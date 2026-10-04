@@ -1,23 +1,2 @@
-# r2 help
-usage: sfx_data_infra [-h] [--data-root DATA_ROOT]
-                      {selfcheck,pipeline,import-assets,synth,split,dedup,build-train,summary}
-                      ...
-
-SFX 训练数据基础设施（M2-SFX-DATA-INFRA/T1a）：manifest/拆分/去重/合成 PoC/导入器
-
-positional arguments:
-  {selfcheck,pipeline,import-assets,synth,split,dedup,build-train,summary}
-    selfcheck           内置自检（EXIT=0 即通过）
-    pipeline            一键：导入+合成+拆分+去重+训练构建+摘要
-    import-assets       导入三存量资产（7+8+43）
-    synth               合成渲染 PoC
-    split               组隔离拆分
-    dedup               双去重
-    build-train         训练集构建（不可读 test/challenge）
-    summary             产 manifest-summary.json
-
-options:
-  -h, --help            show this help message and exit
-  --data-root DATA_ROOT
-                        外部数据树根（gitignored，默认 training_data/sfx-v1）
+# r3 help
 EXIT=0

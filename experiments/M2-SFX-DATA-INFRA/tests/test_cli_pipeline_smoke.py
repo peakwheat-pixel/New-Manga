@@ -61,3 +61,19 @@ def test_pipeline_end_to_end_r1_fixes(tmp_path):
     summary = json.loads(summary_out.read_text(encoding="utf-8"))
     assert summary["synthetic_poc"]["by_split"] == {"train": len(syn)}
     assert "absolute" not in summary["data_root_gitignored"]
+
+    # r2 新-1 回归：summary 重生成不得降级——dedup/train_builder/import 统计仍在
+    assert summary["dedup"]["exact_pairs"] == 0 and "perceptual_pairs" in summary["dedup"]
+    assert summary["train_builder"]["excluded_negative_ids"] is not None
+    assert summary["import_assets"]["imported"] == 58
+    # r2 新-2 回归：摘要内字体只记基名，无本机绝对路径
+    for f in summary["synthetic_poc"]["fonts"]:
+        assert "\\" not in f and "/" not in f, f"字体应为基名: {f}"
+    # r2 新-6 回归：lock 形状不随写者漂移（pipeline 与 split/dedup 同键集）
+    assert container["lock"].get("challenge_single_bucket") == ["BJ13", "BJ14", "BJ15"]
+    # r2 新-6：dedup 子命令后 lock.fingerprint 仍与盘上 kept 集一致
+    rc3 = cli.main(["--data-root", str(data_root), "dedup"])
+    assert rc3 == 0
+    container2, records2 = load_manifest(data_root / "manifest.full.json")
+    from sfx_data_infra.splits import split_fingerprint as _sf
+    assert container2["lock"]["fingerprint"] == _sf(records2, int(container2["seed"]))

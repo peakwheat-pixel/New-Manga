@@ -209,10 +209,6 @@ def import_ogkalu(cases_index: dict, roots, now_iso: str) -> list[SampleRecord]:
             det_conf_stats.append(
                 {"conf": det.get("conf"), "cls": det.get("cls"), "conf_ge_primary": det.get("conf_ge_primary")}
             )
-        if not boxes:
-            # detections 为空 = 模型在该 crop 无检出（harvest 0.25 灵敏度下）：
-            # 以空框 pseudo 负证据样本入册（schema 冻结允许 pseudo 空框），43 region 全量对齐 AC5。
-            pass
         img_ref = ImageRef(
             path=str(crop_path),
             sha256=sha256_file(crop_path),
@@ -234,7 +230,7 @@ def import_ogkalu(cases_index: dict, roots, now_iso: str) -> list[SampleRecord]:
                     "weights_sha256": model_info.get("weights_sha256"),
                     "harvest_threshold": data.get("harvest_threshold"),
                     "evidence": "experiments/M2-SFX-DETECT/ogkalu-sfx-frames.json",
-                    "original_classes": sorted({d["cls"] for d in r.get("detections", [])}),
+                    "original_classes": sorted({d.get("cls", "") for d in r.get("detections", [])}),
                     "detection_conf_stats": det_conf_stats,
                     "negative": not boxes,
                     "quality_note": "模型 harvest 灵敏度产出（0.25 阈值），无人工确认；仅伪 GT"

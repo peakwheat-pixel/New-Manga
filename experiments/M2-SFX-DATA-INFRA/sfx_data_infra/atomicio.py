@@ -106,7 +106,7 @@ def load_manifest(path: str | os.PathLike) -> tuple[dict, list[SampleRecord]]:
 
 
 def cleanup_stale_tmp(path: str | os.PathLike) -> list[Path]:
-    """清理上次中断残留的 tmp/bak 同名前缀文件（bak 保留最新一个由写入逻辑管理）。"""
+    """清理上次中断残留的 tmp 同名前缀文件（.bak 是有意保留的恢复位，不在此清理）。"""
     path = Path(path)
     removed = []
     pattern = str(path.with_name(f"{path.name}.*{TMP_SUFFIX}"))

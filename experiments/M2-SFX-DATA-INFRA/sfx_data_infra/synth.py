@@ -42,7 +42,8 @@ _FONT_CANDIDATES = (
     r"C:\Windows\Fonts\ariblk.ttf",
 )
 
-_BRUSHY_NAME_HINTS = ("tanuki", "brush", "fude", "pen", "kouzan", "hand", "magic")
+# r2 新-5：收窄启发式——"pen"/"hand"/"magic" 会误命中 opensans 等普通字体
+_BRUSHY_NAME_HINTS = ("tanuki", "brush", "fude", "kouzan")
 
 _POC_TEXTS = ("ドン", "ゴゴゴ", "バーン", "ザッ", "オギャァ", "メキメキ", "ズシャア", "ビシッ")
 

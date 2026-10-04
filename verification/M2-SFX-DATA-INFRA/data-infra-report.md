@@ -17,6 +17,39 @@
 | AC5 存量导入器 | **完成** | `importers.py` 一键 7+8+43=58：l3 七参照框→`partial`（页图 BJ13/14/15 在 E2E-MATERIAL worktree）；BJ06 八自证框→`partial`（页图在 TA2B worktree，**导入时对账 qual 记录 source_sha256 `b06c9d7d…` 一致**）；ogkalu 43 region→`pseudo`（crop 图 43/43 在盘，原始 cls/conf/harvest 阈值入 provenance；其中 11 region detections 为空→空框 pseudo 负证据样本，schema 冻结允许且 43 全量入册） |
 | AC6 零 src+CLI | **完成** | `git diff 4c12e8af..HEAD --stat` 零 src/tests/contracts/packaging/apps/STATUS/test_assets 变更；`python -m sfx_data_infra --help` EXIT=0；`selfcheck` EXIT=0（schema 往返/dhash/几何互算 5.7e-14/原子写恢复 4 项自检全 OK）；数据本体落 `training_data/sfx-v1/`（`.gitignore` 加 `/training_data/`，check-ignore 验证） |
 
+## r3 修订（DSH r2 changes_requested 返修——本节覆盖 r2/r1 数字）
+
+r2 结论：changes_requested（r1 四项 P1 全通过；新引入 1×P1 + P2-13 回潮 + 7×P3）。
+r3 修复：
+
+- **新-1（P1）摘要覆写降级**：`cmd_summary` 改为从盘上 manifest **重算全部统计**
+  （dedup/build-train/import 全算，不再传空报告）；验证流程改为"官方 data_root 只跑
+  pipeline、子命令在临时副本验证"——Git 摘要不再被子命令回写污染。
+  **最终产物 sha：manifest.full `a48d616eae59ee84…`、manifest.train `e0d2981a054145e1…`
+  （与 manifest_summary.json 逐字节核对一致）**；报告与 handoff 引用同值。
+- **新-2（P2-13 真闭合）**：摘要 `fonts` 只记文件名（TanukiMagic.ttf），无本机绝对路径。
+- 新-3 未用 `import os as _os` 清除；新-4 importers 空 pass 分支删除、`det.get("cls")`。
+- **新-5 字体可复现通道**：新增 `fetch_fonts.py`（上游 zip+ttf 双 sha256 pin 校验，
+  fail-closed 不静默换源；LICENSE-NOTE.txt 落字体目录）；`_BRUSHY_NAME_HINTS` 收窄
+  （去 pen/hand/magic，防普通字体误判顶掉真毛笔体）。
+- **新-6 lock 形状统一**：pipeline/split/dedup 三写者 lock 键集一致
+  （challenge_single_bucket 统一键名）；`cmd_dedup` 真丢弃时重算 fingerprint；
+  `cleanup_stale_tmp` docstring 去"bak"。
+- 新-7 `.gitignore` 的 `experiments/M2-SFX-DATA-INFRA/*.bak` 行：请集成方一并追认
+  （原子写备份文件不进 Git，与 P2-1 追认同理）。
+- 新-8 溯源：handoff frontmatter 填实 r2_head/r3_head；Task 正文回填在集成收口时；
+  r1/r2 报告原字节入 `doc/reviews/` 由集成方执行。
+- 新-9 登记：**test 集 4 样本中 1 个为空框负样本**（11 空框 = builder 排除 10 + test 1），
+  评估价值进一步受限（转 T1b 重划）；r2 的 8 个回归测试 red 留证以
+  `red-evidence-r2-tests.log` 替代证明（r1 代码上符号不存在，import/断言必然红）；
+  `build_summary` 对 train manifest 中间态缺失容错（typed note，不再 FileNotFoundError）。
+
+**r3 产物数字（pipeline EXIT=0，seed=20261004）**：与 r2 相同分布——challenge 7 /
+train 63（含合成 24，TanukiMagic 独占）/ val 8 / test 4；builder 排除负样本 10；
+GT 互算 1.71e-13px；tests **37 passed**（smoke 新增 summary 不降级/字体基名/lock
+形状/dedup 后 fingerprint 一致断言）；selfcheck/help/pipeline EXIT=0；子命令在副本
+data_root 全 EXIT=0（`subcommands-r3-run.log`）。
+
 ## r2 修订（DSH r1 changes_requested 返修后重跑——本节覆盖下方 r1 历史数字）
 
 r1 结论：changes_requested（4 P1 / 12 P2 / 11 P3，无 P0）。r2 修复与重跑结果：

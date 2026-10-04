@@ -2,7 +2,7 @@
  "task": "M2-SFX-DATA-INFRA",
  "schema_version": "sfx-data-infra/sample@1",
  "manifest_kind": "sfx-data-infra/manifest@1",
- "generated_at": "2026-10-04T03:23:43Z",
+ "generated_at": "2026-10-04T03:38:17Z",
  "data_root_gitignored": "training_data/sfx-v1（repo 同级 gitignored 外部树）",
  "totals": {
   "samples": 82,
@@ -39,18 +39,21 @@
   "bj06_selfcheck_boxes": 8,
   "ogkalu_regions": 43,
   "ogkalu_regions_negative_empty_boxes": 11,
-  "ogkalu_boxes_total": 167
+  "ogkalu_boxes_total": 167,
+  "imported": 58,
+  "boxes": 182,
+  "assets_copied": 47
  },
  "synthetic_poc": {
   "count": 24,
-  "gt_roundtrip_max_err_px": null,
+  "gt_roundtrip_max_err_px": 1.7053025658242404e-13,
   "annotation_status": "synthetic",
   "ai_fullpage_generation": "not_used（若引入必标 pseudo 不入 GT）",
   "by_split": {
    "train": 24
   },
   "fonts": [
-   "G:\\CODEX\\New Manga.worktrees\\M2-SFX-DATA-INFRA-zcode\\training_data\\sfx-v1\\fonts\\TanukiMagic.ttf"
+   "TanukiMagic.ttf"
   ]
  },
  "split_lock": {
@@ -74,16 +77,38 @@
  },
  "train_builder": {
   "train_builder_counts": {
-   "note": "见 manifest.train.json"
+   "train": 57,
+   "val": 4
+  },
+  "excluded_splits": [
+   "test",
+   "challenge"
+  ],
+  "excluded_negative_ids": [
+   "imp-ogkalu-k03-r107",
+   "imp-ogkalu-k05-r011",
+   "imp-ogkalu-k05-r026",
+   "imp-ogkalu-k07-r095",
+   "imp-ogkalu-k08-r019",
+   "imp-ogkalu-k08-r041",
+   "imp-ogkalu-k08-r047",
+   "imp-ogkalu-k08-r057",
+   "imp-ogkalu-k10-r143",
+   "imp-ogkalu-k10-r144"
+  ],
+  "status_distribution": {
+   "partial": 8,
+   "pseudo": 29,
+   "synthetic": 24
   }
  },
  "manifest_files": {
   "manifest.full.json": {
-   "sha256": "872e8aabbc3081abc75e282932ffb35dab37268c9787bc09ae8b6c88608c9af0",
-   "bytes": 253295
+   "sha256": "a48d616eae59ee848a30f2902df6101f5765898e5471265557e481d5bc15878a",
+   "bytes": 253363
   },
   "manifest.train.json": {
-   "sha256": "ebf71b06c49fa250f06e4e058d7db5bdfeeea5a72e717e36157b86ac5c8f0651",
+   "sha256": "e0d2981a054145e1532bdf2f31610aba50fee9845ee3c9c74aac1f85116b36e8",
    "bytes": 216280
   }
  }

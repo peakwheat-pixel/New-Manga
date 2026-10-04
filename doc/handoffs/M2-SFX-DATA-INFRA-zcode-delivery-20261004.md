@@ -4,8 +4,9 @@ author: ZCode（subagent，Owner 实现；r2 返修=编排会话 ZCode Owner）
 recipient: Codex（Integrator，编排会话代行）
 base_commit: 4c12e8af
 delivery_head: ecb39e67ff8eba63bf0586beaa00291b76bc29fc
-r2_head: 见交付记录 §r2
-status: r2-delivered（r1 changes_requested 已返修，待 DSH r2 复核）
+r2_head: 2838d690（r1→r2 返修；被 r3 取代）
+r3_head: 89872c03（r2→r3 返修，当前 tip）
+status: r3-delivered（r2 changes_requested 已返修，待 DSH r3 复核）
 ---
 
 # Handoff：M2-SFX-DATA-INFRA（T1a，SFX 训练数据基础设施）
@@ -138,3 +139,35 @@ synth 渲染逐点性能（P3）；粒度口径文档化（一框一样本 vs �
 细化时冻结）。
 
 **下一接收者**：DSH r2 复核（核对 r1 问题清单逐条关闭）→ Codex 集成。
+
+
+---
+
+## r3 返修轮（2026-10-04，DSH r2 changes_requested → 返修）
+
+**r2 结论**：4×P1 全通过、11/13×P2 通过；新引入 新-1（P1）+ P2-13 回潮 + 7×P3。
+
+**r3 修复**（DSH r2 最小闭合清单逐条）：
+1. 新-1：`cmd_summary` 从盘重算全部统计（dedup/train/import）不再降级；验证顺序改为
+   官方 data_root 只跑 pipeline、子命令在临时副本验证；报告/handoff 的 manifest sha
+   更新为最终实算值 **`a48d616e…` / `e0d2981a…`**（与 manifest_summary.json 一致），
+   并删除不可承载的"与摘要一致"式自引证措辞。
+2. 新-2：摘要 fonts 改基名（TanukiMagic.ttf）。
+3. 新-3/新-4：`import os as _os` 清除；importers 空 pass 分支删除；`det.get("cls")`。
+4. 新-5：`fetch_fonts.py`（zip+ttf 双 sha256 pin，fail-closed）+ LICENSE-NOTE.txt 落
+   字体目录；`_BRUSHY_NAME_HINTS` 收窄（去 pen/hand/magic）。
+5. 新-6：pipeline/split/dedup lock 键集统一（challenge_single_bucket）；cmd_dedup
+   真丢弃时重算 fingerprint；cleanup_stale_tmp docstring 去"bak"。
+6. 新-7：.gitignore `*.bak` 行请集成方追认。新-8：r2_head=2838d690 已填，r3_head
+   commit 后回填；Task 正文回填与 r1/r2 报告入库在集成收口执行。新-9：test 4 中
+   1 空框负样本已登记；red 留证以 red-evidence-r2-tests.log 替代证明；build_summary
+   对 train 中间态容错。
+
+**r3 验证**：tests **37 passed**（smoke 加固：summary 不降级/字体基名/lock 形状/
+dedup 后 fingerprint 一致）；官方 pipeline EXIT=0（challenge 7/train 63（合成 24）/
+val 8/test 4；排除负样本 10；GT 互算 1.71e-13px）；selfcheck/help EXIT=0；子命令
+副本验证全 EXIT=0（subcommands-r3-run.log，含 bypass 断言 OK）；manifest sha
+a48d616e…/e0d2981a… 逐字节核对一致。
+
+**下一接收者**：DSH r3 复核 → Codex 集成（merge + r1/r2/r3 报告原字节入 doc/reviews/
++ Task/STATUS/PLAN 收口）。

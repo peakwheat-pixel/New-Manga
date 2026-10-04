@@ -1,0 +1,13 @@
+# r3 子命令验证（在临时副本 data_root 上执行，不污染 Git 摘要——r2 新-1 教训）
+[dedup] {"exact_pairs": 0, "box_exact_pairs": 0, "perceptual_pairs": 0, "dropped": 0, "dhash_errors": []}
+[build-train] {"train_builder_counts": {"train": 57, "val": 4}, "excluded_splits": ["test", "challenge"], "excluded_negative_ids": ["imp-ogkalu-k03-r107", "imp-ogkalu-k05-r011", "imp-ogkalu-k05-r026", "imp-ogkalu-k07-r095", "imp-ogkalu-k08-r019", "imp-ogkalu-k08-r041", "imp-ogkalu-k08-r047", "imp-ogkalu-k08-r057", "imp-ogkalu-k10-r143", "imp-ogkalu-k10-r144"], "status_distribution": {"partial": 8, "pseudo": 29, "synthetic": 24}}
+[summary] C:\Users\49745\AppData\Local\Temp\tmp.29k6aJ3T6n\summary.bypass.json
+summary EXIT=0
+[dedup] {"exact_pairs": 0, "box_exact_pairs": 0, "perceptual_pairs": 0, "dropped": 0, "dhash_errors": []}
+dedup EXIT=0
+[split] {"seed": 20261005, "pinned_groups": {"synthetic/poc": "train"}, "by_split": {"challenge": 7, "test": 8, "train": 57, "val": 10}}
+split(force) EXIT=0
+[build-train] {"train_builder_counts": {"train": 48, "val": 8}, "excluded_splits": ["test", "challenge"], "excluded_negative_ids": ["imp-ogkalu-k01-r069", "imp-ogkalu-k03-r107", "imp-ogkalu-k05-r011", "imp-ogkalu-k05-r026", "imp-ogkalu-k07-r095", "imp-ogkalu-k08-r019", "imp-ogkalu-k08-r041", "imp-ogkalu-k08-r047", "imp-ogkalu-k08-r057", "imp-ogkalu-k10-r143", "imp-ogkalu-k10-r144"], "status_distribution": {"pseudo": 32, "synthetic": 24}}
+build-train EXIT=0
+bypass assertions OK
+bypass-assert EXIT=0
