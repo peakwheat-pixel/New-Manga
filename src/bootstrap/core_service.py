@@ -7,14 +7,15 @@ then enters a stdio request loop serving typed commands over JSON-lines.
 
 Transport & Envelope (Contract 1.1 §3, §8, §12; Seam 冻结七条):
   Request:
-    {"protocol": "new-manga.core", "version": {"major": 1, "minor": 2},
+    {"protocol": "new-manga.core", "version": {"major": 1, "minor": 3+},
      "request_id": "<id>", "command": "<cmd>", "payload": {...}}
   Response:
-    {"protocol": "new-manga.core", "version": {"major": 1, "minor": 2},
+    {"protocol": "new-manga.core", "version": {"major": 1, "minor": 3+},
      "request_id": "<id>", "result": {...} | null, "error": ErrorEnvelope | null}
 
-Allowed production commands (M2-IPC1 + M2-PROD-DETECT-3 + M2-SETTINGS-IPC-CHANNEL):
-  - core.ping: {} -> {"status": "ready", "protocol_version": {"major": 1, "minor": 2}, "capabilities": ["library.list_books"]}
+Allowed production commands (M2-IPC1 + M2-PROD-DETECT-3 + M2-SETTINGS-IPC-CHANNEL
+  + M2-REGION-RETYPE-CORE):
+  - core.ping: {} -> {"status": "ready", "protocol_version": {"major": 1, "minor": 3+}, "capabilities": ["library.list_books"]}
   - ListBooks: {} -> BookSummary[]
   - core.shutdown: {} -> {"status": "stopped"} (then exit 0)
   - core.detect: {"page": "<base64 PNG/JPEG>", "width": <int>, "height": <int>}
@@ -55,6 +56,29 @@ Allowed production commands (M2-IPC1 + M2-PROD-DETECT-3 + M2-SETTINGS-IPC-CHANNE
     first validation instance -- must be one of skip/translate/manual.
     Everything else passes through; a failure never reaches the store.
     Contract: M2-C1 rev 1.3 §5.3.)
+  - set_region_type: {"region_id": "<id>", "new_region_type": <RegionType>,
+      "expected_revision"?: <int>} -> the post-retype effective state
+      {"region_id", "revision_no", "region_type", "sfx_policy"}
+    (M2-REGION-RETYPE-CORE, protocol minor bump 2 -> 3: the same
+    backwards-compatible widening precedent -- every pre-existing command
+    keeps its payload/result/error codes. The retype is ONE new revision
+    through the existing commit seam, origin always user, review_state
+    UNREVIEWED; the snapshot delta is region_type + sfx_policy ONLY. EV-8
+    (RULED): retype-to-sfx re-snapshots sfx_policy from the GLOBAL
+    sfx.policy configuration at retype time; every non-sfx target is forced
+    SKIP. Error semantics reuse the existing typed literals only:
+    INVALID_REQUEST (validation) / INPUT_REVISION_CHANGED (conflict, the
+    explicit optimistic guard C4) / TARGET_NOT_FOUND (not_found) / UNKNOWN
+    (internal); wire codes are SCREAMING_SNAKE_CASE. Contract: M2-C1
+    rev 1.4 §5.4.)
+  - list_regions: {"page_id": "<id>"} -> {"regions": RegionListSummary[]}
+    (M2-REGION-RETYPE-CORE. The minimal read DTO -- region_id /
+    region_type / sfx_policy / origin / revision_no -- in reading_order
+    ascending, the revision the current pointer targets; no geometry,
+    text or annotation semantics. A page with no rows (unknown page_id
+    included) reads as {"regions": []}, NOT an error -- the existing
+    list_regions semantics (contract rev 1.4 §5.4 footnote a). Errors:
+    INVALID_REQUEST (payload) / UNKNOWN (internal) only.)
 """
 
 from __future__ import annotations
@@ -70,6 +94,7 @@ import sys
 import time
 from typing import Any, Callable, TextIO
 
+from application.editing.errors import GuardStatus, RegionNotFound
 from application.importing.images.ports import DecodedImage
 from application.settings.errors import BindingValidationError
 from application.translation.color.service import SourceStyleService
@@ -78,7 +103,7 @@ from bootstrap.core_assembly import (
     assemble_core_services,
     default_data_root,
 )
-from domain.regions.entities import SfxPolicy
+from domain.regions.entities import RegionType, SfxPolicy
 from ports.detection.ports import DetectionRequest
 from ports.providers.errors import ProviderError, ProviderNotConfigured
 
@@ -89,7 +114,10 @@ PROTOCOL_MAJOR = 1
 # M2-SETTINGS-IPC-CHANNEL: 1 -> 2 (minor bump, settings.get /
 # settings.update_section commands added; same backwards-compatible widening
 # precedent -- pre-existing command semantics unchanged).
-PROTOCOL_MINOR = 2
+# M2-REGION-RETYPE-CORE: 2 -> 3 (minor bump, set_region_type / list_regions
+# commands added; same backwards-compatible widening precedent -- pre-existing
+# command semantics unchanged. Contract: M2-C1 rev 1.4 §5.4).
+PROTOCOL_MINOR = 3
 
 # Typed error codes per Contract 1.1 §3, §8
 E_PROTOCOL_VERSION_UNSUPPORTED = "PROTOCOL_VERSION_UNSUPPORTED"
@@ -103,6 +131,16 @@ E_UNKNOWN = "UNKNOWN"
 # request validation failures (bad section/values shapes, illegal sfx.policy)
 # -- no new error code is invented (contract rev 1.3 §5.3, §8 existing enum).
 E_INVALID_REQUEST = "INVALID_REQUEST"
+# M2-REGION-RETYPE-CORE: the retype wire reuses the EXISTING typed error
+# literals only (contract rev 1.4 §5.4 error mapping table -- zero new error
+# semantics). INPUT_REVISION_CHANGED is the code family the guarded machine
+# writes already surface (application/editing/errors.py GuardStatus + the
+# pipeline's candidate path); TARGET_NOT_FOUND is the §8 table's existing
+# not_found row. Footnote c: wire codes are SCREAMING_SNAKE_CASE literals --
+# the lowercase GuardStatus enum VALUES ("input_revision_changed") are
+# internal guard states and never ride the wire.
+E_INPUT_REVISION_CHANGED = "INPUT_REVISION_CHANGED"
+E_TARGET_NOT_FOUND = "TARGET_NOT_FOUND"
 
 #: M2-SETTINGS-IPC-CHANNEL: the legal ``settings["sfx"]["policy"]`` values
 #: (contract rev 1.3 §5.3 write-side validation, first instance). The
@@ -110,6 +148,14 @@ E_INVALID_REQUEST = "INVALID_REQUEST"
 #: per region); the value set is the domain enum itself so the wire gate can
 #: never drift from what the assembly-time reader accepts.
 _SFX_POLICY_VALUES = frozenset(policy.value for policy in SfxPolicy)
+
+#: M2-REGION-RETYPE-CORE: the ``RegionType`` six-value closed set (contract
+#: rev 1.4 §5.4 -- zero new enum values; "ignore" is a processing action /
+#: filter state, NOT a RegionType). The value set is the domain enum itself
+#: so the wire gate can never drift from what the entity layer accepts.
+_REGION_TYPE_VALUES = frozenset(
+    region_type.value for region_type in RegionType
+)
 
 #: M2-PROD-DETECT-3: upper bound for one core.detect page, enforced on the
 #: base64-decoded FILE bytes; a separate pixel-count cap (below) bounds the
@@ -168,6 +214,29 @@ class DetectRequestError(ValueError):
 class SettingsRequestError(ValueError):
     """A settings.get/update_section payload violates the request contract
     (INVALID_REQUEST; M2-SETTINGS-IPC-CHANNEL, contract rev 1.3 §5.3)."""
+
+
+class RegionRequestError(ValueError):
+    """A set_region_type/list_regions payload violates the request contract
+    (INVALID_REQUEST; M2-REGION-RETYPE-CORE, contract rev 1.4 §5.4 -- the
+    §5.3 write-side fail-closed discipline applies to these commands too)."""
+
+
+class RegionConflictError(ValueError):
+    """An explicit optimistic expectation failed on set_region_type
+    (INPUT_REVISION_CHANGED, contract rev 1.4 §5.4 C4 -- the same code
+    family the guarded machine writes surface; C4: zero write on
+    rejection)."""
+
+
+class RegionLookupError(ValueError):
+    """A set_region_type target does not exist or is soft-deleted (C7) --
+    mapped to the existing TARGET_NOT_FOUND/not_found row; carries only the
+    region_id so no raw exception text rides the wire (§8)."""
+
+    def __init__(self, region_id: str) -> None:
+        super().__init__("region not found")
+        self.region_id = region_id
 
 
 
@@ -533,6 +602,119 @@ class CoreServiceServer:
             raise SettingsRequestError(str(error)) from error
         return {"settings": dict(defaults.settings)}
 
+    # ------------------------------------------------------------------
+    # set_region_type / list_regions (M2-REGION-RETYPE-CORE)
+    # ------------------------------------------------------------------
+
+    def _global_sfx_policy_value(self) -> str:
+        """The CURRENT global ``sfx.policy`` configuration value -- the EV-8
+        re-snapshot source for retype-to-sfx (contract rev 1.4 §5.4). Read
+        fresh at retype time; an unset section keeps the domain default
+        SKIP (M2-SFX-TRANSLATE-ENTRY)."""
+        settings = self._core.pipeline_defaults.read().settings
+        sfx_section = settings.get("sfx")
+        if sfx_section is None:
+            return SfxPolicy.SKIP.value
+        if not isinstance(sfx_section, dict):
+            # corrupted store shape: internal failure, not a bad request --
+            # the assembly-time reader fail-fasts on the same shape.
+            raise RuntimeError("sfx settings section is not an object")
+        policy_value = sfx_section.get("policy", SfxPolicy.SKIP.value)
+        if policy_value not in _SFX_POLICY_VALUES:
+            raise RuntimeError(
+                f"sfx.policy value {policy_value!r} is not one of"
+                f" {sorted(_SFX_POLICY_VALUES)}"
+            )
+        return policy_value
+
+    def handle_set_region_type(self, payload: dict[str, Any]) -> dict[str, Any]:
+        """Retype one region (contract rev 1.4 §5.4).
+
+        Validation is WRITE-SIDE and typed fail-closed BEFORE any
+        persistence (the §5.3 discipline): ``region_id`` a non-empty string,
+        ``new_region_type`` inside the RegionType six-value closed set,
+        ``expected_revision`` (when present) a real integer (JSON booleans
+        are NOT integers on this face). Error semantics reuse the existing
+        typed literals only: the optimistic guard (C4) maps to
+        INPUT_REVISION_CHANGED/conflict, an unknown or soft-deleted
+        region_id to TARGET_NOT_FOUND/not_found, and everything Core-side
+        unclassified falls through to UNKNOWN/internal in dispatch. The
+        result is the post-retype effective state -- one round trip, no
+        second query (§5.3 settings_update_section precedent)."""
+        region_id = payload.get("region_id")
+        if not isinstance(region_id, str) or not region_id:
+            raise RegionRequestError(
+                "set_region_type requires 'region_id': a non-empty string"
+            )
+        new_region_type = payload.get("new_region_type")
+        if not (
+            isinstance(new_region_type, str)
+            and new_region_type in _REGION_TYPE_VALUES
+        ):
+            raise RegionRequestError(
+                "set_region_type requires 'new_region_type': one of"
+                f" {sorted(_REGION_TYPE_VALUES)}"
+            )
+        expected_revision = payload.get("expected_revision")
+        if expected_revision is not None and (
+            not isinstance(expected_revision, int)
+            or isinstance(expected_revision, bool)
+        ):
+            raise RegionRequestError(
+                "set_region_type 'expected_revision' must be an integer"
+                " when present"
+            )
+
+        try:
+            outcome = self._core.editing.set_region_type(
+                region_id,
+                new_region_type,
+                current_global_sfx_policy=self._global_sfx_policy_value(),
+                expected_revision_no=expected_revision,
+            )
+        except RegionNotFound as error:
+            # C7: the region does not exist or is soft-deleted. The typed
+            # TARGET_NOT_FOUND carries a fixed safe phrase (§8: no paths,
+            # no raw exception text).
+            raise RegionLookupError(region_id) from error
+        if outcome.status is GuardStatus.INPUT_REVISION_CHANGED:
+            # C4: the explicit optimistic expectation failed; the region
+            # state is untouched (zero write).
+            raise RegionConflictError(
+                "region revision changed since it was read"
+            )
+        if outcome.status is not GuardStatus.APPLIED:
+            # a USER write carries no lock expectation, so LOCK_CHANGED is
+            # an internal invariant breach here -- fall through to
+            # UNKNOWN/internal instead of inventing a wire semantics.
+            raise RuntimeError(
+                f"set_region_type commit failed: {outcome.detail}"
+            )
+
+        # One round trip: read back the effective state from the same
+        # authoritative region object (already updated in place by the
+        # commit seam).
+        region = self._core.editing.get_region(region_id)
+        return {
+            "region_id": region_id,
+            "revision_no": outcome.revision_no,
+            "region_type": region.region_type.value,
+            "sfx_policy": region.sfx_policy.value,
+        }
+
+    def handle_list_regions(self, payload: dict[str, Any]) -> dict[str, Any]:
+        """The RegionListSummary read channel (contract rev 1.4 §5.4):
+        ``{"regions": [...]}`` in reading_order ascending. A page with no
+        rows -- unknown page_id included -- is an EMPTY LIST, not an error
+        (footnote a: no page existence check, the existing list_regions
+        semantics)."""
+        page_id = payload.get("page_id")
+        if not isinstance(page_id, str) or not page_id:
+            raise RegionRequestError(
+                "list_regions requires 'page_id': a non-empty string"
+            )
+        return {"regions": self._core.editing.list_region_summaries(page_id)}
+
     def dispatch_request(self, raw_line: str) -> tuple[dict[str, Any], bool]:
         """Dispatch a single raw json request line.
 
@@ -794,6 +976,97 @@ class CoreServiceServer:
                             code=E_UNKNOWN,
                             category="internal",
                             message="Settings operation failed",
+                            retryable=False,
+                        ),
+                    },
+                    False,
+                )
+            return (
+                {
+                    "protocol": PROTOCOL_NAME,
+                    "version": {"major": PROTOCOL_MAJOR, "minor": PROTOCOL_MINOR},
+                    "request_id": request_id,
+                    "result": result,
+                    "error": None,
+                },
+                False,
+            )
+
+        # M2-REGION-RETYPE-CORE: the region retype write + read pair. The
+        # commands above are untouched; these branches only widen the
+        # surface (protocol minor bump, see the module docstring). Request
+        # validation is typed fail-closed BEFORE any persistence (the §5.3
+        # discipline); error semantics reuse the existing typed literals
+        # only (contract rev 1.4 §5.4 mapping table).
+        if command in ("set_region_type", "list_regions"):
+            try:
+                if command == "set_region_type":
+                    result = self.handle_set_region_type(payload)
+                else:
+                    result = self.handle_list_regions(payload)
+            except RegionRequestError as error:
+                return (
+                    {
+                        "protocol": PROTOCOL_NAME,
+                        "version": {"major": PROTOCOL_MAJOR, "minor": PROTOCOL_MINOR},
+                        "request_id": request_id,
+                        "result": None,
+                        "error": make_error_envelope(
+                            code=E_INVALID_REQUEST,
+                            category="validation",
+                            message=str(error),
+                            retryable=False,
+                        ),
+                    },
+                    False,
+                )
+            except RegionConflictError as error:
+                return (
+                    {
+                        "protocol": PROTOCOL_NAME,
+                        "version": {"major": PROTOCOL_MAJOR, "minor": PROTOCOL_MINOR},
+                        "request_id": request_id,
+                        "result": None,
+                        "error": make_error_envelope(
+                            code=E_INPUT_REVISION_CHANGED,
+                            category="conflict",
+                            message=str(error),
+                            retryable=False,
+                        ),
+                    },
+                    False,
+                )
+            except RegionLookupError:
+                return (
+                    {
+                        "protocol": PROTOCOL_NAME,
+                        "version": {"major": PROTOCOL_MAJOR, "minor": PROTOCOL_MINOR},
+                        "request_id": request_id,
+                        "result": None,
+                        "error": make_error_envelope(
+                            code=E_TARGET_NOT_FOUND,
+                            category="not_found",
+                            message="region not found",
+                            retryable=False,
+                        ),
+                    },
+                    False,
+                )
+            except Exception:
+                return (
+                    {
+                        "protocol": PROTOCOL_NAME,
+                        "version": {"major": PROTOCOL_MAJOR, "minor": PROTOCOL_MINOR},
+                        "request_id": request_id,
+                        "result": None,
+                        "error": make_error_envelope(
+                            code=E_UNKNOWN,
+                            category="internal",
+                            message=(
+                                "Region retype failed"
+                                if command == "set_region_type"
+                                else "Region read failed"
+                            ),
                             retryable=False,
                         ),
                     },

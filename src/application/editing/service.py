@@ -81,6 +81,18 @@ def _guard_status_of(result: RegionCommitResult) -> GuardStatus:
     }.get(result.status, GuardStatus.INPUT_REVISION_CHANGED)
 
 
+def effective_sfx_policy(
+    region_type: RegionType, global_policy: str | SfxPolicy
+) -> SfxPolicy:
+    """EV-8 shared rule for BOTH region write paths (creation and retype):
+    only an SFX-typed region carries the configured global policy; every
+    other type forces SKIP so the policy can never leak onto non-SFX
+    regions (M2-C1 rev 1.4 §5.4; core_assembly creation precedent)."""
+    if region_type is RegionType.SFX:
+        return SfxPolicy(global_policy)
+    return SfxPolicy.SKIP
+
+
 class InMemoryRegionCommitter:
     """Contract-faithful committer for in-memory repositories: same guard
     order and pointer semantics as the SQLite seam, without transactions."""
@@ -284,6 +296,123 @@ class RegionEditingService:
         region = self._require_region(region_id)
         region.soft_delete()
         self._repo.update_region(region)
+
+    # ------------------------------------------------------------------
+    # region retype (M2-REGION-RETYPE-CORE, contract M2-C1 rev 1.4 §5.4)
+    # ------------------------------------------------------------------
+
+    def set_region_type(
+        self,
+        region_id: str,
+        new_region_type: str | RegionType,
+        *,
+        current_global_sfx_policy: str | SfxPolicy,
+        expected_revision_no: int | None = None,
+    ) -> GuardedWriteOutcome:
+        """Retype one region (contract M2-C1 rev 1.4 §5.4): exactly ONE new
+        revision through the existing commit seam, ``origin`` always USER,
+        ``review_state`` UNREVIEWED (a type decision never signals a text
+        proofreading need).
+
+        EV-8 (RULED): retyping TO sfx re-snapshots ``sfx_policy`` from the
+        GLOBAL configuration at retype time (the caller passes the current
+        global value; creation-time semantics, core_assembly.py precedent);
+        retyping to any NON-sfx type forces SKIP so the policy can never
+        leak onto non-SFX regions. The snapshot delta against the previous
+        revision is therefore region_type + sfx_policy ONLY — text, style,
+        locks, reading_order and geometry are preserved verbatim (§10
+        manual-edit protection; no confirmed translation falls back to
+        needs-review).
+
+        ``expected_revision_no`` is the optional optimistic guard (C4): a
+        mismatch is a typed INPUT_REVISION_CHANGED with zero write; the
+        matching id is re-checked inside the commit seam, the same
+        double-check the guarded machine writes get (D06 §90)."""
+        region = self._require_region(region_id)
+        expected_current_revision_id: str | None = None
+        if expected_revision_no is not None:
+            expected_revision = self._repo.get_revision(region_id, expected_revision_no)
+            if (
+                expected_revision is None
+                or region.current_revision_id != expected_revision.region_revision_id
+            ):
+                return GuardedWriteOutcome(
+                    GuardStatus.INPUT_REVISION_CHANGED,
+                    conflicts=(region_id,),
+                    detail=(
+                        f"expected current revision {expected_revision_no},"
+                        f" current pointer targets a different revision"
+                    ),
+                )
+            expected_current_revision_id = expected_revision.region_revision_id
+        target_type = RegionType(new_region_type)
+        staged = _clone_region(region)
+        staged.apply_type(target_type)
+        staged.apply_sfx_policy(
+            effective_sfx_policy(target_type, current_global_sfx_policy)
+        )
+        revision = self._build_revision(
+            staged, RegionOrigin.USER, ReviewState.UNREVIEWED
+        )
+        result = self._commit(
+            region, staged, revision,
+            expected_current_revision_id=expected_current_revision_id,
+        )
+        if result.status is not RegionCommitStatus.APPLIED:
+            if result.status is RegionCommitStatus.INPUT_REVISION_CHANGED:
+                # C4: the seam-side guard lost — typed conflict outcome with
+                # zero write, same semantics as the pre-seam guard above.
+                return GuardedWriteOutcome(
+                    _guard_status_of(result), detail=result.detail
+                )
+            # r1 P2-2 (rev 1.4 §5.4): a human retype never degrades into a
+            # machine write candidate. DB_FAILED is a persistence fault and
+            # LOCK_CHANGED cannot legitimately gate the user channel (the
+            # user path passes no lock snapshot into the seam); both escalate
+            # fail-loud (core_service maps RuntimeError to UNKNOWN/internal),
+            # matching _commit_user_or_raise semantics.
+            raise RuntimeError(
+                f"region retype commit failed: {result.status.value}:"
+                f" {result.detail}"
+            )
+        return GuardedWriteOutcome(
+            GuardStatus.APPLIED, revision_no=result.revision_no
+        )
+
+    def list_region_summaries(self, page_id: str) -> list[dict[str, object]]:
+        """RegionListSummary read channel (contract M2-C1 rev 1.4 §5.4
+        ListRegions): the minimal retype-decision DTO per live region, in
+        ``reading_order`` ascending. ``origin``/``revision_no`` come from the
+        revision the current pointer targets, so machine pens and human
+        retypes stay distinguishable (UI design A7). No geometry, text or
+        annotation semantics ride this face."""
+        summaries: list[dict[str, object]] = []
+        for region in self.list_regions(page_id):
+            current = next(
+                (
+                    rev
+                    for rev in self._repo.list_revisions(region.region_id)
+                    if rev.region_revision_id == region.current_revision_id
+                ),
+                None,
+            )
+            if current is None:
+                # TASK-002 §2.1 invariant broken: fail loudly instead of
+                # fabricating a plausible summary row.
+                raise RuntimeError(
+                    f"current revision pointer of region {region.region_id}"
+                    " does not resolve"
+                )
+            summaries.append(
+                {
+                    "region_id": region.region_id,
+                    "region_type": region.region_type.value,
+                    "sfx_policy": region.sfx_policy.value,
+                    "origin": current.origin.value,
+                    "revision_no": current.revision_no,
+                }
+            )
+        return summaries
 
     # ------------------------------------------------------------------
     # geometry (AC-REGION-002, D06 §87 "Geometry 保存")

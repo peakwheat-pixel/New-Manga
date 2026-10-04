@@ -130,6 +130,24 @@ pub trait LibraryChannel: Send + Sync {
         section: &str,
         values: &serde_json::Value,
     ) -> Result<serde_json::Value, LibraryError>;
+    /// M2-REGION-RETYPE-CORE (contract rev 1.4 §5.4): retype one region via
+    /// the Core's `set_region_type`. All domain authority (the RegionType
+    /// six-value closed set, the EV-8 policy re-snapshot, the optimistic
+    /// `expected_revision` guard) lives Core-side BEFORE persistence; the
+    /// typed rejection (INVALID_REQUEST / INPUT_REVISION_CHANGED /
+    /// TARGET_NOT_FOUND) propagates as `LibraryError.code` and the result
+    /// is the post-retype effective state
+    /// (`{region_id, revision_no, region_type, sfx_policy}`) as raw JSON.
+    fn set_region_type(
+        &self,
+        region_id: &str,
+        new_region_type: &str,
+        expected_revision: Option<i64>,
+    ) -> Result<serde_json::Value, LibraryError>;
+    /// M2-REGION-RETYPE-CORE: the RegionListSummary read channel via the
+    /// Core's `list_regions` — the raw `{"regions": [...]}` projection
+    /// passes through; a page with no rows is an empty list, not an error.
+    fn list_regions(&self, page_id: &str) -> Result<serde_json::Value, LibraryError>;
 }
 
 /// The command argv pinned for spawning the production Core service.
@@ -321,6 +339,31 @@ impl LibraryChannel for StdioLibraryChannel {
             serde_json::json!({ "section": section, "values": values }),
         )
     }
+
+    fn set_region_type(
+        &self,
+        region_id: &str,
+        new_region_type: &str,
+        expected_revision: Option<i64>,
+    ) -> Result<serde_json::Value, LibraryError> {
+        // contract rev 1.4 §5.4: the optional optimistic guard rides the
+        // payload only when the caller supplies it (its absence = the
+        // user-direct write); the Core validates everything pre-persistence
+        let mut payload = serde_json::json!({
+            "region_id": region_id,
+            "new_region_type": new_region_type,
+        });
+        if let Some(revision) = expected_revision {
+            payload["expected_revision"] = serde_json::json!(revision);
+        }
+        self.round_trip("set_region_type", payload)
+    }
+
+    fn list_regions(&self, page_id: &str) -> Result<serde_json::Value, LibraryError> {
+        // contract rev 1.4 §5.4: the result is the raw {"regions": [...]}
+        // projection (empty list for a page without rows, not an error)
+        self.round_trip("list_regions", serde_json::json!({ "page_id": page_id }))
+    }
 }
 
 /// In-memory mock channel for testing without spawning Python.
@@ -328,6 +371,8 @@ pub struct MockLibraryChannel {
     ping_result: Mutex<Result<PingResult, LibraryError>>,
     books_result: Mutex<Result<Vec<BookSummary>, LibraryError>>,
     settings_result: Mutex<Result<serde_json::Value, LibraryError>>,
+    retype_result: Mutex<Result<serde_json::Value, LibraryError>>,
+    regions_result: Mutex<Result<serde_json::Value, LibraryError>>,
 }
 
 impl MockLibraryChannel {
@@ -340,6 +385,13 @@ impl MockLibraryChannel {
             })),
             books_result: Mutex::new(Ok(Vec::new())),
             settings_result: Mutex::new(Ok(serde_json::json!({ "settings": {} }))),
+            retype_result: Mutex::new(Ok(serde_json::json!({
+                "region_id": "r1",
+                "revision_no": 2,
+                "region_type": "sfx",
+                "sfx_policy": "skip",
+            }))),
+            regions_result: Mutex::new(Ok(serde_json::json!({ "regions": [] }))),
         }
     }
 
@@ -355,6 +407,16 @@ impl MockLibraryChannel {
     /// typed rejection, e.g. INVALID_REQUEST) for host-level tests.
     pub fn set_settings_result(&self, result: Result<serde_json::Value, LibraryError>) {
         *self.settings_result.lock().unwrap() = result;
+    }
+
+    /// M2-REGION-RETYPE-CORE: pin the mocked retype result / read
+    /// projection (or a typed rejection) for host-level tests.
+    pub fn set_retype_result(&self, result: Result<serde_json::Value, LibraryError>) {
+        *self.retype_result.lock().unwrap() = result;
+    }
+
+    pub fn set_regions_result(&self, result: Result<serde_json::Value, LibraryError>) {
+        *self.regions_result.lock().unwrap() = result;
     }
 
     #[allow(dead_code)]
@@ -388,6 +450,19 @@ impl LibraryChannel for MockLibraryChannel {
         _values: &serde_json::Value,
     ) -> Result<serde_json::Value, LibraryError> {
         self.settings_result.lock().unwrap().clone()
+    }
+
+    fn set_region_type(
+        &self,
+        _region_id: &str,
+        _new_region_type: &str,
+        _expected_revision: Option<i64>,
+    ) -> Result<serde_json::Value, LibraryError> {
+        self.retype_result.lock().unwrap().clone()
+    }
+
+    fn list_regions(&self, _page_id: &str) -> Result<serde_json::Value, LibraryError> {
+        self.regions_result.lock().unwrap().clone()
     }
 }
 
@@ -519,6 +594,48 @@ mod tests {
         assert_eq!(err.code, "INVALID_REQUEST");
         assert_eq!(err.category, "validation");
         assert!(!err.retryable);
+    }
+
+    #[test]
+    fn retype_mock_channel_round_trip_and_typed_rejection() {
+        // M2-REGION-RETYPE-CORE: the host-level retype surface maps 1:1 onto
+        // the LibraryChannel methods (same discipline as the settings mock —
+        // the REAL channel round-trips the Core). What is pinned here is the
+        // post-retype effective-state shape and the typed pass-through of
+        // the reused error codes (contract rev 1.4 §5.4).
+        let channel = MockLibraryChannel::new();
+
+        let retyped = channel
+            .set_region_type("r1", "sfx", Some(1))
+            .expect("retype succeeds");
+        assert_eq!(retyped["region_id"], "r1");
+        assert_eq!(retyped["revision_no"], 2);
+        assert_eq!(retyped["region_type"], "sfx");
+        assert_eq!(retyped["sfx_policy"], "skip");
+
+        let regions = channel.list_regions("page-1").unwrap();
+        assert_eq!(regions["regions"], serde_json::json!([]));
+
+        channel.set_retype_result(Err(LibraryError::new(
+            "INPUT_REVISION_CHANGED",
+            "conflict",
+            false,
+            Some("region revision changed since it was read"),
+        )));
+        let conflict = channel.set_region_type("r1", "sfx", Some(1)).unwrap_err();
+        assert_eq!(conflict.code, "INPUT_REVISION_CHANGED");
+        assert_eq!(conflict.category, "conflict");
+        assert!(!conflict.retryable);
+
+        channel.set_regions_result(Err(LibraryError::new(
+            "INVALID_REQUEST",
+            "validation",
+            false,
+            Some("list_regions requires 'page_id': a non-empty string"),
+        )));
+        let invalid = channel.list_regions("").unwrap_err();
+        assert_eq!(invalid.code, "INVALID_REQUEST");
+        assert_eq!(invalid.category, "validation");
     }
 
     #[test]

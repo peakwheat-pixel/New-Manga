@@ -51,7 +51,9 @@ from ports.providers.errors import (
 
 # M2-SETTINGS-IPC-CHANNEL: minor 1 -> 2 (settings.get/update_section added;
 # same backwards-compatible widening precedent as the core.detect bump)
-PROTOCOL_VERSION = {"major": PROTOCOL_MAJOR, "minor": 2}
+# M2-REGION-RETYPE-CORE: minor 2 -> 3 (set_region_type/list_regions added;
+# same backwards-compatible widening precedent, contract rev 1.4 §5.4)
+PROTOCOL_VERSION = {"major": PROTOCOL_MAJOR, "minor": 3}
 
 
 def _make_server(tmp_path: Path) -> tuple[CoreServiceServer, object]:
@@ -599,15 +601,16 @@ def test_detect_non_png_jpeg_format_rejected_fail_closed(tmp_path: Path) -> None
 # ---------------------------------------------------------------------------
 
 
-def test_ping_carries_protocol_minor_2(tmp_path: Path) -> None:
+def test_ping_carries_protocol_minor_3(tmp_path: Path) -> None:
     # M2-SETTINGS-IPC-CHANNEL: the envelope minor moves with each command
-    # surface widening (core.detect -> 1, settings pair -> 2)
+    # surface widening (core.detect -> 1, settings pair -> 2);
+    # M2-REGION-RETYPE-CORE: the retype pair -> 3
     server, core = _make_server(tmp_path)
     try:
         res, should_exit = _dispatch(server, "p-1", {}, command="core.ping")
         assert should_exit is False
         assert res["error"] is None
-        assert res["result"]["protocol_version"] == {"major": 1, "minor": 2}
+        assert res["result"]["protocol_version"] == {"major": 1, "minor": 3}
     finally:
         core.conn.close()
 

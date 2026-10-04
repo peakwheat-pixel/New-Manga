@@ -36,7 +36,7 @@ import sqlite3
 import sys
 from typing import Any
 
-from application.editing.service import RegionEditingService
+from application.editing.service import RegionEditingService, effective_sfx_policy
 from application.export import ExportService
 from application.importing.documents import ImportDocumentsUseCase
 from application.importing.images.ports import ImageDecoder
@@ -1037,12 +1037,9 @@ def assemble_core_services(
                 # configured policy (the translation gate consumes it); every
                 # other region type keeps the SKIP default regardless of
                 # configuration — the policy can never leak onto non-SFX
-                # regions.
-                sfx_policy=(
-                    sfx_policy_cfg
-                    if region_type is RegionType.SFX
-                    else SfxPolicy.SKIP
-                ),
+                # regions. Shared EV-8 helper (r1 P4-1): same rule the retype
+                # path applies, one definition for both write paths.
+                sfx_policy=effective_sfx_policy(region_type, sfx_policy_cfg),
                 reading_order=reading_order,
                 origin=RegionOrigin.MACHINE,
             )

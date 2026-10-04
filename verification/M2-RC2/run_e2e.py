@@ -295,6 +295,10 @@ ALLOWLIST_RE = re.compile(r"\[m2rc2-allowlist\] (probe|production):(.*)")
 #: (settings_get / settings_update_section, M2-C1 rev 1.3 §5.3); this
 #: runner's expectations continue to be maintained by the integrating
 #: slice, not by the Owner branch.
+#: M2-REGION-RETYPE-CORE (2026-10-04, Owner ZCode): 7 -> 9
+#: (set_region_type / list_regions, M2-C1 rev 1.4 §5.4) -- bypass sync done
+#: by the Owner branch this time (the M2-SETTINGS-IPC-CHANNEL r1 R1 lesson:
+#: the expectations must move in the same commit as the surface).
 PRODUCTION_EXPECTED = [
     "issue_resource_url",
     "revoke_ref",
@@ -303,6 +307,8 @@ PRODUCTION_EXPECTED = [
     "library_list_books",
     "settings_get",
     "settings_update_section",
+    "set_region_type",
+    "list_regions",
 ]
 #: M2-IPC1 ruling (DSH r2 P2-1 option B): test modes keep the frozen RC2
 #: surface — the production-only IPC1 commands are absent from the probe

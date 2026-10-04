@@ -1,0 +1,7 @@
+$ <installed>\resources\core-sidecar\core_service.exe (purged PATH, install-state stdio)
+exit=0
+--- stdout ---
+{"protocol":"new-manga.core","version":{"major":1,"minor":3},"request_id":"r1","result":{"status":"ready","protocol_version":{"major":1,"minor":3},"capabilities":["library.list_books"]},"error":null}
+{"protocol":"new-manga.core","version":{"major":1,"minor":3},"request_id":"r2","result":[],"error":null}
+{"protocol":"new-manga.core","version":{"major":1,"minor":3},"request_id":"r3","result":{"status":"stopped"},"error":null}
+--- stderr ---

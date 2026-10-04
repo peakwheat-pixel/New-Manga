@@ -1,0 +1,14 @@
+FF.                                                                      [100%]
+================================== FAILURES ===================================
+_____ test_r1_p2_2_db_failed_seam_escalates_runtime_error_with_zero_write _____
+tests\editing\test_region_retype.py:602: in test_r1_p2_2_db_failed_seam_escalates_runtime_error_with_zero_write
+    with pytest.raises(RuntimeError, match="db_failed"):
+E   Failed: DID NOT RAISE RuntimeError
+___ test_r1_p2_2_lock_changed_seam_escalates_runtime_error_with_zero_write ____
+tests\editing\test_region_retype.py:618: in test_r1_p2_2_lock_changed_seam_escalates_runtime_error_with_zero_write
+    with pytest.raises(RuntimeError, match="lock_changed"):
+E   Failed: DID NOT RAISE RuntimeError
+=========================== short test summary info ===========================
+FAILED tests/editing/test_region_retype.py::test_r1_p2_2_db_failed_seam_escalates_runtime_error_with_zero_write
+FAILED tests/editing/test_region_retype.py::test_r1_p2_2_lock_changed_seam_escalates_runtime_error_with_zero_write
+2 failed, 1 passed, 20 deselected in 0.10s
