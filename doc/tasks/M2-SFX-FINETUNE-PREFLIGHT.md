@@ -14,6 +14,7 @@ base_commit: 4c12e8af
 branch: agent/zcode/M2-SFX-FINETUNE-PREFLIGHT
 worktree: G:/CODEX/New Manga.worktrees/M2-SFX-FINETUNE-PREFLIGHT-zcode
 integration_commit: null
+delivery_head: 6b73c92a
 ---
 
 # M2-SFX-FINETUNE-PREFLIGHT：SFX 微调 V1 技术预检
@@ -55,4 +56,4 @@ depends_on 均已 done。风险：路线 A 若无 .pt 原生权重→升级 B/C 
 
 - 主报告：`verification/M2-SFX-FINETUNE-PREFLIGHT/preflight-report.md`（路线定案建议 A′、四类策略选项 1、显存实测、导出链证据、AC5 备案表）
 - 路线定案建议：**A′＝Ultralytics 官方 yolo11s-seg.pt（AGPL）基座 + BJ/KO 四类 GT + 合成数据微调**；原路线 A（chiqui7 续训）实证受阻（无 .pt）；定案待编排裁决（合同停点）。
-- Handoff：尚无。Review：尚无。
+- Handoff：`doc/handoffs/M2-SFX-FINETUNE-PREFLIGHT-6b73c92a.md`。Review：尚无（待 DSH 非-作者审查）。
