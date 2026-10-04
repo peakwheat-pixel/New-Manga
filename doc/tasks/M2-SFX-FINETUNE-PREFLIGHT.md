@@ -2,14 +2,15 @@
 id: M2-SFX-FINETUNE-PREFLIGHT
 title: "SFX fine-tune V1 技术预检：训练路线可行性实证+训练环境就绪+许可备案（T0；零 src）"
 kind: spike
-status: ready
+status: in_progress
+owner_claim: 2026-10-04 09:09 +0800
 approval: user_ruling_2026-10-04_训练质量效率优先_许可降权备案
 suggested_owner: ZCode
 owner: ZCode
 reviewer: DeepSeek Harness（非作者）
 integrator: 编排会话代行 Codex（用户全权授权）
 depends_on: [M2-SFX-DETECT-DOMAIN-EXT-DIAG, M2-SFX-PROD-1, M2-REGION-OVERLAP-ARBITRATION]
-base_commit: 74fa71e9
+base_commit: 4c12e8af
 branch: agent/zcode/M2-SFX-FINETUNE-PREFLIGHT
 worktree: G:/CODEX/New Manga.worktrees/M2-SFX-FINETUNE-PREFLIGHT-zcode
 integration_commit: null
