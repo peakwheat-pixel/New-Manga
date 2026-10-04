@@ -66,14 +66,17 @@ def _request(server: CoreServiceServer, command: str, payload: dict) -> dict:
 # ---------------------------------------------------------------------------
 
 
-def test_protocol_minor_bumped_to_two_with_settings_surface(server) -> None:
+def test_protocol_minor_tracks_the_current_command_surface(server) -> None:
     # M2-SETTINGS-IPC-CHANNEL: 1 -> 2 (same backwards-compatible widening
     # precedent as M2-PROD-DETECT-3's core.detect bump; the pre-existing
     # command semantics are pinned unchanged by the existing suite).
-    assert (PROTOCOL_MAJOR, PROTOCOL_MINOR) == (1, 2)
+    # M2-REGION-RETYPE-CORE: 2 -> 3 (set_region_type/list_regions added;
+    # same widening precedent, contract rev 1.4 §5.4 -- this file pins the
+    # settings pair's own semantics against the CURRENT envelope).
+    assert (PROTOCOL_MAJOR, PROTOCOL_MINOR) == (1, 3)
     response = _request(server, "core.ping", {})
     assert response["error"] is None
-    assert response["result"]["protocol_version"] == {"major": 1, "minor": 2}
+    assert response["result"]["protocol_version"] == {"major": 1, "minor": 3}
 
 
 # ---------------------------------------------------------------------------

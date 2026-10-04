@@ -34,13 +34,15 @@ fn main() {
     // match bare command invocations, so the ACL layer silently skipped
     // them). With `__app-acl__` present, Tauri enforces the capability for
     // every bare command: `capabilities/m2rc1-commands.json` grants exactly
-    // the fourteen commands below to the main window (five production
+    // the sixteen commands below to the main window (five production
     // commands — three resource-channel + two IPC1 — plus the two
-    // M2-SETTINGS-IPC-CHANNEL settings commands, the four probe commands
-    // and the three M2-AC1 acceptance commands), and any other command name
+    // M2-SETTINGS-IPC-CHANNEL settings commands, the two M2-REGION-RETYPE-
+    // CORE region-retype commands, the four probe commands and the three
+    // M2-AC1 acceptance commands), and any other command name
     // (e.g. the deleted `register_catalog`) is refused by the ACL before the invoke
     // handler is consulted. The settings_* pair (M2-SETTINGS-IPC-CHANNEL,
-    // contract rev 1.3 §5.3) is production-only; the probe commands
+    // contract rev 1.3 §5.3) and the region-retype pair (M2-REGION-RETYPE-
+    // CORE, contract rev 1.4 §5.4) are production-only; the probe commands
     // additionally require probe mode, and the three acceptance commands
     // require the M2-AC1 test mode at runtime (main.rs).
     //
@@ -62,6 +64,12 @@ fn main() {
             // mode (main.rs SETTINGS_PRODUCTION_ONLY_COMMANDS).
             "settings_get",
             "settings_update_section",
+            // M2-REGION-RETYPE-CORE (contract rev 1.4 §5.4): production-
+            // only region retype write/read pair; ACL-declared so the
+            // capability file can name them, registered at runtime ONLY in
+            // production mode (main.rs RETYPE_PRODUCTION_ONLY_COMMANDS).
+            "set_region_type",
+            "list_regions",
             "probe_config",
             "probe_write_results",
             "probe_exit",

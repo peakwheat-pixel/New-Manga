@@ -437,10 +437,12 @@ def run_library_probe(gate: Gate, install_dir: Path, env: dict, lab: Path) -> No
         # server still accepts minor-0 requests -- backwards-compatible
         # widening). This runner now speaks the current protocol and asserts
         # the SAME strict equality as before, just against 1.1.
+        # M2-REGION-RETYPE-CORE: minor 2 -> 3 (set_region_type/list_regions
+        # added; same backwards-compatible widening, contract rev 1.4 §5.4).
         return json.dumps(
             {
                 "protocol": "new-manga.core",
-                "version": {"major": 1, "minor": 2},
+                "version": {"major": 1, "minor": 3},
                 "request_id": request_id,
                 "command": command,
                 "payload": {},
@@ -492,7 +494,7 @@ def run_library_probe(gate: Gate, install_dir: Path, env: dict, lab: Path) -> No
     gate.pass_or(
         ping.get("error") is None
         and ping_result.get("status") == "ready"
-        and ping_result.get("protocol_version") == {"major": 1, "minor": 2}
+        and ping_result.get("protocol_version") == {"major": 1, "minor": 3}
         and "library.list_books" in (ping_result.get("capabilities") or []),
         "CS-L1-packaged-core-ping",
         {"result": ping_result, "error": ping.get("error")},

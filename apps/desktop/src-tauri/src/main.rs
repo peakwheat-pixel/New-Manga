@@ -20,9 +20,11 @@
 //! `m2rc1-commands` plugin put every command behind the Tauri ACL for the
 //! main window; the hardened CSP replaces the RC1 `csp: null`.
 //! M2-IPC1 later added the production-only `core_ping`/`library_list_books`
-//! pair, and M2-SETTINGS-IPC-CHANNEL (contract rev 1.3 §5.3) the
-//! production-only `settings_get`/`settings_update_section` pair — the
-//! production surface is pinned at exactly seven commands by unit test.
+//! pair, M2-SETTINGS-IPC-CHANNEL (contract rev 1.3 §5.3) the
+//! production-only `settings_get`/`settings_update_section` pair, and
+//! M2-REGION-RETYPE-CORE (contract rev 1.4 §5.4) the production-only
+//! `set_region_type`/`list_regions` pair — the production surface is pinned
+//! at exactly nine commands by unit test.
 
 // console note (updated M2-RG1 r1 rework, P3-1): dev builds keep the console
 // on purpose — probe evidence includes startup stderr. Release builds are
@@ -56,6 +58,10 @@ pub const PRODUCTION_COMMANDS: &[&str] = &[
     // write pair, production-only like the IPC1 commands below.
     "settings_get",
     "settings_update_section",
+    // M2-REGION-RETYPE-CORE (contract rev 1.4 §5.4): the region retype
+    // write/read pair, production-only like the settings pair above.
+    "set_region_type",
+    "list_regions",
 ];
 
 /// Commands that exist ONLY in probe mode (`M2RC1_PROBE_OUT` set by the
@@ -91,6 +97,12 @@ pub const IPC1_PRODUCTION_ONLY_COMMANDS: &[&str] = &["core_ping", "library_list_
 pub const SETTINGS_PRODUCTION_ONLY_COMMANDS: &[&str] =
     &["settings_get", "settings_update_section"];
 
+/// M2-REGION-RETYPE-CORE (contract rev 1.4 §5.4): the region retype pair is
+/// production-only as well (same option-B precedent — the frozen test-mode
+/// surfaces keep their historical shape).
+pub const RETYPE_PRODUCTION_ONLY_COMMANDS: &[&str] =
+    &["set_region_type", "list_regions"];
+
 pub fn command_allowlist(probe_mode: bool, ac1_mode: bool) -> Vec<&'static str> {
     let mut commands: Vec<&'static str> = if probe_mode || ac1_mode {
         PRODUCTION_COMMANDS
@@ -99,6 +111,7 @@ pub fn command_allowlist(probe_mode: bool, ac1_mode: bool) -> Vec<&'static str> 
             .filter(|command| {
                 !IPC1_PRODUCTION_ONLY_COMMANDS.contains(command)
                     && !SETTINGS_PRODUCTION_ONLY_COMMANDS.contains(command)
+                    && !RETYPE_PRODUCTION_ONLY_COMMANDS.contains(command)
             })
             .collect()
     } else {
@@ -200,6 +213,45 @@ fn settings_update_section(
         .as_ref()
         .ok_or_else(|| "CORE_UNAVAILABLE".to_string())?
         .update_settings_section(&section, &values)
+        .map_err(|error| error.code)
+}
+
+/// M2-REGION-RETYPE-CORE (contract rev 1.4 §5.4): retype one region through
+/// the Core's `set_region_type` (ONE new revision via the existing commit
+/// seam, origin=user, EV-8 policy re-snapshot — all decided Core-side). The
+/// host is a pass-through: value-domain authority (the RegionType six-value
+/// closed set) and the optimistic guard live in the Python Core BEFORE any
+/// persistence; the typed rejection propagates verbatim and the result is
+/// the post-retype effective state (one round trip, no second query).
+#[tauri::command]
+fn set_region_type(
+    state: tauri::State<'_, AppState>,
+    region_id: String,
+    new_region_type: String,
+    expected_revision: Option<i64>,
+) -> Result<serde_json::Value, String> {
+    state
+        .library
+        .as_ref()
+        .ok_or_else(|| "CORE_UNAVAILABLE".to_string())?
+        .set_region_type(&region_id, &new_region_type, expected_revision)
+        .map_err(|error| error.code)
+}
+
+/// M2-REGION-RETYPE-CORE (contract rev 1.4 §5.4): the RegionListSummary
+/// read channel — the minimal five-field DTO per live region in
+/// reading_order. A page with no rows reads as `{"regions": []}` (NOT an
+/// error, footnote a); the host never interprets the summaries.
+#[tauri::command]
+fn list_regions(
+    state: tauri::State<'_, AppState>,
+    page_id: String,
+) -> Result<serde_json::Value, String> {
+    state
+        .library
+        .as_ref()
+        .ok_or_else(|| "CORE_UNAVAILABLE".to_string())?
+        .list_regions(&page_id)
         .map_err(|error| error.code)
 }
 
@@ -617,7 +669,9 @@ fn main() {
             core_ping,
             library_list_books,
             settings_get,
-            settings_update_section
+            settings_update_section,
+            set_region_type,
+            list_regions
         ])
     };
 
@@ -752,9 +806,11 @@ mod tests {
     }
 
     #[test]
-    fn production_surface_is_exactly_seven_commands() {
+    fn production_surface_is_exactly_nine_commands() {
         // M2-SETTINGS-IPC-CHANNEL: five -> seven (settings_get +
         // settings_update_section, contract rev 1.3 §5.3; pinned wire names)
+        // M2-REGION-RETYPE-CORE: seven -> nine (set_region_type +
+        // list_regions, contract rev 1.4 §5.4; pinned wire names)
         assert_eq!(
             command_allowlist(false, false),
             vec![
@@ -765,6 +821,8 @@ mod tests {
                 "library_list_books",
                 "settings_get",
                 "settings_update_section",
+                "set_region_type",
+                "list_regions",
             ]
         );
     }
@@ -784,11 +842,16 @@ mod tests {
         for command in SETTINGS_PRODUCTION_ONLY_COMMANDS {
             assert!(!probe.contains(command), "{command} must stay production-only");
         }
+        // M2-REGION-RETYPE-CORE: the retype pair is production-only too
+        for command in RETYPE_PRODUCTION_ONLY_COMMANDS {
+            assert!(!probe.contains(command), "{command} must stay production-only");
+        }
         assert_eq!(
             probe.len(),
             PRODUCTION_COMMANDS.len()
                 - IPC1_PRODUCTION_ONLY_COMMANDS.len()
                 - SETTINGS_PRODUCTION_ONLY_COMMANDS.len()
+                - RETYPE_PRODUCTION_ONLY_COMMANDS.len()
                 + PROBE_ONLY_COMMANDS.len()
         );
     }
@@ -810,11 +873,16 @@ mod tests {
         for command in SETTINGS_PRODUCTION_ONLY_COMMANDS {
             assert!(!ac1.contains(command), "{command} must stay production-only");
         }
+        // M2-REGION-RETYPE-CORE: the retype pair is production-only too
+        for command in RETYPE_PRODUCTION_ONLY_COMMANDS {
+            assert!(!ac1.contains(command), "{command} must stay production-only");
+        }
         assert_eq!(
             ac1.len(),
             PRODUCTION_COMMANDS.len()
                 - IPC1_PRODUCTION_ONLY_COMMANDS.len()
                 - SETTINGS_PRODUCTION_ONLY_COMMANDS.len()
+                - RETYPE_PRODUCTION_ONLY_COMMANDS.len()
                 + AC1_TEST_COMMANDS.len()
         );
     }
@@ -1303,11 +1371,12 @@ mod tests {
         assert_eq!(ping.protocol_version.major, 1);
         // M2-PROD-DETECT-3 integration (DSH r1 R4): protocol minor bump
         // 1.0 -> 1.1 (core.detect added); M2-SETTINGS-IPC-CHANNEL: 1.1 -> 2
-        // (settings_get/settings_update_section added). This real-sidecar
-        // assertion is the consequence sync for both widenings. The
-        // MockChannel self-consistency stub above (:1194) keeps its own
-        // minor 0 by design.
-        assert_eq!(ping.protocol_version.minor, 2);
+        // (settings_get/settings_update_section added);
+        // M2-REGION-RETYPE-CORE: 2 -> 3 (set_region_type/list_regions
+        // added). This real-sidecar assertion is the consequence sync for
+        // the widenings. The MockChannel self-consistency stub above (:1194)
+        // keeps its own minor 0 by design.
+        assert_eq!(ping.protocol_version.minor, 3);
         assert!(ping.capabilities.contains(&"library.list_books".to_string()));
 
         // 2. List books succeeds on empty store
