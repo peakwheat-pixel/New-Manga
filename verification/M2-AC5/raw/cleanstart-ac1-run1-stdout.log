@@ -1,4 +1,6 @@
 $ <installed>\m2rc1-desktop.exe (M2AC1_TEST_MODE=1, launch=run1, purged PATH)
 exit=0
 [m2ac1-allowlist] ac1:issue_resource_url,revoke_ref,revoke_resource_refs,ac1_request,ac1_write_results,ac1_exit
-[1004/154016.607:ERROR:ui\gfx\win\window_impl.cc:172] Failed to unregister class Chrome_WidgetWin_0. Error = 1412
+QFontDatabase: Cannot find font directory C:/Users/49745/AppData/Local/Temp/m2ac5-cleanstart/install/resources/core-sidecar/_internal/PySide6/lib/fonts.
+Note that Qt no longer ships fonts. Deploy some (from https://dejavu-fonts.github.io/ for example) or switch to fontconfig.
+[0929/111020.061:ERROR:ui\gfx\win\window_impl.cc:172] Failed to unregister class Chrome_WidgetWin_0. Error = 1412

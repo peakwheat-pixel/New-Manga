@@ -73,7 +73,7 @@ fresh checkout 顺序约束履行（build_sidecar → frontend build → tauri b
 3. `npx --yes @tauri-apps/cli@2 build` → NSIS 产出 `target/release/bundle/nsis/m2rc1-desktop_0.1.0_x64-setup.exe`（479.96 MiB）。
 4. `"G:/CODEX/New Manga.task-envs/TASK-012-py312/Scripts/python.exe" packaging/m2ac5/run_clean_start_e2e.py` → **GATE: PASS，EXIT=0**。
 
-gate JSON（`verification/M2-AC5/raw/cleanstart-gate.json`）：`verdict="PASS"`，`scenarios` **25/25 全 PASS**（0 non-PASS），`installer_sha256=d6003ae78821ce76...`。关键断言：
+gate JSON（`verification/M2-REGION-RETYPE-CORE/raw/retype-m2ac5-cleanstart-gate.json`）：`verdict="PASS"`，`scenarios` **25/25 全 PASS**（0 non-PASS），`installer_sha256=d6003ae78821ce76...`。关键断言：
 
 - **CS-L1-packaged-core-ping PASS：真实安装包 core_service.exe ping 返回 `protocol_version {"major": 1, "minor": 3}`**——本 Task 的协议 minor bump 在 frozen 打包链上生效（旁路同步 CS-L1 envelope 2→3 的双向验证）；
 - CS-R3-production-surface-announced PASS（production 模式 allowlist 广播，runner 断言 9 命令 PRODUCTION_EXPECTED）；
@@ -91,3 +91,26 @@ gate JSON（`verification/M2-AC5/raw/cleanstart-gate.json`）：`verdict="PASS"`
 - 本 Task 零改动：`doc/contracts/**`、`doc/STATUS.md`、`doc/REBASELINE_PLAN.md`、既有设计稿、`apps/desktop/frontend/**`（React 前端，49 持平佐证）、`packaging/m2ac5/core_sidecar.spec`（GATE 跑但 spec 未改；旁路同步仅触 runner 脚本的 minor/EXPECTED 常量=AC5 明示交付）。
 - capabilities/m2rc1-commands.json 不在任务书允许范围字面清单（src-tauri/src/**）内，但属契约 §5.4 末条宿主同步纪律（「三处同步视图 + capabilities 声明 … 必须同一 commit 内同步」）的强制组成部分，沿 SETTINGS-IPC 先例同 commit 落；登记此取舍供 Review 裁量。
 - `tests/editing/test_region_retype.py` 的 P2 复用断言依赖 handlers 幂等分支（handlers.py 复用逻辑本身有既有测试 `test_detect_reuses_existing_live_regions` 守护）；本 Task P2 断言聚焦「复用发生时人工改标保持」。
+
+## 10. DSH r1 返修记录（r1=approved_with_conditions，0×P0/P1；返修 commit=r1(REGION-RETYPE-CORE)）
+
+**P2-1（AC5 raw 证据覆盖越权）**：`git show 1b765007:verification/M2-AC5/raw/cleanstart-gate.json` 实测被覆盖前旧值=原始 M2-AC5 证据（installer `5410e29e118d24ae28192c241a3fc7a8c3e6f5bcc4def38d7c588e900be61336`，M2-AC5-zcode worktree 产出；CS-L1 ping `minor=0`）——本文件此前在 Handoff §风险 4 写作「SETTINGS-IPC 时代 minor=2」不准，已按实测更正。处置：`git checkout 1b765007 -- verification/M2-AC5/raw/` 还原全部 6 文件（`git diff 1b765007..eaed7858 --name-status` 实测被本轮覆盖的即此 6 文件）；本轮 GATE 产物搬至本目录 `raw/retype-m2ac5-*`（沿 RG1 先例 `rg1-m2ac5-*` 命名）；本文档与 Handoff 引用全部改指新位置。Q1 同时裁定：`run_clean_start_e2e.py` 与 `verification/M2-RC2/run_e2e.py` 的旁路同步=追认合规，不返修。
+
+**P2-2（DB_FAILED 码位）**：`service.set_region_type` 的非 APPLIED 分支改为显式三分支——`INPUT_REVISION_CHANGED` 保持 typed 冲突态返回（wire=INPUT_REVISION_CHANGED/conflict 不变）；`DB_FAILED`/`LOCK_CHANGED` 抛 `RuntimeError`（fail-loud，沿 `_commit_user_or_raise` 用户写通道先例；core_service 既有 `except Exception`→UNKNOWN/internal 映射承接）。全局 `_guard_status_of` 未改（机器写候选语义不波及）。单测先红后绿（红态证据 `raw/retype-r1-red-state.log`：DB_FAILED/LOCK_CHANGED 两条 DID NOT RAISE；恢复实现后 3 passed），fake committer 走 ports 真实 `RegionCommitResult` 失败报告路径（非 pre-raise RuntimeError 模拟）。
+
+**P3/P4 处置对照**：
+
+| 条目 | 处置 | 证据 |
+|---|---|---|
+| P3-1 docstring 三处 envelope 示例 minor 2→3+ | 已修 | `core_service.py` 模块 docstring Request/Response/core.ping 三处示例改 `minor: 3+`；Allowed production commands 行补 `M2-REGION-RETYPE-CORE` 家族名 |
+| P3-2 ACL 断言循环+production-only 负例 | 已修 | `main.rs::app_acl_manifest_is_generated_and_enforced` 循环加 `command_allowlist(false, false)`（三面并集覆盖全 16 条：9 production+4 probe+3 ac1）；新增 `production_only_commands_stay_off_both_frozen_test_surfaces`（三个 production-only 家族统一负例+probe/ac1 冻结面 7/6 pin） |
+| P3-3 补跑 pytest editing/pipeline+全量 | 已跑 | `raw/retype-r1-pytest-editing-pipeline.log`（**143 passed**）；`raw/retype-r1-pytest-full.log`（全量 `tests/`：**1780 passed, 1 skipped, 1 failed**——唯一失败 `tests/m2_test_assets/test_catalog.py::test_manifest_has_unique_cases_and_exact_taxonomy` 为 pre-existing：manifest 100 vs 期望 97，属 T1b annotate-R1 并行会话资产计数未同步，经 stash 全部改动后于 HEAD 干净态实测同样失败，与本 Task 零关联，不代修）；三套件口径复跑 `raw/retype-r1-pytest-tri-suite.log`（**650 passed, 1 skipped** 持平基线） |
+| P3-4 真实 sidecar 测试 | 已修 | `main.rs::real_core_sidecar_retype_pair_empty_page_and_typed_rejection`：`list_regions("no-such-page")`→`{"regions": []}` 非错误（脚注 a）+ `set_region_type("no-such-region")`→TARGET_NOT_FOUND/not_found——覆盖 Rust→stdio→Core→SQLite→Rust 全断链+typed 映射，沿 settings real_core_sidecar 先例 |
+| P3-5 前端 commandSurface pin 顺延 | 登记 | 前端 React 侧 commandSurface 类型/调用 pin 属 Workbench UI 实现 Task（未释放）；本 Task 前端零改动，Rust 三视图与 capabilities 已 pin。UI Task 接通时须同步前端 commandSurface 清单（9 条） |
+| P4-1 effective_sfx_policy helper | 已修 | `service.py` 抽模块级 `effective_sfx_policy(region_type, global_policy)`（仅 SFX 携带全局值/非 SFX 强制 SKIP）；service 改标路径与 `core_assembly._create_detected_region` 创建路径两条写路径共用同一 helper，消除 EV-8 双写漂移；core_assembly 侧行为逐位不变（同一布尔分支的等价替换），既有 EV-8 参数化矩阵+providers/candidates 测试护航 |
+| P4-2 命名决策登记 | 登记 | Core stdio 通道命令名=`set_region_type`/`list_regions`（snake_case，沿既有 stdio 命令）；契约 §5 表中的 `SetRegionType`/`ListRegions` 为 transport-neutral 逻辑名（wire 载荷层无命令名字段冲突）；Tauri command 名（WebView invoke 面）本 Task 沿 Rust 函数名实现但**命名风格未由契约裁决**，归 Workbench UI Task 决策（若改名将同步三视图+capabilities） |
+| P4-3 seam 复检失败分支单测 | 已修 | `test_r1_p4_3_seam_recheck_loss_is_typed_input_revision_changed_zero_write`（fake committer 返回 INPUT_REVISION_CHANGED → typed 冲突态+零写入；pin 既有行为，非红绿驱动，红态即绿已登记） |
+| P4-4 测试卫生三处 | 已修 | ①`test_core_service_retype.py` `revisions_before` 补断言 `len(revisions) == revisions_before + 1`（原定义后 del 弃用）；②`test_region_retype.py` snapshot-delta 用例的 `or key == "sfx_policy"` 恒真子句拆为显式 region_type 必变/sfx_policy 免断言两分支；③`test_list_region_summaries_minimal_dto_in_reading_order` 注释声称 machine-created 而断言 user——改 `origin=RegionOrigin.MACHINE` 显式创建+断言 `"machine"`，注释/断言/§3 描述三者一致 |
+| P4-5/P4-6/P4-7 | 登记不修 | 按 DSH r1 裁定登记不修（原报条目正文以 DSH 报告文件为准；三者均不属实现正确性缺陷） |
+
+**返修后回归数字**：pytest tests/editing+tests/pipeline **143 passed**；三套件 **650 passed, 1 skipped**（基线持平）；全量 `tests/` **1780 passed, 1 skipped, 1 failed（pre-existing T1b，HEAD 同样失败）**；cargo test **49 passed, 0 failed, 1 ignored**（47→49：+P3-2 负例测试+P3-4 real-sidecar 测试；日志 `raw/retype-r1-cargo-test.log`）。vitest 未重跑（前端零改动，r1 返修不触 `apps/desktop/frontend/**`）。

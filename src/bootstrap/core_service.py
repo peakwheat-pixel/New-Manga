@@ -7,14 +7,15 @@ then enters a stdio request loop serving typed commands over JSON-lines.
 
 Transport & Envelope (Contract 1.1 §3, §8, §12; Seam 冻结七条):
   Request:
-    {"protocol": "new-manga.core", "version": {"major": 1, "minor": 2},
+    {"protocol": "new-manga.core", "version": {"major": 1, "minor": 3+},
      "request_id": "<id>", "command": "<cmd>", "payload": {...}}
   Response:
-    {"protocol": "new-manga.core", "version": {"major": 1, "minor": 2},
+    {"protocol": "new-manga.core", "version": {"major": 1, "minor": 3+},
      "request_id": "<id>", "result": {...} | null, "error": ErrorEnvelope | null}
 
-Allowed production commands (M2-IPC1 + M2-PROD-DETECT-3 + M2-SETTINGS-IPC-CHANNEL):
-  - core.ping: {} -> {"status": "ready", "protocol_version": {"major": 1, "minor": 2}, "capabilities": ["library.list_books"]}
+Allowed production commands (M2-IPC1 + M2-PROD-DETECT-3 + M2-SETTINGS-IPC-CHANNEL
+  + M2-REGION-RETYPE-CORE):
+  - core.ping: {} -> {"status": "ready", "protocol_version": {"major": 1, "minor": 3+}, "capabilities": ["library.list_books"]}
   - ListBooks: {} -> BookSummary[]
   - core.shutdown: {} -> {"status": "stopped"} (then exit 0)
   - core.detect: {"page": "<base64 PNG/JPEG>", "width": <int>, "height": <int>}

@@ -36,14 +36,14 @@ integration_commit: null
 
 ## 禁止范围
 
-`doc/contracts/**`（rev 1.4 已冻结，实现中发现契约缺口=停等登记，不得改契约）、`apps/**` 前端、`packaging/**`（GATE 跑但不改 spec）、`doc/STATUS.md`、既有设计稿。
+`doc/contracts/**`（rev 1.4 已冻结，实现中发现契约缺口=停等登记，不得改契约）、`apps/**` 前端、**`packaging/**` 除经追认的 CS-L1 协议字面量与 RC2 EXPECTED 计数同步外不改；spec 冻结**（Q1 附条件 b，DSH r1 返修措辞修订 2026-10-04）、`doc/STATUS.md`、既有设计稿。
 
 ## 测试要求
 
 | 场景/AC | 计划命令 | 前提 | 实际结果 | 证据 |
 |---|---|---|---|---|
 | AC3 11 断言 | pytest 新增（先红后绿） | dev venv | **PASS**：红态 43 failed @`084426dc` → 绿态 46 passed @`e40eeae0`（3 个管线候选持久化断言为既有机制场景守护，红绿不适用，已登记） | verification/M2-REGION-RETYPE-CORE/verification.md §3 |
-| AC5 GATE | M2-AC5 GATE 25/25 | build_sidecar | **PASS 25/25**（EXIT=0；CS-L1 实测 ping minor=3；installer sha256 d6003ae7…，bundle HEAD=cfbf3859） | verification/M2-AC5/raw/cleanstart-gate.json |
+| AC5 GATE | M2-AC5 GATE 25/25 | build_sidecar | **PASS 25/25**（EXIT=0；CS-L1 实测 ping minor=3；installer sha256 d6003ae7…，bundle HEAD=cfbf3859） | verification/M2-REGION-RETYPE-CORE/raw/retype-m2ac5-cleanstart-gate.json（DSH r1 P2-1 返修：AC5 raw 已还原原始 M2-AC5 证据，本轮产物搬至本 Task raw/） |
 | AC6 回归 | 三套件+m2_acceptance | dev venv | **PASS**：650+1sk 0 failed（基线 627+1sk）+ cargo 47+0f+1ig（基线 46+1ig）+ vitest 49（基线 49）+ m2_acceptance 35 passed | verification/M2-REGION-RETYPE-CORE/verification.md §6 |
 
 ## 依赖、风险与阻塞
@@ -54,3 +54,4 @@ depends_on=M2-REGION-RETYPE-CONTRACT（done）。与 T5c 并行（写范围零�
 
 - Handoff：[doc/handoffs/M2-REGION-RETYPE-CORE-zcode-delivery-cfbf3859.md](../handoffs/M2-REGION-RETYPE-CORE-zcode-delivery-cfbf3859.md)（实现链 claim=`07fe4a9e` → 红态=`084426dc` → Core 绿=`e40eeae0` → Rust+旁路=`cfbf3859` → 文档 commit）。Review：尚无。
 - 实现摘要：AC1 `service.set_region_type`（commit seam 单笔新 revision/origin=user/review_state=UNREVIEWED/EV-8 重快照）+ `service.list_region_summaries` + `core_service` 两命令（wire=rev 1.4 §5.4，错误零新增语义）；AC2 Rust production-only 两命令+三视图+capabilities；AC3 C1-C7/P1-P4 两层断言；AC4 RegionListSummary 最小五字段读取面（脚注 a 空列表）；AC5 PROTOCOL_MINOR 2→3+三处旁路同步+frozen-probe 维持冻结；AC6 三套件全绿。遗留与取舍登记见 Handoff §风险与遗留。
+- **DSH r1（approved_with_conditions，0×P0/P1）返修已落**：必修 P2-1（AC5 raw 还原+本轮 GATE 产物搬本 Task raw/ `retype-m2ac5-*`，git show 实测旧值=原始 M2-AC5 证据 installer `5410e29e…`/minor 0）+ P2-2（`set_region_type` 非 APPLIED 显式三分支：INPUT_REVISION_CHANGED 保持冲突态，DB_FAILED/LOCK_CHANGED 抛 RuntimeError→UNKNOWN/internal；单测先红后绿）；P3-1/2/3/4 修、P3-5 登记，P4-1/3/4 修、P4-2/5/6/7 登记。返修后回归：pytest editing+pipeline 143 passed、三套件 650+1sk 持平、全量 1780 passed/1 skipped/1 failed（唯一失败=T1b 资产计数 pre-existing，HEAD 同样失败，不代修）、cargo 49+0f+1ig（47→49）。处置对照表：Handoff「DSH r1 修订段」+ verification §10。status 保持 in_progress 待 r2 复核与 Codex 集成。

@@ -172,8 +172,9 @@ def test_set_region_type_review_state_unreviewed_and_origin_user(server, rpc) ->
     response = _make_retype_request(rpc, region.region_id, {"new_region_type": "note"})
 
     assert response["error"] is None
-    del revisions_before
     revisions = server.editing._repo.list_revisions(region.region_id)
+    # the retype produced exactly ONE new revision (no extra writes)
+    assert len(revisions) == revisions_before + 1
     assert revisions[-1].review_state.value == "unreviewed"
     assert revisions[-1].origin.value == "user"
     assert response["result"]["region_type"] == "note"

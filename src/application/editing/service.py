@@ -81,6 +81,18 @@ def _guard_status_of(result: RegionCommitResult) -> GuardStatus:
     }.get(result.status, GuardStatus.INPUT_REVISION_CHANGED)
 
 
+def effective_sfx_policy(
+    region_type: RegionType, global_policy: str | SfxPolicy
+) -> SfxPolicy:
+    """EV-8 shared rule for BOTH region write paths (creation and retype):
+    only an SFX-typed region carries the configured global policy; every
+    other type forces SKIP so the policy can never leak onto non-SFX
+    regions (M2-C1 rev 1.4 §5.4; core_assembly creation precedent)."""
+    if region_type is RegionType.SFX:
+        return SfxPolicy(global_policy)
+    return SfxPolicy.SKIP
+
+
 class InMemoryRegionCommitter:
     """Contract-faithful committer for in-memory repositories: same guard
     order and pointer semantics as the SQLite seam, without transactions."""
@@ -337,9 +349,7 @@ class RegionEditingService:
         staged = _clone_region(region)
         staged.apply_type(target_type)
         staged.apply_sfx_policy(
-            SfxPolicy(current_global_sfx_policy)
-            if target_type is RegionType.SFX
-            else SfxPolicy.SKIP
+            effective_sfx_policy(target_type, current_global_sfx_policy)
         )
         revision = self._build_revision(
             staged, RegionOrigin.USER, ReviewState.UNREVIEWED
@@ -349,8 +359,21 @@ class RegionEditingService:
             expected_current_revision_id=expected_current_revision_id,
         )
         if result.status is not RegionCommitStatus.APPLIED:
-            return GuardedWriteOutcome(
-                _guard_status_of(result), detail=result.detail
+            if result.status is RegionCommitStatus.INPUT_REVISION_CHANGED:
+                # C4: the seam-side guard lost — typed conflict outcome with
+                # zero write, same semantics as the pre-seam guard above.
+                return GuardedWriteOutcome(
+                    _guard_status_of(result), detail=result.detail
+                )
+            # r1 P2-2 (rev 1.4 §5.4): a human retype never degrades into a
+            # machine write candidate. DB_FAILED is a persistence fault and
+            # LOCK_CHANGED cannot legitimately gate the user channel (the
+            # user path passes no lock snapshot into the seam); both escalate
+            # fail-loud (core_service maps RuntimeError to UNKNOWN/internal),
+            # matching _commit_user_or_raise semantics.
+            raise RuntimeError(
+                f"region retype commit failed: {result.status.value}:"
+                f" {result.detail}"
             )
         return GuardedWriteOutcome(
             GuardStatus.APPLIED, revision_no=result.revision_no

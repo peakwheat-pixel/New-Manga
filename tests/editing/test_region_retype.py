@@ -32,6 +32,7 @@ if str(SRC_ROOT) not in sys.path:
     sys.path.insert(0, str(SRC_ROOT))
 
 from application.editing.errors import GuardStatus, RegionNotFound
+from application.editing.ports import RegionCommitResult, RegionCommitStatus
 from application.editing.service import RegionEditingService
 from application.translation.context.gate import decide_sfx_translation
 from domain.regions.entities import (
@@ -345,8 +346,13 @@ def test_retype_snapshot_changes_only_type_and_policy() -> None:
     after = repo.list_revisions(region.region_id)[-1].snapshot
     assert set(after.keys()) == set(before.keys())
     for key in after:
-        if key in ("region_type", "sfx_policy"):
-            assert after[key] != before[key] or key == "sfx_policy"
+        if key == "region_type":
+            # the retype IS the type change
+            assert after[key] != before[key]
+            continue
+        if key == "sfx_policy":
+            # may or may not change (the retype-time global config can equal
+            # the previous revision's value) — no assertion, only recorded
             continue
         assert after[key] == before[key], f"field {key} must survive a retype"
     # the confirmed manual translation is NOT wiped and does NOT fall back
@@ -376,7 +382,9 @@ def test_retype_creates_user_revision_with_unreviewed_state() -> None:
 
 def test_list_region_summaries_minimal_dto_in_reading_order() -> None:
     service, _ = make_service()
-    third = service.create_region("page-1", geo(), reading_order=3)
+    machine_region = service.create_region(
+        "page-1", geo(), reading_order=3, origin=RegionOrigin.MACHINE
+    )
     first = service.create_region("page-1", geo(), reading_order=1)
     service.set_region_type(
         first.region_id, "sfx", current_global_sfx_policy=SfxPolicy.TRANSLATE
@@ -384,7 +392,7 @@ def test_list_region_summaries_minimal_dto_in_reading_order() -> None:
 
     summaries = service.list_region_summaries("page-1")
 
-    assert [s["region_id"] for s in summaries] == [first.region_id, third.region_id]
+    assert [s["region_id"] for s in summaries] == [first.region_id, machine_region.region_id]
     assert summaries[0] == {
         "region_id": first.region_id,
         "region_type": "sfx",
@@ -393,7 +401,7 @@ def test_list_region_summaries_minimal_dto_in_reading_order() -> None:
         "revision_no": 2,
     }
     # machine-created regions stay distinguishable from human retypes (A7)
-    assert summaries[1]["origin"] == "user"  # created via create_region default
+    assert summaries[1]["origin"] == "machine"  # created with origin=MACHINE
     # the minimal set: no geometry/text/annotation semantics on the read face
     assert set(summaries[0].keys()) == {
         "region_id", "region_type", "sfx_policy", "origin", "revision_no",
@@ -530,3 +538,106 @@ def test_p4_retype_after_restore_reapplies_ev8_with_current_config() -> None:
     assert region.sfx_policy is SfxPolicy.SKIP  # the re-retype-time config
     assert revisions[-1].origin is RegionOrigin.USER
     assert revisions[-1].review_state is ReviewState.UNREVIEWED
+
+
+# ---------------------------------------------------------------------------
+# DSH r1 P2-2 / P4-3 — the retype's non-APPLIED seam outcomes are explicit:
+# the typed conflict (INPUT_REVISION_CHANGED) stays a conflict OUTCOME, while
+# DB_FAILED / LOCK_CHANGED escalate fail-loud (a human retype never degrades
+# into a machine-write candidate). The committers below are fakes over the
+# REAL seam result protocol (application.editing.ports.RegionCommitResult) —
+# the actual persistence-failure reporting path, not a pre-raised exception.
+# ---------------------------------------------------------------------------
+
+
+class _DbFailedCommitter:
+    """Reports the seam's genuine persistence-failure status (DB_FAILED),
+    exactly how the SQLite seam reports a failed BEGIN IMMEDIATE."""
+
+    def commit_region_revision(
+        self, region, revision, *, expected_current_revision_id=None, lock_snapshot=None
+    ) -> RegionCommitResult:
+        return RegionCommitResult(
+            RegionCommitStatus.DB_FAILED,
+            detail="simulated persistence failure inside the seam",
+        )
+
+
+class _LockChangedCommitter:
+    """Reports the seam's lock-recheck failure (LOCK_CHANGED) — unreachable
+    on the user channel in practice (no lock snapshot is passed), so the
+    retype path must escalate rather than map it onto a candidate."""
+
+    def commit_region_revision(
+        self, region, revision, *, expected_current_revision_id=None, lock_snapshot=None
+    ) -> RegionCommitResult:
+        return RegionCommitResult(
+            RegionCommitStatus.LOCK_CHANGED,
+            detail="simulated mid-flight lock change inside the seam",
+        )
+
+
+class _SeamRecheckLostCommitter:
+    """Loses the optimistic guard INSIDE the seam (the re-check the matching
+    expectation gets): reports INPUT_REVISION_CHANGED with zero write."""
+
+    def commit_region_revision(
+        self, region, revision, *, expected_current_revision_id=None, lock_snapshot=None
+    ) -> RegionCommitResult:
+        return RegionCommitResult(
+            RegionCommitStatus.INPUT_REVISION_CHANGED,
+            detail=(
+                f"expected current {expected_current_revision_id!r},"
+                " stored current moved mid-flight"
+            ),
+        )
+
+
+def test_r1_p2_2_db_failed_seam_escalates_runtime_error_with_zero_write() -> None:
+    service, repo = make_service()
+    region = make_speech_region(service)
+    revision_count_before = len(repo.list_revisions(region.region_id))
+    failing = RegionEditingService(repo, committer=_DbFailedCommitter())
+
+    with pytest.raises(RuntimeError, match="db_failed"):
+        failing.set_region_type(
+            region.region_id, "sfx", current_global_sfx_policy=SfxPolicy.SKIP
+        )
+
+    # the persistence fault never produced a revision or a conflict outcome
+    assert len(repo.list_revisions(region.region_id)) == revision_count_before
+    assert region.region_type is RegionType.SPEECH
+
+
+def test_r1_p2_2_lock_changed_seam_escalates_runtime_error_with_zero_write() -> None:
+    service, repo = make_service()
+    region = make_speech_region(service)
+    revision_count_before = len(repo.list_revisions(region.region_id))
+    failing = RegionEditingService(repo, committer=_LockChangedCommitter())
+
+    with pytest.raises(RuntimeError, match="lock_changed"):
+        failing.set_region_type(
+            region.region_id, "sfx", current_global_sfx_policy=SfxPolicy.SKIP
+        )
+
+    assert len(repo.list_revisions(region.region_id)) == revision_count_before
+
+
+def test_r1_p4_3_seam_recheck_loss_is_typed_input_revision_changed_zero_write() -> None:
+    """The in-seam optimistic re-check losing (C4 double-check) stays a typed
+    conflict OUTCOME — not an exception, not a silent no-op, zero write."""
+    service, repo = make_service()
+    region = make_speech_region(service)
+    current_no = repo.list_revisions(region.region_id)[-1].revision_no
+    revision_count_before = len(repo.list_revisions(region.region_id))
+    guarded = RegionEditingService(repo, committer=_SeamRecheckLostCommitter())
+
+    outcome = guarded.set_region_type(
+        region.region_id, "sfx",
+        current_global_sfx_policy=SfxPolicy.SKIP,
+        expected_revision_no=current_no,
+    )
+
+    assert outcome.status is GuardStatus.INPUT_REVISION_CHANGED
+    assert len(repo.list_revisions(region.region_id)) == revision_count_before
+    assert region.region_type is RegionType.SPEECH

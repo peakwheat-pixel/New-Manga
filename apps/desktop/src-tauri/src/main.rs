@@ -786,9 +786,15 @@ mod tests {
         // F-003 (DSH r1): the ACL existence check covers the ac1 test-mode
         // commands too — a capability/manifest typo for an ac1 command must
         // fail here, not only surface as an E2E ACL denial.
+        // M2-REGION-RETYPE-CORE r1 P3-2: the production surface joins the
+        // sweep, so the existence check covers all 16 commands across the
+        // three surfaces (9 production + 4 probe-only + 3 ac1) — a missing
+        // capability/manifest entry for a production-only command (e.g. the
+        // retype pair) fails this test, not just a live invoke.
         for command in command_allowlist(true, false)
             .into_iter()
             .chain(command_allowlist(false, true))
+            .chain(command_allowlist(false, false))
         {
             let allow = format!("allow-{}", command.replace('_', "-"));
             assert!(
@@ -885,6 +891,30 @@ mod tests {
                 - RETYPE_PRODUCTION_ONLY_COMMANDS.len()
                 + AC1_TEST_COMMANDS.len()
         );
+    }
+
+    #[test]
+    fn production_only_commands_stay_off_both_frozen_test_surfaces() {
+        // M2-REGION-RETYPE-CORE r1 P3-2: one negative sweep across the THREE
+        // production-only families (IPC1 + settings + retype) — the frozen
+        // probe and ac1 test-mode surfaces must never gain any of them, and
+        // their historical 7/6-command shapes stay pinned.
+        for command in IPC1_PRODUCTION_ONLY_COMMANDS
+            .iter()
+            .chain(SETTINGS_PRODUCTION_ONLY_COMMANDS)
+            .chain(RETYPE_PRODUCTION_ONLY_COMMANDS)
+        {
+            assert!(
+                !command_allowlist(true, false).contains(command),
+                "{command} must stay production-only (probe surface)"
+            );
+            assert!(
+                !command_allowlist(false, true).contains(command),
+                "{command} must stay production-only (ac1 surface)"
+            );
+        }
+        assert_eq!(command_allowlist(true, false).len(), 7);
+        assert_eq!(command_allowlist(false, true).len(), 6);
     }
 
     #[test]
@@ -1446,6 +1476,49 @@ mod tests {
         assert_eq!(error.category, "validation");
         let still = channel.get_settings(Some("sfx")).expect("read after reject");
         assert_eq!(still["settings"]["sfx"]["policy"], "translate");
+    }
+
+    /// M2-REGION-RETYPE-CORE r1 P3-4: the retype read/write pair end to end
+    /// over the REAL production Core sidecar — the full
+    /// Rust→stdio→Core→SQLite→Rust chain with the typed mapping intact:
+    /// an unknown page_id reads as an EMPTY regions array (contract rev 1.4
+    /// §5.4 footnote a — NOT an error), and an unknown region_id is typed
+    /// TARGET_NOT_FOUND/not_found (no raw traceback on the error surface).
+    #[test]
+    fn real_core_sidecar_retype_pair_empty_page_and_typed_rejection() {
+        let python = std::env::var("M2RC1_PYTHON").unwrap_or_else(|_| "python".into());
+        let src_root = std::env::var("M2RC1_SRC_ROOT")
+            .map(PathBuf::from)
+            .unwrap_or_else(|_| {
+                let mut path = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
+                for _ in 0..3 {
+                    path.pop();
+                }
+                path.join("src")
+            });
+        let dir = tempfile::tempdir().unwrap();
+        let data_root = dir.path().join("data_root");
+        std::fs::create_dir_all(&data_root).unwrap();
+
+        let channel = StdioLibraryChannel::spawn(
+            &python,
+            &src_root,
+            Some(&data_root),
+        )
+        .expect("library sidecar spawn");
+
+        // 1. footnote a: unknown page -> {"regions": []}, a successful read
+        let empty = channel
+            .list_regions("no-such-page")
+            .expect("unknown page is an empty read, not an error");
+        assert_eq!(empty["regions"], serde_json::json!([]));
+
+        // 2. unknown region -> typed TARGET_NOT_FOUND (not_found category)
+        let error = channel
+            .set_region_type("no-such-region", "sfx", None)
+            .unwrap_err();
+        assert_eq!(error.code, "TARGET_NOT_FOUND");
+        assert_eq!(error.category, "not_found");
     }
 
     // ---- M2-AC5: packaged-mode resolution (fail-closed spawn) -------------
