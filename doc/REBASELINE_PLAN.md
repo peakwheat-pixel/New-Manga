@@ -138,6 +138,9 @@ Live Git=`main@f6f22b67`（2026-09-29 REBASELINE 审计基线，未 push）。�
 | [M2-SFX-DATA-INFRA](tasks/M2-SFX-DATA-INFRA.md) 训练数据基础设施（T1a） | **done @merge `71a9a84e`**（2026-10-04；schema 冻结+分组隔离 pinned+双去重+可恢复+合成渲染 24 样本精确 GT 1.71e-13px+导入 58；DSH r1/r2 changes_requested→r3 approved_with_conditions→r4 条件闭合，报告入 doc/reviews/；38 tests） | ZCode / DeepSeek Harness | 数据线地基；批量生成=T1b（弱负样本策略/竖排/底图来源输入已备）。 |
 | [M2-SFX-SYNTH-BG-AUTO](tasks/M2-SFX-SYNTH-BG-AUTO.md) SFX 合成底图自动 provider | **done**（2026-10-04 全 AC 闭合含真实冒烟留证；全自动内嵌=Playwright 持久登录态+缺口自动触发+fail-closed；DSH r1/r2 changes_requested→r3 approved_with_conditions→r4 docfix） | ZCode / DeepSeek Harness | T1a 底图来源工具化；端到端样册=T1b 输入。 |
 | [M2-REGION-RETYPE-CONTRACT](tasks/M2-REGION-RETYPE-CONTRACT.md) Region 改标契约冻结（T5a） | **done @merge `b4b995ab`**（DSH r1 changes_requested P1-1+3×P2→返修 7f390ca6→r2 **approved** 12/12 闭合零新发现；SetRegionType wire+RegionListSummary 读取 DTO+C1-C7 并发/P1-P4 持久化 11 条断言+「忽略」RULED 处理动作/EV-8 RULED 按全局配置重快照；零新错误语义；**runtime 未实现，T5b 另行释放**；EV-8 转 CLOSED 集成注记已落设计稿） | ZCode / DeepSeek Harness | T5 线第一环收官；T5b Core 实现/T5c 样本导出器就绪待释放。 |
+| [M2-SFX-ANNOTATE-R1](tasks/M2-SFX-ANNOTATE-R1.md) SFX 标注轮 R1（T1b 两阶段） | **ready**（2026-10-04 释放；阶段一=AI 预标注+审核工作表导出→停点等用户审核；阶段二=三集产出+YOLO 导出；承诺 BJ≥25 页+KO≥15 页+合成≥200） | ZCode+用户 / DeepSeek Harness | A′ 采纳输入条件兑现；下游 T2 训练。 |
+| [M2-REGION-RETYPE-CORE](tasks/M2-REGION-RETYPE-CORE.md) Region 改标 Core 实现（T5b） | **ready**（同批释放；rev 1.4 全链实现+11 断言两层落测+协议 minor bump+GATE 重跑；与 T5c 并行、集成串行） | ZCode / DeepSeek Harness | Workbench UI 实现的前置。 |
+| [M2-SFX-CORRECTION-EXPORTER](tasks/M2-SFX-CORRECTION-EXPORTER.md) 纠错样本导出器（T5c） | **ready**（同批释放；revision 链类型纠错识别+资格判定+T1a/YOLO 双形态导出；fixture 先行零 src） | ZCode / DeepSeek Harness | 纠错积累链采集端。 |
 
 ```mermaid
 flowchart TD
@@ -211,6 +214,9 @@ flowchart TD
   DEXT -.-> T0["M2-SFX-FINETUNE-PREFLIGHT 技术预检 · done @dedb97b2（A′ 裁决：官方基座+四类全标）"]
   DEXT -.-> T1A["M2-SFX-DATA-INFRA 数据基础设施 · done @71a9a84e（T1a 并行）"]
   UIM -.-> T5A["M2-REGION-RETYPE-CONTRACT 改标契约 · done @b4b995ab（rev1.4 冻结；T5b/T5c 待释放）"]
+  T0 -.-> T1B["M2-SFX-ANNOTATE-R1 标注轮 R1 · ready（两阶段；阶段二等用户审核）"]
+  T5A -.-> T5B["M2-REGION-RETYPE-CORE 改标 Core 实现 · ready（T5b）"]
+  T5A -.-> T5C["M2-SFX-CORRECTION-EXPORTER 纠错导出器 · ready（T5c）"]
 
   %% docTR qualification 主线（2026-09-30 口径裁决后闭环，正式结论 FAIL）
   TA1 -.-> PRE["DOCTR-QUAL-PREFLIGHT 权重/环境/评测基座 · O:ZCode ✓"]
