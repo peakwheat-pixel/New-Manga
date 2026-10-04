@@ -14,3 +14,6 @@ dist/
 
 # atomic_write_json 的 .bak 备份不进 Git（r2）
 experiments/M2-SFX-DATA-INFRA/*.bak
+
+# ZCode 会话本地文件不进 Git
+.zcode/
