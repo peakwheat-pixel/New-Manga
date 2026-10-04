@@ -105,9 +105,10 @@ def _make_region(core, **create_kwargs):
     )
 
 
-def _make_retype_request(rpc, region_id, **payload_overrides) -> dict:
+def _make_retype_request(rpc, region_id, overrides=None) -> dict:
     payload = {"region_id": region_id, "new_region_type": "sfx"}
-    payload.update(payload_overrides)
+    if overrides:
+        payload.update(overrides)
     return rpc("set_region_type", payload)
 
 
@@ -156,9 +157,11 @@ def test_set_region_type_round_trip_full_effective_state(server, rpc) -> None:
         "region_type": "sfx",
         "sfx_policy": "translate",  # EV-8: re-snapshotted from the global config
     }
-    # the effective state matches the persisted region (one round trip)
-    assert region.region_type.value == "sfx"
-    assert region.sfx_policy.value == "translate"
+    # the effective state matches the persisted region (one round trip --
+    # read back through the editing service, the SQLite authority)
+    persisted = server.editing.get_region(region.region_id)
+    assert persisted.region_type.value == "sfx"
+    assert persisted.sfx_policy.value == "translate"
 
 
 def test_set_region_type_review_state_unreviewed_and_origin_user(server, rpc) -> None:

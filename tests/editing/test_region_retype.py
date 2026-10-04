@@ -102,11 +102,12 @@ def test_c2_machine_write_after_retype_fails_closed_on_stale_revision() -> None:
     service, repo = make_service()
     region = make_speech_region(service)
     stale_revision_id = region.current_revision_id
-    stale_snapshot = dict(region.snapshot_state())
 
     service.set_region_type(
         region.region_id, "sfx", current_global_sfx_policy=SfxPolicy.SKIP
     )
+    # the state the machine write must not overwrite = the RETYPED state
+    retyped_snapshot = dict(region.snapshot_state())
 
     outcome = service.apply_machine_translation(
         region.region_id, "翻訳",
@@ -114,7 +115,8 @@ def test_c2_machine_write_after_retype_fails_closed_on_stale_revision() -> None:
     )
     assert outcome.status is GuardStatus.INPUT_REVISION_CHANGED
     # fail-closed: not one region field was overwritten
-    assert region.snapshot_state() == stale_snapshot
+    assert region.snapshot_state() == retyped_snapshot
+    assert region.region_type is RegionType.SFX
 
 
 # ---------------------------------------------------------------------------
@@ -129,9 +131,9 @@ def test_c3_machine_write_after_retype_fails_closed_on_lock() -> None:
     service.set_region_type(
         region.region_id, "sfx", current_global_sfx_policy=SfxPolicy.SKIP
     )
-    region.translation_locked = True
+    # the human protection the machine write must respect after the retype
+    region.text.translation_locked = True
     repo.update_region(region)
-    current_revision_id = region.current_revision_id
     snapshot = dict(region.snapshot_state())
 
     outcome = service.apply_machine_translation(region.region_id, "翻訳")
@@ -145,7 +147,6 @@ def test_c3_machine_write_after_retype_fails_closed_on_lock() -> None:
         expected_current_revision_id="not-the-current-one",
     )
     assert outcome_stale.status is GuardStatus.INPUT_REVISION_CHANGED
-    del current_revision_id
 
 
 # ---------------------------------------------------------------------------
@@ -205,14 +206,25 @@ def test_c5_post_retype_decision_follows_retyped_fields() -> None:
     )
     assert action.status == "translate"
 
-    # sfx -> speech: the forced-SKIP snapshot keeps the original artwork text
+    # sfx + the forced-SKIP snapshot keeps the original artwork text
+    service.set_region_type(
+        region.region_id, "sfx", current_global_sfx_policy=SfxPolicy.SKIP
+    )
+    action = decide_sfx_translation(
+        region.region_type.value, region.sfx_policy.value
+    )
+    assert action.skipped is True
+
+    # sfx -> speech: the region is back on the dialogue chain (the gate
+    # consumes the retyped TYPE, so the forced-SKIP snapshot it carried as
+    # an sfx region no longer skips anything)
     service.set_region_type(
         region.region_id, "speech", current_global_sfx_policy=SfxPolicy.TRANSLATE
     )
     action = decide_sfx_translation(
         region.region_type.value, region.sfx_policy.value
     )
-    assert action.skipped is True
+    assert action.status == "translate"
 
 
 # ---------------------------------------------------------------------------

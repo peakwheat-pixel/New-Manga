@@ -168,40 +168,24 @@ def _pipeline(workspace, *, detector):
             geometry=_FakeGeometrySource(),
             retry_policy=RetryPolicy(max_attempts=1, backoff_seconds=0),
             detector=detector,
-            region_creator=None,
+            # the idempotency branch under test REUSES live regions, so the
+            # writer must never be reached (same guard as test_detect_handler)
+            region_creator=lambda *args, **kwargs: "should-not-run",
         )
     )
-    return PipelineService(
-        build_production_pipeline(
-            workspace["conn"],
-            handlers=handlers.as_mapping(),
-            settings={"ocr": {"script": "japanese"}},
-        )
+    return build_production_pipeline(
+        workspace["conn"],
+        handlers=handlers.as_mapping(),
+        settings={"ocr": {"script": "japanese"}},
     )
 
 
 def test_p2_redetect_reuses_live_regions_and_keeps_human_retype(workspace) -> None:
-    """P2: a re-detect over a page with live (and human-retyped) regions
-    reuses them — the retype is never rolled back, nothing is rebuilt."""
-    editing = RegionEditingService(workspace["regions"])
-    region = editing.create_region(
-        "page-1",
-        RegionGeometry(bbox=BBox(0, 0, 10, 5)),
-        reading_order=1,
-        origin=RegionOrigin.MACHINE,
-    )
-    # the human retype lands on the machine-created region
-    outcome = editing.set_region_type(
-        region.region_id, "sfx", current_global_sfx_policy=SfxPolicy.TRANSLATE
-    )
-    assert outcome.revision_no == 2
-    retyped_before = (
-        region.region_type,
-        region.sfx_policy,
-        len(workspace["regions"].list_revisions(region.region_id)),
-    )
-
-    # re-detect over the same page (a fresh run's leading detect unit)
+    """P2: a re-detect over a page that gained live (and human-retyped)
+    regions reuses them — the retype is never rolled back, nothing is
+    rebuilt. (The idempotency branch exists for exactly this shape: a page
+    task planned while the page still had no region executes against the
+    regions that exist by then.)"""
     detector = FakeDetector(_two_candidates())
     service = _pipeline(workspace, detector=detector)
     run = service.create_run(
@@ -209,6 +193,22 @@ def test_p2_redetect_reuses_live_regions_and_keeps_human_retype(workspace) -> No
         PipelineScope(ScopeType.CHAPTER, chapter_id="chapter-1"),
     )
     service.plan_run(run.run_id)
+    assert run.tasks[0].units[0].step_type == STEP_DETECT
+
+    # the human-retype lands between planning and execution: a machine
+    # region appears and the user retypes it (two revisions on the region)
+    editing = RegionEditingService(workspace["regions"])
+    region = editing.create_region(
+        "page-1",
+        RegionGeometry(bbox=BBox(0, 0, 10, 5)),
+        reading_order=1,
+        origin=RegionOrigin.MACHINE,
+    )
+    outcome = editing.set_region_type(
+        region.region_id, "sfx", current_global_sfx_policy=SfxPolicy.TRANSLATE
+    )
+    assert outcome.revision_no == 2
+
     executed = service.execute_run(run.run_id)
 
     # idempotent reuse: the SAME region survives, no duplicate is created
@@ -222,12 +222,9 @@ def test_p2_redetect_reuses_live_regions_and_keeps_human_retype(workspace) -> No
     assert detector.requests == []  # the provider is never even consulted
 
     # the human retype is intact: type, policy snapshot and both revisions
-    assert (
-        region.region_type,
-        region.sfx_policy,
-        len(workspace["regions"].list_revisions(region.region_id)),
-    ) == retyped_before
-    assert region.region_type is RegionType.SFX
-    assert region.sfx_policy is SfxPolicy.TRANSLATE
+    # (read back through the repo -- SQLite rebuilds objects per read)
+    persisted = workspace["regions"].get_region(region.region_id)
+    assert persisted.region_type is RegionType.SFX
+    assert persisted.sfx_policy is SfxPolicy.TRANSLATE
     revisions = workspace["regions"].list_revisions(region.region_id)
     assert [rev.origin.value for rev in revisions] == ["machine", "user"]

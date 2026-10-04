@@ -169,8 +169,13 @@ def test_lock_mid_flight_persists_lock_changed_candidate() -> None:
 
 
 def test_after_lock_release_only_an_explicit_rerun_consumes_the_retype() -> None:
+    locked_once = False
+
     def user_locks_during_execution(step_run, unit, run):
-        if unit.step_type == "translate":
+        # the user locks the region exactly once, mid-flight of the first run
+        nonlocal locked_once
+        if unit.step_type == "translate" and not locked_once:
+            locked_once = True
             catalog.update_region("r1", lock=LockSnapshot(translation_locked=True))
 
     executor = DeterministicStepExecutor(on_execute=user_locks_during_execution)
@@ -182,10 +187,11 @@ def test_after_lock_release_only_an_explicit_rerun_consumes_the_retype() -> None
     # machine payload parked in the candidate list
     assert catalog.current("r1").current_revisions["region"] == "r1-rev-1"
 
-    # the user releases the lock and explicitly reruns the failed target
+    # the user releases the lock, leaves the RETYPED revision in place, and
+    # explicitly reruns the work as a fresh run
     catalog.update_region("r1", lock=LockSnapshot())
     catalog.update_region("r1", current_revisions={"region": "user-retype-rev"})
-    retry = pipeline.retry_failed_targets(run.run_id)
+    retry = create_and_plan(pipeline, "retranslate_region")
     retry_result = pipeline.execute_run(retry.run_id)
 
     assert retry_result.status is PipelineRunStatus.COMPLETED
