@@ -1,0 +1,417 @@
+{
+ "task": "M2-SFX-ANNOTATE-R2 stage-2（AC5：R2 判定并入 + 三集扩集重导出 + YOLO + 验证）",
+ "generated_at_utc": "2026-10-04T13:17:15Z",
+ "tool": "experiments/M2-SFX-ANNOTATE-R2/stage2_finalize_r2.py --step summary",
+ "mode": "ai-review-backfill（沿 R1 口径：codex+agy 共识 + 分歧仲裁；human_review=false，不谎称人工；provenance.stage2r2 留判定链）",
+ "r2_judgments": {
+  "units_total": 19,
+  "units_by_part": {
+   "replay": 6,
+   "bj_new": 13
+  },
+  "consensus_units": 18,
+  "arbitrated_units": 1,
+  "final_verdict_dist": {
+   "delete": 8,
+   "confirm": 11
+  },
+  "reviewer_dist": {
+   "codex+agy-consensus": 18,
+   "arbiter": 1
+  },
+  "ac2_bj_lowconf_note": "units.json notes：R1 残留 BJ 域 11 单元中 conf∈[0.2,0.5) 为 0——AC2 扩审部分为空集，如实登记"
+ },
+ "manifest_merge": {
+  "r1_base": "annotate-r1/preannotate/manifest.json（72 样本 450 框，只读；R1 判定链 provenance.stage2 保留）",
+  "r2_bj_new": "annotate-r2/preannotate/manifest-bj-new.json（10 样本 29 框，BJ16-25）",
+  "r2_merged": "annotate-r2/preannotate/manifest.r2.json",
+  "samples_total": 82,
+  "r1_samples_touched_by_r2": 5,
+  "r1_samples_untouched": 67,
+  "bj_new_to_complete": 5,
+  "stage2r2_actions": {
+   "—": 67,
+   "kept_pseudo_replay_page_delete_excluded": 5,
+   "completed": 5,
+   "kept_pseudo_no_judged_units_this_round": 4,
+   "kept_pseudo_zero_box_negative_evidence": 1
+  }
+ },
+ "ac5_splits": {
+  "seed": 20261004,
+  "method": "group-hash-rank-v2（T1a splits.assign_splits）",
+  "pinned_groups": {
+   "synthetic/annotate-r1": "train"
+  },
+  "fingerprint": "564498e13651bb2e7baba7540e7fd088e7ab17ff5fed438df4c4c162e525ccfa",
+  "by_split": {
+   "train": {
+    "samples": 345,
+    "boxes": 571,
+    "real": 21,
+    "synthetic": 324,
+    "groups": [
+     "densho810/vol01",
+     "densho810/vol03",
+     "densho810/vol05",
+     "synthetic/annotate-r1",
+     "vasyanator2/131385",
+     "vasyanator2/570506",
+     "vasyanator2/641253",
+     "vasyanator2/670145",
+     "vasyanator2/671421",
+     "vasyanator2/730656"
+    ],
+    "images": 345
+   },
+   "val": {
+    "samples": 4,
+    "boxes": 53,
+    "real": 4,
+    "synthetic": 0,
+    "groups": [
+     "vasyanator2/701535",
+     "vasyanator2/717481"
+    ],
+    "images": 4
+   },
+   "test": {
+    "samples": 2,
+    "boxes": 5,
+    "real": 2,
+    "synthetic": 0,
+    "groups": [
+     "vasyanator2/651664",
+     "vasyanator2/724815"
+    ],
+    "images": 2
+   },
+   "challenge": {
+    "samples": 0,
+    "boxes": 0,
+    "real": 0,
+    "synthetic": 0,
+    "groups": [],
+    "images": 0
+   }
+  },
+  "manifest_files": [
+   "manifest.r2.json",
+   "manifest.train.json",
+   "manifest.val.json",
+   "manifest.test.json",
+   "manifest.challenge.json"
+  ],
+  "challenge_empty_reason": "R2 轮正集仍无 BJ13/14/15 complete 样本：本轮判定范围（judgments/units.json 19 单元）不含 BJ13/14/15 任何单元（AC2 BJ conf 0.2-0.5 层经 units.json 核对为空集；BJ13 唯一 conf≥0.5 判定=R1 的 delete，本轮无新判定未翻案），故 challenge split 空集如实登记（AC5 验收判据允许分支：BJ13 判定仍=delete 时如实登记并交编排裁决）；BJ13/14/15 页级样本保持 pseudo 留待扩标。挑战集正框补齐后重跑 split+yolo 即自动单列。",
+  "group_isolation_violations": {},
+  "group_isolation_verified": true
+ },
+ "ac5_bj_positive": {
+  "pages": 5,
+  "boxes": 11,
+  "cases": [
+   "BJ16",
+   "BJ17",
+   "BJ18",
+   "BJ23",
+   "BJ24"
+  ],
+  "groups": [
+   "densho810/vol01",
+   "densho810/vol03",
+   "densho810/vol05"
+  ],
+  "detail": [
+   {
+    "sample_id": "pre-bj16",
+    "case_id": "BJ16",
+    "group": "densho810/vol01",
+    "boxes": 3,
+    "kept_units": [
+     "R2-BJ16-B00",
+     "R2-BJ16-B01",
+     "R2-BJ16-B02"
+    ]
+   },
+   {
+    "sample_id": "pre-bj17",
+    "case_id": "BJ17",
+    "group": "densho810/vol05",
+    "boxes": 2,
+    "kept_units": [
+     "R2-BJ17-B00",
+     "R2-BJ17-B01"
+    ]
+   },
+   {
+    "sample_id": "pre-bj18",
+    "case_id": "BJ18",
+    "group": "densho810/vol05",
+    "boxes": 3,
+    "kept_units": [
+     "R2-BJ18-B00",
+     "R2-BJ18-B01",
+     "R2-BJ18-B02"
+    ]
+   },
+   {
+    "sample_id": "pre-bj23",
+    "case_id": "BJ23",
+    "group": "densho810/vol03",
+    "boxes": 2,
+    "kept_units": [
+     "R2-BJ23-B00",
+     "R2-BJ23-B01"
+    ]
+   },
+   {
+    "sample_id": "pre-bj24",
+    "case_id": "BJ24",
+    "group": "densho810/vol03",
+    "boxes": 1,
+    "kept_units": [
+     "R2-BJ24-B00"
+    ]
+   }
+  ],
+  "note": "本轮 11 confirm 框判定 rationale 主体为竖排/斜排毛笔假名与艺术化字形（codex/agy 双评审原文见 judgments/consensus.json）——A′ 主攻毛笔竖排形态获得首批真实正样本；量级仍小（5 页 11 框），如实登记"
+ },
+ "ac5_synthetic": {
+  "source": "annotate-r1/synthetic/manifest.json（R1 渲染产物只读并入；图像从 R1 数据树复制）",
+  "samples": 324,
+  "pinned_group": "synthetic/annotate-r1",
+  "in_test": 0
+ },
+ "ac5_yolo": {
+  "root": "final/yolo",
+  "dataset_yaml": "final/yolo/dataset.yaml",
+  "names_dual_channel_check": {
+   "channel1_readback": {
+    "parsed": {
+     "0": "bubble",
+     "1": "panel",
+     "2": "sfx",
+     "3": "text"
+    },
+    "expected_literal": {
+     "0": "bubble",
+     "1": "panel",
+     "2": "sfx",
+     "3": "text"
+    },
+    "order": [
+     0,
+     1,
+     2,
+     3
+    ],
+    "assert": "PASS"
+   },
+   "channel2_pyyaml": {
+    "parsed": {
+     "0": "bubble",
+     "1": "panel",
+     "2": "sfx",
+     "3": "text"
+    },
+    "expected_literal": {
+     "0": "bubble",
+     "1": "panel",
+     "2": "sfx",
+     "3": "text"
+    },
+    "parser": "pyyaml 6.0.3",
+    "assert": "PASS"
+   }
+  },
+  "per_split": [
+   {
+    "split": "train",
+    "images": 345,
+    "boxes": 571
+   },
+   {
+    "split": "val",
+    "images": 4,
+    "boxes": 53
+   },
+   {
+    "split": "test",
+    "images": 2,
+    "boxes": 5
+   },
+   {
+    "split": "challenge",
+    "images": 0,
+    "boxes": 0,
+    "note": "空集（见 lock.challenge_note）"
+   }
+  ],
+  "stem_mismatch_total": 0,
+  "polygon_caliber": "T1a 实例包络（归一化，cls 恒 2=sfx）",
+  "train_builder": "train/val 经 TrainingSetBuilder（不可读 test/challenge）；test/challenge 独立导出路径",
+  "excluded_negative_ids": []
+ },
+ "section81_vs_r1": {
+  "source": "verification/M2-SFX-ANNOTATE-R1/stage2-report.md §8.1（R1 时点状态）",
+  "r1_then": {
+   "bj_real_pages_annotated": 15,
+   "ko_real_pages_annotated": 10,
+   "bj_positive_samples": 0,
+   "challenge": "空集",
+   "synthetic": 324
+  },
+  "r2_now": {
+   "bj_real_pages_annotated": "在册（cases.json+落位）25 页（AC1 补齐 BJ16-25）；其中经预标注判定覆盖 19 页（BJ01-15 R1 预标注+BJ16-25 R2 预标注），本轮判定入正集 5 页",
+   "ko_real_pages_annotated": "在册 15 页（AC5 复核对账：R1 已标注 K01-10 页图按 R1 manifest 引用路径在盘核实 10/10；R2 新落 K13/K15/K18/K19/K24 按 cases.json+resolve_asset_roots(+R2 素材根) 可解析 5/5，见 selection/material-selection.json ko_selected）。其中经预标注+判定 10 页（K01-10）；R2 新 5 页素材在册未标注（本轮判定范围不含 KO 新页，如实登记）",
+   "bj_positive_samples": {
+    "pages": 5,
+    "boxes": 11,
+    "cases": [
+     "BJ16",
+     "BJ17",
+     "BJ18",
+     "BJ23",
+     "BJ24"
+    ],
+    "groups": [
+     "densho810/vol01",
+     "densho810/vol03",
+     "densho810/vol05"
+    ],
+    "detail": [
+     {
+      "sample_id": "pre-bj16",
+      "case_id": "BJ16",
+      "group": "densho810/vol01",
+      "boxes": 3,
+      "kept_units": [
+       "R2-BJ16-B00",
+       "R2-BJ16-B01",
+       "R2-BJ16-B02"
+      ]
+     },
+     {
+      "sample_id": "pre-bj17",
+      "case_id": "BJ17",
+      "group": "densho810/vol05",
+      "boxes": 2,
+      "kept_units": [
+       "R2-BJ17-B00",
+       "R2-BJ17-B01"
+      ]
+     },
+     {
+      "sample_id": "pre-bj18",
+      "case_id": "BJ18",
+      "group": "densho810/vol05",
+      "boxes": 3,
+      "kept_units": [
+       "R2-BJ18-B00",
+       "R2-BJ18-B01",
+       "R2-BJ18-B02"
+      ]
+     },
+     {
+      "sample_id": "pre-bj23",
+      "case_id": "BJ23",
+      "group": "densho810/vol03",
+      "boxes": 2,
+      "kept_units": [
+       "R2-BJ23-B00",
+       "R2-BJ23-B01"
+      ]
+     },
+     {
+      "sample_id": "pre-bj24",
+      "case_id": "BJ24",
+      "group": "densho810/vol03",
+      "boxes": 1,
+      "kept_units": [
+       "R2-BJ24-B00"
+      ]
+     }
+    ],
+    "note": "本轮 11 confirm 框判定 rationale 主体为竖排/斜排毛笔假名与艺术化字形（codex/agy 双评审原文见 judgments/consensus.json）——A′ 主攻毛笔竖排形态获得首批真实正样本；量级仍小（5 页 11 框），如实登记"
+   },
+   "challenge": "仍空集（BJ13 本轮无新判定，R1 delete 未翻案；AC5 验收判据允许分支，如实登记交编排裁决）",
+   "synthetic": 324,
+   "replay_pages": "R1 C4 偏差部分闭合：回放 6 单元本轮全判 delete（判定链留痕 stage2r2）——回放页仍无训练正例，按判定如实排除（delete 框已出框列表）"
+  }
+ },
+ "r1_baseline_for_diff": {
+  "export_summary_file": "annotate-r1/final/export-summary.json",
+  "r1_by_split": {
+   "train": {
+    "samples": 342,
+    "boxes": 585,
+    "real": 18,
+    "synthetic": 324,
+    "groups": [
+     "synthetic/annotate-r1",
+     "vasyanator2/131385",
+     "vasyanator2/570506",
+     "vasyanator2/641253",
+     "vasyanator2/670145",
+     "vasyanator2/671421",
+     "vasyanator2/717481",
+     "vasyanator2/730656"
+    ],
+    "images": 342
+   },
+   "val": {
+    "samples": 3,
+    "boxes": 31,
+    "real": 3,
+    "synthetic": 0,
+    "groups": [
+     "vasyanator2/651664",
+     "vasyanator2/701535"
+    ],
+    "images": 3
+   },
+   "test": {
+    "samples": 1,
+    "boxes": 2,
+    "real": 1,
+    "synthetic": 0,
+    "groups": [
+     "vasyanator2/724815"
+    ],
+    "images": 1
+   },
+   "challenge": {
+    "samples": 0,
+    "boxes": 0,
+    "real": 0,
+    "synthetic": 0,
+    "groups": [],
+    "images": 0
+   }
+  },
+  "r1_fingerprint": "f9ea1c801e53f705c9ab68c1cac55ff736af926f64108bf71d2aa95af6009271"
+ },
+ "artifacts_sha256": {
+  "preannotate/manifest.r2.json": "02c4c9036d20993795f4d1fb3c6487fb64f00fcd6f951d632c3391e96cc0a253",
+  "final/manifest.r2.json": "e7f1a1a7c1f3cd271a12cf60425e95a7dc7d000a3d7240b20aa7e512793741c8",
+  "final/manifest.train.json": "30bf1a6c33c788c4d40a5dc42ca03bd8f4503f17d105e957173f75451c8cf9e5",
+  "final/manifest.val.json": "43ad1904a235761436c3a27820a336940d89172ed1a4b37852a036bc8200e3fa",
+  "final/manifest.test.json": "e5c48295a119d755beba850fd6e7ad86c8d3892704ec0dbabf1318948077b24d",
+  "final/manifest.challenge.json": "6555a38729f8c5ae88089384b998e3f4522eaaaaaa873d16db4e11d0471e2723",
+  "final/yolo/dataset.yaml": "ca8830a813d9a326b42886e6ada2c8387fa77d5bd8f2ff628e07f4323e619188",
+  "final/yolo/_export_stats.json": "84e382fac49c5ed2bb817fa254b5d0b98ed49a990fb3b24345cf9a0e59ac3911"
+ },
+ "honest_notes": [
+  "AC2 BJ 低置信层为空集（R1 残留 BJ 单元无一落在 conf 0.2-0.5），未产生新正样本",
+  "challenge 仍空集：BJ13/14/15 本轮零新判定，未翻案未凑数",
+  "K11-15 素材在册未标注（本轮判定范围不含 KO 新页）；BJ19/20/21/22/25 页候选框 conf<0.2 或全 delete，保持 pseudo",
+  "R1 底册只读：R2 判定链写在 provenance.stage2r2，不覆盖 R1 provenance.stage2",
+  "worksheet-bj-new.json 的 verdict 列回填不在本轮 ask 范围：判定留痕以 judgments/* 与 manifest.r2.json stage2r2 为准"
+ ],
+ "data_root_gitignored": "training_data/sfx-v1/annotate-r2/（repo gitignored 外部树；annotate-r1/ 同理在 R1 worktree）；本摘要内路径均相对 training_data/sfx-v1/ 根",
+ "yolo_layout": {
+  "images": "annotate-r2/final/yolo/images/{train,val,test}/（challenge 空集未导出）",
+  "labels": "annotate-r2/final/yolo/labels/{train,val,test}/（YOLO seg 归一化多边形，cls=2）",
+  "stem_rule": "sample_id 中 '/' 替换为 '__'（synth-r1/synth-… → synth-r1__synth-…）"
+ }
+}
