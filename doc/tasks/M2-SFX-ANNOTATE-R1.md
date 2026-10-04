@@ -47,14 +47,18 @@ A′ 路线裁决（T0 收口）的采纳输入条件=「T1b 承诺最小标注�
 
 | 场景/AC | 计划步骤 | 前提 | 实际结果 | 证据 |
 |---|---|---|---|---|
-| AC1-AC2 | 预标注跑通+工作表导出+审核量预估 | dev venv+图像本地 | NOT_RUN | 无 |
-| AC3 | 用户逐条审核（真实人工） | 用户介入 | NOT_RUN/BLOCKED_ON_USER | 无 |
-| AC4 | 拆分+YOLO 导出+names 校验 | AC3 完成 | NOT_RUN | 无 |
+| AC1-AC2（阶段一） | 预标注跑通+工作表导出+审核量预估 | dev venv+图像本地 | **PASS（2026-10-04 stage-1）**：scan/assemble/worksheet 三步 EXIT=0；T1a schema 全量校验 0 错误；预览三张人工目检符合预期 | verification/M2-SFX-ANNOTATE-R1/stage1-report.md；training_data/sfx-v1/annotate-r1/{preannotate,selection,worksheet,previews,scan}；Git 内摘要 stage1-manifest-summary.json |
+| AC3 | 用户逐条审核（真实人工） | 用户介入 | **BLOCKED_ON_USER（WAITING_USER_LABELING 停点，2026-10-04 起）**：806 单元待裁（conf 分层 ≥0.5=413/≥0.2=537 供范围裁定） | training_data/sfx-v1/annotate-r1/worksheet/worksheet.md |
+| AC4 | 拆分+YOLO 导出+names 校验 | AC3 完成 | NOT_RUN（阶段二） | 无 |
 
 ## 依赖、风险与阻塞
 
 depends_on 已 done。阻塞点=阶段二等用户审核（预估 1-2 小时级，阶段一回报精确数字）。风险：BJ 域页 SFX 密度不均→阶段一选取时按框数报告再定终集。
 
+**阶段一实测回报（2026-10-04）**：全量 806 单元（bj=20/ko=613/replay-j=6/ogkalu=167）按 C1 实测速率（1-2 分钟/单元，doc/tasks/M2-DOCTR-QUAL-C1.md:25）估 13.4-26.9 小时，超出合同预估一个量级——主因 chiqui7 对 KO 域 conf@0.01 检出 613 框；用户可在停点按 conf 分层/域优先裁定审核范围。标注量承诺缺口：BJ 15/25 页（素材树仅 BJ01-15 在盘）、KO 10/15 页（K11-25 的 local_path 路径不存在），60 MISSING case 逐条登记于 selection.json，不凑数；缺口需素材扩充后补轮。
+
 ## 交付与运行记录
 
-- Handoff：尚无。Review：阶段二交付后一并 DSH 审查（阶段一交付+停点登记即可先报）。
+- **阶段一（2026-10-04，stage-1）**：AC1+AC2 交付，claim fe62677e。三源预标注合并（chiqui7 L1+新扫 / ogkalu 43 region / BJ06+l3 参照框；跨源 IoU≥0.5 去重，全部 pseudo，72 样本 806 框）；页面选取 seed=20261004 冻结（BJ 15 页全选+KO 10 页全选+回放 BJ06+J38/J41/J43/J51）；审核工作表（806 单元×20% 边距裁切预览 808 张+JSON/md 清单，AI 预判列预填/用户裁决列与 user_rationale 列留空，沿 C1 先例）。工具 `experiments/M2-SFX-ANNOTATE-R1/stage1_preannotate.py`（scan/assemble/worksheet，零 src 复用 T1a schema/importers/splits 与 DOMAIN-EXT 生产推理序列）。数据本体 gitignored `training_data/sfx-v1/annotate-r1/`；Git 内摘要 `verification/M2-SFX-ANNOTATE-R1/stage1-manifest-summary.json`。**状态：WAITING_USER_LABELING 停点**——AC3-AC5（阶段二）待用户完成逐条审核并裁定审核范围后释放。
+- Handoff：doc/handoffs/M2-SFX-ANNOTATE-R1-zcode-stage1-20261004.md（含阶段二入口与可转发指令）。
+- Review：阶段二交付后一并 DSH 审查（阶段一交付+停点已登记）。
