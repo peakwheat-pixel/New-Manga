@@ -1,0 +1,12 @@
+{
+  "batch": 8,
+  "imgsz": 1024,
+  "iters_recorded": 40,
+  "per_iter_median_s": 0.1194,
+  "it_s": 8.38,
+  "per_iter_all_median_s": 0.1194,
+  "peak_vram_reserved_MiB": 7488.0,
+  "peak_vram_allocated_MiB": 6039.4,
+  "epoch_wall_s": 34.3,
+  "amp": true
+}

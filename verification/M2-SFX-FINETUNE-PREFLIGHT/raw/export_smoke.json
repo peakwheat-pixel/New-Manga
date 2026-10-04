@@ -1,0 +1,88 @@
+{
+  "best_pt": "G:\\CODEX\\New Manga.task-envs\\M2-SFX-FINETUNE-gpu-py312\\runs\\vram-probe\\b2\\weights\\best.pt",
+  "onnx": "G:\\CODEX\\New Manga.task-envs\\M2-SFX-FINETUNE-gpu-py312\\runs\\vram-probe\\b2\\weights\\best.onnx",
+  "onnx_sha256": "b1bb877fc2b331ddc843cf0783dbd9b325470eee44314846d78be70af8933d7e",
+  "steps": [
+    {
+      "step": "input",
+      "t": 311940.664,
+      "best_pt": "G:\\CODEX\\New Manga.task-envs\\M2-SFX-FINETUNE-gpu-py312\\runs\\vram-probe\\b2\\weights\\best.pt"
+    },
+    {
+      "step": "export.start",
+      "t": 311942.07,
+      "imgsz": 1024,
+      "format": "onnx"
+    },
+    {
+      "step": "export.done",
+      "t": 311946.83,
+      "onnx": "G:\\CODEX\\New Manga.task-envs\\M2-SFX-FINETUNE-gpu-py312\\runs\\vram-probe\\b2\\weights\\best.onnx",
+      "size_bytes": 40824248,
+      "sha256": "b1bb877fc2b331ddc843cf0783dbd9b325470eee44314846d78be70af8933d7e"
+    },
+    {
+      "step": "sha_gate.fired",
+      "t": 311946.854,
+      "error_code": "PROVIDER_FAILED",
+      "detail": "PROVIDER_FAILED: sfx detector weights file G:\\CODEX\\New Manga.task-envs\\M2-SFX-FINETUNE-gpu-py312\\runs\\vram-probe\\b2\\weights\\best.onnx has sha256 b1bb877fc2b331ddc843cf0783dbd9b325470eee44314846d78be7"
+    },
+    {
+      "step": "sha_gate.ok",
+      "t": 311946.854,
+      "pinned": "d87389af4350",
+      "actual": "b1bb877fc2b3"
+    },
+    {
+      "step": "build_engine.full_chain_ok",
+      "t": 311946.946,
+      "names_metadata": "{0: 'bubble', 1: 'panel', 2: 'sfx', 3: 'text'}",
+      "class_map_asserted": {
+        "0": "bubble",
+        "1": "panel",
+        "2": "sfx",
+        "3": "text"
+      },
+      "imgsz": 1024,
+      "imgsz_source": "metadata_parsed",
+      "imgsz_metadata_raw": "[1024, 1024]"
+    },
+    {
+      "step": "detect.conf_0.5",
+      "t": 311947.187,
+      "candidates": 0,
+      "elapsed_ms": 236,
+      "provider_id": "local-sfx",
+      "coordinate_space": "page-global",
+      "imgsz": "1024",
+      "imgsz_source": "metadata_parsed",
+      "arch": "yolo11s_seg_onnx",
+      "class_filter": "sfx",
+      "first_candidate": null
+    },
+    {
+      "step": "detect.conf_0.01",
+      "t": 311947.496,
+      "candidates": 0,
+      "elapsed_ms": 291,
+      "provider_id": "local-sfx",
+      "coordinate_space": "page-global",
+      "imgsz": "1024",
+      "imgsz_source": "metadata_parsed",
+      "arch": "yolo11s_seg_onnx",
+      "class_filter": "sfx",
+      "first_candidate": null
+    },
+    {
+      "step": "output_tensor",
+      "t": 311947.626,
+      "shape": [
+        1,
+        40,
+        21504
+      ],
+      "expect": "1x40xN (4+4cls+32mask)"
+    }
+  ],
+  "exit": 0
+}
