@@ -11,7 +11,7 @@
 |---|---|
 | 路线 A（chiqui7 续训） | **实证受阻**：HF 仓库只有 `yolo11s-seg.onnx`，**无原生 .pt**，ONNX 不可回训 |
 | 路线定案建议 | **A′：Ultralytics 官方 `yolo11s-seg.pt` 基座 + BJ/KO 四类 GT 微调**（全链已实证） |
-| 四类监督策略 | **选项 1 四类全标为主线**；选项 3 冻结非 sfx 头技术不可行（Ultralytics 无按类冻结机制） |
+| 四类监督策略 | **选项 1 四类全标为主线**；选项 3 无法以可接受代价达成目标，排除（freeze 配置面无按类通道冻结，详见 §1.3） |
 | 显存摸底 | imgsz=1024 AMP：b2=1.94GB / b4=4.03GB / b8=7.49GB；吞吐 36.5/57.3/67.0 img/s；**推荐 batch=8** |
 | 导出链 | `.pt→ONNX(imgsz=1024)→生产 _build_engine→SfxDetectionProvider.detect` **EXIT=0**，类别面逐字一致，无类别差异 |
 | AC5 | 备案完成（不产出资格门） |
@@ -20,11 +20,14 @@
 
 ### 1.1 ①原生 .pt 可得性：**否定**（核心结论）
 
-- 命令：`curl -s -x http://127.0.0.1:7890 "https://huggingface.co/api/models/chiqui7/yolo11-manga-seg"`（2026-10-04 实测）
-- 文件清单（API `siblings` 字段原文）：`.gitattributes`、`README.md`、`yolo11s-seg.onnx` —— **仅一个 ONNX 文件，无任何 .pt/训练 checkpoint**；`usedStorage: 41227478`（≈41MB，即生产 ONNX 本体）；`sha: 7f5f5c04…`（与生产 pin `SFX_HF_REVISION` 一致，`detection_sfx.py:108`）。
-- 模型卡 README（`https://huggingface.co/chiqui7/yolo11-manga-seg/raw/main/README.md` 实测）：只有类别面/预处理说明，**无训练代码、无权重下载外链、无 GitHub 链接**。
+- 命令：`curl -s -x http://127.0.0.1:7890 "https://huggingface.co/api/models/chiqui7/yolo11-manga-seg"`（2026-10-04 实测；API 原文快照 `raw/hf_api_models_chiqui7.json`）
+- 文件清单（API `siblings` 字段原文）：`.gitattributes`、`README.md`、`yolo11s-seg.onnx` —— **仅一个 ONNX 文件，无任何 .pt/训练 checkpoint**；`usedStorage: 41227478`（≈41MB）；`sha: 7f5f5c04…`（与生产 pin `SFX_HF_REVISION` 一致，`detection_sfx.py:108`）。
+- **usedStorage 排除逻辑（全 revision 旁证）**：`usedStorage=41,227,478 B` 与 `tree/main` 端点实测的 `yolo11s-seg.onnx` 单文件 size **逐字节相等**（`raw/hf_tree_main_recursive.json`）——仓库存储被这一个 ONNX 占满；官方 `yolo11s-seg.pt` 为 20,669,228 B（§2），**若任一 revision 存在该 20.7MB 的 .pt，usedStorage 至少 ≈62MB 而非 41MB**。revision 端点（`raw/hf_api_models_chiqui7_revision_main.json`，与主 API 同 usedStorage 同 sha）与 refs 端点（`raw/hf_api_models_chiqui7_refs.json`：branches 仅 `main`、`tags: []`、`converts: []`——**无训练分支/标签**）交叉印证。
+- 附加交叉证据：`tree/main` 端点 `yolo11s-seg.onnx` 的 `lfs.oid = d87389af4350954143a216bcfe40fd2ad93312cb136534e6073c9c740d98b646`，与生产权重 SHA pin `SFX_WEIGHTS_SHA256`（`detection_sfx.py:110-111`）**逐字一致**——生产 ONNX 即该 HF LFS 对象（`raw/hf_tree_main_recursive.json`）。
+- 模型卡 README（raw 快照 `raw/hf_readme_main_snapshot.md`）：只有类别面/预处理说明，**无训练代码、无权重下载外链、无 GitHub 链接**。
 - 佐证：chiqui7 的 ONNX 权重元数据 license 声明为 `AGPL-3.0 License (ultralytics.com/license)`（`verification/M2-SFX-DETECT-EVAL/license-evidence.md:23`）——产物形态是 Ultralytics 导出物，仓库内未发布训练侧工件。
 - 结论：**Ultralytics 不支持从 ONNX 回训；路线 A 的「chiqui7 直接续训」形态在本仓库现状下不可行**。训练只能换基座（见 §2 路线定案）。
+- 不把 onnx2torch 类 ONNX→图转换当续训路径的理由：**权重/优化器状态缺失**（ONNX 只含推理图，无 optimizer state/EMA/训练进度等续训上下文）、**算子兼容风险**（导出图含融合/后处理算子，反向还原为可训 torch 图不可靠）、**无原训练配置**（仓库无 args.yaml/超参，无从复现原训练动态）。
 
 ### 1.2 ②训练代码/配置完整性：通过（以官方栈为准）
 
@@ -36,7 +39,7 @@ Ultralytics 官方训练入口完整可用：本预检在冒烟中实测 `YOLO("
 |---|---|---|
 | 1. 四类全标 | 质量上限最高：bubble/panel/text 有真 GT 监督，sfx 不受类不平衡背景污染；共享 backbone 梯度更丰富 | **✅ 定案主线** |
 | 2. 域内回放混合（只标 sfx + chiqui7 ONNX 伪标签回放其余三类） | 成本低，但伪标签质量受限于 chiqui7 现役召回——BJ 域 sfx 零响应（pre-NMS peak 0.0855，`detection_sfx.py:181`）意味着**最难学的难例恰恰被系统性欠采样**；伪标签噪声直接进入监督信号 | ⚠️ fallback（仅在标注预算只够单类时启用，且需先做伪标签质量抽检） |
-| 3. 冻结非 sfx 输出头 | **技术不可行**：Ultralytics `freeze` 参数官方文档（docs.ultralytics.com/usage/cfg，2026-10-04 实测）原文 "Freezes the first N layers of the model, or specific layers **by index or module name**"——只支持按层/模块冻结；cls 分支是**共享 conv 输出 nc=4 通道**，不存在按类别子头；冻结整个 cls 头则 sfx 也无法学习 | ❌ 排除 |
+| 3. 冻结非 sfx 输出头 | Ultralytics 官方 freeze 配置面仅支持按层索引/模块名冻结，不提供按类通道冻结（官方文档 docs.ultralytics.com/usage/cfg，2026-10-04 实测原文："Freezes the first N layers of the model, or specific layers by index or module name (`23.cv2`, without the leading `model.`)"，原文快照 `raw/ultralytics_docs_cfg_freeze_snapshot.html`）；类级梯度屏蔽需自定义训练代码（超出零 src 与开箱配置面），且即便冻结 cls 输出通道，共享 backbone/neck 仍会更新导致非 sfx 类输出漂移——选项 3 无法以可接受代价达成目标，故排除 | ❌ 排除 |
 
 选项 1 定案理由（质量×成本比）：
 1. **边际成本低**：用户二次裁决已定 V1=BJ+KO 双域真实标注+合成数据辅助；真实标注按全类 GT 产出时（T1a manifest 支持多类），同一次标注行为的全类边际成本远低于单类独立 pass；程序合成数据（T1a PoC）天然产全类精确 GT，零额外成本。
@@ -54,10 +57,12 @@ Ultralytics 官方训练入口完整可用：本预检在冒烟中实测 `YOLO("
 - A′ 与被阻断的原路线 A 同为 Ultralytics yolo11-seg 训练入口：架构/导出/类别面/letterbox 口径与生产适配面**完全同构**（本预检 AC4 已实证导出物进生产序列零改动通过——含 names 类断言与 imgsz 解析）。
 - 基座差异如实登记：官方基座是 COCO 80 类预训练，**无 manga 域先验**（chiqui7 的域先验不可继承，因其无 .pt）；域知识只能靠 BJ/KO GT+合成数据补——这正是 T1a/T1b 数据线的职责。
 - AC1-② 实证：换头 nc=4 微调入口、`args.yaml` 全参数面（对照 `anonimkaq4` 公开训练配置 `rect`/`imgsz=1024`/`batch=8` 形态）均在位。
+- **硬约束（V1 训练实施前登记）**：训练 `dataset.yaml` 的 `names` 顺序必须逐字等于生产 `SFX_CLASS_MAP`（`0:bubble / 1:panel / 2:sfx / 3:text`）——类 id 顺序漂移即生产类面污染；本预检 AC4 的 names 逐字零漂移断言即对该契约的守门。
+- **采纳 A′ 的输入条件**：T1b 承诺最小标注量（页数下限）与召回基线回归口径——A′ 基座无 manga 域先验，质量上限由数据投入决定；无最低标注承诺与回归口径，A′ 相对选项 2 fallback 的质量优势无法验收。
 
 ## 3. AC2 路线 B/C 备胎登记（A 受阻 → 按合同升级为静态深评一段，未超预检边界）
 
-**路线 B（替代 manga-seg .pt）**：HF 全站搜索（`manga-seg` / `manga segmentation` 两查询，2026-10-04 实测约 20+ 仓库）**不存在第二个带独立 sfx 类的模型**——与 M2-SFX-DETECT-EVAL「chiqui7 是唯一 surveyed candidate with a dedicated SFX class」结论一致（`detection_sfx.py:8-11`）。带原生 .pt 的近域候选：
+**路线 B（替代 manga-seg .pt）**：HF 搜索（`manga-seg` / `manga segmentation` 两查询，2026-10-04 实测约 20+ 仓库）**未见第二个带独立 sfx 类的模型**——口径限定：AC2 沿用 M2-SFX-DETECT-EVAL 既有 surveyed 口径+本次两查询复核，非全站穷举证明——与 M2-SFX-DETECT-EVAL「chiqui7 是唯一 surveyed candidate with a dedicated SFX class」结论一致（`detection_sfx.py:8-11`）。带原生 .pt 的近域候选：
 
 | 模型 | 类别面 | 权重 | 许可 | 对 A′ 的可用性 |
 |---|---|---|---|---|
@@ -80,14 +85,16 @@ Ultralytics 官方训练入口完整可用：本预检在冒烟中实测 `YOLO("
 
 数据=coco8-seg（8 张）程序复制+标签 id%4 重映射为 chiqui7 四类名（冒烟只测显存/速度/链路，不产生精度结论）；每档实测 40 iter（**超出合同要求的 20 iter**，由复制倍数自然形成，只多不少）。
 
-| batch | peak VRAM (reserved) | peak VRAM (allocated) | s/iter (中位) | 吞吐 | epoch 墙钟 |
+| batch | peak VRAM (reserved，含 final val) | peak VRAM (allocated，含 final val) | s/iter (中位) | 吞吐 | 整段 train() 墙钟（含初始化+final val） |
 |---|---|---|---|---|---|
 | 2 | **1,940 MiB** | 1,722.6 MiB | 0.0548 | 36.5 img/s | 43.3s/40iter |
 | 4 | **4,030 MiB** | 3,343.1 MiB | 0.0698 | 57.3 img/s | 25.9s/40iter |
 | 8 | **7,488 MiB** | 6,039.4 MiB | 0.1194 | 67.0 img/s | 34.3s/40iter |
 
+- 口径注：「含 final val」＝ultralytics 在 `model.train()` 内训练完成后自动跑的 final validation（raw console 各档 `Validating …best.pt` 段），峰值 VRAM 计数覆盖该段；墙钟列为 `model.train()` 调用全程 `perf_counter` 差值（`vram_probe.py` 注释），非纯训练 iter 时间。
+
 - 证据：`raw/vram_probe_summary.json`、`raw/vram_probe_console.log`（逐档 ultralytics 原生日志，含 `imgsz=1024`/`amp=True` 训练参数回显）、逐档 `raw/vram_probe_b{2,4,8}.json`
-- **可行 batch 推算**：显存随 batch 线性（≈810 MiB/张）→ b12≈11GB、b16≈14.5GB（贴近 16GB 上限）。**推荐 V1 batch=8**（2 倍显存安全边际 + 最高实测吞吐 67 img/s）；b12 可作数据管线成熟后的提速选项。
+- **可行 batch 推算**：显存随 batch 线性（约 925 MiB/张，reserved 线性拟合 1940→7488 MiB over b2→b8）→ b12≈11.2GB、b16≈14.9GB（贴近 16GB 上限）。**推荐 V1 batch=8**（2 倍显存安全边际 + 最高实测吞吐 67 img/s）；b12 可作数据管线成熟后的提速选项。
 - **训练时长方向性外推**（局限：冒烟图为 COCO 640px 小图、实例稀疏，真实 manga 页实例更密，按 2-3× 折减）：2,000 张/epoch @b8 ≈ 30-90s → 100 epoch ≈ **1-2.5 小时/百 epoch**量级。V1 训练在单卡 5070 Ti 上完全可行。
 
 ## 5. AC4 ONNX 导出 + 生产适配冒烟：EXIT=0（无类别差异）
@@ -97,7 +104,7 @@ Ultralytics 官方训练入口完整可用：本预检在冒烟中实测 `YOLO("
 | 步骤 | 实测结果 |
 |---|---|
 | 导出 | `best.onnx` 40,824,248 B（38.9MB，与生产 chiqui7 41MB 同量级），sha256 `b1bb877f…` |
-| SHA 门（供应链） | 以导出物直接调 `_build_engine` → **`PROVIDER_FAILED` 正确命中**（门在位且对外来权重生效）；随后测试进程内将 `SFX_WEIGHTS_SHA256` 重指向导出物实际 sha（仅运行时模块常量，src 文件零改动） |
+| SHA 门（供应链） | 以导出物直接调 `_build_engine` → **`PROVIDER_FAILED` 正确命中**（门在位且对外来权重生效）；随后测试进程内将 `SFX_WEIGHTS_SHA256` 重指向导出物实际 sha——**仅进程内运行时常量重指，未写回 src/env/registry，进程结束即失效；生产 pin 仍为 `d87389af4350954143a216bcfe40fd2ad93312cb136534e6073c9c740d98b646`**（`detection_sfx.py:110-111`；本次 HF tree 端点 `lfs.oid` 与该 pin 逐字一致，见 §1.1），src 文件零改动 |
 | 类面断言（R8） | 导出物 metadata `names="{0: 'bubble', 1: 'panel', 2: 'sfx', 3: 'text'}"` 与生产 `SFX_CLASS_MAP` **逐字一致，零漂移**（官方栈换头导出天然对齐生产四类契约） |
 | imgsz 解析（DSH r1 R4） | metadata `"[1024, 1024]"` → `imgsz=1024, imgsz_source=metadata_parsed`（列表解析路径命中） |
 | detect 全链 | 合成 manga 页（1024×1536）conf=0.5 与 conf=0.01 两档：`DetectionResult` 构造合法（provider_id/arch/imgsz_source/class_filter options 全对）；0 候选=1-epoch 半随机权重的合法 fail-closed 结果 |
@@ -114,7 +121,7 @@ Ultralytics 官方训练入口完整可用：本预检在冒烟中实测 `YOLO("
 | chiqui7 争议现状 | HF 标签 `license:mit`（API 实测）vs 权重元数据 `AGPL-3.0`（`license-evidence.md:23`）——争议已由用户裁决接受（`detection_sfx.py:3-6` 既有记录）；本预检新增事实：A′ 基座为 **Ultralytics 官方 yolo11s-seg.pt，AGPL-3.0 无标签争议**，衍生权重 AGPL 属性更明确 |
 | 用户接受声明 | Task frontmatter `approval: user_ruling_2026-10-04_训练质量效率优先_许可降权备案`；DOMAIN-EXT-DIAG 二次裁决段（`doc/tasks/M2-SFX-DETECT-DOMAIN-EXT-DIAG.md:69-74`）：版权/许可风险用户明示接受，降级为登记备案项，不作为训练流程阻断门 |
 | 素材来源① HF webtoon（KO 域） | 二次裁决「KO HF 素材恢复训练资格」——备案在案，训练资格已恢复 |
-| 素材来源② densho810 | 追加利用报告已发（vol03 48/60/159 页，窗口 2026-11-02 前达标，`74fa71e9`）——权限交涉进行中，训练使用=备案项 |
+| 素材来源② densho810 | 追加利用报告已发（vol03 48/60/159 页，窗口 2026-11-02 前达标，`74fa71e9`＝履行登记 commit，message 经集成方 git show 验证；DSH r1 因沙箱无 git 误判为无关引用）——权限交涉进行中，训练使用=备案项 |
 | 素材来源③ P&C | 沿二次裁决同批备案（风险用户明示接受，登记不阻断） |
 
 ## 7. 风险与遗留
@@ -132,5 +139,8 @@ Ultralytics 官方训练入口完整可用：本预检在冒烟中实测 `YOLO("
 | 显存摸底摘要/逐档/控制台 | `verification/M2-SFX-FINETUNE-PREFLIGHT/raw/vram_probe_summary.json`、`vram_probe_b{2,4,8}.json`、`vram_probe_console.log` |
 | 导出链冒烟 | `raw/export_smoke.json`、`raw/export_smoke_console.log` |
 | 解析链注入 | `raw/nms_chain_probe.json` |
+| HF API/docs 原文快照（DSH r1 补档，2026-10-04 经代理实测，均 HTTP 200） | `raw/hf_api_models_chiqui7.json`、`raw/hf_api_models_chiqui7_revision_main.json`、`raw/hf_api_models_chiqui7_refs.json`、`raw/hf_tree_main_recursive.json`、`raw/hf_readme_main_snapshot.md`、`raw/ultralytics_docs_cfg_freeze_snapshot.html` |
 | 实验脚本（零 src） | `experiments/M2-SFX-FINETUNE-PREFLIGHT/scripts/{vram_probe,export_smoke,nms_chain_probe}.py` |
 | 外部树（不进 git） | venv/datasets/weights/runs：`G:/CODEX/New Manga.task-envs/M2-SFX-FINETUNE-gpu-py312/`；基座 `weights/yolo11s-seg.pt`（sha256 `1caa81c0…`） |
+
+> 注：raw 日志中出现的 mAP 数字（如 `vram_probe_console.log` 各档训练后 final validation 段）为 coco8-seg 合成/重映射冒烟的副产物，**不构成任何精度证据**。

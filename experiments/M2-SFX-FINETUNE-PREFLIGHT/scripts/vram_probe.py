@@ -1,4 +1,4 @@
-"""M2-SFX-FINETUNE-PREFLIGHT AC3：显存摸底（yolo11s-seg @imgsz=1024，batch 2/4/8 各 20 iter）。
+"""M2-SFX-FINETUNE-PREFLIGHT AC3：显存摸底（yolo11s-seg @imgsz=1024，batch 2/4/8 各 40 iter）。
 
 设计（AC1-③ 联动）：
 - 数据 = Ultralytics 官方 coco8-seg（8 train + 4 val，自动下载），标签类 id %4 重映射为
@@ -6,9 +6,10 @@
   不产生任何精度结论；
 - 四类名数据集使训练产物 best.pt 天然带 nc=4 head（官方 COCO 80 类基座换头微调），
   供 AC4 导出链直接对齐生产 SFX_CLASS_MAP 断言；
-- 每档 batch 通过复制 coco8 训练图（b2=5x/40 张、b4=10x/80 张、b8=20x/160 张）
-  使 epoch 恰为 20 iter；
-- 峰值显存 = torch.cuda.max_memory_reserved/allocated（训练前 reset）；
+- 每档 batch 通过复制 coco8 训练图（b2=20x/80 张、b4=40x/160 张、b8=80x/320 张）
+  使 epoch 恰为 40 iter（与实测一致，超出合同要求的 20 iter）；
+- 峰值显存 = torch.cuda.max_memory_reserved/allocated（训练前 reset，覆盖 model.train()
+  全程，含初始化与 ultralytics 训后 final validation/权重落盘）；
   it/s = on_train_batch_end 回调逐 iter 时间戳（排除首个 warmup iter 后取中位）。
 
 零 src；运行于 task-envs/M2-SFX-FINETUNE-gpu-py312（外部树），产物不进 git。
@@ -36,7 +37,7 @@ RAW_OUT = Path(
 )
 
 CLASS_NAMES = {0: "bubble", 1: "panel", 2: "sfx", 3: "text"}
-BATCH_REPEAT = {2: 20, 4: 40, 8: 80}  # coco8-seg train=4 张 → repeat 后每 epoch 恰 20 iter
+BATCH_REPEAT = {2: 20, 4: 40, 8: 80}  # coco8-seg train=4 张 → repeat 后每 epoch 恰 40 iter（b2: 80/2, b4: 160/4, b8: 320/8）
 IMGSZ = 1024
 
 
@@ -142,6 +143,8 @@ def probe_batch(batch: int) -> dict:
         name=f"b{batch}",
         verbose=True,
     )
+    # wall = 整段 model.train() 墙钟（含 dataloader/模型初始化、全部训练 iter、
+    # ultralytics 训后 final validation 与权重落盘），非纯训练 iter 时间
     wall = time.perf_counter() - t0
 
     peak_reserved = torch.cuda.max_memory_reserved() / 2**20

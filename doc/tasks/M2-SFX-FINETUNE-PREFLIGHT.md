@@ -25,7 +25,7 @@ delivery_head: 6b73c92a
 
 ## Acceptance Criteria
 
-- [x] AC1 路线 A 技术实证（chiqui7 续训，效率首选）：①HF `chiqui7/yolo11-manga-seg` 是否提供**原生 .pt 训练权重**（生产现用 41MB ONNX 不能直接微调——Ultralytics 对 ONNX 回训支持有限，必须查证）；②训练代码/配置完整性（Ultralytics yolo11 seg 训练入口）；③**四类监督策略定案**：只标 sfx 时 bubble/panel/text 目标会被当背景导致其他类退化——从「四类全标 / 域内回放混合 / 冻结非 sfx 输出头」三选项按质量成本比定案并给理由；④imgsz=1024 生产口径兼容。（**①否定：仓库仅 ONNX 无 .pt**——路线 A chiqui7 续训形态受阻；②通过；③定案选项 1 四类全标（选项 3 技术不可行）；④通过）
+- [x] AC1 路线 A 技术实证（chiqui7 续训，效率首选）：①HF `chiqui7/yolo11-manga-seg` 是否提供**原生 .pt 训练权重**（生产现用 41MB ONNX 不能直接微调——Ultralytics 对 ONNX 回训支持有限，必须查证）；②训练代码/配置完整性（Ultralytics yolo11 seg 训练入口）；③**四类监督策略定案**：只标 sfx 时 bubble/panel/text 目标会被当背景导致其他类退化——从「四类全标 / 域内回放混合 / 冻结非 sfx 输出头」三选项按质量成本比定案并给理由；④imgsz=1024 生产口径兼容。（**①否定：仓库仅 ONNX 无 .pt**——路线 A chiqui7 续训形态受阻；②通过；③定案选项 1 四类全标（选项 3 无法以可接受代价达成目标，排除——官方 freeze 配置面仅支持按层索引/模块名冻结、无按类通道冻结，类级屏蔽需自定义训练代码且共享 backbone/neck 仍漂移）；④通过）
 - [x] AC2 路线 B/C 备胎登记（各一段静态评估，不深投入）：B=`yolo11-manga-seg` 独立 sfx 类；C=RT-DETR 系 Apache 基座（ogkalu 栈现成）。仅当 A 实证受阻才升级深评。（A 受阻已触发升级；B=无带 sfx 类的 .pt、anonimkaq4/ShadowB 候选登记；C=ogkalu RT-DETR-v2 Apache 无 sfx、生产链不同构，维持备胎）
 - [x] AC3 训练环境就绪：隔离 venv `task-envs/M2-SFX-FINETUNE-gpu-py312`（沿 DOCTR-QUAL GPU venv 先例，RTX 5070 Ti 实测 torch+CUDA 可用）；**显存摸底**：yolo11s-seg imgsz1024 小 batch 冒烟实测峰值显存与 it/s，推算可行 batch 与预计训练时长。（torch 2.11.0+cu128；b2/b4/b8=1.94/4.03/7.49GB，推荐 batch=8）
 - [x] AC4 ONNX 导出+生产适配冒烟：任一路线模型（可用现役 yolo11s-seg.onnx 复刻）经「训练格式→ONNX 导出→`detection_sfx.py` 生产推理序列加载（imgsz metadata 解析/conf 门/类别映射）」全链冒烟 EXIT=0——证明未来训练产物能进生产通道。（官方基座换头 nc=4 实训产物导出，类面与生产断言零漂移，SHA 门/全链/解析链注入 EXIT=0）
@@ -56,4 +56,9 @@ depends_on 均已 done。风险：路线 A 若无 .pt 原生权重→升级 B/C 
 
 - 主报告：`verification/M2-SFX-FINETUNE-PREFLIGHT/preflight-report.md`（路线定案建议 A′、四类策略选项 1、显存实测、导出链证据、AC5 备案表）
 - 路线定案建议：**A′＝Ultralytics 官方 yolo11s-seg.pt（AGPL）基座 + BJ/KO 四类 GT + 合成数据微调**；原路线 A（chiqui7 续训）实证受阻（无 .pt）；定案待编排裁决（合同停点）。
-- Handoff：`doc/handoffs/M2-SFX-FINETUNE-PREFLIGHT-6b73c92a.md`。Review：尚无（待 DSH 非-作者审查）。
+- Handoff：`doc/handoffs/M2-SFX-FINETUNE-PREFLIGHT-6b73c92a.md`。Review：DSH r1 已回，返修完成（见下）。
+
+### DSH r1 返修记录（2026-10-04，owner=ZCode）
+
+- 返修范围：`verification/M2-SFX-FINETUNE-PREFLIGHT/**`（报告修订 + 新增 raw 六件：HF API 主/revision/refs/tree/README 快照 + ultralytics docs freeze 原文快照，全部 `curl -x http://127.0.0.1:7890` 实测 HTTP 200）、Handoff（判语同步 + names 硬约束 + onnx 系版本附录 + 「DSH r1 修订段」处置对照表）、本文件、`vram_probe.py`（仅注释）。零 src/测试/STATUS/生产 pin 改动；未重跑 GPU 实验。
+- 关键处置：P2-1 经集成方 `git show 74fa71e9` 验证为 DSH 误判（message 即 densho810 追报履行登记），保留原表述仅补溯源注；P2-2 选项 3 判语四处收敛；P2-3 usedStorage 全 revision 排除逻辑显式化（附 tree 端点 `lfs.oid`=生产 pin 的交叉证据）；P3-2 显存斜率改 925 MiB/张（1940→7488 over b2→b8）；P4-1/P4-2/P4-4/P4-6 按择要授权登记不修。逐条处置对照见 Handoff「DSH r1 修订段」。
