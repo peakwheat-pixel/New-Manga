@@ -52,10 +52,13 @@
 
 ## 已知限制与 NOT_RUN（如实）
 
-- NSIS 安装器构建未执行（授权面边界；bundle onedir+resource 随包链已实测）——下一发布轮沿 PROD-1 cleanstart 复验。
+- NSIS 安装器构建未执行——理由按 AC2 允许口径对齐（DSH r1 P3-4）：授权面外的交付链环节（tauri/NSIS 打包属 M2-AC5/PROD-1 交付链），非技术不可行；bundle onedir+resource 随包链已实测——下一发布轮沿 PROD-1 cleanstart 复验。
 - BJ06 sfx 检出 5（v2b）vs 8（chiqui7）=directional（单页无 GT，T3 G1 判定方向一致：v2b 更保守）。
 - 冻结探针 FV-1 conf 0.9047 vs PROD-1 期望 0.9313=directional（期望值为 chiqui7 时代锚，不跨权重携带）。
 - AC1 冒烟 venv=M2-TA3-B-ocr（先例同款；任务书 FINETUNE venv 用于 AC3/AC4）——偏差已登记 switch-report §1。
+- **残留身份文本清单（DSH r1 P3-1/P3-2，越域登记交后续清理）**：requirements.txt:30-36、detection_sfx.py:24/:139-140/:286/:498、core_assembly.py:958、build_sidecar.ps1:115、run_qualification.py:481（detector 标签）——行为无影响，见 Task 偏差登记段。
+- **AC1 断言面（DSH r1 P3-3）**：「新增故障=0」硬断言消费 attribution 集合差；failures=0+全 stage OK 为佐证未被脚本消费——DSH 独立逐字段复核结论方向正确；脚本强化留待下次重跑。
+- 锚 JSON 仅 rgb24 面（DSH r1 P4-4）；FV-1 判据面窄于记录面（P4-6）；AC3/AC4 console 缺 shell 级退出码（P4-2）。
 
 ## 集成方后续（Task 合同外提示）
 

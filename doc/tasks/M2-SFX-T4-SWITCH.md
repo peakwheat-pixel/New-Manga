@@ -59,4 +59,10 @@ T3 正式评测门（done @merge `27817412`）逐门判定：**v2b（best.onnx `
 
 **偏差登记**：①AC1 冒烟 venv=`M2-TA3-B-ocr`（run_qualification 需 PySide6+manga_ocr，先例同款；任务书所述 FINETUNE venv 用于 AC3/AC4）；②Owner 执行中断续接一次（子 agent 600s 监控超时×2+配额耗尽终止，AC1 后半由编排会话代行 Owner 接管完成——Owner=ZCode 同一作者身份，非作者 Review 约束不受影响）。
 
+**偏差登记（DSH r1 条件闭合，r1=approved_with_conditions 0×P0/P1/P2、4×P3、7×P4）**：
+- **P3-1 残留身份文本清单（越域，未改=正确处置，此处登记交后续发布轮/Task 清理）**：pin 切换后以下位置仍保留 chiqui7 时代身份文字——`requirements.txt:30-36`（PROD-1 段含 d87389af sha 字面量）、`detection_sfx.py:24/:139-140/:286/:498`（类 docstring 与注释）、`src/bootstrap/core_assembly.py:958`（注释）、`packaging/m2ac5/build_sidecar.ps1:115`（段头注释）、`experiments/M2-TA3-B/run_qualification.py:481`（detector 标签硬编码 `manga-ogkalu+chiqui7-sfx`，**非本 Task 引入**，merge 后所有 run_qualification 证据继续如此标注=权重身份证据须以 harness-meta/pin 重指承载，P3-2 同此）——全部在本 Task 授权修改面之外，行为无影响（sha 校验链以 pin 常量为准）。
+- **P3-4 NSIS NOT_RUN 理由口径**：AC2 允许条件原文=「若 NSIS 随包验证在本环境不可行」；实际理由=「授权面边界（tauri/NSIS 打包属 M2-AC5/PROD-1 交付链）」。二者兼容（授权面外即本环境不执行），此处按 AC2 口径显式对齐：**NSIS 随包验证未执行=授权面外的交付链环节，非技术不可行**。
+- **P3-3 AC1「新增故障=0」断言面说明**：`compare_g7_arms.py` 硬断言实际消费的是两臂 `attribution` 集合差（=新增 attribution=0）；`qual-report.failures=0`+逐 stage OK/COMPLETED 为佐证证据未被脚本消费。DSH 独立逐字段复核确认结论方向正确（两臂 attribution 空集+全 stage OK+failures=0）。断言面收窄已登记，脚本强化（并入 failures==0）留待下次重跑时一并（避免脚本与已落盘证据版本差）。
+- **P4 级登记（下轮补强，非阻断）**：锚 JSON 仅 rgb24 面（rgb32 走同一 provider 路径由独立测试钉住）；冻结探针 FV-1 PASS 判据不含 sfx 候选存在（记录面宽于判据面，观测值含 sfx-1/0.9047）；AC3/AC4 console 缺 shell 级退出码捕获；`rollback-drill.json` 的 `weights_sha256_verified_by_gate` 为脚本常量回显（真证明=`_build_engine` 内部比对通过）。
+
 **交付 head**：AC5 commit（见 branch tip）；详细部署指引与 NOT_RUN 清单见 [switch-report](../verification/M2-SFX-T4-SWITCH/switch-report.md) 与 [Handoff](../handoffs/M2-SFX-T4-SWITCH-zcode-20261006.md)。
