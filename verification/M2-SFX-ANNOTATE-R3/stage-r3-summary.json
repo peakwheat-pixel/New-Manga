@@ -1,6 +1,6 @@
 {
  "task": "M2-SFX-ANNOTATE-R3 stage-2（AC2 后半判定并入+仲裁 / AC3 manifest.r3+train-v3 重建）",
- "generated_at_utc": "2026-10-05T02:46:59Z",
+ "generated_at_utc": "2026-10-05T03:40:47Z",
  "tool": "experiments/M2-SFX-ANNOTATE-R3/stage2_finalize_r3.py --step all",
  "mode": "ai-review-backfill（codex+agy 共识 19+分歧仲裁 3；human_review=false，不谎称人工）",
  "r3_judgments": {
@@ -346,10 +346,10 @@
   }
  },
  "artifacts": {
-  "training_data/sfx-v1/annotate-r3/preannotate/manifest.r3.json": "1c6a97bc9ec5e052e7df38bd16c1ac8b58b7c93b0a2b675cccde382014df8fed",
-  "training_data/sfx-v1/train-v3/manifest.train-v3.json": "ab7b68de5ae5f2b960fa71c0fbc4a0dca24cd808644059423adc2cbb95d98e50",
-  "training_data/sfx-v1/train-v3/dataset/dataset.yaml": "71dbe2c3621b3156417b2286c3d619bb5992df59b651e6cd891724b2a589b281",
-  "training_data/sfx-v1/train-v3/dataset/_export_stats.json": "4d4a178c965076547a89c276d58c5ac2b158b4f0208a2d7e95b90e198339ad36"
+  "training_data/sfx-v1/annotate-r3/preannotate/manifest.r3.json": "fa663d262a825ed46078b16214c32a8fb8caaccb5d0606cb82ee1098750a39f9",
+  "training_data/sfx-v1/train-v3/manifest.train-v3.json": "6fd2829c3036f1b3619d4bf14ccc575720a5c680f85b214928c185f474c483d4",
+  "training_data/sfx-v1/train-v3/dataset/dataset.yaml": "fa231f9e511aa84c1880aacef4f8f54b28b747cc4ce790af05cd3f4d4cca8a30",
+  "training_data/sfx-v1/train-v3/dataset/_export_stats.json": "ffe8a07825d00ce6c690295ba047b08e6323ab23771deaa7165b8b3fe234c2d4"
  },
  "honest_notes": [
   "BJ26-37 六页（BJ32-37，AC1 目检确认含毛笔竖排 SFX）chiqui7 零候选：保持 pseudo 零框负证据，SFX 标注留 miss 补画通道（chiqui7 BJ 盲区实证三连：R2 conf 天然低→R3 密度全≤1→毛笔页零检出）",

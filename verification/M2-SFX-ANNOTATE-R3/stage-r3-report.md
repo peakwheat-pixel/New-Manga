@@ -136,6 +136,8 @@ python experiments/M2-SFX-ANNOTATE-R3/stage2_finalize_r3.py --step all  # 判定
 
 ## 5. AC3 manifest.r3 + train-v3 重建
 
+> **DSH r1 C1 落框（P2-1 处置①）**：`R2-BJ22-B01`（仲裁 correct，原候选宽框仅碰椭圆左缘）已按仲裁 `fix_hint=[1840,60,2100,570]` 落框——`apply_bj22_correction.py` 幂等脚本+重跑 reassign/yolo/summary（指纹不变 d57353b1；train 仍 904/2311；label 验证 x∈[0.6246,0.7128] 逐位吻合）。**BJ 正集 18 框全部有效**。correct 坐标变更先例=本轮首例（R1 先例为「坐标未动 needs_fix 留痕」——本轮按 DSH 建议升级为落框，revision.correction_applied 留痕）。
+
 ### 5.1 manifest.r3.json（判定并入，real 94）
 
 - 构成：R2 底册 82 样本（`R2 preannotate/manifest.r2.json` **只读**，`provenance.stage2r2` 不覆盖）+
@@ -204,6 +206,11 @@ python experiments/M2-SFX-ANNOTATE-R3/stage2_finalize_r3.py --step all  # 判定
 
 ## 6. AC4 T3 材料更新提案（仅提案，不裁决）
 
+> **DSH r1 P3-4 噪声分层不对称登记（T3 归因材料）**：densho810 64 个 pseudo 不入 train；own-manga 418 pseudo 带模型输出框入 train 当 GT（自蒸馏性质）——两者 annotation_status 同名处置相反，T3 归因时 own-manga 418 框不可与 BJ 正集同权。
+> **DSH r1 P3-5**：选页 tier 内顺序=目检结论顺序，非 sha256 机械决胜（kept=0 组 38 页机械序未用于 rank7-12 组内排序）。
+> **DSH r1 P4-2**：「无 conf 门槛」精确口径=无人工门槛，仅引擎下限 0.01（conf_scan_diag.py:121）。
+> **DSH r1 P4-4**：R2 351 label 比对=350 项逐字节+1 项前缀特判（pre-bj16），非 351 全逐字节。
+
 1. **BJ 正集量级**：毛笔竖排主攻形态正样本 5 页 11 框→**8 页 18 框**（train 侧 6 页 13 框）——达成合同
    「扩到几十框量级」方向，绝对量仍小（18 框，如实报数）；BJ 域深度继续依赖 324 合成（横排系统字体/限定
    毛笔字体，与真竖排毛笔形态覆盖度未经验证）+own-manga 558（模型输出框未收紧）。T3 Gate 归因时
@@ -214,7 +221,7 @@ python experiments/M2-SFX-ANNOTATE-R3/stage2_finalize_r3.py --step all  # 判定
 3. **T3 材料清单**：train-v3 指纹 `d57353b1…28de`、912 全量（pos 30+synth 324+own 558）、BJ 正集 18 框、
    考卷 5 框逐位=R2 出厂、`_export_stats.json`/`dataset.yaml` 在 `train-v3/dataset/`。
 4. **检测盲区口径持续登记**：chiqui7 对 BJ 毛笔竖排三连实证（R2 conf 天然低→R3 密度全≤1→BJ32-37 毛笔页
-   零检出）——**T3 引入新检测权重前，该盲区口径需持续登记**（BJ32-37 miss 补画通道开放）。
+   零检出）——**T3 引入新检测权重前，该盲区口径需持续登记**（BJ32-37 miss 补画已识别未执行（DSH r1 P2-2；T3 释放时立项 M2-SFX-ANNOTATE-R3-MISS：BJ32-37 六页 miss 补画走同一双 AI+仲裁链——把 BJ 正集推向几十框最快的一步））。
 
 ## 7. AC5 零 src 与 pin（收尾轮 #9-#12 复算）
 

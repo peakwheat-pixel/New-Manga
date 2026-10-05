@@ -173,3 +173,13 @@ report §8-§9）。GT 性质=**ai-consensus**（human_review=false，沿 R1 §0
 - **限制**：见「风险与遗留」1-8。
 - **建议**：T3 释放裁决以 report §6 提案为准（考卷重划仅提案）；BJ 正集量级 18 框如实报数，Gate 归因注意
   ai-consensus 上限（R1 §0）。
+
+## DSH r1 审查记录（2026-10-05，approved_with_conditions；C1/C2 已闭）
+
+- Verdict=approved_with_conditions（0×P0/P1、2×P2、5×P3、5×P4）；全文落 doc/reviews/M2-SFX-ANNOTATE-R3-65a6e038-dsh-r1.md。
+- **C1（P2-1，已闭=处置①落框）**：R2-BJ22-B01 按仲裁 fix_hint=[1840,60,2100,570] 落框（apply_bj22_correction.py 幂等入库）+重跑 reassign/yolo/summary（指纹不变；label 逐位验证）——BJ 正集 18 框全部有效。
+- **C2（P3-2，已闭）**：correct 先例更正为 R1（R2 本轮 correct=0）；本轮落框=先例升级（坐标变更首例），报告已声明。
+- **P2-2（立项建议）**：BJ32-37 六页 miss 补画=「已识别未执行」，T3 释放时立项 M2-SFX-ANNOTATE-R3-MISS（最快扩 BJ 正集路径）。
+- Q3 底册口径判断被 DSH 判定「正确且必要」（82 底册=preannotate/manifest.r2.json 唯一语义正确方案），登记充分。
+- P3-3 治理登记=编排 governance commit 已登（01bfe108）；P3-4/P3-5/P4-2/P4-4 已落报告 §6/§9。
+- 集成 Gate（DSH 无 shell 项由集成方复跑）：git diff 9258afc0..<merge> -- src/ 为空+pin 三常量在位+cases.json 纯追加 numstat。
