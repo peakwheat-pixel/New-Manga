@@ -2,13 +2,14 @@
 id: M2-SFX-ANNOTATE-R3
 title: "SFX 标注轮 R3（T1b-R3 扩标轮）：BJ 候选池 44 页选页入池+低置信扩审+正集扩容"
 kind: feature
-status: in_review
+status: done
 owner_claim: ZCode @85435bb9（2026-10-05）
 approval: user_ruling_2026-10-05_按推荐_T3释放
 suggested_owner: ZCode
 owner: ZCode
 reviewer: DeepSeek Harness（非作者）
 integrator: 编排会话代行 Codex（用户全权授权）
+integration_commit: 由编排 merge 后回填（分支顶 6f2621d2=C1 落框返修）
 depends_on: [M2-SFX-ANNOTATE-R2, M2-SFX-DATA-INFRA]
 base_commit: 9258afc0
 branch: agent/zcode/M2-SFX-ANNOTATE-R3
