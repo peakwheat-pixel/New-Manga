@@ -1,0 +1,369 @@
+{
+ "task": "M2-SFX-ANNOTATE-R3 stage-2（AC2 后半判定并入+仲裁 / AC3 manifest.r3+train-v3 重建）",
+ "generated_at_utc": "2026-10-05T03:40:47Z",
+ "tool": "experiments/M2-SFX-ANNOTATE-R3/stage2_finalize_r3.py --step all",
+ "mode": "ai-review-backfill（codex+agy 共识 19+分歧仲裁 3；human_review=false，不谎称人工）",
+ "r3_judgments": {
+  "units_total": 22,
+  "units_by_part": {
+   "bj_new": 6,
+   "bj_lowconf_leftover": 16
+  },
+  "consensus_units": 19,
+  "arbitrated_units": 3,
+  "final_verdict_dist": {
+   "delete": 15,
+   "confirm": 6,
+   "correct": 1
+  },
+  "reviewer_dist": {
+   "codex+agy-consensus": 19,
+   "arbiter": 3
+  },
+  "arbiter_note": "仲裁=编排会话逐图实看终裁（预览+原页上下文；rationale 全文在 judgments/arbiter/batch-1.json）"
+ },
+ "manifest_merge": {
+  "r2_base": "annotate-r2/preannotate/manifest.r2.json（82 样本，只读；R2 判定链 stage2r2 未覆盖）",
+  "base_manifest_caliber_note": "ask 字面「R2 final manifest 82 样本」与文件事实不符：R2 final/manifest.r2.json 实为 351 样本（27 complete+324 synthetic）；82 样本底册本体=preannotate/manifest.r2.json（27 complete+55 pseudo）。遗留 16 单元判定更新对象 pre-bj19/20/21/22 pseudo 页只在该82 底册，且 R2 stage2r2 语义的底册正是此文件——按 preanimate 82 底册执行，此处如实登记。",
+  "r3_bj_new": "annotate-r3/preannotate/manifest-bj-new.json（BJ26-37 12 样本）",
+  "r3_merged": "annotate-r3/preannotate/manifest.r3.json",
+  "samples_total": 94,
+  "stage3r3_actions": {
+   "—": 75,
+   "completed": 4,
+   "kept_complete_delete_leftovers_excluded": 2,
+   "kept_pseudo_zero_box_negative_evidence": 7,
+   "kept_pseudo_zero_candidates_negative_evidence": 6
+  }
+ },
+ "bj_positive": {
+  "r2_then": {
+   "pages": 5,
+   "boxes": 11,
+   "detail": "BJ16×3+BJ17×2+BJ18×3+BJ23×2+BJ24×1（train 6 框+challenge 考卷 5 框）"
+  },
+  "r3_now": {
+   "pages": 8,
+   "boxes": 18,
+   "train_pages": 6,
+   "train_boxes": 13,
+   "challenge_boxes": 5,
+   "detail": [
+    {
+     "sample_id": "pre-bj16",
+     "case_id": "BJ16",
+     "group": "densho810/vol01",
+     "boxes": 6,
+     "split": "train",
+     "units_kept": [
+      "R2-BJ16-B00",
+      "R2-BJ16-B01",
+      "R2-BJ16-B02",
+      "R2-BJ16-B04",
+      "R2-BJ16-B05",
+      "R2-BJ16-B06"
+     ],
+     "morphology": "斜向粗毛笔片假名（シャ/ゴ类）+R3 回填 3 框（R2-BJ16-B04/05/06 consensus confirm）"
+    },
+    {
+     "sample_id": "pre-bj17",
+     "case_id": "BJ17",
+     "group": "densho810/vol05",
+     "boxes": 2,
+     "split": "challenge",
+     "units_kept": [
+      "R2-BJ17-B00",
+      "R2-BJ17-B01"
+     ],
+     "morphology": "竖排毛笔假名（考卷不动）"
+    },
+    {
+     "sample_id": "pre-bj18",
+     "case_id": "BJ18",
+     "group": "densho810/vol05",
+     "boxes": 3,
+     "split": "challenge",
+     "units_kept": [
+      "R2-BJ18-B00",
+      "R2-BJ18-B01",
+      "R2-BJ18-B02"
+     ],
+     "morphology": "竖排/斜置粗毛笔片假名（考卷不动）"
+    },
+    {
+     "sample_id": "pre-bj22",
+     "case_id": "BJ22",
+     "group": "densho810/vol01",
+     "boxes": 2,
+     "split": "train",
+     "units_kept": [
+      "R2-BJ22-B00",
+      "R2-BJ22-B01"
+     ],
+     "morphology": "手术室潦草拟声（R2-BJ22-B00 consensus confirm + R2-BJ22-B01 arbiter correct）"
+    },
+    {
+     "sample_id": "pre-bj23",
+     "case_id": "BJ23",
+     "group": "densho810/vol03",
+     "boxes": 2,
+     "split": "train",
+     "units_kept": [
+      "R2-BJ23-B00",
+      "R2-BJ23-B01"
+     ],
+     "morphology": "—"
+    },
+    {
+     "sample_id": "pre-bj24",
+     "case_id": "BJ24",
+     "group": "densho810/vol03",
+     "boxes": 1,
+     "split": "train",
+     "units_kept": [
+      "R2-BJ24-B00"
+     ],
+     "morphology": "—"
+    },
+    {
+     "sample_id": "pre-bj28",
+     "case_id": "BJ28",
+     "group": "densho810/vol01",
+     "boxes": 1,
+     "split": "train",
+     "units_kept": [
+      "R3-BJ28-B00"
+     ],
+     "morphology": "竖排字块（R3-BJ28-B00 consensus confirm）"
+    },
+    {
+     "sample_id": "pre-bj29",
+     "case_id": "BJ29",
+     "group": "densho810/vol03",
+     "boxes": 1,
+     "split": "train",
+     "units_kept": [
+      "R3-BJ29-B00"
+     ],
+     "morphology": "竖排拟声（R3-BJ29-B00 consensus confirm）"
+    }
+   ],
+   "delta": "+3 页 +7 框（pre-bj16 +3 回填、pre-bj22 +2 新 complete、pre-bj28/29 +1×2）；考卷 5 框不动"
+  }
+ },
+ "train_v3": {
+  "seed": 20261004,
+  "method": "group-hash-rank-v2（T1a splits.assign_splits(force=True, pinned=…) 函数参数传参）+ R3 判定并入（BJ 正集 +3 页 +7 框）+ own-manga 六组/synthetic 钉 train + vol05 组钉 challenge",
+  "pinned_groups": {
+   "densho810/vol05": "challenge",
+   "own-manga/v01": "train",
+   "own-manga/v02s": "train",
+   "own-manga/v12": "train",
+   "own-manga/v13": "train",
+   "own-manga/v15": "train",
+   "own-manga/v16": "train",
+   "synthetic/annotate-r1": "train"
+  },
+  "fingerprint": "d57353b1db87749fbf20da4a4f2b555c60266db41fc69a594110bd7658c328de",
+  "by_split": {
+   "train": {
+    "samples": 904,
+    "boxes": 2311,
+    "real": 22,
+    "partial": 140,
+    "pseudo": 418,
+    "synthetic": 324,
+    "groups": [
+     "densho810/vol01",
+     "densho810/vol03",
+     "own-manga/v01",
+     "own-manga/v02s",
+     "own-manga/v12",
+     "own-manga/v13",
+     "own-manga/v15",
+     "own-manga/v16",
+     "synthetic/annotate-r1",
+     "vasyanator2/131385",
+     "vasyanator2/570506",
+     "vasyanator2/641253",
+     "vasyanator2/670145",
+     "vasyanator2/671421",
+     "vasyanator2/730656"
+    ],
+    "images": 904
+   },
+   "val": {
+    "samples": 4,
+    "boxes": 53,
+    "real": 4,
+    "partial": 0,
+    "pseudo": 0,
+    "synthetic": 0,
+    "groups": [
+     "vasyanator2/701535",
+     "vasyanator2/717481"
+    ],
+    "images": 4
+   },
+   "test": {
+    "samples": 2,
+    "boxes": 5,
+    "real": 2,
+    "partial": 0,
+    "pseudo": 0,
+    "synthetic": 0,
+    "groups": [
+     "vasyanator2/651664",
+     "vasyanator2/724815"
+    ],
+    "images": 2
+   },
+   "challenge": {
+    "samples": 2,
+    "boxes": 5,
+    "real": 2,
+    "partial": 0,
+    "pseudo": 0,
+    "synthetic": 0,
+    "groups": [
+     "densho810/vol05"
+    ],
+    "images": 2
+   }
+  },
+  "vs_v2_baseline": {
+   "v2_train": {
+    "samples": 901,
+    "boxes": 2304
+   },
+   "v3_train": {
+    "samples": 904,
+    "boxes": 2311
+   },
+   "delta": "+3 样本 +7 框（R3 判定并入）；val/test/challenge 不变",
+   "zero_drift_vs_r2_factory": true
+  },
+  "group_isolation_violations": 0,
+  "exam_dossier": {
+   "group": "densho810/vol05",
+   "samples": 2,
+   "boxes": 5,
+   "unchanged_assert": "PASS（框数+坐标逐位=R2 出厂）",
+   "r3_deleted_leftover_units": [
+    {
+     "sample_id": "pre-bj17",
+     "case_id": "BJ17",
+     "boxes": 2,
+     "r3_deleted_leftover_units": [
+      "R2-BJ17-B03",
+      "R2-BJ17-B04"
+     ]
+    },
+    {
+     "sample_id": "pre-bj18",
+     "case_id": "BJ18",
+     "boxes": 3,
+     "r3_deleted_leftover_units": [
+      "R2-BJ18-B03"
+     ]
+    }
+   ]
+  },
+  "exam_zero_overlap": "组名/id/页图 sha256 三层零交集断言 PASS（own 558 vs pos 30 全量比对）",
+  "yolo": {
+   "root": "training_data/sfx-v1/train-v3/dataset",
+   "names_dual_channel_check": {
+    "channel1_readback": {
+     "assert": "PASS",
+     "parsed": {
+      "0": "bubble",
+      "1": "panel",
+      "2": "sfx",
+      "3": "text"
+     }
+    },
+    "channel2_pyyaml": {
+     "assert": "PASS",
+     "parser": "pyyaml 6.0.3"
+    }
+   },
+   "ultralytics_scan": {
+    "names": {
+     "0": "bubble",
+     "1": "panel",
+     "2": "sfx",
+     "3": "text"
+    },
+    "nc": 4,
+    "dir_image_counts": {
+     "train": 904,
+     "val": 4,
+     "test": 2,
+     "challenge": 2
+    },
+    "assert": "PASS"
+   },
+   "label_crosscheck_vs_r2": {
+    "checked": 351,
+    "mismatch": [],
+    "bj16_suffix_checked": true,
+    "scope": "R2 出厂 351 中入 train-v3 的 351−0 全部（own 558 除外）与 R2 yolo 树原分集同名 label 逐字节比对；pre-bj16 例外=R3 判定 +3 框（原 3 行逐字节前缀+3 行新增特判）；新 complete pre-bj22/28/29 无出厂对照，走导出后自洽校验"
+   },
+   "sha256_spot_check": {
+    "verified_count": 22
+   },
+   "stem_mismatch_total": 0
+  },
+  "own_manga_ingest": {
+   "package": "G:\\CODEX\\New Manga.task-envs\\sfx-synth-exp\\own-manga-ingest\\own_manga_manifest_records.json",
+   "package_sha256": "af11645793fe5816ecaa717bfb9552d12dda09f464d759f9b252531ba4a89faa",
+   "material_root": "G:\\CODEX\\New Manga.task-envs\\sfx-synth-exp",
+   "pages_by_group": {
+    "own-manga/v01": 125,
+    "own-manga/v02s": 103,
+    "own-manga/v12": 88,
+    "own-manga/v13": 105,
+    "own-manga/v15": 53,
+    "own-manga/v16": 84
+   },
+   "boxes_by_group": {
+    "own-manga/v01": 481,
+    "own-manga/v02s": 319,
+    "own-manga/v12": 203,
+    "own-manga/v13": 295,
+    "own-manga/v15": 153,
+    "own-manga/v16": 287
+   },
+   "status": {
+    "partial": 140,
+    "pseudo": 418
+   },
+   "validate": {
+    "total": 558,
+    "errors": 0
+   },
+   "license": "source=user-own-manga（2026-10-04 用户裁决备案）"
+  }
+ },
+ "artifacts": {
+  "training_data/sfx-v1/annotate-r3/preannotate/manifest.r3.json": "fa663d262a825ed46078b16214c32a8fb8caaccb5d0606cb82ee1098750a39f9",
+  "training_data/sfx-v1/train-v3/manifest.train-v3.json": "6fd2829c3036f1b3619d4bf14ccc575720a5c680f85b214928c185f474c483d4",
+  "training_data/sfx-v1/train-v3/dataset/dataset.yaml": "fa231f9e511aa84c1880aacef4f8f54b28b747cc4ce790af05cd3f4d4cca8a30",
+  "training_data/sfx-v1/train-v3/dataset/_export_stats.json": "ffe8a07825d00ce6c690295ba047b08e6323ab23771deaa7165b8b3fe234c2d4"
+ },
+ "honest_notes": [
+  "BJ26-37 六页（BJ32-37，AC1 目检确认含毛笔竖排 SFX）chiqui7 零候选：保持 pseudo 零框负证据，SFX 标注留 miss 补画通道（chiqui7 BJ 盲区实证三连：R2 conf 天然低→R3 密度全≤1→毛笔页零检出）",
+  "BJ19/20/21 遗留候选全 delete→空框 pseudo 负证据留痕（R3 扩审关闭该三页的低置信候选）",
+  "R2-BJ22-B01 correct：框保留原坐标+revision 留痕（R2 stage2r2 correct 口径），重框参考区域在 revision.fix_hint_xyxy_page",
+  "底册口径差异如实登记（manifest_merge.base_manifest_caliber_note）：ask「final 82」实为 preanimate 82/final 351",
+  "own-manga 框坐标=chiqui7 模型输出未手工收紧（V2 边界沿袭）；partial 140/pseudo 418 分级如实",
+  "pre-bj16 label 与 R2 出厂比对走特判（原 3 行逐字节前缀一致+3 行新增）；其余 R2 出厂 348 入集样本逐字节一致",
+  "challenge 考卷页的 R3 遗留单元（BJ17×2/BJ18×1）全 delete 已留痕：考卷内容零改动"
+ ],
+ "data_root_gitignored": "training_data/sfx-v1/{annotate-r3,train-v3}/（repo gitignored）；R2/R1 树在本 worktree 外只读；own-manga 入册包在 task-envs 外部树只读",
+ "yolo_layout": {
+  "images": "training_data/sfx-v1/train-v3/dataset/images/{train,val,test,challenge}/",
+  "labels": "training_data/sfx-v1/train-v3/dataset/labels/{train,val,test,challenge}/（YOLO seg 归一化多边形，cls=2）",
+  "stem_rule": "sample_id 中 '/' 替换为 '__'"
+ }
+}

@@ -1,0 +1,121 @@
+{
+ "tool": "experiments/M2-SFX-ANNOTATE-R3/stage1_preannotate_bj_r3.py",
+ "generated_at_utc": "2026-10-05T02:17:25Z",
+ "stage": "annotate-r3-stage1-bj-new (AC2 清单部分：预标注+遗留单元+合并 units+批次切分；判定轮后续执行)",
+ "pages": {
+  "bj_new": [
+   "BJ26",
+   "BJ27",
+   "BJ28",
+   "BJ29",
+   "BJ30",
+   "BJ31",
+   "BJ32",
+   "BJ33",
+   "BJ34",
+   "BJ35",
+   "BJ36",
+   "BJ37"
+  ]
+ },
+ "units": {
+  "total": 22,
+  "byPart": {
+   "bj_new": 6,
+   "bj_lowconf_leftover": 16
+  },
+  "byReviewTier": {
+   "conf_lt_0.2": 19,
+   "conf_ge_0.5": 2,
+   "conf_0.2_to_0.5": 1
+  }
+ },
+ "batches": {
+  "n": 2,
+  "max_units_per_batch": 20,
+  "sizes": [
+   6,
+   16
+  ],
+  "files": [
+   "training_data/sfx-v1/annotate-r3/judgments/batch-list/batch-1.json",
+   "training_data/sfx-v1/annotate-r3/judgments/batch-list/batch-2.json"
+  ]
+ },
+ "artifacts_gitignored": {
+  "preannotate": [
+   "preannotate/scan-bj-new.json",
+   "preannotate/manifest-bj-new.json",
+   "preannotate/selection-bj-new.json"
+  ],
+  "worksheet": [
+   "worksheet/worksheet-bj-new.json",
+   "worksheet/worksheet-bj-new.md"
+  ],
+  "previews": "previews/*.png（bj_new 裁切预览）",
+  "judgments": [
+   "judgments/units.json",
+   "training_data/sfx-v1/annotate-r3/judgments/batch-list/batch-1.json",
+   "training_data/sfx-v1/annotate-r3/judgments/batch-list/batch-2.json"
+  ]
+ },
+ "judge_std": {
+  "basis": "沿 R2 双 AI 交叉审核判定口径（R2 judgments/units.json + codex/agy rationale 留痕 + R2 合同 AC2 JUDGE_STD：含毛笔竖排主攻形态说明）",
+  "verdict_enum": {
+   "confirm": "确认是 SFX（效果音文字）且框可接受",
+   "correct": "是 SFX 但框需修（在 rationale 写明修正方式）",
+   "delete": "非 SFX：对话框台词/旁白/章节标题字/画面物体/空白等",
+   "miss": "页级漏标（补记框坐标）"
+  },
+  "bj_focus": "BJ 域主攻形态=毛笔/书法竖排效果音：巨大粗笔画片假名、无对话框，常带尖刺/冲击框或黑底白字形态；fragmented 小型竖排拟声（「ア！」「ィ！」类尖刺小框）同样确认为 SFX（R2 confirm 判例：「斜向粗毛笔片假名（シャ等）重度艺术字，无气泡，典型效果音」）",
+  "negative_examples": "对话框台词（R3 复核判例：vol03_p0209「ダウン症だ」、vol05_p0192「ギャンブルの……」）、旁白框（vol05_p0218）、章节标题字（vol03_p0198「21（ニジュウイチ）/ダウン症」——标题字非拟声，防污染 SFX 域）、画面物体、空白 → delete",
+  "human_review": false,
+  "human_review_note": "human_review=false 保真：AI 代审裁决链沿 R1/R2 登记口径，判定链留痕"
+ },
+ "zero_box_pages": [
+  {
+   "case_id": "BJ32",
+   "domain": "bj",
+   "page_file": "vol05_p0026.png"
+  },
+  {
+   "case_id": "BJ33",
+   "domain": "bj",
+   "page_file": "vol03_p0117.png"
+  },
+  {
+   "case_id": "BJ34",
+   "domain": "bj",
+   "page_file": "vol03_p0175.png"
+  },
+  {
+   "case_id": "BJ35",
+   "domain": "bj",
+   "page_file": "vol03_p0094.png"
+  },
+  {
+   "case_id": "BJ36",
+   "domain": "bj",
+   "page_file": "vol03_p0140.png"
+  },
+  {
+   "case_id": "BJ37",
+   "domain": "bj",
+   "page_file": "vol05_p0103.png"
+  }
+ ],
+ "leftover": {
+  "source": "G:\\CODEX\\New Manga.worktrees\\M2-SFX-ANNOTATE-R2-zcode\\training_data\\sfx-v1\\annotate-r2\\worksheet\\worksheet-bj-new.json",
+  "conf_lt": 0.2,
+  "n": 16,
+  "by_case": {
+   "BJ16": 4,
+   "BJ17": 2,
+   "BJ18": 1,
+   "BJ19": 3,
+   "BJ20": 2,
+   "BJ21": 2,
+   "BJ22": 2
+  }
+ }
+}

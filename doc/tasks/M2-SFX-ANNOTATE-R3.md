@@ -2,13 +2,14 @@
 id: M2-SFX-ANNOTATE-R3
 title: "SFX 标注轮 R3（T1b-R3 扩标轮）：BJ 候选池 44 页选页入池+低置信扩审+正集扩容"
 kind: feature
-status: ready
-owner_claim: —
+status: done
+owner_claim: ZCode @85435bb9（2026-10-05）
 approval: user_ruling_2026-10-05_按推荐_T3释放
 suggested_owner: ZCode
 owner: ZCode
 reviewer: DeepSeek Harness（非作者）
 integrator: 编排会话代行 Codex（用户全权授权）
+integration_commit: 由编排 merge 后回填（分支顶 6f2621d2=C1 落框返修）
 depends_on: [M2-SFX-ANNOTATE-R2, M2-SFX-DATA-INFRA]
 base_commit: 9258afc0
 branch: agent/zcode/M2-SFX-ANNOTATE-R3
@@ -41,11 +42,11 @@ AC4：三文档齐。
 
 ## Acceptance Criteria
 
-- [ ] AC1 候选池密度选页 top-12 入池（BJ26-BJ37 纯追加）
-- [ ] AC2 新页预标注（无 conf 门槛）+遗留 16 单元+双 AI 交叉审核
-- [ ] AC3 manifest v3+train-v3 重切（考卷不动+own-manga/合成并入）
-- [ ] AC4 报告+Handoff+Task 回填+T3 材料更新
-- [ ] AC5 零 src；数据本体 gitignored；Git 只进摘要与 cases.json 追加
+- [x] AC1 候选池密度选页 top-12 入池（BJ26-BJ37 纯追加）@579af8a5
+- [x] AC2 新页预标注（无 conf 门槛）+遗留 16 单元+双 AI 交叉审核 @d1a6da43+85435bb9
+- [x] AC3 manifest v3+train-v3 重切（考卷不动+own-manga/合成并入）@85435bb9
+- [x] AC4 报告+Handoff+Task 回填+T3 材料更新（本次 docs 提交）
+- [x] AC5 零 src；数据本体 gitignored；Git 只进摘要与 cases.json 追加
 
 ## 允许修改范围
 
@@ -62,4 +63,24 @@ AC4：三文档齐。
 
 ## 交付与运行记录
 
--（待 Owner 回填）
+- Owner=ZCode；分支 `agent/zcode/M2-SFX-ANNOTATE-R3`，base=9258afc0（分支自 main `7dd5402d` 分出）。
+  交付链：material @`579af8a5`（AC1 选页入池：44 页候选池密度扫描 kept=1 六页直选+kept=0 38 页并列 AI 目检
+  毛笔形态决胜选 6 → cases.json 纯追加 BJ26-BJ37 +900/−0+material 三脚本）→ prep @`d1a6da43`（AC2 清单：
+  BJ26-37 整页 letterbox 预标注无 conf 门槛全检出入审+R2 遗留 conf<0.2 16 单元并入 → units 22+批次 [6,16]）
+  → `85435bb9`（AC2 后半+AC3：双 AI 判定比对共识 19+分歧 3→编排逐图实看仲裁终裁 → final 22 单元
+  confirm6+correct1+delete15 → 判定并入 manifest.r3 real 94（T1a schema 0 错误）+ train-v3 重建 912 全量
+  （train 904/2311+val 4/53+test 2/5+challenge 2/5 考卷 5 框不动））→ docs（AC4 三文档：报告+Handoff+本回填）。
+- **核心结果**：BJ 正集 5 页 11 框→**8 页 18 框**（train 侧 3 页 6 框→6 页 13 框：pre-bj16 回填+3、pre-bj22
+  新 complete+2、pre-bj28/29 新页+1×2；考卷 5 框坐标逐位=R2 出厂不动）；双审 codex 22（confirm7/correct0/
+  delete15）+agy 22（confirm8/correct0/delete14）→共识 19+分歧 3（R3-BJ27-B00 delete 花纹领带/R2-BJ20-B01
+  delete 器件牌字符/R2-BJ22-B01 correct 椭圆拟声框需收缩留 revision 链）；uncovered=0 残留=0；train-v3 912
+  全量（指纹 `d57353b1…28de`、seed=20261004、组隔离 0 违例、考卷零重叠三层断言、R2 出厂 351 label 逐字节
+  0 失配、own-manga 558+synthetic 324 并入、零漂移）；BJ32-37 零候选负证据留 miss 补画通道。
+- **交付后复核轮=PASS**（五项独立重算+超抽 4 图实看 verdict/rationale 全一致；非阻断登记 4 条）。
+  底册口径差异如实登记：ask 字面「R2 final manifest 82」实为 preanimate 82/final 351（report §0）。
+- **GT 性质=ai-consensus**（human_review=false，沿 R1 §0 口径）；T3 材料更新=report §6 仅提案不裁决
+  （考卷是否随正集扩容重划留用户/编排裁决）。
+- 证据：[stage-r3-report.md](../verification/M2-SFX-ANNOTATE-R3/stage-r3-report.md)（全部数字为收尾轮从盘上
+  产物复算，§2.2 十三项复算记录）+ [stage-r3-summary.json](../verification/M2-SFX-ANNOTATE-R3/stage-r3-summary.json)
+  + [Handoff](../doc/handoffs/M2-SFX-ANNOTATE-R3-zcode-20261005.md)。
+- 状态：**in_review**（待 Reviewer=DeepSeek Harness 非作者独立 Review；通过后编排会话代行 Codex 集成）。
