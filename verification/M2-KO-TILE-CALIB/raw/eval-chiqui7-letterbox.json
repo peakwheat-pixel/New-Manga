@@ -1,0 +1,797 @@
+{
+ "task": "M2-KO-TILE-CALIB AC1+AC2（KO 长条页 tile vs letterbox 口径对照）",
+ "generated_at_utc": "2026-10-05T02:01:28Z",
+ "mode": "full",
+ "gt_source": {
+  "manifests": [
+   "G:\\CODEX\\New Manga.worktrees\\M2-SFX-ANNOTATE-R2-zcode\\training_data\\sfx-v1\\annotate-r2\\final\\manifest.val.json",
+   "G:\\CODEX\\New Manga.worktrees\\M2-SFX-ANNOTATE-R2-zcode\\training_data\\sfx-v1\\annotate-r2\\final\\manifest.test.json"
+  ],
+  "pages": {
+   "pre-k08": {
+    "split": "val",
+    "size": [
+     690,
+     51971
+    ],
+    "n_gt": 27,
+    "aspect": "1:75"
+   },
+   "pre-k09": {
+    "split": "val",
+    "size": [
+     690,
+     100480
+    ],
+    "n_gt": 24,
+    "aspect": "1:146"
+   },
+   "pre-k01": {
+    "split": "test",
+    "size": [
+     690,
+     62133
+    ],
+    "n_gt": 2,
+    "aspect": "1:90"
+   },
+   "pre-k02": {
+    "split": "test",
+    "size": [
+     600,
+     18401
+    ],
+    "n_gt": 3,
+    "aspect": "1:31"
+   }
+  },
+  "n_gt_total": 56,
+  "image_sha256_asserted": true
+ },
+ "weights": {
+  "chiqui7": {
+   "onnx": "G:\\CODEX\\New Manga.task-envs\\M2-SFX-DETECT\\weights\\yolo11s-seg.onnx",
+   "sha256": "d87389af4350954143a216bcfe40fd2ad93312cb136534e6073c9c740d98b646",
+   "note": "生产现役权重（pin d87389af… 逐字核对），pin 原样零重指",
+   "imgsz": 1024,
+   "imgsz_source": "metadata_parsed"
+  },
+  "v2b": {
+   "onnx": "G:\\CODEX\\New Manga.worktrees\\M2-SFX-TRAIN-V2-zcode\\training_data\\sfx-v1\\train-v2\\weights\\v2b\\best.onnx",
+   "sha256": "944e811410933ad6ff8d32446fcc9eef90fb463794e1874ce83035e83acd418d",
+   "note": "T2-V2 产物 best.onnx（sha 前缀 944e8114 断言过），进程内重指 pin",
+   "imgsz": 1024,
+   "imgsz_source": "metadata_parsed"
+  }
+ },
+ "calibers": {
+  "letterbox": "生产序列原样 SfxDetectionProvider.detect（letterbox 1024/类无关 NMS 0.7/sfx 过滤/CPUExecutionProvider）",
+  "tile": "R1 tile_690x1024_overlap128 复刻：tile 宽=页宽原生无缩放、高 1024、重叠 128（步长 896、末尾补页底锚点）；每 tile 生产序列本体推理（dsfx._letterbox+_sfx_boxes）；页级跨 tile IoU 0.5 conf 降序贪心 NMS（R1 _dedup_boxes 逐字）"
+ },
+ "matching": "box IoU>=0.5，pred conf 降序贪心（每 GT 至多一预测；沿 eval_v2.py match_gt 逐字）",
+ "confs": {
+  "0.5": "生产冻结",
+  "0.2": "宽松口径"
+ },
+ "matrix": {
+  "chiqui7": {
+   "letterbox": {
+    "0.5": {
+     "matched": "0/56",
+     "recall_rate": 0.0,
+     "precision": null,
+     "n_pred": 0
+    },
+    "0.2": {
+     "matched": "0/56",
+     "recall_rate": 0.0,
+     "precision": null,
+     "n_pred": 0
+    }
+   },
+   "tile": {
+    "0.5": {
+     "matched": "56/56",
+     "recall_rate": 1.0,
+     "precision": 0.8235,
+     "n_pred": 68
+    },
+    "0.2": {
+     "matched": "56/56",
+     "recall_rate": 1.0,
+     "precision": 0.6667,
+     "n_pred": 84
+    }
+   }
+  },
+  "v2b": {
+   "letterbox": {
+    "0.5": {
+     "matched": "0/56",
+     "recall_rate": 0.0,
+     "precision": null,
+     "n_pred": 0
+    },
+    "0.2": {
+     "matched": "0/56",
+     "recall_rate": 0.0,
+     "precision": null,
+     "n_pred": 0
+    }
+   },
+   "tile": {
+    "0.5": {
+     "matched": "35/56",
+     "recall_rate": 0.625,
+     "precision": 0.3465,
+     "n_pred": 101
+    },
+    "0.2": {
+     "matched": "43/56",
+     "recall_rate": 0.7679,
+     "precision": 0.2019,
+     "n_pred": 213
+    }
+   }
+  }
+ },
+ "wording_discipline": "directional 评测，统计功效低；结论禁用「显著」；0 也如实",
+ "side": "chiqui7",
+ "caliber": "letterbox",
+ "matrix_cell": {
+  "0.5": {
+   "matched": "0/56",
+   "recall_rate": 0.0,
+   "precision": null,
+   "n_pred": 0
+  },
+  "0.2": {
+   "matched": "0/56",
+   "recall_rate": 0.0,
+   "precision": null,
+   "n_pred": 0
+  }
+ },
+ "per_sample": {
+  "0.5": {
+   "per_page": [
+    {
+     "sample_id": "pre-k08",
+     "gt": [
+      {
+       "unit_id": "R1-K08-B00",
+       "conf": 0.9608
+      },
+      {
+       "unit_id": "R1-K08-B01",
+       "conf": 0.96
+      },
+      {
+       "unit_id": "R1-K08-B02",
+       "conf": 0.9593
+      },
+      {
+       "unit_id": "R1-K08-B03",
+       "conf": 0.9584
+      },
+      {
+       "unit_id": "R1-K08-B04",
+       "conf": 0.9542
+      },
+      {
+       "unit_id": "R1-K08-B05",
+       "conf": 0.9505
+      },
+      {
+       "unit_id": "R1-K08-B06",
+       "conf": 0.946
+      },
+      {
+       "unit_id": "R1-K08-B07",
+       "conf": 0.9456
+      },
+      {
+       "unit_id": "R1-K08-B09",
+       "conf": 0.936
+      },
+      {
+       "unit_id": "R1-K08-B10",
+       "conf": 0.9345
+      },
+      {
+       "unit_id": "R1-K08-B11",
+       "conf": 0.9276
+      },
+      {
+       "unit_id": "R1-K08-B12",
+       "conf": 0.9153
+      },
+      {
+       "unit_id": "R1-K08-B13",
+       "conf": 0.8977
+      },
+      {
+       "unit_id": "R1-K08-B14",
+       "conf": 0.8935
+      },
+      {
+       "unit_id": "R1-K08-B15",
+       "conf": 0.8749
+      },
+      {
+       "unit_id": "R1-K08-B16",
+       "conf": 0.8737
+      },
+      {
+       "unit_id": "R1-K08-B17",
+       "conf": 0.8697
+      },
+      {
+       "unit_id": "R1-K08-B18",
+       "conf": 0.833
+      },
+      {
+       "unit_id": "R1-K08-B19",
+       "conf": 0.8269
+      },
+      {
+       "unit_id": "R1-K08-B20",
+       "conf": 0.8229
+      },
+      {
+       "unit_id": "R1-K08-B21",
+       "conf": 0.8211
+      },
+      {
+       "unit_id": "R1-K08-B22",
+       "conf": 0.7772
+      },
+      {
+       "unit_id": "R1-K08-B23",
+       "conf": 0.7491
+      },
+      {
+       "unit_id": "R1-K08-B24",
+       "conf": 0.7422
+      },
+      {
+       "unit_id": "R1-K08-B25",
+       "conf": 0.7415
+      },
+      {
+       "unit_id": "R1-K08-B26",
+       "conf": 0.7279
+      },
+      {
+       "unit_id": "R1-K08-B27",
+       "conf": 0.7056
+      }
+     ],
+     "gt_matched_flags": [
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false
+     ],
+     "pairs": [],
+     "preds": []
+    },
+    {
+     "sample_id": "pre-k09",
+     "gt": [
+      {
+       "unit_id": "R1-K09-B00",
+       "conf": 0.9648
+      },
+      {
+       "unit_id": "R1-K09-B01",
+       "conf": 0.9591
+      },
+      {
+       "unit_id": "R1-K09-B02",
+       "conf": 0.9527
+      },
+      {
+       "unit_id": "R1-K09-B03",
+       "conf": 0.9517
+      },
+      {
+       "unit_id": "R1-K09-B04",
+       "conf": 0.9487
+      },
+      {
+       "unit_id": "R1-K09-B05",
+       "conf": 0.9437
+      },
+      {
+       "unit_id": "R1-K09-B06",
+       "conf": 0.9436
+      },
+      {
+       "unit_id": "R1-K09-B07",
+       "conf": 0.9399
+      },
+      {
+       "unit_id": "R1-K09-B08",
+       "conf": 0.9269
+      },
+      {
+       "unit_id": "R1-K09-B09",
+       "conf": 0.911
+      },
+      {
+       "unit_id": "R1-K09-B10",
+       "conf": 0.9031
+      },
+      {
+       "unit_id": "R1-K09-B11",
+       "conf": 0.9009
+      },
+      {
+       "unit_id": "R1-K09-B12",
+       "conf": 0.8854
+      },
+      {
+       "unit_id": "R1-K09-B13",
+       "conf": 0.884
+      },
+      {
+       "unit_id": "R1-K09-B14",
+       "conf": 0.8732
+      },
+      {
+       "unit_id": "R1-K09-B16",
+       "conf": 0.8365
+      },
+      {
+       "unit_id": "R1-K09-B17",
+       "conf": 0.8321
+      },
+      {
+       "unit_id": "R1-K09-B18",
+       "conf": 0.8111
+      },
+      {
+       "unit_id": "R1-K09-B19",
+       "conf": 0.7717
+      },
+      {
+       "unit_id": "R1-K09-B20",
+       "conf": 0.7538
+      },
+      {
+       "unit_id": "R1-K09-B21",
+       "conf": 0.6777
+      },
+      {
+       "unit_id": "R1-K09-B22",
+       "conf": 0.6757
+      },
+      {
+       "unit_id": "R1-K09-B25",
+       "conf": 0.6404
+      },
+      {
+       "unit_id": "R1-K09-B26",
+       "conf": 0.5788
+      }
+     ],
+     "gt_matched_flags": [
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false
+     ],
+     "pairs": [],
+     "preds": []
+    },
+    {
+     "sample_id": "pre-k01",
+     "gt": [
+      {
+       "unit_id": "R1-K01-B00",
+       "conf": 0.5927
+      },
+      {
+       "unit_id": "R1-K01-B01",
+       "conf": 0.5358
+      }
+     ],
+     "gt_matched_flags": [
+      false,
+      false
+     ],
+     "pairs": [],
+     "preds": []
+    },
+    {
+     "sample_id": "pre-k02",
+     "gt": [
+      {
+       "unit_id": "R1-K02-B00",
+       "conf": 0.8985
+      },
+      {
+       "unit_id": "R1-K02-B03",
+       "conf": 0.7474
+      },
+      {
+       "unit_id": "R1-K02-B05",
+       "conf": 0.5731
+      }
+     ],
+     "gt_matched_flags": [
+      false,
+      false,
+      false
+     ],
+     "pairs": [],
+     "preds": []
+    }
+   ]
+  },
+  "0.2": {
+   "per_page": [
+    {
+     "sample_id": "pre-k08",
+     "gt": [
+      {
+       "unit_id": "R1-K08-B00",
+       "conf": 0.9608
+      },
+      {
+       "unit_id": "R1-K08-B01",
+       "conf": 0.96
+      },
+      {
+       "unit_id": "R1-K08-B02",
+       "conf": 0.9593
+      },
+      {
+       "unit_id": "R1-K08-B03",
+       "conf": 0.9584
+      },
+      {
+       "unit_id": "R1-K08-B04",
+       "conf": 0.9542
+      },
+      {
+       "unit_id": "R1-K08-B05",
+       "conf": 0.9505
+      },
+      {
+       "unit_id": "R1-K08-B06",
+       "conf": 0.946
+      },
+      {
+       "unit_id": "R1-K08-B07",
+       "conf": 0.9456
+      },
+      {
+       "unit_id": "R1-K08-B09",
+       "conf": 0.936
+      },
+      {
+       "unit_id": "R1-K08-B10",
+       "conf": 0.9345
+      },
+      {
+       "unit_id": "R1-K08-B11",
+       "conf": 0.9276
+      },
+      {
+       "unit_id": "R1-K08-B12",
+       "conf": 0.9153
+      },
+      {
+       "unit_id": "R1-K08-B13",
+       "conf": 0.8977
+      },
+      {
+       "unit_id": "R1-K08-B14",
+       "conf": 0.8935
+      },
+      {
+       "unit_id": "R1-K08-B15",
+       "conf": 0.8749
+      },
+      {
+       "unit_id": "R1-K08-B16",
+       "conf": 0.8737
+      },
+      {
+       "unit_id": "R1-K08-B17",
+       "conf": 0.8697
+      },
+      {
+       "unit_id": "R1-K08-B18",
+       "conf": 0.833
+      },
+      {
+       "unit_id": "R1-K08-B19",
+       "conf": 0.8269
+      },
+      {
+       "unit_id": "R1-K08-B20",
+       "conf": 0.8229
+      },
+      {
+       "unit_id": "R1-K08-B21",
+       "conf": 0.8211
+      },
+      {
+       "unit_id": "R1-K08-B22",
+       "conf": 0.7772
+      },
+      {
+       "unit_id": "R1-K08-B23",
+       "conf": 0.7491
+      },
+      {
+       "unit_id": "R1-K08-B24",
+       "conf": 0.7422
+      },
+      {
+       "unit_id": "R1-K08-B25",
+       "conf": 0.7415
+      },
+      {
+       "unit_id": "R1-K08-B26",
+       "conf": 0.7279
+      },
+      {
+       "unit_id": "R1-K08-B27",
+       "conf": 0.7056
+      }
+     ],
+     "gt_matched_flags": [
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false
+     ],
+     "pairs": [],
+     "preds": []
+    },
+    {
+     "sample_id": "pre-k09",
+     "gt": [
+      {
+       "unit_id": "R1-K09-B00",
+       "conf": 0.9648
+      },
+      {
+       "unit_id": "R1-K09-B01",
+       "conf": 0.9591
+      },
+      {
+       "unit_id": "R1-K09-B02",
+       "conf": 0.9527
+      },
+      {
+       "unit_id": "R1-K09-B03",
+       "conf": 0.9517
+      },
+      {
+       "unit_id": "R1-K09-B04",
+       "conf": 0.9487
+      },
+      {
+       "unit_id": "R1-K09-B05",
+       "conf": 0.9437
+      },
+      {
+       "unit_id": "R1-K09-B06",
+       "conf": 0.9436
+      },
+      {
+       "unit_id": "R1-K09-B07",
+       "conf": 0.9399
+      },
+      {
+       "unit_id": "R1-K09-B08",
+       "conf": 0.9269
+      },
+      {
+       "unit_id": "R1-K09-B09",
+       "conf": 0.911
+      },
+      {
+       "unit_id": "R1-K09-B10",
+       "conf": 0.9031
+      },
+      {
+       "unit_id": "R1-K09-B11",
+       "conf": 0.9009
+      },
+      {
+       "unit_id": "R1-K09-B12",
+       "conf": 0.8854
+      },
+      {
+       "unit_id": "R1-K09-B13",
+       "conf": 0.884
+      },
+      {
+       "unit_id": "R1-K09-B14",
+       "conf": 0.8732
+      },
+      {
+       "unit_id": "R1-K09-B16",
+       "conf": 0.8365
+      },
+      {
+       "unit_id": "R1-K09-B17",
+       "conf": 0.8321
+      },
+      {
+       "unit_id": "R1-K09-B18",
+       "conf": 0.8111
+      },
+      {
+       "unit_id": "R1-K09-B19",
+       "conf": 0.7717
+      },
+      {
+       "unit_id": "R1-K09-B20",
+       "conf": 0.7538
+      },
+      {
+       "unit_id": "R1-K09-B21",
+       "conf": 0.6777
+      },
+      {
+       "unit_id": "R1-K09-B22",
+       "conf": 0.6757
+      },
+      {
+       "unit_id": "R1-K09-B25",
+       "conf": 0.6404
+      },
+      {
+       "unit_id": "R1-K09-B26",
+       "conf": 0.5788
+      }
+     ],
+     "gt_matched_flags": [
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false
+     ],
+     "pairs": [],
+     "preds": []
+    },
+    {
+     "sample_id": "pre-k01",
+     "gt": [
+      {
+       "unit_id": "R1-K01-B00",
+       "conf": 0.5927
+      },
+      {
+       "unit_id": "R1-K01-B01",
+       "conf": 0.5358
+      }
+     ],
+     "gt_matched_flags": [
+      false,
+      false
+     ],
+     "pairs": [],
+     "preds": []
+    },
+    {
+     "sample_id": "pre-k02",
+     "gt": [
+      {
+       "unit_id": "R1-K02-B00",
+       "conf": 0.8985
+      },
+      {
+       "unit_id": "R1-K02-B03",
+       "conf": 0.7474
+      },
+      {
+       "unit_id": "R1-K02-B05",
+       "conf": 0.5731
+      }
+     ],
+     "gt_matched_flags": [
+      false,
+      false,
+      false
+     ],
+     "pairs": [],
+     "preds": []
+    }
+   ]
+  }
+ }
+}
