@@ -2,7 +2,7 @@
 id: M2-KO-TILE-CALIB
 title: "KO 长条页推理口径校准实验（T3 前置）：tile 切块 vs 整页 letterbox 对照+口径建议固化"
 kind: experiment
-status: in_review
+status: done
 owner_claim: ZCode 2026-10-05（AC1-AC5 全交付，delivery_head 49253b09，docs head 见交付记录）
 approval: user_ruling_2026-10-05_按推荐_T3释放
 suggested_owner: ZCode

@@ -144,7 +144,7 @@ Live Git=`main@f6f22b67`（2026-09-29 REBASELINE 审计基线，未 push）。�
 | [M2-SFX-TRAIN-V2](tasks/M2-SFX-TRAIN-V2.md) SFX 训练 V2（T2-V2） | **done**（2026-10-05 @merge 784e585b；DSH r1 approved_with_conditions 条件全闭；own-manga 558 页接入→train 901/2304；**BJ 考卷 V1 0/5→V2B 5/5 零误检**；结构性发现=KO 长条页 letterbox 口径瓶颈（三方全 0/56）归 T3） | ZCode / DeepSeek Harness | 用户裁决：T3 释放（含 KO 口径实验）/T4 条件/暂停。 |
 | [M2-KO-TILE-CALIB](tasks/M2-KO-TILE-CALIB.md) KO 长条页推理口径校准（T3 前置） | **done**（2026-10-05 @merge f84b56b7；DSH r1→r2 定点复审→返修全闭；四组矩阵 letterbox 全 0/56 vs tile chiqui7 56/56（同源复现口径）/v2b 35/56——**口径瓶颈确证**；KO Gate 提案冻结 tile_ov128+非派生 GT 裁决项） | ZCode / DeepSeek Harness | T3 Gate 采信（非派生 KO GT 裁决前置）。 |
 | [M2-SFX-ANNOTATE-R3](tasks/M2-SFX-ANNOTATE-R3.md) SFX 标注轮 R3（T1b-R3） | **done**（2026-10-05 @merge 5efa052e；DSH r1 approved_with_conditions C1 落框+C2 先例更正全闭；BJ26-37 入池；22 单元双 AI；**BJ 正集 8 页 18 框全部有效**；train-v3 904/2311 考卷不动） | ZCode / DeepSeek Harness | T3 备数据完成；R3-MISS 补画立项建议。 |
-| [M2-SFX-GATE-T3](tasks/M2-SFX-GATE-T3.md) SFX 正式评测门（T3） | **ready**（2026-10-05 释放 @用户裁决按推荐：Gate 定义冻结 G1-G8+R3-MISS 补画（AI 直接标注首例）+KO 非派生考题（隔离纪律）+三方×四数据集评测+判定与 T4 终稿） | ZCode / DeepSeek Harness | 判定后 T4 生产切换材料终稿。 |
+| [M2-SFX-GATE-T3](tasks/M2-SFX-GATE-T3.md) SFX 正式评测门（T3） | **done**（2026-10-05 @merge 27817412；DSH r1 approved_with_conditions 12/12 条件闭+r2 建议集成；Gate 定义冻结 v1.0+v1.1 追加；R3-MISS BJ32-35 15 框 ai-direct 首例；KO 非派生 GT 135 框；36 格评测 ALL CELLS 复算 PASS；**G1/G2 v2a 双 FAIL 丧失资格、v2b 全定资格硬门 PASS（考卷 5/5 P1.0+KO 非派生 0.3556≥0.3037）+G8 license 审计 PASS——T4 切换等用户裁决**；零 src） | ZCode / DeepSeek Harness | T4 生产切换材料终稿已呈报（tile 化 17-81s/页性能预算+G7 补证前置）。 |
 | [M2-REGION-RETYPE-CORE](tasks/M2-REGION-RETYPE-CORE.md) Region 改标 Core 实现（T5b） | **done @merge `d8019810`**（DSH r1 approved_with_conditions（Q1 追认 runner 同步）→返修 `0f88cbcd`→r2 **approved** 12/12；rev 1.4 全链+11 断言两层红绿+real-sidecar 测试+PROTOCOL_MINOR 2→3 旁路追认+GATE 25/25 重跑（M2-AC5/raw 还原+自有 raw 副本 retype-m2ac5-*）；五目录 793 passed；test_catalog 100vs97 pre-existing 实证转登记） | ZCode / DeepSeek Harness | Workbench UI 实现前置就绪；test_catalog 断言更新小切片登记。 |
 | [M2-SFX-CORRECTION-EXPORTER](tasks/M2-SFX-CORRECTION-EXPORTER.md) 纠错样本导出器（T5c） | **done @merge `66871d5d`**（DSH r1 changes_requested（P1-1 bbox xywh 误读静默产错框，被测试钉死）→返修 `669146a1`（T1a helper 修复+rgO 判别+判别力数值验证）→r2 approved_with_conditions 条件全闭；scanner 按 rev 1.4 语义+资格判定+双形态导出+--yolo-scope；50 tests 红绿；真库冒烟 CORRECTIONS_EMPTY=expected 补跑） | ZCode / DeepSeek Harness | 纠错积累链采集端就绪；T5 线全收官（契约+Core+导出器）。 |
 
@@ -226,7 +226,7 @@ flowchart TD
   T2 -.-> T2V2["M2-SFX-TRAIN-V2 · done @784e585b（BJ 考卷 0/5→5/5；KO 口径瓶颈发现归 T3）"]
   T2V2 -.-> KOCAL["M2-KO-TILE-CALIB 口径校准 · ready（tile vs letterbox 对照）"]
   T2V2 -.-> T1BR3["M2-SFX-ANNOTATE-R3 扩标轮 · ready（BJ 正集 6 框→几十框）"]
-  KOCAL -.-> T3["M2-SFX-GATE-T3 正式评测门 · ready（Gate 定义冻结+R3-MISS 补画+KO 非派生 GT+三方评测+判定）"]
+  KOCAL -.-> T3["M2-SFX-GATE-T3 正式评测门 · done @27817412（v2b 唯一全硬门通过；T4 等用户裁决）"]
   T1BR3 -.-> T3
   T2 -.-> T4["T4 生产切换 · 用户裁决"]
   T5A -.-> T5B["M2-REGION-RETYPE-CORE 改标 Core 实现 · done @d8019810（rev1.4 全链+GATE 25/25）"]
