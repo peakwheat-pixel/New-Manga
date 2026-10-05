@@ -9,7 +9,7 @@ suggested_owner: ZCode
 owner: ZCode
 reviewer: DeepSeek Harness（非作者）
 integrator: 编排会话代行 Codex（用户全权授权）
-integration_commit: 由编排 merge 后回填（分支顶 6f2621d2=C1 落框返修）
+integration_commit: 5efa052e（merge into main，2026-10-05）
 depends_on: [M2-SFX-ANNOTATE-R2, M2-SFX-DATA-INFRA]
 base_commit: 9258afc0
 branch: agent/zcode/M2-SFX-ANNOTATE-R3

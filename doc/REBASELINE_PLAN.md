@@ -142,8 +142,8 @@ Live Git=`main@f6f22b67`（2026-09-29 REBASELINE 审计基线，未 push）。�
 | [M2-SFX-ANNOTATE-R2](tasks/M2-SFX-ANNOTATE-R2.md) SFX 标注轮 R2（T1b-R2 扩标轮） | **done**（2026-10-04 @merge 84f952b3；DSH r1 approved_with_conditions 条件全闭；素材 KO+5/BJ+10 入池 25/25+15/15 达标；扩审 19 单元双 AI；三集 train 345/571；**BJ 正集 0→5 页 11 框毛笔竖排首批正样本**；challenge 空集明许分支） | ZCode / DeepSeek Harness | T2 训练释放待用户裁决（challenge 空集处置+量级确认）。 |
 | [M2-SFX-TRAIN-V1](tasks/M2-SFX-TRAIN-V1.md) SFX 训练 V1（T2） | **done**（2026-10-04 @merge 35cb3db0；DSH r1 approved_with_conditions 条件全闭+运行级验证 5/5；管线验证达成（训练/导出/冒烟全通）；模型全面欠拟合如实登记（BJ 0/5·KO 0/56）；T3/T4 裁决材料已呈报） | ZCode / DeepSeek Harness | 用户裁决 SFX 线下一步（R3 扩标/V2 调参/暂停）。 |
 | [M2-SFX-TRAIN-V2](tasks/M2-SFX-TRAIN-V2.md) SFX 训练 V2（T2-V2） | **done**（2026-10-05 @merge 784e585b；DSH r1 approved_with_conditions 条件全闭；own-manga 558 页接入→train 901/2304；**BJ 考卷 V1 0/5→V2B 5/5 零误检**；结构性发现=KO 长条页 letterbox 口径瓶颈（三方全 0/56）归 T3） | ZCode / DeepSeek Harness | 用户裁决：T3 释放（含 KO 口径实验）/T4 条件/暂停。 |
-| [M2-KO-TILE-CALIB](tasks/M2-KO-TILE-CALIB.md) KO 长条页推理口径校准（T3 前置） | **ready**（2026-10-05 释放 @用户裁决按推荐：tile 切块 vs 整页 letterbox 对照（chiqui7+v2b 两权重）+口径建议固化；V2 结构性发现=KO 三方全 0/56 瓶颈在口径非权重） | ZCode / DeepSeek Harness | 口径提案供 T3 Gate 采信；生产切换归 T4。 |
-| [M2-SFX-ANNOTATE-R3](tasks/M2-SFX-ANNOTATE-R3.md) SFX 标注轮 R3（T1b-R3） | **ready**（2026-10-05 释放 @用户裁决按推荐：BJ 候选池 44 页密度选页 top-12 入池（BJ26-37）+遗留 16 低置信+新页无门槛预标注→双 AI 交叉审核→manifest v3+train-v3；目标 BJ 正集 6 框→几十框） | ZCode / DeepSeek Harness | T3 正式 Gate 备数据。 |
+| [M2-KO-TILE-CALIB](tasks/M2-KO-TILE-CALIB.md) KO 长条页推理口径校准（T3 前置） | **done**（2026-10-05 @merge f84b56b7；DSH r1→r2 定点复审→返修全闭；四组矩阵 letterbox 全 0/56 vs tile chiqui7 56/56（同源复现口径）/v2b 35/56——**口径瓶颈确证**；KO Gate 提案冻结 tile_ov128+非派生 GT 裁决项） | ZCode / DeepSeek Harness | T3 Gate 采信（非派生 KO GT 裁决前置）。 |
+| [M2-SFX-ANNOTATE-R3](tasks/M2-SFX-ANNOTATE-R3.md) SFX 标注轮 R3（T1b-R3） | **done**（2026-10-05 @merge 5efa052e；DSH r1 approved_with_conditions C1 落框+C2 先例更正全闭；BJ26-37 入池；22 单元双 AI；**BJ 正集 8 页 18 框全部有效**；train-v3 904/2311 考卷不动） | ZCode / DeepSeek Harness | T3 备数据完成；R3-MISS 补画立项建议。 |
 | [M2-REGION-RETYPE-CORE](tasks/M2-REGION-RETYPE-CORE.md) Region 改标 Core 实现（T5b） | **done @merge `d8019810`**（DSH r1 approved_with_conditions（Q1 追认 runner 同步）→返修 `0f88cbcd`→r2 **approved** 12/12；rev 1.4 全链+11 断言两层红绿+real-sidecar 测试+PROTOCOL_MINOR 2→3 旁路追认+GATE 25/25 重跑（M2-AC5/raw 还原+自有 raw 副本 retype-m2ac5-*）；五目录 793 passed；test_catalog 100vs97 pre-existing 实证转登记） | ZCode / DeepSeek Harness | Workbench UI 实现前置就绪；test_catalog 断言更新小切片登记。 |
 | [M2-SFX-CORRECTION-EXPORTER](tasks/M2-SFX-CORRECTION-EXPORTER.md) 纠错样本导出器（T5c） | **done @merge `66871d5d`**（DSH r1 changes_requested（P1-1 bbox xywh 误读静默产错框，被测试钉死）→返修 `669146a1`（T1a helper 修复+rgO 判别+判别力数值验证）→r2 approved_with_conditions 条件全闭；scanner 按 rev 1.4 语义+资格判定+双形态导出+--yolo-scope；50 tests 红绿；真库冒烟 CORRECTIONS_EMPTY=expected 补跑） | ZCode / DeepSeek Harness | 纠错积累链采集端就绪；T5 线全收官（契约+Core+导出器）。 |
 
@@ -225,7 +225,7 @@ flowchart TD
   T2 -.-> T2V2["M2-SFX-TRAIN-V2 · done @784e585b（BJ 考卷 0/5→5/5；KO 口径瓶颈发现归 T3）"]
   T2V2 -.-> KOCAL["M2-KO-TILE-CALIB 口径校准 · ready（tile vs letterbox 对照）"]
   T2V2 -.-> T1BR3["M2-SFX-ANNOTATE-R3 扩标轮 · ready（BJ 正集 6 框→几十框）"]
-  KOCAL -.-> T3["T3 评测 Gate G1-G8 · 待释放（口径校准+扩标后）"]
+  KOCAL -.-> T3["T3 评测 Gate G1-G8 · 待释放（材料已齐：KO 口径提案+BJ 18 框+R3-MISS 立项建议）"]
   T1BR3 -.-> T3
   T2 -.-> T4["T4 生产切换 · 用户裁决"]
   T5A -.-> T5B["M2-REGION-RETYPE-CORE 改标 Core 实现 · done @d8019810（rev1.4 全链+GATE 25/25）"]
