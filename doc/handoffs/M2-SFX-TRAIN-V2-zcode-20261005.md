@@ -96,3 +96,13 @@ status: in_review
 - **失败样例**：v2a 漏 BJ18-B00（严格口径）；KO 长条页三方 0/56（整页 letterbox 亚像素化，结构性）；chiqui7 复跑 KO crop 页 0/2（其 2 检出与 GT 不匹配，v2a/v2b 2/2 反超）。
 - **限制**：val 仅 KO 4 页 53 框指标噪声大；directional 统计功效低禁用「显著」；own-manga 标签噪声（partial/pseudo 未分层消融）；BJ 主攻形态不在 own-manga 覆盖内；KO 序列口径实验未做（归 T3/T4）。
 - **建议**：见报告 §7（T3 前置=BJ 扩标+KO 序列口径对照实验+复跑口径固化；T4 语义=v2b directional 优选+pin/来源字段/许可审计/回退四件套）。
+
+## DSH r1 审查记录（2026-10-05，approved_with_conditions）
+
+- Verdict=approved_with_conditions（0×P0/P1、3×P2、4×P3、5×P4）；全文落 doc/reviews/M2-SFX-TRAIN-V2-2768c6c1-dsh-r1.md。docs_commit=2768c6c1（P4-12）。
+- **P2-1（核心）**：「两版 best fitness 持平」被推翻——A 已保存权重 vs B 未保存 epoch49 并列是口径错位；同口径 A 高 13.6%（wrapper 0.020833 vs 0.018338）；val 无判别力（51/53 框落于三方全 0 的 KO 长条页）→ A/B 判定只依据考卷实测。已改述 §0/§2.4/§7.1.5/Task。
+- **P2-2**：commit 093631d2 message 的持平框架以报告口径为准（历史不改写）——注记已落 §2.3/本节。
+- **P2-3**：「独立复核」署名改为作者侧复核（workflow 内）——已改报告 §5/Task。
+- P3-4/P3-5 措辞（「显著」「超 chiqui7」）、P3-6 KO GT 溯源（tile vs letterbox 物理根因）、P3-7 训练集内 KO 长条页标签噪声新边界、P4-8/P4-9/P4-12 小修——全部落实。
+- **T3/T4 材料结论（继承报告 §7+DSH 裁定）**：KO 门前置=序列口径对照实验（tile vs letterbox，**口径命题非权重命题**）；T4 候选 v2b（best.onnx 944e8114…）须先补 license:other 审计+处置 SFX_HF_REPO/REVISION 来源语义；**V2 数字不作门判定，不得据本报告直接切换生产**。
+- ISSUE-B：外部树 export-summary.json 已删除（集成轮执行）。

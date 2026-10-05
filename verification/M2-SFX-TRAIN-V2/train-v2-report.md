@@ -1,5 +1,6 @@
 # M2-SFX-TRAIN-V2 训练 V2 交付报告（T2-V2：own-manga 接入+A/B 基座重训+同链路对照评测）
 
+- docs commit：2768c6c1（本返修 commit 见链尾——DSH r1 P4-12）
 ---
 task: M2-SFX-TRAIN-V2
 author: ZCode
@@ -16,7 +17,7 @@ report_caliber: 本文数字除标注「引自独立复核记录」外，均由�
 **V2 = own-manga 冻结池接入后的 A/B 基座重训 + 同链路对照评测；仍不是正式 G1-G8 Gate**（正式 Gate 属 T3，沿 V1 合同口径）。
 
 - **数据结论：训练集翻 2.6 倍。** train 343→**901 页/2304 框**（19 R2 真实+324 合成+558 own-manga）；考卷（densho810/vol05 组 2 页 5 框）、val（4/53）、test（2/5）与 V1 完全不变——与合同 AC1 期望全数命中（`prepare-summary.json` `expected_vs_actual` 逐项相等，fail-fast 断言通过）。
-- **训练结论：A/B 双版完整完成（无 skip）。** A 版 v2a（官方 yolo11s-seg.pt）与 B 版 v2b（anonimkaq4 近域基座）同口径各训一跑，均早停收敛、零 OOM。**两版 best fitness 持平级**（A 0.02083 vs B 0.02052，wrapper box-fitness 口径）——val 仅 KO 4 页 53 框，指标噪声大，不据此下结论；directional 判定归评测轮。
+- **训练结论：A/B 双版完整完成（无 skip）。** A 版 v2a（官方 yolo11s-seg.pt）与 B 版 v2b（anonimkaq4 近域基座）同口径各训一跑，均早停收敛、零 OOM。**两版 best 的 val 指标对比**不构成结论**——val 无判别力（53 框中 51 框落于三方均零召回的 KO 长条页，仅 2 个 crop 框可判），A/B 判定只依据考卷实测（DSH r1 P2-1：同口径被评权重 A(ep79) wrapper 0.020833 vs B(ep45) 0.018338，A 更高；此前「持平级」对比误将 B 版未保存的 epoch49 指标与 A 版已保存权重并列）
 - **评测结论：V1→V2 directional 大幅改善。** BJ 考卷新模型 0/5（V1）→ **v2a 4/5、v2b 5/5**；B 版考卷零误检 precision 1.0 超 chiqui7 独立复跑（5/5，P 0.8333）。KO crop 页 2/2 全中（V1 0/2）。**结构性发现如实登记：KO 长条页 4 样本 56 框三方（含现役 chiqui7 独立复跑）全部 0/56**——瓶颈在推理序列口径（整页 letterbox vs 切块）非模型权重，归 T3/T4 议题。
 - **P2-1 整改落地：chiqui7 对照从「预标注引用」（V1）改为「同链路独立复跑」（V2）**——生产 pin d87389af 权重原样加载走同一 `SfxDetectionProvider` 序列（`eval_v2.py:129-131` sha 自检、`:197-201` provider.detect 真调用），循环性特别核查裁定整改成立（§6.3）。
 - 独立复核 **PASS**（§6）：重切/训练真实性/评测复算/零 src 四项全部实测通过；ISSUE-A（v2b best 双口径登记错位，中级）如实登记（§2.3）。
@@ -88,9 +89,11 @@ challenge=densho810/vol05 组 `pre-bj17`（BJ17，vol05_p0167，竖排毛笔假�
 
 定性：**登记口径误导，非数字造假**——两个 epoch 的数字均真实存在于 results.csv，早停数学（45+30=75）自洽，被评权重 sha 链完整。建议后续文档与 T3/T4 呈报一律标注双口径（wrapper best_epoch=49 vs ultralytics best.pt=epoch 45）。
 
+> **DSH r1 P2-2**：commit `093631d2` message 中 A/B「持平级」框架基于 B 版**未保存**的 epoch49 指标（wrapper box-fitness argmax），与本节双口径说明冲突——**以本报告口径为准**；历史 commit message 不改写。
+
 ### 2.4 A/B 对比口径与初始 loss
 
-- **两版 best fitness 持平级**（wrapper box-fitness：A 0.020833 vs B 0.020517）——val 仅 KO 4 页 53 框，指标噪声大，**不据此下结论**；A/B directional 判定归评测轮（§4）。
+- **两版 best 的 val 指标对比**不构成结论**——val 无判别力（53 框中 51 框落于三方均零召回的 KO 长条页，仅 2 个 crop 框可判），A/B 判定只依据考卷实测（DSH r1 P2-1：同口径被评权重 A(ep79) wrapper 0.020833 vs B(ep45) 0.018338，A 更高；此前「持平级」对比误将 B 版未保存的 epoch49 指标与 A 版已保存权重并列）
 - **初始 loss B 显著低于 A，近域先验可见（文档收尾轮 log 提取）**：epoch 1 首 iter seg loss v2a=**9.196** vs v2b=**4.814**（近域基座起点约低一半）；epoch 1 末 iter 已接近（v2a 2.423 vs v2b 2.544）——起点优势在一个 epoch 内被追平，收敛后两版持平。复核材料口径「seg 2.57 vs 9.2」对应 v2b epoch 1 收尾即时值（2.544≈2.57 量级）与 v2a 首迭代值，取样点不同、方向一致。
 - torch 读 best.pt train_args 确认两版基座、同口径 epochs150/patience30/imgsz1024/batch8/seed20261004、names 四类正确（独立复核记录）。
 - 裁量点处置：单类 nc=1 第三跑**未做**（A/B 完成即达合同最低要求，时间盒内不追加）；v15 组钉 val 不做（沿合同）。
@@ -129,7 +132,7 @@ challenge=densho810/vol05 组 `pre-bj17`（BJ17，vol05_p0167，竖排毛笔假�
 | V1 基线（Git 引用） | 0/5（0 检出） | 1/5（P=0.3333，3 pred） |
 
 - v2a 唯一漏检=R2-BJ18-B00；chiqui7 复跑唯一误检 conf 0.8634=**曾被仲裁 delete 的 R2-BJ17-B02 气泡框**（与 R2 判定链自洽，沿 V1 观察）。
-- **B 版考卷零误检 precision 1.0，超 chiqui7 独立复跑（P 0.8333）**。
+- **B 版考卷零误检 precision 1.0，与 chiqui7 独立复跑同级（差 1 个误检——chiqui7 唯一误检=曾被 R2 仲裁 delete 的气泡框；5 框考卷功效不足以判优劣，DSH r1 P3-5）**。
 
 ### 4.3 KO val+test 6 样本 58 框
 
@@ -144,6 +147,8 @@ challenge=densho810/vol05 组 `pre-bj17`（BJ17，vol05_p0167，竖排毛笔假�
 - chiqui7 复跑在该 2 crop 页 0/2（其检出 2 框与 GT 不匹配）。
 
 ### 4.4 结构性发现：KO 长条页 4 样本 56 框三方全部 0/56
+
+> **DSH r1 P3-6 溯源注**：KO val/test 的 GT 框本身派生于 chiqui7 的 tile 扫描检出（R1 `stage1_preannotate.py` `scan_mode=tile_690x1024_overlap128`，注释原文=webtoon 宽 690 超长条整页 letterbox 会缩到 172px 丢细节）——KO 数字并非跨模型中立基准；「两口径不可直比」的物理根因=tile（原生分辨率切块）vs letterbox（整页缩放）。
 
 **【KO 页 only 4 样本 56 框】三方全部 0/56（含现役 chiqui7 独立复跑 n_pred=0）**——如实登记：
 
@@ -170,7 +175,7 @@ challenge=densho810/vol05 组 `pre-bj17`（BJ17，vol05_p0167，竖排毛笔假�
 
 ---
 
-## 5. 独立复核（非作者）= PASS
+## 5. 作者侧复核（workflow 内，非本 Task 正式 Review）= PASS；正式独立 Review 见 doc/reviews/M2-SFX-TRAIN-V2-2768c6c1-dsh-r1.md（DSH r1=approved_with_conditions）
 
 > 复核记录要点引自复核会话（全部结论基于复核轮**本轮独立执行的重算与命令**，未采信任何文档转述）；其中 §2.3 双口径、§2.1/2.2 权重 sha、results.csv 行数、§1.3 考卷 GT、§4 逐框匹配与漏检误检、log TRAIN_RESULT_JSON/EarlyStopping/OOM、§3 sha 与 pin、零 src diff 等，文档收尾轮已按同一口径重算/重读，全部一致。
 
@@ -209,9 +214,11 @@ challenge=densho810/vol05 组 `pre-bj17`（BJ17，vol05_p0167，竖排毛笔假�
 
 ## 6. 诚实边界
 
+> **DSH r1 P3-7 新增边界**：训练集内同样存在 KO 长条页（manifest.train 中 6 页 height≥10000：80494/28156/46000/81776/131289/100674=pre-k03..k07/k10）——其 SFX 框在 imgsz=1024 整页 letterbox 下同为亚像素，对 901 页训练集构成潜在标签噪声；T3 序列口径实验（tile vs letterbox）须一并处置训练侧。
+
 - **own-manga 框坐标=模型输出**（chiqui7/yolo11s-seg.onnx，0.1px）**未手工收紧**——定位精度受 chiqui7 上限约束；partial 140 页=用户核验 SFX 存在性（annotation_grade=human-verified-existence）但框未手工收紧，不冒充 complete；pseudo 418 页=模型产出+AI 内容复核过滤，无逐框人工确认。标签噪声影响 V2 不做 partial/pseudo 分层消融（合同时间盒裁量），如实登记为边界。
 - **chiqui7 同源性对毛笔竖排无补**：own-manga 候选框全部源自 chiqui7 检出（AI 复核过滤假阳但覆盖不了 chiqui7 漏检类型）；chiqui7 弱项（毛笔竖排漏检）需独立补框通道，本包不覆盖；**BJ 主攻形态（考卷 BJ17/18 竖排毛笔）不在本包覆盖内**——V2 的 BJ 改善来自整体 SFX 监督量翻倍（566→2304 框）与近域基座的一般化效应，非该形态直接补标。
-- **val 仅 KO 4 页 53 框**：训练期 val 指标噪声大，两版 best fitness 持平级不作质量结论；方向性判定以评测轮为准。
+- **val 仅 KO 4 页 53 框**：训练期 val 指标噪声大，两版 best 的 val 指标对比**不构成结论**——val 无判别力（53 框中 51 框落于三方均零召回的 KO 长条页，仅 2 个 crop 框可判），A/B 判定只依据考卷实测（DSH r1 P2-1：同口径被评权重 A(ep79) wrapper 0.020833 vs B(ep45) 0.018338，A 更高；此前「持平级」对比误将 B 版未保存的 epoch49 指标与 A 版已保存权重并列）
 - **KO 页 0/56 是序列口径瓶颈**（§4.4），不是 V2 权重的回退；V1 预标注口径 56/56 与整页推理口径不可直比。
 - **统计功效低**：directional 评测，禁用「显著」；V2 数字不作门判定。
 - **许可备案**：A 版基座=官方 yolo11s-seg.pt AGPL-3.0（用户许可降权备案覆盖，沿 T0）；B 版基座=`license: other` **未审计**（快照留证 `raw/b-base-readme-snapshot.md`，含 Manga109-s 衍生声明；上生产面前须补审计）。衍生权重均 gitignored 外部树，未入库未分发；生产 pin 零改动。
