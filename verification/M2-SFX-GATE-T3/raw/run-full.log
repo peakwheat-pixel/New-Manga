@@ -1,0 +1,280 @@
+[gate-t3] start 2026-10-05T12:28:36Z mode=full
+[gate-t3] chiqui7 onnx sha256=d87389af4350954143a216bcfe40fd2ad93312cb136534e6073c9c740d98b646（先验断言过）
+[gate-t3] v2a onnx sha256=27d162e94d7dd2150b177f5636613e3bfce836dfdb08240975b86fce85b97d43（先验断言过）
+[gate-t3] v2b onnx sha256=944e811410933ad6ff8d32446fcc9eef90fb463794e1874ce83035e83acd418d（先验断言过）
+[gate-t3] 数据装载：BJ 12 页 33 框（考卷 2 页 5 框）｜KO 派生 4 页 56 框｜KO 非派生 135 框
+[gate-t3] engine chiqui7: imgsz=1024 (metadata_parsed)
+[gate-t3] engine v2a: imgsz=1024 (metadata_parsed)
+[gate-t3] engine v2b: imgsz=1024 (metadata_parsed)
+[gate-t3] chiqui7/bj-exam pre-bj17: conf0.5=2/2, conf0.2=2/2 (0.4s)
+[gate-t3] chiqui7/bj-exam pre-bj18: conf0.5=3/3, conf0.2=3/3 (0.4s)
+[gate-t3] wrote G:\CODEX\New Manga.worktrees\M2-SFX-GATE-T3-zcode\verification\M2-SFX-GATE-T3\raw\eval-chiqui7-bj-exam.json
+[gate-t3] chiqui7/bj-exam: conf0.5={'matched': '5/5', 'recall_rate': 1.0, 'precision': 0.8333, 'n_pred': 6} (1.5s)
+[gate-t3] chiqui7/bj-ext pre-bj16: conf0.5=3/6, conf0.2=3/6 (0.4s)
+[gate-t3] chiqui7/bj-ext pre-bj17: conf0.5=2/2, conf0.2=2/2 (0.4s)
+[gate-t3] chiqui7/bj-ext pre-bj18: conf0.5=3/3, conf0.2=3/3 (0.4s)
+[gate-t3] chiqui7/bj-ext pre-bj22: conf0.5=0/2, conf0.2=0/2 (0.4s)
+[gate-t3] chiqui7/bj-ext pre-bj23: conf0.5=2/2, conf0.2=2/2 (0.4s)
+[gate-t3] chiqui7/bj-ext pre-bj24: conf0.5=1/1, conf0.2=1/1 (0.4s)
+[gate-t3] chiqui7/bj-ext pre-bj28: conf0.5=1/1, conf0.2=1/1 (0.4s)
+[gate-t3] chiqui7/bj-ext pre-bj29: conf0.5=1/1, conf0.2=1/1 (0.4s)
+[gate-t3] chiqui7/bj-ext pre-bj32: conf0.5=0/3, conf0.2=0/3 (0.4s)
+[gate-t3] chiqui7/bj-ext pre-bj33: conf0.5=0/3, conf0.2=0/3 (0.4s)
+[gate-t3] chiqui7/bj-ext pre-bj34: conf0.5=0/3, conf0.2=0/3 (0.4s)
+[gate-t3] chiqui7/bj-ext pre-bj35: conf0.5=0/6, conf0.2=0/6 (0.4s)
+[gate-t3] wrote G:\CODEX\New Manga.worktrees\M2-SFX-GATE-T3-zcode\verification\M2-SFX-GATE-T3\raw\eval-chiqui7-bj-ext.json
+[gate-t3] chiqui7/bj-ext: conf0.5={'matched': '13/33', 'recall_rate': 0.3939, 'precision': 0.9286, 'n_pred': 14} (8.7s)
+    tile 20/58 (y0=17024) sfx_raw_cum=7
+    tile 40/58 (y0=34944) sfx_raw_cum=19
+    tile 58/58 (y0=50947) sfx_raw_cum=31
+    tile 20/58 (y0=17024) sfx_raw_cum=11
+    tile 40/58 (y0=34944) sfx_raw_cum=26
+    tile 58/58 (y0=50947) sfx_raw_cum=41
+[gate-t3] chiqui7/ko-tile pre-k08: conf0.5=tile 27/27 (lb 0), conf0.2=tile 27/27 (lb 0) (17.1s)
+    tile 20/112 (y0=17024) sfx_raw_cum=11
+    tile 40/112 (y0=34944) sfx_raw_cum=19
+    tile 60/112 (y0=52864) sfx_raw_cum=21
+    tile 80/112 (y0=70784) sfx_raw_cum=26
+    tile 100/112 (y0=88704) sfx_raw_cum=27
+    tile 112/112 (y0=99456) sfx_raw_cum=29
+    tile 20/112 (y0=17024) sfx_raw_cum=13
+    tile 40/112 (y0=34944) sfx_raw_cum=21
+    tile 60/112 (y0=52864) sfx_raw_cum=25
+    tile 80/112 (y0=70784) sfx_raw_cum=32
+    tile 100/112 (y0=88704) sfx_raw_cum=33
+    tile 112/112 (y0=99456) sfx_raw_cum=35
+[gate-t3] chiqui7/ko-tile pre-k09: conf0.5=tile 24/24 (lb 0), conf0.2=tile 24/24 (lb 0) (50.4s)
+    tile 20/70 (y0=17024) sfx_raw_cum=0
+    tile 40/70 (y0=34944) sfx_raw_cum=0
+    tile 60/70 (y0=52864) sfx_raw_cum=2
+    tile 70/70 (y0=61109) sfx_raw_cum=2
+    tile 20/70 (y0=17024) sfx_raw_cum=1
+    tile 40/70 (y0=34944) sfx_raw_cum=1
+    tile 60/70 (y0=52864) sfx_raw_cum=3
+    tile 70/70 (y0=61109) sfx_raw_cum=3
+[gate-t3] chiqui7/ko-tile pre-k01: conf0.5=tile 2/2 (lb 0), conf0.2=tile 2/2 (lb 0) (72.0s)
+    tile 20/21 (y0=17024) sfx_raw_cum=7
+    tile 21/21 (y0=17377) sfx_raw_cum=8
+    tile 20/21 (y0=17024) sfx_raw_cum=9
+    tile 21/21 (y0=17377) sfx_raw_cum=10
+[gate-t3] chiqui7/ko-tile pre-k02: conf0.5=tile 3/3 (lb 0), conf0.2=tile 3/3 (lb 0) (78.9s)
+[gate-t3] wrote G:\CODEX\New Manga.worktrees\M2-SFX-GATE-T3-zcode\verification\M2-SFX-GATE-T3\raw\eval-chiqui7-ko-tile.json
+[gate-t3] chiqui7/ko-tile: conf0.5={'matched': '56/56', 'recall_rate': 1.0, 'precision': 0.8235, 'n_pred': 68} lb={'matched': '0/56', 'recall_rate': 0.0, 'precision': None, 'n_pred': 0} (78.9s)
+    tile 20/58 (y0=17024) sfx_raw_cum=7
+    tile 40/58 (y0=34944) sfx_raw_cum=19
+    tile 58/58 (y0=50947) sfx_raw_cum=31
+    tile 20/58 (y0=17024) sfx_raw_cum=11
+    tile 40/58 (y0=34944) sfx_raw_cum=26
+    tile 58/58 (y0=50947) sfx_raw_cum=41
+[gate-t3] chiqui7/ko-npd pre-k08: conf0.5=tile 19/35 (lb 0), conf0.2=tile 19/35 (lb 0) (18.1s)
+    tile 20/112 (y0=17024) sfx_raw_cum=11
+    tile 40/112 (y0=34944) sfx_raw_cum=19
+    tile 60/112 (y0=52864) sfx_raw_cum=21
+    tile 80/112 (y0=70784) sfx_raw_cum=26
+    tile 100/112 (y0=88704) sfx_raw_cum=27
+    tile 112/112 (y0=99456) sfx_raw_cum=29
+    tile 20/112 (y0=17024) sfx_raw_cum=13
+    tile 40/112 (y0=34944) sfx_raw_cum=21
+    tile 60/112 (y0=52864) sfx_raw_cum=25
+    tile 80/112 (y0=70784) sfx_raw_cum=32
+    tile 100/112 (y0=88704) sfx_raw_cum=33
+    tile 112/112 (y0=99456) sfx_raw_cum=35
+[gate-t3] chiqui7/ko-npd pre-k09: conf0.5=tile 18/42 (lb 0), conf0.2=tile 19/42 (lb 0) (52.6s)
+    tile 20/70 (y0=17024) sfx_raw_cum=0
+    tile 40/70 (y0=34944) sfx_raw_cum=0
+    tile 60/70 (y0=52864) sfx_raw_cum=2
+    tile 70/70 (y0=61109) sfx_raw_cum=2
+    tile 20/70 (y0=17024) sfx_raw_cum=1
+    tile 40/70 (y0=34944) sfx_raw_cum=1
+    tile 60/70 (y0=52864) sfx_raw_cum=3
+    tile 70/70 (y0=61109) sfx_raw_cum=3
+[gate-t3] chiqui7/ko-npd pre-k01: conf0.5=tile 2/48 (lb 0), conf0.2=tile 2/48 (lb 0) (74.2s)
+    tile 20/21 (y0=17024) sfx_raw_cum=7
+    tile 21/21 (y0=17377) sfx_raw_cum=8
+    tile 20/21 (y0=17024) sfx_raw_cum=9
+    tile 21/21 (y0=17377) sfx_raw_cum=10
+[gate-t3] chiqui7/ko-npd pre-k02: conf0.5=tile 2/10 (lb 0), conf0.2=tile 2/10 (lb 0) (81.1s)
+[gate-t3] wrote G:\CODEX\New Manga.worktrees\M2-SFX-GATE-T3-zcode\verification\M2-SFX-GATE-T3\raw\eval-chiqui7-ko-npd.json
+[gate-t3] chiqui7/ko-npd: conf0.5={'matched': '41/135', 'recall_rate': 0.3037, 'precision': 0.6029, 'n_pred': 68} lb={'matched': '0/135', 'recall_rate': 0.0, 'precision': None, 'n_pred': 0} (81.1s)
+[gate-t3] v2a/bj-exam pre-bj17: conf0.5=2/2, conf0.2=2/2 (0.3s)
+[gate-t3] v2a/bj-exam pre-bj18: conf0.5=2/3, conf0.2=2/3 (0.3s)
+[gate-t3] wrote G:\CODEX\New Manga.worktrees\M2-SFX-GATE-T3-zcode\verification\M2-SFX-GATE-T3\raw\eval-v2a-bj-exam.json
+[gate-t3] v2a/bj-exam: conf0.5={'matched': '4/5', 'recall_rate': 0.8, 'precision': 0.8, 'n_pred': 5} (1.3s)
+[gate-t3] v2a/bj-ext pre-bj16: conf0.5=4/6, conf0.2=5/6 (0.3s)
+[gate-t3] v2a/bj-ext pre-bj17: conf0.5=2/2, conf0.2=2/2 (0.3s)
+[gate-t3] v2a/bj-ext pre-bj18: conf0.5=2/3, conf0.2=2/3 (0.3s)
+[gate-t3] v2a/bj-ext pre-bj22: conf0.5=0/2, conf0.2=0/2 (0.3s)
+[gate-t3] v2a/bj-ext pre-bj23: conf0.5=2/2, conf0.2=2/2 (0.3s)
+[gate-t3] v2a/bj-ext pre-bj24: conf0.5=1/1, conf0.2=1/1 (0.3s)
+[gate-t3] v2a/bj-ext pre-bj28: conf0.5=1/1, conf0.2=1/1 (0.3s)
+[gate-t3] v2a/bj-ext pre-bj29: conf0.5=1/1, conf0.2=1/1 (0.3s)
+[gate-t3] v2a/bj-ext pre-bj32: conf0.5=0/3, conf0.2=0/3 (0.3s)
+[gate-t3] v2a/bj-ext pre-bj33: conf0.5=1/3, conf0.2=1/3 (0.3s)
+[gate-t3] v2a/bj-ext pre-bj34: conf0.5=0/3, conf0.2=1/3 (0.3s)
+[gate-t3] v2a/bj-ext pre-bj35: conf0.5=1/6, conf0.2=1/6 (0.3s)
+[gate-t3] wrote G:\CODEX\New Manga.worktrees\M2-SFX-GATE-T3-zcode\verification\M2-SFX-GATE-T3\raw\eval-v2a-bj-ext.json
+[gate-t3] v2a/bj-ext: conf0.5={'matched': '15/33', 'recall_rate': 0.4545, 'precision': 0.9375, 'n_pred': 16} (8.0s)
+    tile 20/58 (y0=17024) sfx_raw_cum=7
+    tile 40/58 (y0=34944) sfx_raw_cum=11
+    tile 58/58 (y0=50947) sfx_raw_cum=14
+    tile 20/58 (y0=17024) sfx_raw_cum=17
+    tile 40/58 (y0=34944) sfx_raw_cum=36
+    tile 58/58 (y0=50947) sfx_raw_cum=50
+[gate-t3] v2a/ko-tile pre-k08: conf0.5=tile 7/27 (lb 0), conf0.2=tile 11/27 (lb 0) (17.8s)
+    tile 20/112 (y0=17024) sfx_raw_cum=19
+    tile 40/112 (y0=34944) sfx_raw_cum=28
+    tile 60/112 (y0=52864) sfx_raw_cum=35
+    tile 80/112 (y0=70784) sfx_raw_cum=47
+    tile 100/112 (y0=88704) sfx_raw_cum=50
+    tile 112/112 (y0=99456) sfx_raw_cum=54
+    tile 20/112 (y0=17024) sfx_raw_cum=33
+    tile 40/112 (y0=34944) sfx_raw_cum=53
+    tile 60/112 (y0=52864) sfx_raw_cum=66
+    tile 80/112 (y0=70784) sfx_raw_cum=90
+    tile 100/112 (y0=88704) sfx_raw_cum=100
+    tile 112/112 (y0=99456) sfx_raw_cum=107
+[gate-t3] v2a/ko-tile pre-k09: conf0.5=tile 19/24 (lb 0), conf0.2=tile 21/24 (lb 0) (51.8s)
+    tile 20/70 (y0=17024) sfx_raw_cum=3
+    tile 40/70 (y0=34944) sfx_raw_cum=7
+    tile 60/70 (y0=52864) sfx_raw_cum=14
+    tile 70/70 (y0=61109) sfx_raw_cum=18
+    tile 20/70 (y0=17024) sfx_raw_cum=15
+    tile 40/70 (y0=34944) sfx_raw_cum=31
+    tile 60/70 (y0=52864) sfx_raw_cum=54
+    tile 70/70 (y0=61109) sfx_raw_cum=66
+[gate-t3] v2a/ko-tile pre-k01: conf0.5=tile 0/2 (lb 0), conf0.2=tile 2/2 (lb 0) (73.2s)
+    tile 20/21 (y0=17024) sfx_raw_cum=4
+    tile 21/21 (y0=17377) sfx_raw_cum=4
+    tile 20/21 (y0=17024) sfx_raw_cum=5
+    tile 21/21 (y0=17377) sfx_raw_cum=5
+[gate-t3] v2a/ko-tile pre-k02: conf0.5=tile 2/3 (lb 0), conf0.2=tile 2/3 (lb 0) (79.9s)
+[gate-t3] wrote G:\CODEX\New Manga.worktrees\M2-SFX-GATE-T3-zcode\verification\M2-SFX-GATE-T3\raw\eval-v2a-ko-tile.json
+[gate-t3] v2a/ko-tile: conf0.5={'matched': '28/56', 'recall_rate': 0.5, 'precision': 0.3333, 'n_pred': 84} lb={'matched': '0/56', 'recall_rate': 0.0, 'precision': None, 'n_pred': 0} (79.9s)
+    tile 20/58 (y0=17024) sfx_raw_cum=7
+    tile 40/58 (y0=34944) sfx_raw_cum=11
+    tile 58/58 (y0=50947) sfx_raw_cum=14
+    tile 20/58 (y0=17024) sfx_raw_cum=17
+    tile 40/58 (y0=34944) sfx_raw_cum=36
+    tile 58/58 (y0=50947) sfx_raw_cum=50
+[gate-t3] v2a/ko-npd pre-k08: conf0.5=tile 9/35 (lb 0), conf0.2=tile 16/35 (lb 0) (17.8s)
+    tile 20/112 (y0=17024) sfx_raw_cum=19
+    tile 40/112 (y0=34944) sfx_raw_cum=28
+    tile 60/112 (y0=52864) sfx_raw_cum=35
+    tile 80/112 (y0=70784) sfx_raw_cum=47
+    tile 100/112 (y0=88704) sfx_raw_cum=50
+    tile 112/112 (y0=99456) sfx_raw_cum=54
+    tile 20/112 (y0=17024) sfx_raw_cum=33
+    tile 40/112 (y0=34944) sfx_raw_cum=53
+    tile 60/112 (y0=52864) sfx_raw_cum=66
+    tile 80/112 (y0=70784) sfx_raw_cum=90
+    tile 100/112 (y0=88704) sfx_raw_cum=100
+    tile 112/112 (y0=99456) sfx_raw_cum=107
+[gate-t3] v2a/ko-npd pre-k09: conf0.5=tile 19/42 (lb 0), conf0.2=tile 23/42 (lb 0) (52.2s)
+    tile 20/70 (y0=17024) sfx_raw_cum=3
+    tile 40/70 (y0=34944) sfx_raw_cum=7
+    tile 60/70 (y0=52864) sfx_raw_cum=14
+    tile 70/70 (y0=61109) sfx_raw_cum=18
+    tile 20/70 (y0=17024) sfx_raw_cum=15
+    tile 40/70 (y0=34944) sfx_raw_cum=31
+    tile 60/70 (y0=52864) sfx_raw_cum=54
+    tile 70/70 (y0=61109) sfx_raw_cum=66
+[gate-t3] v2a/ko-npd pre-k01: conf0.5=tile 3/48 (lb 0), conf0.2=tile 8/48 (lb 0) (73.6s)
+    tile 20/21 (y0=17024) sfx_raw_cum=4
+    tile 21/21 (y0=17377) sfx_raw_cum=4
+    tile 20/21 (y0=17024) sfx_raw_cum=5
+    tile 21/21 (y0=17377) sfx_raw_cum=5
+[gate-t3] v2a/ko-npd pre-k02: conf0.5=tile 4/10 (lb 0), conf0.2=tile 4/10 (lb 0) (80.1s)
+[gate-t3] wrote G:\CODEX\New Manga.worktrees\M2-SFX-GATE-T3-zcode\verification\M2-SFX-GATE-T3\raw\eval-v2a-ko-npd.json
+[gate-t3] v2a/ko-npd: conf0.5={'matched': '35/135', 'recall_rate': 0.2593, 'precision': 0.4167, 'n_pred': 84} lb={'matched': '0/135', 'recall_rate': 0.0, 'precision': None, 'n_pred': 0} (80.1s)
+[gate-t3] v2b/bj-exam pre-bj17: conf0.5=2/2, conf0.2=2/2 (0.3s)
+[gate-t3] v2b/bj-exam pre-bj18: conf0.5=3/3, conf0.2=3/3 (0.3s)
+[gate-t3] wrote G:\CODEX\New Manga.worktrees\M2-SFX-GATE-T3-zcode\verification\M2-SFX-GATE-T3\raw\eval-v2b-bj-exam.json
+[gate-t3] v2b/bj-exam: conf0.5={'matched': '5/5', 'recall_rate': 1.0, 'precision': 1.0, 'n_pred': 5} (1.2s)
+[gate-t3] v2b/bj-ext pre-bj16: conf0.5=4/6, conf0.2=4/6 (0.3s)
+[gate-t3] v2b/bj-ext pre-bj17: conf0.5=2/2, conf0.2=2/2 (0.3s)
+[gate-t3] v2b/bj-ext pre-bj18: conf0.5=3/3, conf0.2=3/3 (0.3s)
+[gate-t3] v2b/bj-ext pre-bj22: conf0.5=0/2, conf0.2=0/2 (0.3s)
+[gate-t3] v2b/bj-ext pre-bj23: conf0.5=1/2, conf0.2=2/2 (0.3s)
+[gate-t3] v2b/bj-ext pre-bj24: conf0.5=1/1, conf0.2=1/1 (0.3s)
+[gate-t3] v2b/bj-ext pre-bj28: conf0.5=1/1, conf0.2=1/1 (0.3s)
+[gate-t3] v2b/bj-ext pre-bj29: conf0.5=1/1, conf0.2=1/1 (0.3s)
+[gate-t3] v2b/bj-ext pre-bj32: conf0.5=0/3, conf0.2=0/3 (0.3s)
+[gate-t3] v2b/bj-ext pre-bj33: conf0.5=0/3, conf0.2=0/3 (0.3s)
+[gate-t3] v2b/bj-ext pre-bj34: conf0.5=0/3, conf0.2=0/3 (0.3s)
+[gate-t3] v2b/bj-ext pre-bj35: conf0.5=0/6, conf0.2=1/6 (0.4s)
+[gate-t3] wrote G:\CODEX\New Manga.worktrees\M2-SFX-GATE-T3-zcode\verification\M2-SFX-GATE-T3\raw\eval-v2b-bj-ext.json
+[gate-t3] v2b/bj-ext: conf0.5={'matched': '13/33', 'recall_rate': 0.3939, 'precision': 0.8667, 'n_pred': 15} (7.6s)
+    tile 20/58 (y0=17024) sfx_raw_cum=6
+    tile 40/58 (y0=34944) sfx_raw_cum=16
+    tile 58/58 (y0=50947) sfx_raw_cum=23
+    tile 20/58 (y0=17024) sfx_raw_cum=16
+    tile 40/58 (y0=34944) sfx_raw_cum=41
+    tile 58/58 (y0=50947) sfx_raw_cum=62
+[gate-t3] v2b/ko-tile pre-k08: conf0.5=tile 14/27 (lb 0), conf0.2=tile 18/27 (lb 0) (17.5s)
+    tile 20/112 (y0=17024) sfx_raw_cum=22
+    tile 40/112 (y0=34944) sfx_raw_cum=34
+    tile 60/112 (y0=52864) sfx_raw_cum=43
+    tile 80/112 (y0=70784) sfx_raw_cum=49
+    tile 100/112 (y0=88704) sfx_raw_cum=52
+    tile 112/112 (y0=99456) sfx_raw_cum=56
+    tile 20/112 (y0=17024) sfx_raw_cum=38
+    tile 40/112 (y0=34944) sfx_raw_cum=71
+    tile 60/112 (y0=52864) sfx_raw_cum=85
+    tile 80/112 (y0=70784) sfx_raw_cum=101
+    tile 100/112 (y0=88704) sfx_raw_cum=108
+    tile 112/112 (y0=99456) sfx_raw_cum=113
+[gate-t3] v2b/ko-tile pre-k09: conf0.5=tile 17/24 (lb 0), conf0.2=tile 21/24 (lb 0) (50.4s)
+    tile 20/70 (y0=17024) sfx_raw_cum=7
+    tile 40/70 (y0=34944) sfx_raw_cum=13
+    tile 60/70 (y0=52864) sfx_raw_cum=22
+    tile 70/70 (y0=61109) sfx_raw_cum=25
+    tile 20/70 (y0=17024) sfx_raw_cum=17
+    tile 40/70 (y0=34944) sfx_raw_cum=34
+    tile 60/70 (y0=52864) sfx_raw_cum=53
+    tile 70/70 (y0=61109) sfx_raw_cum=59
+[gate-t3] v2b/ko-tile pre-k01: conf0.5=tile 2/2 (lb 0), conf0.2=tile 2/2 (lb 0) (71.0s)
+    tile 20/21 (y0=17024) sfx_raw_cum=5
+    tile 21/21 (y0=17377) sfx_raw_cum=5
+    tile 20/21 (y0=17024) sfx_raw_cum=11
+    tile 21/21 (y0=17377) sfx_raw_cum=11
+[gate-t3] v2b/ko-tile pre-k02: conf0.5=tile 2/3 (lb 0), conf0.2=tile 2/3 (lb 0) (77.5s)
+[gate-t3] wrote G:\CODEX\New Manga.worktrees\M2-SFX-GATE-T3-zcode\verification\M2-SFX-GATE-T3\raw\eval-v2b-ko-tile.json
+[gate-t3] v2b/ko-tile: conf0.5={'matched': '35/56', 'recall_rate': 0.625, 'precision': 0.3465, 'n_pred': 101} lb={'matched': '0/56', 'recall_rate': 0.0, 'precision': None, 'n_pred': 0} (77.5s)
+    tile 20/58 (y0=17024) sfx_raw_cum=6
+    tile 40/58 (y0=34944) sfx_raw_cum=16
+    tile 58/58 (y0=50947) sfx_raw_cum=23
+    tile 20/58 (y0=17024) sfx_raw_cum=16
+    tile 40/58 (y0=34944) sfx_raw_cum=41
+    tile 58/58 (y0=50947) sfx_raw_cum=62
+[gate-t3] v2b/ko-npd pre-k08: conf0.5=tile 14/35 (lb 0), conf0.2=tile 21/35 (lb 0) (17.1s)
+    tile 20/112 (y0=17024) sfx_raw_cum=22
+    tile 40/112 (y0=34944) sfx_raw_cum=34
+    tile 60/112 (y0=52864) sfx_raw_cum=43
+    tile 80/112 (y0=70784) sfx_raw_cum=49
+    tile 100/112 (y0=88704) sfx_raw_cum=52
+    tile 112/112 (y0=99456) sfx_raw_cum=56
+    tile 20/112 (y0=17024) sfx_raw_cum=38
+    tile 40/112 (y0=34944) sfx_raw_cum=71
+    tile 60/112 (y0=52864) sfx_raw_cum=85
+    tile 80/112 (y0=70784) sfx_raw_cum=101
+    tile 100/112 (y0=88704) sfx_raw_cum=108
+    tile 112/112 (y0=99456) sfx_raw_cum=113
+[gate-t3] v2b/ko-npd pre-k09: conf0.5=tile 26/42 (lb 0), conf0.2=tile 31/42 (lb 0) (50.1s)
+    tile 20/70 (y0=17024) sfx_raw_cum=7
+    tile 40/70 (y0=34944) sfx_raw_cum=13
+    tile 60/70 (y0=52864) sfx_raw_cum=22
+    tile 70/70 (y0=61109) sfx_raw_cum=25
+    tile 20/70 (y0=17024) sfx_raw_cum=17
+    tile 40/70 (y0=34944) sfx_raw_cum=34
+    tile 60/70 (y0=52864) sfx_raw_cum=53
+    tile 70/70 (y0=61109) sfx_raw_cum=59
+[gate-t3] v2b/ko-npd pre-k01: conf0.5=tile 5/48 (lb 0), conf0.2=tile 8/48 (lb 0) (70.7s)
+    tile 20/21 (y0=17024) sfx_raw_cum=5
+    tile 21/21 (y0=17377) sfx_raw_cum=5
+    tile 20/21 (y0=17024) sfx_raw_cum=11
+    tile 21/21 (y0=17377) sfx_raw_cum=11
+[gate-t3] v2b/ko-npd pre-k02: conf0.5=tile 3/10 (lb 0), conf0.2=tile 4/10 (lb 0) (77.2s)
+[gate-t3] wrote G:\CODEX\New Manga.worktrees\M2-SFX-GATE-T3-zcode\verification\M2-SFX-GATE-T3\raw\eval-v2b-ko-npd.json
+[gate-t3] v2b/ko-npd: conf0.5={'matched': '48/135', 'recall_rate': 0.3556, 'precision': 0.4752, 'n_pred': 101} lb={'matched': '0/135', 'recall_rate': 0.0, 'precision': None, 'n_pred': 0} (77.2s)
+[gate-t3] wrote G:\CODEX\New Manga.worktrees\M2-SFX-GATE-T3-zcode\verification\M2-SFX-GATE-T3\eval-matrix.json
+[gate-t3] MATRIX {"chiqui7": {"bj-exam": {"caliber": "letterbox-1024 生产序列原样（SfxDetectionProvider.detect）", "gt_attr": {"kind": "derived", "note": "GT⊂chiqui7 整页扫描候选池（R2 判定链 confirm）——chiqui7 召回=数学必然自洽上界（gate-definition §3.5/G1 限制①），非独立性能"}, "0.5": {"matched": "5/5", "recall_rate": 1.0, "precision": 0.8333, "n_pred": 6}, "0.2": {"matched": "5/5", "recall_rate": 1.0, "precision": 0.8333, "n_pred": 6}}, "bj-ext": {"caliber": "letterbox-1024 生产序列原样（SfxDetectionProvider.detect）", "gt_attr": {"kind": "mixed: derived + ai-direct", "note": "R2/R3 判定链页=derived（循环性同 bj-exam）；R4-BJ32-35=ai-direct（无模型预标，ai-direct-annotation 首例，G1 限制④/G6 归因）"}, "0.5": {"matched": "13/33", "recall_rate": 0.3939, "precision": 0.9286, "n_pred": 14}, "0.2": {"matched": "13/33", "recall_rate": 0.3939, "precision": 0.9286, "n_pred": 14}, "split_buckets": {"0.5": {"challenge": {"matched": "5/8", "recall_rate": 0.625, "precision": 0.8333, "n_pred": 6}, "train": {"matched": "8/25", "recall_rate": 0.32, "precision": 1.0, "n_pred": 8}}, "0.2": {"challenge": {"matched": "5/8", "recall_rate": 0.625, "precision": 0.8333, "n_pred": 6}, "train": {"matched": "8/25", "recall_rate": 0.32, "precision": 1.0, "n_pred": 8}}}}, "ko-tile": {"caliber": "tile_ov128 冻结口径（tile 宽=页宽原生/高 1024/重叠 128/末尾补页底锚点/页级跨 tile IoU 0.5 conf 降序贪心 NMS；tile_calib.py tile 实现逐字）+ letterbox 整页对照并行", "gt_attr": {"kind": "derived", "note": "chiqui7 派生 56 框=采集一致性属性（directional，G2-A）；56/56 基线=同源复现上界非独立性能（gate-definition §4.G2 已知限制①）"}, "0.5": {"matched": "56/56", "recall_rate": 1.0, "precision": 0.8235, "n_pred": 68}, "0.2": {"matched": "56/56", "recall_rate": 1.0, "precision": 0.6667, "n_pred": 84}, "letterbox_control": {"0.5": {"matched": "0/56", "recall_rate": 0.0, "precision": null, "n_pred": 0}, "0.2": {"matched": "0/56", "recall_rate": 0.0, "precision": null, "n_pred": 0}, "note": "G2 冻结口径「letterbox 整页对照口径并行跑」；KO-TILE 结构性事实=整页 letterbox 下 SFX 亚像素化（0 召回复现预期）"}, "tile_stats_total": {"0.5": {"n_tiles": 261, "sfx_raw": 70, "sfx_after_page_nms": 68}, "0.2": {"n_tiles": 261, "sfx_raw": 89, "sfx_after_page_nms": 84}}}, "ko-npd": {"caliber": "tile_ov128 冻结口径（tile 宽=页宽原生/高 1024/重叠 128/末尾补页底锚点/页级跨 tile IoU 0.5 conf 降序贪心 NMS；tile_calib.py tile 实现逐字）+ letterbox 整页对照并行", "gt_attr": {"kind": "non-derived", "note": "AC3 双 AI 独立整页标注（任务书零既有坐标，隔离纪律 PASS）定稿切片=模型质量属性，G2-B 硬判据载体（相对不回退判据）"}, "0.5": {"matched": "41/135", "recall_rate": 0.3037, "precision": 0.6029, "n_pred": 68}, "0.2": {"matched": "42/135", "recall_rate": 0.3111, "precision": 0.5, "n_pred": 84}, "letterbox_control": {"0.5": {"matched": "0/135", "recall_rate": 0.0, "precision": null, "n_pred": 0}, "0.2": {"matched": "0/135", "recall_rate": 0.0, "precision": null, "n_pred": 0}, "note": "G2 冻结口径「letterbox 整页对照口径并行跑」；KO-TILE 结构性事实=整页 letterbox 下 SFX 亚像素化（0 召回复现预期）"}, "tile_stats_total": {"0.5": {"n_tiles": 261, "sfx_raw": 70, "sfx_after_page_nms": 68}, "0.2": {"n_tiles": 261, "sfx_raw": 89, "sfx_after_page_nms": 84}}}}, "v2a": {"bj-exam": {"caliber": "letterbox-1024 生产序列原样（SfxDetectionProvider.detect）", "gt_attr": {"kind": "derived", "note": "GT⊂chiqui7 整页扫描候选池（R2 判定链 confirm）——chiqui7 召回=数学必然自洽上界（gate-definition §3.5/G1 限制①），非独立性能"}, "0.5": {"matched": "4/5", "recall_rate": 0.8, "precision": 0.8, "n_pred": 5}, "0.2": {"matched": "4/5", "recall_rate": 0.8, "precision": 0.6667, "n_pred": 6}}, "bj-ext": {"caliber": "letterbox-1024 生产序列原样（SfxDetectionProvider.detect）", "gt_attr": {"kind": "mixed: derived + ai-direct", "note": "R2/R3 判定链页=derived（循环性同 bj-exam）；R4-BJ32-35=ai-direct（无模型预标，ai-direct-annotation 首例，G1 限制④/G6 归因）"}, "0.5": {"matched": "15/33", "recall_rate": 0.4545, "precision": 0.9375, "n_pred": 16}, "0.2": {"matched": "17/33", "recall_rate": 0.5152, "precision": 0.7727, "n_pred": 22}, "split_buckets": {"0.5": {"challenge": {"matched": "4/8", "recall_rate": 0.5, "precision": 0.8, "n_pred": 5}, "train": {"matched": "11/25", "recall_rate": 0.44, "precision": 1.0, "n_pred": 11}}, "0.2": {"challenge": {"matched": "4/8", "recall_rate": 0.5, "precision": 0.6667, "n_pred": 6}, "train": {"matched": "13/25", "recall_rate": 0.52, "precision": 0.8125, "n_pred": 16}}}}, "ko-tile": {"caliber": "tile_ov128 冻结口径（tile 宽=页宽原生/高 1024/重叠 128/末尾补页底锚点/页级跨 tile IoU 0.5 conf 降序贪心 NMS；tile_calib.py tile 实现逐字）+ letterbox 整页对照并行", "gt_attr": {"kind": "derived", "note": "chiqui7 派生 56 框=采集一致性属性（directional，G2-A）；56/56 基线=同源复现上界非独立性能（gate-definition §4.G2 已知限制①）"}, "0.5": {"matched": "28/56", "recall_rate": 0.5, "precision": 0.3333, "n_pred": 84}, "0.2": {"matched": "36/56", "recall_rate": 0.6429, "precision": 0.1765, "n_pred": 204}, "letterbox_control": {"0.5": {"matched": "0/56", "recall_rate": 0.0, "precision": null, "n_pred": 0}, "0.2": {"matched": "0/56", "recall_rate": 0.0, "precision": null, "n_pred": 0}, "note": "G2 冻结口径「letterbox 整页对照口径并行跑」；KO-TILE 结构性事实=整页 letterbox 下 SFX 亚像素化（0 召回复现预期）"}, "tile_stats_total": {"0.5": {"n_tiles": 261, "sfx_raw": 90, "sfx_after_page_nms": 84}, "0.2": {"n_tiles": 261, "sfx_raw": 228, "sfx_after_page_nms": 204}}}, "ko-npd": {"caliber": "tile_ov128 冻结口径（tile 宽=页宽原生/高 1024/重叠 128/末尾补页底锚点/页级跨 tile IoU 0.5 conf 降序贪心 NMS；tile_calib.py tile 实现逐字）+ letterbox 整页对照并行", "gt_attr": {"kind": "non-derived", "note": "AC3 双 AI 独立整页标注（任务书零既有坐标，隔离纪律 PASS）定稿切片=模型质量属性，G2-B 硬判据载体（相对不回退判据）"}, "0.5": {"matched": "35/135", "recall_rate": 0.2593, "precision": 0.4167, "n_pred": 84}, "0.2": {"matched": "51/135", "recall_rate": 0.3778, "precision": 0.25, "n_pred": 204}, "letterbox_control": {"0.5": {"matched": "0/135", "recall_rate": 0.0, "precision": null, "n_pred": 0}, "0.2": {"matched": "0/135", "recall_rate": 0.0, "precision": null, "n_pred": 0}, "note": "G2 冻结口径「letterbox 整页对照口径并行跑」；KO-TILE 结构性事实=整页 letterbox 下 SFX 亚像素化（0 召回复现预期）"}, "tile_stats_total": {"0.5": {"n_tiles": 261, "sfx_raw": 90, "sfx_after_page_nms": 84}, "0.2": {"n_tiles": 261, "sfx_raw": 228, "sfx_after_page_nms": 204}}}}, "v2b": {"bj-exam": {"caliber": "letterbox-1024 生产序列原样（SfxDetectionProvider.detect）", "gt_attr": {"kind": "derived", "note": "GT⊂chiqui7 整页扫描候选池（R2 判定链 confirm）——chiqui7 召回=数学必然自洽上界（gate-definition §3.5/G1 限制①），非独立性能"}, "0.5": {"matched": "5/5", "recall_rate": 1.0, "precision": 1.0, "n_pred": 5}, "0.2": {"matched": "5/5", "recall_rate": 1.0, "precision": 1.0, "n_pred": 5}}, "bj-ext": {"caliber": "letterbox-1024 生产序列原样（SfxDetectionProvider.detect）", "gt_attr": {"kind": "mixed: derived + ai-direct", "note": "R2/R3 判定链页=derived（循环性同 bj-exam）；R4-BJ32-35=ai-direct（无模型预标，ai-direct-annotation 首例，G1 限制④/G6 归因）"}, "0.5": {"matched": "13/33", "recall_rate": 0.3939, "precision": 0.8667, "n_pred": 15}, "0.2": {"matched": "15/33", "recall_rate": 0.4545, "precision": 0.8333, "n_pred": 18}, "split_buckets": {"0.5": {"challenge": {"matched": "5/8", "recall_rate": 0.625, "precision": 1.0, "n_pred": 5}, "train": {"matched": "8/25", "recall_rate": 0.32, "precision": 0.8, "n_pred": 10}}, "0.2": {"challenge": {"matched": "5/8", "recall_rate": 0.625, "precision": 1.0, "n_pred": 5}, "train": {"matched": "10/25", "recall_rate": 0.4, "precision": 0.7692, "n_pred": 13}}}}, "ko-tile": {"caliber": "tile_ov128 冻结口径（tile 宽=页宽原生/高 1024/重叠 128/末尾补页底锚点/页级跨 tile IoU 0.5 conf 降序贪心 NMS；tile_calib.py tile 实现逐字）+ letterbox 整页对照并行", "gt_attr": {"kind": "derived", "note": "chiqui7 派生 56 框=采集一致性属性（directional，G2-A）；56/56 基线=同源复现上界非独立性能（gate-definition §4.G2 已知限制①）"}, "0.5": {"matched": "35/56", "recall_rate": 0.625, "precision": 0.3465, "n_pred": 101}, "0.2": {"matched": "43/56", "recall_rate": 0.7679, "precision": 0.2019, "n_pred": 213}, "letterbox_control": {"0.5": {"matched": "0/56", "recall_rate": 0.0, "precision": null, "n_pred": 0}, "0.2": {"matched": "0/56", "recall_rate": 0.0, "precision": null, "n_pred": 0}, "note": "G2 冻结口径「letterbox 整页对照口径并行跑」；KO-TILE 结构性事实=整页 letterbox 下 SFX 亚像素化（0 召回复现预期）"}, "tile_stats_total": {"0.5": {"n_tiles": 261, "sfx_raw": 109, "sfx_after_page_nms": 101}, "0.2": {"n_tiles": 261, "sfx_raw": 245, "sfx_after_page_nms": 213}}}, "ko-npd": {"caliber": "tile_ov128 冻结口径（tile 宽=页宽原生/高 1024/重叠 128/末尾补页底锚点/页级跨 tile IoU 0.5 conf 降序贪心 NMS；tile_calib.py tile 实现逐字）+ letterbox 整页对照并行", "gt_attr": {"kind": "non-derived", "note": "AC3 双 AI 独立整页标注（任务书零既有坐标，隔离纪律 PASS）定稿切片=模型质量属性，G2-B 硬判据载体（相对不回退判据）"}, "0.5": {"matched": "48/135", "recall_rate": 0.3556, "precision": 0.4752, "n_pred": 101}, "0.2": {"matched": "64/135", "recall_rate": 0.4741, "precision": 0.3005, "n_pred": 213}, "letterbox_control": {"0.5": {"matched": "0/135", "recall_rate": 0.0, "precision": null, "n_pred": 0}, "0.2": {"matched": "0/135", "recall_rate": 0.0, "precision": null, "n_pred": 0}, "note": "G2 冻结口径「letterbox 整页对照口径并行跑」；KO-TILE 结构性事实=整页 letterbox 下 SFX 亚像素化（0 召回复现预期）"}, "tile_stats_total": {"0.5": {"n_tiles": 261, "sfx_raw": 109, "sfx_after_page_nms": 101}, "0.2": {"n_tiles": 261, "sfx_raw": 245, "sfx_after_page_nms": 213}}}}}

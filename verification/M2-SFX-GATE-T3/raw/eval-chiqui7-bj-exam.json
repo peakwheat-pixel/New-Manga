@@ -1,0 +1,313 @@
+{
+ "task": "M2-SFX-GATE-T3 AC4 正式评测（三方×四数据集）",
+ "side": "chiqui7",
+ "dataset": "bj-exam",
+ "model": {
+  "onnx": "G:\\CODEX\\New Manga.task-envs\\M2-SFX-DETECT\\weights\\yolo11s-seg.onnx",
+  "sha256": "d87389af4350954143a216bcfe40fd2ad93312cb136534e6073c9c740d98b646",
+  "note": "生产现役权重（pin d87389af… 逐字核对），pin 原样零重指——同链路独立复跑",
+  "inference": "生产 SfxDetectionProvider.detect 全序列（letterbox 1024/类无关 NMS 0.7/sfx 过滤/CPUExecutionProvider）"
+ },
+ "caliber": "letterbox-1024 生产序列原样（SfxDetectionProvider.detect）",
+ "gt_attr": {
+  "kind": "derived",
+  "note": "GT⊂chiqui7 整页扫描候选池（R2 判定链 confirm）——chiqui7 召回=数学必然自洽上界（gate-definition §3.5/G1 限制①），非独立性能"
+ },
+ "matching": "box IoU>=0.5，pred conf 降序贪心（每 GT 至多一预测；沿 eval_v2.py match_gt 逐字）",
+ "confs": {
+  "0.5": "主口径（生产冻结）",
+  "0.2": "宽松口径（仅诊断）"
+ },
+ "summary": {
+  "0.5": {
+   "matched": "5/5",
+   "recall_rate": 1.0,
+   "precision": 0.8333,
+   "n_pred": 6
+  },
+  "0.2": {
+   "matched": "5/5",
+   "recall_rate": 1.0,
+   "precision": 0.8333,
+   "n_pred": 6
+  }
+ },
+ "per_sample": [
+  {
+   "sample_id": "pre-bj17",
+   "case_id": "BJ17",
+   "split": "challenge",
+   "kind": "bj_letterbox",
+   "gt_attr": "derived",
+   "page": "pre-bj17.png",
+   "gt": [
+    {
+     "unit_id": "R2-BJ17-B00",
+     "conf": 0.932,
+     "gt_attr": "derived"
+    },
+    {
+     "unit_id": "R2-BJ17-B01",
+     "conf": 0.9096,
+     "gt_attr": "derived"
+    }
+   ],
+   "sides": {
+    "0.5": {
+     "preds": [
+      {
+       "xyxy": [
+        1660.4,
+        2394.9,
+        1773.2,
+        2624.7
+       ],
+       "conf": 0.932
+      },
+      {
+       "xyxy": [
+        1816.3,
+        2123.4,
+        1921.0,
+        2383.6
+       ],
+       "conf": 0.9096
+      },
+      {
+       "xyxy": [
+        947.2,
+        3672.9,
+        1026.5,
+        3841.0
+       ],
+       "conf": 0.8634
+      }
+     ],
+     "matched": 2,
+     "n_pred": 3,
+     "recall": 1.0,
+     "precision": 0.6667,
+     "pairs": [
+      {
+       "gt_index": 0,
+       "pred_index": 0,
+       "iou": 0.9995,
+       "pred_conf": 0.932
+      },
+      {
+       "gt_index": 1,
+       "pred_index": 1,
+       "iou": 0.9993,
+       "pred_conf": 0.9096
+      }
+     ],
+     "gt_matched_flags": [
+      true,
+      true
+     ]
+    },
+    "0.2": {
+     "preds": [
+      {
+       "xyxy": [
+        1660.4,
+        2394.9,
+        1773.2,
+        2624.7
+       ],
+       "conf": 0.932
+      },
+      {
+       "xyxy": [
+        1816.3,
+        2123.4,
+        1921.0,
+        2383.6
+       ],
+       "conf": 0.9096
+      },
+      {
+       "xyxy": [
+        947.2,
+        3672.9,
+        1026.5,
+        3841.0
+       ],
+       "conf": 0.8634
+      }
+     ],
+     "matched": 2,
+     "n_pred": 3,
+     "recall": 1.0,
+     "precision": 0.6667,
+     "pairs": [
+      {
+       "gt_index": 0,
+       "pred_index": 0,
+       "iou": 0.9995,
+       "pred_conf": 0.932
+      },
+      {
+       "gt_index": 1,
+       "pred_index": 1,
+       "iou": 0.9993,
+       "pred_conf": 0.9096
+      }
+     ],
+     "gt_matched_flags": [
+      true,
+      true
+     ]
+    }
+   }
+  },
+  {
+   "sample_id": "pre-bj18",
+   "case_id": "BJ18",
+   "split": "challenge",
+   "kind": "bj_letterbox",
+   "gt_attr": "derived",
+   "page": "pre-bj18.png",
+   "gt": [
+    {
+     "unit_id": "R2-BJ18-B00",
+     "conf": 0.8951,
+     "gt_attr": "derived"
+    },
+    {
+     "unit_id": "R2-BJ18-B01",
+     "conf": 0.8636,
+     "gt_attr": "derived"
+    },
+    {
+     "unit_id": "R2-BJ18-B02",
+     "conf": 0.8333,
+     "gt_attr": "derived"
+    }
+   ],
+   "sides": {
+    "0.5": {
+     "preds": [
+      {
+       "xyxy": [
+        2418.3,
+        1331.6,
+        2577.8,
+        1553.8
+       ],
+       "conf": 0.8951
+      },
+      {
+       "xyxy": [
+        1443.5,
+        2213.7,
+        1569.0,
+        2410.0
+       ],
+       "conf": 0.8636
+      },
+      {
+       "xyxy": [
+        468.9,
+        1584.0,
+        586.6,
+        1772.6
+       ],
+       "conf": 0.8333
+      }
+     ],
+     "matched": 3,
+     "n_pred": 3,
+     "recall": 1.0,
+     "precision": 1.0,
+     "pairs": [
+      {
+       "gt_index": 0,
+       "pred_index": 0,
+       "iou": 0.9993,
+       "pred_conf": 0.8951
+      },
+      {
+       "gt_index": 1,
+       "pred_index": 1,
+       "iou": 0.9995,
+       "pred_conf": 0.8636
+      },
+      {
+       "gt_index": 2,
+       "pred_index": 2,
+       "iou": 0.9994,
+       "pred_conf": 0.8333
+      }
+     ],
+     "gt_matched_flags": [
+      true,
+      true,
+      true
+     ]
+    },
+    "0.2": {
+     "preds": [
+      {
+       "xyxy": [
+        2418.3,
+        1331.6,
+        2577.8,
+        1553.8
+       ],
+       "conf": 0.8951
+      },
+      {
+       "xyxy": [
+        1443.5,
+        2213.7,
+        1569.0,
+        2410.0
+       ],
+       "conf": 0.8636
+      },
+      {
+       "xyxy": [
+        468.9,
+        1584.0,
+        586.6,
+        1772.6
+       ],
+       "conf": 0.8333
+      }
+     ],
+     "matched": 3,
+     "n_pred": 3,
+     "recall": 1.0,
+     "precision": 1.0,
+     "pairs": [
+      {
+       "gt_index": 0,
+       "pred_index": 0,
+       "iou": 0.9993,
+       "pred_conf": 0.8951
+      },
+      {
+       "gt_index": 1,
+       "pred_index": 1,
+       "iou": 0.9995,
+       "pred_conf": 0.8636
+      },
+      {
+       "gt_index": 2,
+       "pred_index": 2,
+       "iou": 0.9994,
+       "pred_conf": 0.8333
+      }
+     ],
+     "gt_matched_flags": [
+      true,
+      true,
+      true
+     ]
+    }
+   }
+  }
+ ],
+ "wording_discipline": "directional 评测，统计功效低；结论禁用「显著」；0 也如实"
+}

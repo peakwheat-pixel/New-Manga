@@ -1,0 +1,1119 @@
+{
+ "task": "M2-SFX-GATE-T3 AC4 正式评测（三方×四数据集）",
+ "side": "chiqui7",
+ "dataset": "bj-ext",
+ "model": {
+  "onnx": "G:\\CODEX\\New Manga.task-envs\\M2-SFX-DETECT\\weights\\yolo11s-seg.onnx",
+  "sha256": "d87389af4350954143a216bcfe40fd2ad93312cb136534e6073c9c740d98b646",
+  "note": "生产现役权重（pin d87389af… 逐字核对），pin 原样零重指——同链路独立复跑",
+  "inference": "生产 SfxDetectionProvider.detect 全序列（letterbox 1024/类无关 NMS 0.7/sfx 过滤/CPUExecutionProvider）"
+ },
+ "caliber": "letterbox-1024 生产序列原样（SfxDetectionProvider.detect）",
+ "gt_attr": {
+  "kind": "mixed: derived + ai-direct",
+  "note": "R2/R3 判定链页=derived（循环性同 bj-exam）；R4-BJ32-35=ai-direct（无模型预标，ai-direct-annotation 首例，G1 限制④/G6 归因）"
+ },
+ "matching": "box IoU>=0.5，pred conf 降序贪心（每 GT 至多一预测；沿 eval_v2.py match_gt 逐字）",
+ "confs": {
+  "0.5": "主口径（生产冻结）",
+  "0.2": "宽松口径（仅诊断）"
+ },
+ "summary": {
+  "0.5": {
+   "matched": "13/33",
+   "recall_rate": 0.3939,
+   "precision": 0.9286,
+   "n_pred": 14
+  },
+  "0.2": {
+   "matched": "13/33",
+   "recall_rate": 0.3939,
+   "precision": 0.9286,
+   "n_pred": 14
+  },
+  "split_buckets": {
+   "0.5": {
+    "challenge": {
+     "matched": "5/8",
+     "recall_rate": 0.625,
+     "precision": 0.8333,
+     "n_pred": 6
+    },
+    "train": {
+     "matched": "8/25",
+     "recall_rate": 0.32,
+     "precision": 1.0,
+     "n_pred": 8
+    }
+   },
+   "0.2": {
+    "challenge": {
+     "matched": "5/8",
+     "recall_rate": 0.625,
+     "precision": 0.8333,
+     "n_pred": 6
+    },
+    "train": {
+     "matched": "8/25",
+     "recall_rate": 0.32,
+     "precision": 1.0,
+     "n_pred": 8
+    }
+   }
+  }
+ },
+ "per_sample": [
+  {
+   "sample_id": "pre-bj16",
+   "case_id": "BJ16",
+   "split": "train",
+   "kind": "bj_letterbox",
+   "gt_attr": "derived",
+   "page": "pre-bj16.png",
+   "gt": [
+    {
+     "unit_id": "R2-BJ16-B00",
+     "conf": 0.9524,
+     "gt_attr": "derived"
+    },
+    {
+     "unit_id": "R2-BJ16-B01",
+     "conf": 0.8949,
+     "gt_attr": "derived"
+    },
+    {
+     "unit_id": "R2-BJ16-B02",
+     "conf": 0.851,
+     "gt_attr": "derived"
+    },
+    {
+     "unit_id": "R2-BJ16-B04",
+     "conf": 0.1074,
+     "gt_attr": "derived"
+    },
+    {
+     "unit_id": "R2-BJ16-B05",
+     "conf": 0.0443,
+     "gt_attr": "derived"
+    },
+    {
+     "unit_id": "R2-BJ16-B06",
+     "conf": 0.0351,
+     "gt_attr": "derived"
+    }
+   ],
+   "sides": {
+    "0.5": {
+     "preds": [
+      {
+       "xyxy": [
+        481.7,
+        2527.3,
+        846.6,
+        3132.2
+       ],
+       "conf": 0.9524
+      },
+      {
+       "xyxy": [
+        1486.1,
+        2600.5,
+        1733.6,
+        2749.5
+       ],
+       "conf": 0.8949
+      },
+      {
+       "xyxy": [
+        1770.0,
+        3584.4,
+        1945.0,
+        3736.5
+       ],
+       "conf": 0.851
+      }
+     ],
+     "matched": 3,
+     "n_pred": 3,
+     "recall": 0.5,
+     "precision": 1.0,
+     "pairs": [
+      {
+       "gt_index": 0,
+       "pred_index": 0,
+       "iou": 0.9998,
+       "pred_conf": 0.9524
+      },
+      {
+       "gt_index": 1,
+       "pred_index": 1,
+       "iou": 0.9992,
+       "pred_conf": 0.8949
+      },
+      {
+       "gt_index": 2,
+       "pred_index": 2,
+       "iou": 0.9994,
+       "pred_conf": 0.851
+      }
+     ],
+     "gt_matched_flags": [
+      true,
+      true,
+      true,
+      false,
+      false,
+      false
+     ]
+    },
+    "0.2": {
+     "preds": [
+      {
+       "xyxy": [
+        481.7,
+        2527.3,
+        846.6,
+        3132.2
+       ],
+       "conf": 0.9524
+      },
+      {
+       "xyxy": [
+        1486.1,
+        2600.5,
+        1733.6,
+        2749.5
+       ],
+       "conf": 0.8949
+      },
+      {
+       "xyxy": [
+        1770.0,
+        3584.4,
+        1945.0,
+        3736.5
+       ],
+       "conf": 0.851
+      }
+     ],
+     "matched": 3,
+     "n_pred": 3,
+     "recall": 0.5,
+     "precision": 1.0,
+     "pairs": [
+      {
+       "gt_index": 0,
+       "pred_index": 0,
+       "iou": 0.9998,
+       "pred_conf": 0.9524
+      },
+      {
+       "gt_index": 1,
+       "pred_index": 1,
+       "iou": 0.9992,
+       "pred_conf": 0.8949
+      },
+      {
+       "gt_index": 2,
+       "pred_index": 2,
+       "iou": 0.9994,
+       "pred_conf": 0.851
+      }
+     ],
+     "gt_matched_flags": [
+      true,
+      true,
+      true,
+      false,
+      false,
+      false
+     ]
+    }
+   }
+  },
+  {
+   "sample_id": "pre-bj17",
+   "case_id": "BJ17",
+   "split": "challenge",
+   "kind": "bj_letterbox",
+   "gt_attr": "derived",
+   "page": "pre-bj17.png",
+   "gt": [
+    {
+     "unit_id": "R2-BJ17-B00",
+     "conf": 0.932,
+     "gt_attr": "derived"
+    },
+    {
+     "unit_id": "R2-BJ17-B01",
+     "conf": 0.9096,
+     "gt_attr": "derived"
+    }
+   ],
+   "sides": {
+    "0.5": {
+     "preds": [
+      {
+       "xyxy": [
+        1660.4,
+        2394.9,
+        1773.2,
+        2624.7
+       ],
+       "conf": 0.932
+      },
+      {
+       "xyxy": [
+        1816.3,
+        2123.4,
+        1921.0,
+        2383.6
+       ],
+       "conf": 0.9096
+      },
+      {
+       "xyxy": [
+        947.2,
+        3672.9,
+        1026.5,
+        3841.0
+       ],
+       "conf": 0.8634
+      }
+     ],
+     "matched": 2,
+     "n_pred": 3,
+     "recall": 1.0,
+     "precision": 0.6667,
+     "pairs": [
+      {
+       "gt_index": 0,
+       "pred_index": 0,
+       "iou": 0.9995,
+       "pred_conf": 0.932
+      },
+      {
+       "gt_index": 1,
+       "pred_index": 1,
+       "iou": 0.9993,
+       "pred_conf": 0.9096
+      }
+     ],
+     "gt_matched_flags": [
+      true,
+      true
+     ]
+    },
+    "0.2": {
+     "preds": [
+      {
+       "xyxy": [
+        1660.4,
+        2394.9,
+        1773.2,
+        2624.7
+       ],
+       "conf": 0.932
+      },
+      {
+       "xyxy": [
+        1816.3,
+        2123.4,
+        1921.0,
+        2383.6
+       ],
+       "conf": 0.9096
+      },
+      {
+       "xyxy": [
+        947.2,
+        3672.9,
+        1026.5,
+        3841.0
+       ],
+       "conf": 0.8634
+      }
+     ],
+     "matched": 2,
+     "n_pred": 3,
+     "recall": 1.0,
+     "precision": 0.6667,
+     "pairs": [
+      {
+       "gt_index": 0,
+       "pred_index": 0,
+       "iou": 0.9995,
+       "pred_conf": 0.932
+      },
+      {
+       "gt_index": 1,
+       "pred_index": 1,
+       "iou": 0.9993,
+       "pred_conf": 0.9096
+      }
+     ],
+     "gt_matched_flags": [
+      true,
+      true
+     ]
+    }
+   }
+  },
+  {
+   "sample_id": "pre-bj18",
+   "case_id": "BJ18",
+   "split": "challenge",
+   "kind": "bj_letterbox",
+   "gt_attr": "derived",
+   "page": "pre-bj18.png",
+   "gt": [
+    {
+     "unit_id": "R2-BJ18-B00",
+     "conf": 0.8951,
+     "gt_attr": "derived"
+    },
+    {
+     "unit_id": "R2-BJ18-B01",
+     "conf": 0.8636,
+     "gt_attr": "derived"
+    },
+    {
+     "unit_id": "R2-BJ18-B02",
+     "conf": 0.8333,
+     "gt_attr": "derived"
+    }
+   ],
+   "sides": {
+    "0.5": {
+     "preds": [
+      {
+       "xyxy": [
+        2418.3,
+        1331.6,
+        2577.8,
+        1553.8
+       ],
+       "conf": 0.8951
+      },
+      {
+       "xyxy": [
+        1443.5,
+        2213.7,
+        1569.0,
+        2410.0
+       ],
+       "conf": 0.8636
+      },
+      {
+       "xyxy": [
+        468.9,
+        1584.0,
+        586.6,
+        1772.6
+       ],
+       "conf": 0.8333
+      }
+     ],
+     "matched": 3,
+     "n_pred": 3,
+     "recall": 1.0,
+     "precision": 1.0,
+     "pairs": [
+      {
+       "gt_index": 0,
+       "pred_index": 0,
+       "iou": 0.9993,
+       "pred_conf": 0.8951
+      },
+      {
+       "gt_index": 1,
+       "pred_index": 1,
+       "iou": 0.9995,
+       "pred_conf": 0.8636
+      },
+      {
+       "gt_index": 2,
+       "pred_index": 2,
+       "iou": 0.9994,
+       "pred_conf": 0.8333
+      }
+     ],
+     "gt_matched_flags": [
+      true,
+      true,
+      true
+     ]
+    },
+    "0.2": {
+     "preds": [
+      {
+       "xyxy": [
+        2418.3,
+        1331.6,
+        2577.8,
+        1553.8
+       ],
+       "conf": 0.8951
+      },
+      {
+       "xyxy": [
+        1443.5,
+        2213.7,
+        1569.0,
+        2410.0
+       ],
+       "conf": 0.8636
+      },
+      {
+       "xyxy": [
+        468.9,
+        1584.0,
+        586.6,
+        1772.6
+       ],
+       "conf": 0.8333
+      }
+     ],
+     "matched": 3,
+     "n_pred": 3,
+     "recall": 1.0,
+     "precision": 1.0,
+     "pairs": [
+      {
+       "gt_index": 0,
+       "pred_index": 0,
+       "iou": 0.9993,
+       "pred_conf": 0.8951
+      },
+      {
+       "gt_index": 1,
+       "pred_index": 1,
+       "iou": 0.9995,
+       "pred_conf": 0.8636
+      },
+      {
+       "gt_index": 2,
+       "pred_index": 2,
+       "iou": 0.9994,
+       "pred_conf": 0.8333
+      }
+     ],
+     "gt_matched_flags": [
+      true,
+      true,
+      true
+     ]
+    }
+   }
+  },
+  {
+   "sample_id": "pre-bj22",
+   "case_id": "BJ22",
+   "split": "train",
+   "kind": "bj_letterbox",
+   "gt_attr": "derived",
+   "page": "pre-bj22.png",
+   "gt": [
+    {
+     "unit_id": "R2-BJ22-B00",
+     "conf": 0.07,
+     "gt_attr": "derived"
+    },
+    {
+     "unit_id": "R2-BJ22-B01",
+     "conf": 0.0255,
+     "gt_attr": "derived"
+    }
+   ],
+   "sides": {
+    "0.5": {
+     "preds": [],
+     "matched": 0,
+     "n_pred": 0,
+     "recall": 0.0,
+     "precision": null,
+     "pairs": [],
+     "gt_matched_flags": [
+      false,
+      false
+     ]
+    },
+    "0.2": {
+     "preds": [],
+     "matched": 0,
+     "n_pred": 0,
+     "recall": 0.0,
+     "precision": null,
+     "pairs": [],
+     "gt_matched_flags": [
+      false,
+      false
+     ]
+    }
+   }
+  },
+  {
+   "sample_id": "pre-bj23",
+   "case_id": "BJ23",
+   "split": "train",
+   "kind": "bj_letterbox",
+   "gt_attr": "derived",
+   "page": "pre-bj23.png",
+   "gt": [
+    {
+     "unit_id": "R2-BJ23-B00",
+     "conf": 0.7038,
+     "gt_attr": "derived"
+    },
+    {
+     "unit_id": "R2-BJ23-B01",
+     "conf": 0.6251,
+     "gt_attr": "derived"
+    }
+   ],
+   "sides": {
+    "0.5": {
+     "preds": [
+      {
+       "xyxy": [
+        1929.6,
+        3382.2,
+        2088.6,
+        3775.2
+       ],
+       "conf": 0.7038
+      },
+      {
+       "xyxy": [
+        799.8,
+        3488.6,
+        907.8,
+        3824.0
+       ],
+       "conf": 0.6251
+      }
+     ],
+     "matched": 2,
+     "n_pred": 2,
+     "recall": 1.0,
+     "precision": 1.0,
+     "pairs": [
+      {
+       "gt_index": 0,
+       "pred_index": 0,
+       "iou": 0.9995,
+       "pred_conf": 0.7038
+      },
+      {
+       "gt_index": 1,
+       "pred_index": 1,
+       "iou": 0.9992,
+       "pred_conf": 0.6251
+      }
+     ],
+     "gt_matched_flags": [
+      true,
+      true
+     ]
+    },
+    "0.2": {
+     "preds": [
+      {
+       "xyxy": [
+        1929.6,
+        3382.2,
+        2088.6,
+        3775.2
+       ],
+       "conf": 0.7038
+      },
+      {
+       "xyxy": [
+        799.8,
+        3488.6,
+        907.8,
+        3824.0
+       ],
+       "conf": 0.6251
+      }
+     ],
+     "matched": 2,
+     "n_pred": 2,
+     "recall": 1.0,
+     "precision": 1.0,
+     "pairs": [
+      {
+       "gt_index": 0,
+       "pred_index": 0,
+       "iou": 0.9995,
+       "pred_conf": 0.7038
+      },
+      {
+       "gt_index": 1,
+       "pred_index": 1,
+       "iou": 0.9992,
+       "pred_conf": 0.6251
+      }
+     ],
+     "gt_matched_flags": [
+      true,
+      true
+     ]
+    }
+   }
+  },
+  {
+   "sample_id": "pre-bj24",
+   "case_id": "BJ24",
+   "split": "train",
+   "kind": "bj_letterbox",
+   "gt_attr": "derived",
+   "page": "pre-bj24.png",
+   "gt": [
+    {
+     "unit_id": "R2-BJ24-B00",
+     "conf": 0.9465,
+     "gt_attr": "derived"
+    }
+   ],
+   "sides": {
+    "0.5": {
+     "preds": [
+      {
+       "xyxy": [
+        1682.6,
+        2632.7,
+        1811.8,
+        2875.6
+       ],
+       "conf": 0.9465
+      }
+     ],
+     "matched": 1,
+     "n_pred": 1,
+     "recall": 1.0,
+     "precision": 1.0,
+     "pairs": [
+      {
+       "gt_index": 0,
+       "pred_index": 0,
+       "iou": 0.9994,
+       "pred_conf": 0.9465
+      }
+     ],
+     "gt_matched_flags": [
+      true
+     ]
+    },
+    "0.2": {
+     "preds": [
+      {
+       "xyxy": [
+        1682.6,
+        2632.7,
+        1811.8,
+        2875.6
+       ],
+       "conf": 0.9465
+      }
+     ],
+     "matched": 1,
+     "n_pred": 1,
+     "recall": 1.0,
+     "precision": 1.0,
+     "pairs": [
+      {
+       "gt_index": 0,
+       "pred_index": 0,
+       "iou": 0.9994,
+       "pred_conf": 0.9465
+      }
+     ],
+     "gt_matched_flags": [
+      true
+     ]
+    }
+   }
+  },
+  {
+   "sample_id": "pre-bj28",
+   "case_id": "BJ28",
+   "split": "train",
+   "kind": "bj_letterbox",
+   "gt_attr": "derived",
+   "page": "pre-bj28.png",
+   "gt": [
+    {
+     "unit_id": "R3-BJ28-B00",
+     "conf": 0.9108,
+     "gt_attr": "derived"
+    }
+   ],
+   "sides": {
+    "0.5": {
+     "preds": [
+      {
+       "xyxy": [
+        1388.9,
+        2617.4,
+        1601.7,
+        2745.6
+       ],
+       "conf": 0.9108
+      }
+     ],
+     "matched": 1,
+     "n_pred": 1,
+     "recall": 1.0,
+     "precision": 1.0,
+     "pairs": [
+      {
+       "gt_index": 0,
+       "pred_index": 0,
+       "iou": 0.9999,
+       "pred_conf": 0.9108
+      }
+     ],
+     "gt_matched_flags": [
+      true
+     ]
+    },
+    "0.2": {
+     "preds": [
+      {
+       "xyxy": [
+        1388.9,
+        2617.4,
+        1601.7,
+        2745.6
+       ],
+       "conf": 0.9108
+      }
+     ],
+     "matched": 1,
+     "n_pred": 1,
+     "recall": 1.0,
+     "precision": 1.0,
+     "pairs": [
+      {
+       "gt_index": 0,
+       "pred_index": 0,
+       "iou": 0.9999,
+       "pred_conf": 0.9108
+      }
+     ],
+     "gt_matched_flags": [
+      true
+     ]
+    }
+   }
+  },
+  {
+   "sample_id": "pre-bj29",
+   "case_id": "BJ29",
+   "split": "train",
+   "kind": "bj_letterbox",
+   "gt_attr": "derived",
+   "page": "pre-bj29.png",
+   "gt": [
+    {
+     "unit_id": "R3-BJ29-B00",
+     "conf": 0.6038,
+     "gt_attr": "derived"
+    }
+   ],
+   "sides": {
+    "0.5": {
+     "preds": [
+      {
+       "xyxy": [
+        2422.4,
+        2391.4,
+        2581.7,
+        2725.1
+       ],
+       "conf": 0.6038
+      }
+     ],
+     "matched": 1,
+     "n_pred": 1,
+     "recall": 1.0,
+     "precision": 1.0,
+     "pairs": [
+      {
+       "gt_index": 0,
+       "pred_index": 0,
+       "iou": 0.9998,
+       "pred_conf": 0.6038
+      }
+     ],
+     "gt_matched_flags": [
+      true
+     ]
+    },
+    "0.2": {
+     "preds": [
+      {
+       "xyxy": [
+        2422.4,
+        2391.4,
+        2581.7,
+        2725.1
+       ],
+       "conf": 0.6038
+      }
+     ],
+     "matched": 1,
+     "n_pred": 1,
+     "recall": 1.0,
+     "precision": 1.0,
+     "pairs": [
+      {
+       "gt_index": 0,
+       "pred_index": 0,
+       "iou": 0.9998,
+       "pred_conf": 0.6038
+      }
+     ],
+     "gt_matched_flags": [
+      true
+     ]
+    }
+   }
+  },
+  {
+   "sample_id": "pre-bj32",
+   "case_id": "BJ32",
+   "split": "challenge",
+   "kind": "bj_letterbox",
+   "gt_attr": "ai-direct",
+   "page": "pre-bj32.png",
+   "gt": [
+    {
+     "unit_id": "R4-BJ32-C00",
+     "conf": null,
+     "gt_attr": "ai-direct"
+    },
+    {
+     "unit_id": "R4-BJ32-C01",
+     "conf": null,
+     "gt_attr": "ai-direct"
+    },
+    {
+     "unit_id": "R4-BJ32-C02",
+     "conf": null,
+     "gt_attr": "ai-direct"
+    }
+   ],
+   "sides": {
+    "0.5": {
+     "preds": [],
+     "matched": 0,
+     "n_pred": 0,
+     "recall": 0.0,
+     "precision": null,
+     "pairs": [],
+     "gt_matched_flags": [
+      false,
+      false,
+      false
+     ]
+    },
+    "0.2": {
+     "preds": [],
+     "matched": 0,
+     "n_pred": 0,
+     "recall": 0.0,
+     "precision": null,
+     "pairs": [],
+     "gt_matched_flags": [
+      false,
+      false,
+      false
+     ]
+    }
+   }
+  },
+  {
+   "sample_id": "pre-bj33",
+   "case_id": "BJ33",
+   "split": "train",
+   "kind": "bj_letterbox",
+   "gt_attr": "ai-direct",
+   "page": "pre-bj33.png",
+   "gt": [
+    {
+     "unit_id": "R4-BJ33-C00",
+     "conf": null,
+     "gt_attr": "ai-direct"
+    },
+    {
+     "unit_id": "R4-BJ33-C01",
+     "conf": null,
+     "gt_attr": "ai-direct"
+    },
+    {
+     "unit_id": "R4-BJ33-D01",
+     "conf": null,
+     "gt_attr": "ai-direct"
+    }
+   ],
+   "sides": {
+    "0.5": {
+     "preds": [],
+     "matched": 0,
+     "n_pred": 0,
+     "recall": 0.0,
+     "precision": null,
+     "pairs": [],
+     "gt_matched_flags": [
+      false,
+      false,
+      false
+     ]
+    },
+    "0.2": {
+     "preds": [],
+     "matched": 0,
+     "n_pred": 0,
+     "recall": 0.0,
+     "precision": null,
+     "pairs": [],
+     "gt_matched_flags": [
+      false,
+      false,
+      false
+     ]
+    }
+   }
+  },
+  {
+   "sample_id": "pre-bj34",
+   "case_id": "BJ34",
+   "split": "train",
+   "kind": "bj_letterbox",
+   "gt_attr": "ai-direct",
+   "page": "pre-bj34.png",
+   "gt": [
+    {
+     "unit_id": "R4-BJ34-C00",
+     "conf": null,
+     "gt_attr": "ai-direct"
+    },
+    {
+     "unit_id": "R4-BJ34-C01",
+     "conf": null,
+     "gt_attr": "ai-direct"
+    },
+    {
+     "unit_id": "R4-BJ34-C02",
+     "conf": null,
+     "gt_attr": "ai-direct"
+    }
+   ],
+   "sides": {
+    "0.5": {
+     "preds": [],
+     "matched": 0,
+     "n_pred": 0,
+     "recall": 0.0,
+     "precision": null,
+     "pairs": [],
+     "gt_matched_flags": [
+      false,
+      false,
+      false
+     ]
+    },
+    "0.2": {
+     "preds": [],
+     "matched": 0,
+     "n_pred": 0,
+     "recall": 0.0,
+     "precision": null,
+     "pairs": [],
+     "gt_matched_flags": [
+      false,
+      false,
+      false
+     ]
+    }
+   }
+  },
+  {
+   "sample_id": "pre-bj35",
+   "case_id": "BJ35",
+   "split": "train",
+   "kind": "bj_letterbox",
+   "gt_attr": "ai-direct",
+   "page": "pre-bj35.png",
+   "gt": [
+    {
+     "unit_id": "R4-BJ35-C00",
+     "conf": null,
+     "gt_attr": "ai-direct"
+    },
+    {
+     "unit_id": "R4-BJ35-C01",
+     "conf": null,
+     "gt_attr": "ai-direct"
+    },
+    {
+     "unit_id": "R4-BJ35-C02",
+     "conf": null,
+     "gt_attr": "ai-direct"
+    },
+    {
+     "unit_id": "R4-BJ35-C03",
+     "conf": null,
+     "gt_attr": "ai-direct"
+    },
+    {
+     "unit_id": "R4-BJ35-D00",
+     "conf": null,
+     "gt_attr": "ai-direct"
+    },
+    {
+     "unit_id": "R4-BJ35-D01",
+     "conf": null,
+     "gt_attr": "ai-direct"
+    }
+   ],
+   "sides": {
+    "0.5": {
+     "preds": [],
+     "matched": 0,
+     "n_pred": 0,
+     "recall": 0.0,
+     "precision": null,
+     "pairs": [],
+     "gt_matched_flags": [
+      false,
+      false,
+      false,
+      false,
+      false,
+      false
+     ]
+    },
+    "0.2": {
+     "preds": [],
+     "matched": 0,
+     "n_pred": 0,
+     "recall": 0.0,
+     "precision": null,
+     "pairs": [],
+     "gt_matched_flags": [
+      false,
+      false,
+      false,
+      false,
+      false,
+      false
+     ]
+    }
+   }
+  }
+ ],
+ "wording_discipline": "directional 评测，统计功效低；结论禁用「显著」；0 也如实"
+}

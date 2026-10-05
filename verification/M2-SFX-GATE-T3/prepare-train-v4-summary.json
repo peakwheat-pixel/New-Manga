@@ -1,0 +1,189 @@
+{
+ "task": "M2-SFX-GATE-T3 AC2 train-v4 重切（BJ32-35 转正并入 ai-direct-annotation 首例）",
+ "generated_at_utc": "2026-10-05T12:05:30Z",
+ "tool": "experiments/M2-SFX-GATE-T3/prepare_dataset_v4.py --step all",
+ "base": {
+  "train_v3_full": "G:\\CODEX\\New Manga.worktrees\\M2-SFX-ANNOTATE-R3-zcode\\training_data\\sfx-v1\\train-v3\\manifest.train-v3.json",
+  "r3_count": 912,
+  "r4_manifest": "G:\\CODEX\\New Manga.worktrees\\M2-SFX-GATE-T3-zcode\\training_data\\sfx-v1\\annotate-r4\\manifest.r4.json",
+  "new_ids": [
+   "pre-bj32",
+   "pre-bj33",
+   "pre-bj34",
+   "pre-bj35"
+  ],
+  "bj36_37_note": "双 AI 终裁零 SFX（0 框）留底册 pseudo 不入（schema.py:88-89+pre-bj25 先例）"
+ },
+ "assign_splits": {
+  "method": "选项 A：assign_splits(force=True, pinned=…) 函数参数（沿 V2/R3）",
+  "pinned": {
+   "densho810/vol05": "challenge",
+   "own-manga/v01": "train",
+   "own-manga/v02s": "train",
+   "own-manga/v12": "train",
+   "own-manga/v13": "train",
+   "own-manga/v15": "train",
+   "own-manga/v16": "train",
+   "synthetic/annotate-r1": "train"
+  },
+  "drift_vs_train_v3": 0,
+  "group_isolation_violations": 0,
+  "fingerprint": "6bb0ea1386c724b7a5e9775165e68ea58fd2912fdae87acc2bb2c095cb163805",
+  "challenge_members": [
+   "pre-bj17",
+   "pre-bj18",
+   "pre-bj32"
+  ],
+  "challenge_boxes": 8,
+  "exam_5box_untouched": "pre-bj17×2+pre-bj18×3 逐位=R2 final 出厂（断言 A3）",
+  "bj3237_pin_divergence": "ask 表述「own/synthetic/BJ26-37 钉 train」中 BJ32/37 属 densho810/vol05 考卷组：与 G3 组隔离硬门（challenge 仅 vol05 组+组原子性 0 违例）冲突，按 gate-definition v1.0 冻结语义执行——BJ32 随组入 challenge、BJ33-35（vol03 组）入 train、BJ36 （vol03 组）0 框留底册不入、BJ37（vol05 组）0 框留底册不入。G1 主判据 5 框不受影响。"
+ },
+ "expected_vs_actual": {
+  "expected": {
+   "train": [
+    907,
+    2323
+   ],
+   "val": [
+    4,
+    53
+   ],
+   "test": [
+    2,
+    5
+   ],
+   "challenge": [
+    3,
+    8
+   ]
+  },
+  "total": 916,
+  "actual": {
+   "train": {
+    "samples": 907,
+    "boxes": 2323
+   },
+   "val": {
+    "samples": 4,
+    "boxes": 53
+   },
+   "test": {
+    "samples": 2,
+    "boxes": 5
+   },
+   "challenge": {
+    "samples": 3,
+    "boxes": 8
+   }
+  }
+ },
+ "splits_detail": {
+  "train": {
+   "samples": 907,
+   "boxes": 2323,
+   "complete": 25,
+   "partial": 140,
+   "pseudo": 418,
+   "synthetic": 324
+  },
+  "val": {
+   "samples": 4,
+   "boxes": 53,
+   "complete": 4,
+   "partial": 0,
+   "pseudo": 0,
+   "synthetic": 0
+  },
+  "test": {
+   "samples": 2,
+   "boxes": 5,
+   "complete": 2,
+   "partial": 0,
+   "pseudo": 0,
+   "synthetic": 0
+  },
+  "challenge": {
+   "samples": 3,
+   "boxes": 8,
+   "complete": 3,
+   "partial": 0,
+   "pseudo": 0,
+   "synthetic": 0
+  }
+ },
+ "yolo": {
+  "root": "training_data/sfx-v1/train-v4/dataset",
+  "per_split": [
+   {
+    "split": "train",
+    "images": 907,
+    "boxes": 2323
+   },
+   {
+    "split": "val",
+    "images": 4,
+    "boxes": 53
+   },
+   {
+    "split": "test",
+    "images": 2,
+    "boxes": 5
+   },
+   {
+    "split": "challenge",
+    "images": 3,
+    "boxes": 8
+   }
+  ],
+  "names_dual_channel": {
+   "channel1": {
+    "parsed": {
+     "0": "bubble",
+     "1": "panel",
+     "2": "sfx",
+     "3": "text"
+    },
+    "assert": "PASS"
+   },
+   "channel2": {
+    "parsed": {
+     "0": "bubble",
+     "1": "panel",
+     "2": "sfx",
+     "3": "text"
+    },
+    "parser": "pyyaml 6.0.3",
+    "assert": "PASS"
+   }
+  },
+  "ultralytics_scan": {
+   "assert": "PASS",
+   "ultralytics_python": "G:\\CODEX\\New Manga.task-envs\\M2-SFX-FINETUNE-gpu-py312\\Scripts\\python.exe",
+   "dir_image_counts": {
+    "train": 907,
+    "val": 4,
+    "test": 2,
+    "challenge": 3
+   },
+   "nc": 4
+  },
+  "label_crosscheck_vs_r3": {
+   "checked": 912,
+   "mismatch": [],
+   "new_selfcheck": 4,
+   "scope": "R3 912 与 R3 yolo 树原分集同名 label 逐字节比对（重切不动框几何）；BJ32-35 新页导出自洽校验+sha256 三方抽验"
+  },
+  "sha256_new_verified": [
+   "pre-bj33",
+   "pre-bj34",
+   "pre-bj35",
+   "pre-bj32"
+  ]
+ },
+ "honest_notes": [
+  "BJ32/37 属 densho810/vol05 考卷组：BJ32（3 框）随组入 challenge（gate-definition §4.G1 「challenge 侧含 vol05 组转正扩展框」）；BJ37 双 AI 终裁零 SFX 0 框，schema.py:88-89 禁止 complete 空框 → 沿 pre-bj25 零框负证据先例保持 pseudo 留底册，不入本 manifest。",
+  "ask 表述「BJ26-37 钉 train」与 G3 组隔离硬门冲突处按冻结 Gate 语义执行（BJ33-35 vol03 组入 train；BJ26/27/30/31 仍 pseudo 不入），G1 主判据 5 框不受影响。",
+  "BJ32-35 框=双 AI consensus union + arbiter keep 终裁（ai-direct-annotation 首例，conf=null 概念不适用）；BJ 扩展集 directional 侧 12 页 33 框（challenge 3 页 8 框+train 9 页 25 框）。",
+  "BJ36（vol03 组）0 框负证据留底册不入训练 manifest——与 own-manga pseudo 0 框页入 train 的处置不同（own pseudo=模型产出弱负样本既定入册先例；BJ36=人工判定零 SFX 的负证据留痕，沿 BJ25 先例不入），处置差异如实登记。"
+ ]
+}
