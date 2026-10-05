@@ -185,11 +185,12 @@ def dedup_boxes(boxes: list[dict], iou_thr: float = 0.5) -> list[dict]:
     return kept
 
 
-def tile_ys(page_h: int) -> list[int]:
+def tile_ys(page_h: int, overlap: int = K_TILE_OVERLAP) -> list[int]:
     """R1 tile y 锚点序列，逐字复刻 stage1_preannotate.py:240-245：
-    步长 K_TILE_H-K_TILE_OVERLAP，末尾补 page_h-K_TILE_H 保证覆盖页底。
+    步长 K_TILE_H-overlap，末尾补 page_h-K_TILE_H 保证覆盖页底。
+    （overlap 仅合同裁量点变体实验覆写；主口径恒为 K_TILE_OVERLAP=128。）
     """
-    ys = list(range(0, max(page_h - K_TILE_H, 0) + 1, K_TILE_H - K_TILE_OVERLAP))
+    ys = list(range(0, max(page_h - K_TILE_H, 0) + 1, K_TILE_H - overlap))
     if not ys:
         ys = [0]
     if ys[-1] + K_TILE_H < page_h:
@@ -259,12 +260,13 @@ def run_letterbox_caliber(provider_factory, page: dict, conf: float) -> list[tup
              float(cd.confidence)) for cd in res.candidates]
 
 
-def run_tile_caliber(dsfx, session, imgsz, page: dict, conf: float, log) -> tuple[
+def run_tile_caliber(dsfx, session, imgsz, page: dict, conf: float, log,
+                     overlap: int = K_TILE_OVERLAP) -> tuple[
         list[tuple[list[float], float]], dict]:
     """口径②tile 切块：R1 tile 几何 + 每 tile 生产序列推理 + 页级跨 tile NMS。
 
     - tile 几何：stage1_preannotate.py:238-251 逐字（tile 宽=页宽原生、
-      高 1024、步长 896、末尾补页底锚点、y+y0 平移回页坐标）；
+      高 1024、步长 1024-overlap、末尾补页底锚点、y+y0 平移回页坐标）；
     - 每 tile 推理 = 生产序列本体（dsfx._letterbox + dsfx._sfx_boxes，
       conf 过滤口径先于类无关 NMS 0.7、sfx 类后过滤、/scale 映射+clip 到
       tile 界）——与 letterbox 口径唯一差异=成像口径本身；
@@ -274,7 +276,7 @@ def run_tile_caliber(dsfx, session, imgsz, page: dict, conf: float, log) -> tupl
     from PIL import Image
 
     page_w, page_h = page["w"], page["h"]
-    ys = tile_ys(page_h)
+    ys = tile_ys(page_h, overlap)
     with Image.open(page["img"]) as im:
         rgb = im.convert("RGB")
     sfx_boxes: list[dict] = []
@@ -315,9 +317,19 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--smoke", action="store_true",
                         help="冒烟：仅 pre-k02（最小页 21 tiles），产物落 gitignored smoke 目录")
+    parser.add_argument("--overlap", type=int, default=K_TILE_OVERLAP,
+                        help=f"tile 重叠 px（默认 {K_TILE_OVERLAP}=R1 主口径；合同裁量点变体用）")
+    parser.add_argument("--sides", default="chiqui7,v2b",
+                        help="逗号分隔的权重子集（默认全）")
+    parser.add_argument("--calibers", default="letterbox,tile",
+                        help="逗号分隔的口径子集（默认全）")
+    parser.add_argument("--out-suffix", default="",
+                        help="产物文件名后缀（变体实验登记用，如 '-ov256'）")
     args = parser.parse_args()
+    suffix = args.out_suffix
     out_dir = SMOKE_OUT if args.smoke else RAW_OUT
-    out_matrix = (SMOKE_OUT / "eval-matrix.json") if args.smoke else OUT_JSON_MATRIX
+    out_matrix = ((SMOKE_OUT / "eval-matrix.json") if args.smoke
+                  else RAW_OUT.parent / f"eval-matrix{suffix}.json")
 
     import numpy
     from PIL import Image
@@ -371,8 +383,9 @@ def main() -> int:
     for side, e in engines.items():
         print(f"[tile-calib] engine {side}: imgsz={e['imgsz']} ({e['imgsz_source']})", flush=True)
 
-    sides = ("chiqui7", "v2b")
-    calibers = ("letterbox", "tile")
+    sides = tuple(s.strip() for s in args.sides.split(",") if s.strip())
+    calibers = tuple(c.strip() for c in args.calibers.split(",") if c.strip())
+    assert set(sides) <= {"chiqui7", "v2b"} and set(calibers) <= {"letterbox", "tile"}
     matrix: dict[str, dict[str, dict]] = {s: {c: {} for c in calibers} for s in sides}
     detail: dict[str, dict[str, dict]] = {s: {c: {} for c in calibers} for s in sides}
 
@@ -397,7 +410,8 @@ def main() -> int:
                         else:
                             t0 = time.perf_counter()
                             preds, stats = run_tile_caliber(
-                                dsfx, e["session"], e["imgsz"], p, c, print)
+                                dsfx, e["session"], e["imgsz"], p, c, print,
+                                overlap=args.overlap)
                         m = match_gt(p["gts"], preds)
                         elapsed = round(time.perf_counter() - t0, 1)
                         cell = {"sample_id": p["sample_id"],
@@ -433,6 +447,8 @@ def main() -> int:
         "task": "M2-KO-TILE-CALIB AC1+AC2（KO 长条页 tile vs letterbox 口径对照）",
         "generated_at_utc": now_iso(),
         "mode": "smoke" if args.smoke else "full",
+        "run_params": {"overlap": args.overlap, "sides": list(sides),
+                       "calibers": list(calibers), "out_suffix": suffix},
         "gt_source": {
             "manifests": [str(R2_FINAL / f"manifest.{s}.json") for s in ("val", "test")],
             "pages": {p["sample_id"]: {"split": p["split"], "size": [p["w"], p["h"]],
@@ -447,7 +463,7 @@ def main() -> int:
                     for side, e in engines.items()},
         "calibers": {
             "letterbox": "生产序列原样 SfxDetectionProvider.detect（letterbox 1024/类无关 NMS 0.7/sfx 过滤/CPUExecutionProvider）",
-            "tile": f"R1 tile_690x1024_overlap128 复刻：tile 宽=页宽原生无缩放、高 {K_TILE_H}、重叠 {K_TILE_OVERLAP}（步长 {K_TILE_H - K_TILE_OVERLAP}、末尾补页底锚点）；每 tile 生产序列本体推理（dsfx._letterbox+_sfx_boxes）；页级跨 tile IoU {TILE_PAGE_NMS_IOU} conf 降序贪心 NMS（R1 _dedup_boxes 逐字）",
+            "tile": f"R1 tile_690x1024_overlap{args.overlap} 复刻：tile 宽=页宽原生无缩放、高 {K_TILE_H}、重叠 {args.overlap}（步长 {K_TILE_H - args.overlap}、末尾补页底锚点）；每 tile 生产序列本体推理（dsfx._letterbox+_sfx_boxes）；页级跨 tile IoU {TILE_PAGE_NMS_IOU} conf 降序贪心 NMS（R1 _dedup_boxes 逐字）",
         },
         "matching": f"box IoU>={IOU_MATCH}，pred conf 降序贪心（每 GT 至多一预测；沿 eval_v2.py match_gt 逐字）",
         "confs": {"0.5": "生产冻结", "0.2": "宽松口径"},
@@ -461,7 +477,7 @@ def main() -> int:
             doc["caliber"] = caliber
             doc["matrix_cell"] = matrix[side][caliber]
             doc["per_sample"] = detail[side][caliber]
-            fname = f"eval-{side}-{caliber}.json"
+            fname = f"eval-{side}-{caliber}{suffix}.json"
             out_dir.mkdir(parents=True, exist_ok=True)
             (out_dir / fname).write_text(
                 json.dumps(doc, ensure_ascii=False, indent=1), encoding="utf-8")
