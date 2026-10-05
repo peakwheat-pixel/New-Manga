@@ -1053,6 +1053,13 @@ def test_tile_caliber_assertion_rejects_broken_geometry():
         _assert_tile_caliber([512, 1408], 2048, 1024, 128)
     with pytest.raises(ProviderInvalidOutput, match="empty"):
         _assert_tile_caliber([], 2048, 1024, 128)
+    # DSH r1 P3-3: the degenerate branch (y + tile_h <= y, i.e. tile_h <= 0)
+    # must also raise. It is deliberately defensive — with tile_h > 0 and the
+    # first-anchor/step checks passing, no _tile_ys output can reach it — so
+    # the case is synthetic; constant freezing itself is pinned by
+    # test_tile_constants_are_frozen above.
+    with pytest.raises(ProviderInvalidOutput, match="degenerate"):
+        _assert_tile_caliber([0], 0, 0, 0)
 
 
 def test_tile_config_defaults_are_frozen(monkeypatch):

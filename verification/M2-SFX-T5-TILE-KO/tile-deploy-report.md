@@ -47,6 +47,10 @@ tile 冻结口径（1024/896/128/NMS 0.5）conf 0.5，KO 4 页（58/112/70/21 ti
 - 已知限制（如实登记）：①宽≠600/690 的 KO 形页按常量阈值参数化路由，未逐宽重校
   （KO-TILE §9 既有登记）；②KO 4 页相位依赖——若复测偏离 56/56（chiqui7 派生 GT 上界）
   先查 GT 相位与页图 sha；③GPU 档为呈报数据，生产引擎仍冻结 CPU EP，启用 GPU 属部署
-  形态用户终选+后续 Task。
+  形态用户终选+后续 Task；④（DSH r1 P3-2）路由按页面形状全局生效、不绑定 KO 书域——
+  任何宽≤690 且 aspect≥8.0 的页（含非 KO 长条页）默认走 tile（≈20× 于 letterbox），
+  跨域激活的代价评估与阈值复标留后续 Task；⑤（DSH r1 P3-1 errata）AC3 硬门脚本已在
+  返修中把逐页 bit parity 并入硬断言并拆分 matched_reproduction/preds_bit_equal 字段
+  （本轮入库 flag 全 true 未重跑，强化自下次重跑生效）。
 - 权重/GT 数据不入 Git：weights 与 npd-gt.json/R2 manifest 均在 gitignored 外部树
   （路径见 `verify_tile_parity.py` 头部）。

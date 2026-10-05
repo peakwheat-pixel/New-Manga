@@ -53,4 +53,10 @@ T3/T2/KO-TILE 三轮确证：KO 长条页（宽 600/690、aspect 1:31~1:146）�
 
 **偏差与限制登记**：①测试初版两处设计错（fail-fast 漏 setenv；端到端页 aspect 2.97 低于路由下限未触发 tile）在实现完成前修正，红证据 log 为首次全量红（collection error），未伪造过程证据；②GPU 档=呈报数据，生产引擎冻结 CPU EP 不动，启用 GPU 属用户部署形态终选+后续 Task；③ORT DML 会话部分节点未分配 preferred EP warning 如实登记（deploy report §1）；④宽≠600/690 KO 形页按常量阈值参数化=KO-TILE §9 既有缺口，未扩大授权面。
 
+**偏差登记（DSH r1 条件闭合，r1=approved_with_conditions 0×P0/P1/P2、3×P3、4×P4，报告 doc/reviews/M2-SFX-T5-TILE-KO-aa5095cc-dsh-r1.md）**：
+- **P3-1 AC3 硬门语义硬化（返修实改）**：`verify_tile_parity.py` KO 段硬断言原只消费 matched 总数（bit_parity 字段只记录不断言）——已并入 `assert all(bit_parity_vs_t3_raw)` 并把 `bit_reproduction` 拆为 `matched_reproduction`/`preds_bit_equal` 两字段。**本轮入库 parity 产物 8 个 KO 页 flag 全 true（DSH 独立逐页对 T3 raw 交叉核验过），不重跑**；脚本强化后下次重跑生效。
+- **P3-2 路由生效面登记**：路由按**页面形状全局生效**（宽≤690 且 aspect≥8.0），不绑定 KO 书域——任何满足形状的页（含非 KO 长条页）默认走 tile，代价约 20×（CPU 均值 10.46s/页 vs letterbox 0.3-0.5s/页）。跨域长条页代价评估与阈值复标留后续候选 Task。
+- **P3-3 degenerate 负例补齐（返修实改）**：`_assert_tile_caliber` 的 degenerate 分支（`tile_h<=0`）为防御性代码——在 tile_h>0 且 first-anchor/step 检查通过时 `_tile_ys` 输出不可达；合成负例 `[0], page_h=0, tile_h=0` 单测覆盖，注释明示「常量冻结本身由 `test_tile_constants_are_frozen` 承担、运行期门只发现序列构造漂移」。
+- **errata（P4-1/P4-2/P4-4）**：①`c9880955` 提交信息「22 例」应读作 **32 个收集项**（13 函数含 ×20 参数化；与 +32/1812 算术一致）；②交付链首环前另有 `217f3383`（Task 合同 base_commit 更新，doc-only，编排侧 cherry-pick）；③`NEWMANGA_SFX_TILE=off` 不短路其余 4 个几何/阈值 env（off+非法值仍 fail-fast=与「anywhere 非法即 ValueError」口径自洽）。
+
 **交付链**：`c11a2a9d` claim → `98338691` impl → `c9880955` test → `24ae2765` verify → docs commit（本提交）。下一环=DSH 非作者 r1 Review（指令见 Handoff）。

@@ -417,12 +417,20 @@ def main() -> int:
                             f"{m['matched']}/{m['n_gt']} bit_parity={bit_equal} "
                             f"({elapsed}s)", flush=True
                         )
-                    ok = total_matched == expect and total_gt == (
+                    # DSH r1 P3-1: the hard gate is BOTH the matched-count
+                    # reproduction AND per-page bit parity vs the T3 raw — a
+                    # count match alone cannot detect prediction drift that
+                    # preserves the matched total.
+                    parity_all = all(p["bit_parity_vs_t3_raw"] for p in per_page)
+                    matched_ok = total_matched == expect and total_gt == (
                         EXPECT_KO_DERIVED_BOXES if ds_name == "ko-tile" else EXPECT_NPD_BOXES
                     )
+                    ok = matched_ok and parity_all
                     cell = {
                         "matched": f"{total_matched}/{total_gt}",
                         "expected": f"{expect}/{total_gt}",
+                        "matched_reproduction": matched_ok,
+                        "preds_bit_equal": parity_all,
                         "bit_reproduction": ok,
                         "elapsed_s": round(time.perf_counter() - t_ds, 1),
                     }
@@ -432,7 +440,10 @@ def main() -> int:
                         f"[parity] {side}/{ds_name}: {cell['matched']} "
                         f"(expected {cell['expected']}) bit={ok}", flush=True
                     )
-                    assert ok, f"{side}/{ds_name}: {cell['matched']} != {cell['expected']}"
+                    assert matched_ok, f"{side}/{ds_name}: {cell['matched']} != {cell['expected']}"
+                    assert parity_all, (
+                        f"{side}/{ds_name}: per-page bit parity vs T3 raw failed"
+                    )
                 summary["sides"][side] = {
                     "ko-tile": doc["per_ds"]["ko-tile"],
                     "ko-npd": doc["per_ds"]["ko-npd"],
