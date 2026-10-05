@@ -1,0 +1,1256 @@
+{
+ "task": "M2-SFX-GATE-T3 AC4 正式评测（三方×四数据集）",
+ "side": "v2a",
+ "dataset": "bj-ext",
+ "model": {
+  "onnx": "G:\\CODEX\\New Manga.worktrees\\M2-SFX-TRAIN-V2-zcode\\training_data\\sfx-v1\\train-v2\\weights\\v2a\\best.onnx",
+  "sha256": "27d162e94d7dd2150b177f5636613e3bfce836dfdb08240975b86fce85b97d43",
+  "note": "M2-SFX-TRAIN-V2 v2a best.onnx（sha 前缀 27d162e9 断言过），进程内重指 pin",
+  "inference": "生产 SfxDetectionProvider.detect 全序列（letterbox 1024/类无关 NMS 0.7/sfx 过滤/CPUExecutionProvider）"
+ },
+ "caliber": "letterbox-1024 生产序列原样（SfxDetectionProvider.detect）",
+ "gt_attr": {
+  "kind": "mixed: derived + ai-direct",
+  "note": "R2/R3 判定链页=derived（循环性同 bj-exam）；R4-BJ32-35=ai-direct（无模型预标，ai-direct-annotation 首例，G1 限制④/G6 归因）"
+ },
+ "matching": "box IoU>=0.5，pred conf 降序贪心（每 GT 至多一预测；沿 eval_v2.py match_gt 逐字）",
+ "confs": {
+  "0.5": "主口径（生产冻结）",
+  "0.2": "宽松口径（仅诊断）"
+ },
+ "summary": {
+  "0.5": {
+   "matched": "15/33",
+   "recall_rate": 0.4545,
+   "precision": 0.9375,
+   "n_pred": 16
+  },
+  "0.2": {
+   "matched": "17/33",
+   "recall_rate": 0.5152,
+   "precision": 0.7727,
+   "n_pred": 22
+  },
+  "split_buckets": {
+   "0.5": {
+    "challenge": {
+     "matched": "4/8",
+     "recall_rate": 0.5,
+     "precision": 0.8,
+     "n_pred": 5
+    },
+    "train": {
+     "matched": "11/25",
+     "recall_rate": 0.44,
+     "precision": 1.0,
+     "n_pred": 11
+    }
+   },
+   "0.2": {
+    "challenge": {
+     "matched": "4/8",
+     "recall_rate": 0.5,
+     "precision": 0.6667,
+     "n_pred": 6
+    },
+    "train": {
+     "matched": "13/25",
+     "recall_rate": 0.52,
+     "precision": 0.8125,
+     "n_pred": 16
+    }
+   }
+  }
+ },
+ "per_sample": [
+  {
+   "sample_id": "pre-bj16",
+   "case_id": "BJ16",
+   "split": "train",
+   "kind": "bj_letterbox",
+   "gt_attr": "derived",
+   "page": "pre-bj16.png",
+   "gt": [
+    {
+     "unit_id": "R2-BJ16-B00",
+     "conf": 0.9524,
+     "gt_attr": "derived"
+    },
+    {
+     "unit_id": "R2-BJ16-B01",
+     "conf": 0.8949,
+     "gt_attr": "derived"
+    },
+    {
+     "unit_id": "R2-BJ16-B02",
+     "conf": 0.851,
+     "gt_attr": "derived"
+    },
+    {
+     "unit_id": "R2-BJ16-B04",
+     "conf": 0.1074,
+     "gt_attr": "derived"
+    },
+    {
+     "unit_id": "R2-BJ16-B05",
+     "conf": 0.0443,
+     "gt_attr": "derived"
+    },
+    {
+     "unit_id": "R2-BJ16-B06",
+     "conf": 0.0351,
+     "gt_attr": "derived"
+    }
+   ],
+   "sides": {
+    "0.5": {
+     "preds": [
+      {
+       "xyxy": [
+        484.6,
+        2529.1,
+        850.2,
+        3128.4
+       ],
+       "conf": 0.9364
+      },
+      {
+       "xyxy": [
+        1768.8,
+        3585.5,
+        1939.9,
+        3735.2
+       ],
+       "conf": 0.8591
+      },
+      {
+       "xyxy": [
+        1425.2,
+        3760.4,
+        1599.9,
+        3870.6
+       ],
+       "conf": 0.841
+      },
+      {
+       "xyxy": [
+        1487.2,
+        2598.2,
+        1719.3,
+        2751.3
+       ],
+       "conf": 0.8047
+      }
+     ],
+     "matched": 4,
+     "n_pred": 4,
+     "recall": 0.6667,
+     "precision": 1.0,
+     "pairs": [
+      {
+       "gt_index": 0,
+       "pred_index": 0,
+       "iou": 0.9736,
+       "pred_conf": 0.9364
+      },
+      {
+       "gt_index": 2,
+       "pred_index": 1,
+       "iou": 0.9496,
+       "pred_conf": 0.8591
+      },
+      {
+       "gt_index": 3,
+       "pred_index": 2,
+       "iou": 0.8984,
+       "pred_conf": 0.841
+      },
+      {
+       "gt_index": 1,
+       "pred_index": 3,
+       "iou": 0.9142,
+       "pred_conf": 0.8047
+      }
+     ],
+     "gt_matched_flags": [
+      true,
+      true,
+      true,
+      true,
+      false,
+      false
+     ]
+    },
+    "0.2": {
+     "preds": [
+      {
+       "xyxy": [
+        484.6,
+        2529.1,
+        850.2,
+        3128.4
+       ],
+       "conf": 0.9364
+      },
+      {
+       "xyxy": [
+        1768.8,
+        3585.5,
+        1939.9,
+        3735.2
+       ],
+       "conf": 0.8591
+      },
+      {
+       "xyxy": [
+        1425.2,
+        3760.4,
+        1599.9,
+        3870.6
+       ],
+       "conf": 0.841
+      },
+      {
+       "xyxy": [
+        1487.2,
+        2598.2,
+        1719.3,
+        2751.3
+       ],
+       "conf": 0.8047
+      },
+      {
+       "xyxy": [
+        1086.7,
+        328.4,
+        1151.9,
+        568.5
+       ],
+       "conf": 0.2705
+      }
+     ],
+     "matched": 5,
+     "n_pred": 5,
+     "recall": 0.8333,
+     "precision": 1.0,
+     "pairs": [
+      {
+       "gt_index": 0,
+       "pred_index": 0,
+       "iou": 0.9736,
+       "pred_conf": 0.9364
+      },
+      {
+       "gt_index": 2,
+       "pred_index": 1,
+       "iou": 0.9496,
+       "pred_conf": 0.8591
+      },
+      {
+       "gt_index": 3,
+       "pred_index": 2,
+       "iou": 0.8984,
+       "pred_conf": 0.841
+      },
+      {
+       "gt_index": 1,
+       "pred_index": 3,
+       "iou": 0.9142,
+       "pred_conf": 0.8047
+      },
+      {
+       "gt_index": 4,
+       "pred_index": 4,
+       "iou": 0.746,
+       "pred_conf": 0.2705
+      }
+     ],
+     "gt_matched_flags": [
+      true,
+      true,
+      true,
+      true,
+      true,
+      false
+     ]
+    }
+   }
+  },
+  {
+   "sample_id": "pre-bj17",
+   "case_id": "BJ17",
+   "split": "challenge",
+   "kind": "bj_letterbox",
+   "gt_attr": "derived",
+   "page": "pre-bj17.png",
+   "gt": [
+    {
+     "unit_id": "R2-BJ17-B00",
+     "conf": 0.932,
+     "gt_attr": "derived"
+    },
+    {
+     "unit_id": "R2-BJ17-B01",
+     "conf": 0.9096,
+     "gt_attr": "derived"
+    }
+   ],
+   "sides": {
+    "0.5": {
+     "preds": [
+      {
+       "xyxy": [
+        1663.7,
+        2396.4,
+        1773.4,
+        2623.2
+       ],
+       "conf": 0.922
+      },
+      {
+       "xyxy": [
+        1815.6,
+        2122.2,
+        1921.8,
+        2377.7
+       ],
+       "conf": 0.866
+      },
+      {
+       "xyxy": [
+        1828.6,
+        2251.8,
+        1920.1,
+        2376.2
+       ],
+       "conf": 0.6711
+      }
+     ],
+     "matched": 2,
+     "n_pred": 3,
+     "recall": 1.0,
+     "precision": 0.6667,
+     "pairs": [
+      {
+       "gt_index": 0,
+       "pred_index": 0,
+       "iou": 0.956,
+       "pred_conf": 0.922
+      },
+      {
+       "gt_index": 1,
+       "pred_index": 1,
+       "iou": 0.9598,
+       "pred_conf": 0.866
+      }
+     ],
+     "gt_matched_flags": [
+      true,
+      true
+     ]
+    },
+    "0.2": {
+     "preds": [
+      {
+       "xyxy": [
+        1663.7,
+        2396.4,
+        1773.4,
+        2623.2
+       ],
+       "conf": 0.922
+      },
+      {
+       "xyxy": [
+        1815.6,
+        2122.2,
+        1921.8,
+        2377.7
+       ],
+       "conf": 0.866
+      },
+      {
+       "xyxy": [
+        1828.6,
+        2251.8,
+        1920.1,
+        2376.2
+       ],
+       "conf": 0.6711
+      },
+      {
+       "xyxy": [
+        2509.0,
+        1245.2,
+        2581.4,
+        1386.2
+       ],
+       "conf": 0.2421
+      }
+     ],
+     "matched": 2,
+     "n_pred": 4,
+     "recall": 1.0,
+     "precision": 0.5,
+     "pairs": [
+      {
+       "gt_index": 0,
+       "pred_index": 0,
+       "iou": 0.956,
+       "pred_conf": 0.922
+      },
+      {
+       "gt_index": 1,
+       "pred_index": 1,
+       "iou": 0.9598,
+       "pred_conf": 0.866
+      }
+     ],
+     "gt_matched_flags": [
+      true,
+      true
+     ]
+    }
+   }
+  },
+  {
+   "sample_id": "pre-bj18",
+   "case_id": "BJ18",
+   "split": "challenge",
+   "kind": "bj_letterbox",
+   "gt_attr": "derived",
+   "page": "pre-bj18.png",
+   "gt": [
+    {
+     "unit_id": "R2-BJ18-B00",
+     "conf": 0.8951,
+     "gt_attr": "derived"
+    },
+    {
+     "unit_id": "R2-BJ18-B01",
+     "conf": 0.8636,
+     "gt_attr": "derived"
+    },
+    {
+     "unit_id": "R2-BJ18-B02",
+     "conf": 0.8333,
+     "gt_attr": "derived"
+    }
+   ],
+   "sides": {
+    "0.5": {
+     "preds": [
+      {
+       "xyxy": [
+        467.6,
+        1577.3,
+        583.6,
+        1823.8
+       ],
+       "conf": 0.9016
+      },
+      {
+       "xyxy": [
+        1444.4,
+        2202.0,
+        1570.1,
+        2419.9
+       ],
+       "conf": 0.795
+      }
+     ],
+     "matched": 2,
+     "n_pred": 2,
+     "recall": 0.6667,
+     "precision": 1.0,
+     "pairs": [
+      {
+       "gt_index": 2,
+       "pred_index": 0,
+       "iou": 0.7421,
+       "pred_conf": 0.9016
+      },
+      {
+       "gt_index": 1,
+       "pred_index": 1,
+       "iou": 0.887,
+       "pred_conf": 0.795
+      }
+     ],
+     "gt_matched_flags": [
+      false,
+      true,
+      true
+     ]
+    },
+    "0.2": {
+     "preds": [
+      {
+       "xyxy": [
+        467.6,
+        1577.3,
+        583.6,
+        1823.8
+       ],
+       "conf": 0.9016
+      },
+      {
+       "xyxy": [
+        1444.4,
+        2202.0,
+        1570.1,
+        2419.9
+       ],
+       "conf": 0.795
+      }
+     ],
+     "matched": 2,
+     "n_pred": 2,
+     "recall": 0.6667,
+     "precision": 1.0,
+     "pairs": [
+      {
+       "gt_index": 2,
+       "pred_index": 0,
+       "iou": 0.7421,
+       "pred_conf": 0.9016
+      },
+      {
+       "gt_index": 1,
+       "pred_index": 1,
+       "iou": 0.887,
+       "pred_conf": 0.795
+      }
+     ],
+     "gt_matched_flags": [
+      false,
+      true,
+      true
+     ]
+    }
+   }
+  },
+  {
+   "sample_id": "pre-bj22",
+   "case_id": "BJ22",
+   "split": "train",
+   "kind": "bj_letterbox",
+   "gt_attr": "derived",
+   "page": "pre-bj22.png",
+   "gt": [
+    {
+     "unit_id": "R2-BJ22-B00",
+     "conf": 0.07,
+     "gt_attr": "derived"
+    },
+    {
+     "unit_id": "R2-BJ22-B01",
+     "conf": 0.0255,
+     "gt_attr": "derived"
+    }
+   ],
+   "sides": {
+    "0.5": {
+     "preds": [],
+     "matched": 0,
+     "n_pred": 0,
+     "recall": 0.0,
+     "precision": null,
+     "pairs": [],
+     "gt_matched_flags": [
+      false,
+      false
+     ]
+    },
+    "0.2": {
+     "preds": [
+      {
+       "xyxy": [
+        1605.7,
+        2953.7,
+        1713.3,
+        3101.9
+       ],
+       "conf": 0.2059
+      }
+     ],
+     "matched": 0,
+     "n_pred": 1,
+     "recall": 0.0,
+     "precision": 0.0,
+     "pairs": [],
+     "gt_matched_flags": [
+      false,
+      false
+     ]
+    }
+   }
+  },
+  {
+   "sample_id": "pre-bj23",
+   "case_id": "BJ23",
+   "split": "train",
+   "kind": "bj_letterbox",
+   "gt_attr": "derived",
+   "page": "pre-bj23.png",
+   "gt": [
+    {
+     "unit_id": "R2-BJ23-B00",
+     "conf": 0.7038,
+     "gt_attr": "derived"
+    },
+    {
+     "unit_id": "R2-BJ23-B01",
+     "conf": 0.6251,
+     "gt_attr": "derived"
+    }
+   ],
+   "sides": {
+    "0.5": {
+     "preds": [
+      {
+       "xyxy": [
+        1926.7,
+        3385.9,
+        2089.2,
+        3767.7
+       ],
+       "conf": 0.8637
+      },
+      {
+       "xyxy": [
+        800.2,
+        3490.6,
+        914.5,
+        3826.5
+       ],
+       "conf": 0.8302
+      }
+     ],
+     "matched": 2,
+     "n_pred": 2,
+     "recall": 1.0,
+     "precision": 1.0,
+     "pairs": [
+      {
+       "gt_index": 0,
+       "pred_index": 0,
+       "iou": 0.9513,
+       "pred_conf": 0.8637
+      },
+      {
+       "gt_index": 1,
+       "pred_index": 1,
+       "iou": 0.9256,
+       "pred_conf": 0.8302
+      }
+     ],
+     "gt_matched_flags": [
+      true,
+      true
+     ]
+    },
+    "0.2": {
+     "preds": [
+      {
+       "xyxy": [
+        1926.7,
+        3385.9,
+        2089.2,
+        3767.7
+       ],
+       "conf": 0.8637
+      },
+      {
+       "xyxy": [
+        800.2,
+        3490.6,
+        914.5,
+        3826.5
+       ],
+       "conf": 0.8302
+      }
+     ],
+     "matched": 2,
+     "n_pred": 2,
+     "recall": 1.0,
+     "precision": 1.0,
+     "pairs": [
+      {
+       "gt_index": 0,
+       "pred_index": 0,
+       "iou": 0.9513,
+       "pred_conf": 0.8637
+      },
+      {
+       "gt_index": 1,
+       "pred_index": 1,
+       "iou": 0.9256,
+       "pred_conf": 0.8302
+      }
+     ],
+     "gt_matched_flags": [
+      true,
+      true
+     ]
+    }
+   }
+  },
+  {
+   "sample_id": "pre-bj24",
+   "case_id": "BJ24",
+   "split": "train",
+   "kind": "bj_letterbox",
+   "gt_attr": "derived",
+   "page": "pre-bj24.png",
+   "gt": [
+    {
+     "unit_id": "R2-BJ24-B00",
+     "conf": 0.9465,
+     "gt_attr": "derived"
+    }
+   ],
+   "sides": {
+    "0.5": {
+     "preds": [
+      {
+       "xyxy": [
+        1683.6,
+        2634.8,
+        1808.0,
+        2875.5
+       ],
+       "conf": 0.9628
+      }
+     ],
+     "matched": 1,
+     "n_pred": 1,
+     "recall": 1.0,
+     "precision": 1.0,
+     "pairs": [
+      {
+       "gt_index": 0,
+       "pred_index": 0,
+       "iou": 0.954,
+       "pred_conf": 0.9628
+      }
+     ],
+     "gt_matched_flags": [
+      true
+     ]
+    },
+    "0.2": {
+     "preds": [
+      {
+       "xyxy": [
+        1683.6,
+        2634.8,
+        1808.0,
+        2875.5
+       ],
+       "conf": 0.9628
+      }
+     ],
+     "matched": 1,
+     "n_pred": 1,
+     "recall": 1.0,
+     "precision": 1.0,
+     "pairs": [
+      {
+       "gt_index": 0,
+       "pred_index": 0,
+       "iou": 0.954,
+       "pred_conf": 0.9628
+      }
+     ],
+     "gt_matched_flags": [
+      true
+     ]
+    }
+   }
+  },
+  {
+   "sample_id": "pre-bj28",
+   "case_id": "BJ28",
+   "split": "train",
+   "kind": "bj_letterbox",
+   "gt_attr": "derived",
+   "page": "pre-bj28.png",
+   "gt": [
+    {
+     "unit_id": "R3-BJ28-B00",
+     "conf": 0.9108,
+     "gt_attr": "derived"
+    }
+   ],
+   "sides": {
+    "0.5": {
+     "preds": [
+      {
+       "xyxy": [
+        1390.5,
+        2615.7,
+        1594.9,
+        2741.6
+       ],
+       "conf": 0.7369
+      }
+     ],
+     "matched": 1,
+     "n_pred": 1,
+     "recall": 1.0,
+     "precision": 1.0,
+     "pairs": [
+      {
+       "gt_index": 0,
+       "pred_index": 0,
+       "iou": 0.9191,
+       "pred_conf": 0.7369
+      }
+     ],
+     "gt_matched_flags": [
+      true
+     ]
+    },
+    "0.2": {
+     "preds": [
+      {
+       "xyxy": [
+        1390.5,
+        2615.7,
+        1594.9,
+        2741.6
+       ],
+       "conf": 0.7369
+      },
+      {
+       "xyxy": [
+        1392.6,
+        2616.7,
+        1527.8,
+        2744.4
+       ],
+       "conf": 0.284
+      }
+     ],
+     "matched": 1,
+     "n_pred": 2,
+     "recall": 1.0,
+     "precision": 0.5,
+     "pairs": [
+      {
+       "gt_index": 0,
+       "pred_index": 0,
+       "iou": 0.9191,
+       "pred_conf": 0.7369
+      }
+     ],
+     "gt_matched_flags": [
+      true
+     ]
+    }
+   }
+  },
+  {
+   "sample_id": "pre-bj29",
+   "case_id": "BJ29",
+   "split": "train",
+   "kind": "bj_letterbox",
+   "gt_attr": "derived",
+   "page": "pre-bj29.png",
+   "gt": [
+    {
+     "unit_id": "R3-BJ29-B00",
+     "conf": 0.6038,
+     "gt_attr": "derived"
+    }
+   ],
+   "sides": {
+    "0.5": {
+     "preds": [
+      {
+       "xyxy": [
+        2408.2,
+        2395.3,
+        2583.3,
+        2748.8
+       ],
+       "conf": 0.8756
+      }
+     ],
+     "matched": 1,
+     "n_pred": 1,
+     "recall": 1.0,
+     "precision": 1.0,
+     "pairs": [
+      {
+       "gt_index": 0,
+       "pred_index": 0,
+       "iou": 0.8404,
+       "pred_conf": 0.8756
+      }
+     ],
+     "gt_matched_flags": [
+      true
+     ]
+    },
+    "0.2": {
+     "preds": [
+      {
+       "xyxy": [
+        2408.2,
+        2395.3,
+        2583.3,
+        2748.8
+       ],
+       "conf": 0.8756
+      }
+     ],
+     "matched": 1,
+     "n_pred": 1,
+     "recall": 1.0,
+     "precision": 1.0,
+     "pairs": [
+      {
+       "gt_index": 0,
+       "pred_index": 0,
+       "iou": 0.8404,
+       "pred_conf": 0.8756
+      }
+     ],
+     "gt_matched_flags": [
+      true
+     ]
+    }
+   }
+  },
+  {
+   "sample_id": "pre-bj32",
+   "case_id": "BJ32",
+   "split": "challenge",
+   "kind": "bj_letterbox",
+   "gt_attr": "ai-direct",
+   "page": "pre-bj32.png",
+   "gt": [
+    {
+     "unit_id": "R4-BJ32-C00",
+     "conf": null,
+     "gt_attr": "ai-direct"
+    },
+    {
+     "unit_id": "R4-BJ32-C01",
+     "conf": null,
+     "gt_attr": "ai-direct"
+    },
+    {
+     "unit_id": "R4-BJ32-C02",
+     "conf": null,
+     "gt_attr": "ai-direct"
+    }
+   ],
+   "sides": {
+    "0.5": {
+     "preds": [],
+     "matched": 0,
+     "n_pred": 0,
+     "recall": 0.0,
+     "precision": null,
+     "pairs": [],
+     "gt_matched_flags": [
+      false,
+      false,
+      false
+     ]
+    },
+    "0.2": {
+     "preds": [],
+     "matched": 0,
+     "n_pred": 0,
+     "recall": 0.0,
+     "precision": null,
+     "pairs": [],
+     "gt_matched_flags": [
+      false,
+      false,
+      false
+     ]
+    }
+   }
+  },
+  {
+   "sample_id": "pre-bj33",
+   "case_id": "BJ33",
+   "split": "train",
+   "kind": "bj_letterbox",
+   "gt_attr": "ai-direct",
+   "page": "pre-bj33.png",
+   "gt": [
+    {
+     "unit_id": "R4-BJ33-C00",
+     "conf": null,
+     "gt_attr": "ai-direct"
+    },
+    {
+     "unit_id": "R4-BJ33-C01",
+     "conf": null,
+     "gt_attr": "ai-direct"
+    },
+    {
+     "unit_id": "R4-BJ33-D01",
+     "conf": null,
+     "gt_attr": "ai-direct"
+    }
+   ],
+   "sides": {
+    "0.5": {
+     "preds": [
+      {
+       "xyxy": [
+        1430.1,
+        1083.9,
+        1536.0,
+        1375.2
+       ],
+       "conf": 0.7127
+      }
+     ],
+     "matched": 1,
+     "n_pred": 1,
+     "recall": 0.3333,
+     "precision": 1.0,
+     "pairs": [
+      {
+       "gt_index": 1,
+       "pred_index": 0,
+       "iou": 0.5036,
+       "pred_conf": 0.7127
+      }
+     ],
+     "gt_matched_flags": [
+      false,
+      true,
+      false
+     ]
+    },
+    "0.2": {
+     "preds": [
+      {
+       "xyxy": [
+        1430.1,
+        1083.9,
+        1536.0,
+        1375.2
+       ],
+       "conf": 0.7127
+      }
+     ],
+     "matched": 1,
+     "n_pred": 1,
+     "recall": 0.3333,
+     "precision": 1.0,
+     "pairs": [
+      {
+       "gt_index": 1,
+       "pred_index": 0,
+       "iou": 0.5036,
+       "pred_conf": 0.7127
+      }
+     ],
+     "gt_matched_flags": [
+      false,
+      true,
+      false
+     ]
+    }
+   }
+  },
+  {
+   "sample_id": "pre-bj34",
+   "case_id": "BJ34",
+   "split": "train",
+   "kind": "bj_letterbox",
+   "gt_attr": "ai-direct",
+   "page": "pre-bj34.png",
+   "gt": [
+    {
+     "unit_id": "R4-BJ34-C00",
+     "conf": null,
+     "gt_attr": "ai-direct"
+    },
+    {
+     "unit_id": "R4-BJ34-C01",
+     "conf": null,
+     "gt_attr": "ai-direct"
+    },
+    {
+     "unit_id": "R4-BJ34-C02",
+     "conf": null,
+     "gt_attr": "ai-direct"
+    }
+   ],
+   "sides": {
+    "0.5": {
+     "preds": [],
+     "matched": 0,
+     "n_pred": 0,
+     "recall": 0.0,
+     "precision": null,
+     "pairs": [],
+     "gt_matched_flags": [
+      false,
+      false,
+      false
+     ]
+    },
+    "0.2": {
+     "preds": [
+      {
+       "xyxy": [
+        2389.4,
+        2546.9,
+        2529.6,
+        2962.4
+       ],
+       "conf": 0.3868
+      }
+     ],
+     "matched": 1,
+     "n_pred": 1,
+     "recall": 0.3333,
+     "precision": 1.0,
+     "pairs": [
+      {
+       "gt_index": 0,
+       "pred_index": 0,
+       "iou": 0.6512,
+       "pred_conf": 0.3868
+      }
+     ],
+     "gt_matched_flags": [
+      true,
+      false,
+      false
+     ]
+    }
+   }
+  },
+  {
+   "sample_id": "pre-bj35",
+   "case_id": "BJ35",
+   "split": "train",
+   "kind": "bj_letterbox",
+   "gt_attr": "ai-direct",
+   "page": "pre-bj35.png",
+   "gt": [
+    {
+     "unit_id": "R4-BJ35-C00",
+     "conf": null,
+     "gt_attr": "ai-direct"
+    },
+    {
+     "unit_id": "R4-BJ35-C01",
+     "conf": null,
+     "gt_attr": "ai-direct"
+    },
+    {
+     "unit_id": "R4-BJ35-C02",
+     "conf": null,
+     "gt_attr": "ai-direct"
+    },
+    {
+     "unit_id": "R4-BJ35-C03",
+     "conf": null,
+     "gt_attr": "ai-direct"
+    },
+    {
+     "unit_id": "R4-BJ35-D00",
+     "conf": null,
+     "gt_attr": "ai-direct"
+    },
+    {
+     "unit_id": "R4-BJ35-D01",
+     "conf": null,
+     "gt_attr": "ai-direct"
+    }
+   ],
+   "sides": {
+    "0.5": {
+     "preds": [
+      {
+       "xyxy": [
+        1004.3,
+        918.8,
+        1190.6,
+        1626.2
+       ],
+       "conf": 0.5062
+      }
+     ],
+     "matched": 1,
+     "n_pred": 1,
+     "recall": 0.1667,
+     "precision": 1.0,
+     "pairs": [
+      {
+       "gt_index": 2,
+       "pred_index": 0,
+       "iou": 0.8071,
+       "pred_conf": 0.5062
+      }
+     ],
+     "gt_matched_flags": [
+      false,
+      false,
+      true,
+      false,
+      false,
+      false
+     ]
+    },
+    "0.2": {
+     "preds": [
+      {
+       "xyxy": [
+        1004.3,
+        918.8,
+        1190.6,
+        1626.2
+       ],
+       "conf": 0.5062
+      },
+      {
+       "xyxy": [
+        1348.5,
+        2791.9,
+        1458.8,
+        3182.2
+       ],
+       "conf": 0.2663
+      }
+     ],
+     "matched": 1,
+     "n_pred": 2,
+     "recall": 0.1667,
+     "precision": 0.5,
+     "pairs": [
+      {
+       "gt_index": 2,
+       "pred_index": 0,
+       "iou": 0.8071,
+       "pred_conf": 0.5062
+      }
+     ],
+     "gt_matched_flags": [
+      false,
+      false,
+      true,
+      false,
+      false,
+      false
+     ]
+    }
+   }
+  }
+ ],
+ "wording_discipline": "directional 评测，统计功效低；结论禁用「显著」；0 也如实"
+}

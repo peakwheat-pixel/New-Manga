@@ -1,0 +1,571 @@
+{
+ "task": "M2-SFX-GATE-T3 AC4 正式评测（三方×四数据集矩阵）",
+ "generated_at_utc": "2026-10-05T12:37:04Z",
+ "generated_from": "experiments/M2-SFX-GATE-T3/eval_gate_t3.py",
+ "mode": "full",
+ "gate_ref": "verification/M2-SFX-GATE-T3/gate-definition.md v1.0-frozen §3/§4.G1/§4.G2",
+ "weights": {
+  "chiqui7": {
+   "onnx": "G:\\CODEX\\New Manga.task-envs\\M2-SFX-DETECT\\weights\\yolo11s-seg.onnx",
+   "sha256": "d87389af4350954143a216bcfe40fd2ad93312cb136534e6073c9c740d98b646",
+   "note": "生产现役权重（pin d87389af… 逐字核对），pin 原样零重指——同链路独立复跑",
+   "imgsz": 1024,
+   "imgsz_source": "metadata_parsed"
+  },
+  "v2a": {
+   "onnx": "G:\\CODEX\\New Manga.worktrees\\M2-SFX-TRAIN-V2-zcode\\training_data\\sfx-v1\\train-v2\\weights\\v2a\\best.onnx",
+   "sha256": "27d162e94d7dd2150b177f5636613e3bfce836dfdb08240975b86fce85b97d43",
+   "note": "M2-SFX-TRAIN-V2 v2a best.onnx（sha 前缀 27d162e9 断言过），进程内重指 pin",
+   "imgsz": 1024,
+   "imgsz_source": "metadata_parsed"
+  },
+  "v2b": {
+   "onnx": "G:\\CODEX\\New Manga.worktrees\\M2-SFX-TRAIN-V2-zcode\\training_data\\sfx-v1\\train-v2\\weights\\v2b\\best.onnx",
+   "sha256": "944e811410933ad6ff8d32446fcc9eef90fb463794e1874ce83035e83acd418d",
+   "note": "M2-SFX-TRAIN-V2 v2b best.onnx（sha 前缀 944e8114 断言过），进程内重指 pin",
+   "imgsz": 1024,
+   "imgsz_source": "metadata_parsed"
+  }
+ },
+ "datasets": {
+  "bj-exam": {
+   "pages": 2,
+   "n_gt": 5,
+   "caliber": "letterbox 现行口径（G1 主判据数据，考卷原始 5 框）",
+   "gt_attr": {
+    "kind": "derived",
+    "note": "GT⊂chiqui7 整页扫描候选池（R2 判定链 confirm）——chiqui7 召回=数学必然自洽上界（gate-definition §3.5/G1 限制①），非独立性能"
+   }
+  },
+  "bj-ext": {
+   "pages": 12,
+   "n_gt": 33,
+   "attr_mix": {
+    "derived": "8 页 18 框（R2/R3 判定链）",
+    "ai-direct": "4 页 15 框（R4-BJ32-35 补画）"
+   },
+   "caliber": "letterbox 现行口径（G1 directional 扩展集；challenge/train 分列）",
+   "gt_attr": {
+    "kind": "mixed: derived + ai-direct",
+    "note": "R2/R3 判定链页=derived（循环性同 bj-exam）；R4-BJ32-35=ai-direct（无模型预标，ai-direct-annotation 首例，G1 限制④/G6 归因）"
+   }
+  },
+  "ko-tile": {
+   "pages": 4,
+   "n_gt": 56,
+   "caliber": "tile_ov128 冻结口径+letterbox 对照（G2-A 采集一致性）",
+   "gt_attr": {
+    "kind": "derived",
+    "note": "chiqui7 派生 56 框=采集一致性属性（directional，G2-A）；56/56 基线=同源复现上界非独立性能（gate-definition §4.G2 已知限制①）"
+   }
+  },
+  "ko-npd": {
+   "pages": 4,
+   "n_gt": 135,
+   "caliber": "tile_ov128 冻结口径+letterbox 对照（G2-B 模型质量）",
+   "gt_attr": {
+    "kind": "non-derived",
+    "note": "AC3 双 AI 独立整页标注（任务书零既有坐标，隔离纪律 PASS）定稿切片=模型质量属性，G2-B 硬判据载体（相对不回退判据）"
+   }
+  }
+ },
+ "matching": "box IoU>=0.5，pred conf 降序贪心（每 GT 至多一预测；沿 eval_v2.py:68-97 逐字）",
+ "confs": {
+  "0.5": "主口径（生产冻结 SFX_CONF_THRESHOLD=0.5）",
+  "0.2": "宽松口径（仅诊断，不作硬 Gate 判据）"
+ },
+ "matrix": {
+  "chiqui7": {
+   "bj-exam": {
+    "caliber": "letterbox-1024 生产序列原样（SfxDetectionProvider.detect）",
+    "gt_attr": {
+     "kind": "derived",
+     "note": "GT⊂chiqui7 整页扫描候选池（R2 判定链 confirm）——chiqui7 召回=数学必然自洽上界（gate-definition §3.5/G1 限制①），非独立性能"
+    },
+    "0.5": {
+     "matched": "5/5",
+     "recall_rate": 1.0,
+     "precision": 0.8333,
+     "n_pred": 6
+    },
+    "0.2": {
+     "matched": "5/5",
+     "recall_rate": 1.0,
+     "precision": 0.8333,
+     "n_pred": 6
+    }
+   },
+   "bj-ext": {
+    "caliber": "letterbox-1024 生产序列原样（SfxDetectionProvider.detect）",
+    "gt_attr": {
+     "kind": "mixed: derived + ai-direct",
+     "note": "R2/R3 判定链页=derived（循环性同 bj-exam）；R4-BJ32-35=ai-direct（无模型预标，ai-direct-annotation 首例，G1 限制④/G6 归因）"
+    },
+    "0.5": {
+     "matched": "13/33",
+     "recall_rate": 0.3939,
+     "precision": 0.9286,
+     "n_pred": 14
+    },
+    "0.2": {
+     "matched": "13/33",
+     "recall_rate": 0.3939,
+     "precision": 0.9286,
+     "n_pred": 14
+    },
+    "split_buckets": {
+     "0.5": {
+      "challenge": {
+       "matched": "5/8",
+       "recall_rate": 0.625,
+       "precision": 0.8333,
+       "n_pred": 6
+      },
+      "train": {
+       "matched": "8/25",
+       "recall_rate": 0.32,
+       "precision": 1.0,
+       "n_pred": 8
+      }
+     },
+     "0.2": {
+      "challenge": {
+       "matched": "5/8",
+       "recall_rate": 0.625,
+       "precision": 0.8333,
+       "n_pred": 6
+      },
+      "train": {
+       "matched": "8/25",
+       "recall_rate": 0.32,
+       "precision": 1.0,
+       "n_pred": 8
+      }
+     }
+    }
+   },
+   "ko-tile": {
+    "caliber": "tile_ov128 冻结口径（tile 宽=页宽原生/高 1024/重叠 128/末尾补页底锚点/页级跨 tile IoU 0.5 conf 降序贪心 NMS；tile_calib.py tile 实现逐字）+ letterbox 整页对照并行",
+    "gt_attr": {
+     "kind": "derived",
+     "note": "chiqui7 派生 56 框=采集一致性属性（directional，G2-A）；56/56 基线=同源复现上界非独立性能（gate-definition §4.G2 已知限制①）"
+    },
+    "0.5": {
+     "matched": "56/56",
+     "recall_rate": 1.0,
+     "precision": 0.8235,
+     "n_pred": 68
+    },
+    "0.2": {
+     "matched": "56/56",
+     "recall_rate": 1.0,
+     "precision": 0.6667,
+     "n_pred": 84
+    },
+    "letterbox_control": {
+     "0.5": {
+      "matched": "0/56",
+      "recall_rate": 0.0,
+      "precision": null,
+      "n_pred": 0
+     },
+     "0.2": {
+      "matched": "0/56",
+      "recall_rate": 0.0,
+      "precision": null,
+      "n_pred": 0
+     },
+     "note": "G2 冻结口径「letterbox 整页对照口径并行跑」；KO-TILE 结构性事实=整页 letterbox 下 SFX 亚像素化（0 召回复现预期）"
+    },
+    "tile_stats_total": {
+     "0.5": {
+      "n_tiles": 261,
+      "sfx_raw": 70,
+      "sfx_after_page_nms": 68
+     },
+     "0.2": {
+      "n_tiles": 261,
+      "sfx_raw": 89,
+      "sfx_after_page_nms": 84
+     }
+    }
+   },
+   "ko-npd": {
+    "caliber": "tile_ov128 冻结口径（tile 宽=页宽原生/高 1024/重叠 128/末尾补页底锚点/页级跨 tile IoU 0.5 conf 降序贪心 NMS；tile_calib.py tile 实现逐字）+ letterbox 整页对照并行",
+    "gt_attr": {
+     "kind": "non-derived",
+     "note": "AC3 双 AI 独立整页标注（任务书零既有坐标，隔离纪律 PASS）定稿切片=模型质量属性，G2-B 硬判据载体（相对不回退判据）"
+    },
+    "0.5": {
+     "matched": "41/135",
+     "recall_rate": 0.3037,
+     "precision": 0.6029,
+     "n_pred": 68
+    },
+    "0.2": {
+     "matched": "42/135",
+     "recall_rate": 0.3111,
+     "precision": 0.5,
+     "n_pred": 84
+    },
+    "letterbox_control": {
+     "0.5": {
+      "matched": "0/135",
+      "recall_rate": 0.0,
+      "precision": null,
+      "n_pred": 0
+     },
+     "0.2": {
+      "matched": "0/135",
+      "recall_rate": 0.0,
+      "precision": null,
+      "n_pred": 0
+     },
+     "note": "G2 冻结口径「letterbox 整页对照口径并行跑」；KO-TILE 结构性事实=整页 letterbox 下 SFX 亚像素化（0 召回复现预期）"
+    },
+    "tile_stats_total": {
+     "0.5": {
+      "n_tiles": 261,
+      "sfx_raw": 70,
+      "sfx_after_page_nms": 68
+     },
+     "0.2": {
+      "n_tiles": 261,
+      "sfx_raw": 89,
+      "sfx_after_page_nms": 84
+     }
+    }
+   }
+  },
+  "v2a": {
+   "bj-exam": {
+    "caliber": "letterbox-1024 生产序列原样（SfxDetectionProvider.detect）",
+    "gt_attr": {
+     "kind": "derived",
+     "note": "GT⊂chiqui7 整页扫描候选池（R2 判定链 confirm）——chiqui7 召回=数学必然自洽上界（gate-definition §3.5/G1 限制①），非独立性能"
+    },
+    "0.5": {
+     "matched": "4/5",
+     "recall_rate": 0.8,
+     "precision": 0.8,
+     "n_pred": 5
+    },
+    "0.2": {
+     "matched": "4/5",
+     "recall_rate": 0.8,
+     "precision": 0.6667,
+     "n_pred": 6
+    }
+   },
+   "bj-ext": {
+    "caliber": "letterbox-1024 生产序列原样（SfxDetectionProvider.detect）",
+    "gt_attr": {
+     "kind": "mixed: derived + ai-direct",
+     "note": "R2/R3 判定链页=derived（循环性同 bj-exam）；R4-BJ32-35=ai-direct（无模型预标，ai-direct-annotation 首例，G1 限制④/G6 归因）"
+    },
+    "0.5": {
+     "matched": "15/33",
+     "recall_rate": 0.4545,
+     "precision": 0.9375,
+     "n_pred": 16
+    },
+    "0.2": {
+     "matched": "17/33",
+     "recall_rate": 0.5152,
+     "precision": 0.7727,
+     "n_pred": 22
+    },
+    "split_buckets": {
+     "0.5": {
+      "challenge": {
+       "matched": "4/8",
+       "recall_rate": 0.5,
+       "precision": 0.8,
+       "n_pred": 5
+      },
+      "train": {
+       "matched": "11/25",
+       "recall_rate": 0.44,
+       "precision": 1.0,
+       "n_pred": 11
+      }
+     },
+     "0.2": {
+      "challenge": {
+       "matched": "4/8",
+       "recall_rate": 0.5,
+       "precision": 0.6667,
+       "n_pred": 6
+      },
+      "train": {
+       "matched": "13/25",
+       "recall_rate": 0.52,
+       "precision": 0.8125,
+       "n_pred": 16
+      }
+     }
+    }
+   },
+   "ko-tile": {
+    "caliber": "tile_ov128 冻结口径（tile 宽=页宽原生/高 1024/重叠 128/末尾补页底锚点/页级跨 tile IoU 0.5 conf 降序贪心 NMS；tile_calib.py tile 实现逐字）+ letterbox 整页对照并行",
+    "gt_attr": {
+     "kind": "derived",
+     "note": "chiqui7 派生 56 框=采集一致性属性（directional，G2-A）；56/56 基线=同源复现上界非独立性能（gate-definition §4.G2 已知限制①）"
+    },
+    "0.5": {
+     "matched": "28/56",
+     "recall_rate": 0.5,
+     "precision": 0.3333,
+     "n_pred": 84
+    },
+    "0.2": {
+     "matched": "36/56",
+     "recall_rate": 0.6429,
+     "precision": 0.1765,
+     "n_pred": 204
+    },
+    "letterbox_control": {
+     "0.5": {
+      "matched": "0/56",
+      "recall_rate": 0.0,
+      "precision": null,
+      "n_pred": 0
+     },
+     "0.2": {
+      "matched": "0/56",
+      "recall_rate": 0.0,
+      "precision": null,
+      "n_pred": 0
+     },
+     "note": "G2 冻结口径「letterbox 整页对照口径并行跑」；KO-TILE 结构性事实=整页 letterbox 下 SFX 亚像素化（0 召回复现预期）"
+    },
+    "tile_stats_total": {
+     "0.5": {
+      "n_tiles": 261,
+      "sfx_raw": 90,
+      "sfx_after_page_nms": 84
+     },
+     "0.2": {
+      "n_tiles": 261,
+      "sfx_raw": 228,
+      "sfx_after_page_nms": 204
+     }
+    }
+   },
+   "ko-npd": {
+    "caliber": "tile_ov128 冻结口径（tile 宽=页宽原生/高 1024/重叠 128/末尾补页底锚点/页级跨 tile IoU 0.5 conf 降序贪心 NMS；tile_calib.py tile 实现逐字）+ letterbox 整页对照并行",
+    "gt_attr": {
+     "kind": "non-derived",
+     "note": "AC3 双 AI 独立整页标注（任务书零既有坐标，隔离纪律 PASS）定稿切片=模型质量属性，G2-B 硬判据载体（相对不回退判据）"
+    },
+    "0.5": {
+     "matched": "35/135",
+     "recall_rate": 0.2593,
+     "precision": 0.4167,
+     "n_pred": 84
+    },
+    "0.2": {
+     "matched": "51/135",
+     "recall_rate": 0.3778,
+     "precision": 0.25,
+     "n_pred": 204
+    },
+    "letterbox_control": {
+     "0.5": {
+      "matched": "0/135",
+      "recall_rate": 0.0,
+      "precision": null,
+      "n_pred": 0
+     },
+     "0.2": {
+      "matched": "0/135",
+      "recall_rate": 0.0,
+      "precision": null,
+      "n_pred": 0
+     },
+     "note": "G2 冻结口径「letterbox 整页对照口径并行跑」；KO-TILE 结构性事实=整页 letterbox 下 SFX 亚像素化（0 召回复现预期）"
+    },
+    "tile_stats_total": {
+     "0.5": {
+      "n_tiles": 261,
+      "sfx_raw": 90,
+      "sfx_after_page_nms": 84
+     },
+     "0.2": {
+      "n_tiles": 261,
+      "sfx_raw": 228,
+      "sfx_after_page_nms": 204
+     }
+    }
+   }
+  },
+  "v2b": {
+   "bj-exam": {
+    "caliber": "letterbox-1024 生产序列原样（SfxDetectionProvider.detect）",
+    "gt_attr": {
+     "kind": "derived",
+     "note": "GT⊂chiqui7 整页扫描候选池（R2 判定链 confirm）——chiqui7 召回=数学必然自洽上界（gate-definition §3.5/G1 限制①），非独立性能"
+    },
+    "0.5": {
+     "matched": "5/5",
+     "recall_rate": 1.0,
+     "precision": 1.0,
+     "n_pred": 5
+    },
+    "0.2": {
+     "matched": "5/5",
+     "recall_rate": 1.0,
+     "precision": 1.0,
+     "n_pred": 5
+    }
+   },
+   "bj-ext": {
+    "caliber": "letterbox-1024 生产序列原样（SfxDetectionProvider.detect）",
+    "gt_attr": {
+     "kind": "mixed: derived + ai-direct",
+     "note": "R2/R3 判定链页=derived（循环性同 bj-exam）；R4-BJ32-35=ai-direct（无模型预标，ai-direct-annotation 首例，G1 限制④/G6 归因）"
+    },
+    "0.5": {
+     "matched": "13/33",
+     "recall_rate": 0.3939,
+     "precision": 0.8667,
+     "n_pred": 15
+    },
+    "0.2": {
+     "matched": "15/33",
+     "recall_rate": 0.4545,
+     "precision": 0.8333,
+     "n_pred": 18
+    },
+    "split_buckets": {
+     "0.5": {
+      "challenge": {
+       "matched": "5/8",
+       "recall_rate": 0.625,
+       "precision": 1.0,
+       "n_pred": 5
+      },
+      "train": {
+       "matched": "8/25",
+       "recall_rate": 0.32,
+       "precision": 0.8,
+       "n_pred": 10
+      }
+     },
+     "0.2": {
+      "challenge": {
+       "matched": "5/8",
+       "recall_rate": 0.625,
+       "precision": 1.0,
+       "n_pred": 5
+      },
+      "train": {
+       "matched": "10/25",
+       "recall_rate": 0.4,
+       "precision": 0.7692,
+       "n_pred": 13
+      }
+     }
+    }
+   },
+   "ko-tile": {
+    "caliber": "tile_ov128 冻结口径（tile 宽=页宽原生/高 1024/重叠 128/末尾补页底锚点/页级跨 tile IoU 0.5 conf 降序贪心 NMS；tile_calib.py tile 实现逐字）+ letterbox 整页对照并行",
+    "gt_attr": {
+     "kind": "derived",
+     "note": "chiqui7 派生 56 框=采集一致性属性（directional，G2-A）；56/56 基线=同源复现上界非独立性能（gate-definition §4.G2 已知限制①）"
+    },
+    "0.5": {
+     "matched": "35/56",
+     "recall_rate": 0.625,
+     "precision": 0.3465,
+     "n_pred": 101
+    },
+    "0.2": {
+     "matched": "43/56",
+     "recall_rate": 0.7679,
+     "precision": 0.2019,
+     "n_pred": 213
+    },
+    "letterbox_control": {
+     "0.5": {
+      "matched": "0/56",
+      "recall_rate": 0.0,
+      "precision": null,
+      "n_pred": 0
+     },
+     "0.2": {
+      "matched": "0/56",
+      "recall_rate": 0.0,
+      "precision": null,
+      "n_pred": 0
+     },
+     "note": "G2 冻结口径「letterbox 整页对照口径并行跑」；KO-TILE 结构性事实=整页 letterbox 下 SFX 亚像素化（0 召回复现预期）"
+    },
+    "tile_stats_total": {
+     "0.5": {
+      "n_tiles": 261,
+      "sfx_raw": 109,
+      "sfx_after_page_nms": 101
+     },
+     "0.2": {
+      "n_tiles": 261,
+      "sfx_raw": 245,
+      "sfx_after_page_nms": 213
+     }
+    }
+   },
+   "ko-npd": {
+    "caliber": "tile_ov128 冻结口径（tile 宽=页宽原生/高 1024/重叠 128/末尾补页底锚点/页级跨 tile IoU 0.5 conf 降序贪心 NMS；tile_calib.py tile 实现逐字）+ letterbox 整页对照并行",
+    "gt_attr": {
+     "kind": "non-derived",
+     "note": "AC3 双 AI 独立整页标注（任务书零既有坐标，隔离纪律 PASS）定稿切片=模型质量属性，G2-B 硬判据载体（相对不回退判据）"
+    },
+    "0.5": {
+     "matched": "48/135",
+     "recall_rate": 0.3556,
+     "precision": 0.4752,
+     "n_pred": 101
+    },
+    "0.2": {
+     "matched": "64/135",
+     "recall_rate": 0.4741,
+     "precision": 0.3005,
+     "n_pred": 213
+    },
+    "letterbox_control": {
+     "0.5": {
+      "matched": "0/135",
+      "recall_rate": 0.0,
+      "precision": null,
+      "n_pred": 0
+     },
+     "0.2": {
+      "matched": "0/135",
+      "recall_rate": 0.0,
+      "precision": null,
+      "n_pred": 0
+     },
+     "note": "G2 冻结口径「letterbox 整页对照口径并行跑」；KO-TILE 结构性事实=整页 letterbox 下 SFX 亚像素化（0 召回复现预期）"
+    },
+    "tile_stats_total": {
+     "0.5": {
+      "n_tiles": 261,
+      "sfx_raw": 109,
+      "sfx_after_page_nms": 101
+     },
+     "0.2": {
+      "n_tiles": 261,
+      "sfx_raw": 245,
+      "sfx_after_page_nms": 213
+     }
+    }
+   }
+  }
+ },
+ "npd_gt_source": {
+  "path": "G:\\CODEX\\New Manga.worktrees\\M2-SFX-GATE-T3-zcode\\training_data\\sfx-v1\\gate-t3\\npd-gt.json",
+  "total_boxes": 135,
+  "isolation_discipline": "任务书零既有坐标（npd-gt.json isolation_discipline PASS）"
+ },
+ "wording_discipline": "directional 评测，统计功效低；结论禁用「显著」；0 也如实"
+}
