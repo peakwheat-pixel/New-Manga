@@ -12,6 +12,10 @@
   delete-duplicate 同目标冗余（对方框/合并框已承接）
   delete          非 SFX（判据①②③）或框内无字形
   correct         是 SFX 但框需修（定稿框=修正框）
+
+仲裁终裁档案（DSH r1 P2-1）：51 单元 verdict/final_xyxy/rationale 全文在
+npd-judgments/arbiter/batch-1.json（与 AC2 annotate-r4/judgments/arbiter/batch-1.json
+同构）；本脚本只读取该档案并断言其与 divergence 记录逐单元一致，不再内嵌终裁常量。
 """
 from __future__ import annotations
 
@@ -27,119 +31,11 @@ R3M = Path(r"G:/CODEX/New Manga.worktrees/M2-SFX-ANNOTATE-R3-zcode/training_data
 IOU_MATCH = 0.5
 
 # ---------------------------------------------------------------------------
-# 仲裁终裁表（逐单元；rationale 全文在 arbiter/batch-1.json judgments 内）
+# 仲裁终裁表已导出为独立档案：npd-judgments/arbiter/batch-1.json（51 单元
+# verdict/final_xyxy/rationale，与 AC2 annotate-r4/judgments/arbiter/batch-1.json 同构）。
+# 本脚本只读取该档案并断言其与 divergence 记录逐单元一致（DSH r1 P2-1），
+# 不再内嵌终裁常量。
 # ---------------------------------------------------------------------------
-VERDICTS: dict[str, dict] = {
-    # ---- pre-k01（21）----
-    "R4-pre-k01-D00": {"verdict": "keep-merged", "final_xyxy": [563.0, 3639.0, 625.0, 3699.0]},
-    "R4-pre-k01-D08": {"verdict": "delete-duplicate"},
-    "R4-pre-k01-D01": {"verdict": "keep-merged", "final_xyxy": [25.0, 4168.0, 155.0, 4310.0]},
-    "R4-pre-k01-D10": {"verdict": "delete-duplicate"},
-    "R4-pre-k01-D02": {"verdict": "keep-merged", "final_xyxy": [490.0, 7913.0, 560.0, 7972.0]},
-    "R4-pre-k01-D11": {"verdict": "delete-duplicate"},
-    "R4-pre-k01-D03": {"verdict": "keep", "final_xyxy": [210.0, 13534.0, 307.0, 13617.0]},
-    "R4-pre-k01-D12": {"verdict": "delete-duplicate"},
-    "R4-pre-k01-D04": {"verdict": "keep-merged", "final_xyxy": [214.0, 29848.0, 267.0, 29937.0]},
-    "R4-pre-k01-D13": {"verdict": "delete-duplicate"},
-    "R4-pre-k01-D05": {"verdict": "delete"},
-    "R4-pre-k01-D14": {"verdict": "keep", "final_xyxy": [172.0, 35913.0, 234.0, 35962.0]},
-    "R4-pre-k01-D06": {"verdict": "delete"},
-    "R4-pre-k01-D15": {"verdict": "delete"},
-    "R4-pre-k01-D16": {"verdict": "delete"},
-    "R4-pre-k01-D07": {"verdict": "keep", "final_xyxy": [144.0, 45503.0, 234.0, 45640.0]},
-    "R4-pre-k01-D17": {"verdict": "keep", "final_xyxy": [121.0, 45696.0, 236.0, 45842.0]},
-    "R4-pre-k01-D09": {"verdict": "keep", "final_xyxy": [292.0, 4103.0, 340.0, 4136.0]},
-    "R4-pre-k01-D18": {"verdict": "keep", "final_xyxy": [427.0, 49845.0, 486.0, 49915.0]},
-    "R4-pre-k01-D19": {"verdict": "keep", "final_xyxy": [351.0, 49851.0, 398.0, 49903.0]},
-    "R4-pre-k01-D20": {"verdict": "keep", "final_xyxy": [265.0, 50015.0, 335.0, 50105.0]},
-    # ---- pre-k02（6；三对同目标小框 IoU 配对失败）----
-    "R4-pre-k02-D00": {"verdict": "keep-merged", "final_xyxy": [232.0, 1042.0, 272.0, 1092.0]},
-    "R4-pre-k02-D03": {"verdict": "delete-duplicate"},
-    "R4-pre-k02-D01": {"verdict": "keep-merged", "final_xyxy": [251.0, 1938.0, 314.0, 1990.0]},
-    "R4-pre-k02-D04": {"verdict": "delete-duplicate"},
-    "R4-pre-k02-D02": {"verdict": "keep-merged", "final_xyxy": [312.0, 5953.0, 357.0, 5994.0]},
-    "R4-pre-k02-D05": {"verdict": "delete-duplicate"},
-    # ---- pre-k08（8）----
-    "R4-pre-k08-D00": {"verdict": "keep-merged", "final_xyxy": [235.0, 6048.0, 326.0, 6300.0]},
-    "R4-pre-k08-D03": {"verdict": "delete-duplicate"},
-    "R4-pre-k08-D01": {"verdict": "keep", "final_xyxy": [107.0, 31745.0, 375.0, 32070.0]},
-    "R4-pre-k08-D02": {"verdict": "keep", "final_xyxy": [425.0, 31972.0, 702.0, 32315.0]},
-    "R4-pre-k08-D06": {"verdict": "delete"},
-    "R4-pre-k08-D04": {"verdict": "delete"},
-    "R4-pre-k08-D05": {"verdict": "correct", "final_xyxy": [220.0, 28298.0, 520.0, 28430.0]},
-    "R4-pre-k08-D07": {"verdict": "keep", "final_xyxy": [610.0, 44120.0, 648.0, 44218.0]},
-    # ---- pre-k09（16）----
-    "R4-pre-k09-D00": {"verdict": "keep-merged", "final_xyxy": [422.0, 8520.0, 690.0, 9110.0]},
-    "R4-pre-k09-D09": {"verdict": "delete-duplicate"},
-    "R4-pre-k09-D01": {"verdict": "keep", "final_xyxy": [91.0, 10921.0, 243.0, 11217.0]},
-    "R4-pre-k09-D11": {"verdict": "delete-duplicate"},
-    "R4-pre-k09-D12": {"verdict": "delete-duplicate"},
-    "R4-pre-k09-D02": {"verdict": "keep", "final_xyxy": [167.0, 34064.0, 473.0, 34175.0]},
-    "R4-pre-k09-D13": {"verdict": "delete-duplicate"},
-    "R4-pre-k09-D03": {"verdict": "keep", "final_xyxy": [373.0, 49635.0, 555.0, 49772.0]},
-    "R4-pre-k09-D04": {"verdict": "keep", "final_xyxy": [363.0, 50765.0, 522.0, 50881.0]},
-    "R4-pre-k09-D05": {"verdict": "delete"},
-    "R4-pre-k09-D06": {"verdict": "keep", "final_xyxy": [298.0, 56455.0, 400.0, 56615.0]},
-    "R4-pre-k09-D15": {"verdict": "delete-duplicate"},
-    "R4-pre-k09-D07": {"verdict": "keep", "final_xyxy": [333.0, 68360.0, 395.0, 68420.0]},
-    "R4-pre-k09-D08": {"verdict": "keep", "final_xyxy": [25.0, 7492.0, 305.0, 8030.0]},
-    "R4-pre-k09-D10": {"verdict": "keep", "final_xyxy": [187.0, 10200.0, 268.0, 10312.0]},
-    "R4-pre-k09-D14": {"verdict": "delete"},
-}
-
-RATIONALES: dict[str, str] = {
-    "R4-pre-k01-D00": "实看 sheet+rationale：绿底右上灰色「호호/후훗」笑声小字独立无气泡，a/b 双方各框（563-625/584-620 同区），字 40px 级小框 IoU 0.38 配对失败——同目标 keep-merge，定稿=union。",
-    "R4-pre-k01-D08": "与 D00 同目标（对方框已由合并框承接），delete-duplicate。",
-    "R4-pre-k01-D01": "实看 sheet：粉底放射集中线上「오호호」蓝白描边大字斜排+星光装饰，笑声效果字无气泡。a/b 双框同目标（IoU 0.25，字斜排致框差大），keep-merge 定稿=union（含三字+描边出血）。",
-    "R4-pre-k01-D10": "与 D01 同目标（对方框已由合并框承接），delete-duplicate。",
-    "R4-pre-k01-D02": "实看 sheet：绿底「딸기..」黑色手写小字+粉圆点（草莓嘟哝拟态），效果字无容器。a/b 双框同目标 IoU 0.46 差 0.04 配对失败，keep-merge 定稿=union。",
-    "R4-pre-k01-D11": "与 D02 同目标（对方框已由合并框承接），delete-duplicate。",
-    "R4-pre-k01-D03": "实看高清叠框（k01_D03_D12_hires.png 4x）：粉墙白字蓝描边「달까」二字分列黑竖线两侧，字群实际 y≈13530-13600；a 框基本套准（右下少量空白），b 框偏上 50px 仅套字顶。字形带描边装饰、独立无容器，按 KO 域效果字口径 keep=a 框。",
-    "R4-pre-k01-D12": "与 D03 同目标，b 框偏上未套准字形（高清图实证），delete-duplicate。",
-    "R4-pre-k01-D04": "实看 sheet：深蓝底粉白描边竖排「울/올느」抽泣效果字无气泡。a/b 双框同目标（b⊂a），keep-merge 定稿=a 框（b 完全包含于 a）。",
-    "R4-pre-k01-D13": "与 D04 同目标（合并框=a 框已承接），delete-duplicate。",
-    "R4-pre-k01-D05": "实看高清叠框（k01_D05_D14_hires.png 2x）：a 框 [357,35910,470,36000] 区域为大气泡「왕유리는 없냐? 왕유리??」右下半+空白，「아」「하」字均在框外——框内主体是对白气泡无独立字形，delete。",
-    "R4-pre-k01-D14": "实看高清叠框：b 框恰好套住左「아」白字红描边（叹声效果字，无气泡独立于画面），keep=b 框。",
-    "R4-pre-k01-D06": "实看 sheet（D15/D16 同区）：橙色横贯解说带「뚜두구 뚜뚜뚜-기상음악 나이베 어~」——「기상음악 나이베어~」（起床音乐响了）为陈述句旁白解说，横幅=画面容器，按 R2-BJ17-B02 容器判例其内文字=容器语义内容非画面空间效果音，delete。",
-    "R4-pre-k01-D15": "同一解说带左段（뚜뚜루 뚜뚜뚜 喇叭声段）：虽为拟声形态，但与右侧陈述句连排构成完整解说带容器内容，一体 delete（判据②容器语义）。",
-    "R4-pre-k01-D16": "同一解说带右段（기상음악 나이베에~ 歌词/解说），delete（判据②）。",
-    "R4-pre-k01-D07": "实看 sheet：蓝底白字橙描边竖排「걸걸」潦草艺术字（厚脸皮笑声）独立无气泡，keep=a 框。",
-    "R4-pre-k01-D17": "实看 sheet：蓝底白字橙描边「끝끝」竖排斜列（得意拟态）效果字，与 D07 同域异位（y45696 vs 45503 无重叠），keep=b 框。",
-    "R4-pre-k01-D09": "实看 sheet：紫底「냬엠☆」粉紫描边小字+星形装饰（哈欠拟态），效果字，keep=b 框。",
-    "R4-pre-k01-D18": "实看 sheet：浅蓝字竖排「개웃겨」（爆笑感叹效果字）+描边装饰，KO 域反应感叹效果字惯例（彩色描边、无容器、字形装饰化），keep=b 框。",
-    "R4-pre-k01-D19": "实看 sheet：斜排「ㅋㅋ」浅蓝描边小字（笑声）散置群像间，keep=b 框。",
-    "R4-pre-k01-D20": "实看 sheet：白字粉描边小字群散布（群像笑闹效果字群，b 读 ㅋ 群），与同区共识效果字群同域，keep=b 框。",
-    "R4-pre-k02-D00": "实看 sheet：窗前蓝灰描边竖排小拟声字（a 读 푸훕/b 读 푸덕），男角色嘴旁无气泡。字仅 30x48px，a/b 框 10px 偏移 IoU 0.29 配对失败——同目标 keep-merge 定稿=union。",
-    "R4-pre-k02-D03": "与 D00 同目标（合并框承接），delete-duplicate。",
-    "R4-pre-k02-D01": "实看 sheet：棕色描边小字「콜록/쾅쾅」（咳嗽/砰砰拟声）+黄点装饰，a 框偏左含纸巾边、b 框套准字。同目标 keep-merge 定稿=union。",
-    "R4-pre-k02-D04": "与 D01 同目标（合并框承接），delete-duplicate。",
-    "R4-pre-k02-D02": "实看 sheet：橙色手写小字「웅기?」样+问号（女角色旁拟态小字），无气泡。a/b 双框同目标 IoU 0.35 配对失败，keep-merge 定稿=union。",
-    "R4-pre-k02-D05": "与 D02 同目标（合并框承接），delete-duplicate。",
-    "R4-pre-k08-D00": "实看 sheet：小拳面板左上棕红描边竖排变形字「드르륵/쿵직类」（a/b 读法异、目标同）。a 框紧套字形，b 框左扩 130px 含面板空白——keep-merge 定稿=a 框（correct：弃 b 框过宽部分）。",
-    "R4-pre-k08-D03": "与 D00 同目标（b 框过宽未采用），delete-duplicate。",
-    "R4-pre-k08-D01": "实看 sheet：红色巨型变形冲击字左簇（벅，双环部件）+集中线，keep=a 框。",
-    "R4-pre-k08-D02": "实看 sheet：红色巨型变形冲击字右簇（컥，圆+长笔画）——a 按词拆排两簇分框符合实例粒度，keep=a 框（框稍大含集中线下部可接受）。",
-    "R4-pre-k08-D06": "实看 sheet：b 框一框套「벅+컥」两簇独立实例（中间隔人物）——一框多实例粒度错误，两实例已由 D01/D02 承接，delete。",
-    "R4-pre-k08-D04": "实看 sheet：白色圆角气泡容器内规整印刷体「ㅋㅋㅋ」——气泡对白（笑声文字化）非画面空间效果音，b 自述「不确定照标」；按 BJ36 仲裁同判据（容器+规整字形+语法语义）delete。",
-    "R4-pre-k08-D05": "实看 sheet：黑色几何粗直笔画连写「크크크크类」（连击/笑声拟声变形字）无气泡——是 SFX；但 b 框右下 30% 含人物头发/脸。correct 收窄至字带 [220,28298,520,28430]（x2 598→520 去人物、y2 28472→28430 去脸缘）。",
-    "R4-pre-k08-D07": "实看 sheet：白底棕色斜排小字「훗」形（冷笑拟声）字形结构清晰非线稿，keep=b 框。",
-    "R4-pre-k09-D00": "实看 sheet：深蓝速度线背景斜排草书细笔画大字+底部双圆圈（坠落拟声 쿵/옴）。a/b 双框同目标 IoU 0.44 配对失败，keep-merge 定稿=union。",
-    "R4-pre-k09-D09": "与 D00 同目标（合并框承接），delete-duplicate。",
-    "R4-pre-k09-D01": "实看 sheet：深色手写斜排「퍽퍽!」两枚字块上下紧贴（间隙≈8px）构成连续拟声串——连续紧贴字串按一实例计，keep=a 组合框；b 拆分双框记 delete-duplicate。",
-    "R4-pre-k09-D11": "与 D01 同目标上枚（连续字串由组合框承接），delete-duplicate。",
-    "R4-pre-k09-D12": "与 D01 同目标下枚（连续字串由组合框承接），delete-duplicate。",
-    "R4-pre-k09-D02": "实看 sheet：白字描边「✱너무신남✱」横排效果字+两侧十字爆花/金星装饰（兴奋拟态）。a 框套准字带+装饰，keep=a 框。",
-    "R4-pre-k09-D13": "与 D02 同目标（b 框下延至 y34312 含人物头部），delete-duplicate。",
-    "R4-pre-k09-D03": "实看 sheet：矩形效果音框（尖角、无尾）内大号手写艺术字「디동」（瘫倒拟声）——与对白气泡的区别在字形艺术化+框形（KO webtoon 效果音框惯例），keep=a 框。",
-    "R4-pre-k09-D04": "实看 sheet：矩形效果音框内手写粗笔「벅격」（撞击拟声）艺术字，同 D03 判据，keep=a 框。",
-    "R4-pre-k09-D05": "实看 sheet：浅黄纸上单笔 ㄱ 形锯齿钩笔画——无字形结构（非文字，判据③动作线/爪痕），delete。",
-    "R4-pre-k09-D06": "实看 sheet：浅黄纸上锯齿锋利笔画字「탁类」（抓取拟声）字形结构可辨，keep=a 框。",
-    "R4-pre-k09-D15": "实看 sheet：b 大框 [156,56440,452,56645] 套整个黄纸区（含手部+弧线+多处字迹）——粒度粗含非文字区域，字迹已由 D06 承接，delete-duplicate。",
-    "R4-pre-k09-D07": "实看 sheet：白底黑手写小字「쿰~」+波浪符（蹭头拟声），keep=a 框。",
-    "R4-pre-k09-D08": "实看 sheet：深蓝背景竖长排布尖锐笔画组合变形字（쿵쿵落地声变形，笔画群有字块结构非平行速度线），keep=b 框。",
-    "R4-pre-k09-D10": "实看 sheet：黑色毛笔字「탁」斜排+右下白色冲击箭头，字清晰，框含箭头可接受（冲击一体呈现），keep=b 框。",
-    "R4-pre-k09-D14": "实看 sheet：白底规整印刷体粗黑「뭐?！」——完全规整字形（无任何艺术化变形）+疑问句语法语义+无容器压画面的台词强调，非以声音拟形的效果音（b 自述「照标」），按判据①delete。",
-}
 
 # keep-merged 配对表（定稿框并入方 ← 被承接方）
 MERGE_PAIRS = [
@@ -167,26 +63,37 @@ def main() -> int:
     div = json.loads((NPJ / "divergence.json").read_text(encoding="utf-8"))
     cons = json.loads((NPJ / "consensus.json").read_text(encoding="utf-8"))
 
-    # 1) 断言：仲裁表覆盖全部分歧单元且 ID 无重号
+    # 1) 仲裁终裁档案装载+断言（对齐 stage_r4_manifest.py:52/67-68 模式）
+    arb = json.loads((NPJ / "arbiter" / "batch-1.json").read_text(encoding="utf-8"))
+    arb_by_id = {j["id"]: j for j in arb["judgments"]}
+    assert len(arb_by_id) == len(arb["judgments"]), "arbiter batch-1 ID 重号"
     ids = [u["id"] for u in div["divergence"]]
     assert len(set(ids)) == len(ids), "divergence ID 重号"
-    assert set(VERDICTS) == set(ids), (
-        f"仲裁表与分歧单元失配: 缺 {set(ids)-set(VERDICTS)} 多 {set(VERDICTS)-set(ids)}")
+    assert set(arb_by_id) == set(ids), (
+        f"仲裁档案与分歧单元失配: 缺 {set(ids)-set(arb_by_id)} 多 {set(arb_by_id)-set(ids)}")
     for pair in MERGE_PAIRS:
-        assert VERDICTS[pair[0]]["verdict"] == "keep-merged"
-        assert VERDICTS[pair[1]]["verdict"] == "delete-duplicate"
-
-    # 2) 回写 divergence 状态 + 仲裁 rationale
+        assert arb_by_id[pair[0]]["verdict"] == "keep-merged"
+        assert arb_by_id[pair[1]]["verdict"] == "delete-duplicate"
     for u in div["divergence"]:
-        v = VERDICTS[u["id"]]
+        a = arb_by_id[u["id"]]
+        assert a["page"] == u["page"] and a["proposer"] == u["proposer"], u["id"]
+        assert a["xyxy"] == u["xyxy"], f"{u['id']}: arbiter xyxy 与 divergence 不一致"
+        if u.get("status", "").startswith("arbiter-"):  # 已回写态（重跑）：逐单元一致
+            assert a["verdict"] == u["status"].removeprefix("arbiter-"), u["id"]
+            assert a["rationale"] == u["arbiter_rationale"], u["id"]
+            assert a.get("final_xyxy") == u.get("final_xyxy"), u["id"]
+
+    # 2) 回写 divergence 状态 + 仲裁 rationale（终裁唯一来源=arbiter/batch-1.json）
+    for u in div["divergence"]:
+        v = arb_by_id[u["id"]]
         u["status"] = "arbiter-" + v["verdict"]
-        u["arbiter_rationale"] = RATIONALES[u["id"]]
+        u["arbiter_rationale"] = v["rationale"]
         if "final_xyxy" in v:
             u["final_xyxy"] = v["final_xyxy"]
-    div["n_arbitrated"] = len(VERDICTS)
+    div["n_arbitrated"] = len(arb_by_id)
     div["arbiter"] = ("入册会话独立标准（逐单元叠框预览/高清复核+原页实看；判据=字形艺术化/"
                       "容器语义/画面线稿/实例粒度四条，不引用任何既有 GT 坐标；"
-                      "R3 仲裁先例容器判例沿用）；arbiter/batch-1.json")
+                      "R3 仲裁先例容器判例沿用）；npd-judgments/arbiter/batch-1.json")
     div["arbitrated_at_utc"] = now
     (NPJ / "divergence.json").write_text(
         json.dumps(div, ensure_ascii=False, indent=1), encoding="utf-8")
@@ -204,8 +111,8 @@ def main() -> int:
         if u["status"] in ("arbiter-keep", "arbiter-keep-merged", "arbiter-correct"):
             pg = pages.setdefault(u["page"], {"boxes": []})
             pg["boxes"].append({
-                "xyxy": VERDICTS[u["id"]]["final_xyxy"],
-                "rationale": (f"divergence({u['proposer']})｜{RATIONALES[u['id']]}"),
+                "xyxy": arb_by_id[u["id"]]["final_xyxy"],
+                "rationale": (f"divergence({u['proposer']})｜{arb_by_id[u['id']]['rationale']}"),
                 "chain": f"{u['id']}={u['status']}",
             })
     dist = Counter(u["status"] for u in div["divergence"])
@@ -257,8 +164,10 @@ def main() -> int:
             "task_brief_leak_check": "PASS（标注任务书不含任何既有框坐标）",
             "arbiter_independence": "仲裁判据四条不含既有 GT 坐标引用（见 tool docstring）",
             "coincidence_evidence": ("pre-k08 D00=a 框 [235,6048,326,6300] 与 R2 confirm 派生框 "
-                                     "[233.4,6046.4,330.9,6301.1] 独立重合、pre-k08 D07=b 框与派生框 "
-                                     "[609.4,44114,645.9,44213.6] 独立重合——双 AI 独立标注客观性旁证"
+                                     "[233.4,6046.4,330.9,6301.1] 独立重合（IoU≈0.92）、pre-k08 D07=b 框与"
+                                     "派生框 [609.4,44114,645.9,44213.6] 独立重合——可读作双 AI 独立标注"
+                                     "客观性旁证亦可读作泄漏信号，双向解释、决定性不足；隔离判定以 "
+                                     "task_brief_leak_check（作者自查）+复核产物级间接验证为准"
                                      "（交集统计自然体现，未参与判定）"),
         },
         "verdict_dist_divergence": dict(sorted(dist.items())),

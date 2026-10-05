@@ -73,7 +73,7 @@
 ### G3 · 数据集健全性与考卷完整性门【硬 Gate · 先决】
 
 - **定义**：本轮评测所依据的数据集（train-v4 重切产物）与考卷的完整性断言——**先决门**：任何一项 FAIL，则本轮全部评测数字不作门判定（先决失效，G1/G2/G7 判 INDETERMINATE-先决失效如实登记）。
-- **评测数据**：train-v4 全量 manifest+dataset 树（AC2 产物）；考卷 vol05 组定义（Task 禁止范围——本轮零改动）。
+- **评测数据**：train-v4 全量 manifest+dataset 树（AC2 产物）；考卷 vol05 组定义（Task 禁止范围）；G1 判据集（原始 5 框）本轮零改动；challenge 成员扩展见 §6 v1.1。
 - **口径**：断言清单（全部沿 V1/V2/R3 三轮已实证的既有口径，零新造）：①组隔离违例=0（每 group 单 split）；②challenge 仅 densho810/vol05 组；③考卷原始 5 框坐标逐位=R2 final 出厂；④`dataset.yaml` names 双通道（字面行解析+pyyaml 独立解析）逐字=`SFX_CLASS_MAP`（`detection_sfx.py:137`）；⑤重切指纹按 `experiments/M2-SFX-DATA-INFRA/sfx_data_infra/splits.py:160` 算法可复现且 lock/summary 一致（seed=20261004，`splits.py:31`）；⑥考卷零重叠：own-manga/新增页与考卷页组名/样本 id/页图 sha256 三层零交集。
 - **阈值（冻结）**：六项断言**全部零违例**。
 - **判定规则**：**硬 Gate**——6/6=PASS；任何一项违例=FAIL 且触发先决失效语义。判定输出=逐项断言数字表。
@@ -150,6 +150,7 @@
 | 版本 | 日期 | 变更 | commit |
 |---|---|---|---|
 | v1.0-frozen | 2026-10-05 | 初版：G1-G8 合同级定义冻结（G1/G7/G8 对齐提案语境，G2-G6 权威化新定，门数登记理由 §2） | gatedef(GATE-T3) |
+| v1.1 | 2026-10-05 | **追加不回溯**（AC3 数据落地，§5.3 机制内追加式变更，已判定门的定义与阈值零改动）：challenge 成员随 vol05 组转正扩展为 pre-bj17/pre-bj18/pre-bj32 三页 8 框（组隔离优先于 ask「BJ26-37 钉 train」表述）；**G1 判据集不变=原始 5 框**（S4 original_5box_bitwise_r2 断言保持）；§4.G3「考卷…本轮零改动」措辞同步修正为「G1 判据集（原始 5 框）本轮零改动；challenge 成员扩展见本行」 | review-fix(GATE-T3 r1) |
 
 ## 7. 证据索引
 

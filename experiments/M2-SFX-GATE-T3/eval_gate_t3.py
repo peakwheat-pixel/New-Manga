@@ -14,8 +14,9 @@ dedup_boxes/每 tile 生产序列本体 dsfx._letterbox+_sfx_boxes）。
 
 四数据集（每格与 GT 均标派生属性；gate-definition §4.G1/G2 数据构成）：
   ① bj-exam : BJ 考卷 vol05 组原始 5 框（pre-bj17×2+pre-bj18×3），坐标=R2 出厂
-              （manifest.r2.json）逐位，并断言与 train-v4 challenge manifest 逐位
-              一致（G3-S4 口径本轮复算）；整页 letterbox 现行口径（G1 主判据数据；
+              （manifest.r2.json）逐值（0.1 精度），并断言与 train-v4 challenge manifest
+              逐值（0.1 精度）一致（G3-S4 口径本轮复算）；整页 letterbox 现行口径
+              （G1 主判据数据；
               gt_attr=derived——GT⊂chiqui7 扫描候选池循环性，G1 限制①）
   ② bj-ext  : BJ 扩集=R3-MISS 补画后 BJ 域（densho810 组）全部 complete 页
               （train-v4 dataset 口径，manifest.train-v4.json）12 页 33 框
@@ -246,11 +247,11 @@ def _read(p: Path):
 
 
 def load_bj_pages() -> list[dict]:
-    """BJ 域 complete 页 12 页 33 框（train-v4 dataset 口径）+ 考卷 5 框出厂逐位断言。
+    """BJ 域 complete 页 12 页 33 框（train-v4 dataset 口径）+ 考卷 5 框出厂逐值（0.1 精度）断言。
 
     - bj-ext GT=train-v4 manifest（densho810/vol05 complete 全量）；
     - bj-exam GT=manifest.r2.json 出厂坐标（pre-bj17×2+pre-bj18×3），断言与
-      train-v4 challenge manifest round(v,1) 逐位一致（G3-S4 口径本轮复算）；
+      train-v4 challenge manifest round(v,1) 逐值（0.1 精度）一致（G3-S4 口径本轮复算）；
     - 页图=train-v4 dataset 树，逐页 sha256 对 manifest.image.sha256 断言
       （R2 出厂页另断言与 manifest.r2.json image.sha256 同值）。
     """
@@ -273,7 +274,7 @@ def load_bj_pages() -> list[dict]:
     assert chal_ids == ["pre-bj17", "pre-bj18", "pre-bj32"], f"challenge 成员 {chal_ids}"
     assert len(train_ids) == 9, f"train 侧 BJ 页 {len(train_ids)} != 9"
 
-    # 考卷 5 框出厂逐位（manifest.r2.json 出厂 ↔ train-v4 challenge）
+    # 考卷 5 框出厂逐值（0.1 精度；manifest.r2.json 出厂 ↔ train-v4 challenge）
     r2 = _read(R2_FINAL / "manifest.r2.json")
     r2_by = {s["sample_id"]: s for s in r2["samples"]}
     r2_exam_boxes: dict[str, list[list[float]]] = {}
@@ -308,7 +309,7 @@ def load_bj_pages() -> list[dict]:
         assert (w, h) == (s["image"]["width"], s["image"]["height"]), f"{sid}: 尺寸失配"
         meta_boxes = s["provenance"].get("boxes_meta") or [{}]
         if sid in EXAM_IDS:
-            gts = r2_exam_boxes[sid]  # 考卷 GT=R2 出厂逐位（bj-exam 主判据数据）
+            gts = r2_exam_boxes[sid]  # 考卷 GT=R2 出厂（0.1 精度断言，bj-exam 主判据数据）
         else:
             gts = [poly_to_xyxy(b["polygon"]) for b in s["boxes"]]
         pages.append({

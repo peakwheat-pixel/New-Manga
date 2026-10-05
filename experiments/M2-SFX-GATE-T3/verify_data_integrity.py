@@ -4,7 +4,7 @@
   S1 schema：manifest.r4 94 / manifest.train-v4 916 from_dict+validate 0 错误
   S2 指纹复算：splits.split_fingerprint(全量, 20261004) == lock.fingerprint
   S3 组隔离：916 样本 group→set(split) 违例=0；challenge 仅 densho810/vol05 组
-  S4 考卷：challenge=pre-bj17/18/32；原始 5 框（bj17×2+bj18×3）逐位=R2 final 出厂
+  S4 考卷：challenge=pre-bj17/18/32；原始 5 框（bj17×2+bj18×3）逐值（0.1 精度）=R2 final 出厂
   S5 names 双通道：字面行解析 + pyyaml 独立解析 逐字=SFX_CLASS_MAP
   S6 考卷零重叠三层：own-manga vs densho810 组名/样本 id/页图 sha256 零交集
   S7 判定链：npd-gt 135 框逐框 chain 可溯（consensus.json / divergence+arbiter 状态）

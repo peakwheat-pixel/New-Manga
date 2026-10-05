@@ -69,7 +69,6 @@ PINNED: dict[str, str] = {
 }
 NEW_IDS = ("pre-bj32", "pre-bj33", "pre-bj34", "pre-bj35")
 EXPECTED_CHALLENGE = {"pre-bj17": 2, "pre-bj18": 3, "pre-bj32": 3}
-# 期望分集（页, 框）：train 904+12=916? 核算：train-v3 train=904/2311；+BJ33/34/35 共 12 框
 EXPECTED_SPLITS = {"train": (907, 2323), "val": (4, 53), "test": (2, 5), "challenge": (3, 8)}
 EXPECTED_TOTAL = 916
 
