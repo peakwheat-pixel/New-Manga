@@ -2,8 +2,8 @@
 id: M2-SFX-GATE-T3
 title: "SFX 正式评测门 T3：Gate 定义冻结（G1-G8）+双前置数据（R3-MISS 补画/KO 非派生 GT）+三方评测执行+判定与 T4 材料"
 kind: feature
-status: in_review
-owner_claim: ZCode @2e95760a（2026-10-05，AC5 判定文档随后续 docs 提交）
+status: done
+owner_claim: ZCode @b35536af（2026-10-05，DSH r1 条件+r2 N1-N5 全闭终态；评测执行 head=2e95760a）
 approval: user_ruling_2026-10-05_按推荐_T3释放
 suggested_owner: ZCode
 owner: ZCode
@@ -70,6 +70,14 @@ AC5：逐门判定如实（FAIL 如实）+T4 终稿。
 - **候选资格结论**：v2b（best.onnx `944e8114…`）=唯一通过全部定资格硬门（G1/G2/G5/G8）+G7 条件性（同约束不改变结论）的切换候选；切换与否=T4 用户裁决点。T4 终稿四件齐：切换候选建议（附 KO 改善=0/bj-ext 泛化未证/低功效三条件）+许可审计结算+生产 tile 化方案（G2 冻结口径实现+性能实测 17-81s/页@CPU 须预算裁决+相位依赖）+回退方案（pin 恢复 `d87389af…`+NSIS 通道不动）。
 - 验证：`verify_data_integrity.py` 9/9 PASS（AC5 轮复跑，复算后与提交版逐位一致）；`recompute_eval_t3.py` ALL CELLS RECOMPUTED（AC5 轮复跑 EXIT=0）；三权重 sha256 AC5 轮盘上重算与 pin/矩阵一致；零 src 实测（26 文件（HEAD=2e95760a 时点）+2 docs（AC5 轮）全在允许路径，src/tests/contracts/packaging/apps/doc/STATUS.md diff=0）。AC4 后作者侧复核=PASS 六项（含 2 条非阻断观察，报告 §5 原样登记；正式独立 Review=DSH r1）。
 - 诚实边界：AI 直接标注首例/非派生 GT=ai-consensus 非人工/统计功效低（5 框量级禁用「显著」）/GT 循环性（chiqui7 5/5、56/56=自洽上界）——报告 §6。
+
+## 集成记录（2026-10-05，编排会话代行 Codex）
+
+- **DSH r1**（审查对象 head=e53a2629，报告落盘 `doc/reviews/M2-SFX-GATE-T3-e53a2629-dsh-r1.md`）：approved_with_conditions（P0=0/P1=1/P2=3/P3=5/P4=4）；36 格矩阵/逐页求和/交叉核对静态逐值一致，数字层零发现。
+- **Owner 返修**：r1 条件 commit `32fa3bab`（P1-1/P2-1/P2-2/P2-3/P3/P4 全闭）；DSH r2 定点复核（报告落盘 `doc/reviews/M2-SFX-GATE-T3-32fa3bab-dsh-r2.md`）=**条件全闭建议集成**（12/12 通过；P2-2 v1.1 经全文逐行核对确认 §5.3 追加式成立；P3-2 tile 口径运行期断言按 r1 定位转 T4 承接；N1-N5 为编辑性问题）。
+- **N1-N5 修正**：commit `b35536af`（行号引用对齐/v1.0 段零修改措辞限定/裁决登记位置表述/候选资格措辞统一/diff 声称精度）。
+- **集成 Gate（编排实测）**：`git diff --name-only 87ca8724..b35536af`=28 文件全在允许路径（doc/handoffs 1+doc/tasks 1+experiments 8+verification 18）；`detection_sfx.py` pin（SFX_HF_REVISION=7f5f5c04…/SFX_WEIGHTS_SHA256=d87389af…）base..HEAD 逐字一致；`verify_data_integrity.py` 复跑 9/9 PASS EXIT=0；`recompute_eval_t3.py` 复跑 ALL CELLS RECOMPUTED EXIT=0；复跑后 data-integrity-asserts.json git diff 空。
+- **编排裁决登记（r1 Q1）**：接受「G7 冻结口径边界=检测契约面」——G7=PASS（条件性：T4 补证前置），T4 部署前必须以新权重补跑 BJ06 型 policy=translate 端到端冒烟；裁决依据=gate-definition §4.G7 口径原文「沿 T0/V2 冒烟方式」+报告执行边界如实披露。
 
 ## Review 返修记录（review-fix(GATE-T3 r1)，2026-10-05）
 
