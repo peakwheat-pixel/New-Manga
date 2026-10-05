@@ -1,0 +1,9 @@
+{
+  "snapshot_path": "/data/hf_snapshots/manga-yolo11s-1024-b8-18ep-20260723-204429",
+  "created_unix": 1784839469.2292151,
+  "latest_epoch": "18",
+  "latest_mask_map50": "0.86488",
+  "latest_mask_map50_95": "0.58954",
+  "latest_box_map50": "0.9444",
+  "latest_box_map50_95": "0.84039"
+}
