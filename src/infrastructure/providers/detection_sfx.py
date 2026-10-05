@@ -218,6 +218,257 @@ ARBITRATION_IOU = 0.9
 ARBITRATED_LABEL_PREFIX = "sfx-arb-"
 
 
+# ---------------------------------------------------------------------------
+# KO long-strip tile routing (M2-SFX-T5-TILE-KO)
+#
+# The structural fact (T3 / M2-KO-TILE-CALIB, three weights all-zero): KO
+# long-strip pages — 600/690 px wide, aspect (h/w) 30.7-145.6 — sub-pixelize
+# under the whole-page letterbox, so the sfx class has ZERO response there
+# and tile-ing the inference sequence is the only route from zero to sfx
+# candidates. This section routes those pages through the FROZEN tile
+# caliber (KO-TILE proposal §3, the numbers the T3 evaluation matrix and the
+# KO acceptance are pegged to); every other page keeps the letterbox path
+# byte-for-byte.
+#
+# Implementation equivalence contract (AC3): the production tile branch
+# replicates ``experiments/M2-SFX-GATE-T3/eval_gate_t3.py`` ``run_tile`` /
+# ``tile_calib.py`` ``run_tile_caliber`` verbatim — per-tile the production
+# letterbox+boxes sequence itself (``_letterbox`` + ``_sfx_boxes``), ``+y0``
+# translation back into page coordinates, then the page-level cross-tile
+# dedup (conf-descending stable greedy, IoU >= 0.5 drops the newcomer) with
+# the final ``(-conf, xyxy)`` ordering. Bit-parity with the T3 matrix
+# (v2b 35/56+48/135, chiqui7 56/56+41/135 at conf 0.5) is the acceptance
+# evidence.
+#
+# The env channel follows the ARBITRATION/TILING precedent: absent variables
+# mean the frozen defaults; an empty or illegal value is a fail-fast
+# ``ValueError`` naming the variable — read BEFORE any inference/weights
+# resolution, never a silent default, never a half-detected page.
+# ---------------------------------------------------------------------------
+
+#: Frozen tile caliber (K_TILE_H / K_TILE_OVERLAP / TILE_PAGE_NMS_IOU in the
+#: lines of record). Changing any of these is a new slice with re-run KO
+#: evidence — the T3 numbers do not transfer across calibers.
+SFX_TILE_HEIGHT = 1024
+SFX_TILE_OVERLAP = 128  # step = HEIGHT - OVERLAP = 896
+SFX_TILE_NMS_IOU = 0.5
+
+#: Route thresholds — the AC1 implementation-discretion constants, frozen
+#: here with their registration basis: the KO domain's observed long-strip
+#: pages are 600/690 px wide with aspect 30.7-145.6 (T3 raw ``page_size``);
+#: ordinary pages run near aspect 1.4. The width cap 690 is the largest
+#: observed KO width inclusive; the aspect floor 8.0 sits more than 3.8x
+#: below the smallest observed KO aspect and more than 5.7x above ordinary
+#: pages, so neither domain can cross into the other by rounding. Registered
+#: coverage gap (KO-TILE §9): a KO-shaped page whose width is neither 600 nor
+#: 690 is parameterized by these constants, not re-calibrated per width.
+SFX_TILE_ROUTE_MAX_PAGE_W = 690
+SFX_TILE_ROUTE_MIN_ASPECT = 8.0
+
+TILE_ENV_MODE = "NEWMANGA_SFX_TILE"
+TILE_ENV_ROUTE_MAX_PAGE_W = "NEWMANGA_SFX_TILE_ROUTE_MAX_PAGE_W"
+TILE_ENV_ROUTE_MIN_ASPECT = "NEWMANGA_SFX_TILE_ROUTE_MIN_ASPECT"
+TILE_ENV_HEIGHT = "NEWMANGA_SFX_TILE_HEIGHT"
+TILE_ENV_OVERLAP = "NEWMANGA_SFX_TILE_OVERLAP"
+TILE_ENV_NMS_IOU = "NEWMANGA_SFX_TILE_NMS_IOU"
+
+
+@dataclass(frozen=True)
+class _TileConfig:
+    """Resolved tile-routing configuration (frozen defaults or env overrides)."""
+
+    enabled: bool
+    route_max_page_w: float
+    route_min_aspect: float
+    tile_h: int
+    overlap: int
+    nms_iou: float
+
+
+def _tile_config() -> _TileConfig:
+    """Read ONLY the tile env overrides (the ``_arbitration_config``
+    testability pattern; the fail-fast discipline).
+
+    Absent variables mean the frozen defaults; ``NEWMANGA_SFX_TILE`` accepts
+    ``on|off`` (default on — the ruling that authorized this Task; ``off``
+    restores the pre-T5 letterbox behavior byte-for-byte). An empty or
+    illegal value anywhere is a ``ValueError`` naming the variable.
+    """
+    raw_mode = os.environ.get(TILE_ENV_MODE)
+    if raw_mode is not None:
+        mode = raw_mode.strip().lower()
+        if mode not in ("on", "off"):
+            raise ValueError(
+                f"{TILE_ENV_MODE}: unsupported value {raw_mode!r} (use on|off)"
+            )
+        enabled = mode == "on"
+    else:
+        enabled = True
+
+    def _positive_float(name: str, default: float) -> float:
+        raw = os.environ.get(name)
+        if raw is None:
+            return default
+        try:
+            value = float(raw.strip())
+        except ValueError as error:
+            raise ValueError(f"{name}: not a number: {raw!r}") from error
+        if not value > 0.0:
+            raise ValueError(f"{name}: must be > 0, got {value!r}")
+        return value
+
+    route_max_page_w = _positive_float(TILE_ENV_ROUTE_MAX_PAGE_W, float(SFX_TILE_ROUTE_MAX_PAGE_W))
+    route_min_aspect = _positive_float(TILE_ENV_ROUTE_MIN_ASPECT, float(SFX_TILE_ROUTE_MIN_ASPECT))
+
+    raw_h = os.environ.get(TILE_ENV_HEIGHT)
+    if raw_h is None:
+        tile_h = SFX_TILE_HEIGHT
+    else:
+        try:
+            tile_h = int(raw_h.strip())
+        except ValueError as error:
+            raise ValueError(f"{TILE_ENV_HEIGHT}: not an integer: {raw_h!r}") from error
+        if tile_h <= 0:
+            raise ValueError(f"{TILE_ENV_HEIGHT}: must be > 0, got {tile_h!r}")
+
+    raw_overlap = os.environ.get(TILE_ENV_OVERLAP)
+    if raw_overlap is None:
+        overlap = SFX_TILE_OVERLAP
+    else:
+        try:
+            overlap = int(raw_overlap.strip())
+        except ValueError as error:
+            raise ValueError(f"{TILE_ENV_OVERLAP}: not an integer: {raw_overlap!r}") from error
+        if not 0 < overlap < tile_h:
+            raise ValueError(
+                f"{TILE_ENV_OVERLAP}: must be in (0, {TILE_ENV_HEIGHT}) exclusive "
+                f"so the step {tile_h}-{overlap} stays >= 1, got {overlap!r}"
+            )
+
+    raw_iou = os.environ.get(TILE_ENV_NMS_IOU)
+    if raw_iou is None:
+        nms_iou = float(SFX_TILE_NMS_IOU)
+    else:
+        try:
+            nms_iou = float(raw_iou.strip())
+        except ValueError as error:
+            raise ValueError(f"{TILE_ENV_NMS_IOU}: not a number: {raw_iou!r}") from error
+        if not 0.0 < nms_iou <= 1.0:
+            raise ValueError(f"{TILE_ENV_NMS_IOU}: must be in (0, 1], got {nms_iou!r}")
+
+    return _TileConfig(
+        enabled=enabled,
+        route_max_page_w=route_max_page_w,
+        route_min_aspect=route_min_aspect,
+        tile_h=tile_h,
+        overlap=overlap,
+        nms_iou=nms_iou,
+    )
+
+
+def _routes_to_tile(page_w: int, page_h: int, cfg: _TileConfig) -> bool:
+    """The AC1 routing predicate: a long-strip page at or below the width cap
+    with aspect at or above the floor goes to tiles; everything else keeps
+    the letterbox path verbatim."""
+    if page_w > cfg.route_max_page_w:
+        return False
+    return (page_h / page_w) >= cfg.route_min_aspect
+
+
+def _tile_ys(page_h: int, tile_h: int, overlap: int) -> list[int]:
+    """The tile y-anchor sequence — ``tile_calib.py`` / ``eval_gate_t3.py``
+    ``tile_ys`` verbatim (stage1_preannotate.py lineage): step
+    ``tile_h - overlap`` from 0, plus the trailing ``page_h - tile_h``
+    anchor whenever the regular sequence leaves the page bottom uncovered.
+
+    The T4-inherited review item r1 P3-2 (tile-caliber run-time assertion)
+    closes here: the frozen caliber is asserted on EVERY call via
+    ``_assert_tile_caliber`` — a typed raise, stronger than the ``assert``
+    statement (never stripped under ``python -O``).
+    """
+    ys = list(range(0, max(page_h - tile_h, 0) + 1, tile_h - overlap))
+    if not ys:
+        ys = [0]
+    if ys[-1] + tile_h < page_h:
+        ys.append(page_h - tile_h)
+    _assert_tile_caliber(ys, page_h, tile_h, overlap)
+    return ys
+
+
+def _assert_tile_caliber(
+    ys: list[int], page_h: int, tile_h: int, overlap: int
+) -> None:
+    """r1 P3-2 closure — the frozen tile caliber as a run-time gate.
+
+    Asserts (typed ``ProviderInvalidOutput``, not ``assert``): non-empty
+    sequence anchored at 0; every adjacent gap is either the frozen step
+    ``tile_h - overlap`` or the trailing page-bottom anchor
+    ``page_h - tile_h``; the last anchor's tile covers the page bottom; every
+    anchor yields a non-degenerate tile. A drift in any frozen number fails
+    loudly at detect time instead of silently re-calibrating the KO domain.
+    """
+    step = tile_h - overlap
+    bottom_anchor = page_h - tile_h
+    if not ys:
+        raise ProviderInvalidOutput(
+            f"sfx tile caliber assertion failed: empty anchor sequence "
+            f"(page_h={page_h}, tile_h={tile_h})",
+            provider_id=PROVIDER_SFX,
+            stage="detection",
+        )
+    if ys[0] != 0:
+        raise ProviderInvalidOutput(
+            f"sfx tile caliber assertion failed: first anchor {ys[0]} != 0",
+            provider_id=PROVIDER_SFX,
+            stage="detection",
+        )
+    for prev, cur in zip(ys, ys[1:]):
+        if cur - prev != step and cur != bottom_anchor:
+            raise ProviderInvalidOutput(
+                f"sfx tile caliber assertion failed: anchor gap {cur - prev} "
+                f"is neither the frozen step {step} nor the page-bottom "
+                f"anchor {bottom_anchor} (page_h={page_h}, tile_h={tile_h}, "
+                f"overlap={overlap})",
+                provider_id=PROVIDER_SFX,
+                stage="detection",
+            )
+    if ys[-1] + tile_h < page_h:
+        raise ProviderInvalidOutput(
+            f"sfx tile caliber assertion failed: last anchor {ys[-1]} + "
+            f"tile_h {tile_h} does not cover the page bottom {page_h}",
+            provider_id=PROVIDER_SFX,
+            stage="detection",
+        )
+    if any(y < 0 or y + tile_h <= y for y in ys):
+        raise ProviderInvalidOutput(
+            f"sfx tile caliber assertion failed: degenerate anchor in {ys!r}",
+            provider_id=PROVIDER_SFX,
+            stage="detection",
+        )
+
+
+def _tile_page_nms(
+    boxes: list[tuple[list[float], float]], iou_thr: float
+) -> list[tuple[float, float, float, float, float]]:
+    """Page-level cross-tile sfx dedup — ``dedup_boxes`` semantics verbatim
+    (the R1 ``_dedup_boxes`` lineage): conf-descending STABLE greedy sort,
+    a box is dropped when it overlaps any kept box at IoU >= threshold;
+    the kept ordering is ``(-conf, xyxy)`` exactly as the T3 ``run_tile``
+    leaves it. Stable sorting keeps the tile-collection order on confidence
+    ties — deliberate bit-parity with the evaluation implementation."""
+    ordered = sorted(boxes, key=lambda entry: entry[1], reverse=True)
+    kept: list[tuple[list[float], float]] = []
+    for box, confidence in ordered:
+        if any(_iou(box, kept_box[0]) >= iou_thr for kept_box in kept):
+            continue
+        kept.append((box, confidence))
+    kept.sort(key=lambda entry: (-entry[1], entry[0]))
+    return [
+        (box[0], box[1], box[2], box[3], confidence)
+        for box, confidence in kept
+    ]
+
+
 def _arbitration_config() -> tuple[bool, float]:
     """Read ONLY the arbitration env overrides (module-level, the
     ``_detected_region_type`` testability pattern; the TILING fail-fast
@@ -306,18 +557,38 @@ class SfxDetectionProvider:
     def detect(self, request: DetectionRequest) -> DetectionResult:
         started = time.perf_counter()
         self._validate_request(request)
+        # Fail-fast BEFORE any inference or weights resolution (the
+        # ARBITRATION/TILING discipline): an illegal tile env must not
+        # produce a half-detected page.
+        tile_cfg = _tile_config()
         session, imgsz, imgsz_source, imgsz_raw = self._engine_or_raise()
         numpy = _lazy_import("numpy", "detection")
         rgb = self._frame_pixels(request)
-        inp, scale = _letterbox(numpy, rgb, imgsz)
-        boxes = _sfx_boxes(
-            session,
-            inp,
-            scale,
-            self.conf_threshold,
-            page_w=float(rgb.shape[1]),
-            page_h=float(rgb.shape[0]),
-        )
+        page_h, page_w = int(rgb.shape[0]), int(rgb.shape[1])
+        route = "tile" if (
+            tile_cfg.enabled and _routes_to_tile(page_w, page_h, tile_cfg)
+        ) else "letterbox"
+        route_options: tuple[tuple[str, str], ...] = (("sfx_route", route),)
+        if route == "tile":
+            boxes, n_tiles = self._detect_tiles(
+                session, imgsz, rgb, page_w=page_w, page_h=page_h, cfg=tile_cfg
+            )
+            route_options = route_options + (
+                ("tile_h", str(tile_cfg.tile_h)),
+                ("tile_overlap", str(tile_cfg.overlap)),
+                ("tile_nms_iou", str(tile_cfg.nms_iou)),
+                ("tile_count", str(n_tiles)),
+            )
+        else:
+            inp, scale = _letterbox(numpy, rgb, imgsz)
+            boxes = _sfx_boxes(
+                session,
+                inp,
+                scale,
+                self.conf_threshold,
+                page_w=float(rgb.shape[1]),
+                page_h=float(rgb.shape[0]),
+            )
         candidates = tuple(
             RegionCandidate(
                 polygon=((x0, y0), (x1, y0), (x1, y1), (x0, y1)),
@@ -352,9 +623,60 @@ class SfxDetectionProvider:
                 ("nms_iou", str(SFX_NMS_IOU)),
                 *imgsz_options,
                 ("class_filter", "sfx"),
+                *route_options,
             ),
             elapsed_ms=elapsed_ms,
         )
+
+    # -- KO long-strip tile branch (M2-SFX-T5-TILE-KO) -----------------------
+
+    def _detect_tiles(
+        self,
+        session: Any,
+        imgsz: int,
+        rgb: Any,
+        *,
+        page_w: int,
+        page_h: int,
+        cfg: _TileConfig,
+    ) -> tuple[list[tuple[float, float, float, float, float]], int]:
+        """The frozen tile caliber over one long-strip page — the T3
+        evaluation ``run_tile`` verbatim, on the production sequence itself:
+
+        - anchors from ``_tile_ys`` (step ``tile_h - overlap`` from 0, the
+          trailing ``page_h - tile_h`` anchor covering the page bottom, the
+          P3-2 run-time caliber assertion on every call);
+        - per tile: the native-width crop, the production ``_letterbox`` +
+          ``_sfx_boxes`` sequence UNCHANGED (conf filter -> class-agnostic
+          NMS 0.7 -> sfx class -> /scale mapping clipped to the TILE bounds),
+          then the ``+y0`` translation into page coordinates;
+        - page level: ``_tile_page_nms`` (conf-descending stable greedy,
+          IoU >= the frozen 0.5 drops the newcomer) with the final
+          ``(-conf, xyxy)`` ordering.
+
+        Tile width is the native page width by construction — the caliber's
+        only resize is the per-tile letterbox to the model ``imgsz``.
+        Returns ``(boxes_in_page_pixels, n_tiles)``.
+        """
+        numpy = _lazy_import("numpy", "detection")
+        ys = _tile_ys(page_h, cfg.tile_h, cfg.overlap)
+        collected: list[tuple[list[float], float]] = []
+        for y0 in ys:
+            y1 = min(y0 + cfg.tile_h, page_h)
+            tile = numpy.ascontiguousarray(rgb[y0:y1, 0:page_w])
+            tile_h_px = y1 - y0
+            inp, scale = _letterbox(numpy, tile, imgsz)
+            raw = _sfx_boxes(
+                session,
+                inp,
+                scale,
+                self.conf_threshold,
+                page_w=float(page_w),
+                page_h=float(tile_h_px),
+            )
+            for bx0, by0, bx1, by1, confidence in raw:
+                collected.append(([bx0, by0 + y0, bx1, by1 + y0], confidence))
+        return _tile_page_nms(collected, cfg.nms_iou), len(ys)
 
     # -- engine lifecycle ---------------------------------------------------
 
