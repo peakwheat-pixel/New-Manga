@@ -1,0 +1,28 @@
+[parity] start 2026-10-05T16:52:06Z
+[parity] v2b sha 944e81141093（生产 pin 原样）
+[parity] chiqui7 sha d87389af4350（进程内重指窗口）
+[parity] 数据装载：KO 4 页 56 档派生 GT + 135 框 npd GT｜考卷 2 页
+[parity] v2b/ko-tile pre-k08: 14/27 bit_parity=True (8.4s)
+[parity] v2b/ko-tile pre-k09: 17/24 bit_parity=True (15.5s)
+[parity] v2b/ko-tile pre-k01: 2/2 bit_parity=True (9.5s)
+[parity] v2b/ko-tile pre-k02: 2/3 bit_parity=True (2.8s)
+[parity] v2b/ko-tile: 35/56 (expected 35/56) bit=True
+[parity] v2b/ko-npd pre-k08: 14/35 bit_parity=True (7.9s)
+[parity] v2b/ko-npd pre-k09: 26/42 bit_parity=True (15.7s)
+[parity] v2b/ko-npd pre-k01: 5/48 bit_parity=True (9.7s)
+[parity] v2b/ko-npd pre-k02: 3/10 bit_parity=True (2.8s)
+[parity] v2b/ko-npd: 48/135 (expected 48/135) bit=True
+[parity] chiqui7/ko-tile pre-k08: 27/27 bit_parity=True (8.1s)
+[parity] chiqui7/ko-tile pre-k09: 24/24 bit_parity=True (14.8s)
+[parity] chiqui7/ko-tile pre-k01: 2/2 bit_parity=True (9.1s)
+[parity] chiqui7/ko-tile pre-k02: 3/3 bit_parity=True (2.8s)
+[parity] chiqui7/ko-tile: 56/56 (expected 56/56) bit=True
+[parity] chiqui7/ko-npd pre-k08: 19/35 bit_parity=True (7.6s)
+[parity] chiqui7/ko-npd pre-k09: 18/42 bit_parity=True (14.7s)
+[parity] chiqui7/ko-npd pre-k01: 2/48 bit_parity=True (9.3s)
+[parity] chiqui7/ko-npd pre-k02: 2/10 bit_parity=True (2.8s)
+[parity] chiqui7/ko-npd: 41/135 (expected 41/135) bit=True
+[parity] chiqui7/bj-exam pre-bj17: n_pred=3 bit_parity=True (0.3s)
+[parity] chiqui7/bj-exam pre-bj18: n_pred=3 bit_parity=True (0.2s)
+[parity] wrote G:\CODEX\New Manga.worktrees\M2-SFX-T5-TILE-KO-zcode\verification\M2-SFX-T5-TILE-KO\raw\parity-summary.json
+[parity] ALL PARITY CHECKS PASSED
