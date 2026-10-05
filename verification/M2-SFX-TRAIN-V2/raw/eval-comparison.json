@@ -1,0 +1,298 @@
+{
+ "task": "M2-SFX-TRAIN-V2 AC3 三方对比（directional；V2A/V2B/chiqui7 独立复跑 vs V1 基线）",
+ "generated_from": "experiments/M2-SFX-TRAIN-V2/eval_v2.py",
+ "caliber": {
+  "pages_gt": "challenge 2 页 5 框（BJ 考卷）+ val 4 样本 53 框 + test 2 样本 5 框（KO 58 框）=63 框；与 V1 同批（AC1 重切未动 challenge/val/test）",
+  "confs": "≥0.50 生产冻结 / ≥0.20 宽松双口径",
+  "matching": "box IoU≥0.5，pred conf 降序贪心",
+  "inference": "三方同一生产推理序列（SfxDetectionProvider.detect；chiqui7=生产 pin 原样，v2a/v2b=进程内重指）"
+ },
+ "structural_finding": {
+  "finding": "KO 页（webtoon 超长条）在整页 letterbox 1024 生产序列下 SFX 亚像素化，三方模型 KO 页召回全部 0/56——含生产现役 chiqui7 独立复跑（n_pred=0）。V1 预标注引用口径的 chiqui7 56/56 来自素材线切块扫描采集口径，与整页推理口径不可直比；P2-1 整改（独立复跑）暴露了预标注引用口径掩盖的序列级事实：现役模型在 KO 域的生产整页序列表现同为 0 召回。",
+  "ko_page_dimensions": {
+   "pre-k08": "690x51971 (aspect 1:75)",
+   "pre-k09": "690x100480 (aspect 1:146)",
+   "pre-k01": "690x62133 (aspect 1:90)",
+   "pre-k02": "600x18401 (aspect 1:31)"
+  },
+  "implication": "V2 新模型 KO 页 0/56 与现役持平（无回退）；对 T4 生产切换的含义：KO 域瓶颈在推理序列口径（整页 letterbox vs 切块），非模型权重本身——归 T3/T4 议题，不在本 Task 范围内解决"
+ },
+ "sides": {
+  "chiqui7_prod_rerun": {
+   "model": {
+    "onnx": "G:\\CODEX\\New Manga.task-envs\\M2-SFX-DETECT\\weights\\yolo11s-seg.onnx",
+    "sha": "d87389af4350954143a216bcfe40fd2ad93312cb136534e6073c9c740d98b646",
+    "note": "生产现役权重（pin d87389af… 逐字核对），pin 原样零重指——独立复跑"
+   },
+   "summary": {
+    "bj_challenge_2pages_5gt": {
+     "0.5": {
+      "recall": "5/5",
+      "recall_rate": 1.0,
+      "precision": 0.8333,
+      "n_pred": 6
+     },
+     "0.2": {
+      "recall": "5/5",
+      "recall_rate": 1.0,
+      "precision": 0.8333,
+      "n_pred": 6
+     }
+    },
+    "ko_val_test_6samples_58gt": {
+     "0.5": {
+      "recall": "0/58",
+      "recall_rate": 0.0,
+      "precision": 0.0,
+      "n_pred": 2
+     },
+     "0.2": {
+      "recall": "0/58",
+      "recall_rate": 0.0,
+      "precision": 0.0,
+      "n_pred": 2
+     }
+    },
+    "ko_page_only_4samples_56gt": {
+     "0.5": {
+      "recall": "0/56",
+      "recall_rate": 0.0,
+      "precision": null,
+      "n_pred": 0
+     },
+     "0.2": {
+      "recall": "0/56",
+      "recall_rate": 0.0,
+      "precision": null,
+      "n_pred": 0
+     }
+    },
+    "full_8pages_63gt": {
+     "0.5": {
+      "recall": "5/63",
+      "recall_rate": 0.0794,
+      "precision": 0.625,
+      "n_pred": 8
+     },
+     "0.2": {
+      "recall": "5/63",
+      "recall_rate": 0.0794,
+      "precision": 0.625,
+      "n_pred": 8
+     }
+    }
+   }
+  },
+  "v2a": {
+   "model": {
+    "onnx": "G:\\CODEX\\New Manga.worktrees\\M2-SFX-TRAIN-V2-zcode\\training_data\\sfx-v1\\train-v2\\weights\\v2a\\best.onnx",
+    "sha": "27d162e94d7dd2150b177f5636613e3bfce836dfdb08240975b86fce85b97d43",
+    "note": "AC3 导出（基座=官方 yolo11s-seg.pt），进程内重指 pin"
+   },
+   "summary": {
+    "bj_challenge_2pages_5gt": {
+     "0.5": {
+      "recall": "4/5",
+      "recall_rate": 0.8,
+      "precision": 0.8,
+      "n_pred": 5
+     },
+     "0.2": {
+      "recall": "4/5",
+      "recall_rate": 0.8,
+      "precision": 0.6667,
+      "n_pred": 6
+     }
+    },
+    "ko_val_test_6samples_58gt": {
+     "0.5": {
+      "recall": "2/58",
+      "recall_rate": 0.0345,
+      "precision": 0.5,
+      "n_pred": 4
+     },
+     "0.2": {
+      "recall": "2/58",
+      "recall_rate": 0.0345,
+      "precision": 0.3333,
+      "n_pred": 6
+     }
+    },
+    "ko_page_only_4samples_56gt": {
+     "0.5": {
+      "recall": "0/56",
+      "recall_rate": 0.0,
+      "precision": null,
+      "n_pred": 0
+     },
+     "0.2": {
+      "recall": "0/56",
+      "recall_rate": 0.0,
+      "precision": null,
+      "n_pred": 0
+     }
+    },
+    "full_8pages_63gt": {
+     "0.5": {
+      "recall": "6/63",
+      "recall_rate": 0.0952,
+      "precision": 0.6667,
+      "n_pred": 9
+     },
+     "0.2": {
+      "recall": "6/63",
+      "recall_rate": 0.0952,
+      "precision": 0.5,
+      "n_pred": 12
+     }
+    }
+   }
+  },
+  "v2b": {
+   "model": {
+    "onnx": "G:\\CODEX\\New Manga.worktrees\\M2-SFX-TRAIN-V2-zcode\\training_data\\sfx-v1\\train-v2\\weights\\v2b\\best.onnx",
+    "sha": "944e811410933ad6ff8d32446fcc9eef90fb463794e1874ce83035e83acd418d",
+    "note": "AC3 导出（基座=anonimkaq4 manga yolo11s-seg 近域基座），进程内重指 pin"
+   },
+   "summary": {
+    "bj_challenge_2pages_5gt": {
+     "0.5": {
+      "recall": "5/5",
+      "recall_rate": 1.0,
+      "precision": 1.0,
+      "n_pred": 5
+     },
+     "0.2": {
+      "recall": "5/5",
+      "recall_rate": 1.0,
+      "precision": 1.0,
+      "n_pred": 5
+     }
+    },
+    "ko_val_test_6samples_58gt": {
+     "0.5": {
+      "recall": "2/58",
+      "recall_rate": 0.0345,
+      "precision": 0.5,
+      "n_pred": 4
+     },
+     "0.2": {
+      "recall": "2/58",
+      "recall_rate": 0.0345,
+      "precision": 0.5,
+      "n_pred": 4
+     }
+    },
+    "ko_page_only_4samples_56gt": {
+     "0.5": {
+      "recall": "0/56",
+      "recall_rate": 0.0,
+      "precision": null,
+      "n_pred": 0
+     },
+     "0.2": {
+      "recall": "0/56",
+      "recall_rate": 0.0,
+      "precision": null,
+      "n_pred": 0
+     }
+    },
+    "full_8pages_63gt": {
+     "0.5": {
+      "recall": "7/63",
+      "recall_rate": 0.1111,
+      "precision": 0.7778,
+      "n_pred": 9
+     },
+     "0.2": {
+      "recall": "7/63",
+      "recall_rate": 0.1111,
+      "precision": 0.7778,
+      "n_pred": 9
+     }
+    }
+   }
+  }
+ },
+ "v1_baseline_git_reference": {
+  "source": "Git verification/M2-SFX-TRAIN-V1/raw/eval-challenge.json + eval-kodelta.json（V1 merge 35cb3db0 入库；同考卷同 GT 同阈值同 IoU）",
+  "v1_new_model_onnx_sha256": "fb60b4605ae44fa66d65dbaf56d07cd4c539d766b4dd3ec8bec1bff1a5b329f6",
+  "bj_challenge_2pages_5gt": {
+   "new": {
+    "0.5": {
+     "recall": "0/5",
+     "recall_rate": 0.0,
+     "precision": null,
+     "n_pred": 0
+    },
+    "0.2": {
+     "recall": "1/5",
+     "recall_rate": 0.2,
+     "precision": 0.3333,
+     "n_pred": 3
+    }
+   },
+   "chiqui7": {
+    "0.5": {
+     "recall": "5/5",
+     "recall_rate": 1.0,
+     "precision": 0.8333,
+     "n_pred": 6
+    },
+    "0.2": {
+     "recall": "5/5",
+     "recall_rate": 1.0,
+     "precision": 0.8333,
+     "n_pred": 6
+    }
+   }
+  },
+  "ko_val_test_6samples_58gt": {
+   "0.5": {
+    "recall": "0/58",
+    "recall_rate": 0.0,
+    "precision": null,
+    "n_pred": 0
+   },
+   "0.2": {
+    "recall": "0/58",
+    "recall_rate": 0.0,
+    "precision": 0.0,
+    "n_pred": 5
+   }
+  },
+  "ko_page_only_4samples_56gt_chiqui7_prelabel": {
+   "new_model": {
+    "0.5": {
+     "recall": "0/56",
+     "recall_rate": 0.0,
+     "precision": null,
+     "n_pred": 0
+    },
+    "0.2": {
+     "recall": "0/56",
+     "recall_rate": 0.0,
+     "precision": null,
+     "n_pred": 0
+    }
+   },
+   "chiqui7": {
+    "0.5": {
+     "recall": "56/56",
+     "recall_rate": 1.0,
+     "precision": 0.8235,
+     "n_pred": 68
+    },
+    "0.2": {
+     "recall": "56/56",
+     "recall_rate": 1.0,
+     "precision": 0.6667,
+     "n_pred": 84
+    }
+   }
+  },
+  "caliber_note": "V1 的 chiqui7=预标注引用（R2/R1 worksheet 候选池，P2-1 整改对象）；V2 的 chiqui7=同链路独立复跑（生产推理序列原始检出）——两口径不同不可直比；V1 new_model 与 V2 各方为同口径可直比",
+  "v2_coverage_extension_note": "独立复跑覆盖全部 8 页（含 imp-ogkalu-* 2 页——V1 预标注引用口径下 chiqui7 基线不可得的页，复跑口径无此缺口）"
+ },
+ "wording_discipline": "directional；统计功效低；禁用「显著」；0 也如实"
+}
