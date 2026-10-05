@@ -1,0 +1,111 @@
+[tile-calib] start 2026-10-05T01:58:55Z mode=full
+[tile-calib] chiqui7 onnx sha256=d87389af4350954143a216bcfe40fd2ad93312cb136534e6073c9c740d98b646（== 生产 pin，零重指）
+[tile-calib] v2b onnx sha256=944e811410933ad6ff8d32446fcc9eef90fb463794e1874ce83035e83acd418d（前缀 944e8114 断言过）
+[tile-calib] page pre-k08 (val) 690x51971 gt=27 tiles=58
+[tile-calib] page pre-k09 (val) 690x100480 gt=24 tiles=112
+[tile-calib] page pre-k01 (test) 690x62133 gt=2 tiles=70
+[tile-calib] page pre-k02 (test) 600x18401 gt=3 tiles=21
+[tile-calib] engine chiqui7: imgsz=1024 (metadata_parsed)
+[tile-calib] engine v2b: imgsz=1024 (metadata_parsed)
+[tile-calib] chiqui7/letterbox/conf0.5 pre-k08: matched=0/27 n_pred=0 0.4s
+[tile-calib] chiqui7/letterbox/conf0.2 pre-k08: matched=0/27 n_pred=0 0.4s
+[tile-calib] chiqui7/letterbox/conf0.5 pre-k09: matched=0/24 n_pred=0 0.5s
+[tile-calib] chiqui7/letterbox/conf0.2 pre-k09: matched=0/24 n_pred=0 0.5s
+[tile-calib] chiqui7/letterbox/conf0.5 pre-k01: matched=0/2 n_pred=0 0.4s
+[tile-calib] chiqui7/letterbox/conf0.2 pre-k01: matched=0/2 n_pred=0 0.4s
+[tile-calib] chiqui7/letterbox/conf0.5 pre-k02: matched=0/3 n_pred=0 0.3s
+[tile-calib] chiqui7/letterbox/conf0.2 pre-k02: matched=0/3 n_pred=0 0.3s
+[tile-calib] chiqui7/letterbox: {"0.5": {"matched": "0/56", "recall_rate": 0.0, "precision": null, "n_pred": 0}, "0.2": {"matched": "0/56", "recall_rate": 0.0, "precision": null, "n_pred": 0}} (3.2s)
+    tile 20/58 (y0=17024) sfx_raw_cum=7
+    tile 40/58 (y0=34944) sfx_raw_cum=19
+    tile 58/58 (y0=50947) sfx_raw_cum=31
+[tile-calib] chiqui7/tile/conf0.5 pre-k08: matched=27/27 n_pred=30 7.9s
+    tile 20/58 (y0=17024) sfx_raw_cum=11
+    tile 40/58 (y0=34944) sfx_raw_cum=26
+    tile 58/58 (y0=50947) sfx_raw_cum=41
+[tile-calib] chiqui7/tile/conf0.2 pre-k08: matched=27/27 n_pred=38 7.8s
+    tile 20/112 (y0=17024) sfx_raw_cum=11
+    tile 40/112 (y0=34944) sfx_raw_cum=19
+    tile 60/112 (y0=52864) sfx_raw_cum=21
+    tile 80/112 (y0=70784) sfx_raw_cum=26
+    tile 100/112 (y0=88704) sfx_raw_cum=27
+    tile 112/112 (y0=99456) sfx_raw_cum=29
+[tile-calib] chiqui7/tile/conf0.5 pre-k09: matched=24/24 n_pred=28 15.2s
+    tile 20/112 (y0=17024) sfx_raw_cum=13
+    tile 40/112 (y0=34944) sfx_raw_cum=21
+    tile 60/112 (y0=52864) sfx_raw_cum=25
+    tile 80/112 (y0=70784) sfx_raw_cum=32
+    tile 100/112 (y0=88704) sfx_raw_cum=33
+    tile 112/112 (y0=99456) sfx_raw_cum=35
+[tile-calib] chiqui7/tile/conf0.2 pre-k09: matched=24/24 n_pred=33 15.6s
+    tile 20/70 (y0=17024) sfx_raw_cum=0
+    tile 40/70 (y0=34944) sfx_raw_cum=0
+    tile 60/70 (y0=52864) sfx_raw_cum=2
+    tile 70/70 (y0=61109) sfx_raw_cum=2
+[tile-calib] chiqui7/tile/conf0.5 pre-k01: matched=2/2 n_pred=2 9.7s
+    tile 20/70 (y0=17024) sfx_raw_cum=1
+    tile 40/70 (y0=34944) sfx_raw_cum=1
+    tile 60/70 (y0=52864) sfx_raw_cum=3
+    tile 70/70 (y0=61109) sfx_raw_cum=3
+[tile-calib] chiqui7/tile/conf0.2 pre-k01: matched=2/2 n_pred=3 9.7s
+    tile 20/21 (y0=17024) sfx_raw_cum=7
+    tile 21/21 (y0=17377) sfx_raw_cum=8
+[tile-calib] chiqui7/tile/conf0.5 pre-k02: matched=3/3 n_pred=8 2.8s
+    tile 20/21 (y0=17024) sfx_raw_cum=9
+    tile 21/21 (y0=17377) sfx_raw_cum=10
+[tile-calib] chiqui7/tile/conf0.2 pre-k02: matched=3/3 n_pred=10 2.9s
+[tile-calib] chiqui7/tile: {"0.5": {"matched": "56/56", "recall_rate": 1.0, "precision": 0.8235, "n_pred": 68}, "0.2": {"matched": "56/56", "recall_rate": 1.0, "precision": 0.6667, "n_pred": 84}} (71.6s)
+[tile-calib] v2b/letterbox/conf0.5 pre-k08: matched=0/27 n_pred=0 0.4s
+[tile-calib] v2b/letterbox/conf0.2 pre-k08: matched=0/27 n_pred=0 0.4s
+[tile-calib] v2b/letterbox/conf0.5 pre-k09: matched=0/24 n_pred=0 0.5s
+[tile-calib] v2b/letterbox/conf0.2 pre-k09: matched=0/24 n_pred=0 0.5s
+[tile-calib] v2b/letterbox/conf0.5 pre-k01: matched=0/2 n_pred=0 0.4s
+[tile-calib] v2b/letterbox/conf0.2 pre-k01: matched=0/2 n_pred=0 0.4s
+[tile-calib] v2b/letterbox/conf0.5 pre-k02: matched=0/3 n_pred=0 0.3s
+[tile-calib] v2b/letterbox/conf0.2 pre-k02: matched=0/3 n_pred=0 0.3s
+[tile-calib] v2b/letterbox: {"0.5": {"matched": "0/56", "recall_rate": 0.0, "precision": null, "n_pred": 0}, "0.2": {"matched": "0/56", "recall_rate": 0.0, "precision": null, "n_pred": 0}} (3.1s)
+    tile 20/58 (y0=17024) sfx_raw_cum=6
+    tile 40/58 (y0=34944) sfx_raw_cum=16
+    tile 58/58 (y0=50947) sfx_raw_cum=23
+[tile-calib] v2b/tile/conf0.5 pre-k08: matched=14/27 n_pred=23 8.3s
+    tile 20/58 (y0=17024) sfx_raw_cum=16
+    tile 40/58 (y0=34944) sfx_raw_cum=41
+    tile 58/58 (y0=50947) sfx_raw_cum=62
+[tile-calib] v2b/tile/conf0.2 pre-k08: matched=18/27 n_pred=56 8.2s
+    tile 20/112 (y0=17024) sfx_raw_cum=22
+    tile 40/112 (y0=34944) sfx_raw_cum=34
+    tile 60/112 (y0=52864) sfx_raw_cum=43
+    tile 80/112 (y0=70784) sfx_raw_cum=49
+    tile 100/112 (y0=88704) sfx_raw_cum=52
+    tile 112/112 (y0=99456) sfx_raw_cum=56
+[tile-calib] v2b/tile/conf0.5 pre-k09: matched=17/24 n_pred=50 15.4s
+    tile 20/112 (y0=17024) sfx_raw_cum=38
+    tile 40/112 (y0=34944) sfx_raw_cum=71
+    tile 60/112 (y0=52864) sfx_raw_cum=85
+    tile 80/112 (y0=70784) sfx_raw_cum=101
+    tile 100/112 (y0=88704) sfx_raw_cum=108
+    tile 112/112 (y0=99456) sfx_raw_cum=113
+[tile-calib] v2b/tile/conf0.2 pre-k09: matched=21/24 n_pred=95 15.9s
+    tile 20/70 (y0=17024) sfx_raw_cum=7
+    tile 40/70 (y0=34944) sfx_raw_cum=13
+    tile 60/70 (y0=52864) sfx_raw_cum=22
+    tile 70/70 (y0=61109) sfx_raw_cum=25
+[tile-calib] v2b/tile/conf0.5 pre-k01: matched=2/2 n_pred=23 9.5s
+    tile 20/70 (y0=17024) sfx_raw_cum=17
+    tile 40/70 (y0=34944) sfx_raw_cum=34
+    tile 60/70 (y0=52864) sfx_raw_cum=53
+    tile 70/70 (y0=61109) sfx_raw_cum=59
+[tile-calib] v2b/tile/conf0.2 pre-k01: matched=2/2 n_pred=52 9.5s
+    tile 20/21 (y0=17024) sfx_raw_cum=5
+    tile 21/21 (y0=17377) sfx_raw_cum=5
+[tile-calib] v2b/tile/conf0.5 pre-k02: matched=2/3 n_pred=5 2.8s
+    tile 20/21 (y0=17024) sfx_raw_cum=11
+    tile 21/21 (y0=17377) sfx_raw_cum=11
+[tile-calib] v2b/tile/conf0.2 pre-k02: matched=2/3 n_pred=10 2.8s
+[tile-calib] v2b/tile: {"0.5": {"matched": "35/56", "recall_rate": 0.625, "precision": 0.3465, "n_pred": 101}, "0.2": {"matched": "43/56", "recall_rate": 0.7679, "precision": 0.2019, "n_pred": 213}} (72.5s)
+[tile-calib] wrote G:\CODEX\New Manga.worktrees\M2-KO-TILE-CALIB-zcode\verification\M2-KO-TILE-CALIB\raw\eval-chiqui7-letterbox.json
+[tile-calib] wrote G:\CODEX\New Manga.worktrees\M2-KO-TILE-CALIB-zcode\verification\M2-KO-TILE-CALIB\raw\eval-chiqui7-tile.json
+[tile-calib] wrote G:\CODEX\New Manga.worktrees\M2-KO-TILE-CALIB-zcode\verification\M2-KO-TILE-CALIB\raw\eval-v2b-letterbox.json
+[tile-calib] wrote G:\CODEX\New Manga.worktrees\M2-KO-TILE-CALIB-zcode\verification\M2-KO-TILE-CALIB\raw\eval-v2b-tile.json
+[tile-calib] wrote G:\CODEX\New Manga.worktrees\M2-KO-TILE-CALIB-zcode\verification\M2-KO-TILE-CALIB\eval-matrix.json
+[tile-calib] MATRIX {"chiqui7": {"letterbox": {"0.5": {"matched": "0/56", "recall_rate": 0.0, "precision": null, "n_pred": 0}, "0.2": {"matched": "0/56", "recall_rate": 0.0, "precision": null, "n_pred": 0}}, "tile": {"0.5": {"matched": "56/56", "recall_rate": 1.0, "precision": 0.8235, "n_pred": 68}, "0.2": {"matched": "56/56", "recall_rate": 1.0, "precision": 0.6667, "n_pred": 84}}}, "v2b": {"letterbox": {"0.5": {"matched": "0/56", "recall_rate": 0.0, "precision": null, "n_pred": 0}, "0.2": {"matched": "0/56", "recall_rate": 0.0, "precision": null, "n_pred": 0}}, "tile": {"0.5": {"matched": "35/56", "recall_rate": 0.625, "precision": 0.3465, "n_pred": 101}, "0.2": {"matched": "43/56", "recall_rate": 0.7679, "precision": 0.2019, "n_pred": 213}}}}
