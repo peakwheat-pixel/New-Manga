@@ -1,0 +1,505 @@
+{
+ "task": "M2-SFX-TRAIN-V2 AC1 数据准备（own-manga 冻结池接入 + train-v2 重切 + 数据集重建）",
+ "generated_at_utc": "2026-10-05T00:03:44Z",
+ "tool": "experiments/M2-SFX-TRAIN-V2/prepare_dataset_v2.py --step all",
+ "directive": "用户指令 2026-10-05：own-manga 冻结池按 ingest_notes 步骤 1-3 接入并重训 V2",
+ "base_manifest": {
+  "source": "M2-SFX-ANNOTATE-R2 final/manifest.{r2,train,val,test,challenge}.json（只读）",
+  "r2_fingerprint": "564498e13651bb2e7baba7540e7fd088e7ab17ff5fed438df4c4c162e525ccfa",
+  "r2_by_split": {
+   "train": 345,
+   "val": 4,
+   "test": 2,
+   "challenge": 0
+  },
+  "crosscheck": "四分集数量加和=351=全量；成员与 split 字段一致；指纹同值"
+ },
+ "own_manga_ingest": {
+  "package": "G:\\CODEX\\New Manga.task-envs\\sfx-synth-exp\\own-manga-ingest\\own_manga_manifest_records.json",
+  "package_sha256": "af11645793fe5816ecaa717bfb9552d12dda09f464d759f9b252531ba4a89faa",
+  "material_root": "G:\\CODEX\\New Manga.task-envs\\sfx-synth-exp",
+  "generated_at": "2026-10-04T23:45:20+00:00",
+  "record_count": 558,
+  "box_count": 1738,
+  "pages_by_group": {
+   "own-manga/v01": 125,
+   "own-manga/v02s": 103,
+   "own-manga/v12": 88,
+   "own-manga/v13": 105,
+   "own-manga/v15": 53,
+   "own-manga/v16": 84
+  },
+  "boxes_by_group": {
+   "own-manga/v01": 481,
+   "own-manga/v02s": 319,
+   "own-manga/v12": 203,
+   "own-manga/v13": 295,
+   "own-manga/v15": 153,
+   "own-manga/v16": 287
+  },
+  "annotation_status": {
+   "partial": 140,
+   "pseudo": 418
+  },
+  "validate": {
+   "total": 558,
+   "errors": 0,
+   "sample3": [
+    {
+     "sample_id": "imp-own-v01-0005",
+     "group": "own-manga/v01",
+     "annotation_status": "partial",
+     "boxes": 14,
+     "image_on_disk": true,
+     "image_sha256_head": "0932cf4f"
+    },
+    {
+     "sample_id": "imp-own-v01-0007",
+     "group": "own-manga/v01",
+     "annotation_status": "pseudo",
+     "boxes": 2,
+     "image_on_disk": true,
+     "image_sha256_head": "3b60678d"
+    },
+    {
+     "sample_id": "imp-own-v01-0008",
+     "group": "own-manga/v01",
+     "annotation_status": "pseudo",
+     "boxes": 3,
+     "image_on_disk": true,
+     "image_sha256_head": "1ca09a3f"
+    }
+   ]
+  },
+  "images_on_disk": "558/558 在盘（.jpg，六卷抽验+全量存在性断言）",
+  "license": "source=user-own-manga（2026-10-04 用户裁决备案，ingest_notes）"
+ },
+ "reassign": {
+  "method": "选项 A：T1a assign_splits(force=True, pinned=…) 函数参数传参对全量 909 重算（不改 T1a splits.py 交付物）。登记理由：合同 AC1 指定 pinned 走函数参数；R2 出厂 lock.method=group-hash-rank-v2+seed=20261004 冻结 → 重算可复现 R2 出厂分桶，同时实证 pinned 组隔离语义",
+  "pinned_groups": {
+   "densho810/vol05": "challenge",
+   "own-manga/v01": "train",
+   "own-manga/v02s": "train",
+   "own-manga/v12": "train",
+   "own-manga/v13": "train",
+   "own-manga/v15": "train",
+   "own-manga/v16": "train",
+   "synthetic/annotate-r1": "train"
+  },
+  "moved": [
+   "pre-bj17",
+   "pre-bj18"
+  ],
+  "drift_non_vol05": 0,
+  "drift_check": "R2 非 vol05 组 349 样本 split 与出厂逐样本一致（零漂移断言通过）",
+  "own_train": 558,
+  "group_isolation_violations": 0,
+  "group_isolation_method": "全量 909 样本 group→set(split) 重算，违例=0 断言通过",
+  "assign_group_split": {
+   "synthetic/annotate-r1": "train",
+   "densho810/vol05": "challenge",
+   "own-manga/v01": "train",
+   "own-manga/v02s": "train",
+   "own-manga/v12": "train",
+   "own-manga/v13": "train",
+   "own-manga/v15": "train",
+   "own-manga/v16": "train",
+   "vasyanator2/641253": "train",
+   "vasyanator2/570506": "train",
+   "vasyanator2/730656": "train",
+   "densho810/vol01": "train",
+   "vasyanator2/131385": "train",
+   "vasyanator2/670145": "train",
+   "densho810/vol03": "train",
+   "vasyanator2/671421": "train",
+   "vasyanator2/717481": "val",
+   "vasyanator2/701535": "val",
+   "vasyanator2/651664": "test",
+   "vasyanator2/724815": "test"
+  },
+  "exam_zero_overlap": {
+   "group_name_intersection": 0,
+   "sample_id_intersection": 0,
+   "page_sha256_intersection": 0,
+   "scope": "own-manga 558 页 sha vs R2 351 页 sha 全量比对（含 challenge 考卷 2 页专项）",
+   "assert": "PASS"
+  }
+ },
+ "expected_vs_actual": {
+  "expected_splits": {
+   "train": {
+    "samples": 901,
+    "boxes": 2304
+   },
+   "val": {
+    "samples": 4,
+    "boxes": 53
+   },
+   "test": {
+    "samples": 2,
+    "boxes": 5
+   },
+   "challenge": {
+    "samples": 2,
+    "boxes": 5
+   }
+  },
+  "actual_splits": {
+   "train": {
+    "samples": 901,
+    "boxes": 2304
+   },
+   "val": {
+    "samples": 4,
+    "boxes": 53
+   },
+   "test": {
+    "samples": 2,
+    "boxes": 5
+   },
+   "challenge": {
+    "samples": 2,
+    "boxes": 5
+   }
+  },
+  "note": "合同 AC1 期望全数命中（fail-fast 断言通过）；合同括号「629+1738 框」中 629 为笔误：V1 实测 train=566 框，566+1738=2304 与合同「约 2304 框」自洽"
+ },
+ "splits": {
+  "train": {
+   "samples": 901,
+   "boxes": 2304,
+   "real": 19,
+   "partial": 140,
+   "pseudo": 418,
+   "synthetic": 324,
+   "groups": [
+    "densho810/vol01",
+    "densho810/vol03",
+    "own-manga/v01",
+    "own-manga/v02s",
+    "own-manga/v12",
+    "own-manga/v13",
+    "own-manga/v15",
+    "own-manga/v16",
+    "synthetic/annotate-r1",
+    "vasyanator2/131385",
+    "vasyanator2/570506",
+    "vasyanator2/641253",
+    "vasyanator2/670145",
+    "vasyanator2/671421",
+    "vasyanator2/730656"
+   ],
+   "images": 901
+  },
+  "val": {
+   "samples": 4,
+   "boxes": 53,
+   "real": 4,
+   "partial": 0,
+   "pseudo": 0,
+   "synthetic": 0,
+   "groups": [
+    "vasyanator2/701535",
+    "vasyanator2/717481"
+   ],
+   "images": 4
+  },
+  "test": {
+   "samples": 2,
+   "boxes": 5,
+   "real": 2,
+   "partial": 0,
+   "pseudo": 0,
+   "synthetic": 0,
+   "groups": [
+    "vasyanator2/651664",
+    "vasyanator2/724815"
+   ],
+   "images": 2
+  },
+  "challenge": {
+   "samples": 2,
+   "boxes": 5,
+   "real": 2,
+   "partial": 0,
+   "pseudo": 0,
+   "synthetic": 0,
+   "groups": [
+    "densho810/vol05"
+   ],
+   "images": 2
+  }
+ },
+ "challenge_dossier": {
+  "group": "densho810/vol05",
+  "samples": 2,
+  "boxes": 5,
+  "per_sample": {
+   "pre-bj17": 2,
+   "pre-bj18": 3
+  },
+  "pages": [
+   "vol05_p0167.png",
+   "vol05_p0065.png"
+  ],
+  "per_box_trace": [
+   {
+    "sample_id": "pre-bj17",
+    "case_id": "BJ17",
+    "page": "vol05_p0167",
+    "unit_id": "R2-BJ17-B00",
+    "conf": 0.932,
+    "verdict": "confirm",
+    "reviewer": "codex+agy-consensus",
+    "morphology": "竖排毛笔假名（ヒチヤ类）粗笔艺术字（R2-BJ17-B00/B01 consensus rationale）"
+   },
+   {
+    "sample_id": "pre-bj17",
+    "case_id": "BJ17",
+    "page": "vol05_p0167",
+    "unit_id": "R2-BJ17-B01",
+    "conf": 0.9096,
+    "verdict": "confirm",
+    "reviewer": "codex+agy-consensus",
+    "morphology": "竖排毛笔假名（ヒチヤ类）粗笔艺术字（R2-BJ17-B00/B01 consensus rationale）"
+   },
+   {
+    "sample_id": "pre-bj18",
+    "case_id": "BJ18",
+    "page": "vol05_p0065",
+    "unit_id": "R2-BJ18-B00",
+    "conf": 0.8951,
+    "verdict": "confirm",
+    "reviewer": "codex+agy-consensus",
+    "morphology": "竖排/斜置粗毛笔片假名（サッ类）艺术字（R2-BJ18-B00/B01/B02 consensus rationale）"
+   },
+   {
+    "sample_id": "pre-bj18",
+    "case_id": "BJ18",
+    "page": "vol05_p0065",
+    "unit_id": "R2-BJ18-B01",
+    "conf": 0.8636,
+    "verdict": "confirm",
+    "reviewer": "codex+agy-consensus",
+    "morphology": "竖排/斜置粗毛笔片假名（サッ类）艺术字（R2-BJ18-B00/B01/B02 consensus rationale）"
+   },
+   {
+    "sample_id": "pre-bj18",
+    "case_id": "BJ18",
+    "page": "vol05_p0065",
+    "unit_id": "R2-BJ18-B02",
+    "conf": 0.8333,
+    "verdict": "confirm",
+    "reviewer": "codex+agy-consensus",
+    "morphology": "竖排/斜置粗毛笔片假名（サッ类）艺术字（R2-BJ18-B00/B01/B02 consensus rationale）"
+   }
+  ],
+  "excluded_delete_boxes_traced": [
+   {
+    "unit_id": "R2-BJ17-B02",
+    "verdict": "delete",
+    "reviewer": "arbiter",
+    "note": "气泡对白非 SFX（仲裁判定），已在 pre-bj17 stage2r2 留痕并核对判定源"
+   }
+  ],
+  "same_group_pseudo": "pre-bj25（vol05 组，pseudo 零框负证据）不在训练 manifest；未来转正按组不跨集自动入 challenge",
+  "zero_overlap_vs_ownmanga": "考卷页图 sha256 与 own-manga 558 页零交集（断言通过）"
+ },
+ "train_bj_remaining": {
+  "positive_boxes": 6,
+  "detail": [
+   {
+    "sample_id": "pre-bj16",
+    "group": "densho810/vol01",
+    "boxes": 3,
+    "units": [
+     "R2-BJ16-B00",
+     "R2-BJ16-B01",
+     "R2-BJ16-B02"
+    ]
+   },
+   {
+    "sample_id": "pre-bj23",
+    "group": "densho810/vol03",
+    "boxes": 2,
+    "units": [
+     "R2-BJ23-B00",
+     "R2-BJ23-B01"
+    ]
+   },
+   {
+    "sample_id": "pre-bj24",
+    "group": "densho810/vol03",
+    "boxes": 1,
+    "units": [
+     "R2-BJ24-B00"
+    ]
+   }
+  ],
+  "negative_evidence_not_in_manifest": {
+   "pre-bj22": {
+    "group": "densho810/vol01",
+    "status": "pseudo",
+    "candidate_boxes_kept_out": 2,
+    "stage2r2_action": "kept_pseudo_no_judged_units_this_round",
+    "note": "BJ22：候选框 conf<0.2 未入本轮判定范围，无判定单元，保持 pseudo（候选框留底册非零框）"
+   },
+   "pre-bj25": {
+    "group": "densho810/vol05",
+    "status": "pseudo",
+    "candidate_boxes_kept_out": 0,
+    "stage2r2_action": "kept_pseudo_zero_box_negative_evidence",
+    "note": "BJ25：唯一候选框判 delete，零框负证据留痕"
+   }
+  }
+ },
+ "fingerprint": "345deeb72b9a609ba9a42eeeabec0506e2efe51a14e6176c6a7df884ddeb0e63",
+ "fingerprint_method": "T1a splits.split_fingerprint（seed=20261004 + 全部 909 (sample_id, split) sha256，工具零重写复用）",
+ "yolo": {
+  "root": "training_data/sfx-v1/train-v2/dataset",
+  "dataset_yaml": "training_data/sfx-v1/train-v2/dataset/dataset.yaml",
+  "per_split": [
+   {
+    "split": "train",
+    "images": 901,
+    "boxes": 2304
+   },
+   {
+    "split": "val",
+    "images": 4,
+    "boxes": 53
+   },
+   {
+    "split": "test",
+    "images": 2,
+    "boxes": 5
+   },
+   {
+    "split": "challenge",
+    "images": 2,
+    "boxes": 5
+   }
+  ],
+  "names_dual_channel_check": {
+   "channel1_readback": {
+    "parsed": {
+     "0": "bubble",
+     "1": "panel",
+     "2": "sfx",
+     "3": "text"
+    },
+    "expected_literal": {
+     "0": "bubble",
+     "1": "panel",
+     "2": "sfx",
+     "3": "text"
+    },
+    "order": [
+     0,
+     1,
+     2,
+     3
+    ],
+    "assert": "PASS"
+   },
+   "channel2_pyyaml": {
+    "parsed": {
+     "0": "bubble",
+     "1": "panel",
+     "2": "sfx",
+     "3": "text"
+    },
+    "expected_literal": {
+     "0": "bubble",
+     "1": "panel",
+     "2": "sfx",
+     "3": "text"
+    },
+    "parser": "pyyaml 6.0.3",
+    "assert": "PASS"
+   }
+  },
+  "ultralytics_scan": {
+   "names": {
+    "0": "bubble",
+    "1": "panel",
+    "2": "sfx",
+    "3": "text"
+   },
+   "nc": 4,
+   "train_exists": true,
+   "val_exists": true,
+   "test_exists": true,
+   "challenge_value": "images/challenge",
+   "challenge_dir_exists": true,
+   "dir_image_counts": {
+    "train": 901,
+    "val": 4,
+    "test": 2,
+    "challenge": 2
+   },
+   "assert": "PASS",
+   "ultralytics_python": "G:\\CODEX\\New Manga.task-envs\\M2-SFX-FINETUNE-gpu-py312\\Scripts\\python.exe"
+  },
+  "label_crosscheck_vs_r2": "R2 351 全量与 R2 yolo 树原分集同名 label 逐字节相等（重切只动 split 归属、不动框几何）；own-manga 558 走导出后自洽校验（行数==框数/cls/坐标域）",
+  "image_copy": {
+   "source": "R2 351：R2 final/yolo 树（出厂时已对素材根做过 sha256 复制校验），素材根 fallback；own-manga 558：record.image.path（material_root=sfx-synth-exp，.jpg）",
+   "full_check": "copy2 后 dst/src 文件大小逐张断言相等（909 张全量）",
+   "sha256_spot_check": {
+    "r2_verified": [
+     "imp-ogkalu-k03-r155",
+     "imp-ogkalu-k05-r034",
+     "imp-ogkalu-k06-r096",
+     "imp-ogkalu-k08-r025",
+     "imp-ogkalu-k09-r071",
+     "pre-bj16",
+     "pre-bj17",
+     "pre-bj18",
+     "pre-bj23",
+     "pre-bj24",
+     "pre-k01",
+     "pre-k02",
+     "pre-k08"
+    ],
+    "r2_policy": "BJ 5 页必验 + 每 split（R2 子集）stem sorted 前 3；三方一致",
+    "own_verified": [
+     "imp-own-v01-0005",
+     "imp-own-v02s-005",
+     "imp-own-v12-008",
+     "imp-own-v13-p_004",
+     "imp-own-v15-006",
+     "imp-own-v16-p_006"
+    ],
+    "own_policy": "每卷 1 张共 6 张（≥ask 要求 5 张）；三方一致（dst==源==manifest.image.sha256）"
+   }
+  },
+  "polygon_caliber": "T1a 实例包络（归一化 6 位小数，cls 恒 2=sfx）",
+  "path_key_note": "dataset.yaml path 用绝对路径（沿 V1）：ultralytics 扫描器与 cwd 无关"
+ },
+ "honest_notes": [
+  "own-manga 框坐标=模型输出（chiqui7/yolo11s-seg.onnx，0.1px）未手工收紧——定位精度受 chiqui7 上限约束；partial 140 页=用户核验 SFX 存在性（annotation_grade=human-verified-existence）但框未手工收紧，不冒充 complete；pseudo 418 页=模型产出+AI 内容复核过滤，无逐框人工确认。标签噪声影响 V2 不做 partial/pseudo 分层消融（合同时间盒裁量），如实登记为边界。",
+  "chiqui7 同源性边界（沿 ingest_notes）：own-manga 候选框全部源自 chiqui7 检出（AI 复核过滤假阳但覆盖不了 chiqui7 漏检类型）；chiqui7 弱项（毛笔竖排漏检）需独立补框通道，本包不覆盖；BJ 主攻形态（考卷 BJ17/18 竖排毛笔）不在本包覆盖内。",
+  "考卷零重叠实证：own-manga 六组（own-manga/*）与 densho810 组异源异页，组名/样本 id/页图 sha256 三层零交集断言通过（558 vs 351 全量比对），challenge 考卷 2 页专项复核无泄漏。",
+  "组级指派=选项 A（assign_splits pinned= 函数参数，不改 T1a splits.py）：重算对 R2 非 vol05 组 349/349 逐样本零漂移（复现 R2 出厂分桶），vol05 组 train→challenge 恰 2 样本沿 V1 考卷不变，own-manga 六组全钉 train（ingest_notes 建议 1）。",
+  "合同 AC1 括号「629+1738 框」中 629 为笔误：V1 实测 train=566 框（V1 prepare-summary.json），566+1738=2304 与合同「约 2304 框」自洽；本轮实测 train=901 页/2304 框与期望全数一致（fail-fast 断言通过，无凑数）。",
+  "own-manga 558 页为 .jpg，与 R2 系 .png 混树（YOLO 按文件扫描，无影响）；own-manga pseudo 含空框页（负证据），label 导出为空文件（YOLO 背景图惯例）。",
+  "v15 组改钉 val 的裁量（ingest_notes 建议 3）本轮不做（合同裁量点：val 保持 KO 4 样本不动，近域 val 归 T3）。",
+  "627 个被复核剔除的误检框未入册（ingest_notes）；难负样本使用属显式决策，不默认掺入。",
+  "ultralytics 可扫描断言在训练 venv（M2-SFX-FINETUNE-gpu-py312，ultralytics 8.4.172）以 check_det_dataset 只读冒烟落实（四分集目录图像计数 901/4/2/2 断言）；管线 venv（T1.1.1-impl-py312）无 ultralytics。"
+ ],
+ "artifacts_sha256": {
+  "training_data/sfx-v1/train-v2/manifest.train-v2.json": "089a044e852aa552693eb1381a458841bacd1f4f570d85afecd5a4b94d02e555",
+  "training_data/sfx-v1/train-v2/manifest.train.json": "52e998363fedf5d4e45f738c6e933e2998f8a93049c75e15f509d0ba8a6eb96a",
+  "training_data/sfx-v1/train-v2/manifest.val.json": "4b83da2ca30965b11e1e8f76d1ff74d214638902870fa8247a2052cc6938f76e",
+  "training_data/sfx-v1/train-v2/manifest.test.json": "213dda5c263c254350b254a6c21f4b2e80aa0cc5fa64eb7907c2b96388c3cddf",
+  "training_data/sfx-v1/train-v2/manifest.challenge.json": "2744afe2e42f0367f7022b9a6b9954e337cf9c7a5a6e76a0bf52fbd344a48715",
+  "training_data/sfx-v1/train-v2/dataset/dataset.yaml": "54f73c1034f4baa678e1bd45554deb5af447289c58726c8295b6513bed20d30c",
+  "training_data/sfx-v1/train-v2/dataset/_export_stats.json": "beec1cdac159d7052aca8797f51a6df12b8a7e97872c68e85fd6aab74486c5a8"
+ },
+ "data_root_gitignored": "training_data/sfx-v1/train-v2/（repo gitignored 外部树，.gitignore:13 /training_data/）；own-manga 入册包在 task-envs 外部树（只读引用）；本摘要内 repo 相对路径均相对 G:/CODEX/New Manga.worktrees/M2-SFX-TRAIN-V2-zcode",
+ "yolo_layout": {
+  "images": "training_data/sfx-v1/train-v2/dataset/images/{train,val,test,challenge}/",
+  "labels": "training_data/sfx-v1/train-v2/dataset/labels/{train,val,test,challenge}/（YOLO seg 归一化多边形，cls=2）",
+  "stem_rule": "sample_id 中 '/' 替换为 '__'（909 样本 id 均无 '/'，stem==sample_id）"
+ }
+}
