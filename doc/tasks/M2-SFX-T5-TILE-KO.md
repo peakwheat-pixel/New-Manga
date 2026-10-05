@@ -2,8 +2,8 @@
 id: M2-SFX-T5-TILE-KO
 title: "SFX KO tile 化生产分支（T5-TILE）：tile_ov128 冻结口径落地+路由阈值+性能双档实测+KO 域验收"
 kind: feature
-status: ready
-owner_claim: —
+status: owner_claim
+owner_claim: ZCode 2026-10-06 @worktree M2-SFX-T5-TILE-KO-zcode（base=a3b0f537=main 收口 tip 含 T4 v2b pin 终态；授权=user ruling 2026-10-05「三件都同意」tile 化立项）
 approval: user_ruling_2026-10-05_三件都同意（tile化立项）
 suggested_owner: ZCode
 owner: ZCode
