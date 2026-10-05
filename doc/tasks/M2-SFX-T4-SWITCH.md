@@ -2,8 +2,8 @@
 id: M2-SFX-T4-SWITCH
 title: "SFX 生产切换 V2B（T4）：G7 翻译链深层补证（硬前置先行）+权重通道与 pin 替换+SHA 门反向验证+回退语义出证"
 kind: feature
-status: ready
-owner_claim: —
+status: owner_claim
+owner_claim: ZCode 2026-10-05（用户裁决「三件都同意」授权面认领；base=3d4f20f1）
 approval: user_ruling_2026-10-05_三件都同意（切换v2b/tile化立项/G7补证硬前置）
 suggested_owner: ZCode
 owner: ZCode
