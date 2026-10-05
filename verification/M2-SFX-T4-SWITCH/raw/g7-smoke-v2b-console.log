@@ -1,0 +1,27 @@
+[g7-smoke] sha_gate_probe: FIRED error_code=PROVIDER_FAILED
+[g7-smoke] repoint window OPEN: SFX_WEIGHTS_SHA256 -> 944e81141093…
+[BJ06] source: OK {'width': 2946, 'height': 4167, 'sha256_match': True}
+[BJ06] assemble: OK {'mode': 'production', 'detector': 'manga-ogkalu+chiqui7-sfx', 'device': 'cpu'}
+[BJ06] sfx_policy_reassemble: OK {'policy': 'translate'}
+[BJ06] providers: OK {'translate_readiness': 'ready', 'ocr': 'manga-ocr'}
+[BJ06] import: OK {'page_id': 'c1730ecf7d834959bf71bd11b2040e50', 'width': 2946, 'height': 4167}
+Loading weights:   0%|          | 0/770 [00:00<?, ?it/s]Loading weights:  46%|████▋     | 357/770 [00:00<00:00, 3569.64it/s]Loading weights: 100%|██████████| 770/770 [00:00<00:00, 6253.08it/s]
+[32m2026-10-05 23:25:37.788[0m | [1mINFO    [0m | [36mmanga_ocr.ocr[0m:[36m__init__[0m:[36m16[0m - [1mLoading OCR model from kha-white/manga-ocr-base[0m
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Loading weights:   0%|          | 0/264 [00:00<?, ?it/s]Loading weights: 100%|██████████| 264/264 [00:00<00:00, 24280.68it/s]
+[32m2026-10-05 23:25:43.155[0m | [1mINFO    [0m | [36mmanga_ocr.ocr[0m:[36m__init__[0m:[36m30[0m - [1mUsing CPU[0m
+[32m2026-10-05 23:25:43.431[0m | [1mINFO    [0m | [36mmanga_ocr.ocr[0m:[36m__init__[0m:[36m37[0m - [1mOCR ready[0m
+QFontDatabase: Cannot find font directory G:/CODEX/New Manga.task-envs/M2-TA3-B-ocr/Lib/site-packages/PySide6/lib/fonts.
+Note that Qt no longer ships fonts. Deploy some (from https://dejavu-fonts.github.io/ for example) or switch to fontconfig.
+[BJ06] run1_page_selection: COMPLETED {'elapsed_s': 355.88}
+[BJ06] detect: OK {'region_count': 14}
+[BJ06] crops: OK {'saved': 14}
+[BJ06] run2_region_chain: COMPLETED {'region_runs': 14, 'truncated': False, 'elapsed_s': 330.51}
+[BJ06] details: OK {'ocr': 14, 'translated': 14}
+[BJ06] export: OK {'sha256': 'd270ac3fc9211c8a', 'size': 8483442}
+[BJ06] summary -> G:\CODEX\New Manga.worktrees\M2-SFX-T4-SWITCH-zcode\verification\M2-SFX-T4-SWITCH\raw\g7-smoke-v2b\summaries\qual-BJ06.json
+report -> G:\CODEX\New Manga.worktrees\M2-SFX-T4-SWITCH-zcode\verification\M2-SFX-T4-SWITCH\raw\g7-smoke-v2b\summaries\qual-report.json
+SUMMARY cases=1 pipeline_failures=0 rerun_pairs=0
+[g7-smoke] repoint window CLOSED (pin restored=True)
+[g7-smoke] run_qualification exit code = 0
+EXIT=0

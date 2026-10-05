@@ -1,0 +1,18 @@
+{
+  "task": "M2-SFX-T4-SWITCH",
+  "ac": "AC1 G7 translation-chain deep-call smoke",
+  "side": "chiqui7",
+  "weights_path": "G:\\CODEX\\New Manga.task-envs\\M2-SFX-DETECT\\weights\\yolo11s-seg.onnx",
+  "weights_sha256_expected": "d87389af4350954143a216bcfe40fd2ad93312cb136534e6073c9c740d98b646",
+  "production_pin_at_start": "d87389af4350954143a216bcfe40fd2ad93312cb136534e6073c9c740d98b646",
+  "repoint": false,
+  "started_at_utc": "2026-10-05T15:11:00.589181+00:00",
+  "sha_gate_probe": {
+    "chiqui7_control_build": "loaded-ok"
+  },
+  "pin_restored_after_window": true,
+  "run_qualification_exit_code": 0,
+  "out_dir": "G:\\CODEX\\New Manga.worktrees\\M2-SFX-T4-SWITCH-zcode\\verification\\M2-SFX-T4-SWITCH\\raw\\g7-smoke-chiqui7\\summaries",
+  "pixel_root": "G:\\CODEX\\New Manga.task-envs\\M2-SFX-T4-SWITCH\\pixels-chiqui7",
+  "finished_at_utc": "2026-10-05T15:25:02.277916+00:00"
+}
