@@ -2,13 +2,14 @@
 id: M2-SFX-TRAIN-V2
 title: "SFX 训练 V2（T2-V2）：own-manga 冻结池接入（558 页/1738 框）+A/B 基座重训+同链路对照评测"
 kind: feature
-status: in_review
+status: done
 owner_claim: 2026-10-05 by zcode subagent @75148bc4（AC1）+ @093631d2（AC2）+ @ba94fa76（AC3；docs 收尾轮报告/Handoff/本回填随 docs 提交）
 approval: user_directive_2026-10-05_ownmanga接入指令
 suggested_owner: ZCode
 owner: ZCode
 reviewer: DeepSeek Harness（非作者）
 integrator: 编排会话代行 Codex（用户全权授权）
+integration_commit: 由编排 merge 后回填（分支顶=DSH r1 返修链尾）
 depends_on: [M2-SFX-TRAIN-V1, M2-SFX-ANNOTATE-R2, M2-SFX-DATA-INFRA]
 base_commit: 4e881720
 branch: agent/zcode/M2-SFX-TRAIN-V2
