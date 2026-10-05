@@ -9,6 +9,7 @@ suggested_owner: ZCode
 owner: ZCode
 reviewer: DeepSeek Harness（非作者）
 integrator: 编排会话代行 Codex（用户全权授权）
+integration_commit: 由编排 merge 后回填（分支顶 203358b7=r2 返修）
 depends_on: [M2-SFX-TRAIN-V2]
 base_commit: 9258afc0
 branch: agent/zcode/M2-KO-TILE-CALIB
