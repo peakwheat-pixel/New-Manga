@@ -1,0 +1,21 @@
+{
+  "task": "M2-SFX-T4-SWITCH",
+  "mode": "ac4",
+  "generated_at_utc": "2026-10-05T15:54:29.626698+00:00",
+  "production_pin_as_imported": "d87389af4350954143a216bcfe40fd2ad93312cb136534e6073c9c740d98b646",
+  "expected_class_map": {
+    "0": "bubble",
+    "1": "panel",
+    "2": "sfx",
+    "3": "text"
+  },
+  "rollback_build": {
+    "ok": true,
+    "weights": "G:\\CODEX\\New Manga.task-envs\\M2-SFX-DETECT\\weights\\yolo11s-seg.onnx",
+    "weights_sha256_verified_by_gate": "d87389af4350954143a216bcfe40fd2ad93312cb136534e6073c9c740d98b646",
+    "imgsz": 1024,
+    "imgsz_source": "metadata_parsed",
+    "imgsz_metadata_raw": "[1024, 1024]",
+    "note": "chiqui7 weights file read-only throughout — never modified/deleted"
+  }
+}

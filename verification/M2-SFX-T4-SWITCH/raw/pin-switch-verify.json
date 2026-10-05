@@ -1,0 +1,27 @@
+{
+  "task": "M2-SFX-T4-SWITCH",
+  "mode": "ac3",
+  "generated_at_utc": "2026-10-05T15:54:37.436937+00:00",
+  "production_pin_as_imported": "944e811410933ad6ff8d32446fcc9eef90fb463794e1874ce83035e83acd418d",
+  "expected_class_map": {
+    "0": "bubble",
+    "1": "panel",
+    "2": "sfx",
+    "3": "text"
+  },
+  "sha_gate_foreign_chiqui7": {
+    "weights": "G:\\CODEX\\New Manga.task-envs\\M2-SFX-DETECT\\weights\\yolo11s-seg.onnx",
+    "weights_sha256": "d87389af4350954143a216bcfe40fd2ad93312cb136534e6073c9c740d98b646",
+    "fired": true,
+    "error_code": "PROVIDER_FAILED",
+    "message_head": "PROVIDER_FAILED: sfx detector weights file G:\\CODEX\\New Manga.task-envs\\M2-SFX-DETECT\\weights\\yolo11s-seg.onnx has sha256 d87389af4350954143a216bcfe40fd2ad93312cb136534e6073c9c740d98b646, expected 944"
+  },
+  "v2b_build": {
+    "ok": true,
+    "weights": "G:\\CODEX\\New Manga.task-envs\\M2-SFX-DETECT\\weights-v2b\\yolo11s-seg.onnx",
+    "weights_sha256": "944e811410933ad6ff8d32446fcc9eef90fb463794e1874ce83035e83acd418d",
+    "imgsz": 1024,
+    "imgsz_source": "metadata_parsed",
+    "imgsz_metadata_raw": "[1024, 1024]"
+  }
+}

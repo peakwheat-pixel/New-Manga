@@ -1,0 +1,26 @@
+[g7-smoke] chiqui7 control build: loaded-ok
+[BJ06] source: OK {'width': 2946, 'height': 4167, 'sha256_match': True}
+[BJ06] assemble: OK {'mode': 'production', 'detector': 'manga-ogkalu+chiqui7-sfx', 'device': 'cpu'}
+[BJ06] sfx_policy_reassemble: OK {'policy': 'translate'}
+[BJ06] providers: OK {'translate_readiness': 'ready', 'ocr': 'manga-ocr'}
+[BJ06] import: OK {'page_id': 'ade61f174cf644ca87dbbbf57d619cf7', 'width': 2946, 'height': 4167}
+Loading weights:   0%|          | 0/770 [00:00<?, ?it/s]Loading weights:  50%|████▉     | 383/770 [00:00<00:00, 3804.21it/s]Loading weights: 100%|██████████| 770/770 [00:00<00:00, 6346.43it/s]
+[32m2026-10-05 23:11:11.160[0m | [1mINFO    [0m | [36mmanga_ocr.ocr[0m:[36m__init__[0m:[36m16[0m - [1mLoading OCR model from kha-white/manga-ocr-base[0m
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Loading weights:   0%|          | 0/264 [00:00<?, ?it/s]Loading weights: 100%|██████████| 264/264 [00:00<00:00, 21465.05it/s]
+[32m2026-10-05 23:11:16.585[0m | [1mINFO    [0m | [36mmanga_ocr.ocr[0m:[36m__init__[0m:[36m30[0m - [1mUsing CPU[0m
+[32m2026-10-05 23:11:16.865[0m | [1mINFO    [0m | [36mmanga_ocr.ocr[0m:[36m__init__[0m:[36m37[0m - [1mOCR ready[0m
+QFontDatabase: Cannot find font directory G:/CODEX/New Manga.task-envs/M2-TA3-B-ocr/Lib/site-packages/PySide6/lib/fonts.
+Note that Qt no longer ships fonts. Deploy some (from https://dejavu-fonts.github.io/ for example) or switch to fontconfig.
+[BJ06] run1_page_selection: COMPLETED {'elapsed_s': 437.34}
+[BJ06] detect: OK {'region_count': 17}
+[BJ06] crops: OK {'saved': 17}
+[BJ06] run2_region_chain: COMPLETED {'region_runs': 17, 'truncated': False, 'elapsed_s': 403.1}
+[BJ06] details: OK {'ocr': 17, 'translated': 17}
+[BJ06] export: OK {'sha256': '3090cb34e37083ad', 'size': 8422737}
+[BJ06] summary -> G:\CODEX\New Manga.worktrees\M2-SFX-T4-SWITCH-zcode\verification\M2-SFX-T4-SWITCH\raw\g7-smoke-chiqui7\summaries\qual-BJ06.json
+report -> G:\CODEX\New Manga.worktrees\M2-SFX-T4-SWITCH-zcode\verification\M2-SFX-T4-SWITCH\raw\g7-smoke-chiqui7\summaries\qual-report.json
+SUMMARY cases=1 pipeline_failures=0 rerun_pairs=0
+[g7-smoke] repoint window CLOSED (pin restored=True)
+[g7-smoke] run_qualification exit code = 0
+EXIT=0

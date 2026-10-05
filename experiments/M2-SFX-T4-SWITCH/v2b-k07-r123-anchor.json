@@ -1,0 +1,23 @@
+{
+  "schema": "m2-sfx-t4-switch/real-anchor@1",
+  "task": "M2-SFX-T4-SWITCH",
+  "generated_at_utc": "2026-10-05T16:11:16.884146+00:00",
+  "extraction": "SfxDetectionProvider.detect — same call path as tests/providers/test_detection_sfx.py",
+  "weights": "G:\\CODEX\\New Manga.task-envs\\M2-SFX-DETECT\\weights-v2b\\yolo11s-seg.onnx",
+  "weights_sha256": "944e811410933ad6ff8d32446fcc9eef90fb463794e1874ce83035e83acd418d",
+  "frame": "G:\\CODEX\\New Manga.task-envs\\M2-DOCTR-QUAL-work\\regions\\K07_R123.png",
+  "frame_sha256": "28dab503aca3c903111488c03e857b430d309421a4a54bab335a63bbe7b9cec4",
+  "conf_threshold": 0.5,
+  "detections": [
+    {
+      "cls": "sfx",
+      "conf": 0.9046694040298462,
+      "box_xyxy": [
+        200.5,
+        1131.4,
+        380.5,
+        1342.7
+      ]
+    }
+  ]
+}

@@ -1,0 +1,92 @@
+{
+  "task": "M2-SFX-T4-SWITCH",
+  "ac": "AC1 G7 compare: v2b repoint arm vs chiqui7 control arm (BJ06, policy=translate)",
+  "arms": {
+    "chiqui7": {
+      "summary": "G:\\CODEX\\New Manga.worktrees\\M2-SFX-T4-SWITCH-zcode\\verification\\M2-SFX-T4-SWITCH\\raw\\g7-smoke-chiqui7\\summaries\\qual-BJ06.json",
+      "pipeline_completed": true,
+      "stages": {
+        "source": "OK",
+        "assemble": "OK",
+        "sfx_policy_reassemble": "OK",
+        "providers": "OK",
+        "import": "OK",
+        "run1_page_selection": "COMPLETED",
+        "detect": "OK",
+        "crops": "OK",
+        "run2_region_chain": "COMPLETED",
+        "details": "OK",
+        "export": "OK"
+      },
+      "region_count": 17,
+      "sfx_region_count": 8,
+      "region_type_counts": {
+        "sfx": 8,
+        "speech": 9
+      },
+      "translate": {
+        "rows": 17,
+        "nonempty_translations": 17,
+        "sfx_rows": 8,
+        "sfx_nonempty": 8
+      },
+      "export": {
+        "status": "OK",
+        "export_id": "exp-a68b02e624cb",
+        "file": "BJ06-translated.png",
+        "pixel_path": "G:\\CODEX\\New Manga.task-envs\\M2-SFX-T4-SWITCH\\pixels-chiqui7\\export\\BJ06-translated.png",
+        "sha256": "3090cb34e37083ad43d6f527de8065adac6ae4be7ab9bd36ad037e12707dd61e",
+        "size": 8422737,
+        "translated_revision_id": "0add42ab951640a08cf805206fb524a9"
+      },
+      "attribution": []
+    },
+    "v2b": {
+      "summary": "G:\\CODEX\\New Manga.worktrees\\M2-SFX-T4-SWITCH-zcode\\verification\\M2-SFX-T4-SWITCH\\raw\\g7-smoke-v2b\\summaries\\qual-BJ06.json",
+      "pipeline_completed": true,
+      "stages": {
+        "source": "OK",
+        "assemble": "OK",
+        "sfx_policy_reassemble": "OK",
+        "providers": "OK",
+        "import": "OK",
+        "run1_page_selection": "COMPLETED",
+        "detect": "OK",
+        "crops": "OK",
+        "run2_region_chain": "COMPLETED",
+        "details": "OK",
+        "export": "OK"
+      },
+      "region_count": 14,
+      "sfx_region_count": 5,
+      "region_type_counts": {
+        "sfx": 5,
+        "speech": 9
+      },
+      "translate": {
+        "rows": 14,
+        "nonempty_translations": 14,
+        "sfx_rows": 5,
+        "sfx_nonempty": 5
+      },
+      "export": {
+        "status": "OK",
+        "export_id": "exp-8c9be51d212d",
+        "file": "BJ06-translated.png",
+        "pixel_path": "G:\\CODEX\\New Manga.task-envs\\M2-SFX-T4-SWITCH\\pixels-v2b\\export\\BJ06-translated.png",
+        "sha256": "d270ac3fc9211c8a7a342c70572fd5f1681ceac724e86328f8dbb57595741263",
+        "size": 8483442,
+        "translated_revision_id": "77c5540f85a74a9cafe798461f5eecf6"
+      },
+      "attribution": []
+    }
+  },
+  "verdict": {
+    "new_failures_v2b_vs_chiqui7": [],
+    "new_failure_count": 0,
+    "resolved_attributions": [],
+    "both_pipeline_completed": true,
+    "fail_closed_chain_legal": true,
+    "box_set_difference_caliber": "directional (single page, no SFX GT; E2E-MATERIAL evidence caliber)"
+  }
+}

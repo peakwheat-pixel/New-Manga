@@ -1,0 +1,44 @@
+{
+  "schema": "m2-sfx-t4-switch/frozen-v2b-probe@1",
+  "task": "M2-SFX-T4-SWITCH",
+  "bundle_exe": "G:\\CODEX\\New Manga.worktrees\\M2-SFX-T4-SWITCH-zcode\\apps\\desktop\\src-tauri\\target\\core-sidecar\\core-sidecar\\core_service.exe",
+  "bundle_sfx_weights_sha256": "944e811410933ad6ff8d32446fcc9eef90fb463794e1874ce83035e83acd418d",
+  "probe_frame": "G:\\CODEX\\New Manga.task-envs\\M2-DOCTR-QUAL-work\\regions\\K07_R123.png",
+  "scenarios": [
+    {
+      "id": "FV-1",
+      "status": "PASS",
+      "observed": {
+        "ready": true,
+        "candidates": 2,
+        "sfx_labels": [
+          "sfx-1"
+        ],
+        "best_sfx_conf": 0.9046694040298462,
+        "manga_candidates": 1,
+        "stderr_sha_or_provider_failed_lines": [],
+        "elapsed_ms": 21649
+      }
+    },
+    {
+      "id": "FV-2",
+      "status": "PASS",
+      "observed": {
+        "candidates": 1,
+        "sfx_labels": [],
+        "manga_candidates": 1
+      }
+    },
+    {
+      "id": "FV-3",
+      "status": "PASS",
+      "observed": {
+        "ready": "ready",
+        "manga_candidates": 1,
+        "sfx_labels": [],
+        "stderr_has_degradation": true
+      }
+    }
+  ],
+  "verdict": "PASS"
+}

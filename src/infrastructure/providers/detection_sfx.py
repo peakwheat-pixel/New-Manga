@@ -1,18 +1,21 @@
-"""Standalone SFX (sound-effect) detection adapter — chiqui7 ONNX (M2-SFX-PROD-1).
+"""Standalone SFX (sound-effect) detection adapter — local train-v2b ONNX.
 
-User ruling 2026-10-01 (M2-SFX-PROD-1, verbatim): "要做 / chiqui7 能用，不在乎 /
-路线 A" — the chiqui7/yolo11-manga-seg weights are bundled for production use;
-the Ultralytics AGPL-metadata vs HF MIT-tag dispute is accepted by that ruling
-(license-evidence chain: ``verification/M2-SFX-DETECT-EVAL/license-evidence.md``).
+User rulings: 2026-10-01 (M2-SFX-PROD-1, verbatim) "要做 / chiqui7 能用，
+不在乎 / 路线 A" established the standalone-SFX-provider route; 2026-10-05
+(M2-SFX-T4-SWITCH, verbatim) "三件都同意" switched the pinned weights to the
+LOCAL train-v2b release (G1/G2/G5/G8 all-hard-gate pass at the M2-SFX-GATE-T3
+evaluation gate; G7 deep-call smoke precondition = M2-SFX-T4-SWITCH AC1
+PASS). The rollback is the pin single-value restore to the previous
+production chiqui7 weights (kept in place; T3 §7.4 / AC4 drill).
 
-Model: ``chiqui7/yolo11-manga-seg`` @ ``7f5f5c04`` (HF tag: MIT), the ONLY
-surveyed candidate with a dedicated SFX class — ONNX metadata names
-``{0: bubble, 1: panel, 2: sfx, 3: text}`` (M2-SFX-DETECT-EVAL, directional
-evidence: sfx class 11/29 instances @0.5, ogkalu hard-blind partial
-intersection 6/7). This provider produces **sfx-class candidates only**;
-every other class is dropped (the class map is asserted against the ONNX
-metadata at load, so a silent class-surface drift fails loudly instead of
-mislabeling detections — the eval script's R8 discipline).
+Model: the LOCAL train-v2b ONNX export (M2-SFX-TRAIN-V2, B-variant
+fine-tune; NOT an HF release) — ONNX metadata names
+``{0: bubble, 1: panel, 2: sfx, 3: text}`` (asserted at load against the
+production class surface, R8 discipline; T3 G5 names/imgsz 5/5 PASS).
+This provider produces **sfx-class candidates only**;
+every other class is dropped (the class map is asserted
+against the ONNX metadata at load, so a silent class-surface drift fails
+loudly instead of mislabeling detections — the eval script's R8 discipline).
 
 Inference caliber — this module replicates the evaluation pipeline
 (``experiments/M2-SFX-DETECT/eval_sfx_mangabubble.py``, read-only blueprint)
@@ -101,14 +104,27 @@ from ports.providers.errors import (
 
 PROVIDER_SFX = "local-sfx"
 
-#: The pinned weights identity (M2-SFX-DETECT-EVAL §3.1; HF revision
-#: ``7f5f5c0464f2eeb57282f16da760eb8828a8716a``). The weights live on local /
-#: gitignored paths only — never committed, never downloaded at run time.
-SFX_HF_REPO = "chiqui7/yolo11-manga-seg"
-SFX_HF_REVISION = "7f5f5c0464f2eeb57282f16da760eb8828a8716a"
+#: The pinned weights identity (M2-SFX-T4-SWITCH switch, user ruling
+#: 2026-10-05 "三件都同意"). The weights live on local / gitignored paths
+#: only — never committed, never downloaded at run time.
+#:
+#: Source fields — LOCAL RELEASE CHANNEL REGISTRATION (V2 report §7.2.3):
+#: train-v2b is a LOCAL training product (M2-SFX-TRAIN-V2), not an HF
+#: release, so ``SFX_HF_REPO``/``SFX_HF_REVISION`` no longer name an HF
+#: repo/revision. They are REGISTRARIAL pointers into the local release
+#: chain: the training task / variant, and the direct upstream checkpoint
+#: (best.pt). Full deployment chain sha256 (T3 §4.8-2 verified, no break):
+#:   base .pt  1f0fd609e7dc29c831255db67586ed5623f9bebae6a1e29fae197c1c6d7b77e0
+#:   best.pt   c22f0175ffe7b453fd660161831aa9fce2a736fc32d29e574650ba9731131c08
+#:   best.onnx 944e811410933ad6ff8d32446fcc9eef90fb463794e1874ce83035e83acd418d
+#: Rollback = restore the previous single pin value ``d87389af…b646``
+#: (chiqui7/yolo11-manga-seg @ 7f5f5c0464f2eeb57282f16da760eb8828a8716a)
+#: with the chiqui7 weights file still in place (AC4 drill proves it).
+SFX_HF_REPO = "local-release:sfx-train-v2/v2b"
+SFX_HF_REVISION = "c22f0175ffe7b453fd660161831aa9fce2a736fc32d29e574650ba9731131c08"
 SFX_WEIGHTS_FILENAME = "yolo11s-seg.onnx"
 SFX_WEIGHTS_SHA256 = (
-    "d87389af4350954143a216bcfe40fd2ad93312cb136534e6073c9c740d98b646"
+    "944e811410933ad6ff8d32446fcc9eef90fb463794e1874ce83035e83acd418d"
 )
 
 #: Frozen conf threshold (user ruling: precision-first — SfxPolicy default is
