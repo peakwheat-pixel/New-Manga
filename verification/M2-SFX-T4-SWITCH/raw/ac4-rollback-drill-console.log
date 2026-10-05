@@ -1,0 +1,2 @@
+rollback build_engine.ok imgsz=1024 source=metadata_parsed EXIT=0 semantics
+AC4: PASS
