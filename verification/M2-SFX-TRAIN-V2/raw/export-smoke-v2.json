@@ -1,0 +1,185 @@
+{
+  "v2a": {
+    "best_pt": "G:\\CODEX\\New Manga.worktrees\\M2-SFX-TRAIN-V2-zcode\\training_data\\sfx-v1\\train-v2\\runs\\v2a\\weights\\best.pt",
+    "onnx": "G:\\CODEX\\New Manga.worktrees\\M2-SFX-TRAIN-V2-zcode\\training_data\\sfx-v1\\train-v2\\weights\\v2a\\best.onnx",
+    "onnx_sha256": "27d162e94d7dd2150b177f5636613e3bfce836dfdb08240975b86fce85b97d43",
+    "smoke": "PASS"
+  },
+  "v2b": {
+    "best_pt": "G:\\CODEX\\New Manga.worktrees\\M2-SFX-TRAIN-V2-zcode\\training_data\\sfx-v1\\train-v2\\runs\\v2b\\weights\\best.pt",
+    "onnx": "G:\\CODEX\\New Manga.worktrees\\M2-SFX-TRAIN-V2-zcode\\training_data\\sfx-v1\\train-v2\\weights\\v2b\\best.onnx",
+    "onnx_sha256": "944e811410933ad6ff8d32446fcc9eef90fb463794e1874ce83035e83acd418d",
+    "smoke": "PASS"
+  },
+  "steps": [
+    {
+      "step": "input",
+      "t": 38537.586,
+      "variant": "v2a",
+      "best_pt": "G:\\CODEX\\New Manga.worktrees\\M2-SFX-TRAIN-V2-zcode\\training_data\\sfx-v1\\train-v2\\runs\\v2a\\weights\\best.pt",
+      "best_pt_sha256": "3e6276cf9fc340570d3f302052bd5d88b249a57600434471fe91c7065a5f65d4"
+    },
+    {
+      "step": "export.start",
+      "t": 38539.155,
+      "variant": "v2a",
+      "imgsz": 1024,
+      "format": "onnx"
+    },
+    {
+      "step": "export.done",
+      "t": 38541.488,
+      "variant": "v2a",
+      "onnx": "G:\\CODEX\\New Manga.worktrees\\M2-SFX-TRAIN-V2-zcode\\training_data\\sfx-v1\\train-v2\\weights\\v2a\\best.onnx",
+      "size_bytes": 40824255,
+      "sha256": "27d162e94d7dd2150b177f5636613e3bfce836dfdb08240975b86fce85b97d43"
+    },
+    {
+      "step": "sha_gate.fired",
+      "t": 38541.512,
+      "variant": "v2a",
+      "error_code": "PROVIDER_FAILED",
+      "detail": "PROVIDER_FAILED: sfx detector weights file G:\\CODEX\\New Manga.worktrees\\M2-SFX-TRAIN-V2-zcode\\training_data\\sfx-v1\\train-v2\\weights\\v2a\\best.onnx has sha256 27d"
+    },
+    {
+      "step": "sha_gate.ok",
+      "t": 38541.512,
+      "variant": "v2a",
+      "production_pin": "d87389af4350",
+      "export_actual": "27d162e94d7d"
+    },
+    {
+      "step": "build_engine.full_chain_ok",
+      "t": 38541.606,
+      "variant": "v2a",
+      "names_metadata": "{0: 'bubble', 1: 'panel', 2: 'sfx', 3: 'text'}",
+      "class_map_asserted": {
+        "0": "bubble",
+        "1": "panel",
+        "2": "sfx",
+        "3": "text"
+      },
+      "imgsz": 1024,
+      "imgsz_source": "metadata_parsed",
+      "imgsz_metadata_raw": "[1024, 1024]"
+    },
+    {
+      "step": "detect.conf_0.5",
+      "t": 38541.854,
+      "variant": "v2a",
+      "candidates": 0,
+      "provider_id": "local-sfx",
+      "coordinate_space": "page-global",
+      "imgsz": "1024",
+      "imgsz_source": "metadata_parsed",
+      "class_filter": "sfx"
+    },
+    {
+      "step": "detect.conf_0.01",
+      "t": 38542.118,
+      "variant": "v2a",
+      "candidates": 2,
+      "provider_id": "local-sfx",
+      "coordinate_space": "page-global",
+      "imgsz": "1024",
+      "imgsz_source": "metadata_parsed",
+      "class_filter": "sfx"
+    },
+    {
+      "step": "output_tensor",
+      "t": 38542.251,
+      "variant": "v2a",
+      "shape": [
+        1,
+        40,
+        21504
+      ],
+      "expect": "1x40xN (4+4cls+32mask)"
+    },
+    {
+      "step": "input",
+      "t": 38542.298,
+      "variant": "v2b",
+      "best_pt": "G:\\CODEX\\New Manga.worktrees\\M2-SFX-TRAIN-V2-zcode\\training_data\\sfx-v1\\train-v2\\runs\\v2b\\weights\\best.pt",
+      "best_pt_sha256": "c22f0175ffe7b453fd660161831aa9fce2a736fc32d29e574650ba9731131c08"
+    },
+    {
+      "step": "export.start",
+      "t": 38542.327,
+      "variant": "v2b",
+      "imgsz": 1024,
+      "format": "onnx"
+    },
+    {
+      "step": "export.done",
+      "t": 38543.736,
+      "variant": "v2b",
+      "onnx": "G:\\CODEX\\New Manga.worktrees\\M2-SFX-TRAIN-V2-zcode\\training_data\\sfx-v1\\train-v2\\weights\\v2b\\best.onnx",
+      "size_bytes": 40824255,
+      "sha256": "944e811410933ad6ff8d32446fcc9eef90fb463794e1874ce83035e83acd418d"
+    },
+    {
+      "step": "sha_gate.fired",
+      "t": 38543.761,
+      "variant": "v2b",
+      "error_code": "PROVIDER_FAILED",
+      "detail": "PROVIDER_FAILED: sfx detector weights file G:\\CODEX\\New Manga.worktrees\\M2-SFX-TRAIN-V2-zcode\\training_data\\sfx-v1\\train-v2\\weights\\v2b\\best.onnx has sha256 944"
+    },
+    {
+      "step": "sha_gate.ok",
+      "t": 38543.761,
+      "variant": "v2b",
+      "production_pin": "27d162e94d7d",
+      "export_actual": "944e81141093"
+    },
+    {
+      "step": "build_engine.full_chain_ok",
+      "t": 38543.857,
+      "variant": "v2b",
+      "names_metadata": "{0: 'bubble', 1: 'panel', 2: 'sfx', 3: 'text'}",
+      "class_map_asserted": {
+        "0": "bubble",
+        "1": "panel",
+        "2": "sfx",
+        "3": "text"
+      },
+      "imgsz": 1024,
+      "imgsz_source": "metadata_parsed",
+      "imgsz_metadata_raw": "[1024, 1024]"
+    },
+    {
+      "step": "detect.conf_0.5",
+      "t": 38544.107,
+      "variant": "v2b",
+      "candidates": 1,
+      "provider_id": "local-sfx",
+      "coordinate_space": "page-global",
+      "imgsz": "1024",
+      "imgsz_source": "metadata_parsed",
+      "class_filter": "sfx"
+    },
+    {
+      "step": "detect.conf_0.01",
+      "t": 38544.373,
+      "variant": "v2b",
+      "candidates": 2,
+      "provider_id": "local-sfx",
+      "coordinate_space": "page-global",
+      "imgsz": "1024",
+      "imgsz_source": "metadata_parsed",
+      "class_filter": "sfx"
+    },
+    {
+      "step": "output_tensor",
+      "t": 38544.516,
+      "variant": "v2b",
+      "shape": [
+        1,
+        40,
+        21504
+      ],
+      "expect": "1x40xN (4+4cls+32mask)"
+    }
+  ],
+  "exit": 0
+}
