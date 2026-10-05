@@ -1,0 +1,10 @@
+bundle weights sha256 == v2b pin: OK (944e81141093…)
+=== FV-1 frozen REAL inference under the v2b pin (SFX on) ===
+  [PASS] FV-1: {"best_sfx_conf": 0.9046694040298462, "candidates": 2, "elapsed_ms": 21649, "manga_candidates": 1, "ready": true, "sfx_labels": ["sfx-1"], "stderr_sha_or_provider_failed_lines": []}
+=== FV-2 NEWMANGA_SFX_DETECTION=off -> manga-only surface ===
+  [PASS] FV-2: {"candidates": 1, "manga_candidates": 1, "sfx_labels": []}
+=== FV-3 broken sfx weights -> typed degradation, manga chain lives ===
+  [PASS] FV-3: {"manga_candidates": 1, "ready": "ready", "sfx_labels": [], "stderr_has_degradation": true}
+results -> G:\CODEX\New Manga.worktrees\M2-SFX-T4-SWITCH-zcode\verification\M2-SFX-T4-SWITCH\raw\frozen-v2b-probe-results.json
+verdict: PASS
+EXIT=0

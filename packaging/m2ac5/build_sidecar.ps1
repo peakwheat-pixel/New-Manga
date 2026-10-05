@@ -39,11 +39,14 @@ param (
     # relocates the source, never relaxes the verification.
     [Parameter(Mandatory = $false)]
     [string]$WeightsSource = "G:/CODEX/New Manga.task-envs/M2-DOCTR-QUAL-C4/weights/ogkalu-comic-text-and-bubble-detector",
-    # M2-SFX-PROD-1: source directory holding the pinned chiqui7 ONNX export
-    # (yolo11s-seg.onnx). Same relocation-only semantics as -WeightsSource:
+    # M2-SFX-PROD-1 / M2-SFX-T4-SWITCH: source directory holding the pinned
+    # SFX ONNX export (yolo11s-seg.onnx). Since the v2b switch the default
+    # points at the v2b deploy directory (the previous chiqui7 file stays in
+    # the sibling weights/ directory, untouched, for the rollback path).
+    # Same relocation-only semantics as -WeightsSource:
     # the file must STILL match the SHA-256 pin below or the build fails.
     [Parameter(Mandatory = $false)]
-    [string]$SfxWeightsSource = "G:/CODEX/New Manga.task-envs/M2-SFX-DETECT/weights",
+    [string]$SfxWeightsSource = "G:/CODEX/New Manga.task-envs/M2-SFX-DETECT/weights-v2b",
     # M2-PROD-DETECT-2: skip the manga weights copy step (debug only — the
     # shipped bundle then has NO in-bundle weights; per the DSH r1 R5/R6
     # review-fix the frozen assembly does NOT crash: it prints one stderr
@@ -129,18 +132,21 @@ function Copy-SfxWeights {
 
     # SHA-256 pin, duplicated verbatim from
     # src/infrastructure/providers/detection_sfx.py (SFX_WEIGHTS_SHA256;
-    # chiqui7/yolo11-manga-seg @ 7f5f5c04). A build script cannot import
+    # M2-SFX-T4-SWITCH switch: local train-v2b release, deployment chain
+    # base .pt 1f0fd609… -> best.pt c22f0175… -> best.onnx 944e8114…;
+    # rollback = the previous chiqui7 pin d87389af… + weights in place).
+    # A build script cannot import
     # src/**, so the value is a literal here — if the provider pin ever
     # changes, these MUST be updated in lockstep (the copy step fails closed
     # on any mismatch, so a stale literal cannot ship silently).
     $pins = [ordered]@{
-        "yolo11s-seg.onnx" = "d87389af4350954143a216bcfe40fd2ad93312cb136534e6073c9c740d98b646"
+        "yolo11s-seg.onnx" = "944e811410933ad6ff8d32446fcc9eef90fb463794e1874ce83035e83acd418d"
     }
 
     foreach ($name in $pins.Keys) {
         $src = Join-Path $weightsSource $name
         if (-not (Test-Path -LiteralPath $src -PathType Leaf)) {
-            throw "sfx weights file missing: $src (place the pinned ONNX export of chiqui7/yolo11-manga-seg there, or rebuild with -SkipWeights for a debug-only bundle)"
+            throw "sfx weights file missing: $src (place the pinned v2b ONNX export there — local-release:sfx-train-v2/v2b, see detection_sfx.py — or rebuild with -SkipWeights for a debug-only bundle)"
         }
         $actual = (Get-FileHash -LiteralPath $src -Algorithm SHA256).Hash.ToLowerInvariant()
         if ($actual -ne $pins[$name]) {
