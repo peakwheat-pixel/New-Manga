@@ -2,7 +2,7 @@
 id: M2-SFX-T5-TILE-KO
 title: "SFX KO tile 化生产分支（T5-TILE）：tile_ov128 冻结口径落地+路由阈值+性能双档实测+KO 域验收"
 kind: feature
-status: in_review
+status: done
 owner_claim: ZCode 2026-10-06 @worktree M2-SFX-T5-TILE-KO-zcode（base=a3b0f537=main 收口 tip 含 T4 v2b pin 终态；授权=user ruling 2026-10-05「三件都同意」tile 化立项）
 delivery: ZCode 2026-10-06（AC1-AC5 全 PASS：AC3 逐位复现 v2b 35/56+48/135、chiqui7 56/56+41/135，BJ letterbox 零变化逐位；r1 P3-2 闭合；delivery head=24ae2765，docs commit 随后）
 approval: user_ruling_2026-10-05_三件都同意（tile化立项）
@@ -12,6 +12,7 @@ reviewer: DeepSeek Harness（非作者）
 integrator: 编排会话代行 Codex（用户全权授权）
 depends_on: [M2-SFX-T4-SWITCH]
 base_commit: a3b0f537（2026-10-06 T4 收口后解锁；worktree 实建 base）
+integration: merge 5e70af4e（2026-10-06，集成 Gate：src/tests 各 1 文件/contracts-apps-packaging 零 diff/16 文件允许路径/worktree clean/SFX 测试 70-70 全 PASS；DSH r1 报告 doc/reviews/M2-SFX-T5-TILE-KO-aa5095cc-dsh-r1.md）
 branch: agent/zcode/M2-SFX-T5-TILE-KO
 worktree: G:/CODEX/New Manga.worktrees/M2-SFX-T5-TILE-KO-zcode
 review_events: []
