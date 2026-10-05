@@ -2,9 +2,10 @@
 id: M2-SFX-T4-SWITCH
 title: "SFX 生产切换 V2B（T4）：G7 翻译链深层补证（硬前置先行）+权重通道与 pin 替换+SHA 门反向验证+回退语义出证"
 kind: feature
-status: in_review
+status: done
 owner_claim: ZCode 2026-10-05（用户裁决「三件都同意」授权面认领；base=3d4f20f1）
-delivery: ZCode 2026-10-06（AC1-AC5 全 PASS，AC1 硬前置先行遵守；delivery head 见交付记录；转 in_review 停写）
+delivery: ZCode 2026-10-06（AC1-AC5 全 PASS，AC1 硬前置先行遵守；delivery head=6464c4a3+返修 bd23eaa8）
+integration: merge cff4923e（2026-10-06，集成 Gate：29 文件允许路径/AC1 零 src/contracts-apps 零 diff/d87389af 残留恰 3 处登记性注释/worktree clean 全 PASS；DSH r1 报告 doc/reviews/M2-SFX-T4-SWITCH-6464c4a3-dsh-r1.md）
 approval: user_ruling_2026-10-05_三件都同意（切换v2b/tile化立项/G7补证硬前置）
 suggested_owner: ZCode
 owner: ZCode
@@ -66,3 +67,7 @@ T3 正式评测门（done @merge `27817412`）逐门判定：**v2b（best.onnx `
 - **P4 级登记（下轮补强，非阻断）**：锚 JSON 仅 rgb24 面（rgb32 走同一 provider 路径由独立测试钉住）；冻结探针 FV-1 PASS 判据不含 sfx 候选存在（记录面宽于判据面，观测值含 sfx-1/0.9047）；AC3/AC4 console 缺 shell 级退出码捕获；`rollback-drill.json` 的 `weights_sha256_verified_by_gate` 为脚本常量回显（真证明=`_build_engine` 内部比对通过）。
 
 **交付 head**：AC5 commit（见 branch tip）；详细部署指引与 NOT_RUN 清单见 [switch-report](../verification/M2-SFX-T4-SWITCH/switch-report.md) 与 [Handoff](../handoffs/M2-SFX-T4-SWITCH-zcode-20261006.md)。
+
+## Review 返修记录
+
+- **DSH r1（非作者，只读静态；报告=doc/reviews/M2-SFX-T4-SWITCH-6464c4a3-dsh-r1.md）**：`approved_with_conditions`（0×P0/P1/P2、4×P3、7×P4）——R1-R8 逐项 PASS（AC1 顺序纪律 reflog 级硬证据、src 变更面替身法核对干净、来源字段全链 sha 逐字、tests 4/4 声明命中、回归计数逐字相符、directional 纪律干净、G8 checklist 与 T3 登记一致）。**条件闭合 @bd23eaa8（docs-only）**：P3-1 残留身份文本越域清单登记（requirements.txt:30-36/detection_sfx.py:24,139-140,286,498/core_assembly.py:958/build_sidecar.ps1:115/run_qualification.py:481——行为无影响，交后续清理）+P3-3 AC1 断言面说明（硬断言=attribution 差集；failures=0 为佐证）+P3-4 NSIS NOT_RUN 理由按 AC2 口径对齐+P4 级登记。登记于此代替 review_events 回填（repo 惯例）。
