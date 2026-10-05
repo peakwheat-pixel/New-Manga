@@ -10,7 +10,7 @@ owner: ZCode
 reviewer: DeepSeek Harness（非作者）
 integrator: 编排会话代行 Codex（用户全权授权）
 depends_on: [M2-SFX-T4-SWITCH]
-base_commit: 5166ba7f
+base_commit: a3b0f537（2026-10-06 T4 收口后解锁；worktree 实建 base）
 branch: agent/zcode/M2-SFX-T5-TILE-KO
 worktree: G:/CODEX/New Manga.worktrees/M2-SFX-T5-TILE-KO-zcode
 review_events: []
