@@ -64,7 +64,7 @@ CPUExecutionProvider——与生产 detection_sfx.py:426 同 EP）；被测 comm
 
 | AC/场景 | 实际命令/步骤 | 结果 | 日志/产物 |
 |---|---|---|---|
-| AC1+AC2 全量四组 | `python experiments/M2-KO-TILE-CALIB/tile_calib.py --mode full`（GT/权重 sha 断言内置 fail-fast；log:2 chiqui7==pin、:3 v2b 前缀断言） | PASS（letterbox 0/56×4 格；chiqui7 tile 56/56；v2b tile 35/56@0.5） | raw/run-full.log、raw/eval-*.json、eval-matrix.json |
+| AC1+AC2 全量四组 | `python experiments/M2-KO-TILE-CALIB/tile_calib.py`（GT/权重 sha 断言内置 fail-fast；log:2 chiqui7==pin、:3 v2b 前缀断言） | PASS（letterbox 0/56×4 格；chiqui7 tile 56/56；v2b tile 35/56@0.5） | raw/run-full.log、raw/eval-*.json、eval-matrix.json |
 | AC3 裁量点变体 | 同脚本 `--overlap 256` / `--overlap 448`（chiqui7×tile） | PASS（44/56、45/56@0.5；相位方差证据） | raw/eval-chiqui7-tile-ov{256,448}.json、eval-matrix-ov{256,448}.json |
 | 数字复算 | `python experiments/M2-KO-TILE-CALIB/recompute_matrix.py`（独立重实现匹配，不 import tile_calib.py） | PASS（`ALL 8 CELLS RECOMPUTED == eval-matrix.json`） | calib-report.md §5 |
 | 预处理等价性 | 逐字对照表 13 环节（生产行号逐一核对；复核①再次全量核实） | PASS | preprocess-caliber-table.md；calib-report.md §8-① |
@@ -81,7 +81,7 @@ KO 页 tile 参数化用例（GT 页集仅 690/600 宽，归 T4 扩充）；GPU 
 - 分支 `agent/zcode/M2-KO-TILE-CALIB`，worktree
   `G:/CODEX/New Manga.worktrees/M2-KO-TILE-CALIB-zcode`，base 9258afc0，
   delivery_head 49253b09（docs head 随本提交更新于 Task 回填）。
-- 复现：`python experiments/M2-KO-TILE-CALIB/tile_calib.py --mode full`
+- 复现：`python experiments/M2-KO-TILE-CALIB/tile_calib.py`
   （venv=M2-SFX-FINETUNE-gpu-py312）；权重 chiqui7=
   `G:/CODEX/New Manga.task-envs/M2-SFX-DETECT/weights/yolo11s-seg.onnx`
   （pin d87389af…）、v2b 只读引用
@@ -188,3 +188,11 @@ KO 页 tile 参数化用例（GT 页集仅 690/600 宽，归 T4 扩充）；GPU 
   直比（采集口径差异已登记）；GPU EP 未测。
 - **建议**：T3 Gate 采信 ko-caliber-proposal.md 五条口径；T4 落地时先查相位
   方差再扩展页宽参数化；v2b 噪声归 T3 扩标处置。
+
+## DSH r1 审查记录（2026-10-05，approved_with_conditions；P1-1/P2-1 返修见上）
+
+- Verdict=approved_with_conditions（1×P1、1×P2、8×P3、4×P4）；全文落 doc/reviews/M2-KO-TILE-CALIB-76bf2a94-dsh-r1.md。
+- **P1-1（核心，已闭）**：GT 同源性循环性——KO GT 源自 chiqui7 tile ov128 采集，「56/56 满召回/P 0.8235」降级为同源复现、「ov128 最优」降级为相位一致；核心结论（letterbox n_pred=0 vs tile n_pred>0=口径瓶颈非权重）锚定 GT 无关事实独立成立；T3 若度量模型质量须另建非 chiqui7 派生 KO GT（提请 T3 裁决）。
+- P2-1 复现命令已更正（无参运行）；P3-1/2/3/4/5/P4-1 已落报告 §9；P3-6 治理登记=编排 governance commit 01bfe108 已登记（本 worktree 不含 main 治理 commit，非缺口）；P3-7 署名已更正。
+- **T4 材料补强（DSH 建议）**：冻结 ov128 两条硬约束=①overlap≥h_max（本 GT 675.8→≥676）②页级合并层（sfx-only 0.5）为 T4 新造需 fail-fast 纪律+保留 pre-NMS 框。
+- 集成 Gate（DSH 无 shell 三项由集成方复跑）：git diff 9258afc0..<merge> -- src/ training_data/ 为空+pin d87389af 在位+recompute_matrix.py 8 格相等。
