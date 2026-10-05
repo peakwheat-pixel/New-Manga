@@ -15,7 +15,7 @@ branch: agent/zcode/M2-KO-TILE-CALIB
 worktree: G:/CODEX/New Manga.worktrees/M2-KO-TILE-CALIB-zcode
 review_events: []
 created: 2026-10-05
-delivery_commit: 49253b09
+delivery_commit: 76bf2a94（提案/报告）；返修链 3517ceda→本链尾
 handoff: doc/handoffs/M2-KO-TILE-CALIB-zcode-20261005.md
 report: verification/M2-KO-TILE-CALIB/calib-report.md
 ---

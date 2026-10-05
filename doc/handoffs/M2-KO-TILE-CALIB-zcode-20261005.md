@@ -29,7 +29,7 @@ status: in_review
 
 - **AC1 chiqui7 两口径对照（4 页 56 框 GT）：PASS，预期成立**。letterbox 整页
   conf≥0.5/0.2 均 **0/56（n_pred=0，零输出非低分）**；tile 690x1024 ov128
-  conf≥0.5 **56/56 满召回（precision 0.8235，n_pred 68）**、conf≥0.2 56/56
+  conf≥0.5 **56/56 同源复现（见报告 GT 同源性限制段）（precision 0.8235，n_pred 68）**、conf≥0.2 56/56
   （precision 0.6667，n_pred 84）。逐页@0.5：pre-k08 27/27、pre-k09 24/24、
   pre-k01 2/2、pre-k02 3/3。**T2-V2 结构性发现（KO 长条页三方全 0/56）独立复现
   成立且定性为序列口径瓶颈非权重**。
@@ -44,15 +44,15 @@ status: in_review
   896/页底补锚点）；tile 内生产序列逐字；页级跨 tile IoU 0.5 conf 降序贪心
   NMS；主口径 conf≥0.5、0.2 仅诊断；基线权重=chiqui7 现役；letterbox 双权重
   全 0/56 仅作对照口径并行登记。裁量点变体（ov256=44/56、ov448=45/56）证实
-  **相位方差主导**（GT 框最高 676px 无跨 tile 切断；pre-k01 两框 ~55px 高完整
-  落格却在 ov256 零检出），ov128 实测最优。生产切换成本估计 ~8.9s/页 CPU
+  **相位方差主导**（GT 框最高 676px ov128/ov448 下无跨 tile 切断（ov256 存在几何切断：pre-k08 #20 h=675.8）；pre-k01 两框 ~55px 高完整
+  落格却在 ov256 零检出），ov128 与 GT 采集相位一致（变体证明相位敏感）。生产切换成本估计 ~8.9s/页 CPU
   （≈20× letterbox，GPU 可压）与 tile 序列层实施归 T4。
 - **AC4 报告+Handoff+Task 回填：PASS（本轮 docs 提交）**。
 - **AC5 零 src；产物摘要入 Git：PASS**。15 文件全在 Task 允许面（doc/tasks/
   +experiments 2 脚本+verification 5 摘要/报告+7 raw）；`-- src/ training_data/`
   空 diff；gitignored 中间产物在 `training_data/sfx-v1/ko-tile-calib/` 不入 Git。
 
-**独立复核（非作者）= PASS**（四项复核全部实测通过，未发现等价性缺陷、NMS 去重
+**作者侧复核（workflow 内；正式 Review=DSH r1/r2 见 doc/reviews/）= PASS**（四项复核全部实测通过，未发现等价性缺陷、NMS 去重
 错误或零 src 违规；含 1 项过程假差异如实登记——系复核脚本初版丢失 y+y0 平移，
 修正后 bit-exact 复现。见 calib-report.md §8）。
 
@@ -131,7 +131,7 @@ KO 页 tile 参数化用例（GT 页集仅 690/600 宽，归 T4 扩充）；GPU 
   > 冻结+conf0.5 主口径+chiqui7 基线+v2b 不入候选）、零 src、AC3 提案与 T3/T4
   > 归属清晰；④结论落 doc/reviews/M2-KO-TILE-CALIB-<docs-head>-dsh-r1.md 并
   > 回填 Task review_events。已知登记：directional 禁用「显著」；相位方差
-  > （ov128 最优 56/44/45）已在提案 §2/报告 §3 如实登记；T4 成本为 CPU 实测
+  > （ov128 与 GT 采集相位一致 56/44/45）已在提案 §2/报告 §3 如实登记；T4 成本为 CPU 实测
   > 外推（GPU 未测）。禁改 src/**。
 
 如果没有安全且已授权的后续工作，填写“无需下一步操作”及原因，不创建占位 Task。
@@ -174,12 +174,12 @@ KO 页 tile 参数化用例（GT 页集仅 690/600 宽，归 T4 扩充）；GPU 
 - **参数**：tile 宽=页宽原生（690/600）、高 1024、重叠 128（步长 896）、末尾补
   `page_h-1024` 锚点；变体 overlap∈{256,448}；conf∈{0.5,0.2} 每 conf 独立完整
   推理；匹配 IoU≥0.5 conf 降序贪心每 GT 至多一预测。
-- **运行次数**：主口径 1 次（--mode full）；变体各 1 次；复核独立重跑 pre-k08
+- **运行次数**：主口径 1 次（无参运行=full）；变体各 1 次；复核独立重跑 pre-k08
   tile conf0.5 1 次（bit-exact 复现）。
 - **原始结果**：raw/eval-{chiqui7,v2b}-{letterbox,tile}.json（逐框 preds+匹配
   对+tile_stats）、raw/eval-chiqui7-tile-ov{256,448}.json、run-full.log（逐页
   耗时：letterbox 0.3-0.5s/页、tile≈0.136s/tile，pre-k08 tile 7.9s/58 tiles）。
-- **质量判断办法**：两口径唯一差异=成像口径本身（预处理对照表 13 环节+共享函数
+- **质量判断办法**：两口径预处理与成像口径唯一差异（另有 NMS 作用域+页级合并两层有意步骤）本身（预处理对照表 13 环节+共享函数
   本体）；匹配算法与 eval_v2.py 逐字同构；数字经 recompute_matrix.py+复核者独立
   实现双重从盘上复算。
 - **失败样例**：letterbox 全零输出（结构性）；v2b tile 误检（pre-k01 23 preds
@@ -189,10 +189,14 @@ KO 页 tile 参数化用例（GT 页集仅 690/600 宽，归 T4 扩充）；GPU 
 - **建议**：T3 Gate 采信 ko-caliber-proposal.md 五条口径；T4 落地时先查相位
   方差再扩展页宽参数化；v2b 噪声归 T3 扩标处置。
 
+## 交付链补充（P3-3）
+
+- docs head=76bf2a94（r1 审查对象）；返修=r2 定点复审对象 3517ceda；后续 commit 见分支链尾。
+
 ## DSH r1 审查记录（2026-10-05，approved_with_conditions；P1-1/P2-1 返修见上）
 
 - Verdict=approved_with_conditions（1×P1、1×P2、8×P3、4×P4）；全文落 doc/reviews/M2-KO-TILE-CALIB-76bf2a94-dsh-r1.md。
-- **P1-1（核心，已闭）**：GT 同源性循环性——KO GT 源自 chiqui7 tile ov128 采集，「56/56 满召回/P 0.8235」降级为同源复现、「ov128 最优」降级为相位一致；核心结论（letterbox n_pred=0 vs tile n_pred>0=口径瓶颈非权重）锚定 GT 无关事实独立成立；T3 若度量模型质量须另建非 chiqui7 派生 KO GT（提请 T3 裁决）。
+- **P1-1（核心，已闭）**：GT 同源性循环性——KO GT 源自 chiqui7 tile ov128 采集，「56/56 同源复现（见报告 GT 同源性限制段）/P 0.8235」降级为同源复现、「ov128 与 GT 采集相位一致」降级为相位一致；核心结论（letterbox n_pred=0 vs tile n_pred>0=口径瓶颈非权重）锚定 GT 无关事实独立成立；T3 若度量模型质量须另建非 chiqui7 派生 KO GT（提请 T3 裁决）。
 - P2-1 复现命令已更正（无参运行）；P3-1/2/3/4/5/P4-1 已落报告 §9；P3-6 治理登记=编排 governance commit 01bfe108 已登记（本 worktree 不含 main 治理 commit，非缺口）；P3-7 署名已更正。
 - **T4 材料补强（DSH 建议）**：冻结 ov128 两条硬约束=①overlap≥h_max（本 GT 675.8→≥676）②页级合并层（sfx-only 0.5）为 T4 新造需 fail-fast 纪律+保留 pre-NMS 框。
 - 集成 Gate（DSH 无 shell 三项由集成方复跑）：git diff 9258afc0..<merge> -- src/ training_data/ 为空+pin d87389af 在位+recompute_matrix.py 8 格相等。
