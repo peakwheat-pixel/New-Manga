@@ -61,21 +61,27 @@ from ports.providers.errors import (
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 
-#: Real pinned weights (gitignored task-envs tree).
+#: Real pinned weights (gitignored task-envs tree). M2-SFX-T4-SWITCH moved the
+#: production pin to v2b (sha 944e8114…) — the real-weights anchor file moves
+#: with the pin; the chiqui7 file at weights/yolo11s-seg.onnx is the rollback
+#: weights and is refused by the SHA gate under the new pin (by design).
 REAL_WEIGHTS = Path(
-    "G:/CODEX/New Manga.task-envs/M2-SFX-DETECT/weights/yolo11s-seg.onnx"
+    "G:/CODEX/New Manga.task-envs/M2-SFX-DETECT/weights-v2b/yolo11s-seg.onnx"
 )
-#: The M2-SFX-DETECT-EVAL frame with the highest-confidence sfx detection
-#: (K07_R123, conf 0.9313 — the payload line the real test reproduces).
+#: The M2-SFX-DETECT-EVAL frame with the highest-confidence sfx detection in
+#: both eras (K07_R123). Expected values come from the v2b anchor JSON
+#: (M2-SFX-T4-SWITCH, conf 0.9047); the chiqui7-era anchor
+#: (experiments/M2-SFX-DETECT/onnx-sfx-frames.json, conf 0.9313) stays on disk
+#: as eval history but no longer matches the production pin.
 REAL_FRAME = Path(
     "G:/CODEX/New Manga.task-envs/M2-DOCTR-QUAL-work/regions/K07_R123.png"
 )
-EVAL_PAYLOAD = (
-    REPO_ROOT / "experiments" / "M2-SFX-DETECT" / "onnx-sfx-frames.json"
+V2B_ANCHOR = (
+    REPO_ROOT / "experiments" / "M2-SFX-T4-SWITCH" / "v2b-k07-r123-anchor.json"
 )
 REAL_SKIP = pytest.mark.skipif(
     not REAL_WEIGHTS.is_file() or not REAL_FRAME.is_file(),
-    reason="real chiqui7 weights / eval frame not present on this machine",
+    reason="real v2b weights / eval frame not present on this machine",
 )
 
 PAGE_W, PAGE_H = 1000, 2000
@@ -908,16 +914,22 @@ def test_arbitration_degraded_sfx_provider_skips_arbitration(monkeypatch):
 @REAL_SKIP
 @pytest.mark.parametrize("rgb32", [False, True], ids=["rgb24", "rgb32"])
 def test_real_weights_reproduce_eval_payload(rgb32):
-    """The production provider reproduces the M2-SFX-DETECT-EVAL K07_R123
-    sfx detection (conf 0.9313) — the eval-caliber replication, end to end."""
-    payload = json.loads(EVAL_PAYLOAD.read_text(encoding="utf-8"))
-    region = payload["regions"]["K07_R123"]
+    """The production provider reproduces the M2-SFX-T4-SWITCH v2b anchor on
+    K07_R123 (conf 0.9047) — the pinned-weights regression anchor, end to end.
+    The anchor JSON carries the weights sha it was extracted with; if the pin
+    moves again, re-extract the anchor (experiments/M2-SFX-T4-SWITCH/
+    extract_v2b_anchor.py) — the SHA gate makes stale weights fail closed."""
+    payload = json.loads(V2B_ANCHOR.read_text(encoding="utf-8"))
+    assert payload["weights_sha256"] == SFX_WEIGHTS_SHA256, (
+        "v2b anchor was extracted from weights that no longer match the "
+        "production pin — re-run extract_v2b_anchor.py"
+    )
     expected = [
         detection
-        for detection in region["chiqui7_yolo11s_seg"]["detections"]
+        for detection in payload["detections"]
         if detection["cls"] == "sfx" and detection["conf"] >= 0.5
     ]
-    assert expected, "eval payload lost its K07_R123 sfx anchor"
+    assert expected, "v2b anchor lost its K07_R123 sfx detection"
 
     with Image.open(REAL_FRAME) as image:
         rgb = image.convert("RGB")
