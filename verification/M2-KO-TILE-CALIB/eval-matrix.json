@@ -1,0 +1,139 @@
+{
+ "task": "M2-KO-TILE-CALIB AC1+AC2（KO 长条页 tile vs letterbox 口径对照）",
+ "generated_at_utc": "2026-10-05T02:01:28Z",
+ "mode": "full",
+ "gt_source": {
+  "manifests": [
+   "G:\\CODEX\\New Manga.worktrees\\M2-SFX-ANNOTATE-R2-zcode\\training_data\\sfx-v1\\annotate-r2\\final\\manifest.val.json",
+   "G:\\CODEX\\New Manga.worktrees\\M2-SFX-ANNOTATE-R2-zcode\\training_data\\sfx-v1\\annotate-r2\\final\\manifest.test.json"
+  ],
+  "pages": {
+   "pre-k08": {
+    "split": "val",
+    "size": [
+     690,
+     51971
+    ],
+    "n_gt": 27,
+    "aspect": "1:75"
+   },
+   "pre-k09": {
+    "split": "val",
+    "size": [
+     690,
+     100480
+    ],
+    "n_gt": 24,
+    "aspect": "1:146"
+   },
+   "pre-k01": {
+    "split": "test",
+    "size": [
+     690,
+     62133
+    ],
+    "n_gt": 2,
+    "aspect": "1:90"
+   },
+   "pre-k02": {
+    "split": "test",
+    "size": [
+     600,
+     18401
+    ],
+    "n_gt": 3,
+    "aspect": "1:31"
+   }
+  },
+  "n_gt_total": 56,
+  "image_sha256_asserted": true
+ },
+ "weights": {
+  "chiqui7": {
+   "onnx": "G:\\CODEX\\New Manga.task-envs\\M2-SFX-DETECT\\weights\\yolo11s-seg.onnx",
+   "sha256": "d87389af4350954143a216bcfe40fd2ad93312cb136534e6073c9c740d98b646",
+   "note": "生产现役权重（pin d87389af… 逐字核对），pin 原样零重指",
+   "imgsz": 1024,
+   "imgsz_source": "metadata_parsed"
+  },
+  "v2b": {
+   "onnx": "G:\\CODEX\\New Manga.worktrees\\M2-SFX-TRAIN-V2-zcode\\training_data\\sfx-v1\\train-v2\\weights\\v2b\\best.onnx",
+   "sha256": "944e811410933ad6ff8d32446fcc9eef90fb463794e1874ce83035e83acd418d",
+   "note": "T2-V2 产物 best.onnx（sha 前缀 944e8114 断言过），进程内重指 pin",
+   "imgsz": 1024,
+   "imgsz_source": "metadata_parsed"
+  }
+ },
+ "calibers": {
+  "letterbox": "生产序列原样 SfxDetectionProvider.detect（letterbox 1024/类无关 NMS 0.7/sfx 过滤/CPUExecutionProvider）",
+  "tile": "R1 tile_690x1024_overlap128 复刻：tile 宽=页宽原生无缩放、高 1024、重叠 128（步长 896、末尾补页底锚点）；每 tile 生产序列本体推理（dsfx._letterbox+_sfx_boxes）；页级跨 tile IoU 0.5 conf 降序贪心 NMS（R1 _dedup_boxes 逐字）"
+ },
+ "matching": "box IoU>=0.5，pred conf 降序贪心（每 GT 至多一预测；沿 eval_v2.py match_gt 逐字）",
+ "confs": {
+  "0.5": "生产冻结",
+  "0.2": "宽松口径"
+ },
+ "matrix": {
+  "chiqui7": {
+   "letterbox": {
+    "0.5": {
+     "matched": "0/56",
+     "recall_rate": 0.0,
+     "precision": null,
+     "n_pred": 0
+    },
+    "0.2": {
+     "matched": "0/56",
+     "recall_rate": 0.0,
+     "precision": null,
+     "n_pred": 0
+    }
+   },
+   "tile": {
+    "0.5": {
+     "matched": "56/56",
+     "recall_rate": 1.0,
+     "precision": 0.8235,
+     "n_pred": 68
+    },
+    "0.2": {
+     "matched": "56/56",
+     "recall_rate": 1.0,
+     "precision": 0.6667,
+     "n_pred": 84
+    }
+   }
+  },
+  "v2b": {
+   "letterbox": {
+    "0.5": {
+     "matched": "0/56",
+     "recall_rate": 0.0,
+     "precision": null,
+     "n_pred": 0
+    },
+    "0.2": {
+     "matched": "0/56",
+     "recall_rate": 0.0,
+     "precision": null,
+     "n_pred": 0
+    }
+   },
+   "tile": {
+    "0.5": {
+     "matched": "35/56",
+     "recall_rate": 0.625,
+     "precision": 0.3465,
+     "n_pred": 101
+    },
+    "0.2": {
+     "matched": "43/56",
+     "recall_rate": 0.7679,
+     "precision": 0.2019,
+     "n_pred": 213
+    }
+   }
+  }
+ },
+ "wording_discipline": "directional 评测，统计功效低；结论禁用「显著」；0 也如实"
+}
