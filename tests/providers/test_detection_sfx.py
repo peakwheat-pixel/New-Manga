@@ -45,11 +45,21 @@ from infrastructure.providers.detection_sfx import (
     SFX_CLASS_MAP,
     SFX_DEFAULT_IMGSZ,
     SFX_LABEL_PREFIX,
+    SFX_TILE_HEIGHT,
+    SFX_TILE_NMS_IOU,
+    SFX_TILE_OVERLAP,
+    SFX_TILE_ROUTE_MAX_PAGE_W,
+    SFX_TILE_ROUTE_MIN_ASPECT,
     SFX_WEIGHTS_SHA256,
     MangaSfxParallelDetectionProvider,
     SfxDetectionProvider,
+    _assert_tile_caliber,
     _parse_imgsz,
     _parse_names_metadata,
+    _routes_to_tile,
+    _tile_config,
+    _tile_page_nms,
+    _tile_ys,
 )
 from ports.detection.ports import DetectionRequest, DetectionResult, RegionCandidate
 from ports.providers.errors import (
@@ -972,3 +982,246 @@ def test_real_weights_blank_page_structurally_valid():
         assert len(candidate.polygon) == 4
         assert 0.0 <= (candidate.confidence or 0.0) <= 1.0
     assert dict(result.options)["conf_threshold"] == "0.5"
+
+
+# ---------------------------------------------------------------------------
+# KO long-strip tile routing (M2-SFX-T5-TILE-KO)
+#
+# The KO long-strip pages (600/690 px wide, aspect 1:30.7-1:145.6) sub-pixelize
+# under the whole-page letterbox (zero sfx response — T3/KO-TILE structural
+# fact), so the frozen tile caliber is the only KO-domain route from zero to
+# sfx candidates: tile width = the native page width, tile_h 1024, step
+# 1024-128=896, trailing page-bottom anchor, per-tile production sequence
+# verbatim (letterbox + sfx boxes), page-level cross-tile NMS IoU 0.5
+# conf-descending greedy. The production branch replicates the T3 evaluation
+# tile implementation (eval_gate_t3.py run_tile / tile_calib.py) — AC3
+# bit-parity with the T3 matrix (v2b 35/56+48/135, chiqui7 56/56+41/135) is
+# the implementation-equivalence evidence.
+# ---------------------------------------------------------------------------
+
+_TILE_ENV_NAMES = (
+    "NEWMANGA_SFX_TILE",
+    "NEWMANGA_SFX_TILE_ROUTE_MAX_PAGE_W",
+    "NEWMANGA_SFX_TILE_ROUTE_MIN_ASPECT",
+    "NEWMANGA_SFX_TILE_HEIGHT",
+    "NEWMANGA_SFX_TILE_OVERLAP",
+    "NEWMANGA_SFX_TILE_NMS_IOU",
+)
+
+
+def _tile_defaults(monkeypatch) -> None:
+    for name in _TILE_ENV_NAMES:
+        monkeypatch.delenv(name, raising=False)
+
+
+def test_tile_constants_are_frozen():
+    """The frozen caliber numbers, verbatim from the KO-TILE proposal §3
+    (eval_gate_t3.py / tile_calib.py lines of record)."""
+    assert SFX_TILE_HEIGHT == 1024
+    assert SFX_TILE_OVERLAP == 128
+    assert SFX_TILE_NMS_IOU == 0.5
+    assert SFX_TILE_ROUTE_MAX_PAGE_W == 690
+    assert SFX_TILE_ROUTE_MIN_ASPECT == 8.0
+
+
+def test_tile_ys_frozen_caliber_matches_t3_tile_counts():
+    """The anchor sequence over the four KO exam page heights reproduces the
+    T3 tile counts (58/112/70/21) — the frozen caliber's geometry face."""
+    assert len(_tile_ys(51971, SFX_TILE_HEIGHT, SFX_TILE_OVERLAP)) == 58
+    assert len(_tile_ys(100480, SFX_TILE_HEIGHT, SFX_TILE_OVERLAP)) == 112
+    assert len(_tile_ys(62133, SFX_TILE_HEIGHT, SFX_TILE_OVERLAP)) == 70
+    assert len(_tile_ys(18401, SFX_TILE_HEIGHT, SFX_TILE_OVERLAP)) == 21
+
+
+def test_tile_ys_step_anchors_and_bottom_coverage():
+    assert _tile_ys(2048, 1024, 128) == [0, 896, 1024]  # step + trailing anchor
+    assert _tile_ys(1024, 1024, 128) == [0]  # page exactly one tile
+    assert _tile_ys(800, 1024, 128) == [0]  # page shorter than a tile
+    assert _tile_ys(1025, 1024, 128) == [0, 1]  # 1px overflow -> bottom anchor
+
+
+def test_tile_caliber_assertion_rejects_broken_geometry():
+    """T4-承接 r1 P3-2 closure: the frozen caliber (step / first anchor /
+    page-bottom coverage) is asserted at run time via a typed raise —
+    stronger than the ``assert`` statement, never stripped under ``-O``."""
+    _assert_tile_caliber([0, 896, 1024], 2048, 1024, 128)  # well-formed
+    with pytest.raises(ProviderInvalidOutput, match="step"):
+        _assert_tile_caliber([0, 800, 1024], 2048, 1024, 128)
+    with pytest.raises(ProviderInvalidOutput, match="page bottom"):
+        _assert_tile_caliber([0, 896], 2048, 1024, 128)
+    with pytest.raises(ProviderInvalidOutput, match="first anchor"):
+        _assert_tile_caliber([512, 1408], 2048, 1024, 128)
+    with pytest.raises(ProviderInvalidOutput, match="empty"):
+        _assert_tile_caliber([], 2048, 1024, 128)
+    # DSH r1 P3-3: the degenerate branch (y + tile_h <= y, i.e. tile_h <= 0)
+    # must also raise. It is deliberately defensive — with tile_h > 0 and the
+    # first-anchor/step checks passing, no _tile_ys output can reach it — so
+    # the case is synthetic; constant freezing itself is pinned by
+    # test_tile_constants_are_frozen above.
+    with pytest.raises(ProviderInvalidOutput, match="degenerate"):
+        _assert_tile_caliber([0], 0, 0, 0)
+
+
+def test_tile_config_defaults_are_frozen(monkeypatch):
+    _tile_defaults(monkeypatch)
+    cfg = _tile_config()
+    assert cfg.enabled is True
+    assert cfg.route_max_page_w == 690.0
+    assert cfg.route_min_aspect == 8.0
+    assert cfg.tile_h == 1024
+    assert cfg.overlap == 128
+    assert cfg.nms_iou == 0.5
+
+
+def test_tile_route_decision_boundaries(monkeypatch):
+    _tile_defaults(monkeypatch)
+    cfg = _tile_config()
+    assert _routes_to_tile(690, 51971, cfg)  # KO pre-k08
+    assert _routes_to_tile(600, 18401, cfg)  # KO pre-k02
+    assert not _routes_to_tile(691, 100000, cfg)  # width above the route cap
+    assert not _routes_to_tile(690, 3000, cfg)  # aspect below the route floor
+    assert _routes_to_tile(690, 5520, cfg)  # aspect == 8.0 boundary -> tile
+    assert not _routes_to_tile(1100, 1600, cfg)  # ordinary page
+
+
+def test_tile_env_off_routes_long_strip_page_back_to_letterbox(monkeypatch):
+    """The kill switch: NEWMANGA_SFX_TILE=off restores the pre-T5 letterbox
+    behavior for a page whose shape would otherwise route to tiles (600x4800
+    = the aspect-8.0 route boundary)."""
+    monkeypatch.setenv("NEWMANGA_SFX_TILE", "off")
+    rows = [((345.0, 55.0, 200.0, 90.0), [0.05, 0.05, 0.90, 0.00])]
+    result = _provider_with_engine(rows).detect(_request(width=600, height=4800))
+    options = dict(result.options)
+    assert options["sfx_route"] == "letterbox"
+    assert "tile_count" not in options
+
+
+def test_tile_env_override_expands_the_route_domain(monkeypatch):
+    monkeypatch.setenv("NEWMANGA_SFX_TILE_ROUTE_MAX_PAGE_W", "800")
+    monkeypatch.setenv("NEWMANGA_SFX_TILE_ROUTE_MIN_ASPECT", "4.0")
+    cfg = _tile_config()
+    assert cfg.route_max_page_w == 800.0
+    assert cfg.route_min_aspect == 4.0
+    assert _routes_to_tile(800, 10000, cfg)
+
+
+def test_tile_env_override_tile_geometry_records_in_options(monkeypatch):
+    monkeypatch.setenv("NEWMANGA_SFX_TILE_HEIGHT", "512")
+    monkeypatch.setenv("NEWMANGA_SFX_TILE_OVERLAP", "64")
+    monkeypatch.setenv("NEWMANGA_SFX_TILE_NMS_IOU", "0.4")
+    rows = [((345.0, 55.0, 200.0, 90.0), [0.05, 0.05, 0.90, 0.00])]
+    # 690x5520 routes (aspect 8.0); tile_h 512 / overlap 64 -> step 448,
+    # anchors [0,448,...,4928] + trailing 5008 = 13 tiles.
+    result = _provider_with_engine(rows).detect(_request(width=690, height=5520))
+    options = dict(result.options)
+    assert options["sfx_route"] == "tile"
+    assert options["tile_h"] == "512"
+    assert options["tile_overlap"] == "64"
+    assert options["tile_nms_iou"] == "0.4"
+    assert options["tile_count"] == "13"
+
+
+@pytest.mark.parametrize(
+    ("name", "value"),
+    [
+        ("NEWMANGA_SFX_TILE", ""),
+        ("NEWMANGA_SFX_TILE", "auto"),
+        ("NEWMANGA_SFX_TILE_ROUTE_MAX_PAGE_W", ""),
+        ("NEWMANGA_SFX_TILE_ROUTE_MAX_PAGE_W", "abc"),
+        ("NEWMANGA_SFX_TILE_ROUTE_MAX_PAGE_W", "0"),
+        ("NEWMANGA_SFX_TILE_ROUTE_MAX_PAGE_W", "-5"),
+        ("NEWMANGA_SFX_TILE_ROUTE_MIN_ASPECT", ""),
+        ("NEWMANGA_SFX_TILE_ROUTE_MIN_ASPECT", "abc"),
+        ("NEWMANGA_SFX_TILE_ROUTE_MIN_ASPECT", "0"),
+        ("NEWMANGA_SFX_TILE_HEIGHT", ""),
+        ("NEWMANGA_SFX_TILE_HEIGHT", "abc"),
+        ("NEWMANGA_SFX_TILE_HEIGHT", "0"),
+        ("NEWMANGA_SFX_TILE_OVERLAP", ""),
+        ("NEWMANGA_SFX_TILE_OVERLAP", "abc"),
+        ("NEWMANGA_SFX_TILE_OVERLAP", "0"),
+        ("NEWMANGA_SFX_TILE_OVERLAP", "1024"),  # must stay < tile_h (step >= 1)
+        ("NEWMANGA_SFX_TILE_NMS_IOU", ""),
+        ("NEWMANGA_SFX_TILE_NMS_IOU", "abc"),
+        ("NEWMANGA_SFX_TILE_NMS_IOU", "0"),
+        ("NEWMANGA_SFX_TILE_NMS_IOU", "1.5"),
+    ],
+)
+def test_tile_env_illegal_value_fails_fast_before_any_inference(
+    monkeypatch, name, value
+):
+    """The TILING/ARBITRATION fail-fast discipline: an empty or illegal
+    ``NEWMANGA_SFX_TILE_*`` env is a ValueError naming the variable, raised
+    BEFORE the weights file is even resolved (the provider below carries a
+    missing-weights path that would type PROVIDER_NOT_CONFIGURED if the env
+    gate did not fire first) — never a silent default, never a half-detected
+    page. (The provider below carries a missing-weights path that would type
+    PROVIDER_NOT_CONFIGURED if the env gate did not fire first.)"""
+    monkeypatch.setenv(name, value)
+    provider = SfxDetectionProvider(weights_path=Path("missing.onnx"))
+    with pytest.raises(ValueError, match=name):
+        provider.detect(_request())
+
+
+def test_tile_detect_translates_tiles_and_merges_page_level():
+    """End-to-end tile face over a fake session: a 600x4800 page sits exactly
+    on the aspect-8.0 route boundary; anchors [0, 896, 1792, 2688, 3584,
+    3776], each tile runs the production letterbox+boxes sequence, the
+    per-tile results are translated by +y0 into page coordinates and survive
+    the page-level cross-tile NMS (the same tile-local box from different
+    anchors lands on disjoint page rows here — the +y0 caliber is the
+    assertion target)."""
+    # Tile 600x1024 -> letterbox scale 1.0; box letterbox xyxy
+    # (245,10)-(445,100), sfx conf 0.9.
+    rows = [((345.0, 55.0, 200.0, 90.0), [0.05, 0.05, 0.90, 0.00])]
+    result = _provider_with_engine(rows).detect(_request(width=600, height=4800))
+    options = dict(result.options)
+    assert options["sfx_route"] == "tile"
+    assert options["tile_count"] == "6"
+    assert options["tile_h"] == "1024"
+    assert options["tile_overlap"] == "128"
+    assert options["tile_nms_iou"] == "0.5"
+    assert _labels(result) == [f"sfx-{i}" for i in range(1, 7)]
+    for candidate, y0 in zip(result.candidates, (0, 896, 1792, 2688, 3584, 3776)):
+        xs = [point[0] for point in candidate.polygon]
+        page_ys = [point[1] for point in candidate.polygon]
+        assert min(xs) == pytest.approx(245.0, abs=1e-3)
+        assert max(xs) == pytest.approx(445.0, abs=1e-3)
+        assert min(page_ys) == pytest.approx(10.0 + y0, abs=1e-3)
+        assert max(page_ys) == pytest.approx(100.0 + y0, abs=1e-3)
+        assert candidate.confidence == pytest.approx(0.90, abs=1e-3)
+
+
+def test_tile_page_nms_suppresses_cross_tile_duplicates():
+    """Page-level cross-tile dedup, dedup_boxes semantics verbatim: conf
+    descending stable greedy, IoU >= threshold drops the newcomer, the kept
+    ordering is (-conf, xyxy)."""
+    boxes = [
+        ([10.0, 1024.0, 100.0, 1124.0], 0.80),  # trailing-anchor tile's copy
+        ([10.0, 1000.0, 100.0, 1100.0], 0.90),  # overlapping-region tile, wins
+        ([500.0, 10.0, 590.0, 100.0], 0.60),  # disjoint, keeps its slot
+    ]
+    assert _tile_page_nms(boxes, 0.5) == [
+        (10.0, 1000.0, 100.0, 1100.0, 0.90),
+        (500.0, 10.0, 590.0, 100.0, 0.60),
+    ]
+
+
+def test_ordinary_page_routes_letterbox_verbatim():
+    """An ordinary page takes the letterbox path with the candidate surface
+    unchanged (the pre-T5 anchor numbers from
+    test_sfx_class_only_filter_and_anonymous_labels) and the route recorded."""
+    rows = [
+        ((256.0, 256.0, 51.2, 102.4), [0.05, 0.05, 0.90, 0.00]),
+        ((768.0, 256.0, 51.2, 102.4), [0.85, 0.05, 0.05, 0.05]),
+        ((256.0, 768.0, 51.2, 102.4), [0.05, 0.05, 0.05, 0.99]),
+    ]
+    result = _provider_with_engine(rows).detect(_request())
+    assert dict(result.options)["sfx_route"] == "letterbox"
+    assert _labels(result) == ["sfx-1"]
+    candidate = result.candidates[0]
+    xs = [point[0] for point in candidate.polygon]
+    ys = [point[1] for point in candidate.polygon]
+    assert min(xs) == pytest.approx(450.0, abs=1e-3)
+    assert max(xs) == pytest.approx(550.0, abs=1e-3)
+    assert min(ys) == pytest.approx(400.0, abs=1e-3)
+    assert max(ys) == pytest.approx(600.0, abs=1e-3)

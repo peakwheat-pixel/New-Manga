@@ -1,0 +1,185 @@
+{
+ "task": "M2-SFX-T5-TILE-KO AC2 tile dual-track performance",
+ "generated_at_utc": "2026-10-05T16:58:30Z",
+ "generated_from": "experiments/M2-SFX-T5-TILE-KO/perf_tile_dual.py",
+ "protocol": "每页 warm-up 1 次不计 + 计测 1 次；tile 冻结口径 conf 0.5",
+ "env": {
+  "host_gpu": "NVIDIA GeForce RTX 5070 Ti",
+  "gpu_ep_package": "onnxruntime-directml (DmlExecutionProvider)"
+ },
+ "faces": {
+  "cpu_v2b": {
+   "ep": "CPUExecutionProvider (生产 _build_engine 原样)",
+   "weights": "v2b (生产 pin 944e8114)",
+   "rows": [
+    {
+     "sample_id": "pre-k08",
+     "page_size": [
+      690,
+      51971
+     ],
+     "sfx_route": "tile",
+     "tile_count": 58,
+     "wall_s": 9.26,
+     "provider_elapsed_ms": 9259
+    },
+    {
+     "sample_id": "pre-k09",
+     "page_size": [
+      690,
+      100480
+     ],
+     "sfx_route": "tile",
+     "tile_count": 112,
+     "wall_s": 17.96,
+     "provider_elapsed_ms": 17952
+    },
+    {
+     "sample_id": "pre-k01",
+     "page_size": [
+      690,
+      62133
+     ],
+     "sfx_route": "tile",
+     "tile_count": 70,
+     "wall_s": 11.24,
+     "provider_elapsed_ms": 11233
+    },
+    {
+     "sample_id": "pre-k02",
+     "page_size": [
+      600,
+      18401
+     ],
+     "sfx_route": "tile",
+     "tile_count": 21,
+     "wall_s": 3.36,
+     "provider_elapsed_ms": 3355
+    }
+   ],
+   "stats": {
+    "pages": 4,
+    "total_s": 41.82,
+    "mean_s": 10.46,
+    "max_s": 17.96,
+    "min_s": 3.36
+   }
+  },
+  "gpu_v2b": {
+   "ep": "DmlExecutionProvider (session swap, tile 序列=生产代码逐字)",
+   "weights": "v2b (生产 pin 944e8114)",
+   "rows": [
+    {
+     "sample_id": "pre-k08",
+     "page_size": [
+      690,
+      51971
+     ],
+     "sfx_route": "tile",
+     "tile_count": 58,
+     "wall_s": 0.95,
+     "provider_elapsed_ms": 951
+    },
+    {
+     "sample_id": "pre-k09",
+     "page_size": [
+      690,
+      100480
+     ],
+     "sfx_route": "tile",
+     "tile_count": 112,
+     "wall_s": 1.89,
+     "provider_elapsed_ms": 1883
+    },
+    {
+     "sample_id": "pre-k01",
+     "page_size": [
+      690,
+      62133
+     ],
+     "sfx_route": "tile",
+     "tile_count": 70,
+     "wall_s": 1.14,
+     "provider_elapsed_ms": 1135
+    },
+    {
+     "sample_id": "pre-k02",
+     "page_size": [
+      600,
+      18401
+     ],
+     "sfx_route": "tile",
+     "tile_count": 21,
+     "wall_s": 0.34,
+     "provider_elapsed_ms": 335
+    }
+   ],
+   "stats": {
+    "pages": 4,
+    "total_s": 4.32,
+    "mean_s": 1.08,
+    "max_s": 1.89,
+    "min_s": 0.34
+   }
+  },
+  "gpu_chiqui7": {
+   "ep": "DmlExecutionProvider (session swap, tile 序列=生产代码逐字)",
+   "weights": "chiqui7 (回滚 pin d87389af, 进程内重指)",
+   "rows": [
+    {
+     "sample_id": "pre-k08",
+     "page_size": [
+      690,
+      51971
+     ],
+     "sfx_route": "tile",
+     "tile_count": 58,
+     "wall_s": 1.13,
+     "provider_elapsed_ms": 1130
+    },
+    {
+     "sample_id": "pre-k09",
+     "page_size": [
+      690,
+      100480
+     ],
+     "sfx_route": "tile",
+     "tile_count": 112,
+     "wall_s": 2.19,
+     "provider_elapsed_ms": 2180
+    },
+    {
+     "sample_id": "pre-k01",
+     "page_size": [
+      690,
+      62133
+     ],
+     "sfx_route": "tile",
+     "tile_count": 70,
+     "wall_s": 1.37,
+     "provider_elapsed_ms": 1370
+    },
+    {
+     "sample_id": "pre-k02",
+     "page_size": [
+      600,
+      18401
+     ],
+     "sfx_route": "tile",
+     "tile_count": 21,
+     "wall_s": 0.41,
+     "provider_elapsed_ms": 404
+    }
+   ],
+   "stats": {
+    "pages": 4,
+    "total_s": 5.1,
+    "mean_s": 1.27,
+    "max_s": 2.19,
+    "min_s": 0.41
+   }
+  }
+ },
+ "wording_discipline": "directional 数据如实登记不作质量判定；部署形态终选=用户裁决收口呈报项",
+ "cited_chiqui7_cpu_from_ac3_parity": "verification/M2-SFX-T5-TILE-KO/raw/parity-chiqui7.json per_page elapsed_s（CPU 生产 EP，等价性运行顺带测量）"
+}
