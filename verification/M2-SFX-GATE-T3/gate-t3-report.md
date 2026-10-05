@@ -2,7 +2,7 @@
 
 - Task：[doc/tasks/M2-SFX-GATE-T3.md](../../doc/tasks/M2-SFX-GATE-T3.md) AC5 ｜ Owner：ZCode ｜ Reviewer：DeepSeek Harness（非作者，待 review）｜ 日期：2026-10-05
 - 分支 `agent/zcode/M2-SFX-GATE-T3`（base_commit=`87ca8724`）｜ worktree：`G:/CODEX/New Manga.worktrees/M2-SFX-GATE-T3-zcode` ｜ AC4 评测执行 head=`2e95760a`
-- 门定义事实源：[gate-definition.md](gate-definition.md) **v1.0-frozen**（commit `907011a2`，评测执行开始后零修改——冻结时序实证见 §5-①）。本报告逐门判定均依据 gate-definition v1.0 §4.Gx，引用非冻结版本定义的判定无效（§5.4）。
+- 门定义事实源：[gate-definition.md](gate-definition.md) **v1.0-frozen**（v1.1 追加登记见 §6；commit `907011a2`，评测执行后 v1.0 段零修改——冻结时序实证见 §5-①；v1.1=§5.3 追加登记 commit `32fa3bab`，不回溯，G1 判据集不变）。本报告逐门判定均依据 gate-definition v1.0 §4.Gx，引用非冻结版本定义的判定无效（§5.4）。
 - 判定纪律（§0.4）：统计功效低，禁用「显著」；0 也如实；**FAIL 如实判定即为本 Task 成功**。
 
 ## 0. 判定速览
@@ -77,7 +77,7 @@ GT 属性标注（每格）：①考卷 5 框=R2 出厂（chiqui7 扫描候选�
 
 ### 4.2 G2 · KO 长条页门（tile_ov128 冻结口径，双 GT）【硬】——v2a FAIL / v2b PASS
 
-依据 gate-definition v1.0 §4.G2。**条件①口径合规=PASS**（两候选同判）：冻结参数逐字复刻断言在位——K_TILE_H=1024/K_TILE_OVERLAP=128/TILE_PAGE_NMS_IOU=0.5（eval_gate_t3.py:104-106）、tile_ys 步长 896+末尾补页底锚点（:218-226）、页级跨 tile conf 降序贪心 NMS 0.5（:194-215）、每 tile 生产序列本体 `dsfx._letterbox`+`dsfx._sfx_boxes`（:428-429）；实测 tile_stats_total n_tiles=261（=4 页 tile 数合计，双 conf 一致）；**letterbox 对照并行 12 格全 0/56、0/135（n_pred=0 双 conf）**——零输出结构性事实复现；chiqui7 ko-tile 56/56 P=0.8235 与 KO-TILE 参考矩阵**逐位一致**（同链路复现上界）。
+依据 gate-definition v1.0 §4.G2。**条件①口径合规=PASS**（两候选同判）：冻结参数逐字复刻断言在位——K_TILE_H=1024/K_TILE_OVERLAP=128/TILE_PAGE_NMS_IOU=0.5（eval_gate_t3.py:105-107）、tile_ys 步长 896+末尾补页底锚点（:219-227）、页级跨 tile conf 降序贪心 NMS 0.5（:195-216）、每 tile 生产序列本体 `dsfx._letterbox`+`dsfx._sfx_boxes`（:429-430）；实测 tile_stats_total n_tiles=261（=4 页 tile 数合计，双 conf 一致）；**letterbox 对照并行 12 格全 0/56、0/135（n_pred=0 双 conf）**——零输出结构性事实复现；chiqui7 ko-tile 56/56 P=0.8235 与 KO-TILE 参考矩阵**逐位一致**（同链路复现上界）。
 
 **条件②KO-B 非派生切片相对不回退**（ko-npd 135 框，conf≥0.50；基线=chiqui7 41/135 R=0.3037）：
 
@@ -117,8 +117,8 @@ GT 属性标注（每格）：①考卷 5 框=R2 出厂（chiqui7 扫描候选�
 
 依据 gate-definition v1.0 §4.G5。逐断言（v2a/v2b 同判）：
 
-1. **SHA 门先证 PROVIDER_FAILED**：**T3 当轮未复跑**（eval_gate_t3.py:477-487 的「先验断言」=盘上权重 sha256 实算比对，非拒跑反向验证）；判定依据=**V2 当轮证据显式收编**：export-smoke-v2.json sha_gate.fired=:38-43/:122-127（v2a/v2b error_code=PROVIDER_FAILED）+sha_gate.ok=:44-50/:128-134，gate-definition §4.G5 阈值依据「三轮全过，正式门原样收编」。收编合法性依据：收编证据（export-smoke-v2.json）的 v2a/v2b onnx sha（:5/:11 `27d162e9…`/`944e8114…`）与 T3 被测权重 sha（eval-matrix.json weights）逐字相同（`27d162e9…`/`944e8114…`）——收编对象为同一批工件，非异批引用。
-2. **进程内重指全链 EXIT=0、零 src、pin 零改动**：T3 当轮=eval_gate_t3.py 进程内重指（build 窗口 :509-519+finally 恢复；推理窗口 :529-531+:711-712），三方 36 格全链跑完 EXIT=0（raw/run-full.log 完整落盘+eval-matrix.json 写出）；src/tests/contracts/packaging/apps diff=0（base 87ca8724..HEAD 26 文件全在 Task 允许路径，§5-⑥）；pin 现值 `d87389af…`（detection_sfx.py:110-112）base..HEAD 逐字一致。
+1. **SHA 门先证 PROVIDER_FAILED**：**T3 当轮未复跑**（eval_gate_t3.py:478-488 的「先验断言」=盘上权重 sha256 实算比对，非拒跑反向验证）；判定依据=**V2 当轮证据显式收编**：export-smoke-v2.json sha_gate.fired=:38-43/:122-127（v2a/v2b error_code=PROVIDER_FAILED）+sha_gate.ok=:44-50/:128-134，gate-definition §4.G5 阈值依据「三轮全过，正式门原样收编」。收编合法性依据：收编证据（export-smoke-v2.json）的 v2a/v2b onnx sha（:5/:11 `27d162e9…`/`944e8114…`）与 T3 被测权重 sha（eval-matrix.json weights）逐字相同（`27d162e9…`/`944e8114…`）——收编对象为同一批工件，非异批引用。
+2. **进程内重指全链 EXIT=0、零 src、pin 零改动**：T3 当轮=eval_gate_t3.py 进程内重指（build 重指窗口 :510-511+finally 恢复 :519-520；推理重指 :530-531+finally 恢复 :712-713），三方 36 格全链跑完 EXIT=0（raw/run-full.log 完整落盘+eval-matrix.json 写出）；src/tests/contracts/packaging/apps diff=0（base 87ca8724..HEAD 26 文件全在 Task 允许路径，§5-⑥）；pin 现值 `d87389af…`（detection_sfx.py:110-112）base..HEAD 逐字一致。
 3. **names 逐字**：`_build_engine` 装载期断言 drift 即拒（detection_sfx.py:433-443）——T3 三权重 engine build 全过；V2 逐字登记 names_metadata=`{0: 'bubble', 1: 'panel', 2: 'sfx', 3: 'text'}`（export-smoke-v2.json:55/139）。
 4. **imgsz `metadata_parsed`=1024**：T3 三权重 engine 逐行实测（raw/run-full.log:6-8）+eval-matrix.json weights.imgsz_source。
 5. **输出张量 `(1, 40, N)`**：V2 实测 [1,40,21504]（export-smoke-v2.json:92-98 v2a / :176-181 v2b）；T3 侧生产 `_sfx_boxes` 按 (1,40,N) 消费（detection_sfx.py:551-552）且 36 格全链成功（含 chiqui7 与 KO-TILE 参考矩阵逐位复现的功能性旁证）。
@@ -140,7 +140,7 @@ GT 属性标注（每格）：①考卷 5 框=R2 出厂（chiqui7 扫描候选�
 2. **契约合法、fail-closed 保持** ✓：V2 冒烟 detect 步骤实测 `class_filter=sfx`、`coordinate_space=page-global`（export-smoke-v2.json:67-87/150-170）；conf≥0.5 零候选=合法空输入非异常（T0 §5 先例，0 也如实）；T3 全部 raw JSON 契约面同构。
 3. **vs 基线同链对照新增故障=0** ✓（验证边界=检测契约面）：同页同参 chiqui7 基线同链路全程在列（V2 §4 三方同序列+T3 36 格三方对照）；v2a/v2b 未引入任何错误/异常/超时新增；框集差异 directional 登记（如 bj-exam v2b 5 框 vs 基线 6 框=基线少 1 误检，系新权重的目的非损害）。
 
-**执行边界（如实）与条件**：翻译链入口的深层调用（run_qualification 级 policy=translate 端到端，先例=M2-SFX-E2E-MATERIAL BJ06 8/8）在 T3 当轮与 T0/V2 均未以新权重执行——G7 链路证据止于检测契约面（此即冻结口径「T0/V2 冒烟方式」的边界；编排裁决（2026-10-05）已确认该边界口径并写入 Task `review_events`）。因此本判定为**条件性 PASS**：**条件=T4 部署前必须以新权重补跑一次 BJ06 型 policy=translate 端到端冒烟（run_qualification 级深层调用），未补证前不得把 G7 记为部署就绪**（§7-④；对 v2a/v2b 同约束）。该条件不影响候选资格结论（v2b 资格由 G1/G2/G5/G8 定，§0）。
+**执行边界（如实）与条件**：翻译链入口的深层调用（run_qualification 级 policy=translate 端到端，先例=M2-SFX-E2E-MATERIAL BJ06 8/8）在 T3 当轮与 T0/V2 均未以新权重执行——G7 链路证据止于检测契约面（此即冻结口径「T0/V2 冒烟方式」的边界；编排裁决（2026-10-05）已确认该边界口径，登记于 Task「Review 返修记录」段，review_events 由集成轮回填）。因此本判定为**条件性 PASS**：**条件=T4 部署前必须以新权重补跑一次 BJ06 型 policy=translate 端到端冒烟（run_qualification 级深层调用），未补证前不得把 G7 记为部署就绪**（§7-④；对 v2a/v2b 同约束）。该条件不影响候选资格结论（v2b 资格由 G1/G2/G5/G8 定，§0）。
 
 ### 4.8 G8 · 部署门【硬·checklist】——v2b 7/7 出证 PASS（候选资格保持）；v2a 审计只登记（已因 G1/G2 丧失资格）
 
@@ -161,7 +161,7 @@ GT 属性标注（每格）：①考卷 5 框=R2 出厂（chiqui7 扫描候选�
 
 ## 5. 作者侧复核（workflow 内 phase 5，非本 Task 正式独立 Review）
 
-**AC4 后作者侧复核=PASS**（六项复核全部执行于本 worktree，HEAD=`2e95760a`，base=`87ca8724`；未发现隔离失败或数字矛盾；2 条非阻断观察见 §5.1；正式独立 Review（DSH，非作者）见 doc/reviews/，集成轮落盘）：①Gate 定义完备性 PASS（五节齐备+冻结时序实证：`git log -- gate-definition.md` 仅 `907011a2` 一个提交（12:21），其后 AC2/AC3（`3c84f438`，20:07）与 AC4（`2e95760a`，20:38）均未触碰——评测执行开始后零修改；定义引用生产契约行号本 worktree 直验一致）；②标注独立性间接验证 PASS（作者侧脚本重算：a/b 互比 IoU 连续分布无逐位重合、npd vs 派生 GT matched 40 无 1.0、坐标数值指纹 100% 整数 vs preds 整数占比 12.8%（过程观察，未舍入坐标未落盘，不可复算）分离；「任务书无泄漏」为作者自查字段，本项为产物级间接验证）；③比对仲裁闭环重算 PASS（BJ32-37 a13/b17/matched12/only_a1/only_b5 与 npd a128/b135/matched106/only_a22/only_b29 逐值一致，135=106+29、51/51 final_xyxy 逐位）；④断言复跑 PASS（9/9+git diff 为空）；⑤评测矩阵复算 PASS（36 格全量超抽格要求）；⑥零 src+pin PASS（26 文件全在允许路径，禁止路径 diff 空，pin base..HEAD 逐字一致）。
+**AC4 后作者侧复核=PASS**（六项复核全部执行于本 worktree，HEAD=`2e95760a`，base=`87ca8724`；未发现隔离失败或数字矛盾；2 条非阻断观察见 §5.1；正式独立 Review（DSH，非作者）见 doc/reviews/，集成轮落盘）：①Gate 定义完备性 PASS（五节齐备+冻结时序实证：`git log -- gate-definition.md` 至 AC4 时点仅 `907011a2` 一个提交（12:21），其后 AC2/AC3（`3c84f438`，20:07）与 AC4（`2e95760a`，20:38）均未触碰——**v1.0 段评测执行后零修改（仅 907011a2）；v1.1=§5.3 追加登记（commit 32fa3bab，不回溯，G1 判据集不变=原始 5 框）**；定义引用生产契约行号本 worktree 直验一致）；②标注独立性间接验证 PASS（作者侧脚本重算：a/b 互比 IoU 连续分布无逐位重合、npd vs 派生 GT matched 40 无 1.0、坐标数值指纹 100% 整数 vs preds 整数占比 12.8%（过程观察，未舍入坐标未落盘，不可复算）分离；「任务书无泄漏」为作者自查字段，本项为产物级间接验证）；③比对仲裁闭环重算 PASS（BJ32-37 a13/b17/matched12/only_a1/only_b5 与 npd a128/b135/matched106/only_a22/only_b29 逐值一致，135=106+29、51/51 final_xyxy 逐位）；④断言复跑 PASS（9/9+git diff 为空）；⑤评测矩阵复算 PASS（36 格全量超抽格要求）；⑥零 src+pin PASS（26 文件全在允许路径，禁止路径 diff 空，pin base..HEAD 逐字一致）。
 
 **2 条非阻断观察（原样保留）**：(1) T3 当轮未复跑 PROVIDER_FAILED 拒跑反向验证——G5-① 判定须显式引用 V2 证据（本报告 §4.5-1 已照办）；(2) AC5（G1-G8 逐门判定+T4 终稿）在复核时点尚未产出——即本报告。
 

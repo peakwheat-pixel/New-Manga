@@ -2,7 +2,7 @@
 
 - Task：[doc/tasks/M2-SFX-GATE-T3.md](../../doc/tasks/M2-SFX-GATE-T3.md) AC1 ｜ Owner：ZCode ｜ 日期：2026-10-05
 - 分支 `agent/zcode/M2-SFX-GATE-T3`（base_commit=`87ca8724`，release=`f858edd3` 仅 Task 合同入库）｜ worktree：`G:/CODEX/New Manga.worktrees/M2-SFX-GATE-T3-zcode`
-- 版本：**v1.0-frozen**（本文档 commit 即冻结时点；变更规则见 §5）
+- 版本：**v1.0-frozen**（本文档 commit 即冻结时点；变更规则见 §5；v1.1 追加登记见 §6，不回溯）
 
 ## 0. 冻结声明
 
