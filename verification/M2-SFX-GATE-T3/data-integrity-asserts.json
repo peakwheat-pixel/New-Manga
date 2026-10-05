@@ -1,0 +1,87 @@
+{
+ "kind": "sfx-gate-t3/data-integrity-asserts@1",
+ "generated_from": "落盘文件独立复算（进程独立于产出脚本）",
+ "asserts": {
+  "S1_schema": {
+   "r4": 94,
+   "train_v4": 916,
+   "errors": {
+    "r4": 0,
+    "train_v4": 0
+   },
+   "assert": "PASS"
+  },
+  "S2_fingerprint": {
+   "recomputed": "6bb0ea1386c724b7a5e9775165e68ea58fd2912fdae87acc2bb2c095cb163805",
+   "lock": "6bb0ea1386c724b7a5e9775165e68ea58fd2912fdae87acc2bb2c095cb163805",
+   "seed": 20261004,
+   "assert": "PASS"
+  },
+  "S3_group_isolation": {
+   "violations": 0,
+   "challenge_groups": [
+    "densho810/vol05"
+   ],
+   "assert": "PASS"
+  },
+  "S4_exam": {
+   "members": [
+    "pre-bj17",
+    "pre-bj18",
+    "pre-bj32"
+   ],
+   "boxes": 8,
+   "original_5box_bitwise_r2": true,
+   "assert": "PASS"
+  },
+  "S5_names": {
+   "channel1_literal": "PASS",
+   "channel2_pyyaml": "PASS",
+   "expected": {
+    "0": "bubble",
+    "1": "panel",
+    "2": "sfx",
+    "3": "text"
+   },
+   "assert": "PASS"
+  },
+  "S6_exam_zero_overlap": {
+   "group_name": 0,
+   "sample_id": 0,
+   "page_sha256": 0,
+   "scope": "own 558 vs densho810 12",
+   "assert": "PASS"
+  },
+  "S7_npd_chain": {
+   "total_boxes": 135,
+   "traceable": 135,
+   "consensus": 106,
+   "divergence_arbitrated": 51,
+   "verdict_dist": {
+    "arbiter-correct": 1,
+    "arbiter-delete": 8,
+    "arbiter-delete-duplicate": 14,
+    "arbiter-keep": 19,
+    "arbiter-keep-merged": 9
+   },
+   "assert": "PASS"
+  },
+  "S8_r4_box_source": {
+   "bj32_35_boxes": 15,
+   "sources": {
+    "consensus_union": 12,
+    "arbiter_keep": 3
+   },
+   "assert": "PASS"
+  },
+  "S9_derived_crosscheck": {
+   "derived_gt": 56,
+   "npd_gt": 135,
+   "matched_iou05": 40,
+   "derived_only": 16,
+   "npd_only": 95,
+   "recomputed_independent": true,
+   "assert": "PASS"
+  }
+ }
+}
