@@ -1,0 +1,64 @@
+SHELL=PowerShell 7.6.6
+NODE=v24.15.0
+NPM=12.0.1
+HEAD=6f3544a22cf7e41d9bcbf0a89337ccb6ee26f6b5 (regression probe; WorkbenchPage temporarily reverted to prior behavior)
+COMMAND=npm test -- src/workbench/WorkbenchPage.test.tsx with latest WorkbenchPage guard patch temporarily reversed (cwd=apps/desktop/frontend)
+npm notice run m2rc1-frontend@0.1.0 test
+npm notice run vitest run src/workbench/WorkbenchPage.test.tsx
+
+ RUN  v2.1.9 G:/CODEX/New Manga.worktrees/RC4-react-consumer/apps/desktop/frontend
+
+ ❯ src/workbench/WorkbenchPage.test.tsx (23 tests | 2 failed) 249ms
+   × RC-4 Workbench actual DOM actions > drops a manual resource read that completes after switching pages 17ms
+     → expected <img …(4)></img> to be null
+   × RC-4 Workbench actual DOM actions > keeps the rerender preview when an earlier manual resource read finishes late 19ms
+     → expected 'blob:rc4-preview-2' to be 'blob:rc4-preview-1' // Object.is equality
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/workbench/WorkbenchPage.test.tsx > RC-4 Workbench actual DOM actions > drops a manual resource read that completes after switching pages
+AssertionError: expected <img …(4)></img> to be null
+
+- Expected: 
+null
+
++ Received: 
+<img
+  alt="page"
+  data-testid="viewer-image"
+  src="blob:rc4-preview-1"
+  style="display: block; max-width: none;"
+/>
+
+ ❯ src/workbench/WorkbenchPage.test.tsx:627:74
+    625|       await act(async () => { await nextTurn(); });
+    626|       expect(ui.resourceReads).toContain("http://m2res.localhost/m2id/…
+    627|       expect(ui.container.querySelector('[data-testid="viewer-image"]'…
+       |                                                                          ^
+    628|       expect(ui.revokedUrls).toContain("blob:rc4-preview-1");
+    629|       expect(ui.container.textContent).toContain("page page-2");
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  src/workbench/WorkbenchPage.test.tsx > RC-4 Workbench actual DOM actions > keeps the rerender preview when an earlier manual resource read finishes late
+AssertionError: expected 'blob:rc4-preview-2' to be 'blob:rc4-preview-1' // Object.is equality
+
+Expected: "blob:rc4-preview-1"
+Received: "blob:rc4-preview-2"
+
+ ❯ src/workbench/WorkbenchPage.test.tsx:668:10
+    666|       expect(ui.resourceReads).toContain("http://m2res.localhost/m2id/…
+    667|       expect(ui.container.querySelector('[data-testid="viewer-image"]'…
+    668|         .toBe(previewUrl);
+       |          ^
+    669|       expect(ui.revokedUrls).toContain("blob:rc4-preview-2");
+    670|       expect(ui.container.textContent).toContain("已重渲染并加载预览");
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 21 passed (23)
+   Start at  01:22:34
+   Duration  1.17s (transform 119ms, setup 0ms, collect 579ms, tests 249ms, environment 0ms, prepare 124ms)
+
+EXIT=1
