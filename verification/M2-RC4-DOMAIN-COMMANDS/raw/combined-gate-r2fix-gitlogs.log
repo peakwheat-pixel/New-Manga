@@ -1,0 +1,23 @@
+SHELL=Git Bash (MINGW64, Windows)
+HEAD=d625d6d0 (combined tree; H1)
+=== [1] git diff --check 0fba6079..H1 -- src/ apps/ tests/ packaging/ (code surface) ===
+EXIT[1]=0
+=== [2] git diff --name-status 0fba6079..7c9d3a32 -- src/ui/ tests/ui_shell/ (expect empty) ===
+EXIT[2]=0
+=== [3] git diff --stat 37110749..58b3706d -- src/ (expect only service.py) ===
+ src/application/rendering/service.py | 54 +++++++++++++++++++++++++-----------
+ 1 file changed, 38 insertions(+), 16 deletions(-)
+EXIT[3]=0
+=== [4] git diff --name-status 7c9d3a32..1e6b58b9 (expect docs/verification only) ===
+A	doc/reviews/M2-RC4-DOMAIN-COMMANDS-5954bb4b-dsh-r1.md
+M	doc/tasks/M2-RC4-DOMAIN-COMMANDS.md
+A	verification/M2-RC4-DOMAIN-COMMANDS/raw/combined-gate-r2fix-build.log
+A	verification/M2-RC4-DOMAIN-COMMANDS/raw/combined-gate-r2fix-cargo.log
+A	verification/M2-RC4-DOMAIN-COMMANDS/raw/combined-gate-r2fix-focused.log
+A	verification/M2-RC4-DOMAIN-COMMANDS/raw/combined-gate-r2fix-frontend.log
+A	verification/M2-RC4-DOMAIN-COMMANDS/raw/combined-gate-r2fix-full.log
+A	verification/M2-RC4-DOMAIN-COMMANDS/raw/combined-gate-r2fix-uishell-main-baseline.log
+EXIT[4]=0
+=== [5] git diff --name-status 1e6b58b9..H1 (expect tests/core/test_core_service.py only) ===
+M	tests/core/test_core_service.py
+EXIT[5]=0
