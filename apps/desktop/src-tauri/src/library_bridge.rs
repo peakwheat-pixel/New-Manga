@@ -163,6 +163,13 @@ pub trait LibraryChannel: Send + Sync {
     ) -> Result<serde_json::Value, LibraryError>;
     /// RC-4 synchronous render and resource-channel preview projection.
     fn rerender_page(&self, page_id: &str) -> Result<serde_json::Value, LibraryError>;
+    /// M2-PAGE-RESOURCE-RESOLVE-1 (contract rev 1.7 §5): resolve one page's
+    /// immutable managed original to its servable resource catalog key
+    /// (`{resource_id, revision}`); Core publishes the first resolve into
+    /// the derived read-only root and later resolves return the same key.
+    /// PAGE_NOT_FOUND (unknown page / no managed original) propagates as
+    /// `LibraryError.code`.
+    fn resolve_page_resource(&self, page_id: &str) -> Result<serde_json::Value, LibraryError>;
 }
 
 /// The command argv pinned for spawning the production Core service.
@@ -428,6 +435,13 @@ impl LibraryChannel for StdioLibraryChannel {
     fn rerender_page(&self, page_id: &str) -> Result<serde_json::Value, LibraryError> {
         self.round_trip("rerender_page", serde_json::json!({ "page_id": page_id }))
     }
+
+    fn resolve_page_resource(&self, page_id: &str) -> Result<serde_json::Value, LibraryError> {
+        self.round_trip(
+            "resolve_page_resource",
+            serde_json::json!({ "page_id": page_id }),
+        )
+    }
 }
 
 /// In-memory mock channel for testing without spawning Python.
@@ -548,6 +562,10 @@ impl LibraryChannel for MockLibraryChannel {
     }
 
     fn rerender_page(&self, _page_id: &str) -> Result<serde_json::Value, LibraryError> {
+        self.domain_result.lock().unwrap().clone()
+    }
+
+    fn resolve_page_resource(&self, _page_id: &str) -> Result<serde_json::Value, LibraryError> {
         self.domain_result.lock().unwrap().clone()
     }
 }

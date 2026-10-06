@@ -143,6 +143,7 @@ async function mountInteractiveWorkbench(
 function makeInteractiveInvoke(options: {
   onRetype?: (args: Record<string, unknown>) => Promise<unknown>;
   onIssue?: (args: Record<string, unknown>) => Promise<unknown>;
+  onResolvePage?: (args: Record<string, unknown>) => Promise<unknown>;
   rerender?: () => unknown;
 } = {}) {
   const rows = new Map<string, RegionSummary[]>([
@@ -151,6 +152,13 @@ function makeInteractiveInvoke(options: {
   ]);
   const invoke = vi.fn(async (command: string, args: Record<string, unknown> = {}) => {
     if (command === "library_list_books") return [];
+    if (command === "resolve_page_resource") {
+      // M2-PAGE-RESOURCE-RESOLVE-1: default OFF (typed PAGE_NOT_FOUND) so
+      // the manual/preview flows below keep their historical timing; the
+      // auto-load cases pass onResolvePage explicitly.
+      if (options.onResolvePage) return options.onResolvePage(args);
+      throw new Error("PAGE_NOT_FOUND");
+    }
     if (command === "list_regions") return {
       regions: rows.get(String(args.pageId)) ?? [],
       page_size: { width: 100, height: 50 },
@@ -715,6 +723,50 @@ describe("RC-4 Workbench actual DOM actions", () => {
       expect(ui.container.textContent).toContain("渲染已提交（revision 8），但预览不可用：PREVIEW_UNAVAILABLE");
       expect(ui.container.textContent).not.toContain("重渲染失败");
       expect(ui.container.querySelector('[data-testid="feedback-rerender"]')).not.toBeNull();
+    } finally {
+      await ui.unmount();
+    }
+  });
+
+  it("resolves the page resource automatically and feeds the image loader (M2-PAGE-RESOURCE-RESOLVE-1)", async () => {
+    const { invoke } = makeInteractiveInvoke({
+      onResolvePage: (args) => Promise.resolve({
+        resource_id: `page-original-${String(args.pageId)}`,
+        revision: "original",
+      }),
+    });
+    const ui = await mountInteractiveWorkbench(invoke);
+    try {
+      await ui.input("page-id-input", "page-1");
+      expect(invoke).toHaveBeenCalledWith("resolve_page_resource", { pageId: "page-1" });
+      const idInput = ui.container.querySelector('[data-testid="resource-id-input"]') as HTMLInputElement | null;
+      expect(idInput?.value).toBe("page-original-page-1");
+      expect(ui.container.querySelector('[data-testid="resource-resolve-error"]')).toBeNull();
+      expect(ui.container.querySelector('[data-testid="resource-resolve-busy"]')).toBeNull();
+      expect(ui.container.querySelector('[data-testid="viewer-image"]')?.getAttribute("src"))
+        .toBe("blob:rc4-preview-1");
+      expect(ui.resourceReads).toContain("http://m2res.localhost/m2id/page-original-page-1?chunk=0");
+    } finally {
+      await ui.unmount();
+    }
+  });
+
+  it("surfaces a typed resolve failure and keeps the manual resource fallback (M2-PAGE-RESOURCE-RESOLVE-1)", async () => {
+    const { invoke } = makeInteractiveInvoke();
+    const ui = await mountInteractiveWorkbench(invoke);
+    try {
+      await ui.input("page-id-input", "page-1");
+      expect(ui.container.querySelector('[data-testid="resource-resolve-error"]')?.textContent)
+        .toBe("PAGE_NOT_FOUND");
+      const idInput = ui.container.querySelector('[data-testid="resource-id-input"]') as HTMLInputElement | null;
+      expect(idInput?.value).toBe("");
+      expect(ui.resourceReads).toHaveLength(0);
+      // the manual fallback still drives the existing image loader
+      await ui.input("resource-id-input", "manual-fallback");
+      expect(invoke).toHaveBeenCalledWith("issue_resource_url", {
+        resourceId: "manual-fallback",
+        revision: "current",
+      });
     } finally {
       await ui.unmount();
     }

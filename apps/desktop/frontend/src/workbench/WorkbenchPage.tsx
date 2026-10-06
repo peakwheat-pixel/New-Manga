@@ -83,6 +83,10 @@ export function WorkbenchPage({ invoke }: WorkbenchPageProps) {
   const [resourceRevision, setResourceRevision] = useState("current");
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const [imageError, setImageError] = useState<string | null>(null);
+  // M2-PAGE-RESOURCE-RESOLVE-1: automatic page -> resource resolution; the
+  // manual resource inputs stay as the debug fallback (e.g. previews).
+  const [resourceResolveBusy, setResourceResolveBusy] = useState(false);
+  const [resourceResolveError, setResourceResolveError] = useState<string | null>(null);
   // ---- IMPL-1 retype/mitigation state ----
   // Pure-UI suspect flags (design R1): never persisted, never sent to Core.
   const [suspects, setSuspects] = useState<Set<string>>(new Set());
@@ -210,6 +214,41 @@ export function WorkbenchPage({ invoke }: WorkbenchPageProps) {
       cancelled = true;
     };
   }, [clients]);
+
+  // M2-PAGE-RESOURCE-RESOLVE-1: resolve the page's managed original to its
+  // catalog key and feed the existing image loader automatically; the manual
+  // resource inputs stay as the debug fallback (a resolve failure leaves
+  // them authoritative, so previews still load by hand).
+  useEffect(() => {
+    const trimmed = pageId.trim();
+    if (!trimmed) {
+      setResourceResolveBusy(false);
+      setResourceResolveError(null);
+      return;
+    }
+    let cancelled = false;
+    setResourceResolveBusy(true);
+    setResourceResolveError(null);
+    clients.library
+      .resolvePageResource(trimmed)
+      .then((resolved) => {
+        if (cancelled) return;
+        setResourceId(resolved.resource_id);
+        setResourceRevision(resolved.revision);
+        setResourceResolveBusy(false);
+        setResourceResolveError(null);
+      })
+      .catch((error: unknown) => {
+        if (cancelled) return;
+        setResourceResolveBusy(false);
+        setResourceResolveError(
+          error instanceof LibraryClientError ? error.code : "PAGE_RESOURCE_UNAVAILABLE",
+        );
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [clients, pageId]);
 
   // Region read loop via the EXISTING list_regions projection (rev 1.5
   // optional geometry/page_size consumed when present). Retype and restore
@@ -368,6 +407,13 @@ export function WorkbenchPage({ invoke }: WorkbenchPageProps) {
     imageRequestRef.current += 1;
     replaceImageUrl(null);
     setImageError(null);
+    // M2-PAGE-RESOURCE-RESOLVE-1: the resolve loop re-runs for the new page
+    // and repopulates the resource address; stale manual values must not
+    // leak across pages.
+    setResourceId("");
+    setResourceRevision("current");
+    setResourceResolveBusy(false);
+    setResourceResolveError(null);
     setPageId(nextPageId);
   }, [invalidateUndo, replaceImageUrl]);
 
@@ -771,6 +817,16 @@ export function WorkbenchPage({ invoke }: WorkbenchPageProps) {
                 }}
               />
             </label>
+            {resourceResolveBusy && (
+              <p data-testid="resource-resolve-busy" style={{ margin: 0, fontSize: 11, color: "#8a94a2" }}>
+                resolving page resource…
+              </p>
+            )}
+            {resourceResolveError && (
+              <p data-testid="resource-resolve-error" style={{ margin: 0, fontSize: 11, color: "#e8a0a0" }}>
+                {resourceResolveError}
+              </p>
+            )}
           </section>
         </div>
       </div>

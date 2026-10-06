@@ -75,6 +75,9 @@ fn main() {
             "list_region_revisions",
             "restore_region_revision",
             "rerender_page",
+            // M2-PAGE-RESOURCE-RESOLVE-1: production-only page display
+            // image resolve; declared here so the Tauri ACL can name it.
+            "resolve_page_resource",
             "probe_config",
             "probe_write_results",
             "probe_exit",

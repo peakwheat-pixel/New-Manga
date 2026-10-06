@@ -31,3 +31,14 @@ export interface LibraryErrorDetail {
   message?: string;
   retryable?: boolean;
 }
+
+/**
+ * M2-PAGE-RESOURCE-RESOLVE-1: the servable resource catalog key of one
+ * page's immutable managed original (contract M2-C1 rev 1.7 §5). The key
+ * is deterministic (`page-original-{page_id}`), so repeated resolves of
+ * the same page return the same pair.
+ */
+export interface PageResourceResolve {
+  resource_id: string;
+  revision: string;
+}

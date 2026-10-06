@@ -67,6 +67,9 @@ pub const PRODUCTION_COMMANDS: &[&str] = &[
     "list_region_revisions",
     "restore_region_revision",
     "rerender_page",
+    // M2-PAGE-RESOURCE-RESOLVE-1 (contract rev 1.7 section 5): the page display
+    // image resolve, production-only like the RC-4 trio above.
+    "resolve_page_resource",
 ];
 
 /// Commands that exist ONLY in probe mode (`M2RC1_PROBE_OUT` set by the
@@ -116,6 +119,10 @@ pub const RC4_PRODUCTION_ONLY_COMMANDS: &[&str] = &[
     "rerender_page",
 ];
 
+/// M2-PAGE-RESOURCE-RESOLVE-1: the page display image resolve stays
+/// production-only; probe and AC1 surfaces retain their historical shape.
+pub const PAGE_RESOLVE_PRODUCTION_ONLY_COMMANDS: &[&str] = &["resolve_page_resource"];
+
 pub fn command_allowlist(probe_mode: bool, ac1_mode: bool) -> Vec<&'static str> {
     let mut commands: Vec<&'static str> = if probe_mode || ac1_mode {
         PRODUCTION_COMMANDS
@@ -126,6 +133,7 @@ pub fn command_allowlist(probe_mode: bool, ac1_mode: bool) -> Vec<&'static str> 
                     && !SETTINGS_PRODUCTION_ONLY_COMMANDS.contains(command)
                     && !RETYPE_PRODUCTION_ONLY_COMMANDS.contains(command)
                     && !RC4_PRODUCTION_ONLY_COMMANDS.contains(command)
+                    && !PAGE_RESOLVE_PRODUCTION_ONLY_COMMANDS.contains(command)
             })
             .collect()
     } else {
@@ -328,6 +336,23 @@ fn rerender_page_from_core(
         .rerender_page(page_id)
         .map_err(|error| error.code)?;
     rotate_render_preview(state.channel.as_ref(), page_id, result, &mut current)
+}
+
+/// M2-PAGE-RESOURCE-RESOLVE-1: the resolved key is a STABLE catalog entry
+/// (the managed original is immutable) -- deliberately NOT routed through
+/// the preview rotation, which revokes the previous render per page and
+/// would delete a still-authoritative original reference.
+#[tauri::command]
+fn resolve_page_resource(
+    state: tauri::State<'_, AppState>,
+    page_id: String,
+) -> Result<serde_json::Value, String> {
+    state
+        .library
+        .as_ref()
+        .ok_or_else(|| "CORE_UNAVAILABLE".to_string())?
+        .resolve_page_resource(&page_id)
+        .map_err(|error| error.code)
 }
 
 fn rotate_render_preview(
@@ -798,7 +823,8 @@ fn main() {
             list_regions,
             list_region_revisions,
             restore_region_revision,
-            rerender_page
+            rerender_page,
+            resolve_page_resource
         ])
     };
 
@@ -896,8 +922,8 @@ mod tests {
     /// keyed `plugin:<name>|<cmd>` and never matches bare invocations -- the
     /// ACL layer silently skipped them, DSH R2-01). This pins the build
     /// artifact: the app manifest declares exactly the live commands
-    /// (twelve production -- resource-channel, IPC1, settings, retype and
-    /// RC-4 -- plus three M2-AC1 acceptance; R2-06),
+    /// (thirteen production -- resource-channel, IPC1, settings, retype,
+    /// RC-4 and the page resolve -- plus three M2-AC1 acceptance; R2-06),
     /// and no plugin-shaped surface remains.
     #[test]
     fn app_acl_manifest_is_generated_and_enforced() {
@@ -941,11 +967,12 @@ mod tests {
     }
 
     #[test]
-    fn production_surface_is_exactly_twelve_commands() {
+    fn production_surface_is_exactly_thirteen_commands() {
         // M2-SETTINGS-IPC-CHANNEL: five -> seven (settings_get +
         // settings_update_section, contract rev 1.3 §5.3; pinned wire names)
         // M2-REGION-RETYPE-CORE: seven -> nine; RC-4 adds three frozen
-        // history/restore/render commands on production only.
+        // history/restore/render commands on production only;
+        // M2-PAGE-RESOURCE-RESOLVE-1: nine -> thirteen (contract rev 1.7).
         assert_eq!(
             command_allowlist(false, false),
             vec![
@@ -961,6 +988,7 @@ mod tests {
                 "list_region_revisions",
                 "restore_region_revision",
                 "rerender_page",
+                "resolve_page_resource",
             ]
         );
     }
@@ -987,6 +1015,9 @@ mod tests {
         for command in RC4_PRODUCTION_ONLY_COMMANDS {
             assert!(!probe.contains(command), "{command} must stay production-only");
         }
+        for command in PAGE_RESOLVE_PRODUCTION_ONLY_COMMANDS {
+            assert!(!probe.contains(command), "{command} must stay production-only");
+        }
         assert_eq!(
             probe.len(),
             PRODUCTION_COMMANDS.len()
@@ -994,6 +1025,7 @@ mod tests {
                 - SETTINGS_PRODUCTION_ONLY_COMMANDS.len()
                 - RETYPE_PRODUCTION_ONLY_COMMANDS.len()
                 - RC4_PRODUCTION_ONLY_COMMANDS.len()
+                - PAGE_RESOLVE_PRODUCTION_ONLY_COMMANDS.len()
                 + PROBE_ONLY_COMMANDS.len()
         );
     }
@@ -1022,6 +1054,9 @@ mod tests {
         for command in RC4_PRODUCTION_ONLY_COMMANDS {
             assert!(!ac1.contains(command), "{command} must stay production-only");
         }
+        for command in PAGE_RESOLVE_PRODUCTION_ONLY_COMMANDS {
+            assert!(!ac1.contains(command), "{command} must stay production-only");
+        }
         assert_eq!(
             ac1.len(),
             PRODUCTION_COMMANDS.len()
@@ -1029,6 +1064,7 @@ mod tests {
                 - SETTINGS_PRODUCTION_ONLY_COMMANDS.len()
                 - RETYPE_PRODUCTION_ONLY_COMMANDS.len()
                 - RC4_PRODUCTION_ONLY_COMMANDS.len()
+                - PAGE_RESOLVE_PRODUCTION_ONLY_COMMANDS.len()
                 + AC1_TEST_COMMANDS.len()
         );
     }
@@ -1544,10 +1580,11 @@ mod tests {
         // 1.0 -> 1.1 (core.detect added); M2-SETTINGS-IPC-CHANNEL: 1.1 -> 2
         // (settings_get/settings_update_section added);
         // M2-REGION-RETYPE-CORE: 2 -> 3 (set_region_type/list_regions
-        // added). This real-sidecar assertion is the consequence sync for
-        // the widenings. The MockChannel self-consistency stub above (:1194)
-        // keeps its own minor 0 by design.
-        assert_eq!(ping.protocol_version.minor, 4);
+        // added); M2-PAGE-RESOURCE-RESOLVE-1: 4 -> 5
+        // (resolve_page_resource added). This real-sidecar assertion is the
+        // consequence sync for the widenings. The MockChannel
+        // self-consistency stub above (:1194) keeps its own minor 0 by design.
+        assert_eq!(ping.protocol_version.minor, 5);
         assert!(ping.capabilities.contains(&"library.list_books".to_string()));
 
         // 2. List books succeeds on empty store
@@ -1754,6 +1791,9 @@ mod tests {
                 "preview_error": null,
             }))
         }
+        fn resolve_page_resource(&self, page_id: &str) -> Result<serde_json::Value, LibraryError> {
+            self.inner.resolve_page_resource(page_id)
+        }
     }
 
     /// The shared Arc handle forwards to the library so the test can keep
@@ -1785,6 +1825,9 @@ mod tests {
         }
         fn rerender_page(&self, page_id: &str) -> Result<serde_json::Value, LibraryError> {
             (**self).rerender_page(page_id)
+        }
+        fn resolve_page_resource(&self, page_id: &str) -> Result<serde_json::Value, LibraryError> {
+            (**self).resolve_page_resource(page_id)
         }
     }
 
