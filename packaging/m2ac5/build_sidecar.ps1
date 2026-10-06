@@ -203,8 +203,10 @@ Write-Host "build_sidecar: git HEAD=$gitHead pyinstaller=$pyinstallerVersion pyt
 if ($LASTEXITCODE -ne 0) { throw "PyInstaller failed (exit=$LASTEXITCODE)" }
 
 # layout sanity gate: the Rust host resolves exactly these names
+# (M2-PROD-SFX-PROBE-1: + sfx_detect_probe.exe, the one-shot frozen SFX-detect
+# probe — not an IPC command, the catalog_loader precedent shape).
 $bundle = Join-Path $distPath "core-sidecar"
-foreach ($exe in @("host_bridge.exe", "core_service.exe", "acceptance_bridge.exe", "catalog_loader.exe")) {
+foreach ($exe in @("host_bridge.exe", "core_service.exe", "acceptance_bridge.exe", "catalog_loader.exe", "sfx_detect_probe.exe")) {
     if (-not (Test-Path -LiteralPath (Join-Path $bundle $exe) -PathType Leaf)) {
         throw "sidecar bundle incomplete: missing $exe under $bundle"
     }
