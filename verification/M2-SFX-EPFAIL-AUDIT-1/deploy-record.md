@@ -120,10 +120,12 @@ DSH r1 P1-1（composite `MangaSfxParallelDetectionProvider.detect` 未透传 run
 ## 5. 已知限制
 
 1. `sfx_ep_runtime_check` 观测的是「session providers 列表相对构建期发生变化」，归因「wrapper run-time EPFail fallback」基于：本仓代码从不调用 `set_providers`，而 wrapper 仅在 run() EPFail 分支调用它（同 wheel 版本内成立；wheel 升级需复核 wrapper 行为，属既有 EP 语义的同一复核面）。
-2. wrapper fallback 每 session 只触发一次（`disable_fallback`）；第二次 EPFail 将异常传播 → 既有 typed detect 失败路径（非本 Task 语义，GPU-EP-1 交付原样）。
+2. wrapper fallback 每 session 只触发一次（`disable_fallback`）；第二次 EPFail 将异常传播（ORT `RuntimeError` 族）→ composite 只捕 `ProviderError`，该异常最终由 pipeline 层归为通用 `STEP_FAILED`（非 typed provider 错误码；行为与 GPU-EP-1 交付逐字节一致——r2 P4-4 措辞精确化：本文与其余交付文档的「typed 失败路径」应读作「既有失败路径」，映射口径以本条为准）。
 3. 审计读回对「providers 列表为空」返回稳态（不追加键）——真实 ORT session 列表恒非空（至少含 CPU），该分支仅为测试替身形态兜底。
 4. run-time 通道的实机 EPFail（真实 GPU 掉卡）未在本 Task 触发（NOT_RUN）——探测面可见性由「wrapper 同 API 调用重放 + stub 形态单测」覆盖；与 GPU-EP-1 验证矩阵②同一诚实口径。
 5. GPU-EP-1 deploy-record §1.3 历史文件零改动；闭合声明仅存于本记录 §0。
+6. 形态 2（重跑失败→下一成功页观测）的前提=同一进程/同一装配实例的后续 detect：失败单元的剩余 unit 会被取消、进程/装配重建则 session 态丢失——无后续成功 detect 时该归因不落盘（丢的仅是「归因到 EP 回退」一条，页本身仍用户可见硬失败）（r2 残留风险②登记）。
+7. composite 每页新增一次 `dict(sfx_result.options)` 拷贝（μs 量级，≪1% 预算 11,060μs）——可忽略，如实登记（r2 残留风险③）。
 
 ## 6. 交付链
 
@@ -136,7 +138,8 @@ DSH r1 P1-1（composite `MangaSfxParallelDetectionProvider.detect` 未透传 run
 | `cf013b01` | docs：Task 回填（status=in_review）+ Handoff |
 | `6c2825ce` | r1 review-fix P1-1(+P4-3)：composite tail options 条件性透传 + wheel 升级复核面注释 |
 | `2356fb8f` | r1 review-fix P1-1/P3-1 test：composite 透传用例+形态 2 钉子，红绿证据 raw/ |
-| （verify-fix commit） | r1 P2-1：1% 预算口径修正+微基准重跑（JSON/log 再生）+P4-7/P4-8 脚本注释 |
-| （docs-fix commit） | r1 P2-1/P3-2/P4-1/P4-2/P4-5/P4-6 文档同步 + 全量回归 r1fix log |
+| `22ea8a09` | r1 review-fix P2-1(+P4-7/P4-8)：1% 预算口径修正+微基准重跑（JSON/log 再生）+脚本注释 |
+| `9db9a8ad` | r1 review-fix P2-1/P3-2/P4-1/P4-2/P4-5/P4-6：文档同步 + 全量回归 r1fix log |
+| `d388a7bf` | r1 review-fix P4-1：base_commit 双值注记行补右括号（frontmatter 格式完整性） |
 
 NOT_RUN 清单：实机真实 EPFail 触发（§5.4）；其余 AC 全部有证据。

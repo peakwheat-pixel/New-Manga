@@ -570,6 +570,10 @@ def test_composite_appends_sfx_past_primary_reading_order_max():
     assert options["sfx_provider"] == "local-sfx"
     assert options["sfx_candidates"] == "1"
     assert options["sfx_conf_threshold"] == "0.5"
+    # r2 P4-1: composite steady state must not grow the runtime-audit key —
+    # the conditional pass-through stays byte-identical when the sfx face
+    # produced no sfx_ep_runtime_check.
+    assert "sfx_ep_runtime_check" not in options
     # Composite timing covers BOTH detects (primary reported 10 ms).
     assert result.elapsed_ms is not None and result.elapsed_ms >= 10
 
