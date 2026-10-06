@@ -8,10 +8,10 @@ reviewer: DeepSeek Harness（非作者）
 integrator: 编排会话代行 Codex（用户全权授权）
 approval: user_2026-10-04_批准进行2（已登记非阻塞候选②：M2-PROD-DETECT-2 裁决⑥ NOT_RUN 结构缺口的 sfx slice）
 depends_on: [M2-SFX-GPU-EP-1]
-base_commit: d298ecd0（DSH r1 P3-4 更正：72807d30=STATUS 释放时预记基点，worktree 实际检出/owner 分支 fork 点=d298ecd0，worktree reflog + Handoff + deploy-record 三处一致，以 d298ecd0 为准）
+base_commit: d298ecd0
 branch: agent/zcode/M2-PROD-SFX-PROBE-1
 worktree: G:/CODEX/New Manga.worktrees/M2-PROD-SFX-PROBE-1-zcode
-review_events: [r1 approved_with_conditions（DSH 非作者 2026-10-06：0×P0/1×P1/3×P2/5×P3；C1 锚点措辞更正、C2 闭包归属+取舍登记、C3 runner 判据加固、C4 文档同步——集成方顺笔返修 441f4ab5/r1fix 证据/docs 三 commit，详见 deploy-record r1fix 段）]
+review_events: [r1 approved_with_conditions（DSH 非作者 2026-10-06：0×P0/1×P1/3×P2/5×P3；C1 锚点措辞更正、C2 闭包归属+取舍登记、C3 runner 判据加固、C4 文档同步——集成方顺笔返修，报告与 r2 由集成方于集成 merge 归档 doc/reviews/）, r2 approved_with_conditions（DSH 定点复审 2026-10-06：0×P0/0×P1，实质通过；C1/C2/C3 闭合+P3-3 特别裁决认可实测登记；残留 R-1/R-2/R-3 集成顺笔闭）]
 created: 2026-10-04
 ---
 
@@ -79,6 +79,8 @@ runner = `verification/M2-PROD-SFX-PROBE-1/packaged-sfx-detect-probe.py`（PROD-
 
 ## DSH r1 审查与返修登记（2026-10-06）
 
-- **r1 判定：approved_with_conditions**（0×P0 / 1×P1 / 3×P2 / 5×P3；报告=doc/reviews/M2-PROD-SFX-PROBE-1-b1dd1ad4-dsh-r1.md，集成方导入）。全部条件在 Task 允许面内、不要求重跑构建/探针。
+- **r1 判定：approved_with_conditions**（0×P0 / 1×P1 / 3×P2 / 5×P3；报告=doc/reviews/M2-PROD-SFX-PROBE-1-b1dd1ad4-dsh-r1.md，由集成方于集成 merge 归档——DSH r2 R-3 措辞）。全部条件在 Task 允许面内、不要求重跑构建/探针。
+- **base_commit 更正（DSH r1 P3-4 / r2 R-9）**：72807d30=STATUS 释放时预记基点，worktree 实际检出/owner 分支 fork 点=d298ecd0（worktree reflog + Handoff + deploy-record 三处一致）；frontmatter 值保持裸 hash `d298ecd0`，解释移本节。
+- **r2 判定：approved_with_conditions（实质通过，0×P0/0×P1，无需再开 Review 轮）**——C1/C2/C3 闭合（C3=代码面+重跑证据双闭合）、P3-3 特别裁决认可集成方实测登记；残留 R-1（Handoff 同步）/R-2（SP-L2 三键判据落代码）/R-3（报告归档）+P4×8 已按 r2 §5 清单在集成 commit 顺笔闭合（b4a9ad4d+本 docs commit）。
 - **返修（集成方顺笔，三 commit）**：`441f4ab5` runner（C3 判据加固 frozen is True+SP-L2 权重 pin；P3-5 可追溯字段 --installer-sha256/--build-head；P4-3 minor 3；P4-8 page_file_sha256；--raw-subdir 隔离）→ r1fix 重跑（真实安装态 4/4 PASS，conf 与首轮逐位一致、页文件哈希与锚点逐位一致）→ docs（C1 三处措辞更正/C2 spec 注释+归属+三选一登记选 (a)/C4：README 五入口、base_commit 更正、P3-3 range check 真实落盘、P4-4 场景枚举、P4-2/P4-6 注记、§5 闭合语义按 DSH 4.1 精确化、P3-2 判据描述更新、P4-5 双 pin 同步登记）。
-- **实测推翻 DSH 一项预期（如实登记）**：P3-3 预期 range check「应为空」，实测 `d298ecd0..b1dd1ad4` 报 55 处 trailing whitespace（DSH 静态文本检索抹掉 CRLF 的 CR 所致）；处置不变（真实输出落盘+沿先例豁免），登记口径改为实测事实。
+- **实测推翻 DSH 一项预期（如实登记）**：P3-3 预期 range check「应为空」，实测 `d298ecd0..b1dd1ad4` 报 git 输出 55 行=**27 处 trailing whitespace + 1 处 `new blank line at EOF`（tauri-build.log:302）跨 6 个 raw 证据 log**——归因更正（DSH r2 R-5）：r1 用文本检索核 whitespace（口径=CR 前须有空格/制表符），结构上无法命中裸 CR，未覆盖 git 默认 cr-at-eol 关闭下的裸 CR，故其「应为空」预期被实测推翻；入报集由 **git blob 层行尾**决定（工作区同为 CRLF 的 sp-l1/sp-l2 log 与 gate.json 未入报）。处置不变（真实输出落盘+沿先例豁免）。

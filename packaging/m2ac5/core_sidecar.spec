@@ -67,8 +67,10 @@ SRC_ROOT = os.path.join(REPO_ROOT, "src")
 #: identifiers the Rust host resolves under `resources/core-sidecar/` in
 #: packaged mode. Only the production library entry (core_service) carries
 #: the detect chain, so only its Analysis pins the ML hiddenimports and gets
-#: the ML closure assertion (the other three entries keep their released
-#: stdlib+repo closure — do not widen them).
+#: the ML closure assertion. The other entries take no ML
+#: hiddenimports/assertion of their own; note the sfx probe's PYZ
+#: nonetheless carries the ML closure transitively (detection_doctr static
+#: import followed by modulegraph — see the ENTRIES comment below).
 ENTRIES = [
     ("entry_host_bridge", "host_bridge", False),
     ("entry_core_service", "core_service", True),
