@@ -36,6 +36,7 @@ from application.editing.ports import (
     RegionRepository,
     RegionRevisionCommitter,
 )
+from application.editing.region_canvas import page_geometry_to_normalized
 from domain.regions.entities import (
     Region,
     RegionGeometry,
@@ -379,13 +380,23 @@ class RegionEditingService:
             GuardStatus.APPLIED, revision_no=result.revision_no
         )
 
-    def list_region_summaries(self, page_id: str) -> list[dict[str, object]]:
-        """RegionListSummary read channel (contract M2-C1 rev 1.4 §5.4
-        ListRegions): the minimal retype-decision DTO per live region, in
+    def list_region_summaries(
+        self, page_id: str, *, page_size: tuple[int, int] | None = None
+    ) -> list[dict[str, object]]:
+        """RegionListSummary read channel (contract M2-C1 §5.4 ListRegions):
+        the minimal retype-decision DTO per live region, in
         ``reading_order`` ascending. ``origin``/``revision_no`` come from the
         revision the current pointer targets, so machine pens and human
-        retypes stay distinguishable (UI design A7). No geometry, text or
-        annotation semantics ride this face."""
+        retypes stay distinguishable (UI design A7). No text or annotation
+        semantics ride this face.
+
+        ``page_size`` (M2-WORKBENCH-REACT-1, contract rev 1.5 additive
+        widening): when the caller injects the page's ``(width, height)``
+        pixel extent, each summary row gains an OPTIONAL normalized
+        ``geometry`` field (the D5 read-face gap; ``application/
+        editing/region_canvas.py`` owns the single reverse mapping). Omitting
+        it keeps the frozen five-field shape verbatim -- strictly additive,
+        pre-existing callers are untouched."""
         summaries: list[dict[str, object]] = []
         for region in self.list_regions(page_id):
             current = next(
@@ -403,15 +414,19 @@ class RegionEditingService:
                     f"current revision pointer of region {region.region_id}"
                     " does not resolve"
                 )
-            summaries.append(
-                {
-                    "region_id": region.region_id,
-                    "region_type": region.region_type.value,
-                    "sfx_policy": region.sfx_policy.value,
-                    "origin": current.origin.value,
-                    "revision_no": current.revision_no,
-                }
-            )
+            summary: dict[str, object] = {
+                "region_id": region.region_id,
+                "region_type": region.region_type.value,
+                "sfx_policy": region.sfx_policy.value,
+                "origin": current.origin.value,
+                "revision_no": current.revision_no,
+            }
+            if page_size is not None:
+                page_w, page_h = page_size
+                summary["geometry"] = page_geometry_to_normalized(
+                    region.geometry, page_w, page_h
+                )
+            summaries.append(summary)
         return summaries
 
     # ------------------------------------------------------------------
