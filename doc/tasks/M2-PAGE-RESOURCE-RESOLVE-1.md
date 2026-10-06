@@ -2,7 +2,7 @@
 id: M2-PAGE-RESOURCE-RESOLVE-1
 title: 页→资源解析 wire 命令 resolve_page_resource（Workbench 页图自动加载第一刀）
 kind: feature
-status: in_review
+status: done
 approval: user_2026-10-07_autonomous_mode_continuation（STATUS 授权：RC-4 后继续最新证据下下一最高优先任务）
 suggested_owner: Codex Executor
 owner: Codex Executor（ZCode 代行）
@@ -12,7 +12,7 @@ depends_on: [M2-RC4-DOMAIN-COMMANDS, M2-WORKBENCH-REACT-1]
 base_commit: 2fe446c5
 branch: zcode/page-resource-resolve-1
 worktree: G:/CODEX/New Manga.worktrees/PAGE-RESOLVE-1
-integration_commit: null
+integration_commit: 9e242b0c
 ---
 
 # M2-PAGE-RESOURCE-RESOLVE-1
