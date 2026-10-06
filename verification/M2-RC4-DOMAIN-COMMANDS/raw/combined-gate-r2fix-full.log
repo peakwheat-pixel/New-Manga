@@ -1,0 +1,398 @@
+SHELL=Git Bash (MINGW64, Windows)
+PYTHON=G:/CODEX/New Manga.task-envs/T1.1.1-impl-py312/Scripts/python.exe
+HEAD=7c9d3a32 (combined tree after merging Core e495910f + React 7021d34c)
+COMMAND=python -m pytest tests -q -rs -rf --tb=short
+........................................................................ [  3%]
+........................................................................ [  7%]
+........................................................................ [ 11%]
+........................................................................ [ 15%]
+........................................................................ [ 19%]
+........................................................................ [ 23%]
+........................................................................ [ 27%]
+......................................................F................. [ 30%]
+........................................................................ [ 34%]
+........................................................................ [ 38%]
+........................................................................ [ 42%]
+........................................................................ [ 46%]
+........................................................................ [ 50%]
+........................................................................ [ 54%]
+........................................................................ [ 57%]
+........................................................................ [ 61%]
+............................s........................................... [ 65%]
+........................................................................ [ 69%]
+.................................file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/reader/ReaderView.qml:204: TypeError: Cannot read property 'sourcePath' of null
+.file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/reader/ReaderView.qml:204: TypeError: Cannot read property 'sourcePath' of null
+.file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/reader/ReaderView.qml:204: TypeError: Cannot read property 'sourcePath' of null
+..file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/reader/ReaderView.qml:204: TypeError: Cannot read property 'sourcePath' of null
+.file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/reader/ReaderView.qml:204: TypeError: Cannot read property 'sourcePath' of null
+.file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/reader/ReaderView.qml:204: TypeError: Cannot read property 'sourcePath' of null
+.file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/reader/ReaderView.qml:204: TypeError: Cannot read property 'sourcePath' of null
+................................ [ 73%]
+........................................................................ [ 77%]
+........................................................................ [ 81%]
+........................................................................ [ 85%]
+........................................................................ [ 88%]
+..................................file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/shell/AppShell.qml:56: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/shell/AppShell.qml:51: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/shell/AppShell.qml:46: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/shell/AppShell.qml:41: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/shell/PrimaryNavigationRail.qml:21: TypeError: Cannot read property 'pages' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/shell/PrimaryNavigationRail.qml:37: TypeError: Cannot read property 'workbenchRunning' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/bookshelf/ChapterList.qml:31: TypeError: Cannot read property 'chapterListModel' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/bookshelf/BookDetailPanel.qml:17: TypeError: Cannot read property 'selectedBook' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/bookshelf/BookshelfView.qml:82: TypeError: Cannot read property 'isEmpty' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/bookshelf/BookGrid.qml:51: TypeError: Cannot read property 'viewMode' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/bookshelf/BookGrid.qml:54: TypeError: Cannot read property 'bookListModel' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/bookshelf/BookGrid.qml:25: TypeError: Cannot read property 'viewMode' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/bookshelf/BookGrid.qml:29: TypeError: Cannot read property 'bookListModel' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/bookshelf/BookshelfView.qml:66: TypeError: Cannot read property 'isEmpty' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/bookshelf/BookshelfToolbar.qml:77: TypeError: Cannot read property 'viewMode' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/bookshelf/BookshelfToolbar.qml:71: TypeError: Cannot read property 'sortBy' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/bookshelf/BookshelfToolbar.qml:66: TypeError: Cannot read property 'archivedFilter' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/bookshelf/BookshelfToolbar.qml:59: TypeError: Cannot read property 'favoritesOnly' of null
+.file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/shell/AppShell.qml:56: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/shell/AppShell.qml:51: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/shell/AppShell.qml:46: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/shell/AppShell.qml:41: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/shell/PrimaryNavigationRail.qml:21: TypeError: Cannot read property 'pages' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/shell/PrimaryNavigationRail.qml:37: TypeError: Cannot read property 'workbenchRunning' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/bookshelf/ChapterList.qml:31: TypeError: Cannot read property 'chapterListModel' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/bookshelf/BookDetailPanel.qml:17: TypeError: Cannot read property 'selectedBook' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/bookshelf/BookshelfView.qml:82: TypeError: Cannot read property 'isEmpty' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/bookshelf/BookGrid.qml:51: TypeError: Cannot read property 'viewMode' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/bookshelf/BookGrid.qml:54: TypeError: Cannot read property 'bookListModel' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/bookshelf/BookGrid.qml:25: TypeError: Cannot read property 'viewMode' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/bookshelf/BookGrid.qml:29: TypeError: Cannot read property 'bookListModel' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/bookshelf/BookshelfView.qml:66: TypeError: Cannot read property 'isEmpty' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/bookshelf/BookshelfToolbar.qml:77: TypeError: Cannot read property 'viewMode' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/bookshelf/BookshelfToolbar.qml:71: TypeError: Cannot read property 'sortBy' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/bookshelf/BookshelfToolbar.qml:66: TypeError: Cannot read property 'archivedFilter' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/bookshelf/BookshelfToolbar.qml:59: TypeError: Cannot read property 'favoritesOnly' of null
+.file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/shell/AppShell.qml:56: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/shell/AppShell.qml:51: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/shell/AppShell.qml:46: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/shell/AppShell.qml:41: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/shell/PrimaryNavigationRail.qml:21: TypeError: Cannot read property 'pages' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/shell/PrimaryNavigationRail.qml:37: TypeError: Cannot read property 'workbenchRunning' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/bookshelf/ChapterList.qml:31: TypeError: Cannot read property 'chapterListModel' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/bookshelf/BookDetailPanel.qml:17: TypeError: Cannot read property 'selectedBook' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/bookshelf/BookshelfView.qml:82: TypeError: Cannot read property 'isEmpty' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/bookshelf/BookGrid.qml:51: TypeError: Cannot read property 'viewMode' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/bookshelf/BookGrid.qml:54: TypeError: Cannot read property 'bookListModel' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/bookshelf/BookGrid.qml:25: TypeError: Cannot read property 'viewMode' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/bookshelf/BookGrid.qml:29: TypeError: Cannot read property 'bookListModel' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/bookshelf/BookshelfView.qml:66: TypeError: Cannot read property 'isEmpty' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/bookshelf/BookshelfToolbar.qml:77: TypeError: Cannot read property 'viewMode' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/bookshelf/BookshelfToolbar.qml:71: TypeError: Cannot read property 'sortBy' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/bookshelf/BookshelfToolbar.qml:66: TypeError: Cannot read property 'archivedFilter' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/bookshelf/BookshelfToolbar.qml:59: TypeError: Cannot read property 'favoritesOnly' of null
+.file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/shell/AppShell.qml:56: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/shell/AppShell.qml:51: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/shell/AppShell.qml:46: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/shell/AppShell.qml:41: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/shell/PrimaryNavigationRail.qml:21: TypeError: Cannot read property 'pages' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/shell/PrimaryNavigationRail.qml:37: TypeError: Cannot read property 'workbenchRunning' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/bookshelf/ChapterList.qml:31: TypeError: Cannot read property 'chapterListModel' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/bookshelf/BookDetailPanel.qml:17: TypeError: Cannot read property 'selectedBook' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/bookshelf/BookshelfView.qml:82: TypeError: Cannot read property 'isEmpty' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/bookshelf/BookGrid.qml:51: TypeError: Cannot read property 'viewMode' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/bookshelf/BookGrid.qml:54: TypeError: Cannot read property 'bookListModel' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/bookshelf/BookGrid.qml:25: TypeError: Cannot read property 'viewMode' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/bookshelf/BookGrid.qml:29: TypeError: Cannot read property 'bookListModel' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/bookshelf/BookshelfView.qml:66: TypeError: Cannot read property 'isEmpty' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/bookshelf/BookshelfToolbar.qml:77: TypeError: Cannot read property 'viewMode' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/bookshelf/BookshelfToolbar.qml:71: TypeError: Cannot read property 'sortBy' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/bookshelf/BookshelfToolbar.qml:66: TypeError: Cannot read property 'archivedFilter' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/bookshelf/BookshelfToolbar.qml:59: TypeError: Cannot read property 'favoritesOnly' of null
+.file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/shell/AppShell.qml:56: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/shell/AppShell.qml:51: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/shell/AppShell.qml:46: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/shell/AppShell.qml:41: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/shell/PrimaryNavigationRail.qml:21: TypeError: Cannot read property 'pages' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/shell/PrimaryNavigationRail.qml:37: TypeError: Cannot read property 'workbenchRunning' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/bookshelf/ChapterList.qml:31: TypeError: Cannot read property 'chapterListModel' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/bookshelf/BookDetailPanel.qml:17: TypeError: Cannot read property 'selectedBook' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/bookshelf/BookshelfView.qml:82: TypeError: Cannot read property 'isEmpty' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/bookshelf/BookGrid.qml:51: TypeError: Cannot read property 'viewMode' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/bookshelf/BookGrid.qml:54: TypeError: Cannot read property 'bookListModel' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/bookshelf/BookGrid.qml:25: TypeError: Cannot read property 'viewMode' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/bookshelf/BookGrid.qml:29: TypeError: Cannot read property 'bookListModel' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/bookshelf/BookshelfView.qml:66: TypeError: Cannot read property 'isEmpty' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/bookshelf/BookshelfToolbar.qml:77: TypeError: Cannot read property 'viewMode' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/bookshelf/BookshelfToolbar.qml:71: TypeError: Cannot read property 'sortBy' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/bookshelf/BookshelfToolbar.qml:66: TypeError: Cannot read property 'archivedFilter' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/bookshelf/BookshelfToolbar.qml:59: TypeError: Cannot read property 'favoritesOnly' of null
+.file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/shell/AppShell.qml:56: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/shell/AppShell.qml:51: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/shell/AppShell.qml:46: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/shell/AppShell.qml:41: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/shell/PrimaryNavigationRail.qml:21: TypeError: Cannot read property 'pages' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/shell/PrimaryNavigationRail.qml:37: TypeError: Cannot read property 'workbenchRunning' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/bookshelf/ChapterList.qml:31: TypeError: Cannot read property 'chapterListModel' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/bookshelf/BookDetailPanel.qml:17: TypeError: Cannot read property 'selectedBook' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/bookshelf/BookshelfView.qml:82: TypeError: Cannot read property 'isEmpty' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/bookshelf/BookGrid.qml:51: TypeError: Cannot read property 'viewMode' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/bookshelf/BookGrid.qml:54: TypeError: Cannot read property 'bookListModel' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/bookshelf/BookGrid.qml:25: TypeError: Cannot read property 'viewMode' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/bookshelf/BookGrid.qml:29: TypeError: Cannot read property 'bookListModel' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/bookshelf/BookshelfView.qml:66: TypeError: Cannot read property 'isEmpty' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/bookshelf/BookshelfToolbar.qml:77: TypeError: Cannot read property 'viewMode' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/bookshelf/BookshelfToolbar.qml:71: TypeError: Cannot read property 'sortBy' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/bookshelf/BookshelfToolbar.qml:66: TypeError: Cannot read property 'archivedFilter' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/bookshelf/BookshelfToolbar.qml:59: TypeError: Cannot read property 'favoritesOnly' of null
+.file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/shell/AppShell.qml:56: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/shell/AppShell.qml:51: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/shell/AppShell.qml:46: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/shell/AppShell.qml:41: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/shell/PrimaryNavigationRail.qml:21: TypeError: Cannot read property 'pages' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/shell/PrimaryNavigationRail.qml:37: TypeError: Cannot read property 'workbenchRunning' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/bookshelf/ChapterList.qml:31: TypeError: Cannot read property 'chapterListModel' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/bookshelf/BookDetailPanel.qml:17: TypeError: Cannot read property 'selectedBook' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/bookshelf/BookshelfView.qml:82: TypeError: Cannot read property 'isEmpty' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/bookshelf/BookGrid.qml:51: TypeError: Cannot read property 'viewMode' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/bookshelf/BookGrid.qml:54: TypeError: Cannot read property 'bookListModel' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/bookshelf/BookGrid.qml:25: TypeError: Cannot read property 'viewMode' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/bookshelf/BookGrid.qml:29: TypeError: Cannot read property 'bookListModel' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/bookshelf/BookshelfView.qml:66: TypeError: Cannot read property 'isEmpty' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/bookshelf/BookshelfToolbar.qml:77: TypeError: Cannot read property 'viewMode' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/bookshelf/BookshelfToolbar.qml:71: TypeError: Cannot read property 'sortBy' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/bookshelf/BookshelfToolbar.qml:66: TypeError: Cannot read property 'archivedFilter' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/bookshelf/BookshelfToolbar.qml:59: TypeError: Cannot read property 'favoritesOnly' of null
+.file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/shell/AppShell.qml:56: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/shell/AppShell.qml:51: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/shell/AppShell.qml:46: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/shell/AppShell.qml:41: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/shell/PrimaryNavigationRail.qml:21: TypeError: Cannot read property 'pages' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/shell/PrimaryNavigationRail.qml:37: TypeError: Cannot read property 'workbenchRunning' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/bookshelf/ChapterList.qml:31: TypeError: Cannot read property 'chapterListModel' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/bookshelf/BookDetailPanel.qml:17: TypeError: Cannot read property 'selectedBook' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/bookshelf/BookshelfView.qml:82: TypeError: Cannot read property 'isEmpty' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/bookshelf/BookGrid.qml:51: TypeError: Cannot read property 'viewMode' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/bookshelf/BookGrid.qml:54: TypeError: Cannot read property 'bookListModel' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/bookshelf/BookGrid.qml:25: TypeError: Cannot read property 'viewMode' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/bookshelf/BookGrid.qml:29: TypeError: Cannot read property 'bookListModel' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/bookshelf/BookshelfView.qml:66: TypeError: Cannot read property 'isEmpty' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/bookshelf/BookshelfToolbar.qml:77: TypeError: Cannot read property 'viewMode' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/bookshelf/BookshelfToolbar.qml:71: TypeError: Cannot read property 'sortBy' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/bookshelf/BookshelfToolbar.qml:66: TypeError: Cannot read property 'archivedFilter' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/bookshelf/BookshelfToolbar.qml:59: TypeError: Cannot read property 'favoritesOnly' of null
+.file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/shell/AppShell.qml:56: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/shell/AppShell.qml:51: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/shell/AppShell.qml:46: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/shell/AppShell.qml:41: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/shell/PrimaryNavigationRail.qml:21: TypeError: Cannot read property 'pages' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/shell/PrimaryNavigationRail.qml:37: TypeError: Cannot read property 'workbenchRunning' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/bookshelf/ChapterList.qml:31: TypeError: Cannot read property 'chapterListModel' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/bookshelf/BookDetailPanel.qml:17: TypeError: Cannot read property 'selectedBook' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/bookshelf/BookshelfView.qml:82: TypeError: Cannot read property 'isEmpty' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/bookshelf/BookGrid.qml:51: TypeError: Cannot read property 'viewMode' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/bookshelf/BookGrid.qml:54: TypeError: Cannot read property 'bookListModel' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/bookshelf/BookGrid.qml:25: TypeError: Cannot read property 'viewMode' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/bookshelf/BookGrid.qml:29: TypeError: Cannot read property 'bookListModel' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/bookshelf/BookshelfView.qml:66: TypeError: Cannot read property 'isEmpty' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/bookshelf/BookshelfToolbar.qml:77: TypeError: Cannot read property 'viewMode' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/bookshelf/BookshelfToolbar.qml:71: TypeError: Cannot read property 'sortBy' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/bookshelf/BookshelfToolbar.qml:66: TypeError: Cannot read property 'archivedFilter' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/bookshelf/BookshelfToolbar.qml:59: TypeError: Cannot read property 'favoritesOnly' of null
+.file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/shell/AppShell.qml:56: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/shell/AppShell.qml:51: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/shell/AppShell.qml:46: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/shell/AppShell.qml:41: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/shell/PrimaryNavigationRail.qml:21: TypeError: Cannot read property 'pages' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/shell/PrimaryNavigationRail.qml:37: TypeError: Cannot read property 'workbenchRunning' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/bookshelf/ChapterList.qml:31: TypeError: Cannot read property 'chapterListModel' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/bookshelf/BookDetailPanel.qml:17: TypeError: Cannot read property 'selectedBook' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/bookshelf/BookshelfView.qml:82: TypeError: Cannot read property 'isEmpty' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/bookshelf/BookGrid.qml:51: TypeError: Cannot read property 'viewMode' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/bookshelf/BookGrid.qml:54: TypeError: Cannot read property 'bookListModel' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/bookshelf/BookGrid.qml:25: TypeError: Cannot read property 'viewMode' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/bookshelf/BookGrid.qml:29: TypeError: Cannot read property 'bookListModel' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/bookshelf/BookshelfView.qml:66: TypeError: Cannot read property 'isEmpty' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/bookshelf/BookshelfToolbar.qml:77: TypeError: Cannot read property 'viewMode' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/bookshelf/BookshelfToolbar.qml:71: TypeError: Cannot read property 'sortBy' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/bookshelf/BookshelfToolbar.qml:66: TypeError: Cannot read property 'archivedFilter' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/bookshelf/BookshelfToolbar.qml:59: TypeError: Cannot read property 'favoritesOnly' of null
+..file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/shell/AppShell.qml:56: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/shell/AppShell.qml:51: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/shell/AppShell.qml:46: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/shell/AppShell.qml:41: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/shell/PrimaryNavigationRail.qml:21: TypeError: Cannot read property 'pages' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/shell/PrimaryNavigationRail.qml:37: TypeError: Cannot read property 'workbenchRunning' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/bookshelf/ChapterList.qml:31: TypeError: Cannot read property 'chapterListModel' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/bookshelf/BookDetailPanel.qml:17: TypeError: Cannot read property 'selectedBook' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/bookshelf/BookshelfView.qml:82: TypeError: Cannot read property 'isEmpty' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/bookshelf/BookGrid.qml:51: TypeError: Cannot read property 'viewMode' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/bookshelf/BookGrid.qml:54: TypeError: Cannot read property 'bookListModel' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/bookshelf/BookGrid.qml:25: TypeError: Cannot read property 'viewMode' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/bookshelf/BookGrid.qml:29: TypeError: Cannot read property 'bookListModel' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/bookshelf/BookshelfView.qml:66: TypeError: Cannot read property 'isEmpty' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/bookshelf/BookshelfToolbar.qml:77: TypeError: Cannot read property 'viewMode' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/bookshelf/BookshelfToolbar.qml:71: TypeError: Cannot read property 'sortBy' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/bookshelf/BookshelfToolbar.qml:66: TypeError: Cannot read property 'archivedFilter' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/bookshelf/BookshelfToolbar.qml:59: TypeError: Cannot read property 'favoritesOnly' of null
+...file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/bookshelf/ChapterList.qml:31: TypeError: Cannot read property 'chapterListModel' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/bookshelf/BookDetailPanel.qml:17: TypeError: Cannot read property 'selectedBook' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/bookshelf/BookshelfView.qml:82: TypeError: Cannot read property 'isEmpty' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/bookshelf/BookGrid.qml:51: TypeError: Cannot read property 'viewMode' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/bookshelf/BookGrid.qml:54: TypeError: Cannot read property 'bookListModel' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/bookshelf/BookGrid.qml:25: TypeError: Cannot read property 'viewMode' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/bookshelf/BookGrid.qml:29: TypeError: Cannot read property 'bookListModel' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/bookshelf/BookshelfView.qml:66: TypeError: Cannot read property 'isEmpty' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/bookshelf/BookshelfToolbar.qml:77: TypeError: Cannot read property 'viewMode' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/bookshelf/BookshelfToolbar.qml:71: TypeError: Cannot read property 'sortBy' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/bookshelf/BookshelfToolbar.qml:66: TypeError: Cannot read property 'archivedFilter' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/bookshelf/BookshelfToolbar.qml:59: TypeError: Cannot read property 'favoritesOnly' of null
+FF.file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/bookshelf/ChapterList.qml:31: TypeError: Cannot read property 'chapterListModel' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/bookshelf/BookDetailPanel.qml:17: TypeError: Cannot read property 'selectedBook' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/bookshelf/BookshelfView.qml:82: TypeError: Cannot read property 'isEmpty' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/bookshelf/BookGrid.qml:51: TypeError: Cannot read property 'viewMode' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/bookshelf/BookGrid.qml:54: TypeError: Cannot read property 'bookListModel' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/bookshelf/BookGrid.qml:25: TypeError: Cannot read property 'viewMode' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/bookshelf/BookGrid.qml:29: TypeError: Cannot read property 'bookListModel' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/bookshelf/BookshelfView.qml:66: TypeError: Cannot read property 'isEmpty' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/bookshelf/BookshelfToolbar.qml:77: TypeError: Cannot read property 'viewMode' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/bookshelf/BookshelfToolbar.qml:71: TypeError: Cannot read property 'sortBy' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/bookshelf/BookshelfToolbar.qml:66: TypeError: Cannot read property 'archivedFilter' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/bookshelf/BookshelfToolbar.qml:59: TypeError: Cannot read property 'favoritesOnly' of null
+.file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/bookshelf/ChapterList.qml:31: TypeError: Cannot read property 'chapterListModel' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/bookshelf/BookDetailPanel.qml:17: TypeError: Cannot read property 'selectedBook' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/bookshelf/BookshelfView.qml:82: TypeError: Cannot read property 'isEmpty' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/bookshelf/BookGrid.qml:51: TypeError: Cannot read property 'viewMode' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/bookshelf/BookGrid.qml:54: TypeError: Cannot read property 'bookListModel' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/bookshelf/BookGrid.qml:25: TypeError: Cannot read property 'viewMode' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/bookshelf/BookGrid.qml:29: TypeError: Cannot read property 'bookListModel' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/bookshelf/BookshelfView.qml:66: TypeError: Cannot read property 'isEmpty' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/bookshelf/BookshelfToolbar.qml:77: TypeError: Cannot read property 'viewMode' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/bookshelf/BookshelfToolbar.qml:71: TypeError: Cannot read property 'sortBy' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/bookshelf/BookshelfToolbar.qml:66: TypeError: Cannot read property 'archivedFilter' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-integration/src/ui/qml/bookshelf/BookshelfToolbar.qml:59: TypeError: Cannot read property 'favoritesOnly' of null
+.................... [ 92%]
+........................................................................ [ 96%]
+...............................................................          [100%]
+================================== FAILURES ===================================
+______________ test_manifest_has_unique_cases_and_exact_taxonomy ______________
+tests\m2_test_assets\test_catalog.py:33: in test_manifest_has_unique_cases_and_exact_taxonomy
+    assert len(cases) == 97
+E   AssertionError: assert 122 == 97
+E    +  where 122 = len([{'case_id': 'K01', 'language': 'ko', 'source': 'https://huggingface.co/datasets/Vasyanator2/cleaned_webtoon_dataset',... 'source': 'https://huggingface.co/datasets/Vasyanator2/cleaned_webtoon_dataset', 'source_id': '570506_196', ...}, ...])
+________________ test_current_chapter_alias_follows_row_click _________________
+tests\ui_shell\test_repair13_import_entry.py:154: in test_current_chapter_alias_follows_row_click
+    assert detail.property("currentChapterId") == chapter_id
+E   AssertionError: assert '' == '150d998e8c13...df7c1651996d2'
+E     
+E     - 150d998e8c1349a89bcdf7c1651996d2
+__________________ test_import_entry_enabled_after_row_click __________________
+tests\ui_shell\test_repair13_import_entry.py:163: in test_import_entry_enabled_after_row_click
+    assert btn.isEnabled(), "import unlocks once a chapter is selected"
+E   AssertionError: import unlocks once a chapter is selected
+E   assert False
+E    +  where False = <built-in method isEnabled of PySide6.QtQuick.QQuickItem object at 0x00000237B98BD680>()
+E    +    where <built-in method isEnabled of PySide6.QtQuick.QQuickItem object at 0x00000237B98BD680> = <PySide6.QtQuick.QQuickItem(0x23a2e090930, name="btnImport", parent=0x23a2c4db250, geometry=64,0 32x23) at 0x00000237B98BD680>.isEnabled
+============================== warnings summary ===============================
+tests/core/test_rc4_stdio_render_preview.py::test_production_stdio_decodes_nmfr_renders_text_and_publishes_readable_preview
+  G:\CODEX\New Manga.worktrees\RC4-integration\tests\core\test_rc4_stdio_render_preview.py:245: DeprecationWarning: Image.Image.getdata is deprecated and will be removed in Pillow 14 (2027-10-15). Use get_flattened_data instead.
+    for px in rendered.crop((20, 20, 150, 120)).convert("RGB").getdata()
+
+tests/import_formats/test_mobi_import.py::test_picture_mobi_imports_one_managed_page_per_image
+  G:\CODEX\New Manga.task-envs\T1.1.1-impl-py312\Lib\site-packages\mobi\mobi_cover.py:4: DeprecationWarning: 'imghdr' is deprecated and slated for removal in Python 3.13
+    import imghdr
+
+tests/rendering/test_pillow_rendering.py::test_pillow_compositor_draws_centered_stroked_text_into_real_png
+  G:\CODEX\New Manga.worktrees\RC4-integration\tests\rendering\test_pillow_rendering.py:94: DeprecationWarning: Image.Image.getdata is deprecated and will be removed in Pillow 14 (2027-10-15). Use get_flattened_data instead.
+    for red, green, blue, _alpha in image.getdata()
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED tests/m2_test_assets/test_catalog.py::test_manifest_has_unique_cases_and_exact_taxonomy
+FAILED tests/ui_shell/test_repair13_import_entry.py::test_current_chapter_alias_follows_row_click
+FAILED tests/ui_shell/test_repair13_import_entry.py::test_import_entry_enabled_after_row_click
+3 failed, 1859 passed, 1 skipped, 3 warnings in 106.03s (0:01:46)
+EXIT=1

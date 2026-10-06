@@ -2,7 +2,7 @@
 id: M2-RC4-DOMAIN-COMMANDS
 title: 撤销、重渲染与修订历史 Core 域命令面端到端闭环
 kind: feature
-status: in_progress
+status: in_review
 approval: user_2026-10-07_autonomous_rc4_and_next_priority
 suggested_owner: Codex Executor
 owner: Codex Executor
@@ -64,4 +64,10 @@ Codex 实测未发现 ZCode CLI 或 connector 可用，因此使用本会话 Exe
 ## 交付与运行记录
 
 - 2026-10-07 Codex refresh/rebaseline：main 44421008，干净；详见 verification/rebaseline-20261007.md。释放 commit 为本文件首次提交，base 字段为审计基线，Owner worktree 起点取该 release commit（文档漂移，无产品变更）。
-- Handoff/Review/实际测试：尚无。
+- 2026-10-07 Core/Rust 子面交付：claim 0fba6079 → feat 37110749（三命令 Python/Rust/Pillow headless/preview 发布）→ 测试轮 58b3706d（envelope minor 4 期望、skip-SFX 原图像素恢复断言、typed fail-closed、preview 轮换、真实 stdio/Pillow 新测试）→ Handoff e6b3e811。验证：focused 399 passed / 全量 1852+1sk+1 既有 catalog 失败 / cargo 51 passed+1 ignored / sidecar EXIT=0（raw 见 verification/M2-RC4-DOMAIN-COMMANDS/raw/core-*）。
+- 2026-10-07 React 子面交付：a27b3443 初版 → 独立 Review changes_requested（R-1 P1 切页/迟到响应覆盖、R-2 P2 预览 mock、R-3 P2 过期文案，doc/reviews/M2-RC4-DOMAIN-COMMANDS-a27b3443-react-reviewer.md）→ 返修 6f3544a2（统一请求版本+page epoch 守卫、迟到 URL revoke、非零 PNG bytes、PREVIEW_UNAVAILABLE、文案更新）→ Handoff ada80767。验证：117 tests + build EXIT=0（raw react-review-fix-*）。
+- 2026-10-07 组合与 Gate（RC4-integration@5954bb4b）：Core+React 串行组合，reviewer-core 37110749 证据 4 份（组合树曾 7 failed=契约行为 vs 旧期望，已由测试轮按契约处置）import 入库；组合树复跑 focused 399 / 全量 1852+1sk+1 既有 / cargo 51 / sidecar EXIT=0（HEAD 绑定 78e4f24d）/ frontend 117+build / 代码面 diff --check EXIT=0。
+- 2026-10-07 DeepSeek 独立 Review r1（对 58b3706d + 6f3544a2，组合树 5954bb4b）：**approved_with_conditions**（0×P0/P1；3 blocking + 5 非阻塞 + 5 nit），报告 doc/reviews/M2-RC4-DOMAIN-COMMANDS-5954bb4b-dsh-r1.md。r1 独立确认 7 failed 测试更新为契约驱动正当更新（非迁就实现）、范围纪律基本 PASS。
+- 2026-10-07 r1 返修：Core `e495910f`（RC4-01 list/restore wire 级 SQLite 测试 7 用例；RC4-02 墨水显式断言 ≥400 实测 1389 + diff 口径写明；RC4-06 可注入 revoke 失败 fail-closed 测试；RC4-08 compose ValueError→MISSING_REQUIRED_INPUT / OSError→ARTIFACT_WRITE_FAILED 拆分+两测试；RC4-09 四处陈旧命名注释；RC4-11 等值短路+测试）→ focused 408 / cargo 53 / stdio+revision 8 全绿；React `7021d34c`（RC4-07 卸载 in-flight 作废；RC4-09 ViewerPanel 注释；RC4-13 非冻结码判别用例）→ vitest 118 / build EXIT=0。逐项处置表见两份 Handoff 返修段。
+- 2026-10-07 RC4-05 追认（Codex/集成方）：`gen/schemas/*.json` 4 文件系 build.rs 生成器对 RC-4 三命令权限条目的实质再生，随 58b3706d 入库，属交付必要生成物；按 M2-REGION-RETYPE-CORE P3-2 先例追认为 allowed_paths 授权范围内，后续同源生成物再生不再单列审批。
+- 2026-10-07 组合返修 Gate（RC4-integration@7c9d3a32 = merge Core e495910f + React 7021d34c）：focused **408 passed** / cargo **53 passed+1 ignored** / frontend vitest **118 passed** + build EXIT=0 / 代码面 diff --check EXIT=0 / 全量 **1859 passed + 1 skipped + 3 failed**——failed 定性：① `test_catalog` 122≠97 既有登记基线失败（main 同口径）；② ③ `tests/ui_shell/test_repair13_import_entry.py` 两例 QML 环境敏感失败（btnImport isEnabled），main@8c8e0eb4 基线对照同样 2 failed（raw combined-gate-r2fix-uishell-main-baseline.log），且 `git diff 0fba6079..7c9d3a32 -- src/ui/ tests/ui_shell/` 为空＝RC-4 改动零接触该路径，非本任务回归。1 skipped=registry_readiness（dev venv 有意携带 ML 栈，用户批准）；Owner 轮 7 skipped 与此差异=PowerShell 驱动下 openssl 不在 PATH 的 6 个 TLS skip（RC4-04 口径闭合）。日志 combined-gate-r2fix-*。

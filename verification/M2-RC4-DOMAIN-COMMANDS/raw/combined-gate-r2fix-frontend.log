@@ -1,0 +1,27 @@
+SHELL=Git Bash (MINGW64, Windows)
+PYTHON=G:/CODEX/New Manga.task-envs/T1.1.1-impl-py312/Scripts/python.exe (pytest/npm via venv)
+HEAD=7c9d3a32 (combined tree after merging Core e495910f + React 7021d34c)
+COMMAND=npx vitest run (cwd=apps/desktop/frontend)
+npm notice run m2rc1-frontend@0.1.0 npx
+npm notice run vitest run
+
+[1m[7m[36m RUN [39m[27m[22m [36mv2.1.9 [39m[90mG:/CODEX/New Manga.worktrees/RC4-integration/apps/desktop/frontend[39m
+
+ [32m✓[39m src/region/geometry.test.ts [2m([22m[2m8 tests[22m[2m)[22m[90m 3[2mms[22m[39m
+ [32m✓[39m src/ac1/driver.test.ts [2m([22m[2m3 tests[22m[2m)[22m[90m 2[2mms[22m[39m
+ [32m✓[39m src/library/client.test.ts [2m([22m[2m4 tests[22m[2m)[22m[90m 5[2mms[22m[39m
+ [32m✓[39m src/resourceChannel/client.test.ts [2m([22m[2m8 tests[22m[2m)[22m[90m 6[2mms[22m[39m
+ [32m✓[39m src/workbench/relabelMachine.test.ts [2m([22m[2m21 tests[22m[2m)[22m[90m 6[2mms[22m[39m
+ [32m✓[39m src/region/client.test.ts [2m([22m[2m15 tests[22m[2m)[22m[90m 6[2mms[22m[39m
+ [32m✓[39m src/resourceChannel/commandSurface.test.ts [2m([22m[2m10 tests[22m[2m)[22m[90m 8[2mms[22m[39m
+ [32m✓[39m src/settings/client.test.ts [2m([22m[2m7 tests[22m[2m)[22m[90m 5[2mms[22m[39m
+ [32m✓[39m src/library/LibraryPanel.test.tsx [2m([22m[2m8 tests[22m[2m)[22m[90m 161[2mms[22m[39m
+ [32m✓[39m src/settings/SettingsPanel.test.tsx [2m([22m[2m10 tests[22m[2m)[22m[90m 215[2mms[22m[39m
+ [32m✓[39m src/workbench/WorkbenchPage.test.tsx [2m([22m[2m24 tests[22m[2m)[22m[90m 222[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m11 passed[39m[22m[90m (11)[39m
+[2m      Tests [22m [1m[32m118 passed[39m[22m[90m (118)[39m
+[2m   Start at [22m 03:17:43
+[2m   Duration [22m 5.74s[2m (transform 780ms, setup 0ms, collect 6.05s, tests 640ms, environment 1ms, prepare 4.19s)[22m
+
+EXIT=0
