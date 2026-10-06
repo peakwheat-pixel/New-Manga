@@ -131,9 +131,15 @@ export function retypeFeedback(
   postPolicy: SfxPolicy,
   newType: "sfx" | "speech" = "sfx",
 ): RetypeFeedback {
+  // §4.4 / §4.3-4 (FROZEN): the relabel does NOT erase an already-rendered
+  // translation — every feedback copy states the artefact boundary so the
+  // user can read "original intact; the rendered page needs a re-render".
+  // (The reader-projection has no artefact field yet, so the line is
+  // unconditional — the conservative, more-informative direction.)
+  const ARTEFACT_NOTE = "原图完好；已渲染成品图需重跑渲染才恢复原文";
   if (newType === "speech") {
     return {
-      text: "已改回对白（speech）——该区域将按对白链翻译，可能产生新的译文",
+      text: `已改回对白（speech）——该区域将按对白链翻译，可能产生新的译文；${ARTEFACT_NOTE}`,
       offerUndo: true,
       offerRerender: true,
     };
@@ -141,20 +147,20 @@ export function retypeFeedback(
   switch (postPolicy) {
     case "translate":
       return {
-        text: "已标记为拟声词（SFX · 拟声词翻译链）——将按拟声词翻译链重新翻译",
+        text: `已标记为拟声词（SFX · 拟声词翻译链）——将按拟声词翻译链重新翻译；${ARTEFACT_NOTE}`,
         offerUndo: true,
         offerRerender: true,
       };
     case "manual":
       return {
-        text: "已标记为拟声词——保留原文（手动处理模式），不再自动翻译",
+        text: `已标记为拟声词——保留原文（手动处理模式），不再自动翻译；${ARTEFACT_NOTE}`,
         offerUndo: true,
         offerRerender: true,
       };
     case "skip":
     default:
       return {
-        text: "已标记为拟声词（SFX · 保留原文）——按当前策略保留原文，不再翻译",
+        text: `已标记为拟声词（SFX · 保留原文）——按当前策略保留原文，不再翻译；${ARTEFACT_NOTE}`,
         offerUndo: true,
         offerRerender: true,
       };

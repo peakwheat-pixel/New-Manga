@@ -154,6 +154,14 @@ describe("retypeFeedback (E4 copy = result + the region's own post-retype policy
     expect(fb.offerUndo).toBe(true);
   });
 
+  it("every feedback copy states the artefact boundary (§4.3-4/§4.4 FROZEN: relabel != erasing a rendered page)", () => {
+    for (const policy of ["skip", "manual", "translate"] as const) {
+      expect(retypeFeedback(policy).text).toContain("成品图需重跑渲染");
+      expect(retypeFeedback(policy).text).toContain("原图完好");
+    }
+    expect(retypeFeedback("skip", "speech").text).toContain("成品图需重跑渲染");
+  });
+
   it("post-retype manual snapshot -> manual-mode copy, not auto-translate (§4.2 row 2)", () => {
     const fb = retypeFeedback("manual");
     expect(fb.text).toContain("手动");

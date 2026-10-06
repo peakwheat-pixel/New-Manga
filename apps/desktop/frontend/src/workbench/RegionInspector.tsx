@@ -105,7 +105,7 @@ export function RegionInspector({
           style={{ margin: 0, fontSize: 10, color: "#8a94a2" }}
         >
           当前该 region 策略快照：{POLICY_SNAPSHOT_LABELS[region.sfx_policy] ?? region.sfx_policy}
-          。{RELABEL_SOURCE_SAFETY_NOTE}，可随时撤销（经 revision 历史）。
+          。{RELABEL_SOURCE_SAFETY_NOTE}。撤销/历史入口待 Core restore 命令面 Task 落地后启用（当前 UI 通道未开通）。
         </p>
       )}
       {region && toSfx && toSpeech && onRetypeRequest && (

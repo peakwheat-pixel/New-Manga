@@ -226,10 +226,16 @@ export function WorkbenchPage({ invoke }: WorkbenchPageProps) {
   }, []);
 
   const doSetRegionType = useCallback(
-    (region: RegionSummary, to: RegionType) => {
-      // plan gate: only enabled speech<->sfx transitions reach the wire (A12).
+    (
+      region: RegionSummary,
+      to: RegionType,
+      opts?: { confirmed?: boolean; fromConfirm?: boolean },
+    ) => {
+      // Structural A5 gate (r1 P3-4): a confirm-class transition reaches the
+      // wire ONLY through the dialog's explicit confirm — no caller can
+      // one-click it past the gate by accident.
       const plan = planRetypeAction(region, to as "sfx" | "speech");
-      if (plan.kind !== "execute" && plan.kind !== "confirm") {
+      if (plan.kind === "blocked" || (plan.kind === "confirm" && !opts?.confirmed)) {
         return;
       }
       setBusyRegionId(region.region_id);
@@ -265,16 +271,24 @@ export function WorkbenchPage({ invoke }: WorkbenchPageProps) {
           // mutated optimistically, and the suspect flag stays untouched, so
           // the warning survives as required.
           setBusyRegionId(null);
-          setConfirmTarget(null);
           const code =
             error instanceof RegionClientError
               ? error.code
               : (error as { code?: string })?.code;
-          setRetypeError(
+          const message =
             typeof code === "string"
               ? `改标失败：${code}（region 未变更；INPUT_REVISION_CHANGED 时刷新后重试）`
-              : "改标失败：region 未变更",
-          );
+              : "改标失败：region 未变更";
+          if (opts?.fromConfirm) {
+            // r1 P1-1: the dialog STAYS UP with the typed error inside —
+            // closing it on failure was exactly the invisible-error bug.
+            setRetypeError(message);
+            return;
+          }
+          // Forward-retype failure surfaces in the E4 feedback bar (error
+          // variant) — the user must SEE the failure, never a silent no-op.
+          setConfirmTarget(null);
+          setFeedback({ regionId: region.region_id, text: message, isError: true });
         });
     },
     [clients, pageId, refreshRegions],
@@ -414,7 +428,9 @@ export function WorkbenchPage({ invoke }: WorkbenchPageProps) {
           target={confirmTarget}
           busy={busyRegionId === confirmTarget.region_id}
           errorText={retypeError}
-          onConfirm={() => doSetRegionType(confirmTarget, "speech")}
+          onConfirm={() =>
+            doSetRegionType(confirmTarget, "speech", { confirmed: true, fromConfirm: true })
+          }
           onCancel={() => {
             // Guard 2: cancel returns to the originating state — nothing to
             // roll back because nothing was written.

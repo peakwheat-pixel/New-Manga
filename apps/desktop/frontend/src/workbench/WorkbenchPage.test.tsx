@@ -2,6 +2,7 @@ import { renderToString } from "react-dom/server";
 import { describe, expect, it } from "vitest";
 import { RegionOverlay } from "../region/RegionOverlay";
 import type { RegionSummary } from "../region/types";
+import { ViewerPanel } from "./ViewerPanel";
 import { WorkbenchPage } from "./WorkbenchPage";
 
 /**
@@ -50,13 +51,15 @@ describe("<WorkbenchPage> five-zone skeleton (mapping-contract names)", () => {
     expect(html).not.toContain('data-testid="workbench-error"');
   });
 
-  it("replaces the first-slice reserved retype control with the IMPL-1 dual entry (M2-SFX-MISROUTE-UI-IMPL-1)", () => {
-    // IMPL-1 landed: the reserved disabled control is replaced by the real
-    // dual entry (Inspector buttons + overlay context menu). With NO region
-    // selected the Inspector still renders no retype buttons — entries only
-    // exist inside a selected-region block (SSR renders the empty state).
+  it("replaces the first-slice reserved retype controls with the IMPL-1 dual entry (M2-SFX-MISROUTE-UI-IMPL-1)", () => {
+    // IMPL-1 landed: BOTH reserved disabled controls (inspector + toolbar)
+    // are replaced by the real dual entry (Inspector buttons + overlay
+    // context menu). With NO region selected the Inspector still renders no
+    // retype buttons — entries only exist inside a selected-region block
+    // (SSR renders the empty state).
     const html = renderToString(<WorkbenchPage invoke={async () => null} />);
     expect(html).not.toContain('data-testid="inspector-retype-reserved"');
+    expect(html).not.toContain('data-testid="toolbar-retype-reserved"');
     expect(html).not.toContain('data-testid="inspector-mark-sfx"');
     expect(html).toContain('data-testid="region-inspector"');
   });
@@ -66,6 +69,58 @@ describe("<WorkbenchPage> five-zone skeleton (mapping-contract names)", () => {
     // a command face for a placeholder is explicitly forbidden (Task AC2)
     const html = renderToString(<WorkbenchPage invoke={async () => null} />);
     expect(html).toContain("占位不扩命令面");
+  });
+});
+
+describe("E4 feedback bar (ViewerPanel, r1 P1-1 error branch)", () => {
+  it("renders the error variant with the fail border and NO action buttons (failure must be visible)", () => {
+    const html = renderToString(
+      <ViewerPanel
+        imageUrl={null}
+        imageError={null}
+        regions={[]}
+        pageSize={null}
+        selectedRegionId={null}
+        onSelectRegion={() => {}}
+        relabelFeedback={{
+          regionId: "rg-9",
+          text: "改标失败：INPUT_REVISION_CHANGED（region 未变更；INPUT_REVISION_CHANGED 时刷新后重试）",
+          isError: true,
+        }}
+      />,
+    );
+    expect(html).toContain('data-testid="relabel-feedback"');
+    expect(html).toContain("改标失败：INPUT_REVISION_CHANGED");
+    // error variant carries no disabled action buttons (they belong to the
+    // success variant only)
+    expect(html).not.toContain('data-testid="feedback-undo"');
+    expect(html).not.toContain('data-testid="feedback-rerender"');
+  });
+
+  it("renders the success variant with both HONEST disabled action buttons", () => {
+    const html = renderToString(
+      <ViewerPanel
+        imageUrl={null}
+        imageError={null}
+        regions={[
+          {
+            region_id: "rg-1",
+            region_type: "sfx",
+            sfx_policy: "skip",
+            origin: "machine",
+            revision_no: 5,
+          },
+        ]}
+        pageSize={null}
+        selectedRegionId={null}
+        onSelectRegion={() => {}}
+        relabelFeedback={{ regionId: "rg-1", text: "已标记为拟声词", isError: false }}
+      />,
+    );
+    expect(html).toContain('data-testid="feedback-undo"');
+    expect(html).toContain('data-testid="feedback-rerender"');
+    expect(html).toContain("撤销");
+    expect(html).toContain("重渲染本页");
   });
 });
 

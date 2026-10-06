@@ -121,10 +121,24 @@ export function ViewerPanel({
       <div
         ref={measure}
         data-testid="viewer-stage"
+        tabIndex={-1}
+        onKeyDown={(event) => {
+          // r1 P3-5: Escape dismisses the context menu (no focus trap — the
+          // stage is a passive host; keydown reaches it once clicked).
+          if (event.key === "Escape") {
+            closeMenu();
+          }
+        }}
+        onContextMenu={(event) => {
+          // Right click on EMPTY canvas dismisses the menu (region frames
+          // stopPropagation and reopen it at the new anchor instead).
+          event.preventDefault();
+          closeMenu();
+        }}
         style={{
           position: "relative",
           flex: 1,
-          background: "#0b0e12",
+          background: "var(--bg-canvas, #0b0e12)",
           borderRadius: 4,
           overflow: "hidden",
           minHeight: 200,
