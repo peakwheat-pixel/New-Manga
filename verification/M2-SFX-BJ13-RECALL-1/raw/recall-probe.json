@@ -1,0 +1,1092 @@
+{
+ "task": "M2-SFX-BJ13-RECALL-1",
+ "generated_at_utc": "2026-10-06T13:33:27Z",
+ "conf_threshold_production": 0.5,
+ "nms_iou": 0.7,
+ "conf_rungs": [
+  0.01,
+  0.05,
+  0.1,
+  0.2,
+  0.3,
+  0.4,
+  0.5
+ ],
+ "weights": {
+  "path": "G:\\CODEX\\New Manga.task-envs\\M2-SFX-DETECT\\weights-v2b\\yolo11s-seg.onnx",
+  "sha256": "944e811410933ad6ff8d32446fcc9eef90fb463794e1874ce83035e83acd418d",
+  "pin_source": "src/infrastructure/providers/detection_sfx.py SFX_WEIGHTS_SHA256 (v2b, T4 @cff4923e)"
+ },
+ "ep": {
+  "requested": "dml",
+  "effective": "dml",
+  "fallback_reason": null
+ },
+ "imgsz": 1024,
+ "imgsz_source": "metadata_parsed",
+ "primary_reuse": {
+  "arbitration_raw": "G:\\CODEX\\New Manga.worktrees\\M2-SFX-BJ13-RECALL-1-zcode\\verification\\M2-REGION-OVERLAP-ARBITRATION\\raw\\arbitrate-pages.json",
+  "arbitration_raw_sha256": "5048bab61ae7b8e79ce43cbbafcaa393aae700efe3af4593660e270ed997f10f",
+  "ogkalu_snapshot": {
+   "dir": "G:\\CODEX\\New Manga.task-envs\\M2-DOCTR-QUAL-C4\\weights\\ogkalu-comic-text-and-bubble-detector",
+   "files": {
+    "model.safetensors": "037930a861e67870eb345be01b28cc70d7e2b7956528e48ee0ebdb0c093df80d",
+    "config.json": "b6d707933e12e9593a7025604be1c95add70a6db371fdd1532e8854e2256e072",
+    "preprocessor_config.json": "7e9e2245806aa3ef068a5321f5eebee3116fa4cec560173231954ffaca930eca"
+   }
+  },
+  "note": "primary candidates reused read-only; snapshot identity re-verified against frozen pins this run"
+ },
+ "pages": {
+  "BJ06": {
+   "page": "G:\\CODEX\\New Manga.worktrees\\M2-TA2B-OPEN-ASSETS-zcode\\test_assets\\comic_golden_suite\\日漫_JA\\01_black_jack_official\\vol03\\pages\\vol03_p0056.png",
+   "page_size": [
+    2946,
+    4167
+   ],
+   "inference_s": 0.016,
+   "conf_ge_0.01_count_by_class": {
+    "bubble": 0,
+    "panel": 0,
+    "sfx": 16,
+    "text": 0
+   },
+   "by_rung": {
+    "0.01": {
+     "count_by_class": {
+      "bubble": 0,
+      "panel": 0,
+      "sfx": 16,
+      "text": 0
+     }
+    },
+    "0.05": {
+     "count_by_class": {
+      "bubble": 0,
+      "panel": 0,
+      "sfx": 8,
+      "text": 0
+     }
+    },
+    "0.1": {
+     "count_by_class": {
+      "bubble": 0,
+      "panel": 0,
+      "sfx": 8,
+      "text": 0
+     }
+    },
+    "0.2": {
+     "count_by_class": {
+      "bubble": 0,
+      "panel": 0,
+      "sfx": 7,
+      "text": 0
+     }
+    },
+    "0.3": {
+     "count_by_class": {
+      "bubble": 0,
+      "panel": 0,
+      "sfx": 6,
+      "text": 0
+     }
+    },
+    "0.4": {
+     "count_by_class": {
+      "bubble": 0,
+      "panel": 0,
+      "sfx": 5,
+      "text": 0
+     }
+    },
+    "0.5": {
+     "count_by_class": {
+      "bubble": 0,
+      "panel": 0,
+      "sfx": 5,
+      "text": 0
+     }
+    }
+   },
+   "production_sfx_candidates_conf_ge_0.5": [
+    {
+     "cls": "sfx",
+     "conf": 0.8719,
+     "xyxy": [
+      2493.9,
+      2913.2,
+      2646.8,
+      3313.6
+     ],
+     "scores": {
+      "bubble": 0.0,
+      "panel": 0.0,
+      "sfx": 0.8719,
+      "text": 0.0
+     }
+    },
+    {
+     "cls": "sfx",
+     "conf": 0.8486,
+     "xyxy": [
+      396.8,
+      3408.7,
+      734.0,
+      3924.8
+     ],
+     "scores": {
+      "bubble": 0.0,
+      "panel": 0.0,
+      "sfx": 0.8486,
+      "text": 0.0
+     }
+    },
+    {
+     "cls": "sfx",
+     "conf": 0.8469,
+     "xyxy": [
+      2152.1,
+      3082.0,
+      2308.4,
+      3390.4
+     ],
+     "scores": {
+      "bubble": 0.0,
+      "panel": 0.0,
+      "sfx": 0.8469,
+      "text": 0.0
+     }
+    },
+    {
+     "cls": "sfx",
+     "conf": 0.7546,
+     "xyxy": [
+      1828.4,
+      2970.7,
+      1990.6,
+      3261.9
+     ],
+     "scores": {
+      "bubble": 0.0,
+      "panel": 0.0,
+      "sfx": 0.7546,
+      "text": 0.0
+     }
+    },
+    {
+     "cls": "sfx",
+     "conf": 0.5446,
+     "xyxy": [
+      1537.6,
+      3510.8,
+      1759.3,
+      3963.6
+     ],
+     "scores": {
+      "bubble": 0.0,
+      "panel": 0.0,
+      "sfx": 0.5446,
+      "text": 0.0
+     }
+    }
+   ],
+   "reference_verdicts": [],
+   "raw_pre_nms_in_reference": {},
+   "bj06_region_recall": {
+    "regions_hit": 5,
+    "regions_total": 8,
+    "per_region": [
+     {
+      "region_id": "3ca2446544644ceeb2768bebf61789bf",
+      "xyxy": [
+       2145,
+       3084,
+       2306,
+       3393
+      ],
+      "best_prod_sfx_iou": 0.9283
+     },
+     {
+      "region_id": "dab09d6b4e24438cb2dc6b2ea4d18af3",
+      "xyxy": [
+       2495,
+       2907,
+       2652,
+       3316
+      ],
+      "best_prod_sfx_iou": 0.9401
+     },
+     {
+      "region_id": "2eeaa2c4d2a747f59bd7cf52b8d12e30",
+      "xyxy": [
+       1534,
+       3517,
+       1757,
+       3912
+      ],
+      "best_prod_sfx_iou": 0.8512
+     },
+     {
+      "region_id": "ab8974e10c0b476ab26366798668de53",
+      "xyxy": [
+       926,
+       2818,
+       1096,
+       3112
+      ],
+      "best_prod_sfx_iou": 0.0
+     },
+     {
+      "region_id": "eac72dfd7b834871a1cec081153b560e",
+      "xyxy": [
+       388,
+       3402,
+       728,
+       3936
+      ],
+      "best_prod_sfx_iou": 0.9257
+     },
+     {
+      "region_id": "ea4cbed9134c428ab3804944055449ce",
+      "xyxy": [
+       1830,
+       2969,
+       1992,
+       3266
+      ],
+      "best_prod_sfx_iou": 0.9627
+     },
+     {
+      "region_id": "c3781c28a8e14d648560dcf03418b44b",
+      "xyxy": [
+       408,
+       468,
+       625,
+       960
+      ],
+      "best_prod_sfx_iou": 0.0
+     },
+     {
+      "region_id": "b5b747d0919542a4adf781a9f3eaa841",
+      "xyxy": [
+       2494,
+       1895,
+       2581,
+       1998
+      ],
+      "best_prod_sfx_iou": 0.0
+     }
+    ]
+   },
+   "arbitration_overlap_vs_primary_rerun": {
+    "n_sfx_candidates": 5,
+    "n_primary_candidates": 9,
+    "excluded_non_primary_labels": [
+     "sfx-1",
+     "sfx-2",
+     "sfx-3",
+     "sfx-4",
+     "sfx-5",
+     "sfx-6",
+     "sfx-7",
+     "sfx-8"
+    ],
+    "pairs_desc": [
+     {
+      "sfx_idx": 4,
+      "sfx_conf": 0.5446,
+      "sfx_xyxy": [
+       1537.6,
+       3510.8,
+       1759.3,
+       3963.6
+      ],
+      "primary_idx": 8,
+      "primary_conf": 0.5379,
+      "primary_bbox": [
+       1540.1,
+       3500.0,
+       1762.0,
+       3924.7
+      ],
+      "iou": 0.8732,
+      "sfx_covered_by_primary": 0.9038,
+      "primary_covered_by_sfx": 0.9627
+     },
+     {
+      "sfx_idx": 1,
+      "sfx_conf": 0.8486,
+      "sfx_xyxy": [
+       396.8,
+       3408.7,
+       734.0,
+       3924.8
+      ],
+      "primary_idx": 7,
+      "primary_conf": 0.6049,
+      "primary_bbox": [
+       429.3,
+       3419.2,
+       714.6,
+       3881.3
+      ],
+      "iou": 0.7576,
+      "sfx_covered_by_primary": 0.7576,
+      "primary_covered_by_sfx": 1.0
+     }
+    ],
+    "max_pair_iou": 0.8732,
+    "pairs_ge_0.85": 1,
+    "containment_pairs_any_direction_1.0": 1,
+    "simulated_gate_at_frozen_0.90": {
+     "relabels": 0,
+     "partial_overlap": "0.8732"
+    }
+   }
+  },
+  "BJ13": {
+   "page": "G:\\CODEX\\New Manga.worktrees\\M2-SFX-E2E-MATERIAL-zcode\\test_assets\\comic_golden_suite\\日漫_JA\\01_black_jack_official\\vol03\\pages\\vol03_p0048.png",
+   "page_size": [
+    2946,
+    4167
+   ],
+   "inference_s": 0.009,
+   "conf_ge_0.01_count_by_class": {
+    "bubble": 0,
+    "panel": 0,
+    "sfx": 6,
+    "text": 0
+   },
+   "by_rung": {
+    "0.01": {
+     "count_by_class": {
+      "bubble": 0,
+      "panel": 0,
+      "sfx": 6,
+      "text": 0
+     }
+    },
+    "0.05": {
+     "count_by_class": {
+      "bubble": 0,
+      "panel": 0,
+      "sfx": 5,
+      "text": 0
+     }
+    },
+    "0.1": {
+     "count_by_class": {
+      "bubble": 0,
+      "panel": 0,
+      "sfx": 3,
+      "text": 0
+     }
+    },
+    "0.2": {
+     "count_by_class": {
+      "bubble": 0,
+      "panel": 0,
+      "sfx": 2,
+      "text": 0
+     }
+    },
+    "0.3": {
+     "count_by_class": {
+      "bubble": 0,
+      "panel": 0,
+      "sfx": 2,
+      "text": 0
+     }
+    },
+    "0.4": {
+     "count_by_class": {
+      "bubble": 0,
+      "panel": 0,
+      "sfx": 1,
+      "text": 0
+     }
+    },
+    "0.5": {
+     "count_by_class": {
+      "bubble": 0,
+      "panel": 0,
+      "sfx": 1,
+      "text": 0
+     }
+    }
+   },
+   "production_sfx_candidates_conf_ge_0.5": [
+    {
+     "cls": "sfx",
+     "conf": 0.8914,
+     "xyxy": [
+      1555.4,
+      2610.8,
+      1778.4,
+      2904.4
+     ],
+     "scores": {
+      "bubble": 0.0,
+      "panel": 0.0,
+      "sfx": 0.8914,
+      "text": 0.0
+     }
+    }
+   ],
+   "reference_verdicts": [
+    {
+     "ref": {
+      "text": "ピ一一ーン！",
+      "approx_xyxy": [
+       2210,
+       240,
+       2560,
+       1000
+      ]
+     },
+     "n_intersecting": 1,
+     "production_sfx_candidates_conf_ge_0.5": 0,
+     "best_prod_sfx_iou": 0.0,
+     "best_sfx_class_score_among_intersecting": 0.3727,
+     "prod_sfx_boxes": [],
+     "sfx_class_intersecting_any_conf": [
+      {
+       "cls": "sfx",
+       "conf": 0.3727,
+       "xyxy": [
+        2116.0,
+        261.1,
+        2476.9,
+        1114.3
+       ],
+       "scores": {
+        "bubble": 0.0001,
+        "panel": 0.0,
+        "sfx": 0.3727,
+        "text": 0.0
+       }
+      }
+     ]
+    },
+    {
+     "ref": {
+      "text": "ピ一一ーン！",
+      "approx_xyxy": [
+       420,
+       2560,
+       760,
+       3400
+      ]
+     },
+     "n_intersecting": 1,
+     "production_sfx_candidates_conf_ge_0.5": 0,
+     "best_prod_sfx_iou": 0.0,
+     "best_sfx_class_score_among_intersecting": 0.1796,
+     "prod_sfx_boxes": [],
+     "sfx_class_intersecting_any_conf": [
+      {
+       "cls": "sfx",
+       "conf": 0.1796,
+       "xyxy": [
+        471.7,
+        2669.3,
+        754.6,
+        3698.9
+       ],
+       "scores": {
+        "bubble": 0.0,
+        "panel": 0.0,
+        "sfx": 0.1796,
+        "text": 0.0
+       }
+      }
+     ]
+    }
+   ],
+   "raw_pre_nms_in_reference": {
+    "ref1": {
+     "n_raw_candidates_conf_ge_0.01": 13,
+     "top_sfx_score": 0.3727,
+     "top20": [
+      {
+       "letterbox_center": [
+        564.3,
+        169.0
+       ],
+       "argmax_cls": "sfx",
+       "scores": {
+        "bubble": 0.0001,
+        "panel": 0.0,
+        "sfx": 0.3727,
+        "text": 0.0
+       }
+      },
+      {
+       "letterbox_center": [
+        564.3,
+        181.8
+       ],
+       "argmax_cls": "sfx",
+       "scores": {
+        "bubble": 0.0001,
+        "panel": 0.0,
+        "sfx": 0.3403,
+        "text": 0.0
+       }
+      },
+      {
+       "letterbox_center": [
+        564.1,
+        186.0
+       ],
+       "argmax_cls": "sfx",
+       "scores": {
+        "bubble": 0.0,
+        "panel": 0.0,
+        "sfx": 0.2275,
+        "text": 0.0
+       }
+      },
+      {
+       "letterbox_center": [
+        564.4,
+        177.9
+       ],
+       "argmax_cls": "sfx",
+       "scores": {
+        "bubble": 0.0,
+        "panel": 0.0,
+        "sfx": 0.219,
+        "text": 0.0
+       }
+      },
+      {
+       "letterbox_center": [
+        564.2,
+        189.9
+       ],
+       "argmax_cls": "sfx",
+       "scores": {
+        "bubble": 0.0,
+        "panel": 0.0,
+        "sfx": 0.1341,
+        "text": 0.0
+       }
+      },
+      {
+       "letterbox_center": [
+        564.8,
+        165.4
+       ],
+       "argmax_cls": "sfx",
+       "scores": {
+        "bubble": 0.0,
+        "panel": 0.0,
+        "sfx": 0.1292,
+        "text": 0.0
+       }
+      },
+      {
+       "letterbox_center": [
+        564.1,
+        192.0
+       ],
+       "argmax_cls": "sfx",
+       "scores": {
+        "bubble": 0.0,
+        "panel": 0.0,
+        "sfx": 0.0991,
+        "text": 0.0
+       }
+      },
+      {
+       "letterbox_center": [
+        564.9,
+        157.3
+       ],
+       "argmax_cls": "sfx",
+       "scores": {
+        "bubble": 0.0,
+        "panel": 0.0,
+        "sfx": 0.0713,
+        "text": 0.0
+       }
+      },
+      {
+       "letterbox_center": [
+        564.3,
+        165.9
+       ],
+       "argmax_cls": "sfx",
+       "scores": {
+        "bubble": 0.0,
+        "panel": 0.0,
+        "sfx": 0.0654,
+        "text": 0.0
+       }
+      },
+      {
+       "letterbox_center": [
+        564.5,
+        167.9
+       ],
+       "argmax_cls": "sfx",
+       "scores": {
+        "bubble": 0.0,
+        "panel": 0.0,
+        "sfx": 0.0298,
+        "text": 0.0
+       }
+      },
+      {
+       "letterbox_center": [
+        564.4,
+        155.1
+       ],
+       "argmax_cls": "sfx",
+       "scores": {
+        "bubble": 0.0,
+        "panel": 0.0,
+        "sfx": 0.0262,
+        "text": 0.0
+       }
+      },
+      {
+       "letterbox_center": [
+        565.7,
+        188.7
+       ],
+       "argmax_cls": "sfx",
+       "scores": {
+        "bubble": 0.0,
+        "panel": 0.0,
+        "sfx": 0.0208,
+        "text": 0.0
+       }
+      },
+      {
+       "letterbox_center": [
+        566.0,
+        170.2
+       ],
+       "argmax_cls": "sfx",
+       "scores": {
+        "bubble": 0.0,
+        "panel": 0.0,
+        "sfx": 0.0162,
+        "text": 0.0
+       }
+      }
+     ]
+    },
+    "ref2": {
+     "n_raw_candidates_conf_ge_0.01": 6,
+     "top_sfx_score": 0.1796,
+     "top20": [
+      {
+       "letterbox_center": [
+        150.7,
+        782.5
+       ],
+       "argmax_cls": "sfx",
+       "scores": {
+        "bubble": 0.0,
+        "panel": 0.0,
+        "sfx": 0.1796,
+        "text": 0.0
+       }
+      },
+      {
+       "letterbox_center": [
+        150.1,
+        779.1
+       ],
+       "argmax_cls": "sfx",
+       "scores": {
+        "bubble": 0.0,
+        "panel": 0.0,
+        "sfx": 0.0908,
+        "text": 0.0
+       }
+      },
+      {
+       "letterbox_center": [
+        150.9,
+        779.7
+       ],
+       "argmax_cls": "sfx",
+       "scores": {
+        "bubble": 0.0,
+        "panel": 0.0,
+        "sfx": 0.0754,
+        "text": 0.0
+       }
+      },
+      {
+       "letterbox_center": [
+        151.3,
+        777.7
+       ],
+       "argmax_cls": "sfx",
+       "scores": {
+        "bubble": 0.0,
+        "panel": 0.0,
+        "sfx": 0.0665,
+        "text": 0.0
+       }
+      },
+      {
+       "letterbox_center": [
+        150.8,
+        780.5
+       ],
+       "argmax_cls": "sfx",
+       "scores": {
+        "bubble": 0.0,
+        "panel": 0.0,
+        "sfx": 0.0263,
+        "text": 0.0
+       }
+      },
+      {
+       "letterbox_center": [
+        151.1,
+        781.6
+       ],
+       "argmax_cls": "sfx",
+       "scores": {
+        "bubble": 0.0,
+        "panel": 0.0,
+        "sfx": 0.0192,
+        "text": 0.0
+       }
+      }
+     ]
+    }
+   },
+   "arbitration_overlap_vs_primary_rerun": {
+    "n_sfx_candidates": 1,
+    "n_primary_candidates": 3,
+    "excluded_non_primary_labels": [
+     "sfx-1"
+    ],
+    "pairs_desc": [],
+    "max_pair_iou": 0.0,
+    "pairs_ge_0.85": 0,
+    "containment_pairs_any_direction_1.0": 0,
+    "simulated_gate_at_frozen_0.90": {
+     "relabels": 0,
+     "partial_overlap": null
+    }
+   }
+  },
+  "BJ14": {
+   "page": "G:\\CODEX\\New Manga.worktrees\\M2-SFX-E2E-MATERIAL-zcode\\test_assets\\comic_golden_suite\\日漫_JA\\01_black_jack_official\\vol03\\pages\\vol03_p0060.png",
+   "page_size": [
+    2946,
+    4167
+   ],
+   "inference_s": 0.008,
+   "conf_ge_0.01_count_by_class": {
+    "bubble": 0,
+    "panel": 0,
+    "sfx": 0,
+    "text": 0
+   },
+   "by_rung": {
+    "0.01": {
+     "count_by_class": {
+      "bubble": 0,
+      "panel": 0,
+      "sfx": 0,
+      "text": 0
+     }
+    },
+    "0.05": {
+     "count_by_class": {
+      "bubble": 0,
+      "panel": 0,
+      "sfx": 0,
+      "text": 0
+     }
+    },
+    "0.1": {
+     "count_by_class": {
+      "bubble": 0,
+      "panel": 0,
+      "sfx": 0,
+      "text": 0
+     }
+    },
+    "0.2": {
+     "count_by_class": {
+      "bubble": 0,
+      "panel": 0,
+      "sfx": 0,
+      "text": 0
+     }
+    },
+    "0.3": {
+     "count_by_class": {
+      "bubble": 0,
+      "panel": 0,
+      "sfx": 0,
+      "text": 0
+     }
+    },
+    "0.4": {
+     "count_by_class": {
+      "bubble": 0,
+      "panel": 0,
+      "sfx": 0,
+      "text": 0
+     }
+    },
+    "0.5": {
+     "count_by_class": {
+      "bubble": 0,
+      "panel": 0,
+      "sfx": 0,
+      "text": 0
+     }
+    }
+   },
+   "production_sfx_candidates_conf_ge_0.5": [],
+   "reference_verdicts": [
+    {
+     "ref": {
+      "text": "オギャァ",
+      "approx_xyxy": [
+       1230,
+       300,
+       1520,
+       950
+      ]
+     },
+     "n_intersecting": 0,
+     "production_sfx_candidates_conf_ge_0.5": 0,
+     "best_prod_sfx_iou": 0.0,
+     "best_sfx_class_score_among_intersecting": 0.0,
+     "prod_sfx_boxes": [],
+     "sfx_class_intersecting_any_conf": []
+    },
+    {
+     "ref": {
+      "text": "オギャァ",
+      "approx_xyxy": [
+       400,
+       1900,
+       700,
+       2560
+      ]
+     },
+     "n_intersecting": 0,
+     "production_sfx_candidates_conf_ge_0.5": 0,
+     "best_prod_sfx_iou": 0.0,
+     "best_sfx_class_score_among_intersecting": 0.0,
+     "prod_sfx_boxes": [],
+     "sfx_class_intersecting_any_conf": []
+    },
+    {
+     "ref": {
+      "text": "オギャァ",
+      "approx_xyxy": [
+       1900,
+       2260,
+       2200,
+       2900
+      ]
+     },
+     "n_intersecting": 0,
+     "production_sfx_candidates_conf_ge_0.5": 0,
+     "best_prod_sfx_iou": 0.0,
+     "best_sfx_class_score_among_intersecting": 0.0,
+     "prod_sfx_boxes": [],
+     "sfx_class_intersecting_any_conf": []
+    }
+   ],
+   "raw_pre_nms_in_reference": {
+    "ref1": {
+     "n_raw_candidates_conf_ge_0.01": 0,
+     "top_sfx_score": 0.0,
+     "top20": []
+    },
+    "ref2": {
+     "n_raw_candidates_conf_ge_0.01": 0,
+     "top_sfx_score": 0.0,
+     "top20": []
+    },
+    "ref3": {
+     "n_raw_candidates_conf_ge_0.01": 0,
+     "top_sfx_score": 0.0,
+     "top20": []
+    }
+   },
+   "arbitration_overlap_vs_primary_rerun": {
+    "n_sfx_candidates": 0,
+    "n_primary_candidates": 6,
+    "excluded_non_primary_labels": [],
+    "pairs_desc": [],
+    "max_pair_iou": 0.0,
+    "pairs_ge_0.85": 0,
+    "containment_pairs_any_direction_1.0": 0,
+    "simulated_gate_at_frozen_0.90": {
+     "relabels": 0,
+     "partial_overlap": null
+    }
+   }
+  },
+  "BJ15": {
+   "page": "G:\\CODEX\\New Manga.worktrees\\M2-SFX-E2E-MATERIAL-zcode\\test_assets\\comic_golden_suite\\日漫_JA\\01_black_jack_official\\vol03\\pages\\vol03_p0159.png",
+   "page_size": [
+    2946,
+    4167
+   ],
+   "inference_s": 0.008,
+   "conf_ge_0.01_count_by_class": {
+    "bubble": 0,
+    "panel": 0,
+    "sfx": 2,
+    "text": 0
+   },
+   "by_rung": {
+    "0.01": {
+     "count_by_class": {
+      "bubble": 0,
+      "panel": 0,
+      "sfx": 2,
+      "text": 0
+     }
+    },
+    "0.05": {
+     "count_by_class": {
+      "bubble": 0,
+      "panel": 0,
+      "sfx": 1,
+      "text": 0
+     }
+    },
+    "0.1": {
+     "count_by_class": {
+      "bubble": 0,
+      "panel": 0,
+      "sfx": 1,
+      "text": 0
+     }
+    },
+    "0.2": {
+     "count_by_class": {
+      "bubble": 0,
+      "panel": 0,
+      "sfx": 1,
+      "text": 0
+     }
+    },
+    "0.3": {
+     "count_by_class": {
+      "bubble": 0,
+      "panel": 0,
+      "sfx": 1,
+      "text": 0
+     }
+    },
+    "0.4": {
+     "count_by_class": {
+      "bubble": 0,
+      "panel": 0,
+      "sfx": 1,
+      "text": 0
+     }
+    },
+    "0.5": {
+     "count_by_class": {
+      "bubble": 0,
+      "panel": 0,
+      "sfx": 1,
+      "text": 0
+     }
+    }
+   },
+   "production_sfx_candidates_conf_ge_0.5": [
+    {
+     "cls": "sfx",
+     "conf": 0.5118,
+     "xyxy": [
+      821.1,
+      935.5,
+      915.0,
+      1316.0
+     ],
+     "scores": {
+      "bubble": 0.0,
+      "panel": 0.0,
+      "sfx": 0.5118,
+      "text": 0.0
+     }
+    }
+   ],
+   "reference_verdicts": [
+    {
+     "ref": {
+      "text": "オギャァ",
+      "approx_xyxy": [
+       1600,
+       200,
+       1900,
+       800
+      ]
+     },
+     "n_intersecting": 0,
+     "production_sfx_candidates_conf_ge_0.5": 0,
+     "best_prod_sfx_iou": 0.0,
+     "best_sfx_class_score_among_intersecting": 0.0,
+     "prod_sfx_boxes": [],
+     "sfx_class_intersecting_any_conf": []
+    },
+    {
+     "ref": {
+      "text": "オギャァ",
+      "approx_xyxy": [
+       900,
+       1650,
+       1150,
+       2200
+      ]
+     },
+     "n_intersecting": 0,
+     "production_sfx_candidates_conf_ge_0.5": 0,
+     "best_prod_sfx_iou": 0.0,
+     "best_sfx_class_score_among_intersecting": 0.0,
+     "prod_sfx_boxes": [],
+     "sfx_class_intersecting_any_conf": []
+    }
+   ],
+   "raw_pre_nms_in_reference": {
+    "ref1": {
+     "n_raw_candidates_conf_ge_0.01": 0,
+     "top_sfx_score": 0.0,
+     "top20": []
+    },
+    "ref2": {
+     "n_raw_candidates_conf_ge_0.01": 0,
+     "top_sfx_score": 0.0,
+     "top20": []
+    }
+   },
+   "arbitration_overlap_vs_primary_rerun": {
+    "n_sfx_candidates": 1,
+    "n_primary_candidates": 7,
+    "excluded_non_primary_labels": [],
+    "pairs_desc": [],
+    "max_pair_iou": 0.0,
+    "pairs_ge_0.85": 0,
+    "containment_pairs_any_direction_1.0": 0,
+    "simulated_gate_at_frozen_0.90": {
+     "relabels": 0,
+     "partial_overlap": null
+    }
+   }
+  }
+ }
+}

@@ -1,0 +1,31 @@
+# M2-SFX-BJ13-RECALL-1 r1fix rerun (DSH r1 P3-5: raw log header)
+date_utc_local: 2026-10-06T22:05:01+0800
+cmd: "G:/CODEX/New Manga.task-envs/M2-SFX-T5-TILE-gpu/Scripts/python.exe" experiments/M2-SFX-BJ13-RECALL-1/recall_probe.py --out-dir verification/M2-SFX-BJ13-RECALL-1/raw/r1fix
+venv: G:/CODEX/New Manga.task-envs/M2-SFX-T5-TILE-gpu
+Python 3.12.3
+onnxruntime 1.24.4 | numpy 2.5.3 | PIL 12.3.0
+worktree: G:/CODEX/New Manga.worktrees/M2-SFX-BJ13-RECALL-1-zcode (branch agent/zcode/M2-SFX-BJ13-RECALL-1)
+--- probe stdout/stderr below ---
+weights: G:\CODEX\New Manga.task-envs\M2-SFX-DETECT\weights-v2b\yolo11s-seg.onnx
+weights sha256: 944e811410933ad6ff8d32446fcc9eef90fb463794e1874ce83035e83acd418d
+primary snapshot identity re-verified: G:\CODEX\New Manga.task-envs\M2-DOCTR-QUAL-C4\weights\ogkalu-comic-text-and-bubble-detector
+primary candidates read from G:\CODEX\New Manga.worktrees\M2-SFX-BJ13-RECALL-1-zcode\verification\M2-REGION-OVERLAP-ARBITRATION\raw\arbitrate-pages.json (sha256 5048bab61ae7b8e7…)
+ENGINE OK imgsz=1024 (metadata_parsed) ep_requested=dml ep_effective=dml ep_fallback=None
+PROBE BJ06: 2946x4167 0.022s conf0.5_sfx=5 all_class={'bubble': 0, 'panel': 0, 'sfx': 16, 'text': 0}
+   arbitration: max_pair_iou=0.8732 pairs_ge_0.85=1 containment=1 sim_gate={'relabels': 0, 'partial_overlap': '0.8732'}
+   BJ06 control: 5/8 regions hit
+PROBE BJ13: 2946x4167 0.009s conf0.5_sfx=1 all_class={'bubble': 0, 'panel': 0, 'sfx': 6, 'text': 0}
+   ref ピ一一ーン！ [2210, 240, 2560, 1000] -> prod_sfx_iou=0.0 best_sfx_score_any=0.3727
+   ref ピ一一ーン！ [420, 2560, 760, 3400] -> prod_sfx_iou=0.0 best_sfx_score_any=0.1796
+   arbitration: max_pair_iou=0.0 pairs_ge_0.85=0 containment=0 sim_gate={'relabels': 0, 'partial_overlap': None}
+PROBE BJ14: 2946x4167 0.008s conf0.5_sfx=0 all_class={'bubble': 0, 'panel': 0, 'sfx': 0, 'text': 0}
+   ref オギャァ [1230, 300, 1520, 950] -> prod_sfx_iou=0.0 best_sfx_score_any=0.0
+   ref オギャァ [400, 1900, 700, 2560] -> prod_sfx_iou=0.0 best_sfx_score_any=0.0
+   ref オギャァ [1900, 2260, 2200, 2900] -> prod_sfx_iou=0.0 best_sfx_score_any=0.0
+   arbitration: max_pair_iou=0.0 pairs_ge_0.85=0 containment=0 sim_gate={'relabels': 0, 'partial_overlap': None}
+PROBE BJ15: 2946x4167 0.008s conf0.5_sfx=1 all_class={'bubble': 0, 'panel': 0, 'sfx': 2, 'text': 0}
+   ref オギャァ [1600, 200, 1900, 800] -> prod_sfx_iou=0.0 best_sfx_score_any=0.0
+   ref オギャァ [900, 1650, 1150, 2200] -> prod_sfx_iou=0.0 best_sfx_score_any=0.0
+   arbitration: max_pair_iou=0.0 pairs_ge_0.85=0 containment=0 sim_gate={'relabels': 0, 'partial_overlap': None}
+wrote verification\M2-SFX-BJ13-RECALL-1\raw\r1fix\recall-probe.json
+EXIT=0
