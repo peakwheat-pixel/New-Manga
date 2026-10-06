@@ -27,18 +27,22 @@ torchvision==0.29.0
 # PROVIDER_DEPENDENCY_MISSING. torch/torchvision lines above are untouched.
 transformers==5.17.0
 safetensors==0.8.0
-# M2-SFX-PROD-1 standalone SFX detector (chiqui7/yolo11-manga-seg ONNX, user
-# ruling 2026-10-01: do it / MIT accepted / route A). onnxruntime is the
-# LIGHTWEIGHT sfx runtime (CPU EP, no torch) — see
-# src/infrastructure/providers/detection_sfx.py; the version is PINNED to the
-# exact build proven by the M2-SFX-DETECT-EVAL inference (CPU provider,
-# verification/M2-SFX-DETECT-EVAL). Weights (yolo11s-seg.onnx, 41 MB,
-# sha256 d87389af4350954143a216bcfe40fd2ad93312cb136534e6073c9c740d98b646)
-# are NOT downloaded at run time and NOT committed; they ride the packaged
-# bundle via packaging/m2ac5/build_sidecar.ps1. The letterbox preprocessing
-# uses PIL, which is already guaranteed by the torchvision dependency above
-# (hard Requires-Dist: pillow) — deliberately NOT re-pinned here.
-onnxruntime==1.30.0
+# M2-SFX-GPU-EP-1 (user ruling 2026-10-06: deployment form = GPU). The wheel
+# switches onnxruntime -> onnxruntime-directml (SAME import name and API
+# surface; PyPI's directml line tops out at 1.24.4 — the exact build the T5
+# perf venv measured at 1.08 s/page on the DML EP, and the DmlExecutionProvider
+# is now the DEFAULT SFX EP via NEWMANGA_SFX_EP, dml|cpu, with an automatic
+# audited CPU fallback when DML init fails). The directml and CPU wheels are
+# mutually exclusive in one environment — installing one REPLACES the other.
+# The version stays PINNED to the exact build proven by the T5 GPU/CPU
+# measurement (verification/M2-SFX-T5-TILE-KO) and this Task's AC2/AC3
+# evidence. Weights (yolo11s-seg.onnx, ~41 MB, sha256 944e8114… — the v2b
+# production pin, see detection_sfx.py) are NOT downloaded at run time and
+# NOT committed; they ride the packaged bundle via
+# packaging/m2ac5/build_sidecar.ps1. The letterbox preprocessing uses PIL,
+# which is already guaranteed by the torchvision dependency above (hard
+# Requires-Dist: pillow) — deliberately NOT re-pinned here.
+onnxruntime-directml==1.24.4
 
 # M2-SFX-SYNTH-BG-AUTO: playwright = ChatGPT 网页底图自动 provider 的浏览器驱动（channel=chrome 用系统浏览器，无需下载内核）
 playwright==1.63.0

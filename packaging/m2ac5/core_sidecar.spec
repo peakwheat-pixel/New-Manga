@@ -110,15 +110,18 @@ ML_BINARY_IMPORTS = [
     "torchvision/image_stable.pyd",
 ]
 
-#: M2-SFX-PROD-1: the onnxruntime C-extension pair — the pyd that
-#: ``import onnxruntime`` loads and (like torchvision above, EXTENSION TOC
-#: entries inside the bundle dir) the native engine DLL it needs. The pyd
-#: pull-in is what the assertion below checks; the DLL ships beside it in
-#: onnxruntime/capi/. The check is the SFX counterpart of the torchvision
-#: binaries assertion: build venv has the runtime but a shrink here must
-#: fail the BUILD, not the release detect.
+#: M2-SFX-PROD-1 / M2-SFX-GPU-EP-1: the onnxruntime C-extension pair plus —
+#: since the GPU deployment ruling (2026-10-06) — the DirectML runtime DLL.
+#: The dependency is onnxruntime-directml==1.24.4 (same import name ``onnxruntime``,
+#: same pyd name; the directml wheel additionally bundles ``DirectML.dll``
+#: beside the pyd in onnxruntime/capi/, and the DmlExecutionProvider session
+#: cannot initialize without it). The pyd pull-in is what the assertion below
+#: checks; the DLLs ship beside it in onnxruntime/capi/. The check is the SFX
+#: counterpart of the torchvision binaries assertion: build venv has the
+#: runtime but a shrink here must fail the BUILD, not the release detect.
 SFX_BINARY_IMPORTS = [
     "onnxruntime_pybind11_state.pyd",
+    "DirectML.dll",
 ]
 
 

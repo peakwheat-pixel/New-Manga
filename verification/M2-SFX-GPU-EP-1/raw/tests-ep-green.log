@@ -1,0 +1,11 @@
+........................................................................ [ 74%]
+.........................                                                [100%]
+============================== warnings summary ===============================
+tests/providers/test_detection_sfx.py::test_real_weights_reproduce_eval_payload[rgb24]
+tests/providers/test_detection_sfx.py::test_real_weights_reproduce_eval_payload[rgb32]
+tests/providers/test_detection_sfx.py::test_real_weights_blank_page_structurally_valid
+  G:\CODEX\New Manga.task-envs\T1.1.1-impl-py312\Lib\site-packages\onnxruntime\capi\onnxruntime_inference_collection.py:197: UserWarning: Specified provider 'DmlExecutionProvider' is not in available provider names.Available providers: 'AzureExecutionProvider, CPUExecutionProvider'
+    warnings.warn(
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+97 passed, 3 warnings in 2.38s

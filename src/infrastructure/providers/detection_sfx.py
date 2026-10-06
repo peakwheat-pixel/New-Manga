@@ -67,8 +67,13 @@ merge (that is the word-level dialogue caliber); they are block-level art-text
 candidates flowing beside the manga candidates into region creation, where the
 assembly dispatches the ``sfx-`` label prefix to ``RegionType.SFX`` and the
 existing SfxPolicy gate takes over. The onnxruntime stack is deliberately the
-LIGHTWEIGHT route (no torch) — CPU EP, 41 MB weights bundled (release-form
-out-of-the-box per user ruling 3).
+LIGHTWEIGHT route (no torch). The execution provider is CONFIGURED since
+M2-SFX-GPU-EP-1 (user ruling 2026-10-06: deployment form = GPU):
+``NEWMANGA_SFX_EP`` (``dml`` default | ``cpu``) selects DmlExecutionProvider
+(the onnxruntime-directml wheel) or the pre-GPU CPUExecutionProvider behavior;
+a DML init failure falls back to the CPU EP automatically with the degradation
+audit-visible in the detect options (never silent). Weights stay bundled
+(release-form out-of-the-box per user ruling 3).
 
 The parallel assembly form lives here too:
 :class:`MangaSfxParallelDetectionProvider` composes the primary (manga) provider
@@ -366,6 +371,111 @@ def _tile_config() -> _TileConfig:
     )
 
 
+# ---------------------------------------------------------------------------
+# Execution-provider selection (M2-SFX-GPU-EP-1, user ruling 2026-10-06 GPU)
+#
+# T5-TILE-KO's deployment-form data (verification/M2-SFX-T5-TILE-KO): KO
+# long-strip pages measured 10.46 s/page on the CPU EP vs 1.08 s/page on the
+# DML EP (onnxruntime-directml 1.24.4, RTX 5070 Ti) — the user ruled the
+# deployment form GPU and this section turns the hardcoded
+# ``CPUExecutionProvider`` into a configured value.
+#
+# ``NEWMANGA_SFX_EP`` accepts ``dml`` (DEFAULT — the ruling) or ``cpu`` (the
+# pre-GPU behavior verbatim). The env follows the ARBITRATION/TILE
+# discipline: an absent variable means the default; an empty or illegal value
+# is a fail-fast ``ValueError`` naming the variable, raised BEFORE any
+# weights resolution or inference (never a half-configured engine).
+#
+# DML init failure semantics (Owner discretion, registered in the Task
+# report; r1 P1-1 mechanism corrected): a machine without a DX12 GPU / with
+# a broken driver / running the CPU-only wheel cannot use a DML session.
+# The MECHANISM matters: onnxruntime's own Python wrapper
+# (``InferenceSession.__init__``, ``enable_fallback=True`` by default)
+# SWALLOWS (ValueError, RuntimeError) from the requested EP, rebuilds on
+# ["CPUExecutionProvider"] and returns NORMALLY — so the usual fallback
+# shape is NOT an exception here. The effective EP is therefore read back
+# off the session via ``get_providers()``: requested dml + a session whose
+# first provider is not DmlExecutionProvider = the wrapper-level fallback.
+# Either way (wrapper fallback, or the defensive exception-driven retry for
+# the shapes that DO raise) the degradation is recorded in the detect
+# options — ``device`` carries the EFFECTIVE EP, ``sfx_ep`` the EP that was
+# requested at engine-build time, ``sfx_ep_fallback`` the reason —
+# availability first, the behavior stays usable everywhere, the fallback is
+# never silent. ``device`` is the SFX provider's EXECUTION-PROVIDER key: it
+# shares its NAME with the manga/doctr torch-device ``device`` options key
+# but records an onnxruntime provider there (r1 P4-3 note; no consumer in
+# src/ or apps/ branches on either value). The EP is NOT part of the
+# supply-chain security surface (the SHA-256 weights gate runs before any
+# runtime import and is unaffected by the EP choice). An EXPLICIT ``cpu``
+# request whose session build fails stays a typed ``ProviderError`` — no
+# fallback out of an explicit request. The fallback above covers INIT only
+# (r2 N-P3-1 narrowing): the wrapper ALSO retries internally at run() time —
+# an ``ORT EPFail`` mid-inference is silently retried on CPU inside
+# ``InferenceSession.run`` (wrapper ``:278-305``) and is NOT re-audited by
+# the three-key read-back (re-reading providers per detect was judged too
+# costly; registered as a known unaudited channel / candidate slice). A
+# session that BUILT but fails at run() time with anything other than that
+# wrapper-internal retry keeps the existing typed detect-time failure path.
+#
+# Cache semantics: the EP is an ENGINE-level property (providers are fixed at
+# InferenceSession construction), so the resolved env rides the first
+# ``_engine_or_raise`` call and the cached engine keeps it for the provider
+# instance's lifetime — same lifetime discipline as the ``conf_threshold``
+# field; a different EP means a new provider instance or process. The
+# fail-fast env read itself happens on EVERY detect, so an illegal value
+# never slips through on a warm engine either. Corollary (r1 P4-4): on a
+# warm engine a LATER env change is deliberately NOT reflected in the
+# options — ``sfx_ep`` records what was requested at ENGINE-BUILD time, the
+# fail-fast read only guards the legality of the env, never re-resolves the
+# engine.
+# ---------------------------------------------------------------------------
+
+#: The env name. Values: ``dml`` (default) | ``cpu``.
+SFX_ENV_EP = "NEWMANGA_SFX_EP"
+SFX_EP_DML = "dml"
+SFX_EP_CPU = "cpu"
+#: The deployment-form default = the user ruling 2026-10-06 (GPU).
+SFX_EP_DEFAULT = SFX_EP_DML
+
+#: The provider-name strings as onnxruntime spells them.
+_EP_PROVIDER_NAMES = {
+    SFX_EP_DML: "DmlExecutionProvider",
+    SFX_EP_CPU: "CPUExecutionProvider",
+}
+#: Reverse lookup for the get_providers() read-back (r1 P1-1): a provider
+#: name -> the ``dml``/``cpu`` audit token; an unknown name is recorded
+#: as-is (the audit value follows the runtime, never a guess).
+_EP_MODE_BY_PROVIDER_NAME = {
+    name: mode for mode, name in _EP_PROVIDER_NAMES.items()
+}
+
+
+def _ep_config() -> str:
+    """Read the EP env override (the ``_tile_config``/``_arbitration_config``
+    testability pattern; the fail-fast discipline)."""
+    raw = os.environ.get(SFX_ENV_EP)
+    if raw is None:
+        return SFX_EP_DEFAULT
+    mode = raw.strip().lower()
+    if mode not in (SFX_EP_DML, SFX_EP_CPU):
+        raise ValueError(
+            f"{SFX_ENV_EP}: unsupported value {raw!r} (use dml|cpu)"
+        )
+    return mode
+
+
+@dataclass(frozen=True)
+class _EpProvenance:
+    """The execution-provider provenance riding the engine to the detect
+    options (the DSH r1 R4 imgsz-provenance pattern): what was REQUESTED via
+    the env, what is EFFECTIVE (differs only on the DML->CPU fallback), and
+    the fallback reason when there is one."""
+
+    requested: str
+    effective: str
+    fallback_reason: str | None = None
+
+
 def _routes_to_tile(page_w: int, page_h: int, cfg: _TileConfig) -> bool:
     """The AC1 routing predicate: a long-strip page at or below the width cap
     with aspect at or above the floor goes to tiles; everything else keeps
@@ -561,7 +671,10 @@ class SfxDetectionProvider:
         # ARBITRATION/TILING discipline): an illegal tile env must not
         # produce a half-detected page.
         tile_cfg = _tile_config()
-        session, imgsz, imgsz_source, imgsz_raw = self._engine_or_raise()
+        # Same discipline for the EP env (M2-SFX-GPU-EP-1): the illegal
+        # NEWMANGA_SFX_EP raises here, before the engine/weights resolution.
+        ep_cfg = _ep_config()
+        session, imgsz, imgsz_source, imgsz_raw, ep_prov = self._engine_or_raise(ep_cfg)
         numpy = _lazy_import("numpy", "detection")
         rgb = self._frame_pixels(request)
         page_h, page_w = int(rgb.shape[0]), int(rgb.shape[1])
@@ -618,7 +731,13 @@ class SfxDetectionProvider:
             model=self.model,
             options=(
                 ("arch", "yolo11s_seg_onnx"),
-                ("device", "cpu"),
+                ("device", ep_prov.effective),
+                ("sfx_ep", ep_prov.requested),
+                *(
+                    (("sfx_ep_fallback", ep_prov.fallback_reason),)
+                    if ep_prov.fallback_reason
+                    else ()
+                ),
                 ("conf_threshold", str(self.conf_threshold)),
                 ("nms_iou", str(SFX_NMS_IOU)),
                 *imgsz_options,
@@ -680,9 +799,15 @@ class SfxDetectionProvider:
 
     # -- engine lifecycle ---------------------------------------------------
 
-    def _engine_or_raise(self) -> tuple[Any, int]:
+    def _engine_or_raise(
+        self, ep_mode: str
+    ) -> tuple[Any, int, str, str | None, _EpProvenance]:
+        """The engine is built ONCE per provider instance with the EP the
+        first detect resolved (providers are fixed at session construction —
+        an engine-level property); the fail-fast env read in ``detect`` keeps
+        guarding every call regardless of the cache."""
         if self._engine is None:
-            self._engine = _build_engine(self.weights_path)
+            self._engine = _build_engine(self.weights_path, ep_mode)
         return self._engine
 
     @staticmethod
@@ -726,20 +851,31 @@ class SfxDetectionProvider:
         return raw.reshape(request.height, request.width, 3).copy()
 
 
-def _build_engine(weights_path: Path) -> tuple[Any, int, str, str | None]:
+def _build_engine(
+    weights_path: Path, ep_mode: str | None = None
+) -> tuple[Any, int, str, str | None, _EpProvenance]:
     """Load the pinned ONNX without touching the network. Check order matters:
 
-    1. the weights *file* must exist — probed first with zero dependencies;
-    2. its SHA-256 must match the pin — verified BEFORE any runtime import, so
+    1. the EP env is resolved and fail-fast validated FIRST (``None`` means
+       "read the env now" for direct callers) — an illegal
+       ``NEWMANGA_SFX_EP`` never reaches the weights resolution;
+    2. the weights *file* must exist — probed next with zero dependencies;
+    3. its SHA-256 must match the pin — verified BEFORE any runtime import, so
        a corrupted/substituted artifact is ``PROVIDER_FAILED`` even on a
        machine that never installed onnxruntime;
-    3. onnxruntime must import — the typed dependency gap otherwise;
-    4. the session builds (CPU EP — the lightweight-stack ruling);
-    5. the metadata ``names`` must equal the asserted class map (R8 discipline)
+    4. onnxruntime must import — the typed dependency gap otherwise;
+    5. the session builds (the EP from ``NEWMANGA_SFX_EP`` — default dml =
+       the GPU deployment ruling; a DML init failure falls back to the CPU EP
+       with the degradation recorded in the returned provenance; an explicit
+       cpu failure is typed);
+    6. the metadata ``names`` must equal the asserted class map (R8 discipline)
        and the metadata ``imgsz`` (when parseable) drives the letterbox size —
-       returned as ``(session, imgsz, source, raw_text)`` so the caller can
-       record the two-state provenance (DSH r1 R4).
+       returned as ``(session, imgsz, source, raw_text, ep_provenance)`` so the
+       caller can record the two-state provenance (DSH r1 R4) and the EP
+       provenance (M2-SFX-GPU-EP-1).
     """
+    if ep_mode is None:
+        ep_mode = _ep_config()
     if not weights_path.is_file():
         raise ProviderNotConfigured(
             f"sfx detector weights are not installed: file {weights_path} is "
@@ -759,15 +895,82 @@ def _build_engine(weights_path: Path) -> tuple[Any, int, str, str | None]:
             stage="detection",
         )
     onnxruntime = _lazy_import("onnxruntime", "detection")
+    requested_provider = _EP_PROVIDER_NAMES[ep_mode]
+    prov: _EpProvenance
     try:
         session = onnxruntime.InferenceSession(
-            str(weights_path), providers=["CPUExecutionProvider"]
+            str(weights_path), providers=[requested_provider]
         )
-    except Exception as error:  # noqa: BLE001 - any session-build failure is typed
-        raise ProviderError(
-            f"sfx detector engine failed to load from {weights_path}: {error!r}",
-            stage="detection",
-        ) from error
+    except Exception as requested_error:  # noqa: BLE001 - any build failure is typed
+        if ep_mode != SFX_EP_DML:
+            # An EXPLICIT cpu request that fails is a typed failure — no
+            # fallback out of an explicit request (the registered semantics).
+            raise ProviderError(
+                f"sfx detector engine failed to load from {weights_path}: "
+                f"{requested_error!r}",
+                stage="detection",
+            ) from requested_error
+        # Defensive retry (r1 P1-1 role clarification): the onnxruntime
+        # PYTHON WRAPPER usually handles the DML failure itself and returns
+        # NORMALLY (see the get_providers() read-back below), so this branch
+        # is NOT the primary fallback path — it only fires when an exception
+        # escapes the wrapper (a non-(ValueError, RuntimeError) failure, or
+        # a build with fallback disabled). The explicit CPU rebuild keeps
+        # the behavior usable in exactly those shapes, with the degradation
+        # carried in the provenance (never silent).
+        try:
+            session = onnxruntime.InferenceSession(
+                str(weights_path),
+                providers=[_EP_PROVIDER_NAMES[SFX_EP_CPU]],
+            )
+        except Exception as error:  # noqa: BLE001 - any build failure is typed
+            raise ProviderError(
+                f"sfx detector engine failed to load from {weights_path}: "
+                f"{error!r}",
+                stage="detection",
+            ) from error
+        prov = _EpProvenance(
+            requested=ep_mode,
+            effective=SFX_EP_CPU,
+            fallback_reason=(
+                "dml init failed; fell back to cpu "
+                f"({type(requested_error).__name__})"
+            ),
+        )
+    else:
+        # r1 P1-1: the wrapper's InferenceSession.__init__ has
+        # enable_fallback=True BY DEFAULT and SWALLOWS (ValueError,
+        # RuntimeError) from the requested EP — it rebuilds on
+        # ["CPUExecutionProvider"] and returns NORMALLY (r2 N-P4-2: depending on
+        # the failure shape the wrapper either prints an "EP Error" banner on
+        # STDOUT, or the unavailable provider is dropped by the native layer
+        # with only a UserWarning — both shapes end in "constructor returns
+        # normally with a CPU session"). A DML init failure (no DX12 GPU /
+        # broken driver / CPU-only wheel) therefore usually does NOT raise
+        # here at
+        # all: the session in hand IS the CPU session. The authoritative
+        # effective EP is read back OFF the session — a requested dml whose
+        # first provider is not DmlExecutionProvider is the wrapper-level
+        # fallback, and it gets the SAME three-key audit (sfx_ep / device /
+        # sfx_ep_fallback): never silent, never a wrong "dml".
+        effective_providers = session.get_providers()
+        effective_name = (
+            effective_providers[0] if effective_providers else requested_provider
+        )
+        if effective_name == requested_provider:
+            prov = _EpProvenance(requested=ep_mode, effective=ep_mode)
+        else:
+            prov = _EpProvenance(
+                requested=ep_mode,
+                effective=_EP_MODE_BY_PROVIDER_NAME.get(
+                    effective_name, effective_name
+                ),
+                fallback_reason=(
+                    f"requested {ep_mode} but onnxruntime built the session "
+                    f"on {effective_name} (wrapper-level fallback/EP "
+                    f"unavailable)"
+                ),
+            )
     meta = session.get_modelmeta().custom_metadata_map
     names_raw = meta.get("names", "")
     parsed = _parse_names_metadata(names_raw)
@@ -780,7 +983,7 @@ def _build_engine(weights_path: Path) -> tuple[Any, int, str, str | None]:
             stage="detection",
         )
     imgsz, imgsz_source = _parse_imgsz(meta.get("imgsz"))
-    return session, imgsz, imgsz_source, meta.get("imgsz")
+    return session, imgsz, imgsz_source, meta.get("imgsz"), prov
 
 
 def _parse_names_metadata(raw: str) -> dict[str, str]:

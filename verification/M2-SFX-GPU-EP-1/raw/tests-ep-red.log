@@ -1,0 +1,231 @@
+============================= test session starts =============================
+collecting ... collected 78 items / 70 deselected / 8 selected
+
+tests/providers/test_detection_sfx.py::test_ep_config_defaults_to_dml FAILED [ 12%]
+tests/providers/test_detection_sfx.py::test_ep_config_accepts_explicit_values_case_insensitive FAILED [ 25%]
+tests/providers/test_detection_sfx.py::test_ep_config_illegal_value_fails_fast_before_weights_resolution FAILED [ 37%]
+tests/providers/test_detection_sfx.py::test_ep_config_empty_value_fails_fast FAILED [ 50%]
+tests/providers/test_detection_sfx.py::test_engine_build_defaults_to_dml_provider FAILED [ 62%]
+tests/providers/test_detection_sfx.py::test_engine_build_cpu_env_requests_cpu_provider FAILED [ 75%]
+tests/providers/test_detection_sfx.py::test_engine_dml_failure_falls_back_to_cpu_with_audit FAILED [ 87%]
+tests/providers/test_detection_sfx.py::test_engine_cpu_failure_is_typed_no_fallback PASSED [100%]
+
+================================== FAILURES ===================================
+_______________________ test_ep_config_defaults_to_dml ________________________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x000002547C445A30>
+
+    def test_ep_config_defaults_to_dml(monkeypatch):
+        monkeypatch.delenv("NEWMANGA_SFX_EP", raising=False)
+>       assert dsfx._ep_config() == "dml"
+               ^^^^^^^^^^^^^^^
+E       AttributeError: module 'infrastructure.providers.detection_sfx' has no attribute '_ep_config'. Did you mean: '_tile_config'?
+
+tests\providers\test_detection_sfx.py:1249: AttributeError
+___________ test_ep_config_accepts_explicit_values_case_insensitive ___________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x000002547C4590A0>
+
+    def test_ep_config_accepts_explicit_values_case_insensitive(monkeypatch):
+        monkeypatch.setenv("NEWMANGA_SFX_EP", "cpu")
+>       assert dsfx._ep_config() == "cpu"
+               ^^^^^^^^^^^^^^^
+E       AttributeError: module 'infrastructure.providers.detection_sfx' has no attribute '_ep_config'. Did you mean: '_tile_config'?
+
+tests\providers\test_detection_sfx.py:1254: AttributeError
+______ test_ep_config_illegal_value_fails_fast_before_weights_resolution ______
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x000002547C459A60>
+tmp_path = WindowsPath('C:/Users/49745/AppData/Local/Temp/pytest-of-49745/pytest-924/test_ep_config_illegal_value_f0')
+
+    def test_ep_config_illegal_value_fails_fast_before_weights_resolution(
+        monkeypatch, tmp_path
+    ):
+        """The fail-fast fires BEFORE the weights file is even probed: the
+        missing-weights path would raise the typed ProviderNotConfigured, so a
+        ValueError here proves the EP env gate runs first (never a half-configured
+        engine, the T5 env discipline)."""
+        monkeypatch.setenv("NEWMANGA_SFX_EP", "cuda")
+        provider = SfxDetectionProvider(weights_path=tmp_path / "missing.onnx")
+        with pytest.raises(ValueError, match="NEWMANGA_SFX_EP"):
+>           provider.detect(_request())
+
+tests\providers\test_detection_sfx.py:1271: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+src\infrastructure\providers\detection_sfx.py:564: in detect
+    session, imgsz, imgsz_source, imgsz_raw = self._engine_or_raise()
+                                              ^^^^^^^^^^^^^^^^^^^^^^^
+src\infrastructure\providers\detection_sfx.py:685: in _engine_or_raise
+    self._engine = _build_engine(self.weights_path)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+weights_path = WindowsPath('C:/Users/49745/AppData/Local/Temp/pytest-of-49745/pytest-924/test_ep_config_illegal_value_f0/missing.onnx')
+
+    def _build_engine(weights_path: Path) -> tuple[Any, int, str, str | None]:
+        """Load the pinned ONNX without touching the network. Check order matters:
+    
+        1. the weights *file* must exist — probed first with zero dependencies;
+        2. its SHA-256 must match the pin — verified BEFORE any runtime import, so
+           a corrupted/substituted artifact is ``PROVIDER_FAILED`` even on a
+           machine that never installed onnxruntime;
+        3. onnxruntime must import — the typed dependency gap otherwise;
+        4. the session builds (CPU EP — the lightweight-stack ruling);
+        5. the metadata ``names`` must equal the asserted class map (R8 discipline)
+           and the metadata ``imgsz`` (when parseable) drives the letterbox size —
+           returned as ``(session, imgsz, source, raw_text)`` so the caller can
+           record the two-state provenance (DSH r1 R4).
+        """
+        if not weights_path.is_file():
+>           raise ProviderNotConfigured(
+                f"sfx detector weights are not installed: file {weights_path} is "
+                f"missing (place the pinned ONNX export of {SFX_HF_REPO} @ "
+                f"{SFX_HF_REVISION[:8]} there — {SFX_WEIGHTS_FILENAME}, sha256 "
+                f"pinned in src/infrastructure/providers/detection_sfx.py; "
+                f"weights are never downloaded at run time; or point "
+                f"NEWMANGA_SFX_WEIGHTS at the file, or set "
+                f"NEWMANGA_SFX_DETECTION=off to skip sfx detection)",
+                stage="detection",
+            )
+E           ports.providers.errors.ProviderNotConfigured: PROVIDER_NOT_CONFIGURED: sfx detector weights are not installed: file C:\Users\49745\AppData\Local\Temp\pytest-of-49745\pytest-924\test_ep_config_illegal_value_f0\missing.onnx is missing (place the pinned ONNX export of local-release:sfx-train-v2/v2b @ c22f0175 there — yolo11s-seg.onnx, sha256 pinned in src/infrastructure/providers/detection_sfx.py; weights are never downloaded at run time; or point NEWMANGA_SFX_WEIGHTS at the file, or set NEWMANGA_SFX_DETECTION=off to skip sfx detection)
+
+src\infrastructure\providers\detection_sfx.py:744: ProviderNotConfigured
+____________________ test_ep_config_empty_value_fails_fast ____________________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x000002547C460470>
+
+    def test_ep_config_empty_value_fails_fast(monkeypatch):
+        monkeypatch.setenv("NEWMANGA_SFX_EP", "")
+        with pytest.raises(ValueError, match="NEWMANGA_SFX_EP"):
+>           dsfx._ep_config()
+            ^^^^^^^^^^^^^^^
+E           AttributeError: module 'infrastructure.providers.detection_sfx' has no attribute '_ep_config'. Did you mean: '_tile_config'?
+
+tests\providers\test_detection_sfx.py:1277: AttributeError
+_________________ test_engine_build_defaults_to_dml_provider __________________
+
+tmp_path = WindowsPath('C:/Users/49745/AppData/Local/Temp/pytest-of-49745/pytest-924/test_engine_build_defaults_to_0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x000002547C461160>
+
+    def test_engine_build_defaults_to_dml_provider(tmp_path, monkeypatch):
+        """Env absent -> the session is built with DmlExecutionProvider (the
+        user's GPU deployment ruling is the DEFAULT, not an opt-in)."""
+        junk = tmp_path / "weights.onnx"
+        junk.write_bytes(b"junk")
+        monkeypatch.setattr(
+            "infrastructure.providers.detection_sfx.sha256_file",
+            lambda _: SFX_WEIGHTS_SHA256,
+        )
+        calls = _install_fake_onnxruntime(monkeypatch, _ep_metadata())
+        provider = SfxDetectionProvider(weights_path=junk)
+>       result = provider.detect(_request())
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\providers\test_detection_sfx.py:1298: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+src\infrastructure\providers\detection_sfx.py:584: in detect
+    boxes = _sfx_boxes(
+src\infrastructure\providers\detection_sfx.py:889: in _sfx_boxes
+    out = session.run(None, {"images": inp})[0]  # (1, 40, N)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <test_detection_sfx._install_fake_onnxruntime.<locals>._FakeSession object at 0x000002547C4612B0>
+_ = None
+feeds = {'images': array([[[[1.        , 1.        , 1.        , ..., 0.44705883,
+          0.44705883, 0.44705883],
+         ...   , 1.        , ..., 0.44705883,
+          0.44705883, 0.44705883]]]],
+      shape=(1, 3, 1024, 1024), dtype=float32)}
+
+    def run(self, _, feeds):  # noqa: ANN001
+>       return self._delegate.run(_, feeds)
+               ^^^^^^^^^^^^^^
+E       AttributeError: '_FakeSession' object has no attribute '_delegate'
+
+tests\providers\test_detection_sfx.py:323: AttributeError
+_______________ test_engine_build_cpu_env_requests_cpu_provider _______________
+
+tmp_path = WindowsPath('C:/Users/49745/AppData/Local/Temp/pytest-of-49745/pytest-924/test_engine_build_cpu_env_requ0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x000002547C4632F0>
+
+    def test_engine_build_cpu_env_requests_cpu_provider(tmp_path, monkeypatch):
+        junk = tmp_path / "weights.onnx"
+        junk.write_bytes(b"junk")
+        monkeypatch.setattr(
+            "infrastructure.providers.detection_sfx.sha256_file",
+            lambda _: SFX_WEIGHTS_SHA256,
+        )
+        calls = _install_fake_onnxruntime(monkeypatch, _ep_metadata())
+        monkeypatch.setenv("NEWMANGA_SFX_EP", "cpu")
+        provider = SfxDetectionProvider(weights_path=junk)
+>       result = provider.detect(_request())
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\providers\test_detection_sfx.py:1317: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+src\infrastructure\providers\detection_sfx.py:584: in detect
+    boxes = _sfx_boxes(
+src\infrastructure\providers\detection_sfx.py:889: in _sfx_boxes
+    out = session.run(None, {"images": inp})[0]  # (1, 40, N)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <test_detection_sfx._install_fake_onnxruntime.<locals>._FakeSession object at 0x000002547C4626F0>
+_ = None
+feeds = {'images': array([[[[1.        , 1.        , 1.        , ..., 0.44705883,
+          0.44705883, 0.44705883],
+         ...   , 1.        , ..., 0.44705883,
+          0.44705883, 0.44705883]]]],
+      shape=(1, 3, 1024, 1024), dtype=float32)}
+
+    def run(self, _, feeds):  # noqa: ANN001
+>       return self._delegate.run(_, feeds)
+               ^^^^^^^^^^^^^^
+E       AttributeError: '_FakeSession' object has no attribute '_delegate'
+
+tests\providers\test_detection_sfx.py:323: AttributeError
+____________ test_engine_dml_failure_falls_back_to_cpu_with_audit _____________
+
+tmp_path = WindowsPath('C:/Users/49745/AppData/Local/Temp/pytest-of-49745/pytest-924/test_engine_dml_failure_falls_0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x000002547C463560>
+
+    def test_engine_dml_failure_falls_back_to_cpu_with_audit(tmp_path, monkeypatch):
+        """DML init failure (no DX12 GPU machine) -> the CPU EP session is built
+        and the degradation is AUDIT-VISIBLE in the detect options: device=cpu
+        (the effective EP), sfx_ep=dml (what was requested), sfx_ep_fallback
+        carrying the reason. Availability first, never a silent fallback."""
+        junk = tmp_path / "weights.onnx"
+        junk.write_bytes(b"junk")
+        monkeypatch.setattr(
+            "infrastructure.providers.detection_sfx.sha256_file",
+            lambda _: SFX_WEIGHTS_SHA256,
+        )
+        calls = _install_dml_failing_onnxruntime(monkeypatch, _ep_metadata())
+        provider = SfxDetectionProvider(weights_path=junk)
+        result = provider.detect(_request())
+>       assert calls["providers"] == [
+            ["DmlExecutionProvider"],
+            ["CPUExecutionProvider"],
+        ]
+E       AssertionError: assert [['CPUExecutionProvider']] == [['DmlExecuti...ionProvider']]
+E         
+E         At index 0 diff: ['CPUExecutionProvider'] != ['DmlExecutionProvider']
+E         Right contains one more item: ['CPUExecutionProvider']
+E         
+E         Full diff:
+E           [
+E         -     [...
+E         
+E         ...Full output truncated (6 lines hidden), use '-vv' to show
+
+tests\providers\test_detection_sfx.py:1366: AssertionError
+=========================== short test summary info ===========================
+FAILED tests/providers/test_detection_sfx.py::test_ep_config_defaults_to_dml
+FAILED tests/providers/test_detection_sfx.py::test_ep_config_accepts_explicit_values_case_insensitive
+FAILED tests/providers/test_detection_sfx.py::test_ep_config_illegal_value_fails_fast_before_weights_resolution
+FAILED tests/providers/test_detection_sfx.py::test_ep_config_empty_value_fails_fast
+FAILED tests/providers/test_detection_sfx.py::test_engine_build_defaults_to_dml_provider
+FAILED tests/providers/test_detection_sfx.py::test_engine_build_cpu_env_requests_cpu_provider
+FAILED tests/providers/test_detection_sfx.py::test_engine_dml_failure_falls_back_to_cpu_with_audit
+================= 7 failed, 1 passed, 70 deselected in 0.50s ==================

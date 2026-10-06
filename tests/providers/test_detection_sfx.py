@@ -41,6 +41,7 @@ SRC_ROOT = Path(__file__).resolve().parents[2] / "src"
 if str(SRC_ROOT) not in sys.path:
     sys.path.insert(0, str(SRC_ROOT))
 
+from infrastructure.providers import detection_sfx as dsfx
 from infrastructure.providers.detection_sfx import (
     SFX_CLASS_MAP,
     SFX_DEFAULT_IMGSZ,
@@ -136,13 +137,15 @@ def _fake_session(rows: list[tuple[tuple[float, float, float, float], list[float
 
 def _provider_with_engine(rows, conf_threshold: float = 0.5) -> SfxDetectionProvider:
     provider = SfxDetectionProvider(weights_path=Path("unused.onnx"), conf_threshold=conf_threshold)
-    # Engine tuple = (session, imgsz, imgsz_source, imgsz_raw) — DSH r1 R4's
-    # two-state provenance rides the engine to the detect options.
+    # Engine tuple = (session, imgsz, imgsz_source, imgsz_raw, ep_provenance) —
+    # DSH r1 R4's two-state provenance and M2-SFX-GPU-EP-1's EP provenance
+    # ride the engine to the detect options.
     provider._engine = (
         _fake_session(rows),
         SFX_DEFAULT_IMGSZ,
         "metadata_parsed",
         "[1024, 1024]",
+        dsfx._EpProvenance(requested="dml", effective="dml"),
     )
     return provider
 
@@ -317,6 +320,15 @@ def _install_fake_onnxruntime(monkeypatch, metadata: dict, session=None):
 
         def get_modelmeta(self):
             return _FakeMeta()
+
+        # P1-1 (DSH r1): the production _build_engine reads the effective EP
+        # back off the session via get_providers() (the wrapper's CPU
+        # fallback makes the constructor return NORMALLY on a DML failure,
+        # so the read-back is the only authoritative signal). This stub
+        # models the NORMAL shape: the built session runs exactly the
+        # providers that were requested.
+        def get_providers(self):
+            return list(calls["providers"] or [])
 
         def run(self, _, feeds):  # noqa: ANN001
             return self._delegate.run(_, feeds)
@@ -534,7 +546,8 @@ def test_composite_appends_sfx_past_primary_reading_order_max():
     sfx = SfxDetectionProvider(weights_path=Path("x.onnx"))
     composite = MangaSfxParallelDetectionProvider(primary=primary, sfx=sfx)
     # Inject a fake engine so no weights are touched (engine tuple = session,
-    # imgsz, imgsz_source, imgsz_raw — DSH r1 R4's provenance form).
+    # imgsz, imgsz_source, imgsz_raw, ep_provenance — DSH r1 R4's provenance
+    # form + M2-SFX-GPU-EP-1's EP provenance).
     sfx._engine = (
         _fake_session(
             [((256.0, 256.0, 51.2, 102.4), [0.05, 0.05, 0.93, 0.00])]
@@ -542,6 +555,7 @@ def test_composite_appends_sfx_past_primary_reading_order_max():
         SFX_DEFAULT_IMGSZ,
         "metadata_parsed",
         "[1024, 1024]",
+        dsfx._EpProvenance(requested="dml", effective="dml"),
     )
     result = composite.detect(_request())
     assert [c.provider_label for c in result.candidates] == [
@@ -1225,3 +1239,257 @@ def test_ordinary_page_routes_letterbox_verbatim():
     assert max(xs) == pytest.approx(550.0, abs=1e-3)
     assert min(ys) == pytest.approx(400.0, abs=1e-3)
     assert max(ys) == pytest.approx(600.0, abs=1e-3)
+
+
+# ---------------------------------------------------------------------------
+# execution-provider selection (M2-SFX-GPU-EP-1)
+#
+# User ruling 2026-10-06: the deployment form is GPU — onnxruntime-directml
+# + NEWMANGA_SFX_EP (dml|cpu, default dml; illegal value fail-fast BEFORE any
+# weights resolution, the T5 env discipline). A DML init failure (no DX12
+# GPU / missing driver / CPU-only wheel) falls back to the CPU EP WITH a
+# visible audit key (sfx_ep_fallback in the detect options) — availability
+# first, never a silent degradation; an explicit cpu request that fails is a
+# typed ProviderError (fail-closed, no fallback out of an explicit request).
+# All semantics are exercised through the STUBBED onnxruntime module, so the
+# matrix is green on any machine regardless of its GPU; the real DML numbers
+# live in the AC2/AC3 experiment evidence.
+# ---------------------------------------------------------------------------
+
+
+def test_ep_config_defaults_to_dml(monkeypatch):
+    monkeypatch.delenv("NEWMANGA_SFX_EP", raising=False)
+    assert dsfx._ep_config() == "dml"
+
+
+def test_ep_config_accepts_explicit_values_case_insensitive(monkeypatch):
+    monkeypatch.setenv("NEWMANGA_SFX_EP", "cpu")
+    assert dsfx._ep_config() == "cpu"
+    monkeypatch.setenv("NEWMANGA_SFX_EP", " CPU ")
+    assert dsfx._ep_config() == "cpu"
+    monkeypatch.setenv("NEWMANGA_SFX_EP", "DML")
+    assert dsfx._ep_config() == "dml"
+
+
+def test_ep_config_illegal_value_fails_fast_before_weights_resolution(
+    monkeypatch, tmp_path
+):
+    """The fail-fast fires BEFORE the weights file is even probed: the
+    missing-weights path would raise the typed ProviderNotConfigured, so a
+    ValueError here proves the EP env gate runs first (never a half-configured
+    engine, the T5 env discipline)."""
+    monkeypatch.setenv("NEWMANGA_SFX_EP", "cuda")
+    provider = SfxDetectionProvider(weights_path=tmp_path / "missing.onnx")
+    with pytest.raises(ValueError, match="NEWMANGA_SFX_EP"):
+        provider.detect(_request())
+
+
+def test_ep_config_empty_value_fails_fast(monkeypatch):
+    monkeypatch.setenv("NEWMANGA_SFX_EP", "")
+    with pytest.raises(ValueError, match="NEWMANGA_SFX_EP"):
+        dsfx._ep_config()
+
+
+def _ep_metadata() -> dict:
+    return {
+        "names": ", ".join(f"'{k}': '{v}'" for k, v in SFX_CLASS_MAP.items()),
+        "imgsz": "[1024, 1024]",
+    }
+
+
+def _zero_run_session(metadata: dict):
+    """A session whose run() returns an all-zero output0 (no detections) and
+    whose metadata carries the asserted class surface."""
+    zeros = np.zeros((1, 40, 2), dtype=np.float32)
+
+    class _ZeroSession:
+        def get_modelmeta(self):  # noqa: ANN202
+            class _Meta:
+                custom_metadata_map = metadata
+
+            return _Meta()
+
+        def run(self, _, feeds):  # noqa: ANN001
+            return (zeros,)
+
+    return _ZeroSession()
+
+
+def test_engine_build_defaults_to_dml_provider(tmp_path, monkeypatch):
+    """Env absent -> the session is built with DmlExecutionProvider (the
+    user's GPU deployment ruling is the DEFAULT, not an opt-in)."""
+    junk = tmp_path / "weights.onnx"
+    junk.write_bytes(b"junk")
+    monkeypatch.setattr(
+        "infrastructure.providers.detection_sfx.sha256_file",
+        lambda _: SFX_WEIGHTS_SHA256,
+    )
+    calls = _install_fake_onnxruntime(
+        monkeypatch, _ep_metadata(), session=_zero_run_session(_ep_metadata())
+    )
+    provider = SfxDetectionProvider(weights_path=junk)
+    result = provider.detect(_request())
+    assert calls["providers"] == ["DmlExecutionProvider"]
+    options = dict(result.options)
+    assert options["sfx_ep"] == "dml"
+    assert options["device"] == "dml"
+    assert "sfx_ep_fallback" not in options
+    assert result.candidates == ()
+
+
+def test_engine_build_cpu_env_requests_cpu_provider(tmp_path, monkeypatch):
+    junk = tmp_path / "weights.onnx"
+    junk.write_bytes(b"junk")
+    monkeypatch.setattr(
+        "infrastructure.providers.detection_sfx.sha256_file",
+        lambda _: SFX_WEIGHTS_SHA256,
+    )
+    calls = _install_fake_onnxruntime(
+        monkeypatch, _ep_metadata(), session=_zero_run_session(_ep_metadata())
+    )
+    monkeypatch.setenv("NEWMANGA_SFX_EP", "cpu")
+    provider = SfxDetectionProvider(weights_path=junk)
+    result = provider.detect(_request())
+    assert calls["providers"] == ["CPUExecutionProvider"]
+    options = dict(result.options)
+    assert options["sfx_ep"] == "cpu"
+    assert options["device"] == "cpu"
+    assert "sfx_ep_fallback" not in options
+
+
+def _install_dml_failing_onnxruntime(monkeypatch, metadata: dict) -> dict:
+    """A stub whose InferenceSession RAISES when asked for the DML provider
+    (the no-DX12-GPU / missing-driver / CPU-only-wheel shape) and succeeds
+    for the CPU provider — the automatic-fallback semantics' test double."""
+    calls = {"providers": []}
+
+    class _FakeMeta:
+        custom_metadata_map = metadata
+
+    class _FakeSession:
+        def __init__(self, path, providers=None):  # noqa: ANN001
+            calls["providers"].append(list(providers or []))
+            if providers and "DmlExecutionProvider" in providers:
+                raise RuntimeError("Unable to create DML device: no DX12")
+
+        def get_modelmeta(self):
+            return _FakeMeta()
+
+        def run(self, _, feeds):  # noqa: ANN001
+            return (np.zeros((1, 40, 2), dtype=np.float32),)
+
+    fake = types.ModuleType("onnxruntime")
+    fake.InferenceSession = _FakeSession  # type: ignore[attr-defined]
+    monkeypatch.setitem(sys.modules, "onnxruntime", fake)
+    return calls
+
+
+def test_engine_dml_failure_falls_back_to_cpu_with_audit(tmp_path, monkeypatch):
+    """DML init failure (no DX12 GPU machine) -> the CPU EP session is built
+    and the degradation is AUDIT-VISIBLE in the detect options: device=cpu
+    (the effective EP), sfx_ep=dml (what was requested), sfx_ep_fallback
+    carrying the reason. Availability first, never a silent fallback."""
+    junk = tmp_path / "weights.onnx"
+    junk.write_bytes(b"junk")
+    monkeypatch.setattr(
+        "infrastructure.providers.detection_sfx.sha256_file",
+        lambda _: SFX_WEIGHTS_SHA256,
+    )
+    calls = _install_dml_failing_onnxruntime(monkeypatch, _ep_metadata())
+    provider = SfxDetectionProvider(weights_path=junk)
+    result = provider.detect(_request())
+    assert calls["providers"] == [
+        ["DmlExecutionProvider"],
+        ["CPUExecutionProvider"],
+    ]
+    options = dict(result.options)
+    assert options["sfx_ep"] == "dml"
+    assert options["device"] == "cpu"
+    assert "DML" in options["sfx_ep_fallback"] or "dml" in options["sfx_ep_fallback"]
+    assert result.candidates == ()
+
+
+def test_engine_cpu_failure_is_typed_no_fallback(tmp_path, monkeypatch):
+    """An EXPLICIT cpu request whose session build fails is a typed
+    ProviderError — there is no "fall back" out of an explicit request."""
+    junk = tmp_path / "weights.onnx"
+    junk.write_bytes(b"junk")
+    monkeypatch.setattr(
+        "infrastructure.providers.detection_sfx.sha256_file",
+        lambda _: SFX_WEIGHTS_SHA256,
+    )
+
+    class _BrokenSession:
+        def __init__(self, path, providers=None):  # noqa: ANN001
+            raise RuntimeError("boom")
+
+    _install_fake_onnxruntime(monkeypatch, {}, session=None)
+    sys.modules["onnxruntime"].InferenceSession = _BrokenSession
+    monkeypatch.setenv("NEWMANGA_SFX_EP", "cpu")
+    provider = SfxDetectionProvider(weights_path=junk)
+    with pytest.raises(ProviderError, match="failed to load"):
+        provider.detect(_request())
+
+
+def test_engine_wrapper_level_cpu_fallback_gets_three_key_audit(
+    tmp_path, monkeypatch
+):
+    """P1-1 (DSH r1) THE REAL FAILURE SHAPE: onnxruntime's
+    ``InferenceSession.__init__`` carries its own CPU fallback
+    (``enable_fallback`` defaults to True in
+    ``onnxruntime_inference_collection.py``) — a DML init failure (no DX12
+    GPU / broken driver / CPU-only wheel) is SWALLOWED as
+    (ValueError, RuntimeError), the wrapper rebuilds on
+    ["CPUExecutionProvider"] and returns NORMALLY (an "EP Error" banner on
+    stderr only). The constructor does NOT raise, so an exception-driven
+    fallback branch never runs and there is NO second construction.
+
+    The three-key audit (sfx_ep / device / sfx_ep_fallback) must therefore
+    be driven by a get_providers() READ-BACK: requested dml + a session
+    whose first provider is not DmlExecutionProvider = the wrapper-level
+    fallback, audited with device=cpu (the EFFECTIVE EP) — never a silent
+    wrong "dml"."""
+    calls = {"providers": []}
+    metadata = _ep_metadata()
+
+    class _FakeMeta:
+        custom_metadata_map = metadata
+
+    class _WrapperFallbackSession:
+        """Models the wrapper after its internal fallback: built once for
+        DML, returned as a CPU-only session, never raising."""
+
+        def __init__(self, path, providers=None):  # noqa: ANN001
+            calls["providers"].append(list(providers or []))
+
+        def get_modelmeta(self):
+            return _FakeMeta()
+
+        def get_providers(self):
+            # The wrapper already fell back internally: the session's
+            # effective provider list carries CPU only.
+            return ["CPUExecutionProvider"]
+
+        def run(self, _, feeds):  # noqa: ANN001
+            return (np.zeros((1, 40, 2), dtype=np.float32),)
+
+    fake = types.ModuleType("onnxruntime")
+    fake.InferenceSession = _WrapperFallbackSession  # type: ignore[attr-defined]
+    monkeypatch.setitem(sys.modules, "onnxruntime", fake)
+    junk = tmp_path / "weights.onnx"
+    junk.write_bytes(b"junk")
+    monkeypatch.setattr(
+        "infrastructure.providers.detection_sfx.sha256_file",
+        lambda _: SFX_WEIGHTS_SHA256,
+    )
+    monkeypatch.delenv("NEWMANGA_SFX_EP", raising=False)  # default dml
+    provider = SfxDetectionProvider(weights_path=junk)
+    result = provider.detect(_request())
+    # Exactly ONE construction: the wrapper handled the fallback internally.
+    assert calls["providers"] == [["DmlExecutionProvider"]]
+    options = dict(result.options)
+    assert options["sfx_ep"] == "dml"
+    assert options["device"] == "cpu"
+    assert "dml" in options["sfx_ep_fallback"]
+    assert "CPUExecutionProvider" in options["sfx_ep_fallback"]
+    assert result.candidates == ()

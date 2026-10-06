@@ -1,0 +1,26 @@
+{
+ "task": "M2-SFX-GPU-EP-1 r1 P1-1 decisive verification",
+ "generated_at_utc": "2026-10-06T04:49:17Z",
+ "generated_from": "experiments/M2-SFX-GPU-EP-1/verify_wrapper_fallback_cpu_wheel.py",
+ "environment": {
+  "onnxruntime_version": "1.30.0",
+  "available_providers": [
+   "AzureExecutionProvider",
+   "CPUExecutionProvider"
+  ],
+  "note": "CPU-only wheel（生产 venv 换装前状态）；DML 不存在于进程"
+ },
+ "weights_sha256": "944e811410933ad6ff8d32446fcc9eef90fb463794e1874ce83035e83acd418d",
+ "options": {
+  "sfx_ep": "dml",
+  "device": "cpu",
+  "sfx_ep_fallback": "requested dml but onnxruntime built the session on CPUExecutionProvider (wrapper-level fallback/EP unavailable)"
+ },
+ "checks": {
+  "sfx_ep_requested_dml": true,
+  "device_effective_cpu": true,
+  "sfx_ep_fallback_present": true,
+  "fallback_names_wrapper_or_cpu": true
+ },
+ "verdict": "PASS"
+}

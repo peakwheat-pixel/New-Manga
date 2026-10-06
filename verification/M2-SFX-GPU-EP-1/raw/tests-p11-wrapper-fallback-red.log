@@ -1,0 +1,76 @@
+F                                                                        [100%]
+================================== FAILURES ===================================
+_________ test_engine_wrapper_level_cpu_fallback_gets_three_key_audit _________
+
+tmp_path = WindowsPath('C:/Users/49745/AppData/Local/Temp/pytest-of-49745/pytest-930/test_engine_wrapper_level_cpu_0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x0000016E34F1CEC0>
+
+    def test_engine_wrapper_level_cpu_fallback_gets_three_key_audit(
+        tmp_path, monkeypatch
+    ):
+        """P1-1 (DSH r1) THE REAL FAILURE SHAPE: onnxruntime's
+        ``InferenceSession.__init__`` carries its own CPU fallback
+        (``enable_fallback`` defaults to True in
+        ``onnxruntime_inference_collection.py``) — a DML init failure (no DX12
+        GPU / broken driver / CPU-only wheel) is SWALLOWED as
+        (ValueError, RuntimeError), the wrapper rebuilds on
+        ["CPUExecutionProvider"] and returns NORMALLY (an "EP Error" banner on
+        stderr only). The constructor does NOT raise, so an exception-driven
+        fallback branch never runs and there is NO second construction.
+    
+        The three-key audit (sfx_ep / device / sfx_ep_fallback) must therefore
+        be driven by a get_providers() READ-BACK: requested dml + a session
+        whose first provider is not DmlExecutionProvider = the wrapper-level
+        fallback, audited with device=cpu (the EFFECTIVE EP) — never a silent
+        wrong "dml"."""
+        calls = {"providers": []}
+        metadata = _ep_metadata()
+    
+        class _FakeMeta:
+            custom_metadata_map = metadata
+    
+        class _WrapperFallbackSession:
+            """Models the wrapper after its internal fallback: built once for
+            DML, returned as a CPU-only session, never raising."""
+    
+            def __init__(self, path, providers=None):  # noqa: ANN001
+                calls["providers"].append(list(providers or []))
+    
+            def get_modelmeta(self):
+                return _FakeMeta()
+    
+            def get_providers(self):
+                # The wrapper already fell back internally: the session's
+                # effective provider list carries CPU only.
+                return ["CPUExecutionProvider"]
+    
+            def run(self, _, feeds):  # noqa: ANN001
+                return (np.zeros((1, 40, 2), dtype=np.float32),)
+    
+        fake = types.ModuleType("onnxruntime")
+        fake.InferenceSession = _WrapperFallbackSession  # type: ignore[attr-defined]
+        monkeypatch.setitem(sys.modules, "onnxruntime", fake)
+        junk = tmp_path / "weights.onnx"
+        junk.write_bytes(b"junk")
+        monkeypatch.setattr(
+            "infrastructure.providers.detection_sfx.sha256_file",
+            lambda _: SFX_WEIGHTS_SHA256,
+        )
+        monkeypatch.delenv("NEWMANGA_SFX_EP", raising=False)  # default dml
+        provider = SfxDetectionProvider(weights_path=junk)
+        result = provider.detect(_request())
+        # Exactly ONE construction: the wrapper handled the fallback internally.
+        assert calls["providers"] == [["DmlExecutionProvider"]]
+        options = dict(result.options)
+        assert options["sfx_ep"] == "dml"
+>       assert options["device"] == "cpu"
+E       AssertionError: assert 'dml' == 'cpu'
+E         
+E         - cpu
+E         + dml
+
+tests\providers\test_detection_sfx.py:1492: AssertionError
+=========================== short test summary info ===========================
+FAILED tests/providers/test_detection_sfx.py::test_engine_wrapper_level_cpu_fallback_gets_three_key_audit
+1 failed in 0.23s
+EXIT=1

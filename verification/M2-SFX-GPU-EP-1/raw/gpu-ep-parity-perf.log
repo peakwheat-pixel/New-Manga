@@ -1,0 +1,25 @@
+[gpu-ep] start 2026-10-06T04:08:36Z
+[gpu-ep] v2b sha 944e81141093（生产 pin 原样）
+[gpu-ep] onnxruntime 1.24.4 providers=['DmlExecutionProvider', 'CPUExecutionProvider']
+[gpu-ep] 数据装载：KO 4 页（56 档派生 GT + 135 框 npd GT）｜BJ 考卷 2 页
+[cpu] pre-k08: n_pred=23 wall=9.593s provider_ms=9589 route=tile
+[cpu] pre-k09: n_pred=50 wall=17.834s provider_ms=17823 route=tile
+[cpu] pre-k01: n_pred=23 wall=11.058s provider_ms=11053 route=tile
+[cpu] pre-k02: n_pred=5 wall=3.302s provider_ms=3300 route=tile
+[cpu] pre-bj17: n_pred=2 wall=0.204s provider_ms=201 route=letterbox
+[cpu] pre-bj18: n_pred=3 wall=0.202s provider_ms=200 route=letterbox
+[dml] pre-k08: n_pred=23 wall=1.002s provider_ms=996 route=tile
+[dml] pre-k09: n_pred=50 wall=1.958s provider_ms=1949 route=tile
+[dml] pre-k01: n_pred=23 wall=1.133s provider_ms=1129 route=tile
+[dml] pre-k02: n_pred=5 wall=0.331s provider_ms=329 route=tile
+[dml] pre-bj17: n_pred=2 wall=0.065s provider_ms=63 route=letterbox
+[dml] pre-bj18: n_pred=3 wall=0.064s provider_ms=62 route=letterbox
+[ac2] KO pre-k08: bit=False dconf=1e-06 dxyxy=0.0001px gate_flips=0 derived=14/27 -> 14/27 set_eq=True npd=14/35 -> 14/35 set_eq=True
+[ac2] KO pre-k09: bit=False dconf=1e-06 dxyxy=0.0001px gate_flips=0 derived=17/24 -> 17/24 set_eq=True npd=26/42 -> 26/42 set_eq=True
+[ac2] KO pre-k01: bit=False dconf=1e-06 dxyxy=0.0001px gate_flips=0 derived=2/2 -> 2/2 set_eq=True npd=5/48 -> 5/48 set_eq=True
+[ac2] KO pre-k02: bit=False dconf=2e-06 dxyxy=0.0001px gate_flips=0 derived=2/3 -> 2/3 set_eq=True npd=3/10 -> 3/10 set_eq=True
+[ac2] BJ pre-bj17: bit=False dconf=0.0 dxyxy=0.0px gate_flips=0
+[ac2] BJ pre-bj18: bit=False dconf=0.0 dxyxy=0.0002px gate_flips=0
+[gpu-ep] wrote G:\CODEX\New Manga.worktrees\M2-SFX-GPU-EP-1-zcode\verification\M2-SFX-GPU-EP-1\raw\gpu-ep-parity-perf.json
+[gpu-ep] verdict: {"all_pages_bit_identical": false, "ko_all_matched_sets_equal": true, "ko_max_abs_dconf": 2e-06, "ko_max_abs_dxyxy_px": 0.0001, "bj_max_abs_dconf": 0.0, "bj_max_abs_dxyxy_px": 0.0002, "gate_flips_total": 0, "gpu_run_to_run_all_bit_stable": true}
+EXIT=0

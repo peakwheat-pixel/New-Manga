@@ -1,0 +1,9 @@
+NSIS setup.exe  : 512645237 B = 488.9 MiB  (sha256 61df02997f5e11cb...)
+onedir total    : 1225505427 B = 1168.73 MiB
+_internal/onnxruntime: 66170520 B = 63.11 MiB
+DirectML.dll    : 18527776 B = 17.67 MiB
+baseline NSIS (M2-PROD-DETECT-2 release-notes): 460181312 B = 438.86 MiB
+delta NSIS      : 52463925 B = 50.03 MiB
+EXIT=0
+NSIS r2run: 512675022 B = 488.93 MiB  (sha256 4c9ef883e1f831778bd5e6b8c1276552b813430c65b6c4525474149076a86dc2)
+delta vs baseline 460181312 B: 52493710 B = 50.06 MiB
