@@ -2,8 +2,8 @@
 id: M2-SFX-GPU-EP-1
 title: "SFX 推理 EP 切换 GPU（DML）：onnxruntime-directml 依赖面+EP 配置化+数值一致性验证+打包闭包与 GATE 重跑"
 kind: feature
-status: ready
-owner_claim: —
+status: owner_claim
+owner_claim: ZCode @2026-10-06（branch agent/zcode/M2-SFX-GPU-EP-1；claim base=48e83a33=daa34e4e 之上的 release commit、含 T5-TILE-KO 落地终态；授权=用户裁决 2026-10-06「部署形态=GPU」）
 approval: user_ruling_2026-10-06_GPU（T5-TILE-KO 收口呈报的部署形态终选）
 suggested_owner: ZCode
 owner: ZCode
