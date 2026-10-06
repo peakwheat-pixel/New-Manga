@@ -8,10 +8,10 @@ imported from THIS worktree) twice:
 - letterbox      : NEWMANGA_SFX_TILE=off (pre-T5 behavior restored byte-for-byte)
 
 plus a conf-0.2 reference face (KO-TILE-CALIB dual-caliber precedent) — the
-production main caliber stays conf 0.5. Out-of-domain bins (width > 690, so
-the routing predicate sends them to letterbox under the default env) run the
-default env only and assert sfx_route == "letterbox" (NEWMANGA_SFX_TILE=off
-is path-identical for them — recorded as such).
+production main caliber stays conf 0.5. Out-of-domain bins (width > 690) have
+no tile face: at conf 0.5 they run the default env only and assert
+sfx_route == "letterbox" (predicate routing); at conf 0.2 they run
+NEWMANGA_SFX_TILE=off (path-identical letterbox for them — recorded as such).
 
 Anchors: the native W690/W600 pages at conf 0.5 tile must reproduce the T5
 parity raw numbers per page (parity-v2b.json, ko-tile derived GT) — a
@@ -405,9 +405,6 @@ def main() -> int:
             }
 
         assert anchor_checked, "原生锚点自检未执行（评测集缺原生档？）"
-        os.environ.pop("NEWMANGA_SFX_TILE", None)
-        if env_backup is not None:
-            os.environ["NEWMANGA_SFX_TILE"] = env_backup
 
         (RAW_OUT / "width-eval.json").write_text(
             json.dumps(summary, ensure_ascii=False, indent=1), encoding="utf-8"
@@ -435,6 +432,12 @@ def main() -> int:
         )
         print(f"[eval] FAILED: {error}", flush=True)
         return 1
+    finally:
+        # env 恢复对齐合同字面与 T5 先例（DSH r1 P3-10）：成功/失败/异常路径均恢复；
+        # 控制流收拢，无数字路径变化，raw 证据不重跑。
+        os.environ.pop("NEWMANGA_SFX_TILE", None)
+        if env_backup is not None:
+            os.environ["NEWMANGA_SFX_TILE"] = env_backup
 
 
 if __name__ == "__main__":

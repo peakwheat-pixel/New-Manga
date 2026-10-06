@@ -11,6 +11,7 @@
 | `sfx-synth-exp/own-manga/{1,2,3}`（6 卷：Gemu obu Famiria v15/v16、Uragirareta v12/v13、Goshujinsama v01/v02s） | 2018 张用户自有普通漫画页 | **0 页**（全部 1350x1920 / 1167x1618 / 964-987x1400 等普通宽页，aspect ~1.4） |
 | `sfx-synth-exp/own-manga-candidates/` | own-manga SFX 标注链（v1 harvest 口径 2017 框 → 四层过滤 final pool 1738 框 → 558 页级样本入册 `own-manga-ingest/own_manga_manifest_records.json`） | 0 页（页图同上树；partial 140 页 / pseudo 418 页分级见 ingest_notes.md） |
 | `M2-TA2B-OPEN-ASSETS-zcode/test_assets/comic_golden_suite/韩漫_KO/01_real_webtoon_cleaned_dataset`（K01-K10 × 7 个处理阶段变体 = 70 图） | KO 域全部已知长条 webtoon 页 | **0 页**——全部恰为 690 或 600 宽（690x62133~131289、600x18401），与 T5 deploy-report §3①「已知 KO case GT 页只有 600/690 宽」一致 |
+| `M2-TA2B-OPEN-ASSETS-zcode/test_assets/comic_golden_suite/韩漫_KO/02_public_ground_truth_peppercarrot`（K11/K19 等） | 同套件另一子目录（DSH r1 P4-3 补登「逐树」完整性） | 0 页——仓内旁证（M2-REGION-OVERLAP-ARBITRATION raw ko-scan）：K11/K19 为 1200x1660 普通宽页（aspect ~1.38），非长条页，不构成反例 |
 | `M2-SFX-TRAIN-V2-zcode/training_data/sfx-v1/train-v2` manifest.train-v2.json（909 样本 / 2367 框；annotation_status: pseudo 418 / synthetic 324 / partial 140 / complete 27） | V2 训练集全量标注 | 0 页——aspect≥8.0 的仅 pre-k01~k10 十页，宽全部 690/600；其余 887 样本为普通宽页或 synth-r1 小尺寸切片（199-456px 宽、aspect<2） |
 | `M2-DETECT-WEBTOON-DIAG` / `M2-DETECT-WEBTOON-TILING` | DSH 诊断报告/日志 | 无页图素材 |
 
@@ -39,6 +40,8 @@
 2. **合成精确 GT**：矩形文字块（韩文拟声词+拉丁拟声词混排、描边+填充）与真实 KO 手写/艺术字 SFX 视觉域不同，检测器对其的绝对 conf/召回不可外推到真实页；仅用于同页 tile vs letterbox 的机械行为对照与耗时实测。字形域偏移为常量、宽度为变量，宽度轴上的相对对比仍 directional 有效。
 3. **真实 GT**（W690/W600）为 R2 final 派生框（AI 审链 partial/pseudo 性质，T5 同口径），非人工逐框核实；本 Task 沿用其作为 KO 域相对参照（锚点档），登记同样的 GT 性质限制。
 4. 页数少（多数档 2 页、W600 仅 1 页 3 框）：统计功效低，结论全部 directional，禁「显著」措辞。
+5. **宽度阶梯非独立（DSH r1 P3-3）**：重采样 640/480/320/800/1024 全部复用同 2 张源页（pre-k08/k09）——观测非独立（pseudo-replication），「逐宽」实为「逐缩放」；宽度轴上不新增独立样本。
+6. 重采样 y 坐标按宽度比缩放、页高用 round(h0×scale)（DSH r1 P4-7 注记）：垂直两轴比例差 ~5e-6（页底 ~0.3px），对本轮 IoU 匹配无影响，备查。
 
 ## 4. 权重与环境
 

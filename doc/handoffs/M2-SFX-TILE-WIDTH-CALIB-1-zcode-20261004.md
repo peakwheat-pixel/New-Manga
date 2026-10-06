@@ -34,7 +34,7 @@ status: delivered
 | 零 src 纪律 | `git diff d298ecd0..HEAD --stat -- src/ tests/ packaging/ contracts/ apps/ doc/STATUS.md doc/REBASELINE_PLAN.md` | @docs head | PASS（空 diff） | git |
 | 未运行项 | chiqui7 对照面（Task 合同「如需」条款，本 Task 无权重变更不触发）；CPU 档耗时（Task 合同明令禁止 CPU tile）；更极端宽度（<320）页素材 | — | N/A（原因见左） | — |
 
-核心数字（conf 0.5 主口径，完整表见报告 §2）：域内重采样档 640/480/320 tile recall 0.647/0.686/0.686 vs 原生 690 档 0.608（同量级）；letterbox 面 10 档 × 双 conf 全零候选；合成档（字形域偏移声明内）tile recall 0.245-0.391、precision 0.818-0.923；域外 800/1024 维持 letterbox 结构性零检出（路由谓词语义一致）；tile ms/tile 全档 16.3-18.4ms（DML），tile:letterbox 耗时比 ~8-12×（GPU 档口径，T5 的 ≈20× 为 CPU 档口径，并记）。
+核心数字（conf 0.5 主口径，完整表见报告 §2）：域内重采样档 640/480/320 tile recall 0.647/0.686/0.686 vs 原生 690 档 0.608（同量级）；letterbox 面 10 档 × 双 conf 全零候选；合成档（字形域偏移声明内）tile recall 0.245-0.391、precision 0.818-0.923；域外 800/1024 维持 letterbox 结构性零检出（路由谓词语义一致）；tile ms/tile 全档 16.3-18.4ms（DML），tile:letterbox 耗时比 ~6.5-12×（逐档 6.5-11.6×；主口径 ms/tile——GPU 档口径，T5 的 ≈20× 为 CPU 档口径，并记）。
 
 ## 接收方式
 
@@ -44,7 +44,7 @@ status: delivered
 
 ## 下一任务建议（必填）
 
-- **无需下一步操作**（实现面）：AC3 结论为 (a) 维持现状、零 src，Task 收口后无后续实现 Task 待释放；deploy-report §3①「宽≠600/690 未逐宽重校」缺口以本 Task 证据关闭，§3④ 跨域激活代价已获 GPU 档 directional 实测（~0.8s/页、8-12×）补强登记。
+- **无需下一步操作**（实现面）：AC3 结论为 (a) 维持现状、零 src，Task 收口后无后续实现 Task 待释放；deploy-report §3①「宽≠600/690 未逐宽重校」缺口以本 Task 证据关闭，§3④ 跨域激活代价已获 GPU 档 directional 实测（ms/tile 16.3-18.4ms、页级 ~0.8s/页随 tile 数线性、6.5-12×）补强登记。
 - Review 流程面：recipient=DeepSeek Harness 非作者独立 Review → 编排代行 Codex 集成验证 → merge 后 Task done。
 
 ## 风险与遗留
@@ -59,6 +59,6 @@ status: delivered
 - 权重：v2b `944e8114…`（生产 pin 原样，sha256 先验断言，零重指、零变更）。
 - Runtime/硬件：onnxruntime-directml 1.24.4，DmlExecutionProvider，RTX 5070 Ti；venv=T1.1.1-impl-py312（Python 3.12.3）。
 - 参数：tile 冻结口径原样（1024/896 步长/128 重叠/NMS 0.5、路由 w≤690 ∧ aspect≥8.0、conf 0.5 主 + 0.2 参考、warm-up 1 次不计+计测）。
-- 运行次数：完整评测单轮写盘（另有 2 轮修复中断，域内数字跨轮逐位一致）；单次运行覆盖 14 页 × 4 faces ≈ 2.5 分钟。
+- 运行次数：完整评测单轮写盘（另有 2 轮修复中断、未写盘；「跨轮逐位一致」仅为运行控制台观察、未入库，不作为证据主张——DSH r1 P3-7 后收紧）；单次运行覆盖 14 页 × 4 faces ≈ 2.5 分钟。
 - 质量判断办法：eval_gate_t3.py match_gt 逐字（IoU≥0.5 conf 降序贪心）+ 原生锚点硬断言。
 - 限制：directional（报告 §5 末段逐条）；合成页文字块与真实 KO 艺术字域不同；重采样插值损失逐来源声明。
