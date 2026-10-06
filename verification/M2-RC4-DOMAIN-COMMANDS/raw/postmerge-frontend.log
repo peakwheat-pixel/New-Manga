@@ -1,0 +1,29 @@
+SHELL=Git Bash (MINGW64, Windows)
+NODE=v24.15.0
+HEAD=post-merge main (after npm ci)
+COMMAND=npx vitest run && npm run build
+npm notice run m2rc1-frontend@0.1.0 npx
+npm notice run vitest run
+
+[1m[7m[36m RUN [39m[27m[22m [36mv2.1.9 [39m[90mG:/CODEX/New Manga/apps/desktop/frontend[39m
+
+ [32m✓[39m src/region/geometry.test.ts [2m([22m[2m8 tests[22m[2m)[22m[90m 5[2mms[22m[39m
+ [32m✓[39m src/ac1/driver.test.ts [2m([22m[2m3 tests[22m[2m)[22m[90m 3[2mms[22m[39m
+ [32m✓[39m src/library/client.test.ts [2m([22m[2m4 tests[22m[2m)[22m[90m 8[2mms[22m[39m
+ [32m✓[39m src/workbench/relabelMachine.test.ts [2m([22m[2m21 tests[22m[2m)[22m[90m 7[2mms[22m[39m
+ [32m✓[39m src/resourceChannel/client.test.ts [2m([22m[2m8 tests[22m[2m)[22m[90m 10[2mms[22m[39m
+ [32m✓[39m src/resourceChannel/commandSurface.test.ts [2m([22m[2m10 tests[22m[2m)[22m[90m 14[2mms[22m[39m
+ [32m✓[39m src/region/client.test.ts [2m([22m[2m15 tests[22m[2m)[22m[90m 12[2mms[22m[39m
+ [32m✓[39m src/settings/client.test.ts [2m([22m[2m7 tests[22m[2m)[22m[90m 10[2mms[22m[39m
+ [32m✓[39m src/library/LibraryPanel.test.tsx [2m([22m[2m8 tests[22m[2m)[22m[90m 116[2mms[22m[39m
+ [32m✓[39m src/settings/SettingsPanel.test.tsx [2m([22m[2m10 tests[22m[2m)[22m[90m 170[2mms[22m[39m
+ [32m✓[39m src/workbench/WorkbenchPage.test.tsx [2m([22m[2m24 tests[22m[2m)[22m[90m 253[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m11 passed[39m[22m[90m (11)[39m
+[2m      Tests [22m [1m[32m118 passed[39m[22m[90m (118)[39m
+[2m   Start at [22m 03:47:12
+[2m   Duration [22m 6.58s[2m (transform 1.14s, setup 0ms, collect 7.80s, tests 610ms, environment 2ms, prepare 4.88s)[22m
+
+VITEST_EXIT=0
+[32m✓ built in 490ms[39m
+BUILD_EXIT=0

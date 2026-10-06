@@ -2,7 +2,7 @@
 id: M2-RC4-DOMAIN-COMMANDS
 title: 撤销、重渲染与修订历史 Core 域命令面端到端闭环
 kind: feature
-status: in_review
+status: done
 approval: user_2026-10-07_autonomous_rc4_and_next_priority
 suggested_owner: Codex Executor
 owner: Codex Executor
@@ -12,7 +12,7 @@ depends_on: [M2-WORKBENCH-REACT-1, M2-SFX-MISROUTE-UI-IMPL-1, M2-REGION-RETYPE-C
 base_commit: 444210085dacaa92a56400bc21aadb64fce1fbf1
 branch: codex/rc4-domain-commands
 worktree: G:/CODEX/New Manga.worktrees/RC4-domain-commands
-integration_commit: null
+integration_commit: 0a7e0d5b
 ---
 
 # M2-RC4-DOMAIN-COMMANDS
@@ -25,11 +25,11 @@ Codex 实测未发现 ZCode CLI 或 connector 可用，因此使用本会话 Exe
 
 ## Acceptance Criteria
 
-- [ ] AC1 三命令 DTO、校验、typed errors、协议 minor 4、Tauri production allowlist/ACL 全接通；旧命令保持语义，probe/AC1 零扩权。
-- [ ] AC2 restore 新建 restored revision，保持旧历史/pin/人工文字/Lock，含事务内并发零写守卫；history 摘要真实可追溯。
-- [ ] AC3 实际 headless 文字渲染；sfx skip/manual 不绘制旧译文，clean 缺失 fail-closed，无 AI 调用；新产物与原始文件保护证据；preview 经既有资源通道读取。
-- [ ] AC4 UI 三入口、10 秒 undo、确认恢复、失败显示、busy/切页/陈旧响应保护、实际交互检查全部可运行。
-- [ ] AC5 Handoff/逐次 raw 测试日志/独立 DeepSeek Review/返修/Integration Gate/merge/post-merge 回归齐全，Codex 才可置 done。
+- [x] AC1 三命令 DTO、校验、typed errors、协议 minor 4、Tauri production allowlist/ACL 全接通；旧命令保持语义，probe/AC1 零扩权。
+- [x] AC2 restore 新建 restored revision，保持旧历史/pin/人工文字/Lock，含事务内并发零写守卫；history 摘要真实可追溯。
+- [x] AC3 实际 headless 文字渲染；sfx skip/manual 不绘制旧译文，clean 缺失 fail-closed，无 AI 调用；新产物与原始文件保护证据；preview 经既有资源通道读取。
+- [x] AC4 UI 三入口、10 秒 undo、确认恢复、失败显示、busy/切页/陈旧响应保护、实际交互检查全部可运行。
+- [x] AC5 Handoff/逐次 raw 测试日志/独立 DeepSeek Review/返修/Integration Gate/merge/post-merge 回归齐全，Codex 才可置 done。
 
 ## 允许修改范围（allowed_paths）
 
@@ -74,3 +74,4 @@ Codex 实测未发现 ZCode CLI 或 connector 可用，因此使用本会话 Exe
 - 2026-10-07 DeepSeek 独立 Review r2（对组合树 1e6b58b9）：**approved_with_conditions（0×P0/P1/P2；r1 三项 blocking 全部闭合）**，报告 doc/reviews/M2-RC4-DOMAIN-COMMANDS-1e6b58b9-dsh-r2.md。裁决：RC4-01/03/05/06/07/08/09/11/13 闭合，RC4-02/04/10/12 降级接受（登记口径）；新 finding=2×P3（N-1 范围追认、N-2 git 原始日志缺档）+3×P4（N-3 SKIPPED 原行、N-4 注释补行、N-5 head 等价句）。AC 层：AC2 证据面已满足（RC4-01 闭合）；AC5 待 merge+post-merge。
 - 2026-10-07 r2 条件处置（Codex/集成方）：① **N-1 追认（RC4-05 同款）**：`apps/desktop/src-tauri/src/core_bridge.rs`（`MockCoreChannel.fail_revoke_for` test-only 注入口，生产路径不可达）由 r1 返修引入，属 allowed_paths 授权范围（`apps/desktop/src-tauri/**` 意旨涵盖；与 RC4-05 生成物先例同理），Codex 追认登记，并把「test-only Rust 注入面」视为该条 allowed_paths 的既定解释；② **N-2/N-5**：五条 git 原始日志入库 `raw/combined-gate-r2fix-gitlogs.log`——代码面 diff --check EXIT=0、`0fba6079..7c9d3a32 -- src/ui/ tests/ui_shell/` 为空、`37110749..58b3706d -- src/` 仅 service.py（+38/−16，与 Handoff 口径逐字一致＝RC4-02 残留闭合）、`7c9d3a32..1e6b58b9` 仅 docs/verification、`1e6b58b9..d625d6d0` 仅 test_core_service.py；③ **N-3**：`raw/combined-gate-r2fix-full2.log`（-ra 重跑，绑 d625d6d0）含 `SKIPPED [1] tests/providers/test_registry_readiness.py:237` 原行，3 failed/1859 passed/1 skipped 数字与前轮一致；④ **N-4**：`tests/core/test_core_service.py` 两处 minor 注释链补 `M2-RC4-DOMAIN-COMMANDS: 3 -> 4`（Core r2fix 6a7b4c3d，已 merge）。
 - 2026-10-07 head 等价性（N-5 闭合）：被审代码 head **d625d6d0** = r2 被审 head `1e6b58b9` + Core r2fix `6a7b4c3d`（仅 tests 注释）+ 本收口 commit（仅 docs/verification）；`git diff --name-status` 逐段证明见 raw/combined-gate-r2fix-gitlogs.log，Gate 证据（full2 -ra 绑 d625d6d0；focused/cargo/frontend 绑 7c9d3a32 代码树经 [4][5] 等价链覆盖 d625d6d0）对被审 head 成立。
+- 2026-10-07 Integration Gate 通过并 merge：main fast-forward 至 `0a7e0d5b`（= r2 收口 commit，integration_commit 同值）。post-merge 三套件回归（raw postmerge-*）：pytest 全量 **1859 passed + 1 skipped + 3 failed**（与组合 Gate 等量同因：test_catalog 既有 + ui_shell QML 两例 main 基线同样失败）；cargo **53 passed + 1 ignored**；frontend **npm ci 后 vitest 118 passed + build EXIT=0**（main 工作区 node_modules 缺 jsdom 属环境漂移，非代码回归，已由 npm ci 修复并如实登记）。AC5 闭合，Task 置 done。
