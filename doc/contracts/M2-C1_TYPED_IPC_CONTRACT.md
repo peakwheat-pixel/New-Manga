@@ -1,3 +1,5 @@
+> **rev 1.6（2026-10-07，RC-4 授权增量）**：新增 list_region_revisions / restore_region_revision / rerender_page，协议 minor 3→4；冻结 DTO、并发、保护与 UI 消费语义见 [RC-4](M2-RC4_DOMAIN_COMMANDS.md)。本增量优先于下方目录中同能力的 PROPOSAL 状态；既有 rev 1.5 命令语义不变。
+
 # M2-C1 — Typed IPC Contract
 
 状态：文档冻结候选；DSH 独立 Review r1（changes_requested）返修已落，待复核。版本：`1.5`（**草案**——`1.5`（M2-WORKBENCH-REACT-1）：`ListRegions` 读取面 additive widening——`RegionListSummary` 可选 `geometry` 字段 + result 包装可选 `page_size` 投影字段，D5 读取面几何缺口闭合；协议 minor 不 bump，见 Revision history `1.5`。含 `1.4` 草案——M2-REGION-RETYPE-CONTRACT：`SetRegionType`/`ListRegions` wire shape、EV-8 policy 快照裁决、并发与人工覆盖语义、持久性语义、「忽略」定义；含 r1 返修文本修订。含 `1.3` M2-SETTINGS-IPC-CHANNEL 产品 Tauri settings 通道 `settings_get`/`settings_update_section` wire shape 授权登记。均不代表更广协议已实现）。
