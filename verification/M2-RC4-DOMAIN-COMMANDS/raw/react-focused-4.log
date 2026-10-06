@@ -1,0 +1,37 @@
+SHELL=PowerShell 7.6.6
+NODE=v24.15.0
+NPM=12.0.1
+HEAD=0fba60796c83a3039a260c5790353976bc891dd7 (worktree changes present)
+COMMAND=npm test -- src/workbench/WorkbenchPage.test.tsx src/region/client.test.ts src/resourceChannel/commandSurface.test.ts (cwd=apps/desktop/frontend)
+EXIT=1
+
+npm notice run m2rc1-frontend@0.1.0 test
+npm notice run vitest run src/workbench/WorkbenchPage.test.tsx src/region/client.test.ts src/resourceChannel/commandSurface.test.ts
+
+ RUN  v2.1.9 G:/CODEX/New Manga.worktrees/RC4-react-consumer/apps/desktop/frontend
+
+ ✓ src/region/client.test.ts (15 tests) 6ms
+ ✓ src/resourceChannel/commandSurface.test.ts (10 tests) 9ms
+ ❯ src/workbench/WorkbenchPage.test.tsx (20 tests | 1 failed) 191ms
+   × RC-4 Workbench actual DOM actions > invalidates undo on page change and ignores a late result from the previous page 18ms
+     → expected null not to be null
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/workbench/WorkbenchPage.test.tsx > RC-4 Workbench actual DOM actions > invalidates undo on page change and ignores a late result from the previous page
+AssertionError: expected null not to be null
+ ❯ src/workbench/WorkbenchPage.test.tsx:554:88
+    552|       await act(async () => { await nextTurn(); });
+    553|       expect(ui.container.querySelector('[data-testid="relabel-feedbac…
+    554|       expect(ui.container.querySelector('[data-testid="inspector-row-r…
+       |                                                                                        ^
+    555|     } finally {
+    556|       resolveRetype(null);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+ Test Files  1 failed | 2 passed (3)
+      Tests  1 failed | 44 passed (45)
+   Start at  01:07:54
+   Duration  1.07s (transform 180ms, setup 0ms, collect 679ms, tests 206ms, environment 0ms, prepare 338ms)
+

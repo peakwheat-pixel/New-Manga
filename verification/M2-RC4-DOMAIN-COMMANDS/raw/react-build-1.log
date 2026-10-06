@@ -1,0 +1,10 @@
+SHELL=PowerShell 7.6.6
+NODE=v24.15.0
+NPM=12.0.1
+HEAD=0fba60796c83a3039a260c5790353976bc891dd7 (worktree changes present)
+COMMAND=npm run build (cwd=apps/desktop/frontend)
+EXIT=2
+
+npm notice run m2rc1-frontend@0.1.0 build
+npm notice run tsc && vite build
+src/workbench/RegionInspector.tsx(287,49): error TS18047: 'region' is possibly 'null'.

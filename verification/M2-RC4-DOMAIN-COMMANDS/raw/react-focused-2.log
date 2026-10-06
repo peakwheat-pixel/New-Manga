@@ -1,0 +1,360 @@
+SHELL=PowerShell 7.6.6
+NODE=v24.15.0
+NPM=12.0.1
+HEAD=0fba60796c83a3039a260c5790353976bc891dd7 (worktree changes present)
+COMMAND=npm test -- src/workbench/WorkbenchPage.test.tsx src/region/client.test.ts src/resourceChannel/commandSurface.test.ts (cwd=apps/desktop/frontend)
+EXIT=1
+
+npm notice run m2rc1-frontend@0.1.0 test
+npm notice run vitest run src/workbench/WorkbenchPage.test.tsx src/region/client.test.ts src/resourceChannel/commandSurface.test.ts
+
+ RUN  v2.1.9 G:/CODEX/New Manga.worktrees/RC4-react-consumer/apps/desktop/frontend
+
+ ✓ src/region/client.test.ts (15 tests) 6ms
+ ✓ src/resourceChannel/commandSurface.test.ts (10 tests) 9ms
+stderr | src/workbench/WorkbenchPage.test.tsx > RC-4 Workbench actual DOM actions > clicks relabel, undoes through guarded restore, confirms history restore, then loads the render preview
+Error: Uncaught [ReferenceError: useState is not defined]
+    at reportException (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\node_modules\jsdom\lib\jsdom\living\helpers\runtime-script-errors.js:66:24)
+    at innerInvokeEventListeners (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:353:9)
+    at invokeEventListeners (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:286:3)
+    at HTMLUnknownElementImpl._dispatch (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:233:9)
+    at HTMLUnknownElementImpl.dispatchEvent (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:104:17)
+    at HTMLUnknownElement.dispatchEvent (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\node_modules\jsdom\lib\jsdom\living\generated\EventTarget.js:241:34)
+    at Object.invokeGuardedCallbackDev (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\node_modules\react-dom\cjs\react-dom.development.js:4213:16)
+    at invokeGuardedCallback (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\node_modules\react-dom\cjs\react-dom.development.js:4277:31)
+    at beginWork$1 (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\node_modules\react-dom\cjs\react-dom.development.js:27490:7)
+    at performUnitOfWork (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\node_modules\react-dom\cjs\react-dom.development.js:26599:12) ReferenceError: useState is not defined
+    at RegionInspector (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\src\workbench\RegionInspector.tsx:67:45)
+    at renderWithHooks (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\node_modules\react-dom\cjs\react-dom.development.js:15486:18)
+    at mountIndeterminateComponent (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\node_modules\react-dom\cjs\react-dom.development.js:20103:13)
+    at beginWork (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\node_modules\react-dom\cjs\react-dom.development.js:21626:16)
+    at HTMLUnknownElement.callCallback (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\node_modules\react-dom\cjs\react-dom.development.js:4164:14)
+    at HTMLUnknownElement.callTheUserObjectsOperation (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\node_modules\jsdom\lib\jsdom\living\generated\EventListener.js:26:30)
+    at innerInvokeEventListeners (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:350:25)
+    at invokeEventListeners (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:286:3)
+    at HTMLUnknownElementImpl._dispatch (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:233:9)
+    at HTMLUnknownElementImpl.dispatchEvent (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:104:17)
+Error: Uncaught [ReferenceError: useState is not defined]
+    at reportException (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\node_modules\jsdom\lib\jsdom\living\helpers\runtime-script-errors.js:66:24)
+    at innerInvokeEventListeners (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:353:9)
+    at invokeEventListeners (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:286:3)
+    at HTMLUnknownElementImpl._dispatch (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:233:9)
+    at HTMLUnknownElementImpl.dispatchEvent (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:104:17)
+    at HTMLUnknownElement.dispatchEvent (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\node_modules\jsdom\lib\jsdom\living\generated\EventTarget.js:241:34)
+    at Object.invokeGuardedCallbackDev (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\node_modules\react-dom\cjs\react-dom.development.js:4213:16)
+    at invokeGuardedCallback (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\node_modules\react-dom\cjs\react-dom.development.js:4277:31)
+    at beginWork$1 (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\node_modules\react-dom\cjs\react-dom.development.js:27490:7)
+    at performUnitOfWork (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\node_modules\react-dom\cjs\react-dom.development.js:26599:12) ReferenceError: useState is not defined
+    at RegionInspector (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\src\workbench\RegionInspector.tsx:67:45)
+    at renderWithHooks (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\node_modules\react-dom\cjs\react-dom.development.js:15486:18)
+    at mountIndeterminateComponent (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\node_modules\react-dom\cjs\react-dom.development.js:20103:13)
+    at beginWork (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\node_modules\react-dom\cjs\react-dom.development.js:21626:16)
+    at HTMLUnknownElement.callCallback (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\node_modules\react-dom\cjs\react-dom.development.js:4164:14)
+    at HTMLUnknownElement.callTheUserObjectsOperation (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\node_modules\jsdom\lib\jsdom\living\generated\EventListener.js:26:30)
+    at innerInvokeEventListeners (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:350:25)
+    at invokeEventListeners (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:286:3)
+    at HTMLUnknownElementImpl._dispatch (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:233:9)
+    at HTMLUnknownElementImpl.dispatchEvent (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:104:17)
+The above error occurred in the <RegionInspector> component:
+
+    at RegionInspector (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\src\workbench\RegionInspector.tsx:13:3)
+    at div
+    at div
+    at div
+    at WorkbenchPage (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\src\workbench\WorkbenchPage.tsx:35:26)
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
+
+stderr | src/workbench/WorkbenchPage.test.tsx > RC-4 Workbench actual DOM actions > shows a typed retype failure after the actual Inspector click
+Error: Uncaught [ReferenceError: useState is not defined]
+    at reportException (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\node_modules\jsdom\lib\jsdom\living\helpers\runtime-script-errors.js:66:24)
+    at innerInvokeEventListeners (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:353:9)
+    at invokeEventListeners (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:286:3)
+    at HTMLUnknownElementImpl._dispatch (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:233:9)
+    at HTMLUnknownElementImpl.dispatchEvent (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:104:17)
+    at HTMLUnknownElement.dispatchEvent (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\node_modules\jsdom\lib\jsdom\living\generated\EventTarget.js:241:34)
+    at Object.invokeGuardedCallbackDev (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\node_modules\react-dom\cjs\react-dom.development.js:4213:16)
+    at invokeGuardedCallback (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\node_modules\react-dom\cjs\react-dom.development.js:4277:31)
+    at beginWork$1 (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\node_modules\react-dom\cjs\react-dom.development.js:27490:7)
+    at performUnitOfWork (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\node_modules\react-dom\cjs\react-dom.development.js:26599:12) ReferenceError: useState is not defined
+    at RegionInspector (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\src\workbench\RegionInspector.tsx:67:45)
+    at renderWithHooks (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\node_modules\react-dom\cjs\react-dom.development.js:15486:18)
+    at mountIndeterminateComponent (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\node_modules\react-dom\cjs\react-dom.development.js:20103:13)
+    at beginWork (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\node_modules\react-dom\cjs\react-dom.development.js:21626:16)
+    at HTMLUnknownElement.callCallback (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\node_modules\react-dom\cjs\react-dom.development.js:4164:14)
+    at HTMLUnknownElement.callTheUserObjectsOperation (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\node_modules\jsdom\lib\jsdom\living\generated\EventListener.js:26:30)
+    at innerInvokeEventListeners (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:350:25)
+    at invokeEventListeners (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:286:3)
+    at HTMLUnknownElementImpl._dispatch (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:233:9)
+    at HTMLUnknownElementImpl.dispatchEvent (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:104:17)
+Error: Uncaught [ReferenceError: useState is not defined]
+    at reportException (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\node_modules\jsdom\lib\jsdom\living\helpers\runtime-script-errors.js:66:24)
+    at innerInvokeEventListeners (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:353:9)
+    at invokeEventListeners (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:286:3)
+    at HTMLUnknownElementImpl._dispatch (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:233:9)
+    at HTMLUnknownElementImpl.dispatchEvent (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:104:17)
+    at HTMLUnknownElement.dispatchEvent (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\node_modules\jsdom\lib\jsdom\living\generated\EventTarget.js:241:34)
+    at Object.invokeGuardedCallbackDev (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\node_modules\react-dom\cjs\react-dom.development.js:4213:16)
+    at invokeGuardedCallback (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\node_modules\react-dom\cjs\react-dom.development.js:4277:31)
+    at beginWork$1 (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\node_modules\react-dom\cjs\react-dom.development.js:27490:7)
+    at performUnitOfWork (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\node_modules\react-dom\cjs\react-dom.development.js:26599:12) ReferenceError: useState is not defined
+    at RegionInspector (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\src\workbench\RegionInspector.tsx:67:45)
+    at renderWithHooks (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\node_modules\react-dom\cjs\react-dom.development.js:15486:18)
+    at mountIndeterminateComponent (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\node_modules\react-dom\cjs\react-dom.development.js:20103:13)
+    at beginWork (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\node_modules\react-dom\cjs\react-dom.development.js:21626:16)
+    at HTMLUnknownElement.callCallback (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\node_modules\react-dom\cjs\react-dom.development.js:4164:14)
+    at HTMLUnknownElement.callTheUserObjectsOperation (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\node_modules\jsdom\lib\jsdom\living\generated\EventListener.js:26:30)
+    at innerInvokeEventListeners (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:350:25)
+    at invokeEventListeners (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:286:3)
+    at HTMLUnknownElementImpl._dispatch (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:233:9)
+    at HTMLUnknownElementImpl.dispatchEvent (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:104:17)
+The above error occurred in the <RegionInspector> component:
+
+    at RegionInspector (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\src\workbench\RegionInspector.tsx:13:3)
+    at div
+    at div
+    at div
+    at WorkbenchPage (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\src\workbench\WorkbenchPage.tsx:35:26)
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
+
+stderr | src/workbench/WorkbenchPage.test.tsx > RC-4 Workbench actual DOM actions > expires the undo click affordance at ten seconds
+Error: Uncaught [ReferenceError: useState is not defined]
+    at reportException (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\node_modules\jsdom\lib\jsdom\living\helpers\runtime-script-errors.js:66:24)
+    at innerInvokeEventListeners (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:353:9)
+    at invokeEventListeners (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:286:3)
+    at HTMLUnknownElementImpl._dispatch (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:233:9)
+    at HTMLUnknownElementImpl.dispatchEvent (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:104:17)
+    at HTMLUnknownElement.dispatchEvent (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\node_modules\jsdom\lib\jsdom\living\generated\EventTarget.js:241:34)
+    at Object.invokeGuardedCallbackDev (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\node_modules\react-dom\cjs\react-dom.development.js:4213:16)
+    at invokeGuardedCallback (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\node_modules\react-dom\cjs\react-dom.development.js:4277:31)
+    at beginWork$1 (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\node_modules\react-dom\cjs\react-dom.development.js:27490:7)
+    at performUnitOfWork (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\node_modules\react-dom\cjs\react-dom.development.js:26599:12) ReferenceError: useState is not defined
+    at RegionInspector (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\src\workbench\RegionInspector.tsx:67:45)
+    at renderWithHooks (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\node_modules\react-dom\cjs\react-dom.development.js:15486:18)
+    at mountIndeterminateComponent (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\node_modules\react-dom\cjs\react-dom.development.js:20103:13)
+    at beginWork (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\node_modules\react-dom\cjs\react-dom.development.js:21626:16)
+    at HTMLUnknownElement.callCallback (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\node_modules\react-dom\cjs\react-dom.development.js:4164:14)
+    at HTMLUnknownElement.callTheUserObjectsOperation (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\node_modules\jsdom\lib\jsdom\living\generated\EventListener.js:26:30)
+    at innerInvokeEventListeners (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:350:25)
+    at invokeEventListeners (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:286:3)
+    at HTMLUnknownElementImpl._dispatch (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:233:9)
+    at HTMLUnknownElementImpl.dispatchEvent (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:104:17)
+Error: Uncaught [ReferenceError: useState is not defined]
+    at reportException (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\node_modules\jsdom\lib\jsdom\living\helpers\runtime-script-errors.js:66:24)
+    at innerInvokeEventListeners (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:353:9)
+    at invokeEventListeners (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:286:3)
+    at HTMLUnknownElementImpl._dispatch (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:233:9)
+    at HTMLUnknownElementImpl.dispatchEvent (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:104:17)
+    at HTMLUnknownElement.dispatchEvent (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\node_modules\jsdom\lib\jsdom\living\generated\EventTarget.js:241:34)
+    at Object.invokeGuardedCallbackDev (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\node_modules\react-dom\cjs\react-dom.development.js:4213:16)
+    at invokeGuardedCallback (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\node_modules\react-dom\cjs\react-dom.development.js:4277:31)
+    at beginWork$1 (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\node_modules\react-dom\cjs\react-dom.development.js:27490:7)
+    at performUnitOfWork (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\node_modules\react-dom\cjs\react-dom.development.js:26599:12) ReferenceError: useState is not defined
+    at RegionInspector (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\src\workbench\RegionInspector.tsx:67:45)
+    at renderWithHooks (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\node_modules\react-dom\cjs\react-dom.development.js:15486:18)
+    at mountIndeterminateComponent (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\node_modules\react-dom\cjs\react-dom.development.js:20103:13)
+    at beginWork (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\node_modules\react-dom\cjs\react-dom.development.js:21626:16)
+    at HTMLUnknownElement.callCallback (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\node_modules\react-dom\cjs\react-dom.development.js:4164:14)
+    at HTMLUnknownElement.callTheUserObjectsOperation (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\node_modules\jsdom\lib\jsdom\living\generated\EventListener.js:26:30)
+    at innerInvokeEventListeners (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:350:25)
+    at invokeEventListeners (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:286:3)
+    at HTMLUnknownElementImpl._dispatch (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:233:9)
+    at HTMLUnknownElementImpl.dispatchEvent (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:104:17)
+The above error occurred in the <RegionInspector> component:
+
+    at RegionInspector (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\src\workbench\RegionInspector.tsx:13:3)
+    at div
+    at div
+    at div
+    at WorkbenchPage (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\src\workbench\WorkbenchPage.tsx:35:26)
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
+
+stderr | src/workbench/WorkbenchPage.test.tsx > RC-4 Workbench actual DOM actions > invalidates undo on page change and ignores a late result from the previous page
+Error: Uncaught [ReferenceError: useState is not defined]
+    at reportException (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\node_modules\jsdom\lib\jsdom\living\helpers\runtime-script-errors.js:66:24)
+    at innerInvokeEventListeners (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:353:9)
+    at invokeEventListeners (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:286:3)
+    at HTMLUnknownElementImpl._dispatch (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:233:9)
+    at HTMLUnknownElementImpl.dispatchEvent (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:104:17)
+    at HTMLUnknownElement.dispatchEvent (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\node_modules\jsdom\lib\jsdom\living\generated\EventTarget.js:241:34)
+    at Object.invokeGuardedCallbackDev (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\node_modules\react-dom\cjs\react-dom.development.js:4213:16)
+    at invokeGuardedCallback (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\node_modules\react-dom\cjs\react-dom.development.js:4277:31)
+    at beginWork$1 (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\node_modules\react-dom\cjs\react-dom.development.js:27490:7)
+    at performUnitOfWork (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\node_modules\react-dom\cjs\react-dom.development.js:26599:12) ReferenceError: useState is not defined
+    at RegionInspector (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\src\workbench\RegionInspector.tsx:67:45)
+    at renderWithHooks (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\node_modules\react-dom\cjs\react-dom.development.js:15486:18)
+    at mountIndeterminateComponent (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\node_modules\react-dom\cjs\react-dom.development.js:20103:13)
+    at beginWork (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\node_modules\react-dom\cjs\react-dom.development.js:21626:16)
+    at HTMLUnknownElement.callCallback (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\node_modules\react-dom\cjs\react-dom.development.js:4164:14)
+    at HTMLUnknownElement.callTheUserObjectsOperation (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\node_modules\jsdom\lib\jsdom\living\generated\EventListener.js:26:30)
+    at innerInvokeEventListeners (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:350:25)
+    at invokeEventListeners (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:286:3)
+    at HTMLUnknownElementImpl._dispatch (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:233:9)
+    at HTMLUnknownElementImpl.dispatchEvent (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:104:17)
+Error: Uncaught [ReferenceError: useState is not defined]
+    at reportException (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\node_modules\jsdom\lib\jsdom\living\helpers\runtime-script-errors.js:66:24)
+    at innerInvokeEventListeners (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:353:9)
+    at invokeEventListeners (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:286:3)
+    at HTMLUnknownElementImpl._dispatch (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:233:9)
+    at HTMLUnknownElementImpl.dispatchEvent (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:104:17)
+    at HTMLUnknownElement.dispatchEvent (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\node_modules\jsdom\lib\jsdom\living\generated\EventTarget.js:241:34)
+    at Object.invokeGuardedCallbackDev (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\node_modules\react-dom\cjs\react-dom.development.js:4213:16)
+    at invokeGuardedCallback (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\node_modules\react-dom\cjs\react-dom.development.js:4277:31)
+    at beginWork$1 (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\node_modules\react-dom\cjs\react-dom.development.js:27490:7)
+    at performUnitOfWork (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\node_modules\react-dom\cjs\react-dom.development.js:26599:12) ReferenceError: useState is not defined
+    at RegionInspector (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\src\workbench\RegionInspector.tsx:67:45)
+    at renderWithHooks (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\node_modules\react-dom\cjs\react-dom.development.js:15486:18)
+    at mountIndeterminateComponent (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\node_modules\react-dom\cjs\react-dom.development.js:20103:13)
+    at beginWork (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\node_modules\react-dom\cjs\react-dom.development.js:21626:16)
+    at HTMLUnknownElement.callCallback (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\node_modules\react-dom\cjs\react-dom.development.js:4164:14)
+    at HTMLUnknownElement.callTheUserObjectsOperation (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\node_modules\jsdom\lib\jsdom\living\generated\EventListener.js:26:30)
+    at innerInvokeEventListeners (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:350:25)
+    at invokeEventListeners (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:286:3)
+    at HTMLUnknownElementImpl._dispatch (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:233:9)
+    at HTMLUnknownElementImpl.dispatchEvent (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:104:17)
+The above error occurred in the <RegionInspector> component:
+
+    at RegionInspector (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\src\workbench\RegionInspector.tsx:13:3)
+    at div
+    at div
+    at div
+    at WorkbenchPage (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\src\workbench\WorkbenchPage.tsx:35:26)
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
+
+stderr | src/workbench/WorkbenchPage.test.tsx > RC-4 Workbench actual DOM actions > keeps preview publication failure separate from committed render failure
+Error: Uncaught [ReferenceError: useState is not defined]
+    at reportException (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\node_modules\jsdom\lib\jsdom\living\helpers\runtime-script-errors.js:66:24)
+    at innerInvokeEventListeners (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:353:9)
+    at invokeEventListeners (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:286:3)
+    at HTMLUnknownElementImpl._dispatch (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:233:9)
+    at HTMLUnknownElementImpl.dispatchEvent (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:104:17)
+    at HTMLUnknownElement.dispatchEvent (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\node_modules\jsdom\lib\jsdom\living\generated\EventTarget.js:241:34)
+    at Object.invokeGuardedCallbackDev (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\node_modules\react-dom\cjs\react-dom.development.js:4213:16)
+    at invokeGuardedCallback (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\node_modules\react-dom\cjs\react-dom.development.js:4277:31)
+    at beginWork$1 (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\node_modules\react-dom\cjs\react-dom.development.js:27490:7)
+    at performUnitOfWork (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\node_modules\react-dom\cjs\react-dom.development.js:26599:12) ReferenceError: useState is not defined
+    at RegionInspector (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\src\workbench\RegionInspector.tsx:67:45)
+    at renderWithHooks (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\node_modules\react-dom\cjs\react-dom.development.js:15486:18)
+    at mountIndeterminateComponent (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\node_modules\react-dom\cjs\react-dom.development.js:20103:13)
+    at beginWork (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\node_modules\react-dom\cjs\react-dom.development.js:21626:16)
+    at HTMLUnknownElement.callCallback (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\node_modules\react-dom\cjs\react-dom.development.js:4164:14)
+    at HTMLUnknownElement.callTheUserObjectsOperation (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\node_modules\jsdom\lib\jsdom\living\generated\EventListener.js:26:30)
+    at innerInvokeEventListeners (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:350:25)
+    at invokeEventListeners (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:286:3)
+    at HTMLUnknownElementImpl._dispatch (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:233:9)
+    at HTMLUnknownElementImpl.dispatchEvent (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:104:17)
+Error: Uncaught [ReferenceError: useState is not defined]
+    at reportException (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\node_modules\jsdom\lib\jsdom\living\helpers\runtime-script-errors.js:66:24)
+    at innerInvokeEventListeners (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:353:9)
+    at invokeEventListeners (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:286:3)
+    at HTMLUnknownElementImpl._dispatch (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:233:9)
+    at HTMLUnknownElementImpl.dispatchEvent (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:104:17)
+    at HTMLUnknownElement.dispatchEvent (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\node_modules\jsdom\lib\jsdom\living\generated\EventTarget.js:241:34)
+    at Object.invokeGuardedCallbackDev (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\node_modules\react-dom\cjs\react-dom.development.js:4213:16)
+    at invokeGuardedCallback (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\node_modules\react-dom\cjs\react-dom.development.js:4277:31)
+    at beginWork$1 (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\node_modules\react-dom\cjs\react-dom.development.js:27490:7)
+    at performUnitOfWork (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\node_modules\react-dom\cjs\react-dom.development.js:26599:12) ReferenceError: useState is not defined
+    at RegionInspector (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\src\workbench\RegionInspector.tsx:67:45)
+    at renderWithHooks (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\node_modules\react-dom\cjs\react-dom.development.js:15486:18)
+    at mountIndeterminateComponent (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\node_modules\react-dom\cjs\react-dom.development.js:20103:13)
+    at beginWork (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\node_modules\react-dom\cjs\react-dom.development.js:21626:16)
+    at HTMLUnknownElement.callCallback (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\node_modules\react-dom\cjs\react-dom.development.js:4164:14)
+    at HTMLUnknownElement.callTheUserObjectsOperation (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\node_modules\jsdom\lib\jsdom\living\generated\EventListener.js:26:30)
+    at innerInvokeEventListeners (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:350:25)
+    at invokeEventListeners (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:286:3)
+    at HTMLUnknownElementImpl._dispatch (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:233:9)
+    at HTMLUnknownElementImpl.dispatchEvent (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:104:17)
+The above error occurred in the <RegionInspector> component:
+
+    at RegionInspector (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\src\workbench\RegionInspector.tsx:13:3)
+    at div
+    at div
+    at div
+    at WorkbenchPage (G:\CODEX\New Manga.worktrees\RC4-react-consumer\apps\desktop\frontend\src\workbench\WorkbenchPage.tsx:35:26)
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
+
+ ❯ src/workbench/WorkbenchPage.test.tsx (20 tests | 9 failed) 262ms
+   × <WorkbenchPage> five-zone skeleton (mapping-contract names) > renders the five zones with their data-testid pins 8ms
+     → useState is not defined
+   × <WorkbenchPage> five-zone skeleton (mapping-contract names) > renders the honest empty states before any data channel resolves 1ms
+     → useState is not defined
+   × <WorkbenchPage> five-zone skeleton (mapping-contract names) > replaces the first-slice reserved retype controls with the IMPL-1 dual entry (M2-SFX-MISROUTE-UI-IMPL-1) 1ms
+     → useState is not defined
+   × <WorkbenchPage> five-zone skeleton (mapping-contract names) > keeps the task progress placeholder free of any new command face 0ms
+     → useState is not defined
+   × RC-4 Workbench actual DOM actions > clicks relabel, undoes through guarded restore, confirms history restore, then loads the render preview 200ms
+     → useState is not defined
+   × RC-4 Workbench actual DOM actions > shows a typed retype failure after the actual Inspector click 12ms
+     → useState is not defined
+   × RC-4 Workbench actual DOM actions > expires the undo click affordance at ten seconds 13ms
+     → useState is not defined
+   × RC-4 Workbench actual DOM actions > invalidates undo on page change and ignores a late result from the previous page 11ms
+     → useState is not defined
+   × RC-4 Workbench actual DOM actions > keeps preview publication failure separate from committed render failure 11ms
+     → useState is not defined
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 9 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/workbench/WorkbenchPage.test.tsx > <WorkbenchPage> five-zone skeleton (mapping-contract names) > renders the five zones with their data-testid pins
+ FAIL  src/workbench/WorkbenchPage.test.tsx > <WorkbenchPage> five-zone skeleton (mapping-contract names) > renders the honest empty states before any data channel resolves
+ FAIL  src/workbench/WorkbenchPage.test.tsx > <WorkbenchPage> five-zone skeleton (mapping-contract names) > replaces the first-slice reserved retype controls with the IMPL-1 dual entry (M2-SFX-MISROUTE-UI-IMPL-1)
+ FAIL  src/workbench/WorkbenchPage.test.tsx > <WorkbenchPage> five-zone skeleton (mapping-contract names) > keeps the task progress placeholder free of any new command face
+ReferenceError: useState is not defined
+ ❯ RegionInspector src/workbench/RegionInspector.tsx:67:45
+     65|   onRestoreRevision,
+     66| }: RegionInspectorProps) {
+     67|   const [restoreTarget, setRestoreTarget] = useState<RevisionSummary |…
+       |                                             ^
+     68|   const phase = region ? derivePhase(region, suspects ?? new Set()) : …
+     69|   const toSfx = region ? canRetype(region, "sfx") : null;
+ ❯ renderWithHooks node_modules/react-dom/cjs/react-dom-server-legacy.node.development.js:5662:16
+ ❯ renderIndeterminateComponent node_modules/react-dom/cjs/react-dom-server-legacy.node.development.js:5736:15
+ ❯ renderElement node_modules/react-dom/cjs/react-dom-server-legacy.node.development.js:5961:7
+ ❯ renderNodeDestructiveImpl node_modules/react-dom/cjs/react-dom-server-legacy.node.development.js:6119:11
+ ❯ renderNodeDestructive node_modules/react-dom/cjs/react-dom-server-legacy.node.development.js:6091:14
+ ❯ renderNode node_modules/react-dom/cjs/react-dom-server-legacy.node.development.js:6274:12
+ ❯ renderChildrenArray node_modules/react-dom/cjs/react-dom-server-legacy.node.development.js:6226:7
+ ❯ renderNodeDestructiveImpl node_modules/react-dom/cjs/react-dom-server-legacy.node.development.js:6156:7
+ ❯ renderNodeDestructive node_modules/react-dom/cjs/react-dom-server-legacy.node.development.js:6091:14
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/9]⎯
+
+ FAIL  src/workbench/WorkbenchPage.test.tsx > RC-4 Workbench actual DOM actions > clicks relabel, undoes through guarded restore, confirms history restore, then loads the render preview
+ FAIL  src/workbench/WorkbenchPage.test.tsx > RC-4 Workbench actual DOM actions > shows a typed retype failure after the actual Inspector click
+ FAIL  src/workbench/WorkbenchPage.test.tsx > RC-4 Workbench actual DOM actions > expires the undo click affordance at ten seconds
+ FAIL  src/workbench/WorkbenchPage.test.tsx > RC-4 Workbench actual DOM actions > invalidates undo on page change and ignores a late result from the previous page
+ FAIL  src/workbench/WorkbenchPage.test.tsx > RC-4 Workbench actual DOM actions > keeps preview publication failure separate from committed render failure
+ReferenceError: useState is not defined
+ ❯ RegionInspector src/workbench/RegionInspector.tsx:67:45
+     65|   onRestoreRevision,
+     66| }: RegionInspectorProps) {
+     67|   const [restoreTarget, setRestoreTarget] = useState<RevisionSummary |…
+       |                                             ^
+     68|   const phase = region ? derivePhase(region, suspects ?? new Set()) : …
+     69|   const toSfx = region ? canRetype(region, "sfx") : null;
+ ❯ renderWithHooks node_modules/react-dom/cjs/react-dom.development.js:15486:18
+ ❯ mountIndeterminateComponent node_modules/react-dom/cjs/react-dom.development.js:20103:13
+ ❯ beginWork node_modules/react-dom/cjs/react-dom.development.js:21626:16
+ ❯ beginWork$1 node_modules/react-dom/cjs/react-dom.development.js:27465:14
+ ❯ performUnitOfWork node_modules/react-dom/cjs/react-dom.development.js:26599:12
+ ❯ workLoopSync node_modules/react-dom/cjs/react-dom.development.js:26505:5
+ ❯ renderRootSync node_modules/react-dom/cjs/react-dom.development.js:26473:7
+ ❯ recoverFromConcurrentError node_modules/react-dom/cjs/react-dom.development.js:25889:20
+ ❯ performConcurrentWorkOnRoot node_modules/react-dom/cjs/react-dom.development.js:25789:22
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/9]⎯
+
+ Test Files  1 failed | 2 passed (3)
+      Tests  9 failed | 36 passed (45)
+   Start at  01:06:40
+   Duration  1.21s (transform 206ms, setup 0ms, collect 735ms, tests 278ms, environment 0ms, prepare 377ms)
+
