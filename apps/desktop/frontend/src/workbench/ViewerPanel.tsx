@@ -11,11 +11,27 @@
  * The page size the overlay consumes comes ONLY from the region read
  * projection — never from the <img> element (single math + "size only from
  * the projection").
+ *
+ * IMPL-1 additions: the retype context menu host (right click on a region
+ * frame opens <RelabelContextMenu> in stage-relative coordinates) and the
+ * E4 feedback bar (design §3.2: canvas bottom-center) with its HONEST
+ * disabled action buttons — Core has no restore/rerender runtime command
+ * yet (PROTOCOL_MINOR=3), and simulating undo with a reverse retype would
+ * violate A6, so the affordances render disabled with their reasons.
  */
 
 import { useCallback, useRef, useState } from "react";
 import { RegionOverlay } from "../region/RegionOverlay";
-import type { PageSizeProjection, RegionSummary } from "../region/types";
+import type { PageSizeProjection, RegionSummary, RegionType } from "../region/types";
+import { RERENDER_DISABLED_TITLE, UNDO_DISABLED_TITLE } from "./relabelMachine";
+import { RelabelContextMenu, type ContextMenuState } from "./RelabelContextMenu";
+
+/** E4 feedback-bar payload (design §3.2 / §4.3 R4). */
+export interface RelabelFeedbackState {
+  regionId: string;
+  text: string;
+  isError: boolean;
+}
 
 export interface ViewerPanelProps {
   imageUrl: string | null;
@@ -24,6 +40,12 @@ export interface ViewerPanelProps {
   pageSize: PageSizeProjection | null;
   selectedRegionId: string | null;
   onSelectRegion: (regionId: string | null) => void;
+  /** Pure-UI suspect flags passed through to the overlay warning layers. */
+  suspects?: ReadonlySet<string>;
+  relabelFeedback?: RelabelFeedbackState | null;
+  relabelBusyRegionId?: string | null;
+  onRetypeRequest?: (region: RegionSummary, to: RegionType) => void;
+  onToggleSuspect?: (regionId: string) => void;
 }
 
 export function ViewerPanel({
@@ -33,9 +55,39 @@ export function ViewerPanel({
   pageSize,
   selectedRegionId,
   onSelectRegion,
+  suspects,
+  relabelFeedback,
+  relabelBusyRegionId,
+  onRetypeRequest,
+  onToggleSuspect,
 }: ViewerPanelProps) {
   const hostRef = useRef<HTMLDivElement | null>(null);
   const [size, setSize] = useState({ width: 0, height: 0 });
+  const [menu, setMenu] = useState<ContextMenuState | null>(null);
+
+  const openMenu = useCallback(
+    (regionId: string, x: number, y: number) => {
+      if (!onRetypeRequest || !onToggleSuspect) {
+        return;
+      }
+      const host = hostRef.current;
+      const maxX = host ? Math.max(0, host.clientWidth - 210) : x;
+      const maxY = host ? Math.max(0, host.clientHeight - 120) : y;
+      setMenu({
+        regionId,
+        x: Math.min(Math.max(2, x), maxX),
+        y: Math.min(Math.max(2, y), maxY),
+      });
+    },
+    [onRetypeRequest, onToggleSuspect],
+  );
+  const closeMenu = useCallback(() => setMenu(null), []);
+  const menuRegion = menu
+    ? regions.find((region) => region.region_id === menu.regionId) ?? null
+    : null;
+  const feedbackRegion = relabelFeedback
+    ? regions.find((region) => region.region_id === relabelFeedback.regionId) ?? null
+    : null;
 
   const measure = useCallback((node: HTMLDivElement | null) => {
     hostRef.current = node;
@@ -69,10 +121,24 @@ export function ViewerPanel({
       <div
         ref={measure}
         data-testid="viewer-stage"
+        tabIndex={-1}
+        onKeyDown={(event) => {
+          // r1 P3-5: Escape dismisses the context menu (no focus trap — the
+          // stage is a passive host; keydown reaches it once clicked).
+          if (event.key === "Escape") {
+            closeMenu();
+          }
+        }}
+        onContextMenu={(event) => {
+          // Right click on EMPTY canvas dismisses the menu (region frames
+          // stopPropagation and reopen it at the new anchor instead).
+          event.preventDefault();
+          closeMenu();
+        }}
         style={{
           position: "relative",
           flex: 1,
-          background: "#0b0e12",
+          background: "var(--bg-canvas, #0b0e12)",
           borderRadius: 4,
           overflow: "hidden",
           minHeight: 200,
@@ -105,9 +171,103 @@ export function ViewerPanel({
           regions={regions}
           pageSize={pageSize}
           selectedRegionId={selectedRegionId}
+          suspects={suspects}
           containerWidth={size.width}
           containerHeight={size.height}
+          onRegionClick={(regionId) => {
+            closeMenu();
+            onSelectRegion(regionId);
+          }}
+          onRegionContextMenu={openMenu}
         />
+        {menu && menuRegion && onRetypeRequest && onToggleSuspect && (
+          <RelabelContextMenu
+            region={menuRegion}
+            x={menu.x}
+            y={menu.y}
+            suspects={suspects ?? new Set()}
+            busy={relabelBusyRegionId === menuRegion.region_id}
+            onRetypeRequest={onRetypeRequest}
+            onToggleSuspect={onToggleSuspect}
+            onClose={closeMenu}
+          />
+        )}
+        {relabelFeedback && (
+          <div
+            data-testid="relabel-feedback"
+            role="status"
+            style={{
+              position: "absolute",
+              bottom: 8,
+              left: "50%",
+              transform: "translateX(-50%)",
+              zIndex: 15,
+              display: "flex",
+              alignItems: "center",
+              gap: 8,
+              maxWidth: "92%",
+              background: "var(--wb-bg-raised, #161b22)",
+              border: `1px solid ${relabelFeedback.isError ? "var(--wb-fail, #e07a7a)" : "var(--border-strong, #2a3038)"}`,
+              borderRadius: 6,
+              padding: "6px 10px",
+              fontSize: 11,
+              color: relabelFeedback.isError
+                ? "var(--wb-fail, #e07a7a)"
+                : "#d8e0e8",
+              boxShadow: "0 2px 8px rgba(0,0,0,0.35)",
+              height: 36,
+              whiteSpace: "nowrap",
+              overflow: "hidden",
+            }}
+            onClick={(event) => event.stopPropagation()}
+          >
+            <span
+              data-testid="relabel-feedback-text"
+              style={{ overflow: "hidden", textOverflow: "ellipsis" }}
+            >
+              {relabelFeedback.isError ? "" : "✅ "}
+              {relabelFeedback.text}
+            </span>
+            {!relabelFeedback.isError && feedbackRegion && (
+              <>
+                <button
+                  type="button"
+                  data-testid="feedback-undo"
+                  disabled
+                  title={UNDO_DISABLED_TITLE}
+                  style={{
+                    background: "#101418",
+                    color: "#5a6470",
+                    border: "1px solid #2a3038",
+                    borderRadius: 4,
+                    padding: "2px 8px",
+                    fontSize: 11,
+                    cursor: "not-allowed",
+                  }}
+                >
+                  撤销
+                </button>
+                <button
+                  type="button"
+                  data-testid="feedback-rerender"
+                  disabled
+                  title={RERENDER_DISABLED_TITLE}
+                  style={{
+                    background: "#101418",
+                    color: "#5a6470",
+                    border: "1px solid #2a3038",
+                    borderRadius: 4,
+                    padding: "2px 8px",
+                    fontSize: 11,
+                    cursor: "not-allowed",
+                  }}
+                >
+                  重渲染本页
+                </button>
+              </>
+            )}
+          </div>
+        )}
       </div>
     </section>
   );

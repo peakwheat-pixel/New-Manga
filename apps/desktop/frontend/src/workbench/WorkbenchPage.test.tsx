@@ -2,6 +2,7 @@ import { renderToString } from "react-dom/server";
 import { describe, expect, it } from "vitest";
 import { RegionOverlay } from "../region/RegionOverlay";
 import type { RegionSummary } from "../region/types";
+import { ViewerPanel } from "./ViewerPanel";
 import { WorkbenchPage } from "./WorkbenchPage";
 
 /**
@@ -50,12 +51,17 @@ describe("<WorkbenchPage> five-zone skeleton (mapping-contract names)", () => {
     expect(html).not.toContain('data-testid="workbench-error"');
   });
 
-  it("keeps the retype entries RESERVED and disabled (IMPL-1 owns enablement)", () => {
+  it("replaces the first-slice reserved retype controls with the IMPL-1 dual entry (M2-SFX-MISROUTE-UI-IMPL-1)", () => {
+    // IMPL-1 landed: BOTH reserved disabled controls (inspector + toolbar)
+    // are replaced by the real dual entry (Inspector buttons + overlay
+    // context menu). With NO region selected the Inspector still renders no
+    // retype buttons — entries only exist inside a selected-region block
+    // (SSR renders the empty state).
     const html = renderToString(<WorkbenchPage invoke={async () => null} />);
-    expect(html).toContain('data-testid="inspector-retype-reserved"');
-    expect(html).toContain('data-testid="toolbar-retype-reserved"');
-    // the disabled attribute renders on both reserved controls
-    expect((html.match(/disabled=""|\bdisabled\b/g) ?? []).length).toBeGreaterThanOrEqual(2);
+    expect(html).not.toContain('data-testid="inspector-retype-reserved"');
+    expect(html).not.toContain('data-testid="toolbar-retype-reserved"');
+    expect(html).not.toContain('data-testid="inspector-mark-sfx"');
+    expect(html).toContain('data-testid="region-inspector"');
   });
 
   it("keeps the task progress placeholder free of any new command face", () => {
@@ -63,6 +69,143 @@ describe("<WorkbenchPage> five-zone skeleton (mapping-contract names)", () => {
     // a command face for a placeholder is explicitly forbidden (Task AC2)
     const html = renderToString(<WorkbenchPage invoke={async () => null} />);
     expect(html).toContain("占位不扩命令面");
+  });
+});
+
+describe("E4 feedback bar (ViewerPanel, r1 P1-1 error branch)", () => {
+  it("renders the error variant with the fail border and NO action buttons (failure must be visible)", () => {
+    const html = renderToString(
+      <ViewerPanel
+        imageUrl={null}
+        imageError={null}
+        regions={[]}
+        pageSize={null}
+        selectedRegionId={null}
+        onSelectRegion={() => {}}
+        relabelFeedback={{
+          regionId: "rg-9",
+          text: "改标失败：INPUT_REVISION_CHANGED（region 未变更；INPUT_REVISION_CHANGED 时刷新后重试）",
+          isError: true,
+        }}
+      />,
+    );
+    expect(html).toContain('data-testid="relabel-feedback"');
+    expect(html).toContain("改标失败：INPUT_REVISION_CHANGED");
+    // error variant carries no disabled action buttons (they belong to the
+    // success variant only)
+    expect(html).not.toContain('data-testid="feedback-undo"');
+    expect(html).not.toContain('data-testid="feedback-rerender"');
+  });
+
+  it("renders the success variant with both HONEST disabled action buttons", () => {
+    const html = renderToString(
+      <ViewerPanel
+        imageUrl={null}
+        imageError={null}
+        regions={[
+          {
+            region_id: "rg-1",
+            region_type: "sfx",
+            sfx_policy: "skip",
+            origin: "machine",
+            revision_no: 5,
+          },
+        ]}
+        pageSize={null}
+        selectedRegionId={null}
+        onSelectRegion={() => {}}
+        relabelFeedback={{ regionId: "rg-1", text: "已标记为拟声词", isError: false }}
+      />,
+    );
+    expect(html).toContain('data-testid="feedback-undo"');
+    expect(html).toContain('data-testid="feedback-rerender"');
+    expect(html).toContain("撤销");
+    expect(html).toContain("重渲染本页");
+  });
+});
+
+describe("<RegionOverlay> mitigation layers (M2-SFX-MISROUTE-UI-IMPL-1, design §3.2)", () => {
+  const SPEECH_REGION: RegionSummary = {
+    ...FRAME_REGION,
+    region_id: "speech-1",
+    region_type: "speech",
+    sfx_policy: "skip",
+  };
+
+  it("renders E1 warning outline + E2 warn pill ONLY for a suspect-flagged speech region", () => {
+    const html = renderToString(
+      <RegionOverlay
+        regions={[SPEECH_REGION, FRAME_REGION]}
+        pageSize={{ width: 100, height: 50 }}
+        selectedRegionId={null}
+        suspects={new Set(["speech-1"])}
+        containerWidth={200}
+        containerHeight={100}
+      />,
+    );
+    expect(html).toContain('data-testid="region-warn-speech-1"');
+    expect(html).toContain("疑似拟声词");
+    // speech-only scope (R-015): the flagged sfx region gets NO warning —
+    // the sfx region shows its E3 type pill instead.
+    expect(html).not.toContain('data-testid="region-warn-region-1"');
+    expect(html).toContain('data-testid="region-badge-region-1"');
+    expect(html).toContain("SFX · 拟声词翻译链");
+  });
+
+  it("renders E3 pill copy per the region policy snapshot (skip variant)", () => {
+    const html = renderToString(
+      <RegionOverlay
+        regions={[{ ...FRAME_REGION, sfx_policy: "skip" }]}
+        pageSize={{ width: 100, height: 50 }}
+        selectedRegionId={null}
+        containerWidth={200}
+        containerHeight={100}
+      />,
+    );
+    expect(html).toContain("SFX · 保留原文");
+  });
+
+  it("triple coding: badge carries glyph + text (color alone never carries the state, A8)", () => {
+    const html = renderToString(
+      <RegionOverlay
+        regions={[SPEECH_REGION]}
+        pageSize={{ width: 100, height: 50 }}
+        selectedRegionId={null}
+        suspects={new Set(["speech-1"])}
+        containerWidth={200}
+        containerHeight={100}
+      />,
+    );
+    expect(html).toContain("♪?");
+    expect(html).toContain("疑似拟声词");
+  });
+
+  it("no suspect flag -> no warning layers, no badge on plain speech (default silence)", () => {
+    const html = renderToString(
+      <RegionOverlay
+        regions={[SPEECH_REGION]}
+        pageSize={{ width: 100, height: 50 }}
+        selectedRegionId={null}
+        suspects={new Set()}
+        containerWidth={200}
+        containerHeight={100}
+      />,
+    );
+    expect(html).not.toContain("疑似拟声词");
+    expect(html).not.toContain("region-badge-speech-1");
+  });
+
+  it("interaction handlers absent -> frames stay non-interactive (first-slice behavior preserved)", () => {
+    const html = renderToString(
+      <RegionOverlay
+        regions={[FRAME_REGION]}
+        pageSize={{ width: 100, height: 50 }}
+        selectedRegionId={null}
+        containerWidth={200}
+        containerHeight={100}
+      />,
+    );
+    expect(html).toContain('data-testid="region-frame-region-1"');
   });
 });
 

@@ -1,0 +1,25 @@
+# git diff --name-status ecbfe9cb..3474affa (r2 condition-1 regeneration: full r1+r1fix face)
+M	apps/desktop/frontend/src/region/RegionOverlay.tsx
+M	apps/desktop/frontend/src/workbench/RegionInspector.tsx
+A	apps/desktop/frontend/src/workbench/RelabelConfirmDialog.tsx
+A	apps/desktop/frontend/src/workbench/RelabelContextMenu.tsx
+M	apps/desktop/frontend/src/workbench/ViewerPanel.tsx
+M	apps/desktop/frontend/src/workbench/WorkbenchPage.test.tsx
+M	apps/desktop/frontend/src/workbench/WorkbenchPage.tsx
+M	apps/desktop/frontend/src/workbench/WorkbenchToolbar.tsx
+A	apps/desktop/frontend/src/workbench/relabelMachine.test.ts
+A	apps/desktop/frontend/src/workbench/relabelMachine.ts
+M	doc/design/M2-SFX-MISROUTE-UI-MITIGATION/design.md
+A	doc/handoffs/M2-SFX-MISROUTE-UI-IMPL-1-zcode-20261006.md
+M	doc/tasks/M2-SFX-MISROUTE-UI-IMPL-1.md
+A	verification/M2-SFX-MISROUTE-UI-IMPL-1/raw/npm-build-r1fix.log
+A	verification/M2-SFX-MISROUTE-UI-IMPL-1/raw/npm-build.log
+A	verification/M2-SFX-MISROUTE-UI-IMPL-1/raw/npm-install.log
+A	verification/M2-SFX-MISROUTE-UI-IMPL-1/raw/pytest-full.log
+A	verification/M2-SFX-MISROUTE-UI-IMPL-1/raw/r1fix-diff-name-status.txt
+A	verification/M2-SFX-MISROUTE-UI-IMPL-1/raw/vitest-impl.log
+A	verification/M2-SFX-MISROUTE-UI-IMPL-1/raw/vitest-impl2.log
+A	verification/M2-SFX-MISROUTE-UI-IMPL-1/raw/vitest-machine-green.log
+A	verification/M2-SFX-MISROUTE-UI-IMPL-1/raw/vitest-machine-red.log
+A	verification/M2-SFX-MISROUTE-UI-IMPL-1/raw/vitest-r1fix.log
+A	verification/M2-SFX-MISROUTE-UI-IMPL-1/raw/vitest-verify.log
