@@ -100,7 +100,12 @@ import sys
 import time
 from typing import Any, Callable, TextIO
 
-from application.editing.errors import GuardStatus, RegionNotFound
+from application.editing.errors import (
+    GuardStatus,
+    RegionNotFound,
+    RegionRevisionChanged,
+    RegionRevisionNotFound,
+)
 from application.importing.images.ports import DecodedImage
 from application.settings.errors import BindingValidationError
 from application.translation.color.service import SourceStyleService
@@ -110,6 +115,14 @@ from bootstrap.core_assembly import (
     default_data_root,
 )
 from domain.regions.entities import RegionType, SfxPolicy
+from infrastructure.rendering.pillow_rendering import (
+    PillowFontCatalog,
+    PillowImageCompositor,
+    PillowTextLayoutEngine,
+    decode_nmfr_frame,
+)
+from infrastructure.resource_channel.catalog_store import ResourceCatalogStore
+from infrastructure.resource_channel.render_preview import RenderPreviewPublisher
 from ports.detection.ports import DetectionRequest
 from ports.providers.errors import ProviderError, ProviderNotConfigured
 
@@ -130,7 +143,7 @@ PROTOCOL_MAJOR = 1
 # optional fields, so this is compatible widening without a minor bump; the
 # module's bump annotations all correspond to "commands added", which this
 # revision deliberately has none of.
-PROTOCOL_MINOR = 3
+PROTOCOL_MINOR = 4
 
 # Typed error codes per Contract 1.1 §3, §8
 E_PROTOCOL_VERSION_UNSUPPORTED = "PROTOCOL_VERSION_UNSUPPORTED"
@@ -252,6 +265,13 @@ class RegionLookupError(ValueError):
         self.region_id = region_id
 
 
+class RenderCommandError(ValueError):
+    def __init__(self, code: str, category: str, message: str) -> None:
+        super().__init__(message)
+        self.code = code
+        self.category = category
+
+
 
 class _PassthroughImageDecoder:
     def decode(self, payload: bytes) -> DecodedImage:
@@ -281,16 +301,43 @@ def assemble_production_core(data_root: Path | None = None) -> CoreServices:
     db_path = data_root / "library.db"
     managed_root = data_root / "managed"
 
-    # Assemble Qt-free Core services with headless stubs
+    # Assemble Qt-free Core services with real headless rendering adapters.
+    catalog = PillowFontCatalog()
+    assembled: dict[str, CoreServices] = {}
+
+    def read_original_page(page_id: str) -> bytes | None:
+        # Normal imports write their immutable source to Page.managed_original_ref
+        # (Managed Copy), without necessarily creating an ORIGINAL media artifact.
+        # Resolve it at use time through the assembled Core repositories/storage;
+        # no path or new business identity is exposed on the wire.
+        current = assembled.get("core")
+        if current is None:
+            return None
+        page = current.repository.get_page(page_id)
+        if page is None or not page.managed_original_ref:
+            return None
+        managed_root = current.storage.root.resolve()
+        path = Path(current.storage.absolute_path(page.managed_original_ref)).resolve()
+        try:
+            path.relative_to(managed_root)
+        except ValueError as error:
+            raise ValueError("managed original escaped the Managed Copy root") from error
+        if not path.is_file():
+            return None
+        return path.read_bytes()
+
     core = assemble_core_services(
         db_path,
         managed_root,
         image_decoder=_PassthroughImageDecoder(),
-        font_catalog=object(),  # type: ignore[arg-type]
-        layout_engine=object(),  # type: ignore[arg-type]
-        compositor=object(),  # type: ignore[arg-type]
+        font_catalog=catalog,
+        layout_engine=PillowTextLayoutEngine(catalog),
+        compositor=PillowImageCompositor(catalog),
         source_styles=SourceStyleService(_StubStyleAnalyzer()),
+        content_decoder=decode_nmfr_frame,
+        original_page_reader=read_original_page,
     )
+    assembled["core"] = core
     return core
 
 
@@ -337,10 +384,12 @@ class CoreServiceServer:
         *,
         stdin: TextIO | None = None,
         stdout: TextIO | None = None,
+        render_previews: RenderPreviewPublisher | None = None,
     ) -> None:
         self._core = core
         self._stdin = stdin or sys.stdin
         self._stdout = stdout or sys.stdout
+        self._render_previews = render_previews
 
     def handle_ping(self, payload: dict[str, Any]) -> dict[str, Any]:
         del payload
@@ -746,6 +795,121 @@ class CoreServiceServer:
             "page_size": page_size,
         }
 
+    def handle_list_region_revisions(self, payload: dict[str, Any]) -> dict[str, Any]:
+        region_id = payload.get("region_id")
+        if not isinstance(region_id, str) or not region_id:
+            raise RegionRequestError(
+                "list_region_revisions requires 'region_id': a non-empty string"
+            )
+        try:
+            return self._core.editing.list_revision_summaries(region_id)
+        except RegionNotFound as error:
+            raise RegionLookupError(region_id) from error
+
+    def handle_restore_region_revision(
+        self, payload: dict[str, Any]
+    ) -> dict[str, Any]:
+        region_id = payload.get("region_id")
+        revision_no = payload.get("revision_no")
+        expected_revision = payload.get("expected_revision")
+        if not isinstance(region_id, str) or not region_id:
+            raise RegionRequestError(
+                "restore_region_revision requires 'region_id': a non-empty string"
+            )
+        if not self._is_positive_integer(revision_no):
+            raise RegionRequestError(
+                "restore_region_revision requires positive integer 'revision_no'"
+            )
+        if not self._is_positive_integer(expected_revision):
+            raise RegionRequestError(
+                "restore_region_revision requires positive integer 'expected_revision'"
+            )
+        try:
+            region, committed_no = self._core.editing.restore_revision_with_number(
+                region_id,
+                revision_no,
+                expected_revision_no=expected_revision,
+            )
+        except RegionNotFound as error:
+            raise RegionLookupError(region_id) from error
+        except RegionRevisionNotFound as error:
+            raise RegionLookupError(region_id) from error
+        except RegionRevisionChanged as error:
+            raise RegionConflictError(
+                "region revision changed since it was read"
+            ) from error
+        return {
+            "region_id": region_id,
+            "revision_no": committed_no,
+            "region_type": region.region_type.value,
+            "sfx_policy": region.sfx_policy.value,
+        }
+
+    def handle_rerender_page(self, payload: dict[str, Any]) -> dict[str, Any]:
+        page_id = payload.get("page_id")
+        if not isinstance(page_id, str) or not page_id:
+            raise RegionRequestError(
+                "rerender_page requires 'page_id': a non-empty string"
+            )
+        if self._core.repository.get_page(page_id) is None:
+            raise RegionLookupError(page_id)
+        outcome = self._core.render.rerender_page(page_id)
+        if outcome.status != "committed":
+            code = outcome.error_code or E_UNKNOWN
+            if code == "COMPOSITION_BASE_CHANGED":
+                code = E_INPUT_REVISION_CHANGED
+            elif outcome.status == "write_failed":
+                code = "ARTIFACT_WRITE_FAILED"
+            category = "conflict" if code == E_INPUT_REVISION_CHANGED else (
+                "not_found" if code in (E_TARGET_NOT_FOUND, "MISSING_REQUIRED_INPUT")
+                else "internal"
+            )
+            message = {
+                "MISSING_REQUIRED_INPUT": "required render input is missing",
+                E_TARGET_NOT_FOUND: "page not found",
+                E_INPUT_REVISION_CHANGED: "render input changed; retry the operation",
+                "ARTIFACT_WRITE_FAILED": "render output could not be saved",
+            }.get(code, "page rerender failed")
+            print(
+                f"[core.rerender_page] code={code} detail={outcome.detail or ''}",
+                file=sys.stderr,
+            )
+            raise RenderCommandError(code, category, message)
+
+        preview = None
+        preview_error = None
+        try:
+            if self._render_previews is None or outcome.managed_path is None:
+                raise RuntimeError("preview publisher is not configured")
+            preview = self._render_previews.publish(
+                self._core.storage.absolute_path(outcome.managed_path),
+                f"rev-{outcome.revision_no}",
+            )
+        except Exception as error:
+            print(f"[core.rerender_page] preview publish failed: {error!r}", file=sys.stderr)
+            preview_error = "PREVIEW_UNAVAILABLE"
+
+        return {
+            "page_id": page_id,
+            "artifact_id": outcome.artifact_id,
+            "revision_no": outcome.revision_no,
+            "reports": [
+                {
+                    "region_id": report.region_id,
+                    "status": report.status,
+                    "skip_reason": report.skip_reason,
+                    "font_substituted": report.font_substituted,
+                }
+                for report in outcome.reports
+            ],
+            "preview": preview,
+            "preview_error": preview_error,
+        }
+
+    @staticmethod
+    def _is_positive_integer(value: Any) -> bool:
+        return isinstance(value, int) and not isinstance(value, bool) and value > 0
+
     def dispatch_request(self, raw_line: str) -> tuple[dict[str, Any], bool]:
         """Dispatch a single raw json request line.
 
@@ -1029,10 +1193,19 @@ class CoreServiceServer:
         # validation is typed fail-closed BEFORE any persistence (the §5.3
         # discipline); error semantics reuse the existing typed literals
         # only (contract rev 1.4 §5.4 mapping table).
-        if command in ("set_region_type", "list_regions"):
+        if command in (
+            "set_region_type",
+            "list_regions",
+            "list_region_revisions",
+            "restore_region_revision",
+        ):
             try:
                 if command == "set_region_type":
                     result = self.handle_set_region_type(payload)
+                elif command == "list_region_revisions":
+                    result = self.handle_list_region_revisions(payload)
+                elif command == "restore_region_revision":
+                    result = self.handle_restore_region_revision(payload)
                 else:
                     result = self.handle_list_regions(payload)
             except RegionRequestError as error:
@@ -1093,11 +1266,88 @@ class CoreServiceServer:
                         "error": make_error_envelope(
                             code=E_UNKNOWN,
                             category="internal",
-                            message=(
-                                "Region retype failed"
-                                if command == "set_region_type"
-                                else "Region read failed"
-                            ),
+                            message={
+                                "set_region_type": "Region retype failed",
+                                "restore_region_revision": "Region restore failed",
+                            }.get(command, "Region read failed"),
+                            retryable=False,
+                        ),
+                    },
+                    False,
+                )
+            return (
+                {
+                    "protocol": PROTOCOL_NAME,
+                    "version": {"major": PROTOCOL_MAJOR, "minor": PROTOCOL_MINOR},
+                    "request_id": request_id,
+                    "result": result,
+                    "error": None,
+                },
+                False,
+            )
+
+        if command == "rerender_page":
+            try:
+                result = self.handle_rerender_page(payload)
+            except RegionRequestError as error:
+                return (
+                    {
+                        "protocol": PROTOCOL_NAME,
+                        "version": {"major": PROTOCOL_MAJOR, "minor": PROTOCOL_MINOR},
+                        "request_id": request_id,
+                        "result": None,
+                        "error": make_error_envelope(
+                            code=E_INVALID_REQUEST,
+                            category="validation",
+                            message=str(error),
+                            retryable=False,
+                        ),
+                    },
+                    False,
+                )
+            except RegionLookupError:
+                return (
+                    {
+                        "protocol": PROTOCOL_NAME,
+                        "version": {"major": PROTOCOL_MAJOR, "minor": PROTOCOL_MINOR},
+                        "request_id": request_id,
+                        "result": None,
+                        "error": make_error_envelope(
+                            code=E_TARGET_NOT_FOUND,
+                            category="not_found",
+                            message="page not found",
+                            retryable=False,
+                        ),
+                    },
+                    False,
+                )
+            except RenderCommandError as error:
+                return (
+                    {
+                        "protocol": PROTOCOL_NAME,
+                        "version": {"major": PROTOCOL_MAJOR, "minor": PROTOCOL_MINOR},
+                        "request_id": request_id,
+                        "result": None,
+                        "error": make_error_envelope(
+                            code=error.code,
+                            category=error.category,
+                            message=str(error),
+                            retryable=False,
+                        ),
+                    },
+                    False,
+                )
+            except Exception:
+                return (
+                    {
+                        "protocol": PROTOCOL_NAME,
+                        "version": {"major": PROTOCOL_MAJOR, "minor": PROTOCOL_MINOR},
+                        "request_id": request_id,
+                        "result": None,
+                        "error": make_error_envelope(
+                            code=E_UNKNOWN,
+                            category="internal",
+                            message="page rerender failed",
                             retryable=False,
                         ),
                     },
@@ -1163,11 +1413,21 @@ class CoreServiceServer:
 def main() -> int:
     env_root = os.environ.get("NEWMANGA_DATA_ROOT")
     data_root = Path(env_root) if env_root else default_data_root()
+    derived_root = Path(os.environ.get("M2RC1_DERIVED_ROOT", data_root / "derived"))
+    catalog_db = Path(
+        os.environ.get("M2RC2_CATALOG_DB", data_root / "catalog" / "catalog.sqlite")
+    )
+    catalog_db.parent.mkdir(parents=True, exist_ok=True)
     core = assemble_production_core(data_root)
+    catalog = ResourceCatalogStore(catalog_db)
     try:
-        server = CoreServiceServer(core)
+        server = CoreServiceServer(
+            core,
+            render_previews=RenderPreviewPublisher(derived_root, catalog),
+        )
         return server.serve_forever()
     finally:
+        catalog.close()
         core.conn.close()
 
 

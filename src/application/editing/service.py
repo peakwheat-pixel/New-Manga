@@ -28,6 +28,8 @@ from application.editing.errors import (
     GuardStatus,
     GuardedWriteOutcome,
     RegionNotFound,
+    RegionRevisionChanged,
+    RegionRevisionNotFound,
 )
 from application.editing.ports import (
     RegionCommitResult,
@@ -429,6 +431,36 @@ class RegionEditingService:
             summaries.append(summary)
         return summaries
 
+    def list_revision_summaries(self, region_id: str) -> dict[str, object]:
+        """Return the frozen, read-only revision history projection."""
+        region = self._require_region(region_id)
+        revisions = self._repo.list_revisions(region_id)
+        current = next(
+            (rev for rev in revisions if rev.region_revision_id == region.current_revision_id),
+            None,
+        )
+        if current is None:
+            raise RuntimeError("current region revision pointer does not resolve")
+        return {
+            "region_id": region_id,
+            "current_revision_no": current.revision_no,
+            "revisions": [
+                {
+                    "region_revision_id": rev.region_revision_id,
+                    "revision_no": rev.revision_no,
+                    "origin": rev.origin.value,
+                    "review_state": rev.review_state.value,
+                    "is_pinned": rev.is_pinned,
+                    "restored_from_revision_id": rev.restored_from_revision_id,
+                    "created_at": rev.created_at,
+                    "region_type": rev.snapshot["region_type"],
+                    "sfx_policy": rev.snapshot["sfx_policy"],
+                    "is_current": rev.region_revision_id == region.current_revision_id,
+                }
+                for rev in revisions
+            ],
+        }
+
     # ------------------------------------------------------------------
     # geometry (AC-REGION-002, D06 §87 "Geometry 保存")
     # ------------------------------------------------------------------
@@ -693,11 +725,33 @@ class RegionEditingService:
 
     def restore_revision(self, region_id: str, revision_no: int) -> Region:
         """AC-REV-004: copy the snapshot into a NEW revision with provenance;
-        current then points at the restored copy, history stays intact."""
+        current then points at the restored copy, history stays intact. The
+        observed current id is always passed into the atomic seam, including
+        for legacy callers that do not supply an explicit expected revision."""
+        region, _revision_no = self.restore_revision_with_number(region_id, revision_no)
+        return region
+
+    def restore_revision_with_number(
+        self,
+        region_id: str,
+        revision_no: int,
+        *,
+        expected_revision_no: int | None = None,
+    ) -> tuple[Region, int]:
+        """Restore a snapshot and return the committed number for its new copy."""
         region = self._require_region(region_id)
+        revisions = self._repo.list_revisions(region_id)
+        current = next(
+            (rev for rev in revisions if rev.region_revision_id == region.current_revision_id),
+            None,
+        )
+        if current is None:
+            raise RuntimeError("current region revision pointer does not resolve")
+        if expected_revision_no is not None and current.revision_no != expected_revision_no:
+            raise RegionRevisionChanged()
         source = self._repo.get_revision(region_id, revision_no)
         if source is None:
-            raise ValueError(f"revision {revision_no} not found for {region_id}")
+            raise RegionRevisionNotFound()
         staged = _clone_region(region)
         staged.restore_from_snapshot(dict(source.snapshot))
         revision = RegionRevision(
@@ -709,11 +763,25 @@ class RegionEditingService:
             review_state=ReviewState.NEEDS_REVIEW,
             restored_from_revision_id=source.region_revision_id,
         )
-        result = self._committer.commit_region_revision(staged, revision)
+        result = self._committer.commit_region_revision(
+            staged,
+            revision,
+            expected_current_revision_id=current.region_revision_id,
+            lock_snapshot=RegionLockSnapshot(
+                region_locked=region.region_locked,
+                translation_locked=region.translation_locked,
+                inpaint_locked=region.inpaint_locked,
+            ),
+        )
+        if result.status in (
+            RegionCommitStatus.INPUT_REVISION_CHANGED,
+            RegionCommitStatus.LOCK_CHANGED,
+        ):
+            raise RegionRevisionChanged()
         if result.status is not RegionCommitStatus.APPLIED:
             raise RuntimeError(f"region revision commit failed: {result.detail}")
         _sync_region_state(region, staged)
-        return region
+        return region, result.revision_no or 0
 
     def set_revision_pinned(self, region_id: str, revision_no: int, pinned: bool) -> None:
         """AC-REV-003: pin is a dedicated single-purpose transaction that

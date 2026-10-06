@@ -12,6 +12,14 @@ class RegionNotFound(Exception):
         self.region_id = region_id
 
 
+class RegionRevisionNotFound(Exception):
+    """A requested immutable revision does not belong to the live region."""
+
+
+class RegionRevisionChanged(Exception):
+    """The current revision moved since the caller read it."""
+
+
 class GuardStatus(str, Enum):
     """Outcome of a guarded (optimistic) automatic write, D06 §90."""
 

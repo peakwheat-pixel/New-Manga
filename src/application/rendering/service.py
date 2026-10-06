@@ -43,7 +43,7 @@ from application.rendering.style import (
 )
 from application.translation.color.service import SourceStyleService
 from application.translation.context.gate import decide_sfx_translation
-from domain.regions.entities import SfxPolicy
+from domain.regions.entities import RegionType, SfxPolicy
 from ports.repositories.artifacts import (
     ArtifactRecord,
     ArtifactRepositoryPort,
@@ -117,6 +117,7 @@ class RenderService:
         source_styles: SourceStyleService,
         font_catalog: FontCatalog,
         content_decoder: Callable[[str, bytes], bytes] | None = None,
+        original_page_reader: Callable[[str], bytes | None] | None = None,
     ) -> None:
         """``content_decoder`` is a TASK-033 assembly bridge, opt-in and
         behaviour-preserving: pipeline artifact revisions are stored in the
@@ -137,6 +138,7 @@ class RenderService:
         self._source_styles = source_styles
         self._font_catalog = font_catalog
         self._content_decoder = content_decoder
+        self._original_page_reader = original_page_reader
 
     # ------------------------------------------------------------------
     # page rerender (D06 §41)
@@ -185,6 +187,7 @@ class RenderService:
         source_style_result = self._extract_source_style(page_id)
         reports: list[RegionRenderReport] = []
         ops: list[RenderOp] = []
+        skipped_sfx = []
         for region in self._active_regions(page_id):
             prepared = self._prepare_region(
                 region,
@@ -194,6 +197,11 @@ class RenderService:
             )
             if prepared.report.status == _SKIPPED:
                 reports.append(prepared.report)
+                if (
+                    region.region_type is RegionType.SFX
+                    and region.sfx_policy in (SfxPolicy.SKIP, SfxPolicy.MANUAL)
+                ):
+                    skipped_sfx.append(region)
                 continue
             if prepared.op is None:  # resolution failure → blocked page
                 return _blocked(
@@ -203,8 +211,40 @@ class RenderService:
             ops.append(prepared.op)
 
         try:
+            # The clean artifact has already erased every inpaint mask. For
+            # SFX regions explicitly withheld by the batch policy, restore
+            # their original pixels before drawing the remaining translations.
+            # This also removes any old translated text because composition
+            # starts from clean rather than the prior translated artifact.
+            if skipped_sfx:
+                original = self._locator.locate_current(page_id, ArtifactType.ORIGINAL)
+                if original is not None:
+                    original_bytes = self._read_managed(original[1].managed_path)
+                elif self._original_page_reader is not None:
+                    # Normal import stores the immutable original on Page's
+                    # Managed Copy reference; it does not necessarily create
+                    # a media_artifacts ORIGINAL row. The assembly callback
+                    # reads that existing protected copy without inventing a
+                    # second artifact identity.
+                    original_bytes = self._original_page_reader(page_id)
+                else:
+                    original_bytes = None
+                if not original_bytes:
+                    return _blocked(
+                        "MISSING_REQUIRED_INPUT",
+                        "rerender requires the current original artifact for skipped SFX",
+                    )
+                for region in skipped_sfx:
+                    box = region.geometry.bbox
+                    composed_base = self._compositor.compose_region(
+                        clean_bytes,
+                        original_bytes,
+                        box.as_tuple(),
+                        _empty_render_op(box.x, box.y, box.width, box.height),
+                    )
+                    clean_bytes = composed_base
             composed = self._compositor.compose_page(clean_bytes, ops)
-        except OSError as error:
+        except (OSError, ValueError) as error:
             return RenderOutcome(
                 status=RenderStatus.WRITE_FAILED,
                 error_code="ARTIFACT_WRITE_FAILED",
@@ -530,6 +570,24 @@ class RenderService:
 class _Prepared:
     report: RegionRenderReport
     op: RenderOp | None
+
+
+def _empty_render_op(x: int, y: int, width: int, height: int) -> RenderOp:
+    """No-op draw used with compose_region's existing pixel-restore seam."""
+    return RenderOp(
+        items=(),
+        region_x=x,
+        region_y=y,
+        region_width=width,
+        region_height=height,
+        font_family="Arial",
+        font_size=1,
+        text_color="#000000",
+        stroke_enabled=False,
+        stroke_color="#FFFFFF",
+        stroke_width=0,
+        direction=TextDirection.HORIZONTAL,
+    )
 
 
 def _skip_report(region_id: str, reason: str) -> RegionRenderReport:
