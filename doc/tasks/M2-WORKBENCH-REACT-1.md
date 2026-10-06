@@ -137,3 +137,7 @@ created: 2026-10-06
 | vitest-impl.log / vitest-impl2.log | `2b567f16` / `9a5c6815` | 实现过程运行记录（首轮 7 失败=测试期望值笔误修正，最终全绿） |
 | npm-build.log | `14618b6c` | tsc+vite build EXIT=0（built in 498ms） |
 | pytest-full.log | `0bc05fb9` | pytest tests -q：1 failed/1847 passed/1 skipped（基线等量递增，failed=既有 test_catalog BASELINE_FAILURE），生产 venv T1.1.1-impl-py312，153s |
+
+### git diff --check 豁免登记（GPU-EP-1 先例）
+
+`verification/M2-WORKBENCH-REACT-1/raw/vitest-impl.log` 第 37/40 行存在 2 处 trailing whitespace——来源为 vitest 首轮运行的终端着色输出**原样落盘**（`- Expected:` / `+ Received:` diff 提示行）；该文件是原始过程证据（首轮 7 失败的诚实记录），不可改写，故沿 GPU-EP-1 先例登记豁免。其余全部文件 `git diff --check` 干净；最终验证证据以 `vitest-verify.log`（77 passed EXIT=0）为准。

@@ -61,3 +61,4 @@ AC1-AC5 全 PASS。Workbench React 页读取面闭环交付，UI-MITIGATION 实�
 - **esbuild postinstall 拦截**：本机 allowScripts 策略拦截 postinstall（校验脚本），平台二进制经 optional dep 就位，build 实证通过；CI/其他环境如有不同策略需复验 build。
 - **test_catalog 既有 failed**：基线组成部分（BASELINE_FAILURE 登记），本 Task 零触碰。
 - **占位/预留面**：TaskProgress 静态占位、改标入口禁用态、Toolbar 命令面空缺——均为登记偏差，不构成缺陷；后续切片按映射契约推进。
+- **git diff --check 豁免（GPU-EP-1 先例）**：`raw/vitest-impl.log` 2 处 trailing whitespace（vitest 首轮终端着色输出原样，不可改写的原始过程证据）；其余文件干净，最终证据=`vitest-verify.log`。
