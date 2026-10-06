@@ -11,7 +11,8 @@ owner: ZCode
 reviewer: DeepSeek Harness（非作者）
 integrator: 编排会话代行 Codex（用户全权授权）
 depends_on: [M2-SFX-T5-TILE-KO]
-base_commit: 48e83a33（=daa34e4e 之上的 release commit、实际 fork 点，含 T5-TILE-KO 落地终态；r1 P4-1 与 owner_claim/HANDOFF 统一以此为准）
+base_commit: 48e83a33
+integration: merge 931a6d03（2026-10-06，集成 Gate：src 面 1 文件/contracts-apps 零 diff/44 文件允许路径/worktree clean/全量回归 1823+1sk+1 failed 基线一致；DSH r1 changes_requested P1-1 返修闭+r2 approved_with_conditions 建议集成，报告 doc/reviews/M2-SFX-GPU-EP-1-cdc2305c-dsh-r2.md；r2 文档级条件顺笔闭合 fbb5b7f4）（=daa34e4e 之上的 release commit、实际 fork 点，含 T5-TILE-KO 落地终态；r1 P4-1 与 owner_claim/HANDOFF 统一以此为准）
 branch: agent/zcode/M2-SFX-GPU-EP-1
 worktree: G:/CODEX/New Manga.worktrees/M2-SFX-GPU-EP-1-zcode
 review_events: []
