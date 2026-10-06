@@ -1,0 +1,8 @@
+SHELL=PowerShell
+PYTHON=G:/CODEX/New Manga.task-envs/T1.1.1-impl-py312/Scripts/python.exe
+HEAD=300b4007 (product unchanged at a4e35e82)
+COMMAND=python -m pytest tests/network/test_connection_tester.py tests/network/test_transport_tls.py -q -rs
+PATH_PREFIX=C:/Program Files/Git/usr/bin
+...........                                                              [100%]
+11 passed in 3.31s
+EXIT=0

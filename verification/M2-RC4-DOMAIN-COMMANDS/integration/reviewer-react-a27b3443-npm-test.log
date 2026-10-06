@@ -1,0 +1,35 @@
+SHELL=PowerShell 7.6.6
+NODE=E:\Program Files\nodejs\node.exe (v24.15.0)
+NPM=E:\Program Files\nodejs\npm.ps1
+HEAD=a27b344320af38ea6f17caece0284ac64d4fc672
+WORKDIR=G:/CODEX/New Manga.worktrees/RC4-react-consumer/apps/desktop/frontend
+COMMAND=npm test
+EXIT=0
+
+7.6.6
+E:\Program Files\nodejs\node.exe
+E:\Program Files\nodejs\npm.ps1
+a27b344320af38ea6f17caece0284ac64d4fc672
+npm notice run m2rc1-frontend@0.1.0 test
+npm notice run vitest run
+
+ RUN  v2.1.9 G:/CODEX/New Manga.worktrees/RC4-react-consumer/apps/desktop/frontend
+
+ ✓ src/workbench/relabelMachine.test.ts (21 tests) 6ms
+ ✓ src/region/geometry.test.ts (8 tests) 3ms
+ ✓ src/resourceChannel/client.test.ts (8 tests) 8ms
+ ✓ src/region/client.test.ts (15 tests) 7ms
+ ✓ src/resourceChannel/commandSurface.test.ts (10 tests) 9ms
+ ✓ src/ac1/driver.test.ts (3 tests) 3ms
+ ✓ src/library/client.test.ts (4 tests) 5ms
+ ✓ src/settings/client.test.ts (7 tests) 6ms
+ ✓ src/library/LibraryPanel.test.tsx (8 tests) 90ms
+ ✓ src/settings/SettingsPanel.test.tsx (10 tests) 139ms
+ ✓ src/workbench/WorkbenchPage.test.tsx (20 tests) 193ms
+
+ Test Files  11 passed (11)
+      Tests  114 passed (114)
+   Start at  01:15:30
+   Duration  1.18s (transform 625ms, setup 0ms, collect 1.58s, tests 467ms, environment 1ms, prepare 1.79s)
+
+EXIT=0

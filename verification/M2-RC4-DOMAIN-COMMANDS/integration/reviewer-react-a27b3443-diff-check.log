@@ -1,0 +1,8 @@
+SHELL=PowerShell 7.6.6
+NODE=N/A
+HEAD=a27b344320af38ea6f17caece0284ac64d4fc672
+WORKDIR=G:/CODEX/New Manga.worktrees/RC4-react-consumer
+COMMAND=git diff --check 0fba60796c83a3039a260c5790353976bc891dd7 a27b344320af38ea6f17caece0284ac64d4fc672
+EXIT=0
+
+EXIT=0

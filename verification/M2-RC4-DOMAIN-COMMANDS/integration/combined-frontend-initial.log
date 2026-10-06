@@ -1,0 +1,59 @@
+SHELL=PowerShell
+HEAD=f1ff4e278cf469fab2d19136c72ecc67fed50d1a
+COMMAND=npm ci; npm test; npm run build
+v24.15.0
+npm warn deprecated whatwg-encoding@3.1.1: Use @exodus/bytes instead for a more spec-conformant and faster implementation
+
+added 140 packages, and audited 141 packages in 3s
+
+24 packages are looking for funding
+  run `npm fund` for details
+
+7 vulnerabilities (3 moderate, 2 high, 2 critical)
+
+To address issues that do not require attention, run:
+  npm audit fix
+
+To address all issues (including breaking changes), run:
+  npm audit fix --force
+
+Run `npm audit` for details.
+npm warn install-scripts 1 package had install scripts blocked because they are not covered by allowScripts:
+npm warn install-scripts   esbuild@0.21.5 (postinstall: node install.js)
+npm warn install-scripts
+npm warn install-scripts Run `npm install-scripts ls` to review, or `npm install-scripts approve <pkg>` to allow.
+CI_EXIT=0
+npm notice run m2rc1-frontend@0.1.0 test
+npm notice run vitest run
+
+ RUN  v2.1.9 G:/CODEX/New Manga.worktrees/RC4-integration/apps/desktop/frontend
+
+ ✓ src/region/geometry.test.ts (8 tests) 3ms
+ ✓ src/library/client.test.ts (4 tests) 4ms
+ ✓ src/ac1/driver.test.ts (3 tests) 3ms
+ ✓ src/workbench/relabelMachine.test.ts (21 tests) 5ms
+ ✓ src/resourceChannel/client.test.ts (8 tests) 6ms
+ ✓ src/region/client.test.ts (15 tests) 7ms
+ ✓ src/resourceChannel/commandSurface.test.ts (10 tests) 10ms
+ ✓ src/settings/client.test.ts (7 tests) 5ms
+ ✓ src/library/LibraryPanel.test.tsx (8 tests) 118ms
+ ✓ src/settings/SettingsPanel.test.tsx (10 tests) 173ms
+ ✓ src/workbench/WorkbenchPage.test.tsx (20 tests) 257ms
+
+ Test Files  11 passed (11)
+      Tests  114 passed (114)
+   Start at  01:15:53
+   Duration  7.92s (transform 907ms, setup 0ms, collect 8.45s, tests 591ms, environment 1ms, prepare 5.12s)
+
+TEST_EXIT=0
+npm notice run m2rc1-frontend@0.1.0 build
+npm notice run tsc && vite build
+vite v5.4.21 building for production...
+transforming...
+✓ 50 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                  0.28 kB │ gzip:  0.21 kB
+dist/assets/index-DegSqT-o.js  193.97 kB │ gzip: 61.91 kB
+✓ built in 560ms
+BUILD_EXIT=0

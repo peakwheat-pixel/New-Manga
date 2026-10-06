@@ -1,0 +1,28 @@
+SHELL=PowerShell 7.6.6
+NODE=E:\Program Files\nodejs\node.exe (v24.15.0)
+NPM=E:\Program Files\nodejs\npm.ps1
+HEAD=a27b344320af38ea6f17caece0284ac64d4fc672
+WORKDIR=G:/CODEX/New Manga.worktrees/RC4-react-consumer/apps/desktop/frontend
+COMMAND=npm test -- --runInBand
+EXIT=1
+
+7.6.6
+E:\Program Files\nodejs\node.exe
+E:\Program Files\nodejs\npm.ps1
+a27b344320af38ea6f17caece0284ac64d4fc672
+npm notice run m2rc1-frontend@0.1.0 test
+npm notice run vitest run --runInBand
+file:///G:/CODEX/New%20Manga.worktrees/RC4-react-consumer/apps/desktop/frontend/node_modules/vitest/dist/chunks/cac.CB_9Zo9Q.js:403
+          throw new CACError(`Unknown option \`${name.length > 1 ? `--${name}` : `-${name}`}\``);
+                ^
+
+CACError: Unknown option `--runInBand`
+    at Command.checkUnknownOptions (file:///G:/CODEX/New%20Manga.worktrees/RC4-react-consumer/apps/desktop/frontend/node_modules/vitest/dist/chunks/cac.CB_9Zo9Q.js:403:17)
+    at CAC.runMatchedCommand (file:///G:/CODEX/New%20Manga.worktrees/RC4-react-consumer/apps/desktop/frontend/node_modules/vitest/dist/chunks/cac.CB_9Zo9Q.js:603:13)
+    at CAC.parse (file:///G:/CODEX/New%20Manga.worktrees/RC4-react-consumer/apps/desktop/frontend/node_modules/vitest/dist/chunks/cac.CB_9Zo9Q.js:544:12)
+    at file:///G:/CODEX/New%20Manga.worktrees/RC4-react-consumer/apps/desktop/frontend/node_modules/vitest/dist/cli.js:8:13
+    at ModuleJob.run (node:internal/modules/esm/module_job:437:25)
+    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5)
+
+Node.js v24.15.0
+EXIT=1
