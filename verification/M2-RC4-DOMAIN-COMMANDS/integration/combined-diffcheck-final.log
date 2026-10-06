@@ -1,0 +1,78 @@
+shell: Git Bash (integrator)
+head: a1bd8acb060e0acda3759624716533d1bdef0c51
+command: git diff --check 0fba6079..HEAD && git diff --check HEAD
+verification/M2-RC4-DOMAIN-COMMANDS/integration/reviewer-core-37110749-existing-tests.log:58: trailing whitespace.
++E             
+verification/M2-RC4-DOMAIN-COMMANDS/integration/reviewer-core-37110749-existing-tests.log:74: trailing whitespace.
++    
+verification/M2-RC4-DOMAIN-COMMANDS/integration/reviewer-core-37110749-existing-tests.log:80: trailing whitespace.
++    
+verification/M2-RC4-DOMAIN-COMMANDS/integration/reviewer-core-37110749-existing-tests.log:94: trailing whitespace.
++    
+verification/M2-RC4-DOMAIN-COMMANDS/integration/reviewer-core-37110749-existing-tests.log:110: trailing whitespace.
++    
+verification/M2-RC4-DOMAIN-COMMANDS/integration/reviewer-core-37110749-existing-tests.log:127: trailing whitespace.
++    
+verification/M2-RC4-DOMAIN-COMMANDS/integration/reviewer-core-37110749-existing-tests.log:141: trailing whitespace.
++    
+verification/M2-RC4-DOMAIN-COMMANDS/integration/reviewer-core-37110749-existing-tests.log:160: trailing whitespace.
++E             
+verification/M2-RC4-DOMAIN-COMMANDS/integration/reviewer-core-37110749-existing-tests.log:175: trailing whitespace.
++    
+verification/M2-RC4-DOMAIN-COMMANDS/integration/reviewer-core-37110749-existing-tests.log:178: trailing whitespace.
++    
+verification/M2-RC4-DOMAIN-COMMANDS/integration/reviewer-core-37110749-existing-tests.log:188: trailing whitespace.
++    
+verification/M2-RC4-DOMAIN-COMMANDS/integration/reviewer-core-37110749-existing-tests.log:199: trailing whitespace.
++    
+verification/M2-RC4-DOMAIN-COMMANDS/integration/reviewer-core-37110749-existing-tests.log:206: trailing whitespace.
++    
+verification/M2-RC4-DOMAIN-COMMANDS/integration/reviewer-core-37110749-existing-tests.log:224: trailing whitespace.
++E             
+verification/M2-RC4-DOMAIN-COMMANDS/integration/reviewer-core-37110749-existing-tests.log:242: trailing whitespace.
++E         
+verification/M2-RC4-DOMAIN-COMMANDS/integration/reviewer-core-37110749-existing-tests.log:260: trailing whitespace.
++E         
+verification/M2-RC4-DOMAIN-COMMANDS/integration/reviewer-core-37110749-existing-tests.log:280: trailing whitespace.
++    
+verification/M2-RC4-DOMAIN-COMMANDS/integration/reviewer-core-37110749-existing-tests.log:282: trailing whitespace.
++    
+verification/M2-RC4-DOMAIN-COMMANDS/integration/reviewer-core-37110749-existing-tests.log:313: trailing whitespace.
++    
+verification/M2-RC4-DOMAIN-COMMANDS/raw/core-focused-resume-2.log:37: trailing whitespace.
++    
+verification/M2-RC4-DOMAIN-COMMANDS/raw/core-stdio-preview-attempt-2.log:20: trailing whitespace.
++    
+verification/M2-RC4-DOMAIN-COMMANDS/raw/core-stdio-preview-attempt-2.log:30: trailing whitespace.
++    
+verification/M2-RC4-DOMAIN-COMMANDS/raw/core-stdio-preview-attempt-2.log:38: trailing whitespace.
++    
+verification/M2-RC4-DOMAIN-COMMANDS/raw/core-stdio-preview-attempt-2.log:54: trailing whitespace.
++    
+verification/M2-RC4-DOMAIN-COMMANDS/raw/core-stdio-preview-attempt-2.log:62: trailing whitespace.
++    
+verification/M2-RC4-DOMAIN-COMMANDS/raw/core-stdio-preview-attempt-2.log:99: trailing whitespace.
++    
+verification/M2-RC4-DOMAIN-COMMANDS/raw/core-stdio-preview-attempt-2.log:153: trailing whitespace.
++    
+verification/M2-RC4-DOMAIN-COMMANDS/raw/core-stdio-preview-initial.log:20: trailing whitespace.
++    
+verification/M2-RC4-DOMAIN-COMMANDS/raw/core-stdio-preview-initial.log:30: trailing whitespace.
++    
+verification/M2-RC4-DOMAIN-COMMANDS/raw/core-stdio-preview-initial.log:39: trailing whitespace.
++tests\core\test_rc4_stdio_render_preview.py:110: 
+verification/M2-RC4-DOMAIN-COMMANDS/raw/react-focused-1.log:24: trailing whitespace.
++  
+verification/M2-RC4-DOMAIN-COMMANDS/raw/react-focused-1.log:32: trailing whitespace.
++  
+verification/M2-RC4-DOMAIN-COMMANDS/raw/react-focused-1.log:45: new blank line at EOF.
+verification/M2-RC4-DOMAIN-COMMANDS/raw/react-focused-2.log:360: new blank line at EOF.
+verification/M2-RC4-DOMAIN-COMMANDS/raw/react-focused-3.log:108: new blank line at EOF.
+verification/M2-RC4-DOMAIN-COMMANDS/raw/react-focused-4.log:37: new blank line at EOF.
+verification/M2-RC4-DOMAIN-COMMANDS/raw/react-focused-5.log:21: new blank line at EOF.
+verification/M2-RC4-DOMAIN-COMMANDS/raw/react-full-test-1.log:29: new blank line at EOF.
+verification/M2-RC4-DOMAIN-COMMANDS/raw/react-review-regression-red.log:22: trailing whitespace.
++- Expected: 
+verification/M2-RC4-DOMAIN-COMMANDS/raw/react-review-regression-red.log:25: trailing whitespace.
+++ Received: 
+EXIT_range: 2 EXIT_tree: 0

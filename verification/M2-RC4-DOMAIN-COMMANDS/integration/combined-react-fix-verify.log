@@ -1,0 +1,39 @@
+shell: Git Bash (integrator)
+node: v24.15.0
+head: 2f7414074d2995b6052e62db570b62c9e5babca2
+command: npm test
+npm notice run m2rc1-frontend@0.1.0 test
+npm notice run vitest run
+
+[1m[7m[36m RUN [39m[27m[22m [36mv2.1.9 [39m[90mG:/CODEX/New Manga.worktrees/RC4-integration/apps/desktop/frontend[39m
+
+ [32m✓[39m src/region/geometry.test.ts [2m([22m[2m8 tests[22m[2m)[22m[90m 3[2mms[22m[39m
+ [32m✓[39m src/library/client.test.ts [2m([22m[2m4 tests[22m[2m)[22m[90m 5[2mms[22m[39m
+ [32m✓[39m src/ac1/driver.test.ts [2m([22m[2m3 tests[22m[2m)[22m[90m 3[2mms[22m[39m
+ [32m✓[39m src/workbench/relabelMachine.test.ts [2m([22m[2m21 tests[22m[2m)[22m[90m 4[2mms[22m[39m
+ [32m✓[39m src/resourceChannel/client.test.ts [2m([22m[2m8 tests[22m[2m)[22m[90m 6[2mms[22m[39m
+ [32m✓[39m src/region/client.test.ts [2m([22m[2m15 tests[22m[2m)[22m[90m 7[2mms[22m[39m
+ [32m✓[39m src/resourceChannel/commandSurface.test.ts [2m([22m[2m10 tests[22m[2m)[22m[90m 8[2mms[22m[39m
+ [32m✓[39m src/settings/client.test.ts [2m([22m[2m7 tests[22m[2m)[22m[90m 5[2mms[22m[39m
+ [32m✓[39m src/library/LibraryPanel.test.tsx [2m([22m[2m8 tests[22m[2m)[22m[90m 91[2mms[22m[39m
+ [32m✓[39m src/settings/SettingsPanel.test.tsx [2m([22m[2m10 tests[22m[2m)[22m[90m 141[2mms[22m[39m
+ [32m✓[39m src/workbench/WorkbenchPage.test.tsx [2m([22m[2m23 tests[22m[2m)[22m[90m 212[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m11 passed[39m[22m[90m (11)[39m
+[2m      Tests [22m [1m[32m117 passed[39m[22m[90m (117)[39m
+[2m   Start at [22m 01:47:07
+[2m   Duration [22m 1.21s[2m (transform 656ms, setup 0ms, collect 1.65s, tests 486ms, environment 1ms, prepare 1.80s)[22m
+
+EXIT: 0
+command: npm run build
+npm notice run m2rc1-frontend@0.1.0 build
+npm notice run tsc && vite build
+[36mvite v5.4.21 [32mbuilding for production...[36m[39m
+transforming...
+[32m✓[39m 50 modules transformed.
+rendering chunks...
+computing gzip size...
+[2mdist/[22m[32mindex.html                [39m[1m[2m  0.28 kB[22m[1m[22m[2m │ gzip:  0.21 kB[22m
+[2mdist/[22m[36massets/index-COrSkr-p.js  [39m[1m[2m194.21 kB[22m[1m[22m[2m │ gzip: 61.98 kB[22m
+[32m✓ built in 413ms[39m
+EXIT: 0
