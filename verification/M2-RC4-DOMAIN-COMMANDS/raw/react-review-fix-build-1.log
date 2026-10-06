@@ -1,0 +1,16 @@
+SHELL=PowerShell 7.6.6
+NODE=v24.15.0
+NPM=12.0.1
+HEAD=4dd8fa2797f5061333b31474dcccdc6ab2a74cb8 (review fixes in working tree)
+COMMAND=npm run build (cwd=apps/desktop/frontend)
+npm notice run m2rc1-frontend@0.1.0 build
+npm notice run tsc && vite build
+vite v5.4.21 building for production...
+transforming...
+✓ 50 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                  0.28 kB │ gzip:  0.21 kB
+dist/assets/index-8CJCXfHV.js  194.21 kB │ gzip: 61.99 kB
+✓ built in 475ms
+EXIT=0

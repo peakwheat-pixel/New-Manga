@@ -1,0 +1,18 @@
+SHELL=PowerShell 7.6.6
+NODE=v24.15.0
+NPM=12.0.1
+HEAD=4dd8fa2797f5061333b31474dcccdc6ab2a74cb8 (review fixes in working tree)
+COMMAND=npm test -- src/workbench/WorkbenchPage.test.tsx (cwd=apps/desktop/frontend)
+npm notice run m2rc1-frontend@0.1.0 test
+npm notice run vitest run src/workbench/WorkbenchPage.test.tsx
+
+ RUN  v2.1.9 G:/CODEX/New Manga.worktrees/RC4-react-consumer/apps/desktop/frontend
+
+ ✓ src/workbench/WorkbenchPage.test.tsx (23 tests) 235ms
+
+ Test Files  1 passed (1)
+      Tests  23 passed (23)
+   Start at  01:20:26
+   Duration  1.11s (transform 112ms, setup 0ms, collect 551ms, tests 235ms, environment 0ms, prepare 115ms)
+
+EXIT=0
