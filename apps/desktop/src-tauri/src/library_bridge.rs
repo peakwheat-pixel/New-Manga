@@ -148,6 +148,21 @@ pub trait LibraryChannel: Send + Sync {
     /// Core's `list_regions` — the raw `{"regions": [...]}` projection
     /// passes through; a page with no rows is an empty list, not an error.
     fn list_regions(&self, page_id: &str) -> Result<serde_json::Value, LibraryError>;
+    /// RC-4 read-only revision history projection.
+    fn list_region_revisions(
+        &self,
+        region_id: &str,
+    ) -> Result<serde_json::Value, LibraryError>;
+    /// RC-4 explicit restore creates a new revision under the Core's
+    /// transaction-time current-revision guard.
+    fn restore_region_revision(
+        &self,
+        region_id: &str,
+        revision_no: i64,
+        expected_revision: i64,
+    ) -> Result<serde_json::Value, LibraryError>;
+    /// RC-4 synchronous render and resource-channel preview projection.
+    fn rerender_page(&self, page_id: &str) -> Result<serde_json::Value, LibraryError>;
 }
 
 /// The command argv pinned for spawning the production Core service.
@@ -168,6 +183,19 @@ impl StdioLibraryChannel {
         src_root: &std::path::Path,
         data_root: Option<&std::path::Path>,
     ) -> Result<Self, LibraryError> {
+        Self::spawn_with_resource_roots(python_exe, src_root, data_root, None, None)
+    }
+
+    /// RC-4 production spawn. The optional roots bind Core preview writes to
+    /// the same catalog and derived directory used by the resource bridge;
+    /// the historical spawn signature remains available to existing callers.
+    pub fn spawn_with_resource_roots(
+        python_exe: &str,
+        src_root: &std::path::Path,
+        data_root: Option<&std::path::Path>,
+        derived_root: Option<&std::path::Path>,
+        catalog_db: Option<&std::path::Path>,
+    ) -> Result<Self, LibraryError> {
         // M2-RG1 AC2: Command-construction section only — CREATE_NO_WINDOW on
         // Windows; argv/cwd/env/stdio semantics unchanged.
         let mut cmd = Command::new(python_exe);
@@ -180,6 +208,12 @@ impl StdioLibraryChannel {
 
         if let Some(root) = data_root {
             cmd.env("NEWMANGA_DATA_ROOT", root);
+        }
+        if let Some(root) = derived_root {
+            cmd.env("M2RC1_DERIVED_ROOT", root);
+        }
+        if let Some(path) = catalog_db {
+            cmd.env("M2RC2_CATALOG_DB", path);
         }
 
         #[cfg(windows)]
@@ -221,7 +255,7 @@ impl StdioLibraryChannel {
         );
         let request = serde_json::json!({
             "protocol": "new-manga.core",
-            "version": { "major": 1, "minor": 0 },
+            "version": { "major": 1, "minor": 4 },
             "request_id": req_id,
             "command": command,
             "payload": payload,
@@ -288,7 +322,7 @@ impl Drop for StdioLibraryChannel {
     fn drop(&mut self) {
         let req = serde_json::json!({
             "protocol": "new-manga.core",
-            "version": { "major": 1, "minor": 0 },
+            "version": { "major": 1, "minor": 4 },
             "request_id": "shutdown-drop",
             "command": "core.shutdown",
             "payload": {},
@@ -364,6 +398,36 @@ impl LibraryChannel for StdioLibraryChannel {
         // projection (empty list for a page without rows, not an error)
         self.round_trip("list_regions", serde_json::json!({ "page_id": page_id }))
     }
+
+    fn list_region_revisions(
+        &self,
+        region_id: &str,
+    ) -> Result<serde_json::Value, LibraryError> {
+        self.round_trip(
+            "list_region_revisions",
+            serde_json::json!({ "region_id": region_id }),
+        )
+    }
+
+    fn restore_region_revision(
+        &self,
+        region_id: &str,
+        revision_no: i64,
+        expected_revision: i64,
+    ) -> Result<serde_json::Value, LibraryError> {
+        self.round_trip(
+            "restore_region_revision",
+            serde_json::json!({
+                "region_id": region_id,
+                "revision_no": revision_no,
+                "expected_revision": expected_revision,
+            }),
+        )
+    }
+
+    fn rerender_page(&self, page_id: &str) -> Result<serde_json::Value, LibraryError> {
+        self.round_trip("rerender_page", serde_json::json!({ "page_id": page_id }))
+    }
 }
 
 /// In-memory mock channel for testing without spawning Python.
@@ -373,6 +437,7 @@ pub struct MockLibraryChannel {
     settings_result: Mutex<Result<serde_json::Value, LibraryError>>,
     retype_result: Mutex<Result<serde_json::Value, LibraryError>>,
     regions_result: Mutex<Result<serde_json::Value, LibraryError>>,
+    domain_result: Mutex<Result<serde_json::Value, LibraryError>>,
 }
 
 impl MockLibraryChannel {
@@ -392,6 +457,7 @@ impl MockLibraryChannel {
                 "sfx_policy": "skip",
             }))),
             regions_result: Mutex::new(Ok(serde_json::json!({ "regions": [] }))),
+            domain_result: Mutex::new(Ok(serde_json::json!({}))),
         }
     }
 
@@ -463,6 +529,26 @@ impl LibraryChannel for MockLibraryChannel {
 
     fn list_regions(&self, _page_id: &str) -> Result<serde_json::Value, LibraryError> {
         self.regions_result.lock().unwrap().clone()
+    }
+
+    fn list_region_revisions(
+        &self,
+        _region_id: &str,
+    ) -> Result<serde_json::Value, LibraryError> {
+        self.domain_result.lock().unwrap().clone()
+    }
+
+    fn restore_region_revision(
+        &self,
+        _region_id: &str,
+        _revision_no: i64,
+        _expected_revision: i64,
+    ) -> Result<serde_json::Value, LibraryError> {
+        self.domain_result.lock().unwrap().clone()
+    }
+
+    fn rerender_page(&self, _page_id: &str) -> Result<serde_json::Value, LibraryError> {
+        self.domain_result.lock().unwrap().clone()
     }
 }
 

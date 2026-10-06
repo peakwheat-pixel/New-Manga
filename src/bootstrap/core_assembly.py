@@ -753,6 +753,7 @@ def assemble_core_services(
     compositor: ImageCompositor,
     source_styles: SourceStyleService,
     content_decoder: Callable[[str, bytes], bytes] | None = None,
+    original_page_reader: Callable[[str], bytes | None] | None = None,
     mock_local_providers: bool = False,
 ) -> CoreServices:
     """Open + migrate the SQLite library and build the Qt-free services.
@@ -1002,6 +1003,7 @@ def assemble_core_services(
                 content_decoder if content_decoder is not None
                 else _render_content_decoder
             ),
+            original_page_reader=original_page_reader,
         )
         # TASK-049 AC ②: the one application-layer Region write path —
         # ``RegionEditingService.create_region`` (first revision + pointer in

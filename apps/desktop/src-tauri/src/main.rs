@@ -23,8 +23,8 @@
 //! pair, M2-SETTINGS-IPC-CHANNEL (contract rev 1.3 §5.3) the
 //! production-only `settings_get`/`settings_update_section` pair, and
 //! M2-REGION-RETYPE-CORE (contract rev 1.4 §5.4) the production-only
-//! `set_region_type`/`list_regions` pair — the production surface is pinned
-//! at exactly nine commands by unit test.
+//! `set_region_type`/`list_regions` and the RC-4 history/restore/render
+//! commands — probe/AC1 surfaces remain frozen while production widens.
 
 // console note (updated M2-RG1 r1 rework, P3-1): dev builds keep the console
 // on purpose — probe evidence includes startup stderr. Release builds are
@@ -62,6 +62,9 @@ pub const PRODUCTION_COMMANDS: &[&str] = &[
     // write/read pair, production-only like the settings pair above.
     "set_region_type",
     "list_regions",
+    "list_region_revisions",
+    "restore_region_revision",
+    "rerender_page",
 ];
 
 /// Commands that exist ONLY in probe mode (`M2RC1_PROBE_OUT` set by the
@@ -103,6 +106,14 @@ pub const SETTINGS_PRODUCTION_ONLY_COMMANDS: &[&str] =
 pub const RETYPE_PRODUCTION_ONLY_COMMANDS: &[&str] =
     &["set_region_type", "list_regions"];
 
+/// RC-4 commands stay production-only; probe and AC1 surfaces retain their
+/// historical shape.
+pub const RC4_PRODUCTION_ONLY_COMMANDS: &[&str] = &[
+    "list_region_revisions",
+    "restore_region_revision",
+    "rerender_page",
+];
+
 pub fn command_allowlist(probe_mode: bool, ac1_mode: bool) -> Vec<&'static str> {
     let mut commands: Vec<&'static str> = if probe_mode || ac1_mode {
         PRODUCTION_COMMANDS
@@ -112,6 +123,7 @@ pub fn command_allowlist(probe_mode: bool, ac1_mode: bool) -> Vec<&'static str> 
                 !IPC1_PRODUCTION_ONLY_COMMANDS.contains(command)
                     && !SETTINGS_PRODUCTION_ONLY_COMMANDS.contains(command)
                     && !RETYPE_PRODUCTION_ONLY_COMMANDS.contains(command)
+                    && !RC4_PRODUCTION_ONLY_COMMANDS.contains(command)
             })
             .collect()
     } else {
@@ -252,6 +264,47 @@ fn list_regions(
         .as_ref()
         .ok_or_else(|| "CORE_UNAVAILABLE".to_string())?
         .list_regions(&page_id)
+        .map_err(|error| error.code)
+}
+
+#[tauri::command]
+fn list_region_revisions(
+    state: tauri::State<'_, AppState>,
+    region_id: String,
+) -> Result<serde_json::Value, String> {
+    state
+        .library
+        .as_ref()
+        .ok_or_else(|| "CORE_UNAVAILABLE".to_string())?
+        .list_region_revisions(&region_id)
+        .map_err(|error| error.code)
+}
+
+#[tauri::command]
+fn restore_region_revision(
+    state: tauri::State<'_, AppState>,
+    region_id: String,
+    revision_no: i64,
+    expected_revision: i64,
+) -> Result<serde_json::Value, String> {
+    state
+        .library
+        .as_ref()
+        .ok_or_else(|| "CORE_UNAVAILABLE".to_string())?
+        .restore_region_revision(&region_id, revision_no, expected_revision)
+        .map_err(|error| error.code)
+}
+
+#[tauri::command]
+fn rerender_page(
+    state: tauri::State<'_, AppState>,
+    page_id: String,
+) -> Result<serde_json::Value, String> {
+    state
+        .library
+        .as_ref()
+        .ok_or_else(|| "CORE_UNAVAILABLE".to_string())?
+        .rerender_page(&page_id)
         .map_err(|error| error.code)
 }
 
@@ -562,15 +615,19 @@ fn main() {
     let is_production = !probe_mode && !ac1_mode;
     let library: Option<Box<dyn LibraryChannel>> = if is_production {
         let chan = match &packaged_dir {
-            Some(dir) => StdioLibraryChannel::spawn(
+            Some(dir) => StdioLibraryChannel::spawn_with_resource_roots(
                 &dir.join("core_service.exe").to_string_lossy(),
                 dir,
                 data_root.as_deref(),
+                Some(&derived_root),
+                Some(&catalog_db),
             ),
-            None => StdioLibraryChannel::spawn(
+            None => StdioLibraryChannel::spawn_with_resource_roots(
                 &python_exe,
                 &src_root,
                 data_root.as_deref(),
+                Some(&derived_root),
+                Some(&catalog_db),
             ),
         }
         .expect("production core library sidecar failed to start");
@@ -671,7 +728,10 @@ fn main() {
             settings_get,
             settings_update_section,
             set_region_type,
-            list_regions
+            list_regions,
+            list_region_revisions,
+            restore_region_revision,
+            rerender_page
         ])
     };
 
@@ -787,8 +847,8 @@ mod tests {
         // commands too — a capability/manifest typo for an ac1 command must
         // fail here, not only surface as an E2E ACL denial.
         // M2-REGION-RETYPE-CORE r1 P3-2: the production surface joins the
-        // sweep, so the existence check covers all 16 commands across the
-        // three surfaces (9 production + 4 probe-only + 3 ac1) — a missing
+        // sweep, so the existence check covers all 19 commands across the
+        // three surfaces (12 production + 4 probe-only + 3 ac1) — a missing
         // capability/manifest entry for a production-only command (e.g. the
         // retype pair) fails this test, not just a live invoke.
         for command in command_allowlist(true, false)
@@ -812,11 +872,11 @@ mod tests {
     }
 
     #[test]
-    fn production_surface_is_exactly_nine_commands() {
+    fn production_surface_is_exactly_twelve_commands() {
         // M2-SETTINGS-IPC-CHANNEL: five -> seven (settings_get +
         // settings_update_section, contract rev 1.3 §5.3; pinned wire names)
-        // M2-REGION-RETYPE-CORE: seven -> nine (set_region_type +
-        // list_regions, contract rev 1.4 §5.4; pinned wire names)
+        // M2-REGION-RETYPE-CORE: seven -> nine; RC-4 adds three frozen
+        // history/restore/render commands on production only.
         assert_eq!(
             command_allowlist(false, false),
             vec![
@@ -829,6 +889,9 @@ mod tests {
                 "settings_update_section",
                 "set_region_type",
                 "list_regions",
+                "list_region_revisions",
+                "restore_region_revision",
+                "rerender_page",
             ]
         );
     }
@@ -852,12 +915,16 @@ mod tests {
         for command in RETYPE_PRODUCTION_ONLY_COMMANDS {
             assert!(!probe.contains(command), "{command} must stay production-only");
         }
+        for command in RC4_PRODUCTION_ONLY_COMMANDS {
+            assert!(!probe.contains(command), "{command} must stay production-only");
+        }
         assert_eq!(
             probe.len(),
             PRODUCTION_COMMANDS.len()
                 - IPC1_PRODUCTION_ONLY_COMMANDS.len()
                 - SETTINGS_PRODUCTION_ONLY_COMMANDS.len()
                 - RETYPE_PRODUCTION_ONLY_COMMANDS.len()
+                - RC4_PRODUCTION_ONLY_COMMANDS.len()
                 + PROBE_ONLY_COMMANDS.len()
         );
     }
@@ -883,12 +950,16 @@ mod tests {
         for command in RETYPE_PRODUCTION_ONLY_COMMANDS {
             assert!(!ac1.contains(command), "{command} must stay production-only");
         }
+        for command in RC4_PRODUCTION_ONLY_COMMANDS {
+            assert!(!ac1.contains(command), "{command} must stay production-only");
+        }
         assert_eq!(
             ac1.len(),
             PRODUCTION_COMMANDS.len()
                 - IPC1_PRODUCTION_ONLY_COMMANDS.len()
                 - SETTINGS_PRODUCTION_ONLY_COMMANDS.len()
                 - RETYPE_PRODUCTION_ONLY_COMMANDS.len()
+                - RC4_PRODUCTION_ONLY_COMMANDS.len()
                 + AC1_TEST_COMMANDS.len()
         );
     }
@@ -903,6 +974,7 @@ mod tests {
             .iter()
             .chain(SETTINGS_PRODUCTION_ONLY_COMMANDS)
             .chain(RETYPE_PRODUCTION_ONLY_COMMANDS)
+            .chain(RC4_PRODUCTION_ONLY_COMMANDS)
         {
             assert!(
                 !command_allowlist(true, false).contains(command),
@@ -1406,7 +1478,7 @@ mod tests {
         // added). This real-sidecar assertion is the consequence sync for
         // the widenings. The MockChannel self-consistency stub above (:1194)
         // keeps its own minor 0 by design.
-        assert_eq!(ping.protocol_version.minor, 3);
+        assert_eq!(ping.protocol_version.minor, 4);
         assert!(ping.capabilities.contains(&"library.list_books".to_string()));
 
         // 2. List books succeeds on empty store

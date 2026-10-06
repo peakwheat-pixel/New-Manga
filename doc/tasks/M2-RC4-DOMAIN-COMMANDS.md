@@ -35,9 +35,11 @@ Codex 实测未发现 ZCode CLI 或 connector 可用，因此使用本会话 Exe
 
 - `src/application/editing/service.py`、`src/application/editing/errors.py`；`src/application/rendering/service.py`（仅 RC-4 必要保护/错误修复）。
 - `src/bootstrap/core_service.py`；`src/infrastructure/rendering/pillow_rendering.py`（拟议 headless 适配器）；`src/infrastructure/resource_channel/render_preview.py`（拟议只读预览发布适配器）。不修改 ports/Schema。
+- `src/bootstrap/core_assembly.py`：Codex 于 2026-10-07 授权可将 optional original Managed Copy reader 透传给 `RenderService`，以支持正常导入/clean 流未创建 ORIGINAL artifact 行时恢复被 SFX skip 遮盖的原始像素；默认 `None` 保持既有调用行为。
 - `apps/desktop/src-tauri/src/library_bridge.rs`、`src/main.rs`、`build.rs`、`capabilities/**`、`permissions/**`（均相对 src-tauri，只有三命令/生产子进程配置）。
 - `apps/desktop/frontend/src/region/**`、`src/workbench/**`、`src/resourceChannel/commandSurface.test.ts`、`src/testSupport/**`（均相对 frontend）；不新增生产依赖。测试依赖确需增加先由 Codex 记录范围。
-- `tests/core/**`、`tests/editing/**`、`tests/rendering/**`、`tests/resource_channel/**`（任务所需测试）。
+- `apps/desktop/frontend/package.json`、`apps/desktop/frontend/package-lock.json`：Codex 于 2026-10-07 授权仅为真实 DOM 交互测试增加 `jsdom@26.1.0` devDependency，必要时可加测试用 `@types/jsdom@21.x`；不得增加生产依赖或改全局 Vitest 配置。
+- `tests/core/**`、`tests/editing/**`、`tests/rendering/**`、`tests/m2_resource_channel/**`（任务所需测试；Codex 于 2026-10-07 重启后核实仓库现存资源通道测试目录实际为 `tests/m2_resource_channel/`，本路径事实纠正已授权）。
 - 本 Task、`doc/handoffs/M2-RC4-DOMAIN-COMMANDS*`、`verification/M2-RC4-DOMAIN-COMMANDS/**`。C1 rev 1.6 与新冻结契约只由 Codex 修改；总索引/STATUS/PLAN/Review 只由 Codex 维护。
 
 ## 禁止范围
