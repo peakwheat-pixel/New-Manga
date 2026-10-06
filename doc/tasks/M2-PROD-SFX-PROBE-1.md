@@ -2,7 +2,7 @@
 id: M2-PROD-SFX-PROBE-1
 title: "packaged sfx-detect 探针：frozen 进程内 SFX 真实推理（DML）运行证据"
 kind: feature
-status: in_review
+status: done
 owner: ZCode
 reviewer: DeepSeek Harness（非作者）
 integrator: 编排会话代行 Codex（用户全权授权）
@@ -11,7 +11,8 @@ depends_on: [M2-SFX-GPU-EP-1]
 base_commit: d298ecd0
 branch: agent/zcode/M2-PROD-SFX-PROBE-1
 worktree: G:/CODEX/New Manga.worktrees/M2-PROD-SFX-PROBE-1-zcode
-review_events: [r1 approved_with_conditions（DSH 非作者 2026-10-06：0×P0/1×P1/3×P2/5×P3；C1 锚点措辞更正、C2 闭包归属+取舍登记、C3 runner 判据加固、C4 文档同步——集成方顺笔返修，报告与 r2 由集成方于集成 merge 归档 doc/reviews/）, r2 approved_with_conditions（DSH 定点复审 2026-10-06：0×P0/0×P1，实质通过；C1/C2/C3 闭合+P3-3 特别裁决认可实测登记；残留 R-1/R-2/R-3 集成顺笔闭）]
+integration: merge 177b356a（2026-10-06；分支 tip 751e26a7；DSH r1 approved_with_conditions→集成方顺笔返修 441f4ab5/f6a25d69/4d95a2e7→r2 approved_with_conditions 实质通过 0×P0/0×P1→R-1/R-2/R-3+P4×8 顺笔闭 b4a9ad4d/03224fb0；集成 Gate=允许面 48 文件全在 Task 允许面内+禁改面（contracts/src-tauri/STATUS/PLAN/GATE runner/core_service.py）零 diff+range check 终态（raw log 忠实形态沿 GPU-EP-1 先例豁免）+回归 1835+1sk+1 failed（test_catalog 既有）等量；审查报告 doc/reviews/M2-PROD-SFX-PROBE-1-{b1dd1ad4-dsh-r1,4d95a2e7-dsh-r2}.md）
+review_events: [r1 approved_with_conditions（DSH 非作者 2026-10-06：0×P0/1×P1/3×P2/5×P3；C1 锚点措辞更正、C2 闭包归属+取舍登记、C3 runner 判据加固、C4 文档同步——集成方顺笔返修）, r2 approved_with_conditions（DSH 定点复审 2026-10-06：0×P0/0×P1，实质通过无需再开轮；C1/C2/C3 闭合+P3-3 特别裁决认可实测登记；残留 R-1/R-2/R-3+P4×8 集成顺笔闭）]
 created: 2026-10-04
 ---
 
