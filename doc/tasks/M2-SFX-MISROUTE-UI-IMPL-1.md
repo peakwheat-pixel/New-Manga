@@ -2,13 +2,13 @@
 id: M2-SFX-MISROUTE-UI-IMPL-1
 title: "SFX 误路由缓解 UI 产品实现：E1-E4 视觉+不对称状态机+改标交互（设计契约 M2-SFX-MISROUTE-UI-MITIGATION 的实现切片）"
 kind: feature
-status: ready
+status: in_progress
 owner: ZCode
 reviewer: DeepSeek Harness（非作者，技术主审）；Qoder（非作者 UI/UX 复审，派发通道可用时补审）
 integrator: 编排会话代行 Codex（用户全权授权）
 approval: user_2026-10-06「释放：Workbench React 页（依赖已就绪）、UI-MITIGATION 实现（blocked 已解除）、BJ13 召回恢复链」三件之一（候选 B；**blocked_on M2-WORKBENCH-REACT-1 集成，接力派发**）
 depends_on: [M2-SFX-MISROUTE-UI-MITIGATION, M2-WORKBENCH-REACT-1]
-base_commit: 3a65150b
+base_commit: ecbfe9cb
 branch: agent/zcode/M2-SFX-MISROUTE-UI-IMPL-1
 worktree: G:/CODEX/New Manga.worktrees/M2-SFX-MISROUTE-UI-IMPL-1-zcode
 review_events: []
@@ -16,6 +16,12 @@ created: 2026-10-06
 ---
 
 # Task: M2-SFX-MISROUTE-UI-IMPL-1 — UI-MITIGATION 产品实现
+
+## claim 与 base 对账（2026-10-06）
+
+- frontmatter `base_commit: 3a65150b`（释放登记值）→ 更正为 **`ecbfe9cb`**（实际 worktree 起点）：释放链 `3a65150b→630c3f51→2a1a9f73` 两 commit 为纯文档释放登记（零代码面），其后 A/C 两 Task 全链闭环至 `ecbfe9cb`——派发时序（接力等 WORKBENCH-REACT-1 集成）由编排方在派发前把本 worktree 分支 reset --hard 到 `ecbfe9cb`，本 Task 在其上叠加。沿 M2-WORKBENCH-REACT-1 先例（frontmatter 写实际起点，漂移注记移正文）。
+- 前置就绪面已核：region/client.ts setRegionType+RegionListSummary 六字段（含 rev1.5 可选 geometry）+WorkbenchPage 五区+RegionOverlay 只读画框（pointerEvents:none=第一刀定位）+RegionInspector 预留禁用按钮——与本合同 AC1/AC2 落点一一对应。
+
 
 ## 背景与授权
 
