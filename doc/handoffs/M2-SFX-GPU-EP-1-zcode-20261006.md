@@ -2,9 +2,9 @@
 task_id: M2-SFX-GPU-EP-1
 author: ZCode
 recipient: Codex（集成）/ DeepSeek Harness（非作者 Review）
-base_commit: 48e83a33（daa34e4e 之上的 release commit，含 T5-TILE-KO 落地终态）
-delivery_head: 见 git log（AC4/AC5b 证据 commit `36259aaf` 之后为 docs commit）
-status: delivered
+base_commit: 48e83a33（daa34e4e 之上的 release commit，含 T5-TILE-KO 落地终态；r1 P4-1 唯一化）
+delivery_head: 29078d40（r1 Gate 复验证据 commit；其后的 docs commit 仅文档）
+status: delivered→r1 changes_requested→review-fix 交付，待 DSH r2
 ---
 
 # Handoff：M2-SFX-GPU-EP-1 — SFX 推理 EP 切换 GPU（DML）
@@ -49,7 +49,34 @@ AC1-AC5 全 PASS。生产 SFX 推理从 `onnxruntime==1.30.0`（CPU 包）+硬�
 3. `3867f3c4` AC1 实现+AC5a 绿（97 passed；requirements 双文件+EP 配置化）
 4. `016e1259` AC2/AC3 证据（双 EP 面逐页对比+性能+venv 换装 log）
 5. `36259aaf` AC4 spec+AC5b 回归（闭包断言+GATE 证据链前置+回归+部署记录主体）
-6. docs commit（Task 交付记录+Handoff+部署记录 §7 回填）
+6. `4fa38540` docs（Task 交付记录+Handoff+部署记录 §7 回填）
+7. r1 review-fix 段：`3c20e9f0` 真实失败形态 stub 先红 → `79056618` P1-1 修复
+   （get_providers 读回反推+决定性验证 PASS+98 passed）→ `29078d40`
+   Gate 复验证据（AC2/AC3 重跑绑 HEAD+回归 1823+sidecar/tauri/GATE 重跑）
+   → docs commit（本提交）。
+
+## r1 review-fix 摘要（DSH changes_requested 0×P0、1×P1、0×P2、3×P3、6×P4）
+
+- **P1-1（必闭，已闭）**：onnxruntime 包装层自带 CPU 回退（enable_fallback
+  缺省 True），DML 失败不抛异常 → 初版 except 分支不可达+device 错报。
+  修复=构造后 `session.get_providers()` 读回反推 effective EP，三键审计
+  驱动；except 分支降为防御兜底。验证三矩阵：①决定性验证（独立 venv
+  CPU-only wheel 真实 detect 三键 PASS，`raw/wrapper-fallback-cpu-wheel.{json,log}`）；
+  ②真实失败形态 stub 先红（`raw/tests-p11-wrapper-fallback-red.log`，旧实现
+  device 错报 dml 实证）后绿（EP 单测 98 passed）；③原异常驱动用例保持绿。
+- **应闭全闭**：P3-1（frozen DML 改「推断非实测」标注+缺口登记）、P3-2
+  （AC2 配对口径=位次 zip+索引对集合注记）、P3-3（T5 对账仅 v2b 可比注）、
+  P4-1（base_commit 唯一化 48e83a33）、P4-2（`raw/bundle-sizes.log`
+  Get-Item 级载体）、P4-4（暖引擎 env 注记）、P4-5（本文件 delivery_head
+  落 hash）、P4-3（device 键同名注，无消费方）。
+- **Gate 复验**：AC2/AC3 重跑 source_head=79056618 verdict 与首轮完全一致
+  （AC3 directional KO DML 1.211 vs 首轮 1.106=run 间波动双录）；全量回归
+  **1823+1sk+1 failed(test_catalog 既有)**=1822+1 等量递增；sidecar
+  （HEAD=79056618）/tauri（NSIS **512,675,022 B / 488.93 MiB**，sha
+  `4c9ef883…`，取代首轮 61df0299 包）/GATE（**PASS 25/25**）全部重跑绑定
+  返修后源码。
+- P4-6（doc/STATUS.md、doc/REBASELINE_PLAN.md 仍标 ready）属合同禁区非作
+  者面，Codex 集成时跟进。
 
 ## 验证证据
 
@@ -61,7 +88,7 @@ AC1-AC5 全 PASS。生产 SFX 推理从 `onnxruntime==1.30.0`（CPU 包）+硬�
 | AC2+AC3 双面对比 | `T1.1.1-impl-py312/Scripts/python.exe experiments/M2-SFX-GPU-EP-1/verify_gpu_ep_parity_perf.py` | directml 1.24.4 @ `016e1259`；v2b pin 原样；双面经生产 env 门 | **AC2：非逐位一致，max\|Δconf\|≤2e-06、max\|Δxyxy\|≤0.0002px、gate_flips=0、matched 集逐页全不变（KO 双 GT 口径）、GPU run-to-run 逐位稳定；AC3：KO DML 1.106s/页 vs CPU 10.447s/页（T5 呈报 1.08/10.46 复现），BJ 普通页 0.065s vs 0.203s** | `raw/gpu-ep-parity-perf.{json,log}` |
 | AC5b 全量回归 | `pytest -q`（repo root） | directml 1.24.4 venv @ `36259aaf` | **1822 passed+1 skipped+1 failed（test_catalog 既有 BASELINE_FAILURE）=基线 1812+10 新测试吻合一致** | `raw/pytest-full-regression.log` |
 | AC4 sidecar 构建 | `powershell -File packaging/m2ac5/build_sidecar.ps1 -Force` | m2ac5-build venv（directml）@ `016e1259` | EXIT=0；**构建期闭包断言 PASS**（…+`onnxruntime_pybind11_state.pyd, DirectML.dll`） | `raw/build-sidecar-dml.log` |
-| AC4 NSIS | `npx --yes @tauri-apps/cli@2 build` | 同上 | EXIT=0 → **512,645,237 B / 488.90 MiB**（sha `61df0299…`）；vs T4 终态基线 438.86 MiB = **+50.04 MiB**（onedir `_internal/onnxruntime` 35.8MB→63.11MiB） | `raw/tauri-build.log` |
+| AC4 NSIS | `npx --yes @tauri-apps/cli@2 build` | 同上 | EXIT=0 → 首轮 **512,645,237 B / 488.90 MiB**（sha `61df0299…`，返修前源码，已被 r2run 包取代）；**r1 返修后重跑 512,675,022 B / 488.93 MiB**（sha `4c9ef883…`）；vs T4 终态基线 438.86 MiB = **+50.06 MiB**（onedir `_internal/onnxruntime` 35.8MB→63.11MiB；`raw/bundle-sizes.log` Get-Item 实测） | `raw/tauri-build{,-r2run}.log`、`raw/bundle-sizes.log` |
 | AC4 GATE | `python packaging/m2ac5/run_clean_start_e2e.py` | dev venv + 本轮 NSIS 包 | **PASS 25/25（EXIT=0）**：python purged/install sha/四 exe/probe 13 场景/AC1 验收环 run1+run2/zero-touch Z1-Z4 | `raw/gate-clean-start-e2e.log` |
 
 未运行/限制（如实）：①AC2 逐位一致性=**非逐位**（float32 求和顺序级漂移
@@ -89,17 +116,20 @@ README 纪律 checkout 还原。
 
 ## 下一任务建议（必填）
 
-- Task ID / 标题：M2-SFX-GPU-EP-1 r1 独立 Review（DSH 非作者，静态+证据复核）
+- Task ID / 标题：M2-SFX-GPU-EP-1 r2 独立 Review（DSH 非作者；核 r1 changes_requested 全条件闭合）
 - 推荐 Agent / Reviewer：DeepSeek Harness（Owner=ZCode 非作者隔离成立）
-- 推荐原因与前置依赖：本 Task 已交付待审；依赖=本分支 docs commit head；无新
-  授权需求。
+- 推荐原因与前置依赖：r1 changes_requested（0×P0、1×P1、0×P2、3×P3、6×P4）
+  返修已交付；依赖=本分支 delivery_head=`29078d40`（docs commit 为其后继）；
+  无新授权需求。
 - Recovery point：`G:/CODEX/New Manga.worktrees/M2-SFX-GPU-EP-1-zcode`，
-  branch `agent/zcode/M2-SFX-GPU-EP-1`，base `48e83a33`，head=docs commit
-  （见 Task frontmatter 回填）。
-- 允许修改路径：`doc/reviews/M2-SFX-GPU-EP-1-<head>-dsh-r1.md`（新建）。
+  branch `agent/zcode/M2-SFX-GPU-EP-1`，base `48e83a33`，
+  delivery_head=`29078d40`（见本文件 frontmatter）。
+- 允许修改路径：`doc/reviews/M2-SFX-GPU-EP-1-<head>-dsh-r2.md`（新建）。
 - 禁止范围与新增授权条件：零 src/零 tests 修改；结论写 review 文件，status
   变更与集成由 Codex 处置。
-- 交付物：r1 review 报告（逐 AC 判定+证据抽查+P 级登记）。
-- 验证命令、环境与完成 Gate：AC2/AC3 重跑约 2-3 分钟（脚本双面自动）；
-  GATE 重跑需 NSIS 在位（本 worktree target 树已含，重装约 5-8 分钟）；
-  Gate=逐 AC 判定完成+证据引用可复算。
+- 交付物：r2 review 报告（r1 P1-1/P3-1..3/P4-1..5 逐条闭合核验+证据抽查+P 级
+  登记）。
+- 验证命令、环境与完成 Gate：P1-1 决定性验证可复算（CPU-only venv
+  `M2-SFX-GPU-EP-1-cpu-verify` 已建，脚本约 10 秒）；AC2/AC3 重跑约 2-3
+  分钟；GATE 重跑需 NSIS 在位（本 worktree target 树已含 r2run 包
+  `4c9ef883…`，重装约 5-8 分钟）；Gate=逐条闭合判定完成+证据引用可复算。
