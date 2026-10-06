@@ -159,7 +159,10 @@ class RenderService:
                 "(missing_clean_artifact); run inpaint first",
             )
         clean_record, clean_revision = clean
-        clean_bytes = self._read_managed(clean_revision.managed_path)
+        try:
+            clean_bytes = self._read_managed(clean_revision.managed_path)
+        except (OSError, ValueError) as error:
+            return _blocked("MISSING_REQUIRED_INPUT", f"clean artifact could not be read: {error}")
 
         # §8.2: snapshot the composition base when the step starts; the
         # commit compares against this expectation, so anything committed
@@ -196,6 +199,11 @@ class RenderService:
                 allow_sfx=False,
             )
             if prepared.report.status == _SKIPPED:
+                if prepared.report.skip_reason not in ("skip_policy", "empty_final"):
+                    return _blocked(
+                        "MISSING_REQUIRED_INPUT",
+                        prepared.report.skip_reason or "region layout could not be resolved",
+                    )
                 reports.append(prepared.report)
                 if (
                     region.region_type is RegionType.SFX
@@ -218,17 +226,23 @@ class RenderService:
             # starts from clean rather than the prior translated artifact.
             if skipped_sfx:
                 original = self._locator.locate_current(page_id, ArtifactType.ORIGINAL)
-                if original is not None:
-                    original_bytes = self._read_managed(original[1].managed_path)
-                elif self._original_page_reader is not None:
-                    # Normal import stores the immutable original on Page's
-                    # Managed Copy reference; it does not necessarily create
-                    # a media_artifacts ORIGINAL row. The assembly callback
-                    # reads that existing protected copy without inventing a
-                    # second artifact identity.
-                    original_bytes = self._original_page_reader(page_id)
-                else:
-                    original_bytes = None
+                try:
+                    if original is not None:
+                        original_bytes = self._read_managed(original[1].managed_path)
+                    elif self._original_page_reader is not None:
+                        # Normal import stores the immutable original on Page's
+                        # Managed Copy reference; it does not necessarily create
+                        # a media_artifacts ORIGINAL row. The assembly callback
+                        # reads that existing protected copy without inventing a
+                        # second artifact identity.
+                        original_bytes = self._original_page_reader(page_id)
+                    else:
+                        original_bytes = None
+                except (OSError, ValueError) as error:
+                    return _blocked(
+                        "MISSING_REQUIRED_INPUT",
+                        f"original source could not be read for skipped SFX: {error}",
+                    )
                 if not original_bytes:
                     return _blocked(
                         "MISSING_REQUIRED_INPUT",
@@ -284,7 +298,10 @@ class RenderService:
                 "rerender requires a current clean artifact (missing_clean_artifact)",
             )
         clean_record, clean_revision = clean
-        clean_bytes = self._read_managed(clean_revision.managed_path)
+        try:
+            clean_bytes = self._read_managed(clean_revision.managed_path)
+        except (OSError, ValueError) as error:
+            return _blocked("MISSING_REQUIRED_INPUT", f"clean artifact could not be read: {error}")
 
         final = stored.text.final_translation
         if not final.strip():
@@ -323,7 +340,12 @@ class RenderService:
             )
             artifact_id, expected = record.artifact_id, None
         else:
-            base_bytes = self._read_managed(translated[1].managed_path)
+            try:
+                base_bytes = self._read_managed(translated[1].managed_path)
+            except (OSError, ValueError) as error:
+                return _blocked(
+                    "MISSING_REQUIRED_INPUT", f"translated artifact could not be read: {error}"
+                )
             artifact_id = translated[0].artifact_id
             expected = translated[1].artifact_revision_id
 
@@ -332,7 +354,7 @@ class RenderService:
             composed = self._compositor.compose_region(
                 base_bytes, clean_bytes, box, prepared.op
             )
-        except OSError as error:
+        except (OSError, ValueError) as error:
             return RenderOutcome(
                 status=RenderStatus.WRITE_FAILED,
                 error_code="ARTIFACT_WRITE_FAILED",
@@ -388,7 +410,7 @@ class RenderService:
             return None
         try:
             original_bytes = self._read_managed(original[1].managed_path)
-        except OSError:
+        except (OSError, ValueError):
             return None
         return original_bytes
 

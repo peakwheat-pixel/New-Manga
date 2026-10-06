@@ -53,7 +53,7 @@ from ports.providers.errors import (
 # same backwards-compatible widening precedent as the core.detect bump)
 # M2-REGION-RETYPE-CORE: minor 2 -> 3 (set_region_type/list_regions added;
 # same backwards-compatible widening precedent, contract rev 1.4 §5.4)
-PROTOCOL_VERSION = {"major": PROTOCOL_MAJOR, "minor": 3}
+PROTOCOL_VERSION = {"major": PROTOCOL_MAJOR, "minor": 4}
 
 
 def _make_server(tmp_path: Path) -> tuple[CoreServiceServer, object]:
@@ -610,7 +610,7 @@ def test_ping_carries_protocol_minor_3(tmp_path: Path) -> None:
         res, should_exit = _dispatch(server, "p-1", {}, command="core.ping")
         assert should_exit is False
         assert res["error"] is None
-        assert res["result"]["protocol_version"] == {"major": 1, "minor": 3}
+        assert res["result"]["protocol_version"] == {"major": 1, "minor": 4}
     finally:
         core.conn.close()
 

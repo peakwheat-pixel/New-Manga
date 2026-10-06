@@ -256,6 +256,8 @@ class TestRerenderPage:
     def test_sfx_skip_regions_follow_policy_gate(self, stack, clean_png) -> None:
         ids = seed_page(stack)
         commit_artifact(stack, ids, ArtifactType.CLEAN, clean_png)
+        original_png = png_with_text(400, 260, [], fill="#2030D0")
+        commit_artifact(stack, ids, ArtifactType.ORIGINAL, original_png)
         repo = stack["service"]._region_repo
         normal = make_region(repo, ids["page_id"], region_id="r-normal", final="正文")
         sfx_skip = make_region(
@@ -271,8 +273,27 @@ class TestRerenderPage:
         assert by_id[sfx_skip.region_id].skip_reason == "skip_policy"
         assert by_id[normal.region_id].status == "rendered"
         rendered = read_managed(stack, outcome.managed_path)
-        # SFX box is pixel-identical to the clean base (nothing was drawn)
-        assert region_box_equal(rendered, clean_png, (150, 20, 100, 100))
+        # Clean has erased this SFX area; batch skip restores original source
+        # pixels through the existing ImageCompositor region port.
+        assert region_box_equal(rendered, original_png, (150, 20, 100, 100))
+
+    def test_skipped_sfx_without_original_source_fails_closed(self, stack, clean_png) -> None:
+        ids = seed_page(stack)
+        commit_artifact(stack, ids, ArtifactType.CLEAN, clean_png)
+        make_region(
+            stack["service"]._region_repo,
+            ids["page_id"],
+            region_id="r-sfx-no-original",
+            final="ドン!",
+            sfx="skip",
+            region_type="sfx",
+        )
+
+        outcome = stack["service"].rerender_page(ids["page_id"])
+
+        assert outcome.status is RenderStatus.BLOCKED
+        assert outcome.error_code == "MISSING_REQUIRED_INPUT"
+        assert stack["locator"].locate_current(ids["page_id"], ArtifactType.TRANSLATED) is None
 
     def test_speech_region_with_the_real_default_policy_renders(
         self, stack, clean_png
@@ -449,6 +470,12 @@ class TestRerenderRegion:
     def test_region_composition_keeps_neighbours(self, stack, clean_png) -> None:
         ids = seed_page(stack)
         commit_artifact(stack, ids, ArtifactType.CLEAN, clean_png)
+        commit_artifact(
+            stack,
+            ids,
+            ArtifactType.ORIGINAL,
+            png_with_text(400, 260, [], fill="#2030D0"),
+        )
         repo = stack["service"]._region_repo
         make_region(repo, ids["page_id"], region_id="r-a", bbox=(20, 20, 150, 100), final="邻居")
         target = make_region(
@@ -558,6 +585,14 @@ class TestRerenderRegion:
         """The original §85 intent survives: a real SFX region + ``skip`` is gated."""
         ids = seed_page(stack)
         commit_artifact(stack, ids, ArtifactType.CLEAN, clean_png)
+        # Page-level rerender restores skipped SFX pixels from the original
+        # source, so the gated batch needs one committed.
+        commit_artifact(
+            stack,
+            ids,
+            ArtifactType.ORIGINAL,
+            png_with_text(400, 260, [], fill="#2030D0"),
+        )
         repo = stack["service"]._region_repo
         make_region(repo, ids["page_id"], region_id="r-normal", final="正文")
         sfx = make_region(

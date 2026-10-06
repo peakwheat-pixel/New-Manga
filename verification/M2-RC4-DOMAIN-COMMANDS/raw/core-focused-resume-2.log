@@ -1,0 +1,99 @@
+shell: Git Bash (owner resume)
+venv: G:/CODEX/New Manga.task-envs/T1.1.1-impl-py312/Scripts/python.exe
+commit: 37110749910f3078cb85305ab4d65dc80261068e
+dirty: yes (uncommitted owner test-round changes)
+command: G:/CODEX/New Manga.task-envs/T1.1.1-impl-py312/Scripts/python.exe -m pytest tests/core tests/editing tests/rendering tests/m2_resource_channel -q
+........................................................................ [ 18%]
+........................................................................ [ 36%]
+........................................................................ [ 54%]
+........................................................................ [ 72%]
+..................F..................................................... [ 90%]
+.......................................                                  [100%]
+================================== FAILURES ===================================
+_ TestRerenderRegion.test_sfx_region_with_the_real_default_policy_is_still_gated _
+
+self = <test_rerender.TestRerenderRegion object at 0x0000018B6CA3EC90>
+stack = {'conn': <infrastructure.sqlite.connection.ThreadRoutedConnection object at 0x0000018C2877EB70>, 'storage': <infrastru...8C2877FA70>, 'locator': <infrastructure.rendering.locator.SqlitePageArtifactLocator object at 0x0000018C2877EF00>, ...}
+clean_png = b'\x89PNG\r\n\x1a\n\x00\x00\x00\rIHDR\x00\x00\x01\x90\x00\x00\x01\x04\x08\x06\x00\x00\x00\x06Hb\x99\x00\x00\x00\tpHYs\...000! \x00\x00\x13\x02\x02\x000! \x00\x00\x13\x02\x02\x000\xf9?\x14\xba\x08K\x87\x99z\xbd\x00\x00\x00\x00IEND\xaeB`\x82'
+
+    def test_sfx_region_with_the_real_default_policy_is_still_gated(
+        self, stack, clean_png
+    ) -> None:
+        """The original §85 intent survives: a real SFX region + ``skip`` is gated."""
+        ids = seed_page(stack)
+        commit_artifact(stack, ids, ArtifactType.CLEAN, clean_png)
+        repo = stack["service"]._region_repo
+        make_region(repo, ids["page_id"], region_id="r-normal", final="正文")
+        sfx = make_region(
+            repo,
+            ids["page_id"],
+            region_id="r-sfx-default",
+            bbox=(150, 20, 100, 100),
+            final="ドン!",
+            sfx=None,
+            region_type="sfx",
+        )
+        assert sfx.sfx_policy is SfxPolicy.SKIP
+    
+        batch = stack["service"].rerender_page(ids["page_id"])
+>       assert batch.status is RenderStatus.COMMITTED
+E       AssertionError: assert 'blocked' is 'committed'
+E        +  where 'blocked' = RenderOutcome(status='blocked', artifact_id=None, revision_no=None, managed_path=None, provenance_json=None, reports=(), error_code='MISSING_REQUIRED_INPUT', detail='rerender requires the current original artifact for skipped SFX').status
+E        +  and   'committed' = RenderStatus.COMMITTED
+
+tests\rendering\test_rerender.py:602: AssertionError
+============================== warnings summary ===============================
+tests/rendering/test_pillow_rendering.py::test_pillow_compositor_draws_centered_stroked_text_into_real_png
+  G:\CODEX\New Manga.worktrees\RC4-domain-commands\tests\rendering\test_pillow_rendering.py:94: DeprecationWarning: Image.Image.getdata is deprecated and will be removed in Pillow 14 (2027-10-15). Use get_flattened_data instead.
+    for red, green, blue, _alpha in image.getdata()
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED tests/rendering/test_rerender.py::TestRerenderRegion::test_sfx_region_with_the_real_default_policy_is_still_gated
+1 failed, 398 passed, 1 warning in 22.17s
+file:///G:/CODEX/New Manga.worktrees/RC4-domain-commands/src/ui/qml/shell/AppShell.qml:56: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-domain-commands/src/ui/qml/shell/AppShell.qml:51: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-domain-commands/src/ui/qml/shell/AppShell.qml:46: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-domain-commands/src/ui/qml/shell/AppShell.qml:41: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-domain-commands/src/ui/qml/shell/PrimaryNavigationRail.qml:21: TypeError: Cannot read property 'pages' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-domain-commands/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-domain-commands/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-domain-commands/src/ui/qml/shell/PrimaryNavigationRail.qml:37: TypeError: Cannot read property 'workbenchRunning' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-domain-commands/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-domain-commands/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-domain-commands/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-domain-commands/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-domain-commands/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-domain-commands/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-domain-commands/src/ui/qml/reader/ReaderView.qml:204: TypeError: Cannot read property 'sourcePath' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-domain-commands/src/ui/qml/shell/AppShell.qml:56: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-domain-commands/src/ui/qml/shell/AppShell.qml:51: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-domain-commands/src/ui/qml/shell/AppShell.qml:46: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-domain-commands/src/ui/qml/shell/AppShell.qml:41: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-domain-commands/src/ui/qml/shell/PrimaryNavigationRail.qml:21: TypeError: Cannot read property 'pages' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-domain-commands/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-domain-commands/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-domain-commands/src/ui/qml/shell/PrimaryNavigationRail.qml:37: TypeError: Cannot read property 'workbenchRunning' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-domain-commands/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-domain-commands/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-domain-commands/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-domain-commands/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-domain-commands/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-domain-commands/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-domain-commands/src/ui/qml/reader/ReaderView.qml:204: TypeError: Cannot read property 'sourcePath' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-domain-commands/src/ui/qml/shell/AppShell.qml:56: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-domain-commands/src/ui/qml/shell/AppShell.qml:51: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-domain-commands/src/ui/qml/shell/AppShell.qml:46: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-domain-commands/src/ui/qml/shell/AppShell.qml:41: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-domain-commands/src/ui/qml/shell/PrimaryNavigationRail.qml:21: TypeError: Cannot read property 'pages' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-domain-commands/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-domain-commands/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-domain-commands/src/ui/qml/shell/PrimaryNavigationRail.qml:37: TypeError: Cannot read property 'workbenchRunning' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-domain-commands/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-domain-commands/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-domain-commands/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-domain-commands/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-domain-commands/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-domain-commands/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/RC4-domain-commands/src/ui/qml/reader/ReaderView.qml:204: TypeError: Cannot read property 'sourcePath' of null
+EXIT: 1
