@@ -1,0 +1,15 @@
+# r1 review-fix green run against HEAD=6c2825cebebd0fb6a9b0768910ba61cfed231c5d (fix 6c2825ce: P1-1 composite passthrough landed)
+# date: 2026-10-06T19:02:01+08:00
+# command 1: python -m pytest tests/providers/test_detection_sfx.py -k 'composite_passes_through_runtime or retry_failure_page' -q
+..                                                                       [100%]
+2 passed, 82 deselected in 0.19s
+EXIT_NEW=0
+# command 2 (full sfx provider test file):
+........................................................................ [ 85%]
+............                                                             [100%]
+84 passed in 2.53s
+EXIT_FULL=0
+# command 3 (composite assembly file, P1-1 no-regression face):
+...................                                                      [100%]
+19 passed in 0.53s
+EXIT_ASSEMBLY=0

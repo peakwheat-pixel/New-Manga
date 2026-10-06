@@ -1,0 +1,73 @@
+{
+ "task": "M2-SFX-EPFAIL-AUDIT-1 AC1 design measurement",
+ "generated_at_utc": "2026-10-06T11:03:45Z",
+ "generated_from": "experiments/M2-SFX-EPFAIL-AUDIT-1/measure_get_providers_cost.py",
+ "source_head": "2356fb8f6792c02d3939d753c6d9ebd66000f584",
+ "weights": {
+  "onnx": "G:\\CODEX\\New Manga.task-envs\\M2-SFX-DETECT\\weights-v2b\\yolo11s-seg.onnx",
+  "sha256": "944e811410933ad6ff8d32446fcc9eef90fb463794e1874ce83035e83acd418d"
+ },
+ "runtime": {
+  "onnxruntime_version": "1.24.4",
+  "available_providers": [
+   "DmlExecutionProvider",
+   "CPUExecutionProvider"
+  ]
+ },
+ "protocol": "warmup 10000 + median of 5 runs x 1000000 sequential get_providers() calls per face; set_providers replays the wrapper's run-time EPFail fallback call (:301) verbatim",
+ "get_providers_cost_cpu": {
+  "face": "cpu",
+  "providers_readback": [
+   "CPUExecutionProvider"
+  ],
+  "n_iters": 1000000,
+  "per_call_us": 0.0297,
+  "per_call_ns_median_of_5_runs": 29.7,
+  "all_runs_us": [
+   0.0296,
+   0.0297,
+   0.0297,
+   0.0299,
+   0.0299
+  ]
+ },
+ "get_providers_cost_dml": {
+  "face": "dml",
+  "providers_readback": [
+   "DmlExecutionProvider",
+   "CPUExecutionProvider"
+  ],
+  "n_iters": 1000000,
+  "per_call_us": 0.0304,
+  "per_call_ns_median_of_5_runs": 30.4,
+  "all_runs_us": [
+   0.0305,
+   0.0302,
+   0.03,
+   0.0304,
+   0.0306
+  ]
+ },
+ "runtime_epfail_fallback_observability": {
+  "wrapper_call_replayed": "set_providers(['CPUExecutionProvider'])",
+  "set_providers_wall_s": 0.117,
+  "get_providers_after": [
+   "CPUExecutionProvider"
+  ],
+  "readback_shows_cpu_only": true,
+  "note": "wrapper run() catches C.EPFail, calls set_providers(_fallback_providers), disables fallback and re-runs returning NORMALLY (no exception reaches the caller); the provider-list change IS observable via the public get_providers() afterwards"
+ },
+ "one_percent_budget_check": {
+  "unit_note": "口径=单次原语 get_providers() 调用（P4-6）；1% 预算=基准页时延的 1%（1.106 s × 1% = 11,060 μs），r1 P2-1 前版误用整页微秒数",
+  "gpu_ep1_ko_dml_per_page_s": [
+   1.106,
+   1.211
+  ],
+  "one_percent_budget_us": 11060.0,
+  "worst_measured_per_call_us": 0.0304,
+  "worst_call_share_of_budget_pct": 0.00027486,
+  "worst_call_share_of_page_pct": 2.75e-06,
+  "verdict": "PASS: 稳态每页一次 get_providers() 读回的时延增量低于 1% 硬门"
+ },
+ "wording_discipline": "directional 证据；禁用「显著」；数字如实登记不作质量判定"
+}

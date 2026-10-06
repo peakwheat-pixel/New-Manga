@@ -1,0 +1,82 @@
+{
+ "task": "M2-SFX-EPFAIL-AUDIT-1 AC3 parity one-page recheck",
+ "generated_at_utc": "2026-10-06T11:32:59Z",
+ "generated_from": "experiments/M2-SFX-EPFAIL-AUDIT-1/verify_epfail_audit_parity.py",
+ "source_head": "cfeed03bcaf4cd2a72681275f65d9b6027ac9bc0",
+ "weights": {
+  "onnx": "G:\\CODEX\\New Manga.task-envs\\M2-SFX-DETECT\\weights-v2b\\yolo11s-seg.onnx",
+  "sha256": "944e811410933ad6ff8d32446fcc9eef90fb463794e1874ce83035e83acd418d"
+ },
+ "runtime": {
+  "onnxruntime_version": "1.24.4",
+  "available_providers": [
+   "DmlExecutionProvider",
+   "CPUExecutionProvider"
+  ]
+ },
+ "sample_id": "pre-k01",
+ "page_size": [
+  690,
+  62133
+ ],
+ "parity_this_task": {
+  "n_pred_cpu": 23,
+  "n_pred_gpu": 23,
+  "bit_identical": false,
+  "max_abs_dconf": 1e-06,
+  "max_abs_dxyxy_px": 0.0001,
+  "gate_flips": 0,
+  "matched_derived": "2/2 -> 2/2",
+  "matched_set_equal_derived": true,
+  "matched_npd": "5/48 -> 5/48",
+  "matched_set_equal_npd": true
+ },
+ "gpu_ep1_baseline_row": {
+  "sample_id": "pre-k01",
+  "page_size": [
+   690,
+   62133
+  ],
+  "sfx_route": "tile",
+  "n_pred_cpu": 23,
+  "n_pred_gpu": 23,
+  "bit_identical": false,
+  "max_abs_dconf": 1e-06,
+  "max_abs_dxyxy_px": 0.0001,
+  "gate_flips": 0,
+  "gpu_run_to_run_bit_stable": true,
+  "matched_derived": "2/2 -> 2/2",
+  "matched_set_equal_derived": true,
+  "matched_npd": "5/48 -> 5/48",
+  "matched_set_equal_npd": true
+ },
+ "audit_steady_state": {
+  "faces": {
+   "cpu": {
+    "device": "cpu",
+    "sfx_ep": "cpu",
+    "sfx_ep_fallback_present": false,
+    "sfx_ep_runtime_check_present": false
+   },
+   "dml": {
+    "device": "dml",
+    "sfx_ep": "dml",
+    "sfx_ep_fallback_present": false,
+    "sfx_ep_runtime_check_present": false
+   }
+  },
+  "verdict": "PASS"
+ },
+ "perf": {
+  "cpu_wall_s": 11.302,
+  "cpu_provider_ms": 11297,
+  "dml_wall_s": 1.401,
+  "dml_provider_ms": 1398,
+  "gpu_ep1_perf_ko_dml_reference": "min 0.333 / mean 1.211 / max 2.325 s（4 页区间，directional）"
+ },
+ "verdict": {
+  "steady_state_audit_silent": true,
+  "conclusion_unchanged_vs_gpu_ep1": true
+ },
+ "wording_discipline": "directional 证据，统计功效低；禁用「显著」；数字如实登记不作质量判定"
+}

@@ -1,0 +1,9 @@
+[epfail-audit] start 2026-10-06T11:03:45Z
+[epfail-audit] source HEAD 2356fb8f6792c02d3939d753c6d9ebd66000f584
+[epfail-audit] v2b sha 944e81141093（生产 pin 原样）
+[epfail-audit] onnxruntime 1.24.4 available=['DmlExecutionProvider', 'CPUExecutionProvider']
+[epfail-audit] cpu get_providers() -> ['CPUExecutionProvider'] = 0.0297 us/call
+[epfail-audit] dml get_providers() -> ['DmlExecutionProvider', 'CPUExecutionProvider'] = 0.0304 us/call
+[epfail-audit] after set_providers(CPU) (took 0.117s): get_providers() -> ['CPUExecutionProvider']
+[epfail-audit] 1% budget: PASS: 稳态每页一次 get_providers() 读回的时延增量低于 1% 硬门 (0.0304 us vs 11060 us budget = 0.00027486% of budget / 2.75e-06% of page)
+[epfail-audit] wrote G:\CODEX\New Manga.worktrees\M2-SFX-EPFAIL-AUDIT-1-zcode\verification\M2-SFX-EPFAIL-AUDIT-1\raw\epfail-audit-get-providers-cost.json
