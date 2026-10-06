@@ -129,10 +129,11 @@ def _assert_error(response: dict, code: str, category: str) -> None:
 # ---------------------------------------------------------------------------
 
 
-def test_protocol_minor_bumped_to_three_with_retype_surface(server, rpc) -> None:
+def test_protocol_minor_bumped_to_four_with_rc4_surface(server, rpc) -> None:
     # M2-REGION-RETYPE-CORE: 2 -> 3 (same backwards-compatible widening
     # precedent as core.detect 0->1 and settings 1->2; every pre-existing
     # command keeps its payload/result/error codes).
+    # M2-RC4-DOMAIN-COMMANDS: 3 -> 4 (the three domain commands).
     assert (PROTOCOL_MAJOR, PROTOCOL_MINOR) == (1, 4)
     response = rpc("core.ping", {})
     assert response["error"] is None

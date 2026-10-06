@@ -236,4 +236,14 @@ def test_production_stdio_decodes_nmfr_renders_text_and_publishes_readable_previ
             rendered.crop((20, 20, 150, 120)).convert("RGB"),
             Image.new("RGB", (130, 100), (240, 64, 32)),
         ).getbbox() is not None
+        # RC4-02: "not the bare background" is too weak -- a composition bug
+        # could pass it with any stray pixel. The confirmed speech region must
+        # carry real glyph ink; 400 is ~30% of the measured 1389 ink pixels
+        # for "VISIBLE TEXT", far above the ~0 of an empty composition.
+        ink = sum(
+            1
+            for px in rendered.crop((20, 20, 150, 120)).convert("RGB").getdata()
+            if px != (240, 64, 32)
+        )
+        assert ink >= 400, ink
         assert rendered.getpixel((100, 160)) == (240, 64, 32, 255)

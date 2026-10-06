@@ -258,7 +258,18 @@ class RenderService:
                     )
                     clean_bytes = composed_base
             composed = self._compositor.compose_page(clean_bytes, ops)
-        except (OSError, ValueError) as error:
+        except ValueError as error:
+            # The compositor raises ValueError only for unusable input bytes
+            # (undecodable images, dimension mismatch, box outside the page):
+            # a required-input problem under contract §11, not a write
+            # failure.
+            return RenderOutcome(
+                status=RenderStatus.BLOCKED,
+                error_code="MISSING_REQUIRED_INPUT",
+                detail=str(error),
+                reports=tuple(reports),
+            )
+        except OSError as error:
             return RenderOutcome(
                 status=RenderStatus.WRITE_FAILED,
                 error_code="ARTIFACT_WRITE_FAILED",
@@ -354,7 +365,16 @@ class RenderService:
             composed = self._compositor.compose_region(
                 base_bytes, clean_bytes, box, prepared.op
             )
-        except (OSError, ValueError) as error:
+        except ValueError as error:
+            # Same input-vs-write split as rerender_page: ValueError means
+            # unusable composition input, not a write failure.
+            return RenderOutcome(
+                status=RenderStatus.BLOCKED,
+                error_code="MISSING_REQUIRED_INPUT",
+                detail=str(error),
+                reports=(prepared.report,),
+            )
+        except OSError as error:
             return RenderOutcome(
                 status=RenderStatus.WRITE_FAILED,
                 error_code="ARTIFACT_WRITE_FAILED",
