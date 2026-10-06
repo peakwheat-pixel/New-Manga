@@ -115,6 +115,7 @@ from bootstrap.core_assembly import (
     default_data_root,
 )
 from domain.regions.entities import RegionType, SfxPolicy
+from infrastructure.importing import SUPPORTED_IMAGE_SUFFIXES
 from infrastructure.rendering.pillow_rendering import (
     PillowFontCatalog,
     PillowImageCompositor,
@@ -122,7 +123,10 @@ from infrastructure.rendering.pillow_rendering import (
     decode_nmfr_frame,
 )
 from infrastructure.resource_channel.catalog_store import ResourceCatalogStore
-from infrastructure.resource_channel.render_preview import RenderPreviewPublisher
+from infrastructure.resource_channel.render_preview import (
+    ORIGINAL_REVISION,
+    RenderPreviewPublisher,
+)
 from ports.detection.ports import DetectionRequest
 from ports.providers.errors import ProviderError, ProviderNotConfigured
 
@@ -180,11 +184,13 @@ E_TARGET_NOT_FOUND = "TARGET_NOT_FOUND"
 E_PAGE_NOT_FOUND = "PAGE_NOT_FOUND"
 
 #: M2-PAGE-RESOURCE-RESOLVE-1: managed originals are published byte-for-byte
-#: (no transcode) into ``pages/`` under the derived root; the rel-path suffix
-#: comes from the Managed Copy ref, which the import face controls, but the
-#: publish gate stays fail-closed against unexpected formats rather than
-#: trusting that invariant implicitly.
-_ORIGINAL_SUFFIXES = frozenset({".png", ".jpg", ".jpeg", ".webp", ".bmp", ".gif"})
+#: (no transcode) into ``pages/`` under the derived root. The gate reuses the
+#: IMPORT/DECODE face's own supported set (``SUPPORTED_IMAGE_SUFFIXES``,
+#: derived from the Qt decoder's _MIME_TYPES; DSH r1 PR-06) so the publish
+#: gate and the import face share one authority -- a legally imported page
+#: (e.g. .tif) can never fail closed as an unsupported format here, while
+#: anything the decoder would have rejected still does.
+_ORIGINAL_SUFFIXES = SUPPORTED_IMAGE_SUFFIXES
 
 #: M2-SETTINGS-IPC-CHANNEL: the legal ``settings["sfx"]["policy"]`` values
 #: (contract rev 1.3 §5.3 write-side validation, first instance). The
@@ -960,9 +966,16 @@ class CoreServiceServer:
         if not source.is_file():
             raise RegionLookupError(page_id)
         resource_id = f"page-original-{page.page_id}"
-        if self._render_previews.lookup(resource_id) is None:
-            return self._render_previews.publish_original(source, resource_id, suffix)
-        return {"resource_id": resource_id, "revision": "original"}
+        entry = self._render_previews.lookup(resource_id)
+        if entry is not None and self._render_previews.artifact_exists(entry.rel_path):
+            # Catalog hit on a LIVE artifact: the managed original is
+            # immutable, so the first publish wins and later resolves are
+            # lookups (idempotent key). DSH r1 PR-07 adds the artifact
+            # probe: a wiped derived root self-heals by re-publishing
+            # under the same deterministic key instead of returning a
+            # key whose file is gone forever.
+            return {"resource_id": resource_id, "revision": ORIGINAL_REVISION}
+        return self._render_previews.publish_original(source, resource_id, suffix)
 
     @staticmethod
     def _is_positive_integer(value: Any) -> bool:

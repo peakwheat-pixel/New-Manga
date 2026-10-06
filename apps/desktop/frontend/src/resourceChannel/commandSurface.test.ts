@@ -33,8 +33,9 @@ const AC1_TEST_COMMANDS = ["ac1_request", "ac1_write_results", "ac1_exit"];
 const SETTINGS_PRODUCTION_ONLY_COMMANDS = ["settings_get", "settings_update_section"];
 // M2-RC4: region retype/read, revision history/restore and rerender are
 // production-only. M2-PAGE-RESOURCE-RESOLVE-1 adds the page display image
-// resolve to the same production-only family. The probe surface remains frozen.
-const REGION_PRODUCTION_ONLY_COMMANDS = [
+// resolve to the same production-only family (hence the DOMAIN_ name:
+// the family is no longer region-only). The probe surface remains frozen.
+const DOMAIN_PRODUCTION_ONLY_COMMANDS = [
   "set_region_type",
   "list_regions",
   "list_region_revisions",
@@ -58,7 +59,7 @@ function makeSurfaceInvoke(mode: Mode) {
     const available = [
       ...PRODUCTION_COMMANDS,
       ...(mode === "production" ? SETTINGS_PRODUCTION_ONLY_COMMANDS : []),
-      ...(mode === "production" ? REGION_PRODUCTION_ONLY_COMMANDS : []),
+      ...(mode === "production" ? DOMAIN_PRODUCTION_ONLY_COMMANDS : []),
       ...(mode === "probe" ? PROBE_ONLY_COMMANDS : []),
     ];
     if (!available.includes(command)) {
@@ -196,7 +197,7 @@ describe("RC2 command surface allow/deny matrix", () => {
   // The complete frozen region command face rides production and remains
   // absent from probe and acceptance surfaces.
   it("region commands are allowed on production and denied on the probe surface", async () => {
-    expect(REGION_PRODUCTION_ONLY_COMMANDS).toEqual([
+    expect(DOMAIN_PRODUCTION_ONLY_COMMANDS).toEqual([
       "set_region_type",
       "list_regions",
       "list_region_revisions",
@@ -231,7 +232,7 @@ describe("RC2 command surface allow/deny matrix", () => {
       revision: "original",
     });
     const { invoke: probeInvoke } = makeSurfaceInvoke("probe");
-    for (const command of REGION_PRODUCTION_ONLY_COMMANDS) {
+    for (const command of DOMAIN_PRODUCTION_ONLY_COMMANDS) {
       await expect(probeInvoke(command, {})).rejects.toThrow(new RegExp(command));
     }
   });

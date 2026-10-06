@@ -942,8 +942,8 @@ mod tests {
         // commands too — a capability/manifest typo for an ac1 command must
         // fail here, not only surface as an E2E ACL denial.
         // M2-REGION-RETYPE-CORE r1 P3-2: the production surface joins the
-        // sweep, so the existence check covers all 19 commands across the
-        // three surfaces (12 production + 4 probe-only + 3 ac1) — a missing
+        // sweep, so the existence check covers all 20 commands across the
+        // three surfaces (13 production + 4 probe-only + 3 ac1) — a missing
         // capability/manifest entry for a production-only command (e.g. the
         // retype pair) fails this test, not just a live invoke.
         for command in command_allowlist(true, false)
@@ -1071,8 +1071,9 @@ mod tests {
 
     #[test]
     fn production_only_commands_stay_off_both_frozen_test_surfaces() {
-        // M2-REGION-RETYPE-CORE r1 P3-2: one negative sweep across the THREE
-        // production-only families (IPC1 + settings + retype) — the frozen
+        // M2-REGION-RETYPE-CORE r1 P3-2: one negative sweep across the FIVE
+        // production-only families (IPC1 + settings + retype + RC4 + the
+        // M2-PAGE-RESOURCE-RESOLVE-1 page-resource resolve) — the frozen
         // probe and ac1 test-mode surfaces must never gain any of them, and
         // their historical 7/6-command shapes stay pinned.
         for command in IPC1_PRODUCTION_ONLY_COMMANDS
@@ -1080,6 +1081,7 @@ mod tests {
             .chain(SETTINGS_PRODUCTION_ONLY_COMMANDS)
             .chain(RETYPE_PRODUCTION_ONLY_COMMANDS)
             .chain(RC4_PRODUCTION_ONLY_COMMANDS)
+            .chain(PAGE_RESOLVE_PRODUCTION_ONLY_COMMANDS)
         {
             assert!(
                 !command_allowlist(true, false).contains(command),

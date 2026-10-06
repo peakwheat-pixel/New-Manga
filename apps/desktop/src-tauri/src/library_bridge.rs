@@ -499,6 +499,13 @@ impl MockLibraryChannel {
         *self.regions_result.lock().unwrap() = result;
     }
 
+    /// M2-PAGE-RESOURCE-RESOLVE-1 (DSH r1 PR-01): pin the mocked
+    /// domain-command result (history/restore/rerender/page-resolve share
+    /// one slot) or a typed rejection for host-level tests.
+    pub fn set_domain_result(&self, result: Result<serde_json::Value, LibraryError>) {
+        *self.domain_result.lock().unwrap() = result;
+    }
+
     #[allow(dead_code)]
     pub fn set_ping_error(&self, error: LibraryError) {
         *self.ping_result.lock().unwrap() = Err(error);
@@ -740,6 +747,39 @@ mod tests {
         let invalid = channel.list_regions("").unwrap_err();
         assert_eq!(invalid.code, "INVALID_REQUEST");
         assert_eq!(invalid.category, "validation");
+    }
+
+    #[test]
+    fn page_resolve_mock_channel_round_trip_and_typed_rejection() {
+        // M2-PAGE-RESOURCE-RESOLVE-1 (DSH r1 PR-01): the page display-image
+        // resolve rides the same LibraryChannel seam as the settings/retype
+        // surfaces. What is pinned here is the result projection shape
+        // ({resource_id, revision}, snake_case, contract rev 1.7 §5) and
+        // the typed PAGE_NOT_FOUND pass-through; the REAL stdio channel
+        // round-trips the same wire name through bootstrap.core_service
+        // (real_core_sidecar_round_trip_and_eof in main.rs asserts the
+        // protocol minor this command bumped).
+        let channel = MockLibraryChannel::new();
+        channel.set_domain_result(Ok(serde_json::json!({
+            "resource_id": "page-original-page-1",
+            "revision": "original",
+        })));
+        let resolved = channel
+            .resolve_page_resource("page-1")
+            .expect("resolve succeeds");
+        assert_eq!(resolved["resource_id"], "page-original-page-1");
+        assert_eq!(resolved["revision"], "original");
+
+        channel.set_domain_result(Err(LibraryError::new(
+            "PAGE_NOT_FOUND",
+            "not_found",
+            false,
+            Some("page or its managed original is not available"),
+        )));
+        let err = channel.resolve_page_resource("page-1").unwrap_err();
+        assert_eq!(err.code, "PAGE_NOT_FOUND");
+        assert_eq!(err.category, "not_found");
+        assert!(!err.retryable);
     }
 
     #[test]

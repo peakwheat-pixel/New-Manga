@@ -10,6 +10,12 @@ from pathlib import Path
 
 from infrastructure.resource_channel.catalog_store import ResourceCatalogStore
 
+#: M2-PAGE-RESOURCE-RESOLVE-1 (DSH r1 PR-12): the opaque revision label for
+#: deterministic managed-original keys; contract rev 1.7 freezes the
+#: literal. Single source shared by the publish return and the catalog-hit
+#: branch in bootstrap.core_service.
+ORIGINAL_REVISION = "original"
+
 
 class RenderPreviewPublisher:
     def __init__(self, derived_root: Path | str, catalog: ResourceCatalogStore) -> None:
@@ -19,6 +25,17 @@ class RenderPreviewPublisher:
     def lookup(self, resource_id: str):
         """Catalog read-through for deterministic publish keys (idempotent resolve)."""
         return self._catalog.lookup(resource_id)
+
+    def artifact_exists(self, rel_path: str) -> bool:
+        """Cheap existence probe for a deterministic-key artifact.
+
+        DSH r1 PR-07: a catalog row alone must not satisfy resolve -- if
+        the derived artifact was lost (cache wipe, catalog db copied
+        without the derived root), the caller re-publishes under the same
+        key (byte-for-byte, deterministic) instead of returning a key
+        whose file is gone.
+        """
+        return (self._root / rel_path).is_file()
 
     def publish(self, managed_png: Path | str, revision: str) -> dict[str, str]:
         root = self._root.resolve()
@@ -84,7 +101,7 @@ class RenderPreviewPublisher:
                 temp_path.unlink(missing_ok=True)
             target.unlink(missing_ok=True)
             raise
-        return {"resource_id": resource_id, "revision": "original"}
+        return {"resource_id": resource_id, "revision": ORIGINAL_REVISION}
 
 
 __all__ = ["RenderPreviewPublisher"]

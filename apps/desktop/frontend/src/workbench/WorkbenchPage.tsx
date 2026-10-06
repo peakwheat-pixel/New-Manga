@@ -227,19 +227,24 @@ export function WorkbenchPage({ invoke }: WorkbenchPageProps) {
       return;
     }
     let cancelled = false;
+    // Same guard discipline as the region/history/image loops below: the
+    // passive-effect cleanup is a later macrotask, so a late resolve reply
+    // for a PREVIOUS page can land after the new page's commit and would
+    // otherwise feed page-1's key into page-2's viewer.
+    const stillCurrent = () => !cancelled && trimmed === pageIdRef.current.trim();
     setResourceResolveBusy(true);
     setResourceResolveError(null);
     clients.library
       .resolvePageResource(trimmed)
       .then((resolved) => {
-        if (cancelled) return;
+        if (!stillCurrent()) return;
         setResourceId(resolved.resource_id);
         setResourceRevision(resolved.revision);
         setResourceResolveBusy(false);
         setResourceResolveError(null);
       })
       .catch((error: unknown) => {
-        if (cancelled) return;
+        if (!stillCurrent()) return;
         setResourceResolveBusy(false);
         setResourceResolveError(
           error instanceof LibraryClientError ? error.code : "PAGE_RESOURCE_UNAVAILABLE",
@@ -824,7 +829,7 @@ export function WorkbenchPage({ invoke }: WorkbenchPageProps) {
             )}
             {resourceResolveError && (
               <p data-testid="resource-resolve-error" style={{ margin: 0, fontSize: 11, color: "#e8a0a0" }}>
-                {resourceResolveError}
+                {`resource: ${resourceResolveError}`}
               </p>
             )}
           </section>
