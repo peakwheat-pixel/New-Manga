@@ -17,7 +17,10 @@
 
 import type {
   ListRegionsResult,
+  ListRegionRevisionsResult,
+  RerenderPageResult,
   RegionType,
+  RestoreRegionRevisionResult,
   SetRegionTypeResult,
 } from "./types";
 
@@ -39,6 +42,10 @@ export const LIST_REGIONS_COMMAND = "list_regions";
 
 /** RULED wire name (contract M2-C1 §5.4; pinned by the Rust suite). */
 export const SET_REGION_TYPE_COMMAND = "set_region_type";
+
+export const LIST_REGION_REVISIONS_COMMAND = "list_region_revisions";
+export const RESTORE_REGION_REVISION_COMMAND = "restore_region_revision";
+export const RERENDER_PAGE_COMMAND = "rerender_page";
 
 export class RegionClientError extends Error {
   code: string;
@@ -128,6 +135,79 @@ export class RegionClient {
         throw error;
       }
       throw typedError("set_region_type", error);
+    }
+  }
+
+  async listRegionRevisions(regionId: string): Promise<ListRegionRevisionsResult> {
+    try {
+      const res = (await this.invoke(LIST_REGION_REVISIONS_COMMAND, {
+        regionId,
+      })) as ListRegionRevisionsResult;
+      if (
+        !res ||
+        typeof res.region_id !== "string" ||
+        typeof res.current_revision_no !== "number" ||
+        !Array.isArray(res.revisions)
+      ) {
+        throw new RegionClientError(
+          "REGION_PROJECTION_MALFORMED",
+          "list_region_revisions returned no revision list",
+        );
+      }
+      return res;
+    } catch (error) {
+      if (error instanceof RegionClientError) throw error;
+      throw typedError("list_region_revisions", error);
+    }
+  }
+
+  async restoreRegionRevision(
+    regionId: string,
+    revisionNo: number,
+    expectedRevision: number,
+  ): Promise<RestoreRegionRevisionResult> {
+    try {
+      const res = (await this.invoke(RESTORE_REGION_REVISION_COMMAND, {
+        regionId,
+        revisionNo,
+        expectedRevision,
+      })) as RestoreRegionRevisionResult;
+      if (!res || typeof res.region_id !== "string" || typeof res.revision_no !== "number") {
+        throw new RegionClientError(
+          "REGION_PROJECTION_MALFORMED",
+          "restore_region_revision returned no effective state",
+        );
+      }
+      return res;
+    } catch (error) {
+      if (error instanceof RegionClientError) throw error;
+      throw typedError("restore_region_revision", error);
+    }
+  }
+
+  async rerenderPage(pageId: string): Promise<RerenderPageResult> {
+    try {
+      const res = (await this.invoke(RERENDER_PAGE_COMMAND, {
+        pageId,
+      })) as RerenderPageResult;
+      if (
+        !res ||
+        typeof res.page_id !== "string" ||
+        typeof res.artifact_id !== "string" ||
+        typeof res.revision_no !== "number" ||
+        !Array.isArray(res.reports) ||
+        !(res.preview === null || (typeof res.preview?.resource_id === "string" && res.preview.revision !== undefined)) ||
+        !(res.preview_error === null || typeof res.preview_error === "string")
+      ) {
+        throw new RegionClientError(
+          "REGION_PROJECTION_MALFORMED",
+          "rerender_page returned no render result",
+        );
+      }
+      return res;
+    } catch (error) {
+      if (error instanceof RegionClientError) throw error;
+      throw typedError("rerender_page", error);
     }
   }
 }

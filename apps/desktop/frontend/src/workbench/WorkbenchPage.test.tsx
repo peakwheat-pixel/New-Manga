@@ -1,5 +1,7 @@
 import { renderToString } from "react-dom/server";
-import { describe, expect, it } from "vitest";
+import { act } from "react";
+import { JSDOM } from "jsdom";
+import { describe, expect, it, vi } from "vitest";
 import { RegionOverlay } from "../region/RegionOverlay";
 import type { RegionSummary } from "../region/types";
 import { ViewerPanel } from "./ViewerPanel";
@@ -30,6 +32,167 @@ const FRAME_REGION: RegionSummary = {
     polygon: [[0.1, 0.2], [0.4, 0.2], [0.4, 0.6], [0.1, 0.6]],
   },
 };
+
+const INTERACTIVE_REGION: RegionSummary = {
+  region_id: "region-1",
+  region_type: "speech",
+  sfx_policy: "skip",
+  origin: "user",
+  revision_no: 1,
+  geometry: { bbox: [0.1, 0.2, 0.3, 0.4], polygon: [] },
+};
+
+async function nextTurn() {
+  for (let i = 0; i < 8; i += 1) await Promise.resolve();
+}
+
+async function mountInteractiveWorkbench(
+  invoke: (command: string, args?: Record<string, unknown>) => Promise<unknown>,
+) {
+  const dom = new JSDOM("<!doctype html><html><body></body></html>", { url: "http://localhost" });
+  Object.defineProperty(dom.window.HTMLElement.prototype, "clientWidth", {
+    configurable: true,
+    get: () => 200,
+  });
+  Object.defineProperty(dom.window.HTMLElement.prototype, "clientHeight", {
+    configurable: true,
+    get: () => 100,
+  });
+  Object.defineProperty(dom.window.URL, "createObjectURL", {
+    configurable: true,
+    value: () => "blob:rc4-preview",
+  });
+  Object.defineProperty(dom.window.URL, "revokeObjectURL", {
+    configurable: true,
+    value: () => undefined,
+  });
+  vi.stubGlobal("window", dom.window);
+  vi.stubGlobal("document", dom.window.document);
+  vi.stubGlobal("navigator", dom.window.navigator);
+  vi.stubGlobal("Node", dom.window.Node);
+  vi.stubGlobal("Element", dom.window.Element);
+  vi.stubGlobal("HTMLElement", dom.window.HTMLElement);
+  vi.stubGlobal("URL", dom.window.URL);
+  vi.stubGlobal("IS_REACT_ACT_ENVIRONMENT", true);
+
+  const { createRoot } = await import("react-dom/client");
+  const container = dom.window.document.createElement("div");
+  dom.window.document.body.append(container);
+  const root = createRoot(container);
+  await act(async () => {
+    root.render(<WorkbenchPage invoke={invoke} />);
+    await nextTurn();
+  });
+
+  const click = async (testId: string) => {
+    const target = container.querySelector(`[data-testid="${testId}"]`) as HTMLElement | null;
+    if (!target) throw new Error(`missing test target: ${testId}`);
+    await act(async () => {
+      target.dispatchEvent(new dom.window.MouseEvent("click", {
+        bubbles: true,
+        cancelable: true,
+        button: 0,
+      }));
+      await nextTurn();
+    });
+  };
+  const input = async (testId: string, value: string) => {
+    const target = container.querySelector(`[data-testid="${testId}"]`) as HTMLInputElement | null;
+    if (!target) throw new Error(`missing input: ${testId}`);
+    await act(async () => {
+      const setter = Object.getOwnPropertyDescriptor(dom.window.HTMLInputElement.prototype, "value")?.set;
+      setter?.call(target, value);
+      target.dispatchEvent(new dom.window.Event("input", { bubbles: true }));
+      await nextTurn();
+    });
+  };
+  const unmount = async () => {
+    await act(async () => root.unmount());
+    dom.window.close();
+    vi.useRealTimers();
+    vi.unstubAllGlobals();
+  };
+  return { dom, container, click, input, unmount };
+}
+
+function makeInteractiveInvoke(options: {
+  onRetype?: (args: Record<string, unknown>) => Promise<unknown>;
+  rerender?: () => unknown;
+} = {}) {
+  const rows = new Map<string, RegionSummary[]>([
+    ["page-1", [{ ...INTERACTIVE_REGION }]],
+    ["page-2", [{ ...INTERACTIVE_REGION, region_id: "region-2" }]],
+  ]);
+  const invoke = vi.fn(async (command: string, args: Record<string, unknown> = {}) => {
+    if (command === "library_list_books") return [];
+    if (command === "list_regions") return {
+      regions: rows.get(String(args.pageId)) ?? [],
+      page_size: { width: 100, height: 50 },
+    };
+    if (command === "set_region_type") {
+      if (options.onRetype) return options.onRetype(args);
+      const regionId = String(args.regionId);
+      const page = String(args.pageId ?? "page-1");
+      const list = rows.get(page) ?? [];
+      const old = list.find((row) => row.region_id === regionId) ?? INTERACTIVE_REGION;
+      const next = { ...old, region_type: args.newRegionType as RegionSummary["region_type"], revision_no: old.revision_no + 1 };
+      rows.set(page, list.map((row) => row.region_id === regionId ? next : row));
+      return { region_id: regionId, revision_no: next.revision_no, region_type: next.region_type, sfx_policy: next.sfx_policy };
+    }
+    if (command === "restore_region_revision") {
+      const regionId = String(args.regionId);
+      const current = rows.get("page-1")?.[0] ?? INTERACTIVE_REGION;
+      const next = { ...current, region_type: "speech" as const, origin: "restored" as const, revision_no: current.revision_no + 1 };
+      rows.set("page-1", [next]);
+      return { region_id: regionId, revision_no: next.revision_no, region_type: next.region_type, sfx_policy: next.sfx_policy };
+    }
+    if (command === "list_region_revisions") return {
+      region_id: "region-1",
+      current_revision_no: rows.get("page-1")?.[0]?.revision_no ?? 1,
+      revisions: [
+        {
+          region_revision_id: "revision-1",
+          revision_no: 1,
+          origin: "user",
+          review_state: "accepted",
+          is_pinned: true,
+          restored_from_revision_id: null,
+          created_at: "2026-10-01T00:00:00Z",
+          region_type: "speech",
+          sfx_policy: "skip",
+          is_current: false,
+        },
+        {
+          region_revision_id: "revision-2",
+          revision_no: rows.get("page-1")?.[0]?.revision_no ?? 1,
+          origin: rows.get("page-1")?.[0]?.origin ?? "user",
+          review_state: "needs_review",
+          is_pinned: false,
+          restored_from_revision_id: null,
+          created_at: "2026-10-02T00:00:00Z",
+          region_type: rows.get("page-1")?.[0]?.region_type ?? "speech",
+          sfx_policy: "skip",
+          is_current: true,
+        },
+      ],
+    };
+    if (command === "rerender_page") return options.rerender?.() ?? {
+      page_id: "page-1",
+      artifact_id: "artifact-1",
+      revision_no: 8,
+      reports: [],
+      preview: { resource_id: "preview-1", revision: "rev-8" },
+      preview_error: null,
+    };
+    if (command === "issue_resource_url") return {
+      url: "http://m2res.localhost/m2id/opaque",
+      size: 0,
+      opaque_id: "opaque",
+    };
+    return null;
+  });
+  return { invoke, rows };
+}
 
 describe("<WorkbenchPage> five-zone skeleton (mapping-contract names)", () => {
   it("renders the five zones with their data-testid pins", () => {
@@ -97,7 +260,7 @@ describe("E4 feedback bar (ViewerPanel, r1 P1-1 error branch)", () => {
     expect(html).not.toContain('data-testid="feedback-rerender"');
   });
 
-  it("renders the success variant with both HONEST disabled action buttons", () => {
+  it("renders enabled success actions when their callbacks and eligibility are present", () => {
     const html = renderToString(
       <ViewerPanel
         imageUrl={null}
@@ -115,12 +278,17 @@ describe("E4 feedback bar (ViewerPanel, r1 P1-1 error branch)", () => {
         selectedRegionId={null}
         onSelectRegion={() => {}}
         relabelFeedback={{ regionId: "rg-1", text: "已标记为拟声词", isError: false }}
+        undoAvailable
+        onUndo={() => {}}
+        canRerender
+        onRerender={() => {}}
       />,
     );
     expect(html).toContain('data-testid="feedback-undo"');
     expect(html).toContain('data-testid="feedback-rerender"');
     expect(html).toContain("撤销");
     expect(html).toContain("重渲染本页");
+    expect(html.match(/data-testid="feedback-(?:undo|rerender)" disabled/g)).toBeNull();
   });
 });
 
@@ -277,5 +445,143 @@ describe("<RegionOverlay> read-only SVG frames (M2-UI1 hard rules)", () => {
       />,
     );
     expect(html).not.toContain("region-frame-region-1");
+  });
+});
+
+describe("RC-4 Workbench actual DOM actions", () => {
+  it("clicks relabel, undoes through guarded restore, confirms history restore, then loads the render preview", async () => {
+    const { invoke } = makeInteractiveInvoke();
+    const ui = await mountInteractiveWorkbench(invoke);
+    try {
+      await ui.input("page-id-input", "page-1");
+      await ui.click("region-frame-region-1");
+      await ui.click("inspector-toggle-suspect");
+      await ui.click("inspector-mark-sfx");
+      expect(ui.container.querySelector('[data-testid="feedback-undo"]')).not.toBeNull();
+      expect(invoke).toHaveBeenCalledWith("set_region_type", {
+        regionId: "region-1",
+        newRegionType: "sfx",
+        expectedRevision: 1,
+      });
+
+      await ui.click("feedback-undo");
+      expect(invoke).toHaveBeenCalledWith("restore_region_revision", {
+        regionId: "region-1",
+        revisionNo: 1,
+        expectedRevision: 2,
+      });
+      expect(ui.container.textContent).toContain("疑似拟声词");
+      expect(ui.container.querySelector('[data-testid="feedback-undo"]')).toBeNull();
+
+      await ui.click("inspector-revision-history");
+      expect(ui.container.textContent).toContain("revision 1");
+      expect(ui.container.textContent).toContain("已固定");
+      await ui.click("restore-revision-1");
+      expect(ui.container.querySelector('[data-testid="revision-restore-target"]')?.textContent)
+        .toContain("revision 1 · user · speech");
+      expect(ui.container.querySelector('[data-testid="revision-restore-dialog"]')?.textContent)
+        .toContain("文字、类型、策略与锁状态（可能回退当前锁）");
+      await ui.click("revision-restore-confirm");
+      expect(invoke).toHaveBeenCalledWith("restore_region_revision", {
+        regionId: "region-1",
+        revisionNo: 1,
+        expectedRevision: 3,
+      });
+      expect(ui.container.textContent).toContain("新增 current restored revision 4");
+
+      await ui.click("feedback-rerender");
+      expect(invoke).toHaveBeenCalledWith("rerender_page", { pageId: "page-1" });
+      expect(invoke).toHaveBeenCalledWith("issue_resource_url", {
+        resourceId: "preview-1",
+        revision: "rev-8",
+      });
+      expect(ui.container.querySelector('[data-testid="viewer-image"]')?.getAttribute("src"))
+        .toBe("blob:rc4-preview");
+      expect(ui.container.textContent).toContain("已重渲染并加载预览");
+    } finally {
+      await ui.unmount();
+    }
+  });
+
+  it("shows a typed retype failure after the actual Inspector click", async () => {
+    const { invoke } = makeInteractiveInvoke({
+      onRetype: async () => { throw "INPUT_REVISION_CHANGED"; },
+    });
+    const ui = await mountInteractiveWorkbench(invoke);
+    try {
+      await ui.input("page-id-input", "page-1");
+      await ui.click("region-frame-region-1");
+      await ui.click("inspector-mark-sfx");
+      expect(ui.container.textContent).toContain("改标失败：INPUT_REVISION_CHANGED");
+      expect(invoke.mock.calls.filter(([command]) => command === "set_region_type")).toHaveLength(1);
+      expect(ui.container.querySelector('[data-testid="feedback-undo"]')).toBeNull();
+    } finally {
+      await ui.unmount();
+    }
+  });
+
+  it("expires the undo click affordance at ten seconds", async () => {
+    vi.useFakeTimers();
+    const { invoke } = makeInteractiveInvoke();
+    const ui = await mountInteractiveWorkbench(invoke);
+    try {
+      await ui.input("page-id-input", "page-1");
+      await ui.click("region-frame-region-1");
+      await ui.click("inspector-mark-sfx");
+      expect(ui.container.querySelector('[data-testid="feedback-undo"]')).not.toBeNull();
+      await act(async () => { await vi.advanceTimersByTimeAsync(10_001); });
+      expect(ui.container.querySelector('[data-testid="feedback-undo"]')).toBeNull();
+      expect(ui.container.querySelector('[data-testid="feedback-rerender"]')).not.toBeNull();
+      expect(invoke).not.toHaveBeenCalledWith("restore_region_revision", expect.anything());
+    } finally {
+      await ui.unmount();
+    }
+  });
+
+  it("invalidates undo on page change and ignores a late result from the previous page", async () => {
+    let resolveRetype!: (value: unknown) => void;
+    const pending = new Promise<unknown>((resolve) => { resolveRetype = resolve; });
+    const { invoke } = makeInteractiveInvoke({ onRetype: () => pending });
+    const ui = await mountInteractiveWorkbench(invoke);
+    try {
+      await ui.input("page-id-input", "page-1");
+      await ui.click("region-frame-region-1");
+      await ui.click("inspector-mark-sfx");
+      await ui.input("page-id-input", "page-2");
+      expect(ui.container.querySelector('[data-testid="feedback-undo"]')).toBeNull();
+      expect(ui.container.textContent).toContain("page page-2");
+      resolveRetype({ region_id: "region-1", revision_no: 2, region_type: "sfx", sfx_policy: "skip" });
+      await act(async () => { await nextTurn(); });
+      expect(ui.container.querySelector('[data-testid="relabel-feedback"]')).toBeNull();
+      expect(ui.container.querySelector('[data-testid="region-frame-region-2"]')).not.toBeNull();
+    } finally {
+      resolveRetype(null);
+      await ui.unmount();
+    }
+  });
+
+  it("keeps preview publication failure separate from committed render failure", async () => {
+    const { invoke } = makeInteractiveInvoke({
+      rerender: () => ({
+        page_id: "page-1",
+        artifact_id: "artifact-1",
+        revision_no: 8,
+        reports: [],
+        preview: null,
+        preview_error: "PREVIEW_PUBLISH_FAILED",
+      }),
+    });
+    const ui = await mountInteractiveWorkbench(invoke);
+    try {
+      await ui.input("page-id-input", "page-1");
+      await ui.click("region-frame-region-1");
+      await ui.click("inspector-mark-sfx");
+      await ui.click("feedback-rerender");
+      expect(ui.container.textContent).toContain("渲染已提交（revision 8），但预览不可用：PREVIEW_PUBLISH_FAILED");
+      expect(ui.container.textContent).not.toContain("重渲染失败");
+      expect(ui.container.querySelector('[data-testid="feedback-rerender"]')).not.toBeNull();
+    } finally {
+      await ui.unmount();
+    }
   });
 });

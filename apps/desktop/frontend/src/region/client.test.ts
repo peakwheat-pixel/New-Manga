@@ -1,7 +1,10 @@
 import { describe, expect, it, vi } from "vitest";
 import {
   LIST_REGIONS_COMMAND,
+  LIST_REGION_REVISIONS_COMMAND,
+  RERENDER_PAGE_COMMAND,
   RegionClient,
+  RESTORE_REGION_REVISION_COMMAND,
   SET_REGION_TYPE_COMMAND,
 } from "./client";
 import type { ListRegionsResult, SetRegionTypeResult } from "./types";
@@ -184,5 +187,79 @@ describe("RegionClient.setRegionType (write face; UI interaction belongs to IMPL
     await expect(
       client.setRegionType("region-1", "sfx"),
     ).rejects.toMatchObject({ code: "REGION_PROJECTION_MALFORMED" });
+  });
+});
+
+describe("RegionClient RC-4 command face", () => {
+  it("lists revisions using the Tauri camelCase arg and keeps the Core summary verbatim", async () => {
+    const result = {
+      region_id: "region-1",
+      current_revision_no: 4,
+      revisions: [{
+        region_revision_id: "revision-2",
+        revision_no: 2,
+        origin: "user",
+        review_state: "accepted",
+        is_pinned: true,
+        restored_from_revision_id: null,
+        created_at: "2026-10-07T00:00:00Z",
+        region_type: "speech",
+        sfx_policy: "skip",
+        is_current: false,
+      }],
+    };
+    const invoke = makeInvoke((command, args) => {
+      expect(command).toBe(LIST_REGION_REVISIONS_COMMAND);
+      expect(args).toEqual({ regionId: "region-1" });
+      return result;
+    });
+
+    await expect(new RegionClient(invoke).listRegionRevisions("region-1")).resolves.toEqual(result);
+  });
+
+  it("restores an explicit target with the current revision guard", async () => {
+    const result = {
+      region_id: "region-1",
+      revision_no: 5,
+      region_type: "speech",
+      sfx_policy: "skip",
+    };
+    const invoke = makeInvoke((command, args) => {
+      expect(command).toBe(RESTORE_REGION_REVISION_COMMAND);
+      expect(args).toEqual({ regionId: "region-1", revisionNo: 2, expectedRevision: 4 });
+      return result;
+    });
+
+    await expect(new RegionClient(invoke).restoreRegionRevision("region-1", 2, 4)).resolves.toEqual(result);
+  });
+
+  it("rerenders by page id and carries an opaque preview resource", async () => {
+    const result = {
+      page_id: "page-1",
+      artifact_id: "artifact-1",
+      revision_no: 8,
+      reports: [{ region_id: "region-1", status: "rendered", skip_reason: null, font_substituted: false }],
+      preview: { resource_id: "preview-1", revision: "rev-8" },
+      preview_error: null,
+    };
+    const invoke = makeInvoke((command, args) => {
+      expect(command).toBe(RERENDER_PAGE_COMMAND);
+      expect(args).toEqual({ pageId: "page-1" });
+      return result;
+    });
+
+    await expect(new RegionClient(invoke).rerenderPage("page-1")).resolves.toEqual(result);
+  });
+
+  it("surfaces restore conflicts and rejects malformed rerender results", async () => {
+    const conflict = new RegionClient(makeInvoke(() => { throw "INPUT_REVISION_CHANGED"; }));
+    await expect(conflict.restoreRegionRevision("region-1", 2, 4)).rejects.toMatchObject({
+      name: "RegionClientError",
+      code: "INPUT_REVISION_CHANGED",
+    });
+    const malformed = new RegionClient(makeInvoke(() => ({ page_id: "page-1" })));
+    await expect(malformed.rerenderPage("page-1")).rejects.toMatchObject({
+      code: "REGION_PROJECTION_MALFORMED",
+    });
   });
 });

@@ -23,7 +23,6 @@
 import { useCallback, useRef, useState } from "react";
 import { RegionOverlay } from "../region/RegionOverlay";
 import type { PageSizeProjection, RegionSummary, RegionType } from "../region/types";
-import { RERENDER_DISABLED_TITLE, UNDO_DISABLED_TITLE } from "./relabelMachine";
 import { RelabelContextMenu, type ContextMenuState } from "./RelabelContextMenu";
 
 /** E4 feedback-bar payload (design §3.2 / §4.3 R4). */
@@ -31,6 +30,7 @@ export interface RelabelFeedbackState {
   regionId: string;
   text: string;
   isError: boolean;
+  showRerenderAction?: boolean;
 }
 
 export interface ViewerPanelProps {
@@ -43,7 +43,13 @@ export interface ViewerPanelProps {
   /** Pure-UI suspect flags passed through to the overlay warning layers. */
   suspects?: ReadonlySet<string>;
   relabelFeedback?: RelabelFeedbackState | null;
+  relabelBusy?: boolean;
   relabelBusyRegionId?: string | null;
+  undoAvailable?: boolean;
+  rerenderBusy?: boolean;
+  canRerender?: boolean;
+  onUndo?: () => void;
+  onRerender?: () => void;
   onRetypeRequest?: (region: RegionSummary, to: RegionType) => void;
   onToggleSuspect?: (regionId: string) => void;
 }
@@ -57,7 +63,13 @@ export function ViewerPanel({
   onSelectRegion,
   suspects,
   relabelFeedback,
+  relabelBusy = false,
   relabelBusyRegionId,
+  undoAvailable = false,
+  rerenderBusy = false,
+  canRerender = false,
+  onUndo,
+  onRerender,
   onRetypeRequest,
   onToggleSuspect,
 }: ViewerPanelProps) {
@@ -84,9 +96,6 @@ export function ViewerPanel({
   const closeMenu = useCallback(() => setMenu(null), []);
   const menuRegion = menu
     ? regions.find((region) => region.region_id === menu.regionId) ?? null
-    : null;
-  const feedbackRegion = relabelFeedback
-    ? regions.find((region) => region.region_id === relabelFeedback.regionId) ?? null
     : null;
 
   const measure = useCallback((node: HTMLDivElement | null) => {
@@ -186,7 +195,7 @@ export function ViewerPanel({
             x={menu.x}
             y={menu.y}
             suspects={suspects ?? new Set()}
-            busy={relabelBusyRegionId === menuRegion.region_id}
+            busy={relabelBusy || relabelBusyRegionId === menuRegion.region_id}
             onRetypeRequest={onRetypeRequest}
             onToggleSuspect={onToggleSuspect}
             onClose={closeMenu}
@@ -228,42 +237,48 @@ export function ViewerPanel({
               {relabelFeedback.isError ? "" : "✅ "}
               {relabelFeedback.text}
             </span>
-            {!relabelFeedback.isError && feedbackRegion && (
+            {(!relabelFeedback.isError || relabelFeedback.showRerenderAction) && (
               <>
+                {!relabelFeedback.isError && undoAvailable && onUndo && (
                 <button
                   type="button"
                   data-testid="feedback-undo"
-                  disabled
-                  title={UNDO_DISABLED_TITLE}
+                  disabled={rerenderBusy}
+                  title="10 秒内恢复到改标前 revision"
+                  onClick={onUndo}
                   style={{
                     background: "#101418",
-                    color: "#5a6470",
-                    border: "1px solid #2a3038",
+                    color: "#d8e0e8",
+                    border: "1px solid #3a4858",
                     borderRadius: 4,
                     padding: "2px 8px",
                     fontSize: 11,
-                    cursor: "not-allowed",
+                    cursor: rerenderBusy ? "wait" : "pointer",
                   }}
                 >
-                  撤销
+                  撤销（10 秒内）
                 </button>
+                )}
+                {onRerender && (
                 <button
                   type="button"
                   data-testid="feedback-rerender"
-                  disabled
-                  title={RERENDER_DISABLED_TITLE}
+                  disabled={!canRerender || rerenderBusy}
+                  title={canRerender ? "使用当前 clean 与区域 revision 重渲染本页" : "请先输入 page_id"}
+                  onClick={onRerender}
                   style={{
                     background: "#101418",
-                    color: "#5a6470",
+                    color: canRerender && !rerenderBusy ? "#d8e0e8" : "#5a6470",
                     border: "1px solid #2a3038",
                     borderRadius: 4,
                     padding: "2px 8px",
                     fontSize: 11,
-                    cursor: "not-allowed",
+                    cursor: canRerender && !rerenderBusy ? "pointer" : "not-allowed",
                   }}
                 >
-                  重渲染本页
+                  {rerenderBusy ? "重渲染中…" : "重渲染本页"}
                 </button>
+                )}
               </>
             )}
           </div>

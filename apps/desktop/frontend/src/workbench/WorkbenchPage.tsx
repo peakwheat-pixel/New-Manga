@@ -15,17 +15,20 @@
  *   a resource id + revision is supplied (production page->resource
  *   catalogization is a registered gap).
  *
- * Retype write face: RegionClient.setRegionType is callable and unit-pinned
- * at the client layer; the UI interaction consuming it belongs to
- * M2-SFX-MISROUTE-UI-IMPL-1 (this slice keeps only reserved disabled
- * entries).
+ * Retype, revision restore/history and page rerender consume the frozen
+ * RC-4 command face; page images continue through the resource channel.
  */
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { LibraryClient, LibraryClientError } from "../library/client";
 import type { BookSummary } from "../library/types";
 import { RegionClient, RegionClientError } from "../region/client";
-import type { RegionSummary, RegionType } from "../region/types";
+import type {
+  ListRegionRevisionsResult,
+  RegionSummary,
+  RegionType,
+  RevisionSummary,
+} from "../region/types";
 import { ResourceChannelClient, TypedChannelError } from "../resourceChannel/client";
 import { loadPageImageUrl } from "./pageImage";
 import { PageListPanel } from "./PageListPanel";
@@ -41,6 +44,30 @@ export type InvokeFn = (command: string, args?: Record<string, unknown>) => Prom
 export interface WorkbenchPageProps {
   /** Injectable invoke for tests; defaults to the Tauri bridge. */
   invoke?: InvokeFn;
+}
+
+interface UndoOffer {
+  pageId: string;
+  regionId: string;
+  previousRevisionNo: number;
+  expectedRevision: number;
+  hadSuspect: boolean;
+  expiresAt: number;
+}
+
+interface OperationContext {
+  id: number;
+  pageId: string;
+  pageEpoch: number;
+}
+
+function errorCode(error: unknown, fallback: string): string {
+  if (error instanceof RegionClientError) return error.code;
+  if (typeof error === "string") return error;
+  const value = error as { code?: unknown; message?: unknown } | null;
+  if (typeof value?.code === "string") return value.code;
+  if (typeof value?.message === "string") return value.message;
+  return fallback;
 }
 
 export function WorkbenchPage({ invoke }: WorkbenchPageProps) {
@@ -63,6 +90,78 @@ export function WorkbenchPage({ invoke }: WorkbenchPageProps) {
   const [busyRegionId, setBusyRegionId] = useState<string | null>(null);
   const [feedback, setFeedback] = useState<RelabelFeedbackState | null>(null);
   const [retypeError, setRetypeError] = useState<string | null>(null);
+  const [undoOffer, setUndoOffer] = useState<UndoOffer | null>(null);
+  const [actionBusy, setActionBusy] = useState(false);
+  const [actionBusyKind, setActionBusyKind] = useState<"retype" | "undo" | "restore" | "rerender" | null>(null);
+  const [historyRegionId, setHistoryRegionId] = useState<string | null>(null);
+  const [history, setHistory] = useState<ListRegionRevisionsResult | null>(null);
+  const [historyBusy, setHistoryBusy] = useState(false);
+  const [historyError, setHistoryError] = useState<string | null>(null);
+  const [restoreError, setRestoreError] = useState<string | null>(null);
+
+  const pageIdRef = useRef(pageId);
+  pageIdRef.current = pageId;
+  const selectedRegionIdRef = useRef(selectedRegionId);
+  selectedRegionIdRef.current = selectedRegionId;
+  const pageEpochRef = useRef(0);
+  const regionReadRef = useRef(0);
+  const historyReadRef = useRef(0);
+  const operationRef = useRef(0);
+  const actionBusyRef = useRef(false);
+  const undoOfferRef = useRef<UndoOffer | null>(null);
+  const undoTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const imageUrlRef = useRef<string | null>(null);
+  const previewPageIdRef = useRef<string | null>(null);
+
+  const invalidateUndo = useCallback(() => {
+    if (undoTimerRef.current !== null) clearTimeout(undoTimerRef.current);
+    undoTimerRef.current = null;
+    undoOfferRef.current = null;
+    setUndoOffer(null);
+  }, []);
+
+  const exposeUndo = useCallback((offer: UndoOffer) => {
+    if (undoTimerRef.current !== null) clearTimeout(undoTimerRef.current);
+    undoOfferRef.current = offer;
+    setUndoOffer(offer);
+    undoTimerRef.current = setTimeout(() => {
+      if (undoOfferRef.current === offer) {
+        undoOfferRef.current = null;
+        setUndoOffer(null);
+      }
+      undoTimerRef.current = null;
+    }, Math.max(0, offer.expiresAt - Date.now()));
+  }, []);
+
+  const beginOperation = useCallback((kind: NonNullable<typeof actionBusyKind>): OperationContext | null => {
+    if (actionBusyRef.current) return null;
+    actionBusyRef.current = true;
+    invalidateUndo();
+    setActionBusy(true);
+    setActionBusyKind(kind);
+    return { id: ++operationRef.current, pageId: pageIdRef.current, pageEpoch: pageEpochRef.current };
+  }, [invalidateUndo]);
+
+  const operationIsCurrent = useCallback((operation: OperationContext) =>
+    operation.id === operationRef.current &&
+    operation.pageEpoch === pageEpochRef.current &&
+    operation.pageId === pageIdRef.current,
+  []);
+
+  const finishOperation = useCallback((operation: OperationContext) => {
+    if (!operationIsCurrent(operation)) return;
+    actionBusyRef.current = false;
+    setActionBusy(false);
+    setActionBusyKind(null);
+    setBusyRegionId(null);
+  }, [operationIsCurrent]);
+
+  const replaceImageUrl = useCallback((url: string | null) => {
+    const previous = imageUrlRef.current;
+    imageUrlRef.current = url;
+    setImageUrl(url);
+    if (previous && previous !== url) URL.revokeObjectURL(previous);
+  }, []);
 
   const clients = useMemo(() => {
     // Clients are cheap; a new one per invoke identity keeps tests honest.
@@ -113,38 +212,40 @@ export function WorkbenchPage({ invoke }: WorkbenchPageProps) {
   }, [clients]);
 
   // Region read loop via the EXISTING list_regions projection (rev 1.5
-  // optional geometry/page_size consumed when present). Refreshable: the
-  // retype flow re-reads after a successful write so the next render works
-  // from Core authority (no optimistic region mutation anywhere).
+  // optional geometry/page_size consumed when present). Retype and restore
+  // refresh from Core after writes; UI state never impersonates a revision.
   const refreshRegions = useCallback(
-    (current: string, signal: { cancelled: boolean }) => {
+    async (current: string, signal: { cancelled: boolean }): Promise<boolean> => {
+      const requestId = ++regionReadRef.current;
+      const isCurrent = () =>
+        !signal.cancelled &&
+        current === pageIdRef.current &&
+        requestId === regionReadRef.current;
       const trimmed = current.trim();
       if (!trimmed) {
-        setRegions([]);
-        setPageSize(null);
-        setRegionError(null);
-        return;
-      }
-      clients.region
-        .listRegions(trimmed)
-        .then((result) => {
-          if (signal.cancelled) {
-            return;
-          }
-          setRegions(result.regions);
-          setPageSize(result.page_size ?? null);
-          setRegionError(null);
-        })
-        .catch((error: unknown) => {
-          if (signal.cancelled) {
-            return;
-          }
+        if (isCurrent()) {
           setRegions([]);
           setPageSize(null);
-          setRegionError(
-            error instanceof RegionClientError ? error.code : "REGION_CHANNEL_UNAVAILABLE",
-          );
-        });
+          setRegionError(null);
+        }
+        return isCurrent();
+      }
+      try {
+        const result = await clients.region.listRegions(trimmed);
+        if (!isCurrent()) return false;
+        setRegions(result.regions);
+        setPageSize(result.page_size ?? null);
+        setRegionError(null);
+        return true;
+      } catch (error: unknown) {
+        if (!isCurrent()) return false;
+        setRegions([]);
+        setPageSize(null);
+        setRegionError(
+          error instanceof RegionClientError ? error.code : "REGION_CHANNEL_UNAVAILABLE",
+        );
+        return false;
+      }
     },
     [clients],
   );
@@ -162,7 +263,7 @@ export function WorkbenchPage({ invoke }: WorkbenchPageProps) {
   useEffect(() => {
     const trimmedId = resourceId.trim();
     if (!trimmedId) {
-      setImageUrl(null);
+      replaceImageUrl(null);
       setImageError(null);
       return;
     }
@@ -175,14 +276,15 @@ export function WorkbenchPage({ invoke }: WorkbenchPageProps) {
           return;
         }
         createdUrl = url;
-        setImageUrl(url);
+        previewPageIdRef.current = null;
+        replaceImageUrl(url);
         setImageError(null);
       })
       .catch((error: unknown) => {
         if (cancelled) {
           return;
         }
-        setImageUrl(null);
+        replaceImageUrl(null);
         // r1 P4-1: the resource channel speaks TypedChannelError (its own
         // typed surface) or a generic code-shaped failure -- never a
         // RegionClientError, which belongs to the region client.
@@ -196,9 +298,15 @@ export function WorkbenchPage({ invoke }: WorkbenchPageProps) {
       cancelled = true;
       if (createdUrl) {
         URL.revokeObjectURL(createdUrl);
+        if (imageUrlRef.current === createdUrl) imageUrlRef.current = null;
       }
     };
-  }, [clients, resourceId, resourceRevision]);
+  }, [clients, replaceImageUrl, resourceId, resourceRevision]);
+
+  useEffect(() => () => {
+    if (undoTimerRef.current !== null) clearTimeout(undoTimerRef.current);
+    if (imageUrlRef.current) URL.revokeObjectURL(imageUrlRef.current);
+  }, []);
 
   const selectedRegion = useMemo(
     () => regions.find((region) => region.region_id === selectedRegionId) ?? null,
@@ -206,14 +314,57 @@ export function WorkbenchPage({ invoke }: WorkbenchPageProps) {
   );
 
   const onSelectRegion = useCallback((regionId: string | null) => {
+    if (selectedRegionIdRef.current !== regionId) {
+      historyReadRef.current += 1;
+      setHistoryRegionId(null);
+      setHistory(null);
+      setHistoryBusy(false);
+      setHistoryError(null);
+    }
+    selectedRegionIdRef.current = regionId;
     setSelectedRegionId(regionId);
   }, []);
+
+  const onPageIdChange = useCallback((nextPageId: string) => {
+    pageIdRef.current = nextPageId;
+    pageEpochRef.current += 1;
+    regionReadRef.current += 1;
+    historyReadRef.current += 1;
+    operationRef.current += 1;
+    actionBusyRef.current = false;
+    invalidateUndo();
+    setActionBusy(false);
+    setActionBusyKind(null);
+    setBusyRegionId(null);
+    setConfirmTarget(null);
+    setRetypeError(null);
+    setFeedback(null);
+    setSelectedRegionId(null);
+    selectedRegionIdRef.current = null;
+    setRegions([]);
+    setPageSize(null);
+    setRegionError(null);
+    setHistoryRegionId(null);
+    setHistory(null);
+    setHistoryBusy(false);
+    setHistoryError(null);
+    setRestoreError(null);
+    setSuspects(new Set());
+    if (previewPageIdRef.current !== null && previewPageIdRef.current !== nextPageId) {
+      previewPageIdRef.current = null;
+      replaceImageUrl(null);
+      setImageError(null);
+    }
+    setPageId(nextPageId);
+  }, [invalidateUndo, replaceImageUrl]);
 
   // ---- IMPL-1 retype flow (design §4.1; A9/A12 enforced via lookups) ----
 
   /** Pure-UI suspect toggle (R1: no Core call, no revision, A3: the flag
    * itself never triggers anything). */
   const onToggleSuspect = useCallback((regionId: string) => {
+    if (actionBusyRef.current) return;
+    invalidateUndo();
     setSuspects((prev) => {
       const next = new Set(prev);
       if (next.has(regionId)) {
@@ -223,94 +374,257 @@ export function WorkbenchPage({ invoke }: WorkbenchPageProps) {
       }
       return next;
     });
-  }, []);
+  }, [invalidateUndo]);
 
-  const doSetRegionType = useCallback(
-    (
-      region: RegionSummary,
-      to: RegionType,
-      opts?: { confirmed?: boolean; fromConfirm?: boolean },
-    ) => {
-      // Structural A5 gate (r1 P3-4): a confirm-class transition reaches the
-      // wire ONLY through the dialog's explicit confirm — no caller can
-      // one-click it past the gate by accident.
-      const plan = planRetypeAction(region, to as "sfx" | "speech");
-      if (plan.kind === "blocked" || (plan.kind === "confirm" && !opts?.confirmed)) {
+  const loadHistory = useCallback(async (regionId: string) => {
+    const page = pageIdRef.current;
+    const epoch = pageEpochRef.current;
+    const requestId = ++historyReadRef.current;
+    setHistoryRegionId(regionId);
+    setHistoryBusy(true);
+    setHistoryError(null);
+    setRestoreError(null);
+    try {
+      const result = await clients.region.listRegionRevisions(regionId);
+      if (
+        requestId !== historyReadRef.current ||
+        epoch !== pageEpochRef.current ||
+        page !== pageIdRef.current ||
+        regionId !== selectedRegionIdRef.current
+      ) return null;
+      setHistory(result);
+      return result;
+    } catch (error: unknown) {
+      if (
+        requestId === historyReadRef.current &&
+        epoch === pageEpochRef.current &&
+        page === pageIdRef.current &&
+        regionId === selectedRegionIdRef.current
+      ) {
+        setHistory(null);
+        setHistoryError(errorCode(error, "REGION_CHANNEL_UNAVAILABLE"));
+      }
+      return null;
+    } finally {
+      if (requestId === historyReadRef.current) setHistoryBusy(false);
+    }
+  }, [clients]);
+
+  const doSetRegionType = useCallback(async (
+    region: RegionSummary,
+    to: RegionType,
+    opts?: { confirmed?: boolean; fromConfirm?: boolean },
+  ) => {
+    const plan = planRetypeAction(region, to as "sfx" | "speech");
+    if (plan.kind === "blocked" || (plan.kind === "confirm" && !opts?.confirmed)) return false;
+    const operation = beginOperation("retype");
+    if (!operation) return false;
+    setBusyRegionId(region.region_id);
+    setRetypeError(null);
+    const hadSuspect = suspects.has(region.region_id);
+    try {
+      const result = await clients.region.setRegionType(region.region_id, to, region.revision_no);
+      if (!operationIsCurrent(operation)) return false;
+      setConfirmTarget(null);
+      setFeedback({
+        regionId: result.region_id,
+        text: retypeFeedback(result.sfx_policy, result.region_type as "sfx" | "speech").text,
+        isError: false,
+      });
+      setSuspects((prev) => {
+        if (!prev.has(region.region_id)) return prev;
+        const next = new Set(prev);
+        next.delete(region.region_id);
+        return next;
+      });
+      exposeUndo({
+        pageId: operation.pageId,
+        regionId: region.region_id,
+        previousRevisionNo: region.revision_no,
+        expectedRevision: result.revision_no,
+        hadSuspect,
+        expiresAt: Date.now() + 10_000,
+      });
+      await refreshRegions(operation.pageId, { cancelled: false });
+      return true;
+    } catch (error: unknown) {
+      if (!operationIsCurrent(operation)) return false;
+      const code = errorCode(error, "REGION_CHANNEL_UNAVAILABLE");
+      const message = `改标失败：${code}（region 未变更；冲突后可刷新再操作）`;
+      if (opts?.fromConfirm) {
+        setRetypeError(message);
+      } else {
+        setConfirmTarget(null);
+        setFeedback({ regionId: region.region_id, text: message, isError: true });
+      }
+      return false;
+    } finally {
+      finishOperation(operation);
+    }
+  }, [beginOperation, clients, exposeUndo, finishOperation, operationIsCurrent, refreshRegions, suspects]);
+
+  const undoRetype = useCallback(async () => {
+    const offer = undoOfferRef.current;
+    if (!offer) return;
+    if (Date.now() >= offer.expiresAt || pageIdRef.current !== offer.pageId || actionBusyRef.current) {
+      invalidateUndo();
+      return;
+    }
+    const operation = beginOperation("undo");
+    if (!operation) return;
+    setBusyRegionId(offer.regionId);
+    try {
+      const result = await clients.region.restoreRegionRevision(
+        offer.regionId,
+        offer.previousRevisionNo,
+        offer.expectedRevision,
+      );
+      if (!operationIsCurrent(operation)) return;
+      const refreshed = await refreshRegions(operation.pageId, { cancelled: false });
+      if (!operationIsCurrent(operation)) return;
+      if (refreshed) {
+        setSuspects((prev) => {
+          const next = new Set(prev);
+          if (offer.hadSuspect) next.add(offer.regionId);
+          else next.delete(offer.regionId);
+          return next;
+        });
+      }
+      setFeedback({
+        regionId: offer.regionId,
+        text: refreshed
+          ? `已撤销改标：新增 restored revision ${result.revision_no}，Core 已恢复改标前状态`
+          : `恢复已提交（revision ${result.revision_no}），但当前页刷新失败；请重新读取 region`,
+        isError: !refreshed,
+      });
+      return;
+    } catch (error: unknown) {
+      if (!operationIsCurrent(operation)) return;
+      setFeedback({
+        regionId: offer.regionId,
+        text: `撤销失败：${errorCode(error, "REGION_CHANNEL_UNAVAILABLE")}（未自动重试）`,
+        isError: true,
+      });
+    } finally {
+      finishOperation(operation);
+    }
+  }, [beginOperation, clients, finishOperation, invalidateUndo, operationIsCurrent, refreshRegions]);
+
+  const restoreHistoryRevision = useCallback(async (revision: RevisionSummary): Promise<boolean> => {
+    const regionId = selectedRegionIdRef.current;
+    if (!regionId || historyRegionId !== regionId) return false;
+    const expectedRevision = history?.current_revision_no;
+    if (typeof expectedRevision !== "number" || expectedRevision < 1) {
+      setRestoreError("修订历史缺少有效 current revision；请重新读取历史");
+      return false;
+    }
+    const operation = beginOperation("restore");
+    if (!operation) return false;
+    setRestoreError(null);
+    try {
+      const result = await clients.region.restoreRegionRevision(
+        regionId,
+        revision.revision_no,
+        expectedRevision,
+      );
+      if (!operationIsCurrent(operation)) return false;
+      const regionsRefreshed = await refreshRegions(operation.pageId, { cancelled: false });
+      if (!operationIsCurrent(operation)) return false;
+      const refreshedHistory = await loadHistory(regionId);
+      if (!operationIsCurrent(operation)) return false;
+      setFeedback({
+        regionId,
+        text: refreshedHistory && regionsRefreshed
+          ? `已恢复 revision ${revision.revision_no}；新增 current restored revision ${result.revision_no}`
+          : `恢复已提交并新增 revision ${result.revision_no}；Core 刷新未完整完成，请重新读取 region 与历史`,
+        isError: !refreshedHistory || !regionsRefreshed,
+      });
+      return true;
+    } catch (error: unknown) {
+      if (!operationIsCurrent(operation)) return false;
+      setRestoreError(errorCode(error, "REGION_CHANNEL_UNAVAILABLE"));
+      return false;
+    } finally {
+      finishOperation(operation);
+    }
+  }, [beginOperation, clients, finishOperation, history?.current_revision_no, historyRegionId, loadHistory, operationIsCurrent, refreshRegions]);
+
+  const rerenderPage = useCallback(async () => {
+    const page = pageIdRef.current.trim();
+    if (!page) return;
+    const operation = beginOperation("rerender");
+    if (!operation) return;
+    try {
+      const result = await clients.region.rerenderPage(page);
+      if (!operationIsCurrent(operation)) return;
+      if (result.preview_error || !result.preview) {
+        previewPageIdRef.current = page;
+        replaceImageUrl(null);
+        setImageError(result.preview_error ?? "PREVIEW_UNAVAILABLE");
+        setFeedback({
+          regionId: selectedRegionIdRef.current ?? "",
+          text: `渲染已提交（revision ${result.revision_no}），但预览不可用：${result.preview_error ?? "Core 未返回预览资源"}`,
+          isError: false,
+        });
         return;
       }
-      setBusyRegionId(region.region_id);
-      setRetypeError(null);
-      clients.region
-        // expected_revision optimistic-guard: the row we rendered from.
-        .setRegionType(region.region_id, to, region.revision_no)
-        .then((result) => {
-          setBusyRegionId(null);
-          setConfirmTarget(null);
-          setFeedback({
-            regionId: result.region_id,
-            // The SetRegionType wire contract echoes the requested type; the
-            // plan gate above pins it to speech<->sfx before the call.
-            text: retypeFeedback(result.sfx_policy, result.region_type as "sfx" | "speech").text,
-            isError: false,
-          });
-          // The warning flag is speech-scoped UI memory: a successful retype
-          // re-derives the phase, so drop the flag to keep the set clean.
-          setSuspects((prev) => {
-            if (!prev.has(region.region_id)) {
-              return prev;
-            }
-            const next = new Set(prev);
-            next.delete(region.region_id);
-            return next;
-          });
-          const signal = { cancelled: false };
-          refreshRegions(pageId, signal);
-        })
-        .catch((error: unknown) => {
-          // R6: failure returns to the triggering state — regions were never
-          // mutated optimistically, and the suspect flag stays untouched, so
-          // the warning survives as required.
-          setBusyRegionId(null);
-          const code =
-            error instanceof RegionClientError
-              ? error.code
-              : (error as { code?: string })?.code;
-          const message =
-            typeof code === "string"
-              ? `改标失败：${code}（region 未变更；INPUT_REVISION_CHANGED 时刷新后重试）`
-              : "改标失败：region 未变更";
-          if (opts?.fromConfirm) {
-            // r1 P1-1: the dialog STAYS UP with the typed error inside —
-            // closing it on failure was exactly the invisible-error bug.
-            setRetypeError(message);
-            return;
-          }
-          // Forward-retype failure surfaces in the E4 feedback bar (error
-          // variant) — the user must SEE the failure, never a silent no-op.
-          setConfirmTarget(null);
-          setFeedback({ regionId: region.region_id, text: message, isError: true });
+      try {
+        const url = await loadPageImageUrl(
+          clients.resource,
+          result.preview.resource_id,
+          String(result.preview.revision),
+        );
+        if (!operationIsCurrent(operation)) {
+          URL.revokeObjectURL(url);
+          return;
+        }
+        previewPageIdRef.current = page;
+        replaceImageUrl(url);
+        setImageError(null);
+        setFeedback({
+          regionId: selectedRegionIdRef.current ?? "",
+          text: `本页已重渲染并加载预览（revision ${result.revision_no}）`,
+          isError: false,
         });
-    },
-    [clients, pageId, refreshRegions],
-  );
+      } catch (error: unknown) {
+        if (!operationIsCurrent(operation)) return;
+        previewPageIdRef.current = page;
+        replaceImageUrl(null);
+        setImageError(errorCode(error, "RESOURCE_UNAVAILABLE"));
+        setFeedback({
+          regionId: selectedRegionIdRef.current ?? "",
+          text: `渲染已提交（revision ${result.revision_no}），但预览读取失败：${errorCode(error, "RESOURCE_UNAVAILABLE")}`,
+          isError: false,
+        });
+      }
+    } catch (error: unknown) {
+      if (!operationIsCurrent(operation)) return;
+      setFeedback({
+        regionId: selectedRegionIdRef.current ?? "",
+        text: `重渲染失败：${errorCode(error, "REGION_CHANNEL_UNAVAILABLE")}`,
+        isError: true,
+        showRerenderAction: true,
+      });
+    } finally {
+      finishOperation(operation);
+    }
+  }, [beginOperation, clients, finishOperation, operationIsCurrent, replaceImageUrl]);
 
-  /** Entry dispatcher (§4.1): sfx->speech goes through the explicit confirm
-   * dialog (A5); speech->sfx executes immediately (R2). */
   const onRetypeRequest = useCallback(
     (region: RegionSummary, to: RegionType) => {
+      if (actionBusyRef.current) return;
       const plan = planRetypeAction(region, to as "sfx" | "speech");
-      if (plan.kind === "blocked") {
-        return;
-      }
+      if (plan.kind === "blocked") return;
+      invalidateUndo();
       setFeedback(null);
       setRetypeError(null);
       if (plan.kind === "confirm") {
         setConfirmTarget(region);
         return;
       }
-      doSetRegionType(region, to);
+      void doSetRegionType(region, to);
     },
-    [doSetRegionType],
+    [doSetRegionType, invalidateUndo],
   );
 
   return (
@@ -346,7 +660,7 @@ export function WorkbenchPage({ invoke }: WorkbenchPageProps) {
           books={books}
           selectedBookId={selectedBookId}
           pageId={pageId}
-          onPageIdChange={setPageId}
+          onPageIdChange={onPageIdChange}
           onSelectBook={setSelectedBookId}
         />
         <ViewerPanel
@@ -358,17 +672,32 @@ export function WorkbenchPage({ invoke }: WorkbenchPageProps) {
           onSelectRegion={onSelectRegion}
           suspects={suspects}
           relabelFeedback={feedback}
+          relabelBusy={actionBusy}
           relabelBusyRegionId={busyRegionId}
+          undoAvailable={Boolean(undoOffer && undoOffer.pageId === pageId && Date.now() < undoOffer.expiresAt)}
+          rerenderBusy={actionBusy}
+          canRerender={Boolean(pageId.trim())}
+          onUndo={() => { void undoRetype(); }}
+          onRerender={() => { void rerenderPage(); }}
           onRetypeRequest={onRetypeRequest}
           onToggleSuspect={onToggleSuspect}
         />
         <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
           <RegionInspector
+            key={`${pageId}:${selectedRegionId ?? "none"}`}
             region={selectedRegion}
             suspects={suspects}
-            busy={selectedRegion !== null && busyRegionId === selectedRegion.region_id}
+            busy={actionBusy}
             onRetypeRequest={onRetypeRequest}
             onToggleSuspect={onToggleSuspect}
+            revisions={historyRegionId === selectedRegion?.region_id ? history?.revisions ?? null : null}
+            currentRevisionNo={historyRegionId === selectedRegion?.region_id ? history?.current_revision_no ?? null : null}
+            historyBusy={historyBusy}
+            historyError={historyRegionId === selectedRegion?.region_id ? historyError : null}
+            restoreBusy={actionBusy && actionBusyKind === "restore"}
+            restoreError={restoreError}
+            onLoadHistory={(regionId) => { void loadHistory(regionId); }}
+            onRestoreRevision={restoreHistoryRevision}
           />
           <TaskProgressPanel />
           <section
@@ -428,9 +757,7 @@ export function WorkbenchPage({ invoke }: WorkbenchPageProps) {
           target={confirmTarget}
           busy={busyRegionId === confirmTarget.region_id}
           errorText={retypeError}
-          onConfirm={() =>
-            doSetRegionType(confirmTarget, "speech", { confirmed: true, fromConfirm: true })
-          }
+          onConfirm={() => { void doSetRegionType(confirmTarget, "speech", { confirmed: true, fromConfirm: true }); }}
           onCancel={() => {
             // Guard 2: cancel returns to the originating state — nothing to
             // roll back because nothing was written.
