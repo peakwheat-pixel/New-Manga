@@ -265,12 +265,14 @@ directml wheel 其它文件的压缩差异），可接受性属用户部署形�
   自然结果，未新增 frozen 专属改动。
 - **落点处置登记**：GATE runner 的内置产物落点是
   `verification/M2-AC5/raw/`（M2-AC5 Task 时代目录，不在本 Task 允许面）。
-  本轮运行覆盖的工作区副本已快照至
+  首轮运行覆盖的工作区副本已快照至
   `raw/m2ac5-gate-artifacts/`（6 文件：gate verdict JSON+五路 stdout），
-  `verification/M2-AC5/raw/` 原样还原（保持 M2-AC5 时代历史证据不被跨
-  Task 改写）；本 Task GATE 证据以
-  `raw/gate-clean-start-e2e.log`（runner 完整 stdout）+
-  `raw/m2ac5-gate-artifacts/cleanstart-gate.json`（verdict）为准。
+  r1 返修后第二轮 GATE 重跑的落点覆盖同样快照至
+  `raw/m2ac5-gate-artifacts-r2run/`（verdict=本轮 4c9ef883 包 25/25
+  PASS）；两个轮次后 `verification/M2-AC5/raw/` 均原样还原（保持
+  M2-AC5 时代历史证据不被跨 Task 改写）；本 Task GATE 证据以
+  `raw/gate-clean-start-e2e{,-r2run}.log`（runner 完整 stdout）+
+  两份 `m2ac5-gate-artifacts*/cleanstart-gate.json`（verdict）为准。
 - **frozen 面 DML 证据口径（r1 P3-1 修订）**：「frozen sfx detect 链默认走
   DML」在本仓库内是**推断，不是实测**——GATE 的 25 个场景全部不触及
   sfx 检测/DML（probe 为资源通道、AC1 环为 mock ocr/translate）， DirectML.dll

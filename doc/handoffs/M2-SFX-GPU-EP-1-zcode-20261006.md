@@ -3,7 +3,7 @@ task_id: M2-SFX-GPU-EP-1
 author: ZCode
 recipient: Codex（集成）/ DeepSeek Harness（非作者 Review）
 base_commit: 48e83a33（daa34e4e 之上的 release commit，含 T5-TILE-KO 落地终态；r1 P4-1 唯一化）
-delivery_head: 29078d40（r1 Gate 复验证据 commit；其后的 docs commit 仅文档）
+delivery_head: 1e9f2324（最终证据锚：r2run GATE 落点处置修正；其后 docs commit 仅文档）
 status: delivered→r1 changes_requested→review-fix 交付，待 DSH r2
 ---
 
@@ -53,7 +53,7 @@ AC1-AC5 全 PASS。生产 SFX 推理从 `onnxruntime==1.30.0`（CPU 包）+硬�
 7. r1 review-fix 段：`3c20e9f0` 真实失败形态 stub 先红 → `79056618` P1-1 修复
    （get_providers 读回反推+决定性验证 PASS+98 passed）→ `29078d40`
    Gate 复验证据（AC2/AC3 重跑绑 HEAD+回归 1823+sidecar/tauri/GATE 重跑）
-   → docs commit（本提交）。
+   → `1e9f2324` GATE r2run 落点处置修正（最终证据锚）→ docs commit（本提交）。
 
 ## r1 review-fix 摘要（DSH changes_requested 0×P0、1×P1、0×P2、3×P3、6×P4）
 
@@ -119,11 +119,11 @@ README 纪律 checkout 还原。
 - Task ID / 标题：M2-SFX-GPU-EP-1 r2 独立 Review（DSH 非作者；核 r1 changes_requested 全条件闭合）
 - 推荐 Agent / Reviewer：DeepSeek Harness（Owner=ZCode 非作者隔离成立）
 - 推荐原因与前置依赖：r1 changes_requested（0×P0、1×P1、0×P2、3×P3、6×P4）
-  返修已交付；依赖=本分支 delivery_head=`29078d40`（docs commit 为其后继）；
+  返修已交付；依赖=本分支 delivery_head=`1e9f2324`（docs commit 为其后继）；
   无新授权需求。
 - Recovery point：`G:/CODEX/New Manga.worktrees/M2-SFX-GPU-EP-1-zcode`，
   branch `agent/zcode/M2-SFX-GPU-EP-1`，base `48e83a33`，
-  delivery_head=`29078d40`（见本文件 frontmatter）。
+  delivery_head=`1e9f2324`（见本文件 frontmatter）。
 - 允许修改路径：`doc/reviews/M2-SFX-GPU-EP-1-<head>-dsh-r2.md`（新建）。
 - 禁止范围与新增授权条件：零 src/零 tests 修改；结论写 review 文件，status
   变更与集成由 Codex 处置。
