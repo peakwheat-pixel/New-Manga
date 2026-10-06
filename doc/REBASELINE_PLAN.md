@@ -147,6 +147,7 @@ Live Git=`main@f6f22b67`（2026-09-29 REBASELINE 审计基线，未 push）。�
 | [M2-SFX-GATE-T3](tasks/M2-SFX-GATE-T3.md) SFX 正式评测门（T3） | **done**（2026-10-05 @merge 27817412；DSH r1 approved_with_conditions 12/12 条件闭+r2 建议集成；Gate 定义冻结 v1.0+v1.1 追加；R3-MISS BJ32-35 15 框 ai-direct 首例；KO 非派生 GT 135 框；36 格评测 ALL CELLS 复算 PASS；**G1/G2 v2a 双 FAIL 丧失资格、v2b 全定资格硬门 PASS（考卷 5/5 P1.0+KO 非派生 0.3556≥0.3037）+G8 license 审计 PASS——T4 切换等用户裁决**；零 src） | ZCode / DeepSeek Harness | T4 生产切换材料终稿已呈报（tile 化 17-81s/页性能预算+G7 补证前置）。 |
 | [M2-SFX-T4-SWITCH](tasks/M2-SFX-T4-SWITCH.md) SFX 生产切换 V2B（T4） | **done**（2026-10-06 @用户裁决「三件都同意」；DSH r1 approved_with_conditions 0×P0/P1/P2 条件闭 @bd23eaa8；AC1-AC5 全 PASS @merge `cff4923e`——G7 补证 PASS 部署就绪+pin 944e8114 切换+SHA 门反向验证+回退实测+回归锚迁移基线一致；NSIS NOT_RUN=授权面外） | ZCode / DeepSeek Harness | ~~闭环后 T5-TILE 解锁~~ **T5-TILE 已解锁**。 |
 | [M2-SFX-T5-TILE-KO](tasks/M2-SFX-T5-TILE-KO.md) SFX KO tile 化生产分支（T5-TILE） | **done**（2026-10-06；DSH r1 approved_with_conditions 0×P0/P1/P2 条件闭 @306f5040；AC1-AC5 全 PASS @merge `5e70af4e`——tile 路由+逐位复现 35/56+48/135 硬证据+性能双档呈报+T4 承接 r1 P3-2 闭合） | ZCode / DeepSeek Harness | ~~部署形态呈报用户终选~~ **已呈报等终选**（CPU 10.46s/页 vs GPU DML 1.08s/页；GPU 启用需新 Task）。 |
+| [M2-SFX-GPU-EP-1](tasks/M2-SFX-GPU-EP-1.md) SFX 推理 EP 切换 GPU/DML | **ready（2026-10-06 释放 @用户裁决部署形态=GPU）**：onnxruntime-directml 依赖面+EP 配置化（默认 dml）+数值一致性硬门+生产路径性能复测+闭包断言+GATE 重跑；闭合 PROD-1 遗留边界 | ZCode / DeepSeek Harness | 完成后 SFX 线 KO 域生产时延 ~1.1s/页。 |
 | [M2-REGION-RETYPE-CORE](tasks/M2-REGION-RETYPE-CORE.md) Region 改标 Core 实现（T5b） | **done @merge `d8019810`**（DSH r1 approved_with_conditions（Q1 追认 runner 同步）→返修 `0f88cbcd`→r2 **approved** 12/12；rev 1.4 全链+11 断言两层红绿+real-sidecar 测试+PROTOCOL_MINOR 2→3 旁路追认+GATE 25/25 重跑（M2-AC5/raw 还原+自有 raw 副本 retype-m2ac5-*）；五目录 793 passed；test_catalog 100vs97 pre-existing 实证转登记） | ZCode / DeepSeek Harness | Workbench UI 实现前置就绪；test_catalog 断言更新小切片登记。 |
 | [M2-SFX-CORRECTION-EXPORTER](tasks/M2-SFX-CORRECTION-EXPORTER.md) 纠错样本导出器（T5c） | **done @merge `66871d5d`**（DSH r1 changes_requested（P1-1 bbox xywh 误读静默产错框，被测试钉死）→返修 `669146a1`（T1a helper 修复+rgO 判别+判别力数值验证）→r2 approved_with_conditions 条件全闭；scanner 按 rev 1.4 语义+资格判定+双形态导出+--yolo-scope；50 tests 红绿；真库冒烟 CORRECTIONS_EMPTY=expected 补跑） | ZCode / DeepSeek Harness | 纠错积累链采集端就绪；T5 线全收官（契约+Core+导出器）。 |
 
@@ -232,6 +233,7 @@ flowchart TD
   T1BR3 -.-> T3
   T3 -.-> T4SW["M2-SFX-T4-SWITCH 生产切换 V2B · done @cff4923e（G7 补证 PASS+pin 944e8114 切换+回退实测）"]
   T4SW -.-> T5TILE["M2-SFX-T5-TILE-KO tile 化分支 · done @5e70af4e（逐位复现硬证据+性能双档呈报）"]
+  T5TILE -.-> GPUEP["M2-SFX-GPU-EP-1 EP 切换 GPU/DML · ready（@用户裁决 GPU）"]
   T5A -.-> T5B["M2-REGION-RETYPE-CORE 改标 Core 实现 · done @d8019810（rev1.4 全链+GATE 25/25）"]
   T5A -.-> T5C["M2-SFX-CORRECTION-EXPORTER 纠错导出器 · done @66871d5d（scanner+双形态导出）"]
 
