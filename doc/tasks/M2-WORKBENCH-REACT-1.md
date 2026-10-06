@@ -2,7 +2,8 @@
 id: M2-WORKBENCH-REACT-1
 title: "Workbench React 页第一刀：React 页壳（页列/页图/region 只读画框/任务进度占位）+ region 通道 client（含 D5 几何读取面契约修订）"
 kind: feature
-status: in_review
+status: done
+integration: merge 108bf113（收口见 STATUS；DSH r2 approved_with_conditions 0×新 P0/P1/P2，条件 C1/C2 随收口 commit 闭合）
 owner: ZCode
 reviewer: DeepSeek Harness（非作者，技术主审）；Qoder（非作者 UI/UX 复审，派发通道可用时补审）
 integrator: 编排会话代行 Codex（用户全权授权）
@@ -159,3 +160,11 @@ DSH 非作者 r1 判定 **changes_requested**（0×P0；1×P1+2×P2+5×P3+5×P4�
 - **P4-1/P4-2/P4-3/P4-4/P4-5（建议级）——登记处置**：P4-1（resource 通道错误判定语义错位）与 P4-2（fallback code 断言缺钉）**采纳顺笔修**（`WorkbenchPage.tsx` 改 `TypedChannelError`/`{code?}` 统一判定；`client.test.ts` 补 `REGION_CHANNEL_UNAVAILABLE` 钉断言——该改动影响 vitest 覆盖，已随本轮复跑验证）；P4-3（pytest log 缺命令头）接受为证据形式建议，既有 log 不重生成，复跑类证据（r1fix 后缀）已带命令头；P4-4（SSR 无 effects）与既有前端测试分工一致，维持登记；P4-5（无桥 render 期抛错）维持——组件仅挂载于 production 窗口（navChrome 前置），SSR/Storybook 为未来注意项。
 
 复跑证据（P3-2 类型改动触发）：`verification/M2-WORKBENCH-REACT-1/raw/vitest-verify-r1fix.log`（**77 passed，EXIT=0**）、`npm-build-r1fix.log`（**EXIT=0**）。pytest 无需重跑（docstring 零行为影响）。
+
+
+### r2 定点复审（DSH 非作者 2026-10-06：**approved_with_conditions**，报告=doc/reviews/M2-WORKBENCH-REACT-1-a8bd3ddc-dsh-r2.md）
+
+- r1 全部发现（P1-1 契约文本自洽/P2-1 wire 名裁决落字/P2-2b 第 8 条偏差/P3-1..6/P4-1..2）逐条 CLOSED；SetRegionType 语义文本零变化经主仓 1.4 前置副本逐句对照专项核验；77 等量复跑/构建 EXIT=0 证据与构成逐文件复算成立；approved 面抽验（Overlay 硬规则/typed error/pin 口径/NOT_IN_SCOPE）无回归。
+- 新发现：N-1（P3）契约脚注 a 字面过度泛化（page 命中无存活 region 实际返回 `page_size: {width,height}` 非 null）；N-2（P4）§11 两行陈旧句未覆盖「runtime 未实现」；N-3（P4）三处文档小瑕。
+- 集成收口（随收口 commit，零代码零复跑）：**C1**=脚注 a 按 runtime 实际字面收口（page 未命中→null/page 命中→{width,height}，均空列表非错误）；**C2**=集成方授权 §11 两行事实同步（wire 名 snake_case 裁决+runtime 已落地，零语义变更）；N-3 ①行号引用、③library_bridge.rs:147-149 陈旧注记并入 Rust 面后续顺笔清单（Rust 零 diff 纪律）。
+- 集成 Gate（shell 补验 r2 NOT_VERIFIED 五项）：fb730a00 恰 10 files/+140/−49 ✓；全范围 33 文件全在允许路径 ✓；`git diff --check 2a1a9f73..a8bd3ddc` 恰 2 处=vitest-impl.log:37/:40 登记豁免范围 ✓；Rust/QML/GATE 零 diff ✓；工作区干净 tip=a8bd3ddc ✓。post-merge main 三套件回归：vitest 10 files 全过 EXIT=0+build EXIT=0（470ms）+pytest 1847 passed+1 skipped+1 failed（test_catalog 既有）——与 owner 分支交付数字逐项等量（log=raw/main-regression-postmerge-{vitest,build,pytest}.log；跑 env=T1.1.1-impl-py312 venv）。
