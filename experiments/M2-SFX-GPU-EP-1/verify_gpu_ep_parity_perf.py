@@ -156,6 +156,14 @@ def main() -> int:
     from infrastructure.providers.detection_sfx import SfxDetectionProvider
 
     print(f"[gpu-ep] start {now_iso()}", flush=True)
+    # r1 gate: evidence reruns must be bound to the exact source commit.
+    import subprocess
+
+    head = subprocess.run(
+        ["git", "-C", str(REPO), "rev-parse", "HEAD"],
+        capture_output=True, text=True, check=True,
+    ).stdout.strip()
+    print(f"[gpu-ep] source HEAD {head}", flush=True)
     v2b_sha = sha256_file(V2B_ONNX)
     assert v2b_sha == PROD_PIN_SHA, f"v2b sha {v2b_sha[:12]} != 生产 pin"
     print(f"[gpu-ep] v2b sha {v2b_sha[:12]}（生产 pin 原样）", flush=True)
@@ -262,6 +270,7 @@ def main() -> int:
         "generated_from": (
             "experiments/M2-SFX-GPU-EP-1/verify_gpu_ep_parity_perf.py"
         ),
+        "source_head": head,
         "weights": {
             "onnx": str(V2B_ONNX),
             "sha256": v2b_sha,

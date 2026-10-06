@@ -1,0 +1,11 @@
+[wrapper-fallback] start 2026-10-06T04:49:17Z
+[wrapper-fallback] onnxruntime 1.30.0 (site-packages)
+[wrapper-fallback] available_providers=['AzureExecutionProvider', 'CPUExecutionProvider']
+[wrapper-fallback] v2b sha 944e81141093（生产 pin 原样）
+G:\CODEX\New Manga.task-envs\M2-SFX-GPU-EP-1-cpu-verify\Lib\site-packages\onnxruntime\capi\onnxruntime_inference_collection.py:197: UserWarning: Specified provider 'DmlExecutionProvider' is not in available provider names.Available providers: 'AzureExecutionProvider, CPUExecutionProvider'
+  warnings.warn(
+[wrapper-fallback] detect OK route=letterbox n_candidates=0
+[wrapper-fallback] 三键审计: sfx_ep='dml' device='cpu' sfx_ep_fallback='requested dml but onnxruntime built the session on CPUExecutionProvider (wrapper-level fallback/EP unavailable)'
+[wrapper-fallback] wrote G:\CODEX\New Manga.worktrees\M2-SFX-GPU-EP-1-zcode\verification\M2-SFX-GPU-EP-1\raw\wrapper-fallback-cpu-wheel.json
+[wrapper-fallback] VERDICT: PASS {"sfx_ep_requested_dml": true, "device_effective_cpu": true, "sfx_ep_fallback_present": true, "fallback_names_wrapper_or_cpu": true}
+EXIT=0

@@ -387,12 +387,24 @@ def _tile_config() -> _TileConfig:
 # weights resolution or inference (never a half-configured engine).
 #
 # DML init failure semantics (Owner discretion, registered in the Task
-# report): a machine without a DX12 GPU / with a broken driver / running the
-# CPU-only wheel cannot build a DML session. The provider then falls back to
-# the CPU EP AUTOMATICALLY and records the degradation in the detect options
-# — ``device`` carries the EFFECTIVE EP, ``sfx_ep`` the REQUESTED one, and
-# ``sfx_ep_fallback`` the reason — availability first, the behavior stays
-# usable everywhere, the fallback is never silent. The EP is NOT part of the
+# report; r1 P1-1 mechanism corrected): a machine without a DX12 GPU / with
+# a broken driver / running the CPU-only wheel cannot use a DML session.
+# The MECHANISM matters: onnxruntime's own Python wrapper
+# (``InferenceSession.__init__``, ``enable_fallback=True`` by default)
+# SWALLOWS (ValueError, RuntimeError) from the requested EP, rebuilds on
+# ["CPUExecutionProvider"] and returns NORMALLY — so the usual fallback
+# shape is NOT an exception here. The effective EP is therefore read back
+# off the session via ``get_providers()``: requested dml + a session whose
+# first provider is not DmlExecutionProvider = the wrapper-level fallback.
+# Either way (wrapper fallback, or the defensive exception-driven retry for
+# the shapes that DO raise) the degradation is recorded in the detect
+# options — ``device`` carries the EFFECTIVE EP, ``sfx_ep`` the EP that was
+# requested at engine-build time, ``sfx_ep_fallback`` the reason —
+# availability first, the behavior stays usable everywhere, the fallback is
+# never silent. ``device`` is the SFX provider's EXECUTION-PROVIDER key: it
+# shares its NAME with the manga/doctr torch-device ``device`` options key
+# but records an onnxruntime provider there (r1 P4-3 note; no consumer in
+# src/ or apps/ branches on either value). The EP is NOT part of the
 # supply-chain security surface (the SHA-256 weights gate runs before any
 # runtime import and is unaffected by the EP choice). An EXPLICIT ``cpu``
 # request whose session build fails stays a typed ``ProviderError`` — no
@@ -406,7 +418,11 @@ def _tile_config() -> _TileConfig:
 # instance's lifetime — same lifetime discipline as the ``conf_threshold``
 # field; a different EP means a new provider instance or process. The
 # fail-fast env read itself happens on EVERY detect, so an illegal value
-# never slips through on a warm engine either.
+# never slips through on a warm engine either. Corollary (r1 P4-4): on a
+# warm engine a LATER env change is deliberately NOT reflected in the
+# options — ``sfx_ep`` records what was requested at ENGINE-BUILD time, the
+# fail-fast read only guards the legality of the env, never re-resolves the
+# engine.
 # ---------------------------------------------------------------------------
 
 #: The env name. Values: ``dml`` (default) | ``cpu``.
@@ -420,6 +436,12 @@ SFX_EP_DEFAULT = SFX_EP_DML
 _EP_PROVIDER_NAMES = {
     SFX_EP_DML: "DmlExecutionProvider",
     SFX_EP_CPU: "CPUExecutionProvider",
+}
+#: Reverse lookup for the get_providers() read-back (r1 P1-1): a provider
+#: name -> the ``dml``/``cpu`` audit token; an unknown name is recorded
+#: as-is (the audit value follows the runtime, never a guess).
+_EP_MODE_BY_PROVIDER_NAME = {
+    name: mode for mode, name in _EP_PROVIDER_NAMES.items()
 }
 
 
@@ -883,10 +905,14 @@ def _build_engine(
                 f"{requested_error!r}",
                 stage="detection",
             ) from requested_error
-        # The registered DML fallback (M2-SFX-GPU-EP-1): no DX12 GPU /
-        # broken driver / CPU-only wheel -> rebuild on the CPU EP so the
-        # behavior stays usable everywhere, with the degradation carried in
-        # the provenance (audit-visible in the detect options, never silent).
+        # Defensive retry (r1 P1-1 role clarification): the onnxruntime
+        # PYTHON WRAPPER usually handles the DML failure itself and returns
+        # NORMALLY (see the get_providers() read-back below), so this branch
+        # is NOT the primary fallback path — it only fires when an exception
+        # escapes the wrapper (a non-(ValueError, RuntimeError) failure, or
+        # a build with fallback disabled). The explicit CPU rebuild keeps
+        # the behavior usable in exactly those shapes, with the degradation
+        # carried in the provenance (never silent).
         try:
             session = onnxruntime.InferenceSession(
                 str(weights_path),
@@ -907,7 +933,35 @@ def _build_engine(
             ),
         )
     else:
-        prov = _EpProvenance(requested=ep_mode, effective=ep_mode)
+        # r1 P1-1: the wrapper's InferenceSession.__init__ has
+        # enable_fallback=True BY DEFAULT and SWALLOWS (ValueError,
+        # RuntimeError) from the requested EP — it rebuilds on
+        # ["CPUExecutionProvider"] and returns NORMALLY (an "EP Error"
+        # banner on stderr only). A DML init failure (no DX12 GPU / broken
+        # driver / CPU-only wheel) therefore usually does NOT raise here at
+        # all: the session in hand IS the CPU session. The authoritative
+        # effective EP is read back OFF the session — a requested dml whose
+        # first provider is not DmlExecutionProvider is the wrapper-level
+        # fallback, and it gets the SAME three-key audit (sfx_ep / device /
+        # sfx_ep_fallback): never silent, never a wrong "dml".
+        effective_providers = session.get_providers()
+        effective_name = (
+            effective_providers[0] if effective_providers else requested_provider
+        )
+        if effective_name == requested_provider:
+            prov = _EpProvenance(requested=ep_mode, effective=ep_mode)
+        else:
+            prov = _EpProvenance(
+                requested=ep_mode,
+                effective=_EP_MODE_BY_PROVIDER_NAME.get(
+                    effective_name, effective_name
+                ),
+                fallback_reason=(
+                    f"requested {ep_mode} but onnxruntime built the session "
+                    f"on {effective_name} (wrapper-level fallback/EP "
+                    f"unavailable)"
+                ),
+            )
     meta = session.get_modelmeta().custom_metadata_map
     names_raw = meta.get("names", "")
     parsed = _parse_names_metadata(names_raw)

@@ -54,20 +54,33 @@ import 名 `onnxruntime`、同一 pyd 名 `onnxruntime_pybind11_state.pyd`，whe
 - **engine 缓存语义**：providers 在 InferenceSession 构造时固定，是
   engine 级属性——EP 随首次 detect 解析并随 engine 缓存至 provider 实例
   生命周期结束（与 `conf_threshold` 字段同级）；换 EP = 新 provider 实例
-  或进程重启。
+  或进程重启；暖引擎下后续 env 变更**不反映**进 options（`sfx_ep` 记录
+  引擎构建时的请求值，fail-fast 读只守 env 合法性、不重解析引擎，r1
+  P4-4 注记）。
 - `_build_engine(weights_path, ep_mode=None)` 返回 5 元组
   `(session, imgsz, imgsz_source, imgsz_raw, _EpProvenance)`——EP
   provenance 沿 DSH r1 R4 imgsz provenance 同一模式随 engine 传递。
 
-### 1.3 DML 初始化失败语义（Owner 设计裁量，登记）
+### 1.3 DML 初始化失败语义（Owner 设计裁量，登记；r1 P1-1 机制更正后终版）
 
-**设计：自动回退 CPU EP + 三键审计，绝不静默。**
+**设计：自动回退 CPU EP + 三键审计，绝不静默、绝不错值。**
 
-- 请求 DML 而会话构建失败（无 DX12 GPU / 驱动缺失 / 装了 CPU-only wheel）
-  → 自动以 `CPUExecutionProvider` 重建会话，行为保持可用；
-- 审计三键进 detect options：`device`=<有效 EP>（`cpu`）、`sfx_ep`=<env
-  请求值>（`dml`）、`sfx_ep_fallback`="dml init failed; fell back to cpu
-  (<异常类型名>)"；
+- **机制（r1 P1-1 更正）**：onnxruntime 的 Python 包装层
+  `InferenceSession.__init__` 自带 CPU 回退（`enable_fallback` 缺省 True，
+  生产 wheel `onnxruntime_inference_collection.py:482,503-519,576-577`）——
+  DML 初始化失败（无 DX12 GPU / 驱动缺失 / CPU-only wheel）被包装层吞掉
+  （except `(ValueError, RuntimeError)`），以 `["CPUExecutionProvider"]`
+  重建并**正常返回**（仅 stderr 打 EP Error banner）。因此**主回退路径不
+  经过本仓的 except 分支**；有效 EP 的权威来源是构造后的
+  `session.get_providers()` 读回：请求 dml 而首 provider 非
+  `DmlExecutionProvider` = 包装层回退，写入同一套三键审计。本仓 except
+  分支保留为**防御兜底**（覆盖逃逸出包装层的异常形态 / 禁用回退的构建），
+  其内做显式 CPU 重建（原因含异常类型名）。
+- 审计三键进 detect options：`device`=<有效 EP>（`cpu`）、`sfx_ep`=<引擎
+  构建时 env 请求值>（`dml`）、`sfx_ep_fallback`=原因（包装层回退形态
+  "requested dml but onnxruntime built the session on
+  CPUExecutionProvider (wrapper-level fallback/EP unavailable)" / 兜底形态
+  "dml init failed; fell back to cpu (<异常类型名>)"）；
 - **显式 `cpu` 请求失败 = typed `ProviderError`，无回退**（显式请求不允许
   悄悄降级为其它东西）；
 - 回退只覆盖**初始化**：会话构建成功但 run() 失败维持既有 detect 期 typed
@@ -75,12 +88,28 @@ import 名 `onnxruntime`、同一 pyd 名 `onnxruntime_pybind11_state.pyd`，whe
 - **供应链安全面不受影响**：SHA-256 权重门仍先于任何 runtime import
   （检查顺序 1.EP env → 2.文件存在 → 3.sha → 4.import → 5.session →
   6.metadata 断言），EP 不是 pin 对象，sha 门纪律零变化；
-- 回退路径双实证：① 单测
-  `test_engine_dml_failure_falls_back_to_cpu_with_audit`（stub 对 DML raise /
-  对 CPU 成功，断言 providers 序列 `[Dml]→[CPU]` + 三键）；② 真实机器
-  反向实证——换装前生产 venv 还是 CPU 包 1.30.0 时真实权重单测自然走回退
-  路径（ORT 警告 "DmlExecutionProvider is not in available provider names"
-  + CPU 会话建成 + 测试绿，tests-ep-green.log warning 段）。
+- **三形态验证矩阵**：
+  1. **包装层回退（真实主形态）——决定性验证 PASS**：独立 venv
+     `M2-SFX-GPU-EP-1-cpu-verify`（onnxruntime==1.30.0 CPU-only 包，进程内
+     无 DML provider，= 生产 venv 换装前状态）+ 生产代码原样 detect：
+     `sfx_ep='dml'`、`device='cpu'`、
+     `sfx_ep_fallback='requested dml but onnxruntime built the session on
+     CPUExecutionProvider (wrapper-level fallback/EP unavailable)'`——
+     `raw/wrapper-fallback-cpu-wheel.{json,log}`（VERDICT: PASS；ORT
+     "not in available provider names" UserWarning 原样入 log）；
+  2. **包装层回退的 stub 钉子**：
+     `test_engine_wrapper_level_cpu_fallback_gets_three_key_audit`（构造器
+     不抛异常、无第二次构造、get_providers 读回驱动三键；先红——红证据
+     `raw/tests-p11-wrapper-fallback-red.log` 实证旧实现 device 错报
+     "dml"——后绿）；
+  3. **异常驱动兜底**：`test_engine_dml_failure_falls_back_to_cpu_with_audit`
+     （stub 对 DML raise / 对 CPU 成功，断言 providers 序列
+     `[Dml]→[CPU]` + 三键）+ `test_engine_cpu_failure_is_typed_no_fallback`
+     （显式 cpu 失败 typed 无回退）。
+- **r1 证据误读更正**：初版报告把 tests-ep-green.log 的 ORT 警告当「本仓
+  except 回退路径的反向实证」——**误读**。该警告是 ORT 包装层内建回退的
+  表现（构造器正常返回，本仓 except 未执行），当时无任何 sfx_ep_fallback
+  观测；正确机制与决定性验证如上。
 
 ### 1.4 主检测器（manga）面零改动声明
 
@@ -121,6 +150,19 @@ onnxruntime session、无 ExecutionProvider 概念，本 Task 零触碰；
 Δxyxy ≤ 0.0002 px（亚微米像素级）；conf≥0.5 门零翻转（gate_flips=0 全
 6 页）；matched 集逐页全部不变。**检出行为在 GPU DML 与 CPU EP 下等价**
 （在 conf≥0.5 生产门与 GT 匹配口径下不可区分）。
+
+**配对口径（r1 P3-2 注记）**：`max |Δconf|/|Δxyxy|` 按双侧 `(-conf, xyxy)`
+排序后的**位次 zip** 比较；"matched 集不变"指 **(gt_index, pred_index)
+索引对集合相等**——`pred_index` 是生产候选顺序位次，GPU 面 `bit_identical
+=false`（全 6 页）下理论上存在微重排使"索引对相等"不严格等同于"同一物理
+框"；Δ≤2e-06/0.0002px 使该风险极低，但口径应读作**索引集不变**（跨面
+最近邻 IoU 配对复核未做，留作可选强化）。
+
+**T5 对账口径（r1 P3-3 注记）**：与 T5 基准的可比对账**仅限 v2b**——KO
+derived 14+17+2+2=35/56、npd 14+26+5+3=48/135，与 T5 v2b 基准逐位吻合；
+T5 的 chiqui7 56/56+41/135 与 BJ chiqui7（6 preds）属另一权重，本 Task 未
+跑、不可比。BJ 考卷页本 Task **未做 GT 匹配**（只记 n_pred 与双面漂移；
+n_pred 2+3=5 与 M2-SFX-TRAIN-V2 记录的 v2b BJ 5/5@0.5 自洽）。
 
 ## 3. AC3 生产路径性能复测 — PASS（如实登记）
 
@@ -185,11 +227,14 @@ onnxruntime session、无 ExecutionProvider 概念，本 Task 零触碰；
 
 ### 7.1 包体积变化（vs T4 终态基线）
 
+载体：`raw/bundle-sizes.log`（Get-Item/Get-ChildItem 实测，r1 P4-2 补录；
+本表全部数字以其为准）。
+
 | 口径 | CPU 包终态（T4 时代基线） | DML 包（本 Task 实测） | Δ |
 |---|---|---|---|
-| onedir `_internal/onnxruntime/` | 35.8 MB（Task 合同引 PROD-1 记录） | **63.11 MiB** | **+27.3 MiB**（DirectML.dll 17.67 MiB + onnxruntime.dll/providers_shared.dll 增量） |
-| onedir 整包 `core-sidecar/` | —（未单列基线） | 1168.73 MiB | — |
-| NSIS 安装包 | 460,181,312 B / 438.86 MiB（M2-PROD-DETECT-2 release-notes，T4 未重建包体沿用该闭包形态） | **512,645,237 B / 488.90 MiB**（sha256 `61df0299…`，GATE CS-E2 记录） | **+52,463,925 B / +50.04 MiB** |
+| onedir `_internal/onnxruntime/` | 35.8 MB（Task 合同引 PROD-1 记录） | **66,170,520 B / 63.11 MiB** | **+27.3 MiB**（DirectML.dll 18,527,776 B / 17.67 MiB + onnxruntime.dll/providers_shared.dll 增量） |
+| onedir 整包 `core-sidecar/` | —（未单列基线） | 1,225,505,427 B / 1168.73 MiB | — |
+| NSIS 安装包 | 460,181,312 B / 438.86 MiB（M2-PROD-DETECT-2 release-notes，T4 未重建包体沿用该闭包形态） | **512,645,237 B / 488.90 MiB**（sha256 `61df0299…`，GATE CS-E2 + bundle-sizes.log） | **+52,463,925 B / +50.03 MiB** |
 
 注：T4-SWITCH 只替换权重 pin 未重建包体，其「终态基线」= PROD-2 时代
 onnxruntime CPU 包闭包（438.86 MiB NSIS / 35.8MB onnxruntime 目录）。
@@ -226,3 +271,12 @@ directml wheel 其它文件的压缩差异），可接受性属用户部署形�
   Task 改写）；本 Task GATE 证据以
   `raw/gate-clean-start-e2e.log`（runner 完整 stdout）+
   `raw/m2ac5-gate-artifacts/cleanstart-gate.json`（verdict）为准。
+- **frozen 面 DML 证据口径（r1 P3-1 修订）**：「frozen sfx detect 链默认走
+  DML」在本仓库内是**推断，不是实测**——GATE 的 25 个场景全部不触及
+  sfx 检测/DML（probe 为资源通道、AC1 环为 mock ocr/translate）， DirectML.dll
+  的**实体在位**（构建闭包断言 + 盘上产物
+  `_internal/onnxruntime/capi/DirectML.dll` 与 pyd 同目录）只证明加载
+  路径成立，不构成 frozen 进程内 DML 推理的运行证据。packaged sfx-detect
+  探针需要 frozen 命令面扩展（M2-PROD-DETECT-2 的已知 NOT_RUN 结构性
+  缺口，须 Codex 立契约），本 Task 不扩权、留作缺口登记。源码形态的
+  DML 默认行为由 AC2/AC3 双面证据与 EP 单测覆盖。
