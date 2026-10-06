@@ -46,17 +46,20 @@ Scenarios:
 Usage (from the repository root):
   python verification/M2-PROD-SFX-PROBE-1/packaged-sfx-detect-probe.py \
       --install-dir <NSIS install dir> \
-      [--real-page <png>] [--out <results.json>]
+      [--real-page <png>] [--out <results.json>] [--raw-subdir <name>] \
+      [--installer-sha256 <hex>] [--build-head <sha>] [--build-venv-note <note>]
 
 Results JSON defaults to packaged-sfx-detect-probe-results.json next to this
-script; raw stdout/stderr logs land in raw/. The gate fails closed: any FAIL
-fails the probe; SP-L2 with a missing real page is recorded as SKIP (NOT_RUN
-evidence), not a failure.
+script; raw stdout/stderr logs land in raw/ (--raw-subdir reroutes them to
+raw/<name>/ so a re-run never overwrites the original evidence). The gate
+fails closed: any FAIL fails the probe; SP-L2 with a missing real page is
+recorded as SKIP (NOT_RUN evidence), not a failure.
 """
 
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import os
 import subprocess
@@ -148,6 +151,20 @@ def parse_probe_json(text: str) -> dict | None:
         return None
 
 
+def sha256_file(path: Path) -> str:
+    digest = hashlib.sha256()
+    with path.open("rb") as fh:
+        for chunk in iter(lambda: fh.read(1 << 20), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
+
+
+def is_frozen(payload: dict | None) -> bool:
+    """DSH r1 P2-3: "inside the frozen process" is a judged face, not just a
+    recorded one — the probe JSON's ``python.frozen`` flag must be asserted."""
+    return (payload or {}).get("python", {}).get("frozen") is True
+
+
 def run_frozen_probe(exe: Path, args: list[str], env: dict[str, str], timeout: int) -> tuple[int, str, str, int]:
     started = time.perf_counter()
     proc = subprocess.run(
@@ -167,10 +184,13 @@ def stdio_ping_shutdown(exe: Path, env: dict[str, str], timeout: int = 240) -> t
     """One stdio JSON-lines round trip against the INSTALLED core_service.exe:
     core.ping then core.shutdown (the M2-IPC1 frozen face, unchanged)."""
     def envelope(request_id: str, command: str) -> str:
+        # minor=3 matches the frozen PROTOCOL_MINOR (DSH r1 P4-3): this is a
+        # smoke of the EXISTING command face, so it speaks the frozen form
+        # rather than a minimal envelope.
         return json.dumps(
             {
                 "protocol": "new-manga.core",
-                "version": {"major": 1, "minor": 0},
+                "version": {"major": 1, "minor": 3},
                 "request_id": request_id,
                 "command": command,
                 "payload": {},
@@ -221,6 +241,25 @@ def main() -> int:
         default="",
         help="free-form note recorded into the results JSON (e.g. the build venv id)",
     )
+    # DSH r1 P3-5: programmatic provenance for the evidence — bind the probe
+    # results to the installer artifact and the build HEAD without relying on
+    # out-of-band logs.
+    parser.add_argument(
+        "--installer-sha256",
+        default="",
+        help="sha256 of the NSIS installer under test (recorded into the results JSON)",
+    )
+    parser.add_argument(
+        "--build-head",
+        default="",
+        help="repository HEAD the sidecar bundle was built from (recorded into the results JSON)",
+    )
+    # DSH r1 r1fix re-run support: keep the original raw/ evidence intact.
+    parser.add_argument(
+        "--raw-subdir",
+        default="",
+        help="reroute raw logs to raw/<name>/ instead of overwriting raw/",
+    )
     args = parser.parse_args()
 
     install_dir = args.install_dir.resolve()
@@ -228,7 +267,8 @@ def main() -> int:
     core_service_exe = install_dir / CORE_SERVICE_EXE_REL
     bundle_weights = install_dir / BUNDLE_WEIGHTS_REL
     gate = Gate()
-    RAW_DIR.mkdir(parents=True, exist_ok=True)
+    raw_dir = RAW_DIR / args.raw_subdir if args.raw_subdir else RAW_DIR
+    raw_dir.mkdir(parents=True, exist_ok=True)
     env, cleared_env_names = purged_env()
 
     print(f"install dir: {install_dir}")
@@ -255,7 +295,7 @@ def main() -> int:
     exit_code, stdout, stderr, wall_ms = run_frozen_probe(
         probe_exe, ["--label", "synthetic"], env, timeout=300
     )
-    (RAW_DIR / "sp-l1-synthetic.log").write_text(
+    (raw_dir / "sp-l1-synthetic.log").write_text(
         f"$ <install>\\{PROBE_EXE_REL.as_posix()} --label synthetic (purged PATH, all NEWMANGA_* cleared)\n"
         f"exit={exit_code} wall_ms={wall_ms}\n--- stdout ---\n{stdout}\n--- stderr ---\n{stderr}",
         encoding="utf-8",
@@ -272,6 +312,7 @@ def main() -> int:
     observed_l1 = {
         "exit": exit_code,
         "json_parsed": payload is not None,
+        "frozen_in_process": is_frozen(payload),
         "n_candidates": result.get("n_candidates"),
         "device": result.get("device"),
         "sfx_ep": result.get("sfx_ep"),
@@ -292,6 +333,7 @@ def main() -> int:
         exit_code == 0
         and payload is not None
         and three_keys_present
+        and is_frozen(payload)
         and weights.get("sha256") == SFX_WEIGHTS_SHA256,
         "SP-L1-frozen-synthetic-probe",
         observed_l1,
@@ -315,7 +357,7 @@ def main() -> int:
             env,
             timeout=600,
         )
-        (RAW_DIR / "sp-l2-real-page.log").write_text(
+        (raw_dir / "sp-l2-real-page.log").write_text(
             f"$ <install>\\{PROBE_EXE_REL.as_posix()} --page {args.real_page} (purged PATH, all NEWMANGA_* cleared)\n"
             f"exit={exit_code} wall_ms={wall_ms}\n--- stdout ---\n{stdout}\n--- stderr ---\n{stderr}",
             encoding="utf-8",
@@ -323,12 +365,19 @@ def main() -> int:
         payload = parse_probe_json(stdout)
         result = (payload or {}).get("result") or {}
         page = (payload or {}).get("page") or {}
+        weights = (payload or {}).get("weights") or {}
         fallback = result.get("sfx_ep_fallback")
         observed_l2 = {
             "exit": exit_code,
             "json_parsed": payload is not None,
+            "frozen_in_process": is_frozen(payload),
             "real_page": str(args.real_page),
             "page_sha256": page.get("sha256"),
+            "page_sha256_domain_note": (
+                "page.sha256 = decoded rgb24 PIXEL-BUFFER hash (probe face); "
+                "page_file_sha256 = the PNG FILE hash (anchor-file face, DSH r1 P4-8)"
+            ),
+            "page_file_sha256": sha256_file(args.real_page),
             "n_candidates": result.get("n_candidates"),
             "confidences_max": max(result.get("confidences") or [None]),
             "device": result.get("device"),
@@ -338,18 +387,24 @@ def main() -> int:
             "wall_ms": wall_ms,
             "sfx_route": (result.get("options") or {}).get("sfx_route"),
             "imgsz": (result.get("options") or {}).get("imgsz"),
+            "weights_sha256_matches_pin": weights.get("sha256") == SFX_WEIGHTS_SHA256,
             "expected_form": "device=dml, no sfx_ep_fallback; wrapper fallback recorded honestly without failing",
         }
         # AC2 face: real inference INSIDE the frozen process with candidates.
         # The EP form is recorded, not asserted: device=dml without fallback
         # is the expectation, but a wrapper-level CPU fallback is registered
         # honestly (Task contract) — never a silent pass, never a false fail.
+        # DSH r1 P2-3: "frozen" and the weights pin are JUDGED here (they were
+        # previously only recorded), so a probe accidentally pointed at a
+        # non-frozen form or re-pinned weights cannot still PASS.
         gate.pass_or(
             exit_code == 0
             and payload is not None
+            and is_frozen(payload)
             and (result.get("n_candidates") or 0) > 0
             and result.get("device") is not None
-            and result.get("sfx_ep") is not None,
+            and result.get("sfx_ep") is not None
+            and weights.get("sha256") == SFX_WEIGHTS_SHA256,
             "SP-L2-frozen-real-page-probe",
             observed_l2,
         )
@@ -357,7 +412,7 @@ def main() -> int:
     # -- SP-L3: existing frozen command surface zero-change smoke ------------
     log("SP-L3: existing command surface smoke (installed core_service.exe, stdio)")
     exit_code, ping, shutdown, raw = stdio_ping_shutdown(core_service_exe, env)
-    (RAW_DIR / "sp-l3-core-service-ping.log").write_text(
+    (raw_dir / "sp-l3-core-service-ping.log").write_text(
         f"$ <install>\\{CORE_SERVICE_EXE_REL.as_posix()} (purged PATH)\nexit={exit_code}\n{raw}",
         encoding="utf-8",
     )
@@ -378,6 +433,8 @@ def main() -> int:
         "install_dir": str(install_dir),
         "verdict": gate.verdict,
         "build_venv_note": args.build_venv_note,
+        "installer_sha256": args.installer_sha256,
+        "build_head": args.build_head,
         "boundary_note": (
             "The frozen-process sfx detect evidence path is the fifth frozen "
             "entry exe (sfx_detect_probe.exe — one production "
