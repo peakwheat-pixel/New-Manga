@@ -2,7 +2,7 @@
 id: M2-PROD-SFX-PROBE-1
 title: "packaged sfx-detect 探针：frozen 进程内 SFX 真实推理（DML）运行证据"
 kind: feature
-status: in_progress
+status: in_review
 owner: ZCode
 reviewer: DeepSeek Harness（非作者）
 integrator: 编排会话代行 Codex（用户全权授权）
@@ -62,3 +62,17 @@ M2-PROD-DETECT-2（done @merge `9e44fb21`）裁决⑥：frozen 命令面（`core
 ### AC2 实测面（预登记）
 
 runner = `verification/M2-PROD-SFX-PROBE-1/packaged-sfx-detect-probe.py`（PROD-DETECT-2 `packaged-detect-probe.py` 先例姿势，独立探针不进 GATE 场景集）：对 **NSIS 静默安装后**的环境（purged PATH）依次跑 ①安装的 `sfx_detect_probe.exe` 内置合成页（结构性冒烟：EXIT=0、JSON 可解析、三键在场；候选数如实记录——合成页不在训练分布，候选=0 在此入口不判 FAIL、登记原因）；②同 exe `--page` 注入 K07_R123 真实页（真实推理判定面：预期候选>0，v2b 锚点 conf≈0.9047；记录 EXIT/候选数/耗时/三键；`device=dml` 无 `sfx_ep_fallback` 为预期形态，如遇 wrapper 回退形态如实登记不判失败）。页图零入库：真实页留在 gitignored task-envs 外部树，证据只记路径+sha256。
+
+## 交付回填（Owner=ZCode 2026-10-04 实测，delivery_head=33e824e4）
+
+**全部 AC PASS，status=in_review，Reviewer=DSH（非作者）**。证据：`verification/M2-PROD-SFX-PROBE-1/deploy-record.md`（总记录）+ `packaged-sfx-detect-probe-results.json`（verdict=PASS）+ `raw/**`。
+
+| AC | 判定 | 要点 |
+|---|---|---|
+| AC1 命令面扩展 | **PASS（additive 零契约修订）** | 第五 frozen 入口 `sfx_detect_probe.exe`（catalog_loader 独立入口先例形）；M2-C1/M2-IPC1 冻结粒度核实=设计登记段；AC1③ 不适用（无契约修订草案、无 rev bump）；`core_service.py` 命令分发表/Tauri 面/contracts 零 diff |
+| AC2 frozen 进程内真实运行 | **PASS** | 安装后环境（GATE 安装态、purged PATH+全 `NEWMANGA_*` 清除）：K07_R123 真实页 EXIT=0、**候选=1、conf=0.9047（v2b 锚点逐位一致）**、elapsed_ms=696、**三键 device=dml / sfx_ep=dml / sfx_ep_fallback=null（无 wrapper 回退，预期形态）**；合成页 EXIT=0、候选=4、1846ms 同三键；权重 `bundle_probe` 解析且 sha256=生产 pin |
+| AC3 既有面零破坏 | **PASS** | GATE PASS 25/25 EXIT=0（M2-AC5/raw 落点按 GPU-EP-1 先例快照+还原）；SP-L3 既有命令面 stdio 冒烟 ready/stopped；包体积 NSIS 580,540,551 B / 553.65 MiB（+64.72 MiB vs GPU-EP-1 基线，主体=第五入口内嵌 PYZ，与既有 ML/Qt 入口同形态，deploy-record §3 登记） |
+| AC4 回归与纪律 | **PASS** | pytest **1835 passed + 1 skipped + 1 failed（test_catalog 既有）** = 基线 1823 + 新增 12 逐项吻合；`git diff --check` EXIT=0；禁改面专项 diff 空；权重/页图零入库 |
+| AC5 文档 | **PASS** | deploy-record + results JSON + raw logs + Task 回填 + Handoff；**PROD-DETECT-2 AC5 NOT_RUN 子项（sfx slice）以 deploy-record §5 声明闭合**（manga slice 属另一缺口未覆盖） |
+
+构建链（fresh worktree 全链如实登记）：frontend build → `build_sidecar.ps1 -Force`（HEAD=2b4e4946，闭包断言 PASS ×2：core_service 8584 modules ML 全量面 + **sfx_detect_probe 8455 modules onnxruntime 面**+pyd/DirectML.dll）→ `tauri build`（NSIS `3ffa03f5…`）→ GATE → 探针 runner。已知注释过时（留集成裁量）：`main.rs:378-379` sidecar exe 名单注释仍列四个，纯注释无功能引用，本 Task 保持 src-tauri 零 diff。
