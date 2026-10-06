@@ -144,6 +144,35 @@ def test_conf_threshold_env_reaches_the_provider(assembled, monkeypatch):
 
 
 # ---------------------------------------------------------------------------
+# NEWMANGA_SFX_EP combination semantics (M2-SFX-GPU-EP-1)
+#
+# The EP is a DETECT-time gate (the T5 tile-env discipline), not an assembly
+# gate: the assembly wires the lazy provider untouched, the provider resolves
+# the EP at first detect. Two consequences, both registered here:
+# - an explicit NEWMANGA_SFX_EP=cpu assembles the SAME wiring (the EP choice
+#   is invisible to the assembly);
+# - NEWMANGA_SFX_DETECTION=off skips the whole sfx assembly, so the EP env is
+#   never read — even an ILLEGAL value stays inert under off (the provider
+#   that would fail fast on it is never built).
+# ---------------------------------------------------------------------------
+
+
+def test_ep_env_cpu_assembles_the_same_wiring(assembled, monkeypatch):
+    monkeypatch.setenv("NEWMANGA_SFX_EP", "cpu")
+    core = assembled()
+    assert isinstance(core.detector, MangaSfxParallelDetectionProvider)
+    assert isinstance(core.detector.sfx, SfxDetectionProvider)
+
+
+def test_off_assembly_never_touches_the_ep_env(assembled, monkeypatch):
+    monkeypatch.setenv("NEWMANGA_SFX_DETECTION", "off")
+    monkeypatch.setenv("NEWMANGA_SFX_EP", "totally-bogus")
+    core = assembled()
+    assert isinstance(core.detector, MangaDetectionProvider)
+    assert not isinstance(core.detector, MangaSfxParallelDetectionProvider)
+
+
+# ---------------------------------------------------------------------------
 # label -> RegionType dispatch (AC3)
 # ---------------------------------------------------------------------------
 

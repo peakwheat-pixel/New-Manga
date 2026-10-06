@@ -137,13 +137,15 @@ def _fake_session(rows: list[tuple[tuple[float, float, float, float], list[float
 
 def _provider_with_engine(rows, conf_threshold: float = 0.5) -> SfxDetectionProvider:
     provider = SfxDetectionProvider(weights_path=Path("unused.onnx"), conf_threshold=conf_threshold)
-    # Engine tuple = (session, imgsz, imgsz_source, imgsz_raw) — DSH r1 R4's
-    # two-state provenance rides the engine to the detect options.
+    # Engine tuple = (session, imgsz, imgsz_source, imgsz_raw, ep_provenance) —
+    # DSH r1 R4's two-state provenance and M2-SFX-GPU-EP-1's EP provenance
+    # ride the engine to the detect options.
     provider._engine = (
         _fake_session(rows),
         SFX_DEFAULT_IMGSZ,
         "metadata_parsed",
         "[1024, 1024]",
+        dsfx._EpProvenance(requested="dml", effective="dml"),
     )
     return provider
 
@@ -535,7 +537,8 @@ def test_composite_appends_sfx_past_primary_reading_order_max():
     sfx = SfxDetectionProvider(weights_path=Path("x.onnx"))
     composite = MangaSfxParallelDetectionProvider(primary=primary, sfx=sfx)
     # Inject a fake engine so no weights are touched (engine tuple = session,
-    # imgsz, imgsz_source, imgsz_raw — DSH r1 R4's provenance form).
+    # imgsz, imgsz_source, imgsz_raw, ep_provenance — DSH r1 R4's provenance
+    # form + M2-SFX-GPU-EP-1's EP provenance).
     sfx._engine = (
         _fake_session(
             [((256.0, 256.0, 51.2, 102.4), [0.05, 0.05, 0.93, 0.00])]
@@ -543,6 +546,7 @@ def test_composite_appends_sfx_past_primary_reading_order_max():
         SFX_DEFAULT_IMGSZ,
         "metadata_parsed",
         "[1024, 1024]",
+        dsfx._EpProvenance(requested="dml", effective="dml"),
     )
     result = composite.detect(_request())
     assert [c.provider_label for c in result.candidates] == [
@@ -1284,6 +1288,24 @@ def _ep_metadata() -> dict:
     }
 
 
+def _zero_run_session(metadata: dict):
+    """A session whose run() returns an all-zero output0 (no detections) and
+    whose metadata carries the asserted class surface."""
+    zeros = np.zeros((1, 40, 2), dtype=np.float32)
+
+    class _ZeroSession:
+        def get_modelmeta(self):  # noqa: ANN202
+            class _Meta:
+                custom_metadata_map = metadata
+
+            return _Meta()
+
+        def run(self, _, feeds):  # noqa: ANN001
+            return (zeros,)
+
+    return _ZeroSession()
+
+
 def test_engine_build_defaults_to_dml_provider(tmp_path, monkeypatch):
     """Env absent -> the session is built with DmlExecutionProvider (the
     user's GPU deployment ruling is the DEFAULT, not an opt-in)."""
@@ -1293,7 +1315,9 @@ def test_engine_build_defaults_to_dml_provider(tmp_path, monkeypatch):
         "infrastructure.providers.detection_sfx.sha256_file",
         lambda _: SFX_WEIGHTS_SHA256,
     )
-    calls = _install_fake_onnxruntime(monkeypatch, _ep_metadata())
+    calls = _install_fake_onnxruntime(
+        monkeypatch, _ep_metadata(), session=_zero_run_session(_ep_metadata())
+    )
     provider = SfxDetectionProvider(weights_path=junk)
     result = provider.detect(_request())
     assert calls["providers"] == ["DmlExecutionProvider"]
@@ -1311,7 +1335,9 @@ def test_engine_build_cpu_env_requests_cpu_provider(tmp_path, monkeypatch):
         "infrastructure.providers.detection_sfx.sha256_file",
         lambda _: SFX_WEIGHTS_SHA256,
     )
-    calls = _install_fake_onnxruntime(monkeypatch, _ep_metadata())
+    calls = _install_fake_onnxruntime(
+        monkeypatch, _ep_metadata(), session=_zero_run_session(_ep_metadata())
+    )
     monkeypatch.setenv("NEWMANGA_SFX_EP", "cpu")
     provider = SfxDetectionProvider(weights_path=junk)
     result = provider.detect(_request())

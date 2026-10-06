@@ -48,9 +48,12 @@ torchvision==0.29.0
 transformers==5.17.0
 safetensors==0.8.0
 
-# M2-SFX-PROD-1: the standalone SFX detector runtime (chiqui7 ONNX over
-# onnxruntime, CPU EP — the lightweight stack). VERBATIM copy of the
-# ../../requirements.txt line (same pin, eval-proven build); the frozen
-# closure must carry it (spec ML_HIDDENIMPORTS + binaries assertion). PIL
-# arrives transitively via torchvision (hard Requires-Dist: pillow).
-onnxruntime==1.30.0
+# M2-SFX-GPU-EP-1 (user ruling 2026-10-06: deployment form = GPU): the
+# standalone SFX detector runtime — v2b ONNX over onnxruntime-directml
+# (DmlExecutionProvider DEFAULT via NEWMANGA_SFX_EP, audited CPU fallback).
+# VERBATIM copy of the ../../requirements.txt line (same pin — the PyPI
+# directml line tops out at 1.24.4, the exact build the T5 perf venv
+# measured); the frozen closure must carry it (spec ML_HIDDENIMPORTS +
+# binaries assertion incl. DirectML.dll). PIL arrives transitively via
+# torchvision (hard Requires-Dist: pillow).
+onnxruntime-directml==1.24.4
