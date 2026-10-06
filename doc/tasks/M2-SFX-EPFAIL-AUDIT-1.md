@@ -9,7 +9,7 @@ reviewer: DeepSeek Harness（非作者）
 integrator: 编排会话代行 Codex（用户全权授权）
 approval: user_2026-10-04_批准进行2（已登记非阻塞候选①：GPU-EP-1 r2 N-P3-1 run-time EPFail 未审计通道）
 depends_on: [M2-SFX-GPU-EP-1]
-base_commit: 72807d30（r1 P4-1 双值注记：72807d30=Task 合同释放登记 base；d298ecd0=owner 分支实际 fork 点=释放 commit（`merge-base --is-ancestor`：72807d30 是 d298ecd0 祖先；分支自 d298ecd0 checkout，merge-base(HEAD, d298ecd0)=d298ecd0 实证），owner claim/HANDOFF 统一以 d298ecd0 为准
+base_commit: 72807d30（r1 P4-1 双值注记：72807d30=Task 合同释放登记 base；d298ecd0=owner 分支实际 fork 点=释放 commit（`merge-base --is-ancestor`：72807d30 是 d298ecd0 祖先；分支自 d298ecd0 checkout，merge-base(HEAD, d298ecd0)=d298ecd0 实证），owner claim/HANDOFF 统一以 d298ecd0 为准）
 branch: agent/zcode/M2-SFX-EPFAIL-AUDIT-1
 worktree: G:/CODEX/New Manga.worktrees/M2-SFX-EPFAIL-AUDIT-1-zcode
 review_events: []
