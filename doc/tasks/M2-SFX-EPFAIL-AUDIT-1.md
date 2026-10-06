@@ -2,7 +2,8 @@
 id: M2-SFX-EPFAIL-AUDIT-1
 title: "SFX 推理 run-time EPFail 通道审计：ORT 包装层 run() 期内部静默重跑 CPU 的可观测性闭合"
 kind: feature
-status: ready
+status: owner_claim
+owner_claim: ZCode 2026-10-04 @worktree M2-SFX-EPFAIL-AUDIT-1-zcode（base=d298ecd0=释放登记 tip；授权=user 2026-10-04 批准进行2 非阻塞候选①；AC1 设计实测前置=get_providers() 耗时+fallback 状态读回可见性）
 owner: ZCode
 reviewer: DeepSeek Harness（非作者）
 integrator: 编排会话代行 Codex（用户全权授权）
