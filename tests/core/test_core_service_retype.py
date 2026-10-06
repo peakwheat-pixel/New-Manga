@@ -129,16 +129,16 @@ def _assert_error(response: dict, code: str, category: str) -> None:
 # ---------------------------------------------------------------------------
 
 
-def test_protocol_minor_bumped_to_five_with_page_resolve_surface(server, rpc) -> None:
+def test_protocol_minor_bumped_to_six_with_page_nav_surface(server, rpc) -> None:
     # M2-REGION-RETYPE-CORE: 2 -> 3 (same backwards-compatible widening
     # precedent as core.detect 0->1 and settings 1->2; every pre-existing
     # command keeps its payload/result/error codes).
     # M2-RC4-DOMAIN-COMMANDS: 3 -> 4 (the three domain commands).
     # M2-PAGE-RESOURCE-RESOLVE-1: 4 -> 5 (resolve_page_resource).
-    assert (PROTOCOL_MAJOR, PROTOCOL_MINOR) == (1, 5)
+    assert (PROTOCOL_MAJOR, PROTOCOL_MINOR) == (1, 6)
     response = rpc("core.ping", {})
     assert response["error"] is None
-    assert response["result"]["protocol_version"] == {"major": 1, "minor": 5}
+    assert response["result"]["protocol_version"] == {"major": 1, "minor": 6}
 
 
 # ---------------------------------------------------------------------------

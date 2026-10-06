@@ -213,6 +213,18 @@
           "markdownDescription": "Enables the library_list_books command without any pre-configured scope."
         },
         {
+          "description": "Enables the list_chapter_pages command without any pre-configured scope.",
+          "type": "string",
+          "const": "allow-list-chapter-pages",
+          "markdownDescription": "Enables the list_chapter_pages command without any pre-configured scope."
+        },
+        {
+          "description": "Enables the list_chapters command without any pre-configured scope.",
+          "type": "string",
+          "const": "allow-list-chapters",
+          "markdownDescription": "Enables the list_chapters command without any pre-configured scope."
+        },
+        {
           "description": "Enables the list_region_revisions command without any pre-configured scope.",
           "type": "string",
           "const": "allow-list-region-revisions",
@@ -331,6 +343,18 @@
           "type": "string",
           "const": "deny-library-list-books",
           "markdownDescription": "Denies the library_list_books command without any pre-configured scope."
+        },
+        {
+          "description": "Denies the list_chapter_pages command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-list-chapter-pages",
+          "markdownDescription": "Denies the list_chapter_pages command without any pre-configured scope."
+        },
+        {
+          "description": "Denies the list_chapters command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-list-chapters",
+          "markdownDescription": "Denies the list_chapters command without any pre-configured scope."
         },
         {
           "description": "Denies the list_region_revisions command without any pre-configured scope.",

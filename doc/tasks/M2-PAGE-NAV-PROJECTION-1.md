@@ -2,7 +2,10 @@
 id: M2-PAGE-NAV-PROJECTION-1
 title: 页导航投影命令 list_chapters/list_chapter_pages（Workbench 页列表三级下钻第一刀）
 kind: feature
-status: ready
+status: in_review
+delivery_commit: 00538a14 (final; delivery 614f3f98 -> rework 14f4b1e6 -> hardening 00538a14)
+review: DSH r1 approve_with_conditions @614f3f98 -> r2 approve @14f4b1e6 (N-01..05 hardened @00538a14)
+handoff: ../handoffs/M2-PAGE-NAV-PROJECTION-1-zcode-614f3f98.md
 approval: user_2026-10-07_autonomous_mode_continuation（STATUS Planned next 候选①，授权自动选下一最高优先任务）
 suggested_owner: Codex Executor
 owner: Codex Executor（ZCode 代行）

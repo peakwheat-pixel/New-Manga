@@ -21,7 +21,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { LibraryClient, LibraryClientError } from "../library/client";
-import type { BookSummary } from "../library/types";
+import type { BookSummary, ChapterNavSummary, PageNavSummary } from "../library/types";
 import { RegionClient, RegionClientError } from "../region/client";
 import type {
   ListRegionRevisionsResult,
@@ -74,6 +74,16 @@ export function WorkbenchPage({ invoke }: WorkbenchPageProps) {
   const [books, setBooks] = useState<BookSummary[]>([]);
   const [booksError, setBooksError] = useState<string | null>(null);
   const [selectedBookId, setSelectedBookId] = useState<string | null>(null);
+  // M2-PAGE-NAV-PROJECTION-1: three-level drill-down state (book -> chapter
+  // -> page over the read-only navigation projections). Expand/collapse is
+  // pure local UI state; Core is never written through this face.
+  const [chapters, setChapters] = useState<ChapterNavSummary[]>([]);
+  const [chaptersBusy, setChaptersBusy] = useState(false);
+  const [chaptersError, setChaptersError] = useState<string | null>(null);
+  const [selectedChapterId, setSelectedChapterId] = useState<string | null>(null);
+  const [pages, setPages] = useState<PageNavSummary[]>([]);
+  const [pagesBusy, setPagesBusy] = useState(false);
+  const [pagesError, setPagesError] = useState<string | null>(null);
   const [pageId, setPageId] = useState("");
   const [regions, setRegions] = useState<RegionSummary[]>([]);
   const [pageSize, setPageSize] = useState<{ width: number; height: number } | null>(null);
@@ -109,6 +119,8 @@ export function WorkbenchPage({ invoke }: WorkbenchPageProps) {
   selectedRegionIdRef.current = selectedRegionId;
   const pageEpochRef = useRef(0);
   const regionReadRef = useRef(0);
+  const chapterReadRef = useRef(0);
+  const pageNavReadRef = useRef(0);
   const historyReadRef = useRef(0);
   const operationRef = useRef(0);
   const actionBusyRef = useRef(false);
@@ -214,6 +226,87 @@ export function WorkbenchPage({ invoke }: WorkbenchPageProps) {
       cancelled = true;
     };
   }, [clients]);
+
+  // M2-PAGE-NAV-PROJECTION-1: chapters of the selected book through the
+  // frozen read-only projection. A null selection collapses the drill-down;
+  // switching books resets the chapter selection with the list.
+  useEffect(() => {
+    const signal = { cancelled: false };
+    setSelectedChapterId(null);
+    if (!selectedBookId) {
+      setChapters([]);
+      setChaptersBusy(false);
+      setChaptersError(null);
+      return;
+    }
+    const requestId = ++chapterReadRef.current;
+    const isCurrent = () => !signal.cancelled && requestId === chapterReadRef.current;
+    // DSH r1 PR-06: drop the previous book's rows IMMEDIATELY (not only on
+    // the reply). Otherwise the stale rows stay rendered and clickable in
+    // the loading window, so a click could re-introduce a dangling
+    // selectedChapterId for a chapter that belongs to the OLD book.
+    setChapters([]);
+    setChaptersBusy(true);
+    setChaptersError(null);
+    clients.library
+      .listChapters(selectedBookId)
+      .then((rows) => {
+        if (!isCurrent()) return;
+        setChapters(rows);
+        setChaptersBusy(false);
+        setChaptersError(null);
+      })
+      .catch((error: unknown) => {
+        if (!isCurrent()) return;
+        setChapters([]);
+        setChaptersBusy(false);
+        setChaptersError(
+          error instanceof LibraryClientError ? error.code : "PAGE_NAV_UNAVAILABLE",
+        );
+      });
+    return () => {
+      signal.cancelled = true;
+    };
+  }, [clients, selectedBookId]);
+
+  // M2-PAGE-NAV-PROJECTION-1: pages of the selected chapter (second
+  // drill-down level). Clicking a page is handled by the panel through
+  // onPageIdChange and joins the existing resolve -> image chain.
+  useEffect(() => {
+    const signal = { cancelled: false };
+    if (!selectedChapterId) {
+      setPages([]);
+      setPagesBusy(false);
+      setPagesError(null);
+      return;
+    }
+    const requestId = ++pageNavReadRef.current;
+    const isCurrent = () => !signal.cancelled && requestId === pageNavReadRef.current;
+    // Same immediate-drop discipline as the chapter loop above: the old
+    // chapter's rows must not stay clickable while the new list loads.
+    setPages([]);
+    setPagesBusy(true);
+    setPagesError(null);
+    clients.library
+      .listChapterPages(selectedChapterId)
+      .then((rows) => {
+        if (!isCurrent()) return;
+        setPages(rows);
+        setPagesBusy(false);
+        setPagesError(null);
+      })
+      .catch((error: unknown) => {
+        if (!isCurrent()) return;
+        setPages([]);
+        setPagesBusy(false);
+        setPagesError(
+          error instanceof LibraryClientError ? error.code : "PAGE_NAV_UNAVAILABLE",
+        );
+      });
+    return () => {
+      signal.cancelled = true;
+    };
+  }, [clients, selectedChapterId]);
 
   // M2-PAGE-RESOURCE-RESOLVE-1: resolve the page's managed original to its
   // catalog key and feed the existing image loader automatically; the manual
@@ -382,6 +475,17 @@ export function WorkbenchPage({ invoke }: WorkbenchPageProps) {
     }
     selectedRegionIdRef.current = regionId;
     setSelectedRegionId(regionId);
+  }, []);
+
+  // M2-PAGE-NAV-PROJECTION-1: drill-down selection toggles. Clicking the
+  // open book/chapter again collapses that level (local UI state; the
+  // effects above own the reads and resets).
+  const onSelectBook = useCallback((bookId: string) => {
+    setSelectedBookId((current) => (current === bookId ? null : bookId));
+  }, []);
+
+  const onSelectChapter = useCallback((chapterId: string) => {
+    setSelectedChapterId((current) => (current === chapterId ? null : chapterId));
   }, []);
 
   const onPageIdChange = useCallback((nextPageId: string) => {
@@ -732,9 +836,17 @@ export function WorkbenchPage({ invoke }: WorkbenchPageProps) {
         <PageListPanel
           books={books}
           selectedBookId={selectedBookId}
+          chapters={chapters}
+          chaptersBusy={chaptersBusy}
+          chaptersError={chaptersError}
+          selectedChapterId={selectedChapterId}
+          pages={pages}
+          pagesBusy={pagesBusy}
+          pagesError={pagesError}
           pageId={pageId}
           onPageIdChange={onPageIdChange}
-          onSelectBook={setSelectedBookId}
+          onSelectBook={onSelectBook}
+          onSelectChapter={onSelectChapter}
         />
         <ViewerPanel
           imageUrl={imageUrl}

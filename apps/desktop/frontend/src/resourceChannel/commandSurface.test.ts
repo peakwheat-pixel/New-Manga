@@ -11,10 +11,10 @@ import { ResourceChannelClient } from "./client";
  *   ONLY (issue has no TTL parameter shape); the M2-IPC1 production-only
  *   pair (core_ping / library_list_books), the M2-SETTINGS-IPC-CHANNEL
  *   settings pair (settings_get / settings_update_section, contract M2-C1
- *   rev 1.3 §5.3) and the M2-REGION-RETYPE-CORE region pair (set_region_type
- *   / list_regions, contract rev 1.4 §5.4 — pin 补录 deferred to this Task,
- *   now landed by M2-WORKBENCH-REACT-1) ride the same production arm and are
- *   likewise absent from every test-mode surface;
+ *   rev 1.3 §5.3) and the DOMAIN production-only family (region
+ *   retype/read/history/restore/rerender + the page resolve, rev 1.7, +
+ *   the page navigation projections, rev 1.8 §5) ride the same production
+ *   arm and are likewise absent from every test-mode surface;
  * - probe_config / probe_write_results / probe_exit / probe_issue_url exist
  *   only in probe mode;
  * - register_catalog exists in NO mode (catalog is Core/SQLite authority);
@@ -33,8 +33,10 @@ const AC1_TEST_COMMANDS = ["ac1_request", "ac1_write_results", "ac1_exit"];
 const SETTINGS_PRODUCTION_ONLY_COMMANDS = ["settings_get", "settings_update_section"];
 // M2-RC4: region retype/read, revision history/restore and rerender are
 // production-only. M2-PAGE-RESOURCE-RESOLVE-1 adds the page display image
-// resolve to the same production-only family (hence the DOMAIN_ name:
-// the family is no longer region-only). The probe surface remains frozen.
+// resolve and M2-PAGE-NAV-PROJECTION-1 adds the page navigation
+// projections (list_chapters / list_chapter_pages, contract rev 1.8 §5) to
+// the same production-only family (hence the DOMAIN_ name: the family is
+// no longer region-only). The probe surface remains frozen.
 const DOMAIN_PRODUCTION_ONLY_COMMANDS = [
   "set_region_type",
   "list_regions",
@@ -42,6 +44,8 @@ const DOMAIN_PRODUCTION_ONLY_COMMANDS = [
   "restore_region_revision",
   "rerender_page",
   "resolve_page_resource",
+  "list_chapters",
+  "list_chapter_pages",
 ];
 
 type Mode = "production" | "probe";
@@ -49,15 +53,19 @@ type Mode = "production" | "probe";
 function makeSurfaceInvoke(mode: Mode) {
   const calls: { command: string; args: Record<string, unknown> }[] = [];
   const invoke = vi.fn(async (command: string, args?: Record<string, unknown>) => {
-    // production arm = the three resource-channel commands + the M2-IPC1
-    // pair (core_ping / library_list_books) + the M2-SETTINGS-IPC-CHANNEL
-    // settings pair (settings_get / settings_update_section) + the
-    // region command face (retype/read/revision/history/restore/rerender);
-    // the probe arm keeps the frozen RC2 shape (settings/region pairs
-    // absent, four probe commands added) — mirroring main.rs
-    // command_allowlist.
+    // production arm = the three resource-channel commands + the
+    // M2-SETTINGS-IPC-CHANNEL settings pair (settings_get /
+    // settings_update_section) + the DOMAIN production-only command face
+    // (region retype/read/history/restore/rerender + the page resolve,
+    // rev 1.7 + the page navigation projections, rev 1.8); the probe arm
+    // keeps the frozen RC2 shape (settings/domain pairs absent, four probe
+    // commands added) — mirroring main.rs command_allowlist.
     const available = [
       ...PRODUCTION_COMMANDS,
+      // r2 N-03: the mock now mirrors the docstring -- the M2-IPC1 pair
+      // rides the production arm too (no test case invokes them here; the
+      // deny matrix for the probe arm is what the frozen-shape pins cover).
+      ...(mode === "production" ? ["core_ping", "library_list_books"] : []),
       ...(mode === "production" ? SETTINGS_PRODUCTION_ONLY_COMMANDS : []),
       ...(mode === "production" ? DOMAIN_PRODUCTION_ONLY_COMMANDS : []),
       ...(mode === "probe" ? PROBE_ONLY_COMMANDS : []),
@@ -117,6 +125,12 @@ function makeSurfaceInvoke(mode: Mode) {
       // contract M2-C1 rev 1.7 (M2-PAGE-RESOURCE-RESOLVE-1): the stable
       // {resource_id, revision} catalog-key pair
       return { resource_id: "page-original-page-1", revision: "original" };
+    }
+    if (command === "list_chapters" || command === "list_chapter_pages") {
+      // contract M2-C1 rev 1.8 (M2-PAGE-NAV-PROJECTION-1): the read-only
+      // navigation projections (empty fail-soft lists here -- the wrapper
+      // shape is what this matrix pins)
+      return command === "list_chapters" ? { chapters: [] } : { pages: [] };
     }
     if (command === "issue_resource_url") {
       // host-side hardening (compile-time in Rust): an unknown key such as
@@ -194,9 +208,10 @@ describe("RC2 command surface allow/deny matrix", () => {
     }
   });
 
-  // The complete frozen region command face rides production and remains
-  // absent from probe and acceptance surfaces.
-  it("region commands are allowed on production and denied on the probe surface", async () => {
+  // The complete frozen domain command face (retype/read/history/restore/
+  // rerender/resolve + the rev 1.8 navigation projections) rides production
+  // and remains absent from the probe surface.
+  it("domain commands are allowed on production and denied on the probe surface", async () => {
     expect(DOMAIN_PRODUCTION_ONLY_COMMANDS).toEqual([
       "set_region_type",
       "list_regions",
@@ -204,6 +219,8 @@ describe("RC2 command surface allow/deny matrix", () => {
       "restore_region_revision",
       "rerender_page",
       "resolve_page_resource",
+      "list_chapters",
+      "list_chapter_pages",
     ]);
     const { invoke } = makeSurfaceInvoke("production");
     await expect(
@@ -230,6 +247,12 @@ describe("RC2 command surface allow/deny matrix", () => {
     await expect(invoke("resolve_page_resource", { pageId: "page-1" })).resolves.toMatchObject({
       resource_id: "page-original-page-1",
       revision: "original",
+    });
+    await expect(invoke("list_chapters", { bookId: "book-1" })).resolves.toMatchObject({
+      chapters: [],
+    });
+    await expect(invoke("list_chapter_pages", { chapterId: "ch-1" })).resolves.toMatchObject({
+      pages: [],
     });
     const { invoke: probeInvoke } = makeSurfaceInvoke("probe");
     for (const command of DOMAIN_PRODUCTION_ONLY_COMMANDS) {
