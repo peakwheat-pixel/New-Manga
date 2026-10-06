@@ -30,8 +30,15 @@ def make_webtoon_case(local_path="ko/test"):
 def test_manifest_has_unique_cases_and_exact_taxonomy():
     manifest = assets.load_manifest()
     cases = manifest["cases"]
-    assert len(cases) == 97
-    assert len({case["case_id"] for case in cases}) == 97
+    # M2-TEST-CATALOG-DRIFT-CLEAR-1: pinning the exact total is an
+    # anti-pattern -- the suite grows append-only via authorized material
+    # tasks (97 -> 100 BJ13-15 @40a8ceec M2-SFX-E2E-MATERIAL, -> 110
+    # BJ16-25 @9b9916af ANNOTATE-R2, -> 122 BJ26-37 @579af8a5 ANNOTATE-R3).
+    # Assert the uniqueness invariant and the frozen floor instead (100 =
+    # the M2 contractual floor after E2E-MATERIAL, not the current total);
+    # per-family coverage is asserted by the sibling tests below.
+    assert len(cases) == len({case["case_id"] for case in cases})
+    assert len(cases) >= 100
     assert manifest["taxonomy"]["difficulty_tags"] == [
         "normal_dialogue", "dense_dialogue", "tiny_text", "huge_text",
         "vertical_text", "horizontal_text", "rotated_text", "curved_text",
@@ -44,12 +51,14 @@ def test_manifest_has_unique_cases_and_exact_taxonomy():
     assert all(case["levels"] == ["regression", "full"] for case in cases if case["case_id"] in {"K11", "K12", "K13"})
     # M2-TA3-A: the five smoke cases carry their exercised-chain PASS
     # statuses (literal snapshot, so a future FAIL/NOT_RUN regression on
-    # these cases turns red too); every other case must remain all-NOT_RUN
+    # these cases turns red too); M2-SFX-E2E-MATERIAL (40a8ceec) likewise
+    # left real executed states on BJ13-15 (BJ13 sfx=PASS is the SFX
+    # translate e2e closure). Every other case must remain all-NOT_RUN
     # (fail-closed).
-    ta3a_cases = {"BJ02", "BJ06", "K01", "K02", "K11"}
+    executed_cases = {"BJ02", "BJ06", "K01", "K02", "K11", "BJ13", "BJ14", "BJ15"}
     assert all(
         case["pipeline_status"] == {stage: "NOT_RUN" for stage in case["expected_pipeline"]}
-        for case in cases if case["case_id"] not in ta3a_cases
+        for case in cases if case["case_id"] not in executed_cases
     )
     expected_ta3a = {
         "BJ02": {"ocr": "PASS", "text_detection": "PASS", "region": "PASS", "reading_order": "PASS",
@@ -68,9 +77,21 @@ def test_manifest_has_unique_cases_and_exact_taxonomy():
                 "webtoon_slice_reassemble": "NOT_RUN"},
         "K11": {"ocr": "PASS", "text_detection": "PASS", "manga_page_render": "PASS"},
     }
+    expected_e2e_material = {
+        "BJ13": {"ocr": "PASS", "text_detection": "PASS", "region": "PASS", "reading_order": "PASS",
+                 "sfx": "PASS", "speaker_attribution": "NOT_RUN", "translation": "PASS",
+                 "inpainting": "PASS", "typesetting": "PASS", "manga_page_render": "PASS"},
+        "BJ14": {"ocr": "PASS", "text_detection": "PASS", "region": "PASS", "reading_order": "PASS",
+                 "sfx": "NOT_RUN", "speaker_attribution": "NOT_RUN", "translation": "PASS",
+                 "inpainting": "PASS", "typesetting": "PASS", "manga_page_render": "PASS"},
+        "BJ15": {"ocr": "PASS", "text_detection": "PASS", "region": "PASS", "reading_order": "PASS",
+                 "sfx": "NOT_RUN", "speaker_attribution": "NOT_RUN", "translation": "PASS",
+                 "inpainting": "PASS", "typesetting": "PASS", "manga_page_render": "PASS"},
+    }
+    expected_executed = {**expected_ta3a, **expected_e2e_material}
     for case in cases:
-        if case["case_id"] in ta3a_cases:
-            assert case["pipeline_status"] == expected_ta3a[case["case_id"]]
+        if case["case_id"] in executed_cases:
+            assert case["pipeline_status"] == expected_executed[case["case_id"]]
 
 
 def test_black_jack_official_cases_are_registered_with_attribution():
