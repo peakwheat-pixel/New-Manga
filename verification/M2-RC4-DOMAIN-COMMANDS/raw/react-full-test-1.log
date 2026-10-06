@@ -1,0 +1,29 @@
+SHELL=PowerShell 7.6.6
+NODE=v24.15.0
+NPM=12.0.1
+HEAD=0fba60796c83a3039a260c5790353976bc891dd7 (worktree changes present)
+COMMAND=npm test (cwd=apps/desktop/frontend)
+EXIT=0
+
+npm notice run m2rc1-frontend@0.1.0 test
+npm notice run vitest run
+
+ RUN  v2.1.9 G:/CODEX/New Manga.worktrees/RC4-react-consumer/apps/desktop/frontend
+
+ ✓ src/region/geometry.test.ts (8 tests) 3ms
+ ✓ src/ac1/driver.test.ts (3 tests) 2ms
+ ✓ src/library/client.test.ts (4 tests) 4ms
+ ✓ src/workbench/relabelMachine.test.ts (21 tests) 4ms
+ ✓ src/resourceChannel/client.test.ts (8 tests) 6ms
+ ✓ src/region/client.test.ts (15 tests) 7ms
+ ✓ src/resourceChannel/commandSurface.test.ts (10 tests) 9ms
+ ✓ src/settings/client.test.ts (7 tests) 6ms
+ ✓ src/library/LibraryPanel.test.tsx (8 tests) 136ms
+ ✓ src/settings/SettingsPanel.test.tsx (10 tests) 188ms
+ ✓ src/workbench/WorkbenchPage.test.tsx (20 tests) 230ms
+
+ Test Files  11 passed (11)
+      Tests  114 passed (114)
+   Start at  01:12:42
+   Duration  8.65s (transform 899ms, setup 0ms, collect 9.12s, tests 595ms, environment 2ms, prepare 5.40s)
+

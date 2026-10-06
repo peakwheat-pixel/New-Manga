@@ -1,0 +1,45 @@
+SHELL=PowerShell 7.6.6
+NODE=v24.15.0
+NPM=12.0.1
+HEAD=0fba60796c83a3039a260c5790353976bc891dd7
+COMMAND=npm test -- src/workbench/WorkbenchPage.test.tsx src/region/client.test.ts src/resourceChannel/commandSurface.test.ts (cwd=apps/desktop/frontend)
+EXIT=1
+
+npm notice run m2rc1-frontend@0.1.0 test
+npm notice run vitest run src/workbench/WorkbenchPage.test.tsx src/region/client.test.ts src/resourceChannel/commandSurface.test.ts
+
+ RUN  v2.1.9 G:/CODEX/New Manga.worktrees/RC4-react-consumer/apps/desktop/frontend
+
+ ✓ src/region/client.test.ts (15 tests) 6ms
+ ✓ src/resourceChannel/commandSurface.test.ts (10 tests) 8ms
+ ❯ src/workbench/WorkbenchPage.test.tsx (0 test)
+
+⎯⎯⎯⎯⎯⎯ Failed Suites 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/workbench/WorkbenchPage.test.tsx [ src/workbench/WorkbenchPage.test.tsx ]
+Error: Transform failed with 1 error:
+G:/CODEX/New Manga.worktrees/RC4-react-consumer/apps/desktop/frontend/src/workbench/WorkbenchPage.tsx:628:8: ERROR: The symbol "onRetypeRequest" has already been declared
+  Plugin: vite:esbuild
+  File: G:/CODEX/New Manga.worktrees/RC4-react-consumer/apps/desktop/frontend/src/workbench/WorkbenchPage.tsx:628:8
+  
+  The symbol "onRetypeRequest" has already been declared
+  626|    /** Entry dispatcher (§4.1): sfx->speech goes through the explicit confirm
+  627|     * dialog (A5); speech->sfx executes immediately (R2). */
+  628|    const onRetypeRequest = useCallback(
+     |          ^
+  629|      (region: RegionSummary, to: RegionType) => {
+  630|        const plan = planRetypeAction(region, to as "sfx" | "speech");
+  
+ ❯ failureErrorWithLog node_modules/esbuild/lib/main.js:1472:15
+ ❯ node_modules/esbuild/lib/main.js:755:50
+ ❯ responseCallbacks.<computed> node_modules/esbuild/lib/main.js:622:9
+ ❯ handleIncomingPacket node_modules/esbuild/lib/main.js:677:12
+ ❯ Socket.readFromStdout node_modules/esbuild/lib/main.js:600:7
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+ Test Files  1 failed | 2 passed (3)
+      Tests  25 passed (25)
+   Start at  01:06:00
+   Duration  8.18s (transform 174ms, setup 0ms, collect 154ms, tests 15ms, environment 0ms, prepare 1.37s)
+

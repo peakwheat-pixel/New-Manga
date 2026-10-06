@@ -1,0 +1,108 @@
+SHELL=PowerShell 7.6.6
+NODE=v24.15.0
+NPM=12.0.1
+HEAD=0fba60796c83a3039a260c5790353976bc891dd7 (worktree changes present)
+COMMAND=npm test -- src/workbench/WorkbenchPage.test.tsx src/region/client.test.ts src/resourceChannel/commandSurface.test.ts (cwd=apps/desktop/frontend)
+EXIT=1
+
+npm notice run m2rc1-frontend@0.1.0 test
+npm notice run vitest run src/workbench/WorkbenchPage.test.tsx src/region/client.test.ts src/resourceChannel/commandSurface.test.ts
+
+ RUN  v2.1.9 G:/CODEX/New Manga.worktrees/RC4-react-consumer/apps/desktop/frontend
+
+ ✓ src/region/client.test.ts (15 tests) 6ms
+ ✓ src/resourceChannel/commandSurface.test.ts (10 tests) 9ms
+ ❯ src/workbench/WorkbenchPage.test.tsx (20 tests | 5 failed) 145ms
+   × RC-4 Workbench actual DOM actions > clicks relabel, undoes through guarded restore, confirms history restore, then loads the render preview 88ms
+     → target.click is not a function
+   × RC-4 Workbench actual DOM actions > shows a typed retype failure after the actual Inspector click 13ms
+     → target.click is not a function
+   × RC-4 Workbench actual DOM actions > expires the undo click affordance at ten seconds 12ms
+     → target.click is not a function
+   × RC-4 Workbench actual DOM actions > invalidates undo on page change and ignores a late result from the previous page 11ms
+     → target.click is not a function
+   × RC-4 Workbench actual DOM actions > keeps preview publication failure separate from committed render failure 11ms
+     → target.click is not a function
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 5 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/workbench/WorkbenchPage.test.tsx > RC-4 Workbench actual DOM actions > clicks relabel, undoes through guarded restore, confirms history restore, then loads the render preview
+TypeError: target.click is not a function
+ ❯ src/workbench/WorkbenchPage.test.tsx:91:14
+     89|     if (!target) throw new Error(`missing test target: ${testId}`);
+     90|     await act(async () => {
+     91|       target.click();
+       |              ^
+     92|       await nextTurn();
+     93|     });
+ ❯ Proxy.act node_modules/react/cjs/react.development.js:2512:16
+ ❯ Object.click src/workbench/WorkbenchPage.test.tsx:90:11
+ ❯ src/workbench/WorkbenchPage.test.tsx:453:16
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/5]⎯
+
+ FAIL  src/workbench/WorkbenchPage.test.tsx > RC-4 Workbench actual DOM actions > shows a typed retype failure after the actual Inspector click
+TypeError: target.click is not a function
+ ❯ src/workbench/WorkbenchPage.test.tsx:91:14
+     89|     if (!target) throw new Error(`missing test target: ${testId}`);
+     90|     await act(async () => {
+     91|       target.click();
+       |              ^
+     92|       await nextTurn();
+     93|     });
+ ❯ Proxy.act node_modules/react/cjs/react.development.js:2512:16
+ ❯ Object.click src/workbench/WorkbenchPage.test.tsx:90:11
+ ❯ src/workbench/WorkbenchPage.test.tsx:507:16
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/5]⎯
+
+ FAIL  src/workbench/WorkbenchPage.test.tsx > RC-4 Workbench actual DOM actions > expires the undo click affordance at ten seconds
+TypeError: target.click is not a function
+ ❯ src/workbench/WorkbenchPage.test.tsx:91:14
+     89|     if (!target) throw new Error(`missing test target: ${testId}`);
+     90|     await act(async () => {
+     91|       target.click();
+       |              ^
+     92|       await nextTurn();
+     93|     });
+ ❯ Proxy.act node_modules/react/cjs/react.development.js:2512:16
+ ❯ Object.click src/workbench/WorkbenchPage.test.tsx:90:11
+ ❯ src/workbench/WorkbenchPage.test.tsx:523:16
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/5]⎯
+
+ FAIL  src/workbench/WorkbenchPage.test.tsx > RC-4 Workbench actual DOM actions > invalidates undo on page change and ignores a late result from the previous page
+TypeError: target.click is not a function
+ ❯ src/workbench/WorkbenchPage.test.tsx:91:14
+     89|     if (!target) throw new Error(`missing test target: ${testId}`);
+     90|     await act(async () => {
+     91|       target.click();
+       |              ^
+     92|       await nextTurn();
+     93|     });
+ ❯ Proxy.act node_modules/react/cjs/react.development.js:2512:16
+ ❯ Object.click src/workbench/WorkbenchPage.test.tsx:90:11
+ ❯ src/workbench/WorkbenchPage.test.tsx:542:16
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/5]⎯
+
+ FAIL  src/workbench/WorkbenchPage.test.tsx > RC-4 Workbench actual DOM actions > keeps preview publication failure separate from committed render failure
+TypeError: target.click is not a function
+ ❯ src/workbench/WorkbenchPage.test.tsx:91:14
+     89|     if (!target) throw new Error(`missing test target: ${testId}`);
+     90|     await act(async () => {
+     91|       target.click();
+       |              ^
+     92|       await nextTurn();
+     93|     });
+ ❯ Proxy.act node_modules/react/cjs/react.development.js:2512:16
+ ❯ Object.click src/workbench/WorkbenchPage.test.tsx:90:11
+ ❯ src/workbench/WorkbenchPage.test.tsx:571:16
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/5]⎯
+
+ Test Files  1 failed | 2 passed (3)
+      Tests  5 failed | 40 passed (45)
+   Start at  01:07:02
+   Duration  1.06s (transform 187ms, setup 0ms, collect 698ms, tests 160ms, environment 0ms, prepare 373ms)
+
