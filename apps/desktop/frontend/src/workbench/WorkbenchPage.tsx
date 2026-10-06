@@ -307,6 +307,8 @@ export function WorkbenchPage({ invoke }: WorkbenchPageProps) {
       signal.cancelled = true;
     };
   }, [clients, selectedChapterId]);
+
+  // M2-PAGE-RESOURCE-RESOLVE-1: resolve the page's managed original to its
   // catalog key and feed the existing image loader automatically; the manual
   // resource inputs stay as the debug fallback (a resolve failure leaves
   // them authoritative, so previews still load by hand).

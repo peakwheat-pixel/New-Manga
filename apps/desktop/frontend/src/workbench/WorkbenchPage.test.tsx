@@ -916,14 +916,20 @@ describe("RC-4 Workbench actual DOM actions", () => {
     }
   });
 
-  it("resets the chapter selection when switching books, so no stale chapter stays clickable (DSH r1 PR-06)", async () => {
+  it("resets the chapter selection when switching books, so no stale chapter stays clickable (DSH r1 PR-06, r2 N-01)", async () => {
+    // The regression window this test must exercise: book-b's reply has NOT
+    // landed yet. If the switch-book branch only cleared the selection and
+    // not the rows, book-a's stale rows would stay rendered and clickable
+    // here (a click would re-introduce a dangling chapter id).
+    let resolveBookB!: (value: unknown) => void;
+    const pendingBookB = new Promise<unknown>((resolve) => { resolveBookB = resolve; });
     const { invoke } = makeInteractiveInvoke({
       onBooks: () => [BOOK_A_ROW, BOOK_B_ROW],
-      onListChapters: (args) => Promise.resolve({
-        chapters: String(args.bookId) === "book-a"
-          ? [{ chapter_id: "ch-a", title: "A first", chapter_number: "1", sort_order: 1 }]
-          : [{ chapter_id: "ch-b", title: "B first", chapter_number: "1", sort_order: 1 }],
-      }),
+      onListChapters: (args) => String(args.bookId) === "book-a"
+        ? Promise.resolve({
+            chapters: [{ chapter_id: "ch-a", title: "A first", chapter_number: "1", sort_order: 1 }],
+          })
+        : pendingBookB,
       onListChapterPages: () => Promise.resolve({
         pages: [{ page_id: "p-a", source_filename: "a.png", sort_order: 1 }],
       }),
@@ -934,14 +940,22 @@ describe("RC-4 Workbench actual DOM actions", () => {
       await ui.click("chapter-tile-ch-a");
       expect(ui.container.querySelector('[data-testid="page-nav-list"]')).not.toBeNull();
 
-      // switching books must collapse the page level IMMEDIATELY (before
-      // book-b's chapters even arrive) and render only book-b's rows
+      // switching books must collapse the page level and drop book-a's rows
+      // IMMEDIATELY -- book-b's reply is still pending, so nothing but the
+      // immediate clear can explain what the next assertions see
       await ui.click("book-tile-book-b");
       expect(ui.container.querySelector('[data-testid="page-nav-list"]')).toBeNull();
+      expect(ui.container.querySelector('[data-testid="chapter-tile-ch-a"]')).toBeNull();
+      expect(ui.container.querySelector('[data-testid="chapters-busy"]')).not.toBeNull();
+
+      // book-b's reply lands and only its own rows render
+      resolveBookB({ chapters: [{ chapter_id: "ch-b", title: "B first", chapter_number: "1", sort_order: 1 }] });
+      await act(async () => { await nextTurn(); });
       expect(ui.container.querySelector('[data-testid="chapter-tile-ch-b"]')).not.toBeNull();
       expect(ui.container.querySelector('[data-testid="chapter-tile-ch-a"]')).toBeNull();
-      expect(ui.container.querySelector('[data-testid="pages-busy"]')).toBeNull();
+      expect(ui.container.querySelector('[data-testid="chapters-busy"]')).toBeNull();
     } finally {
+      resolveBookB({ chapters: [] });
       await ui.unmount();
     }
   });

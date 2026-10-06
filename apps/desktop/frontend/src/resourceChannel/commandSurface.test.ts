@@ -53,15 +53,19 @@ type Mode = "production" | "probe";
 function makeSurfaceInvoke(mode: Mode) {
   const calls: { command: string; args: Record<string, unknown> }[] = [];
   const invoke = vi.fn(async (command: string, args?: Record<string, unknown>) => {
-    // production arm = the three resource-channel commands + the M2-IPC1
-    // pair (core_ping / library_list_books) + the M2-SETTINGS-IPC-CHANNEL
-    // settings pair (settings_get / settings_update_section) + the
-    // region command face (retype/read/revision/history/restore/rerender);
-    // the probe arm keeps the frozen RC2 shape (settings/region pairs
-    // absent, four probe commands added) — mirroring main.rs
-    // command_allowlist.
+    // production arm = the three resource-channel commands + the
+    // M2-SETTINGS-IPC-CHANNEL settings pair (settings_get /
+    // settings_update_section) + the DOMAIN production-only command face
+    // (region retype/read/history/restore/rerender + the page resolve,
+    // rev 1.7 + the page navigation projections, rev 1.8); the probe arm
+    // keeps the frozen RC2 shape (settings/domain pairs absent, four probe
+    // commands added) — mirroring main.rs command_allowlist.
     const available = [
       ...PRODUCTION_COMMANDS,
+      // r2 N-03: the mock now mirrors the docstring -- the M2-IPC1 pair
+      // rides the production arm too (no test case invokes them here; the
+      // deny matrix for the probe arm is what the frozen-shape pins cover).
+      ...(mode === "production" ? ["core_ping", "library_list_books"] : []),
       ...(mode === "production" ? SETTINGS_PRODUCTION_ONLY_COMMANDS : []),
       ...(mode === "production" ? DOMAIN_PRODUCTION_ONLY_COMMANDS : []),
       ...(mode === "probe" ? PROBE_ONLY_COMMANDS : []),

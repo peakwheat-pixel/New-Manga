@@ -88,21 +88,27 @@ describe("<PageListPanel> three-level drill-down (M2-PAGE-NAV-PROJECTION-1)", ()
     expect(empty).toContain('data-testid="chapter-list-empty"');
   });
 
-  it("renders page tiles with the current-page highlight once a chapter is selected", () => {
+  it("renders page tiles and highlights only the current page once a chapter is selected", () => {
     // renderToString never fires events, so the page-tile -> onPageIdChange
     // WIRING is pinned at the integration layer (WorkbenchPage.test.tsx
     // clicks page-tile-* and asserts the resolve -> image chain); this
-    // static case only pins what the panel renders per its props.
+    // static case pins what the panel renders per its props, including the
+    // selected-page highlight (r2 N-05: the claim now carries an assertion).
     const html = renderPanel({
       selectedBookId: "book-1",
       chapters: [CHAPTER],
       selectedChapterId: "ch-1",
-      pages: [PAGE],
+      pages: [PAGE, { ...PAGE, page_id: "p-2", source_filename: "002.png", sort_order: 2 }],
       pageId: "p-1",
     });
     expect(html).toContain('data-testid="page-nav-list"');
     expect(html).toContain('data-testid="page-tile-p-1"');
-    expect(html).toContain("001.png");
+    expect(html).toContain('data-testid="page-tile-p-2"');
+    // the selected-page highlight lands on exactly the current page's tile
+    const tileMarkup = (testId: string) =>
+      html.match(new RegExp(`<button[^>]*data-testid="${testId}"[^>]*>`))?.[0] ?? "";
+    expect(tileMarkup("page-tile-p-1")).toContain("background:#1c2430");
+    expect(tileMarkup("page-tile-p-2")).not.toContain("background:#1c2430");
     expect(html).not.toContain('data-testid="pages-busy"');
     expect(html).not.toContain('data-testid="pages-error"');
     expect(html).not.toContain('data-testid="page-nav-list-empty"');

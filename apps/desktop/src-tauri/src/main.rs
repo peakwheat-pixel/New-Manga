@@ -965,7 +965,7 @@ mod tests {
     /// artifact: the app manifest declares exactly the live commands
     /// (fifteen production -- resource-channel, IPC1, settings, retype,
     /// RC-4, the page resolve and the page navigation projections -- plus
-    /// three M2-AC1 acceptance; R2-06),
+    /// four probe-only and three M2-AC1 acceptance commands; R2-06),
     /// and no plugin-shaped surface remains.
     #[test]
     fn app_acl_manifest_is_generated_and_enforced() {
