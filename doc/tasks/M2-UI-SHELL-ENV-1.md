@@ -2,7 +2,7 @@
 id: M2-UI-SHELL-ENV-1
 title: ui_shell QML 事件投递环境敏感失败定性+Quick 后端固定（test-debt）
 kind: test-debt
-status: in_progress
+status: done
 approval: user_2026-10-07_autonomous_mode_continuation
 suggested_owner: Codex Executor
 owner: Codex Executor
@@ -12,7 +12,7 @@ depends_on: [T3.2.1-REPAIR-13]
 base_commit: 76379af2
 branch: main（测试基础设施单文件修复，直落 main）
 worktree: G:/CODEX/New Manga
-integration_commit: null
+integration_commit: 195995bb
 ---
 
 # M2-UI-SHELL-ENV-1
