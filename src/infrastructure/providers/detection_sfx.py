@@ -410,12 +410,37 @@ def _tile_config() -> _TileConfig:
 # request whose session build fails stays a typed ``ProviderError`` — no
 # fallback out of an explicit request. The fallback above covers INIT only
 # (r2 N-P3-1 narrowing): the wrapper ALSO retries internally at run() time —
-# an ``ORT EPFail`` mid-inference is silently retried on CPU inside
-# ``InferenceSession.run`` (wrapper ``:278-305``) and is NOT re-audited by
-# the three-key read-back (re-reading providers per detect was judged too
-# costly; registered as a known unaudited channel / candidate slice). A
-# session that BUILT but fails at run() time with anything other than that
-# wrapper-internal retry keeps the existing typed detect-time failure path.
+# an ``ORT EPFail`` mid-inference is caught by ``InferenceSession.run``
+# (wrapper ``:278-305``), which calls ``set_providers(
+# self._fallback_providers)`` (a CPU list for a dml request), disables the
+# fallback (it fires ONCE per session) and re-runs on CPU, returning
+# NORMALLY — no exception reaches the caller, only two stdout ``print``
+# lines that the frozen face drops (r2 N-P4-2). That run-time channel is
+# audited SINCE M2-SFX-EPFAIL-AUDIT-1: the wrapper's ``set_providers`` call
+# rewrites the session's provider list, and that change is observable
+# through the PUBLIC ``get_providers()`` read-back (wrapper :214-216 — a
+# pure Python attribute read, measured 0.03 us/call on the production wheel
+# + v2b weights, DML and CPU sessions alike; a DML session's post-build
+# read-back is ``[Dml, CPU]``, after the run-time fallback ``[CPU]``). Every
+# detect reads the providers back ONCE and compares the first name against
+# the ENGINE-BUILD effective name: unchanged = steady state, nothing is
+# added; changed = the key ``sfx_ep_runtime_check`` joins the options
+# ("session providers changed at run time: <built> -> <now> (ORT wrapper
+# run-time EPFail fallback)"). The silent-success shape is observed on the
+# SAME page (the read-back happens after run); a re-run that also fails
+# keeps the existing typed detect-time failure (no options that page) and
+# the changed provider list is observed on the NEXT successful detect —
+# session state, not a per-page event. The three-key provenance above keeps
+# its ENGINE-BUILD semantics and write point verbatim (``device``/``sfx_ep``
+# /``sfx_ep_fallback`` are NOT rewritten to the run-time state; the runtime
+# key is additive). A session object without a provider read-back face (a
+# bare test double) skips the runtime check — the build gate already
+# requires the same surface on every real session, so the audit never
+# becomes a new failure point. Rejected designs are registered in the Task
+# deploy record (exception-triggered read-back misses the silent-success
+# shape; sampled read-back adds an env knob for no gain at 0.03 us/call;
+# private-attribute probing rides wrapper internals the public API already
+# exposes).
 #
 # Cache semantics: the EP is an ENGINE-level property (providers are fixed at
 # InferenceSession construction), so the resolved env rides the first
@@ -474,6 +499,53 @@ class _EpProvenance:
     requested: str
     effective: str
     fallback_reason: str | None = None
+
+
+def _runtime_ep_audit(
+    session: Any, ep_prov: _EpProvenance
+) -> tuple[tuple[str, str], ...]:
+    """The run-time EPFail channel audit (M2-SFX-EPFAIL-AUDIT-1, AC1).
+
+    The ORT wrapper's ``InferenceSession.run`` catches ``C.EPFail``,
+    switches the session to its CPU fallback list via ``set_providers`` and
+    re-runs, returning NORMALLY (no exception reaches the caller; its only
+    own signal is two stdout lines the frozen face drops — r2 N-P4-2). The
+    observable face is therefore the session's provider list itself: the
+    public ``get_providers()`` read-back (a pure Python attribute read,
+    measured 0.03 us/call on the production wheel — negligible against the
+    1%-per-page latency budget) shows ``[Dml, CPU]`` after a dml build and
+    ``[CPU]`` once the wrapper's run-time fallback has fired.
+
+    Returns an EMPTY tuple in the steady state (the read-back still matches
+    the engine-build effective provider) — the detect options stay
+    byte-identical to the pre-audit form — and a single
+    ``sfx_ep_runtime_check`` entry when the session's first provider no
+    longer matches the build: the silent-success shape is observed on the
+    same page (the read-back runs after ``run``), a failed re-run surfaces
+    through the next successful detect (session state persists). The
+    three-key provenance keeps its engine-build semantics and write point;
+    this key is ADDITIVE. A session without a ``get_providers`` face (a
+    bare test double) skips the check — never a new failure point.
+    """
+    read_back = getattr(session, "get_providers", None)
+    if read_back is None:
+        return ()
+    providers = read_back()
+    if not providers:
+        return ()
+    built_name = _EP_PROVIDER_NAMES.get(ep_prov.effective, ep_prov.effective)
+    current_name = providers[0]
+    if current_name == built_name:
+        return ()
+    current_token = _EP_MODE_BY_PROVIDER_NAME.get(current_name, current_name)
+    return (
+        (
+            "sfx_ep_runtime_check",
+            "session providers changed at run time: "
+            f"{ep_prov.effective} -> {current_token} "
+            "(ORT wrapper run-time EPFail fallback)",
+        ),
+    )
 
 
 def _routes_to_tile(page_w: int, page_h: int, cfg: _TileConfig) -> bool:
@@ -721,6 +793,11 @@ class SfxDetectionProvider:
         )
         if imgsz_source == SFX_IMGSZ_SOURCE_FALLBACK and imgsz_raw:
             imgsz_options = imgsz_options + (("imgsz_metadata_raw", imgsz_raw),)
+        # M2-SFX-EPFAIL-AUDIT-1: the run-time EPFail channel read-back —
+        # steady state adds NOTHING, a wrapper run-time fallback adds the
+        # single ``sfx_ep_runtime_check`` key (the three-key provenance above
+        # keeps its engine-build values verbatim).
+        runtime_options = _runtime_ep_audit(session, ep_prov)
         elapsed_ms = int((time.perf_counter() - started) * 1000)
         return DetectionResult(
             page_id=request.page_id,
@@ -738,6 +815,7 @@ class SfxDetectionProvider:
                     if ep_prov.fallback_reason
                     else ()
                 ),
+                *runtime_options,
                 ("conf_threshold", str(self.conf_threshold)),
                 ("nms_iou", str(SFX_NMS_IOU)),
                 *imgsz_options,
