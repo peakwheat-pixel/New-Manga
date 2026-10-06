@@ -42,12 +42,24 @@ const INTERACTIVE_REGION: RegionSummary = {
   geometry: { bbox: [0.1, 0.2, 0.3, 0.4], polygon: [] },
 };
 
+const PREVIEW_PNG_BYTES = Uint8Array.from([
+  0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a,
+  0x00, 0x00, 0x00, 0x0d, 0x49, 0x48, 0x44, 0x52,
+  0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x01,
+  0x08, 0x06, 0x00, 0x00, 0x00, 0x1f, 0x15, 0xc4, 0x89,
+  0x00, 0x00, 0x00, 0x0b, 0x49, 0x44, 0x41, 0x54,
+  0x78, 0x9c, 0x63, 0x60, 0x00, 0x02, 0x00, 0x00, 0x05, 0x00, 0x01,
+  0xa5, 0xf6, 0x45, 0x40,
+  0x00, 0x00, 0x00, 0x00, 0x49, 0x45, 0x4e, 0x44, 0xae, 0x42, 0x60, 0x82,
+]);
+
 async function nextTurn() {
   for (let i = 0; i < 8; i += 1) await Promise.resolve();
 }
 
 async function mountInteractiveWorkbench(
   invoke: (command: string, args?: Record<string, unknown>) => Promise<unknown>,
+  options: { resourceFetch?: typeof fetch } = {},
 ) {
   const dom = new JSDOM("<!doctype html><html><body></body></html>", { url: "http://localhost" });
   Object.defineProperty(dom.window.HTMLElement.prototype, "clientWidth", {
@@ -58,13 +70,19 @@ async function mountInteractiveWorkbench(
     configurable: true,
     get: () => 100,
   });
+  const createdBlobs: Blob[] = [];
+  const revokedUrls: string[] = [];
+  const resourceReads: string[] = [];
   Object.defineProperty(dom.window.URL, "createObjectURL", {
     configurable: true,
-    value: () => "blob:rc4-preview",
+    value: (blob: Blob) => {
+      createdBlobs.push(blob);
+      return `blob:rc4-preview-${createdBlobs.length}`;
+    },
   });
   Object.defineProperty(dom.window.URL, "revokeObjectURL", {
     configurable: true,
-    value: () => undefined,
+    value: (url: string) => { revokedUrls.push(url); },
   });
   vi.stubGlobal("window", dom.window);
   vi.stubGlobal("document", dom.window.document);
@@ -73,6 +91,13 @@ async function mountInteractiveWorkbench(
   vi.stubGlobal("Element", dom.window.Element);
   vi.stubGlobal("HTMLElement", dom.window.HTMLElement);
   vi.stubGlobal("URL", dom.window.URL);
+  vi.stubGlobal("fetch", options.resourceFetch ?? (async (input: RequestInfo | URL) => {
+    resourceReads.push(String(input));
+    return new Response(PREVIEW_PNG_BYTES.slice(), {
+      status: 200,
+      headers: { "content-type": "image/png" },
+    });
+  }));
   vi.stubGlobal("IS_REACT_ACT_ENVIRONMENT", true);
 
   const { createRoot } = await import("react-dom/client");
@@ -112,11 +137,12 @@ async function mountInteractiveWorkbench(
     vi.useRealTimers();
     vi.unstubAllGlobals();
   };
-  return { dom, container, click, input, unmount };
+  return { dom, container, click, input, createdBlobs, revokedUrls, resourceReads, unmount };
 }
 
 function makeInteractiveInvoke(options: {
   onRetype?: (args: Record<string, unknown>) => Promise<unknown>;
+  onIssue?: (args: Record<string, unknown>) => Promise<unknown>;
   rerender?: () => unknown;
 } = {}) {
   const rows = new Map<string, RegionSummary[]>([
@@ -185,9 +211,11 @@ function makeInteractiveInvoke(options: {
       preview_error: null,
     };
     if (command === "issue_resource_url") return {
-      url: "http://m2res.localhost/m2id/opaque",
-      size: 0,
-      opaque_id: "opaque",
+      ...(await options.onIssue?.(args) ?? {
+        url: `http://m2res.localhost/m2id/${String(args.resourceId)}`,
+        size: PREVIEW_PNG_BYTES.byteLength,
+        opaque_id: String(args.resourceId),
+      }),
     };
     return null;
   });
@@ -455,6 +483,7 @@ describe("RC-4 Workbench actual DOM actions", () => {
     try {
       await ui.input("page-id-input", "page-1");
       await ui.click("region-frame-region-1");
+      expect(ui.container.textContent).toContain("撤销仅在改标后 10 秒内、当前页且没有新操作时可用");
       await ui.click("inspector-toggle-suspect");
       await ui.click("inspector-mark-sfx");
       expect(ui.container.querySelector('[data-testid="feedback-undo"]')).not.toBeNull();
@@ -496,7 +525,11 @@ describe("RC-4 Workbench actual DOM actions", () => {
         revision: "rev-8",
       });
       expect(ui.container.querySelector('[data-testid="viewer-image"]')?.getAttribute("src"))
-        .toBe("blob:rc4-preview");
+        .toBe("blob:rc4-preview-1");
+      expect(ui.resourceReads).toContain("http://m2res.localhost/m2id/preview-1?chunk=0");
+      expect(ui.createdBlobs).toHaveLength(1);
+      expect(ui.createdBlobs[0].size).toBe(PREVIEW_PNG_BYTES.byteLength);
+      expect(new Uint8Array(await ui.createdBlobs[0].arrayBuffer())).toEqual(PREVIEW_PNG_BYTES);
       expect(ui.container.textContent).toContain("已重渲染并加载预览");
     } finally {
       await ui.unmount();
@@ -560,6 +593,108 @@ describe("RC-4 Workbench actual DOM actions", () => {
     }
   });
 
+  it("drops a manual resource read that completes after switching pages", async () => {
+    let resolveManualIssue!: (value: unknown) => void;
+    const manualIssue = new Promise<unknown>((resolve) => { resolveManualIssue = resolve; });
+    const { invoke } = makeInteractiveInvoke({
+      onIssue: (args) => String(args.resourceId) === "manual-A"
+        ? manualIssue
+        : Promise.resolve({
+            url: `http://m2res.localhost/m2id/${String(args.resourceId)}`,
+            size: PREVIEW_PNG_BYTES.byteLength,
+            opaque_id: String(args.resourceId),
+          }),
+    });
+    const ui = await mountInteractiveWorkbench(invoke);
+    try {
+      await ui.input("page-id-input", "page-1");
+      await ui.input("resource-id-input", "manual-A");
+      expect(invoke).toHaveBeenCalledWith("issue_resource_url", {
+        resourceId: "manual-A",
+        revision: "current",
+      });
+
+      await ui.input("page-id-input", "page-2");
+      expect(ui.container.querySelector('[data-testid="viewer-image"]')).toBeNull();
+
+      resolveManualIssue({
+        url: "http://m2res.localhost/m2id/manual-A",
+        size: PREVIEW_PNG_BYTES.byteLength,
+        opaque_id: "manual-A",
+      });
+      await act(async () => { await nextTurn(); });
+      expect(ui.resourceReads).toContain("http://m2res.localhost/m2id/manual-A?chunk=0");
+      expect(ui.container.querySelector('[data-testid="viewer-image"]')).toBeNull();
+      expect(ui.revokedUrls).toContain("blob:rc4-preview-1");
+      expect(ui.container.textContent).toContain("page page-2");
+    } finally {
+      resolveManualIssue(null);
+      await ui.unmount();
+    }
+  });
+
+  it("keeps the rerender preview when an earlier manual resource read finishes late", async () => {
+    let resolveManualIssue!: (value: unknown) => void;
+    const manualIssue = new Promise<unknown>((resolve) => { resolveManualIssue = resolve; });
+    const { invoke } = makeInteractiveInvoke({
+      onIssue: (args) => String(args.resourceId) === "manual-before-render"
+        ? manualIssue
+        : Promise.resolve({
+            url: `http://m2res.localhost/m2id/${String(args.resourceId)}`,
+            size: PREVIEW_PNG_BYTES.byteLength,
+            opaque_id: String(args.resourceId),
+          }),
+    });
+    const ui = await mountInteractiveWorkbench(invoke);
+    try {
+      await ui.input("page-id-input", "page-1");
+      await ui.click("region-frame-region-1");
+      await ui.click("inspector-mark-sfx");
+      await ui.input("resource-id-input", "manual-before-render");
+
+      await ui.click("feedback-rerender");
+      const previewUrl = ui.container.querySelector('[data-testid="viewer-image"]')?.getAttribute("src");
+      expect(previewUrl).toBe("blob:rc4-preview-1");
+      expect(ui.resourceReads).toContain("http://m2res.localhost/m2id/preview-1?chunk=0");
+
+      resolveManualIssue({
+        url: "http://m2res.localhost/m2id/manual-before-render",
+        size: PREVIEW_PNG_BYTES.byteLength,
+        opaque_id: "manual-before-render",
+      });
+      await act(async () => { await nextTurn(); });
+      expect(ui.resourceReads).toContain("http://m2res.localhost/m2id/manual-before-render?chunk=0");
+      expect(ui.container.querySelector('[data-testid="viewer-image"]')?.getAttribute("src"))
+        .toBe(previewUrl);
+      expect(ui.revokedUrls).toContain("blob:rc4-preview-2");
+      expect(ui.container.textContent).toContain("已重渲染并加载预览");
+    } finally {
+      resolveManualIssue(null);
+      await ui.unmount();
+    }
+  });
+
+  it("shows typed preview resource read failures without reporting render failure", async () => {
+    const { invoke } = makeInteractiveInvoke();
+    const ui = await mountInteractiveWorkbench(invoke, {
+      resourceFetch: async () => new Response(JSON.stringify({ code: "REF_EXPIRED" }), {
+        status: 410,
+        headers: { "content-type": "application/json" },
+      }),
+    });
+    try {
+      await ui.input("page-id-input", "page-1");
+      await ui.click("region-frame-region-1");
+      await ui.click("inspector-mark-sfx");
+      await ui.click("feedback-rerender");
+      expect(ui.container.textContent).toContain("渲染已提交（revision 8），但预览读取失败：REF_EXPIRED");
+      expect(ui.container.textContent).not.toContain("重渲染失败");
+      expect(ui.container.querySelector('[data-testid="viewer-image"]')).toBeNull();
+    } finally {
+      await ui.unmount();
+    }
+  });
+
   it("keeps preview publication failure separate from committed render failure", async () => {
     const { invoke } = makeInteractiveInvoke({
       rerender: () => ({
@@ -568,7 +703,7 @@ describe("RC-4 Workbench actual DOM actions", () => {
         revision_no: 8,
         reports: [],
         preview: null,
-        preview_error: "PREVIEW_PUBLISH_FAILED",
+        preview_error: "PREVIEW_UNAVAILABLE",
       }),
     });
     const ui = await mountInteractiveWorkbench(invoke);
@@ -577,7 +712,7 @@ describe("RC-4 Workbench actual DOM actions", () => {
       await ui.click("region-frame-region-1");
       await ui.click("inspector-mark-sfx");
       await ui.click("feedback-rerender");
-      expect(ui.container.textContent).toContain("渲染已提交（revision 8），但预览不可用：PREVIEW_PUBLISH_FAILED");
+      expect(ui.container.textContent).toContain("渲染已提交（revision 8），但预览不可用：PREVIEW_UNAVAILABLE");
       expect(ui.container.textContent).not.toContain("重渲染失败");
       expect(ui.container.querySelector('[data-testid="feedback-rerender"]')).not.toBeNull();
     } finally {

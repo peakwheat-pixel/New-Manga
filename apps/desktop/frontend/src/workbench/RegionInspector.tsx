@@ -11,9 +11,8 @@ import { useState } from "react";
  * shared relabelMachine tables) — the UI never decides translation
  * behaviour. A12: retype buttons exist for speech<->sfx only; anything
  * else renders disabled WITH the reason. The revision-history entry
- * (design §4.3 "常驻历史入口") renders honestly disabled: Core exposes no
- * ListRegionRevisions runtime command yet (RC-4 domain) — registered
- * deviation.
+ * (design §4.3 "常驻历史入口") reads the frozen RC-4 revision summary and
+ * requires explicit confirmation before restoring a historical snapshot.
  */
 
 import type { RegionSummary, RegionType, RevisionSummary } from "../region/types";
@@ -124,7 +123,7 @@ export function RegionInspector({
           style={{ margin: 0, fontSize: 10, color: "#8a94a2" }}
         >
           当前该 region 策略快照：{POLICY_SNAPSHOT_LABELS[region.sfx_policy] ?? region.sfx_policy}
-          。{RELABEL_SOURCE_SAFETY_NOTE}。撤销入口待 Core restore IPC 命令面、历史入口待 ListRegionRevisions 命令面各自落地后启用（当前 UI 通道均未开通）。
+          。{RELABEL_SOURCE_SAFETY_NOTE}。撤销仅在改标后 10 秒内、当前页且没有新操作时可用；修订历史可读取，恢复旧修订前需要确认。
         </p>
       )}
       {region && toSfx && toSpeech && onRetypeRequest && (

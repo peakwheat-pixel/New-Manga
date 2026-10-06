@@ -111,7 +111,7 @@ export function WorkbenchPage({ invoke }: WorkbenchPageProps) {
   const undoOfferRef = useRef<UndoOffer | null>(null);
   const undoTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const imageUrlRef = useRef<string | null>(null);
-  const previewPageIdRef = useRef<string | null>(null);
+  const imageRequestRef = useRef(0);
 
   const invalidateUndo = useCallback(() => {
     if (undoTimerRef.current !== null) clearTimeout(undoTimerRef.current);
@@ -261,6 +261,13 @@ export function WorkbenchPage({ invoke }: WorkbenchPageProps) {
   // Page image through the EXISTING resource channel, one fresh issue per
   // addressable request.
   useEffect(() => {
+    const requestId = ++imageRequestRef.current;
+    const requestPage = pageIdRef.current;
+    const requestEpoch = pageEpochRef.current;
+    const isCurrent = () =>
+      requestId === imageRequestRef.current &&
+      requestPage === pageIdRef.current &&
+      requestEpoch === pageEpochRef.current;
     const trimmedId = resourceId.trim();
     if (!trimmedId) {
       replaceImageUrl(null);
@@ -269,19 +276,20 @@ export function WorkbenchPage({ invoke }: WorkbenchPageProps) {
     }
     let cancelled = false;
     let createdUrl: string | null = null;
+    replaceImageUrl(null);
+    setImageError(null);
     loadPageImageUrl(clients.resource, trimmedId, resourceRevision.trim() || "current")
       .then((url) => {
-        if (cancelled) {
+        if (cancelled || !isCurrent()) {
           URL.revokeObjectURL(url);
           return;
         }
         createdUrl = url;
-        previewPageIdRef.current = null;
         replaceImageUrl(url);
         setImageError(null);
       })
       .catch((error: unknown) => {
-        if (cancelled) {
+        if (cancelled || !isCurrent()) {
           return;
         }
         replaceImageUrl(null);
@@ -296,9 +304,10 @@ export function WorkbenchPage({ invoke }: WorkbenchPageProps) {
       });
     return () => {
       cancelled = true;
-      if (createdUrl) {
+      if (imageRequestRef.current === requestId) imageRequestRef.current += 1;
+      if (createdUrl && imageUrlRef.current === createdUrl) {
         URL.revokeObjectURL(createdUrl);
-        if (imageUrlRef.current === createdUrl) imageUrlRef.current = null;
+        imageUrlRef.current = null;
       }
     };
   }, [clients, replaceImageUrl, resourceId, resourceRevision]);
@@ -350,11 +359,9 @@ export function WorkbenchPage({ invoke }: WorkbenchPageProps) {
     setHistoryError(null);
     setRestoreError(null);
     setSuspects(new Set());
-    if (previewPageIdRef.current !== null && previewPageIdRef.current !== nextPageId) {
-      previewPageIdRef.current = null;
-      replaceImageUrl(null);
-      setImageError(null);
-    }
+    imageRequestRef.current += 1;
+    replaceImageUrl(null);
+    setImageError(null);
     setPageId(nextPageId);
   }, [invalidateUndo, replaceImageUrl]);
 
@@ -554,31 +561,41 @@ export function WorkbenchPage({ invoke }: WorkbenchPageProps) {
     if (!page) return;
     const operation = beginOperation("rerender");
     if (!operation) return;
+    const imageRequestId = ++imageRequestRef.current;
     try {
       const result = await clients.region.rerenderPage(page);
       if (!operationIsCurrent(operation)) return;
-      if (result.preview_error || !result.preview) {
-        previewPageIdRef.current = page;
-        replaceImageUrl(null);
-        setImageError(result.preview_error ?? "PREVIEW_UNAVAILABLE");
+      if (imageRequestRef.current !== imageRequestId) {
         setFeedback({
           regionId: selectedRegionIdRef.current ?? "",
-          text: `渲染已提交（revision ${result.revision_no}），但预览不可用：${result.preview_error ?? "Core 未返回预览资源"}`,
+          text: `渲染已提交（revision ${result.revision_no}）；保留较新的手动资源选择`,
           isError: false,
         });
         return;
       }
+      if (result.preview_error || !result.preview) {
+        replaceImageUrl(null);
+        setImageError("PREVIEW_UNAVAILABLE");
+        setFeedback({
+          regionId: selectedRegionIdRef.current ?? "",
+          text: `渲染已提交（revision ${result.revision_no}），但预览不可用：PREVIEW_UNAVAILABLE`,
+          isError: false,
+        });
+        return;
+      }
+      replaceImageUrl(null);
+      setImageError(null);
+      const previewRequestId = ++imageRequestRef.current;
       try {
         const url = await loadPageImageUrl(
           clients.resource,
           result.preview.resource_id,
           String(result.preview.revision),
         );
-        if (!operationIsCurrent(operation)) {
+        if (!operationIsCurrent(operation) || imageRequestRef.current !== previewRequestId) {
           URL.revokeObjectURL(url);
           return;
         }
-        previewPageIdRef.current = page;
         replaceImageUrl(url);
         setImageError(null);
         setFeedback({
@@ -587,8 +604,7 @@ export function WorkbenchPage({ invoke }: WorkbenchPageProps) {
           isError: false,
         });
       } catch (error: unknown) {
-        if (!operationIsCurrent(operation)) return;
-        previewPageIdRef.current = page;
+        if (!operationIsCurrent(operation) || imageRequestRef.current !== previewRequestId) return;
         replaceImageUrl(null);
         setImageError(errorCode(error, "RESOURCE_UNAVAILABLE"));
         setFeedback({
