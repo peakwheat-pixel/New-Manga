@@ -32,13 +32,16 @@ const AC1_TEST_COMMANDS = ["ac1_request", "ac1_write_results", "ac1_exit"];
 // (main.rs SETTINGS_PRODUCTION_ONLY_COMMANDS; option-B precedent of M2-IPC1).
 const SETTINGS_PRODUCTION_ONLY_COMMANDS = ["settings_get", "settings_update_section"];
 // M2-RC4: region retype/read, revision history/restore and rerender are
-// production-only. The probe surface remains frozen.
-const REGION_PRODUCTION_ONLY_COMMANDS = [
+// production-only. M2-PAGE-RESOURCE-RESOLVE-1 adds the page display image
+// resolve to the same production-only family (hence the DOMAIN_ name:
+// the family is no longer region-only). The probe surface remains frozen.
+const DOMAIN_PRODUCTION_ONLY_COMMANDS = [
   "set_region_type",
   "list_regions",
   "list_region_revisions",
   "restore_region_revision",
   "rerender_page",
+  "resolve_page_resource",
 ];
 
 type Mode = "production" | "probe";
@@ -56,7 +59,7 @@ function makeSurfaceInvoke(mode: Mode) {
     const available = [
       ...PRODUCTION_COMMANDS,
       ...(mode === "production" ? SETTINGS_PRODUCTION_ONLY_COMMANDS : []),
-      ...(mode === "production" ? REGION_PRODUCTION_ONLY_COMMANDS : []),
+      ...(mode === "production" ? DOMAIN_PRODUCTION_ONLY_COMMANDS : []),
       ...(mode === "probe" ? PROBE_ONLY_COMMANDS : []),
     ];
     if (!available.includes(command)) {
@@ -109,6 +112,11 @@ function makeSurfaceInvoke(mode: Mode) {
         preview: null,
         preview_error: "preview unavailable",
       };
+    }
+    if (command === "resolve_page_resource") {
+      // contract M2-C1 rev 1.7 (M2-PAGE-RESOURCE-RESOLVE-1): the stable
+      // {resource_id, revision} catalog-key pair
+      return { resource_id: "page-original-page-1", revision: "original" };
     }
     if (command === "issue_resource_url") {
       // host-side hardening (compile-time in Rust): an unknown key such as
@@ -189,12 +197,13 @@ describe("RC2 command surface allow/deny matrix", () => {
   // The complete frozen region command face rides production and remains
   // absent from probe and acceptance surfaces.
   it("region commands are allowed on production and denied on the probe surface", async () => {
-    expect(REGION_PRODUCTION_ONLY_COMMANDS).toEqual([
+    expect(DOMAIN_PRODUCTION_ONLY_COMMANDS).toEqual([
       "set_region_type",
       "list_regions",
       "list_region_revisions",
       "restore_region_revision",
       "rerender_page",
+      "resolve_page_resource",
     ]);
     const { invoke } = makeSurfaceInvoke("production");
     await expect(
@@ -218,8 +227,12 @@ describe("RC2 command surface allow/deny matrix", () => {
       artifact_id: "artifact-1",
       preview_error: "preview unavailable",
     });
+    await expect(invoke("resolve_page_resource", { pageId: "page-1" })).resolves.toMatchObject({
+      resource_id: "page-original-page-1",
+      revision: "original",
+    });
     const { invoke: probeInvoke } = makeSurfaceInvoke("probe");
-    for (const command of REGION_PRODUCTION_ONLY_COMMANDS) {
+    for (const command of DOMAIN_PRODUCTION_ONLY_COMMANDS) {
       await expect(probeInvoke(command, {})).rejects.toThrow(new RegExp(command));
     }
   });

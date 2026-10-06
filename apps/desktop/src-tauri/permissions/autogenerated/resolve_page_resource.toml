@@ -1,0 +1,11 @@
+# Automatically generated - DO NOT EDIT!
+
+[[permission]]
+identifier = "allow-resolve-page-resource"
+description = "Enables the resolve_page_resource command without any pre-configured scope."
+commands.allow = ["resolve_page_resource"]
+
+[[permission]]
+identifier = "deny-resolve-page-resource"
+description = "Denies the resolve_page_resource command without any pre-configured scope."
+commands.deny = ["resolve_page_resource"]

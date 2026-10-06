@@ -30,6 +30,12 @@ _MIME_TYPES = {
 }
 _UNKNOWN_MIME_TYPE = "application/octet-stream"
 
+#: M2-PAGE-RESOURCE-RESOLVE-1 (DSH r1 PR-06): the page-resolve wire gate in
+#: bootstrap.core_service admits exactly the suffixes this decode face can
+#: decode -- derived from _MIME_TYPES so the two can never drift (a legally
+#: imported .tif/.heic page must not fail closed as an unsupported format).
+SUPPORTED_IMAGE_SUFFIXES = frozenset(f".{ext}" for ext in _MIME_TYPES)
+
 # R-001 (TASK-041 review): page images are exactly ``image%05d.<ext>`` in
 # ``mobi7/Images/``. The fullmatch keeps the extractor's other outputs out —
 # ``cover%05d.*`` (a cover, not a page) and ``HDimage%05d.*`` (HD duplicates

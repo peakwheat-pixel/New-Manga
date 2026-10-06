@@ -143,6 +143,7 @@ async function mountInteractiveWorkbench(
 function makeInteractiveInvoke(options: {
   onRetype?: (args: Record<string, unknown>) => Promise<unknown>;
   onIssue?: (args: Record<string, unknown>) => Promise<unknown>;
+  onResolvePage?: (args: Record<string, unknown>) => Promise<unknown>;
   rerender?: () => unknown;
 } = {}) {
   const rows = new Map<string, RegionSummary[]>([
@@ -151,6 +152,16 @@ function makeInteractiveInvoke(options: {
   ]);
   const invoke = vi.fn(async (command: string, args: Record<string, unknown> = {}) => {
     if (command === "library_list_books") return [];
+    if (command === "resolve_page_resource") {
+      // M2-PAGE-RESOURCE-RESOLVE-1: default OFF (typed PAGE_NOT_FOUND) so
+      // the manual/preview flows below keep their historical timing; the
+      // auto-load cases pass onResolvePage explicitly. The rejection is a
+      // BARE string, the shape the real Tauri invoke rejects with (DSH r1
+      // PR-09: registered as an intentional fixture deviation -- the
+      // default is the opposite of the product default path).
+      if (options.onResolvePage) return options.onResolvePage(args);
+      throw "PAGE_NOT_FOUND";
+    }
     if (command === "list_regions") return {
       regions: rows.get(String(args.pageId)) ?? [],
       page_size: { width: 100, height: 50 },
@@ -716,6 +727,85 @@ describe("RC-4 Workbench actual DOM actions", () => {
       expect(ui.container.textContent).not.toContain("重渲染失败");
       expect(ui.container.querySelector('[data-testid="feedback-rerender"]')).not.toBeNull();
     } finally {
+      await ui.unmount();
+    }
+  });
+
+  it("resolves the page resource automatically and feeds the image loader (M2-PAGE-RESOURCE-RESOLVE-1)", async () => {
+    const { invoke } = makeInteractiveInvoke({
+      onResolvePage: (args) => Promise.resolve({
+        resource_id: `page-original-${String(args.pageId)}`,
+        revision: "original",
+      }),
+    });
+    const ui = await mountInteractiveWorkbench(invoke);
+    try {
+      await ui.input("page-id-input", "page-1");
+      expect(invoke).toHaveBeenCalledWith("resolve_page_resource", { pageId: "page-1" });
+      const idInput = ui.container.querySelector('[data-testid="resource-id-input"]') as HTMLInputElement | null;
+      expect(idInput?.value).toBe("page-original-page-1");
+      expect(ui.container.querySelector('[data-testid="resource-resolve-error"]')).toBeNull();
+      expect(ui.container.querySelector('[data-testid="resource-resolve-busy"]')).toBeNull();
+      expect(ui.container.querySelector('[data-testid="viewer-image"]')?.getAttribute("src"))
+        .toBe("blob:rc4-preview-1");
+      expect(ui.resourceReads).toContain("http://m2res.localhost/m2id/page-original-page-1?chunk=0");
+    } finally {
+      await ui.unmount();
+    }
+  });
+
+  it("surfaces a typed resolve failure and keeps the manual resource fallback (M2-PAGE-RESOURCE-RESOLVE-1)", async () => {
+    const { invoke } = makeInteractiveInvoke();
+    const ui = await mountInteractiveWorkbench(invoke);
+    try {
+      await ui.input("page-id-input", "page-1");
+      expect(ui.container.querySelector('[data-testid="resource-resolve-error"]')?.textContent)
+        .toBe("resource: PAGE_NOT_FOUND");
+      const idInput = ui.container.querySelector('[data-testid="resource-id-input"]') as HTMLInputElement | null;
+      expect(idInput?.value).toBe("");
+      expect(ui.resourceReads).toHaveLength(0);
+      // the manual fallback still drives the existing image loader
+      await ui.input("resource-id-input", "manual-fallback");
+      expect(invoke).toHaveBeenCalledWith("issue_resource_url", {
+        resourceId: "manual-fallback",
+        revision: "current",
+      });
+    } finally {
+      await ui.unmount();
+    }
+  });
+
+  it("drops a stale page-resource resolve that answers a page already switched away (M2-PAGE-RESOURCE-RESOLVE-1)", async () => {
+    // DSH r1 PR-04: the resolve effect must re-check the current page id
+    // when its reply lands, exactly like the region/history/image loops.
+    // A late page-1 reply that lands after page-2 committed must never
+    // feed page-1's key into page-2's viewer.
+    let resolvePage1!: (value: unknown) => void;
+    const pendingPage1 = new Promise<unknown>((resolve) => { resolvePage1 = resolve; });
+    const { invoke } = makeInteractiveInvoke({
+      onResolvePage: (args) => String(args.pageId) === "page-1"
+        ? pendingPage1
+        : Promise.resolve({
+            resource_id: `page-original-${String(args.pageId)}`,
+            revision: "original",
+          }),
+    });
+    const ui = await mountInteractiveWorkbench(invoke);
+    const resourceIdInput = () =>
+      ui.container.querySelector('[data-testid="resource-id-input"]') as HTMLInputElement | null;
+    try {
+      await ui.input("page-id-input", "page-1"); // resolve hangs
+      await ui.input("page-id-input", "page-2"); // its own resolve settles
+      expect(resourceIdInput()?.value).toBe("page-original-page-2");
+
+      // the stale page-1 reply lands after the page-2 commit
+      resolvePage1({ resource_id: "page-original-page-1", revision: "original" });
+      await act(async () => { await nextTurn(); });
+      expect(resourceIdInput()?.value).toBe("page-original-page-2");
+      expect(ui.resourceReads).toContain("http://m2res.localhost/m2id/page-original-page-2?chunk=0");
+      expect(ui.resourceReads).not.toContain("http://m2res.localhost/m2id/page-original-page-1?chunk=0");
+    } finally {
+      resolvePage1({ resource_id: "page-original-page-1", revision: "original" });
       await ui.unmount();
     }
   });

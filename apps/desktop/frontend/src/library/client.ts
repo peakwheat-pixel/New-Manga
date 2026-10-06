@@ -1,4 +1,4 @@
-import type { BookSummary, PingResult } from "./types";
+import type { BookSummary, PageResourceResolve, PingResult } from "./types";
 
 export type InvokeFn = (command: string, args?: Record<string, unknown>) => Promise<unknown>;
 
@@ -22,6 +22,9 @@ export class LibraryClientError extends Error {
     this.code = code;
   }
 }
+
+/** RULED wire name (contract M2-C1 rev 1.7 §5; pinned by the Rust suite). */
+export const RESOLVE_PAGE_RESOURCE_COMMAND = "resolve_page_resource";
 
 export class LibraryClient {
   private invoke: InvokeFn;
@@ -47,6 +50,33 @@ export class LibraryClient {
     } catch (error) {
       const code = typeof error === "string" ? error : (error as Error)?.message || "CORE_UNAVAILABLE";
       throw new LibraryClientError(code, `library_list_books failed: ${code}`);
+    }
+  }
+
+  /**
+   * M2-PAGE-RESOURCE-RESOLVE-1 (contract M2-C1 rev 1.7 §5): resolve one
+   * page's immutable managed original to its servable resource catalog key.
+   * An unknown page (or one without a managed original) rejects with the
+   * typed PAGE_NOT_FOUND code -- the caller keeps the manual fallback.
+   */
+  async resolvePageResource(pageId: string): Promise<PageResourceResolve> {
+    try {
+      const res = (await this.invoke(RESOLVE_PAGE_RESOURCE_COMMAND, {
+        pageId,
+      })) as PageResourceResolve;
+      if (!res || typeof res.resource_id !== "string" || typeof res.revision !== "string") {
+        throw new LibraryClientError(
+          "PAGE_RESOURCE_MALFORMED",
+          "resolve_page_resource returned no {resource_id, revision} pair",
+        );
+      }
+      return res;
+    } catch (error) {
+      if (error instanceof LibraryClientError) {
+        throw error;
+      }
+      const code = typeof error === "string" ? error : (error as Error)?.message || "CORE_UNAVAILABLE";
+      throw new LibraryClientError(code, `resolve_page_resource failed: ${code}`);
     }
   }
 }

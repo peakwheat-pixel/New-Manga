@@ -255,6 +255,12 @@
           "markdownDescription": "Enables the rerender_page command without any pre-configured scope."
         },
         {
+          "description": "Enables the resolve_page_resource command without any pre-configured scope.",
+          "type": "string",
+          "const": "allow-resolve-page-resource",
+          "markdownDescription": "Enables the resolve_page_resource command without any pre-configured scope."
+        },
+        {
           "description": "Enables the restore_region_revision command without any pre-configured scope.",
           "type": "string",
           "const": "allow-restore-region-revision",
@@ -367,6 +373,12 @@
           "type": "string",
           "const": "deny-rerender-page",
           "markdownDescription": "Denies the rerender_page command without any pre-configured scope."
+        },
+        {
+          "description": "Denies the resolve_page_resource command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-resolve-page-resource",
+          "markdownDescription": "Denies the resolve_page_resource command without any pre-configured scope."
         },
         {
           "description": "Denies the restore_region_revision command without any pre-configured scope.",

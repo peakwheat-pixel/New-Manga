@@ -1,27 +1,30 @@
 {
-  "$schema": "https://schema.tauri.app/capability/2",
-  "identifier": "m2rc1-command-surface",
-  "description": "The main window may invoke only commands declared in the application ACL manifest: production library and resource commands, the four probe commands, and the three M2-AC1 acceptance commands. RC-4 history, restore, and rerender commands are production-only. Probe and AC1 runtime surfaces keep their existing command sets.",
-  "windows": ["main"],
-  "permissions": [
-    "allow-issue-resource-url",
-    "allow-revoke-ref",
-    "allow-revoke-resource-refs",
-    "allow-core-ping",
-    "allow-library-list-books",
-    "allow-settings-get",
-    "allow-settings-update-section",
-    "allow-set-region-type",
-    "allow-list-regions",
-    "allow-list-region-revisions",
-    "allow-restore-region-revision",
-    "allow-rerender-page",
-    "allow-probe-config",
-    "allow-probe-write-results",
-    "allow-probe-exit",
-    "allow-probe-issue-url",
-    "allow-ac1-request",
-    "allow-ac1-write-results",
-    "allow-ac1-exit"
-  ]
+ "$schema": "https://schema.tauri.app/capability/2",
+ "identifier": "m2rc1-command-surface",
+ "description": "The main window may invoke only commands declared in the application ACL manifest: production library and resource commands, the four probe commands, and the three M2-AC1 acceptance commands. RC-4 history, restore, and rerender commands and the M2-PAGE-RESOURCE-RESOLVE-1 page resolve are production-only. Probe and AC1 runtime surfaces keep their existing command sets.",
+ "windows": [
+  "main"
+ ],
+ "permissions": [
+  "allow-issue-resource-url",
+  "allow-revoke-ref",
+  "allow-revoke-resource-refs",
+  "allow-core-ping",
+  "allow-library-list-books",
+  "allow-settings-get",
+  "allow-settings-update-section",
+  "allow-set-region-type",
+  "allow-list-regions",
+  "allow-list-region-revisions",
+  "allow-restore-region-revision",
+  "allow-rerender-page",
+  "allow-resolve-page-resource",
+  "allow-probe-config",
+  "allow-probe-write-results",
+  "allow-probe-exit",
+  "allow-probe-issue-url",
+  "allow-ac1-request",
+  "allow-ac1-write-results",
+  "allow-ac1-exit"
+ ]
 }

@@ -163,6 +163,13 @@ pub trait LibraryChannel: Send + Sync {
     ) -> Result<serde_json::Value, LibraryError>;
     /// RC-4 synchronous render and resource-channel preview projection.
     fn rerender_page(&self, page_id: &str) -> Result<serde_json::Value, LibraryError>;
+    /// M2-PAGE-RESOURCE-RESOLVE-1 (contract rev 1.7 §5): resolve one page's
+    /// immutable managed original to its servable resource catalog key
+    /// (`{resource_id, revision}`); Core publishes the first resolve into
+    /// the derived read-only root and later resolves return the same key.
+    /// PAGE_NOT_FOUND (unknown page / no managed original) propagates as
+    /// `LibraryError.code`.
+    fn resolve_page_resource(&self, page_id: &str) -> Result<serde_json::Value, LibraryError>;
 }
 
 /// The command argv pinned for spawning the production Core service.
@@ -428,6 +435,13 @@ impl LibraryChannel for StdioLibraryChannel {
     fn rerender_page(&self, page_id: &str) -> Result<serde_json::Value, LibraryError> {
         self.round_trip("rerender_page", serde_json::json!({ "page_id": page_id }))
     }
+
+    fn resolve_page_resource(&self, page_id: &str) -> Result<serde_json::Value, LibraryError> {
+        self.round_trip(
+            "resolve_page_resource",
+            serde_json::json!({ "page_id": page_id }),
+        )
+    }
 }
 
 /// In-memory mock channel for testing without spawning Python.
@@ -483,6 +497,13 @@ impl MockLibraryChannel {
 
     pub fn set_regions_result(&self, result: Result<serde_json::Value, LibraryError>) {
         *self.regions_result.lock().unwrap() = result;
+    }
+
+    /// M2-PAGE-RESOURCE-RESOLVE-1 (DSH r1 PR-01): pin the mocked
+    /// domain-command result (history/restore/rerender/page-resolve share
+    /// one slot) or a typed rejection for host-level tests.
+    pub fn set_domain_result(&self, result: Result<serde_json::Value, LibraryError>) {
+        *self.domain_result.lock().unwrap() = result;
     }
 
     #[allow(dead_code)]
@@ -548,6 +569,10 @@ impl LibraryChannel for MockLibraryChannel {
     }
 
     fn rerender_page(&self, _page_id: &str) -> Result<serde_json::Value, LibraryError> {
+        self.domain_result.lock().unwrap().clone()
+    }
+
+    fn resolve_page_resource(&self, _page_id: &str) -> Result<serde_json::Value, LibraryError> {
         self.domain_result.lock().unwrap().clone()
     }
 }
@@ -722,6 +747,39 @@ mod tests {
         let invalid = channel.list_regions("").unwrap_err();
         assert_eq!(invalid.code, "INVALID_REQUEST");
         assert_eq!(invalid.category, "validation");
+    }
+
+    #[test]
+    fn page_resolve_mock_channel_round_trip_and_typed_rejection() {
+        // M2-PAGE-RESOURCE-RESOLVE-1 (DSH r1 PR-01): the page display-image
+        // resolve rides the same LibraryChannel seam as the settings/retype
+        // surfaces. What is pinned here is the result projection shape
+        // ({resource_id, revision}, snake_case, contract rev 1.7 §5) and
+        // the typed PAGE_NOT_FOUND pass-through; the REAL stdio channel
+        // round-trips the same wire name through bootstrap.core_service
+        // (real_core_sidecar_round_trip_and_eof in main.rs asserts the
+        // protocol minor this command bumped).
+        let channel = MockLibraryChannel::new();
+        channel.set_domain_result(Ok(serde_json::json!({
+            "resource_id": "page-original-page-1",
+            "revision": "original",
+        })));
+        let resolved = channel
+            .resolve_page_resource("page-1")
+            .expect("resolve succeeds");
+        assert_eq!(resolved["resource_id"], "page-original-page-1");
+        assert_eq!(resolved["revision"], "original");
+
+        channel.set_domain_result(Err(LibraryError::new(
+            "PAGE_NOT_FOUND",
+            "not_found",
+            false,
+            Some("page or its managed original is not available"),
+        )));
+        let err = channel.resolve_page_resource("page-1").unwrap_err();
+        assert_eq!(err.code, "PAGE_NOT_FOUND");
+        assert_eq!(err.category, "not_found");
+        assert!(!err.retryable);
     }
 
     #[test]
