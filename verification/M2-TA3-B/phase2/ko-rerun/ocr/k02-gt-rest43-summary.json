@@ -1,0 +1,192 @@
+{
+  "task": "M2-TA3-B ko-rerun K02 GT：剩余 43 行 AI 直读终稿（候选清单第 4 项）",
+  "closed_at": "2026-10-04",
+  "approval_chain": "用户 2026-10-04「批准进行2」（已登记非阻塞候选之 K02 剩余 43 行 GT）；免审口径沿用同日 densho810 工作表「直接提交」裁决",
+  "scope": "ko-rerun cer-regions.csv 93 行 pending 按 unit_id 排序的第 51-93 行（43 行，前 50 行为 agent draft @33a606d4 保持 draft 不动）",
+  "method": "43 张裁切图（task-envs/M2-TA3-B/ko-rerun-pixels/ocr/crops/K02/）逐张视觉直读；OCR 输出仅作低置信手写行的候选读法参照",
+  "gt_source_marker": "G2:ai_direct_user_waiver",
+  "cer_conventions": "strip-all-whitespace; …≡...; latin casefold（与 G1/g2 终稿一致）",
+  "n_rows": 43,
+  "n_norm_diff_from_ocr": 25,
+  "norm_diff_rows": [
+    {
+      "unit_id": "K02:d3631ba1",
+      "gt_text": "우리집에서",
+      "ocr_text": "< 우리집에서 eee",
+      "cer": "0.8000"
+    },
+    {
+      "unit_id": "K02:ef59a62f",
+      "gt_text": "우",
+      "ocr_text": "어",
+      "cer": "1.0000"
+    },
+    {
+      "unit_id": "K02:cb5e8a8f",
+      "gt_text": "너.. 너는 괜찮은 애야",
+      "ocr_text": "너..너는 괜찮은 애야 렌찮은",
+      "cer": "0.3000"
+    },
+    {
+      "unit_id": "K02:f32b689d",
+      "gt_text": "뭔데 갑자기",
+      "ocr_text": "뭔데 갑차기",
+      "cer": "0.2000"
+    },
+    {
+      "unit_id": "K02:f9b088a4",
+      "gt_text": "슬이 넌 정말로 좋은 사람이야!",
+      "ocr_text": "슬이년정말로좋은사람이야!",
+      "cer": "0.0769"
+    },
+    {
+      "unit_id": "K02:c85516cd",
+      "gt_text": "아~ 뭔가 이상하다 했어",
+      "ocr_text": "~ 뭔가 이상하다했어",
+      "cer": "0.1000"
+    },
+    {
+      "unit_id": "K02:f0170851",
+      "gt_text": "하....",
+      "ocr_text": "하.",
+      "cer": "0.6000"
+    },
+    {
+      "unit_id": "K02:8755b198",
+      "gt_text": "결국 반쯤도 나왔다",
+      "ocr_text": "결국 반 나옵님 왔다",
+      "cer": "0.3750"
+    },
+    {
+      "unit_id": "K02:b7a237fc",
+      "gt_text": "(쫄거나용)",
+      "ocr_text": "(꽃거나용)",
+      "cer": "0.1667"
+    },
+    {
+      "unit_id": "K02:7a587809",
+      "gt_text": "내가? 그렇다고?? 그럼 이만~",
+      "ocr_text": "내가? 그다고?? 그럼미만",
+      "cer": "0.2143"
+    },
+    {
+      "unit_id": "K02:7ca95c57",
+      "gt_text": "빈말이라도 좋은 사람소리 들으니 기분은 좋은 듯하다",
+      "ocr_text": "빈말이래도 좋은사람소리들으니 기분은풍더라",
+      "cer": "0.2727"
+    },
+    {
+      "unit_id": "K02:e18be99d",
+      "gt_text": "이걸로 내긴심이 어느정돈지 알겠...",
+      "ocr_text": "이걸로내긴심이 어느정돈지 알겠",
+      "cer": "0.1765"
+    },
+    {
+      "unit_id": "K02:f9bfc20b",
+      "gt_text": "아 진짜 뭘 모르네",
+      "ocr_text": "아 긴짜 뭘모르네",
+      "cer": "0.1429"
+    },
+    {
+      "unit_id": "K02:a6c5a5a1",
+      "gt_text": "이 부분",
+      "ocr_text": "이 ㅂㅂ",
+      "cer": "0.6667"
+    },
+    {
+      "unit_id": "K02:7995bd3b",
+      "gt_text": "그 심장을 주겠다는 거..",
+      "ocr_text": "그심장을 주겠다는 거.",
+      "cer": "0.0909"
+    },
+    {
+      "unit_id": "K02:90c0e458",
+      "gt_text": "됐다 됐어 다 필요 없어",
+      "ocr_text": "됐다 됐어 H 2 다 필요없어",
+      "cer": "0.2222"
+    },
+    {
+      "unit_id": "K02:fffe7aa3",
+      "gt_text": "우리 찐빠쳤어요~",
+      "ocr_text": "우리찬 삐쳤어요",
+      "cer": "0.3750"
+    },
+    {
+      "unit_id": "K02:74483fa9",
+      "gt_text": "뭐야 딴금없이..",
+      "ocr_text": "뭐야 금없이",
+      "cer": "0.3750"
+    },
+    {
+      "unit_id": "K02:f627528b",
+      "gt_text": "아니 그맘은 나도 알지만..",
+      "ocr_text": "아니그많은 나도 알치만",
+      "cer": "0.3333"
+    },
+    {
+      "unit_id": "K02:8c44118b",
+      "gt_text": "자. 그럼 이거구만 빈말아닌거 믿어 줄래? 먹던것",
+      "ocr_text": "자.그럼이거구면빈말아닌거 믿어 줄래? 먹던거지",
+      "cer": "0.1429"
+    },
+    {
+      "unit_id": "K02:799f5a79",
+      "gt_text": "콘 아이스크림 끝부분 초코",
+      "ocr_text": "콘아이스크링 끝부분 초코",
+      "cer": "0.0909"
+    },
+    {
+      "unit_id": "K02:795fea15",
+      "gt_text": "헉.. 둘어....",
+      "ocr_text": "헉뜰아",
+      "cer": "0.8889"
+    },
+    {
+      "unit_id": "K02:c199cde5",
+      "gt_text": "너만 눈치 못 챘지 넌 날 좋아한다고 생각",
+      "ocr_text": "너만 눈치못찮지 년날 풍아하다고생각",
+      "cer": "0.2500"
+    },
+    {
+      "unit_id": "K02:fddacc32",
+      "gt_text": "이건 그냥 줄 수 있는게 아니~",
+      "ocr_text": "이건 그냥줄수있는게 아니야",
+      "cer": "0.0833"
+    },
+    {
+      "unit_id": "K02:eb8484af",
+      "gt_text": "무서운 이야기가 닿는 여름입니다",
+      "ocr_text": "무서문이야기가 당는여름입니다",
+      "cer": "0.1429"
+    }
+  ],
+  "n_low_confidence": 18,
+  "low_confidence_unit_ids": [
+    "K02:84f9ad00",
+    "K02:ef59a62f",
+    "K02:f9b088a4",
+    "K02:8755b198",
+    "K02:b7a237fc",
+    "K02:f2d95172",
+    "K02:7ca95c57",
+    "K02:e18be99d",
+    "K02:b6b4fc8f",
+    "K02:7d63aac5",
+    "K02:c117f203",
+    "K02:e57e5749",
+    "K02:a6c5a5a1",
+    "K02:90c0e458",
+    "K02:fffe7aa3",
+    "K02:8c44118b",
+    "K02:795fea15",
+    "K02:a304916a"
+  ],
+  "low_confidence_note": "手写体/徽章字（이 부분 ×3=동일 배지、단일 글자 우/뭐、찐빠 등）：低分辨率下读法不确定处如实登记；自锚风险 directional",
+  "cer_stats": {
+    "n": 43,
+    "cer_median": 0.0909,
+    "cer_mean": 0.1881,
+    "cer_zero_share": "41.9%"
+  },
+  "table_state_note": "本表终态：43 行 ai_direct_user_waiver + 50 行 draft(33a606d4) 待审核/免审裁决 + 13 行其他既有 source；50 行 draft 若同口径免审可随后续指令定稿"
+}
