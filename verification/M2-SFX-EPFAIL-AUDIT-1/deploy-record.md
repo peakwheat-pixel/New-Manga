@@ -20,9 +20,9 @@ M2-SFX-GPU-EP-1（done @merge `931a6d03`）交付的「DML 失败回退 CPU 三�
 
 「逐 detect 复读 get_providers 代价高」是 GPU-EP-1 时的权衡判断、未附数字。本 Task 按合同先实测（`experiments/M2-SFX-EPFAIL-AUDIT-1/measure_get_providers_cost.py`，生产 venv + v2b 生产权重 pin 944e8114，证据 `raw/epfail-audit-get-providers-cost.{json,log}`）：
 
-- **`get_providers()` 单次调用 ~0.03 μs**（CPU session 0.0303 μs / DML session 0.0305 μs，5 轮中位数，各 100 万次顺序调用）——wrapper :214-216 就是 `return self._providers`，**纯 Python 属性读，无 native 调用**；原「代价高」判断不成立；
-- **run-time fallback 状态读回可见性**：在同一 DML session 上原样重放 wrapper EPFail 分支的 `set_providers(['CPUExecutionProvider'])` 调用（一次性 native 重建实测 0.121 s，非稳态项）后，`get_providers()` 从 `['DmlExecutionProvider', 'CPUExecutionProvider']`（DML 构建后真实读回形态）变为 `['CPUExecutionProvider']`——**公共 API 面即可观测**；
-- **1% 硬门**：稳态每页一次读回 = 0.0305 μs，占 GPU-EP-1 AC3 KO 基准（1.106-1.211 s/页）的 **~2.8e-6 %**（1% 预算占比 3e-6 %）。PASS。
+- **`get_providers()` 单次调用 ~0.03 μs**（口径=单次原语 `get_providers()` 调用，P4-6；r1 P2-1 后重跑值：CPU session 0.0297 μs / DML session 0.0304 μs，5 轮中位数，各 100 万次顺序调用）——wrapper :214-216 就是 `return self._providers`，**纯 Python 属性读，无 native 调用**；原「代价高」判断不成立；
+- **run-time fallback 状态读回可见性**：在同一 DML session 上原样重放 wrapper EPFail 分支的 `set_providers(['CPUExecutionProvider'])` 调用（一次性 native 重建实测 0.117 s，非稳态项）后，`get_providers()` 从 `['DmlExecutionProvider', 'CPUExecutionProvider']`（DML 构建后真实读回形态）变为 `['CPUExecutionProvider']`——**公共 API 面即可观测**；
+- **1% 硬门（r1 P2-1 口径修正后重跑）**：1% 预算 = 基准页时延的 1%（1.106 s × 1% = **11,060 μs**；前版误用整页微秒数 1,106,000 μs，差 100×）。稳态每页一次读回 = 0.0304 μs，两个占比并列：**页占比 = 0.0304 μs / 1,106,000 μs = 2.75e-6 %**；**1% 预算占比 = 0.0304 μs / 11,060 μs = 2.7486e-4 %**。PASS（`raw/epfail-audit-get-providers-cost.{json,log}` 为重跑再生证据，非手改）。
 
 ### 1.2 所选设计：稳态逐 detect 一次读回 + 条件性追加审计键
 
@@ -30,7 +30,7 @@ M2-SFX-GPU-EP-1（done @merge `931a6d03`）交付的「DML 失败回退 CPU 三�
 
 - 读回首 provider 名 == 构建期 effective 名（`_EpProvenance.effective` 经 `_EP_PROVIDER_NAMES` 反查）→ **稳态，零追加**（options 与审计前面形态逐字节一致）；
 - 不一致 → 追加**单一新键** `sfx_ep_runtime_check`，值：`"session providers changed at run time: <built> -> <now> (ORT wrapper run-time EPFail fallback)"`（`<built>`/`<now>` 为 `dml`/`cpu` token 反查，未知名字按「审计值跟随运行时、绝不猜」纪律原样记录）；
-- session 无 `get_providers` 面（裸测试替身）→ 跳过检查（真实 ORT session 恒有该面——构建期读回已调用过同一方法）——审计绝不成为新故障点。
+- session 无 `get_providers` 面（裸测试替身）→ 跳过检查（真实 ORT session 恒有该面——构建期读回已调用过同一方法）——审计绝不成为新故障点。注（r1 P4-2）：「属性存在但不可调用」的形态（`session.get_providers` 存在却抛异常）**不兜底**——该形态在真实 ORT session 不命中（wrapper 的 `get_providers` 是无副作用属性读），兜底反而会吞掉真实的 session 状态异常。
 
 覆盖面（对登记通道的两种形态）：
 
@@ -42,7 +42,7 @@ M2-SFX-GPU-EP-1（done @merge `931a6d03`）交付的「DML 失败回退 CPU 三�
 | 约束 | 结果 |
 | --- | --- |
 | 不依赖 stdout | PASS——探测面是公共 `get_providers()`，stdout 零参与 |
-| 稳态每页时延增量 ≤1% | PASS——0.0305 μs/页 ≈ 基准页时延的 2.8e-6 %（§1.1 实测） |
+| 稳态每页时延增量 ≤1% | PASS——单次原语调用 0.0304 μs = 页占比 2.75e-6 %、1% 预算（11,060 μs）占比 2.7486e-4 %（§1.1 实测，r1 P2-1 口径修正后） |
 | 三键（device/sfx_ep/sfx_ep_fallback）语义与写入时点不变 | PASS——仍为构建期 `_EpProvenance`（引擎构建后一次、随 engine 缓存），新键纯追加；真实稳态 parity 复核断言两 face 三键照常（§4.1） |
 | `NEWMANGA_SFX_EP` 解析与 fail-fast 时序不变 | PASS——`_ep_config()` 零改动，detect 入口 fail-fast 位置零改动 |
 | run() 失败既有 typed 路径不变 | PASS——`_sfx_boxes`/`_detect_tiles` 的 run 调用零改动 |
@@ -61,8 +61,10 @@ M2-SFX-GPU-EP-1（done @merge `931a6d03`）交付的「DML 失败回退 CPU 三�
 2. `test_runtime_steady_state_adds_no_runtime_key`——稳态零变化（无新键，AC3 等量递增的构造前提）；
 3. `test_runtime_audit_skips_sessions_without_readback_face`——无读回面的裸测试替身跳过检查（三键照写）。
 
-- **红**：对基线 claim `a336bd41` 跑新测试 = `1 failed, 3 passed`——唯一 failed 即核心测试 `KeyError: 'sfx_ep_runtime_check'`（基线无 run-time 审计），两个辅助用例按构造在基线通过（断言键的缺席/跳过）；
+- **红**：对基线 claim `a336bd41` 跑新测试 = `1 failed, 3 passed`——唯一 failed 即核心测试 `KeyError: 'sfx_ep_runtime_check'`（基线无 run-time 审计）；3 passed = 2 条新辅助用例 + 1 条被 `-k runtime` 选中的既有用例（`test_hash_mismatch_fails_before_any_runtime_import`，名字含 "runtime" 被过滤器带入，r1 P3-2 精确化叙述）；
 - **绿**：对 impl `0f4702d0` = 新用例 `4 passed`，全文件 `82 passed`（79 基线 + 3 新增）。
+
+绿 log 注（r1 P4-5，不重生成既有证据）：`raw/tests-epfail-green.log` 中的 `EXIT_K Runtime=0` 字样是 shell echo 标签排版歧义——含义为「`-k runtime` 选择的用例集 EXIT=0」（写脚本时把标签写成了 `EXIT_K Runtime`），其下「# full file:」段与 `EXIT_FULL=0` 才是全文件跑的落点。
 
 ## 3. 供应链与禁改面 — 零变化
 
@@ -97,6 +99,24 @@ perf（directional，如实登记）：dml wall 1.122 s（provider_ms 1118）落
 
 = 基线 1823 passed + 本 Task 新增 3 passed + 1 skipped + 唯一 failed=`tests/m2_test_assets/test_catalog.py::test_manifest_has_unique_cases_and_exact_taxonomy`（既有 BASELINE_FAILURE）。**等量递增成立。**
 
+r1 review-fix 后全量回归（`raw/pytest-full-regression-r1fix.log`，HEAD=`2356fb8f`，P1-1 透传+2 新用例落地后）：
+
+```
+1 failed, 1828 passed, 1 skipped, 1 warning in 124.74s
+```
+
+= 基线 1823 + 首轮 3 + 返修 2 = **1828 passed** + 1 skipped + 同一 test_catalog 既有 failed。**等量递增维持。**
+
+## 2r. r1 review-fix 补充（composite 透传 + 形态 2 钉子）
+
+DSH r1 P1-1（composite `MangaSfxParallelDetectionProvider.detect` 未透传 run-time 审计键，编排裁决采透传方案 (a)）+ P3-1（形态 2 钉子），返修后补 2 用例（`raw/tests-epfail-r1fix-red.log` 红 + `raw/tests-epfail-r1fix-green.log` 绿）：
+
+1. `test_composite_passes_through_runtime_epfail_audit_key`——静默回退 stub 页 → composite 输出携带 `sfx_ep_runtime_check`（值原样透传）+ 只透传该键（`sfx_ep`/`sfx_ep_fallback` 不出现、`device` 仍=primary 的同名键原样，不透传面 DSH r1 提醒成立）；
+2. `test_runtime_epfail_retry_failure_page_then_next_success_observes_key`——P3-1 形态 2 钉子：同 provider 实例首次 run 触发 wrapper fallback（providers 已翻转，wrapper :301→:621）且 CPU 重跑仍失败 → 当页异常传播无 options；同实例第二次 detect 成功页 options 出现新键（session 状态持久）。
+
+- **红**：对 cf013b01（P1-1 修复前）= `1 failed, 1 passed`——failed=composite 透传用例（`KeyError`，缺口实证）；形态 2 钉子按构造绿（钉的是已交付的 sfx 级 session 状态行为，回归钉非新行为，红形态如实登记）；
+- **绿**：对修复 commit `6c2825ce` = 新用例 `2 passed` + 全文件 `84 passed`（82+2）+ `tests/core/test_sfx_assembly.py 19 passed`（既有 composite/assembly 用例零破坏）。
+
 ## 5. 已知限制
 
 1. `sfx_ep_runtime_check` 观测的是「session providers 列表相对构建期发生变化」，归因「wrapper run-time EPFail fallback」基于：本仓代码从不调用 `set_providers`，而 wrapper 仅在 run() EPFail 分支调用它（同 wheel 版本内成立；wheel 升级需复核 wrapper 行为，属既有 EP 语义的同一复核面）。
@@ -112,7 +132,11 @@ perf（directional，如实登记）：dml wall 1.122 s（provider_ms 1118）落
 | `a336bd41` | claim：Owner claim base=d298ecd0（status→owner_claim） |
 | `0f4702d0` | impl：`_runtime_ep_audit` + detect options 追加点 + EP 段注释闭合登记 |
 | `0afb22dd` | test：3 用例 + 红/绿证据 log 入 verification/raw/ |
-| （本 commit） | verify：实测/parity/回归证据 + experiments 脚本 + 本部署记录 |
-| （docs commit） | Task 回填（status=in_review）+ Handoff |
+| `2bed03d0` | verify：实测/parity/回归证据 + experiments 脚本 + 本部署记录 |
+| `cf013b01` | docs：Task 回填（status=in_review）+ Handoff |
+| `6c2825ce` | r1 review-fix P1-1(+P4-3)：composite tail options 条件性透传 + wheel 升级复核面注释 |
+| `2356fb8f` | r1 review-fix P1-1/P3-1 test：composite 透传用例+形态 2 钉子，红绿证据 raw/ |
+| （verify-fix commit） | r1 P2-1：1% 预算口径修正+微基准重跑（JSON/log 再生）+P4-7/P4-8 脚本注释 |
+| （docs-fix commit） | r1 P2-1/P3-2/P4-1/P4-2/P4-5/P4-6 文档同步 + 全量回归 r1fix log |
 
 NOT_RUN 清单：实机真实 EPFail 触发（§5.4）；其余 AC 全部有证据。

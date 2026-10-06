@@ -9,7 +9,7 @@ reviewer: DeepSeek Harness（非作者）
 integrator: 编排会话代行 Codex（用户全权授权）
 approval: user_2026-10-04_批准进行2（已登记非阻塞候选①：GPU-EP-1 r2 N-P3-1 run-time EPFail 未审计通道）
 depends_on: [M2-SFX-GPU-EP-1]
-base_commit: 72807d30
+base_commit: 72807d30（r1 P4-1 双值注记：72807d30=Task 合同释放登记 base；d298ecd0=owner 分支实际 fork 点=释放 commit（`merge-base --is-ancestor`：72807d30 是 d298ecd0 祖先；分支自 d298ecd0 checkout，merge-base(HEAD, d298ecd0)=d298ecd0 实证），owner claim/HANDOFF 统一以 d298ecd0 为准
 branch: agent/zcode/M2-SFX-EPFAIL-AUDIT-1
 worktree: G:/CODEX/New Manga.worktrees/M2-SFX-EPFAIL-AUDIT-1-zcode
 review_events: []
@@ -43,15 +43,27 @@ M2-SFX-GPU-EP-1（done @merge `931a6d03`）交付了「DML 失败回退 CPU 三�
 
 ## 交付记录（Owner=ZCode，2026-10-06）
 
-**结果：AC1-AC4 全 PASS。所选设计=稳态每 detect 一次 `session.get_providers()` 读回（公共 API，实测 0.03 μs/次=纯 Python 属性读，占 GPU-EP-1 KO 基准页 1% 时延预算的 ~2.8e-6%），首 provider 与构建期 effective 比对，稳态零追加、变化才追加单一新键 `sfx_ep_runtime_check`（"session providers changed at run time: <built> -> <now> (ORT wrapper run-time EPFail fallback)"）——静默成功主形态当页即观测，重跑亦失败经下一页成功 detect 观测（session 状态持续）；三键构建期语义与写入时点逐字不变、`NEWMANGA_SFX_EP` 解析与 fail-fast 时序零改动、零 stdout 依赖。GPU-EP-1 deploy-record §1.3 登记的「已知未审计通道」由本 Task 闭合（注记声明，历史文件零改动）。全量回归 1826 passed（基线 1823+3 新增）+1 skipped+1 failed（test_catalog 既有 BASELINE_FAILURE）等量递增。status owner_claim→in_review 停写，待 DSH 非作者 Review。**
+**结果：AC1-AC4 全 PASS（r1 review-fix 后维持，DSH r1 changes_requested 1×P1/P2/P3×2/P4×8 逐项处置见下）。所选设计=稳态每 detect 一次 `session.get_providers()` 读回（公共 API，口径=单次原语调用、实测 0.0304 μs/次=纯 Python 属性读；两个占比并列：页占比 2.75e-6%（vs GPU-EP-1 KO 基准 1.106 s/页）、1% 预算占比 2.7486e-4%（预算=11,060 μs，r1 P2-1 口径修正：1% 预算=页时延×1% 而非整页微秒数）），首 provider 与构建期 effective 比对，稳态零追加、变化才追加单一新键 `sfx_ep_runtime_check`（"session providers changed at run time: <built> -> <now> (ORT wrapper run-time EPFail fallback)"）——静默成功主形态当页即观测，重跑亦失败经下一页成功 detect 观测（session 状态持续）；composite 面条件性透传该键（r1 P1-1 返修：仅当 sfx 面实际产出，不透传 device/sfx_ep/sfx_ep_fallback——device 与 primary torch 面同名冲突）；三键构建期语义与写入时点逐字不变、`NEWMANGA_SFX_EP` 解析与 fail-fast 时序零改动、零 stdout 依赖。GPU-EP-1 deploy-record §1.3 登记的「已知未审计通道」由本 Task 闭合（注记声明，历史文件零改动）。全量回归 1828 passed（基线 1823+首轮 3+返修 2）+1 skipped+1 failed（test_catalog 既有 BASELINE_FAILURE）等量递增。status 保持 in_review 停写，待 DSH r2。**
 
 | AC | 判定 | 核心证据 |
 |---|---|---|
-| AC1 审计机制 | **PASS** | 实测前置（合同硬要求）：`get_providers()` 单次 0.0303/0.0305 μs（cpu/dml，5 轮×1e6 次中位数）——wrapper :214-216 `return self._providers` 纯 Python 读，GPU-EP-1 时「逐 detect 复读代价高」判断不成立；wrapper EPFail 分支 `set_providers(['CPUExecutionProvider'])` 重放后读回 `[Dml,CPU]→[CPU]` 公共 API 可见（set_providers 一次性 0.121 s 非稳态项）；1% 硬门 PASS（`raw/epfail-audit-get-providers-cost.{json,log}`）。设计+落选理由登记部署记录 §1（异常触发式漏静默成功主形态；低频采样 0.03 μs 下无必要且新增 env 面；私有属性探测依赖 wrapper 内部而公共 API 已暴露同一信息）。commit `0f4702d0` |
-| AC2 单测先红后绿 | **PASS** | 3 用例（stub 注入 wrapper run 期 EPFail 形态）：静默成功主形态（构建后 DML 读回 `[Dml,CPU]`=实测真实形态，首次 run 内部翻转 `[CPU]`+重跑成功零异常→当页 `sfx_ep_runtime_check` 精确文案+三键构建期语义不变+第二页持续可见）；稳态零新键；无读回面替身跳过。红=对基线 claim `a336bd41` 跑新测试 1 failed（`KeyError: 'sfx_ep_runtime_check'`）+3 passed 按构造（`raw/tests-epfail-red.log`）；绿=对 impl `0f4702d0` 全文件 82 passed（79 基线+3 新增）（`raw/tests-epfail-green.log`）。commit `0afb22dd` |
-| AC3 数值与回归零变化 | **PASS** | parity 抽 KO pre-k01 页（tile 路由）复核与 GPU-EP-1 基准行**逐数字一致**：max|Δconf|=1e-06、max|Δxyxy|=0.0001px、gate_flips=0、derived 2/2+npd 5/48 matched set equal；真实稳态两 face 零新键、三键照常；dml 1.122s 落 GPU-EP-1 KO 基准区间（0.333-2.325，directional）（`raw/epfail-audit-parity-prek01.{json,log}`）。全量回归 `1 failed, 1826 passed, 1 skipped`=基线 1823+3 新增+1 skipped+test_catalog 既有 BASELINE_FAILURE，等量递增（`raw/pytest-full-regression.log`）。commit `2bed03d0` |
+| AC1 审计机制 | **PASS** | 实测前置（合同硬要求；r1 P2-1 口径修正后重跑值）：`get_providers()` 单次 0.0297/0.0304 μs（cpu/dml，5 轮×1e6 次中位数，口径=单次原语调用 P4-6）——wrapper :214-216 `return self._providers` 纯 Python 读，GPU-EP-1 时「逐 detect 复读代价高」判断不成立；wrapper EPFail 分支 `set_providers(['CPUExecutionProvider'])` 重放后读回 `[Dml,CPU]→[CPU]` 公共 API 可见（set_providers 一次性 0.117 s 非稳态项）；1% 硬门 PASS：页占比 2.75e-6%（vs 1.106 s/页）/ 1% 预算（11,060 μs）占比 2.7486e-4% 并列（`raw/epfail-audit-get-providers-cost.{json,log}` 为重跑再生证据）。设计+落选理由登记部署记录 §1（异常触发式漏静默成功主形态；低频采样 0.03 μs 下无必要且新增 env 面；私有属性探测依赖 wrapper 内部而公共 API 已暴露同一信息）。commit `0f4702d0` |
+| AC2 单测先红后绿 | **PASS** | 3 用例（stub 注入 wrapper run 期 EPFail 形态）：静默成功主形态（构建后 DML 读回 `[Dml,CPU]`=实测真实形态，首次 run 内部翻转 `[CPU]`+重跑成功零异常→当页 `sfx_ep_runtime_check` 精确文案+三键构建期语义不变+第二页持续可见）；稳态零新键；无读回面替身跳过。红=对基线 claim `a336bd41` 跑新测试 1 failed（`KeyError: 'sfx_ep_runtime_check'`）+3 passed 按构造（`raw/tests-epfail-red.log`）；绿=对 impl `0f4702d0` 全文件 82 passed（79 基线+3 新增）（`raw/tests-epfail-green.log`；红 log 3 passed=2 辅助用例+1 被 `-k runtime` 选中的既有用例 test_hash_mismatch_fails_before_any_runtime_import，r1 P3-2 精确化）。commit `0afb22dd`；r1 返修复核见下 r1 段 |
+| AC3 数值与回归零变化 | **PASS** | parity 抽 KO pre-k01 页（tile 路由）复核与 GPU-EP-1 基准行**逐数字一致**：max|Δconf|=1e-06、max|Δxyxy|=0.0001px、gate_flips=0、derived 2/2+npd 5/48 matched set equal；真实稳态两 face 零新键、三键照常；dml 1.122s 落 GPU-EP-1 KO 基准区间（0.333-2.325，directional）（`raw/epfail-audit-parity-prek01.{json,log}`）。全量回归 `1 failed, 1826 passed, 1 skipped`=基线 1823+3 新增+1 skipped+test_catalog 既有 BASELINE_FAILURE，等量递增（`raw/pytest-full-regression.log`）；r1 返修后复跑 `1 failed, 1828 passed, 1 skipped`=基线 1823+首轮 3+返修 2（`raw/pytest-full-regression-r1fix.log`）。commit `2bed03d0` |
 | AC4 文档 | **PASS** | [部署记录](../../verification/M2-SFX-EPFAIL-AUDIT-1/deploy-record.md)（背景闭合声明/设计+落选/实测/红绿/parity/回归/已知限制/交付链）+本回填+[Handoff](../handoffs/M2-SFX-EPFAIL-AUDIT-1-zcode-20261004.md)；GPU-EP-1 §1.3 通道闭合以注记声明（deploy-record §0，历史文件零改动） |
 
 **偏差与限制登记**：①实机真实 EPFail（GPU 掉卡）NOT_RUN——探测面可见性由 wrapper 同 API 调用重放+stub 单测覆盖（deploy-record §5.4，与 GPU-EP-1 验证矩阵②同一诚实口径）；②`sfx_ep_runtime_check` 归因「wrapper run-time EPFail fallback」基于本仓从不调用 `set_providers`+wrapper 仅 EPFail 分支调用（同 wheel 版本内成立，升级需复核）；③wrapper fallback 每 session 一次（`disable_fallback`），第二次 EPFail 走既有 typed 失败路径（GPU-EP-1 语义原样）。
 
-**交付链**：`a336bd41` claim → `0f4702d0` impl → `0afb22dd` test（红+绿证据）→ `2bed03d0` verify（实测+parity+回归+部署记录）→ docs（本回填+Handoff）。
+**交付链**：`a336bd41` claim → `0f4702d0` impl → `0afb22dd` test（红+绿证据）→ `2bed03d0` verify（实测+parity+回归+部署记录）→ `cf013b01` docs（本回填+Handoff）→ r1 review-fix 段（下）。
+
+## r1 review-fix（DSH changes_requested：1×P1、1×P2、2×P3、8×P4；报告由集成方导入 doc/reviews/）
+
+**P1-1（必闭，已闭，编排裁决采透传方案 (a)）——composite 未透传 run-time 审计键**：`MangaSfxParallelDetectionProvider.detect` 的 tail options 重建处条件性透传 `sfx_ep_runtime_check`（仅当 sfx 面实际产出该键时追加该单键、值原样；稳态 composite options 逐字节不变）；只透传该 sfx 专属键，**不透传** device/sfx_ep/sfx_ep_fallback（device 与 primary torch 面同名冲突=DSH r1 提醒，三键保持 sfx 面 engine-build 写入点）；typed 降级分支不承载（无成功 detect 无该键，形态 2 由下一成功页观测）。commit `6c2825ce`+测试 `2356fb8f`（composite 透传用例+P3-1 形态 2 钉子：首次 run fallback+重跑失败当页无 options→同实例第二成功页出现新键；红=对 cf013b01 composite 用例 KeyError+形态 2 钉子按构造绿如实登记 `raw/tests-epfail-r1fix-red.log`；绿=新用例 2 passed+全文件 84 passed+tests/core/test_sfx_assembly.py 19 passed 零破坏 `raw/tests-epfail-r1fix-green.log`）。
+
+**P2-1（应返修，已闭）**：1% 预算口径差 100×——`one_percent_budget_us` 修正为 11,060 μs（1.106 s×1%；前版误用整页 1,106,000 μs），gate 同步；微基准脚本重跑再生 raw JSON/log（非手改）：cpu 0.0297/dml 0.0304 μs，页占比 2.75e-6% 与 1% 预算占比 2.7486e-4% 并列（P4-6 口径注明=单次原语 get_providers() 调用）。commit `22ea8a09`。
+
+**P3 闭**：P3-1 形态 2 钉子（同上 2356fb8f）；P3-2 红 log 叙述精确化（3 passed=2 新辅助用例+1 既有用例被 `-k runtime` 选中，deploy-record §2+本表 AC2 行+Handoff 同步）。
+
+**P4 顺笔闭**：P4-1 base_commit 双值注记（本 frontmatter）；P4-2 deploy-record §1.2 注「属性存在但不可调用形态不兜底（真实 ORT session 不命中）」；P4-3 detection_sfx.py 比较处 wheel 升级复核面注释（只比对 providers[0]，本 wheel fallback 恒 [CPUExecutionProvider]，wrapper :541-577）；P4-4 DSH 已判可接受不动；P4-5 green log `EXIT_K Runtime=0` 排版歧义说明（deploy-record §2 注，不重生成证据）；P4-6 口径注明（§1.1/表行）；P4-7 parity 脚本跨 worktree 依赖注释（GPU-EP-1 基准行读自主 checkout）；P4-8 parity 脚本注释区分脚本门（同量级）与人工对表（逐数字一致）。
+
+**Gate 复验**：全量回归 `1 failed, 1828 passed, 1 skipped`=基线 1823+5 新增等量递增（`raw/pytest-full-regression-r1fix.log`，HEAD=2356fb8f）；微基准重跑 verdict PASS（§1.1 新数字）。
