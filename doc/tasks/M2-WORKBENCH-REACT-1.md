@@ -2,7 +2,7 @@
 id: M2-WORKBENCH-REACT-1
 title: "Workbench React 页第一刀：React 页壳（页列/页图/region 只读画框/任务进度占位）+ region 通道 client（含 D5 几何读取面契约修订）"
 kind: feature
-status: ready
+status: in_progress
 owner: ZCode
 reviewer: DeepSeek Harness（非作者，技术主审）；Qoder（非作者 UI/UX 复审，派发通道可用时补审）
 integrator: 编排会话代行 Codex（用户全权授权）
@@ -53,3 +53,43 @@ created: 2026-10-06
 - UI-MITIGATION 设计（本 Task 的下游消费者，读 §3.2/§5 判断通道字段够用性，但**不实现其视觉**）：`doc/design/M2-SFX-MISROUTE-UI-MITIGATION/design.md`。
 - settings client 模板：`apps/desktop/frontend/src/settings/client.ts`（typed error、invoke 封装、测试形态）。
 - RETYPE-CORE 的 Tauri/Core 落法模板：`eaed7858`/`0f88cbcd`（三视图同步逐项清单）。
+
+## 实施登记（Owner：ZCode，2026-10-06）
+
+### claim 核对
+
+- worktree `G:/CODEX/New Manga.worktrees/M2-WORKBENCH-REACT-1-zcode`（分支 `agent/zcode/M2-WORKBENCH-REACT-1`）干净，HEAD=`2a1a9f73`。Task `base_commit: 3a65150b` 与实际起点存在 **+2 release commits 漂移**（`630c3f51` 释放三件 + `2a1a9f73` PLAN 回填；两者均只触 `doc/REBASELINE_PLAN.md`/`doc/STATUS.md` 收口面，零代码面），claim 按实际起点 `2a1a9f73` 实施。
+- fresh worktree `npm install`（apps/desktop/frontend）：EXIT=0，`package-lock.json` 零变化；esbuild postinstall 被 allowScripts 拦截（既有全局策略，vite 构建用平台 optional dep，build 验证不受影响）。
+
+### AC1 裁量：选方案 (a)——`list_regions` 扩可选几何字段（additive，协议 minor 不 bump）
+
+**核实结论（源码事实链）**：
+1. region 几何在 Region 实体**直接可得**：`src/domain/regions/entities.py:87-114` `RegionGeometry { bbox: BBox(x,y,w,h), polygon: tuple[tuple[int,int], ...] }`——页面**像素**坐标（int），`list_regions(page_id)` 返回的每个 Region 实体都携带 current 态几何（改标 revision 仅 region_type/sfx_policy 两字段变化、geometry 原样保留，`application/editing/service.py:312-330`）。
+2. page 尺寸直接可得：`src/domain/pages/entities.py:26-27` `Page.width/height`（解码图像尺寸，导入时固化）；`SqliteLibraryRepository.get_page(page_id)`（`infrastructure/sqlite/library.py:346`）一次查询；`core_service` 的 `CoreServices.repository` 直接持有该 repo。
+3. 归一化反算与正向规则 round-trip 自洽：正向 half-up `floor(n*size+0.5)`（`application/editing/region_canvas.py:40-41`）⇒ 反算定义 `normalized := pixel / size` 满足 `floor((pixel/size)*size+0.5) == pixel`（pixel 为整数），无漂移。
+
+**裁量理由（(a) 优于 (b)）**：
+- 几何在 region 行已直接可得（上述 1/2），(a) 改动面 = core handler + editing service + 契约文档三个文件；(b) 额外需要协议 minor bump 3→4 + Tauri 三视图同步（command_allowlist/generate_handler!/build.rs app-manifest）+ capabilities + 前端 commandSurface pin + Rust 单测 + packaging EXPECTED 计数，命令面冗余。
+- §5.4 既有定案③「单 region 详情不设独立命令（避免命令面冗余，最小面原则）」的同一原则适用于几何面：UI 需要「列表+几何」一次往返全齐，(b) 引入 N+1 或两段往返。
+- (a) 零既有语义变更：无新命令、纯可选字段扩展（§3.2 同 major additive widening——接收端忽略未知可选字段）；现状无 region React 消费端（M2-SFX-MISROUTE-UI-MITIGATION 是纯设计交付），零既有消费者破坏。
+
+**协议 minor 裁量：不 bump（3 保持）**。`core_service.py:110-120` 既有注记惯例：每次 minor bump 均对应「commands added」（detect→1、settings→2、region pair→3）。本次为纯可选字段扩展（无新命令、无新 wire 错误语义），按 §3.2「同 major 下 minor 可向前增加可选字段」属兼容 widening 的非命令子集；如实登记为 **rev 1.4→1.5 additive 修订、PROTOCOL_MINOR 维持 3**。旧读取端（忽略未知可选字段）与旧 Core（不返回新字段）双向兼容。
+
+**契约修订草案（rev 1.4→1.5 diff 面，落 `doc/contracts/M2-C1_TYPED_IPC_CONTRACT.md`）**：
+1. `RegionListSummary` 追加**可选**字段：
+   ```text
+   geometry?: {
+     bbox: [x, y, w, h],        # 归一化 0..1，反算自 region.geometry.bbox / page 尺寸
+     polygon: [[x, y], ...]     # 归一化点环，反算自 region.geometry.polygon；空环 => []
+   }
+   ```
+   （页无存活 region 时列表为空，字段面不变；region 实体几何恒存在——`Page.__post_init__` 与 `RegionGeometry` 校验保证 page 与 bbox 尺寸为正。）
+2. `ListRegions` result 包装对象追加**可选** `page_size?: { width: int, height: int } | null`——页面**像素**尺寸投影（RegionOverlay letterbox 数学的「尺寸只从投影取」承载，M2-UI1 §2.2 RegionOverlay 行硬规则）；page_id 未命中任何 page 时为 `null`（沿 §5.3 frozen-None 通道语义先例：未命中可区分于零尺寸；`page_id` 存在性不校验的 footnote a 语义不变）。
+3. 错误码映射表零变化；C1-C7/P1-P4 断言零变化；`SetRegionType` 零变化。
+4. Revision history 追加 `1.5` 条目（M2-WORKBENCH-REACT-1，授权=本 Task AC1；UI 设计稿 D5 缺口闭合，UI-MITIGATION §5 D5 行由本修订承载）。
+
+**Core 实施落点（允许路径内逐文件声明）**：
+- `src/application/editing/region_canvas.py`：新增 `page_geometry_to_normalized(geometry, page_w, page_h)`——与正向换算同文件（「单一数学」约束，正向规则已在该文件钉死）。
+- `src/application/editing/service.py`：`list_region_summaries(page_id, *, page_size=None)` 增可选 keyword-only 参数——注入 page 尺寸时每行 summary 追加 `geometry`（归一化）；未注入时保持五字段原样（严格 additive，既有调用者零破坏）。
+- `src/bootstrap/core_service.py`：`handle_list_regions` 查 `self._core.repository.get_page(page_id)` 组装 `page_size` 并注入 service。
+- Tauri/Rust：**零改动**（`PRODUCTION_COMMANDS` 保持恰 9 命令，AC3 Rust 面零改动成立）。
