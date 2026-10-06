@@ -3,7 +3,7 @@ task_id: M2-WORKBENCH-REACT-1
 author: ZCode
 recipient: Codex（集成）/ DeepSeek Harness（非作者技术主审 r2）/ Qoder（非作者 UI/UX 复审，派发通道可用时补审）
 base_commit: 2a1a9f73（实际实施起点；Task 释放登记时写 3a65150b，漂移 +2 释放链 commits 零代码面）
-delivery_head: 待落（r1 返修证据锚=fix commit hash，由其后继 docs commit 回填；GPU-EP-1 先例——tip 以 git log 分支头为准）
+delivery_head: fb730a00（r1 返修证据锚=fix commit；其后继 docs commit 仅落此 hash——GPU-EP-1 先例，tip 以 git log 分支头为准）
 status: in_review（r1 DSH changes_requested 已返修闭合，待 DSH r2 复核 + Codex 集成）
 ---
 
@@ -17,7 +17,7 @@ AC1-AC5 全 PASS。Workbench React 页读取面闭环交付，UI-MITIGATION 实�
 - **AC2 页壳第一刀**：`region/client.ts`（`listRegions`/`setRegionType` typed 封装，沿 settings client 先例）+ `<WorkbenchPage>` 五区骨架（Toolbar/PageList/Viewer+RegionOverlay/RegionInspector/TaskProgress，`data-testid` 钉位平移）+ App.tsx 页级导航（production 窗口 tab 切换；**探针/ac1 runner 窗口 chrome 冻结**）。RegionOverlay SVG 只读画框逐字遵守 M2-UI1 两条硬规则+单一数学（`region/geometry.ts` 唯一换算点）。改标入口预留禁用态。
 - **AC3 deferral 闭合**：`commandSurface.test.ts` 补录 `REGION_PRODUCTION_ONLY_COMMANDS`（production allow/probe deny），RETYPE-CORE 交付时的 pin 补录 deferral（merge `d8019810` message 登记）由此闭合。
 - **变更路径**：`src/application/editing/{region_canvas,service}.py`、`src/bootstrap/core_service.py`、`doc/contracts/M2-C1_TYPED_IPC_CONTRACT.md`（AC1 授权 additive 修订）、`apps/desktop/frontend/src/{App.tsx,region/**,workbench/**}`、`apps/desktop/frontend/src/resourceChannel/commandSurface.test.ts`、`tests/{core/test_core_service_retype.py,workbench/test_region_canvas.py}`、`verification/M2-WORKBENCH-REACT-1/**`、`doc/tasks/`、`doc/handoffs/`。零 npm 新依赖。
-- **commit 链**：`75d55899` claim → `5b341680` impl → `bd3771f9` test → verify（证据入库）→ docs（Task 回填+本文件）→ **r1 返修**（见下节 fix commit，hash 由后继 docs commit 回填本 frontmatter `delivery_head`）。
+- **commit 链**：`75d55899` claim → `5b341680` impl → `bd3771f9` test → verify（证据入库）→ docs（Task 回填+本文件）→ **r1 返修 `fb730a00` fix**（逐条处置见下节）+ 后继 docs（delivery_head 回填）。
 
 ## DSH r1 返修处置（changes_requested @reviewed_head=3a98a3ac → 逐条闭合，2026-10-06）
 
