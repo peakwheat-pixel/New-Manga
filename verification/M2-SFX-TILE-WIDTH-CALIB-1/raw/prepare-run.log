@@ -1,0 +1,15 @@
+[prepare] native pre-k08 690x51971 boxes=27
+[prepare] native pre-k09 690x100480 boxes=24
+[prepare] native pre-k02 600x18401 boxes=3
+[prepare] pre-k08@640: 640x48205 boxes=27
+[prepare] pre-k08@480: 480x36154 boxes=27
+[prepare] pre-k08@320: 320x24102 boxes=27
+[prepare] pre-k08@800: 800x60256 boxes=27
+[prepare] pre-k08@1024: 1024x77128 boxes=27
+[prepare] pre-k09@640: 640x93199 boxes=24
+[prepare] pre-k09@480: 480x69899 boxes=24
+[prepare] pre-k09@320: 320x46599 boxes=24
+[prepare] synth-384: 384x40960 blocks=49
+[prepare] synth-560: 560x40960 blocks=46
+[prepare] synth-680: 680x40960 blocks=46
+[prepare] wrote G:\CODEX\New Manga.task-envs\M2-SFX-TILE-WIDTH-CALIB-1\pages-manifest.json pages=14
