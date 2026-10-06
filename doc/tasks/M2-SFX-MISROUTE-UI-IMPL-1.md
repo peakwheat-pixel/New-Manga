@@ -11,7 +11,7 @@ depends_on: [M2-SFX-MISROUTE-UI-MITIGATION, M2-WORKBENCH-REACT-1]
 base_commit: ecbfe9cb
 branch: agent/zcode/M2-SFX-MISROUTE-UI-IMPL-1
 worktree: G:/CODEX/New Manga.worktrees/M2-SFX-MISROUTE-UI-IMPL-1-zcode
-review_events: []
+review_events: [r1 2026-10-06 DSH 非作者 changes_requested（1×P1+5×P2+6×P3+6×P4；A1-A13 逐条判定+RC-1 裁定核验成立；返修见 r1 返修段）]
 created: 2026-10-06
 ---
 
@@ -52,7 +52,7 @@ created: 2026-10-06
 - **AC1 改标交互全套（不对称状态机 FROZEN §4.1）——PARTIAL（undo 执行面登记缺失，语义面全合规）**：正向 speech→sfx 即时执行（R2，planRetypeAction→execute，无确认框）✓；反向 sfx→speech 显式确认框（R3/A5，`RelabelConfirmDialog`，文案含「重新进入对白翻译链，可能产生新的译文」+「改标只修改标注，不改动原图文件」固定安全文案，st-fail 边）✓；失败即原态（R6：零乐观变更+typed 错误块 `relabel-feedback`/`retypeError` 显式呈现无自动重试；守卫②取消=仅关框零回滚）+expected_revision 并发保护（region.revision_no 作 expected）✓；**undo=禁用态+原因 title**（`UNDO_DISABLED_TITLE`：Core 无 restore 命令 runtime [PROTOCOL_MINOR=3 无此命令]，A6 红线禁止以反向改标模拟撤销——禁用是唯一合规呈现，通道属后续命令面 Task [RC-4 域]）→ 状态机四分支中 undo 转换为登记性禁用，判 PARTIAL 如实登记。
 - **AC2 E1-E4 视觉——PASS**：E1 警示外圈（warn 2px 实线，基框外 2px 间距，选中内圈 accent+警示外圈 warn 两层并存）+E2 warn pill（♪? 疑似拟声词）+E3 sfx pill（♪ SFX·保留原文/手动处理模式/拟声词翻译链 三档查找表）+E4 反馈条（ViewerPanel 画布底部居中 36px，结果文案=policy 快照分档+[撤销][重渲染本页] 双禁用态+title 原因）——全部落 RegionOverlay SVG/ViewerPanel/RegionInspector；三重编码 A8（字形+颜色+文本齐备，vitest 断言）。**RC-1 裁定=不含（裁量理由）**：设计 R1 原文「警示置位本身不写 region revision（是 UI 辅助信号不是领域变更）」「初始唯一置位来源是人工」→ suspect 实现为**纯前端 UI 内存态**（`WorkbenchPage.suspects: Set<regionId>`，零 Core 调用零持久化），RC-1 契约修订仅在需要持久化/heuristic 来源/跨端共享时才必要（设计 OPEN-2 边界原文）；E1 不渲染不虚构约束满足（A2：置位不依赖 OCR/候选——planRetypeAction/derivePhase 签名根本不接受 OCR/候选输入）。Reader 页级提示条未实现（合同范围边界：Reader React 页不存在）。
 - **AC3 Design-to-impl 保真——PASS（偏差 9 条全登记，见下）**：§7 断言 UI 可测面落 vitest：A2（planRetypeAction 无 suspect 外部输入参数=构造性满足）、A3（suspect toggle 零 Core 调用）、A5（plan confirm 分支钉测）、A8（badge glyph+文本 SSR 断言）、A9（E3/E4 全部为 Core 快照查找表，零决策逻辑）、A12（canRetype 禁用+原因逐类型钉测）。
-- **AC4 测试与回归——PASS**：vitest 77→**102 passed**（+25：relabelMachine 20+overlay mitigation 5）EXIT=0（先红后绿：`vitest-machine-red.log` 模块不存在首轮红→`vitest-machine-green.log` 16/16 绿，时间戳有序）；`npm run build` EXIT=0（485ms）；pytest 1847 passed+1 skipped+1 failed（test_catalog 既有 BASELINE_FAILURE）=基线等量（跑 env=T1.1.1-impl-py312 venv；前端零 Python 触碰）。
+- **AC4 测试与回归——PASS（r1 曾下调 PARTIAL，返修后闭合）**：vitest 77→**105 passed**（终态；首轮 +25=relabelMachine 20+overlay 5，r1fix +3=feedback 两变体+artefact 文案）EXIT=0（先红后绿：`vitest-machine-red.log` 首轮红→green 16/16——**16/20 红先行，retypeFeedback 组 4 例随实现同轮补，P3-3 已精确化**）；`npm run build` EXIT=0（485ms）；pytest 1847 passed+1 skipped+1 failed（test_catalog 既有 BASELINE_FAILURE）=基线等量（跑 env=T1.1.1-impl-py312 venv；前端零 Python 触碰）。
 - **AC5 文档——PASS**：本回填+Handoff+设计文档尾注（原文不回改）。
 
 ### Design-to-impl 偏差登记（设计 FROZEN，偏差=登记非静默改动）
@@ -76,3 +76,21 @@ created: 2026-10-06
 - raw：`verification/M2-SFX-MISROUTE-UI-IMPL-1/raw/{npm-install,vitest-machine-red,vitest-machine-green,vitest-impl,vitest-impl2,vitest-verify,npm-build,pytest-full}.log`
 - Handoff：`doc/handoffs/M2-SFX-MISROUTE-UI-IMPL-1-zcode-20261006.md`
 - 设计尾注：`doc/design/M2-SFX-MISROUTE-UI-MITIGATION/design.md` 文尾实现状态注记（原文零回改）
+
+### r1 返修段（DSH 非作者 2026-10-06：changes_requested——1×P1+5×P2+6×P3+6×P4，全部闭合或登记；r1fix commit `5dd325b8`+本文档 docs 补充）
+
+- **P1-1（闭合，代码+测试双闭合）**：改标失败错误呈现不可达（retypeError 唯一消费点在确认框、catch 先卸框=死代码）——修复：①正向失败走 E4 反馈条 error 变体（`isError:true`，fail 边框+无动作按钮，r1 指出的死分支激活）；②确认框路径失败**保留对话框**框内显示 typed 错误（不再关框）；③补 error/success 两变体 SSR 断言（ViewerPanel feedback describe ×2）。Task 原「typed 错误块显式呈现」声明自此成立。
+- **P2-1（闭合）**：WorkbenchToolbar 陈旧占位 `toolbar-retype-reserved` 删除（断言静默缩窄同步修复——工具栏 not.toContain 断言恢复）。
+- **P2-2（闭合）**：Inspector「可随时撤销」承诺改条件句「撤销/历史入口待 Core restore 命令面 Task 落地后启用（当前 UI 通道未开通）」。
+- **P2-3（闭合）**：retypeFeedback 四分支文案全部补「原图完好；已渲染成品图需重跑渲染才恢复原文」（§4.3-4/§4.4 FROZEN 义务；读面无产物字段→无条件附=保守方向）+vitest 断言（5 分支逐条包含断言）。
+- **P2-4（闭合可测面+表述修正）**：补 feedback error/success SSR 断言×2；**A3 覆盖表述修正**——onToggleSuspect 零 invoke 为实现事实（函数体仅 setSuspects 集合增删，静态保证），交互时序测试因本前端零 DOM 测试环境（无 jsdom/happy-dom）不设，沿「结构 SSR+逻辑纯函数」既定分工如实登记，不声称落 vitest；AC4 表述按 r1 下调 PARTIAL 认同（返修后闭合）。
+- **P2-5（闭合）**：`raw/r1fix-diff-name-status.txt` 落盘（ecbfe9cb..tip 全 diff 面；9 前端文件+3 文档+verification raw，零 Python src/**/src-tauri/qml/GATE 触碰）。
+- **P3-1（闭合登记）**：A13(b) 并入偏差 8 扩充——全前端无 CSS/token 定义，`var(--x, fallback)` 恒解析 fallback；画布衬底本次已 token 化 `var(--bg-canvas, #0b0e12)`（r1fix 顺笔）；A13(b) 静态估算 E1 fallback vs 衬底 ≈11.6:1（≥3:1，非权威），权威取证随 token 真值链。
+- **P3-2（闭合登记）**：OTHER_TYPE 补偏差第 10 条（A12 派生根，非拓扑新增）。
+- **P3-3（表述修正）**：先红后绿=「16/20 红先行（retypeFeedback 组 4 例随实现同轮补）+终态全绿」，AC4 行已按此精确化。
+- **P3-4（闭合）**：doSetRegionType 增 `opts.confirmed` 结构化闸门——confirm 类转换未带 confirmed=true 不达 wire（A5 从调用点纪律升为结构纪律）。
+- **P3-5（闭合）**：stage 空白右键关菜单+Escape 关菜单（tabIndex+onKeyDown）。
+- **P3-6（登记）**：offerUndo/offerRerender 无条件 true（读面无产物字段）——与 P2-3 文案无条件附同口径。
+- **P4 登记**：P4-2 选中描边 2.5px/间距 2.25px（视觉基线冻结）；P4-3 refreshRegions 本地 signal 永不取消（登记）；P4-5 feedback 跨页不清理（登记）；P4-6 草稿互斥退化（无草稿态，登记）。
+- **P4-4（表述精确化）**：「Core 无 restore」→「Core **应用层已有** `RegionEditingService.restore_revision`（editing/service.py:694-716），缺的是 IPC/Tauri 命令面（PROTOCOL_MINOR=3 未暴露）」——undo 禁用理由表述随此精确化（结论不变）。
+- r1fix 复跑：vitest **105**（102+3）EXIT=0、build EXIT=0（431ms）；pytest 免重跑（零 Python 触碰）。
