@@ -1,0 +1,38 @@
+SHELL=PowerShell
+NODE=E:\Program Files\nodejs\node.exe
+HEAD=915daf6112228f2824b21c44a464cdd092de9d8d
+COMMAND=npm test; npm run build (sequential)
+npm notice run m2rc1-frontend@0.1.0 test
+npm notice run vitest run
+
+ RUN  v2.1.9 G:/CODEX/New Manga/apps/desktop/frontend
+
+ ✓ src/resourceChannel/commandSurface.test.ts (10 tests) 12ms
+ ✓ src/region/geometry.test.ts (8 tests) 4ms
+ ✓ src/region/client.test.ts (11 tests) 8ms
+ ✓ src/ac1/driver.test.ts (3 tests) 3ms
+ ✓ src/library/client.test.ts (4 tests) 6ms
+ ✓ src/workbench/relabelMachine.test.ts (21 tests) 7ms
+ ✓ src/settings/client.test.ts (7 tests) 7ms
+ ✓ src/library/LibraryPanel.test.tsx (8 tests) 95ms
+ ✓ src/resourceChannel/client.test.ts (8 tests) 9ms
+ ✓ src/settings/SettingsPanel.test.tsx (10 tests) 180ms
+ ✓ src/workbench/WorkbenchPage.test.tsx (15 tests) 17ms
+
+ Test Files  11 passed (11)
+      Tests  105 passed (105)
+   Start at  00:40:50
+   Duration  2.25s (transform 5.75s, setup 0ms, collect 6.53s, tests 348ms, environment 2ms, prepare 1.90s)
+
+TEST_EXIT=0
+npm notice run m2rc1-frontend@0.1.0 build
+npm notice run tsc && vite build
+vite v5.4.21 building for production...
+transforming...
+✓ 50 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                  0.28 kB │ gzip:  0.21 kB
+dist/assets/index-D97NL1aF.js  183.77 kB │ gzip: 59.06 kB
+✓ built in 1.74s
+BUILD_EXIT=0

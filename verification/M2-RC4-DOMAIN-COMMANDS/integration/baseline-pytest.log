@@ -1,0 +1,6 @@
+SHELL=PowerShell
+PYTHON=G:/CODEX/New Manga.task-envs/T1.1.1-impl-py312/Scripts/python.exe
+HEAD=915daf6112228f2824b21c44a464cdd092de9d8d
+COMMAND=python -m pytest tests -q
+
+RESULT=INTERRUPTED_BY_SYSTEM_REBOOT; EXIT unavailable; NOT_RUN (no completed result)
