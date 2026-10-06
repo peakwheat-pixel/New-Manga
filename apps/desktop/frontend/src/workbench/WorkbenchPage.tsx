@@ -241,6 +241,11 @@ export function WorkbenchPage({ invoke }: WorkbenchPageProps) {
     }
     const requestId = ++chapterReadRef.current;
     const isCurrent = () => !signal.cancelled && requestId === chapterReadRef.current;
+    // DSH r1 PR-06: drop the previous book's rows IMMEDIATELY (not only on
+    // the reply). Otherwise the stale rows stay rendered and clickable in
+    // the loading window, so a click could re-introduce a dangling
+    // selectedChapterId for a chapter that belongs to the OLD book.
+    setChapters([]);
     setChaptersBusy(true);
     setChaptersError(null);
     clients.library
@@ -277,6 +282,9 @@ export function WorkbenchPage({ invoke }: WorkbenchPageProps) {
     }
     const requestId = ++pageNavReadRef.current;
     const isCurrent = () => !signal.cancelled && requestId === pageNavReadRef.current;
+    // Same immediate-drop discipline as the chapter loop above: the old
+    // chapter's rows must not stay clickable while the new list loads.
+    setPages([]);
     setPagesBusy(true);
     setPagesError(null);
     clients.library

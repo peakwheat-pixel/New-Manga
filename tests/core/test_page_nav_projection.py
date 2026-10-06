@@ -46,7 +46,7 @@ def _rpc(command: str, request_id: str, payload: dict) -> str:
 
 def _seed_core(tmp_path: Path) -> CoreServiceServer:
     """One book, two chapters (reverse-name order, explicit sort_order),
-    two pages in the second chapter imported in one call."""
+    two pages in the second chapter imported one per call (distinct colors so the second import is not dropped by source-hash dedup)."""
     core = assemble_production_core(tmp_path / "data")
     with core.conn:
         core.conn.execute(

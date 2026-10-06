@@ -1490,9 +1490,6 @@ class CoreServiceServer:
                 False,
             )
 
-        # M2-PAGE-RESOURCE-RESOLVE-1: page -> servable resource key. Read
-        # face of the display image; publishes the immutable managed original
-        # into the derived read-only root under a deterministic catalog key.
         if command in ("list_chapters", "list_chapter_pages"):
             # M2-PAGE-NAV-PROJECTION-1: read-only navigation projections.
             # Unknown parent ids are EMPTY data (P3-4 precedent), so the
@@ -1545,6 +1542,9 @@ class CoreServiceServer:
                 False,
             )
 
+        # M2-PAGE-RESOURCE-RESOLVE-1: page -> servable resource key. Read
+        # face of the display image; publishes the immutable managed original
+        # into the derived read-only root under a deterministic catalog key.
         if command == "resolve_page_resource":
             try:
                 result = self.handle_resolve_page_resource(payload)

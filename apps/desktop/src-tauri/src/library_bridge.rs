@@ -840,6 +840,20 @@ mod tests {
             .expect("list_chapter_pages succeeds");
         assert_eq!(pages["pages"][0]["page_id"], "p1");
         assert_eq!(pages["pages"][1]["source_filename"], "page-b.png");
+
+        // DSH r1 PR-01: the "typed pass-through" half of this test's claim
+        // needs an actual Err branch assertion, like the page-resolve
+        // precedent above. The Mock forwards the LibraryError verbatim.
+        channel.set_domain_result(Err(LibraryError::new(
+            "INVALID_REQUEST",
+            "validation",
+            false,
+            Some("list_chapters requires 'book_id': a non-empty string"),
+        )));
+        let err = channel.list_chapters("book-1").unwrap_err();
+        assert_eq!(err.code, "INVALID_REQUEST");
+        assert_eq!(err.category, "validation");
+        assert!(!err.retryable);
     }
 
     #[test]

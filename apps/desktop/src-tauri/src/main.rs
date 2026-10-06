@@ -963,8 +963,9 @@ mod tests {
     /// keyed `plugin:<name>|<cmd>` and never matches bare invocations -- the
     /// ACL layer silently skipped them, DSH R2-01). This pins the build
     /// artifact: the app manifest declares exactly the live commands
-    /// (thirteen production -- resource-channel, IPC1, settings, retype,
-    /// RC-4 and the page resolve -- plus three M2-AC1 acceptance; R2-06),
+    /// (fifteen production -- resource-channel, IPC1, settings, retype,
+    /// RC-4, the page resolve and the page navigation projections -- plus
+    /// three M2-AC1 acceptance; R2-06),
     /// and no plugin-shaped surface remains.
     #[test]
     fn app_acl_manifest_is_generated_and_enforced() {
@@ -983,8 +984,8 @@ mod tests {
         // commands too — a capability/manifest typo for an ac1 command must
         // fail here, not only surface as an E2E ACL denial.
         // M2-REGION-RETYPE-CORE r1 P3-2: the production surface joins the
-        // sweep, so the existence check covers all 20 commands across the
-        // three surfaces (13 production + 4 probe-only + 3 ac1) — a missing
+        // sweep, so the existence check covers all 22 commands across the
+        // three surfaces (15 production + 4 probe-only + 3 ac1) — a missing
         // capability/manifest entry for a production-only command (e.g. the
         // retype pair) fails this test, not just a live invoke.
         for command in command_allowlist(true, false)
@@ -1636,7 +1637,9 @@ mod tests {
         // 1.0 -> 1.1 (core.detect added); M2-SETTINGS-IPC-CHANNEL: 1.1 -> 2
         // (settings_get/settings_update_section added);
         // M2-REGION-RETYPE-CORE: 2 -> 3 (set_region_type/list_regions
-        // added); M2-PAGE-RESOURCE-RESOLVE-1: 4 -> 5
+        // added); M2-RC4-DOMAIN-COMMANDS: 3 -> 4 (list_region_revisions /
+        // restore_region_revision / rerender_page added, DSH r1 PR-07
+        // retro-note); M2-PAGE-RESOURCE-RESOLVE-1: 4 -> 5
         // (resolve_page_resource added); M2-PAGE-NAV-PROJECTION-1: 5 -> 6
         // (list_chapters / list_chapter_pages added). This real-sidecar
         // assertion is the consequence sync for the widenings. The

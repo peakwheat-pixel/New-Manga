@@ -1,5 +1,5 @@
 import { renderToString } from "react-dom/server";
-import { describe, expect, it, vi } from "vitest";
+import { describe, expect, it } from "vitest";
 import type { BookSummary } from "../library/types";
 import { PageListPanel } from "./PageListPanel";
 
@@ -88,8 +88,11 @@ describe("<PageListPanel> three-level drill-down (M2-PAGE-NAV-PROJECTION-1)", ()
     expect(empty).toContain('data-testid="chapter-list-empty"');
   });
 
-  it("renders page tiles feeding onPageIdChange once a chapter is selected", () => {
-    const onPageIdChange = vi.fn();
+  it("renders page tiles with the current-page highlight once a chapter is selected", () => {
+    // renderToString never fires events, so the page-tile -> onPageIdChange
+    // WIRING is pinned at the integration layer (WorkbenchPage.test.tsx
+    // clicks page-tile-* and asserts the resolve -> image chain); this
+    // static case only pins what the panel renders per its props.
     const html = renderPanel({
       selectedBookId: "book-1",
       chapters: [CHAPTER],
@@ -103,8 +106,6 @@ describe("<PageListPanel> three-level drill-down (M2-PAGE-NAV-PROJECTION-1)", ()
     expect(html).not.toContain('data-testid="pages-busy"');
     expect(html).not.toContain('data-testid="pages-error"');
     expect(html).not.toContain('data-testid="page-nav-list-empty"');
-    // the panel itself never invokes; the click handler is the injected prop
-    expect(onPageIdChange).not.toHaveBeenCalled();
   });
 
   it("renders the page loading/error/empty states distinctly", () => {
