@@ -1646,3 +1646,122 @@ def test_runtime_audit_skips_sessions_without_readback_face(tmp_path):
     assert "sfx_ep_runtime_check" not in options
     assert options["device"] == "dml"
     assert options["sfx_ep"] == "dml"
+
+
+def test_composite_passes_through_runtime_epfail_audit_key():
+    """r1 P1-1: the run-time EPFail audit key rides the COMPOSITE result —
+    passed through CONDITIONALLY (only when the sfx face actually produced
+    it, so the steady-state composite options stay byte-identical) and as
+    THE SFX-ONLY KEY: ``device``/``sfx_ep``/``sfx_ep_fallback`` are NOT
+    passed through (``device`` collides with the primary torch face's
+    same-named key — DSH r1 reminder; the three keys keep their engine-build
+    write point on the sfx face only)."""
+    primary = _FakeProvider(
+        [
+            RegionCandidate(
+                polygon=((0.0, 0.0), (5.0, 0.0), (5.0, 5.0)),
+                reading_order=1,
+                provider_label="manga-1",
+            )
+        ]
+    )
+    sfx = SfxDetectionProvider(weights_path=Path("x.onnx"))
+    composite = MangaSfxParallelDetectionProvider(primary=primary, sfx=sfx)
+
+    class _SilentRuntimeFallbackSession:
+        """Post-build DML read-back form whose run flips the provider list to
+        the wrapper's CPU fallback INSIDE the wrapper and returns NORMALLY
+        (the silent-success shape — no exception, results keep flowing)."""
+
+        def __init__(self):  # noqa: ANN204
+            self._providers = [
+                "DmlExecutionProvider",
+                "CPUExecutionProvider",
+            ]
+
+        def get_providers(self):
+            return list(self._providers)
+
+        def run(self, _, feeds):  # noqa: ANN001
+            self._providers = ["CPUExecutionProvider"]
+            return (np.zeros((1, 40, 2), dtype=np.float32),)
+
+    sfx._engine = (
+        _SilentRuntimeFallbackSession(),
+        SFX_DEFAULT_IMGSZ,
+        "metadata_parsed",
+        "[1024, 1024]",
+        dsfx._EpProvenance(requested="dml", effective="dml"),
+    )
+    result = composite.detect(_request())
+    options = dict(result.options)
+    # The audit key rides the composite tail options verbatim.
+    assert options["sfx_ep_runtime_check"] == (
+        "session providers changed at run time: dml -> cpu "
+        "(ORT wrapper run-time EPFail fallback)"
+    )
+    # ONLY that key: the sfx EP keys stay on the sfx face — ``device`` is
+    # the primary torch face's key here (the _FakeProvider's own options).
+    assert "sfx_ep" not in options
+    assert "sfx_ep_fallback" not in options
+    assert options["device"] == "cpu"
+
+
+def test_runtime_epfail_retry_failure_page_then_next_success_observes_key():
+    """P3-1 形态 2 nail: the wrapper's run-time fallback flips the provider
+    list (``set_providers`` at wrapper :301 rewrites ``self._providers`` via
+    _reset_session :621) BEFORE its CPU retry, and the retry can STILL fail —
+    that page propagates the failure with no options at all — while the
+    provider-list change persists as SESSION STATE. The next successful
+    detect on the SAME provider instance therefore observes it and carries
+    the audit key (the audit is session-state-driven, not a per-page
+    event)."""
+    provider = SfxDetectionProvider(
+        weights_path=Path("unused.onnx"), conf_threshold=0.5
+    )
+
+    class _EpfailRetryFailsSession:
+        """First run: the wrapper flips the providers to CPU (set_providers
+        already took effect) and the CPU retry ALSO fails — the exception
+        propagates to the caller. Later runs: the (now CPU) session
+        succeeds."""
+
+        def __init__(self):  # noqa: ANN204
+            self._providers = [
+                "DmlExecutionProvider",
+                "CPUExecutionProvider",
+            ]
+            self._runs = 0
+
+        def get_providers(self):
+            return list(self._providers)
+
+        def run(self, _, feeds):  # noqa: ANN001
+            self._runs += 1
+            if self._runs == 1:
+                self._providers = ["CPUExecutionProvider"]
+                raise RuntimeError("CPU retry failed after EPFail fallback")
+            return (np.zeros((1, 40, 2), dtype=np.float32),)
+
+    provider._engine = (
+        _EpfailRetryFailsSession(),
+        SFX_DEFAULT_IMGSZ,
+        "metadata_parsed",
+        "[1024, 1024]",
+        dsfx._EpProvenance(requested="dml", effective="dml"),
+    )
+    # Page 1 fails: no options exist on a failed page.
+    with pytest.raises(RuntimeError, match="CPU retry failed"):
+        provider.detect(_request())
+    # Page 2 succeeds on the same instance: the persisted provider-list
+    # change is observed (the three-key provenance keeps its engine-build
+    # semantics verbatim).
+    result = provider.detect(_request())
+    options = dict(result.options)
+    assert options["device"] == "dml"
+    assert options["sfx_ep"] == "dml"
+    assert "sfx_ep_fallback" not in options
+    assert options["sfx_ep_runtime_check"] == (
+        "session providers changed at run time: dml -> cpu "
+        "(ORT wrapper run-time EPFail fallback)"
+    )

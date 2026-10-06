@@ -1,0 +1,68 @@
+# r1 review-fix red run against HEAD=cf013b01ab076c8f36a7e660f000b4614d46430a (docs cf013b01) — P1-1 composite passthrough NOT yet implemented, new tests only in worktree
+# date: 2026-10-06T19:00:59+08:00
+# command: python -m pytest tests/providers/test_detection_sfx.py -k 'composite_passes_through_runtime or retry_failure_page' -q
+# expected red shape: composite passthrough case FAILS (KeyError: sfx_ep_runtime_check — r1 P1-1 gap); the P3-1 形态 2 nail is GREEN BY CONSTRUCTION on the delivered sfx-level audit (it nails already-delivered session-state behavior against regression, no new red)
+F.                                                                       [100%]
+================================== FAILURES ===================================
+___________ test_composite_passes_through_runtime_epfail_audit_key ____________
+
+    def test_composite_passes_through_runtime_epfail_audit_key():
+        """r1 P1-1: the run-time EPFail audit key rides the COMPOSITE result —
+        passed through CONDITIONALLY (only when the sfx face actually produced
+        it, so the steady-state composite options stay byte-identical) and as
+        THE SFX-ONLY KEY: ``device``/``sfx_ep``/``sfx_ep_fallback`` are NOT
+        passed through (``device`` collides with the primary torch face's
+        same-named key — DSH r1 reminder; the three keys keep their engine-build
+        write point on the sfx face only)."""
+        primary = _FakeProvider(
+            [
+                RegionCandidate(
+                    polygon=((0.0, 0.0), (5.0, 0.0), (5.0, 5.0)),
+                    reading_order=1,
+                    provider_label="manga-1",
+                )
+            ]
+        )
+        sfx = SfxDetectionProvider(weights_path=Path("x.onnx"))
+        composite = MangaSfxParallelDetectionProvider(primary=primary, sfx=sfx)
+    
+        class _SilentRuntimeFallbackSession:
+            """Post-build DML read-back form whose run flips the provider list to
+            the wrapper's CPU fallback INSIDE the wrapper and returns NORMALLY
+            (the silent-success shape — no exception, results keep flowing)."""
+    
+            def __init__(self):  # noqa: ANN204
+                self._providers = [
+                    "DmlExecutionProvider",
+                    "CPUExecutionProvider",
+                ]
+    
+            def get_providers(self):
+                return list(self._providers)
+    
+            def run(self, _, feeds):  # noqa: ANN001
+                self._providers = ["CPUExecutionProvider"]
+                return (np.zeros((1, 40, 2), dtype=np.float32),)
+    
+        sfx._engine = (
+            _SilentRuntimeFallbackSession(),
+            SFX_DEFAULT_IMGSZ,
+            "metadata_parsed",
+            "[1024, 1024]",
+            dsfx._EpProvenance(requested="dml", effective="dml"),
+        )
+        result = composite.detect(_request())
+        options = dict(result.options)
+        # The audit key rides the composite tail options verbatim.
+>       assert options["sfx_ep_runtime_check"] == (
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+            "session providers changed at run time: dml -> cpu "
+            "(ORT wrapper run-time EPFail fallback)"
+        )
+E       KeyError: 'sfx_ep_runtime_check'
+
+tests\providers\test_detection_sfx.py:1699: KeyError
+=========================== short test summary info ===========================
+FAILED tests/providers/test_detection_sfx.py::test_composite_passes_through_runtime_epfail_audit_key
+1 failed, 1 passed, 82 deselected in 0.35s
+EXIT=1
