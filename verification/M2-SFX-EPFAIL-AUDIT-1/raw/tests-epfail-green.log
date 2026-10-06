@@ -1,0 +1,11 @@
+# green run against HEAD=0f4702d0b7f1cacf9613895ed8fdf2a1eba7436a (impl 0f4702d0)
+# date: 2026-10-06T18:23:50+08:00
+# command: python -m pytest tests/providers/test_detection_sfx.py -k runtime -q  (then the full file)
+....                                                                     [100%]
+4 passed, 78 deselected in 0.22s
+EXIT_K Runtime=0
+# full file:
+........................................................................ [ 87%]
+..........                                                               [100%]
+82 passed in 2.35s
+EXIT_FULL=0

@@ -1,0 +1,93 @@
+# red run against baseline HEAD=a336bd411caaf892d6530803c70bc67ebdfead14 (claim a336bd41) — impl in stash, new tests only in worktree
+# date: 2026-10-06T18:23:08+08:00
+# command: python -m pytest tests/providers/test_detection_sfx.py -k runtime -q
+# expected red shape: test_runtime_epfail_silent_rerun_gets_runtime_audit_key FAILS (KeyError: sfx_ep_runtime_check — the baseline has no run-time channel audit); the steady-state and no-readback-face tests pass on the baseline by construction (they assert the key's ABSENCE / a skip)
+.F..                                                                     [100%]
+================================== FAILURES ===================================
+___________ test_runtime_epfail_silent_rerun_gets_runtime_audit_key ___________
+
+tmp_path = WindowsPath('C:/Users/49745/AppData/Local/Temp/pytest-of-49745/pytest-937/test_runtime_epfail_silent_rer0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x0000016D89C3A390>
+
+    def test_runtime_epfail_silent_rerun_gets_runtime_audit_key(
+        tmp_path, monkeypatch
+    ):
+        """THE registered unaudited channel (GPU-EP-1 deploy-record §1.3, r2
+        N-P3-1), now audited: the stub replays the wrapper's run-time fallback
+        shape EXACTLY — a post-build DML session (read-back ``[Dml, CPU]``, the
+        measured real form) whose FIRST ``run()`` flips the provider list to
+        ``[CPU]`` inside the wrapper and re-runs successfully; the caller gets a
+        normal result and NO exception (the silent-success shape).
+    
+        The detect options must carry the additive ``sfx_ep_runtime_check`` key
+        (dml -> cpu, run-time channel) while the three-key provenance keeps its
+        ENGINE-BUILD semantics verbatim: device/sfx_ep stay "dml" (the BUILD had
+        no fallback) and no ``sfx_ep_fallback`` appears. A SECOND page on the
+        now-CPU session still reports the runtime key — the change is session
+        state, not a per-page event."""
+        calls = {"providers": [], "runtime_fell_back": False}
+        metadata = _ep_metadata()
+    
+        class _FakeMeta:
+            custom_metadata_map = metadata
+    
+        class _RuntimeEpfailSession:
+            """A real DML session as the wrapper presents it post-build, whose
+            first ``run()`` triggers the wrapper-internal EPFail fallback:
+            ``set_providers(['CPUExecutionProvider'])`` rewrites the provider
+            list, the CPU retry succeeds, and the caller observes NOTHING (the
+            wrapper's only own signal is two stdout lines the frozen face
+            drops)."""
+    
+            def __init__(self, path, providers=None):  # noqa: ANN001
+                calls["providers"].append(list(providers or []))
+                self._providers = [
+                    "DmlExecutionProvider",
+                    "CPUExecutionProvider",
+                ]
+    
+            def get_modelmeta(self):
+                return _FakeMeta()
+    
+            def get_providers(self):
+                return list(self._providers)
+    
+            def run(self, _, feeds):  # noqa: ANN001
+                if not calls["runtime_fell_back"]:
+                    calls["runtime_fell_back"] = True
+                    self._providers = ["CPUExecutionProvider"]
+                return (np.zeros((1, 40, 2), dtype=np.float32),)
+    
+        fake = types.ModuleType("onnxruntime")
+        fake.InferenceSession = _RuntimeEpfailSession  # type: ignore[attr-defined]
+        monkeypatch.setitem(sys.modules, "onnxruntime", fake)
+        junk = tmp_path / "weights.onnx"
+        junk.write_bytes(b"junk")
+        monkeypatch.setattr(
+            "infrastructure.providers.detection_sfx.sha256_file",
+            lambda _: SFX_WEIGHTS_SHA256,
+        )
+        monkeypatch.delenv("NEWMANGA_SFX_EP", raising=False)  # default dml
+        provider = SfxDetectionProvider(weights_path=junk)
+    
+        # Page 1: the run-time fallback fires mid-detect; the result flows
+        # normally and the audit key reports the provider-list change.
+        result = provider.detect(_request())
+        options = dict(result.options)
+        # The three-key provenance keeps its ENGINE-BUILD semantics verbatim.
+        assert options["device"] == "dml"
+        assert options["sfx_ep"] == "dml"
+        assert "sfx_ep_fallback" not in options
+        # The run-time channel is the additive key.
+>       assert options["sfx_ep_runtime_check"] == (
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+            "session providers changed at run time: dml -> cpu "
+            "(ORT wrapper run-time EPFail fallback)"
+        )
+E       KeyError: 'sfx_ep_runtime_check'
+
+tests\providers\test_detection_sfx.py:1589: KeyError
+=========================== short test summary info ===========================
+FAILED tests/providers/test_detection_sfx.py::test_runtime_epfail_silent_rerun_gets_runtime_audit_key
+1 failed, 3 passed, 78 deselected in 0.35s
+EXIT=1
