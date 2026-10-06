@@ -2,7 +2,7 @@
 id: M2-PAGE-NAV-PROJECTION-1
 title: 页导航投影命令 list_chapters/list_chapter_pages（Workbench 页列表三级下钻第一刀）
 kind: feature
-status: in_review
+status: done
 delivery_commit: 00538a14 (final; delivery 614f3f98 -> rework 14f4b1e6 -> hardening 00538a14)
 review: DSH r1 approve_with_conditions @614f3f98 -> r2 approve @14f4b1e6 (N-01..05 hardened @00538a14)
 handoff: ../handoffs/M2-PAGE-NAV-PROJECTION-1-zcode-614f3f98.md
@@ -15,7 +15,7 @@ depends_on: [M2-PAGE-RESOURCE-RESOLVE-1, M2-WORKBENCH-REACT-1]
 base_commit: 8e8e724b
 branch: zcode/page-nav-projection-1
 worktree: G:/CODEX/New Manga.worktrees/PAGE-NAV-1
-integration_commit: null
+integration_commit: 657af2e3 (merge; final head 00538a14, post-merge 1876+1sk / cargo 55+1ign / vitest 136)
 ---
 
 # M2-PAGE-NAV-PROJECTION-1
@@ -64,3 +64,12 @@ STATUS Planned next 候选①（M2-PAGE-RESOURCE-RESOLVE-1 收口后主路径）
 ## 完成定义
 
 AC 全过 + Review 通过 + 集成 merge main + STATUS/PLAN 收口。
+
+## 交付记录（2026-10-07 闭环）
+
+- **Delivery** `614f3f98`：Core 两 handler+dispatch（minor 6）+ test_page_nav_projection.py 5 用例 + 五文件 minor pin 同步；Rust trait/stdio/Mock 三实现+桥接用例+15 命令 pin+PAGE_NAV 生产-only 组+ACL 三面；React client/types/PageListPanel 三级下钻+WorkbenchPage 下钻 effect+三测试文件 10 用例；契约 rev 1.8 落字。五套件全绿（focused 422 / full 1876+1sk / cargo 55+1ign / vitest 134 / build 0）。
+- **DSH r1** `approve_with_conditions`（0×P0/P1；PR-01 P2 + PR-02..06 P3×5 + PR-07..11 P4×5）→ **Rework** `14f4b1e6`：PR-01..10 全 fixed（桥接 Err 断言/契约互指方向/dispatch 注释错位/两处陈旧计数/commandSurface 镜像扩员/切书窗口立即清空+判别用例/minor 注记链补 3→4/迟到回包判别用例/用例名与恒真断言/docstring），PR-11 deferred（历代先例共有结构弱点）；vitest 134→136。
+- **DSH r2** `approve`（PR-01..10 全 fixed 判定、PR-11 deferred-accepted 含对 r1 反推的自我更正）→ **Hardening** `00538a14`：N-01 PR-06 用例改造为 pending 窗口（删 setChapters([]) 即红）/N-02 ACL 注释补 probe 面/N-03 mock 与 docstring 自洽（IPC1 pair）/N-04 悬挂注释补首行/N-05 高亮逐 tile 断言。
+- **集成** merge `657af2e3`（final head `00538a14`）；post-merge 复跑：pytest **1876+1sk+0 failed** / cargo **55+1ign** / vitest **136**，等量递增全绿。
+- **移交**：worktree `G:/CODEX/New Manga.worktrees/PAGE-NAV-1` 保留为证据；页导航下一刀候选（Reader 面/跨页联动/缩略图）以 STATUS Planned next 为准。
+
