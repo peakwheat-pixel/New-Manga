@@ -3,7 +3,7 @@
 Task: M2-SFX-GPU-EP-1 — SFX 推理 EP 切换 GPU（DML）
 Owner: ZCode；base=48e83a33；branch=`agent/zcode/M2-SFX-GPU-EP-1`
 授权：用户裁决 2026-10-06「部署形态=GPU」（T5-TILE-KO 收口呈报 CPU 10.46s/页 vs GPU DML 1.08s/页）
-状态：owner_claim（交付中）；Reviewer=DeepSeek Harness（非作者，待 r1）
+状态：in_review（r1 review-fix 已交，DSH r2=approved_with_conditions 建议集成）；Reviewer=DeepSeek Harness（非作者）
 
 ## 0. 交付摘要
 
@@ -70,7 +70,10 @@ import 名 `onnxruntime`、同一 pyd 名 `onnxruntime_pybind11_state.pyd`，whe
   生产 wheel `onnxruntime_inference_collection.py:482,503-519,576-577`）——
   DML 初始化失败（无 DX12 GPU / 驱动缺失 / CPU-only wheel）被包装层吞掉
   （except `(ValueError, RuntimeError)`），以 `["CPUExecutionProvider"]`
-  重建并**正常返回**（仅 stderr 打 EP Error banner）。因此**主回退路径不
+  重建并**正常返回**（r2 N-P4-2：banner 走包装层 ``print``=stdout 而非
+  stderr；且决定性验证 log 显示 CPU-only wheel 形态实走「不可用 provider 被
+  native 层丢弃/归一化 + UserWarning → 正常返回」，无 banner——两形态均落
+  「构造正常返回 + CPU 会话」，同为读回反推的适用面）。因此**主回退路径不
   经过本仓的 except 分支**；有效 EP 的权威来源是构造后的
   `session.get_providers()` 读回：请求 dml 而首 provider 非
   `DmlExecutionProvider` = 包装层回退，写入同一套三键审计。本仓 except
@@ -81,10 +84,18 @@ import 名 `onnxruntime`、同一 pyd 名 `onnxruntime_pybind11_state.pyd`，whe
   "requested dml but onnxruntime built the session on
   CPUExecutionProvider (wrapper-level fallback/EP unavailable)" / 兜底形态
   "dml init failed; fell back to cpu (<异常类型名>)"）；
+- **验证覆盖矩阵（r2 N-P4-4 标注）**：①CPU-only wheel（无 DML provider）
+  =**实机**决定性验证；②directml wheel 已装但机器无 DX12/驱动坏=**逻辑+stub
+  覆盖，实机 NOT_RUN**（读回逻辑成立：最终 session 首 provider=CPU →
+  device=cpu）；③异常逃逸包装层=stub 兜底分支。勿把矩阵①读作三场景全覆盖；
 - **显式 `cpu` 请求失败 = typed `ProviderError`，无回退**（显式请求不允许
   悄悄降级为其它东西）；
-- 回退只覆盖**初始化**：会话构建成功但 run() 失败维持既有 detect 期 typed
-  失败路径不变；
+- **回退审计只覆盖初始化（r2 N-P3-1 收窄）**：本仓三键读回只在会话构建后
+  执行一次；ORT 包装层在 run() 期对 ``EPFail`` 另有**内部静默重跑 CPU**
+  （wrapper ``:278-305``，仅 stdout 两行提示）——该 run-time 通道不在三键
+  审计内（逐 detect 复读 get_providers 代价高，权衡后不采），登记为已知未
+  审计通道/后续候选切片。除该包装层内部重试外，run() 失败维持既有 detect
+  期 typed 失败路径不变；
 - **供应链安全面不受影响**：SHA-256 权重门仍先于任何 runtime import
   （检查顺序 1.EP env → 2.文件存在 → 3.sha → 4.import → 5.session →
   6.metadata 断言），EP 不是 pin 对象，sha 门纪律零变化；
@@ -121,6 +132,11 @@ onnxruntime session、无 ExecutionProvider 概念，本 Task 零触碰；
 ## 2. AC2 数值一致性硬门 — PASS（非逐位一致，漂移量化+门/匹配零影响）
 
 证据：`raw/gpu-ep-parity-perf.json` + `raw/gpu-ep-parity-perf.log`
+  **（r2 N-P4-3 载体指针：json 本体现为 r2run 轮——source_head=79056618、
+  KO DML 1.211s/页/CPU 10.372s/页；上表首轮数字（1.106/10.447/0.065/0.203）
+  的载体是 `gpu-ep-parity-perf.log`；两轮 verdict 逐值一致（Δconf≤2e-06/
+  gate_flips=0/matched 集全不变），DML 时延 1.106→1.211=run 间波动双录；
+  §7.3 同绑 parity/perf 重跑）**
 （脚本 `experiments/M2-SFX-GPU-EP-1/verify_gpu_ep_parity_perf.py`，双面均经
 生产 env 门+生产 detect，无 session swap 旁路；v2b pin 原样；每页 warm-up
 1 次不计 + 计测 1 次取 preds；GPU 面第 3 次 detect 做 run-to-run 稳定性）。
@@ -260,9 +276,11 @@ directml wheel 其它文件的压缩差异），可接受性属用户部署形�
   - zero-touch：CS-Z1 安装目录零写入 / CS-Z2 用户源文件字节一致 /
     CS-Z3 无 sidecar 进程残留 / CS-Z4 宿主真实 APPDATA 未触碰。
 - 本轮 GATE 跑在 **directml 闭包**上：安装包内 `_internal/onnxruntime/capi/`
-  含 DirectML.dll（闭包断言构建期已验），frozen sfx detect 链在无 env
-  干预下默认走 DML（有 DX12 GPU 的本机）——frozen 面为 AC1 配置化的
-  自然结果，未新增 frozen 专属改动。
+  含 DirectML.dll（闭包断言构建期已验）。~~frozen sfx detect 链在无 env
+  干预下默认走 DML~~（r1 P3-1/r2 N-P4-2 差注：此句为**推断**，实测口径
+  以本节下方「frozen 面 DML 证据口径」修订段为准——GATE 25 场景零触及
+  sfx/DML，frozen 面为 AC1 配置化的自然结果、未新增 frozen 专属改动，
+  但无 frozen 进程内运行证据）。
 - **落点处置登记**：GATE runner 的内置产物落点是
   `verification/M2-AC5/raw/`（M2-AC5 Task 时代目录，不在本 Task 允许面）。
   首轮运行覆盖的工作区副本已快照至

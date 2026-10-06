@@ -408,9 +408,14 @@ def _tile_config() -> _TileConfig:
 # supply-chain security surface (the SHA-256 weights gate runs before any
 # runtime import and is unaffected by the EP choice). An EXPLICIT ``cpu``
 # request whose session build fails stays a typed ``ProviderError`` — no
-# fallback out of an explicit request. The fallback covers INIT only: a
-# session that BUILT but fails at run() time keeps the existing typed
-# detect-time failure path.
+# fallback out of an explicit request. The fallback above covers INIT only
+# (r2 N-P3-1 narrowing): the wrapper ALSO retries internally at run() time —
+# an ``ORT EPFail`` mid-inference is silently retried on CPU inside
+# ``InferenceSession.run`` (wrapper ``:278-305``) and is NOT re-audited by
+# the three-key read-back (re-reading providers per detect was judged too
+# costly; registered as a known unaudited channel / candidate slice). A
+# session that BUILT but fails at run() time with anything other than that
+# wrapper-internal retry keeps the existing typed detect-time failure path.
 #
 # Cache semantics: the EP is an ENGINE-level property (providers are fixed at
 # InferenceSession construction), so the resolved env rides the first
@@ -936,9 +941,13 @@ def _build_engine(
         # r1 P1-1: the wrapper's InferenceSession.__init__ has
         # enable_fallback=True BY DEFAULT and SWALLOWS (ValueError,
         # RuntimeError) from the requested EP — it rebuilds on
-        # ["CPUExecutionProvider"] and returns NORMALLY (an "EP Error"
-        # banner on stderr only). A DML init failure (no DX12 GPU / broken
-        # driver / CPU-only wheel) therefore usually does NOT raise here at
+        # ["CPUExecutionProvider"] and returns NORMALLY (r2 N-P4-2: depending on
+        # the failure shape the wrapper either prints an "EP Error" banner on
+        # STDOUT, or the unavailable provider is dropped by the native layer
+        # with only a UserWarning — both shapes end in "constructor returns
+        # normally with a CPU session"). A DML init failure (no DX12 GPU /
+        # broken driver / CPU-only wheel) therefore usually does NOT raise
+        # here at
         # all: the session in hand IS the CPU session. The authoritative
         # effective EP is read back OFF the session — a requested dml whose
         # first provider is not DmlExecutionProvider is the wrapper-level

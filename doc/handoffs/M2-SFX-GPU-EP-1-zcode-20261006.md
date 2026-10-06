@@ -3,7 +3,7 @@ task_id: M2-SFX-GPU-EP-1
 author: ZCode
 recipient: Codex（集成）/ DeepSeek Harness（非作者 Review）
 base_commit: 48e83a33（daa34e4e 之上的 release commit，含 T5-TILE-KO 落地终态；r1 P4-1 唯一化）
-delivery_head: 1e9f2324（最终证据锚：r2run GATE 落点处置修正；其后 docs commit 仅文档）
+delivery_head: 1e9f2324（最终证据锚；其后 docs commit 仅文档）→ **tip 映射（集成时落）：交付链 tip=cdc2305c（r2 集成前），集成顺笔修正 commit 后以 merge 记录为准（r2 N-P4-1：承载 frontmatter 的提交无法自指，取「末个证据锚+显式映射」合规解）**（最终证据锚：r2run GATE 落点处置修正；其后 docs commit 仅文档）
 status: delivered→r1 changes_requested→review-fix 交付，待 DSH r2
 ---
 
