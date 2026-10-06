@@ -197,6 +197,6 @@ export const RELABEL_X2S_CONFIRM_TEXT =
 /** Honest-disabled reasons for the E4 action buttons (registered deviation:
  * restore/rerender runtime commands are outside PROTOCOL_MINOR=3). */
 export const UNDO_DISABLED_TITLE =
-  "撤销走 revision 恢复（Core restore 命令待后续命令面 Task；不得以反向改标模拟撤销）";
+  "撤销走 revision 恢复（应用层已有 restore_revision，缺 IPC 命令面——待命令面 Task；不得以反向改标模拟撤销）";
 export const RERENDER_DISABLED_TITLE =
   "重渲染 run 通道 runtime 未实现（契约 §5.1 PROPOSAL 层）";
