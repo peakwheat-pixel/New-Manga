@@ -314,6 +314,12 @@ export function WorkbenchPage({ invoke }: WorkbenchPageProps) {
 
   useEffect(() => () => {
     if (undoTimerRef.current !== null) clearTimeout(undoTimerRef.current);
+    // RC4-07: after unmount, in-flight image/preview closures must fail
+    // their isCurrent checks -- a late preview resolution would otherwise
+    // replaceImageUrl a URL that no later cleanup can revoke (permanent
+    // object-URL leak).
+    imageRequestRef.current += 1;
+    operationRef.current += 1;
     if (imageUrlRef.current) URL.revokeObjectURL(imageUrlRef.current);
   }, []);
 

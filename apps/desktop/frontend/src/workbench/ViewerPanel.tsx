@@ -3,10 +3,10 @@
  * `ViewerPanel.qml`). Shows the page image fetched through the EXISTING
  * resource channel (issue + chunked fetch, `loadPageImageUrl`) when a
  * resource is addressable, with the read-only <RegionOverlay> absolutely
- * positioned above. Production page->resource catalogization does not exist
- * yet (resource catalog entries are only seeded by the acceptance bridge),
- * so the honest empty states below are first-slice behaviour (registered as
- * a deviation in the Task).
+ * positioned above. Production catalogization of the initial page view
+ * does not exist yet (RC-4 rerender previews are catalogized by Core, but a
+ * plain page id still has no resource entry), so the honest empty states
+ * below are first-slice behaviour (registered as a deviation in the Task).
  *
  * The page size the overlay consumes comes ONLY from the region read
  * projection — never from the <img> element (single math + "size only from
@@ -14,10 +14,12 @@
  *
  * IMPL-1 additions: the retype context menu host (right click on a region
  * frame opens <RelabelContextMenu> in stage-relative coordinates) and the
- * E4 feedback bar (design §3.2: canvas bottom-center) with its HONEST
- * disabled action buttons — Core has no restore/rerender runtime command
- * yet (PROTOCOL_MINOR=3), and simulating undo with a reverse retype would
- * violate A6, so the affordances render disabled with their reasons.
+ * E4 feedback bar (design §3.2: canvas bottom-center). Since M2-RC4-DOMAIN-
+ * COMMANDS (envelope protocol minor 4) the affordances call the real Core
+ * commands: undo runs restore_region_revision inside its 10 s window, and
+ * rerender calls rerender_page through the same resource channel; until the
+ * first undo-capable revision exists the affordances render disabled with
+ * their reasons.
  */
 
 import { useCallback, useRef, useState } from "react";
