@@ -1,0 +1,65 @@
+shell: PowerShell
+venv: G:/CODEX/New Manga.task-envs/T1.1.1-impl-py312/Scripts/python.exe
+commit: 37110749910f3078cb85305ab4d65dc80261068e
+command: python -m pytest tests/core/test_rc4_stdio_render_preview.py -q
+F                                                                        [100%]
+================================== FAILURES ===================================
+_ test_production_stdio_decodes_nmfr_renders_text_and_publishes_readable_preview _
+
+tmp_path = WindowsPath('C:/Users/49745/AppData/Local/Temp/pytest-of-49745/pytest-966/test_production_stdio_decodes_0')
+
+    def test_production_stdio_decodes_nmfr_renders_text_and_publishes_readable_preview(
+        tmp_path: Path,
+    ) -> None:
+        data_root = tmp_path / "data"
+        derived_root = tmp_path / "derived"
+        catalog_db = tmp_path / "catalog" / "catalog.sqlite"
+        source_path = tmp_path / "source.png"
+        original = Image.new("RGBA", (300, 180), (24, 50, 210, 255))
+        original.save(source_path, format="PNG")
+    
+        core = assemble_production_core(data_root)
+        _seed_book_and_chapter(core)
+        report = core.importer.import_files(
+            "chapter",
+            [ImportSource("source.png", source_path.read_bytes)],
+        )
+        assert not report.failed and len(report.imported) == 1
+        page = core.repository.get_page(report.imported[0].page.page_id)
+        assert page is not None and page.managed_original_ref
+    
+        # This is the same provider artifact container consumed by production
+        # rerendering: NMFR header + rgb32 payload, rather than a test-only PNG.
+        # RGB32 in QImage memory is BGRA on this Windows product host. A colored
+        # clean base makes the NMFR channel order observable outside all regions.
+        frame = ImageFrame(300, 180, "rgb32", b"\x20\x40\xf0\xff" * (300 * 180))
+        clean_payload, clean_mime, _, _ = artifact_payload_from_frame(frame)
+>       _commit_artifact(core, page, ArtifactType.CLEAN, clean_payload, clean_mime)
+
+tests\core\test_rc4_stdio_render_preview.py:110: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+core = CoreServices(conn=<infrastructure.sqlite.connection.ThreadRoutedConnection object at 0x0000021FFC869880>, repository=<...d='local-sfx', provider_type='local-sfx', model='sfx/yolo11s-seg.onnx', requirements=('onnxruntime', 'numpy', 'PIL'))))
+page = Page(page_id='98bd1c8f986942d98a4a1d3ce487725e', chapter_id='chapter', source_filename='source.png', source_order=1, s...'not_started', created_at='2026-10-06T17:17:40.226+00:00', updated_at='2026-10-06T17:17:40.226+00:00', deleted_at=None)
+artifact_type = <ArtifactType.CLEAN: 'clean'>
+payload = b'NMFR\x00\x00\x00D{"bytes_per_pixel": 4, "height": 180, "mode": "rgb32", "width": 300} @\xf0\xff @\xf0\xff @\xf0\xff ...\xf0\xff @\xf0\xff @\xf0\xff @\xf0\xff @\xf0\xff @\xf0\xff @\xf0\xff @\xf0\xff @\xf0\xff @\xf0\xff @\xf0\xff @\xf0\xff'
+mime = 'application/x-newmanga-frame'
+
+    def _commit_artifact(core, page, artifact_type: ArtifactType, payload: bytes, mime: str):
+        artifacts = SqliteArtifactRepository(core.conn, core.storage)
+        record = artifacts.create_artifact(
+            NewArtifact(
+>               book_id=page.book_id,
+                        ^^^^^^^^^^^^
+                chapter_id=page.chapter_id,
+                page_id=page.page_id,
+                artifact_type=artifact_type,
+            )
+        )
+E       AttributeError: 'Page' object has no attribute 'book_id'
+
+tests\core\test_rc4_stdio_render_preview.py:54: AttributeError
+=========================== short test summary info ===========================
+FAILED tests/core/test_rc4_stdio_render_preview.py::test_production_stdio_decodes_nmfr_renders_text_and_publishes_readable_preview
+1 failed in 1.29s
+EXIT: 1

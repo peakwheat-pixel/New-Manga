@@ -213,6 +213,12 @@
           "markdownDescription": "Enables the library_list_books command without any pre-configured scope."
         },
         {
+          "description": "Enables the list_region_revisions command without any pre-configured scope.",
+          "type": "string",
+          "const": "allow-list-region-revisions",
+          "markdownDescription": "Enables the list_region_revisions command without any pre-configured scope."
+        },
+        {
           "description": "Enables the list_regions command without any pre-configured scope.",
           "type": "string",
           "const": "allow-list-regions",
@@ -241,6 +247,18 @@
           "type": "string",
           "const": "allow-probe-write-results",
           "markdownDescription": "Enables the probe_write_results command without any pre-configured scope."
+        },
+        {
+          "description": "Enables the rerender_page command without any pre-configured scope.",
+          "type": "string",
+          "const": "allow-rerender-page",
+          "markdownDescription": "Enables the rerender_page command without any pre-configured scope."
+        },
+        {
+          "description": "Enables the restore_region_revision command without any pre-configured scope.",
+          "type": "string",
+          "const": "allow-restore-region-revision",
+          "markdownDescription": "Enables the restore_region_revision command without any pre-configured scope."
         },
         {
           "description": "Enables the revoke_ref command without any pre-configured scope.",
@@ -309,6 +327,12 @@
           "markdownDescription": "Denies the library_list_books command without any pre-configured scope."
         },
         {
+          "description": "Denies the list_region_revisions command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-list-region-revisions",
+          "markdownDescription": "Denies the list_region_revisions command without any pre-configured scope."
+        },
+        {
           "description": "Denies the list_regions command without any pre-configured scope.",
           "type": "string",
           "const": "deny-list-regions",
@@ -337,6 +361,18 @@
           "type": "string",
           "const": "deny-probe-write-results",
           "markdownDescription": "Denies the probe_write_results command without any pre-configured scope."
+        },
+        {
+          "description": "Denies the rerender_page command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-rerender-page",
+          "markdownDescription": "Denies the rerender_page command without any pre-configured scope."
+        },
+        {
+          "description": "Denies the restore_region_revision command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-restore-region-revision",
+          "markdownDescription": "Denies the restore_region_revision command without any pre-configured scope."
         },
         {
           "description": "Denies the revoke_ref command without any pre-configured scope.",

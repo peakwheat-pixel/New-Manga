@@ -1,0 +1,58 @@
+shell: Git Bash (owner resume)
+commit: 37110749910f3078cb85305ab4d65dc80261068e
+dirty: yes (uncommitted owner test-round changes; sidecar bundle built from this dirty tree, HEAD=37110749)
+command: cargo test -- --test-threads=1
+   Compiling webview2-com-sys v0.39.1
+   Compiling tao v0.37.1
+   Compiling m2rc1-desktop v0.1.0 (G:\CODEX\New Manga.worktrees\RC4-domain-commands\apps\desktop\src-tauri)
+   Compiling webview2-com v0.39.1
+   Compiling tauri-runtime v2.12.0
+   Compiling wry v0.57.0
+   Compiling tauri-runtime-wry v2.12.0
+   Compiling tauri v2.12.0
+error: proc macro panicked
+   --> src\main.rs:801:14
+    |
+801 |         .run(tauri::generate_context!())
+    |              ^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |
+    = help: message: The `frontendDist` configuration is set to `"../frontend/dist"` but this path doesn't exist
+
+warning: unused import: `std::sync::Arc`
+  --> src\main.rs:47:5
+   |
+47 | use std::sync::Arc;
+   |     ^^^^^^^^^^^^^^
+   |
+   = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: unused import: `CHUNK_SIZE`
+   --> src\main.rs:811:54
+    |
+811 |         build_url, handle_m2res_request, ScopeRoots, CHUNK_SIZE, ID_LENGTH,
+    |                                                      ^^^^^^^^^^
+
+error[E0308]: mismatched types
+    --> src\main.rs:1784:27
+     |
+1784 |             library: Some(library.clone()),
+     |                      ---- ^^^^^^^^^^^^^^^ expected `Box<dyn LibraryChannel>`, found `Arc<SequencedRerenderLibrary>`
+     |                      |
+     |                      arguments to this enum variant are incorrect
+     |
+     = note: expected struct `Box<dyn library_bridge::LibraryChannel>`
+                found struct `Arc<SequencedRerenderLibrary>`
+help: the type constructed contains `Arc<SequencedRerenderLibrary>` due to the type of the argument passed
+    --> src\main.rs:1784:22
+     |
+1784 |             library: Some(library.clone()),
+     |                      ^^^^^---------------^
+     |                           |
+     |                           this argument influences the type of `Some`
+note: tuple variant defined here
+    --> /rustc/48a229ceaefd4985c50990b14116b6d856af0985/library\core\src\option.rs:606:4
+
+For more information about this error, try `rustc --explain E0308`.
+warning: `m2rc1-desktop` (bin "m2rc1-desktop" test) generated 2 warnings
+error: could not compile `m2rc1-desktop` (bin "m2rc1-desktop" test) due to 2 previous errors; 2 warnings emitted
+EXIT: 101

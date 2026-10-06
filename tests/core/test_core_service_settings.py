@@ -73,10 +73,10 @@ def test_protocol_minor_tracks_the_current_command_surface(server) -> None:
     # M2-REGION-RETYPE-CORE: 2 -> 3 (set_region_type/list_regions added;
     # same widening precedent, contract rev 1.4 §5.4 -- this file pins the
     # settings pair's own semantics against the CURRENT envelope).
-    assert (PROTOCOL_MAJOR, PROTOCOL_MINOR) == (1, 3)
+    assert (PROTOCOL_MAJOR, PROTOCOL_MINOR) == (1, 4)
     response = _request(server, "core.ping", {})
     assert response["error"] is None
-    assert response["result"]["protocol_version"] == {"major": 1, "minor": 3}
+    assert response["result"]["protocol_version"] == {"major": 1, "minor": 4}
 
 
 # ---------------------------------------------------------------------------

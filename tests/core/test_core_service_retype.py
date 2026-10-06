@@ -133,10 +133,10 @@ def test_protocol_minor_bumped_to_three_with_retype_surface(server, rpc) -> None
     # M2-REGION-RETYPE-CORE: 2 -> 3 (same backwards-compatible widening
     # precedent as core.detect 0->1 and settings 1->2; every pre-existing
     # command keeps its payload/result/error codes).
-    assert (PROTOCOL_MAJOR, PROTOCOL_MINOR) == (1, 3)
+    assert (PROTOCOL_MAJOR, PROTOCOL_MINOR) == (1, 4)
     response = rpc("core.ping", {})
     assert response["error"] is None
-    assert response["result"]["protocol_version"] == {"major": 1, "minor": 3}
+    assert response["result"]["protocol_version"] == {"major": 1, "minor": 4}
 
 
 # ---------------------------------------------------------------------------

@@ -42,8 +42,10 @@ use core_bridge::{CoreChannel, CoreError, StdioCoreChannel};
 use library_bridge::{BookSummary, LibraryChannel, PingResult, StdioLibraryChannel};
 use resource_protocol::{ScopeRoots};
 use serde::Serialize;
+use std::collections::HashMap;
 use std::path::PathBuf;
 use std::sync::Arc;
+use std::sync::Mutex;
 use tauri::Manager;
 
 /// Commands every mode exposes: the product WebView surface. No path-shaped
@@ -146,6 +148,11 @@ struct AppState {
     ac1: Option<Ac1Channel>,
     /// Present only in production mode; probe and ac1 modes do not spawn library sidecar.
     library: Option<Box<dyn LibraryChannel>>,
+    /// Current preview catalog id by page. Keep one global lock for the
+    /// short rerender/revoke/swap sequence so concurrent pages cannot
+    /// interleave opaque-resource cleanup; split only if throughput evidence
+    /// justifies the extra machinery.
+    render_preview_resources: Mutex<HashMap<String, String>>,
 }
 
 #[derive(Serialize)]
@@ -300,12 +307,66 @@ fn rerender_page(
     state: tauri::State<'_, AppState>,
     page_id: String,
 ) -> Result<serde_json::Value, String> {
-    state
+    rerender_page_from_core(&state, &page_id)
+}
+
+fn rerender_page_from_core(
+    state: &AppState,
+    page_id: &str,
+) -> Result<serde_json::Value, String> {
+    // Acquire before Core commits and hold through revocation/swap. Otherwise
+    // concurrent calls could commit in order but publish their preview map in
+    // reverse response order, leaving the stale resource live.
+    let mut current = state
+        .render_preview_resources
+        .lock()
+        .map_err(|_| "CORE_UNAVAILABLE".to_string())?;
+    let result = state
         .library
         .as_ref()
         .ok_or_else(|| "CORE_UNAVAILABLE".to_string())?
-        .rerender_page(&page_id)
-        .map_err(|error| error.code)
+        .rerender_page(page_id)
+        .map_err(|error| error.code)?;
+    rotate_render_preview(state.channel.as_ref(), page_id, result, &mut current)
+}
+
+fn rotate_render_preview(
+    channel: &dyn CoreChannel,
+    page_id: &str,
+    mut result: serde_json::Value,
+    current: &mut HashMap<String, String>,
+) -> Result<serde_json::Value, String> {
+    let previous = current.get(page_id).cloned();
+    let next = result
+        .get("preview")
+        .and_then(|preview| preview.get("resource_id"))
+        .and_then(serde_json::Value::as_str)
+        .filter(|resource_id| !resource_id.is_empty())
+        .map(str::to_owned);
+
+    if let Some(previous_id) = previous.as_deref() {
+        if channel.revoke_resource(previous_id).is_err() {
+            if let Some(next_id) = next.as_deref() {
+                let _ = channel.revoke_resource(next_id);
+            }
+            result["preview"] = serde_json::Value::Null;
+            result["preview_error"] = serde_json::json!("PREVIEW_UNAVAILABLE");
+            return Ok(result);
+        }
+    }
+
+    match next {
+        Some(resource_id) => {
+            current.insert(page_id.to_string(), resource_id);
+        }
+        None => {
+            current.remove(page_id);
+        }
+    }
+    if !result["preview_error"].is_null() {
+        result["preview_error"] = serde_json::json!("PREVIEW_UNAVAILABLE");
+    }
+    Ok(result)
 }
 
 /// Production issue shape: catalog entry name + revision only. There is no
@@ -642,6 +703,7 @@ fn main() {
         fixture_shas: fixture_shas(),
         ac1,
         library,
+        render_preview_resources: Mutex::new(HashMap::new()),
     };
 
     let builder = tauri::Builder::default()
@@ -744,6 +806,7 @@ fn main() {
 mod tests {
     use super::*;
     use crate::core_bridge::{build_issue_params, MockCoreChannel};
+    use crate::library_bridge::{LibraryError, MockLibraryChannel};
     use crate::resource_protocol::{
         build_url, handle_m2res_request, ScopeRoots, CHUNK_SIZE, ID_LENGTH,
     };
@@ -1591,6 +1654,199 @@ mod tests {
             .unwrap_err();
         assert_eq!(error.code, "TARGET_NOT_FOUND");
         assert_eq!(error.category, "not_found");
+    }
+
+    #[test]
+    fn real_core_sidecar_rc4_commands_round_trip_typed_errors() {
+        let python = std::env::var("M2RC1_PYTHON").unwrap_or_else(|_| "python".into());
+        let src_root = std::env::var("M2RC1_SRC_ROOT")
+            .map(PathBuf::from)
+            .unwrap_or_else(|_| {
+                let mut path = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
+                for _ in 0..3 {
+                    path.pop();
+                }
+                path.join("src")
+            });
+        let dir = tempfile::tempdir().unwrap();
+        let data_root = dir.path().join("data_root");
+        std::fs::create_dir_all(&data_root).unwrap();
+        let channel = StdioLibraryChannel::spawn(&python, &src_root, Some(&data_root))
+            .expect("library sidecar spawn");
+
+        assert_eq!(
+            channel.list_region_revisions("no-such-region").unwrap_err().code,
+            "TARGET_NOT_FOUND"
+        );
+        assert_eq!(
+            channel
+                .restore_region_revision("no-such-region", 1, 1)
+                .unwrap_err()
+                .code,
+            "TARGET_NOT_FOUND"
+        );
+        assert_eq!(
+            channel.rerender_page("no-such-page").unwrap_err().code,
+            "TARGET_NOT_FOUND"
+        );
+    }
+
+    struct SequencedRerenderLibrary {
+        inner: MockLibraryChannel,
+        calls: std::sync::atomic::AtomicUsize,
+        active: std::sync::atomic::AtomicUsize,
+        max_active: Mutex<usize>,
+        first_entered: Mutex<std::sync::mpsc::Sender<()>>,
+        release_first: Mutex<std::sync::mpsc::Receiver<()>>,
+        second_entered: Mutex<std::sync::mpsc::Sender<()>>,
+    }
+
+    impl LibraryChannel for SequencedRerenderLibrary {
+        fn ping(&self) -> Result<PingResult, LibraryError> { self.inner.ping() }
+        fn list_books(&self) -> Result<Vec<BookSummary>, LibraryError> { self.inner.list_books() }
+        fn get_settings(&self, section: Option<&str>) -> Result<serde_json::Value, LibraryError> {
+            self.inner.get_settings(section)
+        }
+        fn update_settings_section(&self, section: &str, values: &serde_json::Value)
+            -> Result<serde_json::Value, LibraryError> {
+            self.inner.update_settings_section(section, values)
+        }
+        fn set_region_type(&self, region_id: &str, new_region_type: &str, expected_revision: Option<i64>)
+            -> Result<serde_json::Value, LibraryError> {
+            self.inner.set_region_type(region_id, new_region_type, expected_revision)
+        }
+        fn list_regions(&self, page_id: &str) -> Result<serde_json::Value, LibraryError> {
+            self.inner.list_regions(page_id)
+        }
+        fn list_region_revisions(&self, region_id: &str) -> Result<serde_json::Value, LibraryError> {
+            self.inner.list_region_revisions(region_id)
+        }
+        fn restore_region_revision(&self, region_id: &str, revision_no: i64, expected_revision: i64)
+            -> Result<serde_json::Value, LibraryError> {
+            self.inner.restore_region_revision(region_id, revision_no, expected_revision)
+        }
+        fn rerender_page(&self, page_id: &str) -> Result<serde_json::Value, LibraryError> {
+            let ordinal = self.calls.fetch_add(1, std::sync::atomic::Ordering::SeqCst);
+            let active = self.active.fetch_add(1, std::sync::atomic::Ordering::SeqCst) + 1;
+            {
+                let mut max_active = self.max_active.lock().unwrap();
+                *max_active = (*max_active).max(active);
+            }
+            if ordinal == 0 {
+                self.first_entered.lock().unwrap().send(()).unwrap();
+                self.release_first.lock().unwrap().recv().unwrap();
+            } else {
+                self.second_entered.lock().unwrap().send(()).unwrap();
+            }
+            self.active.fetch_sub(1, std::sync::atomic::Ordering::SeqCst);
+            Ok(serde_json::json!({
+                "page_id": page_id,
+                "artifact_id": "artifact",
+                "revision_no": ordinal + 1,
+                "reports": [],
+                "preview": {"resource_id": format!("render-{}", ordinal + 1), "revision": format!("rev-{}", ordinal + 1)},
+                "preview_error": null,
+            }))
+        }
+    }
+
+    /// The shared Arc handle forwards to the library so the test can keep
+    /// atomic/counter handles for assertions while AppState owns a boxed
+    /// channel.
+    impl LibraryChannel for Arc<SequencedRerenderLibrary> {
+        fn ping(&self) -> Result<PingResult, LibraryError> { (**self).ping() }
+        fn list_books(&self) -> Result<Vec<BookSummary>, LibraryError> { (**self).list_books() }
+        fn get_settings(&self, section: Option<&str>) -> Result<serde_json::Value, LibraryError> {
+            (**self).get_settings(section)
+        }
+        fn update_settings_section(&self, section: &str, values: &serde_json::Value)
+            -> Result<serde_json::Value, LibraryError> {
+            (**self).update_settings_section(section, values)
+        }
+        fn set_region_type(&self, region_id: &str, new_region_type: &str, expected_revision: Option<i64>)
+            -> Result<serde_json::Value, LibraryError> {
+            (**self).set_region_type(region_id, new_region_type, expected_revision)
+        }
+        fn list_regions(&self, page_id: &str) -> Result<serde_json::Value, LibraryError> {
+            (**self).list_regions(page_id)
+        }
+        fn list_region_revisions(&self, region_id: &str) -> Result<serde_json::Value, LibraryError> {
+            (**self).list_region_revisions(region_id)
+        }
+        fn restore_region_revision(&self, region_id: &str, revision_no: i64, expected_revision: i64)
+            -> Result<serde_json::Value, LibraryError> {
+            (**self).restore_region_revision(region_id, revision_no, expected_revision)
+        }
+        fn rerender_page(&self, page_id: &str) -> Result<serde_json::Value, LibraryError> {
+            (**self).rerender_page(page_id)
+        }
+    }
+
+    #[test]
+    fn rerenders_hold_one_global_lock_through_core_and_preview_swap() {
+        use std::sync::atomic::AtomicUsize;
+        use std::sync::mpsc;
+        use std::sync::Arc;
+        use std::time::Duration;
+
+        let (first_entered_tx, first_entered_rx) = mpsc::channel();
+        let (release_first_tx, release_first_rx) = mpsc::channel();
+        let (second_entered_tx, second_entered_rx) = mpsc::channel();
+        let library = Arc::new(SequencedRerenderLibrary {
+            inner: MockLibraryChannel::new(),
+            calls: AtomicUsize::new(0),
+            active: AtomicUsize::new(0),
+            max_active: Mutex::new(0),
+            first_entered: Mutex::new(first_entered_tx),
+            release_first: Mutex::new(release_first_rx),
+            second_entered: Mutex::new(second_entered_tx),
+        });
+        let core = MockCoreChannel::new();
+        core.register("render-0", "derived/render-0.png").unwrap();
+        core.register("render-1", "derived/render-1.png").unwrap();
+        core.register("render-2", "derived/render-2.png").unwrap();
+        let old_ref = core.issue("render-0", "rev-0").unwrap();
+        let first_ref = core.issue("render-1", "rev-1").unwrap();
+        let dir = tempfile::tempdir().unwrap();
+        let state = Arc::new(AppState {
+            channel: Box::new(core),
+            roots: ScopeRoots {
+                derived: dir.path().join("derived"),
+                managed: dir.path().join("managed"),
+            },
+            fixture_shas: serde_json::json!({}),
+            ac1: None,
+            library: Some(Box::new(library.clone())),
+            render_preview_resources: Mutex::new(HashMap::from([(
+                "page".to_string(),
+                "render-0".to_string(),
+            )])),
+        });
+
+        let first_state = state.clone();
+        let first = std::thread::spawn(move || rerender_page_from_core(&first_state, "page"));
+        first_entered_rx.recv_timeout(Duration::from_secs(2)).unwrap();
+
+        let second_state = state.clone();
+        let (second_started_tx, second_started_rx) = mpsc::channel();
+        let second = std::thread::spawn(move || {
+            second_started_tx.send(()).unwrap();
+            rerender_page_from_core(&second_state, "page")
+        });
+        second_started_rx.recv_timeout(Duration::from_secs(2)).unwrap();
+        assert!(second_entered_rx.recv_timeout(Duration::from_millis(100)).is_err());
+        assert_eq!(library.calls.load(std::sync::atomic::Ordering::SeqCst), 1);
+
+        release_first_tx.send(()).unwrap();
+        first.join().unwrap().unwrap();
+        second.join().unwrap().unwrap();
+        assert_eq!(*library.max_active.lock().unwrap(), 1);
+        assert_eq!(
+            state.render_preview_resources.lock().unwrap().get("page"),
+            Some(&"render-2".to_string())
+        );
+        assert_eq!(state.channel.resolve(&old_ref.opaque_id).unwrap_err().code, "REF_REVOKED");
+        assert_eq!(state.channel.resolve(&first_ref.opaque_id).unwrap_err().code, "REF_REVOKED");
     }
 
     // ---- M2-AC5: packaged-mode resolution (fail-closed spawn) -------------
