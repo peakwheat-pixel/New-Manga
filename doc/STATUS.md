@@ -2,7 +2,7 @@
 
 Planning source of truth: [Project Rebaseline Plan](REBASELINE_PLAN.md)
 
-| Execution checkpoint: 2026-10-07 (Asia/Shanghai) — **M2-RC4-DOMAIN-COMMANDS 全链闭环 done @merge `0a7e0d5b`**（DSH r1→r2 approved_with_conditions 全条件闭合；post-merge 三套件等量全绿）；无 Active、无 released。|
+| Execution checkpoint: 2026-10-07 (Asia/Shanghai) — **M2-RC4-DOMAIN-COMMANDS 全链闭环 done @merge `0a7e0d5b`**（DSH r1→r2 approved_with_conditions 全条件闭合；post-merge 三套件等量全绿）；**test_catalog 漂移清算 done @`8412ccfd`**（main 基线=**1860 passed+1 skipped+2 failed**，唯一失败=ui_shell 两例环境敏感）；无 Active、无 released。|
 
 > **Current architecture directive（2026-09-28；用户裁决）:** 所有后续 Task、问题诊断、修复和验收只在 React + TypeScript + Tauri + Python Core + SQLite 新架构上进行。Legacy PySide6/QML 仅保留历史证据，不再释放相关工作；`DIAG-LEGACY-QML-IMPORT-ENTRY-001` planning candidate 已撤销、从未释放。旧架构问题如仍代表目标产品行为，须转化为 M2 新架构需求后处理。
 
@@ -11,6 +11,10 @@ Planning source of truth: [Project Rebaseline Plan](REBASELINE_PLAN.md)
 **[M2-RC4-DOMAIN-COMMANDS](tasks/M2-RC4-DOMAIN-COMMANDS.md) done @merge `0a7e0d5b`**（撤销、重渲染与修订历史 Core 域命令面端到端闭环；用户授权 Codex 自主执行至 post-merge）：Core/Rust 子面 37110749+58b3706d（三命令 `list_region_revisions`/`restore_region_revision`/`rerender_page`、envelope minor 3→4、preview 轮换 fail-closed）+ React 子面 a27b3443→6f3544a2（三入口解禁、10 秒 undo、预览轮换守卫）→ 组合树 Gate（focused 399→返修后 408）→ **DSH r1 approved_with_conditions**（0×P0/P1；3 blocking+5 非阻塞+5 nit）→ r1 返修 Core `e495910f`（RC4-01 wire 级 SQLite 测试 7 用例、RC4-02 墨水断言 ≥400 实测 1389、RC4-06/08/09/11）+ React `7021d34c`（RC4-07/09/13）→ 组合 Gate 绑 `7c9d3a32`（RC4-03 闭合）→ **DSH r2 approved_with_conditions（0×P0/P1/P2，r1 三 blocking 全闭）**→ r2 条件 N-1..N-5 全闭合（N-1 core_bridge.rs test-only 注入面 Codex 追认、N-2/N-5 五条 git 原始日志、N-3 SKIPPED 原行、N-4 注释补行 `6a7b4c3d`）→ main fast-forward `0a7e0d5b`。**post-merge 三套件等量全绿**：pytest 1859 passed+1 skipped+3 failed（test_catalog 既有 + ui_shell 两例 main@8c8e0eb4 基线同样失败，`git diff` 证明 RC-4 零接触该路径）、cargo 53+1 ignored、frontend npm ci 后 vitest 118+build EXIT=0（main node_modules 缺 jsdom 属环境漂移非回归）。报告 doc/reviews/M2-RC4-DOMAIN-COMMANDS-{5954bb4b-dsh-r1,1e6b58b9-dsh-r2}.md；全量 raw 日志 verification/M2-RC4-DOMAIN-COMMANDS/raw/。AC1-AC5 全 PASS。
 
 用户授权继续「最新证据下下一最高优先任务」；候选见 Planned next。
+
+## 2026-10-07 test_catalog 漂移清算 checkpoint
+
+**[M2-TEST-CATALOG-DRIFT-CLEAR-1](tasks/M2-TEST-CATALOG-DRIFT-CLEAR-1.md) done @`8412ccfd`**（test-debt 轻量 Task，main 直落）：test_catalog 122≠97 长期失败终结。漂移事实=三次合法授权素材 Task append-only 追加（97→100 `40a8ceec` E2E-MATERIAL、→110 `9b9916af` ANNOTATE-R2、→122 `579af8a5` ANNOTATE-R3），agy 非作者 Review（approve，0×P0/P1/P2）独立验证前缀不变性。修复=exact-total pin 改唯一性不变量+`>=100` M2 契约冻结下界；NOT_RUN fail-closed 例外集并入 BJ13/14/15 真实留态（BJ13 sfx=PASS）。Gate：m2_test_assets 47 passed；全量 **1860+1sk+2 failed**（ui_shell 两例为剩余唯一失败，环境敏感待核实）。报告 verification/M2-TEST-CATALOG-DRIFT-CLEAR-1/raw/agy-review-1.md。
 
 ## 2026-10-07 已确认业务裁决
 
@@ -31,7 +35,7 @@ Planning source of truth: [Project Rebaseline Plan](REBASELINE_PLAN.md)
 | Completed | GOV-001 与 M2-D1/I1/I2/R1/UI1/C1/S1/S2/C2/S3/RC1/RC2/AC1/AC2/AC3/AC4/FIX-STUB-DECODER/FIX-EXPORT-LINEAGE/FIX-LISTBOOKS-PAGECOUNT-UNKNOWN、DIAG-M2-REGIONLESS-LOCK-CHANGED-001、M2-P1、M2-IPC1 全部 `done`；最新 integration=`69961029`（F-2 unknown 通道，契约 1.2） |
 | Completed | GOV-001 与 M2-D1/I1/I2/R1/UI1/C1/S1/S2/C2/S3/RC1/RC2/AC1/AC2/AC3/AC4/FIX-STUB-DECODER/FIX-EXPORT-LINEAGE、DIAG-M2-REGIONLESS-LOCK-CHANGED-001、M2-P1、M2-IPC1 全部 `done`；最新 integration=`d71883ec`（M2-FIX-EXPORT-LINEAGE F-1 修复） |
 | Completed | GOV-001 与 M2-D1/I1/I2/R1/UI1/C1/S1/S2/C2/S3/RC1/RC2/AC1/AC2/AC3/AC4/FIX-STUB-DECODER、DIAG-M2-REGIONLESS-LOCK-CHANGED-001、M2-P1、M2-IPC1 全部 `done`；最新 integration=`121a281c`（M2-FIX-STUB-DECODER stub 签名修复） |
-| Planned next | RC-4 已闭环；按授权自动选下一最高优先候选：①test_catalog 断言漂移清算（122≠97 既有失败，BASELINE_FAILURE 每轮单列负担持续增长）；②production 页导航/资源投影（Workbench 页到真实资源通道路径）；③ui_shell QML 环境敏感失败核实（当前会话 main 基线复现，需 GUI 会话排查）；④DOM 测试环境/token 取证（MISROUTE-UI 遗留候选）。BJ13 扩展不释放。 |
+| Planned next | RC-4 与 test_catalog 漂移清算均已闭环（`0a7e0d5b`/`8412ccfd`）；按授权自动选下一最高优先候选：①production 页导航/资源投影（Workbench 页到真实资源通道路径，主路径）；②ui_shell QML 环境敏感失败核实（当前会话 main 基线复现，需 GUI 会话排查）；③DOM 测试环境/token 取证（MISROUTE-UI 遗留候选）；④derived 预览 GC（RC4-12）/MISSING_REQUIRED_INPUT category 澄清（RC4-10）。BJ13 扩展不释放。 |
 | Product boundary | 只推进 React + TypeScript + Tauri + Python Core + SQLite；Legacy PySide6/QML 不再产生 Task |
 | Codex role | Codex Lead/Architect/Integrator 已接管；历史 ZCode 代行窗口不再用于新任务。 |
 | Release evidence | [release-5789b30b](../verification/DIAG-M2-REGIONLESS-LOCK-CHANGED-001/release-5789b30b.md) |

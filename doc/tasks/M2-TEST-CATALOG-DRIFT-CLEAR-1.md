@@ -2,7 +2,7 @@
 id: M2-TEST-CATALOG-DRIFT-CLEAR-1
 title: test_catalog 断言漂移清算（exact snapshot 反模式修复）
 kind: test-debt
-status: in_progress
+status: done
 approval: user_2026-10-07_autonomous_mode_continuation
 suggested_owner: Codex Executor
 owner: Codex Executor
@@ -12,7 +12,7 @@ depends_on: [M2-SFX-E2E-MATERIAL, M2-TA2C, M2-SFX-ANNOTATE-R2, M2-SFX-ANNOTATE-R
 base_commit: 8bf57ba2
 branch: main（单文件测试修复，直落 main）
 worktree: G:/CODEX/New Manga
-integration_commit: null
+integration_commit: 8412ccfd
 ---
 
 # M2-TEST-CATALOG-DRIFT-CLEAR-1
@@ -48,3 +48,10 @@ integration_commit: null
 ## 完成定义
 
 AC 全过 + Review 通过 + STATUS Planned next 更新。
+
+## 交付记录（2026-10-07）
+
+- 实现+收口同 commit `8412ccfd`（main 直落）：test_catalog.py 唯一性不变量 + `>=100` 冻结下界 + BJ13/14/15 例外集与字面快照；agy Review P3（下界语义显式化）与 P4（合并字典查找）两项顺手修改同批落。
+- Reviewer=Antigravity（非作者，conv `a434bed0-4416-4314-b684-6b61db71765b`）：**approve**，0×P0/P1/P2；独立验证三 commit append-only 前缀不变性（`c_40a8[:97]==c_base`、`c_9b99[:100]==c_40a8`、`c_579a[:110]==c_9b99`）。
+- Gate：`pytest tests/m2_test_assets -q` = **47 passed**；pytest 全量 = **1860 passed + 1 skipped + 2 failed**（唯一减少=本失败转绿；剩余 2 failed=ui_shell 两例，归 M2-UI-SHELL-ENV 另行核实）。raw 日志 verification/M2-TEST-CATALOG-DRIFT-CLEAR-1/raw/。
+- 效果：终结自 2026-10-01 起每轮 Gate 的 test_catalog BASELINE_FAILURE 单列负担。
