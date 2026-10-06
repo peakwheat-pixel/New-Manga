@@ -1,7 +1,8 @@
 {
  "task": "M2-SFX-GPU-EP-1 AC2 numeric parity + AC3 production-path perf",
- "generated_at_utc": "2026-10-06T04:10:18Z",
+ "generated_at_utc": "2026-10-06T04:52:35Z",
  "generated_from": "experiments/M2-SFX-GPU-EP-1/verify_gpu_ep_parity_perf.py",
+ "source_head": "790566180ff1e067cad73ff41a2ab3d0601cc2f8",
  "weights": {
   "onnx": "G:\\CODEX\\New Manga.task-envs\\M2-SFX-DETECT\\weights-v2b\\yolo11s-seg.onnx",
   "sha256": "944e811410933ad6ff8d32446fcc9eef90fb463794e1874ce83035e83acd418d",
@@ -131,29 +132,29 @@
   "cpu": {
    "wall_s": {
     "pages": 4,
-    "mean": 10.447,
-    "min": 3.302,
-    "max": 17.834
+    "mean": 10.372,
+    "min": 3.303,
+    "max": 17.73
    },
    "provider_ms": {
     "pages": 4,
-    "mean": 10441.25,
-    "min": 3300,
-    "max": 17823
+    "mean": 10367.5,
+    "min": 3302,
+    "max": 17722
    }
   },
   "dml": {
    "wall_s": {
     "pages": 4,
-    "mean": 1.106,
-    "min": 0.331,
-    "max": 1.958
+    "mean": 1.211,
+    "min": 0.333,
+    "max": 2.325
    },
    "provider_ms": {
     "pages": 4,
-    "mean": 1100.75,
-    "min": 329,
-    "max": 1949
+    "mean": 1206.75,
+    "min": 331,
+    "max": 2318
    }
   }
  },
@@ -161,29 +162,29 @@
   "cpu": {
    "wall_s": {
     "pages": 2,
-    "mean": 0.203,
-    "min": 0.202,
-    "max": 0.204
+    "mean": 0.206,
+    "min": 0.204,
+    "max": 0.209
    },
    "provider_ms": {
     "pages": 2,
-    "mean": 200.5,
-    "min": 200,
-    "max": 201
+    "mean": 204,
+    "min": 201,
+    "max": 207
    }
   },
   "dml": {
    "wall_s": {
     "pages": 2,
-    "mean": 0.065,
-    "min": 0.064,
-    "max": 0.065
+    "mean": 0.064,
+    "min": 0.063,
+    "max": 0.064
    },
    "provider_ms": {
     "pages": 2,
-    "mean": 62.5,
-    "min": 62,
-    "max": 63
+    "mean": 61.5,
+    "min": 61,
+    "max": 62
    }
   }
  },

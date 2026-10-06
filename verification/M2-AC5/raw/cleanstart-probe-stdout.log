@@ -4,4 +4,4 @@ exit=0
 [m2rc1-title] M2-RC1 resource channel runtime
 [m2rc1-title] M2-RC1 resource channel runtime
 [m2rc1-title] M2-RC1 resource channel runtime
-[0929/111018.960:ERROR:ui\gfx\win\window_impl.cc:172] Failed to unregister class Chrome_WidgetWin_0. Error = 1412
+[1006/130536.945:ERROR:ui\gfx\win\window_impl.cc:172] Failed to unregister class Chrome_WidgetWin_0. Error = 1412

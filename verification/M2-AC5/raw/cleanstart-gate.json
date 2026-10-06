@@ -1,13 +1,13 @@
 {
   "gate": "m2ac5-clean-start",
-  "installer": "G:\\CODEX\\New Manga.worktrees\\M2-AC5-zcode\\apps\\desktop\\src-tauri\\target\\release\\bundle\\nsis\\m2rc1-desktop_0.1.0_x64-setup.exe",
-  "installer_sha256": "5410e29e118d24ae28192c241a3fc7a8c3e6f5bcc4def38d7c588e900be61336",
+  "installer": "G:\\CODEX\\New Manga.worktrees\\M2-SFX-GPU-EP-1-zcode\\apps\\desktop\\src-tauri\\target\\release\\bundle\\nsis\\m2rc1-desktop_0.1.0_x64-setup.exe",
+  "installer_sha256": "4c9ef883e1f831778bd5e6b8c1276552b813430c65b6c4525474149076a86dc2",
   "install_dir": "C:\\Users\\49745\\AppData\\Local\\Temp\\m2ac5-cleanstart\\install",
-  "lab": "C:\\Users\\49745\\AppData\\Local\\Temp\\m2ac5-cleanstart-r3u1k_ci",
+  "lab": "C:\\Users\\49745\\AppData\\Local\\Temp\\m2ac5-cleanstart-ui15g6xc",
   "appdata_isolation": {
     "app_env_appdata": "pinned into the lab (probe/ac1/production)",
     "host_real_appdata": "C:\\Users\\49745\\AppData\\Roaming\\com.newmanga.m2rc1.desktop",
-    "host_real_appdata_files": 2
+    "host_real_appdata_files": 4
   },
   "verdict": "PASS",
   "scenarios": [
@@ -35,8 +35,8 @@
       "id": "CS-E2-installer-present",
       "status": "PASS",
       "observed": {
-        "installer": "G:\\CODEX\\New Manga.worktrees\\M2-AC5-zcode\\apps\\desktop\\src-tauri\\target\\release\\bundle\\nsis\\m2rc1-desktop_0.1.0_x64-setup.exe",
-        "sha256": "5410e29e118d24ae28192c241a3fc7a8c3e6f5bcc4def38d7c588e900be61336"
+        "installer": "G:\\CODEX\\New Manga.worktrees\\M2-SFX-GPU-EP-1-zcode\\apps\\desktop\\src-tauri\\target\\release\\bundle\\nsis\\m2rc1-desktop_0.1.0_x64-setup.exe",
+        "sha256": "4c9ef883e1f831778bd5e6b8c1276552b813430c65b6c4525474149076a86dc2"
       }
     },
     {
@@ -69,7 +69,7 @@
           "status": "ready",
           "protocol_version": {
             "major": 1,
-            "minor": 0
+            "minor": 3
           },
           "capabilities": [
             "library.list_books"
@@ -101,7 +101,7 @@
       "id": "CS-P1-probe-results-written",
       "status": "PASS",
       "observed": {
-        "path": "C:\\Users\\49745\\AppData\\Local\\Temp\\m2ac5-cleanstart-r3u1k_ci\\probe\\probe-results.json"
+        "path": "C:\\Users\\49745\\AppData\\Local\\Temp\\m2ac5-cleanstart-ui15g6xc\\probe\\probe-results.json"
       }
     },
     {
@@ -163,12 +163,12 @@
       "status": "PASS",
       "observed": {
         "run1": [
-          50160,
-          12988
+          57416,
+          25992
         ],
         "run2": [
-          22128,
-          34040
+          64856,
+          58572
         ]
       }
     },
@@ -226,7 +226,7 @@
           "data": true
         },
         "catalog.sqlite": true,
-        "root": "C:\\Users\\49745\\AppData\\Local\\Temp\\m2ac5-cleanstart-r3u1k_ci\\production\\roaming\\com.newmanga.m2rc1.desktop",
+        "root": "C:\\Users\\49745\\AppData\\Local\\Temp\\m2ac5-cleanstart-ui15g6xc\\production\\roaming\\com.newmanga.m2rc1.desktop",
         "appdata_isolated": true
       }
     },
@@ -257,7 +257,7 @@
       "status": "PASS",
       "observed": {
         "root": "C:\\Users\\49745\\AppData\\Roaming\\com.newmanga.m2rc1.desktop",
-        "files": 2,
+        "files": 4,
         "changed_entries": [],
         "note": "runner never deletes here; app APPDATA pinned into the lab"
       }
@@ -277,7 +277,7 @@
         "core_service.exe": 0,
         "acceptance_bridge.exe": 0,
         "catalog_loader.exe": 0,
-        "python.exe": 8
+        "python.exe": 4
       }
     }
   ]

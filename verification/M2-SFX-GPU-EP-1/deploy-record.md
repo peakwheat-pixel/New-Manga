@@ -280,3 +280,15 @@ directml wheel 其它文件的压缩差异），可接受性属用户部署形�
   探针需要 frozen 命令面扩展（M2-PROD-DETECT-2 的已知 NOT_RUN 结构性
   缺口，须 Codex 立契约），本 Task 不扩权、留作缺口登记。源码形态的
   DML 默认行为由 AC2/AC3 双面证据与 EP 单测覆盖。
+
+### 7.3 r1 返修后构建链重跑（绑定返修源码）
+
+- `build_sidecar.ps1 -Force` EXIT=0，**HEAD=79056618…（P1-1 修复 commit）
+  绑定**（`raw/build-sidecar-r2run.log`）；
+- `tauri build` EXIT=0 → NSIS **512,675,022 B / 488.93 MiB**，sha256
+  `4c9ef883e1f831778bd5e6b8c1276552b813430c65b6c4525474149076a86dc2`（vs
+  基线 delta +52,493,710 B = +50.06 MiB；首轮包 512,645,237 B /
+  `61df0299…` 为返修前源码所建，被本轮取代；
+  `raw/tauri-build-r2run.log` + `raw/bundle-sizes.log`）；
+- **GATE 重跑 PASS（25/25，EXIT=0**，`raw/gate-clean-start-e2e-r2run.log`）；
+  tauri 行尾重写文件已再次按 README 纪律 checkout 还原。
