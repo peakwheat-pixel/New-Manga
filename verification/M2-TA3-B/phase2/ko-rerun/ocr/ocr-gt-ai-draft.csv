@@ -1,0 +1,51 @@
+unit_id,language,case_id,region_id,region_type,ai_draft_gt_text,confidence,ai_note
+K02:02ffb866,ko,K02,02ffb86606fd4f61935cd2ab5b3d08fc,speech,...어..,high,[AI] 视觉直读：左右侧省略号夹单字「어」
+K02:05b31cb5,ko,K02,05b31cb569c6428897d1326c2f4db35d,speech,아~ 그래~? 정말~? 진짜로~,high,[AI] 视觉直读；首词为「아~」（OCR 读「와니그래」与图不符）
+K02:0949843e,ko,K02,0949843e3ce449628d426430c41ffa48,speech,제대로 설명들을?,low,[AI] 低置信：印刷体小字，「제대로」第二音节是否为「대」重复无法确认，行首横线未计入
+K02:09e721d0,ko,K02,09e721d0a3714894b9d9937e25372608,speech,잠까안!!?,low,[AI] 低置信：红色手写艺术字，「까/깐」받침难辨（OCR 同读「잠까안」）
+K02:0a7474a3,ko,K02,0a7474a339674fa8a9f8fe31f3677a48,speech,빈말아냐,high,[AI] 视觉直读
+K02:0ba91f3e,ko,K02,0ba91f3e38814491b682795140d98d69,speech,"폰에서 한 컷 씩, 넘겨보는 컷툰",high,[AI] 视觉直读：印刷体开场说明文字
+K02:0fde639c,ko,K02,0fde639c699a49c9ac4632b18c744d37,speech,웅 웅 그래 그래,high,[AI] 视觉直读（OCR 读「O 그래 그래 0」为拟声词误读）
+K02:14dbd2a8,ko,K02,14dbd2a8cf154831bb64db3010b2f15e,speech,저기요? 저 말 듣고 있나요?,high,[AI] 视觉直读；「저 말」有空格
+K02:179d1c30,ko,K02,179d1c309d6a4fb496fd36ebd613705c,speech,아~ 이런,high,[AI] 视觉直读（OCR 读「아이전」与图不符）
+K02:185fcf95,ko,K02,185fcf95531345dda38499b6f8fdb105,speech,...그..,high,[AI] 视觉直读：左右省略号夹单字「그」
+K02:194eb509,ko,K02,194eb509dd624ec49ee504206d6cf9ee,speech,먹음직스어이?,low,[AI] 低置信：蓝绿色装饰艺术字，词尾音节串「스어이」连写模糊；左下橙色小装饰字未计入
+K02:19b690b4,ko,K02,19b690b44b934a8c899a3fb8ac7a3831,speech,혹시 다른사람에게 말할까 걱정되는거면 걱정마! 절대 말 안할게,medium,[AI] 末词「안할게/안탈게」手写 ㅎ/ㅌ 相近，按图取「안할게」
+K02:1c46fcc4,ko,K02,1c46fcc40b684477ae4d34c23bc87d2a,speech,진정해!! 여기 카페라고!!,high,[AI] 视觉直读
+K02:1d5503d2,ko,K02,1d5503d2f5a541ef9b7cc8ddd44f401e,speech,그런 무서운 소리 하지를 말어,high,[AI] 视觉直读；「말어」为图中原文（口音拼写，不作语义修复）
+K02:1d7348e0,ko,K02,1d7348e0f4214934bac45eb89c25f2cd,speech,또님 조금만 조용히..!!,medium,[AI] 首词「또님」云朵气泡内手写、确认度中（OCR 读「끄금만조용히」与图明显不符）
+K02:24a57edd,ko,K02,24a57eddb0d94e2283262e0d1a993fa2,speech,말이 안돼..?,high,[AI] 视觉直读
+K02:30f0dfee,ko,K02,30f0dfee94674141be00335d1afff231,speech,오빠를 좋아한다고 생각해,high,[AI] 视觉直读（OCR 读「풍아」为误读；OCR 尾部「U」为图形误读）
+K02:33085715,ko,K02,33085715143e4fc29fd548a7bb27e26a,speech,내 친구라서 하는 말이 아니고 년.. 그.. 자기관리도 잘하고 성격도 착하고 그리고..,medium,[AI] 「성격도 착하고」的「착」字形中等清晰（OCR 读「뜰걱하고」与图不符）
+K02:33124574,ko,K02,3312457419af4783bd6a294c52ae6717,speech,어휴 어휴 알았다,high,[AI] 视觉直读
+K02:35b2ed2e,ko,K02,35b2ed2eed924c2fb22b1db4dbf83ecc,speech,아~ 이런 기분이거나~ 복수하는거야?,medium,[AI] 「기분이거나/기분이구나」元音按图取「거」（OCR 读「이구나」）
+K02:3812233c,ko,K02,3812233c463a471486d06dfc2d0524df,speech,설기가 내가 오빠를 좋아한다고 오해하고 있어~ 라고 하든가,medium,[AI] 末行「하든가/하던가」받침按图取「하든가」
+K02:391236b8,ko,K02,391236b8e9fa4c4995420500981fdd40,speech,아까 너가 너가 짝사랑하는 걸 너무 싫어 했던게..,high,[AI] 视觉直读；「너가 너가」逐行重复为图中原文（OCR 读「착박하는」为误读）
+K02:3baeb753,ko,K02,3baeb75316fe471da380c408dae1b86a,speech,하지만 너도 웃내서? 말해준거잖아,low,[AI] 低置信：第二行首词直读三音节「웃내서」，疑为「용기내서」的误读或作者简写，以「?」标记待人工核，不作语义修复
+K02:3c869c4a,ko,K02,3c869c4a30144048ab02ad35dc896541,speech,더 믿기 힘들어졌어,high,[AI] 视觉直读
+K02:3e5591a7,ko,K02,3e5591a73ad94d7f9c31bd55c30a4136,speech,cat+myo@naver.com cat+myo.blog.me,high,[AI] 视觉直读：手写 @ 形似「⊙」，按语义还原为 @；拉丁字符照图直读
+K02:3eab7242,ko,K02,3eab72422bdb40559e6a842add9c52b2,speech,뭐야그 표정은..?!,high,[AI] 视觉直读
+K02:401bd54e,ko,K02,401bd54e86294be4b941993a3307775a,speech,이 작고 소동한 걸 주는데??,high,[AI] 视觉直读；「작고 소동한」为图中原文
+K02:4168c649,ko,K02,4168c649f61245f7a3764cf712ddd0ed,speech,그리고 네가 상처받는다고 말하니까 더 그랬지,high,[AI] 视觉直读（OCR 读「그렸지」与图「그랬지」不符）
+K02:418ab06c,ko,K02,418ab06cf0a04574a6c464c6df27309c,speech,미안.. 아.. 아니 고맙다,high,[AI] 视觉直读
+K02:4391ff1f,ko,K02,4391ff1fbd5b4126b8e7436f06c9150a,speech,그건 나랑 연인걸로 너무 놀라니까..,medium,[AI] 「연인걸로/엮인걸로」按图取「연인걸로」（OCR 读「엮인걸로」）
+K02:483859af,ko,K02,483859af94784e9c963e69f7c89f0712,speech,자존심 상해서..,high,[AI] 视觉直读
+K02:4b99dce1,ko,K02,4b99dce15fc14e29870a29f6f7029f64,speech,??,high,[AI] 视觉直读：两个手写问号
+K02:533db4f4,ko,K02,533db4f4f919432d9412772276af4e3e,speech,아니 나랑 오빠 얘기잖아 설기는 어떨지 모르는거야,high,[AI] 视觉直读
+K02:534737c4,ko,K02,534737c468ba4e18adc48eec277b5330,speech,근데 알다시피 난.. 좋아하는 사람이 있잖아.. 네가 날 좋아하는 마음은 알겠지만 정말 미안하게...,high,[AI] 视觉直读（OCR 多处误读：증아/풍아/있아；图中「좋아하는/있잖아」清晰）
+K02:53b2360f,ko,K02,53b2360f34cb46759743bb1ced1dd1aa,speech,설기도 그렇게 어떨까..?,medium,[AI] OCR 读「설기도 끄게 2」与图明显不符；「그렇게/어떨까」字形中等
+K02:54327548,ko,K02,54327548c97d41b9b03ffd62c5de3e3c,speech,니가 앞에 설명을 잘 안해줘서 그런거었잖아!,medium,[AI] 末行「그런거었잖아」连写处字形中等（OCR 读「잘안해서그아」与图不符）
+K02:571f9d83,ko,K02,571f9d839b1b40e5968d6fef9c26ab7d,speech,에이~ 미안해 농담이었어,high,[AI] 视觉直读（OCR「에이ㅣ」的竖线为波浪号误读）
+K02:57c0e73b,ko,K02,57c0e73b1a974b36853ed1099cfd3e62,speech,우리집에서 밥먹고갈래요? 오빠,high,[AI] 视觉直读：装饰体标题+右下角手写小字「오빠」；OCR「tleke/OLDIL」为花体装饰误读
+K02:58e77a9f,ko,K02,58e77a9f5ab24ce1817cbc9f0d152cd4,speech,충격이야,high,[AI] 视觉直读
+K02:5f1c454d,ko,K02,5f1c454db4144a5ca2d5dfe5af516514,speech,고마울건 뭐람~ 일단 알고있다고 미안할것도 없고~,medium,[AI] 第二行「알고있다고」字形中等（OCR 读「있으라고」）；第三行为底部小字「미안할것도 없고~」
+K02:60c0958c,ko,K02,60c0958cced04d75963b7b3cad6460e3,speech,얼굴은 새빨거리서? 뭐하는거야,low,[AI] 低置信：第二词元音（ㅔ/ㅐ）与「뿐/빨」模糊，语义疑为「새빨개져서」，以「?」标记待人工核，不作语义修复
+K02:658f0519,ko,K02,658f05193dd145d5b55c716ad522434b,speech,아악!! 모르면 꼭 닥쳐봐!!!,high,[AI] 视觉直读（OCR「끔」为「꼭」误读）
+K02:671ccc38,ko,K02,671ccc380eb1445093d461c91b29eba5,speech,빈 말 위로 따위 필요 없어!!!,high,[AI] 视觉直读
+K02:6c276b56,ko,K02,6c276b56491d42dda8df4280c1d83a99,speech,진짜야. 정말 그렇게 생각해 진짜로?,medium,[AI] 右上小字「진짜로?」并入行尾（OCR 读「02」为小字误读）
+K02:6f571eae,ko,K02,6f571eaebc044043acaf8f024f9d16a7,speech,생각지도 못해서,high,[AI] 视觉直读
+K02:6fded8fd,ko,K02,6fded8fdcc8446f3a8d33b06f16910c0,speech,그거는 말이 안되는 소리를 하니까..,high,[AI] 视觉直读（OCR 读「말이인되는/하까」与图不符）
+K02:71570fcb,ko,K02,71570fcbbc314d29809cda45bd0e1382,speech,이렇게 찍찍 거릴땐 별론데 그 외엔 괜찮은 놈이지,medium,[AI] 「찍찍」小字形确认度中（OCR 读「끼질거릴때」）
+K02:72677b42,ko,K02,72677b42c20d48509b30d59d82a0b57a,speech,이게? 한테는 메인보다 중요한,low,[AI] 低置信：首词字形似「이게」而语境疑为「네」，助词组合异常，以「?」标记待人工核
+K02:72a82f30,ko,K02,72a82f303c35452abba00dfb7d1d6105,speech,이거 주면 믿어줄래?,high,[AI] 视觉直读（OCR 读「꾸면」为「주면」误读）
+K02:72d44805,ko,K02,72d44805dac44b3cb25e28e199db290c,speech,와악,high,[AI] 视觉直读：红色艺术字拟声词（OCR 读「와학」与图不符）

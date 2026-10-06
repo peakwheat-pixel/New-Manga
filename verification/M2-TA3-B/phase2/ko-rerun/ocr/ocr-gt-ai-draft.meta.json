@@ -1,0 +1,45 @@
+{
+  "artifact": "ocr-gt-ai-draft.csv",
+  "artifact_role": "G2 AI 预判 GT 的 AI 视觉直读预填 draft（C1 模式预填步，非最终 GT）",
+  "generated_at_utc": "2026-10-06T09:03:56Z",
+  "generated_by": "GLM-5.3-Flash（ZCode 会话模型，视觉直读 region crop；M2-TA3-B G2 人工 GT 工作表后续步骤执行者）",
+  "data_source": "verification/M2-TA3-B/phase2/ko-rerun/ocr/cer-regions.csv（105 region 行；gt_source=G2:pending_human_worksheet 实测 93 行，全部为 ko/K02）",
+  "scope_decision": {
+    "50_row_definition": "quality-report.md:84/:184 与 STATUS.md:14 的「G2 待审 50 行」原始出处=首跑 phase2/ocr/cer-regions.csv 中 50 个 pending 行（ja BJ02-BJ11 八 case 全部 region：BJ06 17/BJ10 11/BJ11 8/BJ02 5/BJ04 3/BJ08 3/BJ03 2/BJ05 1），该批已就绪待审、不在本数据本体。",
+    "this_draft_selection_rule": "本 draft 基于任务指定的 ko-rerun 数据本体：其 pending=93 行（ko/K02），文档无唯一清单段划定其中 50 行；按 fallback 规则「ko 语言的 pending 行中按 unit_id 字符串排序取前 50」选取，其余 43 行留待（未预填、未丢弃）。",
+    "selected": 50,
+    "remainder_pending": 43,
+    "remainder_ids_note": "剩余 43 行=93 个 K02 pending 行按 unit_id 排序的第 51-93 名（K02:73d6f68b 起），可按同一规则补次批预填。",
+    "region_type_filter": "93 个 pending 行 region_type 全部为 speech，无需按 region_type 再过滤。"
+  },
+  "crop_source": {
+    "task_stated_path": "G:/CODEX/New Manga.task-envs/M2-TA3-B/phase2-pixels/ocr/crops/<case_id>/<region_id>.png",
+    "actual_path_used": "G:/CODEX/New Manga.task-envs/M2-TA3-B/ko-rerun-pixels/ocr/crops/K02/<region_id>.png",
+    "path_facts_note": "phase2-pixels/ocr/crops/ 仅含首跑像素树 case（BJ02-BJ11/J46/J47/K11*），无 K02 目录；K02（ko-rerun 解锁 case）的 crop 落在独立的 ko-rerun-pixels 兄弟目录树。50 张 crop 全部存在、逐张直读，0 缺图。",
+    "missing_crops": []
+  },
+  "counts": {
+    "rows": 50,
+    "read_directly": 50,
+    "crop_missing": 0,
+    "confidence_low": 6,
+    "confidence_medium": 11,
+    "confidence_high": 33,
+    "low_confidence_unit_ids": [
+      "K02:0949843e",
+      "K02:09e721d0",
+      "K02:194eb509",
+      "K02:3baeb753",
+      "K02:60c0958c",
+      "K02:72677b42"
+    ]
+  },
+  "discipline": {
+    "ai_prefix": "全部 ai_note 带 [AI] 前缀（thresholds §2.2 设计要点：draft 整体存档 + [AI]/[人工修订] rationale 前缀先例）。",
+    "user_verdict_column_absent": "本 CSV 无 user_verdict 列——用户逐条审核是下一步，本轮不代行；正式 ocr-gt.csv（最终 GT）禁止由本步生成。",
+    "uncertainty_marker": "不确定字/模糊区域在 ai_draft_gt_text 内以 ? 逐处标记；整行低置信在 confidence=low + ai_note 注明。",
+    "no_semantic_repair": "直读纪律：按图面文字原文记录（含「말어」「웃내서」「작고 소동한」等图中原文拼写），不做语义修复；疑似误读处以 ? 标记并在 ai_note 披露候选。"
+  },
+  "self_anchoring_risk_statement": "本 draft 为单标注者（AI 视觉直读）预填，自评锚定未测量：同 crop 已有 PaddleOCR 输出（cer-regions.csv ocr_text 列）在先，直读不排除被先验文本污染（anchoring 风险方向性存在、强度未测）。按 C1 先例（c1-spot-audit-report.md §2）与 thresholds 判定权威条款，本 draft 全部内容=方向性证据（directional evidence）下限材料，最终 GT 唯一来源=用户逐条审核后的工作表；引用本文件任何字段时不得升格为独立双盲结论。",
+  "next_step": "用户按 crop 图逐条审核本 draft（采纳/修订，rationale 前缀 [AI]/[人工修订]），生成正式 ocr-gt.csv；剩余 43 行 pending 可按同一选取规则补次批 AI 预填 draft。"
+}
