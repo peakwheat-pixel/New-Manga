@@ -1,27 +1,27 @@
 SHELL=Git Bash (MINGW64, Windows)
-HEAD=14f4b1e6b05c7fc5cc1f947e1848a1ff411335d7
+HEAD=00538a14abc5242b34e7b4d7320e459a0ca3c456
 COMMAND=npx vitest run
 npm notice run m2rc1-frontend@0.1.0 npx
 npm notice run vitest run
 
 [1m[7m[36m RUN [39m[27m[22m [36mv2.1.9 [39m[90mG:/CODEX/New Manga.worktrees/PAGE-NAV-1/apps/desktop/frontend[39m
 
- [32m✓[39m src/workbench/relabelMachine.test.ts [2m([22m[2m21 tests[22m[2m)[22m[90m 5[2mms[22m[39m
- [32m✓[39m src/library/client.test.ts [2m([22m[2m10 tests[22m[2m)[22m[90m 7[2mms[22m[39m
- [32m✓[39m src/ac1/driver.test.ts [2m([22m[2m3 tests[22m[2m)[22m[90m 2[2mms[22m[39m
- [32m✓[39m src/region/geometry.test.ts [2m([22m[2m8 tests[22m[2m)[22m[90m 3[2mms[22m[39m
- [32m✓[39m src/resourceChannel/client.test.ts [2m([22m[2m8 tests[22m[2m)[22m[90m 6[2mms[22m[39m
- [32m✓[39m src/region/client.test.ts [2m([22m[2m15 tests[22m[2m)[22m[90m 6[2mms[22m[39m
- [32m✓[39m src/resourceChannel/commandSurface.test.ts [2m([22m[2m10 tests[22m[2m)[22m[90m 9[2mms[22m[39m
- [32m✓[39m src/settings/client.test.ts [2m([22m[2m7 tests[22m[2m)[22m[90m 5[2mms[22m[39m
- [32m✓[39m src/workbench/PageListPanel.test.tsx [2m([22m[2m5 tests[22m[2m)[22m[90m 6[2mms[22m[39m
- [32m✓[39m src/library/LibraryPanel.test.tsx [2m([22m[2m8 tests[22m[2m)[22m[90m 92[2mms[22m[39m
- [32m✓[39m src/settings/SettingsPanel.test.tsx [2m([22m[2m10 tests[22m[2m)[22m[90m 145[2mms[22m[39m
- [32m✓[39m src/workbench/WorkbenchPage.test.tsx [2m([22m[2m31 tests[22m[2m)[22m[90m 292[2mms[22m[39m
+ [32m✓[39m src/workbench/relabelMachine.test.ts [2m([22m[2m21 tests[22m[2m)[22m[90m 4[2mms[22m[39m
+ [32m✓[39m src/region/geometry.test.ts [2m([22m[2m8 tests[22m[2m)[22m[90m 4[2mms[22m[39m
+ [32m✓[39m src/resourceChannel/client.test.ts [2m([22m[2m8 tests[22m[2m)[22m[90m 9[2mms[22m[39m
+ [32m✓[39m src/library/client.test.ts [2m([22m[2m10 tests[22m[2m)[22m[90m 10[2mms[22m[39m
+ [32m✓[39m src/resourceChannel/commandSurface.test.ts [2m([22m[2m10 tests[22m[2m)[22m[90m 10[2mms[22m[39m
+ [32m✓[39m src/ac1/driver.test.ts [2m([22m[2m3 tests[22m[2m)[22m[90m 3[2mms[22m[39m
+ [32m✓[39m src/region/client.test.ts [2m([22m[2m15 tests[22m[2m)[22m[90m 7[2mms[22m[39m
+ [32m✓[39m src/settings/client.test.ts [2m([22m[2m7 tests[22m[2m)[22m[90m 6[2mms[22m[39m
+ [32m✓[39m src/workbench/PageListPanel.test.tsx [2m([22m[2m5 tests[22m[2m)[22m[90m 7[2mms[22m[39m
+ [32m✓[39m src/library/LibraryPanel.test.tsx [2m([22m[2m8 tests[22m[2m)[22m[90m 93[2mms[22m[39m
+ [32m✓[39m src/settings/SettingsPanel.test.tsx [2m([22m[2m10 tests[22m[2m)[22m[90m 146[2mms[22m[39m
+ [32m✓[39m src/workbench/WorkbenchPage.test.tsx [2m([22m[2m31 tests[22m[2m)[22m[33m 303[2mms[22m[39m
 
 [2m Test Files [22m [1m[32m12 passed[39m[22m[90m (12)[39m
 [2m      Tests [22m [1m[32m136 passed[39m[22m[90m (136)[39m
-[2m   Start at [22m 07:39:12
-[2m   Duration [22m 1.24s[2m (transform 690ms, setup 0ms, collect 1.78s, tests 578ms, environment 1ms, prepare 1.80s)[22m
+[2m   Start at [22m 07:53:08
+[2m   Duration [22m 1.25s[2m (transform 737ms, setup 0ms, collect 1.76s, tests 603ms, environment 1ms, prepare 1.78s)[22m
 
 EXIT=0

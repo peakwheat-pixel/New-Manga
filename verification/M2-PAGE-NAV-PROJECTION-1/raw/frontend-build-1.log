@@ -1,5 +1,5 @@
 SHELL=Git Bash (MINGW64, Windows)
-HEAD=14f4b1e6b05c7fc5cc1f947e1848a1ff411335d7
+HEAD=00538a14abc5242b34e7b4d7320e459a0ca3c456
 COMMAND=npm run build
 npm notice run m2rc1-frontend@0.1.0 build
 npm notice run tsc && vite build
@@ -10,5 +10,5 @@ rendering chunks...
 computing gzip size...
 [2mdist/[22m[32mindex.html                [39m[1m[2m  0.28 kB[22m[1m[22m[2m │ gzip:  0.21 kB[22m
 [2mdist/[22m[36massets/index-CbuaKdcb.js  [39m[1m[2m198.48 kB[22m[1m[22m[2m │ gzip: 62.94 kB[22m
-[32m✓ built in 401ms[39m
+[32m✓ built in 392ms[39m
 EXIT=0

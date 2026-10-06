@@ -6,7 +6,8 @@
 - Task: [M2-PAGE-NAV-PROJECTION-1](../tasks/M2-PAGE-NAV-PROJECTION-1.md)（release `428cd92c`，base `8e8e724b`）
 - Branch/worktree: `zcode/page-nav-projection-1` @ `G:/CODEX/New Manga.worktrees/PAGE-NAV-1`
 - Delivery head: `614f3f98`（单交付 commit：Core+Rust+React+契约同 commit）
-- Rework head: `14f4b1e6`（DSH r1 `approve_with_conditions` 返修，PR-01..PR-10 fixed、PR-11 deferred；本文件以下数字均以 `14f4b1e6` 为准；r1 报告 `doc/reviews/M2-PAGE-NAV-PROJECTION-1-614f3f98-dsh-r1.md`）
+- Rework head: `14f4b1e6`（DSH r1 `approve_with_conditions` 返修，PR-01..PR-10 fixed、PR-11 deferred；r1 报告 `doc/reviews/M2-PAGE-NAV-PROJECTION-1-614f3f98-dsh-r1.md`）
+- Hardening head: `00538a14`（DSH r2 `approve` 后顺手加固 N-01..N-05；r2 报告 `doc/reviews/M2-PAGE-NAV-PROJECTION-1-14f4b1e6-dsh-r2.md`；**本文件以下数字均以 `00538a14` 为准**）
 
 ## 交付内容（一句话）
 
@@ -50,17 +51,29 @@
 | PR-8 导航两 effect 迟到回包守卫无测试钉住 | P4 | **fixed**——新增「A 书 chapters 迟到回包被丢弃」判别用例（删 `isCurrent` 守卫即红） |
 | PR-09 PageListPanel「回调接线」用例未验证接线 | P4 | **fixed**——用例改名+移除恒真断言+去未用 `vi` 导入；接线判别力归属集成层（WorkbenchPage 用例已真实覆盖） |
 | PR-10 Core 测试 docstring 与 seed 实现不符 | P4 | **fixed**——改为「imported one per call (distinct colors …)」 |
-| PR-11 生产-only 族算术 pin 对被测常量自引用 | P4 | **deferred**——DSH 自证该结构弱点为 IPC1/SETTINGS/RETYPE/RC4/RESOLVE 各代先例共有、非本 Task 引入；单 Task 内单独加固会扩大范围。登记为后续统一加固候选（新增常量成员精确断言或族间两两不相交断言），归属独立技术债清算 Task |
+| PR-11 生产-only 族算术 pin 对被测常量自引用 | P4 | **deferred**——DSH 自证该结构弱点为 IPC1/SETTINGS/RETYPE/RC4/RESOLVE 各代先例共有、非本 Task 引入；单 Task 内单独加固会扩大范围。登记为后续统一加固候选（新增常量成员精确断言或族间两两不相交断言），归属独立技术债清算 Task。r2 自我更正：残余缺口比 r1 描述更窄（15 元精确 vec pin + 绝对 7/6 长度 pin 已覆盖「删成单成员」突变），defer 双轮均可接受 |
 
-## 验收对照（rework @`14f4b1e6`）
+## DSH r2（@`14f4b1e6`，报告 `doc/reviews/M2-PAGE-NAV-PROJECTION-1-14f4b1e6-dsh-r2.md`）：VERDICT **approve**
+
+PR-01..10 全部 **fixed** 判定、PR-11 **deferred-accepted**（含对 r1 PR-11 反向推演的自我更正）。新发现 N-01（P3）+N-02..05（P4，非阻断建议）——r2 无条件放行；Owner 按测试判别力纪律顺手加固（`00538a14`）：
+
+| 项 | 级 | 处置 |
+|---|---|---|
+| N-01 PR-06 判别用例对「立即清空」无判别力（book-b 同步回包使断言由回包覆盖保证） | P3 | **fixed**——用例改造：book-b chapters 挂起（pending promise），断言切书窗口内 `page-nav-list` 收起 + 旧书章行不可见 + `chapters-busy` 在场，再 resolve book-b 断言恢复——删 `setChapters([])` 即红 |
+| N-02 ACL 文档注释只改数字未补 probe 面 | P4 | **fixed**——补「plus four probe-only and three M2-AC1 acceptance commands」（15+4+3=22 自洽） |
+| N-03 commandSurface 内联注释/docstring 与 mock 允许面不一致（IPC1 pair 缺席 mock） | P4 | **fixed**——内联注释更新为 DOMAIN face 完整表述；mock available 补 IPC1 pair（`core_ping`/`library_list_books` production-only），mock 与 docstring 自洽 |
+| N-04 WorkbenchPage 悬挂注释残句（resolve 注释首行被 effect 插入吃掉） | P4 | **fixed**——补回 `M2-PAGE-RESOURCE-RESOLVE-1: resolve the page's…` 完整首行 |
+| N-05 Panel 用例名声称的高亮无断言 | P4 | **fixed**——改名「highlights only the current page」+ 逐 tile 断言（p-1 tile 含选中背景、p-2 tile 不含） |
+
+## 验收对照（final @`00538a14`；r1 @`614f3f98`、r2 复核 @`14f4b1e6` 数字同构）
 
 | AC | 状态 | 证据 |
 |---|---|---|
-| AC1 契约 rev 1.8 | DONE | 契约落字（见上；rework PR-02 方向修正）；`614f3f98`+`14f4b1e6` |
-| AC2 Core focused | DONE | focused 四目录 **422 passed**（PAGE-RESOLVE 基线 417 + 本 Task 5 新用例）；raw 日志 `verification/M2-PAGE-NAV-PROJECTION-1/raw/focused-pytest-1.log`（HEAD=`14f4b1e6`，EXIT=0） |
-| AC3 Rust | DONE | cargo **55 passed + 1 ignored**（54+1 + 1 新桥接用例，15 命令 pin + 新组负向断言）；raw 日志 `verification/M2-PAGE-NAV-PROJECTION-1/raw/cargo-test-1.log`（HEAD=`14f4b1e6`，EXIT=0） |
-| AC4 前端 | DONE | vitest **136 passed**（124+12：client.test.ts +3、PageListPanel.test.tsx +5、WorkbenchPage.test.tsx +4）+ `npm run build` EXIT=0；raw 日志 `verification/M2-PAGE-NAV-PROJECTION-1/raw/vitest-run-1.log` 与 `frontend-build-1.log`（HEAD=`14f4b1e6`） |
-| AC5 全量回归 | DONE | worktree 全量 pytest **1876 passed + 1 skipped + 0 failed**（base `8e8e724b` 基线 1871+1sk + 5 本 Task 新用例=1876，等量递增）；raw 日志 `verification/M2-PAGE-NAV-PROJECTION-1/raw/full-pytest-1.log`（HEAD=`14f4b1e6`，EXIT=0） |
+| AC1 契约 rev 1.8 | DONE | 契约落字（rework PR-02 方向修正）；`614f3f98`+`14f4b1e6` |
+| AC2 Core focused | DONE | focused 四目录 **422 passed**（PAGE-RESOLVE 基线 417 + 本 Task 5 新用例）；raw 日志 `verification/M2-PAGE-NAV-PROJECTION-1/raw/focused-pytest-1.log`（HEAD=`00538a14`，EXIT=0） |
+| AC3 Rust | DONE | cargo **55 passed + 1 ignored**（54+1 + 1 新桥接用例，15 命令 pin + 新组负向断言）；raw 日志 `verification/M2-PAGE-NAV-PROJECTION-1/raw/cargo-test-1.log`（HEAD=`00538a14`，EXIT=0） |
+| AC4 前端 | DONE | vitest **136 passed**（124+12：client.test.ts +3、PageListPanel.test.tsx +5、WorkbenchPage.test.tsx +4）+ `npm run build` EXIT=0；raw 日志 `verification/M2-PAGE-NAV-PROJECTION-1/raw/vitest-run-1.log` 与 `frontend-build-1.log`（HEAD=`00538a14`） |
+| AC5 全量回归 | DONE | worktree 全量 pytest **1876 passed + 1 skipped + 0 failed**（base `8e8e724b` 基线 1871+1sk + 5 本 Task 新用例=1876，等量递增）；raw 日志 `verification/M2-PAGE-NAV-PROJECTION-1/raw/full-pytest-1.log`（HEAD=`00538a14`，EXIT=0） |
 
 ## 设计裁定（Reviewer/集成方请特别核验）
 
