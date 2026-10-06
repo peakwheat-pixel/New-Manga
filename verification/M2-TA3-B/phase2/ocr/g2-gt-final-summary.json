@@ -1,0 +1,92 @@
+{
+  "task": "M2-TA3-B phase2 G2 GT 终审定稿（densho810 报告义务材料侧）",
+  "closed_at": "2026-10-04",
+  "user_ruling": "「直接提交」=免逐条人工审核授权（用户原话，2026-10-04）；本表 GT 为 AI 视觉直读终态，非人工逐条审核产物",
+  "scope": "首跑 phase2/ocr/cer-regions.csv 全部 50 行 G2:pending_human_worksheet（ja BJ02-BJ11，与 doc/tasks/M2-TA3-B2.md:56/:62『G2 待审 50 行』口径一致）",
+  "method": "50 张裁切图（task-envs/M2-TA3-B/phase2-pixels/ocr/crops/<case>/<region>.png）逐张视觉直读；manga_ocr 输出仅作（a）宽窄歧义字形的全角约定参照（b）低置信毛笔字候选读法",
+  "gt_source_marker": "G2:ai_direct_user_waiver",
+  "cer_conventions": "strip-all-whitespace; …≡...; latin casefold; ー 不折叠（对齐 cer-summary.json G1 口径）",
+  "n_rows": 50,
+  "n_gt_diff_from_ocr": 7,
+  "gt_diff_rows": [
+    {
+      "unit_id": "BJ02:3df2f8e2",
+      "gt_text": "正しいってのは弱いって事だ",
+      "ocr_text": "正しいってのは弱いっそ事だ",
+      "cer": "0.0769"
+    },
+    {
+      "unit_id": "BJ04:f412b623",
+      "gt_text": "ブラックジャックによろしく完全版佐藤秀峰SATO SYUHOU",
+      "ocr_text": "ブラックジャックによろしく完全版編集",
+      "cer": "0.4667"
+    },
+    {
+      "unit_id": "BJ05:7f4908b0",
+      "gt_text": "ブラックジャックによろしく完全版佐藤秀峰SATO SYUHOU",
+      "ocr_text": "ブラックジャックによろしく完全版佐藤森",
+      "cer": "0.4000"
+    },
+    {
+      "unit_id": "BJ08:6621c6fa",
+      "gt_text": "３",
+      "ocr_text": "２０",
+      "cer": "2.0000"
+    },
+    {
+      "unit_id": "BJ08:355409b9",
+      "gt_text": "ブラックジャックによろしく完全版佐藤秀峰SATO SYUHOU",
+      "ocr_text": "ブラックジャックによろしく完全版『警察",
+      "cer": "0.4667"
+    },
+    {
+      "unit_id": "BJ11:5a4b662d",
+      "gt_text": "君は自分を非常識な人間だと思うかい．．．？",
+      "ocr_text": "君は自分を非常識な人間だと思うかい．．．！？",
+      "cer": "0.0476"
+    },
+    {
+      "unit_id": "BJ11:ddd55d04",
+      "gt_text": "多数派が常識人．．．",
+      "ocr_text": "多数派が常識人：．．．",
+      "cer": "0.1000"
+    }
+  ],
+  "n_low_confidence": 18,
+  "low_confidence_unit_ids": [
+    "BJ06:eff33622",
+    "BJ06:dbfca5fd",
+    "BJ06:90566348",
+    "BJ06:21009baf",
+    "BJ06:2e99d206",
+    "BJ06:3f3179c4",
+    "BJ06:d16d7b65",
+    "BJ06:23d0a5d5",
+    "BJ06:f1118148",
+    "BJ06:38f63aea",
+    "BJ06:edba04fb",
+    "BJ06:59b30a5f",
+    "BJ10:202e21c2",
+    "BJ10:78b09f52",
+    "BJ10:2601228f",
+    "BJ11:076814fa",
+    "BJ11:e7eb38da",
+    "BJ11:52942100"
+  ],
+  "low_confidence_note": "手绘毛笔字/SFX 行：低分辨率下独立直读与 manga_ocr 读法一致则采纳；这些行 CER=0 属「读法一致」非强证据（自锚风险：单标注者+OCR 先验参照，directional 下限材料）",
+  "cer_overall": {
+    "n": 50,
+    "cer_median": 0.0,
+    "cer_mean": 0.0712,
+    "cer_p90": 0.0769,
+    "cer_zero_share": "86.0%"
+  },
+  "cer_printed_only": {
+    "n": 32,
+    "cer_median": 0.0,
+    "cer_mean": 0.1112,
+    "cer_p90": 0.4,
+    "cer_zero_share": "78.1%"
+  },
+  "ko_rerun_note": "phase2/ko-rerun/ocr/cer-regions.csv 的 93 行 K02 pending 不属本待办；其中 50 行 AI 预填 draft 已存档 @33a606d4（ocr-gt-ai-draft.csv），审核按需推进"
+}
