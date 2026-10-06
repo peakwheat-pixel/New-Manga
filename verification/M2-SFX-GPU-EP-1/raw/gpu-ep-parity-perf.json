@@ -1,0 +1,201 @@
+{
+ "task": "M2-SFX-GPU-EP-1 AC2 numeric parity + AC3 production-path perf",
+ "generated_at_utc": "2026-10-06T04:10:18Z",
+ "generated_from": "experiments/M2-SFX-GPU-EP-1/verify_gpu_ep_parity_perf.py",
+ "weights": {
+  "onnx": "G:\\CODEX\\New Manga.task-envs\\M2-SFX-DETECT\\weights-v2b\\yolo11s-seg.onnx",
+  "sha256": "944e811410933ad6ff8d32446fcc9eef90fb463794e1874ce83035e83acd418d",
+  "pin": "as-is（生产 pin 944e8114）"
+ },
+ "runtime": {
+  "onnxruntime_version": "1.24.4",
+  "available_providers": [
+   "DmlExecutionProvider",
+   "CPUExecutionProvider"
+  ],
+  "faces": "NEWMANGA_SFX_EP=cpu / =dml 经生产 env 门（无 session swap 旁路）"
+ },
+ "protocol": "每页 warm-up 1 次（不计）+ 计测 1 次（preds=AC2 对比面+AC3 时延）；GPU 面第 3 次 detect 做 run-to-run 逐位稳定性登记；KO 页双 GT 口径（derived 56 档 + npd 135 框）matched 集按 (gt,pred) 索引对比较",
+ "t5_reference": "KO GPU DML 1.08s/页（T5 perf_tile_dual.py 独立 venv 呈报）",
+ "ko_pages": [
+  {
+   "sample_id": "pre-k08",
+   "page_size": [
+    690,
+    51971
+   ],
+   "sfx_route": "tile",
+   "n_pred_cpu": 23,
+   "n_pred_gpu": 23,
+   "bit_identical": false,
+   "max_abs_dconf": 1e-06,
+   "max_abs_dxyxy_px": 0.0001,
+   "gate_flips": 0,
+   "gpu_run_to_run_bit_stable": true,
+   "matched_derived": "14/27 -> 14/27",
+   "matched_set_equal_derived": true,
+   "matched_npd": "14/35 -> 14/35",
+   "matched_set_equal_npd": true
+  },
+  {
+   "sample_id": "pre-k09",
+   "page_size": [
+    690,
+    100480
+   ],
+   "sfx_route": "tile",
+   "n_pred_cpu": 50,
+   "n_pred_gpu": 50,
+   "bit_identical": false,
+   "max_abs_dconf": 1e-06,
+   "max_abs_dxyxy_px": 0.0001,
+   "gate_flips": 0,
+   "gpu_run_to_run_bit_stable": true,
+   "matched_derived": "17/24 -> 17/24",
+   "matched_set_equal_derived": true,
+   "matched_npd": "26/42 -> 26/42",
+   "matched_set_equal_npd": true
+  },
+  {
+   "sample_id": "pre-k01",
+   "page_size": [
+    690,
+    62133
+   ],
+   "sfx_route": "tile",
+   "n_pred_cpu": 23,
+   "n_pred_gpu": 23,
+   "bit_identical": false,
+   "max_abs_dconf": 1e-06,
+   "max_abs_dxyxy_px": 0.0001,
+   "gate_flips": 0,
+   "gpu_run_to_run_bit_stable": true,
+   "matched_derived": "2/2 -> 2/2",
+   "matched_set_equal_derived": true,
+   "matched_npd": "5/48 -> 5/48",
+   "matched_set_equal_npd": true
+  },
+  {
+   "sample_id": "pre-k02",
+   "page_size": [
+    600,
+    18401
+   ],
+   "sfx_route": "tile",
+   "n_pred_cpu": 5,
+   "n_pred_gpu": 5,
+   "bit_identical": false,
+   "max_abs_dconf": 2e-06,
+   "max_abs_dxyxy_px": 0.0001,
+   "gate_flips": 0,
+   "gpu_run_to_run_bit_stable": true,
+   "matched_derived": "2/3 -> 2/3",
+   "matched_set_equal_derived": true,
+   "matched_npd": "3/10 -> 3/10",
+   "matched_set_equal_npd": true
+  }
+ ],
+ "bj_pages": [
+  {
+   "sample_id": "pre-bj17",
+   "page_size": [
+    2946,
+    4167
+   ],
+   "sfx_route": "letterbox",
+   "n_pred_cpu": 2,
+   "n_pred_gpu": 2,
+   "bit_identical": false,
+   "max_abs_dconf": 0.0,
+   "max_abs_dxyxy_px": 0.0,
+   "gate_flips": 0,
+   "gpu_run_to_run_bit_stable": true
+  },
+  {
+   "sample_id": "pre-bj18",
+   "page_size": [
+    2946,
+    4167
+   ],
+   "sfx_route": "letterbox",
+   "n_pred_cpu": 3,
+   "n_pred_gpu": 3,
+   "bit_identical": false,
+   "max_abs_dconf": 0.0,
+   "max_abs_dxyxy_px": 0.0002,
+   "gate_flips": 0,
+   "gpu_run_to_run_bit_stable": true
+  }
+ ],
+ "perf_ko": {
+  "cpu": {
+   "wall_s": {
+    "pages": 4,
+    "mean": 10.447,
+    "min": 3.302,
+    "max": 17.834
+   },
+   "provider_ms": {
+    "pages": 4,
+    "mean": 10441.25,
+    "min": 3300,
+    "max": 17823
+   }
+  },
+  "dml": {
+   "wall_s": {
+    "pages": 4,
+    "mean": 1.106,
+    "min": 0.331,
+    "max": 1.958
+   },
+   "provider_ms": {
+    "pages": 4,
+    "mean": 1100.75,
+    "min": 329,
+    "max": 1949
+   }
+  }
+ },
+ "perf_bj": {
+  "cpu": {
+   "wall_s": {
+    "pages": 2,
+    "mean": 0.203,
+    "min": 0.202,
+    "max": 0.204
+   },
+   "provider_ms": {
+    "pages": 2,
+    "mean": 200.5,
+    "min": 200,
+    "max": 201
+   }
+  },
+  "dml": {
+   "wall_s": {
+    "pages": 2,
+    "mean": 0.065,
+    "min": 0.064,
+    "max": 0.065
+   },
+   "provider_ms": {
+    "pages": 2,
+    "mean": 62.5,
+    "min": 62,
+    "max": 63
+   }
+  }
+ },
+ "wording_discipline": "directional 证据，统计功效低；禁用「显著」；数字如实登记不作质量判定",
+ "verdict": {
+  "all_pages_bit_identical": false,
+  "ko_all_matched_sets_equal": true,
+  "ko_max_abs_dconf": 2e-06,
+  "ko_max_abs_dxyxy_px": 0.0001,
+  "bj_max_abs_dconf": 0.0,
+  "bj_max_abs_dxyxy_px": 0.0002,
+  "gate_flips_total": 0,
+  "gpu_run_to_run_all_bit_stable": true
+ }
+}
