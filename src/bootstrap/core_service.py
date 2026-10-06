@@ -71,13 +71,19 @@ Allowed production commands (M2-IPC1 + M2-PROD-DETECT-3 + M2-SETTINGS-IPC-CHANNE
     explicit optimistic guard C4) / TARGET_NOT_FOUND (not_found) / UNKNOWN
     (internal); wire codes are SCREAMING_SNAKE_CASE. Contract: M2-C1
     rev 1.4 §5.4.)
-  - list_regions: {"page_id": "<id>"} -> {"regions": RegionListSummary[]}
-    (M2-REGION-RETYPE-CORE. The minimal read DTO -- region_id /
-    region_type / sfx_policy / origin / revision_no -- in reading_order
-    ascending, the revision the current pointer targets; no geometry,
-    text or annotation semantics. A page with no rows (unknown page_id
-    included) reads as {"regions": []}, NOT an error -- the existing
-    list_regions semantics (contract rev 1.4 §5.4 footnote a). Errors:
+  - list_regions: {"page_id": "<id>"} -> {"regions": RegionListSummary[],
+    "page_size": {"width", "height"} | null}
+    (M2-REGION-RETYPE-CORE; read face widened ADDITIVELY by
+    M2-WORKBENCH-REACT-1, contract rev 1.5 -- optional per-row normalized
+    "geometry" + optional wrapper "page_size" projection, zero new commands,
+    protocol minor stays 3. The five-field minimal read DTO -- region_id /
+    region_type / sfx_policy / origin / revision_no -- rides verbatim in
+    reading_order ascending, from the revision the current pointer targets;
+    no TEXT or ANNOTATION semantics (geometry rides since rev 1.5 as the
+    display-geometry channel, the normalized reverse of the stored pixels).
+    A page with no rows (unknown page_id included) reads as
+    {"regions": [], "page_size": null}, NOT an error -- the existing
+    list_regions semantics (contract §5.4 footnote a). Errors:
     INVALID_REQUEST (payload) / UNKNOWN (internal) only.)
 """
 

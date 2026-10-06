@@ -8,9 +8,12 @@ assembly, with the wire shape frozen by rev 1.4 §5.4:
 - request ``{"region_id", "new_region_type", "expected_revision"?}`` →
   result ``{"region_id", "revision_no", "region_type", "sfx_policy"}``
   (the post-retype effective state, one round trip, no second query);
-- ``list_regions`` ``{"page_id"}`` → ``{"regions": RegionListSummary[]}``
-  in reading_order, the minimal five-field DTO (no geometry/text/annotation
-  semantics);
+- ``list_regions`` ``{"page_id"}`` → ``{"regions": RegionListSummary[],
+  "page_size": {width, height} | null}`` in reading_order: the minimal
+  five-field DTO rides verbatim; no TEXT/annotation semantics (the rev 1.5
+  M2-WORKBENCH-REACT-1 additive widening adds the OPTIONAL normalized
+  ``geometry`` + ``page_size`` display-geometry projection -- see the
+  rev 1.5 tests below);
 - error semantics reuse the EXISTING typed codes only (zero new error
   semantics): INVALID_REQUEST (validation) / INPUT_REVISION_CHANGED
   (conflict) / TARGET_NOT_FOUND (not_found) / UNKNOWN (internal); wire

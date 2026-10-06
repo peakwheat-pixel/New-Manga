@@ -2,7 +2,6 @@ import { describe, expect, it, vi } from "vitest";
 import {
   LIST_REGIONS_COMMAND,
   RegionClient,
-  RegionClientError,
   SET_REGION_TYPE_COMMAND,
 } from "./client";
 import type { ListRegionsResult, SetRegionTypeResult } from "./types";
@@ -107,13 +106,18 @@ describe("RegionClient.listRegions (read face)", () => {
     });
   });
 
-  it("wraps a generic bridge failure as REGION_CHANNEL_UNAVAILABLE", async () => {
+  it("falls back to REGION_CHANNEL_UNAVAILABLE when a rejection carries no code/message", async () => {
+    // r1 P4-2: the fallback code itself is pinned, not just the error type.
+    // An Error WITH a message passes the message through as the code (the
+    // settings-client precedent: Tauri string codes and Error messages are
+    // both informative); the fallback fires for code/message-less objects.
     const client = new RegionClient(makeInvoke(() => {
-      throw new Error("bridge gone");
+      throw {};
     }));
-    await expect(client.listRegions("page-1")).rejects.toBeInstanceOf(
-      RegionClientError,
-    );
+    await expect(client.listRegions("page-1")).rejects.toMatchObject({
+      name: "RegionClientError",
+      code: "REGION_CHANNEL_UNAVAILABLE",
+    });
   });
 });
 

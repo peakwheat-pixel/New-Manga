@@ -26,7 +26,7 @@ import { LibraryClient, LibraryClientError } from "../library/client";
 import type { BookSummary } from "../library/types";
 import { RegionClient, RegionClientError } from "../region/client";
 import type { RegionSummary } from "../region/types";
-import { ResourceChannelClient } from "../resourceChannel/client";
+import { ResourceChannelClient, TypedChannelError } from "../resourceChannel/client";
 import { loadPageImageUrl } from "./pageImage";
 import { PageListPanel } from "./PageListPanel";
 import { ViewerPanel } from "./ViewerPanel";
@@ -165,11 +165,14 @@ export function WorkbenchPage({ invoke }: WorkbenchPageProps) {
           return;
         }
         setImageUrl(null);
-        setImageError(
-          error instanceof RegionClientError || (error as { code?: string })?.code
-            ? String((error as { code?: string }).code)
-            : "RESOURCE_UNAVAILABLE",
-        );
+        // r1 P4-1: the resource channel speaks TypedChannelError (its own
+        // typed surface) or a generic code-shaped failure -- never a
+        // RegionClientError, which belongs to the region client.
+        const code =
+          error instanceof TypedChannelError
+            ? error.code
+            : (error as { code?: string })?.code;
+        setImageError(typeof code === "string" ? code : "RESOURCE_UNAVAILABLE");
       });
     return () => {
       cancelled = true;

@@ -65,10 +65,12 @@ export interface RegionSummary {
   geometry?: NormalizedRegionGeometry;
 }
 
-/** The page's pixel-size projection (contract rev 1.5 optional wrapper
+/** The page's pixel-size projection (contract rev 1.5 OPTIONAL wrapper
  * field): the ONLY size source the RegionOverlay letterbox math consumes
- * ("size only from the projection", M2-UI1 §2.2). null = the page_id hit no
- * page row (frozen-None channel semantics, distinguishable from zero). */
+ * ("size only from the projection", M2-UI1 §2.2). The optionality mirrors
+ * the wire exactly: a pre-1.5 Core never sends the key (undefined), a 1.5
+ * Core sends null when the page_id hits no page row (frozen-None channel,
+ * distinguishable from zero). Consumers collapse both with `?? null`. */
 export interface PageSizeProjection {
   width: number;
   height: number;
@@ -77,7 +79,7 @@ export interface PageSizeProjection {
 /** The `list_regions` result wrapper. */
 export interface ListRegionsResult {
   regions: RegionSummary[];
-  page_size: PageSizeProjection | null;
+  page_size?: PageSizeProjection | null;
 }
 
 /** The `set_region_type` result: the post-retype effective state, one round
