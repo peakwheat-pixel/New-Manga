@@ -1,8 +1,7 @@
 SHELL=Git Bash (MINGW64, Windows)
-PYTHON=G:/CODEX/New Manga.task-envs/T1.1.1-impl-py312/Scripts/python.exe (Python 3.12)
-HEAD=61c71952 (worktree zcode/page-resource-resolve-1)
+PYTHON=G:/CODEX/New Manga.task-envs/T1.1.1-impl-py312/Scripts/python.exe
+HEAD=1620d0b7f5367640ac6023e633abf711a49235c7
 COMMAND=python -m pytest tests/ -q -ra
-----
 ........................................................................ [  3%]
 ........................................................................ [  7%]
 ........................................................................ [ 11%]
@@ -19,21 +18,21 @@ COMMAND=python -m pytest tests/ -q -ra
 ........................................................................ [ 53%]
 ........................................................................ [ 57%]
 ........................................................................ [ 61%]
-................................s....................................... [ 65%]
+.....................................s.................................. [ 65%]
 ........................................................................ [ 69%]
-.....................................file:///G:/CODEX/New Manga.worktrees/PAGE-RESOLVE-1/src/ui/qml/reader/ReaderView.qml:204: TypeError: Cannot read property 'sourcePath' of null
+..........................................file:///G:/CODEX/New Manga.worktrees/PAGE-RESOLVE-1/src/ui/qml/reader/ReaderView.qml:204: TypeError: Cannot read property 'sourcePath' of null
 .file:///G:/CODEX/New Manga.worktrees/PAGE-RESOLVE-1/src/ui/qml/reader/ReaderView.qml:204: TypeError: Cannot read property 'sourcePath' of null
 .file:///G:/CODEX/New Manga.worktrees/PAGE-RESOLVE-1/src/ui/qml/reader/ReaderView.qml:204: TypeError: Cannot read property 'sourcePath' of null
 ..file:///G:/CODEX/New Manga.worktrees/PAGE-RESOLVE-1/src/ui/qml/reader/ReaderView.qml:204: TypeError: Cannot read property 'sourcePath' of null
 .file:///G:/CODEX/New Manga.worktrees/PAGE-RESOLVE-1/src/ui/qml/reader/ReaderView.qml:204: TypeError: Cannot read property 'sourcePath' of null
 .file:///G:/CODEX/New Manga.worktrees/PAGE-RESOLVE-1/src/ui/qml/reader/ReaderView.qml:204: TypeError: Cannot read property 'sourcePath' of null
 .file:///G:/CODEX/New Manga.worktrees/PAGE-RESOLVE-1/src/ui/qml/reader/ReaderView.qml:204: TypeError: Cannot read property 'sourcePath' of null
-............................ [ 73%]
-........................................................................ [ 77%]
+....................... [ 73%]
+........................................................................ [ 76%]
 ........................................................................ [ 80%]
 ........................................................................ [ 84%]
 ........................................................................ [ 88%]
-......................................file:///G:/CODEX/New Manga.worktrees/PAGE-RESOLVE-1/src/ui/qml/shell/AppShell.qml:56: TypeError: Cannot read property 'currentPage' of null
+...........................................file:///G:/CODEX/New Manga.worktrees/PAGE-RESOLVE-1/src/ui/qml/shell/AppShell.qml:56: TypeError: Cannot read property 'currentPage' of null
 file:///G:/CODEX/New Manga.worktrees/PAGE-RESOLVE-1/src/ui/qml/shell/AppShell.qml:51: TypeError: Cannot read property 'currentPage' of null
 file:///G:/CODEX/New Manga.worktrees/PAGE-RESOLVE-1/src/ui/qml/shell/AppShell.qml:46: TypeError: Cannot read property 'currentPage' of null
 file:///G:/CODEX/New Manga.worktrees/PAGE-RESOLVE-1/src/ui/qml/shell/AppShell.qml:41: TypeError: Cannot read property 'currentPage' of null
@@ -379,9 +378,9 @@ file:///G:/CODEX/New Manga.worktrees/PAGE-RESOLVE-1/src/ui/qml/bookshelf/Bookshe
 file:///G:/CODEX/New Manga.worktrees/PAGE-RESOLVE-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:71: TypeError: Cannot read property 'sortBy' of null
 file:///G:/CODEX/New Manga.worktrees/PAGE-RESOLVE-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:66: TypeError: Cannot read property 'archivedFilter' of null
 file:///G:/CODEX/New Manga.worktrees/PAGE-RESOLVE-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:59: TypeError: Cannot read property 'favoritesOnly' of null
-................ [ 92%]
+........... [ 92%]
 ........................................................................ [ 96%]
-...................................................................      [100%]
+........................................................................ [100%]
 ============================== warnings summary ===============================
 tests/core/test_rc4_stdio_render_preview.py::test_production_stdio_decodes_nmfr_renders_text_and_publishes_readable_preview
   G:\CODEX\New Manga.worktrees\PAGE-RESOLVE-1\tests\core\test_rc4_stdio_render_preview.py:245: DeprecationWarning: Image.Image.getdata is deprecated and will be removed in Pillow 14 (2027-10-15). Use get_flattened_data instead.
@@ -398,7 +397,5 @@ tests/rendering/test_pillow_rendering.py::test_pillow_compositor_draws_centered_
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
 =========================== short test summary info ===========================
 SKIPPED [1] tests\providers\test_registry_readiness.py:237: dev venv intentionally carries the ML stack since T1.1.1 (user-approved requirements: torch==2.14.0, transformers==5.17.0) — the TASK-019-era 'no model runtime in this environment' evidence is INVALIDATED, nothing left to guard here; separately, release-side ML-closure completeness is independently guaranteed at build time by packaging/m2ac5 core_sidecar.spec _assert_ml_closure (M2-PROD-DETECT-2), which is the opposite-direction assertion and must not be read as this test's replacement
-1866 passed, 1 skipped, 3 warnings in 107.06s (0:01:47)
-
-----
+1871 passed, 1 skipped, 3 warnings in 113.60s (0:01:53)
 EXIT=0
