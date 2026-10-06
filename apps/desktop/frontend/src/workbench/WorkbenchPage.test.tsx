@@ -141,6 +141,9 @@ async function mountInteractiveWorkbench(
 }
 
 function makeInteractiveInvoke(options: {
+  onBooks?: () => unknown;
+  onListChapters?: (args: Record<string, unknown>) => Promise<unknown>;
+  onListChapterPages?: (args: Record<string, unknown>) => Promise<unknown>;
   onRetype?: (args: Record<string, unknown>) => Promise<unknown>;
   onIssue?: (args: Record<string, unknown>) => Promise<unknown>;
   onResolvePage?: (args: Record<string, unknown>) => Promise<unknown>;
@@ -151,7 +154,18 @@ function makeInteractiveInvoke(options: {
     ["page-2", [{ ...INTERACTIVE_REGION, region_id: "region-2" }]],
   ]);
   const invoke = vi.fn(async (command: string, args: Record<string, unknown> = {}) => {
-    if (command === "library_list_books") return [];
+    if (command === "library_list_books") return options.onBooks?.() ?? [];
+    // M2-PAGE-NAV-PROJECTION-1: the navigation projections default to
+    // empty fail-soft lists so the historical flows below keep their
+    // shape; the drill-down cases pass explicit handlers.
+    if (command === "list_chapters") {
+      if (options.onListChapters) return options.onListChapters(args);
+      return { chapters: [] };
+    }
+    if (command === "list_chapter_pages") {
+      if (options.onListChapterPages) return options.onListChapterPages(args);
+      return { pages: [] };
+    }
     if (command === "resolve_page_resource") {
       // M2-PAGE-RESOURCE-RESOLVE-1: default OFF (typed PAGE_NOT_FOUND) so
       // the manual/preview flows below keep their historical timing; the
@@ -806,6 +820,83 @@ describe("RC-4 Workbench actual DOM actions", () => {
       expect(ui.resourceReads).not.toContain("http://m2res.localhost/m2id/page-original-page-1?chunk=0");
     } finally {
       resolvePage1({ resource_id: "page-original-page-1", revision: "original" });
+      await ui.unmount();
+    }
+  });
+
+  it("drills book -> chapter -> page and auto-loads the image (M2-PAGE-NAV-PROJECTION-1)", async () => {
+    // AC4 integration smoke: a page click from the drill-down must drive
+    // the existing resolve -> image chain end to end (no manual input).
+    const { invoke } = makeInteractiveInvoke({
+      onBooks: () => [{
+        book_id: "book-1",
+        title: "Test Manga",
+        original_title: "テスト漫画",
+        is_favorite: false,
+        is_archived: false,
+        page_count: 1,
+        created_at: "2026-10-07T00:00:00Z",
+        updated_at: "2026-10-07T00:00:00Z",
+      }],
+      onListChapters: () => Promise.resolve({
+        chapters: [{ chapter_id: "ch-1", title: "First", chapter_number: "1", sort_order: 1 }],
+      }),
+      onListChapterPages: () => Promise.resolve({
+        pages: [{ page_id: "p-nav-1", source_filename: "001.png", sort_order: 1 }],
+      }),
+      onResolvePage: (args) => Promise.resolve({
+        resource_id: `page-original-${String(args.pageId)}`,
+        revision: "original",
+      }),
+    });
+    const ui = await mountInteractiveWorkbench(invoke);
+    try {
+      await ui.click("book-tile-book-1");
+      expect(invoke).toHaveBeenCalledWith("list_chapters", { bookId: "book-1" });
+      await ui.click("chapter-tile-ch-1");
+      expect(invoke).toHaveBeenCalledWith("list_chapter_pages", { chapterId: "ch-1" });
+      await ui.click("page-tile-p-nav-1");
+      expect(invoke).toHaveBeenCalledWith("resolve_page_resource", { pageId: "p-nav-1" });
+      const idInput = ui.container.querySelector('[data-testid="page-id-input"]') as HTMLInputElement | null;
+      expect(idInput?.value).toBe("p-nav-1");
+      const resourceInput = ui.container.querySelector('[data-testid="resource-id-input"]') as HTMLInputElement | null;
+      expect(resourceInput?.value).toBe("page-original-p-nav-1");
+      expect(ui.resourceReads).toContain("http://m2res.localhost/m2id/page-original-p-nav-1?chunk=0");
+    } finally {
+      await ui.unmount();
+    }
+  });
+
+  it("collapses the drill-down when the open book or chapter is clicked again (M2-PAGE-NAV-PROJECTION-1)", async () => {
+    const { invoke } = makeInteractiveInvoke({
+      onBooks: () => [{
+        book_id: "book-1",
+        title: "Test Manga",
+        original_title: "テスト漫画",
+        is_favorite: false,
+        is_archived: false,
+        page_count: 1,
+        created_at: "2026-10-07T00:00:00Z",
+        updated_at: "2026-10-07T00:00:00Z",
+      }],
+      onListChapters: () => Promise.resolve({
+        chapters: [{ chapter_id: "ch-1", title: "First", chapter_number: "1", sort_order: 1 }],
+      }),
+    });
+    const ui = await mountInteractiveWorkbench(invoke);
+    try {
+      await ui.click("book-tile-book-1");
+      expect(ui.container.querySelector('[data-testid="chapter-list"]')).not.toBeNull();
+      await ui.click("book-tile-book-1");
+      expect(ui.container.querySelector('[data-testid="chapter-list"]')).toBeNull();
+
+      // re-opening rebuilds the level, and the chapter level toggles too
+      await ui.click("book-tile-book-1");
+      await ui.click("chapter-tile-ch-1");
+      expect(ui.container.querySelector('[data-testid="page-nav-list"]')).not.toBeNull();
+      await ui.click("chapter-tile-ch-1");
+      expect(ui.container.querySelector('[data-testid="page-nav-list"]')).toBeNull();
+    } finally {
       await ui.unmount();
     }
   });

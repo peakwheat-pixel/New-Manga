@@ -152,7 +152,11 @@ PROTOCOL_MAJOR = 1
 # M2-PAGE-RESOURCE-RESOLVE-1: 4 -> 5 (minor bump, resolve_page_resource
 # command added; same backwards-compatible widening precedent -- pre-existing
 # command semantics unchanged. Contract: M2-C1 rev 1.7 §5).
-PROTOCOL_MINOR = 5
+# M2-PAGE-NAV-PROJECTION-1: 5 -> 6 (minor bump, list_chapters /
+# list_chapter_pages commands added; same backwards-compatible widening
+# precedent -- pre-existing command semantics unchanged. Contract: M2-C1
+# rev 1.8 §5).
+PROTOCOL_MINOR = 6
 
 # Typed error codes per Contract 1.1 §3, §8
 E_PROTOCOL_VERSION_UNSUPPORTED = "PROTOCOL_VERSION_UNSUPPORTED"
@@ -930,6 +934,57 @@ class CoreServiceServer:
             "preview_error": preview_error,
         }
 
+    def handle_list_chapters(self, payload: dict[str, Any]) -> dict[str, Any]:
+        """M2-PAGE-NAV-PROJECTION-1 (contract M2-C1 rev 1.8 §5): the chapter
+        navigation read face -- one book's chapters in the user's current
+        ``sort_order`` (D03 AC-PAGE-001; the repository query already orders).
+        Read-only projection: an unknown book id yields an EMPTY list (the
+        list_regions P3-4 precedent -- a missing parent is empty data, not
+        an error), and the summary rows carry no Reader/display semantics.
+        """
+        book_id = payload.get("book_id")
+        if not isinstance(book_id, str) or not book_id:
+            raise RegionRequestError(
+                "list_chapters requires 'book_id': a non-empty string"
+            )
+        chapters = self._core.repository.list_chapters(book_id)
+        return {
+            "chapters": [
+                {
+                    "chapter_id": chapter.chapter_id,
+                    "title": chapter.title,
+                    "chapter_number": chapter.chapter_number,
+                    "sort_order": chapter.sort_order,
+                }
+                for chapter in chapters
+            ]
+        }
+
+    def handle_list_chapter_pages(self, payload: dict[str, Any]) -> dict[str, Any]:
+        """M2-PAGE-NAV-PROJECTION-1 (contract M2-C1 rev 1.8 §5): one
+        chapter's committed pages in the user's current ``sort_order``
+        (D03 AC-PAGE-001). Navigation summary rows only -- the managed
+        original ref, pixel dimensions and lock state stay behind the
+        channel; the page IMAGE itself is fetched downstream via
+        resolve_page_resource -> issue_resource_url.
+        """
+        chapter_id = payload.get("chapter_id")
+        if not isinstance(chapter_id, str) or not chapter_id:
+            raise RegionRequestError(
+                "list_chapter_pages requires 'chapter_id': a non-empty string"
+            )
+        pages = self._core.repository.list_pages(chapter_id)
+        return {
+            "pages": [
+                {
+                    "page_id": page.page_id,
+                    "source_filename": page.source_filename,
+                    "sort_order": page.sort_order,
+                }
+                for page in pages
+            ]
+        }
+
     def handle_resolve_page_resource(self, payload: dict[str, Any]) -> dict[str, Any]:
         """M2-PAGE-RESOURCE-RESOLVE-1: page_id -> servable resource catalog key.
 
@@ -1438,6 +1493,58 @@ class CoreServiceServer:
         # M2-PAGE-RESOURCE-RESOLVE-1: page -> servable resource key. Read
         # face of the display image; publishes the immutable managed original
         # into the derived read-only root under a deterministic catalog key.
+        if command in ("list_chapters", "list_chapter_pages"):
+            # M2-PAGE-NAV-PROJECTION-1: read-only navigation projections.
+            # Unknown parent ids are EMPTY data (P3-4 precedent), so the
+            # only error face here is the payload validation row.
+            try:
+                if command == "list_chapters":
+                    result = self.handle_list_chapters(payload)
+                else:
+                    result = self.handle_list_chapter_pages(payload)
+            except RegionRequestError as error:
+                return (
+                    {
+                        "protocol": PROTOCOL_NAME,
+                        "version": {"major": PROTOCOL_MAJOR, "minor": PROTOCOL_MINOR},
+                        "request_id": request_id,
+                        "result": None,
+                        "error": make_error_envelope(
+                            code=E_INVALID_REQUEST,
+                            category="validation",
+                            message=str(error),
+                            retryable=False,
+                        ),
+                    },
+                    False,
+                )
+            except Exception:
+                return (
+                    {
+                        "protocol": PROTOCOL_NAME,
+                        "version": {"major": PROTOCOL_MAJOR, "minor": PROTOCOL_MINOR},
+                        "request_id": request_id,
+                        "result": None,
+                        "error": make_error_envelope(
+                            code=E_UNKNOWN,
+                            category="internal",
+                            message="page navigation projection failed",
+                            retryable=False,
+                        ),
+                    },
+                    False,
+                )
+            return (
+                {
+                    "protocol": PROTOCOL_NAME,
+                    "version": {"major": PROTOCOL_MAJOR, "minor": PROTOCOL_MINOR},
+                    "request_id": request_id,
+                    "result": result,
+                    "error": None,
+                },
+                False,
+            )
+
         if command == "resolve_page_resource":
             try:
                 result = self.handle_resolve_page_resource(payload)

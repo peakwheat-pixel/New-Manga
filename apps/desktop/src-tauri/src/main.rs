@@ -70,6 +70,10 @@ pub const PRODUCTION_COMMANDS: &[&str] = &[
     // M2-PAGE-RESOURCE-RESOLVE-1 (contract rev 1.7 section 5): the page display
     // image resolve, production-only like the RC-4 trio above.
     "resolve_page_resource",
+    // M2-PAGE-NAV-PROJECTION-1 (contract rev 1.8 section 5): the read-only
+    // page navigation projections, production-only like the resolve above.
+    "list_chapters",
+    "list_chapter_pages",
 ];
 
 /// Commands that exist ONLY in probe mode (`M2RC1_PROBE_OUT` set by the
@@ -123,6 +127,12 @@ pub const RC4_PRODUCTION_ONLY_COMMANDS: &[&str] = &[
 /// production-only; probe and AC1 surfaces retain their historical shape.
 pub const PAGE_RESOLVE_PRODUCTION_ONLY_COMMANDS: &[&str] = &["resolve_page_resource"];
 
+/// M2-PAGE-NAV-PROJECTION-1 (contract rev 1.8 §5): the read-only page
+/// navigation projections stay production-only; probe and AC1 surfaces
+/// retain their historical shape.
+pub const PAGE_NAV_PRODUCTION_ONLY_COMMANDS: &[&str] =
+    &["list_chapters", "list_chapter_pages"];
+
 pub fn command_allowlist(probe_mode: bool, ac1_mode: bool) -> Vec<&'static str> {
     let mut commands: Vec<&'static str> = if probe_mode || ac1_mode {
         PRODUCTION_COMMANDS
@@ -134,6 +144,7 @@ pub fn command_allowlist(probe_mode: bool, ac1_mode: bool) -> Vec<&'static str> 
                     && !RETYPE_PRODUCTION_ONLY_COMMANDS.contains(command)
                     && !RC4_PRODUCTION_ONLY_COMMANDS.contains(command)
                     && !PAGE_RESOLVE_PRODUCTION_ONLY_COMMANDS.contains(command)
+                    && !PAGE_NAV_PRODUCTION_ONLY_COMMANDS.contains(command)
             })
             .collect()
     } else {
@@ -352,6 +363,34 @@ fn resolve_page_resource(
         .as_ref()
         .ok_or_else(|| "CORE_UNAVAILABLE".to_string())?
         .resolve_page_resource(&page_id)
+        .map_err(|error| error.code)
+}
+
+/// M2-PAGE-NAV-PROJECTION-1: read-only navigation projections. No channel
+/// or rotation state is touched -- the summaries are pure Core reads.
+#[tauri::command]
+fn list_chapters(
+    state: tauri::State<'_, AppState>,
+    book_id: String,
+) -> Result<serde_json::Value, String> {
+    state
+        .library
+        .as_ref()
+        .ok_or_else(|| "CORE_UNAVAILABLE".to_string())?
+        .list_chapters(&book_id)
+        .map_err(|error| error.code)
+}
+
+#[tauri::command]
+fn list_chapter_pages(
+    state: tauri::State<'_, AppState>,
+    chapter_id: String,
+) -> Result<serde_json::Value, String> {
+    state
+        .library
+        .as_ref()
+        .ok_or_else(|| "CORE_UNAVAILABLE".to_string())?
+        .list_chapter_pages(&chapter_id)
         .map_err(|error| error.code)
 }
 
@@ -824,7 +863,9 @@ fn main() {
             list_region_revisions,
             restore_region_revision,
             rerender_page,
-            resolve_page_resource
+            resolve_page_resource,
+            list_chapters,
+            list_chapter_pages
         ])
     };
 
@@ -967,12 +1008,13 @@ mod tests {
     }
 
     #[test]
-    fn production_surface_is_exactly_thirteen_commands() {
+    fn production_surface_is_exactly_fifteen_commands() {
         // M2-SETTINGS-IPC-CHANNEL: five -> seven (settings_get +
         // settings_update_section, contract rev 1.3 §5.3; pinned wire names)
         // M2-REGION-RETYPE-CORE: seven -> nine; RC-4 adds three frozen
         // history/restore/render commands on production only;
-        // M2-PAGE-RESOURCE-RESOLVE-1: nine -> thirteen (contract rev 1.7).
+        // M2-PAGE-RESOURCE-RESOLVE-1: nine -> thirteen (contract rev 1.7);
+        // M2-PAGE-NAV-PROJECTION-1: thirteen -> fifteen (contract rev 1.8).
         assert_eq!(
             command_allowlist(false, false),
             vec![
@@ -989,6 +1031,8 @@ mod tests {
                 "restore_region_revision",
                 "rerender_page",
                 "resolve_page_resource",
+                "list_chapters",
+                "list_chapter_pages",
             ]
         );
     }
@@ -1018,6 +1062,9 @@ mod tests {
         for command in PAGE_RESOLVE_PRODUCTION_ONLY_COMMANDS {
             assert!(!probe.contains(command), "{command} must stay production-only");
         }
+        for command in PAGE_NAV_PRODUCTION_ONLY_COMMANDS {
+            assert!(!probe.contains(command), "{command} must stay production-only");
+        }
         assert_eq!(
             probe.len(),
             PRODUCTION_COMMANDS.len()
@@ -1026,6 +1073,7 @@ mod tests {
                 - RETYPE_PRODUCTION_ONLY_COMMANDS.len()
                 - RC4_PRODUCTION_ONLY_COMMANDS.len()
                 - PAGE_RESOLVE_PRODUCTION_ONLY_COMMANDS.len()
+                - PAGE_NAV_PRODUCTION_ONLY_COMMANDS.len()
                 + PROBE_ONLY_COMMANDS.len()
         );
     }
@@ -1057,6 +1105,9 @@ mod tests {
         for command in PAGE_RESOLVE_PRODUCTION_ONLY_COMMANDS {
             assert!(!ac1.contains(command), "{command} must stay production-only");
         }
+        for command in PAGE_NAV_PRODUCTION_ONLY_COMMANDS {
+            assert!(!ac1.contains(command), "{command} must stay production-only");
+        }
         assert_eq!(
             ac1.len(),
             PRODUCTION_COMMANDS.len()
@@ -1065,15 +1116,17 @@ mod tests {
                 - RETYPE_PRODUCTION_ONLY_COMMANDS.len()
                 - RC4_PRODUCTION_ONLY_COMMANDS.len()
                 - PAGE_RESOLVE_PRODUCTION_ONLY_COMMANDS.len()
+                - PAGE_NAV_PRODUCTION_ONLY_COMMANDS.len()
                 + AC1_TEST_COMMANDS.len()
         );
     }
 
     #[test]
     fn production_only_commands_stay_off_both_frozen_test_surfaces() {
-        // M2-REGION-RETYPE-CORE r1 P3-2: one negative sweep across the FIVE
+        // M2-REGION-RETYPE-CORE r1 P3-2: one negative sweep across the SIX
         // production-only families (IPC1 + settings + retype + RC4 + the
-        // M2-PAGE-RESOURCE-RESOLVE-1 page-resource resolve) — the frozen
+        // M2-PAGE-RESOURCE-RESOLVE-1 page-resource resolve + the
+        // M2-PAGE-NAV-PROJECTION-1 navigation projections) — the frozen
         // probe and ac1 test-mode surfaces must never gain any of them, and
         // their historical 7/6-command shapes stay pinned.
         for command in IPC1_PRODUCTION_ONLY_COMMANDS
@@ -1082,6 +1135,7 @@ mod tests {
             .chain(RETYPE_PRODUCTION_ONLY_COMMANDS)
             .chain(RC4_PRODUCTION_ONLY_COMMANDS)
             .chain(PAGE_RESOLVE_PRODUCTION_ONLY_COMMANDS)
+            .chain(PAGE_NAV_PRODUCTION_ONLY_COMMANDS)
         {
             assert!(
                 !command_allowlist(true, false).contains(command),
@@ -1583,10 +1637,12 @@ mod tests {
         // (settings_get/settings_update_section added);
         // M2-REGION-RETYPE-CORE: 2 -> 3 (set_region_type/list_regions
         // added); M2-PAGE-RESOURCE-RESOLVE-1: 4 -> 5
-        // (resolve_page_resource added). This real-sidecar assertion is the
-        // consequence sync for the widenings. The MockChannel
-        // self-consistency stub above (:1194) keeps its own minor 0 by design.
-        assert_eq!(ping.protocol_version.minor, 5);
+        // (resolve_page_resource added); M2-PAGE-NAV-PROJECTION-1: 5 -> 6
+        // (list_chapters / list_chapter_pages added). This real-sidecar
+        // assertion is the consequence sync for the widenings. The
+        // MockChannel self-consistency stub above (:1194) keeps its own
+        // minor 0 by design.
+        assert_eq!(ping.protocol_version.minor, 6);
         assert!(ping.capabilities.contains(&"library.list_books".to_string()));
 
         // 2. List books succeeds on empty store
@@ -1796,6 +1852,12 @@ mod tests {
         fn resolve_page_resource(&self, page_id: &str) -> Result<serde_json::Value, LibraryError> {
             self.inner.resolve_page_resource(page_id)
         }
+        fn list_chapters(&self, book_id: &str) -> Result<serde_json::Value, LibraryError> {
+            self.inner.list_chapters(book_id)
+        }
+        fn list_chapter_pages(&self, chapter_id: &str) -> Result<serde_json::Value, LibraryError> {
+            self.inner.list_chapter_pages(chapter_id)
+        }
     }
 
     /// The shared Arc handle forwards to the library so the test can keep
@@ -1830,6 +1892,12 @@ mod tests {
         }
         fn resolve_page_resource(&self, page_id: &str) -> Result<serde_json::Value, LibraryError> {
             (**self).resolve_page_resource(page_id)
+        }
+        fn list_chapters(&self, book_id: &str) -> Result<serde_json::Value, LibraryError> {
+            (**self).list_chapters(book_id)
+        }
+        fn list_chapter_pages(&self, chapter_id: &str) -> Result<serde_json::Value, LibraryError> {
+            (**self).list_chapter_pages(chapter_id)
         }
     }
 

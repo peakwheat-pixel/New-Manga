@@ -8,7 +8,7 @@ root, the PAGE_NOT_FOUND fail-closed rows (unknown page, missing original
 file), the unsupported-format and escaping-ref rows (E_UNKNOWN), the
 publish-OSError row (ARTIFACT_WRITE_FAILED, retryable=true), the derived-
 artifact self-heal after a wipe (DSH r1 PR-07), the validation row, and
-the protocol minor bump 4 -> 5.
+the protocol minor bump (5 at this file's delivery; now 6).
 """
 
 from __future__ import annotations
@@ -85,13 +85,13 @@ def _server(core, tmp_path: Path) -> CoreServiceServer:
     )
 
 
-def test_ping_carries_protocol_minor_5(tmp_path) -> None:
+def test_ping_carries_protocol_minor_6(tmp_path) -> None:
     core = assemble_production_core(tmp_path / "data")
     core.conn.close()
     server = CoreServiceServer(core)
     res, _ = server.dispatch_request(_rpc("core.ping", "p-1", {}))
     assert res["error"] is None
-    assert res["result"]["protocol_version"] == {"major": PROTOCOL_MAJOR, "minor": 5}
+    assert res["result"]["protocol_version"] == {"major": PROTOCOL_MAJOR, "minor": 6}
 
 
 def test_first_resolve_publishes_and_later_resolves_are_idempotent(tmp_path) -> None:

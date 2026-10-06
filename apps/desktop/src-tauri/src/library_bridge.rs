@@ -170,6 +170,14 @@ pub trait LibraryChannel: Send + Sync {
     /// PAGE_NOT_FOUND (unknown page / no managed original) propagates as
     /// `LibraryError.code`.
     fn resolve_page_resource(&self, page_id: &str) -> Result<serde_json::Value, LibraryError>;
+
+    /// M2-PAGE-NAV-PROJECTION-1 (contract rev 1.8 §5): the read-only page
+    /// navigation projections -- one book's chapters / one chapter's pages,
+    /// both in the user's current sort_order. Unknown parent ids yield
+    /// EMPTY lists (fail-soft, P3-4 precedent).
+    fn list_chapters(&self, book_id: &str) -> Result<serde_json::Value, LibraryError>;
+
+    fn list_chapter_pages(&self, chapter_id: &str) -> Result<serde_json::Value, LibraryError>;
 }
 
 /// The command argv pinned for spawning the production Core service.
@@ -442,6 +450,17 @@ impl LibraryChannel for StdioLibraryChannel {
             serde_json::json!({ "page_id": page_id }),
         )
     }
+
+    fn list_chapters(&self, book_id: &str) -> Result<serde_json::Value, LibraryError> {
+        self.round_trip("list_chapters", serde_json::json!({ "book_id": book_id }))
+    }
+
+    fn list_chapter_pages(&self, chapter_id: &str) -> Result<serde_json::Value, LibraryError> {
+        self.round_trip(
+            "list_chapter_pages",
+            serde_json::json!({ "chapter_id": chapter_id }),
+        )
+    }
 }
 
 /// In-memory mock channel for testing without spawning Python.
@@ -573,6 +592,14 @@ impl LibraryChannel for MockLibraryChannel {
     }
 
     fn resolve_page_resource(&self, _page_id: &str) -> Result<serde_json::Value, LibraryError> {
+        self.domain_result.lock().unwrap().clone()
+    }
+
+    fn list_chapters(&self, _book_id: &str) -> Result<serde_json::Value, LibraryError> {
+        self.domain_result.lock().unwrap().clone()
+    }
+
+    fn list_chapter_pages(&self, _chapter_id: &str) -> Result<serde_json::Value, LibraryError> {
         self.domain_result.lock().unwrap().clone()
     }
 }
@@ -780,6 +807,39 @@ mod tests {
         assert_eq!(err.code, "PAGE_NOT_FOUND");
         assert_eq!(err.category, "not_found");
         assert!(!err.retryable);
+    }
+
+    #[test]
+    fn page_nav_mock_channel_round_trip_and_typed_pass_through() {
+        // M2-PAGE-NAV-PROJECTION-1 (DSH r1 PR-01 precedent): the read-only
+        // navigation projections ride the same LibraryChannel seam. What is
+        // pinned here is the wrapper-envelope projection shape and the
+        // typed pass-through discipline; the REAL stdio channel round-trips
+        // the wire names through bootstrap.core_service (the real sidecar
+        // round-trip test asserts the protocol minor this command pair
+        // bumps).
+        let channel = MockLibraryChannel::new();
+        channel.set_domain_result(Ok(serde_json::json!({
+            "chapters": [
+                { "chapter_id": "c1", "title": "first", "chapter_number": "1", "sort_order": 1 },
+                { "chapter_id": "c2", "title": "second", "chapter_number": "2", "sort_order": 2 }
+            ],
+        })));
+        let chapters = channel.list_chapters("book-1").expect("list_chapters succeeds");
+        assert_eq!(chapters["chapters"][0]["chapter_id"], "c1");
+        assert_eq!(chapters["chapters"][1]["sort_order"], 2);
+
+        channel.set_domain_result(Ok(serde_json::json!({
+            "pages": [
+                { "page_id": "p1", "source_filename": "page-a.png", "sort_order": 0 },
+                { "page_id": "p2", "source_filename": "page-b.png", "sort_order": 1 }
+            ],
+        })));
+        let pages = channel
+            .list_chapter_pages("chapter-1")
+            .expect("list_chapter_pages succeeds");
+        assert_eq!(pages["pages"][0]["page_id"], "p1");
+        assert_eq!(pages["pages"][1]["source_filename"], "page-b.png");
     }
 
     #[test]

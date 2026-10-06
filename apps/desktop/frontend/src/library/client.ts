@@ -1,4 +1,10 @@
-import type { BookSummary, PageResourceResolve, PingResult } from "./types";
+import type {
+  BookSummary,
+  ChapterNavSummary,
+  PageNavSummary,
+  PageResourceResolve,
+  PingResult,
+} from "./types";
 
 export type InvokeFn = (command: string, args?: Record<string, unknown>) => Promise<unknown>;
 
@@ -25,6 +31,13 @@ export class LibraryClientError extends Error {
 
 /** RULED wire name (contract M2-C1 rev 1.7 §5; pinned by the Rust suite). */
 export const RESOLVE_PAGE_RESOURCE_COMMAND = "resolve_page_resource";
+
+/**
+ * RULED wire names (contract M2-C1 rev 1.8 §5; pinned by the Rust suite):
+ * the read-only page navigation projections (M2-PAGE-NAV-PROJECTION-1).
+ */
+export const LIST_CHAPTERS_COMMAND = "list_chapters";
+export const LIST_CHAPTER_PAGES_COMMAND = "list_chapter_pages";
 
 export class LibraryClient {
   private invoke: InvokeFn;
@@ -77,6 +90,60 @@ export class LibraryClient {
       }
       const code = typeof error === "string" ? error : (error as Error)?.message || "CORE_UNAVAILABLE";
       throw new LibraryClientError(code, `resolve_page_resource failed: ${code}`);
+    }
+  }
+
+  /**
+   * M2-PAGE-NAV-PROJECTION-1 (contract M2-C1 rev 1.8 §5): one book's
+   * chapter navigation summaries in the user's current sort order. An
+   * unknown book id resolves to an EMPTY list (fail-soft; no new error
+   * code) -- only a transport/Core failure rejects here.
+   */
+  async listChapters(bookId: string): Promise<ChapterNavSummary[]> {
+    try {
+      const res = (await this.invoke(LIST_CHAPTERS_COMMAND, { bookId })) as {
+        chapters?: unknown;
+      };
+      if (!res || !Array.isArray(res.chapters)) {
+        throw new LibraryClientError(
+          "PAGE_NAV_MALFORMED",
+          "list_chapters returned no {chapters} array",
+        );
+      }
+      return res.chapters as ChapterNavSummary[];
+    } catch (error) {
+      if (error instanceof LibraryClientError) {
+        throw error;
+      }
+      const code = typeof error === "string" ? error : (error as Error)?.message || "CORE_UNAVAILABLE";
+      throw new LibraryClientError(code, `list_chapters failed: ${code}`);
+    }
+  }
+
+  /**
+   * M2-PAGE-NAV-PROJECTION-1 (contract M2-C1 rev 1.8 §5): one chapter's
+   * committed page navigation summaries in the user's current sort order.
+   * Same fail-soft contract as listChapters: an unknown chapter id is an
+   * empty list, not an error.
+   */
+  async listChapterPages(chapterId: string): Promise<PageNavSummary[]> {
+    try {
+      const res = (await this.invoke(LIST_CHAPTER_PAGES_COMMAND, { chapterId })) as {
+        pages?: unknown;
+      };
+      if (!res || !Array.isArray(res.pages)) {
+        throw new LibraryClientError(
+          "PAGE_NAV_MALFORMED",
+          "list_chapter_pages returned no {pages} array",
+        );
+      }
+      return res.pages as PageNavSummary[];
+    } catch (error) {
+      if (error instanceof LibraryClientError) {
+        throw error;
+      }
+      const code = typeof error === "string" ? error : (error as Error)?.message || "CORE_UNAVAILABLE";
+      throw new LibraryClientError(code, `list_chapter_pages failed: ${code}`);
     }
   }
 }
