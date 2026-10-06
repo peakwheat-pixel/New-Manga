@@ -8,10 +8,10 @@ reviewer: DeepSeek Harness（非作者）
 integrator: 编排会话代行 Codex（用户全权授权）
 approval: user_2026-10-06「释放：Workbench React 页（依赖已就绪）、UI-MITIGATION 实现（blocked 已解除）、BJ13 召回恢复链」三件之一（候选 C；合同锚点=M2-REGION-OVERLAP-ARBITRATION :60 依赖链注记）
 depends_on: [M2-REGION-OVERLAP-ARBITRATION, M2-SFX-GPU-EP-1]
-base_commit: 3a65150b
+base_commit: 2a1a9f73
 branch: agent/zcode/M2-SFX-BJ13-RECALL-1
 worktree: G:/CODEX/New Manga.worktrees/M2-SFX-BJ13-RECALL-1-zcode
-review_events: []
+review_events: [r1 2026-10-06 DSH 非作者 approved_with_conditions（0×P0/P1；1×P2+5×P3+7×P4；核心事实层独立重算成立；返修见执行记录 r1 返修段）]
 created: 2026-10-06
 ---
 
@@ -29,7 +29,7 @@ created: 2026-10-06
 
 ## 验收条件
 
-- **AC1 召回实测（第一交付，「先验证」）**：在当前 v2b 生产链（letterbox、conf 0.5、NEWMANGA_SFX_EP 默认 dml，等价生产装配语义）对 BJ13/BJ14/BJ15 + 域内对照 BJ06 跑 sfx 检测实测：用 DOMAIN-EXT-DIAG L1/L3 探针先例（`experiments/M2-SFX-DETECT-DOMAIN-EXT-DIAG/**` 脚本形态，零 src），记录每页 sfx 通道候选数/conf/与参照框 IoU；BJ13 参照框=DOMAIN-EXT-DIAG raw `l1-fullpage-conf-scan.json` 两处 approx（(2210,240,2560,1000)/(420,2560,760,3400)）；判定标准=「召回恢复是否发生」三态结论（恢复/部分恢复/未恢复）逐页登记。BJ13/14/15 页面与 v2b 权重在 gitignored task-envs 外部树（如实登记路径，零入库）。
+- **AC1 召回实测（第一交付，「先验证」）**：在当前 v2b 生产链（letterbox、conf 0.5、NEWMANGA_SFX_EP 默认 dml，等价生产装配语义）对 BJ13/BJ14/BJ15 + 域内对照 BJ06 跑 sfx 检测实测：用 DOMAIN-EXT-DIAG L1/L3 探针先例（`experiments/M2-SFX-DETECT-DOMAIN-EXT-DIAG/**` 脚本形态，零 src），记录每页 sfx 通道候选数/conf/与参照框 IoU；BJ13 参照框=DOMAIN-EXT-DIAG raw `l1-fullpage-conf-scan.json` 两处 approx（(2210,240,2560,1000)/(420,2560,760,3400)）；判定标准=「召回恢复是否发生」三态结论（恢复/部分恢复/未恢复）逐页登记。BJ13/14/15 页面与 v2b 权重在 gitignored 外部树（v2b 权重在 task-envs；页图在 peer worktree `test_assets/comic_golden_suite/日漫_JA/01_black_jack_official/`——该目录由其 `.gitignore:26` 忽略；如实登记路径，零入库；措辞按 DSH r1 P4-5 修正）。
 - **AC2 分支 A——召回恢复（全或部分）**：按登记义务执行仲裁阈值域重审切片：BJ13 新形态的 sfx×primary 重叠量 vs 0.90 冻结域、重审条件（内含形/0.85+ 对）核对、`NEWMANGA_SFX_ARBITRATION[_IOU]` 旋钮是否需要重校准的提案（**提案交集成/用户裁决，不自行改冻结域**）；若改标链路被触发走既有 `sfx-arb-` 前缀→RegionType.SFX→SfxPolicy 门链路（登记即可，不实施产品改动）。
 - **AC3 分支 B——召回未恢复**：登记剩余选项交用户裁决，不新发明方案：①BJ13 补标（须先翻案 R1 delete 裁决/裁决 challenge 语义=用户裁决点）；②R3-MISS 同款 ai-direct 补画形态扩展至 BJ13/14/15（BJ36/37 0 框先例已登记）；③维持现状（损害兜底=UI-MITIGATION 实现+`sfx-policy=skip` 既有面）。各选项登记成本/收益与推荐序。
 - **AC4 回归与纪律**：零 src 或最小 src；若触 src，冻结回归锚逐位不破：BJ06 8 region、KO 10 case 仲裁 off/on 逐位、KO tile 35/56+npd 48/135 parity、三套件 1840+1sk+1 failed 等量递增；`git diff --check` EXIT=0（工作区口径）。
@@ -39,7 +39,7 @@ created: 2026-10-06
 
 - 允许路径：`experiments/M2-SFX-BJ13-RECALL-1/**`、`verification/M2-SFX-BJ13-RECALL-1/**`、`doc/tasks/M2-SFX-BJ13-RECALL-1.md`、`doc/handoffs/`、`tests/**`（仅当触 src 时配套）。
 - 禁改：`src/**` 生产代码（探针实验零 src；若实测证明必须触 src，停等交集成裁决后再扩授权）、冻结阈值域（0.90 IoU/conf 0.5/tile 路由谓词——重校准是提案不是实施）、`doc/contracts/**`、`doc/STATUS.md`/`doc/REBASELINE_PLAN.md`（集成方收口面）、M2-REGION-OVERLAP-ARBITRATION 历史证据文件。
-- 权重/页图零入库（外部树 task-envs；探针证据只记路径+sha256）；实验脚本沿 DOMAIN-EXT-DIAG 先例形态（直接调 provider 类，不 mock）。
+- 权重/页图零入库（权重在 gitignored task-envs；页图在 peer worktree `test_assets/comic_golden_suite/日漫_JA/01_black_jack_official/`，该目录 `.gitignore:26` 忽略——零入库结论不变，DSH r1 P4-5；探针证据只记路径+sha256）；实验脚本沿 DOMAIN-EXT-DIAG 先例形态（直接调 provider 类，不 mock）。
 - 实测结论措辞纪律：逐口径核对自家数字（DML↔CPU 漂移窗口 ≤2e-06 既有登记；跨形态禁写「位级可复现」）。
 
 ## 执行记录（ZCode 2026-10-06，status in_review 停写）
@@ -50,6 +50,24 @@ created: 2026-10-06
 - AC3 **登记**：三选项成本收益+推荐序 ③维持现状 → ②ai-direct 补画扩展 → ①BJ13 补标（报告 §4，交用户裁决）。
 - AC4 **零 src**：`src/**`/`tests/**` 零字节变化；冻结回归锚代码面未触碰，不跑全量 pytest 的理由登记（报告 §5）；`git diff --check` EXIT=0。
 - AC5 **PASS**：`verification/M2-SFX-BJ13-RECALL-1/recall-report.md` + `raw/recall-probe.{json,-run.log}` + 本回填 + `doc/handoffs/M2-SFX-BJ13-RECALL-1-zcode-20261006.md`。
-- 新增事实登记（历史口径修正）：①chiqui7 在 BJ13 并非页面级零检出——仲裁 rerun raw `sfx-1`（conf 0.8222）即 Slipknot 印刷字检出，v2b 同位 conf 0.8914、跨权重框 IoU 0.9444（两代权重域内一致性正面证据）；DOMAIN-EXT-DIAG「零响应」仅在两个目检拟声词参照框口径成立。②v2b 在四页 bubble/panel/text 通道 conf≥0.01 全零（仅 sfx 类候选）——与 G7 v2b 臂形态一致，登记为 v2b 已知形态。
+- 新增事实登记（历史口径修正）：①chiqui7 在 BJ13 并非页面级零检出——仲裁 rerun raw `sfx-1`（conf 0.8222）即 Slipknot 印刷字检出，v2b 同位 conf 0.8914、跨权重框 IoU 0.9444（两代权重在该区——DOMAIN-EXT-DIAG 判定域外页 BJ13——判定一致的正面证据，措辞按 DSH r1 P4-3 修正）；DOMAIN-EXT-DIAG「零响应」仅在两个目检拟声词参照框口径成立。②v2b 在四页 bubble/panel/text 通道 conf≥0.01 全零（仅 sfx 类候选）——与 G7 v2b 臂形态一致，登记为 v2b 已知形态。
 - 环境：venv `G:/CODEX/New Manga.task-envs/M2-SFX-T5-TILE-gpu`（onnxruntime 1.24.4 DML，imgsz=1024 由 v2b metadata 驱动）；primary 候选复用 2026-10-03 仲裁 rerun（ogkalu 三文件 sha256 当次重验与 pin 一致，漂移即 exit 3）；DML 单形态，跨形态措辞按 ≤2e-06 漂移窗口纪律执行。
 - 遗留/裁量：判定标准 X 值、BJ15 孤立候选处置、G7 EP 形态未登记的对位口径注记、Slipknot 目检为 Owner 观测——均见 recall-report §2/§6（Known limitations 不得省略引用）。
+- base_commit 对账（DSH r1 P3-4，集成裁决=统一 2a1a9f73）：frontmatter 原 `3a65150b`（Task 文件创建时的释放登记 tip）更正为 `2a1a9f73`（实际 worktree 起点；释放链 `630c3f51`→`2a1a9f73` 两 commit 均零代码面，回填注记自本轮起移至本段正文）。
+
+### r1 返修段（DSH 非作者 2026-10-06：approved_with_conditions，0×P0/P1、1×P2+5×P3+7×P4；全部文本级闭合，零检测数字变化）
+
+- **P2-1（闭合）**：recall-report §1 chiqui7 基线 imgsz 「1280」更正为 **1024**（三项记录一致：DOMAIN-EXT-DIAG raw `l1-fullpage-conf-scan.json:3`、`sfx-detect-eval-report.md:67`、`switch-report.md:67`+`rollback-drill.json:16`）；顺笔补基线 CPU 形态（chiqui7，ORT 1.30.0）vs 本次 DML 声明，两代同 imgsz 使 4.4x/42x 无 letterbox 混杂（report §1/§5）。
+- **P3-1（闭合）**：recall-report §4 补 tile 路由对 BJ13 不可适用（aspect 1.41 不满足宽≤690 且 aspect≥8.0 谓词，谓词属冻结域）——不列为选项。
+- **P3-2（闭合）**：recall-report §6 加 limitation 6：BJ06 对照 8 region 为 chiqui7 自证清单（无独立 GT，沿 DOMAIN-EXT-DIAG 已登记限制）——「域内锚定」证明的是生产链等价性而非独立召回 GT。
+- **P3-3（闭合）**：recall-report §1 补两点探针口径差异：①conf 过滤次序（probe 先 0.01 再分 rung vs 生产单次阈值；对 ≥0.5 子集数学等价，G7 逐框对位实证）；②probe 取模块常量 `SFX_CONF_THRESHOLD` 不读 `NEWMANGA_SFX_CONF_THRESHOLD` env（本 Task 未设该 env，实际一致）。
+- **P3-4（闭合）**：见上「base_commit 对账」段。
+- **P3-5（闭合）**：r1fix 重跑探针落 `verification/M2-SFX-BJ13-RECALL-1/raw/recall-probe-run-r1fix.log`（含命令行/venv/EP/EXIT 头）+ `raw/r1fix/recall-probe.json`（原 raw 零触碰）——与原 run json **全树逐位一致**（排除时间戳/耗时字段后 0 diff；四页读数 5/1/0/1、BJ06 max 0.8732、BJ13 ref1 峰值 0.3727 全部相同）。同形态 DML→DML run-to-run 确定性互证成立（同形态逐位，非跨形态声明）。
+- **P4-1（登记不改动）**：probe `relabels` 按「相交对数」vs 生产按「primary 候选数」——当前四页全 0 无影响，口径注记已在 report §3 模拟段语义中隐含；如未来出现非零改标，以生产 `detection_sfx.py:1359-1368` 口径为准。
+- **P4-2（登记不改动）**：probe 恒走 letterbox 未自证路由谓词——四页 page_w=2946>690 必为 letterbox，结论不受影响。
+- **P4-3（闭合）**：「两代权重域内一致性」→「两代权重在该区（DOMAIN-EXT-DIAG 判定域外页 BJ13）判定一致」（report §2 + 本执行记录段）。
+- **P4-4（闭合）**：report §2 BJ06 段「小框 87×103」限定为仅 b5b747d0 成立。
+- **P4-5（闭合）**：Task AC1/纪律段与 Handoff 页图位置措辞更正为 peer worktree `test_assets/comic_golden_suite/日漫_JA/01_black_jack_official/`（该目录 `.gitignore:26` 忽略，零入库结论不变）。
+- **P4-6（闭合，随 P2-1）**：report §5 补 4.4x/42x 属 CPU（chiqui7）↔ DML（v2b）跨形态比较的显式声明（量级远超 ≤2e-06 漂移窗口，结论不受影响；跨形态仍禁写位级可复现）。
+- **P4-7（闭合）**：report §2 补登类别翻转证据：同像素 chiqui7 text 0.5195/sfx 0.0855 → v2b sfx 0.3727/text 0.0（sfx/text 排序翻转，比比值更直接支持域适应起效）。
+- 返修 commit：`fix(review)`（本文件与 report/Handoff/r1fix 证据同 commit；hash 见 git log）。Task status 保持 in_review（返修后待 DSH r2 或集成方按 r1 条件闭合清单收口）。
