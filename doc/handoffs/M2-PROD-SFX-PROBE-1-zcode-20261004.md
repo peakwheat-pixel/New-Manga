@@ -11,7 +11,7 @@ status: in_review
 
 ## 交付结果
 
-给 frozen sidecar 闭包新增**第五个独立探针入口** `sfx_detect_probe.exe`：启动即对样例页跑一次生产 `SfxDetectionProvider.detect`（与 `core.detect` handler 同一 provider 类、同装配语义）并打印 JSON（候选数/耗时/三键 `device`/`sfx_ep`/`sfx_ep_fallback`/权重 sha/页 sha），随后退出。**不动 IPC 命令面、不经 Tauri、零契约修订**（catalog_loader 独立入口先例形，AC1②；AC1③ 契约修订草案=不适用）。对 NSIS 安装后环境完成 frozen 进程内真实推理实测：K07_R123 真实页候选=1、conf=0.9047（v2b 锚点逐位一致）、device=dml 无 fallback、696ms——M2-PROD-DETECT-2 裁决⑥ NOT_RUN 的 sfx slice 由此闭合（deploy-record §5 声明）。
+给 frozen sidecar 闭包新增**第五个独立探针入口** `sfx_detect_probe.exe`：启动即对样例页跑一次生产 `SfxDetectionProvider.detect`（与 `core.detect` handler 同一 provider 类、同装配语义）并打印 JSON（候选数/耗时/三键 `device`/`sfx_ep`/`sfx_ep_fallback`/权重 sha/页 sha），随后退出。**不动 IPC 命令面、不经 Tauri、零契约修订**（catalog_loader 独立入口先例形，AC1②；AC1③ 契约修订草案=不适用）。对 NSIS 安装后环境完成 frozen 进程内真实推理实测：K07_R123 真实页候选=1、conf=0.9047（与 v2b 锚点同源同页：页文件哈希逐位一致、conf 差 1.79e-7 在 GPU↔CPU 漂移窗口 ≤2e-06 内——DSH r1 P1-1 措辞更正）、device=dml 无 fallback、696ms——M2-PROD-DETECT-2 裁决⑥ NOT_RUN 的 sfx slice 由此闭合（deploy-record §5 声明，按 DSH r1 §4.1 精确边界=闭包面闭合，非 core_service 进程内可达、非 manga slice）。
 
 Commit 链（worktree `G:/CODEX/New Manga.worktrees/M2-PROD-SFX-PROBE-1-zcode`，branch `agent/zcode/M2-PROD-SFX-PROBE-1`，base=d298ecd0）：
 
@@ -29,7 +29,7 @@ Commit 链（worktree `G:/CODEX/New Manga.worktrees/M2-PROD-SFX-PROBE-1-zcode`�
 |---|---|---|---|---|
 | AC1 冻结粒度核实+additive 选型 | 读 `doc/contracts/M2-C1_TYPED_IPC_CONTRACT.md` rev 1.4 + `src/bootstrap/core_service.py` + `packaging/m2ac5/README.md` §3 + `run_clean_start_e2e.py` CS-I1 断言 | base d298ecd0 | PASS（结论落 Task 设计登记段） | `doc/tasks/M2-PROD-SFX-PROBE-1.md` |
 | AC1 零触碰 | `git diff HEAD --stat -- contracts/ apps/desktop/src-tauri/ doc/STATUS.md doc/REBASELINE_PLAN.md packaging/m2ac5/run_clean_start_e2e.py` | 33e824e4 | PASS（空 diff） | verify commit |
-| AC2 SP-L2 真实页 frozen 实测 | `packaged-sfx-detect-probe.py --install-dir <GATE 安装态>`（purged PATH+全 NEWMANGA_* 清除） | 构建 HEAD=2b4e4946，NSIS sha256 `3ffa03f5…` | **PASS：EXIT=0，候选=1，conf=0.9047（v2b 锚点一致），elapsed=696ms，device=dml/sfx_ep=dml/sfx_ep_fallback=null** | `verification/M2-PROD-SFX-PROBE-1/packaged-sfx-detect-probe-results.json` + `raw/sp-l2-real-page.log` |
+| AC2 SP-L2 真实页 frozen 实测 | `packaged-sfx-detect-probe.py --install-dir <GATE 安装态>`（purged PATH+全 NEWMANGA_* 清除） | 构建 HEAD=2b4e4946，NSIS sha256 `3ffa03f5…` | **PASS：EXIT=0，候选=1，conf=0.9046692252159119（锚点 0.9046694040298462，差 1.79e-7 在漂移窗口 ≤2e-06 内；r1fix 实测页文件 sha256 与锚点 frame_sha256 逐位一致），elapsed=696ms，device=dml/sfx_ep=dml/sfx_ep_fallback=null** | `verification/M2-PROD-SFX-PROBE-1/packaged-sfx-detect-probe-results.json` + `raw/sp-l2-real-page.log` |
 | AC2 SP-L1 合成页 frozen 冒烟 | 同上（内置合成页） | 同上 | PASS：EXIT=0，候选=4（conf_max=0.798），1846ms（含 DML 冷启动），同三键 dml/dml/null | `raw/sp-l1-synthetic.log` |
 | AC2 SP-P0/SP-L3 | 第五入口+权重在位断言；installed core_service.exe stdio ping/shutdown | 同上 | PASS（ready/stopped，EXIT=0） | `raw/probe-runner.log` + `raw/sp-l3-core-service-ping.log` |
 | AC3 GATE 25/25 | `TASK-012-py312/Scripts/python.exe packaging/m2ac5/run_clean_start_e2e.py` | installer sha256 `3ffa03f5…`（本 Task 包） | **PASS 25/25 EXIT=0**；M2-AC5/raw 落点按 GPU-EP-1 先例快照+`git checkout --` 还原（历史证据原样） | `raw/gate-clean-start-e2e.log` + `raw/m2ac5-gate-artifacts-thisrun/cleanstart-gate.json` |
@@ -64,7 +64,7 @@ Commit 链（worktree `G:/CODEX/New Manga.worktrees/M2-PROD-SFX-PROBE-1-zcode`�
 
 ## 风险与遗留
 
-- 包体积 +64.72 MiB（第五入口内嵌 PYZ 复用生产 provider import 闭包的代价，与既有 ML/Qt 入口同形态；如需收窄=瘦身探针 import 面/共享 PYZ 方案，属新 slice 裁量；回退=revert spec 第五行+sanity gate 行）。
+- 包体积 +64.72 MiB（**DSH r1 P2-1 归属更正**：主体=第五入口内嵌 PYZ 复用生产 provider import 闭包的代价，且该闭包含第二份 torch/transformers/doctr 链——`detection_doctr` 函数体静态 import 被 modulegraph 跟进，非 onnxruntime 面；**取舍登记（DSH r1 P2-2 三选一，集成裁决选 (a)）**：(a) 接受（零产品风险、回退=revert spec 第五行+sanity gate 行）；(b) core_service.exe 一次性 CLI 模式（0 B）被拒——分叉产品主入口启动行为；(c) 瘦身探针 import 面/共享 PYZ 属产品 src 重构，留后续 slice）。
 - `apps/desktop/src-tauri/src/main.rs:378-379` 注释列举 sidecar exe 名单仍为四个（纯注释、无功能引用；本 Task 保持 src-tauri 零 diff，留集成轮裁量是否顺带更新）。
 - 探针权重解析在非 frozen dev 形态拒绝猜测数据根（诚实配置错误）；`--weights`/`NEWMANGA_SFX_WEIGHTS` 通道可用。
 - K07_R123 锚点页与 v2b 权重在 gitignored task-envs 树（`M2-DOCTR-QUAL-work/regions/`、`M2-SFX-DETECT/weights-v2b/`）；其他机器复现 SP-L2 需本地放置并在 runner 用 `--real-page` 指向（缺失=SKIP/NOT_RUN，不判失败）。

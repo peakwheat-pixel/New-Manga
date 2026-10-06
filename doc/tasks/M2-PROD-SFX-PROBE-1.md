@@ -8,10 +8,10 @@ reviewer: DeepSeek Harness（非作者）
 integrator: 编排会话代行 Codex（用户全权授权）
 approval: user_2026-10-04_批准进行2（已登记非阻塞候选②：M2-PROD-DETECT-2 裁决⑥ NOT_RUN 结构缺口的 sfx slice）
 depends_on: [M2-SFX-GPU-EP-1]
-base_commit: 72807d30
+base_commit: d298ecd0（DSH r1 P3-4 更正：72807d30=STATUS 释放时预记基点，worktree 实际检出/owner 分支 fork 点=d298ecd0，worktree reflog + Handoff + deploy-record 三处一致，以 d298ecd0 为准）
 branch: agent/zcode/M2-PROD-SFX-PROBE-1
 worktree: G:/CODEX/New Manga.worktrees/M2-PROD-SFX-PROBE-1-zcode
-review_events: []
+review_events: [r1 approved_with_conditions（DSH 非作者 2026-10-06：0×P0/1×P1/3×P2/5×P3；C1 锚点措辞更正、C2 闭包归属+取舍登记、C3 runner 判据加固、C4 文档同步——集成方顺笔返修 441f4ab5/r1fix 证据/docs 三 commit，详见 deploy-record r1fix 段）]
 created: 2026-10-04
 ---
 
@@ -54,7 +54,7 @@ M2-PROD-DETECT-2（done @merge `9e44fb21`）裁决⑥：frozen 命令面（`core
 
 - 新增 `src/bootstrap/sfx_detect_probe.py`（生产探针模块；`main()` 可编程驱动，样例页=PIL 程序化合成（零入库），`--page <png>` 可注入真实页（v2b 锚点 K07_R123，conf 0.9047 已知锚）；typed 错误也打 JSON+非零 EXIT）；权重解析：`--weights` > `NEWMANGA_SFX_WEIGHTS`（非空取用，与装配 override 语义一致）> frozen in-bundle 探测（`Path(sys.executable).parent/models/detector/yolo11s-seg.onnx`，`sys.frozen` 时）——探针不猜数据根。
 - 新增 `packaging/m2ac5/entries/entry_sfx_detect_probe.py` 薄包装（entry 先例姿势）。
-- `core_sidecar.spec`：ENTRIES +1（探针 entry **不**进 ML hiddenimports 面——不拉 torch/transformers；专用 hiddenimports `["onnxruntime"]` + 专用闭包断言（onnxruntime pure 模块 + `onnxruntime_pybind11_state.pyd`/`DirectML.dll` binaries），断言失败=构建失败，先例姿势）。
+- `core_sidecar.spec`：ENTRIES +1（探针 entry **不**进 ML hiddenimports 面、走专用 hiddenimports `["onnxruntime"]` + 专用闭包断言（onnxruntime pure 模块 + `onnxruntime_pybind11_state.pyd`/`DirectML.dll` binaries），断言失败=构建失败，先例姿势）。**DSH r1 P2-1 更正**：「不进 ML hiddenimports 面」不等于「不拉 torch/transformers」——modulegraph 经 `detection_doctr.py:226` 函数体内静态 `from doctr.models import detection_predictor` 实际拉入第二份 torch/transformers/doctr 闭包（8455 modules），spec 注释已更正为事实口径、增量取舍登记见 deploy-record §3（集成裁决选 (a) 接受）。
 - `build_sidecar.ps1`：layout sanity gate exe 名单 +1。
 - 零触碰：`src/bootstrap/core_service.py` 命令分发表、`contracts/**`、`apps/desktop/src-tauri/**`、GATE runner 场景集。
 - **AC1③ 判定：不适用**——本方案不触碰任何冻结契约（M2-C1 §5 命令表、M2-IPC1 stdio 命令面、Tauri allowlist 零 diff），无需契约修订草案。
@@ -70,9 +70,15 @@ runner = `verification/M2-PROD-SFX-PROBE-1/packaged-sfx-detect-probe.py`（PROD-
 | AC | 判定 | 要点 |
 |---|---|---|
 | AC1 命令面扩展 | **PASS（additive 零契约修订）** | 第五 frozen 入口 `sfx_detect_probe.exe`（catalog_loader 独立入口先例形）；M2-C1/M2-IPC1 冻结粒度核实=设计登记段；AC1③ 不适用（无契约修订草案、无 rev bump）；`core_service.py` 命令分发表/Tauri 面/contracts 零 diff |
-| AC2 frozen 进程内真实运行 | **PASS** | 安装后环境（GATE 安装态、purged PATH+全 `NEWMANGA_*` 清除）：K07_R123 真实页 EXIT=0、**候选=1、conf=0.9047（v2b 锚点逐位一致）**、elapsed_ms=696、**三键 device=dml / sfx_ep=dml / sfx_ep_fallback=null（无 wrapper 回退，预期形态）**；合成页 EXIT=0、候选=4、1846ms 同三键；权重 `bundle_probe` 解析且 sha256=生产 pin |
+| AC2 frozen 进程内真实运行 | **PASS** | 安装后环境（GATE 安装态、purged PATH+全 `NEWMANGA_*` 清除）：K07_R123 真实页 EXIT=0、**候选=1、conf=0.9046692252159119（与 v2b 锚点 0.9046694040298462 同源同页：r1fix 实测页文件 sha256 与锚点 frame_sha256 逐位一致、conf 差 1.79e-7 在 GPU-EP-1 登记 GPU↔CPU 漂移窗口 ≤2e-06 内——DSH r1 P1-1 更正，原「逐位一致」措辞错误，位级可复现不得写入任何证据）**、elapsed_ms=696、**三键 device=dml / sfx_ep=dml / sfx_ep_fallback=null（无 wrapper 回退，预期形态）**；合成页 EXIT=0、候选=4、1846ms 同三键；权重 `bundle_probe` 解析且 sha256=生产 pin；r1fix 新判据（python.frozen is True+权重 pin 断言）重跑 4/4 PASS |
 | AC3 既有面零破坏 | **PASS** | GATE PASS 25/25 EXIT=0（M2-AC5/raw 落点按 GPU-EP-1 先例快照+还原）；SP-L3 既有命令面 stdio 冒烟 ready/stopped；包体积 NSIS 580,540,551 B / 553.65 MiB（+64.72 MiB vs GPU-EP-1 基线，主体=第五入口内嵌 PYZ，与既有 ML/Qt 入口同形态，deploy-record §3 登记） |
-| AC4 回归与纪律 | **PASS** | pytest **1835 passed + 1 skipped + 1 failed（test_catalog 既有）** = 基线 1823 + 新增 12 逐项吻合；`git diff --check` EXIT=0；禁改面专项 diff 空；权重/页图零入库 |
+| AC4 回归与纪律 | **PASS** | pytest **1835 passed + 1 skipped + 1 failed（test_catalog 既有）** = 基线 1823 + 新增 12 逐项吻合；`git diff --check`（DSH r1 P3-3 更正为 range 口径：`d298ecd0..b1dd1ad4` 实报 55 处 trailing whitespace 全部在 6 个 raw 证据 log、沿 GPU-EP-1 先例豁免；排除 raw/** 后 EXIT=0——原「工作区口径 EXIT=0」属口径空转）；禁改面专项 diff 空；权重/页图零入库 |
 | AC5 文档 | **PASS** | deploy-record + results JSON + raw logs + Task 回填 + Handoff；**PROD-DETECT-2 AC5 NOT_RUN 子项（sfx slice）以 deploy-record §5 声明闭合**（manga slice 属另一缺口未覆盖） |
 
-构建链（fresh worktree 全链如实登记）：frontend build → `build_sidecar.ps1 -Force`（HEAD=2b4e4946，闭包断言 PASS ×2：core_service 8584 modules ML 全量面 + **sfx_detect_probe 8455 modules onnxruntime 面**+pyd/DirectML.dll）→ `tauri build`（NSIS `3ffa03f5…`）→ GATE → 探针 runner。已知注释过时（留集成裁量）：`main.rs:378-379` sidecar exe 名单注释仍列四个，纯注释无功能引用，本 Task 保持 src-tauri 零 diff。
+构建链（fresh worktree 全链如实登记）：frontend build → `build_sidecar.ps1 -Force`（HEAD=2b4e4946，闭包断言 PASS ×2：core_service 8584 modules ML 全量面 + **sfx_detect_probe 8455 modules（断言口径=onnxruntime 引擎在场；PYZ 实际含第二份 torch/transformers/doctr 闭包——DSH r1 P2-1 归属更正，见 deploy-record §3）**+pyd/DirectML.dll）→ `tauri build`（NSIS `3ffa03f5…`）→ GATE → 探针 runner。已知注释过时（留集成裁量）：`main.rs:378-379` sidecar exe 名单注释仍列四个，纯注释无功能引用，本 Task 保持 src-tauri 零 diff。
+
+## DSH r1 审查与返修登记（2026-10-06）
+
+- **r1 判定：approved_with_conditions**（0×P0 / 1×P1 / 3×P2 / 5×P3；报告=doc/reviews/M2-PROD-SFX-PROBE-1-b1dd1ad4-dsh-r1.md，集成方导入）。全部条件在 Task 允许面内、不要求重跑构建/探针。
+- **返修（集成方顺笔，三 commit）**：`441f4ab5` runner（C3 判据加固 frozen is True+SP-L2 权重 pin；P3-5 可追溯字段 --installer-sha256/--build-head；P4-3 minor 3；P4-8 page_file_sha256；--raw-subdir 隔离）→ r1fix 重跑（真实安装态 4/4 PASS，conf 与首轮逐位一致、页文件哈希与锚点逐位一致）→ docs（C1 三处措辞更正/C2 spec 注释+归属+三选一登记选 (a)/C4：README 五入口、base_commit 更正、P3-3 range check 真实落盘、P4-4 场景枚举、P4-2/P4-6 注记、§5 闭合语义按 DSH 4.1 精确化、P3-2 判据描述更新、P4-5 双 pin 同步登记）。
+- **实测推翻 DSH 一项预期（如实登记）**：P3-3 预期 range check「应为空」，实测 `d298ecd0..b1dd1ad4` 报 55 处 trailing whitespace（DSH 静态文本检索抹掉 CRLF 的 CR 所致）；处置不变（真实输出落盘+沿先例豁免），登记口径改为实测事实。

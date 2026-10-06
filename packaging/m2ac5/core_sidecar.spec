@@ -75,17 +75,32 @@ ENTRIES = [
     ("entry_acceptance_bridge", "acceptance_bridge", False),
     ("entry_catalog_loader", "catalog_loader", False),
     # M2-PROD-SFX-PROBE-1: the one-shot SFX-detect probe (frozen-process
-    # evidence, NOT an IPC command — catalog_loader precedent shape). It
-    # needs ONLY the onnxruntime stack (no torch/transformers), so it gets
-    # its own hiddenimports + its own closure assertion below instead of the
-    # ML entry treatment.
+    # evidence, NOT an IPC command — catalog_loader precedent shape).
+    # Closure reality (DSH r1 P2-1, corrected from the original "onnxruntime
+    # only" claim): the probe imports the production SfxDetectionProvider,
+    # whose module graph runs detection_sfx -> detection_manga ->
+    # detection_doctr, and detection_doctr carries a function-body-static
+    # `from doctr.models import detection_predictor` that modulegraph DOES
+    # follow — so this entry's PYZ ships a SECOND torch/transformers/doctr
+    # closure (~8455 pure modules, ~64.76 MiB exe), not an onnxruntime-only
+    # face. Accepted deliberately (integration ruling on the DSH r1 menu):
+    # (a) accept the duplication (zero-risk, revert = drop this line);
+    # (b) a one-shot CLI mode on core_service.exe (0 B) was rejected — it
+    #     forks the production entry's startup behaviour;
+    # (c) slimming the probe import face (breaking the static doctr import)
+    #     is a product-src refactor left to a future slice.
+    # It still gets its own hiddenimports + its own closure assertion below
+    # instead of the ML entry treatment.
     ("entry_sfx_detect_probe", "sfx_detect_probe", False),
 ]
 
 #: M2-PROD-SFX-PROBE-1: the probe entry's own closure pins — onnxruntime is
 #: resolved through importlib at detect time (modulegraph never tracks it),
 #: so it is pinned explicitly; the assertion below fails the BUILD if the
-#: graph did not collect the engine binaries.
+#: graph did not collect the engine binaries. Scope note (DSH r1 P2-1): this
+#: asserts the onnxruntime ENGINE is present — it does NOT mean the probe PYZ
+#: is onnxruntime-only (it carries a second torch/transformers/doctr closure
+#: via the detection_doctr static import, see the ENTRIES comment above).
 SFX_PROBE_ENTRY = "entry_sfx_detect_probe"
 SFX_PROBE_HIDDENIMPORTS = [
     "onnxruntime",
