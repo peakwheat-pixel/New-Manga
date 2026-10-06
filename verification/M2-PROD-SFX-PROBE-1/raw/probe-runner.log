@@ -1,0 +1,19 @@
+install dir: C:\Users\49745\AppData\Local\Temp\m2ac5-cleanstart\install
+probe exe: C:\Users\49745\AppData\Local\Temp\m2ac5-cleanstart\install\resources\core-sidecar\sfx_detect_probe.exe (exists=True)
+bundle weights: C:\Users\49745\AppData\Local\Temp\m2ac5-cleanstart\install\resources\core-sidecar\models\detector\yolo11s-seg.onnx (exists=True)
+real page: G:\CODEX\New Manga.task-envs\M2-DOCTR-QUAL-work\regions\K07_R123.png (exists=True)
+cleared env names (0): []
+
+=== SP-P0: fifth frozen entry installed (sfx_detect_probe.exe) ===
+  [PASS] SP-P0-probe-entry-installed: {"core_service_exists": true, "in_bundle_weights_exist": true, "probe_exe": "C:\\Users\\49745\\AppData\\Local\\Temp\\m2ac5-cleanstart\\install\\resources\\core-sidecar\\sfx_detect_probe.exe", "probe_exe_exists": true}
+
+=== SP-L1: frozen-process probe on the builtin synthetic page (purged PATH) ===
+  [PASS] SP-L1-frozen-synthetic-probe: {"device": "dml", "elapsed_ms": 1846, "exit": 0, "json_parsed": true, "n_candidates": 4, "sfx_ep": "dml", "sfx_ep_fallback": null, "synthetic_zero_candidates_note": null, "wall_ms": 2339, "weights_resolved_from": "bundle_probe", "weights_sha256_matches_pin": true}
+
+=== SP-L2: frozen-process probe on the v2b anchor page (K07_R123) ===
+  [PASS] SP-L2-frozen-real-page-probe: {"confidences_max": 0.9046692252159119, "device": "dml", "elapsed_ms": 696, "exit": 0, "expected_form": "device=dml, no sfx_ep_fallback; wrapper fallback recorded honestly without failing", "imgsz": "1024", "json_parsed": true, "n_candidates": 1, "page_sha256": "b3b7c4a6951e5a61f4677674830041c7850ee
+
+=== SP-L3: existing command surface smoke (installed core_service.exe, stdio) ===
+  [PASS] SP-L3-existing-command-surface-smoke: {"exit": 0, "ping_status": "ready", "shutdown_status": "stopped"}
+
+PROBE: PASS -> G:\CODEX\New Manga.worktrees\M2-PROD-SFX-PROBE-1-zcode\verification\M2-PROD-SFX-PROBE-1\packaged-sfx-detect-probe-results.json
