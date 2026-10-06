@@ -126,12 +126,16 @@ Event<T> = {
 | `CreateRegion` | `{page_id, shape: {kind:"rectangle", corners: [NormalizedPoint, NormalizedPoint]} \| {kind:"polygon", points: NormalizedPoint[3+]}}` → `RegionSummary` | 归一化换算使用 app `normalized_to_page_geometry`，几何校验在 Core；image/page bytes 不随命令传输。 |
 | `DeleteRegion` | `{region_id}` → `Unit` | Workbench VM 调用 Region deleter；权限、Lock 与 revision 条件由 Core 检查。 |
 | `SaveManualTranslation` | `{region_id, text, expected_revision?: RevisionNo}` → `{revision_no: RevisionNo}` | Workbench VM 当前调用编辑 service 保存手工译文。`expected_revision` 是防覆盖 Proposal，精确并发策略 **UNKNOWN**。 |
-| `ListRegionRevisions` / `RestoreRegionRevision` / `SetRevisionPinned` | `{region_id}` / `{region_id, revision_no}` / `{region_id, revision_no, pinned}` → `RevisionSummary[]` / `RegionSnapshot` / `Unit` | `RegionRepository` port 的 `list_revisions` 读取历史；编辑 service 提供 `restore_revision` 与 `set_revision_pinned`。具体 ViewModel/QML 可见性并不完整。锁/Revision 保护要求来自 AD-001；任何操作的资格检查归 Core。 |
+| `ListRegionRevisions` / `RestoreRegionRevision` | `{region_id}` / `{region_id, revision_no, expected_revision}` → 历史包装摘要 / 恢复结果 | **1.6 RC-4 冻结**：wire `list_region_revisions` / `restore_region_revision` 的精确 DTO、完整快照与 Lock 恢复、事务内 expected 守卫以 [RC-4 契约](M2-RC4_DOMAIN_COMMANDS.md) 为准。新建 restored revision，不改写历史。 |
+| `SetRevisionPinned` | `{region_id, revision_no, pinned}` → `Unit` | 仍为未释放 Proposal；RC-4 不新增 pin 写命令。 |
+| `RerenderPage` | `{page_id}` → artifact/reports/preview | **1.6 RC-4 冻结**：wire `rerender_page`，同步复用既有 RenderService，无 AI/PipelineRun；错误、skip 原图回填与资源撤销以 [RC-4 契约](M2-RC4_DOMAIN_COMMANDS.md) 为准，协议 minor 4。 |
 | `GetReaderProjection` / `SaveReadingProgress` | `{chapter_id}` / `{chapter_id, page_id?, scroll_offset?}` → `ReaderProjection` / `Unit` | Reader VM 读取章节页并保存滚动偏移；page navigation、display mode 为 presentation state。 |
 | `GetSettings` / `SaveSettings` | `{section?}` / `{section, values}` → `SettingsProjection` / `SettingsProjection` | AS-IS 仅证明 Settings VM 在进程内调用 profiles/defaults/credentials services；没有已定义的 `CredentialRef` 类型或 IPC exchange。Credential DTO/exchange 为 UNKNOWN / DEFERRED；secret 不得进入普通事件或日志。**`1.3` 修订（M2-SETTINGS-IPC-CHANNEL）**：本行 transport-neutral 命令名与其 PROPOSAL 等级不变；产品 Tauri 面落地为 §5.3 的 `settings_get` / `settings_update_section`（请求/响应/错误码与写入端校验以 §5.3 为准）。 |
 | `StartExport` / `CancelExport` | `{export_request: ExportRequestDto}` / `{export_id}` → `ExportAccepted` / `Unit` | ViewModel 调 Export service 与本地 worker；实际输出文件选择/宿主能力需后续 host contract，当前导出 IPC 未实现。 |
 
 ### 5.1 Task command types
+
+1.6 RC-4 的 UI 重渲染本页使用同步 `rerender_page`，承载既有设计稿的页重渲染意图；不以 `rerender_single` 的通用 PipelineRun runtime 作为本切片前提，不声称该命令族已接通。
 
 `PipelineCommand` wire enum 复用现有 `CommandType` 字符串：
 

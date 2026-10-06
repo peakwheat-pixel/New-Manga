@@ -1,0 +1,5 @@
+SHELL=PowerShell
+COMMAND=dsh --profile headless --json -
+WORKTREE=G:/CODEX/New Manga.worktrees/RC4-review-preflight
+HEAD=bb7f3dcb
+EXIT=0
