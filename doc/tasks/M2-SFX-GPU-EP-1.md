@@ -2,7 +2,7 @@
 id: M2-SFX-GPU-EP-1
 title: "SFX 推理 EP 切换 GPU（DML）：onnxruntime-directml 依赖面+EP 配置化+数值一致性验证+打包闭包与 GATE 重跑"
 kind: feature
-status: in_review
+status: done
 owner_claim: ZCode @2026-10-06（branch agent/zcode/M2-SFX-GPU-EP-1；claim base=48e83a33=daa34e4e 之上的 release commit、含 T5-TILE-KO 落地终态；授权=用户裁决 2026-10-06「部署形态=GPU」）
 delivery: ZCode 2026-10-06（AC1-AC5 全 PASS：依赖换 onnxruntime-directml==1.24.4+NEWMANGA_SFX_EP 配置化默认 dml+DML 失败回退 CPU 三键审计；AC2 漂移量化 max|Δconf|≤2e-06/max|Δxyxy|≤0.0002px 门零翻转 matched 集全不变；AC3 KO DML 1.106s/页 vs CPU 10.447s/页；闭包断言+DirectML.dll、NSIS 488.90MiB、GATE 25/25 PASS；回归 1822+1sk+1 failed=基线一致；status owner_claim→in_review 停写待 DSH 非作者 r1）；r1 review-fix 2026-10-06（changes_requested 1×P1 全闭：回退审计读回反推 get_providers+真实失败形态 stub 用例先红后绿+CPU-only wheel 决定性验证 PASS；P3/P4 应闭全闭；Gate 复验 1823+1sk+1 failed=等量递增）
 approval: user_ruling_2026-10-06_GPU（T5-TILE-KO 收口呈报的部署形态终选）
