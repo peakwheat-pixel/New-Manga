@@ -37,3 +37,28 @@ M2-PROD-DETECT-2（done @merge `9e44fb21`）裁决⑥：frozen 命令面（`core
 - 禁改：`contracts/**` 既有 DTO/命令语义、`doc/STATUS.md`/`doc/REBASELINE_PLAN.md`（集成方收口面）、M2-AC5 runner 场景集（25/25 保持）。
 - 分支 `agent/zcode/M2-PROD-SFX-PROBE-1`，worktree 独立；构建/GATE/安装类长命令一律后台+log 落盘+轮询；`build_sidecar.ps1` 后必须 `tauri build` 才能拿到含 probe 的安装包（先例：tauri build 姿势见三确认批次教训）。
 - 权重/页图零入库（外部树）；fresh checkout 须先跑 build_sidecar.ps1（如实登记 NOT_RUN 前置）。
+
+## 设计登记（AC1① 冻结粒度核实 + AC1② 探针路径提案，Owner=ZCode 2026-10-04）
+
+### AC1① 冻结粒度核实结论
+
+- **M2-C1**（`doc/contracts/M2-C1_TYPED_IPC_CONTRACT.md`，当前 rev 1.4 草案）：冻结面是 **React ↔ Tauri ↔ Python Core 的 transport-neutral 消息边界**（产品 UI 面命令集、Tauri command allowlist 三处同步纪律）。它约束的是「产品命令通道」，不约束 sidecar onedir 里的独立 CLI 入口 exe 清单。
+- **M2-IPC1**（runtime 事实源 `src/bootstrap/core_service.py`）：冻结面是 **core_service.exe 的 stdio JSON-lines 命令面**（`core.ping`/`ListBooks`/`core.shutdown`；其后 `core.detect`（M2-PROD-DETECT-3）、`settings.*`（M2-SETTINGS-IPC-CHANNEL）、`set_region_type`/`list_regions`（M2-REGION-RETYPE-CORE）均为 additive widening + envelope minor bump 先例，`PROTOCOL_MINOR=3`）。
+- **catalog_loader 先例**：`catalog_loader.exe` 是「launcher 侧 catalog seeding CLI——packaged 环境无系统 python 可跑 dev 的 `python -m` seeding；**产品命令面零扩展**」（`packaging/m2ac5/README.md` §3）——仓库既有形态已确立「不挂 IPC 命令面的独立 frozen 入口 exe」不算命令面扩展。
+- **GATE 场景集核实**：`run_clean_start_e2e.py` CS-I1 对 `SIDECAR_EXES` 是 **at-least 语义**（只断言四个必需 exe 存在，不校验目录恰等）；CS-Z3 进程残留按名单查。新增第五入口不触碰 25 场景任何断言（已读源核实）。
+- **Rust host 核实面**：packaged 分支按固定文件名解析 sidecar exe（`host_bridge.exe`/`core_service.exe`），不对 `resources/core-sidecar/` 目录做封闭枚举；新增文件零影响（GATE CS-Z1 安装目录零写入为安装前后 hash 对比，探针 exe 属安装包一部分，前后一致）。
+
+### AC1② 探针路径提案（选定：独立探针入口，不动 IPC）
+
+给 frozen 闭包新增第五个入口 `sfx_detect_probe.exe`（onelook = dev 形态 `python -m bootstrap.sfx_detect_probe`），启动即对样例页跑**一次生产 `SfxDetectionProvider.detect`**（与 `core.detect` handler / pipeline detect step 所用的同一 provider 类，装配语义一致）并打印 JSON（候选数/耗时/options 三键 `device`/`sfx_ep`/`sfx_ep_fallback` + 权重 sha/解析来源），随后退出。不触碰 IPC 命令面、不经 Tauri、既有命令行为零变化。
+
+- 新增 `src/bootstrap/sfx_detect_probe.py`（生产探针模块；`main()` 可编程驱动，样例页=PIL 程序化合成（零入库），`--page <png>` 可注入真实页（v2b 锚点 K07_R123，conf 0.9047 已知锚）；typed 错误也打 JSON+非零 EXIT）；权重解析：`--weights` > `NEWMANGA_SFX_WEIGHTS`（非空取用，与装配 override 语义一致）> frozen in-bundle 探测（`Path(sys.executable).parent/models/detector/yolo11s-seg.onnx`，`sys.frozen` 时）——探针不猜数据根。
+- 新增 `packaging/m2ac5/entries/entry_sfx_detect_probe.py` 薄包装（entry 先例姿势）。
+- `core_sidecar.spec`：ENTRIES +1（探针 entry **不**进 ML hiddenimports 面——不拉 torch/transformers；专用 hiddenimports `["onnxruntime"]` + 专用闭包断言（onnxruntime pure 模块 + `onnxruntime_pybind11_state.pyd`/`DirectML.dll` binaries），断言失败=构建失败，先例姿势）。
+- `build_sidecar.ps1`：layout sanity gate exe 名单 +1。
+- 零触碰：`src/bootstrap/core_service.py` 命令分发表、`contracts/**`、`apps/desktop/src-tauri/**`、GATE runner 场景集。
+- **AC1③ 判定：不适用**——本方案不触碰任何冻结契约（M2-C1 §5 命令表、M2-IPC1 stdio 命令面、Tauri allowlist 零 diff），无需契约修订草案。
+
+### AC2 实测面（预登记）
+
+runner = `verification/M2-PROD-SFX-PROBE-1/packaged-sfx-detect-probe.py`（PROD-DETECT-2 `packaged-detect-probe.py` 先例姿势，独立探针不进 GATE 场景集）：对 **NSIS 静默安装后**的环境（purged PATH）依次跑 ①安装的 `sfx_detect_probe.exe` 内置合成页（结构性冒烟：EXIT=0、JSON 可解析、三键在场；候选数如实记录——合成页不在训练分布，候选=0 在此入口不判 FAIL、登记原因）；②同 exe `--page` 注入 K07_R123 真实页（真实推理判定面：预期候选>0，v2b 锚点 conf≈0.9047；记录 EXIT/候选数/耗时/三键；`device=dml` 无 `sfx_ep_fallback` 为预期形态，如遇 wrapper 回退形态如实登记不判失败）。页图零入库：真实页留在 gitignored task-envs 外部树，证据只记路径+sha256。
