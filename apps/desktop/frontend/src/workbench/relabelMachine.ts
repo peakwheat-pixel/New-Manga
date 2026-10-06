@@ -16,9 +16,8 @@
  *   display mapping, never decision logic; the gate authority stays in
  *   `gate.py::decide_sfx_translation`).
  *
- * NOT here (deliberately): any optimistic state mutation, any translation
- * decision, any restore/rerender execution — those are Core authorities or
- * later command-face slices (honest disabled entries in the UI layer).
+ * NOT here (deliberately): any optimistic state mutation, translation
+ * decision, or restore/rerender execution — those remain Core authorities.
  */
 
 import type { RegionSummary, RegionType, SfxPolicy } from "../region/types";
@@ -114,11 +113,7 @@ export function sfxBadgeLabel(policy: SfxPolicy): SfxBadgeLabel {
 
 export interface RetypeFeedback {
   text: string;
-  /** E4 action offers. Both actions render honestly DISABLED in this
-   * slice: Core has no restore/rerender runtime command yet
-   * (PROTOCOL_MINOR=3 command face), and simulating undo with a reverse
-   * retype violates A6. The buttons exist so the affordance is visible;
-   * the title text carries the reason. */
+  /** E4 action offers; undo uses revision restore, never reverse retype. */
   offerUndo: boolean;
   offerRerender: boolean;
 }
@@ -193,10 +188,3 @@ export const RELABEL_SOURCE_SAFETY_NOTE = "改标只修改标注，不改动原�
  * translations). */
 export const RELABEL_X2S_CONFIRM_TEXT =
   "该区域将改回对白（speech）并重新进入对白翻译链，可能产生新的译文";
-
-/** Honest-disabled reasons for the E4 action buttons (registered deviation:
- * restore/rerender runtime commands are outside PROTOCOL_MINOR=3). */
-export const UNDO_DISABLED_TITLE =
-  "撤销走 revision 恢复（应用层已有 restore_revision，缺 IPC 命令面——待命令面 Task；不得以反向改标模拟撤销）";
-export const RERENDER_DISABLED_TITLE =
-  "重渲染 run 通道 runtime 未实现（契约 §5.1 PROPOSAL 层）";

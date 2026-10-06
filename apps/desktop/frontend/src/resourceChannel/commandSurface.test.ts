@@ -31,12 +31,15 @@ const AC1_TEST_COMMANDS = ["ac1_request", "ac1_write_results", "ac1_exit"];
 // M2-SETTINGS-IPC-CHANNEL: the settings read/write pair is production-only
 // (main.rs SETTINGS_PRODUCTION_ONLY_COMMANDS; option-B precedent of M2-IPC1).
 const SETTINGS_PRODUCTION_ONLY_COMMANDS = ["settings_get", "settings_update_section"];
-// M2-WORKBENCH-REACT-1 (AC3 deferral closure): the region retype/read pair is
-// production-only like the settings pair — the Rust suite pins the same two
-// wire names inside PRODUCTION_COMMANDS (main.rs production_surface test,
-// exactly nine commands). Rev 1.5 widened the list_regions READ result
-// additively with NO new command, so this pair stays exactly two names.
-const REGION_PRODUCTION_ONLY_COMMANDS = ["set_region_type", "list_regions"];
+// M2-RC4: region retype/read, revision history/restore and rerender are
+// production-only. The probe surface remains frozen.
+const REGION_PRODUCTION_ONLY_COMMANDS = [
+  "set_region_type",
+  "list_regions",
+  "list_region_revisions",
+  "restore_region_revision",
+  "rerender_page",
+];
 
 type Mode = "production" | "probe";
 
@@ -46,7 +49,7 @@ function makeSurfaceInvoke(mode: Mode) {
     // production arm = the three resource-channel commands + the M2-IPC1
     // pair (core_ping / library_list_books) + the M2-SETTINGS-IPC-CHANNEL
     // settings pair (settings_get / settings_update_section) + the
-    // M2-REGION-RETYPE-CORE region pair (set_region_type / list_regions);
+    // region command face (retype/read/revision/history/restore/rerender);
     // the probe arm keeps the frozen RC2 shape (settings/region pairs
     // absent, four probe commands added) — mirroring main.rs
     // command_allowlist.
@@ -90,6 +93,22 @@ function makeSurfaceInvoke(mode: Mode) {
     if (command === "set_region_type") {
       // the post-retype effective state (§5.4 SetRegionType result)
       return { region_id: "region-1", revision_no: 4, region_type: "narration", sfx_policy: "skip" };
+    }
+    if (command === "list_region_revisions") {
+      return { region_id: "region-1", current_revision_no: 4, revisions: [] };
+    }
+    if (command === "restore_region_revision") {
+      return { region_id: "region-1", revision_no: 5, region_type: "speech", sfx_policy: "skip" };
+    }
+    if (command === "rerender_page") {
+      return {
+        page_id: "page-1",
+        artifact_id: "artifact-1",
+        revision_no: 8,
+        reports: [],
+        preview: null,
+        preview_error: "preview unavailable",
+      };
     }
     if (command === "issue_resource_url") {
       // host-side hardening (compile-time in Rust): an unknown key such as
@@ -167,13 +186,16 @@ describe("RC2 command surface allow/deny matrix", () => {
     }
   });
 
-  // M2-WORKBENCH-REACT-1 (AC3 deferral closure): the region pair rides the
-  // production arm (allow) and is absent from the frozen probe surface
-  // (deny) — the same matrix the Rust suite pins via PRODUCTION_COMMANDS
-  // (exactly nine commands; rev 1.5 added NO command, only optional result
-  // fields).
+  // The complete frozen region command face rides production and remains
+  // absent from probe and acceptance surfaces.
   it("region commands are allowed on production and denied on the probe surface", async () => {
-    expect(REGION_PRODUCTION_ONLY_COMMANDS).toEqual(["set_region_type", "list_regions"]);
+    expect(REGION_PRODUCTION_ONLY_COMMANDS).toEqual([
+      "set_region_type",
+      "list_regions",
+      "list_region_revisions",
+      "restore_region_revision",
+      "rerender_page",
+    ]);
     const { invoke } = makeSurfaceInvoke("production");
     await expect(
       invoke("list_regions", { pageId: "page-1" }),
@@ -184,6 +206,18 @@ describe("RC2 command surface allow/deny matrix", () => {
     await expect(
       invoke("set_region_type", { regionId: "region-1", newRegionType: "narration" }),
     ).resolves.toMatchObject({ region_id: "region-1", revision_no: 4 });
+    await expect(invoke("list_region_revisions", { regionId: "region-1" })).resolves.toMatchObject({
+      current_revision_no: 4,
+    });
+    await expect(invoke("restore_region_revision", {
+      regionId: "region-1",
+      revisionNo: 2,
+      expectedRevision: 4,
+    })).resolves.toMatchObject({ revision_no: 5 });
+    await expect(invoke("rerender_page", { pageId: "page-1" })).resolves.toMatchObject({
+      artifact_id: "artifact-1",
+      preview_error: "preview unavailable",
+    });
     const { invoke: probeInvoke } = makeSurfaceInvoke("probe");
     for (const command of REGION_PRODUCTION_ONLY_COMMANDS) {
       await expect(probeInvoke(command, {})).rejects.toThrow(new RegExp(command));

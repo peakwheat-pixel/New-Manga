@@ -1,3 +1,5 @@
+import { useState } from "react";
+
 /**
  * <RegionInspector> — inspector (M2-UI1 §2.2 mapping: QML
  * `RegionInspector.qml`). First slice showed the selected region row
@@ -14,7 +16,7 @@
  * deviation.
  */
 
-import type { RegionSummary, RegionType } from "../region/types";
+import type { RegionSummary, RegionType, RevisionSummary } from "../region/types";
 import {
   RELABEL_SOURCE_SAFETY_NOTE,
   canRetype,
@@ -39,6 +41,14 @@ export interface RegionInspectorProps {
    * raises the request. */
   onRetypeRequest?: (region: RegionSummary, to: RegionType) => void;
   onToggleSuspect?: (regionId: string) => void;
+  revisions?: RevisionSummary[] | null;
+  currentRevisionNo?: number | null;
+  historyBusy?: boolean;
+  historyError?: string | null;
+  restoreBusy?: boolean;
+  restoreError?: string | null;
+  onLoadHistory?: (regionId: string) => void;
+  onRestoreRevision?: (revision: RevisionSummary) => Promise<boolean>;
 }
 
 export function RegionInspector({
@@ -47,7 +57,16 @@ export function RegionInspector({
   busy = false,
   onRetypeRequest,
   onToggleSuspect,
+  revisions = null,
+  currentRevisionNo = null,
+  historyBusy = false,
+  historyError = null,
+  restoreBusy = false,
+  restoreError = null,
+  onLoadHistory,
+  onRestoreRevision,
 }: RegionInspectorProps) {
+  const [restoreTarget, setRestoreTarget] = useState<RevisionSummary | null>(null);
   const phase = region ? derivePhase(region, suspects ?? new Set()) : null;
   const toSfx = region ? canRetype(region, "sfx") : null;
   const toSpeech = region ? canRetype(region, "speech") : null;
@@ -181,21 +200,114 @@ export function RegionInspector({
           <button
             type="button"
             data-testid="inspector-revision-history"
-            disabled
-            title="revision 历史列表待 Core ListRegionRevisions 命令面（RC-4 域）落地后启用"
+            disabled={busy || historyBusy}
+            aria-expanded={revisions !== null}
+            onClick={() => onLoadHistory?.(region.region_id)}
             style={{
               background: "#101418",
-              color: "#5a6470",
+              color: busy || historyBusy ? "#5a6470" : "#d8e0e8",
               border: "1px solid #2a3038",
               borderRadius: 4,
               padding: "4px 8px",
               fontSize: 11,
-              cursor: "not-allowed",
+              cursor: busy || historyBusy ? "wait" : "pointer",
               textAlign: "left",
             }}
           >
-            历史（预留）
+            {historyBusy ? "读取历史中…" : revisions === null ? "修订历史" : "刷新修订历史"}
           </button>
+          {historyError && (
+            <p data-testid="inspector-history-error" role="alert" style={{ margin: 0, fontSize: 10, color: "var(--wb-fail, #e07a7a)" }}>
+              历史读取失败：{historyError}
+            </p>
+          )}
+          {revisions && (
+            <ol data-testid="inspector-revision-list" style={{ margin: 0, paddingLeft: 20, display: "flex", flexDirection: "column", gap: 4, fontSize: 10 }}>
+              {revisions.length === 0 && <li style={{ color: "#8a94a2" }}>暂无修订记录</li>}
+              {revisions.map((revision) => {
+                const source = revision.restored_from_revision_id
+                  ? revisions.find((item) => item.region_revision_id === revision.restored_from_revision_id)
+                  : undefined;
+                return (
+                  <li key={revision.region_revision_id} data-testid={`inspector-revision-${revision.revision_no}`}>
+                    <div style={{ color: "#d8e0e8" }}>
+                      revision {revision.revision_no} · {revision.origin} · {revision.review_state} · {revision.region_type} · {revision.sfx_policy} · {revision.created_at}
+                      {revision.is_current && " · 当前"}
+                      {revision.is_pinned && " · 已固定"}
+                    </div>
+                    {revision.restored_from_revision_id && (
+                      <div style={{ color: "#8a94a2" }}>
+                        来源：revision {source?.revision_no ?? revision.restored_from_revision_id}
+                      </div>
+                    )}
+                    <button
+                      type="button"
+                      data-testid={`restore-revision-${revision.revision_no}`}
+                      disabled={busy || restoreBusy || revision.is_current}
+                      onClick={() => setRestoreTarget(revision)}
+                      style={{
+                        marginTop: 2,
+                        background: "#101418",
+                        color: revision.is_current || busy || restoreBusy ? "#5a6470" : "#d8e0e8",
+                        border: "1px solid #2a3038",
+                        borderRadius: 4,
+                        padding: "2px 6px",
+                        fontSize: 10,
+                        cursor: revision.is_current || busy || restoreBusy ? "not-allowed" : "pointer",
+                      }}
+                    >
+                      {revision.is_current ? "当前修订" : "恢复此修订…"}
+                    </button>
+                  </li>
+                );
+              })}
+            </ol>
+          )}
+        </div>
+      )}
+      {restoreTarget && (
+        <div
+          data-testid="revision-restore-overlay"
+          style={{ position: "fixed", inset: 0, zIndex: 40, background: "rgba(0,0,0,0.45)", display: "flex", alignItems: "center", justifyContent: "center" }}
+          onClick={() => { if (!restoreBusy) setRestoreTarget(null); }}
+        >
+          <div
+            data-testid="revision-restore-dialog"
+            role="dialog"
+            aria-modal="true"
+            style={{ background: "var(--wb-bg-raised, #161b22)", border: "1px solid #4a3a20", borderRadius: 8, padding: 12, width: 320, display: "flex", flexDirection: "column", gap: 8 }}
+            onClick={(event) => event.stopPropagation()}
+          >
+            <strong style={{ fontSize: 12, color: "#e0b070" }}>恢复 revision {restoreTarget.revision_no}？</strong>
+            <p data-testid="revision-restore-target" style={{ margin: 0, fontSize: 11, color: "#d8e0e8" }}>
+              目标：revision {restoreTarget.revision_no} · {restoreTarget.origin} · {restoreTarget.region_type} · {restoreTarget.sfx_policy}
+              {restoreTarget.is_pinned ? " · 已固定" : ""}
+              {restoreTarget.restored_from_revision_id ? ` · 来源 ${restoreTarget.restored_from_revision_id}` : ""}
+            </p>
+            <p style={{ margin: 0, fontSize: 10, color: "#8a94a2" }}>
+              将恢复该修订的文字、类型、策略与锁状态（可能回退当前锁）；当前 revision {currentRevisionNo ?? region?.revision_no ?? "未知"} 与历史都会保留，Core 会新增 restored revision，不改动原图。
+            </p>
+            {restoreError && (
+              <p data-testid="revision-restore-error" role="alert" style={{ margin: 0, fontSize: 11, color: "var(--wb-fail, #e07a7a)" }}>
+                恢复失败：{restoreError}
+              </p>
+            )}
+            <div style={{ display: "flex", gap: 6, justifyContent: "flex-end" }}>
+              <button type="button" data-testid="revision-restore-cancel" disabled={restoreBusy} onClick={() => setRestoreTarget(null)}>
+                取消
+              </button>
+              <button
+                type="button"
+                data-testid="revision-restore-confirm"
+                disabled={restoreBusy}
+                onClick={async () => {
+                  if (await onRestoreRevision?.(restoreTarget)) setRestoreTarget(null);
+                }}
+              >
+                {restoreBusy ? "恢复中…" : `确认恢复 revision ${restoreTarget.revision_no}`}
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </section>

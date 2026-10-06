@@ -90,3 +90,50 @@ export interface SetRegionTypeResult {
   region_type: RegionType;
   sfx_policy: SfxPolicy;
 }
+
+export interface RevisionSummary {
+  region_revision_id: string;
+  revision_no: number;
+  origin: RegionOrigin;
+  review_state: string;
+  is_pinned: boolean;
+  restored_from_revision_id: string | null;
+  created_at: string;
+  region_type: RegionType;
+  sfx_policy: SfxPolicy;
+  is_current: boolean;
+}
+
+export interface ListRegionRevisionsResult {
+  region_id: string;
+  current_revision_no: number;
+  revisions: RevisionSummary[];
+}
+
+export interface RestoreRegionRevisionResult {
+  region_id: string;
+  revision_no: number;
+  region_type: RegionType;
+  sfx_policy: SfxPolicy;
+}
+
+export interface RerenderRegionReport {
+  region_id: string;
+  status: string;
+  skip_reason: string | null;
+  font_substituted: boolean;
+}
+
+export interface PreviewResource {
+  resource_id: string;
+  revision: string | number;
+}
+
+export interface RerenderPageResult {
+  page_id: string;
+  artifact_id: string;
+  revision_no: number;
+  reports: RerenderRegionReport[];
+  preview: PreviewResource | null;
+  preview_error: string | null;
+}
