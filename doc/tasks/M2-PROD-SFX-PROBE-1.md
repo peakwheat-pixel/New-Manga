@@ -2,7 +2,7 @@
 id: M2-PROD-SFX-PROBE-1
 title: "packaged sfx-detect 探针：frozen 进程内 SFX 真实推理（DML）运行证据"
 kind: feature
-status: ready
+status: in_progress
 owner: ZCode
 reviewer: DeepSeek Harness（非作者）
 integrator: 编排会话代行 Codex（用户全权授权）
