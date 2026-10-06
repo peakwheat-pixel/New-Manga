@@ -1,3 +1,4 @@
+# $ git diff --check d298ecd0..b1dd1ad4   (DSH r1 P3-3: delivery-range whitespace check; run in worktree root)
 verification/M2-PROD-SFX-PROBE-1/raw/m2ac5-gate-artifacts-thisrun/cleanstart-ac1-run1-stdout.log:1: trailing whitespace.
 +$ <installed>\m2rc1-desktop.exe (M2AC1_TEST_MODE=1, launch=run1, purged PATH)
 verification/M2-PROD-SFX-PROBE-1/raw/m2ac5-gate-artifacts-thisrun/cleanstart-ac1-run1-stdout.log:2: trailing whitespace.
@@ -5,7 +6,7 @@ verification/M2-PROD-SFX-PROBE-1/raw/m2ac5-gate-artifacts-thisrun/cleanstart-ac1
 verification/M2-PROD-SFX-PROBE-1/raw/m2ac5-gate-artifacts-thisrun/cleanstart-ac1-run1-stdout.log:3: trailing whitespace.
 +[m2ac1-allowlist] ac1:issue_resource_url,revoke_ref,revoke_resource_refs,ac1_request,ac1_write_results,ac1_exit
 verification/M2-PROD-SFX-PROBE-1/raw/m2ac5-gate-artifacts-thisrun/cleanstart-ac1-run1-stdout.log:4: trailing whitespace.
-+[1006/191344.616:ERROR:ui\gfx\win\window_impl.cc:172] Failed to unregister class Chrome_WidgetWin_0. Error = 1412
++[1006/191344.616:ERROR:ui\gfx\win\window_impl.cc:172] Failed to unregister class Chrome_WidgetWin_0. Error = 1412
 verification/M2-PROD-SFX-PROBE-1/raw/m2ac5-gate-artifacts-thisrun/cleanstart-ac1-run2-stdout.log:1: trailing whitespace.
 +$ <installed>\m2rc1-desktop.exe (M2AC1_TEST_MODE=1, launch=run2, purged PATH)
 verification/M2-PROD-SFX-PROBE-1/raw/m2ac5-gate-artifacts-thisrun/cleanstart-ac1-run2-stdout.log:2: trailing whitespace.
@@ -13,7 +14,7 @@ verification/M2-PROD-SFX-PROBE-1/raw/m2ac5-gate-artifacts-thisrun/cleanstart-ac1
 verification/M2-PROD-SFX-PROBE-1/raw/m2ac5-gate-artifacts-thisrun/cleanstart-ac1-run2-stdout.log:3: trailing whitespace.
 +[m2ac1-allowlist] ac1:issue_resource_url,revoke_ref,revoke_resource_refs,ac1_request,ac1_write_results,ac1_exit
 verification/M2-PROD-SFX-PROBE-1/raw/m2ac5-gate-artifacts-thisrun/cleanstart-ac1-run2-stdout.log:4: trailing whitespace.
-+[1006/191345.031:ERROR:ui\gfx\win\window_impl.cc:172] Failed to unregister class Chrome_WidgetWin_0. Error = 1412
++[1006/191345.031:ERROR:ui\gfx\win\window_impl.cc:172] Failed to unregister class Chrome_WidgetWin_0. Error = 1412
 verification/M2-PROD-SFX-PROBE-1/raw/m2ac5-gate-artifacts-thisrun/cleanstart-probe-stdout.log:1: trailing whitespace.
 +$ <installed>\m2rc1-desktop.exe (purged PATH, no M2RC1_SRC_ROOT/PYTHON)
 verification/M2-PROD-SFX-PROBE-1/raw/m2ac5-gate-artifacts-thisrun/cleanstart-probe-stdout.log:2: trailing whitespace.
@@ -27,7 +28,7 @@ verification/M2-PROD-SFX-PROBE-1/raw/m2ac5-gate-artifacts-thisrun/cleanstart-pro
 verification/M2-PROD-SFX-PROBE-1/raw/m2ac5-gate-artifacts-thisrun/cleanstart-probe-stdout.log:6: trailing whitespace.
 +[m2rc1-title] M2-RC1 resource channel runtime
 verification/M2-PROD-SFX-PROBE-1/raw/m2ac5-gate-artifacts-thisrun/cleanstart-probe-stdout.log:7: trailing whitespace.
-+[1006/191343.477:ERROR:ui\gfx\win\window_impl.cc:172] Failed to unregister class Chrome_WidgetWin_0. Error = 1412
++[1006/191343.477:ERROR:ui\gfx\win\window_impl.cc:172] Failed to unregister class Chrome_WidgetWin_0. Error = 1412
 verification/M2-PROD-SFX-PROBE-1/raw/m2ac5-gate-artifacts-thisrun/r1-library-probe.log:1: trailing whitespace.
 +$ <installed>\resources\core-sidecar\core_service.exe (purged PATH, install-state stdio)
 verification/M2-PROD-SFX-PROBE-1/raw/m2ac5-gate-artifacts-thisrun/r1-library-probe.log:2: trailing whitespace.
@@ -35,11 +36,11 @@ verification/M2-PROD-SFX-PROBE-1/raw/m2ac5-gate-artifacts-thisrun/r1-library-pro
 verification/M2-PROD-SFX-PROBE-1/raw/m2ac5-gate-artifacts-thisrun/r1-library-probe.log:3: trailing whitespace.
 +--- stdout ---
 verification/M2-PROD-SFX-PROBE-1/raw/m2ac5-gate-artifacts-thisrun/r1-library-probe.log:4: trailing whitespace.
-+{"protocol":"new-manga.core","version":{"major":1,"minor":3},"request_id":"r1","result":{"status":"ready","protocol_version":{"major":1,"minor":3},"capabilities":["library.list_books"]},"error":null}
++{"protocol":"new-manga.core","version":{"major":1,"minor":3},"request_id":"r1","result":{"status":"ready","protocol_version":{"major":1,"minor":3},"capabilities":["library.list_books"]},"error":null}
 verification/M2-PROD-SFX-PROBE-1/raw/m2ac5-gate-artifacts-thisrun/r1-library-probe.log:5: trailing whitespace.
-+{"protocol":"new-manga.core","version":{"major":1,"minor":3},"request_id":"r2","result":[],"error":null}
++{"protocol":"new-manga.core","version":{"major":1,"minor":3},"request_id":"r2","result":[],"error":null}
 verification/M2-PROD-SFX-PROBE-1/raw/m2ac5-gate-artifacts-thisrun/r1-library-probe.log:6: trailing whitespace.
-+{"protocol":"new-manga.core","version":{"major":1,"minor":3},"request_id":"r3","result":{"status":"stopped"},"error":null}
++{"protocol":"new-manga.core","version":{"major":1,"minor":3},"request_id":"r3","result":{"status":"stopped"},"error":null}
 verification/M2-PROD-SFX-PROBE-1/raw/m2ac5-gate-artifacts-thisrun/r1-library-probe.log:7: trailing whitespace.
 +--- stderr ---
 verification/M2-PROD-SFX-PROBE-1/raw/sp-l3-core-service-ping.log:1: trailing whitespace.
@@ -47,9 +48,10 @@ verification/M2-PROD-SFX-PROBE-1/raw/sp-l3-core-service-ping.log:1: trailing whi
 verification/M2-PROD-SFX-PROBE-1/raw/sp-l3-core-service-ping.log:2: trailing whitespace.
 +exit=0
 verification/M2-PROD-SFX-PROBE-1/raw/sp-l3-core-service-ping.log:3: trailing whitespace.
-+{"protocol":"new-manga.core","version":{"major":1,"minor":3},"request_id":"r1","result":{"status":"ready","protocol_version":{"major":1,"minor":3},"capabilities":["library.list_books"]},"error":null}
++{"protocol":"new-manga.core","version":{"major":1,"minor":3},"request_id":"r1","result":{"status":"ready","protocol_version":{"major":1,"minor":3},"capabilities":["library.list_books"]},"error":null}
 verification/M2-PROD-SFX-PROBE-1/raw/sp-l3-core-service-ping.log:4: trailing whitespace.
-+{"protocol":"new-manga.core","version":{"major":1,"minor":3},"request_id":"r2","result":{"status":"stopped"},"error":null}
++{"protocol":"new-manga.core","version":{"major":1,"minor":3},"request_id":"r2","result":{"status":"stopped"},"error":null}
 verification/M2-PROD-SFX-PROBE-1/raw/sp-l3-core-service-ping.log:5: trailing whitespace.
 +--- stderr ---
 verification/M2-PROD-SFX-PROBE-1/raw/tauri-build.log:302: new blank line at EOF.
+# EXIT=2 (non-zero = findings above; git output 55 lines = 27 trailing-whitespace + 1 new-blank-line-at-EOF across 6 raw evidence logs)

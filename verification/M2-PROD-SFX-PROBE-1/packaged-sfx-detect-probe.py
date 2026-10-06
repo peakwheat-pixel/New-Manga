@@ -241,9 +241,10 @@ def main() -> int:
         default="",
         help="free-form note recorded into the results JSON (e.g. the build venv id)",
     )
-    # DSH r1 P3-5: programmatic provenance for the evidence — bind the probe
-    # results to the installer artifact and the build HEAD without relying on
-    # out-of-band logs.
+    # DSH r1 P3-5: caller-supplied provenance for the evidence — record the
+    # installer artifact and build HEAD the caller passes in (the runner does
+    # not measure or verify them; cross-check against the GATE CS-E2 measured
+    # installer sha256).
     parser.add_argument(
         "--installer-sha256",
         default="",
@@ -404,6 +405,7 @@ def main() -> int:
             and (result.get("n_candidates") or 0) > 0
             and result.get("device") is not None
             and result.get("sfx_ep") is not None
+            and "sfx_ep_fallback" in result
             and weights.get("sha256") == SFX_WEIGHTS_SHA256,
             "SP-L2-frozen-real-page-probe",
             observed_l2,
