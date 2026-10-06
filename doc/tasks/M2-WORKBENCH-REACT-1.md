@@ -2,7 +2,7 @@
 id: M2-WORKBENCH-REACT-1
 title: "Workbench React 页第一刀：React 页壳（页列/页图/region 只读画框/任务进度占位）+ region 通道 client（含 D5 几何读取面契约修订）"
 kind: feature
-status: in_progress
+status: in_review
 owner: ZCode
 reviewer: DeepSeek Harness（非作者，技术主审）；Qoder（非作者 UI/UX 复审，派发通道可用时补审）
 integrator: 编排会话代行 Codex（用户全权授权）
@@ -93,3 +93,47 @@ created: 2026-10-06
 - `src/application/editing/service.py`：`list_region_summaries(page_id, *, page_size=None)` 增可选 keyword-only 参数——注入 page 尺寸时每行 summary 追加 `geometry`（归一化）；未注入时保持五字段原样（严格 additive，既有调用者零破坏）。
 - `src/bootstrap/core_service.py`：`handle_list_regions` 查 `self._core.repository.get_page(page_id)` 组装 `page_size` 并注入 service。
 - Tauri/Rust：**零改动**（`PRODUCTION_COMMANDS` 保持恰 9 命令，AC3 Rust 面零改动成立）。
+
+### 交付 commit 链（2026-10-06，ZCode）
+
+- `75d55899` claim(...)：frontmatter ready→in_progress + base 漂移核对（3a65150b→2a1a9f73，+2 释放链 commits 零代码面）+ AC1 裁量登记（本段上方草案）。
+- `5b341680` impl(...)：AC1 落地（`region_canvas.py` 反向映射 `page_geometry_to_normalized`、`editing/service.py` `list_region_summaries(*, page_size)` 注入、`core_service.py` handler 组装+PROTOCOL_MINOR 注记登记不 bump；契约 `M2-C1` rev 1.4→1.5：头部版本行+Revision history 1.5 条目+§5 表 ListRegions 行+§5.4 条目 DTO/包装字段+修订纪律声明 runtime 落地回填）+ 前端 region 切片（`region/types.ts`/`region/client.ts`/`region/geometry.ts`/`region/RegionOverlay.tsx`）+ workbench 五区（`workbench/WorkbenchPage.tsx`/`PageListPanel.tsx`/`ViewerPanel.tsx`/`RegionInspector.tsx`/`TaskProgressPanel.tsx`/`WorkbenchToolbar.tsx`/`pageImage.ts`）+ `App.tsx` 视图切换。Tauri/Rust **零改动**（PRODUCTION_COMMANDS 保持恰 9 命令）。
+- `bd3771f9` test(...)：vitest 新增 28 用例（region client 11、投影数学 8、五区+Overlay 冒烟 8、commandSurface region pair 1）+ pytest 新增 7 用例（region_canvas 反向映射 4、core_service rev 1.5 扩面 3；既有 2 断言按 1.5 口径更新）。
+- verify/docs commit：见 verification/ 与 git log（本段为 docs commit 内容）。
+
+### AC 逐条判定
+
+| AC | 判定 | 证据 |
+|---|---|---|
+| AC1 D5 几何读取面 | **PASS** | 方案 (a) 落地=契约 rev 1.5（`doc/contracts/M2-C1_TYPED_IPC_CONTRACT.md` Revision history `1.5` 条目+§5.4 DTO/包装可选字段）+Core 三文件+测试钉面（round-trip 自洽/完整页扩字段/软删页不虚构）。additive 零既有语义变更：错误码映射表、C1-C7/P1-P4、SetRegionType 全部零 diff；协议 minor 维持 3（如实登记，见 Revision history 1.5 ③）；现状无 region React 消费端，旧 Core/旧读取端双向兼容。pytest 扩面证据=`verification/M2-WORKBENCH-REACT-1/raw/pytest-full.log`。 |
+| AC2 Workbench React 页壳读取面闭环 | **PASS**（含落地偏差登记，见下节） | `region/client.ts` 读写两方法+typed error（沿 SettingsClientError 先例）+单测覆盖（client 层可调用即 AC2①要求，写方法 UI 消费属 IMPL-1）；五区骨架+页级导航接入（App.tsx production 窗口 tab，探针/ac1 冻结）；PageList 消费既有 `library_list_books`；Viewer 经既有 resourceChannel（`loadPageImageUrl`=issue+chunked fetch）；RegionOverlay 按 M2-UI1 硬规则 SVG 只读画框（归一化→投影换算仅在 `region/geometry.ts` 单一数学，尺寸仅从 `page_size` 投影取）；RegionInspector 只读五行；TaskProgress 静态占位；改标最小入口预留禁用态。vitest/build 证据=raw/*.log。 |
+| AC3 前端 commandSurface pin 补录 | **PASS** | `resourceChannel/commandSurface.test.ts` 补录 `REGION_PRODUCTION_ONLY_COMMANDS=["set_region_type","list_regions"]`（production allow+probe deny 断言+mock fixture），与 Rust `PRODUCTION_COMMANDS`（恰 9 命令）口径一致；AC1 选 (a) 未新增命令 → **Rust 面零改动**成立（main.rs 逐字节零 diff）。 |
+| AC4 测试与构建 | **PASS** | vitest 基线 49 → 77（+28 等量递增）EXIT=0（`raw/vitest-verify.log`，sha256 `6e3ce9ba…`）；`npm run build`（tsc+vite）EXIT=0（`raw/npm-build.log`，sha256 `14618b6c…`）；pytest 基线 1840 passed+1 skipped+1 failed → **1 failed, 1847 passed, 1 skipped**（=1840+7 等量递增；failed=`tests/m2_test_assets/test_catalog.py::test_manifest_has_unique_cases_and_exact_taxonomy` 既有 BASELINE_FAILURE 非本 Task 责任；`raw/pytest-full.log`，sha256 `0bc05fb9…`）。AC1 触 Core runtime → 受影响套件（tests/workbench/test_region_canvas.py+tests/core/test_core_service_retype.py）等量递增已含于全量。Rust 面零改动 → cargo test 不适用。 |
+| AC5 文档 | **PASS** | 本回填（AC 判定+偏差登记+AC1 契约修订草案在实施登记段）+Handoff `doc/handoffs/M2-WORKBENCH-REACT-1-zcode-20261006.md`+契约修订草案已随 impl 落 `M2-C1` rev 1.5。 |
+
+### M2-UI1 映射契约落地偏差登记（第一刀范围裁剪，逐条）
+
+1. **PageList 页级选择**：页级命令面（ListChapters/ListPages）为 §5 PROPOSAL 未实现，第一刀 PageList 消费书级 `library_list_books`（AC2③ 原文即此）；page_id 由手动输入入口供给 region 读取通道；`PageTile` 折叠/多选/range 等页级 parity **NOT_IN_SCOPE**（后续切片）。
+2. **Viewer 页图资源生产目录化缺口**：page→resource_id 映射生产面不存在（resource catalog 仅 acceptance bridge seed），Viewer 以 resource id+revision 手动入口消费既有 resourceChannel（`loadPageImageUrl`），诚实空态占位；生产自动目录化属后续基础设施（登记，不在本 Task 范围）。
+3. **WorkbenchToolbar**：仅 context readout+region 计数+预留禁用改标入口；startTranslate*/viewerMode/stepPage 命令面属后续 parity 切片。
+4. **TaskProgress**：静态骨架占位（数据通道属 GetRunSnapshot/GetTaskProjection runtime PROPOSAL；占位不扩命令面——AC2③ 原文授权）。
+5. **RegionOverlay**：只读画框（既有 region 描边+选中 accent+多边形环）；draft 拖拽/createRectangle/createPolygon/deleteRegion 交互属 IMPL-1/后续；Canvas→SVG 落地，letterbox/归一化两条硬规则+「单一数学」逐字遵守（`region/geometry.ts` 唯一换算点，单测钉面）。
+6. **RegionInspector**：只读五行（region_id/region_type/sfx_policy/origin/revision_no）；译文置顶重排（映射契约已登记为 F 实现切片差异）与 setInspectorText/saveInspector 编辑面不在本刀（读取面无文本字段——契约 §5.4 读取面边界）。
+7. **导航形态**：App.tsx 顶部两按钮 tab（Console=现状探针+panels 面 / Workbench=新页）；**探针与 ac1 runner 窗口 chrome 冻结**（navChrome 恒 false，runner 场景 DOM 与改动前一致——禁改条款的落实）；无 router 依赖（零新增 npm 依赖）。
+
+### UI-MITIGATION 设计对齐注记（设计稿不回改，闭合注记落本 verification）
+
+- **D5 闭合**：UI-MITIGATION §5 D5 行「缺失（读取面，归入 RC-3）」由本 Task 契约 rev 1.5 承载（`RegionListSummary.geometry?` 归一化 + `page_size` 投影），下游 M2-SFX-MISROUTE-UI-IMPL-1 可消费。
+- **D6 已承载**：`RegionListSummary.sfx_policy`（region 自身快照）即 D6 的 policy 生效态读取面（1.4 已闭合，本 Task 消费）。
+- **通道字段够用性**：IMPL-1 改标 UI 所需决策字段=五字段+几何（§3.2 视觉所需 type/policy/origin/revision/geometry 全在）；suspect（D2/RC-1）不在读取面，保持登记（本 Task 不裁决）。
+- **A7 机器/人工可区分**：`origin` 字段承载（§5.4 既有定案），第一刀 Inspector 原样展示 origin 值。
+
+### 验证证据清单（verification/M2-WORKBENCH-REACT-1/raw/，sha256）
+
+| 文件 | sha256（前 8 位） | 内容 |
+|---|---|---|
+| npm-install.log | `307f2a68` | fresh worktree npm install EXIT=0，lockfile 零变化（esbuild postinstall 被 allowScripts 拦截=既有全局策略，build 未受影响） |
+| vitest-verify.log | `6e3ce9ba` | vitest run 77 passed EXIT=0（基线 49+28） |
+| vitest-impl.log / vitest-impl2.log | `2b567f16` / `9a5c6815` | 实现过程运行记录（首轮 7 失败=测试期望值笔误修正，最终全绿） |
+| npm-build.log | `14618b6c` | tsc+vite build EXIT=0（built in 498ms） |
+| pytest-full.log | `0bc05fb9` | pytest tests -q：1 failed/1847 passed/1 skipped（基线等量递增，failed=既有 test_catalog BASELINE_FAILURE），生产 venv T1.1.1-impl-py312，153s |
