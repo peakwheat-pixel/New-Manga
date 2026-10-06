@@ -321,6 +321,15 @@ def _install_fake_onnxruntime(monkeypatch, metadata: dict, session=None):
         def get_modelmeta(self):
             return _FakeMeta()
 
+        # P1-1 (DSH r1): the production _build_engine reads the effective EP
+        # back off the session via get_providers() (the wrapper's CPU
+        # fallback makes the constructor return NORMALLY on a DML failure,
+        # so the read-back is the only authoritative signal). This stub
+        # models the NORMAL shape: the built session runs exactly the
+        # providers that were requested.
+        def get_providers(self):
+            return list(calls["providers"] or [])
+
         def run(self, _, feeds):  # noqa: ANN001
             return self._delegate.run(_, feeds)
 
@@ -1420,3 +1429,67 @@ def test_engine_cpu_failure_is_typed_no_fallback(tmp_path, monkeypatch):
     provider = SfxDetectionProvider(weights_path=junk)
     with pytest.raises(ProviderError, match="failed to load"):
         provider.detect(_request())
+
+
+def test_engine_wrapper_level_cpu_fallback_gets_three_key_audit(
+    tmp_path, monkeypatch
+):
+    """P1-1 (DSH r1) THE REAL FAILURE SHAPE: onnxruntime's
+    ``InferenceSession.__init__`` carries its own CPU fallback
+    (``enable_fallback`` defaults to True in
+    ``onnxruntime_inference_collection.py``) — a DML init failure (no DX12
+    GPU / broken driver / CPU-only wheel) is SWALLOWED as
+    (ValueError, RuntimeError), the wrapper rebuilds on
+    ["CPUExecutionProvider"] and returns NORMALLY (an "EP Error" banner on
+    stderr only). The constructor does NOT raise, so an exception-driven
+    fallback branch never runs and there is NO second construction.
+
+    The three-key audit (sfx_ep / device / sfx_ep_fallback) must therefore
+    be driven by a get_providers() READ-BACK: requested dml + a session
+    whose first provider is not DmlExecutionProvider = the wrapper-level
+    fallback, audited with device=cpu (the EFFECTIVE EP) — never a silent
+    wrong "dml"."""
+    calls = {"providers": []}
+    metadata = _ep_metadata()
+
+    class _FakeMeta:
+        custom_metadata_map = metadata
+
+    class _WrapperFallbackSession:
+        """Models the wrapper after its internal fallback: built once for
+        DML, returned as a CPU-only session, never raising."""
+
+        def __init__(self, path, providers=None):  # noqa: ANN001
+            calls["providers"].append(list(providers or []))
+
+        def get_modelmeta(self):
+            return _FakeMeta()
+
+        def get_providers(self):
+            # The wrapper already fell back internally: the session's
+            # effective provider list carries CPU only.
+            return ["CPUExecutionProvider"]
+
+        def run(self, _, feeds):  # noqa: ANN001
+            return (np.zeros((1, 40, 2), dtype=np.float32),)
+
+    fake = types.ModuleType("onnxruntime")
+    fake.InferenceSession = _WrapperFallbackSession  # type: ignore[attr-defined]
+    monkeypatch.setitem(sys.modules, "onnxruntime", fake)
+    junk = tmp_path / "weights.onnx"
+    junk.write_bytes(b"junk")
+    monkeypatch.setattr(
+        "infrastructure.providers.detection_sfx.sha256_file",
+        lambda _: SFX_WEIGHTS_SHA256,
+    )
+    monkeypatch.delenv("NEWMANGA_SFX_EP", raising=False)  # default dml
+    provider = SfxDetectionProvider(weights_path=junk)
+    result = provider.detect(_request())
+    # Exactly ONE construction: the wrapper handled the fallback internally.
+    assert calls["providers"] == [["DmlExecutionProvider"]]
+    options = dict(result.options)
+    assert options["sfx_ep"] == "dml"
+    assert options["device"] == "cpu"
+    assert "dml" in options["sfx_ep_fallback"]
+    assert "CPUExecutionProvider" in options["sfx_ep_fallback"]
+    assert result.candidates == ()
