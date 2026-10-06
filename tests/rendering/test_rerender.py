@@ -422,6 +422,35 @@ class TestRerenderPage:
         )
         assert revision.revision_no == 1
 
+    def test_undecodable_input_reports_missing_required_input(
+        self, stack, clean_png
+    ) -> None:
+        """RC4-08: a compositor ValueError means unusable input bytes
+        (undecodable image / dimension mismatch) -- blocked as
+        MISSING_REQUIRED_INPUT, not the write-failure code; the previous
+        translated revision stays current."""
+        ids = seed_page(stack)
+        commit_artifact(stack, ids, ArtifactType.CLEAN, clean_png)
+        make_region(stack["service"]._region_repo, ids["page_id"])
+        first = stack["service"].rerender_page(ids["page_id"])
+        assert first.status is RenderStatus.COMMITTED
+
+        class CorruptInputCompositor:
+            def compose_page(self, base_png, ops):
+                raise ValueError("base and restore image dimensions differ")
+
+            def compose_region(self, *args):
+                raise ValueError("base and restore image dimensions differ")
+
+        stack["service"]._compositor = CorruptInputCompositor()
+        second = stack["service"].rerender_page(ids["page_id"])
+        assert second.status is RenderStatus.BLOCKED
+        assert second.error_code == "MISSING_REQUIRED_INPUT"
+        _, revision = stack["locator"].locate_current(
+            ids["page_id"], ArtifactType.TRANSLATED
+        )
+        assert revision.revision_no == 1
+
     def test_render_never_touches_ai_ports(self, stack, clean_png) -> None:
         """AC-RENDER-001: rerender must not invoke OCR/Translation/Inpaint.
 
@@ -530,6 +559,32 @@ class TestRerenderRegion:
             ids["page_id"], ArtifactType.TRANSLATED
         )
         assert revision.revision_no == 1  # old current kept
+
+    def test_region_undecodable_input_reports_missing_required_input(
+        self, stack, clean_png
+    ) -> None:
+        """RC4-08: the region-level composition path applies the same
+        input-vs-write split -- compositor ValueError lands on
+        MISSING_REQUIRED_INPUT."""
+        ids = seed_page(stack)
+        commit_artifact(stack, ids, ArtifactType.CLEAN, clean_png)
+        make_region(
+            stack["service"]._region_repo, ids["page_id"], region_id="r-bad", final="旧"
+        )
+        page = stack["service"].rerender_page(ids["page_id"])
+        assert page.status is RenderStatus.COMMITTED
+
+        class CorruptInputCompositor:
+            def compose_page(self, base_png, ops):
+                raise AssertionError("compose_page must not be reached")
+
+            def compose_region(self, *args):
+                raise ValueError("base and restore image dimensions differ")
+
+        stack["service"]._compositor = CorruptInputCompositor()
+        outcome = stack["service"].rerender_region("r-bad")
+        assert outcome.status is RenderStatus.BLOCKED
+        assert outcome.error_code == "MISSING_REQUIRED_INPUT"
 
     def test_missing_final_translation_is_blocked(self, stack, clean_png) -> None:
         ids = seed_page(stack)

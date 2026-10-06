@@ -29,6 +29,26 @@ Core 域命令面实现固定在两个 commit（分支 `codex/rc4-domain-command
 | `input-error-probe.log`：clean 文件缺失时 `rerender_page` 抛裸 `FileNotFoundError`（typed_outcome_returned=False） | 真实缺口：managed 读取异常未包装 typed outcome | `service.py` 将 clean/original/translated managed 读取包进 `MISSING_REQUIRED_INPUT`（BLOCKED、零写），非法 `skip_reason` 值同样 fail-closed | 修复 |
 | `layout-probe.log` / `pillow-probe.log`：Pillow 布局/合成行为探针（fits/竖排/描边/对齐/邻区不覆盖） | 行为观察，非缺陷 | 新 `tests/rendering/test_pillow_rendering.py` 把探针行为固化为断言（换行/竖排/fit 不满足/描边红像素/NMFR 通道序与截断 fail-closed） | 固化 |
 
+## DSH r1（对 58b3706d + 6f3544a2）返修处置
+
+DSH r1 结论 `approved_with_conditions`（0×P0/P1；3 blocking + 5 非阻塞 + 5 nit，报告原文见 DSH 会话 `session-dcdc49b4-05af-4df6-8411-4bce348ee2ef` 导出）。本轮返修 head 见 git log（`r1 fix` 轮）；逐项处置：
+
+| 项 | 级别 | 处置 | 结论 |
+|---|---|---|---|
+| RC4-01 list/restore 零 wire 测试 | blocking | 新 `tests/core/test_rc4_revision_commands.py`（真实 SQLite）：RevisionSummary DTO 10 字段/升序/is_current 唯一、TARGET_NOT_FOUND、restore 成功全语义（origin=restored、restored_from_revision_id、pin 保留、文字/锁回退）、过期 expected 零写 `INPUT_REVISION_CHANGED`、正整数校验（bool/float/str/缺参）、unknown revision（expected 守卫先行防 TOCTOU）、双连接 barrier 竞态恰一应用。7 passed | 闭合 |
+| RC4-02 attempt-2→3 翻转未解释 | 非阻塞 | 两侧闭合：(a) diff 口径写明——`git diff 37110749..58b3706d -- src/` 仅 `src/application/rendering/service.py`（+38/−16），全部落在 managed 读取 typed 化、reports 白名单化、skip-SFX 原图 bbox 恢复，不触碰 Pillow 画字路径；attempt-2 的 RGBA 域断言与 attempt-3 的 RGB 域断言差异来自测试文件自身演进（`test_rc4_stdio_render_preview.py` 在 58b3706d 才入库），非实现翻转。(b) speech 区墨水显式断言：`test_rc4_stdio_render_preview.py` 新增墨水像素计数 ≥400（实测 1389），原"与纯背景不同"弱断言保留 | 闭合 |
+| RC4-03 Gate 日志未绑定 5954bb4b | blocking | 集成方在组合新 head 全量复跑 Gate 并绑定该 head（见下节"接收方式"后置项） | 后置于集成 |
+| RC4-04 7 vs 1 skip 口径 | 非阻塞 | 7 skipped=PowerShell 驱动下无 openssl 的 6 个 TLS skip + 1 个其它；Git Bash 下 focused 1 skipped。Gate 复跑日志附 skip 名称清单逐一对账 | 后置于 Gate 复跑 |
+| RC4-05 gen/schemas 越 allowed_paths | blocking | 4 个 schema JSON 为 build.rs 生成器对三命令权限条目的实质再生，随交付必要产物；按 REGION-RETYPE P3-2 先例提请集成方追认登记 | 待追认 |
+| RC4-06 撤销失败分支无证据 | 非阻塞 | `core_bridge.rs` Mock 加 `fail_revoke_for` 注入口；`main.rs` 新增 `rerender_fails_closed_when_previous_revoke_fails`（preview=Null、`PREVIEW_UNAVAILABLE`、current 保留、next grant REF_REVOKED、旧 grant 仍可 resolve） | 闭合 |
+| RC4-07 卸载窗口 object URL 泄漏 | 非阻塞 | React worktree：卸载 cleanup 递增 `imageRequestRef`/`operationRef`，卸载后在途 image/preview 闭包的 isCurrent 判定必失败（详见 React 返修 Handoff） | 闭合 |
+| RC4-08 "必要输入不可用"两种 wire 码 | 非阻塞 | `service.py` 两处 compose 异常拆分：`ValueError`（解码失败/尺寸不一致/box 越界＝输入不可用，契约 §11）→ BLOCKED `MISSING_REQUIRED_INPUT`；`OSError`（磁盘/IO）→ `ARTIFACT_WRITE_FAILED` 保持不变。补 page 级+region 级两条测试钉住拆分；既有 OSError 用例语义不变 | 闭合 |
+| RC4-09 陈旧注释/命名 | nit | Core 侧四处：`test_ping_carries_protocol_minor_3`→`_minor_4`、`test_protocol_minor_bumped_to_three_...`→`_to_four_with_rc4_surface`、`main.rs` "ten live commands"→"twelve production + three M2-AC1"、`build.rs` "five production commands"→"twelve production commands"（3 resource-channel + 2 IPC1 + 2 settings + 2 retype + 3 RC-4）；本 Handoff cargo 行 "ignored=既有 GATE 场景" 措辞改为 digest 性能探针。React 侧 ViewerPanel 头注释由 React worktree 同轮修正 | 闭合 |
+| RC4-10 MISSING_REQUIRED_INPUT category | nit | deferred：契约未冻结 category，UI 按 code 消费；建议下一轮契约修订澄清类别映射 | 登记不修 |
+| RC4-11 rotate 无等值短路 | nit | `rotate_render_preview` 加等值短路（revoke-previous-first 仅跨不同 catalog key）+ `preview_rotation_short_circuits_equal_catalog_key` 测试 | 闭合 |
+| RC4-12 derived 预览无 GC | nit | deferred：契约未要求 GC；登记 derived 预览回收为后续 Task 候选 | 登记不修 |
+| RC4-13 冻结码判别力弱化 | 非阻塞 | React worktree：新增"Core 返回非冻结码 → UI 仍显示 PREVIEW_UNAVAILABLE 且不回显 Core 值"用例（详见 React 返修 Handoff） | 闭合 |
+
 ## 验证证据
 
 环境：Git Bash on Windows；Python `G:/CODEX/New Manga.task-envs/T1.1.1-impl-py312/Scripts/python.exe`（3.12.3）；PowerShell 用于 sidecar 构建。全部 raw 日志位于 `verification/M2-RC4-DOMAIN-COMMANDS/raw/`（本轮及中断前 attempt 均入库）。
@@ -37,9 +57,19 @@ Core 域命令面实现固定在两个 commit（分支 `codex/rc4-domain-command
 |---|---|---|---|
 | focused 四目录（Core/SQLite、editing、render、resource channel） | `python -m pytest tests/core tests/editing tests/rendering tests/m2_resource_channel -q` | **399 passed，EXIT=0** | `core-focused-resume-3.log`（前序：resume-2 398+1 failed 定位最后遗漏场景） |
 | 全量回归 | `python -m pytest tests -q` | **1852 passed / 1 skipped / 1 failed**，唯一失败=既有 `test_catalog` 122≠97 基线失败（main@300b4007 同口径），等量递增 +11 | `core-full-resume-1.log` |
-| Rust bridge/ACL + real sidecar | `cargo test -- --test-threads=1` | **51 passed / 1 ignored，EXIT=0**（ignored=既有 GATE 场景） | `core-cargo-resume-4.log`（resume-2 编译错两处已修：测试 `Arc<SequencedRerenderLibrary>` 需 Box 装、`MockCoreChannel.issue` 需先 `register`；resume-3 1 failed 同因） |
+| Rust bridge/ACL + real sidecar | `cargo test -- --test-threads=1` | **51 passed / 1 ignored，EXIT=0**（ignored=`perf_chunk_request_digest_cost`，M2-FIX-RESOURCE-CHANNEL-DIGEST-PERF 的 digest 性能探针，`#[ignore]` 仅显式测量，非 GATE 场景） | `core-cargo-resume-4.log`（resume-2 编译错两处已修：测试 `Arc<SequencedRerenderLibrary>` 需 Box 装、`MockCoreChannel.issue` 需先 `register`；resume-3 1 failed 同因） |
 | sidecar bundle | `powershell -File packaging/m2ac5/build_sidecar.ps1` | **EXIT=0**，闭包断言通过（onnxruntime+DirectML.dll）、manga/SFX 权重 sha256 校验捆绑；bundle 绑定 HEAD=37110749（dirty 树构建：`service.py` 未提交修改已包含，`core_service.py`/桥无未提交修改，sidecar typed 错误路径不受影响——已如实登记） | `core-sidecar-build-1.log` |
 | 真实 stdio + preview 通道 | `python -m pytest tests/core/test_rc4_stdio_render_preview.py -q` | **1 passed**（真实生产装配、NMFR rgb32 帧、Managed Copy 无 ORIGINAL row 形态、skip SFX、真实 `ResourceCatalogStore`/`host_bridge` 预览读取） | `core-stdio-preview-attempt-3.log` + focused resume-3 |
+
+DSH r1 返修轮（同环境；raw 日志 `core-*-r1fix-1.log`）：
+
+| 检查 | 命令 | 结果 | 证据 |
+|---|---|---|---|
+| focused 四目录（含新增 9 测试） | `python -m pytest tests/core tests/editing tests/rendering tests/m2_resource_channel -q` | **408 passed，EXIT=0** | `core-focused-r1fix-1.log` |
+| RC4 wire + stdio（含墨水断言） | `python -m pytest tests/core/test_rc4_stdio_render_preview.py tests/core/test_rc4_revision_commands.py -q` | **8 passed，EXIT=0** | `core-stdio-r1fix-1.log` |
+| Rust bridge/ACL + real sidecar | `cargo test -- --test-threads=1` | **53 passed / 1 ignored，EXIT=0**（含 RC4-06/11 两个新测试） | `core-cargo-r1fix-1.log` |
+
+React worktree 同轮验证（`RC4-react-consumer`，详见 React 返修 Handoff）：vitest **118 passed（11 files）** + `npm run build` OK，raw 日志 `react-vitest-r1fix-1.log` / `react-build-r1fix-1.log`。
 
 `git diff --check 0fba6079..58b3706d` 由集成方 Gate 复跑（本 Handoff 提交后补跑留痕）。ACL 生成物：`gen/schemas/*.json` 4 文件为三命令权限条目的实质再生（build.rs 生成器输出，随 58b3706d 入库）；16 个既有 toml 的 cargo 触碰仅为行尾差异，已 checkout 恢复零 diff。
 

@@ -345,7 +345,12 @@ fn rotate_render_preview(
         .map(str::to_owned);
 
     if let Some(previous_id) = previous.as_deref() {
-        if channel.revoke_resource(previous_id).is_err() {
+        // RC4-11: revoke-previous-first rotates across distinct catalog
+        // keys. If the new preview re-uses the previous key, revoking it
+        // first would silently invalidate the preview we are about to
+        // serve -- the equal-key case skips the revoke.
+        let same_key = next.as_deref() == Some(previous_id);
+        if !same_key && channel.revoke_resource(previous_id).is_err() {
             if let Some(next_id) = next.as_deref() {
                 let _ = channel.revoke_resource(next_id);
             }
@@ -890,8 +895,9 @@ mod tests {
     /// `__app-acl__` application manifest (an inlined-plugin declaration is
     /// keyed `plugin:<name>|<cmd>` and never matches bare invocations -- the
     /// ACL layer silently skipped them, DSH R2-01). This pins the build
-    /// artifact: the app manifest declares exactly the ten live commands
-    /// (seven resource-channel + three M2-AC1 acceptance; R2-06),
+    /// artifact: the app manifest declares exactly the live commands
+    /// (twelve production -- resource-channel, IPC1, settings, retype and
+    /// RC-4 -- plus three M2-AC1 acceptance; R2-06),
     /// and no plugin-shaped surface remains.
     #[test]
     fn app_acl_manifest_is_generated_and_enforced() {
@@ -1847,6 +1853,73 @@ mod tests {
         );
         assert_eq!(state.channel.resolve(&old_ref.opaque_id).unwrap_err().code, "REF_REVOKED");
         assert_eq!(state.channel.resolve(&first_ref.opaque_id).unwrap_err().code, "REF_REVOKED");
+    }
+
+    #[test]
+    fn rerender_fails_closed_when_previous_revoke_fails() {
+        let core = MockCoreChannel::new();
+        core.register("render-0", "derived/render-0.png").unwrap();
+        core.register("render-1", "derived/render-1.png").unwrap();
+        let old_ref = core.issue("render-0", "rev-0").unwrap();
+        let next_ref = core.issue("render-1", "rev-1").unwrap();
+        core.fail_revoke_for
+            .lock()
+            .unwrap()
+            .replace("render-0".to_string());
+
+        let mut current = HashMap::from([("page".to_string(), "render-0".to_string())]);
+        let result = serde_json::json!({
+            "page_id": "page",
+            "artifact_id": "artifact",
+            "revision_no": 2,
+            "reports": [],
+            "preview": {"resource_id": "render-1", "revision": "rev-1"},
+            "preview_error": null,
+        });
+
+        let out = rotate_render_preview(&core, "page", result, &mut current).unwrap();
+
+        // Contract §3: a failed revoke keeps the committed artifact but
+        // fail-closes the new preview, keeps the old key retryable, and
+        // rolls back the just-issued new grant.
+        assert_eq!(out["preview"], serde_json::Value::Null);
+        assert_eq!(out["preview_error"], serde_json::json!("PREVIEW_UNAVAILABLE"));
+        assert_eq!(current.get("page"), Some(&"render-0".to_string()));
+        assert_eq!(core.resolve(&old_ref.opaque_id).unwrap().resource_id, "render-0");
+        assert_eq!(
+            core.resolve(&next_ref.opaque_id).unwrap_err().code,
+            "REF_REVOKED"
+        );
+    }
+
+    #[test]
+    fn preview_rotation_short_circuits_equal_catalog_key() {
+        let core = MockCoreChannel::new();
+        core.register("render-0", "derived/render-0.png").unwrap();
+        let old_ref = core.issue("render-0", "rev-0").unwrap();
+        core.fail_revoke_for
+            .lock()
+            .unwrap()
+            .replace("render-0".to_string());
+
+        let mut current = HashMap::from([("page".to_string(), "render-0".to_string())]);
+        let result = serde_json::json!({
+            "page_id": "page",
+            "artifact_id": "artifact",
+            "revision_no": 2,
+            "reports": [],
+            "preview": {"resource_id": "render-0", "revision": "rev-1"},
+            "preview_error": null,
+        });
+
+        let out = rotate_render_preview(&core, "page", result, &mut current).unwrap();
+
+        // RC4-11: an equal-key rotation must not revoke the key it is about
+        // to serve -- even a failing revoke stays unreached and the preview
+        // stays intact.
+        assert_eq!(out["preview_error"], serde_json::Value::Null);
+        assert_eq!(current.get("page"), Some(&"render-0".to_string()));
+        assert!(core.resolve(&old_ref.opaque_id).is_ok());
     }
 
     // ---- M2-AC5: packaged-mode resolution (fail-closed spawn) -------------

@@ -315,6 +315,10 @@ pub(crate) fn build_issue_params(
 pub struct MockCoreChannel {
     pub catalog: Mutex<HashMap<String, String>>,
     pub table: Mutex<HashMap<String, MockEntry>>,
+    /// RC-4: inject a `revoke_resource` failure for one resource id so tests
+    /// can exercise the fail-closed preview-rotation branch without a real
+    /// Core round trip.
+    pub fail_revoke_for: Mutex<Option<String>>,
 }
 
 pub struct MockEntry {
@@ -330,6 +334,7 @@ impl MockCoreChannel {
         Self {
             catalog: Mutex::new(HashMap::new()),
             table: Mutex::new(HashMap::new()),
+            fail_revoke_for: Mutex::new(None),
         }
     }
 
@@ -431,6 +436,15 @@ impl CoreChannel for MockCoreChannel {
     }
 
     fn revoke_resource(&self, resource_id: &str) -> Result<u32, CoreError> {
+        if self
+            .fail_revoke_for
+            .lock()
+            .unwrap()
+            .as_deref()
+            .is_some_and(|failed| failed == resource_id)
+        {
+            return Err(CoreError::new("REVOKE_FAILED"));
+        }
         let mut table = self.table.lock().unwrap();
         let mut count = 0;
         for entry in table.values_mut() {

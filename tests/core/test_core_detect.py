@@ -601,10 +601,11 @@ def test_detect_non_png_jpeg_format_rejected_fail_closed(tmp_path: Path) -> None
 # ---------------------------------------------------------------------------
 
 
-def test_ping_carries_protocol_minor_3(tmp_path: Path) -> None:
+def test_ping_carries_protocol_minor_4(tmp_path: Path) -> None:
     # M2-SETTINGS-IPC-CHANNEL: the envelope minor moves with each command
     # surface widening (core.detect -> 1, settings pair -> 2);
-    # M2-REGION-RETYPE-CORE: the retype pair -> 3
+    # M2-REGION-RETYPE-CORE: the retype pair -> 3;
+    # M2-RC4-DOMAIN-COMMANDS: the three domain commands -> 4
     server, core = _make_server(tmp_path)
     try:
         res, should_exit = _dispatch(server, "p-1", {}, command="core.ping")

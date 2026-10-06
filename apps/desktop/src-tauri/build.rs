@@ -34,11 +34,11 @@ fn main() {
     // match bare command invocations, so the ACL layer silently skipped
     // them). With `__app-acl__` present, Tauri enforces the capability for
     // every bare command: `capabilities/m2rc1-commands.json` grants exactly
-    // the nineteen commands below to the main window (five production
-    // commands — three resource-channel + two IPC1 — plus the two
-    // M2-SETTINGS-IPC-CHANNEL settings commands, the two M2-REGION-RETYPE-
-    // CORE region-retype commands, the four probe commands and the three
-    // M2-AC1 acceptance commands plus three RC-4 production commands), and any other command name
+    // the nineteen commands below to the main window (twelve production
+    // commands — three resource-channel + two IPC1 + the two
+    // M2-SETTINGS-IPC-CHANNEL settings commands + the two M2-REGION-RETYPE-
+    // CORE region-retype commands + three RC-4 production commands — plus
+    // the four probe commands and the three M2-AC1 acceptance commands), and any other command name
     // (e.g. the deleted `register_catalog`) is refused by the ACL before the invoke
     // handler is consulted. The settings_* pair (M2-SETTINGS-IPC-CHANNEL,
     // contract rev 1.3 §5.3) and the region-retype pair (M2-REGION-RETYPE-
