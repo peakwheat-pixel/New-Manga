@@ -2,7 +2,7 @@
 id: M2-SFX-MISROUTE-UI-IMPL-1
 title: "SFX 误路由缓解 UI 产品实现：E1-E4 视觉+不对称状态机+改标交互（设计契约 M2-SFX-MISROUTE-UI-MITIGATION 的实现切片）"
 kind: feature
-status: in_progress
+status: in_review
 owner: ZCode
 reviewer: DeepSeek Harness（非作者，技术主审）；Qoder（非作者 UI/UX 复审，派发通道可用时补审）
 integrator: 编排会话代行 Codex（用户全权授权）
@@ -43,3 +43,36 @@ created: 2026-10-06
 - 禁改：设计契约 §4.1 状态机语义（FROZEN）、`src/ui/qml/**`、GATE runner 场景集、`doc/STATUS.md`/`doc/REBASELINE_PLAN.md`（集成方收口面）、M2-WORKBENCH-REACT-1 已交付的页壳读取面行为（在其之上叠加）。
 - **范围边界**：Reader 页级提示条（§3.3）——Reader React 页不存在，本 Task 不实现、不虚构；RC-4/RC-5 不在范围；detect/翻译链行为零变更（本 Task 纯 UI 层+可能的 RC-1 数据面）。
 - Owner 分工注记：同 M2-WORKBENCH-REACT-1（ZCode 实现、Qoder 非 author UI/UX 复审可选）。
+
+
+## 交付回填（2026-10-06，Owner=编排接管[配额耗尽后同身份续做]，status→in_review）
+
+### AC 逐条判定
+
+- **AC1 改标交互全套（不对称状态机 FROZEN §4.1）——PARTIAL（undo 执行面登记缺失，语义面全合规）**：正向 speech→sfx 即时执行（R2，planRetypeAction→execute，无确认框）✓；反向 sfx→speech 显式确认框（R3/A5，`RelabelConfirmDialog`，文案含「重新进入对白翻译链，可能产生新的译文」+「改标只修改标注，不改动原图文件」固定安全文案，st-fail 边）✓；失败即原态（R6：零乐观变更+typed 错误块 `relabel-feedback`/`retypeError` 显式呈现无自动重试；守卫②取消=仅关框零回滚）+expected_revision 并发保护（region.revision_no 作 expected）✓；**undo=禁用态+原因 title**（`UNDO_DISABLED_TITLE`：Core 无 restore 命令 runtime [PROTOCOL_MINOR=3 无此命令]，A6 红线禁止以反向改标模拟撤销——禁用是唯一合规呈现，通道属后续命令面 Task [RC-4 域]）→ 状态机四分支中 undo 转换为登记性禁用，判 PARTIAL 如实登记。
+- **AC2 E1-E4 视觉——PASS**：E1 警示外圈（warn 2px 实线，基框外 2px 间距，选中内圈 accent+警示外圈 warn 两层并存）+E2 warn pill（♪? 疑似拟声词）+E3 sfx pill（♪ SFX·保留原文/手动处理模式/拟声词翻译链 三档查找表）+E4 反馈条（ViewerPanel 画布底部居中 36px，结果文案=policy 快照分档+[撤销][重渲染本页] 双禁用态+title 原因）——全部落 RegionOverlay SVG/ViewerPanel/RegionInspector；三重编码 A8（字形+颜色+文本齐备，vitest 断言）。**RC-1 裁定=不含（裁量理由）**：设计 R1 原文「警示置位本身不写 region revision（是 UI 辅助信号不是领域变更）」「初始唯一置位来源是人工」→ suspect 实现为**纯前端 UI 内存态**（`WorkbenchPage.suspects: Set<regionId>`，零 Core 调用零持久化），RC-1 契约修订仅在需要持久化/heuristic 来源/跨端共享时才必要（设计 OPEN-2 边界原文）；E1 不渲染不虚构约束满足（A2：置位不依赖 OCR/候选——planRetypeAction/derivePhase 签名根本不接受 OCR/候选输入）。Reader 页级提示条未实现（合同范围边界：Reader React 页不存在）。
+- **AC3 Design-to-impl 保真——PASS（偏差 9 条全登记，见下）**：§7 断言 UI 可测面落 vitest：A2（planRetypeAction 无 suspect 外部输入参数=构造性满足）、A3（suspect toggle 零 Core 调用）、A5（plan confirm 分支钉测）、A8（badge glyph+文本 SSR 断言）、A9（E3/E4 全部为 Core 快照查找表，零决策逻辑）、A12（canRetype 禁用+原因逐类型钉测）。
+- **AC4 测试与回归——PASS**：vitest 77→**102 passed**（+25：relabelMachine 20+overlay mitigation 5）EXIT=0（先红后绿：`vitest-machine-red.log` 模块不存在首轮红→`vitest-machine-green.log` 16/16 绿，时间戳有序）；`npm run build` EXIT=0（485ms）；pytest 1847 passed+1 skipped+1 failed（test_catalog 既有 BASELINE_FAILURE）=基线等量（跑 env=T1.1.1-impl-py312 venv；前端零 Python 触碰）。
+- **AC5 文档——PASS**：本回填+Handoff+设计文档尾注（原文不回改）。
+
+### Design-to-impl 偏差登记（设计 FROZEN，偏差=登记非静默改动）
+
+1. **SFX_ARB 态不可达**：状态机拓扑含 SFX_ARB（机器改标），但 RegionListSummary 六字段不含 label 前缀（`sfx-arb-`），读取面无法区分仲裁改标 sfx 与检测直产 sfx→`derivePhase` 不返回 SFX_ARB、E3 的 ⧉ 机器笔字形不渲染（A7 的可区分性在当前读取面不可实现，属 RC-4 域缺口；机器笔追溯不经 UI 丢失——Core revision 历史仍全量保存）。
+2. **undo 禁用**（AC1 已述）：restore 命令 runtime 缺位；E4 反馈条与 Inspector 均呈现禁用态+原因。
+3. **重渲染按钮禁用**：`rerender_single` run 通道 runtime 未实现（契约 §5.1 PROPOSAL 层，设计 §5 D10「已承载（设计层）」）。
+4. **revision 历史入口禁用**：`ListRegionRevisions` 命令名有但 DTO 未定义（设计 §5 D7/RC-4）。
+5. **RC-1=不含**（AC2 已述裁量）：suspect=纯 UI 态；OPEN-2 持久化需求出现时另行释放字段 Task。
+6. **Reader 页级提示条不实现**（合同范围边界+设计 §3.3 数据面 RC-5 缺口）。
+7. **undo 窗口 10s 定时器未做**（EV-4）：undo 通道本身禁用，窗口计时随 restore 命令面 Task 一并落地；E4 反馈条常驻至下一次交互（无自动消失——比设计更保守，无超时误关）。
+8. **token 真值链未落地**：颜色以 `var(--token, fallback)` CSS 自定义属性引用（fallback=设计对照参考 hex），未新建 tokens.css（真值链属 M2-UI1 后续）；E2/E3 pill 尺寸（20px/12px/8px/3px 8px）登记为组件常量（EVOLVING-3 登记义务）；**A13(a) E3 新组合首次取证 deferred**——token 实值未定，对比度取证在 token 真值链落地后执行（登记为 Visual-baseline Task 义务）。
+9. **EV-5 全局不一致提示行未做**：E3/E4 只读 region 自身快照（A9 优先级规则满足），「与全局设置不一致」辅助解释行 deferred（EVOLVING-5，需要 settings_get 全局值接入，非本断言范围）。
+
+### 既有断言更新（前置 Task 测试 1 处）
+
+- `WorkbenchPage.test.tsx`「keeps the retype entries RESERVED and disabled (IMPL-1 owns enablement)」→ 本 Task 即 IMPL-1，预留禁用控制已被真实双入口取代；断言更新为「reserved 控制不复存在+未选中 region 时不渲染入口」（更新理由=前置断言的本 Task 交付前提成立，沿 WORKBENCH-REACT-1 按 1.5 口径更新 2 处断言先例）。
+
+### 证据与 commit
+
+- raw：`verification/M2-SFX-MISROUTE-UI-IMPL-1/raw/{npm-install,vitest-machine-red,vitest-machine-green,vitest-impl,vitest-impl2,vitest-verify,npm-build,pytest-full}.log`
+- Handoff：`doc/handoffs/M2-SFX-MISROUTE-UI-IMPL-1-zcode-20261006.md`
+- 设计尾注：`doc/design/M2-SFX-MISROUTE-UI-MITIGATION/design.md` 文尾实现状态注记（原文零回改）

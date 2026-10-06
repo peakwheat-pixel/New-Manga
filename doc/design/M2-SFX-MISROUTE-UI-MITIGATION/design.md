@@ -338,3 +338,6 @@ stateDiagram-v2
 
 
 > **2026-10-04 集成注记（EV-8 转 CLOSED）**：EV-8（改标后 policy 快照语义）已由 M2-REGION-RETYPE-CONTRACT 裁决：「按改标时全局配置重快照」（sfx 方向）/非 sfx 强制 skip（leak 不变量），落 M2-C1 rev 1.4 §5.4。本设计 §4.2 联动表 translate 行前置条件（「仅当 RC-2 裁决为改标重快照」）就此满足，UI 两侧兼容设计经集成核对零返工。本注记由集成方添加（Task 合同分工：设计稿不回改原文，集成注记追加于文尾）。
+
+
+> **2026-10-06 实现状态注记（M2-SFX-MISROUTE-UI-IMPL-1，集成前 in_review）**：本设计的产品实现已交付——§4.1 状态机 UI 决策面=纯函数 `relabelMachine.ts`（planRetypeAction/canRetype/derivePhase，vitest 钉测）；§3.2 E1-E4 落 RegionOverlay SVG/ViewerPanel/RegionInspector；双入口+反向确认框落地。RC-1 裁定=不含（§4.1 R1 原文口径：suspect=纯 UI 内存态，置位不写 revision，初始唯一来源人工；持久化需求出现时按 OPEN-2 另行释放字段 Task）。偏差 9 条登记于 Task 交付回填节（核心三条：undo/rerender/revision-历史动作按钮=禁用态+原因——对应 Core 命令面 runtime 缺位，A6 红线禁止反向改标模拟撤销；SFX_ARB 态不可达=读取面无 label 前缀字段属 RC-4 域）。本文原文零回改（沿 EV-8 集成注记先例，注记追加于文尾）。
