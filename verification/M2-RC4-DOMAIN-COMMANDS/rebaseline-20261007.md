@@ -11,3 +11,7 @@
 真实 RC-4 缺口：restore_revision 无 IPC，且应用层未传期望 current ID；history DTO/runtime 缺位；rerender_page 服务已存在，但 core_service 的 font/layout/compositor=object()，生产重渲染不可用；Tauri 三新命令未注册；Viewer undo/rerender 与 Inspector history 硬禁用，undo 窗口计时缺失。冻结方案见 doc/contracts/M2-RC4_DOMAIN_COMMANDS.md。
 
 运行期权责恢复：Codex Lead/Integrator，不再沿 STATUS 历史 quota exhausted 委托；可用 Executor 实施（ZCode CLI/connector 未发现），DeepSeek 非作者 Review。没有覆盖或清理任何历史 worktree/用户数据。
+
+## 重启后实际基线
+
+2026-10-07，main@3dc16a9d，PowerShell / T1.1.1-impl-py312：tests/core + tests/editing + tests/rendering + tests/m2_resource_channel **394 passed，EXIT=0**；raw=integration/baseline-focused-after-reboot.log。前端基线 main@915daf61 **105 passed，TEST_EXIT=0，BUILD_EXIT=0**；raw=integration/baseline-frontend.log。全量pytest被系统重启中断，无EXIT；只保留INTERRUPTED，不记PASS。

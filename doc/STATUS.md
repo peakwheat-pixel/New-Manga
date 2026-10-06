@@ -8,7 +8,7 @@ Planning source of truth: [Project Rebaseline Plan](REBASELINE_PLAN.md)
 
 ## 2026-10-07 重启恢复 checkpoint
 
-用户报告系统自动黑屏重启；实测 main@915daf61，任务分支@0fba6079（claim），工作树干净、尚无产品修改；原 Executor 不再存在。已完成基线 frontend 105 passed/build EXIT=0；pytest 全量日志只有 header、无 EXIT，记 INTERRUPTED/NOT_RUN，不视为通过。从 claim 续做，不重新打开 A/B/C。
+用户报告系统自动黑屏重启；实测 main@915daf61，任务分支@0fba6079（claim），工作树干净、尚无产品修改；原 Executor 不再存在。Codex 已在两个独立 linked worktree 分派 Core/Rust 与 React 消费端实施，写集合互不重叠；串行组合与 Gate 仍由 Codex 负责。已完成基线 frontend 105 passed/build EXIT=0；pytest 全量日志只有 header、无 EXIT，记 INTERRUPTED/NOT_RUN，不视为通过。从 claim 续做，不重新打开 A/B/C。
 
 ## 2026-10-07 已确认业务裁决
 
