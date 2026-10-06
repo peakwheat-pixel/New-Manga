@@ -2,7 +2,8 @@
 id: M2-SFX-MISROUTE-UI-IMPL-1
 title: "SFX 误路由缓解 UI 产品实现：E1-E4 视觉+不对称状态机+改标交互（设计契约 M2-SFX-MISROUTE-UI-MITIGATION 的实现切片）"
 kind: feature
-status: in_review
+status: done
+integration: merge b355757c（收口见 STATUS；DSH r2 approved_with_conditions 条件全闭后集成）
 owner: ZCode
 reviewer: DeepSeek Harness（非作者，技术主审）；Qoder（非作者 UI/UX 复审，派发通道可用时补审）
 integrator: 编排会话代行 Codex（用户全权授权）
@@ -11,7 +12,8 @@ depends_on: [M2-SFX-MISROUTE-UI-MITIGATION, M2-WORKBENCH-REACT-1]
 base_commit: ecbfe9cb
 branch: agent/zcode/M2-SFX-MISROUTE-UI-IMPL-1
 worktree: G:/CODEX/New Manga.worktrees/M2-SFX-MISROUTE-UI-IMPL-1-zcode
-review_events: [r1 2026-10-06 DSH 非作者 changes_requested（1×P1+5×P2+6×P3+6×P4；A1-A13 逐条判定+RC-1 裁定核验成立；返修见 r1 返修段）]
+review_events: [r1 2026-10-06 DSH 非作者 changes_requested（1×P1+5×P2+6×P3+6×P4；A1-A13 逐条判定+RC-1 裁定核验成立；返修见 r1 返修段；报告=doc/reviews/M2-SFX-MISROUTE-UI-IMPL-1-e70356e5-dsh-r1.md）,
+ r2 2026-10-06 DSH 非作者 approved_with_conditions（代码面零缺陷、P1-1/P2-1..3 真实闭合+无回归；条件=文档/物证级 N-1/N-2/N-3/N-4/N-6→r2fix 全闭；报告=doc/reviews/M2-SFX-MISROUTE-UI-IMPL-1-3474affa-dsh-r2.md）]
 created: 2026-10-06
 ---
 
@@ -98,3 +100,10 @@ created: 2026-10-06
 - **N-6（r2，闭合）**：用户可见口径统一——`UNDO_DISABLED_TITLE` 改「应用层已有 restore_revision，缺 IPC 命令面（待命令面 Task）」；Inspector 注记「撤销/历史」分称（撤销=restore 命令面；历史=ListRegionRevisions 命令面）。
 - **P4-4（表述精确化）**：「Core 无 restore」→「Core **应用层已有** `RegionEditingService.restore_revision`（editing/service.py:694-716），缺的是 IPC/Tauri 命令面（PROTOCOL_MINOR=3 未暴露）」——undo 禁用理由表述随此精确化（结论不变）。
 - r1fix 复跑：vitest **105**（102+3）EXIT=0、build EXIT=0（431ms）；pytest 免重跑（零 Python 触碰）。
+
+### r2 定点复审与收口（DSH 非作者 2026-10-06：approved_with_conditions，报告=doc/reviews/M2-SFX-MISROUTE-UI-IMPL-1-3474affa-dsh-r2.md）
+
+- r2 核验：P1-1/P2-1/2/3 真实闭合（代码+测试）；P3-3/4/5/6 与 P4-2..6 闭合；A1/A5/A8/A9/A12 无回归；105 逐文件复算成立；isError 传播链 11 处全链自洽；r1fix 未越界。
+- 条件（全文档/物证级）→r2fix commit `9f605e08` 全闭：条件 1=diff 面 raw 重生成覆盖 ecbfe9cb..3474affa（含 WorkbenchToolbar+补列 r1fix raw）+Task 表述改实际范围；条件 2=AC4 判 **PARTIAL**+实现口径注（零 DOM 环境：失败接线静态可读+变体 SSR，交互接线无 DOM 测试）+A3 移出「落 vitest」表述；登记补齐=偏差清单扩 **11 条**（OTHER_TYPE+A13(b)）+P4-1 补登+N-6 用户可见口径分称（restore IPC 命令面 vs ListRegionRevisions 命令面）+设计尾注同步。
+- 集成 Gate：工作区干净；diff 面=10 前端文件+3 文档+verification raw（`git diff --check` EXIT=0；零 Python src/**/src-tauri/qml/GATE 触碰）；r2fix 复跑 vitest 105 EXIT=0+build EXIT=0。
+- Owner 附注：本 Task Owner=编排接管（Owner 子 agent 派发 59s 配额耗尽，沿「配额耗尽编排接管正路」由编排会话同身份续做）——非作者 Review 约束不受影响（DSH 两轮均为真非作者静态审查）。
