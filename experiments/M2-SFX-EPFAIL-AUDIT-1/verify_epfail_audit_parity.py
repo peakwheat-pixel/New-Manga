@@ -41,6 +41,10 @@ PROD_PIN_SHA = (
     "944e811410933ad6ff8d32446fcc9eef90fb463794e1874ce83035e83acd418d"
 )
 
+# 跨 worktree 依赖（r1 P4-7）：基准行读自主 checkout 的
+# `G:/CODEX/New Manga/verification/M2-SFX-GPU-EP-1/raw/gpu-ep-parity-perf.json`
+# （GPU-EP-1 的主仓证据，非本 worktree 树内文件）；文件缺失时
+# baseline_row=None → 结论不变判定为 False（依赖是硬前提，不静默降级）。
 GPU_EP1_BASELINE_JSON = Path(
     r"G:/CODEX/New Manga/verification/M2-SFX-GPU-EP-1/raw/gpu-ep-parity-perf.json"
 )
@@ -233,6 +237,12 @@ def main() -> int:
         baseline_row = next(
             r for r in base["ko_pages"] if r["sample_id"] == SAMPLE_ID
         )
+    # 结论不变的两层口径（r1 P4-8），不混写：
+    # - 脚本门（自动判定）= 同量级：漂移落在基准量级邻域
+    #   （dconf≤1e-05 / dxyxy≤0.001px）+ gate_flips=0 + matched set equal；
+    # - 人工对表 = 逐数字一致：本跑数字与基准行逐项对照（1e-06/0.0001px/0）
+    #   由阅读本 JSON 的人完成，脚本不做逐数字断言（浮点重跑的合法波动
+    #   不应造成假红）。
     same_shape = (
         baseline_row is not None
         and row["n_pred_cpu"] == row["n_pred_gpu"]

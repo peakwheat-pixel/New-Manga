@@ -171,28 +171,38 @@ def main() -> int:
         flush=True,
     )
 
-    # ---- 1% 硬门对照 ----
+    # ---- 1% 硬门对照（r1 P2-1 口径修正 + P4-6 口径注明）----
+    # 口径 = 单次原语 get_providers() 调用 vs 硬门预算：1% 预算 =
+    # 基准页时延的 1%（1.106 s × 1% = 11,060 μs），不是整页的微秒数。
+    # 两个占比并列登记：增量/整页（页占比）与增量/1% 预算（预算占比）。
     worst_us = max(cpu_timing["per_call_us"], dml_timing["per_call_us"])
-    per_page_budget_us = min(GPU_EP1_KO_DML_PER_PAGE_S) * 1e6  # 1% of 1.106 s
+    page_us = min(GPU_EP1_KO_DML_PER_PAGE_S) * 1e6  # 整页 1,106,000 μs
+    one_percent_budget_us = page_us * 0.01  # = 11,060 μs（r1 P2-1：1% 预算）
     results["one_percent_budget_check"] = {
+        "unit_note": (
+            "口径=单次原语 get_providers() 调用（P4-6）；1% 预算=基准页时延"
+            "的 1%（1.106 s × 1% = 11,060 μs），r1 P2-1 前版误用整页微秒数"
+        ),
         "gpu_ep1_ko_dml_per_page_s": GPU_EP1_KO_DML_PER_PAGE_S,
-        "one_percent_budget_us": round(per_page_budget_us, 1),
+        "one_percent_budget_us": round(one_percent_budget_us, 1),
         "worst_measured_per_call_us": worst_us,
         "worst_call_share_of_budget_pct": round(
-            worst_us / per_page_budget_us * 100, 6
+            worst_us / one_percent_budget_us * 100, 8
         ),
-        "worst_call_share_of_page_pct": round(
-            worst_us / (min(GPU_EP1_KO_DML_PER_PAGE_S) * 1e6) * 100, 8
-        ),
+        "worst_call_share_of_page_pct": round(worst_us / page_us * 100, 8),
         "verdict": (
             "PASS: 稳态每页一次 get_providers() 读回的时延增量低于 1% 硬门"
-            if worst_us < per_page_budget_us
+            if worst_us < one_percent_budget_us
             else "FAIL"
         ),
     }
     print(
         f"[epfail-audit] 1% budget: {results['one_percent_budget_check']['verdict']} "
-        f"({worst_us} us vs {per_page_budget_us:.0f} us budget)",
+        f"({worst_us} us vs {one_percent_budget_us:.0f} us budget "
+        f"= {results['one_percent_budget_check']['worst_call_share_of_budget_pct']}% "
+        f"of budget / "
+        f"{results['one_percent_budget_check']['worst_call_share_of_page_pct']}% "
+        f"of page)",
         flush=True,
     )
 
