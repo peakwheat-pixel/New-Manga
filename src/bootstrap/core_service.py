@@ -143,7 +143,12 @@ PROTOCOL_MAJOR = 1
 # optional fields, so this is compatible widening without a minor bump; the
 # module's bump annotations all correspond to "commands added", which this
 # revision deliberately has none of.
-PROTOCOL_MINOR = 4
+# M2-RC4-DOMAIN-COMMANDS: 3 -> 4 (three domain commands list_region_revisions
+# / restore_region_revision / rerender_page added).
+# M2-PAGE-RESOURCE-RESOLVE-1: 4 -> 5 (minor bump, resolve_page_resource
+# command added; same backwards-compatible widening precedent -- pre-existing
+# command semantics unchanged. Contract: M2-C1 rev 1.7 §5).
+PROTOCOL_MINOR = 5
 
 # Typed error codes per Contract 1.1 §3, §8
 E_PROTOCOL_VERSION_UNSUPPORTED = "PROTOCOL_VERSION_UNSUPPORTED"
@@ -167,6 +172,19 @@ E_INVALID_REQUEST = "INVALID_REQUEST"
 # internal guard states and never ride the wire.
 E_INPUT_REVISION_CHANGED = "INPUT_REVISION_CHANGED"
 E_TARGET_NOT_FOUND = "TARGET_NOT_FOUND"
+# M2-PAGE-RESOURCE-RESOLVE-1: dedicated not_found literal for the page
+# display image face. TARGET_NOT_FOUND stays the region-face row; this
+# command resolves a PAGE's managed original, and its contract row (M2-C1
+# rev 1.7 §5) needs to distinguish "page/its original is not available"
+# from the region not-found family without overloading the message text.
+E_PAGE_NOT_FOUND = "PAGE_NOT_FOUND"
+
+#: M2-PAGE-RESOURCE-RESOLVE-1: managed originals are published byte-for-byte
+#: (no transcode) into ``pages/`` under the derived root; the rel-path suffix
+#: comes from the Managed Copy ref, which the import face controls, but the
+#: publish gate stays fail-closed against unexpected formats rather than
+#: trusting that invariant implicitly.
+_ORIGINAL_SUFFIXES = frozenset({".png", ".jpg", ".jpeg", ".webp", ".bmp", ".gif"})
 
 #: M2-SETTINGS-IPC-CHANNEL: the legal ``settings["sfx"]["policy"]`` values
 #: (contract rev 1.3 §5.3 write-side validation, first instance). The
@@ -906,6 +924,46 @@ class CoreServiceServer:
             "preview_error": preview_error,
         }
 
+    def handle_resolve_page_resource(self, payload: dict[str, Any]) -> dict[str, Any]:
+        """M2-PAGE-RESOURCE-RESOLVE-1: page_id -> servable resource catalog key.
+
+        The managed original is immutable, so the resource key is
+        deterministic (``page-original-{page_id}``): the first resolve
+        publishes the file byte-for-byte into the derived read-only root
+        (same channel the RC-4 preview publisher uses) and every later
+        resolve is a catalog lookup returning the same key -- idempotent,
+        no duplicate derived artifacts.
+        """
+        page_id = payload.get("page_id")
+        if not isinstance(page_id, str) or not page_id:
+            raise RegionRequestError(
+                "resolve_page_resource requires 'page_id': a non-empty string"
+            )
+        if self._render_previews is None:
+            raise RuntimeError("resource catalog is not configured")
+        page = self._core.repository.get_page(page_id)
+        if page is None or not page.managed_original_ref:
+            raise RegionLookupError(page_id)
+        # Same seam as the assembly-time read_original_page closure: the
+        # managed original is resolved at use time, must stay inside the
+        # Managed Copy root, and no path or new business identity rides
+        # the wire (only the opaque catalog key).
+        managed_root = self._core.storage.root.resolve()
+        source = Path(self._core.storage.absolute_path(page.managed_original_ref)).resolve()
+        try:
+            source.relative_to(managed_root)
+        except ValueError as error:
+            raise RuntimeError("managed original escaped the Managed Copy root") from error
+        suffix = source.suffix.lower()
+        if suffix not in _ORIGINAL_SUFFIXES:
+            raise RuntimeError(f"unsupported managed original format: {suffix!r}")
+        if not source.is_file():
+            raise RegionLookupError(page_id)
+        resource_id = f"page-original-{page.page_id}"
+        if self._render_previews.lookup(resource_id) is None:
+            return self._render_previews.publish_original(source, resource_id, suffix)
+        return {"resource_id": resource_id, "revision": "original"}
+
     @staticmethod
     def _is_positive_integer(value: Any) -> bool:
         return isinstance(value, int) and not isinstance(value, bool) and value > 0
@@ -1348,6 +1406,91 @@ class CoreServiceServer:
                             code=E_UNKNOWN,
                             category="internal",
                             message="page rerender failed",
+                            retryable=False,
+                        ),
+                    },
+                    False,
+                )
+            return (
+                {
+                    "protocol": PROTOCOL_NAME,
+                    "version": {"major": PROTOCOL_MAJOR, "minor": PROTOCOL_MINOR},
+                    "request_id": request_id,
+                    "result": result,
+                    "error": None,
+                },
+                False,
+            )
+
+        # M2-PAGE-RESOURCE-RESOLVE-1: page -> servable resource key. Read
+        # face of the display image; publishes the immutable managed original
+        # into the derived read-only root under a deterministic catalog key.
+        if command == "resolve_page_resource":
+            try:
+                result = self.handle_resolve_page_resource(payload)
+            except RegionRequestError as error:
+                return (
+                    {
+                        "protocol": PROTOCOL_NAME,
+                        "version": {"major": PROTOCOL_MAJOR, "minor": PROTOCOL_MINOR},
+                        "request_id": request_id,
+                        "result": None,
+                        "error": make_error_envelope(
+                            code=E_INVALID_REQUEST,
+                            category="validation",
+                            message=str(error),
+                            retryable=False,
+                        ),
+                    },
+                    False,
+                )
+            except RegionLookupError:
+                return (
+                    {
+                        "protocol": PROTOCOL_NAME,
+                        "version": {"major": PROTOCOL_MAJOR, "minor": PROTOCOL_MINOR},
+                        "request_id": request_id,
+                        "result": None,
+                        "error": make_error_envelope(
+                            code=E_PAGE_NOT_FOUND,
+                            category="not_found",
+                            message="page or its managed original is not available",
+                            retryable=False,
+                        ),
+                    },
+                    False,
+                )
+            except OSError as error:
+                print(
+                    f"[core.resolve_page_resource] publish failed: {error!r}",
+                    file=sys.stderr,
+                )
+                return (
+                    {
+                        "protocol": PROTOCOL_NAME,
+                        "version": {"major": PROTOCOL_MAJOR, "minor": PROTOCOL_MINOR},
+                        "request_id": request_id,
+                        "result": None,
+                        "error": make_error_envelope(
+                            code="ARTIFACT_WRITE_FAILED",
+                            category="internal",
+                            message="page resource could not be published",
+                            retryable=True,
+                        ),
+                    },
+                    False,
+                )
+            except Exception:
+                return (
+                    {
+                        "protocol": PROTOCOL_NAME,
+                        "version": {"major": PROTOCOL_MAJOR, "minor": PROTOCOL_MINOR},
+                        "request_id": request_id,
+                        "result": None,
+                        "error": make_error_envelope(
+                            code=E_UNKNOWN,
+                            category="internal",
+                            message="page resource resolve failed",
                             retryable=False,
                         ),
                     },
