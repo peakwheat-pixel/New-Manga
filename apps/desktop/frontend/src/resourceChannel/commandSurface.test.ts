@@ -9,10 +9,12 @@ import { ResourceChannelClient } from "./client";
  *
  * - production surface = issue_resource_url / revoke_ref / revoke_resource_refs
  *   ONLY (issue has no TTL parameter shape); the M2-IPC1 production-only
- *   pair (core_ping / library_list_books) and the M2-SETTINGS-IPC-CHANNEL
+ *   pair (core_ping / library_list_books), the M2-SETTINGS-IPC-CHANNEL
  *   settings pair (settings_get / settings_update_section, contract M2-C1
- *   rev 1.3 §5.3) ride the same production arm and are likewise absent from
- *   every test-mode surface;
+ *   rev 1.3 §5.3) and the M2-REGION-RETYPE-CORE region pair (set_region_type
+ *   / list_regions, contract rev 1.4 §5.4 — pin 补录 deferred to this Task,
+ *   now landed by M2-WORKBENCH-REACT-1) ride the same production arm and are
+ *   likewise absent from every test-mode surface;
  * - probe_config / probe_write_results / probe_exit / probe_issue_url exist
  *   only in probe mode;
  * - register_catalog exists in NO mode (catalog is Core/SQLite authority);
@@ -29,6 +31,12 @@ const AC1_TEST_COMMANDS = ["ac1_request", "ac1_write_results", "ac1_exit"];
 // M2-SETTINGS-IPC-CHANNEL: the settings read/write pair is production-only
 // (main.rs SETTINGS_PRODUCTION_ONLY_COMMANDS; option-B precedent of M2-IPC1).
 const SETTINGS_PRODUCTION_ONLY_COMMANDS = ["settings_get", "settings_update_section"];
+// M2-WORKBENCH-REACT-1 (AC3 deferral closure): the region retype/read pair is
+// production-only like the settings pair — the Rust suite pins the same two
+// wire names inside PRODUCTION_COMMANDS (main.rs production_surface test,
+// exactly nine commands). Rev 1.5 widened the list_regions READ result
+// additively with NO new command, so this pair stays exactly two names.
+const REGION_PRODUCTION_ONLY_COMMANDS = ["set_region_type", "list_regions"];
 
 type Mode = "production" | "probe";
 
@@ -37,12 +45,15 @@ function makeSurfaceInvoke(mode: Mode) {
   const invoke = vi.fn(async (command: string, args?: Record<string, unknown>) => {
     // production arm = the three resource-channel commands + the M2-IPC1
     // pair (core_ping / library_list_books) + the M2-SETTINGS-IPC-CHANNEL
-    // settings pair (settings_get / settings_update_section); the probe arm
-    // keeps the frozen RC2 shape (settings pair absent, four probe commands
-    // added) — mirroring main.rs command_allowlist.
+    // settings pair (settings_get / settings_update_section) + the
+    // M2-REGION-RETYPE-CORE region pair (set_region_type / list_regions);
+    // the probe arm keeps the frozen RC2 shape (settings/region pairs
+    // absent, four probe commands added) — mirroring main.rs
+    // command_allowlist.
     const available = [
       ...PRODUCTION_COMMANDS,
       ...(mode === "production" ? SETTINGS_PRODUCTION_ONLY_COMMANDS : []),
+      ...(mode === "production" ? REGION_PRODUCTION_ONLY_COMMANDS : []),
       ...(mode === "probe" ? PROBE_ONLY_COMMANDS : []),
     ];
     if (!available.includes(command)) {
@@ -59,6 +70,26 @@ function makeSurfaceInvoke(mode: Mode) {
     }
     if (command === "settings_update_section") {
       return { settings: {} };
+    }
+    if (command === "list_regions") {
+      // contract M2-C1 §5.4 (rev 1.5 read widening): the wrapper carries the
+      // optional page_size projection beside the summaries
+      return {
+        regions: [
+          {
+            region_id: "region-1",
+            region_type: "sfx",
+            sfx_policy: "translate",
+            origin: "user",
+            revision_no: 3,
+          },
+        ],
+        page_size: { width: 100, height: 50 },
+      };
+    }
+    if (command === "set_region_type") {
+      // the post-retype effective state (§5.4 SetRegionType result)
+      return { region_id: "region-1", revision_no: 4, region_type: "narration", sfx_policy: "skip" };
     }
     if (command === "issue_resource_url") {
       // host-side hardening (compile-time in Rust): an unknown key such as
@@ -132,6 +163,29 @@ describe("RC2 command surface allow/deny matrix", () => {
     ).resolves.toMatchObject({ settings: {} });
     const { invoke: probeInvoke } = makeSurfaceInvoke("probe");
     for (const command of SETTINGS_PRODUCTION_ONLY_COMMANDS) {
+      await expect(probeInvoke(command, {})).rejects.toThrow(new RegExp(command));
+    }
+  });
+
+  // M2-WORKBENCH-REACT-1 (AC3 deferral closure): the region pair rides the
+  // production arm (allow) and is absent from the frozen probe surface
+  // (deny) — the same matrix the Rust suite pins via PRODUCTION_COMMANDS
+  // (exactly nine commands; rev 1.5 added NO command, only optional result
+  // fields).
+  it("region commands are allowed on production and denied on the probe surface", async () => {
+    expect(REGION_PRODUCTION_ONLY_COMMANDS).toEqual(["set_region_type", "list_regions"]);
+    const { invoke } = makeSurfaceInvoke("production");
+    await expect(
+      invoke("list_regions", { pageId: "page-1" }),
+    ).resolves.toMatchObject({
+      regions: [{ region_id: "region-1", region_type: "sfx" }],
+      page_size: { width: 100, height: 50 },
+    });
+    await expect(
+      invoke("set_region_type", { regionId: "region-1", newRegionType: "narration" }),
+    ).resolves.toMatchObject({ region_id: "region-1", revision_no: 4 });
+    const { invoke: probeInvoke } = makeSurfaceInvoke("probe");
+    for (const command of REGION_PRODUCTION_ONLY_COMMANDS) {
       await expect(probeInvoke(command, {})).rejects.toThrow(new RegExp(command));
     }
   });

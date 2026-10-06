@@ -41,7 +41,7 @@ from bootstrap.core_service import (
     CoreServiceServer,
     assemble_production_core,
 )
-from domain.regions.entities import SfxPolicy
+from domain.regions.entities import BBox, RegionGeometry, SfxPolicy
 
 
 NOW = "2026-01-01T00:00:00.000+00:00"
@@ -314,7 +314,11 @@ def test_list_regions_returns_minimal_summaries_in_reading_order(
         "origin": "user",
         "revision_no": 2,
     }
-    # the minimal set — no geometry/text/annotation semantics
+    # the minimal set -- no text/annotation semantics. This page row is
+    # INCOMPLETE (no width/height/hash columns), so the rev 1.5 optional
+    # geometry widening does NOT ride this row either (no fabricated
+    # geometry from an incomplete page; get_page's completeness predicate
+    # hides the row).
     assert set(regions[0].keys()) == {
         "region_id", "region_type", "sfx_policy", "origin", "revision_no",
     }
@@ -323,12 +327,14 @@ def test_list_regions_returns_minimal_summaries_in_reading_order(
 def test_list_regions_empty_list_for_unknown_page_is_not_an_error(
     server, rpc
 ) -> None:
-    """Footnote a: a page with no rows — unknown page_id or no live regions —
-    reads as an empty list, NOT a typed error (no page existence check)."""
+    """Footnote a: a page with no rows -- unknown page_id or no live regions --
+    reads as an empty list, NOT a typed error (no page existence check).
+    Rev 1.5: the wrapper also carries ``page_size: null`` for an unknown
+    page (frozen-None channel, distinguishable from a zero extent)."""
     _seed_page(core=server)
     response = rpc("list_regions", {"page_id": "no-such-page"})
     assert response["error"] is None
-    assert response["result"] == {"regions": []}
+    assert response["result"] == {"regions": [], "page_size": None}
 
 
 def test_list_regions_missing_page_id_is_invalid_request(server, rpc) -> None:
@@ -337,6 +343,119 @@ def test_list_regions_missing_page_id_is_invalid_request(server, rpc) -> None:
     _assert_error(
         rpc("list_regions", {"page_id": 42}), "INVALID_REQUEST", "validation"
     )
+
+
+# ---------------------------------------------------------------------------
+# rev 1.5 (M2-WORKBENCH-REACT-1): the additive geometry/page_size widening
+# ---------------------------------------------------------------------------
+
+
+def _seed_complete_page(core, page_id: str, width: int, height: int) -> None:
+    """A COMPLETE page row (hash + managed ref + positive pixel extent) --
+    the only shape get_page returns, so the only shape the widening serves."""
+    with core.conn:
+        core.conn.execute(
+            "INSERT INTO books (book_id, title, created_at, updated_at)"
+            " VALUES ('book-c', 't', ?, ?)",
+            (NOW, NOW),
+        )
+        core.conn.execute(
+            "INSERT INTO chapters (chapter_id, book_id, title, created_at,"
+            " updated_at) VALUES ('chapter-c', 'book-c', 'c', ?, ?)",
+            (NOW, NOW),
+        )
+        core.conn.execute(
+            "INSERT INTO pages (page_id, chapter_id, sort_order, source_hash,"
+            " source_size_bytes, width, height, managed_original_ref,"
+            " created_at, updated_at)"
+            " VALUES (?, 'chapter-c', 0, 'hash-c', 1, ?, ?, 'managed/ref',"
+            " ?, ?)",
+            (page_id, width, height, NOW, NOW),
+        )
+
+
+def test_list_regions_widens_geometry_and_page_size_for_a_complete_page(
+    server, rpc
+) -> None:
+    """Rev 1.5 additive widening (D5 closure): a COMPLETE page row yields the
+    optional ``page_size`` projection plus per-row normalized ``geometry``
+    (pixel/size reverse mapping; contract Revision history 1.5). The frozen
+    five-field set is untouched -- the widening only ADDS keys."""
+    _seed_complete_page(core=server, page_id="page-c", width=100, height=50)
+    region = server.editing.create_region(
+        "page-c",
+        RegionGeometry(bbox=BBox(10, 10, 30, 20)),
+    )
+
+    response = rpc("list_regions", {"page_id": "page-c"})
+
+    assert response["error"] is None
+    result = response["result"]
+    assert result["page_size"] == {"width": 100, "height": 50}
+    (row,) = result["regions"]
+    assert row["region_id"] == region.region_id
+    # the frozen five-field set still rides the row verbatim
+    assert {
+        "region_id", "region_type", "sfx_policy", "origin", "revision_no",
+    }.issubset(set(row.keys()))
+    # normalized reverse mapping: pixel / size (10/100, 10/50, 30/100, 20/50)
+    assert row["geometry"] == {
+        "bbox": [0.1, 0.2, 0.3, 0.4],
+        "polygon": [],
+    }
+
+
+def test_list_regions_geometry_rides_the_current_region_not_a_revision(
+    server, rpc
+) -> None:
+    """A retype never changes geometry (contract §5.4: the snapshot delta is
+    region_type+sfx_policy only) -- the widened field reflects the region's
+    CURRENT geometry after a retype, unchanged."""
+    _seed_complete_page(core=server, page_id="page-c", width=200, height=100)
+    region = server.editing.create_region(
+        "page-c",
+        RegionGeometry(bbox=BBox(50, 25, 100, 50)),
+    )
+    rpc("set_region_type", {
+        "region_id": region.region_id,
+        "new_region_type": "sfx",
+    })
+
+    response = rpc("list_regions", {"page_id": "page-c"})
+
+    assert response["error"] is None
+    (row,) = response["result"]["regions"]
+    assert row["region_type"] == "sfx"
+    assert row["origin"] == "user"
+    assert row["geometry"]["bbox"] == [0.25, 0.25, 0.5, 0.5]
+
+
+def test_list_regions_with_hidden_page_keeps_rows_but_no_geometry(
+    server, rpc
+) -> None:
+    """A soft-deleted page row is hidden by get_page (AC-IMPORT semantics),
+    while the region rows stay addressable (list_regions never checks page
+    existence, footnote a). Rev 1.5 keeps that honesty: ``page_size`` reads
+    null and NO geometry is fabricated -- but the five-field summaries ride
+    verbatim."""
+    _seed_complete_page(core=server, page_id="page-gone", width=100, height=50)
+    region = server.editing.create_region(
+        "page-gone", RegionGeometry(bbox=BBox(0, 0, 10, 10))
+    )
+    with server.conn:
+        server.conn.execute(
+            "UPDATE pages SET deleted_at = ? WHERE page_id = 'page-gone'",
+            (NOW,),
+        )
+
+    response = rpc("list_regions", {"page_id": "page-gone"})
+
+    assert response["error"] is None
+    result = response["result"]
+    assert result["page_size"] is None
+    (row,) = result["regions"]
+    assert row["region_id"] == region.region_id
+    assert "geometry" not in row
 
 
 # ---------------------------------------------------------------------------
