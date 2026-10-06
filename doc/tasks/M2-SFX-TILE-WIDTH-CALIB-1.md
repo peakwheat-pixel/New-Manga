@@ -2,7 +2,8 @@
 id: M2-SFX-TILE-WIDTH-CALIB-1
 title: "SFX tile 路由宽≠600/690 逐宽校准：多宽页 directional 评测与阈值维持/修订提案"
 kind: feature
-status: in_review
+status: done
+integration: merge 14b5ec03（2026-10-06，集成 Gate：零 src 断言空 diff[src/tests/packaging/contracts/apps/STATUS/PLAN]+py_compile OK+worktree clean；DSH r1 approved_with_conditions 0×P0/P1，P2-1/P2-2 docs-only 集成闭合 ea6fbc2c+采纳 P3 修正，报告 doc/reviews/M2-SFX-TILE-WIDTH-CALIB-1-c01ef086-dsh-r1.md；评测数字零变化）
 owner_claim: ZCode 2026-10-04 @worktree M2-SFX-TILE-WIDTH-CALIB-1-zcode（base=d298ecd0=释放登记 tip；授权=user 2026-10-04 批准进行2 非阻塞候选③；默认零 src、AC3 三选一硬门=诚实）
 owner: ZCode
 reviewer: DeepSeek Harness（非作者）
