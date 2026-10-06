@@ -43,6 +43,23 @@ status: delivered_awaiting_review
 
 仍未运行：Core/SQLite、真实 Rust/stdio、preview grant 生命周期或跨层集成验证；当前 FakeCore/JSDOM 用例只证明 React 发起了 opaque URL chunk read、接收并挂载了非空 fixture bytes，不替代真实 Core 或 WebView 验收。没有新增依赖，未修改 Task/STATUS/PLAN、合同、Core/Rust 或其他 Agent 文件。
 
+## DSH r1 返修（RC4-07/09/13，本轮）
+
+DSH r1（`approved_with_conditions`，0×P0/P1）对 React 子面遗留三项，本轮在 `6f3544a2` 之上返修：
+
+| 项 | 级别 | 处置 | 结论 |
+|---|---|---|---|
+| RC4-07 卸载窗口 object URL 泄漏（P3） | 非阻塞 | `WorkbenchPage.tsx` 卸载 cleanup（undo timer effect）追加 `imageRequestRef.current += 1` 与 `operationRef.current += 1`：卸载后在途手工读/预览闭包的 isCurrent 判定必失败，迟到 resolve 不再 `replaceImageUrl` 一个已无人能 revoke 的 URL。未新增 JSDOM 用例——jsdom 无真实 blob 生命周期，泄漏断言只能 mock `URL` 计数自证，判别力为零；修复行为由代码与注释直接钉住 | 闭合 |
+| RC4-09 ViewerPanel 过期注释（P4） | nit | 头注释两段重写：删除 "Core has no restore/rerender runtime command yet (PROTOCOL_MINOR=3)…render disabled"（RC-4 已解禁三入口），更正 "resource catalog entries are only seeded by the acceptance bridge"（RC-4 preview 由 Core 真实 catalogize，初始页视图仍无资源条目） | 闭合 |
+| RC4-13 冻结码判别力弱化（P4） | 非阻塞 | `WorkbenchPage.test.tsx` 新增用例：fake Core 返回 `preview_error: "CORE_INTERNAL_PREVIEW_CODE"`，断言 UI 反馈仍显示冻结 `PREVIEW_UNAVAILABLE` 且不回显 Core 原值、rerender 入口保持可用——区分"UI 硬编码冻结码"与"回显 Core" | 闭合 |
+
+返修轮验证（同环境 Git Bash + Node `v24.15.0`）：
+
+| 检查 | 命令 | 结果 | 证据 |
+|---|---|---|---|
+| 全量前端测试 | `npx vitest run` | PASS，11 files / 118 tests（+1 RC4-13 用例），EXIT=0 | `react-vitest-r1fix-1.log` |
+| TypeScript + production build | `npm run build` | PASS，EXIT=0 | `react-build-r1fix-1.log` |
+
 ## 接收方式
 
 ```powershell

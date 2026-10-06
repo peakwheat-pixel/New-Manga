@@ -719,4 +719,31 @@ describe("RC-4 Workbench actual DOM actions", () => {
       await ui.unmount();
     }
   });
+
+  it("displays the frozen preview code even when Core reports a different one", async () => {
+    // RC4-13: the UI fail-closes on the frozen PREVIEW_UNAVAILABLE literal;
+    // it must not echo an arbitrary Core-side preview_error back to the user.
+    const { invoke } = makeInteractiveInvoke({
+      rerender: () => ({
+        page_id: "page-1",
+        artifact_id: "artifact-1",
+        revision_no: 8,
+        reports: [],
+        preview: null,
+        preview_error: "CORE_INTERNAL_PREVIEW_CODE",
+      }),
+    });
+    const ui = await mountInteractiveWorkbench(invoke);
+    try {
+      await ui.input("page-id-input", "page-1");
+      await ui.click("region-frame-region-1");
+      await ui.click("inspector-mark-sfx");
+      await ui.click("feedback-rerender");
+      expect(ui.container.textContent).toContain("渲染已提交（revision 8），但预览不可用：PREVIEW_UNAVAILABLE");
+      expect(ui.container.textContent).not.toContain("CORE_INTERNAL_PREVIEW_CODE");
+      expect(ui.container.querySelector('[data-testid="feedback-rerender"]')).not.toBeNull();
+    } finally {
+      await ui.unmount();
+    }
+  });
 });
