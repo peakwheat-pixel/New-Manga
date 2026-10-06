@@ -8,6 +8,8 @@ Planning source of truth: [Project Rebaseline Plan](REBASELINE_PLAN.md)
 
 ## 2026-10-07 重启恢复 checkpoint
 
+恢复后推进记录：Core/Rust checkpoint=`37110749`，React 实现=`a27b3443`、Handoff=`4dd8fa27`；已在 `codex/rc4-integration` / `G:/CODEX/New Manga.worktrees/RC4-integration` 串行组合，仅用于 Gate，**未合并 main**。当前 React [独立 Review](reviews/M2-RC4-DOMAIN-COMMANDS-a27b3443-react-reviewer.md) 为 changes_requested（旧图片异步响应覆盖当前预览 P1），Owner 正在返修；[DeepSeek 静态契约预检](reviews/M2-RC4-DOMAIN-COMMANDS-bb7f3dcb-dsh-preflight.md) 已由 [冻结处置](../verification/M2-RC4-DOMAIN-COMMANDS/integration/preflight-disposition.md) 澄清，仍需固定实现最终 Review。main@300b4007 全仓 baseline=`1841 passed / 7 skipped / 1 failed`，唯一失败为既有 catalog 122≠97；6 个 TLS skip 来自当前 PowerShell PATH 无 openssl，补入现有 Git openssl 后两个 TLS 文件 `11 passed / 0 skipped`。其余 skip 原因由最终全仓 `-ra` 日志补全，不推断为通过。唯一 Active Task 仍 RC-4 in_progress。
+
 用户报告系统自动黑屏重启；实测 main@915daf61，任务分支@0fba6079（claim），工作树干净、尚无产品修改；原 Executor 不再存在。Codex 已在两个独立 linked worktree 分派 Core/Rust 与 React 消费端实施，写集合互不重叠；串行组合与 Gate 仍由 Codex 负责。已完成基线 frontend 105 passed/build EXIT=0；pytest 全量日志只有 header、无 EXIT，记 INTERRUPTED/NOT_RUN，不视为通过。从 claim 续做，不重新打开 A/B/C。
 
 ## 2026-10-07 已确认业务裁决

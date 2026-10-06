@@ -1,0 +1,23 @@
+SHELL=PowerShell 7.6.6
+NODE=E:\Program Files\nodejs\node.exe (v24.15.0)
+NPM=E:\Program Files\nodejs\npm.ps1
+HEAD=a27b344320af38ea6f17caece0284ac64d4fc672
+WORKDIR=G:/CODEX/New Manga.worktrees/RC4-react-consumer/apps/desktop/frontend
+COMMAND=npm run build
+EXIT=0
+
+7.6.6
+E:\Program Files\nodejs\node.exe
+E:\Program Files\nodejs\npm.ps1
+a27b344320af38ea6f17caece0284ac64d4fc672
+npm notice run m2rc1-frontend@0.1.0 build
+npm notice run tsc && vite build
+vite v5.4.21 building for production...
+transforming...
+✓ 50 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                  0.28 kB │ gzip:  0.21 kB
+dist/assets/index-DegSqT-o.js  193.97 kB │ gzip: 61.91 kB
+✓ built in 488ms
+EXIT=0
