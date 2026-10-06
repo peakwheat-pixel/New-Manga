@@ -2,7 +2,7 @@
 id: M2-RC4-DOMAIN-COMMANDS
 title: 撤销、重渲染与修订历史 Core 域命令面端到端闭环
 kind: feature
-status: ready
+status: in_progress
 approval: user_2026-10-07_autonomous_rc4_and_next_priority
 suggested_owner: Codex Executor
 owner: Codex Executor
