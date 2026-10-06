@@ -535,6 +535,11 @@ def _runtime_ep_audit(
         return ()
     built_name = _EP_PROVIDER_NAMES.get(ep_prov.effective, ep_prov.effective)
     current_name = providers[0]
+    # Wheel-upgrade review face (r1 P4-3): the comparison is providers[0]
+    # ONLY; on THIS wheel (1.24.4) the wrapper's run-time fallback list is
+    # ALWAYS ["CPUExecutionProvider"] regardless of the request (wrapper
+    # :541-577), so a first-name change is exactly the wrapper's
+    # set_providers having fired. A wheel bump must re-check that invariant.
     if current_name == built_name:
         return ()
     current_token = _EP_MODE_BY_PROVIDER_NAME.get(current_name, current_name)
@@ -1391,6 +1396,28 @@ class MangaSfxParallelDetectionProvider:
                 )
         primary_elapsed = result.elapsed_ms or 0
         sfx_elapsed = sfx_result.elapsed_ms or 0
+        # M2-SFX-EPFAIL-AUDIT-1 r1 P1-1: the run-time EPFail audit key rides
+        # the composite result too — passed through CONDITIONALLY (only when
+        # the sfx face actually produced it, so a steady-state composite's
+        # options stay byte-identical to the pre-audit form) and as THE
+        # SFX-ONLY KEY: device/sfx_ep/sfx_ep_fallback are NOT passed through
+        # (``device`` collides with the primary torch face's same-named key,
+        # r1 P4-3 note; the three-key provenance keeps its engine-build write
+        # point on the sfx face only). The typed-degradation branch above
+        # carries no runtime key by construction: a failed sfx detect has no
+        # options, and the provider-list change is session state — the next
+        # successful sfx detect observes it there.
+        sfx_options = dict(sfx_result.options)
+        runtime_audit = (
+            (
+                (
+                    "sfx_ep_runtime_check",
+                    sfx_options["sfx_ep_runtime_check"],
+                ),
+            )
+            if "sfx_ep_runtime_check" in sfx_options
+            else ()
+        )
         return replace(
             result,
             candidates=primary_candidates + sfx_candidates,
@@ -1400,6 +1427,7 @@ class MangaSfxParallelDetectionProvider:
                 ("sfx_provider", sfx_result.provider_id),
                 ("sfx_candidates", str(len(sfx_candidates))),
                 ("sfx_conf_threshold", str(self.sfx.conf_threshold)),
-            ),
+            )
+            + runtime_audit,
             elapsed_ms=(primary_elapsed + sfx_elapsed) or None,
         )
