@@ -13,8 +13,10 @@ import pytest
 
 from domain.regions.entities import BBox, RegionGeometry
 from application.editing.region_canvas import (
+    PAGE_SIZE_UNAVAILABLE,
     RegionCanvasError,
     normalized_to_page_geometry,
+    page_geometry_to_normalized,
 )
 
 
@@ -151,3 +153,68 @@ def test_backward_compatibility_reexports():
     assert ui_rc.PAGE_SIZE_UNAVAILABLE is app_rc.PAGE_SIZE_UNAVAILABLE
     assert ui_rc.TOO_FEW_POINTS is app_rc.TOO_FEW_POINTS
     assert ui_rc.DEGENERATE_GEOMETRY is app_rc.DEGENERATE_GEOMETRY
+
+
+# ---------------------------------------------------------------------------
+# page_geometry_to_normalized (M2-WORKBENCH-REACT-1, contract rev 1.5):
+# the READ-face reverse mapping, owned next to the forward writer so the
+# round trip stays a single-math property, not a convention.
+# ---------------------------------------------------------------------------
+
+
+def test_reverse_mapping_round_trips_the_half_up_writer_exactly():
+    """normalized -> pixels -> normalized is the identity for every stored
+    integer pixel: floor((pixel/size)*size + 0.5) == pixel."""
+    import math
+
+    page_w, page_h = 800, 1200
+    original = normalized_to_page_geometry(
+        [(0.25, 0.1), (0.75, 0.5)], page_w, page_h
+    )
+    restored = page_geometry_to_normalized(original, page_w, page_h)
+
+    bbox = restored["bbox"]
+    ring = restored["polygon"]
+    assert len(bbox) == 4 and len(ring) == 4
+    # re-applying the forward rule to the restored normalized values yields
+    # the exact stored integers (no half-pixel drift, incl. the edges 0/size
+    # and the clamped size boundary)
+    for index, (nx, ny) in enumerate(ring):
+        px, py = original.polygon[index]
+        assert math.floor(nx * page_w + 0.5) == px
+        assert math.floor(ny * page_h + 0.5) == py
+    bx, by, bw, bh = bbox
+    assert math.floor(bx * page_w + 0.5) == original.bbox.x
+    assert math.floor(by * page_h + 0.5) == original.bbox.y
+    assert math.floor(bw * page_w + 0.5) == original.bbox.width
+    assert math.floor(bh * page_h + 0.5) == original.bbox.height
+
+
+def test_reverse_mapping_is_normalized_within_unit_square():
+    geometry = normalized_to_page_geometry(
+        [(0.0, 0.0), (1.0, 1.0)], 640, 480
+    )
+    restored = page_geometry_to_normalized(geometry, 640, 480)
+    for x, y in restored["polygon"]:
+        assert 0.0 <= x <= 1.0
+        assert 0.0 <= y <= 1.0
+    bx, by, bw, bh = restored["bbox"]
+    assert 0.0 <= bx and bw <= 1.0
+    assert 0.0 <= by and bh <= 1.0
+
+
+def test_reverse_mapping_keeps_an_empty_ring_empty():
+    geometry = RegionGeometry(bbox=BBox(10, 20, 30, 40), polygon=())
+    restored = page_geometry_to_normalized(geometry, 200, 100)
+    assert restored["polygon"] == []
+    assert restored["bbox"] == [0.05, 0.2, 0.15, 0.4]
+
+
+def test_reverse_mapping_rejects_a_nonpositive_page_extent_typed():
+    geometry = RegionGeometry(bbox=BBox(0, 0, 10, 10))
+    with pytest.raises(RegionCanvasError) as excinfo:
+        page_geometry_to_normalized(geometry, 0, 100)
+    assert excinfo.value.code == PAGE_SIZE_UNAVAILABLE
+    with pytest.raises(RegionCanvasError) as excinfo:
+        page_geometry_to_normalized(geometry, 100, -1)
+    assert excinfo.value.code == PAGE_SIZE_UNAVAILABLE

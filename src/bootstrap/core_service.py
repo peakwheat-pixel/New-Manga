@@ -71,13 +71,19 @@ Allowed production commands (M2-IPC1 + M2-PROD-DETECT-3 + M2-SETTINGS-IPC-CHANNE
     explicit optimistic guard C4) / TARGET_NOT_FOUND (not_found) / UNKNOWN
     (internal); wire codes are SCREAMING_SNAKE_CASE. Contract: M2-C1
     rev 1.4 §5.4.)
-  - list_regions: {"page_id": "<id>"} -> {"regions": RegionListSummary[]}
-    (M2-REGION-RETYPE-CORE. The minimal read DTO -- region_id /
-    region_type / sfx_policy / origin / revision_no -- in reading_order
-    ascending, the revision the current pointer targets; no geometry,
-    text or annotation semantics. A page with no rows (unknown page_id
-    included) reads as {"regions": []}, NOT an error -- the existing
-    list_regions semantics (contract rev 1.4 §5.4 footnote a). Errors:
+  - list_regions: {"page_id": "<id>"} -> {"regions": RegionListSummary[],
+    "page_size": {"width", "height"} | null}
+    (M2-REGION-RETYPE-CORE; read face widened ADDITIVELY by
+    M2-WORKBENCH-REACT-1, contract rev 1.5 -- optional per-row normalized
+    "geometry" + optional wrapper "page_size" projection, zero new commands,
+    protocol minor stays 3. The five-field minimal read DTO -- region_id /
+    region_type / sfx_policy / origin / revision_no -- rides verbatim in
+    reading_order ascending, from the revision the current pointer targets;
+    no TEXT or ANNOTATION semantics (geometry rides since rev 1.5 as the
+    display-geometry channel, the normalized reverse of the stored pixels).
+    A page with no rows (unknown page_id included) reads as
+    {"regions": [], "page_size": null}, NOT an error -- the existing
+    list_regions semantics (contract §5.4 footnote a). Errors:
     INVALID_REQUEST (payload) / UNKNOWN (internal) only.)
 """
 
@@ -117,6 +123,13 @@ PROTOCOL_MAJOR = 1
 # M2-REGION-RETYPE-CORE: 2 -> 3 (minor bump, set_region_type / list_regions
 # commands added; same backwards-compatible widening precedent -- pre-existing
 # command semantics unchanged. Contract: M2-C1 rev 1.4 §5.4).
+# M2-WORKBENCH-REACT-1: NO bump (stays 3). Contract rev 1.5 widens the
+# ListRegions read face ADDITIVELY -- an optional per-row "geometry" field and
+# an optional "page_size" on the result wrapper -- with zero new commands and
+# zero new error semantics. Per §3.2 same-major receivers ignore unknown
+# optional fields, so this is compatible widening without a minor bump; the
+# module's bump annotations all correspond to "commands added", which this
+# revision deliberately has none of.
 PROTOCOL_MINOR = 3
 
 # Typed error codes per Contract 1.1 §3, §8
@@ -703,17 +716,35 @@ class CoreServiceServer:
         }
 
     def handle_list_regions(self, payload: dict[str, Any]) -> dict[str, Any]:
-        """The RegionListSummary read channel (contract rev 1.4 §5.4):
-        ``{"regions": [...]}`` in reading_order ascending. A page with no
-        rows -- unknown page_id included -- is an EMPTY LIST, not an error
-        (footnote a: no page existence check, the existing list_regions
-        semantics)."""
+        """The RegionListSummary read channel (contract rev 1.4 §5.4, read
+        face widened additively by rev 1.5 / M2-WORKBENCH-REACT-1):
+        ``{"regions": [...], "page_size": {"width", "height"} | null}`` in
+        reading_order ascending. A page with no rows -- unknown page_id
+        included -- is an EMPTY LIST, not an error (footnote a: no page
+        existence check, the existing list_regions semantics); an unknown
+        page reads ``page_size: null`` (the frozen-None channel precedent of
+        §5.3, distinguishable from a zero extent). ``page_size`` is the
+        page's pixel-size projection the RegionOverlay letterbox math
+        consumes ("size only from the projection", M2-UI1 §2.2); the per-row
+        optional ``geometry`` is the normalized reverse mapping owned by
+        ``application/editing/region_canvas.py``. Zero protocol bump: no new
+        command, purely optional fields (rev 1.5 additive widening)."""
         page_id = payload.get("page_id")
         if not isinstance(page_id, str) or not page_id:
             raise RegionRequestError(
                 "list_regions requires 'page_id': a non-empty string"
             )
-        return {"regions": self._core.editing.list_region_summaries(page_id)}
+        page = self._core.repository.get_page(page_id)
+        page_size = (
+            {"width": page.width, "height": page.height} if page else None
+        )
+        return {
+            "regions": self._core.editing.list_region_summaries(
+                page_id,
+                page_size=(page.width, page.height) if page else None,
+            ),
+            "page_size": page_size,
+        }
 
     def dispatch_request(self, raw_line: str) -> tuple[dict[str, Any], bool]:
         """Dispatch a single raw json request line.

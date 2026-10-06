@@ -1,0 +1,217 @@
+Tue Oct  6 21:35:39     2026
+npm notice run m2rc1-frontend@0.1.0 npx
+npm notice run vitest run
+
+[1m[7m[36m RUN [39m[27m[22m [36mv2.1.9 [39m[90mG:/CODEX/New Manga.worktrees/M2-WORKBENCH-REACT-1-zcode/apps/desktop/frontend[39m
+
+ [32m✓[39m src/library/client.test.ts [2m([22m[2m4 tests[22m[2m)[22m[90m 4[2mms[22m[39m
+ [32m✓[39m src/ac1/driver.test.ts [2m([22m[2m3 tests[22m[2m)[22m[90m 2[2mms[22m[39m
+ [32m✓[39m src/resourceChannel/client.test.ts [2m([22m[2m8 tests[22m[2m)[22m[90m 7[2mms[22m[39m
+ [31m❯[39m src/region/client.test.ts [2m([22m[2m11 tests[22m[2m | [22m[31m1 failed[39m[2m)[22m[90m 7[2mms[22m[39m
+[31m   [31m×[31m RegionClient.listRegions (read face)[2m > [22mreads an older projection without the optional fields (additive widening, §3.2)[90m 3[2mms[22m[31m[39m
+[31m     → expected undefined to be null[39m
+ [32m✓[39m src/resourceChannel/commandSurface.test.ts [2m([22m[2m10 tests[22m[2m)[22m[90m 8[2mms[22m[39m
+ [32m✓[39m src/settings/client.test.ts [2m([22m[2m7 tests[22m[2m)[22m[90m 5[2mms[22m[39m
+ [31m❯[39m src/region/geometry.test.ts [2m([22m[2m8 tests[22m[2m | [22m[31m5 failed[39m[2m)[22m[90m 9[2mms[22m[39m
+[31m   [31m×[31m letterboxView (size only from the projection)[2m > [22mcenters an aspect-preserving view inside a wider container[90m 5[2mms[22m[31m[39m
+[31m     → expected { x: 111.11111111111109, y: +0, …(2) } to deeply equal { x: 200, y: +0, width: 1600, …(1) }[39m
+[31m   [31m×[31m letterboxView (size only from the projection)[2m > [22mfits by width when the container is proportionally taller[90m 1[2mms[22m[31m[39m
+[31m     → expected { x: +0, y: 225, width: 800, …(1) } to deeply equal { x: +0, y: 150, width: 800, …(1) }[39m
+[31m   [31m×[31m projectRegionBox (normalized in, viewport pixels out)[2m > [22mmaps the normalized domain onto the letterbox rect, not the container[90m 1[2mms[22m[31m[39m
+[31m     → expected { x: 555.5555555555555, y: 500, …(2) } to deeply equal { x: 600, y: 450, width: 400, …(1) }[39m
+[31m   [31m×[31m projectRegionBox (normalized in, viewport pixels out)[2m > [22mkeeps frames glued to the image at any container size (same math, new view)[90m 0[2mms[22m[31m[39m
+[31m     → expected { x: 200, y: 450, width: 200, …(1) } to deeply equal { x: 200, y: 375, width: 200, …(1) }[39m
+[31m   [31m×[31m projectRegionPolygon[2m > [22mprojects every ring point through the same view[90m 1[2mms[22m[31m[39m
+[31m     → expected [ [ 111.11111111111109, +0 ], …(3) ] to deeply equal [ [ 200, +0 ], [ 1800, +0 ], …(2) ][39m
+ [31m❯[39m src/workbench/WorkbenchPage.test.tsx [2m([22m[2m8 tests[22m[2m | [22m[31m1 failed[39m[2m)[22m[90m 13[2mms[22m[39m
+[31m   [31m×[31m <RegionOverlay> read-only SVG frames (M2-UI1 hard rules)[2m > [22mdraws the frame from normalized geometry through the single math[90m 6[2mms[22m[31m[39m
+[31m     → expected '<svg data-testid="region-overlay" wid…' to contain '20,20 60,20 60,60 20,60'[39m
+ [32m✓[39m src/library/LibraryPanel.test.tsx [2m([22m[2m8 tests[22m[2m)[22m[90m 138[2mms[22m[39m
+ [32m✓[39m src/settings/SettingsPanel.test.tsx [2m([22m[2m10 tests[22m[2m)[22m[90m 186[2mms[22m[39m
+
+[31m⎯⎯⎯⎯⎯⎯⎯[1m[7m Failed Tests 7 [27m[22m⎯⎯⎯⎯⎯⎯⎯[39m
+
+[31m[1m[7m FAIL [27m[22m[39m src/region/client.test.ts[2m > [22mRegionClient.listRegions (read face)[2m > [22mreads an older projection without the optional fields (additive widening, §3.2)
+[31m[1mAssertionError[22m: expected undefined to be null[39m
+
+[32m- Expected:[39m 
+null
+
+[31m+ Received:[39m 
+undefined
+
+[36m [2m❯[22m src/region/client.test.ts:[2m88:30[22m[39m
+    [90m 86| [39m    [35mconst[39m result [33m=[39m [35mawait[39m client[33m.[39m[34mlistRegions[39m([32m"page-old"[39m)[33m;[39m
+    [90m 87| [39m
+    [90m 88| [39m    [34mexpect[39m(result[33m.[39mpage_size)[33m.[39m[34mtoBeNull[39m()[33m;[39m
+    [90m   | [39m                             [31m^[39m
+    [90m 89| [39m    [34mexpect[39m(result[33m.[39mregions[[34m0[39m][33m.[39mgeometry)[33m.[39m[34mtoBeUndefined[39m()[33m;[39m
+    [90m 90| [39m  })[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/7]⎯[22m[39m
+
+[31m[1m[7m FAIL [27m[22m[39m src/region/geometry.test.ts[2m > [22mletterboxView (size only from the projection)[2m > [22mcenters an aspect-preserving view inside a wider container
+[31m[1mAssertionError[22m: expected { x: 111.11111111111109, y: +0, …(2) } to deeply equal { x: 200, y: +0, width: 1600, …(1) }[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[2m  Object {[22m
+[32m-   "height": 900,[39m
+[32m-   "width": 1600,[39m
+[32m-   "x": 200,[39m
+[31m+   "height": 1000,[39m
+[31m+   "width": 1777.7777777777778,[39m
+[31m+   "x": 111.11111111111109,[39m
+[2m    "y": 0,[22m
+[2m  }[22m
+
+[36m [2m❯[22m src/region/geometry.test.ts:[2m22:18[22m[39m
+    [90m 20| [39m    [90m// container 2000x1000: the 16:9 page fits by height[39m
+    [90m 21| [39m    [35mconst[39m view [33m=[39m [34mletterboxView[39m([33mPAGE_16_9[39m[33m,[39m [34m2000[39m[33m,[39m [34m1000[39m)[33m;[39m
+    [90m 22| [39m    [34mexpect[39m(view)[33m.[39m[34mtoEqual[39m({ x[33m:[39m [34m200[39m[33m,[39m y[33m:[39m [34m0[39m[33m,[39m width[33m:[39m [34m1600[39m[33m,[39m height[33m:[39m [34m900[39m })[33m;[39m
+    [90m   | [39m                 [31m^[39m
+    [90m 23| [39m  })[33m;[39m
+    [90m 24| [39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/7]⎯[22m[39m
+
+[31m[1m[7m FAIL [27m[22m[39m src/region/geometry.test.ts[2m > [22mletterboxView (size only from the projection)[2m > [22mfits by width when the container is proportionally taller
+[31m[1mAssertionError[22m: expected { x: +0, y: 225, width: 800, …(1) } to deeply equal { x: +0, y: 150, width: 800, …(1) }[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[2m  Object {[22m
+[2m    "height": 450,[22m
+[2m    "width": 800,[22m
+[2m    "x": 0,[22m
+[32m-   "y": 150,[39m
+[31m+   "y": 225,[39m
+[2m  }[22m
+
+[36m [2m❯[22m src/region/geometry.test.ts:[2m27:18[22m[39m
+    [90m 25| [39m  [34mit[39m([32m"fits by width when the container is proportionally taller"[39m[33m,[39m () [33m=[39m…
+    [90m 26| [39m    [35mconst[39m view [33m=[39m [34mletterboxView[39m([33mPAGE_16_9[39m[33m,[39m [34m800[39m[33m,[39m [34m900[39m)[33m;[39m
+    [90m 27| [39m    [34mexpect[39m(view)[33m.[39m[34mtoEqual[39m({ x[33m:[39m [34m0[39m[33m,[39m y[33m:[39m [34m150[39m[33m,[39m width[33m:[39m [34m800[39m[33m,[39m height[33m:[39m [34m450[39m })[33m;[39m
+    [90m   | [39m                 [31m^[39m
+    [90m 28| [39m  })[33m;[39m
+    [90m 29| [39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/7]⎯[22m[39m
+
+[31m[1m[7m FAIL [27m[22m[39m src/region/geometry.test.ts[2m > [22mprojectRegionBox (normalized in, viewport pixels out)[2m > [22mmaps the normalized domain onto the letterbox rect, not the container
+[31m[1mAssertionError[22m: expected { x: 555.5555555555555, y: 500, …(2) } to deeply equal { x: 600, y: 450, width: 400, …(1) }[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[2m  Object {[22m
+[32m-   "height": 225,[39m
+[32m-   "width": 400,[39m
+[32m-   "x": 600,[39m
+[32m-   "y": 450,[39m
+[31m+   "height": 250,[39m
+[31m+   "width": 444.44444444444446,[39m
+[31m+   "x": 555.5555555555555,[39m
+[31m+   "y": 500,[39m
+[2m  }[22m
+
+[36m [2m❯[22m src/region/geometry.test.ts:[2m51:46[22m[39m
+    [90m 49| [39m    [90m// view offset x=200: a normalized 0.25 x lands at 200 + 0.25*1600[39m
+    [90m 50| [39m    [35mconst[39m view [33m=[39m [34mletterboxView[39m([33mPAGE_16_9[39m[33m,[39m [34m2000[39m[33m,[39m [34m1000[39m)[33m;[39m
+    [90m 51| [39m    [34mexpect[39m([34mprojectRegionBox[39m([33mGEOMETRY[39m[33m,[39m view))[33m.[39m[34mtoEqual[39m({
+    [90m   | [39m                                             [31m^[39m
+    [90m 52| [39m      x[33m:[39m [34m600[39m[33m,[39m
+    [90m 53| [39m      y[33m:[39m [34m450[39m[33m,[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/7]⎯[22m[39m
+
+[31m[1m[7m FAIL [27m[22m[39m src/region/geometry.test.ts[2m > [22mprojectRegionBox (normalized in, viewport pixels out)[2m > [22mkeeps frames glued to the image at any container size (same math, new view)
+[31m[1mAssertionError[22m: expected { x: 200, y: 450, width: 200, …(1) } to deeply equal { x: 200, y: 375, width: 200, …(1) }[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[2m  Object {[22m
+[2m    "height": 112.5,[22m
+[2m    "width": 200,[22m
+[2m    "x": 200,[22m
+[32m-   "y": 375,[39m
+[31m+   "y": 450,[39m
+[2m  }[22m
+
+[36m [2m❯[22m src/region/geometry.test.ts:[2m63:17[22m[39m
+    [90m 61| [39m    [35mconst[39m box [33m=[39m [34mprojectRegionBox[39m([33mGEOMETRY[39m[33m,[39m narrow)[33m;[39m
+    [90m 62| [39m    [90m// normalized x 0.25 of the 800-wide image area + no x offset[39m
+    [90m 63| [39m    [34mexpect[39m(box)[33m.[39m[34mtoEqual[39m({ x[33m:[39m [34m200[39m[33m,[39m y[33m:[39m [34m375[39m[33m,[39m width[33m:[39m [34m200[39m[33m,[39m height[33m:[39m [34m112.5[39m })[33m;[39m
+    [90m   | [39m                [31m^[39m
+    [90m 64| [39m  })[33m;[39m
+    [90m 65| [39m})[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/7]⎯[22m[39m
+
+[31m[1m[7m FAIL [27m[22m[39m src/region/geometry.test.ts[2m > [22mprojectRegionPolygon[2m > [22mprojects every ring point through the same view
+[31m[1mAssertionError[22m: expected [ [ 111.11111111111109, +0 ], …(3) ] to deeply equal [ [ 200, +0 ], [ 1800, +0 ], …(2) ][39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[2m  Array [[22m
+[2m    Array [[22m
+[32m-     200,[39m
+[31m+     111.11111111111109,[39m
+[2m      0,[22m
+[2m    ],[22m
+[2m    Array [[22m
+[32m-     1800,[39m
+[31m+     1888.888888888889,[39m
+[2m      0,[22m
+[2m    ],[22m
+[2m    Array [[22m
+[32m-     1800,[39m
+[32m-     900,[39m
+[31m+     1888.888888888889,[39m
+[31m+     1000,[39m
+[2m    ],[22m
+[2m    Array [[22m
+[32m-     200,[39m
+[32m-     900,[39m
+[31m+     111.11111111111109,[39m
+[31m+     1000,[39m
+[2m    ],[22m
+[2m  ][22m
+
+[36m [2m❯[22m src/region/geometry.test.ts:[2m74:50[22m[39m
+    [90m 72| [39m    }[33m;[39m
+    [90m 73| [39m    [35mconst[39m view [33m=[39m [34mletterboxView[39m([33mPAGE_16_9[39m[33m,[39m [34m2000[39m[33m,[39m [34m1000[39m)[33m;[39m
+    [90m 74| [39m    [34mexpect[39m([34mprojectRegionPolygon[39m(geometry[33m,[39m view))[33m.[39m[34mtoEqual[39m([
+    [90m   | [39m                                                 [31m^[39m
+    [90m 75| [39m      [[34m200[39m[33m,[39m [34m0[39m][33m,[39m
+    [90m 76| [39m      [[34m1800[39m[33m,[39m [34m0[39m][33m,[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/7]⎯[22m[39m
+
+[31m[1m[7m FAIL [27m[22m[39m src/workbench/WorkbenchPage.test.tsx[2m > [22m<RegionOverlay> read-only SVG frames (M2-UI1 hard rules)[2m > [22mdraws the frame from normalized geometry through the single math
+[31m[1mAssertionError[22m: expected '<svg data-testid="region-overlay" wid…' to contain '20,20 60,20 60,60 20,60'[39m
+
+Expected: [32m"20,20 [7m6[27m0,20 [7m6[27m0,60 20,60"[39m
+Received: [31m"[7m<svg data-testid="region-overlay" width="200" height="100" style="position:absolute;inset:0;pointer-events:none" aria-hidden="true"><rect data-testid="region-frame-region-1" x="20" y="20" width="60" height="40" fill="none" stroke="var(--wb-region-selected, #d8a03c)" stroke-width="2.5"></rect><polygon data-testid="region-ring-region-1" points="[27m20,20 [7m8[27m0,20 [7m8[27m0,60 20,60[7m" fill="none" stroke="var(--wb-region-selected, #d8a03c)" stroke-width="1" stroke-dasharray="4 3"></polygon></svg>[27m"[39m
+
+[36m [2m❯[22m src/workbench/WorkbenchPage.test.tsx:[2m88:18[22m[39m
+    [90m 86| [39m    [90m// the polygon ring rides the same view (dashed detail line)[39m
+    [90m 87| [39m    [34mexpect[39m(html)[33m.[39m[34mtoContain[39m([32m'data-testid="region-ring-region-1"'[39m)[33m;[39m
+    [90m 88| [39m    [34mexpect[39m(html)[33m.[39m[34mtoContain[39m([32m"20,20 60,20 60,60 20,60"[39m)[33m;[39m
+    [90m   | [39m                 [31m^[39m
+    [90m 89| [39m  })[33m;[39m
+    [90m 90| [39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/7]⎯[22m[39m
+
+[2m Test Files [22m [1m[31m3 failed[39m[22m[2m | [22m[1m[32m7 passed[39m[22m[90m (10)[39m
+[2m      Tests [22m [1m[31m7 failed[39m[22m[2m | [22m[1m[32m70 passed[39m[22m[90m (77)[39m
+[2m   Start at [22m 21:35:41
+[2m   Duration [22m 1.28s[2m (transform 486ms, setup 0ms, collect 1.32s, tests 380ms, environment 1ms, prepare 4.43s)[22m
+
+EXIT=1
+Tue Oct  6 21:35:43     2026

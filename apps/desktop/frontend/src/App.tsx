@@ -3,6 +3,7 @@ import { runAc1OrFailClosed } from "./ac1/driver";
 import { LibraryPanel } from "./library/LibraryPanel";
 import { ResourceChannelClient, TypedChannelError } from "./resourceChannel/client";
 import { SettingsPanel } from "./settings/SettingsPanel";
+import { WorkbenchPage } from "./workbench/WorkbenchPage";
 
 type InvokeFn = (command: string, args?: Record<string, unknown>) => Promise<unknown>;
 
@@ -65,6 +66,12 @@ async function expectCommandDenied(action: () => Promise<unknown>): Promise<Scen
 export default function App() {
   const [log, setLog] = useState<string[]>([]);
   const [status, setStatus] = useState("idle");
+  // M2-WORKBENCH-REACT-1 navigation: the probe/ac1 runner windows keep the
+  // frozen chrome (navChrome=false forever there -- the deny matrix and the
+  // probe driver must see the exact pre-Task DOM); only the user-facing
+  // production window (interactive deny matrix path) gets the view toggle.
+  const [navChrome, setNavChrome] = useState(false);
+  const [view, setView] = useState<"console" | "workbench">("console");
 
   const append = useCallback((line: string) => {
     setLog((previous) => [...previous, line]);
@@ -101,6 +108,11 @@ export default function App() {
     // The matrix below keeps the page honest and observable on screen; a red
     // scenario is a visible regression, not a gate channel.
     const runInteractiveDenyMatrix = async (invoke: InvokeFn) => {
+      // M2-WORKBENCH-REACT-1: this is the ONLY path that is a user-facing
+      // production window (probe_config denied = neither probe nor ac1
+      // mode); every probe/ac1 path returns before this point and keeps
+      // navChrome=false, so runner windows see the frozen chrome.
+      setNavChrome(true);
       const record = (id: string, result: ScenarioResult) => {
         results.push({ id, ...result });
         append(`${id}  ${result.status}${result.note ? ` — ${result.note}` : ""}`);
@@ -463,15 +475,59 @@ export default function App() {
         background: "#101418",
       }}
     >
-      <h1 style={{ fontSize: 15 }}>M2-RC2 resource channel runtime</h1>
-      <div>{status}</div>
-      <div>
-        {log.map((line, index) => (
-          <div key={index}>{line}</div>
-        ))}
-      </div>
-      <LibraryPanel />
-      <SettingsPanel />
+      {navChrome && (
+        <nav data-testid="app-nav" style={{ display: "flex", gap: 6, marginBottom: 8 }}>
+          <button
+            type="button"
+            data-testid="nav-console"
+            onClick={() => setView("console")}
+            disabled={view === "console"}
+            style={{
+              background: view === "console" ? "#1c2430" : "#161b22",
+              color: "#d8e0e8",
+              border: "1px solid #2a3038",
+              borderRadius: 4,
+              padding: "3px 10px",
+              fontSize: 12,
+              cursor: "pointer",
+            }}
+          >
+            Console
+          </button>
+          <button
+            type="button"
+            data-testid="nav-workbench"
+            onClick={() => setView("workbench")}
+            disabled={view === "workbench"}
+            style={{
+              background: view === "workbench" ? "#1c2430" : "#161b22",
+              color: "#d8e0e8",
+              border: "1px solid #2a3038",
+              borderRadius: 4,
+              padding: "3px 10px",
+              fontSize: 12,
+              cursor: "pointer",
+            }}
+          >
+            Workbench
+          </button>
+        </nav>
+      )}
+      {view === "workbench" ? (
+        <WorkbenchPage />
+      ) : (
+        <>
+          <h1 style={{ fontSize: 15 }}>M2-RC2 resource channel runtime</h1>
+          <div>{status}</div>
+          <div>
+            {log.map((line, index) => (
+              <div key={index}>{line}</div>
+            ))}
+          </div>
+          <LibraryPanel />
+          <SettingsPanel />
+        </>
+      )}
     </div>
   );
 }

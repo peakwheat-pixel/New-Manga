@@ -97,3 +97,48 @@ def normalized_to_page_geometry(
         )
 
     return RegionGeometry(bbox=BBox(left, top, width, height), polygon=polygon)
+
+
+def page_geometry_to_normalized(
+    geometry: RegionGeometry, page_w: int, page_h: int
+) -> dict[str, object]:
+    """Convert stored page-pixel geometry back to normalized (0..1) shape for
+    the region READ face (M2-WORKBENCH-REACT-1, contract rev 1.5 additive
+    widening of ``RegionListSummary``).
+
+    Owns the single reverse mapping next to the forward rule above (the
+    module owns normalized<->page-pixels; only the presentation knows its
+    viewport). The inverse is defined as ``normalized := pixel / size``, which
+    round-trips the forward half-up rule exactly for every stored integer
+    pixel: ``floor((pixel/size)*size + 0.5) == pixel``. Clamping of the
+    forward writer means stored pixels are already within ``[0, size]``, so
+    the normalized output is within ``[0, 1]`` by construction -- no value
+    needs re-clamping here and none is silently dropped.
+
+    Raises the same typed ``RegionCanvasError`` (``PAGE_SIZE_UNAVAILABLE``) as
+    the forward rule for a non-positive page extent, so the read face can
+    never fabricate geometry from a corrupt page row.
+
+    Returns the contract wire shape::
+
+        {"bbox": [x, y, w, h], "polygon": [[x, y], ...]}
+
+    with every coordinate a float; an empty ring stays ``[]``.
+    """
+    if page_w <= 0 or page_h <= 0:
+        raise RegionCanvasError(
+            PAGE_SIZE_UNAVAILABLE,
+            f"page {page_w}x{page_h} has no usable pixel extent",
+        )
+    bbox = geometry.bbox
+    return {
+        "bbox": [
+            bbox.x / page_w,
+            bbox.y / page_h,
+            bbox.width / page_w,
+            bbox.height / page_h,
+        ],
+        "polygon": [
+            [x / page_w, y / page_h] for x, y in geometry.polygon
+        ],
+    }
