@@ -1,0 +1,43 @@
+npm notice run m2rc1-frontend@0.1.0 npx
+npm notice run vitest run
+
+[1m[7m[36m RUN [39m[27m[22m [36mv2.1.9 [39m[90mG:/CODEX/New Manga.worktrees/M2-SFX-MISROUTE-UI-IMPL-1-zcode/apps/desktop/frontend[39m
+
+ [32m✓[39m src/ac1/driver.test.ts [2m([22m[2m3 tests[22m[2m)[22m[90m 2[2mms[22m[39m
+ [32m✓[39m src/region/geometry.test.ts [2m([22m[2m8 tests[22m[2m)[22m[90m 3[2mms[22m[39m
+ [32m✓[39m src/workbench/relabelMachine.test.ts [2m([22m[2m16 tests[22m[2m)[22m[90m 3[2mms[22m[39m
+ [32m✓[39m src/region/client.test.ts [2m([22m[2m11 tests[22m[2m)[22m[90m 5[2mms[22m[39m
+ [32m✓[39m src/library/client.test.ts [2m([22m[2m4 tests[22m[2m)[22m[90m 4[2mms[22m[39m
+ [32m✓[39m src/resourceChannel/client.test.ts [2m([22m[2m8 tests[22m[2m)[22m[90m 6[2mms[22m[39m
+ [32m✓[39m src/resourceChannel/commandSurface.test.ts [2m([22m[2m10 tests[22m[2m)[22m[90m 8[2mms[22m[39m
+ [32m✓[39m src/settings/client.test.ts [2m([22m[2m7 tests[22m[2m)[22m[90m 5[2mms[22m[39m
+ [31m❯[39m src/workbench/WorkbenchPage.test.tsx [2m([22m[2m8 tests[22m[2m | [22m[31m1 failed[39m[2m)[22m[90m 15[2mms[22m[39m
+[31m   [31m×[31m <WorkbenchPage> five-zone skeleton (mapping-contract names)[2m > [22mkeeps the retype entries RESERVED and disabled (IMPL-1 owns enablement)[90m 6[2mms[22m[31m[39m
+[31m     → expected '<div data-testid="workbench-page" sty…' to contain 'data-testid="inspector-retype-reserve…'[39m
+ [32m✓[39m src/library/LibraryPanel.test.tsx [2m([22m[2m8 tests[22m[2m)[22m[90m 127[2mms[22m[39m
+ [32m✓[39m src/settings/SettingsPanel.test.tsx [2m([22m[2m10 tests[22m[2m)[22m[90m 169[2mms[22m[39m
+
+[31m⎯⎯⎯⎯⎯⎯⎯[1m[7m Failed Tests 1 [27m[22m⎯⎯⎯⎯⎯⎯⎯[39m
+
+[31m[1m[7m FAIL [27m[22m[39m src/workbench/WorkbenchPage.test.tsx[2m > [22m<WorkbenchPage> five-zone skeleton (mapping-contract names)[2m > [22mkeeps the retype entries RESERVED and disabled (IMPL-1 owns enablement)
+[31m[1mAssertionError[22m: expected '<div data-testid="workbench-page" sty…' to contain 'data-testid="inspector-retype-reserve…'[39m
+
+Expected: [32m"data-testid="[7minspector-retype-reserved"[27m"[39m
+Received: [31m"[7m<div [27mdata-testid="[7mworkbench-page" style="display:flex;flex-direction:column;gap:8px;margin-top:12px;padding:8px;border:1px solid #2a3038;border-radius:8px"><section data-testid="workbench-toolbar" style="display:flex;align-items:center;gap:12px;border:1px solid #2a3038;border-radius:6px;padding:6px 10px"><span data-testid="toolbar-context" style="font-size:12px;color:#d8e0e8">no context</span><span data-testid="toolbar-region-count" style="font-size:11px;color:#8a94a2">regions: <!-- -->0</span><button type="button" data-testid="toolbar-retype-reserved" disabled="" title="改标入口属 M2-SFX-MISROUTE-UI-IMPL-1（本刀预留禁用态）" style="background:#161b22;color:#5a6470;border:1px solid #2a3038;border-radius:4px;padding:3px 8px;font-size:11px;cursor:not-allowed">改标工具（预留）</button></section><div style="display:flex;gap:8px;align-items:stretch"><section data-testid="page-list-panel" style="border:1px solid #2a3038;border-radius:6px;padding:8px;min-width:200px;display:flex;flex-direction:column;gap:6px"><h2 style="font-size:12px;margin:0;color:#d8e0e8">Pages</h2><label style="font-size:11px;color:#8a94a2;display:flex;flex-direction:column;gap:2px">page_id (region read channel)<input data-testid="page-id-input" placeholder="page id…" style="background:#101418;color:#d8e0e8;border:1px solid #2a3038;border-radius:4px;padding:3px 6px;font-family:Consolas, monospace" value=""/></label><ul data-testid="book-list" style="list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:2px"><li data-testid="page-list-empty" style="color:#8a94a2;font-size:11px">no books</li></ul></section><section data-testid="viewer-panel" style="border:1px solid #2a3038;border-radius:6px;padding:8px;position:relative;display:flex;flex-direction:column;gap:6px;min-height:240px;flex:1"><h2 style="font-size:12px;margin:0;color:#d8e0e8">Viewer</h2><div data-testid="viewer-stage" style="position:relative;flex:1;background:#0b0e12;border-radius:4px;overflow:hidden;min-height:200px"><div data-testid="viewer-empty" style="color:#8a94a2;font-size:11px;display:flex;align-items:center;justify-content:center;height:100%">no page resource addressed</div><svg data-testid="region-overlay" width="0" height="0" style="position:absolute;inset:0;pointer-events:none"></svg></div></section><div style="display:flex;flex-direction:column;gap:8px"><section data-testid="region-inspector" style="border:1px solid #2a3038;border-radius:6px;padding:8px;min-width:220px;display:flex;flex-direction:column;gap:6px"><h2 style="font-size:12px;margin:0;color:#d8e0e8">Inspector</h2><p data-testid="inspector-empty" style="color:#8a94a2;font-size:11px;margin:0">no region selected</p></section><section data-testid="task-progress-panel" style="border:1px solid #2a3038;border-radius:6px;padding:8px;display:flex;flex-direction:column;gap:6px"><h2 style="font-size:12px;margin:0;color:#d8e0e8">Tasks</h2><p data-testid="task-progress-placeholder" style="color:#8a94a2;font-size:11px;margin:0">任务进度通道占位（GetTaskProjection runtime 未释放；占位不扩命令面）</p></section><section data-testid="resource-address-input" style="border:1px solid #2a3038;border-radius:6px;padding:8px;display:flex;flex-direction:column;gap:4px"><h2 style="font-size:12px;margin:0;color:#d8e0e8">Resource</h2><label style="font-size:11px;color:#8a94a2">resource id<input data-testid="resource-id-input" placeholder="resource id…" style="display:block;width:100%;background:#101418;color:#d8e0e8;border:1px solid #2a3038;border-radius:4px;padding:3px 6px;font-family:Consolas, monospace" value=""/></label><label style="font-size:11px;color:#8a94a2">revision<input data-testid="resource-revision-input" style="display:block;width:100%;background:#101418;color:#d8e0e8;border:1px solid #2a3038;border-radius:4px;padding:3px 6px;font-family:Consolas, monospace" value="current"/></label></section></div></div></div>[27m"[39m
+
+[36m [2m❯[22m src/workbench/WorkbenchPage.test.tsx:[2m55:18[22m[39m
+    [90m 53| [39m  [34mit[39m([32m"keeps the retype entries RESERVED and disabled (IMPL-1 owns enab[39m…
+    [90m 54| [39m    [35mconst[39m html [33m=[39m [34mrenderToString[39m([33m<[39m[33mWorkbenchPage[39m [33minvoke[39m[33m=[39m[33m{[39m[35masync[39m () [33m=>[39m [35mnul[39m…
+    [90m 55| [39m    [34mexpect[39m(html)[33m.[39m[34mtoContain[39m([32m'data-testid="inspector-retype-reserved"'[39m)[33m;[39m
+    [90m   | [39m                 [31m^[39m
+    [90m 56| [39m    [34mexpect[39m(html)[33m.[39m[34mtoContain[39m([32m'data-testid="toolbar-retype-reserved"'[39m)[33m;[39m
+    [90m 57| [39m    [90m// the disabled attribute renders on both reserved controls[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯[22m[39m
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[2m | [22m[1m[32m10 passed[39m[22m[90m (11)[39m
+[2m      Tests [22m [1m[31m1 failed[39m[22m[2m | [22m[1m[32m92 passed[39m[22m[90m (93)[39m
+[2m   Start at [22m 23:19:30
+[2m   Duration [22m 780ms[2m (transform 643ms, setup 0ms, collect 1.41s, tests 348ms, environment 1ms, prepare 1.66s)[22m
+
+VITEST_EXIT=1
