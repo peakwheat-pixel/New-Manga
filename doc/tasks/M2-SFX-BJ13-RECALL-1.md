@@ -2,7 +2,8 @@
 id: M2-SFX-BJ13-RECALL-1
 title: "BJ13 召回恢复链：v2b 生产链 BJ13/14/15 sfx 召回实测（探针零 src）→召回恢复则仲裁阈值域重审切片，未恢复则剩余选项登记交裁决"
 kind: feature
-status: in_review
+status: done
+integration: merge ec460508（收口见 STATUS；DSH r2 approved 0×新 P0/P1/P2）
 owner: ZCode
 reviewer: DeepSeek Harness（非作者）
 integrator: 编排会话代行 Codex（用户全权授权）
@@ -11,7 +12,8 @@ depends_on: [M2-REGION-OVERLAP-ARBITRATION, M2-SFX-GPU-EP-1]
 base_commit: 2a1a9f73
 branch: agent/zcode/M2-SFX-BJ13-RECALL-1
 worktree: G:/CODEX/New Manga.worktrees/M2-SFX-BJ13-RECALL-1-zcode
-review_events: [r1 2026-10-06 DSH 非作者 approved_with_conditions（0×P0/P1；1×P2+5×P3+7×P4；核心事实层独立重算成立；返修见执行记录 r1 返修段）]
+review_events: [r1 2026-10-06 DSH 非作者 approved_with_conditions（0×P0/P1；1×P2+5×P3+7×P4；核心事实层独立重算成立；返修见执行记录 r1 返修段；报告=doc/reviews/M2-SFX-BJ13-RECALL-1-e6b4684c-dsh-r1.md）,
+ r2 2026-10-06 DSH 非作者 approved（r1 三项条件 C1/C2/C3+顺笔 P3-1/P3-5/P4-3..7 全闭+P4-1/2 登记核验；r1fix 同形态逐位互证独立核验成立；0×新 P0/P1/P2；报告=doc/reviews/M2-SFX-BJ13-RECALL-1-04d5f621-dsh-r2.md）]
 created: 2026-10-06
 ---
 
@@ -49,7 +51,7 @@ created: 2026-10-06
 - AC2 **履行（部分恢复触发）**：BJ13 真实形态 sfx×primary **max IoU=0.0**（Slipknot sfx 检出无 primary 对手，3 manga 全不相交）——0.90 冻结域无对象，比历史合成口径 0.490/0.550 更远离；重审条件语境读法未触发（BJ13 无内含形/无 0.85+ 对），字面全域读法的 BJ06 0.8732/内含形 0.7576 均为 chiqui7 时代已观测形态（0.8865/0.870）非新事实；**提案=维持 0.90 冻结域不变**（报告 §3.3，交裁决不实施）；`sfx-arb-` 改标链路本次零触发（已登记）。
 - AC3 **登记**：三选项成本收益+推荐序 ③维持现状 → ②ai-direct 补画扩展 → ①BJ13 补标（报告 §4，交用户裁决）。
 - AC4 **零 src**：`src/**`/`tests/**` 零字节变化；冻结回归锚代码面未触碰，不跑全量 pytest 的理由登记（报告 §5）；`git diff --check` EXIT=0。
-- AC5 **PASS**：`verification/M2-SFX-BJ13-RECALL-1/recall-report.md` + `raw/recall-probe.{json,-run.log}` + 本回填 + `doc/handoffs/M2-SFX-BJ13-RECALL-1-zcode-20261006.md`。
+- AC5 **PASS**：`verification/M2-SFX-BJ13-RECALL-1/recall-report.md` + `raw/recall-probe.{json,-run.log}` + `raw/recall-probe-run-r1fix.log` + `raw/r1fix/recall-probe.json`（r1fix 重跑互证） + 本回填 + `doc/handoffs/M2-SFX-BJ13-RECALL-1-zcode-20261006.md`。
 - 新增事实登记（历史口径修正）：①chiqui7 在 BJ13 并非页面级零检出——仲裁 rerun raw `sfx-1`（conf 0.8222）即 Slipknot 印刷字检出，v2b 同位 conf 0.8914、跨权重框 IoU 0.9444（两代权重在该区——DOMAIN-EXT-DIAG 判定域外页 BJ13——判定一致的正面证据，措辞按 DSH r1 P4-3 修正）；DOMAIN-EXT-DIAG「零响应」仅在两个目检拟声词参照框口径成立。②v2b 在四页 bubble/panel/text 通道 conf≥0.01 全零（仅 sfx 类候选）——与 G7 v2b 臂形态一致，登记为 v2b 已知形态。
 - 环境：venv `G:/CODEX/New Manga.task-envs/M2-SFX-T5-TILE-gpu`（onnxruntime 1.24.4 DML，imgsz=1024 由 v2b metadata 驱动）；primary 候选复用 2026-10-03 仲裁 rerun（ogkalu 三文件 sha256 当次重验与 pin 一致，漂移即 exit 3）；DML 单形态，跨形态措辞按 ≤2e-06 漂移窗口纪律执行。
 - 遗留/裁量：判定标准 X 值、BJ15 孤立候选处置、G7 EP 形态未登记的对位口径注记、Slipknot 目检为 Owner 观测——均见 recall-report §2/§6（Known limitations 不得省略引用）。
@@ -62,7 +64,7 @@ created: 2026-10-06
 - **P3-2（闭合）**：recall-report §6 加 limitation 6：BJ06 对照 8 region 为 chiqui7 自证清单（无独立 GT，沿 DOMAIN-EXT-DIAG 已登记限制）——「域内锚定」证明的是生产链等价性而非独立召回 GT。
 - **P3-3（闭合）**：recall-report §1 补两点探针口径差异：①conf 过滤次序（probe 先 0.01 再分 rung vs 生产单次阈值；对 ≥0.5 子集数学等价，G7 逐框对位实证）；②probe 取模块常量 `SFX_CONF_THRESHOLD` 不读 `NEWMANGA_SFX_CONF_THRESHOLD` env（本 Task 未设该 env，实际一致）。
 - **P3-4（闭合）**：见上「base_commit 对账」段。
-- **P3-5（闭合）**：r1fix 重跑探针落 `verification/M2-SFX-BJ13-RECALL-1/raw/recall-probe-run-r1fix.log`（含命令行/venv/EP/EXIT 头）+ `raw/r1fix/recall-probe.json`（原 raw 零触碰）——与原 run json **全树逐位一致**（排除时间戳/耗时字段后 0 diff；四页读数 5/1/0/1、BJ06 max 0.8732、BJ13 ref1 峰值 0.3727 全部相同）。同形态 DML→DML run-to-run 确定性互证成立（同形态逐位，非跨形态声明）。
+- **P3-5（闭合）**：r1fix 重跑探针落 `verification/M2-SFX-BJ13-RECALL-1/raw/recall-probe-run-r1fix.log`（头部含 date/命令行/venv/Python/runtime/worktree，EP provenance 与 EXIT=0 在正文——N-3 措辞收窄）+ `raw/r1fix/recall-probe.json`（原 raw 零触碰）——与原 run json **全树逐位一致**（排除时间戳/耗时字段后 0 diff；四页读数 5/1/0/1、BJ06 max 0.8732、BJ13 ref1 峰值 0.3727 全部相同）。同形态 DML→DML run-to-run 确定性互证成立（同形态逐位，非跨形态声明）。
 - **P4-1（登记不改动）**：probe `relabels` 按「相交对数」vs 生产按「primary 候选数」——当前四页全 0 无影响，口径注记已在 report §3 模拟段语义中隐含；如未来出现非零改标，以生产 `detection_sfx.py:1359-1368` 口径为准。
 - **P4-2（登记不改动）**：probe 恒走 letterbox 未自证路由谓词——四页 page_w=2946>690 必为 letterbox，结论不受影响。
 - **P4-3（闭合）**：「两代权重域内一致性」→「两代权重在该区（DOMAIN-EXT-DIAG 判定域外页 BJ13）判定一致」（report §2 + 本执行记录段）。
@@ -71,3 +73,9 @@ created: 2026-10-06
 - **P4-6（闭合，随 P2-1）**：report §5 补 4.4x/42x 属 CPU（chiqui7）↔ DML（v2b）跨形态比较的显式声明（量级远超 ≤2e-06 漂移窗口，结论不受影响；跨形态仍禁写位级可复现）。
 - **P4-7（闭合）**：report §2 补登类别翻转证据：同像素 chiqui7 text 0.5195/sfx 0.0855 → v2b sfx 0.3727/text 0.0（sfx/text 排序翻转，比比值更直接支持域适应起效）。
 - 返修 commit：`fix(review)`（本文件与 report/Handoff/r1fix 证据同 commit；hash 见 git log）。Task status 保持 in_review（返修后待 DSH r2 或集成方按 r1 条件闭合清单收口）。
+
+### r2 定点复审（DSH 非作者 2026-10-06：**approved**，报告=doc/reviews/M2-SFX-BJ13-RECALL-1-04d5f621-dsh-r2.md）
+
+- r1 三项集成条件 C1（=P2-1 imgsz 1024）/C2（=P3-4 base 对账）/C3（=P3-2+P3-3 登记）与顺笔 P3-1/P3-5/P4-3/4/5/6/7 逐条 CLOSED；P4-1/P4-2 登记核验成立；措辞纪律合规（同形态逐位互证未外溢跨形态）。
+- r1fix 证据独立核验：ref/reflog 锚定 tip 04d5f621；两份 json 逐行比对仅 generated_at_utc/inference_s 两字段差；原 raw 零触碰经 mtime 序取证成立；fix 触碰面全在允许路径。
+- 集成收口顺笔：N-1（证据清单枚举补 r1fix 两文件）/N-2（log:5 指代限定）/N-3（头部措辞收窄）三文案项随收口 commit 闭合；N-4/N-5/N-6 登记不动作。post-merge main 回归=1840 passed+1 skipped+1 failed（test_catalog 既有 BASELINE_FAILURE）与 merge 前基线逐项等量（零 src 符合预期；log=raw/main-regression-postmerge.log，跑 env=T1.1.1-impl-py312 venv）。AC2 提案（维持 0.90）与 AC3 推荐序（③②①）**双分支呈报用户裁决**（r2 §5.1，不由集成方代取其一）。

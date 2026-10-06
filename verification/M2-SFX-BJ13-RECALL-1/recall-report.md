@@ -3,7 +3,7 @@
 - Task：[M2-SFX-BJ13-RECALL-1](../../doc/tasks/M2-SFX-BJ13-RECALL-1.md)（owner ZCode；reviewer DeepSeek Harness 非作者）
 - 基线：2a1a9f73（分支 `agent/zcode/M2-SFX-BJ13-RECALL-1`）
 - 探针脚本：`experiments/M2-SFX-BJ13-RECALL-1/recall_probe.py`（零 src，直接 import 生产 provider 内部件，沿 DOMAIN-EXT-DIAG L1 先例形态）
-- raw 证据：`raw/recall-probe.json`、`raw/recall-probe-run.log`（本目录）
+- raw 证据：`raw/recall-probe.json`、`raw/recall-probe-run.log`（本目录）+ `raw/recall-probe-run-r1fix.log`、`raw/r1fix/recall-probe.json`（r1fix 重跑互证，N-1）
 - 运行：2026-10-06，EXIT=0
 
 ## 0. 执行摘要
@@ -24,7 +24,7 @@
 ## 1. 环境与有效性判别
 
 - Python 环境：`G:/CODEX/New Manga.task-envs/M2-SFX-T5-TILE-gpu/Scripts/python.exe`（onnxruntime 1.24.4 + `DmlExecutionProvider`，numpy 2.5.3，PIL 12.3.0）。
-- 引擎：`ENGINE OK imgsz=1024 (metadata_parsed) ep_requested=dml ep_effective=dml ep_fallback=None`（log 第 5 行）——**真 DML，无 wrapper 回退**；imgsz=1024 由 v2b ONNX metadata 驱动，**与 chiqui7 生产基线相同（1024，三项记录一致：DOMAIN-EXT-DIAG raw `l1-fullpage-conf-scan.json:3`、`verification/M2-SFX-DETECT-EVAL/sfx-detect-eval-report.md:67`、`verification/M2-SFX-T4-SWITCH/switch-report.md:67` + `raw/rollback-drill.json:16`）——两代同 imgsz 使 §2 的 4.4x/42x 比值在 letterbox 尺寸维度上无混杂；基线为 CPU 形态（chiqui7，ORT 1.30.0）vs 本次 DML，跨形态口径见 §5/§6**。
+- 引擎：`ENGINE OK imgsz=1024 (metadata_parsed) ep_requested=dml ep_effective=dml ep_fallback=None`（`raw/recall-probe-run.log:5`——N-2 指代限定；r1fix log 同读数在 :13）——**真 DML，无 wrapper 回退**；imgsz=1024 由 v2b ONNX metadata 驱动，**与 chiqui7 生产基线相同（1024，三项记录一致：DOMAIN-EXT-DIAG raw `l1-fullpage-conf-scan.json:3`、`verification/M2-SFX-DETECT-EVAL/sfx-detect-eval-report.md:67`、`verification/M2-SFX-T4-SWITCH/switch-report.md:67` + `raw/rollback-drill.json:16`）——两代同 imgsz 使 §2 的 4.4x/42x 比值在 letterbox 尺寸维度上无混杂；基线为 CPU 形态（chiqui7，ORT 1.30.0）vs 本次 DML，跨形态口径见 §5/§6**。
 - 权重：`G:/CODEX/New Manga.task-envs/M2-SFX-DETECT/weights-v2b/yolo11s-seg.onnx`，sha256 `944e811410933ad6ff8d32446fcc9eef90fb463794e1874ce83035e83acd418d`，与 `src/infrastructure/providers/detection_sfx.py` 的 `SFX_WEIGHTS_SHA256`（T4 @cff4923e pin）逐字一致——pin 校验由 `_build_engine` 强制，权重/页图零入库。
 - 页面像素（零入库；权重在 gitignored task-envs，页图在 peer worktree `test_assets/comic_golden_suite/日漫_JA/01_black_jack_official/`——该目录由其 `.gitignore:26` 忽略，DSH r1 P4-5）：BJ06=`M2-TA2B-OPEN-ASSETS-zcode/.../vol03_p0056.png`；BJ13/14/15=`M2-SFX-E2E-MATERIAL-zcode/.../vol03_p0048/p0060/p0159.png`。
 - 耗时口径：仅 `session.run` GPU 前向（letterbox 的 CPU 开销不计入）；BJ06 0.016s（首推含 DML 预热）、BJ13/14/15 0.007-0.009s。DML 上 1024² 输入 YOLO11s-seg 前向为 10ms 量级（「每页百毫秒级」直觉是 CPU 口径）；本 run 的有效性**不依赖耗时判读**，由下条交叉验证锚定。

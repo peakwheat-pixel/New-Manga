@@ -3,7 +3,7 @@ task_id: M2-SFX-BJ13-RECALL-1
 author: ZCode
 recipient: Codex（集成）/ DeepSeek Harness（非作者 Review）
 base_commit: 2a1a9f73（release-followup：PLAN 三行回填实际 release hash 630c3f51）
-delivery_head: d95bbdfe（首轮 verify 证据锚；其后的 fix(review) r1 返修 commit 为当前证据锚——r1fix 重跑互证+全部条件闭合，hash 见 git log 分支头）
+delivery_head: 04d5f621（r1fix 返修 commit=最终证据锚；首轮 verify 证据锚 d95bbdfe；集成 merge ec460508 收口）
 status: delivered → DSH r1 approved_with_conditions（0×P0/P1；1×P2+5×P3+7×P4）→ fix(review) 返修交付，待 DSH r2 或集成收口（Task status: in_review 停写）
 ---
 
@@ -33,7 +33,7 @@ AC1-AC5 全部交付，**零 src**（`src/**`/`tests/**` 零字节变化）。�
 | AC3 三选项登记 | 报告撰写（不新发明方案） | — | **PASS**（③②①推荐序+成本收益） | recall-report §4 |
 | AC4 零 src+纪律 | `git status`（src/tests 零变化）；`git diff --check` | HEAD=`d95bbdfe` | **EXIT=0**；不跑全量 pytest 的理由=代码面零改动+冻结回归锚未触碰+只读 import（recall-report §5） | recall-report §5 |
 | AC5 文档 | 报告+raw+Task 回填+本 Handoff | — | **PASS** | `verification/M2-SFX-BJ13-RECALL-1/recall-report.md`、`doc/tasks/M2-SFX-BJ13-RECALL-1.md` 执行记录段 |
-| r1fix 重跑互证（DSH r1 P3-5） | 同一探针重跑：`"...M2-SFX-T5-TILE-gpu/Scripts/python.exe" experiments/M2-SFX-BJ13-RECALL-1/recall_probe.py --out-dir verification/M2-SFX-BJ13-RECALL-1/raw/r1fix`（log 含命令行/venv/EP/EXIT 头） | r1fix commit；同 venv/同权重 pin/同页面 | **PASS**：与原 run json **全树逐位一致**（排除 `generated_at_utc`/`inference_s` 后 0 diff；四页 conf≥0.5 sfx 5/1/0/1、BJ06 max 0.8732、BJ13 ref1 峰值 0.3727 全部相同）——同形态 DML→DML run-to-run 确定性互证（非跨形态声明）；原 raw 文件零触碰 | `verification/M2-SFX-BJ13-RECALL-1/raw/recall-probe-run-r1fix.log`、`raw/r1fix/recall-probe.json` |
+| r1fix 重跑互证（DSH r1 P3-5） | 同一探针重跑：`"...M2-SFX-T5-TILE-gpu/Scripts/python.exe" experiments/M2-SFX-BJ13-RECALL-1/recall_probe.py --out-dir verification/M2-SFX-BJ13-RECALL-1/raw/r1fix`（log 头部含 date/命令行/venv/Python/runtime/worktree，EP provenance 与 EXIT=0 在正文——N-3 措辞收窄） | r1fix commit；同 venv/同权重 pin/同页面 | **PASS**：与原 run json **全树逐位一致**（排除 `generated_at_utc`/`inference_s` 后 0 diff；四页 conf≥0.5 sfx 5/1/0/1、BJ06 max 0.8732、BJ13 ref1 峰值 0.3727 全部相同）——同形态 DML→DML run-to-run 确定性互证（非跨形态声明）；原 raw 文件零触碰 | `verification/M2-SFX-BJ13-RECALL-1/raw/recall-probe-run-r1fix.log`、`raw/r1fix/recall-probe.json` |
 
 明确未运行项：①CPU 对照臂（DML 单形态实测；跨形态比较按 ≤2e-06 漂移窗口既有登记，禁写位级可复现）；②全量 pytest（零 src 保证，理由上表）；③BJ15 孤立候选与 Slipknot 的 GT 判定（无标注，仅登记不采信；Slipknot 视觉核查=Owner 对裁剪临时图目检，未入库）。
 
