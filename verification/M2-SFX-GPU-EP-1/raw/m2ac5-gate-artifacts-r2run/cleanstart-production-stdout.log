@@ -1,0 +1,7 @@
+$ <installed>\m2rc1-desktop.exe (production defaults; pid=59996; graceful close)
+exit=0
+[m2rc2-allowlist] production:issue_resource_url,revoke_ref,revoke_resource_refs,core_ping,library_list_books,settings_get,settings_update_section,set_region_type,list_regions
+[m2rc1-title] M2-RC1 resource channel runtime
+[m2rc1-title] M2-RC1 resource channel runtime
+[m2rc1-title] M2-RC1 resource channel runtime
+[m2rc1-title] M2-RC1 resource channel runtime
