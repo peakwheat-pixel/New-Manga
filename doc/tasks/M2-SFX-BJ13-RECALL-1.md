@@ -2,7 +2,7 @@
 id: M2-SFX-BJ13-RECALL-1
 title: "BJ13 召回恢复链：v2b 生产链 BJ13/14/15 sfx 召回实测（探针零 src）→召回恢复则仲裁阈值域重审切片，未恢复则剩余选项登记交裁决"
 kind: feature
-status: ready
+status: in_progress
 owner: ZCode
 reviewer: DeepSeek Harness（非作者）
 integrator: 编排会话代行 Codex（用户全权授权）
