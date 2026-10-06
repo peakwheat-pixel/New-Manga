@@ -1,0 +1,36 @@
+SHELL=PowerShell
+PYTHON=
+G:/CODEX/New Manga.task-envs/T1.1.1-impl-py312/Scripts/python.exe
+PYTHONPATH=
+G:/CODEX/New Manga.worktrees/RC4-integration/src
+REVIEWED_HEAD=37110749
+WORKTREE_HEAD=768088a9b6eacb40b4cc4150990892add8012090
+COMMAND=& $py -B -c $script
+PYTHON_CODE_BEGIN
+from dataclasses import replace
+from io import BytesIO
+from PIL import Image
+from infrastructure.rendering.pillow_rendering import PillowFontCatalog, PillowImageCompositor
+from ports.rendering.ports import DrawItem, RenderOp
+from ports.rendering.direction import TextDirection
+catalog = PillowFontCatalog()
+compositor = PillowImageCompositor(catalog)
+image = Image.new('RGB', (200, 100), 'white')
+for y in range(100):
+    for x in range(50): image.putpixel((x, y), (255, 0, 0))
+buffer = BytesIO(); image.save(buffer, format='PNG')
+base = buffer.getvalue()
+op = RenderOp((DrawItem('T', 0, 30),), 50, 10, 100, 70, 'Arial', 26, '#000000', True, '#FFFFFF', 3, TextDirection.HORIZONTAL, 'start')
+result = Image.open(BytesIO(compositor.compose_page(base, (op,)))).convert('RGB')
+changed = [(x,y) for y in range(10,80) for x in range(40,50) if result.getpixel((x,y)) != (255,0,0)]
+print('adjacent_nonoverlap_skip_pixels_changed=', len(changed), 'examples=', changed[:8])
+for align in ('start','center','end'):
+    aligned = Image.open(BytesIO(compositor.compose_page(base, (replace(op, stroke_enabled=False, text_align=align),)))).convert('RGB')
+    ink = [(x,y) for y in range(100) for x in range(50,200) if aligned.getpixel((x,y)) == (0,0,0)]
+    print('align=', align, 'ink_min_x=', min(x for x,y in ink), 'ink_max_x=', max(x for x,y in ink))
+PYTHON_CODE_END
+adjacent_nonoverlap_skip_pixels_changed= 23 examples= [(48, 35), (49, 35), (47, 36), (48, 36), (49, 36), (47, 37), (48, 37), (49, 37)]
+align= start ink_min_x= 51 ink_max_x= 64
+align= center ink_min_x= 93 ink_max_x= 106
+align= end ink_min_x= 51 ink_max_x= 64
+EXIT=0

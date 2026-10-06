@@ -1,0 +1,29 @@
+SHELL=PowerShell
+PYTHON=
+G:/CODEX/New Manga.task-envs/T1.1.1-impl-py312/Scripts/python.exe
+PYTHONPATH=
+G:/CODEX/New Manga.worktrees/RC4-integration/src
+REVIEWED_HEAD=37110749
+WORKTREE_HEAD=768088a9b6eacb40b4cc4150990892add8012090
+COMMAND=& $py -B -c $script
+PYTHON_CODE_BEGIN
+from types import SimpleNamespace
+from application.rendering.service import RenderService
+from ports.repositories.artifacts import ArtifactType
+class Locator:
+    def locate_current(self, page_id, artifact_type):
+        return (SimpleNamespace(), SimpleNamespace(managed_path='missing-clean.png')) if artifact_type is ArtifactType.CLEAN else None
+service = RenderService.__new__(RenderService)
+service._locator = Locator()
+service._storage = SimpleNamespace(absolute_path=lambda path: 'Z:/rc4-review-nonexistent/missing-clean.png')
+service._content_decoder = None
+try:
+    outcome = service.rerender_page('page-1')
+    print('unexpected_outcome=', outcome)
+except Exception as error:
+    print('missing_clean_file_exception=', type(error).__name__)
+    print('typed_outcome_returned=', False)
+PYTHON_CODE_END
+missing_clean_file_exception= FileNotFoundError
+typed_outcome_returned= False
+EXIT=0

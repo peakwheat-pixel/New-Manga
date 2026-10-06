@@ -1,0 +1,28 @@
+SHELL=PowerShell
+PYTHON=
+G:/CODEX/New Manga.task-envs/T1.1.1-impl-py312/Scripts/python.exe
+PYTHONPATH=
+G:/CODEX/New Manga.worktrees/RC4-integration/src
+REVIEWED_HEAD=37110749
+WORKTREE_HEAD=768088a9b6eacb40b4cc4150990892add8012090
+COMMAND=& $py -B -c $script
+PYTHON_CODE_BEGIN
+from io import BytesIO
+from PIL import Image
+from infrastructure.rendering.pillow_rendering import PillowFontCatalog, PillowImageCompositor, PillowTextLayoutEngine
+from ports.rendering.ports import LayoutRequest, RenderOp
+from ports.rendering.direction import TextDirection
+catalog = PillowFontCatalog(); layout = PillowTextLayoutEngine(catalog); compositor = PillowImageCompositor(catalog)
+base = BytesIO(); Image.new('RGB', (240, 160), 'white').save(base, format='PNG')
+for direction, text in ((TextDirection.HORIZONTAL, 'HELLO WORLD\nSECOND LINE'), (TextDirection.VERTICAL, '縦書き文字')):
+    request = LayoutRequest(text, 'Arial', 24, direction, 180, 120, 2, 1.0)
+    result = layout.layout(request)
+    op = RenderOp(result.items, 10, 10, 180, 120, result.resolved_family, 24, '#000000', True, '#FFFFFF', 2, direction, 'center')
+    image = Image.open(BytesIO(compositor.compose_page(base.getvalue(), (op,)))).convert('RGB')
+    dark = sum(1 for pixel in image.getdata() if max(pixel) < 100)
+    print(direction.value, 'fits=', result.fits, 'items=', len(result.items), 'dark_pixels=', dark, 'font_available=', result.font_available)
+PYTHON_CODE_END
+<string>:13: DeprecationWarning: Image.Image.getdata is deprecated and will be removed in Pillow 14 (2027-10-15). Use get_flattened_data instead.
+horizontal fits= True items= 2 dark_pixels= 1656 font_available= True
+vertical fits= True items= 5 dark_pixels= 120 font_available= True
+EXIT=0

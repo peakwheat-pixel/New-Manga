@@ -1,0 +1,330 @@
+SHELL=PowerShell
+PYTHON=
+G:/CODEX/New Manga.task-envs/T1.1.1-impl-py312/Scripts/python.exe
+REVIEWED_HEAD=37110749
+WORKTREE_HEAD=768088a9b6eacb40b4cc4150990892add8012090
+COMMAND=& $py -B -m pytest -p no:cacheprovider tests/core tests/editing tests/rendering
+============================= test session starts =============================
+platform win32 -- Python 3.12.3, pytest-9.1.1, pluggy-1.6.0
+rootdir: G:\CODEX\New Manga.worktrees\RC4-integration
+configfile: pytest.ini
+plugins: anyio-4.15.1
+collected 328 items
+
+tests\core\test_architecture.py ................                         [  4%]
+tests\core\test_bootstrap.py .......................                     [ 11%]
+tests\core\test_connection_ownership.py ......                           [ 13%]
+tests\core\test_core_assembly.py ........                                [ 16%]
+tests\core\test_core_detect.py ...............................F..        [ 26%]
+tests\core\test_core_service.py .FF...                                   [ 28%]
+tests\core\test_core_service_retype.py F........................         [ 35%]
+tests\core\test_core_service_settings.py F..........................     [ 44%]
+tests\core\test_page_catalog_modes.py ...                                [ 45%]
+tests\core\test_pipeline_defaults_assembly.py ...                        [ 46%]
+tests\core\test_pipeline_defaults_service.py ...                         [ 46%]
+tests\core\test_sfx_assembly.py ...................                      [ 52%]
+tests\core\test_sfx_detect_probe.py ............                         [ 56%]
+tests\core\test_sfx_policy_end_to_end.py ...                             [ 57%]
+tests\core\test_sfx_policy_settings.py ...................               [ 63%]
+tests\core\test_shutdown_drain.py ...                                    [ 64%]
+tests\core\test_stub_decoder.py ..                                       [ 64%]
+tests\core\test_transport_credential_assembly.py ....                    [ 65%]
+tests\editing\test_region_geometry.py ........                           [ 68%]
+tests\editing\test_region_retype.py .......................              [ 75%]
+tests\editing\test_sqlite_regions.py .........                           [ 78%]
+tests\editing\test_text_protection.py .........                          [ 80%]
+tests\rendering\test_compositor.py ......                                [ 82%]
+tests\rendering\test_layout.py ..............                            [ 86%]
+tests\rendering\test_rerender.py ..F.............F.                      [ 92%]
+tests\rendering\test_source_style.py .......                             [ 94%]
+tests\rendering\test_style_resolution.py ..................              [100%]
+
+================================== FAILURES ===================================
+_____________________ test_ping_carries_protocol_minor_3 ______________________
+
+tmp_path = WindowsPath('C:/Users/49745/AppData/Local/Temp/pytest-of-49745/pytest-970/test_ping_carries_protocol_min0')
+
+    def test_ping_carries_protocol_minor_3(tmp_path: Path) -> None:
+        # M2-SETTINGS-IPC-CHANNEL: the envelope minor moves with each command
+        # surface widening (core.detect -> 1, settings pair -> 2);
+        # M2-REGION-RETYPE-CORE: the retype pair -> 3
+        server, core = _make_server(tmp_path)
+        try:
+            res, should_exit = _dispatch(server, "p-1", {}, command="core.ping")
+            assert should_exit is False
+            assert res["error"] is None
+>           assert res["result"]["protocol_version"] == {"major": 1, "minor": 3}
+E           AssertionError: assert {'major': 1, 'minor': 4} == {'major': 1, 'minor': 3}
+E             
+E             Omitting 1 identical items, use -vv to show
+E             Differing items:
+E             {'minor': 4} != {'minor': 3}
+E             Use -v to get more diff
+
+tests\core\test_core_detect.py:613: AssertionError
+________________________ test_dispatch_pure_functions _________________________
+
+tmp_path = WindowsPath('C:/Users/49745/AppData/Local/Temp/pytest-of-49745/pytest-970/test_dispatch_pure_functions0')
+
+    def test_dispatch_pure_functions(tmp_path: Path) -> None:
+        data_root = tmp_path / "data"
+        core = assemble_production_core(data_root)
+        try:
+            server = CoreServiceServer(core)
+    
+            # 1. Invalid JSON
+            res, exit_flag = server.dispatch_request("not-a-json")
+            assert not exit_flag
+            assert res["result"] is None
+            assert res["error"]["code"] == "INVALID_JSON"
+    
+            # 2. Unsupported protocol name
+            bad_proto_req = json.dumps({
+                "protocol": "other.protocol",
+                "version": {"major": 1, "minor": 0},
+                "request_id": "req-1",
+                "command": "core.ping",
+                "payload": {},
+            })
+            res, exit_flag = server.dispatch_request(bad_proto_req)
+            assert not exit_flag
+            assert res["request_id"] == "req-1"
+            assert res["result"] is None
+            assert res["error"]["code"] == E_PROTOCOL_VERSION_UNSUPPORTED
+    
+            # 3. Unsupported protocol version (major != 1, non-dict, string, missing)
+            bad_ver_req = json.dumps({
+                "protocol": PROTOCOL_NAME,
+                "version": {"major": 2, "minor": 0},
+                "request_id": "req-2",
+                "command": "core.ping",
+                "payload": {},
+            })
+            res, exit_flag = server.dispatch_request(bad_ver_req)
+            assert not exit_flag
+            assert res["request_id"] == "req-2"
+            assert res["result"] is None
+            assert res["error"]["code"] == E_PROTOCOL_VERSION_UNSUPPORTED
+            assert res["error"]["category"] == "validation"
+            assert res["error"]["retryable"] is False
+    
+            # 3b. Malformed versions (string, missing, None, boolean, string major)
+            for bad_ver in ["1.0", None, {}, {"major": True}, {"major": "1"}, {"minor": 0}]:
+                bad_req = json.dumps({
+                    "protocol": PROTOCOL_NAME,
+                    "version": bad_ver,
+                    "request_id": "req-bad-ver",
+                    "command": "core.ping",
+                    "payload": {},
+                })
+                res, exit_flag = server.dispatch_request(bad_req)
+                assert not exit_flag
+                assert res["request_id"] == "req-bad-ver"
+                assert res["result"] is None
+                assert res["error"]["code"] == E_PROTOCOL_VERSION_UNSUPPORTED
+                assert res["error"]["category"] == "validation"
+                assert res["error"]["retryable"] is False
+    
+            # 4. Unknown command
+            unknown_cmd_req = json.dumps({
+                "protocol": PROTOCOL_NAME,
+                "version": {"major": 1, "minor": 0},
+                "request_id": "req-3",
+                "command": "CreateBook",
+                "payload": {},
+            })
+            res, exit_flag = server.dispatch_request(unknown_cmd_req)
+            assert not exit_flag
+            assert res["request_id"] == "req-3"
+            assert res["result"] is None
+            assert res["error"]["code"] == E_UNKNOWN_COMMAND
+    
+            # 5. core.ping
+            ping_req = json.dumps({
+                "protocol": PROTOCOL_NAME,
+                "version": {"major": 1, "minor": 0},
+                "request_id": "req-4",
+                "command": "core.ping",
+                "payload": {},
+            })
+            res, exit_flag = server.dispatch_request(ping_req)
+            assert not exit_flag
+            assert res["request_id"] == "req-4"
+            assert res["error"] is None
+            assert res["result"]["status"] == "ready"
+            # M2-PROD-DETECT-3: protocol minor bump 1.0 -> 1.1 (core.detect added);
+            # M2-SETTINGS-IPC-CHANNEL: 1.1 -> 2 (settings.get/update_section added)
+            # M2-REGION-RETYPE-CORE: 2 -> 3 (set_region_type/list_regions added)
+>           assert res["result"]["protocol_version"] == {"major": 1, "minor": 3}
+E           AssertionError: assert {'major': 1, 'minor': 4} == {'major': 1, 'minor': 3}
+E             
+E             Omitting 1 identical items, use -vv to show
+E             Differing items:
+E             {'minor': 4} != {'minor': 3}
+E             Use -v to get more diff
+
+tests\core\test_core_service.py:152: AssertionError
+_____________________ test_real_subprocess_e2e_round_trip _____________________
+
+tmp_path = WindowsPath('C:/Users/49745/AppData/Local/Temp/pytest-of-49745/pytest-970/test_real_subprocess_e2e_round0')
+
+    def test_real_subprocess_e2e_round_trip(tmp_path: Path) -> None:
+        """AC4 discriminating test: spawns real subprocess and tests request/response."""
+        data_root = tmp_path / "data_e2e"
+        data_root.mkdir(parents=True, exist_ok=True)
+    
+        repo_root = Path(__file__).resolve().parents[2]
+        src_root = repo_root / "src"
+    
+        env = os.environ.copy()
+        # DSH r1 R5: keep the e2e hermetic -- a host-level detector env must
+        # never turn this subprocess into a real model load (the NOT_CONFIGURED
+        # assertion below would then fail or hang on weights resolution).
+        env.pop("NEWMANGA_DETECTOR_WEIGHTS", None)
+        env.pop("NEWMANGA_DETECTOR_BACKEND", None)
+        env["NEWMANGA_DATA_ROOT"] = str(data_root)
+        env["PYTHONPATH"] = str(src_root)
+        env["PYTHONDONTWRITEBYTECODE"] = "1"
+    
+        proc = subprocess.Popen(
+            [sys.executable, "-m", "bootstrap.core_service"],
+            stdin=subprocess.PIPE,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True,
+            bufsize=1,
+            env=env,
+            cwd=str(repo_root),
+        )
+    
+        def send_and_recv(cmd_obj: dict) -> dict:
+            line = json.dumps(cmd_obj) + "\n"
+            proc.stdin.write(line)  # type: ignore[union-attr]
+            proc.stdin.flush()  # type: ignore[union-attr]
+            resp_line = proc.stdout.readline()  # type: ignore[union-attr]
+            return json.loads(resp_line)
+    
+        try:
+            # 1. ping
+            ping_resp = send_and_recv({
+                "protocol": PROTOCOL_NAME,
+                "version": {"major": 1, "minor": 0},
+                "request_id": "p-1",
+                "command": "core.ping",
+                "payload": {},
+            })
+            assert ping_resp["request_id"] == "p-1"
+            assert ping_resp["error"] is None
+            assert ping_resp["result"]["status"] == "ready"
+            # M2-PROD-DETECT-3: protocol minor bump 1.0 -> 1.1 (core.detect added);
+            # M2-SETTINGS-IPC-CHANNEL: 1.1 -> 2 (settings.get/update_section added)
+            # M2-REGION-RETYPE-CORE: 2 -> 3 (set_region_type/list_regions added)
+>           assert ping_resp["result"]["protocol_version"] == {"major": 1, "minor": 3}
+E           AssertionError: assert {'major': 1, 'minor': 4} == {'major': 1, 'minor': 3}
+E             
+E             Omitting 1 identical items, use -vv to show
+E             Differing items:
+E             {'minor': 4} != {'minor': 3}
+E             Use -v to get more diff
+
+tests\core\test_core_service.py:237: AssertionError
+___________ test_protocol_minor_bumped_to_three_with_retype_surface ___________
+
+server = CoreServices(conn=<infrastructure.sqlite.connection.ThreadRoutedConnection object at 0x00000239D9779E80>, repository=<...d='local-sfx', provider_type='local-sfx', model='sfx/yolo11s-seg.onnx', requirements=('onnxruntime', 'numpy', 'PIL'))))
+rpc = <function rpc.<locals>._request at 0x00000239D96EE020>
+
+    def test_protocol_minor_bumped_to_three_with_retype_surface(server, rpc) -> None:
+        # M2-REGION-RETYPE-CORE: 2 -> 3 (same backwards-compatible widening
+        # precedent as core.detect 0->1 and settings 1->2; every pre-existing
+        # command keeps its payload/result/error codes).
+>       assert (PROTOCOL_MAJOR, PROTOCOL_MINOR) == (1, 3)
+E       assert (1, 4) == (1, 3)
+E         
+E         At index 1 diff: 4 != 3
+E         Use -v to get more diff
+
+tests\core\test_core_service_retype.py:136: AssertionError
+___________ test_protocol_minor_tracks_the_current_command_surface ____________
+
+server = <bootstrap.core_service.CoreServiceServer object at 0x00000239D979B680>
+
+    def test_protocol_minor_tracks_the_current_command_surface(server) -> None:
+        # M2-SETTINGS-IPC-CHANNEL: 1 -> 2 (same backwards-compatible widening
+        # precedent as M2-PROD-DETECT-3's core.detect bump; the pre-existing
+        # command semantics are pinned unchanged by the existing suite).
+        # M2-REGION-RETYPE-CORE: 2 -> 3 (set_region_type/list_regions added;
+        # same widening precedent, contract rev 1.4 ��5.4 -- this file pins the
+        # settings pair's own semantics against the CURRENT envelope).
+>       assert (PROTOCOL_MAJOR, PROTOCOL_MINOR) == (1, 3)
+E       assert (1, 4) == (1, 3)
+E         
+E         At index 1 diff: 4 != 3
+E         Use -v to get more diff
+
+tests\core\test_core_service_settings.py:76: AssertionError
+__________ TestRerenderPage.test_sfx_skip_regions_follow_policy_gate __________
+
+self = <test_rerender.TestRerenderPage object at 0x00000239FF816DB0>
+stack = {'conn': <infrastructure.sqlite.connection.ThreadRoutedConnection object at 0x00000239D97C40E0>, 'storage': <infrastru...39D9853230>, 'locator': <infrastructure.rendering.locator.SqlitePageArtifactLocator object at 0x00000239D9852C90>, ...}
+clean_png = b'\x89PNG\r\n\x1a\n\x00\x00\x00\rIHDR\x00\x00\x01\x90\x00\x00\x01\x04\x08\x06\x00\x00\x00\x06Hb\x99\x00\x00\x00\tpHYs\...000! \x00\x00\x13\x02\x02\x000! \x00\x00\x13\x02\x02\x000\xf9?\x14\xba\x08K\x87\x99z\xbd\x00\x00\x00\x00IEND\xaeB`\x82'
+
+    def test_sfx_skip_regions_follow_policy_gate(self, stack, clean_png) -> None:
+        ids = seed_page(stack)
+        commit_artifact(stack, ids, ArtifactType.CLEAN, clean_png)
+        repo = stack["service"]._region_repo
+        normal = make_region(repo, ids["page_id"], region_id="r-normal", final="����")
+        sfx_skip = make_region(
+            repo, ids["page_id"], region_id="r-sfx", bbox=(150, 20, 100, 100),
+            final="�ɥ�!", sfx="skip", region_type="sfx",
+        )
+    
+        outcome = stack["service"].rerender_page(ids["page_id"])
+    
+>       assert outcome.status is RenderStatus.COMMITTED
+E       AssertionError: assert 'blocked' is 'committed'
+E        +  where 'blocked' = RenderOutcome(status='blocked', artifact_id=None, revision_no=None, managed_path=None, provenance_json=None, reports=(), error_code='MISSING_REQUIRED_INPUT', detail='rerender requires the current original artifact for skipped SFX').status
+E        +  and   'committed' = RenderStatus.COMMITTED
+
+tests\rendering\test_rerender.py:268: AssertionError
+_ TestRerenderRegion.test_sfx_region_with_the_real_default_policy_is_still_gated _
+
+self = <test_rerender.TestRerenderRegion object at 0x00000239FF7FD460>
+stack = {'conn': <infrastructure.sqlite.connection.ThreadRoutedConnection object at 0x00000239D98530E0>, 'storage': <infrastru...39D97E1AC0>, 'locator': <infrastructure.rendering.locator.SqlitePageArtifactLocator object at 0x00000239D97E2510>, ...}
+clean_png = b'\x89PNG\r\n\x1a\n\x00\x00\x00\rIHDR\x00\x00\x01\x90\x00\x00\x01\x04\x08\x06\x00\x00\x00\x06Hb\x99\x00\x00\x00\tpHYs\...000! \x00\x00\x13\x02\x02\x000! \x00\x00\x13\x02\x02\x000\xf9?\x14\xba\x08K\x87\x99z\xbd\x00\x00\x00\x00IEND\xaeB`\x82'
+
+    def test_sfx_region_with_the_real_default_policy_is_still_gated(
+        self, stack, clean_png
+    ) -> None:
+        """The original ��85 intent survives: a real SFX region + ``skip`` is gated."""
+        ids = seed_page(stack)
+        commit_artifact(stack, ids, ArtifactType.CLEAN, clean_png)
+        repo = stack["service"]._region_repo
+        make_region(repo, ids["page_id"], region_id="r-normal", final="����")
+        sfx = make_region(
+            repo,
+            ids["page_id"],
+            region_id="r-sfx-default",
+            bbox=(150, 20, 100, 100),
+            final="�ɥ�!",
+            sfx=None,
+            region_type="sfx",
+        )
+        assert sfx.sfx_policy is SfxPolicy.SKIP
+    
+        batch = stack["service"].rerender_page(ids["page_id"])
+>       assert batch.status is RenderStatus.COMMITTED
+E       AssertionError: assert 'blocked' is 'committed'
+E        +  where 'blocked' = RenderOutcome(status='blocked', artifact_id=None, revision_no=None, managed_path=None, provenance_json=None, reports=(), error_code='MISSING_REQUIRED_INPUT', detail='rerender requires the current original artifact for skipped SFX').status
+E        +  and   'committed' = RenderStatus.COMMITTED
+
+tests\rendering\test_rerender.py:575: AssertionError
+=========================== short test summary info ===========================
+FAILED tests/core/test_core_detect.py::test_ping_carries_protocol_minor_3 - A...
+FAILED tests/core/test_core_service.py::test_dispatch_pure_functions - Assert...
+FAILED tests/core/test_core_service.py::test_real_subprocess_e2e_round_trip
+FAILED tests/core/test_core_service_retype.py::test_protocol_minor_bumped_to_three_with_retype_surface
+FAILED tests/core/test_core_service_settings.py::test_protocol_minor_tracks_the_current_command_surface
+FAILED tests/rendering/test_rerender.py::TestRerenderPage::test_sfx_skip_regions_follow_policy_gate
+FAILED tests/rendering/test_rerender.py::TestRerenderRegion::test_sfx_region_with_the_real_default_policy_is_still_gated
+======================= 7 failed, 321 passed in 20.56s ========================
+EXIT=1
