@@ -2,7 +2,8 @@
 id: M2-SFX-EPFAIL-AUDIT-1
 title: "SFX 推理 run-time EPFail 通道审计：ORT 包装层 run() 期内部静默重跑 CPU 的可观测性闭合"
 kind: feature
-status: in_review
+status: done
+integration: merge 9a29e742（2026-10-06，集成 Gate：允许面 17 文件 git 核验+禁改面零 diff+whitespace 沿 GPU-EP-1 raw log 先例+全量回归 1 failed+1828 passed+1 skipped[唯一 failed=test_catalog 既有，基线 1823+5 等量递增]；DSH r1 changes_requested P1-1/P2-1 返修闭+r2 approved 建议集成 0×新 P0-P3，r2 P4×4 顺笔闭合 cfeed03b/35e9310f/ce11334d——composite 稳态零追加断言+parity 同 HEAD 重跑+链表补全+失败路径措辞精确化；报告 doc/reviews/M2-SFX-EPFAIL-AUDIT-1-cf013b01-dsh-r1.md 与 doc/reviews/M2-SFX-EPFAIL-AUDIT-1-d388a7bf-dsh-r2.md）
 owner_claim: ZCode 2026-10-04 @worktree M2-SFX-EPFAIL-AUDIT-1-zcode（base=d298ecd0=释放登记 tip；授权=user 2026-10-04 批准进行2 非阻塞候选①；AC1 设计实测前置=get_providers() 耗时+fallback 状态读回可见性）
 owner: ZCode
 reviewer: DeepSeek Harness（非作者）
@@ -12,7 +13,7 @@ depends_on: [M2-SFX-GPU-EP-1]
 base_commit: 72807d30（r1 P4-1 双值注记：72807d30=Task 合同释放登记 base；d298ecd0=owner 分支实际 fork 点=释放 commit（`merge-base --is-ancestor`：72807d30 是 d298ecd0 祖先；分支自 d298ecd0 checkout，merge-base(HEAD, d298ecd0)=d298ecd0 实证），owner claim/HANDOFF 统一以 d298ecd0 为准）
 branch: agent/zcode/M2-SFX-EPFAIL-AUDIT-1
 worktree: G:/CODEX/New Manga.worktrees/M2-SFX-EPFAIL-AUDIT-1-zcode
-review_events: []
+review_events: [r1 DSH changes_requested 2026-10-06（1×P1 审计键 composite 装配面被丢弃→编排裁决采透传方案、1×P2 1% 预算口径差 100×、2×P3、8×P4；报告 doc/reviews/M2-SFX-EPFAIL-AUDIT-1-cf013b01-dsh-r1.md）→ 返修 6c2825ce..d388a7bf → r2 DSH approved 建议集成（r1 逐条全闭 0×新 P0-P3、4×P4 顺笔闭合；报告 doc/reviews/M2-SFX-EPFAIL-AUDIT-1-d388a7bf-dsh-r2.md）]
 created: 2026-10-04
 ---
 
