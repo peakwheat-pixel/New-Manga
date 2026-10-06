@@ -1,0 +1,34 @@
+[eval] start 2026-10-06T10:26:48Z
+[eval] v2b sha 944e81141093（生产 pin 原样，零重指）
+[eval] 页装载 14 页: pre-k08@690, pre-k09@690, pre-k02@600, pre-k08@640, pre-k08@480, pre-k08@320, pre-k08@800, pre-k08@1024, pre-k09@640, pre-k09@480, pre-k09@320, synth-384, synth-560, synth-680
+[eval] T5 锚点数字: {'pre-k08': (14, 27), 'pre-k09': (17, 24), 'pre-k01': (2, 2), 'pre-k02': (2, 3)}
+[eval] warm-up done conf=0.5
+[eval] warm-up done conf=0.2
+[eval] W690 pre-k08@690: tile@0.5 14/27 (n_pred 23) | lb@0.5 0/27 (n_pred 0) | tile@0.2 18/27 (n_pred 56) | lb@0.2 0/27 (n_pred 0)
+[eval] W690 pre-k09@690: tile@0.5 17/24 (n_pred 50) | lb@0.5 0/24 (n_pred 0) | tile@0.2 21/24 (n_pred 95) | lb@0.2 0/24 (n_pred 0)
+[eval] W600 pre-k02@600: tile@0.5 2/3 (n_pred 5) | lb@0.5 0/3 (n_pred 0) | tile@0.2 2/3 (n_pred 10) | lb@0.2 0/3 (n_pred 0)
+[eval] W640 pre-k08@640: tile@0.5 17/27 (n_pred 30) | lb@0.5 0/27 (n_pred 0) | tile@0.2 19/27 (n_pred 50) | lb@0.2 0/27 (n_pred 0)
+[eval] W640 pre-k09@640: tile@0.5 16/24 (n_pred 49) | lb@0.5 0/24 (n_pred 0) | tile@0.2 17/24 (n_pred 95) | lb@0.2 0/24 (n_pred 0)
+[eval] W480 pre-k08@480: tile@0.5 19/27 (n_pred 27) | lb@0.5 0/27 (n_pred 0) | tile@0.2 20/27 (n_pred 36) | lb@0.2 0/27 (n_pred 0)
+[eval] W480 pre-k09@480: tile@0.5 16/24 (n_pred 48) | lb@0.5 0/24 (n_pred 0) | tile@0.2 17/24 (n_pred 82) | lb@0.2 0/24 (n_pred 0)
+[eval] W320 pre-k08@320: tile@0.5 19/27 (n_pred 26) | lb@0.5 0/27 (n_pred 0) | tile@0.2 19/27 (n_pred 34) | lb@0.2 0/27 (n_pred 0)
+[eval] W320 pre-k09@320: tile@0.5 16/24 (n_pred 33) | lb@0.5 0/24 (n_pred 0) | tile@0.2 17/24 (n_pred 50) | lb@0.2 0/24 (n_pred 0)
+[eval] SYNTH-384 synth-384: tile@0.5 12/49 (n_pred 13) | lb@0.5 0/49 (n_pred 0) | tile@0.2 16/49 (n_pred 23) | lb@0.2 0/49 (n_pred 0)
+[eval] SYNTH-560 synth-560: tile@0.5 12/46 (n_pred 13) | lb@0.5 0/46 (n_pred 0) | tile@0.2 18/46 (n_pred 22) | lb@0.2 0/46 (n_pred 0)
+[eval] SYNTH-680 synth-680: tile@0.5 18/46 (n_pred 22) | lb@0.5 0/46 (n_pred 0) | tile@0.2 24/46 (n_pred 30) | lb@0.2 0/46 (n_pred 0)
+[eval] W800 pre-k08@800: tile@0.5 n/a (out-of-domain: no tile face) | lb@0.5 0/27 (n_pred 0) | tile@0.2 n/a (out-of-domain: no tile face) | lb@0.2 0/27 (n_pred 0)
+[eval] W1024 pre-k08@1024: tile@0.5 n/a (out-of-domain: no tile face) | lb@0.5 0/27 (n_pred 0) | tile@0.2 n/a (out-of-domain: no tile face) | lb@0.2 0/27 (n_pred 0)
+[eval] wrote G:\CODEX\New Manga.worktrees\M2-SFX-TILE-WIDTH-CALIB-1-zcode\verification\M2-SFX-TILE-WIDTH-CALIB-1\raw\width-eval.json
+
+[eval] === 逐宽汇总（conf 0.5 主口径）===
+W690       tile 31/51 (pred 73, 2.9s) | letterbox 0/51 (pred 0, 0.4s)
+W600       tile 2/3 (pred 5, 0.4s) | letterbox 0/3 (pred 0, 0.1s)
+W640       tile 33/51 (pred 79, 2.7s) | letterbox 0/51 (pred 0, 0.4s)
+W480       tile 35/51 (pred 75, 2.0s) | letterbox 0/51 (pred 0, 0.2s)
+W320       tile 35/51 (pred 59, 1.3s) | letterbox 0/51 (pred 0, 0.1s)
+SYNTH-384  tile 12/49 (pred 13, 0.8s) | letterbox 0/49 (pred 0, 0.1s)
+SYNTH-560  tile 12/46 (pred 13, 0.8s) | letterbox 0/46 (pred 0, 0.1s)
+SYNTH-680  tile 18/46 (pred 22, 0.8s) | letterbox 0/46 (pred 0, 0.1s)
+W800       tile 0/0 (pred 0, 0.0s) | letterbox 0/27 (pred 0, 0.2s)
+W1024      tile 0/0 (pred 0, 0.0s) | letterbox 0/27 (pred 0, 0.3s)
+[eval] DONE

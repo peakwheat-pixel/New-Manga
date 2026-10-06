@@ -350,8 +350,10 @@ def main() -> int:
                         runs[f"letterbox_conf{conf}"] = run_face(
                             provider, page, "letterbox"
                         )
-                # 原生锚点自检（tile conf 0.5 与 T5 parity raw 逐页一致）
-                if page["source"] in anchors and domain == "in_tile":
+                # 原生锚点自检（tile conf 0.5 与 T5 parity raw 逐页一致；
+                # 仅 native 页页 id（pre-kXX@690/@600）参与——重采样页 source
+                # 同名但图已变，matched 数字不同是本 Task 的测量对象）
+                if page["page_id"] in ("pre-k08@690", "pre-k09@690", "pre-k02@600") and domain == "in_tile":
                     exp_m, exp_gt = anchors[page["source"]]
                     got = runs["tile_conf0.5"]
                     assert got["matched"] == exp_m and got["n_gt"] == exp_gt, (
@@ -378,14 +380,19 @@ def main() -> int:
                         agg[face]["matched"] += r["matched"]
                         agg[face]["n_pred"] += r["n_pred"]
                         agg[face]["elapsed_s"] += r["elapsed_s"]
+                def _fmt(face: str) -> str:
+                    r = runs.get(face)
+                    return (
+                        f"{r['matched']}/{r['n_gt']} (n_pred {r['n_pred']})"
+                        if r else "n/a (out-of-domain: no tile face)"
+                    )
+
                 print(
                     f"[eval] {bin_name} {page['page_id']}: "
-                    f"tile@0.5 {runs['tile_conf0.5']['matched']}/{runs['tile_conf0.5']['n_gt']}"
-                    f" (n_pred {runs['tile_conf0.5']['n_pred']}) | "
-                    f"lb@0.5 {runs['letterbox_conf0.5']['matched']}/{runs['letterbox_conf0.5']['n_gt']}"
-                    f" (n_pred {runs['letterbox_conf0.5']['n_pred']}) | "
-                    f"tile@0.2 {runs['tile_conf0.2']['matched']}/{runs['tile_conf0.2']['n_gt']} | "
-                    f"lb@0.2 {runs['letterbox_conf0.2']['matched']}/{runs['letterbox_conf0.2']['n_gt']}",
+                    f"tile@0.5 {_fmt('tile_conf0.5')} | "
+                    f"lb@0.5 {_fmt('letterbox_conf0.5')} | "
+                    f"tile@0.2 {_fmt('tile_conf0.2')} | "
+                    f"lb@0.2 {_fmt('letterbox_conf0.2')}",
                     flush=True,
                 )
             for face, a in agg.items():
