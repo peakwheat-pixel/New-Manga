@@ -1,10 +1,10 @@
-[epfail-parity] start 2026-10-06T10:26:12Z
-[epfail-parity] source HEAD 0afb22dd07d862b3ba8eb545d1d0cc536be1acc2
+[epfail-parity] start 2026-10-06T11:32:30Z
+[epfail-parity] source HEAD cfeed03bcaf4cd2a72681275f65d9b6027ac9bc0
 [epfail-parity] v2b sha 944e81141093（生产 pin 原样）
 [epfail-parity] onnxruntime 1.24.4 providers=['DmlExecutionProvider', 'CPUExecutionProvider']
 [epfail-parity] 抽页 pre-k01: 690x62133（tile 路由域，GPU-EP-1 基准行漂移 1e-06/0.0001px/gate_flips=0）
-[epfail-parity] cpu: n_pred=23 wall=11.299s provider_ms=11296
-[epfail-parity] dml: n_pred=23 wall=1.122s provider_ms=1118
+[epfail-parity] cpu: n_pred=23 wall=11.302s provider_ms=11297
+[epfail-parity] dml: n_pred=23 wall=1.401s provider_ms=1398
 [epfail-parity] 审计稳态（两 face 零新键、三键照常）: PASS — {"cpu": {"device": "cpu", "sfx_ep": "cpu", "sfx_ep_fallback_present": false, "sfx_ep_runtime_check_present": false}, "dml": {"device": "dml", "sfx_ep": "dml", "sfx_ep_fallback_present": false, "sfx_ep_runtime_check_present": false}}
 [epfail-parity] parity: {"n_pred_cpu": 23, "n_pred_gpu": 23, "bit_identical": false, "max_abs_dconf": 1e-06, "max_abs_dxyxy_px": 0.0001, "gate_flips": 0, "matched_derived": "2/2 -> 2/2", "matched_set_equal_derived": true, "matched_npd": "5/48 -> 5/48", "matched_set_equal_npd": true}
 [epfail-parity] 结论不变判定: PASS（基准 gate_flips=0 dconf=1e-06 dxyxy=0.0001）
