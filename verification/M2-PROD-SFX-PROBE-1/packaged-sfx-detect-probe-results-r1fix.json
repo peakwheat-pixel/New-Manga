@@ -1,0 +1,72 @@
+{
+  "gate": "m2-prod-sfx-probe-1-packaged-sfx-detect-probe",
+  "install_dir": "C:\\Users\\49745\\AppData\\Local\\Temp\\m2ac5-cleanstart\\install",
+  "verdict": "PASS",
+  "build_venv_note": "m2ac5-build venv (pyinstaller 6.22.3, onnxruntime-directml 1.24.4); fresh-worktree full build chain",
+  "installer_sha256": "3ffa03f551be5e4439f068d43a6c9f21aa42257bf9baf3cb7213eba1f8dfbfff",
+  "build_head": "2b4e4946",
+  "boundary_note": "The frozen-process sfx detect evidence path is the fifth frozen entry exe (sfx_detect_probe.exe — one production SfxDetectionProvider.detect inside the frozen process); the frozen stdio command surface and every contract DTO are untouched (catalog_loader standalone-entry precedent shape). The GATE 25-scenario set stays untouched and is re-run separately as the no-regression face.",
+  "scenarios": [
+    {
+      "id": "SP-P0-probe-entry-installed",
+      "status": "PASS",
+      "observed": {
+        "probe_exe": "C:\\Users\\49745\\AppData\\Local\\Temp\\m2ac5-cleanstart\\install\\resources\\core-sidecar\\sfx_detect_probe.exe",
+        "probe_exe_exists": true,
+        "core_service_exists": true,
+        "in_bundle_weights_exist": true
+      }
+    },
+    {
+      "id": "SP-L1-frozen-synthetic-probe",
+      "status": "PASS",
+      "observed": {
+        "exit": 0,
+        "json_parsed": true,
+        "frozen_in_process": true,
+        "n_candidates": 4,
+        "device": "dml",
+        "sfx_ep": "dml",
+        "sfx_ep_fallback": null,
+        "elapsed_ms": 761,
+        "wall_ms": 1199,
+        "weights_resolved_from": "bundle_probe",
+        "weights_sha256_matches_pin": true,
+        "synthetic_zero_candidates_note": null
+      }
+    },
+    {
+      "id": "SP-L2-frozen-real-page-probe",
+      "status": "PASS",
+      "observed": {
+        "exit": 0,
+        "json_parsed": true,
+        "frozen_in_process": true,
+        "real_page": "G:\\CODEX\\New Manga.task-envs\\M2-DOCTR-QUAL-work\\regions\\K07_R123.png",
+        "page_sha256": "b3b7c4a6951e5a61f4677674830041c7850eeb68e1eced9cba236f1339ec7306",
+        "page_sha256_domain_note": "page.sha256 = decoded rgb24 PIXEL-BUFFER hash (probe face); page_file_sha256 = the PNG FILE hash (anchor-file face, DSH r1 P4-8)",
+        "page_file_sha256": "28dab503aca3c903111488c03e857b430d309421a4a54bab335a63bbe7b9cec4",
+        "n_candidates": 1,
+        "confidences_max": 0.9046692252159119,
+        "device": "dml",
+        "sfx_ep": "dml",
+        "sfx_ep_fallback": null,
+        "elapsed_ms": 693,
+        "wall_ms": 975,
+        "sfx_route": "letterbox",
+        "imgsz": "1024",
+        "weights_sha256_matches_pin": true,
+        "expected_form": "device=dml, no sfx_ep_fallback; wrapper fallback recorded honestly without failing"
+      }
+    },
+    {
+      "id": "SP-L3-existing-command-surface-smoke",
+      "status": "PASS",
+      "observed": {
+        "exit": 0,
+        "ping_status": "ready",
+        "shutdown_status": "stopped"
+      }
+    }
+  ]
+}

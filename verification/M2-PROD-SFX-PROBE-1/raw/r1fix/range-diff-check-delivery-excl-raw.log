@@ -1,0 +1,2 @@
+# $ git diff --check d298ecd0..b1dd1ad4 -- . ":(exclude)verification/M2-PROD-SFX-PROBE-1/raw/**"   (code+docs face only)
+# EXIT=0 (0 with empty output = code+docs face clean)

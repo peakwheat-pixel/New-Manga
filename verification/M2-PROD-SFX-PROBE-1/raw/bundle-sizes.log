@@ -1,0 +1,6 @@
+# M2-PROD-SFX-PROBE-1 bundle sizes (2026-10-06, Get-Item 实测口径同 GPU-EP-1 bundle-sizes.log)
+# NSIS: 580540551 B / 553.65 MiB  sha256=3ffa03f551be5e4439f068d43a6c9f21aa42257bf9baf3cb7213eba1f8dfbfff
+NSIS installer: 580540551 B / 553.65 MiB
+onedir core-sidecar/: 1293443537 B / 1,233.52 MiB
+probe exe: 67901644 B / 64.76 MiB
+onedir _internal/onnxruntime/: 66170520 B / 63.11 MiB

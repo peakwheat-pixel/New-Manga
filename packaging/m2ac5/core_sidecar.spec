@@ -1,7 +1,7 @@
 # -*- mode: python ; coding: utf-8 -*-
 """M2-AC5 Core sidecar — PyInstaller spec (build tooling only).
 
-One onedir bundle (`core-sidecar/`) holding FOUR frozen entry exes that share
+One onedir bundle (`core-sidecar/`) holding FIVE frozen entry exes that share
 a single `_internal` dependency directory (PyInstaller 6 layout):
 
     host_bridge.exe          <- `-m infrastructure.resource_channel.host_bridge`
@@ -11,6 +11,14 @@ a single `_internal` dependency directory (PyInstaller 6 layout):
                                 (launcher-side seeding tool; a packaged
                                 clean-start env has no system Python to run
                                 the dev `python -m` seeding step with)
+    sfx_detect_probe.exe     <- `-m bootstrap.sfx_detect_probe`
+                                (M2-PROD-SFX-PROBE-1: one-shot frozen-process
+                                SFX-detect probe — NOT an IPC command, the
+                                catalog_loader standalone-entry precedent
+                                shape; runs one production
+                                SfxDetectionProvider.detect against the
+                                in-bundle v2b weights and prints the audit
+                                JSON)
 
 Ruling recorded for M2-AC5 (risk item 1): the three sidecar channels plus the
 seeding tool are covered by ONE onedir closure. Measured facts behind the
@@ -59,13 +67,45 @@ SRC_ROOT = os.path.join(REPO_ROOT, "src")
 #: identifiers the Rust host resolves under `resources/core-sidecar/` in
 #: packaged mode. Only the production library entry (core_service) carries
 #: the detect chain, so only its Analysis pins the ML hiddenimports and gets
-#: the ML closure assertion (the other three entries keep their released
-#: stdlib+repo closure — do not widen them).
+#: the ML closure assertion. The other entries take no ML
+#: hiddenimports/assertion of their own; note the sfx probe's PYZ
+#: nonetheless carries the ML closure transitively (detection_doctr static
+#: import followed by modulegraph — see the ENTRIES comment below).
 ENTRIES = [
     ("entry_host_bridge", "host_bridge", False),
     ("entry_core_service", "core_service", True),
     ("entry_acceptance_bridge", "acceptance_bridge", False),
     ("entry_catalog_loader", "catalog_loader", False),
+    # M2-PROD-SFX-PROBE-1: the one-shot SFX-detect probe (frozen-process
+    # evidence, NOT an IPC command — catalog_loader precedent shape).
+    # Closure reality (DSH r1 P2-1, corrected from the original "onnxruntime
+    # only" claim): the probe imports the production SfxDetectionProvider,
+    # whose module graph runs detection_sfx -> detection_manga ->
+    # detection_doctr, and detection_doctr carries a function-body-static
+    # `from doctr.models import detection_predictor` that modulegraph DOES
+    # follow — so this entry's PYZ ships a SECOND torch/transformers/doctr
+    # closure (~8455 pure modules, ~64.76 MiB exe), not an onnxruntime-only
+    # face. Accepted deliberately (integration ruling on the DSH r1 menu):
+    # (a) accept the duplication (zero-risk, revert = drop this line);
+    # (b) a one-shot CLI mode on core_service.exe (0 B) was rejected — it
+    #     forks the production entry's startup behaviour;
+    # (c) slimming the probe import face (breaking the static doctr import)
+    #     is a product-src refactor left to a future slice.
+    # It still gets its own hiddenimports + its own closure assertion below
+    # instead of the ML entry treatment.
+    ("entry_sfx_detect_probe", "sfx_detect_probe", False),
+]
+
+#: M2-PROD-SFX-PROBE-1: the probe entry's own closure pins — onnxruntime is
+#: resolved through importlib at detect time (modulegraph never tracks it),
+#: so it is pinned explicitly; the assertion below fails the BUILD if the
+#: graph did not collect the engine binaries. Scope note (DSH r1 P2-1): this
+#: asserts the onnxruntime ENGINE is present — it does NOT mean the probe PYZ
+#: is onnxruntime-only (it carries a second torch/transformers/doctr closure
+#: via the detection_doctr static import, see the ENTRIES comment above).
+SFX_PROBE_ENTRY = "entry_sfx_detect_probe"
+SFX_PROBE_HIDDENIMPORTS = [
+    "onnxruntime",
 ]
 
 #: DSH r1 R3 review-fix (N3, DSH r2): the detect chain resolves transformers
@@ -191,6 +231,42 @@ def _assert_ml_closure(analysis, exe_name: str) -> None:
         + ", ".join(ML_BINARY_IMPORTS + SFX_BINARY_IMPORTS)
     )
 
+def _assert_sfx_probe_closure(analysis, exe_name: str) -> None:
+    """M2-PROD-SFX-PROBE-1: the SFX-probe counterpart of _assert_ml_closure —
+    the probe entry must carry the onnxruntime runtime (pure module) AND the
+    engine binaries (the pyd + DirectML.dll, SFX_BINARY_IMPORTS). A closure
+    that lost them would fail the probe at model load, not the build — this
+    assertion keeps that failure at BUILD time."""
+    pure_names = {entry[0] for entry in analysis.pure}
+    missing = [m for m in SFX_PROBE_HIDDENIMPORTS if m not in pure_names]
+    if missing:
+        raise SystemExit(
+            f"SFX probe closure assertion FAILED for {exe_name}: {missing} not "
+            "collected into the PYZ — the frozen sfx probe would degrade to "
+            "PROVIDER_DEPENDENCY_MISSING. Do NOT relax this check; fix the "
+            "hiddenimports/analysis instead."
+        )
+    binary_names = {entry[0].replace("\\", "/") for entry in analysis.binaries}
+    missing_binaries = [
+        m for m in SFX_BINARY_IMPORTS if not any(
+            name == m or name.endswith("/" + m) for name in binary_names
+        )
+    ]
+    if missing_binaries:
+        raise SystemExit(
+            f"SFX probe closure assertion FAILED for {exe_name}: extension(s) "
+            f"{missing_binaries} not collected into the bundle binaries — "
+            "the frozen sfx probe would fail at engine load. Do NOT relax "
+            "this check; fix the hiddenimports/analysis instead."
+        )
+    print(
+        f"closure assertion: {exe_name} PYZ carries "
+        + ", ".join(SFX_PROBE_HIDDENIMPORTS)
+        + f" ({len(pure_names)} pure modules) + extensions "
+        + ", ".join(SFX_BINARY_IMPORTS)
+    )
+
+
 EXCLUDED = [
     # M2-PROD-DETECT-2 (proxy ruling 2): the ML stack (torch/torchvision/
     # doctr + their transitive deps) is deliberately NOT excluded anymore —
@@ -217,7 +293,9 @@ for stem, name, is_ml_entry in ENTRIES:
         datas=[],
         hiddenimports=(
             list(ML_HIDDENIMPORTS) + list(ML_BINARY_IMPORT_MODULES)
-        ) if is_ml_entry else [],
+        ) if is_ml_entry else (
+            list(SFX_PROBE_HIDDENIMPORTS) if stem == SFX_PROBE_ENTRY else []
+        ),
         hookspath=[],
         hooksconfig={},
         runtime_hooks=[],
@@ -230,6 +308,8 @@ for stem, name, is_ml_entry in ENTRIES:
     _archive_warn_file(name)
     if is_ml_entry:
         _assert_ml_closure(a, name)
+    if stem == SFX_PROBE_ENTRY:
+        _assert_sfx_probe_closure(a, name)
     pyz = PYZ(a.pure)
     exes.append(
         EXE(
