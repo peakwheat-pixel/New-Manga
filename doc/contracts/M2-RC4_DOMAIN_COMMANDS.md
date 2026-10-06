@@ -14,6 +14,7 @@ Tauri 名与 Core wire 名均采用以下 snake_case；Tauri arguments 使用既
 
 1. restore 的 expected_revision 先校验读取编号，再将该 current ID 传入现有原子 seam；所有调用者共享服务层守卫。旧 Python 调用签名允许省略编号，但服务始终保护自己观察到的 current ID。保留所有历史，包括人工文字与 pinned revision。
 2. 当前 headless Core 渲染依赖为 object()；本任务授权用已安装 Pillow 提供实际 FontCatalog/Layout/Compositor，保留现有 ports 和 RenderService。Windows 字体从系统字体表/目录由 Core 解析，缺字体明确 substitution；不得引入 Qt、模型、新依赖或通用排版框架。横排、竖排、换行、描边、对齐与 fit 至少可测；能力限制记录，不能以空文本冒烟替代真实文字渲染。
+   - 实际生产源图权威是 Page.managed_original_ref（导入不保证存在 ORIGINAL Artifact）。被 skip/manual 的 SFX 须通过既有 compose_region 的 bbox 恢复接口从原图恢复像素，再合成有效译文；优先已有 ORIGINAL Artifact，缺失时用可选 original_page_reader 注入读取 Managed Copy。授权 core_assembly 仅透传该可选参数（默认 None，旧调用行为保持）；不新增 ports、伪造 ORIGINAL Artifact 或业务 ID。原图缺失/损坏则 fail-closed。真实验证必须包含仅受管导入原图+clean、无 ORIGINAL Artifact 的生产数据形态。
 3. 预览仅 Core 将已提交 PNG 发布到现有 derived 只读根并通过 ResourceCatalogStore 登记。Rust 仅向生产 Core 子进程传递同一 catalog/derived 配置，不接触 DB；保持旧 spawn 调用可用。生产 command allowlist/ACL 同步，probe/AC1 面不得获得新命令。
 4. Undo 保存改标前 revision_no、改标结果 expected_revision 和原 suspect；10 秒窗口内恢复源 revision，不调用 set_region_type。切页/新操作/过期立即失效；busy 与陈旧响应不得跨页污染。恢复后重新读取 Core 权威列表并恢复原 suspect；失败呈现 typed error，不自动重试或乐观修改。
 5. Inspector 常驻历史入口显示摘要/current/pinned/source，显式确认恢复目标；窗外仍可恢复。重渲染成功使用已有 loadPageImageUrl 加载 preview，错误明确显示。三入口解除硬禁用，busy/无目标等资格禁用仍保留。复用现有视觉，不重新设计 A/B/C。
