@@ -1,0 +1,3 @@
+SHELL=PowerShell; COMMAND=rg -n ResourceCatalogStore/catalog_loader; read-only census; no runtime initializer/collector executed
+e4c0967f83a08d9b9e2d84605d17923e81a844b6
+EXIT=2

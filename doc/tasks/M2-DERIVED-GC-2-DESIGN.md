@@ -2,7 +2,7 @@
 id: M2-DERIVED-GC-2-DESIGN
 title: 轮换旧 preview 引用安全回收设计
 kind: design
-status: in_review
+status: approved
 approval: user_directive_2026-10-07_preview_reference_safe_design
 suggested_owner: Codex
 owner: Codex
@@ -68,3 +68,11 @@ src/**、apps/**、tests/**、requirements*、Schema/migration、用户数据/�
 ## 固定交付（2026-10-07）
 
 设计交付=8dd88c56becbb5a5c1942aeb7664c24ce86b9944；Handoff=doc/handoffs/M2-DERIVED-GC-2-DESIGN-codex-8dd88c56.md；文档check最新EXIT=0，产品/native租约/回收NOT_RUN。ExecutionState=CHECKPOINTED，下一步真实DSH非作者Review；两个验证器失败尝试日志已保留，未声称产品失败/通过。
+
+## 最终独立审查（设计批准，待集成/后继准备）
+
+最终delivery=af09c00d6dea1beef50d4bb7c6c2ada74670073c；Handoff入库=fdfd2351，口径精度metadata=e4c0967f83a08d9b9e2d84605d17923e81a844b6（真实reviewed_head）。DSH r1有条件批准→r2/r3 changes_requested→r4 approve_with_conditions；最终0P0/P1/P2/P3、2P4。原报告doc/reviews/M2-DERIVED-GC-2-DESIGN-e4c0967f-dsh-r4.md；session与SHA见review-disposition.md。设计稿仍为该固定reviewed_head原内容，后续只治理/证据。
+
+Codex本机文档/Git检查executed EXIT=0，完整设计范围diff --check=0；src/apps/tests/packaging/历史driver/依赖零实际变动。DSH命令复跑BLOCKED（其shell Win32 5），独立静态executed；native/回收/产品回归NOT_RUN。真实调用点census EXIT=0；一次rg参数转义失败attempt保留，非产品失败。
+
+r4 C1由Codex merge后实际填proposed后继Task恢复点/路径与指令二；C4两个P4写入下一指令（AC1自建derived根+run2不重复init；SHA冻结历史probe不进新Gate）。C2/C3是未来实现的G1-G7与新fixed-head DSH Review要求，均不能借设计批准豁免。当前尚非done，待AC4/AC5后半闭合；不启动实现。

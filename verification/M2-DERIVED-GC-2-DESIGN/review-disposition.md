@@ -44,3 +44,11 @@ Reviewer 的 shell 因 SetNamedSecurityInfoW Win32 5 不可用，命令复跑 BL
 | R3-A4 | 纠正bridge_and_thresholds实际:memory:，真正file-backed直接/间接fixture均点名，不给memory fixture装namespace。 |
 
 新增fixture路径均基于本仓库只读真实调用点定位；本设计仍无生产/测试/driver代码变动，native Gate全部NOT_RUN。r4报告将原字节入库，不把作者修订表视为Reviewer已批准。
+
+## r4 最终设计批准
+
+真实CLI session=session-67621549-2e6b-46e4-9851-9facf013e2a1；reviewed_head=e4c0967f83a08d9b9e2d84605d17923e81a844b6，EXIT=0，精确session挂载EXIT=0/web_visibility=unverified。原final.text UTF-8 SHA256=72c004d4100bd41718818da0360142ef913b082697c6b51da501b66de51194b7，报告doc/reviews/M2-DERIVED-GC-2-DESIGN-e4c0967f-dsh-r4.md。approve_with_conditions，0P0-P3、2P4；R3-01/A1-A4全部独立闭合，设计正文不再修改。
+
+剩余条件：Codex串行集成/治理与proposed后继实际恢复点准备；把R4-A1/A2吸收进后继Task/指令二。G1-G7仍NOT_RUN且实施后必须独立DSH，不把未来Gate记PASS。R4-A1：AC1 fixture在initialize前创建自有derived根，run2复用绑定不重复init，_LoopHarness用root/scope/derived。R4-A2：SHA冻结历史probe_ttl_nan*只保留证据不改，不是后继Gate，现行M2-RC2 driver=run_e2e.py。以上进入实际后继文件后C4才closed。
+
+额外作者执行：integration-ready.log包含固定e4c范围diff --check及doccheck EXIT0；caller-census.log EXIT0，attempt1参数转义失误EXIT2保留。不影响design/source树，禁止将其记录成产品测试PASS。
