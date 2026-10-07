@@ -516,6 +516,36 @@ def test_manual_modification_hash_mismatch_retains_copy(tmp_path) -> None:
     assert catalog.lookup(resource_id) is not None
 
 
+def test_inflight_reader_blocks_sweep_delete_until_release(tmp_path) -> None:
+    # K4 at the SWEEP level (Codex r1 F-06): a real reader handle held OPEN
+    # across the whole sweep makes the delete-open fail (the reader's share
+    # mode admits no DELETE access), the copy AND its metadata are retained,
+    # and the next safe window after the reader exits reclaims normally.
+    publisher, catalog, root = _make(tmp_path)
+    core = _product_core(tmp_path)
+    producer_root = tmp_path / "data"
+    resource_id, copy_path = _seed_retired_preview(
+        tmp_path, publisher, catalog, core, producer_root=producer_root
+    )
+
+    reader = open(copy_path, "rb")
+    try:
+        stats = _sweep(tmp_path, publisher, catalog, core, producer_root)
+        assert stats["retired_deleted"] == 0
+        assert copy_path.is_file(), "an in-flight reader must block the delete"
+        assert catalog.lookup(resource_id) is not None, (
+            "metadata must not be removed while the copy survives"
+        )
+        assert catalog.preview_lifecycle_row(resource_id) is not None
+    finally:
+        reader.close()
+
+    stats = _sweep(tmp_path, publisher, catalog, core, producer_root)
+    assert stats["retired_deleted"] == 1
+    assert not copy_path.exists()
+    assert catalog.lookup(resource_id) is None
+
+
 def test_product_db_busy_retains_everything_fail_soft(tmp_path) -> None:
     # G5: a busy product database keeps the candidates (skip with a reason);
     # busy never lowers protection, and the failure never leaves the sweep

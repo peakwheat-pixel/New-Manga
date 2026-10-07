@@ -293,6 +293,51 @@ class TestPreviewNamespaceLease:
                 child.kill()
                 child.wait(timeout=10)
 
+    def test_two_independent_processes_share_concurrently_then_exclusive(self, tmp_path):
+        import subprocess
+        import sys
+        import time
+
+        from infrastructure.resource_channel.handle_resolver import (
+            try_acquire_exclusive_lease,
+        )
+
+        derived, catalog, binding = self._binding(tmp_path)
+        children = []
+        try:
+            for _ in range(2):
+                child = subprocess.Popen(
+                    [sys.executable, "-c", self._child_script(), str(derived)],
+                    stdout=subprocess.PIPE,
+                    stderr=subprocess.PIPE,
+                    text=True,
+                )
+                children.append(child)
+                assert child.stdout is not None
+                assert child.stdout.readline().strip() == "HELD", (
+                    f"child {len(children)} failed to hold the shared lease"
+                )
+            # two REAL processes hold shared leases at the same time
+            assert try_acquire_exclusive_lease(derived) is None
+            for child in children:
+                child.kill()
+            for child in children:
+                child.wait(timeout=10)
+            deadline = time.monotonic() + 10
+            lease = None
+            while time.monotonic() < deadline:
+                lease = try_acquire_exclusive_lease(derived)
+                if lease is not None:
+                    break
+                time.sleep(0.1)
+            assert lease is not None and lease.exclusive
+            lease.release()
+        finally:
+            for child in children:
+                if child.poll() is None:
+                    child.kill()
+                    child.wait(timeout=10)
+
     def test_exclusive_lease_blocks_new_shared_holders(self, tmp_path):
         from infrastructure.resource_channel.handle_resolver import (
             acquire_shared_lease,
@@ -341,6 +386,37 @@ class TestPreviewNamespaceLease:
         with pytest.raises(TypedResourceChannelError) as excinfo2:
             acquire_shared_lease(other)
         assert excinfo2.value.code == "REF_SCOPE_DENIED"
+
+    def test_lock_path_junction_replacement_is_refused(self, tmp_path):
+        # Codex r1 F-02: the lstat walk cannot cover a replacement between
+        # the walk and CreateFileW, so the OPENED HANDLE is verified (reparse
+        # attribute + final path). Here the lock FILE is deleted and the path
+        # replaced by a junction BEFORE the lease attempt: CreateFileW would
+        # follow it onto a directory, and the post-open checks must refuse
+        # the lease instead of locking a foreign object.
+        import _winapi
+        import os
+
+        from infrastructure.resource_channel.handle_resolver import (
+            PREVIEW_NAMESPACE_LOCK_NAME,
+            acquire_shared_lease,
+        )
+
+        derived, catalog, binding = self._binding(tmp_path)
+        lock = derived / PREVIEW_NAMESPACE_LOCK_NAME
+        lock.unlink()
+        outside = tmp_path / "outside"
+        outside.mkdir()
+        _winapi.CreateJunction(str(outside), str(lock))
+        try:
+            with pytest.raises(TypedResourceChannelError):
+                acquire_shared_lease(derived)
+            # the junction target is untouched: nothing got locked there
+            canary = outside / "canary.txt"
+            canary.write_bytes(b"free")
+            assert canary.read_bytes() == b"free"
+        finally:
+            os.rmdir(str(lock))
 
     def test_reparse_derived_root_is_refused(self, tmp_path):
         import _winapi

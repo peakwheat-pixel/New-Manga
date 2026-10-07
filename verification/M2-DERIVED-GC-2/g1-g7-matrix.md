@@ -9,13 +9,27 @@
 | 命令 | 结果 | 日志 |
 |---|---|---|
 | `python -m pytest -q tests/core/test_derived_gc.py tests/core/test_rc4_stdio_render_preview.py tests/core/test_page_resource_resolve.py tests/m2_resource_channel tests/m2_acceptance` | **155 passed, 0 failed, 0 skipped（1 warning）** EXIT=0 | raw/pytest-focused.log |
-| `python -m pytest -q tests/`（全量回归） | **1922 passed + 1 skipped + 0 failed** EXIT=0（main 基线 1886+1sk，+36 新用例等量递增） | raw/pytest-full.log |
+| `python -m pytest -q -rs tests/`（全量回归，Codex r1 F-08 后按最终 head 重跑） | **1927 passed + 1 skipped + 0 failed** EXIT=0（main 基线 1886+1sk，+41 新用例等量递增；skip 原因已记录=dev venv ML 栈既有豁免 test_registry_readiness.py:237，T1.1.1 用户批准口径） | raw/pytest-full.log |
 | `M2RC1_PYTHON=… cargo test --manifest-path apps/desktop/src-tauri/Cargo.toml` | **62 passed + 1 ignored + 0 failed** EXIT=0（基线 55+1ign：+2 startup-ping、+5 rotate-retire） | raw/cargo-test.log |
-| `git diff --check`（working+staged） | EXIT=0（仅 CRLF 提示，无 whitespace 错误） | raw/diff-check.log |
+| `git diff --check` 双口径（Codex r1 F-08 后重建：代码面与归档日志分开） | 代码面 working+区间 5896db8c..HEAD **EXIT=0**；整树区间 31 个命中全部位于本 Task 归档原始运行日志（P3-8/P3-9 先例豁免），raw 之外命中 **0** | raw/diff-check.log |
 | `python verification/M2-RC2/run_e2e.py`（fresh release 构建+probe/production 双阶段） | probe 阶段 13/13 PASS；catalog-seeding / import-isolation / runtime-build / probe-allowlist 全 PASS；**interactive-production-surface FAIL=runner 自身陈旧期望（9 条，RC-4 前快照）vs 现行 15 条冻结命令面——既有漂移与本 Task 无关**（`git show 5896db8c:verification/M2-RC2/run_e2e.py` 中 PRODUCTION_EXPECTED 即 9 条；本 Task 对该文件仅 +8/-1 行 seed flag）；处理=范围外不改，登记交 Codex | raw/dev-runner-m2rc2.log |
 | `python verification/M2-AC1/run_e2e.py --skip-build` | 见 raw/dev-runner-m2ac1.log（真实桌面双 launch；含 FIX-catalog-prebind 新证据项） | raw/dev-runner-m2ac1.log |
 | `python packaging/m2ac5/run_clean_start_e2e.py --installer <NSIS 553.75MiB, sidecar HEAD=363265b1>` | **产品场景全 PASS**：probe 13/13 + **CS-A0-ac1-catalog-prebind（新）** + AC1 loop run1/run2 + production R1-R4（真实安装态 production 模式：Core first-bind + startup ping + channel 顺序全链）+ zero-touch Z1-Z4（`git diff --check` 干净）；**唯一 FAIL=CS-L1-packaged-core-ping：runner 断言协议 minor 3（RC-4 前快照）而实际 Core=minor 6——既有漂移**（`git show 5896db8c:packaging/m2ac5/run_clean_start_e2e.py:497` 即期望 minor 3；RC-4 集成 minor 4→6 时未同步该 runner；同 L2/L3 ListBooks 全 PASS 证明安装态产品功能正常）；另两处 fixture 语义伴随修正（AC1 fixture catalog 初始化=设计 §2.3 要求的 packaged launcher 义务；CS-Z2 把设计冻结位置的 `.preview-lifecycle.lock` 列入协议白名单——fixture 文件字节恒等保护不变），**交 DSH/Codex 追认** | raw/packaged-runners.log（runner 场景日志另存 raw/packaged-ac5-run/；M2-AC5 历史入库 raw 已恢复原字节，本次运行产物仅搬运不覆盖——P3-9(b) 先例口径） |
 | `python packaging/release-gate/run_release_gate.py --installer <同上>` | **GATE PASS 25/25**——含 RG1-DC1a（packaged loader 初始化+seed fixture 新链）、DC2 host-bridge handshake（安装态 file-backed catalog 共享租约路径）、RG1-CS2 core ready（**protocol minor 6 ready：安装态 production 启动顺序 Core first-bind→startup ping→channel 全链实证**）、三轮真实窗口冷启动+双 sidecar 进程+console 检测全 PASS | raw/packaged-runners.log（runner 场景日志另存 raw/packaged-ac5-run/；M2-AC5 历史入库 raw 已恢复原字节，本次运行产物仅搬运不覆盖——P3-9(b) 先例口径） |
+
+## Codex r1 返修（changes_requested 0P0/3P1/6P2 → 处置）
+
+| Finding | 处置 | 证据 |
+|---|---|---|
+| F-01 P1 旧 schema 预检计数清零 | 独立表探测（缺 lifecycle 表且有 resource 行=UNKNOWN 拒绝）+ 锁内权威重验 + DatabaseError（非 SQLite 文件）拒绝 | `test_initialize_refuses_legacy_schema_with_rows`（断言零写入）、`test_initialize_refuses_non_sqlite_file` |
+| F-02 P1 锁路径 TOCTOU | `_open_lock_handle` 打开后核验 reparse 属性+final path，不符即拒 | `test_lock_path_junction_replacement_is_refused` |
+| F-03 P1 分发迁移 Gate | g7-enablement-boundary.md §2 落「分发前阻断 Gate（阻断性）」+旧 catalog fail-closed 拒绝策略记录 | 文档 + F-01 测试 |
+| F-04 P2 零 busy 判别 | 断言 busy OperationalError 本身（timeout=0 立即 locked）+ 阈值 <1s 仅作 backstop，措辞不再称零等待实测 | `test_mark_uses_zero_busy_independent_connection`（改造） |
+| F-05 P2 双共享持有者 | 两个真实子进程同时 HOLD 共享→独占拒绝→双双退出→独占成功 | `test_two_independent_processes_share_concurrently_then_exclusive` |
+| F-06 P2 sweep 级活跃 reader | reader 句柄持满 sweep→copy+metadata 全保留→释放后下一窗口回收 | `test_inflight_reader_blocks_sweep_delete_until_release` |
+| F-07 P2 runner 快照 FAIL 记录 | G6 措辞改为「产品面 PASS；两个 runner 快照项保持 FAIL 记录至独立 debt Task」 | 本表 G6 行 |
+| F-08 P2 验证记录绑定 | 全量 pytest 按最终 head 重跑（-rs skip 原因）；diff-check 双口径；AC5 两轮时间线归档 | raw/pytest-full.log、raw/diff-check.log、raw/packaged-ac5-run/TIMELINE.md |
+| F-09 P2 超范围/窄授权 | DESIGN 文件经正确基线（5896db8c..7c19b3d6）核验零差量（r1 所引为治理提交差量）；m2ac5 两处窄授权增补请求 Codex 追认（Task 登记段） | raw/baseline-clarification-f09.txt |
 
 ## G1 来源/权限 — PASS
 
@@ -53,10 +67,10 @@
 - crash 点恢复/幂等：unlink 后 catalog 事务丢失→下一窗口 dead-row 清理+来源 metadata 清（`test_crash_after_unlink_recovers_via_dead_row_cleanup`）；D2 metadata-only 边界（`test_metadata_reclaim_is_metadata_only`）；重复运行幂等（D1 用例二跑）；skip 原因逐条 stderr（`test_sweep_reports_skip_reasons_and_survives_publisher_errors`）。
 - publish/mark/unlink/catalog 各失败注入：publish 失败清理路径保持（GC-1 用例全绿）+ mark 异常注入（bridge 用例）。
 
-## G6 回归/隔离 — PASS（含一项既有漂移登记）
+## G6 回归/隔离 — 产品面 PASS；两个 runner 快照项按 Codex r1 F-07 保持 FAIL 记录（交独立 debt Task，闭合前不记 Gate PASS）
 
 - 定向 pytest 155 / 全量 1922+1sk / cargo 62+1ign 全绿；F-05 import 名单未扩大（`test_sidecar_isolation.py` 全绿，`handle_resolver` 原在白名单）。
-- dev 入口：M2-RC2 runner probe 阶段 13/13+catalog-seeding+import-isolation PASS；production allowlist FAIL=runner 陈旧期望（既有，证据见上表，登记交 Codex 处置）。M2-AC1 runner 双 launch 见 raw 日志。
+- dev 入口：M2-RC2 runner probe 阶段 13/13+catalog-seeding+import-isolation PASS；production allowlist 项 FAIL=runner 陈旧期望（既有漂移，Codex r1 F-07 同意交独立 debt Task）——**该 Gate 项在 debt Task 修复并重新验收前保持 FAIL 记录，不以既有漂移为由记 PASS**。M2-AC1 runner GATE PASS（双 launch 真实桌面）。packaged：m2ac5 同口径（CS-L1 保持 FAIL 记录）；release-gate 25/25 PASS（其 runner 无此类陈旧快照）。
 - dev/packaged 构建：sidecar 重建绑定 HEAD=7f652473（build_sidecar OK）；release exe 重建（RC2 runner 内 fresh `cargo build --release`）；packaged runner 执行状态见 raw/packaged-runners.log（runner 场景日志另存 raw/packaged-ac5-run/；M2-AC5 历史入库 raw 已恢复原字节，本次运行产物仅搬运不覆盖——P3-9(b) 先例口径）。
 
 ## G7 启用边界 — PASS（口径见 g7-enablement-boundary.md）

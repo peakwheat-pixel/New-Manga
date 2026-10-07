@@ -1,0 +1,54 @@
+# F-09 基线澄清：M2-DERIVED-GC-2-DESIGN 文件不在 ZCode 差量内
+Codex r1 F-09 引用 ad75fadc..363265b1 区间——该区间含分支快进带入的治理提交
+（554a9845/5896db8c，Codex release 同步）。正确基线（release head）核验：
+
+$ git diff --name-status 5896db8c..7c19b3d6 -- doc/tasks/M2-DERIVED-GC-2-DESIGN.md verification/M2-DERIVED-GC-2-DESIGN
+EXIT=0（空输出=零差量）
+
+5896db8c..7c19b3d6 全列：
+  M	apps/desktop/src-tauri/src/core_bridge.rs
+  M	apps/desktop/src-tauri/src/library_bridge.rs
+  M	apps/desktop/src-tauri/src/main.rs
+  M	doc/contracts/M2-C1_TYPED_IPC_CONTRACT.md
+  A	doc/handoffs/M2-DERIVED-GC-2-363265b1.md
+  M	doc/tasks/M2-DERIVED-GC-2.md
+  M	packaging/m2ac5/run_clean_start_e2e.py
+  M	packaging/release-gate/run_release_gate.py
+  M	src/bootstrap/core_service.py
+  M	src/infrastructure/resource_channel/catalog_loader.py
+  M	src/infrastructure/resource_channel/catalog_store.py
+  M	src/infrastructure/resource_channel/handle_resolver.py
+  M	src/infrastructure/resource_channel/host_bridge.py
+  M	src/infrastructure/resource_channel/render_preview.py
+  M	tests/core/test_derived_gc.py
+  M	tests/core/test_page_resource_resolve.py
+  M	tests/core/test_rc4_stdio_render_preview.py
+  M	tests/m2_acceptance/test_acceptance_loop.py
+  M	tests/m2_resource_channel/test_bridge_and_thresholds.py
+  M	tests/m2_resource_channel/test_catalog_authority.py
+  M	tests/m2_resource_channel/test_handle_resolver.py
+  M	verification/M2-AC1/run_e2e.py
+  A	verification/M2-DERIVED-GC-2/g1-g7-matrix.md
+  A	verification/M2-DERIVED-GC-2/g7-enablement-boundary.md
+  A	verification/M2-DERIVED-GC-2/raw/cargo-test.log
+  A	verification/M2-DERIVED-GC-2/raw/dev-runner-m2ac1-retry.log
+  A	verification/M2-DERIVED-GC-2/raw/dev-runner-m2ac1.log
+  A	verification/M2-DERIVED-GC-2/raw/dev-runner-m2rc2-artifacts/e2e-cargo-build.log
+  A	verification/M2-DERIVED-GC-2/raw/dev-runner-m2rc2-artifacts/e2e-gate.json
+  A	verification/M2-DERIVED-GC-2/raw/dev-runner-m2rc2-artifacts/e2e-probe-results.json
+  A	verification/M2-DERIVED-GC-2/raw/dev-runner-m2rc2-artifacts/e2e-sidecar-modules-probe.json
+  A	verification/M2-DERIVED-GC-2/raw/dev-runner-m2rc2.log
+  A	verification/M2-DERIVED-GC-2/raw/diff-check.log
+  A	verification/M2-DERIVED-GC-2/raw/other-runner-artifacts/M2-RG1/raw/rg1-gate.json
+  A	verification/M2-DERIVED-GC-2/raw/other-runner-artifacts/M2-RG1/raw/rg1-warn-warn-core_sidecar.txt
+  A	verification/M2-DERIVED-GC-2/raw/packaged-ac5-run/cleanstart-ac1-catalog-initialize.log
+  A	verification/M2-DERIVED-GC-2/raw/packaged-ac5-run/cleanstart-ac1-run1-stdout.log
+  A	verification/M2-DERIVED-GC-2/raw/packaged-ac5-run/cleanstart-ac1-run2-stdout.log
+  A	verification/M2-DERIVED-GC-2/raw/packaged-ac5-run/cleanstart-gate.json
+  A	verification/M2-DERIVED-GC-2/raw/packaged-ac5-run/cleanstart-probe-stdout.log
+  A	verification/M2-DERIVED-GC-2/raw/packaged-ac5-run/cleanstart-production-stdout.log
+  A	verification/M2-DERIVED-GC-2/raw/packaged-ac5-run/r1-library-probe.log
+  A	verification/M2-DERIVED-GC-2/raw/packaged-runners.log
+  A	verification/M2-DERIVED-GC-2/raw/pytest-focused.log
+  A	verification/M2-DERIVED-GC-2/raw/pytest-full.log
+  M	verification/M2-RC2/run_e2e.py

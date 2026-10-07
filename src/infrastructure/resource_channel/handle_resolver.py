@@ -531,7 +531,13 @@ def _open_lock_handle(derived_root: str, *, exclusive: bool, create_new: bool = 
     GENERIC_READ|GENERIC_WRITE with share mode 0 -- it fails with a sharing
     violation while any shared lease is open (non-blocking by construction),
     and no shared lease can be taken while it is held.
-    """
+
+    The pre-open lstat walk cannot cover a replacement BETWEEN the walk and
+    ``CreateFileW`` (Codex r1 F-02), so the OPENED HANDLE is verified before
+    it may count as a lease: no reparse attribute and a final path identical
+    to the requested lock path -- anything else is a refused lease, never a
+    lock on a different object."""
+
     lock_path = Path(derived_root) / PREVIEW_NAMESPACE_LOCK_NAME
     _lstat_reparse_walk(lock_path)
     access = (GENERIC_READ | GENERIC_WRITE) if exclusive else GENERIC_READ
@@ -547,6 +553,15 @@ def _open_lock_handle(derived_root: str, *, exclusive: bool, create_new: bool = 
         raise namespace_unavailable(
             f"namespace lock open failed (win32 error {error}, exclusive={exclusive})"
         )
+    try:
+        if _attributes_of(handle) & FILE_ATTRIBUTE_REPARSE_POINT:
+            raise namespace_unavailable("namespace lock path is a reparse point")
+        final = _final_path_of(handle)
+        if _normalized(final) != _normalized(str(lock_path)):
+            raise namespace_unavailable("namespace lock path resolved to a different object")
+    except BaseException:
+        _k32.CloseHandle(wintypes.HANDLE(handle))
+        raise
     return int(handle)
 
 

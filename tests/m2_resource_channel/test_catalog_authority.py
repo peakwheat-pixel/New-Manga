@@ -318,6 +318,53 @@ class TestPreviewNamespaceAuthority:
         with pytest.raises(TypedResourceChannelError):
             initialize_namespace(db2, other)
 
+    def test_initialize_refuses_legacy_schema_with_rows(self, tmp_path):
+        # Codex r1 F-01: an old-schema catalog (resource_catalog WITH rows,
+        # NO preview_lifecycle table) is unknown history. The two table
+        # probes are independent, so the missing lifecycle table can never
+        # zero out the resource count -- the bind is refused and NOTHING is
+        # written (no lifecycle/namespace table may appear, row intact).
+        import sqlite3 as _sq
+
+        db = tmp_path / "legacy.sqlite"
+        conn = _sq.connect(str(db))
+        conn.execute(
+            "CREATE TABLE resource_catalog ("
+            "resource_id TEXT PRIMARY KEY, scope_class TEXT NOT NULL, rel_path TEXT NOT NULL)"
+        )
+        conn.execute(
+            "INSERT INTO resource_catalog VALUES"
+            " ('historic-row', 'derived-read-only', 'previews/historic-row.png')"
+        )
+        conn.commit()
+        conn.close()
+
+        derived = tmp_path / "derived"
+        derived.mkdir()
+        with pytest.raises(TypedResourceChannelError):
+            initialize_namespace(db, derived)
+
+        conn = _sq.connect(str(db))
+        tables = {
+            row[0]
+            for row in conn.execute("SELECT name FROM sqlite_master WHERE type='table'")
+        }
+        (count,) = conn.execute("SELECT COUNT(*) FROM resource_catalog").fetchone()
+        conn.close()
+        assert count == 1, "the historic row must be untouched"
+        assert "preview_lifecycle" not in tables and "preview_namespace" not in tables, (
+            "a refused initialization must not create any table"
+        )
+
+    def test_initialize_refuses_non_sqlite_file(self, tmp_path):
+        # Unknown/corrupt database files are a refusal, never a bind.
+        db = tmp_path / "garbage.sqlite"
+        db.write_bytes(b"definitely not a sqlite database" * 10)
+        derived = tmp_path / "derived"
+        derived.mkdir()
+        with pytest.raises(TypedResourceChannelError):
+            initialize_namespace(db, derived)
+
     def test_second_binding_on_same_derived_is_refused(self, tmp_path):
         derived = self._fresh(tmp_path)
         first_db = tmp_path / "first.sqlite"
@@ -467,9 +514,12 @@ class TestLifecycleWrites:
         assert [c.resource_id for c in candidates] == ["preview-ok"]
 
     def test_mark_uses_zero_busy_independent_connection(self, tmp_path):
-        # G2: the mark connection must have busy_timeout=0 -- a held catalog
-        # write lock makes the mark fail immediately (well under the default
-        # 5 s busy wait), the caller keeps retired=0, and no retry exists.
+        # G2 (Codex r1 F-04): the discriminating evidence for busy_timeout=0
+        # is the SQLITE_BUSY failure ITSELF -- with timeout=0 a contended
+        # BEGIN IMMEDIATE fails immediately with "database is locked"
+        # (OperationalError); the default 5 s wait would instead succeed
+        # after blocking. The elapsed bound is a coarse backstop, not the
+        # zero-wait proof.
         import sqlite3 as _sq
         import time as _time
 
@@ -482,14 +532,14 @@ class TestLifecycleWrites:
         try:
             blocker.execute("BEGIN IMMEDIATE")
             started = _time.monotonic()
-            with pytest.raises(Exception):
+            with pytest.raises(_sq.OperationalError, match="locked|busy"):
                 store.mark_preview_retired("preview-1")
             elapsed = _time.monotonic() - started
         finally:
             blocker.rollback()
             blocker.close()
-        assert elapsed < 2.0, (
-            f"mark must not wait the default busy timeout (took {elapsed:.2f}s)"
+        assert elapsed < 1.0, (
+            f"a timeout=0 mark must fail immediately, not wait (took {elapsed:.2f}s)"
         )
         assert store.preview_lifecycle_row("preview-1")["retired"] is False
         store.close()

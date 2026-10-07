@@ -21,6 +21,8 @@ integration_commit: null
 
 2026-10-07 用户明确授权 Codex 正式释放；Task=ready，ExecutionState=IDLE / AWAITING_OWNER_CLAIM。唯一释放任务为本 Task，Owner=ZCode，非作者 Reviewer=DeepSeek Harness，Integrator=Codex。允许路径、共享 seam、AC/G1-G7 和禁止范围沿用已批准设计及本文件，未扩大产品范围。ZCode 收到实际 release commit 并核对干净恢复点后才认领 in_progress；本轮未派发或启动生产实施。
 
+**2026-10-07 Codex r1 返修登记（非作者审核 changes_requested，0P0/3P1/6P2）**：报告=doc/reviews/M2-DERIVED-GC-2-7c19b3d6-codex-r1.md。处置：F-01 旧 schema 预检计数清零缺陷已修（独立表探测+锁内重验，`test_initialize_refuses_legacy_schema_with_rows`/`test_initialize_refuses_non_sqlite_file`）；F-02 锁句柄打开后 reparse+final-path 核验（`test_lock_path_junction_replacement_is_refused`）；F-03 分发迁移阻断 Gate+旧 catalog 拒绝策略落 g7-enablement-boundary.md §2；F-04 零 busy 判别改为 busy 错误本身；F-05 双共享跨进程用例；F-06 sweep 级活跃 reader 阻止用例；F-07 两 runner 快照项保持 FAIL 记录至独立 debt Task（登记候选：runner 快照与协议版本同步债务）；F-08 验证记录按最终 head 重建（pytest-full.log 带 -rs skip 原因、diff-check 双口径、AC5 两轮时间线）；F-09 经正确基线（5896db8c..7c19b3d6）核验 DESIGN 文件零差量（raw/baseline-clarification-f09.txt）——r1 所引为治理提交差量。**请求 Codex 追认**：m2ac5 runner 的 AC1 fixture prebind（CS-A0）与 CS-Z2 协议锁白名单两处窄授权增补（r1 已表态语义接受、授权待追认）。
+
 **2026-10-07 Review 通道变更（用户指示）**：用户指示「给codex审核」——本 Task 的非作者 Review 由 Codex 执行（Codex 非本 Task 作者，非作者约束保持；DSH 不再担任本轮 Review）。Review 基准 head=7c19b3d6（代码实体=363265b1），经桌面版内嵌 CLI headless 只读通道派发，报告原字节入库 doc/reviews/。
 
 **2026-10-07 Owner 认领（ZCode）**：恢复点核对通过——worktree `G:/CODEX/New Manga.worktrees/DERIVED-GC-2-zcode` 分支 `agent/zcode/M2-DERIVED-GC-2`、HEAD=`5896db8c64b90b53b015eb9c46c7dab6ab29210b`（clean）、common-dir=`G:/CODEX/New Manga/.git`、与 release 恢复点一致；主仓库额外 HEAD=`554a9845` 为指令所述治理 commit。Task 依赖（设计@e4c0967f 已批、GC-1@44859014、RC4@0a7e0d5b）核实已集成。Owner=ZCode 本会话认领 in_progress；Reviewer=DeepSeek Harness（非作者）、Integrator=Codex 不变。AC/G1-G7 维持 planned / NOT_RUN。
