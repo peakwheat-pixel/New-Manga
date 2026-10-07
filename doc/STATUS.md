@@ -2,7 +2,7 @@
 
 ## 当前执行：M2-DERIVED-GC-2-DESIGN
 
-2026-10-07：用户明确授权设计 Task，状态 in_review / ExecutionState=CHECKPOINTED。DSH r1@4a930c61 approve_with_conditions；r2@3a684675 changes_requested（1P2：bootstrap定位锁顺序）。修订 delivery=73e70536，Handoff 入库/固定复审 head=8557a3d4162d00dc7a985ede0dabda22809f60fd；真实 DSH r3 限定复核中。生产树零改动、回收/native/产品测试 NOT_RUN；不得沿用旧批准。Owner=Codex，Reviewer=DeepSeek Harness（非作者），Integrator=Codex；base=ab4b7c11，branch/worktree 见 [Task](tasks/M2-DERIVED-GC-2-DESIGN.md)。仅设计，不启动回收实现；下方“无 Active”是 release 前审计快照。本 Task 成为唯一 Active。
+2026-10-07：用户明确授权设计 Task，状态 in_review / ExecutionState=CHECKPOINTED。DSH r1有条件批准；r2/r3要求补租约bootstrap和新验收库初始化覆盖，均已修订（无P0/P1）。最新delivery=af09c00d，Handoff入库/固定复审head=e4c0967f83a08d9b9e2d84605d17923e81a844b6；真实DSH r4限定复核中。Owner=Codex、Reviewer=DeepSeek Harness、Integrator=Codex；base=ab4b7c11，branch/worktree见[Task](tasks/M2-DERIVED-GC-2-DESIGN.md)。src/apps/tests/packaging/历史driver/依赖零改动；native/回收/产品测试NOT_RUN。仅设计，本Task唯一Active，不创建/启动未释放实现；下方无Active是release前历史快照。
 
 
 ## 2026-10-07 全量核验（当前覆盖层）
