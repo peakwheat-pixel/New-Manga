@@ -70,3 +70,22 @@ tauri build / 定向 pytest / runner stdout）：
 - 历史保护：新产物搬 sixth-run-artifacts/，tracked 历史字节 restore（M2-AC5 status 干净）
 
 第五轮（da2ddeae）记录保留——本第六轮为最终绑定轮（含 r6 全部改动）。
+
+
+---
+
+# 第七轮（CURRENT FINAL）构建链：绑定 e11562be（r7 F-01 精确文本+探针纵深后）
+
+单日志 seventh-round-build-and-run.log（各步骤命令显式入日志，step1..step5 带 EXIT）：
+
+- 返修代码 commit = e11562bed91a36dcbf0ec31094e44822e154488d（r7 F-01：规范化精确
+  匹配 check(singleton=1) 文本守卫；行为探针保留为注释走私类 backstop）
+- [step1] build_sidecar.ps1 -Force，原文行 HEAD=e11562bed91a36dcbf0ec31094e44822e154488d（EXIT=0）
+- [step2] npx --yes @tauri-apps/cli@2 build（EXIT=0）
+- [step3] installer SHA256 = 5d5c5c6099aa1f00508011461adf58e4f48766198dd8f162be914761eb67e33c
+- [step4] 定向回归 161 passed（EXIT=0）
+- [step5] m2ac5 runner：25 项 PASS、唯一 FAIL=CS-L1（既有漂移，F-07 口径保持记录）（EXIT=1）
+- 全量 pytest 另见 raw/pytest-full.log（HEAD=e11562be 指纹）：1939 passed+1 skipped
+- 历史保护：新产物搬 seventh-run-artifacts/，tracked 历史字节 restore
+
+第六轮（adb1498c）记录保留——本第七轮为最终绑定轮（含 r7 全部改动）。
