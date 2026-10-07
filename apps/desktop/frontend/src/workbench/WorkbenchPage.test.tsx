@@ -1017,6 +1017,9 @@ describe("RC-4 Workbench actual DOM actions", () => {
         });
         const resolveCalls = invoke.mock.calls.filter(([command]) => command === "resolve_page_resource");
         expect(resolveCalls).toHaveLength(0);
+        // frozen semantics (Task 冻结范围): the busy indicator shows during
+        // the quiet window, not only after the invoke fires (DSH r1 PR-02)
+        expect(ui.container.querySelector('[data-testid="resource-resolve-busy"]')).not.toBeNull();
 
         await act(async () => {
           vi.advanceTimersByTime(300);

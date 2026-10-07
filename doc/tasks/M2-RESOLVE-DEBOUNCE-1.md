@@ -28,7 +28,7 @@ PAGE-RESOLVE-1 DSH r1 PR-10（deferred 登记）：Workbench resolve effect 对 
 ### React（apps/desktop/frontend/src/workbench）
 - `WorkbenchPage.tsx`：新增可选 prop `resolveDebounceMs?: number`（**默认 300**）；resolve effect 内 `setTimeout` 包裹发起、cleanup `clearTimeout`（与既有 cancelled 守卫叠加——timer 触发后才发 invoke，迟到回包仍由 `stillCurrent()` 复检）。busy 指示随 timer 启动（`resource-resolve-busy` 在输入窗口即显示，解析发起后保持至回包——不变语义）。
 - `WorkbenchPage.test.tsx`：`mountInteractiveWorkbench` 增加 `options.resolveDebounceMs`（**测试默认 0**=既有用例零时序扰动）；新增判别用例：debounce=300 + `vi.useFakeTimers`，逐字符输入 4 键只触发 **1 次** `resolve_page_resource`（原实现为 4 次），advance 后发起且正常喂图；既有 3 个 resolve 用例与 2 个下钻用例零改动全绿。
-- **明确不做**：region/history/image 循环不加 debounce（各自已有 requestId 守卫且非逐键触发面）；Core/Rust/契约零接触；`onPageIdChange` 的立即清屏语义不变（切页即时清空，只是解析延后）。
+- **明确不做**：region/history/image 循环不加 debounce（各自已有 requestId 守卫；**r1 C-1 更正：region 读循环依赖 [clients, pageId, refreshRegions] 同样逐键重跑 invoke list_regions，属既有行为类别，本刀不闭合**——逐键 region IPC 与 regions 错误条闪烁显式保留为 deferred 后续候选）；Core/Rust/契约零接触；`onPageIdChange` 的立即清屏语义不变（切页即时清空，只是解析延后）。
 
 ## 验收 Gate
 
