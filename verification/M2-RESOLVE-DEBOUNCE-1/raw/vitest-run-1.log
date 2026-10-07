@@ -1,0 +1,27 @@
+SHELL=Git Bash (MINGW64, Windows)
+HEAD=acc3a578524407b7cce7e3502349c9b2e32e3e22
+COMMAND=npx vitest run
+npm notice run m2rc1-frontend@0.1.0 npx
+npm notice run vitest run
+
+[1m[7m[36m RUN [39m[27m[22m [36mv2.1.9 [39m[90mG:/CODEX/New Manga.worktrees/RESOLVE-DEBOUNCE-1/apps/desktop/frontend[39m
+
+ [32m✓[39m src/region/geometry.test.ts [2m([22m[2m8 tests[22m[2m)[22m[90m 3[2mms[22m[39m
+ [32m✓[39m src/ac1/driver.test.ts [2m([22m[2m3 tests[22m[2m)[22m[90m 3[2mms[22m[39m
+ [32m✓[39m src/resourceChannel/client.test.ts [2m([22m[2m8 tests[22m[2m)[22m[90m 8[2mms[22m[39m
+ [32m✓[39m src/library/client.test.ts [2m([22m[2m10 tests[22m[2m)[22m[90m 7[2mms[22m[39m
+ [32m✓[39m src/workbench/relabelMachine.test.ts [2m([22m[2m21 tests[22m[2m)[22m[90m 6[2mms[22m[39m
+ [32m✓[39m src/resourceChannel/commandSurface.test.ts [2m([22m[2m10 tests[22m[2m)[22m[90m 10[2mms[22m[39m
+ [32m✓[39m src/region/client.test.ts [2m([22m[2m15 tests[22m[2m)[22m[90m 9[2mms[22m[39m
+ [32m✓[39m src/settings/client.test.ts [2m([22m[2m7 tests[22m[2m)[22m[90m 6[2mms[22m[39m
+ [32m✓[39m src/workbench/PageListPanel.test.tsx [2m([22m[2m5 tests[22m[2m)[22m[90m 9[2mms[22m[39m
+ [32m✓[39m src/library/LibraryPanel.test.tsx [2m([22m[2m8 tests[22m[2m)[22m[90m 92[2mms[22m[39m
+ [32m✓[39m src/settings/SettingsPanel.test.tsx [2m([22m[2m10 tests[22m[2m)[22m[90m 146[2mms[22m[39m
+ [32m✓[39m src/workbench/WorkbenchPage.test.tsx [2m([22m[2m33 tests[22m[2m)[22m[33m 311[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m12 passed[39m[22m[90m (12)[39m
+[2m      Tests [22m [1m[32m138 passed[39m[22m[90m (138)[39m
+[2m   Start at [22m 09:40:44
+[2m   Duration [22m 1.23s[2m (transform 804ms, setup 0ms, collect 1.78s, tests 610ms, environment 1ms, prepare 1.81s)[22m
+
+EXIT=0

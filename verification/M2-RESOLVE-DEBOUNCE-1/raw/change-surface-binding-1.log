@@ -1,0 +1,12 @@
+SHELL=Git Bash (MINGW64, Windows)
+HEAD=3eb620c5e88c1466900cf83d48696e3f58ef50a8
+COMMAND=git diff --name-status adabd913..a7a3462d + git status --porcelain (DSH r1 C-2 binding)
+M	apps/desktop/frontend/src/workbench/WorkbenchPage.test.tsx
+M	apps/desktop/frontend/src/workbench/WorkbenchPage.tsx
+A	doc/tasks/M2-RESOLVE-DEBOUNCE-1.md
+---porcelain---
+ M apps/desktop/frontend/src/workbench/WorkbenchPage.test.tsx
+ M doc/tasks/M2-RESOLVE-DEBOUNCE-1.md
+?? doc/reviews/M2-RESOLVE-DEBOUNCE-1-a7a3462d-dsh-r1.md
+?? verification/M2-RESOLVE-DEBOUNCE-1/raw/change-surface-binding-1.log
+END

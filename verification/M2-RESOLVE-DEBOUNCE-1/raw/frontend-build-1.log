@@ -1,0 +1,14 @@
+SHELL=Git Bash (MINGW64, Windows)
+HEAD=acc3a578524407b7cce7e3502349c9b2e32e3e22
+COMMAND=npm run build
+npm notice run m2rc1-frontend@0.1.0 build
+npm notice run tsc && vite build
+[36mvite v5.4.21 [32mbuilding for production...[36m[39m
+transforming...
+[32m✓[39m 50 modules transformed.
+rendering chunks...
+computing gzip size...
+[2mdist/[22m[32mindex.html                [39m[1m[2m  0.28 kB[22m[1m[22m[2m │ gzip:  0.21 kB[22m
+[2mdist/[22m[36massets/index-BVFzlQS_.js  [39m[1m[2m198.58 kB[22m[1m[22m[2m │ gzip: 62.97 kB[22m
+[32m✓ built in 394ms[39m
+EXIT=0

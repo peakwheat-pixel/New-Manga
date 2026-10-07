@@ -44,6 +44,13 @@ export type InvokeFn = (command: string, args?: Record<string, unknown>) => Prom
 export interface WorkbenchPageProps {
   /** Injectable invoke for tests; defaults to the Tauri bridge. */
   invoke?: InvokeFn;
+  /**
+   * M2-RESOLVE-DEBOUNCE-1 (PAGE-RESOLVE r1 PR-10): quiet period before the
+   * page-resource resolve fires, so typing a page id by hand costs ONE
+   * invoke instead of one per keypress. Tests pass 0 to keep the
+   * historical immediate timing.
+   */
+  resolveDebounceMs?: number;
 }
 
 interface UndoOffer {
@@ -70,7 +77,7 @@ function errorCode(error: unknown, fallback: string): string {
   return fallback;
 }
 
-export function WorkbenchPage({ invoke }: WorkbenchPageProps) {
+export function WorkbenchPage({ invoke, resolveDebounceMs = 300 }: WorkbenchPageProps) {
   const [books, setBooks] = useState<BookSummary[]>([]);
   const [booksError, setBooksError] = useState<string | null>(null);
   const [selectedBookId, setSelectedBookId] = useState<string | null>(null);
@@ -312,6 +319,10 @@ export function WorkbenchPage({ invoke }: WorkbenchPageProps) {
   // catalog key and feed the existing image loader automatically; the manual
   // resource inputs stay as the debug fallback (a resolve failure leaves
   // them authoritative, so previews still load by hand).
+  // M2-RESOLVE-DEBOUNCE-1: the invoke waits for a `resolveDebounceMs` quiet
+  // period (typing a page id costs one invoke, not one per keypress); the
+  // effect cleanup cancels the pending timer, and the late-reply guard
+  // below still re-checks the current page after the timer fires.
   useEffect(() => {
     const trimmed = pageId.trim();
     if (!trimmed) {
@@ -327,26 +338,35 @@ export function WorkbenchPage({ invoke }: WorkbenchPageProps) {
     const stillCurrent = () => !cancelled && trimmed === pageIdRef.current.trim();
     setResourceResolveBusy(true);
     setResourceResolveError(null);
-    clients.library
-      .resolvePageResource(trimmed)
-      .then((resolved) => {
-        if (!stillCurrent()) return;
-        setResourceId(resolved.resource_id);
-        setResourceRevision(resolved.revision);
-        setResourceResolveBusy(false);
-        setResourceResolveError(null);
-      })
-      .catch((error: unknown) => {
-        if (!stillCurrent()) return;
-        setResourceResolveBusy(false);
-        setResourceResolveError(
-          error instanceof LibraryClientError ? error.code : "PAGE_RESOURCE_UNAVAILABLE",
-        );
-      });
+    const fireResolve = () => {
+      clients.library
+        .resolvePageResource(trimmed)
+        .then((resolved) => {
+          if (!stillCurrent()) return;
+          setResourceId(resolved.resource_id);
+          setResourceRevision(resolved.revision);
+          setResourceResolveBusy(false);
+          setResourceResolveError(null);
+        })
+        .catch((error: unknown) => {
+          if (!stillCurrent()) return;
+          setResourceResolveBusy(false);
+          setResourceResolveError(
+            error instanceof LibraryClientError ? error.code : "PAGE_RESOURCE_UNAVAILABLE",
+          );
+        });
+    };
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    if (resolveDebounceMs > 0) {
+      timer = setTimeout(fireResolve, resolveDebounceMs);
+    } else {
+      fireResolve();
+    }
     return () => {
       cancelled = true;
+      if (timer !== undefined) clearTimeout(timer);
     };
-  }, [clients, pageId]);
+  }, [clients, pageId, resolveDebounceMs]);
 
   // Region read loop via the EXISTING list_regions projection (rev 1.5
   // optional geometry/page_size consumed when present). Retype and restore
