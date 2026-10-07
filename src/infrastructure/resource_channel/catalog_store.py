@@ -97,12 +97,15 @@ CREATE TABLE IF NOT EXISTS preview_namespace (
 
 #: Codex r8 F-01: an adopted preview_namespace table must be indistinguishable
 #: from one this module creates. sqlite stores the DDL VERBATIM minus the
-#: leading IF NOT EXISTS, so comparing whitespace-normalized, lowercased text
-#: against this canonical form is SEMANTIC: equal normalized text means an
-#: equal token stream means equal DDL semantics (no heuristic layer --
-#: substring scans, constraint probing or black-box guards -- can be
-#: smuggled past, and a mismatch can only over-reject, never over-accept).
-_NORMALIZED_NAMESPACE_SCHEMA = "".join(
+#: leading IF NOT EXISTS, so comparing lowercased text with whitespace FOLDED
+#: to single spaces (token boundaries preserved) against this canonical form
+#: is SEMANTIC: equal folded text means an equal token stream means equal DDL
+#: semantics. Stripping whitespace entirely would NOT be safe -- it merges
+#: token boundaries (`TEXT NOT NULL` folds to the same text as the legal
+#: multi-word type name `TEXTN OTNULL`, which carries no NOT NULL constraint,
+#: Codex r9 F-01). A mismatch can only over-reject (that database is simply
+#: not claimed), never over-accept.
+_NORMALIZED_NAMESPACE_SCHEMA = " ".join(
     _PREVIEW_NAMESPACE_SCHEMA.replace("IF NOT EXISTS", "").split()
 ).lower()
 
@@ -380,7 +383,7 @@ def _assert_catalog_claimable(connection: sqlite3.Connection) -> None:
         # schema accepts exactly the tables this module could have created
         # and refuses every construction with different semantics.
         if table_sql is None or (
-            "".join(table_sql.split()).lower() != _NORMALIZED_NAMESPACE_SCHEMA
+            " ".join(table_sql.split()).lower() != _NORMALIZED_NAMESPACE_SCHEMA
         ):
             raise namespace_unavailable(
                 "preview_namespace table does not match the canonical"
