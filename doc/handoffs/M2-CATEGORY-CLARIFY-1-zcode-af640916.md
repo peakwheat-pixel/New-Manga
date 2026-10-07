@@ -6,7 +6,7 @@
 - Task: [M2-CATEGORY-CLARIFY-1](../tasks/M2-CATEGORY-CLARIFY-1.md)（release 见 Task frontmatter base `db8999fa`）
 - Branch/worktree: `zcode/category-clarify-1` @ `G:/CODEX/New Manga.worktrees/CATEGORY-CLARIFY-1`
 - Delivery head: `af640916`（单交付 commit：映射拆分+2 用例+契约注记同 commit）
-- Rework head: 见文末 disposition（r1 `approve_with_conditions` 后文案返修，代码/测试零改动）
+- Rework head: `e0ab0444`（r1 `approve_with_conditions` 后 docs-only 文案返修——`git diff --stat af640916 e0ab0444 -- src tests apps` 为空=零代码/测试改动的 git 级证据；r1 报告 `doc/reviews/M2-CATEGORY-CLARIFY-1-af640916-dsh-r1.md`）
 
 ## 交付内容（一句话）
 
@@ -37,7 +37,7 @@ RC4-10 澄清（P4，r2 建议「落到下一轮契约澄清」）：rerender �
 | PR-01 Handoff 对照用例判别力表述与代码可达性矛盾（用例 2 走 dispatch 前置校验不经被改三元；「分支顺序」因果不成立） | P3 | **fixed（文案）**——设计裁定 4 与 Reviewer 关注点两处按 r1 口径改写；测试 docstring 无同款错误因果表述（PR-01 所指 :94-107 为用例函数体，无表述需改） |
 | PR-02 §8 无指向本注记的交叉引用 | P4 | **deferred 登记**——下一轮契约澄清候选清单（与 RC4-08 一并跟踪） |
 | PR-03 unavailable 同值不同义（宿主瞬时 vs 数据缺失，retryable 不同） | P4 | **deferred 登记**——同上；本刀注记已含「availability 失败」定性 |
-| PR-04 新用例通过状态无逐条归因（-q 点阵） | P4 | **fixed**——`raw/category-clarify-attrib-1.log`（-v 两用例逐条 PASSED，EXIT=0） |
+| PR-04 新用例通过状态无逐条归因（-q 点阵） | P4 | **fixed**——`raw/category-clarify-attrib-1.log`（-v 两用例逐条 PASSED，EXIT=0；HEAD=81a39614——docs-only 差值，被测测试文件同 `af640916`，r2 N-02 绑定说明） |
 | PR-05 RC4-08 在本刀后 category 亦分叉（unavailable vs internal） | P4 | **deferred 登记**——下一轮契约澄清候选清单 |
 
 ## 设计裁定（Reviewer 请特别核验）
