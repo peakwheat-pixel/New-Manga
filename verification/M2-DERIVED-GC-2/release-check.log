@@ -1,0 +1,33 @@
+SHELL=PowerShell; governance checks only; product tests NOT_RUN
+
+COMMAND: git status --short --branch
+## main...origin/main [ahead 1040]
+ M doc/00_INDEX.md
+ M doc/REBASELINE_PLAN.md
+ M doc/STATUS.md
+ M doc/tasks/M2-DERIVED-GC-2.md
+ M doc/tasks/README.md
+?? verification/M2-DERIVED-GC-2/
+EXIT=0
+
+COMMAND: git rev-parse HEAD
+02ff655b64b3835bed7207bc26b723547c1febdb
+EXIT=0
+
+COMMAND: git rev-parse --path-format=absolute --git-common-dir
+G:/CODEX/New Manga/.git
+EXIT=0
+
+COMMAND: git -C G:/CODEX/New Manga.worktrees/DERIVED-GC-2-zcode status --short --branch
+## agent/zcode/M2-DERIVED-GC-2
+EXIT=0
+
+COMMAND: git -C G:/CODEX/New Manga.worktrees/DERIVED-GC-2-zcode rev-parse HEAD
+e093f0106bf62476c640dbcf8bb47448c8cc644c
+EXIT=0
+
+COMMAND: git diff --check
+EXIT=0
+
+COMMAND: git diff --name-only -- src apps tests packaging requirements.txt
+EXIT=0

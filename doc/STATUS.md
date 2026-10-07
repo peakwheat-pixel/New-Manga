@@ -1,10 +1,12 @@
 # Current Development Status
 
-## 当前执行：无Active / 无released（设计完成，后继仅准备）
+## 当前执行：M2-DERIVED-GC-2 ready / AWAITING_OWNER_CLAIM
 
-2026-10-07：[M2-DERIVED-GC-2-DESIGN](tasks/M2-DERIVED-GC-2-DESIGN.md) **done / IDLE**，Codex集成=ad75fadc2944983b4322f353176ba70cf0b0b7ae。真实DSH四轮：r1有条件批准→r2/r3修订→r4@e4c0967f approve_with_conditions，0P0-P3，两个P4已吸收进后继指令。post-merge检查EXIT0，设计正文与审查head一致，原报告SHA一致；生产src/apps/tests/packaging/历史driver/依赖零变动。回收/native/产品测试NOT_RUN；GC尚未实现，RC4-12轮换增长仍open。
+2026-10-07 用户授权正式释放；唯一 Active Task=[M2-DERIVED-GC-2](tasks/M2-DERIVED-GC-2.md)，TaskStatus=ready，ExecutionState=IDLE / AWAITING_OWNER_CLAIM。Owner=ZCode，非作者 Reviewer=DeepSeek Harness，Integrator=Codex；只完成治理释放与干净 worktree 快进，不派发、不启动生产实施。ZCode 经恢复点核对后才认领 in_progress。允许路径/共享 seam/AC/G1-G7 按现有 Task 与已批准设计冻结，无新增范围。
 
-下一步[M2-DERIVED-GC-2](tasks/M2-DERIVED-GC-2.md) **proposed / NOT_RELEASED**；Owner=ZCode、非作者Reviewer=DSH、Integrator=Codex。实际base=ad75fadc，branch=agent/zcode/M2-DERIVED-GC-2，worktree=G:/CODEX/New Manga.worktrees/DERIVED-GC-2-zcode，allocated_head=e093f0106bf62476c640dbcf8bb47448c8cc644c，clean/common-dir正确。只准备不启动。Codex正式ready并同步release后再转[指令二](../verification/M2-DERIVED-GC-2-DESIGN/next-task-instruction.md)。G1-G7全部planned/NOT_RUN；G7不足两个sweep恒禁用/BLOCKED。下方190节点是固定历史快照，不覆盖本段。
+设计依赖[M2-DERIVED-GC-2-DESIGN](tasks/M2-DERIVED-GC-2-DESIGN.md) done@ad75fadc2944983b4322f353176ba70cf0b0b7ae；DSH r4固定e4c0967f approve_with_conditions，0P0-P3，两个P4已写入实现 Task/指令。GC-1@44859014、RC4@0a7e0d5b 均集成。设计 base=ad75fadc；branch=agent/zcode/M2-DERIVED-GC-2，worktree=G:/CODEX/New Manga.worktrees/DERIVED-GC-2-zcode；初次 allocated_head=e093f010 为历史准备快照。正式 release HEAD/最新同步证据见[恢复点](../verification/M2-DERIVED-GC-2/release-recovery.md)，[ZCode 完整指令](../verification/M2-DERIVED-GC-2/zcode-instruction.md)。
+
+回收尚未实现，RC4-12轮换增长仍open。G1-G7全部planned/NOT_RUN；G7不足两个sweep恒禁用/BLOCKED。下方190节点及无Active/无released数字均为固定历史快照，不覆盖本段。
 
 ## 2026-10-07 全量核验（当前覆盖层）
 

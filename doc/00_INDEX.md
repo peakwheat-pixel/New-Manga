@@ -1,6 +1,6 @@
 # 项目文档索引与 Source of Truth
 
-当前：[M2-DERIVED-GC-2-DESIGN](tasks/M2-DERIVED-GC-2-DESIGN.md) done@ad75fadc（仅设计）；[设计稿](contracts/M2_DERIVED_PREVIEW_GC_DESIGN.md)、[真实DSH r4](reviews/M2-DERIVED-GC-2-DESIGN-e4c0967f-dsh-r4.md)、[Handoff](handoffs/M2-DERIVED-GC-2-DESIGN-codex-af09c00d.md)。后继[M2-DERIVED-GC-2](tasks/M2-DERIVED-GC-2.md) proposed/ZCode；实际恢复点与[指令二](../verification/M2-DERIVED-GC-2-DESIGN/next-task-instruction.md)齐全；无Active/ready，回收未实现。实时状态见STATUS。
+当前：[M2-DERIVED-GC-2](tasks/M2-DERIVED-GC-2.md) **ready / ZCode / AWAITING_OWNER_CLAIM**；唯一 Active、执行 IDLE，本轮仅释放与同步，不启动实施。设计 done@ad75fadc；[恢复点](../verification/M2-DERIVED-GC-2/release-recovery.md)与[完整实施指令](../verification/M2-DERIVED-GC-2/zcode-instruction.md)。实时状态见 STATUS；回收未实现，G1-G7 NOT_RUN。
 
 
 当前全量盘点：2026-10-07，审计输入 `main@32f9b932`。[REBASELINE 审计报告与下一步派发指令](../verification/REBASELINE-20261007/REPORT.md)；[全部 190 任务节点的台账与流程图](../verification/REBASELINE-20261007/TASK_GRAPH.md)；[完整 Git/Owner/Reviewer/worktree 参数](../verification/REBASELINE-20261007/inventory.json)。当前无 Active、无 released；正式授权仍由 REBASELINE_PLAN / STATUS 决定，下面旧日期正文只作历史记录。

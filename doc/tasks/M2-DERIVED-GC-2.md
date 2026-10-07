@@ -2,8 +2,8 @@
 id: M2-DERIVED-GC-2
 title: 轮换退役 preview 引用安全回收实现
 kind: feature
-status: proposed
-approval: preparation_only_not_released
+status: ready
+approval: user_authorized_release_20261007
 suggested_owner: ZCode
 owner: ZCode
 reviewer: DeepSeek Harness（非作者）
@@ -17,9 +17,13 @@ allocated_head: e093f0106bf62476c640dbcf8bb47448c8cc644c
 integration_commit: null
 ---
 
-# M2-DERIVED-GC-2：后继准备，尚未释放
+# M2-DERIVED-GC-2：正式释放，待 ZCode 认领
 
-本文件只准备 Task/恢复点/冻结范围，不授予生产实施权限。Codex 在 STATUS/Plan 正式 ready 并同步工作区后 ZCode 才能认领。当前设计集成=ad75fadc，DSH r4固定e4c0967f approve_with_conditions（0P0-P3）；分支/worktree已实测创建，allocated_head=e093f0106bf62476c640dbcf8bb47448c8cc644c，clean/common-dir正确；head比base仅治理差量。正式ready须由Codex同步release，不复用其他dirty checkout。只以已集成设计稿和真实代码为准，设计批准不是回收已实现。
+2026-10-07 用户明确授权 Codex 正式释放；Task=ready，ExecutionState=IDLE / AWAITING_OWNER_CLAIM。唯一释放任务为本 Task，Owner=ZCode，非作者 Reviewer=DeepSeek Harness，Integrator=Codex。允许路径、共享 seam、AC/G1-G7 和禁止范围沿用已批准设计及本文件，未扩大产品范围。ZCode 收到实际 release commit 并核对干净恢复点后才认领 in_progress；本轮未派发或启动生产实施。
+
+设计集成=ad75fadc2944983b4322f353176ba70cf0b0b7ae，设计批准 head=e4c0967f83a08d9b9e2d84605d17923e81a844b6，DSH r4 approve_with_conditions（0P0-P3）；两个 P4 已纳入下文。base_commit 保留设计基线，不把治理同步冒充产品基线变化。allocated_head 是初次分配的历史快照；正式释放后的实测 HEAD 以 verification/M2-DERIVED-GC-2/release-recovery.md 为准（释放提交后追加，避免自引用 hash）。初始 main=02ff655b、Owner worktree=e093f010，均 clean、common-dir 正确；ad75fadc 后只有已知治理差量。
+
+本次释放不是实现批准，AC/G1-G7 全部 planned / NOT_RUN。设计完成不等于回收已实现。完整可转发实施指令见 verification/M2-DERIVED-GC-2/zcode-instruction.md。
 
 ## 来源与冻结目标
 
@@ -36,7 +40,7 @@ doc/contracts/M2_DERIVED_PREVIEW_GC_DESIGN.md §1–7；独立报告doc/reviews/
 - [ ] AC5 G1-G7判别证据和受影响定向回归入库，失败/崩溃恢复/metadata顺序幂等；旧runtime全退出及所有入口覆盖无法证明则两个sweep恒禁用并BLOCKED，不伪造启用/测试PASS。
 - [ ] AC6 固定代码head+Handoff→新fixed-head真实DSH非作者Review→条件闭合→Codexmerge与集成后验证，最后才done；不以设计批准代替实现批准。
 
-## allowed_paths（仅正式ready后生效）
+## allowed_paths（本次 ready 释放后生效）
 
 生产落点：
 
@@ -106,4 +110,4 @@ git diff --check
 
 native共享/独占、句柄删除、双DB保护/崩溃恢复必须真实隔离OS进程/自有fixture，mock不代替。受影响dev/packaged入口以固定head构建+runner验收，缺环境BLOCKED；不改其通过阈值，不使用旧PASS。每次日志有shell/解释器/命令/HEAD/EXIT/收集总数/passed与skip及逐条原因；判别矩阵对照必须有可复核artifact。
 
-交付代码commit、verification/M2-DERIVED-GC-2/完整证据、doc/handoffs/M2-DERIVED-GC-2-<head>.md，逐AC实际结果和G7残留。下一接收者=真实DSH非作者，之后Codex；未ready不得执行。完整可转发指令见verification/M2-DERIVED-GC-2-DESIGN/next-task-instruction.md。
+交付代码commit、verification/M2-DERIVED-GC-2/完整证据、doc/handoffs/M2-DERIVED-GC-2-<head>.md，逐AC实际结果和G7残留。下一接收者=真实DSH非作者，之后Codex；ready 后经恢复点核对才可认领。完整可转发指令见verification/M2-DERIVED-GC-2/zcode-instruction.md。
