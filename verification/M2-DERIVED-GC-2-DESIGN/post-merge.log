@@ -1,0 +1,65 @@
+SHELL=PowerShell; PYTHON=C:/Python314/python.exe; integration=ad75fadc2944983b4322f353176ba70cf0b0b7ae; collector/runtime/product tests NOT_RUN
+COMMAND=git rev-parse HEAD
+ad75fadc2944983b4322f353176ba70cf0b0b7ae
+EXIT=0
+COMMAND=git status --short --branch
+## main...origin/main [ahead 1038]
+?? verification/M2-DERIVED-GC-2-DESIGN/post-merge.log
+EXIT=0
+COMMAND=git rev-parse --path-format=absolute --git-common-dir
+G:/CODEX/New Manga/.git
+EXIT=0
+COMMAND=git merge-base --is-ancestor 44859014 ad75fadc2944983b4322f353176ba70cf0b0b7ae
+
+EXIT=0
+COMMAND=git merge-base --is-ancestor 0a7e0d5b ad75fadc2944983b4322f353176ba70cf0b0b7ae
+
+EXIT=0
+COMMAND=git diff ab4b7c110a7c828f20d2d0787bd71144336d2e44 --name-only -- src apps tests requirements.txt packaging
+
+EXIT=0
+COMMAND=git diff --check
+
+EXIT=0
+COMMAND=git ls-files --others --exclude-standard
+verification/M2-DERIVED-GC-2-DESIGN/post-merge.log
+EXIT=0
+COMMAND=git diff ab4b7c110a7c828f20d2d0787bd71144336d2e44 --name-only
+doc/00_INDEX.md
+doc/REBASELINE_PLAN.md
+doc/STATUS.md
+doc/contracts/M2_DERIVED_PREVIEW_GC_DESIGN.md
+doc/handoffs/M2-DERIVED-GC-2-DESIGN-codex-73e70536.md
+doc/handoffs/M2-DERIVED-GC-2-DESIGN-codex-8dd88c56.md
+doc/handoffs/M2-DERIVED-GC-2-DESIGN-codex-af09c00d.md
+doc/handoffs/M2-DERIVED-GC-2-DESIGN-codex-be779967.md
+doc/reviews/M2-DERIVED-GC-2-DESIGN-3a684675-dsh-r2.md
+doc/reviews/M2-DERIVED-GC-2-DESIGN-4a930c61-dsh-r1.md
+doc/reviews/M2-DERIVED-GC-2-DESIGN-8557a3d4-dsh-r3.md
+doc/reviews/M2-DERIVED-GC-2-DESIGN-e4c0967f-dsh-r4.md
+doc/tasks/M2-DERIVED-GC-2-DESIGN.md
+doc/tasks/README.md
+verification/M2-DERIVED-GC-2-DESIGN/caller-census-attempt1.log
+verification/M2-DERIVED-GC-2-DESIGN/caller-census.log
+verification/M2-DERIVED-GC-2-DESIGN/check_design.py
+verification/M2-DERIVED-GC-2-DESIGN/design-check-attempt1.log
+verification/M2-DERIVED-GC-2-DESIGN/design-check-attempt2.log
+verification/M2-DERIVED-GC-2-DESIGN/design-check-r2.log
+verification/M2-DERIVED-GC-2-DESIGN/design-check-r3.log
+verification/M2-DERIVED-GC-2-DESIGN/design-check-r4.log
+verification/M2-DERIVED-GC-2-DESIGN/design-check.log
+verification/M2-DERIVED-GC-2-DESIGN/integration-ready.log
+verification/M2-DERIVED-GC-2-DESIGN/reality-source.log
+verification/M2-DERIVED-GC-2-DESIGN/review-disposition.md
+EXIT=0
+PASS: dependency ancestry, zero product-tree delta, design matrix/Gate completeness, source paths/line bounds
+NOT_RUN: future implementation/runtime/native locks/product regression; design check is not a deletion-safety test
+EXIT=0
+RANGE_DIFF_CHECK_EXIT=0
+PROTECTED_DIFF_COMMAND_EXIT=0; output_above_empty_expected
+PASS raw UTF8 final.text git blob SHA256 4a930c61-dsh-r1 8815d9f5b9d7f502a33375864b7600a63b8a21032f2ec9fbfef36108289c6a44
+PASS raw UTF8 final.text git blob SHA256 3a684675-dsh-r2 6d601a6de0f44c465755ef7d63eb1626a4d0dd763a0bb7e374bbaaafb0900cbb
+PASS raw UTF8 final.text git blob SHA256 8557a3d4-dsh-r3 ba2717c5a511a7ee10ee1b235483b9a005f9013db4b7e8ba294e3056235b5941
+PASS raw UTF8 final.text git blob SHA256 e4c0967f-dsh-r4 72c004d4100bd41718818da0360142ef913b082697c6b51da501b66de51194b7
+PASS design text exactly equals independently reviewed e4c0967f
+HASH_CHECK_EXIT=0
