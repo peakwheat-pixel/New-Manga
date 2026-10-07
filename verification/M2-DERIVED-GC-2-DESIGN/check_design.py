@@ -18,6 +18,7 @@ def git(*args):
 
 
 head = git('rev-parse', 'HEAD')
+git('status', '--short', '--branch')
 assert git('rev-parse', '--path-format=absolute', '--git-common-dir').replace('\\', '/') == 'G:/CODEX/New Manga/.git'
 for dep in ['44859014', '0a7e0d5b']:
     git('merge-base', '--is-ancestor', dep, head)
@@ -35,7 +36,7 @@ for name, line in citations:
     source = ROOT / name
     assert source.is_file(), name
     assert 1 <= int(line) <= len(source.read_text(encoding='utf-8-sig').splitlines()), (name, line)
-for name in re.findall(r'\| ((?:src|apps|tests)/[^ |]+)', text):
+for name in re.findall(r'\| ((?:src|apps|tests)/[^ |、]+)', text):
     assert (ROOT / name).exists(), name
 print('PASS: dependency ancestry, zero product-tree delta, design matrix/Gate completeness, source paths/line bounds')
 print('NOT_RUN: future implementation/runtime/native locks/product regression; design check is not a deletion-safety test')
