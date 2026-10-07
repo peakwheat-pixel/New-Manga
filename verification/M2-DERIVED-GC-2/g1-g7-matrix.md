@@ -98,7 +98,7 @@
 
 - 定向 pytest 155 / 全量 1922+1sk / cargo 62+1ign 全绿；F-05 import 名单未扩大（`test_sidecar_isolation.py` 全绿，`handle_resolver` 原在白名单）。
 - dev 入口：M2-RC2 runner probe 阶段 13/13+catalog-seeding+import-isolation PASS；production allowlist 项 FAIL=runner 陈旧期望（既有漂移，Codex r1 F-07 同意交独立 debt Task）——**该 Gate 项在 debt Task 修复并重新验收前保持 FAIL 记录，不以既有漂移为由记 PASS**。M2-AC1 runner **GATE PASS（r2 返修 head 重跑）**。packaged：m2ac5 **第四轮 FINAL（sidecar/NSIS 重建绑定 e3ad330f，构建链单日志）25 项 PASS、CS-L1 保持 FAIL 记录**；release-gate 25/25 PASS（其 runner 无此类陈旧快照；其安装包为较早代码——其覆盖面与第四轮 m2ac5 重叠且 m2ac5 已绑定最终 head）。
-- dev/packaged 构建：sidecar 重建绑定 HEAD=7f652473（build_sidecar OK）；release exe 重建（RC2 runner 内 fresh `cargo build --release`）；packaged runner 执行状态见 raw/packaged-runners.log（runner 场景日志另存 raw/packaged-ac5-run/；M2-AC5 历史入库 raw 已恢复原字节，本次运行产物仅搬运不覆盖——P3-9(b) 先例口径）。
+- dev/packaged 构建：**最终绑定 head=e3ad330f**——sidecar/NSIS 第四轮重建（build_sidecar 原文行+NSIS SHA256+验收命令闭环见 raw/packaged-ac5-run/build-chain.md「第四轮（FINAL）」节，完整单日志 fourth-round-build-and-run.log）；release exe 重建（RC2 runner 内 fresh `cargo build --release`，Rust 代码此后零变化）；packaged runner 第四轮完整落盘（runner 场景日志另存 raw/packaged-ac5-run/{third-run-artifacts,fourth-run-artifacts}/；M2-AC5 历史入库 raw 已恢复原字节，运行产物仅搬运不覆盖——P3-9(b) 先例口径）。
 
 ## G7 启用边界 — 本机单版本机制 PASS；分发迁移 Gate=阻断条款（执行证据属分发验收，明示 NOT_VERIFIED，不计 PASS——Codex r2 F-03 口径）
 
