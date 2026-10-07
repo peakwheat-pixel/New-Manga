@@ -2,7 +2,7 @@
 id: M2-DERIVED-GC-1
 title: derived 只读根 orphan/死行清理第一刀（RC4-12 登记的预览 GC 缺口最小闭合）
 kind: feature
-status: in_review
+status: done
 delivery_commit: 9c9c7e55 (polish; delivery 13964fe2 -> rework 4edec70a -> polish 9c9c7e55)
 review: DSH r1 approve_with_conditions @13964fe2 -> r2 approve @4edec70a (N-01..04 P4 polished @9c9c7e55)
 handoff: ../handoffs/M2-DERIVED-GC-1-zcode-13964fe2.md
@@ -15,7 +15,7 @@ depends_on: [M2-RC4-DOMAIN-COMMANDS, M2-PAGE-RESOURCE-RESOLVE-1]
 base_commit: d4cd96a7
 branch: zcode/derived-gc-1
 worktree: G:/CODEX/New Manga.worktrees/DERIVED-GC-1
-integration_commit: null
+integration_commit: 44859014 (merge; final head 9c9c7e55, post-merge 1884+1sk / cargo 55+1ign / vitest 136)
 ---
 
 # M2-DERIVED-GC-1
@@ -52,3 +52,12 @@ RC-4 DSH r1 RC4-12（P4，两轮 review 均登记延后）：`render_preview.py`
 ## 完成定义
 
 AC 全过 + Review 通过 + 集成 merge main + STATUS/PLAN 收口。
+
+## 交付记录（2026-10-07 闭环）
+
+- **Delivery** `13964fe2`：`collect_orphans()`（orphan 文件+死行两类回收，目录级门+行级候选双层逃逸检查，活文件/活行/他 scope 零触碰）+ `_run_startup_gc` 装配 fail-soft + 6 用例；五套件全绿（focused 428 / full 1882+1sk / cargo 55+1ign / vitest 136 / build 0）。
+- **DSH r1** `approve_with_conditions`（0×P0/P1/P2；3×P3 条件 C-1..C-3+5×P4）→ **Rework** `4edec70a`：C-1 managed scope 行保留用例（删 scope 过滤即红）/C-2 目录级逃逸 junction 用例（_winapi.CreateJunction，删门即红）/C-3 docstring 措辞精确化（preview 死行 typed code 差异 + RC4-12 定性 PARTIAL mitigation）；8 用例。
+- **DSH r2** `approve`（C-1..C-3 全 fixed 判定；两个新用例判别力经反向推演证实；实现零行为变更经行号不变式佐证）→ **Polish** `9c9c7e55`：N-01 措辞统一/N-02 平台守卫/N-04 disposition 精度（N-03 归收口）。
+- **集成** merge `44859014`（final head `9c9c7e55`）；post-merge 复跑：pytest **1884+1sk+0 failed** / cargo **55+1ign** / vitest **136**，等量递增全绿。
+- **登记**：RC4-12 为 **PARTIAL mitigation**——orphan/死行子集闭合；「有行且有文件的旧 preview」按引用回收（轮换增长主路径）保持 open，需 page 关联或 grant 联动，为后续候选。
+- **移交**：worktree `G:/CODEX/New Manga.worktrees/DERIVED-GC-1` 保留为证据。
