@@ -26,9 +26,9 @@ Live Git main@ab4b7c11 clean，common-dir=G:/CODEX/New Manga/.git；32f9b932..ab
 
 ## Acceptance Criteria
 
-- [ ] AC1：固定 HEAD 下追踪 publisher/catalog、render current/pinned Revision、Core/Rust 独立进程、grant/轮换/读取所有相关调用链，并提供文件/行证据。
-- [ ] AC2：给出可删/必留/未知矩阵；仅 TTL、年龄、数量不足以授权删除；Managed Copy/源文件/人工修改/Lock 与 current/pinned 均受保护。
-- [ ] AC3：最小生命周期方案明确 issue 与 delete 互斥、在途读取、崩溃恢复、未知历史资源保留、目录/文件逃逸；需要共享 seam/Schema 时明确后继授权范围，不更改现行契约。
+- [x] AC1：固定 HEAD 下追踪 publisher/catalog、render current/pinned Revision、Core/Rust 独立进程、grant/轮换/读取所有相关调用链，并提供文件/行证据。
+- [x] AC2：给出可删/必留/未知矩阵；仅 TTL、年龄、数量不足以授权删除；Managed Copy/源文件/人工修改/Lock 与 current/pinned 均受保护。
+- [x] AC3：最小生命周期方案明确 issue 与 delete 互斥、在途读取、崩溃恢复、未知历史资源保留、目录/文件逃逸；需要共享 seam/Schema 时明确后继授权范围，不更改现行契约。
 - [ ] AC4：拟定后继实现 Task 的实际 base/分支/worktree/allowed_paths/交付/验证 Gate 与可转发指令；本轮只准备、不启动实现。
 - [ ] AC5：设计范围 diff 对 src/apps/tests/依赖/Schema 为零；文档检查有命令+HEAD+EXIT；非作者 DSH 固定 head 审查、条件闭合、Codex 集成后才 done。
 
@@ -39,6 +39,7 @@ Live Git main@ab4b7c11 clean，common-dir=G:/CODEX/New Manga/.git；32f9b932..ab
 - verification/M2-DERIVED-GC-2-DESIGN/**
 - doc/handoffs/M2-DERIVED-GC-2-DESIGN-*.md
 - doc/reviews/M2-DERIVED-GC-2-DESIGN-*.md（Codex 原字节导入 DSH 报告，不代写独立批准）
+- doc/tasks/M2-DERIVED-GC-2.md（用户指定的后继准备；只创建 proposed，填实际恢复点与范围，不释放/实施）
 - Codex 元数据维护：doc/REBASELINE_PLAN.md、doc/STATUS.md、doc/00_INDEX.md、doc/tasks/README.md。
 
 共享变更裁量：本轮可记录内部 catalog/host bridge 生命周期 seam 的设计建议；生产实现、catalog Schema、主产品 Schema、协议字段与依赖变更均未获本轮写权限，必须在后继 Task 明确冻结。
@@ -55,6 +56,8 @@ src/**、apps/**、tests/**、requirements*、Schema/migration、用户数据/�
 | 设计矩阵与链接 | 只读代码核对 + 小型文档验证脚本 | planned / NOT_RUN | 同上 |
 | 独立 Review | 真实 DSH，固定 reviewed_head；缺环境标 NOT_RUN | planned / NOT_RUN | 原报告 |
 | 产品测试 | 本轮零产品改动，不以历史 PASS 代本轮验证 | NOT_RUN（设计范围） | 不适用 |
+
+执行覆盖：Git/依赖/文档检查已 executed，EXIT=0，见 design-check.log；早期验证器失败保留 attempt1/2。真实 DSH r1 正在独立 fixed-head=4a930c61 工作区审查；其后作者的 hash/句柄保护、逐项证据和复用 helper/全入口接线补强必须固定新 head 再复审，不延用旧批准。
 
 ## 交付与运行记录
 

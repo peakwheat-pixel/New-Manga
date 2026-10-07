@@ -1,0 +1,20 @@
+# DSH r1 处理与真实派发记录
+
+DSH r1 reviewed_head=4a930c611c1e7a353f5fe5584932f4cf6d8048c1，base=ab4b7c110a7c828f20d2d0787bd71144336d2e44，EXIT=0，session=session-ec7cf46a-1caf-492f-8b3e-09d4f782c667。只读 review worktree=G:/CODEX/New Manga.worktrees/DERIVED-GC-2-DESIGN-review-r1，branch=codex/m2-derived-gc-2-design-review-r1。原 final.text UTF-8 字节保存到 doc/reviews/M2-DERIVED-GC-2-DESIGN-4a930c61-dsh-r1.md，SHA256=8815d9f5b9d7f502a33375864b7600a63b8a21032f2ec9fbfef36108289c6a44。JSONL/err/prompt 仅在本机 Codex tmp 保留，不纳入仓库。
+
+使用真实 `dsh --profile headless --json -`，通过 stdin 自包含指令派发；并非报告 §8 自述的“用户在 worktree 直接派发/非 CLI”。此处纠正派发方式，不修改 Reviewer 原报告，也不影响其静态 finding。mount_session.py 按精确 session ID/工作区挂载 EXIT=0；desktop 下次启动可发现，不重启正在使用的 DSH；web_visibility=unverified。
+
+Reviewer 的 shell 因 SetNamedSecurityInfoW Win32 5 不可用，命令复跑 BLOCKED；Codex 文档检查实际 executed。DSH approve_with_conditions，0 P0/P1、3 P2、2 P3、2 P4。新设计 head 必须再次真实 DSH 复核，不能沿用 4a930c61 批准。
+
+| 条件/观察 | 作者修订（等待 r2 独立核验） |
+|---|---|
+| C1/F01 | production Core 唯一创建来源；channel 仅既有 retired 更新。退役嵌入既有 revoke 请求，不增第二 round-trip；mark 异常 no-op+stderr、零 busy wait/零重试，不杀 channel、不改成功 rerender。新增内部位与窄写权限明确授权。 |
+| C2/F02 | 锁锚定 derived 删除域，catalog singleton namespace 与 lock 绑定 canonical+OS identity/version；双根失配两个 sweep 均禁用。store 单接线覆盖 loader/acceptance/probe/ac1/测试入口。无可靠旧 runtime 检测信号明示 UNKNOWN，G7 控制切换不足则禁用，不冒充可探测。 |
+| C3/F03 | 就绪复用 core.ping；保护先于 assemble/catalog/GC。library_bridge.rs 窄授权启动 deadline=30s/自有 child 退出，失败不 spawn channel；普通 wire/业务不变。 |
+| C4/F04 | 同一请求内 revision_no + outcome.managed_path 逐字匹配唯一行，存真实 revision_id；说明 purge 后 revision_no 可复用，不改 RenderOutcome/port。 |
+| C5/F05/O02 | native helper 复用 handle_resolver.py，点名允许路径及现有测试；GC读+DELETE权限、窄分享、同句柄 hash/size/identity/delete，目录句柄保护，现有reader行为不变。 |
+| F06 | 残留包含每会话每页最后一个未退役 key；失败/多实例/pin/unknown 可更多，不写“至多一个”假上限。 |
+| F07 | 旧设计 delivery=8dd88c56；Handoff 到 reviewed_head=4a930c61 才入库，按协议后续 metadata commit 引用前一 delivery；复审恢复以 reviewed_head 为准。新 Handoff 同样区分两者。 |
+| O01/O03 | K5 显式 Lock/主产品行不写；现行 M2-C1 契约仅在后继 Task 窄授权，本轮不改。 |
+
+额外作者补强：13 条矩阵逐项实证/UNKNOWN；人工修改副本通过同核验句柄匹配 immutable revision 既有 file_hash/size；验证器断言全部改动路径在设计 allowlist。运行回收/native/产品回归均 NOT_RUN，设计审查不是回收实现验收。

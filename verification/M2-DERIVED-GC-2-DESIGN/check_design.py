@@ -24,7 +24,18 @@ for dep in ['44859014', '0a7e0d5b']:
     git('merge-base', '--is-ancestor', dep, head)
 assert not git('diff', BASE, '--name-only', '--', 'src', 'apps', 'tests', 'requirements.txt', 'packaging')
 git('diff', '--check')
-git('ls-files', '--others', '--exclude-standard')
+untracked = git('ls-files', '--others', '--exclude-standard')
+allowed_exact = {
+    'doc/tasks/M2-DERIVED-GC-2-DESIGN.md',
+    'doc/tasks/M2-DERIVED-GC-2.md',
+    'doc/contracts/M2_DERIVED_PREVIEW_GC_DESIGN.md',
+    'doc/REBASELINE_PLAN.md', 'doc/STATUS.md', 'doc/00_INDEX.md', 'doc/tasks/README.md',
+}
+allowed_prefix = ('verification/M2-DERIVED-GC-2-DESIGN/',
+                  'doc/handoffs/M2-DERIVED-GC-2-DESIGN-',
+                  'doc/reviews/M2-DERIVED-GC-2-DESIGN-')
+for name in set(git('diff', BASE, '--name-only').splitlines() + untracked.splitlines()):
+    assert name in allowed_exact or name.startswith(allowed_prefix), name
 text = DESIGN.read_text(encoding='utf-8')
 for label in ['D1', 'D2', 'K1', 'K2', 'K3', 'K4', 'K5', 'K6', 'U1', 'U2', 'U3', 'U4', 'U5', 'G1', 'G2', 'G3', 'G4', 'G5', 'G6', 'G7']:
     assert re.search(r'\| ' + label + r'(?: \|| )', text), label
