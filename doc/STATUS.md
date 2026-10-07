@@ -2,7 +2,7 @@
 
 ## 当前执行：M2-DERIVED-GC-2-DESIGN
 
-2026-10-07：用户明确授权设计 Task，状态 in_review / ExecutionState=CHECKPOINTED；设计 worktree 已创建。DSH r1@4a930c61 approve_with_conditions，五项条件修订 delivery=be779967，Handoff 入库/固定复审 head=3a6846758ebdb18e3ee696e0c1410aa698e43225；真实 DSH r2 运行中（session-70171dd3-7f22-4187-b0d5-36a81232f286）。生产树零改动、回收/native/产品测试 NOT_RUN；不得沿用 r1 批准。Owner=Codex，Reviewer=DeepSeek Harness（非作者），Integrator=Codex；base=ab4b7c11，branch/worktree 见 [Task](tasks/M2-DERIVED-GC-2-DESIGN.md)。仅设计，不启动回收实现；下方“无 Active”是 release 前审计快照。本 Task 成为唯一 Active。
+2026-10-07：用户明确授权设计 Task，状态 in_review / ExecutionState=CHECKPOINTED。DSH r1@4a930c61 approve_with_conditions；r2@3a684675 changes_requested（1P2：bootstrap定位锁顺序）。修订 delivery=73e70536，Handoff 入库/固定复审 head=8557a3d4162d00dc7a985ede0dabda22809f60fd；真实 DSH r3 限定复核中。生产树零改动、回收/native/产品测试 NOT_RUN；不得沿用旧批准。Owner=Codex，Reviewer=DeepSeek Harness（非作者），Integrator=Codex；base=ab4b7c11，branch/worktree 见 [Task](tasks/M2-DERIVED-GC-2-DESIGN.md)。仅设计，不启动回收实现；下方“无 Active”是 release 前审计快照。本 Task 成为唯一 Active。
 
 
 ## 2026-10-07 全量核验（当前覆盖层）
