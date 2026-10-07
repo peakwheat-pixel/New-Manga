@@ -2,7 +2,7 @@
 id: M2-RESOLVE-DEBOUNCE-1
 title: Workbench 页资源解析逐键 debounce（PAGE-RESOLVE r1 PR-10 deferred 闭合）
 kind: fix
-status: in_review
+status: done
 delivery_commit: acc3a578 (rework; initial delivery a7a3462d)
 handoff: ../handoffs/M2-RESOLVE-DEBOUNCE-1-zcode-a7a3462d.md
 approval: user_2026-10-07_autonomous_mode_continuation（STATUS Planned next 候选①，授权自动选下一最高优先任务）
@@ -14,7 +14,7 @@ depends_on: [M2-PAGE-RESOURCE-RESOLVE-1]
 base_commit: adabd913
 branch: zcode/resolve-debounce-1
 worktree: G:/CODEX/New Manga.worktrees/RESOLVE-DEBOUNCE-1
-integration_commit: null
+integration_commit: 65d500e6 (merge; final head b4a8d219, post-merge 1886+1sk / cargo 55+1ign / vitest 138)
 ---
 
 # M2-RESOLVE-DEBOUNCE-1
@@ -39,3 +39,12 @@ PAGE-RESOLVE-1 DSH r1 PR-10（deferred 登记）：Workbench resolve effect 对 
 ## 完成定义
 
 AC 全过 + Review 通过 + 集成 merge main + STATUS/PLAN 收口。
+
+## 交付记录（2026-10-07 闭环）
+
+- **Delivery** `a7a3462d`：`resolveDebounceMs` 可选 prop（产品默认 300/测试注入 0）+ resolve effect debounce 外壳（fireResolve 闭包逻辑逐字不变）+ 2 条 fake-timers 判别用例（逐字符 4 键→1 次调用+quiet 窗口 busy 显示；切页取消挂起 timer）；vitest 138 / build 0 / full 1886+1sk / cargo 55+1ign。
+- **DSH r1** `approve_with_conditions`（0×P0/P1/P2；C-1 Task「非逐键触发面」措辞更正+region 逐键残留 deferred 登记、C-2 变更面绑定日志、PR-02 busy 窗口断言顺笔、PR-03 accepted）→ **返修** `acc3a578`（C-1/C-2/PR-02 全闭；r1 报告入库）。
+- **DSH r2** `approve`（C-1/C-2/PR-02 全 fixed 判定；判别力逐条反向推演复核；N-01..03 P4 记账精度）。
+- **集成** merge `65d500e6`；post-merge 复跑：pytest **1886+1sk+0 failed** / cargo **55+1ign** / vitest **138**，等量全绿；post-merge tree 绑定日志入库（N-02）。
+- **登记**：region 读循环逐键 invoke `list_regions`（与 regions 错误条闪烁）为 deferred 后续候选（r1 C-1——与本刀同类既有行为，需要同款 debounce+判别用例时一并做）。
+- **移交**：worktree `G:/CODEX/New Manga.worktrees/RESOLVE-DEBOUNCE-1` 保留为证据。
