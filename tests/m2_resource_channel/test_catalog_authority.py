@@ -736,3 +736,67 @@ class TestLifecycleWrites:
         assert store.reclaim_orphan_lifecycle_rows() == 0
         assert store.count() == 0
         store.close()
+
+
+    def test_initialize_refuses_namespace_table_with_foreign_rows(self, tmp_path):
+        # Codex r5 F-01: identical columns AND the singleton primary key but
+        # WITHOUT the CHECK constraint, already carrying a foreign
+        # singleton=2 row that the binding query would never see -- the
+        # whole-table row count and the CHECK-presence guard must refuse it,
+        # and nothing may be written.
+        import sqlite3 as _sq
+
+        db = tmp_path / "foreign-namespace.sqlite"
+        conn = _sq.connect(str(db))
+        conn.execute(
+            "CREATE TABLE preview_namespace ("
+            "singleton INTEGER PRIMARY KEY, protocol_version INTEGER,"
+            " derived_root TEXT, derived_identity_volume INTEGER,"
+            " derived_identity_index INTEGER, catalog_root TEXT,"
+            " catalog_identity_volume INTEGER, catalog_identity_index INTEGER)"
+        )  # no CHECK(singleton = 1)
+        conn.execute(
+            "INSERT INTO preview_namespace VALUES (2, 1, 'x', 1, 2, 'y', 3, 4)"
+        )
+        conn.commit()
+        conn.close()
+
+        derived = tmp_path / "derived"
+        derived.mkdir()
+        with pytest.raises(TypedResourceChannelError):
+            initialize_namespace(db, derived)
+
+        conn = _sq.connect(str(db))
+        tables = {
+            row[0]
+            for row in conn.execute("SELECT name FROM sqlite_master WHERE type='table'")
+        }
+        (rows,) = conn.execute("SELECT COUNT(*) FROM preview_namespace").fetchone()
+        conn.close()
+        assert rows == 1, "the foreign row must be untouched"
+        assert tables == {"preview_namespace"}, (
+            "a refused initialization must not create any other table"
+        )
+
+    def test_initialize_refuses_namespace_table_without_check(self, tmp_path):
+        # Same shape and primary key, empty, but the singleton CHECK
+        # constraint is missing -- the empty look-alike is refused too (it
+        # would later accept rows the real schema forbids).
+        import sqlite3 as _sq
+
+        db = tmp_path / "no-check.sqlite"
+        conn = _sq.connect(str(db))
+        conn.execute(
+            "CREATE TABLE preview_namespace ("
+            "singleton INTEGER PRIMARY KEY, protocol_version INTEGER,"
+            " derived_root TEXT, derived_identity_volume INTEGER,"
+            " derived_identity_index INTEGER, catalog_root TEXT,"
+            " catalog_identity_volume INTEGER, catalog_identity_index INTEGER)"
+        )
+        conn.commit()
+        conn.close()
+
+        derived = tmp_path / "derived"
+        derived.mkdir()
+        with pytest.raises(TypedResourceChannelError):
+            initialize_namespace(db, derived)

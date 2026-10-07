@@ -58,6 +58,14 @@
 | F-02 FIXED | 无需变更 | — |
 | F-08 NOT_VERIFIED（证据未绑本轮代码；build_sidecar 原文仅手写汇总） | 第四轮**单日志全链**：step1 build_sidecar（原文行 HEAD=e3ad330f）/step2 NSIS/step3 installer SHA256/step4 定向回归/step5 runner，全部带 EXIT；全量 pytest 重跑绑 e3ad330f（1934+1sk）；matrix 陈旧 7f652473 行更正 | raw/packaged-ac5-run/fourth-round-build-and-run.log、build-chain.md「第四轮（FINAL）」节、raw/pytest-full.log |
 
+## Codex r5 复核处置（F-08 FIXED；范围 PASS；F-01 最后一项追加）
+
+| r5 判定 | 追加处置 | 证据 |
+|---|---|---|
+| F-01 NOT FIXED（namespace 表 CHECK 缺失收养+foreign singleton=2 行不可见） | 双重守卫：①`preview_namespace` **全表行计数>0 即拒绝**（绑定查询只读 singleton=1，外键行不可见≠不存在）；②收养表必须携带 singleton CHECK 约束（sqlite_master.sql 含 CHECK，缺失的空同形表同样拒绝） | `test_initialize_refuses_namespace_table_with_foreign_rows`（同列同主键无 CHECK+singleton=2 行→拒绝+零写入）、`test_initialize_refuses_namespace_table_without_check`（空无 CHECK 同形表→拒绝） |
+| F-08 FIXED | 无需变更（第四轮构建链与全量回归已绑定 e3ad330f） | — |
+| 证据范围更正 | 零 src/apps 差量区间更正为 **e3ad330f..4c9053e2**（230c076f..e3ad330f 含本轮 catalog_store 变更）；「定向 167」说法废弃，归档口径=第四轮 step4 的 119 passed | git diff --name-status e3ad330f..4c9053e2 |
+
 ## G1 来源/权限 — PASS
 
 - 来源登记唯一权威=Core：`register_preview_with_origin` 单事务写 catalog+`preview_lifecycle(retired=0)`（`test_register_origin_and_mark_roundtrip`）；publish(origin) 在 temp+fsync+replace 后同事务登记（`test_publish*` 系）。

@@ -342,6 +342,27 @@ def _assert_catalog_claimable(connection: sqlite3.Connection) -> None:
         raise namespace_unavailable(
             "catalog already carries resource/origin rows; unknown history is never claimed"
         )
+    # The namespace table gets TWO extra guards (Codex r5 F-01): ANY
+    # pre-existing row is unknown history (the binding query reads only
+    # singleton=1 and would not even SEE a foreign singleton=2 row), and
+    # the adopted table must carry the singleton CHECK constraint -- an
+    # empty look-alike without it would later accept rows the real schema
+    # forbids.
+    if "preview_namespace" in tables:
+        (namespace_rows,) = connection.execute(
+            "SELECT COUNT(*) FROM preview_namespace"
+        ).fetchone()
+        if namespace_rows:
+            raise namespace_unavailable(
+                "preview_namespace already carries rows; unknown history is never claimed"
+            )
+        (table_sql,) = connection.execute(
+            "SELECT sql FROM sqlite_master WHERE type='table' AND name='preview_namespace'"
+        ).fetchone()
+        if table_sql is None or "CHECK" not in (table_sql or "").upper():
+            raise namespace_unavailable(
+                "preview_namespace lacks the singleton CHECK constraint"
+            )
 
 
 def _preflight_initialize_target(db_path: Path) -> None:
