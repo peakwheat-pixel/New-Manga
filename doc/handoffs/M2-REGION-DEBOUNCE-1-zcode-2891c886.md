@@ -6,7 +6,7 @@
 - Task: [M2-REGION-DEBOUNCE-1](../tasks/M2-REGION-DEBOUNCE-1.md)（release 见 Task frontmatter，base `9d5d9aa6`）
 - Branch/worktree: `zcode/region-debounce-1` @ `G:/CODEX/New Manga.worktrees/REGION-DEBOUNCE-1`
 - Delivery head: `2891c886`（单交付 commit）
-- Rework head: 见文末 disposition（r1 `approve_with_conditions`——PR-01 P2 取 r1 给出的路径 B：修正反推演声明+缺口如实登记；代码/测试主体零改动）
+- Rework head: `2cfa7e6f`（r1 `approve_with_conditions` 路径 B 返修：用例 2 如实化+PR-02/04；r2 `approve_with_conditions` N-01 措辞同步更正由本 Handoff 所在 docs commit 承载——r2 原文明示该闭合可由收口/集成方修正路径承载；r1 报告 `doc/reviews/M2-REGION-DEBOUNCE-1-2891c886-dsh-r1.md`）
 
 ## 交付内容（一句话）
 
@@ -30,7 +30,7 @@ RESOLVE-DEBOUNCE r1 C-1 登记的 region 逐键残留闭合：region 读 effect 
 
 | 项 | 级 | 处置 |
 |---|---|---|
-| PR-01 用例 2 未进 debounce 分支（helper 默认 0ms），「under the debounce」判别力不成立；反推演显示「timer 错放进 refreshRegions」的变体零红 | **P2** | **路径 B（r1 明示二选一）**——①用例 2 改名如实化（「pins the 0ms direct-call path」+scope note 注明 300ms 判别登记为残留）；②Handoff :18/:38 反推演措辞更正（结构论证：wrapper 只包 effect 体、refreshRegions 函数体与 base 逐字一致，写后刷新在结构上不可能到达 timer）；③**300ms 下写后刷新即时性判别缺口显式登记为残留**（r1 首选的 fake-timer UI 链用例在本 harness 中 Inspector 链不 settle——实测尝试失败，如实记录） |
+| PR-01 用例 2 未进 debounce 分支（helper 默认 0ms），「under the debounce」判别力不成立；反推演显示「timer 错放进 refreshRegions」的变体零红 | **P2** | **路径 B（r1 明示二选一）**——①用例 2 改名如实化（「pins the 0ms direct-call path」+scope note 注明 300ms 判别登记为残留）✓；②Handoff :18/:38 反推演措辞更正——**r2 N-01 指出 :41/:49 未同步，已按 r2 精确口径更正（本 docs commit，作者留痕）**；③**300ms 下写后刷新即时性判别缺口显式登记为残留**（r1 首选的 fake-timer UI 链用例在本 harness 中 Inspector 链不 settle——实测尝试失败，如实记录） |
 | PR-02 裁定 2「空输入清屏 ≤300ms 延迟」与实现不符（onPageIdChange 同步清屏） | P4 | **fixed（文案）**——裁定 2 改写为「清屏立即、deferred 空读冗余无害」 |
 | PR-03 手工 resource id/revision 输入逐键触发 image 读取残留 | P4 | **deferred 登记**（收口 STATUS Planned next；debug 回退输入，Task 冻结已排除） |
 | PR-04 缺 change-surface binding 日志 | P4 | **fixed**——`raw/change-surface-binding-1.log`（diff --name-status 9d5d9aa6..2891c886 应恰为 2 个 frontend 文件） |
@@ -38,7 +38,7 @@ RESOLVE-DEBOUNCE r1 C-1 登记的 region 逐键残留闭合：region 读 effect 
 
 ## 设计裁定（Reviewer 请特别核验）
 
-1. **debounce 只包 effect 驱动读取**：`refreshRegions` 函数本体零改动——写后刷新（`doSetRegionType`/`undoRetype`/`restoreHistoryRevision` 内 `await refreshRegions(...)`）必须即时（写后看到新状态是正确性语义）；用例 2 钉该边界。
+1. **debounce 只包 effect 驱动读取（r2 N-01 更正口径）**：`refreshRegions` 函数本体零改动——写后刷新（`doSetRegionType`/`undoRetype`/`restoreHistoryRevision` 内 `await refreshRegions(...)`）必须即时（写后看到新状态是正确性语义）；用例 2 钉 **0ms 直调路径**，300ms 产品默认下的写后刷新即时性由**结构论证兜底**（wrapper 只包 effect 体、函数体与 base 逐字一致，写后刷新在结构上不可能到达 timer），其独立判别用例缺口已显式登记残留（r1 PR-01）。
 2. **空输入清屏（r1 PR-02 更正）**：空输入（删光 page id）的产品可见清屏由 `onPageIdChange` **立即同步**完成（清 regions/pageSize/regionError），deferred 的 `refreshRegions("")` 空读分支只是冗余无害——产品上不存在「≤300ms 清屏延迟」；原表述作废。
 3. **signal.cancelled 与 timer 双保险**：cleanup 先置 cancelled 再 clearTimeout；timer 已 fire 后的迟到回包由 `refreshRegions` 内部 `requestId`+`signal.cancelled` 守卫丢弃（既有机制）。
 4. **与 resolve debounce 的对称性**：同款 prop 模式/默认值/测试注入约定——两 prop 可独立注入（测试只测 region 时 resolveDebounceMs 默认 0 不干扰）。
@@ -46,4 +46,4 @@ RESOLVE-DEBOUNCE r1 C-1 登记的 region 逐键残留闭合：region 读 effect 
 ## Reviewer 关注点提示
 
 - 实现集中在 region 读 effect（约 +14 行）；测试 +2 用例（fake timers 纪律同前）。
-- 反向推演：删 setTimeout 外壳→用例 1 的 advance 前零调用断言红；把 timer 包裹错放到 `refreshRegions` 函数内→写后刷新被延迟→用例 2 红（retype 后刷新不即时）。
+- 反向推演（r2 N-01 更正口径）：删 setTimeout 外壳→用例 1 的 advance 前零调用断言红；**无门闸**地把 timer 挪进 `refreshRegions`→0ms 用例 2 红；**沿用同门闸的错位变体→用例 2 仍绿**（该 300ms 判别缺口已登记残留，见 disposition PR-01）。

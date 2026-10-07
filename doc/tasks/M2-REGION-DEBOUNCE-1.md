@@ -3,7 +3,8 @@ id: M2-REGION-DEBOUNCE-1
 title: Workbench region 读循环逐键 debounce（RESOLVE-DEBOUNCE r1 C-1 登记残留闭合）
 kind: fix
 status: in_review
-delivery_commit: 2891c886
+delivery_commit: 2891c886 (code; docs rework 2cfa7e6f)
+review: DSH r1 approve_with_conditions @2891c886 -> r2 approve_with_conditions @2cfa7e6f (N-01 wording closed in closeout docs commit per r2 option 2)
 handoff: ../handoffs/M2-REGION-DEBOUNCE-1-zcode-2891c886.md
 approval: user_2026-10-07_autonomous_mode_continuation（STATUS Planned next 候选①，授权自动选下一最高优先任务）
 suggested_owner: Codex Executor
