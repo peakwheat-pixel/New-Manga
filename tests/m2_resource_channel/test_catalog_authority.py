@@ -20,7 +20,10 @@ import pytest
 
 from application.resource_channel import TypedResourceChannelError
 from application.resource_channel.dto import DEFAULT_TTL_SECONDS
-from infrastructure.resource_channel.catalog_store import ResourceCatalogStore
+from infrastructure.resource_channel.catalog_store import (
+    ResourceCatalogStore,
+    initialize_namespace,
+)
 from infrastructure.resource_channel.host_bridge import CoreChannelServer
 from infrastructure.resource_channel.scope import ScopeRoots
 
@@ -61,7 +64,13 @@ class TestCatalogStoreValidation:
         assert catalog.remove("res-x") is False
 
     def test_persists_across_connections(self, tmp_path):
+        # M2-DERIVED-GC-2 (R4-A1): the file-backed fixture first binds its
+        # own fresh derived root; the second store then opens through the
+        # bound-namespace shared path.
         db = tmp_path / "catalog.sqlite"
+        derived = tmp_path / "derived"
+        derived.mkdir()
+        initialize_namespace(db, derived)
         first = ResourceCatalogStore(db)
         first.upsert("res-disk", "derived-read-only", "asset.png")
         first.close()
@@ -249,3 +258,252 @@ class TestTtlCannotBeExtended:
         # the grant now survives until now + 300
         clock["now"] += 200.0
         assert service.resolve(opaque, renew=False) is not None
+
+
+class TestPreviewNamespaceAuthority:
+    """M2-DERIVED-GC-2 (G3): the frozen namespace bootstrap and the narrow
+    first-bind initializer. Unbound = typed refusal; the initializer only
+    claims a brand-new/empty self-owned catalog; a second binding on the
+    same derived root is refused by the singleton row."""
+
+    @staticmethod
+    def _fresh(tmp_path, name="derived"):
+        derived = tmp_path / name
+        derived.mkdir(parents=True, exist_ok=True)
+        return derived
+
+    def test_unbound_file_backed_store_is_refused(self, tmp_path):
+        db = tmp_path / "catalog.sqlite"
+        with pytest.raises(TypedResourceChannelError) as excinfo:
+            ResourceCatalogStore(db)
+        assert excinfo.value.code == "REF_SCOPE_DENIED"
+        assert not db.exists(), "a refused open must never create the database"
+
+    def test_initialize_then_open_then_second_instance(self, tmp_path):
+        derived = self._fresh(tmp_path)
+        db = tmp_path / "catalog.sqlite"
+        initialize_namespace(db, derived)
+        first = ResourceCatalogStore(db)
+        first.upsert("res-a", "derived-read-only", "asset.png")
+        second = ResourceCatalogStore(db)
+        try:
+            assert second.lookup("res-a") is not None
+            assert second.count() == 1
+        finally:
+            first.close()
+            second.close()
+
+    def test_initialize_refuses_catalog_with_rows(self, tmp_path):
+        derived = self._fresh(tmp_path)
+        db = tmp_path / "a.sqlite"
+        initialize_namespace(db, derived)
+        store = ResourceCatalogStore(db)
+        store.upsert("res-1", "derived-read-only", "asset.png")
+        store.close()
+
+        other = self._fresh(tmp_path, "derived2")
+        db2 = tmp_path / "b.sqlite"
+        initialize_namespace(db2, other)
+        store2 = ResourceCatalogStore(db2)
+        store2.upsert("res-2", "derived-read-only", "asset.png")
+        store2.close()
+        # strip the binding to simulate a catalog with rows but no namespace
+        import sqlite3 as _sq
+
+        conn = _sq.connect(str(db2))
+        conn.execute("DELETE FROM preview_namespace")
+        conn.commit()
+        conn.close()
+
+        with pytest.raises(TypedResourceChannelError):
+            initialize_namespace(db2, other)
+
+    def test_second_binding_on_same_derived_is_refused(self, tmp_path):
+        derived = self._fresh(tmp_path)
+        first_db = tmp_path / "first.sqlite"
+        initialize_namespace(first_db, derived)
+
+        second_db = tmp_path / "second.sqlite"
+        with pytest.raises(TypedResourceChannelError):
+            initialize_namespace(second_db, derived)
+        # the refused attempt leaves no half-bound catalog behind
+        import sqlite3 as _sq
+
+        conn = _sq.connect(str(second_db))
+        try:
+            (count,) = conn.execute(
+                "SELECT COUNT(*) FROM sqlite_master WHERE type='table'"
+            ).fetchone()
+        except _sq.Error:
+            count = 0
+        conn.close()
+        assert count == 0, "a refused initialization must not create a half-bound catalog"
+
+    def test_bootstrap_refuses_hint_binding_change(self, tmp_path):
+        # G3 bootstrap discrimination: the immutable read-only hint locates
+        # the derived root; a lock whose CONTENT no longer matches the
+        # hinted catalog identity must refuse business access (never guess).
+        from infrastructure.resource_channel.handle_resolver import (
+            PREVIEW_NAMESPACE_LOCK_NAME,
+        )
+
+        derived = self._fresh(tmp_path)
+        db = tmp_path / "catalog.sqlite"
+        initialize_namespace(db, derived)
+        store = ResourceCatalogStore(db)
+        store.close()
+
+        import json
+
+        other_derived = self._fresh(tmp_path, "derived-b")
+        other_db = tmp_path / "catalog-b.sqlite"
+        initialize_namespace(other_db, other_derived)
+        forged = json.loads(
+            (other_derived / PREVIEW_NAMESPACE_LOCK_NAME).read_text(encoding="utf-8")
+        )
+        # overwrite derived-a's lock with derived-b's binding: the lock's
+        # own catalog-identity check must refuse the business open
+        (derived / PREVIEW_NAMESPACE_LOCK_NAME).write_text(
+            json.dumps(forged), encoding="utf-8"
+        )
+        with pytest.raises(TypedResourceChannelError):
+            ResourceCatalogStore(db)
+
+
+class TestLifecycleWrites:
+    """M2-DERIVED-GC-2 (G1/G2): the lifecycle table is Core-minted only,
+    loader writes invalidate eligibility, and the channel mark is a
+    zero-busy independent connection."""
+
+    @staticmethod
+    def _bound(tmp_path):
+        derived = tmp_path / "derived"
+        derived.mkdir(parents=True, exist_ok=True)
+        db = tmp_path / "catalog.sqlite"
+        initialize_namespace(db, derived)
+        return ResourceCatalogStore(db), derived
+
+    @staticmethod
+    def _origin(producer_root):
+        from infrastructure.resource_channel.catalog_store import PreviewOrigin
+
+        return PreviewOrigin(
+            producer_root=str(producer_root),
+            artifact_id="artifact-1",
+            artifact_revision_id="revision-1",
+            managed_rel_path="books/b/chapters/c/translated/r1.png",
+        )
+
+    def test_register_origin_and_mark_roundtrip(self, tmp_path):
+        store, _ = self._bound(tmp_path)
+        store.register_preview_with_origin(
+            "preview-1", "previews/preview-1.png", self._origin(tmp_path / "data")
+        )
+        row = store.preview_lifecycle_row("preview-1")
+        assert row is not None and row["retired"] is False
+        assert store.mark_preview_retired("preview-1") is True
+        assert store.preview_lifecycle_row("preview-1")["retired"] is True
+        store.close()
+
+    def test_mark_is_noop_for_unknown_or_retargeted_keys(self, tmp_path):
+        store, _ = self._bound(tmp_path)
+        assert store.mark_preview_retired("preview-unknown") is False
+        store.register_preview_with_origin(
+            "preview-1", "previews/preview-1.png", self._origin(tmp_path / "data")
+        )
+        assert store.mark_preview_retired("preview-1") is True
+        # second mark: already retired, rowcount 0
+        assert store.mark_preview_retired("preview-1") is False
+        store.close()
+
+    def test_loader_upsert_invalidates_origin_eligibility(self, tmp_path):
+        # design 2.3: a re-bound row must not inherit the old origin (or
+        # its retired flag) -- even if the path later matches again.
+        store, _ = self._bound(tmp_path)
+        store.register_preview_with_origin(
+            "preview-1", "previews/preview-1.png", self._origin(tmp_path / "data")
+        )
+        store.mark_preview_retired("preview-1")
+        store.upsert("preview-1", "derived-read-only", "previews/preview-1.png")
+        assert store.preview_lifecycle_row("preview-1") is None
+        assert store.retired_preview_candidates(str(tmp_path / "data")) == []
+        store.close()
+
+    def test_loader_remove_clears_origin_row(self, tmp_path):
+        store, _ = self._bound(tmp_path)
+        store.register_preview_with_origin(
+            "preview-1", "previews/preview-1.png", self._origin(tmp_path / "data")
+        )
+        store.remove("preview-1")
+        assert store.preview_lifecycle_row("preview-1") is None
+        store.close()
+
+    def test_retired_candidates_shape_gate(self, tmp_path):
+        store, _ = self._bound(tmp_path)
+        producer_root = str(tmp_path / "data")
+        # correct shape
+        store.register_preview_with_origin(
+            "preview-ok", "previews/preview-ok.png", self._origin(producer_root)
+        )
+        store.mark_preview_retired("preview-ok")
+        # wrong rel_path shape (catalog row not previews/<id>.png)
+        store._connection.execute(
+            "INSERT INTO preview_lifecycle (resource_id, producer_root, artifact_id,"
+            " artifact_revision_id, managed_rel_path, retired)"
+            " VALUES ('preview-shape', ?, 'a', 'r', 'books/x.png', 1)",
+            (producer_root,),
+        )
+        store._connection.execute(
+            "INSERT INTO resource_catalog (resource_id, scope_class, rel_path)"
+            " VALUES ('preview-shape', 'derived-read-only', 'previews/other-name.png')"
+        )
+        store._connection.commit()
+        # unretired origin row
+        store.register_preview_with_origin(
+            "preview-live", "previews/preview-live.png", self._origin(producer_root)
+        )
+
+        candidates = store.retired_preview_candidates(producer_root)
+        assert [c.resource_id for c in candidates] == ["preview-ok"]
+
+    def test_mark_uses_zero_busy_independent_connection(self, tmp_path):
+        # G2: the mark connection must have busy_timeout=0 -- a held catalog
+        # write lock makes the mark fail immediately (well under the default
+        # 5 s busy wait), the caller keeps retired=0, and no retry exists.
+        import sqlite3 as _sq
+        import time as _time
+
+        store, _ = self._bound(tmp_path)
+        db_path = store._db_path
+        store.register_preview_with_origin(
+            "preview-1", "previews/preview-1.png", self._origin(tmp_path / "data")
+        )
+        blocker = _sq.connect(str(db_path), timeout=5)
+        try:
+            blocker.execute("BEGIN IMMEDIATE")
+            started = _time.monotonic()
+            with pytest.raises(Exception):
+                store.mark_preview_retired("preview-1")
+            elapsed = _time.monotonic() - started
+        finally:
+            blocker.rollback()
+            blocker.close()
+        assert elapsed < 2.0, (
+            f"mark must not wait the default busy timeout (took {elapsed:.2f}s)"
+        )
+        assert store.preview_lifecycle_row("preview-1")["retired"] is False
+        store.close()
+
+    def test_metadata_reclaim_only_touches_lifecycle_rows(self, tmp_path):
+        store, _ = self._bound(tmp_path)
+        store.register_preview_with_origin(
+            "preview-1", "previews/preview-1.png", self._origin(tmp_path / "data")
+        )
+        store._connection.execute(
+            "DELETE FROM resource_catalog WHERE resource_id = 'preview-1'"
+        )
+        store._connection.commit()
+        assert store.reclaim_orphan_lifecycle_rows() == 1
+        assert store.reclaim_orphan_lifecycle_rows() == 0
+        assert store.count() == 0
+        store.close()

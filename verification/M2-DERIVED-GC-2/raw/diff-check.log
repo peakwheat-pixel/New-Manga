@@ -1,0 +1,5 @@
+$ git diff --check
+HEAD=7f65247324d5a9104871a89d84fc0bdf49bb34db
+EXIT=0
+---staged---
+EXIT=0

@@ -216,3 +216,177 @@ class TestConcurrency:
         assert outcome.get("write_ok") and outcome.get("read_code") in (
             "CONTENT_DIGEST_MISMATCH", "FILE_SIZE_CHANGED",
         ), outcome
+
+class TestPreviewNamespaceLease:
+    """M2-DERIVED-GC-2 (design §2.3, G3): the namespace lease is a real
+    Windows kernel lock on ``<derived>/.preview-lifecycle.lock``. Shared
+    leases coexist across REAL OS processes; an exclusive lease excludes
+    every other holder; process death releases it by the OS. No mock lock
+    can substitute for these cases."""
+
+    @staticmethod
+    def _binding(tmp_path):
+        from infrastructure.resource_channel.catalog_store import initialize_namespace
+
+        derived = tmp_path / "derived"
+        derived.mkdir(parents=True, exist_ok=True)
+        catalog = tmp_path / "catalog.sqlite"
+        binding = initialize_namespace(catalog, derived)
+        return derived, catalog, binding
+
+    @staticmethod
+    def _child_script() -> str:
+        import sys as _sys
+        from pathlib import Path as _P
+
+        src = _P(__file__).resolve().parents[2] / "src"
+        return (
+            "import sys; sys.path.insert(0, r'%s'); "
+            "from pathlib import Path; "
+            "from infrastructure.resource_channel.handle_resolver import acquire_shared_lease; "
+            "lease = acquire_shared_lease(Path(sys.argv[1])); "
+            "print('HELD', flush=True); "
+            "import time; time.sleep(30)"
+        ) % str(src)
+
+    def test_shared_lease_in_child_blocks_exclusive_and_death_releases(self, tmp_path):
+        import subprocess
+        import sys
+        import time
+
+        from infrastructure.resource_channel.handle_resolver import (
+            try_acquire_exclusive_lease,
+        )
+
+        derived, catalog, binding = self._binding(tmp_path)
+        child = subprocess.Popen(
+            [sys.executable, "-c", self._child_script(), str(derived)],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True,
+        )
+        try:
+            assert child.stdout is not None
+            line = child.stdout.readline()
+            assert line.strip() == "HELD", f"child failed to hold the lease: {child.stderr.read() if child.stderr else ''}"
+
+            # another REAL process holds the shared lease -> the exclusive
+            # GC window is refused, non-blocking
+            started = time.monotonic()
+            assert try_acquire_exclusive_lease(derived) is None
+            assert time.monotonic() - started < 2.0, "the exclusive attempt must not block"
+
+            child.kill()
+            child.wait(timeout=10)
+            # process death releases the kernel lease -> the window opens
+            deadline = time.monotonic() + 10
+            lease = None
+            while time.monotonic() < deadline:
+                lease = try_acquire_exclusive_lease(derived)
+                if lease is not None:
+                    break
+                time.sleep(0.1)
+            assert lease is not None and lease.exclusive
+            lease.release()
+        finally:
+            if child.poll() is None:
+                child.kill()
+                child.wait(timeout=10)
+
+    def test_exclusive_lease_blocks_new_shared_holders(self, tmp_path):
+        from infrastructure.resource_channel.handle_resolver import (
+            acquire_shared_lease,
+            namespace_unavailable,
+            try_acquire_exclusive_lease,
+        )
+
+        derived, catalog, binding = self._binding(tmp_path)
+        lease = try_acquire_exclusive_lease(derived)
+        assert lease is not None and lease.exclusive
+        try:
+            with pytest.raises(TypedResourceChannelError) as excinfo:
+                acquire_shared_lease(derived)
+            assert excinfo.value.code == "REF_SCOPE_DENIED"
+        finally:
+            lease.release()
+        # after release a shared holder can come back
+        shared = acquire_shared_lease(derived)
+        shared.release()
+
+    def test_binding_mismatch_and_alias_are_refused(self, tmp_path):
+        from infrastructure.resource_channel.handle_resolver import (
+            acquire_shared_lease,
+            namespace_unavailable,
+        )
+
+        derived, catalog, binding = self._binding(tmp_path)
+        shared = acquire_shared_lease(derived)
+        shared.release()
+
+        # a catalog identity the lock was never bound to -> refusal
+        with pytest.raises(TypedResourceChannelError) as excinfo:
+            acquire_shared_lease(
+                derived, expected_catalog_identity=(binding.catalog_identity[0], 999999)
+            )
+        assert excinfo.value.code == "REF_SCOPE_DENIED"
+
+        # a junction ALIAS of the same derived root cannot be distinguished
+        # as a different root by path alone, but its canonical+identity must
+        # resolve identically; a REPLACED root (different identity) must be
+        # refused. Use a sibling directory with a copied lock file.
+        import shutil
+
+        other = tmp_path / "other-derived"
+        shutil.copytree(derived, other)
+        with pytest.raises(TypedResourceChannelError) as excinfo2:
+            acquire_shared_lease(other)
+        assert excinfo2.value.code == "REF_SCOPE_DENIED"
+
+    def test_reparse_derived_root_is_refused(self, tmp_path):
+        import _winapi
+
+        from infrastructure.resource_channel.handle_resolver import (
+            acquire_shared_lease,
+        )
+
+        derived, catalog, binding = self._binding(tmp_path)
+        outside = tmp_path / "outside"
+        outside.mkdir()
+        junction = tmp_path / "alias-derived"
+        _winapi.CreateJunction(str(derived), str(junction))
+        try:
+            with pytest.raises(TypedResourceChannelError):
+                acquire_shared_lease(junction)
+        finally:
+            import os
+
+            os.rmdir(str(junction))
+        del outside
+
+    def test_handle_verified_delete_refuses_reparse_candidate(self, tmp_path):
+        import _winapi
+
+        from infrastructure.resource_channel.handle_resolver import (
+            handle_verified_delete,
+        )
+
+        derived, catalog, binding = self._binding(tmp_path)
+        previews = derived / "previews"
+        previews.mkdir(exist_ok=True)
+        outside_file = tmp_path / "outside.png"
+        outside_file.write_bytes(b"precious")
+        link = previews / "preview-link.png"
+        _winapi.CreateJunction(str(outside_file), str(link))
+        try:
+            # the pre-open reparse walk refuses the candidate BEFORE any
+            # handle exists -- a typed refusal, never a pathname unlink
+            with pytest.raises(TypedResourceChannelError):
+                handle_verified_delete(
+                    derived, "previews/preview-link.png",
+                    expected_sha256="0" * 64, expected_size=8,
+                )
+            assert outside_file.is_file(), "a reparse candidate must never be deleted"
+        finally:
+            import os
+
+            os.rmdir(str(link))

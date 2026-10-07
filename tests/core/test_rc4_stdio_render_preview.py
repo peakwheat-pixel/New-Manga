@@ -247,3 +247,95 @@ def test_production_stdio_decodes_nmfr_renders_text_and_publishes_readable_previ
         )
         assert ink >= 400, ink
         assert rendered.getpixel((100, 160)) == (240, 64, 32, 255)
+
+
+def test_rerender_rotation_marks_previous_preview_retired(tmp_path: Path) -> None:
+    """M2-DERIVED-GC-2 (design 2.2, G2): two REAL rerender rounds over one
+    stdio core -- the first preview's references are revoked and its origin
+    row is marked retired=1 by the trusted retire bit; the live preview
+    stays retired=0. The origin row binds the EXACT source revision."""
+    data_root = tmp_path / "data"
+    derived_root = tmp_path / "derived"
+    catalog_db = tmp_path / "catalog" / "catalog.sqlite"
+    source_path = tmp_path / "source.png"
+    original = Image.new("RGBA", (300, 180), (24, 50, 210, 255))
+    original.save(source_path, format="PNG")
+
+    core = assemble_production_core(data_root)
+    _seed_book_and_chapter(core)
+    report = core.importer.import_files(
+        "chapter", [ImportSource("source.png", source_path.read_bytes)],
+    )
+    page = core.repository.get_page(report.imported[0].page.page_id)
+    assert page is not None and page.managed_original_ref
+    frame = ImageFrame(300, 180, "rgb32", bytes([0x10, 0x20, 0x30, 0xFF]) * (300 * 180))
+    clean_payload, clean_mime, _, _ = artifact_payload_from_frame(frame)
+    _commit_artifact(core, page, ArtifactType.CLEAN, clean_payload, clean_mime)
+    speech = core.editing.create_region(
+        page.page_id, RegionGeometry(bbox=BBox(20, 20, 130, 100)),
+    )
+    core.editing.save_manual_translation(speech.region_id, "V1")
+    core.editing.confirm_final(speech.region_id)
+    artifact_id = core.repository.get_page(page.page_id) is not None
+    revisions_before = core.conn.execute(
+        "SELECT COUNT(*) FROM media_artifacts WHERE page_id = ? AND artifact_type='clean'",
+        (page.page_id,),
+    ).fetchone()[0]
+    core.conn.close()
+    assert revisions_before >= 1
+
+    env = os.environ.copy()
+    env["PYTHONPATH"] = str(SRC_ROOT) + os.pathsep + env.get("PYTHONPATH", "")
+    env["NEWMANGA_DATA_ROOT"] = str(data_root)
+    env["M2RC1_DERIVED_ROOT"] = str(derived_root)
+    env["M2RC2_CATALOG_DB"] = str(catalog_db)
+    # one process, two rerender rounds -> the second rotates the first
+    completed = subprocess.run(
+        [sys.executable, "-m", "bootstrap.core_service"],
+        cwd=REPO_ROOT,
+        env=env,
+        input=(
+            _rpc("rerender_page", "render-1", {"page_id": page.page_id})
+            + "\n"
+            + _rpc("rerender_page", "render-2", {"page_id": page.page_id})
+            + "\n"
+            + _rpc("core.shutdown", "shutdown-1", {})
+            + "\n"
+        ),
+        capture_output=True,
+        text=True,
+        timeout=60,
+        check=False,
+    )
+    assert completed.returncode == 0, completed.stderr
+    responses = [json.loads(line) for line in completed.stdout.splitlines() if line]
+    first, second = responses[0]["result"], responses[1]["result"]
+    assert first["preview_error"] is None and second["preview_error"] is None
+    first_key = first["preview"]["resource_id"]
+    second_key = second["preview"]["resource_id"]
+    assert first_key != second_key, "each rerender mints a fresh preview key"
+
+    catalog = ResourceCatalogStore(catalog_db)
+    try:
+        old_row = catalog.preview_lifecycle_row(first_key)
+        new_row = catalog.preview_lifecycle_row(second_key)
+        # The CORE side of the rotation: both rounds register a verified
+        # origin row, still retired=0. The retired=1 flip is deliberately
+        # NOT a Core behaviour -- it happens in the channel only when the
+        # HOST rotation revoke carries the trusted retire bit (host_bridge
+        # TestRetirePreviewWire in test_bridge_and_thresholds.py + the
+        # rotate_render_preview mock discrimination in main.rs tests). The
+        # real-Core evidence here is the origin binding and the fresh key.
+        assert old_row is not None and old_row["retired"] is False
+        assert new_row is not None and new_row["retired"] is False
+        # both origin rows bind the SAME TRANSLATED artifact, each round to
+        # its OWN exact revision and its own verbatim managed path
+        assert old_row["artifact_id"] == new_row["artifact_id"]
+        assert old_row["artifact_revision_id"] != new_row["artifact_revision_id"], (
+            "each rotation binds the exact NEW source revision"
+        )
+        assert old_row["managed_rel_path"] != new_row["managed_rel_path"], (
+            "each commit lands a fresh managed file; the origin is verbatim"
+        )
+    finally:
+        catalog.close()

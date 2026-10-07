@@ -112,7 +112,12 @@ def prepare_lab() -> dict:
 
 
 def seed_catalog() -> tuple[int, str]:
-    """Seed the Core/SQLite catalog authority through the real loader CLI."""
+    """Seed the Core/SQLite catalog authority through the real loader CLI.
+
+    M2-DERIVED-GC-2 (design §7): this runner's lab catalog is a brand-new
+    fixture database, so the trusted first-bind flag runs against the
+    already-prepared lab derived root (prepare_lab) BEFORE any row is
+    written; without the flag the unbound catalog would be refused."""
 
     catalog_db = LAB / "catalog.sqlite"
     catalog_db.unlink(missing_ok=True)
@@ -123,6 +128,8 @@ def seed_catalog() -> tuple[int, str]:
             "infrastructure.resource_channel.catalog_loader",
             "--db",
             str(catalog_db),
+            "--initialize-preview-namespace",
+            str(LAB / "scope" / "derived"),
             "--set",
             "res-probe=asset.png",
             "--set",

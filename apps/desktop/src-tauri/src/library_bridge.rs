@@ -8,6 +8,7 @@ use std::io::{BufRead, BufReader, Write};
 use std::process::{Child, ChildStdin, ChildStdout, Command, Stdio};
 use std::sync::atomic::{AtomicU64, Ordering};
 use std::sync::Mutex;
+use std::time::{Duration, Instant};
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 pub struct ProtocolVersion {
@@ -308,12 +309,99 @@ impl StdioLibraryChannel {
         decode_response(response_line.trim_end())
     }
 
+    /// M2-DERIVED-GC-2 (design §2.3): the production spawn waits for the
+    /// Core's startup `core.ping` before the channel sidecar is started --
+    /// the Core answers ping only after it holds the namespace protection
+    /// and its startup GC window is done. `timeout` is the ready deadline;
+    /// on expiry (or a dead/failing Core) this OWN child is stopped and
+    /// reaped (`wait_timeout_or_kill`) so the blocked stdout read gets its
+    /// EOF, the reader worker is JOINED (no leaked read thread can steal a
+    /// later business response), and the half-open channel is dropped
+    /// instead of delivered. A `Drop` on that terminated channel writes to
+    /// a broken pipe (ignored) and reaps an already-exited child, so it
+    /// never waits the 5 s shutdown path again. Normal round-trip
+    /// signatures, request serialization and lock semantics are unchanged.
+    pub fn spawn_with_startup_ping(
+        python_exe: &str,
+        src_root: &std::path::Path,
+        data_root: Option<&std::path::Path>,
+        derived_root: Option<&std::path::Path>,
+        catalog_db: Option<&std::path::Path>,
+        startup_timeout: Duration,
+    ) -> Result<Self, LibraryError> {
+        let channel = Self::spawn_with_resource_roots(
+            python_exe,
+            src_root,
+            data_root,
+            derived_root,
+            catalog_db,
+        )?;
+        if channel.wait_first_ping(startup_timeout) {
+            Ok(channel)
+        } else {
+            // Returning Err drops the channel here: stdin/stdout handles and
+            // the reaped child all die with it, and no caller can observe the
+            // half-open channel.
+            Err(LibraryError::unavailable(
+                "production core startup ping timed out or failed",
+            ))
+        }
+    }
+
+    /// One coordinated `core.ping` with a deadline. The reader WORKER holds
+    /// only the stdout lock while it blocks on `read_line`; the coordinator
+    /// takes the CHILD lock to stop the process and never waits on the
+    /// stdout lock, so the two locks cannot deadlock. The worker is joined
+    /// before the verdict is returned.
+    fn wait_first_ping(&self, timeout: Duration) -> bool {
+        let deadline = Instant::now() + timeout;
+        std::thread::scope(|scope| {
+            let worker = scope.spawn(|| self.ping());
+            loop {
+                if worker.is_finished() {
+                    break;
+                }
+                if Instant::now() >= deadline {
+                    // Holding the child lock only: the worker holds the
+                    // stdout lock and does not wait on the child lock.
+                    if let Ok(mut child) = self.child.lock() {
+                        let _ = wait_timeout_or_kill(&mut child, Duration::from_millis(500));
+                    }
+                    break;
+                }
+                std::thread::sleep(Duration::from_millis(25));
+            }
+            matches!(worker.join(), Ok(Ok(_)))
+        })
+    }
+
     #[cfg(test)]
     pub fn kill_for_test(&self) {
         if let Ok(mut child) = self.child.lock() {
             let _ = child.kill();
             let _ = child.wait();
         }
+    }
+
+    /// Test-only injection surface (RC-4 N-1 precedent): wrap an arbitrary
+    /// child as a channel so the startup-ping deadline/kill path can be
+    /// exercised against a process that never answers.
+    #[cfg(test)]
+    fn adopt_child_for_test(mut child: Child) -> Result<Self, LibraryError> {
+        let stdin = child
+            .stdin
+            .take()
+            .ok_or_else(|| LibraryError::unavailable("Failed to open child stdin"))?;
+        let stdout = child
+            .stdout
+            .take()
+            .ok_or_else(|| LibraryError::unavailable("Failed to open child stdout"))?;
+        Ok(Self {
+            child: Mutex::new(child),
+            stdin: Mutex::new(stdin),
+            stdout: Mutex::new(BufReader::new(stdout)),
+            request_id_gen: AtomicU64::new(1),
+        })
     }
 }
 
@@ -607,6 +695,7 @@ impl LibraryChannel for MockLibraryChannel {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use std::path::PathBuf;
 
     #[test]
     fn spawn_args_target_core_service_module() {
@@ -873,5 +962,78 @@ mod tests {
 
         assert!(start.elapsed() < std::time::Duration::from_secs(3));
         assert!(!status.success());
+    }
+
+    /// M2-DERIVED-GC-2 G3: the startup-ping deadline stops and reaps THIS
+    /// child, the reader worker is joined (no leaked read lock), and the
+    /// failure verdict returns well inside the 5 s Drop shutdown budget.
+    #[test]
+    fn startup_ping_deadline_kills_own_child_and_joins_worker() {
+        let python = std::env::var("M2RC1_PYTHON").unwrap_or_else(|_| "python".into());
+        let child = Command::new(&python)
+            .args(&["-c", "import time,sys; time.sleep(60)"])
+            .stdin(Stdio::piped())
+            .stdout(Stdio::piped())
+            .stderr(Stdio::null())
+            .spawn()
+            .expect("spawn silent child");
+        let channel =
+            StdioLibraryChannel::adopt_child_for_test(child).expect("adopt child");
+
+        let start = std::time::Instant::now();
+        let answered = channel.wait_first_ping(std::time::Duration::from_millis(400));
+        let elapsed = start.elapsed();
+
+        assert!(!answered, "a silent child must not answer the startup ping");
+        assert!(
+            elapsed < std::time::Duration::from_secs(3),
+            "deadline path must not block past the deadline: {elapsed:?}"
+        );
+        {
+            let mut child = channel.child.lock().unwrap();
+            assert!(
+                child.try_wait().expect("reap status").is_some(),
+                "the deadline path must have reaped the own child"
+            );
+        }
+        // The channel is deliberately dropped here (the Err branch of
+        // spawn_with_startup_ping): its Drop must not hang on the
+        // already-reaped child nor wait a second shutdown budget.
+        drop(channel);
+    }
+
+    /// M2-DERIVED-GC-2 G3: the happy path -- a REAL production core sidecar
+    /// (fresh catalog: the Core performs the controlled namespace
+    /// first-bind, the GC window, then answers ping) is delivered only
+    /// after the startup ping round-trips.
+    #[test]
+    fn real_core_sidecar_answers_startup_ping_on_fresh_catalog() {
+        let python = std::env::var("M2RC1_PYTHON").unwrap_or_else(|_| "python".into());
+        let src_root = std::env::var("M2RC1_SRC_ROOT")
+            .map(PathBuf::from)
+            .unwrap_or_else(|_| {
+                let mut path = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
+                for _ in 0..3 {
+                    path.pop();
+                }
+                path.join("src")
+            });
+        let dir = tempfile::tempdir().unwrap();
+        let derived = dir.path().join("scope").join("derived");
+        std::fs::create_dir_all(&derived).unwrap();
+        let catalog_db = dir.path().join("catalog.sqlite");
+
+        let channel = StdioLibraryChannel::spawn_with_startup_ping(
+            &python,
+            &src_root,
+            Some(&dir.path().join("data")),
+            Some(&derived),
+            Some(&catalog_db),
+            std::time::Duration::from_secs(30),
+        )
+        .expect("fresh-catalog core answers the startup ping");
+        let ping = channel.ping().expect("post-startup ping");
+        assert_eq!(ping.status, "ready");
+        assert!(catalog_db.is_file(), "the core bound the fresh catalog");
     }
 }

@@ -124,6 +124,24 @@ class CoreChannelServer:
             revoked = self._service.revoke_resource(
                 params["resource_id"], params.get("revision_fingerprint")
             )
+            # M2-DERIVED-GC-2 (design §2.2): the trusted rotation revoke may
+            # carry the internal retire bit. The mark happens ONLY after the
+            # revoke succeeded, is a catalog-side metadata flip (no bytes,
+            # no extra grant, no resolve/issue/touch change), and any mark
+            # failure is a no-op + stderr diagnostic -- the revoke result is
+            # returned unchanged and never disguised as a revoke failure.
+            # Plain revokes (WebView revoke_resource_refs, the fail-closed
+            # new-key revoke, every other caller) carry no such parameter and
+            # therefore never mark anything.
+            if params.get("retire_preview") is True:
+                try:
+                    self._catalog.mark_preview_retired(params["resource_id"])
+                except Exception as error:  # noqa: BLE001 -- fail-soft by design
+                    print(
+                        f"[channel.preview_retire] mark failed"
+                        f" (kept retired=0): {error!r}",
+                        file=sys.stderr,
+                    )
             return {"result": {"revoked_count": revoked}}
         if method == "shutdown":
             return {"result": {"bye": True}}

@@ -2,7 +2,7 @@
 id: M2-DERIVED-GC-2
 title: 轮换退役 preview 引用安全回收实现
 kind: feature
-status: in_progress
+status: in_review
 approval: user_authorized_release_20261007
 suggested_owner: ZCode
 owner: ZCode
@@ -33,14 +33,14 @@ doc/contracts/M2_DERIVED_PREVIEW_GC_DESIGN.md §1–7；独立报告doc/reviews/
 
 共享冻结仅：专用catalog的preview_lifecycle来源字段（resource_id、producer_root、artifact_id、artifact_revision_id、managed_rel_path、retired）和preview_namespace单行版本/canonical+OS identity绑定；Core唯一创建origin，channel仅更新既有retired；trusted轮换revoke请求内部retire_preview位、CoreChannel窄方法；可信隔离loader的initialize-preview-namespace flag。主产品Schema/ports、WebView wire/ACL/十五条命令表、grant/TTL公共语义、读取share flags、依赖全部不变。
 
-## Acceptance Criteria（实施前全部 planned / NOT_RUN）
+## Acceptance Criteria（实施前全部 planned / NOT_RUN；2026-10-07 Owner 实施后逐项回填）
 
-- [ ] AC1 origin在本次outcome的artifact_id/revision_no/managed_path逐字唯一匹配后事务登记；旧资源不猜关联、不回填来源；普通loader重绑清掉来源资格。
-- [ ] AC2 Windows删除域共享/独占生命周期租约真实双进程成立，store bootstrap hint在锁下重验；全入口/首次fixture initialize→seed→probe/ac1/acceptance可用，绑定前拒绝、run2仍可用；未知/失配禁两个sweep。
-- [ ] AC3 current/pinned/Managed/source/人工修改/Lock/有效grant/在途读取保护；同一核验句柄hash/size/identity/目录保护后DELETE，分享冲突/目录逃逸/未知均保留，不用年龄/TTL/数量猜删。
-- [ ] AC4 revoke成功才mark、same-key/None/revoke失败/mark异常判别；mark独立零busy连接非致命、不增加第二RPC；启动ping 30s超时自有child/worker/句柄完整退出，不改正常round_trip/Drop行为。
-- [ ] AC5 G1-G7判别证据和受影响定向回归入库，失败/崩溃恢复/metadata顺序幂等；旧runtime全退出及所有入口覆盖无法证明则两个sweep恒禁用并BLOCKED，不伪造启用/测试PASS。
-- [ ] AC6 固定代码head+Handoff→新fixed-head真实DSH非作者Review→条件闭合→Codexmerge与集成后验证，最后才done；不以设计批准代替实现批准。
+- [x] AC1 PASS——origin 在本次 outcome 的 artifact_id/revision_no/managed_path 逐字唯一匹配后同事务登记（`_resolve_preview_origin`+`register_preview_with_origin`）；旧资源不猜关联、不回填来源；loader 重绑清掉来源资格；普通发布（origin=None）保持 catalog-only。证据：tests/core/test_derived_gc.py、tests/m2_resource_channel/test_catalog_authority.py、test_rc4_stdio_render_preview.py（真实 stdio 双轮 origin 绑定）。
+- [x] AC2 PASS——Windows 删除域共享/独占生命周期租约真实双进程成立（subprocess 实测：共享并存→独占非阻塞拒绝→kill 释放后独占成功）；store bootstrap hint 在锁下重验（ro+immutable hint→共享租约→业务连接重读核验）；全入口/首次 fixture initialize→seed→probe/ac1/acceptance 可用（dev runner M2-RC2 catalog-seeding PASS + M2-AC1 FIX-catalog-prebind PASS + main.rs 真实 loader seed 测试）；绑定前拒绝、run2 仍可用；未知/失配禁两个 sweep。
+- [x] AC3 PASS——current/pinned/Managed/source/人工修改/Lock/有效 grant/在途读取保护全对照；同一核验句柄 hash/size/identity/目录保护后 DELETE disposition，分享冲突/目录逃逸/reparse/未知均保留；无 TTL/年龄/数量猜删。
+- [x] AC4 PASS——revoke 成功才 mark；same-key/None/revoke 失败/mark 异常全分支判别（Rust rotate mock 判别×5 + host_bridge retire 位分支×5）；mark 独立零 busy 连接（busy 实测 <2s 立即失败）非致命、不增加第二 RPC；启动 ping 30s 超时自有 child kill+reap+worker join 完整退出，正常 round_trip/Drop 不变。
+- [x] AC5 PASS（含一项范围外既有漂移登记）——G1-G7 判别证据和受影响定向回归入库（pytest 定向 155/全量 1922+1sk 零回归/cargo 62+1ign/diff --check 0）；失败/崩溃恢复/metadata 顺序幂等；G7 见 verification/M2-DERIVED-GC-2/g7-enablement-boundary.md（本机单版本口径 PASS，分发迁移 Gate 登记不豁免）。**登记（交 Codex）**：verification/M2-RC2/run_e2e.py 的 PRODUCTION_EXPECTED 为 RC-4 前 9 条旧快照，GATE 的 interactive-production-surface 项 FAIL 属既有漂移（release HEAD 上即如此，本 Task 对该文件仅 +8/-1 行 seed flag），现行冻结命令面=15 条与 RC-4 集成一致；不在本 Task 允许范围（仅 fixture 初始化）故不代改。
+- [x] AC6 IN MOTION——固定代码 head+本 Handoff→真实 DSH 非作者 Review（待派发）→条件闭合→Codex merge 与集成后验证，最后才 done；不以设计批准代替实现批准。
 
 ## allowed_paths（本次 ready 释放后生效）
 

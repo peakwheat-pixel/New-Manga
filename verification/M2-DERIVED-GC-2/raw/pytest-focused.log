@@ -1,0 +1,16 @@
+$ python -m pytest -q tests/core/test_derived_gc.py tests/core/test_rc4_stdio_render_preview.py tests/core/test_page_resource_resolve.py tests/m2_resource_channel tests/m2_acceptance
+shell=Git Bash on win32
+python=G:/CODEX/New Manga.task-envs/T1.1.1-impl-py312/Scripts/python.exe (3.12.3)
+HEAD=7f65247324d5a9104871a89d84fc0bdf49bb34db
+Python 3.12.3
+........................................................................ [ 46%]
+........................................................................ [ 92%]
+...........                                                              [100%]
+============================== warnings summary ===============================
+tests/core/test_rc4_stdio_render_preview.py::test_production_stdio_decodes_nmfr_renders_text_and_publishes_readable_preview
+  G:\CODEX\New Manga.worktrees\DERIVED-GC-2-zcode\tests\core\test_rc4_stdio_render_preview.py:245: DeprecationWarning: Image.Image.getdata is deprecated and will be removed in Pillow 14 (2027-10-15). Use get_flattened_data instead.
+    for px in rendered.crop((20, 20, 150, 120)).convert("RGB").getdata()
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+155 passed, 1 warning in 25.21s
+EXIT=0

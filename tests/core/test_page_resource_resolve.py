@@ -31,7 +31,10 @@ from bootstrap.core_service import (
     CoreServiceServer,
     assemble_production_core,
 )
-from infrastructure.resource_channel.catalog_store import ResourceCatalogStore
+from infrastructure.resource_channel.catalog_store import (
+    ResourceCatalogStore,
+    initialize_namespace,
+)
 from infrastructure.resource_channel.render_preview import RenderPreviewPublisher
 
 NOW = "2026-01-01T00:00:00.000+00:00"
@@ -76,12 +79,17 @@ def _seed_page(tmp_path: Path, *, suffix: str = ".png"):
 
 
 def _server(core, tmp_path: Path) -> CoreServiceServer:
+    # M2-DERIVED-GC-2 (R4-A1): the fixture binds its OWN fresh derived root
+    # through the narrow initializer before the store is constructed.
     catalog_db = tmp_path / "catalog" / "catalog.sqlite"
     catalog_db.parent.mkdir(parents=True, exist_ok=True)
+    derived_root = tmp_path / "derived"
+    derived_root.mkdir(parents=True, exist_ok=True)
+    initialize_namespace(catalog_db, derived_root)
     catalog = ResourceCatalogStore(catalog_db)
     return CoreServiceServer(
         core,
-        render_previews=RenderPreviewPublisher(tmp_path / "derived", catalog),
+        render_previews=RenderPreviewPublisher(derived_root, catalog),
     )
 
 

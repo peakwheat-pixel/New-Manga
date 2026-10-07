@@ -276,14 +276,21 @@ def prepare_probe_lab(lab: Path) -> dict:
     return manifest
 
 
-def seed_catalog_packaged(install_dir: Path, catalog_db: Path) -> tuple[bool, str]:
-    """Launcher-side seeding through the packaged catalog_loader.exe."""
+def seed_catalog_packaged(install_dir: Path, catalog_db: Path, derived_root: Path) -> tuple[bool, str]:
+    """Launcher-side seeding through the packaged catalog_loader.exe.
+
+    M2-DERIVED-GC-2 (design §2.3): this probe fixture catalog is brand-new,
+    so the trusted first-bind flag runs against this lab's own derived root
+    before the rows are written; install/seed thresholds and the rest of the
+    acceptance flow are untouched."""
     loader = install_dir / "resources" / "core-sidecar" / "catalog_loader.exe"
     completed = subprocess.run(
         [
             str(loader),
             "--db",
             str(catalog_db),
+            "--initialize-preview-namespace",
+            str(derived_root),
             "--set",
             "res-probe=asset.png",
             "--set",
@@ -760,7 +767,9 @@ def main() -> int:
 
     exe = install_dir / INSTALLED_EXE_NAME
     manifest = prepare_probe_lab(lab)
-    seed_ok, seed_detail = seed_catalog_packaged(install_dir, lab / "probe" / "catalog.sqlite")
+    seed_ok, seed_detail = seed_catalog_packaged(
+        install_dir, lab / "probe" / "catalog.sqlite", lab / "probe" / "scope" / "derived"
+    )
     gate.pass_or(seed_ok, "CS-I2-catalog-seeded-packaged-loader", {"detail": seed_detail})
 
     run_library_probe(gate, install_dir, env, lab)

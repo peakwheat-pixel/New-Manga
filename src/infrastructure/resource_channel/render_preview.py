@@ -8,7 +8,8 @@ import tempfile
 import uuid
 from pathlib import Path
 
-from infrastructure.resource_channel.catalog_store import ResourceCatalogStore
+from infrastructure.resource_channel.catalog_store import PreviewOrigin, ResourceCatalogStore
+from infrastructure.resource_channel.handle_resolver import handle_verified_delete
 
 #: M2-PAGE-RESOURCE-RESOLVE-1 (DSH r1 PR-12): the opaque revision label for
 #: deterministic managed-original keys; contract rev 1.7 freezes the
@@ -37,7 +38,22 @@ class RenderPreviewPublisher:
         """
         return (self._root / rel_path).is_file()
 
-    def publish(self, managed_png: Path | str, revision: str) -> dict[str, str]:
+    def publish(
+        self,
+        managed_png: Path | str,
+        revision: str,
+        origin: PreviewOrigin | None = None,
+    ) -> dict[str, str]:
+        """Publish one rotated preview copy.
+
+        M2-DERIVED-GC-2: when ``origin`` is given (the production Core is the
+        ONLY authority that mints one), the catalog row and its
+        ``preview_lifecycle`` origin row (retired=0) commit in the SAME
+        catalog SQLite transaction after the temp+fsync+replace -- never
+        "return the key now, register later". ``origin=None`` keeps the
+        catalog-only legacy behaviour (the copy can never be reclaimed by
+        reference)."""
+
         root = self._root.resolve()
         root.mkdir(parents=True, exist_ok=True)
         preview_dir = root / "previews"
@@ -57,7 +73,10 @@ class RenderPreviewPublisher:
                 temp.flush()
                 os.fsync(temp.fileno())
             os.replace(temp_path, target)
-            self._catalog.upsert(resource_id, "derived-read-only", rel_path)
+            if origin is None:
+                self._catalog.upsert(resource_id, "derived-read-only", rel_path)
+            else:
+                self._catalog.register_preview_with_origin(resource_id, rel_path, origin)
         except Exception:
             if temp_path is not None:
                 temp_path.unlink(missing_ok=True)
@@ -161,6 +180,31 @@ class RenderPreviewPublisher:
                 if self._catalog.remove(resource_id):
                     removed_rows += 1
         return {"orphan_files_removed": removed_files, "dead_rows_removed": removed_rows}
+
+    def delete_retired_preview_copy(
+        self,
+        resource_id: str,
+        *,
+        expected_sha256: str,
+        expected_size: int,
+    ) -> tuple[bool, str]:
+        """M2-DERIVED-GC-2: delete ONE verified retired preview copy by
+        DELETE DISPOSITION on the verifying handle (design §2.4).
+
+        The rel path is recomputed from the resource id (never taken from a
+        catalog row), passed through the lexical gate, opened with
+        read+write+DELETE and FILE_SHARE_READ only, and deleted only when
+        the streaming hash/size match the immutable revision's recorded
+        values from the product DB. Any refusal keeps the file; the reason
+        string is diagnostics only and never a retryable error surface."""
+
+        rel_path = f"previews/{resource_id}.png"
+        return handle_verified_delete(
+            self._root,
+            rel_path,
+            expected_sha256=expected_sha256,
+            expected_size=expected_size,
+        )
 
 
 __all__ = ["RenderPreviewPublisher"]

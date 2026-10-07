@@ -1,0 +1,23 @@
+$ python -m pytest -q tests/core tests/m2_resource_channel tests/m2_acceptance (full src-suite subset)
+HEAD=7f65247324d5a9104871a89d84fc0bdf49bb34db
+file:///G:/CODEX/New Manga.worktrees/DERIVED-GC-2-zcode/src/ui/qml/bookshelf/BookshelfToolbar.qml:66: TypeError: Cannot read property 'archivedFilter' of null
+file:///G:/CODEX/New Manga.worktrees/DERIVED-GC-2-zcode/src/ui/qml/bookshelf/BookshelfToolbar.qml:59: TypeError: Cannot read property 'favoritesOnly' of null
+................................ [ 93%]
+........................................................................ [ 97%]
+...................................................                      [100%]
+============================== warnings summary ===============================
+tests/core/test_rc4_stdio_render_preview.py::test_production_stdio_decodes_nmfr_renders_text_and_publishes_readable_preview
+  G:\CODEX\New Manga.worktrees\DERIVED-GC-2-zcode\tests\core\test_rc4_stdio_render_preview.py:245: DeprecationWarning: Image.Image.getdata is deprecated and will be removed in Pillow 14 (2027-10-15). Use get_flattened_data instead.
+    for px in rendered.crop((20, 20, 150, 120)).convert("RGB").getdata()
+
+tests/import_formats/test_mobi_import.py::test_picture_mobi_imports_one_managed_page_per_image
+  G:\CODEX\New Manga.task-envs\T1.1.1-impl-py312\Lib\site-packages\mobi\mobi_cover.py:4: DeprecationWarning: 'imghdr' is deprecated and slated for removal in Python 3.13
+    import imghdr
+
+tests/rendering/test_pillow_rendering.py::test_pillow_compositor_draws_centered_stroked_text_into_real_png
+  G:\CODEX\New Manga.worktrees\DERIVED-GC-2-zcode\tests\rendering\test_pillow_rendering.py:94: DeprecationWarning: Image.Image.getdata is deprecated and will be removed in Pillow 14 (2027-10-15). Use get_flattened_data instead.
+    for red, green, blue, _alpha in image.getdata()
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+1922 passed, 1 skipped, 3 warnings in 178.32s (0:02:58)
+EXIT=0

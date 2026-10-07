@@ -8,12 +8,22 @@ the current slice.
 
 Usage:
   python -m infrastructure.resource_channel.catalog_loader --db PATH \
+      [--initialize-preview-namespace DERIVED_ROOT] \
       [--set RESOURCE_ID=REL_PATH[@SCOPE_CLASS]]... \
       [--remove RESOURCE_ID]... [--dump] [--count]
 
 ``@scope`` is optional and defaults to ``derived-read-only``. Every write is
 validated by the store (servable scope class + rel-path gate), so a loader
 mistake is a typed error, never a poisoned row.
+
+M2-DERIVED-GC-2: ``--initialize-preview-namespace DERIVED_ROOT`` is the
+trusted first-seed flag for isolated fixtures (design §2.3). It runs the
+frozen narrow ``initialize_namespace`` against THIS loader's own new/empty
+catalog and the given verified derived root, BEFORE any seed row is written;
+without the flag an unbound catalog is refused (never auto-claimed), and a
+failed initialization aborts the seed. A catalog that already carries rows or
+a binding is never re-initialized by the flag (the store then serves the
+bound namespace like any other participant).
 """
 
 from __future__ import annotations
@@ -24,7 +34,10 @@ import sys
 from pathlib import Path
 
 from application.resource_channel.dto import TypedResourceChannelError
-from infrastructure.resource_channel.catalog_store import ResourceCatalogStore
+from infrastructure.resource_channel.catalog_store import (
+    ResourceCatalogStore,
+    initialize_namespace,
+)
 
 DEFAULT_SCOPE = "derived-read-only"
 
@@ -65,6 +78,16 @@ def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("--db", required=True, help="catalog SQLite database file")
     parser.add_argument(
+        "--initialize-preview-namespace",
+        metavar="DERIVED_ROOT",
+        default=None,
+        help=(
+            "trusted fixture/seed initializer: first-bind THIS new/empty"
+            " catalog to the given verified derived root before seeding"
+            " (M2-DERIVED-GC-2; existing/unknown catalogs are refused)"
+        ),
+    )
+    parser.add_argument(
         "--set",
         action="append",
         metavar="RESOURCE_ID=REL_PATH[@SCOPE_CLASS]",
@@ -76,7 +99,17 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--dump", action="store_true", help="print the catalog as JSON")
     parser.add_argument("--count", action="store_true", help="print the catalog row count")
     args = parser.parse_args(argv)
-    store = ResourceCatalogStore(Path(args.db))
+    if args.initialize_preview_namespace:
+        try:
+            initialize_namespace(Path(args.db), Path(args.initialize_preview_namespace))
+        except (TypedResourceChannelError, OSError) as error:
+            print(f"preview namespace initialization refused: {error}")
+            return 2
+    try:
+        store = ResourceCatalogStore(Path(args.db))
+    except TypedResourceChannelError as error:
+        print(f"catalog open refused: {error.code}: {error.message}")
+        return 2
     try:
         return _apply(store, args)
     finally:

@@ -223,11 +223,56 @@ def read_results(path: Path) -> dict | None:
         return None
 
 
+def initialize_fixture_catalog(gate: Gate, root: Path, venv_python: str) -> None:
+    """M2-DERIVED-GC-2 (design §7): pre-bind this runner's fresh fixture
+    catalog to its own derived root through the trusted loader BEFORE any
+    sidecar spawns. run2/relaunches find the catalog bound and take the
+    normal shared path (never a repeated initialize -- the initializer
+    refuses bound catalogs anyway)."""
+
+    catalog_db = root / "catalog.sqlite"
+    if catalog_db.exists():
+        gate.pass_or(True, "FIX-catalog-prebind", {"skipped": "already bound"})
+        return
+    derived_root = root / "scope" / "derived"
+    derived_root.mkdir(parents=True, exist_ok=True)
+    completed = subprocess.run(
+        [
+            venv_python,
+            "-m",
+            "infrastructure.resource_channel.catalog_loader",
+            "--db",
+            str(catalog_db),
+            "--initialize-preview-namespace",
+            str(derived_root),
+        ],
+        cwd=SRC_ROOT,
+        capture_output=True,
+        text=True,
+        timeout=120,
+        check=False,
+    )
+    (root.parent / "fixture-catalog-initialize.log").write_text(
+        (
+            "$ python -m infrastructure.resource_channel.catalog_loader"
+            f" --db {catalog_db} --initialize-preview-namespace {derived_root}\n"
+            f"exit={completed.returncode}\n{completed.stdout}\n{completed.stderr}"
+        ).rstrip() + "\n",
+        encoding="utf-8",
+    )
+    gate.pass_or(
+        completed.returncode == 0,
+        "FIX-catalog-prebind",
+        {"exit": completed.returncode, "stderr": completed.stderr[-300:]},
+    )
+
+
 def run_sample(gate: Gate, exe: Path, lab_root: Path, sample: str, venv_python: str) -> dict | None:
     """Both launches for one sample; returns the sample evidence or None."""
     print(f"[3] sample {sample}")
     sample_root = lab_root / sample
     (sample_root / "root").mkdir(parents=True, exist_ok=True)
+    initialize_fixture_catalog(gate, sample_root / "root", venv_python)
     evidence: dict = {"sample": sample, "launches": {}}
 
     for launch in LAUNCHES:
