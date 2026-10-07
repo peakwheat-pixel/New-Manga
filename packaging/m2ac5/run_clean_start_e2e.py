@@ -564,7 +564,7 @@ def run_probe_phase(gate: Gate, exe: Path, env: dict, lab: Path) -> None:
     )
 
 
-def run_ac1_phase(gate: Gate, exe: Path, env: dict, lab: Path) -> None:
+def run_ac1_phase(gate: Gate, exe: Path, env: dict, lab: Path, install_dir: Path) -> None:
     """The frozen M2-AC1 loop: run1 (pipeline -> SQLite save -> exit) then a
     REAL relaunch (run2: restore -> reader -> PNG export -> digest compare).
     Both launches run the packaged exe under the purged environment."""
@@ -573,6 +573,33 @@ def run_ac1_phase(gate: Gate, exe: Path, env: dict, lab: Path) -> None:
     root = ac1_dir / "root"
     (root / "scope" / "derived").mkdir(parents=True, exist_ok=True)
     (root / "managed").mkdir(parents=True, exist_ok=True)
+    # M2-DERIVED-GC-2 (design 2.3): pre-bind the AC1 fixture catalog to its
+    # own derived root through the packaged trusted loader BEFORE any
+    # sidecar spawns; run2 finds it bound and takes the shared path.
+    ac1_catalog = root / "catalog.sqlite"
+    if not ac1_catalog.exists():
+        loader_exe = install_dir / "resources" / "core-sidecar" / "catalog_loader.exe"
+        init = subprocess.run(
+            [
+                str(loader_exe),
+                "--db", str(ac1_catalog),
+                "--initialize-preview-namespace", str(root / "scope" / "derived"),
+            ],
+            capture_output=True,
+            text=True,
+            encoding="mbcs",
+            errors="replace",
+            timeout=120,
+        )
+        (RAW / "cleanstart-ac1-catalog-initialize.log").write_text(
+            "exit={}\n{}\n{}".format(init.returncode, init.stdout, init.stderr),
+            encoding="utf-8",
+        )
+        gate.pass_or(
+            init.returncode == 0,
+            "CS-A0-ac1-catalog-prebind",
+            {"exit": init.returncode, "stderr": init.stderr[-200:]},
+        )
     results: dict[str, dict] = {}
     pids: dict[str, tuple[int, int | None]] = {}
     for launch in ("run1", "run2"):
@@ -774,7 +801,7 @@ def main() -> int:
 
     run_library_probe(gate, install_dir, env, lab)
     run_probe_phase(gate, exe, env, lab)
-    run_ac1_phase(gate, exe, env, lab)
+    run_ac1_phase(gate, exe, env, lab, install_dir)
     run_production_phase(gate, exe, env, lab)
 
     log("phase 5: AC4 zero-touch assertions")
@@ -804,10 +831,16 @@ def main() -> int:
     )
 
     before = json.loads((lab / "probe" / "source-hashes-before.json").read_text(encoding="utf-8"))
+    # M2-DERIVED-GC-2: the fixture namespace initialization (design 2.3)
+    # creates the protocol lock file at the derived-root level; it is not a
+    # probe source fixture and is excluded from the byte-identity set (the
+    # lock's LOCATION is design-frozen; every actual fixture file below it
+    # stays byte-identical).
+    protocol_names = {".preview-lifecycle.lock"}
     after = {
         p.name: sha256_file(p)
         for p in sorted((lab / "probe" / "scope" / "derived").iterdir())
-        if p.is_file()
+        if p.is_file() and p.name not in protocol_names
     }
     gate.pass_or(before == after, "CS-Z2-user-source-files-byte-identical", {"files": len(after)})
 

@@ -14,7 +14,8 @@
 | `git diff --check`（working+staged） | EXIT=0（仅 CRLF 提示，无 whitespace 错误） | raw/diff-check.log |
 | `python verification/M2-RC2/run_e2e.py`（fresh release 构建+probe/production 双阶段） | probe 阶段 13/13 PASS；catalog-seeding / import-isolation / runtime-build / probe-allowlist 全 PASS；**interactive-production-surface FAIL=runner 自身陈旧期望（9 条，RC-4 前快照）vs 现行 15 条冻结命令面——既有漂移与本 Task 无关**（`git show 5896db8c:verification/M2-RC2/run_e2e.py` 中 PRODUCTION_EXPECTED 即 9 条；本 Task 对该文件仅 +8/-1 行 seed flag）；处理=范围外不改，登记交 Codex | raw/dev-runner-m2rc2.log |
 | `python verification/M2-AC1/run_e2e.py --skip-build` | 见 raw/dev-runner-m2ac1.log（真实桌面双 launch；含 FIX-catalog-prebind 新证据项） | raw/dev-runner-m2ac1.log |
-| packaged runner（m2ac5 / release-gate） | fixture 参数已接线入库；执行见 raw/packaged-runners.log（或 BLOCKED 登记） | raw/packaged-runners.log |
+| `python packaging/m2ac5/run_clean_start_e2e.py --installer <NSIS 553.75MiB, sidecar HEAD=363265b1>` | **产品场景全 PASS**：probe 13/13 + **CS-A0-ac1-catalog-prebind（新）** + AC1 loop run1/run2 + production R1-R4（真实安装态 production 模式：Core first-bind + startup ping + channel 顺序全链）+ zero-touch Z1-Z4（`git diff --check` 干净）；**唯一 FAIL=CS-L1-packaged-core-ping：runner 断言协议 minor 3（RC-4 前快照）而实际 Core=minor 6——既有漂移**（`git show 5896db8c:packaging/m2ac5/run_clean_start_e2e.py:497` 即期望 minor 3；RC-4 集成 minor 4→6 时未同步该 runner；同 L2/L3 ListBooks 全 PASS 证明安装态产品功能正常）；另两处 fixture 语义伴随修正（AC1 fixture catalog 初始化=设计 §2.3 要求的 packaged launcher 义务；CS-Z2 把设计冻结位置的 `.preview-lifecycle.lock` 列入协议白名单——fixture 文件字节恒等保护不变），**交 DSH/Codex 追认** | raw/packaged-runners.log |
+| `python packaging/release-gate/run_release_gate.py --installer <同上>` | **GATE PASS 25/25**——含 RG1-DC1a（packaged loader 初始化+seed fixture 新链）、DC2 host-bridge handshake（安装态 file-backed catalog 共享租约路径）、RG1-CS2 core ready（**protocol minor 6 ready：安装态 production 启动顺序 Core first-bind→startup ping→channel 全链实证**）、三轮真实窗口冷启动+双 sidecar 进程+console 检测全 PASS | raw/packaged-runners.log |
 
 ## G1 来源/权限 — PASS
 
