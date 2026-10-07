@@ -513,6 +513,37 @@ class TestPreviewNamespaceAuthority:
             "the refusal must not migrate, bind or rewrite the legacy catalog"
         )
 
+    def test_initialize_refuses_same_columns_without_primary_key(self, tmp_path):
+        # Codex r4 F-01: identical column NAMES but no PRIMARY KEY is still a
+        # foreign table -- the runtime leans on the keys (upsert's
+        # ON CONFLICT(resource_id), the singleton namespace row), so the
+        # key-less look-alike is refused and nothing is written.
+        import sqlite3 as _sq
+
+        db = tmp_path / "no-pk.sqlite"
+        conn = _sq.connect(str(db))
+        conn.execute(
+            "CREATE TABLE resource_catalog ("
+            "resource_id TEXT, scope_class TEXT, rel_path TEXT)"
+        )
+        conn.commit()
+        conn.close()
+
+        derived = tmp_path / "derived"
+        derived.mkdir()
+        with pytest.raises(TypedResourceChannelError):
+            initialize_namespace(db, derived)
+
+        conn = _sq.connect(str(db))
+        tables = {
+            row[0]
+            for row in conn.execute("SELECT name FROM sqlite_master WHERE type='table'")
+        }
+        conn.close()
+        assert tables == {"resource_catalog"}, (
+            "a refused initialization must not create any other table"
+        )
+
     def test_second_binding_on_same_derived_is_refused(self, tmp_path):
         derived = self._fresh(tmp_path)
         first_db = tmp_path / "first.sqlite"

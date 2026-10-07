@@ -249,25 +249,26 @@ _KNOWN_CATALOG_TABLES = {"resource_catalog", "preview_lifecycle", "preview_names
 #: The exact column shapes the initializer is allowed to adopt. Anything
 #: else -- including an empty table with a foreign schema -- is unknown
 #: history and is refused (Codex r3 F-01).
-_EXPECTED_COLUMNS = {
-    "resource_catalog": ("resource_id", "scope_class", "rel_path"),
+#: (column name, PRAGMA table_info pk position) in table order -- the pk
+#: value 0 means "not the primary key", 1..N the position in the primary
+#: key. The runtime leans on these keys: catalog upsert uses
+#: ON CONFLICT(resource_id), the lifecycle mark/candidates key on
+#: resource_id, and the namespace row on the singleton CHECK primary key
+#: (Codex r4 F-01: names alone would let a key-less foreign table be
+#: adopted and break every write).
+_EXPECTED_LAYOUT = {
+    "resource_catalog": (
+        ("resource_id", 1), ("scope_class", 0), ("rel_path", 0),
+    ),
     "preview_lifecycle": (
-        "resource_id",
-        "producer_root",
-        "artifact_id",
-        "artifact_revision_id",
-        "managed_rel_path",
-        "retired",
+        ("resource_id", 1), ("producer_root", 0), ("artifact_id", 0),
+        ("artifact_revision_id", 0), ("managed_rel_path", 0), ("retired", 0),
     ),
     "preview_namespace": (
-        "singleton",
-        "protocol_version",
-        "derived_root",
-        "derived_identity_volume",
-        "derived_identity_index",
-        "catalog_root",
-        "catalog_identity_volume",
-        "catalog_identity_index",
+        ("singleton", 1), ("protocol_version", 0), ("derived_root", 0),
+        ("derived_identity_volume", 0), ("derived_identity_index", 0),
+        ("catalog_root", 0), ("catalog_identity_volume", 0),
+        ("catalog_identity_index", 0),
     ),
 }
 
@@ -308,19 +309,19 @@ def _assert_catalog_claimable(connection: sqlite3.Connection) -> None:
                 "catalog carries unknown tables (unknown schema/history):"
                 f" {sorted(unknown)}"
             )
-        for known_table, expected_columns in _EXPECTED_COLUMNS.items():
+        for known_table, expected_layout in _EXPECTED_LAYOUT.items():
             if known_table not in tables:
                 continue
             actual = tuple(
-                row[1]
+                (row[1], int(row[5]))
                 for row in connection.execute(
                     f"PRAGMA table_info({known_table})"
                 ).fetchall()
             )
-            if actual != expected_columns:
+            if actual != expected_layout:
                 raise namespace_unavailable(
-                    f"table {known_table} has a foreign column layout"
-                    f" (expected {expected_columns}, found {actual})"
+                    f"table {known_table} has a foreign layout"
+                    f" (expected name+pk {expected_layout}, found {actual})"
                 )
         (count,) = connection.execute("SELECT COUNT(*) FROM resource_catalog").fetchone()
         origin_count = 0
