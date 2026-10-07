@@ -117,6 +117,58 @@ def test_escaping_catalog_row_fails_closed(tmp_path) -> None:
         tampered.collect_orphans()
 
 
+def test_managed_scope_rows_are_never_touched_by_the_sweep(tmp_path) -> None:
+    # DSH r1 C-1: the same catalog db can carry managed-read-only rows
+    # (acceptance_bridge m2ac1-page-*; rel_path relative to the MANAGED
+    # root). The sweep must filter on scope_class BEFORE touching anything
+    # -- dropping the filter would resolve those rel_paths against the
+    # DERIVED root, find no file, and delete live managed rows.
+    publisher, catalog, root = _make(tmp_path)
+    catalog.upsert(
+        "m2ac1-page-0",
+        "managed-read-only",
+        "books/b1/chapters/c1/translated/x.png",
+    )
+
+    stats = publisher.collect_orphans()
+
+    assert stats == {"orphan_files_removed": 0, "dead_rows_removed": 0}
+    assert catalog.lookup("m2ac1-page-0") is not None
+
+
+def test_directory_level_escape_fails_closed(tmp_path) -> None:
+    # DSH r1 C-2: the per-directory resolve()/is_relative_to() gate (the
+    # only door in front of the unlink loop) must fail closed when the
+    # directory itself escapes the derived root -- e.g. previews/ replaced
+    # by a junction pointing outside. Nothing outside may be deleted.
+    import os
+
+    publisher, catalog, root = _make(tmp_path)
+    outside = tmp_path / "outside"
+    outside.mkdir()
+    (outside / "keep-me.txt").write_bytes(b"do-not-delete")
+    catalog.upsert("preview-keep", "derived-read-only", "previews/preview-keep.png")
+
+    junction = root / "previews"
+    root.mkdir(parents=True, exist_ok=True)
+    # CPython's Windows-only junction API: os.symlink would need elevated
+    # privileges, a directory junction does not.
+    import _winapi
+
+    _winapi.CreateJunction(str(outside), str(junction))
+    try:
+        import pytest
+
+        with pytest.raises(OSError, match="escaped derived root"):
+            publisher.collect_orphans()
+        assert (outside / "keep-me.txt").is_file()
+        # the catalogued file "inside" the escaped directory is untouched
+        assert catalog.lookup("preview-keep") is not None
+    finally:
+        # os.rmdir removes the junction itself, never the target contents
+        os.rmdir(str(junction))
+
+
 def test_missing_directories_are_a_clean_noop(tmp_path) -> None:
     publisher, catalog, root = _make(tmp_path)
     catalog.upsert("preview-only-row", "derived-read-only", "previews/preview-only-row.png")

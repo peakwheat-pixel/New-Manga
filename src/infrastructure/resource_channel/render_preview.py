@@ -104,26 +104,34 @@ class RenderPreviewPublisher:
         return {"resource_id": resource_id, "revision": ORIGINAL_REVISION}
 
     def collect_orphans(self) -> dict[str, int]:
-        """M2-DERIVED-GC-1 (RC4-12 first slice): startup sweep of the two
-        managed directories under the derived read-only root.
+        """M2-DERIVED-GC-1 (RC4-12 first slice, PARTIAL mitigation): startup
+        sweep of the two managed directories under the derived read-only root.
 
-        Two equivalence-safe classes only:
+        Precondition: ``self._root`` IS the derived read-only root and
+        ``previews/``/``pages/`` are owned exclusively by this publisher --
+        any other file dropped there unregistered will be removed.
+
+        Two reclamation classes only (DSH r1 C-3 wording):
 
         - **orphan files**: a file under ``previews/`` or ``pages/`` whose
           stem is absent from the catalog. It can never be issued again
           (issue requires a catalog lookup), so deleting it changes no
           observable behaviour.
         - **dead rows**: a ``derived-read-only`` catalog row whose
-          ``rel_path`` no longer resolves to a file. Resolution already
-          treats a missing artifact as "not there" (the rev 1.7 self-heal
-          re-publishes deterministic keys; preview issues fail typed), so
-          removing the row is behaviour-equivalent.
+          ``rel_path`` no longer resolves to a file. Equivalent to absence
+          at the failure-CLASS level, not the literal level: a page-original
+          key self-heals to the same key (rev 1.7), while a preview key's
+          issue moves from ``REF_NOT_FOUND`` (404) to
+          ``RESOURCE_NOT_CATALOGED`` (400) -- both typed hard failures that
+          serve no bytes.
 
         Live files with live rows are NEVER touched (reference-aware
-        reclamation of old previews is a registered follow-up, out of
-        scope), and nothing outside the derived root -- in particular no
-        managed or user source file -- is readable here, let alone
-        deletable: every candidate path is escape-checked before unlink.
+        reclamation of rotated previews -- the actual RC4-12 growth path --
+        is a registered follow-up, out of scope; rows of other scopes such
+        as ``managed-read-only`` are filtered out before any resolution).
+        Nothing outside the derived root -- in particular no managed or
+        user source file -- is deletable here: the directory gate and the
+        per-row candidate check both escape-check before unlink.
         """
         root = self._root.resolve()
         root.mkdir(parents=True, exist_ok=True)
