@@ -2,7 +2,7 @@
 id: M2-CATEGORY-CLARIFY-1
 title: MISSING_REQUIRED_INPUT envelope category 澄清为 unavailable（RC4-10 口径对齐 §8 值域）
 kind: fix
-status: in_review
+status: done
 delivery_commit: af640916 (code; docs rework e0ab0444)
 review: DSH r1 approve_with_conditions @af640916 -> r2 approve @e0ab0444 (docs-only rework)
 handoff: ../handoffs/M2-CATEGORY-CLARIFY-1-zcode-af640916.md
@@ -15,7 +15,7 @@ depends_on: [M2-RC4-DOMAIN-COMMANDS]
 base_commit: db8999fa
 branch: zcode/category-clarify-1
 worktree: G:/CODEX/New Manga.worktrees/CATEGORY-CLARIFY-1
-integration_commit: null
+integration_commit: 21865f7d (merge; final head b688c450, post-merge 1886+1sk / cargo 55+1ign / vitest 136)
 ---
 
 # M2-CATEGORY-CLARIFY-1
@@ -50,3 +50,12 @@ RC-4 DSH r1 RC4-10（P4，r2 降级接受并建议「落到下一轮契约澄清
 ## 完成定义
 
 AC 全过 + Review 通过 + 集成 merge main + STATUS/PLAN 收口。
+
+## 交付记录（2026-10-07 闭环）
+
+- **Delivery** `af640916`：rerender 失败映射拆分（`MISSING_REQUIRED_INPUT`→`unavailable`；`TARGET_NOT_FOUND`/`conflict`/`internal` 不变；code/message/retryable 零变化）+ tests/core/test_rc4_category_clarify.py 2 用例（unavailable 新口径+not_found 对照）+ M2-C1 §5 RerenderPage 行尾注记（非修订定性）；五套件全绿（focused 432 / full 1886+1sk / cargo 55+1ign / vitest 136 / build 0）。
+- **DSH r1** `approve_with_conditions`（0×P0/P1/P2；PR-01 P3 文案条件+PR-02..05 P4；「非修订」定性经审讯成立、不触发自列 P2 升级条件）→ **docs-only 返修** `e0ab0444`（PR-01 Handoff 两处表述按 r1 口径改写；`git diff --stat af640916 e0ab0444 -- src tests apps` 为空=零代码改动 git 级证据；PR-04 -v 归因日志）。
+- **DSH r2** `approve`（PR-01/04 fixed、PR-02/03/05 deferred-accepted；docs-only 核实+处置表如实性核验）→ 补账 N-01/02（rework head pin+attrib 日志绑定）。
+- **集成** merge `21865f7d`；post-merge 复跑：pytest **1886+1sk+0 failed** / cargo **55+1ign** / vitest **136**，等量递增全绿。
+- **登记（下一轮契约澄清候选清单，与 RC4-08 一并跟踪）**：PR-02 §8 反向指针；PR-03 unavailable 同值不同义（宿主瞬时 retryable=true vs 数据缺失 retryable=false——语义注记须明说「非瞬时+retryable=false」）；PR-05 RC4-08 category 分叉（unavailable vs internal）。
+- **移交**：worktree `G:/CODEX/New Manga.worktrees/CATEGORY-CLARIFY-1` 保留为证据。
