@@ -976,6 +976,61 @@ class TestLifecycleWrites:
             "a refused initialization must not create any other table"
         )
 
+    def test_initialize_refuses_namespace_table_with_unicode_whitespace(
+        self, tmp_path
+    ):
+        # Codex r10 F-01: Python's str.split() folds NBSP (U+00A0) like a
+        # space, but sqlite's tokenizer treats every byte >= 0x80 as an
+        # identifier character -- `TEXT NOT NULL` is a single multi-word
+        # TYPE NAME with no NOT NULL constraint. The guard refuses any
+        # non-ASCII DDL outright (the canonical text is pure ASCII), so this
+        # look-alike can never be adopted.
+        import sqlite3 as _sq
+
+        db = tmp_path / "unicode-ws.sqlite"
+        conn = _sq.connect(str(db))
+        conn.execute(
+            "CREATE TABLE resource_catalog ("
+            "resource_id TEXT PRIMARY KEY, scope_class TEXT NOT NULL, rel_path TEXT NOT NULL)"
+        )
+        conn.execute(
+            "CREATE TABLE preview_lifecycle ("
+            "resource_id TEXT PRIMARY KEY, producer_root TEXT NOT NULL,"
+            " artifact_id TEXT NOT NULL, artifact_revision_id TEXT NOT NULL,"
+            " managed_rel_path TEXT NOT NULL, retired INTEGER NOT NULL DEFAULT 0)"
+        )
+        conn.execute(
+            "CREATE TABLE preview_namespace ("
+            "singleton INTEGER PRIMARY KEY CHECK (singleton = 1),"
+            " protocol_version INTEGER NOT NULL,"
+            " derived_root TEXT NOT NULL,"
+            " derived_identity_volume INTEGER NOT NULL,"
+            " derived_identity_index INTEGER NOT NULL,"
+            " catalog_root TEXT NOT NULL,"
+            " catalog_identity_volume INTEGER NOT NULL,"
+            " catalog_identity_index INTEGER NOT NULL)"
+        )
+        conn.commit()
+        conn.close()
+
+        derived = tmp_path / "derived"
+        derived.mkdir()
+        with pytest.raises(
+            TypedResourceChannelError,
+            match="does not match the canonical namespace schema",
+        ):
+            initialize_namespace(db, derived)
+
+        conn = _sq.connect(str(db))
+        tables = {
+            row[0]
+            for row in conn.execute("SELECT name FROM sqlite_master WHERE type='table'")
+        }
+        conn.close()
+        assert tables == {"resource_catalog", "preview_lifecycle", "preview_namespace"}, (
+            "a refused initialization must not create any other table"
+        )
+
     def test_initialize_adopts_existing_empty_self_owned_tables(self, tmp_path):
         # Canonical schema equality must not reject a genuine self-owned
         # catalog: tables created from this module's own schema constant and

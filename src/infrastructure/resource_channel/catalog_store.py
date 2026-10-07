@@ -39,6 +39,7 @@ import isolation (M2-RC2 F-05).
 
 from __future__ import annotations
 
+import re
 import sqlite3
 import threading
 from pathlib import Path
@@ -100,14 +101,24 @@ CREATE TABLE IF NOT EXISTS preview_namespace (
 #: leading IF NOT EXISTS, so comparing lowercased text with whitespace FOLDED
 #: to single spaces (token boundaries preserved) against this canonical form
 #: is SEMANTIC: equal folded text means an equal token stream means equal DDL
-#: semantics. Stripping whitespace entirely would NOT be safe -- it merges
-#: token boundaries (`TEXT NOT NULL` folds to the same text as the legal
-#: multi-word type name `TEXTN OTNULL`, which carries no NOT NULL constraint,
-#: Codex r9 F-01). A mismatch can only over-reject (that database is simply
-#: not claimed), never over-accept.
-_NORMALIZED_NAMESPACE_SCHEMA = " ".join(
-    _PREVIEW_NAMESPACE_SCHEMA.replace("IF NOT EXISTS", "").split()
-).lower()
+#: semantics.
+#:
+#: Two normalization pitfalls are closed by construction:
+#: - stripping whitespace ENTIRELY merges token boundaries (`TEXT NOT NULL`
+#:   folds to the same text as the legal multi-word type name `TEXTN
+#:   OTNULL`, which carries no NOT NULL constraint, Codex r9 F-01) -- so
+#:   whitespace is FOLDED, not stripped;
+#: - the fold set is EXACTLY the five characters sqlite's tokenizer treats
+#:   as separators (0x09, 0x0A, 0x0C, 0x0D, 0x20). Python's str.split()
+#:   would also fold Unicode whitespace such as NBSP (U+00A0), but sqlite
+#:   treats every byte >= 0x80 as an identifier character -- `NOT NULL`
+#:   is one identifier, not the NOT NULL constraint (Codex r10 F-01).
+#:   Callers must refuse non-ASCII DDL before comparing (the canonical text
+#:   is pure ASCII, and an ASCII-only lower() has no Unicode traps).
+_SQLITE_DDL_WS = re.compile("[\x09\x0a\x0c\x0d ]+")
+_NORMALIZED_NAMESPACE_SCHEMA = _SQLITE_DDL_WS.sub(
+    " ", _PREVIEW_NAMESPACE_SCHEMA.replace("IF NOT EXISTS", "")
+).strip().lower()
 
 _MEMORY_TARGETS = (":memory:",)
 
@@ -382,8 +393,11 @@ def _assert_catalog_claimable(connection: sqlite3.Connection) -> None:
         # requiring normalized full-text equality with this module's own
         # schema accepts exactly the tables this module could have created
         # and refuses every construction with different semantics.
-        if table_sql is None or (
-            " ".join(table_sql.split()).lower() != _NORMALIZED_NAMESPACE_SCHEMA
+        if (
+            table_sql is None
+            or not table_sql.isascii()
+            or _SQLITE_DDL_WS.sub(" ", table_sql).strip().lower()
+            != _NORMALIZED_NAMESPACE_SCHEMA
         ):
             raise namespace_unavailable(
                 "preview_namespace table does not match the canonical"
