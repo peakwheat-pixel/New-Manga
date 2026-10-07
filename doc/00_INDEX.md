@@ -1,6 +1,6 @@
 # 项目文档索引与 Source of Truth
 
-当前：[M2-DERIVED-GC-2](tasks/M2-DERIVED-GC-2.md) **ready / ZCode / AWAITING_OWNER_CLAIM**；唯一 Active、执行 IDLE，本轮仅释放与同步，不启动实施。设计 done@ad75fadc；[恢复点](../verification/M2-DERIVED-GC-2/release-recovery.md)与[完整实施指令](../verification/M2-DERIVED-GC-2/zcode-instruction.md)。实时状态见 STATUS；回收未实现，G1-G7 NOT_RUN。
+最近完成：[M2-DERIVED-GC-2](tasks/M2-DERIVED-GC-2.md) **done @merge `cea610ed`**（2026-10-08；Codex r11 approve 收敛，11 轮非作者 Review；集成后三套件等量全绿 pytest 1941+1sk/cargo 62+1ign/vitest 140）。无 Active；debt 候选 M2-RUNNER-SNAPSHOT-DEBT 已登记未释放。实时状态见 STATUS。
 
 
 当前全量盘点：2026-10-07，审计输入 `main@32f9b932`。[REBASELINE 审计报告与下一步派发指令](../verification/REBASELINE-20261007/REPORT.md)；[全部 190 任务节点的台账与流程图](../verification/REBASELINE-20261007/TASK_GRAPH.md)；[完整 Git/Owner/Reviewer/worktree 参数](../verification/REBASELINE-20261007/inventory.json)。当前无 Active、无 released；正式授权仍由 REBASELINE_PLAN / STATUS 决定，下面旧日期正文只作历史记录。

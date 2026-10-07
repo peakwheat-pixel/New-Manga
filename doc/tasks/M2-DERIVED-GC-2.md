@@ -2,7 +2,7 @@
 id: M2-DERIVED-GC-2
 title: 轮换退役 preview 引用安全回收实现
 kind: feature
-status: in_review
+status: done
 approval: user_authorized_release_20261007
 suggested_owner: ZCode
 owner: ZCode
@@ -119,3 +119,12 @@ git diff --check
 native共享/独占、句柄删除、双DB保护/崩溃恢复必须真实隔离OS进程/自有fixture，mock不代替。受影响dev/packaged入口以固定head构建+runner验收，缺环境BLOCKED；不改其通过阈值，不使用旧PASS。每次日志有shell/解释器/命令/HEAD/EXIT/收集总数/passed与skip及逐条原因；判别矩阵对照必须有可复核artifact。
 
 交付代码commit、verification/M2-DERIVED-GC-2/完整证据、doc/handoffs/M2-DERIVED-GC-2-<head>.md，逐AC实际结果和G7残留。下一接收者=真实DSH非作者，之后Codex；ready 后经恢复点核对才可认领。完整可转发指令见verification/M2-DERIVED-GC-2/zcode-instruction.md。
+
+
+---
+
+## 2026-10-08 集成收口（done @merge `cea610ed`）
+
+非作者 Review 链（用户指示「给codex审核」，Codex 执行）**11 轮收敛：r11 approve（0 findings）**，审核基准 head=258ca6fe，Owner 终 tip=0fadc330；11 份报告原字节在 doc/reviews/。F-01 七轮攻防终态=isascii() 先拒非 ASCII DDL + 恰好 sqlite 五个空白字符（0x09/0x0A/0x0C/0x0D/0x20）折叠的规范化全文等价判定（r8 注释走私组合反例为分水岭，r9 起切换判定模型）。
+
+用户 /goal 完全授权自动推进，ZCode 代行 Codex Integrator（2026-09-28 代行授权 + RC-4 集成先例口径）执行 `git merge --no-ff agent/zcode/M2-DERIVED-GC-2` → **main@cea610ed**（127 文件 +16051/−90，范围核查 11 轮 PASS）。**集成后复跑三套件等量全绿**：pytest 1941 passed+1 skipped+0 failed / cargo 62 passed+1 ignored+0 failed / vitest 140 passed。packaged 侧以交付第十轮单日志互证（tenth-round-build-and-run.log：installer sha f9b36b98… 与 gate.json 一致），集成未重建。AC1-AC6 全 PASS；G7 本机单版本机制 PASS、分发迁移 Gate 保持阻断条款登记。债务：CS-L1+M2-RC2 runner 快照漂移登记为 debt 候选 **M2-RUNNER-SNAPSHOT-DEBT**（未释放），相关 Gate 项保持 FAIL 记录。branch/worktree 留存 @0fadc330。

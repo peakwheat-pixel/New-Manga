@@ -5,7 +5,7 @@
 
 [M2-DERIVED-GC-2-DESIGN](tasks/M2-DERIVED-GC-2-DESIGN.md) **done** @merge ad75fadc2944983b4322f353176ba70cf0b0b7ae；Codex/真实DSH/Codex。DSH r4固定e4c0967f approve_with_conditions，0P0-P3；设计判据闭合，两个P4写入指令，治理/实际恢复点准备完成。只交设计，生产代码/Schema/依赖/用户数据零写入；实际回收/native Gate全部NOT_RUN。
 
-唯一 Active Task：[M2-DERIVED-GC-2](tasks/M2-DERIVED-GC-2.md) **ready / AWAITING_OWNER_CLAIM**（2026-10-07 用户授权正式释放）；Owner=ZCode / 非作者 Reviewer=DeepSeek Harness / Integrator=Codex。依赖本设计 merge ad75fadc、GC-1@44859014、RC4@0a7e0d5b 均 done/已集成。设计 base=ad75fadc；branch=agent/zcode/M2-DERIVED-GC-2；worktree=G:/CODEX/New Manga.worktrees/DERIVED-GC-2-zcode。allowed_paths/shared seam/AC/G1-G7 按现有 Task 冻结，不扩大范围。Codex 仅释放与同步恢复点，尚未派发/开始实现；运行状态 IDLE。实际 release HEAD/同步证据见[恢复点](../verification/M2-DERIVED-GC-2/release-recovery.md)，[完整 ZCode 指令](../verification/M2-DERIVED-GC-2/zcode-instruction.md)。G1-G7 全部 planned/NOT_RUN；G7不能证明则两sweep禁用/BLOCKED，不借设计批准启用删除。下方无Active/190节点等数量是固定历史快照，不覆盖本段。
+[M2-DERIVED-GC-2](tasks/M2-DERIVED-GC-2.md) **done @merge `cea610ed`**（2026-10-08 集成收口；用户 /goal 完全授权，ZCode 代行 Integrator）：Owner=ZCode / 非作者 Reviewer=Codex（用户指示变更，原冻结 DSH）/ Integrator=Codex。11 轮非作者 Review 收敛 r11 approve（0 findings）@基准 258ca6fe、Owner 终 tip=0fadc330；AC1-AC6 与 G1-G7 判别测试全入库（G7 分发迁移 Gate 保持阻断条款登记，CS-L1 快照漂移交独立 debt 候选 M2-RUNNER-SNAPSHOT-DEBT 保持 FAIL 记录）。集成后 main@cea610ed 三套件等量全绿：pytest 1941+1sk / cargo 62+1ign / vitest 140。branch/worktree 留存。无 Active、无 released；下方无Active/190节点等数量是固定历史快照，不覆盖本段。
 
 ## 2026-10-07 全面 REBASELINE 覆盖层（审计输入 main@32f9b932）
 

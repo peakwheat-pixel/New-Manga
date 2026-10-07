@@ -1,13 +1,13 @@
 # Current Development Status
 
 正式 release/synced Owner HEAD=5896db8c64b90b53b015eb9c46c7dab6ab29210b，clean/common-dir已核验；主仓库后续仅追加本恢复证据，Owner 固定留在 release，不需追随最新 main。
-## 当前执行：M2-DERIVED-GC-2 ready / AWAITING_OWNER_CLAIM
+## 当前执行：M2-DERIVED-GC-2 done @merge `cea610ed`（2026-10-08 集成收口）
 
-2026-10-07 用户授权正式释放；唯一 Active Task=[M2-DERIVED-GC-2](tasks/M2-DERIVED-GC-2.md)，TaskStatus=ready，ExecutionState=IDLE / AWAITING_OWNER_CLAIM。Owner=ZCode，非作者 Reviewer=DeepSeek Harness，Integrator=Codex；只完成治理释放与干净 worktree 快进，不派发、不启动生产实施。ZCode 经恢复点核对后才认领 in_progress。允许路径/共享 seam/AC/G1-G7 按现有 Task 与已批准设计冻结，无新增范围。
+[M2-DERIVED-GC-2](tasks/M2-DERIVED-GC-2.md) **done @merge `cea610ed`**（用户 /goal 完全授权自动推进，ZCode 代行 Codex Integrator；2026-09-28 代行授权 + RC-4 集成先例口径）。非作者 Review 链（用户指示「给codex审核」，Codex 执行）共 **11 轮收敛：r1 CR(0P0/3P1/6P2) → r2~r10 逐轮 changes_requested（F-01 七轮攻防：子串/行为探针/部分规范化启发式均被反例击败，r8 注释走私组合反例为分水岭，r9 起切换为规范化全文等价判定，终态=isascii() 先拒 + 恰好 sqlite 五个空白字符折叠）→ r11 approve（0 findings）**。审核基准 head=258ca6fe，Owner 终 tip=0fadc330；11 份报告原字节在 doc/reviews/。
 
-设计依赖[M2-DERIVED-GC-2-DESIGN](tasks/M2-DERIVED-GC-2-DESIGN.md) done@ad75fadc2944983b4322f353176ba70cf0b0b7ae；DSH r4固定e4c0967f approve_with_conditions，0P0-P3，两个P4已写入实现 Task/指令。GC-1@44859014、RC4@0a7e0d5b 均集成。设计 base=ad75fadc；branch=agent/zcode/M2-DERIVED-GC-2，worktree=G:/CODEX/New Manga.worktrees/DERIVED-GC-2-zcode；初次 allocated_head=e093f010 为历史准备快照。正式 release HEAD/最新同步证据见[恢复点](../verification/M2-DERIVED-GC-2/release-recovery.md)，[ZCode 完整指令](../verification/M2-DERIVED-GC-2/zcode-instruction.md)。
+**集成后复跑三套件等量全绿**（main@cea610ed）：pytest **1941 passed+1 skipped+0 failed**（T1.1.1 venv）/ cargo **62 passed+1 ignored+0 failed** / vitest **140 passed**。packaged 侧以交付第十轮单日志互证为准（raw/packaged-ac5-run/tenth-round-build-and-run.log：sidecar HEAD=258ca6fe / installer sha f9b36b98… 与 gate.json 一致 / 定向 163 / runner 25 项 PASS），集成未重建。merge 范围 5896db8c..0fadc330 共 127 文件 +16051/−90，范围核查 11 轮 PASS（apps/契约窄注记均在 allowed_paths）。
 
-回收尚未实现，RC4-12轮换增长仍open。G1-G7全部planned/NOT_RUN；G7不足两个sweep恒禁用/BLOCKED。下方190节点及无Active/无released数字均为固定历史快照，不覆盖本段。
+**登记（未释放）**：debt 候选 **M2-RUNNER-SNAPSHOT-DEBT**——m2ac5 CS-L1（packaged runner 协议 minor 3 陈旧快照，RC-4 集成 minor 4→6 未同步该 runner）+ M2-RC2 runner PRODUCTION_EXPECTED 9 条同类漂移；在 debt Task 修复并重新验收前相关 Gate 项保持 FAIL 记录。branch/worktree 保留（agent/zcode/M2-DERIVED-GC-2 @0fadc330）。RC4-12 轮换增长由本 Task 部分缓解（PARTIAL mitigation 口径不变，不宣称磁盘有界）。无 Active、无 released。
 
 ## 2026-10-07 全量核验（当前覆盖层）
 
