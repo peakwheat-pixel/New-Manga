@@ -2,7 +2,9 @@
 id: M2-CATEGORY-CLARIFY-1
 title: MISSING_REQUIRED_INPUT envelope category 澄清为 unavailable（RC4-10 口径对齐 §8 值域）
 kind: fix
-status: ready
+status: in_review
+delivery_commit: af640916
+handoff: ../handoffs/M2-CATEGORY-CLARIFY-1-zcode-af640916.md
 approval: user_2026-10-07_autonomous_mode_continuation（STATUS Planned next 候选②，授权自动选下一最高优先任务）
 suggested_owner: Codex Executor
 owner: Codex Executor（ZCode 代行）
