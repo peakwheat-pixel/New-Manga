@@ -1,0 +1,78 @@
+SHELL=PowerShell; PYTHON=C:/Python314/python.exe; code/runtime/native NOT_RUN; governance completion check
+COMMAND=git rev-parse HEAD
+e093f0106bf62476c640dbcf8bb47448c8cc644c
+EXIT=0
+COMMAND=git status --short --branch
+## main...origin/main [ahead 1039]
+ M doc/00_INDEX.md
+ M doc/REBASELINE_PLAN.md
+ M doc/STATUS.md
+ M doc/handoffs/M2-DERIVED-GC-2-DESIGN-codex-af09c00d.md
+ M doc/tasks/M2-DERIVED-GC-2-DESIGN.md
+ M doc/tasks/M2-DERIVED-GC-2.md
+ M doc/tasks/README.md
+ M verification/M2-DERIVED-GC-2-DESIGN/next-task-instruction.md
+ M verification/M2-DERIVED-GC-2-DESIGN/review-disposition.md
+?? verification/M2-DERIVED-GC-2-DESIGN/completion.md
+?? verification/M2-DERIVED-GC-2-DESIGN/final-check.log
+?? verification/M2-DERIVED-GC-2-DESIGN/next-task-allocation.log
+EXIT=0
+COMMAND=git rev-parse --path-format=absolute --git-common-dir
+G:/CODEX/New Manga/.git
+EXIT=0
+COMMAND=git merge-base --is-ancestor 44859014 e093f0106bf62476c640dbcf8bb47448c8cc644c
+
+EXIT=0
+COMMAND=git merge-base --is-ancestor 0a7e0d5b e093f0106bf62476c640dbcf8bb47448c8cc644c
+
+EXIT=0
+COMMAND=git diff ab4b7c110a7c828f20d2d0787bd71144336d2e44 --name-only -- src apps tests requirements.txt packaging
+
+EXIT=0
+COMMAND=git diff --check
+
+EXIT=0
+COMMAND=git ls-files --others --exclude-standard
+verification/M2-DERIVED-GC-2-DESIGN/completion.md
+verification/M2-DERIVED-GC-2-DESIGN/final-check.log
+verification/M2-DERIVED-GC-2-DESIGN/next-task-allocation.log
+EXIT=0
+COMMAND=git diff ab4b7c110a7c828f20d2d0787bd71144336d2e44 --name-only
+doc/00_INDEX.md
+doc/REBASELINE_PLAN.md
+doc/STATUS.md
+doc/contracts/M2_DERIVED_PREVIEW_GC_DESIGN.md
+doc/handoffs/M2-DERIVED-GC-2-DESIGN-codex-73e70536.md
+doc/handoffs/M2-DERIVED-GC-2-DESIGN-codex-8dd88c56.md
+doc/handoffs/M2-DERIVED-GC-2-DESIGN-codex-af09c00d.md
+doc/handoffs/M2-DERIVED-GC-2-DESIGN-codex-be779967.md
+doc/reviews/M2-DERIVED-GC-2-DESIGN-3a684675-dsh-r2.md
+doc/reviews/M2-DERIVED-GC-2-DESIGN-4a930c61-dsh-r1.md
+doc/reviews/M2-DERIVED-GC-2-DESIGN-8557a3d4-dsh-r3.md
+doc/reviews/M2-DERIVED-GC-2-DESIGN-e4c0967f-dsh-r4.md
+doc/tasks/M2-DERIVED-GC-2-DESIGN.md
+doc/tasks/M2-DERIVED-GC-2.md
+doc/tasks/README.md
+verification/M2-DERIVED-GC-2-DESIGN/caller-census-attempt1.log
+verification/M2-DERIVED-GC-2-DESIGN/caller-census.log
+verification/M2-DERIVED-GC-2-DESIGN/check_design.py
+verification/M2-DERIVED-GC-2-DESIGN/design-check-attempt1.log
+verification/M2-DERIVED-GC-2-DESIGN/design-check-attempt2.log
+verification/M2-DERIVED-GC-2-DESIGN/design-check-r2.log
+verification/M2-DERIVED-GC-2-DESIGN/design-check-r3.log
+verification/M2-DERIVED-GC-2-DESIGN/design-check-r4.log
+verification/M2-DERIVED-GC-2-DESIGN/design-check.log
+verification/M2-DERIVED-GC-2-DESIGN/integration-ready.log
+verification/M2-DERIVED-GC-2-DESIGN/next-task-instruction.md
+verification/M2-DERIVED-GC-2-DESIGN/post-merge.log
+verification/M2-DERIVED-GC-2-DESIGN/reality-source.log
+verification/M2-DERIVED-GC-2-DESIGN/review-disposition.md
+EXIT=0
+PASS: dependency ancestry, zero product-tree delta, design matrix/Gate completeness, source paths/line bounds
+NOT_RUN: future implementation/runtime/native locks/product regression; design check is not a deletion-safety test
+EXIT=0
+  File "<stdin>", line 7
+    assert "
+           ^
+SyntaxError: unterminated string literal (detected at line 7)
+CLOSURE_CHECK_EXIT=1

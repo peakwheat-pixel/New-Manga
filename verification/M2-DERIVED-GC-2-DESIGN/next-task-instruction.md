@@ -2,7 +2,7 @@
 
 Task=M2-DERIVED-GC-2；Owner=ZCode；非作者Reviewer=DeepSeek Harness；Integrator=Codex。唯一仓库G:/CODEX/New Manga；设计merge/base=ad75fadc2944983b4322f353176ba70cf0b0b7ae，设计批准head=e4c0967f83a08d9b9e2d84605d17923e81a844b6。依赖GC-1@44859014、RC4@0a7e0d5b及本设计集成。
 
-恢复点预分配：branch=agent/zcode/M2-DERIVED-GC-2；worktree=G:/CODEX/New Manga.worktrees/DERIVED-GC-2-zcode；实际创建/HEAD待本轮Codex实测回填，不宣称已开工。Task状态proposed，当前无生产实施授权。
+恢复点已实测：branch=agent/zcode/M2-DERIVED-GC-2；worktree=G:/CODEX/New Manga.worktrees/DERIVED-GC-2-zcode；base=ad75fadc2944983b4322f353176ba70cf0b0b7ae；allocated HEAD=e093f0106bf62476c640dbcf8bb47448c8cc644c，clean，common-dir=G:/CODEX/New Manga/.git。此head含proposed准备文件，不是ready/release，尚未开工。Task状态proposed，当前无生产实施授权。
 
 ~~~mermaid
 flowchart LR
@@ -46,4 +46,4 @@ PowerShell环境Python=G:/CODEX/New Manga.task-envs/T1.1.1-impl-py312/Scripts/py
 交付实际固定代码head、完整verification日志（shell/解释器/命令/HEAD/EXIT/passed/skip逐条原因/对照artifact）、逐AC结果与doc/handoffs/M2-DERIVED-GC-2-<head>.md。交真实DSH新fixed-head非作者Review，条件闭合后Codexmerge+集成后验证才done；不审核自己，不合并主线。设计完成不等于回收已实现。
 ~~~
 
-实际分配/恢复点回填将在创建后追加；本阶段没有派发/启动ZCode。
+实测见next-task-allocation.log。正式释放前Codex同步含ready的实际release；本阶段没有派发/启动ZCode。

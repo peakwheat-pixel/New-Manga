@@ -52,3 +52,6 @@ Reviewer 的 shell 因 SetNamedSecurityInfoW Win32 5 不可用，命令复跑 BL
 剩余条件：Codex串行集成/治理与proposed后继实际恢复点准备；把R4-A1/A2吸收进后继Task/指令二。G1-G7仍NOT_RUN且实施后必须独立DSH，不把未来Gate记PASS。R4-A1：AC1 fixture在initialize前创建自有derived根，run2复用绑定不重复init，_LoopHarness用root/scope/derived。R4-A2：SHA冻结历史probe_ttl_nan*只保留证据不改，不是后继Gate，现行M2-RC2 driver=run_e2e.py。以上进入实际后继文件后C4才closed。
 
 额外作者执行：integration-ready.log包含固定e4c范围diff --check及doccheck EXIT0；caller-census.log EXIT0，attempt1参数转义失误EXIT2保留。不影响design/source树，禁止将其记录成产品测试PASS。
+
+## r4 批准条件最终承接
+C1实际proposed Task/指令二/恢复点完成，base=ad75fadc，allocated_head=e093f010、worktree/branch实测clean；C4两个P4写入后继Task与完整指令，closed_for_design。C2/G1-G7与C3未来新fixed-head独立实现Review已逐项承接planned/NOT_RUN，未豁免，不表示技术完成。Codex merge=ad75fadc，post-merge文档/范围/hash检查EXIT0。当前设计done，实施proposed/未启动；详见completion.md。

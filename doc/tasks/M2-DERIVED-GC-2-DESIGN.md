@@ -2,7 +2,7 @@
 id: M2-DERIVED-GC-2-DESIGN
 title: 轮换旧 preview 引用安全回收设计
 kind: design
-status: approved
+status: done
 approval: user_directive_2026-10-07_preview_reference_safe_design
 suggested_owner: Codex
 owner: Codex
@@ -13,7 +13,7 @@ audit_input: 32f9b932d681ba1d551560477d7992cddf6fd7ec
 base_commit: ab4b7c110a7c828f20d2d0787bd71144336d2e44
 branch: codex/m2-derived-gc-2-design
 worktree: G:/CODEX/New Manga.worktrees/DERIVED-GC-2-DESIGN
-integration_commit: null
+integration_commit: ad75fadc2944983b4322f353176ba70cf0b0b7ae
 ---
 
 # M2-DERIVED-GC-2-DESIGN
@@ -29,8 +29,8 @@ Live Git main@ab4b7c11 clean，common-dir=G:/CODEX/New Manga/.git；32f9b932..ab
 - [x] AC1：固定 HEAD 下追踪 publisher/catalog、render current/pinned Revision、Core/Rust 独立进程、grant/轮换/读取所有相关调用链，并提供文件/行证据。
 - [x] AC2：给出可删/必留/未知矩阵；仅 TTL、年龄、数量不足以授权删除；Managed Copy/源文件/人工修改/Lock 与 current/pinned 均受保护。
 - [x] AC3：最小生命周期方案明确 issue 与 delete 互斥、在途读取、崩溃恢复、未知历史资源保留、目录/文件逃逸；需要共享 seam/Schema 时明确后继授权范围，不更改现行契约。
-- [ ] AC4：拟定后继实现 Task 的实际 base/分支/worktree/allowed_paths/交付/验证 Gate 与可转发指令；本轮只准备、不启动实现。
-- [ ] AC5：设计范围 diff 对 src/apps/tests/依赖/Schema 为零；文档检查有命令+HEAD+EXIT；非作者 DSH 固定 head 审查、条件闭合、Codex 集成后才 done。
+- [x] AC4：拟定后继实现 Task 的实际 base/分支/worktree/allowed_paths/交付/验证 Gate 与可转发指令；本轮只准备、不启动实现。
+- [x] AC5：设计范围 diff 对 src/apps/tests/依赖/Schema 为零；文档检查有命令+HEAD+EXIT；非作者 DSH 固定 head 审查、条件闭合、Codex 集成后才 done。
 
 ## 允许修改范围
 
@@ -48,7 +48,7 @@ Live Git main@ab4b7c11 clean，common-dir=G:/CODEX/New Manga/.git；32f9b932..ab
 
 src/**、apps/**、tests/**、requirements*、Schema/migration、用户数据/源文件/模型/素材、部署、远端 push、Legacy 实现；不清理任何历史 worktree。
 
-## 测试要求
+## 测试要求（release计划；实际结果见最终完成记录）
 
 | 场景 | 命令/环境 | 当前结果 | 证据 |
 |---|---|---|---|
@@ -59,10 +59,10 @@ src/**、apps/**、tests/**、requirements*、Schema/migration、用户数据/�
 
 执行覆盖：Git/依赖/文档检查已 executed，EXIT=0，见 design-check.log；早期验证器失败保留 attempt1/2。真实 DSH r1 正在独立 fixed-head=4a930c61 工作区审查；其后作者的 hash/句柄保护、逐项证据和复用 helper/全入口接线补强必须固定新 head 再复审，不延用旧批准。
 
-## 交付与运行记录
+## 交付与运行记录（release时计划，历史）
 
 - release：本 commit；后续固定 delivery head 与 Handoff 追加，不自引用本文件提交 Hash。
-- ExecutionState：ACTIVE；创建 worktree 后 Owner 将状态转 in_progress/ACTIVE。
+- release时ExecutionState=ACTIVE（历史）；最终done/IDLE见完成记录。
 - 下一步：实际调用链取证 → 最小设计 → 固定交付 → DSH 独立 Review → 条件闭合 → Codex 集成；不启动后继实现。
 
 ## 固定交付（2026-10-07）
@@ -76,3 +76,13 @@ src/**、apps/**、tests/**、requirements*、Schema/migration、用户数据/�
 Codex本机文档/Git检查executed EXIT=0，完整设计范围diff --check=0；src/apps/tests/packaging/历史driver/依赖零实际变动。DSH命令复跑BLOCKED（其shell Win32 5），独立静态executed；native/回收/产品回归NOT_RUN。真实调用点census EXIT=0；一次rg参数转义失败attempt保留，非产品失败。
 
 r4 C1由Codex merge后实际填proposed后继Task恢复点/路径与指令二；C4两个P4写入下一指令（AC1自建derived根+run2不重复init；SHA冻结历史probe不进新Gate）。C2/C3是未来实现的G1-G7与新fixed-head DSH Review要求，均不能借设计批准豁免。当前尚非done，待AC4/AC5后半闭合；不启动实现。
+
+## 完成记录（2026-10-07，当前覆盖层）
+
+Task=done / ExecutionState=IDLE；Integrator=Codex，integration_commit=ad75fadc2944983b4322f353176ba70cf0b0b7ae。post-merge.log：文档检查/范围diff --check/依赖祖先/原报告Git blob SHA/设计稿等于独立审查e4c0967f均EXIT0。整个32f9b932..集成对src/apps/tests/packaging/历史driver/依赖零变动。产品/native/实际回收NOT_RUN；设计done不表示RC4-12实现/Release完成。
+
+AC1调用链/源码证据；AC2逐项矩阵/UNKNOWN；AC3冻结生命周期/保护/恢复；AC4后继proposed Task/指令二已入库、实际分支/worktree已创建且clean，base=ad75fadc，allocated_head=e093f0106bf62476c640dbcf8bb47448c8cc644c；AC5真实DSH四轮条件闭合+Codexmerge/集成后检查。均为设计交付/治理Gate，不把后继G1-G7记PASS。
+
+r4 C1实际恢复点/范围/指令二完成；C4两个P4已写入proposed Task/指令；C2/G1-G7与C3未来实现独立Review作为未触发后继Gate承接，仍NOT_RUN，不豁免。批准设计正文未再修改。最终Handoff=doc/handoffs/M2-DERIVED-GC-2-DESIGN-codex-af09c00d.md。
+
+下一步Codex正式ready释放M2-DERIVED-GC-2，更新实际release恢复点后再把verification/M2-DERIVED-GC-2-DESIGN/next-task-instruction.md转ZCode；Owner=ZCode/Reviewer=DSH/Integrator=Codex。目前proposed，不启动实现。

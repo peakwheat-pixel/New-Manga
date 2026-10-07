@@ -1,9 +1,10 @@
 # Project Rebaseline Plan
 
-## 2026-10-07 GC-2 设计释放
+## 2026-10-07 GC-2设计集成与后继准备
 
-用户已明确授权 [M2-DERIVED-GC-2-DESIGN](tasks/M2-DERIVED-GC-2-DESIGN.md)，范围与 AC 已冻结，ready；Owner=Codex、非作者 Reviewer=DeepSeek Harness、Integrator=Codex；base=ab4b7c11，branch=codex/m2-derived-gc-2-design，worktree=G:/CODEX/New Manga.worktrees/DERIVED-GC-2-DESIGN（release 后由 Codex 创建）。只写设计/证据/交接/Review 导入与治理元数据，禁止生产实现/Schema/依赖/用户数据写入。下方全量盘点为 release 前快照，不覆盖本次唯一 Active。
+[M2-DERIVED-GC-2-DESIGN](tasks/M2-DERIVED-GC-2-DESIGN.md) **done** @merge ad75fadc2944983b4322f353176ba70cf0b0b7ae；Codex/真实DSH/Codex。DSH r4固定e4c0967f approve_with_conditions，0P0-P3；设计判据闭合，两个P4写入指令，治理/实际恢复点准备完成。只交设计，生产代码/Schema/依赖/用户数据零写入；实际回收/native Gate全部NOT_RUN。
 
+唯一推荐后继[M2-DERIVED-GC-2](tasks/M2-DERIVED-GC-2.md) **proposed，尚未释放**；ZCode/非作者DSH/Codex；依赖本设计/GC-1/RC4 done。base=ad75fadc；branch=agent/zcode/M2-DERIVED-GC-2；实际worktree=G:/CODEX/New Manga.worktrees/DERIVED-GC-2-zcode，allocated_head=e093f0106bf62476c640dbcf8bb47448c8cc644c，clean。allowed_paths/shared seam/G1-G7冻结于Task，[指令二](../verification/M2-DERIVED-GC-2-DESIGN/next-task-instruction.md)已准备。当前无Active/ready，不启动；Codex正式release并同步恢复点后ZCode才可认领。G7不能证明则两sweep禁用/BLOCKED，不借设计批准启用删除。下方190节点为历史快照。
 
 ## 2026-10-07 全面 REBASELINE 覆盖层（审计输入 main@32f9b932）
 

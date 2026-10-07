@@ -1,0 +1,8 @@
+SHELL=PowerShell; PREPARATION_COMMIT=e093f0106bf62476c640dbcf8bb47448c8cc644c; base=ad75fadc2944983b4322f353176ba70cf0b0b7ae; proposed NOT_RELEASED; owner not dispatched
+## agent/zcode/M2-DERIVED-GC-2
+e093f0106bf62476c640dbcf8bb47448c8cc644c
+G:/CODEX/New Manga/.git
+doc/tasks/M2-DERIVED-GC-2.md
+verification/M2-DERIVED-GC-2-DESIGN/next-task-instruction.md
+verification/M2-DERIVED-GC-2-DESIGN/post-merge.log
+EXIT=0; changes above governance only

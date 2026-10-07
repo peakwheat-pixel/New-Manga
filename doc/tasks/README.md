@@ -1,6 +1,6 @@
 # Task 索引
 
-当前唯一 Active：[M2-DERIVED-GC-2-DESIGN](M2-DERIVED-GC-2-DESIGN.md)，只设计、未释放后继实现。
+当前无Active/ready：[M2-DERIVED-GC-2-DESIGN](M2-DERIVED-GC-2-DESIGN.md) done@ad75fadc（设计）；后继[M2-DERIVED-GC-2](M2-DERIVED-GC-2.md) proposed/ZCode，实际恢复点与指令已准备，尚未实施。实时授权以Plan/STATUS为准。
 
 
 > **2026-09-21 audit**：本索引与 TASK-001～065 文件是历史证据。当前分类、依赖和唯一下一任务见 [REBASELINE_PLAN](../REBASELINE_PLAN.md)，当前 checkpoint 见 [STATUS](../STATUS.md)。不要根据旧 frontmatter 的 `status: done` 单独判定完成。

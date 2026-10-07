@@ -1,9 +1,10 @@
 # Current Development Status
 
-## 当前执行：M2-DERIVED-GC-2-DESIGN
+## 当前执行：无Active / 无released（设计完成，后继仅准备）
 
-2026-10-07：用户明确授权设计 Task，状态 in_review / ExecutionState=CHECKPOINTED。DSH r1有条件批准；r2/r3要求补租约bootstrap和新验收库初始化覆盖，均已修订（无P0/P1）。最新delivery=af09c00d，Handoff入库/固定复审head=e4c0967f83a08d9b9e2d84605d17923e81a844b6；真实DSH r4限定复核中。Owner=Codex、Reviewer=DeepSeek Harness、Integrator=Codex；base=ab4b7c11，branch/worktree见[Task](tasks/M2-DERIVED-GC-2-DESIGN.md)。src/apps/tests/packaging/历史driver/依赖零改动；native/回收/产品测试NOT_RUN。仅设计，本Task唯一Active，不创建/启动未释放实现；下方无Active是release前历史快照。
+2026-10-07：[M2-DERIVED-GC-2-DESIGN](tasks/M2-DERIVED-GC-2-DESIGN.md) **done / IDLE**，Codex集成=ad75fadc2944983b4322f353176ba70cf0b0b7ae。真实DSH四轮：r1有条件批准→r2/r3修订→r4@e4c0967f approve_with_conditions，0P0-P3，两个P4已吸收进后继指令。post-merge检查EXIT0，设计正文与审查head一致，原报告SHA一致；生产src/apps/tests/packaging/历史driver/依赖零变动。回收/native/产品测试NOT_RUN；GC尚未实现，RC4-12轮换增长仍open。
 
+下一步[M2-DERIVED-GC-2](tasks/M2-DERIVED-GC-2.md) **proposed / NOT_RELEASED**；Owner=ZCode、非作者Reviewer=DSH、Integrator=Codex。实际base=ad75fadc，branch=agent/zcode/M2-DERIVED-GC-2，worktree=G:/CODEX/New Manga.worktrees/DERIVED-GC-2-zcode，allocated_head=e093f0106bf62476c640dbcf8bb47448c8cc644c，clean/common-dir正确。只准备不启动。Codex正式ready并同步release后再转[指令二](../verification/M2-DERIVED-GC-2-DESIGN/next-task-instruction.md)。G1-G7全部planned/NOT_RUN；G7不足两个sweep恒禁用/BLOCKED。下方190节点是固定历史快照，不覆盖本段。
 
 ## 2026-10-07 全量核验（当前覆盖层）
 

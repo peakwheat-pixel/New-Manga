@@ -12,14 +12,14 @@ depends_on: [M2-DERIVED-GC-2-DESIGN, M2-DERIVED-GC-1, M2-RC4-DOMAIN-COMMANDS]
 base_commit: ad75fadc2944983b4322f353176ba70cf0b0b7ae
 branch: agent/zcode/M2-DERIVED-GC-2
 worktree: G:/CODEX/New Manga.worktrees/DERIVED-GC-2-zcode
-allocation_state: pending_creation
-allocated_head: null
+allocation_state: allocated_clean
+allocated_head: e093f0106bf62476c640dbcf8bb47448c8cc644c
 integration_commit: null
 ---
 
 # M2-DERIVED-GC-2：后继准备，尚未释放
 
-本文件只准备 Task/恢复点/冻结范围，不授予生产实施权限。Codex 在 STATUS/Plan 正式 ready 并同步工作区后 ZCode 才能认领。当前设计集成=ad75fadc，DSH r4固定e4c0967f approve_with_conditions（0P0-P3）；实际分支/worktree创建后回填allocation/head，不复用其他dirty checkout。只以已集成设计稿和真实代码为准，设计批准不是回收已实现。
+本文件只准备 Task/恢复点/冻结范围，不授予生产实施权限。Codex 在 STATUS/Plan 正式 ready 并同步工作区后 ZCode 才能认领。当前设计集成=ad75fadc，DSH r4固定e4c0967f approve_with_conditions（0P0-P3）；分支/worktree已实测创建，allocated_head=e093f0106bf62476c640dbcf8bb47448c8cc644c，clean/common-dir正确；head比base仅治理差量。正式ready须由Codex同步release，不复用其他dirty checkout。只以已集成设计稿和真实代码为准，设计批准不是回收已实现。
 
 ## 来源与冻结目标
 
