@@ -6,7 +6,19 @@
 - Task: [M2-DERIVED-GC-1](../tasks/M2-DERIVED-GC-1.md)（release `f1e40631`，base `d4cd96a7`）
 - Branch/worktree: `zcode/derived-gc-1` @ `G:/CODEX/New Manga.worktrees/DERIVED-GC-1`
 - Delivery head: `13964fe2`（单交付 commit：Core 实现+装配+测试同 commit）
-- Rework head: `4edec70a`（DSH r1 `approve_with_conditions` 返修，条件 C-1..C-3 全闭合；r1 报告 `doc/reviews/M2-DERIVED-GC-1-13964fe2-dsh-r1.md`；**本文件以下数字均以 `4edec70a` 为准**）
+- Rework head: `4edec70a`（DSH r1 `approve_with_conditions` 返修，条件 C-1..C-3 全闭合；r1 报告 `doc/reviews/M2-DERIVED-GC-1-13964fe2-dsh-r1.md`）
+- Polish head: `a6115563`（DSH r2 `approve` 后顺手闭 N-01/N-02/N-04；r2 报告 `doc/reviews/M2-DERIVED-GC-1-4edec70a-dsh-r2.md`；**本文件以下数字均以 polish head 为准**）
+
+## DSH r2（@`4edec70a`，报告 `doc/reviews/M2-DERIVED-GC-1-4edec70a-dsh-r2.md`）：VERDICT **approve**
+
+C-1/C-2/C-3 全部 **fixed** 判定（两个新用例判别力经 DSH 反向推演证实非伪判别；实现零行为变更经行号不变式佐证——唯一变化是 docstring 增长 8 行）。新发现 N-01..04 全 P4 非阻塞——r2 无条件放行；Owner 顺手闭合（polish commit）：
+
+| 项 | 级 | 处置 |
+|---|---|---|
+| N-01 「等价于不存在」措辞在 _run_startup_gc docstring 与测试模块 docstring 残留 | P4 | **fixed**——两处统一为「failure-class equivalent」并指向 collect_orphans docstring 为权威表述 |
+| N-02 `import _winapi` 无平台守卫 | P4 | **fixed**——补 `sys.platform != "win32"` → `pytest.skip`（沿 transport_credential_assembly 先例） |
+| N-03 Task 标题「最小闭合」误读风险 | P4 | **收口处理**——STATUS/PLAN 收口按 **PARTIAL mitigation** 记录（orphan/死行子集闭合、轮换增长路径保持 open），release 冻结文本不回改 |
+| N-04 PR-06 disposition 声称「登记 docstring」与事实不符 | P4 | **fixed**——表述更正为「登记于本表与 Handoff」 |
 
 ## DSH r1 逐项 disposition（r1 @`13964fe2`；rework `4edec70a`）
 
@@ -15,7 +27,7 @@
 | C-1（PR-02）scope_class 过滤无测试钉住——删过滤 managed 行会被误删 | P3 | **fixed**——新增 `test_managed_scope_rows_are_never_touched_by_the_sweep`（managed-read-only 死行保留；删过滤即红） |
 | C-2（PR-03/PR-05）目录级逃逸检查无测试覆盖+Handoff 表述高估 | P3 | **fixed**——新增 `test_directory_level_escape_fails_closed`（`_winapi.CreateJunction` 把 previews/ 指到 root 外，断言 OSError 且 root 外文件存活）；Handoff 逃逸表述收窄为「目录级门+行级候选检查」 |
 | C-3（PR-01/PR-04）「行为等价」表述与 typed code 事实有偏差+RC4-12 主增长路径未触及 | P3 | **fixed**——docstring 精确化（preview 死行 issue 由 `REF_NOT_FOUND`/404 变 `RESOURCE_NOT_CATALOGED`/400，同为 typed 硬失败不服务字节）；RC4-12 定性 **PARTIAL mitigation**（轮换增长路径保持 open）；Handoff/收口同步 |
-| PR-06 单点失败中止整刀 | P4 | **accepted**——DSH 自证状态一致安全+幂等重试；fail-closed 取舍登记 docstring/Handoff |
+| PR-06 单点失败中止整刀 | P4 | **accepted**——DSH 自证状态一致安全+幂等重试；fail-closed 取舍登记于本表与 Handoff（r2 N-04 更正：collect_orphans docstring 不含该取舍表述，以本 disposition 为登记处） |
 | PR-07 删除面前置条件 | P4 | **fixed（docstring）**——补「root 必须是 derived 只读根且两目录由本 publisher 独占」 |
 | PR-08 统计虚增/悬空链接保守泄漏/O(N) 扫描/except Exception 吞域 | P4 | **accepted 登记**——均无安全影响；DSH 逐项核对含 Ctrl-C 不被吞 ✓ |
 
@@ -37,7 +49,7 @@ derived 只读根启动时 orphan/死行清理第一刀（RC4-12 登记的预览
 | AC1 Core 单测 | DONE | focused 四目录 **430 passed**（PAGE-NAV 基线 422 + 本 Task 8 新用例：6 交付+2 r1 返修）；raw 日志 `verification/M2-DERIVED-GC-1/raw/focused-pytest-1.log`（HEAD=`4edec70a`，EXIT=0） |
 | AC2 装配 | DONE | `_run_startup_gc` fail-soft+统计双形态用例；main() 装配路径调用一次（stderr `[core.derived_gc]`；DSH r1 独立证实 raw cargo 日志内 4 次真实 sidecar spawn 均打印 GC 统计=装配证据强于单测） |
 | AC3 回归 | DONE | 全量 pytest **1884 passed+1 skipped+0 failed**（base 1876+1sk +8 新用例，等量递增）；cargo **55+1ign**、vitest **136**、build EXIT=0 基线不变（本 Task 零 React/Rust 改动的不变量确认）；raw 日志 `verification/M2-DERIVED-GC-1/raw/{full-pytest,cargo-test,vitest-run,frontend-build}-1.log`（HEAD=`4edec70a`） |
-| AC4 非作者 Review | r2 PENDING | r1 [approve_with_conditions](reviews/M2-DERIVED-GC-1-13964fe2-dsh-r1.md)（0×P0/P1/P2；3×P3 条件+5×P4）→ rework `4edec70a` C-1..C-3 全闭合 → DSH r2 |
+| AC4 非作者 Review | DONE | r1 [approve_with_conditions](reviews/M2-DERIVED-GC-1-13964fe2-dsh-r1.md)（0×P0/P1/P2；3×P3 条件+5×P4）→ rework `4edec70a` C-1..C-3 全闭合 → r2 [approve](reviews/M2-DERIVED-GC-1-4edec70a-dsh-r2.md)（N-01..04 P4 顺手闭合） |
 
 ## 设计裁定（Reviewer 请特别核验）
 

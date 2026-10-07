@@ -1697,11 +1697,13 @@ def main() -> int:
 
 
 def _run_startup_gc(previews: RenderPreviewPublisher) -> None:
-    """M2-DERIVED-GC-1 (RC4-12 first slice): one startup sweep of the
-    derived read-only root. Orphan files (no catalog row) and dead rows
-    (missing file) are behaviour-equivalent to absent already; live files
-    with live rows are never touched. Fail-soft: a GC error must not block
-    the service from starting."""
+    """M2-DERIVED-GC-1 (RC4-12 first slice, PARTIAL mitigation): one startup
+    sweep of the derived read-only root. Orphan files (no catalog row) and
+    dead rows (missing file) are equivalent to absence at the failure-CLASS
+    level -- see :meth:`RenderPreviewPublisher.collect_orphans` for the
+    authoritative typed-code wording. Live files with live rows are never
+    touched. Fail-soft: a GC error must not block the service from
+    starting."""
     try:
         stats = previews.collect_orphans()
         print(

@@ -1,12 +1,14 @@
 """M2-DERIVED-GC-1: startup orphan/dead-row sweep of the derived root.
 
-Pins the two behaviour-equivalent reclamation classes only (RC4-12 first
-slice): orphan files under ``previews/``/``pages/`` (stem absent from the
-catalog -- un-issuable either way) and dead ``derived-read-only`` rows
-(file gone -- already unresolvable; the rev 1.7 self-heal re-publishes
-deterministic keys). Live files with live rows must survive untouched,
-escaping paths must fail closed, and the sweep must stay fail-soft at
-assembly (a GC error never blocks the service).
+Pins the two failure-class-equivalent reclamation classes only (RC4-12
+first slice, PARTIAL mitigation): orphan files under ``previews/``/
+``pages/`` (stem absent from the catalog -- un-issuable either way) and
+dead ``derived-read-only`` rows (file gone -- the rev 1.7 self-heal
+re-publishes deterministic keys; a preview key's issue moves typed code
+but still serves no bytes, see the collect_orphans docstring). Live files
+with live rows must survive untouched, escaping paths must fail closed,
+and the sweep must stay fail-soft at assembly (a GC error never blocks
+the service).
 """
 
 from __future__ import annotations
@@ -142,6 +144,12 @@ def test_directory_level_escape_fails_closed(tmp_path) -> None:
     # directory itself escapes the derived root -- e.g. previews/ replaced
     # by a junction pointing outside. Nothing outside may be deleted.
     import os
+    import sys
+
+    if sys.platform != "win32":
+        import pytest
+
+        pytest.skip("directory junctions are a Windows reparse-point facility")
 
     publisher, catalog, root = _make(tmp_path)
     outside = tmp_path / "outside"
