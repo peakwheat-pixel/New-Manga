@@ -2,7 +2,7 @@
 
 ## 当前执行：M2-DERIVED-GC-2-DESIGN
 
-2026-10-07：用户明确授权设计 Task，状态 ready / ExecutionState=IDLE（worktree 创建后转 ACTIVE）。Owner=Codex，Reviewer=DeepSeek Harness（非作者），Integrator=Codex；base=ab4b7c11，branch/worktree 见 [Task](tasks/M2-DERIVED-GC-2-DESIGN.md)。仅设计，不启动回收实现；下方“无 Active”是 release 前审计快照。本 Task 成为唯一 Active。
+2026-10-07：用户明确授权设计 Task，状态 in_review / ExecutionState=CHECKPOINTED；设计worktree已创建，固定reviewed_head=4a930c611c1e7a353f5fe5584932f4cf6d8048c1，真实DSH r1审查运行中；生产树零改动。Owner=Codex，Reviewer=DeepSeek Harness（非作者），Integrator=Codex；base=ab4b7c11，branch/worktree 见 [Task](tasks/M2-DERIVED-GC-2-DESIGN.md)。仅设计，不启动回收实现；下方“无 Active”是 release 前审计快照。本 Task 成为唯一 Active。
 
 
 ## 2026-10-07 全量核验（当前覆盖层）
