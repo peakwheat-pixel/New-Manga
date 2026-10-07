@@ -130,3 +130,24 @@ tauri build / 定向 pytest / runner stdout）：
 - 历史保护：新产物搬 ninth-run-artifacts/，tracked 历史字节 restore
 
 第八轮（a4f80bf0）记录保留——本第九轮为最终绑定轮（含 r9 全部改动）。
+
+
+---
+
+# 第十轮（CURRENT FINAL）构建链：绑定 258ca6fe（r10 F-01 非 ASCII 拒绝+精确五字符空白折叠后）
+
+单日志 tenth-round-build-and-run.log（各步骤命令显式入日志，step1..step5 带 EXIT）：
+
+- 返修代码 commit = 258ca6fe45ae75e4165b6ba5624e0c3a1bb7669e（r10 F-01：DDL 含非 ASCII
+  字符一律拒绝（canonical 纯 ASCII、isascii 消除 lower 陷阱）；空白折叠集合收窄为
+  sqlite tokenizer 认作分隔符的恰好五个字符（0x09/0x0A/0x0C/0x0D/0x20）——Python
+  str.split() 会折叠 NBSP 等 Unicode 空白而 sqlite 把 >=0x80 字节当标识符字符）
+- [step1] build_sidecar.ps1 -Force，原文行 HEAD=258ca6fe45ae75e4165b6ba5624e0c3a1bb7669e（EXIT=0）
+- [step2] npx --yes @tauri-apps/cli@2 build（EXIT=0）
+- [step3] installer SHA256 = f9b36b98b88b3afe265917c8248e107968fd59b4ec91fefdd865e9a54d85ea40
+- [step4] 定向回归 163 passed（EXIT=0）
+- [step5] m2ac5 runner：25 项 PASS、唯一 FAIL=CS-L1（既有漂移，F-07 口径保持记录）（EXIT=1）
+- 全量 pytest 另见 raw/pytest-full.log（标题行与 HEAD 行均为 258ca6fe）：1941 passed+1 skipped
+- 历史保护：新产物搬 tenth-run-artifacts/，tracked 历史字节 restore
+
+第九轮（8291f336）记录保留——本第十轮为最终绑定轮（含 r10 全部改动）。

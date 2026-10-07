@@ -1,0 +1,292 @@
+{
+  "gate": "m2ac5-clean-start",
+  "installer": "G:\\CODEX\\New Manga.worktrees\\DERIVED-GC-2-zcode\\apps\\desktop\\src-tauri\\target\\release\\bundle\\nsis\\m2rc1-desktop_0.1.0_x64-setup.exe",
+  "installer_sha256": "f9b36b98b88b3afe265917c8248e107968fd59b4ec91fefdd865e9a54d85ea40",
+  "install_dir": "C:\\Users\\49745\\AppData\\Local\\Temp\\m2ac5-cleanstart\\install",
+  "lab": "C:\\Users\\49745\\AppData\\Local\\Temp\\m2ac5-cleanstart-26607of3",
+  "appdata_isolation": {
+    "app_env_appdata": "pinned into the lab (probe/ac1/production)",
+    "host_real_appdata": "C:\\Users\\49745\\AppData\\Roaming\\com.newmanga.m2rc1.desktop",
+    "host_real_appdata_files": 4
+  },
+  "verdict": "FAIL",
+  "scenarios": [
+    {
+      "id": "CS-E1-python-purged-from-path",
+      "status": "PASS",
+      "observed": {
+        "detail": "python not on purged PATH (where exit=1); host_bridge.exe resolves: False",
+        "removed_entries": [
+          "C:\\Python314\\Scripts",
+          "C:\\Python314",
+          "C:\\Users\\49745\\AppData\\Local\\Programs\\Python\\Python310\\Scripts",
+          "C:\\Users\\49745\\AppData\\Local\\Programs\\Python\\Python310",
+          "C:\\Users\\49745\\AppData\\Local\\Programs\\Python\\Python312\\Scripts",
+          "C:\\Users\\49745\\AppData\\Local\\Programs\\Python\\Python312",
+          "C:\\Users\\49745\\AppData\\Local\\Programs\\Python\\Python311\\Scripts",
+          "C:\\Users\\49745\\AppData\\Local\\Programs\\Python\\Python311",
+          "C:\\Users\\49745\\AppData\\Local\\Microsoft\\WindowsApps",
+          "C:\\Users\\49745\\AppData\\Local\\Python\\bin",
+          "C:\\Users\\49745\\AppData\\Roaming\\Python\\Python314\\Scripts"
+        ]
+      }
+    },
+    {
+      "id": "CS-E2-installer-present",
+      "status": "PASS",
+      "observed": {
+        "installer": "G:\\CODEX\\New Manga.worktrees\\DERIVED-GC-2-zcode\\apps\\desktop\\src-tauri\\target\\release\\bundle\\nsis\\m2rc1-desktop_0.1.0_x64-setup.exe",
+        "sha256": "f9b36b98b88b3afe265917c8248e107968fd59b4ec91fefdd865e9a54d85ea40"
+      }
+    },
+    {
+      "id": "CS-E3-install-path-no-spaces",
+      "status": "PASS",
+      "observed": {
+        "install_dir": "C:\\Users\\49745\\AppData\\Local\\Temp\\m2ac5-cleanstart\\install",
+        "space_free": true
+      }
+    },
+    {
+      "id": "CS-I1-silent-install",
+      "status": "PASS",
+      "observed": {
+        "detail": "installed to C:\\Users\\49745\\AppData\\Local\\Temp\\m2ac5-cleanstart\\install with resources/core-sidecar/host_bridge.exe, core_service.exe, acceptance_bridge.exe, catalog_loader.exe"
+      }
+    },
+    {
+      "id": "CS-I2-catalog-seeded-packaged-loader",
+      "status": "PASS",
+      "observed": {
+        "detail": "catalog seeded (5 rows) via packaged catalog_loader.exe"
+      }
+    },
+    {
+      "id": "CS-L1-packaged-core-ping",
+      "status": "FAIL",
+      "observed": {
+        "result": {
+          "status": "ready",
+          "protocol_version": {
+            "major": 1,
+            "minor": 6
+          },
+          "capabilities": [
+            "library.list_books"
+          ]
+        },
+        "error": null
+      }
+    },
+    {
+      "id": "CS-L2-packaged-ListBooks-structure",
+      "status": "PASS",
+      "observed": {
+        "count": 0,
+        "envelope_valid": true,
+        "error": null
+      }
+    },
+    {
+      "id": "CS-L3-packaged-core-shutdown",
+      "status": "PASS",
+      "observed": {
+        "result": {
+          "status": "stopped"
+        },
+        "exit": 0
+      }
+    },
+    {
+      "id": "CS-P1-probe-results-written",
+      "status": "PASS",
+      "observed": {
+        "path": "C:\\Users\\49745\\AppData\\Local\\Temp\\m2ac5-cleanstart-26607of3\\probe\\probe-results.json"
+      }
+    },
+    {
+      "id": "CS-P2-probe-scenarios-all-pass",
+      "status": "PASS",
+      "observed": {
+        "count": 13,
+        "failed": [],
+        "ids": [
+          "E-00-probe-mode-detected",
+          "E-01-issue-fetch-digest",
+          "E-02-img-render",
+          "E-03-unknown-id",
+          "E-04-revoke-after-cached-fetch",
+          "E-05-expired-ttl",
+          "E-06-remount-fresh-references",
+          "E-07-per-reference-first-byte-p95",
+          "E-08-boundary-256mib",
+          "E-09-over-limit-typed",
+          "D-01-register-catalog-denied",
+          "D-02-ttl-override-inert",
+          "D-03-probe-issue-allowed-in-probe-mode"
+        ]
+      }
+    },
+    {
+      "id": "CS-P3-sidecar-roundtrip-digest",
+      "status": "PASS",
+      "observed": {
+        "e01": {
+          "id": "E-01-issue-fetch-digest",
+          "status": "PASS",
+          "observed": {
+            "bytes": 49363,
+            "sha256": "b9b217bcad1e8cd97fdb0849c5b7058daf8993281e9c47aa41b08339d84fa334",
+            "expected_sha256": "b9b217bcad1e8cd97fdb0849c5b7058daf8993281e9c47aa41b08339d84fa334"
+          }
+        }
+      }
+    },
+    {
+      "id": "CS-A0-ac1-catalog-prebind",
+      "status": "PASS",
+      "observed": {
+        "exit": 0,
+        "stderr": ""
+      }
+    },
+    {
+      "id": "CS-A1-run1-completed",
+      "status": "PASS",
+      "observed": {
+        "exit": 0,
+        "phase": "run1"
+      }
+    },
+    {
+      "id": "CS-A1-run2-completed",
+      "status": "PASS",
+      "observed": {
+        "exit": 0,
+        "phase": "run2"
+      }
+    },
+    {
+      "id": "CS-A2-restart-new-pids",
+      "status": "PASS",
+      "observed": {
+        "run1": [
+          55840,
+          35536
+        ],
+        "run2": [
+          39344,
+          56760
+        ]
+      }
+    },
+    {
+      "id": "CS-A3-saved-summary-complete",
+      "status": "PASS",
+      "observed": {
+        "run_status": "completed",
+        "pages": 2,
+        "providers": {
+          "ocr": "m2ac1-mock-ocr",
+          "translate": "m2ac1-mock-translate"
+        }
+      }
+    },
+    {
+      "id": "CS-A4-restored-reader-matches-saved",
+      "status": "PASS",
+      "observed": {
+        "viewed": [
+          {
+            "index": 0,
+            "sha": "f66af60a9846"
+          },
+          {
+            "index": 1,
+            "sha": "4afc67386c25"
+          }
+        ]
+      }
+    },
+    {
+      "id": "CS-A5-export-png-digest-matches",
+      "status": "PASS",
+      "observed": {
+        "size": 1122,
+        "sha": "4afc67386c25"
+      }
+    },
+    {
+      "id": "CS-R1-production-process-alive",
+      "status": "PASS",
+      "observed": {
+        "poll": null
+      }
+    },
+    {
+      "id": "CS-R2-userdata-layout-created",
+      "status": "PASS",
+      "observed": {
+        "dirs": {
+          "catalog": true,
+          "derived": true,
+          "managed": true,
+          "data": true
+        },
+        "catalog.sqlite": true,
+        "root": "C:\\Users\\49745\\AppData\\Local\\Temp\\m2ac5-cleanstart-26607of3\\production\\roaming\\com.newmanga.m2rc1.desktop",
+        "appdata_isolated": true
+      }
+    },
+    {
+      "id": "CS-R3-production-surface-announced",
+      "status": "PASS",
+      "observed": {
+        "announcement": "[m2rc2-allowlist] production:",
+        "present": true
+      }
+    },
+    {
+      "id": "CS-R4-no-spawn-failures-in-log",
+      "status": "PASS",
+      "observed": {
+        "spawn_failed_mentions": 0
+      }
+    },
+    {
+      "id": "CS-Z1-install-dir-zero-write",
+      "status": "PASS",
+      "observed": {
+        "changed_entries": []
+      }
+    },
+    {
+      "id": "CS-Z4-host-real-appdata-untouched",
+      "status": "PASS",
+      "observed": {
+        "root": "C:\\Users\\49745\\AppData\\Roaming\\com.newmanga.m2rc1.desktop",
+        "files": 4,
+        "changed_entries": [],
+        "note": "runner never deletes here; app APPDATA pinned into the lab"
+      }
+    },
+    {
+      "id": "CS-Z2-user-source-files-byte-identical",
+      "status": "PASS",
+      "observed": {
+        "files": 4
+      }
+    },
+    {
+      "id": "CS-Z3-no-surviving-sidecar-processes",
+      "status": "PASS",
+      "observed": {
+        "host_bridge.exe": 0,
+        "core_service.exe": 0,
+        "acceptance_bridge.exe": 0,
+        "catalog_loader.exe": 0,
+        "python.exe": 7
+      }
+    }
+  ]
+}
