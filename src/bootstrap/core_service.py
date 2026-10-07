@@ -888,9 +888,13 @@ class CoreServiceServer:
                 code = E_INPUT_REVISION_CHANGED
             elif outcome.status == "write_failed":
                 code = "ARTIFACT_WRITE_FAILED"
+            # M2-CATEGORY-CLARIFY-1 (RC4-10): required-input missing is an
+            # AVAILABILITY failure (data not there), not a "target does not
+            # exist" one -- §8 taxonomy, category never frozen before.
             category = "conflict" if code == E_INPUT_REVISION_CHANGED else (
-                "not_found" if code in (E_TARGET_NOT_FOUND, "MISSING_REQUIRED_INPUT")
-                else "internal"
+                "not_found" if code == E_TARGET_NOT_FOUND else (
+                    "unavailable" if code == "MISSING_REQUIRED_INPUT" else "internal"
+                )
             )
             message = {
                 "MISSING_REQUIRED_INPUT": "required render input is missing",
