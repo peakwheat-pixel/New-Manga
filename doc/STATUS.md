@@ -1,5 +1,13 @@
 # Current Development Status
 
+## 2026-10-07 全量核验（当前覆盖层）
+
+审计输入 `main@32f9b932`，开始时主工作区 clean；Codex 执行本次用户授权的 REBASELINE 文档审计。**产品开发任务无 Active、无 released、登记进行中 0**；本次审计未派发后续实现。279 个 Git worktree（含主工作区）全部只读检查，24 个其他 worktree 有未提交内容；主工作区扫描时另有本次审计产物，均未清理/覆盖。dirty 不代表 Agent 正在运行。
+
+190 个全任务节点：完成记录 161、历史 PARTIAL 9、Legacy 归档未完成 13、closed_with_limitations 1、被取代 6。全部 Owner、Reviewer、依赖与原状态见 [全任务图与台账](../verification/REBASELINE-20261007/TASK_GRAPH.md)，差异、证据限制与完整派发指令见 [报告](../verification/REBASELINE-20261007/REPORT.md)。既有测试日志基线仍为 pytest 1886+1 skipped / cargo 55+1 ignored / vitest 140 / build EXIT=0；本次未复跑产品测试。
+
+下一步推荐 Codex 先登记并释放 **M2-DERIVED-GC-2-DESIGN（尚未创建）**，DSH 非作者设计 Review 后再释放 ZCode 实现。原页头漂移与独立 Review 报告载体缺口见报告 RB-01..03；不把旧 ready/in_review 当作当前认领，不重新开启已完成 TA3-B2/B3 或 BJ13 裁决。
+
 Planning source of truth: [Project Rebaseline Plan](REBASELINE_PLAN.md)
 
 | Execution checkpoint: 2026-10-07 (Asia/Shanghai) — **M2-REGION-DEBOUNCE-1 done @merge `0cb15092`**（region 读 300ms 逐键 debounce，RESOLVE-DEBOUNCE r1 C-1 登记残留闭合；DSH r1 a_w_c→路径 B 返修 `2cfa7e6f`→r2 a_w_c（N-01 措辞）→按 r2 option 2 收口承载闭合 `80db177d`；main 基线=**1886 passed+1 skipped+0 failed**/vitest **140**）；前情：M2-RESOLVE-DEBOUNCE-1 done @merge `65d500e6`、M2-CATEGORY-CLARIFY-1 done @merge `21865f7d`、M2-DERIVED-GC-1 done @merge `44859014`；无 Active、无 released。|

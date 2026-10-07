@@ -1,5 +1,15 @@
 # Project Rebaseline Plan
 
+## 2026-10-07 全面 REBASELINE 覆盖层（审计输入 main@32f9b932）
+
+本次全量审计与下一步分配见 [审计报告](../verification/REBASELINE-20261007/REPORT.md)，全部 **189 个 Task 文件 + T1.1.2 Roadmap 映射，共 190 个节点**见 [任务台账与分组流程图](../verification/REBASELINE-20261007/TASK_GRAPH.md)，机器可复核参数与 Git/worktree 证据见 [inventory](../verification/REBASELINE-20261007/inventory.json)。本段为当前规划覆盖层，下面各日期段落保留历史证据。
+
+数量：已登记完成 **161**（108 DONE_RECORDED + 48 历史 VERIFIED_COMPLETE + 5 DOC_ONLY），历史 PARTIAL **9**、Legacy 归档未完成 **13**、closed_with_limitations **1**、被取代 **6**；当前已登记进行中 **0**、已释放 **0**。这些数字不表示本次复跑全部测试或重做 161 次独立 Review。Legacy 不再生成实施队列。
+
+旧待办校正：TA3-B 阶段二已由 B2 / KO-RERUN / B3 后继任务完成，不再等待用户提供翻译 endpoint；Manga109 永久取消；BJ13/0.90 裁决已确认。ANNOTATE-R2 与 SYNTH-BG-AUTO 原页头落后于 main 集成和 Plan 完成记录，原状态保留并在台账标 STATE_CONFLICT；原独立 Review 报告当前 tracked 树未定位，载体核验 NOT_VERIFIED，不追加虚构批准。
+
+**推荐下一 Task：M2-DERIVED-GC-2-DESIGN（建议 ID，PLANNED_PLACEHOLDER，尚未创建/释放）**。Owner 建议 Codex，非作者 Reviewer 建议 DeepSeek Harness；先追踪旧 preview 的 page/current/pinned/grant 引用，冻结安全回收判据，设计 Gate 后由 ZCode 实现、DSH Review、Codex 集成。允许/禁止路径、固定审计 base/head、worktree 待创建说明及可直接转发指令见审计报告。不得直接启动未释放实现；不扩大 Reader/BJ13 产品范围。
+
 Status: **ACTIVE DEVELOPMENT BASELINE — 2026-10-07 refresh @main `0cb15092`；A/B/C、M2-RC4-DOMAIN-COMMANDS、test_catalog 漂移清算、ui_shell 环境敏感处置、M2-PAGE-RESOURCE-RESOLVE-1、M2-PAGE-NAV-PROJECTION-1、M2-DERIVED-GC-1、M2-CATEGORY-CLARIFY-1、M2-RESOLVE-DEBOUNCE-1 与 M2-REGION-DEBOUNCE-1 全闭环；main 全量基线=1886 passed+1 skipped+0 failed（vitest 140）；无 Active、无已释放。当前运行状态见 STATUS，历史快照不具释放效力。**
 
 Audit date: 2026-10-07 (Asia/Shanghai)，[本次证据](../verification/M2-RC4-DOMAIN-COMMANDS/rebaseline-20261007.md)。

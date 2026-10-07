@@ -1,5 +1,7 @@
 # 项目文档索引与 Source of Truth
 
+当前全量盘点：2026-10-07，审计输入 `main@32f9b932`。[REBASELINE 审计报告与下一步派发指令](../verification/REBASELINE-20261007/REPORT.md)；[全部 190 任务节点的台账与流程图](../verification/REBASELINE-20261007/TASK_GRAPH.md)；[完整 Git/Owner/Reviewer/worktree 参数](../verification/REBASELINE-20261007/inventory.json)。当前无 Active、无 released；正式授权仍由 REBASELINE_PLAN / STATUS 决定，下面旧日期正文只作历史记录。
+
 > **2026-09-21 Stage A Rebaseline 生效**：后续 Milestone、Task、依赖、Legacy Mapping 与治理以 [REBASELINE_PLAN](REBASELINE_PLAN.md) 为唯一规划事实源；实时状态只看 [STATUS](STATUS.md)。TASK-001～065 及下方历史台账保留为证据，不再决定当前排期。Worktree 清理必须先看 [WORKTREE_SAFETY_INVENTORY](WORKTREE_SAFETY_INVENTORY.md)。
 
 > **Current pointer（2026-10-07）**：Codex refresh @main `44421008`；A/B/C done，阈值 0.90 与 BJ13 维持现状已确认。唯一当前释放 [RC-4](tasks/M2-RC4-DOMAIN-COMMANDS.md)，[契约](contracts/M2-RC4_DOMAIN_COMMANDS.md)、[审计证据](../verification/M2-RC4-DOMAIN-COMMANDS/rebaseline-20261007.md)。以 PLAN/STATUS 为准，下方旧记录仅作历史证据。

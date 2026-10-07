@@ -85,3 +85,6 @@ TASK-001～065 的逐项细节保留在下表作为 Legacy 历史导航。当前
 | [TASK-065](TASK-065.md) | TASK-058 复审尾项 docs+tests 小切片（F-002/F-003/F-005/F-006） | **Codex** | **done**；integration=`784e3065`；Legacy 历史证据，不再排期。 |
 
 每个任务含具体 Acceptance Criteria、允许修改路径与测试要求。TASK-005 已建立最小 `src/bootstrap`、`src/domain`、`src/ui` 与 `tests/core`；其余路径仍是拟议所有权边界，ready 前由 Codex 对照实际结构确认。Task 不能越过依赖、冻结状态或扩大允许范围。
+# 2026-10-07 全任务盘点入口
+
+当前无 Active、无 released；189 个 Task 文件与 T1.1.2 Roadmap 映射的 Owner、Reviewer、原始/有效状态、依赖和全部流程图见 [全任务台账](../../verification/REBASELINE-20261007/TASK_GRAPH.md)。[审计报告与下一步完整指令](../../verification/REBASELINE-20261007/REPORT.md)；下面旧日期表仅保留历史，不因旧 ready/in_review 自动授予实施权限。

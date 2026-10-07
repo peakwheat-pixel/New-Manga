@@ -1,0 +1,11 @@
+SHELL=PowerShell (python subprocess for captured checks)
+PYTHON=C:\Python314\python.exe
+HEAD=32f9b932d681ba1d551560477d7992cddf6fd7ec
+COMMAND=['C:\\Python314\\python.exe', 'verification\\REBASELINE-20261007\\audit.py', '--check']
+PASS: multi-block metadata, multiline deps, 190 unique task nodes, counts, dependency coverage, Mermaid nodes/edges, report links
+EXIT=0
+COMMAND=git diff --check
+warning: in the working copy of 'doc/REBASELINE_PLAN.md', LF will be replaced by CRLF the next time Git touches it
+EXIT=0
+COMMAND=git diff 2cfa7e6f..32f9b932 --name-only -- src apps tests requirements.txt
+EXIT=0
