@@ -13,8 +13,8 @@ claim_commit: 7f65247324d5a9104871a89d84fc0bdf49bb34db
 delivery_head: 363265b13fadf0d0b81a23a6d76bb8ded940fb2a
 design_approved_head: e4c0967f83a08d9b9e2d84605d17923e81a844b6
 delivery_head_note: 代码交付=363265b1；owner 分支终 tip=58933f6d（packaged 验证回填+各 runner 历史日志按 P3-9(b) 保护归档，代码实体=363265b1，363265b1..58933f6d 零 src/apps 差量）
-review_chain: Codex r1（7c19b3d6，CR 0P0/3P1/6P2）→ rework cb0a44d9 → Codex r2（CR；F-04..F-09 FIXED+两处追认）→ rework2 70ab9da0 → Codex r3（CR；范围 PASS、F-03 FIXED）→ rework3 230c076f → Codex r4（CR；F-02 FIXED、范围 PASS）→ rework4 e3ad330f → Codex r5（CR；F-08 FIXED、范围 PASS、仅剩 F-01 namespace 守卫）→ rework5 da2ddeae → Codex r6（CR；证据绑定 PASS、范围 PASS、仅剩 F-01 CHECK 语义+测试判别）→ rework6 adb1498c → Codex r7（CR；五项全 PASS、仅剩 F-01 探针域不完备 IN(1,3)）→ rework7 e11562be（全量 1939+1sk；packaged 第七轮构建链绑定该 head）→ 等 r8 复核
-status: in_review（Review 通道=用户指示改由 Codex 非作者执行；Review 基准=e11562be+证据 tip，代码实体=363265b1）
+review_chain: Codex r1（7c19b3d6，CR 0P0/3P1/6P2）→ rework cb0a44d9 → Codex r2（CR；F-04..F-09 FIXED+两处追认）→ rework2 70ab9da0 → Codex r3（CR；范围 PASS、F-03 FIXED）→ rework3 230c076f → Codex r4（CR；F-02 FIXED、范围 PASS）→ rework4 e3ad330f → Codex r5（CR；F-08 FIXED、范围 PASS、仅剩 F-01 namespace 守卫）→ rework5 da2ddeae → Codex r6（CR；证据绑定 PASS、范围 PASS、仅剩 F-01 CHECK 语义+测试判别）→ rework6 adb1498c → Codex r7（CR；五项全 PASS、仅剩 F-01 探针域不完备 IN(1,3)）→ rework7 e11562be → Codex r8（CR；证据/范围 PASS、唯一项=组合反例击败启发式守卫）→ rework8 a4f80bf0（规范化全文逐字相等；全量 1939+1sk；packaged 第八轮构建链绑定该 head）→ 等 r9 复核
+status: in_review（Review 通道=用户指示改由 Codex 非作者执行；Review 基准=a4f80bf0+证据 tip，代码实体=363265b1）
 ```
 
 ## 1. 交付内容（31 文件，+3148/−86，全部 Task allowed_paths）

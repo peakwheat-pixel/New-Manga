@@ -1,7 +1,7 @@
 === FULL pytest suite, rebound to r7-rework head e11562be ===
 shell=Git Bash on win32
 python=G:/CODEX/New Manga.task-envs/T1.1.1-impl-py312/Scripts/python.exe (3.14.6)
-HEAD=e11562bed91a36dcbf0ec31094e44822e154488d
+HEAD=a4f80bf0f23a65e0add38ada27a04aea3e689e02
 worktree status (fingerprint):
  M apps/desktop/src-tauri/gen/schemas/desktop-schema.json
  M apps/desktop/src-tauri/gen/schemas/windows-schema.json
@@ -72,6 +72,6 @@ tests/rendering/test_pillow_rendering.py::test_pillow_compositor_draws_centered_
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
 =========================== short test summary info ===========================
 SKIPPED [1] tests\providers\test_registry_readiness.py:237: dev venv intentionally carries the ML stack since T1.1.1 (user-approved requirements: torch==2.14.0, transformers==5.17.0) — the TASK-019-era 'no model runtime in this environment' evidence is INVALIDATED, nothing left to guard here; separately, release-side ML-closure completeness is independently guaranteed at build time by packaging/m2ac5 core_sidecar.spec _assert_ml_closure (M2-PROD-DETECT-2), which is the opposite-direction assertion and must not be read as this test's replacement
-1939 passed, 1 skipped, 3 warnings in 124.17s (0:02:04)
+1939 passed, 1 skipped, 3 warnings in 119.95s (0:01:59)
 
 EXIT=0

@@ -89,3 +89,23 @@ tauri build / 定向 pytest / runner stdout）：
 - 历史保护：新产物搬 seventh-run-artifacts/，tracked 历史字节 restore
 
 第六轮（adb1498c）记录保留——本第七轮为最终绑定轮（含 r7 全部改动）。
+
+
+---
+
+# 第八轮（CURRENT FINAL）构建链：绑定 a4f80bf0（r8 F-01 规范 schema 全文相等后）
+
+单日志 eighth-round-build-and-run.log（各步骤命令显式入日志，step1..step5 带 EXIT）：
+
+- 返修代码 commit = a4f80bf0f23a65e0add38ada27a04aea3e689e02（r8 F-01：preview_namespace
+  收养判定改为规范化全文逐字相等——sqlite 存储原文（去 IF NOT EXISTS），规范化文本相等
+  = token 流相等 = DDL 语义相等；行为探针删除（全文相等使其不可达））
+- [step1] build_sidecar.ps1 -Force，原文行 HEAD=a4f80bf0f23a65e0add38ada27a04aea3e689e02（EXIT=0）
+- [step2] npx --yes @tauri-apps/cli@2 build（EXIT=0）
+- [step3] installer SHA256 = ed28098b317595a3103049483e4b3efada4241ae1a2a170427dc7ffb44f2cb91
+- [step4] 定向回归 161 passed（EXIT=0）
+- [step5] m2ac5 runner：25 项 PASS、唯一 FAIL=CS-L1（既有漂移，F-07 口径保持记录）（EXIT=1）
+- 全量 pytest 另见 raw/pytest-full.log（HEAD=a4f80bf0 指纹）：1939 passed+1 skipped
+- 历史保护：新产物搬 eighth-run-artifacts/，tracked 历史字节 restore
+
+第七轮（e11562be）记录保留——本第八轮为最终绑定轮（含 r8 全部改动）。
