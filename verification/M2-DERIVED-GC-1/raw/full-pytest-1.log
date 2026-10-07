@@ -1,6 +1,6 @@
 SHELL=Git Bash (MINGW64, Windows)
 PYTHON=G:/CODEX/New Manga.task-envs/T1.1.1-impl-py312/Scripts/python.exe
-HEAD=13964fe28d88625ef62834e361520b7acf183739
+HEAD=4edec70a6e7fd2db5c4d2e7da7451b91c9cac018
 COMMAND=G:/CODEX/New Manga.task-envs/T1.1.1-impl-py312/Scripts/python.exe -m pytest -q
 ........................................................................ [  3%]
 ........................................................................ [  7%]
@@ -18,21 +18,21 @@ COMMAND=G:/CODEX/New Manga.task-envs/T1.1.1-impl-py312/Scripts/python.exe -m pyt
 ........................................................................ [ 53%]
 ........................................................................ [ 57%]
 ........................................................................ [ 61%]
-................................................s....................... [ 65%]
+..................................................s..................... [ 64%]
 ........................................................................ [ 68%]
-.....................................................file:///G:/CODEX/New Manga.worktrees/DERIVED-GC-1/src/ui/qml/reader/ReaderView.qml:204: TypeError: Cannot read property 'sourcePath' of null
+.......................................................file:///G:/CODEX/New Manga.worktrees/DERIVED-GC-1/src/ui/qml/reader/ReaderView.qml:204: TypeError: Cannot read property 'sourcePath' of null
 .file:///G:/CODEX/New Manga.worktrees/DERIVED-GC-1/src/ui/qml/reader/ReaderView.qml:204: TypeError: Cannot read property 'sourcePath' of null
 .file:///G:/CODEX/New Manga.worktrees/DERIVED-GC-1/src/ui/qml/reader/ReaderView.qml:204: TypeError: Cannot read property 'sourcePath' of null
 ..file:///G:/CODEX/New Manga.worktrees/DERIVED-GC-1/src/ui/qml/reader/ReaderView.qml:204: TypeError: Cannot read property 'sourcePath' of null
 .file:///G:/CODEX/New Manga.worktrees/DERIVED-GC-1/src/ui/qml/reader/ReaderView.qml:204: TypeError: Cannot read property 'sourcePath' of null
 .file:///G:/CODEX/New Manga.worktrees/DERIVED-GC-1/src/ui/qml/reader/ReaderView.qml:204: TypeError: Cannot read property 'sourcePath' of null
 .file:///G:/CODEX/New Manga.worktrees/DERIVED-GC-1/src/ui/qml/reader/ReaderView.qml:204: TypeError: Cannot read property 'sourcePath' of null
-............ [ 72%]
+.......... [ 72%]
 ........................................................................ [ 76%]
 ........................................................................ [ 80%]
 ........................................................................ [ 84%]
 ........................................................................ [ 87%]
-......................................................file:///G:/CODEX/New Manga.worktrees/DERIVED-GC-1/src/ui/qml/shell/AppShell.qml:56: TypeError: Cannot read property 'currentPage' of null
+........................................................file:///G:/CODEX/New Manga.worktrees/DERIVED-GC-1/src/ui/qml/shell/AppShell.qml:56: TypeError: Cannot read property 'currentPage' of null
 file:///G:/CODEX/New Manga.worktrees/DERIVED-GC-1/src/ui/qml/shell/AppShell.qml:51: TypeError: Cannot read property 'currentPage' of null
 file:///G:/CODEX/New Manga.worktrees/DERIVED-GC-1/src/ui/qml/shell/AppShell.qml:46: TypeError: Cannot read property 'currentPage' of null
 file:///G:/CODEX/New Manga.worktrees/DERIVED-GC-1/src/ui/qml/shell/AppShell.qml:41: TypeError: Cannot read property 'currentPage' of null
@@ -342,30 +342,6 @@ file:///G:/CODEX/New Manga.worktrees/DERIVED-GC-1/src/ui/qml/bookshelf/Bookshelf
 file:///G:/CODEX/New Manga.worktrees/DERIVED-GC-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:71: TypeError: Cannot read property 'sortBy' of null
 file:///G:/CODEX/New Manga.worktrees/DERIVED-GC-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:66: TypeError: Cannot read property 'archivedFilter' of null
 file:///G:/CODEX/New Manga.worktrees/DERIVED-GC-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:59: TypeError: Cannot read property 'favoritesOnly' of null
-.file:///G:/CODEX/New Manga.worktrees/DERIVED-GC-1/src/ui/qml/bookshelf/ChapterList.qml:31: TypeError: Cannot read property 'chapterListModel' of null
-file:///G:/CODEX/New Manga.worktrees/DERIVED-GC-1/src/ui/qml/bookshelf/BookDetailPanel.qml:17: TypeError: Cannot read property 'selectedBook' of null
-file:///G:/CODEX/New Manga.worktrees/DERIVED-GC-1/src/ui/qml/bookshelf/BookshelfView.qml:82: TypeError: Cannot read property 'isEmpty' of null
-file:///G:/CODEX/New Manga.worktrees/DERIVED-GC-1/src/ui/qml/bookshelf/BookGrid.qml:51: TypeError: Cannot read property 'viewMode' of null
-file:///G:/CODEX/New Manga.worktrees/DERIVED-GC-1/src/ui/qml/bookshelf/BookGrid.qml:54: TypeError: Cannot read property 'bookListModel' of null
-file:///G:/CODEX/New Manga.worktrees/DERIVED-GC-1/src/ui/qml/bookshelf/BookGrid.qml:25: TypeError: Cannot read property 'viewMode' of null
-file:///G:/CODEX/New Manga.worktrees/DERIVED-GC-1/src/ui/qml/bookshelf/BookGrid.qml:29: TypeError: Cannot read property 'bookListModel' of null
-file:///G:/CODEX/New Manga.worktrees/DERIVED-GC-1/src/ui/qml/bookshelf/BookshelfView.qml:66: TypeError: Cannot read property 'isEmpty' of null
-file:///G:/CODEX/New Manga.worktrees/DERIVED-GC-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:77: TypeError: Cannot read property 'viewMode' of null
-file:///G:/CODEX/New Manga.worktrees/DERIVED-GC-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:71: TypeError: Cannot read property 'sortBy' of null
-file:///G:/CODEX/New Manga.worktrees/DERIVED-GC-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:66: TypeError: Cannot read property 'archivedFilter' of null
-file:///G:/CODEX/New Manga.worktrees/DERIVED-GC-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:59: TypeError: Cannot read property 'favoritesOnly' of null
-.file:///G:/CODEX/New Manga.worktrees/DERIVED-GC-1/src/ui/qml/bookshelf/ChapterList.qml:31: TypeError: Cannot read property 'chapterListModel' of null
-file:///G:/CODEX/New Manga.worktrees/DERIVED-GC-1/src/ui/qml/bookshelf/BookDetailPanel.qml:17: TypeError: Cannot read property 'selectedBook' of null
-file:///G:/CODEX/New Manga.worktrees/DERIVED-GC-1/src/ui/qml/bookshelf/BookshelfView.qml:82: TypeError: Cannot read property 'isEmpty' of null
-file:///G:/CODEX/New Manga.worktrees/DERIVED-GC-1/src/ui/qml/bookshelf/BookGrid.qml:51: TypeError: Cannot read property 'viewMode' of null
-file:///G:/CODEX/New Manga.worktrees/DERIVED-GC-1/src/ui/qml/bookshelf/BookGrid.qml:54: TypeError: Cannot read property 'bookListModel' of null
-file:///G:/CODEX/New Manga.worktrees/DERIVED-GC-1/src/ui/qml/bookshelf/BookGrid.qml:25: TypeError: Cannot read property 'viewMode' of null
-file:///G:/CODEX/New Manga.worktrees/DERIVED-GC-1/src/ui/qml/bookshelf/BookGrid.qml:29: TypeError: Cannot read property 'bookListModel' of null
-file:///G:/CODEX/New Manga.worktrees/DERIVED-GC-1/src/ui/qml/bookshelf/BookshelfView.qml:66: TypeError: Cannot read property 'isEmpty' of null
-file:///G:/CODEX/New Manga.worktrees/DERIVED-GC-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:77: TypeError: Cannot read property 'viewMode' of null
-file:///G:/CODEX/New Manga.worktrees/DERIVED-GC-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:71: TypeError: Cannot read property 'sortBy' of null
-file:///G:/CODEX/New Manga.worktrees/DERIVED-GC-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:66: TypeError: Cannot read property 'archivedFilter' of null
-file:///G:/CODEX/New Manga.worktrees/DERIVED-GC-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:59: TypeError: Cannot read property 'favoritesOnly' of null
 . [ 91%]
 file:///G:/CODEX/New Manga.worktrees/DERIVED-GC-1/src/ui/qml/bookshelf/ChapterList.qml:31: TypeError: Cannot read property 'chapterListModel' of null
 file:///G:/CODEX/New Manga.worktrees/DERIVED-GC-1/src/ui/qml/bookshelf/BookDetailPanel.qml:17: TypeError: Cannot read property 'selectedBook' of null
@@ -379,9 +355,33 @@ file:///G:/CODEX/New Manga.worktrees/DERIVED-GC-1/src/ui/qml/bookshelf/Bookshelf
 file:///G:/CODEX/New Manga.worktrees/DERIVED-GC-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:71: TypeError: Cannot read property 'sortBy' of null
 file:///G:/CODEX/New Manga.worktrees/DERIVED-GC-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:66: TypeError: Cannot read property 'archivedFilter' of null
 file:///G:/CODEX/New Manga.worktrees/DERIVED-GC-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:59: TypeError: Cannot read property 'favoritesOnly' of null
-........................................................................ [ 95%]
+.file:///G:/CODEX/New Manga.worktrees/DERIVED-GC-1/src/ui/qml/bookshelf/ChapterList.qml:31: TypeError: Cannot read property 'chapterListModel' of null
+file:///G:/CODEX/New Manga.worktrees/DERIVED-GC-1/src/ui/qml/bookshelf/BookDetailPanel.qml:17: TypeError: Cannot read property 'selectedBook' of null
+file:///G:/CODEX/New Manga.worktrees/DERIVED-GC-1/src/ui/qml/bookshelf/BookshelfView.qml:82: TypeError: Cannot read property 'isEmpty' of null
+file:///G:/CODEX/New Manga.worktrees/DERIVED-GC-1/src/ui/qml/bookshelf/BookGrid.qml:51: TypeError: Cannot read property 'viewMode' of null
+file:///G:/CODEX/New Manga.worktrees/DERIVED-GC-1/src/ui/qml/bookshelf/BookGrid.qml:54: TypeError: Cannot read property 'bookListModel' of null
+file:///G:/CODEX/New Manga.worktrees/DERIVED-GC-1/src/ui/qml/bookshelf/BookGrid.qml:25: TypeError: Cannot read property 'viewMode' of null
+file:///G:/CODEX/New Manga.worktrees/DERIVED-GC-1/src/ui/qml/bookshelf/BookGrid.qml:29: TypeError: Cannot read property 'bookListModel' of null
+file:///G:/CODEX/New Manga.worktrees/DERIVED-GC-1/src/ui/qml/bookshelf/BookshelfView.qml:66: TypeError: Cannot read property 'isEmpty' of null
+file:///G:/CODEX/New Manga.worktrees/DERIVED-GC-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:77: TypeError: Cannot read property 'viewMode' of null
+file:///G:/CODEX/New Manga.worktrees/DERIVED-GC-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:71: TypeError: Cannot read property 'sortBy' of null
+file:///G:/CODEX/New Manga.worktrees/DERIVED-GC-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:66: TypeError: Cannot read property 'archivedFilter' of null
+file:///G:/CODEX/New Manga.worktrees/DERIVED-GC-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:59: TypeError: Cannot read property 'favoritesOnly' of null
+.file:///G:/CODEX/New Manga.worktrees/DERIVED-GC-1/src/ui/qml/bookshelf/ChapterList.qml:31: TypeError: Cannot read property 'chapterListModel' of null
+file:///G:/CODEX/New Manga.worktrees/DERIVED-GC-1/src/ui/qml/bookshelf/BookDetailPanel.qml:17: TypeError: Cannot read property 'selectedBook' of null
+file:///G:/CODEX/New Manga.worktrees/DERIVED-GC-1/src/ui/qml/bookshelf/BookshelfView.qml:82: TypeError: Cannot read property 'isEmpty' of null
+file:///G:/CODEX/New Manga.worktrees/DERIVED-GC-1/src/ui/qml/bookshelf/BookGrid.qml:51: TypeError: Cannot read property 'viewMode' of null
+file:///G:/CODEX/New Manga.worktrees/DERIVED-GC-1/src/ui/qml/bookshelf/BookGrid.qml:54: TypeError: Cannot read property 'bookListModel' of null
+file:///G:/CODEX/New Manga.worktrees/DERIVED-GC-1/src/ui/qml/bookshelf/BookGrid.qml:25: TypeError: Cannot read property 'viewMode' of null
+file:///G:/CODEX/New Manga.worktrees/DERIVED-GC-1/src/ui/qml/bookshelf/BookGrid.qml:29: TypeError: Cannot read property 'bookListModel' of null
+file:///G:/CODEX/New Manga.worktrees/DERIVED-GC-1/src/ui/qml/bookshelf/BookshelfView.qml:66: TypeError: Cannot read property 'isEmpty' of null
+file:///G:/CODEX/New Manga.worktrees/DERIVED-GC-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:77: TypeError: Cannot read property 'viewMode' of null
+file:///G:/CODEX/New Manga.worktrees/DERIVED-GC-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:71: TypeError: Cannot read property 'sortBy' of null
+file:///G:/CODEX/New Manga.worktrees/DERIVED-GC-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:66: TypeError: Cannot read property 'archivedFilter' of null
+file:///G:/CODEX/New Manga.worktrees/DERIVED-GC-1/src/ui/qml/bookshelf/BookshelfToolbar.qml:59: TypeError: Cannot read property 'favoritesOnly' of null
+...................................................................... [ 95%]
 ........................................................................ [ 99%]
-...........                                                              [100%]
+.............                                                            [100%]
 ============================== warnings summary ===============================
 tests/core/test_rc4_stdio_render_preview.py::test_production_stdio_decodes_nmfr_renders_text_and_publishes_readable_preview
   G:\CODEX\New Manga.worktrees\DERIVED-GC-1\tests\core\test_rc4_stdio_render_preview.py:245: DeprecationWarning: Image.Image.getdata is deprecated and will be removed in Pillow 14 (2027-10-15). Use get_flattened_data instead.
@@ -396,5 +396,5 @@ tests/rendering/test_pillow_rendering.py::test_pillow_compositor_draws_centered_
     for red, green, blue, _alpha in image.getdata()
 
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
-1882 passed, 1 skipped, 3 warnings in 116.14s (0:01:56)
+1884 passed, 1 skipped, 3 warnings in 114.63s (0:01:54)
 EXIT=0
