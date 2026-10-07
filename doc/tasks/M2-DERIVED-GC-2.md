@@ -2,7 +2,7 @@
 id: M2-DERIVED-GC-2
 title: 轮换退役 preview 引用安全回收实现
 kind: feature
-status: ready
+status: in_progress
 approval: user_authorized_release_20261007
 suggested_owner: ZCode
 owner: ZCode
@@ -20,6 +20,8 @@ integration_commit: null
 # M2-DERIVED-GC-2：正式释放，待 ZCode 认领
 
 2026-10-07 用户明确授权 Codex 正式释放；Task=ready，ExecutionState=IDLE / AWAITING_OWNER_CLAIM。唯一释放任务为本 Task，Owner=ZCode，非作者 Reviewer=DeepSeek Harness，Integrator=Codex。允许路径、共享 seam、AC/G1-G7 和禁止范围沿用已批准设计及本文件，未扩大产品范围。ZCode 收到实际 release commit 并核对干净恢复点后才认领 in_progress；本轮未派发或启动生产实施。
+
+**2026-10-07 Owner 认领（ZCode）**：恢复点核对通过——worktree `G:/CODEX/New Manga.worktrees/DERIVED-GC-2-zcode` 分支 `agent/zcode/M2-DERIVED-GC-2`、HEAD=`5896db8c64b90b53b015eb9c46c7dab6ab29210b`（clean）、common-dir=`G:/CODEX/New Manga/.git`、与 release 恢复点一致；主仓库额外 HEAD=`554a9845` 为指令所述治理 commit。Task 依赖（设计@e4c0967f 已批、GC-1@44859014、RC4@0a7e0d5b）核实已集成。Owner=ZCode 本会话认领 in_progress；Reviewer=DeepSeek Harness（非作者）、Integrator=Codex 不变。AC/G1-G7 维持 planned / NOT_RUN。
 
 设计集成=ad75fadc2944983b4322f353176ba70cf0b0b7ae，设计批准 head=e4c0967f83a08d9b9e2d84605d17923e81a844b6，DSH r4 approve_with_conditions（0P0-P3）；两个 P4 已纳入下文。base_commit 保留设计基线，不把治理同步冒充产品基线变化。allocated_head 是初次分配的历史快照；正式释放后的实测 HEAD 以 verification/M2-DERIVED-GC-2/release-recovery.md 为准（释放提交后追加，避免自引用 hash）。初始 main=02ff655b、Owner worktree=e093f010，均 clean、common-dir 正确；ad75fadc 后只有已知治理差量。
 
