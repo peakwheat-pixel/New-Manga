@@ -1,0 +1,31 @@
+SHELL=PowerShell
+PYTHON=C:\Python314\python.exe
+COMMAND=python verification/M2-DERIVED-GC-2-DESIGN/check_design.py
+COMMAND=git rev-parse HEAD
+8dd88c56becbb5a5c1942aeb7664c24ce86b9944
+EXIT=0
+COMMAND=git status --short --branch
+## codex/m2-derived-gc-2-design
+?? doc/handoffs/M2-DERIVED-GC-2-DESIGN-codex-8dd88c56.md
+EXIT=0
+COMMAND=git rev-parse --path-format=absolute --git-common-dir
+G:/CODEX/New Manga/.git
+EXIT=0
+COMMAND=git merge-base --is-ancestor 44859014 8dd88c56becbb5a5c1942aeb7664c24ce86b9944
+
+EXIT=0
+COMMAND=git merge-base --is-ancestor 0a7e0d5b 8dd88c56becbb5a5c1942aeb7664c24ce86b9944
+
+EXIT=0
+COMMAND=git diff ab4b7c110a7c828f20d2d0787bd71144336d2e44 --name-only -- src apps tests requirements.txt packaging
+
+EXIT=0
+COMMAND=git diff --check
+
+EXIT=0
+COMMAND=git ls-files --others --exclude-standard
+doc/handoffs/M2-DERIVED-GC-2-DESIGN-codex-8dd88c56.md
+EXIT=0
+PASS: dependency ancestry, zero product-tree delta, design matrix/Gate completeness, source paths/line bounds
+NOT_RUN: future implementation/runtime/native locks/product regression; design check is not a deletion-safety test
+EXIT=0

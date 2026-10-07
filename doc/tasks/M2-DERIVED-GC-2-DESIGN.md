@@ -2,7 +2,7 @@
 id: M2-DERIVED-GC-2-DESIGN
 title: 轮换旧 preview 引用安全回收设计
 kind: design
-status: ready
+status: approved
 approval: user_directive_2026-10-07_preview_reference_safe_design
 suggested_owner: Codex
 owner: Codex
@@ -26,9 +26,9 @@ Live Git main@ab4b7c11 clean，common-dir=G:/CODEX/New Manga/.git；32f9b932..ab
 
 ## Acceptance Criteria
 
-- [ ] AC1：固定 HEAD 下追踪 publisher/catalog、render current/pinned Revision、Core/Rust 独立进程、grant/轮换/读取所有相关调用链，并提供文件/行证据。
-- [ ] AC2：给出可删/必留/未知矩阵；仅 TTL、年龄、数量不足以授权删除；Managed Copy/源文件/人工修改/Lock 与 current/pinned 均受保护。
-- [ ] AC3：最小生命周期方案明确 issue 与 delete 互斥、在途读取、崩溃恢复、未知历史资源保留、目录/文件逃逸；需要共享 seam/Schema 时明确后继授权范围，不更改现行契约。
+- [x] AC1：固定 HEAD 下追踪 publisher/catalog、render current/pinned Revision、Core/Rust 独立进程、grant/轮换/读取所有相关调用链，并提供文件/行证据。
+- [x] AC2：给出可删/必留/未知矩阵；仅 TTL、年龄、数量不足以授权删除；Managed Copy/源文件/人工修改/Lock 与 current/pinned 均受保护。
+- [x] AC3：最小生命周期方案明确 issue 与 delete 互斥、在途读取、崩溃恢复、未知历史资源保留、目录/文件逃逸；需要共享 seam/Schema 时明确后继授权范围，不更改现行契约。
 - [ ] AC4：拟定后继实现 Task 的实际 base/分支/worktree/allowed_paths/交付/验证 Gate 与可转发指令；本轮只准备、不启动实现。
 - [ ] AC5：设计范围 diff 对 src/apps/tests/依赖/Schema 为零；文档检查有命令+HEAD+EXIT；非作者 DSH 固定 head 审查、条件闭合、Codex 集成后才 done。
 
@@ -39,6 +39,7 @@ Live Git main@ab4b7c11 clean，common-dir=G:/CODEX/New Manga/.git；32f9b932..ab
 - verification/M2-DERIVED-GC-2-DESIGN/**
 - doc/handoffs/M2-DERIVED-GC-2-DESIGN-*.md
 - doc/reviews/M2-DERIVED-GC-2-DESIGN-*.md（Codex 原字节导入 DSH 报告，不代写独立批准）
+- doc/tasks/M2-DERIVED-GC-2.md（用户指定的后继准备；只创建 proposed，填实际恢复点与范围，不释放/实施）
 - Codex 元数据维护：doc/REBASELINE_PLAN.md、doc/STATUS.md、doc/00_INDEX.md、doc/tasks/README.md。
 
 共享变更裁量：本轮可记录内部 catalog/host bridge 生命周期 seam 的设计建议；生产实现、catalog Schema、主产品 Schema、协议字段与依赖变更均未获本轮写权限，必须在后继 Task 明确冻结。
@@ -56,8 +57,22 @@ src/**、apps/**、tests/**、requirements*、Schema/migration、用户数据/�
 | 独立 Review | 真实 DSH，固定 reviewed_head；缺环境标 NOT_RUN | planned / NOT_RUN | 原报告 |
 | 产品测试 | 本轮零产品改动，不以历史 PASS 代本轮验证 | NOT_RUN（设计范围） | 不适用 |
 
+执行覆盖：Git/依赖/文档检查已 executed，EXIT=0，见 design-check.log；早期验证器失败保留 attempt1/2。真实 DSH r1 正在独立 fixed-head=4a930c61 工作区审查；其后作者的 hash/句柄保护、逐项证据和复用 helper/全入口接线补强必须固定新 head 再复审，不延用旧批准。
+
 ## 交付与运行记录
 
 - release：本 commit；后续固定 delivery head 与 Handoff 追加，不自引用本文件提交 Hash。
-- ExecutionState：IDLE；创建 worktree 后 Owner 将状态转 in_progress/ACTIVE。
+- ExecutionState：ACTIVE；创建 worktree 后 Owner 将状态转 in_progress/ACTIVE。
 - 下一步：实际调用链取证 → 最小设计 → 固定交付 → DSH 独立 Review → 条件闭合 → Codex 集成；不启动后继实现。
+
+## 固定交付（2026-10-07）
+
+设计交付=8dd88c56becbb5a5c1942aeb7664c24ce86b9944；Handoff=doc/handoffs/M2-DERIVED-GC-2-DESIGN-codex-8dd88c56.md；文档check最新EXIT=0，产品/native租约/回收NOT_RUN。ExecutionState=CHECKPOINTED，下一步真实DSH非作者Review；两个验证器失败尝试日志已保留，未声称产品失败/通过。
+
+## 最终独立审查（设计批准，待集成/后继准备）
+
+最终delivery=af09c00d6dea1beef50d4bb7c6c2ada74670073c；Handoff入库=fdfd2351，口径精度metadata=e4c0967f83a08d9b9e2d84605d17923e81a844b6（真实reviewed_head）。DSH r1有条件批准→r2/r3 changes_requested→r4 approve_with_conditions；最终0P0/P1/P2/P3、2P4。原报告doc/reviews/M2-DERIVED-GC-2-DESIGN-e4c0967f-dsh-r4.md；session与SHA见review-disposition.md。设计稿仍为该固定reviewed_head原内容，后续只治理/证据。
+
+Codex本机文档/Git检查executed EXIT=0，完整设计范围diff --check=0；src/apps/tests/packaging/历史driver/依赖零实际变动。DSH命令复跑BLOCKED（其shell Win32 5），独立静态executed；native/回收/产品回归NOT_RUN。真实调用点census EXIT=0；一次rg参数转义失败attempt保留，非产品失败。
+
+r4 C1由Codex merge后实际填proposed后继Task恢复点/路径与指令二；C4两个P4写入下一指令（AC1自建derived根+run2不重复init；SHA冻结历史probe不进新Gate）。C2/C3是未来实现的G1-G7与新fixed-head DSH Review要求，均不能借设计批准豁免。当前尚非done，待AC4/AC5后半闭合；不启动实现。

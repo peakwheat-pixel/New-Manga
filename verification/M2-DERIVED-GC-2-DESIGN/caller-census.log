@@ -1,0 +1,53 @@
+SHELL=PowerShell; COMMAND=rg -n -F with explicit patterns; read-only census; initializer/collector NOT_RUN
+e4c0967f83a08d9b9e2d84605d17923e81a844b6
+verification/M2-RC2/run_e2e.py:9:     (``python -m infrastructure.resource_channel.catalog_loader``) into the
+verification/M2-RC2/run_e2e.py:114:def seed_catalog() -> tuple[int, str]:
+verification/M2-RC2/run_e2e.py:123:            "infrastructure.resource_channel.catalog_loader",
+verification/M2-RC2/run_e2e.py:149:            "$ python -m infrastructure.resource_channel.catalog_loader "
+verification/M2-AC1/run_e2e.py:177:def launch_env(lab_root: Path, sample: str, results_name: str, venv_python: str) -> dict:
+packaging/m2ac5/run_clean_start_e2e.py:14:     catalog_loader.exe (the frozen equivalent of the dev runners'
+packaging/m2ac5/run_clean_start_e2e.py:15:     ``python -m infrastructure.resource_channel.catalog_loader``), then the
+packaging/m2ac5/run_clean_start_e2e.py:70:    "catalog_loader.exe",
+packaging/m2ac5/run_clean_start_e2e.py:279:def seed_catalog_packaged(install_dir: Path, catalog_db: Path) -> tuple[bool, str]:
+packaging/m2ac5/run_clean_start_e2e.py:280:    """Launcher-side seeding through the packaged catalog_loader.exe."""
+packaging/m2ac5/run_clean_start_e2e.py:281:    loader = install_dir / "resources" / "core-sidecar" / "catalog_loader.exe"
+packaging/m2ac5/run_clean_start_e2e.py:306:        return False, f"catalog_loader exit={completed.returncode}: {completed.stderr[-400:]}"
+packaging/m2ac5/run_clean_start_e2e.py:307:    return True, "catalog seeded (5 rows) via packaged catalog_loader.exe"
+packaging/m2ac5/run_clean_start_e2e.py:806:        ("host_bridge.exe", "core_service.exe", "acceptance_bridge.exe", "catalog_loader.exe", "python.exe")
+packaging/m2ac5/run_clean_start_e2e.py:817:        and survivors["catalog_loader.exe"] == 0,
+apps/desktop/src-tauri/src/main.rs:562:// host_bridge / core_service / acceptance_bridge / catalog_loader).
+apps/desktop/src-tauri/src/main.rs:685:    // launcher seeds the Core/SQLite store (catalog_loader in packaged form)
+apps/desktop/src-tauri/src/main.rs:1508:            .arg("infrastructure.resource_channel.catalog_loader")
+apps/desktop/src-tauri/src/main.rs:1563:            .arg("infrastructure.resource_channel.catalog_loader")
+tests/core/test_derived_gc.py:29:    catalog = ResourceCatalogStore(tmp_path / "catalog.sqlite")
+tests/core/test_derived_gc.py:114:    reopened = ResourceCatalogStore(tmp_path / "catalog.sqlite")
+src/bootstrap/core_service.py:1689:    catalog = ResourceCatalogStore(catalog_db)
+tests/core/test_page_resource_resolve.py:81:    catalog = ResourceCatalogStore(catalog_db)
+tests/core/test_page_resource_resolve.py:141:        catalog = ResourceCatalogStore(tmp_path / "catalog" / "catalog.sqlite")
+tests/core/test_rc4_stdio_render_preview.py:175:    catalog = ResourceCatalogStore(catalog_db)
+src/bootstrap/acceptance_bridge.py:411:        catalog = ResourceCatalogStore(self._catalog_db)
+packaging/release-gate/run_release_gate.py:40:         against a catalog seeded through the packaged catalog_loader.exe
+packaging/release-gate/run_release_gate.py:42:       - catalog_loader.exe: seed a lab data root, then read the rows back
+packaging/release-gate/run_release_gate.py:44:         ``src/infrastructure/resource_channel/catalog_loader.py``)
+packaging/release-gate/run_release_gate.py:99:    "catalog_loader.exe",
+packaging/release-gate/run_release_gate.py:107:    "catalog_loader",
+packaging/release-gate/run_release_gate.py:654:    frozen explicit test configuration, M2-AC5 AC1 mode) — the catalog_loader
+packaging/release-gate/run_release_gate.py:826:def roundtrip_catalog_loader(exe: Path, env: dict, lab: Path) -> dict:
+packaging/release-gate/run_release_gate.py:829:    (AC4: loader CLI params must be read from catalog_loader.py, not assumed)."""
+packaging/release-gate/run_release_gate.py:830:    source = REPO_ROOT / "src" / "infrastructure" / "resource_channel" / "catalog_loader.py"
+packaging/release-gate/run_release_gate.py:1035:    log("phase 3: AC4 catalog_loader seed (lab data root) + sqlite read-back")
+packaging/release-gate/run_release_gate.py:1038:    loader_detail = roundtrip_catalog_loader(sidecar_dir / "catalog_loader.exe", env, lab)
+src/infrastructure/resource_channel\host_bridge.py:70:        self._catalog = catalog or ResourceCatalogStore(":memory:")
+src/infrastructure/resource_channel\host_bridge.py:198:        ResourceCatalogStore(Path(catalog_db)) if catalog_db else ResourceCatalogStore(":memory:")
+tests/m2_resource_channel\test_bridge_and_thresholds.py:26:        catalog=catalog or ResourceCatalogStore(":memory:"),
+tests/m2_resource_channel\test_bridge_and_thresholds.py:38:        catalog = ResourceCatalogStore(":memory:")
+tests/m2_resource_channel\test_bridge_and_thresholds.py:76:        catalog = ResourceCatalogStore(":memory:")
+src/infrastructure/resource_channel\catalog_store.py:6:loader entry point (``catalog_loader``) or the product Core; reads happen at
+src/infrastructure/resource_channel\catalog_loader.py:10:  python -m infrastructure.resource_channel.catalog_loader --db PATH \
+src/infrastructure/resource_channel\catalog_loader.py:79:    store = ResourceCatalogStore(Path(args.db))
+tests/m2_resource_channel\test_catalog_authority.py:32:    return ResourceCatalogStore(":memory:")
+tests/m2_resource_channel\test_catalog_authority.py:65:        first = ResourceCatalogStore(db)
+tests/m2_resource_channel\test_catalog_authority.py:68:        second = ResourceCatalogStore(db)
+tests/m2_resource_channel\test_sidecar_isolation.py:98:    def test_catalog_loader_entry_loads_no_unrelated_adapters(self):
+tests/m2_resource_channel\test_sidecar_isolation.py:101:            "import infrastructure.resource_channel.catalog_loader; "
+EXIT=0

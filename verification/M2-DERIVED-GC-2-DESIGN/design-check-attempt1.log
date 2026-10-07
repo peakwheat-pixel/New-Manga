@@ -1,0 +1,32 @@
+SHELL=PowerShell
+PYTHON=C:\Python314\python.exe
+COMMAND=python verification/M2-DERIVED-GC-2-DESIGN/check_design.py
+COMMAND=git rev-parse HEAD
+69d7cc084561e2042f0172b5239a158ebc9db04b
+EXIT=0
+COMMAND=git rev-parse --path-format=absolute --git-common-dir
+G:/CODEX/New Manga/.git
+EXIT=0
+COMMAND=git merge-base --is-ancestor 44859014 69d7cc084561e2042f0172b5239a158ebc9db04b
+
+EXIT=0
+COMMAND=git merge-base --is-ancestor 0a7e0d5b 69d7cc084561e2042f0172b5239a158ebc9db04b
+
+EXIT=0
+COMMAND=git diff ab4b7c110a7c828f20d2d0787bd71144336d2e44 --name-only -- src apps tests requirements.txt packaging
+
+EXIT=0
+COMMAND=git diff --check
+
+EXIT=0
+COMMAND=git ls-files --others --exclude-standard
+doc/contracts/M2_DERIVED_PREVIEW_GC_DESIGN.md
+verification/M2-DERIVED-GC-2-DESIGN/check_design.py
+verification/M2-DERIVED-GC-2-DESIGN/reality-source.log
+EXIT=0
+Traceback (most recent call last):
+  File "G:\CODEX\New Manga.worktrees\DERIVED-GC-2-DESIGN\verification\M2-DERIVED-GC-2-DESIGN\check_design.py", line 29, in <module>
+    assert f'| {label} |' in text, label
+           ^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: G1
+EXIT=1
