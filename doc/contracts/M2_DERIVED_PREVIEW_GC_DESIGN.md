@@ -55,7 +55,7 @@ retired=1 表示“此 key 曾被一个已知轮换显式退役”，**不表示
 
 为避免新增同步 round-trip 与锁内排队，`mark_preview_retired` 是 catalog/host_bridge 内部操作：Rust 在**既有旧 key revoke_resource 请求**附 trusted `retire_preview=true`，channel 先成功 revoke，再尝试 mark；普通 revoke（包括失败时撤销新 key）不带此位。mark 不成功仍返回原 revoke 成功结果，诊断只到 stderr；CoreChannel trait 窄追加轮换专用方法/默认 mock，不改旧 revoke_resource 语义，不加 WebView payload。SQLite mark 用独立短事务 **busy_timeout=0、零重试**，不得沿默认 5s busy 等待；仅操作一个 key，不扫描/核验文件、不等待 lease（全生命周期共享已取得）。`sqlite3.Error`、OSError 以及非预期 Exception 必须在 mark 分支捕获为 no-op+诊断，不能逃出 `_dispatch` 终止 channel。格式非法仍 REF_MALFORMED；未知来源只是 no-op。新增 DB 等待上界为 0；不承诺已有 stdio/OS I/O 的绝对墙钟上界，需 G2 实测锁争用下新增延迟和 grant 连续可用。不能为 mark 超时杀掉 channel/有效 grant。
 
-mark 明确使用**独立 SQLite 连接**（既存 catalog URI mode=rw、timeout=0；不跑_SCHEMA、不改 journal/WAL/schema，不创建缺失 DB），一次短事务，finally关闭；借用 store 的既有生命周期租约。不能修改 publisher/store 共享连接的 busy_timeout，正常 upsert 默认等待语义保持。G2 同时验证独立连接异常关闭、共享连接busy策略未变、普通WebView revoke不具退役能力。
+mark 明确使用**独立 SQLite 连接**（既存 catalog URI mode=rw、timeout=0；不跑_SCHEMA、不改 journal_mode/WAL配置/schema，不创建缺失 DB；仅其正常metadata事务可产生journal/WAL写入），一次短事务，finally关闭；借用 store 的既有生命周期租约。不能修改 publisher/store 共享连接的 busy_timeout，正常 upsert 默认等待语义保持。G2 同时验证独立连接异常关闭、共享连接busy策略未变、普通WebView revoke不具退役能力。
 
 ### 2.3 命名空间静默保护：跨进程，而非 Python mutex
 
@@ -67,7 +67,20 @@ mark 明确使用**独立 SQLite 连接**（既存 catalog URI mode=rw、timeout
 
 无调用方保护上下文时，file-backed store 从既有 namespace 绑定取得删除域，顺序冻结如下：拒绝 catalog 路径 reparse/核验并固定文件 identity→SQLite **URI mode=ro & immutable=1** 临时 bootstrap 连接（仅读单行 namespace，不执行 `_SCHEMA`/DDL/PRAGMA写/WAL checkpoint/业务查询；禁止创建缺失 DB）→关闭连接→把绑定视为不可信定位 hint，取得相应 derived 锁→以业务连接**重新读取并验证** namespace/version/catalog+derived identity 全一致→才初始化允许表并服务。immutable bootstrap 可能忽略 WAL 中未 checkpoint 的新绑定，缺行/旧值只允许 refusal/UNKNOWN，不能猜测 root、修改绑定或无租约写入；没有第二阶段再读即不能服务。hint 变更、DB identity 替换/半绑定或任一错误拒绝业务、两个 sweep 禁用，不能回退无租约连接。只读定位不 issue/publish/删文件，所以尚未取得租约不构成资源读写窗口。
 
-无绑定的 loader/实验 catalog 无 GC 权限且默认拒绝业务写入；测试/首次新库装配必须**显式传入已验证 derived root 与自有受控保护上下文**，由 §2.3 下一段完成初始化，不能通过从 catalog 路径推导目录或伪造来源恢复旧库。Core/channel 配置已有 derived root，也可显式传入并在锁下验证 namespace；loader/acceptance_bridge 无需新增 root 参数，已绑定时由上述 store bootstrap 覆盖，未绑定时安全拒绝。production Core/channel、loader、acceptance_bridge、probe/ac1 的 file-backed store、测试直接 store/publisher 构造均须覆盖；probe/ac1 与 :memory: 永不启动 GC。可检测信号是绑定缺失/版本不支持/identity失配/租约获取失败/受控入口覆盖清单缺项；**旧版非协作进程不存在可靠运行时检测信号**，只能 G7 用受控全退出迁移证明，否则 sweep 恒禁用（含 orphan），不拿零共享锁替代证据。
+无绑定的 loader/实验 catalog 无 GC 权限且默认拒绝业务写入；测试/首次新库装配必须**显式传入已验证 derived root 与自有受控保护上下文**，由下述显式初始化完成，不能通过从 catalog 路径推导目录或伪造来源恢复旧库。Core/channel 配置已有 derived root，也可显式传入并在锁下验证 namespace；**已绑定**普通loader/acceptance_bridge默认调用无需root参数，由上述store bootstrap覆盖；首次隔离seed的新增可信flag见下段，未绑定普通调用仍拒绝。production Core/channel、loader、acceptance_bridge、probe/ac1 的 file-backed store、测试直接 store/publisher 构造均须覆盖；probe/ac1 与 :memory: 永不启动 GC。可检测信号是绑定缺失/版本不支持/identity失配/租约获取失败/受控入口覆盖清单缺项；**旧版非协作进程不存在可靠运行时检测信号**，只能 G7 用受控全退出迁移证明，否则 sweep 恒禁用（含 orphan），不拿零共享锁替代证据。
+
+上述“不需root参数”只指**已绑定的普通业务调用**；首次隔离 fixture 初始化必须另有显式入口，冻结为现有 ResourceCatalogStore 内的窄函数 `initialize_namespace(catalog_db, derived_root)`：借用下述相同独占初始化步骤，只接受本次自有新建/空 catalog 与已验证隔离 derived 根，目录已有测试 asset 可以保留；catalog 已有资源行/来源/绑定或未知历史不自动迁移/覆盖。函数只建立 namespace、不开启任何 GC、不生成来源、不删除字节/行，不是通用GC框架。production Core首次新库也复用此步骤；旧产品库迁移仍须G7单独证明，不走fixture入口。
+
+| 已知入口（最小覆盖清单） | 初始化/接线顺序 | 后继允许改动落点 |
+|---|---|---|
+| production Core | 验证配置derived root→独占→受控新库初始化或核验旧绑定→业务store借用保护→GC Gate→共享→ping | core_service.py / catalog_store.py |
+| production channel / probe / ac1 channel | 既有env提供derived root；file-backed store核验已绑定 namespace并持共享。probe/ac1无Core时必须先由fixture launcher初始化/seed，永不GC | host_bridge.py；main.rs既有loader测试seed调用 |
+| 只有 --db 的普通catalog_loader | 已绑定→只读hint bootstrap→共享→重读→原set/remove；未绑定默认拒绝 | catalog_store.py，不猜root |
+| loader首次隔离seed（dev/packaged） | 窄追加可信CLI `--initialize-preview-namespace DERIVED_ROOT` →调用上述函数→关闭独占/转共享→普通seed；缺参数不初始化，失败不继续seed。不新增WebView能力 | catalog_loader.py；main.rs两处sidecar测试seed；下面两个packaged runner仅fixture参数 |
+| AcceptanceBridge(catalog_db=...) | 其构造调用不变；测试/packaged launcher先显式初始化catalog，之后bridge按已绑定路径共享；不能桥内自动补猜测 | tests/m2_acceptance/test_acceptance_loop.py 的_LoopHarness；packaged fixture launcher |
+| 直接store/publisher的隔离pytest | fixture先调用initialize_namespace，以实际自有tmp derived root绑定再构造file-backed store；:memory:不需要 | §5点名测试 |
+
+packaged launcher具体为 `packaging/m2ac5/run_clean_start_e2e.py:279–307` seed_catalog_packaged 和 `packaging/release-gate/run_release_gate.py:826–868` roundtrip_catalog_loader；只把本次lab derived根传给上述初始化flag/调用，保持其余验收项、安装/发布行为与阈值不变。不因引入flag让默认loader任意claim生产旧根。已存在的fixture seed文件不会因绑定创建而变成可回收来源。
 
 拟议 catalog `preview_namespace` 只有一行（singleton 主键），保存上述 protocol_version、derived canonical/identity、catalog canonical/identity，与 lock 文件内容一致。初始 catalog 不存在时，先持 derived 独占→创建空 catalog→取得实际 catalog identity→受控事务登记；竞争不同 derived 根以 singleton 唯一约束拒绝第二绑定。不一致不能改写旧绑定，也不能无租约继续访问共享 catalog：相关入口 typed unavailable/refusal，扫描一律跳过；不涉及产品 app.db Schema。初始化崩溃/半绑定/根重建均 UNKNOWN，待重新受控核验，不自动覆盖恢复。
 
@@ -155,6 +168,7 @@ GC 打开候选使用读 + DELETE 权限、仅 FILE_SHARE_READ（不允许写/�
 | 文件/路径（拟议 allowed_paths） | 最小变化 |
 |---|---|
 | src/infrastructure/resource_channel/catalog_store.py | 辅助来源表、事务型登记/退役、metadata 恢复；调用同包 native helper，无通用框架。 |
+| src/infrastructure/resource_channel/catalog_loader.py | 仅隔离fixture显式initialize-preview-namespace参数接线，默认已绑定seed语义保持；未绑定不自动猜root/迁移。 |
 | src/infrastructure/resource_channel/handle_resolver.py | 复用既有 `_identity_of/_size_of/_final_path_of/_digest_through` 等 ctypes 句柄事实，窄追加 namespace 文件租约及核验句柄 delete disposition；现有 reader 行为/share flags 不变。该模块已在 F-05 白名单，不复制第二套 Win32 identity/read 校验。 |
 | src/infrastructure/resource_channel/render_preview.py | 已有 publish 扩显式来源、受保护窗口内 sweep；原 publish_original 行为不改。 |
 | src/bootstrap/core_service.py | 发布时复用 artifact repo 确切源关联、Core 启动/退出共享租约、独占 GC/current-pinned 查询装配。 |
@@ -162,10 +176,12 @@ GC 打开候选使用读 + DELETE 权限、仅 FILE_SHARE_READ（不允许写/�
 | apps/desktop/src-tauri/src/core_bridge.rs | trusted mark 调用与 mock 定向支持；不改 public Tauri 命令表。 |
 | apps/desktop/src-tauri/src/library_bridge.rs | 仅现有 core.ping 启动就绪 deadline/自有 child 清理；正常业务 round_trip/wire 不变。 |
 | apps/desktop/src-tauri/src/main.rs | 生产启动顺序与成功 revoke 后 mark；保持 rerender 锁/失败/same-key/None语义。 |
-| tests/core/test_derived_gc.py、tests/core/test_rc4_stdio_render_preview.py、tests/core/test_page_resource_resolve.py、tests/m2_resource_channel/test_catalog_authority.py、tests/m2_resource_channel/test_bridge_and_thresholds.py、tests/m2_resource_channel/test_handle_resolver.py、tests/m2_resource_channel/test_sidecar_isolation.py | 改动所需判别断言及既有file-backed store隔离fixture显式初始化；原名单之外增测试文件需在实现 Task 点名；沿用已有 pytest。 |
+| tests/core/test_derived_gc.py、tests/core/test_rc4_stdio_render_preview.py、tests/core/test_page_resource_resolve.py、tests/m2_resource_channel/test_catalog_authority.py、tests/m2_resource_channel/test_bridge_and_thresholds.py、tests/m2_resource_channel/test_handle_resolver.py、tests/m2_resource_channel/test_sidecar_isolation.py、tests/m2_acceptance/test_acceptance_loop.py | 改动所需判别断言及既有file-backed store隔离fixture显式初始化；原名单之外增测试文件需在实现 Task 点名；沿用已有 pytest。 |
+| packaging/m2ac5/run_clean_start_e2e.py、packaging/release-gate/run_release_gate.py | 唯一packaging范围例外：隔离fixture seed初始化flag/root参数。禁止修改spec/build/install/deploy流程、通过阈值或跳过现有检查；本轮只设计、不执行这些runner。 |
+| verification/M2-RC2/run_e2e.py、verification/M2-AC1/run_e2e.py | 只改当前可执行driver的新隔离fixture初始化接线；历史报告/原始运行日志/结果文件一律不改，后继新运行日志落自己的verification目录。 |
 | doc/contracts/M2_DERIVED_PREVIEW_GC_DESIGN.md、doc/contracts/M2-C1_TYPED_IPC_CONTRACT.md 的窄注记、正式 Task/Handoff/verification | 设计批准后由 Codex 追认内部生命周期字段与行为；不改现有 WebView wire。 |
 
-明确允许的后继共享变更：**仅专用 catalog 来源/namespace 辅助元数据、channel 更新既有 retired 的窄写权限，以及 trusted revoke 请求的内部 retire_preview 位/轮换方法**；source_artifact_revision_id 不发 WebView、不新增 Tauri IPC/ACL、不变 CatalogEntry/issue 请求、不变 T6 撤销/TTL。现行产品 schema.py、migration、ArtifactRepositoryPort、ResourceChannelService 的公共语义、读取 share flags、React、依赖、packaging/spec、Legacy、用户文件禁止修改。
+明确允许的后继共享变更：**仅专用 catalog 来源/namespace 辅助元数据、channel 更新既有 retired 的窄写权限、trusted revoke 请求的内部 retire_preview 位/轮换方法及可信隔离loader初始化flag**；source_artifact_revision_id 不发 WebView、不新增 Tauri IPC/ACL、不变 CatalogEntry/issue 请求、不变 T6 撤销/TTL。现行产品 schema.py、migration、ArtifactRepositoryPort、ResourceChannelService 的公共语义、读取 share flags、React、依赖、packaging/spec/build/部署流程、Legacy、用户文件禁止修改；仅上述两个现成runner的fixture参数属于packaging例外。
 
 如实现无法保持上述边界，或需要解决混合旧 runtime 的产品启动/升级取舍，先记 BLOCKED，交 Codex 明确扩展 Task/必要用户裁决；不扩大当前设计授权。
 
@@ -183,12 +199,24 @@ GC 打开候选使用读 + DELETE 权限、仅 FILE_SHARE_READ（不允许写/�
 
 G3 补充 bootstrap 判别：只有 --db 的 loader/acceptance_bridge 能在已绑定 catalog 定位并取得同一共享锁；readonly hint不能创建DB/表/业务行，缺行或未checkpoint绑定拒绝，hint后绑定变更必须拒绝；缺少再验证的反例应红。无绑定测试库由显式自有derived保护初始化；不以测试兼容为由给生产未绑定库开无租约写通道。G2 补充：WebView 可达 `revoke_resource_refs` 仍调用普通 revoke，不携 retire_preview；失败撤销新key同样不携该位。
 
+G3/G6必须覆盖首次新库链：loader显式初始化+seed→probe/ac1 shared服务、_LoopHarness预初始化→catalog_pages、main.rs真实sidecar seed、两个packaged runner fixture传参；无flag旧未知库不claim/不删，有绑定冲突flag不覆盖。初始化只metadata不代表G7批准启用。G6定向pytest同时跑tests/m2_acceptance全目录；打包入口因引用的生产模块行为变化，固定head构建及对应runner不得用历史PASS替代，缺干净环境明确BLOCKED，不修改其成功门槛。
+
 建议命令（路径须采用实现 worktree和实测环境，非本稿执行结果）：
 
 ```powershell
-& 'G:/CODEX/New Manga.task-envs/T1.1.1-impl-py312/Scripts/python.exe' -m pytest -q tests/core/test_derived_gc.py tests/core/test_rc4_stdio_render_preview.py tests/m2_resource_channel/test_catalog_authority.py tests/m2_resource_channel/test_handle_resolver.py tests/m2_resource_channel/test_sidecar_isolation.py
+& 'G:/CODEX/New Manga.task-envs/T1.1.1-impl-py312/Scripts/python.exe' -m pytest -q tests/core/test_derived_gc.py tests/core/test_rc4_stdio_render_preview.py tests/core/test_page_resource_resolve.py tests/m2_resource_channel tests/m2_acceptance
 cargo test --manifest-path apps/desktop/src-tauri/Cargo.toml
 git diff --check
 ```
 
 实际入口/lease安全 Gate 必须真实双进程运行；Mock 锁不证明 OS共享/独占，实测 product DB保护不可用则 BLOCKED。固定 head 非作者 Review→条件闭合→Codex merge→集成后受影响回归后才能 done。设计本身只做引用/矩阵/范围核验，不在真实用户库运行 collector。
+
+## 7. 入口清单与精度补充（R3-01/A1-A4，属于冻结范围）
+
+dev launcher点名 verification/M2-RC2/run_e2e.py:114 的seed_catalog（只给新lab catalog seed追加初始化flag与其已有derived根）和 verification/M2-AC1/run_e2e.py:177 的launch_env（生成新fixture路径后、spawn任何sidecar前，通过可信loader显式初始化catalog）。production迁移登记由core_service.main在G7受控全退出/绑定身份核验后执行，旧catalog资源行保持UNKNOWN、不回填来源；fixture入口不替代迁移。acceptance_bridge.main/method_catalog_pages自身不改，通过launcher/_LoopHarness预初始化后的已绑定catalog调用；ac1_bridge.rs继承env形状不改。§2.3的清单加这两个dev driver和两个packaged driver，即文件级最小覆盖，不靠实施时追加未知范围。
+
+所有SQLite URI复用stdlib绝对Path.as_uri的正斜杠/percent转义，再追加已冻结query参数；不把含空格/?/#的原始Windows路径直接插入URI。bootstrap只读保证须在G3实际记录；不能用immutable忽略WAL所得缺行触发初始化旧库。mark“不改WAL”只指journal_mode/WAL配置，不禁止一次正常metadata事务的journal文件。
+
+启动超时明确显式kill+wait，退出child锁区后join读取worker，再以child已回收的终止态丢弃channel；终止态Drop不得再次发shutdown/等待第二个5s，也不能在持child锁期间触发Drop。普通成功channel既有Drop顺序不变；G3以挂起ping child/线程退出与无读锁泄漏作判别。
+
+G2复用现有命令表数字断言：command_allowlist(false,false)仍恰好15条，无退役wrapper。test_bridge_and_thresholds.py的store实际是:memory:，只用于mark行为/mock，不做file-backed初始化；直接file-backed fixture为test_catalog_authority/test_derived_gc/test_page_resource_resolve/test_rc4_stdio_render_preview，间接file-backed为test_acceptance_loop::_LoopHarness。G3必须有首次装配红绿证据：绑定前loader/acceptance拒绝→自有新库显式initialize→绑定后可用；已有行/旧未知库/冲突fixture初始化拒绝，不因测试红放开旧库。

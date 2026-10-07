@@ -30,3 +30,17 @@ Reviewer 的 shell 因 SetNamedSecurityInfoW Win32 5 不可用，命令复跑 BL
 | R2-A2 | library_bridge.rs启动专用wait_startup_ping seam，正常round_trip不改；超时先回收本次child促EOF，再回收worker/锁/句柄，失效对象不交AppState，无通用调度框架。 |
 | R2-A3 | mark用独立mode=rw timeout=0连接，borrow现有lease、finally关闭、零DDL/Schema/WAL变动；不改共享连接busy策略。 |
 | O-R2-1/2/3 | K5 pages保护明确限定live-preview；managed_rel_path明确是拟议表字段保存既有managed_path；点名新增两个已存在store测试文件，非新测试架构。 |
+
+## r3 与首次新库覆盖修订
+
+真实CLI r3 reviewed_head=8557a3d4162d00dc7a985ede0dabda22809f60fd，session=session-4bc4e130-e7f0-4e9f-8ba9-6acbce86807e，EXIT=0。原final.text UTF-8 SHA256=ba2717c5a511a7ee10ee1b235483b9a005f9013db4b7e8ba294e3056235b5941；报告doc/reviews/M2-DERIVED-GC-2-DESIGN-8557a3d4-dsh-r3.md。精确session挂载EXIT=0，web_visibility=unverified。r3 changes_requested（1P2 R3-01）：bootstrap顺序已闭合，未绑定首次验收库入口剩覆盖缺口；0P0/P1。r4仍须固定新head复核。
+
+| r3项 | 作者修订 |
+|---|---|
+| R3-01 | §2.3冻结现有store的initialize_namespace窄函数：只新/空自有catalog显式绑定，不删不启GC、不迁移未知旧库。catalog_loader新增可信fixture initialize-preview-namespace flag；默认已绑定路径不变。Core唯一产品迁移登记者须G7，lab/test driver先initialize再seed/spawn，解决loader先于Core/ac1无Core链。§5点名loader、_LoopHarness、两个packaged runner、两个dev verification driver；只fixture接线，历史报告/结果日志不改。§6/7明确首装红绿Gate。 |
+| R3-A1 | 现有command_allowlist(false,false)仍恰好15条，无退役wrapper；WebView不得透传位。 |
+| R3-A2 | timeout显式kill/wait本次child，退出child锁区再join worker/丢弃终止态channel；终止Drop不再shutdown/等待第二个5s，正常Drop不变。 |
+| R3-A3 | journal/WAL只禁配置变动，允许正常事务journal写；SQLite URI以Path.as_uri归一/percent转义，stale hint拒绝不初始化。 |
+| R3-A4 | 纠正bridge_and_thresholds实际:memory:，真正file-backed直接/间接fixture均点名，不给memory fixture装namespace。 |
+
+新增fixture路径均基于本仓库只读真实调用点定位；本设计仍无生产/测试/driver代码变动，native Gate全部NOT_RUN。r4报告将原字节入库，不把作者修订表视为Reviewer已批准。
