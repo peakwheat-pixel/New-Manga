@@ -1108,10 +1108,16 @@ describe("RC-4 Workbench actual DOM actions", () => {
     }
   });
 
-  it("keeps write-refresh region reads immediate under the debounce (M2-REGION-DEBOUNCE-1)", async () => {
-    // The debounce defers only the effect-driven read; the retype flow's
-    // refreshRegions call must stay immediate (0ms config here, so this
-    // pins the direct-call path is untouched by the deferred wrapper).
+  it("pins the 0ms direct-call path: a retype write-refresh stays immediate (M2-REGION-DEBOUNCE-1, DSH r1 PR-01 scope note)", async () => {
+    // Scope note (r1 PR-01): this case runs at 0ms, so it pins the
+    // DIRECT-call path -- refreshRegions itself is untouched by the
+    // debounce wrapper -- but it does NOT exercise the 300ms product
+    // default; the "write-refresh stays immediate UNDER the debounce"
+    // discrimination is registered as a residual (the fake-timer UI chain
+    // to the Inspector retype buttons does not settle in this harness).
+    // Structurally the wrapper only wraps the effect body, never the
+    // function (refreshRegions body is byte-identical to base), so a
+    // write-refresh cannot reach the timer.
     const { invoke } = makeInteractiveInvoke();
     const ui = await mountInteractiveWorkbench(invoke);
     try {
