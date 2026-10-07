@@ -30,3 +30,23 @@
 
 第三轮（70ab9da0）记录保留在下方与 third-round-full-stdout.log——本轮（e3ad330f）为
 最终绑定轮。
+
+
+---
+
+# 第五轮（CURRENT FINAL）构建链：绑定 da2ddeae（r5 F-01 namespace 双守卫后）
+
+单日志 fifth-round-build-and-run.log（step1..step5 带 EXIT 头，含完整 build_sidecar /
+tauri build / 定向 pytest / runner stdout）：
+
+- 返修代码 commit = da2ddeae616d38d6681865dc1659eec7f5fa966d（r5 F-01 namespace 表
+  行计数+CHECK 存在双守卫）
+- [step1] build_sidecar 原文行：HEAD=da2ddeae616d38d6681865dc1659eec7f5fa966d（EXIT=0）
+- [step2] NSIS 构建（EXIT=0）
+- [step3] installer SHA256（日志内联）
+- [step4] 定向回归（EXIT=0）
+- [step5] m2ac5 runner：25 项 PASS、唯一 FAIL=CS-L1（既有漂移，F-07 口径保持记录）（EXIT=1）
+- 全量 pytest 另见 raw/pytest-full.log（HEAD=da2ddeae 指纹）：1936 passed+1 skipped
+- 历史保护：新产物搬 fifth-run-artifacts/，tracked 历史字节 restore
+
+第四轮（e3ad330f）记录保留——本第五轮为最终绑定轮（含 r5 全部改动）。
