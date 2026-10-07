@@ -51,6 +51,11 @@ export interface WorkbenchPageProps {
    * historical immediate timing.
    */
   resolveDebounceMs?: number;
+  /**
+   * M2-REGION-DEBOUNCE-1 (RESOLVE-DEBOUNCE r1 C-1): same quiet period for
+   * the effect-driven region read. Write-refresh paths stay immediate.
+   */
+  regionDebounceMs?: number;
 }
 
 interface UndoOffer {
@@ -77,7 +82,7 @@ function errorCode(error: unknown, fallback: string): string {
   return fallback;
 }
 
-export function WorkbenchPage({ invoke, resolveDebounceMs = 300 }: WorkbenchPageProps) {
+export function WorkbenchPage({ invoke, resolveDebounceMs = 300, regionDebounceMs = 300 }: WorkbenchPageProps) {
   const [books, setBooks] = useState<BookSummary[]>([]);
   const [booksError, setBooksError] = useState<string | null>(null);
   const [selectedBookId, setSelectedBookId] = useState<string | null>(null);
@@ -409,11 +414,25 @@ export function WorkbenchPage({ invoke, resolveDebounceMs = 300 }: WorkbenchPage
 
   useEffect(() => {
     const signal = { cancelled: false };
+    // M2-REGION-DEBOUNCE-1 (RESOLVE-DEBOUNCE r1 C-1): same quiet-period
+    // treatment as the resolve loop -- typing a page id by hand used to
+    // fire one list_regions invoke per keypress. The write-refresh paths
+    // (retype/undo/restore) call refreshRegions directly and stay
+    // immediate; only this effect-driven read is deferred.
+    if (regionDebounceMs > 0) {
+      const timer = setTimeout(() => {
+        if (!signal.cancelled) void refreshRegions(pageId, signal);
+      }, regionDebounceMs);
+      return () => {
+        signal.cancelled = true;
+        clearTimeout(timer);
+      };
+    }
     refreshRegions(pageId, signal);
     return () => {
       signal.cancelled = true;
     };
-  }, [clients, pageId, refreshRegions]);
+  }, [clients, pageId, refreshRegions, regionDebounceMs]);
 
   // Page image through the EXISTING resource channel, one fresh issue per
   // addressable request.

@@ -1,0 +1,6 @@
+SHELL=Git Bash (MINGW64, Windows)
+HEAD=3a43321c8fa5defede3c2aeed5b5e24c9c6c4f41
+COMMAND=git diff --name-status 9d5d9aa6..2891c886 (DSH r1 PR-04 binding)
+M	apps/desktop/frontend/src/workbench/WorkbenchPage.test.tsx
+M	apps/desktop/frontend/src/workbench/WorkbenchPage.tsx
+END
