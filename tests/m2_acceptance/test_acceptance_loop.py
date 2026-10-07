@@ -27,9 +27,15 @@ from bootstrap.acceptance_bridge import (  # noqa: E402
     FIXTURE_PAGE_COUNT,
     AcceptanceBridge,
     AcceptanceState,
+    BridgeError,
     assemble_acceptance_core,
     sha256_hex,
     synthetic_page_png,
+)
+from application.resource_channel.dto import TypedResourceChannelError  # noqa: E402
+from infrastructure.resource_channel.catalog_store import (  # noqa: E402
+    ResourceCatalogStore,
+    initialize_namespace,
 )
 
 
@@ -38,6 +44,16 @@ class _LoopHarness:
 
     def __init__(self, root: Path) -> None:
         self.root = root
+        # M2-DERIVED-GC-2 (R4-A1): the fixture pre-binds its OWN derived
+        # root before the bridge constructs the store. The first assembly
+        # initializes the fresh catalog; a reassemble() over the same root
+        # finds it bound and takes the normal shared path (never a repeated
+        # initialize).
+        catalog_db = root / "catalog.sqlite"
+        if not catalog_db.exists():
+            derived_root = root / "scope" / "derived"
+            derived_root.mkdir(parents=True, exist_ok=True)
+            initialize_namespace(catalog_db, derived_root)
         self.core = assemble_acceptance_core(
             root / "library.db", root / "managed"
         )
@@ -241,3 +257,47 @@ def test_two_independent_runs_produce_identical_summaries(qapp, tmp_path: Path) 
     assert summaries[0] == summaries[1], (
         "two independent deterministic runs must produce identical summaries"
     )
+
+
+def test_unbound_catalog_refuses_bridge_construction(tmp_path) -> None:
+    """M2-DERIVED-GC-2 (G3 first-run red): a file-backed catalog that was
+    never bound refuses business access -- the acceptance bridge cannot
+    open it, and no database file is silently created either."""
+    root = tmp_path / "root"
+    root.mkdir(parents=True, exist_ok=True)
+    core = assemble_acceptance_core(root / "library.db", root / "managed")
+    state = AcceptanceState(core=core, book_id="", chapter_id="")
+    try:
+        bridge = AcceptanceBridge(state, data_root=root, catalog_db=root / "catalog.sqlite")
+        # the bridge opens the catalog lazily; the first business use must
+        # refuse the unbound catalog (and never create the database file)
+        with pytest.raises((TypedResourceChannelError, BridgeError)):
+            bridge.method_catalog_pages({})
+        assert not (root / "catalog.sqlite").exists()
+    finally:
+        core.conn.close()
+
+
+def test_reassembled_harness_shares_the_bound_namespace(tmp_path) -> None:
+    """M2-DERIVED-GC-2 (G3 first-run green + run2): the first harness binds
+    its own fresh root; the reassembled harness takes the normal shared
+    path over the SAME binding and still serves catalog reads (never a
+    repeated initialize)."""
+    harness = _LoopHarness(tmp_path / "root")
+    try:
+        first_catalog = ResourceCatalogStore(harness.root / "catalog.sqlite")
+        first_binding = first_catalog.namespace_lease.binding
+        first_catalog.close()
+        reassembled = harness.reassemble()
+        try:
+            second_catalog = ResourceCatalogStore(harness.root / "catalog.sqlite")
+            second_binding = second_catalog.namespace_lease.binding
+            second_catalog.close()
+            assert second_binding == first_binding
+            reassembled.call("seed_fixture")
+            books = reassembled.core.repository.list_books()
+            assert books, "run2 serves business reads over the shared lease"
+        finally:
+            reassembled.close()
+    finally:
+        harness.close()

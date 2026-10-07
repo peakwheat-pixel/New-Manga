@@ -1,0 +1,104 @@
+$ python packaging/m2ac5/run_clean_start_e2e.py --installer apps/desktop/src-tauri/target/release/bundle/nsis/m2rc1-desktop_0.1.0_x64-setup.exe
+python=G:/CODEX/New Manga.task-envs/T1.1.1-impl-py312/Scripts/python.exe
+HEAD=363265b13fadf0d0b81a23a6d76bb8ded940fb2a
+installer_sha256=9a10b57a6d1154532d671f4083f272c6069fc346838651e425106a2c31b60b52
+  [PASS] CS-E1-python-purged-from-path: {"detail": "python not on purged PATH (where exit=1); host_bridge.exe resolves: False", "removed_entries": ["C:\\Python314\\Scripts", "C:\\Python314", "C:\\Users\\49745\\AppData\\Local\\Programs\\Python\\Python310\\Scrip
+  [PASS] CS-E2-installer-present: {"installer": "apps\\desktop\\src-tauri\\target\\release\\bundle\\nsis\\m2rc1-desktop_0.1.0_x64-setup.exe", "sha256": "9a10b57a6d1154532d671f4083f272c6069fc346838651e425106a2c31b60b52"}
+  [PASS] CS-E3-install-path-no-spaces: {"install_dir": "C:\\Users\\49745\\AppData\\Local\\Temp\\m2ac5-cleanstart\\install", "space_free": true}
+
+=== phase 0.5: host real %APPDATA% snapshot (P2-4 untouched proof) ===
+  host user root: C:\Users\49745\AppData\Roaming\com.newmanga.m2rc1.desktop (present, files=4)
+
+=== phase 1: NSIS silent install ===
+  [PASS] CS-I1-silent-install: {"detail": "installed to C:\\Users\\49745\\AppData\\Local\\Temp\\m2ac5-cleanstart\\install with resources/core-sidecar/host_bridge.exe, core_service.exe, acceptance_bridge.exe, catalog_loader.exe"}
+  install dir files: 5567
+  [PASS] CS-I2-catalog-seeded-packaged-loader: {"detail": "catalog seeded (5 rows) via packaged catalog_loader.exe"}
+
+=== phase 1.5: packaged library sidecar probe (install-state stdio, P2-2) ===
+  [FAIL] CS-L1-packaged-core-ping: {"error": null, "result": {"capabilities": ["library.list_books"], "protocol_version": {"major": 1, "minor": 6}, "status": "ready"}}
+  [PASS] CS-L2-packaged-ListBooks-structure: {"count": 0, "envelope_valid": true, "error": null}
+  [PASS] CS-L3-packaged-core-shutdown: {"exit": 0, "result": {"status": "stopped"}}
+
+=== phase 2: PROBE mode (resource channel matrix, packaged sidecar) ===
+  [PASS] CS-P1-probe-results-written: {"path": "C:\\Users\\49745\\AppData\\Local\\Temp\\m2ac5-cleanstart-7ohq29w2\\probe\\probe-results.json"}
+  [PASS] CS-P2-probe-scenarios-all-pass: {"count": 13, "failed": [], "ids": ["E-00-probe-mode-detected", "E-01-issue-fetch-digest", "E-02-img-render", "E-03-unknown-id", "E-04-revoke-after-cached-fetch", "E-05-expired-ttl", "E-06-remount-fresh-references", "E-0
+  [PASS] CS-P3-sidecar-roundtrip-digest: {"e01": {"id": "E-01-issue-fetch-digest", "observed": {"bytes": 49363, "expected_sha256": "b9b217bcad1e8cd97fdb0849c5b7058daf8993281e9c47aa41b08339d84fa334", "sha256": "b9b217bcad1e8cd97fdb0849c5b7058daf8993281e9c47aa41b
+
+=== phase 3: AC1 test mode (acceptance loop, packaged sidecar) ===
+  [FAIL] CS-A1-run1-completed: {"exit": 1, "phase": "failed"}
+  [FAIL] CS-A1-run2-completed: {"exit": 1, "phase": "failed"}
+  [FAIL] CS-A2-restart-new-pids: {"run1": [38044, null], "run2": [44328, null]}
+  [FAIL] CS-A3-saved-summary-complete: {"pages": 0, "providers": null, "run_status": null}
+  [FAIL] CS-A4-restored-reader-matches-saved: {"viewed": []}
+  [FAIL] CS-A5-export-png-digest-matches: {"sha": "", "size": 0}
+
+=== phase 4: PRODUCTION mode (real window, isolated %APPDATA% userData) ===
+  [PASS] CS-R1-production-process-alive: {"poll": null}
+  [PASS] CS-R2-userdata-layout-created: {"appdata_isolated": true, "catalog.sqlite": true, "dirs": {"catalog": true, "data": true, "derived": true, "managed": true}, "root": "C:\\Users\\49745\\AppData\\Local\\Temp\\m2ac5-cleanstart-7ohq29w2\\production\\roamin
+  [PASS] CS-R3-production-surface-announced: {"announcement": "[m2rc2-allowlist] production:", "present": true}
+  [PASS] CS-R4-no-spawn-failures-in-log: {"spawn_failed_mentions": 0}
+
+=== phase 5: AC4 zero-touch assertions ===
+  [PASS] CS-Z1-install-dir-zero-write: {"changed_entries": []}
+  [PASS] CS-Z4-host-real-appdata-untouched: {"changed_entries": [], "files": 4, "note": "runner never deletes here; app APPDATA pinned into the lab", "root": "C:\\Users\\49745\\AppData\\Roaming\\com.newmanga.m2rc1.desktop"}
+  [FAIL] CS-Z2-user-source-files-byte-identical: {"files": 5}
+  [PASS] CS-Z3-no-surviving-sidecar-processes: {"acceptance_bridge.exe": 0, "catalog_loader.exe": 0, "core_service.exe": 0, "host_bridge.exe": 0, "python.exe": 6}
+
+=== gate ===
+
+GATE: FAIL
+EXIT=0
+$ python packaging/release-gate/run_release_gate.py --installer apps/desktop/src-tauri/target/release/bundle/nsis/m2rc1-desktop_0.1.0_x64-setup.exe
+python=G:/CODEX/New Manga.task-envs/T1.1.1-impl-py312/Scripts/python.exe
+HEAD=363265b13fadf0d0b81a23a6d76bb8ded940fb2a
+runner python: 3.12.3 (G:\CODEX\New Manga.task-envs\T1.1.1-impl-py312\Scripts\python.exe)
+repo root: G:\CODEX\New Manga.worktrees\DERIVED-GC-2-zcode
+raw evidence: G:\CODEX\New Manga.worktrees\DERIVED-GC-2-zcode\verification\M2-RG1\raw
+
+=== phase 0: environment record + PATH purge ===
+  [PASS] RG1-E1-python-purged-from-path: {"detail": "python not on purged PATH (where exit=1)", "kept_entries": 46, "removed_entries": 11}
+  [PASS] RG1-E2-installer-present: {"installer": "apps\\desktop\\src-tauri\\target\\release\\bundle\\nsis\\m2rc1-desktop_0.1.0_x64-setup.exe", "sha256": "9a10b57a6d1154532d671f4083f272c6069fc346838651e425106a2c31b60b52"}
+  [PASS] RG1-E3-install-path-no-spaces: {"install_dir": "C:\\Users\\49745\\AppData\\Local\\Temp\\m2rg1-gate\\install"}
+
+=== phase 1: NSIS silent install ===
+  [PASS] RG1-I1-silent-install: {"detail": "installed to C:\\Users\\49745\\AppData\\Local\\Temp\\m2rg1-gate\\install with resources/core-sidecar/host_bridge.exe, core_service.exe, acceptance_bridge.exe, catalog_loader.exe"}
+
+=== phase 2: AC2-1 PE subsystem of the installed app exe ===
+  [PASS] RG1-PE1-app-exe-subsystem-gui: {"offset": 340, "optional_header_magic": 523, "subsystem": 2}
+
+=== phase 2.5: AC2-3 static source audit (dev-mode unchanged) ===
+  [PASS] RG1-PE2-console-policy-source-audit: {"core_sidecar_spec_console_true_unchanged": true, "create_no_window_inside_cfg_windows": true, "creation_flags_counts_per_bridge": {"ac1_bridge.rs": 1, "core_bridge.rs": 2, "library_bridge.rs": 1}, "windows_subsystem_attr_gated_by_not_debug_assertions": true}
+
+=== phase 3: AC4 catalog_loader seed (lab data root) + sqlite read-back ===
+  [PASS] RG1-DC4-catalog-loader-seed-readback: {"dump_ok": true, "loader_exit": 0, "loader_stderr_tail": "", "source_confirmed_args": ["--db", "--set", "--dump", "--count", "--remove"], "sqlite_error": null, "sqlite_rows": [{"rel_path": "asset.png", "resource_id": "rg1-res", "scope_class": "derived-read-only"}, {"rel_path": "asset.png", "resource_id": "rg1-res-2", "scope_class": "derived-read-only"}]}
+
+=== phase 4: AC4 sidecar stdio round trips (install state, purged env) ===
+  [PASS] RG1-DC1a-listbooks-seed-fixture: {"exit": 0, "seed_error": null, "seed_ok": true, "seed_response_keys": ["fixture_shas", "page_count"], "shutdown_ok": true}
+  [PASS] RG1-DC1b-core-service-ping-listbooks: {"books_count": 1, "books_error": null, "books_ok": true, "books_required_keys": ["book_id", "created_at", "is_archived", "is_favorite", "original_title", "page_count", "title", "updated_at"], "exit": 0, "expect_books_min": 1, "ping_ok": true, "ping_response": {"error": null, "protocol": "new-manga.core", "request_id": "rg1-dc1-ping", "result": {"capabilities": ["library.list_books"], "protocol_ve
+  [PASS] RG1-DC2-host-bridge-handshake-issue-resolve: {"exit": 0, "issue": {"id": 2, "result": {"id": "m2id.v1.wC72KSTSzd3OuT91BvK4E0wx0sA1aktEMdz6Vv-n4qw", "size": 21}}, "ping": {"id": 1, "result": {"pong": true, "service": "m2-rc1-resource-channel"}}, "resolve": {"id": 3, "result": {"file_index": 4222124650778149, "rel_path": "asset.png", "resource_id": "rg1-res", "revision_fingerprint": "rev-1", "scope_class": "derived-read-only", "sha256": "6b84b
+  [PASS] RG1-DC3-acceptance-bridge-handshake: {"error": null, "exit": 0, "ping_ok": true, "service": "m2-ac1-acceptance", "shutdown_ok": true}
+
+=== phase 5: AC4 PyInstaller warn files copied + classified ===
+  [PASS] RG1-W1-warn-files-copied-and-classified: {"copied": 1, "merged_per_spec_layout": true, "review": [{"missing_excluded_by_spec": ["doctr.io.read_img_as_tensor", "doctr.io.tensor_from_numpy", "torch.DispatchKey", "torch.Generator", "torch.ScriptObject", "torch.Size", "torch.TensorType", "torch._inductor.fx_passes.fb", "torch._inductor.runtime.caching.fb", "torch._inductor.runtime.fb", "torch._numpy.arange", "torch._numpy.empty", "torch._num
+
+=== phase 5.5: AC2 positive control — the detector must see RED ===
+  [PASS] RG1-CW0-positive-control-hits-console: {"attribution": "pid-owner match (classic conhost) OR title heuristic 'powershell' (Windows Terminal delegation)", "classes_expected": ["ConsoleWindowClass", "CASCADIA_HOSTING_WINDOW_CLASS"], "control_carrier": "powershell -NoProfile -Command Start-Sleep -Seconds 30 with CREATE_NEW_CONSOLE(0x10)", "control_pid": 53904, "hits": [{"class": "CASCADIA_HOSTING_WINDOW_CLASS", "hwnd": 3215402, "pid": 563
+
+=== phase 6: AC3 cold-start timers + AC2-2 runtime console observation ===
+  [PASS] RG1-CS1-R1-app-window-observed: {"app_pid": 55168, "exit_poll": null, "first_window": {"class": "Tauri Window", "hwnd": 9506812, "pid": 55168, "title": "M2-RC1 resource channel runtime", "visible": true}, "first_window_ms": 517.7077000043937, "round": 1}
+  [PASS] RG1-CW1-R1-running-console-hits: {"alive_hold_s": 10.0, "app_alive_through_hold": true, "hits": [], "pid_scan": {"app_pid": 55168, "note": "host-wide snapshot: same-named unrelated processes would be included and are visible here", "scan_ok": true, "scanned": {"acceptance_bridge.exe": [], "catalog_loader.exe": [], "core_service.exe": [31776], "host_bridge.exe": [12888]}}, "round": 1, "sidecar_pids_seen": 2}
+  [PASS] RG1-CW2-R1-after-exit-console-hits: {"hits": [], "round": 1, "sidecars_reaped": true}
+  [PASS] RG1-CS1-R2-app-window-observed: {"app_pid": 19508, "exit_poll": null, "first_window": {"class": "Tauri Window", "hwnd": 3477350, "pid": 19508, "title": "M2-RC1 resource channel runtime", "visible": true}, "first_window_ms": 393.7523000058718, "round": 2}
+  [PASS] RG1-CW1-R2-running-console-hits: {"alive_hold_s": 10.0, "app_alive_through_hold": true, "hits": [], "pid_scan": {"app_pid": 19508, "note": "host-wide snapshot: same-named unrelated processes would be included and are visible here", "scan_ok": true, "scanned": {"acceptance_bridge.exe": [], "catalog_loader.exe": [], "core_service.exe": [20696], "host_bridge.exe": [57000]}}, "round": 2, "sidecar_pids_seen": 2}
+  [PASS] RG1-CW2-R2-after-exit-console-hits: {"hits": [], "round": 2, "sidecars_reaped": true}
+  [PASS] RG1-CS1-R3-app-window-observed: {"app_pid": 6668, "exit_poll": null, "first_window": {"class": "Tauri Window", "hwnd": 3018194, "pid": 6668, "title": "M2-RC1 resource channel runtime", "visible": true}, "first_window_ms": 392.0801000058418, "round": 3}
+  [PASS] RG1-CW1-R3-running-console-hits: {"alive_hold_s": 10.0, "app_alive_through_hold": true, "hits": [], "pid_scan": {"app_pid": 6668, "note": "host-wide snapshot: same-named unrelated processes would be included and are visible here", "scan_ok": true, "scanned": {"acceptance_bridge.exe": [], "catalog_loader.exe": [], "core_service.exe": [58148], "host_bridge.exe": [54876]}}, "round": 3, "sidecar_pids_seen": 2}
+  [PASS] RG1-CW2-R3-after-exit-console-hits: {"hits": [], "round": 3, "sidecars_reaped": true}
+  [PASS] RG1-CS2-core-ready-samples: {"details": [{"exit": 0, "response": {"error": null, "protocol": "new-manga.core", "request_id": "rg1-cs2", "result": {"capabilities": ["library.list_books"], "protocol_version": {"major": 1, "minor": 6}, "status": "ready"}, "version": {"major": 1, "minor": 6}}}, {"exit": 0, "response": {"error": null, "protocol": "new-manga.core", "request_id": "rg1-cs2", "result": {"capabilities": ["library.list
+  [PASS] RG1-CS3-ac1-handshake-samples: {"details": [{"exit": 0, "response": {"id": 1, "result": {"data_root": "C:\\Users\\49745\\AppData\\Local\\Temp\\m2rg1-gate-lab-a7ls28sb\\cs3\\round1\\data-root", "pid": 57324, "pong": true, "service": "m2-ac1-acceptance"}}}, {"exit": 0, "response": {"id": 1, "result": {"data_root": "C:\\Users\\49745\\AppData\\Local\\Temp\\m2rg1-gate-lab-a7ls28sb\\cs3\\round2\\data-root", "pid": 53884, "pong": true
+  [PASS] RG1-CS1-app-cold-start-samples: {"method": "CreateProcess -> first visible non-console top-level window of the app pid; new lab APPDATA per round (every round is a cold start)", "stats": {"max_ms": 517.7, "median_ms": 393.8, "min_ms": 392.1, "n": 3, "samples_ms": [517.7, 393.8, 392.1]}}
+
+=== gate ===
+
+GATE: PASS
+EXIT=0

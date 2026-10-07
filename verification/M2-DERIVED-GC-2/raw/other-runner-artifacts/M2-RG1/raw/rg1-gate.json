@@ -1,0 +1,1406 @@
+{
+  "gate": "m2rg1-release-gate",
+  "ruling": "windows local-machine (2026-09-29): this machine is the clean Windows basis; local pass => gate PASS",
+  "base_commit": "875eb818abc74a498c84026016dd1a1c72e0ad50",
+  "runner_python": "3.12.3",
+  "environment": {
+    "path_removed_entries": [
+      "C:\\Python314\\Scripts",
+      "C:\\Python314",
+      "C:\\Users\\49745\\AppData\\Local\\Programs\\Python\\Python310\\Scripts",
+      "C:\\Users\\49745\\AppData\\Local\\Programs\\Python\\Python310",
+      "C:\\Users\\49745\\AppData\\Local\\Programs\\Python\\Python312\\Scripts",
+      "C:\\Users\\49745\\AppData\\Local\\Programs\\Python\\Python312",
+      "C:\\Users\\49745\\AppData\\Local\\Programs\\Python\\Python311\\Scripts",
+      "C:\\Users\\49745\\AppData\\Local\\Programs\\Python\\Python311",
+      "C:\\Users\\49745\\AppData\\Local\\Microsoft\\WindowsApps",
+      "C:\\Users\\49745\\AppData\\Local\\Python\\bin",
+      "C:\\Users\\49745\\AppData\\Roaming\\Python\\Python314\\Scripts"
+    ],
+    "path_kept_entries": [
+      "C:\\Users\\49745\\.local\\bin",
+      "C:\\Users\\49745\\bin",
+      "C:\\Program Files\\Git\\mingw64\\bin",
+      "C:\\Program Files\\Git\\usr\\local\\bin",
+      "C:\\Program Files\\Git\\usr\\bin",
+      "C:\\Program Files\\Git\\usr\\bin",
+      "C:\\Program Files\\Git\\mingw64\\bin",
+      "C:\\Program Files\\Git\\usr\\bin",
+      "C:\\Users\\49745\\bin",
+      "C:\\WINDOWS\\system32",
+      "C:\\WINDOWS",
+      "C:\\WINDOWS\\System32\\Wbem",
+      "C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0",
+      "C:\\WINDOWS\\System32\\OpenSSH",
+      "C:\\Program Files\\NVIDIA Corporation\\NVIDIA App\\NvDLISR",
+      "C:\\Program Files\\dotnet",
+      "C:\\Program Files (x86)\\NVIDIA Corporation\\PhysX\\Common",
+      "C:\\Program Files (x86)\\QuickTime\\QTSystem",
+      "E:\\software\\Bandizip",
+      "E:\\software\\Process Lasso",
+      "C:\\Program Files\\Git\\cmd",
+      "E:\\Program Files\\nodejs",
+      "C:\\ProgramData\\chocolatey\\bin",
+      "C:\\Program Files\\GitHub CLI",
+      "C:\\Program Files\\PowerShell\\7",
+      "C:\\Program Files\\Docker\\Docker\\resources\\bin",
+      "C:\\Program Files\\Go\\bin",
+      "C:\\Users\\49745\\.qoder-cn\\entry",
+      "C:\\Users\\49745\\.repo-knowledge\\bin",
+      "C:\\Users\\49745\\AppData\\Local\\agy\\bin",
+      "C:\\Users\\49745\\AppData\\Local\\Programs\\OpenAI\\Codex\\bin",
+      "C:\\Users\\49745\\.cargo\\bin",
+      "E:\\software\\delevoper\\flutter\\bin",
+      "C:\\Users\\49745\\.dotnet\\tools",
+      "C:\\Users\\49745\\AppData\\Local\\Programs\\Microsoft VS Code\\bin",
+      "C:\\Users\\49745\\AppData\\Roaming\\npm",
+      "C:\\Users\\49745\\AppData\\Local\\Programs\\Ollama",
+      "C:\\Users\\49745\\AppData\\Local\\GitHubDesktop\\bin",
+      "C:\\Users\\49745\\AppData\\Local\\skills-manager",
+      "C:\\Users\\49745\\.qoder-cn\\bin\\qoderclicn",
+      "C:\\Users\\49745\\go\\bin",
+      "C:\\Users\\49745\\AppData\\Local\\Microsoft\\WinGet\\Links",
+      "E:\\Program Files\\ZCode\\resources\\tools\\ripgrep",
+      "E:\\Program Files\\ZCode\\resources\\tools\\ugrep",
+      "C:\\Program Files\\Git\\usr\\bin\\vendor_perl",
+      "C:\\Program Files\\Git\\usr\\bin\\core_perl"
+    ],
+    "purge_markers": [
+      "python",
+      "venv",
+      "conda",
+      "WindowsApps"
+    ],
+    "installer": "apps\\desktop\\src-tauri\\target\\release\\bundle\\nsis\\m2rc1-desktop_0.1.0_x64-setup.exe",
+    "installer_sha256": "9a10b57a6d1154532d671f4083f272c6069fc346838651e425106a2c31b60b52",
+    "os": "Microsoft Windows [\u7248\u672c 10.0.26300.9550]",
+    "processor_architecture": "AMD64",
+    "host_real_user_root_never_touched": "C:\\Users\\49745\\AppData\\Roaming\\com.newmanga.m2rc1.desktop",
+    "console_delegation_registry": {
+      "DelegationConsole": null,
+      "DelegationTerminal": null,
+      "key_path": "HKCU\\Console\\%%Startup"
+    },
+    "console_window_classes_observed": [
+      "ConsoleWindowClass",
+      "CASCADIA_HOSTING_WINDOW_CLASS"
+    ]
+  },
+  "lab": "C:\\Users\\49745\\AppData\\Local\\Temp\\m2rg1-gate-lab-a7ls28sb",
+  "timings": {
+    "app_cold_start": {
+      "n": 3,
+      "min_ms": 392.1,
+      "median_ms": 393.8,
+      "max_ms": 517.7,
+      "samples_ms": [
+        517.7,
+        393.8,
+        392.1
+      ]
+    },
+    "core_ready": {
+      "n": 3,
+      "min_ms": 328.1,
+      "median_ms": 330.6,
+      "max_ms": 331.2,
+      "samples_ms": [
+        330.6,
+        328.1,
+        331.2
+      ]
+    },
+    "ac1_handshake": {
+      "n": 3,
+      "min_ms": 297.1,
+      "median_ms": 298.7,
+      "max_ms": 300.5,
+      "samples_ms": [
+        298.7,
+        297.1,
+        300.5
+      ]
+    },
+    "appdata_isolation": "APPDATA pinned per round into the lab; host real %APPDATA% unreachable"
+  },
+  "install_dir": "C:\\Users\\49745\\AppData\\Local\\Temp\\m2rg1-gate\\install",
+  "verdict": "PASS",
+  "scenarios": [
+    {
+      "id": "RG1-E1-python-purged-from-path",
+      "status": "PASS",
+      "observed": {
+        "detail": "python not on purged PATH (where exit=1)",
+        "removed_entries": 11,
+        "kept_entries": 46
+      }
+    },
+    {
+      "id": "RG1-E2-installer-present",
+      "status": "PASS",
+      "observed": {
+        "installer": "apps\\desktop\\src-tauri\\target\\release\\bundle\\nsis\\m2rc1-desktop_0.1.0_x64-setup.exe",
+        "sha256": "9a10b57a6d1154532d671f4083f272c6069fc346838651e425106a2c31b60b52"
+      }
+    },
+    {
+      "id": "RG1-E3-install-path-no-spaces",
+      "status": "PASS",
+      "observed": {
+        "install_dir": "C:\\Users\\49745\\AppData\\Local\\Temp\\m2rg1-gate\\install"
+      }
+    },
+    {
+      "id": "RG1-I1-silent-install",
+      "status": "PASS",
+      "observed": {
+        "detail": "installed to C:\\Users\\49745\\AppData\\Local\\Temp\\m2rg1-gate\\install with resources/core-sidecar/host_bridge.exe, core_service.exe, acceptance_bridge.exe, catalog_loader.exe"
+      }
+    },
+    {
+      "id": "RG1-PE1-app-exe-subsystem-gui",
+      "status": "PASS",
+      "observed": {
+        "subsystem": 2,
+        "optional_header_magic": 523,
+        "offset": 340
+      }
+    },
+    {
+      "id": "RG1-PE2-console-policy-source-audit",
+      "status": "PASS",
+      "observed": {
+        "windows_subsystem_attr_gated_by_not_debug_assertions": true,
+        "create_no_window_inside_cfg_windows": true,
+        "creation_flags_counts_per_bridge": {
+          "core_bridge.rs": 2,
+          "ac1_bridge.rs": 1,
+          "library_bridge.rs": 1
+        },
+        "core_sidecar_spec_console_true_unchanged": true
+      }
+    },
+    {
+      "id": "RG1-DC4-catalog-loader-seed-readback",
+      "status": "PASS",
+      "observed": {
+        "source_confirmed_args": [
+          "--db",
+          "--set",
+          "--dump",
+          "--count",
+          "--remove"
+        ],
+        "loader_exit": 0,
+        "loader_stderr_tail": "",
+        "dump_ok": true,
+        "sqlite_rows": [
+          {
+            "resource_id": "rg1-res",
+            "scope_class": "derived-read-only",
+            "rel_path": "asset.png"
+          },
+          {
+            "resource_id": "rg1-res-2",
+            "scope_class": "derived-read-only",
+            "rel_path": "asset.png"
+          }
+        ],
+        "sqlite_error": null
+      }
+    },
+    {
+      "id": "RG1-DC1a-listbooks-seed-fixture",
+      "status": "PASS",
+      "observed": {
+        "exit": 0,
+        "seed_ok": true,
+        "seed_response_keys": [
+          "fixture_shas",
+          "page_count"
+        ],
+        "seed_error": null,
+        "shutdown_ok": true
+      }
+    },
+    {
+      "id": "RG1-DC1b-core-service-ping-listbooks",
+      "status": "PASS",
+      "observed": {
+        "exit": 0,
+        "ping_ok": true,
+        "ping_response": {
+          "protocol": "new-manga.core",
+          "version": {
+            "major": 1,
+            "minor": 6
+          },
+          "request_id": "rg1-dc1-ping",
+          "result": {
+            "status": "ready",
+            "protocol_version": {
+              "major": 1,
+              "minor": 6
+            },
+            "capabilities": [
+              "library.list_books"
+            ]
+          },
+          "error": null
+        },
+        "books_ok": true,
+        "books_count": 1,
+        "expect_books_min": 1,
+        "books_required_keys": [
+          "book_id",
+          "created_at",
+          "is_archived",
+          "is_favorite",
+          "original_title",
+          "page_count",
+          "title",
+          "updated_at"
+        ],
+        "books_error": null,
+        "shutdown_ok": true
+      }
+    },
+    {
+      "id": "RG1-DC2-host-bridge-handshake-issue-resolve",
+      "status": "PASS",
+      "observed": {
+        "ping": {
+          "result": {
+            "pong": true,
+            "service": "m2-rc1-resource-channel"
+          },
+          "id": 1
+        },
+        "issue": {
+          "result": {
+            "id": "m2id.v1.wC72KSTSzd3OuT91BvK4E0wx0sA1aktEMdz6Vv-n4qw",
+            "size": 21
+          },
+          "id": 2
+        },
+        "resolve": {
+          "result": {
+            "scope_class": "derived-read-only",
+            "resource_id": "rg1-res",
+            "revision_fingerprint": "rev-1",
+            "rel_path": "asset.png",
+            "size": 21,
+            "sha256": "6b84b41224494296233f04dc2060403f03689066a14428e73ddfd305d1d30a79",
+            "volume_serial": 1485189147,
+            "file_index": 4222124650778149
+          },
+          "id": 3
+        },
+        "revoke": {
+          "result": {
+            "revoked": true
+          },
+          "id": 4
+        },
+        "shutdown": {
+          "result": {
+            "bye": true
+          },
+          "id": 0
+        },
+        "exit": 0
+      }
+    },
+    {
+      "id": "RG1-DC3-acceptance-bridge-handshake",
+      "status": "PASS",
+      "observed": {
+        "exit": 0,
+        "ping_ok": true,
+        "service": "m2-ac1-acceptance",
+        "shutdown_ok": true,
+        "error": null
+      }
+    },
+    {
+      "id": "RG1-W1-warn-files-copied-and-classified",
+      "status": "PASS",
+      "observed": {
+        "copied": 1,
+        "merged_per_spec_layout": true,
+        "review": [
+          {
+            "warn_file": "warn-core_sidecar.txt",
+            "missing_total": 720,
+            "missing_excluded_by_spec": [
+              "doctr.io.read_img_as_tensor",
+              "doctr.io.tensor_from_numpy",
+              "torch.DispatchKey",
+              "torch.Generator",
+              "torch.ScriptObject",
+              "torch.Size",
+              "torch.TensorType",
+              "torch._inductor.fx_passes.fb",
+              "torch._inductor.runtime.caching.fb",
+              "torch._inductor.runtime.fb",
+              "torch._numpy.arange",
+              "torch._numpy.empty",
+              "torch._numpy.float_",
+              "torch._numpy.imag",
+              "torch._numpy.intp",
+              "torch._numpy.iscomplexobj",
+              "torch._numpy.isnan",
+              "torch._numpy.isscalar",
+              "torch._numpy.max",
+              "torch._numpy.real",
+              "torch._numpy.signbit",
+              "torch._rocm_init",
+              "torch._softmax_backward_data",
+              "torch._weight_norm",
+              "torch.absolute",
+              "torch.add",
+              "torch.ao.quantization.FakeQuantizeBase",
+              "torch.ao.quantization.ObserverBase",
+              "torch.ao.quantization.PlaceholderObserver",
+              "torch.ao.quantization.QConfig",
+              "torch.ao.quantization.QConfigAny",
+              "torch.ao.quantization.QConfigMapping",
+              "torch.ao.quantization.QuantType",
+              "torch.arccos",
+              "torch.arccosh",
+              "torch.arcsin",
+              "torch.arcsinh",
+              "torch.arctan",
+              "torch.arctan2",
+              "torch.arctanh",
+              "torch.bitwise_and",
+              "torch.bitwise_left_shift",
+              "torch.bitwise_not",
+              "torch.bitwise_or",
+              "torch.bitwise_right_shift",
+              "torch.bitwise_xor",
+              "torch.ceil",
+              "torch.conj_physical",
+              "torch.copysign",
+              "torch.cos",
+              "torch.cosh",
+              "torch.cuda.MemPool",
+              "torch.default_generator",
+              "torch.deg2rad",
+              "torch.device",
+              "torch.distributed.GroupName",
+              "torch.distributed.ReduceOp",
+              "torch.distributed.Work",
+              "torch.distributed.group",
+              "torch.divide",
+              "torch.eq",
+              "torch.exp",
+              "torch.exp2",
+              "torch.expm1",
+              "torch.float_power",
+              "torch.floor",
+              "torch.floor_divide",
+              "torch.fmax",
+              "torch.fmin",
+              "torch.fmod",
+              "torch.gcd",
+              "torch.greater",
+              "torch.greater_equal",
+              "torch.heaviside",
+              "torch.hypot",
+              "torch.isfinite",
+              "torch.isinf",
+              "torch.isnan",
+              "torch.layout",
+              "torch.lcm",
+              "torch.ldexp",
+              "torch.less",
+              "torch.less_equal",
+              "torch.log",
+              "torch.log10",
+              "torch.log1p",
+              "torch.log2",
+              "torch.logaddexp",
+              "torch.logaddexp2",
+              "torch.logical_and",
+              "torch.logical_not",
+              "torch.logical_or",
+              "torch.logical_xor",
+              "torch.maximum",
+              "torch.memory_format",
+              "torch.minimum",
+              "torch.multiply",
+              "torch.multiprocessing._prctl_pr_set_pdeathsig",
+              "torch.negative",
+              "torch.nextafter",
+              "torch.nn.BatchNorm1d",
+              "torch.nn.BatchNorm2d",
+              "torch.nn.BatchNorm3d",
+              "torch.nn.Conv1d",
+              "torch.nn.Conv2d",
+              "torch.nn.Conv3d",
+              "torch.nn.Linear",
+              "torch.nn.Module",
+              "torch.nn.ModuleDict",
+              "torch.nn.ModuleList",
+              "torch.nn.ParameterDict",
+              "torch.nn.ParameterList",
+              "torch.nn.ReLU",
+              "torch.nn.Sequential",
+              "torch.norm_except_dim",
+              "torch.not_equal",
+              "torch.pow",
+              "torch.qscheme",
+              "torch.rad2deg",
+              "torch.randperm",
+              "torch.reciprocal",
+              "torch.remainder",
+              "torch.round",
+              "torch.sign",
+              "torch.signbit",
+              "torch.sin",
+              "torch.sinh",
+              "torch.sqrt",
+              "torch.square",
+              "torch.subtract",
+              "torch.tan",
+              "torch.tanh",
+              "torch.tensor",
+              "torch.true_divide",
+              "torch.trunc"
+            ],
+            "missing_other_disclosed": [
+              "Cython",
+              "IPython",
+              "Levenshtein",
+              "Mykytea",
+              "StringIO",
+              "_dummy_thread",
+              "_frozen_importlib_external",
+              "_interpqueues",
+              "_interpreters",
+              "_posixshmem",
+              "_posixsubprocess",
+              "_pytest",
+              "_scproxy",
+              "_typeshed",
+              "_winreg",
+              "accelerate",
+              "accimage",
+              "aiohttp",
+              "all",
+              "amdsmi",
+              "annotationlib",
+              "apollo_torch",
+              "aqlm",
+              "array_api_compat",
+              "asyncio.DefaultEventLoopPolicy",
+              "attr",
+              "authlib",
+              "auto_round",
+              "av",
+              "azureml",
+              "bitsandbytes",
+              "brotli",
+              "brotlicffi",
+              "bs4",
+              "cffi",
+              "chardet",
+              "charset_normalizer",
+              "ck4inductor",
+              "clearml",
+              "codecarbon",
+              "com",
+              "comet_ml",
+              "compressed_tensors",
+              "compression",
+              "configuration_xlstm",
+              "coremltools",
+              "cpuinfo",
+              "ctags",
+              "cuda",
+              "cupti",
+              "cupy",
+              "cupyx",
+              "cutlass",
+              "cutlass_cppgen",
+              "cutlass_library",
+              "cython",
+              "dagshub",
+              "dask",
+              "datasets",
+              "decord",
+              "deeplearning",
+              "deepspeed",
+              "defusedxml",
+              "detectron2",
+              "diffusers",
+              "dill",
+              "distributed",
+              "duckdb",
+              "dvclive",
+              "einops",
+              "emoji",
+              "envwrap",
+              "etcd",
+              "eth_hash",
+              "exceptiongroup",
+              "expecttest",
+              "faiss",
+              "fast_hadamard_transform",
+              "fastai",
+              "fastapi",
+              "fastparquet",
+              "fbgemm_gpu",
+              "fbscribelogger",
+              "fcntl",
+              "flash_attn",
+              "flash_attn_interface",
+              "flint",
+              "flute",
+              "flytekit",
+              "flytekitplugins",
+              "foo",
+              "fouroversix",
+              "fp_quant",
+              "fugashi",
+              "fuse",
+              "g2p_en",
+              "galore_torch",
+              "gdown",
+              "gguf",
+              "gmpy",
+              "gmpy2",
+              "google.protobuf.enable_deterministic_proto_serialization",
+              "google.protobuf.internal._api_implementation",
+              "google.protobuf.pyext._message",
+              "gptqmodel",
+              "gradio",
+              "grokadamw",
+              "grp",
+              "h2",
+              "habana_frameworks",
+              "halide",
+              "helion",
+              "hf_xet.SKIP_SHA256",
+              "hf_xet.XetFileInfo",
+              "hf_xet.XetSession",
+              "hqq",
+              "hypothesis",
+              "importlib_resources",
+              "ipadic",
+              "ipywidgets",
+              "isal",
+              "java",
+              "jax",
+              "js",
+              "kenlm",
+              "kerchunk",
+              "kernels",
+              "libarchive",
+              "libfb",
+              "librosa",
+              "liger_kernel",
+              "linkify_it",
+              "lmdb",
+              "lomo_optim",
+              "lxml",
+              "lz4",
+              "lzmaffi",
+              "mambapy",
+              "matplotlib",
+              "mcp",
+              "mistral_common",
+              "mlflow",
+              "mlx",
+              "modeling_xlstm",
+              "monkeytype",
+              "moviepy",
+              "mpi4py",
+              "mpl_toolkits",
+              "mplcursors",
+              "mtia",
+              "multiprocessing.AuthenticationError",
+              "multiprocessing.BufferTooShort",
+              "multiprocessing.Pool",
+              "multiprocessing.RLock",
+              "multiprocessing.TimeoutError",
+              "multiprocessing.cpu_count",
+              "multiprocessing.get_all_start_methods",
+              "multiprocessing.get_context",
+              "multiprocessing.get_start_method",
+              "multiprocessing.set_start_method",
+              "nagisa",
+              "natten",
+              "ndonnx",
+              "neptune",
+              "nltk",
+              "num2words",
+              "numba",
+              "numpy._core.add",
+              "numpy._core.all",
+              "numpy._core.amax",
+              "numpy._core.amin",
+              "numpy._core.arccos",
+              "numpy._core.arccosh",
+              "numpy._core.arcsin",
+              "numpy._core.arcsinh",
+              "numpy._core.arctan",
+              "numpy._core.arctan2",
+              "numpy._core.arctanh",
+              "numpy._core.argsort",
+              "numpy._core.array",
+              "numpy._core.asanyarray",
+              "numpy._core.asarray",
+              "numpy._core.atleast_1d",
+              "numpy._core.atleast_2d",
+              "numpy._core.atleast_3d",
+              "numpy._core.bitwise_and",
+              "numpy._core.bitwise_count",
+              "numpy._core.bitwise_or",
+              "numpy._core.bitwise_xor",
+              "numpy._core.bool_",
+              "numpy._core.byte",
+              "numpy._core.bytes_",
+              "numpy._core.cbrt",
+              "numpy._core.cdouble",
+              "numpy._core.ceil",
+              "numpy._core.character",
+              "numpy._core.clongdouble",
+              "numpy._core.complex64",
+              "numpy._core.complexfloating",
+              "numpy._core.conj",
+              "numpy._core.conjugate",
+              "numpy._core.copysign",
+              "numpy._core.cos",
+              "numpy._core.cosh",
+              "numpy._core.count_nonzero",
+              "numpy._core.cross",
+              "numpy._core.csingle",
+              "numpy._core.datetime64",
+              "numpy._core.deg2rad",
+              "numpy._core.degrees",
+              "numpy._core.diagonal",
+              "numpy._core.divide",
+              "numpy._core.divmod",
+              "numpy._core.dot",
+              "numpy._core.double",
+              "numpy._core.e",
+              "numpy._core.empty",
+              "numpy._core.empty_like",
+              "numpy._core.equal",
+              "numpy._core.errstate",
+              "numpy._core.euler_gamma",
+              "numpy._core.exp",
+              "numpy._core.exp2",
+              "numpy._core.expm1",
+              "numpy._core.fabs",
+              "numpy._core.finfo",
+              "numpy._core.float16",
+              "numpy._core.float32",
+              "numpy._core.float_power",
+              "numpy._core.floating",
+              "numpy._core.floor",
+              "numpy._core.floor_divide",
+              "numpy._core.fmax",
+              "numpy._core.fmin",
+              "numpy._core.fmod",
+              "numpy._core.frexp",
+              "numpy._core.frompyfunc",
+              "numpy._core.gcd",
+              "numpy._core.greater",
+              "numpy._core.greater_equal",
+              "numpy._core.half",
+              "numpy._core.heaviside",
+              "numpy._core.hstack",
+              "numpy._core.hypot",
+              "numpy._core.iinfo",
+              "numpy._core.inexact",
+              "numpy._core.inf",
+              "numpy._core.int16",
+              "numpy._core.int32",
+              "numpy._core.int64",
+              "numpy._core.int8",
+              "numpy._core.intc",
+              "numpy._core.integer",
+              "numpy._core.intp",
+              "numpy._core.isfinite",
+              "numpy._core.isnan",
+              "numpy._core.isscalar",
+              "numpy._core.lcm",
+              "numpy._core.ldexp",
+              "numpy._core.left_shift",
+              "numpy._core.less",
+              "numpy._core.less_equal",
+              "numpy._core.linspace",
+              "numpy._core.log",
+              "numpy._core.log10",
+              "numpy._core.log1p",
+              "numpy._core.log2",
+              "numpy._core.logaddexp",
+              "numpy._core.logaddexp2",
+              "numpy._core.logical_and",
+              "numpy._core.logical_not",
+              "numpy._core.logical_or",
+              "numpy._core.logical_xor",
+              "numpy._core.long",
+              "numpy._core.longdouble",
+              "numpy._core.longlong",
+              "numpy._core.matmul",
+              "numpy._core.matrix_transpose",
+              "numpy._core.matvec",
+              "numpy._core.maximum",
+              "numpy._core.minimum",
+              "numpy._core.mod",
+              "numpy._core.modf",
+              "numpy._core.moveaxis",
+              "numpy._core.multiply",
+              "numpy._core.ndarray",
+              "numpy._core.negative",
+              "numpy._core.newaxis",
+              "numpy._core.nextafter",
+              "numpy._core.not_equal",
+              "numpy._core.number",
+              "numpy._core.object_",
+              "numpy._core.ones",
+              "numpy._core.outer",
+              "numpy._core.pi",
+              "numpy._core.positive",
+              "numpy._core.power",
+              "numpy._core.prod",
+              "numpy._core.rad2deg",
+              "numpy._core.radians",
+              "numpy._core.reciprocal",
+              "numpy._core.remainder",
+              "numpy._core.right_shift",
+              "numpy._core.rint",
+              "numpy._core.short",
+              "numpy._core.sign",
+              "numpy._core.signbit",
+              "numpy._core.signedinteger",
+              "numpy._core.single",
+              "numpy._core.sinh",
+              "numpy._core.sort",
+              "numpy._core.spacing",
+              "numpy._core.sqrt",
+              "numpy._core.square",
+              "numpy._core.str_",
+              "numpy._core.subtract",
+              "numpy._core.sum",
+              "numpy._core.swapaxes",
+              "numpy._core.tan",
+              "numpy._core.tanh",
+              "numpy._core.tensordot",
+              "numpy._core.timedelta64",
+              "numpy._core.trace",
+              "numpy._core.transpose",
+              "numpy._core.true_divide",
+              "numpy._core.trunc",
+              "numpy._core.ubyte",
+              "numpy._core.uint",
+              "numpy._core.uint16",
+              "numpy._core.uint32",
+              "numpy._core.uint64",
+              "numpy._core.uintc",
+              "numpy._core.uintp",
+              "numpy._core.ulong",
+              "numpy._core.ulonglong",
+              "numpy._core.unsignedinteger",
+              "numpy._core.ushort",
+              "numpy._core.vecdot",
+              "numpy._core.vecmat",
+              "numpy._core.void",
+              "numpy._core.zeros",
+              "numpy._distributor_init_local",
+              "nvMatmulHeuristics",
+              "nvmath",
+              "objgraph",
+              "olefile",
+              "onnx_ir",
+              "onnxscript",
+              "opt_einsum",
+              "optimi",
+              "optimum",
+              "optree",
+              "optuna",
+              "origami",
+              "orjson",
+              "outcome",
+              "panel",
+              "paramiko",
+              "peft",
+              "phonemizer",
+              "posix",
+              "psutil",
+              "pulp",
+              "pwd",
+              "pwlf",
+              "py",
+              "py3nvml",
+              "pyarrow",
+              "pycocotools",
+              "pycosat",
+              "pyctcdecode",
+              "pycute",
+              "pydantic",
+              "pydot",
+              "pygit2",
+              "pyglet",
+              "pygments.lexers.PrologLexer",
+              "pygraphviz",
+              "pyimod02_importers",
+              "pyinstrument",
+              "pylab",
+              "pynvml",
+              "pysat",
+              "pytesseract",
+              "pytest_subtests",
+              "pythainlp",
+              "pytorch",
+              "pytorch_lightning",
+              "pyzes",
+              "quark",
+              "ray",
+              "readline",
+              "redis",
+              "regex.DEFAULT_VERSION",
+              "requests",
+              "requests_kerberos",
+              "resource",
+              "rfe",
+              "rhoknp",
+              "rjieba",
+              "rocm_sdk",
+              "sacremoses",
+              "sage",
+              "schedulefree",
+              "scikits",
+              "scipy._distributor_init_local",
+              "scipy._external.array_api_compat.common.array_namespace",
+              "scipy._external.array_api_compat.device",
+              "scipy._external.array_api_compat.is_array_api_obj",
+              "scipy._external.array_api_compat.is_jax_array",
+              "scipy.interpolate.PPoly",
+              "scipy.linalg.LinAlgError",
+              "scipy.linalg.LinAlgWarning",
+              "scipy.linalg._fblas_64",
+              "scipy.linalg._flapack_64",
+              "scipy.linalg.cho_factor",
+              "scipy.linalg.cho_solve",
+              "scipy.linalg.cho_solve_banded",
+              "scipy.linalg.cholesky",
+              "scipy.linalg.cholesky_banded",
+              "scipy.linalg.eig",
+              "scipy.linalg.eigh",
+              "scipy.linalg.get_blas_funcs",
+              "scipy.linalg.get_lapack_funcs",
+              "scipy.linalg.hankel",
+              "scipy.linalg.inv",
+              "scipy.linalg.lstsq",
+              "scipy.linalg.lu_factor",
+              "scipy.linalg.lu_solve",
+              "scipy.linalg.norm",
+              "scipy.linalg.orthogonal_procrustes",
+              "scipy.linalg.qr",
+              "scipy.linalg.qr_insert",
+              "scipy.linalg.solve",
+              "scipy.linalg.solve_banded",
+              "scipy.linalg.svd",
+              "scipy.linalg.toeplitz",
+              "scipy.optimize.OptimizeResult",
+              "scipy.optimize.brentq",
+              "scipy.optimize.minimize",
+              "scipy.optimize.minimize_scalar",
+              "scipy.optimize.newton",
+              "scipy.optimize.root_scalar",
+              "scipy.signal.convolve",
+              "scipy.sparse.SparseEfficiencyWarning",
+              "scipy.sparse.csc_array",
+              "scipy.sparse.csr_array",
+              "scipy.sparse.dia_array",
+              "scipy.sparse.diags_array",
+              "scipy.sparse.eye_array",
+              "scipy.sparse.issparse",
+              "scipy.sparse.kron",
+              "scipy.special.airy",
+              "scipy.special.beta",
+              "scipy.special.betainc",
+              "scipy.special.betaln",
+              "scipy.special.entr",
+              "scipy.special.gammainc",
+              "scipy.special.gammaln",
+              "scipy.special.ive",
+              "scipy.special.loggamma",
+              "scipy.special.multigammaln",
+              "scipy.special.ndtr",
+              "scipy.special.ndtri",
+              "scipy.special.rel_entr",
+              "scipy.special.roots_legendre",
+              "scipy.special.sph_jn",
+              "scipy.special.xlogy",
+              "sentencepiece",
+              "sentencepiece_model_pb2",
+              "shapely.has_m",
+              "shapely.has_z",
+              "shtab",
+              "simplejson",
+              "sinq",
+              "sitecustomize",
+              "six.moves.xrange",
+              "six.moves.zip",
+              "sklearn",
+              "sksparse",
+              "smbclient",
+              "smbprotocol",
+              "smdistributed",
+              "snappy",
+              "sniffio",
+              "socksio",
+              "soundfile",
+              "soxr",
+              "soynlp",
+              "sparse",
+              "sphinx",
+              "spmd_types",
+              "spqr_quant",
+              "starlette",
+              "sudachipy",
+              "swanlab",
+              "tabulate",
+              "tensorboard",
+              "tensorboardX",
+              "tensorflow",
+              "termios",
+              "threadpoolctl",
+              "tiktoken",
+              "timm",
+              "toml",
+              "torch_mlu",
+              "torch_musa",
+              "torch_neuronx",
+              "torch_npu",
+              "torch_tpu",
+              "torch_xla",
+              "torchao",
+              "torcharrow",
+              "torchaudio",
+              "torchcodec",
+              "torchcomms",
+              "torchdistx",
+              "torchrec",
+              "torchvision_extra_decoders",
+              "trackio",
+              "transformers.AutoBackbone",
+              "transformers.AutoModel",
+              "transformers.AutoTokenizer",
+              "transformers.UdopConfig",
+              "transformers.models.auto.CONFIG_MAPPING",
+              "transformers.models.bamba.processing_bamba",
+              "transformers.models.blenderbot_small.tokenization_blenderbot_small_fast",
+              "transformers.models.bloom.tokenization_bloom",
+              "transformers.models.blt.tokenization_blt",
+              "transformers.models.chinese_clip.image_processing_chinese_pil_clip",
+              "transformers.models.detr.feature_extraction_detr",
+              "transformers.models.flava.feature_extraction_flava",
+              "transformers.models.funnel.convert_funnel_original_tf_checkpoint_to_pytorch",
+              "transformers.models.gemma.tokenization_gemma_fast",
+              "transformers.models.hunyuan_v1_dense.tokenization_hy",
+              "transformers.models.imagegpt.feature_extraction_imagegpt",
+              "transformers.models.instructblipvideo.image_processing_instructblipvideo",
+              "transformers.models.layoutlmv2.feature_extraction_layoutlmv2",
+              "transformers.models.layoutlmv3.feature_extraction_layoutlmv3",
+              "transformers.models.levit.feature_extraction_levit",
+              "transformers.models.llava_next_video.image_processing_llava_next_video",
+              "transformers.models.maskformer.feature_extraction_maskformer",
+              "transformers.models.mistral3.processing_mistral3",
+              "transformers.models.mobilenet_v1.image_processing_mobilenet_pil_v1",
+              "transformers.models.modernvbert.image_processing_modernvbert",
+              "transformers.models.modernvbert.image_processing_modernvbert_fast",
+              "transformers.models.modernvbert.processing_modernvbert",
+              "transformers.models.mt5.tokenization_mt5",
+              "transformers.models.owlvit.feature_extraction_owlvit",
+              "transformers.models.poolformer.feature_extraction_poolformer",
+              "transformers.models.qwen2.tokenization_qwen2_fast",
+              "transformers.models.roformer.tokenization_roformer_fast",
+              "transformers.models.splinter.tokenization_splinter_fast",
+              "transformers.models.videomae.feature_extraction_videomae",
+              "transformers.models.vilt.feature_extraction_vilt",
+              "transformers.models.xlm_roberta.tokenization_xlm_roberta_fast",
+              "transformers.models.yolos.feature_extraction_yolos",
+              "trio",
+              "triton",
+              "tvm",
+              "tvm_ffi",
+              "uarray",
+              "ujson",
+              "unidic",
+              "unidic_lite",
+              "urllib3",
+              "uroman",
+              "usercustomize",
+              "uvloop",
+              "vms_lib",
+              "vptq",
+              "wandb",
+              "weasyprint",
+              "win32api",
+              "win32com",
+              "win32evtlog",
+              "win32evtlogutil",
+              "win32pdh",
+              "winloop",
+              "xielu",
+              "xmlrunner",
+              "yarl",
+              "yt_dlp",
+              "z3",
+              "zstandard"
+            ],
+            "note": "operative load-time-critical evidence = the four install-state stdio round trips in this gate; a missing load-time module would crash the entry at spawn, not merely warn. 'missing_other_disclosed' entries are conditional/optional imports observed by PyInstaller's static analysis."
+          }
+        ]
+      }
+    },
+    {
+      "id": "RG1-CW0-positive-control-hits-console",
+      "status": "PASS",
+      "observed": {
+        "control_pid": 53904,
+        "control_carrier": "powershell -NoProfile -Command Start-Sleep -Seconds 30 with CREATE_NEW_CONSOLE(0x10)",
+        "powershell_pids_scanned": [
+          46568,
+          53904
+        ],
+        "scan_ok": true,
+        "hits": [
+          {
+            "hwnd": 3215402,
+            "class": "CASCADIA_HOSTING_WINDOW_CLASS",
+            "title": "C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
+            "pid": 56300,
+            "visible": true
+          }
+        ],
+        "classes_expected": [
+          "ConsoleWindowClass",
+          "CASCADIA_HOSTING_WINDOW_CLASS"
+        ],
+        "attribution": "pid-owner match (classic conhost) OR title heuristic 'powershell' (Windows Terminal delegation)"
+      }
+    },
+    {
+      "id": "RG1-CS1-R1-app-window-observed",
+      "status": "PASS",
+      "observed": {
+        "round": 1,
+        "app_pid": 55168,
+        "first_window": {
+          "hwnd": 9506812,
+          "class": "Tauri Window",
+          "title": "M2-RC1 resource channel runtime",
+          "pid": 55168,
+          "visible": true
+        },
+        "first_window_ms": 517.7077000043937,
+        "exit_poll": null
+      }
+    },
+    {
+      "id": "RG1-CW1-R1-running-console-hits",
+      "status": "PASS",
+      "observed": {
+        "round": 1,
+        "hits": [],
+        "alive_hold_s": 10.0,
+        "app_alive_through_hold": true,
+        "pid_scan": {
+          "scan_ok": true,
+          "app_pid": 55168,
+          "scanned": {
+            "host_bridge.exe": [
+              12888
+            ],
+            "core_service.exe": [
+              31776
+            ],
+            "acceptance_bridge.exe": [],
+            "catalog_loader.exe": []
+          },
+          "note": "host-wide snapshot: same-named unrelated processes would be included and are visible here"
+        },
+        "sidecar_pids_seen": 2
+      }
+    },
+    {
+      "id": "RG1-CW2-R1-after-exit-console-hits",
+      "status": "PASS",
+      "observed": {
+        "round": 1,
+        "hits": [],
+        "sidecars_reaped": true
+      }
+    },
+    {
+      "id": "RG1-CS1-R2-app-window-observed",
+      "status": "PASS",
+      "observed": {
+        "round": 2,
+        "app_pid": 19508,
+        "first_window": {
+          "hwnd": 3477350,
+          "class": "Tauri Window",
+          "title": "M2-RC1 resource channel runtime",
+          "pid": 19508,
+          "visible": true
+        },
+        "first_window_ms": 393.7523000058718,
+        "exit_poll": null
+      }
+    },
+    {
+      "id": "RG1-CW1-R2-running-console-hits",
+      "status": "PASS",
+      "observed": {
+        "round": 2,
+        "hits": [],
+        "alive_hold_s": 10.0,
+        "app_alive_through_hold": true,
+        "pid_scan": {
+          "scan_ok": true,
+          "app_pid": 19508,
+          "scanned": {
+            "host_bridge.exe": [
+              57000
+            ],
+            "core_service.exe": [
+              20696
+            ],
+            "acceptance_bridge.exe": [],
+            "catalog_loader.exe": []
+          },
+          "note": "host-wide snapshot: same-named unrelated processes would be included and are visible here"
+        },
+        "sidecar_pids_seen": 2
+      }
+    },
+    {
+      "id": "RG1-CW2-R2-after-exit-console-hits",
+      "status": "PASS",
+      "observed": {
+        "round": 2,
+        "hits": [],
+        "sidecars_reaped": true
+      }
+    },
+    {
+      "id": "RG1-CS1-R3-app-window-observed",
+      "status": "PASS",
+      "observed": {
+        "round": 3,
+        "app_pid": 6668,
+        "first_window": {
+          "hwnd": 3018194,
+          "class": "Tauri Window",
+          "title": "M2-RC1 resource channel runtime",
+          "pid": 6668,
+          "visible": true
+        },
+        "first_window_ms": 392.0801000058418,
+        "exit_poll": null
+      }
+    },
+    {
+      "id": "RG1-CW1-R3-running-console-hits",
+      "status": "PASS",
+      "observed": {
+        "round": 3,
+        "hits": [],
+        "alive_hold_s": 10.0,
+        "app_alive_through_hold": true,
+        "pid_scan": {
+          "scan_ok": true,
+          "app_pid": 6668,
+          "scanned": {
+            "host_bridge.exe": [
+              54876
+            ],
+            "core_service.exe": [
+              58148
+            ],
+            "acceptance_bridge.exe": [],
+            "catalog_loader.exe": []
+          },
+          "note": "host-wide snapshot: same-named unrelated processes would be included and are visible here"
+        },
+        "sidecar_pids_seen": 2
+      }
+    },
+    {
+      "id": "RG1-CW2-R3-after-exit-console-hits",
+      "status": "PASS",
+      "observed": {
+        "round": 3,
+        "hits": [],
+        "sidecars_reaped": true
+      }
+    },
+    {
+      "id": "RG1-CS2-core-ready-samples",
+      "status": "PASS",
+      "observed": {
+        "stats": {
+          "n": 3,
+          "min_ms": 328.1,
+          "median_ms": 330.6,
+          "max_ms": 331.2,
+          "samples_ms": [
+            330.6,
+            328.1,
+            331.2
+          ]
+        },
+        "details": [
+          {
+            "exit": 0,
+            "response": {
+              "protocol": "new-manga.core",
+              "version": {
+                "major": 1,
+                "minor": 6
+              },
+              "request_id": "rg1-cs2",
+              "result": {
+                "status": "ready",
+                "protocol_version": {
+                  "major": 1,
+                  "minor": 6
+                },
+                "capabilities": [
+                  "library.list_books"
+                ]
+              },
+              "error": null
+            }
+          },
+          {
+            "exit": 0,
+            "response": {
+              "protocol": "new-manga.core",
+              "version": {
+                "major": 1,
+                "minor": 6
+              },
+              "request_id": "rg1-cs2",
+              "result": {
+                "status": "ready",
+                "protocol_version": {
+                  "major": 1,
+                  "minor": 6
+                },
+                "capabilities": [
+                  "library.list_books"
+                ]
+              },
+              "error": null
+            }
+          },
+          {
+            "exit": 0,
+            "response": {
+              "protocol": "new-manga.core",
+              "version": {
+                "major": 1,
+                "minor": 6
+              },
+              "request_id": "rg1-cs2",
+              "result": {
+                "status": "ready",
+                "protocol_version": {
+                  "major": 1,
+                  "minor": 6
+                },
+                "capabilities": [
+                  "library.list_books"
+                ]
+              },
+              "error": null
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "RG1-CS3-ac1-handshake-samples",
+      "status": "PASS",
+      "observed": {
+        "stats": {
+          "n": 3,
+          "min_ms": 297.1,
+          "median_ms": 298.7,
+          "max_ms": 300.5,
+          "samples_ms": [
+            298.7,
+            297.1,
+            300.5
+          ]
+        },
+        "details": [
+          {
+            "exit": 0,
+            "response": {
+              "result": {
+                "pong": true,
+                "service": "m2-ac1-acceptance",
+                "pid": 57324,
+                "data_root": "C:\\Users\\49745\\AppData\\Local\\Temp\\m2rg1-gate-lab-a7ls28sb\\cs3\\round1\\data-root"
+              },
+              "id": 1
+            }
+          },
+          {
+            "exit": 0,
+            "response": {
+              "result": {
+                "pong": true,
+                "service": "m2-ac1-acceptance",
+                "pid": 53884,
+                "data_root": "C:\\Users\\49745\\AppData\\Local\\Temp\\m2rg1-gate-lab-a7ls28sb\\cs3\\round2\\data-root"
+              },
+              "id": 1
+            }
+          },
+          {
+            "exit": 0,
+            "response": {
+              "result": {
+                "pong": true,
+                "service": "m2-ac1-acceptance",
+                "pid": 57016,
+                "data_root": "C:\\Users\\49745\\AppData\\Local\\Temp\\m2rg1-gate-lab-a7ls28sb\\cs3\\round3\\data-root"
+              },
+              "id": 1
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "RG1-CS1-app-cold-start-samples",
+      "status": "PASS",
+      "observed": {
+        "stats": {
+          "n": 3,
+          "min_ms": 392.1,
+          "median_ms": 393.8,
+          "max_ms": 517.7,
+          "samples_ms": [
+            517.7,
+            393.8,
+            392.1
+          ]
+        },
+        "method": "CreateProcess -> first visible non-console top-level window of the app pid; new lab APPDATA per round (every round is a cold start)"
+      }
+    }
+  ]
+}

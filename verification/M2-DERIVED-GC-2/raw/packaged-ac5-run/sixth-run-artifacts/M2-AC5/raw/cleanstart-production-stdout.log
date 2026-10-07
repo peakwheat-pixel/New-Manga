@@ -1,0 +1,8 @@
+$ <installed>\m2rc1-desktop.exe (production defaults; pid=29776; graceful close)
+exit=0
+[core.derived_gc] orphan_files_removed=0 dead_rows_removed=0
+[m2rc2-allowlist] production:issue_resource_url,revoke_ref,revoke_resource_refs,core_ping,library_list_books,settings_get,settings_update_section,set_region_type,list_regions,list_region_revisions,restore_region_revision,rerender_page,resolve_page_resource,list_chapters,list_chapter_pages
+[m2rc1-title] M2-RC1 resource channel runtime
+[m2rc1-title] M2-RC1 resource channel runtime
+[m2rc1-title] M2-RC1 resource channel runtime
+[m2rc1-title] M2-RC1 resource channel runtime

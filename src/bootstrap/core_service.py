@@ -122,7 +122,16 @@ from infrastructure.rendering.pillow_rendering import (
     PillowTextLayoutEngine,
     decode_nmfr_frame,
 )
-from infrastructure.resource_channel.catalog_store import ResourceCatalogStore
+from infrastructure.resource_channel.catalog_store import (
+    PreviewOrigin,
+    ResourceCatalogStore,
+    initialize_namespace,
+)
+from infrastructure.resource_channel.handle_resolver import (
+    acquire_shared_lease,
+    resolve_namespace_identity,
+    try_acquire_exclusive_lease,
+)
 from infrastructure.resource_channel.render_preview import (
     ORIGINAL_REVISION,
     RenderPreviewPublisher,
@@ -413,10 +422,15 @@ class CoreServiceServer:
         stdin: TextIO | None = None,
         stdout: TextIO | None = None,
         render_previews: RenderPreviewPublisher | None = None,
+        producer_root: Path | None = None,
     ) -> None:
         self._core = core
         self._stdin = stdin or sys.stdin
         self._stdout = stdout or sys.stdout
+        # M2-DERIVED-GC-2: the canonical data root this Core owns (its
+        # producer identity for preview origin registration). None keeps the
+        # legacy behaviour -- previews publish catalog-only, never reclaimable.
+        self._producer_root = str(producer_root.resolve()) if producer_root else None
         self._render_previews = render_previews
 
     def handle_ping(self, payload: dict[str, Any]) -> dict[str, Any]:
@@ -913,9 +927,11 @@ class CoreServiceServer:
         try:
             if self._render_previews is None or outcome.managed_path is None:
                 raise RuntimeError("preview publisher is not configured")
+            origin = self._resolve_preview_origin(outcome)
             preview = self._render_previews.publish(
                 self._core.storage.absolute_path(outcome.managed_path),
                 f"rev-{outcome.revision_no}",
+                origin=origin,
             )
         except Exception as error:
             print(f"[core.rerender_page] preview publish failed: {error!r}", file=sys.stderr)
@@ -937,6 +953,51 @@ class CoreServiceServer:
             "preview": preview,
             "preview_error": preview_error,
         }
+
+    def _resolve_preview_origin(self, outcome: Any) -> PreviewOrigin | None:
+        """M2-DERIVED-GC-2 (design §2.1): bind this render outcome to its
+        exact source revision BEFORE the publish transaction.
+
+        Within this very request, the revision list of
+        ``outcome.artifact_id`` must yield EXACTLY ONE row matching both
+        ``revision_no`` and ``outcome.managed_path`` verbatim, and the
+        artifact must be a TRANSLATED product artifact. Zero matches /
+        multiple matches / any mismatch / a producer root that is not
+        configured raise -- the caller maps that to the frozen
+        PREVIEW_UNAVAILABLE fail-closed semantics (the Managed commit itself
+        is NOT rolled back). The stored identity is the row's
+        artifact_revision_id: revision_no is per-artifact and reusable after
+        purges, never a global id."""
+
+        if self._producer_root is None:
+            return None
+        conn = self._core.conn
+        try:
+            artifact = conn.execute(
+                "SELECT artifact_type, current_revision_id FROM media_artifacts"
+                " WHERE artifact_id = ?",
+                (outcome.artifact_id,),
+            ).fetchone()
+            if artifact is None or artifact["artifact_type"] != "translated":
+                raise RuntimeError("preview origin: artifact missing or not TRANSLATED")
+            matching = conn.execute(
+                "SELECT artifact_revision_id FROM artifact_revisions"
+                " WHERE artifact_id = ? AND revision_no = ? AND managed_path = ?",
+                (outcome.artifact_id, outcome.revision_no, outcome.managed_path),
+            ).fetchall()
+        except Exception as error:
+            raise RuntimeError(f"preview origin: source lookup failed: {error!r}") from error
+        if len(matching) != 1:
+            raise RuntimeError(
+                "preview origin: expected exactly one matching source revision,"
+                f" found {len(matching)}"
+            )
+        return PreviewOrigin(
+            producer_root=self._producer_root,
+            artifact_id=outcome.artifact_id,
+            artifact_revision_id=matching[0]["artifact_revision_id"],
+            managed_rel_path=outcome.managed_path,
+        )
 
     def handle_list_chapters(self, payload: dict[str, Any]) -> dict[str, Any]:
         """M2-PAGE-NAV-PROJECTION-1 (contract M2-C1 rev 1.8 §5): the chapter
@@ -1685,19 +1746,65 @@ def main() -> int:
         os.environ.get("M2RC2_CATALOG_DB", data_root / "catalog" / "catalog.sqlite")
     )
     catalog_db.parent.mkdir(parents=True, exist_ok=True)
-    core = assemble_production_core(data_root)
-    catalog = ResourceCatalogStore(catalog_db)
+    derived_root.mkdir(parents=True, exist_ok=True)
+
+    # M2-DERIVED-GC-2 startup order (design §2.3): namespace protection first
+    # -- the fresh-catalog controlled first-bind runs under its own exclusive
+    # lock inside initialize_namespace; then the Core tries the exclusive
+    # lease for the sweeps. A peer holding a shared lease means BOTH sweeps
+    # are skipped this boot and the Core serves normally under a shared
+    # lease. serve_forever (and therefore core.ping) is only reached after
+    # the protection is held and the sweeps are done.
+    if not catalog_db.exists():
+        initialize_namespace(catalog_db, derived_root)
+    catalog_identity = resolve_namespace_identity(catalog_db)[1]
+    exclusive = try_acquire_exclusive_lease(
+        derived_root, expected_catalog_identity=catalog_identity
+    )
+    core = None
     try:
-        previews = RenderPreviewPublisher(derived_root, catalog)
-        _run_startup_gc(previews)
-        server = CoreServiceServer(
-            core,
-            render_previews=previews,
+        core = assemble_production_core(data_root)
+        if exclusive is not None:
+            # The sweeps run under the exclusive lease; the store borrows it
+            # (it must not take a second, shared lock for itself).
+            gc_store = ResourceCatalogStore(catalog_db, namespace_lease=exclusive)
+            try:
+                gc_previews = RenderPreviewPublisher(derived_root, gc_store)
+                _run_startup_gc(gc_previews)
+                _run_retired_preview_gc(
+                    gc_previews, gc_store, core.conn,
+                    producer_root=str(data_root.resolve()),
+                )
+            finally:
+                gc_store.close()
+            # Exclusive -> shared downgrade: no business request happens in
+            # between (nothing is served before serve_forever).
+            exclusive.release()
+        else:
+            print(
+                "[core.derived_gc] skipped: namespace busy"
+                " (a managed peer holds a shared lease)",
+                file=sys.stderr,
+            )
+        shared_lease = acquire_shared_lease(
+            derived_root, expected_catalog_identity=resolve_namespace_identity(catalog_db)[1]
         )
-        return server.serve_forever()
+        catalog = ResourceCatalogStore(catalog_db, namespace_lease=shared_lease)
+        try:
+            previews = RenderPreviewPublisher(derived_root, catalog)
+            server = CoreServiceServer(
+                core,
+                render_previews=previews,
+                producer_root=data_root.resolve(),
+            )
+            return server.serve_forever()
+        finally:
+            catalog.close()
     finally:
-        catalog.close()
-        core.conn.close()
+        if exclusive is not None and exclusive.held:
+            exclusive.release()
+        if core is not None:
+            core.conn.close()
 
 
 def _run_startup_gc(previews: RenderPreviewPublisher) -> None:
@@ -1707,7 +1814,11 @@ def _run_startup_gc(previews: RenderPreviewPublisher) -> None:
     level -- see :meth:`RenderPreviewPublisher.collect_orphans` for the
     authoritative typed-code wording. Live files with live rows are never
     touched. Fail-soft: a GC error must not block the service from
-    starting."""
+    starting.
+
+    M2-DERIVED-GC-2: this sweep now runs ONLY inside the exclusive namespace
+    window (the caller holds the lease) -- never outside the protected
+    window. The per-run GC stdout/stats wire semantics are unchanged."""
     try:
         stats = previews.collect_orphans()
         print(
@@ -1717,6 +1828,94 @@ def _run_startup_gc(previews: RenderPreviewPublisher) -> None:
         )
     except Exception as error:
         print(f"[core.derived_gc] skipped: {error!r}", file=sys.stderr)
+
+
+def _run_retired_preview_gc(
+    publisher: RenderPreviewPublisher,
+    store: ResourceCatalogStore,
+    product_conn: Any,
+    *,
+    producer_root: str,
+) -> dict[str, int]:
+    """M2-DERIVED-GC-2 live-preview sweep (design §2.2/§2.4, exclusive
+    namespace window ONLY).
+
+    Candidates are retired=1 origin rows whose catalog shape gate passed;
+    each one is re-verified against the PRODUCT database under this
+    connection's ``BEGIN IMMEDIATE`` (SELECT-only: current/pinned/source
+    identity/hash/size) and deleted by DELETE DISPOSITION on the verifying
+    handle BEFORE its catalog+origin metadata is removed in one catalog
+    transaction. Any unknown/protected/busy verdict retains the copy. There
+    is no TTL, age, count or naming heuristic anywhere in this sweep."""
+    stats = {
+        "retired_deleted": 0,
+        "protected_retained": 0,
+        "unknown_skipped": 0,
+        "lifecycle_metadata_reclaimed": 0,
+    }
+    try:
+        stats["lifecycle_metadata_reclaimed"] = store.reclaim_orphan_lifecycle_rows()
+        candidates = store.retired_preview_candidates(producer_root)
+        product_conn.commit()
+        product_conn.execute("BEGIN IMMEDIATE")
+        try:
+            for candidate in candidates:
+                verified = _verify_retired_source(product_conn, candidate)
+                if verified is None:
+                    stats["protected_retained"] += 1
+                    continue
+                expected_sha256, expected_size = verified
+                deleted, reason = publisher.delete_retired_preview_copy(
+                    candidate.resource_id,
+                    expected_sha256=expected_sha256,
+                    expected_size=expected_size,
+                )
+                if not deleted:
+                    stats["unknown_skipped"] += 1
+                    print(
+                        f"[core.derived_gc] retired copy kept: {reason}",
+                        file=sys.stderr,
+                    )
+                    continue
+                store.reclaim_retired_preview_metadata(candidate.resource_id)
+                stats["retired_deleted"] += 1
+        finally:
+            product_conn.rollback()
+    except Exception as error:
+        print(f"[core.derived_gc] retired sweep skipped: {error!r}", file=sys.stderr)
+    return stats
+
+
+def _verify_retired_source(product_conn: Any, candidate: Any) -> tuple[str, int] | None:
+    """Product-DB verdict for one retired candidate (design §2.4, SELECT
+    only). None == UNKNOWN/protected -> retain: a missing artifact, a
+    non-TRANSLATED artifact, a missing/aliased revision, a verbatim
+    managed-path mismatch, the CURRENT pointer, a pin, or any query error
+    is never evidence of absence-of-reference."""
+    try:
+        artifact = product_conn.execute(
+            "SELECT artifact_type, current_revision_id FROM media_artifacts"
+            " WHERE artifact_id = ?",
+            (candidate.artifact_id,),
+        ).fetchone()
+        if artifact is None or artifact["artifact_type"] != "translated":
+            return None
+        revision = product_conn.execute(
+            "SELECT artifact_id, managed_path, file_hash, size_bytes, is_pinned"
+            " FROM artifact_revisions WHERE artifact_revision_id = ?",
+            (candidate.artifact_revision_id,),
+        ).fetchone()
+        if revision is None or revision["artifact_id"] != candidate.artifact_id:
+            return None
+        if revision["managed_path"] != candidate.managed_rel_path:
+            return None
+        if artifact["current_revision_id"] == candidate.artifact_revision_id:
+            return None
+        if revision["is_pinned"]:
+            return None
+        return str(revision["file_hash"]), int(revision["size_bytes"])
+    except Exception:
+        return None
 
 
 if __name__ == "__main__":

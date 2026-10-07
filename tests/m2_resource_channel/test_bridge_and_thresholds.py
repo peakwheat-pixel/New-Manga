@@ -33,6 +33,17 @@ def seed(catalog: ResourceCatalogStore, resource_id: str, rel_path: str) -> None
     catalog.upsert(resource_id, "derived-read-only", rel_path)
 
 
+def _preview_origin(producer_root):
+    from infrastructure.resource_channel.catalog_store import PreviewOrigin
+
+    return PreviewOrigin(
+        producer_root=str(producer_root),
+        artifact_id="artifact-1",
+        artifact_revision_id="revision-1",
+        managed_rel_path="books/b/chapters/c/translated/r1.png",
+    )
+
+
 class TestBridge:
     def test_issue_and_resolve_roundtrip(self, scope, reader, service):
         catalog = ResourceCatalogStore(":memory:")
@@ -171,3 +182,88 @@ def _issue_code(reader, service, rel_path):
     except TypedResourceChannelError as error:
         return error.code
     return None
+
+
+class TestRetirePreviewWire:
+    """M2-DERIVED-GC-2 (design 2.2, G2): the trusted retire bit rides the
+    rotation revoke only. The channel marks an already-registered preview
+    retired AFTER its own revoke succeeded; any mark failure is a no-op +
+    stderr diagnostic and never alters the revoke result. Plain revokes
+    (WebView revoke_resource_refs, the fail-closed new-key revoke) never
+    mark anything, and a non-boolean bit is refused the marking path."""
+
+    @staticmethod
+    def _server_with_preview(scope, reader, service, tmp_path):
+        catalog = ResourceCatalogStore(":memory:")
+        catalog.register_preview_with_origin(
+            "preview-old",
+            "previews/preview-old.png",
+            _preview_origin(tmp_path),
+        )
+        server = make_server(scope, reader, service, catalog)
+        return server, catalog
+
+    def test_retire_bit_after_successful_revoke_marks(self, scope, reader, service, tmp_path):
+        server, catalog = self._server_with_preview(scope, reader, service, tmp_path)
+        response = server._dispatch({
+            "id": 7,
+            "method": "revoke_resource",
+            "params": {"resource_id": "preview-old", "retire_preview": True},
+        })
+        assert response.get("error") is None
+        assert response["result"]["revoked_count"] == 0  # no grants, still a success
+        assert catalog.preview_lifecycle_row("preview-old")["retired"] is True
+
+    def test_plain_revoke_never_marks(self, scope, reader, service, tmp_path):
+        server, catalog = self._server_with_preview(scope, reader, service, tmp_path)
+        response = server._dispatch({
+            "id": 7,
+            "method": "revoke_resource",
+            "params": {"resource_id": "preview-old"},
+        })
+        assert response.get("error") is None
+        assert catalog.preview_lifecycle_row("preview-old")["retired"] is False
+
+    def test_non_boolean_retire_bit_never_marks(self, scope, reader, service, tmp_path):
+        server, catalog = self._server_with_preview(scope, reader, service, tmp_path)
+        for smuggled in ("yes", 1, "true"):
+            server._dispatch({
+                "id": 7,
+                "method": "revoke_resource",
+                "params": {"resource_id": "preview-old", "retire_preview": smuggled},
+            })
+        assert catalog.preview_lifecycle_row("preview-old")["retired"] is False
+
+    def test_mark_failure_is_noop_and_revoke_result_unchanged(
+        self, scope, reader, service, tmp_path, capsys
+    ):
+        server, catalog = self._server_with_preview(scope, reader, service, tmp_path)
+        original_mark = catalog.mark_preview_retired
+
+        def exploding(resource_id):
+            raise OSError("catalog volume offline")
+
+        catalog.mark_preview_retired = exploding
+        try:
+            response = server._dispatch({
+                "id": 7,
+                "method": "revoke_resource",
+                "params": {"resource_id": "preview-old", "retire_preview": True},
+            })
+        finally:
+            catalog.mark_preview_retired = original_mark
+        assert response.get("error") is None, "a mark failure must not fail the revoke"
+        assert response["result"]["revoked_count"] == 0
+        assert "[channel.preview_retire] mark failed" in capsys.readouterr().err
+        assert catalog.preview_lifecycle_row("preview-old")["retired"] is False
+
+    def test_unknown_key_mark_is_silent_noop(self, scope, reader, service):
+        catalog = ResourceCatalogStore(":memory:")
+        server = make_server(scope, reader, service, catalog)
+        response = server._dispatch({
+            "id": 7,
+            "method": "revoke_resource",
+            "params": {"resource_id": "preview-unknown", "retire_preview": True},
+        })
+        assert response.get("error") is None
+        assert response["result"]["revoked_count"] == 0

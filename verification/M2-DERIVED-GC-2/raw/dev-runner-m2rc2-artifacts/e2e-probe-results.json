@@ -1,0 +1,102 @@
+{
+  "probe": "M2-RC2 hardened command surface + RC1 resource channel matrix",
+  "results": [
+    {
+      "id": "E-00-probe-mode-detected",
+      "status": "PASS",
+      "observed": {
+        "probe_auto": true
+      }
+    },
+    {
+      "id": "E-01-issue-fetch-digest",
+      "status": "PASS",
+      "observed": {
+        "bytes": 49363,
+        "sha256": "b9b217bcad1e8cd97fdb0849c5b7058daf8993281e9c47aa41b08339d84fa334",
+        "expected_sha256": "b9b217bcad1e8cd97fdb0849c5b7058daf8993281e9c47aa41b08339d84fa334"
+      }
+    },
+    {
+      "id": "E-02-img-render",
+      "status": "PASS",
+      "observed": {
+        "ok": true,
+        "w": 128
+      }
+    },
+    {
+      "id": "E-03-unknown-id",
+      "status": "PASS",
+      "observed": "REF_UNKNOWN_ID"
+    },
+    {
+      "id": "E-04-revoke-after-cached-fetch",
+      "status": "PASS",
+      "observed": "REF_REVOKED"
+    },
+    {
+      "id": "E-05-expired-ttl",
+      "status": "PASS",
+      "observed": "REF_EXPIRED"
+    },
+    {
+      "id": "E-06-remount-fresh-references",
+      "status": "PASS",
+      "observed": {
+        "first": "UlfkH5aSeg",
+        "second": "pitqdFGWXw"
+      }
+    },
+    {
+      "id": "E-07-per-reference-first-byte-p95",
+      "status": "PASS",
+      "observed": {
+        "p95_ms": 80,
+        "timings_ms": [
+          76,
+          76,
+          77,
+          78,
+          79,
+          79,
+          79,
+          80
+        ],
+        "fixture": "typical.png (11525983 B)",
+        "scenario": "per-reference first-byte (cold grant cache, warm OS page cache)"
+      }
+    },
+    {
+      "id": "E-08-boundary-256mib",
+      "status": "PASS",
+      "observed": {
+        "served": 268435456,
+        "declared": 268435456
+      }
+    },
+    {
+      "id": "E-09-over-limit-typed",
+      "status": "PASS",
+      "observed": "RESOURCE_TOO_LARGE"
+    },
+    {
+      "id": "D-01-register-catalog-denied",
+      "status": "PASS",
+      "observed": "Command register_catalog not allowed by ACL"
+    },
+    {
+      "id": "D-02-ttl-override-inert",
+      "status": "PASS",
+      "observed": {
+        "fetch_status": 200
+      },
+      "note": "ttlOverride is not a parameter of the production issue shape"
+    },
+    {
+      "id": "D-03-probe-issue-allowed-in-probe-mode",
+      "status": "PASS",
+      "observed": "resolved"
+    }
+  ]
+}

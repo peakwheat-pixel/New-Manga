@@ -414,7 +414,13 @@ fn rotate_render_preview(
         // first would silently invalidate the preview we are about to
         // serve -- the equal-key case skips the revoke.
         let same_key = next.as_deref() == Some(previous_id);
-        if !same_key && channel.revoke_resource(previous_id).is_err() {
+        // M2-DERIVED-GC-2: the successful previous-key revoke carries the
+        // internal retire bit so the channel can mark the cataloged preview
+        // retired AFTER its own revoke succeeded. The equal-key case and
+        // the fail-closed new-key revoke below stay PLAIN revokes (no
+        // retire bit): same-key rotation must not retire the live key, and
+        // a failed rotation must not mark anything reclaimable.
+        if !same_key && channel.revoke_resource_retiring_preview(previous_id).is_err() {
             if let Some(next_id) = next.as_deref() {
                 let _ = channel.revoke_resource(next_id);
             }
@@ -702,12 +708,46 @@ fn main() {
     // configuration — never combined with the RC1 probe mode.
     let ac1_mode = !probe_mode && std::env::var("M2AC1_TEST_MODE").as_deref() == Ok("1");
 
-    // M2-AC5 packaged-vs-dev spawn dispatch. The library/acceptance bridges
-    // keep their frozen `spawn(python_exe, src_root, ...)` signatures (their
-    // files are outside this task's allowed paths): in packaged mode the
-    // arguments are repointed at the frozen exes — the PyInstaller entry
-    // wrappers ignore the `-m <module>` argv, and the sidecar dir as
-    // cwd/PYTHONPATH is inert — so the channel code stays untouched.
+    // M2-DERIVED-GC-2 production startup order (design §2.3): the
+    // production Core is spawned FIRST and must answer its startup ping
+    // (30 s deadline) before the channel sidecar starts -- the Core only
+    // answers after it holds the preview namespace protection and its
+    // startup GC window is done. Probe/AC1 keep the historical channel-only
+    // startup and never run this GC (probe/ac1 paths never spawn a
+    // production library).
+    let is_production = !probe_mode && !ac1_mode;
+    let data_root = match &user_root {
+        Some(root) => Some(env_path("NEWMANGA_DATA_ROOT").unwrap_or_else(|| {
+            let path = root.join("data");
+            ensure_dir(&path);
+            path
+        })),
+        None => env_path("NEWMANGA_DATA_ROOT"),
+    };
+    let library: Option<Box<dyn LibraryChannel>> = if is_production {
+        let chan = match &packaged_dir {
+            Some(dir) => StdioLibraryChannel::spawn_with_startup_ping(
+                &dir.join("core_service.exe").to_string_lossy(),
+                dir,
+                data_root.as_deref(),
+                Some(&derived_root),
+                Some(&catalog_db),
+                std::time::Duration::from_secs(30),
+            ),
+            None => StdioLibraryChannel::spawn_with_startup_ping(
+                &python_exe,
+                &src_root,
+                data_root.as_deref(),
+                Some(&derived_root),
+                Some(&catalog_db),
+                std::time::Duration::from_secs(30),
+            ),
+        }
+        .expect("production core library sidecar failed to start (startup ping)");
+        Some(Box::new(chan))
+    } else {
+        None
+    };
     let channel = match &packaged_dir {
         Some(dir) => StdioCoreChannel::spawn_packaged(
             &dir.join("host_bridge.exe"),
@@ -731,37 +771,6 @@ fn main() {
             }
             .expect("acceptance core sidecar failed to start"),
         )
-    } else {
-        None
-    };
-    let data_root = match &user_root {
-        Some(root) => Some(env_path("NEWMANGA_DATA_ROOT").unwrap_or_else(|| {
-            let path = root.join("data");
-            ensure_dir(&path);
-            path
-        })),
-        None => env_path("NEWMANGA_DATA_ROOT"),
-    };
-    let is_production = !probe_mode && !ac1_mode;
-    let library: Option<Box<dyn LibraryChannel>> = if is_production {
-        let chan = match &packaged_dir {
-            Some(dir) => StdioLibraryChannel::spawn_with_resource_roots(
-                &dir.join("core_service.exe").to_string_lossy(),
-                dir,
-                data_root.as_deref(),
-                Some(&derived_root),
-                Some(&catalog_db),
-            ),
-            None => StdioLibraryChannel::spawn_with_resource_roots(
-                &python_exe,
-                &src_root,
-                data_root.as_deref(),
-                Some(&derived_root),
-                Some(&catalog_db),
-            ),
-        }
-        .expect("production core library sidecar failed to start");
-        Some(Box::new(chan))
     } else {
         None
     };
@@ -1503,12 +1512,18 @@ mod tests {
 
         // seed the Core/SQLite catalog through the real loader entry point
         let catalog_db = dir.path().join("catalog.sqlite");
+        // M2-DERIVED-GC-2 (R4-A1): the seed creates a brand-new catalog, so
+        // the trusted first-bind flag runs against THIS loader's own derived
+        // root before the rows are written; an unbound catalog would be
+        // refused by the store.
         let seed = std::process::Command::new(&python)
             .arg("-m")
             .arg("infrastructure.resource_channel.catalog_loader")
             .current_dir(&src_root)
             .arg("--db")
             .arg(&catalog_db)
+            .arg("--initialize-preview-namespace")
+            .arg(&derived)
             .arg("--set")
             .arg("res-sidecar=asset.png")
             .env("PYTHONPATH", &src_root)
@@ -1558,12 +1573,18 @@ mod tests {
         std::fs::create_dir_all(&derived).unwrap();
         std::fs::write(derived.join("asset.png"), b"sidecar-payload").unwrap();
         let catalog_db = dir.path().join("catalog.sqlite");
+        // M2-DERIVED-GC-2 (R4-A1): the seed creates a brand-new catalog, so
+        // the trusted first-bind flag runs against THIS loader's own derived
+        // root before the rows are written; an unbound catalog would be
+        // refused by the store.
         let seed = std::process::Command::new(&python)
             .arg("-m")
             .arg("infrastructure.resource_channel.catalog_loader")
             .current_dir(&src_root)
             .arg("--db")
             .arg(&catalog_db)
+            .arg("--initialize-preview-namespace")
+            .arg(&derived)
             .arg("--set")
             .arg("res-sidecar=asset.png")
             .env("PYTHONPATH", &src_root)
@@ -2036,6 +2057,132 @@ mod tests {
         assert_eq!(out["preview_error"], serde_json::Value::Null);
         assert_eq!(current.get("page"), Some(&"render-0".to_string()));
         assert!(core.resolve(&old_ref.opaque_id).is_ok());
+    }
+
+    // ---- M2-DERIVED-GC-2: the rotation retire bit (design §2.2) ----------
+
+    /// A successful rotation carries the retire bit for the PREVIOUS key
+    /// only; the live new key is never marked.
+    #[test]
+    fn successful_rotation_retires_previous_key_only() {
+        let core = MockCoreChannel::new();
+        core.register("render-0", "derived/render-0.png").unwrap();
+        core.register("render-1", "derived/render-1.png").unwrap();
+        core.issue("render-0", "rev-0").unwrap();
+
+        let mut current = HashMap::from([("page".to_string(), "render-0".to_string())]);
+        let result = serde_json::json!({
+            "page_id": "page",
+            "artifact_id": "artifact",
+            "revision_no": 2,
+            "reports": [],
+            "preview": {"resource_id": "render-1", "revision": "rev-1"},
+            "preview_error": null,
+        });
+
+        let out = rotate_render_preview(&core, "page", result, &mut current).unwrap();
+        assert_eq!(out["preview_error"], serde_json::Value::Null);
+        assert_eq!(
+            core.retire_calls.lock().unwrap().clone(),
+            vec!["render-0".to_string()],
+            "exactly the previous key rides the retire path"
+        );
+        assert_eq!(current.get("page"), Some(&"render-1".to_string()));
+    }
+
+    /// Same-key rotation: no revoke at all and therefore no retire mark.
+    #[test]
+    fn same_key_rotation_carries_no_retire_bit() {
+        let core = MockCoreChannel::new();
+        core.register("render-0", "derived/render-0.png").unwrap();
+        core.issue("render-0", "rev-0").unwrap();
+
+        let mut current = HashMap::from([("page".to_string(), "render-0".to_string())]);
+        let result = serde_json::json!({
+            "page_id": "page",
+            "artifact_id": "artifact",
+            "revision_no": 2,
+            "reports": [],
+            "preview": {"resource_id": "render-0", "revision": "rev-1"},
+            "preview_error": null,
+        });
+
+        rotate_render_preview(&core, "page", result, &mut current).unwrap();
+        assert!(
+            core.retire_calls.lock().unwrap().is_empty(),
+            "the live key must never be marked retired"
+        );
+    }
+
+    /// Failed rotation: the fail-closed new-key revoke is a PLAIN revoke
+    /// (no retire bit) and the previous key is not marked either.
+    #[test]
+    fn failed_rotation_marks_nothing() {
+        let core = MockCoreChannel::new();
+        core.register("render-0", "derived/render-0.png").unwrap();
+        core.register("render-1", "derived/render-1.png").unwrap();
+        core.issue("render-0", "rev-0").unwrap();
+        core.fail_revoke_for
+            .lock()
+            .unwrap()
+            .replace("render-0".to_string());
+
+        let mut current = HashMap::from([("page".to_string(), "render-0".to_string())]);
+        let result = serde_json::json!({
+            "page_id": "page",
+            "artifact_id": "artifact",
+            "revision_no": 2,
+            "reports": [],
+            "preview": {"resource_id": "render-1", "revision": "rev-1"},
+            "preview_error": null,
+        });
+
+        let out = rotate_render_preview(&core, "page", result, &mut current).unwrap();
+        assert_eq!(out["preview_error"], serde_json::json!("PREVIEW_UNAVAILABLE"));
+        assert!(
+            core.retire_calls.lock().unwrap().is_empty(),
+            "a failed rotation must not mark anything reclaimable"
+        );
+    }
+
+    /// None-preview rotation: the previous key still gets its successful
+    /// revoke (with the retire bit) before the map entry is dropped.
+    #[test]
+    fn none_preview_rotation_still_retires_previous_key() {
+        let core = MockCoreChannel::new();
+        core.register("render-0", "derived/render-0.png").unwrap();
+        core.issue("render-0", "rev-0").unwrap();
+
+        let mut current = HashMap::from([("page".to_string(), "render-0".to_string())]);
+        let result = serde_json::json!({
+            "page_id": "page",
+            "artifact_id": "artifact",
+            "revision_no": 2,
+            "reports": [],
+            "preview": serde_json::Value::Null,
+            "preview_error": serde_json::json!("PREVIEW_UNAVAILABLE"),
+        });
+
+        let out = rotate_render_preview(&core, "page", result, &mut current).unwrap();
+        assert_eq!(current.get("page"), None);
+        assert_eq!(
+            core.retire_calls.lock().unwrap().clone(),
+            vec!["render-0".to_string()],
+            "the None-preview branch retires the dropped previous key"
+        );
+    }
+
+    /// The WebView-facing plain revoke (revoke_resource_refs) never rides
+    /// the retire path -- only the rotation method records there.
+    #[test]
+    fn plain_webview_revoke_does_not_touch_the_retire_path() {
+        let core = MockCoreChannel::new();
+        core.register("render-0", "derived/render-0.png").unwrap();
+        core.issue("render-0", "rev-0").unwrap();
+
+        core.revoke_resource("render-0").unwrap();
+
+        assert!(core.retire_calls.lock().unwrap().is_empty());
     }
 
     // ---- M2-AC5: packaged-mode resolution (fail-closed spawn) -------------

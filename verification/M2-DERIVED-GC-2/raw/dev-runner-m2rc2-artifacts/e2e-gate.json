@@ -1,0 +1,23 @@
+{
+  "gate": {
+    "environment": "PASS",
+    "lab": "PASS",
+    "catalog-seeding": "PASS",
+    "sidecar-import-isolation": "PASS",
+    "runtime-build": "PASS",
+    "probe-phase": "PASS",
+    "probe-allowlist-announcement": "PASS",
+    "sidecar-module-dump-probe": "PASS",
+    "interactive-production-surface": "FAIL",
+    "sidecar-module-dump-interactive": "PASS"
+  },
+  "failed": [
+    "interactive-production-surface"
+  ],
+  "probe_statuses": {
+    "PASS": 13
+  },
+  "probe_missing_ids": [],
+  "probe_unexpected_ids": [],
+  "probe_non_pass_ids": []
+}

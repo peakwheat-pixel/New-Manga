@@ -1,0 +1,46 @@
+syntax OK
+  [PASS] EVN-cargo: {"version": ["cargo 1.98.1 (797e8a9bc 2026-08-05)"]}
+  [PASS] EVN-rustc-resolved: {"path": "C:\\Users\\49745\\.cargo\\bin\\rustc.EXE"}
+  [PASS] EVN-rustc: {"version": ["rustc 1.98.1 (48a229cea 2026-09-01)"]}
+  [PASS] EVN-node-resolved: {"path": "E:\\Program Files\\nodejs\\node.EXE"}
+  [PASS] EVN-node: {"version": ["v24.15.0"]}
+  [PASS] EVN-npm-resolved: {"path": "E:\\Program Files\\nodejs\\npm.CMD"}
+  [PASS] EVN-npm: {"version": ["12.0.1"]}
+[1] lab ready (two isolated data roots, no user data)
+[3] sample sample-a
+  [PASS] FIX-catalog-prebind: {"exit": 0, "stderr": ""}
+  [PASS] sample-a-run1-allowlist-announcement: {"announced": "issue_resource_url,revoke_ref,revoke_resource_refs,ac1_request,ac1_write_results,ac1_exit"}
+  [PASS] sample-a-run1-exit-code: {"exit": 0, "tail": "[m2ac1-allowlist] ac1:issue_resource_url,revoke_ref,revoke_resource_refs,ac1_request,ac1_write_results,ac1_exit\n[1007/145346.724:ERROR:ui\\gfx\\win\\window_impl.cc:172] Failed to
+  [PASS] sample-a-run1-results-phase: {"phase": "run1"}
+  [PASS] sample-a-run2-allowlist-announcement: {"announced": "issue_resource_url,revoke_ref,revoke_resource_refs,ac1_request,ac1_write_results,ac1_exit"}
+  [PASS] sample-a-run2-exit-code: {"exit": 0, "tail": "[m2ac1-allowlist] ac1:issue_resource_url,revoke_ref,revoke_resource_refs,ac1_request,ac1_write_results,ac1_exit\n[1007/145347.271:ERROR:ui\\gfx\\win\\window_impl.cc:172] Failed to
+  [PASS] sample-a-run2-results-phase: {"phase": "run2"}
+  [PASS] sample-a-restart-desktop-pid-differs: {"run1": 56976, "run2": 32788}
+  [PASS] sample-a-restart-core-pid-differs: {"run1": 57920, "run2": 47288}
+  [PASS] sample-a-saved-summary: {"pages": 2, "run_status": "completed"}
+  [PASS] sample-a-mock-local-providers: {"providers": {"ocr": "m2ac1-mock-ocr", "translate": "m2ac1-mock-translate"}}
+  [PASS] sample-a-reader-pages-match-saved: {"viewed": [{"index": 0, "sha": "f66af60a9846"}, {"index": 1, "sha": "4afc67386c25"}]}
+  [PASS] sample-a-restore-saved-matches-run1: {"run1_pages": [[0, "f66af60a9846"], [1, "4afc67386c25"]], "run2_pages": [[0, "f66af60a9846"], [1, "4afc67386c25"]]}
+  [PASS] sample-a-restore-internals-match-restored-saved: {"exported_sha": "4afc67386c25"}
+  [PASS] sample-a-export-png: {"sha": "4afc67386c25", "size": 1122}
+  [PASS] sample-a-export-png-decodes: {"height": 320, "pixel_sha": "b191d8e5fad6", "width": 240}
+[3] sample sample-b
+  [PASS] FIX-catalog-prebind: {"exit": 0, "stderr": ""}
+  [PASS] sample-b-run1-allowlist-announcement: {"announced": "issue_resource_url,revoke_ref,revoke_resource_refs,ac1_request,ac1_write_results,ac1_exit"}
+  [PASS] sample-b-run1-exit-code: {"exit": 0, "tail": "[m2ac1-allowlist] ac1:issue_resource_url,revoke_ref,revoke_resource_refs,ac1_request,ac1_write_results,ac1_exit\n[1007/145348.593:ERROR:ui\\gfx\\win\\window_impl.cc:172] Failed to
+  [PASS] sample-b-run1-results-phase: {"phase": "run1"}
+  [PASS] sample-b-run2-allowlist-announcement: {"announced": "issue_resource_url,revoke_ref,revoke_resource_refs,ac1_request,ac1_write_results,ac1_exit"}
+  [PASS] sample-b-run2-exit-code: {"exit": 0, "tail": "[m2ac1-allowlist] ac1:issue_resource_url,revoke_ref,revoke_resource_refs,ac1_request,ac1_write_results,ac1_exit\n[1007/145349.128:ERROR:ui\\gfx\\win\\window_impl.cc:172] Failed to
+  [PASS] sample-b-run2-results-phase: {"phase": "run2"}
+  [PASS] sample-b-restart-desktop-pid-differs: {"run1": 58196, "run2": 41704}
+  [PASS] sample-b-restart-core-pid-differs: {"run1": 57784, "run2": 53672}
+  [PASS] sample-b-saved-summary: {"pages": 2, "run_status": "completed"}
+  [PASS] sample-b-mock-local-providers: {"providers": {"ocr": "m2ac1-mock-ocr", "translate": "m2ac1-mock-translate"}}
+  [PASS] sample-b-reader-pages-match-saved: {"viewed": [{"index": 0, "sha": "f66af60a9846"}, {"index": 1, "sha": "4afc67386c25"}]}
+  [PASS] sample-b-restore-saved-matches-run1: {"run1_pages": [[0, "f66af60a9846"], [1, "4afc67386c25"]], "run2_pages": [[0, "f66af60a9846"], [1, "4afc67386c25"]]}
+  [PASS] sample-b-restore-internals-match-restored-saved: {"exported_sha": "4afc67386c25"}
+  [PASS] sample-b-export-png: {"sha": "4afc67386c25", "size": 1122}
+  [PASS] sample-b-export-png-decodes: {"height": 320, "pixel_sha": "b191d8e5fad6", "width": 240}
+  [PASS] independent-samples-identical-summaries: {"sample-a": ["f66af60a9846", "4afc67386c25"], "sample-b": ["f66af60a9846", "4afc67386c25"]}
+  [PASS] E2E-gate: {}
+GATE PASS  evidence: C:\Users\49745\AppData\Local\Temp\m2ac1-e2e-lmm5768l

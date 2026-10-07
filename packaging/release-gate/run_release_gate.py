@@ -837,10 +837,14 @@ def roundtrip_catalog_loader(exe: Path, env: dict, lab: Path) -> dict:
     asset.write_bytes(b"\x89PNG\r\n\x1a\ngate-fixture\n")
     catalog_db = lab / "catalog-gate" / "catalog.sqlite"
 
+    # M2-DERIVED-GC-2 (design 2.3): the roundtrip fixture catalog is
+    # brand-new, so the trusted first-bind flag points at this gate's own
+    # derived root; the gate's pass criteria and thresholds are unchanged.
     completed = subprocess.run(
         [
             str(exe),
             "--db", str(catalog_db),
+            "--initialize-preview-namespace", str(derived),
             "--set", "rg1-res=asset.png",
             "--set", "rg1-res-2=asset.png",
             "--dump",

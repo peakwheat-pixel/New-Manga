@@ -92,6 +92,15 @@ pub trait CoreChannel: Send + Sync {
     fn resolve(&self, opaque_id: &str) -> Result<Grant, CoreError>;
     fn revoke(&self, opaque_id: &str) -> Result<(), CoreError>;
     fn revoke_resource(&self, resource_id: &str) -> Result<u32, CoreError>;
+    /// M2-DERIVED-GC-2 (design §2.2): the rotation-only narrow addition --
+    /// revoke every reference of the previous preview key AND ask the
+    /// channel to mark the cataloged preview retired (internal catalog
+    /// metadata; no WebView payload, no second RPC, no new Tauri command).
+    /// Default implementation = a plain revoke: mocks and any other
+    /// transport keep the old semantics unless they opt into the retire bit.
+    fn revoke_resource_retiring_preview(&self, resource_id: &str) -> Result<u32, CoreError> {
+        self.revoke_resource(resource_id)
+    }
 }
 
 /// Real Python Core sidecar over stdio JSON-lines (wire v1). The catalog
@@ -270,6 +279,17 @@ impl CoreChannel for StdioCoreChannel {
         )?;
         Ok(value.get("revoked_count").and_then(|c| c.as_u64()).unwrap_or(0) as u32)
     }
+
+    fn revoke_resource_retiring_preview(&self, resource_id: &str) -> Result<u32, CoreError> {
+        // The trusted retire bit rides the successful previous-key revoke
+        // request only. The channel marks the preview retired AFTER its own
+        // revoke succeeded; a mark failure never alters the revoke result.
+        let value = self.round_trip(
+            "revoke_resource",
+            serde_json::json!({ "resource_id": resource_id, "retire_preview": true }),
+        )?;
+        Ok(value.get("revoked_count").and_then(|c| c.as_u64()).unwrap_or(0) as u32)
+    }
 }
 
 impl StdioCoreChannel {
@@ -319,6 +339,12 @@ pub struct MockCoreChannel {
     /// can exercise the fail-closed preview-rotation branch without a real
     /// Core round trip.
     pub fail_revoke_for: Mutex<Option<String>>,
+    /// M2-DERIVED-GC-2: resource ids whose revoke went through the
+    /// rotation-specific retire method. The plain `revoke_resource` (WebView
+    /// `revoke_resource_refs`, the fail-closed new-key revoke) never records
+    /// here, which is the host-side discrimination between the two wire
+    /// shapes.
+    pub retire_calls: Mutex<Vec<String>>,
 }
 
 pub struct MockEntry {
@@ -335,6 +361,7 @@ impl MockCoreChannel {
             catalog: Mutex::new(HashMap::new()),
             table: Mutex::new(HashMap::new()),
             fail_revoke_for: Mutex::new(None),
+            retire_calls: Mutex::new(Vec::new()),
         }
     }
 
@@ -454,5 +481,16 @@ impl CoreChannel for MockCoreChannel {
             }
         }
         Ok(count)
+    }
+
+    fn revoke_resource_retiring_preview(&self, resource_id: &str) -> Result<u32, CoreError> {
+        // Mirror the real channel discipline: the mark happens ONLY after
+        // the revoke itself succeeded -- a failed retire revoke records
+        // nothing reclaimable.
+        let result = self.revoke_resource(resource_id);
+        if result.is_ok() {
+            self.retire_calls.lock().unwrap().push(resource_id.to_string());
+        }
+        result
     }
 }
