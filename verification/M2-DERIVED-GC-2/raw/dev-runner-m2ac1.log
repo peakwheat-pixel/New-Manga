@@ -1,8 +1,54 @@
-$ python verification/M2-AC1/run_e2e.py --skip-build
+$ python verification/M2-AC1/run_e2e.py --skip-build   (rebound to rework head; Rust unchanged so the release exe stays valid)
 python=G:/CODEX/New Manga.task-envs/T1.1.1-impl-py312/Scripts/python.exe
-HEAD=7f65247324d5a9104871a89d84fc0bdf49bb34db
-  File "G:\CODEX\New Manga.worktrees\DERIVED-GC-2-zcode\verification\M2-AC1\run_e2e.py", line 258
-    f" --db {catalog_db} --initialize-preview-namespace {derived_root}
-    ^
-SyntaxError: unterminated f-string literal (detected at line 258)
+HEAD=70ab9da0ca72535e6a399adbfd82b5c0282f7f73
+lab: C:\Users\49745\AppData\Local\Temp\m2ac1-e2e-ofi5hdmh
+[0] environment
+  [PASS] EVN-pyside6: {"version": "6.11.2"}
+  [PASS] EVN-runner-python: {"executable": "G:\\CODEX\\New Manga.task-envs\\T1.1.1-impl-py312\\Scripts\\python.exe", "version": "3.12.3"}
+  [PASS] EVN-cargo-resolved: {"path": "C:\\Users\\49745\\.cargo\\bin\\cargo.EXE"}
+  [PASS] EVN-cargo: {"version": ["cargo 1.98.1 (797e8a9bc 2026-08-05)"]}
+  [PASS] EVN-rustc-resolved: {"path": "C:\\Users\\49745\\.cargo\\bin\\rustc.EXE"}
+  [PASS] EVN-rustc: {"version": ["rustc 1.98.1 (48a229cea 2026-09-01)"]}
+  [PASS] EVN-node-resolved: {"path": "E:\\Program Files\\nodejs\\node.EXE"}
+  [PASS] EVN-node: {"version": ["v24.15.0"]}
+  [PASS] EVN-npm-resolved: {"path": "E:\\Program Files\\nodejs\\npm.CMD"}
+  [PASS] EVN-npm: {"version": ["12.0.1"]}
+[1] lab ready (two isolated data roots, no user data)
+[3] sample sample-a
+  [PASS] FIX-catalog-prebind: {"exit": 0, "stderr": ""}
+  [PASS] sample-a-run1-allowlist-announcement: {"announced": "issue_resource_url,revoke_ref,revoke_resource_refs,ac1_request,ac1_write_results,ac1_exit"}
+  [PASS] sample-a-run1-exit-code: {"exit": 0, "tail": "[m2ac1-allowlist] ac1:issue_resource_url,revoke_ref,revoke_resource_refs,ac1_request,ac1_write_results,ac1_exit\n[1007/165456.762:ERROR:ui\\gfx\\win\\window_impl.cc:172] Failed to
+  [PASS] sample-a-run1-results-phase: {"phase": "run1"}
+  [PASS] sample-a-run2-allowlist-announcement: {"announced": "issue_resource_url,revoke_ref,revoke_resource_refs,ac1_request,ac1_write_results,ac1_exit"}
+  [PASS] sample-a-run2-exit-code: {"exit": 0, "tail": "[m2ac1-allowlist] ac1:issue_resource_url,revoke_ref,revoke_resource_refs,ac1_request,ac1_write_results,ac1_exit\n[1007/165457.264:ERROR:ui\\gfx\\win\\window_impl.cc:172] Failed to
+  [PASS] sample-a-run2-results-phase: {"phase": "run2"}
+  [PASS] sample-a-restart-desktop-pid-differs: {"run1": 46428, "run2": 56412}
+  [PASS] sample-a-restart-core-pid-differs: {"run1": 56120, "run2": 55928}
+  [PASS] sample-a-saved-summary: {"pages": 2, "run_status": "completed"}
+  [PASS] sample-a-mock-local-providers: {"providers": {"ocr": "m2ac1-mock-ocr", "translate": "m2ac1-mock-translate"}}
+  [PASS] sample-a-reader-pages-match-saved: {"viewed": [{"index": 0, "sha": "f66af60a9846"}, {"index": 1, "sha": "4afc67386c25"}]}
+  [PASS] sample-a-restore-saved-matches-run1: {"run1_pages": [[0, "f66af60a9846"], [1, "4afc67386c25"]], "run2_pages": [[0, "f66af60a9846"], [1, "4afc67386c25"]]}
+  [PASS] sample-a-restore-internals-match-restored-saved: {"exported_sha": "4afc67386c25"}
+  [PASS] sample-a-export-png: {"sha": "4afc67386c25", "size": 1122}
+  [PASS] sample-a-export-png-decodes: {"height": 320, "pixel_sha": "b191d8e5fad6", "width": 240}
+[3] sample sample-b
+  [PASS] FIX-catalog-prebind: {"exit": 0, "stderr": ""}
+  [PASS] sample-b-run1-allowlist-announcement: {"announced": "issue_resource_url,revoke_ref,revoke_resource_refs,ac1_request,ac1_write_results,ac1_exit"}
+  [PASS] sample-b-run1-exit-code: {"exit": 0, "tail": "[m2ac1-allowlist] ac1:issue_resource_url,revoke_ref,revoke_resource_refs,ac1_request,ac1_write_results,ac1_exit\n[1007/165458.556:ERROR:ui\\gfx\\win\\window_impl.cc:172] Failed to
+  [PASS] sample-b-run1-results-phase: {"phase": "run1"}
+  [PASS] sample-b-run2-allowlist-announcement: {"announced": "issue_resource_url,revoke_ref,revoke_resource_refs,ac1_request,ac1_write_results,ac1_exit"}
+  [PASS] sample-b-run2-exit-code: {"exit": 0, "tail": "[m2ac1-allowlist] ac1:issue_resource_url,revoke_ref,revoke_resource_refs,ac1_request,ac1_write_results,ac1_exit\n[1007/165459.050:ERROR:ui\\gfx\\win\\window_impl.cc:172] Failed to
+  [PASS] sample-b-run2-results-phase: {"phase": "run2"}
+  [PASS] sample-b-restart-desktop-pid-differs: {"run1": 32896, "run2": 27020}
+  [PASS] sample-b-restart-core-pid-differs: {"run1": 37032, "run2": 52360}
+  [PASS] sample-b-saved-summary: {"pages": 2, "run_status": "completed"}
+  [PASS] sample-b-mock-local-providers: {"providers": {"ocr": "m2ac1-mock-ocr", "translate": "m2ac1-mock-translate"}}
+  [PASS] sample-b-reader-pages-match-saved: {"viewed": [{"index": 0, "sha": "f66af60a9846"}, {"index": 1, "sha": "4afc67386c25"}]}
+  [PASS] sample-b-restore-saved-matches-run1: {"run1_pages": [[0, "f66af60a9846"], [1, "4afc67386c25"]], "run2_pages": [[0, "f66af60a9846"], [1, "4afc67386c25"]]}
+  [PASS] sample-b-restore-internals-match-restored-saved: {"exported_sha": "4afc67386c25"}
+  [PASS] sample-b-export-png: {"sha": "4afc67386c25", "size": 1122}
+  [PASS] sample-b-export-png-decodes: {"height": 320, "pixel_sha": "b191d8e5fad6", "width": 240}
+  [PASS] independent-samples-identical-summaries: {"sample-a": ["f66af60a9846", "4afc67386c25"], "sample-b": ["f66af60a9846", "4afc67386c25"]}
+  [PASS] E2E-gate: {}
+GATE PASS  evidence: C:\Users\49745\AppData\Local\Temp\m2ac1-e2e-ofi5hdmh
 EXIT=0
