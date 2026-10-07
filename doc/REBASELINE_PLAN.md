@@ -1,5 +1,10 @@
 # Project Rebaseline Plan
 
+## 2026-10-07 GC-2 设计释放
+
+用户已明确授权 [M2-DERIVED-GC-2-DESIGN](tasks/M2-DERIVED-GC-2-DESIGN.md)，范围与 AC 已冻结，ready；Owner=Codex、非作者 Reviewer=DeepSeek Harness、Integrator=Codex；base=ab4b7c11，branch=codex/m2-derived-gc-2-design，worktree=G:/CODEX/New Manga.worktrees/DERIVED-GC-2-DESIGN（release 后由 Codex 创建）。只写设计/证据/交接/Review 导入与治理元数据，禁止生产实现/Schema/依赖/用户数据写入。下方全量盘点为 release 前快照，不覆盖本次唯一 Active。
+
+
 ## 2026-10-07 全面 REBASELINE 覆盖层（审计输入 main@32f9b932）
 
 本次全量审计与下一步分配见 [审计报告](../verification/REBASELINE-20261007/REPORT.md)，全部 **189 个 Task 文件 + T1.1.2 Roadmap 映射，共 190 个节点**见 [任务台账与分组流程图](../verification/REBASELINE-20261007/TASK_GRAPH.md)，机器可复核参数与 Git/worktree 证据见 [inventory](../verification/REBASELINE-20261007/inventory.json)。本段为当前规划覆盖层，下面各日期段落保留历史证据。

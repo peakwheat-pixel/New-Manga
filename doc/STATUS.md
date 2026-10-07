@@ -1,5 +1,10 @@
 # Current Development Status
 
+## 当前执行：M2-DERIVED-GC-2-DESIGN
+
+2026-10-07：用户明确授权设计 Task，状态 ready / ExecutionState=IDLE（worktree 创建后转 ACTIVE）。Owner=Codex，Reviewer=DeepSeek Harness（非作者），Integrator=Codex；base=ab4b7c11，branch/worktree 见 [Task](tasks/M2-DERIVED-GC-2-DESIGN.md)。仅设计，不启动回收实现；下方“无 Active”是 release 前审计快照。本 Task 成为唯一 Active。
+
+
 ## 2026-10-07 全量核验（当前覆盖层）
 
 审计输入 `main@32f9b932`，开始时主工作区 clean；Codex 执行本次用户授权的 REBASELINE 文档审计。**产品开发任务无 Active、无 released、登记进行中 0**；本次审计未派发后续实现。279 个 Git worktree（含主工作区）全部只读检查，24 个其他 worktree 有未提交内容；主工作区扫描时另有本次审计产物，均未清理/覆盖。dirty 不代表 Agent 正在运行。
