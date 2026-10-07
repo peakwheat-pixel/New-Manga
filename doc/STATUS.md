@@ -1,5 +1,6 @@
 # Current Development Status
 
+正式 release/synced Owner HEAD=5896db8c64b90b53b015eb9c46c7dab6ab29210b，clean/common-dir已核验；主仓库后续仅追加本恢复证据，Owner 固定留在 release，不需追随最新 main。
 ## 当前执行：M2-DERIVED-GC-2 ready / AWAITING_OWNER_CLAIM
 
 2026-10-07 用户授权正式释放；唯一 Active Task=[M2-DERIVED-GC-2](tasks/M2-DERIVED-GC-2.md)，TaskStatus=ready，ExecutionState=IDLE / AWAITING_OWNER_CLAIM。Owner=ZCode，非作者 Reviewer=DeepSeek Harness，Integrator=Codex；只完成治理释放与干净 worktree 快进，不派发、不启动生产实施。ZCode 经恢复点核对后才认领 in_progress。允许路径/共享 seam/AC/G1-G7 按现有 Task 与已批准设计冻结，无新增范围。

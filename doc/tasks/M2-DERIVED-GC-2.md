@@ -12,8 +12,10 @@ depends_on: [M2-DERIVED-GC-2-DESIGN, M2-DERIVED-GC-1, M2-RC4-DOMAIN-COMMANDS]
 base_commit: ad75fadc2944983b4322f353176ba70cf0b0b7ae
 branch: agent/zcode/M2-DERIVED-GC-2
 worktree: G:/CODEX/New Manga.worktrees/DERIVED-GC-2-zcode
-allocation_state: allocated_clean
+allocation_state: release_synced_clean
 allocated_head: e093f0106bf62476c640dbcf8bb47448c8cc644c
+release_commit: 5896db8c64b90b53b015eb9c46c7dab6ab29210b
+synced_head: 5896db8c64b90b53b015eb9c46c7dab6ab29210b
 integration_commit: null
 ---
 

@@ -31,3 +31,47 @@ EXIT=0
 
 COMMAND: git diff --name-only -- src apps tests packaging requirements.txt
 EXIT=0
+
+COMMAND: git -C G:/CODEX/New Manga.worktrees/DERIVED-GC-2-zcode merge --ff-only 5896db8c64b90b53b015eb9c46c7dab6ab29210b
+Updating e093f010..5896db8c
+Fast-forward
+ doc/00_INDEX.md                                    |  2 +-
+ doc/REBASELINE_PLAN.md                             |  5 +-
+ doc/STATUS.md                                      |  7 +-
+ .../M2-DERIVED-GC-2-DESIGN-codex-af09c00d.md       |  9 ++-
+ doc/tasks/M2-DERIVED-GC-2-DESIGN.md                | 26 +++++---
+ doc/tasks/M2-DERIVED-GC-2.md                       | 20 +++---
+ doc/tasks/README.md                                |  2 +-
+ verification/M2-DERIVED-GC-2-DESIGN/completion.md  | 24 +++++++
+ .../final-check-attempt1.log                       | 78 ++++++++++++++++++++++
+ .../M2-DERIVED-GC-2-DESIGN/final-check.log         | 78 ++++++++++++++++++++++
+ .../next-task-allocation.log                       |  8 +++
+ .../next-task-instruction.md                       |  4 +-
+ .../M2-DERIVED-GC-2-DESIGN/review-disposition.md   |  3 +
+ verification/M2-DERIVED-GC-2/release-check.log     | 33 +++++++++
+ verification/M2-DERIVED-GC-2/release-recovery.md   | 25 +++++++
+ verification/M2-DERIVED-GC-2/zcode-instruction.md  | 35 ++++++++++
+ 16 files changed, 334 insertions(+), 25 deletions(-)
+ create mode 100644 verification/M2-DERIVED-GC-2-DESIGN/completion.md
+ create mode 100644 verification/M2-DERIVED-GC-2-DESIGN/final-check-attempt1.log
+ create mode 100644 verification/M2-DERIVED-GC-2-DESIGN/final-check.log
+ create mode 100644 verification/M2-DERIVED-GC-2-DESIGN/next-task-allocation.log
+ create mode 100644 verification/M2-DERIVED-GC-2/release-check.log
+ create mode 100644 verification/M2-DERIVED-GC-2/release-recovery.md
+ create mode 100644 verification/M2-DERIVED-GC-2/zcode-instruction.md
+EXIT=0
+COMMAND: git -C G:/CODEX/New Manga.worktrees/DERIVED-GC-2-zcode status --short --branch
+## agent/zcode/M2-DERIVED-GC-2
+EXIT=0
+COMMAND: git -C G:/CODEX/New Manga.worktrees/DERIVED-GC-2-zcode rev-parse HEAD
+5896db8c64b90b53b015eb9c46c7dab6ab29210b
+EXIT=0
+COMMAND: git -C G:/CODEX/New Manga.worktrees/DERIVED-GC-2-zcode rev-parse --path-format=absolute --git-common-dir
+G:/CODEX/New Manga/.git
+EXIT=0
+COMMAND: git diff --name-only ad75fadc 5896db8c64b90b53b015eb9c46c7dab6ab29210b -- src apps tests packaging requirements.txt
+
+EXIT=0
+COMMAND: git diff ad75fadc 5896db8c64b90b53b015eb9c46c7dab6ab29210b --check
+
+EXIT=0

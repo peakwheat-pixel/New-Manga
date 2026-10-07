@@ -23,3 +23,26 @@ AC/G1-G7/native/产品测试全部 planned / NOT_RUN；本次仅治理检查。
 下一步：ZCode 核对 release HEAD/clean/common-dir/Task ready 后认领 in_progress，
 按冻结范围实施并交固定 head、verification、Handoff；
 真实非作者 DSH Review 条件闭合后，由 Codex 集成并验证才 done。
+
+## 释放后实际恢复点（已同步）
+
+release_commit = 5896db8c64b90b53b015eb9c46c7dab6ab29210b
+Owner worktree HEAD = 5896db8c64b90b53b015eb9c46c7dab6ab29210b
+branch = agent/zcode/M2-DERIVED-GC-2
+worktree = G:/CODEX/New Manga.worktrees/DERIVED-GC-2-zcode
+common-dir = G:/CODEX/New Manga/.git
+Working Tree = clean
+TaskStatus = ready
+ExecutionState = IDLE / AWAITING_OWNER_CLAIM
+Resume Safety = RESUME_SAFE
+
+Codex 实际执行 merge --ff-only，EXIT0；从 e093f010 快进到以上固定 release。
+设计 base 保留 ad75fadc；release 含治理增量。ad75fadc 至 release 的产品
+src/apps/tests/packaging/requirements.txt 差量为零，git diff --check EXIT0。
+详见 release-check.log。没有派发/启动 ZCode，没有运行产品或 native 测试。
+
+本实测记录和完整指令在主仓库后续纯治理提交追加；Owner checkout 固定留在
+上述 release commit，不要求同步追加证据提交。该后续治理提交只填恢复点，
+不改变授权、allowed_paths、设计或产品代码；主 Plan/STATUS 与 Owner release 一致。
+Owner checkout 中本文件的提交后 hash 占位以此主仓库追加记录为准；
+可直接核对本固定 release，不猜最新 main，不 merge 他人变更。
