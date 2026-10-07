@@ -418,6 +418,42 @@ class TestPreviewNamespaceLease:
         finally:
             os.rmdir(str(lock))
 
+    def test_race_equivalent_slipped_walk_still_refused(self, tmp_path, monkeypatch):
+        # Codex r2 F-02: a real check-then-open race cannot be timed from a
+        # test, so test the EQUIVALENT end state: the pre-open lstat walk has
+        # already passed (neutralised here) while the path now IS a junction
+        # -- exactly what the walk would have seen had it run after the
+        # replacement. The lease must still be refused WITHOUT the walk, and
+        # the refusal must NOT come from the walk's message family.
+        import _winapi
+        import os
+
+        from infrastructure.resource_channel import handle_resolver as _hr
+        from infrastructure.resource_channel.handle_resolver import (
+            PREVIEW_NAMESPACE_LOCK_NAME,
+            acquire_shared_lease,
+        )
+
+        derived, catalog, binding = self._binding(tmp_path)
+        lock = derived / PREVIEW_NAMESPACE_LOCK_NAME
+        lock.unlink()
+        outside = tmp_path / "outside"
+        outside.mkdir()
+        _winapi.CreateJunction(str(outside), str(lock))
+        try:
+            monkeypatch.setattr(_hr, "_lstat_reparse_walk", lambda path: None)
+            with pytest.raises(TypedResourceChannelError) as excinfo:
+                acquire_shared_lease(derived)
+            # the (neutralised) walk's own message family must be absent:
+            # the refusal came from the post-open verification path, which
+            # is precisely the line of defence a slipped-past replacement
+            # relies on
+            assert "reparse component in namespace path" not in str(excinfo.value.message)
+            assert (outside / "probe.txt").with_name("probe.txt") is not None
+        finally:
+            os.rmdir(str(lock))
+            del _winapi
+
     def test_reparse_derived_root_is_refused(self, tmp_path):
         import _winapi
 

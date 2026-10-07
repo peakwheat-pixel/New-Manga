@@ -137,6 +137,12 @@ def _rw_uri(db_path: Path) -> str:
     return db_path.resolve().as_uri() + "?mode=rw"
 
 
+def _ro_uri(db_path: Path) -> str:
+    """Read-only WITHOUT immutable: sees un-checkpointed WAL rows (the
+    authoritative initialize-claim check must not miss them)."""
+    return db_path.resolve().as_uri() + "?mode=ro"
+
+
 def _ro_immutable_uri(db_path: Path) -> str:
     return db_path.resolve().as_uri() + "?mode=ro&immutable=1"
 
@@ -184,12 +190,13 @@ def initialize_namespace(catalog_db: Path | str, derived_root: Path | str) -> Na
             raise namespace_unavailable(
                 "namespace lock already bound; re-initialization would overwrite a binding"
             )
-        # Authoritative re-check UNDER the exclusive lock (Codex r1 F-01):
-        # the pre-lock probe alone cannot cover a concurrent writer or an
-        # unreadable file -- the claim decision is re-run here against a
-        # fresh read-only connection before ANY table is created.
+        # Authoritative re-check UNDER the exclusive lock (Codex r1 F-01/r2):
+        # a PLAIN read-only connection -- NOT immutable -- so rows sitting in
+        # an un-checkpointed WAL are visible (design §7 forbids initializing
+        # from an immutable-miss). The pre-lock immutable probe stays a
+        # fast-fail only; this is the claim decision.
         if db_path.exists():
-            recheck = sqlite3.connect(_ro_immutable_uri(db_path), uri=True)
+            recheck = sqlite3.connect(_ro_uri(db_path), uri=True)
             try:
                 _assert_catalog_claimable(recheck)
             finally:
@@ -237,6 +244,9 @@ def initialize_namespace(catalog_db: Path | str, derived_root: Path | str) -> Na
         close_lock_handle(lock_handle)
 
 
+_KNOWN_CATALOG_TABLES = {"resource_catalog", "preview_lifecycle", "preview_namespace"}
+
+
 def _assert_catalog_claimable(connection: sqlite3.Connection) -> None:
     """Refuse anything that is not a brand-new or empty self-owned catalog.
 
@@ -244,27 +254,48 @@ def _assert_catalog_claimable(connection: sqlite3.Connection) -> None:
     table can never zero out the resource count (Codex r1 F-01): an
     old-schema catalog that carries resource rows predates the lifecycle
     schema and is UNKNOWN history -- never claimed. An unknown/corrupt
-    database file (sqlite3.DatabaseError) is likewise a refusal."""
+    database file (sqlite3.DatabaseError) is likewise a refusal.
+
+    Codex r2 F-01 additions: (a) ANY user table outside the known set is an
+    unknown schema -> refusal (history data may live in tables this version
+    does not know); (b) the AUTHORITATIVE check must run on a connection
+    that sees un-checkpointed WAL rows -- the pre-lock probe may legally use
+    ``immutable=1`` as a fast-fail only, because an immutable read can
+    silently miss rows sitting in the WAL (design §7 forbids initializing
+    from an immutable-miss)."""
 
     if _read_namespace_row(connection) is not None:
         raise namespace_unavailable("catalog already carries a namespace binding")
     try:
+        tables = {
+            row[0]
+            for row in connection.execute(
+                "SELECT name FROM sqlite_master WHERE type = 'table'"
+            ).fetchall()
+        }
+        unknown = {
+            name
+            for name in tables
+            if name not in _KNOWN_CATALOG_TABLES and not name.startswith("sqlite_")
+        }
+        if unknown:
+            raise namespace_unavailable(
+                "catalog carries unknown tables (unknown schema/history):"
+                f" {sorted(unknown)}"
+            )
         (count,) = connection.execute("SELECT COUNT(*) FROM resource_catalog").fetchone()
-    except sqlite3.OperationalError:
-        count = 0  # no resource_catalog table at all: a brand-new database file
-    except sqlite3.DatabaseError as error:
-        raise namespace_unavailable(f"catalog file unusable: {error}") from error
-    try:
-        (origin_count,) = connection.execute(
-            "SELECT COUNT(*) FROM preview_lifecycle"
-        ).fetchone()
-    except sqlite3.OperationalError as error:
-        if count:
+        origin_count = 0
+        if "preview_lifecycle" in tables:
+            (origin_count,) = connection.execute(
+                "SELECT COUNT(*) FROM preview_lifecycle"
+            ).fetchone()
+        elif count:
             raise namespace_unavailable(
                 "catalog carries resource rows but predates the lifecycle schema;"
                 " unknown history is never claimed"
-            ) from error
-        origin_count = 0  # brand-new file missing both tables
+            )
+    except sqlite3.OperationalError as error:
+        raise namespace_unavailable(f"catalog probe failed: {error}") from error
     except sqlite3.DatabaseError as error:
         raise namespace_unavailable(f"catalog file unusable: {error}") from error
     if count or origin_count:

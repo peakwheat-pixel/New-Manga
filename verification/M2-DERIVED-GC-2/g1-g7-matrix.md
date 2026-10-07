@@ -73,6 +73,6 @@
 - dev 入口：M2-RC2 runner probe 阶段 13/13+catalog-seeding+import-isolation PASS；production allowlist 项 FAIL=runner 陈旧期望（既有漂移，Codex r1 F-07 同意交独立 debt Task）——**该 Gate 项在 debt Task 修复并重新验收前保持 FAIL 记录，不以既有漂移为由记 PASS**。M2-AC1 runner GATE PASS（双 launch 真实桌面）。packaged：m2ac5 同口径（CS-L1 保持 FAIL 记录）；release-gate 25/25 PASS（其 runner 无此类陈旧快照）。
 - dev/packaged 构建：sidecar 重建绑定 HEAD=7f652473（build_sidecar OK）；release exe 重建（RC2 runner 内 fresh `cargo build --release`）；packaged runner 执行状态见 raw/packaged-runners.log（runner 场景日志另存 raw/packaged-ac5-run/；M2-AC5 历史入库 raw 已恢复原字节，本次运行产物仅搬运不覆盖——P3-9(b) 先例口径）。
 
-## G7 启用边界 — PASS（口径见 g7-enablement-boundary.md）
+## G7 启用边界 — 本机单版本机制 PASS；分发迁移 Gate=阻断条款（执行证据属分发验收，明示 NOT_VERIFIED，不计 PASS——Codex r2 F-03 口径）
 
-全入口租约接入清单+受控全退出机制证明+unknown/mixed-version 不删实证，全部由入库测试承载；分发迁移 Gate（未来多版本共存）已登记不豁免。
+全入口租约接入清单+受控全退出机制证明+unknown/mixed-version 不删实证，全部由入库测试承载；分发迁移 Gate（未来多版本共存）已落为**分发前阻断条款**（g7-enablement-boundary.md §2），其执行证据属分发验收材料，本 Task 不产生也不豁免。production 对未绑定非空 catalog 的启动拒绝有实测（`test_production_core_refuses_unbound_legacy_catalog`）。

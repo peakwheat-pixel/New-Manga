@@ -365,6 +365,119 @@ class TestPreviewNamespaceAuthority:
         with pytest.raises(TypedResourceChannelError):
             initialize_namespace(db, derived)
 
+    def test_initialize_refuses_uncheckpointed_wal_rows(self, tmp_path):
+        # Codex r2 F-01: an immutable read can silently MISS rows sitting in
+        # an un-checkpointed WAL. The authoritative claim decision runs on a
+        # plain ro connection (WAL-visible) under the exclusive lock, so the
+        # bind is refused and nothing is written.
+        import sqlite3 as _sq
+
+        db = tmp_path / "wal.sqlite"
+        conn = _sq.connect(str(db))
+        conn.execute("PRAGMA journal_mode=WAL")
+        conn.execute(
+            "CREATE TABLE resource_catalog ("
+            "resource_id TEXT PRIMARY KEY, scope_class TEXT NOT NULL, rel_path TEXT NOT NULL)"
+        )
+        conn.execute(
+            "INSERT INTO resource_catalog VALUES"
+            " ('wal-row', 'derived-read-only', 'previews/wal-row.png')"
+        )
+        conn.commit()
+        # keep conn OPEN: the row stays in the -wal file, not checkpointed
+        # into the main db
+        (main_count,) = conn.execute("SELECT COUNT(*) FROM resource_catalog").fetchone()
+        assert main_count == 1
+        probe = _sq.connect("file:" + str(db).replace("\\", "/") + "?mode=ro&immutable=1", uri=True)
+        try:
+            (probe_count,) = probe.execute("SELECT COUNT(*) FROM resource_catalog").fetchone()
+        except _sq.OperationalError:
+            probe_count = None  # the table itself lives only in the WAL
+        probe.close()
+        assert probe_count in (0, None), (
+            "test premise: the immutable probe must miss the WAL row"
+        )
+
+        derived = tmp_path / "derived"
+        derived.mkdir()
+        with pytest.raises(TypedResourceChannelError):
+            initialize_namespace(db, derived)
+        conn.close()
+
+    def test_initialize_refuses_unknown_tables(self, tmp_path):
+        # Codex r2 F-01: history may live in tables this version does not
+        # know -- any user table outside the known set is an unknown schema
+        # and is refused even when the known tables are empty.
+        import sqlite3 as _sq
+
+        db = tmp_path / "unknown-table.sqlite"
+        conn = _sq.connect(str(db))
+        conn.execute("CREATE TABLE resource_catalog ("
+                     "resource_id TEXT PRIMARY KEY, scope_class TEXT NOT NULL, rel_path TEXT NOT NULL)")
+        conn.execute("CREATE TABLE some_legacy_widget (id TEXT PRIMARY KEY, payload TEXT)")
+        conn.execute("INSERT INTO some_legacy_widget VALUES ('w1', 'historic')")
+        conn.commit()
+        conn.close()
+
+        derived = tmp_path / "derived"
+        derived.mkdir()
+        with pytest.raises(TypedResourceChannelError):
+            initialize_namespace(db, derived)
+
+    def test_production_core_refuses_unbound_legacy_catalog(self, tmp_path):
+        # Codex r2 F-03: the production main() must FAIL CLOSED on an
+        # existing but unbound (legacy) catalog -- non-zero exit, no binding
+        # written, no silent migration. Real subprocess, real main().
+        import os as _os
+        import sqlite3 as _sq
+        import subprocess as _sp
+        import sys as _sys
+
+        from pathlib import Path as _Path
+
+        src_root = _Path(__file__).resolve().parents[2] / "src"
+        root = tmp_path / "data"
+        (root / "catalog").mkdir(parents=True)
+        derived = tmp_path / "derived"
+        derived.mkdir()
+        catalog_db = root / "catalog" / "catalog.sqlite"
+        conn = _sq.connect(str(catalog_db))
+        conn.execute(
+            "CREATE TABLE resource_catalog ("
+            "resource_id TEXT PRIMARY KEY, scope_class TEXT NOT NULL, rel_path TEXT NOT NULL)"
+        )
+        conn.execute(
+            "INSERT INTO resource_catalog VALUES"
+            " ('historic', 'derived-read-only', 'previews/historic.png')"
+        )
+        conn.commit()
+        conn.close()
+
+        env = dict(_os.environ)
+        env["PYTHONPATH"] = str(src_root)
+        env["NEWMANGA_DATA_ROOT"] = str(root)
+        env["M2RC1_DERIVED_ROOT"] = str(derived)
+        env["M2RC2_CATALOG_DB"] = str(catalog_db)
+        completed = _sp.run(
+            [_sys.executable, "-m", "bootstrap.core_service"],
+            cwd=src_root.parents[1],
+            env=env,
+            input="",
+            capture_output=True,
+            text=True,
+            timeout=120,
+            check=False,
+        )
+        assert completed.returncode != 0, "an unbound legacy catalog must fail closed"
+        assert "namespace" in completed.stderr.lower()
+        conn = _sq.connect(str(catalog_db))
+        tables = {r[0] for r in conn.execute("SELECT name FROM sqlite_master WHERE type='table'")}
+        (count,) = conn.execute("SELECT COUNT(*) FROM resource_catalog").fetchone()
+        conn.close()
+        assert count == 1 and "preview_namespace" not in tables, (
+            "the refusal must not migrate, bind or rewrite the legacy catalog"
+        )
+
     def test_second_binding_on_same_derived_is_refused(self, tmp_path):
         derived = self._fresh(tmp_path)
         first_db = tmp_path / "first.sqlite"
