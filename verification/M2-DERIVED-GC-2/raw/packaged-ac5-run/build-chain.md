@@ -109,3 +109,24 @@ tauri build / 定向 pytest / runner stdout）：
 - 历史保护：新产物搬 eighth-run-artifacts/，tracked 历史字节 restore
 
 第七轮（e11562be）记录保留——本第八轮为最终绑定轮（含 r8 全部改动）。
+
+
+---
+
+# 第九轮（CURRENT FINAL）构建链：绑定 8291f336（r9 F-01 折叠空白保词边界后）
+
+单日志 ninth-round-build-and-run.log（各步骤命令显式入日志，step1..step5 带 EXIT）：
+
+- 返修代码 commit = 8291f33652e32175e44a8b282318604136673d96（r9 F-01：规范 schema 比较
+  从「去全部空白」改为「折叠连续空白为单个空格」——保留 SQL token 边界，堵住
+  `TEXT NOT NULL` 折叠为怪异类型名 `TEXTN OTNULL`（无 NOT NULL 约束）的合并攻击；
+  pytest-full.log 标题行同步跟踪重绑 head）
+- [step1] build_sidecar.ps1 -Force，原文行 HEAD=8291f33652e32175e44a8b282318604136673d96（EXIT=0）
+- [step2] npx --yes @tauri-apps/cli@2 build（EXIT=0）
+- [step3] installer SHA256 = dffd7ebec1937c27ced1a7932dcef8961a26b6994d964b3f249f9e31bc42e91c
+- [step4] 定向回归 162 passed（EXIT=0）
+- [step5] m2ac5 runner：25 项 PASS、唯一 FAIL=CS-L1（既有漂移，F-07 口径保持记录）（EXIT=1）
+- 全量 pytest 另见 raw/pytest-full.log（标题行与 HEAD 行均为 8291f336）：1940 passed+1 skipped
+- 历史保护：新产物搬 ninth-run-artifacts/，tracked 历史字节 restore
+
+第八轮（a4f80bf0）记录保留——本第九轮为最终绑定轮（含 r9 全部改动）。

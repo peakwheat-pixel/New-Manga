@@ -1,0 +1,4 @@
+$ <installed>\m2rc1-desktop.exe (M2AC1_TEST_MODE=1, launch=run2, purged PATH)
+exit=0
+[m2ac1-allowlist] ac1:issue_resource_url,revoke_ref,revoke_resource_refs,ac1_request,ac1_write_results,ac1_exit
+[1008/005101.220:ERROR:ui\gfx\win\window_impl.cc:172] Failed to unregister class Chrome_WidgetWin_0. Error = 1412
