@@ -246,6 +246,31 @@ def initialize_namespace(catalog_db: Path | str, derived_root: Path | str) -> Na
 
 _KNOWN_CATALOG_TABLES = {"resource_catalog", "preview_lifecycle", "preview_namespace"}
 
+#: The exact column shapes the initializer is allowed to adopt. Anything
+#: else -- including an empty table with a foreign schema -- is unknown
+#: history and is refused (Codex r3 F-01).
+_EXPECTED_COLUMNS = {
+    "resource_catalog": ("resource_id", "scope_class", "rel_path"),
+    "preview_lifecycle": (
+        "resource_id",
+        "producer_root",
+        "artifact_id",
+        "artifact_revision_id",
+        "managed_rel_path",
+        "retired",
+    ),
+    "preview_namespace": (
+        "singleton",
+        "protocol_version",
+        "derived_root",
+        "derived_identity_volume",
+        "derived_identity_index",
+        "catalog_root",
+        "catalog_identity_volume",
+        "catalog_identity_index",
+    ),
+}
+
 
 def _assert_catalog_claimable(connection: sqlite3.Connection) -> None:
     """Refuse anything that is not a brand-new or empty self-owned catalog.
@@ -283,6 +308,20 @@ def _assert_catalog_claimable(connection: sqlite3.Connection) -> None:
                 "catalog carries unknown tables (unknown schema/history):"
                 f" {sorted(unknown)}"
             )
+        for known_table, expected_columns in _EXPECTED_COLUMNS.items():
+            if known_table not in tables:
+                continue
+            actual = tuple(
+                row[1]
+                for row in connection.execute(
+                    f"PRAGMA table_info({known_table})"
+                ).fetchall()
+            )
+            if actual != expected_columns:
+                raise namespace_unavailable(
+                    f"table {known_table} has a foreign column layout"
+                    f" (expected {expected_columns}, found {actual})"
+                )
         (count,) = connection.execute("SELECT COUNT(*) FROM resource_catalog").fetchone()
         origin_count = 0
         if "preview_lifecycle" in tables:

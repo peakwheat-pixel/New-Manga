@@ -366,10 +366,13 @@ class TestPreviewNamespaceAuthority:
             initialize_namespace(db, derived)
 
     def test_initialize_refuses_uncheckpointed_wal_rows(self, tmp_path):
-        # Codex r2 F-01: an immutable read can silently MISS rows sitting in
-        # an un-checkpointed WAL. The authoritative claim decision runs on a
-        # plain ro connection (WAL-visible) under the exclusive lock, so the
-        # bind is refused and nothing is written.
+        # Codex r2/r3 F-01: an immutable read can silently MISS rows sitting
+        # in an un-checkpointed WAL. Here the TABLE STRUCTURE is already
+        # checkpointed into the main database and ONLY THE ROW lives in the
+        # WAL -- so the pre-lock immutable probe sees an adoptable EMPTY
+        # table, and this test discriminates exactly the authoritative
+        # WAL-visible re-check under the exclusive lock (a plain ro
+        # connection). The bind is refused and nothing is written.
         import sqlite3 as _sq
 
         db = tmp_path / "wal.sqlite"
@@ -379,23 +382,21 @@ class TestPreviewNamespaceAuthority:
             "CREATE TABLE resource_catalog ("
             "resource_id TEXT PRIMARY KEY, scope_class TEXT NOT NULL, rel_path TEXT NOT NULL)"
         )
+        conn.commit()
+        conn.execute("PRAGMA wal_checkpoint(TRUNCATE)")  # structure -> main db
         conn.execute(
             "INSERT INTO resource_catalog VALUES"
             " ('wal-row', 'derived-read-only', 'previews/wal-row.png')"
         )
-        conn.commit()
-        # keep conn OPEN: the row stays in the -wal file, not checkpointed
-        # into the main db
-        (main_count,) = conn.execute("SELECT COUNT(*) FROM resource_catalog").fetchone()
-        assert main_count == 1
+        conn.commit()  # commits INTO THE WAL; TRUNCATE keeps the main db clean
+        # keep conn OPEN: without a checkpoint the row stays in the -wal file
         probe = _sq.connect("file:" + str(db).replace("\\", "/") + "?mode=ro&immutable=1", uri=True)
         try:
             (probe_count,) = probe.execute("SELECT COUNT(*) FROM resource_catalog").fetchone()
-        except _sq.OperationalError:
-            probe_count = None  # the table itself lives only in the WAL
-        probe.close()
-        assert probe_count in (0, None), (
-            "test premise: the immutable probe must miss the WAL row"
+        finally:
+            probe.close()
+        assert probe_count == 0, (
+            "test premise: the immutable probe must see an EMPTY adoptable table"
         )
 
         derived = tmp_path / "derived"
@@ -404,6 +405,40 @@ class TestPreviewNamespaceAuthority:
             initialize_namespace(db, derived)
         conn.close()
 
+        # zero writes: the row survives and no binding appeared
+        conn = _sq.connect(str(db))
+        (count,) = conn.execute("SELECT COUNT(*) FROM resource_catalog").fetchone()
+        (bound,) = conn.execute(
+            "SELECT COUNT(*) FROM sqlite_master WHERE type='table' AND name='preview_namespace'"
+        ).fetchone()
+        conn.close()
+        assert count == 1 and bound == 0
+
+    def test_initialize_refuses_foreign_known_table_shape(self, tmp_path):
+        # Codex r3 F-01: an EMPTY but foreign-shaped known table must not be
+        # silently adopted by CREATE TABLE IF NOT EXISTS.
+        import sqlite3 as _sq
+
+        db = tmp_path / "foreign-shape.sqlite"
+        conn = _sq.connect(str(db))
+        conn.execute("CREATE TABLE resource_catalog (resource_id TEXT)")  # wrong shape
+        conn.commit()
+        conn.close()
+
+        derived = tmp_path / "derived"
+        derived.mkdir()
+        with pytest.raises(TypedResourceChannelError):
+            initialize_namespace(db, derived)
+
+        conn = _sq.connect(str(db))
+        tables = {
+            row[0]
+            for row in conn.execute("SELECT name FROM sqlite_master WHERE type='table'")
+        }
+        conn.close()
+        assert tables == {"resource_catalog"}, (
+            "a refused initialization must not create any other table"
+        )
     def test_initialize_refuses_unknown_tables(self, tmp_path):
         # Codex r2 F-01: history may live in tables this version does not
         # know -- any user table outside the known set is an unknown schema

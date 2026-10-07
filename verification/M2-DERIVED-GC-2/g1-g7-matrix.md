@@ -1,6 +1,6 @@
 # M2-DERIVED-GC-2 G1–G7 判别矩阵与执行证据
 
-- Owner=ZCode；实现 HEAD=本文件入库 commit（见 Handoff；上一验证轮 HEAD=7f65247324d5a9104871a89d84fc0bdf49bb34db，sidecar/cargo 构建绑定该值，日志头部已记录）。
+| dev/packaged 构建：sidecar+NSIS 在 r1 前曾绑 7f652473、r2 返修后**重建绑定 70ab9da0**（build_sidecar 输出原行+NSIS SHA256+验收命令闭环见 raw/packaged-ac5-run/build-chain.md）；release exe 重建（RC2 runner 内 fresh cargo build）；packaged runner 第三轮完整落盘 raw/packaged-ac5-run/third-round-full-stdout.log。
 - 环境：PowerShell/Git Bash on win32；Python=G:/CODEX/New Manga.task-envs/T1.1.1-impl-py312/Scripts/python.exe（3.12.3）；cargo=C:/Users/49745/.cargo/bin/cargo.exe。
 - 全部证据为 raw/ 下原始日志与允许测试文件内可复跑用例；无 mock 代替 native 判别。
 
@@ -40,6 +40,15 @@
 | F-03 PARTIAL/NOT_VERIFIED | g7 §2 措辞修正（原位改写不换 OS identity、不可检测；安全依赖 UNKNOWN→禁 sweep 而非检测）+ 矩阵 G7 改「分发 Gate=阻断条款、证据属分发验收、明示 NOT_VERIFIED 不计 PASS」+ production 对未绑定旧 catalog 启动拒绝实测 | `test_production_core_refuses_unbound_legacy_catalog`（真实 subprocess main()，断言零迁移零绑定） |
 | F-08 NOT VERIFIED（证据未绑返修 head） | 全量 pytest 重跑（HEAD=70ab9da0+worktree 指纹入日志头）；sidecar/NSIS 重建绑定 70ab9da0 后 m2ac5 第三轮完整落盘（命令/HEAD/指纹/EXIT 头）；M2-AC1 dev runner 重跑 GATE PASS | raw/pytest-full.log、raw/packaged-ac5-run/third-round-full-stdout.log、raw/dev-runner-m2ac1.log |
 | F-09 追认 | Codex 已追认 CS-A0 prebind+CS-Z2 协议锁白名单（限两处 fixture 语义，不扩展） | doc/reviews/M2-DERIVED-GC-2-cb0a44d9-codex-r2.md |
+
+## Codex r3 复核处置（范围纪律 PASS；F-03 FIXED；F-01/F-02/F-08 追加）
+
+| r3 判定 | 追加处置 | 证据 |
+|---|---|---|
+| F-01 NOT FIXED（已知表结构不校验；WAL 用例未穿透预检） | ①`_EXPECTED_COLUMNS` 精确列结构校验（PRAGMA table_info 对比，外来形状即拒）；②WAL 用例重写为「结构已 checkpoint 落主库、仅行在 WAL 未 checkpoint」——immutable 预检看到**可收养的空表**、权威 ro 复核看到行→拒绝（直击判别点） | `test_initialize_refuses_foreign_known_table_shape`（零写入）、`test_initialize_refuses_uncheckpointed_wal_rows`（重写+零写入断言） |
+| F-02 NOT_VERIFIED（测试未证明命中 post-open 核验） | 单元级判别 `test_postopen_verification_fires_refuses_and_closes`：旁路预检+句柄报告 reparse 属性→断言 post-open 核验运行（attributes 计数≥1）、专属消息拒绝（match="reparse point"）、句柄关闭（CloseHandle 计数≥1）；并删除 r1 版测试中一处恒真断言 | 同名用例 |
+| F-08 NOT_VERIFIED（构建 HEAD 未与安装包 SHA 连接） | build-chain.md 归档完整闭环：build_sidecar 输出 HEAD=70ab9da0 原行→NSIS 构建命令→NSIS SHA256=9b7ff1b2…de97d→runner --installer 路径；matrix 陈旧「7f652473」行更正 | raw/packaged-ac5-run/build-chain.md |
+| F-03 FIXED（分发 Gate 维持发布前阻断，不记 PASS） | 维持现状——与 Codex 要求一致，无需变更 | g7-enablement-boundary.md §2 |
 
 ## G1 来源/权限 — PASS
 

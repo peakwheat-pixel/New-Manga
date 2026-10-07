@@ -449,10 +449,8 @@ class TestPreviewNamespaceLease:
             # is precisely the line of defence a slipped-past replacement
             # relies on
             assert "reparse component in namespace path" not in str(excinfo.value.message)
-            assert (outside / "probe.txt").with_name("probe.txt") is not None
         finally:
             os.rmdir(str(lock))
-            del _winapi
 
     def test_reparse_derived_root_is_refused(self, tmp_path):
         import _winapi
@@ -502,3 +500,75 @@ class TestPreviewNamespaceLease:
             import os
 
             os.rmdir(str(link))
+
+
+    def test_race_equivalent_slipped_walk_still_refused(self, tmp_path, monkeypatch):
+        # Codex r2/r3 F-02: a real check-then-open race cannot be timed from
+        # a test, so test the EQUIVALENT end state: the pre-open lstat walk
+        # has already passed (neutralised here) while the path now IS a
+        # junction -- exactly what the walk would have seen had it run after
+        # the replacement. The lease must still be refused WITHOUT the walk,
+        # and the refusal must NOT come from the walk's message family.
+        import _winapi
+        import os
+
+        from infrastructure.resource_channel import handle_resolver as _hr
+        from infrastructure.resource_channel.handle_resolver import (
+            PREVIEW_NAMESPACE_LOCK_NAME,
+            acquire_shared_lease,
+        )
+
+        derived, catalog, binding = self._binding(tmp_path)
+        lock = derived / PREVIEW_NAMESPACE_LOCK_NAME
+        lock.unlink()
+        outside = tmp_path / "outside"
+        outside.mkdir()
+        _winapi.CreateJunction(str(outside), str(lock))
+        try:
+            monkeypatch.setattr(_hr, "_lstat_reparse_walk", lambda path: None)
+            with pytest.raises(TypedResourceChannelError) as excinfo:
+                acquire_shared_lease(derived)
+            # the (neutralised) walk's own message family must be absent:
+            # the refusal came from the post-open verification path, which
+            # is precisely the line of defence a slipped-past replacement
+            # relies on
+            assert "reparse component in namespace path" not in str(excinfo.value.message)
+        finally:
+            os.rmdir(str(lock))
+
+    def test_postopen_verification_fires_refuses_and_closes(self, tmp_path, monkeypatch):
+        # Codex r3 F-02: unit-level discrimination of the SECOND line of
+        # defence. With the pre-open walk neutralised (the state after a
+        # replacement slipped past it) and the opened handle REPORTING a
+        # reparse attribute, `_open_lock_handle` must (a) run the post-open
+        # verification, (b) refuse with its own message, and (c) CLOSE the
+        # opened handle -- a lease is never returned for a foreign object.
+        from infrastructure.resource_channel import handle_resolver as _hr
+        from infrastructure.resource_channel.handle_resolver import (
+            FILE_ATTRIBUTE_REPARSE_POINT,
+        )
+
+        derived, catalog, binding = self._binding(tmp_path)
+
+        real_attributes = _hr._attributes_of
+        real_close = _hr._k32.CloseHandle
+        calls = {"attributes": 0, "close": 0}
+
+        def reporting_attributes(handle):
+            calls["attributes"] += 1
+            return FILE_ATTRIBUTE_REPARSE_POINT  # the opened object claims reparse
+
+        def counting_close(handle):
+            calls["close"] += 1
+            return real_close(handle)
+
+        monkeypatch.setattr(_hr, "_lstat_reparse_walk", lambda path: None)
+        monkeypatch.setattr(_hr, "_attributes_of", reporting_attributes)
+        monkeypatch.setattr(_hr._k32, "CloseHandle", counting_close)
+        try:
+            with pytest.raises(TypedResourceChannelError, match="reparse point"):
+                _hr._open_lock_handle(str(derived), exclusive=False)
+        finally:
+            monkeypatch.setattr(_hr._k32, "CloseHandle", real_close)
+        assert calls["attributes"] >= 1, "the post-open verification must have run"
+        assert calls["close"] >= 1, "a refused lease must close its opened handle"
