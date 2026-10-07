@@ -103,5 +103,56 @@ class RenderPreviewPublisher:
             raise
         return {"resource_id": resource_id, "revision": ORIGINAL_REVISION}
 
+    def collect_orphans(self) -> dict[str, int]:
+        """M2-DERIVED-GC-1 (RC4-12 first slice): startup sweep of the two
+        managed directories under the derived read-only root.
+
+        Two equivalence-safe classes only:
+
+        - **orphan files**: a file under ``previews/`` or ``pages/`` whose
+          stem is absent from the catalog. It can never be issued again
+          (issue requires a catalog lookup), so deleting it changes no
+          observable behaviour.
+        - **dead rows**: a ``derived-read-only`` catalog row whose
+          ``rel_path`` no longer resolves to a file. Resolution already
+          treats a missing artifact as "not there" (the rev 1.7 self-heal
+          re-publishes deterministic keys; preview issues fail typed), so
+          removing the row is behaviour-equivalent.
+
+        Live files with live rows are NEVER touched (reference-aware
+        reclamation of old previews is a registered follow-up, out of
+        scope), and nothing outside the derived root -- in particular no
+        managed or user source file -- is readable here, let alone
+        deletable: every candidate path is escape-checked before unlink.
+        """
+        root = self._root.resolve()
+        root.mkdir(parents=True, exist_ok=True)
+        rows = {entry.resource_id: entry for entry in self._catalog.entries()
+                if entry.scope_class == "derived-read-only"}
+        catalogued = set(rows)
+        removed_files = 0
+        removed_rows = 0
+        for dirname in ("previews", "pages"):
+            directory = root / dirname
+            if not directory.exists():
+                continue
+            resolved_dir = directory.resolve()
+            if not resolved_dir.is_relative_to(root):
+                raise OSError(f"{dirname} directory escaped derived root")
+            for item in sorted(resolved_dir.iterdir()):
+                if not item.is_file():
+                    continue
+                if item.stem not in catalogued:
+                    item.unlink(missing_ok=True)
+                    removed_files += 1
+        for resource_id, entry in rows.items():
+            candidate = (root / entry.rel_path).resolve()
+            if not candidate.is_relative_to(root):
+                raise OSError(f"catalog rel_path escaped derived root: {entry.rel_path}")
+            if not candidate.is_file():
+                if self._catalog.remove(resource_id):
+                    removed_rows += 1
+        return {"orphan_files_removed": removed_files, "dead_rows_removed": removed_rows}
+
 
 __all__ = ["RenderPreviewPublisher"]

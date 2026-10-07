@@ -1684,14 +1684,33 @@ def main() -> int:
     core = assemble_production_core(data_root)
     catalog = ResourceCatalogStore(catalog_db)
     try:
+        previews = RenderPreviewPublisher(derived_root, catalog)
+        _run_startup_gc(previews)
         server = CoreServiceServer(
             core,
-            render_previews=RenderPreviewPublisher(derived_root, catalog),
+            render_previews=previews,
         )
         return server.serve_forever()
     finally:
         catalog.close()
         core.conn.close()
+
+
+def _run_startup_gc(previews: RenderPreviewPublisher) -> None:
+    """M2-DERIVED-GC-1 (RC4-12 first slice): one startup sweep of the
+    derived read-only root. Orphan files (no catalog row) and dead rows
+    (missing file) are behaviour-equivalent to absent already; live files
+    with live rows are never touched. Fail-soft: a GC error must not block
+    the service from starting."""
+    try:
+        stats = previews.collect_orphans()
+        print(
+            f"[core.derived_gc] orphan_files_removed={stats['orphan_files_removed']}"
+            f" dead_rows_removed={stats['dead_rows_removed']}",
+            file=sys.stderr,
+        )
+    except Exception as error:
+        print(f"[core.derived_gc] skipped: {error!r}", file=sys.stderr)
 
 
 if __name__ == "__main__":
