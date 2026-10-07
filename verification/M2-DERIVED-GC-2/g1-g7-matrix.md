@@ -9,12 +9,12 @@
 | 命令 | 结果 | 日志 |
 |---|---|---|
 | `python -m pytest -q tests/core/test_derived_gc.py tests/core/test_rc4_stdio_render_preview.py tests/core/test_page_resource_resolve.py tests/m2_resource_channel tests/m2_acceptance` | **155 passed, 0 failed, 0 skipped（1 warning）** EXIT=0 | raw/pytest-focused.log |
-| `python -m pytest -q -rs tests/`（全量回归，Codex r2 F-08 后按 r2 返修 head=70ab9da0 重跑，日志头附 HEAD+worktree 状态指纹） | **1931 passed + 1 skipped + 0 failed** EXIT=0（main 基线 1886+1sk，+45 新用例等量递增；skip 原因已记录=dev venv ML 栈既有豁免 test_registry_readiness.py:237，T1.1.1 用户批准口径） | raw/pytest-full.log |
+| `python -m pytest -q -rs tests/`（全量回归，按 r4 返修最终 head=e3ad330f 重跑，日志头附 HEAD+worktree 状态指纹） | **1934 passed + 1 skipped + 0 failed** EXIT=0（main 基线 1886+1sk，+48 新用例等量递增；skip 原因已记录=dev venv ML 栈既有豁免 test_registry_readiness.py:237，T1.1.1 用户批准口径） | raw/pytest-full.log |
 | `M2RC1_PYTHON=… cargo test --manifest-path apps/desktop/src-tauri/Cargo.toml` | **62 passed + 1 ignored + 0 failed** EXIT=0（基线 55+1ign：+2 startup-ping、+5 rotate-retire） | raw/cargo-test.log |
 | `git diff --check` 双口径（Codex r1 F-08 后重建：代码面与归档日志分开） | 代码面 working+区间 5896db8c..HEAD **EXIT=0**；整树区间 31 个命中全部位于本 Task 归档原始运行日志（P3-8/P3-9 先例豁免），raw 之外命中 **0** | raw/diff-check.log |
 | `python verification/M2-RC2/run_e2e.py`（fresh release 构建+probe/production 双阶段） | probe 阶段 13/13 PASS；catalog-seeding / import-isolation / runtime-build / probe-allowlist 全 PASS；**interactive-production-surface FAIL=runner 自身陈旧期望（9 条，RC-4 前快照）vs 现行 15 条冻结命令面——既有漂移与本 Task 无关**（`git show 5896db8c:verification/M2-RC2/run_e2e.py` 中 PRODUCTION_EXPECTED 即 9 条；本 Task 对该文件仅 +8/-1 行 seed flag）；处理=范围外不改，登记交 Codex | raw/dev-runner-m2rc2.log |
 | `python verification/M2-AC1/run_e2e.py --skip-build` | 见 raw/dev-runner-m2ac1.log（真实桌面双 launch；含 FIX-catalog-prebind 新证据项） | raw/dev-runner-m2ac1.log |
-| `python packaging/m2ac5/run_clean_start_e2e.py --installer <NSIS 553.80MiB, sidecar/NSIS 均重建绑定 r2 返修 head=70ab9da0>`（第三轮：完整命令/HEAD/指纹/EXIT 落盘） | **产品场景 25 项全 PASS**：probe 13/13 + **CS-A0-ac1-catalog-prebind（新）** + AC1 loop run1/run2 + production R1-R4（真实安装态 production 模式：Core first-bind + startup ping + channel 顺序全链）+ zero-touch Z1-Z4（`git diff --check` 干净）；**唯一 FAIL=CS-L1-packaged-core-ping：runner 断言协议 minor 3（RC-4 前快照）而实际 Core=minor 6——既有漂移**（`git show 5896db8c:packaging/m2ac5/run_clean_start_e2e.py:497` 即期望 minor 3；RC-4 集成 minor 4→6 时未同步该 runner；同 L2/L3 ListBooks 全 PASS 证明安装态产品功能正常）；另两处 fixture 语义伴随修正（AC1 fixture catalog 初始化=设计 §2.3 要求的 packaged launcher 义务；CS-Z2 把设计冻结位置的 `.preview-lifecycle.lock` 列入协议白名单——fixture 文件字节恒等保护不变），**交 DSH/Codex 追认** | raw/packaged-runners.log（runner 场景日志另存 raw/packaged-ac5-run/；M2-AC5 历史入库 raw 已恢复原字节，本次运行产物仅搬运不覆盖——P3-9(b) 先例口径） |
+| `python packaging/m2ac5/run_clean_start_e2e.py --installer <NSIS，sidecar/NSIS 重建绑定最终 head=e3ad330f>`（**第四轮 FINAL**：step1 build_sidecar/step2 NSIS/step3 SHA256/step4 定向回归/step5 runner 全链单日志，含命令/HEAD/指纹/EXIT） | **产品场景 25 项全 PASS**：probe 13/13 + **CS-A0-ac1-catalog-prebind（新）** + AC1 loop run1/run2 + production R1-R4（真实安装态 production 模式：Core first-bind + startup ping + channel 顺序全链）+ zero-touch Z1-Z4（`git diff --check` 干净）；**唯一 FAIL=CS-L1-packaged-core-ping：runner 断言协议 minor 3（RC-4 前快照）而实际 Core=minor 6——既有漂移**（`git show 5896db8c:packaging/m2ac5/run_clean_start_e2e.py:497` 即期望 minor 3；RC-4 集成 minor 4→6 时未同步该 runner；同 L2/L3 ListBooks 全 PASS 证明安装态产品功能正常）；另两处 fixture 语义伴随修正（AC1 fixture catalog 初始化=设计 §2.3 要求的 packaged launcher 义务；CS-Z2 把设计冻结位置的 `.preview-lifecycle.lock` 列入协议白名单——fixture 文件字节恒等保护不变），**交 DSH/Codex 追认** | raw/packaged-runners.log（runner 场景日志另存 raw/packaged-ac5-run/；M2-AC5 历史入库 raw 已恢复原字节，本次运行产物仅搬运不覆盖——P3-9(b) 先例口径） |
 | `python packaging/release-gate/run_release_gate.py --installer <同上>` | **GATE PASS 25/25**——含 RG1-DC1a（packaged loader 初始化+seed fixture 新链）、DC2 host-bridge handshake（安装态 file-backed catalog 共享租约路径）、RG1-CS2 core ready（**protocol minor 6 ready：安装态 production 启动顺序 Core first-bind→startup ping→channel 全链实证**）、三轮真实窗口冷启动+双 sidecar 进程+console 检测全 PASS | raw/packaged-runners.log（runner 场景日志另存 raw/packaged-ac5-run/；M2-AC5 历史入库 raw 已恢复原字节，本次运行产物仅搬运不覆盖——P3-9(b) 先例口径） |
 
 ## Codex r1 返修（changes_requested 0P0/3P1/6P2 → 处置）
@@ -49,6 +49,14 @@
 | F-02 NOT_VERIFIED（测试未证明命中 post-open 核验） | 单元级判别 `test_postopen_verification_fires_refuses_and_closes`：旁路预检+句柄报告 reparse 属性→断言 post-open 核验运行（attributes 计数≥1）、专属消息拒绝（match="reparse point"）、句柄关闭（CloseHandle 计数≥1）；并删除 r1 版测试中一处恒真断言 | 同名用例 |
 | F-08 NOT_VERIFIED（构建 HEAD 未与安装包 SHA 连接） | build-chain.md 归档完整闭环：build_sidecar 输出 HEAD=70ab9da0 原行→NSIS 构建命令→NSIS SHA256=9b7ff1b2…de97d→runner --installer 路径；matrix 陈旧「7f652473」行更正 | raw/packaged-ac5-run/build-chain.md |
 | F-03 FIXED（分发 Gate 维持发布前阻断，不记 PASS） | 维持现状——与 Codex 要求一致，无需变更 | g7-enablement-boundary.md §2 |
+
+## Codex r4 复核处置（范围纪律 PASS；F-02 FIXED；F-01/F-08 追加）
+
+| r4 判定 | 追加处置 | 证据 |
+|---|---|---|
+| F-01 NOT FIXED（仅列名未核主键/约束） | `_EXPECTED_LAYOUT` 升级为 (列名, PRAGMA table_info pk 位) 对比——运行依赖的三处主键（resource_catalog.resource_id、preview_lifecycle.resource_id、preview_namespace.singleton）逐位校验，键缺失的外来同形表拒绝 | `test_initialize_refuses_same_columns_without_primary_key`（同列名无主键→拒绝+零写入） |
+| F-02 FIXED | 无需变更 | — |
+| F-08 NOT_VERIFIED（证据未绑本轮代码；build_sidecar 原文仅手写汇总） | 第四轮**单日志全链**：step1 build_sidecar（原文行 HEAD=e3ad330f）/step2 NSIS/step3 installer SHA256/step4 定向回归/step5 runner，全部带 EXIT；全量 pytest 重跑绑 e3ad330f（1934+1sk）；matrix 陈旧 7f652473 行更正 | raw/packaged-ac5-run/fourth-round-build-and-run.log、build-chain.md「第四轮（FINAL）」节、raw/pytest-full.log |
 
 ## G1 来源/权限 — PASS
 
@@ -89,7 +97,7 @@
 ## G6 回归/隔离 — 产品面 PASS；两个 runner 快照项按 Codex r1 F-07 保持 FAIL 记录（交独立 debt Task，闭合前不记 Gate PASS）
 
 - 定向 pytest 155 / 全量 1922+1sk / cargo 62+1ign 全绿；F-05 import 名单未扩大（`test_sidecar_isolation.py` 全绿，`handle_resolver` 原在白名单）。
-- dev 入口：M2-RC2 runner probe 阶段 13/13+catalog-seeding+import-isolation PASS；production allowlist 项 FAIL=runner 陈旧期望（既有漂移，Codex r1 F-07 同意交独立 debt Task）——**该 Gate 项在 debt Task 修复并重新验收前保持 FAIL 记录，不以既有漂移为由记 PASS**。M2-AC1 runner **GATE PASS（r2 返修 head 重跑）**。packaged：m2ac5 **第三轮（sidecar/NSIS 重建绑定 70ab9da0）25 项 PASS、CS-L1 保持 FAIL 记录**；release-gate 25/25 PASS（其 runner 无此类陈旧快照；其安装包为 363265b1 代码——其覆盖面与第三轮 m2ac5 重叠且 m2ac5 已绑定返修 head）。
+- dev 入口：M2-RC2 runner probe 阶段 13/13+catalog-seeding+import-isolation PASS；production allowlist 项 FAIL=runner 陈旧期望（既有漂移，Codex r1 F-07 同意交独立 debt Task）——**该 Gate 项在 debt Task 修复并重新验收前保持 FAIL 记录，不以既有漂移为由记 PASS**。M2-AC1 runner **GATE PASS（r2 返修 head 重跑）**。packaged：m2ac5 **第四轮 FINAL（sidecar/NSIS 重建绑定 e3ad330f，构建链单日志）25 项 PASS、CS-L1 保持 FAIL 记录**；release-gate 25/25 PASS（其 runner 无此类陈旧快照；其安装包为较早代码——其覆盖面与第四轮 m2ac5 重叠且 m2ac5 已绑定最终 head）。
 - dev/packaged 构建：sidecar 重建绑定 HEAD=7f652473（build_sidecar OK）；release exe 重建（RC2 runner 内 fresh `cargo build --release`）；packaged runner 执行状态见 raw/packaged-runners.log（runner 场景日志另存 raw/packaged-ac5-run/；M2-AC5 历史入库 raw 已恢复原字节，本次运行产物仅搬运不覆盖——P3-9(b) 先例口径）。
 
 ## G7 启用边界 — 本机单版本机制 PASS；分发迁移 Gate=阻断条款（执行证据属分发验收，明示 NOT_VERIFIED，不计 PASS——Codex r2 F-03 口径）
