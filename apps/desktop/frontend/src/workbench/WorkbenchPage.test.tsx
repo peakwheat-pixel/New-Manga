@@ -59,7 +59,7 @@ async function nextTurn() {
 
 async function mountInteractiveWorkbench(
   invoke: (command: string, args?: Record<string, unknown>) => Promise<unknown>,
-  options: { resourceFetch?: typeof fetch; resolveDebounceMs?: number } = {},
+  options: { resourceFetch?: typeof fetch; resolveDebounceMs?: number; regionDebounceMs?: number } = {},
 ) {
   const dom = new JSDOM("<!doctype html><html><body></body></html>", { url: "http://localhost" });
   Object.defineProperty(dom.window.HTMLElement.prototype, "clientWidth", {
@@ -105,10 +105,14 @@ async function mountInteractiveWorkbench(
   dom.window.document.body.append(container);
   const root = createRoot(container);
   await act(async () => {
-    // tests default to 0 (historical immediate resolve); the debounce
-    // behavior itself is covered by the dedicated fake-timer case
+    // tests default to 0 (historical immediate resolve/region reads); the
+    // debounce behavior itself is covered by dedicated fake-timer cases
     root.render(
-      <WorkbenchPage invoke={invoke} resolveDebounceMs={options.resolveDebounceMs ?? 0} />,
+      <WorkbenchPage
+        invoke={invoke}
+        resolveDebounceMs={options.resolveDebounceMs ?? 0}
+        regionDebounceMs={options.regionDebounceMs ?? 0}
+      />,
     );
     await nextTurn();
   });
@@ -1067,6 +1071,58 @@ describe("RC-4 Workbench actual DOM actions", () => {
       }
     } finally {
       vi.useRealTimers();
+    }
+  });
+
+  it("collapses per-keypress typing into ONE deferred region read (M2-REGION-DEBOUNCE-1)", async () => {
+    // RESOLVE-DEBOUNCE r1 C-1: the region read loop shares the same
+    // per-keypress problem -- deps [clients, pageId, refreshRegions] with a
+    // stable callback fire list_regions once per keystroke. With the 300ms
+    // quiet period the four keystrokes must cost exactly ONE invoke.
+    vi.useFakeTimers();
+    try {
+      const { invoke } = makeInteractiveInvoke();
+      const ui = await mountInteractiveWorkbench(invoke, { regionDebounceMs: 300 });
+      try {
+        await act(async () => {
+          await ui.input("page-id-input", "p");
+          await ui.input("page-id-input", "pa");
+          await ui.input("page-id-input", "pag");
+          await ui.input("page-id-input", "page-1");
+        });
+        const regionCalls = invoke.mock.calls.filter(([command]) => command === "list_regions");
+        expect(regionCalls).toHaveLength(0);
+
+        await act(async () => {
+          vi.advanceTimersByTime(300);
+          await nextTurn();
+        });
+        const firedRegions = invoke.mock.calls.filter(([command]) => command === "list_regions");
+        expect(firedRegions).toHaveLength(1);
+        expect(firedRegions[0]).toEqual(["list_regions", { pageId: "page-1" }]);
+      } finally {
+        await ui.unmount();
+      }
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it("keeps write-refresh region reads immediate under the debounce (M2-REGION-DEBOUNCE-1)", async () => {
+    // The debounce defers only the effect-driven read; the retype flow's
+    // refreshRegions call must stay immediate (0ms config here, so this
+    // pins the direct-call path is untouched by the deferred wrapper).
+    const { invoke } = makeInteractiveInvoke();
+    const ui = await mountInteractiveWorkbench(invoke);
+    try {
+      await ui.input("page-id-input", "page-1");
+      expect(invoke).toHaveBeenCalledWith("list_regions", { pageId: "page-1" });
+      await ui.click("region-frame-region-1");
+      await ui.click("inspector-mark-sfx");
+      const refresh = invoke.mock.calls.filter(([command]) => command === "list_regions");
+      expect(refresh.length).toBeGreaterThanOrEqual(2);
+    } finally {
+      await ui.unmount();
     }
   });
 
