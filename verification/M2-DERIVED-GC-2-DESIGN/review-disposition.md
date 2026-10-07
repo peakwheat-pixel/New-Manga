@@ -18,3 +18,15 @@ Reviewer 的 shell 因 SetNamedSecurityInfoW Win32 5 不可用，命令复跑 BL
 | O01/O03 | K5 显式 Lock/主产品行不写；现行 M2-C1 契约仅在后继 Task 窄授权，本轮不改。 |
 
 额外作者补强：13 条矩阵逐项实证/UNKNOWN；人工修改副本通过同核验句柄匹配 immutable revision 既有 file_hash/size；验证器断言全部改动路径在设计 allowlist。运行回收/native/产品回归均 NOT_RUN，设计审查不是回收实现验收。
+
+## r2 与第三轮修订
+
+真实 CLI r2 reviewed_head=3a6846758ebdb18e3ee696e0c1410aa698e43225，session=session-70171dd3-7f22-4187-b0d5-36a81232f286，EXIT=0；原报告 doc/reviews/M2-DERIVED-GC-2-DESIGN-3a684675-dsh-r2.md，final.text UTF-8 SHA256=6d601a6de0f44c465755ef7d63eb1626a4d0dd763a0bb7e374bbaaafb0900cbb。精确session挂载 EXIT=0，desktop下次启动可发现，web_visibility=unverified。DSH changes_requested：C1/C3/C4/C5/F06/F07已闭合，C2的bootstrap顺序剩余R2-01(P2)；0P0/P1。新修订仍需r3独立固定head批准。
+
+| r2 项 | 第三轮作者修改（待 r3 核验） |
+|---|---|
+| R2-01 / C2 | 选择r2建议(b)：显式两段式。只读mode=ro&immutable=1 bootstrap仅读namespace hint，无DDL/写/业务/issue→关闭→取derived租约→业务连接重读identity/version/绑定一致→允许Schema/业务；缺行、WAL旧值、替换、失配拒绝，不回退无租约。loader/acceptance_bridge由默认store接线，无需改CLI；无绑定拒绝写入，受控Core/新测试显式传保护上下文才初始化，入口判别补G3。 |
+| R2-A1 | G2明确WebView revoke_resource_refs及失败撤销新key不带退役位，Tauri命令表不加能力。 |
+| R2-A2 | library_bridge.rs启动专用wait_startup_ping seam，正常round_trip不改；超时先回收本次child促EOF，再回收worker/锁/句柄，失效对象不交AppState，无通用调度框架。 |
+| R2-A3 | mark用独立mode=rw timeout=0连接，borrow现有lease、finally关闭、零DDL/Schema/WAL变动；不改共享连接busy策略。 |
+| O-R2-1/2/3 | K5 pages保护明确限定live-preview；managed_rel_path明确是拟议表字段保存既有managed_path；点名新增两个已存在store测试文件，非新测试架构。 |
