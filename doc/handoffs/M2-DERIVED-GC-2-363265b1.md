@@ -12,8 +12,8 @@ release_head: 5896db8c64b90b53b015eb9c46c7dab6ab29210b
 claim_commit: 7f65247324d5a9104871a89d84fc0bdf49bb34db
 delivery_head: 363265b13fadf0d0b81a23a6d76bb8ded940fb2a
 design_approved_head: e4c0967f83a08d9b9e2d84605d17923e81a844b6
-delivery_head_note: 代码交付=363265b1；owner 分支终 tip=933fa0b9（packaged 验证回填+AC5 历史日志保护，零代码差量 363265b1..933fa0b9）
-status: in_review（等真实 DSH 非作者 fixed-head Review；Review 基准建议=933fa0b9，代码实体=363265b1）
+delivery_head_note: 代码交付=363265b1；owner 分支终 tip=58933f6d（packaged 验证回填+各 runner 历史日志按 P3-9(b) 保护归档，代码实体=363265b1，363265b1..58933f6d 零 src/apps 差量）
+status: in_review（等真实 DSH 非作者 fixed-head Review；Review 基准建议=58933f6d，代码实体=363265b1）
 ```
 
 ## 1. 交付内容（31 文件，+3148/−86，全部 Task allowed_paths）
