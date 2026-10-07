@@ -2,7 +2,9 @@
 id: M2-RESOLVE-DEBOUNCE-1
 title: Workbench 页资源解析逐键 debounce（PAGE-RESOLVE r1 PR-10 deferred 闭合）
 kind: fix
-status: ready
+status: in_review
+delivery_commit: a7a3462d
+handoff: ../handoffs/M2-RESOLVE-DEBOUNCE-1-zcode-a7a3462d.md
 approval: user_2026-10-07_autonomous_mode_continuation（STATUS Planned next 候选①，授权自动选下一最高优先任务）
 suggested_owner: Codex Executor
 owner: Codex Executor（ZCode 代行）
