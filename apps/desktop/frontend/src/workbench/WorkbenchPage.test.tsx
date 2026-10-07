@@ -59,7 +59,7 @@ async function nextTurn() {
 
 async function mountInteractiveWorkbench(
   invoke: (command: string, args?: Record<string, unknown>) => Promise<unknown>,
-  options: { resourceFetch?: typeof fetch } = {},
+  options: { resourceFetch?: typeof fetch; resolveDebounceMs?: number } = {},
 ) {
   const dom = new JSDOM("<!doctype html><html><body></body></html>", { url: "http://localhost" });
   Object.defineProperty(dom.window.HTMLElement.prototype, "clientWidth", {
@@ -105,7 +105,11 @@ async function mountInteractiveWorkbench(
   dom.window.document.body.append(container);
   const root = createRoot(container);
   await act(async () => {
-    root.render(<WorkbenchPage invoke={invoke} />);
+    // tests default to 0 (historical immediate resolve); the debounce
+    // behavior itself is covered by the dedicated fake-timer case
+    root.render(
+      <WorkbenchPage invoke={invoke} resolveDebounceMs={options.resolveDebounceMs ?? 0} />,
+    );
     await nextTurn();
   });
 
@@ -986,6 +990,80 @@ describe("RC-4 Workbench actual DOM actions", () => {
     } finally {
       resolveBookA({ chapters: [] });
       await ui.unmount();
+    }
+  });
+
+  it("collapses per-keypress typing into ONE deferred resolve (M2-RESOLVE-DEBOUNCE-1)", async () => {
+    // PAGE-RESOLVE r1 PR-10: typing a page id by hand used to fire one
+    // resolve per keypress (with per-prefix PAGE_NOT_FOUND flicker and
+    // pointless publish attempts). With the 300ms quiet period the four
+    // keystrokes must cost exactly ONE invoke, fired only after the timer.
+    vi.useFakeTimers();
+    try {
+      const { invoke } = makeInteractiveInvoke({
+        onResolvePage: (args) => Promise.resolve({
+          resource_id: `page-original-${String(args.pageId)}`,
+          revision: "original",
+        }),
+      });
+      const ui = await mountInteractiveWorkbench(invoke, { resolveDebounceMs: 300 });
+      try {
+        await act(async () => {
+          // four keystrokes, each resetting the quiet period
+          await ui.input("page-id-input", "p");
+          await ui.input("page-id-input", "pa");
+          await ui.input("page-id-input", "pag");
+          await ui.input("page-id-input", "page-1");
+        });
+        const resolveCalls = invoke.mock.calls.filter(([command]) => command === "resolve_page_resource");
+        expect(resolveCalls).toHaveLength(0);
+
+        await act(async () => {
+          vi.advanceTimersByTime(300);
+          await nextTurn();
+        });
+        const firedResolves = invoke.mock.calls.filter(([command]) => command === "resolve_page_resource");
+        expect(firedResolves).toHaveLength(1);
+        expect(firedResolves[0]).toEqual(["resolve_page_resource", { pageId: "page-1" }]);
+        const resourceInput = ui.container.querySelector('[data-testid="resource-id-input"]') as HTMLInputElement | null;
+        expect(resourceInput?.value).toBe("page-original-page-1");
+      } finally {
+        await ui.unmount();
+      }
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it("cancels the pending resolve timer when the page changes mid-quiet-period (M2-RESOLVE-DEBOUNCE-1)", async () => {
+    vi.useFakeTimers();
+    try {
+      const { invoke } = makeInteractiveInvoke({
+        onResolvePage: (args) => Promise.resolve({
+          resource_id: `page-original-${String(args.pageId)}`,
+          revision: "original",
+        }),
+      });
+      const ui = await mountInteractiveWorkbench(invoke, { resolveDebounceMs: 300 });
+      try {
+        await act(async () => {
+          await ui.input("page-id-input", "page-1");
+          // switch pages before the quiet period elapses
+          await ui.input("page-id-input", "page-2");
+        });
+        await act(async () => {
+          vi.advanceTimersByTime(1_000);
+          await nextTurn();
+        });
+        const resolveCalls = invoke.mock.calls.filter(([command]) => command === "resolve_page_resource");
+        expect(resolveCalls).toHaveLength(1);
+        // the surviving invoke is the page-2 one; page-1's timer was cancelled
+        expect(resolveCalls[0]).toEqual(["resolve_page_resource", { pageId: "page-2" }]);
+      } finally {
+        await ui.unmount();
+      }
+    } finally {
+      vi.useRealTimers();
     }
   });
 
