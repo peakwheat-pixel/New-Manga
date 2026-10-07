@@ -1,0 +1,48 @@
+SHELL=PowerShell; PYTHON=C:/Python314/python.exe; COMMAND=python verification/M2-DERIVED-GC-2-DESIGN/check_design.py
+COMMAND=git rev-parse HEAD
+73e70536b9c5c3525607311892a44ec055805902
+EXIT=0
+COMMAND=git status --short --branch
+## codex/m2-derived-gc-2-design
+?? verification/M2-DERIVED-GC-2-DESIGN/design-check-r3.log
+EXIT=0
+COMMAND=git rev-parse --path-format=absolute --git-common-dir
+G:/CODEX/New Manga/.git
+EXIT=0
+COMMAND=git merge-base --is-ancestor 44859014 73e70536b9c5c3525607311892a44ec055805902
+
+EXIT=0
+COMMAND=git merge-base --is-ancestor 0a7e0d5b 73e70536b9c5c3525607311892a44ec055805902
+
+EXIT=0
+COMMAND=git diff ab4b7c110a7c828f20d2d0787bd71144336d2e44 --name-only -- src apps tests requirements.txt packaging
+
+EXIT=0
+COMMAND=git diff --check
+
+EXIT=0
+COMMAND=git ls-files --others --exclude-standard
+verification/M2-DERIVED-GC-2-DESIGN/design-check-r3.log
+EXIT=0
+COMMAND=git diff ab4b7c110a7c828f20d2d0787bd71144336d2e44 --name-only
+doc/00_INDEX.md
+doc/REBASELINE_PLAN.md
+doc/STATUS.md
+doc/contracts/M2_DERIVED_PREVIEW_GC_DESIGN.md
+doc/handoffs/M2-DERIVED-GC-2-DESIGN-codex-8dd88c56.md
+doc/handoffs/M2-DERIVED-GC-2-DESIGN-codex-be779967.md
+doc/reviews/M2-DERIVED-GC-2-DESIGN-3a684675-dsh-r2.md
+doc/reviews/M2-DERIVED-GC-2-DESIGN-4a930c61-dsh-r1.md
+doc/tasks/M2-DERIVED-GC-2-DESIGN.md
+doc/tasks/README.md
+verification/M2-DERIVED-GC-2-DESIGN/check_design.py
+verification/M2-DERIVED-GC-2-DESIGN/design-check-attempt1.log
+verification/M2-DERIVED-GC-2-DESIGN/design-check-attempt2.log
+verification/M2-DERIVED-GC-2-DESIGN/design-check-r2.log
+verification/M2-DERIVED-GC-2-DESIGN/design-check.log
+verification/M2-DERIVED-GC-2-DESIGN/reality-source.log
+verification/M2-DERIVED-GC-2-DESIGN/review-disposition.md
+EXIT=0
+PASS: dependency ancestry, zero product-tree delta, design matrix/Gate completeness, source paths/line bounds
+NOT_RUN: future implementation/runtime/native locks/product regression; design check is not a deletion-safety test
+EXIT=0
