@@ -809,9 +809,8 @@ class TestLifecycleWrites:
     def test_initialize_refuses_namespace_table_without_check(self, tmp_path):
         # Same shape and primary key, empty, but the singleton CHECK
         # constraint is missing -- the empty look-alike is refused too (it
-        # would later accept rows the real schema forbids). Codex r6: full
-        # catalog fixture + the refusal must come from the CHECK-presence
-        # guard itself.
+        # would later accept rows the real schema forbids). Codex r6/r8: the
+        # refusal must come from the canonical-schema-equality guard itself.
         import sqlite3 as _sq
 
         db = tmp_path / "no-check.sqlite"
@@ -823,7 +822,8 @@ class TestLifecycleWrites:
         derived = tmp_path / "derived"
         derived.mkdir()
         with pytest.raises(
-            TypedResourceChannelError, match="lacks the singleton CHECK constraint"
+            TypedResourceChannelError,
+            match="does not match the canonical namespace schema",
         ):
             initialize_namespace(db, derived)
 
@@ -861,7 +861,7 @@ class TestLifecycleWrites:
         derived.mkdir()
         with pytest.raises(
             TypedResourceChannelError,
-            match="CHECK does not pin singleton = 1",
+            match="does not match the canonical namespace schema",
         ):
             initialize_namespace(db, derived)
 
@@ -877,22 +877,24 @@ class TestLifecycleWrites:
             "a refused initialization must not create any other table"
         )
 
-    def test_initialize_refuses_namespace_table_with_foreign_check(self, tmp_path):
-        # Codex r6/r7 F-01: sqlite_master.sql is stored VERBATIM, so a
-        # constraint inside a comment can smuggle the literal
-        # `check(singleton = 1)` past the exact-text match; the behavioral
-        # probe (INSERT singleton=2 inside a transaction that is always
-        # rolled back) is the backstop that catches the real semantics.
-        # The probe leaves no rows and creates no tables.
+    def test_initialize_refuses_namespace_table_with_comment_smuggled_combo(
+        self, tmp_path
+    ):
+        # Codex r8 F-01 combined counterexample: a comment smuggles the
+        # literal `check(singleton = 1)` past any text scan while the REAL
+        # constraint CHECK(singleton IN (1, 3)) rejects a singleton=2 probe
+        # row with a CHECK error -- both weaker guards pass, the domain is
+        # still {1, 3}. Canonical normalized full-text equality refuses it:
+        # the stored DDL text differs from this module's own schema.
         import sqlite3 as _sq
 
-        db = tmp_path / "foreign-check.sqlite"
+        db = tmp_path / "smuggled-combo.sqlite"
         conn = _sq.connect(str(db))
         _create_self_owned_empty_tables(
             conn,
             _namespace_lookalike_ddl(
                 extra_constraint=(
-                    " /* check(singleton = 1) */ CHECK (protocol_version > 0)"
+                    " /* check(singleton = 1) */ CHECK (singleton IN (1, 3))"
                 )
             ),
         )
@@ -902,7 +904,8 @@ class TestLifecycleWrites:
         derived = tmp_path / "derived"
         derived.mkdir()
         with pytest.raises(
-            TypedResourceChannelError, match="accepted a singleton=2 probe row"
+            TypedResourceChannelError,
+            match="does not match the canonical namespace schema",
         ):
             initialize_namespace(db, derived)
 
@@ -913,17 +916,16 @@ class TestLifecycleWrites:
         }
         (rows,) = conn.execute("SELECT COUNT(*) FROM preview_namespace").fetchone()
         conn.close()
-        assert rows == 0, "the probe transaction must leave nothing behind"
+        assert rows == 0, "a refused initialization must not write rows"
         assert tables == {"resource_catalog", "preview_lifecycle", "preview_namespace"}, (
             "a refused initialization must not create any other table"
         )
 
     def test_initialize_adopts_existing_empty_self_owned_tables(self, tmp_path):
-        # The behavioral probe must not reject a genuine self-owned catalog:
-        # tables in the exact layout WITH the real CHECK(singleton = 1) and
-        # no rows are adopted and bound (half-initialized crash leftovers
-        # stay recoverable), proving the probe fires only on wrong
-        # constraint semantics.
+        # Canonical schema equality must not reject a genuine self-owned
+        # catalog: tables created from this module's own schema constant and
+        # carrying no rows normalize to the canonical text and are adopted
+        # and bound (half-initialized crash leftovers stay recoverable).
         import sqlite3 as _sq
 
         db = tmp_path / "half-initialized.sqlite"

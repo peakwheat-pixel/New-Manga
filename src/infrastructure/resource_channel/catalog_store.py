@@ -95,6 +95,17 @@ CREATE TABLE IF NOT EXISTS preview_namespace (
 )
 """
 
+#: Codex r8 F-01: an adopted preview_namespace table must be indistinguishable
+#: from one this module creates. sqlite stores the DDL VERBATIM minus the
+#: leading IF NOT EXISTS, so comparing whitespace-normalized, lowercased text
+#: against this canonical form is SEMANTIC: equal normalized text means an
+#: equal token stream means equal DDL semantics (no heuristic layer --
+#: substring scans, constraint probing or black-box guards -- can be
+#: smuggled past, and a mismatch can only over-reject, never over-accept).
+_NORMALIZED_NAMESPACE_SCHEMA = "".join(
+    _PREVIEW_NAMESPACE_SCHEMA.replace("IF NOT EXISTS", "").split()
+).lower()
+
 _MEMORY_TARGETS = (":memory:",)
 
 #: The deterministic page-original keys are managed-original publishes and
@@ -201,11 +212,6 @@ def initialize_namespace(catalog_db: Path | str, derived_root: Path | str) -> Na
                 _assert_catalog_claimable(recheck)
             finally:
                 recheck.close()
-            # Codex r6 F-01: a "CHECK" substring is not proof of THE
-            # singleton constraint; verify the semantics behaviorally (a
-            # violating probe row in a transaction that always rolls back)
-            # while still under the exclusive lock.
-            _probe_singleton_check_semantics(db_path)
         db_path.parent.mkdir(parents=True, exist_ok=True)
         connection = sqlite3.connect(str(db_path), check_same_thread=False)
         try:
@@ -350,9 +356,9 @@ def _assert_catalog_claimable(connection: sqlite3.Connection) -> None:
     # The namespace table gets TWO extra guards (Codex r5 F-01): ANY
     # pre-existing row is unknown history (the binding query reads only
     # singleton=1 and would not even SEE a foreign singleton=2 row), and
-    # the adopted table must carry the singleton CHECK constraint -- an
-    # empty look-alike without it would later accept rows the real schema
-    # forbids.
+    # the adopted table must match the canonical namespace schema exactly
+    # (Codex r8 F-01) -- an empty look-alike with different constraint
+    # semantics would later accept rows the real schema forbids.
     if "preview_namespace" in tables:
         (namespace_rows,) = connection.execute(
             "SELECT COUNT(*) FROM preview_namespace"
@@ -364,79 +370,22 @@ def _assert_catalog_claimable(connection: sqlite3.Connection) -> None:
         (table_sql,) = connection.execute(
             "SELECT sql FROM sqlite_master WHERE type='table' AND name='preview_namespace'"
         ).fetchone()
-        # Codex r7 F-01: any CHECK does not pin singleton = 1 (e.g.
-        # CHECK(singleton IN (1, 3)) rejects the singleton=2 probe yet still
-        # allows 3). Normalize ALL whitespace away and require the exact
-        # constraint text -- sqlite_master.sql is stored verbatim, so an
-        # exact match is semantic (a legal CHECK whose expression is exactly
-        # `singleton = 1`). Over-specific matching can only OVER-reject
-        # (fail-closed: that database is simply not claimed), never
-        # over-accept.
-        normalized = "".join((table_sql or "").split()).lower()
-        if "check" not in normalized:
+        # Codex r7/r8 F-01: any weaker predicate (a "CHECK" substring, an
+        # exact-substring match, behavioral probing of selected values) is
+        # evadeable -- a comment can smuggle the literal past a text scan
+        # while CHECK(singleton IN (1, 3)) passes a singleton=2 probe yet
+        # still allows 3. The only non-evasive test is CANONICAL SCHEMA
+        # EQUALITY: sqlite stores the DDL verbatim (minus IF NOT EXISTS), so
+        # requiring normalized full-text equality with this module's own
+        # schema accepts exactly the tables this module could have created
+        # and refuses every construction with different semantics.
+        if table_sql is None or (
+            "".join(table_sql.split()).lower() != _NORMALIZED_NAMESPACE_SCHEMA
+        ):
             raise namespace_unavailable(
-                "preview_namespace lacks the singleton CHECK constraint"
+                "preview_namespace table does not match the canonical"
+                " namespace schema; unknown history is never claimed"
             )
-        if "check(singleton=1)" not in normalized:
-            raise namespace_unavailable(
-                "preview_namespace CHECK does not pin singleton = 1"
-            )
-
-
-def _probe_singleton_check_semantics(db_path: Path) -> None:
-    """Codex r6 F-01: sqlite exposes no constraint introspection, so the
-    literal text "CHECK" in sqlite_master.sql cannot distinguish
-    CHECK(singleton = 1) from any other CHECK -- an empty same-shape table
-    carrying e.g. CHECK(protocol_version > 0) passes a text scan. The
-    semantics are verified BEHAVIORALLY: in a transaction that is always
-    rolled back, a probe row with singleton=2 must be rejected by a CHECK.
-    The exact-text guard (Codex r7) already pins CHECK(singleton = 1), but
-    sqlite_master.sql is stored verbatim -- a constraint inside a COMMENT
-    can smuggle the literal past the text match; the probe is the
-    behavioral backstop for that class. Preconditions (empty namespace
-    table, known layout, no unknown tables) are already established by
-    _assert_catalog_claimable, so the probe touches no user data and the
-    rollback leaves no rows behind."""
-    connection = sqlite3.connect(
-        _rw_uri(db_path), uri=True, timeout=0.0, isolation_level=None
-    )
-    try:
-        (present,) = connection.execute(
-            "SELECT COUNT(*) FROM sqlite_master WHERE type='table'"
-            " AND name='preview_namespace'"
-        ).fetchone()
-        if not present:
-            return  # brand-new database: nothing to verify
-        connection.execute("BEGIN IMMEDIATE")
-        refused = None
-        try:
-            connection.execute(
-                "INSERT INTO preview_namespace(singleton, protocol_version,"
-                " derived_root, derived_identity_volume, derived_identity_index,"
-                " catalog_root, catalog_identity_volume, catalog_identity_index)"
-                " VALUES(2, 1, 'x', 1, 2, 'y', 3, 4)"
-            )
-        except sqlite3.IntegrityError as error:
-            if "check" not in str(error).lower():
-                refused = (
-                    "preview_namespace rejects the probe row but not via a"
-                    f" CHECK constraint: {error}"
-                )
-            # expected: the singleton CHECK constraint fired
-        else:
-            refused = (
-                "preview_namespace accepted a singleton=2 probe row; the"
-                " singleton CHECK constraint is missing or different"
-            )
-        connection.execute("ROLLBACK")
-        if refused is not None:
-            raise namespace_unavailable(refused)
-    except sqlite3.Error as error:
-        raise namespace_unavailable(
-            f"preview_namespace constraint probe failed: {error}"
-        ) from error
-    finally:
-        connection.close()
 
 
 def _preflight_initialize_target(db_path: Path) -> None:
