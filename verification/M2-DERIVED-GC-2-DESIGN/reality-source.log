@@ -1,0 +1,79 @@
+SHELL=PowerShell
+PYTHON=C:\Python314\python.exe
+COMMAND=git status --short --branch
+## codex/m2-derived-gc-2-design
+ M doc/tasks/M2-DERIVED-GC-2-DESIGN.md
+?? doc/contracts/M2_DERIVED_PREVIEW_GC_DESIGN.md
+?? verification/M2-DERIVED-GC-2-DESIGN/
+
+EXIT=0
+COMMAND=git rev-parse HEAD
+69d7cc084561e2042f0172b5239a158ebc9db04b
+
+EXIT=0
+COMMAND=git rev-parse --path-format=absolute --git-common-dir
+G:/CODEX/New Manga/.git
+
+EXIT=0
+COMMAND=git diff 32f9b932..ab4b7c11 --name-only
+doc/00_INDEX.md
+doc/REBASELINE_PLAN.md
+doc/STATUS.md
+doc/tasks/README.md
+verification/REBASELINE-20261007/REPORT.md
+verification/REBASELINE-20261007/TASK_GRAPH.md
+verification/REBASELINE-20261007/audit.py
+verification/REBASELINE-20261007/checks.log
+verification/REBASELINE-20261007/inventory.json
+
+EXIT=0
+COMMAND=git merge-base --is-ancestor 44859014 HEAD
+
+
+EXIT=0
+COMMAND=git merge-base --is-ancestor 0a7e0d5b HEAD
+
+
+EXIT=0
+SHA256 src/infrastructure/resource_channel/render_preview.py 4a3c6398547867e488cc2e763f624a04ce57107337c0fcfae8b0460830400faf
+SHA256 src/infrastructure/resource_channel/catalog_store.py f0087afc472f3b810ef6058ea69d5fc2a1958e3c592a40390bbf0536a2e97591
+SHA256 src/infrastructure/resource_channel/host_bridge.py d2dbd8fb0a312a97306a751a1ed449ccc8f8591f14aa42307a30e34b929b5a41
+SHA256 src/application/resource_channel/service.py 3dce369a354a034d2643ba8de616b827663fbdbe4332e3fe78cfc612ff6cff72
+SHA256 src/bootstrap/core_service.py 3959b0f34ad2cf607c5bbdda95eb5de42ee32ae6a9309945f45e3d33a28a7828
+SHA256 src/infrastructure/sqlite/artifacts.py 097f87966e872b2603d4ce318b96f027ff6962ccbcc06d59d0e146e5c4328974
+SHA256 apps/desktop/src-tauri/src/main.rs c041a1fcee6cf1f99721a783c785f12cb63d8dc4468aee9aad47ddaa62ce10ef
+SHA256 apps/desktop/src-tauri/src/resource_protocol.rs b10552269c33c9c1358ae374bb1140bdd231c48bfdeaef9db0767119e6295af7
+COMMAND=rg targeted lifecycle callers
+apps/desktop/src-tauri/src\resource_protocol.rs:314:            FILE_SHARE_READ,
+apps/desktop/src-tauri/src\main.rs:174:    render_preview_resources: Mutex<HashMap<String, String>>,
+apps/desktop/src-tauri/src\main.rs:340:        .render_preview_resources
+apps/desktop/src-tauri/src\main.rs:775:        render_preview_resources: Mutex::new(HashMap::new()),
+apps/desktop/src-tauri/src\main.rs:1942:            render_preview_resources: Mutex::new(HashMap::from([(
+apps/desktop/src-tauri/src\main.rs:1967:            state.render_preview_resources.lock().unwrap().get("page"),
+src\bootstrap\core_service.py:916:            preview = self._render_previews.publish(
+src\bootstrap\core_service.py:1037:        return self._render_previews.publish_original(source, resource_id, suffix)
+src\domain\regions\entities.py:323:    is_pinned: bool = False
+src\application\resource_channel\service.py:258:    def revoke_resource(
+src\application\editing\service.py:453:                    "is_pinned": rev.is_pinned,
+src\application\editing\service.py:788:        only flips is_pinned — immutable history is never upserted."""
+src\domain\constraints\entities.py:86:    is_pinned: bool = False
+src\domain\constraints\entities.py:138:        is_pinned: bool = False,
+src\domain\constraints\entities.py:149:            is_pinned=is_pinned,
+src\domain\constraints\entities.py:162:            is_pinned=is_pinned,
+src\ports\repositories\artifacts.py:66:    is_pinned: bool
+src\infrastructure\resource_channel\render_preview.py:106:    def collect_orphans(self) -> dict[str, int]:
+src\infrastructure\sqlite\schema.py:98:    is_pinned INTEGER NOT NULL DEFAULT 0 CHECK (is_pinned IN (0, 1)),
+src\infrastructure\sqlite\schema.py:257:    is_pinned INTEGER NOT NULL DEFAULT 0 CHECK (is_pinned IN (0, 1)),
+src\infrastructure\sqlite\regions.py:9:is a separate single-statement transaction that touches ``is_pinned`` only.
+src\infrastructure\sqlite\regions.py:89:            is_pinned=bool(row["is_pinned"]),
+src\infrastructure\sqlite\regions.py:184:        """TASK-028 §4.2: pin touches is_pinned only — no same-id upsert of
+src\infrastructure\sqlite\regions.py:188:                "UPDATE region_revisions SET is_pinned = ?"
+src\infrastructure\sqlite\regions.py:293:            " snapshot_json, origin, review_state, is_pinned, source_run_id,"
+src\infrastructure\sqlite\regions.py:301:                int(revision.is_pinned), revision.source_run_id,
+src\infrastructure\sqlite\artifacts.py:229:                " step_run_id, provenance_json, is_pinned, created_at)"
+src\infrastructure\sqlite\artifacts.py:293:            is_pinned=bool(row["is_pinned"]),
+src\infrastructure\rendering\locator.py:67:            is_pinned=bool(revision_row["is_pinned"]),
+src\infrastructure\providers\step_writes.py:250:                " revision_no, snapshot_json, origin, review_state, is_pinned,"
+src\infrastructure\providers\step_writes.py:260:                    int(revision.is_pinned),
+src\infrastructure\providers\step_writes.py:369:                " pipeline_run_id, step_run_id, provenance_json, is_pinned, created_at)"
+EXIT=0

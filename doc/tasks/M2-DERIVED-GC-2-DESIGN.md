@@ -2,7 +2,7 @@
 id: M2-DERIVED-GC-2-DESIGN
 title: 轮换旧 preview 引用安全回收设计
 kind: design
-status: ready
+status: in_progress
 approval: user_directive_2026-10-07_preview_reference_safe_design
 suggested_owner: Codex
 owner: Codex
@@ -59,5 +59,5 @@ src/**、apps/**、tests/**、requirements*、Schema/migration、用户数据/�
 ## 交付与运行记录
 
 - release：本 commit；后续固定 delivery head 与 Handoff 追加，不自引用本文件提交 Hash。
-- ExecutionState：IDLE；创建 worktree 后 Owner 将状态转 in_progress/ACTIVE。
+- ExecutionState：ACTIVE；创建 worktree 后 Owner 将状态转 in_progress/ACTIVE。
 - 下一步：实际调用链取证 → 最小设计 → 固定交付 → DSH 独立 Review → 条件闭合 → Codex 集成；不启动后继实现。
