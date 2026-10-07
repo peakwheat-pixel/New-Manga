@@ -839,20 +839,62 @@ class TestLifecycleWrites:
             "a refused initialization must not create any other table"
         )
 
+    def test_initialize_refuses_namespace_table_with_wrong_singleton_domain(
+        self, tmp_path
+    ):
+        # Codex r7 F-01: the singleton=2 probe alone cannot pin the domain
+        # to {1} -- CHECK(singleton IN (1, 3)) rejects the probe yet still
+        # allows 3. The normalized exact-text guard requires the literal
+        # CHECK(singleton = 1) and refuses this look-alike.
+        import sqlite3 as _sq
+
+        db = tmp_path / "wrong-domain.sqlite"
+        conn = _sq.connect(str(db))
+        _create_self_owned_empty_tables(
+            conn,
+            _namespace_lookalike_ddl(extra_constraint=" CHECK (singleton IN (1, 3))"),
+        )
+        conn.commit()
+        conn.close()
+
+        derived = tmp_path / "derived"
+        derived.mkdir()
+        with pytest.raises(
+            TypedResourceChannelError,
+            match="CHECK does not pin singleton = 1",
+        ):
+            initialize_namespace(db, derived)
+
+        conn = _sq.connect(str(db))
+        tables = {
+            row[0]
+            for row in conn.execute("SELECT name FROM sqlite_master WHERE type='table'")
+        }
+        (rows,) = conn.execute("SELECT COUNT(*) FROM preview_namespace").fetchone()
+        conn.close()
+        assert rows == 0, "a refused initialization must not write rows"
+        assert tables == {"resource_catalog", "preview_lifecycle", "preview_namespace"}, (
+            "a refused initialization must not create any other table"
+        )
+
     def test_initialize_refuses_namespace_table_with_foreign_check(self, tmp_path):
-        # Codex r6 F-01: a "CHECK" anywhere in the SQL is not the singleton
-        # constraint. An empty same-shape table carrying
-        # CHECK(protocol_version > 0) passes the text scan; only the
-        # behavioral probe (INSERT singleton=2 inside a transaction that is
-        # always rolled back) proves the semantics are wrong. The probe
-        # leaves no rows and creates no tables.
+        # Codex r6/r7 F-01: sqlite_master.sql is stored VERBATIM, so a
+        # constraint inside a comment can smuggle the literal
+        # `check(singleton = 1)` past the exact-text match; the behavioral
+        # probe (INSERT singleton=2 inside a transaction that is always
+        # rolled back) is the backstop that catches the real semantics.
+        # The probe leaves no rows and creates no tables.
         import sqlite3 as _sq
 
         db = tmp_path / "foreign-check.sqlite"
         conn = _sq.connect(str(db))
         _create_self_owned_empty_tables(
             conn,
-            _namespace_lookalike_ddl(extra_constraint=" CHECK (protocol_version > 0)"),
+            _namespace_lookalike_ddl(
+                extra_constraint=(
+                    " /* check(singleton = 1) */ CHECK (protocol_version > 0)"
+                )
+            ),
         )
         conn.commit()
         conn.close()

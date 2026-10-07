@@ -364,9 +364,22 @@ def _assert_catalog_claimable(connection: sqlite3.Connection) -> None:
         (table_sql,) = connection.execute(
             "SELECT sql FROM sqlite_master WHERE type='table' AND name='preview_namespace'"
         ).fetchone()
-        if table_sql is None or "CHECK" not in (table_sql or "").upper():
+        # Codex r7 F-01: any CHECK does not pin singleton = 1 (e.g.
+        # CHECK(singleton IN (1, 3)) rejects the singleton=2 probe yet still
+        # allows 3). Normalize ALL whitespace away and require the exact
+        # constraint text -- sqlite_master.sql is stored verbatim, so an
+        # exact match is semantic (a legal CHECK whose expression is exactly
+        # `singleton = 1`). Over-specific matching can only OVER-reject
+        # (fail-closed: that database is simply not claimed), never
+        # over-accept.
+        normalized = "".join((table_sql or "").split()).lower()
+        if "check" not in normalized:
             raise namespace_unavailable(
                 "preview_namespace lacks the singleton CHECK constraint"
+            )
+        if "check(singleton=1)" not in normalized:
+            raise namespace_unavailable(
+                "preview_namespace CHECK does not pin singleton = 1"
             )
 
 
@@ -377,9 +390,13 @@ def _probe_singleton_check_semantics(db_path: Path) -> None:
     carrying e.g. CHECK(protocol_version > 0) passes a text scan. The
     semantics are verified BEHAVIORALLY: in a transaction that is always
     rolled back, a probe row with singleton=2 must be rejected by a CHECK.
-    Preconditions (empty namespace table, known layout, no unknown tables)
-    are already established by _assert_catalog_claimable, so the probe
-    touches no user data and the rollback leaves no rows behind."""
+    The exact-text guard (Codex r7) already pins CHECK(singleton = 1), but
+    sqlite_master.sql is stored verbatim -- a constraint inside a COMMENT
+    can smuggle the literal past the text match; the probe is the
+    behavioral backstop for that class. Preconditions (empty namespace
+    table, known layout, no unknown tables) are already established by
+    _assert_catalog_claimable, so the probe touches no user data and the
+    rollback leaves no rows behind."""
     connection = sqlite3.connect(
         _rw_uri(db_path), uri=True, timeout=0.0, isolation_level=None
     )
