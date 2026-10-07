@@ -50,3 +50,23 @@ tauri build / 定向 pytest / runner stdout）：
 - 历史保护：新产物搬 fifth-run-artifacts/，tracked 历史字节 restore
 
 第四轮（e3ad330f）记录保留——本第五轮为最终绑定轮（含 r5 全部改动）。
+
+
+---
+
+# 第六轮（CURRENT FINAL）构建链：绑定 adb1498c（r6 F-01 行为探测后）
+
+单日志 sixth-round-build-and-run.log（各步骤命令显式入日志，step1..step5 带 EXIT）：
+
+- 返修代码 commit = adb1498ce0719b944430adc2028adb43a43eb230（r6 F-01：CHECK 语义
+  行为探测——INSERT singleton=2 探针行于恒回滚事务中必须被 CHECK 拒绝）
+- [step1] build_sidecar.ps1 -Force，原文行 HEAD=adb1498ce0719b944430adc2028adb43a43eb230（EXIT=0）
+- [step2] npx --yes @tauri-apps/cli@2 build（EXIT=0）
+- [step3] installer SHA256 = 072e937f4906a885f8099541fa73e385da34a3d9bb9ffc12594c3e5649668eac
+- [step4] 定向回归（tests/m2_resource_channel + tests/core/test_derived_gc.py +
+  tests/m2_acceptance）160 passed（EXIT=0）
+- [step5] m2ac5 runner：25 项 PASS、唯一 FAIL=CS-L1（既有漂移，F-07 口径保持记录）（EXIT=1）
+- 全量 pytest 另见 raw/pytest-full.log（HEAD=adb1498c 指纹）：1938 passed+1 skipped
+- 历史保护：新产物搬 sixth-run-artifacts/，tracked 历史字节 restore（M2-AC5 status 干净）
+
+第五轮（da2ddeae）记录保留——本第六轮为最终绑定轮（含 r6 全部改动）。
