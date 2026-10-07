@@ -3,7 +3,8 @@ id: M2-DERIVED-GC-1
 title: derived 只读根 orphan/死行清理第一刀（RC4-12 登记的预览 GC 缺口最小闭合）
 kind: feature
 status: in_review
-delivery_commit: 4edec70a (rework; initial delivery 13964fe2)
+delivery_commit: 9c9c7e55 (polish; delivery 13964fe2 -> rework 4edec70a -> polish 9c9c7e55)
+review: DSH r1 approve_with_conditions @13964fe2 -> r2 approve @4edec70a (N-01..04 P4 polished @9c9c7e55)
 handoff: ../handoffs/M2-DERIVED-GC-1-zcode-13964fe2.md
 approval: user_2026-10-07_autonomous_mode_continuation（STATUS Planned next 候选②，授权自动选下一最高优先任务）
 suggested_owner: Codex Executor

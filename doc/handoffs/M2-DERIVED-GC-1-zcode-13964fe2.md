@@ -7,7 +7,7 @@
 - Branch/worktree: `zcode/derived-gc-1` @ `G:/CODEX/New Manga.worktrees/DERIVED-GC-1`
 - Delivery head: `13964fe2`（单交付 commit：Core 实现+装配+测试同 commit）
 - Rework head: `4edec70a`（DSH r1 `approve_with_conditions` 返修，条件 C-1..C-3 全闭合；r1 报告 `doc/reviews/M2-DERIVED-GC-1-13964fe2-dsh-r1.md`）
-- Polish head: `a6115563`（DSH r2 `approve` 后顺手闭 N-01/N-02/N-04；r2 报告 `doc/reviews/M2-DERIVED-GC-1-4edec70a-dsh-r2.md`；**本文件以下数字均以 polish head 为准**）
+- Polish head: `9c9c7e55`（DSH r2 `approve` 后顺手闭 N-01/N-02/N-04；r2 报告 `doc/reviews/M2-DERIVED-GC-1-4edec70a-dsh-r2.md`；**本文件以下数字均以 polish head 为准**）
 
 ## DSH r2（@`4edec70a`，报告 `doc/reviews/M2-DERIVED-GC-1-4edec70a-dsh-r2.md`）：VERDICT **approve**
 
@@ -46,9 +46,9 @@ derived 只读根启动时 orphan/死行清理第一刀（RC4-12 登记的预览
 
 | AC | 状态 | 证据 |
 |---|---|---|
-| AC1 Core 单测 | DONE | focused 四目录 **430 passed**（PAGE-NAV 基线 422 + 本 Task 8 新用例：6 交付+2 r1 返修）；raw 日志 `verification/M2-DERIVED-GC-1/raw/focused-pytest-1.log`（HEAD=`4edec70a`，EXIT=0） |
+| AC1 Core 单测 | DONE | focused 四目录 **430 passed**（PAGE-NAV 基线 422 + 本 Task 8 新用例：6 交付+2 r1 返修）；raw 日志 `verification/M2-DERIVED-GC-1/raw/focused-pytest-1.log`（HEAD=`9c9c7e55`，EXIT=0） |
 | AC2 装配 | DONE | `_run_startup_gc` fail-soft+统计双形态用例；main() 装配路径调用一次（stderr `[core.derived_gc]`；DSH r1 独立证实 raw cargo 日志内 4 次真实 sidecar spawn 均打印 GC 统计=装配证据强于单测） |
-| AC3 回归 | DONE | 全量 pytest **1884 passed+1 skipped+0 failed**（base 1876+1sk +8 新用例，等量递增）；cargo **55+1ign**、vitest **136**、build EXIT=0 基线不变（本 Task 零 React/Rust 改动的不变量确认）；raw 日志 `verification/M2-DERIVED-GC-1/raw/{full-pytest,cargo-test,vitest-run,frontend-build}-1.log`（HEAD=`4edec70a`） |
+| AC3 回归 | DONE | 全量 pytest **1884 passed+1 skipped+0 failed**（base 1876+1sk +8 新用例，等量递增）；cargo **55+1ign**、vitest **136**、build EXIT=0 基线不变（本 Task 零 React/Rust 改动的不变量确认）；raw 日志 `verification/M2-DERIVED-GC-1/raw/{full-pytest,cargo-test,vitest-run,frontend-build}-1.log`（HEAD=`9c9c7e55`） |
 | AC4 非作者 Review | DONE | r1 [approve_with_conditions](reviews/M2-DERIVED-GC-1-13964fe2-dsh-r1.md)（0×P0/P1/P2；3×P3 条件+5×P4）→ rework `4edec70a` C-1..C-3 全闭合 → r2 [approve](reviews/M2-DERIVED-GC-1-4edec70a-dsh-r2.md)（N-01..04 P4 顺手闭合） |
 
 ## 设计裁定（Reviewer 请特别核验）

@@ -1,6 +1,6 @@
 SHELL=Git Bash (MINGW64, Windows)
 PYTHON=G:/CODEX/New Manga.task-envs/T1.1.1-impl-py312/Scripts/python.exe
-HEAD=4edec70a6e7fd2db5c4d2e7da7451b91c9cac018
+HEAD=9c9c7e55e0c031a3d1920bf8508b4962263b4051
 COMMAND=G:/CODEX/New Manga.task-envs/T1.1.1-impl-py312/Scripts/python.exe -m pytest tests/core tests/editing tests/rendering tests/m2_resource_channel -q
 ........................................................................ [ 16%]
 ........................................................................ [ 33%]
@@ -18,8 +18,21 @@ tests/rendering/test_pillow_rendering.py::test_pillow_compositor_draws_centered_
     for red, green, blue, _alpha in image.getdata()
 
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
-430 passed, 2 warnings in 21.76s
-file:///G:/CODEX/New Manga.worktrees/DERIVED-GC-1/src/ui/qml/reader/ReaderView.qml:204: TypeError: Cannot read property 'sourcePath' of null
+430 passed, 2 warnings in 21.65s
+file:///G:/CODEX/New Manga.worktrees/DERIVED-GC-1/src/ui/qml/shell/AppShell.qml:56: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/DERIVED-GC-1/src/ui/qml/shell/AppShell.qml:51: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/DERIVED-GC-1/src/ui/qml/shell/AppShell.qml:46: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/DERIVED-GC-1/src/ui/qml/shell/AppShell.qml:41: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/DERIVED-GC-1/src/ui/qml/shell/PrimaryNavigationRail.qml:21: TypeError: Cannot read property 'pages' of null
+file:///G:/CODEX/New Manga.worktrees/DERIVED-GC-1/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.worktrees/DERIVED-GC-1/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/DERIVED-GC-1/src/ui/qml/shell/PrimaryNavigationRail.qml:37: TypeError: Cannot read property 'workbenchRunning' of null
+file:///G:/CODEX/New Manga.worktrees/DERIVED-GC-1/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.worktrees/DERIVED-GC-1/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/DERIVED-GC-1/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.worktrees/DERIVED-GC-1/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/DERIVED-GC-1/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.worktrees/DERIVED-GC-1/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
 file:///G:/CODEX/New Manga.worktrees/DERIVED-GC-1/src/ui/qml/reader/ReaderView.qml:204: TypeError: Cannot read property 'sourcePath' of null
 file:///G:/CODEX/New Manga.worktrees/DERIVED-GC-1/src/ui/qml/shell/AppShell.qml:56: TypeError: Cannot read property 'currentPage' of null
 file:///G:/CODEX/New Manga.worktrees/DERIVED-GC-1/src/ui/qml/shell/AppShell.qml:51: TypeError: Cannot read property 'currentPage' of null
@@ -35,20 +48,7 @@ file:///G:/CODEX/New Manga.worktrees/DERIVED-GC-1/src/ui/qml/shell/PrimaryNaviga
 file:///G:/CODEX/New Manga.worktrees/DERIVED-GC-1/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
 file:///G:/CODEX/New Manga.worktrees/DERIVED-GC-1/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
 file:///G:/CODEX/New Manga.worktrees/DERIVED-GC-1/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
-file:///G:/CODEX/New Manga.worktrees/DERIVED-GC-1/src/ui/qml/shell/AppShell.qml:56: TypeError: Cannot read property 'currentPage' of null
-file:///G:/CODEX/New Manga.worktrees/DERIVED-GC-1/src/ui/qml/shell/AppShell.qml:51: TypeError: Cannot read property 'currentPage' of null
-file:///G:/CODEX/New Manga.worktrees/DERIVED-GC-1/src/ui/qml/shell/AppShell.qml:46: TypeError: Cannot read property 'currentPage' of null
-file:///G:/CODEX/New Manga.worktrees/DERIVED-GC-1/src/ui/qml/shell/AppShell.qml:41: TypeError: Cannot read property 'currentPage' of null
-file:///G:/CODEX/New Manga.worktrees/DERIVED-GC-1/src/ui/qml/shell/PrimaryNavigationRail.qml:21: TypeError: Cannot read property 'pages' of null
-file:///G:/CODEX/New Manga.worktrees/DERIVED-GC-1/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
-file:///G:/CODEX/New Manga.worktrees/DERIVED-GC-1/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
-file:///G:/CODEX/New Manga.worktrees/DERIVED-GC-1/src/ui/qml/shell/PrimaryNavigationRail.qml:37: TypeError: Cannot read property 'workbenchRunning' of null
-file:///G:/CODEX/New Manga.worktrees/DERIVED-GC-1/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
-file:///G:/CODEX/New Manga.worktrees/DERIVED-GC-1/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
-file:///G:/CODEX/New Manga.worktrees/DERIVED-GC-1/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
-file:///G:/CODEX/New Manga.worktrees/DERIVED-GC-1/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
-file:///G:/CODEX/New Manga.worktrees/DERIVED-GC-1/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
-file:///G:/CODEX/New Manga.worktrees/DERIVED-GC-1/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/DERIVED-GC-1/src/ui/qml/reader/ReaderView.qml:204: TypeError: Cannot read property 'sourcePath' of null
 file:///G:/CODEX/New Manga.worktrees/DERIVED-GC-1/src/ui/qml/shell/AppShell.qml:56: TypeError: Cannot read property 'currentPage' of null
 file:///G:/CODEX/New Manga.worktrees/DERIVED-GC-1/src/ui/qml/shell/AppShell.qml:51: TypeError: Cannot read property 'currentPage' of null
 file:///G:/CODEX/New Manga.worktrees/DERIVED-GC-1/src/ui/qml/shell/AppShell.qml:46: TypeError: Cannot read property 'currentPage' of null
