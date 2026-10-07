@@ -201,6 +201,11 @@ def initialize_namespace(catalog_db: Path | str, derived_root: Path | str) -> Na
                 _assert_catalog_claimable(recheck)
             finally:
                 recheck.close()
+            # Codex r6 F-01: a "CHECK" substring is not proof of THE
+            # singleton constraint; verify the semantics behaviorally (a
+            # violating probe row in a transaction that always rolls back)
+            # while still under the exclusive lock.
+            _probe_singleton_check_semantics(db_path)
         db_path.parent.mkdir(parents=True, exist_ok=True)
         connection = sqlite3.connect(str(db_path), check_same_thread=False)
         try:
@@ -363,6 +368,58 @@ def _assert_catalog_claimable(connection: sqlite3.Connection) -> None:
             raise namespace_unavailable(
                 "preview_namespace lacks the singleton CHECK constraint"
             )
+
+
+def _probe_singleton_check_semantics(db_path: Path) -> None:
+    """Codex r6 F-01: sqlite exposes no constraint introspection, so the
+    literal text "CHECK" in sqlite_master.sql cannot distinguish
+    CHECK(singleton = 1) from any other CHECK -- an empty same-shape table
+    carrying e.g. CHECK(protocol_version > 0) passes a text scan. The
+    semantics are verified BEHAVIORALLY: in a transaction that is always
+    rolled back, a probe row with singleton=2 must be rejected by a CHECK.
+    Preconditions (empty namespace table, known layout, no unknown tables)
+    are already established by _assert_catalog_claimable, so the probe
+    touches no user data and the rollback leaves no rows behind."""
+    connection = sqlite3.connect(
+        _rw_uri(db_path), uri=True, timeout=0.0, isolation_level=None
+    )
+    try:
+        (present,) = connection.execute(
+            "SELECT COUNT(*) FROM sqlite_master WHERE type='table'"
+            " AND name='preview_namespace'"
+        ).fetchone()
+        if not present:
+            return  # brand-new database: nothing to verify
+        connection.execute("BEGIN IMMEDIATE")
+        refused = None
+        try:
+            connection.execute(
+                "INSERT INTO preview_namespace(singleton, protocol_version,"
+                " derived_root, derived_identity_volume, derived_identity_index,"
+                " catalog_root, catalog_identity_volume, catalog_identity_index)"
+                " VALUES(2, 1, 'x', 1, 2, 'y', 3, 4)"
+            )
+        except sqlite3.IntegrityError as error:
+            if "check" not in str(error).lower():
+                refused = (
+                    "preview_namespace rejects the probe row but not via a"
+                    f" CHECK constraint: {error}"
+                )
+            # expected: the singleton CHECK constraint fired
+        else:
+            refused = (
+                "preview_namespace accepted a singleton=2 probe row; the"
+                " singleton CHECK constraint is missing or different"
+            )
+        connection.execute("ROLLBACK")
+        if refused is not None:
+            raise namespace_unavailable(refused)
+    except sqlite3.Error as error:
+        raise namespace_unavailable(
+            f"preview_namespace constraint probe failed: {error}"
+        ) from error
+    finally:
+        connection.close()
 
 
 def _preflight_initialize_target(db_path: Path) -> None:

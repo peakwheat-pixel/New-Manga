@@ -21,6 +21,7 @@ import pytest
 from application.resource_channel import TypedResourceChannelError
 from application.resource_channel.dto import DEFAULT_TTL_SECONDS
 from infrastructure.resource_channel.catalog_store import (
+    _PREVIEW_NAMESPACE_SCHEMA,
     ResourceCatalogStore,
     initialize_namespace,
 )
@@ -258,6 +259,36 @@ class TestTtlCannotBeExtended:
         # the grant now survives until now + 300
         clock["now"] += 200.0
         assert service.resolve(opaque, renew=False) is not None
+
+
+def _create_self_owned_empty_tables(conn, namespace_ddl):
+    """Resource/lifecycle tables in the exact self-owned layout plus the
+    caller's preview_namespace DDL. Codex r6: fixtures for the namespace
+    guards must build the FULL catalog so the refusal provably comes from
+    the namespace guard under test, not from a missing table."""
+    conn.execute(
+        "CREATE TABLE resource_catalog ("
+        "resource_id TEXT PRIMARY KEY, scope_class TEXT NOT NULL, rel_path TEXT NOT NULL)"
+    )
+    conn.execute(
+        "CREATE TABLE preview_lifecycle ("
+        "resource_id TEXT PRIMARY KEY, producer_root TEXT NOT NULL,"
+        " artifact_id TEXT NOT NULL, artifact_revision_id TEXT NOT NULL,"
+        " managed_rel_path TEXT NOT NULL, retired INTEGER NOT NULL DEFAULT 0)"
+    )
+    conn.execute(namespace_ddl)
+
+
+def _namespace_lookalike_ddl(extra_constraint=""):
+    return (
+        "CREATE TABLE preview_namespace ("
+        "singleton INTEGER PRIMARY KEY, protocol_version INTEGER,"
+        " derived_root TEXT, derived_identity_volume INTEGER,"
+        " derived_identity_index INTEGER, catalog_root TEXT,"
+        " catalog_identity_volume INTEGER, catalog_identity_index INTEGER"
+        + extra_constraint
+        + ")"
+    )
 
 
 class TestPreviewNamespaceAuthority:
@@ -742,19 +773,14 @@ class TestLifecycleWrites:
         # Codex r5 F-01: identical columns AND the singleton primary key but
         # WITHOUT the CHECK constraint, already carrying a foreign
         # singleton=2 row that the binding query would never see -- the
-        # whole-table row count and the CHECK-presence guard must refuse it,
-        # and nothing may be written.
+        # whole-table row count must refuse it. Codex r6: the fixture builds
+        # the FULL catalog so the refusal provably comes from the row-count
+        # guard (match=), and nothing may be written.
         import sqlite3 as _sq
 
         db = tmp_path / "foreign-namespace.sqlite"
         conn = _sq.connect(str(db))
-        conn.execute(
-            "CREATE TABLE preview_namespace ("
-            "singleton INTEGER PRIMARY KEY, protocol_version INTEGER,"
-            " derived_root TEXT, derived_identity_volume INTEGER,"
-            " derived_identity_index INTEGER, catalog_root TEXT,"
-            " catalog_identity_volume INTEGER, catalog_identity_index INTEGER)"
-        )  # no CHECK(singleton = 1)
+        _create_self_owned_empty_tables(conn, _namespace_lookalike_ddl())
         conn.execute(
             "INSERT INTO preview_namespace VALUES (2, 1, 'x', 1, 2, 'y', 3, 4)"
         )
@@ -763,7 +789,9 @@ class TestLifecycleWrites:
 
         derived = tmp_path / "derived"
         derived.mkdir()
-        with pytest.raises(TypedResourceChannelError):
+        with pytest.raises(
+            TypedResourceChannelError, match="preview_namespace already carries rows"
+        ):
             initialize_namespace(db, derived)
 
         conn = _sq.connect(str(db))
@@ -774,29 +802,102 @@ class TestLifecycleWrites:
         (rows,) = conn.execute("SELECT COUNT(*) FROM preview_namespace").fetchone()
         conn.close()
         assert rows == 1, "the foreign row must be untouched"
-        assert tables == {"preview_namespace"}, (
+        assert tables == {"resource_catalog", "preview_lifecycle", "preview_namespace"}, (
             "a refused initialization must not create any other table"
         )
 
     def test_initialize_refuses_namespace_table_without_check(self, tmp_path):
         # Same shape and primary key, empty, but the singleton CHECK
         # constraint is missing -- the empty look-alike is refused too (it
-        # would later accept rows the real schema forbids).
+        # would later accept rows the real schema forbids). Codex r6: full
+        # catalog fixture + the refusal must come from the CHECK-presence
+        # guard itself.
         import sqlite3 as _sq
 
         db = tmp_path / "no-check.sqlite"
         conn = _sq.connect(str(db))
-        conn.execute(
-            "CREATE TABLE preview_namespace ("
-            "singleton INTEGER PRIMARY KEY, protocol_version INTEGER,"
-            " derived_root TEXT, derived_identity_volume INTEGER,"
-            " derived_identity_index INTEGER, catalog_root TEXT,"
-            " catalog_identity_volume INTEGER, catalog_identity_index INTEGER)"
+        _create_self_owned_empty_tables(conn, _namespace_lookalike_ddl())
+        conn.commit()
+        conn.close()
+
+        derived = tmp_path / "derived"
+        derived.mkdir()
+        with pytest.raises(
+            TypedResourceChannelError, match="lacks the singleton CHECK constraint"
+        ):
+            initialize_namespace(db, derived)
+
+        conn = _sq.connect(str(db))
+        tables = {
+            row[0]
+            for row in conn.execute("SELECT name FROM sqlite_master WHERE type='table'")
+        }
+        (rows,) = conn.execute("SELECT COUNT(*) FROM preview_namespace").fetchone()
+        conn.close()
+        assert rows == 0, "a refused initialization must not write rows"
+        assert tables == {"resource_catalog", "preview_lifecycle", "preview_namespace"}, (
+            "a refused initialization must not create any other table"
+        )
+
+    def test_initialize_refuses_namespace_table_with_foreign_check(self, tmp_path):
+        # Codex r6 F-01: a "CHECK" anywhere in the SQL is not the singleton
+        # constraint. An empty same-shape table carrying
+        # CHECK(protocol_version > 0) passes the text scan; only the
+        # behavioral probe (INSERT singleton=2 inside a transaction that is
+        # always rolled back) proves the semantics are wrong. The probe
+        # leaves no rows and creates no tables.
+        import sqlite3 as _sq
+
+        db = tmp_path / "foreign-check.sqlite"
+        conn = _sq.connect(str(db))
+        _create_self_owned_empty_tables(
+            conn,
+            _namespace_lookalike_ddl(extra_constraint=" CHECK (protocol_version > 0)"),
         )
         conn.commit()
         conn.close()
 
         derived = tmp_path / "derived"
         derived.mkdir()
-        with pytest.raises(TypedResourceChannelError):
+        with pytest.raises(
+            TypedResourceChannelError, match="accepted a singleton=2 probe row"
+        ):
             initialize_namespace(db, derived)
+
+        conn = _sq.connect(str(db))
+        tables = {
+            row[0]
+            for row in conn.execute("SELECT name FROM sqlite_master WHERE type='table'")
+        }
+        (rows,) = conn.execute("SELECT COUNT(*) FROM preview_namespace").fetchone()
+        conn.close()
+        assert rows == 0, "the probe transaction must leave nothing behind"
+        assert tables == {"resource_catalog", "preview_lifecycle", "preview_namespace"}, (
+            "a refused initialization must not create any other table"
+        )
+
+    def test_initialize_adopts_existing_empty_self_owned_tables(self, tmp_path):
+        # The behavioral probe must not reject a genuine self-owned catalog:
+        # tables in the exact layout WITH the real CHECK(singleton = 1) and
+        # no rows are adopted and bound (half-initialized crash leftovers
+        # stay recoverable), proving the probe fires only on wrong
+        # constraint semantics.
+        import sqlite3 as _sq
+
+        db = tmp_path / "half-initialized.sqlite"
+        conn = _sq.connect(str(db))
+        _create_self_owned_empty_tables(conn, _PREVIEW_NAMESPACE_SCHEMA)
+        conn.commit()
+        conn.close()
+
+        derived = tmp_path / "derived"
+        derived.mkdir()
+        binding = initialize_namespace(db, derived)
+        assert binding.protocol_version == 1
+
+        conn = _sq.connect(str(db))
+        (rows,) = conn.execute(
+            "SELECT COUNT(*) FROM preview_namespace WHERE singleton = 1"
+        ).fetchone()
+        conn.close()
+        assert rows == 1, "the adopted catalog must carry the new binding"
