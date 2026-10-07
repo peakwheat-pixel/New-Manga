@@ -101,8 +101,20 @@
 | r10 判定 | 追加处置 | 证据 |
 |---|---|---|
 | F-01 NOT FIXED（Python str.split() 把 NBSP (U+00A0) 当空白折叠，而 sqlite tokenizer 把 >=0x80 字节当标识符字符——`TEXT NOT NULL` 是单个多词类型名、无 NOT NULL 约束，却折叠为与规范文本相同） | **双保险闭合**：①比较前 `isascii()` 拒绝一切非 ASCII DDL（canonical 纯 ASCII，任何非 ASCII 构造必不等；ASCII-only lower() 无 Unicode 陷阱如 U+212A→k）；②空白折叠集合收窄为 sqlite tokenizer 认作分隔符的**恰好五个字符**（0x09/0x0A/0x0C/0x0D/0x20，正则字面量 `	
- 空格`），两侧 strip 对齐 sqlite 存储文本首尾干净 | `test_initialize_refuses_namespace_table_with_unicode_whitespace`（NOT NULL 同形空表→"does not match the canonical namespace schema" 拒绝+零写入） |
+
+ 空格`），两侧 strip 对齐 sqlite 存储文本首尾干净 | `test_initialize_refuses_namespace_table_with_unicode_whitespace`（NOT NULL 同形空表→"does not match the canonical namespace schema" 拒绝+零写入） |
 | rework10 证据重绑 | 第十轮**单日志全链**重建绑定 258ca6fe（命令显式入日志）：step1 build_sidecar 原文行 HEAD=258ca6fe/step2 NSIS/step3 installer SHA256=f9b36b98…/step4 定向 163 passed/step5 runner——25 项 PASS、CS-L1 保持 FAIL 记录；全量 pytest 重跑绑 258ca6fe（1941+1sk） | raw/packaged-ac5-run/tenth-round-build-and-run.log、build-chain.md「第十轮（CURRENT FINAL）」节、raw/pytest-full.log |
+
+## Codex r11 复核判定 — **approve（findings 0）；F-01 至此闭合**
+
+| r11 判定 | 内容 | 证据 |
+|---|---|---|
+| NBSP 反例闭合 | `isascii()` 短路先拒非 ASCII DDL，随后才进入五字符折叠比较；SQLite tokenizer 五 ASCII 空白+高位字节标识符字符的边界被采纳 | `test_initialize_refuses_namespace_table_with_unicode_whitespace`、catalog_store.py:396 比较序 |
+| 规范化等价性论证被接受 | 非 ASCII 先拒排除 Unicode 空白/lower 陷阱；五 ASCII 空白折叠保边界；注释/引号等结构字符仍致全文不等——未发现可误放行构造 | r11 报告 §2 |
+| 证据绑定 PASS | pytest 标题行+HEAD=258ca6fe（1941+1sk）；packaged 单日志同 HEAD、installer SHA 与 gate.json 一致；CS-L1 保持已登记独立债务不计本轮 PASS | raw/pytest-full.log、tenth-round-build-and-run.log、tenth-run-artifacts/.../cleanstart-gate.json |
+| 范围 PASS | 8291f336..dc0bb484 仅允许文件；apps/src/apps/packaging 零差量 | git diff --name-status |
+
+**Review 链收敛：Codex r11 approve → 按 AC6 交 Codex 集成（merge+集成后验证后才 done）；CS-L1 快照漂移保持独立债务记录。** |
 
 ## G1 来源/权限 — PASS
 
