@@ -1,0 +1,17 @@
+SHELL=Git Bash (MINGW64, Windows)
+PYTHON=G:/CODEX/New Manga.task-envs/T1.1.1-impl-py312/Scripts/python.exe
+HEAD=81a39614562b34cfe4d435c3d4fb62cb29be000a
+COMMAND=G:/CODEX/New Manga.task-envs/T1.1.1-impl-py312/Scripts/python.exe -m pytest tests/core/test_rc4_category_clarify.py -v (PR-04 attribution)
+============================= test session starts =============================
+platform win32 -- Python 3.12.3, pytest-9.1.1, pluggy-1.6.0 -- G:\CODEX\New Manga.task-envs\T1.1.1-impl-py312\Scripts\python.exe
+cachedir: .pytest_cache
+rootdir: G:\CODEX\New Manga.worktrees\CATEGORY-CLARIFY-1
+configfile: pytest.ini
+plugins: anyio-4.15.1
+collecting ... collected 2 items
+
+tests/core/test_rc4_category_clarify.py::test_missing_required_input_carries_unavailable_category PASSED [ 50%]
+tests/core/test_rc4_category_clarify.py::test_target_not_found_keeps_not_found_category PASSED [100%]
+
+============================== 2 passed in 0.92s ==============================
+EXIT=0
