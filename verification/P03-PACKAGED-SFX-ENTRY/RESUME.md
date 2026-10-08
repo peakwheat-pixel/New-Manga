@@ -1,33 +1,27 @@
 # P03 Codex Integration Resume Point
 
-时间：2026-10-09（Asia/Shanghai）；Task=`P03`；TaskStatus=`in_review`；ExecutionState=`R3_CONDITIONS_CLOSED_R4_REVIEW_PREP`。
+时间：2026-10-09（Asia/Shanghai）；Task=`P03`；TaskStatus=`in_review`；ExecutionState=`R4_DISPOSITIONS_RECORDED_R5_CANDIDATE_PENDING`。
 
-## 固定状态
+## 当前权威检查点
 
-- Repository=`G:/CODEX/New Manga`；root `main`=`423ea5f196e6276f007bd3f96e381fa893985eb9`。快进前后根工作区原有24项用户/Qoder/旧Agent dirty与raw evidence未改变；不覆盖、不stage、不stash、不清理。
-- Integration worktree=`G:/CODEX/New Manga.worktrees/P03-review-prep-85482c5b`；branch=`codex/P03-integration-4c04459`；common-dir=`G:/CODEX/New Manga/.git`；source/integration commit=`423ea5f196e6276f007bd3f96e381fa893985eb9`。
-- Task base=`31abde9bf4b73aea2851931dcd48faa0f750b318`；Owner delivery=`85482c5b001d452953c3ed797ce3c4ed64cae4e3`；Owner=Antigravity；非作者Reviewer=DeepSeek Harness；Integrator=Codex。
-- DSH R3=session=`session-4401e9bb-28cb-42a1-8447-608b7fc80b8e`；base=`31abde9b…`；reviewed_head=`423ea5f1…`；decision=`approved`，未解决P0/P1=0/0。报告SHA256=`90892d5ed121533ed83768dbd21c7b539d1dae6dcd630c1a55d3e7dcdd65f041`；raw JSONL SHA256=`BE9B8D4DB40FEBB01CA93894328281915FBCF34F03DED6D0D8A2CCB078CDE509`；报告、prompt、raw、stderr、exit已保存于`integration/dsh-review-r3.*`。DSH shell/Git/pytest/Gate均NOT_RUN（Win32 5）；桌面/Web可见性未核验。
-- R3-01已处置：固定source head `423ea5f1…` 上 Python 3.14.6 定向测试40 passed / 0 skipped / EXIT=0，日志`integration/build-logs/19-finalhead-targeted-tests.log`；同一头、同一installer SHA=`2de124f387bfaf1d0d01b1b0279ad319cd453850d223efa9620b0103ce88a814` 的packaged Gate 28/28 PASS / EXIT=0，日志`integration/build-logs/20-finalhead-packaged-gate.log`。完整Gate raw output逐字节归档=`integration/raw-finalhead-gate-output.zip`，11项文件及SHA索引在manifest；临时目录仅作本地恢复保留。
-- Gate S1真实K07=`exit 0`、frozen、1 candidate、weights pin/path有效、device/sfx_ep=dml、fallback=null；S2缺页对照=`exit 1`且FileNotFoundError，缺页预条件成立。安装目录无写入、host APPDATA 4文件无变化、4个源文件字节不变，五个sidecar进程均为0。隔离TEMP/TMP=`C:\Users\49745\AppData\Local\Temp\codex-p03-gate-423ea-py314`，不得覆盖或清理。
-- R3-02已处置：`build-logs/17–18` 精确绑定 `423ea5f1…`，122 paths、0 out-of-scope、diff-check EXIT=0；两份read-only normalization各6/6 PASS。导航指针已更新。R3-03为非阻断、P03范围外：release-gate runner仍列四个sidecar，留待P20冻结范围，不修改runner或旧main.rs注释。
-
-## 已完成验证
-
-- 固定head `423ea5f1…` 的既有Runner Snapshot oracle 16 cases PASS；fresh frontend、Sidecar与Tauri/NSIS build均EXIT=0；installer SHA256=`2de124f387bfaf1d0d01b1b0279ad319cd453850d223efa9620b0103ce88a814`、579,537,342 bytes，构建源码=`a3aaf22979f2b432a46dbb51cd9702f35a60d7f4`。
-- 最新固定head测试/Gate证据为日志19/20；首轮同installer Gate及auxiliary raw normalization证据保留于`integration/run-2de124f3-py314/`，首次Python 3.12.3 import失败（场景未启动）保留于`integration/run-2de124f3/`。
-- 固定head范围与normalization证据17/18、DSH R3正文/JSONL/raw、Gate与测试新证据均需纳入下一Codex checkpoint提交；不纳入主工作区其他dirty文件。
+- Repository=`G:/CODEX/New Manga`；Git common directory=`G:/CODEX/New Manga/.git`。集成 worktree=`G:/CODEX/New Manga.worktrees/P03-review-prep-85482c5b`；branch=`codex/P03-integration-4c04459`。开始恢复时先读取 live `main`、`git status` 与该 worktree HEAD；不要依据旧聊天状态。
+- Task base=`31abde9bf4b73aea2851931dcd48faa0f750b318`；Owner delivery=`85482c5b001d452953c3ed797ce3c4ed64cae4e3`；Owner=Antigravity；非作者 Reviewer=DeepSeek Harness；Integrator=Codex。
+- `doc/tasks/P03.md` 与 manifest 将 source integration commit 记为 `d717c049a41544a6d592943a0b0fe1b76a41a050`。R4 报告指出 main 已于 review 前从 `423ea5f1` fast-forward 到该提交；该历史事实已如实记录。后续候选必须按项目 Gate 复审，不把历史 fast-forward 当成 Review。
+- DSH R4 session=`session-d27e8ea9-f983-4c1c-9258-a76cdaba0ac0`，base=`31abde9b…`，reviewed head=`d717c049…`，decision=`approved`，未解决 P0/P1=0/0；报告 SHA256=`3a389c2385f5fb7956636b3e94911875f80bc677a4c8673d4f8ec2c294fa755d`，raw JSONL SHA256=`39737ec10538469b8d8fa063b10d3e33f6be998b5fd7c61af0a69cd5d33ff8d3`。会话已挂载到本 worktree；DSH 自身 Git/pytest/Gate 仍为 `NOT_RUN`，Web/Desktop 可见性未核验。
+- DSH R4 的 R4-01..06 与 Codex C-004/C-005 已按 Task 逐项处置；R4-07 为不影响行为的 P4 cosmetic，明确延期。固定 head `d717c049` 的 snapshot 16/16、targeted tests 40/40、packaged Gate 28/28 均 EXIT=0；证据为 logs 21–25 与 `raw-finalhead-d717-gate-output.zip`，manifest 记录 SHA。
+- `P03` 仍为 `in_review`。R3-03 release-gate 第五 sidecar 遗漏继续登记给 P20，禁止在 P03 中修改范围外 runner 或历史 `main.rs` 注释。
+- 恢复链接：[P03 r3 Handoff](../../doc/handoffs/P03-PACKAGED-SFX-ENTRY-140a6686-r3.md)。
 
 ## 下一条直接指令
 
-在本worktree核对HEAD仍为`423ea5f1…`及所有改动都限P03后，提交本次Task/manifest/RESUME/导航指针和R3、17–20证据为新的审查候选。随后以Task base `31abde9b…` 对该精确候选运行范围列表、`git diff --check`与两份只读normalization verifier并保存日志；对同一fixed head派发真实DSH R4正式Review，并让Codex非作者Reviewer复审。新finding必须先修、验证、固定新head后复审。Review通过后由Codex完成最终集成状态核验，关闭P03；依赖复核后创建并释放P01作为下一Active Task，保存自动续推提示词，然后执行本轮用户授权的计算机关机。
+1. 核对 live Git 与本文件：保留根 checkout 原有24项用户/Qoder/其他 Agent dirty 与 raw evidence；保护 worktree 的 untracked Gate 输出目录；只操作 P03 显式文件。
+2. 读取 `integration/build-logs/21–25`、R4 prompt/report/raw/exit、`build-manifest.json` 和两份 RESUME。确认这些文件与当前 branch 的准确关系。
+3. 在完全解决 R4 finding 的 P03 候选上重跑 `git diff --name-only 31abde9b..HEAD`、`git diff --check 31abde9b..HEAD` 和两份只读 normalization verifier；记录 shell、HEAD、路径数、EXIT。复核 AC1–AC4、同一 installer SHA、零越界和所有声明来源。
+4. 按 [DSH dispatch Skill](C:/Users/49745/.agents/skills/dsh-dispatch/SKILL.md) 对该 exact HEAD 发起正式 DSH R5，并由已分配的 Codex 非作者 Reviewer 独立检查同一 base/head；新 finding 先修复、验证、固定新 head 后再审。
+5. Review/Gate 全通过后，Codex 才能集成并把 P03 设为 `done`；按 live Plan 和依赖图重新核对后创建、冻结并释放 P01（Owner=Codex、Reviewer=DSH），更新 Task/Plan/Status/依赖图/RESUME。P01 缺失报告记 `NOT_VERIFIED`，不伪造 Review；R2 空集与 T2 释放等产品选择不由 Codex代决。
+6. 保存下次自动推进提示词；P01 到 `ready` 后，将该提示词发给下一次 Codex 会话。当前会话的关机授权仅在本轮 P03 与恢复资料收口后执行，不延伸到下次会话。
 
-## 当前阻塞
+## 保护边界
 
-仅DSH R4非作者Review和Codex对新fixed head的独立复核尚未完成。R3-03已按P03范围冻结为P20后续风险，不阻塞P03，不得在本Task中修改范围外文件。
-
-## 保护与限制
-
-- 主 checkout `.qoder-credits/**`、historical dispatch/P08 DSH raw、root P03 DSH R2 原始 JSONL/提示词/报告与 Owner worktree 三个 untracked helper 均保持原位，不 stage、不改写、不 stash、不清理。
-- 不修改 `src/**`、`apps/**`、Schema、contracts、依赖、build spec/script；K07 与 ONNX 外部输入只读；应用数据与 WebView 数据均留在各自 Gate TEMP lab。
-- 仍未完成：提交最终 Review-prep 文档 checkpoint；其后 fixed-head checks；DSH formal Review；P03 集成与治理文档收口；创建下一任务与下次自动推进 prompt。机器关机由用户明确授权，但仅在 P03 收口和恢复材料落盘后执行。
+- 主 checkout `.qoder-credits/**`、既有 P03 DSH R2 原始材料、P08 DSH raw、Runner Guard dispatch artifacts、Root dirty files 与 Antigravity Owner worktree 的文件由其作者保留；不 stage、改写、stash、覆盖或清理。
+- 不修改 `src/**`、`apps/**`、Schema、contracts、依赖、build spec/script；K07 与 ONNX 外部输入只读；不读写用户漫画文件、真实数据库、Lock 或 current/pinned Revision。Gate TEMP 和输出目录仅保留作恢复证据，不删除。

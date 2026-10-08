@@ -1,22 +1,22 @@
 # P03 Codex Integration Checkpoint
 
-时间：2026-10-09（Asia/Shanghai）；Task=`P03`；TaskStatus=`in_review`；ExecutionState=`R3_CONDITIONS_CLOSED_R4_REVIEW_PREP`。
+时间：2026-10-09（Asia/Shanghai）；Task=`P03`；TaskStatus=`in_review`；ExecutionState=`R4_DISPOSITIONS_RECORDED_R5_CANDIDATE_PENDING`。
 
-## 当前恢复点（优先于下方历史阶段记录）
+## 当前恢复点
 
-- Repository=`G:/CODEX/New Manga`；root `main` 与 integration worktree source head=`423ea5f196e6276f007bd3f96e381fa893985eb9`；branch=`codex/P03-integration-4c04459`；common-dir=`G:/CODEX/New Manga/.git`。root原24项用户/Agent dirty与raw文件快进前后均保留。
-- Task base=`31abde9bf4b73aea2851931dcd48faa0f750b318`；Owner delivery=`85482c5b001d452953c3ed797ce3c4ed64cae4e3`；Owner=Antigravity；Reviewer=DeepSeek Harness；Integrator=Codex。
-- DSH R3已对`423ea5f1…` approved，session=`session-4401e9bb-28cb-42a1-8447-608b7fc80b8e`；报告/raw及SHA、exit、环境限制见`integration/dsh-review-r3.md`与manifest。DSH自身shell/Git/test/Gate=`NOT_RUN`；web可见性未核验。
-- DSH条件R3-01/02已处置：固定集成commit `423ea5f1…` 上40项定向测试`40 passed`、同一installer SHA=`2de124f3…`的packaged Gate`28/28 PASS`，均EXIT=0，日志19/20；122 paths、零越界、diff-check EXIT=0、两份normalization 6/6，日志17/18。11项Gate raw output逐字节归档于`raw-finalhead-gate-output.zip`并有manifest SHA索引；本地隔离实验目录`run-2de124f3-finalhead-423ea-py314`与TEMP=`C:\Users\49745\AppData\Local\Temp\codex-p03-gate-423ea-py314`均保留不清理。
-- R3-03：`packaging/release-gate/run_release_gate.py`和旧`main.rs`注释均超出P03范围；风险登记为P20后续Gate任务，无P03代码修订。
-- DSH R3 report SHA256=`90892d5ed121533ed83768dbd21c7b539d1dae6dcd630c1a55d3e7dcdd65f041`；raw JSONL SHA256=`BE9B8D4DB40FEBB01CA93894328281915FBCF34F03DED6D0D8A2CCB078CDE509`。其approved不覆盖处置后新commit；必须重新固定head做DSH R4及Codex非作者复审。
+- Repository=`G:/CODEX/New Manga`；integration worktree=`G:/CODEX/New Manga.worktrees/P03-review-prep-85482c5b`；branch=`codex/P03-integration-4c04459`；Git common directory=`G:/CODEX/New Manga/.git`。恢复时核对 `main` 与 worktree live HEAD；root 原有24项用户/Qoder/Agent dirty 与 raw evidence 必须保持原样。
+- Task base=`31abde9bf4b73aea2851931dcd48faa0f750b318`；Owner delivery=`85482c5b001d452953c3ed797ce3c4ed64cae4e3`；Owner=Antigravity；Reviewer=DeepSeek Harness；Integrator=Codex。Integration commit=`d717c049a41544a6d592943a0b0fe1b76a41a050`，main 已有该 fast-forward，原因与时间顺序记录在 R4 报告及 Task。
+- DSH R4=session=`session-d27e8ea9-f983-4c1c-9258-a76cdaba0ac0`；base=`31abde9b…`；reviewed_head=`d717c049…`；decision=`approved`，未解决P0/P1=0/0。报告 SHA=`3a389c2385f5fb7956636b3e94911875f80bc677a4c8673d4f8ec2c294fa755d`；raw JSONL SHA=`39737ec10538469b8d8fa063b10d3e33f6be998b5fd7c61af0a69cd5d33ff8d3`；R4 report/prompt/raw/stderr/exit 已保存。会话已挂载；DSH 自身 shell/Git/test/Gate=`NOT_RUN`，Web/Desktop 可见性未核验。
+- R4-01..06 与 Codex C-004/C-005 的修订/证据见 P03 Task 与 manifest；R4-07 明确 deferred cosmetic。Exact `d717c049` evidence：snapshot 16 actual-predicate cases PASS（log 23）；targeted suite 40 passed / 0 skipped（log 24）；同 installer SHA=`2de124f387bfaf1d0d01b1b0279ad319cd453850d223efa9620b0103ce88a814` 的 packaged Gate 28/28 PASS（log 25）；installer 579,537,342 bytes；Gate output 11项逐字节验证归档于 `raw-finalhead-d717-gate-output.zip`。
+- Trace 21：base..`d717c049` 共132 paths、zero out-of-scope、diff-check EXIT=0；trace 22 两个只读 normalization verifier 各6/6 PASS。
+- AC4 语义已澄清：CS-Z2 是 lab 内4个合成 fixture；CS-Z4 证明 host `%APPDATA%` 的4个文件未变化。Gate 未访问用户漫画源目录。R-004 保留 ONNX 未独立重哈希；R3-03 仍留给 P20，不修改范围外文件。
+- 当前 Resume 补有 [P03 r3 Handoff](../../../doc/handoffs/P03-PACKAGED-SFX-ENTRY-140a6686-r3.md)。
 
 ## 下一条直接指令
 
-核对HEAD与dirty路径后，提交本checkpoint涉及的P03文件/证据；再对该新候选跑fixed-range scope、`git diff --check`和两份只读normalization verifier，记录真实输出与EXIT。创建DSH R4 prompt并用真实`dsh --profile headless --json`在此worktree dispatch、收回JSONL/stderr/exit与最终Review，mount该session到精确worktree；让已有Codex独立Reviewer检查同一base/head。解决阻断后更新P03 Task、Plan、Status、依赖图、README与RESUME至done，再复核P01依赖、创建并释放P01、保存下次自动推进提示词，最后按本轮用户指示关闭计算机。
+先重核 branch/HEAD/status，保留全部其他 Agent dirty/untracked 内容。固定待审候选的 base=`31abde9b…` 与 `git rev-parse HEAD`，检查整个 base..HEAD 路径仅在 Task allowed_paths；对 exact HEAD 运行 `git diff --check`、`verify_normalization.py` 与 `normalize_gate_logs.py --verify-only` 并保存完整日志。然后对该 HEAD 派发真实 DSH R5、挂载会话，并由 Codex 非作者 Reviewer 独立检查同一 exact range。新 finding 修复后重跑受影响 Gate 并重新 Review。双 Review 和集成 Gate 通过后关闭 P03，复核 Plan P01 依赖并建立 released Task；把 P01 当前可核验内容限定在 Git 事实与 Review 载体，缺失报告记 `NOT_VERIFIED`，产品选择留给用户。
 
-- 保护root Qoder `.qoder-credits/**`、历史dispatch、P08 DSH raw、主checkout已有P03 DSH R2原始文件及Antigravity Owner worktree三个untracked helper；不stage/修改/stash/清理。
-- 不改`src/**`、`apps/**`、Schema、contracts、依赖、build spec/script；K07与ONNX外部输入只读；任何安装/APPDATA/WebView数据只在Gate隔离TEMP lab中操作。
+保护根工作区既有 dirty、P08/旧DSH raw、Qoder文件、Owner worktree、K07/ONNX、用户源文件、数据库/Lock/Revision；禁止 push、外发、部署或删除。当前会话收到的关机授权仅在 P03 收口及恢复资料保存后执行。
 
 ## 修订验证进展
 

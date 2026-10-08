@@ -1,10 +1,10 @@
 # Project Rebaseline Plan
 
-**当前位置：P08=done；P03=in_review。P系列共21项：done 1、in_review 1、proposed / 未释放19。P03 integration/source head=`423ea5f196e6276f007bd3f96e381fa893985eb9`；DSH R3 approved，R3-01/02补证已完成，R3-03留作P20范围外风险。唯一当前执行状态见[STATUS](STATUS.md)，P03恢复点见[RESUME](../verification/P03-PACKAGED-SFX-ENTRY/RESUME.md)。**
+**当前位置：P08=done；P03=in_review。P系列共21项：done 1、in_review 1、proposed / 未释放19。P03 integration commit=`d717c049a41544a6d592943a0b0fe1b76a41a050`；DSH R4 approved（0 unresolved P0/P1）；R4 findings dispositions 与 snapshot 16/16、targeted tests 40/40、packaged Gate 28/28 exact-head reruns 已登记。R3-03留作P20范围外风险。唯一当前执行状态见[STATUS](STATUS.md)，P03恢复点见[RESUME](../verification/P03-PACKAGED-SFX-ENTRY/RESUME.md)。**
 
-## 2026-10-09 P03 R3 条件关闭 / 等待最终 Review
+## 2026-10-09 P03 R4 Review 与 exact-head 补证 / 等待 R5
 
-P03仍是唯一Active Task，当前`in_review`。Owner=Antigravity、非作者Reviewer=DeepSeek Harness、Integrator=Codex；三个前置依赖均done。Owner交付=`85482c5b001d452953c3ed797ce3c4ed64cae4e3`，DSH R3对base=`31abde9b…`、head=`423ea5f196e6276f007bd3f96e381fa893985eb9`给出approved（0 unresolved P0/P1）；R3报告=`verification/P03-PACKAGED-SFX-ENTRY/integration/dsh-review-r3.md`。Codex在集成commit `423ea5f1…` 上重跑定向测试40/40及同一installer SHA=`2de124f387bfaf1d0d01b1b0279ad319cd453850d223efa9620b0103ce88a814`的packaged Gate 28/28，均EXIT=0；精确范围/normalization traces `17–18`已登记。R3-03是release-gate runner第五sidecar遗漏，路径超出P03允许范围，明确留给P20未来Gate冻结，不在本Task修改。下一Gate为提交状态/证据checkpoint后，对新的固定head做DSH正式Review与Codex独立复核，再收口集成验收。P03完成后先重新核对并释放P01。
+P03仍是唯一Active Task，当前`in_review`。Owner=Antigravity、非作者Reviewer=DeepSeek Harness、Integrator=Codex；三个前置依赖均done。Owner交付=`85482c5b001d452953c3ed797ce3c4ed64cae4e3`，DSH R4对base=`31abde9b…`、head=`d717c049a41544a6d592943a0b0fe1b76a41a050`给出approved（0 unresolved P0/P1）；R4报告=`verification/P03-PACKAGED-SFX-ENTRY/integration/dsh-review-r4.md`。R4 findings 已处置或如实 deferred；Codex 在该 head 重跑 Runner Snapshot 16/16、定向测试40/40及同一installer SHA=`2de124f387bfaf1d0d01b1b0279ad319cd453850d223efa9620b0103ce88a814`的packaged Gate 28/28，均EXIT=0。新日志记录完整 shell/venv 头；trace 21/22 绑定范围与normalization。R3-03仍超出P03范围，明确留给P20，不修改release-gate runner或历史 `main.rs` 注释。下一Gate：提交R4处置的exact candidate并完成DSH R5及Codex独立复核；两者与集成核验通过后才收口P03、重核并释放P01。
 
 ### 历史快照：P03正式释放时状态 / READY
 
@@ -59,11 +59,11 @@ P08 DSH R7已对base=ecb3b520ce68c2ddcc0c5ec94596e2f50a17f369、reviewed_head=fe
 | P20 | proposed / 未释放 | 最终Windows发布Gate | P19＋P03＋P06；目标环境可用；Architecture Documentation Rebaseline Task先映射目标架构发布/打包/UI要求 | ZCode；DSH；Codex集成 | 新fixed-head/hash安装包；按RG1净化基线验收；Win10单独验证后声明支持；尊重RG1本机裁决，不外推未测环境，不继承PySide6/QML PASS |
 | P21 | proposed / 未释放 | Legacy归档/移除（可选） | P20＋独立移除授权 | Codex；非作者DSH | parity＋数据迁移/回退；不继续修Legacy，不作为当前完整产品必做前提 |
 
-P03已完成实现交付及Codex packaged Gate，状态为`in_review`，等待新的DSH非作者Review。完整base、allowed_paths、输入Hash、当前review candidate与证据见正式Task及RESUME。P02（真UI行为验证）仍为未释放候选：需先冻结真实WebView harness范围并由ZCode负责，不能与当前唯一Active Task状态混淆。
+P03实现交付及Codex packaged Gate已完成，状态仍为`in_review`；DSH R4和Codex独立复核指出的问题已记入Task并补证，当前等待包含R4处置的固定候选完成DSH R5及Codex复核。base、allowed_paths、输入Hash、证据与恢复指令见正式Task及RESUME。P02仍需先冻结真实WebView harness范围并由ZCode负责，不与当前唯一Active Task状态混淆。
 
 保留：Manga109永久取消；BJ13维持0.90、手工改标＋skip，补标/补画不释放；Reader范围：仅跨页联动/页缩略图继续延期；基础Reader已由D1解冻，P16/P17实施仍未释放。LaMa/AOT/BrushNet/FLUX learned inpaint没有production实现，不默认投入；SimpleFill/EdgeBleed已在现有链路，是否足够由P08/P18质量证据决定。GC长会话总磁盘有界没有承诺，不为了漂亮路线图扩大删除能力。
 
-当前步骤：**P03实现、Codex集成和在集成head上的40项定向测试/28项packaged Gate均PASS；先提交R3条件处置证据与治理checkpoint，固定新head并完成DSH R4及Codex独立复核，随后收口P03并在依赖复核后释放P01。**
+当前步骤：**P03实现、Codex集成及 exact-head snapshot 16项、targeted 40项、packaged Gate 28项均PASS；提交R4 finding处置证据并固定新head后，完成DSH R5与Codex非作者复核，再收口P03并按权威Plan复核依赖后释放P01。**
 
 ## 2026-10-08 完成：M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD
 

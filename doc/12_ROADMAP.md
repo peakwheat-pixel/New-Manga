@@ -1,12 +1,12 @@
 # Roadmap
 
-当前工作：P08已done；P03 Owner实现与Codex集成已在`423ea5f1…`，Task=`in_review`。DSH R3 approved，R3-01/02条件已按固定head补证并记录：定向测试40/40、packaged Gate 28/28；下一Gate为新的DSH正式复审与Codex最终收口。恢复见[verification/P03-PACKAGED-SFX-ENTRY/RESUME.md](../verification/P03-PACKAGED-SFX-ENTRY/RESUME.md)。
+当前工作：P08已done；P03仍是唯一`in_review` Task，integration commit=`d717c049…`。DSH R4 approved；Codex exact-head 重跑 snapshot 16/16、targeted tests 40/40、同installer Gate 28/28且EXIT=0，R4 findings已如实处置。下一Gate为包含这些处置的DSH R5与Codex复核，再收口AC5。恢复见[verification/P03-PACKAGED-SFX-ENTRY/RESUME.md](../verification/P03-PACKAGED-SFX-ENTRY/RESUME.md)。
 
 ## 当前整体路线（2026-10-08，PLAN_ONLY）
 
 最新人员裁决：Qoder退出，未来UI/UX设计及React/Tauri实现由ZCode主责，DSH非作者审查，Codex契约/集成；额度接管候选为ZCode、Antigravity。历史交付中的Qoder署名保留。
 
-权威排期见REBASELINE_PLAN中的P01–P21路线、中文依赖图、审计报告和恢复材料。P08=done；P03为唯一in_review Task；最终待审head将在当前证据/治理checkpoint提交后固定。R3-03的release-gate第五sidecar同源遗漏仍超出P03范围，留待P20范围登记。P03关闭后先释放P01。完整产品条件主链为：范围/parity冻结→真实导入/凭据/长任务契约→书架/后台Pipeline→工作台/设置/阅读导出→真实质量→整体E2E→Windows发布。基础Reader已由D1解冻，跨页/缩略图延期。
+权威排期见REBASELINE_PLAN中的P01–P21路线、中文依赖图、审计报告和恢复材料。P08=done；P03为唯一in_review Task，integration commit=`d717c049…`。R3-03的release-gate第五sidecar同源遗漏仍超出P03范围，留待P20登记。P03关闭后先重核依赖并释放P01。完整产品条件主链为：范围/parity冻结→真实导入/凭据/长任务契约→书架/后台Pipeline→工作台/设置/阅读导出→真实质量→整体E2E→Windows发布。基础Reader已由D1解冻，跨页/缩略图延期。
 
 下方2026-09早期导航保留历史，不覆盖本段或Plan；其中旧“ready/planning only”任务多已由后继完成，不能作为当前待办。
 

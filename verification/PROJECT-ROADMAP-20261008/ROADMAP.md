@@ -1,12 +1,12 @@
 # New Manga 一眼路线图（2026-10-08）
 
-最新工作点：P08=done；P03=in_review，集成head=`423ea5f1…`。DSH R3 approved；R3-01/02补证已完成（40/40 tests、28/28 packaged Gate、exact-head traces），当前等待新一轮正式复审。R3-03超出P03范围，登记为P20 release-gate风险。当前恢复点见[P03 RESUME](../../verification/P03-PACKAGED-SFX-ENTRY/RESUME.md)。
+最新工作点：P08=done；P03=in_review，integration commit=`d717c049…`。DSH R4 approved；snapshot 16/16、40/40 tests、28/28 packaged Gate均在该head复跑，R4 dispositions 已记录。当前等待包含这些处置的DSH R5与Codex复核。R3-03超出P03范围，登记为P20 release-gate风险。恢复点见[P03 RESUME](../../verification/P03-PACKAGED-SFX-ENTRY/RESUME.md)。
 
-**当前位置：P08=done；P03=in_review；P系列共21项：done 1、in_review 1、proposed / 未释放19。P03 source integration=`423ea5f1…`；R3-01/02已处置，DSH R4待发。**
+**当前位置：P08=done；P03=in_review；P系列共21项：done 1、in_review 1、proposed / 未释放19。P03 integration commit=`d717c049…`；DSH R4 approved、exact-head AC4复跑已完成，R5待发。**
 
 人员更新：用户已移除Qoder，图中未来UI/UX责任由ZCode承担；非作者Review与正式Task释放Gate保持。
 
-派生视图；排期事实以 [REBASELINE_PLAN](../../doc/REBASELINE_PLAN.md) 当前覆盖层为准。原审计基线：`main@e4242ecd`；箭头表示启动依赖，不是工期；没有可靠估算，不编造百分比或日期。P03实现、Codex集成与精确head Gate均通过，Task仍为in_review等待DSH R4与最终治理收口；其余候选未释放，P03 done后先评估并释放P01。
+派生视图；排期事实以 [REBASELINE_PLAN](../../doc/REBASELINE_PLAN.md) 当前覆盖层为准。原审计基线：`main@e4242ecd`；箭头表示启动依赖，不是工期；没有可靠估算，不编造百分比或日期。P03实现、Codex集成、R4 dispositions 与精确head Gate均通过，Task仍为in_review等待DSH R5/Codex复核与最终治理收口；其余候选未释放，P03 done后先重核依赖并释放P01。
 
 ## 已做到哪里
 
@@ -31,7 +31,7 @@ flowchart TB
 flowchart TB
   BASE["当前位置：P08 DSH R7与Codex集成Gate通过<br/>P系列done 1/21；P08：done"] --> P01["P01<br/>proposed / 未释放<br/>台账取证<br/>修正陈旧metadata；追溯两份Review"]
   BASE --> P02["P02<br/>proposed / 未释放<br/>真UI验证<br/>点击/300ms刷新/对比度/失效窗口"]
-  BASE --> P03["P03<br/>in_review / 等待DSH复审<br/>第五入口Gate<br/>验证SFX frozen入口；不只确认文件存在"]
+  BASE --> P03["P03<br/>in_review / 等待DSH R5与Codex复核<br/>第五入口Gate<br/>验证SFX frozen入口；不只确认文件存在"]
   BASE --> P04["P04<br/>proposed / 未释放<br/>生产命令面验证<br/>常量成员与并发响应；先复现再决定修复"]
   BASE --> P05["P05<br/>proposed / 未释放<br/>错误语义澄清<br/>category与retryable注记一致"]
   BASE --> P06["P06<br/>proposed / 未释放<br/>GC迁移补证<br/>旧版本退出/命名空间保护；未知保留"]
@@ -40,7 +40,7 @@ flowchart TB
   style P08 fill:#d1e7dd,stroke:#198754,stroke-width:3px
 ```
 
-取证与验证候选任务不存在必须全部串行的技术依赖。P08范围准备已done；P03实现与Codex packaged Gate已通过，当前等待DSH正式Review。P02需先冻结真实WebView harness Task后再安排；P01及其余候选按当前Plan依赖和风险顺序释放。启动每个实现前仍须正式Task、独立Reviewer和allowed_paths。共享主线/契约/启动文件串行集成。P06是已完成GC-2的分发补证，不重新实现GC-2，也不声称长会话磁盘有界。
+取证与验证候选任务不存在必须全部串行的技术依赖。P08范围准备已done；P03实现与Codex packaged Gate已通过，当前等待DSH R5及Codex对处置后固定候选的正式复核。P02需先冻结真实WebView harness Task后再安排；P01在P03 done后重核依赖并释放。启动每个实现前仍须正式Task、独立Reviewer和allowed_paths。共享主线/契约/启动文件串行集成。P06是已完成GC-2的分发补证，不重新实现GC-2，也不声称长会话磁盘有界。
 
 ## 完整产品：现在就看清后续，而不是每次临时猜下一件
 

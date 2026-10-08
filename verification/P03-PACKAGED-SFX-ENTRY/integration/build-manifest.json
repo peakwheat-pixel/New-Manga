@@ -258,8 +258,8 @@
     ],
     "note": "Checks include the C-002 test correction and are bound to its committed head. Repeat against the exact final DSH review head after committing the current documentation checkpoint."
   },
-  "candidate_head": "423ea5f196e6276f007bd3f96e381fa893985eb9",
-  "integration_commit": "423ea5f196e6276f007bd3f96e381fa893985eb9",
+  "candidate_head": "d717c049a41544a6d592943a0b0fe1b76a41a050",
+  "integration_commit": "d717c049a41544a6d592943a0b0fe1b76a41a050",
   "dsh_r3": {
     "session_id": "session-4401e9bb-28cb-42a1-8447-608b7fc80b8e",
     "base_commit": "31abde9bf4b73aea2851931dcd48faa0f750b318",
@@ -521,5 +521,252 @@
     "R3-01": "fixed: exact integrated source head rerun has 40/40 targeted tests and same-installer 28/28 packaged Gate, both EXIT=0; see logs 19/20.",
     "R3-02": "fixed: exact-head traces 17/18 and R3 DSH raw/report artifacts are versioned; navigation pointers name the integration head and current RESUME.",
     "R3-03": "deferred_non_blocking_out_of_scope: release-gate runner four-sidecar list and historical main.rs comment remain unchanged; forward the release-gate runner concern to P20 task-scope registration."
+  },
+  "main_fast_forward_before_r4": {
+    "from": "423ea5f196e6276f007bd3f96e381fa893985eb9",
+    "to": "d717c049a41544a6d592943a0b0fe1b76a41a050",
+    "verified_by": "DSH R4 read-only inspection of refs/logs; see dsh-review-r4.md §3 and R4 raw output",
+    "ordering": "The fast-forward predates R4; later candidate revisions remain subject to formal review before further integration."
+  },
+  "dsh_r4": {
+    "session_id": "session-d27e8ea9-f983-4c1c-9258-a76cdaba0ac0",
+    "base_commit": "31abde9bf4b73aea2851931dcd48faa0f750b318",
+    "reviewed_head": "d717c049a41544a6d592943a0b0fe1b76a41a050",
+    "decision": "approved",
+    "unresolved_p0": 0,
+    "unresolved_p1": 0,
+    "unresolved_p2": 0,
+    "nonblocking_p3_findings": 4,
+    "nonblocking_p4_findings": 3,
+    "report_path": "verification/P03-PACKAGED-SFX-ENTRY/integration/dsh-review-r4.md",
+    "report_sha256": "3a389c2385f5fb7956636b3e94911875f80bc677a4c8673d4f8ec2c294fa755d",
+    "prompt_path": "verification/P03-PACKAGED-SFX-ENTRY/integration/dsh-review-r4.prompt.md",
+    "prompt_sha256": "72297393647017bfb9b993033de1ab582c4a718c37f8c14db0214d26c85f9ea0",
+    "stdout_jsonl_path": "verification/P03-PACKAGED-SFX-ENTRY/integration/dsh-review-r4.stdout.jsonl",
+    "stdout_jsonl_size_bytes": 463382,
+    "stdout_jsonl_sha256": "39737ec10538469b8d8fa063b10d3e33f6be998b5fd7c61af0a69cd5d33ff8d3",
+    "stderr_path": "verification/P03-PACKAGED-SFX-ENTRY/integration/dsh-review-r4.stderr.log",
+    "stderr_size_bytes": 0,
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "exit_path": "verification/P03-PACKAGED-SFX-ENTRY/integration/dsh-review-r4.exit",
+    "exit_code": 0,
+    "session_mounted_to_worktree": true,
+    "desktop_web_visibility": "unverified",
+    "dsh_self_execution": "read-only file inspection; git/pytest/gate commands NOT_RUN"
+  },
+  "r4_findings_disposition": {
+    "R4-01": "fixed: both current RESUME files link to the P03 r3 Handoff.",
+    "R4-02": "fixed: integration_commit now records d717c049; main fast-forward from 423ea5f is explicitly recorded as pre-R4 history.",
+    "R4-03": "fixed for the reviewed d717c049 head: traces 21/22 are versioned, 132 paths, zero out of scope, diff-check exit 0, both normalization verifiers 6/6.",
+    "R4-04": "fixed: Runner Snapshot oracle rerun on d717c049; 16 actual-predicate cases PASS, exit 0 (log 23).",
+    "R4-05": "fixed: Task wording distinguishes runner-observed installer SHA from external manifest/Task cross-check.",
+    "R4-06": "fixed: Task distinguishes lab source fixtures from four real host APPDATA files; user manga source folders were not accessed and no zero-touch claim is made.",
+    "R4-07": "deferred_non_blocking_cosmetic: redundant condition in one test description; no behavior impact and outside required acceptance correction."
+  },
+  "codex_r4_independent_review": {
+    "reviewed_head": "d717c049a41544a6d592943a0b0fe1b76a41a050",
+    "review_path": "verification/P03-PACKAGED-SFX-ENTRY/integration/codex-review-r4-d717c049.md",
+    "reviewer": "non-author Codex reviewer agent",
+    "result": "no unresolved P0/P1; C-004 P2 and C-005 P3 recorded for closure",
+    "dispositions": "see P03 Task and r4_findings_disposition"
+  },
+  "r4_exact_head_snapshot_oracle": {
+    "source_head": "d717c049a41544a6d592943a0b0fe1b76a41a050",
+    "command": "C:/Python314/python.exe verification/M2-RUNNER-SNAPSHOT-DEBT/check_snapshots.py",
+    "python_version": "3.14.6",
+    "shell": "PowerShell 7.6.6",
+    "shell_executable": "C:/Program Files/PowerShell/7/pwsh.exe",
+    "virtualenv": "none",
+    "result": "16 actual-predicate cases PASS",
+    "exit": 0,
+    "log_path": "integration/build-logs/23-finalhead-snapshot-oracle.log",
+    "log_sha256": "2b631df58670c1d281bd8fd68ae1482614ef49912a968b45ca15ae7e1ae1076e"
+  },
+  "r4_exact_head_targeted_tests": {
+    "source_head": "d717c049a41544a6d592943a0b0fe1b76a41a050",
+    "installer_sha256": "2de124f387bfaf1d0d01b1b0279ad319cd453850d223efa9620b0103ce88a814",
+    "installer_size_bytes": 579537342,
+    "command": "C:/Python314/python.exe -m pytest -v tests/packaging/test_packaged_fifth_sfx_entry.py tests/packaging/test_runner_output_dir_required.py",
+    "python_version": "3.14.6",
+    "shell": "PowerShell 7.6.6",
+    "shell_executable": "C:/Program Files/PowerShell/7/pwsh.exe",
+    "virtualenv": "none",
+    "result": "40 passed, 0 skipped",
+    "exit": 0,
+    "log_path": "integration/build-logs/24-finalhead-targeted-tests.log",
+    "log_sha256": "283e3d91945f5fe2a8f52cf2f509e7d02a895f737aa6fb97902dae00cfafcc60"
+  },
+  "r4_exact_head_packaged_gate": {
+    "source_head": "d717c049a41544a6d592943a0b0fe1b76a41a050",
+    "command": "C:/Python314/python.exe packaging/m2ac5/run_clean_start_e2e.py --installer apps/desktop/src-tauri/target/release/bundle/nsis/m2rc1-desktop_0.1.0_x64-setup.exe --output-dir verification/P03-PACKAGED-SFX-ENTRY/integration/run-2de124f3-finalhead-d717-py314 --sfx-real-page \"G:/CODEX/New Manga.task-envs/M2-DOCTR-QUAL-work/regions/K07_R123.png\"",
+    "python_version": "3.14.6",
+    "shell": "PowerShell 7.6.6",
+    "shell_executable": "C:/Program Files/PowerShell/7/pwsh.exe",
+    "virtualenv": "none",
+    "exit": 0,
+    "verdict": "PASS",
+    "scenario_count": 28,
+    "scenarios_passed": 28,
+    "installer_sha256": "2de124f387bfaf1d0d01b1b0279ad319cd453850d223efa9620b0103ce88a814",
+    "installer_size_bytes": 579537342,
+    "output_dir": "verification/P03-PACKAGED-SFX-ENTRY/integration/run-2de124f3-finalhead-d717-py314",
+    "temp_root": "C:/Users/49745/AppData/Local/Temp/codex-p03-gate-d717-py314",
+    "k07_sha256": "28dab503aca3c903111488c03e857b430d309421a4a54bab335a63bbe7b9cec4",
+    "sfx_verification": {
+      "requested": true,
+      "page_path": "G:\\CODEX\\New Manga.task-envs\\M2-DOCTR-QUAL-work\\regions\\K07_R123.png",
+      "scenarios_executed": [
+        "CS-S1-packaged-sfx-real-page",
+        "CS-S2-packaged-sfx-missing-page-failure"
+      ],
+      "verdict": "PASS"
+    },
+    "scenario_details": {
+      "s1_real_page": {
+        "exit": 0,
+        "marker_count": 1,
+        "json_parsed": true,
+        "frozen": true,
+        "has_error_key": true,
+        "error": null,
+        "n_candidates": 1,
+        "weights_sha256": "944e811410933ad6ff8d32446fcc9eef90fb463794e1874ce83035e83acd418d",
+        "weights_sha256_matches_pin": true,
+        "weights_resolved_from": "bundle_probe",
+        "weights_path": "C:\\Users\\49745\\AppData\\Local\\Temp\\codex-p03-gate-d717-py314\\m2ac5-cleanstart-msi5sp1y\\install\\resources\\core-sidecar\\models\\detector\\yolo11s-seg.onnx",
+        "weights_in_install_dir": true,
+        "page_pixel_sha256": "b3b7c4a6951e5a61f4677674830041c7850eeb68e1eced9cba236f1339ec7306",
+        "device": "dml",
+        "sfx_ep": "dml",
+        "sfx_ep_fallback": null,
+        "elapsed_ms": 774,
+        "options": {
+          "arch": "yolo11s_seg_onnx",
+          "class_filter": "sfx",
+          "conf_threshold": "0.5",
+          "device": "dml",
+          "imgsz": "1024",
+          "imgsz_source": "metadata_parsed",
+          "nms_iou": "0.7",
+          "sfx_ep": "dml",
+          "sfx_route": "letterbox"
+        },
+        "wall_ms": 1092,
+        "page_path": "G:\\CODEX\\New Manga.task-envs\\M2-DOCTR-QUAL-work\\regions\\K07_R123.png",
+        "page_file_sha256": "28dab503aca3c903111488c03e857b430d309421a4a54bab335a63bbe7b9cec4"
+      },
+      "s2_missing_page": {
+        "exit": 1,
+        "marker_count": 1,
+        "json_parsed": true,
+        "frozen": true,
+        "error": {
+          "class": "FileNotFoundError",
+          "error_code": null,
+          "message_head": "[Errno 2] No such file or directory: 'C:\\\\Users\\\\49745\\\\AppData\\\\Local\\\\Temp\\\\codex-p03-gate-d717-py314\\\\m2ac5-cleanstart-msi5sp1y\\\\sfx-probe-missing-isolation\\\\guaranteed-nonexistent-page.png'"
+        },
+        "wall_ms": 103,
+        "missing_path": "C:\\Users\\49745\\AppData\\Local\\Temp\\codex-p03-gate-d717-py314\\m2ac5-cleanstart-msi5sp1y\\sfx-probe-missing-isolation\\guaranteed-nonexistent-page.png",
+        "path_precondition": "absent"
+      }
+    },
+    "zero_touch_assertions": {
+      "install_dir_changed_entries": 0,
+      "host_appdata_files": 4,
+      "host_appdata_changed_entries": 0,
+      "lab_source_fixture_files": 4,
+      "manga_source_folder": "NOT_ACCESSED_NOT_VERIFIED",
+      "surviving_sidecars": {
+        "host_bridge.exe": 0,
+        "core_service.exe": 0,
+        "acceptance_bridge.exe": 0,
+        "catalog_loader.exe": 0,
+        "sfx_detect_probe.exe": 0,
+        "python.exe": 9
+      }
+    },
+    "runner_log_path": "integration/build-logs/25-finalhead-packaged-gate.log",
+    "runner_log_sha256": "04c8b40dde21a0773941d4bc30f9ddf28a7c796864ca34930bf9cef1127e764c",
+    "gate_json_path": "verification/P03-PACKAGED-SFX-ENTRY/integration/run-2de124f3-finalhead-d717-py314/cleanstart-gate.json",
+    "gate_json_sha256": "0b07a89e2f273a2f74b194f6ff4d884e9403a5067621c5cd8a55a459f400ff81",
+    "raw_output_archive": {
+      "path": "verification/P03-PACKAGED-SFX-ENTRY/integration/raw-finalhead-d717-gate-output.zip",
+      "size_bytes": 8176,
+      "sha256": "755f07cfc266df98a749717546cc8b13dd12cb076b355cfd688394e0c1b22591",
+      "entry_count": 11,
+      "all_entry_hashes_verified": true,
+      "files": [
+        {
+          "path": "cleanstart-ac1-catalog-initialize.log",
+          "size_bytes": 10,
+          "sha256": "3a9a546263872cd9c0cc1afd0dbf0a92554582bf7a6b47e0cfd80dc964bc3b84"
+        },
+        {
+          "path": "cleanstart-ac1-run1-stdout.log",
+          "size_bytes": 316,
+          "sha256": "23a277e0e29de1499a6aab5903949a0f47326002372c53dcc599bbf19ea184d3"
+        },
+        {
+          "path": "cleanstart-ac1-run2-stdout.log",
+          "size_bytes": 316,
+          "sha256": "84971c3a8dc51b9a7ed583ae9198a1b2b6b4e50403bf62df6972fd94cc983f1c"
+        },
+        {
+          "path": "cleanstart-gate.json",
+          "size_bytes": 11133,
+          "sha256": "0b07a89e2f273a2f74b194f6ff4d884e9403a5067621c5cd8a55a459f400ff81"
+        },
+        {
+          "path": "cleanstart-probe-stdout.log",
+          "size_bytes": 474,
+          "sha256": "019e1bdea0150768578ef53d39de734332017852b9e83fc548be59e7ceefdb9b"
+        },
+        {
+          "path": "cleanstart-production-stdout.log",
+          "size_bytes": 632,
+          "sha256": "5447d0dcb7e30ab6aba0ef79450cf53507af5b916f4eba95ecb1afbe28f5f2c3"
+        },
+        {
+          "path": "r1-library-probe.log",
+          "size_bytes": 627,
+          "sha256": "4bfbb7b99128483c2a3155df0385cd1e6a1926cd4a6b9b0be3aaea064c17a699"
+        },
+        {
+          "path": "sfx-probe-missing-page.json",
+          "size_bytes": 695,
+          "sha256": "60c5623373c003ffb7f14bab60ea8b062ea3761e7979eb47f05d9ecf249f1c27"
+        },
+        {
+          "path": "sfx-probe-missing-page.log",
+          "size_bytes": 1462,
+          "sha256": "bd6703147387e9a30720257119a41a4938a80e8ffca7187bd14f6739c2feb181"
+        },
+        {
+          "path": "sfx-probe-real-page.json",
+          "size_bytes": 1724,
+          "sha256": "52270d83db73350abcd57727eb1fc059950adec9e75593bb496701a298fd2c52"
+        },
+        {
+          "path": "sfx-probe-real-page.log",
+          "size_bytes": 1671,
+          "sha256": "73fe0f233f69102e866f4186da88f114a5b7066abd12cffd2a8ad1e851f52b4b"
+        }
+      ]
+    }
+  },
+  "r4_exact_head_fixed_range_checks": {
+    "candidate_head": "d717c049a41544a6d592943a0b0fe1b76a41a050",
+    "task_base_commit": "31abde9bf4b73aea2851931dcd48faa0f750b318",
+    "changed_path_count": 132,
+    "out_of_scope_path_count": 0,
+    "diff_check_exit": 0,
+    "normalization_verifier_cases": 6,
+    "normalization_verifier_exit": 0,
+    "gate_log_normalization_cases": 6,
+    "gate_log_normalization_exit": 0,
+    "logs": [
+      "integration/build-logs/21-finalfixedhead-scope-diff-check.log",
+      "integration/build-logs/22-finalfixedhead-normalization.log"
+    ]
   }
 }

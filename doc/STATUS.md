@@ -1,10 +1,10 @@
 # Current Development Status
 
-**当前位置：P08=done；P03=in_review。P系列共21项：done 1、in_review 1、proposed / 未释放19。P03集成head=`423ea5f196e6276f007bd3f96e381fa893985eb9`；DSH R3 approved，40/40定向测试与28/28 packaged Gate已在该head重跑通过。R3-03是P03范围外P20风险。当前唯一Active Task与恢复点见下方 P03 checkpoint。**
+**当前位置：P08=done；P03=in_review。P系列共21项：done 1、in_review 1、proposed / 未释放19。P03 integration commit=`d717c049a41544a6d592943a0b0fe1b76a41a050`；DSH R4 approved（0 unresolved P0/P1）；snapshot 16/16、定向测试40/40、同installer packaged Gate 28/28均在该head复跑通过。R3-03是P20范围外风险。当前唯一Active Task与恢复点见下方P03 checkpoint。**
 
-## 2026-10-09 P03 Owner delivery 与 Codex Gate 完成 / IN_REVIEW
+## 2026-10-09 P03 R4 Review 与 Codex exact-head 补证 / IN_REVIEW
 
-Task=`[P03](tasks/P03.md)` `in_review`；唯一Active Task。Owner=Antigravity，非作者Reviewer=DeepSeek Harness，Integrator=Codex。Task base=`31abde9bf4b73aea2851931dcd48faa0f750b318`；Owner delivery=`85482c5b001d452953c3ed797ce3c4ed64cae4e3`；DSH R3对`423ea5f196e6276f007bd3f96e381fa893985eb9` approved。该source head上定向测试40/40、完整packaged Gate 28/28均EXIT=0；installer SHA256=`2de124f387bfaf1d0d01b1b0279ad319cd453850d223efa9620b0103ce88a814`。R3-01与R3-02已登记处置；R3-03为P03范围外的P20风险。当前Codex integration branch=`codex/P03-integration-4c04459`、worktree=`G:/CODEX/New Manga.worktrees/P03-review-prep-85482c5b`、集成commit=`423ea5f196e6276f007bd3f96e381fa893985eb9`。下一Gate：在新增证据/治理checkpoint上运行固定head核验，交DSH R4与Codex独立复审；随后Codex收口AC5与P01释放。恢复见[P03 RESUME](../verification/P03-PACKAGED-SFX-ENTRY/RESUME.md)。
+Task=`[P03](tasks/P03.md)` `in_review`；唯一Active Task。Owner=Antigravity，非作者Reviewer=DeepSeek Harness，Integrator=Codex。Task base=`31abde9bf4b73aea2851931dcd48faa0f750b318`；Owner delivery=`85482c5b001d452953c3ed797ce3c4ed64cae4e3`；DSH R4对`d717c049a41544a6d592943a0b0fe1b76a41a050` approved（0 unresolved P0/P1）；Codex在该head复跑snapshot oracle 16/16、定向测试40/40、同一installer SHA=`2de124f387bfaf1d0d01b1b0279ad319cd453850d223efa9620b0103ce88a814` 的完整packaged Gate 28/28，均EXIT=0。R4 dispositions 与完整复跑日志已保存于P03 verification。当前integration branch=`codex/P03-integration-4c04459`、worktree=`G:/CODEX/New Manga.worktrees/P03-review-prep-85482c5b`、integration commit=`d717c049a41544a6d592943a0b0fe1b76a41a050`。下一Gate：对包含R4修订的exact candidate做DSH R5与Codex独立复核，之后才可关闭AC5。恢复见[P03 RESUME](../verification/P03-PACKAGED-SFX-ENTRY/RESUME.md)。
 
 ## 历史快照：P03正式释放时状态 / READY（已由当前IN_REVIEW checkpoint取代）
 
