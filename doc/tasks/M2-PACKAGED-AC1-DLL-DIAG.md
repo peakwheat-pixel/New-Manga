@@ -2,7 +2,7 @@
 id: M2-PACKAGED-AC1-DLL-DIAG
 title: 新架构安装态 AC1 QtGui DLL 加载失败只读诊断
 kind: research
-status: in_progress
+status: approved
 previous_status: in_progress
 blocker: dsh_exec_sandbox_and_unverified_dynamic_diagnosis
 approval: user_authorized_release_20261008
@@ -48,17 +48,26 @@ integration_commit: null
 最小可复核诊断：区分失败DLL/依赖/导出符号/搜索路径/构建环境原因，证据不足保留UNKNOWN；
 给出另行冻结的最小修复范围建议，本Task不实施修复。
 
-- [ ] AC1 Reality Check：实际base/head/branch/common-dir/clean、输入hash、环境/工具版本；
+- [x] AC1 Reality Check：实际base/head/branch/common-dir/clean、输入hash、环境/工具版本；
       planned与executed分开，原始shell/命令/EXIT日志入本Task目录。
-- [ ] AC2 原失败与有界复现：使用hash匹配的二进制，在自有隔离lab复现同一导入失败，
+      **达成（executor=Codex；固定证据HEAD=a84980c3，installer与5个exe hash实测匹配，见local-evidence.md:4）；
+      DSH自身git/hash复测NOT_RUN（沙箱Win32 5），不代填。**
+- [x] AC2 原失败与有界复现：使用hash匹配的二进制，在自有隔离lab复现同一导入失败，
       或明确无法复现/工具不可用的BLOCKED/NOT_RUN；记录调用方式、purged PATH、退出与时间线。
       主线未合并旧Task runner修复，禁止直接用当前checkout旧快照runner混淆诊断。
-- [ ] AC3 DLL/closure矩阵：每个候选写实际文件路径/hash/依赖关系、加载观测、证据、
+      **达成（executor=Codex）：自有lab同hash副本 bridge EXIT1/0.8s，QtGui错误复现；
+      仅改名包内icuuc保留字节的对照 case EXIT0/0.42s（raw/icu-control-*）。
+      外层wrapper EXIT0不等于bridge PASS。**
+- [x] AC3 DLL/closure矩阵：每个候选写实际文件路径/hash/依赖关系、加载观测、证据、
       PROVEN/REJECTED/UNKNOWN；文件存在不等于能加载，静态依赖扫描不等于运行验证。
       只追踪与QtGui导入直接相关的闭包，不进行全仓架构审计。
-- [ ] AC4 环境差量与最小范围：原PowerShell5 PyInstaller成功、weights步骤失败，PS7只恢复hash/copy；
+      **达成：根因PROVEN=包内icuuc遮蔽System32 ICU且仅有_78导出，缺Qt6Core所需20个无后缀符号；
+      含loader-probe WinError127、system-ICU对照、full-exports 20项、三树hash。勘误见ERR-1（8192导出上限伪差）。**
+- [x] AC4 环境差量与最小范围：原PowerShell5 PyInstaller成功、weights步骤失败，PS7只恢复hash/copy；
       与既有PASS构建只比较有固定head/hash的证据，未取得对照记UNKNOWN。
       给出根因置信度、最小拟议修复allowed_paths和后续fresh/full Gate，未授权修复不启动。
+      **达成：环境差量PROVEN；范围限定本固定产物/本机；最小范围建议packaging/m2ac5/**；
+      不得全局删ICU78（其它依赖需求未核实）；修复未启动。**
 - [ ] AC5 交付固定报告/矩阵、原始日志、Handoff，产品/历史证据零diff；Codex非作者Review、
       文档集成验证后才done。诊断done不等于旧Task解除阻塞或完整packaged PASS。
 
@@ -148,6 +157,32 @@ Owner将clean fast-forward到本认领提交，再执行真实DSH；实际start_
 - 交付仍**未提交**（无 git），delivery_head 未固定；新 head 与独立验证由 Codex 记录。
   未改 Plan/STATUS/索引，未改 src/apps/tests/packaging，未加框架依赖，未置 done，未解除 runner debt。
 
+## 运行记录（DSH r2：Codex 本地隔离执行证据整合，2026-10-08，status=in_review）
+
+- 固定证据HEAD=`a84980c394ac9c5380c87e097e081065818aa265`；执行侧证据分布于Codex提交
+  13804524（icu-control/symbol-full-exports）、36765f4b（loader-probe）、5cd31dda（loader-system-icu-control）。
+- 执行者=Codex（本机隔离执行，只写自有lab/raw）；DSH无shell（Win32 5），本轮只读核对+更新报告，未重跑。
+- **根因PROVEN（范围限定本固定installer产物+本机）**：包内`_internal/icuuc.dll`遮蔽System32同名ICU，
+  其导出仅`_78`后缀（`ucnv_open_78`等6个），而`Qt6Core.dll`导入20个无后缀`ucnv_*`/`UCNV_*`符号；
+  Qt6Core原生加载WinError127 → `import PySide6.QtGui`失败。
+  证据：loader-probe（同hash WinError127）、loader-system-icu-control（预加载System32 ICU后同DLL可加载）、
+  symbol-probe-full-exports（imported:20/missing 20）、binary-version-origin（lab/installed/build_env hash一致）、
+  icu-control（原case EXIT1/0.8s vs 改名icuuc后EXIT0/0.42s 因果对照，EOF/purged PATH/lab data root）。
+- **勘误ERR-1**：`raw/symbol-probe.json`的"QtGui→QtCore缺64符号"是pefile默认8192导出上限伪差；
+  `max_symbol_exports=100000`后消失，native GetProcAddress确认样本存在，**不得**当根因。
+  ERR-2：初次wrapper路径预检EXIT1（未启动子进程）与初次缺PATHEXT的step6失败，原记录保留、另行重跑。
+  ERR-3：r1的"Win32 126高置信"作废；原Gate具体错误码仍UNKNOWN（原日志无GetLastError）。
+- DSH独立核对支持probe逻辑与数据：逻辑自洽、相互独立；局限已写入REPORT §4（反事实为移除而非提供可用ICU78、
+  只2case/单次、loader宿主非冻结进程、预加载System32为构造对照、静态符号不解析forwarder、
+  **delay-import扫描未独立验证故从根因链排除**）。
+- 未覆盖/UNKNOWN：原Gate Win32码；installed树未做改名对照；其它仍需ICU78的依赖未核实（禁止全局删除）；
+  完整26项Gate与Tauri packaged验收未跑。**诊断完成不等于runner debt解锁。**
+- 下一Task建议=`M2-PACKAGED-AC1-ICU-ISOLATION-FIX`（未创建/未释放）：Owner建议Antigravity或ZCode，
+  非作者Reviewer=DSH；先冻结`packaging/m2ac5/**`与自有verification范围，保护其它ICU78依赖与原purged PATH；
+  fresh Sidecar+NSIS+完整26Gate+非作者Review+集成；改依赖/共享契约先交用户。
+- 本轮仅改 REPORT.md、dll-closure-matrix.json、本Task文件与Handoff；未改raw/支持probe/产品/其它历史证据；
+  未新增依赖；未启动修复；未自审、未done。
+
 ## Codex自动派发收口（尚未完成诊断）
 
 真实DSH两轮CLI EXIT0，session=session-7de56368-5e9b-44ed-9e2d-0c288fdc67ff；draft=f0ad317c，返修=d30066917759b62133840ac6767c7ef67153be06。
@@ -169,3 +204,9 @@ lab只使用自有复制/隔离数据，忽略其二进制fixture，不提交模
 补充验证冻结：允许Codex在本Task自有lab子进程内追加只读LoadLibrary/GetLastError候选DLL与导入/导出符号核对；只写自有verification日志/最小probe。DSH仍为诊断作者，须用实际日志更新矩阵，不改产品或共享依赖。
 
 对照冻结：仅在本Task新建独占复制fixture内改名icuuc.dll副本（保留原字节，不删除），以同一hash bridge/EOF/隔离data-root比较导入。原installer/原bundle/安装树/产品不变，不将该fixture操作当发行修复或完整Gate PASS。
+
+## Codex非作者审查批准（待文档集成）
+
+报告head=229c6c371d34234b65bbdd67fff73f341c60930f；Codex r3 approved，0P0/P1。
+TaskStatus=approved；AC5尚需文档集成和集成后独立检查，不自行done。原runner debt仍blocked。
+Root为固定产物/本机ICU同名遮蔽和20符号缺口；副本对照不是发行修复或完整Gate。

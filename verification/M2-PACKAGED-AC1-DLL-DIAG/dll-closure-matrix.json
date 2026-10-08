@@ -1,206 +1,112 @@
 {
   "task": "M2-PACKAGED-AC1-DLL-DIAG",
-  "revision": "r1-fix",
+  "revision": "r2-evidence-integrated",
   "produced_by": "DeepSeek Harness (Owner)",
   "produced_at": "2026-10-08",
-  "reviewed_draft_head": "f0ad317c77c1ca35f156e8fd8c0d3f73502cdd50",
-  "reviewed_draft_head_verified_by_git": false,
-  "review_r1": "doc/reviews/M2-PACKAGED-AC1-DLL-DIAG-f0ad317c-codex-r1.md",
-  "execution_capability": {
-    "shell": "NOT_RUN",
-    "reason": "pwsh sandbox setup failed every call: SetNamedSecurityInfoW failed (Win32 5): grantWrite(G:\\CODEX\\New Manga.worktrees\\PACKAGED-AC1-DLL-DIAG-dsh); danger-full-access escalation denied (no approval channel). No further permission retries attempted per review r1.",
-    "method": "read-only file tools only (read/glob/grep)"
+  "fixed_evidence_head": "a84980c394ac9c5380c87e097e081065818aa265",
+  "evidence_heads_by_artifact": {
+    "icu_control_and_symbol_full_exports": "13804524c12dbf5bb97d9b2c824d947ff43cb276",
+    "loader_probe": "36765f4b8aa9b6126efc87a2bb531a69296f5c07",
+    "loader_system_icu_control": "5cd31ddaac70220ae1bcd36930423fdeb586e903"
   },
-  "scope_note": "Every PRESENT/ABSENT observation below is a one-shot static file enumeration of the SCANNED tree only. It does not prove presence/absence in the installed tree, does not prove Windows-loader resolution, and does not prove actual load success or failure. Enumeration tooling has a path cap, so 'not listed' is not a complete proof of non-existence.",
+  "execution": {
+    "executor": "Codex (local isolated execution, own lab/fixture)",
+    "dsH_shell": "NOT_RUN",
+    "dsH_role": "read-only cross-check + report update; no re-run, no product change",
+    "child_env_purged_path": "C:\\WINDOWS/System32;C:\\WINDOWS",
+    "child_env_extra": "PATHEXT explicit, M2AC1_TEST_MODE=1, QT_QPA_PLATFORM=offscreen, APPDATA/LOCALAPPDATA/TEMP/TMP/NEWMANGA_DATA_ROOT pinned into own lab",
+    "stdin": "DEVNULL (EOF)",
+    "outer_wrapper_exit": 0,
+    "bridge_original_case": {"exit": 1, "elapsed_s": 0.8, "qtgui_import_error": true},
+    "bridge_counterfactual_case": {"case": "owned_icu_renamed", "exit": 0, "elapsed_s": 0.42},
+    "discipline": "outer wrapper EXIT0 is NOT a bridge PASS; only the bridge EXIT1/EXIT0 observed above are the measured facts"
+  },
   "frozen_inputs": {
+    "diagnostic_base": "9063c317937b86bed1f6ff3e2f2c5d224dc10553",
     "build_source_head": "cfb5d2eecc4d8ab7a3159cdbb1d5812547bb5cd2",
-    "runner_evidence_head": "15cd788f10e83f6a1a215e71538bfa175b435785",
-    "declared_start_head": "24e0ec6e5c6d64a35daad006565919818616b317",
-    "declared_start_head_verified": false,
-    "installer_path": "G:\\CODEX\\New Manga.worktrees\\RUNNER-SNAPSHOT-DEBT-codex\\apps\\desktop\\src-tauri\\target\\release\\bundle\\nsis\\m2rc1-desktop_0.1.0_x64-setup.exe",
     "installer_sha256": "1cecca95d25439fca682cbe4336123d3b3352db229dd58c4e7d724b4d6c6ccb8",
-    "installer_bytes": 589904619,
-    "installer_sha256_reverified_this_session": "NOT_RUN",
-    "installer_sha256_doc_crosscheck": "MATCH across input-manifest.json / build-fingerprint.json / release.md"
+    "installer_and_five_exe_hashes_measured_by": "Codex (local-evidence.md:4, match)",
+    "verified_by_dSH_this_round": "NOT_RUN (no shell)"
   },
-  "observed_failure": {
-    "id": "CS-A1-run1-completed",
-    "exit": 1,
-    "traceback_frame": "bootstrap\\acceptance_bridge.py:173 in assemble_acceptance_core",
-    "error_text_verbatim": "ImportError: DLL load failed while importing QtGui: <localized 'module not found' text>",
-    "win32_error_code": "UNKNOWN",
-    "win32_error_code_note": "The original log contains only the CPython ImportError text; it records no GetLastError() / Win32 code, so no numeric code (e.g. 126) may be asserted.",
-    "failure_precedes_qguiapplication_construction": true,
-    "evidence": "verification/M2-RUNNER-SNAPSHOT-DEBT/raw/packaged/cleanstart-ac1-run1-stdout.log:4-9"
+  "root_cause": {
+    "verdict": "PROVEN",
+    "scope": "this fixed installer artifact on this host only; not a Gate fix and not generalized",
+    "mechanism": "the bundled _internal/icuuc.dll shadows the System32 icuuc.dll (bundle dir precedes System32 on the loader search path) and exposes only _78-suffixed exports, while Qt6Core.dll imports 20 unsuffixed ICU symbols (ucnv_*/UCNV_*); Qt6Core.dll therefore fails to load natively with WinError 127, and importing PySide6.QtGui raises the ImportError observed by the original runner",
+    "confidence": "high",
+    "win32_code_of_original_gate_run": "UNKNOWN",
+    "win32_code_note": "the original runner log records no GetLastError; WinError 127 comes from an independent native re-load of same-hash DLLs and must not be back-filled into the original Gate record",
+    "not_generalized_to": ["other builds", "other hosts", "a full 26-item Gate PASS"]
   },
-  "scanned_bundle": "G:/CODEX/New Manga.worktrees/RUNNER-SNAPSHOT-DEBT-codex/apps/desktop/src-tauri/target/core-sidecar/core-sidecar",
+  "evidence_chain": [
+    {"id": "E1", "artifact": "raw/loader-probe.log", "executor": "Codex", "head": "36765f4b8aa9b6126efc87a2bb531a69296f5c07", "finding": "same-hash Qt6Core/Qt6Gui/pyside6.abi3.dll/QtCore.pyd/QtGui.pyd -> loaded:false WinError 127; shiboken6.abi3.dll and bundled icuuc.dll -> loaded:true", "verdict": "PROVEN"},
+    {"id": "E2", "artifact": "raw/loader-system-icu-control.log", "executor": "Codex", "head": "5cd31ddaac70220ae1bcd36930423fdeb586e903", "finding": "after preloading absolute System32/icuuc.dll in an isolated process, the same-hash Qt6Core/Qt6Gui load successfully; native GetProcAddress resolves both sampled symbols", "verdict": "PROVEN (environment control)"},
+    {"id": "E3", "artifact": "raw/symbol-probe-full-exports.json", "executor": "Codex", "head": "13804524c12dbf5bb97d9b2c824d947ff43cb276", "finding": "Qt6Core -> icuuc.dll: imported=20, missing_symbols = 20 unsuffixed ucnv_*/UCNV_* names; bundled icuuc exported_names=3027", "verdict": "PROVEN"},
+    {"id": "E4", "artifact": "raw/binary-version-origin.json", "executor": "Codex", "finding": "icuuc.dll sha256 39aec884c7124d673d75b38cca7b44ac1909d9633d8366a812a6e1c269d74bdf identical in lab and installed, exports only ucnv_open_78 / ucnv_openAllNames_78 / ucnv_openCCSID_78 / ucnv_openPackage_78 / ucnv_openStandardNames_78 / ucnv_openU_78; Qt6Core (d6a3c37c...) and Qt6Gui (ae29b005...) identical across lab/installed/build_env at FileVersion 6.11.2.0", "verdict": "PROVEN (unmodified, three trees consistent)"},
+    {"id": "E5", "artifact": "raw/icu-control-result.json + raw/icu-control-original.log + raw/icu-control-owned_icu_renamed.log", "executor": "Codex", "finding": "same-hash EXE asserted against build-fingerprint, same env, stdin EOF: original case EXIT1 with QtGui import error; renaming only the bundled icuuc.dll (bytes preserved) yields EXIT0", "verdict": "PROVEN (causal counterfactual)"},
+    {"id": "E6", "artifact": "run_icu_control.py (DSH read-only logic review)", "executor": "DSH review of Codex code", "finding": "asserts the copy lives under the task lab, verifies source icuuc and EXE hashes, pins env into lab, stdin DEVNULL, rename-only (no byte deletion)", "verdict": "logic sound"}
+  ],
   "candidates": [
+    {"id": "C1", "candidate": "PySide6 QtGui extension module not bundled", "verdict": "REJECTED", "note": "present in bundle; loads natively except for the ICU-dependent chain", "confidence": "high"},
+    {"id": "C2", "candidate": "Qt6Gui.dll missing", "verdict": "REJECTED", "confidence": "high"},
+    {"id": "C3", "candidate": "Qt6Core.dll missing", "verdict": "REJECTED (present; fails to load due to ICU symbol mismatch)", "confidence": "high"},
+    {"id": "C4", "candidate": "pyside6/shiboken6 ABI runtime DLLs missing", "verdict": "REJECTED (shiboken6.abi3.dll loads natively; pyside6.abi3.dll fails only through the same ICU-dependent chain)", "confidence": "medium"},
+    {"id": "C5", "candidate": "MSVC/CRT runtime not shipped", "verdict": "REJECTED", "confidence": "high"},
+    {"id": "C6", "candidate": "Qt absent from the PyInstaller analysis graph", "verdict": "REJECTED", "confidence": "high"},
+    {"id": "C7", "candidate": "build truncated by the weights-phase EXIT=1", "verdict": "REJECTED", "confidence": "high"},
+    {"id": "C8", "candidate": "ICU i18n DLL (icuin*) not observed in the scanned build tree", "verdict": "NOT_OBSERVED_IN_SCANNED_TREE; NOT part of this root cause; impact UNKNOWN", "confidence_observation": "medium", "confidence_impact": "low"},
+    {"id": "C9", "candidate": "d3dcompiler_47.dll not observed", "verdict": "NOT_OBSERVED_IN_SCANNED_TREE; NOT part of this root cause; impact UNKNOWN", "confidence_impact": "low"},
+    {"id": "C10", "candidate": "opengl32sw.dll not observed", "verdict": "NOT_OBSERVED_IN_SCANNED_TREE; NOT part of this root cause; impact UNKNOWN", "confidence_impact": "low"},
+    {"id": "C11", "candidate": "the actual unresolvable dependency", "verdict": "PROVEN: the bundled icuuc.dll lacks the 20 unsuffixed ICU symbols Qt6Core imports", "confidence": "high", "evidence": ["E1", "E2", "E3", "E4", "E5"]},
+    {"id": "C12", "candidate": "installed tree _internal incomplete", "verdict": "PARTIALLY_RESOLVED: Qt6Gui/Qt6Core/icuuc hashes identical between lab and installed (E4); no bridge-level counterfactual was run on the installed tree, so a full installed-tree control remains UNKNOWN", "confidence": "medium"},
+    {"id": "C13", "candidate": "runtime DLL search path / shadowing", "verdict": "PROVEN_RELEVANT: the bundle's _internal directory resolves the unsuffixed icuuc.dll name ahead of System32, shadowing the system ICU", "confidence": "high", "evidence": ["E2", "E3"]},
+    {"id": "C14", "candidate": "symbol-level mismatch", "verdict": "PROVEN: 20 unsuffixed symbols required vs only _78 exports provided", "confidence": "high", "evidence": ["E3", "E4"]}
+  ],
+  "erratum": [
     {
-      "id": "C1",
-      "candidate": "PySide6 QtGui extension module not bundled",
-      "observed_in_scanned_build_tree": "present: _internal/PySide6/QtGui.pyd",
-      "verdict": "NOT_THE_ISSUE_IN_THIS_SCANNED_TREE",
-      "installed_tree_implies": "UNKNOWN",
-      "loadability_verified": false,
-      "confidence": "medium"
+      "id": "ERR-1",
+      "artifact": "raw/symbol-probe.json",
+      "claim_to_discard": "'QtGui -> QtCore is missing 64 symbols'",
+      "cause": "pefile default export cap of 8192 truncated the export table",
+      "resolution": "with max_symbol_exports=100000 and full-name-count assertions the 64 entries disappear, and native GetProcAddress confirms the two sampled symbols exist",
+      "status": "MUST NOT be used as root-cause or defect evidence"
     },
     {
-      "id": "C2",
-      "candidate": "Qt6Gui.dll missing from bundle",
-      "observed_in_scanned_build_tree": "present: _internal/PySide6/Qt6Gui.dll",
-      "verdict": "NOT_THE_ISSUE_IN_THIS_SCANNED_TREE",
-      "installed_tree_implies": "UNKNOWN",
-      "loadability_verified": false,
-      "confidence": "medium"
+      "id": "ERR-2",
+      "artifact": "raw/ (wrapper first runs)",
+      "claim_to_discard": "first wrapper run results",
+      "cause": "initial path pre-check failure (EXIT1, no child started) and initial static sub-env missing PATHEXT (step6 failure)",
+      "resolution": "original records preserved; re-runs after supplying the child-env recognition are recorded separately",
+      "status": "not a result"
     },
     {
-      "id": "C3",
-      "candidate": "Qt6Core.dll missing from bundle",
-      "observed_in_scanned_build_tree": "present: _internal/PySide6/Qt6Core.dll",
-      "verdict": "NOT_THE_ISSUE_IN_THIS_SCANNED_TREE",
-      "installed_tree_implies": "UNKNOWN",
-      "loadability_verified": false,
-      "confidence": "medium"
-    },
-    {
-      "id": "C4",
-      "candidate": "PySide6/shiboken6 ABI runtime DLLs missing",
-      "observed_in_scanned_build_tree": "present: _internal/PySide6/pyside6.abi3.dll, _internal/shiboken6/shiboken6.abi3.dll",
-      "verdict": "NOT_THE_ISSUE_IN_THIS_SCANNED_TREE",
-      "installed_tree_implies": "UNKNOWN",
-      "loadability_verified": false,
-      "confidence": "medium"
-    },
-    {
-      "id": "C5",
-      "candidate": "MSVC/CRT runtime not shipped in bundle",
-      "observed_in_scanned_build_tree": "present: _internal/{msvcp140,MSVCP140_1,MSVCP140_ATOMIC_WAIT,VCRUNTIME140,VCRUNTIME140_1,VCRUNTIME140_THREADS,ucrtbase}.dll + api-ms-win-crt-* set",
-      "verdict": "NOT_THE_ISSUE_IN_THIS_SCANNED_TREE",
-      "installed_tree_implies": "UNKNOWN",
-      "loadability_verified": false,
-      "confidence": "medium"
-    },
-    {
-      "id": "C6",
-      "candidate": "Qt absent from PyInstaller analysis graph (ModuleNotFoundError class)",
-      "observed_in_scanned_build_tree": "sidecar-build.log:239-243 ran hook-PySide6, hook-shiboken6, hook-PySide6.QtNetwork, hook-PySide6.QtCore, hook-PySide6.QtGui for entry_acceptance_bridge",
-      "verdict": "REJECTED",
-      "confidence": "high"
-    },
-    {
-      "id": "C7",
-      "candidate": "PyInstaller build truncated by the weights-phase EXIT=1",
-      "observed_in_scanned_build_tree": "sidecar-build.log:548-552 COLLECT completed successfully / Build complete!; EXIT=1 at :560-569 is Get-FileHash CommandNotFound inside Copy-MangaWeights, after the build",
-      "verdict": "REJECTED",
-      "confidence": "high"
-    },
-    {
-      "id": "C8",
-      "candidate": "ICU i18n DLL (icuin*) absent",
-      "observed_in_scanned_build_tree": "top-level _internal/*.dll listing contains icudt78.dll and icuuc.dll only; no icuin*.dll observed",
-      "verdict": "NOT_OBSERVED_IN_SCANNED_BUILD_TREE_IMPACT_UNKNOWN",
-      "installed_tree_implies": "UNKNOWN",
-      "runtime_impact": "UNKNOWN",
-      "confidence_observation": "medium",
-      "confidence_impact": "low"
-    },
-    {
-      "id": "C9",
-      "candidate": "d3dcompiler_47.dll absent",
-      "observed_in_scanned_build_tree": "glob **/d3dcompiler* over the scanned bundle: 0 hits",
-      "verdict": "NOT_OBSERVED_IN_SCANNED_BUILD_TREE_IMPACT_UNKNOWN",
-      "installed_tree_implies": "UNKNOWN",
-      "runtime_impact": "UNKNOWN",
-      "note": "Windows may supply this name from System32; not measured",
-      "confidence_observation": "medium",
-      "confidence_impact": "low"
-    },
-    {
-      "id": "C10",
-      "candidate": "opengl32sw.dll absent",
-      "observed_in_scanned_build_tree": "not observed in the top-level _internal/*.dll listing",
-      "verdict": "NOT_OBSERVED_IN_SCANNED_BUILD_TREE_IMPACT_UNKNOWN",
-      "installed_tree_implies": "UNKNOWN",
-      "runtime_impact": "UNKNOWN",
-      "confidence_observation": "medium",
-      "confidence_impact": "low"
-    },
-    {
-      "id": "C11",
-      "candidate": "the actual unresolvable module (specific DLL or export symbol)",
-      "observed_in_scanned_build_tree": "requires a real load and a GetLastError observation; not executable this session",
-      "verdict": "UNKNOWN",
-      "confidence": "n/a"
-    },
-    {
-      "id": "C12",
-      "candidate": "installed tree _internal incomplete (NSIS drop / long path / missing file)",
-      "observed_in_scanned_build_tree": "no installed-tree _internal manifest in the evidence set; cleanstart-gate.json CS-I1 only proves 4 exes under resources/core-sidecar",
-      "verdict": "UNKNOWN",
-      "confidence": "n/a"
-    },
-    {
-      "id": "C13",
-      "candidate": "runtime DLL search-path difference (AddDllDirectory / purged PATH)",
-      "observed_in_scanned_build_tree": "build-time search dirs include ...\\site-packages\\PySide6 (sidecar-build.log:186,324); runtime search set not measured",
-      "verdict": "UNKNOWN",
-      "confidence": "n/a"
-    },
-    {
-      "id": "C14",
-      "candidate": "ABI/symbol mismatch inside the PySide6 pair",
-      "observed_in_scanned_build_tree": "PySide6_Essentials==6.11.2 and shiboken6==6.11.2 pinned equal (packaging/m2ac5/requirements-build.txt:43-44)",
-      "verdict": "MISMATCH_REJECTED_FOR_THAT_PAIR; other symbol-level mismatch UNKNOWN",
-      "confidence": "medium"
+      "id": "ERR-3",
+      "artifact": "REPORT.md r1 / dll-closure-matrix.json r1",
+      "claim_to_discard": "'Win32 126 / ERROR_MOD_NOT_FOUND high confidence'",
+      "resolution": "the original log has no GetLastError; the original Gate's Win32 code stays UNKNOWN. WinError 127 is an independent native re-load observation and is not back-filled",
+      "status": "superseded"
     }
   ],
-  "root_cause": {
-    "proven_fact": "the packaged run raised ImportError while importing PySide6.QtGui (log verbatim)",
-    "class": "an unresolved dependency at module-load time is ONLY an unverified inference",
-    "class_confidence": "medium",
-    "win32_error_code": "UNKNOWN",
-    "specific_dll_or_symbol": "UNKNOWN",
-    "installed_tree_relation": "UNKNOWN",
-    "rule_followed": "not inferred from the QtGui module name, and not from build-tree file enumeration"
+  "probe_logic_review_by_dSH": {
+    "run_icu_control.py": {"logic": "sound", "limits": ["renames the bundled ICU away instead of supplying a working ICU78", "only two cases, single run", "timeout=20s", "env lacks ComSpec/SystemDrive (differs from run_local_probe.py env)", "counterfactual is a lab copy, not the installed tree"]},
+    "loader_probe.py": {"logic": "sound", "limits": ["host is T1.1.1-impl-py312 python.exe, not the frozen PyInstaller process", "preloading System32 ICU is a constructed control, not the original purged-PATH Gate"]},
+    "symbol_probe.py": {"logic": "sound (static import-table symbol matching; self-declares no loader/forwarder claim)", "limits": ["does not model API-set/forwarder semantics", "delay-import scanning was never independently validated, so it is excluded from the root-cause chain (same for DSH's own probe/pe_import_probe.py)"]},
+    "pefile_version": "2024.8.26"
   },
-  "environment_delta_proven": {
-    "full_build": {
-      "command": "[\"powershell\",\"-NoProfile\",\"-File\",\"packaging/m2ac5/build_sidecar.ps1\",\"-Force\"]",
-      "log": "verification/M2-RUNNER-SNAPSHOT-DEBT/raw/sidecar-build.log",
-      "head": "cfb5d2eecc4d8ab7a3159cdbb1d5812547bb5cd2",
-      "pyinstaller": "6.22.3",
-      "python": "3.12.3",
-      "venv": "G:/CODEX/New Manga.task-envs/m2ac5-build",
-      "result": "PyInstaller SUCCESS (COLLECT + 5 exes + ML/SFX closure assertions), then Copy-MangaWeights Get-FileHash CommandNotFound",
-      "exit": 1,
-      "elapsed_s": 417.3
-    },
-    "weights_retry": {
-      "command": "[\"C:/Program Files/PowerShell/7/pwsh.exe\",\"-NoProfile\",\"-File\",\"packaging/m2ac5/build_sidecar.ps1\"]",
-      "log": "verification/M2-RUNNER-SNAPSHOT-DEBT/raw/sidecar-weights-retry.log",
-      "path_taken": "incremental short-circuit (build_sidecar.ps1:173): target exists, skipping",
-      "result": "weights sha256 verified copies only; no exe rebuilt",
-      "exit": 0,
-      "elapsed_s": 0.8
-    },
-    "consequence": "all shipped exes come from the PS5.1 -Force run; the weights EXIT=1 did not alter them"
-  },
-  "coverage_gaps": [
-    "installed-tree _internal manifest not present in evidence",
-    "no runtime load test and no GetLastError observation performed",
-    "installer SHA256 not re-measured this session",
-    "git HEAD/branch/clean/common-dir and git diff --check not verifiable this session"
+  "unknowns": [
+    "Win32 error code of the original Gate run (no GetLastError in the original log)",
+    "no rename counterfactual on the installed tree; no re-run in the true purged-PATH installed environment",
+    "which dependencies besides Qt still require the bundled ICU78 (forbids a global ICU78 deletion)",
+    "the full 26-item clean-start Gate and Tauri packaged acceptance were not run"
   ],
-  "review_r1_fixes": {
-    "R1": "run_dll_diag_probe.ps1 step 1 is fail-closed: missing installer or SHA256 drift THROWS (non-zero exit) instead of printing BLOCKED/DRIFT and continuing",
-    "R2": "probe defaults to static-read-only and never starts the exe; it runs acceptance_bridge.exe only from a self-owned lab copy that was copied (copy-only, no /MIR, no delete) AND hash-verified in the same run; copy failure or verification failure stops the run and never falls back to the original bundle",
-    "R3": "REPORT/matrix/Handoff now record the specific Win32 error code as UNKNOWN (original log has no GetLastError), drop the '126 high confidence' wording, and state that a DLL not observed in the enumerated build tree does not prove absence in the installed tree nor an actual load failure; a matrix scope note was added"
+  "next_task_proposal": {
+    "task_id": "M2-PACKAGED-AC1-ICU-ISOLATION-FIX",
+    "status": "NOT_CREATED_NOT_RELEASED",
+    "suggested_owner": "Antigravity or ZCode",
+    "suggested_non_author_reviewer": "DeepSeek Harness",
+    "proposed_allowed_paths": ["packaging/m2ac5/**", "that task's own verification/**"],
+    "constraints": ["freeze scope first", "protect other dependencies that still need ICU78", "keep the original purged-PATH semantics", "dependency or shared-contract changes go to the user first"],
+    "completion_gate": "fresh Sidecar + NSIS -> fixed installer SHA -> full 26-item clean-start Gate -> non-author review -> Codex integration",
+    "fix_implemented": false
   },
-  "minimal_proposed_fix_allowed_paths": [
-    "packaging/m2ac5/core_sidecar.spec",
-    "packaging/m2ac5/build_sidecar.ps1",
-    "packaging/m2ac5/requirements-build.txt"
-  ],
-  "fix_not_implemented": true,
   "runner_debt_unlocked": false
 }

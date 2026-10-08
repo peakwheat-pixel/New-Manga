@@ -1,0 +1,678 @@
+{
+  "bundle": "G:\\CODEX\\New Manga.worktrees\\RUNNER-SNAPSHOT-DEBT-codex\\apps\\desktop\\src-tauri\\target\\core-sidecar\\core-sidecar",
+  "scanned": [
+    {
+      "binary": "host_bridge.exe",
+      "machine": "0x8664",
+      "is_64bit": true,
+      "imports": {
+        "total": 3,
+        "resolved": [
+          {
+            "name": "USER32.dll",
+            "at": "C:\\WINDOWS\\System32\\USER32.dll"
+          },
+          {
+            "name": "KERNEL32.dll",
+            "at": "C:\\WINDOWS\\System32\\KERNEL32.dll"
+          },
+          {
+            "name": "ADVAPI32.dll",
+            "at": "C:\\WINDOWS\\System32\\ADVAPI32.dll"
+          }
+        ],
+        "unresolved": [],
+        "unresolved_os_supplied": []
+      },
+      "delay_imports": {
+        "total": 0,
+        "resolved": [],
+        "unresolved": [],
+        "unresolved_os_supplied": []
+      }
+    },
+    {
+      "binary": "core_service.exe",
+      "machine": "0x8664",
+      "is_64bit": true,
+      "imports": {
+        "total": 3,
+        "resolved": [
+          {
+            "name": "USER32.dll",
+            "at": "C:\\WINDOWS\\System32\\USER32.dll"
+          },
+          {
+            "name": "KERNEL32.dll",
+            "at": "C:\\WINDOWS\\System32\\KERNEL32.dll"
+          },
+          {
+            "name": "ADVAPI32.dll",
+            "at": "C:\\WINDOWS\\System32\\ADVAPI32.dll"
+          }
+        ],
+        "unresolved": [],
+        "unresolved_os_supplied": []
+      },
+      "delay_imports": {
+        "total": 0,
+        "resolved": [],
+        "unresolved": [],
+        "unresolved_os_supplied": []
+      }
+    },
+    {
+      "binary": "acceptance_bridge.exe",
+      "machine": "0x8664",
+      "is_64bit": true,
+      "imports": {
+        "total": 3,
+        "resolved": [
+          {
+            "name": "USER32.dll",
+            "at": "C:\\WINDOWS\\System32\\USER32.dll"
+          },
+          {
+            "name": "KERNEL32.dll",
+            "at": "C:\\WINDOWS\\System32\\KERNEL32.dll"
+          },
+          {
+            "name": "ADVAPI32.dll",
+            "at": "C:\\WINDOWS\\System32\\ADVAPI32.dll"
+          }
+        ],
+        "unresolved": [],
+        "unresolved_os_supplied": []
+      },
+      "delay_imports": {
+        "total": 0,
+        "resolved": [],
+        "unresolved": [],
+        "unresolved_os_supplied": []
+      }
+    },
+    {
+      "binary": "catalog_loader.exe",
+      "machine": "0x8664",
+      "is_64bit": true,
+      "imports": {
+        "total": 3,
+        "resolved": [
+          {
+            "name": "USER32.dll",
+            "at": "C:\\WINDOWS\\System32\\USER32.dll"
+          },
+          {
+            "name": "KERNEL32.dll",
+            "at": "C:\\WINDOWS\\System32\\KERNEL32.dll"
+          },
+          {
+            "name": "ADVAPI32.dll",
+            "at": "C:\\WINDOWS\\System32\\ADVAPI32.dll"
+          }
+        ],
+        "unresolved": [],
+        "unresolved_os_supplied": []
+      },
+      "delay_imports": {
+        "total": 0,
+        "resolved": [],
+        "unresolved": [],
+        "unresolved_os_supplied": []
+      }
+    },
+    {
+      "binary": "sfx_detect_probe.exe",
+      "machine": "0x8664",
+      "is_64bit": true,
+      "imports": {
+        "total": 3,
+        "resolved": [
+          {
+            "name": "USER32.dll",
+            "at": "C:\\WINDOWS\\System32\\USER32.dll"
+          },
+          {
+            "name": "KERNEL32.dll",
+            "at": "C:\\WINDOWS\\System32\\KERNEL32.dll"
+          },
+          {
+            "name": "ADVAPI32.dll",
+            "at": "C:\\WINDOWS\\System32\\ADVAPI32.dll"
+          }
+        ],
+        "unresolved": [],
+        "unresolved_os_supplied": []
+      },
+      "delay_imports": {
+        "total": 0,
+        "resolved": [],
+        "unresolved": [],
+        "unresolved_os_supplied": []
+      }
+    },
+    {
+      "binary": "_internal\\PySide6\\QtGui.pyd",
+      "machine": "0x8664",
+      "is_64bit": true,
+      "imports": {
+        "total": 14,
+        "resolved": [
+          {
+            "name": "pyside6.abi3.dll",
+            "at": "G:\\CODEX\\New Manga.worktrees\\RUNNER-SNAPSHOT-DEBT-codex\\apps\\desktop\\src-tauri\\target\\core-sidecar\\core-sidecar\\_internal\\PySide6\\pyside6.abi3.dll"
+          },
+          {
+            "name": "Qt6Gui.dll",
+            "at": "G:\\CODEX\\New Manga.worktrees\\RUNNER-SNAPSHOT-DEBT-codex\\apps\\desktop\\src-tauri\\target\\core-sidecar\\core-sidecar\\_internal\\PySide6\\Qt6Gui.dll"
+          },
+          {
+            "name": "shiboken6.abi3.dll",
+            "at": "G:\\CODEX\\New Manga.worktrees\\RUNNER-SNAPSHOT-DEBT-codex\\apps\\desktop\\src-tauri\\target\\core-sidecar\\core-sidecar\\_internal\\shiboken6\\shiboken6.abi3.dll"
+          },
+          {
+            "name": "python3.dll",
+            "at": "G:\\CODEX\\New Manga.worktrees\\RUNNER-SNAPSHOT-DEBT-codex\\apps\\desktop\\src-tauri\\target\\core-sidecar\\core-sidecar\\_internal\\python3.dll"
+          },
+          {
+            "name": "Qt6Core.dll",
+            "at": "G:\\CODEX\\New Manga.worktrees\\RUNNER-SNAPSHOT-DEBT-codex\\apps\\desktop\\src-tauri\\target\\core-sidecar\\core-sidecar\\_internal\\PySide6\\Qt6Core.dll"
+          },
+          {
+            "name": "MSVCP140.dll",
+            "at": "G:\\CODEX\\New Manga.worktrees\\RUNNER-SNAPSHOT-DEBT-codex\\apps\\desktop\\src-tauri\\target\\core-sidecar\\core-sidecar\\_internal\\PySide6\\MSVCP140.dll"
+          },
+          {
+            "name": "MSVCP140_2.dll",
+            "at": "G:\\CODEX\\New Manga.worktrees\\RUNNER-SNAPSHOT-DEBT-codex\\apps\\desktop\\src-tauri\\target\\core-sidecar\\core-sidecar\\_internal\\PySide6\\MSVCP140_2.dll"
+          },
+          {
+            "name": "VCRUNTIME140.dll",
+            "at": "G:\\CODEX\\New Manga.worktrees\\RUNNER-SNAPSHOT-DEBT-codex\\apps\\desktop\\src-tauri\\target\\core-sidecar\\core-sidecar\\_internal\\PySide6\\VCRUNTIME140.dll"
+          },
+          {
+            "name": "VCRUNTIME140_1.dll",
+            "at": "G:\\CODEX\\New Manga.worktrees\\RUNNER-SNAPSHOT-DEBT-codex\\apps\\desktop\\src-tauri\\target\\core-sidecar\\core-sidecar\\_internal\\PySide6\\VCRUNTIME140_1.dll"
+          },
+          {
+            "name": "api-ms-win-crt-runtime-l1-1-0.dll",
+            "at": "G:\\CODEX\\New Manga.worktrees\\RUNNER-SNAPSHOT-DEBT-codex\\apps\\desktop\\src-tauri\\target\\core-sidecar\\core-sidecar\\_internal\\api-ms-win-crt-runtime-l1-1-0.dll"
+          },
+          {
+            "name": "api-ms-win-crt-string-l1-1-0.dll",
+            "at": "G:\\CODEX\\New Manga.worktrees\\RUNNER-SNAPSHOT-DEBT-codex\\apps\\desktop\\src-tauri\\target\\core-sidecar\\core-sidecar\\_internal\\api-ms-win-crt-string-l1-1-0.dll"
+          },
+          {
+            "name": "api-ms-win-crt-heap-l1-1-0.dll",
+            "at": "G:\\CODEX\\New Manga.worktrees\\RUNNER-SNAPSHOT-DEBT-codex\\apps\\desktop\\src-tauri\\target\\core-sidecar\\core-sidecar\\_internal\\api-ms-win-crt-heap-l1-1-0.dll"
+          },
+          {
+            "name": "api-ms-win-crt-math-l1-1-0.dll",
+            "at": "G:\\CODEX\\New Manga.worktrees\\RUNNER-SNAPSHOT-DEBT-codex\\apps\\desktop\\src-tauri\\target\\core-sidecar\\core-sidecar\\_internal\\api-ms-win-crt-math-l1-1-0.dll"
+          },
+          {
+            "name": "KERNEL32.dll",
+            "at": "C:\\WINDOWS\\System32\\KERNEL32.dll"
+          }
+        ],
+        "unresolved": [],
+        "unresolved_os_supplied": []
+      },
+      "delay_imports": {
+        "total": 0,
+        "resolved": [],
+        "unresolved": [],
+        "unresolved_os_supplied": []
+      }
+    },
+    {
+      "binary": "_internal\\PySide6\\QtCore.pyd",
+      "machine": "0x8664",
+      "is_64bit": true,
+      "imports": {
+        "total": 11,
+        "resolved": [
+          {
+            "name": "pyside6.abi3.dll",
+            "at": "G:\\CODEX\\New Manga.worktrees\\RUNNER-SNAPSHOT-DEBT-codex\\apps\\desktop\\src-tauri\\target\\core-sidecar\\core-sidecar\\_internal\\PySide6\\pyside6.abi3.dll"
+          },
+          {
+            "name": "shiboken6.abi3.dll",
+            "at": "G:\\CODEX\\New Manga.worktrees\\RUNNER-SNAPSHOT-DEBT-codex\\apps\\desktop\\src-tauri\\target\\core-sidecar\\core-sidecar\\_internal\\shiboken6\\shiboken6.abi3.dll"
+          },
+          {
+            "name": "python3.dll",
+            "at": "G:\\CODEX\\New Manga.worktrees\\RUNNER-SNAPSHOT-DEBT-codex\\apps\\desktop\\src-tauri\\target\\core-sidecar\\core-sidecar\\_internal\\python3.dll"
+          },
+          {
+            "name": "Qt6Core.dll",
+            "at": "G:\\CODEX\\New Manga.worktrees\\RUNNER-SNAPSHOT-DEBT-codex\\apps\\desktop\\src-tauri\\target\\core-sidecar\\core-sidecar\\_internal\\PySide6\\Qt6Core.dll"
+          },
+          {
+            "name": "MSVCP140.dll",
+            "at": "G:\\CODEX\\New Manga.worktrees\\RUNNER-SNAPSHOT-DEBT-codex\\apps\\desktop\\src-tauri\\target\\core-sidecar\\core-sidecar\\_internal\\PySide6\\MSVCP140.dll"
+          },
+          {
+            "name": "VCRUNTIME140.dll",
+            "at": "G:\\CODEX\\New Manga.worktrees\\RUNNER-SNAPSHOT-DEBT-codex\\apps\\desktop\\src-tauri\\target\\core-sidecar\\core-sidecar\\_internal\\PySide6\\VCRUNTIME140.dll"
+          },
+          {
+            "name": "VCRUNTIME140_1.dll",
+            "at": "G:\\CODEX\\New Manga.worktrees\\RUNNER-SNAPSHOT-DEBT-codex\\apps\\desktop\\src-tauri\\target\\core-sidecar\\core-sidecar\\_internal\\PySide6\\VCRUNTIME140_1.dll"
+          },
+          {
+            "name": "api-ms-win-crt-string-l1-1-0.dll",
+            "at": "G:\\CODEX\\New Manga.worktrees\\RUNNER-SNAPSHOT-DEBT-codex\\apps\\desktop\\src-tauri\\target\\core-sidecar\\core-sidecar\\_internal\\api-ms-win-crt-string-l1-1-0.dll"
+          },
+          {
+            "name": "api-ms-win-crt-heap-l1-1-0.dll",
+            "at": "G:\\CODEX\\New Manga.worktrees\\RUNNER-SNAPSHOT-DEBT-codex\\apps\\desktop\\src-tauri\\target\\core-sidecar\\core-sidecar\\_internal\\api-ms-win-crt-heap-l1-1-0.dll"
+          },
+          {
+            "name": "api-ms-win-crt-runtime-l1-1-0.dll",
+            "at": "G:\\CODEX\\New Manga.worktrees\\RUNNER-SNAPSHOT-DEBT-codex\\apps\\desktop\\src-tauri\\target\\core-sidecar\\core-sidecar\\_internal\\api-ms-win-crt-runtime-l1-1-0.dll"
+          },
+          {
+            "name": "KERNEL32.dll",
+            "at": "C:\\WINDOWS\\System32\\KERNEL32.dll"
+          }
+        ],
+        "unresolved": [],
+        "unresolved_os_supplied": []
+      },
+      "delay_imports": {
+        "total": 0,
+        "resolved": [],
+        "unresolved": [],
+        "unresolved_os_supplied": []
+      }
+    },
+    {
+      "binary": "_internal\\PySide6\\Qt6Gui.dll",
+      "machine": "0x8664",
+      "is_64bit": true,
+      "imports": {
+        "total": 24,
+        "resolved": [
+          {
+            "name": "d3d11.dll",
+            "at": "C:\\WINDOWS\\System32\\d3d11.dll"
+          },
+          {
+            "name": "dxgi.dll",
+            "at": "C:\\WINDOWS\\System32\\dxgi.dll"
+          },
+          {
+            "name": "d3d12.dll",
+            "at": "C:\\WINDOWS\\System32\\d3d12.dll"
+          },
+          {
+            "name": "GDI32.dll",
+            "at": "C:\\WINDOWS\\System32\\GDI32.dll"
+          },
+          {
+            "name": "ole32.dll",
+            "at": "C:\\WINDOWS\\System32\\ole32.dll"
+          },
+          {
+            "name": "SHELL32.dll",
+            "at": "C:\\WINDOWS\\System32\\SHELL32.dll"
+          },
+          {
+            "name": "USER32.dll",
+            "at": "C:\\WINDOWS\\System32\\USER32.dll"
+          },
+          {
+            "name": "UxTheme.dll",
+            "at": "C:\\WINDOWS\\System32\\UxTheme.dll"
+          },
+          {
+            "name": "DWrite.dll",
+            "at": "C:\\WINDOWS\\System32\\DWrite.dll"
+          },
+          {
+            "name": "Qt6Core.dll",
+            "at": "G:\\CODEX\\New Manga.worktrees\\RUNNER-SNAPSHOT-DEBT-codex\\apps\\desktop\\src-tauri\\target\\core-sidecar\\core-sidecar\\_internal\\PySide6\\Qt6Core.dll"
+          },
+          {
+            "name": "KERNEL32.dll",
+            "at": "C:\\WINDOWS\\System32\\KERNEL32.dll"
+          },
+          {
+            "name": "MSVCP140.dll",
+            "at": "G:\\CODEX\\New Manga.worktrees\\RUNNER-SNAPSHOT-DEBT-codex\\apps\\desktop\\src-tauri\\target\\core-sidecar\\core-sidecar\\_internal\\PySide6\\MSVCP140.dll"
+          },
+          {
+            "name": "MSVCP140_1.dll",
+            "at": "G:\\CODEX\\New Manga.worktrees\\RUNNER-SNAPSHOT-DEBT-codex\\apps\\desktop\\src-tauri\\target\\core-sidecar\\core-sidecar\\_internal\\PySide6\\MSVCP140_1.dll"
+          },
+          {
+            "name": "MSVCP140_2.dll",
+            "at": "G:\\CODEX\\New Manga.worktrees\\RUNNER-SNAPSHOT-DEBT-codex\\apps\\desktop\\src-tauri\\target\\core-sidecar\\core-sidecar\\_internal\\PySide6\\MSVCP140_2.dll"
+          },
+          {
+            "name": "VCRUNTIME140.dll",
+            "at": "G:\\CODEX\\New Manga.worktrees\\RUNNER-SNAPSHOT-DEBT-codex\\apps\\desktop\\src-tauri\\target\\core-sidecar\\core-sidecar\\_internal\\PySide6\\VCRUNTIME140.dll"
+          },
+          {
+            "name": "VCRUNTIME140_1.dll",
+            "at": "G:\\CODEX\\New Manga.worktrees\\RUNNER-SNAPSHOT-DEBT-codex\\apps\\desktop\\src-tauri\\target\\core-sidecar\\core-sidecar\\_internal\\PySide6\\VCRUNTIME140_1.dll"
+          },
+          {
+            "name": "api-ms-win-crt-string-l1-1-0.dll",
+            "at": "G:\\CODEX\\New Manga.worktrees\\RUNNER-SNAPSHOT-DEBT-codex\\apps\\desktop\\src-tauri\\target\\core-sidecar\\core-sidecar\\_internal\\api-ms-win-crt-string-l1-1-0.dll"
+          },
+          {
+            "name": "api-ms-win-crt-heap-l1-1-0.dll",
+            "at": "G:\\CODEX\\New Manga.worktrees\\RUNNER-SNAPSHOT-DEBT-codex\\apps\\desktop\\src-tauri\\target\\core-sidecar\\core-sidecar\\_internal\\api-ms-win-crt-heap-l1-1-0.dll"
+          },
+          {
+            "name": "api-ms-win-crt-runtime-l1-1-0.dll",
+            "at": "G:\\CODEX\\New Manga.worktrees\\RUNNER-SNAPSHOT-DEBT-codex\\apps\\desktop\\src-tauri\\target\\core-sidecar\\core-sidecar\\_internal\\api-ms-win-crt-runtime-l1-1-0.dll"
+          },
+          {
+            "name": "api-ms-win-crt-math-l1-1-0.dll",
+            "at": "G:\\CODEX\\New Manga.worktrees\\RUNNER-SNAPSHOT-DEBT-codex\\apps\\desktop\\src-tauri\\target\\core-sidecar\\core-sidecar\\_internal\\api-ms-win-crt-math-l1-1-0.dll"
+          },
+          {
+            "name": "api-ms-win-crt-stdio-l1-1-0.dll",
+            "at": "G:\\CODEX\\New Manga.worktrees\\RUNNER-SNAPSHOT-DEBT-codex\\apps\\desktop\\src-tauri\\target\\core-sidecar\\core-sidecar\\_internal\\api-ms-win-crt-stdio-l1-1-0.dll"
+          },
+          {
+            "name": "api-ms-win-crt-environment-l1-1-0.dll",
+            "at": "G:\\CODEX\\New Manga.worktrees\\RUNNER-SNAPSHOT-DEBT-codex\\apps\\desktop\\src-tauri\\target\\core-sidecar\\core-sidecar\\_internal\\api-ms-win-crt-environment-l1-1-0.dll"
+          },
+          {
+            "name": "api-ms-win-crt-utility-l1-1-0.dll",
+            "at": "G:\\CODEX\\New Manga.worktrees\\RUNNER-SNAPSHOT-DEBT-codex\\apps\\desktop\\src-tauri\\target\\core-sidecar\\core-sidecar\\_internal\\api-ms-win-crt-utility-l1-1-0.dll"
+          },
+          {
+            "name": "api-ms-win-crt-convert-l1-1-0.dll",
+            "at": "G:\\CODEX\\New Manga.worktrees\\RUNNER-SNAPSHOT-DEBT-codex\\apps\\desktop\\src-tauri\\target\\core-sidecar\\core-sidecar\\_internal\\api-ms-win-crt-convert-l1-1-0.dll"
+          }
+        ],
+        "unresolved": [],
+        "unresolved_os_supplied": []
+      },
+      "delay_imports": {
+        "total": 0,
+        "resolved": [],
+        "unresolved": [],
+        "unresolved_os_supplied": []
+      }
+    },
+    {
+      "binary": "_internal\\PySide6\\Qt6Core.dll",
+      "machine": "0x8664",
+      "is_64bit": true,
+      "imports": {
+        "total": 31,
+        "resolved": [
+          {
+            "name": "api-ms-win-core-synch-l1-2-0.dll",
+            "at": "G:\\CODEX\\New Manga.worktrees\\RUNNER-SNAPSHOT-DEBT-codex\\apps\\desktop\\src-tauri\\target\\core-sidecar\\core-sidecar\\_internal\\api-ms-win-core-synch-l1-2-0.dll"
+          },
+          {
+            "name": "MPR.dll",
+            "at": "C:\\WINDOWS\\System32\\MPR.dll"
+          },
+          {
+            "name": "USERENV.dll",
+            "at": "C:\\WINDOWS\\System32\\USERENV.dll"
+          },
+          {
+            "name": "ADVAPI32.dll",
+            "at": "C:\\WINDOWS\\System32\\ADVAPI32.dll"
+          },
+          {
+            "name": "AUTHZ.dll",
+            "at": "C:\\WINDOWS\\System32\\AUTHZ.dll"
+          },
+          {
+            "name": "KERNEL32.dll",
+            "at": "C:\\WINDOWS\\System32\\KERNEL32.dll"
+          },
+          {
+            "name": "NETAPI32.dll",
+            "at": "C:\\WINDOWS\\System32\\NETAPI32.dll"
+          },
+          {
+            "name": "ntdll.dll",
+            "at": "C:\\WINDOWS\\System32\\ntdll.dll"
+          },
+          {
+            "name": "ole32.dll",
+            "at": "C:\\WINDOWS\\System32\\ole32.dll"
+          },
+          {
+            "name": "SHELL32.dll",
+            "at": "C:\\WINDOWS\\System32\\SHELL32.dll"
+          },
+          {
+            "name": "USER32.dll",
+            "at": "C:\\WINDOWS\\System32\\USER32.dll"
+          },
+          {
+            "name": "VERSION.dll",
+            "at": "C:\\WINDOWS\\System32\\VERSION.dll"
+          },
+          {
+            "name": "WINMM.dll",
+            "at": "C:\\WINDOWS\\System32\\WINMM.dll"
+          },
+          {
+            "name": "WS2_32.dll",
+            "at": "C:\\WINDOWS\\System32\\WS2_32.dll"
+          },
+          {
+            "name": "icuuc.dll",
+            "at": "G:\\CODEX\\New Manga.worktrees\\RUNNER-SNAPSHOT-DEBT-codex\\apps\\desktop\\src-tauri\\target\\core-sidecar\\core-sidecar\\_internal\\icuuc.dll"
+          },
+          {
+            "name": "MSVCP140.dll",
+            "at": "G:\\CODEX\\New Manga.worktrees\\RUNNER-SNAPSHOT-DEBT-codex\\apps\\desktop\\src-tauri\\target\\core-sidecar\\core-sidecar\\_internal\\PySide6\\MSVCP140.dll"
+          },
+          {
+            "name": "MSVCP140_1.dll",
+            "at": "G:\\CODEX\\New Manga.worktrees\\RUNNER-SNAPSHOT-DEBT-codex\\apps\\desktop\\src-tauri\\target\\core-sidecar\\core-sidecar\\_internal\\PySide6\\MSVCP140_1.dll"
+          },
+          {
+            "name": "VCRUNTIME140.dll",
+            "at": "G:\\CODEX\\New Manga.worktrees\\RUNNER-SNAPSHOT-DEBT-codex\\apps\\desktop\\src-tauri\\target\\core-sidecar\\core-sidecar\\_internal\\PySide6\\VCRUNTIME140.dll"
+          },
+          {
+            "name": "VCRUNTIME140_1.dll",
+            "at": "G:\\CODEX\\New Manga.worktrees\\RUNNER-SNAPSHOT-DEBT-codex\\apps\\desktop\\src-tauri\\target\\core-sidecar\\core-sidecar\\_internal\\PySide6\\VCRUNTIME140_1.dll"
+          },
+          {
+            "name": "api-ms-win-crt-runtime-l1-1-0.dll",
+            "at": "G:\\CODEX\\New Manga.worktrees\\RUNNER-SNAPSHOT-DEBT-codex\\apps\\desktop\\src-tauri\\target\\core-sidecar\\core-sidecar\\_internal\\api-ms-win-crt-runtime-l1-1-0.dll"
+          },
+          {
+            "name": "api-ms-win-crt-heap-l1-1-0.dll",
+            "at": "G:\\CODEX\\New Manga.worktrees\\RUNNER-SNAPSHOT-DEBT-codex\\apps\\desktop\\src-tauri\\target\\core-sidecar\\core-sidecar\\_internal\\api-ms-win-crt-heap-l1-1-0.dll"
+          },
+          {
+            "name": "api-ms-win-crt-string-l1-1-0.dll",
+            "at": "G:\\CODEX\\New Manga.worktrees\\RUNNER-SNAPSHOT-DEBT-codex\\apps\\desktop\\src-tauri\\target\\core-sidecar\\core-sidecar\\_internal\\api-ms-win-crt-string-l1-1-0.dll"
+          },
+          {
+            "name": "api-ms-win-crt-stdio-l1-1-0.dll",
+            "at": "G:\\CODEX\\New Manga.worktrees\\RUNNER-SNAPSHOT-DEBT-codex\\apps\\desktop\\src-tauri\\target\\core-sidecar\\core-sidecar\\_internal\\api-ms-win-crt-stdio-l1-1-0.dll"
+          },
+          {
+            "name": "api-ms-win-crt-environment-l1-1-0.dll",
+            "at": "G:\\CODEX\\New Manga.worktrees\\RUNNER-SNAPSHOT-DEBT-codex\\apps\\desktop\\src-tauri\\target\\core-sidecar\\core-sidecar\\_internal\\api-ms-win-crt-environment-l1-1-0.dll"
+          },
+          {
+            "name": "api-ms-win-crt-math-l1-1-0.dll",
+            "at": "G:\\CODEX\\New Manga.worktrees\\RUNNER-SNAPSHOT-DEBT-codex\\apps\\desktop\\src-tauri\\target\\core-sidecar\\core-sidecar\\_internal\\api-ms-win-crt-math-l1-1-0.dll"
+          },
+          {
+            "name": "api-ms-win-crt-utility-l1-1-0.dll",
+            "at": "G:\\CODEX\\New Manga.worktrees\\RUNNER-SNAPSHOT-DEBT-codex\\apps\\desktop\\src-tauri\\target\\core-sidecar\\core-sidecar\\_internal\\api-ms-win-crt-utility-l1-1-0.dll"
+          },
+          {
+            "name": "api-ms-win-crt-time-l1-1-0.dll",
+            "at": "G:\\CODEX\\New Manga.worktrees\\RUNNER-SNAPSHOT-DEBT-codex\\apps\\desktop\\src-tauri\\target\\core-sidecar\\core-sidecar\\_internal\\api-ms-win-crt-time-l1-1-0.dll"
+          },
+          {
+            "name": "api-ms-win-crt-filesystem-l1-1-0.dll",
+            "at": "G:\\CODEX\\New Manga.worktrees\\RUNNER-SNAPSHOT-DEBT-codex\\apps\\desktop\\src-tauri\\target\\core-sidecar\\core-sidecar\\_internal\\api-ms-win-crt-filesystem-l1-1-0.dll"
+          },
+          {
+            "name": "OLEAUT32.dll",
+            "at": "C:\\WINDOWS\\System32\\OLEAUT32.dll"
+          }
+        ],
+        "unresolved": [],
+        "unresolved_os_supplied": [
+          "api-ms-win-core-winrt-l1-1-0.dll",
+          "api-ms-win-core-winrt-error-l1-1-1.dll"
+        ]
+      },
+      "delay_imports": {
+        "total": 0,
+        "resolved": [],
+        "unresolved": [],
+        "unresolved_os_supplied": []
+      }
+    },
+    {
+      "binary": "_internal\\PySide6\\pyside6.abi3.dll",
+      "machine": "0x8664",
+      "is_64bit": true,
+      "imports": {
+        "total": 11,
+        "resolved": [
+          {
+            "name": "shiboken6.abi3.dll",
+            "at": "G:\\CODEX\\New Manga.worktrees\\RUNNER-SNAPSHOT-DEBT-codex\\apps\\desktop\\src-tauri\\target\\core-sidecar\\core-sidecar\\_internal\\shiboken6\\shiboken6.abi3.dll"
+          },
+          {
+            "name": "python3.dll",
+            "at": "G:\\CODEX\\New Manga.worktrees\\RUNNER-SNAPSHOT-DEBT-codex\\apps\\desktop\\src-tauri\\target\\core-sidecar\\core-sidecar\\_internal\\python3.dll"
+          },
+          {
+            "name": "Qt6Core.dll",
+            "at": "G:\\CODEX\\New Manga.worktrees\\RUNNER-SNAPSHOT-DEBT-codex\\apps\\desktop\\src-tauri\\target\\core-sidecar\\core-sidecar\\_internal\\PySide6\\Qt6Core.dll"
+          },
+          {
+            "name": "MSVCP140.dll",
+            "at": "G:\\CODEX\\New Manga.worktrees\\RUNNER-SNAPSHOT-DEBT-codex\\apps\\desktop\\src-tauri\\target\\core-sidecar\\core-sidecar\\_internal\\PySide6\\MSVCP140.dll"
+          },
+          {
+            "name": "VCRUNTIME140.dll",
+            "at": "G:\\CODEX\\New Manga.worktrees\\RUNNER-SNAPSHOT-DEBT-codex\\apps\\desktop\\src-tauri\\target\\core-sidecar\\core-sidecar\\_internal\\PySide6\\VCRUNTIME140.dll"
+          },
+          {
+            "name": "VCRUNTIME140_1.dll",
+            "at": "G:\\CODEX\\New Manga.worktrees\\RUNNER-SNAPSHOT-DEBT-codex\\apps\\desktop\\src-tauri\\target\\core-sidecar\\core-sidecar\\_internal\\PySide6\\VCRUNTIME140_1.dll"
+          },
+          {
+            "name": "api-ms-win-crt-string-l1-1-0.dll",
+            "at": "G:\\CODEX\\New Manga.worktrees\\RUNNER-SNAPSHOT-DEBT-codex\\apps\\desktop\\src-tauri\\target\\core-sidecar\\core-sidecar\\_internal\\api-ms-win-crt-string-l1-1-0.dll"
+          },
+          {
+            "name": "api-ms-win-crt-runtime-l1-1-0.dll",
+            "at": "G:\\CODEX\\New Manga.worktrees\\RUNNER-SNAPSHOT-DEBT-codex\\apps\\desktop\\src-tauri\\target\\core-sidecar\\core-sidecar\\_internal\\api-ms-win-crt-runtime-l1-1-0.dll"
+          },
+          {
+            "name": "api-ms-win-crt-heap-l1-1-0.dll",
+            "at": "G:\\CODEX\\New Manga.worktrees\\RUNNER-SNAPSHOT-DEBT-codex\\apps\\desktop\\src-tauri\\target\\core-sidecar\\core-sidecar\\_internal\\api-ms-win-crt-heap-l1-1-0.dll"
+          },
+          {
+            "name": "api-ms-win-crt-stdio-l1-1-0.dll",
+            "at": "G:\\CODEX\\New Manga.worktrees\\RUNNER-SNAPSHOT-DEBT-codex\\apps\\desktop\\src-tauri\\target\\core-sidecar\\core-sidecar\\_internal\\api-ms-win-crt-stdio-l1-1-0.dll"
+          },
+          {
+            "name": "KERNEL32.dll",
+            "at": "C:\\WINDOWS\\System32\\KERNEL32.dll"
+          }
+        ],
+        "unresolved": [],
+        "unresolved_os_supplied": []
+      },
+      "delay_imports": {
+        "total": 0,
+        "resolved": [],
+        "unresolved": [],
+        "unresolved_os_supplied": []
+      }
+    },
+    {
+      "binary": "_internal\\shiboken6\\shiboken6.abi3.dll",
+      "machine": "0x8664",
+      "is_64bit": true,
+      "imports": {
+        "total": 13,
+        "resolved": [
+          {
+            "name": "python3.dll",
+            "at": "G:\\CODEX\\New Manga.worktrees\\RUNNER-SNAPSHOT-DEBT-codex\\apps\\desktop\\src-tauri\\target\\core-sidecar\\core-sidecar\\_internal\\python3.dll"
+          },
+          {
+            "name": "KERNEL32.dll",
+            "at": "C:\\WINDOWS\\System32\\KERNEL32.dll"
+          },
+          {
+            "name": "MSVCP140.dll",
+            "at": "G:\\CODEX\\New Manga.worktrees\\RUNNER-SNAPSHOT-DEBT-codex\\apps\\desktop\\src-tauri\\target\\core-sidecar\\core-sidecar\\_internal\\shiboken6\\MSVCP140.dll"
+          },
+          {
+            "name": "VCRUNTIME140.dll",
+            "at": "G:\\CODEX\\New Manga.worktrees\\RUNNER-SNAPSHOT-DEBT-codex\\apps\\desktop\\src-tauri\\target\\core-sidecar\\core-sidecar\\_internal\\shiboken6\\VCRUNTIME140.dll"
+          },
+          {
+            "name": "VCRUNTIME140_1.dll",
+            "at": "G:\\CODEX\\New Manga.worktrees\\RUNNER-SNAPSHOT-DEBT-codex\\apps\\desktop\\src-tauri\\target\\core-sidecar\\core-sidecar\\_internal\\shiboken6\\VCRUNTIME140_1.dll"
+          },
+          {
+            "name": "api-ms-win-crt-runtime-l1-1-0.dll",
+            "at": "G:\\CODEX\\New Manga.worktrees\\RUNNER-SNAPSHOT-DEBT-codex\\apps\\desktop\\src-tauri\\target\\core-sidecar\\core-sidecar\\_internal\\api-ms-win-crt-runtime-l1-1-0.dll"
+          },
+          {
+            "name": "api-ms-win-crt-stdio-l1-1-0.dll",
+            "at": "G:\\CODEX\\New Manga.worktrees\\RUNNER-SNAPSHOT-DEBT-codex\\apps\\desktop\\src-tauri\\target\\core-sidecar\\core-sidecar\\_internal\\api-ms-win-crt-stdio-l1-1-0.dll"
+          },
+          {
+            "name": "api-ms-win-crt-string-l1-1-0.dll",
+            "at": "G:\\CODEX\\New Manga.worktrees\\RUNNER-SNAPSHOT-DEBT-codex\\apps\\desktop\\src-tauri\\target\\core-sidecar\\core-sidecar\\_internal\\api-ms-win-crt-string-l1-1-0.dll"
+          },
+          {
+            "name": "api-ms-win-crt-heap-l1-1-0.dll",
+            "at": "G:\\CODEX\\New Manga.worktrees\\RUNNER-SNAPSHOT-DEBT-codex\\apps\\desktop\\src-tauri\\target\\core-sidecar\\core-sidecar\\_internal\\api-ms-win-crt-heap-l1-1-0.dll"
+          },
+          {
+            "name": "api-ms-win-crt-convert-l1-1-0.dll",
+            "at": "G:\\CODEX\\New Manga.worktrees\\RUNNER-SNAPSHOT-DEBT-codex\\apps\\desktop\\src-tauri\\target\\core-sidecar\\core-sidecar\\_internal\\api-ms-win-crt-convert-l1-1-0.dll"
+          },
+          {
+            "name": "api-ms-win-crt-math-l1-1-0.dll",
+            "at": "G:\\CODEX\\New Manga.worktrees\\RUNNER-SNAPSHOT-DEBT-codex\\apps\\desktop\\src-tauri\\target\\core-sidecar\\core-sidecar\\_internal\\api-ms-win-crt-math-l1-1-0.dll"
+          },
+          {
+            "name": "api-ms-win-crt-filesystem-l1-1-0.dll",
+            "at": "G:\\CODEX\\New Manga.worktrees\\RUNNER-SNAPSHOT-DEBT-codex\\apps\\desktop\\src-tauri\\target\\core-sidecar\\core-sidecar\\_internal\\api-ms-win-crt-filesystem-l1-1-0.dll"
+          },
+          {
+            "name": "api-ms-win-crt-environment-l1-1-0.dll",
+            "at": "G:\\CODEX\\New Manga.worktrees\\RUNNER-SNAPSHOT-DEBT-codex\\apps\\desktop\\src-tauri\\target\\core-sidecar\\core-sidecar\\_internal\\api-ms-win-crt-environment-l1-1-0.dll"
+          }
+        ],
+        "unresolved": [],
+        "unresolved_os_supplied": []
+      },
+      "delay_imports": {
+        "total": 0,
+        "resolved": [],
+        "unresolved": [],
+        "unresolved_os_supplied": []
+      }
+    }
+  ],
+  "skipped": [],
+  "missing_union": [],
+  "verdict": "ALL_SCANNED_IMPORTS_RESOLVABLE",
+  "caveat": "Resolution here is a static file-existence check over the _internal layout and System32; it is NOT a load test. Only step 5 of run_dll_diag_probe.ps1 loads the real process. An OS-supplied name being absent from the bundle is not proof of failure."
+}

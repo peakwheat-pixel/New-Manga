@@ -1,0 +1,14 @@
+[
+  {
+    "case": "original",
+    "exit": 1,
+    "log": "G:\\CODEX\\New Manga.worktrees\\PACKAGED-AC1-DLL-DIAG-dsh\\verification\\M2-PACKAGED-AC1-DLL-DIAG\\raw\\icu-control-original.log",
+    "qtgui_import_error": true
+  },
+  {
+    "case": "owned_icu_renamed",
+    "exit": 0,
+    "log": "G:\\CODEX\\New Manga.worktrees\\PACKAGED-AC1-DLL-DIAG-dsh\\verification\\M2-PACKAGED-AC1-DLL-DIAG\\raw\\icu-control-owned_icu_renamed.log",
+    "qtgui_import_error": false
+  }
+]

@@ -1,0 +1,94 @@
+[
+  {
+    "tree": "lab",
+    "path": "G:\\CODEX\\New Manga.worktrees\\PACKAGED-AC1-DLL-DIAG-dsh\\verification\\M2-PACKAGED-AC1-DLL-DIAG\\lab\\20261008-100953\\core-sidecar\\_internal\\PySide6\\Qt6Core.dll",
+    "sha256": "d6a3c37c5263c5d418fc0e80b722bc9fca7c0859e6f635f9624a2fde00bdc653",
+    "file_version": [
+      6,
+      11,
+      2,
+      0
+    ]
+  },
+  {
+    "tree": "lab",
+    "path": "G:\\CODEX\\New Manga.worktrees\\PACKAGED-AC1-DLL-DIAG-dsh\\verification\\M2-PACKAGED-AC1-DLL-DIAG\\lab\\20261008-100953\\core-sidecar\\_internal\\PySide6\\Qt6Gui.dll",
+    "sha256": "ae29b005f51b6850bf57fa06fced0dc8c7039fd6fafc3bfbcfe76e38adc7abf1",
+    "file_version": [
+      6,
+      11,
+      2,
+      0
+    ]
+  },
+  {
+    "tree": "installed",
+    "path": "C:\\Users\\49745\\AppData\\Local\\Temp\\m2ac5-cleanstart-k50b12ik\\install\\resources\\core-sidecar\\_internal\\PySide6\\Qt6Core.dll",
+    "sha256": "d6a3c37c5263c5d418fc0e80b722bc9fca7c0859e6f635f9624a2fde00bdc653",
+    "file_version": [
+      6,
+      11,
+      2,
+      0
+    ]
+  },
+  {
+    "tree": "installed",
+    "path": "C:\\Users\\49745\\AppData\\Local\\Temp\\m2ac5-cleanstart-k50b12ik\\install\\resources\\core-sidecar\\_internal\\PySide6\\Qt6Gui.dll",
+    "sha256": "ae29b005f51b6850bf57fa06fced0dc8c7039fd6fafc3bfbcfe76e38adc7abf1",
+    "file_version": [
+      6,
+      11,
+      2,
+      0
+    ]
+  },
+  {
+    "tree": "build_env",
+    "path": "G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\PySide6\\Qt6Core.dll",
+    "sha256": "d6a3c37c5263c5d418fc0e80b722bc9fca7c0859e6f635f9624a2fde00bdc653",
+    "file_version": [
+      6,
+      11,
+      2,
+      0
+    ]
+  },
+  {
+    "tree": "build_env",
+    "path": "G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\PySide6\\Qt6Gui.dll",
+    "sha256": "ae29b005f51b6850bf57fa06fced0dc8c7039fd6fafc3bfbcfe76e38adc7abf1",
+    "file_version": [
+      6,
+      11,
+      2,
+      0
+    ]
+  },
+  {
+    "tree": "lab",
+    "path": "G:\\CODEX\\New Manga.worktrees\\PACKAGED-AC1-DLL-DIAG-dsh\\verification\\M2-PACKAGED-AC1-DLL-DIAG\\lab\\20261008-100953\\core-sidecar\\_internal\\icuuc.dll",
+    "sha256": "39aec884c7124d673d75b38cca7b44ac1909d9633d8366a812a6e1c269d74bdf",
+    "ucnv_open_exports": [
+      "ucnv_openAllNames_78",
+      "ucnv_openCCSID_78",
+      "ucnv_openPackage_78",
+      "ucnv_openStandardNames_78",
+      "ucnv_openU_78",
+      "ucnv_open_78"
+    ]
+  },
+  {
+    "tree": "installed",
+    "path": "C:\\Users\\49745\\AppData\\Local\\Temp\\m2ac5-cleanstart-k50b12ik\\install\\resources\\core-sidecar\\_internal\\icuuc.dll",
+    "sha256": "39aec884c7124d673d75b38cca7b44ac1909d9633d8366a812a6e1c269d74bdf",
+    "ucnv_open_exports": [
+      "ucnv_openAllNames_78",
+      "ucnv_openCCSID_78",
+      "ucnv_openPackage_78",
+      "ucnv_openStandardNames_78",
+      "ucnv_openU_78",
+      "ucnv_open_78"
+    ]
+  }
+]
