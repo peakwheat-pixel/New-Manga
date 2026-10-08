@@ -1,0 +1,61 @@
+CWD=G:\CODEX\New Manga; COMMAND=["git", "status", "--short", "--branch"]
+## main...origin/main [ahead 1080]
+ M .qoder-credits/report.json
+M  doc/00_INDEX.md
+M  doc/REBASELINE_PLAN.md
+M  doc/STATUS.md
+M  doc/handoffs/M2-RUNNER-SNAPSHOT-DEBT-codex-cfb5d2ee.md
+A  doc/reviews/M2-RUNNER-SNAPSHOT-DEBT-2af6b71a-dsh-r3.md
+A  doc/reviews/M2-RUNNER-SNAPSHOT-DEBT-41d77f98-dsh-r2.md
+A  doc/reviews/M2-RUNNER-SNAPSHOT-DEBT-7556cb2d-dsh-r1.md
+M  doc/tasks/M2-RUNNER-SNAPSHOT-DEBT.md
+M  doc/tasks/README.md
+A  verification/M2-RUNNER-SNAPSHOT-DEBT/bind_review.py
+A  verification/M2-RUNNER-SNAPSHOT-DEBT/check_snapshots.py
+M  verification/M2-RUNNER-SNAPSHOT-DEBT/checkpoint.md
+A  verification/M2-RUNNER-SNAPSHOT-DEBT/closeout-recovery.md
+A  verification/M2-RUNNER-SNAPSHOT-DEBT/final-validation.log
+A  verification/M2-RUNNER-SNAPSHOT-DEBT/raw/check-snapshots-r2.log
+A  verification/M2-RUNNER-SNAPSHOT-DEBT/raw/check-snapshots-r3.log
+A  verification/M2-RUNNER-SNAPSHOT-DEBT/raw/review-binding-r3-supplement.log
+A  verification/M2-RUNNER-SNAPSHOT-DEBT/raw/review-binding-r3-verified.log
+A  verification/M2-RUNNER-SNAPSHOT-DEBT/raw/review-binding-r3.log
+A  verification/M2-RUNNER-SNAPSHOT-DEBT/review-binding.log
+A  verification/M2-RUNNER-SNAPSHOT-DEBT/review-disposition.md
+A  verification/M2-RUNNER-SNAPSHOT-DEBT/run_step.py
+?? ".qoder-credits/\351\200\232\350\267\257\346\216\242\346\265\213__8602db50.canvas.tsx"
+EXIT=0
+CWD=G:\CODEX\New Manga; COMMAND=["git", "rev-parse", "HEAD"]
+ce89a866520ff2498ab5d4d093ec37bf05572bf1
+EXIT=0
+CWD=G:\CODEX\New Manga; COMMAND=["git", "rev-parse", "--path-format=absolute", "--git-common-dir"]
+G:/CODEX/New Manga/.git
+EXIT=0
+CWD=G:\CODEX\New Manga; COMMAND=["git", "diff", "--check"]
+warning: in the working copy of '.qoder-credits/report.json', LF will be replaced by CRLF the next time Git touches it
+EXIT=0
+CWD=G:\CODEX\New Manga.worktrees\RUNNER-SNAPSHOT-DEBT-codex; COMMAND=["git", "status", "--short", "--branch"]
+## codex/M2-RUNNER-SNAPSHOT-DEBT
+EXIT=0
+CWD=G:\CODEX\New Manga.worktrees\RUNNER-SNAPSHOT-DEBT-codex; COMMAND=["git", "rev-parse", "HEAD"]
+15cd788f10e83f6a1a215e71538bfa175b435785
+EXIT=0
+CWD=G:\CODEX\New Manga.worktrees\RUNNER-SNAPSHOT-DEBT-codex; COMMAND=["git", "rev-parse", "--path-format=absolute", "--git-common-dir"]
+G:/CODEX/New Manga/.git
+EXIT=0
+CWD=G:\CODEX\New Manga.worktrees\RUNNER-SNAPSHOT-DEBT-codex; COMMAND=["git", "diff", "--check"]
+EXIT=0
+CWD=G:\CODEX\New Manga.worktrees\RUNNER-SNAPSHOT-DEBT-codex; COMMAND=["git", "diff", "--name-only", "b3860981", "HEAD", "--", "src", "apps", "tests"]
+EXIT=0
+CWD=G:\CODEX\New Manga; COMMAND=["git", "diff", "--name-only", "b3860981", "HEAD", "--", "packaging/m2ac5/run_clean_start_e2e.py", "verification/M2-RC2/run_e2e.py", "src", "apps", "tests"]
+EXIT=0
+CWD=G:\CODEX\New Manga; COMMAND=["git", "diff", "--cached", "--name-only", "--", "packaging/m2ac5/run_clean_start_e2e.py", "verification/M2-RC2/run_e2e.py", "src", "apps", "tests"]
+EXIT=0
+CWD=G:\CODEX\New Manga; COMMAND=["git", "diff", "--cached", "--check"]
+EXIT=0
+CWD=G:\CODEX\New Manga.worktrees\RUNNER-SNAPSHOT-DEBT-codex; COMMAND=["git", "diff", "--check", "968c8f34", "HEAD"]
+EXIT=0
+DSH_R1_EXACT_FINAL_TEXT_GIT_BYTES=PASS; SHA256=ba7081453360027829fbe45ee4d1fe84a2928ec6f36db6dde317023e39d9082e
+DSH_R2_EXACT_FINAL_TEXT_GIT_BYTES=PASS; SHA256=0ad5abe0cf11232bd333148582d0f688e8cd7e9177a1313bf021d1fc88b4f273
+DSH_R3_EXACT_FINAL_TEXT_GIT_BYTES=PASS; SHA256=5462d5842a9414942ba08134d0b4d34918194f91e5b0d5d5aa7a141fde077f68
+OWNER_CLEAN=PASS; MAIN_OTHER_AGENT_DIRTY_PRESERVED; MAIN_RUNNER_NOT_INTEGRATED=PASS; PRODUCT_DIFF_ZERO=PASS; AC4=FAIL/BLOCKED; AC6=NOT_INTEGRATED

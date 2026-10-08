@@ -2,7 +2,7 @@
 
 2026-10-08；Owner=Codex；非作者 Reviewer=DeepSeek Harness；Integrator=Codex。
 TaskStatus=blocked / previous=in_progress；ExecutionState=CHECKPOINTED。
-本交付是待审查的实现与阻塞证据，不是独立批准或主线集成。
+本交付含DSH有界代码批准与阻塞证据；整个Task未批准、未主线集成。
 
 ## 固定恢复点与结果
 
@@ -23,7 +23,8 @@ output-dir隔离产物；RC2 fresh lab，packaged本次自有lab/install，
 **dev Gate PASS；packaged CS-L1 PASS；完整packaged Gate FAIL/BLOCKED**。
 真实安装态acceptance_bridge.exe导入QtGui失败：
 ImportError: DLL load failed while importing QtGui。
-AC1 run1无结果，既有240秒上限超时退出；未改timeout或场景阈值。
+AC1 run1无结果，返回exit=1；整个runner耗时312.8秒。既有240秒上限未改，
+但旧日志没有记录run_app单次起止/timeout分支，精确退出时间线UNKNOWN。
 本轮不修禁止范围spec/依赖/acceptance_bridge，不合并两处runner实现到main。
 
 ## AC 与真实验证
@@ -32,10 +33,10 @@ AC1 run1无结果，既有240秒上限超时退出；未改timeout或场景阈�
 |---|---|---|
 | AC1 基线漂移 | PASS | baseline-evidence.md，旧GC-2报告保持原文 |
 | AC2 两处快照 | PASS | 实现diff，actual CS-L1 PASS，dev production15条 |
-| AC3 判别 | PASS | check_snapshots.py；raw/check-snapshots.log：12实际谓词用例 |
+| AC3 判别 | PASS | check_snapshots.py；raw/check-snapshots-r3.log：16实际谓词用例（旧12项日志保留） |
 | AC4 全Gate | FAIL / BLOCKED | dev10/10+probe13/13 PASS；packaged20 PASS+1 FAIL，后续AC1五项NOT_RUN |
 | AC5 保护/范围 | PASS | history-index-before.txt、范围检查；旧raw/报告/probe零差量，syntax/diff通过 |
-| AC6 Review/集成 | PENDING | 真实DSH审查待执行；没有实现集成/done |
+| AC6 Review/集成 | BLOCKED | DSH r3有界代码批准；AC4未闭合，没有实现集成/done |
 
 PowerShell；Python3.12.3（T1.1.1 venv）、cargo1.98.1、rustc1.98.1、
 node24.15.0、npm12.0.1；真实环境记录见raw/dev-r2/e2e-environment.json。
@@ -46,7 +47,8 @@ node24.15.0、npm12.0.1；真实环境记录见raw/dev-r2/e2e-environment.json�
 - 初次dev EXIT1：fresh checkout没有sidecar bundle，raw/dev-runner.log及raw/dev/保留。
 - fresh PyInstaller完成所有入口，但原PowerShell5脚本weights阶段Get-FileHash解析失败，
   整条命令EXIT1：raw/sidecar-build.log。
-- 用PowerShell7运行同一未改脚本，复用本次fresh bundle完成两组模型哈希校验与复制，
+- 用PowerShell7运行同一未改脚本，走skip-existing路径复用本次fresh bundle，仅完成两组模型哈希校验与复制；
+  没有重跑PyInstaller，
   EXIT0：raw/sidecar-weights-retry.log。没有SkipWeights，没有旧bundle拷贝。
 - dev重跑完整Gate10/10+probe13/13、无missing/unexpected/non-PASS，EXIT0：
   raw/dev-runner-r2.log、raw/dev-r2/e2e-gate.json。
@@ -85,3 +87,22 @@ DLL解析、PyInstaller closure和与已知PASS构建环境的差量；Owner=DSH
 交付具体失败DLL/环境证据或UNKNOWN、最小修复范围建议；修复须另行冻结授权。
 解除本Task阻塞需fixed-head fresh构建+AC1/完整packaged Gate通过，随后真实非作者审查、
 Codex集成后检查；不得将本轮20项PASS当整个Gate通过。
+
+## DSH r2 与下一轮固定方式
+
+r2 reviewed_head=41d77f98；0P0/P1，N1 P2为提交绑定证据缺口，N2/N3/N4 P3措辞/
+来源/最新用例链接精度；原报告保留。已修标签说明、冻结顺序来源、Handoff16项指针；
+补N1时将固定“本轮代码/修正head”和“随后只加绑定日志的evidence_commit”分列，
+避免要求文件包含自己的提交hash。r3只审固定代码head，后续绑定证据是只读输入，
+不会把证据追加commit冒充代码变化或复用旧head批准。Task继续BLOCKED，AC4未修。
+
+## DSH r3 最终有界复核（2026-10-08）
+
+固定 reviewed_code_head=2af6b71aa06979b822e543b221aaf3a2d5f01abe；evidence_commit=653a00628e484ecb8ae023f2594b80233bce4e9a。
+真实CLI EXIT0；session=session-f303c70c-9bcf-4db2-b356-1f4794458d0b；原始报告
+doc/reviews/M2-RUNNER-SNAPSHOT-DEBT-2af6b71a-dsh-r3.md。DSH只读静态复核，零重跑；
+有界代码批准，0P0/P1，列4个非阻断P2收尾；不等于Task批准，AC4 FAIL、AC6未集成，Task仍BLOCKED。
+P2-1/2/3父侧实际补raw/review-binding-r3-supplement.log（EXIT0）：6af→653父子和全路径、
+原始bytes SHA256（旧verified日志hash由text归一化计算，原文保留）、release968 Rust源码hash
+及968→cfb Rust零差量。P2-4 Handoff AC3改指r3的16项日志。补充未重跑产品Gate。
+下一步仍为单独释放DSH只读DLL诊断；不继续范围外实现、不合并runner。

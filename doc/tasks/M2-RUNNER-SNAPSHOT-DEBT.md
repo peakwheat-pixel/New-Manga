@@ -134,7 +134,7 @@ cfb5d2eecc4d8ab7a3159cdbb1d5812547bb5cd2。两处快照、output-dir、自有lab
 fresh PyInstaller成功但PowerShell5 weights复制EXIT1（Get-FileHash不可用）；
 PowerShell7按既有脚本恢复hash校验复制EXIT0；fresh NSIS EXIT0。
 packaged CS-L1 PASS，但AC1 run1的acceptance_bridge.exe导入QtGui时DLL失败，
-随后超时，完整Gate FAIL/EXIT1。不是旧minor3快照失败，不宣称新AC4 PASS。
+未生成结果且返回1，精确run_app退出时间线UNKNOWN，完整Gate FAIL/EXIT1。不是旧minor3快照失败，不宣称新AC4 PASS。
 
 TaskStatus=blocked，previous_status=in_progress，ExecutionState=CHECKPOINTED。
 禁止范围外spec/依赖/acceptance_bridge修复；主线不集成两处runner实现，
@@ -144,3 +144,25 @@ AC1/AC2/AC3/AC5已执行证据见Handoff；AC4=FAIL/BLOCKED、AC6=PENDING。
 旧日志/报告原字节保留；源src/apps/tests/依赖没有提交差量。
 
 packaged实际结果=20 PASS / 1 FAIL；AC1 run1失败后的run2/restart/saved/reader/export五项NOT_RUN，不计PASS。详细计数见result-summary.json。
+
+## DSH r1 有界修正（Task仍blocked）
+
+reviewed_head=7556cb2d；DSH真实CLI EXIT0，session=session-dbe4f574-2377-4302-885a-1f4cba2ae9f9，
+原始报告doc/reviews/M2-RUNNER-SNAPSHOT-DEBT-7556cb2d-dsh-r1.md。
+代码approve_with_conditions（0P0/P1/P2），整个Task blocked，不豁免AC4。
+C1落实际git diff与head绑定；C2最小检查改独立固定15条oracle，加capability/error/status负向；
+C3只改usage说明/PS7 skip记录，并把未落时间线明确UNKNOWN；C4清理DSH自己误写的scratch。
+原报告出现F-17/F-07编号载体不完整，以及完整21/21表述，原文不改；应验收26个完整场景，
+当前21个已报告=20PASS+1FAIL，后续5项NOT_RUN，不以21/21替代完整Gate。
+下一固定head需真实DSH复核；包装DLL诊断/修复候选未释放。
+
+## DSH r3 最终有界复核（2026-10-08）
+
+固定 reviewed_code_head=2af6b71aa06979b822e543b221aaf3a2d5f01abe；evidence_commit=653a00628e484ecb8ae023f2594b80233bce4e9a。
+真实CLI EXIT0；session=session-f303c70c-9bcf-4db2-b356-1f4794458d0b；原始报告
+doc/reviews/M2-RUNNER-SNAPSHOT-DEBT-2af6b71a-dsh-r3.md。DSH只读静态复核，零重跑；
+有界代码批准，0P0/P1，列4个非阻断P2收尾；不等于Task批准，AC4 FAIL、AC6未集成，Task仍BLOCKED。
+P2-1/2/3父侧实际补raw/review-binding-r3-supplement.log（EXIT0）：6af→653父子和全路径、
+原始bytes SHA256（旧verified日志hash由text归一化计算，原文保留）、release968 Rust源码hash
+及968→cfb Rust零差量。P2-4 Handoff AC3改指r3的16项日志。补充未重跑产品Gate。
+下一步仍为单独释放DSH只读DLL诊断；不继续范围外实现、不合并runner。

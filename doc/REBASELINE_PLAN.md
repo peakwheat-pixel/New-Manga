@@ -1,22 +1,28 @@
 # Project Rebaseline Plan
 
-## 2026-10-08 当前阻塞：M2-RUNNER-SNAPSHOT-DEBT blocked
+## 2026-10-08 当前阻塞：M2-RUNNER-SNAPSHOT-DEBT blocked（DSH r3后）
 
 唯一Active Task=[M2-RUNNER-SNAPSHOT-DEBT](tasks/M2-RUNNER-SNAPSHOT-DEBT.md)，Owner=Codex，
 非作者Reviewer=DeepSeek Harness，Integrator=Codex。TaskStatus=blocked，
-previous_status=in_progress，ExecutionState=CHECKPOINTED。
-两处快照实现与判别检查留在Owner分支codex/M2-RUNNER-SNAPSHOT-DEBT：
-固定源码head=cfb5d2ee，证据head=7556cb2d，worktree=
-G:/CODEX/New Manga.worktrees/RUNNER-SNAPSHOT-DEBT-codex。
-dev Gate10/10+probe13/13 PASS；packaged CS-L1 PASS，但完整Gate20 PASS/1 FAIL，
-AC1 run1的acceptance_bridge.exe报QtGui DLL导入失败并超时，其后五项NOT_RUN。
-AC4=FAIL/BLOCKED，AC6待真实DSH审查；本轮不扩大到spec/依赖/产品，不合并runner实现。
-本主线提交只导入治理/Handoff/证据；旧FAIL和历史日志保持原文。
-[Handoff及可转发诊断建议](handoffs/M2-RUNNER-SNAPSHOT-DEBT-codex-cfb5d2ee.md)；
-[result-summary](../verification/M2-RUNNER-SNAPSHOT-DEBT/result-summary.json)。
-解除需单独授权的新架构packaged AC1 DLL诊断/修复，以及fixed-head fresh构建完整Gate通过；
-诊断候选M2-PACKAGED-AC1-DLL-DIAG尚未创建/释放，Owner建议DSH，Reviewer=Codex。
-下方ready/in_progress/GC-2等为历史checkpoint，不覆盖本段。
+previous_status=in_progress，ExecutionState=CHECKPOINTED。两处runner快照修复留在Owner分支，未集成。
+固定构建源码head=cfb5d2eecc4d8ab7a3159cdbb1d5812547bb5cd2；
+DSH r3 reviewed_code_head=2af6b71aa06979b822e543b221aaf3a2d5f01abe；
+evidence_commit=653a00628e484ecb8ae023f2594b80233bce4e9a；
+Owner恢复HEAD=15cd788f10e83f6a1a215e71538bfa175b435785，clean；worktree=
+G:/CODEX/New Manga.worktrees/RUNNER-SNAPSHOT-DEBT-codex，common-dir=G:/CODEX/New Manga/.git。
+最小16用例PASS；dev Gate10/10+probe13/13 PASS；packaged CS-L1 PASS，完整26项为
+20 PASS / 1 FAIL / 5 NOT_RUN。AC1 run1 acceptance_bridge.exe报QtGui DLL导入失败，
+精确退出时间线UNKNOWN；不把整个runner耗时当单次timeout证据。
+DSH r3静态有界代码批准，零重跑，0P0/P1、4个非阻断P2已补证据/指针；
+[原始Review](reviews/M2-RUNNER-SNAPSHOT-DEBT-2af6b71a-dsh-r3.md)。AC4=FAIL/BLOCKED，AC6未集成，Task不能done。
+主线只同步治理/原始Review/自有verification证据；此处判别脚本作为审计产物，运行须使用Owner工作区，
+主线两个runner仍为未集成版本。没有产品/src/apps/tests/依赖/Schema修改，历史FAIL不追认PASS。
+[Handoff及完整转发指令](handoffs/M2-RUNNER-SNAPSHOT-DEBT-codex-cfb5d2ee.md)；
+[恢复与同步](../verification/M2-RUNNER-SNAPSHOT-DEBT/closeout-recovery.md)。
+下一步建议Codex单独冻结并释放M2-PACKAGED-AC1-DLL-DIAG，Owner=DSH，非作者Reviewer=Codex，
+仅诊断新架构packaged acceptance构建环境；候选尚未创建/释放，不能自行开始范围外修复。
+解除阻塞需新固定head fresh构建完整Gate通过，再经非作者审查与Codex集成验证。
+下方ready/in_progress/历史checkpoint不覆盖本段。
 
 
 ## 2026-10-08 正式释放：M2-RUNNER-SNAPSHOT-DEBT in_progress

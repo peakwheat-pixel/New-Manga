@@ -1,6 +1,6 @@
 # Task 索引
 
-当前唯一Active：[M2-RUNNER-SNAPSHOT-DEBT](M2-RUNNER-SNAPSHOT-DEBT.md) **blocked / Codex**；dev10/10+probe13/13 PASS，packaged CS-L1 PASS但AC1 QtGui DLL失败，20PASS/1FAIL/5NOT_RUN。主线只登记证据，不集成runner实现。范围外诊断候选未释放；实时状态以Plan/STATUS为准。
+当前唯一Active：[M2-RUNNER-SNAPSHOT-DEBT](M2-RUNNER-SNAPSHOT-DEBT.md) **blocked / Codex**；dev10/10+probe13/13 PASS，packaged CS-L1 PASS但AC1 QtGui DLL失败，20PASS/1FAIL/5NOT_RUN。DSH r3已静态有界批准代码；完整Task仍BLOCKED，主线只登记证据，不集成runner实现。范围外诊断候选未释放；实时状态以Plan/STATUS为准。
 
 
 > **2026-09-21 audit**：本索引与 TASK-001～065 文件是历史证据。当前分类、依赖和唯一下一任务见 [REBASELINE_PLAN](../REBASELINE_PLAN.md)，当前 checkpoint 见 [STATUS](../STATUS.md)。不要根据旧 frontmatter 的 `status: done` 单独判定完成。

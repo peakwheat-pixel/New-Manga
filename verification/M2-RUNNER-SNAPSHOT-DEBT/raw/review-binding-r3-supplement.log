@@ -1,0 +1,143 @@
+HOST=Windows; HARNESS_PYTHON=G:\CODEX\New Manga.task-envs\T1.1.1-impl-py312\Scripts\python.exe; CWD=G:\CODEX\New Manga.worktrees\RUNNER-SNAPSHOT-DEBT-codex
+HEAD=653a00628e484ecb8ae023f2594b80233bce4e9a
+COMMAND=["G:/CODEX/New Manga.task-envs/T1.1.1-impl-py312/Scripts/python.exe", "verification/M2-RUNNER-SNAPSHOT-DEBT/bind_review.py", "2af6b71aa06979b822e543b221aaf3a2d5f01abe"]
+COMMAND=["git", "diff", "--name-only", "6afbd1ba", "653a0062"]
+verification/M2-RUNNER-SNAPSHOT-DEBT/bind_review.py
+verification/M2-RUNNER-SNAPSHOT-DEBT/raw/review-binding-r3-verified.log
+EXIT=0
+COMMAND=["git", "rev-parse", "653a0062^1"]
+6afbd1ba49e383fa07cf0acd154796b152cc86f9
+EXIT=0
+COMMAND=["git", "show", "968c8f34601b72667831f1fd15bb20cd2c8f3cb7:apps/desktop/src-tauri/src/main.rs"]
+SOURCE_CONTENT_BYTES_SHA256=3df891331134ef6085bc1c03fda0bafbcd63d0e9a368b3c8c60f937d095e7298
+EXIT=0
+COMMAND=["git", "diff", "--name-only", "968c8f34601b72667831f1fd15bb20cd2c8f3cb7", "cfb5d2eecc4d8ab7a3159cdbb1d5812547bb5cd2", "--", "apps/desktop/src-tauri/src/main.rs"]
+EXIT=0
+COMMAND=["git", "rev-parse", "HEAD"]
+653a00628e484ecb8ae023f2594b80233bce4e9a
+EXIT=0
+COMMAND=["git", "merge-base", "--is-ancestor", "2af6b71aa06979b822e543b221aaf3a2d5f01abe", "653a00628e484ecb8ae023f2594b80233bce4e9a"]
+EXIT=0
+ACTUAL_EVIDENCE_PARENT_HEAD=653a00628e484ecb8ae023f2594b80233bce4e9a
+COMMAND=["git", "diff", "--name-only", "2af6b71aa06979b822e543b221aaf3a2d5f01abe", "653a00628e484ecb8ae023f2594b80233bce4e9a"]
+verification/M2-RUNNER-SNAPSHOT-DEBT/bind_review.py
+verification/M2-RUNNER-SNAPSHOT-DEBT/raw/check-snapshots-r3.log
+verification/M2-RUNNER-SNAPSHOT-DEBT/raw/review-binding-r3-verified.log
+verification/M2-RUNNER-SNAPSHOT-DEBT/raw/review-binding-r3.log
+EXIT=0
+FIXED_REVIEWED_CODE_HEAD=2af6b71aa06979b822e543b221aaf3a2d5f01abe
+COMMAND=["git", "rev-parse", "41d77f98"]
+41d77f9893b0c622556f86f18a7829eab1b3975e
+EXIT=0
+COMMAND=["git", "diff", "--name-only", "cfb5d2eecc4d8ab7a3159cdbb1d5812547bb5cd2", "41d77f98"]
+doc/handoffs/M2-RUNNER-SNAPSHOT-DEBT-codex-cfb5d2ee.md
+doc/reviews/M2-RUNNER-SNAPSHOT-DEBT-7556cb2d-dsh-r1.md
+doc/tasks/M2-RUNNER-SNAPSHOT-DEBT.md
+verification/M2-RC2/run_e2e.py
+verification/M2-RUNNER-SNAPSHOT-DEBT/.gitattributes
+verification/M2-RUNNER-SNAPSHOT-DEBT/baseline-evidence.md
+verification/M2-RUNNER-SNAPSHOT-DEBT/build-fingerprint.json
+verification/M2-RUNNER-SNAPSHOT-DEBT/build-generated-normalization.json
+verification/M2-RUNNER-SNAPSHOT-DEBT/check_snapshots.py
+verification/M2-RUNNER-SNAPSHOT-DEBT/checkpoint.md
+verification/M2-RUNNER-SNAPSHOT-DEBT/final-validation.log
+verification/M2-RUNNER-SNAPSHOT-DEBT/history-index-before.txt
+verification/M2-RUNNER-SNAPSHOT-DEBT/raw/check-snapshots-r2.log
+verification/M2-RUNNER-SNAPSHOT-DEBT/raw/check-snapshots.log
+verification/M2-RUNNER-SNAPSHOT-DEBT/raw/dev-r2/e2e-cargo-build.log
+verification/M2-RUNNER-SNAPSHOT-DEBT/raw/dev-r2/e2e-catalog-loader.log
+verification/M2-RUNNER-SNAPSHOT-DEBT/raw/dev-r2/e2e-environment.json
+verification/M2-RUNNER-SNAPSHOT-DEBT/raw/dev-r2/e2e-gate.json
+verification/M2-RUNNER-SNAPSHOT-DEBT/raw/dev-r2/e2e-probe-results.json
+verification/M2-RUNNER-SNAPSHOT-DEBT/raw/dev-r2/e2e-sidecar-import-isolation.log
+verification/M2-RUNNER-SNAPSHOT-DEBT/raw/dev-r2/e2e-sidecar-modules-probe.json
+verification/M2-RUNNER-SNAPSHOT-DEBT/raw/dev-runner-r2.log
+verification/M2-RUNNER-SNAPSHOT-DEBT/raw/dev-runner.log
+verification/M2-RUNNER-SNAPSHOT-DEBT/raw/dev/e2e-cargo-build.log
+verification/M2-RUNNER-SNAPSHOT-DEBT/raw/dev/e2e-catalog-loader.log
+verification/M2-RUNNER-SNAPSHOT-DEBT/raw/dev/e2e-environment.json
+verification/M2-RUNNER-SNAPSHOT-DEBT/raw/dev/e2e-sidecar-import-isolation.log
+verification/M2-RUNNER-SNAPSHOT-DEBT/raw/frontend-build.log
+verification/M2-RUNNER-SNAPSHOT-DEBT/raw/npm-ci.log
+verification/M2-RUNNER-SNAPSHOT-DEBT/raw/nsis-build.log
+verification/M2-RUNNER-SNAPSHOT-DEBT/raw/packaged-runner.log
+verification/M2-RUNNER-SNAPSHOT-DEBT/raw/packaged/cleanstart-ac1-catalog-initialize.log
+verification/M2-RUNNER-SNAPSHOT-DEBT/raw/packaged/cleanstart-ac1-run1-stdout.log
+verification/M2-RUNNER-SNAPSHOT-DEBT/raw/packaged/cleanstart-gate.json
+verification/M2-RUNNER-SNAPSHOT-DEBT/raw/packaged/cleanstart-probe-stdout.log
+verification/M2-RUNNER-SNAPSHOT-DEBT/raw/packaged/cleanstart-production-stdout.log
+verification/M2-RUNNER-SNAPSHOT-DEBT/raw/packaged/r1-library-probe.log
+verification/M2-RUNNER-SNAPSHOT-DEBT/raw/sidecar-build.log
+verification/M2-RUNNER-SNAPSHOT-DEBT/raw/sidecar-weights-retry.log
+verification/M2-RUNNER-SNAPSHOT-DEBT/result-summary.json
+verification/M2-RUNNER-SNAPSHOT-DEBT/review-binding.log
+verification/M2-RUNNER-SNAPSHOT-DEBT/review-disposition.md
+EXIT=0
+COMMAND=["git", "diff", "--name-only", "cfb5d2eecc4d8ab7a3159cdbb1d5812547bb5cd2", "2af6b71aa06979b822e543b221aaf3a2d5f01abe"]
+doc/handoffs/M2-RUNNER-SNAPSHOT-DEBT-codex-cfb5d2ee.md
+doc/reviews/M2-RUNNER-SNAPSHOT-DEBT-41d77f98-dsh-r2.md
+doc/reviews/M2-RUNNER-SNAPSHOT-DEBT-7556cb2d-dsh-r1.md
+doc/tasks/M2-RUNNER-SNAPSHOT-DEBT.md
+verification/M2-RC2/run_e2e.py
+verification/M2-RUNNER-SNAPSHOT-DEBT/.gitattributes
+verification/M2-RUNNER-SNAPSHOT-DEBT/baseline-evidence.md
+verification/M2-RUNNER-SNAPSHOT-DEBT/build-fingerprint.json
+verification/M2-RUNNER-SNAPSHOT-DEBT/build-generated-normalization.json
+verification/M2-RUNNER-SNAPSHOT-DEBT/check_snapshots.py
+verification/M2-RUNNER-SNAPSHOT-DEBT/checkpoint.md
+verification/M2-RUNNER-SNAPSHOT-DEBT/final-validation.log
+verification/M2-RUNNER-SNAPSHOT-DEBT/history-index-before.txt
+verification/M2-RUNNER-SNAPSHOT-DEBT/raw/check-snapshots-r2.log
+verification/M2-RUNNER-SNAPSHOT-DEBT/raw/check-snapshots.log
+verification/M2-RUNNER-SNAPSHOT-DEBT/raw/dev-r2/e2e-cargo-build.log
+verification/M2-RUNNER-SNAPSHOT-DEBT/raw/dev-r2/e2e-catalog-loader.log
+verification/M2-RUNNER-SNAPSHOT-DEBT/raw/dev-r2/e2e-environment.json
+verification/M2-RUNNER-SNAPSHOT-DEBT/raw/dev-r2/e2e-gate.json
+verification/M2-RUNNER-SNAPSHOT-DEBT/raw/dev-r2/e2e-probe-results.json
+verification/M2-RUNNER-SNAPSHOT-DEBT/raw/dev-r2/e2e-sidecar-import-isolation.log
+verification/M2-RUNNER-SNAPSHOT-DEBT/raw/dev-r2/e2e-sidecar-modules-probe.json
+verification/M2-RUNNER-SNAPSHOT-DEBT/raw/dev-runner-r2.log
+verification/M2-RUNNER-SNAPSHOT-DEBT/raw/dev-runner.log
+verification/M2-RUNNER-SNAPSHOT-DEBT/raw/dev/e2e-cargo-build.log
+verification/M2-RUNNER-SNAPSHOT-DEBT/raw/dev/e2e-catalog-loader.log
+verification/M2-RUNNER-SNAPSHOT-DEBT/raw/dev/e2e-environment.json
+verification/M2-RUNNER-SNAPSHOT-DEBT/raw/dev/e2e-sidecar-import-isolation.log
+verification/M2-RUNNER-SNAPSHOT-DEBT/raw/frontend-build.log
+verification/M2-RUNNER-SNAPSHOT-DEBT/raw/npm-ci.log
+verification/M2-RUNNER-SNAPSHOT-DEBT/raw/nsis-build.log
+verification/M2-RUNNER-SNAPSHOT-DEBT/raw/packaged-runner.log
+verification/M2-RUNNER-SNAPSHOT-DEBT/raw/packaged/cleanstart-ac1-catalog-initialize.log
+verification/M2-RUNNER-SNAPSHOT-DEBT/raw/packaged/cleanstart-ac1-run1-stdout.log
+verification/M2-RUNNER-SNAPSHOT-DEBT/raw/packaged/cleanstart-gate.json
+verification/M2-RUNNER-SNAPSHOT-DEBT/raw/packaged/cleanstart-probe-stdout.log
+verification/M2-RUNNER-SNAPSHOT-DEBT/raw/packaged/cleanstart-production-stdout.log
+verification/M2-RUNNER-SNAPSHOT-DEBT/raw/packaged/r1-library-probe.log
+verification/M2-RUNNER-SNAPSHOT-DEBT/raw/sidecar-build.log
+verification/M2-RUNNER-SNAPSHOT-DEBT/raw/sidecar-weights-retry.log
+verification/M2-RUNNER-SNAPSHOT-DEBT/result-summary.json
+verification/M2-RUNNER-SNAPSHOT-DEBT/review-binding.log
+verification/M2-RUNNER-SNAPSHOT-DEBT/review-disposition.md
+EXIT=0
+COMMAND=["git", "diff", "--name-only", "cfb5d2eecc4d8ab7a3159cdbb1d5812547bb5cd2", "2af6b71aa06979b822e543b221aaf3a2d5f01abe", "--", "src", "apps", "tests"]
+EXIT=0
+COMMAND=["git", "diff", "--check", "cfb5d2eecc4d8ab7a3159cdbb1d5812547bb5cd2", "2af6b71aa06979b822e543b221aaf3a2d5f01abe"]
+EXIT=0
+COMMAND=["git", "show", "cfb5d2eecc4d8ab7a3159cdbb1d5812547bb5cd2:verification/M2-RC2/run_e2e.py"]
+SOURCE_CONTENT_BYTES_SHA256=95bb13f442ecdc33a697fdd9f35a277fa6006b8bc616a7f885ae7445c7ef0d5f
+EXIT=0
+COMMAND=["git", "show", "2af6b71aa06979b822e543b221aaf3a2d5f01abe:verification/M2-RC2/run_e2e.py"]
+SOURCE_CONTENT_BYTES_SHA256=7e0a4ce503a1c4a980b236a2497ee511b495fa708573aa5c78aa39aa59a2112b
+EXIT=0
+AST_EXCLUDING_DOCSTRING_IDENTICAL=verification/M2-RC2/run_e2e.py; EXIT=0
+COMMAND=["git", "show", "cfb5d2eecc4d8ab7a3159cdbb1d5812547bb5cd2:packaging/m2ac5/run_clean_start_e2e.py"]
+SOURCE_CONTENT_BYTES_SHA256=9c8fff9d55936b9b872405d8fc12dad0af0005e5fe0b8b4688dfe2d21bec8216
+EXIT=0
+COMMAND=["git", "show", "2af6b71aa06979b822e543b221aaf3a2d5f01abe:packaging/m2ac5/run_clean_start_e2e.py"]
+SOURCE_CONTENT_BYTES_SHA256=9c8fff9d55936b9b872405d8fc12dad0af0005e5fe0b8b4688dfe2d21bec8216
+EXIT=0
+AST_EXCLUDING_DOCSTRING_IDENTICAL=packaging/m2ac5/run_clean_start_e2e.py; EXIT=0
+REPORT_CONTENT_BYTES_SHA256=M2-RUNNER-SNAPSHOT-DEBT-41d77f98-dsh-r2.md:0ad5abe0cf11232bd333148582d0f688e8cd7e9177a1313bf021d1fc88b4f273
+REPORT_CONTENT_BYTES_SHA256=M2-RUNNER-SNAPSHOT-DEBT-7556cb2d-dsh-r1.md:ba7081453360027829fbe45ee4d1fe84a2928ec6f36db6dde317023e39d9082e
+BINDING_PASS; raw evidence appended after this fixed code head
+
+EXIT=0; ELAPSED=0.6s

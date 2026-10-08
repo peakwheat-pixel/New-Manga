@@ -1,0 +1,3187 @@
+HOST=Windows; HARNESS_PYTHON=G:\CODEX\New Manga.task-envs\T1.1.1-impl-py312\Scripts\python.exe; CWD=G:\CODEX\New Manga.worktrees\RUNNER-SNAPSHOT-DEBT-codex
+HEAD=2af6b71aa06979b822e543b221aaf3a2d5f01abe
+COMMAND=["G:/CODEX/New Manga.task-envs/T1.1.1-impl-py312/Scripts/python.exe", "verification/M2-RUNNER-SNAPSHOT-DEBT/bind_review.py", "2af6b71aa06979b822e543b221aaf3a2d5f01abe"]
+COMMAND=["git", "rev-parse", "HEAD"]
+2af6b71aa06979b822e543b221aaf3a2d5f01abe
+EXIT=0
+FIXED_REVIEWED_CODE_HEAD=2af6b71aa06979b822e543b221aaf3a2d5f01abe
+COMMAND=["git", "rev-parse", "41d77f98"]
+41d77f9893b0c622556f86f18a7829eab1b3975e
+EXIT=0
+COMMAND=["git", "diff", "--name-only", "cfb5d2eecc4d8ab7a3159cdbb1d5812547bb5cd2", "41d77f98"]
+doc/handoffs/M2-RUNNER-SNAPSHOT-DEBT-codex-cfb5d2ee.md
+doc/reviews/M2-RUNNER-SNAPSHOT-DEBT-7556cb2d-dsh-r1.md
+doc/tasks/M2-RUNNER-SNAPSHOT-DEBT.md
+verification/M2-RC2/run_e2e.py
+verification/M2-RUNNER-SNAPSHOT-DEBT/.gitattributes
+verification/M2-RUNNER-SNAPSHOT-DEBT/baseline-evidence.md
+verification/M2-RUNNER-SNAPSHOT-DEBT/build-fingerprint.json
+verification/M2-RUNNER-SNAPSHOT-DEBT/build-generated-normalization.json
+verification/M2-RUNNER-SNAPSHOT-DEBT/check_snapshots.py
+verification/M2-RUNNER-SNAPSHOT-DEBT/checkpoint.md
+verification/M2-RUNNER-SNAPSHOT-DEBT/final-validation.log
+verification/M2-RUNNER-SNAPSHOT-DEBT/history-index-before.txt
+verification/M2-RUNNER-SNAPSHOT-DEBT/raw/check-snapshots-r2.log
+verification/M2-RUNNER-SNAPSHOT-DEBT/raw/check-snapshots.log
+verification/M2-RUNNER-SNAPSHOT-DEBT/raw/dev-r2/e2e-cargo-build.log
+verification/M2-RUNNER-SNAPSHOT-DEBT/raw/dev-r2/e2e-catalog-loader.log
+verification/M2-RUNNER-SNAPSHOT-DEBT/raw/dev-r2/e2e-environment.json
+verification/M2-RUNNER-SNAPSHOT-DEBT/raw/dev-r2/e2e-gate.json
+verification/M2-RUNNER-SNAPSHOT-DEBT/raw/dev-r2/e2e-probe-results.json
+verification/M2-RUNNER-SNAPSHOT-DEBT/raw/dev-r2/e2e-sidecar-import-isolation.log
+verification/M2-RUNNER-SNAPSHOT-DEBT/raw/dev-r2/e2e-sidecar-modules-probe.json
+verification/M2-RUNNER-SNAPSHOT-DEBT/raw/dev-runner-r2.log
+verification/M2-RUNNER-SNAPSHOT-DEBT/raw/dev-runner.log
+verification/M2-RUNNER-SNAPSHOT-DEBT/raw/dev/e2e-cargo-build.log
+verification/M2-RUNNER-SNAPSHOT-DEBT/raw/dev/e2e-catalog-loader.log
+verification/M2-RUNNER-SNAPSHOT-DEBT/raw/dev/e2e-environment.json
+verification/M2-RUNNER-SNAPSHOT-DEBT/raw/dev/e2e-sidecar-import-isolation.log
+verification/M2-RUNNER-SNAPSHOT-DEBT/raw/frontend-build.log
+verification/M2-RUNNER-SNAPSHOT-DEBT/raw/npm-ci.log
+verification/M2-RUNNER-SNAPSHOT-DEBT/raw/nsis-build.log
+verification/M2-RUNNER-SNAPSHOT-DEBT/raw/packaged-runner.log
+verification/M2-RUNNER-SNAPSHOT-DEBT/raw/packaged/cleanstart-ac1-catalog-initialize.log
+verification/M2-RUNNER-SNAPSHOT-DEBT/raw/packaged/cleanstart-ac1-run1-stdout.log
+verification/M2-RUNNER-SNAPSHOT-DEBT/raw/packaged/cleanstart-gate.json
+verification/M2-RUNNER-SNAPSHOT-DEBT/raw/packaged/cleanstart-probe-stdout.log
+verification/M2-RUNNER-SNAPSHOT-DEBT/raw/packaged/cleanstart-production-stdout.log
+verification/M2-RUNNER-SNAPSHOT-DEBT/raw/packaged/r1-library-probe.log
+verification/M2-RUNNER-SNAPSHOT-DEBT/raw/sidecar-build.log
+verification/M2-RUNNER-SNAPSHOT-DEBT/raw/sidecar-weights-retry.log
+verification/M2-RUNNER-SNAPSHOT-DEBT/result-summary.json
+verification/M2-RUNNER-SNAPSHOT-DEBT/review-binding.log
+verification/M2-RUNNER-SNAPSHOT-DEBT/review-disposition.md
+EXIT=0
+COMMAND=["git", "diff", "--name-only", "cfb5d2eecc4d8ab7a3159cdbb1d5812547bb5cd2", "2af6b71aa06979b822e543b221aaf3a2d5f01abe"]
+doc/handoffs/M2-RUNNER-SNAPSHOT-DEBT-codex-cfb5d2ee.md
+doc/reviews/M2-RUNNER-SNAPSHOT-DEBT-41d77f98-dsh-r2.md
+doc/reviews/M2-RUNNER-SNAPSHOT-DEBT-7556cb2d-dsh-r1.md
+doc/tasks/M2-RUNNER-SNAPSHOT-DEBT.md
+verification/M2-RC2/run_e2e.py
+verification/M2-RUNNER-SNAPSHOT-DEBT/.gitattributes
+verification/M2-RUNNER-SNAPSHOT-DEBT/baseline-evidence.md
+verification/M2-RUNNER-SNAPSHOT-DEBT/build-fingerprint.json
+verification/M2-RUNNER-SNAPSHOT-DEBT/build-generated-normalization.json
+verification/M2-RUNNER-SNAPSHOT-DEBT/check_snapshots.py
+verification/M2-RUNNER-SNAPSHOT-DEBT/checkpoint.md
+verification/M2-RUNNER-SNAPSHOT-DEBT/final-validation.log
+verification/M2-RUNNER-SNAPSHOT-DEBT/history-index-before.txt
+verification/M2-RUNNER-SNAPSHOT-DEBT/raw/check-snapshots-r2.log
+verification/M2-RUNNER-SNAPSHOT-DEBT/raw/check-snapshots.log
+verification/M2-RUNNER-SNAPSHOT-DEBT/raw/dev-r2/e2e-cargo-build.log
+verification/M2-RUNNER-SNAPSHOT-DEBT/raw/dev-r2/e2e-catalog-loader.log
+verification/M2-RUNNER-SNAPSHOT-DEBT/raw/dev-r2/e2e-environment.json
+verification/M2-RUNNER-SNAPSHOT-DEBT/raw/dev-r2/e2e-gate.json
+verification/M2-RUNNER-SNAPSHOT-DEBT/raw/dev-r2/e2e-probe-results.json
+verification/M2-RUNNER-SNAPSHOT-DEBT/raw/dev-r2/e2e-sidecar-import-isolation.log
+verification/M2-RUNNER-SNAPSHOT-DEBT/raw/dev-r2/e2e-sidecar-modules-probe.json
+verification/M2-RUNNER-SNAPSHOT-DEBT/raw/dev-runner-r2.log
+verification/M2-RUNNER-SNAPSHOT-DEBT/raw/dev-runner.log
+verification/M2-RUNNER-SNAPSHOT-DEBT/raw/dev/e2e-cargo-build.log
+verification/M2-RUNNER-SNAPSHOT-DEBT/raw/dev/e2e-catalog-loader.log
+verification/M2-RUNNER-SNAPSHOT-DEBT/raw/dev/e2e-environment.json
+verification/M2-RUNNER-SNAPSHOT-DEBT/raw/dev/e2e-sidecar-import-isolation.log
+verification/M2-RUNNER-SNAPSHOT-DEBT/raw/frontend-build.log
+verification/M2-RUNNER-SNAPSHOT-DEBT/raw/npm-ci.log
+verification/M2-RUNNER-SNAPSHOT-DEBT/raw/nsis-build.log
+verification/M2-RUNNER-SNAPSHOT-DEBT/raw/packaged-runner.log
+verification/M2-RUNNER-SNAPSHOT-DEBT/raw/packaged/cleanstart-ac1-catalog-initialize.log
+verification/M2-RUNNER-SNAPSHOT-DEBT/raw/packaged/cleanstart-ac1-run1-stdout.log
+verification/M2-RUNNER-SNAPSHOT-DEBT/raw/packaged/cleanstart-gate.json
+verification/M2-RUNNER-SNAPSHOT-DEBT/raw/packaged/cleanstart-probe-stdout.log
+verification/M2-RUNNER-SNAPSHOT-DEBT/raw/packaged/cleanstart-production-stdout.log
+verification/M2-RUNNER-SNAPSHOT-DEBT/raw/packaged/r1-library-probe.log
+verification/M2-RUNNER-SNAPSHOT-DEBT/raw/sidecar-build.log
+verification/M2-RUNNER-SNAPSHOT-DEBT/raw/sidecar-weights-retry.log
+verification/M2-RUNNER-SNAPSHOT-DEBT/result-summary.json
+verification/M2-RUNNER-SNAPSHOT-DEBT/review-binding.log
+verification/M2-RUNNER-SNAPSHOT-DEBT/review-disposition.md
+EXIT=0
+COMMAND=["git", "diff", "--name-only", "cfb5d2eecc4d8ab7a3159cdbb1d5812547bb5cd2", "2af6b71aa06979b822e543b221aaf3a2d5f01abe", "--", "src", "apps", "tests"]
+EXIT=0
+COMMAND=["git", "diff", "--check", "cfb5d2eecc4d8ab7a3159cdbb1d5812547bb5cd2", "2af6b71aa06979b822e543b221aaf3a2d5f01abe"]
+EXIT=0
+COMMAND=["git", "show", "cfb5d2eecc4d8ab7a3159cdbb1d5812547bb5cd2:verification/M2-RC2/run_e2e.py"]
+"""M2-RC2 end-to-end matrix runner (Task deliverable, RC2-AC1/AC2).
+
+Exercises the REAL sidecar launch path and the hardened command surface:
+
+  0. environment record (Python/Cargo/Node versions, WebView2 presence);
+     a missing tool FAILS the gate (R2-06)
+  1. synthetic lab preparation (asset/typical/boundary/oversize, scope roots)
+  2. catalog seeding through the REAL loader entry point
+     (``python -m infrastructure.resource_channel.catalog_loader``) into the
+     Core/SQLite catalog store -- the launcher-side write path
+  3. sidecar import isolation (headless subprocess loads the sidecar entry,
+     captured module set is gated against the F-05 whitelist)
+  4. PROBE phase: the built desktop runtime runs the full WebView matrix
+     (RC1 resource-channel scenarios E-01..E-09 + RC2 hardened-surface
+     scenarios D-01..D-03) and exits through probe_exit; the gate asserts
+     the EXPECTED scenario SET (R2-05), and copies the discriminating
+     artefacts (probe results JSON, sidecar module dumps) into raw/
+  5. INTERACTIVE phase: the same runtime without M2RC1_PROBE_OUT. The gate
+     (`interactive-production-surface`) verifies externally observable facts
+     only -- the announced production allowlist, process liveness, absence
+     of probe results; the in-page IP/IA matrix is NOT machine-verified
+     (R2-03). A reader thread keeps draining stderr throughout.
+  6. gate: every recorded scenario must be PASS (FAIL/MISSING/NOT_RUN are
+     gate failures, the RC1 R-03 rule)
+
+Run (from the repository root):
+  python verification/M2-RC2/run_e2e.py [--exe PATH] [--skip-build]
+
+Artifacts land in ``verification/M2-RC2/raw/`` and ``%TEMP%/m2rc2-lab``.
+"""
+
+from __future__ import annotations
+
+import argparse
+import hashlib
+import json
+import os
+import re
+import shutil
+import subprocess
+import sys
+import threading
+import tempfile
+import time
+from pathlib import Path
+
+REPO_ROOT = Path(__file__).resolve().parents[2]
+SRC_ROOT = REPO_ROOT / "src"
+RAW = Path(__file__).resolve().parent / "raw"
+LAB = Path(os.environ.get("TEMP", ".")) / "m2rc2-lab"
+BOUNDARY_BYTES = 256 * 1024 * 1024
+
+sys.path.insert(0, str(REPO_ROOT / "tests" / "m2_resource_channel"))
+from conftest import write_noise_png  # noqa: E402
+
+#: F-05 isolation whitelist: the sidecar entry may load exactly these
+#: project modules (mirrors tests/m2_resource_channel/test_sidecar_isolation.py).
+SIDECAR_ALLOWED_PROJECT_MODULES = {
+    "application",
+    "application.resource_channel",
+    "application.resource_channel.dto",
+    "application.resource_channel.service",
+    "infrastructure",
+    "infrastructure.resource_channel",
+    "infrastructure.resource_channel.catalog_store",
+    "infrastructure.resource_channel.handle_resolver",
+    "infrastructure.resource_channel.host_bridge",
+    "infrastructure.resource_channel.scope",
+}
+
+# Note: document.title is NOT a reliable report channel here ！ Tauri's
+# window.title() does not follow the page title on this stack, so the
+# interactive phase is judged on observable behavior (self-close), not on the
+# stderr title mirror.
+def sha256_hex(data: bytes) -> str:
+    return hashlib.sha256(data).hexdigest()
+
+
+def log(section: str) -> None:
+    print(f"\n=== {section} ===")
+
+
+def prepare_lab() -> dict:
+    derived = LAB / "scope" / "derived"
+    managed = LAB / "scope" / "managed"
+    derived.mkdir(parents=True, exist_ok=True)
+    managed.mkdir(parents=True, exist_ok=True)
+
+    payload = write_noise_png(derived / "asset.png", 128, 128, seed=5101)
+    typical = write_noise_png(derived / "typical.png", 1600, 2400, seed=5202)
+
+    boundary = derived / "boundary.bin"
+    with open(boundary, "wb") as handle:
+        handle.truncate(BOUNDARY_BYTES)
+    oversize = derived / "oversize.bin"
+    with open(oversize, "wb") as handle:
+        handle.truncate(BOUNDARY_BYTES + 1)
+
+    manifest = {
+        "lab": str(LAB),
+        "fixtures": {
+            "asset": {"sha256": sha256_hex(payload), "bytes": len(payload)},
+            "typical": {"sha256": sha256_hex(typical), "bytes": len(typical)},
+            "boundary": {
+                "sha256": hashlib.sha256(b"\x00" * BOUNDARY_BYTES).hexdigest(),
+                "bytes": BOUNDARY_BYTES,
+            },
+        },
+    }
+    (LAB / "fixtures.json").write_text(json.dumps(manifest, indent=2), encoding="utf-8")
+    print(f"lab ready: {LAB}")
+    return manifest
+
+
+def seed_catalog() -> tuple[int, str]:
+    """Seed the Core/SQLite catalog authority through the real loader CLI.
+
+    M2-DERIVED-GC-2 (design ′7): this runner's lab catalog is a brand-new
+    fixture database, so the trusted first-bind flag runs against the
+    already-prepared lab derived root (prepare_lab) BEFORE any row is
+    written; without the flag the unbound catalog would be refused."""
+
+    catalog_db = LAB / "catalog.sqlite"
+    catalog_db.unlink(missing_ok=True)
+    completed = subprocess.run(
+        [
+            sys.executable,
+            "-m",
+            "infrastructure.resource_channel.catalog_loader",
+            "--db",
+            str(catalog_db),
+            "--initialize-preview-namespace",
+            str(LAB / "scope" / "derived"),
+            "--set",
+            "res-probe=asset.png",
+            "--set",
+            "res-hot=typical.png",
+            "--set",
+            "res-boundary=boundary.bin",
+            "--set",
+            "res-oversize=oversize.bin",
+            "--set",
+            "res-cataloged=asset.png",
+            "--dump",
+        ],
+        capture_output=True,
+        text=True,
+        cwd=SRC_ROOT,
+        timeout=120,
+    )
+    # R2-07: a trailing newline discipline -- the whole record is stripped
+    # and closed with exactly ONE newline (an empty stderr inside the f-string
+    # would otherwise leave a blank line at EOF, which `git diff --check`
+    # flags and the review correctly called out).
+    (RAW / "e2e-catalog-loader.log").write_text(
+        (
+            "$ python -m infrastructure.resource_channel.catalog_loader "
+            f"--db {catalog_db} --set ... (5 rows)\n"
+            f"exit={completed.returncode}\n"
+            f"{completed.stdout}\n"
+            f"{completed.stderr}"
+        ).rstrip() + "\n",
+        encoding="utf-8",
+    )
+    return completed.returncode, str(catalog_db)
+
+
+def check_import_isolation() -> tuple[bool, str]:
+    """Headless sidecar-entry import gate (F-05), recorded to raw/."""
+
+    snippet = (
+        "import sys, json; "
+        "import infrastructure.resource_channel.host_bridge; "
+        "print(json.dumps(sorted(m for m in sys.modules if m.startswith(('infrastructure', 'application', 'domain')))))"
+    )
+    completed = subprocess.run(
+        [sys.executable, "-c", snippet],
+        capture_output=True,
+        text=True,
+        cwd=SRC_ROOT,
+        timeout=120,
+    )
+    (RAW / "e2e-sidecar-import-isolation.log").write_text(
+        (
+            "$ python -c <import infrastructure.resource_channel.host_bridge; dump modules>\n"
+            f"exit={completed.returncode}\n"
+            f"{completed.stdout}\n"
+            f"{completed.stderr}"
+        ).rstrip() + "\n",
+        encoding="utf-8",
+    )
+    if completed.returncode != 0:
+        return False, f"sidecar import failed: {completed.stderr[-400:]}"
+    modules = set(json.loads(completed.stdout.strip().splitlines()[-1]))
+    forbidden = modules - SIDECAR_ALLOWED_PROJECT_MODULES
+    if forbidden:
+        return False, f"sidecar loaded unrelated project modules: {sorted(forbidden)}"
+    missing = SIDECAR_ALLOWED_PROJECT_MODULES - modules
+    if missing:
+        print(f"  note (not a violation): expected modules absent from dump: {sorted(missing)}")
+    return True, f"{len(modules)} project modules, all whitelisted"
+
+
+def build_runtime(skip_build: bool) -> tuple[Path | None, int]:
+    exe = REPO_ROOT / "apps" / "desktop" / "src-tauri" / "target" / "release" / "m2rc1-desktop.exe"
+    if skip_build and exe.exists():
+        return exe, 0
+    completed = subprocess.run(
+        ["cargo", "build", "--release", "--manifest-path",
+         str(REPO_ROOT / "apps" / "desktop" / "src-tauri" / "Cargo.toml"), "--locked"],
+        capture_output=True,
+        text=True,
+        timeout=900,
+    )
+    (RAW / "e2e-cargo-build.log").write_text(
+        f"$ cargo build --release --manifest-path apps/desktop/src-tauri/Cargo.toml --locked\n"
+        f"exit={completed.returncode}\n{completed.stdout}\n{completed.stderr[-4000:]}",
+        encoding="utf-8",
+    )
+    return (exe if completed.returncode == 0 else None), completed.returncode
+
+
+def runtime_env(out_path: Path, log_path: Path, catalog_db: str, probe: bool) -> dict:
+    env = {
+        **os.environ,
+        "M2RC1_PYTHON": sys.executable,
+        "M2RC1_SRC_ROOT": str(SRC_ROOT),
+        "M2RC1_DERIVED_ROOT": str(LAB / "scope" / "derived"),
+        "M2RC1_MANAGED_ROOT": str(LAB / "scope" / "managed"),
+        "M2RC1_FIXTURES": str(LAB / "fixtures.json"),
+        "M2RC2_CATALOG_DB": catalog_db,
+        #: M2-IPC1 integration ruling (DSH r2 P2-2): the production phase now
+        #: spawns `bootstrap.core_service`, which must not fall back to the
+        #: real %LOCALAPPDATA% data root ！ pin it to the lab root.
+        "NEWMANGA_DATA_ROOT": str(LAB / "data-root"),
+        "M2RC2_MODULE_DUMP": str(LAB / ("sidecar-modules-probe.json" if probe else "sidecar-modules-interactive.json")),
+        "WEBVIEW2_USER_DATA_FOLDER": str(LAB / "webview2-udd"),
+    }
+    if probe:
+        env["M2RC1_PROBE_OUT"] = str(out_path)
+        env["M2RC1_PROBE_LOG"] = str(log_path)
+    else:
+        env.pop("M2RC1_PROBE_OUT", None)
+        env.pop("M2RC1_PROBE_LOG", None)
+    return env
+
+
+def run_probe_phase(exe: Path, catalog_db: str) -> tuple[int, dict | None]:
+    out_path = LAB / "probe-results.json"
+    log_path = LAB / "probe-runtime.log"
+    for path in (out_path, log_path):
+        path.unlink(missing_ok=True)
+    shutil.rmtree(LAB / "webview2-udd", ignore_errors=True)
+
+    start = time.time()
+    proc = subprocess.Popen(
+        [str(exe)], env=runtime_env(out_path, log_path, catalog_db, probe=True),
+        stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
+    )
+    output = b""
+    try:
+        output, _ = proc.communicate(timeout=300)
+    except subprocess.TimeoutExpired:
+        proc.kill()
+        try:
+            output, _ = proc.communicate(timeout=15)
+        except (subprocess.TimeoutExpired, ValueError):
+            pass
+        print("TIMEOUT: probe did not exit within 300 s (partial output below)")
+    elapsed = time.time() - start
+    if output:
+        log_path.write_bytes(output)
+        tail = output.decode("utf-8", errors="replace").splitlines()
+        for line in tail[-20:]:
+            print("  [runtime]", line)
+    print(f"probe phase: exit_code={proc.returncode} elapsed={elapsed:.1f}s")
+
+    results = None
+    if out_path.exists():
+        try:
+            results = json.loads(out_path.read_text(encoding="utf-8"))
+        except json.JSONDecodeError:
+            print("  probe results JSON unreadable")
+    # R2-05: keep a copy of the discriminating artefacts in raw/ (the
+    # interactive phase deliberately deletes the live probe-results file to
+    # prove the write-command denial, so only the copy survives in-tree).
+    for source in (
+        out_path,
+        LAB / "sidecar-modules-probe.json",
+        LAB / "sidecar-modules-interactive.json",
+    ):
+        if source.exists():
+            shutil.copy2(source, RAW / f"e2e-{source.name}")
+    return proc.returncode, results
+
+
+ALLOWLIST_RE = re.compile(r"\[m2rc2-allowlist\] (probe|production):(.*)")
+#: M2-IPC1 integration ruling (2026-09-28, Codex proxy): the production
+#: surface intentionally grows from 3 to 5 commands (core_ping,
+#: library_list_books); this runner's expectations are maintained by the
+#: M2-IPC1 integration, not by the Owner branch.
+#: M2-SETTINGS-IPC-CHANNEL integration (2026-10-02, Codex proxy): 5 -> 7
+#: (settings_get / settings_update_section, M2-C1 rev 1.3 ′5.3); this
+#: runner's expectations continue to be maintained by the integrating
+#: slice, not by the Owner branch.
+#: M2-REGION-RETYPE-CORE (2026-10-04, Owner ZCode): 7 -> 9
+#: (set_region_type / list_regions, M2-C1 rev 1.4 ′5.4) -- bypass sync done
+#: by the Owner branch this time (the M2-SETTINGS-IPC-CHANNEL r1 R1 lesson:
+#: the expectations must move in the same commit as the surface).
+#: RC4 / page resolve / page navigation widen production to 15 commands;
+#: keep exact ordered equality with the frozen main.rs production surface.
+PRODUCTION_EXPECTED = [
+    "issue_resource_url",
+    "revoke_ref",
+    "revoke_resource_refs",
+    "core_ping",
+    "library_list_books",
+    "settings_get",
+    "settings_update_section",
+    "set_region_type",
+    "list_regions",
+    "list_region_revisions",
+    "restore_region_revision",
+    "rerender_page",
+    "resolve_page_resource",
+    "list_chapters",
+    "list_chapter_pages",
+]
+#: M2-IPC1 ruling (DSH r2 P2-1 option B): test modes keep the frozen RC2
+#: surface ！ the production-only IPC1 commands are absent from the probe
+#: announcement, so it stays 7 and is pinned explicitly.
+PROBE_EXPECTED = [
+    "issue_resource_url",
+    "revoke_ref",
+    "revoke_resource_refs",
+    "probe_config",
+    "probe_write_results",
+    "probe_exit",
+    "probe_issue_url",
+]
+
+#: R2-05: the exact set of scenario ids the probe phase must report. The
+#: gate asserts set equality -- an empty or partial results file is a gate
+#: failure, not a pass.
+EXPECTED_PROBE_IDS = [
+    "E-00-probe-mode-detected",
+    "E-01-issue-fetch-digest",
+    "E-02-img-render",
+    "E-03-unknown-id",
+    "E-04-revoke-after-cached-fetch",
+    "E-05-expired-ttl",
+    "E-06-remount-fresh-references",
+    "E-07-per-reference-first-byte-p95",
+    "E-08-boundary-256mib",
+    "E-09-over-limit-typed",
+    "D-01-register-catalog-denied",
+    "D-02-ttl-override-inert",
+    "D-03-probe-issue-allowed-in-probe-mode",
+]
+
+
+def run_interactive_phase(exe: Path, catalog_db: str) -> tuple[bool, str]:
+    """Production-surface facts, observed from the OUTSIDE.
+
+    R2-03 disclosure: this phase does NOT machine-verify the in-page IP/IA
+    matrix (that matrix cannot leave the page by design, and a white-screen
+    page would pass this gate). The gate -- therefore named
+    `interactive-production-surface`, not a deny-matrix check -- rests on
+    externally observable facts only:
+
+    - the host's stderr allowlist announcement (emitted at startup from the
+      `command_allowlist` CONSTANT ARRAY -- one of THREE hand-maintained
+      views of the command surface, see main.rs; R2-04) must be exactly the
+      15 production commands in this mode;
+    - the process must stay alive (an early death = probe_exit leak);
+    - no probe results file may appear (a write = probe_write_results leak).
+
+    A reader thread keeps draining the process output throughout the watch
+    so any crash/panic text still lands in the log.
+    """
+
+    MIN_ALIVE_SECONDS = 10.0
+    log_path = LAB / "interactive-runtime.log"
+    shutil.rmtree(LAB / "webview2-udd", ignore_errors=True)
+    # the deny matrix must never produce probe results in this mode
+    out_path = LAB / "probe-results.json"
+    out_path.unlink(missing_ok=True)
+
+    start = time.time()
+    proc = subprocess.Popen(
+        [str(exe)], env=runtime_env(log_path, log_path, catalog_db, probe=False),
+        stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
+    )
+    tail: list[str] = []
+    announcement: tuple[str, list[str]] | None = None
+    assert proc.stdout is not None
+
+    def _drain() -> None:
+        for raw_line in proc.stdout:  # type: ignore[union-attr]
+            tail.append(raw_line.decode("utf-8", errors="replace").rstrip())
+
+    reader = threading.Thread(target=_drain, daemon=True)
+    reader.start()
+    deadline = time.time() + 60
+    while time.time() < deadline and announcement is None:
+        for text in tail:
+            match = ALLOWLIST_RE.search(text)
+            if match:
+                announcement = (match.group(1), [c for c in match.group(2).split(",") if c])
+                break
+        if announcement is None:
+            time.sleep(0.2)
+    if announcement is None:
+        proc.kill()
+        proc.wait(timeout=30)
+        reader.join(timeout=10)
+        log_path.write_text("\n".join(tail), encoding="utf-8")
+        return False, "host never announced its command allowlist (startup failed?)"
+    # allow the page to boot and run its on-screen matrix while we watch for
+    # an early death (probe_exit leak); the reader thread keeps the log alive
+    while time.time() - start < MIN_ALIVE_SECONDS:
+        if proc.poll() is not None:
+            reader.join(timeout=10)
+            log_path.write_text("\n".join(tail), encoding="utf-8")
+            return False, (
+                f"interactive runtime died after {time.time() - start:.1f}s: "
+                "an exit command leaked onto the production surface"
+            )
+        time.sleep(0.5)
+    early_death = proc.poll() is not None
+    if not early_death:
+        proc.terminate()
+        try:
+            proc.wait(timeout=30)
+        except subprocess.TimeoutExpired:
+            proc.kill()
+    reader.join(timeout=10)
+    elapsed = time.time() - start
+    log_path.write_text(
+        "\n".join(tail) + f"\n[runner] elapsed={elapsed:.1f}s alive_through_watch={not early_death}\n",
+        encoding="utf-8",
+    )
+
+    wrote_probe_results = out_path.exists()
+    mode, commands = announcement
+    if mode != "production":
+        return False, f"host announced mode {mode!r}, expected 'production'"
+    if commands != PRODUCTION_EXPECTED:
+        return False, (
+            f"production allowlist mismatch: announced {commands}, "
+            f"expected {PRODUCTION_EXPECTED}"
+        )
+    if early_death:
+        return False, "process died during the liveness watch (probe_exit leak)"
+    if wrote_probe_results:
+        return False, "probe results file appeared in interactive mode (probe_write_results leak)"
+    return True, (
+        f"production allowlist exactly {PRODUCTION_EXPECTED}; process stayed alive "
+        f"through the {MIN_ALIVE_SECONDS:.0f}s watch; no probe results written; "
+        "the in-page IP/IA matrix itself is NOT machine-verified (R2-03)"
+    )
+
+
+def check_announcement(log_path: Path, expected_mode: str) -> tuple[bool, str]:
+    """Verify the host's stderr allowlist announcement against the mode's
+    expected command set (see ALLOWLIST_RE / *_EXPECTED)."""
+
+    try:
+        text = log_path.read_text(encoding="utf-8", errors="replace")
+    except OSError:
+        return False, f"{log_path.name} missing"
+    match = ALLOWLIST_RE.search(text)
+    if match is None:
+        return False, f"no allowlist announcement in {log_path.name}"
+    mode, commands = match.group(1), [c for c in match.group(2).split(",") if c]
+    expected = PROBE_EXPECTED if expected_mode == "probe" else PRODUCTION_EXPECTED
+    if mode != expected_mode:
+        return False, f"announced mode {mode!r}, expected {expected_mode!r}"
+    if commands != expected:
+        return False, f"allowlist mismatch: announced {commands}, expected {expected}"
+    return True, f"{mode} allowlist exactly {expected}"
+
+
+def check_sidecar_dump(dump_path: Path, phase: str) -> tuple[bool, str]:
+    if not dump_path.exists():
+        return False, f"{phase}: sidecar module dump missing ({dump_path.name})"
+    payload = json.loads(dump_path.read_text(encoding="utf-8"))
+    modules = set(payload.get("modules", []))
+    project = {m for m in modules if m.split(".")[0] in ("infrastructure", "application", "domain")}
+    forbidden = project - SIDECAR_ALLOWED_PROJECT_MODULES
+    if forbidden:
+        return False, f"{phase}: sidecar loaded unrelated modules: {sorted(forbidden)}"
+    return True, f"{phase}: {len(project)} project modules, all whitelisted"
+
+
+def main() -> int:
+    global RAW, LAB
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--exe", default=None, help="path to a prebuilt m2rc1-desktop.exe")
+    # Each execution owns a fresh lab; --output-dir protects historical evidence.
+    parser.add_argument("--skip-build", action="store_true", help="use the existing release build only")
+    parser.add_argument("--output-dir", type=Path, default=RAW, help="isolated evidence directory")
+    args = parser.parse_args()
+    RAW = args.output_dir.resolve()
+    LAB = Path(tempfile.mkdtemp(prefix="m2rc2-lab-"))
+    RAW.mkdir(parents=True, exist_ok=True)
+
+    gate: dict[str, str] = {}
+
+    log("0. environment")
+    tools = {}
+    missing = []
+    for name, argv in (("python", [sys.executable, "--version"]), ("cargo", ["cargo", "--version"]),
+                       ("rustc", ["rustc", "--version"]), ("node", ["node", "--version"]),
+                       ("npm", ["npm", "--version"])):
+        # R2-06: resolve through shutil.which so bare names like `npm`
+        # resolve to npm.cmd on Windows; a tool that cannot be found or run
+        # is recorded as UNAVAILABLE and FAILS the gate instead of being
+        # silently PASSed.
+        resolved = shutil.which(argv[0]) or shutil.which(argv[0] + ".cmd")
+        if resolved is None:
+            tools[name] = "UNAVAILABLE: not on PATH"
+            missing.append(name)
+            continue
+        try:
+            tools[name] = subprocess.run(
+                [resolved] + argv[1:], capture_output=True, text=True, timeout=60
+            ).stdout.strip()
+        except (OSError, subprocess.TimeoutExpired) as error:
+            tools[name] = f"UNAVAILABLE: {error}"
+            missing.append(name)
+    print(json.dumps(tools, indent=2))
+    (RAW / "e2e-environment.json").write_text(json.dumps(tools, indent=2), encoding="utf-8")
+    gate["environment"] = "FAIL" if missing else "PASS"
+    if missing:
+        print(f"environment gate FAIL: missing tools: {missing}")
+
+    log("1. synthetic lab")
+    manifest = prepare_lab()
+    gate["lab"] = "PASS"
+
+    log("2. catalog seeding (real loader entry point)")
+    code, catalog_db = seed_catalog()
+    gate["catalog-seeding"] = "PASS" if code == 0 else "FAIL"
+    print(f"catalog loader exit={code} db={catalog_db}")
+    if code != 0:
+        print("cannot continue without a catalog authority")
+        return 1
+
+    log("3. sidecar import isolation (headless, F-05)")
+    ok, detail = check_import_isolation()
+    gate["sidecar-import-isolation"] = "PASS" if ok else "FAIL"
+    print(f"{'PASS' if ok else 'FAIL'}: {detail}")
+
+    log("4. desktop runtime build")
+    exe = Path(args.exe) if args.exe else None
+    if exe is None:
+        exe, code = build_runtime(args.skip_build)
+        print(f"cargo build exit={code}")
+        if exe is None or not exe.exists():
+            gate["runtime-build"] = "FAIL"
+            return 1
+    gate["runtime-build"] = "PASS"
+    if not exe.exists():
+        print(f"runtime exe missing: {exe}")
+        gate["runtime-build"] = "FAIL"
+        return 1
+    print(f"exe: {exe}")
+
+    log("5. PROBE phase (E2E matrix through the real sidecar)")
+    exit_code, results = run_probe_phase(exe, catalog_db)
+    reported: dict[str, str] = {}
+    if results is not None:
+        for record in results["results"]:
+            reported[str(record.get("id", "?"))] = record.get("status", "MISSING")
+            print(f"{record.get('id', '?'):42s} {record.get('status', 'MISSING')}")
+    statuses: dict[str, int] = {}
+    for status in reported.values():
+        statuses[status] = statuses.get(status, 0) + 1
+    print("summary:", statuses)
+    # R2-05: assert the EXPECTED scenario SET, not just the status
+    # distribution -- a missing, empty or partial results file cannot pass.
+    expected_set = set(EXPECTED_PROBE_IDS)
+    reported_set = set(reported)
+    missing_ids = sorted(expected_set - reported_set)
+    unexpected_ids = sorted(reported_set - expected_set)
+    bad_ids = sorted(id_ for id_, status in reported.items() if status != "PASS")
+    if missing_ids:
+        print(f"missing scenario ids: {missing_ids}")
+    if unexpected_ids:
+        print(f"unexpected scenario ids: {unexpected_ids}")
+    if bad_ids:
+        print(f"non-PASS scenarios: {bad_ids}")
+    gate["probe-phase"] = (
+        "PASS"
+        if (
+            results is not None
+            and exit_code == 0
+            and not missing_ids
+            and not unexpected_ids
+            and not bad_ids
+        )
+        else "FAIL"
+    )
+
+    ok, detail = check_announcement(LAB / "probe-runtime.log", "probe")
+    gate["probe-allowlist-announcement"] = "PASS" if ok else "FAIL"
+    print(f"{'PASS' if ok else 'FAIL'}: {detail}")
+
+    ok, detail = check_sidecar_dump(LAB / "sidecar-modules-probe.json", "probe")
+    gate["sidecar-module-dump-probe"] = "PASS" if ok else "FAIL"
+    print(f"{'PASS' if ok else 'FAIL'}: {detail}")
+
+    log("6. INTERACTIVE phase (production-surface facts; the in-page IP/IA")
+    log("   matrix is NOT machine-verified here ！ R2-03, see gate name)")
+    ok, detail = run_interactive_phase(exe, catalog_db)
+    gate["interactive-production-surface"] = "PASS" if ok else "FAIL"
+    print(f"{'PASS' if ok else 'FAIL'}: {detail}")
+
+    ok, detail = check_sidecar_dump(LAB / "sidecar-modules-interactive.json", "interactive")
+    gate["sidecar-module-dump-interactive"] = "PASS" if ok else "FAIL"
+    print(f"{'PASS' if ok else 'FAIL'}: {detail}")
+
+    log("7. gate")
+    failed = [name for name, status in gate.items() if status != "PASS"]
+    for name, status in gate.items():
+        print(f"{name:34s} {status}")
+    (RAW / "e2e-gate.json").write_text(
+        json.dumps(
+            {
+                "gate": gate,
+                "failed": failed,
+                "probe_statuses": statuses,
+                "probe_missing_ids": missing_ids,
+                "probe_unexpected_ids": unexpected_ids,
+                "probe_non_pass_ids": bad_ids,
+            },
+            indent=2,
+        ),
+        encoding="utf-8",
+    )
+    if failed:
+        print(f"GATE FAIL: {failed}")
+        return 1
+    print("GATE PASS: all phases green")
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())
+EXIT=0
+COMMAND=["git", "show", "2af6b71aa06979b822e543b221aaf3a2d5f01abe:verification/M2-RC2/run_e2e.py"]
+"""M2-RC2 end-to-end matrix runner (Task deliverable, RC2-AC1/AC2).
+
+Exercises the REAL sidecar launch path and the hardened command surface:
+
+  0. environment record (Python/Cargo/Node versions, WebView2 presence);
+     a missing tool FAILS the gate (R2-06)
+  1. synthetic lab preparation (asset/typical/boundary/oversize, scope roots)
+  2. catalog seeding through the REAL loader entry point
+     (``python -m infrastructure.resource_channel.catalog_loader``) into the
+     Core/SQLite catalog store -- the launcher-side write path
+  3. sidecar import isolation (headless subprocess loads the sidecar entry,
+     captured module set is gated against the F-05 whitelist)
+  4. PROBE phase: the built desktop runtime runs the full WebView matrix
+     (RC1 resource-channel scenarios E-01..E-09 + RC2 hardened-surface
+     scenarios D-01..D-03) and exits through probe_exit; the gate asserts
+     the EXPECTED scenario SET (R2-05), and copies the discriminating
+     artefacts (probe results JSON, sidecar module dumps) into raw/
+  5. INTERACTIVE phase: the same runtime without M2RC1_PROBE_OUT. The gate
+     (`interactive-production-surface`) verifies externally observable facts
+     only -- the announced production allowlist, process liveness, absence
+     of probe results; the in-page IP/IA matrix is NOT machine-verified
+     (R2-03). A reader thread keeps draining stderr throughout.
+  6. gate: every recorded scenario must be PASS (FAIL/MISSING/NOT_RUN are
+     gate failures, the RC1 R-03 rule)
+
+Run (from the repository root):
+  python verification/M2-RC2/run_e2e.py [--exe PATH] [--skip-build] [--output-dir PATH]
+
+Artifacts land in --output-dir (default verification/M2-RC2/raw/)
+and a fresh runner-owned %TEMP%/m2rc2-lab-* directory.
+"""
+
+from __future__ import annotations
+
+import argparse
+import hashlib
+import json
+import os
+import re
+import shutil
+import subprocess
+import sys
+import threading
+import tempfile
+import time
+from pathlib import Path
+
+REPO_ROOT = Path(__file__).resolve().parents[2]
+SRC_ROOT = REPO_ROOT / "src"
+RAW = Path(__file__).resolve().parent / "raw"
+LAB = Path(os.environ.get("TEMP", ".")) / "m2rc2-lab"
+BOUNDARY_BYTES = 256 * 1024 * 1024
+
+sys.path.insert(0, str(REPO_ROOT / "tests" / "m2_resource_channel"))
+from conftest import write_noise_png  # noqa: E402
+
+#: F-05 isolation whitelist: the sidecar entry may load exactly these
+#: project modules (mirrors tests/m2_resource_channel/test_sidecar_isolation.py).
+SIDECAR_ALLOWED_PROJECT_MODULES = {
+    "application",
+    "application.resource_channel",
+    "application.resource_channel.dto",
+    "application.resource_channel.service",
+    "infrastructure",
+    "infrastructure.resource_channel",
+    "infrastructure.resource_channel.catalog_store",
+    "infrastructure.resource_channel.handle_resolver",
+    "infrastructure.resource_channel.host_bridge",
+    "infrastructure.resource_channel.scope",
+}
+
+# Note: document.title is NOT a reliable report channel here ！ Tauri's
+# window.title() does not follow the page title on this stack, so the
+# interactive phase is judged on observable behavior (self-close), not on the
+# stderr title mirror.
+def sha256_hex(data: bytes) -> str:
+    return hashlib.sha256(data).hexdigest()
+
+
+def log(section: str) -> None:
+    print(f"\n=== {section} ===")
+
+
+def prepare_lab() -> dict:
+    derived = LAB / "scope" / "derived"
+    managed = LAB / "scope" / "managed"
+    derived.mkdir(parents=True, exist_ok=True)
+    managed.mkdir(parents=True, exist_ok=True)
+
+    payload = write_noise_png(derived / "asset.png", 128, 128, seed=5101)
+    typical = write_noise_png(derived / "typical.png", 1600, 2400, seed=5202)
+
+    boundary = derived / "boundary.bin"
+    with open(boundary, "wb") as handle:
+        handle.truncate(BOUNDARY_BYTES)
+    oversize = derived / "oversize.bin"
+    with open(oversize, "wb") as handle:
+        handle.truncate(BOUNDARY_BYTES + 1)
+
+    manifest = {
+        "lab": str(LAB),
+        "fixtures": {
+            "asset": {"sha256": sha256_hex(payload), "bytes": len(payload)},
+            "typical": {"sha256": sha256_hex(typical), "bytes": len(typical)},
+            "boundary": {
+                "sha256": hashlib.sha256(b"\x00" * BOUNDARY_BYTES).hexdigest(),
+                "bytes": BOUNDARY_BYTES,
+            },
+        },
+    }
+    (LAB / "fixtures.json").write_text(json.dumps(manifest, indent=2), encoding="utf-8")
+    print(f"lab ready: {LAB}")
+    return manifest
+
+
+def seed_catalog() -> tuple[int, str]:
+    """Seed the Core/SQLite catalog authority through the real loader CLI.
+
+    M2-DERIVED-GC-2 (design ′7): this runner's lab catalog is a brand-new
+    fixture database, so the trusted first-bind flag runs against the
+    already-prepared lab derived root (prepare_lab) BEFORE any row is
+    written; without the flag the unbound catalog would be refused."""
+
+    catalog_db = LAB / "catalog.sqlite"
+    catalog_db.unlink(missing_ok=True)
+    completed = subprocess.run(
+        [
+            sys.executable,
+            "-m",
+            "infrastructure.resource_channel.catalog_loader",
+            "--db",
+            str(catalog_db),
+            "--initialize-preview-namespace",
+            str(LAB / "scope" / "derived"),
+            "--set",
+            "res-probe=asset.png",
+            "--set",
+            "res-hot=typical.png",
+            "--set",
+            "res-boundary=boundary.bin",
+            "--set",
+            "res-oversize=oversize.bin",
+            "--set",
+            "res-cataloged=asset.png",
+            "--dump",
+        ],
+        capture_output=True,
+        text=True,
+        cwd=SRC_ROOT,
+        timeout=120,
+    )
+    # R2-07: a trailing newline discipline -- the whole record is stripped
+    # and closed with exactly ONE newline (an empty stderr inside the f-string
+    # would otherwise leave a blank line at EOF, which `git diff --check`
+    # flags and the review correctly called out).
+    (RAW / "e2e-catalog-loader.log").write_text(
+        (
+            "$ python -m infrastructure.resource_channel.catalog_loader "
+            f"--db {catalog_db} --set ... (5 rows)\n"
+            f"exit={completed.returncode}\n"
+            f"{completed.stdout}\n"
+            f"{completed.stderr}"
+        ).rstrip() + "\n",
+        encoding="utf-8",
+    )
+    return completed.returncode, str(catalog_db)
+
+
+def check_import_isolation() -> tuple[bool, str]:
+    """Headless sidecar-entry import gate (F-05), recorded to raw/."""
+
+    snippet = (
+        "import sys, json; "
+        "import infrastructure.resource_channel.host_bridge; "
+        "print(json.dumps(sorted(m for m in sys.modules if m.startswith(('infrastructure', 'application', 'domain')))))"
+    )
+    completed = subprocess.run(
+        [sys.executable, "-c", snippet],
+        capture_output=True,
+        text=True,
+        cwd=SRC_ROOT,
+        timeout=120,
+    )
+    (RAW / "e2e-sidecar-import-isolation.log").write_text(
+        (
+            "$ python -c <import infrastructure.resource_channel.host_bridge; dump modules>\n"
+            f"exit={completed.returncode}\n"
+            f"{completed.stdout}\n"
+            f"{completed.stderr}"
+        ).rstrip() + "\n",
+        encoding="utf-8",
+    )
+    if completed.returncode != 0:
+        return False, f"sidecar import failed: {completed.stderr[-400:]}"
+    modules = set(json.loads(completed.stdout.strip().splitlines()[-1]))
+    forbidden = modules - SIDECAR_ALLOWED_PROJECT_MODULES
+    if forbidden:
+        return False, f"sidecar loaded unrelated project modules: {sorted(forbidden)}"
+    missing = SIDECAR_ALLOWED_PROJECT_MODULES - modules
+    if missing:
+        print(f"  note (not a violation): expected modules absent from dump: {sorted(missing)}")
+    return True, f"{len(modules)} project modules, all whitelisted"
+
+
+def build_runtime(skip_build: bool) -> tuple[Path | None, int]:
+    exe = REPO_ROOT / "apps" / "desktop" / "src-tauri" / "target" / "release" / "m2rc1-desktop.exe"
+    if skip_build and exe.exists():
+        return exe, 0
+    completed = subprocess.run(
+        ["cargo", "build", "--release", "--manifest-path",
+         str(REPO_ROOT / "apps" / "desktop" / "src-tauri" / "Cargo.toml"), "--locked"],
+        capture_output=True,
+        text=True,
+        timeout=900,
+    )
+    (RAW / "e2e-cargo-build.log").write_text(
+        f"$ cargo build --release --manifest-path apps/desktop/src-tauri/Cargo.toml --locked\n"
+        f"exit={completed.returncode}\n{completed.stdout}\n{completed.stderr[-4000:]}",
+        encoding="utf-8",
+    )
+    return (exe if completed.returncode == 0 else None), completed.returncode
+
+
+def runtime_env(out_path: Path, log_path: Path, catalog_db: str, probe: bool) -> dict:
+    env = {
+        **os.environ,
+        "M2RC1_PYTHON": sys.executable,
+        "M2RC1_SRC_ROOT": str(SRC_ROOT),
+        "M2RC1_DERIVED_ROOT": str(LAB / "scope" / "derived"),
+        "M2RC1_MANAGED_ROOT": str(LAB / "scope" / "managed"),
+        "M2RC1_FIXTURES": str(LAB / "fixtures.json"),
+        "M2RC2_CATALOG_DB": catalog_db,
+        #: M2-IPC1 integration ruling (DSH r2 P2-2): the production phase now
+        #: spawns `bootstrap.core_service`, which must not fall back to the
+        #: real %LOCALAPPDATA% data root ！ pin it to the lab root.
+        "NEWMANGA_DATA_ROOT": str(LAB / "data-root"),
+        "M2RC2_MODULE_DUMP": str(LAB / ("sidecar-modules-probe.json" if probe else "sidecar-modules-interactive.json")),
+        "WEBVIEW2_USER_DATA_FOLDER": str(LAB / "webview2-udd"),
+    }
+    if probe:
+        env["M2RC1_PROBE_OUT"] = str(out_path)
+        env["M2RC1_PROBE_LOG"] = str(log_path)
+    else:
+        env.pop("M2RC1_PROBE_OUT", None)
+        env.pop("M2RC1_PROBE_LOG", None)
+    return env
+
+
+def run_probe_phase(exe: Path, catalog_db: str) -> tuple[int, dict | None]:
+    out_path = LAB / "probe-results.json"
+    log_path = LAB / "probe-runtime.log"
+    for path in (out_path, log_path):
+        path.unlink(missing_ok=True)
+    shutil.rmtree(LAB / "webview2-udd", ignore_errors=True)
+
+    start = time.time()
+    proc = subprocess.Popen(
+        [str(exe)], env=runtime_env(out_path, log_path, catalog_db, probe=True),
+        stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
+    )
+    output = b""
+    try:
+        output, _ = proc.communicate(timeout=300)
+    except subprocess.TimeoutExpired:
+        proc.kill()
+        try:
+            output, _ = proc.communicate(timeout=15)
+        except (subprocess.TimeoutExpired, ValueError):
+            pass
+        print("TIMEOUT: probe did not exit within 300 s (partial output below)")
+    elapsed = time.time() - start
+    if output:
+        log_path.write_bytes(output)
+        tail = output.decode("utf-8", errors="replace").splitlines()
+        for line in tail[-20:]:
+            print("  [runtime]", line)
+    print(f"probe phase: exit_code={proc.returncode} elapsed={elapsed:.1f}s")
+
+    results = None
+    if out_path.exists():
+        try:
+            results = json.loads(out_path.read_text(encoding="utf-8"))
+        except json.JSONDecodeError:
+            print("  probe results JSON unreadable")
+    # R2-05: keep a copy of the discriminating artefacts in raw/ (the
+    # interactive phase deliberately deletes the live probe-results file to
+    # prove the write-command denial, so only the copy survives in-tree).
+    for source in (
+        out_path,
+        LAB / "sidecar-modules-probe.json",
+        LAB / "sidecar-modules-interactive.json",
+    ):
+        if source.exists():
+            shutil.copy2(source, RAW / f"e2e-{source.name}")
+    return proc.returncode, results
+
+
+ALLOWLIST_RE = re.compile(r"\[m2rc2-allowlist\] (probe|production):(.*)")
+#: M2-IPC1 integration ruling (2026-09-28, Codex proxy): the production
+#: surface intentionally grows from 3 to 5 commands (core_ping,
+#: library_list_books); this runner's expectations are maintained by the
+#: M2-IPC1 integration, not by the Owner branch.
+#: M2-SETTINGS-IPC-CHANNEL integration (2026-10-02, Codex proxy): 5 -> 7
+#: (settings_get / settings_update_section, M2-C1 rev 1.3 ′5.3); this
+#: runner's expectations continue to be maintained by the integrating
+#: slice, not by the Owner branch.
+#: M2-REGION-RETYPE-CORE (2026-10-04, Owner ZCode): 7 -> 9
+#: (set_region_type / list_regions, M2-C1 rev 1.4 ′5.4) -- bypass sync done
+#: by the Owner branch this time (the M2-SETTINGS-IPC-CHANNEL r1 R1 lesson:
+#: the expectations must move in the same commit as the surface).
+#: RC4 / page resolve / page navigation widen production to 15 commands;
+#: keep exact ordered equality with the frozen main.rs production surface.
+PRODUCTION_EXPECTED = [
+    "issue_resource_url",
+    "revoke_ref",
+    "revoke_resource_refs",
+    "core_ping",
+    "library_list_books",
+    "settings_get",
+    "settings_update_section",
+    "set_region_type",
+    "list_regions",
+    "list_region_revisions",
+    "restore_region_revision",
+    "rerender_page",
+    "resolve_page_resource",
+    "list_chapters",
+    "list_chapter_pages",
+]
+#: M2-IPC1 ruling (DSH r2 P2-1 option B): test modes keep the frozen RC2
+#: surface ！ the production-only IPC1 commands are absent from the probe
+#: announcement, so it stays 7 and is pinned explicitly.
+PROBE_EXPECTED = [
+    "issue_resource_url",
+    "revoke_ref",
+    "revoke_resource_refs",
+    "probe_config",
+    "probe_write_results",
+    "probe_exit",
+    "probe_issue_url",
+]
+
+#: R2-05: the exact set of scenario ids the probe phase must report. The
+#: gate asserts set equality -- an empty or partial results file is a gate
+#: failure, not a pass.
+EXPECTED_PROBE_IDS = [
+    "E-00-probe-mode-detected",
+    "E-01-issue-fetch-digest",
+    "E-02-img-render",
+    "E-03-unknown-id",
+    "E-04-revoke-after-cached-fetch",
+    "E-05-expired-ttl",
+    "E-06-remount-fresh-references",
+    "E-07-per-reference-first-byte-p95",
+    "E-08-boundary-256mib",
+    "E-09-over-limit-typed",
+    "D-01-register-catalog-denied",
+    "D-02-ttl-override-inert",
+    "D-03-probe-issue-allowed-in-probe-mode",
+]
+
+
+def run_interactive_phase(exe: Path, catalog_db: str) -> tuple[bool, str]:
+    """Production-surface facts, observed from the OUTSIDE.
+
+    R2-03 disclosure: this phase does NOT machine-verify the in-page IP/IA
+    matrix (that matrix cannot leave the page by design, and a white-screen
+    page would pass this gate). The gate -- therefore named
+    `interactive-production-surface`, not a deny-matrix check -- rests on
+    externally observable facts only:
+
+    - the host's stderr allowlist announcement (emitted at startup from the
+      `command_allowlist` CONSTANT ARRAY -- one of THREE hand-maintained
+      views of the command surface, see main.rs; R2-04) must be exactly the
+      15 production commands in this mode;
+    - the process must stay alive (an early death = probe_exit leak);
+    - no probe results file may appear (a write = probe_write_results leak).
+
+    A reader thread keeps draining the process output throughout the watch
+    so any crash/panic text still lands in the log.
+    """
+
+    MIN_ALIVE_SECONDS = 10.0
+    log_path = LAB / "interactive-runtime.log"
+    shutil.rmtree(LAB / "webview2-udd", ignore_errors=True)
+    # the deny matrix must never produce probe results in this mode
+    out_path = LAB / "probe-results.json"
+    out_path.unlink(missing_ok=True)
+
+    start = time.time()
+    proc = subprocess.Popen(
+        [str(exe)], env=runtime_env(log_path, log_path, catalog_db, probe=False),
+        stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
+    )
+    tail: list[str] = []
+    announcement: tuple[str, list[str]] | None = None
+    assert proc.stdout is not None
+
+    def _drain() -> None:
+        for raw_line in proc.stdout:  # type: ignore[union-attr]
+            tail.append(raw_line.decode("utf-8", errors="replace").rstrip())
+
+    reader = threading.Thread(target=_drain, daemon=True)
+    reader.start()
+    deadline = time.time() + 60
+    while time.time() < deadline and announcement is None:
+        for text in tail:
+            match = ALLOWLIST_RE.search(text)
+            if match:
+                announcement = (match.group(1), [c for c in match.group(2).split(",") if c])
+                break
+        if announcement is None:
+            time.sleep(0.2)
+    if announcement is None:
+        proc.kill()
+        proc.wait(timeout=30)
+        reader.join(timeout=10)
+        log_path.write_text("\n".join(tail), encoding="utf-8")
+        return False, "host never announced its command allowlist (startup failed?)"
+    # allow the page to boot and run its on-screen matrix while we watch for
+    # an early death (probe_exit leak); the reader thread keeps the log alive
+    while time.time() - start < MIN_ALIVE_SECONDS:
+        if proc.poll() is not None:
+            reader.join(timeout=10)
+            log_path.write_text("\n".join(tail), encoding="utf-8")
+            return False, (
+                f"interactive runtime died after {time.time() - start:.1f}s: "
+                "an exit command leaked onto the production surface"
+            )
+        time.sleep(0.5)
+    early_death = proc.poll() is not None
+    if not early_death:
+        proc.terminate()
+        try:
+            proc.wait(timeout=30)
+        except subprocess.TimeoutExpired:
+            proc.kill()
+    reader.join(timeout=10)
+    elapsed = time.time() - start
+    log_path.write_text(
+        "\n".join(tail) + f"\n[runner] elapsed={elapsed:.1f}s alive_through_watch={not early_death}\n",
+        encoding="utf-8",
+    )
+
+    wrote_probe_results = out_path.exists()
+    mode, commands = announcement
+    if mode != "production":
+        return False, f"host announced mode {mode!r}, expected 'production'"
+    if commands != PRODUCTION_EXPECTED:
+        return False, (
+            f"production allowlist mismatch: announced {commands}, "
+            f"expected {PRODUCTION_EXPECTED}"
+        )
+    if early_death:
+        return False, "process died during the liveness watch (probe_exit leak)"
+    if wrote_probe_results:
+        return False, "probe results file appeared in interactive mode (probe_write_results leak)"
+    return True, (
+        f"production allowlist exactly {PRODUCTION_EXPECTED}; process stayed alive "
+        f"through the {MIN_ALIVE_SECONDS:.0f}s watch; no probe results written; "
+        "the in-page IP/IA matrix itself is NOT machine-verified (R2-03)"
+    )
+
+
+def check_announcement(log_path: Path, expected_mode: str) -> tuple[bool, str]:
+    """Verify the host's stderr allowlist announcement against the mode's
+    expected command set (see ALLOWLIST_RE / *_EXPECTED)."""
+
+    try:
+        text = log_path.read_text(encoding="utf-8", errors="replace")
+    except OSError:
+        return False, f"{log_path.name} missing"
+    match = ALLOWLIST_RE.search(text)
+    if match is None:
+        return False, f"no allowlist announcement in {log_path.name}"
+    mode, commands = match.group(1), [c for c in match.group(2).split(",") if c]
+    expected = PROBE_EXPECTED if expected_mode == "probe" else PRODUCTION_EXPECTED
+    if mode != expected_mode:
+        return False, f"announced mode {mode!r}, expected {expected_mode!r}"
+    if commands != expected:
+        return False, f"allowlist mismatch: announced {commands}, expected {expected}"
+    return True, f"{mode} allowlist exactly {expected}"
+
+
+def check_sidecar_dump(dump_path: Path, phase: str) -> tuple[bool, str]:
+    if not dump_path.exists():
+        return False, f"{phase}: sidecar module dump missing ({dump_path.name})"
+    payload = json.loads(dump_path.read_text(encoding="utf-8"))
+    modules = set(payload.get("modules", []))
+    project = {m for m in modules if m.split(".")[0] in ("infrastructure", "application", "domain")}
+    forbidden = project - SIDECAR_ALLOWED_PROJECT_MODULES
+    if forbidden:
+        return False, f"{phase}: sidecar loaded unrelated modules: {sorted(forbidden)}"
+    return True, f"{phase}: {len(project)} project modules, all whitelisted"
+
+
+def main() -> int:
+    global RAW, LAB
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--exe", default=None, help="path to a prebuilt m2rc1-desktop.exe")
+    # Each execution owns a fresh lab; --output-dir protects historical evidence.
+    parser.add_argument("--skip-build", action="store_true", help="use the existing release build only")
+    parser.add_argument("--output-dir", type=Path, default=RAW, help="isolated evidence directory")
+    args = parser.parse_args()
+    RAW = args.output_dir.resolve()
+    LAB = Path(tempfile.mkdtemp(prefix="m2rc2-lab-"))
+    RAW.mkdir(parents=True, exist_ok=True)
+
+    gate: dict[str, str] = {}
+
+    log("0. environment")
+    tools = {}
+    missing = []
+    for name, argv in (("python", [sys.executable, "--version"]), ("cargo", ["cargo", "--version"]),
+                       ("rustc", ["rustc", "--version"]), ("node", ["node", "--version"]),
+                       ("npm", ["npm", "--version"])):
+        # R2-06: resolve through shutil.which so bare names like `npm`
+        # resolve to npm.cmd on Windows; a tool that cannot be found or run
+        # is recorded as UNAVAILABLE and FAILS the gate instead of being
+        # silently PASSed.
+        resolved = shutil.which(argv[0]) or shutil.which(argv[0] + ".cmd")
+        if resolved is None:
+            tools[name] = "UNAVAILABLE: not on PATH"
+            missing.append(name)
+            continue
+        try:
+            tools[name] = subprocess.run(
+                [resolved] + argv[1:], capture_output=True, text=True, timeout=60
+            ).stdout.strip()
+        except (OSError, subprocess.TimeoutExpired) as error:
+            tools[name] = f"UNAVAILABLE: {error}"
+            missing.append(name)
+    print(json.dumps(tools, indent=2))
+    (RAW / "e2e-environment.json").write_text(json.dumps(tools, indent=2), encoding="utf-8")
+    gate["environment"] = "FAIL" if missing else "PASS"
+    if missing:
+        print(f"environment gate FAIL: missing tools: {missing}")
+
+    log("1. synthetic lab")
+    manifest = prepare_lab()
+    gate["lab"] = "PASS"
+
+    log("2. catalog seeding (real loader entry point)")
+    code, catalog_db = seed_catalog()
+    gate["catalog-seeding"] = "PASS" if code == 0 else "FAIL"
+    print(f"catalog loader exit={code} db={catalog_db}")
+    if code != 0:
+        print("cannot continue without a catalog authority")
+        return 1
+
+    log("3. sidecar import isolation (headless, F-05)")
+    ok, detail = check_import_isolation()
+    gate["sidecar-import-isolation"] = "PASS" if ok else "FAIL"
+    print(f"{'PASS' if ok else 'FAIL'}: {detail}")
+
+    log("4. desktop runtime build")
+    exe = Path(args.exe) if args.exe else None
+    if exe is None:
+        exe, code = build_runtime(args.skip_build)
+        print(f"cargo build exit={code}")
+        if exe is None or not exe.exists():
+            gate["runtime-build"] = "FAIL"
+            return 1
+    gate["runtime-build"] = "PASS"
+    if not exe.exists():
+        print(f"runtime exe missing: {exe}")
+        gate["runtime-build"] = "FAIL"
+        return 1
+    print(f"exe: {exe}")
+
+    log("5. PROBE phase (E2E matrix through the real sidecar)")
+    exit_code, results = run_probe_phase(exe, catalog_db)
+    reported: dict[str, str] = {}
+    if results is not None:
+        for record in results["results"]:
+            reported[str(record.get("id", "?"))] = record.get("status", "MISSING")
+            print(f"{record.get('id', '?'):42s} {record.get('status', 'MISSING')}")
+    statuses: dict[str, int] = {}
+    for status in reported.values():
+        statuses[status] = statuses.get(status, 0) + 1
+    print("summary:", statuses)
+    # R2-05: assert the EXPECTED scenario SET, not just the status
+    # distribution -- a missing, empty or partial results file cannot pass.
+    expected_set = set(EXPECTED_PROBE_IDS)
+    reported_set = set(reported)
+    missing_ids = sorted(expected_set - reported_set)
+    unexpected_ids = sorted(reported_set - expected_set)
+    bad_ids = sorted(id_ for id_, status in reported.items() if status != "PASS")
+    if missing_ids:
+        print(f"missing scenario ids: {missing_ids}")
+    if unexpected_ids:
+        print(f"unexpected scenario ids: {unexpected_ids}")
+    if bad_ids:
+        print(f"non-PASS scenarios: {bad_ids}")
+    gate["probe-phase"] = (
+        "PASS"
+        if (
+            results is not None
+            and exit_code == 0
+            and not missing_ids
+            and not unexpected_ids
+            and not bad_ids
+        )
+        else "FAIL"
+    )
+
+    ok, detail = check_announcement(LAB / "probe-runtime.log", "probe")
+    gate["probe-allowlist-announcement"] = "PASS" if ok else "FAIL"
+    print(f"{'PASS' if ok else 'FAIL'}: {detail}")
+
+    ok, detail = check_sidecar_dump(LAB / "sidecar-modules-probe.json", "probe")
+    gate["sidecar-module-dump-probe"] = "PASS" if ok else "FAIL"
+    print(f"{'PASS' if ok else 'FAIL'}: {detail}")
+
+    log("6. INTERACTIVE phase (production-surface facts; the in-page IP/IA")
+    log("   matrix is NOT machine-verified here ！ R2-03, see gate name)")
+    ok, detail = run_interactive_phase(exe, catalog_db)
+    gate["interactive-production-surface"] = "PASS" if ok else "FAIL"
+    print(f"{'PASS' if ok else 'FAIL'}: {detail}")
+
+    ok, detail = check_sidecar_dump(LAB / "sidecar-modules-interactive.json", "interactive")
+    gate["sidecar-module-dump-interactive"] = "PASS" if ok else "FAIL"
+    print(f"{'PASS' if ok else 'FAIL'}: {detail}")
+
+    log("7. gate")
+    failed = [name for name, status in gate.items() if status != "PASS"]
+    for name, status in gate.items():
+        print(f"{name:34s} {status}")
+    (RAW / "e2e-gate.json").write_text(
+        json.dumps(
+            {
+                "gate": gate,
+                "failed": failed,
+                "probe_statuses": statuses,
+                "probe_missing_ids": missing_ids,
+                "probe_unexpected_ids": unexpected_ids,
+                "probe_non_pass_ids": bad_ids,
+            },
+            indent=2,
+        ),
+        encoding="utf-8",
+    )
+    if failed:
+        print(f"GATE FAIL: {failed}")
+        return 1
+    print("GATE PASS: all phases green")
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())
+EXIT=0
+AST_EXCLUDING_DOCSTRING_IDENTICAL=verification/M2-RC2/run_e2e.py; EXIT=0
+COMMAND=["git", "show", "cfb5d2eecc4d8ab7a3159cdbb1d5812547bb5cd2:packaging/m2ac5/run_clean_start_e2e.py"]
+"""M2-AC5 packaged clean-start acceptance runner (AC3/AC4, host simulation).
+
+Drives the NSIS-installed desktop runtime through its three startup modes in
+an environment that provably has NO system Python on PATH and NO M2RC1_*
+source-tree env:
+
+  0. environment record + PATH purge assertion (``python`` must NOT resolve)
+     + READ-ONLY snapshot of the HOST's real %APPDATA% user root (P2-4)
+  1. NSIS silent install into a space-free temp dir (``/S /D=...``; the
+     /D= target is guarded against spaces, P3-6)
+  1.5 packaged library probe (P2-2): the INSTALLED core_service.exe serves
+     core.ping / ListBooks / core.shutdown over stdio JSON-lines
+  2. PROBE mode: launcher-side catalog seeding through the packaged
+     catalog_loader.exe (the frozen equivalent of the dev runners'
+     ``python -m infrastructure.resource_channel.catalog_loader``), then the
+     full WebView resource-channel matrix; gate = probe results JSON verdicts
+  3. AC1 test mode: the deterministic acceptance loop (pipeline -> SQLite ->
+     restart -> restore -> reader -> PNG export); gate = results JSON verdicts
+  4. PRODUCTION mode: real window, ISOLATED %APPDATA% userData layout
+     assertions (every launch env pins APPDATA into the lab ！ P2-4), graceful
+     close, sidecar reaping assertion
+  5. AC4: install-dir write-diff (hash before/after all runs), host real
+     %APPDATA% byte-identical proof (CS-Z4), user source files byte-identical,
+     no surviving sidecar processes
+
+Scope note (frozen at release): this is the LOCAL host-simulation route
+(python purged from PATH + M2RC1_* cleared); a truly clean Windows machine is
+M2 Release Gate scope and stays explicitly NOT_RUN here.
+
+The RUNNER may use the dev venv Python (acceptance tooling); every spawned
+instance of the app runs under the purged environment. Usage:
+
+    python packaging/m2ac5/run_clean_start_e2e.py [--installer <path>] [--output-dir <path>]
+
+Artifacts land in --output-dir (default verification/M2-AC5/raw/) and the
+lab temp dir. The gate fails closed: FAIL/MISSING verdicts fail the run.
+"""
+
+from __future__ import annotations
+
+import argparse
+import hashlib
+import json
+import os
+import subprocess
+import sys
+import tempfile
+import time
+from pathlib import Path
+
+REPO_ROOT = Path(__file__).resolve().parents[2]
+SRC_ROOT = REPO_ROOT / "src"
+RAW = Path(__file__).resolve().parent.parent.parent / "verification" / "M2-AC5" / "raw"
+DEFAULT_INSTALLER = (
+    REPO_ROOT
+    / "apps"
+    / "desktop"
+    / "src-tauri"
+    / "target"
+    / "release"
+    / "bundle"
+    / "nsis"
+    / "m2rc1-desktop_0.1.0_x64-setup.exe"
+)
+INSTALLED_EXE_NAME = "m2rc1-desktop.exe"
+SIDECAR_EXES = (
+    "host_bridge.exe",
+    "core_service.exe",
+    "acceptance_bridge.exe",
+    "catalog_loader.exe",
+)
+#: The HOST's real user-data root ！ READ-ONLY for the P2-4 untouched proof
+#: (hashed before/after the whole run, never written, never deleted). The app
+#: itself never sees this path: every launch env pins APPDATA into the lab
+#: (see *_env functions), which is exactly what packaged main.rs
+#: `packaged_user_root()` consumes via std::env::var("APPDATA").
+HOST_USER_ROOT = Path(os.environ.get("APPDATA", "")) / "com.newmanga.m2rc1.desktop"
+
+ANNOUNCE_PRODUCTION = "[m2rc2-allowlist] production:"
+LAUNCH_TIMEOUT = 240
+
+sys.path.insert(0, str(REPO_ROOT / "tests" / "m2_resource_channel"))
+from conftest import write_noise_png  # noqa: E402
+
+
+def sha256_file(path: Path) -> str:
+    digest = hashlib.sha256()
+    with path.open("rb") as handle:
+        for block in iter(lambda: handle.read(1024 * 1024), b""):
+            digest.update(block)
+    return digest.hexdigest()
+
+
+def sha256_hex(data: bytes) -> str:
+    return hashlib.sha256(data).hexdigest()
+
+
+class Gate:
+    """Fail-closed evidence collector (same shape as the RC2/AC1 runners)."""
+
+    def __init__(self) -> None:
+        self.scenarios: list[dict] = []
+
+    def record(self, scenario_id: str, status: str, observed) -> None:
+        self.scenarios.append({"id": scenario_id, "status": status, "observed": observed})
+        print(f"  [{status}] {scenario_id}: {json.dumps(observed, sort_keys=True)[:220]}")
+
+    def pass_or(self, condition: bool, scenario_id: str, observed) -> None:
+        self.record(scenario_id, "PASS" if condition else "FAIL", observed)
+
+    @property
+    def verdict(self) -> str:
+        statuses = {entry["status"] for entry in self.scenarios}
+        if not self.scenarios or "FAIL" in statuses:
+            return "FAIL"
+        return "PASS"
+
+
+def log(section: str) -> None:
+    print(f"\n=== {section} ===")
+
+
+# --------------------------------------------------------------------------
+# 0. environment: purge Python from PATH, clear the dev env contract
+# --------------------------------------------------------------------------
+
+PURGE_MARKERS = ("python", "venv", "conda", "WindowsApps")
+
+
+def purged_environment(lab: Path) -> tuple[dict, list[str]]:
+    """Build the clean-start env: python-free PATH + no M2RC1_* contract."""
+    removed = []
+    kept = []
+    for entry in os.environ.get("PATH", "").split(os.pathsep):
+        marker_hit = any(marker.lower() in entry.lower() for marker in PURGE_MARKERS)
+        (removed if marker_hit else kept).append(entry)
+    cleared_keys = [
+        key
+        for key in os.environ
+        if key.startswith("M2RC1_") or key.startswith("M2RC2_") or key in ("M2AC1_TEST_MODE", "NEWMANGA_DATA_ROOT", "M2RC1_PACKAGED")
+    ]
+    env = {key: value for key, value in os.environ.items() if key not in cleared_keys}
+    env["PATH"] = os.pathsep.join(kept)
+    env.setdefault("SYSTEMROOT", os.environ.get("SYSTEMROOT", "C:\\Windows"))
+    env.setdefault("TEMP", str(lab / "tmp"))
+    env.setdefault("TMP", str(lab / "tmp"))
+    (lab / "tmp").mkdir(parents=True, exist_ok=True)
+    return env, removed
+
+
+def assert_no_python_on_path(env: dict) -> tuple[bool, str]:
+    """The purge assertion: under the purged PATH, `python` must not resolve."""
+    probe = subprocess.run(
+        ["where", "python"],
+        env=env,
+        capture_output=True,
+        text=True,
+        encoding="mbcs",
+        errors="replace",
+        timeout=30,
+    )
+    if probe.returncode == 0:
+        return False, f"python still resolves under purged PATH: {probe.stdout.strip()}"
+    # also prove the packaged exes themselves are independent of any python:
+    # list what IS resolvable for the record (P3-2: mbcs decode ！ `where`
+    # localizes its output and would explode the reader thread on zh-CN)
+    where_py_exes = subprocess.run(
+        ["where", "host_bridge.exe"],
+        env=env,
+        capture_output=True,
+        text=True,
+        encoding="mbcs",
+        errors="replace",
+        timeout=30,
+    )
+    return True, (
+        "python not on purged PATH (where exit="
+        f"{probe.returncode}); host_bridge.exe resolves: {where_py_exes.returncode == 0}"
+    )
+
+
+# --------------------------------------------------------------------------
+# 1. NSIS silent install
+# --------------------------------------------------------------------------
+
+def dir_tree_hashes(root: Path) -> dict[str, str]:
+    hashes: dict[str, str] = {}
+    for path in sorted(root.rglob("*")):
+        if path.is_file():
+            hashes[str(path.relative_to(root)).lower()] = sha256_file(path)
+    return hashes
+
+
+def silent_install(installer: Path, target: Path, env: dict) -> tuple[bool, str]:
+    # P3-6 guard: NSIS `/D=` must be the LAST argument, unquoted, and the
+    # target path must not contain spaces (the unquoted-/D= rule makes
+    # space-containing install dirs ambiguous ！ fail closed instead).
+    if " " in str(target):
+        return False, (
+            f"/D= target contains a space (NSIS unquoted-/D= ambiguity): {target} ！ "
+            "pick a space-free install dir"
+        )
+    argv = [str(installer), "/S", f"/D={target}"]
+    assert argv[-1].startswith("/D="), "NSIS /D= must be the last installer argument"
+    if target.exists():
+        subprocess.run(["taskkill", "/F", "/IM", INSTALLED_EXE_NAME], capture_output=True)
+        time.sleep(1)
+        import shutil
+
+        shutil.rmtree(target, ignore_errors=True)
+    # NSIS /S = silent; /D=<dir> must be the LAST argument and unquoted.
+    # The NSIS setup exe is a GUI-subsystem process: wait for the installer
+    # process itself, then poll for the payload to be fully on disk.
+    proc = subprocess.Popen(
+        argv,
+        env=env,
+        stdout=subprocess.DEVNULL,
+        stderr=subprocess.DEVNULL,
+    )
+    try:
+        proc.wait(timeout=600)
+    except subprocess.TimeoutExpired:
+        proc.kill()
+        return False, "installer timed out after 600 s"
+    exe = target / INSTALLED_EXE_NAME
+    deadline = time.time() + 60
+    while time.time() < deadline and not exe.is_file():
+        time.sleep(1)
+    if not exe.is_file():
+        return False, f"installed exe missing after wait: {exe}"
+    missing = [name for name in SIDECAR_EXES if not (target / "resources" / "core-sidecar" / name).is_file()]
+    if missing:
+        return False, f"sidecar exes missing after install: {missing}"
+    return True, f"installed to {target} with resources/core-sidecar/{', '.join(SIDECAR_EXES)}"
+
+
+# --------------------------------------------------------------------------
+# lab preparation (probe fixtures) ！ mirrors the RC2 runner lab
+# --------------------------------------------------------------------------
+
+def prepare_probe_lab(lab: Path) -> dict:
+    derived = lab / "probe" / "scope" / "derived"
+    managed = lab / "probe" / "scope" / "managed"
+    derived.mkdir(parents=True, exist_ok=True)
+    managed.mkdir(parents=True, exist_ok=True)
+
+    payload = write_noise_png(derived / "asset.png", 128, 128, seed=5101)
+    typical = write_noise_png(derived / "typical.png", 1600, 2400, seed=5202)
+    boundary = derived / "boundary.bin"
+    with open(boundary, "wb") as handle:
+        handle.truncate(256 * 1024 * 1024)
+    oversize = derived / "oversize.bin"
+    with open(oversize, "wb") as handle:
+        handle.truncate(256 * 1024 * 1024 + 1)
+
+    manifest = {
+        "lab": str(lab),
+        "fixtures": {
+            "asset": {"sha256": sha256_hex(payload), "bytes": len(payload)},
+            "typical": {"sha256": sha256_hex(typical), "bytes": len(typical)},
+            "boundary": {
+                "sha256": hashlib.sha256(b"\x00" * (256 * 1024 * 1024)).hexdigest(),
+                "bytes": 256 * 1024 * 1024,
+            },
+        },
+    }
+    (lab / "probe" / "fixtures.json").write_text(json.dumps(manifest, indent=2), encoding="utf-8")
+    # pre-run source-file hashes for the AC4 zero-touch assertion
+    (lab / "probe" / "source-hashes-before.json").write_text(
+        json.dumps(
+            {p.name: sha256_file(p) for p in sorted(derived.iterdir()) if p.is_file()},
+            indent=2,
+        ),
+        encoding="utf-8",
+    )
+    return manifest
+
+
+def seed_catalog_packaged(install_dir: Path, catalog_db: Path, derived_root: Path) -> tuple[bool, str]:
+    """Launcher-side seeding through the packaged catalog_loader.exe.
+
+    M2-DERIVED-GC-2 (design ′2.3): this probe fixture catalog is brand-new,
+    so the trusted first-bind flag runs against this lab's own derived root
+    before the rows are written; install/seed thresholds and the rest of the
+    acceptance flow are untouched."""
+    loader = install_dir / "resources" / "core-sidecar" / "catalog_loader.exe"
+    completed = subprocess.run(
+        [
+            str(loader),
+            "--db",
+            str(catalog_db),
+            "--initialize-preview-namespace",
+            str(derived_root),
+            "--set",
+            "res-probe=asset.png",
+            "--set",
+            "res-hot=typical.png",
+            "--set",
+            "res-boundary=boundary.bin",
+            "--set",
+            "res-oversize=oversize.bin",
+            "--set",
+            "res-cataloged=asset.png",
+            "--dump",
+        ],
+        capture_output=True,
+        text=True,
+        encoding="mbcs",
+        errors="replace",
+        timeout=120,
+    )
+    if completed.returncode != 0:
+        return False, f"catalog_loader exit={completed.returncode}: {completed.stderr[-400:]}"
+    return True, "catalog seeded (5 rows) via packaged catalog_loader.exe"
+
+
+# --------------------------------------------------------------------------
+# launch plumbing
+# --------------------------------------------------------------------------
+
+def probe_env(env: dict, lab: Path) -> dict:
+    out = dict(env)
+    out["M2RC1_PACKAGED"] = "1"
+    # P2-4 APPDATA isolation: packaged_user_root() reads %APPDATA%; pin it
+    # into the lab so NO app launch can touch the host's real user profile.
+    out["APPDATA"] = str(lab / "probe" / "roaming")
+    out["M2RC1_DERIVED_ROOT"] = str(lab / "probe" / "scope" / "derived")
+    out["M2RC1_MANAGED_ROOT"] = str(lab / "probe" / "scope" / "managed")
+    out["M2RC1_FIXTURES"] = str(lab / "probe" / "fixtures.json")
+    out["M2RC2_CATALOG_DB"] = str(lab / "probe" / "catalog.sqlite")
+    out["M2RC1_PROBE_OUT"] = str(lab / "probe" / "probe-results.json")
+    out["M2RC1_PROBE_LOG"] = str(lab / "probe" / "probe-runtime.log")
+    out["WEBVIEW2_USER_DATA_FOLDER"] = str(lab / "probe" / "webview2-udd")
+    return out
+
+
+def ac1_env(env: dict, lab: Path) -> dict:
+    out = dict(env)
+    out["M2RC1_PACKAGED"] = "1"
+    out["APPDATA"] = str(lab / "ac1" / "roaming")
+    out["M2AC1_TEST_MODE"] = "1"
+    # launcher-side lab prep (same contract as the dev AC1 runner): explicit
+    # M2RC1_* paths are prepared by the runner, NOT by the host
+    root = lab / "ac1" / "root"
+    (root / "scope" / "derived").mkdir(parents=True, exist_ok=True)
+    (root / "managed").mkdir(parents=True, exist_ok=True)
+    out["NEWMANGA_DATA_ROOT"] = str(root)
+    out["M2RC2_CATALOG_DB"] = str(root / "catalog.sqlite")
+    out["M2RC1_DERIVED_ROOT"] = str(root / "scope" / "derived")
+    out["M2RC1_MANAGED_ROOT"] = str(root / "managed")
+    out["M2AC1_RESULTS_OUT"] = str(lab / "ac1" / "results.json")
+    out["WEBVIEW2_USER_DATA_FOLDER"] = str(lab / "ac1" / "webview2-udd")
+    return out
+
+
+def production_env(env: dict, lab: Path) -> dict:
+    out = dict(env)
+    out["M2RC1_PACKAGED"] = "1"
+    # P2-4 APPDATA isolation: the packaged defaults (%APPDATA% user root)
+    # resolve INSIDE the lab; the host's real user profile is never visible
+    # to the app and never touched by this runner.
+    out["APPDATA"] = str(lab / "production" / "roaming")
+    out["WEBVIEW2_USER_DATA_FOLDER"] = str(lab / "production" / "webview2-udd")
+    return out
+
+
+def lab_user_root(lab: Path) -> Path:
+    """The isolated user root the app actually resolves (APPDATA override)."""
+    return lab / "production" / "roaming" / "com.newmanga.m2rc1.desktop"
+
+
+def run_app(exe: Path, env: dict, timeout: int) -> tuple[int, str, int]:
+    """Run the app to completion, streaming stderr into the captured output."""
+    proc = subprocess.Popen(
+        [str(exe)],
+        env=env,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.STDOUT,
+    )
+    desktop_pid = proc.pid
+    output = b""
+    try:
+        output, _ = proc.communicate(timeout=timeout)
+    except subprocess.TimeoutExpired:
+        proc.kill()
+        try:
+            output, _ = proc.communicate(timeout=15)
+        except (subprocess.TimeoutExpired, ValueError):
+            pass
+    return proc.returncode, output.decode("utf-8", errors="replace"), desktop_pid
+
+
+def wait_for_file(path: Path, timeout: int) -> bool:
+    deadline = time.time() + timeout
+    while time.time() < deadline:
+        if path.is_file():
+            return True
+        time.sleep(1)
+    return path.is_file()
+
+
+def list_processes(names: tuple[str, ...]) -> dict[str, int]:
+    completed = subprocess.run(
+        ["tasklist", "/FO", "CSV", "/NH"],
+        capture_output=True,
+        text=True,
+        encoding="mbcs",
+        errors="replace",
+        timeout=60,
+    )
+    counts = {name: 0 for name in names}
+    for line in completed.stdout.splitlines():
+        for name in names:
+            if line.lower().startswith(f'"{name.lower()}"'):
+                counts[name] += 1
+    return counts
+
+
+# --------------------------------------------------------------------------
+# phases
+# --------------------------------------------------------------------------
+
+def run_library_probe(gate: Gate, install_dir: Path, env: dict, lab: Path) -> None:
+    """P2-2: install-state ListBooks workflow assertion (AC3).
+
+    Drives the INSTALLED `<install>/resources/core-sidecar/core_service.exe`
+    directly over stdio JSON-lines (Contract 1.1 envelope) under the purged
+    environment: core.ping round trip, then the ListBooks production command
+    (the exact command the production WebView surface exposes), then
+    core.shutdown. This gives AC3's "ListBooks workflow returns" a
+    machine-observable assertion against the installed artifact itself,
+    independent of the WebView phases.
+    """
+    log("phase 1.5: packaged library sidecar probe (install-state stdio, P2-2)")
+    exe = install_dir / "resources" / "core-sidecar" / "core_service.exe"
+    data_root = lab / "library-probe" / "data-root"
+    data_root.mkdir(parents=True, exist_ok=True)
+    lenv = dict(env)
+    lenv["NEWMANGA_DATA_ROOT"] = str(data_root)
+    lenv["APPDATA"] = str(lab / "library-probe" / "roaming")
+
+    def envelope(request_id: str, command: str) -> str:
+        # Keep the minor-3 request as a backwards-compatibility probe.
+        # The response must still declare the current protocol 1.6.
+        return json.dumps(
+            {
+                "protocol": "new-manga.core",
+                "version": {"major": 1, "minor": 3},
+                "request_id": request_id,
+                "command": command,
+                "payload": {},
+            }
+        )
+
+    requests = "\n".join(
+        [
+            envelope("r1", "core.ping"),
+            envelope("r2", "ListBooks"),
+            envelope("r3", "core.shutdown"),
+        ]
+    ) + "\n"
+    proc = subprocess.Popen(
+        [str(exe)],
+        env=lenv,
+        stdin=subprocess.PIPE,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+    )
+    try:
+        out, err = proc.communicate(input=requests.encode("utf-8"), timeout=120)
+    except subprocess.TimeoutExpired:
+        proc.kill()
+        out, err = proc.communicate(timeout=15)
+    text = out.decode("utf-8", errors="replace")
+    err_text = err.decode("utf-8", errors="replace")
+    (RAW / "r1-library-probe.log").write_text(
+        f"$ <installed>\\resources\\core-sidecar\\core_service.exe (purged PATH, install-state stdio)\n"
+        f"exit={proc.returncode}\n--- stdout ---\n{text}--- stderr ---\n{err_text}",
+        encoding="utf-8",
+    )
+
+    responses: dict[str, dict] = {}
+    for line in text.splitlines():
+        line = line.strip()
+        if not line:
+            continue
+        try:
+            value = json.loads(line)
+        except json.JSONDecodeError:
+            continue
+        request_id = value.get("request_id")
+        if request_id:
+            responses[request_id] = value
+
+    ping = responses.get("r1", {})
+    ping_result = ping.get("result") or {}
+    gate.pass_or(
+        ping.get("error") is None
+        and ping_result.get("status") == "ready"
+        and ping_result.get("protocol_version") == {"major": 1, "minor": 6}
+        and "library.list_books" in (ping_result.get("capabilities") or []),
+        "CS-L1-packaged-core-ping",
+        {"result": ping_result, "error": ping.get("error")},
+    )
+
+    books = responses.get("r2", {})
+    books_result = books.get("result")
+    required_keys = {"book_id", "title", "original_title", "is_favorite", "is_archived", "page_count", "created_at", "updated_at"}
+    books_valid = isinstance(books_result, list) and all(
+        isinstance(entry, dict) and required_keys.issubset(entry.keys()) for entry in books_result
+    )
+    gate.pass_or(
+        books.get("error") is None and books_valid,
+        "CS-L2-packaged-ListBooks-structure",
+        {"count": len(books_result) if isinstance(books_result, list) else None,
+         "envelope_valid": books_valid, "error": books.get("error")},
+    )
+
+    shutdown = responses.get("r3", {})
+    gate.pass_or(
+        (shutdown.get("result") or {}).get("status") == "stopped",
+        "CS-L3-packaged-core-shutdown",
+        {"result": shutdown.get("result"), "exit": proc.returncode},
+    )
+
+
+def run_probe_phase(gate: Gate, exe: Path, env: dict, lab: Path) -> None:
+    log("phase 2: PROBE mode (resource channel matrix, packaged sidecar)")
+    results_path = lab / "probe" / "probe-results.json"
+    results_path.unlink(missing_ok=True)
+    code, output = run_app(exe, probe_env(env, lab), LAUNCH_TIMEOUT)[:2]
+    (RAW / "cleanstart-probe-stdout.log").write_text(
+        f"$ <installed>\\m2rc1-desktop.exe (purged PATH, no M2RC1_SRC_ROOT/PYTHON)\n"
+        f"exit={code}\n{output}",
+        encoding="utf-8",
+    )
+    gate.pass_or(
+        wait_for_file(results_path, 20),
+        "CS-P1-probe-results-written",
+        {"path": str(results_path)},
+    )
+    if not results_path.is_file():
+        return
+    results = json.loads(results_path.read_text(encoding="utf-8"))
+    scenarios = results.get("results", [])
+    ids = [entry.get("id") for entry in scenarios]
+    fails = [entry["id"] for entry in scenarios if entry.get("status") != "PASS"]
+    gate.pass_or(
+        len(scenarios) >= 10 and not fails,
+        "CS-P2-probe-scenarios-all-pass",
+        {"count": len(scenarios), "failed": fails, "ids": ids},
+    )
+    # the digest self-check pins a REAL sidecar round trip (E-01 compares the
+    # fetched bytes against the fixture manifest sha)
+    e01 = next((entry for entry in scenarios if entry.get("id") == "E-01-issue-fetch-digest"), None)
+    gate.pass_or(
+        bool(e01) and e01.get("status") == "PASS",
+        "CS-P3-sidecar-roundtrip-digest",
+        {"e01": e01},
+    )
+
+
+def run_ac1_phase(gate: Gate, exe: Path, env: dict, lab: Path, install_dir: Path) -> None:
+    """The frozen M2-AC1 loop: run1 (pipeline -> SQLite save -> exit) then a
+    REAL relaunch (run2: restore -> reader -> PNG export -> digest compare).
+    Both launches run the packaged exe under the purged environment."""
+    log("phase 3: AC1 test mode (acceptance loop, packaged sidecar)")
+    ac1_dir = lab / "ac1"
+    root = ac1_dir / "root"
+    (root / "scope" / "derived").mkdir(parents=True, exist_ok=True)
+    (root / "managed").mkdir(parents=True, exist_ok=True)
+    # M2-DERIVED-GC-2 (design 2.3): pre-bind the AC1 fixture catalog to its
+    # own derived root through the packaged trusted loader BEFORE any
+    # sidecar spawns; run2 finds it bound and takes the shared path.
+    ac1_catalog = root / "catalog.sqlite"
+    if not ac1_catalog.exists():
+        loader_exe = install_dir / "resources" / "core-sidecar" / "catalog_loader.exe"
+        init = subprocess.run(
+            [
+                str(loader_exe),
+                "--db", str(ac1_catalog),
+                "--initialize-preview-namespace", str(root / "scope" / "derived"),
+            ],
+            capture_output=True,
+            text=True,
+            encoding="mbcs",
+            errors="replace",
+            timeout=120,
+        )
+        (RAW / "cleanstart-ac1-catalog-initialize.log").write_text(
+            "exit={}\n{}\n{}".format(init.returncode, init.stdout, init.stderr),
+            encoding="utf-8",
+        )
+        gate.pass_or(
+            init.returncode == 0,
+            "CS-A0-ac1-catalog-prebind",
+            {"exit": init.returncode, "stderr": init.stderr[-200:]},
+        )
+    results: dict[str, dict] = {}
+    pids: dict[str, tuple[int, int | None]] = {}
+    for launch in ("run1", "run2"):
+        results_path = ac1_dir / f"{launch}.json"
+        results_path.unlink(missing_ok=True)
+        launch_env = ac1_env(env, lab)
+        launch_env["M2AC1_RESULTS_OUT"] = str(results_path)
+        code, output, desktop_pid = run_app(exe, launch_env, LAUNCH_TIMEOUT)
+        (RAW / f"cleanstart-ac1-{launch}-stdout.log").write_text(
+            f"$ <installed>\\m2rc1-desktop.exe (M2AC1_TEST_MODE=1, launch={launch}, purged PATH)\n"
+            f"exit={code}\n{output}",
+            encoding="utf-8",
+        )
+        payload = None
+        if results_path.is_file():
+            try:
+                payload = json.loads(results_path.read_text(encoding="utf-8"))
+            except json.JSONDecodeError:
+                payload = None
+        gate.pass_or(
+            code == 0 and bool(payload) and payload.get("phase") == launch,
+            f"CS-A1-{launch}-completed",
+            {"exit": code, "phase": (payload or {}).get("phase")},
+        )
+        if payload is None:
+            return
+        core_pid = payload.get("core_pid")
+        results[launch] = payload
+        pids[launch] = (desktop_pid, int(core_pid) if core_pid else None)
+
+    # AC3 semantics: a real restart ！ desktop AND core sidecar are new PIDs
+    gate.pass_or(
+        pids["run1"][0] != pids["run2"][0] and pids["run1"][1] != pids["run2"][1],
+        "CS-A2-restart-new-pids",
+        {"run1": pids["run1"], "run2": pids["run2"]},
+    )
+
+    run1, run2 = results["run1"], results["run2"]
+    saved = run1.get("saved") or {}
+    gate.pass_or(
+        saved.get("run_status") == "completed" and len(saved.get("pages") or []) == 2
+        and saved.get("providers") == {"ocr": "m2ac1-mock-ocr", "translate": "m2ac1-mock-translate"},
+        "CS-A3-saved-summary-complete",
+        {"run_status": saved.get("run_status"), "pages": len(saved.get("pages") or []),
+         "providers": saved.get("providers")},
+    )
+
+    saved_by_index = {page["index"]: page["sha256"] for page in saved.get("pages") or []}
+    viewed = run2.get("viewed") or []
+    gate.pass_or(
+        len(viewed) == 2
+        and all(
+            entry.get("sha256") == saved_by_index.get(entry.get("index"))
+            and entry.get("naturalWidth", 0) > 0
+            for entry in viewed
+        ),
+        "CS-A4-restored-reader-matches-saved",
+        {"viewed": [{"index": e.get("index"), "sha": (e.get("sha256") or "")[:12]} for e in viewed]},
+    )
+
+    exported = run2.get("exported") or {}
+    output_name = exported.get("output_path")
+    export_file = root / "exports" / output_name if isinstance(output_name, str) else None
+    gate.pass_or(
+        bool(export_file and export_file.is_file() and export_file.stat().st_size > 0
+             and sha256_file(export_file) == exported.get("sha256")
+             and exported.get("sha256") == saved_by_index.get(exported.get("page_index"))),
+        "CS-A5-export-png-digest-matches",
+        {"size": export_file.stat().st_size if export_file and export_file.is_file() else 0,
+         "sha": (exported.get("sha256") or "")[:12]},
+    )
+
+
+def run_production_phase(gate: Gate, exe: Path, env: dict, lab: Path) -> None:
+    log("phase 4: PRODUCTION mode (real window, isolated %APPDATA% userData)")
+    # P2-4: NO deletion against the host's real %APPDATA% ！ the app resolves
+    # its packaged defaults under the lab roaming override (production_env),
+    # so this phase only ever creates lab space.
+    user_root = lab_user_root(lab)
+    catalog_sqlite = user_root / "catalog" / "catalog.sqlite"
+
+    proc = subprocess.Popen(
+        [str(exe)],
+        env=production_env(env, lab),
+        stdout=subprocess.PIPE,
+        stderr=subprocess.STDOUT,
+    )
+    # hold the real window open for at least 10 s (AC3: the app must START
+    # and STAY alive with its sidecars), then close gracefully
+    alive_deadline = time.time() + 10
+    while time.time() < alive_deadline:
+        time.sleep(1)
+        if proc.poll() is not None:
+            break
+    alive = proc.poll() is None
+    gate.pass_or(alive, "CS-R1-production-process-alive", {"poll": proc.poll()})
+    user_dirs = {
+        child: (user_root / child).is_dir() for child in ("catalog", "derived", "managed", "data")
+    }
+    gate.pass_or(
+        all(user_dirs.values()) and catalog_sqlite.is_file(),
+        "CS-R2-userdata-layout-created",
+        {
+            "dirs": user_dirs,
+            "catalog.sqlite": catalog_sqlite.is_file(),
+            "root": str(user_root),
+            "appdata_isolated": True,
+        },
+    )
+    # graceful close (WM_CLOSE, no /F): lets the host drop the channels so the
+    # sidecars receive `shutdown` and exit ！ the AC4 reaping precondition
+    subprocess.run(["taskkill", "/PID", str(proc.pid)], capture_output=True)
+    try:
+        output_tail, _ = proc.communicate(timeout=60)
+    except subprocess.TimeoutExpired:
+        proc.kill()
+        output_tail, _ = proc.communicate(timeout=15)
+    text = output_tail.decode("utf-8", errors="replace")
+    (RAW / "cleanstart-production-stdout.log").write_text(
+        f"$ <installed>\\m2rc1-desktop.exe (production defaults; pid={proc.pid}; graceful close)\n"
+        f"exit={proc.returncode}\n{text}",
+        encoding="utf-8",
+    )
+    gate.pass_or(
+        ANNOUNCE_PRODUCTION in text,
+        "CS-R3-production-surface-announced",
+        {"announcement": ANNOUNCE_PRODUCTION, "present": ANNOUNCE_PRODUCTION in text},
+    )
+    gate.pass_or(
+        text.count("CORE_SPAWN_FAILED") == 0 and "Traceback" not in text,
+        "CS-R4-no-spawn-failures-in-log",
+        {"spawn_failed_mentions": text.count("CORE_SPAWN_FAILED")},
+    )
+
+
+def main() -> int:
+    global RAW
+    parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
+    parser.add_argument("--installer", type=Path, default=DEFAULT_INSTALLER)
+    parser.add_argument("--output-dir", type=Path, default=RAW, help="isolated evidence directory")
+    args = parser.parse_args()
+    RAW = args.output_dir.resolve()
+
+    RAW.mkdir(parents=True, exist_ok=True)
+    lab = Path(tempfile.mkdtemp(prefix="m2ac5-cleanstart-"))
+    installer = args.installer
+    gate = Gate()
+
+    log("phase 0: environment record + PATH purge")
+    env, removed = purged_environment(lab)
+    purged_ok, purge_detail = assert_no_python_on_path(env)
+    gate.pass_or(purged_ok, "CS-E1-python-purged-from-path", {"detail": purge_detail, "removed_entries": removed})
+    gate.pass_or(
+        installer.is_file(),
+        "CS-E2-installer-present",
+        {"installer": str(installer), "sha256": sha256_file(installer)},
+    )
+    if not installer.is_file() or not purged_ok:
+        gate.record("CS-BLOCKED", "FAIL", {"reason": "installer missing or python purge failed"})
+        print(f"\nGATE: {gate.verdict}")
+        return 1
+
+    install_dir = lab / "install"
+    # P3-6: NSIS /D= must stay unquoted and space-free ！ fail closed here
+    # with an actionable message instead of an ambiguous silent install.
+    if " " in str(install_dir):
+        gate.record(
+            "CS-E3-install-path-no-spaces",
+            "FAIL",
+            {"install_dir": str(install_dir), "hint": "set TEMP to a space-free directory"},
+        )
+        print(f"\nGATE: {gate.verdict}")
+        return 1
+    gate.pass_or(
+        True,
+        "CS-E3-install-path-no-spaces",
+        {"install_dir": str(install_dir), "space_free": True},
+    )
+
+    # P2-4: snapshot the HOST's real user-data root READ-ONLY. The runner
+    # never writes or deletes here; the phase-5 comparison proves the whole
+    # run left it byte-identical.
+    log("phase 0.5: host real %APPDATA% snapshot (P2-4 untouched proof)")
+    host_hashes_before = dir_tree_hashes(HOST_USER_ROOT) if HOST_USER_ROOT.exists() else {}
+    print(f"  host user root: {HOST_USER_ROOT} ({'present' if host_hashes_before else 'absent'}, files={len(host_hashes_before)})")
+
+    log("phase 1: NSIS silent install")
+    ok, detail = silent_install(installer, install_dir, env)
+    gate.pass_or(ok, "CS-I1-silent-install", {"detail": detail})
+    if not ok:
+        print(f"\nGATE: {gate.verdict}")
+        return 1
+    install_hashes_before = dir_tree_hashes(install_dir)
+    print(f"  install dir files: {len(install_hashes_before)}")
+
+    exe = install_dir / INSTALLED_EXE_NAME
+    manifest = prepare_probe_lab(lab)
+    seed_ok, seed_detail = seed_catalog_packaged(
+        install_dir, lab / "probe" / "catalog.sqlite", lab / "probe" / "scope" / "derived"
+    )
+    gate.pass_or(seed_ok, "CS-I2-catalog-seeded-packaged-loader", {"detail": seed_detail})
+
+    run_library_probe(gate, install_dir, env, lab)
+    run_probe_phase(gate, exe, env, lab)
+    run_ac1_phase(gate, exe, env, lab, install_dir)
+    run_production_phase(gate, exe, env, lab)
+
+    log("phase 5: AC4 zero-touch assertions")
+    install_hashes_after = dir_tree_hashes(install_dir)
+    changed = {
+        key for key in set(install_hashes_before) | set(install_hashes_after)
+        if install_hashes_before.get(key) != install_hashes_after.get(key)
+    }
+    gate.pass_or(not changed, "CS-Z1-install-dir-zero-write", {"changed_entries": sorted(changed)[:8]})
+
+    # P2-4 untouched proof: the host's real user-data root must be
+    # byte-identical across the whole run (install + 3 modes + probes).
+    host_hashes_after = dir_tree_hashes(HOST_USER_ROOT) if HOST_USER_ROOT.exists() else {}
+    host_changed = {
+        key for key in set(host_hashes_before) | set(host_hashes_after)
+        if host_hashes_before.get(key) != host_hashes_after.get(key)
+    }
+    gate.pass_or(
+        not host_changed,
+        "CS-Z4-host-real-appdata-untouched",
+        {
+            "root": str(HOST_USER_ROOT),
+            "files": len(host_hashes_after),
+            "changed_entries": sorted(host_changed)[:8],
+            "note": "runner never deletes here; app APPDATA pinned into the lab",
+        },
+    )
+
+    before = json.loads((lab / "probe" / "source-hashes-before.json").read_text(encoding="utf-8"))
+    # M2-DERIVED-GC-2: the fixture namespace initialization (design 2.3)
+    # creates the protocol lock file at the derived-root level; it is not a
+    # probe source fixture and is excluded from the byte-identity set (the
+    # lock's LOCATION is design-frozen; every actual fixture file below it
+    # stays byte-identical).
+    protocol_names = {".preview-lifecycle.lock"}
+    after = {
+        p.name: sha256_file(p)
+        for p in sorted((lab / "probe" / "scope" / "derived").iterdir())
+        if p.is_file() and p.name not in protocol_names
+    }
+    gate.pass_or(before == after, "CS-Z2-user-source-files-byte-identical", {"files": len(after)})
+
+    survivors = list_processes(
+        ("host_bridge.exe", "core_service.exe", "acceptance_bridge.exe", "catalog_loader.exe", "python.exe")
+    )
+    # python.exe is a RECORD-ONLY count here: this host machine legitimately
+    # runs unrelated python processes (the acceptance runner itself among
+    # them); "no system Python" is proven by the CS-E1 purged-PATH assertion
+    # plus the frozen exes serving every workflow above. The gate asserts the
+    # four packaged sidecar exes are fully reaped.
+    gate.pass_or(
+        survivors["host_bridge.exe"] == 0
+        and survivors["core_service.exe"] == 0
+        and survivors["acceptance_bridge.exe"] == 0
+        and survivors["catalog_loader.exe"] == 0,
+        "CS-Z3-no-surviving-sidecar-processes",
+        survivors,
+    )
+
+    log("gate")
+    results = {
+        "gate": "m2ac5-clean-start",
+        "installer": str(installer),
+        "installer_sha256": sha256_file(installer),
+        "install_dir": str(install_dir),
+        "lab": str(lab),
+        "appdata_isolation": {
+            "app_env_appdata": "pinned into the lab (probe/ac1/production)",
+            "host_real_appdata": str(HOST_USER_ROOT),
+            "host_real_appdata_files": len(host_hashes_after),
+        },
+        "verdict": gate.verdict,
+        "scenarios": gate.scenarios,
+    }
+    (RAW / "cleanstart-gate.json").write_text(json.dumps(results, indent=2), encoding="utf-8")
+    print(f"\nGATE: {gate.verdict}")
+    return 0 if gate.verdict == "PASS" else 1
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
+EXIT=0
+COMMAND=["git", "show", "2af6b71aa06979b822e543b221aaf3a2d5f01abe:packaging/m2ac5/run_clean_start_e2e.py"]
+"""M2-AC5 packaged clean-start acceptance runner (AC3/AC4, host simulation).
+
+Drives the NSIS-installed desktop runtime through its three startup modes in
+an environment that provably has NO system Python on PATH and NO M2RC1_*
+source-tree env:
+
+  0. environment record + PATH purge assertion (``python`` must NOT resolve)
+     + READ-ONLY snapshot of the HOST's real %APPDATA% user root (P2-4)
+  1. NSIS silent install into a space-free temp dir (``/S /D=...``; the
+     /D= target is guarded against spaces, P3-6)
+  1.5 packaged library probe (P2-2): the INSTALLED core_service.exe serves
+     core.ping / ListBooks / core.shutdown over stdio JSON-lines
+  2. PROBE mode: launcher-side catalog seeding through the packaged
+     catalog_loader.exe (the frozen equivalent of the dev runners'
+     ``python -m infrastructure.resource_channel.catalog_loader``), then the
+     full WebView resource-channel matrix; gate = probe results JSON verdicts
+  3. AC1 test mode: the deterministic acceptance loop (pipeline -> SQLite ->
+     restart -> restore -> reader -> PNG export); gate = results JSON verdicts
+  4. PRODUCTION mode: real window, ISOLATED %APPDATA% userData layout
+     assertions (every launch env pins APPDATA into the lab ！ P2-4), graceful
+     close, sidecar reaping assertion
+  5. AC4: install-dir write-diff (hash before/after all runs), host real
+     %APPDATA% byte-identical proof (CS-Z4), user source files byte-identical,
+     no surviving sidecar processes
+
+Scope note (frozen at release): this is the LOCAL host-simulation route
+(python purged from PATH + M2RC1_* cleared); a truly clean Windows machine is
+M2 Release Gate scope and stays explicitly NOT_RUN here.
+
+The RUNNER may use the dev venv Python (acceptance tooling); every spawned
+instance of the app runs under the purged environment. Usage:
+
+    python packaging/m2ac5/run_clean_start_e2e.py [--installer <path>] [--output-dir <path>]
+
+Artifacts land in --output-dir (default verification/M2-AC5/raw/) and the
+lab temp dir. The gate fails closed: FAIL/MISSING verdicts fail the run.
+"""
+
+from __future__ import annotations
+
+import argparse
+import hashlib
+import json
+import os
+import subprocess
+import sys
+import tempfile
+import time
+from pathlib import Path
+
+REPO_ROOT = Path(__file__).resolve().parents[2]
+SRC_ROOT = REPO_ROOT / "src"
+RAW = Path(__file__).resolve().parent.parent.parent / "verification" / "M2-AC5" / "raw"
+DEFAULT_INSTALLER = (
+    REPO_ROOT
+    / "apps"
+    / "desktop"
+    / "src-tauri"
+    / "target"
+    / "release"
+    / "bundle"
+    / "nsis"
+    / "m2rc1-desktop_0.1.0_x64-setup.exe"
+)
+INSTALLED_EXE_NAME = "m2rc1-desktop.exe"
+SIDECAR_EXES = (
+    "host_bridge.exe",
+    "core_service.exe",
+    "acceptance_bridge.exe",
+    "catalog_loader.exe",
+)
+#: The HOST's real user-data root ！ READ-ONLY for the P2-4 untouched proof
+#: (hashed before/after the whole run, never written, never deleted). The app
+#: itself never sees this path: every launch env pins APPDATA into the lab
+#: (see *_env functions), which is exactly what packaged main.rs
+#: `packaged_user_root()` consumes via std::env::var("APPDATA").
+HOST_USER_ROOT = Path(os.environ.get("APPDATA", "")) / "com.newmanga.m2rc1.desktop"
+
+ANNOUNCE_PRODUCTION = "[m2rc2-allowlist] production:"
+LAUNCH_TIMEOUT = 240
+
+sys.path.insert(0, str(REPO_ROOT / "tests" / "m2_resource_channel"))
+from conftest import write_noise_png  # noqa: E402
+
+
+def sha256_file(path: Path) -> str:
+    digest = hashlib.sha256()
+    with path.open("rb") as handle:
+        for block in iter(lambda: handle.read(1024 * 1024), b""):
+            digest.update(block)
+    return digest.hexdigest()
+
+
+def sha256_hex(data: bytes) -> str:
+    return hashlib.sha256(data).hexdigest()
+
+
+class Gate:
+    """Fail-closed evidence collector (same shape as the RC2/AC1 runners)."""
+
+    def __init__(self) -> None:
+        self.scenarios: list[dict] = []
+
+    def record(self, scenario_id: str, status: str, observed) -> None:
+        self.scenarios.append({"id": scenario_id, "status": status, "observed": observed})
+        print(f"  [{status}] {scenario_id}: {json.dumps(observed, sort_keys=True)[:220]}")
+
+    def pass_or(self, condition: bool, scenario_id: str, observed) -> None:
+        self.record(scenario_id, "PASS" if condition else "FAIL", observed)
+
+    @property
+    def verdict(self) -> str:
+        statuses = {entry["status"] for entry in self.scenarios}
+        if not self.scenarios or "FAIL" in statuses:
+            return "FAIL"
+        return "PASS"
+
+
+def log(section: str) -> None:
+    print(f"\n=== {section} ===")
+
+
+# --------------------------------------------------------------------------
+# 0. environment: purge Python from PATH, clear the dev env contract
+# --------------------------------------------------------------------------
+
+PURGE_MARKERS = ("python", "venv", "conda", "WindowsApps")
+
+
+def purged_environment(lab: Path) -> tuple[dict, list[str]]:
+    """Build the clean-start env: python-free PATH + no M2RC1_* contract."""
+    removed = []
+    kept = []
+    for entry in os.environ.get("PATH", "").split(os.pathsep):
+        marker_hit = any(marker.lower() in entry.lower() for marker in PURGE_MARKERS)
+        (removed if marker_hit else kept).append(entry)
+    cleared_keys = [
+        key
+        for key in os.environ
+        if key.startswith("M2RC1_") or key.startswith("M2RC2_") or key in ("M2AC1_TEST_MODE", "NEWMANGA_DATA_ROOT", "M2RC1_PACKAGED")
+    ]
+    env = {key: value for key, value in os.environ.items() if key not in cleared_keys}
+    env["PATH"] = os.pathsep.join(kept)
+    env.setdefault("SYSTEMROOT", os.environ.get("SYSTEMROOT", "C:\\Windows"))
+    env.setdefault("TEMP", str(lab / "tmp"))
+    env.setdefault("TMP", str(lab / "tmp"))
+    (lab / "tmp").mkdir(parents=True, exist_ok=True)
+    return env, removed
+
+
+def assert_no_python_on_path(env: dict) -> tuple[bool, str]:
+    """The purge assertion: under the purged PATH, `python` must not resolve."""
+    probe = subprocess.run(
+        ["where", "python"],
+        env=env,
+        capture_output=True,
+        text=True,
+        encoding="mbcs",
+        errors="replace",
+        timeout=30,
+    )
+    if probe.returncode == 0:
+        return False, f"python still resolves under purged PATH: {probe.stdout.strip()}"
+    # also prove the packaged exes themselves are independent of any python:
+    # list what IS resolvable for the record (P3-2: mbcs decode ！ `where`
+    # localizes its output and would explode the reader thread on zh-CN)
+    where_py_exes = subprocess.run(
+        ["where", "host_bridge.exe"],
+        env=env,
+        capture_output=True,
+        text=True,
+        encoding="mbcs",
+        errors="replace",
+        timeout=30,
+    )
+    return True, (
+        "python not on purged PATH (where exit="
+        f"{probe.returncode}); host_bridge.exe resolves: {where_py_exes.returncode == 0}"
+    )
+
+
+# --------------------------------------------------------------------------
+# 1. NSIS silent install
+# --------------------------------------------------------------------------
+
+def dir_tree_hashes(root: Path) -> dict[str, str]:
+    hashes: dict[str, str] = {}
+    for path in sorted(root.rglob("*")):
+        if path.is_file():
+            hashes[str(path.relative_to(root)).lower()] = sha256_file(path)
+    return hashes
+
+
+def silent_install(installer: Path, target: Path, env: dict) -> tuple[bool, str]:
+    # P3-6 guard: NSIS `/D=` must be the LAST argument, unquoted, and the
+    # target path must not contain spaces (the unquoted-/D= rule makes
+    # space-containing install dirs ambiguous ！ fail closed instead).
+    if " " in str(target):
+        return False, (
+            f"/D= target contains a space (NSIS unquoted-/D= ambiguity): {target} ！ "
+            "pick a space-free install dir"
+        )
+    argv = [str(installer), "/S", f"/D={target}"]
+    assert argv[-1].startswith("/D="), "NSIS /D= must be the last installer argument"
+    if target.exists():
+        subprocess.run(["taskkill", "/F", "/IM", INSTALLED_EXE_NAME], capture_output=True)
+        time.sleep(1)
+        import shutil
+
+        shutil.rmtree(target, ignore_errors=True)
+    # NSIS /S = silent; /D=<dir> must be the LAST argument and unquoted.
+    # The NSIS setup exe is a GUI-subsystem process: wait for the installer
+    # process itself, then poll for the payload to be fully on disk.
+    proc = subprocess.Popen(
+        argv,
+        env=env,
+        stdout=subprocess.DEVNULL,
+        stderr=subprocess.DEVNULL,
+    )
+    try:
+        proc.wait(timeout=600)
+    except subprocess.TimeoutExpired:
+        proc.kill()
+        return False, "installer timed out after 600 s"
+    exe = target / INSTALLED_EXE_NAME
+    deadline = time.time() + 60
+    while time.time() < deadline and not exe.is_file():
+        time.sleep(1)
+    if not exe.is_file():
+        return False, f"installed exe missing after wait: {exe}"
+    missing = [name for name in SIDECAR_EXES if not (target / "resources" / "core-sidecar" / name).is_file()]
+    if missing:
+        return False, f"sidecar exes missing after install: {missing}"
+    return True, f"installed to {target} with resources/core-sidecar/{', '.join(SIDECAR_EXES)}"
+
+
+# --------------------------------------------------------------------------
+# lab preparation (probe fixtures) ！ mirrors the RC2 runner lab
+# --------------------------------------------------------------------------
+
+def prepare_probe_lab(lab: Path) -> dict:
+    derived = lab / "probe" / "scope" / "derived"
+    managed = lab / "probe" / "scope" / "managed"
+    derived.mkdir(parents=True, exist_ok=True)
+    managed.mkdir(parents=True, exist_ok=True)
+
+    payload = write_noise_png(derived / "asset.png", 128, 128, seed=5101)
+    typical = write_noise_png(derived / "typical.png", 1600, 2400, seed=5202)
+    boundary = derived / "boundary.bin"
+    with open(boundary, "wb") as handle:
+        handle.truncate(256 * 1024 * 1024)
+    oversize = derived / "oversize.bin"
+    with open(oversize, "wb") as handle:
+        handle.truncate(256 * 1024 * 1024 + 1)
+
+    manifest = {
+        "lab": str(lab),
+        "fixtures": {
+            "asset": {"sha256": sha256_hex(payload), "bytes": len(payload)},
+            "typical": {"sha256": sha256_hex(typical), "bytes": len(typical)},
+            "boundary": {
+                "sha256": hashlib.sha256(b"\x00" * (256 * 1024 * 1024)).hexdigest(),
+                "bytes": 256 * 1024 * 1024,
+            },
+        },
+    }
+    (lab / "probe" / "fixtures.json").write_text(json.dumps(manifest, indent=2), encoding="utf-8")
+    # pre-run source-file hashes for the AC4 zero-touch assertion
+    (lab / "probe" / "source-hashes-before.json").write_text(
+        json.dumps(
+            {p.name: sha256_file(p) for p in sorted(derived.iterdir()) if p.is_file()},
+            indent=2,
+        ),
+        encoding="utf-8",
+    )
+    return manifest
+
+
+def seed_catalog_packaged(install_dir: Path, catalog_db: Path, derived_root: Path) -> tuple[bool, str]:
+    """Launcher-side seeding through the packaged catalog_loader.exe.
+
+    M2-DERIVED-GC-2 (design ′2.3): this probe fixture catalog is brand-new,
+    so the trusted first-bind flag runs against this lab's own derived root
+    before the rows are written; install/seed thresholds and the rest of the
+    acceptance flow are untouched."""
+    loader = install_dir / "resources" / "core-sidecar" / "catalog_loader.exe"
+    completed = subprocess.run(
+        [
+            str(loader),
+            "--db",
+            str(catalog_db),
+            "--initialize-preview-namespace",
+            str(derived_root),
+            "--set",
+            "res-probe=asset.png",
+            "--set",
+            "res-hot=typical.png",
+            "--set",
+            "res-boundary=boundary.bin",
+            "--set",
+            "res-oversize=oversize.bin",
+            "--set",
+            "res-cataloged=asset.png",
+            "--dump",
+        ],
+        capture_output=True,
+        text=True,
+        encoding="mbcs",
+        errors="replace",
+        timeout=120,
+    )
+    if completed.returncode != 0:
+        return False, f"catalog_loader exit={completed.returncode}: {completed.stderr[-400:]}"
+    return True, "catalog seeded (5 rows) via packaged catalog_loader.exe"
+
+
+# --------------------------------------------------------------------------
+# launch plumbing
+# --------------------------------------------------------------------------
+
+def probe_env(env: dict, lab: Path) -> dict:
+    out = dict(env)
+    out["M2RC1_PACKAGED"] = "1"
+    # P2-4 APPDATA isolation: packaged_user_root() reads %APPDATA%; pin it
+    # into the lab so NO app launch can touch the host's real user profile.
+    out["APPDATA"] = str(lab / "probe" / "roaming")
+    out["M2RC1_DERIVED_ROOT"] = str(lab / "probe" / "scope" / "derived")
+    out["M2RC1_MANAGED_ROOT"] = str(lab / "probe" / "scope" / "managed")
+    out["M2RC1_FIXTURES"] = str(lab / "probe" / "fixtures.json")
+    out["M2RC2_CATALOG_DB"] = str(lab / "probe" / "catalog.sqlite")
+    out["M2RC1_PROBE_OUT"] = str(lab / "probe" / "probe-results.json")
+    out["M2RC1_PROBE_LOG"] = str(lab / "probe" / "probe-runtime.log")
+    out["WEBVIEW2_USER_DATA_FOLDER"] = str(lab / "probe" / "webview2-udd")
+    return out
+
+
+def ac1_env(env: dict, lab: Path) -> dict:
+    out = dict(env)
+    out["M2RC1_PACKAGED"] = "1"
+    out["APPDATA"] = str(lab / "ac1" / "roaming")
+    out["M2AC1_TEST_MODE"] = "1"
+    # launcher-side lab prep (same contract as the dev AC1 runner): explicit
+    # M2RC1_* paths are prepared by the runner, NOT by the host
+    root = lab / "ac1" / "root"
+    (root / "scope" / "derived").mkdir(parents=True, exist_ok=True)
+    (root / "managed").mkdir(parents=True, exist_ok=True)
+    out["NEWMANGA_DATA_ROOT"] = str(root)
+    out["M2RC2_CATALOG_DB"] = str(root / "catalog.sqlite")
+    out["M2RC1_DERIVED_ROOT"] = str(root / "scope" / "derived")
+    out["M2RC1_MANAGED_ROOT"] = str(root / "managed")
+    out["M2AC1_RESULTS_OUT"] = str(lab / "ac1" / "results.json")
+    out["WEBVIEW2_USER_DATA_FOLDER"] = str(lab / "ac1" / "webview2-udd")
+    return out
+
+
+def production_env(env: dict, lab: Path) -> dict:
+    out = dict(env)
+    out["M2RC1_PACKAGED"] = "1"
+    # P2-4 APPDATA isolation: the packaged defaults (%APPDATA% user root)
+    # resolve INSIDE the lab; the host's real user profile is never visible
+    # to the app and never touched by this runner.
+    out["APPDATA"] = str(lab / "production" / "roaming")
+    out["WEBVIEW2_USER_DATA_FOLDER"] = str(lab / "production" / "webview2-udd")
+    return out
+
+
+def lab_user_root(lab: Path) -> Path:
+    """The isolated user root the app actually resolves (APPDATA override)."""
+    return lab / "production" / "roaming" / "com.newmanga.m2rc1.desktop"
+
+
+def run_app(exe: Path, env: dict, timeout: int) -> tuple[int, str, int]:
+    """Run the app to completion, streaming stderr into the captured output."""
+    proc = subprocess.Popen(
+        [str(exe)],
+        env=env,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.STDOUT,
+    )
+    desktop_pid = proc.pid
+    output = b""
+    try:
+        output, _ = proc.communicate(timeout=timeout)
+    except subprocess.TimeoutExpired:
+        proc.kill()
+        try:
+            output, _ = proc.communicate(timeout=15)
+        except (subprocess.TimeoutExpired, ValueError):
+            pass
+    return proc.returncode, output.decode("utf-8", errors="replace"), desktop_pid
+
+
+def wait_for_file(path: Path, timeout: int) -> bool:
+    deadline = time.time() + timeout
+    while time.time() < deadline:
+        if path.is_file():
+            return True
+        time.sleep(1)
+    return path.is_file()
+
+
+def list_processes(names: tuple[str, ...]) -> dict[str, int]:
+    completed = subprocess.run(
+        ["tasklist", "/FO", "CSV", "/NH"],
+        capture_output=True,
+        text=True,
+        encoding="mbcs",
+        errors="replace",
+        timeout=60,
+    )
+    counts = {name: 0 for name in names}
+    for line in completed.stdout.splitlines():
+        for name in names:
+            if line.lower().startswith(f'"{name.lower()}"'):
+                counts[name] += 1
+    return counts
+
+
+# --------------------------------------------------------------------------
+# phases
+# --------------------------------------------------------------------------
+
+def run_library_probe(gate: Gate, install_dir: Path, env: dict, lab: Path) -> None:
+    """P2-2: install-state ListBooks workflow assertion (AC3).
+
+    Drives the INSTALLED `<install>/resources/core-sidecar/core_service.exe`
+    directly over stdio JSON-lines (Contract 1.1 envelope) under the purged
+    environment: core.ping round trip, then the ListBooks production command
+    (the exact command the production WebView surface exposes), then
+    core.shutdown. This gives AC3's "ListBooks workflow returns" a
+    machine-observable assertion against the installed artifact itself,
+    independent of the WebView phases.
+    """
+    log("phase 1.5: packaged library sidecar probe (install-state stdio, P2-2)")
+    exe = install_dir / "resources" / "core-sidecar" / "core_service.exe"
+    data_root = lab / "library-probe" / "data-root"
+    data_root.mkdir(parents=True, exist_ok=True)
+    lenv = dict(env)
+    lenv["NEWMANGA_DATA_ROOT"] = str(data_root)
+    lenv["APPDATA"] = str(lab / "library-probe" / "roaming")
+
+    def envelope(request_id: str, command: str) -> str:
+        # Keep the minor-3 request as a backwards-compatibility probe.
+        # The response must still declare the current protocol 1.6.
+        return json.dumps(
+            {
+                "protocol": "new-manga.core",
+                "version": {"major": 1, "minor": 3},
+                "request_id": request_id,
+                "command": command,
+                "payload": {},
+            }
+        )
+
+    requests = "\n".join(
+        [
+            envelope("r1", "core.ping"),
+            envelope("r2", "ListBooks"),
+            envelope("r3", "core.shutdown"),
+        ]
+    ) + "\n"
+    proc = subprocess.Popen(
+        [str(exe)],
+        env=lenv,
+        stdin=subprocess.PIPE,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+    )
+    try:
+        out, err = proc.communicate(input=requests.encode("utf-8"), timeout=120)
+    except subprocess.TimeoutExpired:
+        proc.kill()
+        out, err = proc.communicate(timeout=15)
+    text = out.decode("utf-8", errors="replace")
+    err_text = err.decode("utf-8", errors="replace")
+    (RAW / "r1-library-probe.log").write_text(
+        f"$ <installed>\\resources\\core-sidecar\\core_service.exe (purged PATH, install-state stdio)\n"
+        f"exit={proc.returncode}\n--- stdout ---\n{text}--- stderr ---\n{err_text}",
+        encoding="utf-8",
+    )
+
+    responses: dict[str, dict] = {}
+    for line in text.splitlines():
+        line = line.strip()
+        if not line:
+            continue
+        try:
+            value = json.loads(line)
+        except json.JSONDecodeError:
+            continue
+        request_id = value.get("request_id")
+        if request_id:
+            responses[request_id] = value
+
+    ping = responses.get("r1", {})
+    ping_result = ping.get("result") or {}
+    gate.pass_or(
+        ping.get("error") is None
+        and ping_result.get("status") == "ready"
+        and ping_result.get("protocol_version") == {"major": 1, "minor": 6}
+        and "library.list_books" in (ping_result.get("capabilities") or []),
+        "CS-L1-packaged-core-ping",
+        {"result": ping_result, "error": ping.get("error")},
+    )
+
+    books = responses.get("r2", {})
+    books_result = books.get("result")
+    required_keys = {"book_id", "title", "original_title", "is_favorite", "is_archived", "page_count", "created_at", "updated_at"}
+    books_valid = isinstance(books_result, list) and all(
+        isinstance(entry, dict) and required_keys.issubset(entry.keys()) for entry in books_result
+    )
+    gate.pass_or(
+        books.get("error") is None and books_valid,
+        "CS-L2-packaged-ListBooks-structure",
+        {"count": len(books_result) if isinstance(books_result, list) else None,
+         "envelope_valid": books_valid, "error": books.get("error")},
+    )
+
+    shutdown = responses.get("r3", {})
+    gate.pass_or(
+        (shutdown.get("result") or {}).get("status") == "stopped",
+        "CS-L3-packaged-core-shutdown",
+        {"result": shutdown.get("result"), "exit": proc.returncode},
+    )
+
+
+def run_probe_phase(gate: Gate, exe: Path, env: dict, lab: Path) -> None:
+    log("phase 2: PROBE mode (resource channel matrix, packaged sidecar)")
+    results_path = lab / "probe" / "probe-results.json"
+    results_path.unlink(missing_ok=True)
+    code, output = run_app(exe, probe_env(env, lab), LAUNCH_TIMEOUT)[:2]
+    (RAW / "cleanstart-probe-stdout.log").write_text(
+        f"$ <installed>\\m2rc1-desktop.exe (purged PATH, no M2RC1_SRC_ROOT/PYTHON)\n"
+        f"exit={code}\n{output}",
+        encoding="utf-8",
+    )
+    gate.pass_or(
+        wait_for_file(results_path, 20),
+        "CS-P1-probe-results-written",
+        {"path": str(results_path)},
+    )
+    if not results_path.is_file():
+        return
+    results = json.loads(results_path.read_text(encoding="utf-8"))
+    scenarios = results.get("results", [])
+    ids = [entry.get("id") for entry in scenarios]
+    fails = [entry["id"] for entry in scenarios if entry.get("status") != "PASS"]
+    gate.pass_or(
+        len(scenarios) >= 10 and not fails,
+        "CS-P2-probe-scenarios-all-pass",
+        {"count": len(scenarios), "failed": fails, "ids": ids},
+    )
+    # the digest self-check pins a REAL sidecar round trip (E-01 compares the
+    # fetched bytes against the fixture manifest sha)
+    e01 = next((entry for entry in scenarios if entry.get("id") == "E-01-issue-fetch-digest"), None)
+    gate.pass_or(
+        bool(e01) and e01.get("status") == "PASS",
+        "CS-P3-sidecar-roundtrip-digest",
+        {"e01": e01},
+    )
+
+
+def run_ac1_phase(gate: Gate, exe: Path, env: dict, lab: Path, install_dir: Path) -> None:
+    """The frozen M2-AC1 loop: run1 (pipeline -> SQLite save -> exit) then a
+    REAL relaunch (run2: restore -> reader -> PNG export -> digest compare).
+    Both launches run the packaged exe under the purged environment."""
+    log("phase 3: AC1 test mode (acceptance loop, packaged sidecar)")
+    ac1_dir = lab / "ac1"
+    root = ac1_dir / "root"
+    (root / "scope" / "derived").mkdir(parents=True, exist_ok=True)
+    (root / "managed").mkdir(parents=True, exist_ok=True)
+    # M2-DERIVED-GC-2 (design 2.3): pre-bind the AC1 fixture catalog to its
+    # own derived root through the packaged trusted loader BEFORE any
+    # sidecar spawns; run2 finds it bound and takes the shared path.
+    ac1_catalog = root / "catalog.sqlite"
+    if not ac1_catalog.exists():
+        loader_exe = install_dir / "resources" / "core-sidecar" / "catalog_loader.exe"
+        init = subprocess.run(
+            [
+                str(loader_exe),
+                "--db", str(ac1_catalog),
+                "--initialize-preview-namespace", str(root / "scope" / "derived"),
+            ],
+            capture_output=True,
+            text=True,
+            encoding="mbcs",
+            errors="replace",
+            timeout=120,
+        )
+        (RAW / "cleanstart-ac1-catalog-initialize.log").write_text(
+            "exit={}\n{}\n{}".format(init.returncode, init.stdout, init.stderr),
+            encoding="utf-8",
+        )
+        gate.pass_or(
+            init.returncode == 0,
+            "CS-A0-ac1-catalog-prebind",
+            {"exit": init.returncode, "stderr": init.stderr[-200:]},
+        )
+    results: dict[str, dict] = {}
+    pids: dict[str, tuple[int, int | None]] = {}
+    for launch in ("run1", "run2"):
+        results_path = ac1_dir / f"{launch}.json"
+        results_path.unlink(missing_ok=True)
+        launch_env = ac1_env(env, lab)
+        launch_env["M2AC1_RESULTS_OUT"] = str(results_path)
+        code, output, desktop_pid = run_app(exe, launch_env, LAUNCH_TIMEOUT)
+        (RAW / f"cleanstart-ac1-{launch}-stdout.log").write_text(
+            f"$ <installed>\\m2rc1-desktop.exe (M2AC1_TEST_MODE=1, launch={launch}, purged PATH)\n"
+            f"exit={code}\n{output}",
+            encoding="utf-8",
+        )
+        payload = None
+        if results_path.is_file():
+            try:
+                payload = json.loads(results_path.read_text(encoding="utf-8"))
+            except json.JSONDecodeError:
+                payload = None
+        gate.pass_or(
+            code == 0 and bool(payload) and payload.get("phase") == launch,
+            f"CS-A1-{launch}-completed",
+            {"exit": code, "phase": (payload or {}).get("phase")},
+        )
+        if payload is None:
+            return
+        core_pid = payload.get("core_pid")
+        results[launch] = payload
+        pids[launch] = (desktop_pid, int(core_pid) if core_pid else None)
+
+    # AC3 semantics: a real restart ！ desktop AND core sidecar are new PIDs
+    gate.pass_or(
+        pids["run1"][0] != pids["run2"][0] and pids["run1"][1] != pids["run2"][1],
+        "CS-A2-restart-new-pids",
+        {"run1": pids["run1"], "run2": pids["run2"]},
+    )
+
+    run1, run2 = results["run1"], results["run2"]
+    saved = run1.get("saved") or {}
+    gate.pass_or(
+        saved.get("run_status") == "completed" and len(saved.get("pages") or []) == 2
+        and saved.get("providers") == {"ocr": "m2ac1-mock-ocr", "translate": "m2ac1-mock-translate"},
+        "CS-A3-saved-summary-complete",
+        {"run_status": saved.get("run_status"), "pages": len(saved.get("pages") or []),
+         "providers": saved.get("providers")},
+    )
+
+    saved_by_index = {page["index"]: page["sha256"] for page in saved.get("pages") or []}
+    viewed = run2.get("viewed") or []
+    gate.pass_or(
+        len(viewed) == 2
+        and all(
+            entry.get("sha256") == saved_by_index.get(entry.get("index"))
+            and entry.get("naturalWidth", 0) > 0
+            for entry in viewed
+        ),
+        "CS-A4-restored-reader-matches-saved",
+        {"viewed": [{"index": e.get("index"), "sha": (e.get("sha256") or "")[:12]} for e in viewed]},
+    )
+
+    exported = run2.get("exported") or {}
+    output_name = exported.get("output_path")
+    export_file = root / "exports" / output_name if isinstance(output_name, str) else None
+    gate.pass_or(
+        bool(export_file and export_file.is_file() and export_file.stat().st_size > 0
+             and sha256_file(export_file) == exported.get("sha256")
+             and exported.get("sha256") == saved_by_index.get(exported.get("page_index"))),
+        "CS-A5-export-png-digest-matches",
+        {"size": export_file.stat().st_size if export_file and export_file.is_file() else 0,
+         "sha": (exported.get("sha256") or "")[:12]},
+    )
+
+
+def run_production_phase(gate: Gate, exe: Path, env: dict, lab: Path) -> None:
+    log("phase 4: PRODUCTION mode (real window, isolated %APPDATA% userData)")
+    # P2-4: NO deletion against the host's real %APPDATA% ！ the app resolves
+    # its packaged defaults under the lab roaming override (production_env),
+    # so this phase only ever creates lab space.
+    user_root = lab_user_root(lab)
+    catalog_sqlite = user_root / "catalog" / "catalog.sqlite"
+
+    proc = subprocess.Popen(
+        [str(exe)],
+        env=production_env(env, lab),
+        stdout=subprocess.PIPE,
+        stderr=subprocess.STDOUT,
+    )
+    # hold the real window open for at least 10 s (AC3: the app must START
+    # and STAY alive with its sidecars), then close gracefully
+    alive_deadline = time.time() + 10
+    while time.time() < alive_deadline:
+        time.sleep(1)
+        if proc.poll() is not None:
+            break
+    alive = proc.poll() is None
+    gate.pass_or(alive, "CS-R1-production-process-alive", {"poll": proc.poll()})
+    user_dirs = {
+        child: (user_root / child).is_dir() for child in ("catalog", "derived", "managed", "data")
+    }
+    gate.pass_or(
+        all(user_dirs.values()) and catalog_sqlite.is_file(),
+        "CS-R2-userdata-layout-created",
+        {
+            "dirs": user_dirs,
+            "catalog.sqlite": catalog_sqlite.is_file(),
+            "root": str(user_root),
+            "appdata_isolated": True,
+        },
+    )
+    # graceful close (WM_CLOSE, no /F): lets the host drop the channels so the
+    # sidecars receive `shutdown` and exit ！ the AC4 reaping precondition
+    subprocess.run(["taskkill", "/PID", str(proc.pid)], capture_output=True)
+    try:
+        output_tail, _ = proc.communicate(timeout=60)
+    except subprocess.TimeoutExpired:
+        proc.kill()
+        output_tail, _ = proc.communicate(timeout=15)
+    text = output_tail.decode("utf-8", errors="replace")
+    (RAW / "cleanstart-production-stdout.log").write_text(
+        f"$ <installed>\\m2rc1-desktop.exe (production defaults; pid={proc.pid}; graceful close)\n"
+        f"exit={proc.returncode}\n{text}",
+        encoding="utf-8",
+    )
+    gate.pass_or(
+        ANNOUNCE_PRODUCTION in text,
+        "CS-R3-production-surface-announced",
+        {"announcement": ANNOUNCE_PRODUCTION, "present": ANNOUNCE_PRODUCTION in text},
+    )
+    gate.pass_or(
+        text.count("CORE_SPAWN_FAILED") == 0 and "Traceback" not in text,
+        "CS-R4-no-spawn-failures-in-log",
+        {"spawn_failed_mentions": text.count("CORE_SPAWN_FAILED")},
+    )
+
+
+def main() -> int:
+    global RAW
+    parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
+    parser.add_argument("--installer", type=Path, default=DEFAULT_INSTALLER)
+    parser.add_argument("--output-dir", type=Path, default=RAW, help="isolated evidence directory")
+    args = parser.parse_args()
+    RAW = args.output_dir.resolve()
+
+    RAW.mkdir(parents=True, exist_ok=True)
+    lab = Path(tempfile.mkdtemp(prefix="m2ac5-cleanstart-"))
+    installer = args.installer
+    gate = Gate()
+
+    log("phase 0: environment record + PATH purge")
+    env, removed = purged_environment(lab)
+    purged_ok, purge_detail = assert_no_python_on_path(env)
+    gate.pass_or(purged_ok, "CS-E1-python-purged-from-path", {"detail": purge_detail, "removed_entries": removed})
+    gate.pass_or(
+        installer.is_file(),
+        "CS-E2-installer-present",
+        {"installer": str(installer), "sha256": sha256_file(installer)},
+    )
+    if not installer.is_file() or not purged_ok:
+        gate.record("CS-BLOCKED", "FAIL", {"reason": "installer missing or python purge failed"})
+        print(f"\nGATE: {gate.verdict}")
+        return 1
+
+    install_dir = lab / "install"
+    # P3-6: NSIS /D= must stay unquoted and space-free ！ fail closed here
+    # with an actionable message instead of an ambiguous silent install.
+    if " " in str(install_dir):
+        gate.record(
+            "CS-E3-install-path-no-spaces",
+            "FAIL",
+            {"install_dir": str(install_dir), "hint": "set TEMP to a space-free directory"},
+        )
+        print(f"\nGATE: {gate.verdict}")
+        return 1
+    gate.pass_or(
+        True,
+        "CS-E3-install-path-no-spaces",
+        {"install_dir": str(install_dir), "space_free": True},
+    )
+
+    # P2-4: snapshot the HOST's real user-data root READ-ONLY. The runner
+    # never writes or deletes here; the phase-5 comparison proves the whole
+    # run left it byte-identical.
+    log("phase 0.5: host real %APPDATA% snapshot (P2-4 untouched proof)")
+    host_hashes_before = dir_tree_hashes(HOST_USER_ROOT) if HOST_USER_ROOT.exists() else {}
+    print(f"  host user root: {HOST_USER_ROOT} ({'present' if host_hashes_before else 'absent'}, files={len(host_hashes_before)})")
+
+    log("phase 1: NSIS silent install")
+    ok, detail = silent_install(installer, install_dir, env)
+    gate.pass_or(ok, "CS-I1-silent-install", {"detail": detail})
+    if not ok:
+        print(f"\nGATE: {gate.verdict}")
+        return 1
+    install_hashes_before = dir_tree_hashes(install_dir)
+    print(f"  install dir files: {len(install_hashes_before)}")
+
+    exe = install_dir / INSTALLED_EXE_NAME
+    manifest = prepare_probe_lab(lab)
+    seed_ok, seed_detail = seed_catalog_packaged(
+        install_dir, lab / "probe" / "catalog.sqlite", lab / "probe" / "scope" / "derived"
+    )
+    gate.pass_or(seed_ok, "CS-I2-catalog-seeded-packaged-loader", {"detail": seed_detail})
+
+    run_library_probe(gate, install_dir, env, lab)
+    run_probe_phase(gate, exe, env, lab)
+    run_ac1_phase(gate, exe, env, lab, install_dir)
+    run_production_phase(gate, exe, env, lab)
+
+    log("phase 5: AC4 zero-touch assertions")
+    install_hashes_after = dir_tree_hashes(install_dir)
+    changed = {
+        key for key in set(install_hashes_before) | set(install_hashes_after)
+        if install_hashes_before.get(key) != install_hashes_after.get(key)
+    }
+    gate.pass_or(not changed, "CS-Z1-install-dir-zero-write", {"changed_entries": sorted(changed)[:8]})
+
+    # P2-4 untouched proof: the host's real user-data root must be
+    # byte-identical across the whole run (install + 3 modes + probes).
+    host_hashes_after = dir_tree_hashes(HOST_USER_ROOT) if HOST_USER_ROOT.exists() else {}
+    host_changed = {
+        key for key in set(host_hashes_before) | set(host_hashes_after)
+        if host_hashes_before.get(key) != host_hashes_after.get(key)
+    }
+    gate.pass_or(
+        not host_changed,
+        "CS-Z4-host-real-appdata-untouched",
+        {
+            "root": str(HOST_USER_ROOT),
+            "files": len(host_hashes_after),
+            "changed_entries": sorted(host_changed)[:8],
+            "note": "runner never deletes here; app APPDATA pinned into the lab",
+        },
+    )
+
+    before = json.loads((lab / "probe" / "source-hashes-before.json").read_text(encoding="utf-8"))
+    # M2-DERIVED-GC-2: the fixture namespace initialization (design 2.3)
+    # creates the protocol lock file at the derived-root level; it is not a
+    # probe source fixture and is excluded from the byte-identity set (the
+    # lock's LOCATION is design-frozen; every actual fixture file below it
+    # stays byte-identical).
+    protocol_names = {".preview-lifecycle.lock"}
+    after = {
+        p.name: sha256_file(p)
+        for p in sorted((lab / "probe" / "scope" / "derived").iterdir())
+        if p.is_file() and p.name not in protocol_names
+    }
+    gate.pass_or(before == after, "CS-Z2-user-source-files-byte-identical", {"files": len(after)})
+
+    survivors = list_processes(
+        ("host_bridge.exe", "core_service.exe", "acceptance_bridge.exe", "catalog_loader.exe", "python.exe")
+    )
+    # python.exe is a RECORD-ONLY count here: this host machine legitimately
+    # runs unrelated python processes (the acceptance runner itself among
+    # them); "no system Python" is proven by the CS-E1 purged-PATH assertion
+    # plus the frozen exes serving every workflow above. The gate asserts the
+    # four packaged sidecar exes are fully reaped.
+    gate.pass_or(
+        survivors["host_bridge.exe"] == 0
+        and survivors["core_service.exe"] == 0
+        and survivors["acceptance_bridge.exe"] == 0
+        and survivors["catalog_loader.exe"] == 0,
+        "CS-Z3-no-surviving-sidecar-processes",
+        survivors,
+    )
+
+    log("gate")
+    results = {
+        "gate": "m2ac5-clean-start",
+        "installer": str(installer),
+        "installer_sha256": sha256_file(installer),
+        "install_dir": str(install_dir),
+        "lab": str(lab),
+        "appdata_isolation": {
+            "app_env_appdata": "pinned into the lab (probe/ac1/production)",
+            "host_real_appdata": str(HOST_USER_ROOT),
+            "host_real_appdata_files": len(host_hashes_after),
+        },
+        "verdict": gate.verdict,
+        "scenarios": gate.scenarios,
+    }
+    (RAW / "cleanstart-gate.json").write_text(json.dumps(results, indent=2), encoding="utf-8")
+    print(f"\nGATE: {gate.verdict}")
+    return 0 if gate.verdict == "PASS" else 1
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
+EXIT=0
+AST_EXCLUDING_DOCSTRING_IDENTICAL=packaging/m2ac5/run_clean_start_e2e.py; EXIT=0
+REPORT_CONTENT_BYTES_SHA256=M2-RUNNER-SNAPSHOT-DEBT-41d77f98-dsh-r2.md:0ad5abe0cf11232bd333148582d0f688e8cd7e9177a1313bf021d1fc88b4f273
+REPORT_CONTENT_BYTES_SHA256=M2-RUNNER-SNAPSHOT-DEBT-7556cb2d-dsh-r1.md:ba7081453360027829fbe45ee4d1fe84a2928ec6f36db6dde317023e39d9082e
+BINDING_PASS; raw evidence appended after this fixed code head
+
+EXIT=0; ELAPSED=0.4s
