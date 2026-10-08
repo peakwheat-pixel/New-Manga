@@ -330,3 +330,21 @@ command=git diff --name-only ab2f813c0ce311a6712002cafd852b9e7a258380 -- protect
 current-state stale-reference scan across Plan/Status/Index/Roadmap/Task/P08 Resume/derived roadmap; no stale R3-running or N-07/N-08-waiting-for-author-fix hits
 R3 report SHA256 rechecked; exact DSH R3 review worktree remains detached/clean at 1ad05d99c924678f35a2558f6e15b6c548d92f09
 external author-owned .qoder-credits and historical dispatch dirty paths remain untouched and unstaged; product pytest/cargo/vitest/GUI/build/model=NOT_RUN
+P08 R4 fixed delivery validation and review preparation
+local_time=2026-10-08 23:03:19 +08:00; delivery_HEAD=16fb07a973b36b0b129945bc3a85f9ae51234982
+review_worktree=G:\CODEX\New Manga.worktrees\P08-dsh-review-16fb07a9-r4; status=detached clean; common_dir=G:/CODEX/New Manga/.git
+command=python -B -X utf8 verification/P08/verify_scope.py; EXIT=0; 193 numbered D08 AC, AC-SMOKE, 12 gates, links, protocol states, protected paths; 3 P08 Handoffs dynamically included
+command=python -B -X utf8 verification/PROJECT-ROADMAP-20261008/verify_plan.py; EXIT=0; 196 snapshot nodes, 105 ancestors, 21 planned nodes, status labels, local links, no dependency cycles
+command=git diff --check ab2f813c0ce311a6712002cafd852b9e7a258380 16fb07a973b36b0b129945bc3a85f9ae51234982 -- authorized P08/governance paths; EXIT=0
+command=git diff --name-only ab2f813c0ce311a6712002cafd852b9e7a258380 16fb07a973b36b0b129945bc3a85f9ae51234982 -- protected product/contracts/source paths; EXIT=0; empty
+command=git diff --exit-code HEAD -- . in exact R4 worktree; EXIT=0; clean
+DSH R4 Prompt=verification/P08/DSH-REVIEW-PROMPT-R4.md and Handoff=doc/handoffs/P08-16fb07a9-dsh-r4.md prepared post-delivery; not dispatched yet; Task remains changes_requested
+Product pytest/cargo/vitest/GUI/build/model=NOT_RUN (document-only Task); no author-owned dirty paths touched or staged.
+P08 R4 post-delivery review metadata preflight
+local_time=2026-10-08 23:04:05 +08:00; delivery_HEAD=16fb07a973b36b0b129945bc3a85f9ae51234982
+main Task state=changes_requested; R4 status=delivered_review_ready; DSH not yet dispatched
+command=python -B -X utf8 verification/P08/verify_scope.py on main with staged post-delivery metadata; EXIT=0; 4 P08 Handoffs dynamically in whitespace scope
+command=python -B -X utf8 verification/PROJECT-ROADMAP-20261008/verify_plan.py; EXIT=0
+command=git diff --cached --check; EXIT=0
+command=git diff --name-only -- protected product/contracts/source paths; EXIT=0; empty
+R4 Prompt/Handoff are post-delivery documents and do not change reviewed_head; exact reviewer worktree remains clean at delivery HEAD.
