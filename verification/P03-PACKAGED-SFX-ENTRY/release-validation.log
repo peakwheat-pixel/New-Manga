@@ -1,0 +1,10 @@
+Timestamp: 2026-10-09 (Asia/Shanghai)
+Task: P03 release metadata
+Branch: main
+HEAD: ece8765461ce19f7493ce636ff7d69ae6a3e1c4b
+Shell: PowerShell 7.6.6
+Python: C:\Python314\python.exe (Python 3.14.6)
+Command: C:\Python314\python.exe -B -X utf8 verification/P03-PACKAGED-SFX-ENTRY/verify_release.py
+Output:
+PASS: P03 state=ready; dependencies done; roadmap links agree; worktree=g:\codex\new manga.worktrees\p03-packaged-sfx-entry-antigravity; owner_head=ece8765461ce19f7493ce636ff7d69ae6a3e1c4b
+EXIT: 0

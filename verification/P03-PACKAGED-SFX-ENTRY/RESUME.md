@@ -1,10 +1,10 @@
 # P03 恢复点
 
-时间：2026-10-09（Asia/Shanghai）；Task=`P03`；TaskStatus=`ready`；ExecutionState=`IDLE`。release metadata commit 在本恢复点提交后补录；Owner尚未开工或派发。
+时间：2026-10-09（Asia/Shanghai）；Task=`P03`；TaskStatus=`ready`；ExecutionState=`IDLE`。release metadata commit=`ece8765461ce19f7493ce636ff7d69ae6a3e1c4b`；Owner尚未开工或派发。
 
 ## 固定状态
 
-- 仓库：`G:/CODEX/New Manga`；main base=`31abde9bf4b73aea2851931dcd48faa0f750b318`；branch=`agent/antigravity/P03-packaged-sfx-entry`；worktree=`G:/CODEX/New Manga.worktrees/P03-packaged-sfx-entry-antigravity`；初始Owner checkout HEAD=`31abde9bf4b73aea2851931dcd48faa0f750b318`、clean、common-dir=`G:/CODEX/New Manga/.git`。正式释放后Owner checkout须fast-forward到P03 metadata commit再开始修改。
+- 仓库：`G:/CODEX/New Manga`；Task代码base=`31abde9bf4b73aea2851931dcd48faa0f750b318`；release metadata commit=`ece8765461ce19f7493ce636ff7d69ae6a3e1c4b`；branch=`agent/antigravity/P03-packaged-sfx-entry`；worktree=`G:/CODEX/New Manga.worktrees/P03-packaged-sfx-entry-antigravity`；Owner checkout在本checkpoint核验的HEAD=`ece8765461ce19f7493ce636ff7d69ae6a3e1c4b`、clean、common-dir=`G:/CODEX/New Manga/.git`。正式派发前必须重新核对live main，并将Owner branch fast-forward到当时最新main。
 - Owner=`Antigravity`；非作者 Reviewer=`DeepSeek Harness`；Integrator=`Codex`。
 - 三个依赖均已完成：`M2-PROD-SFX-PROBE-1@177b356a6453ecc7ae1ec3ae1d5c60f453104007`、`M2-RUNNER-SNAPSHOT-DEBT@73588624b70c337ca4fcb36a4d42e91d3b03f5b0`、`M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD@e7d1f7f8528a6186baec6f642ac8422572103527`。
 - Owner allowed paths 见 [`doc/tasks/P03.md`](../../doc/tasks/P03.md)；当前没有产品源码、Schema、IPC 或依赖修改授权。
@@ -31,3 +31,4 @@
 - 只读核对：Plan、Status、协作协议、Task 模板、P08 RESUME、P03 三个依赖、runner、SFX probe 与 historical SFX 验收工具。
 - Task 测试、构建、packaged gate、成功/失败入口运行、Review、集成 Gate：均 `NOT_RUN`。
 - 当前已知产品决策阻塞：无。
+- 释放元数据验证：[`release-validation.log`](release-validation.log)，PowerShell 7.6.6 + `C:\Python314\python.exe` 3.14.6，`verify_release.py` PASS，EXIT=0；验证时Owner worktree HEAD=`ece8765461ce19f7493ce636ff7d69ae6a3e1c4b`。
