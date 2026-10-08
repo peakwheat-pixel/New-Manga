@@ -33,7 +33,7 @@ AC1 run1无结果，返回exit=1；整个runner耗时312.8秒。既有240秒上�
 |---|---|---|
 | AC1 基线漂移 | PASS | baseline-evidence.md，旧GC-2报告保持原文 |
 | AC2 两处快照 | PASS | 实现diff，actual CS-L1 PASS，dev production15条 |
-| AC3 判别 | PASS | check_snapshots.py；raw/check-snapshots.log：12实际谓词用例 |
+| AC3 判别 | PASS | check_snapshots.py；raw/check-snapshots-r2.log：16实际谓词用例（旧12项日志保留） |
 | AC4 全Gate | FAIL / BLOCKED | dev10/10+probe13/13 PASS；packaged20 PASS+1 FAIL，后续AC1五项NOT_RUN |
 | AC5 保护/范围 | PASS | history-index-before.txt、范围检查；旧raw/报告/probe零差量，syntax/diff通过 |
 | AC6 Review/集成 | PENDING | 真实DSH审查待执行；没有实现集成/done |
@@ -87,3 +87,11 @@ DLL解析、PyInstaller closure和与已知PASS构建环境的差量；Owner=DSH
 交付具体失败DLL/环境证据或UNKNOWN、最小修复范围建议；修复须另行冻结授权。
 解除本Task阻塞需fixed-head fresh构建+AC1/完整packaged Gate通过，随后真实非作者审查、
 Codex集成后检查；不得将本轮20项PASS当整个Gate通过。
+
+## DSH r2 与下一轮固定方式
+
+r2 reviewed_head=41d77f98；0P0/P1，N1 P2为提交绑定证据缺口，N2/N3/N4 P3措辞/
+来源/最新用例链接精度；原报告保留。已修标签说明、冻结顺序来源、Handoff16项指针；
+补N1时将固定“本轮代码/修正head”和“随后只加绑定日志的evidence_commit”分列，
+避免要求文件包含自己的提交hash。r3只审固定代码head，后续绑定证据是只读输入，
+不会把证据追加commit冒充代码变化或复用旧head批准。Task继续BLOCKED，AC4未修。

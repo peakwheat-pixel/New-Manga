@@ -20,3 +20,14 @@ C4：DSH误写scratch违背只读指令，报告主动erratum；确认自有raw�
 r1报告内部F17编号及21/21完整Gate建议原文保留；实际应为26个完整场景，
 当前21个报告=20PASS/1FAIL，另5NOT_RUN，不放宽到21项。
 后续r2只复核有界修正，不重复或豁免AC4；Task不合并实现，不done。
+
+## r2：有界纠正未能批准新head
+
+reviewed_head=41d77f98；原报告doc/reviews/M2-RUNNER-SNAPSHOT-DEBT-41d77f98-dsh-r2.md，
+C2/C3/C4 fixed，C1 partial/unverified；N1 P2需补准确新head完整name-only和AST命令日志，
+N2 P3标签精度、N3 P3顺序来源、N4 P3最新16项指针已修，N5 P4原报告编号问题原文保留。
+R1_REPORT_UTF8_GIT_BLOB_SHA256指Git blob内容字节的SHA256，不是Git对象ID（SHA1）；
+既有标签未改写原绑定日志，新日志将字段明确为REPORT_CONTENT_BYTES_SHA256。
+Oracle是人工固定release base main.rs的有序面，M2-C1冻结membership而非wire行顺序；
+它不从当前被测runner/公告实时提取，可以检出runner与runtime同时漂移。
+固定本轮代码head后另加只读绑定证据commit，审查head与evidence_commit分列。

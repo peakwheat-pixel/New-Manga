@@ -30,7 +30,8 @@ def main():
     rust = (ROOT / "apps/desktop/src-tauri/src/main.rs").read_text(encoding="utf-8")
     body = rust.split("pub const PRODUCTION_COMMANDS:", 1)[1].split("= &[", 1)[1].split("];", 1)[0]
     implemented = re.findall(r'"([a-z_]+)"', re.sub(r"//[^\n]*", "", body))
-    # Independent pinned oracle: released Task scope + M2-C1 rev1.8 section 5.
+    # Manually pinned oracle: ordered main.rs production surface at release base 968c8f34.
+    # M2-C1 rev1.8 section 5 freezes membership, not wire order; do not extract a live oracle.
     # Do not derive expected values from either runner or the runtime response.
     frozen = [
         "issue_resource_url", "revoke_ref", "revoke_resource_refs", "core_ping",
