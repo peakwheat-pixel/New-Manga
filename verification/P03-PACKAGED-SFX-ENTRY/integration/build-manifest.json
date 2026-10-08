@@ -1,0 +1,71 @@
+{
+  "task_id": "P03",
+  "phase": "fresh_build_complete_gate_pending",
+  "integration_branch": "codex/P03-integration-4c04459",
+  "integration_worktree": "G:/CODEX/New Manga.worktrees/P03-review-prep-85482c5b",
+  "task_base_commit": "31abde9bf4b73aea2851931dcd48faa0f750b318",
+  "r003_fix_commit": "db2c1e9390b0b8601877c366d4a43699b1d12ee5",
+  "frontend": {
+    "npm_ci_source_head": "2da76b1d6853b8147cd624c33d90ed5d58074d42",
+    "npm_ci_command": "npm ci --no-audit --no-fund",
+    "npm_ci_exit": 0,
+    "npm_ci_packages_added": 140,
+    "npm_ci_warning": "esbuild@0.21.5 postinstall blocked by configured npm allowScripts policy; npm run build succeeded without manual script approval",
+    "npm_build_source_head": "19f5348ff8ad88c4d5baaefc6fa1ab65968210e0",
+    "npm_build_command": "npm run build",
+    "npm_build_exit": 0,
+    "vite_modules_transformed": 50,
+    "log_paths": [
+      "integration/build-logs/03-frontend-npm-ci.log",
+      "integration/build-logs/04-frontend-npm-build.log"
+    ]
+  },
+  "sidecar": {
+    "source_head": "a7161ca316052d14aefd24b920b146afd1969017",
+    "working_tree_before_build": "clean",
+    "command": "powershell.exe -NoProfile -ExecutionPolicy Bypass -File packaging/m2ac5/build_sidecar.ps1 -Force",
+    "exit": 0,
+    "python": "3.12.3",
+    "pyinstaller": "6.22.3",
+    "five_entries_present": true,
+    "pinned_sfx_weights_sha256": "944e811410933ad6ff8d32446fcc9eef90fb463794e1874ce83035e83acd418d",
+    "zero_shadowing_icu_assertion": "PASS",
+    "log_path": "integration/build-logs/05-sidecar-build.log"
+  },
+  "installer": {
+    "source_head": "a3aaf22979f2b432a46dbb51cd9702f35a60d7f4",
+    "working_tree_before_tauri_build": "clean",
+    "command": "npx --yes @tauri-apps/cli@2 build",
+    "tauri_cli": "2.12.1",
+    "node": "v24.15.0",
+    "npm": "12.0.1",
+    "rustc": "rustc 1.98.1 (48a229cea 2026-09-01)",
+    "cargo": "cargo 1.98.1 (797e8a9bc 2026-08-05)",
+    "nsis_path": "C:/Users/49745/AppData/Local/tauri/NSIS/makensis.exe",
+    "nsis_version": "v3.11",
+    "path": "apps/desktop/src-tauri/target/release/bundle/nsis/m2rc1-desktop_0.1.0_x64-setup.exe",
+    "size_bytes": 579537342,
+    "sha256": "2de124f387bfaf1d0d01b1b0279ad319cd453850d223efa9620b0103ce88a814",
+    "exit": 0,
+    "log_path": "integration/build-logs/06-tauri-nsis-build.log"
+  },
+  "inputs": {
+    "k07_path": "G:/CODEX/New Manga.task-envs/M2-DOCTR-QUAL-work/regions/K07_R123.png",
+    "k07_size_bytes": 1020887,
+    "k07_sha256": "28dab503aca3c903111488c03e857b430d309421a4a54bab335a63bbe7b9cec4",
+    "sfx_weights_path": "G:/CODEX/New Manga.task-envs/M2-SFX-DETECT/weights-v2b/yolo11s-seg.onnx",
+    "sfx_weights_size_bytes": 40824255,
+    "sfx_weights_sha256": "944e811410933ad6ff8d32446fcc9eef90fb463794e1874ce83035e83acd418d"
+  },
+  "generated_tracked_drift": {
+    "path_count": 24,
+    "allowed_generated_prefixes_only": true,
+    "restored_to_head": true,
+    "tracked_diff_after_restore": "none"
+  },
+  "packaged_gate": {
+    "status": "NOT_RUN",
+    "required_installer_sha256": "2de124f387bfaf1d0d01b1b0279ad319cd453850d223efa9620b0103ce88a814",
+    "planned_output_dir": "verification/P03-PACKAGED-SFX-ENTRY/integration/run-2de124f3"
+  }
+}

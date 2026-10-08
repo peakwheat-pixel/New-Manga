@@ -1,39 +1,36 @@
-# P03 恢复点
+# P03 Codex Integration Resume Point
 
-时间：2026-10-09（Asia/Shanghai）；Task=`P03`；TaskStatus=`in_review`；ExecutionState=`READY_FOR_FIXED_HEAD_DSH_REVIEW`。
-Owner最终delivery HEAD=`85482c5b001d452953c3ed797ce3c4ed64cae4e3`；
-Owner evidence commit=`e3319990216699357c8b5a37c494010505535bb6`；
-首个空白修正 evidence commit=`6d67c718f6b6ba710b11c8ac4b6d616ed00a2578`；
-NSIS build source HEAD=`29024a21939917c6d8eb15f1a2bb9ff46cd5bf23`；
-Fresh NSIS Installer SHA-256=`5a14c0a98008442bf4e3b70ec1fcc17373e33313cbadf69414fd9584a25a2fa0`（579,528,233 bytes）；
-复验 Packaged Gate=`PASS`（28/28 全量通过，EXIT=0）；
-Handoff r3=[`doc/handoffs/P03-PACKAGED-SFX-ENTRY-140a6686-r3.md`](../../doc/handoffs/P03-PACKAGED-SFX-ENTRY-140a6686-r3.md)。
+时间：2026-10-09（Asia/Shanghai）；Task=`P03`；TaskStatus=`in_review`；ExecutionState=`FRESH_BUILD_COMPLETE_GATE_PENDING`。
 
 ## 固定状态
 
-- 仓库：`G:/CODEX/New Manga`；Task代码base=`31abde9bf4b73aea2851931dcd48faa0f750b318`；release metadata commit=`ece8765461ce19f7493ce636ff7d69ae6a3e1c4b`；branch=`agent/antigravity/P03-packaged-sfx-entry`；worktree=`G:/CODEX/New Manga.worktrees/P03-packaged-sfx-entry-antigravity`；common-dir=`G:/CODEX/New Manga/.git`。
-- Owner=`Antigravity`；非作者 Reviewer=`DeepSeek Harness`；Integrator=`Codex`。
-- Owner最终 delivery branch=`agent/antigravity/P03-packaged-sfx-entry`，HEAD=`85482c5b001d452953c3ed797ce3c4ed64cae4e3`；tracked内容 clean。Codex review-prep worktree=`G:/CODEX/New Manga.worktrees/P03-review-prep-85482c5b`；本RESUME与Handoff修正会提交在该worktree。提交后以 `git -C 'G:/CODEX/New Manga.worktrees/P03-review-prep-85482c5b' rev-parse HEAD` 读取实际固定 Review HEAD。
-- 依赖项：`M2-PROD-SFX-PROBE-1`、`M2-RUNNER-SNAPSHOT-DEBT`、`M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD` 均已完成。
-- K07 anchor page SHA-256=`28dab503aca3c903111488c03e857b430d309421a4a54bab335a63bbe7b9cec4`；pinned v2b SFX weights SHA-256=`944e811410933ad6ff8d32446fcc9eef90fb463794e1874ce83035e83acd418d`。
-- Fresh NSIS Installer SHA-256=`5a14c0a98008442bf4e3b70ec1fcc17373e33313cbadf69414fd9584a25a2fa0`（579,528,233 bytes）。
-- 复验 Packaged Gate=`PASS`（28/28 全量通过，EXIT=0）。
+- Repository=`G:/CODEX/New Manga`；root `main` 尚为 `0a31bbc52447b87a3f04145df62a5ad19baa4b44`，保留 Qoder 与旧 DSH 的原始 dirty/untracked 内容。
+- Integration worktree=`G:/CODEX/New Manga.worktrees/P03-review-prep-85482c5b`；branch=`codex/P03-integration-4c04459`；common-dir=`G:/CODEX/New Manga/.git`。Review-prep 基线/approved head=`4c04459bc6b8bf9ef6cba596829ac47f37bc02af`；最新源代码修订=`db2c1e9390b0b8601877c366d4a43699b1d12ee5`；Tauri/NSIS build source=`a3aaf22979f2b432a46dbb51cd9702f35a60d7f4`，构建开始时 clean。
+- Task base=`31abde9bf4b73aea2851931dcd48faa0f750b318`；Owner delivery=`85482c5b001d452953c3ed797ce3c4ed64cae4e3`；DSH formal R2 reviewed head=`4c04459bc6b8bf9ef6cba596829ac47f37bc02af`, decision=`approved`（0 unresolved P0/P1；3 P2、3 P3）。Owner worktree 仍有 3 个 Antigravity helper untracked 文件，未修改。
 
-## 已确认事实与保护集合
+## Codex 集成修订与验证
 
-- 原始 `traceability-rerun/*.log` 原文件原字节完整保留，绝不修改或覆盖。
-- 在 `canonical-utf8/*.log` 建立了严格可读、零 NUL、保留完整执行记录与 EXIT=0 的规范副本。
-- 形式化 Token Grammar（包含 `CHAR_TOKEN`、`NEWLINE_TOKEN`、`TRAILING_SPACE_TOKEN`）证明 Body 严格受控，双向映射确定且 100% 可逆。
-- 对 `03` 中两处原生控制台行尾空格引入无歧义可见符号 `U+2420 SYMBOL FOR SPACE`（`␠`），消除 `git diff --check` Whitespace 报错，实现检查 EXIT=0。
-- `verify_normalization.py` 为纯内存只读脚本，不写磁盘，运行前后 `git status` 零变化；全面断言 NUL counts、重构哈希与大小、per-file assertion statuses 以及 `U+2420` 不在 raw body 出现。
-- 运行 `verify_normalization.py` 完成全部 6 个日志文件的逆变换重构，证明重建字节与原始文件 100% 逐位一致（Bit-for-bit identical），零信息损失。
-- Manifest `07-encoding-normalization.json` 升级至 Schema 2.1，客观陈述编码事实，彻底撤回关于 Out-File/Tee-Object 产生机制的未证实因果推测。
-- 证据派发文件 `antigravity-dispatch.json` 和 `antigravity-dispatch.stderr.log` 原样保留。
-- 本次为 evidence/doc-only 修订，不改动产品代码、测试代码或构建配置；不重跑 Gate。
-- Owner worktree中三个现有未跟踪辅助文件 `antigravity-dispatch.json`、`antigravity-dispatch.stderr.log`、`antigravity-log-encoding-followup.md` 属于 Owner，全部保留且不 stage、不覆盖、不删除。
+- R-003 fail-open 修正：`evaluate_sfx_probe_success` 不再把缺失 `install_dir` 当作通过；有效 probe payload 省略该参数时 `weights_in_install_dir=false` 且结果 FAIL。生产调用点仍显式传目录。修订提交=`db2c1e9390b0b8601877c366d4a43699b1d12ee5`。
+- DSH R-001 hash、R-005 token count、Codex C-001 Handoff 相对链接已修正。R-004 作为非阻断增强项 deferred；R-002 fixed-head diff-check trace 仍 pending；R-006 已由新 build trace 捕获精确 HEAD/status。
+- 定向测试：Python 3.14.6，40 passed、0 skipped，EXIT=0；Snapshot oracle 16 actual-predicate cases PASS、EXIT=0。日志=`integration/build-logs/01-targeted-tests.log`、`02-snapshot-check.log`。
+- Frontend `npm ci` / `npm run build` 均 EXIT=0；Vite 50 modules。npm 的 allowScripts 策略跳过 esbuild postinstall，实际 build 通过；未批准脚本。
+- Sidecar fresh build EXIT=0，5 个 sidecar 与闭包断言和 pin 检查通过，build source=`a7161ca316052d14aefd24b920b146afd1969017`。
+- Fresh NSIS build EXIT=0；Tauri CLI `2.12.1`、Node `24.15.0`、npm `12.0.1`、rustc/cargo `1.98.1`、Python `3.12.3`、PyInstaller `6.22.3`、NSIS `v3.11`。NSIS installer SHA256=`2de124f387bfaf1d0d01b1b0279ad319cd453850d223efa9620b0103ce88a814`，size=`579,537,342` bytes。Installer 与输入 pin 在 `integration/build-manifest.json` 和 Task 中固定，尚未运行 packaged Gate。
+- Tauri build 曾生成 24 个 `gen/schemas` / `permissions/autogenerated` tracked 文件差量；核对所有路径都来自 clean pre-build tree 后，只还原这 24 个路径。恢复后 tracked diff 为 none；installer 是从还原前相同代码生成的。
+- DSH Review raw R2、用户/其他 Agent dirty 文件均保留原位；Gate 还未启动，避免把计划结果当 PASS。
 
-## 当前步骤与下一条直接指令
+## 下一条直接指令
 
-1. 提交本次 Codex Handoff/RESUME 修正；提交后以固定状态段所列命令读取准确 Review HEAD。
-2. 从该完整 HEAD 创建新的 detached DSH worktree，以 `base=31abde9bf4b73aea2851931dcd48faa0f750b318` 和实测 Review HEAD 执行 `dsh headless` 正式 Review；将原始stdout、stderr、退出码、session ID和挂载状态保存到未占用的唯一 P03 Review evidence 文件，不覆盖任何既有 P03/DSH raw。
-3. 当前 P03 DSH Review 尚未分发、未开始、未批准；若有 findings，Task 转 `changes_requested` 并由 Owner 修订；待 DSH 独立批准且无未解决 P0/P1 后，Codex执行集成验证。
+提交当前 Task/manifest/checkpoint/build trace 后，从 clean checkout 创建唯一隔离临时根 `C:\Users\49745\AppData\Local\Temp\codex-p03-gate-2de124f3`（先检查其不存在），设置当前子进程 `TEMP` 与 `TMP` 指向此无空格目录，执行：
+
+```powershell
+G:/CODEX/New Manga.task-envs/m2ac5-build/Scripts/python.exe packaging/m2ac5/run_clean_start_e2e.py --installer "apps/desktop/src-tauri/target/release/bundle/nsis/m2rc1-desktop_0.1.0_x64-setup.exe" --output-dir "verification/P03-PACKAGED-SFX-ENTRY/integration/run-2de124f3" --sfx-real-page "G:/CODEX/New Manga.task-envs/M2-DOCTR-QUAL-work/regions/K07_R123.png"
+```
+
+Gate 必须记录同一 SHA256=`2de124f387bfaf1d0d01b1b0279ad319cd453850d223efa9620b0103ce88a814`，28 场景（原 26 + 两条 SFX）通过，S1/S2 正负向结构化证据完整；复核 host `%APPDATA%` 前后哈希、安装目录零写、source 数据零写和 5 sidecar 零存活。Gate 结果提交后，再固定最终 reviewed head，运行只读 normalization verifier、范围检查与 `git diff --check <base>..<fixed-head>` 并保存 EXIT trace，派发真实 DSH 新一轮正式 Review。
+
+## 保护与限制
+
+- 保持主 checkout `.qoder-credits/**`、historical dispatch/P08 DSH raw、root P03 原始 DSH R2 JSONL/提示词与报告等未跟踪文件不动；canonical copies 使用 integration 子目录新路径。
+- 不修改 `src/**`、`apps/**`、Schema、contracts、依赖、build spec/script；不改写 K07 或 ONNX 外部输入；应用数据与 WebView 数据只落到 Gate task TEMP 根。
+- 仍未完成：最新 packaged Gate、正式 DSH 新 head review、Codex integration Gate、P03 Task/Plan/Status/依赖图收口、释放下一项 Task。
