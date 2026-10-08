@@ -116,3 +116,40 @@ EXIT=0
 command=git diff --check
 No whitespace errors; EXIT=0 (PowerShell emitted only line-ending warnings for existing dirty/status files).
 Repair note: first verify_scope invocation exposed a missing capture group in the newly added status assertion; corrected it and reran both validators successfully before checkpointing.
+
+P08 findings-repair working-tree checkpoint by Codex
+UTC=2026-10-08T13:46:58+00:00
+repo=G:\CODEX\New Manga; branch=main; common_dir=G:/CODEX/New Manga/.git
+source_HEAD=80f1dacd9f6d6cbf4fe182576a5adf22b9734ef2
+tested_state=source_HEAD plus current P08-authorized document/verification edits; not yet the final fixed delivery head
+shell=PowerShell 7.6.6
+python=C:\Python314\python.exe (Python 3.14.6)
+worktree_status=pre-existing four foreign dirty paths plus authorized P08 changes; no foreign file staged or modified
+command=python -B -X utf8 verification/P08/verify_scope.py
+PASS: 193 numbered D08 criteria, AC-SMOKE, all §68–79 rows; historical PASS/To-Be reconciliation and D1–D7 mapping; links; protected docs unchanged; full P08 subtree/task-governance whitespace check; zero production/contracts/Review/inventory changes
+Product tests/build/GUI/model calls: NOT_RUN (document Task)
+EXIT=0
+command=python -B -X utf8 verification/PROJECT-ROADMAP-20261008/verify_plan.py
+PASS: 196 historical nodes; 105 architecture/governance records are audit-base ancestors; 21 roadmap nodes unique; dependencies/graphs and links valid; zero production/code delta
+Product tests/build/GUI: NOT_RUN (planning-only)
+EXIT=0
+command=git diff --check
+No whitespace errors; EXIT=0 (line-ending warning only for pre-existing dirty report.json).
+Repair note: the first post-edit run found the new AC-WIN self-check expected a narrower label than the planned P12/P14/P15/P17 row wording; assertion was aligned to the actual package mapping and all checks reran green.
+
+Latest pre-delivery repair validation by Codex
+UTC=2026-10-08T13:52:09+00:00
+repo=G:\CODEX\New Manga; branch=main; common_dir=G:/CODEX/New Manga/.git
+source_HEAD=80f1dacd9f6d6cbf4fe182576a5adf22b9734ef2
+tested_state=source_HEAD plus current P08/Plan/Status/derived-roadmap authorized document edits; fixed delivery commit pending
+shell=PowerShell 7.6.6
+python=C:\Python314\python.exe (Python 3.14.6)
+command=python -B -X utf8 verification/P08/verify_scope.py
+Expected scope: 193 numbered AC + AC-SMOKE + 12 gates; doc/13/ACG/Legacy reconciliation; AC-WIN implementation slices; D5/Legacy and Architecture Documentation Rebaseline Gate; exact repository path/source guards; entire P08 whitespace check.
+PASS: 193 numbered AC + AC-SMOKE + all 12 gates; P08 local links; seven user decisions; P0/P1 retained and six P2 extensions deferred; P08 changes_requested with 20 candidates unreleased; frozen docs unchanged; full P08/task-governance diff whitespace-clean; no production/contracts/review/inventory delta.
+Product tests/build/GUI/model calls: NOT_RUN (document Task).
+command=python -B -X utf8 verification/P08/verify_scope.py; EXIT=0
+command=python -B -X utf8 verification/PROJECT-ROADMAP-20261008/verify_plan.py
+PASS: 196 historical nodes and classifications; 105 audit-base ancestors; 21 roadmap nodes; no cycles; local links; zero production/code delta; EXIT=0.
+command=git diff --check; no whitespace errors; EXIT=0 (line-ending warnings only for pre-existing dirty report.json and P08/RESUME.md).
+tested_state remains the author working tree at source_HEAD, not the final reviewed-head evidence.

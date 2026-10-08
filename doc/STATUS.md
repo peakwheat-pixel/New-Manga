@@ -1,10 +1,10 @@
 # Current Development Status
 
-**当前位置：P08的D1–D7全部确认，DSH对固定范围head `490f9bd9` 返回 `changes_requested`（CHECKPOINTED）；P系列完成0/21，changes_requested 1，proposed / 未释放20。用户决策已收齐，产品实现未释放。下一步：闭合P08 findings并复审；之后按依赖逐项处理P01–P07。**
+**当前位置：P08的D1–D7全部确认，DSH对固定范围head `490f9bd9` 返回 `changes_requested`；Codex正在按报告修订文档（ACTIVE）。P系列完成0/21，changes_requested 1，proposed / 未释放20。用户决策已收齐，产品实现未释放。下一步：提交修订head、非作者复审与Codex集成；之后按依赖逐项处理P01–P07。**
 
 ## 2026-10-08 当前工作：P08 DSH Review返修 / changes_requested
 
-用户已授权Codex准备[P08](tasks/P08.md)，准备范围仅文档；Owner=Codex，非作者Reviewer=DeepSeek Harness。范围交付head=`490f9bd9637de0812a3ef3d9bbfa754868d5c15f`，DSH正式Review=`changes_requested`（4 P1、6 P2），报告见[Review](../verification/P08/review-dsh-490f9bd.md)，session=`session-f663b6eb-7648-4750-b84d-41becd54737b`。Task状态=`changes_requested` / ExecutionState=`CHECKPOINTED`；P2-1措辞已在review checkpoint `bde69d3e`修正，其余findings待同范围文档修订和复审。base=`ab2f813c0ce311a6712002cafd852b9e7a258380`，Owner branch/worktree=`main` / `G:/CODEX/New Manga`。D1–D7已全部确认，P18补充质量数值在资格方案Task实验前冻结；P08未done，后继实施均未释放。历史196节点CSV仍是审计快照；本轮新增P08正式设计Task，不改原任务及完成记录。D1已解冻基础Reader；跨页联动/页缩略图仍延期。D2选入PDF/MOBI输入、CBZ/PDF/文本输出；D3按RG1净化基线且JA/KO分别实测、Win10实测后声明；D4全库备份；D5保持D08全部P0/P1及完整主流程；D6保留模型下载、延期Plugin/Hook/字体上传/Sakura监控/Plugin Agent；D7维护满足现行P0/P1。全部产品验收仍NOT_RUN。
+用户已授权Codex准备[P08](tasks/P08.md)，准备范围仅文档；Owner=Codex，非作者Reviewer=DeepSeek Harness。范围交付head=`490f9bd9637de0812a3ef3d9bbfa754868d5c15f`，DSH正式Review=`changes_requested`（4 P1、6 P2），报告见[Review](../verification/P08/review-dsh-490f9bd.md)，session=`session-f663b6eb-7648-4750-b84d-41becd54737b`。Task状态=`changes_requested` / ExecutionState=`ACTIVE`；P2-1在review checkpoint `bde69d3e`修正，其余findings正按Task表在允许的文档/验证范围内闭合，新固定head尚未交复审。P08不修改D04/D08/AD-001/doc/13源文档。AD-001规定的Architecture Documentation Rebaseline Task尚未登记；须在P09开发释放前完成AC-DOC-001..003目标架构Gate，并在P18/P20或最终发布使用stack-specific AC前完成等价映射。该Task未编号、未释放，不改变D5门槛。base=`ab2f813c0ce311a6712002cafd852b9e7a258380`，Owner branch/worktree=`main` / `G:/CODEX/New Manga`。D1–D7已全部确认，P18补充质量数值在资格方案Task实验前冻结；P08未done，后继实施均未释放。历史196节点CSV仍是审计快照；本轮新增P08正式设计Task，不改原任务及完成记录。D1已解冻基础Reader；跨页联动/页缩略图仍延期。D2选入PDF/MOBI输入、CBZ/PDF/文本输出；D3按RG1净化基线且JA/KO分别实测、Win10实测后声明；D4全库备份；D5保持D08全部P0/P1及完整主流程；D6保留模型下载、延期Plugin/Hook/字体上传/Sakura监控/Plugin Agent；D7维护满足现行P0/P1。新架构产品验收仍NOT_RUN。
 
 
 2026-10-08 最新编号裁决：当前21个规划节点沿用 `P01–P21`，状态为 `proposed / 未释放`；仅统一编号，不释放实施、不改原有任务及完成记录。原始审计、台账与历史验证日志保留为固定快照。

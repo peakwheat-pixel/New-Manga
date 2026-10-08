@@ -38,15 +38,21 @@ if __name__ == "__main__":
         subprocess.run(["git", "-C", str(ROOT), "merge-base", "--is-ancestor", commit, BASE], check=True)
     print("PASS: 105 new architecture/governance integration records are audit-base ancestors")
     plan = (ROOT / "doc/REBASELINE_PLAN.md").read_text(encoding="utf-8")
-    nodes = re.findall(r"^\| (P\d{2}) \| (?:proposed / 未释放|blocked|in_review|changes_requested) \|", plan, re.M)
+    nodes = re.findall(r"^\| (P\d{2}) \| (?:proposed / 未释放|blocked|in_review|changes_requested|done) \|", plan, re.M)
     assert len(nodes) == len(set(nodes)) == 21
     assert not set(nodes) & ids, "P roadmap IDs collide with historical snapshot"
     current = plan.split("## 2026-10-08 完成：", 1)[0]
     assert nodes == [f"P{i:02}" for i in range(1, 22)], "candidate numbering is not consecutive"
-    assert "| P08 | changes_requested |" in plan
+    task = (ROOT / "doc/tasks/P08.md").read_text(encoding="utf-8")
+    task_state = re.search(r"^status: (changes_requested|in_review|done)$", task, re.M)
+    assert task_state and f"| P08 | {task_state.group(1)} |" in plan
     assert len(re.findall(r"^\| P\d{2} \| proposed / 未释放 \|", plan, re.M)) == 20
     roadmap = (HERE / "ROADMAP.md").read_text(encoding="utf-8")
-    assert set(re.findall(r'\["(P\d{2})<br/>(?:proposed / 未释放|blocked / 范围已确认待Review|in_review / DSH正式Review进行中|changes_requested / DSH Review待修订)', roadmap)) == set(nodes)
+    assert set(re.findall(r'\["(P\d{2})<br/>(?:proposed / 未释放|blocked / 范围已确认待Review|in_review / DSH Review复审中|changes_requested / DSH Review待修订|done / DSH Review与Codex集成通过)', roadmap)) == set(nodes)
+    p08_label = {"changes_requested": "changes_requested / DSH Review待修订",
+                 "in_review": "in_review / DSH Review复审中",
+                 "done": "done / DSH Review与Codex集成通过"}[task_state.group(1)]
+    assert len(re.findall(r'\["P08<br/>' + re.escape(p08_label), roadmap)) == 2
     for diagram in re.findall(r"```mermaid\n(.*?)```", roadmap, re.S):
         edges = re.findall(r"^\s*([\w-]+)\s+(?:-->|-\.->|-\. .*?\.->)\s*([\w-]+)", diagram, re.M)
         graph = {}

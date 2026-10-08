@@ -2,7 +2,7 @@
 
 最新工作点：P08 D1–D7已确认；DSH对固定head `490f9bd9`正式Review为`changes_requested`（4 P1、6 P2），完整报告和修订检查点见[最新恢复点](../P08/RESUME.md)。后继产品实现未释放；下方审计与规划材料按各自时间点保留。
 
-**当前位置：P08的D1–D7全部确认，首轮DSH非作者正式Review为`changes_requested`（CHECKPOINTED）；P系列完成0/21，changes_requested 1，proposed / 未释放20。用户决策已收齐，产品实现未释放。下一步：闭合Review findings并复审；之后按依赖逐项处理P01–P07。**
+**当前位置：P08的D1–D7全部确认，首轮DSH非作者正式Review为`changes_requested`；Codex文档修订进行中（ACTIVE）。P系列完成0/21，changes_requested 1，proposed / 未释放20。用户决策已收齐，产品实现未释放。下一步：提交修订head、非作者复审与Codex集成；之后按依赖逐项处理P01–P07。**
 
 人员更新：用户已移除Qoder，图中未来UI/UX责任由ZCode承担；非作者Review与正式Task释放Gate保持。
 
@@ -46,7 +46,10 @@ flowchart TB
 
 ```mermaid
 flowchart TB
-  P08["P08<br/>changes_requested / DSH Review待修订<br/>范围＋四页设计冻结<br/>保留四页；基础Reader已解冻"] --> P09["P09<br/>proposed / 未释放<br/>真实导入契约与Core适配<br/>图片/PDF/MOBI；真实尺寸；Managed Copy"]
+  P08["P08<br/>changes_requested / DSH Review待修订<br/>范围＋四页设计冻结<br/>保留四页；基础Reader已解冻"] --> ARCHDOC["Architecture Documentation Rebaseline Task<br/>未登记 / 未释放<br/>AC-DOC先于P09；stack-specific映射先于P18/P20"]
+  ARCHDOC --> P09["P09<br/>proposed / 未释放<br/>真实导入契约与Core适配<br/>图片/PDF/MOBI；真实尺寸；Managed Copy"]
+  ARCHDOC -.-> P18
+  ARCHDOC -.-> P20
   P08 --> P10["P10<br/>proposed / 未释放<br/>设置与凭据安全通道<br/>Provider配置可验证；secret不进普通DTO"]
   P08 --> P11["P11<br/>proposed / 未释放<br/>长任务契约冻结<br/>启动/快照/暂停取消重试/恢复语义"]
   P09 --> P12["P12<br/>proposed / 未释放<br/>书架与导入产品链<br/>建书/章节/选文件/结果；ZCode接UI"]
@@ -71,6 +74,8 @@ flowchart TB
   P20 -. "另行授权，可选" .-> P21["P21<br/>proposed / 未释放<br/>Legacy归档/移除<br/>新架构parity通过后；不修旧架构"]
   style P08 fill:#fff3cd,stroke:#b58105,stroke-width:3px
 ```
+
+P12/P14/P15/P17另需P08范围确认后分别释放的ZCode页面设计Task通过非作者Review；这些设计切片不额外增加P01–P21产品节点。
 
 完整产品候选任务尚未释放。D1已解冻基础Reader；跨页联动/页缩略图继续延期。缩略图、跨页联动不作为默认任务。P09/P10/P11 内部先契约后实现，正式释放时拆为独立 Task；P14新增编辑能力同样先Codex冻结命令、ZCode/Antigravity实现Core、再ZCode接UI；P16先Core/IPC后P17 UI。Pipeline 最小成功链可先用 deterministic provider，真实质量 Gate 依赖 P10 和可用受控模型/endpoint，不能将 mock PASS 当真质量 PASS。
 
