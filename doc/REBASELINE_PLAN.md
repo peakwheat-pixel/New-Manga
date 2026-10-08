@@ -11,7 +11,8 @@ worktree=G:/CODEX/New Manga.worktrees/PACKAGED-AC1-DLL-DIAG-dsh，已分配clean
 不启动Legacy诊断、不绕过purged PATH Gate、不实施修复。原installer SHA已重新实测匹配，诊断测试NOT_RUN。
 原构建source_head=cfb5d2eecc4d8ab7a3159cdbb1d5812547bb5cd2；证据head=15cd788f10e83f6a1a215e71538bfa175b435785。
 交付失败DLL/闭包/环境证据或UNKNOWN、最小修复范围建议；Codex非作者Review后才集成诊断文档。
-[输入参数](../verification/M2-PACKAGED-AC1-DLL-DIAG/input-manifest.json)；实际release/synced HEAD在提交后追加恢复记录。
+[输入参数](../verification/M2-PACKAGED-AC1-DLL-DIAG/input-manifest.json)；正式release/synced HEAD=4330b792479c7d251b6dd2389aefa4b1a1b7fe6f，clean/common-dir复核通过。
+[实际恢复点](../verification/M2-PACKAGED-AC1-DLL-DIAG/release.md)；[完整DSH指令](../verification/M2-PACKAGED-AC1-DLL-DIAG/DSH_INSTRUCTION.md)。
 下方runner debt的“唯一Active”及未释放诊断描述为历史checkpoint，不覆盖本段；它的FAIL/BLOCKED不变。
 
 
