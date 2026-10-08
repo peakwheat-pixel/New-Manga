@@ -1,8 +1,8 @@
 # Task 索引
 
-2026-10-09新增：P03「Packaged第五SFX入口验收补齐」正式Task已创建并释放为`ready`；Owner=Antigravity、非作者Reviewer=DeepSeek Harness、Integrator=Codex。P08完整产品范围与验收冻结准备已done。
+历史释放记录（2026-10-09）：P03「Packaged第五SFX入口验收补齐」由Codex正式创建并释放为`ready`；Owner=Antigravity、非作者Reviewer=DeepSeek Harness、Integrator=Codex。
 
-当前唯一Active/released Task：[P03](P03.md) `ready`；固定base=`31abde9bf4b73aea2851931dcd48faa0f750b318`，Owner worktree=`G:/CODEX/New Manga.worktrees/P03-packaged-sfx-entry-antigravity`。最近完成P08：Owner=Codex、非作者Reviewer=DeepSeek Harness；R7 reviewed head及integration=`fe222464616152e9c95208e06c248565f2fd86a6`，Task=`done`。此前M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD done@integration `e7d1f7f8528a6186baec6f642ac8422572103527`；P03承接其R-003。下方旧状态为历史。
+当前唯一Active Task：[P03](P03.md) `in_review`；base=`31abde9bf4b73aea2851931dcd48faa0f750b318`；Owner worktree=`G:/CODEX/New Manga.worktrees/P03-packaged-sfx-entry-antigravity`；Codex integration branch=`codex/P03-integration-4c04459`，checkpoint head=`2e8d6c077f4743a335f0ad80469a612faf2e95bd`。40项定向测试、16项Snapshot oracle、installer SHA `2de124f3…` 的28/28 packaged Gate通过；当前等待新一轮DSH正式Review。P08已done；此前M2 Runner Guard done@`e7d1f7f8528a6186baec6f642ac8422572103527`。下方旧状态为历史。
 
 
 > **2026-09-21 audit**：本索引与 TASK-001～065 文件是历史证据。当前分类、依赖和唯一下一任务见 [REBASELINE_PLAN](../REBASELINE_PLAN.md)，当前 checkpoint 见 [STATUS](../STATUS.md)。不要根据旧 frontmatter 的 `status: done` 单独判定完成。
