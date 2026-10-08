@@ -1,8 +1,8 @@
 # 全项目任务规划恢复点
 
-最新工作点：P08 D1–D7已确认；DSH R2对`31c26389`返回`changes_requested`，首轮4项P1关闭，2项P2和4项P3待修订；DSH shell检查NOT_RUN（Win32 5）。报告与恢复状态见[最新恢复点](../P08/RESUME.md)。后继产品实现未释放；下方历史审计与规划材料按各自时间点保留。
+最新工作点：P08 D1–D7已确认；DSH R2对`31c26389`返回`changes_requested`，首轮4项P1关闭，N-01..N-06已由Codex修订于1ad05d99，R3待启动；DSH shell检查NOT_RUN（Win32 5）。报告与恢复状态见[最新恢复点](../P08/RESUME.md)。后继产品实现未释放；下方历史审计与规划材料按各自时间点保留。
 
-**当前位置：DSH R2已对P08首轮修订head返回`changes_requested`，Codex正在修复N-01..N-06。P系列完成0/21，changes_requested 1，proposed / 未释放20。产品实现未释放；新head复审与Codex集成Gate通过后，再按Plan依赖选择下一Task。**
+**当前位置：DSH R2已对P08首轮修订head返回`changes_requested`，Codex已修复N-01..N-06于1ad05d99，R3待派发。P系列完成0/21，changes_requested 1，proposed / 未释放20。产品实现未释放；新head复审与Codex集成Gate通过后，再按Plan依赖选择下一Task。**
 
 2026-10-08 最新编号裁决：当前21个候选任务沿用 `P01–P21`，状态为 `proposed / 未释放`；仅统一编号，不释放实施、不改原有任务及完成记录。原始审计、台账与历史验证日志保留为固定快照。
 

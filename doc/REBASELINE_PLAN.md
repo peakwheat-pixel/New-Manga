@@ -1,6 +1,6 @@
 # Project Rebaseline Plan
 
-**当前位置：P08的D1–D7全部确认；首轮DSH findings修订head `31c26389`已获二轮复核，R2返回`changes_requested`。R1的4项P1已关闭，仍有2项P2及4项P3待处置；P系列完成0/21，changes_requested 1，proposed / 未释放20。产品实现未释放；P08修订、新head复审和Codex集成Gate通过后，再按依赖选择后续Task。**
+**当前位置：P08的D1–D7全部确认；首轮DSH findings修订head `31c26389`已获二轮复核，R2返回`changes_requested`。R1的4项P1已关闭，N-01..N-06已由Codex修订并固定于1ad05d99，等待R3正式Review；P系列完成0/21，changes_requested 1，proposed / 未释放20。产品实现未释放；R3复审和Codex集成Gate通过后，再按依赖选择后续Task。**
 
 ## 2026-10-08 当前工作：P08 DSH Review返修 / changes_requested
 
@@ -36,7 +36,7 @@
 | P05 | proposed / 未释放 | category/retryable契约注记收敛 | CATEGORY done；RC4-08等deferred | Codex；DSH | 文档一致与反向链接；不更改冻结错误语义 |
 | P06 | proposed / 未释放 | GC分发迁移安全补证 | GC2 done；受控旧版本/隔离根可用 | ZCode；DSH | G7旧runtime退出/所有入口参与证据；未知保留、迁移不满足BLOCKED；不重做GC2 |
 | P07 | proposed / 未释放 | 手输image读取/quiet-window交互修补 | P02证明剩余缺口；REGION-DEBOUNCE已done | ZCode；DSH | 最小实际缺口与判别用例；不重开已闭debounce |
-| P08 | changes_requested | [完整产品范围与验收冻结准备](tasks/P08.md) | 利用P01取证/明确处置（NOT_VERIFIED可保留）；D1–D7已确认；闭合DSH Review findings并复审 | Codex管契约，ZCode另设计Task；DSH | 功能parity矩阵/质量阈值/数据保护/发布矩阵；格式/样式/维护边界逐项选入或deferred；基础Reader已解冻，跨页/缩略图延期；不扩一级页面 |
+| P08 | changes_requested | [完整产品范围与验收冻结准备](tasks/P08.md) | 利用P01取证/明确处置（NOT_VERIFIED可保留）；D1–D7已确认；N-01..N-06已于1ad05d99修订，等待R3独立Review | Codex管契约，ZCode另设计Task；DSH | 功能parity矩阵/质量阈值/数据保护/发布矩阵；格式/样式/维护边界逐项选入或deferred；基础Reader已解冻，跨页/缩略图延期；不扩一级页面 |
 | P09 | proposed / 未释放 | 真实导入契约＋Core适配 | P08；先完成AC-DOC-001..003的Architecture Documentation Rebaseline Gate，再冻结来源能力和实施 | Codex契约→Antigravity/ZCode实现；DSH | opaque受限来源、图片/文件夹/PDF/MOBI、真实尺寸、Managed Copy、损坏/逃逸/部分失败；复用Import API与现有decoder |
 | P10 | proposed / 未释放 | Provider配置与凭据安全通道 | P08；secret exchange先冻结 | Codex契约→Antigravity实现；DSH | credential引用/存储/脱敏/启动配置与重启持久；secret不进入普通DTO/事件/日志 |
 | P11 | proposed / 未释放 | 长任务IPC生命周期契约 | P08；现有PipelineService语义 | Codex；DSH | StartRun快照/控制/恢复/错误/事件策略/有界工作；冻结接受时点；不造第二调度器 |
