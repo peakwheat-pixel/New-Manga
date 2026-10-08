@@ -1,6 +1,6 @@
 # 项目文档索引与 Source of Truth
 
-当前无 Active / released Task。最近完成=`M2-RUNNER-SNAPSHOT-DEBT done@integration 73588624`；DSH r4=`approved`，AC4 fresh Gate 与集成后 snapshot 验证均通过。详情见 [STATUS](STATUS.md)、[Plan](REBASELINE_PLAN.md)、[Runner Handoff](handoffs/M2-RUNNER-SNAPSHOT-DEBT-3d532c1f.md)、[DSH r4 Review](reviews/M2-RUNNER-SNAPSHOT-DEBT-3d532c1f-dsh-r4.md) 与 [集成验证](../verification/M2-RUNNER-SNAPSHOT-DEBT/integration-validation.log)。R-001/R-003 deferred follow-up 未释放；需要用户选择新范围后另行冻结。
+当前 Active / released Task=`[M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD](tasks/M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD.md)`，ready / IDLE，Owner=Antigravity、Reviewer=DSH、Integrator=Codex。基于 Runner DSH r4 deferred R-001 冻结；恢复点和允许路径见 [STATUS](STATUS.md) 与 [Task](tasks/M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD.md)。最近完成=`M2-RUNNER-SNAPSHOT-DEBT done@integration 73588624`；证据见 [Runner Handoff](handoffs/M2-RUNNER-SNAPSHOT-DEBT-3d532c1f.md)、[DSH r4 Review](reviews/M2-RUNNER-SNAPSHOT-DEBT-3d532c1f-dsh-r4.md) 与 [集成验证](../verification/M2-RUNNER-SNAPSHOT-DEBT/integration-validation.log)。R-003 仍未释放。
 
 全任务盘点与 inventory 下方段落是其各自审计时的历史快照，不反映当前总数或授权状态；以本页首段、[Plan](REBASELINE_PLAN.md) 与 [STATUS](STATUS.md) 为当前事实。
 

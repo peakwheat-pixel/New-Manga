@@ -1,5 +1,9 @@
 # Current Development Status
 
+## 2026-10-08 Active / released：M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD
+
+唯一 Active Task=`[M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD](tasks/M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD.md)`，状态=`ready` / ExecutionState=`IDLE`；本次释放还未派发，产品测试 NOT_RUN。Owner=Antigravity，非作者 Reviewer=DeepSeek Harness，Integrator=Codex；依赖 `M2-RUNNER-SNAPSHOT-DEBT done@73588624`。代码基线=`e9b66455356c56e0fe6720d658b46bdbdbeb53b5`；branch=`agent/antigravity/M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD`；worktree 待 Codex 按该路径创建并核验。冻结范围仅两处 runner、当前 packaging README、一个 parser regression test、Task/Handoff 与专属 verification。Qoder 留在主工作区的 `.qoder-credits/report.json`（modified）和 `通路探测__8602db50.canvas.tsx`（untracked）由原作者保留；Owner 使用独立 linked worktree，不携带、不编辑这两份文件。
+
 ## 2026-10-08 M2-PACKAGED-AC1-ICU-ISOLATION-FIX 集成完成
 
 `[M2-PACKAGED-AC1-ICU-ISOLATION-FIX](tasks/M2-PACKAGED-AC1-ICU-ISOLATION-FIX.md)` 已 `done`，Owner=Antigravity、非作者 Reviewer=DeepSeek Harness、Integrator=Codex。固定实现/测试 head=`4499217d7b2249da16d5dbf27a3219a43876aac7`，Owner evidence=`2c79645939635beef4a391f4bd9071ffeacd300b`，DSH r2=APPROVED（0 P0/P1），integration commit=`65ba30144048a0b8daae22205c01f8049b44b8a7`。集成验证见 [`integration-validation.log`](../verification/M2-PACKAGED-AC1-ICU-ISOLATION-FIX/integration-validation.log)：packaging 及 src/apps/tests 对 reviewed head 零差量；merge 后未重跑产品 Gate。Owner fresh build/Dev 10+13/Packaged 26 项证据绑定于 `4499217d`。R2-002/R2-003 非阻断证据局限按 DSH 报告保留。

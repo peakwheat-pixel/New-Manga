@@ -1,12 +1,16 @@
 # Project Rebaseline Plan
 
+## 2026-10-08 Ready：M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD
+
+[M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD](tasks/M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD.md) 已单独冻结并释放，处理 Runner DSH r4 的 deferred R-001：两个 Gate runner 缺省写入历史 tracked raw。Owner=Antigravity，非作者 Reviewer=DeepSeek Harness，Integrator=Codex；硬依赖 `M2-RUNNER-SNAPSHOT-DEBT done@73588624`。实现基线=`e9b66455356c56e0fe6720d658b46bdbdbeb53b5`；branch=`agent/antigravity/M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD`；worktree=`G:/CODEX/New Manga.worktrees/RUNNER-HISTORICAL-RAW-OUTPUT-GUARD-antigravity`。只要求两个 runner 显式传 `--output-dir`、更新当前 README 用法并加入最小 parser regression；不碰历史证据或运行产品 Gate。Task 已 ready，派发/开工状态以 STATUS 和 release evidence 更新为准。
+
 ## 2026-10-08 完成：M2-RUNNER-SNAPSHOT-DEBT @integration `73588624`
 
 ICU 修复 Task 已 done@`65ba30144048a0b8daae22205c01f8049b44b8a7`；fresh Sidecar/NSIS 与 packaged AC1、完整 26/26 Gate 均绑定 source=`4499217d7b2249da16d5dbf27a3219a43876aac7` 和 installer SHA，满足 Runner Debt 原 blocker 的解除条件。集成后未重跑 ICU Gate，production 差量为零。
 
 Task=`[M2-RUNNER-SNAPSHOT-DEBT](tasks/M2-RUNNER-SNAPSHOT-DEBT.md)` 已 `done`；Owner=Codex、非作者 Reviewer=DeepSeek Harness、Integrator=Codex。reviewed head=`5c2d047804eb4a802c04e53b5e8e5e5459570b24`，AC4 实际代码/测试 head=`3d532c1f99e49da703d2076bd67d46b710866637`，integration fast-forward=`73588624b70c337ca4fcb36a4d42e91d3b03f5b0`。Fresh Sidecar/NSIS/Dev/Packaged 与 snapshot oracle 均 PASS；Packaged 26/26，installer SHA=`ef617573ab39c0469079203489f4db4af78ae4e3437f8d97d87a3565bb40fa75`。DSH r4=`approved`、0 P0/P1；集成后核验与 snapshot 16 项 PASS 见 [integration-validation.log](../verification/M2-RUNNER-SNAPSHOT-DEBT/integration-validation.log)。R-001/R-003 为非阻断 deferred，未自动创建后续 Task。
 
-当前无 Active Task、无 released Task。下一项需用户选择要关闭的 follow-up 范围；R-001（保护历史 raw 输出）优先建议单独冻结，R-003（Packaged Gate 覆盖第五入口）是另一个候选，不自动启动。下方 ICU/Runner 旧 release、blocked 与 changes_requested 段落仅为历史 checkpoint。
+当前 Active Task 为 `M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD`（ready，待 Owner 开始）；R-003（Packaged Gate 覆盖第五入口）仍是未释放候选。下方 ICU/Runner 旧 release、blocked 与 changes_requested 段落仅为历史 checkpoint。
 
 ICU 集成证据：[integration-validation.log](../verification/M2-PACKAGED-AC1-ICU-ISOLATION-FIX/integration-validation.log)；[DSH r2 Review](reviews/M2-PACKAGED-AC1-ICU-ISOLATION-FIX-4499217d-dsh-r2.md)。
 
