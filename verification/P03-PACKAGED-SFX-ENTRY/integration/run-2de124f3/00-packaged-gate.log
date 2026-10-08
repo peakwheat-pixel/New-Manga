@@ -1,0 +1,21 @@
+Shell: PowerShell 7.6.6 (C:\Program Files\PowerShell\7\pwsh.exe)
+WorkingDirectory: G:\CODEX\New Manga.worktrees\P03-review-prep-85482c5b
+Source HEAD: 39bd27938b78355c5b948233843ad5cc02c36b30
+Working tree before Gate: clean
+Python: G:\CODEX\New Manga.task-envs\m2ac5-build\Scripts\python.exe
+Python version: Python 3.12.3
+TEMP=C:\Users\49745\AppData\Local\Temp\codex-p03-gate-2de124f3
+TMP=C:\Users\49745\AppData\Local\Temp\codex-p03-gate-2de124f3
+Installer SHA256=2de124f387bfaf1d0d01b1b0279ad319cd453850d223efa9620b0103ce88a814
+Installer size=579537342
+K07 SHA256=28dab503aca3c903111488c03e857b430d309421a4a54bab335a63bbe7b9cec4
+Command: packaging/m2ac5/run_clean_start_e2e.py --installer apps/desktop/src-tauri/target/release/bundle/nsis/m2rc1-desktop_0.1.0_x64-setup.exe --output-dir verification/P03-PACKAGED-SFX-ENTRY/integration/run-2de124f3 --sfx-real-page <pinned K07_R123.png>
+--- runner output ---
+Traceback (most recent call last):
+  File "G:\CODEX\New Manga.worktrees\P03-review-prep-85482c5b\packaging\m2ac5\run_clean_start_e2e.py", line 87, in <module>
+    from conftest import write_noise_png  # noqa: E402
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "G:\CODEX\New Manga.worktrees\P03-review-prep-85482c5b\tests\m2_resource_channel\conftest.py", line 17, in <module>
+    import pytest
+ModuleNotFoundError: No module named 'pytest'
+GATE_EXIT=1

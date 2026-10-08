@@ -1,6 +1,6 @@
 {
   "task_id": "P03",
-  "phase": "fresh_build_complete_gate_pending",
+  "phase": "fresh_build_gate_retry_pending",
   "integration_branch": "codex/P03-integration-4c04459",
   "integration_worktree": "G:/CODEX/New Manga.worktrees/P03-review-prep-85482c5b",
   "task_base_commit": "31abde9bf4b73aea2851931dcd48faa0f750b318",
@@ -66,6 +66,20 @@
   "packaged_gate": {
     "status": "NOT_RUN",
     "required_installer_sha256": "2de124f387bfaf1d0d01b1b0279ad319cd453850d223efa9620b0103ce88a814",
-    "planned_output_dir": "verification/P03-PACKAGED-SFX-ENTRY/integration/run-2de124f3"
+    "planned_output_dir": "verification/P03-PACKAGED-SFX-ENTRY/integration/run-2de124f3-py314",
+    "execution_attempts": [
+      {
+        "attempt": 1,
+        "stage": "runner import before Gate initialization",
+        "interpreter": "G:/CODEX/New Manga.task-envs/m2ac5-build/Scripts/python.exe",
+        "python_version": "3.12.3",
+        "exit": 1,
+        "gate_scenarios_started": false,
+        "cause": "ModuleNotFoundError: No module named 'pytest' from tests/m2_resource_channel/conftest.py",
+        "log_path": "integration/run-2de124f3/00-packaged-gate.log"
+      }
+    ],
+    "runner_python": "C:/Python314/python.exe",
+    "runner_python_version": "3.14.6"
   }
 }
