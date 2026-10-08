@@ -70,7 +70,7 @@ if __name__ == "__main__":
     assert task_state and task_state.group(1) in TASK_STATES
     assert f"| P08 | {task_state.group(1)} |" in plan
     status_counts = Counter(label.strip() for _, label in plan_rows)
-    assert status_counts == {"done": 2, "blocked": 1, "proposed / 未释放": 18}, status_counts
+    assert status_counts == {"done": 2, "in_review": 1, "proposed / 未释放": 18}, status_counts
     roadmap = (HERE / "ROADMAP.md").read_text(encoding="utf-8")
     diagram_nodes = re.findall(r'\["(P\d{2})<br/>([^<]+)', roadmap)
     assert {node for node, _ in diagram_nodes} == set(nodes)

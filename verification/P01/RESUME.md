@@ -1,6 +1,6 @@
 # P01 恢复点
 
-时间：2026-10-09（Asia/Shanghai）；Task=`P01`；TaskStatus=`blocked`；ExecutionState=`ACTIVE`。
+时间：2026-10-09（Asia/Shanghai）；Task=`P01`；当前working-tree候选状态=`in_review`；ExecutionState=`ACTIVE`。Live HEAD状态以本节latest checkpoint为准。
 
 ## 当前权威状态
 
@@ -37,33 +37,41 @@
 
 ## 验证状态
 
-- AC1–AC6 与允许的元数据修正：已执行，delivery=`9b12493616326af9cdd50a055282426c72516a5a`；path/diff preflight EXIT=0；Handoff fixed head/DSH Review/Codex Gate仍待执行。
+- AC1–AC6 与允许的元数据修正：已执行，delivery=`9b12493616326af9cdd50a055282426c72516a5a`；path/diff preflight EXIT=0；DSH R1=`blocked`及修订C5 fixed-head Gate PASS已分别留证，当前R2正式Review仍待执行。
 - P01 来源 Task/Handoff 指纹与 Review carrier 搜索：已执行；ANNOTATE-R2、SYNTH Review原件=`NOT_VERIFIED`。
 - 产品 pytest/cargo/vitest、GUI、build：`NOT_RUN`（本 Task 不涉及产品代码）。
-- 独立 DSH Review 与 Codex Integration Gate：待 P01 完成时对最终固定 head 执行。
+- 独立 DSH Review 与 Codex Integration Gate：R1 blocked保留；R2须针对当前in_review候选的精确fixed head执行；Codex Integration Gate待R2实际通过后执行。
 - 目前没有需用户裁决的产品问题阻止 P01 启动；对已知裁决边界保持只记录、不决策。
 
 ## 下一条直接指令
 
-恢复后先核对main与P01 worktree的branch/HEAD/dirty/common-dir及本恢复点。delivery=`9b12493616326af9cdd50a055282426c72516a5a`，治理checkpoint=`dfe31bbac2e61d5ace969a35f6727e4fd04a2331`；AC2–AC6不重做。P01 Handoff `doc/handoffs/P01-9b124936.md`与`in_review`状态已登记，DSH通路探测session=`session-27b2c99c-65b3-4ae0-8559-8b6af35f7de5`已挂载。当前24项Review候选均在allowed paths，staged=0，`git diff --check`与路线校验均EXIT=0，证据见`ac7-candidate-check.log`。逐项核对这些文件与Handoff后提交候选；提交后在clean worktree记录完整HEAD SHA、执行commit-range diff-check和路线校验，确保dispatch后HEAD不再变更。使用已安装`dsh-dispatch` Skill正式派发DeepSeek Harness非作者Review，保存原始prompt/stdout/stderr/exit/session与报告SHA。Review后Codex按`base_commit..reviewed_head`核对allowed paths、所有AC、commit/报告指纹与无产品越界；修订须产生新head并重新Review。Review与Codex Gate通过后集成、完成P01，再从权威Plan正式释放下一项并自动继续。继续保护root现存24项dirty、用户数据、Lock、current/pinned Revision及Qoder历史；不push、不发布、不部署、不删除。只有全项目目标完成且无待办Task/Review/Gate/阻塞时正常关机。
+当前精确指令见下方最新C5/C6检查点；恢复时优先核对Live Git与其文件集合。不要重复AC2–AC6或P03/P08。R2 Review与Codex Gate完成后，按权威Plan释放下一项并自动继续。保护root现存24项dirty、用户数据、Lock、current/pinned Revision及Qoder历史；不push、不发布、不部署、不删除。
 
 ## 本次 release prompt
 
 见 [`NEXT-AUTOPROGRESS-PROMPT.md`](NEXT-AUTOPROGRESS-PROMPT.md)。
 
-## 2026-10-09 DSH R1 阻塞与恢复点
+## 2026-10-09 DSH R1 阻塞检查点（历史 C4）
 
-- TaskStatus=`blocked`；前一状态=`in_review`；ExecutionState=`ACTIVE`。正式DSH Reviewer=DeepSeek Harness，Integrator=Codex。
+- 当时TaskStatus=`blocked`；前一状态=`in_review`；ExecutionState=`ACTIVE`。正式DSH Reviewer=DeepSeek Harness，Integrator=Codex。后续C5修订已完成，当前执行点见本文件末尾。
 - 本轮恢复时Reality Check=`RESUME_SAFE`：root branch=`main`、HEAD=`714138de3da06013e3ea35395e0c11b3d15fc371`、24个dirty/untracked与启动记录路径集合相同；逐项名称及比对证据见[`ac1-root-status.log`](ac1-root-status.log)。P01 worktree=本地`G:/CODEX/New Manga.worktrees/P01-metadata-audit-codex`、branch=`agent/codex/P01-metadata-audit`、common-dir=`G:/CODEX/New Manga/.git`。
 - R1 reviewed_head=`6f24006c21281df485375674d20a1d3b7b48ca63`，decision=`blocked`，session=`session-28701f2e-5276-4696-8036-11fb9a4b0445`；报告[`P01-6f24006c-dsh-r1.md`](../../doc/reviews/P01-6f24006c-dsh-r1.md)，SHA-256=`9d30def7e8d683b79b4265c808199523ea9aa375489fce556f477d5c506ab9ff`。完整fixed-head Codex验证=`ac7-fixed-head-check.log`（R1候选C3，range base..C3，路径24、越界0、diff-check/route/祖先检查EXIT=0）；不把这些结果归给DSH。
 - 阻塞事项：更正R2 source状态事实与`STATE_CONFLICT`；修正Task/Handoff日志和测试结果的fixed-commit绑定；把治理空白检查改为冻结P01 base..HEAD；区分SYNTH Task=`in_review`与Handoff=`r4-docfix-delivered`；新的候选日志需注明UTC、shell、解释器与被测fixed HEAD。R1因Win32 5将Git/Python检查列为`NOT_RUN`，不批准Codex Integration Gate。
-- 当前工作区包含R1报告、prompt、exit/session carrier、root清单和C3固定验证日志6项未跟踪文件，详见`git status --short`；上述均在P01允许路径。不得改root原有24项dirty。
-- **下一精确步骤**：完成本恢复点记录并提交R1阻塞checkpoint；随后修复上述P01允许路径，运行`git diff --name-only <base>..<candidate>`、`git diff --check <base>..<candidate>`及`python -B -X utf8 verification/PROJECT-ROADMAP-20261008/verify_plan.py`，将时间/环境/EXIT和新fixed HEAD记入`verification/P01/`，把P01状态恢复为`in_review`，对该新HEAD派发DSH R2并保存完整原始carrier。R1 finding与命令结论不得删改。
+- C4时的R1报告与C3 fixed-check artifacts已提交并受版本控制；root原有24项dirty继续保护。以下关于C4之后working tree和下一步的旧说明已由本文件末尾的最新检查点取代。
 
-## 2026-10-09 P01 R1修订候选检查点（C4之后）
+## 2026-10-09 P01 C5修订Gate与C6复审候选检查点
+
+- 上一已提交head C5=`e95ebbf56c9747ad97f2d4e9fa9d1bb10f128364`；branch=`agent/codex/P01-metadata-audit`；worktree=`G:/CODEX/New Manga.worktrees/P01-metadata-audit-codex`；common-dir=`G:/CODEX/New Manga/.git`。C5的TaskStatus仍`blocked`；工作树候选把P01、Plan、Status、Handoff和派生导航同步为`in_review`。
+- C5固定HEAD检查日志=`verification/P01/ac7-r1-remediation-check.log`（待随C6提交）；捕获UTC=`2026-10-08T23:07:14Z`，PowerShell 7.6.6、Python 3.14.6、Git 2.52.0.windows.1。固定范围31 paths、越界0、产品paths 0；base祖先、clean worktree、range `git diff --check`、路线校验、R2来源Task只读、root HEAD/path set=24项均PASS。
+- C6候选相对C5共有12个modified路径：`doc/00_INDEX.md`、`doc/12_ROADMAP.md`、`doc/REBASELINE_PLAN.md`、`doc/STATUS.md`、`doc/handoffs/P01-9b124936.md`、`doc/tasks/P01.md`、`doc/tasks/README.md`、`verification/P01/NEXT-AUTOPROGRESS-PROMPT.md`、`verification/P01/RESUME.md`、`verification/PROJECT-ROADMAP-20261008/RESUME.md`、`verification/PROJECT-ROADMAP-20261008/ROADMAP.md`、`verification/PROJECT-ROADMAP-20261008/verify_plan.py`；另有待跟C6提交的untracked `verification/P01/ac7-r1-remediation-check.log`。均属P01允许路径；候选状态= `in_review`，C5 fixed-head测试和产品测试边界如上所述。
+- root Reality Check=`RESUME_SAFE`：branch=`main`，HEAD=`714138de3da06013e3ea35395e0c11b3d15fc371`，24项dirty/untracked与`ac1-root-status.log`启动清单一致；不得触碰、stage、stash或清理。
+- **下一精确步骤**：重新读取Task/Handoff/Resume及12个候选diff，确认范围与状态同步；只stage以上12个文件和C5 fixed-head日志，staged `git diff --check`及路线校验通过后提交C6。随后以Live `git rev-parse HEAD`固定R2 reviewed_head，在worktree clean时运行精确base..HEAD allowed-path、range `git diff --check`、路线校验与root保护检查，将完整输出保存在worktree外。使用已安装`dsh-dispatch` Skill派发DeepSeek Harness非作者Review并挂载；保存原始prompt/stdout/stderr/exit/session、报告与SHA-256。R2若未approved则根据真实Review继续修订并复审；仅R2 approved后执行Codex Integration Gate，不得提前标`done`。
+- 下次进程必须继续本提示词定义的全项目自动推进；本轮P01完成后才关机一次。重启后不得因本提示词里的本轮关机请求再次在后续Task完成时关机。
+
+## 2026-10-09 P01 C4之后的工作树检查点（历史；已由C5/C6取代）
 
 - 上一正式checkpoint C4=`aaa27767f1ca8cd5014cda0796033b3f9268cf90`；branch=`agent/codex/P01-metadata-audit`，worktree=`G:/CODEX/New Manga.worktrees/P01-metadata-audit-codex`，common-dir=`G:/CODEX/New Manga/.git`。C4提交后曾为clean；其 fixed-head Gate=`verification/P01/ac7-r1-blocked-checkpoint.log`，UTC=`2026-10-08T23:01:33Z`，PowerShell 7.6.6/Python 3.14.6，30个range paths全允许、产品路径0、root 24项一致、range diff-check与路线校验EXIT=0。
-- 最新Live HEAD仍是C4；当前TaskStatus=`blocked`、ExecutionState=`ACTIVE`。working tree有13个modified路径：`doc/00_INDEX.md`、`doc/12_ROADMAP.md`、`doc/REBASELINE_PLAN.md`、`doc/STATUS.md`、`doc/handoffs/P01-9b124936.md`、`doc/tasks/P01.md`、`doc/tasks/README.md`、`verification/P01/NEXT-AUTOPROGRESS-PROMPT.md`、`verification/P01/RESUME.md`、`verification/P01/metadata-audit.md`、`verification/PROJECT-ROADMAP-20261008/RESUME.md`、`verification/PROJECT-ROADMAP-20261008/ROADMAP.md`、`verification/PROJECT-ROADMAP-20261008/verify_plan.py`；新增untracked=`verification/P01/ac7-r1-blocked-checkpoint.log`；当前staged=0。以上均是P01允许路径，未触碰来源R2 Task。
+- 该历史工作树快照的Live HEAD是C4；当时TaskStatus=`blocked`、ExecutionState=`ACTIVE`。记录的13个modified paths和C4验证日志后续已由C5/C6提交收口；当时staged=0，路径都在P01范围内，来源R2 Task未触碰。
 - 本轮Live Reality Check：root仍branch=`main`、HEAD=`714138de3da06013e3ea35395e0c11b3d15fc371`，24项dirty/untracked名称集合与`ac1-root-status.log`一致；P01工作树相对C4为上述可识别文档修订，判定`RESUME_SAFE`。如果Live Git与此不符，先记录漂移来源，不覆盖或重置。
 - R1修订候选已更正R2真实`status: in_review`并新增`STATE_CONFLICT`，更正SYNTH Task/Handoff状态措辞，纠正Task/Handoff测试HEAD绑定；`verify_plan.py`的产品路径与治理空白检查均显式使用P01 `base_commit..HEAD`。working-tree route validator与`git diff --check`目前EXIT=0，但它们不是C5 fixed-head结果。
-- **下一精确步骤**：先审阅当前diff与allowed-path列表；只stage上述11个P01文档和`ac7-r1-blocked-checkpoint.log`，运行staged `git diff --check`后提交R1修订checkpoint（Task仍`blocked`）。提交后以真实完整HEAD运行commit-range allowed-path、`git diff --check <base>..<HEAD>`、路线校验、R2 source Task只读与root 24项保护检查；将UTC、PowerShell/Python/Git版本、HEAD、各命令EXIT写入新的fixed-head日志。全部通过后才把Task/Plan/Status转`in_review`、更新Resume/提示词、固定复审head并派发DSH R2；保存完整R2 carrier。不得把R1 blocked改写成approved或复用旧head。
+- **该历史检查点的下一精确步骤**：审阅、提交R1修订candidate，运行fixed-head Gate，再转`in_review`并派发DSH R2；此步骤已由C5及当前working-tree C6候选推进，现行操作见本文件最新checkpoint。
