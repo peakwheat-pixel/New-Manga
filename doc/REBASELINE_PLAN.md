@@ -1,10 +1,10 @@
 # Project Rebaseline Plan
 
-**当前位置：P08 D1–D7已确认；DSH R4已对固定head `16fb07a9`判定`approved`，独立关闭N-07/N-08；另有R4-01..03三项非阻断P3由Codex集成处理。P系列完成0/21，approved 1，proposed / 未释放20。P08待Codex集成Gate与新head独立复审，后继产品实现未释放。**
+**当前位置：P08 D1–D7已确认；R4的N-07/N-08已独立关闭，R4-01..03修订固定于`af1ddeec`；DSH R5独立Review材料已备妥，待正式派发。P系列完成0/21，in_review 1，proposed / 未释放20。P08待新head复审与Codex集成Gate，后继产品实现未释放。**
 
-## 2026-10-08 当前工作：P08 Codex集成 Gate / approved
+## 2026-10-08 当前工作：P08 DSH R5 Review / in_review
 
-用户已授权Codex准备[P08](tasks/P08.md)，准备范围仅文档；Owner=Codex，非作者Reviewer=DeepSeek Harness。固定审查head=`490f9bd9637de0812a3ef3d9bbfa754868d5c15f`，DSH正式Review结论=`changes_requested`（0 P0、4 P1、6 P2），报告见[Review](../verification/P08/review-dsh-490f9bd.md)。DSH session=`session-f663b6eb-7648-4750-b84d-41becd54737b`，worktree=`G:/CODEX/New Manga.worktrees/P08-dsh-review-490f9bd`；其shell检查`NOT_RUN`，Codex精确head验证为`EXIT=0`。当前状态=`approved`（等待Codex集成）；R3已完成并返回changes_requested，审查head=`1ad05d99c924678f35a2558f6e15b6c548d92f09`；R4在delivery head=`16fb07a973b36b0b129945bc3a85f9ae51234982`已获`approved`；DSH session=`session-eafdd15a-13da-4abf-86fc-1cb444c715ff`、CLI exit=0、报告SHA256=`9259F9B0B1BED6C8AF0640E45CF3860308BFEC89E5757B233942A16FDDDE0AF6`；R4-01..03三项P3待集成处理。二轮session=`session-d9ecc0fb-6e88-41a1-ad89-e2d3f877a1f6`返回0未闭合P0/P1、1残留P2、1新P2、4新P3；DSH shell检查因Win32 5为NOT_RUN。base=`ab2f813c0ce311a6712002cafd852b9e7a258380`，Owner branch/worktree=`main` / `G:/CODEX/New Manga`。详见[Task](tasks/P08.md)、[范围/验收草案](../verification/P08/SCOPE_DRAFT.md)、[D08逐AC及总Gate覆盖索引](../verification/P08/AC_COVERAGE.md)和[恢复点](../verification/P08/RESUME.md)。AD-001要求D07/D08的新架构适用性由单独Architecture Documentation Rebaseline Task建立；当前尚未登记，必须在P09开发释放前完成AC-DOC-001..003目标架构核定，且在P18/P20或最终发布使用stack-specific AC之前完成目标等价映射。此Task未编号、未释放，不改变产品范围或D5门槛；Codex须在相应Task释放前按Plan注册。D1–D7已全部确认；P18补充数值指标在资格方案Task实验前冻结。P08未done，后继实施均未释放。历史196节点CSV仍是审计快照；本轮新增P08正式设计Task，不改原任务及完成记录。D1已解冻基础Reader；跨页联动/页缩略图仍延期。D2选入PDF/MOBI输入、CBZ/PDF/文本输出；D3按RG1净化基线且JA/KO分别实测、Win10实测后声明；D4全库备份；D5保持D08全部P0/P1及完整主流程；D6保留模型下载、延期Plugin/Hook/字体上传/Sakura监控/Plugin Agent；D7维护满足现行P0/P1。全部新架构产品验收仍NOT_RUN。
+用户已授权Codex准备[P08](tasks/P08.md)，准备范围仅文档；Owner=Codex，非作者Reviewer=DeepSeek Harness。固定审查head=`490f9bd9637de0812a3ef3d9bbfa754868d5c15f`，DSH正式Review结论=`changes_requested`（0 P0、4 P1、6 P2），报告见[Review](../verification/P08/review-dsh-490f9bd.md)。DSH session=`session-f663b6eb-7648-4750-b84d-41becd54737b`，worktree=`G:/CODEX/New Manga.worktrees/P08-dsh-review-490f9bd`；其shell检查`NOT_RUN`，Codex精确head验证为`EXIT=0`。当前状态=`in_review`；R5新fixed head复审待派发，Prompt/Handoff已准备；R3已完成并返回changes_requested，审查head=`1ad05d99c924678f35a2558f6e15b6c548d92f09`；R4在delivery head=`16fb07a973b36b0b129945bc3a85f9ae51234982`已获`approved`；DSH session=`session-eafdd15a-13da-4abf-86fc-1cb444c715ff`、CLI exit=0、报告SHA256=`9259F9B0B1BED6C8AF0640E45CF3860308BFEC89E5757B233942A16FDDDE0AF6`；R4-01..03已作者修订于`af1ddeec`。R5 review_worktree=`G:/CODEX/New Manga.worktrees/P08-dsh-review-af1ddeec-r5`，已核实detached、clean、HEAD=`af1ddeec1b998f2ddaf121a85f5fd382561aae1e`、common-dir正确；native session尚未创建。二轮session=`session-d9ecc0fb-6e88-41a1-ad89-e2d3f877a1f6`返回0未闭合P0/P1、1残留P2、1新P2、4新P3；DSH shell检查因Win32 5为NOT_RUN。base=`ab2f813c0ce311a6712002cafd852b9e7a258380`，Owner branch/worktree=`main` / `G:/CODEX/New Manga`。详见[Task](tasks/P08.md)、[范围/验收草案](../verification/P08/SCOPE_DRAFT.md)、[D08逐AC及总Gate覆盖索引](../verification/P08/AC_COVERAGE.md)和[恢复点](../verification/P08/RESUME.md)。AD-001要求D07/D08的新架构适用性由单独Architecture Documentation Rebaseline Task建立；当前尚未登记，必须在P09开发释放前完成AC-DOC-001..003目标架构核定，且在P18/P20或最终发布使用stack-specific AC之前完成目标等价映射。此Task未编号、未释放，不改变产品范围或D5门槛；Codex须在相应Task释放前按Plan注册。D1–D7已全部确认；P18补充数值指标在资格方案Task实验前冻结。P08未done，后继实施均未释放。历史196节点CSV仍是审计快照；本轮新增P08正式设计Task，不改原任务及完成记录。D1已解冻基础Reader；跨页联动/页缩略图仍延期。D2选入PDF/MOBI输入、CBZ/PDF/文本输出；D3按RG1净化基线且JA/KO分别实测、Win10实测后声明；D4全库备份；D5保持D08全部P0/P1及完整主流程；D6保留模型下载、延期Plugin/Hook/字体上传/Sakura监控/Plugin Agent；D7维护满足现行P0/P1。全部新架构产品验收仍NOT_RUN。
 
 
 2026-10-08 最新编号裁决：当前21个规划节点沿用 `P01–P21`，状态为 `proposed / 未释放`；仅统一编号，不释放实施、不改原有任务及完成记录。原始审计、台账与历史验证日志保留为固定快照。
@@ -25,7 +25,7 @@
 
 ### 预先定义的任务依赖树与 Gate
 
-以下 `P01–P21` 中 **P08为approved（R4对16fb07a9通过；R4-01..03三项P3进入Codex集成，R5复核新fixed head后再评定done），其余20项为proposed / 未释放**，为拟议 Task ID，P08已建立正式设计Task，其余尚无正式Task文件；不回改196节点历史快照。表内人员为建议，不是实际认领；正式释放时为每个契约/实现切片单独填 Task、fixed base/head、branch/worktree、allowed_paths与非作者Reviewer，不能一行授予跨层无限写权限。没有正式 M3/M4 树，不虚构新 Milestone。估算需在范围冻结后给出，不按Task数计算产品完成百分比。
+以下 `P01–P21` 中 **P08为in_review（R4已批准，R4-01..03作者修订固定于`af1ddeec`，R5独立Review材料已备妥、待正式派发），其余20项为proposed / 未释放**，为拟议 Task ID，P08已建立正式设计Task，其余尚无正式Task文件；不回改196节点历史快照。表内人员为建议，不是实际认领；正式释放时为每个契约/实现切片单独填 Task、fixed base/head、branch/worktree、allowed_paths与非作者Reviewer，不能一行授予跨层无限写权限。没有正式 M3/M4 树，不虚构新 Milestone。估算需在范围冻结后给出，不按Task数计算产品完成百分比。
 
 | 候选任务编号 | 状态 | 简单中文描述 | 启动依赖/条件 | 建议责任方；非作者审查 | 完成 Gate / 边界 |
 |---|---|---|---|---|---|
@@ -36,7 +36,7 @@
 | P05 | proposed / 未释放 | category/retryable契约注记收敛 | CATEGORY done；RC4-08等deferred | Codex；DSH | 文档一致与反向链接；不更改冻结错误语义 |
 | P06 | proposed / 未释放 | GC分发迁移安全补证 | GC2 done；受控旧版本/隔离根可用 | ZCode；DSH | G7旧runtime退出/所有入口参与证据；未知保留、迁移不满足BLOCKED；不重做GC2 |
 | P07 | proposed / 未释放 | 手输image读取/quiet-window交互修补 | P02证明剩余缺口；REGION-DEBOUNCE已done | ZCode；DSH | 最小实际缺口与判别用例；不重开已闭debounce |
-| P08 | approved | [完整产品范围与验收冻结准备](tasks/P08.md) | 利用P01取证/明确处置（NOT_VERIFIED可保留）；D1–D7已确认；R4已关闭N-07/N-08，R4-01..03三项P3待Codex集成处理与新head独立复审 | Codex管契约，ZCode另设计Task；DSH | 功能parity矩阵/质量阈值/数据保护/发布矩阵；格式/样式/维护边界逐项选入或deferred；基础Reader已解冻，跨页/缩略图延期；不扩一级页面 |
+| P08 | in_review | [完整产品范围与验收冻结准备](tasks/P08.md) | 利用P01取证/明确处置（NOT_VERIFIED可保留）；D1–D7已确认；R4已关闭N-07/N-08，R4-01..03已修订于`af1ddeec`，R5材料已备妥、待派发 | Codex管契约，ZCode另设计Task；DSH | 功能parity矩阵/质量阈值/数据保护/发布矩阵；格式/样式/维护边界逐项选入或deferred；基础Reader已解冻，跨页/缩略图延期；不扩一级页面 |
 | P09 | proposed / 未释放 | 真实导入契约＋Core适配 | P08；先完成AC-DOC-001..003的Architecture Documentation Rebaseline Gate，再冻结来源能力和实施 | Codex契约→Antigravity/ZCode实现；DSH | opaque受限来源、图片/文件夹/PDF/MOBI、真实尺寸、Managed Copy、损坏/逃逸/部分失败；复用Import API与现有decoder |
 | P10 | proposed / 未释放 | Provider配置与凭据安全通道 | P08；secret exchange先冻结 | Codex契约→Antigravity实现；DSH | credential引用/存储/脱敏/启动配置与重启持久；secret不进入普通DTO/事件/日志 |
 | P11 | proposed / 未释放 | 长任务IPC生命周期契约 | P08；现有PipelineService语义 | Codex；DSH | StartRun快照/控制/恢复/错误/事件策略/有界工作；冻结接受时点；不造第二调度器 |

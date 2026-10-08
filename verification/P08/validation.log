@@ -394,3 +394,16 @@ command=python -B -X utf8 verification/PROJECT-ROADMAP-20261008/verify_plan.py; 
 command=git diff --check -- authorized P08/governance paths; EXIT=0; only LF-to-CRLF advisory warnings for two files
 command=git diff --name-only -- protected product/contracts/source paths; EXIT=0; empty
 Product pytest/cargo/vitest/GUI/build/model=NOT_RUN (document-only Task); original external dirty files and R4 raw temporary files unstaged.
+
+P08 R5 dispatch preparation checkpoint
+local_time=2026-10-08 23:30 +08:00
+main_HEAD=af1ddeec1b998f2ddaf121a85f5fd382561aae1e; branch=main; user-owned external dirty paths preserved and unstaged
+delivery_base=16fb07a973b36b0b129945bc3a85f9ae51234982; reviewed_head=af1ddeec1b998f2ddaf121a85f5fd382561aae1e
+review_worktree=G:\CODEX\New Manga.worktrees\P08-dsh-review-af1ddeec-r5; detached; clean; common_dir=G:/CODEX/New Manga/.git; git diff --exit-code HEAD -- . EXIT=0
+environment=PowerShell 7.6.6; Python=C:\Python314\python.exe 3.14.6; dsh --version=0.1.7-rc.2
+command=python -B -X utf8 verification/P08/verify_scope.py; EXIT=0; 193 numbered D08 criteria, AC-SMOKE, 12 gates, 7 decisions; committed BASE..HEAD allowlist 28 files; 5 filesystem P08 Handoffs covered; P08 in_review; 20 successors unreleased
+command=python -B -X utf8 verification/PROJECT-ROADMAP-20261008/verify_plan.py; EXIT=0; 196 unique nodes, 105 ancestry records, 21 planned nodes, labels, links and acyclic graphs passed
+command=git diff --check -- authorized tracked P08/governance paths; EXIT=0
+command=git diff --name-only 16fb07a973b36b0b129945bc3a85f9ae51234982 af1ddeec1b998f2ddaf121a85f5fd382561aae1e -- src apps tests packaging; EXIT=0; empty
+R4-01..03=author fixes on af1ddeec; remain open pending independent R5 confirmation; R5 Prompt/Handoff prepared; dispatch not yet started; no R5 session/report/exit exists
+Product pytest/cargo/vitest/GUI/build/model=NOT_RUN (documentation/acceptance Task; no product code/test changes)
