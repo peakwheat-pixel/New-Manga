@@ -1,10 +1,10 @@
 # Project Rebaseline Plan
 
-**当前位置：P08/P03=done；P系列共21项：done 2、blocked 1、proposed 18。唯一当前Task=P01（台账元数据与独立 Review 载体核验），工作树checkpoint候选状态=`blocked` / ExecutionState=`ACTIVE`；R1 findings已按P01路径修订并通过C5 Gate；DSH R2对C6=`3e67d53be6363e0eaabbd1ce038c226b82b8a494`返回`blocked`，原因是Reviewer sandbox Win32 5，且要求将C6 Gate证据随报告版本化。R2原件、C6 Gate日志与R2-02/03 disposition正记录到C7 checkpoint candidate；需先解决可复核证据/Review环境，再恢复`in_review`并通过独立Review后进入Codex Integration Gate。P01 base=`826bea12a132c5af2ac0cd1244d00e9170093c71`，Owner=Codex、非作者Reviewer=DeepSeek Harness；branch=`agent/codex/P01-metadata-audit`，worktree=`G:/CODEX/New Manga.worktrees/P01-metadata-audit-codex`。恢复见[P01 Task](tasks/P01.md)及[P01 RESUME](../verification/P01/RESUME.md)。P03 integration=`552464238a69ad2cea63cff18abe98f412dbae87`；其产品验证仍绑定source `d717c049`。**
+**当前位置：P08/P03=done；P系列共21项：done 2、in_review 1、proposed 18。唯一Active Task=P01（台账元数据与Review载体取证），状态=in_review；C7=06f52f5a644079afeb57abb38f0ac674c02531c8的Codex fixed-head Gate PASS且已版本化。DSH shell因Win32 5不能运行；只读文件工具可访问P01精确worktree路径，现由Codex固定差量/独立Gate配合DSH只读Review。R1/R2 blocked结论保持原样；R2/SYNTH Review carrier缺失仍为NOT_VERIFIED，产品裁决与来源Task状态不改。P01 base=826bea12a132c5af2ac0cd1244d00e9170093c71；Owner=Codex、非作者Reviewer=DeepSeek Harness；branch=agent/codex/P01-metadata-audit，worktree=G:/CODEX/New Manga.worktrees/P01-metadata-audit-codex。恢复见P01 Task及P01 RESUME。P03 integration=552464238a69ad2cea63cff18abe98f412dbae87；其产品验证仍绑定source d717c049。**
 
-## 2026-10-09 P01 DSH R2 BLOCKED / reviewer environment follow-up
+## 历史检查点：2026-10-09 P01 DSH R2 BLOCKED（由C8 in_review取代）
 
-P01 AC1–AC6与允许的三处来源字段更正已完成，delivery=`9b12493616326af9cdd50a055282426c72516a5a`。DSH R1对`6f24006c21281df485375674d20a1d3b7b48ca63`的`blocked` findings已在P01允许路径修订；C5=`e95ebbf56c9747ad97f2d4e9fa9d1bb10f128364` Codex fixed-head Gate PASS。DSH R2对C6=`3e67d53be6363e0eaabbd1ce038c226b82b8a494`返回`blocked`：Reviewer因sandbox Win32 5未运行Git/Python，另提出C6 Gate日志需版本化（R2-02）及Integration Gate显式绑定P01校验器路径（R2-03）。报告与C6日志已加入当前C7 blocked checkpoint candidate；下一步解决R2-01执行环境并固定新Review head。R1原始报告及DSH `NOT_RUN`事实保留，产品测试仍`NOT_RUN`。
+P01 AC1–AC6与允许的三处来源字段更正已完成，delivery=`9b12493616326af9cdd50a055282426c72516a5a`。DSH R1对`6f24006c21281df485375674d20a1d3b7b48ca63`的`blocked` findings已在P01允许路径修订；C5=`e95ebbf56c9747ad97f2d4e9fa9d1bb10f128364` Codex fixed-head Gate PASS。DSH R2对C6=`3e67d53be6363e0eaabbd1ce038c226b82b8a494`返回`blocked`：Reviewer因sandbox Win32 5未运行Git/Python，另提出C6 Gate日志需版本化（R2-02）及Integration Gate显式绑定P01校验器路径（R2-03）。报告与C6日志已加入C7 committed blocked checkpoint；下一步解决R2-01执行环境并固定新Review head。R1原始报告及DSH `NOT_RUN`事实保留，产品测试仍`NOT_RUN`。
 
 ## 历史记录：2026-10-09 P01 正式启动 / IN_PROGRESS
 
@@ -45,7 +45,7 @@ P08 DSH R7已对base=ecb3b520ce68c2ddcc0c5ec94596e2f50a17f369、reviewed_head=fe
 
 | 候选任务编号 | 状态 | 简单中文描述 | 启动依赖/条件 | 建议责任方；非作者审查 | 完成 Gate / 边界 |
 |---|---|---|---|---|---|
-| P01 | blocked | 台账元数据与Review载体取证 | 无Task依赖；冻结基线`826bea12`；AC1–AC6交付已冻结；C6=`3e67d53b` Codex fixed-head Gate PASS；DSH R2 blocked因Reviewer Win32 5 | Codex；非作者DeepSeek Harness | 版本化R2/C6证据，提供可执行的独立Review环境并对新固定head复审；R2/SYNTH独立Review carrier缺失保持`NOT_VERIFIED`，不改产品裁决或来源Task状态 |
+| P01 | in_review | 台账元数据与Review载体取证 | 无Task依赖；冻结基线826bea12；AC1–AC6交付已冻结；C7=06f52f5a Codex fixed-head Gate PASS并已版本化 | Codex；非作者DeepSeek Harness | DSH shell Win32 5保留为NOT_RUN；使用只读文件工具审阅完整固定差量，Codex独立复核allowed paths、diff-check与路线校验；R2/SYNTH Review carrier仍NOT_VERIFIED，不改产品裁决或来源Task状态 |
 | P02 | proposed / 未释放 | 真UI行为、300ms刷新与对比度验证 | 现有Workbench；冻结harness范围 | ZCode；DSH | DOM/真实WebView取证，区分mock与实际；覆盖切页、写后刷新、键盘、token |
 | P03 | done | Packaged第五SFX入口验收补齐 | PROBE-1/Runner Debt/Guard已done；DSH R5/R6与Codex集成Gate通过 | Antigravity；DSH | integration=`552464238a69ad2cea63cff18abe98f412dbae87`；Gate evidence绑定source=`d717c049`与固定installer SHA；R3-03留给P20 |
 | P04 | proposed / 未释放 | 生产命令族/桥接并发定向验证 | PAGE-NAV done；先检查现有断言 | Antigravity；DSH | 独立常量成员断言；同会话并发响应与协议核验候选先复现；无缺口不加修复 |
@@ -71,7 +71,7 @@ P08 DSH R7已对base=ecb3b520ce68c2ddcc0c5ec94596e2f50a17f369、reviewed_head=fe
 
 保留：Manga109永久取消；BJ13维持0.90、手工改标＋skip，补标/补画不释放；Reader范围：仅跨页联动/页缩略图继续延期；基础Reader已由D1解冻，P16/P17实施仍未释放。LaMa/AOT/BrushNet/FLUX learned inpaint没有production实现，不默认投入；SimpleFill/EdgeBleed已在现有链路，是否足够由P08/P18质量证据决定。GC长会话总磁盘有界没有承诺，不为了漂亮路线图扩大删除能力。
 
-当前步骤：**P01 R1 findings已修订；C5固定范围31 paths Gate PASS。DSH R2对C6=`3e67d53be6363e0eaabbd1ce038c226b82b8a494`为`blocked`：报告中的R2-01是Reviewer sandbox无法执行任何外部命令，R2-02要求将C6 Gate日志与reviewed_head版本化，R2-03为P3加固建议。R2原始报告、prompt、exit、session metadata及C6 Gate日志进入当前C7 blocked checkpoint candidate；后续尝试可执行的临时Review镜像，同时保证精确commit/tree不变；独立Review实际通过且Codex Integration Gate全部通过前不关闭AC7。R2/SYNTH carrier仍`NOT_VERIFIED`，不改用户裁决或来源Task状态。**
+当前步骤：**P01 R1 findings已修订；C5固定范围31 paths Gate PASS。DSH R2对C6=`3e67d53be6363e0eaabbd1ce038c226b82b8a494`为`blocked`：报告中的R2-01是Reviewer sandbox无法执行任何外部命令，R2-02要求将C6 Gate日志与reviewed_head版本化，R2-03为P3加固建议。R2原始报告、prompt、exit、session metadata及C6 Gate日志进入C7 committed blocked checkpoint；后续尝试可执行的临时Review镜像，同时保证精确commit/tree不变；独立Review实际通过且Codex Integration Gate全部通过前不关闭AC7。R2/SYNTH carrier仍`NOT_VERIFIED`，不改用户裁决或来源Task状态。**
 
 ## 2026-10-08 完成：M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD
 
