@@ -1,8 +1,9 @@
 # P03 恢复点
 
-时间：2026-10-09（Asia/Shanghai）；Task=`P03`；TaskStatus=`in_review`；ExecutionState=`TRACEABILITY_CANONICAL_NORMALIZATION_DELIVERED`。
-起点 delivery HEAD=`140a6686ef13e45d4c95de2c7929b61bdaef1d1e`；
-证据 delivery commit=`e3319990216699357c8b5a37c494010505535bb6`；
+时间：2026-10-09（Asia/Shanghai）；Task=`P03`；TaskStatus=`in_review`；ExecutionState=`READY_FOR_FIXED_HEAD_DSH_REVIEW`。
+Owner最终delivery HEAD=`85482c5b001d452953c3ed797ce3c4ed64cae4e3`；
+Owner evidence commit=`e3319990216699357c8b5a37c494010505535bb6`；
+首个空白修正 evidence commit=`6d67c718f6b6ba710b11c8ac4b6d616ed00a2578`；
 NSIS build source HEAD=`29024a21939917c6d8eb15f1a2bb9ff46cd5bf23`；
 Fresh NSIS Installer SHA-256=`5a14c0a98008442bf4e3b70ec1fcc17373e33313cbadf69414fd9584a25a2fa0`（579,528,233 bytes）；
 复验 Packaged Gate=`PASS`（28/28 全量通过，EXIT=0）；
@@ -12,6 +13,7 @@ Handoff r3=[`doc/handoffs/P03-PACKAGED-SFX-ENTRY-140a6686-r3.md`](../handoffs/P0
 
 - 仓库：`G:/CODEX/New Manga`；Task代码base=`31abde9bf4b73aea2851931dcd48faa0f750b318`；release metadata commit=`ece8765461ce19f7493ce636ff7d69ae6a3e1c4b`；branch=`agent/antigravity/P03-packaged-sfx-entry`；worktree=`G:/CODEX/New Manga.worktrees/P03-packaged-sfx-entry-antigravity`；common-dir=`G:/CODEX/New Manga/.git`。
 - Owner=`Antigravity`；非作者 Reviewer=`DeepSeek Harness`；Integrator=`Codex`。
+- Owner最终 delivery branch=`agent/antigravity/P03-packaged-sfx-entry`，HEAD=`85482c5b001d452953c3ed797ce3c4ed64cae4e3`；tracked内容 clean。Codex review-prep worktree=`G:/CODEX/New Manga.worktrees/P03-review-prep-85482c5b`；本RESUME与Handoff修正会提交在该worktree。提交后以 `git -C 'G:/CODEX/New Manga.worktrees/P03-review-prep-85482c5b' rev-parse HEAD` 读取实际固定 Review HEAD。
 - 依赖项：`M2-PROD-SFX-PROBE-1`、`M2-RUNNER-SNAPSHOT-DEBT`、`M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD` 均已完成。
 - K07 anchor page SHA-256=`28dab503aca3c903111488c03e857b430d309421a4a54bab335a63bbe7b9cec4`；pinned v2b SFX weights SHA-256=`944e811410933ad6ff8d32446fcc9eef90fb463794e1874ce83035e83acd418d`。
 - Fresh NSIS Installer SHA-256=`5a14c0a98008442bf4e3b70ec1fcc17373e33313cbadf69414fd9584a25a2fa0`（579,528,233 bytes）。
@@ -28,9 +30,10 @@ Handoff r3=[`doc/handoffs/P03-PACKAGED-SFX-ENTRY-140a6686-r3.md`](../handoffs/P0
 - Manifest `07-encoding-normalization.json` 升级至 Schema 2.1，客观陈述编码事实，彻底撤回关于 Out-File/Tee-Object 产生机制的未证实因果推测。
 - 证据派发文件 `antigravity-dispatch.json` 和 `antigravity-dispatch.stderr.log` 原样保留。
 - 本次为 evidence/doc-only 修订，不改动产品代码、测试代码或构建配置；不重跑 Gate。
+- Owner worktree中三个现有未跟踪辅助文件 `antigravity-dispatch.json`、`antigravity-dispatch.stderr.log`、`antigravity-log-encoding-followup.md` 属于 Owner，全部保留且不 stage、不覆盖、不删除。
 
 ## 当前步骤与下一条直接指令
 
-1. 提交文档修订，固定最新 delivery/review checkpoint。
-2. 将任务交接给非作者 Reviewer `DeepSeek Harness`，按协作协议 §6 对固定的最终 head 进行独立复审（fresh fixed-head DSH review）。
-3. 当前尚未分发，审查尚未开始或通过；待 Reviewer 批准且无未解决 P0/P1 后，由 Codex 执行集成验证。
+1. 提交本次 Codex Handoff/RESUME 修正；提交后以固定状态段所列命令读取准确 Review HEAD。
+2. 从该完整 HEAD 创建新的 detached DSH worktree，以 `base=31abde9bf4b73aea2851931dcd48faa0f750b318` 和实测 Review HEAD 执行 `dsh headless` 正式 Review；将原始stdout、stderr、退出码、session ID和挂载状态保存到未占用的唯一 P03 Review evidence 文件，不覆盖任何既有 P03/DSH raw。
+3. 当前 P03 DSH Review 尚未分发、未开始、未批准；若有 findings，Task 转 `changes_requested` 并由 Owner 修订；待 DSH 独立批准且无未解决 P0/P1 后，Codex执行集成验证。

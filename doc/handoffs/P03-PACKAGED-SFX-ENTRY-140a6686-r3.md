@@ -113,7 +113,7 @@ status: in_review
 - Branch: agent/antigravity/P03-packaged-sfx-entry
 - Base Commit: 31abde9bf4b73aea2851931dcd48faa0f750b318
 - Evidence Commit: e3319990216699357c8b5a37c494010505535bb6
-- Review Head: agent/antigravity/P03-packaged-sfx-entry
+- Review Head: Codex will pin the exact fixed commit at formal DSH dispatch and record its complete hash in the Review report and checkpoint.
 - Build Source HEAD: 29024a21939917c6d8eb15f1a2bb9ff46cd5bf23
 - Delivery Handoff: doc/handoffs/P03-PACKAGED-SFX-ENTRY-140a6686-r3.md
 - 规范 UTF-8 日志: verification/P03-PACKAGED-SFX-ENTRY/revision-2/traceability-rerun/canonical-utf8/**
