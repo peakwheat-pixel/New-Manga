@@ -509,3 +509,32 @@ command=dsh --version; EXIT=0; version=0.1.7-rc.2; command=dsh --profile headles
 availability_probe=from G:/CODEX/New Manga, `dsh --profile headless "只回复两个字：收到"`; CLI EXIT=0; stdout exactly `收到`; stderr empty; probe output stored under the OS temp directory; this is not a formal P08 Review or Review session
 R7 formal dispatch=not yet started; P08 Task status=in_review; review_session=pending; exact target remains fe222464616152e9c95208e06c248565f2fd86a6
 next_gate=save this dispatch-readiness checkpoint, then run `dsh --profile headless --json` with the full R7 Prompt from the exact R7 worktree
+
+P08 R7 formal DSH Review completion checkpoint
+observed_time=2026-10-09 01:04 Asia/Shanghai
+review_base=ecb3b520ce68c2ddcc0c5ec94596e2f50a17f369; reviewed_head=fe222464616152e9c95208e06c248565f2fd86a6; DSH decision=approved; DSH CLI version=0.1.7-rc.2; CLI command=dsh --profile headless --json with full verification/P08/DSH-REVIEW-PROMPT-R7.md from exact R7 worktree; CLI EXIT=0
+native_session=session-bf5b0be5-bd1e-41b8-83cc-152c28227485; event cwd=G:\CODEX\New Manga.worktrees\P08-dsh-review-fe222464-r7; mount_session.py --id session-bf5b0be5-bd1e-41b8-83cc-152c28227485 EXIT=0; mounted to New Manga workspace; desktop/Web visibility=unverified
+canonical_report=verification/P08/review-dsh-fe222464-r7.md; SHA256=2D8165B95A702B40607840889208C62A1CEC4E89C4A445D0591BE9ED2A719C03; raw_jsonl=verification/P08/dsh-r7.stdout.jsonl; SHA256=3260118DCEF50848B986D17ECB72B34F5109E3B09F0C699CC6137153F575447C; stderr=0 bytes; JSONL final.text=15668 Unicode characters and UTF-8 bytes exactly equal canonical report
+DSH decision/findings=approved; no unresolved P0/P1/P2; R7-01 is nonblocking P3 documented by the P08 Task-local approval/status mapping; R7-02 is P4 evidence-boundary observation covered by the Codex fixed-head integration Gate; R7-03 is P4 historical literal removed post-delivery
+DSH command boundary=4 pwsh attempts failed at ACL grant with SetNamedSecurityInfoW Win32 5; DSH shell/git/python command results remain NOT_RUN/NOT_VERIFIED. Codex command results below are independently attributable to Codex only.
+command=python -B -X utf8 verification/P08/verify_scope.py in exact R7 worktree; PowerShell 7.6.6/Python 3.14.6; EXIT=0; 193 D08 criteria, AC-SMOKE, 12 gates, seven decisions, allowlist, links/whitespace and protected scope passed
+command=python -B -X utf8 verification/PROJECT-ROADMAP-20261008/verify_plan.py in exact R7 worktree; EXIT=0; 196 nodes, 105 ancestry records, 21 planned nodes, labels/links/acyclic graph passed
+command=git diff --check ecb3b520ce68c2ddcc0c5ec94596e2f50a17f369 fe222464616152e9c95208e06c248565f2fd86a6 in exact R7 worktree; EXIT=0
+command=git diff --quiet HEAD -- . in exact R7 worktree; EXIT=0; worktree detached/clean; HEAD=fe222464616152e9c95208e06c248565f2fd86a6; common_dir=G:/CODEX/New Manga/.git
+command=git diff --name-only base..reviewed_head against src/apps/tests/packaging, doc/contracts, doc/reviews, AGENTS.md, doc/01-09/13, AD-001, inventory; empty; no protected path delta
+command=python -B -X utf8 verification/P08/verify_scope.py on main post-review metadata; EXIT=0; P08 approved, 20 successors/candidates remain unreleased; 36 committed BASE..HEAD files inside allowed P08 scope; seven current P08 handoffs checked
+command=python -B -X utf8 verification/PROJECT-ROADMAP-20261008/verify_plan.py on main; EXIT=0; 196 nodes, 105 ancestry records, 21 planned nodes and graph links/acyclicity passed
+command=git diff --check HEAD for P08 authorized Task/Handoff/verification/navigation working changes; EXIT=0 (Git reported LF-to-CRLF normalization warnings for two apply-patched files only)
+product pytest/cargo/vitest/GUI/build/model=NOT_RUN (document/validator-only task)
+
+P08 approved-state navigation and review-findings disposition checkpoint
+observed_time=2026-10-09 01:08 Asia/Shanghai; live main HEAD before review checkpoint commit=5106ae4bc6c83a6cbf07466926517c415bfb6911
+checkpoint_audit=independent read-only check found R7 session/cwd/final body/report/raw hashes consistent; flagged stale current-Gate phrases and wrong RESUME ExecutionState enum; Codex corrected Task, Plan, Handoff, and RESUME wording before checkpoint
+command=python -B -X utf8 verification/P08/verify_scope.py on main after navigation and R7-02 disposition sync; EXIT=0; Task=approved; 20 successor candidates unreleased; 36 committed P08-scope files and seven current handoffs passed
+command=python -B -X utf8 verification/PROJECT-ROADMAP-20261008/verify_plan.py on main after navigation and R7-02 disposition sync; EXIT=0; 196 nodes, 105 ancestry records, 21 planned nodes, labels/links/acyclic graph passed
+command=git diff --check HEAD -- authorized P08 Task/Handoff/verification/navigation files; EXIT=0; Git printed only expected LF-to-CRLF working-copy warnings for files edited by patch tools
+finding_disposition=R7-01 P3 documented in P08 Task-local approval/status mapping; R7-02 P4 closed by the exact fixed-head Codex Gate; R7-03 P4 historical literal removed post-delivery. No unresolved R7 P0/P1/P2.
+product pytest/cargo/vitest/GUI/build/model=NOT_RUN
+next_gate=stage explicit P08-authorized files plus canonical R7 report (never raw JSONL/stderr or protected dirty), commit the approved Review checkpoint, then set P08 done and save final next-session automatic-advance prompt
+
+navigation_review_followup=independent read-only agent rechecked stale-current-gate and ExecutionState wording; Codex corrected Plan/Task/Handoff/RESUME. Final state remains P08=approved, DSH R7=approved, Codex fixed-head integration=passed, done checkpoint pending. No new Gate blocker.

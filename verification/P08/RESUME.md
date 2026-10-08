@@ -1,34 +1,26 @@
 # P08 可恢复检查点
 
-时间：2026-10-09 00:42（Asia/Shanghai）；Agent=Codex；TaskStatus=in_review；ExecutionState=ACTIVE（R7 delivery=`fe222464616152e9c95208e06c248565f2fd86a6`已固定；精确worktree验证通过；post-delivery state commit=`65a75e3dea387c0a0e09d0dd113d50eb1792e975`；DSH headless连通性探测EXIT=0并返回`收到`；正式R7 Review尚未派发）。当前main可能含dispatch-ready checkpoint，review目标固定不变。
+时间：2026-10-09 01:04（Asia/Shanghai）；Task=P08；TaskStatus=approved；ExecutionState=ACTIVE；工作点=Codex集成Gate通过，done收口提交待完成。
 
-## 当前事实
+## 当前权威事实
 
-- 唯一仓库=`G:/CODEX/New Manga`；branch=`main`；R7 fixed delivery head=`fe222464616152e9c95208e06c248565f2fd86a6`；其后仅有delivery后状态/PROMPT/Handoff checkpoint metadata；common-dir=`G:/CODEX/New Manga/.git`。恢复时先读live HEAD及status，不将delivery后metadata提交误认作reviewed head变化。
-- P08 Task基线=`ab2f813c0ce311a6712002cafd852b9e7a258380`；R7 base=`ecb3b520ce68c2ddcc0c5ec94596e2f50a17f369`。精确R7 worktree=`G:/CODEX/New Manga.worktrees/P08-dsh-review-fe222464-r7`，detached、clean、HEAD精确匹配、common-dir正确。R6原head=`ecb3b520ce68c2ddcc0c5ec94596e2f50a17f369`仅受R6批准。
-- DSH R6正式结论=`approved`；native session=`session-44947a36-b277-4118-8f82-635e1e803dd1`，CLI EXIT=0，报告=`verification/P08/review-dsh-ecb3b520-r6.md`，SHA256=`7E486D1EC46CD0EBF3BEC280EDDDB837CE600715549E2E528027FF2FEB883C28`；与`verification/P08/dsh-r6.stdout.md`逐字节相同，session已挂载至New Manga workspace。R5-01/R5-02 closed；0未闭合P0/P1/P2。DSH自身shell/git/python检查因Win32 5为`NOT_RUN`/`NOT_VERIFIED`，不能记为DSH PASS。
-- R6-01（非阻断P3）已在post-delivery commit=`547894f59dc2e9ab89812d27efc511d432c6b6a9`修正；DSH确认无需为该修正重开R6 head。R6-O1/O2/O3为P4信息观察，详见canonical报告。
-- Codex集成预检首轮`verify_scope.py` EXIT=1：canonical R6 Review报告及原始stdout含示例目标`[…]`，旧链接检查将它当作真实相对路径。不得修改报告或raw stdout（会破坏证据/hash）。已将验证器改为仅跳过目标恰为`…`或`...`的展示占位，其他相对链接仍须存在。R6原批准不延伸至新delivery。
-- R7精确head=`fe222464616152e9c95208e06c248565f2fd86a6`上的Codex验证：`verify_scope.py` EXIT=0（193 AC、AC-SMOKE、12 Gate、7项决策、34个授权BASE..HEAD路径、六份P08 Handoff和范围通过）；`verify_plan.py` EXIT=0（196节点、105 ancestry、21规划节点、链接和无环依赖通过）；`git diff --check ecb3b520ce68c2ddcc0c5ec94596e2f50a17f369 fe222464616152e9c95208e06c248565f2fd86a6` EXIT=0；受保护路径差量为空；精确worktree detached、clean且common-dir正确。证据为Codex实测，见`verification/P08/validation.log`。产品pytest/cargo/vitest/GUI/build/model=`NOT_RUN`。
-- Delivery后同步路线图图标签时，主线`verify_scope.py`通过而`verify_plan.py`首次EXIT=1：图中P08显示`in_review / Review中`，不匹配既有`STATUS_LABELS['in_review']`；现已改为精确标签`in_review / DSH Review复审中`。该状态metadata不改变R7 delivery；随后主线复验两validator均通过，具体EXIT见`validation.log`。
-- DSH headless连通性探测：在项目根目录执行`dsh --profile headless "只回复两个字：收到"`，CLI EXIT=0、stdout=`收到`、stderr为空；这是路由探测，不是P08 Review或正式Review session。
-- 当前P08状态=`in_review`；DSH R7=`pending`，canonical目标`verification/P08/review-dsh-fe222464-r7.md`。P09–P20均proposed/未释放；D1–D7已确认。Architecture Documentation Rebaseline Task尚未登记：AC-DOC-001..003须先于P09；stack-specific映射须先于P18/P20相应Gate。产品验收仍`NOT_RUN`。
-- 必须保护且不得stage/覆盖/stash/reset/clean：`.qoder-credits/report.json` modified、`.qoder-credits/通路探测__8602db50.canvas.tsx` untracked、`verification/M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD/antigravity-dispatch.json`及`.stderr.log` untracked；`verification/P08/dsh-r4.*`、`dsh-r5.*`、`dsh-r6.*`原始stdout/stderr均不纳入正式提交。R6 canonical报告应提交为正式证据；DSH原始日志保留未跟踪。
-- 用户要求P08任务完成后关机并提供续跑提示。P08尚未`done`，R7未review，因此现在不可关机；只有R7独立Review、Codex集成Gate、`done`状态和最终Resume均落盘后才执行关机。P03在本次P08收口前不释放。
+- 唯一仓库：G:/CODEX/New Manga；branch=main；恢复时以 live HEAD 和 Git 状态为准。
+- P08 Task 基线：ab2f813c0ce311a6712002cafd852b9e7a258380。
+- R7 固定 delivery / reviewed_head：fe222464616152e9c95208e06c248565f2fd86a6；review base：ecb3b520ce68c2ddcc0c5ec94596e2f50a17f369。
+- DSH 正式 R7：decision=approved；native session=session-bf5b0be5-bd1e-41b8-83cc-152c28227485；CLI EXIT=0；DSH 版本=0.1.7-rc.2；session cwd=G:/CODEX/New Manga.worktrees/P08-dsh-review-fe222464-r7。mount_session.py --id 返回 EXIT=0 并挂载到 New Manga workspace；桌面/Web 可见性未核验，保持 unverified。
+- canonical 报告=verification/P08/review-dsh-fe222464-r7.md；SHA256=2D8165B95A702B40607840889208C62A1CEC4E89C4A445D0591BE9ED2A719C03。raw JSONL=verification/P08/dsh-r7.stdout.jsonl；SHA256=3260118DCEF50848B986D17ECB72B34F5109E3B09F0C699CC6137153F575447C；stderr=0 bytes；final正文共15668字符，和canonical报告UTF-8字节完全一致。
+- DSH 的 pwsh 命令4次均在ACL授予阶段因 SetNamedSecurityInfoW Win32 5 失败，DSH 自身 shell/git/python 结果记 NOT_RUN / NOT_VERIFIED。Codex 实测不得冒称为 DSH 命令级PASS。
+- DSH 报告无未解决 P0/P1/P2。R7-01 P3：已在 P08 Task 记录 Task-local approval/status 映射，不改共享协议或Schema；R7-02 P4：固定head与delivery后验证边界已由 Codex Gate 实测并记录；R7-03 P4：Task 尾部历史字面量已从 delivery 后正文移除。R6-01已在547894f59dc2e9ab89812d27efc511d432c6b6a9修复；R5-01/R5-02已由R6独立关闭。
+- 精确 R7 worktree=G:/CODEX/New Manga.worktrees/P08-dsh-review-fe222464-r7；detached、clean、HEAD精确等于fe222464616152e9c95208e06c248565f2fd86a6，common-dir=G:/CODEX/New Manga/.git。
+- Codex 在精确 R7 worktree 实跑 verify_scope.py EXIT=0、verify_plan.py EXIT=0、git diff --check ecb3b520...fe222464 EXIT=0、git diff --quiet HEAD -- . EXIT=0；protected source/contracts/frozen-spec/inventory 差量为空。主线 metadata 验证器也通过：P08 approved，20项候选仍未释放；193项D08 criteria、AC-SMOKE、12 gates与路线图链接/无环依赖通过。
+- 产品 pytest/cargo/vitest/GUI/build/model 均 NOT_RUN；此 Task 是文档与验证器准备，不代表产品实现或产品 Gate 通过。
+- P03 是当前推荐下一候选，Plan 标明 PROBE-1、Runner Debt、Guard 前置已完成，建议 Owner=Antigravity、非作者 Reviewer=DeepSeek Harness；它尚未建立正式 Task、没有冻结 allowed_paths/hash，也未释放。按本次关机要求，本检查点完成后不在本轮启动P03。
+- 必须原样保护，不暂存、不覆盖、不stash/reset/clean：.qoder-credits/report.json modified；.qoder-credits/通路探测__8602db50.canvas.tsx untracked；verification/M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD/antigravity-dispatch.json 与 .stderr.log；verification/P08/dsh-r4.*、dsh-r5.*、dsh-r6.*、dsh-r7.stdout.jsonl、dsh-r7.stderr.log raw outputs。R7 canonical报告是授权的正式证据，可提交。
 
-## 下一条可直接执行的指令
+## 直接恢复指令
 
-1. 检查`git status --short --branch`、live HEAD/common-dir和此RESUME；保护列出的外部dirty/raw文件。确认P08 Task=`in_review`，R7 delivery仍为`fe222464616152e9c95208e06c248565f2fd86a6`，精确review worktree未漂移，正式Review尚待派发。
-2. 确认delivery后Task/Plan/Status/Handoff/Prompt/RESUME状态metadata已提交；如未提交，只显式stage授权清单，不stage raw输出或其他Agent内容。重跑主线`verify_scope.py`、`verify_plan.py`和基线diff-check，保持`in_review`状态一致。
-3. DSH路由探测已EXIT=0。现在从精确R7 worktree执行`dsh --profile headless --json <R7 Prompt全文>`只读Review，使用`verification/P08/DSH-REVIEW-PROMPT-R7.md`全文。保存原始JSONL/stderr与真实exit，提取session event并按session ID mount；保留native session ID与raw/canonical hash。CLI失败时先诊断并记录，不伪造Review。
-4. R7返回后把真实中文Review正文归档到`verification/P08/review-dsh-fe222464-r7.md`，与JSONL里的final answer比对；记录findings disposition。只有reviewed head未变、R7 approved、无未闭合P0/P1/关键验证缺失时才执行Codex集成Gate。
-5. Codex集成Gate在精确R7 worktree和主线上复跑两个validator、固定base/head diff-check、受保护路径差量、HEAD/common-dir/clean、canonical/raw一致性及Task AC。若修订受审内容，重新建fixed head并DSH复审。通过后同步Task=`done`、Plan/Status/依赖图/RESUME，记录integration_commit及P03下一Task建议并提交最终checkpoint。
-6. P08最终checkpoint和供下次续跑的完整提示词保存完毕后，按用户明确授权安排关机。关闭前核验最新Git状态、外部dirty保护清单和验证证据。下一次从live Git与RESUME恢复，重新核对权威Plan；P03仅为候选，需正式创建/冻结/分配并通过依赖核查后才可释放。
-
-## 下次恢复自动推进提示词
-
-请从`G:/CODEX/New Manga`的实时Git与`verification/P08/RESUME.md`恢复，持续自动推进已授权路线。先核对`doc/REBASELINE_PLAN.md`、`doc/00_INDEX.md`、`doc/STATUS.md`、`doc/09_COLLABORATION.md`、当前Task、branch/HEAD/common-dir和本检查点；不要依据聊天记录推断完成，也不要重做已完成全库审计。
-
-P08当前`in_review`：R6只批准固定head=`ecb3b520ce68c2ddcc0c5ec94596e2f50a17f369`（session=`session-44947a36-b277-4118-8f82-635e1e803dd1`，报告SHA256=`7E486D1EC46CD0EBF3BEC280EDDDB837CE600715549E2E528027FF2FEB883C28`，报告与stdout逐字节相同且session已挂载）。R6-01已在`547894f59dc2e9ab89812d27efc511d432c6b6a9`修正。链接守卫修订delivery=`fe222464616152e9c95208e06c248565f2fd86a6`；R7精确worktree的两validator、diff-check与受保护路径检查均EXIT=0；正式DSH R7尚待派发。reviewed head不得被R6批准替代。
-
-严格遵守项目授权：Owner与Reviewer不同；Qoder已退出，绝不分配；保护用户数据、Lock、current/pinned Revision、密钥、`.qoder-credits`、其他Agent dirty及R4/R5/R6 raw输出。仅显式stage P08授权文件；不伪造Review/PASS/DONE。P09–P20未释放；D1–D7不再询问；目标架构文档重基线Gate仍须在P09及P18/P20相关工作前完成。P08所有AC、Review、Codex集成Gate和恢复点完成后，按用户明确授权保存最终checkpoint并关闭计算机；P08未done或仍有Gate时不得关机。之后从Plan选择下一依赖满足Task，正式建Task、冻结范围、分配不同Owner/Reviewer并继续。
+1. 检查 live branch、HEAD、common-dir、status 与本文件；保留上述其他作者 dirty/raw。
+2. 当前应见 P08=approved，R7 head=fe222464，DSH Review approved。对照 doc/tasks/P08.md、doc/STATUS.md、doc/REBASELINE_PLAN.md 与验证日志。不要重复全库审计，不重派 R7。
+3. Task状态metadata与Plan/Status/Index/README/ROADMAP/派生REPORT/RESUME已同步到approved。集成验证结果已通过；确认本 checkpoint 提交仅包含 P08 授权 Task/Handoff/verification 与导航文件、canonical R7 报告，不包含raw或受保护dirty。
+4. 将P08收口为done：integration_commit沿用直接集成到main的R7 delivery fe222464；完成AC/依赖图/恢复点；复跑主线两个validator和whitespace检查并提交final checkpoint。R7-02已closed。更新后的RESUME必须包含下一次自动推进提示词。
+5. 关闭P08后仅记录P03为下一推荐候选；不要凭此检查点虚构正式Task、工作路径、commit、冻结hash或释放状态。然后按用户授权安排关机。

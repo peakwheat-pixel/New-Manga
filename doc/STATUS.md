@@ -1,10 +1,10 @@
 # Current Development Status
 
-**当前位置：P08 D1–D7已确认；R6仅批准旧head=`ecb3b520`。窄范围修订已固定于`fe222464616152e9c95208e06c248565f2fd86a6`，精确R7 worktree验证通过，等待DSH正式Review。P08=`in_review`；P系列done 0/21、in_review 1、proposed / 未释放20。**
+**当前位置：P08 D1–D7已确认；DSH R7已批准固定head=fe222464616152e9c95208e06c248565f2fd86a6。P08=approved，Codex集成Gate已核验，Task收口提交待完成；P系列done 0/21、approved 1、proposed / 未释放20。**
 
-## 2026-10-09 当前工作：P08 DSH R7正式Review / in_review
+## 2026-10-09 当前工作：P08 Codex集成Gate / approved
 
-R6原delivery=`ecb3b520ce68c2ddcc0c5ec94596e2f50a17f369`；DSH R6=`approved`，session=`session-44947a36-b277-4118-8f82-635e1e803dd1`，报告SHA256=`7E486D1EC46CD0EBF3BEC280EDDDB837CE600715549E2E528027FF2FEB883C28`。Codex主线集成预检发现canonical报告与raw stdout中的省略号示例目标导致`verify_scope.py`误报；报告和raw输出未改写。精确目标`…`/`...`修订已固定为R7 delivery=`fe222464616152e9c95208e06c248565f2fd86a6`，worktree=`G:/CODEX/New Manga.worktrees/P08-dsh-review-fe222464-r7`，两个validator、base/head whitespace和受保护路径检查均通过。Task=`in_review`，review_session=`pending`；DSH R7 approved且Codex集成Gate通过后才置`done`。R6批准只适用于旧head。
+DSH R7正式Review：base=ecb3b520ce68c2ddcc0c5ec94596e2f50a17f369，reviewed_head=fe222464616152e9c95208e06c248565f2fd86a6，decision=approved，session=session-bf5b0be5-bd1e-41b8-83cc-152c28227485，报告SHA256=2D8165B95A702B40607840889208C62A1CEC4E89C4A445D0591BE9ED2A719C03。R7 canonical报告与raw JSONL final逐字节相等；精确worktree Codex集成Gate已通过。Task=approved；准备提交done状态。DSH命令因Win32 5为NOT_RUN/NOT_VERIFIED；产品pytest/cargo/vitest/GUI/build/model保持NOT_RUN。R6批准只适用于旧head。
 
 
 2026-10-08 最新编号裁决：规划任务ID沿用 `P01–P21`；本句仅说明编号，不表达节点状态或任务释放。当前状态与授权以本文件开头的Active Task及REBASELINE_PLAN顶部为准。原始审计、台账与历史验证日志保留为固定快照。
@@ -17,7 +17,7 @@ R6原delivery=`ecb3b520ce68c2ddcc0c5ec94596e2f50a17f369`；DSH R6=`approved`，s
 
 用户本轮请求已完成三路GPT-6.1 Sol high代码/文档审计与整体依赖规划；这是规划交付，**当前仍无 Active / released产品Task**。审计输入=`main@e4242ecd`；[报告](../verification/PROJECT-ROADMAP-20261008/REPORT.md)、[中文图](../verification/PROJECT-ROADMAP-20261008/ROADMAP.md)、[196节点完整台账](../verification/PROJECT-ROADMAP-20261008/task-inventory.csv)、[恢复点](../verification/PROJECT-ROADMAP-20261008/RESUME.md)。167登记完成/文档交付＋29历史局限/归档，不作为产品完成率；新架构有界Task全部收口，正式四页与完整用户链仍缺。
 
-当前后续整体树以[Plan顶部P01–P21 候选任务](REBASELINE_PLAN.md)为准，P08=`in_review`（R7 fixed head=`fe222464`，DSH正式Review待进行），其余20项proposed / 未释放。新旧head、报告与验证边界见[P08恢复点](../verification/P08/RESUME.md)；后继Task未释放，Architecture Documentation Rebaseline仍是P09/P18/P20相应Gate的先决条件。
+当前后续整体树以Plan顶部P01–P21候选任务为准，P08=approved（R7固定head=fe222464已获DSH批准，Codex集成Gate通过待Task收口提交），其余20项proposed / 未释放。下一候选为P03；尚未创建或释放。新旧head、报告与验证边界见P08恢复点；Architecture Documentation Rebaseline仍是P09/P18/P20相应Gate的先决条件。
 
 ## 2026-10-08 完成：M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD
 

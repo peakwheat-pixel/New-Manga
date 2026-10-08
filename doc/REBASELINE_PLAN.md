@@ -1,13 +1,13 @@
 # Project Rebaseline Plan
 
-**当前位置：P08 D1–D7已确认；R6仅批准旧head=`ecb3b520`。修复省略号示例链接误报的delivery=`fe222464616152e9c95208e06c248565f2fd86a6`已固定；DSH R7正式Review进行中，P08=`in_review`。P系列done 0/21、in_review 1、proposed / 未释放20。**
+**当前位置：P08 D1–D7已确认；DSH R7已批准固定head=fe222464616152e9c95208e06c248565f2fd86a6，P08=approved，Codex集成Gate已通过，待done状态提交。P系列done 0/21、approved 1、proposed / 未释放20。**
 
-## 2026-10-09 当前工作：P08 DSH R7正式Review / in_review
+## 2026-10-09 当前工作：P08 Codex集成Gate / approved
 
-P08由Codex按用户授权完成文档准备与R6 Review；DSH对旧head=`ecb3b520`返回`approved`，session=`session-44947a36-b277-4118-8f82-635e1e803dd1`，报告SHA256=`7E486D1EC46CD0EBF3BEC280EDDDB837CE600715549E2E528027FF2FEB883C28`。省略号示例链接误报已在delivery=`fe222464616152e9c95208e06c248565f2fd86a6`窄范围修订；R7固定worktree验证通过，当前等待DSH对新head正式Review。R5-01/R5-02 closed，R6-01已在`547894f5`修正。DSH自身命令的运行边界待R7报告；产品验收仍`NOT_RUN`。Architecture Documentation Rebaseline仍须先于P09及P18/P20相关Gate。
+P08 DSH R7已对base=ecb3b520ce68c2ddcc0c5ec94596e2f50a17f369、reviewed_head=fe222464616152e9c95208e06c248565f2fd86a6批准，session=session-bf5b0be5-bd1e-41b8-83cc-152c28227485，报告SHA256=2D8165B95A702B40607840889208C62A1CEC4E89C4A445D0591BE9ED2A719C03；canonical报告与JSONL final正文逐字节一致。Codex已在精确R7 worktree复跑两个validator、fixed-range git diff --check、clean及common-dir检查并通过；R7-01 P3已在P08 Task声明局部approval/status映射，R7-02验证证据边界已由Codex Gate核验，R7-03历史字面量已清理。DSH自身命令因Win32 5为NOT_RUN/NOT_VERIFIED；产品验收仍NOT_RUN。P08收口提交待完成；Architecture Documentation Rebaseline仍须先于P09及P18/P20相关Gate。
 
 
-2026-10-09 P08 Review状态：P08=`in_review`（delivery=`fe222464616152e9c95208e06c248565f2fd86a6`，base=`ecb3b520ce68c2ddcc0c5ec94596e2f50a17f369`，DSH R7 pending）；其余20项=`proposed / 未释放`。原始审计、台账与历史验证日志保留为固定快照。
+2026-10-09 P08状态：P08=approved（delivery/reviewed_head=fe222464616152e9c95208e06c248565f2fd86a6；Codex集成Gate已核验，收口提交待完成）；其余20项=proposed / 未释放。原始审计、台账与历史验证日志保留为固定快照。
 
 ## 2026-10-08 当前人员裁决：Qoder退出项目
 
@@ -25,7 +25,7 @@ P08由Codex按用户授权完成文档准备与R6 Review；DSH对旧head=`ecb3b5
 
 ### 预先定义的任务依赖树与 Gate
 
-以下 `P01–P21` 中 **P08=in_review（R7 fixed head=`fe222464`，等待DSH正式Review），其余20项为proposed / 未释放**，为拟议Task ID；P08正式设计范围已冻结，其余尚无正式Task文件；不回改196节点历史快照。表内人员为建议，不是实际认领；正式释放时为每个契约/实现切片单独填Task、fixed base/head、branch/worktree、allowed_paths与非作者Reviewer，不能一行授予跨层无限写权限。没有正式M3/M4树，不虚构新Milestone。估算需在范围冻结后给出，不按Task数计算产品完成百分比。
+以下 P01–P21 中 **P08=approved（R7 fixed head=fe222464，Codex集成Gate已通过、待Task收口），其余20项为proposed / 未释放**，为拟议Task ID；P08正式设计范围已冻结，其余尚无正式Task文件；不回改196节点历史快照。表内人员为建议，不是实际认领；正式释放时为每个契约/实现切片单独填Task、fixed base/head、branch/worktree、allowed_paths与非作者Reviewer，不能一行授予跨层无限写权限。没有正式M3/M4树，不虚构新Milestone。估算需在范围冻结后给出，不按Task数计算产品完成百分比。
 
 | 候选任务编号 | 状态 | 简单中文描述 | 启动依赖/条件 | 建议责任方；非作者审查 | 完成 Gate / 边界 |
 |---|---|---|---|---|---|
@@ -36,7 +36,7 @@ P08由Codex按用户授权完成文档准备与R6 Review；DSH对旧head=`ecb3b5
 | P05 | proposed / 未释放 | category/retryable契约注记收敛 | CATEGORY done；RC4-08等deferred | Codex；DSH | 文档一致与反向链接；不更改冻结错误语义 |
 | P06 | proposed / 未释放 | GC分发迁移安全补证 | GC2 done；受控旧版本/隔离根可用 | ZCode；DSH | G7旧runtime退出/所有入口参与证据；未知保留、迁移不满足BLOCKED；不重做GC2 |
 | P07 | proposed / 未释放 | 手输image读取/quiet-window交互修补 | P02证明剩余缺口；REGION-DEBOUNCE已done | ZCode；DSH | 最小实际缺口与判别用例；不重开已闭debounce |
-| P08 | in_review | [完整产品范围与验收冻结准备](tasks/P08.md) | 利用P01取证/明确处置（NOT_VERIFIED可保留）；D1–D7已确认；R6旧head `ecb3b520` approved；R7 delivery=`fe222464`，等待DSH正式Review | Codex管契约，ZCode另设计Task；DSH | 功能parity矩阵/质量阈值/数据保护/发布矩阵；格式/样式/维护边界逐项选入或deferred；基础Reader已解冻，跨页/缩略图延期；不扩一级页面 |
+| P08 | approved | [完整产品范围与验收冻结准备](tasks/P08.md) | 利用P01取证/明确处置（NOT_VERIFIED可保留）；D1–D7已确认；DSH R7对fe222464正式approved；Codex集成Gate已通过，待done状态收口 | Codex管契约，ZCode另设计Task；DSH | 功能parity矩阵/质量阈值/数据保护/发布矩阵；格式/样式/维护边界逐项选入或deferred；基础Reader已解冻，跨页/缩略图延期；不扩一级页面 |
 | P09 | proposed / 未释放 | 真实导入契约＋Core适配 | P08；先完成AC-DOC-001..003的Architecture Documentation Rebaseline Gate，再冻结来源能力和实施 | Codex契约→Antigravity/ZCode实现；DSH | opaque受限来源、图片/文件夹/PDF/MOBI、真实尺寸、Managed Copy、损坏/逃逸/部分失败；复用Import API与现有decoder |
 | P10 | proposed / 未释放 | Provider配置与凭据安全通道 | P08；secret exchange先冻结 | Codex契约→Antigravity实现；DSH | credential引用/存储/脱敏/启动配置与重启持久；secret不进入普通DTO/事件/日志 |
 | P11 | proposed / 未释放 | 长任务IPC生命周期契约 | P08；现有PipelineService语义 | Codex；DSH | StartRun快照/控制/恢复/错误/事件策略/有界工作；冻结接受时点；不造第二调度器 |
@@ -55,7 +55,7 @@ P08集成并收口后，推荐下一项为P03（Packaged第五SFX入口验收补
 
 保留：Manga109永久取消；BJ13维持0.90、手工改标＋skip，补标/补画不释放；Reader范围：仅跨页联动/页缩略图继续延期；基础Reader已由D1解冻，P16/P17实施仍未释放。LaMa/AOT/BrushNet/FLUX learned inpaint没有production实现，不默认投入；SimpleFill/EdgeBleed已在现有链路，是否足够由P08/P18质量证据决定。GC长会话总磁盘有界没有承诺，不为了漂亮路线图扩大删除能力。
 
-当前步骤：**Codex修复并复审P08链接守卫的占位目标误报。**R6对原delivery的批准仍有效但不延伸至新head；新head独立Review通过后，继续Codex集成Gate。
+当前步骤：**将P08 approved状态正式收口为done，记录主线提交并保存下次自动推进提示词。**Codex固定head Gate和所有R7 findings均已处置；收口提交后按用户要求关机。P03仍只是下一候选，尚未创建或释放。
 
 ## 2026-10-08 完成：M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD
 

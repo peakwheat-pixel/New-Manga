@@ -1,12 +1,12 @@
 # 项目文档索引与 Source of Truth
 
-当前工作：P08的D1–D7设计范围已冻结；R6仅批准旧head `ecb3b520`。链接守卫窄范围修订delivery=`fe222464`已通过精确head Codex验证，现等待DSH正式R7 Review。P08=`in_review`；后继Task未释放；[最新恢复点](../verification/P08/RESUME.md)。
+当前工作：P08 D1–D7范围已确认；DSH R7对固定head=fe222464616152e9c95208e06c248565f2fd86a6正式approved，Codex集成Gate通过，Task收口提交待完成。P08=approved；P03仍是未创建/未释放候选；最新恢复点见verification/P08/RESUME.md。
 
 2026-10-08人员更新：Qoder已退出本项目。当前角色/接管名单见[协作协议](09_COLLABORATION.md)；未来UI设计/实现归ZCode，历史Qoder署名仅作证据。整体路线与恢复材料已同步，不新增产品释放。
 
-**2026-10-08整体规划入口**：[权威Plan当前P01–P21 候选任务路线](REBASELINE_PLAN.md)、[一眼中文图](../verification/PROJECT-ROADMAP-20261008/ROADMAP.md)、[全项目报告](../verification/PROJECT-ROADMAP-20261008/REPORT.md)、[196节点台账](../verification/PROJECT-ROADMAP-20261008/task-inventory.csv)、[额度恢复点](../verification/PROJECT-ROADMAP-20261008/RESUME.md)。三路GPT-6.1 Sol high审计；不释放实现。当前Active仅有P08文档准备/Review Task，没有released产品Task；完整产品未来树与历史done图分层，167登记完成/文档交付不代表产品完成率。下面旧Architecture/盘点段落是其当时的快照。
+**整体规划入口**：[权威Plan与候选Task](REBASELINE_PLAN.md)、[中文依赖图](../verification/PROJECT-ROADMAP-20261008/ROADMAP.md)、[全项目报告](../verification/PROJECT-ROADMAP-20261008/REPORT.md)、[196节点历史台账](../verification/PROJECT-ROADMAP-20261008/task-inventory.csv)、[恢复点](../verification/PROJECT-ROADMAP-20261008/RESUME.md)。审计基线仍是e4242ecd快照；当前P08已获DSH Review与Codex集成Gate通过，下一候选P03未创建/未释放。167项登记完成或文档交付不代表新架构产品完成率。
 
-当前只有P08文档准备/Review Task Active，没有released产品Task。最近完成=`M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD done@integration e7d1f7f8`；Owner=Antigravity、非作者 Reviewer=DSH（r2 approved）、Integrator=Codex。集成验证见 [Runner Guard integration log](../verification/M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD/integration-validation.log)，恢复点与未运行 Gate 边界见 [STATUS](STATUS.md) 和 [Task](tasks/M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD.md)。R-06 模块加载复杂度 deferred；R-003 仍未释放。
+P08 Task当前approved，DSH R7与Codex集成Gate均已通过，done收口提交待完成；尚无released产品Task，下一候选P03尚未创建/未释放。最近完成：M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD done@integration e7d1f7f8；Owner=Antigravity、非作者 Reviewer=DSH（r2 approved）、Integrator=Codex。集成验证见 [Runner Guard integration log](../verification/M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD/integration-validation.log)，恢复点与Gate边界见 [STATUS](STATUS.md) 和 [Task](tasks/M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD.md)。R-06 deferred；R-003未释放。
 
 全任务盘点与 inventory 下方段落是其各自审计时的历史快照，不反映当前总数或授权状态；以本页首段、[Plan](REBASELINE_PLAN.md) 与 [STATUS](STATUS.md) 为当前事实。
 
