@@ -1,5 +1,15 @@
 # Project Rebaseline Plan
 
+## 2026-10-08 自动派发：M2-PACKAGED-AC1-ICU-ISOLATION-FIX in_progress / ACTIVE
+
+用户授权“下一步”；Codex串行登记唯一Active Task=[ICU隔离修复](tasks/M2-PACKAGED-AC1-ICU-ISOLATION-FIX.md)，Owner=Antigravity，非作者Reviewer=DSH，Integrator=Codex。
+真实agy CLI=1.3.1，只读通路探测EXIT0/status=SUCCESS；执行恢复点在派发前同步本登记提交。
+base=5a72db9e3c5778ce4700b7d404250853e474c5de；branch=agent/antigravity/M2-PACKAGED-AC1-ICU-ISOLATION-FIX；
+worktree=G:/CODEX/New Manga.worktrees/PACKAGED-AC1-ICU-ISOLATION-FIX-antigravity；生产仅packaging/m2ac5/**，其余范围/Gate按正式Task冻结不变。
+Owner开工将Task ready改in_progress；此处是Codex串行认领授权。产品测试目前NOT_RUN。
+真实外部Agent实施后必须固定提交/测试/Handoff，再交真实非作者DSH；不提前称修复完成。
+原runner debt保持blocked。下方ready / IDLE等均为历史恢复点。
+
 ## 2026-10-08 M2-PACKAGED-AC1-ICU-ISOLATION-FIX ready / IDLE
 
 用户单独释放[ICU隔离修复](tasks/M2-PACKAGED-AC1-ICU-ISOLATION-FIX.md)：Owner=Antigravity，非作者Reviewer=DeepSeek Harness，Integrator=Codex。
