@@ -1,0 +1,53 @@
+git rev-parse 7556cb2d
+7556cb2dbfb8077e2ff62532d010f0d545733f52
+EXIT=0
+
+git diff --name-only cfb5d2ee 7556cb2d
+doc/handoffs/M2-RUNNER-SNAPSHOT-DEBT-codex-cfb5d2ee.md
+doc/tasks/M2-RUNNER-SNAPSHOT-DEBT.md
+verification/M2-RUNNER-SNAPSHOT-DEBT/baseline-evidence.md
+verification/M2-RUNNER-SNAPSHOT-DEBT/build-fingerprint.json
+verification/M2-RUNNER-SNAPSHOT-DEBT/build-generated-normalization.json
+verification/M2-RUNNER-SNAPSHOT-DEBT/checkpoint.md
+verification/M2-RUNNER-SNAPSHOT-DEBT/history-index-before.txt
+verification/M2-RUNNER-SNAPSHOT-DEBT/raw/check-snapshots.log
+verification/M2-RUNNER-SNAPSHOT-DEBT/raw/dev-r2/e2e-cargo-build.log
+verification/M2-RUNNER-SNAPSHOT-DEBT/raw/dev-r2/e2e-catalog-loader.log
+verification/M2-RUNNER-SNAPSHOT-DEBT/raw/dev-r2/e2e-environment.json
+verification/M2-RUNNER-SNAPSHOT-DEBT/raw/dev-r2/e2e-gate.json
+verification/M2-RUNNER-SNAPSHOT-DEBT/raw/dev-r2/e2e-probe-results.json
+verification/M2-RUNNER-SNAPSHOT-DEBT/raw/dev-r2/e2e-sidecar-import-isolation.log
+verification/M2-RUNNER-SNAPSHOT-DEBT/raw/dev-r2/e2e-sidecar-modules-probe.json
+verification/M2-RUNNER-SNAPSHOT-DEBT/raw/dev-runner-r2.log
+verification/M2-RUNNER-SNAPSHOT-DEBT/raw/dev-runner.log
+verification/M2-RUNNER-SNAPSHOT-DEBT/raw/dev/e2e-cargo-build.log
+verification/M2-RUNNER-SNAPSHOT-DEBT/raw/dev/e2e-catalog-loader.log
+verification/M2-RUNNER-SNAPSHOT-DEBT/raw/dev/e2e-environment.json
+verification/M2-RUNNER-SNAPSHOT-DEBT/raw/dev/e2e-sidecar-import-isolation.log
+verification/M2-RUNNER-SNAPSHOT-DEBT/raw/frontend-build.log
+verification/M2-RUNNER-SNAPSHOT-DEBT/raw/npm-ci.log
+verification/M2-RUNNER-SNAPSHOT-DEBT/raw/nsis-build.log
+verification/M2-RUNNER-SNAPSHOT-DEBT/raw/packaged-runner.log
+verification/M2-RUNNER-SNAPSHOT-DEBT/raw/packaged/cleanstart-ac1-catalog-initialize.log
+verification/M2-RUNNER-SNAPSHOT-DEBT/raw/packaged/cleanstart-ac1-run1-stdout.log
+verification/M2-RUNNER-SNAPSHOT-DEBT/raw/packaged/cleanstart-gate.json
+verification/M2-RUNNER-SNAPSHOT-DEBT/raw/packaged/cleanstart-probe-stdout.log
+verification/M2-RUNNER-SNAPSHOT-DEBT/raw/packaged/cleanstart-production-stdout.log
+verification/M2-RUNNER-SNAPSHOT-DEBT/raw/packaged/r1-library-probe.log
+verification/M2-RUNNER-SNAPSHOT-DEBT/raw/sidecar-build.log
+verification/M2-RUNNER-SNAPSHOT-DEBT/raw/sidecar-weights-retry.log
+verification/M2-RUNNER-SNAPSHOT-DEBT/result-summary.json
+EXIT=0
+
+git diff --name-only cfb5d2ee HEAD -- src apps tests packaging/m2ac5/run_clean_start_e2e.py
+EXIT=0
+
+git diff 968c8f34 HEAD --check
+EXIT=0
+
+git status --short --branch
+## codex/M2-RUNNER-SNAPSHOT-DEBT
+?? verification/M2-RUNNER-SNAPSHOT-DEBT/raw/check-snapshots-r2.log
+EXIT=0
+RC2_RUNNER_AFTER_BUILD_AST_EXCLUDING_DOCSTRING=IDENTICAL
+R1_REPORT_UTF8_GIT_BLOB_SHA256=ba7081453360027829fbe45ee4d1fe84a2928ec6f36db6dde317023e39d9082e

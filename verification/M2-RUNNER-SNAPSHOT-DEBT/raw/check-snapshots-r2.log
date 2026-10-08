@@ -1,0 +1,30 @@
+HOST=Windows; HARNESS_PYTHON=G:\CODEX\New Manga.task-envs\T1.1.1-impl-py312\Scripts\python.exe; CWD=G:\CODEX\New Manga.worktrees\RUNNER-SNAPSHOT-DEBT-codex
+HEAD=08fa104878c3156769970fb8b6063e7bce272f29
+COMMAND=["G:/CODEX/New Manga.task-envs/T1.1.1-impl-py312/Scripts/python.exe", "verification/M2-RUNNER-SNAPSHOT-DEBT/check_snapshots.py"]
+  [PASS] CS-L1-packaged-core-ping: {"error": null, "result": {"capabilities": ["library.list_books"], "protocol_version": {"major": 1, "minor": 6}, "status": "ready"}}
+  [PASS] CS-L2-packaged-ListBooks-structure: {"count": 0, "envelope_valid": true, "error": null}
+  [PASS] CS-L3-packaged-core-shutdown: {"exit": 0, "result": {"status": "stopped"}}
+  [FAIL] CS-L1-packaged-core-ping: {"error": null, "result": {"capabilities": ["library.list_books"], "protocol_version": {"major": 1, "minor": 3}, "status": "ready"}}
+  [PASS] CS-L2-packaged-ListBooks-structure: {"count": 0, "envelope_valid": true, "error": null}
+  [PASS] CS-L3-packaged-core-shutdown: {"exit": 0, "result": {"status": "stopped"}}
+  [FAIL] CS-L1-packaged-core-ping: {"error": null, "result": {"capabilities": ["library.list_books"], "protocol_version": {"major": 1, "minor": 7}, "status": "ready"}}
+  [PASS] CS-L2-packaged-ListBooks-structure: {"count": 0, "envelope_valid": true, "error": null}
+  [PASS] CS-L3-packaged-core-shutdown: {"exit": 0, "result": {"status": "stopped"}}
+  [FAIL] CS-L1-packaged-core-ping: {"error": null, "result": {"capabilities": ["library.list_books"], "protocol_version": null, "status": "ready"}}
+  [PASS] CS-L2-packaged-ListBooks-structure: {"count": 0, "envelope_valid": true, "error": null}
+  [PASS] CS-L3-packaged-core-shutdown: {"exit": 0, "result": {"status": "stopped"}}
+  [FAIL] CS-L1-packaged-core-ping: {"error": null, "result": {"capabilities": [], "protocol_version": {"major": 1, "minor": 6}, "status": "ready"}}
+  [PASS] CS-L2-packaged-ListBooks-structure: {"count": 0, "envelope_valid": true, "error": null}
+  [PASS] CS-L3-packaged-core-shutdown: {"exit": 0, "result": {"status": "stopped"}}
+  [FAIL] CS-L1-packaged-core-ping: {"error": null, "result": {"capabilities": ["unrelated"], "protocol_version": {"major": 1, "minor": 6}, "status": "ready"}}
+  [PASS] CS-L2-packaged-ListBooks-structure: {"count": 0, "envelope_valid": true, "error": null}
+  [PASS] CS-L3-packaged-core-shutdown: {"exit": 0, "result": {"status": "stopped"}}
+  [FAIL] CS-L1-packaged-core-ping: {"error": null, "result": {"capabilities": ["library.list_books"], "protocol_version": {"major": 1, "minor": 6}, "status": "starting"}}
+  [PASS] CS-L2-packaged-ListBooks-structure: {"count": 0, "envelope_valid": true, "error": null}
+  [PASS] CS-L3-packaged-core-shutdown: {"exit": 0, "result": {"status": "stopped"}}
+  [FAIL] CS-L1-packaged-core-ping: {"error": {"code": "FAIL"}, "result": {"capabilities": ["library.list_books"], "protocol_version": {"major": 1, "minor": 6}, "status": "ready"}}
+  [PASS] CS-L2-packaged-ListBooks-structure: {"count": 0, "envelope_valid": true, "error": null}
+  [PASS] CS-L3-packaged-core-shutdown: {"exit": 0, "result": {"status": "stopped"}}
+PASS: 16 actual-predicate cases; source alignment and syntax; no product/runtime claim
+
+EXIT=0; ELAPSED=0.2s
