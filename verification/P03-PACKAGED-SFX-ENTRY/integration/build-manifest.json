@@ -1,6 +1,6 @@
 {
   "task_id": "P03",
-  "phase": "packaged_gate_pass_dsh_review_pending",
+  "phase": "r3_conditions_closed_r4_review_pending",
   "integration_branch": "codex/P03-integration-4c04459",
   "integration_worktree": "G:/CODEX/New Manga.worktrees/P03-review-prep-85482c5b",
   "task_base_commit": "31abde9bf4b73aea2851931dcd48faa0f750b318",
@@ -257,5 +257,269 @@
       "integration/build-logs/16-c002-fixed-head-normalization.log"
     ],
     "note": "Checks include the C-002 test correction and are bound to its committed head. Repeat against the exact final DSH review head after committing the current documentation checkpoint."
+  },
+  "candidate_head": "423ea5f196e6276f007bd3f96e381fa893985eb9",
+  "integration_commit": "423ea5f196e6276f007bd3f96e381fa893985eb9",
+  "dsh_r3": {
+    "session_id": "session-4401e9bb-28cb-42a1-8447-608b7fc80b8e",
+    "base_commit": "31abde9bf4b73aea2851931dcd48faa0f750b318",
+    "reviewed_head": "423ea5f196e6276f007bd3f96e381fa893985eb9",
+    "decision": "approved",
+    "unresolved_p0": 0,
+    "unresolved_p1": 0,
+    "report_path": "verification/P03-PACKAGED-SFX-ENTRY/integration/dsh-review-r3.md",
+    "report_sha256": "90892d5ed121533ed83768dbd21c7b539d1dae6dcd630c1a55d3e7dcdd65f041",
+    "stdout_jsonl_path": "verification/P03-PACKAGED-SFX-ENTRY/integration/dsh-review-r3.stdout.jsonl",
+    "stdout_jsonl_size_bytes": 383536,
+    "stdout_jsonl_sha256": "be9b8d4db40febb01ca93894328281915fbcf34f03ded6d0d8a2ccb078cde509",
+    "stderr_path": "verification/P03-PACKAGED-SFX-ENTRY/integration/dsh-review-r3.stderr.log",
+    "exit_path": "verification/P03-PACKAGED-SFX-ENTRY/integration/dsh-review-r3.exit",
+    "desktop_web_visibility": "unverified"
+  },
+  "post_r3_fixed_head_checks": {
+    "candidate_head": "423ea5f196e6276f007bd3f96e381fa893985eb9",
+    "task_base_commit": "31abde9bf4b73aea2851931dcd48faa0f750b318",
+    "shell": "PowerShell 7.6.6",
+    "changed_path_count": 122,
+    "out_of_scope_path_count": 0,
+    "diff_check_exit": 0,
+    "traceability_normalization_exit": 0,
+    "gate_log_normalization_exit": 0,
+    "logs": [
+      "integration/build-logs/17-final-review-head-scope-diff-check.log",
+      "integration/build-logs/18-final-review-head-normalization.log"
+    ]
+  },
+  "r3_01_exact_head_regression_rerun": {
+    "status": "fixed",
+    "source_head": "423ea5f196e6276f007bd3f96e381fa893985eb9",
+    "command": "C:/Python314/python.exe -m pytest -v tests/packaging/test_packaged_fifth_sfx_entry.py tests/packaging/test_runner_output_dir_required.py",
+    "python_version": "3.14.6",
+    "result": "40 passed, 0 skipped",
+    "exit": 0,
+    "log_path": "integration/build-logs/19-finalhead-targeted-tests.log",
+    "log_sha256": "521057bb53735bff4ad181e97945dc787746dfdf04e561fb19cf64a87bdce5d2"
+  },
+  "r3_01_exact_head_packaged_gate": {
+    "status": "fixed",
+    "source_head": "423ea5f196e6276f007bd3f96e381fa893985eb9",
+    "command": "C:/Python314/python.exe packaging/m2ac5/run_clean_start_e2e.py --installer apps/desktop/src-tauri/target/release/bundle/nsis/m2rc1-desktop_0.1.0_x64-setup.exe --output-dir verification/P03-PACKAGED-SFX-ENTRY/integration/run-2de124f3-finalhead-423ea-py314 --sfx-real-page \"G:/CODEX/New Manga.task-envs/M2-DOCTR-QUAL-work/regions/K07_R123.png\"",
+    "python_version": "3.14.6",
+    "exit": 0,
+    "verdict": "PASS",
+    "scenario_count": 28,
+    "scenarios_passed": 28,
+    "installer_sha256": "2de124f387bfaf1d0d01b1b0279ad319cd453850d223efa9620b0103ce88a814",
+    "installer_size_bytes": 579537342,
+    "output_dir": "verification/P03-PACKAGED-SFX-ENTRY/integration/run-2de124f3-finalhead-423ea-py314",
+    "temp_root": "C:/Users/49745/AppData/Local/Temp/codex-p03-gate-423ea-py314",
+    "k07_sha256": "28dab503aca3c903111488c03e857b430d309421a4a54bab335a63bbe7b9cec4",
+    "sfx_verification": {
+      "requested": true,
+      "page_path": "G:\\CODEX\\New Manga.task-envs\\M2-DOCTR-QUAL-work\\regions\\K07_R123.png",
+      "scenarios_executed": [
+        "CS-S1-packaged-sfx-real-page",
+        "CS-S2-packaged-sfx-missing-page-failure"
+      ],
+      "verdict": "PASS"
+    },
+    "scenario_details": {
+      "s1_real_page": {
+        "exit": 0,
+        "marker_count": 1,
+        "json_parsed": true,
+        "frozen": true,
+        "has_error_key": true,
+        "error": null,
+        "n_candidates": 1,
+        "weights_sha256": "944e811410933ad6ff8d32446fcc9eef90fb463794e1874ce83035e83acd418d",
+        "weights_sha256_matches_pin": true,
+        "weights_resolved_from": "bundle_probe",
+        "weights_path": "C:\\Users\\49745\\AppData\\Local\\Temp\\codex-p03-gate-423ea-py314\\m2ac5-cleanstart-2mivzfqv\\install\\resources\\core-sidecar\\models\\detector\\yolo11s-seg.onnx",
+        "weights_in_install_dir": true,
+        "page_pixel_sha256": "b3b7c4a6951e5a61f4677674830041c7850eeb68e1eced9cba236f1339ec7306",
+        "device": "dml",
+        "sfx_ep": "dml",
+        "sfx_ep_fallback": null,
+        "elapsed_ms": 775,
+        "options": {
+          "arch": "yolo11s_seg_onnx",
+          "class_filter": "sfx",
+          "conf_threshold": "0.5",
+          "device": "dml",
+          "imgsz": "1024",
+          "imgsz_source": "metadata_parsed",
+          "nms_iou": "0.7",
+          "sfx_ep": "dml",
+          "sfx_route": "letterbox"
+        },
+        "wall_ms": 1091,
+        "page_path": "G:\\CODEX\\New Manga.task-envs\\M2-DOCTR-QUAL-work\\regions\\K07_R123.png",
+        "page_file_sha256": "28dab503aca3c903111488c03e857b430d309421a4a54bab335a63bbe7b9cec4"
+      },
+      "s2_missing_page": {
+        "exit": 1,
+        "marker_count": 1,
+        "json_parsed": true,
+        "frozen": true,
+        "error": {
+          "class": "FileNotFoundError",
+          "error_code": null,
+          "message_head": "[Errno 2] No such file or directory: 'C:\\\\Users\\\\49745\\\\AppData\\\\Local\\\\Temp\\\\codex-p03-gate-423ea-py314\\\\m2ac5-cleanstart-2mivzfqv\\\\sfx-probe-missing-isolation\\\\guaranteed-nonexistent-page.png'"
+        },
+        "wall_ms": 103,
+        "missing_path": "C:\\Users\\49745\\AppData\\Local\\Temp\\codex-p03-gate-423ea-py314\\m2ac5-cleanstart-2mivzfqv\\sfx-probe-missing-isolation\\guaranteed-nonexistent-page.png",
+        "path_precondition": "absent"
+      }
+    },
+    "zero_touch_assertions": {
+      "install_dir_changed_entries": 0,
+      "host_appdata_files": 4,
+      "host_appdata_changed_entries": 0,
+      "source_files_byte_identical": true,
+      "surviving_sidecars": {
+        "host_bridge.exe": 0,
+        "core_service.exe": 0,
+        "acceptance_bridge.exe": 0,
+        "catalog_loader.exe": 0,
+        "sfx_detect_probe.exe": 0
+      }
+    },
+    "runner_log_path": "integration/build-logs/20-finalhead-packaged-gate.log",
+    "runner_log_sha256": "9e78b181bb48c8f176f7d26ee5f3b3c6a4ce488287e0201a13a155f3c40420e9",
+    "gate_json_path": "verification/P03-PACKAGED-SFX-ENTRY/integration/run-2de124f3-finalhead-423ea-py314/cleanstart-gate.json",
+    "gate_json_sha256": "82c86708a98ac597b13525016989f1a611cfca4ed7949873ee5b1ca9452fee30",
+    "evidence_files": [
+      {
+        "path": "verification/P03-PACKAGED-SFX-ENTRY/integration/run-2de124f3-finalhead-423ea-py314/cleanstart-ac1-catalog-initialize.log",
+        "size_bytes": 10,
+        "sha256": "3a9a546263872cd9c0cc1afd0dbf0a92554582bf7a6b47e0cfd80dc964bc3b84"
+      },
+      {
+        "path": "verification/P03-PACKAGED-SFX-ENTRY/integration/run-2de124f3-finalhead-423ea-py314/cleanstart-ac1-run1-stdout.log",
+        "size_bytes": 316,
+        "sha256": "6589caad3d7a698331729d95812305dce395697099d41125bc3a46182e8fb0de"
+      },
+      {
+        "path": "verification/P03-PACKAGED-SFX-ENTRY/integration/run-2de124f3-finalhead-423ea-py314/cleanstart-ac1-run2-stdout.log",
+        "size_bytes": 316,
+        "sha256": "2a84d3be10ebc316fc2a5b9497cc84b12f0aa45e7ba93a0355470dc2377329d1"
+      },
+      {
+        "path": "verification/P03-PACKAGED-SFX-ENTRY/integration/run-2de124f3-finalhead-423ea-py314/cleanstart-gate.json",
+        "size_bytes": 11143,
+        "sha256": "82c86708a98ac597b13525016989f1a611cfca4ed7949873ee5b1ca9452fee30"
+      },
+      {
+        "path": "verification/P03-PACKAGED-SFX-ENTRY/integration/run-2de124f3-finalhead-423ea-py314/cleanstart-probe-stdout.log",
+        "size_bytes": 474,
+        "sha256": "45b05904def99883fb180a869e9414d4dfa363cf6f887ba331b055459be3a5a3"
+      },
+      {
+        "path": "verification/P03-PACKAGED-SFX-ENTRY/integration/run-2de124f3-finalhead-423ea-py314/cleanstart-production-stdout.log",
+        "size_bytes": 632,
+        "sha256": "d077cde7e849cc5ec42b1a61100828bc141ea1dec4be35d86f79fbc955bee07e"
+      },
+      {
+        "path": "verification/P03-PACKAGED-SFX-ENTRY/integration/run-2de124f3-finalhead-423ea-py314/r1-library-probe.log",
+        "size_bytes": 627,
+        "sha256": "4bfbb7b99128483c2a3155df0385cd1e6a1926cd4a6b9b0be3aaea064c17a699"
+      },
+      {
+        "path": "verification/P03-PACKAGED-SFX-ENTRY/integration/run-2de124f3-finalhead-423ea-py314/sfx-probe-missing-page.json",
+        "size_bytes": 697,
+        "sha256": "b9be6b89a31da41a6d54d7f4753688e61a2a8cc2902c4ba74f9ec75870b2a56f"
+      },
+      {
+        "path": "verification/P03-PACKAGED-SFX-ENTRY/integration/run-2de124f3-finalhead-423ea-py314/sfx-probe-missing-page.log",
+        "size_bytes": 1466,
+        "sha256": "dcd242de043035bc928b1c7e9de42b533ed356a7b775e85013020624f3c1ff55"
+      },
+      {
+        "path": "verification/P03-PACKAGED-SFX-ENTRY/integration/run-2de124f3-finalhead-423ea-py314/sfx-probe-real-page.json",
+        "size_bytes": 1726,
+        "sha256": "51099dd232bf98760d91fecd7049b91d1534e629b2fb0698740c02d520fbc221"
+      },
+      {
+        "path": "verification/P03-PACKAGED-SFX-ENTRY/integration/run-2de124f3-finalhead-423ea-py314/sfx-probe-real-page.log",
+        "size_bytes": 1673,
+        "sha256": "b954f5bc9d6527c5483208e99b2e8e01b6064dea956368d03e4c0ca3a1bd4dbb"
+      }
+    ],
+    "raw_output_archive": {
+      "path": "verification/P03-PACKAGED-SFX-ENTRY/integration/raw-finalhead-gate-output.zip",
+      "size_bytes": 8191,
+      "sha256": "99c135e87ac3842664a43e77e566b62845cc89b16c6ac42ccf8b9ec2d20a63a8",
+      "files": [
+        {
+          "path": "verification/P03-PACKAGED-SFX-ENTRY/integration/run-2de124f3-finalhead-423ea-py314/cleanstart-ac1-catalog-initialize.log",
+          "size_bytes": 10,
+          "sha256": "3a9a546263872cd9c0cc1afd0dbf0a92554582bf7a6b47e0cfd80dc964bc3b84"
+        },
+        {
+          "path": "verification/P03-PACKAGED-SFX-ENTRY/integration/run-2de124f3-finalhead-423ea-py314/cleanstart-ac1-run1-stdout.log",
+          "size_bytes": 316,
+          "sha256": "6589caad3d7a698331729d95812305dce395697099d41125bc3a46182e8fb0de"
+        },
+        {
+          "path": "verification/P03-PACKAGED-SFX-ENTRY/integration/run-2de124f3-finalhead-423ea-py314/cleanstart-ac1-run2-stdout.log",
+          "size_bytes": 316,
+          "sha256": "2a84d3be10ebc316fc2a5b9497cc84b12f0aa45e7ba93a0355470dc2377329d1"
+        },
+        {
+          "path": "verification/P03-PACKAGED-SFX-ENTRY/integration/run-2de124f3-finalhead-423ea-py314/cleanstart-gate.json",
+          "size_bytes": 11143,
+          "sha256": "82c86708a98ac597b13525016989f1a611cfca4ed7949873ee5b1ca9452fee30"
+        },
+        {
+          "path": "verification/P03-PACKAGED-SFX-ENTRY/integration/run-2de124f3-finalhead-423ea-py314/cleanstart-probe-stdout.log",
+          "size_bytes": 474,
+          "sha256": "45b05904def99883fb180a869e9414d4dfa363cf6f887ba331b055459be3a5a3"
+        },
+        {
+          "path": "verification/P03-PACKAGED-SFX-ENTRY/integration/run-2de124f3-finalhead-423ea-py314/cleanstart-production-stdout.log",
+          "size_bytes": 632,
+          "sha256": "d077cde7e849cc5ec42b1a61100828bc141ea1dec4be35d86f79fbc955bee07e"
+        },
+        {
+          "path": "verification/P03-PACKAGED-SFX-ENTRY/integration/run-2de124f3-finalhead-423ea-py314/r1-library-probe.log",
+          "size_bytes": 627,
+          "sha256": "4bfbb7b99128483c2a3155df0385cd1e6a1926cd4a6b9b0be3aaea064c17a699"
+        },
+        {
+          "path": "verification/P03-PACKAGED-SFX-ENTRY/integration/run-2de124f3-finalhead-423ea-py314/sfx-probe-missing-page.json",
+          "size_bytes": 697,
+          "sha256": "b9be6b89a31da41a6d54d7f4753688e61a2a8cc2902c4ba74f9ec75870b2a56f"
+        },
+        {
+          "path": "verification/P03-PACKAGED-SFX-ENTRY/integration/run-2de124f3-finalhead-423ea-py314/sfx-probe-missing-page.log",
+          "size_bytes": 1466,
+          "sha256": "dcd242de043035bc928b1c7e9de42b533ed356a7b775e85013020624f3c1ff55"
+        },
+        {
+          "path": "verification/P03-PACKAGED-SFX-ENTRY/integration/run-2de124f3-finalhead-423ea-py314/sfx-probe-real-page.json",
+          "size_bytes": 1726,
+          "sha256": "51099dd232bf98760d91fecd7049b91d1534e629b2fb0698740c02d520fbc221"
+        },
+        {
+          "path": "verification/P03-PACKAGED-SFX-ENTRY/integration/run-2de124f3-finalhead-423ea-py314/sfx-probe-real-page.log",
+          "size_bytes": 1673,
+          "sha256": "b954f5bc9d6527c5483208e99b2e8e01b6064dea956368d03e4c0ca3a1bd4dbb"
+        }
+      ],
+      "byte_for_byte_verified": true
+    },
+    "evidence_bundle": {
+      "path": "verification/P03-PACKAGED-SFX-ENTRY/integration/raw-finalhead-gate-output.zip",
+      "size_bytes": 8191,
+      "sha256": "99c135e87ac3842664a43e77e566b62845cc89b16c6ac42ccf8b9ec2d20a63a8",
+      "entry_count": 11,
+      "all_entry_hashes_verified": true
+    }
+  },
+  "r3_findings_disposition": {
+    "R3-01": "fixed: exact integrated source head rerun has 40/40 targeted tests and same-installer 28/28 packaged Gate, both EXIT=0; see logs 19/20.",
+    "R3-02": "fixed: exact-head traces 17/18 and R3 DSH raw/report artifacts are versioned; navigation pointers name the integration head and current RESUME.",
+    "R3-03": "deferred_non_blocking_out_of_scope: release-gate runner four-sidecar list and historical main.rs comment remain unchanged; forward the release-gate runner concern to P20 task-scope registration."
   }
 }

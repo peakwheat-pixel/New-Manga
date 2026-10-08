@@ -1,0 +1,48 @@
+Shell: PowerShell 7.6.6
+Branch: codex/P03-integration-4c04459
+Fixed DSH review head: 423ea5f196e6276f007bd3f96e381fa893985eb9
+Task base: 31abde9bf4b73aea2851931dcd48faa0f750b318
+Worktree before checks: only expected untracked draft prompt present
+Status unchanged by read-only commands: True
+
+Command: C:/Python314/python.exe verification/P03-PACKAGED-SFX-ENTRY/revision-2/traceability-rerun/verify_normalization.py
+Output:
+=== P03 Traceability Logs Read-Only Verification ===
+  [PASS] 01-rerun-targeted-tests.log:
+         raw: 12648 B (c7e442c4c7d1..., NUL=6030) | canon: 6618 B (e10f83acd1ec..., NUL=0)
+         U+2420 absent from raw body: TRUE | NUL-free: TRUE | trailing-whitespace-free: TRUE
+         bit-for-bit inverse reconstruction: MATCH | manifest consistency: 100% VERIFIED
+  [PASS] 02-rerun-snapshot-check.log:
+         raw: 6221 B (7883b6b4ae32..., NUL=2870) | canon: 3351 B (0dfe5bf62ff8..., NUL=0)
+         U+2420 absent from raw body: TRUE | NUL-free: TRUE | trailing-whitespace-free: TRUE
+         bit-for-bit inverse reconstruction: MATCH | manifest consistency: 100% VERIFIED
+  [PASS] 03-rerun-tauri-nsis-build.log:
+         raw: 14601 B (20b5936e8db7..., NUL=6978) | canon: 7627 B (eed0153fa9dc..., NUL=0)
+         U+2420 absent from raw body: TRUE | NUL-free: TRUE | trailing-whitespace-free: TRUE
+         bit-for-bit inverse reconstruction: MATCH | manifest consistency: 100% VERIFIED
+  [PASS] 04-rerun-diff-name-only.log:
+         raw: 7942 B (f9a0905a5218..., NUL=3685) | canon: 4257 B (86c342139ee7..., NUL=0)
+         U+2420 absent from raw body: TRUE | NUL-free: TRUE | trailing-whitespace-free: TRUE
+         bit-for-bit inverse reconstruction: MATCH | manifest consistency: 100% VERIFIED
+  [PASS] 05-rerun-diff-check.log:
+         raw: 468 B (f45684005e28..., NUL=0) | canon: 468 B (f45684005e28..., NUL=0)
+         U+2420 absent from raw body: TRUE | NUL-free: TRUE | trailing-whitespace-free: TRUE
+         bit-for-bit inverse reconstruction: MATCH | manifest consistency: 100% VERIFIED
+  [PASS] 06-rerun-packaged-gate.log:
+         raw: 10766 B (63f0410c4d0d..., NUL=4996) | canon: 5770 B (70497d2f1ac2..., NUL=0)
+         U+2420 absent from raw body: TRUE | NUL-free: TRUE | trailing-whitespace-free: TRUE
+         bit-for-bit inverse reconstruction: MATCH | manifest consistency: 100% VERIFIED
+
+ALL 6 FILES VERIFIED READ-ONLY: Grammar, Hashes, Trailing Whitespace, Bijective Reconstruction & Manifest Consistency 100% PASS.
+VERIFY_EXIT=0
+
+Command: C:/Python314/python.exe verification/P03-PACKAGED-SFX-ENTRY/integration/normalize_gate_logs.py --verify-only
+Output:
+PASS cleanstart-ac1-catalog-initialize.log: archived raw + canonical hash + inverse reconstruction
+PASS cleanstart-ac1-run1-stdout.log: archived raw + canonical hash + inverse reconstruction
+PASS cleanstart-ac1-run2-stdout.log: archived raw + canonical hash + inverse reconstruction
+PASS cleanstart-probe-stdout.log: archived raw + canonical hash + inverse reconstruction
+PASS cleanstart-production-stdout.log: archived raw + canonical hash + inverse reconstruction
+PASS r1-library-probe.log: archived raw + canonical hash + inverse reconstruction
+READ-ONLY NORMALIZATION VERIFICATION: ALL SIX LOGS PASS
+VERIFY_EXIT=0

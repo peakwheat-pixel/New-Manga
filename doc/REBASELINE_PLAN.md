@@ -1,10 +1,10 @@
 # Project Rebaseline Plan
 
-**当前位置：P08=done；P03=in_review。P系列共21项：done 1、in_review 1、proposed / 未释放19。唯一当前执行状态见[STATUS](STATUS.md)，P03恢复点见[RESUME](../verification/P03-PACKAGED-SFX-ENTRY/RESUME.md)。**
+**当前位置：P08=done；P03=in_review。P系列共21项：done 1、in_review 1、proposed / 未释放19。P03 integration/source head=`423ea5f196e6276f007bd3f96e381fa893985eb9`；DSH R3 approved，R3-01/02补证已完成，R3-03留作P20范围外风险。唯一当前执行状态见[STATUS](STATUS.md)，P03恢复点见[RESUME](../verification/P03-PACKAGED-SFX-ENTRY/RESUME.md)。**
 
-## 2026-10-09 P03 Owner delivery 与 Codex Gate 完成 / IN_REVIEW
+## 2026-10-09 P03 R3 条件关闭 / 等待最终 Review
 
-P03仍是唯一Active Task，当前`in_review`。Owner=Antigravity、非作者Reviewer=DeepSeek Harness、Integrator=Codex；三个前置依赖均done。Owner交付=`85482c5b001d452953c3ed797ce3c4ed64cae4e3`，原DSH R2 reviewed head=`4c04459bc6b8bf9ef6cba596829ac47f37bc02af` approved。Codex修正R-003后以 source=`a3aaf22979f2b432a46dbb51cd9702f35a60d7f4` fresh build；installer SHA256=`2de124f387bfaf1d0d01b1b0279ad319cd453850d223efa9620b0103ce88a814`。在此安装包上的40项定向测试、16项Snapshot oracle与28/28 packaged Gate均通过；当前下一Gate为对最终固定head的DSH正式Review，再由Codex做集成验收。P01仍是下一候选，但在P03进入done并重新核对依赖前不释放。
+P03仍是唯一Active Task，当前`in_review`。Owner=Antigravity、非作者Reviewer=DeepSeek Harness、Integrator=Codex；三个前置依赖均done。Owner交付=`85482c5b001d452953c3ed797ce3c4ed64cae4e3`，DSH R3对base=`31abde9b…`、head=`423ea5f196e6276f007bd3f96e381fa893985eb9`给出approved（0 unresolved P0/P1）；R3报告=`verification/P03-PACKAGED-SFX-ENTRY/integration/dsh-review-r3.md`。Codex在集成commit `423ea5f1…` 上重跑定向测试40/40及同一installer SHA=`2de124f387bfaf1d0d01b1b0279ad319cd453850d223efa9620b0103ce88a814`的packaged Gate 28/28，均EXIT=0；精确范围/normalization traces `17–18`已登记。R3-03是release-gate runner第五sidecar遗漏，路径超出P03允许范围，明确留给P20未来Gate冻结，不在本Task修改。下一Gate为提交状态/证据checkpoint后，对新的固定head做DSH正式Review与Codex独立复核，再收口集成验收。P03完成后先重新核对并释放P01。
 
 ### 历史快照：P03正式释放时状态 / READY
 
@@ -63,7 +63,7 @@ P03已完成实现交付及Codex packaged Gate，状态为`in_review`，等待�
 
 保留：Manga109永久取消；BJ13维持0.90、手工改标＋skip，补标/补画不释放；Reader范围：仅跨页联动/页缩略图继续延期；基础Reader已由D1解冻，P16/P17实施仍未释放。LaMa/AOT/BrushNet/FLUX learned inpaint没有production实现，不默认投入；SimpleFill/EdgeBleed已在现有链路，是否足够由P08/P18质量证据决定。GC长会话总磁盘有界没有承诺，不为了漂亮路线图扩大删除能力。
 
-当前步骤：**P03实现及Codex packaged Gate已PASS；先固定并复审最终head，DSH正式Review通过后完成Codex集成Gate与治理文档收口，再按依赖释放P01。**
+当前步骤：**P03实现、Codex集成和在集成head上的40项定向测试/28项packaged Gate均PASS；先提交R3条件处置证据与治理checkpoint，固定新head并完成DSH R4及Codex独立复核，随后收口P03并在依赖复核后释放P01。**
 
 ## 2026-10-08 完成：M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD
 

@@ -1,12 +1,12 @@
 # New Manga 一眼路线图（2026-10-08）
 
-最新工作点：P08=done；P03=in_review，Owner=Antigravity、Reviewer=DeepSeek Harness；Codex packaged Gate 28/28通过，等待DSH正式复审。当前恢复点见[P03 RESUME](../../verification/P03-PACKAGED-SFX-ENTRY/RESUME.md)。
+最新工作点：P08=done；P03=in_review，集成head=`423ea5f1…`。DSH R3 approved；R3-01/02补证已完成（40/40 tests、28/28 packaged Gate、exact-head traces），当前等待新一轮正式复审。R3-03超出P03范围，登记为P20 release-gate风险。当前恢复点见[P03 RESUME](../../verification/P03-PACKAGED-SFX-ENTRY/RESUME.md)。
 
-**当前位置：P08=done；P03=in_review；P系列共21项：done 1、in_review 1、proposed / 未释放19。**
+**当前位置：P08=done；P03=in_review；P系列共21项：done 1、in_review 1、proposed / 未释放19。P03 source integration=`423ea5f1…`；R3-01/02已处置，DSH R4待发。**
 
 人员更新：用户已移除Qoder，图中未来UI/UX责任由ZCode承担；非作者Review与正式Task释放Gate保持。
 
-派生视图；排期事实以 [REBASELINE_PLAN](../../doc/REBASELINE_PLAN.md) 当前覆盖层为准。原审计基线：`main@e4242ecd`；箭头表示启动依赖，不是工期；没有可靠估算，不编造百分比或日期。P03正式Task的实现与Codex Gate已完成，状态为in_review；其余候选未释放。
+派生视图；排期事实以 [REBASELINE_PLAN](../../doc/REBASELINE_PLAN.md) 当前覆盖层为准。原审计基线：`main@e4242ecd`；箭头表示启动依赖，不是工期；没有可靠估算，不编造百分比或日期。P03实现、Codex集成与精确head Gate均通过，Task仍为in_review等待DSH R4与最终治理收口；其余候选未释放，P03 done后先评估并释放P01。
 
 ## 已做到哪里
 

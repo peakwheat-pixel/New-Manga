@@ -1,18 +1,22 @@
 # P03 Codex Integration Checkpoint
 
-时间：2026-10-09（Asia/Shanghai）；Task=`P03`；TaskStatus=`in_review`；ExecutionState=`FINAL_DSH_REVIEW_PREP_CHECKPOINT_PENDING`。
+时间：2026-10-09（Asia/Shanghai）；Task=`P03`；TaskStatus=`in_review`；ExecutionState=`R3_CONDITIONS_CLOSED_R4_REVIEW_PREP`。
 
 ## 当前恢复点（优先于下方历史阶段记录）
 
-- Repository=`G:/CODEX/New Manga`；integration worktree=`G:/CODEX/New Manga.worktrees/P03-review-prep-85482c5b`；branch=`codex/P03-integration-4c04459`；common-dir=`G:/CODEX/New Manga/.git`。
-- Task base=`31abde9bf4b73aea2851931dcd48faa0f750b318`；Owner delivery=`85482c5b001d452953c3ed797ce3c4ed64cae4e3`；C-002 test-only correction commit=`41be59e9d4e3c55ac87cf0868f89077b4d03978e`。独立 Codex Review 在其 parent `fb5782c5…` 发现 C-002 P2；旧 DSH R2 对 `4c04459…` 的 approved 不覆盖任何后续改动。
-- C-002 修复建立有效 `install_dir` 与内部 weights path，每个负例先证明 unmodified baseline passes，再施加目标负条件；单独的缺省目录 fail-closed assertion 保留。定向套件 40/40 PASS，EXIT=0；`build-logs/14-targeted-regression-tests.log`。
-- Root `main` 用户/历史 Agent dirty/raw、Antigravity Owner worktree 三个 untracked helper 与 DSH raw 均保持保护；当前 Integration worktree 有最新 Task/Resume/manifest 修改、`build-logs/15–16`，以及待更新为最终 reviewed head 的 R3 prompt 草稿。
-- Fresh installer SHA=`2de124f387bfaf1d0d01b1b0279ad319cd453850d223efa9620b0103ce88a814`；前序 frontend/Sidecar/Tauri NSIS build、同 installer packaged Gate 28/28 PASS、16 项 Snapshot 与原始/规范化日志验证均已完成，见 P03 Task 与下方历史阶段。
-- Post-C-002 committed head `41be59e9…` 的 scope/diff trace=`build-logs/15`（120 paths、zero out-of-scope、`git diff --check` EXIT=0）；normalization trace=`build-logs/16`（两份 verifier 各 6/6 PASS、EXIT=0）。
-- **立即下一步：**提交已记录 C-002/C-003 的 Task、manifest、两份 RESUME 和 `build-logs/15–16`；其 commit 才是最新 formal review candidate。随后对该精确 head 重跑 scope + diff-check 和两份 normalization verifier，更新 R3 prompt 的 reviewed head 与结果；派发 DSH formal Review，并让 Codex Reviewer 对同一 base/head 复审。需要修的 finding 必须先修、重验、固定新 head 后复审；approved 且 Codex 集成 Gate 通过后收口 P03。
-- 用户指示：P03 当前任务完成、下一次自动推进 prompt 保存后关闭计算机；下次先核对 Live Git、STATUS 与此 RESUME，再自动进入路线图推进。
-- 以下 `## 修订验证进展` 起为按时间记录的历史阶段，非当前待办清单。
+- Repository=`G:/CODEX/New Manga`；root `main` 与 integration worktree source head=`423ea5f196e6276f007bd3f96e381fa893985eb9`；branch=`codex/P03-integration-4c04459`；common-dir=`G:/CODEX/New Manga/.git`。root原24项用户/Agent dirty与raw文件快进前后均保留。
+- Task base=`31abde9bf4b73aea2851931dcd48faa0f750b318`；Owner delivery=`85482c5b001d452953c3ed797ce3c4ed64cae4e3`；Owner=Antigravity；Reviewer=DeepSeek Harness；Integrator=Codex。
+- DSH R3已对`423ea5f1…` approved，session=`session-4401e9bb-28cb-42a1-8447-608b7fc80b8e`；报告/raw及SHA、exit、环境限制见`integration/dsh-review-r3.md`与manifest。DSH自身shell/Git/test/Gate=`NOT_RUN`；web可见性未核验。
+- DSH条件R3-01/02已处置：固定集成commit `423ea5f1…` 上40项定向测试`40 passed`、同一installer SHA=`2de124f3…`的packaged Gate`28/28 PASS`，均EXIT=0，日志19/20；122 paths、零越界、diff-check EXIT=0、两份normalization 6/6，日志17/18。11项Gate raw output逐字节归档于`raw-finalhead-gate-output.zip`并有manifest SHA索引；本地隔离实验目录`run-2de124f3-finalhead-423ea-py314`与TEMP=`C:\Users\49745\AppData\Local\Temp\codex-p03-gate-423ea-py314`均保留不清理。
+- R3-03：`packaging/release-gate/run_release_gate.py`和旧`main.rs`注释均超出P03范围；风险登记为P20后续Gate任务，无P03代码修订。
+- DSH R3 report SHA256=`90892d5ed121533ed83768dbd21c7b539d1dae6dcd630c1a55d3e7dcdd65f041`；raw JSONL SHA256=`BE9B8D4DB40FEBB01CA93894328281915FBCF34F03DED6D0D8A2CCB078CDE509`。其approved不覆盖处置后新commit；必须重新固定head做DSH R4及Codex非作者复审。
+
+## 下一条直接指令
+
+核对HEAD与dirty路径后，提交本checkpoint涉及的P03文件/证据；再对该新候选跑fixed-range scope、`git diff --check`和两份只读normalization verifier，记录真实输出与EXIT。创建DSH R4 prompt并用真实`dsh --profile headless --json`在此worktree dispatch、收回JSONL/stderr/exit与最终Review，mount该session到精确worktree；让已有Codex独立Reviewer检查同一base/head。解决阻断后更新P03 Task、Plan、Status、依赖图、README与RESUME至done，再复核P01依赖、创建并释放P01、保存下次自动推进提示词，最后按本轮用户指示关闭计算机。
+
+- 保护root Qoder `.qoder-credits/**`、历史dispatch、P08 DSH raw、主checkout已有P03 DSH R2原始文件及Antigravity Owner worktree三个untracked helper；不stage/修改/stash/清理。
+- 不改`src/**`、`apps/**`、Schema、contracts、依赖、build spec/script；K07与ONNX外部输入只读；任何安装/APPDATA/WebView数据只在Gate隔离TEMP lab中操作。
 
 ## 修订验证进展
 
