@@ -2,7 +2,7 @@
 
 2026-10-08；Owner=Codex；非作者 Reviewer=DeepSeek Harness；Integrator=Codex。
 TaskStatus=blocked / previous=in_progress；ExecutionState=CHECKPOINTED。
-本交付是待审查的实现与阻塞证据，不是独立批准或主线集成。
+本交付含DSH有界代码批准与阻塞证据；整个Task未批准、未主线集成。
 
 ## 固定恢复点与结果
 
@@ -33,10 +33,10 @@ AC1 run1无结果，返回exit=1；整个runner耗时312.8秒。既有240秒上�
 |---|---|---|
 | AC1 基线漂移 | PASS | baseline-evidence.md，旧GC-2报告保持原文 |
 | AC2 两处快照 | PASS | 实现diff，actual CS-L1 PASS，dev production15条 |
-| AC3 判别 | PASS | check_snapshots.py；raw/check-snapshots-r2.log：16实际谓词用例（旧12项日志保留） |
+| AC3 判别 | PASS | check_snapshots.py；raw/check-snapshots-r3.log：16实际谓词用例（旧12项日志保留） |
 | AC4 全Gate | FAIL / BLOCKED | dev10/10+probe13/13 PASS；packaged20 PASS+1 FAIL，后续AC1五项NOT_RUN |
 | AC5 保护/范围 | PASS | history-index-before.txt、范围检查；旧raw/报告/probe零差量，syntax/diff通过 |
-| AC6 Review/集成 | PENDING | 真实DSH审查待执行；没有实现集成/done |
+| AC6 Review/集成 | BLOCKED | DSH r3有界代码批准；AC4未闭合，没有实现集成/done |
 
 PowerShell；Python3.12.3（T1.1.1 venv）、cargo1.98.1、rustc1.98.1、
 node24.15.0、npm12.0.1；真实环境记录见raw/dev-r2/e2e-environment.json。
@@ -95,3 +95,14 @@ r2 reviewed_head=41d77f98；0P0/P1，N1 P2为提交绑定证据缺口，N2/N3/N4
 补N1时将固定“本轮代码/修正head”和“随后只加绑定日志的evidence_commit”分列，
 避免要求文件包含自己的提交hash。r3只审固定代码head，后续绑定证据是只读输入，
 不会把证据追加commit冒充代码变化或复用旧head批准。Task继续BLOCKED，AC4未修。
+
+## DSH r3 最终有界复核（2026-10-08）
+
+固定 reviewed_code_head=2af6b71aa06979b822e543b221aaf3a2d5f01abe；evidence_commit=653a00628e484ecb8ae023f2594b80233bce4e9a。
+真实CLI EXIT0；session=session-f303c70c-9bcf-4db2-b356-1f4794458d0b；原始报告
+doc/reviews/M2-RUNNER-SNAPSHOT-DEBT-2af6b71a-dsh-r3.md。DSH只读静态复核，零重跑；
+有界代码批准，0P0/P1，列4个非阻断P2收尾；不等于Task批准，AC4 FAIL、AC6未集成，Task仍BLOCKED。
+P2-1/2/3父侧实际补raw/review-binding-r3-supplement.log（EXIT0）：6af→653父子和全路径、
+原始bytes SHA256（旧verified日志hash由text归一化计算，原文保留）、release968 Rust源码hash
+及968→cfb Rust零差量。P2-4 Handoff AC3改指r3的16项日志。补充未重跑产品Gate。
+下一步仍为单独释放DSH只读DLL诊断；不继续范围外实现、不合并runner。

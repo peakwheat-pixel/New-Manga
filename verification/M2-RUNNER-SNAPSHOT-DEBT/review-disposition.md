@@ -31,3 +31,14 @@ R1_REPORT_UTF8_GIT_BLOB_SHA256指Git blob内容字节的SHA256，不是Git对象
 Oracle是人工固定release base main.rs的有序面，M2-C1冻结membership而非wire行顺序；
 它不从当前被测runner/公告实时提取，可以检出runner与runtime同时漂移。
 固定本轮代码head后另加只读绑定证据commit，审查head与evidence_commit分列。
+
+## DSH r3 最终有界复核（2026-10-08）
+
+固定 reviewed_code_head=2af6b71aa06979b822e543b221aaf3a2d5f01abe；evidence_commit=653a00628e484ecb8ae023f2594b80233bce4e9a。
+真实CLI EXIT0；session=session-f303c70c-9bcf-4db2-b356-1f4794458d0b；原始报告
+doc/reviews/M2-RUNNER-SNAPSHOT-DEBT-2af6b71a-dsh-r3.md。DSH只读静态复核，零重跑；
+有界代码批准，0P0/P1，列4个非阻断P2收尾；不等于Task批准，AC4 FAIL、AC6未集成，Task仍BLOCKED。
+P2-1/2/3父侧实际补raw/review-binding-r3-supplement.log（EXIT0）：6af→653父子和全路径、
+原始bytes SHA256（旧verified日志hash由text归一化计算，原文保留）、release968 Rust源码hash
+及968→cfb Rust零差量。P2-4 Handoff AC3改指r3的16项日志。补充未重跑产品Gate。
+下一步仍为单独释放DSH只读DLL诊断；不继续范围外实现、不合并runner。

@@ -13,17 +13,21 @@ source = "cfb5d2eecc4d8ab7a3159cdbb1d5812547bb5cd2"
 
 def git(*args):
     print("COMMAND=" + json.dumps(["git", *args]))
-    result = subprocess.run(["git", *args], capture_output=True, text=True, encoding="utf-8")
+    result = subprocess.run(["git", *args], capture_output=True)
     if args and args[0] == "show":
-        print("SOURCE_CONTENT_BYTES_SHA256=" + hashlib.sha256(result.stdout.encode("utf-8")).hexdigest())
+        print("SOURCE_CONTENT_BYTES_SHA256=" + hashlib.sha256(result.stdout).hexdigest())
     else:
-        print(result.stdout, end="")
-    print(result.stderr, end="")
+        print(result.stdout.decode("utf-8"), end="")
+    print(result.stderr.decode("utf-8"), end="")
     print("EXIT=" + str(result.returncode))
     assert result.returncode == 0
-    return result.stdout.strip()
+    return result.stdout.decode("utf-8").strip()
 
 
+git("diff", "--name-only", "6afbd1ba", "653a0062")
+git("rev-parse", "653a0062^1")
+git("show", "968c8f34601b72667831f1fd15bb20cd2c8f3cb7:apps/desktop/src-tauri/src/main.rs")
+assert not git("diff", "--name-only", "968c8f34601b72667831f1fd15bb20cd2c8f3cb7", source, "--", "apps/desktop/src-tauri/src/main.rs")
 current = git("rev-parse", "HEAD")
 git("merge-base", "--is-ancestor", reviewed, current)
 print("ACTUAL_EVIDENCE_PARENT_HEAD=" + current)
