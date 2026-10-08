@@ -1,0 +1,6 @@
+HOST=Windows; HARNESS_PYTHON=G:\CODEX\New Manga.task-envs\T1.1.1-impl-py312\Scripts\python.exe; CWD=G:\CODEX\New Manga.worktrees\RUNNER-SNAPSHOT-DEBT-codex\apps\desktop
+HEAD=3d532c1f99e49da703d2076bd67d46b710866637
+COMMAND=["C:/Windows/System32/cmd.exe", "/d", "/s", "/c", "npx.cmd --yes @tauri-apps/cli@2 build"]
+The syntax of the command is incorrect.
+
+EXIT=1; ELAPSED=0.0s

@@ -1,0 +1,43 @@
+{
+  "task": "M2-RUNNER-SNAPSHOT-DEBT",
+  "source_head": "3d532c1f99e49da703d2076bd67d46b710866637",
+  "build_completed_at": "2026-10-08T13:54:10+08:00",
+  "installer": {
+    "path": "apps/desktop/src-tauri/target/release/bundle/nsis/m2rc1-desktop_0.1.0_x64-setup.exe",
+    "size_bytes": 579545058,
+    "sha256": "ef617573ab39c0469079203489f4db4af78ae4e3437f8d97d87a3565bb40fa75"
+  },
+  "sidecar_entries": {
+    "acceptance_bridge.exe": {
+      "path": "apps/desktop/src-tauri/target/core-sidecar/core-sidecar/acceptance_bridge.exe",
+      "size_bytes": 68530186,
+      "sha256": "23cab960877dbe74521482a0ff91082168a13a654078ff91298375a70c4ce0d8"
+    },
+    "catalog_loader.exe": {
+      "path": "apps/desktop/src-tauri/target/core-sidecar/core-sidecar/catalog_loader.exe",
+      "size_bytes": 1824326,
+      "sha256": "37192434eb3d58d7b3c8c63786a80358a19bcdba77dbd170999128dd82519c0e"
+    },
+    "core_service.exe": {
+      "path": "apps/desktop/src-tauri/target/core-sidecar/core-sidecar/core_service.exe",
+      "size_bytes": 68542970,
+      "sha256": "f82ec2306bf77ff635b446eeb046fafe3753522072413980864dbc230b5e8ba6"
+    },
+    "host_bridge.exe": {
+      "path": "apps/desktop/src-tauri/target/core-sidecar/core-sidecar/host_bridge.exe",
+      "size_bytes": 1826431,
+      "sha256": "5507ec5a6ce00ab8361af960bd0c33cec0eb187438241f64334fc33b3b4e6216"
+    },
+    "sfx_detect_probe.exe": {
+      "path": "apps/desktop/src-tauri/target/core-sidecar/core-sidecar/sfx_detect_probe.exe",
+      "size_bytes": 67902901,
+      "sha256": "459bc27df8414f6fec650d9ccb09dd8537fbbce6d6933120c8c496fea670c28c"
+    }
+  },
+  "build_environment": {
+    "python": "Python 3.12.3",
+    "pyinstaller": "6.22.3",
+    "node": "v24.15.0",
+    "cargo": "cargo 1.98.1 (797e8a9bc 2026-08-05)"
+  }
+}

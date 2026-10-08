@@ -2,7 +2,7 @@
 id: M2-RUNNER-SNAPSHOT-DEBT
 title: 修复验收 runner 协议与生产命令快照漂移
 kind: maintenance
-status: in_progress
+status: in_review
 approval: user_authorized_release_20261008
 suggested_owner: Codex
 owner: Codex
@@ -12,11 +12,15 @@ depends_on: [M2-DERIVED-GC-2]
 base_commit: 968c8f34601b72667831f1fd15bb20cd2c8f3cb7
 branch: codex/M2-RUNNER-SNAPSHOT-DEBT
 worktree: G:/CODEX/New Manga.worktrees/RUNNER-SNAPSHOT-DEBT-codex
-previous_status: blocked
+previous_status: in_progress
 blocker: null
 integration_commit: null
-execution_state: ACTIVE
+execution_state: CHECKPOINTED
 resume_code_head: bc337fcbef676d4d75befae03e6ea3f5d406e076
+delivery_head: 3d532c1f99e49da703d2076bd67d46b710866637
+review_base_commit: 2b780120d1eb94f93afadf073790f65899a618e6
+review_report: doc/reviews/M2-RUNNER-SNAPSHOT-DEBT-3d532c1f-dsh-r4.md
+handoff_doc: doc/handoffs/M2-RUNNER-SNAPSHOT-DEBT-3d532c1f.md
 ---
 
 # M2-RUNNER-SNAPSHOT-DEBT：runner 快照债务
@@ -54,7 +58,7 @@ minor-3 请求若原意为兼容测试，保留并说明；严格核对服务端
       probe7条及 fail-closed 行为不变。不得放宽成长度/包含关系/接受任意 minor。
 - [x] AC3 最小判别检查：旧minor/缺命令/额外命令/错误顺序或probe混入仍失败；
       正确期望通过；对比独立冻结来源，不能将实现原样复制成无判别测试。
-- [ ] AC4 真实dev M2-RC2 runner probe/production全Gate通过，真实packaged m2ac5
+- [x] AC4 真实dev M2-RC2 runner probe/production全Gate通过，真实packaged m2ac5
       全Gate通过含CS-L1；fresh构建与固定代码head/installer SHA256/执行日志相互绑定。
       依赖缺失记BLOCKED/NOT_RUN，不使用旧产品PASS替代本次验收。
 - [x] AC5 旧报告/日志/冻结probe原字节保持，运行输出只入本Task隔离目录；无生产/
@@ -176,3 +180,19 @@ P2-1/2/3父侧实际补raw/review-binding-r3-supplement.log（EXIT0）：6af→6
 本 Task 按用户先前的明确释放与“Codex 认领并实施”授权恢复 `in_progress / ACTIVE`。唯一 Owner worktree `G:/CODEX/New Manga.worktrees/RUNNER-SNAPSHOT-DEBT-codex` 在 `codex/M2-RUNNER-SNAPSHOT-DEBT` 上从原 delivery/evidence head `15cd788f10e83f6a1a215e71538bfa175b435785` 干净同步主线 `cd09c4d9d39685979d06cc4930d12e4719caccd4`，合并恢复点=`bc337fcbef676d4d75befae03e6ea3f5d406e076`，common-dir=`G:/CODEX/New Manga/.git`；与同步主线相比 Owner 差量仍仅两个冻结 runner 文件。主线同步及状态恢复证据见 `verification/M2-RUNNER-SNAPSHOT-DEBT/resume-after-icu-fix.md`。
 
 当前恢复 head 只确认 ICU 修复已作为测试前置纳入；**本 Task 在组合代码 head 上的 AC4 fresh build/dev/packaged Gate 尚未运行，状态 NOT_RUN**。继续按原 AC4 绑定组合 source head、五入口 Sidecar、NSIS installer hash 与 Gate；旧 FAIL 不回填。DSH r3 是此前 runner 代码的有界批准，不代表本次 AC4 已通过或 Task 可 done；新鲜 Gate 后仍须以固定新 head 取得真实非作者 DSH Review，再由 Codex 集成。
+
+## 2026-10-08 AC4 完成，提交非作者 Review（当前状态）
+
+TaskStatus=`in_review`，previous_status=`in_progress`，ExecutionState=`CHECKPOINTED`；Owner=Codex、Reviewer=DeepSeek Harness（非作者）、Integrator=Codex。旧 packaged AC1 blocker 已由 ICU Task done@`65ba30144048a0b8daae22205c01f8049b44b8a7` 解除；Runner Debt 自身 AC4 已在组合代码/测试 head=`3d532c1f99e49da703d2076bd67d46b710866637` 完成 fresh 验收。审查基线=`2b780120d1eb94f93afadf073790f65899a618e6`；该范围只有两处冻结 runner 文件变更，`src/**`、`apps/**`、`tests/**`、Schema 与依赖为零差量。
+
+| AC4 Gate | 固定 head / 命令 | 结果 | 证据 |
+|---|---|---|---|
+| 判别 oracle | Windows PowerShell；`G:/CODEX/New Manga.task-envs/T1.1.1-impl-py312/Scripts/python.exe verification/M2-RUNNER-SNAPSHOT-DEBT/check_snapshots.py` | 16 个实际谓词用例 PASS；EXIT=0；0.2s | `verification/M2-RUNNER-SNAPSHOT-DEBT/raw/resume/check-snapshots.log` |
+| 五入口 Sidecar | `powershell -NoProfile -File packaging/m2ac5/build_sidecar.ps1 -Force` | EXIT=0；348.5s；五个 sidecar 均生成；bundle guard 检出 0 个遮蔽 ICU | `verification/M2-RUNNER-SNAPSHOT-DEBT/raw/resume/sidecar-build.log`、`verification/M2-RUNNER-SNAPSHOT-DEBT/raw/resume/build-fingerprint.json` |
+| RC2 Dev Gate | Python=`G:/CODEX/New Manga.task-envs/T1.1.1-impl-py312/Scripts/python.exe`；`verification/M2-RC2/run_e2e.py --output-dir verification/M2-RUNNER-SNAPSHOT-DEBT/raw/resume/dev` | 全 Gate PASS；10/10 phase、13/13 probe；production 命令 15 条、probe 7 条；EXIT=0；36.2s | `verification/M2-RUNNER-SNAPSHOT-DEBT/raw/resume/dev-runner.log` |
+| NSIS | PowerShell 7 下执行 `npx --yes @tauri-apps/cli@2 build` | EXIT=0；337.9s；installer 579,545,058 bytes；SHA256=`ef617573ab39c0469079203489f4db4af78ae4e3437f8d97d87a3565bb40fa75` | `verification/M2-RUNNER-SNAPSHOT-DEBT/raw/resume/nsis-build-r1.log`、`verification/M2-RUNNER-SNAPSHOT-DEBT/raw/resume/build-fingerprint.json` |
+| Packaged AC5 | 同一 Python；`packaging/m2ac5/run_clean_start_e2e.py --installer apps/desktop/src-tauri/target/release/bundle/nsis/m2rc1-desktop_0.1.0_x64-setup.exe --output-dir verification/M2-RUNNER-SNAPSHOT-DEBT/raw/resume/packaged` | 26/26 场景 PASS；EXIT=0；70.3s；Gate SHA 与构建指纹相同 | `verification/M2-RUNNER-SNAPSHOT-DEBT/raw/resume/packaged-runner.log`、`verification/M2-RUNNER-SNAPSHOT-DEBT/raw/resume/packaged/cleanstart-gate.json` |
+
+前述三次 Tauri 生成文件检查记录在 `dev-generated-tauri-hash-check.log`、`dev-generated-tauri-diff-cleanup.log`、`nsis-generated-tauri-cleanup.log`；生成前后已核对 tracked 文件内容与固定 head 一致，最终相关路径无差量。一次最初 NSIS wrapper 参数错误的尝试在启动构建前 EXIT=1，记录于 `nsis-build.log`，不作为 Gate；有效构建为 `nsis-build-r1.log`。PyInstaller 有可选 `torch.utils.tensorboard`、`torchvision.image/_C` 模块收集警告但命令完整 EXIT=0；Dev 日志中的 Chromium class unregister 错误消息未改变 Gate 结果。已知边界：Dev in-page IP/IA matrix 仍为 R2-03、未机器验证；本地 host simulation 不替代干净 Windows 分发验收。
+
+AC1–AC5 当前均为 PASS；AC6 仍待真实 DSH r4 非作者审查和 Codex 集成后检查。Review packet=`doc/handoffs/M2-RUNNER-SNAPSHOT-DEBT-3d532c1f.md`；拟存原始 Review=`doc/reviews/M2-RUNNER-SNAPSHOT-DEBT-3d532c1f-dsh-r4.md`。不得因 AC4 PASS 将 Task 提前标 done；旧 FAIL 保留为历史记录。

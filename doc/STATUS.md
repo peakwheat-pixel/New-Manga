@@ -4,13 +4,13 @@
 
 `[M2-PACKAGED-AC1-ICU-ISOLATION-FIX](tasks/M2-PACKAGED-AC1-ICU-ISOLATION-FIX.md)` 已 `done`，Owner=Antigravity、非作者 Reviewer=DeepSeek Harness、Integrator=Codex。固定实现/测试 head=`4499217d7b2249da16d5dbf27a3219a43876aac7`，Owner evidence=`2c79645939635beef4a391f4bd9071ffeacd300b`，DSH r2=APPROVED（0 P0/P1），integration commit=`65ba30144048a0b8daae22205c01f8049b44b8a7`。集成验证见 [`integration-validation.log`](../verification/M2-PACKAGED-AC1-ICU-ISOLATION-FIX/integration-validation.log)：packaging 及 src/apps/tests 对 reviewed head 零差量；merge 后未重跑产品 Gate。Owner fresh build/Dev 10+13/Packaged 26 项证据绑定于 `4499217d`。R2-002/R2-003 非阻断证据局限按 DSH 报告保留。
 
-## 2026-10-08 恢复执行：M2-RUNNER-SNAPSHOT-DEBT
+## 2026-10-08 M2-RUNNER-SNAPSHOT-DEBT 提交 DSH r4 Review
 
-当前唯一 Active Task=`[M2-RUNNER-SNAPSHOT-DEBT](tasks/M2-RUNNER-SNAPSHOT-DEBT.md)`，Owner=Codex、非作者 Reviewer=DeepSeek Harness、Integrator=Codex；TaskStatus=`in_progress` / ExecutionState=`ACTIVE`。此前 runner 实现固定 head=`2af6b71aa06979b822e543b221aaf3a2d5f01abe`（DSH r3 有界批准），旧 packaged AC1 QtGui DLL blocker 已由 ICU Task done@`65ba30144048a0b8daae22205c01f8049b44b8a7` 满足解除条件。
+当前唯一 Active Task=`[M2-RUNNER-SNAPSHOT-DEBT](tasks/M2-RUNNER-SNAPSHOT-DEBT.md)`，Owner=Codex、非作者 Reviewer=DeepSeek Harness、Integrator=Codex；TaskStatus=`in_review` / ExecutionState=`CHECKPOINTED`。代码/测试 head=`3d532c1f99e49da703d2076bd67d46b710866637`，review base=`2b780120d1eb94f93afadf073790f65899a618e6`；AC1–AC5 已满足，AC6 等待真实 DSH r4 与集成后检查。此前 packaged AC1 QtGui DLL blocker 已由 ICU Task done@`65ba30144048a0b8daae22205c01f8049b44b8a7` 解除；本 Task 自己在修复后的组合 head 上 fresh 复跑，不借用 ICU 前置 Gate 代替 AC4。
 
-Codex Owner branch=`codex/M2-RUNNER-SNAPSHOT-DEBT`；worktree=`G:/CODEX/New Manga.worktrees/RUNNER-SNAPSHOT-DEBT-codex`；resume_code_head=`bc337fcbef676d4d75befae03e6ea3f5d406e076`（owner tip `15cd788f` 与主线 `cd09c4d9` 的无冲突 merge），common-dir=`G:/CODEX/New Manga/.git`。Owner worktree 已核实 clean，和同步前主线的 Task-specific 差量仅 `packaging/m2ac5/run_clean_start_e2e.py`、`verification/M2-RC2/run_e2e.py`。当前 AC4 在组合代码 head 上尚未重跑，NOT_RUN；下一步 fresh build、Dev Gate 与完整 Packaged Gate，记录 source/installer hash 绑定后交 DSH 新 Review。详细恢复点见 [`resume-after-icu-fix.md`](../verification/M2-RUNNER-SNAPSHOT-DEBT/resume-after-icu-fix.md)。
+Codex Owner branch=`codex/M2-RUNNER-SNAPSHOT-DEBT`；worktree=`G:/CODEX/New Manga.worktrees/RUNNER-SNAPSHOT-DEBT-codex`；common-dir=`G:/CODEX/New Manga/.git`。相对 review base，生产/应用/测试/Schema/依赖零差量，代码变更限于 Task 冻结的两处 runner 文件。AC4 证据：16 个 snapshot oracle PASS；Dev 10/10 phase、probe 13/13 PASS；fresh 五入口 Sidecar 与 NSIS EXIT=0；Packaged 26/26 PASS、EXIT=0；installer SHA256=`ef617573ab39c0469079203489f4db4af78ae4e3437f8d97d87a3565bb40fa75`，与 gate JSON 匹配。完整逐项证据见 [`M2-RUNNER-SNAPSHOT-DEBT-3d532c1f.md`](handoffs/M2-RUNNER-SNAPSHOT-DEBT-3d532c1f.md) 与 `verification/M2-RUNNER-SNAPSHOT-DEBT/raw/resume/`。
 
-以下 ICU R1、ready、blocked 内容均为历史 checkpoint，以本段和后续最新 checkpoint 为准。
+下一 Gate：从该 linked worktree 根按 `doc/09_COLLABORATION.md` §6.1 派真实 DSH r4，固定 reviewed head 并保存原始 CLI/session 证据；批准后 Codex 串行集成，核对精确合并范围并做集成后检查。R2-03 in-page matrix 未机器验证、host simulation 不替代干净 Windows Gate、可选 PyInstaller 模块警告继续披露。旧 FAIL 保持历史，不回填 PASS。以下 ICU R1、ready、blocked 内容均为历史 checkpoint，以本段和后续最新 checkpoint 为准。
 
 ## 2026-10-08 DSH Review r1：M2-PACKAGED-AC1-ICU-ISOLATION-FIX changes_requested
 

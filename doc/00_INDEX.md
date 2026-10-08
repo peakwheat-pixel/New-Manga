@@ -1,6 +1,6 @@
 # 项目文档索引与 Source of Truth
 
-当前唯一 Active Task=`M2-RUNNER-SNAPSHOT-DEBT`（Codex / DSH Reviewer）；ICU 前置已 done@`65ba30144048a0b8daae22205c01f8049b44b8a7`。Runner Debt 已解除旧 packaged AC1 blocker 并恢复 in_progress，AC4 fresh Gate 待运行。见 [STATUS](STATUS.md)、[Plan](REBASELINE_PLAN.md)、[Runner恢复记录](../verification/M2-RUNNER-SNAPSHOT-DEBT/resume-after-icu-fix.md) 与 [ICU集成验证](../verification/M2-PACKAGED-AC1-ICU-ISOLATION-FIX/integration-validation.log)。下方旧指针均为历史记录。
+当前唯一 Active Task=`M2-RUNNER-SNAPSHOT-DEBT`（Codex / DSH Reviewer），状态=`in_review`；AC4 已在代码 head `3d532c1f99e49da703d2076bd67d46b710866637` 完成 fresh Dev 与 Packaged Gate，等待真实 DSH r4、再由 Codex 集成。ICU 前置已 done@`65ba30144048a0b8daae22205c01f8049b44b8a7`。见 [STATUS](STATUS.md)、[Plan](REBASELINE_PLAN.md)、[Runner Handoff](handoffs/M2-RUNNER-SNAPSHOT-DEBT-3d532c1f.md) 与 [AC4 原始证据](../verification/M2-RUNNER-SNAPSHOT-DEBT/raw/resume/)。下方旧指针均为历史记录。
 
 当前唯一Active Task处于 changes_requested：[M2-PACKAGED-AC1-ICU-ISOLATION-FIX](tasks/M2-PACKAGED-AC1-ICU-ISOLATION-FIX.md)，Owner=Antigravity、Reviewer=DSH、Integrator=Codex；原代码head=aa099f2a 未集成，R1 findings 待修。runner debt仍blocked。详见REBASELINE_PLAN/STATUS最近checkpoint。
 
