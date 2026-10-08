@@ -4,6 +4,7 @@
 
 用户单独释放[ICU隔离修复](tasks/M2-PACKAGED-AC1-ICU-ISOLATION-FIX.md)：Owner=Antigravity，非作者Reviewer=DeepSeek Harness，Integrator=Codex。
 唯一ready Task；无运行中Task，本轮未派发实施。硬依赖诊断done@44317548与GC-2 done@cea610ed均已集成。
+release/synced_head=3d6d8743f662cb850e570e1fa248b96258fee714（Owner clean，未启动）；
 base=5a72db9e3c5778ce4700b7d404250853e474c5de；branch=agent/antigravity/M2-PACKAGED-AC1-ICU-ISOLATION-FIX；
 worktree=G:/CODEX/New Manga.worktrees/PACKAGED-AC1-ICU-ISOLATION-FIX-antigravity，新分配初始clean，共享唯一Git common-dir。
 生产允许仅packaging/m2ac5/**；先核实ICU78消费者；禁止src/apps/tests/Schema/依赖变更或全局删ICU。
