@@ -1,9 +1,9 @@
 # Project Rebaseline Plan
 
-## 2026-10-08 正式释放：M2-PACKAGED-AC1-DLL-DIAG ready / DSH
+## 2026-10-08 自动派发：M2-PACKAGED-AC1-DLL-DIAG in_progress / DSH
 
-唯一Active Task=[M2-PACKAGED-AC1-DLL-DIAG](tasks/M2-PACKAGED-AC1-DLL-DIAG.md)，TaskStatus=ready，ExecutionState=IDLE。
-Owner=DeepSeek Harness，非作者Reviewer=Codex，Integrator=Codex。用户授权单独释放，只读诊断，未派发/未开工。
+唯一Active Task=[M2-PACKAGED-AC1-DLL-DIAG](tasks/M2-PACKAGED-AC1-DLL-DIAG.md)，TaskStatus=in_progress，ExecutionState=ACTIVE。
+Owner=DeepSeek Harness，非作者Reviewer=Codex，Integrator=Codex。用户授权自动调用外部Agent；Codex已串行登记认领，只读诊断，真实DSH CLI派发中。
 硬依赖M2-DERIVED-GC-2 done@cea610ed；M2-RUNNER-SNAPSHOT-DEBT只是固定失败证据来源，仍blocked、暂停恢复。
 base=9063c317937b86bed1f6ff3e2f2c5d224dc10553；branch=agent/deepseek/M2-PACKAGED-AC1-DLL-DIAG；
 worktree=G:/CODEX/New Manga.worktrees/PACKAGED-AC1-DLL-DIAG-dsh，已分配clean/common-dir=G:/CODEX/New Manga/.git。

@@ -2,7 +2,7 @@
 id: M2-PACKAGED-AC1-DLL-DIAG
 title: 新架构安装态 AC1 QtGui DLL 加载失败只读诊断
 kind: research
-status: ready
+status: in_progress
 approval: user_authorized_release_20261008
 suggested_owner: DeepSeek Harness
 owner: DeepSeek Harness
@@ -18,8 +18,8 @@ integration_commit: null
 
 # M2-PACKAGED-AC1-DLL-DIAG：安装态 AC1 DLL 诊断
 
-2026-10-08 用户明确授权单独释放。TaskStatus=ready，ExecutionState=IDLE；
-本轮未派发/未启动诊断，诊断测试NOT_RUN。Owner认领前先核对正式释放恢复点。
+2026-10-08 用户明确授权单独释放。TaskStatus=in_progress，ExecutionState=ACTIVE；
+2026-10-08 用户授权自动调用外部Agent，Codex已串行登记DSH认领；即将真实CLI派发，诊断测试当前NOT_RUN。
 
 ## 来源、依赖与冻结输入
 
@@ -108,3 +108,10 @@ G:/CODEX/New Manga/verification/M2-PACKAGED-AC1-DLL-DIAG/release.md及DSH_INSTRU
 DSH启动前读取该实际恢复点，不猜自身提交hash、不追随main后续纯治理HEAD。
 认领需按协作协议由Codex串行登记再由Owner在本分支ready→in_progress；只读分析并不允许另开修复。
 下一接收者=DSH；交付后Reviewer=Codex；诊断/修复范围需另行批准，旧runner debt继续blocked。
+
+## 自动派发认领（Codex串行登记）
+
+DSH通路探测CLI EXIT0，返回“收到”；版本0.1.7-rc.2。用户明确授权自动调用外部Agent。
+Codex登记ready→in_progress；Owner=DSH。原release4330b792之后仅恢复文档和本认领治理变更，
+Owner将clean fast-forward到本认领提交，再执行真实DSH；实际start_head写入主仓库dispatch.md，
+冻结诊断输入source_head与installer SHA不变。不得跟随未冻结生产差量。

@@ -1,6 +1,6 @@
 # Task 索引
 
-当前唯一Active：[M2-PACKAGED-AC1-DLL-DIAG](M2-PACKAGED-AC1-DLL-DIAG.md) **ready / DSH**；非作者Reviewer=Codex，只读安装态AC1 DLL诊断，未开工。M2-RUNNER-SNAPSHOT-DEBT保持blocked；正式范围/恢复点以Plan、STATUS、Task为准。
+当前唯一Active：[M2-PACKAGED-AC1-DLL-DIAG](M2-PACKAGED-AC1-DLL-DIAG.md) **in_progress / DSH**；非作者Reviewer=Codex，已串行登记并自动派发只读安装态AC1 DLL诊断。M2-RUNNER-SNAPSHOT-DEBT保持blocked；正式范围/恢复点以Plan、STATUS、Task为准。
 
 
 > **2026-09-21 audit**：本索引与 TASK-001～065 文件是历史证据。当前分类、依赖和唯一下一任务见 [REBASELINE_PLAN](../REBASELINE_PLAN.md)，当前 checkpoint 见 [STATUS](../STATUS.md)。不要根据旧 frontmatter 的 `status: done` 单独判定完成。
