@@ -1,4 +1,4 @@
-$ python -m infrastructure.resource_channel.catalog_loader --db C:\Users\49745\AppData\Local\Temp\m2rc2-lab-t4cza0o9\catalog.sqlite --set ... (5 rows)
+$ python -m infrastructure.resource_channel.catalog_loader --db C:\Users\49745\AppData\Local\Temp\m2rc2-lab-yil9joy6\catalog.sqlite --set ... (5 rows)
 exit=0
 {
   "res-boundary": {

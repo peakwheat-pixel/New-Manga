@@ -1,16 +1,22 @@
-HOST=Windows; HEAD=df824182e813fc6d9045872da51d263f28db87f0; COMMAND=G:/CODEX/New Manga.task-envs/T1.1.1-impl-py312/Scripts/python.exe G:/CODEX/New Manga.worktrees/PACKAGED-AC1-ICU-ISOLATION-FIX-antigravity/verification/M2-PACKAGED-AC1-ICU-ISOLATION-FIX/run_clean_start_e2e.py --installer G:/CODEX/New Manga.worktrees/PACKAGED-AC1-ICU-ISOLATION-FIX-antigravity/apps/desktop/src-tauri/target/release/bundle/nsis/m2rc1-desktop_0.1.0_x64-setup.exe --output-dir G:/CODEX/New Manga.worktrees/PACKAGED-AC1-ICU-ISOLATION-FIX-antigravity/verification/M2-PACKAGED-AC1-ICU-ISOLATION-FIX/raw/packaged; TIME=2026-10-08T11:20:32.0901738+08:00
+COMMAND: G:\CODEX\New Manga.task-envs\T1.1.1-impl-py312\Scripts\python.exe G:\CODEX\New Manga.worktrees\PACKAGED-AC1-ICU-ISOLATION-FIX-antigravity\verification\M2-PACKAGED-AC1-ICU-ISOLATION-FIX\run_clean_start_e2e.py --installer G:\CODEX\New Manga.worktrees\PACKAGED-AC1-ICU-ISOLATION-FIX-antigravity\apps\desktop\src-tauri\target\release\bundle\nsis\m2rc1-desktop_0.1.0_x64-setup.exe --output-dir G:\CODEX\New Manga.worktrees\PACKAGED-AC1-ICU-ISOLATION-FIX-antigravity\verification\M2-PACKAGED-AC1-ICU-ISOLATION-FIX\raw\packaged
+GIT_HEAD: 4499217d7b2249da16d5dbf27a3219a43876aac7
+PYTHON_INTERPRETER: G:\CODEX\New Manga.task-envs\T1.1.1-impl-py312\Scripts\python.exe (Python 3.12.3)
+TESTED_INSTALLER_PATH: G:\CODEX\New Manga.worktrees\PACKAGED-AC1-ICU-ISOLATION-FIX-antigravity\apps\desktop\src-tauri\target\release\bundle\nsis\m2rc1-desktop_0.1.0_x64-setup.exe
+TESTED_INSTALLER_SIZE: 579525817
+TESTED_INSTALLER_SHA256: f2a4e2e7e92f083739bb92d2055539ea859461991b43559c3fe1f759b2c195ae
+START_TIME: 2026-10-08 13:04:04
 
 === phase 0: environment record + PATH purge ===
   [PASS] CS-E1-python-purged-from-path: {"detail": "python not on purged PATH (where exit=1); host_bridge.exe resolves: False", "removed_entries": ["C:\\Python314\\Scripts\\", "C:\\Python314\\", "C:\\Users\\49745\\AppData\\Local\\Programs\\Python\\Python310\\S
-  [PASS] CS-E2-installer-present: {"installer": "G:\\CODEX\\New Manga.worktrees\\PACKAGED-AC1-ICU-ISOLATION-FIX-antigravity\\apps\\desktop\\src-tauri\\target\\release\\bundle\\nsis\\m2rc1-desktop_0.1.0_x64-setup.exe", "sha256": "a17a9708d5c18d79b0e009f9b
-  [PASS] CS-E3-install-path-no-spaces: {"install_dir": "C:\\Users\\49745\\AppData\\Local\\Temp\\m2ac5-cleanstart-7179_gi9\\install", "space_free": true}
+  [PASS] CS-E2-installer-present: {"installer": "G:\\CODEX\\New Manga.worktrees\\PACKAGED-AC1-ICU-ISOLATION-FIX-antigravity\\apps\\desktop\\src-tauri\\target\\release\\bundle\\nsis\\m2rc1-desktop_0.1.0_x64-setup.exe", "sha256": "f2a4e2e7e92f083739bb92d20
+  [PASS] CS-E3-install-path-no-spaces: {"install_dir": "C:\\Users\\49745\\AppData\\Local\\Temp\\m2ac5-cleanstart-p6wc8heu\\install", "space_free": true}
 
 === phase 0.5: host real %APPDATA% snapshot (P2-4 untouched proof) ===
   host user root: C:\Users\49745\AppData\Roaming\com.newmanga.m2rc1.desktop (present, files=4)
 
 === phase 1: NSIS silent install ===
-  [PASS] CS-I1-silent-install: {"detail": "installed to C:\\Users\\49745\\AppData\\Local\\Temp\\m2ac5-cleanstart-7179_gi9\\install with resources/core-sidecar/host_bridge.exe, core_service.exe, acceptance_bridge.exe, catalog_loader.exe"}
-  install dir files: 5565
+  [PASS] CS-I1-silent-install: {"detail": "installed to C:\\Users\\49745\\AppData\\Local\\Temp\\m2ac5-cleanstart-p6wc8heu\\install with resources/core-sidecar/host_bridge.exe, core_service.exe, acceptance_bridge.exe, catalog_loader.exe"}
+  install dir files: 5610
   [PASS] CS-I2-catalog-seeded-packaged-loader: {"detail": "catalog seeded (5 rows) via packaged catalog_loader.exe"}
 
 === phase 1.5: packaged library sidecar probe (install-state stdio, P2-2) ===
@@ -19,7 +25,7 @@ HOST=Windows; HEAD=df824182e813fc6d9045872da51d263f28db87f0; COMMAND=G:/CODEX/Ne
   [PASS] CS-L3-packaged-core-shutdown: {"exit": 0, "result": {"status": "stopped"}}
 
 === phase 2: PROBE mode (resource channel matrix, packaged sidecar) ===
-  [PASS] CS-P1-probe-results-written: {"path": "C:\\Users\\49745\\AppData\\Local\\Temp\\m2ac5-cleanstart-7179_gi9\\probe\\probe-results.json"}
+  [PASS] CS-P1-probe-results-written: {"path": "C:\\Users\\49745\\AppData\\Local\\Temp\\m2ac5-cleanstart-p6wc8heu\\probe\\probe-results.json"}
   [PASS] CS-P2-probe-scenarios-all-pass: {"count": 13, "failed": [], "ids": ["E-00-probe-mode-detected", "E-01-issue-fetch-digest", "E-02-img-render", "E-03-unknown-id", "E-04-revoke-after-cached-fetch", "E-05-expired-ttl", "E-06-remount-fresh-references", "E-0
   [PASS] CS-P3-sidecar-roundtrip-digest: {"e01": {"id": "E-01-issue-fetch-digest", "observed": {"bytes": 49363, "expected_sha256": "b9b217bcad1e8cd97fdb0849c5b7058daf8993281e9c47aa41b08339d84fa334", "sha256": "b9b217bcad1e8cd97fdb0849c5b7058daf8993281e9c47aa41b
 
@@ -27,14 +33,14 @@ HOST=Windows; HEAD=df824182e813fc6d9045872da51d263f28db87f0; COMMAND=G:/CODEX/Ne
   [PASS] CS-A0-ac1-catalog-prebind: {"exit": 0, "stderr": ""}
   [PASS] CS-A1-run1-completed: {"exit": 0, "phase": "run1"}
   [PASS] CS-A1-run2-completed: {"exit": 0, "phase": "run2"}
-  [PASS] CS-A2-restart-new-pids: {"run1": [54380, 20680], "run2": [5908, 23980]}
+  [PASS] CS-A2-restart-new-pids: {"run1": [61404, 11828], "run2": [30296, 38904]}
   [PASS] CS-A3-saved-summary-complete: {"pages": 2, "providers": {"ocr": "m2ac1-mock-ocr", "translate": "m2ac1-mock-translate"}, "run_status": "completed"}
   [PASS] CS-A4-restored-reader-matches-saved: {"viewed": [{"index": 0, "sha": "f66af60a9846"}, {"index": 1, "sha": "4afc67386c25"}]}
   [PASS] CS-A5-export-png-digest-matches: {"sha": "4afc67386c25", "size": 1122}
 
 === phase 4: PRODUCTION mode (real window, isolated %APPDATA% userData) ===
   [PASS] CS-R1-production-process-alive: {"poll": null}
-  [PASS] CS-R2-userdata-layout-created: {"appdata_isolated": true, "catalog.sqlite": true, "dirs": {"catalog": true, "data": true, "derived": true, "managed": true}, "root": "C:\\Users\\49745\\AppData\\Local\\Temp\\m2ac5-cleanstart-7179_gi9\\production\\roamin
+  [PASS] CS-R2-userdata-layout-created: {"appdata_isolated": true, "catalog.sqlite": true, "dirs": {"catalog": true, "data": true, "derived": true, "managed": true}, "root": "C:\\Users\\49745\\AppData\\Local\\Temp\\m2ac5-cleanstart-p6wc8heu\\production\\roamin
   [PASS] CS-R3-production-surface-announced: {"announcement": "[m2rc2-allowlist] production:", "present": true}
   [PASS] CS-R4-no-spawn-failures-in-log: {"spawn_failed_mentions": 0}
 
@@ -42,9 +48,11 @@ HOST=Windows; HEAD=df824182e813fc6d9045872da51d263f28db87f0; COMMAND=G:/CODEX/Ne
   [PASS] CS-Z1-install-dir-zero-write: {"changed_entries": []}
   [PASS] CS-Z4-host-real-appdata-untouched: {"changed_entries": [], "files": 4, "note": "runner never deletes here; app APPDATA pinned into the lab", "root": "C:\\Users\\49745\\AppData\\Roaming\\com.newmanga.m2rc1.desktop"}
   [PASS] CS-Z2-user-source-files-byte-identical: {"files": 4}
-  [PASS] CS-Z3-no-surviving-sidecar-processes: {"acceptance_bridge.exe": 0, "catalog_loader.exe": 0, "core_service.exe": 0, "host_bridge.exe": 0, "python.exe": 5}
+  [PASS] CS-Z3-no-surviving-sidecar-processes: {"acceptance_bridge.exe": 0, "catalog_loader.exe": 0, "core_service.exe": 0, "host_bridge.exe": 0, "python.exe": 6}
 
 === gate ===
 
 GATE: PASS
-EXIT=0; ELAPSED=141.6355965s
+END_TIME: 2026-10-08 13:06:15
+EXIT: 0
+ELAPSED_SECONDS: 131.1276487

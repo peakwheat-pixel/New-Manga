@@ -12,16 +12,17 @@
     "packaged_gate_result": "20 PASS / 1 FAIL / 5 NOT_RUN"
   },
   "post_fix_verified": {
-    "source_head": "df824182e813fc6d9045872da51d263f28db87f0 (implementation commits applied)",
-    "installer_sha256": "f76b91d6f78518787a8bb16f721581430dc8ec7c1498cf5a4e09d29f6225ce1f",
-    "installer_size": 578947768,
-    "acceptance_bridge_status": "PASS (EXIT 0 / 1.01s in isolated purged PATH env, zero error)",
+    "source_head": "4499217d7b2249da16d5dbf27a3219a43876aac7",
+    "installer_sha256": "f2a4e2e7e92f083739bb92d2055539ea859461991b43559c3fe1f759b2c195ae",
+    "installer_size": 579525817,
+    "acceptance_bridge_status": "PASS (EXIT 0 / 0.47s in isolated purged PATH env, M2AC1_TEST_MODE=1, QT_QPA_PLATFORM=offscreen, stdin=EOF)",
     "underlying_loader_resolution": "Qt6Core.dll cleanly loads Windows System32 icuuc.dll (542 unsuffixed exports)",
-    "bundled_icuuc_status": "NOT_BUNDLED (zero shadowing in _internal/)",
-    "dev_gate_result": "10/10 Gate PASS, 13/13 Probe PASS, 15 production / 7 probe commands exact match",
-    "packaged_gate_result": "26/26 Gate PASS (ALL GREEN)",
+    "bundled_icuuc_status": "NOT_BUNDLED (zero shadowing across bundle layout)",
+    "dev_gate_result": "10/10 Gate PASS, 13/13 Probe PASS, 15 production / 7 probe commands exact match (19.37s, EXIT 0)",
+    "packaged_gate_result": "26/26 Gate PASS (131.13s, EXIT 0, ALL GREEN)",
     "surviving_sidecar_processes": 0,
-    "appdata_protection": "PASS (CS-Z4: host real appdata untouched, CS-Z2: user source files identical)"
+    "appdata_protection": "PASS (CS-Z4: host real appdata untouched with 4 files intact, CS-Z2: user source files identical)",
+    "windows_support_baseline": "Windows 10 version 1809+ / Windows 11 (System32 icuuc.dll inbox component)"
   },
   "verdict": "RESOLVED"
 }

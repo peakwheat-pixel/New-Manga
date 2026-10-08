@@ -1,9 +1,9 @@
 {
   "gate": "m2ac5-clean-start",
   "installer": "G:\\CODEX\\New Manga.worktrees\\PACKAGED-AC1-ICU-ISOLATION-FIX-antigravity\\apps\\desktop\\src-tauri\\target\\release\\bundle\\nsis\\m2rc1-desktop_0.1.0_x64-setup.exe",
-  "installer_sha256": "a17a9708d5c18d79b0e009f9bf1da8c0de8701ddd7a06af8356a08dd7766ceb2",
-  "install_dir": "C:\\Users\\49745\\AppData\\Local\\Temp\\m2ac5-cleanstart-7179_gi9\\install",
-  "lab": "C:\\Users\\49745\\AppData\\Local\\Temp\\m2ac5-cleanstart-7179_gi9",
+  "installer_sha256": "f2a4e2e7e92f083739bb92d2055539ea859461991b43559c3fe1f759b2c195ae",
+  "install_dir": "C:\\Users\\49745\\AppData\\Local\\Temp\\m2ac5-cleanstart-p6wc8heu\\install",
+  "lab": "C:\\Users\\49745\\AppData\\Local\\Temp\\m2ac5-cleanstart-p6wc8heu",
   "appdata_isolation": {
     "app_env_appdata": "pinned into the lab (probe/ac1/production)",
     "host_real_appdata": "C:\\Users\\49745\\AppData\\Roaming\\com.newmanga.m2rc1.desktop",
@@ -36,14 +36,14 @@
       "status": "PASS",
       "observed": {
         "installer": "G:\\CODEX\\New Manga.worktrees\\PACKAGED-AC1-ICU-ISOLATION-FIX-antigravity\\apps\\desktop\\src-tauri\\target\\release\\bundle\\nsis\\m2rc1-desktop_0.1.0_x64-setup.exe",
-        "sha256": "a17a9708d5c18d79b0e009f9bf1da8c0de8701ddd7a06af8356a08dd7766ceb2"
+        "sha256": "f2a4e2e7e92f083739bb92d2055539ea859461991b43559c3fe1f759b2c195ae"
       }
     },
     {
       "id": "CS-E3-install-path-no-spaces",
       "status": "PASS",
       "observed": {
-        "install_dir": "C:\\Users\\49745\\AppData\\Local\\Temp\\m2ac5-cleanstart-7179_gi9\\install",
+        "install_dir": "C:\\Users\\49745\\AppData\\Local\\Temp\\m2ac5-cleanstart-p6wc8heu\\install",
         "space_free": true
       }
     },
@@ -51,7 +51,7 @@
       "id": "CS-I1-silent-install",
       "status": "PASS",
       "observed": {
-        "detail": "installed to C:\\Users\\49745\\AppData\\Local\\Temp\\m2ac5-cleanstart-7179_gi9\\install with resources/core-sidecar/host_bridge.exe, core_service.exe, acceptance_bridge.exe, catalog_loader.exe"
+        "detail": "installed to C:\\Users\\49745\\AppData\\Local\\Temp\\m2ac5-cleanstart-p6wc8heu\\install with resources/core-sidecar/host_bridge.exe, core_service.exe, acceptance_bridge.exe, catalog_loader.exe"
       }
     },
     {
@@ -101,7 +101,7 @@
       "id": "CS-P1-probe-results-written",
       "status": "PASS",
       "observed": {
-        "path": "C:\\Users\\49745\\AppData\\Local\\Temp\\m2ac5-cleanstart-7179_gi9\\probe\\probe-results.json"
+        "path": "C:\\Users\\49745\\AppData\\Local\\Temp\\m2ac5-cleanstart-p6wc8heu\\probe\\probe-results.json"
       }
     },
     {
@@ -171,12 +171,12 @@
       "status": "PASS",
       "observed": {
         "run1": [
-          54380,
-          20680
+          61404,
+          11828
         ],
         "run2": [
-          5908,
-          23980
+          30296,
+          38904
         ]
       }
     },
@@ -234,7 +234,7 @@
           "data": true
         },
         "catalog.sqlite": true,
-        "root": "C:\\Users\\49745\\AppData\\Local\\Temp\\m2ac5-cleanstart-7179_gi9\\production\\roaming\\com.newmanga.m2rc1.desktop",
+        "root": "C:\\Users\\49745\\AppData\\Local\\Temp\\m2ac5-cleanstart-p6wc8heu\\production\\roaming\\com.newmanga.m2rc1.desktop",
         "appdata_isolated": true
       }
     },
@@ -285,7 +285,7 @@
         "core_service.exe": 0,
         "acceptance_bridge.exe": 0,
         "catalog_loader.exe": 0,
-        "python.exe": 5
+        "python.exe": 6
       }
     }
   ]

@@ -1,4 +1,8 @@
-HOST=Windows; CWD=G:\CODEX\New Manga.worktrees\PACKAGED-AC1-ICU-ISOLATION-FIX-antigravity\apps\desktop; HEAD=df824182e813fc6d9045872da51d263f28db87f0; COMMAND=npx.cmd --yes @tauri-apps/cli@2 build; TIME=2026-10-08T11:20:19.1209685+08:00
+COMMAND: npx.cmd --yes @tauri-apps/cli@2 build (CWD=apps/desktop)
+GIT_HEAD: 4499217d7b2249da16d5dbf27a3219a43876aac7
+NODE_VERSION: v24.15.0
+TAURI_CLI: 2.x (via npx @tauri-apps/cli@2)
+START_TIME: 2026-10-08 12:57:05
 npm notice run npx
 npm notice run tauri build
         Info Looking up installed tauri packages to check mismatched versions...
@@ -72,12 +76,17 @@ warning: methods `set_books`, `set_books_error`, `set_settings_result`, `set_ret
     |            ^^^^^^^^^^^^^^^^^
 
 warning: `m2rc1-desktop` (bin "m2rc1-desktop") generated 6 warnings (run `cargo fix --bin "m2rc1-desktop" -p m2rc1-desktop` to apply 1 suggestion)
-    Finished `release` profile [optimized] target(s) in 6.43s
+    Finished `release` profile [optimized] target(s) in 6.33s
        Built application at: G:\CODEX\New Manga.worktrees\PACKAGED-AC1-ICU-ISOLATION-FIX-antigravity\apps\desktop\src-tauri\target\release\m2rc1-desktop.exe
         Info Patching G:\CODEX\New Manga.worktrees\PACKAGED-AC1-ICU-ISOLATION-FIX-antigravity\apps\desktop\src-tauri\target\release\m2rc1-desktop.exe with bundle type information: nsis
         Info Target: x64
      Running makensis to produce G:\CODEX\New Manga.worktrees\PACKAGED-AC1-ICU-ISOLATION-FIX-antigravity\apps\desktop\src-tauri\target\release\bundle\nsis\m2rc1-desktop_0.1.0_x64-setup.exe
     Finished 1 bundle at:
-        G:\CODEX\New Manga.worktrees\PACKAGED-AC1-ICU-ISOLATION-FIX-antigravity\apps\desktop\src-tauri\target\release\bundle\nsis\m2rc1-desktop_0.1.0_x64-setup.exe (552.13 MiB)
+        G:\CODEX\New Manga.worktrees\PACKAGED-AC1-ICU-ISOLATION-FIX-antigravity\apps\desktop\src-tauri\target\release\bundle\nsis\m2rc1-desktop_0.1.0_x64-setup.exe (552.68 MiB)
 
-EXIT=0; ELAPSED=277.3196328s
+END_TIME: 2026-10-08 13:02:32
+EXIT: 0
+ELAPSED_SECONDS: 326.8241483
+INSTALLER_PATH: G:\CODEX\New Manga.worktrees\PACKAGED-AC1-ICU-ISOLATION-FIX-antigravity\apps\desktop\src-tauri\target\release\bundle\nsis\m2rc1-desktop_0.1.0_x64-setup.exe
+INSTALLER_SIZE: 579525817
+INSTALLER_SHA256: f2a4e2e7e92f083739bb92d2055539ea859461991b43559c3fe1f759b2c195ae

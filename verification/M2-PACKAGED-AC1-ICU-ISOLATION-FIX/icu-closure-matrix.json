@@ -2,10 +2,17 @@
   "task": "M2-PACKAGED-AC1-ICU-ISOLATION-FIX",
   "generated_by": "Antigravity (Owner)",
   "date": "2026-10-08",
+  "source_head": "4499217d7b2249da16d5dbf27a3219a43876aac7",
   "status": "PASS",
+  "scanner_reference": {
+    "script": "verification/M2-PACKAGED-AC1-ICU-ISOLATION-FIX/scan_pe_closure.py",
+    "raw_output": "verification/M2-PACKAGED-AC1-ICU-ISOLATION-FIX/raw/pe-scan-raw.json",
+    "total_pe_binaries_scanned": 313,
+    "parse_errors": 0
+  },
   "root_cause_confirmation": {
     "verdict": "PROVEN",
-    "mechanism": "PyInstaller's bindepend scanned host PATH during Qt6Core analysis and harvested alien ICU78 from external native toolchain (C:\\Users\\49745\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\poppler\\Library\\bin\\icuuc.dll), copying it to _internal/icuuc.dll. Windows loader resolved _internal/icuuc.dll ahead of C:\\Windows\\System32\\icuuc.dll. The alien ICU78 exported only _78-suffixed symbols, lacking the 20 unsuffixed symbols (ucnv_*) demanded by Qt6Core.dll, causing WinError 127 and PySide6.QtGui ImportError.",
+    "mechanism": "PyInstaller's bindepend scanned host PATH during Qt6Core analysis and harvested alien ICU78 from external native toolchain (poppler/Library/bin/icuuc.dll), copying it to bundle _internal. Windows loader resolved _internal/icuuc.dll ahead of C:\\Windows\\System32\\icuuc.dll. The alien ICU78 exported only _78-suffixed symbols, lacking the 20 unsuffixed symbols (ucnv_*) demanded by Qt6Core.dll, causing WinError 127 and PySide6.QtGui ImportError.",
     "alien_icu_source": "C:\\Users\\49745\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\poppler\\Library\\bin\\icuuc.dll",
     "alien_icu_sha256": "39aec884c7124d673d75b38cca7b44ac1909d9633d8366a812a6e1c269d74bdf",
     "system_icu_location": "C:\\Windows\\System32\\icuuc.dll",
@@ -16,56 +23,76 @@
     {
       "entry_name": "host_bridge.exe",
       "module": "infrastructure.resource_channel.host_bridge",
-      "binary_dependencies": "Python stdlib + in-repo packages only; 0 external C-extensions",
-      "is_icu78_consumer": false,
-      "evidence": "Static import graph scan + binary PE import table scan (0 icu imports)",
-      "status": "PROVEN_NON_CONSUMER"
+      "sha256": "6ca28abaf9ec0d1ba4e21a237b7d733f5c72b8d0fa4831e3051cf69efea346a2",
+      "size": 1826431,
+      "direct_static_icu_imports": {},
+      "direct_delay_icu_imports": {},
+      "direct_import_verdict": "NO_DIRECT_ICU_IMPORTS",
+      "transitive_closure_verdict": "UNKNOWN (transitive PE closure not statically resolved from entry PE alone)",
+      "dynamic_load_boundary": "UNKNOWN (dynamic ctypes/LoadLibrary/importlib unobserved in static scan)",
+      "evidence": "scan_pe_closure.py import table scan records 0 direct icu references"
     },
     {
       "entry_name": "core_service.exe",
       "module": "bootstrap.core_service",
-      "binary_dependencies": "Python stdlib + SQLite + PyTorch/torchvision/transformers/onnxruntime/doctr ML stack",
-      "is_icu78_consumer": false,
-      "evidence": "PE import table scan of all bundled ML binaries (torch, torchvision, doctr, transformers, onnxruntime, DirectML.dll) shows 0 references to icu*.dll",
-      "status": "PROVEN_NON_CONSUMER"
+      "sha256": "7a1a78525dae14ac862e2da518fc493c7993b0ffbbe953cebd42b5823d70e10a",
+      "size": 68542970,
+      "direct_static_icu_imports": {},
+      "direct_delay_icu_imports": {},
+      "direct_import_verdict": "NO_DIRECT_ICU_IMPORTS",
+      "transitive_closure_verdict": "UNKNOWN (transitive PE closure not statically resolved from entry PE alone)",
+      "dynamic_load_boundary": "UNKNOWN (dynamic ctypes/LoadLibrary/importlib unobserved in static scan)",
+      "evidence": "scan_pe_closure.py import table scan records 0 direct icu references"
     },
     {
       "entry_name": "acceptance_bridge.exe",
       "module": "bootstrap.acceptance_bridge",
-      "binary_dependencies": "Python stdlib + PySide6 (Qt6Core, Qt6Gui)",
-      "is_icu78_consumer": false,
-      "is_system_icu_consumer": true,
-      "evidence": "Qt6Core.dll imports 20 unsuffixed ICU symbols (ucnv_*) supplied by Windows System32 icuuc.dll; it does NOT consume ICU78. Bundling alien ICU78 broke it via shadowing.",
-      "status": "PROVEN_SYSTEM_ICU_ONLY"
+      "sha256": "9e4a0068e153e376c02bf802435e9dbffe7442b014fee7e420197e50e4d7eae8",
+      "size": 68530186,
+      "direct_static_icu_imports": {},
+      "direct_delay_icu_imports": {},
+      "direct_import_verdict": "NO_DIRECT_ICU_IMPORTS",
+      "transitive_closure_verdict": "UNKNOWN (transitive PE closure not statically resolved from entry PE alone; bundle carries Qt6Core.dll requiring unsuffixed icuuc.dll)",
+      "dynamic_load_boundary": "UNKNOWN (dynamic ctypes/LoadLibrary/importlib unobserved in static scan)",
+      "evidence": "acceptance_bridge.exe has no direct ICU imports; Qt6Core.dll in bundle imports 20 unsuffixed symbols from icuuc.dll. Windows System32 icuuc.dll supplies all 20 unsuffixed symbols."
     },
     {
       "entry_name": "catalog_loader.exe",
       "module": "infrastructure.resource_channel.catalog_loader",
-      "binary_dependencies": "Python stdlib + in-repo SQLite catalog access only; 0 external C-extensions",
-      "is_icu78_consumer": false,
-      "evidence": "Static import graph scan + binary PE import table scan (0 icu imports)",
-      "status": "PROVEN_NON_CONSUMER"
+      "sha256": "f0a59794fb6c6beefa49305506ec0e97b2e31adf4edf78c56a3b0f151c67bf6f",
+      "size": 1824326,
+      "direct_static_icu_imports": {},
+      "direct_delay_icu_imports": {},
+      "direct_import_verdict": "NO_DIRECT_ICU_IMPORTS",
+      "transitive_closure_verdict": "UNKNOWN (transitive PE closure not statically resolved from entry PE alone)",
+      "dynamic_load_boundary": "UNKNOWN (dynamic ctypes/LoadLibrary/importlib unobserved in static scan)",
+      "evidence": "scan_pe_closure.py import table scan records 0 direct icu references"
     },
     {
       "entry_name": "sfx_detect_probe.exe",
-      "module": "bootstrap.sfx_detect_probe",
-      "binary_dependencies": "Python stdlib + onnxruntime-directml + transitive torch/doctr ML stack",
-      "is_icu78_consumer": false,
-      "evidence": "PE import table scan shows onnxruntime_pybind11_state.pyd and DirectML.dll do not import icu*.dll",
-      "status": "PROVEN_NON_CONSUMER"
+      "module": "infrastructure.providers.detection_sfx",
+      "sha256": "f9b31287136e44262c37ce342ee663c0210a6a33090ba67533c3c0b40aaa9456",
+      "size": 67902901,
+      "direct_static_icu_imports": {},
+      "direct_delay_icu_imports": {},
+      "direct_import_verdict": "NO_DIRECT_ICU_IMPORTS",
+      "transitive_closure_verdict": "UNKNOWN (transitive PE closure not statically resolved from entry PE alone)",
+      "dynamic_load_boundary": "UNKNOWN (dynamic ctypes/LoadLibrary/importlib unobserved in static scan)",
+      "evidence": "scan_pe_closure.py import table scan records 0 direct icu references"
     }
   ],
-  "bundle_binary_scan": {
-    "total_pe_binaries_scanned": 412,
-    "binaries_importing_icuuc": [
-      "_internal/PySide6/Qt6Core.dll"
-    ],
-    "binaries_importing_icu78": [],
-    "verdict": "ZERO bundled components require ICU78. Bundled ICU78 was 100% build host PATH contamination."
+  "bundle_static_verdict": {
+    "total_pe_scanned": 313,
+    "parse_errors": 0,
+    "icu78_static_consumers_in_bundle": [],
+    "sole_icu_consumer": "_internal/PySide6/Qt6Core.dll -> icuuc.dll (unsuffixed)",
+    "summary": "Across 313 scanned PE files in bundle, 0 static or delay-load imports for versioned ICU78 exist. The sole ICU static consumer is Qt6Core.dll requiring unsuffixed icuuc.dll (Windows System32)."
   },
-  "isolation_fix": {
-    "packaging_spec": "packaging/m2ac5/core_sidecar.spec: _isolate_icu_closure strips alien icuuc.dll / icudt*.dll from a.binaries and asserts absence of shadowing icuuc.dll",
-    "packaging_build_script": "packaging/m2ac5/build_sidecar.ps1: local PATH sanitization during PyInstaller execution removes poppler/codex-runtimes paths + post-build layout assertion verifies no _internal/icuuc.dll",
-    "diff_contained_in_allowed_paths": true
+  "isolation_fix_summary": {
+    "strategy": "Source-bounded isolation in spec and PATH sanitization in build_sidecar.ps1",
+    "in_venv_or_repo_handling": "Preserved without modification",
+    "confirmed_alien_handling": "Isolated from PyInstaller collection (preventing DLL shadowing)",
+    "unclassified_external_handling": "Fails closed with SystemExit diagnostic error",
+    "bundle_layout_guard": "Verified 0 shadowing icuuc*.dll or icudt*.dll files in bundle root or _internal (fail-closed policy)"
   }
 }
