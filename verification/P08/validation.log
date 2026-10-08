@@ -194,3 +194,36 @@ command=git diff --name-only ab2f813c0ce311a6712002cafd852b9e7a258380 31c2638926
 No paths returned; EXIT=0 (protected production paths have no delta).
 
 DSH round-2 review has not yet been dispatched; no DSH result or approval is claimed.
+
+P08 DSH round-2 dispatch checkpoint
+UTC=2026-10-08T14:00:57+00:00
+reviewed_head=31c263892605fdc984982b9ba1875fa6eb609cb6
+base=ab2f813c0ce311a6712002cafd852b9e7a258380
+review_worktree=G:\CODEX\New Manga.worktrees\P08-dsh-review-31c2638; detached HEAD verified; clean before dispatch; common_dir=G:/CODEX/New Manga/.git
+reviewer=DeepSeek Harness (non-author)
+dsh_version=0.1.7-rc.2
+command=dsh --profile headless --json <verification/P08/DSH-REVIEW-PROMPT-R2.md contents>
+working_directory=G:\CODEX\New Manga.worktrees\P08-dsh-review-31c2638
+session=session-d9ecc0fb-6e88-41a1-ad89-e2d3f877a1f6
+session_mounted_to_exact_worktree=yes; mount_session.py returned success (1 session attached)
+stdout=verification/P08/dsh-r2.stdout.jsonl
+stderr=verification/P08/dsh-r2.stderr.log
+run_state=ACTIVE at checkpoint; process host session ID=1615
+DSH shell attempt=NOT_RUN: pwsh tool reported SetNamedSecurityInfoW failed (Win32 5), grantWrite on exact worktree. A second attempted sandbox escalation was rejected because no approval channel is available; no project files were changed by these attempts.
+review_decision=NOT_RETURNED; do not infer approval or finding closure.
+
+P08 post-dispatch governance-state validation
+UTC=2026-10-08T14:07:10+00:00
+repo=G:\CODEX\New Manga; branch=main; live_HEAD=cefbc1377567e62bd7982b84ea9beebfe60a86b9
+state=live HEAD plus authorized P08 in_review status/navigation/checkpoint edits; external original dirty paths remain unstaged
+shell=PowerShell 7.6.6
+python=C:\Python314\python.exe (Python 3.14.6)
+command=python -B -X utf8 verification/P08/verify_scope.py
+PASS: P08 in_review; 20 successors remain unreleased; coverage/links/read-only guards pass; EXIT=0
+command=python -B -X utf8 verification/PROJECT-ROADMAP-20261008/verify_plan.py
+PASS: 196 audit nodes; 21 candidates; dependency/roadmap graph and navigation links pass; EXIT=0
+command=git diff --check
+PASS: no whitespace errors; EXIT=0
+command=git diff --name-only -- src apps tests packaging
+PASS: no protected production paths changed; EXIT=0
+Product tests/build/GUI/model calls=NOT_RUN (document Task)
