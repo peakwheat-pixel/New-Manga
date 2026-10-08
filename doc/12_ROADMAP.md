@@ -1,12 +1,12 @@
 # Roadmap
 
-当前工作：[P08范围草案与验收矩阵](../verification/P08/SCOPE_DRAFT.md)已准备；[正式Task](tasks/P08.md)为in_review，D1–D7已确认，R3对`1ad05d99`发现项已修订于`16fb07a9`，DSH R4独立Review正在运行。产品实现未释放；[最新恢复点](../verification/P08/RESUME.md)。下方原规划建议按此当前工作点续接。
+当前工作：[P08范围草案与验收矩阵](../verification/P08/SCOPE_DRAFT.md)已准备；[正式Task](tasks/P08.md)为approved、等待Codex集成；DSH R4已对`16fb07a9`判定approved，N-07/N-08关闭，R4-01..03三项P3待集成收口。产品实现未释放；[最新恢复点](../verification/P08/RESUME.md)。下方原规划建议按此当前工作点续接。
 
 ## 当前整体路线（2026-10-08，PLAN_ONLY）
 
 最新人员裁决：Qoder退出，未来UI/UX设计及React/Tauri实现由ZCode主责，DSH非作者审查，Codex契约/集成；额度接管候选为ZCode、Antigravity。历史交付中的Qoder署名保留。
 
-权威排期见 [Plan顶部P01–P21 候选任务](REBASELINE_PLAN.md)，[中文分层依赖图](../verification/PROJECT-ROADMAP-20261008/ROADMAP.md)，[代码深读与完整台账](../verification/PROJECT-ROADMAP-20261008/REPORT.md)，[额度中断恢复](../verification/PROJECT-ROADMAP-20261008/RESUME.md)。当前仅P08文档准备/Review Task active，没有released产品Task；完整产品条件主链为：范围/parity冻结→真实导入/凭据/长任务契约→书架/后台Pipeline→工作台/设置/阅读导出→真实质量→整体E2E→Windows发布。基础Reader已由D1解冻，跨页/缩略图延期。DSH R4已从fixed delivery head `16fb07a973b36b0b129945bc3a85f9ae51234982`启动；Codex exec session=`90862`，native session待挂载确认；所有后继规划节点未释放。
+权威排期见 [Plan顶部P01–P21 候选任务](REBASELINE_PLAN.md)，[中文分层依赖图](../verification/PROJECT-ROADMAP-20261008/ROADMAP.md)，[代码深读与完整台账](../verification/PROJECT-ROADMAP-20261008/REPORT.md)，[额度中断恢复](../verification/PROJECT-ROADMAP-20261008/RESUME.md)。当前仅P08文档准备/Review Task active，没有released产品Task；完整产品条件主链为：范围/parity冻结→真实导入/凭据/长任务契约→书架/后台Pipeline→工作台/设置/阅读导出→真实质量→整体E2E→Windows发布。基础Reader已由D1解冻，跨页/缩略图延期。DSH R4对fixed delivery head `16fb07a973b36b0b129945bc3a85f9ae51234982`判定`approved`；session=`session-eafdd15a-13da-4abf-86fc-1cb444c715ff`、CLI exit=0；R4-01..03三项P3待Codex集成，所有后继规划节点未释放。
 
 下方2026-09早期导航保留历史，不覆盖本段或Plan；其中旧“ready/planning only”任务多已由后继完成，不能作为当前待办。
 

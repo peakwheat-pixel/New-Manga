@@ -369,3 +369,28 @@ command=python -B -X utf8 verification/PROJECT-ROADMAP-20261008/verify_plan.py; 
 command=git diff --cached --check; EXIT=0
 command=git diff --cached --name-only -- protected product/contracts/source paths; EXIT=0; empty
 Transient validation: the first verify_scope.py run after appending this log returned EXIT=1 due one blank line at EOF; normalized to a single final newline and reran validator and diff-check successfully.
+
+P08 R4恢复点状态更新
+local_time=2026-10-08 23:11 +08:00
+status_sync_commit=893df221808ae384818ddebdbf6d80d9b99f31d6; subject=docs(P08): record active R4 review checkpoint
+resume=verification/P08/RESUME.md now includes complete Chinese automatic-resumption prompt and shutdown condition; latest resume metadata follows the status-sync commit
+R4 remains active: exact reviewed_head=16fb07a973b36b0b129945bc3a85f9ae51234982; Codex exec session=90862; DSH native session/exit/report pending; do not re-dispatch or shut down
+
+P08 DSH R4正式Review返回与归档
+reviewed_head=16fb07a973b36b0b129945bc3a85f9ae51234982; base=ab2f813c0ce311a6712002cafd852b9e7a258380
+review_worktree=G:\CODEX\New Manga.worktrees\P08-dsh-review-16fb07a9-r4; detached; DSH file-layer confirmed HEAD/common-dir/reflog; DSH git status/working-tree identity=NOT_VERIFIED due ACL
+reviewer=DeepSeek Harness (non-author); DSH CLI version=0.1.7-rc.2; Codex exec session=90862; process exit=0; decision=approved
+DSH native session=session-eafdd15a-13da-4abf-86fc-1cb444c715ff; mount_session.py --id; EXIT=0; mounted to New Manga workspace
+canonical_report=verification/P08/review-dsh-16fb07a9-r4.md; SHA256=9259F9B0B1BED6C8AF0640E45CF3860308BFEC89E5757B233942A16FDDDE0AF6; stdout SHA256 matches byte-for-byte
+Findings: N-07 P2 and N-08 P3 independently closed; no open P0/P1/P2; new R4-01/R4-02/R4-03 are P3 open/non-blocking and assigned to Codex integration
+DSH pwsh/git/python/validator/diff-check/allowlist commands=NOT_RUN/NOT_VERIFIED: SetNamedSecurityInfoW failed Win32 5; file-layer reads/grep completed. Do not attribute Codex EXIT=0 checks to DSH.
+Product pytest/cargo/vitest/GUI/build/model=NOT_RUN (document-only Task).
+Temporary raw stdout/stderr still exist as task-created untracked outputs; canonical report hash matched. Do not commit raw stderr; final cleanup is not recorded as completed.
+
+P08 R4 approved结果同步与Codex集成Gate起点复验
+validation_HEAD=893df221808ae384818ddebdbf6d80d9b99f31d6; Task state=approved; R4 reviewed_head=16fb07a973b36b0b129945bc3a85f9ae51234982
+command=python -B -X utf8 verification/P08/verify_scope.py; EXIT=0; 193 AC, AC-SMOKE, 12 gates, all 7 decisions, approved state, 20 successors unreleased, 4 filesystem P08 Handoffs included in whitespace scope
+command=python -B -X utf8 verification/PROJECT-ROADMAP-20261008/verify_plan.py; EXIT=0; 196 nodes, 105 ancestry records, 21 plans, labels/links and acyclic graphs passed
+command=git diff --check -- authorized P08/governance paths; EXIT=0; only LF-to-CRLF advisory warnings for two files
+command=git diff --name-only -- protected product/contracts/source paths; EXIT=0; empty
+Product pytest/cargo/vitest/GUI/build/model=NOT_RUN (document-only Task); original external dirty files and R4 raw temporary files unstaged.
