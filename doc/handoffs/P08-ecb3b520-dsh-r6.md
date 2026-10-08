@@ -4,7 +4,7 @@ author: Codex
 recipient: DeepSeek Harness
 base_commit: af1ddeec1b998f2ddaf121a85f5fd382561aae1e
 delivery_head: ecb3b520ce68c2ddcc0c5ec94596e2f50a17f369
-status: delivered_review_ready
+status: delivered_review_approved
 ---
 
 # Handoff：P08 DSH 第六轮正式 Review
@@ -19,6 +19,12 @@ Codex在R5 approved delivery之后，按R5的两项非阻断P3观察修改P08验
 | R5-02 | 将doc/handoffs/P08-*.md加入本地Markdown链接解析检查；扩展后验证当前五份P08 Handoff链接均可解析。 |
 
 变更固定于delivery head=ecb3b520ce68c2ddcc0c5ec94596e2f50a17f369；base=af1ddeec1b998f2ddaf121a85f5fd382561aae1e。其他R5结果和历史报告保持原样。没有修改产品源码/测试、共享契约/Schema/依赖、冻结产品需求、用户数据或其他Agent dirty。P09–P20不释放。
+
+## R6 Review结果
+
+DSH session=`session-44947a36-b277-4118-8f82-635e1e803dd1`，CLI EXIT=0，decision=`approved`，报告=`verification/P08/review-dsh-ecb3b520-r6.md`，SHA256=`7E486D1EC46CD0EBF3BEC280EDDDB837CE600715549E2E528027FF2FEB883C28`。原始stdout与canonical报告SHA256逐字节一致；session已通过`mount_session.py --id`挂载到New Manga workspace（EXIT=0）。R5-01/R5-02经DSH独立确认closed，无未关闭P0/P1/P2。
+
+唯一新finding R6-01为非阻断P3，指出Plan编号说明与P08状态不一致；该行已在post-delivery commit `547894f59dc2e9ab89812d27efc511d432c6b6a9`修正，DSH确认无需重开固定head，交Codex Integration Gate记录后关闭。R6-O1/O2/O3为P4信息观察，见canonical报告；当前Resume已同步，链接范围没有当前漏项，历史报告保留原样。DSH自身shell/git/python运行因Win32 5未能完成，相关DSH证据如实标为`NOT_RUN`/`NOT_VERIFIED`；Codex精确head重跑结果见`verification/P08/validation.log`。
 
 ## 固定delivery验证
 
@@ -45,14 +51,14 @@ Codex在R5 approved delivery之后，按R5的两项非阻断P3观察修改P08验
 
 ## 下一任务建议（doc/09_COLLABORATION.md §5.1）
 
-- **Task / 前置条件**：P08 R6非作者Review；Review返回后由Codex执行集成Gate。
+- **Task / 前置条件**：R6仅批准固定head=`ecb3b520`。Codex集成预检发现正式报告中的占位Markdown目标触发链接验证器误报；须先固定验证器修订的新delivery，由DSH正式R7复审并批准，之后才能执行Codex集成Gate。R6-01已在`547894f5`修正并记录关闭。
 - **Agent / Reviewer**：DeepSeek Harness为独立Reviewer；Codex为作者与Integrator，不能自审。
-- **Recovery point**：仓库G:/CODEX/New Manga；branch/worktree=main / G:/CODEX/New Manga；base=af1ddeec1b998f2ddaf121a85f5fd382561aae1e；delivery head=ecb3b520ce68c2ddcc0c5ec94596e2f50a17f369；R6 worktree见上。
+- **Recovery point**：仓库G:/CODEX/New Manga；branch/worktree=main / G:/CODEX/New Manga；当前主线HEAD=`e9795470ac0d2a02604509895dc4a37e45fe0d57`；R6 base=`af1ddeec1b998f2ddaf121a85f5fd382561aae1e`、delivery/reviewed head=`ecb3b520ce68c2ddcc0c5ec94596e2f50a17f369`；R7修订delivery须由Codex固定后再记入R7 Handoff与RESUME，不能预填commit。
 - **允许/禁止范围**：Reviewer只读；Codex只在P08 Task授权的文档、verification/P08、派生导航与本Task Handoff中收尾；禁止产品源码/测试/打包、共享契约/Schema/依赖、冻结产品需求和用户数据修改，不释放P09–P20、不重开D1–D7、不恢复Qoder。
-- **Deliverables**：中文R6报告原文、实际session和CLI exit、报告SHA256；逐项处置R5-01/R5-02和历史Finding。
-- **Verification/Gate**：R6必须对固定base/head作独立复核；Codex验证与DSH验证分别记录。完成P08全部AC、非作者Review、Codex集成与集成后验证前不得置done。
-- **可直接转发指令**：工作目录固定为`G:/CODEX/New Manga.worktrees/P08-dsh-review-ecb3b520-r6`；只读审查`af1ddeec1b998f2ddaf121a85f5fd382561aae1e..ecb3b520ce68c2ddcc0c5ec94596e2f50a17f369`。DSH headless将收到主工作区R6 Prompt全文；该Prompt/Handoff不在固定worktree中。复核R5-01/R5-02、历史Finding、fixed delivery状态与post-delivery状态边界。返回中文完整报告，注明固定head、实际命令/环境/EXIT和NOT_RUN/NOT_VERIFIED，不改项目文件，不把Codex结果冒称为DSH验证。
+- **Deliverables**：R6 canonical报告与SHA256、native session/CLI exit/mount、R5-01/R5-02关闭及R6-01处置已落盘；R7修订delivery、正式Review与Codex集成证据待完成。
+- **Verification/Gate**：R6只覆盖`ecb3b520`；Codex已在该exact R6 worktree验证两个validator、固定base/head whitespace、受保护路径和clean状态均EXIT=0。R6之后的验证器修订须在新fixed head独立Review。产品测试按Task范围NOT_RUN。P08完成前必须有R7 approved、R7精确head Codex集成验证、Task/Plan/Status/路线图/Resume一致并通过集成后validator。
+- **可直接转发指令**：请Codex从`G:/CODEX/New Manga`实时main=`e9795470ac0d2a02604509895dc4a37e45fe0d57`继续P08。先复跑`python -B -X utf8 verification/P08/verify_scope.py`、`python -B -X utf8 verification/PROJECT-ROADMAP-20261008/verify_plan.py`与`git diff --check ab2f813c0ce311a6712002cafd852b9e7a258380`；保护所有原作者dirty与DSH raw输出，仅暂存P08授权文件和canonical R6报告。固定新的P08 delivery commit并创建精确detached/clean Review worktree；记录真实base/head后，派发DSH只读正式R7 Review，审查链接守卫仅跳过精确`…`/`...`、其他本地目标继续验证以及完整P08范围。R7未approved前不得执行P08集成Gate或置done。R7通过后再由Codex验证固定head身份/clean、两个validator、diff-check、受保护路径、报告/raw hash与Task AC，最后同步并验证Task/Plan/Status/路线图/Resume。禁止修改产品源码、测试、契约、需求或用户数据；不要释放后继Task。
 
 ## 风险与遗留
 
-R6尚未派发。R5-01/R5-02虽由Codex修订，仍保持open直至DSH独立确认。P08仍未done；后继产品Task未释放。原作者dirty和P08 R4/R5原始stdout/stderr均保持未暂存、不清理。
+R6对固定head=`ecb3b520`已approved并关闭R5-01/R5-02；R6-01已由post-delivery `547894f5`修正并由Codex记录关闭。之后Codex主线集成预检发现R6报告中的占位Markdown链接触发`verify_scope.py`误报；canonical报告与raw stdout保持原样，验证器最小修订现位于新delivery工作区，P08已回到`in_progress`并须由DSH对新fixed head正式R7复审。R6批准只覆盖`ecb3b520`，不覆盖R7新head。原作者dirty和P08 R4/R5/R6原始stdout/stderr均保持未暂存、不清理。

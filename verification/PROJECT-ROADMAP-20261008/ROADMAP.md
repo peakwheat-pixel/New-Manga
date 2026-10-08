@@ -1,8 +1,8 @@
 # New Manga 一眼路线图（2026-10-08）
 
-最新工作点：P08状态=`in_review`；DSH R5对固定head `af1ddeec`返回`approved`并关闭R4-01..03；R5-01/R5-02作者修订固定于`ecb3b520`，R6正式Review待派发。R4已关闭N-07/N-08；R3/R5的DSH shell检查因Win32 5为NOT_RUN。报告与恢复状态见[最新恢复点](../P08/RESUME.md)。后继产品实现未释放；下方审计与规划材料按各自时间点保留。
+最新工作点：P08状态=`in_progress`；DSH R6原head `ecb3b520`已批准，Codex集成预检发现报告示例占位链接误报，验证器窄修订及新head Review进行中。恢复与验证边界见[P08 RESUME](../P08/RESUME.md)。
 
-**当前位置：P08状态=`in_review`；R3已关闭R1的4项P1及R2 N-01..N-06；R4关闭N-07/N-08，R5批准`af1ddeec`并关闭R4-01..03；R5-01/R5-02修订固定于`ecb3b520`，R6正式Review待派发。P系列完成0/21，in_review 1，proposed / 未释放20。产品实现未释放；R6与Codex集成Gate通过后再按Plan选择后续Task。**
+**当前位置：P08状态=`in_progress`；R6原head approved，报告占位链接误报的修订/复审中。P系列done 0/21、in_progress 1、proposed / 未释放20。集成Gate通过后按Plan选择后续Task。**
 
 人员更新：用户已移除Qoder，图中未来UI/UX责任由ZCode承担；非作者Review与正式Task释放Gate保持。
 
@@ -29,14 +29,14 @@ flowchart TB
 
 ```mermaid
 flowchart TB
-  BASE["当前位置：P08 DSH R5已批准，R5 P3修订待R6正式Review<br/>P系列完成0/21；P08：in_review，reviewed head ecb3b520"] --> P01["P01<br/>proposed / 未释放<br/>台账取证<br/>修正陈旧metadata；追溯两份Review"]
+  BASE["当前位置：P08验证器修订与新head Review进行中<br/>P系列done 0/21；P08：in_progress"] --> P01["P01<br/>proposed / 未释放<br/>台账取证<br/>修正陈旧metadata；追溯两份Review"]
   BASE --> P02["P02<br/>proposed / 未释放<br/>真UI验证<br/>点击/300ms刷新/对比度/失效窗口"]
   BASE --> P03["P03<br/>proposed / 未释放<br/>第五入口Gate<br/>验证SFX frozen入口；不只确认文件存在"]
   BASE --> P04["P04<br/>proposed / 未释放<br/>生产命令面验证<br/>常量成员与并发响应；先复现再决定修复"]
   BASE --> P05["P05<br/>proposed / 未释放<br/>错误语义澄清<br/>category与retryable注记一致"]
   BASE --> P06["P06<br/>proposed / 未释放<br/>GC迁移补证<br/>旧版本退出/命名空间保护；未知保留"]
   P02 -. "确认实际缺口后" .-> P07["P07<br/>proposed / 未释放<br/>小交互修补<br/>手输image读取/quiet-window busy"]
-  P01 --> P08["P08<br/>in_review / DSH Review复审中<br/>完整产品范围与验收冻结<br/>R5-01/R5-02固定head ecb3b520；R6待派发"]
+  P01 --> P08["P08<br/>in_progress / 执行中<br/>完整产品范围与验收冻结<br/>R6原head ecb3b520 approved；修订新head待Review"]
   style P08 fill:#fff3cd,stroke:#b58105,stroke-width:3px
 ```
 
@@ -46,7 +46,7 @@ flowchart TB
 
 ```mermaid
 flowchart TB
-  P08["P08<br/>in_review / DSH Review复审中<br/>范围＋四页设计冻结<br/>R5-01/R5-02固定head ecb3b520；R6待派发；基础Reader已解冻"] --> ARCHDOC["Architecture Documentation Rebaseline Task<br/>未登记 / 未释放<br/>AC-DOC先于P09；stack-specific映射先于P18/P20"]
+  P08["P08<br/>in_progress / 执行中<br/>范围＋四页设计冻结<br/>R6原head approved；验证器修订待Review"] --> ARCHDOC["Architecture Documentation Rebaseline Task<br/>未登记 / 未释放<br/>AC-DOC先于P09；stack-specific映射先于P18/P20"]
   ARCHDOC --> P09["P09<br/>proposed / 未释放<br/>真实导入契约与Core适配<br/>图片/PDF/MOBI；真实尺寸；Managed Copy"]
   ARCHDOC -.-> P18
   ARCHDOC -.-> P20

@@ -27,6 +27,9 @@ if __name__ == "__main__":
         content = doc.read_text(encoding="utf-8")
         for target in re.findall(r"\]\(([^)]+)\)", content):
             target = target.strip("<>").split("#", 1)[0]
+            # Review evidence may quote an elided target as an example, not a link.
+            if target in {"…", "..."}:
+                continue
             if target and "://" not in target:
                 assert (doc.parent / target).is_file(), (doc, target)
     print("PASS: P08 local links resolve")
@@ -38,13 +41,16 @@ if __name__ == "__main__":
     assert protocol_states == TASK_STATES, (protocol_states, TASK_STATES)
     state = re.search(r"^status: ([a-z_]+)$", task, re.M)
     integration = re.search(r"^integration_commit: (null|[0-9a-f]{40})$", task, re.M)
-    approval = re.search(r"^approval: .+$", task, re.M)
+    approval = re.search(r"^approval: ([a-z_]+)$", task, re.M)
     assert state and state.group(1) in TASK_STATES and integration and approval
     assert "reviewer: DeepSeek Harness" in task
     assert state.group(1) != "done" or integration.group(1) != "null"
     reviewed_head = re.search(r"^reviewed_head: ([0-9a-f]{40})$", task, re.M)
     assert reviewed_head, "P08 must record a full reviewed_head"
-    assert "approval: user_scope_confirmed_review_pending" in task
+    expected_approval = ("user_scope_confirmed_review_approved"
+                         if state.group(1) in {"approved", "done"}
+                         else "user_scope_confirmed_review_pending")
+    assert approval.group(1) == expected_approval, (approval.group(1), state.group(1))
     scope = (HERE / "SCOPE_DRAFT.md").read_text(encoding="utf-8")
     assert len(re.findall(r"^\| D[1-7] \|", scope, re.M)) == 7
     for row in rows:

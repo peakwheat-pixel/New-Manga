@@ -1,10 +1,10 @@
 # 全项目任务规划恢复点
 
-最新工作点：P08状态=`in_review`；R5对固定head `af1ddeec`返回`approved`并关闭R4-01..03；Codex修订R5-01/R5-02的delivery=`ecb3b520ce68c2ddcc0c5ec94596e2f50a17f369`，R6正式DSH非作者Review材料已备妥、待派发。R4已关闭N-07/N-08；历史R1/R2/R3结论详见[P08 Task](../../doc/tasks/P08.md)。恢复状态见[最新恢复点](../P08/RESUME.md)。后继产品实现未释放；下方历史审计与规划材料按各自时间点保留。
+最新工作点：P08状态=`in_progress`；R6原head `ecb3b520`正式approved；集成预检发现canonical Review报告的省略号示例链接导致验证器误报，修订与新head Review进行中。恢复指令与完整证据见[P08 RESUME](../P08/RESUME.md)。
 
-**当前位置：P08状态=`in_review`；R4关闭N-07/N-08，R5批准`af1ddeec`并关闭R4-01..03；R5-01/R5-02修订固定于`ecb3b520`，R6正式Review待派发。P系列完成0/21，in_review 1，proposed / 未释放20。产品实现未释放；R6与Codex集成Gate通过后再按Plan依赖选择下一Task。**
+**当前位置：P08=`in_progress`；P系列done 0/21、in_progress 1、proposed / 未释放20。R6原head已approved；验证器修订及新head Review通过后完成Codex集成Gate。**
 
-2026-10-08 最新编号裁决：任务编号沿用 `P01–P21`；P08=`in_review`，其余20项=`proposed / 未释放`。仅统一编号，不释放产品实施、不改原有任务及完成记录。原始审计、台账与历史验证日志保留为固定快照。
+2026-10-08 编号裁决时的状态快照：任务编号沿用 `P01–P21`；当时P08=`in_review`，其余20项=`proposed / 未释放`。当前状态见本恢复点顶部及`doc/STATUS.md`；本编号裁决本身不释放产品实施、不改历史记录。
 
 最新恢复约束（2026-10-08）：用户已将Qoder剔除本项目，当前未来UI/UX由ZCode主责，fallback_order=zcode,antigravity；恢复时以AGENTS/Plan/STATUS当前名单为准。旧审计报告、台账或共享skill默认候选不能恢复Qoder资格。人员调整基线=`main@5b8aed4d`，后续仅已知治理差量；当前无Active/released产品Task。人员变更检查见`qoder-retirement.log`，原代码审计与验证不重做。
 

@@ -445,3 +445,39 @@ product pytest/cargo/vitest/GUI/build/model=NOT_RUN (documentation/validation-on
 DSH R6=not yet dispatched; R5-01/R5-02 remain open pending independent confirmation
 pre_dispatch_checkpoint_commit=547894f59dc2e9ab89812d27efc511d432c6b6a9; subject=docs(P08): record R6 review checkpoint; only explicit authorized P08/governance/roadmap paths staged; external author dirty and R4/R5 raw logs excluded
 post_checkpoint_status=main clean for committed P08 preparation; only protected original dirty/untracked and R4/R5 raw outputs remain; exact R6 Review worktree still detached clean at ecb3b520ce68c2ddcc0c5ec94596e2f50a17f369
+
+P08 R6 formal Review returned and Codex integration preflight checkpoint
+observed_time=2026-10-09 00:26 Asia/Shanghai; main_BRANCH=main; validation_HEAD=e9795470ac0d2a02604509895dc4a37e45fe0d57; P08 Task state=in_progress for a narrow validator rework discovered during integration
+reviewed_base=af1ddeec1b998f2ddaf121a85f5fd382561aae1e; reviewed_head=ecb3b520ce68c2ddcc0c5ec94596e2f50a17f369
+review_worktree=G:\CODEX\New Manga.worktrees\P08-dsh-review-ecb3b520-r6; detached; clean; HEAD exact; common-dir=G:/CODEX/New Manga/.git; git diff --exit-code HEAD -- . EXIT=0
+reviewer=DeepSeek Harness (non-author); dsh_version=0.1.7-rc.2; native_session=session-44947a36-b277-4118-8f82-635e1e803dd1; CLI EXIT=0; decision=approved
+canonical_report=verification/P08/review-dsh-ecb3b520-r6.md; SHA256=7E486D1EC46CD0EBF3BEC280EDDDB837CE600715549E2E528027FF2FEB883C28
+raw_stdout=verification/P08/dsh-r6.stdout.md; SHA256=7E486D1EC46CD0EBF3BEC280EDDDB837CE600715549E2E528027FF2FEB883C28; byte-for-byte equal to canonical report; raw stdout/stderr remain untracked
+mount_session.py --id session-44947a36-b277-4118-8f82-635e1e803dd1; EXIT=0; mounted to New Manga workspace. Independent read-only audit also matched native session id/cwd/final text to the canonical report.
+findings=R5-01/R5-02 closed; 0 open P0/P1/P2; R6-01 fixed at post-delivery commit 547894f59dc2e9ab89812d27efc511d432c6b6a9 and accepted by DSH without reopening fixed head; R6-O1/O2/O3 are P4 observations. DSH shell/git/python commands NOT_RUN/NOT_VERIFIED due SetNamedSecurityInfoW failed (Win32 5).
+pre-fix integration command=python -B -X utf8 verification/P08/verify_scope.py on main with canonical/raw R6 report present; EXIT=1 because local-link validator treated the report's illustrative Markdown target (…) as a real path. Report/raw evidence/hash were not modified.
+Codex fix=verification/P08/verify_scope.py skips only explicit ellipsis targets (U+2026 and three ASCII dots); concrete relative links continue through file-existence checks. This changes content after R6 reviewed_head, so R6 approval does not extend to the new delivery; formal DSH R7 review is required.
+command=python -B -X utf8 verification/P08/verify_scope.py on main working tree after fix; EXIT=0; 193 AC, AC-SMOKE, 12 gates, P08 local links, 7 decisions, 33 committed BASE..HEAD allowlist files, six Handoff links/whitespace, protected paths and frozen product docs passed; P08 in_progress, 20 successors unreleased
+command=python -B -X utf8 verification/PROJECT-ROADMAP-20261008/verify_plan.py on main working tree; EXIT=0; 196 nodes, 105 ancestry, 21 planning nodes, status labels, links and acyclic graph passed
+command=git diff --check ab2f813c0ce311a6712002cafd852b9e7a258380; EXIT=0
+Product pytest/cargo/vitest/GUI/build/model=NOT_RUN (documentation/validator-only change; no product source/test changes)
+protected_dirty=.qoder-credits/report.json; .qoder-credits/通路探测__8602db50.canvas.tsx; verification/M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD/antigravity-dispatch.json; antigravity-dispatch.stderr.log; verification/P08/dsh-r4.*; dsh-r5.*; dsh-r6.*; none staged
+next_gate=commit fixed validator delivery, create exact clean R7 worktree, dispatch DSH non-author review, then Codex integration Gate
+
+P08 R6-link-guard correction pre-delivery checkpoint
+observed_time=2026-10-09 Asia/Shanghai; main_BRANCH=main; HEAD=e9795470ac0d2a02604509895dc4a37e45fe0d57 before fixed delivery commit
+scope=exact-target ellipsis exemption in local Markdown link validation plus P08 Task/Handoff/navigation state correction; no product source/test changes
+checkpoint_audit=independent read-only audit found stale R6-era statements in P08 Task, R6 Handoff next-step instruction and doc/12_ROADMAP.md; all now state R6 approval is scoped to ecb3b520 and R7 is required before integration
+command=python -B -X utf8 verification/P08/verify_scope.py on main after state corrections; EXIT=0; 193 AC, AC-SMOKE, 12 gates, seven decisions, 33 committed BASE..HEAD paths, six P08 Handoff links/whitespace, frozen product docs and scope passed; Task in_progress and 20 candidates unreleased
+command=python -B -X utf8 verification/PROJECT-ROADMAP-20261008/verify_plan.py on main after state corrections; EXIT=0; 196 nodes, 105 ancestry records, 21 planned nodes, links and acyclic graph passed
+command=git diff --check ab2f813c0ce311a6712002cafd852b9e7a258380; EXIT=0 (Git emitted LF-to-CRLF warnings for existing working-tree files only)
+R6 canonical report SHA256 remains 7E486D1EC46CD0EBF3BEC280EDDDB837CE600715549E2E528027FF2FEB883C28; raw R4/R5/R6 outputs remain untracked and untouched
+protected_dirty=.qoder-credits/report.json; .qoder-credits/通路探测__8602db50.canvas.tsx; verification/M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD/antigravity-dispatch.json; antigravity-dispatch.stderr.log; verification/P08/dsh-r4.*; dsh-r5.*; dsh-r6.*; none staged
+product pytest/cargo/vitest/GUI/build/model=NOT_RUN (documentation/validator-only delivery)
+next_gate=commit P08-authorized R7 fixed delivery, create exact detached/clean review worktree, run exact-head Codex validators, then dispatch formal DSH R7
+post_resume_finalization=RESUME timestamp and next instruction updated; exact current main HEAD remains e9795470ac0d2a02604509895dc4a37e45fe0d57 pending delivery commit
+command=python -B -X utf8 verification/P08/verify_scope.py after final RESUME update; EXIT=0; same frozen coverage and current P08 in_progress state passed
+command=python -B -X utf8 verification/PROJECT-ROADMAP-20261008/verify_plan.py after final RESUME update; EXIT=0; all 196 nodes, links, 21-node graph and acyclic dependencies passed
+command=git diff --check ab2f813c0ce311a6712002cafd852b9e7a258380 after final RESUME update; EXIT=0
+command=Get-FileHash canonical R6 report and raw stdout; both SHA256=7E486D1EC46CD0EBF3BEC280EDDDB837CE600715549E2E528027FF2FEB883C28; cmd /c fc /b; no differences
+command=git diff --name-only BASE -- protected product/contracts/frozen-spec/inventory paths; EXIT=0; empty
