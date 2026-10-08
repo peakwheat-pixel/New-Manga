@@ -1,0 +1,3 @@
+COMMAND=git diff --check d12ebc7a0bbd5617e7a376e00f45c9ee114c8c10...1c49fe38dd0fc67b9c8abc39bfd6b57386ac0661
+EXIT=0
+OUTPUT=

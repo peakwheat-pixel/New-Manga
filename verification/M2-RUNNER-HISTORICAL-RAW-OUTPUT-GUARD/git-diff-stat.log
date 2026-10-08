@@ -1,0 +1,8 @@
+COMMAND=git diff --stat d12ebc7a0bbd5617e7a376e00f45c9ee114c8c10...1c49fe38dd0fc67b9c8abc39bfd6b57386ac0661
+EXIT=0
+OUTPUT=
+packaging/m2ac5/README.md                          |   5 +-
+ packaging/m2ac5/run_clean_start_e2e.py             |  19 ++-
+ tests/packaging/test_runner_output_dir_required.py | 173 +++++++++++++++++++++
+ verification/M2-RC2/run_e2e.py                     |  18 ++-
+ 4 files changed, 199 insertions(+), 16 deletions(-)

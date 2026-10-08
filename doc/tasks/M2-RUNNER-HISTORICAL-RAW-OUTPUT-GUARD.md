@@ -2,7 +2,7 @@
 id: M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD
 title: Require explicit isolated output directories for M2 runner commands
 kind: implementation
-status: ready
+status: in_review
 approval: user_authorized_release_20261008
 suggested_owner: Antigravity
 owner: Antigravity
@@ -25,10 +25,10 @@ integration_commit: null
 
 ## Acceptance Criteria
 
-- [ ] AC1：两个 runner 的 CLI 都要求显式 `--output-dir`；省略时以 argparse usage error / exit 2 失败，且失败发生在任何文件系统副作用及 Gate 启动之前。
-- [ ] AC2：传入显式 `--output-dir <isolated-path>` 时 argparse 接受参数，并继续将该路径作为本次运行输出根；不改变 Gate 场景、阈值、产物结构或其他 runner 行为。
-- [ ] AC3：更新 `packaging/m2ac5/README.md` 当前验收命令，示范新建/隔离输出目录；用法说明不再声称 runner 会默认落入历史 raw 目录。历史 Handoff / verification 原始记录不改写。
-- [ ] AC4：新增回归测试覆盖两个 runner 的“省略参数拒绝”和“显式参数解析”；测试在调用 runner 主体前停止，避免触发构建、安装或产品 Gate。确认 `verification/M2-RC2/raw/` 与 `verification/M2-AC5/raw/` 的 tracked 文件集合及内容未被测试改变。
+- [x] AC1：两个 runner 的 CLI 都要求显式 `--output-dir`；省略时以 argparse usage error / exit 2 失败，且失败发生在任何文件系统副作用及 Gate 启动之前。
+- [x] AC2：传入显式 `--output-dir <isolated-path>` 时 argparse 接受参数，并继续将该路径作为本次运行输出根；不改变 Gate 场景、阈值、产物结构或其他 runner 行为。
+- [x] AC3：更新 `packaging/m2ac5/README.md` 当前验收命令，示范新建/隔离输出目录；用法说明不再声称 runner 会默认落入历史 raw 目录。历史 Handoff / verification 原始记录不改写。
+- [x] AC4：新增回归测试覆盖两个 runner 的“省略参数拒绝”和“显式参数解析”；测试在调用 runner 主体前停止，避免触发构建、安装或产品 Gate。确认 `verification/M2-RC2/raw/` 与 `verification/M2-AC5/raw/` 的 tracked 文件集合及内容未被测试改变。
 - [ ] AC5：实现差量严格限于本 Task allowed_paths；交付固定 commit、测试日志及 Handoff；非作者 DSH 独立审查通过后由 Codex 集成并完成集成验证。
 
 ## 允许修改范围
@@ -54,9 +54,9 @@ integration_commit: null
 
 | 场景/AC | 计划命令或步骤 | 前提/环境 | 实际结果 | 证据 |
 |---|---|---|---|---|
-| AC1/AC2 parser regression | `python -m pytest -q tests/packaging/test_runner_output_dir_required.py` | Windows/Python；测试在 `parse_args` 成功后拦截，不进入 runner 主体 | NOT_RUN | `verification/M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD/` |
-| AC4 历史 raw 不变 | 对两个 tracked raw 目录运行前后文件集合/内容摘要对比 | 与 parser regression 同一 checkout | NOT_RUN | `verification/M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD/` |
-| 范围与空白 | `git diff --name-only <base>...<head>`；`git diff --check <base>...<head>` | 固定 owner base/head | NOT_RUN | Handoff / verification |
+| AC1/AC2 parser regression | `python -m pytest -q tests/packaging/test_runner_output_dir_required.py` | Windows/Python；测试在 `parse_args` 成功后拦截，不进入 runner 主体 | PASS (9/9 passed) | `verification/M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD/pytest-regression.log` |
+| AC4 历史 raw 不变 | 对两个 tracked raw 目录运行前后文件集合/内容摘要对比 | 与 parser regression 同一 checkout | PASS (61 files byte-identical) | `verification/M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD/raw-integrity.log` |
+| 范围与空白 | `git diff --name-only <base>...<head>`；`git diff --check <base>...<head>` | 固定 owner base/head | PASS (EXIT=0，零空白错误) | `verification/M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD/git-diff-check.log` |
 
 ## 依赖、风险与阻塞
 
@@ -66,7 +66,13 @@ integration_commit: null
 
 ## 交付与运行记录
 
-- Task release evidence：待 Codex 写入 `verification/M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD/release.md`。
-- Handoff：尚无。
-- Review：尚无。
-- 实际测试：NOT_RUN；Owner 开始后逐项记录真实命令、shell/解释器、EXIT 和日志路径。
+- Code delivery HEAD：`1c49fe38dd0fc67b9c8abc39bfd6b57386ac0661` (`1c49fe38`)
+- Handoff：`doc/handoffs/M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD-1c49fe38.md`
+- 验证报告：`verification/M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD/VERIFICATION.md`
+- 实际测试：
+  - `python -m pytest -v tests/packaging/test_runner_output_dir_required.py` -> EXIT=0 (9 passed)
+  - `& "G:\CODEX\New Manga.task-envs\TASK-012-py312\Scripts\python.exe" -m pytest -v tests/packaging/test_runner_output_dir_required.py` -> EXIT=0 (9 passed)
+  - `python verification/M2-RUNNER-SNAPSHOT-DEBT/check_snapshots.py` -> EXIT=0 (16 actual-predicate cases PASS)
+  - 61 个历史 tracked raw 文件 byte-identical 核查 -> PASS
+  - `git diff --check d12ebc7a..HEAD` -> EXIT=0
+  - `git diff --name-only d12ebc7a..HEAD` -> 4 个 allowed_paths 文件
