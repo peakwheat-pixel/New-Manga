@@ -1,0 +1,284 @@
+﻿=== Traceability Execution Record ===
+Shell: PowerShell 5.1.26100.9549
+WorkingDirectory: apps/desktop/src-tauri
+Command: npx --yes @tauri-apps/cli@2 build --verbose
+StartTime: 2026-10-09T02:57:19+08:00
+=====================================
+node.exe : npm notice run npx
+
+At line:1 char:1
+
++ & "E:\Program Files\nodejs/node.exe" "C:\Users\49745\AppData\Roaming\ ...
+
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    + CategoryInfo          : NotSpecified: (npm notice run npx:String) [], RemoteException
+
+    + FullyQualifiedErrorId : NativeCommandError
+
+ 
+
+npm notice run tauri build --verbose
+
+       Debug [tauri_cli::helpers::app_paths] Found Tauri project inside G:\CODEX\New Manga.worktrees\P03-packaged-sfx-e
+
+ntry-antigravity\apps\desktop\src-tauri on early lookup
+
+       Debug [tauri_cli::helpers::app_paths] resolving frontend directory from G:\CODEX\New Manga.worktrees\P03-package
+
+d-sfx-entry-antigravity\apps\desktop\src-tauri
+
+       Debug [globset] built glob set; 0 literals, 3 basenames, 0 extensions, 0 prefixes, 0 suffixes, 0 required extens
+
+ions, 0 regexes
+
+       Debug [ignore::gitignore] opened gitignore file: \\?\G:\CODEX\New Manga.worktrees\P03-packaged-sfx-entry-antigra
+
+vity\.gitignore
+
+       Debug [globset] glob `Glob("**/*.py[cod]")` converted to regex: `"(?-u)^(?:/?|.*/)[^/]*\\.py[cod]$"`
+
+       Debug [globset] built glob set; 1 literals, 6 basenames, 3 extensions, 0 prefixes, 0 suffixes, 1 required extens
+
+ions, 1 regexes
+
+       Debug [ignore::gitignore] opened gitignore file: \\?\G:\CODEX\New Manga.worktrees\P03-packaged-sfx-entry-antigra
+
+vity\apps\desktop\.gitignore
+
+       Debug [globset] built glob set; 3 literals, 0 basenames, 0 extensions, 0 prefixes, 0 suffixes, 0 required extens
+
+ions, 0 regexes
+
+        Info [tauri_cli::build] Looking up installed tauri packages to check mismatched versions...
+
+     Running [tauri_cli] Command `cargo build --bins --features tauri/custom-protocol --release`
+
+   Compiling m2rc1-desktop v0.1.0 (G:\CODEX\New Manga.worktrees\P03-packaged-sfx-entry-antigravity\apps\desktop\src-tau
+
+ri)
+
+warning: unused import: `std::sync::Arc`
+
+  --> src\main.rs:47:5
+
+   |
+
+47 | use std::sync::Arc;
+
+   |     ^^^^^^^^^^^^^^
+
+   |
+
+   = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+
+
+warning: struct `MockCoreChannel` is never constructed
+
+   --> src\core_bridge.rs:335:12
+
+    |
+
+335 | pub struct MockCoreChannel {
+
+    |            ^^^^^^^^^^^^^^^
+
+    |
+
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+
+
+warning: struct `MockEntry` is never constructed
+
+   --> src\core_bridge.rs:350:12
+
+    |
+
+350 | pub struct MockEntry {
+
+    |            ^^^^^^^^^
+
+
+
+warning: associated items `new`, `register`, and `issue_internal` are never used
+
+   --> src\core_bridge.rs:359:12
+
+    |
+
+358 | impl MockCoreChannel {
+
+    | -------------------- associated items in this implementation
+
+359 |     pub fn new() -> Self {
+
+    |            ^^^
+
+...
+
+370 |     pub fn register(&self, resource_id: &str, rel_path: &str) -> Result<(), CoreError> {
+
+    |            ^^^^^^^^
+
+...
+
+378 |     fn issue_internal(
+
+    |        ^^^^^^^^^^^^^^
+
+
+
+warning: associated function `spawn` is never used
+
+   --> src\library_bridge.rs:197:12
+
+    |
+
+196 | impl StdioLibraryChannel {
+
+    | ------------------------ associated function in this implementation
+
+197 |     pub fn spawn(
+
+    |            ^^^^^
+
+
+
+warning: methods `set_books`, `set_books_error`, `set_settings_result`, `set_retype_result`, `set_regions_result`, and 
+
+`set_domain_result` are never used
+
+   --> src\library_bridge.rs:585:12
+
+    |
+
+564 | impl MockLibraryChannel {
+
+    | ----------------------- methods in this implementation
+
+...
+
+585 |     pub fn set_books(&self, books: Vec<BookSummary>) {
+
+    |            ^^^^^^^^^
+
+...
+
+589 |     pub fn set_books_error(&self, error: LibraryError) {
+
+    |            ^^^^^^^^^^^^^^^
+
+...
+
+595 |     pub fn set_settings_result(&self, result: Result<serde_json::Value, LibraryError>) {
+
+    |            ^^^^^^^^^^^^^^^^^^^
+
+...
+
+601 |     pub fn set_retype_result(&self, result: Result<serde_json::Value, LibraryError>) {
+
+    |            ^^^^^^^^^^^^^^^^^
+
+...
+
+605 |     pub fn set_regions_result(&self, result: Result<serde_json::Value, LibraryError>) {
+
+    |            ^^^^^^^^^^^^^^^^^^
+
+...
+
+612 |     pub fn set_domain_result(&self, result: Result<serde_json::Value, LibraryError>) {
+
+    |            ^^^^^^^^^^^^^^^^^
+
+
+
+warning: `m2rc1-desktop` (bin "m2rc1-desktop") generated 6 warnings (run `cargo fix --bin "m2rc1-desktop" -p m2rc1-desk
+
+top` to apply 1 suggestion)
+
+    Finished `release` profile [optimized] target(s) in 6.42s
+
+       Built [tauri_cli::build] application at: G:\CODEX\New Manga.worktrees\P03-packaged-sfx-entry-antigravity\apps\de
+
+sktop\src-tauri\target\release\m2rc1-desktop.exe
+
+        Info [tauri_bundler::bundle] Patching G:\CODEX\New Manga.worktrees\P03-packaged-sfx-entry-antigravity\apps\desk
+
+top\src-tauri\target\release\m2rc1-desktop.exe with bundle type information: nsis
+
+        Info [tauri_bundler::bundle::windows::nsis] Target: x64
+
+     Running [tauri_bundler::bundle::windows::nsis] makensis to produce G:\CODEX\New Manga.worktrees\P03-packaged-sfx-e
+
+ntry-antigravity\apps\desktop\src-tauri\target\release\bundle\nsis\m2rc1-desktop_0.1.0_x64-setup.exe
+
+     Running [tauri_bundler::utils] Command `C:\Users\49745\AppData\Local\tauri\NSIS\makensis.exe  -INPUTCHARSET UTF8 -
+
+OUTPUTCHARSET UTF8 -V3 G:\CODEX\New Manga.worktrees\P03-packaged-sfx-entry-antigravity\apps\desktop\src-tauri\target\re
+
+lease\nsis\x64\installer.nsi`
+
+MakeNSIS v3.11 - Copyright 1999-2025 Contributors
+
+See the file COPYING for license details.
+
+Credits can be found in the Users Manual.
+
+
+
+Processing config: C:\Users\49745\AppData\Local\tauri\NSIS\nsisconf.nsh
+
+Processing script file: "G:\CODEX\New Manga.worktrees\P03-packaged-sfx-entry-antigravity\apps\desktop\src-tauri\target\release\nsis\x64\installer.nsi" (UTF8)
+
+
+
+Processed 1 file, writing output (x86-unicode):
+
+
+
+Output: "G:\CODEX\New Manga.worktrees\P03-packaged-sfx-entry-antigravity\apps\desktop\src-tauri\target\release\nsis\x64\nsis-output.exe"
+
+Install: 6 pages (384 bytes), 3 sections (6216 bytes), 14231 instructions (398468 bytes), 7130 strings (1037080 bytes), 1 language table (414 bytes).
+
+Uninstall: 2 pages (192 bytes), 1 section (2072 bytes), 7440 instructions (208320 bytes), 6989 strings (1072970 bytes), 1 language table (274 bytes).
+
+Datablock optimizer saved 204150 bytes (~0.0%).
+
+
+
+Using lzma (compress whole) compression.
+
+
+
+EXE header size:               52736 / 38912 bytes
+
+Install code:                          (1443026 bytes)
+
+Install data:                          (1298551498 bytes)
+
+Uninstall code+data:                   (1350428 bytes)
+
+Compressed data:           579475493 / 1301344952 bytes
+
+CRC (0x73E39868):                  4 / 4 bytes
+
+
+
+Total size:                579528233 / 1301383868 bytes (44.5%)
+
+    Finished [tauri_bundler::bundle] 1 bundle at:
+
+        G:\CODEX\New Manga.worktrees\P03-packaged-sfx-entry-antigravity\apps\desktop\src-tauri\target\release\bundle\ns
+
+is\m2rc1-desktop_0.1.0_x64-setup.exe (552.68 MiB)
+
+
+
+=====================================
+EndTime: 2026-10-09T03:02:47+08:00
+EXIT=0
+=====================================

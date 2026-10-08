@@ -1,0 +1,406 @@
+{
+  "schema_version": "2.0",
+  "title": "Traceability Logs Canonical UTF-8 Normalization and Formal Bijective Verification",
+  "timestamp_iso": "2026-10-08T19:26:40.635463+00:00",
+  "files_count": 6,
+  "all_assertions_passed": true,
+  "all_reconstructions_verified": true,
+  "grammar_specification": {
+    "description": "Formal grammar defining the mixed-encoding body byte stream and its bijective mapping to canonical UTF-8",
+    "segments": {
+      "header": "UTF-8-SIG bytes from start to separator =====================================\\r\\n",
+      "body": "Token stream between header separator and footer separator =====================================\\r\\nEndTime:",
+      "footer": "UTF-8 bytes from footer separator to file EOF"
+    },
+    "tokens": {
+      "CHAR_TOKEN": {
+        "raw_byte_pattern": "[0x00-0x7F, 0x00] excluding CR/LF in byte 0",
+        "raw_byte_length": 2,
+        "interpretation": "Standard UTF-16LE encoding of single-byte ASCII characters",
+        "forward_canonical_mapping": "Single byte c (UTF-8 ASCII)",
+        "inverse_mapping": "bytes([c, 0])"
+      },
+      "NEWLINE_TOKEN": {
+        "raw_byte_pattern": "0x0D 0x0A 0x00 0x0D 0x0A 0x00 (hex: 0d 0a 00 0d 0a 00)",
+        "raw_byte_length": 6,
+        "interpretation": "Splitline-crlf expansion: UTF-16LE CR (0x0D 0x00) and LF (0x0A 0x00) separated by UTF-8 splitlines re-encoding into \\r\\n\\x00\\r\\n\\x00. Under raw UTF-16LE decoding, this sequence corresponds to U+0A0D U+0D00 U+000A",
+        "forward_canonical_mapping": "\\r\\n\\r\\n (hex: 0d 0a 0d 0a, CRLF CRLF, 4 bytes)",
+        "inverse_mapping": "b'\\r\\n\\x00\\r\\n\\x00' (6 bytes)"
+      }
+    },
+    "transform_properties": {
+      "deterministic": true,
+      "bijective": true,
+      "information_loss": false,
+      "lossless_reconstruction_verified": true
+    }
+  },
+  "files": [
+    {
+      "filename": "01-rerun-targeted-tests.log",
+      "original": {
+        "relative_path": "verification/P03-PACKAGED-SFX-ENTRY/revision-2/traceability-rerun/01-rerun-targeted-tests.log",
+        "size_bytes": 12648,
+        "sha256": "c7e442c4c7d1ad92d40dddd96607babf5005fdb301b98dcccba1a432881a55c1",
+        "nul_bytes_count": 6030
+      },
+      "canonical": {
+        "relative_path": "verification/P03-PACKAGED-SFX-ENTRY/revision-2/traceability-rerun/canonical-utf8/01-rerun-targeted-tests.log",
+        "size_bytes": 6618,
+        "sha256": "e10f83acd1ec270ac943c8cab5da0eb40fc4e1d1826da78a420f3f45476348ff",
+        "nul_bytes_count": 0
+      },
+      "segments": {
+        "header": {
+          "start_byte": 0,
+          "end_byte": 366,
+          "raw_encoding": "utf-8-sig",
+          "canonical_encoding": "utf-8-sig",
+          "byte_transform": "identity"
+        },
+        "body": {
+          "start_byte": 366,
+          "end_byte": 12526,
+          "raw_encoding": "utf-16le-ascii-with-splitline-crlf",
+          "canonical_encoding": "utf-8",
+          "raw_body_bytes": 12160,
+          "canonical_body_bytes": 6130,
+          "token_statistics": {
+            "char_tokens_count": 5930,
+            "newline_tokens_count": 50,
+            "total_tokens": 5980
+          },
+          "byte_transform": "bijective_token_mapping"
+        },
+        "footer": {
+          "start_byte": 12526,
+          "end_byte": 12648,
+          "raw_encoding": "utf-8",
+          "canonical_encoding": "utf-8",
+          "byte_transform": "identity"
+        }
+      },
+      "reconstruction_verification": {
+        "reconstructed_matches_original_bit_for_bit": true,
+        "reconstructed_sha256": "c7e442c4c7d1ad92d40dddd96607babf5005fdb301b98dcccba1a432881a55c1",
+        "reconstructed_size_bytes": 12648,
+        "inverse_transform": "inverse_token_mapping"
+      },
+      "assertions": {
+        "nul_free": true,
+        "utf8_decodable": true,
+        "header_record_present": true,
+        "exit_zero_present": true,
+        "footer_delimiter_present": true,
+        "byte_copy_for_05": null,
+        "reconstruction_verified": true,
+        "status": "PASS"
+      }
+    },
+    {
+      "filename": "02-rerun-snapshot-check.log",
+      "original": {
+        "relative_path": "verification/P03-PACKAGED-SFX-ENTRY/revision-2/traceability-rerun/02-rerun-snapshot-check.log",
+        "size_bytes": 6221,
+        "sha256": "7883b6b4ae324900d707d0dfbc1927002dc068b62b46a876d3554281474b5b24",
+        "nul_bytes_count": 2870
+      },
+      "canonical": {
+        "relative_path": "verification/P03-PACKAGED-SFX-ENTRY/revision-2/traceability-rerun/canonical-utf8/02-rerun-snapshot-check.log",
+        "size_bytes": 3351,
+        "sha256": "0dfe5bf62ff8fb3b3970441829629f8fee78e93d7ff248bb217e0aa19cf3db97",
+        "nul_bytes_count": 0
+      },
+      "segments": {
+        "header": {
+          "start_byte": 0,
+          "end_byte": 309,
+          "raw_encoding": "utf-8-sig",
+          "canonical_encoding": "utf-8-sig",
+          "byte_transform": "identity"
+        },
+        "body": {
+          "start_byte": 309,
+          "end_byte": 6099,
+          "raw_encoding": "utf-16le-ascii-with-splitline-crlf",
+          "canonical_encoding": "utf-8",
+          "raw_body_bytes": 5790,
+          "canonical_body_bytes": 2920,
+          "token_statistics": {
+            "char_tokens_count": 2820,
+            "newline_tokens_count": 25,
+            "total_tokens": 2845
+          },
+          "byte_transform": "bijective_token_mapping"
+        },
+        "footer": {
+          "start_byte": 6099,
+          "end_byte": 6221,
+          "raw_encoding": "utf-8",
+          "canonical_encoding": "utf-8",
+          "byte_transform": "identity"
+        }
+      },
+      "reconstruction_verification": {
+        "reconstructed_matches_original_bit_for_bit": true,
+        "reconstructed_sha256": "7883b6b4ae324900d707d0dfbc1927002dc068b62b46a876d3554281474b5b24",
+        "reconstructed_size_bytes": 6221,
+        "inverse_transform": "inverse_token_mapping"
+      },
+      "assertions": {
+        "nul_free": true,
+        "utf8_decodable": true,
+        "header_record_present": true,
+        "exit_zero_present": true,
+        "footer_delimiter_present": true,
+        "byte_copy_for_05": null,
+        "reconstruction_verified": true,
+        "status": "PASS"
+      }
+    },
+    {
+      "filename": "03-rerun-tauri-nsis-build.log",
+      "original": {
+        "relative_path": "verification/P03-PACKAGED-SFX-ENTRY/revision-2/traceability-rerun/03-rerun-tauri-nsis-build.log",
+        "size_bytes": 14601,
+        "sha256": "20b5936e8db7969b5c754857aac2bd21519ee37610bffaf580317f27a9a7cfdc",
+        "nul_bytes_count": 6978
+      },
+      "canonical": {
+        "relative_path": "verification/P03-PACKAGED-SFX-ENTRY/revision-2/traceability-rerun/canonical-utf8/03-rerun-tauri-nsis-build.log",
+        "size_bytes": 7623,
+        "sha256": "a8b5bbe91a36804a79a48eefdca9d10f3cbc365b0c42379c91096f418d99e4a4",
+        "nul_bytes_count": 0
+      },
+      "segments": {
+        "header": {
+          "start_byte": 0,
+          "end_byte": 249,
+          "raw_encoding": "utf-8-sig",
+          "canonical_encoding": "utf-8-sig",
+          "byte_transform": "identity"
+        },
+        "body": {
+          "start_byte": 249,
+          "end_byte": 14479,
+          "raw_encoding": "utf-16le-ascii-with-splitline-crlf",
+          "canonical_encoding": "utf-8",
+          "raw_body_bytes": 14230,
+          "canonical_body_bytes": 7252,
+          "token_statistics": {
+            "char_tokens_count": 6704,
+            "newline_tokens_count": 137,
+            "total_tokens": 6841
+          },
+          "byte_transform": "bijective_token_mapping"
+        },
+        "footer": {
+          "start_byte": 14479,
+          "end_byte": 14601,
+          "raw_encoding": "utf-8",
+          "canonical_encoding": "utf-8",
+          "byte_transform": "identity"
+        }
+      },
+      "reconstruction_verification": {
+        "reconstructed_matches_original_bit_for_bit": true,
+        "reconstructed_sha256": "20b5936e8db7969b5c754857aac2bd21519ee37610bffaf580317f27a9a7cfdc",
+        "reconstructed_size_bytes": 14601,
+        "inverse_transform": "inverse_token_mapping"
+      },
+      "assertions": {
+        "nul_free": true,
+        "utf8_decodable": true,
+        "header_record_present": true,
+        "exit_zero_present": true,
+        "footer_delimiter_present": true,
+        "byte_copy_for_05": null,
+        "reconstruction_verified": true,
+        "status": "PASS"
+      }
+    },
+    {
+      "filename": "04-rerun-diff-name-only.log",
+      "original": {
+        "relative_path": "verification/P03-PACKAGED-SFX-ENTRY/revision-2/traceability-rerun/04-rerun-diff-name-only.log",
+        "size_bytes": 7942,
+        "sha256": "f9a0905a5218588306f84c7af01ab10158aeb7ac04cbbf8e977359f43e00c65a",
+        "nul_bytes_count": 3685
+      },
+      "canonical": {
+        "relative_path": "verification/P03-PACKAGED-SFX-ENTRY/revision-2/traceability-rerun/canonical-utf8/04-rerun-diff-name-only.log",
+        "size_bytes": 4257,
+        "sha256": "86c342139ee72c99022e9cb9a88eeaaaa785524c8cecb1da7b02d5daeced11a7",
+        "nul_bytes_count": 0
+      },
+      "segments": {
+        "header": {
+          "start_byte": 0,
+          "end_byte": 350,
+          "raw_encoding": "utf-8-sig",
+          "canonical_encoding": "utf-8-sig",
+          "byte_transform": "identity"
+        },
+        "body": {
+          "start_byte": 350,
+          "end_byte": 7820,
+          "raw_encoding": "utf-16le-ascii-with-splitline-crlf",
+          "canonical_encoding": "utf-8",
+          "raw_body_bytes": 7470,
+          "canonical_body_bytes": 3785,
+          "token_statistics": {
+            "char_tokens_count": 3585,
+            "newline_tokens_count": 50,
+            "total_tokens": 3635
+          },
+          "byte_transform": "bijective_token_mapping"
+        },
+        "footer": {
+          "start_byte": 7820,
+          "end_byte": 7942,
+          "raw_encoding": "utf-8",
+          "canonical_encoding": "utf-8",
+          "byte_transform": "identity"
+        }
+      },
+      "reconstruction_verification": {
+        "reconstructed_matches_original_bit_for_bit": true,
+        "reconstructed_sha256": "f9a0905a5218588306f84c7af01ab10158aeb7ac04cbbf8e977359f43e00c65a",
+        "reconstructed_size_bytes": 7942,
+        "inverse_transform": "inverse_token_mapping"
+      },
+      "assertions": {
+        "nul_free": true,
+        "utf8_decodable": true,
+        "header_record_present": true,
+        "exit_zero_present": true,
+        "footer_delimiter_present": true,
+        "byte_copy_for_05": null,
+        "reconstruction_verified": true,
+        "status": "PASS"
+      }
+    },
+    {
+      "filename": "05-rerun-diff-check.log",
+      "original": {
+        "relative_path": "verification/P03-PACKAGED-SFX-ENTRY/revision-2/traceability-rerun/05-rerun-diff-check.log",
+        "size_bytes": 468,
+        "sha256": "f45684005e28dcdae897bf65a6f44825ea25e13a480c9116f9c7e817ef0678a8",
+        "nul_bytes_count": 0
+      },
+      "canonical": {
+        "relative_path": "verification/P03-PACKAGED-SFX-ENTRY/revision-2/traceability-rerun/canonical-utf8/05-rerun-diff-check.log",
+        "size_bytes": 468,
+        "sha256": "f45684005e28dcdae897bf65a6f44825ea25e13a480c9116f9c7e817ef0678a8",
+        "nul_bytes_count": 0
+      },
+      "segments": {
+        "header": {
+          "start_byte": 0,
+          "end_byte": 346,
+          "raw_encoding": "utf-8-sig",
+          "canonical_encoding": "utf-8-sig",
+          "byte_transform": "identity"
+        },
+        "body": {
+          "start_byte": 346,
+          "end_byte": 346,
+          "raw_encoding": "empty",
+          "canonical_encoding": "empty",
+          "raw_body_bytes": 0,
+          "canonical_body_bytes": 0,
+          "token_statistics": {
+            "char_tokens_count": 0,
+            "newline_tokens_count": 0,
+            "total_tokens": 0
+          },
+          "byte_transform": "identity"
+        },
+        "footer": {
+          "start_byte": 346,
+          "end_byte": 468,
+          "raw_encoding": "utf-8",
+          "canonical_encoding": "utf-8",
+          "byte_transform": "identity"
+        }
+      },
+      "reconstruction_verification": {
+        "reconstructed_matches_original_bit_for_bit": true,
+        "reconstructed_sha256": "f45684005e28dcdae897bf65a6f44825ea25e13a480c9116f9c7e817ef0678a8",
+        "reconstructed_size_bytes": 468,
+        "inverse_transform": "identity"
+      },
+      "assertions": {
+        "nul_free": true,
+        "utf8_decodable": true,
+        "header_record_present": true,
+        "exit_zero_present": true,
+        "footer_delimiter_present": true,
+        "byte_copy_for_05": true,
+        "reconstruction_verified": true,
+        "status": "PASS"
+      }
+    },
+    {
+      "filename": "06-rerun-packaged-gate.log",
+      "original": {
+        "relative_path": "verification/P03-PACKAGED-SFX-ENTRY/revision-2/traceability-rerun/06-rerun-packaged-gate.log",
+        "size_bytes": 10766,
+        "sha256": "63f0410c4d0d5b88824b59369634981ea3204ddf525a150563e2d5b010098d1d",
+        "nul_bytes_count": 4996
+      },
+      "canonical": {
+        "relative_path": "verification/P03-PACKAGED-SFX-ENTRY/revision-2/traceability-rerun/canonical-utf8/06-rerun-packaged-gate.log",
+        "size_bytes": 5770,
+        "sha256": "70497d2f1ac269fc6750c07439ac7c0ce165c98156e7db30bc034aa43438028e",
+        "nul_bytes_count": 0
+      },
+      "segments": {
+        "header": {
+          "start_byte": 0,
+          "end_byte": 548,
+          "raw_encoding": "utf-8-sig",
+          "canonical_encoding": "utf-8-sig",
+          "byte_transform": "identity"
+        },
+        "body": {
+          "start_byte": 548,
+          "end_byte": 10644,
+          "raw_encoding": "utf-16le-ascii-with-splitline-crlf",
+          "canonical_encoding": "utf-8",
+          "raw_body_bytes": 10096,
+          "canonical_body_bytes": 5100,
+          "token_statistics": {
+            "char_tokens_count": 4892,
+            "newline_tokens_count": 52,
+            "total_tokens": 4944
+          },
+          "byte_transform": "bijective_token_mapping"
+        },
+        "footer": {
+          "start_byte": 10644,
+          "end_byte": 10766,
+          "raw_encoding": "utf-8",
+          "canonical_encoding": "utf-8",
+          "byte_transform": "identity"
+        }
+      },
+      "reconstruction_verification": {
+        "reconstructed_matches_original_bit_for_bit": true,
+        "reconstructed_sha256": "63f0410c4d0d5b88824b59369634981ea3204ddf525a150563e2d5b010098d1d",
+        "reconstructed_size_bytes": 10766,
+        "inverse_transform": "inverse_token_mapping"
+      },
+      "assertions": {
+        "nul_free": true,
+        "utf8_decodable": true,
+        "header_record_present": true,
+        "exit_zero_present": true,
+        "footer_delimiter_present": true,
+        "byte_copy_for_05": null,
+        "reconstruction_verified": true,
+        "status": "PASS"
+      }
+    }
+  ]
+}
