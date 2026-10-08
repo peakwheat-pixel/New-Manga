@@ -60,7 +60,7 @@ status: in_review
 |---|---|---|---|---|---|---|---|
 | `01-rerun-targeted-tests.log` | 12,648 B | `c7e442c4c7d1ad92...` | 6,618 B | `e10f83acd1ec270a...` | 5,930 | 50 / 0 | **MATCH (12648/12648)** |
 | `02-rerun-snapshot-check.log` | 6,221 B | `7883b6b4ae324900...` | 3,351 B | `0dfe5bf62ff8fb3b...` | 2,820 | 25 / 0 | **MATCH (6221/6221)** |
-| `03-rerun-tauri-nsis-build.log` | 14,601 B | `20b5936e8db7969b...` | 7,627 B | `eed0153fa9dc6a3b...` | 6,704 | 137 / 2 | **MATCH (14601/14601)** |
+| `03-rerun-tauri-nsis-build.log` | 14,601 B | `20b5936e8db7969b...` | 7,627 B | `eed0153fa9dc6a3b...` | 6,702 | 137 / 2 | **MATCH (14601/14601)** |
 | `04-rerun-diff-name-only.log` | 7,942 B | `f9a0905a52185883...` | 4,257 B | `86c342139ee72c99...` | 3,585 | 50 / 0 | **MATCH (7942/7942)** |
 | `05-rerun-diff-check.log` | 468 B | `f45684005e28dcda...` | 468 B | `f45684005e28dcda...` | 0 | 0 / 0 (逐字节复制) | **MATCH (468/468)** |
 | `06-rerun-packaged-gate.log` | 10,766 B | `63f0410c4d0d5b88...` | 5,770 B | `70497d2f1ac269fc...` | 4,892 | 52 / 0 | **MATCH (10766/10766)** |

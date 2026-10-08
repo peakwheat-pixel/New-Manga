@@ -141,6 +141,11 @@ def test_evaluate_sfx_probe_success_valid(ac5_mod: ModuleType, tmp_path: Path):
     assert obs["sfx_ep"] == "dml"
     assert obs["sfx_ep_fallback"] is None
 
+    # R-003: valid probe output still fails closed without an install directory.
+    missing_install_dir_passed, missing_install_dir_obs = ac5_mod.evaluate_sfx_probe_success(0, stdout, "")
+    assert missing_install_dir_passed is False
+    assert missing_install_dir_obs["weights_in_install_dir"] is False
+
 
 def test_evaluate_sfx_probe_success_with_cpu_fallback(ac5_mod: ModuleType, tmp_path: Path):
     """AC2: evaluate_sfx_probe_success records runtime fallback without hiding or failing."""

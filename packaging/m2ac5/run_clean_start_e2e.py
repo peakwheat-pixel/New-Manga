@@ -796,8 +796,6 @@ def evaluate_sfx_probe_success(
             weights_in_install_dir = weights_path_resolved.is_relative_to(install_dir_resolved)
         except Exception:
             weights_in_install_dir = False
-    elif weights_path_str and install_dir is None:
-        weights_in_install_dir = True
 
     n_candidates = result.get("n_candidates")
     candidates_valid = type(n_candidates) is int and n_candidates > 0
@@ -819,7 +817,7 @@ def evaluate_sfx_probe_success(
         and candidates_valid
         and weights_match
         and weights_source_valid
-        and (weights_in_install_dir if install_dir is not None else True)
+        and weights_in_install_dir
     )
 
     observed = {

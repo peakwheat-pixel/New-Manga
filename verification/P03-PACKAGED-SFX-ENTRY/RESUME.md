@@ -7,7 +7,7 @@ Owner evidence commit=`e3319990216699357c8b5a37c494010505535bb6`；
 NSIS build source HEAD=`29024a21939917c6d8eb15f1a2bb9ff46cd5bf23`；
 Fresh NSIS Installer SHA-256=`5a14c0a98008442bf4e3b70ec1fcc17373e33313cbadf69414fd9584a25a2fa0`（579,528,233 bytes）；
 复验 Packaged Gate=`PASS`（28/28 全量通过，EXIT=0）；
-Handoff r3=[`doc/handoffs/P03-PACKAGED-SFX-ENTRY-140a6686-r3.md`](../handoffs/P03-PACKAGED-SFX-ENTRY-140a6686-r3.md)。
+Handoff r3=[`doc/handoffs/P03-PACKAGED-SFX-ENTRY-140a6686-r3.md`](../../doc/handoffs/P03-PACKAGED-SFX-ENTRY-140a6686-r3.md)。
 
 ## 固定状态
 
