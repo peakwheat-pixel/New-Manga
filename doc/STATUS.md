@@ -1,10 +1,10 @@
 # Current Development Status
 
-**当前位置：P08/P03=done；P系列共21项：done 2、in_review 1、proposed 18。唯一当前Task=P01 `in_review`，base=`826bea12a132c5af2ac0cd1244d00e9170093c71`，Owner=Codex、Reviewer=DeepSeek Harness，branch=`agent/codex/P01-metadata-audit`，worktree=`G:/CODEX/New Manga.worktrees/P01-metadata-audit-codex`。TaskStatus=`in_review` / ExecutionState=`ACTIVE`；Reality Check=`RESUME_SAFE`。范围与恢复点见[P01 Task](tasks/P01.md)和[P01 RESUME](../verification/P01/RESUME.md)。P03 integration=`552464238a69ad2cea63cff18abe98f412dbae87`；其测试仍绑定source `d717c049`。**
+**当前位置：P08/P03=done；P系列共21项：done 2、blocked 1、proposed 18。唯一当前Task=P01 `blocked`，base=`826bea12a132c5af2ac0cd1244d00e9170093c71`，Owner=Codex、Reviewer=DeepSeek Harness，branch=`agent/codex/P01-metadata-audit`，worktree=`G:/CODEX/New Manga.worktrees/P01-metadata-audit-codex`。TaskStatus=`blocked` / ExecutionState=`ACTIVE`；前一状态=`in_review`；DSH R1 fixed head=`6f24006c21281df485375674d20a1d3b7b48ca63` decision=`blocked`。恢复条件见[P01 Task](tasks/P01.md)和[P01 RESUME](../verification/P01/RESUME.md)。P03 integration=`552464238a69ad2cea63cff18abe98f412dbae87`；其测试仍绑定source `d717c049`。**
 
-## 2026-10-09 P01 Handoff / IN_REVIEW
+## 2026-10-09 P01 DSH R1 / BLOCKED
 
-当前唯一 Active Task=`[P01](tasks/P01.md)`，Owner=Codex，非作者Reviewer=DeepSeek Harness，Integrator=Codex；TaskStatus=`in_review` / ExecutionState=`ACTIVE`。base=`826bea12a132c5af2ac0cd1244d00e9170093c71`；branch=`agent/codex/P01-metadata-audit`；worktree=`G:/CODEX/New Manga.worktrees/P01-metadata-audit-codex`；depends_on=`[]`。worktree release起点=`826bea12a132c5af2ac0cd1244d00e9170093c71`；P01 Reality Check=`RESUME_SAFE`，root 24项既有dirty/untracked未触碰。AC1–AC6与允许的3处来源字段修正已完成；delivery=`9b12493616326af9cdd50a055282426c72516a5a`；DSH可用性探测`0.1.7-rc.2` EXIT=0，session=`session-27b2c99c-65b3-4ae0-8559-8b6af35f7de5`已挂载。P01 Handoff已创建并在本候选中冻结；正式DeepSeek Harness Review和Codex Integration Gate尚未执行。产品pytest/cargo/vitest/GUI/build=`NOT_RUN`（本Task不改产品/测试代码）。
+当前唯一 Active Task=`[P01](tasks/P01.md)`，Owner=Codex，非作者Reviewer=DeepSeek Harness，Integrator=Codex；TaskStatus=`blocked` / ExecutionState=`ACTIVE`，前一状态=`in_review`。base=`826bea12a132c5af2ac0cd1244d00e9170093c71`；branch=`agent/codex/P01-metadata-audit`；worktree=`G:/CODEX/New Manga.worktrees/P01-metadata-audit-codex`；depends_on=`[]`。DSH R1 reviewed_head=`6f24006c21281df485375674d20a1d3b7b48ca63`，decision=`blocked`，报告SHA-256=`9d30def7e8d683b79b4265c808199523ea9aa375489fce556f477d5c506ab9ff`。AC1–AC6和delivery=`9b12493616326af9cdd50a055282426c72516a5a`保留；R1修订与新head复审是恢复条件。Codex fixed-head日志覆盖路径、空白、路线图和实际root 24项状态，不能冒充DSH执行。产品pytest/cargo/vitest/GUI/build=`NOT_RUN`。
 
 ## 历史完成记录：2026-10-09 P03 Review 与 Codex 集成完成 / DONE
 

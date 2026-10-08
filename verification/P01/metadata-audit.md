@@ -14,10 +14,10 @@
 | AC1 固定检查点 | PASS | 恢复点、branch/HEAD/dirty/common-dir 与 base 祖先核验均一致；root 24项原有 dirty/untracked 保持。 |
 | AC2 GC2 元数据 | PASS | `cea610ed…` 是当前 HEAD 祖先上的真实 merge commit；Task、Plan、Handoff、11轮 Review 链及集成后记录一致。仅修正 Task `integration_commit`。 |
 | AC3 DETECT3 元数据 | PASS | 错误 SHA 对象查询 EXIT=128；实际 merge `8fe5199c…` 是 HEAD 祖先，且集成修正 `7314ad20` 与证据提交 `69a6e4e1` 均在该 merge 的第二父链。仅修正 Task `integration_commit`。 |
-| AC4 ANNOTATE-R2 Review carrier | PASS / 独立原件 `NOT_VERIFIED` | 已追踪 Task、Handoff、Owner 报告、数据摘要与 `doc/reviews/`；没有可核验的 R2 独立报告/fixed reviewed head。没有据此宣称 Review 从未发生。 |
+| AC4 ANNOTATE-R2 Review carrier | PASS / 独立原件 `NOT_VERIFIED` | 已追踪 Task、Handoff、Owner 报告、数据摘要与 `doc/reviews/`；没有可核验的 R2 独立报告/fixed reviewed head。来源Task的`in_review`与Plan/历史集成完成冲突登记为`STATE_CONFLICT`，未修改来源Task。没有据此宣称 Review 从未发生。 |
 | AC5 SYNTH Review / 元数据冲突 | PASS / 独立原件 `NOT_VERIFIED` | Codex closeout、真实 integration commit、Plan 与 Handoff 足以证明重复字段中的 `null` 陈旧；已合并为唯一完整 SHA。Task 仍为 `in_review`，独立 Review 原件/fixed head/decision/hash 仍 `NOT_VERIFIED`。 |
 | AC6 产品裁决保护 | PASS | 记录 R2 challenge 空集/T2 release 交用户裁决；保留 SYNTH 人工登录前置与来源 Task `in_review` 文本，不代用户决定、不冒称已正式 Review。 |
-| AC7 最终 Review 与 Integration Gate | PENDING | 尚待固定最终 head、真实派发 DeepSeek Harness 非作者 Review、Codex 范围/指纹/空白与集成后 Gate。 |
+| AC7 最终 Review 与 Integration Gate | BLOCKED at R1 | R1固定head=`6f24006c21281df485375674d20a1d3b7b48ca63`，decision=`blocked`；见本报告末尾R1记录。修订后需新fixed-head DSH Review和Codex Integration Gate。 |
 
 ## AC2 — M2-DERIVED-GC-2
 
@@ -44,7 +44,7 @@
 - Handoff `doc/handoffs/M2-SFX-ANNOTATE-R2-zcode-20261004.md` SHA-256=`0baa9fc65b4247ef7ae97b79e9e5140d50e0c5aa07fa0fa5355dfa5ece3c7182`，blob=`bbefef967c660129fb99a0b4915b5a1c219d3d4d`：frontmatter 记录 base=`99eab8b6`、delivery=`cb055135`、`status=in_review`；正文要求 DSH 报告落到该 Task 的 verification 目录，但现存交接只有摘要，没有原始报告、精确 reviewed head、DSH transcript/退出码或报告 SHA。
 - `verification/M2-SFX-ANNOTATE-R2/stage-r2-report.md` 是 Owner 自核而非 Reviewer 报告：开头明确独立 Review 待审。SHA-256=`e624c7cfed247f149fc7aad57d244fc2010966c9bdd0c4661dfeee26d1005508`，blob=`09cefe93311092c793ea39d183f7cccaae5c4c94`。`stage-r2-final-summary.json` 是数据摘要，不是 Review：SHA-256=`38ea3b95fc2f0089d1dbcc028f285120bd264754d08acadfe0320bf47b9000b2`，blob=`6a1d2a5809c5c636dc74877e9a8a9fe20baed33f`。
 - `git ls-tree -r --name-only HEAD -- verification/M2-SFX-ANNOTATE-R2` 仅有上述两项；`doc/reviews/` 未找到 R2 专属报告。R3 的 DSH 报告和 R1 的 DSH verdict summary 均不是 R2 Review carrier。
-- Task `status: done`、`integration_commit: 84f952b3` 及其历史关闭提交保留不动。Task 与 Owner 报告中的 challenge 空集、T2 是否释放均明确留待用户/编排裁决；P01 不追加解释为批准或释放建议。
+- Task实际`status: in_review`、`integration_commit: 84f952b3`及其历史关闭提交均保持只读。P01 base中的`task-inventory.csv`已把Plan/历史集成完成但来源Task页头仍`in_review`登记为`STATE_CONFLICT`；P01在本报告中同步登记该冲突，不修改来源Task。Task与Owner报告中的challenge空集、T2是否释放均明确留待用户/编排裁决；P01不追加解释为批准或释放建议。
 
 ## AC5 / AC6 — M2-SFX-SYNTH-BG-AUTO
 
@@ -58,7 +58,7 @@
 ### 人工冒烟和产品裁决边界
 
 - Versioned evidence commit `5907be5967ea01ce42ee2834e84837771abadc7f` 含 `verification/M2-SFX-SYNTH-BG-AUTO/smoke-run.log`（该 Git 对象内容 SHA-256=`90654cd070ead3437331b6bb110c6a2bc7f32d8f580c068b43c3dfd70a2c10ab`）和 `bg-index-smoke.json`（SHA-256=`d20afc4ec339c0a7ca28c119c29ada013bf6a8eb190e9c3080a68b00b9b033a4`）；后继 `3a0ce5f7` 将证据集成。Handoff §真实冒烟留证记录人工登录后由集成方生成两张图并 `EXIT=0`。这证明有版本化冒烟证据，但不替代独立 Review。
-- 源 Task/Handoff 仍保留 `status=in_review` / manual-login 文本；Plan 与后续记录另称已 done/AC5 冒烟闭合。此处只登记 `STATE_CONFLICT`，不改 source status、登录前置、用户决定或 Review 结论，也不把人工冒烟提升为本次重跑。
+- 源Task `status=in_review`，而SYNTH Handoff frontmatter=`r4-docfix-delivered`并保留manual-login文本；Plan与后续记录另称已done/AC5冒烟闭合。此处只登记Task/Plan的`STATE_CONFLICT`，不把Handoff状态误写为`in_review`，不改source status、登录前置、用户决定或Review结论，也不把人工冒烟提升为本次重跑。
 - ANNOTATE-R2 challenge 空集和 T2 release 都仍是用户裁决；SYNTH 人工登录要求保持原文。本 Task 没有作产品取舍。
 
 ## 运行记录与剩余 Gate
@@ -71,4 +71,11 @@
 | 路线图状态/依赖验证器 | `python -B -X utf8 verification/PROJECT-ROADMAP-20261008/verify_plan.py` | EXECUTED EXIT=0：196节点分类/依赖、105祖先记录、21规划节点、DAG、导航链接、P01 frozen-base零产品差量均PASS。校验器的状态分布/标签、P08节点计数及代码差量基线已按P01 Task scope note收窄更新。 |
 | AC7 路径/空白预检 | P01 allowed-path gate；`git diff --check 826bea12a132c5af2ac0cd1244d00e9170093c71`；同一命令运行路线图校验器 | `verification/P01/ac7-preflight.log`，SHA-256=`75aa3a3db5d6893ba60387271a255ee45ac8d818dfedc5c44eb4d1fcf71d63c9`；Git blob=`6d6de83ff6b7ce38d78ffa8cabc62aa72162682f` | 16项均在Task允许路径，staged=0，diff-check EXIT=0，路线图验证器 EXIT=0。此为交付前预检；固定 delivery/final head 的复核、DSH Review 与 Integration Gate仍待执行。 |
 | 产品代码/测试 | 本 Task 冻结为只读取证和少量 Task frontmatter 修正 | `NOT_RUN`；本 Task未修改产品/测试代码。 |
-| 固定 head / allowed paths / diff-check / DSH Review / Integration Gate | P01 AC7 | `PENDING`；待交付 Handoff 后，以实际固定最终 head 派发 DeepSeek Harness 非作者 Review，再由 Codex核验并集成。 |
+| 固定 head / allowed paths / diff-check / DSH Review / Integration Gate | P01 AC7 | `BLOCKED`；R1已对fixed head=`6f24006c21281df485375674d20a1d3b7b48ca63`正式返回`blocked`，不得进入Integration Gate；恢复条件见R1记录。 |
+
+## 正式 DSH Review R1（2026-10-08 UTC）
+
+- reviewed_head=`6f24006c21281df485375674d20a1d3b7b48ca63`；decision=`blocked`；session=`session-28701f2e-5276-4696-8036-11fb9a4b0445`；CLI EXIT=0，session已挂载。
+- 原始Review报告=`doc/reviews/P01-6f24006c-dsh-r1.md`，SHA-256=`9d30def7e8d683b79b4265c808199523ea9aa375489fce556f477d5c506ab9ff`；prompt、exit与session metadata见`verification/P01/dsh-review-r1.*`。
+- 主要修订要求：P1-1更正R2状态并记录`STATE_CONFLICT`；P2-1更正验证证据commit绑定；P2-2将`verify_plan.py`治理空白检查改为P01冻结base至HEAD范围；P3-1区分SYNTH Task与Handoff状态；旧日志缺环境/UTC信息，不得回填，须以新fixed-head日志补证。
+- DSH因Win32 5未运行Git/Python/路线校验和工作区检查，正式decision保持`blocked`；Codex已对R1 reviewed head完成独立检查，证据见`ac1-root-status.log`和`ac7-fixed-head-check.log`。不得将Codex结果归为DSH执行。

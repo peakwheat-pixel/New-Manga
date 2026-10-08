@@ -1,0 +1,35 @@
+P01 AC1 root status inventory
+CAPTURED_UTC=2026-10-08T22:54:07Z
+ROOT=G:\CODEX\New Manga
+BRANCH=main
+HEAD=714138de3da06013e3ea35395e0c11b3d15fc371
+DIRTY_PATH_COUNT=24
+Initial P01 session observation: main@714138de3da06013e3ea35395e0c11b3d15fc371 with 24 dirty/untracked entries.
+CURRENT_EQUALS_INITIAL_OBSERVED_PATHS=True
+=== current git status --short ===
+ M .qoder-credits/report.json
+?? ".qoder-credits/\351\200\232\350\267\257\346\216\242\346\265\213__8602db50.canvas.tsx"
+?? doc/reviews/P03-PACKAGED-SFX-ENTRY-6d84b480-dsh.md
+?? verification/M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD/antigravity-dispatch.json
+?? verification/M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD/antigravity-dispatch.stderr.log
+?? verification/P03-PACKAGED-SFX-ENTRY/dsh-preflight.jsonl
+?? verification/P03-PACKAGED-SFX-ENTRY/dsh-preflight.log
+?? verification/P03-PACKAGED-SFX-ENTRY/dsh-preflight.stderr.log
+?? verification/P03-PACKAGED-SFX-ENTRY/dsh-review-formal-r2-4c04459.exit
+?? verification/P03-PACKAGED-SFX-ENTRY/dsh-review-formal-r2-4c04459.prompt.md
+?? verification/P03-PACKAGED-SFX-ENTRY/dsh-review-formal-r2-4c04459.stderr.log
+?? verification/P03-PACKAGED-SFX-ENTRY/dsh-review-formal-r2-4c04459.stdout.jsonl
+?? verification/P03-PACKAGED-SFX-ENTRY/dsh-review-prompt.md
+?? verification/P03-PACKAGED-SFX-ENTRY/dsh-review.exit
+?? verification/P03-PACKAGED-SFX-ENTRY/dsh-review.stderr.log
+?? verification/P03-PACKAGED-SFX-ENTRY/dsh-review.stdout.jsonl
+?? verification/P08/dsh-r4.stderr.log
+?? verification/P08/dsh-r4.stdout.md
+?? verification/P08/dsh-r5.stderr.log
+?? verification/P08/dsh-r5.stdout.md
+?? verification/P08/dsh-r6.stderr.log
+?? verification/P08/dsh-r6.stdout.md
+?? verification/P08/dsh-r7.stderr.log
+?? verification/P08/dsh-r7.stdout.jsonl
+=== comparison to initial observed status ===
+PASS: current status path set matches initial session observation

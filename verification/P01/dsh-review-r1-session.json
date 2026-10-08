@@ -1,0 +1,17 @@
+{
+  "task": "P01",
+  "baseCommit": "826bea12a132c5af2ac0cd1244d00e9170093c71",
+  "reviewedHead": "6f24006c21281df485375674d20a1d3b7b48ca63",
+  "decision": "blocked",
+  "exit": 0,
+  "sessionId": "session-28701f2e-5276-4696-8036-11fb9a4b0445",
+  "mountExit": 0,
+  "mountWorkspace": "P01-metadata-audit-codex",
+  "promptPath": "verification/P01/dsh-review-r1.prompt.md",
+  "stdoutPath": "doc/reviews/P01-6f24006c-dsh-r1.md",
+  "stdoutBytes": 17419,
+  "stdoutSha256": "9d30def7e8d683b79b4265c808199523ea9aa375489fce556f477d5c506ab9ff",
+  "stderrBytes": 95512,
+  "stderrSha256": "1bd95b00a08d6b309cb05e294d771ce48aa9dceb07e9e402ece28a5a6974ca17",
+  "stderrDisposition": "Captured in local temporary output; not copied into repository because it contains verbose reviewer reasoning rather than diagnostic errors. Exit was 0; decision and findings are preserved verbatim in stdout."
+}

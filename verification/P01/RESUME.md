@@ -1,6 +1,6 @@
 # P01 恢复点
 
-时间：2026-10-09（Asia/Shanghai）；Task=`P01`；TaskStatus=`in_review`；ExecutionState=`ACTIVE`。
+时间：2026-10-09（Asia/Shanghai）；Task=`P01`；TaskStatus=`blocked`；ExecutionState=`ACTIVE`。
 
 ## 当前权威状态
 
@@ -50,3 +50,12 @@
 ## 本次 release prompt
 
 见 [`NEXT-AUTOPROGRESS-PROMPT.md`](NEXT-AUTOPROGRESS-PROMPT.md)。
+
+## 2026-10-09 DSH R1 阻塞与恢复点
+
+- TaskStatus=`blocked`；前一状态=`in_review`；ExecutionState=`ACTIVE`。正式DSH Reviewer=DeepSeek Harness，Integrator=Codex。
+- 本轮恢复时Reality Check=`RESUME_SAFE`：root branch=`main`、HEAD=`714138de3da06013e3ea35395e0c11b3d15fc371`、24个dirty/untracked与启动记录路径集合相同；逐项名称及比对证据见[`ac1-root-status.log`](ac1-root-status.log)。P01 worktree=本地`G:/CODEX/New Manga.worktrees/P01-metadata-audit-codex`、branch=`agent/codex/P01-metadata-audit`、common-dir=`G:/CODEX/New Manga/.git`。
+- R1 reviewed_head=`6f24006c21281df485375674d20a1d3b7b48ca63`，decision=`blocked`，session=`session-28701f2e-5276-4696-8036-11fb9a4b0445`；报告[`P01-6f24006c-dsh-r1.md`](../../doc/reviews/P01-6f24006c-dsh-r1.md)，SHA-256=`9d30def7e8d683b79b4265c808199523ea9aa375489fce556f477d5c506ab9ff`。完整fixed-head Codex验证=`ac7-fixed-head-check.log`（R1候选C3，range base..C3，路径24、越界0、diff-check/route/祖先检查EXIT=0）；不把这些结果归给DSH。
+- 阻塞事项：更正R2 source状态事实与`STATE_CONFLICT`；修正Task/Handoff日志和测试结果的fixed-commit绑定；把治理空白检查改为冻结P01 base..HEAD；区分SYNTH Task=`in_review`与Handoff=`r4-docfix-delivered`；新的候选日志需注明UTC、shell、解释器与被测fixed HEAD。R1因Win32 5将Git/Python检查列为`NOT_RUN`，不批准Codex Integration Gate。
+- 当前工作区包含R1报告、prompt、exit/session carrier、root清单和C3固定验证日志6项未跟踪文件，详见`git status --short`；上述均在P01允许路径。不得改root原有24项dirty。
+- **下一精确步骤**：完成本恢复点记录并提交R1阻塞checkpoint；随后修复上述P01允许路径，运行`git diff --name-only <base>..<candidate>`、`git diff --check <base>..<candidate>`及`python -B -X utf8 verification/PROJECT-ROADMAP-20261008/verify_plan.py`，将时间/环境/EXIT和新fixed HEAD记入`verification/P01/`，把P01状态恢复为`in_review`，对该新HEAD派发DSH R2并保存完整原始carrier。R1 finding与命令结论不得删改。
