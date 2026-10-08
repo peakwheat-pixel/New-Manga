@@ -1,6 +1,6 @@
 # 全项目任务盘点与整体规划
 
-最新工作点：用户已授权准备P08，[范围草案](../P08/SCOPE_DRAFT.md)与[逐AC索引](../P08/AC_COVERAGE.md)已落盘；P08正式设计Task为blocked，未done。D1–D7已确认；按[最新恢复点](../P08/RESUME.md)进入非作者正式Review，下方原“准备P08”指令作为此前快照保留。
+最新工作点：P08 D1–D7已确认，正式Task处于`in_review`；固定交付`490f9bd9`已分配DeepSeek Harness做非作者Review，审查worktree及恢复步骤见[最新检查点](../P08/RESUME.md)。后继产品实现未释放；本报告其余审计结论保留为`e4242ecd`时点快照。
 
 2026-10-08后续用户裁决：Qoder退出本项目；本报告的未来分配/可转发指令已改为ZCode主责UI/UX，Codex契约与集成、DSH非作者审查，fallback=ZCode→Antigravity。原Core/Desktop/Plan审计、台账、历史署名和Review保留审计时事实；它们的旧推荐不覆盖当前Plan/AGENTS人员资格。本更新不启动产品Task。
 
@@ -100,14 +100,14 @@ Packaged26/26的已入库证据绑定source=`3d532c1f99e49da703d2076bd67d46b7108
 
 ## 推荐下一任务与可直接转发指令
 
-当前可转发的下一步：[P08 DSH正式Review指令](../P08/DSH-REVIEW-PROMPT.md)。D1–D7已全部确认，无需再次询问；DSH未派发/认领。下方长指令仅为此前规划快照，不可用于当前派发。
+当前执行点：[P08 DSH正式Review指令](../P08/DSH-REVIEW-PROMPT.md)。D1–D7已全部确认，无需再次询问；固定head与Reviewer已登记。下方长指令是此前规划快照，不得替代当前Task与恢复点。
 
-**Task**：[P08](../../doc/tasks/P08.md)“完整产品范围与验收冻结准备”（blocked / CHECKPOINTED；已落草案，等用户D1–D7裁决及正式DSH Review）。**Agent**：Codex负责范围/契约；后续ZCode另开设计Task；建议非作者Reviewer=DSH。本次用户请求只规划，准备可以只读进行，产品取舍/Reader解冻必须等待用户裁决，不能启动后继实现。
+**Task**：[P08](../../doc/tasks/P08.md)“完整产品范围与验收冻结准备”（in_review / CHECKPOINTED；D1–D7已确认，固定范围head=`490f9bd9`，DeepSeek Harness正式Review）。**Agent**：Codex负责范围/契约，DeepSeek Harness非作者Review；后续ZCode另开设计Task。P08完成前及单独释放前均不得启动后继产品实现。
 
 **Recovery point**：唯一仓库/branch=`G:/CODEX/New Manga`/`main`；审计base=head=`e4242ecd419eb0eea098d2f63b40f709aa5caeea`。后续治理提交与实际HEAD须live核验；正式Task branch/worktree待Codex创建，不臆造。**Scope**：只读src/apps/tests/Task/契约；新正式Task范围拟限自有Task、范围/验收草案、自有verification、Handoff，Plan/STATUS/索引由Codex维护。禁止生产src/apps、Schema、依赖、用户数据、已有raw、既有dirty写入；草案不修改冻结wire或需求。
 
 **Deliverables**：逐产品能力的must/deferred/out矩阵；每个现有命令/后继契约映射；Reader解冻与发布矩阵需用户裁决的具体选项；后继产品与发布候选任务逐步正式Task草案/依赖/Owner/Reviewer/allowlist/Gate。复用UI1，不再造一套视觉规范。**Verification**：PowerShell下Git Reality Check与`git diff --check`、相对固定base路径核验；每项需求能追溯D01/D04/D05/D08/现行Task和源码，草案/UNKNOWN/NOT_RUN如实保留。固定文档交付经非作者Review、Codex集成后才登记该设计Task done；这不释放任何产品实现。
 
 ```text
-在 G:/CODEX/New Manga 继续；先读取 AGENTS.md、doc/REBASELINE_PLAN.md 当前整体路线、doc/STATUS.md，以及 verification/PROJECT-ROADMAP-20261008/{RESUME,REPORT,ROADMAP}.md。审计base/head=e4242ecd419eb0eea098d2f63b40f709aa5caeea，当前branch main；实测HEAD/status/common-dir，保留.qoder-credits和历史dispatch dirty，不reset/clean/stash。建议当前准备=P08，已进入blocked等待裁决/审查，正式ID P08 尚未创建/释放；Codex主责范围/契约、DSH建议非作者审查，ZCode设计另开Task；branch/worktree待Codex实际创建。先复用本轮Core/Desktop/Plan审计和CSV，形成四页must/deferred/out与质量/Windows验收矩阵，提前拆后继产品与发布候选任务的契约/Core/Host/UI/验收依赖，不再每做一个才猜下一步。允许只读生产代码；写集合仅拟议自有Task、范围/验收草案、verification/Handoff与Codex治理导航，禁止生产src/apps、Schema、依赖、冻结wire、用户数据、已有raw和他人dirty。Reader/跨页/缩略图保持当前明确不做，若完整目标需要Reader先列产品裁决，不默认解冻；Manga109永久取消，BJ13維持0.90手工改标+skip。逐项写需求/代码证据、允许路径、实际Owner/Reviewer、可复制测试计划和Gate；planned/NOT_RUN/UNKNOWN不记PASS。仅准备范围，不实施、不派发未释放产品Task。文档固定提交后交非作者Review与Codex集成验证，再更新checkpoint；只有正式释放范围后才逐节点实现。
+以下为该报告生成时的原始转发指令快照，当前不可执行；事实与恢复步骤以当前Plan、Status和[P08 RESUME](../P08/RESUME.md)为准：在 G:/CODEX/New Manga 继续；先读取 AGENTS.md、doc/REBASELINE_PLAN.md 当前整体路线、doc/STATUS.md，以及 verification/PROJECT-ROADMAP-20261008/{RESUME,REPORT,ROADMAP}.md。审计base/head=e4242ecd419eb0eea098d2f63b40f709aa5caeea，当前branch main；实测HEAD/status/common-dir，保留.qoder-credits和历史dispatch dirty，不reset/clean/stash。建议当前准备=P08，已进入blocked等待裁决/审查，正式ID P08 尚未创建/释放；Codex主责范围/契约、DSH建议非作者审查，ZCode设计另开Task；branch/worktree待Codex实际创建。先复用本轮Core/Desktop/Plan审计和CSV，形成四页must/deferred/out与质量/Windows验收矩阵，提前拆后继产品与发布候选任务的契约/Core/Host/UI/验收依赖，不再每做一个才猜下一步。允许只读生产代码；写集合仅拟议自有Task、范围/验收草案、verification/Handoff与Codex治理导航，禁止生产src/apps、Schema、依赖、冻结wire、用户数据、已有raw和他人dirty。Reader/跨页/缩略图保持当前明确不做，若完整目标需要Reader先列产品裁决，不默认解冻；Manga109永久取消，BJ13維持0.90手工改标+skip。逐项写需求/代码证据、允许路径、实际Owner/Reviewer、可复制测试计划和Gate；planned/NOT_RUN/UNKNOWN不记PASS。仅准备范围，不实施、不派发未释放产品Task。文档固定提交后交非作者Review与Codex集成验证，再更新checkpoint；只有正式释放范围后才逐节点实现。
 ```

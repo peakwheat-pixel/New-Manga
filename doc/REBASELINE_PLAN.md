@@ -1,10 +1,10 @@
 # Project Rebaseline Plan
 
-**当前位置：P08的D1–D7全部确认，范围交付等待DSH非作者正式Review（blocked / CHECKPOINTED）；P系列完成0/21，blocked 1，proposed / 未释放20。用户决策已收齐，产品实现未释放。下一步：固定提交并审查P08；P01–P07按依赖单独处理。**
+**当前位置：P08的D1–D7全部确认，固定范围交付进入DSH非作者正式Review（in_review / CHECKPOINTED）；P系列完成0/21，in_review 1，proposed / 未释放20。用户决策已收齐，产品实现未释放。下一步：完成P08 Review与Codex集成检查；之后按依赖逐项处理P01–P07。**
 
-## 2026-10-08 当前工作：P08用户范围已确认 / blocked
+## 2026-10-08 当前工作：P08 DSH正式Review / in_review
 
-用户已授权Codex准备[P08](tasks/P08.md)，准备范围仅文档；正式Task已登记，Owner=Codex，建议Reviewer=DSH（未认领，未派发）。base=`ab2f813c0ce311a6712002cafd852b9e7a258380`，branch/worktree=`main` / `G:/CODEX/New Manga`。交付：[范围/验收草案](../verification/P08/SCOPE_DRAFT.md)、[D08逐AC及总Gate覆盖索引](../verification/P08/AC_COVERAGE.md)、[恢复点](../verification/P08/RESUME.md)。D1–D7已全部确认；当前仅等待DSH非作者正式审查，补充数值指标在P18资格方案实验前冻结，previous=in_progress，ExecutionState=CHECKPOINTED；P08未done，后继实施均未释放。历史196节点CSV仍是审计快照；本轮新增P08正式设计Task，不改原任务及完成记录。D1已解冻基础Reader；跨页联动/页缩略图仍延期。D2选入PDF/MOBI输入、CBZ/PDF/文本输出；D3按RG1净化基线且JA/KO分别实测、Win10实测后声明；D4全库备份；D5保持D08全部P0/P1及完整主流程；D6保留模型下载、延期Plugin/Hook/字体上传/Sakura监控/Plugin Agent；D7维护满足现行P0/P1。全部产品验收仍NOT_RUN。
+用户已授权Codex准备[P08](tasks/P08.md)，准备范围仅文档；正式Task的非作者Reviewer=DeepSeek Harness。范围交付head=`490f9bd9637de0812a3ef3d9bbfa754868d5c15f`，独立审查worktree=`G:/CODEX/New Manga.worktrees/P08-dsh-review-490f9bd`，当前状态=`in_review / CHECKPOINTED`。base=`ab2f813c0ce311a6712002cafd852b9e7a258380`，Owner branch/worktree=`main` / `G:/CODEX/New Manga`。详见[Task](tasks/P08.md)、[范围/验收草案](../verification/P08/SCOPE_DRAFT.md)、[D08逐AC及总Gate覆盖索引](../verification/P08/AC_COVERAGE.md)和[恢复点](../verification/P08/RESUME.md)。D1–D7已全部确认；DSH正式Review即将派发，P18补充数值指标在资格方案Task实验前冻结。P08未done，后继实施均未释放。历史196节点CSV仍是审计快照；本轮新增P08正式设计Task，不改原任务及完成记录。D1已解冻基础Reader；跨页联动/页缩略图仍延期。D2选入PDF/MOBI输入、CBZ/PDF/文本输出；D3按RG1净化基线且JA/KO分别实测、Win10实测后声明；D4全库备份；D5保持D08全部P0/P1及完整主流程；D6保留模型下载、延期Plugin/Hook/字体上传/Sakura监控/Plugin Agent；D7维护满足现行P0/P1。全部产品验收仍NOT_RUN。
 
 
 2026-10-08 最新编号裁决：当前21个规划节点沿用 `P01–P21`，状态为 `proposed / 未释放`；仅统一编号，不释放实施、不改原有任务及完成记录。原始审计、台账与历史验证日志保留为固定快照。
@@ -25,7 +25,7 @@
 
 ### 预先定义的任务依赖树与 Gate
 
-以下 `P01–P21` 中 **P08为blocked（范围已确认/待Review），其余20项为proposed / 未释放**，为拟议 Task ID，P08已建立正式设计Task，其余尚无正式Task文件；不回改196节点历史快照。表内人员为建议，不是实际认领；正式释放时为每个契约/实现切片单独填 Task、fixed base/head、branch/worktree、allowed_paths与非作者Reviewer，不能一行授予跨层无限写权限。没有正式 M3/M4 树，不虚构新 Milestone。估算需在范围冻结后给出，不按Task数计算产品完成百分比。
+以下 `P01–P21` 中 **P08为in_review（范围已确认，DSH正式Review进行中），其余20项为proposed / 未释放**，为拟议 Task ID，P08已建立正式设计Task，其余尚无正式Task文件；不回改196节点历史快照。表内人员为建议，不是实际认领；正式释放时为每个契约/实现切片单独填 Task、fixed base/head、branch/worktree、allowed_paths与非作者Reviewer，不能一行授予跨层无限写权限。没有正式 M3/M4 树，不虚构新 Milestone。估算需在范围冻结后给出，不按Task数计算产品完成百分比。
 
 | 候选任务编号 | 状态 | 简单中文描述 | 启动依赖/条件 | 建议责任方；非作者审查 | 完成 Gate / 边界 |
 |---|---|---|---|---|---|
@@ -36,7 +36,7 @@
 | P05 | proposed / 未释放 | category/retryable契约注记收敛 | CATEGORY done；RC4-08等deferred | Codex；DSH | 文档一致与反向链接；不更改冻结错误语义 |
 | P06 | proposed / 未释放 | GC分发迁移安全补证 | GC2 done；受控旧版本/隔离根可用 | ZCode；DSH | G7旧runtime退出/所有入口参与证据；未知保留、迁移不满足BLOCKED；不重做GC2 |
 | P07 | proposed / 未释放 | 手输image读取/quiet-window交互修补 | P02证明剩余缺口；REGION-DEBOUNCE已done | ZCode；DSH | 最小实际缺口与判别用例；不重开已闭debounce |
-| P08 | blocked | [完整产品范围与验收冻结准备](tasks/P08.md) | 利用P01取证/明确处置（NOT_VERIFIED可保留）；D1–D7已确认，待正式Review | Codex管契约，ZCode另设计Task；DSH | 功能parity矩阵/质量阈值/数据保护/发布矩阵；格式/样式/维护边界逐项选入或deferred；基础Reader已解冻，跨页/缩略图延期；不扩一级页面 |
+| P08 | in_review | [完整产品范围与验收冻结准备](tasks/P08.md) | 利用P01取证/明确处置（NOT_VERIFIED可保留）；D1–D7已确认，DSH正式Review | Codex管契约，ZCode另设计Task；DSH | 功能parity矩阵/质量阈值/数据保护/发布矩阵；格式/样式/维护边界逐项选入或deferred；基础Reader已解冻，跨页/缩略图延期；不扩一级页面 |
 | P09 | proposed / 未释放 | 真实导入契约＋Core适配 | P08；先冻结来源能力，再实施 | Codex契约→Antigravity/ZCode实现；DSH | opaque受限来源、图片/文件夹/PDF/MOBI、真实尺寸、Managed Copy、损坏/逃逸/部分失败；复用Import API与现有decoder |
 | P10 | proposed / 未释放 | Provider配置与凭据安全通道 | P08；secret exchange先冻结 | Codex契约→Antigravity实现；DSH | credential引用/存储/脱敏/启动配置与重启持久；secret不进入普通DTO/事件/日志 |
 | P11 | proposed / 未释放 | 长任务IPC生命周期契约 | P08；现有PipelineService语义 | Codex；DSH | StartRun快照/控制/恢复/错误/事件策略/有界工作；冻结接受时点；不造第二调度器 |
@@ -55,7 +55,7 @@
 
 保留：Manga109永久取消；BJ13维持0.90、手工改标＋skip，补标/补画不释放；Reader范围：仅跨页联动/页缩略图继续延期；基础Reader已由D1解冻，P16/P17实施仍未释放。LaMa/AOT/BrushNet/FLUX learned inpaint没有production实现，不默认投入；SimpleFill/EdgeBleed已在现有链路，是否足够由P08/P18质量证据决定。GC长会话总磁盘有界没有承诺，不为了漂亮路线图扩大删除能力。
 
-本轮推荐下一步：**DeepSeek Harness对P08固定交付进行正式Review**，指令、base/head、范围与验证见[报告末尾](../verification/PROJECT-ROADMAP-20261008/REPORT.md)。D1–D7产品取舍已确认，等待DSH正式Review，实施仍未释放。额度恢复先读RESUME并核Live Git，不重跑全仓审计；只在交付/审查/集成等边界保存checkpoint。
+本轮当前步骤：**DeepSeek Harness对P08固定交付进行正式Review**，base=`ab2f813c0ce311a6712002cafd852b9e7a258380`、reviewed head=`490f9bd9637de0812a3ef3d9bbfa754868d5c15f`，审查worktree及可恢复信息见[P08 RESUME](../verification/P08/RESUME.md)。D1–D7已确认，产品实现仍未释放。
 
 ## 2026-10-08 完成：M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD
 
