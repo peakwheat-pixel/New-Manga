@@ -1,6 +1,6 @@
 # P01 恢复点
 
-时间：2026-10-09（Asia/Shanghai）；Task=`P01`；当前working-tree候选状态=`in_review`；ExecutionState=`ACTIVE`。Live HEAD状态以本节latest checkpoint为准。
+时间：2026-10-09（Asia/Shanghai）；Task=`P01`；当前working-tree候选状态=`blocked`；ExecutionState=`ACTIVE`。Live HEAD状态以本节latest checkpoint为准；C6已提交状态与C7当前候选状态存在有记录的转换。
 
 ## 当前权威状态
 
@@ -37,15 +37,15 @@
 
 ## 验证状态
 
-- AC1–AC6 与允许的元数据修正：已执行，delivery=`9b12493616326af9cdd50a055282426c72516a5a`；path/diff preflight EXIT=0；DSH R1=`blocked`及修订C5 fixed-head Gate PASS已分别留证，当前R2正式Review仍待执行。
+- AC1–AC6 与允许的元数据修正：已执行，delivery=`9b12493616326af9cdd50a055282426c72516a5a`；path/diff preflight EXIT=0；DSH R1=`blocked`及修订C5 fixed-head Gate PASS已留证；DSH R2对C6=`3e67d53be6363e0eaabbd1ce038c226b82b8a494`返回`blocked`，报告及C6 Gate日志已纳入当前C7工作树候选。
 - P01 来源 Task/Handoff 指纹与 Review carrier 搜索：已执行；ANNOTATE-R2、SYNTH Review原件=`NOT_VERIFIED`。
 - 产品 pytest/cargo/vitest、GUI、build：`NOT_RUN`（本 Task 不涉及产品代码）。
-- 独立 DSH Review 与 Codex Integration Gate：R1 blocked保留；R2须针对当前in_review候选的精确fixed head执行；Codex Integration Gate待R2实际通过后执行。
+- 独立 DSH Review 与 Codex Integration Gate：R1/R2的`blocked`报告均保留；C6 Codex fixed-head Gate PASS，DSH R2自身Git/Python等关键检查`NOT_RUN`（Win32 5）；先提交C7阻塞检查点，再将相同完整commit/tree置于可执行Review镜像并重新形成fixed head；后续新的DSH Review实际通过后才能进入Codex Integration Gate。C6不是当前可集成approved head。
 - 目前没有需用户裁决的产品问题阻止 P01 启动；对已知裁决边界保持只记录、不决策。
 
 ## 下一条直接指令
 
-当前精确指令见下方最新C5/C6检查点；恢复时优先核对Live Git与其文件集合。不要重复AC2–AC6或P03/P08。R2 Review与Codex Gate完成后，按权威Plan释放下一项并自动继续。保护root现存24项dirty、用户数据、Lock、current/pinned Revision及Qoder历史；不push、不发布、不部署、不删除。
+当前精确指令见本文件末尾最新R2/C7检查点；恢复时先核对Live Git与文档中记录的C6→C7状态漂移，再决定`RESUME_SAFE`或`DRIFT_DETECTED`。不要重复AC2–AC6或P03/P08。解决R2环境/证据问题、完成新的非作者Review与Codex Gate后，再按权威Plan释放下一项并自动继续。保护root现存24项dirty、用户数据、Lock、current/pinned Revision及Qoder历史；不push、不发布、不部署、不删除。
 
 ## 本次 release prompt
 
@@ -59,7 +59,7 @@
 - 阻塞事项：更正R2 source状态事实与`STATE_CONFLICT`；修正Task/Handoff日志和测试结果的fixed-commit绑定；把治理空白检查改为冻结P01 base..HEAD；区分SYNTH Task=`in_review`与Handoff=`r4-docfix-delivered`；新的候选日志需注明UTC、shell、解释器与被测fixed HEAD。R1因Win32 5将Git/Python检查列为`NOT_RUN`，不批准Codex Integration Gate。
 - C4时的R1报告与C3 fixed-check artifacts已提交并受版本控制；root原有24项dirty继续保护。以下关于C4之后working tree和下一步的旧说明已由本文件末尾的最新检查点取代。
 
-## 2026-10-09 P01 C5修订Gate与C6复审候选检查点
+## 2026-10-09 P01 C5修订Gate与C6复审候选检查点（历史；后由R2/C7检查点取代）
 
 - 上一已提交head C5=`e95ebbf56c9747ad97f2d4e9fa9d1bb10f128364`；branch=`agent/codex/P01-metadata-audit`；worktree=`G:/CODEX/New Manga.worktrees/P01-metadata-audit-codex`；common-dir=`G:/CODEX/New Manga/.git`。C5的TaskStatus仍`blocked`；工作树候选把P01、Plan、Status、Handoff和派生导航同步为`in_review`。
 - C5固定HEAD检查日志=`verification/P01/ac7-r1-remediation-check.log`（待随C6提交）；捕获UTC=`2026-10-08T23:07:14Z`，PowerShell 7.6.6、Python 3.14.6、Git 2.52.0.windows.1。固定范围31 paths、越界0、产品paths 0；base祖先、clean worktree、range `git diff --check`、路线校验、R2来源Task只读、root HEAD/path set=24项均PASS。
@@ -75,3 +75,13 @@
 - 本轮Live Reality Check：root仍branch=`main`、HEAD=`714138de3da06013e3ea35395e0c11b3d15fc371`，24项dirty/untracked名称集合与`ac1-root-status.log`一致；P01工作树相对C4为上述可识别文档修订，判定`RESUME_SAFE`。如果Live Git与此不符，先记录漂移来源，不覆盖或重置。
 - R1修订候选已更正R2真实`status: in_review`并新增`STATE_CONFLICT`，更正SYNTH Task/Handoff状态措辞，纠正Task/Handoff测试HEAD绑定；`verify_plan.py`的产品路径与治理空白检查均显式使用P01 `base_commit..HEAD`。working-tree route validator与`git diff --check`目前EXIT=0，但它们不是C5 fixed-head结果。
 - **该历史检查点的下一精确步骤**：审阅、提交R1修订candidate，运行fixed-head Gate，再转`in_review`并派发DSH R2；此步骤已由C5及当前working-tree C6候选推进，现行操作见本文件最新checkpoint。
+
+## 2026-10-09 P01 DSH R2 blocked / C7检查点候选
+
+- 最近已提交P01 head C6=`3e67d53be6363e0eaabbd1ce038c226b82b8a494`；branch=`agent/codex/P01-metadata-audit`；worktree=`G:/CODEX/New Manga.worktrees/P01-metadata-audit-codex`；common-dir=`G:/CODEX/New Manga/.git`。C6 committed Task status=`in_review`，它的固定HEAD Codex Gate=`PASS`，日志已复制到当前工作树的`verification/P01/ac7-c6-fixed-head-check.log`并准备随C7提交。
+- DSH R2针对base=`826bea12a132c5af2ac0cd1244d00e9170093c71`、reviewed_head=C6返回decision=`blocked`，CLI exit=0，session=`session-55a8f3e2-9765-4be4-a2cd-b587260ae63f`，mount exit=0；正式报告=`doc/reviews/P01-3e67d53-dsh-r2.md`，SHA-256=`e333509c847c982d050b0338f72f3a5a19f6931bd5908fdca02c159cde3d0342`。R2 prompt=`verification/P01/dsh-review-r2.prompt.md`；session metadata=`verification/P01/dsh-review-r2-session.json`；exit=`verification/P01/dsh-review-r2.exit`。stderr原件保留在`C:/Users/49745/AppData/Local/Temp/P01-C6-dsh-r2.stderr.log`，SHA-256=`7e42a2f47517b4e926bc1a07adb19b0fb469c26ec17ed3503387f62d5551e211`；因其包含verbose reviewer reasoning，按R1已记录的carrier policy不复制入库。
+- R2-01（P2阻断）：DSH在正式P01 linked worktree无法通过Win32 5 sandbox ACL设置，Git/Python/测试/Gate全部`NOT_RUN`；不批准未核验关键路径。R2-02（P3证据同步）已在当前候选中加入C6 Gate日志；R2-03（P3建议）由后续Integration Gate显式记录P01 worktree绝对路径、validator脚本路径与目标HEAD处理。不得将C6 gate或R2 report推断为DSH approved。
+- root main当前保护点：branch=`main`，HEAD=`714138de3da06013e3ea35395e0c11b3d15fc371`，24个dirty/untracked；路径集合与`ac1-root-status.log`相同。不得触碰、stage、stash、覆盖或清理root内容。
+- 当前C7 blocked checkpoint候选相对C6含11个modified路径：`doc/00_INDEX.md`、`doc/12_ROADMAP.md`、`doc/REBASELINE_PLAN.md`、`doc/STATUS.md`、`doc/handoffs/P01-9b124936.md`、`doc/tasks/P01.md`、`doc/tasks/README.md`、`verification/P01/RESUME.md`、`verification/PROJECT-ROADMAP-20261008/RESUME.md`、`verification/PROJECT-ROADMAP-20261008/ROADMAP.md`、`verification/PROJECT-ROADMAP-20261008/verify_plan.py`；另有6个untracked evidence路径：`doc/reviews/P01-3e67d53-dsh-r2.md`、`verification/P01/ac7-c6-fixed-head-check.log`、`verification/P01/ac7-r2-blocked-candidate-check.log`、`verification/P01/dsh-review-r2-session.json`、`verification/P01/dsh-review-r2.exit`、`verification/P01/dsh-review-r2.prompt.md`。候选均在P01允许路径，staged=0；Task/Plan/Status候选状态=`blocked`（previous=`in_review`）。此前route validator发现状态断言仍固定为in_review，已在scope note限定范围内改为按P01当前in_progress/in_review/blocked状态计数；当前working-tree候选route EXIT=0、diff-check EXIT=0，证据路径为ac7-r2-blocked-candidate-check.log。这些是候选检查，不替代C7提交后的fixed-head Gate。
+- **下一精确步骤**：确认上述15条路径与Review载体SHA一致，route validator与staged `git diff --check`通过后，只提交allowlisted C7 blocked checkpoint。随后在Temp中新建一个独立、干净的本地Git clone/mirror，checkout到C7提交的精确SHA；核对mirror HEAD、tree、base祖先、clean status均与P01 worktree一致。对mirror实际运行shell/Git/Python和路线校验器，若ACL正常，再把候选Task/Plan/Status/Handoff由`blocked`恢复为`in_review`并产生下一固定head，执行其fixed-head Gate后派发新的DSH非作者Review。若Temp mirror仍受Win32 5阻断，保留报告与失败证据，继续寻找可用的本机DSH执行配置；不得把R2或之后任何blocked报告改为approved。R2-03在集成验证时从P01 worktree的绝对脚本路径运行并记录`pwd`、script path和`git rev-parse HEAD`。
+- 自动推进及关机提示已保存在[`NEXT-AUTOPROGRESS-PROMPT.md`](NEXT-AUTOPROGRESS-PROMPT.md)：必须从Live Task继续，不重做已完成审计；本轮P01完成并持久化续跑提示后执行一次关机，此授权不延伸到以后Task。

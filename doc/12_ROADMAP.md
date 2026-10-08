@@ -1,12 +1,12 @@
 # Roadmap
 
-当前工作：P08/P03=done；唯一Active Task=P01 `in_review`，Owner=Codex、Reviewer=DeepSeek Harness，base=`826bea12a132c5af2ac0cd1244d00e9170093c71`，branch=`agent/codex/P01-metadata-audit`。DSH R1 findings已修订，C5 fixed-head检查通过，等待对新candidate执行R2；见[P01 RESUME](../verification/P01/RESUME.md)。P03证据仍在[P03 RESUME](../verification/P03-PACKAGED-SFX-ENTRY/RESUME.md)。
+当前工作：P08/P03=done；唯一Active Task=P01 `blocked`，Owner=Codex、Reviewer=DeepSeek Harness，base=`826bea12a132c5af2ac0cd1244d00e9170093c71`，branch=`agent/codex/P01-metadata-audit`。DSH R2对C6=`3e67d53be6363e0eaabbd1ce038c226b82b8a494`因执行环境无法运行Git/Python而blocked；C6 Codex Gate通过，证据正纳入P01检查点；见[P01 RESUME](../verification/P01/RESUME.md)。P03证据仍在[P03 RESUME](../verification/P03-PACKAGED-SFX-ENTRY/RESUME.md)。
 
 ## 当前整体路线（权威候选与P01执行状态见Plan/Status）
 
 最新人员裁决：Qoder退出，未来UI/UX设计及React/Tauri实现由ZCode主责，DSH非作者审查，Codex契约/集成；额度接管候选为ZCode、Antigravity。历史交付中的Qoder署名保留。
 
-权威排期见REBASELINE_PLAN中的P01–P21路线、中文依赖图、审计报告和恢复材料。P08/P03=done，P01是唯一in_review Task；base、Owner/Reviewer、branch和worktree详见Plan与STATUS。P03 R3-03仍留待P20登记。
+权威排期见REBASELINE_PLAN中的P01–P21路线、中文依赖图、审计报告和恢复材料。P08/P03=done，P01是唯一blocked Task；base、Owner/Reviewer、branch和worktree详见Plan与STATUS。P03 R3-03仍留待P20登记。
 
 下方2026-09早期导航保留历史，不覆盖本段或Plan；其中旧“ready/planning only”任务多已由后继完成，不能作为当前待办。
 

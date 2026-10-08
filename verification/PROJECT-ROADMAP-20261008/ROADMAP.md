@@ -1,8 +1,8 @@
 # New Manga 一眼路线图（2026-10-08）
 
-最新工作点：P08/P03=done；唯一Active Task=P01 `in_review`，Owner=Codex、Reviewer=DeepSeek Harness，base=`826bea12a132c5af2ac0cd1244d00e9170093c71`。DSH R1 findings已修订，C5 fixed-head检查通过，当前新candidate待R2固定head审查，恢复见[P01 RESUME](../../verification/P01/RESUME.md)。P03验证绑定source `d717c049`与同一installer，集成无产品/runner/test/build差量。
+最新工作点：P08/P03=done；唯一Active Task=P01 `blocked`，Owner=Codex、Reviewer=DeepSeek Harness，base=`826bea12a132c5af2ac0cd1244d00e9170093c71`。C6=`3e67d53be6363e0eaabbd1ce038c226b82b8a494` Codex fixed-head Gate通过；DSH R2=`blocked`（Reviewer sandbox Win32 5无法执行Git/Python），报告与Gate证据已纳入C7 blocked checkpoint candidate，恢复见[P01 RESUME](../../verification/P01/RESUME.md)。P03验证绑定source `d717c049`与同一installer，集成无产品/runner/test/build差量。
 
-**当前位置：P08/P03=done；P系列done 2/21、in_review 1、proposed 18。唯一in_review Task=P01；DSH R1=`blocked` findings已修订，R1修订head C5 Gate PASS，当前new candidate待DSH R2；P03 integration=`552464238a69ad2cea63cff18abe98f412dbae87`，DSH R5/R6与Codex Integration Gate PASS。**
+**当前位置：P08/P03=done；P系列done 2/21、blocked 1、proposed 18。唯一blocked Task=P01；DSH R1 findings已修订、C5 Gate PASS；DSH R2=`blocked`@C6（Reviewer Win32 5）；当前恢复点处理R2证据并准备可执行Review环境。P03 integration=`552464238a69ad2cea63cff18abe98f412dbae87`，DSH R5/R6与Codex Integration Gate PASS。**
 
 人员更新：用户已移除Qoder，图中未来UI/UX责任由ZCode承担；非作者Review与正式Task释放Gate保持。
 
@@ -29,7 +29,7 @@ flowchart TB
 
 ```mermaid
 flowchart TB
-  BASE["当前位置：P08/P03 done<br/>P系列done 2/21、in_review 1、proposed 18"] --> P01["P01<br/>in_review / DSH Review复审中<br/>台账取证<br/>Owner Codex · Reviewer DSH<br/>base 826bea12"]
+  BASE["当前位置：P08/P03 done<br/>P系列done 2/21、blocked 1、proposed 18"] --> P01["P01<br/>blocked / DSH Reviewer执行环境待恢复<br/>台账取证<br/>Owner Codex · Reviewer DSH<br/>base 826bea12"]
   BASE --> P02["P02<br/>proposed / 未释放<br/>真UI验证<br/>点击/300ms刷新/对比度/失效窗口"]
   BASE --> P03["P03<br/>done / Review与Codex集成Gate通过<br/>第五入口Gate<br/>集成55246423；Gate绑定d717"]
   BASE --> P04["P04<br/>proposed / 未释放<br/>生产命令面验证<br/>常量成员与并发响应；先复现再决定修复"]
