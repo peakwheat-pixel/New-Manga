@@ -1,16 +1,16 @@
 # P03 Codex Integration Checkpoint
 
-时间：2026-10-09（Asia/Shanghai）；Task=`P03`；TaskStatus=`in_review`；ExecutionState=`C002_TEST_FIX_CHECKPOINT_PENDING`。
+时间：2026-10-09（Asia/Shanghai）；Task=`P03`；TaskStatus=`in_review`；ExecutionState=`FINAL_DSH_REVIEW_PREP_CHECKPOINT_PENDING`。
 
 ## 当前恢复点（优先于下方历史阶段记录）
 
 - Repository=`G:/CODEX/New Manga`；integration worktree=`G:/CODEX/New Manga.worktrees/P03-review-prep-85482c5b`；branch=`codex/P03-integration-4c04459`；common-dir=`G:/CODEX/New Manga/.git`。
-- Task base=`31abde9bf4b73aea2851931dcd48faa0f750b318`；Owner delivery=`85482c5b001d452953c3ed797ce3c4ed64cae4e3`；last committed candidate=`fb5782c51eab0d5dc3267770c9a0a7df8f343175`。独立 Codex Review 对该 head 发现 C-002 P2：success-negative 参数化用例省略 `install_dir`，因此 fail-closed 前置条件遮蔽了被测负例；旧 DSH R2 对 `4c04459…` 的 approved 不覆盖当前候选。
-- 当前变更是 C-002 的 test-only 修复：建立实际 `install_dir` 与内部 weights path，每个负例先断言未修改基线会通过，再应用目标坏条件。对应 40/40 测试通过，`build-logs/14-targeted-regression-tests.log`。Task 文档已登记 C-002/C-003，需随此 checkpoint 一并提交。
-- Root `main` 用户/历史 Agent dirty/raw、Antigravity Owner worktree 三个 untracked helper 与 DSH raw 均保持保护；Integration worktree 当前有 C-002 测试、Task 修改，以及 `build-logs/12–14` 和一份未派发的 R3 prompt 草稿。
+- Task base=`31abde9bf4b73aea2851931dcd48faa0f750b318`；Owner delivery=`85482c5b001d452953c3ed797ce3c4ed64cae4e3`；C-002 test-only correction commit=`41be59e9d4e3c55ac87cf0868f89077b4d03978e`。独立 Codex Review 在其 parent `fb5782c5…` 发现 C-002 P2；旧 DSH R2 对 `4c04459…` 的 approved 不覆盖任何后续改动。
+- C-002 修复建立有效 `install_dir` 与内部 weights path，每个负例先证明 unmodified baseline passes，再施加目标负条件；单独的缺省目录 fail-closed assertion 保留。定向套件 40/40 PASS，EXIT=0；`build-logs/14-targeted-regression-tests.log`。
+- Root `main` 用户/历史 Agent dirty/raw、Antigravity Owner worktree 三个 untracked helper 与 DSH raw 均保持保护；当前 Integration worktree 有最新 Task/Resume/manifest 修改、`build-logs/15–16`，以及待更新为最终 reviewed head 的 R3 prompt 草稿。
 - Fresh installer SHA=`2de124f387bfaf1d0d01b1b0279ad319cd453850d223efa9620b0103ce88a814`；前序 frontend/Sidecar/Tauri NSIS build、同 installer packaged Gate 28/28 PASS、16 项 Snapshot 与原始/规范化日志验证均已完成，见 P03 Task 与下方历史阶段。
-- 上一固定 head `fb5782c5…` 的 scope/diff trace=`build-logs/12`（117 paths、zero out-of-scope、`git diff --check` EXIT=0）；normalization trace=`build-logs/13`（两份 verifier EXIT=0）。这两项发生在 C-002 测试修改之前，提交后必须对新 head 重跑并更新 trace/prompt。
-- **立即下一步：**已更新 manifest、两份 RESUME 和 Task；仅 stage P03 Task/test/evidence/checkpoint paths，跑 `git diff --cached --check` 后提交。取得新 HEAD 后重跑 `base..HEAD` scope + diff-check 和两份 normalization verifier；再触发正式 DSH Review 与 Codex 独立复审，二者都使用同一精确 head。Review findings 要先处理并重审；approved 且 Codex 集成 Gate 通过后才收口 P03。
+- Post-C-002 committed head `41be59e9…` 的 scope/diff trace=`build-logs/15`（120 paths、zero out-of-scope、`git diff --check` EXIT=0）；normalization trace=`build-logs/16`（两份 verifier 各 6/6 PASS、EXIT=0）。
+- **立即下一步：**提交已记录 C-002/C-003 的 Task、manifest、两份 RESUME 和 `build-logs/15–16`；其 commit 才是最新 formal review candidate。随后对该精确 head 重跑 scope + diff-check 和两份 normalization verifier，更新 R3 prompt 的 reviewed head 与结果；派发 DSH formal Review，并让 Codex Reviewer 对同一 base/head 复审。需要修的 finding 必须先修、重验、固定新 head 后复审；approved 且 Codex 集成 Gate 通过后收口 P03。
 - 用户指示：P03 当前任务完成、下一次自动推进 prompt 保存后关闭计算机；下次先核对 Live Git、STATUS 与此 RESUME，再自动进入路线图推进。
 - 以下 `## 修订验证进展` 起为按时间记录的历史阶段，非当前待办清单。
 
