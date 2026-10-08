@@ -5,7 +5,10 @@ recipient: DeepSeek Harness
 base_commit: 5a72db9e3c5778ce4700b7d404250853e474c5de
 start_head: df824182e813fc6d9045872da51d263f28db87f0
 delivery_head: 4499217d7b2249da16d5dbf27a3219a43876aac7
-status: ready_for_review
+evidence_commit: 2c79645939635beef4a391f4bd9071ffeacd300b
+reviewed_head: 4499217d7b2249da16d5dbf27a3219a43876aac7
+review_report: doc/reviews/M2-PACKAGED-AC1-ICU-ISOLATION-FIX-4499217d-dsh-r2.md
+status: approved
 ---
 
 # Handoff：M2-PACKAGED-AC1-ICU-ISOLATION-FIX（DSH r1/r2 修订交付）
@@ -20,7 +23,7 @@ status: ready_for_review
   - [`packaging/m2ac5/build_sidecar.ps1`](file:///G:/CODEX/New%20Manga.worktrees/PACKAGED-AC1-ICU-ISOLATION-FIX-antigravity/packaging/m2ac5/build_sidecar.ps1)：定向净化 PATH 中已证实的 poppler 工具链条目并在 `finally` 恢复；明确全量 ICU 布局门禁为针对 System32 遮蔽风险的显式 fail-closed 安全门禁，而非武断宣称未来永不需要 versioned ICU。
 - **只读受保护范围**：`src/**`、`apps/**`、`tests/**`、依赖清单/版本、Schema/共享IPC/ACL 保持严格 0 改动；实测 `git diff HEAD -- apps` 为 0。
 - **固定实现代码提交**：[`4499217d7b2249da16d5dbf27a3219a43876aac7`](file:///G:/CODEX/New%20Manga.worktrees/PACKAGED-AC1-ICU-ISOLATION-FIX-antigravity) (`fix(packaging): restrict ICU isolation to verified poppler contaminant and tighten fail-closed boundary (M2-PACKAGED-AC1-ICU-ISOLATION-FIX)`)。所有新鲜构建和测试均严格在该固定 HEAD 上执行（R-001, R-002）。
-- **本文档提交**：独立文档与证据提交，引用实现 commit `4499217d`。
+- **Owner evidence commit**：`2c79645939635beef4a391f4bd9071ffeacd300b`，包含本 Handoff、报告及 fresh gate/scan 证据。
 
 ### 2. DSH r1 审查意见关闭汇总
 
@@ -43,8 +46,8 @@ status: ready_for_review
 | **AC-3** | fresh Sidecar 5 入口与 fresh NSIS 构建成功，绑定 source_head、命令、hash、大小、EXIT 与耗时 | **PASS**：fresh Sidecar 347.60s EXIT 0；fresh NSIS 326.82s EXIT 0（552.68 MiB）。指纹绑定见 [`build-fingerprint.json`](file:///G:/CODEX/New%20Manga.worktrees/PACKAGED-AC1-ICU-ISOLATION-FIX-antigravity/verification/M2-PACKAGED-AC1-ICU-ISOLATION-FIX/build-fingerprint.json)。 |
 | **AC-4** | 冻结 Dev Gate 完整 10 项 Gate 及 13 项 probe 通过；15 production / 7 probe commands 严格核对 | **PASS**：`run_e2e.py` 完整 10/10 Gate PASS，13/13 Probe 场景 PASS（耗时 19.37s，EXIT 0）。见 [`dev-gate-execution.log`](file:///G:/CODEX/New%20Manga.worktrees/PACKAGED-AC1-ICU-ISOLATION-FIX-antigravity/verification/M2-PACKAGED-AC1-ICU-ISOLATION-FIX/raw/dev-gate-execution.log)。 |
 | **AC-5** | 新安装副本完整 26 项 Packaged Gate 全 PASS；CS-L1 响应 minor 1.6、两轮 AC1、重启新 PID、数据与 PNG digest 一致 | **PASS**：`run_clean_start_e2e.py` 完整 26/26 场景全 PASS（耗时 131.13s，EXIT 0），被测安装包 SHA256 与 fingerprint 严格一致。见 [`cleanstart-gate.json`](file:///G:/CODEX/New%20Manga.worktrees/PACKAGED-AC1-ICU-ISOLATION-FIX-antigravity/verification/M2-PACKAGED-AC1-ICU-ISOLATION-FIX/raw/packaged/cleanstart-gate.json)。 |
-| **AC-6** | 用户源文件、人工修改、Lock、current/pinned Revision、Managed Copy 及恢复能力保护；零残留 | **PASS**：CS-Z1~Z4 零写入/零篡改/零孤儿进程断言全 PASS；真实 APPDATA 零触碰。 |
-| **AC-7** | 固定实现 head、逐项结果及 Handoff 齐全；经外部非作者 DSH 审核 approved 及 Codex 集成后方可 done | **PENDING (NOT_RUN)**：实现提交固定为 `4499217d`，文档交接中；等待 DSH r2 独立 Review 与 Codex 集成。 |
+| **AC-6** | 用户源文件、人工修改、Lock、current/pinned Revision、Managed Copy 及恢复能力保护；零残留 | **PASS**：CS-Z1/Z2/Z4 零写入或篡改断言全 PASS；CS-Z3 断言 4 个 sidecar 进程残留计数为 0（`python.exe: 6` 为记录项，不作零残留断言）；真实 APPDATA 零触碰。 |
+| **AC-7** | 固定实现 head、逐项结果及 Handoff 齐全；经外部非作者 DSH 审核 approved 及 Codex 集成后方可 done | **APPROVED / INTEGRATION_PENDING**：DSH r2 已批准固定实现 head `4499217d`；Codex 集成及集成后验证仍待完成。 |
 
 ---
 
@@ -60,7 +63,7 @@ status: ready_for_review
 | **AC-3 NSIS 构建** | `npx.cmd --yes @tauri-apps/cli@2 build` (CWD=apps/desktop) | Node.js v24.15.0 / Cargo 1.98.1 | `4499217d` | **PASS** (326.82s, EXIT 0) | [`nsis-build.log`](file:///G:/CODEX/New%20Manga.worktrees/PACKAGED-AC1-ICU-ISOLATION-FIX-antigravity/verification/M2-PACKAGED-AC1-ICU-ISOLATION-FIX/raw/nsis-build.log) |
 | **AC-4 Dev Gate** | `python run_e2e.py --exe .../m2rc1-desktop.exe --skip-build --output-dir raw/dev` | Python 3.12 (T1.1.1-impl-py312) | `4499217d` | **PASS** (19.37s, EXIT 0) 10/10 Gate + 13/13 Probe | [`dev-gate-execution.log`](file:///G:/CODEX/New%20Manga.worktrees/PACKAGED-AC1-ICU-ISOLATION-FIX-antigravity/verification/M2-PACKAGED-AC1-ICU-ISOLATION-FIX/raw/dev-gate-execution.log) |
 | **AC-5 Packaged Gate** | `python run_clean_start_e2e.py --installer .../m2rc1-desktop_0.1.0_x64-setup.exe --output-dir raw/packaged` | Python 3.12 (T1.1.1-impl-py312) | `4499217d` | **PASS** (131.13s, EXIT 0) 26/26 场景全 PASS | [`packaged-gate-execution.log`](file:///G:/CODEX/New%20Manga.worktrees/PACKAGED-AC1-ICU-ISOLATION-FIX-antigravity/verification/M2-PACKAGED-AC1-ICU-ISOLATION-FIX/raw/packaged-gate-execution.log) |
-| **AC-6 零污染验证** | `git diff HEAD -- apps; git status --short` | Git CLI | `4499217d` | **PASS** (apps 0 内容差异，宿主机 0 污染) | 工作区实测检验通过 |
+| **范围核验** | `git diff --name-only 5a72db9e..4499217d`; `git diff --check 5a72db9e..4499217d` | Git CLI | code head `4499217d` | **PASS** (src/apps/tests/deps/Schema 零路径；生产仅 packaging/m2ac5) | `verification/M2-PACKAGED-AC1-ICU-ISOLATION-FIX/review/r2-codex-scope-validation.log` |
 
 ### 2. 产物指纹与 Hash 绑定
 
@@ -77,7 +80,7 @@ status: ready_for_review
 
 ### 3. 未运行项目与说明
 - **真实发行包系统级安装**：未运行（NOT_RUN）。安装态测试在自有隔离临时目录 `cleanstart_lab/install` 中静默解包执行，严格禁止向宿主机 `C:\Program Files` 或系统注册表执行真实安装，以杜绝环境污染。
-- **AC-7 独立 Review 与主线合并**：未运行（PENDING）。按团队协作规范，作者 Agent 禁止审核自己提交的代码，待 DeepSeek Harness r2 独立审核后由 Codex 执行最终主线集成。
+- **AC-7 独立 Review 与主线合并**：DSH r2 APPROVED；主线集成和集成后验证待 Codex 完成。
 
 ---
 
@@ -101,15 +104,16 @@ status: ready_for_review
 
 ## 下一步建议
 
-本任务代码修复与全部证据链已闭环，保持 `ready_for_review` 与 `CHECKPOINTED` 状态。请 Codex 调度非作者 Reviewer (DeepSeek Harness) 执行 r2 独立审查：
+DSH r2 已批准固定代码 head。Codex 下一步应完成范围验证、解决 Task 文档冲突并集成至当前主线；合并后确认生产代码与 `4499217d` 相同，记录 integration commit 与验证结果。
 
 ```bash
-# 指令转发给 DeepSeek Harness
-Agent: DeepSeek Harness
-Action: Review
+# Codex 集成指令
+Agent: Codex
+Action: Integrate
 Task: M2-PACKAGED-AC1-ICU-ISOLATION-FIX
-Branch: agent/antigravity/M2-PACKAGED-AC1-ICU-ISOLATION-FIX
-Target Commit: 4499217d7b2249da16d5dbf27a3219a43876aac7
+Branch: main; source branch: agent/antigravity/M2-PACKAGED-AC1-ICU-ISOLATION-FIX
+Target Commit: 4499217d7b2249da16d5dbf27a3219a43876aac7; evidence commit: 2c79645939635beef4a391f4bd9071ffeacd300b
 Handoff: doc/handoffs/M2-PACKAGED-AC1-ICU-ISOLATION-FIX-4499217d.md
-Report: verification/M2-PACKAGED-AC1-ICU-ISOLATION-FIX/REPORT.md
+Review: doc/reviews/M2-PACKAGED-AC1-ICU-ISOLATION-FIX-4499217d-dsh-r2.md
+Validation: verification/M2-PACKAGED-AC1-ICU-ISOLATION-FIX/review/r2-codex-scope-validation.log
 ```

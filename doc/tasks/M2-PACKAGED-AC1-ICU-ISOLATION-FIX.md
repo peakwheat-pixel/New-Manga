@@ -2,7 +2,7 @@
 id: M2-PACKAGED-AC1-ICU-ISOLATION-FIX
 title: 安装态 Qt 与 ICU78 依赖闭包隔离修复
 kind: bugfix
-status: ready_for_review
+status: approved
 approval: user_authorized_release_20261008
 suggested_owner: Antigravity
 owner: Antigravity
@@ -15,7 +15,11 @@ worktree: G:/CODEX/New Manga.worktrees/PACKAGED-AC1-ICU-ISOLATION-FIX-antigravit
 start_head: df824182e813fc6d9045872da51d263f28db87f0
 allocated_head: 5a72db9e3c5778ce4700b7d404250853e474c5de
 implementation_head: 4499217d7b2249da16d5dbf27a3219a43876aac7
+evidence_head: 2c79645939635beef4a391f4bd9071ffeacd300b
+reviewed_head: 4499217d7b2249da16d5dbf27a3219a43876aac7
+review_report: doc/reviews/M2-PACKAGED-AC1-ICU-ISOLATION-FIX-4499217d-dsh-r2.md
 gate_evidence: verification/M2-PACKAGED-AC1-ICU-ISOLATION-FIX/REPORT.md
+review_decision: approved
 handoff_doc: doc/handoffs/M2-PACKAGED-AC1-ICU-ISOLATION-FIX-4499217d.md
 execution_state: CHECKPOINTED
 integration_commit: null
@@ -44,9 +48,19 @@ allowed_paths:
 - [x] AC-3：fresh Sidecar五入口和NSIS构建成功，实际source_head、命令/解释器、产物hash/大小、EXIT/耗时绑定。不能用skip-existing替代fresh构建。（达成：fresh Sidecar 347.60s EXIT 0；fresh NSIS 326.82s EXIT 0；产物指纹绑定见 build-fingerprint.json）
 - [x] AC-4：冻结dev完整10项Gate及13项probe通过；15 production commands、7 probe commands严格核对，不降低阈值。（达成：run_e2e.py 完整 10/10 Gate PASS，13/13 probe 场景 PASS，EXIT 0 / 19.37s，见 dev-gate-execution.log）
 - [x] AC-5：新安装副本完整26项packaged Gate全PASS；CS-L1响应minor1.6、请求minor3兼容；两轮AC1完成、重启新PID、summary/reader恢复、PNG digest一致。旧FAIL不回填。（达成：run_clean_start_e2e.py 完整 26/26 场景全 PASS，EXIT 0 / 131.13s，被测 installer SHA256 与 fingerprint 严格一致，见 cleanstart-gate.json 与 packaged-gate-execution.log）
-- [x] AC-6：用户源文件、人工修改、Lock、current/pinned Revision、Managed Copy及恢复能力保护；只写自有隔离fixture/输出，运行后无自身sidecar残留。（达成：CS-Z1/Z2/Z3/Z4 零写入、零篡改、零孤儿进程断言全 PASS）
-- [ ] AC-7：固定实现head、逐项结果及Handoff齐全；真实非作者DSH approved后由Codex集成并验证，才进入done。（待 DSH r2 独立 Review 与 Codex 集成验证）
+- [x] AC-6：用户源文件、人工修改、Lock、current/pinned Revision、Managed Copy及恢复能力保护；只写自有隔离fixture/输出，运行后无自身sidecar残留。（达成：CS-Z1/Z2/Z4 零写入或篡改断言全 PASS；CS-Z3 断言 4 个 sidecar 残留计数为 0，`python.exe: 6` 仅记录、不作零残留断言）
+- [ ] AC-7：固定实现head、逐项结果及Handoff齐全；DSH r2 已对 `4499217d` 作出 APPROVED，Codex 集成及集成验证仍待完成。
 
+## DSH Review r2：APPROVED
+
+- Reviewed code head：`4499217d7b2249da16d5dbf27a3219a43876aac7`；Owner evidence commit：`2c79645939635beef4a391f4bd9071ffeacd300b`。
+- Review：[M2-PACKAGED-AC1-ICU-ISOLATION-FIX-4499217d-dsh-r2.md](../reviews/M2-PACKAGED-AC1-ICU-ISOLATION-FIX-4499217d-dsh-r2.md)。结论 APPROVED（有界；0 P0/P1），DSH 未重跑构建或 Gate。
+- R2-001 CLOSED：Codex 以 `git diff --name-only 5a72db9e..4499217d` 实测并归档完整范围核验，见 `verification/M2-PACKAGED-AC1-ICU-ISOLATION-FIX/review/r2-codex-scope-validation.log`。
+- R2-002 ACCEPTED WITH LIMITATION：fresh 构建未发现 ICU 候选，spec 分类/守卫分支只有静态审查证据；未知来源仍 fail-closed，最终递归 bundle 门禁通过。为避免改动已验证生产实现而重跑全套 Gate，本轮不改生产策略。
+- R2-003 ACCEPTED WITH LIMITATION：313 个 PE 的实际计数正确，五入口 SHA256 与构建 fingerprint 一致；raw scanner 未自带 HEAD/时间戳且摘要计数硬编码，仅作为本次一次性扫描证据使用。
+- R2-004 CLOSED：报告已精确区分 542 个系统 ICU 导出总数与 Qt6Core 所需 20 个 `ucnv_*` 符号。
+- R2-005 CLOSED：Task/Handoff 已限定 CS-Z3 断言为 4 个 sidecar 进程归零；`python.exe: 6` 是观测记录。
+- R2-006 CLOSED：r1 原始报告位于 `verification/M2-PACKAGED-AC1-ICU-ISOLATION-FIX/review-dsh-r1.md`；r2 报告已入库，并固定 Owner evidence commit。
 ## 允许修改范围
 
 Owner仅上述allowed_paths。生产修改仅packaging/m2ac5/**，不更改已冻结验收口径；本次不借机合并runner debt。
@@ -72,7 +86,7 @@ Codex可维护Plan/STATUS/索引和释放记录；DSH可写doc/reviews/M2-PACKAG
 | 隔离加载 | `acceptance_bridge.exe` 启动测试 (purged PATH, M2AC1_TEST_MODE=1, stdin=EOF) | Windows System32 icuuc.dll 正常解析，0 遮蔽 | PASS (0.47s, EXIT 0, log: acceptance-bridge-purged-path.log) |
 | Dev Gate | `run_e2e.py --exe .../m2rc1-desktop.exe --skip-build --output-dir .../raw/dev` | 完整 10 项 Gate + 13 项 probe 场景，T1.1.1-impl-py312 环境 | PASS (19.37s, EXIT 0, 10/10 Gate + 13/13 Probe 全 PASS) |
 | Packaged Gate | `run_clean_start_e2e.py --installer .../setup.exe --output-dir .../raw/packaged` | 完整 26 场景，purged PATH 隔离环境，被测 installer hash 一致 | PASS (131.13s, EXIT 0, 26/26 场景全 PASS) |
-| 范围核验 | `git status --short --branch; git diff HEAD -- apps; git diff --check` | apps 0 差异，生产改动仅 packaging/m2ac5/** | PASS (越界为零，0 格式违规) |
+| 范围核验 | `git diff --name-only 5a72db9e..4499217d`；`git diff --check 5a72db9e..4499217d` | 固定实现提交差量枚举；src/apps/tests/deps/Schema 零路径 | PASS；证据见 `verification/M2-PACKAGED-AC1-ICU-ISOLATION-FIX/review/r2-codex-scope-validation.log` |
 
 日志全量落库 verification/M2-PACKAGED-AC1-ICU-ISOLATION-FIX/**。
 
@@ -87,9 +101,12 @@ M2-RUNNER-SNAPSHOT-DEBT是关联blocked Task，仅用于本Task验证runner复�
 ## 交付与运行记录
 
 - Handoff：见 [M2-PACKAGED-AC1-ICU-ISOLATION-FIX-4499217d.md](../handoffs/M2-PACKAGED-AC1-ICU-ISOLATION-FIX-4499217d.md)。
-- Review：DSH r1 changes_requested 审查意见（R-001..R-007）已全数关闭；待 DSH r2 复审。
+- Review：DSH r1 R-001..R-007 已修复；DSH r2 对实现 head `4499217d` 作出 APPROVED（0 P0/P1）。R2-001 已由 Codex 范围日志关闭；R2-002/R2-003 作为非阻断证据局限记录并接受；R2-004/R2-005 文档措辞已修正；R2-006 由入库的 r1/r2 报告及固定 evidence head 收口。
 - 实际产品测试：Dev Gate 10/10 + 13/13 PASS；Packaged Gate 26/26 PASS。
 - 2026-10-08 Antigravity 完成来源限定闭包隔离修复、可判别守卫断言、fresh 双构建与全量 Gate 验收。
 - start_head: df824182e813fc6d9045872da51d263f28db87f0
 - implementation_head: 4499217d7b2249da16d5dbf27a3219a43876aac7
-- status: ready_for_review / ExecutionState: CHECKPOINTED。待 DSH r2 独立复审与 Codex 集成。
+- evidence_head: 2c79645939635beef4a391f4bd9071ffeacd300b
+- reviewed_head: 4499217d7b2249da16d5dbf27a3219a43876aac7
+- review_report: doc/reviews/M2-PACKAGED-AC1-ICU-ISOLATION-FIX-4499217d-dsh-r2.md
+- status: approved / ExecutionState: CHECKPOINTED。DSH r2 已批准；Codex 集成验证仍待完成。

@@ -6,7 +6,7 @@
 - **Integrator**: `Codex`
 - **Base Commit**: `5a72db9e3c5778ce4700b7d404250853e474c5de`
 - **固定实现代码 Head (code_head)**: `4499217d7b2249da16d5dbf27a3219a43876aac7`
-- **交付证据 Commit**: 本次修订提交
+- **Owner 交付证据 Commit**: `2c79645939635beef4a391f4bd9071ffeacd300b`
 
 ---
 
@@ -154,5 +154,5 @@
 ## 7. 系统级依赖与 Windows 支持基线说明（R-007）
 
 - **声明支持基线**: Windows 10 version 1809+（OS Build 17763+）以及 Windows 11。
-- **系统依赖**: `C:\Windows\System32\icuuc.dll` 为 Windows 10 1809+ 起内置的官方操作系统组件，导出 542 个无后缀 C 接口符号（`ucnv_*`）。
+- **系统依赖**: `C:\Windows\System32\icuuc.dll` 为 Windows 10 1809+ 起内置的官方操作系统组件，共有 542 个无后缀导出，其中包含 Qt6Core 所需的 20 个 `ucnv_*` 符号。
 - **运行依赖机制**: 新架构采用 React + TypeScript + Tauri v2。Tauri 依赖宿主 WebView2（在 Windows 10/11 均为系统标配），Sidecar 内 PySide6 (Qt 6.8+) 动态链接到系统 `System32\icuuc.dll`。修复后包内消除了外来同名 ICU78 遮蔽，运行时顺利由操作系统内核供给，符合已声明的 Windows 支持基线承诺。

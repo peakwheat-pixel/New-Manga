@@ -1,0 +1,77 @@
+Task: M2-PACKAGED-AC1-ICU-ISOLATION-FIX
+Verifier: Codex Integrator
+Recorded: 2026-10-08
+Base: 5a72db9e3c5778ce4700b7d404250853e474c5de
+Code head: 4499217d7b2249da16d5dbf27a3219a43876aac7
+Evidence head at review: 2c79645939635beef4a391f4bd9071ffeacd300b
+Observed branch: agent/antigravity/M2-PACKAGED-AC1-ICU-ISOLATION-FIX
+Observed HEAD: 2c79645939635beef4a391f4bd9071ffeacd300b
+Observed common-dir: G:/CODEX/New Manga/.git
+
+COMMAND: git status --short --branch
+EXIT: 0
+## agent/antigravity/M2-PACKAGED-AC1-ICU-ISOLATION-FIX
+?? doc/reviews/M2-PACKAGED-AC1-ICU-ISOLATION-FIX-4499217d-dsh-r2.md
+
+COMMAND: git rev-parse HEAD
+EXIT: 0
+2c79645939635beef4a391f4bd9071ffeacd300b
+
+COMMAND: git rev-parse --path-format=absolute --git-common-dir
+EXIT: 0
+G:/CODEX/New Manga/.git
+
+COMMAND: git diff --name-only 5a72db9e3c5778ce4700b7d404250853e474c5de 4499217d7b2249da16d5dbf27a3219a43876aac7
+EXIT: 0
+doc/00_INDEX.md
+doc/REBASELINE_PLAN.md
+doc/STATUS.md
+doc/handoffs/M2-PACKAGED-AC1-ICU-ISOLATION-FIX-aa099f2a.md
+doc/tasks/M2-PACKAGED-AC1-ICU-ISOLATION-FIX.md
+doc/tasks/README.md
+packaging/m2ac5/build_sidecar.ps1
+packaging/m2ac5/core_sidecar.spec
+verification/M2-PACKAGED-AC1-ICU-ISOLATION-FIX/.gitattributes
+verification/M2-PACKAGED-AC1-ICU-ISOLATION-FIX/REPORT.md
+verification/M2-PACKAGED-AC1-ICU-ISOLATION-FIX/build-fingerprint.json
+verification/M2-PACKAGED-AC1-ICU-ISOLATION-FIX/comparison-evidence.json
+verification/M2-PACKAGED-AC1-ICU-ISOLATION-FIX/dispatch.md
+verification/M2-PACKAGED-AC1-ICU-ISOLATION-FIX/icu-closure-matrix.json
+verification/M2-PACKAGED-AC1-ICU-ISOLATION-FIX/raw/dev-e2e.log
+verification/M2-PACKAGED-AC1-ICU-ISOLATION-FIX/raw/dev-gate-execution.log
+verification/M2-PACKAGED-AC1-ICU-ISOLATION-FIX/raw/dev/e2e-catalog-loader.log
+verification/M2-PACKAGED-AC1-ICU-ISOLATION-FIX/raw/dev/e2e-environment.json
+verification/M2-PACKAGED-AC1-ICU-ISOLATION-FIX/raw/dev/e2e-gate.json
+verification/M2-PACKAGED-AC1-ICU-ISOLATION-FIX/raw/dev/e2e-probe-results.json
+verification/M2-PACKAGED-AC1-ICU-ISOLATION-FIX/raw/dev/e2e-sidecar-import-isolation.log
+verification/M2-PACKAGED-AC1-ICU-ISOLATION-FIX/raw/dev/e2e-sidecar-modules-probe.json
+verification/M2-PACKAGED-AC1-ICU-ISOLATION-FIX/raw/nsis-build.log
+verification/M2-PACKAGED-AC1-ICU-ISOLATION-FIX/raw/packaged-e2e.log
+verification/M2-PACKAGED-AC1-ICU-ISOLATION-FIX/raw/packaged-gate-execution.log
+verification/M2-PACKAGED-AC1-ICU-ISOLATION-FIX/raw/packaged/cleanstart-ac1-catalog-initialize.log
+verification/M2-PACKAGED-AC1-ICU-ISOLATION-FIX/raw/packaged/cleanstart-ac1-run1-stdout.log
+verification/M2-PACKAGED-AC1-ICU-ISOLATION-FIX/raw/packaged/cleanstart-ac1-run2-stdout.log
+verification/M2-PACKAGED-AC1-ICU-ISOLATION-FIX/raw/packaged/cleanstart-gate.json
+verification/M2-PACKAGED-AC1-ICU-ISOLATION-FIX/raw/packaged/cleanstart-probe-stdout.log
+verification/M2-PACKAGED-AC1-ICU-ISOLATION-FIX/raw/packaged/cleanstart-production-stdout.log
+verification/M2-PACKAGED-AC1-ICU-ISOLATION-FIX/raw/packaged/r1-library-probe.log
+verification/M2-PACKAGED-AC1-ICU-ISOLATION-FIX/raw/sidecar-build.log
+verification/M2-PACKAGED-AC1-ICU-ISOLATION-FIX/release-validation.log
+verification/M2-PACKAGED-AC1-ICU-ISOLATION-FIX/release.md
+verification/M2-PACKAGED-AC1-ICU-ISOLATION-FIX/run_clean_start_e2e.py
+verification/M2-PACKAGED-AC1-ICU-ISOLATION-FIX/run_e2e.py
+
+PRODUCTION PATHS (classification of exact diff list):
+packaging/m2ac5/build_sidecar.ps1
+packaging/m2ac5/core_sidecar.spec
+
+FORBIDDEN src/apps/tests/dependency/schema/migration paths (classification of exact diff list):
+(none)
+
+COMMAND: git diff --name-only 5a72db9e3c5778ce4700b7d404250853e474c5de 4499217d7b2249da16d5dbf27a3219a43876aac7 -- src apps tests
+EXIT: 0
+(none)
+
+COMMAND: git diff --check 5a72db9e3c5778ce4700b7d404250853e474c5de 4499217d7b2249da16d5dbf27a3219a43876aac7
+EXIT: 0
+(no output)
