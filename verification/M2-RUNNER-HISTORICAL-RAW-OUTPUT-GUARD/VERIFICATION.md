@@ -61,3 +61,4 @@
 - 集成差量校准了 DSH r2 的非阻断证据问题：R-08 测试数改为 8/8；R-09 精确区分 owner 总路径与实现/测试子集并校准 diff 基线；R-10 哈希相同计数不再扣减其他错误数，结论限定为两个 raw 路径；R-11 README 使用带时间戳的唯一输出目录。R-06 剩余导入复杂度继续明确 deferred。
 - 全部命令、退出码、范围结果和 NOT_RUN 边界见 [`integration-validation.log`](integration-validation.log)。
 - 历史冻结记录 `verification/M2-RC2/integration-88f972fe/verify.ps1:14` 与旧 Handoff 中仍保留缺少 `--output-dir` 的命令；它们属于不可重放的历史记录，按 AC3 不改写。
+- 主线已 fast-forward 至 `5e08596a786159f36c3471af6cd88b5650b6964b`；主工作区再次通过双 Python 回归、两个缺参 CLI（exit 2）、snapshot oracle 与 `git diff --check`。跨 worktree 对比 Owner 快照曾因 3 个文件的 CRLF checkout 表示差异不匹配，但对应 Git blob 相同且 raw 路径干净；改为在主工作区新建 before 快照、重跑测试后，61/61 SHA-256 一致。细节见 `integration-validation.log`。

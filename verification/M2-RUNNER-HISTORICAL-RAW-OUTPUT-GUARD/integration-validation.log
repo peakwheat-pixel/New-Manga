@@ -155,3 +155,17 @@ Command: git diff --numstat d12ebc7a0bbd5617e7a376e00f45c9ee114c8c10...e167e7235
 153 0 tests/packaging/test_runner_output_dir_required.py
 11 7 verification/M2-RC2/run_e2e.py
 EXIT=0
+## Post-fast-forward main worktree verification
+
+Root repository: G:/CODEX/New Manga
+Branch: main
+HEAD: 5e08596a786159f36c3471af6cd88b5650b6964b
+Common Git dir: G:/CODEX/New Manga/.git
+git diff --check dc2b1bd3d3275bc3f8be88c87f604a8a10896d62..5e08596a786159f36c3471af6cd88b5650b6964b: EXIT=0
+Python 3.14.6 parser regression: 8 passed (post-fast-forward rerun)
+Python 3.12.3 parser regression: 8 passed (post-fast-forward rerun)
+Both no-argument runner invocations: argparse usage error requiring --output-dir, EXIT=2
+Runner snapshot oracle: 16 actual-predicate cases PASS
+Fresh main-worktree raw snapshot -> both parser suites -> compare-after: 61/61 SHA-256 identical; both raw paths Git clean.
+
+Cross-worktree snapshot note: comparing main's checked-out bytes to the earlier integration-worktree snapshot showed 3 SHA-256 differences, while the 3 Git blob IDs matched the index in both worktrees and both raw-path Git statuses were clean. The worktrees have different line-ending checkout representations (core.autocrlf=true; CRLF counts differ). A byte snapshot is valid only when before/after are taken in the same worktree. The fresh same-main-worktree comparison above passed; the cross-worktree mismatch did not indicate a test mutation.
