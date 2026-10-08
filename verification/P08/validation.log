@@ -153,3 +153,44 @@ command=python -B -X utf8 verification/PROJECT-ROADMAP-20261008/verify_plan.py
 PASS: 196 historical nodes and classifications; 105 audit-base ancestors; 21 roadmap nodes; no cycles; local links; zero production/code delta; EXIT=0.
 command=git diff --check; no whitespace errors; EXIT=0 (line-ending warnings only for pre-existing dirty report.json and P08/RESUME.md).
 tested_state remains the author working tree at source_HEAD, not the final reviewed-head evidence.
+
+P08 exact fixed-head validation for DSH round 2
+UTC=2026-10-08T13:55:18+00:00
+reviewed_head=31c263892605fdc984982b9ba1875fa6eb609cb6
+review_base=ab2f813c0ce311a6712002cafd852b9e7a258380
+repo=G:\CODEX\New Manga
+branch=detached
+review_worktree=G:\CODEX\New Manga.worktrees\P08-dsh-review-31c2638
+worktree_status=clean
+common_dir=G:/CODEX/New Manga/.git
+shell=PowerShell 7.6.6
+python=C:\Python314\python.exe (Python 3.14.6)
+
+command=python -B -X utf8 verification/P08/verify_scope.py
+PASS: 193 numbered D08 criteria, AC-SMOKE and all 12 §68–79 gates mapped; results remain NOT_RUN
+PASS: P08 local links resolve
+PASS: all seven decisions recorded; all P0/P1 included, six P2 extensions deferred; extra formats mapped
+PASS: P08 changes_requested, 20 successors/candidates unreleased; no fabricated approval
+PASS: frozen product docs unchanged; full P08 subtree/task governance diff is whitespace-clean
+PASS: zero production/contracts/Review/inventory changes; historical Plan/Status preserved
+Product tests/build/GUI/model calls: NOT_RUN (document preparation only)
+EXIT=0
+
+command=python -B -X utf8 verification/PROJECT-ROADMAP-20261008/verify_plan.py
+Planning snapshot base=e4242ecd419eb0eea098d2f63b40f709aa5caeea; live HEAD=31c263892605fdc984982b9ba1875fa6eb609cb6
+PASS: 196 unique nodes, all classifications and dependency references
+PASS: 105 new architecture/governance integration records are audit-base ancestors
+PASS: 21 unique planned nodes and roadmap graphs have no dependency cycles
+PASS: delivery/navigation local links resolve
+PASS: zero production/code delta; governance whitespace check
+Product tests/build/GUI: NOT_RUN (planning-only)
+EXIT=0
+
+command=git diff --check ab2f813c0ce311a6712002cafd852b9e7a258380 31c263892605fdc984982b9ba1875fa6eb609cb6 -- doc/tasks/P08.md doc/REBASELINE_PLAN.md doc/STATUS.md doc/00_INDEX.md doc/12_ROADMAP.md doc/tasks/README.md verification/P08 verification/PROJECT-ROADMAP-20261008
+No output; EXIT=0
+command=git diff --stat ab2f813c0ce311a6712002cafd852b9e7a258380 31c263892605fdc984982b9ba1875fa6eb609cb6
+19 files changed, 1096 insertions(+), 41 deletions(-)
+command=git diff --name-only ab2f813c0ce311a6712002cafd852b9e7a258380 31c263892605fdc984982b9ba1875fa6eb609cb6 -- src apps tests packaging
+No paths returned; EXIT=0 (protected production paths have no delta).
+
+DSH round-2 review has not yet been dispatched; no DSH result or approval is claimed.
