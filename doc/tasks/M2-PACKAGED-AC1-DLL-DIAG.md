@@ -2,9 +2,9 @@
 id: M2-PACKAGED-AC1-DLL-DIAG
 title: 新架构安装态 AC1 QtGui DLL 加载失败只读诊断
 kind: research
-status: approved
+status: done
 previous_status: in_progress
-blocker: dsh_exec_sandbox_and_unverified_dynamic_diagnosis
+blocker: null
 approval: user_authorized_release_20261008
 suggested_owner: DeepSeek Harness
 owner: DeepSeek Harness
@@ -15,7 +15,7 @@ related_blocked_task: M2-RUNNER-SNAPSHOT-DEBT
 base_commit: 9063c317937b86bed1f6ff3e2f2c5d224dc10553
 branch: agent/deepseek/M2-PACKAGED-AC1-DLL-DIAG
 worktree: G:/CODEX/New Manga.worktrees/PACKAGED-AC1-DLL-DIAG-dsh
-integration_commit: null
+integration_commit: 4431754845fc25795058534f21656705ef701cd6
 ---
 
 # M2-PACKAGED-AC1-DLL-DIAG：安装态 AC1 DLL 诊断
@@ -68,7 +68,7 @@ integration_commit: null
       给出根因置信度、最小拟议修复allowed_paths和后续fresh/full Gate，未授权修复不启动。
       **达成：环境差量PROVEN；范围限定本固定产物/本机；最小范围建议packaging/m2ac5/**；
       不得全局删ICU78（其它依赖需求未核实）；修复未启动。**
-- [ ] AC5 交付固定报告/矩阵、原始日志、Handoff，产品/历史证据零diff；Codex非作者Review、
+- [x] AC5 交付固定报告/矩阵、原始日志、Handoff，产品/历史证据零diff；Codex非作者Review、
       文档集成验证后才done。诊断done不等于旧Task解除阻塞或完整packaged PASS。
 
 ## allowed_paths
@@ -210,3 +210,14 @@ lab只使用自有复制/隔离数据，忽略其二进制fixture，不提交模
 报告head=229c6c371d34234b65bbdd67fff73f341c60930f；Codex r3 approved，0P0/P1。
 TaskStatus=approved；AC5尚需文档集成和集成后独立检查，不自行done。原runner debt仍blocked。
 Root为固定产物/本机ICU同名遮蔽和20符号缺口；副本对照不是发行修复或完整Gate。
+
+## Codex集成完成（诊断Task done）
+
+TaskStatus=done；ExecutionState=CHECKPOINTED；integration_commit=4431754845fc25795058534f21656705ef701cd6。
+DSH报告head229c6c37，非作者Codex r3 approved；merge后verify_local_evidence EXIT0、syntax/diff检查通过，
+批准报告原字节不变、实际DSH最终回答与Git逐字节一致，src/apps/tests/packaging零差量。
+主线与Owner旧导入报告的add/add冲突核对为旧d300原文和已批准新报告，更新living报告；
+Task保留主线全部执行/隔离范围冻结，未盲选丢弃约束。旧raw和历史FAIL保留。
+包内ICU遮蔽和20缺符号根因在固定产物/本机得到因果证实；未修生产，未运行完整26Gate，
+M2-RUNNER-SNAPSHOT-DEBT保持blocked，禁止将诊断done等同于发行修复。
+下一步候选M2-PACKAGED-AC1-ICU-ISOLATION-FIX，Owner=Antigravity、Reviewer=DSH、Integrator=Codex，未创建/释放。

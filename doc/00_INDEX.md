@@ -1,6 +1,6 @@
 # 项目文档索引与 Source of Truth
 
-当前唯一Active：[M2-PACKAGED-AC1-DLL-DIAG](tasks/M2-PACKAGED-AC1-DLL-DIAG.md) **in_progress / DSH**；Codex提供本机隔离验证支持，随后回传DSH更新矩阵并非作者审查。M2-RUNNER-SNAPSHOT-DEBT保持blocked；正式范围/恢复点以Plan、STATUS、Task为准。
+当前无运行中/ready Task；M2-PACKAGED-AC1-DLL-DIAG **done @merge 44317548 / DSH**（Codex非作者审查）。原runner debt仍blocked，ICU隔离修复候选未创建/释放。
 
 
 当前全量盘点：2026-10-07，审计输入 `main@32f9b932`。[REBASELINE 审计报告与下一步派发指令](../verification/REBASELINE-20261007/REPORT.md)；[全部 190 任务节点的台账与流程图](../verification/REBASELINE-20261007/TASK_GRAPH.md)；[完整 Git/Owner/Reviewer/worktree 参数](../verification/REBASELINE-20261007/inventory.json)。当前无 Active、无 released；正式授权仍由 REBASELINE_PLAN / STATUS 决定，下面旧日期正文只作历史记录。

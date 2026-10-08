@@ -1,5 +1,20 @@
 # Current Development Status
 
+## 2026-10-08 M2-PACKAGED-AC1-DLL-DIAG done @merge 44317548
+
+诊断Task=[M2-PACKAGED-AC1-DLL-DIAG](tasks/M2-PACKAGED-AC1-DLL-DIAG.md) done；Owner=DSH，非作者Reviewer/Integrator=Codex。
+DSH固定报告head=229c6c371d34234b65bbdd67fff73f341c60930f；Codex r3 approved；integration_commit=4431754845fc25795058534f21656705ef701cd6。
+Codex实际隔离复现：同hash bridge原副本EXIT1/QtGui错误，仅自有副本改名保留icuuc后初始化EXIT0。
+包内ICU78无Qt所需20个无后缀符号，同名遮蔽系统ICU；native错误127及系统ICU加载对照支撑因果。
+范围仅本固定产物/本机；没有生产修复，完整26项Gate未重跑，其它ICU78依赖需求未核实，禁止全局删除。
+集成后独立证据检查EXIT0、syntax/diff PASS、批准报告字节一致，src/apps/tests/packaging零差量。
+[REPORT](../verification/M2-PACKAGED-AC1-DLL-DIAG/REPORT.md)；[Review r3](reviews/M2-PACKAGED-AC1-DLL-DIAG-229c6c37-codex-r3.md)；
+[集成验证](../verification/M2-PACKAGED-AC1-DLL-DIAG/raw/post-merge-validation.log)。
+当前无运行中/ready Task；M2-RUNNER-SNAPSHOT-DEBT保持blocked。下一步候选M2-PACKAGED-AC1-ICU-ISOLATION-FIX，
+Owner=Antigravity，非作者Reviewer=DSH，Integrator=Codex；未创建/释放，须单独冻结修复范围与分配工作区。
+下方in_progress/blocked为历史checkpoint，不覆盖本段。
+
+
 ## 2026-10-08 恢复隔离实测：M2-PACKAGED-AC1-DLL-DIAG in_progress
 
 用户授权“下一步”；Codex串行恢复本Task in_progress / ACTIVE，Owner=DSH，Reviewer/Integrator=Codex。
