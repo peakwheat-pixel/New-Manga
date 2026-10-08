@@ -1,0 +1,81 @@
+HOST=Windows; SHELL=PowerShell 7.6.6; PYTHON=G:/CODEX/New Manga.task-envs/T1.1.1-impl-py312/Scripts/python.exe; CWD=G:\CODEX\New Manga
+integration_commit=73588624b70c337ca4fcb36a4d42e91d3b03f5b0
+reviewed_head=5c2d047804eb4a802c04e53b5e8e5e5459570b24
+code_delivery_head=3d532c1f99e49da703d2076bd67d46b710866637
+COMMAND=git diff --name-only 2b780120d1eb94f93afadf073790f65899a618e6 73588624b70c337ca4fcb36a4d42e91d3b03f5b0
+doc/00_INDEX.md
+doc/REBASELINE_PLAN.md
+doc/STATUS.md
+doc/handoffs/M2-RUNNER-SNAPSHOT-DEBT-3d532c1f.md
+doc/reviews/M2-RUNNER-SNAPSHOT-DEBT-3d532c1f-dsh-r4.md
+doc/tasks/M2-RUNNER-SNAPSHOT-DEBT.md
+packaging/m2ac5/run_clean_start_e2e.py
+verification/M2-RC2/run_e2e.py
+verification/M2-RUNNER-SNAPSHOT-DEBT/raw/resume/build-fingerprint.json
+verification/M2-RUNNER-SNAPSHOT-DEBT/raw/resume/check-snapshots.log
+verification/M2-RUNNER-SNAPSHOT-DEBT/raw/resume/dev-generated-tauri-diff-cleanup.log
+verification/M2-RUNNER-SNAPSHOT-DEBT/raw/resume/dev-generated-tauri-hash-check.log
+verification/M2-RUNNER-SNAPSHOT-DEBT/raw/resume/dev-runner.log
+verification/M2-RUNNER-SNAPSHOT-DEBT/raw/resume/dev/e2e-cargo-build.log
+verification/M2-RUNNER-SNAPSHOT-DEBT/raw/resume/dev/e2e-catalog-loader.log
+verification/M2-RUNNER-SNAPSHOT-DEBT/raw/resume/dev/e2e-environment.json
+verification/M2-RUNNER-SNAPSHOT-DEBT/raw/resume/dev/e2e-gate.json
+verification/M2-RUNNER-SNAPSHOT-DEBT/raw/resume/dev/e2e-probe-results.json
+verification/M2-RUNNER-SNAPSHOT-DEBT/raw/resume/dev/e2e-sidecar-import-isolation.log
+verification/M2-RUNNER-SNAPSHOT-DEBT/raw/resume/dev/e2e-sidecar-modules-probe.json
+verification/M2-RUNNER-SNAPSHOT-DEBT/raw/resume/dsh-r4-dispatch.md
+verification/M2-RUNNER-SNAPSHOT-DEBT/raw/resume/dsh-r4-events.jsonl
+verification/M2-RUNNER-SNAPSHOT-DEBT/raw/resume/dsh-r4-exit.txt
+verification/M2-RUNNER-SNAPSHOT-DEBT/raw/resume/dsh-r4-integration-precheck.log
+verification/M2-RUNNER-SNAPSHOT-DEBT/raw/resume/dsh-r4-stderr.log
+verification/M2-RUNNER-SNAPSHOT-DEBT/raw/resume/nsis-build-r1.log
+verification/M2-RUNNER-SNAPSHOT-DEBT/raw/resume/nsis-build.log
+verification/M2-RUNNER-SNAPSHOT-DEBT/raw/resume/nsis-generated-tauri-cleanup.log
+verification/M2-RUNNER-SNAPSHOT-DEBT/raw/resume/packaged-runner.log
+verification/M2-RUNNER-SNAPSHOT-DEBT/raw/resume/packaged/cleanstart-ac1-catalog-initialize.log
+verification/M2-RUNNER-SNAPSHOT-DEBT/raw/resume/packaged/cleanstart-ac1-run1-stdout.log
+verification/M2-RUNNER-SNAPSHOT-DEBT/raw/resume/packaged/cleanstart-ac1-run2-stdout.log
+verification/M2-RUNNER-SNAPSHOT-DEBT/raw/resume/packaged/cleanstart-gate.json
+verification/M2-RUNNER-SNAPSHOT-DEBT/raw/resume/packaged/cleanstart-probe-stdout.log
+verification/M2-RUNNER-SNAPSHOT-DEBT/raw/resume/packaged/cleanstart-production-stdout.log
+verification/M2-RUNNER-SNAPSHOT-DEBT/raw/resume/packaged/r1-library-probe.log
+verification/M2-RUNNER-SNAPSHOT-DEBT/raw/resume/sidecar-build.log
+EXIT=0
+COMMAND=check reviewed paths against Task allowlist
+RESULT=PASS; disallowed_paths=0
+COMMAND=git diff --check review_base integration_commit
+EXIT=0
+COMMAND=git diff --name-only reviewed_head integration_commit -- two runner paths
+EXIT=0
+COMMAND=git diff --name-only code_delivery_head integration_commit -- src apps packaging
+EXIT=0
+COMMAND=check forbidden source/schema/dependency paths in integration range
+RESULT=PASS; forbidden_paths=0
+COMMAND=G:/CODEX/New Manga.task-envs/T1.1.1-impl-py312/Scripts/python.exe verification/M2-RUNNER-SNAPSHOT-DEBT/check_snapshots.py
+  [PASS] CS-L1-packaged-core-ping: {"error": null, "result": {"capabilities": ["library.list_books"], "protocol_version": {"major": 1, "minor": 6}, "status": "ready"}}
+  [PASS] CS-L2-packaged-ListBooks-structure: {"count": 0, "envelope_valid": true, "error": null}
+  [PASS] CS-L3-packaged-core-shutdown: {"exit": 0, "result": {"status": "stopped"}}
+  [FAIL] CS-L1-packaged-core-ping: {"error": null, "result": {"capabilities": ["library.list_books"], "protocol_version": {"major": 1, "minor": 3}, "status": "ready"}}
+  [PASS] CS-L2-packaged-ListBooks-structure: {"count": 0, "envelope_valid": true, "error": null}
+  [PASS] CS-L3-packaged-core-shutdown: {"exit": 0, "result": {"status": "stopped"}}
+  [FAIL] CS-L1-packaged-core-ping: {"error": null, "result": {"capabilities": ["library.list_books"], "protocol_version": {"major": 1, "minor": 7}, "status": "ready"}}
+  [PASS] CS-L2-packaged-ListBooks-structure: {"count": 0, "envelope_valid": true, "error": null}
+  [PASS] CS-L3-packaged-core-shutdown: {"exit": 0, "result": {"status": "stopped"}}
+  [FAIL] CS-L1-packaged-core-ping: {"error": null, "result": {"capabilities": ["library.list_books"], "protocol_version": null, "status": "ready"}}
+  [PASS] CS-L2-packaged-ListBooks-structure: {"count": 0, "envelope_valid": true, "error": null}
+  [PASS] CS-L3-packaged-core-shutdown: {"exit": 0, "result": {"status": "stopped"}}
+  [FAIL] CS-L1-packaged-core-ping: {"error": null, "result": {"capabilities": [], "protocol_version": {"major": 1, "minor": 6}, "status": "ready"}}
+  [PASS] CS-L2-packaged-ListBooks-structure: {"count": 0, "envelope_valid": true, "error": null}
+  [PASS] CS-L3-packaged-core-shutdown: {"exit": 0, "result": {"status": "stopped"}}
+  [FAIL] CS-L1-packaged-core-ping: {"error": null, "result": {"capabilities": ["unrelated"], "protocol_version": {"major": 1, "minor": 6}, "status": "ready"}}
+  [PASS] CS-L2-packaged-ListBooks-structure: {"count": 0, "envelope_valid": true, "error": null}
+  [PASS] CS-L3-packaged-core-shutdown: {"exit": 0, "result": {"status": "stopped"}}
+  [FAIL] CS-L1-packaged-core-ping: {"error": null, "result": {"capabilities": ["library.list_books"], "protocol_version": {"major": 1, "minor": 6}, "status": "starting"}}
+  [PASS] CS-L2-packaged-ListBooks-structure: {"count": 0, "envelope_valid": true, "error": null}
+  [PASS] CS-L3-packaged-core-shutdown: {"exit": 0, "result": {"status": "stopped"}}
+  [FAIL] CS-L1-packaged-core-ping: {"error": {"code": "FAIL"}, "result": {"capabilities": ["library.list_books"], "protocol_version": {"major": 1, "minor": 6}, "status": "ready"}}
+  [PASS] CS-L2-packaged-ListBooks-structure: {"count": 0, "envelope_valid": true, "error": null}
+  [PASS] CS-L3-packaged-core-shutdown: {"exit": 0, "result": {"status": "stopped"}}
+PASS: 16 actual-predicate cases; source alignment and syntax; no product/runtime claim
+EXIT=0
+OVERALL_EXIT=0

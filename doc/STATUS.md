@@ -4,7 +4,11 @@
 
 `[M2-PACKAGED-AC1-ICU-ISOLATION-FIX](tasks/M2-PACKAGED-AC1-ICU-ISOLATION-FIX.md)` 已 `done`，Owner=Antigravity、非作者 Reviewer=DeepSeek Harness、Integrator=Codex。固定实现/测试 head=`4499217d7b2249da16d5dbf27a3219a43876aac7`，Owner evidence=`2c79645939635beef4a391f4bd9071ffeacd300b`，DSH r2=APPROVED（0 P0/P1），integration commit=`65ba30144048a0b8daae22205c01f8049b44b8a7`。集成验证见 [`integration-validation.log`](../verification/M2-PACKAGED-AC1-ICU-ISOLATION-FIX/integration-validation.log)：packaging 及 src/apps/tests 对 reviewed head 零差量；merge 后未重跑产品 Gate。Owner fresh build/Dev 10+13/Packaged 26 项证据绑定于 `4499217d`。R2-002/R2-003 非阻断证据局限按 DSH 报告保留。
 
-## 2026-10-08 M2-RUNNER-SNAPSHOT-DEBT DSH r4 approved，待 Codex 集成
+## 2026-10-08 M2-RUNNER-SNAPSHOT-DEBT 集成完成
+
+`[M2-RUNNER-SNAPSHOT-DEBT](tasks/M2-RUNNER-SNAPSHOT-DEBT.md)` 已 `done`，Owner=Codex、非作者 Reviewer=DeepSeek Harness、Integrator=Codex。代码/测试 head=`3d532c1f99e49da703d2076bd67d46b710866637`，DSH r4 reviewed head=`5c2d047804eb4a802c04e53b5e8e5e5459570b24`，Review=`approved`（0 P0/P1），integration fast-forward=`73588624b70c337ca4fcb36a4d42e91d3b03f5b0`。Fresh Dev 10/10 + probe 13/13、Packaged 26/26、五入口 Sidecar/NSIS、集成后 snapshot oracle 16 项均 PASS；installer SHA=`ef617573ab39c0469079203489f4db4af78ae4e3437f8d97d87a3565bb40fa75`。范围/空白/代码恒等验证=`verification/M2-RUNNER-SNAPSHOT-DEBT/integration-validation.log` EXIT=0；合并后构建输入及两处 runner 无代码差量，故未重建 installer。原始 DSH Review、JSONL session 及 findings disposition 已归档；R-001/R-003 是非阻断 deferred。当前无 Active / released Task；新 follow-up 需单独冻结与用户选择。
+
+## 历史 checkpoint：M2-RUNNER-SNAPSHOT-DEBT DSH r4 approved，待 Codex 集成
 
 当前唯一 Active Task=`[M2-RUNNER-SNAPSHOT-DEBT](tasks/M2-RUNNER-SNAPSHOT-DEBT.md)`，Owner=Codex、非作者 Reviewer=DeepSeek Harness、Integrator=Codex；TaskStatus=`in_review` / ExecutionState=`CHECKPOINTED`。真实 DSH r4 已对 `reviewed_head=5c2d047804eb4a802c04e53b5e8e5e5459570b24` 批准（0 P0/P1），但 DSH 自身 Windows Gate 重跑为 NOT_RUN；现场验证结论来自已入库 producer logs。AC1–AC5 已满足，AC6 等待 Codex 集成后检查。此前 packaged AC1 QtGui DLL blocker 已由 ICU Task done@`65ba30144048a0b8daae22205c01f8049b44b8a7` 解除；本 Task 自己在修复后的组合 head 上 fresh 复跑，不借用 ICU 前置 Gate 代替 AC4。
 

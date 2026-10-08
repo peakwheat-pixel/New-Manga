@@ -5,7 +5,7 @@ recipient: Codex（Integrator）
 base_commit: 968c8f34601b72667831f1fd15bb20cd2c8f3cb7
 delivery_head: 3d532c1f99e49da703d2076bd67d46b710866637
 evidence_commit: ce5ff3fc21bcba082b995ea716a983d2fd4c6a89
-status: in_review
+status: done
 ---
 
 # Handoff：M2-RUNNER-SNAPSHOT-DEBT
@@ -45,20 +45,20 @@ DSH 已从 Owner worktree 完成只读审查：
 
 Reviewer 未在自己的环境重跑 Windows Gate（NOT_RUN），批准基于已入库 producer logs；批准仅适用于固定 reviewed head，不替代 Codex 集成 Gate。DSH Review 原文列有 4 项非阻断 P2 和 1 个 judgement：R-002 范围/diff-check 日志、doc-only 代码恒等已由 `raw/resume/dsh-r4-integration-precheck.log` 关闭；R-004 的统计疑点未复现，Git 证实 Handoff `+27/−13` 正确；R-001 输出目录默认、R-003 第五入口断言继续 deferred；R-005 judgement 接受且不改代码。DSH Web/desktop session visibility=`unverified`，workspace.json 的精确 worktree 注册已核实。
 
-Codex 作为 Integrator 下一步应：在主线只做 fast-forward 集成，保留其他 worktree 的工作；集成后核对 Task merge 范围及两处 runner blob 与已审查代码一致，`git diff --check`，用固定代码 Gate 已通过的证据引用关系做适用性核查，并至少复跑最小 snapshot oracle。补入 `dsh-r4-integration-precheck.log` 的范围/空白检查输出和完整 findings disposition；只在 AC6 检查闭合后标 Task done。Reviewer 报告、旧历史 FAIL 及当前四项遗留限制均不改写。
+Codex 已完成 Integrator Gate：main fast-forward integration=`73588624b70c337ca4fcb36a4d42e91d3b03f5b0`；[`integration-validation.log`](../../verification/M2-RUNNER-SNAPSHOT-DEBT/integration-validation.log) EXIT=0，范围/allowlist、`git diff --check`、reviewed runner blob 一致性、build-input 零差量及集成后 16 项 snapshot oracle 均通过。完整 fresh Gate 仍绑定 code delivery=`3d532c1f` 和 installer SHA；集成没有改 runner/build 输入，因此不重建 installer。AC1–AC6 已完成，Task=`done`。
 
 ## 下一任务建议
 
-- Task ID / 标题：`M2-RUNNER-SNAPSHOT-DEBT` Codex 集成 Gate
-- 推荐 Agent / Reviewer：Codex（Integrator；原非作者 Reviewer=DeepSeek Harness 已批准）
-- 推荐原因与前置依赖：r4=`approved`、0 P0/P1；review 要求的真实范围/空白与 doc-only 差量检查已保存，进入唯一剩余的 AC6 集成阶段。
-- Recovery point：唯一仓库 `G:/CODEX/New Manga`；branch=`codex/M2-RUNNER-SNAPSHOT-DEBT`；worktree=`G:/CODEX/New Manga.worktrees/RUNNER-SNAPSHOT-DEBT-codex`；review base=`2b780120d1eb94f93afadf073790f65899a618e6`；reviewed head=`5c2d047804eb4a802c04e53b5e8e5e5459570b24`；代码 delivery=`3d532c1f99e49da703d2076bd67d46b710866637`。
-- 允许修改路径：review/dispatch/precheck 证据与 Task/Handoff/Plan/Status 治理记录；集成时只合并该 branch 的冻结两处 runner 修改和本 Task 证据。
-- 禁止范围与新增授权条件：不改产品 src/apps/tests、Schema/依赖/IPC，不扩大到 packaged 第五入口 assertion；不触碰主工作区 Qoder dirty 文件；不 reset/clean/stash。
-- 交付物：merge commit、集成后最小 Gate/范围验证日志、Task AC6 disposition 和 done 状态（通过后）。
-- 验证命令、环境与完成 Gate：应用 `raw/resume/dsh-r4-integration-precheck.log` 中的实际 `git diff --stat`/`git diff --check`；合并后核对 runner blob 等于 reviewed head，复跑 Windows snapshot oracle；其它 fresh Dev/NSIS/Packaged Gate仍绑定 `3d532c1f`，只有证明代码字节一致才可引用，不重建 installer。
-- 可直接转发给 Agent 的指令：无须转发，Codex 当前已授权担任 Integrator；按 Task 与 DSH r4 报告逐项完成合并前核验及 AC6 集成后检查。R-001/R-003 保留为非阻断 deferred，R-005 接受；不要因 DSH approved 单独标 done。
+- Task ID / 标题：无已冻结/授权的后续 Task（当前唯一 Active Task 已 done）
+- 推荐 Agent / Reviewer：无需分配；任何 follow-up 应先由 Codex 单独冻结范围，再由用户决定是否释放。
+- 推荐原因与前置依赖：Review R-001 输出目录缺省仍可覆盖历史 raw、R-003 packaged Gate 未断言第五入口均已登记为非阻断 deferred；它们不属于已批准实现范围，不能自动创建或启动。
+- Recovery point：main=`73588624b70c337ca4fcb36a4d42e91d3b03f5b0`；owner branch/worktree 保留=`codex/M2-RUNNER-SNAPSHOT-DEBT` / `G:/CODEX/New Manga.worktrees/RUNNER-SNAPSHOT-DEBT-codex`。
+- 允许修改路径：无；除非先创建并释放新的 Task。
+- 禁止范围与新增授权条件：不得把本 Task 的完成解释为 R-001/R-003 已修复或授权新实现。
+- 交付物：无需下一步操作；如用户继续推进，先明确要关闭的 deferred finding 并独立冻结 Task。
+- 验证命令、环境与完成 Gate：不适用。
+- 可直接转发给 Agent 的指令：无需下一步操作。
 
 ## 风险与遗留
 
-AC1–AC5 当前已满足；DSH r4 对固定 reviewed head 批准，AC6 的 Codex integration/post-merge check 仍 pending，故 Task 保持 `in_review`，不能标 `done`。已披露限制：R-001 默认 raw 输出目录的潜在覆盖、R-003 第五 sidecar 未被 packaged assertion 验证、Dev in-page matrix R2-03 未机器验证；host simulation 不替代干净 Windows 分发 Gate；PyInstaller 可选模块警告仍可见。旧 packaged AC1 QtGui DLL FAIL 作为历史原文保留，不回填为 PASS；本次新鲜 packaged Gate 在 ICU 修复集成后重新完成 26/26 PASS。
+Task 已 `done @integration 73588624`。已披露限制：R-001 默认 raw 输出目录的潜在覆盖、R-003 第五 sidecar 未被 packaged assertion 验证、Dev in-page matrix R2-03 未机器验证；host simulation 不替代干净 Windows 分发 Gate；PyInstaller 可选模块警告仍可见。旧 packaged AC1 QtGui DLL FAIL 作为历史原文保留，不回填为 PASS；本次新鲜 packaged Gate 在 ICU 修复集成后重新完成 26/26 PASS。当前没有已释放后续 Task。

@@ -2,7 +2,7 @@
 id: M2-RUNNER-SNAPSHOT-DEBT
 title: 修复验收 runner 协议与生产命令快照漂移
 kind: maintenance
-status: in_review
+status: done
 approval: user_authorized_release_20261008
 suggested_owner: Codex
 owner: Codex
@@ -12,10 +12,10 @@ depends_on: [M2-DERIVED-GC-2]
 base_commit: 968c8f34601b72667831f1fd15bb20cd2c8f3cb7
 branch: codex/M2-RUNNER-SNAPSHOT-DEBT
 worktree: G:/CODEX/New Manga.worktrees/RUNNER-SNAPSHOT-DEBT-codex
-previous_status: in_progress
+previous_status: in_review
 blocker: null
-integration_commit: null
-execution_state: CHECKPOINTED
+integration_commit: 73588624b70c337ca4fcb36a4d42e91d3b03f5b0
+execution_state: COMPLETE
 resume_code_head: bc337fcbef676d4d75befae03e6ea3f5d406e076
 delivery_head: 3d532c1f99e49da703d2076bd67d46b710866637
 evidence_commit: ce5ff3fc21bcba082b995ea716a983d2fd4c6a89
@@ -29,9 +29,7 @@ review_session_id: session-1aa0514a-fb63-474e-8911-1cf78821df49
 
 # M2-RUNNER-SNAPSHOT-DEBT：runner 快照债务
 
-2026-10-08 用户明确授权 Codex 认领并实施；TaskStatus=in_progress，
-ExecutionState=ACTIVE。Codex 已核对分配工作区、固定release与纯治理追加差量。非作者 Reviewer=DeepSeek Harness，
-Integrator=Codex；作者不得自己批准实现。唯一 Active Task 为本 Task。
+2026-10-08 用户明确授权 Codex 认领并实施；该授权曾使 TaskStatus=in_progress / ExecutionState=ACTIVE。Codex 已核对分配工作区、固定release与纯治理追加差量。非作者 Reviewer=DeepSeek Harness，Integrator=Codex；作者不得自己批准实现。该段记录开工状态，最新集成完成状态见本文末尾。
 
 ## 来源、实际证据与冻结目标
 
@@ -67,7 +65,7 @@ minor-3 请求若原意为兼容测试，保留并说明；严格核对服务端
       依赖缺失记BLOCKED/NOT_RUN，不使用旧产品PASS替代本次验收。
 - [x] AC5 旧报告/日志/冻结probe原字节保持，运行输出只入本Task隔离目录；无生产/
       wire/Schema/依赖差量；语法、diff检查和受影响测试通过。
-- [ ] AC6 代码head、日志、Handoff固定后真实DSH非作者Review；条件闭合，Codex集成
+- [x] AC6 代码head、日志、Handoff固定后真实DSH非作者Review；条件闭合，Codex集成
       后受影响检查才done。作者不得自己批准，产品测试未跑不伪造PASS。
 
 ## allowed_paths
@@ -185,7 +183,7 @@ P2-1/2/3父侧实际补raw/review-binding-r3-supplement.log（EXIT0）：6af→6
 
 当前恢复 head 只确认 ICU 修复已作为测试前置纳入；**本 Task 在组合代码 head 上的 AC4 fresh build/dev/packaged Gate 尚未运行，状态 NOT_RUN**。继续按原 AC4 绑定组合 source head、五入口 Sidecar、NSIS installer hash 与 Gate；旧 FAIL 不回填。DSH r3 是此前 runner 代码的有界批准，不代表本次 AC4 已通过或 Task 可 done；新鲜 Gate 后仍须以固定新 head 取得真实非作者 DSH Review，再由 Codex 集成。
 
-## 2026-10-08 AC4 完成，提交非作者 Review（当前状态）
+## 历史 checkpoint：2026-10-08 AC4 完成，提交非作者 Review
 
 TaskStatus=`in_review`，previous_status=`in_progress`，ExecutionState=`CHECKPOINTED`；Owner=Codex、Reviewer=DeepSeek Harness（非作者）、Integrator=Codex。旧 packaged AC1 blocker 已由 ICU Task done@`65ba30144048a0b8daae22205c01f8049b44b8a7` 解除；Runner Debt 自身 AC4 已在组合代码/测试 head=`3d532c1f99e49da703d2076bd67d46b710866637` 完成 fresh 验收。审查基线=`2b780120d1eb94f93afadf073790f65899a618e6`；该范围只有两处冻结 runner 文件变更，`src/**`、`apps/**`、`tests/**`、Schema 与依赖为零差量。
 
@@ -209,4 +207,10 @@ AC1–AC5 当前均为 PASS；AC6 仍待 Codex 集成与集成后检查。真实
 - R-004 P2（Handoff 变更行数疑似不一致）：未复现；Git 实际 `2b780120..3d532c1f` 对两处 runner 的统计为 `27 insertions / 13 deletions`，与 Handoff 一致，核验记录见 `dsh-r4-integration-precheck.log`。Reviewer 的 +26/−12 计算不采纳，Review 原文不修改。
 - R-005 P2 judgement（`global RAW, LAB` 模块状态）：按 Task 的最小 runner 结构要求接受此判断项，不增加抽象或本轮返工。
 
-DSH workspace 注册已在 `C:/Users/49745/.dsh/storages/workspace.json` 核实指向精确 linked worktree；DSH desktop 可见性未现场验证，记录 `web_visibility=unverified`。AC6 仍待 Codex 集成与集成后检查，当前不得标 `done`；旧 FAIL 保留为历史记录。
+当时 DSH workspace 注册已在 `C:/Users/49745/.dsh/storages/workspace.json` 核实指向精确 linked worktree；DSH desktop 可见性未现场验证，记录 `web_visibility=unverified`。该 checkpoint 的 AC6 pending 随后已在下方完成；旧 FAIL 保留为历史记录。
+
+## 2026-10-08 Codex 集成与 AC6 完成（done）
+
+DSH r4=`approved`，reviewed_head=`5c2d047804eb4a802c04e53b5e8e5e5459570b24`；Codex 将 `codex/M2-RUNNER-SNAPSHOT-DEBT` 从 review base=`2b780120d1eb94f93afadf073790f65899a618e6` fast-forward 集成至 main，integration_commit=`73588624b70c337ca4fcb36a4d42e91d3b03f5b0`。集成后 `verification/M2-RUNNER-SNAPSHOT-DEBT/integration-validation.log` 记录 EXIT=0：review range 路径全部在 allowlist，src/apps/tests/contracts/dependencies 为零，`git diff --check` 通过；从 code_delivery_head=`3d532c1f99e49da703d2076bd67d46b710866637` 至 integration head 的 `src/apps/packaging` 无差量，两处 runner 文件与 reviewed head 字节相同；在 main 集成 head 复跑 snapshot oracle 16 个谓词全部 PASS。因合并后构建输入与被测 runner 均未变化，fresh Sidecar/NSIS/Dev/Packaged Gate 仍适用原 code_delivery_head 与 installer SHA，没有宣称合并后重建或重跑完整 Gate。
+
+AC1–AC6 均闭合，Task=`done`。Review 的 R-001（缺省输出目录仍指向历史 raw）和 R-003（装载 Gate 未断言第五 sidecar）留作非阻断 deferred 债务，不改变本 Task 结论；R-002 已由集成前核验日志关闭，R-004 的统计差异未复现，R-005 judgement 按最小实现原则接受。原始历史 FAIL 不改写、不追认；未授权新的 follow-up Task。

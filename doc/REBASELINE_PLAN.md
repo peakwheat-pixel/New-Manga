@@ -1,16 +1,18 @@
 # Project Rebaseline Plan
 
-## 2026-10-08 当前执行：M2-RUNNER-SNAPSHOT-DEBT
+## 2026-10-08 完成：M2-RUNNER-SNAPSHOT-DEBT @integration `73588624`
 
 ICU 修复 Task 已 done@`65ba30144048a0b8daae22205c01f8049b44b8a7`；fresh Sidecar/NSIS 与 packaged AC1、完整 26/26 Gate 均绑定 source=`4499217d7b2249da16d5dbf27a3219a43876aac7` 和 installer SHA，满足 Runner Debt 原 blocker 的解除条件。集成后未重跑 ICU Gate，production 差量为零。
 
-唯一 Active=`[M2-RUNNER-SNAPSHOT-DEBT](tasks/M2-RUNNER-SNAPSHOT-DEBT.md)`，Task=`in_review`（DSH r4 `approved`），Owner=Codex、Reviewer=DeepSeek Harness（非作者）、Integrator=Codex。reviewed head=`5c2d047804eb4a802c04e53b5e8e5e5459570b24`；AC4 实际代码/测试 head=`3d532c1f99e49da703d2076bd67d46b710866637`，installer SHA=`ef617573ab39c0469079203489f4db4af78ae4e3437f8d97d87a3565bb40fa75`。16 项 oracle、Dev 10/10 + probe 13/13、fresh 五入口 Sidecar + NSIS、Packaged 26/26 均 PASS。DSH 报告 `doc/reviews/M2-RUNNER-SNAPSHOT-DEBT-3d532c1f-dsh-r4.md` 无 P0/P1；集成前 diff/path/零差量核验 EXIT=0，Handoff `+27/−13` 与实测一致。R-001/R-003 deferred，R-005 judgement 已接受。下一 Gate 为 Codex 集成和 AC6 集成后检查；未闭合前不得 done。工作区、证据与最新 Handoff 见 [`STATUS`](STATUS.md) 和 [Handoff](handoffs/M2-RUNNER-SNAPSHOT-DEBT-3d532c1f.md)。
+Task=`[M2-RUNNER-SNAPSHOT-DEBT](tasks/M2-RUNNER-SNAPSHOT-DEBT.md)` 已 `done`；Owner=Codex、非作者 Reviewer=DeepSeek Harness、Integrator=Codex。reviewed head=`5c2d047804eb4a802c04e53b5e8e5e5459570b24`，AC4 实际代码/测试 head=`3d532c1f99e49da703d2076bd67d46b710866637`，integration fast-forward=`73588624b70c337ca4fcb36a4d42e91d3b03f5b0`。Fresh Sidecar/NSIS/Dev/Packaged 与 snapshot oracle 均 PASS；Packaged 26/26，installer SHA=`ef617573ab39c0469079203489f4db4af78ae4e3437f8d97d87a3565bb40fa75`。DSH r4=`approved`、0 P0/P1；集成后核验与 snapshot 16 项 PASS 见 [integration-validation.log](../verification/M2-RUNNER-SNAPSHOT-DEBT/integration-validation.log)。R-001/R-003 为非阻断 deferred，未自动创建后续 Task。
+
+当前无 Active Task、无 released Task。下一项需用户选择要关闭的 follow-up 范围；R-001（保护历史 raw 输出）优先建议单独冻结，R-003（Packaged Gate 覆盖第五入口）是另一个候选，不自动启动。下方 ICU/Runner 旧 release、blocked 与 changes_requested 段落仅为历史 checkpoint。
 
 ICU 集成证据：[integration-validation.log](../verification/M2-PACKAGED-AC1-ICU-ISOLATION-FIX/integration-validation.log)；[DSH r2 Review](reviews/M2-PACKAGED-AC1-ICU-ISOLATION-FIX-4499217d-dsh-r2.md)。
 
-## 2026-10-08 DSH Review r1：M2-PACKAGED-AC1-ICU-ISOLATION-FIX changes_requested
+## 历史 DSH Review r1：M2-PACKAGED-AC1-ICU-ISOLATION-FIX changes_requested
 
-当前唯一Active Task为 changes_requested：Owner=Antigravity，非作者Reviewer=DeepSeek Harness，Integrator=Codex。实现尚未集成、Task不得标done。
+该历史 checkpoint 的 Active Task 为 changes_requested：Owner=Antigravity，非作者Reviewer=DeepSeek Harness，Integrator=Codex。实现当时尚未集成；其最终完成状态见本 Plan 首段与当前 STATUS。
 固定原始实现 head=aa099f2a013408bf53c3466ab8361bc028289743；DSH审查报告=verification/M2-PACKAGED-AC1-ICU-ISOLATION-FIX/review-dsh-r1.md，decision=changes_requested，DSH session=session-4655cd71-226a-4eec-91a7-78dad7e84fab（已挂载到 New Manga workspace；桌面可见性待用户下次启动核对）。
 R-001 P1：packaged Gate 实测 installer SHA a17a9708… 与 fingerprint/交付包 f76b91d6… 不同；R-002 P1：构建/Gate 日志 HEAD=df824182，无法证明输入字节等同声明提交 aa099f2a。R-003 P2 缺 PE 扫描原始证据；R-004 P2 spec 按名称整包移除 ICU，违背未知引用保留/禁止全局删除；R-005/R-006/R-007 为断言、报告口径、System32 ICU 运行依赖记录问题。
 现有 packaged 26/26 PASS 仅适用于日志记录的 a17a9708… installer，不能记作最终指纹 f76b91d6… 已验收。Dev 10/10+13/13 与 Sidecar/NSIS EXIT 0 也仅是提交内日志，DSH未现场重跑。
@@ -95,7 +97,7 @@ worktree=G:/CODEX/New Manga.worktrees/PACKAGED-AC1-DLL-DIAG-dsh，已分配clean
 下方runner debt的“唯一Active”及未释放诊断描述为历史checkpoint，不覆盖本段；它的FAIL/BLOCKED不变。
 
 
-## 2026-10-08 当前阻塞：M2-RUNNER-SNAPSHOT-DEBT blocked（DSH r3后）
+## 历史 checkpoint：M2-RUNNER-SNAPSHOT-DEBT blocked（DSH r3后）
 
 唯一Active Task=[M2-RUNNER-SNAPSHOT-DEBT](tasks/M2-RUNNER-SNAPSHOT-DEBT.md)，Owner=Codex，
 非作者Reviewer=DeepSeek Harness，Integrator=Codex。TaskStatus=blocked，
@@ -120,7 +122,7 @@ DSH r3静态有界代码批准，零重跑，0P0/P1、4个非阻断P2已补证�
 下方ready/in_progress/历史checkpoint不覆盖本段。
 
 
-## 2026-10-08 正式释放：M2-RUNNER-SNAPSHOT-DEBT in_progress
+## 历史正式释放：M2-RUNNER-SNAPSHOT-DEBT in_progress
 
 唯一 Active Task=[M2-RUNNER-SNAPSHOT-DEBT](tasks/M2-RUNNER-SNAPSHOT-DEBT.md)，
 TaskStatus=in_progress，ExecutionState=ACTIVE。用户明确释放，

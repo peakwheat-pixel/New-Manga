@@ -1,15 +1,15 @@
 # 项目文档索引与 Source of Truth
 
-当前唯一 Active Task=`M2-RUNNER-SNAPSHOT-DEBT`（Codex / DSH Reviewer），状态=`in_review`；DSH r4 对固定 reviewed head=`5c2d0478` 批准，Codex 集成与 AC6 集成后检查待完成。AC4 fresh Gate 绑定代码 head `3d532c1f99e49da703d2076bd67d46b710866637`。ICU 前置已 done@`65ba30144048a0b8daae22205c01f8049b44b8a7`。见 [STATUS](STATUS.md)、[Plan](REBASELINE_PLAN.md)、[Runner Handoff](handoffs/M2-RUNNER-SNAPSHOT-DEBT-3d532c1f.md)、[DSH r4 Review](reviews/M2-RUNNER-SNAPSHOT-DEBT-3d532c1f-dsh-r4.md) 与 [AC4 原始证据](../verification/M2-RUNNER-SNAPSHOT-DEBT/raw/resume/)。下方旧指针均为历史记录。
+当前无 Active / released Task。最近完成=`M2-RUNNER-SNAPSHOT-DEBT done@integration 73588624`；DSH r4=`approved`，AC4 fresh Gate 与集成后 snapshot 验证均通过。详情见 [STATUS](STATUS.md)、[Plan](REBASELINE_PLAN.md)、[Runner Handoff](handoffs/M2-RUNNER-SNAPSHOT-DEBT-3d532c1f.md)、[DSH r4 Review](reviews/M2-RUNNER-SNAPSHOT-DEBT-3d532c1f-dsh-r4.md) 与 [集成验证](../verification/M2-RUNNER-SNAPSHOT-DEBT/integration-validation.log)。R-001/R-003 deferred follow-up 未释放；需要用户选择新范围后另行冻结。
 
-此前 `M2-PACKAGED-AC1-ICU-ISOLATION-FIX` 的 changes_requested 与 `M2-RUNNER-SNAPSHOT-DEBT` blocked 均为历史 checkpoint；ICU Task 已完成集成，Runner 当前 DSH r4 approved、等待 Codex AC6 集成。以本页首段、[Plan](REBASELINE_PLAN.md) 与 [STATUS](STATUS.md) 为当前事实。
+全任务盘点与 inventory 下方段落是其各自审计时的历史快照，不反映当前总数或授权状态；以本页首段、[Plan](REBASELINE_PLAN.md) 与 [STATUS](STATUS.md) 为当前事实。
 
 
-当前全量盘点：2026-10-07，审计输入 `main@32f9b932`。[REBASELINE 审计报告与下一步派发指令](../verification/REBASELINE-20261007/REPORT.md)；[全部 190 任务节点的台账与流程图](../verification/REBASELINE-20261007/TASK_GRAPH.md)；[完整 Git/Owner/Reviewer/worktree 参数](../verification/REBASELINE-20261007/inventory.json)。当前无 Active、无 released；正式授权仍由 REBASELINE_PLAN / STATUS 决定，下面旧日期正文只作历史记录。
+全量盘点快照：2026-10-07，审计输入 `main@32f9b932`。[REBASELINE 审计报告与下一步派发指令](../verification/REBASELINE-20261007/REPORT.md)；[全部 190 任务节点的台账与流程图](../verification/REBASELINE-20261007/TASK_GRAPH.md)；[完整 Git/Owner/Reviewer/worktree 参数](../verification/REBASELINE-20261007/inventory.json)。在该审计时间点无 Active、无 released；当前授权仍由 REBASELINE_PLAN / STATUS 决定，下面旧日期正文只作历史记录。
 
 > **2026-09-21 Stage A Rebaseline 生效**：后续 Milestone、Task、依赖、Legacy Mapping 与治理以 [REBASELINE_PLAN](REBASELINE_PLAN.md) 为唯一规划事实源；实时状态只看 [STATUS](STATUS.md)。TASK-001～065 及下方历史台账保留为证据，不再决定当前排期。Worktree 清理必须先看 [WORKTREE_SAFETY_INVENTORY](WORKTREE_SAFETY_INVENTORY.md)。
 
-> **Current pointer（2026-10-07）**：Codex refresh @main `44421008`；A/B/C done，阈值 0.90 与 BJ13 维持现状已确认。唯一当前释放 [RC-4](tasks/M2-RC4-DOMAIN-COMMANDS.md)，[契约](contracts/M2-RC4_DOMAIN_COMMANDS.md)、[审计证据](../verification/M2-RC4-DOMAIN-COMMANDS/rebaseline-20261007.md)。以 PLAN/STATUS 为准，下方旧记录仅作历史证据。
+> **Historical pointer（2026-10-07）**：Codex refresh @main `44421008`；A/B/C done，阈值 0.90 与 BJ13 维持现状已确认。该时点释放 [RC-4](tasks/M2-RC4-DOMAIN-COMMANDS.md)，[契约](contracts/M2-RC4_DOMAIN_COMMANDS.md)、[审计证据](../verification/M2-RC4-DOMAIN-COMMANDS/rebaseline-20261007.md)。当前以 PLAN/STATUS 为准。
 
 > **Architecture Decision / M2 release**：[AD-001](AD-001_TARGET_DESKTOP_ARCHITECTURE.md) 的 React + TypeScript / Tauri / Python Core / SQLite 目标保持。资源通道 runtime 与 command-surface hardening 已由 M2-RC1/RC2 集成；production Core 业务 IPC、产品四页 React shell、打包与完整 Release Gate 仍待后续 Task。
 
