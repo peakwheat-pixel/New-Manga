@@ -4,7 +4,13 @@
 
 `[M2-PACKAGED-AC1-ICU-ISOLATION-FIX](tasks/M2-PACKAGED-AC1-ICU-ISOLATION-FIX.md)` 已 `done`，Owner=Antigravity、非作者 Reviewer=DeepSeek Harness、Integrator=Codex。固定实现/测试 head=`4499217d7b2249da16d5dbf27a3219a43876aac7`，Owner evidence=`2c79645939635beef4a391f4bd9071ffeacd300b`，DSH r2=APPROVED（0 P0/P1），integration commit=`65ba30144048a0b8daae22205c01f8049b44b8a7`。集成验证见 [`integration-validation.log`](../verification/M2-PACKAGED-AC1-ICU-ISOLATION-FIX/integration-validation.log)：packaging 及 src/apps/tests 对 reviewed head 零差量；merge 后未重跑产品 Gate。Owner fresh build/Dev 10+13/Packaged 26 项证据绑定于 `4499217d`。R2-002/R2-003 非阻断证据局限按 DSH 报告保留。
 
-下一步恢复曾由用户释放且由 Codex 实施的 [`M2-RUNNER-SNAPSHOT-DEBT`](tasks/M2-RUNNER-SNAPSHOT-DEBT.md)：新 ICU 修复固定 head 上 fresh packaged AC1 与完整 Gate 26/26 PASS，已满足原 blocker 的解除条件；Runner owner worktree 同步和新鲜 AC4 仍待执行。以下 ICU R1、ready、blocked 内容均为历史 checkpoint，以本段和后续最新 checkpoint 为准。
+## 2026-10-08 恢复执行：M2-RUNNER-SNAPSHOT-DEBT
+
+当前唯一 Active Task=`[M2-RUNNER-SNAPSHOT-DEBT](tasks/M2-RUNNER-SNAPSHOT-DEBT.md)`，Owner=Codex、非作者 Reviewer=DeepSeek Harness、Integrator=Codex；TaskStatus=`in_progress` / ExecutionState=`ACTIVE`。此前 runner 实现固定 head=`2af6b71aa06979b822e543b221aaf3a2d5f01abe`（DSH r3 有界批准），旧 packaged AC1 QtGui DLL blocker 已由 ICU Task done@`65ba30144048a0b8daae22205c01f8049b44b8a7` 满足解除条件。
+
+Codex Owner branch=`codex/M2-RUNNER-SNAPSHOT-DEBT`；worktree=`G:/CODEX/New Manga.worktrees/RUNNER-SNAPSHOT-DEBT-codex`；resume_code_head=`bc337fcbef676d4d75befae03e6ea3f5d406e076`（owner tip `15cd788f` 与主线 `cd09c4d9` 的无冲突 merge），common-dir=`G:/CODEX/New Manga/.git`。Owner worktree 已核实 clean，和同步前主线的 Task-specific 差量仅 `packaging/m2ac5/run_clean_start_e2e.py`、`verification/M2-RC2/run_e2e.py`。当前 AC4 在组合代码 head 上尚未重跑，NOT_RUN；下一步 fresh build、Dev Gate 与完整 Packaged Gate，记录 source/installer hash 绑定后交 DSH 新 Review。详细恢复点见 [`resume-after-icu-fix.md`](../verification/M2-RUNNER-SNAPSHOT-DEBT/resume-after-icu-fix.md)。
+
+以下 ICU R1、ready、blocked 内容均为历史 checkpoint，以本段和后续最新 checkpoint 为准。
 
 ## 2026-10-08 DSH Review r1：M2-PACKAGED-AC1-ICU-ISOLATION-FIX changes_requested
 
