@@ -12,6 +12,7 @@ Codex实际隔离复现：同hash bridge原副本EXIT1/QtGui错误，仅自有�
 [集成验证](../verification/M2-PACKAGED-AC1-DLL-DIAG/raw/post-merge-validation.log)。
 当前无运行中/ready Task；M2-RUNNER-SNAPSHOT-DEBT保持blocked。下一步候选M2-PACKAGED-AC1-ICU-ISOLATION-FIX，
 Owner=Antigravity，非作者Reviewer=DSH，Integrator=Codex；未创建/释放，须单独冻结修复范围与分配工作区。
+[下一Task完整释放准备](../verification/M2-PACKAGED-AC1-DLL-DIAG/NEXT_IMPLEMENTATION.md)。
 下方in_progress/blocked为历史checkpoint，不覆盖本段。
 
 
