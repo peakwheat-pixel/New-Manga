@@ -1,66 +1,9 @@
-=== TRACKED RAW EVIDENCE INTEGRITY CHECK ===
-Total tracked files: 61
-OK: verification/M2-AC5/raw/README.md blob=30cee6849351441e04d3242da778bc286e7e1c5a
-OK: verification/M2-AC5/raw/ac1-input-hashes-build1.txt blob=515bd477ec9345e85e7399ebe1b025baa25437a7
-OK: verification/M2-AC5/raw/ac1-repro-run1-hashes.txt blob=fd994aa5b5e7376e0980dc931b6418c6e1fc5ac8
-OK: verification/M2-AC5/raw/ac1-repro-run2-hashes.txt blob=17c430d38a6106fbbfb4dedab81229581003dadb
-OK: verification/M2-AC5/raw/ac1-repro-sidecar-diff.txt blob=b8fd742869b462049a3270fc3b1982903b462a7f
-OK: verification/M2-AC5/raw/ac1-repro-sidecar-runA.txt blob=b19bc850fbcd9da1e2a08e12b93b39f8828f1e3c
-OK: verification/M2-AC5/raw/ac1-repro-sidecar-runB.txt blob=30027e79ec3f9be6391c88192ea00f21e44ba19c
-OK: verification/M2-AC5/raw/artifact-inventory-final.txt blob=680ff42cc58fb75be679055ac53b208b898a9a8f
-OK: verification/M2-AC5/raw/baseline-cargo-test.log blob=0cb79724c7d305bfc9a96beb33d7058ce2d88d4f
-OK: verification/M2-AC5/raw/baseline-pytest-m2-acceptance.log blob=b48bd6f605cf4fc4ae4269ff4aac09dc921e254b
-OK: verification/M2-AC5/raw/baseline-vitest-run.log blob=61d72c17c329ffb6cb61dc1ad566f9b4a254d04e
-OK: verification/M2-AC5/raw/cleanstart-ac1-run1-stdout.log blob=c9fc3cef76605168ff18df707ef428af17d50846
-OK: verification/M2-AC5/raw/cleanstart-ac1-run2-stdout.log blob=50085577fb5ffef7496549f469cdb4abfbf64b8d
-OK: verification/M2-AC5/raw/cleanstart-final.log blob=40cf135814c0cd671daf9c5a897d463f6fe05d83
-OK: verification/M2-AC5/raw/cleanstart-gate.json blob=bb2ef02c9c725dd341c9f40da9ad712a0a2960c6
-OK: verification/M2-AC5/raw/cleanstart-probe-stdout.log blob=e84ad8154c2a259ca98b7e44bd075086c23b5ac9
-OK: verification/M2-AC5/raw/cleanstart-production-stdout.log blob=78758fb139c75d18df71c0898b69e23fae1b6b75
-OK: verification/M2-AC5/raw/cleanstart-r1-final.log blob=62415c875add5cbce912a7f4d563ab9f00ea5b83
-OK: verification/M2-AC5/raw/cleanstart-run1.log blob=2a11e7835e5326a9b93a09e8793207b394250a1d
-OK: verification/M2-AC5/raw/cleanstart-run2.log blob=894e10c6a1e6953d3b6f2a9ae75448f500238c05
-OK: verification/M2-AC5/raw/cleanstart-run3.log blob=bbc9e5079013f1c5691da8e9c395a0fcf449ec95
-OK: verification/M2-AC5/raw/cleanstart-run4.log blob=c9ed6211ea8ad9800f29e88176a63641fc140cfb
-OK: verification/M2-AC5/raw/cleanstart-run5.log blob=09cbc65c223643ec47c763cf26f710a6463c348c
-OK: verification/M2-AC5/raw/environment-record.log blob=f14a2bcbc7c62cd53fadeb342c464a0b7df0c22b
-OK: verification/M2-AC5/raw/f1-scope-audit.log blob=d6b18036faf12190e0cf7a5dc9445d022736f6d3
-OK: verification/M2-AC5/raw/f2-final-scope-audit.log blob=8f5cd990390d77fa84358211ce82ab1400223d20
-OK: verification/M2-AC5/raw/i-integration-replay.log blob=a9590a9318801a58daa26675e334971436e4d24c
-OK: verification/M2-AC5/raw/pyinstaller-build-closure-pyside6.log blob=b71eb12b0dad1fcbcfe426dfc1a31ce690ccbd70
-OK: verification/M2-AC5/raw/pyinstaller-rebuild-repro.log blob=9e2f476f7bb2e85e739c1eb4d126097fc15b593a
-OK: verification/M2-AC5/raw/r1-baseline-cargo-test.log blob=8353dd073078a00be81c66539f1038541ad60214
-OK: verification/M2-AC5/raw/r1-baseline-pytest-m2-acceptance.log blob=5b071feb9bde7bedbc672930319ba27897e16100
-OK: verification/M2-AC5/raw/r1-baseline-vitest-run.log blob=526843a0639936ce6e836fa9e02ff972b4e85df3
-OK: verification/M2-AC5/raw/r1-library-probe.log blob=ae7260e90b4146ba85b6cdf51ff5233547eb9646
-OK: verification/M2-AC5/raw/sidecar-entries-smoke.log blob=b4072dc9c100d4b0043f44ff15d26035309978b7
-OK: verification/M2-AC5/raw/tauri-build-run1.log blob=fd9ca533896c68b3f2735a50eba94761bb37ee5f
-OK: verification/M2-AC5/raw/tauri-build-run2.log blob=a002929c978bd780808ef7459541bdc542006b11
-OK: verification/M2-RC2/raw/claim-baseline-cargo.log blob=a85f73c7c74460275c3c97ddd1b8bce11682e675
-OK: verification/M2-RC2/raw/claim-baseline-e2e-blocked.log blob=81cfbe55ebadae90382eeb7f80c9c81ebba17e51
-OK: verification/M2-RC2/raw/claim-baseline-npm.log blob=25ef391e68ce1ea4013670fee9ebe4337e904dff
-OK: verification/M2-RC2/raw/claim-baseline-pytest.log blob=edc35a8aa7f9ddbdb4c0593bab164ef60c63a6e1
-OK: verification/M2-RC2/raw/claim-baseline-versions.log blob=74ea11a4baccc1d4d28826d29ca323be4a427925
-OK: verification/M2-RC2/raw/e2e-cargo-build.log blob=e46e1eeed7bc003eadca37c72f01609e6a60857d
-OK: verification/M2-RC2/raw/e2e-catalog-loader.log blob=dc99822f2775509018ac51641100f5b9d0ec8f4c
-OK: verification/M2-RC2/raw/e2e-environment.json blob=d6e74190e23cf255b80e656c8e8290f1fb5f3c9e
-OK: verification/M2-RC2/raw/e2e-gate.json blob=8acb3999a94699785eda7d24b3fa8f0bfc23607a
-OK: verification/M2-RC2/raw/e2e-probe-results.json blob=63fcbdae9e87744079bb17cf746810aa50c354b6
-OK: verification/M2-RC2/raw/e2e-sidecar-import-isolation.log blob=80d374cb560d6891d5f759f158e5bbda1338359a
-OK: verification/M2-RC2/raw/e2e-sidecar-modules-interactive.json blob=95c67070cb60b3625c32604426f36738fb516dca
-OK: verification/M2-RC2/raw/e2e-sidecar-modules-probe.json blob=e4b7ddf86fa2aac44ab234ff42b861286d716b3f
-OK: verification/M2-RC2/raw/final-cargo.log blob=0a717087f82113c7959354905b70bbfa049545ee
-OK: verification/M2-RC2/raw/final-diff-name-status.txt blob=19cf7125db6af56d047941ea73b4306eca6a176e
-OK: verification/M2-RC2/raw/final-e2e-runner-stdout.log blob=42b2b635573cf79cbd43897f6d2cc133cd9b45ef
-OK: verification/M2-RC2/raw/final-pytest.log blob=82f1362bc450455426894b9115a14bf60f1c8c44
-OK: verification/M2-RC2/raw/final-vitest.log blob=3abd5922d0361bae397174e2d5fee2f90cf75ac3
-OK: verification/M2-RC2/raw/fix-cargo.log blob=08303f726980cfab1e51d132f2cf6f944bbab2d7
-OK: verification/M2-RC2/raw/fix-diff-name-status.txt blob=689f960b1fa2690f81833e0e7fa44b3c9d45034a
-OK: verification/M2-RC2/raw/fix-e2e-runner-stdout.log blob=248f7cf1c3612d208ae7320094f40a03a46af40f
-OK: verification/M2-RC2/raw/fix-probe-ttl-nan.log blob=cd0a79cc17ac7fc52d01e8377607f2e042b35cf3
-OK: verification/M2-RC2/raw/fix-pytest.log blob=c259e78819efdf960d0b202ec22977eff1887724
-OK: verification/M2-RC2/raw/fix-vitest.log blob=e407db092c76322c941ea86c0b5521337603c140
-OK: verification/M2-RC2/raw/sidecar-import-before-fix.log blob=738cb621550b4af5ed80fddf4c2b04f74d322cfa
-GIT DIFF: clean (0 changes against HEAD)
-GIT STATUS: clean (0 untracked, 0 staged, 0 modified)
-INTEGRITY VERDICT: PASS (all 61 tracked files byte-identical to HEAD, zero modifications or untracked files)
+HOST=HOME-MY; SHELL=pwsh; PYTHON=C:\Python314\python.exe; VER=Python 3.14.6; HEAD=e167e72351d6f725653d1f16b210a54f435e621f
+COMMAND=python verification/M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD/verify_raw_integrity.py --compare-after verification/M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD/raw-snapshot-before.json
+=== BEFORE/AFTER RAW INTEGRITY COMPARISON ===
+Files tracked in historical raw directories: 61
+Files matching byte-identical before and after: 61
+Working tree clean: True
+RESULT: PASS (all 61 tracked historical raw files byte-identical before and after; zero modifications or untracked files)
+Note: This is a historical raw evidence integrity verification. It does not claim product Gate PASS.
+EXIT=0

@@ -1,7 +1,18 @@
-COMMAND=git diff --name-only d12ebc7a0bbd5617e7a376e00f45c9ee114c8c10...1c49fe38dd0fc67b9c8abc39bfd6b57386ac0661
-EXIT=0
-OUTPUT=
+BASE=d12ebc7a0bbd5617e7a376e00f45c9ee114c8c10
+HEAD=e167e72351d6f725653d1f16b210a54f435e621f
+COMMAND=git diff --name-only d12ebc7a0bbd5617e7a376e00f45c9ee114c8c10...e167e72351d6f725653d1f16b210a54f435e621f
+doc/handoffs/M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD-1c49fe38.md
+doc/tasks/M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD.md
 packaging/m2ac5/README.md
 packaging/m2ac5/run_clean_start_e2e.py
 tests/packaging/test_runner_output_dir_required.py
 verification/M2-RC2/run_e2e.py
+verification/M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD/VERIFICATION.md
+verification/M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD/check-snapshots.log
+verification/M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD/git-diff-check.log
+verification/M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD/git-diff-name-only.log
+verification/M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD/git-diff-stat.log
+verification/M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD/pytest-regression-py312.log
+verification/M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD/pytest-regression.log
+verification/M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD/raw-integrity.log
+EXIT=0

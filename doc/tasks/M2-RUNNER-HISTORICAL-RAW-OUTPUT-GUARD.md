@@ -66,13 +66,13 @@ integration_commit: null
 
 ## 交付与运行记录
 
-- Code delivery HEAD：`1c49fe38dd0fc67b9c8abc39bfd6b57386ac0661` (`1c49fe38`)
-- Handoff：`doc/handoffs/M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD-1c49fe38.md`
+- Code delivery HEAD：`e167e72351d6f725653d1f16b210a54f435e621f` (`e167e723`)
+- Handoff：`doc/handoffs/M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD-e167e723.md`
 - 验证报告：`verification/M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD/VERIFICATION.md`
 - 实际测试：
-  - `python -m pytest -v tests/packaging/test_runner_output_dir_required.py` -> EXIT=0 (9 passed)
-  - `& "G:\CODEX\New Manga.task-envs\TASK-012-py312\Scripts\python.exe" -m pytest -v tests/packaging/test_runner_output_dir_required.py` -> EXIT=0 (9 passed)
+  - `python -m pytest -v tests/packaging/test_runner_output_dir_required.py` -> EXIT=0 (8 passed)
+  - `& "G:\CODEX\New Manga.task-envs\TASK-012-py312\Scripts\python.exe" -m pytest -v tests/packaging/test_runner_output_dir_required.py` -> EXIT=0 (8 passed)
+  - `python verification/M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD/verify_raw_integrity.py --compare-after ...` -> EXIT=0 (61 个历史 raw 文件 byte-identical 核查 PASS)
   - `python verification/M2-RUNNER-SNAPSHOT-DEBT/check_snapshots.py` -> EXIT=0 (16 actual-predicate cases PASS)
-  - 61 个历史 tracked raw 文件 byte-identical 核查 -> PASS
-  - `git diff --check d12ebc7a..HEAD` -> EXIT=0
-  - `git diff --name-only d12ebc7a..HEAD` -> 4 个 allowed_paths 文件
+  - `git diff --check d12ebc7a..e167e723` -> EXIT=0
+  - `git diff --name-only d12ebc7a..e167e723` -> 4 个 allowed_paths 代码文件（零超界）
