@@ -1,5 +1,7 @@
 # 全项目任务盘点与整体规划
 
+最新工作点：用户已授权准备P08，[范围草案](../P08/SCOPE_DRAFT.md)与[逐AC索引](../P08/AC_COVERAGE.md)已落盘；P08正式设计Task为blocked，未done。按[最新恢复点](../P08/RESUME.md)完成产品裁决与非作者Review，下方原“准备P08”指令作为此前快照保留。
+
 2026-10-08后续用户裁决：Qoder退出本项目；本报告的未来分配/可转发指令已改为ZCode主责UI/UX，Codex契约与集成、DSH非作者审查，fallback=ZCode→Antigravity。原Core/Desktop/Plan审计、台账、历史署名和Review保留审计时事实；它们的旧推荐不覆盖当前Plan/AGENTS人员资格。本更新不启动产品Task。
 
 2026-10-08（Asia/Shanghai）。审计输入 `G:/CODEX/New Manga`，`main@e4242ecd419eb0eea098d2f63b40f709aa5caeea`；common-dir=`G:/CODEX/New Manga/.git`。本轮授权为规划/取证/中文图/中断恢复，不包含产品实施。

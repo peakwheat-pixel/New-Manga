@@ -1,5 +1,7 @@
 # Task 索引
 
+2026-10-08新增：[P08 完整产品范围与验收冻结准备](P08.md)，Codex文档准备已交付，blocked / 等待产品裁决及非作者Review；不释放后继产品实现。历史Task与完成记录不变。
+
 当前无 Active/released Task。最近完成：[M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD](M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD.md) `done@integration e7d1f7f8`；Owner=Antigravity、非作者 Reviewer=DeepSeek Harness（r2 approved）、Integrator=Codex。集成验证见 `verification/M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD/integration-validation.log`；R-003 保持未释放。下方旧状态为历史。
 
 

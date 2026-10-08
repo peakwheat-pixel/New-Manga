@@ -1,6 +1,8 @@
 # New Manga 一眼路线图（2026-10-08）
 
-**当前位置：现行新架构已登记任务已收口，整体规划已完成；新 P 系列尚未启动（已完成 0/21，进行中 0，proposed / 未释放 21）。推荐下一准备：P08「完整产品范围与验收冻结」。P01–P07是验证与收口候选，编号用于定位，执行顺序以依赖为准。**
+最新工作点：用户已授权准备P08，[范围草案](../P08/SCOPE_DRAFT.md)与[逐AC索引](../P08/AC_COVERAGE.md)已落盘；P08正式设计Task为blocked，未done。按[最新恢复点](../P08/RESUME.md)完成产品裁决与非作者Review，下方原“准备P08”指令作为此前快照保留。
+
+**当前位置：P08范围草案已准备，等待用户裁决与非作者Review（blocked / CHECKPOINTED）；P系列完成0/21，blocked 1，proposed / 未释放20。产品实施未释放。下一步：完成P08范围裁决与审查；P01–P07按依赖单独处理。**
 
 人员更新：用户已移除Qoder，图中未来UI/UX责任由ZCode承担；非作者Review与正式Task释放Gate保持。
 
@@ -27,14 +29,14 @@ flowchart TB
 
 ```mermaid
 flowchart TB
-  BASE["当前位置：规划完成，实施未启动<br/>P系列完成0/21；下一准备P08"] --> P01["P01<br/>proposed / 未释放<br/>台账取证<br/>修正陈旧metadata；追溯两份Review"]
+  BASE["当前位置：规划完成，实施未启动<br/>P系列完成0/21；P08草案待裁决"] --> P01["P01<br/>proposed / 未释放<br/>台账取证<br/>修正陈旧metadata；追溯两份Review"]
   BASE --> P02["P02<br/>proposed / 未释放<br/>真UI验证<br/>点击/300ms刷新/对比度/失效窗口"]
   BASE --> P03["P03<br/>proposed / 未释放<br/>第五入口Gate<br/>验证SFX frozen入口；不只确认文件存在"]
   BASE --> P04["P04<br/>proposed / 未释放<br/>生产命令面验证<br/>常量成员与并发响应；先复现再决定修复"]
   BASE --> P05["P05<br/>proposed / 未释放<br/>错误语义澄清<br/>category与retryable注记一致"]
   BASE --> P06["P06<br/>proposed / 未释放<br/>GC迁移补证<br/>旧版本退出/命名空间保护；未知保留"]
   P02 -. "确认实际缺口后" .-> P07["P07<br/>proposed / 未释放<br/>小交互修补<br/>手输image读取/quiet-window busy"]
-  P01 --> P08["P08<br/>proposed / 未释放<br/>完整产品范围与验收冻结<br/>Codex汇总；用户裁决；ZCode设计"]
+  P01 --> P08["P08<br/>blocked / 草案待裁决与Review<br/>完整产品范围与验收冻结<br/>Codex汇总；用户裁决；ZCode设计"]
   style P08 fill:#fff3cd,stroke:#b58105,stroke-width:3px
 ```
 
@@ -44,7 +46,7 @@ flowchart TB
 
 ```mermaid
 flowchart TB
-  P08["P08<br/>proposed / 未释放<br/>范围＋四页设计冻结<br/>保留四页；Reader解冻须用户裁决"] --> P09["P09<br/>proposed / 未释放<br/>真实导入契约与Core适配<br/>受限来源引用；真实尺寸；Managed Copy"]
+  P08["P08<br/>blocked / 草案待裁决与Review<br/>范围＋四页设计冻结<br/>保留四页；Reader解冻须用户裁决"] --> P09["P09<br/>proposed / 未释放<br/>真实导入契约与Core适配<br/>受限来源引用；真实尺寸；Managed Copy"]
   P08 --> P10["P10<br/>proposed / 未释放<br/>设置与凭据安全通道<br/>Provider配置可验证；secret不进普通DTO"]
   P08 --> P11["P11<br/>proposed / 未释放<br/>长任务契约冻结<br/>启动/快照/暂停取消重试/恢复语义"]
   P09 --> P12["P12<br/>proposed / 未释放<br/>书架与导入产品链<br/>建书/章节/选文件/结果；ZCode接UI"]

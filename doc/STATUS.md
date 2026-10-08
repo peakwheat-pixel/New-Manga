@@ -1,8 +1,13 @@
 # Current Development Status
 
-**当前位置：现行新架构已登记任务已收口，整体规划已完成；新 P 系列尚未启动（已完成 0/21，进行中 0，proposed / 未释放 21）。推荐下一准备：P08「完整产品范围与验收冻结」。P01–P07是验证与收口候选，编号用于定位，执行顺序以依赖为准。**
+**当前位置：P08范围草案已准备，等待用户裁决与非作者Review（blocked / CHECKPOINTED）；P系列完成0/21，blocked 1，proposed / 未释放20。产品实施未释放。下一步：完成P08范围裁决与审查；P01–P07按依赖单独处理。**
 
-2026-10-08 最新编号裁决：当前21个候选任务沿用 `P01–P21`，状态为 `proposed / 未释放`；仅统一编号，不释放实施、不改原有任务及完成记录。原始审计、台账与历史验证日志保留为固定快照。
+## 2026-10-08 当前工作：P08草案已准备 / blocked
+
+用户已授权Codex准备[P08](tasks/P08.md)，准备范围仅文档；正式Task已登记，Owner=Codex，建议Reviewer=DSH（未认领，未派发）。base=`ab2f813c0ce311a6712002cafd852b9e7a258380`，branch/worktree=`main` / `G:/CODEX/New Manga`。交付：[范围/验收草案](../verification/P08/SCOPE_DRAFT.md)、[193项D08覆盖索引](../verification/P08/AC_COVERAGE.md)、[恢复点](../verification/P08/RESUME.md)。当前等待D1–D3产品裁决、质量指标冻结和独立审查，previous=in_progress，ExecutionState=CHECKPOINTED；P08未done，后继实施均未释放。历史196节点CSV仍是审计快照；本轮新增P08正式设计Task，不改原任务及完成记录。现行Reader限制仍有效，deferred建议未获批准，不能当N/A。
+
+
+2026-10-08 最新编号裁决：当前21个规划节点沿用 `P01–P21`，状态为 `proposed / 未释放`；仅统一编号，不释放实施、不改原有任务及完成记录。原始审计、台账与历史验证日志保留为固定快照。
 
 ## 2026-10-08 当前人员裁决：Qoder退出（已生效）
 
@@ -12,7 +17,7 @@
 
 用户本轮请求已完成三路GPT-6.1 Sol high代码/文档审计与整体依赖规划；这是规划交付，**当前仍无 Active / released产品Task**。审计输入=`main@e4242ecd`；[报告](../verification/PROJECT-ROADMAP-20261008/REPORT.md)、[中文图](../verification/PROJECT-ROADMAP-20261008/ROADMAP.md)、[196节点完整台账](../verification/PROJECT-ROADMAP-20261008/task-inventory.csv)、[恢复点](../verification/PROJECT-ROADMAP-20261008/RESUME.md)。167登记完成/文档交付＋29历史局限/归档，不作为产品完成率；新架构有界Task全部收口，正式四页与完整用户链仍缺。
 
-当前后续整体树以[Plan顶部P01–P21 候选任务](REBASELINE_PLAN.md)为准，全部proposed / 未释放。推荐Codex先准备P08完整产品范围/parity与验收，ZCode另做设计，DSH非作者Review；实施未释放，Reader/BJ13/缩略图等现行裁决保持。产品测试本轮NOT_RUN，仅规划/证据/依赖检查；历史PASS限定原commit/hash。额度恢复按RESUME核Git并复用已完成审计，不再全库重做；下方各ready/blocked段落继续作为历史恢复证据。
+当前后续整体树以[Plan顶部P01–P21 候选任务](REBASELINE_PLAN.md)为准，P08 blocked，其余20项proposed / 未释放。推荐Codex先准备P08完整产品范围/parity与验收，ZCode另做设计，DSH非作者Review；实施未释放，Reader/BJ13/缩略图等现行裁决保持。产品测试本轮NOT_RUN，仅规划/证据/依赖检查；历史PASS限定原commit/hash。额度恢复按RESUME核Git并复用已完成审计，不再全库重做；下方各ready/blocked段落继续作为历史恢复证据。
 
 ## 2026-10-08 完成：M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD
 

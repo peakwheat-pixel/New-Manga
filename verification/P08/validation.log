@@ -1,0 +1,22 @@
+P08 document preparation validation; Python=3.14.6; shell=PowerShell
+base=ab2f813c0ce311a6712002cafd852b9e7a258380; branch=main; worktree=G:/CODEX/New Manga
+User D1/D2/D3=pending; independent Review=pending; Task=blocked; ExecutionState=CHECKPOINTED
+COMMAND: python verification/P08/verify_scope.py
+PASS: 193 D08 criteria mapped exactly once; product results remain NOT_RUN
+PASS: P08 local links resolve
+PASS: P08 blocked, 20 successors/candidates unreleased; no fabricated approval
+PASS: zero production/contracts/Review/inventory changes; historical Plan/Status preserved
+Product tests/build/GUI/model calls: NOT_RUN (document preparation only)
+EXIT=0
+COMMAND: python verification/PROJECT-ROADMAP-20261008/verify_plan.py
+Planning snapshot base=e4242ecd419eb0eea098d2f63b40f709aa5caeea; live HEAD=ab2f813c0ce311a6712002cafd852b9e7a258380
+PASS: 196 unique nodes, all classifications and dependency references
+PASS: 105 new architecture/governance integration records are audit-base ancestors
+PASS: 21 unique planned nodes and roadmap graphs have no dependency cycles
+PASS: delivery/navigation local links resolve
+PASS: zero production/code delta; governance whitespace check
+Product tests/build/GUI: NOT_RUN (planning-only)
+EXIT=0
+COMMAND: git diff --check -- doc verification/P08 verification/PROJECT-ROADMAP-20261008
+EXIT=0; PASS (only newline conversion notices)
+Products pytest/cargo/vitest/GUI/build/model/API calls: NOT_RUN

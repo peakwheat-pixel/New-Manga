@@ -1,5 +1,7 @@
 # Roadmap
 
+当前工作：[P08范围草案与验收矩阵](../verification/P08/SCOPE_DRAFT.md)已准备；[正式Task](tasks/P08.md)为blocked，等待用户裁决与非作者Review。产品实现未释放；[最新恢复点](../verification/P08/RESUME.md)。下方原规划建议按此当前工作点续接。
+
 ## 当前整体路线（2026-10-08，PLAN_ONLY）
 
 最新人员裁决：Qoder退出，未来UI/UX设计及React/Tauri实现由ZCode主责，DSH非作者审查，Codex契约/集成；额度接管候选为ZCode、Antigravity。历史交付中的Qoder署名保留。

@@ -38,13 +38,13 @@ if __name__ == "__main__":
         subprocess.run(["git", "-C", str(ROOT), "merge-base", "--is-ancestor", commit, BASE], check=True)
     print("PASS: 105 new architecture/governance integration records are audit-base ancestors")
     plan = (ROOT / "doc/REBASELINE_PLAN.md").read_text(encoding="utf-8")
-    nodes = re.findall(r"^\| (P\d{2}) \| proposed / 未释放 \|", plan, re.M)
+    nodes = re.findall(r"^\| (P\d{2}) \| (?:proposed / 未释放|blocked) \|", plan, re.M)
     assert len(nodes) == len(set(nodes)) == 21
-    assert not set(nodes) & ids, "candidate IDs collide with existing tasks"
+    assert not set(nodes) & ids, "P roadmap IDs collide with historical snapshot"
     current = plan.split("## 2026-10-08 完成：", 1)[0]
     assert nodes == [f"P{i:02}" for i in range(1, 22)], "candidate numbering is not consecutive"
     roadmap = (HERE / "ROADMAP.md").read_text(encoding="utf-8")
-    assert set(re.findall(r'\["(P\d{2})<br/>proposed / 未释放', roadmap)) == set(nodes)
+    assert set(re.findall(r'\["(P\d{2})<br/>(?:proposed / 未释放|blocked / 草案待裁决与Review)', roadmap)) == set(nodes)
     for diagram in re.findall(r"```mermaid\n(.*?)```", roadmap, re.S):
         edges = re.findall(r"^\s*([\w-]+)\s+(?:-->|-\.->|-\. .*?\.->)\s*([\w-]+)", diagram, re.M)
         graph = {}
