@@ -1,0 +1,55 @@
+Task: M2-PACKAGED-AC1-ICU-ISOLATION-FIX
+Integrator: Codex
+Recorded: 2026-10-08 (Asia/Shanghai)
+Integration commit: 65ba30144048a0b8daae22205c01f8049b44b8a7
+Reviewed production code head: 4499217d7b2249da16d5dbf27a3219a43876aac7
+Owner evidence commit: 2c79645939635beef4a391f4bd9071ffeacd300b
+DSH r2: APPROVED, 0 P0/P1; report=doc/reviews/M2-PACKAGED-AC1-ICU-ISOLATION-FIX-4499217d-dsh-r2.md
+
+## Main checkout state at integration verification
+
+COMMAND: git status --short --branch
+EXIT: 0
+## main...origin/main [ahead 1121]
+ M .qoder-credits/report.json
+?? .qoder-credits/通路探测__8602db50.canvas.tsx
+The two Qoder-owned paths were preserved and not staged.
+
+COMMAND: git rev-parse HEAD
+EXIT: 0
+65ba30144048a0b8daae22205c01f8049b44b8a7
+
+COMMAND: git rev-parse --path-format=absolute --git-common-dir
+EXIT: 0
+G:/CODEX/New Manga/.git
+
+COMMAND: git show --check --oneline HEAD
+EXIT: 0
+65ba3014 merge: integrate reviewed ICU isolation fix
+
+COMMAND: git merge-base --is-ancestor 4499217d7b2249da16d5dbf27a3219a43876aac7 65ba30144048a0b8daae22205c01f8049b44b8a7
+EXIT: 0
+
+COMMAND: git diff --name-only 4499217d7b2249da16d5dbf27a3219a43876aac7 65ba30144048a0b8daae22205c01f8049b44b8a7 -- src apps tests packaging
+EXIT: 0
+(empty)
+
+COMMAND: git diff --quiet 4499217d7b2249da16d5dbf27a3219a43876aac7 65ba30144048a0b8daae22205c01f8049b44b8a7 -- packaging/m2ac5
+EXIT: 0
+
+## Reused Owner verification evidence
+
+The reviewed source head is `4499217d7b2249da16d5dbf27a3219a43876aac7`; fresh build and Gate logs each record this exact `GIT_HEAD`:
+- `raw/sidecar-build.log`
+- `raw/nsis-build.log`
+- `raw/dev-gate-execution.log`
+- `raw/dev-e2e.log`
+- `raw/packaged-gate-execution.log`
+- `raw/packaged-e2e.log`
+- `raw/acceptance-bridge-purged-path.log`
+
+`build-fingerprint.json` source head matches. Installer SHA256 is `f2a4e2e7e92f083739bb92d2055539ea859461991b43559c3fe1f759b2c195ae`; `raw/packaged/cleanstart-gate.json` records the same SHA and `verdict=PASS`. The report records Dev Gate 10/10 plus probes 13/13 PASS and Packaged Gate 26/26 PASS.
+
+No product build or Gate was rerun after the merge. This is an integration identity check: production paths are unchanged from the reviewed and freshly tested source head, so Owner evidence remains applicable specifically to `4499217d`, not to a newly rerun build.
+
+Accepted non-blocking review limitations remain R2-002 (spec classification/guard branches had static review only because the fresh bundle contained no ICU candidate) and R2-003 (one-time scanner raw output has no embedded HEAD/timestamp and its summary count is hardcoded). See the DSH r2 report and Codex disposition.

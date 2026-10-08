@@ -8,7 +8,8 @@ delivery_head: 4499217d7b2249da16d5dbf27a3219a43876aac7
 evidence_commit: 2c79645939635beef4a391f4bd9071ffeacd300b
 reviewed_head: 4499217d7b2249da16d5dbf27a3219a43876aac7
 review_report: doc/reviews/M2-PACKAGED-AC1-ICU-ISOLATION-FIX-4499217d-dsh-r2.md
-status: approved
+status: done
+integration_commit: 65ba30144048a0b8daae22205c01f8049b44b8a7
 ---
 
 # Handoff：M2-PACKAGED-AC1-ICU-ISOLATION-FIX（DSH r1/r2 修订交付）
@@ -47,7 +48,7 @@ status: approved
 | **AC-4** | 冻结 Dev Gate 完整 10 项 Gate 及 13 项 probe 通过；15 production / 7 probe commands 严格核对 | **PASS**：`run_e2e.py` 完整 10/10 Gate PASS，13/13 Probe 场景 PASS（耗时 19.37s，EXIT 0）。见 [`dev-gate-execution.log`](file:///G:/CODEX/New%20Manga.worktrees/PACKAGED-AC1-ICU-ISOLATION-FIX-antigravity/verification/M2-PACKAGED-AC1-ICU-ISOLATION-FIX/raw/dev-gate-execution.log)。 |
 | **AC-5** | 新安装副本完整 26 项 Packaged Gate 全 PASS；CS-L1 响应 minor 1.6、两轮 AC1、重启新 PID、数据与 PNG digest 一致 | **PASS**：`run_clean_start_e2e.py` 完整 26/26 场景全 PASS（耗时 131.13s，EXIT 0），被测安装包 SHA256 与 fingerprint 严格一致。见 [`cleanstart-gate.json`](file:///G:/CODEX/New%20Manga.worktrees/PACKAGED-AC1-ICU-ISOLATION-FIX-antigravity/verification/M2-PACKAGED-AC1-ICU-ISOLATION-FIX/raw/packaged/cleanstart-gate.json)。 |
 | **AC-6** | 用户源文件、人工修改、Lock、current/pinned Revision、Managed Copy 及恢复能力保护；零残留 | **PASS**：CS-Z1/Z2/Z4 零写入或篡改断言全 PASS；CS-Z3 断言 4 个 sidecar 进程残留计数为 0（`python.exe: 6` 为记录项，不作零残留断言）；真实 APPDATA 零触碰。 |
-| **AC-7** | 固定实现 head、逐项结果及 Handoff 齐全；经外部非作者 DSH 审核 approved 及 Codex 集成后方可 done | **APPROVED / INTEGRATION_PENDING**：DSH r2 已批准固定实现 head `4499217d`；Codex 集成及集成后验证仍待完成。 |
+| **AC-7** | 固定实现 head、逐项结果及 Handoff 齐全；经外部非作者 DSH 审核 approved 及 Codex 集成后方可 done | **DONE**：DSH r2 APPROVED；Codex 集成 `65ba30144048a0b8daae22205c01f8049b44b8a7`，集成验证见 `verification/M2-PACKAGED-AC1-ICU-ISOLATION-FIX/integration-validation.log`。 |
 
 ---
 
@@ -80,7 +81,7 @@ status: approved
 
 ### 3. 未运行项目与说明
 - **真实发行包系统级安装**：未运行（NOT_RUN）。安装态测试在自有隔离临时目录 `cleanstart_lab/install` 中静默解包执行，严格禁止向宿主机 `C:\Program Files` 或系统注册表执行真实安装，以杜绝环境污染。
-- **AC-7 独立 Review 与主线合并**：DSH r2 APPROVED；主线集成和集成后验证待 Codex 完成。
+- **AC-7 独立 Review 与主线合并**：DSH r2 APPROVED；集成提交 `65ba30144048a0b8daae22205c01f8049b44b8a7`。集成后 `src/apps/tests/packaging` 对 reviewed source head `4499217d` 零差量，未重跑产品 Gate；复用绑定于 `4499217d` 的 Owner Gate 证据。
 
 ---
 
@@ -104,7 +105,7 @@ status: approved
 
 ## 下一步建议
 
-DSH r2 已批准固定代码 head。Codex 下一步应完成范围验证、解决 Task 文档冲突并集成至当前主线；合并后确认生产代码与 `4499217d` 相同，记录 integration commit 与验证结果。
+Task 已完成：集成提交 `65ba30144048a0b8daae22205c01f8049b44b8a7`，reviewed production source 为 `4499217d7b2249da16d5dbf27a3219a43876aac7`。Codex 未在 merge 后重跑 Gate；代码路径逐字节等同，Owner fresh Gate 证据仍绑定于 source head。下一步恢复曾由用户释放、现因 ICU 修复而解除阻塞的 `M2-RUNNER-SNAPSHOT-DEBT`，先将其分配 worktree 同步到当前集成依赖，再 fresh 构建并完成 AC4。
 
 ```bash
 # Codex 集成指令

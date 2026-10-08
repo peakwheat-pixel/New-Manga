@@ -2,7 +2,7 @@
 id: M2-PACKAGED-AC1-ICU-ISOLATION-FIX
 title: 安装态 Qt 与 ICU78 依赖闭包隔离修复
 kind: bugfix
-status: approved
+status: done
 approval: user_authorized_release_20261008
 suggested_owner: Antigravity
 owner: Antigravity
@@ -22,7 +22,7 @@ gate_evidence: verification/M2-PACKAGED-AC1-ICU-ISOLATION-FIX/REPORT.md
 review_decision: approved
 handoff_doc: doc/handoffs/M2-PACKAGED-AC1-ICU-ISOLATION-FIX-4499217d.md
 execution_state: CHECKPOINTED
-integration_commit: null
+integration_commit: 65ba30144048a0b8daae22205c01f8049b44b8a7
 allowed_paths:
   - packaging/m2ac5/**
   - doc/tasks/M2-PACKAGED-AC1-ICU-ISOLATION-FIX.md
@@ -49,7 +49,7 @@ allowed_paths:
 - [x] AC-4：冻结dev完整10项Gate及13项probe通过；15 production commands、7 probe commands严格核对，不降低阈值。（达成：run_e2e.py 完整 10/10 Gate PASS，13/13 probe 场景 PASS，EXIT 0 / 19.37s，见 dev-gate-execution.log）
 - [x] AC-5：新安装副本完整26项packaged Gate全PASS；CS-L1响应minor1.6、请求minor3兼容；两轮AC1完成、重启新PID、summary/reader恢复、PNG digest一致。旧FAIL不回填。（达成：run_clean_start_e2e.py 完整 26/26 场景全 PASS，EXIT 0 / 131.13s，被测 installer SHA256 与 fingerprint 严格一致，见 cleanstart-gate.json 与 packaged-gate-execution.log）
 - [x] AC-6：用户源文件、人工修改、Lock、current/pinned Revision、Managed Copy及恢复能力保护；只写自有隔离fixture/输出，运行后无自身sidecar残留。（达成：CS-Z1/Z2/Z4 零写入或篡改断言全 PASS；CS-Z3 断言 4 个 sidecar 残留计数为 0，`python.exe: 6` 仅记录、不作零残留断言）
-- [ ] AC-7：固定实现head、逐项结果及Handoff齐全；DSH r2 已对 `4499217d` 作出 APPROVED，Codex 集成及集成验证仍待完成。
+- [x] AC-7：固定实现head、逐项结果及Handoff齐全；DSH r2 APPROVED，Codex 集成及集成验证完成，见 `verification/M2-PACKAGED-AC1-ICU-ISOLATION-FIX/integration-validation.log`。
 
 ## DSH Review r2：APPROVED
 
@@ -109,4 +109,4 @@ M2-RUNNER-SNAPSHOT-DEBT是关联blocked Task，仅用于本Task验证runner复�
 - evidence_head: 2c79645939635beef4a391f4bd9071ffeacd300b
 - reviewed_head: 4499217d7b2249da16d5dbf27a3219a43876aac7
 - review_report: doc/reviews/M2-PACKAGED-AC1-ICU-ISOLATION-FIX-4499217d-dsh-r2.md
-- status: approved / ExecutionState: CHECKPOINTED。DSH r2 已批准；Codex 集成验证仍待完成。
+- status: done / ExecutionState: CHECKPOINTED；integration_commit=`65ba30144048a0b8daae22205c01f8049b44b8a7`。集成代码与 reviewed source head `4499217d` 在 `src/apps/tests/packaging` 零差量；未在 merge 后重跑产品 Gate，沿用 Owner 绑定于 `4499217d` 的 fresh 证据。R2-002/R2-003 为已接受的证据局限。
