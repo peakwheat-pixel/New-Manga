@@ -1,0 +1,490 @@
+{
+  "head": "240a94cbc7efcef31e84f27635c4bdbc60d70a5f",
+  "command": [
+    "verification/M2-PACKAGED-AC1-DLL-DIAG/symbol_probe.py",
+    "G:/CODEX/New Manga.worktrees/PACKAGED-AC1-DLL-DIAG-dsh/verification/M2-PACKAGED-AC1-DLL-DIAG/lab/20261008-100953/core-sidecar",
+    "verification/M2-PACKAGED-AC1-DLL-DIAG/raw/symbol-probe.json"
+  ],
+  "pefile_version": "2024.8.26",
+  "bundle": "G:\\CODEX\\New Manga.worktrees\\PACKAGED-AC1-DLL-DIAG-dsh\\verification\\M2-PACKAGED-AC1-DLL-DIAG\\lab\\20261008-100953\\core-sidecar",
+  "note": "Static candidate symbol matching; no loader search/forwarder claim",
+  "binaries": [
+    {
+      "binary": "_internal/PySide6/Qt6Core.dll",
+      "sha256": "d6a3c37c5263c5d418fc0e80b722bc9fca7c0859e6f635f9624a2fde00bdc653",
+      "dependencies": [
+        {
+          "dll": "api-ms-win-core-synch-l1-2-0.dll",
+          "candidate": "G:\\CODEX\\New Manga.worktrees\\PACKAGED-AC1-DLL-DIAG-dsh\\verification\\M2-PACKAGED-AC1-DLL-DIAG\\lab\\20261008-100953\\core-sidecar\\_internal\\api-ms-win-core-synch-l1-2-0.dll",
+          "sha256": "f6482bbec5612c39ecb4822787a333f2b7570f7a5f922a4059be41ba957bb372",
+          "imported": 3,
+          "missing_symbols": []
+        },
+        {
+          "dll": "MPR.dll",
+          "candidate": "C:\\WINDOWS\\System32\\MPR.dll",
+          "sha256": "8bb319c8c8255e915c05c03eccc24981cf9653025d2f720fb7fffdd4d524309c",
+          "imported": 1,
+          "missing_symbols": []
+        },
+        {
+          "dll": "USERENV.dll",
+          "candidate": "C:\\WINDOWS\\System32\\USERENV.dll",
+          "sha256": "aeb1a6a15397bee7a0ebc67b8188f751e10089c0adadfd86146496c5faae914c",
+          "imported": 1,
+          "missing_symbols": []
+        },
+        {
+          "dll": "ADVAPI32.dll",
+          "candidate": "C:\\WINDOWS\\System32\\ADVAPI32.dll",
+          "sha256": "74fefade3065de4bf2b870777369222fbc2908ddcad2aa4cb63a33f1eef9979d",
+          "imported": 31,
+          "missing_symbols": []
+        },
+        {
+          "dll": "AUTHZ.dll",
+          "candidate": "C:\\WINDOWS\\System32\\AUTHZ.dll",
+          "sha256": "59dbbee701b9010e6120886ef21c03a21363e75b87fa4ca3a91a60e25b855db9",
+          "imported": 6,
+          "missing_symbols": []
+        },
+        {
+          "dll": "KERNEL32.dll",
+          "candidate": "C:\\WINDOWS\\System32\\KERNEL32.dll",
+          "sha256": "4f7e85e01b521aa002692b1e868bee9a3a9ba19b815ce5d16d2e959fb0289feb",
+          "imported": 159,
+          "missing_symbols": []
+        },
+        {
+          "dll": "NETAPI32.dll",
+          "candidate": "C:\\WINDOWS\\System32\\NETAPI32.dll",
+          "sha256": "d5b12248b116177329bf72cb517d515637cf2476dff1c159a0e1e7d28420be09",
+          "imported": 2,
+          "missing_symbols": []
+        },
+        {
+          "dll": "ntdll.dll",
+          "candidate": "C:\\WINDOWS\\System32\\ntdll.dll",
+          "sha256": "a378d703c3f155d71b57ac53891b5905dc1036d3e763d82980705d1e2a8dd17d",
+          "imported": 4,
+          "missing_symbols": []
+        },
+        {
+          "dll": "ole32.dll",
+          "candidate": "C:\\WINDOWS\\System32\\ole32.dll",
+          "sha256": "1053ffb858cddbe29eaaa6a5b0836b88c7cd11fbd58605288600e507c06db443",
+          "imported": 5,
+          "missing_symbols": []
+        },
+        {
+          "dll": "SHELL32.dll",
+          "candidate": "C:\\WINDOWS\\System32\\SHELL32.dll",
+          "sha256": "be4d90cdb64b98be38083576f872015615ac6930e6c7c462d125a2e50767b887",
+          "imported": 4,
+          "missing_symbols": []
+        },
+        {
+          "dll": "USER32.dll",
+          "candidate": "C:\\WINDOWS\\System32\\USER32.dll",
+          "sha256": "f285937030bcb325cad39ee5be4818f6666241229adeadea4ff1ae469dfd7ef3",
+          "imported": 24,
+          "missing_symbols": []
+        },
+        {
+          "dll": "VERSION.dll",
+          "candidate": "C:\\WINDOWS\\System32\\VERSION.dll",
+          "sha256": "cea99f212af557a9613150c5509631403ed0f05f5d9a06ac42039bd59b40e39a",
+          "imported": 3,
+          "missing_symbols": []
+        },
+        {
+          "dll": "WINMM.dll",
+          "candidate": "C:\\WINDOWS\\System32\\WINMM.dll",
+          "sha256": "b9035da2ee058fe565ecb3c0064f46f2d09bde01f29e423ffe6b33e15c773f04",
+          "imported": 2,
+          "missing_symbols": []
+        },
+        {
+          "dll": "WS2_32.dll",
+          "candidate": "C:\\WINDOWS\\System32\\WS2_32.dll",
+          "sha256": "d82732cf85c19e632ccaf08bd6be0c70142eafbfcd515c24495261d12aaec570",
+          "imported": 3,
+          "missing_symbols": []
+        },
+        {
+          "dll": "icuuc.dll",
+          "candidate": "G:\\CODEX\\New Manga.worktrees\\PACKAGED-AC1-DLL-DIAG-dsh\\verification\\M2-PACKAGED-AC1-DLL-DIAG\\lab\\20261008-100953\\core-sidecar\\_internal\\icuuc.dll",
+          "sha256": "39aec884c7124d673d75b38cca7b44ac1909d9633d8366a812a6e1c269d74bdf",
+          "imported": 20,
+          "missing_symbols": [
+            "ucnv_open",
+            "ucnv_close",
+            "UCNV_FROM_U_CALLBACK_SUBSTITUTE",
+            "UCNV_TO_U_CALLBACK_SUBSTITUTE",
+            "ucnv_reset",
+            "ucnv_getMaxCharSize",
+            "ucnv_getName",
+            "ucnv_getToUCallBack",
+            "ucnv_getFromUCallBack",
+            "ucnv_setToUCallBack",
+            "ucnv_setFromUCallBack",
+            "ucnv_cbToUWriteUChars",
+            "ucnv_toUnicode",
+            "ucnv_cbFromUWriteUChars",
+            "ucnv_toUCountPending",
+            "ucnv_fromUCountPending",
+            "ucnv_getStandardName",
+            "ucnv_getAvailableName",
+            "ucnv_countAvailable",
+            "ucnv_fromUnicode"
+          ]
+        },
+        {
+          "dll": "MSVCP140.dll",
+          "candidate": "G:\\CODEX\\New Manga.worktrees\\PACKAGED-AC1-DLL-DIAG-dsh\\verification\\M2-PACKAGED-AC1-DLL-DIAG\\lab\\20261008-100953\\core-sidecar\\_internal\\PySide6\\MSVCP140.dll",
+          "sha256": "4c667b706893593812cd111b369ba6a77f54d1f1b1ae87cf3bf37692663cfba2",
+          "imported": 29,
+          "missing_symbols": []
+        },
+        {
+          "dll": "MSVCP140_1.dll",
+          "candidate": "G:\\CODEX\\New Manga.worktrees\\PACKAGED-AC1-DLL-DIAG-dsh\\verification\\M2-PACKAGED-AC1-DLL-DIAG\\lab\\20261008-100953\\core-sidecar\\_internal\\PySide6\\MSVCP140_1.dll",
+          "sha256": "d419d24b0a76366f5c9d908b0e45fe70e9e9154bb8ad5f3de42070f2337f857b",
+          "imported": 1,
+          "missing_symbols": []
+        },
+        {
+          "dll": "VCRUNTIME140.dll",
+          "candidate": "G:\\CODEX\\New Manga.worktrees\\PACKAGED-AC1-DLL-DIAG-dsh\\verification\\M2-PACKAGED-AC1-DLL-DIAG\\lab\\20261008-100953\\core-sidecar\\_internal\\PySide6\\VCRUNTIME140.dll",
+          "sha256": "f893ae75a1a24eea174d982f94bc80ce2448201eaa919a73c0653a5657685de4",
+          "imported": 17,
+          "missing_symbols": []
+        },
+        {
+          "dll": "VCRUNTIME140_1.dll",
+          "candidate": "G:\\CODEX\\New Manga.worktrees\\PACKAGED-AC1-DLL-DIAG-dsh\\verification\\M2-PACKAGED-AC1-DLL-DIAG\\lab\\20261008-100953\\core-sidecar\\_internal\\PySide6\\VCRUNTIME140_1.dll",
+          "sha256": "48aa2783793ea18ab3c2c71d420d4fff9814e662a1ff810053c6e5250061a716",
+          "imported": 1,
+          "missing_symbols": []
+        },
+        {
+          "dll": "api-ms-win-crt-runtime-l1-1-0.dll",
+          "candidate": "G:\\CODEX\\New Manga.worktrees\\PACKAGED-AC1-DLL-DIAG-dsh\\verification\\M2-PACKAGED-AC1-DLL-DIAG\\lab\\20261008-100953\\core-sidecar\\_internal\\api-ms-win-crt-runtime-l1-1-0.dll",
+          "sha256": "72adc1b3677e0814d9c4ebf0964000e84bb2acf67336c8963061665e44f78029",
+          "imported": 20,
+          "missing_symbols": []
+        },
+        {
+          "dll": "api-ms-win-crt-heap-l1-1-0.dll",
+          "candidate": "G:\\CODEX\\New Manga.worktrees\\PACKAGED-AC1-DLL-DIAG-dsh\\verification\\M2-PACKAGED-AC1-DLL-DIAG\\lab\\20261008-100953\\core-sidecar\\_internal\\api-ms-win-crt-heap-l1-1-0.dll",
+          "sha256": "c71080cbcb43bf1f8f3e391deb12a582eb0abefc80946f340675a2c616e4feb4",
+          "imported": 7,
+          "missing_symbols": []
+        },
+        {
+          "dll": "api-ms-win-crt-string-l1-1-0.dll",
+          "candidate": "G:\\CODEX\\New Manga.worktrees\\PACKAGED-AC1-DLL-DIAG-dsh\\verification\\M2-PACKAGED-AC1-DLL-DIAG\\lab\\20261008-100953\\core-sidecar\\_internal\\api-ms-win-crt-string-l1-1-0.dll",
+          "sha256": "fcf12466cc12fd3b73611fc0763a5a1f9d44e90349513c34a0c83b0f36421793",
+          "imported": 10,
+          "missing_symbols": []
+        },
+        {
+          "dll": "api-ms-win-crt-stdio-l1-1-0.dll",
+          "candidate": "G:\\CODEX\\New Manga.worktrees\\PACKAGED-AC1-DLL-DIAG-dsh\\verification\\M2-PACKAGED-AC1-DLL-DIAG\\lab\\20261008-100953\\core-sidecar\\_internal\\api-ms-win-crt-stdio-l1-1-0.dll",
+          "sha256": "900afc3989673c9bb1a687ed38c192f46db9e6ba6d11a668898a539e7fc23798",
+          "imported": 24,
+          "missing_symbols": []
+        },
+        {
+          "dll": "api-ms-win-crt-environment-l1-1-0.dll",
+          "candidate": "G:\\CODEX\\New Manga.worktrees\\PACKAGED-AC1-DLL-DIAG-dsh\\verification\\M2-PACKAGED-AC1-DLL-DIAG\\lab\\20261008-100953\\core-sidecar\\_internal\\api-ms-win-crt-environment-l1-1-0.dll",
+          "sha256": "39e5929593709e8af3bc9e0a75ec1155778d6f4a247f4cdfc58928ad6db88434",
+          "imported": 4,
+          "missing_symbols": []
+        },
+        {
+          "dll": "api-ms-win-crt-math-l1-1-0.dll",
+          "candidate": "G:\\CODEX\\New Manga.worktrees\\PACKAGED-AC1-DLL-DIAG-dsh\\verification\\M2-PACKAGED-AC1-DLL-DIAG\\lab\\20261008-100953\\core-sidecar\\_internal\\api-ms-win-crt-math-l1-1-0.dll",
+          "sha256": "d4fbcccbe29371cbce431e43b2eb4f7ba9a6f04a3d740a071f02457a505e9dc8",
+          "imported": 14,
+          "missing_symbols": []
+        },
+        {
+          "dll": "api-ms-win-crt-utility-l1-1-0.dll",
+          "candidate": "G:\\CODEX\\New Manga.worktrees\\PACKAGED-AC1-DLL-DIAG-dsh\\verification\\M2-PACKAGED-AC1-DLL-DIAG\\lab\\20261008-100953\\core-sidecar\\_internal\\api-ms-win-crt-utility-l1-1-0.dll",
+          "sha256": "5f8f26b216ade615b67a41f6fbbb910972fc6153315a65bb8f09912be50215b1",
+          "imported": 1,
+          "missing_symbols": []
+        },
+        {
+          "dll": "api-ms-win-crt-time-l1-1-0.dll",
+          "candidate": "G:\\CODEX\\New Manga.worktrees\\PACKAGED-AC1-DLL-DIAG-dsh\\verification\\M2-PACKAGED-AC1-DLL-DIAG\\lab\\20261008-100953\\core-sidecar\\_internal\\api-ms-win-crt-time-l1-1-0.dll",
+          "sha256": "886e57c4a6adb299b38f02945369f590a67da4e79a798359fc60aaa067212d7c",
+          "imported": 4,
+          "missing_symbols": []
+        },
+        {
+          "dll": "api-ms-win-crt-filesystem-l1-1-0.dll",
+          "candidate": "G:\\CODEX\\New Manga.worktrees\\PACKAGED-AC1-DLL-DIAG-dsh\\verification\\M2-PACKAGED-AC1-DLL-DIAG\\lab\\20261008-100953\\core-sidecar\\_internal\\api-ms-win-crt-filesystem-l1-1-0.dll",
+          "sha256": "5a8ecebac32edf4e1f3c5c6c1c8ea1a1add6cda4f9c9cb26f752fb295bea6865",
+          "imported": 3,
+          "missing_symbols": []
+        },
+        {
+          "dll": "api-ms-win-core-winrt-l1-1-0.dll",
+          "candidate": null
+        },
+        {
+          "dll": "api-ms-win-core-winrt-error-l1-1-1.dll",
+          "candidate": null
+        },
+        {
+          "dll": "OLEAUT32.dll",
+          "candidate": "C:\\WINDOWS\\System32\\OLEAUT32.dll",
+          "sha256": "92f48fb8a5f59a507037b55fcfcc4980904ad38443469e289842b3e35e74c234",
+          "imported": 4,
+          "missing_symbols": []
+        }
+      ]
+    },
+    {
+      "binary": "_internal/PySide6/Qt6Gui.dll",
+      "sha256": "ae29b005f51b6850bf57fa06fced0dc8c7039fd6fafc3bfbcfe76e38adc7abf1",
+      "dependencies": [
+        {
+          "dll": "d3d11.dll",
+          "candidate": "C:\\WINDOWS\\System32\\d3d11.dll",
+          "sha256": "3e6c8932026ffb0dba16207a4bb6793e56b9483fa2e19f36e68ef308ed027e25",
+          "imported": 1,
+          "missing_symbols": []
+        },
+        {
+          "dll": "dxgi.dll",
+          "candidate": "C:\\WINDOWS\\System32\\dxgi.dll",
+          "sha256": "023542bb41afcf0ba5ee02cb63ccbaeab4765a5dd859a1b0a6e05fa9b739e89f",
+          "imported": 1,
+          "missing_symbols": []
+        },
+        {
+          "dll": "d3d12.dll",
+          "candidate": "C:\\WINDOWS\\System32\\d3d12.dll",
+          "sha256": "0963513f3291a67ea56985a6e8b7ed8088a1e858803be6dc3373faa07460ce02",
+          "imported": 3,
+          "missing_symbols": []
+        },
+        {
+          "dll": "GDI32.dll",
+          "candidate": "C:\\WINDOWS\\System32\\GDI32.dll",
+          "sha256": "772c73e294a4c5f5e0d4146288af95287a85c074d3aee3fa9f320dc010d7dbfe",
+          "imported": 36,
+          "missing_symbols": []
+        },
+        {
+          "dll": "ole32.dll",
+          "candidate": "C:\\WINDOWS\\System32\\ole32.dll",
+          "sha256": "1053ffb858cddbe29eaaa6a5b0836b88c7cd11fbd58605288600e507c06db443",
+          "imported": 3,
+          "missing_symbols": []
+        },
+        {
+          "dll": "SHELL32.dll",
+          "candidate": "C:\\WINDOWS\\System32\\SHELL32.dll",
+          "sha256": "be4d90cdb64b98be38083576f872015615ac6930e6c7c462d125a2e50767b887",
+          "imported": 1,
+          "missing_symbols": []
+        },
+        {
+          "dll": "USER32.dll",
+          "candidate": "C:\\WINDOWS\\System32\\USER32.dll",
+          "sha256": "f285937030bcb325cad39ee5be4818f6666241229adeadea4ff1ae469dfd7ef3",
+          "imported": 12,
+          "missing_symbols": []
+        },
+        {
+          "dll": "UxTheme.dll",
+          "candidate": "C:\\WINDOWS\\System32\\UxTheme.dll",
+          "sha256": "75b98acc9146e536134126925b75c9efc33fc92e478ccca08d8c9512cf4271a4",
+          "imported": 2,
+          "missing_symbols": []
+        },
+        {
+          "dll": "DWrite.dll",
+          "candidate": "C:\\WINDOWS\\System32\\DWrite.dll",
+          "sha256": "75340026c45761fd1e6d1ba39fa34ec0d24433c68aed90cbf9658e0b3d4b8314",
+          "imported": 1,
+          "missing_symbols": []
+        },
+        {
+          "dll": "Qt6Core.dll",
+          "candidate": "G:\\CODEX\\New Manga.worktrees\\PACKAGED-AC1-DLL-DIAG-dsh\\verification\\M2-PACKAGED-AC1-DLL-DIAG\\lab\\20261008-100953\\core-sidecar\\_internal\\PySide6\\Qt6Core.dll",
+          "sha256": "d6a3c37c5263c5d418fc0e80b722bc9fca7c0859e6f635f9624a2fde00bdc653",
+          "imported": 1425,
+          "missing_symbols": [
+            "?width@QSize@@QEBAHXZ",
+            "?x@QRect@@QEBAHXZ",
+            "?y@QRect@@QEBAHXZ",
+            "?width@QRect@@QEBAHXZ",
+            "?writeQSizeType@QDataStream@@CA_NAEAV1@_J@Z",
+            "?warning@QMessageLogger@@QEBAXPEBDZZ",
+            "?writeRawData@QDataStream@@QEAA_JPEBD_J@Z",
+            "?write@QIODevice@@QEAA_JPEBD_J@Z",
+            "?value@QSettings@@QEBA?AVQVariant@@VQAnyStringView@@AEBV2@@Z",
+            "?value@QSettings@@QEBA?AVQVariant@@VQAnyStringView@@@Z",
+            "?warning@QMessageLogger@@QEBA?AVQDebug@@XZ",
+            "?waitInternal@QLatch@@AEAAXH@Z",
+            "?wakeUp@QLatch@@AEAAXXZ",
+            "qt_cpu_features",
+            "?waitForReadyRead@QIODevice@@UEAA_NH@Z",
+            "?waitForBytesWritten@QIODevice@@UEAA_NH@Z",
+            "?writeData@QFileDevice@@MEAA_JPEBD_J@Z",
+            "?writeToDebugStream@QObjectPrivate@@UEBAXAEAVQDebug@@@Z",
+            "?valueToKey@QMetaEnum@@QEBAPEBD_K@Z",
+            "?valueToKeys@QMetaEnum@@QEBA?AVQByteArray@@_K@Z",
+            "?version@QLibraryInfo@@SA?AVQVersionNumber@@XZ",
+            "?waitForDone@QThreadPool@@QEAA_NVQDeadlineTimer@@@Z",
+            "?wait@QWaitCondition@@QEAA_NPEAVQMutex@@VQDeadlineTimer@@@Z",
+            "?wakeOne@QWaitCondition@@QEAAXXZ",
+            "?x1@QLine@@QEBAHXZ",
+            "?y1@QLine@@QEBAHXZ",
+            "?x2@QLine@@QEBAHXZ",
+            "?y2@QLine@@QEBAHXZ",
+            "?x1@QLineF@@QEBANXZ",
+            "?x2@QLineF@@QEBANXZ",
+            "?write@QIODevice@@QEAA_JPEBD@Z",
+            "?write@QIODevice@@QEAA_JAEBVQByteArray@@@Z",
+            "?year@QDate@@QEBAHXZ",
+            "?writeAttribute@QXmlStreamWriter@@QEAAXVQAnyStringView@@00@Z",
+            "?writeCharacters@QXmlStreamWriter@@QEAAXVQAnyStringView@@@Z",
+            "?writeEndDocument@QXmlStreamWriter@@QEAAXXZ",
+            "?writeEndElement@QXmlStreamWriter@@QEAAXXZ",
+            "?writeNamespace@QXmlStreamWriter@@QEAAXVQAnyStringView@@0@Z",
+            "?writeStartElement@QXmlStreamWriter@@QEAAXVQAnyStringView@@0@Z",
+            "z_deflate",
+            "z_deflateEnd",
+            "z_deflateInit_",
+            "?writeData@QBuffer@@MEAA_JPEBD_J@Z",
+            "?y1@QLineF@@QEBANXZ",
+            "?y2@QLineF@@QEBANXZ",
+            "?x@QRectF@@QEBANXZ",
+            "?y@QRectF@@QEBANXZ",
+            "?writableLocation@QStandardPaths@@SA?AVQString@@W4StandardLocation@1@@Z",
+            "?wakeUp@QEventDispatcherWin32@@UEAAXXZ",
+            "?windowsComString@QSystemError@@SA?AVQString@@J@Z",
+            "?wait@QThread@@QEAA_NVQDeadlineTimer@@@Z",
+            "?writeEmptyElement@QXmlStreamWriter@@QEAAXVQAnyStringView@@0@Z",
+            "?writeStartDocument@QXmlStreamWriter@@QEAAXXZ",
+            "?wait@QThread@@QEAA_NK@Z",
+            "?wakeAll@QWaitCondition@@QEAAXXZ",
+            "?warning@QMessageLogger@@QEBAXP6AAEBVQLoggingCategory@@XZPEBDZZ",
+            "z_inflate",
+            "z_inflateEnd",
+            "z_inflateReset",
+            "z_inflateInit2_",
+            "z_crc32",
+            "z_deflateReset",
+            "z_deflateInit2_",
+            "z_inflateReset2"
+          ]
+        },
+        {
+          "dll": "KERNEL32.dll",
+          "candidate": "C:\\WINDOWS\\System32\\KERNEL32.dll",
+          "sha256": "4f7e85e01b521aa002692b1e868bee9a3a9ba19b815ce5d16d2e959fb0289feb",
+          "imported": 36,
+          "missing_symbols": []
+        },
+        {
+          "dll": "MSVCP140.dll",
+          "candidate": "G:\\CODEX\\New Manga.worktrees\\PACKAGED-AC1-DLL-DIAG-dsh\\verification\\M2-PACKAGED-AC1-DLL-DIAG\\lab\\20261008-100953\\core-sidecar\\_internal\\PySide6\\MSVCP140.dll",
+          "sha256": "4c667b706893593812cd111b369ba6a77f54d1f1b1ae87cf3bf37692663cfba2",
+          "imported": 7,
+          "missing_symbols": []
+        },
+        {
+          "dll": "MSVCP140_1.dll",
+          "candidate": "G:\\CODEX\\New Manga.worktrees\\PACKAGED-AC1-DLL-DIAG-dsh\\verification\\M2-PACKAGED-AC1-DLL-DIAG\\lab\\20261008-100953\\core-sidecar\\_internal\\PySide6\\MSVCP140_1.dll",
+          "sha256": "d419d24b0a76366f5c9d908b0e45fe70e9e9154bb8ad5f3de42070f2337f857b",
+          "imported": 1,
+          "missing_symbols": []
+        },
+        {
+          "dll": "MSVCP140_2.dll",
+          "candidate": "G:\\CODEX\\New Manga.worktrees\\PACKAGED-AC1-DLL-DIAG-dsh\\verification\\M2-PACKAGED-AC1-DLL-DIAG\\lab\\20261008-100953\\core-sidecar\\_internal\\PySide6\\MSVCP140_2.dll",
+          "sha256": "89917964abb6ca16a260cab258e180c3abc239b5af00eed659d0edf0efdd339c",
+          "imported": 1,
+          "missing_symbols": []
+        },
+        {
+          "dll": "VCRUNTIME140.dll",
+          "candidate": "G:\\CODEX\\New Manga.worktrees\\PACKAGED-AC1-DLL-DIAG-dsh\\verification\\M2-PACKAGED-AC1-DLL-DIAG\\lab\\20261008-100953\\core-sidecar\\_internal\\PySide6\\VCRUNTIME140.dll",
+          "sha256": "f893ae75a1a24eea174d982f94bc80ce2448201eaa919a73c0653a5657685de4",
+          "imported": 17,
+          "missing_symbols": []
+        },
+        {
+          "dll": "VCRUNTIME140_1.dll",
+          "candidate": "G:\\CODEX\\New Manga.worktrees\\PACKAGED-AC1-DLL-DIAG-dsh\\verification\\M2-PACKAGED-AC1-DLL-DIAG\\lab\\20261008-100953\\core-sidecar\\_internal\\PySide6\\VCRUNTIME140_1.dll",
+          "sha256": "48aa2783793ea18ab3c2c71d420d4fff9814e662a1ff810053c6e5250061a716",
+          "imported": 1,
+          "missing_symbols": []
+        },
+        {
+          "dll": "api-ms-win-crt-string-l1-1-0.dll",
+          "candidate": "G:\\CODEX\\New Manga.worktrees\\PACKAGED-AC1-DLL-DIAG-dsh\\verification\\M2-PACKAGED-AC1-DLL-DIAG\\lab\\20261008-100953\\core-sidecar\\_internal\\api-ms-win-crt-string-l1-1-0.dll",
+          "sha256": "fcf12466cc12fd3b73611fc0763a5a1f9d44e90349513c34a0c83b0f36421793",
+          "imported": 10,
+          "missing_symbols": []
+        },
+        {
+          "dll": "api-ms-win-crt-heap-l1-1-0.dll",
+          "candidate": "G:\\CODEX\\New Manga.worktrees\\PACKAGED-AC1-DLL-DIAG-dsh\\verification\\M2-PACKAGED-AC1-DLL-DIAG\\lab\\20261008-100953\\core-sidecar\\_internal\\api-ms-win-crt-heap-l1-1-0.dll",
+          "sha256": "c71080cbcb43bf1f8f3e391deb12a582eb0abefc80946f340675a2c616e4feb4",
+          "imported": 7,
+          "missing_symbols": []
+        },
+        {
+          "dll": "api-ms-win-crt-runtime-l1-1-0.dll",
+          "candidate": "G:\\CODEX\\New Manga.worktrees\\PACKAGED-AC1-DLL-DIAG-dsh\\verification\\M2-PACKAGED-AC1-DLL-DIAG\\lab\\20261008-100953\\core-sidecar\\_internal\\api-ms-win-crt-runtime-l1-1-0.dll",
+          "sha256": "72adc1b3677e0814d9c4ebf0964000e84bb2acf67336c8963061665e44f78029",
+          "imported": 12,
+          "missing_symbols": []
+        },
+        {
+          "dll": "api-ms-win-crt-math-l1-1-0.dll",
+          "candidate": "G:\\CODEX\\New Manga.worktrees\\PACKAGED-AC1-DLL-DIAG-dsh\\verification\\M2-PACKAGED-AC1-DLL-DIAG\\lab\\20261008-100953\\core-sidecar\\_internal\\api-ms-win-crt-math-l1-1-0.dll",
+          "sha256": "d4fbcccbe29371cbce431e43b2eb4f7ba9a6f04a3d740a071f02457a505e9dc8",
+          "imported": 30,
+          "missing_symbols": []
+        },
+        {
+          "dll": "api-ms-win-crt-stdio-l1-1-0.dll",
+          "candidate": "G:\\CODEX\\New Manga.worktrees\\PACKAGED-AC1-DLL-DIAG-dsh\\verification\\M2-PACKAGED-AC1-DLL-DIAG\\lab\\20261008-100953\\core-sidecar\\_internal\\api-ms-win-crt-stdio-l1-1-0.dll",
+          "sha256": "900afc3989673c9bb1a687ed38c192f46db9e6ba6d11a668898a539e7fc23798",
+          "imported": 11,
+          "missing_symbols": []
+        },
+        {
+          "dll": "api-ms-win-crt-environment-l1-1-0.dll",
+          "candidate": "G:\\CODEX\\New Manga.worktrees\\PACKAGED-AC1-DLL-DIAG-dsh\\verification\\M2-PACKAGED-AC1-DLL-DIAG\\lab\\20261008-100953\\core-sidecar\\_internal\\api-ms-win-crt-environment-l1-1-0.dll",
+          "sha256": "39e5929593709e8af3bc9e0a75ec1155778d6f4a247f4cdfc58928ad6db88434",
+          "imported": 1,
+          "missing_symbols": []
+        },
+        {
+          "dll": "api-ms-win-crt-utility-l1-1-0.dll",
+          "candidate": "G:\\CODEX\\New Manga.worktrees\\PACKAGED-AC1-DLL-DIAG-dsh\\verification\\M2-PACKAGED-AC1-DLL-DIAG\\lab\\20261008-100953\\core-sidecar\\_internal\\api-ms-win-crt-utility-l1-1-0.dll",
+          "sha256": "5f8f26b216ade615b67a41f6fbbb910972fc6153315a65bb8f09912be50215b1",
+          "imported": 2,
+          "missing_symbols": []
+        },
+        {
+          "dll": "api-ms-win-crt-convert-l1-1-0.dll",
+          "candidate": "G:\\CODEX\\New Manga.worktrees\\PACKAGED-AC1-DLL-DIAG-dsh\\verification\\M2-PACKAGED-AC1-DLL-DIAG\\lab\\20261008-100953\\core-sidecar\\_internal\\api-ms-win-crt-convert-l1-1-0.dll",
+          "sha256": "8b94662429171019fcd63c70bbf2095a075170599704a5e7dcdbe3da13f3a429",
+          "imported": 1,
+          "missing_symbols": []
+        }
+      ]
+    }
+  ]
+}

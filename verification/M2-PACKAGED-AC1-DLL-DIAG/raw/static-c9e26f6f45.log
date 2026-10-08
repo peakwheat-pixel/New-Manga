@@ -1,0 +1,74 @@
+HEAD=e3bb7b6dbcc7c0e98c7dd1e219e3d04e67722e8d
+COMMAND=["C:/Program Files/PowerShell/7/pwsh.exe", "-NoProfile", "-File", "G:\\CODEX\\New Manga.worktrees\\PACKAGED-AC1-DLL-DIAG-dsh\\verification\\M2-PACKAGED-AC1-DLL-DIAG\\probe\\run_dll_diag_probe.ps1", "-InstallDir", "C:\\Users\\49745\\AppData\\Local\\Temp\\m2ac5-cleanstart-k50b12ik\\install"]
+STDIN=EOF; CHILD_ENV={"SystemRoot": "C:\\WINDOWS", "WINDIR": "C:\\WINDOWS", "ComSpec": "C:\\WINDOWS/System32/cmd.exe", "PATH": "C:\\WINDOWS/System32;C:\\WINDOWS", "PATHEXT": ".COM;.EXE;.BAT;.CMD", "APPDATA": "G:\\CODEX\\New Manga.worktrees\\PACKAGED-AC1-DLL-DIAG-dsh\\verification\\M2-PACKAGED-AC1-DLL-DIAG\\lab\\static-c9e26f6f45\\roaming", "LOCALAPPDATA": "G:\\CODEX\\New Manga.worktrees\\PACKAGED-AC1-DLL-DIAG-dsh\\verification\\M2-PACKAGED-AC1-DLL-DIAG\\lab\\static-c9e26f6f45\\local", "TEMP": "G:\\CODEX\\New Manga.worktrees\\PACKAGED-AC1-DLL-DIAG-dsh\\verification\\M2-PACKAGED-AC1-DLL-DIAG\\lab\\static-c9e26f6f45\\temp", "TMP": "G:\\CODEX\\New Manga.worktrees\\PACKAGED-AC1-DLL-DIAG-dsh\\verification\\M2-PACKAGED-AC1-DLL-DIAG\\lab\\static-c9e26f6f45\\temp", "NEWMANGA_DATA_ROOT": "G:\\CODEX\\New Manga.worktrees\\PACKAGED-AC1-DLL-DIAG-dsh\\verification\\M2-PACKAGED-AC1-DLL-DIAG\\lab\\static-c9e26f6f45\\data"}
+INPUT_SHA256={"acceptance_bridge.exe": "f58936bdc25a40db71d4ec4b9fcf13d9b979b26ddd9b4be6c5cf97a52325f715", "catalog_loader.exe": "cf449b12eb09505a1403e49defe335c5a1f27279f7b7914fe9d1c0153458b62f", "core_service.exe": "a64e6904770b25603d01b7e200f9a861aec6a5c6da874496f2f944dddeca4b8c", "host_bridge.exe": "64928a65a7e3ed3a77fe1119bedca5314cda86545554ad62d843cd5e3258766e", "sfx_detect_probe.exe": "d629f9c32fccda4ccd726fda2208795e7553eb2fc489f594cd6fb4639caa0abf"}
+HOST=Microsoft Windows NT 10.0.26300.0; PS=7.6.6; PY=G:/CODEX/New Manga.task-envs/T1.1.1-impl-py312/Scripts/python.exe
+BUNDLE=G:/CODEX/New Manga.worktrees/RUNNER-SNAPSHOT-DEBT-codex/apps/desktop/src-tauri/target/core-sidecar/core-sidecar
+MODE=static-read-only
+START=2026-10-08T10:09:51.5819472+08:00
+STEP1 installer-hash=PASS sha256=1cecca95d25439fca682cbe4336123d3b3352db229dd58c4e7d724b4d6c6ccb8 bytes=589904619
+STEP2 closure PRESENT _internal/PySide6/Qt6Core.dll
+STEP2 closure PRESENT _internal/PySide6/Qt6Gui.dll
+STEP2 closure PRESENT _internal/PySide6/QtCore.pyd
+STEP2 closure PRESENT _internal/PySide6/QtGui.pyd
+STEP2 closure PRESENT _internal/PySide6/pyside6.abi3.dll
+STEP2 closure PRESENT _internal/shiboken6/shiboken6.abi3.dll
+STEP2 closure PRESENT _internal/msvcp140.dll
+STEP2 closure PRESENT _internal/VCRUNTIME140.dll
+STEP2 closure PRESENT _internal/VCRUNTIME140_1.dll
+STEP2 closure PRESENT _internal/ucrtbase.dll
+STEP2 closure PRESENT _internal/python312.dll
+STEP2 closure PRESENT _internal/icuuc.dll
+STEP2 closure PRESENT _internal/icudt78.dll
+STEP2 closure ABSENT _internal/icuin.dll
+STEP2 closure ABSENT _internal/icuin78.dll
+STEP2 closure ABSENT _internal/d3dcompiler_47.dll
+STEP2 closure ABSENT _internal/opengl32sw.dll
+STEP2 closure ABSENT _internal/PySide6/Qt/plugins/platforms/qoffscreen.dll
+STEP2 PySide6 pyd files: QtCore.pyd, QtGui.pyd, QtNetwork.pyd
+STEP2 _internal top-level dll count=60
+STEP2 _internal top-level dlls: api-ms-win-core-console-l1-1-0.dll, api-ms-win-core-datetime-l1-1-0.dll, api-ms-win-core-debug-l1-1-0.dll, api-ms-win-core-errorhandling-l1-1-0.dll, api-ms-win-core-fibers-l1-1-0.dll, api-ms-win-core-fibers-l1-1-1.dll, api-ms-win-core-file-l1-1-0.dll, api-ms-win-core-file-l1-2-0.dll, api-ms-win-core-file-l2-1-0.dll, api-ms-win-core-handle-l1-1-0.dll, api-ms-win-core-heap-l1-1-0.dll, api-ms-win-core-interlocked-l1-1-0.dll, api-ms-win-core-kernel32-legacy-l1-1-1.dll, api-ms-win-core-libraryloader-l1-1-0.dll, api-ms-win-core-localization-l1-2-0.dll, api-ms-win-core-memory-l1-1-0.dll, api-ms-win-core-namedpipe-l1-1-0.dll, api-ms-win-core-processenvironment-l1-1-0.dll, api-ms-win-core-processthreads-l1-1-0.dll, api-ms-win-core-processthreads-l1-1-1.dll, api-ms-win-core-profile-l1-1-0.dll, api-ms-win-core-rtlsupport-l1-1-0.dll, api-ms-win-core-string-l1-1-0.dll, api-ms-win-core-synch-l1-1-0.dll, api-ms-win-core-synch-l1-2-0.dll, api-ms-win-core-sysinfo-l1-1-0.dll, api-ms-win-core-sysinfo-l1-2-0.dll, api-ms-win-core-timezone-l1-1-0.dll, api-ms-win-core-util-l1-1-0.dll, api-ms-win-crt-conio-l1-1-0.dll, api-ms-win-crt-convert-l1-1-0.dll, api-ms-win-crt-environment-l1-1-0.dll, api-ms-win-crt-filesystem-l1-1-0.dll, api-ms-win-crt-heap-l1-1-0.dll, api-ms-win-crt-locale-l1-1-0.dll, api-ms-win-crt-math-l1-1-0.dll, api-ms-win-crt-private-l1-1-0.dll, api-ms-win-crt-process-l1-1-0.dll, api-ms-win-crt-runtime-l1-1-0.dll, api-ms-win-crt-stdio-l1-1-0.dll, api-ms-win-crt-string-l1-1-0.dll, api-ms-win-crt-time-l1-1-0.dll, api-ms-win-crt-utility-l1-1-0.dll, icudt78.dll, icuuc.dll, libcrypto-3-x64.dll, libcrypto-3.dll, libffi-8.dll, libssl-3-x64.dll, libssl-3.dll, MSVCP140_1.dll, MSVCP140_ATOMIC_WAIT.dll, msvcp140.dll, python3.dll, python312.dll, sqlite3.dll, ucrtbase.dll, VCRUNTIME140_1.dll, VCRUNTIME140_THREADS.dll, VCRUNTIME140.dll
+STEP2 scope: ABSENT here means absent from THIS scanned built tree; it is NOT evidence about the installed tree or about load success/failure.
+STEP3 installed PRESENT _internal/PySide6/Qt6Core.dll
+STEP3 installed PRESENT _internal/PySide6/Qt6Gui.dll
+STEP3 installed PRESENT _internal/PySide6/QtCore.pyd
+STEP3 installed PRESENT _internal/PySide6/QtGui.pyd
+STEP3 installed PRESENT _internal/PySide6/pyside6.abi3.dll
+STEP3 installed PRESENT _internal/shiboken6/shiboken6.abi3.dll
+STEP3 installed PRESENT _internal/msvcp140.dll
+STEP3 installed PRESENT _internal/VCRUNTIME140.dll
+STEP3 installed PRESENT _internal/VCRUNTIME140_1.dll
+STEP3 installed PRESENT _internal/ucrtbase.dll
+STEP3 installed PRESENT _internal/python312.dll
+STEP3 installed PRESENT _internal/icuuc.dll
+STEP3 installed PRESENT _internal/icudt78.dll
+STEP3 installed ABSENT _internal/icuin.dll
+STEP3 installed ABSENT _internal/icuin78.dll
+STEP3 installed ABSENT _internal/d3dcompiler_47.dll
+STEP3 installed ABSENT _internal/opengl32sw.dll
+STEP3 installed ABSENT _internal/PySide6/Qt/plugins/platforms/qoffscreen.dll
+STEP3 installed _internal dll count=60
+STEP4 lab-copy=NOT_RUN (no -CopyBundle: static-read-only mode; the exe will not be started)
+STEP5 repro=NOT_RUN (no verified own-lab copy; R2 forbids starting the exe from the original bundle)
+bundle: G:\CODEX\New Manga.worktrees\RUNNER-SNAPSHOT-DEBT-codex\apps\desktop\src-tauri\target\core-sidecar\core-sidecar
+host_bridge.exe                            imports=3    unresolved=0   delay_unresolved=0
+core_service.exe                           imports=3    unresolved=0   delay_unresolved=0
+acceptance_bridge.exe                      imports=3    unresolved=0   delay_unresolved=0
+catalog_loader.exe                         imports=3    unresolved=0   delay_unresolved=0
+sfx_detect_probe.exe                       imports=3    unresolved=0   delay_unresolved=0
+_internal\PySide6\QtGui.pyd                imports=14   unresolved=0   delay_unresolved=0
+_internal\PySide6\QtCore.pyd               imports=11   unresolved=0   delay_unresolved=0
+_internal\PySide6\Qt6Gui.dll               imports=24   unresolved=0   delay_unresolved=0
+_internal\PySide6\Qt6Core.dll              imports=31   unresolved=0   delay_unresolved=0
+_internal\PySide6\pyside6.abi3.dll         imports=11   unresolved=0   delay_unresolved=0
+_internal\shiboken6\shiboken6.abi3.dll     imports=13   unresolved=0   delay_unresolved=0
+verdict: ALL_SCANNED_IMPORTS_RESOLVABLE
+report: G:\CODEX\New Manga.worktrees\PACKAGED-AC1-DLL-DIAG-dsh\verification\M2-PACKAGED-AC1-DLL-DIAG\raw\pe-import-probe-20261008-100951.json
+STEP6 pe-probe EXIT=0 report=G:\CODEX\New Manga.worktrees\PACKAGED-AC1-DLL-DIAG-dsh\verification\M2-PACKAGED-AC1-DLL-DIAG\raw\pe-import-probe-20261008-100951.json scanned=G:/CODEX/New Manga.worktrees/RUNNER-SNAPSHOT-DEBT-codex/apps/desktop/src-tauri/target/core-sidecar/core-sidecar
+STEP6 scope: import-table resolution is static; it is NOT a Windows loader (GetLastError) observation.
+STEP7 artifact pe-import-probe-20261008-100951.json bytes=29292 sha256=8a88dec4d5bf8b9ad57fc107719386aefae08dd3583a8b954daf6a35586bf2f6
+STEP7 artifact probe-20261008-100951.log bytes=6341 sha256=b350cd6e4e7c981a14ee888c8cb85a7f596e790822cb0a88172ef1613a051b95
+END=2026-10-08T10:09:52.3223082+08:00 log=G:\CODEX\New Manga.worktrees\PACKAGED-AC1-DLL-DIAG-dsh\verification\M2-PACKAGED-AC1-DLL-DIAG\raw\probe-20261008-100951.log
+NOTE: no file was written into RUNNER-SNAPSHOT-DEBT-codex; system PATH was not modified.
+
+EXIT=0; TIMEOUT=False; ELAPSED=1.26s

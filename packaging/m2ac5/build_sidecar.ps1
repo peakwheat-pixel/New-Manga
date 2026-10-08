@@ -194,13 +194,44 @@ $workPath = Join-Path $targetRoot "pyinstaller-work"
 $pyinstallerVersion = (& $PythonExe -m PyInstaller --version)
 Write-Host "build_sidecar: git HEAD=$gitHead pyinstaller=$pyinstallerVersion python=$PythonExe"
 
-& $PythonExe -m PyInstaller `
-    --noconfirm `
-    --clean `
-    --distpath $distPath `
-    --workpath $workPath `
-    (Join-Path $repoRoot "packaging/m2ac5/core_sidecar.spec")
-if ($LASTEXITCODE -ne 0) { throw "PyInstaller failed (exit=$LASTEXITCODE)" }
+# M2-PACKAGED-AC1-ICU-ISOLATION-FIX (R-004): Sanitize local PATH during PyInstaller
+# execution to isolate confirmed alien native toolchains (poppler) that leak into
+# bindepend and harvest incompatible ICU binaries shadowing Windows System32 icuuc.dll.
+$origPath = $env:PATH
+try {
+    $sanitizedEntries = @()
+    $pathEntries = $env:PATH -split ';' | Where-Object {
+        if (-not $_ -or -not (Test-Path -LiteralPath $_)) {
+            return $false
+        }
+        # R-004: Restrict sanitization specifically to confirmed alien native toolchains
+        if ($_ -match '(?i)[\\/]dependencies[\\/]native[\\/]poppler' -or $_ -match '(?i)[\\/]poppler[\\/].*bin') {
+            $sanitizedEntries += $_
+            return $false
+        }
+        return $true
+    }
+    $env:PATH = ($pathEntries -join ';')
+    if ($sanitizedEntries.Count -gt 0) {
+        Write-Host "build_sidecar: sanitized $($sanitizedEntries.Count) confirmed alien toolchain entries from PATH for PyInstaller execution:"
+        foreach ($se in $sanitizedEntries) {
+            Write-Host "  [PATH-SANITIZED] $se"
+        }
+    } else {
+        Write-Host "build_sidecar: PATH checked for PyInstaller execution (0 alien toolchain entries found on PATH)"
+    }
+
+    & $PythonExe -m PyInstaller `
+        --noconfirm `
+        --clean `
+        --distpath $distPath `
+        --workpath $workPath `
+        (Join-Path $repoRoot "packaging/m2ac5/core_sidecar.spec")
+    if ($LASTEXITCODE -ne 0) { throw "PyInstaller failed (exit=$LASTEXITCODE)" }
+}
+finally {
+    $env:PATH = $origPath
+}
 
 # layout sanity gate: the Rust host resolves exactly these names
 # (M2-PROD-SFX-PROBE-1: + sfx_detect_probe.exe, the one-shot frozen SFX-detect
@@ -211,6 +242,21 @@ foreach ($exe in @("host_bridge.exe", "core_service.exe", "acceptance_bridge.exe
         throw "sidecar bundle incomplete: missing $exe under $bundle"
     }
 }
+
+# M2-PACKAGED-AC1-ICU-ISOLATION-FIX (R-005): assert that no shadowing ICU binaries
+# exist anywhere in the built bundle layout. Qt6Core requires Windows System32 icuuc.dll;
+# bundling an unisolated or shadowing icuuc*.dll/icudt*.dll in the sidecar bundle root or _internal
+# causes native WinError 127 symbol missing failure.
+# Note: this is an explicit fail-closed safety constraint guarding against System32 shadowing
+# rather than an assumption that no future consumer will ever need a versioned ICU.
+$bundleIcuFiles = Get-ChildItem -Path $bundle -Recurse -File | Where-Object {
+    $_.Name -like "icuuc*.dll" -or $_.Name -like "icudt*.dll"
+}
+if ($bundleIcuFiles.Count -gt 0) {
+    $leakedList = ($bundleIcuFiles | ForEach-Object { $_.FullName }) -join "; "
+    throw "sidecar bundle layout assertion FAILED (fail-closed policy): found unexpected ICU binaries in bundle that could shadow System32: $leakedList"
+}
+Write-Host "build_sidecar: verified 0 shadowing ICU binaries across bundle layout under $bundle (fail-closed guard satisfied)"
 
 if (-not $SkipWeights) {
     Copy-MangaWeights -Bundle $bundle -WeightsSource $WeightsSource

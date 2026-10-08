@@ -1,5 +1,125 @@
 # Project Rebaseline Plan
 
+## 2026-10-08 M2-PACKAGED-AC1-ICU-ISOLATION-FIX done；恢复 Runner Snapshot Debt
+
+当前唯一后继工作是恢复此前已获用户授权的 [`M2-RUNNER-SNAPSHOT-DEBT`](tasks/M2-RUNNER-SNAPSHOT-DEBT.md)，Owner=Codex，非作者 Reviewer=DeepSeek Harness，Integrator=Codex。ICU 前置 Task 已集成并 `done`：Owner code/test head=`4499217d7b2249da16d5dbf27a3219a43876aac7`，Owner evidence=`2c79645939635beef4a391f4bd9071ffeacd300b`，DSH r2 APPROVED（0 P0/P1），integration=`65ba30144048a0b8daae22205c01f8049b44b8a7`。Owner fresh packaged 26/26 PASS 与 installer fingerprint 一致；集成后产品 Gate 未重跑，production paths 对 approved code head 零差量。R2-002/R2-003 为接受的非阻断证据局限。
+
+M2-RUNNER-SNAPSHOT-DEBT 原 blocker `packaged_ac1_QtGui_DLL_import_failure` 已由上述固定 head 的 AC1 修复、fresh NSIS 与完整 packaged 26/26 Gate 通过所满足。恢复前须在分配 worktree 核对 clean/common-dir/HEAD，并将 ICU 隔离修复作为已集成依赖引入后 fresh 运行 Task AC4；不改变 Task 允许范围，不追认旧 FAIL。当前 Task/Plan/STATUS 运行点随后按实际 claim commit 更新。旧 ICU r1/r2 段落保留为历史证据，不再代表当前状态。
+
+集成证据：[ICU 集成验证](../verification/M2-PACKAGED-AC1-ICU-ISOLATION-FIX/integration-validation.log)；[DSH r2 Review](reviews/M2-PACKAGED-AC1-ICU-ISOLATION-FIX-4499217d-dsh-r2.md)。
+
+## 2026-10-08 DSH Review r1：M2-PACKAGED-AC1-ICU-ISOLATION-FIX changes_requested
+
+当前唯一Active Task为 changes_requested：Owner=Antigravity，非作者Reviewer=DeepSeek Harness，Integrator=Codex。实现尚未集成、Task不得标done。
+固定原始实现 head=aa099f2a013408bf53c3466ab8361bc028289743；DSH审查报告=verification/M2-PACKAGED-AC1-ICU-ISOLATION-FIX/review-dsh-r1.md，decision=changes_requested，DSH session=session-4655cd71-226a-4eec-91a7-78dad7e84fab（已挂载到 New Manga workspace；桌面可见性待用户下次启动核对）。
+R-001 P1：packaged Gate 实测 installer SHA a17a9708… 与 fingerprint/交付包 f76b91d6… 不同；R-002 P1：构建/Gate 日志 HEAD=df824182，无法证明输入字节等同声明提交 aa099f2a。R-003 P2 缺 PE 扫描原始证据；R-004 P2 spec 按名称整包移除 ICU，违背未知引用保留/禁止全局删除；R-005/R-006/R-007 为断言、报告口径、System32 ICU 运行依赖记录问题。
+现有 packaged 26/26 PASS 仅适用于日志记录的 a17a9708… installer，不能记作最终指纹 f76b91d6… 已验收。Dev 10/10+13/13 与 Sidecar/NSIS EXIT 0 也仅是提交内日志，DSH未现场重跑。
+Owner恢复点：branch=agent/antigravity/M2-PACKAGED-AC1-ICU-ISOLATION-FIX；worktree=G:/CODEX/New Manga.worktrees/PACKAGED-AC1-ICU-ISOLATION-FIX-antigravity；HEAD=46f50a097d25a1893dd1f43b0a38479952242161，clean、common-dir正确。修订从该实际HEAD继续，Task原始基线仍为 5a72db9e3c5778ce4700b7d404250853e474c5de。
+Codex已准备 R1修订指令；生产允许路径仍仅 packaging/m2ac5/**。fresh build、hash绑定、AC-1 artefact及新的非作者DSH复审通过前不集成。M2-RUNNER-SNAPSHOT-DEBT仍blocked。
+
+用户授权“下一步”；Codex串行登记唯一Active Task=[ICU隔离修复](tasks/M2-PACKAGED-AC1-ICU-ISOLATION-FIX.md)，Owner=Antigravity，非作者Reviewer=DSH，Integrator=Codex。
+真实agy CLI=1.3.1；探测EXIT0/SUCCESS。实际派发start_head=df824182e813fc6d9045872da51d263f28db87f0，
+conversation=d0af5e1f-1da8-4842-a5e6-ededa3b2d651；状态CASCADE_RUN_STATUS_RUNNING，最终EXIT/交付待返回。
+[自动派发恢复记录](../verification/M2-PACKAGED-AC1-ICU-ISOLATION-FIX/dispatch.md)；禁止重复派发同worktree写入。
+base=5a72db9e3c5778ce4700b7d404250853e474c5de；branch=agent/antigravity/M2-PACKAGED-AC1-ICU-ISOLATION-FIX；
+worktree=G:/CODEX/New Manga.worktrees/PACKAGED-AC1-ICU-ISOLATION-FIX-antigravity；生产仅packaging/m2ac5/**，其余范围/Gate按正式Task冻结不变。
+Owner开工将Task ready改in_progress；此处是Codex串行认领授权。产品测试目前NOT_RUN。
+真实外部Agent实施后必须固定提交/测试/Handoff，再交真实非作者DSH；不提前称修复完成。
+原runner debt保持blocked。下方ready / IDLE等均为历史恢复点。
+
+## 2026-10-08 M2-PACKAGED-AC1-ICU-ISOLATION-FIX ready / IDLE
+
+用户单独释放[ICU隔离修复](tasks/M2-PACKAGED-AC1-ICU-ISOLATION-FIX.md)：Owner=Antigravity，非作者Reviewer=DeepSeek Harness，Integrator=Codex。
+唯一ready Task；无运行中Task，本轮未派发实施。硬依赖诊断done@44317548与GC-2 done@cea610ed均已集成。
+release/synced_head=3d6d8743f662cb850e570e1fa248b96258fee714（Owner clean，未启动）；
+base=5a72db9e3c5778ce4700b7d404250853e474c5de；branch=agent/antigravity/M2-PACKAGED-AC1-ICU-ISOLATION-FIX；
+worktree=G:/CODEX/New Manga.worktrees/PACKAGED-AC1-ICU-ISOLATION-FIX-antigravity，新分配初始clean，共享唯一Git common-dir。
+生产允许仅packaging/m2ac5/**；先核实ICU78消费者；禁止src/apps/tests/Schema/依赖变更或全局删ICU。
+完整fresh五入口/NSIS、dev10+probe13、packaged26项Gate及真实DSH审查/集成后验证为done条件；本轮产品测试NOT_RUN。
+固定runner来源2af6b71a仅本Task隔离验证复用，原M2-RUNNER-SNAPSHOT-DEBT仍blocked、未集成/关闭。
+[释放恢复点与可转发指令](../verification/M2-PACKAGED-AC1-ICU-ISOLATION-FIX/release.md)由Codex追加。
+下方旧ready/in_progress或“无ready”均为历史checkpoint，不覆盖本段。
+
+## 2026-10-08 M2-PACKAGED-AC1-DLL-DIAG done @merge 44317548
+
+诊断Task=[M2-PACKAGED-AC1-DLL-DIAG](tasks/M2-PACKAGED-AC1-DLL-DIAG.md) done；Owner=DSH，非作者Reviewer/Integrator=Codex。
+DSH固定报告head=229c6c371d34234b65bbdd67fff73f341c60930f；Codex r3 approved；integration_commit=4431754845fc25795058534f21656705ef701cd6。
+Codex实际隔离复现：同hash bridge原副本EXIT1/QtGui错误，仅自有副本改名保留icuuc后初始化EXIT0。
+包内ICU78无Qt所需20个无后缀符号，同名遮蔽系统ICU；native错误127及系统ICU加载对照支撑因果。
+范围仅本固定产物/本机；没有生产修复，完整26项Gate未重跑，其它ICU78依赖需求未核实，禁止全局删除。
+集成后独立证据检查EXIT0、syntax/diff PASS、批准报告字节一致，src/apps/tests/packaging零差量。
+[REPORT](../verification/M2-PACKAGED-AC1-DLL-DIAG/REPORT.md)；[Review r3](reviews/M2-PACKAGED-AC1-DLL-DIAG-229c6c37-codex-r3.md)；
+[集成验证](../verification/M2-PACKAGED-AC1-DLL-DIAG/raw/post-merge-validation.log)。
+当前无运行中/ready Task；M2-RUNNER-SNAPSHOT-DEBT保持blocked。下一步候选M2-PACKAGED-AC1-ICU-ISOLATION-FIX，
+Owner=Antigravity，非作者Reviewer=DSH，Integrator=Codex；未创建/释放，须单独冻结修复范围与分配工作区。
+[下一Task完整释放准备](../verification/M2-PACKAGED-AC1-DLL-DIAG/NEXT_IMPLEMENTATION.md)。
+下方in_progress/blocked为历史checkpoint，不覆盖本段。
+
+
+## 2026-10-08 恢复隔离实测：M2-PACKAGED-AC1-DLL-DIAG in_progress
+
+用户授权“下一步”；Codex串行恢复本Task in_progress / ACTIVE，Owner=DSH，Reviewer/Integrator=Codex。
+Codex提供本机独立验证执行支持，冻结允许范围在Task末尾；原probe代码head=d3006691，Owner恢复db65b6cf。
+先固定installer/bundle hash、隔离环境/自有lab、stdin EOF和自身进程超时，再实跑DSH探针、回传DSH更新报告。
+src/apps/tests/packaging/依赖/Schema仍只读；生产修复未释放，原runner debt保持blocked。
+下方blocked是历史checkpoint，根因在取得新证据前继续UNKNOWN。
+
+## 2026-10-08 DSH自动诊断返回：M2-PACKAGED-AC1-DLL-DIAG blocked
+
+当前Task=[M2-PACKAGED-AC1-DLL-DIAG](tasks/M2-PACKAGED-AC1-DLL-DIAG.md)，Owner=DeepSeek Harness，非作者Reviewer/Integrator=Codex。
+TaskStatus=blocked，previous=in_progress，ExecutionState=CHECKPOINTED。真实dsh CLI两轮EXIT0；
+session=session-7de56368-5e9b-44ed-9e2d-0c288fdc67ff，已精确挂载，桌面下次启动可发现；当前可见性未验证。
+Owner分支agent/deepseek/M2-PACKAGED-AC1-DLL-DIAG；worktree=G:/CODEX/New Manga.worktrees/PACKAGED-AC1-DLL-DIAG-dsh。
+固定返修head=d30066917759b62133840ac6767c7ef67153be06；原start_head=24e0ec6e5c6d64a35daad006565919818616b317；base=9063c317。
+DSH交付报告/矩阵/最小probe，运行被pwsh沙箱Win32 5阻塞，实际加载仍NOT_RUN，具体DLL/符号/错误码UNKNOWN。
+Codex r1发现安全/证据问题，已自动回传DSH；r2有界静态核对通过，不能替代动态验证或完成批准。
+[REPORT](../verification/M2-PACKAGED-AC1-DLL-DIAG/REPORT.md)；[Codex r2](reviews/M2-PACKAGED-AC1-DLL-DIAG-d3006691-codex-r2.md)。
+主线只同步治理/报告/Review，probe留在Owner分支待执行核验；src/apps/tests/packaging零差量。
+下一步同Task补可信隔离运行和实际加载证据，再回DSH更新矩阵并由Codex重审；生产修复未释放。
+M2-RUNNER-SNAPSHOT-DEBT继续blocked，完整packaged Gate未通过。下方in_progress/ready为历史checkpoint。
+
+
+## 2026-10-08 自动派发：M2-PACKAGED-AC1-DLL-DIAG in_progress / DSH
+
+唯一Active Task=[M2-PACKAGED-AC1-DLL-DIAG](tasks/M2-PACKAGED-AC1-DLL-DIAG.md)，TaskStatus=in_progress，ExecutionState=ACTIVE。
+Owner=DeepSeek Harness，非作者Reviewer=Codex，Integrator=Codex。用户授权自动调用外部Agent；Codex已串行登记认领，只读诊断，真实DSH CLI派发中。
+硬依赖M2-DERIVED-GC-2 done@cea610ed；M2-RUNNER-SNAPSHOT-DEBT只是固定失败证据来源，仍blocked、暂停恢复。
+base=9063c317937b86bed1f6ff3e2f2c5d224dc10553；branch=agent/deepseek/M2-PACKAGED-AC1-DLL-DIAG；
+worktree=G:/CODEX/New Manga.worktrees/PACKAGED-AC1-DLL-DIAG-dsh，已分配clean/common-dir=G:/CODEX/New Manga/.git。
+冻结范围：诊断Task、自有verification与Handoff；产品/src/apps/tests/packaging/spec/依赖只读，
+不启动Legacy诊断、不绕过purged PATH Gate、不实施修复。原installer SHA已重新实测匹配，诊断测试NOT_RUN。
+原构建source_head=cfb5d2eecc4d8ab7a3159cdbb1d5812547bb5cd2；证据head=15cd788f10e83f6a1a215e71538bfa175b435785。
+交付失败DLL/闭包/环境证据或UNKNOWN、最小修复范围建议；Codex非作者Review后才集成诊断文档。
+[输入参数](../verification/M2-PACKAGED-AC1-DLL-DIAG/input-manifest.json)；正式release/synced HEAD=4330b792479c7d251b6dd2389aefa4b1a1b7fe6f，clean/common-dir复核通过。
+[实际恢复点](../verification/M2-PACKAGED-AC1-DLL-DIAG/release.md)；[完整DSH指令](../verification/M2-PACKAGED-AC1-DLL-DIAG/DSH_INSTRUCTION.md)。
+下方runner debt的“唯一Active”及未释放诊断描述为历史checkpoint，不覆盖本段；它的FAIL/BLOCKED不变。
+
+
+## 2026-10-08 当前阻塞：M2-RUNNER-SNAPSHOT-DEBT blocked（DSH r3后）
+
+唯一Active Task=[M2-RUNNER-SNAPSHOT-DEBT](tasks/M2-RUNNER-SNAPSHOT-DEBT.md)，Owner=Codex，
+非作者Reviewer=DeepSeek Harness，Integrator=Codex。TaskStatus=blocked，
+previous_status=in_progress，ExecutionState=CHECKPOINTED。两处runner快照修复留在Owner分支，未集成。
+固定构建源码head=cfb5d2eecc4d8ab7a3159cdbb1d5812547bb5cd2；
+DSH r3 reviewed_code_head=2af6b71aa06979b822e543b221aaf3a2d5f01abe；
+evidence_commit=653a00628e484ecb8ae023f2594b80233bce4e9a；
+Owner恢复HEAD=15cd788f10e83f6a1a215e71538bfa175b435785，clean；worktree=
+G:/CODEX/New Manga.worktrees/RUNNER-SNAPSHOT-DEBT-codex，common-dir=G:/CODEX/New Manga/.git。
+最小16用例PASS；dev Gate10/10+probe13/13 PASS；packaged CS-L1 PASS，完整26项为
+20 PASS / 1 FAIL / 5 NOT_RUN。AC1 run1 acceptance_bridge.exe报QtGui DLL导入失败，
+精确退出时间线UNKNOWN；不把整个runner耗时当单次timeout证据。
+DSH r3静态有界代码批准，零重跑，0P0/P1、4个非阻断P2已补证据/指针；
+[原始Review](reviews/M2-RUNNER-SNAPSHOT-DEBT-2af6b71a-dsh-r3.md)。AC4=FAIL/BLOCKED，AC6未集成，Task不能done。
+主线只同步治理/原始Review/自有verification证据；此处判别脚本作为审计产物，运行须使用Owner工作区，
+主线两个runner仍为未集成版本。没有产品/src/apps/tests/依赖/Schema修改，历史FAIL不追认PASS。
+[Handoff及完整转发指令](handoffs/M2-RUNNER-SNAPSHOT-DEBT-codex-cfb5d2ee.md)；
+[恢复与同步](../verification/M2-RUNNER-SNAPSHOT-DEBT/closeout-recovery.md)。
+下一步建议Codex单独冻结并释放M2-PACKAGED-AC1-DLL-DIAG，Owner=DSH，非作者Reviewer=Codex，
+仅诊断新架构packaged acceptance构建环境；候选尚未创建/释放，不能自行开始范围外修复。
+解除阻塞需新固定head fresh构建完整Gate通过，再经非作者审查与Codex集成验证。
+下方ready/in_progress/历史checkpoint不覆盖本段。
+
+
 ## 2026-10-08 正式释放：M2-RUNNER-SNAPSHOT-DEBT in_progress
 
 唯一 Active Task=[M2-RUNNER-SNAPSHOT-DEBT](tasks/M2-RUNNER-SNAPSHOT-DEBT.md)，

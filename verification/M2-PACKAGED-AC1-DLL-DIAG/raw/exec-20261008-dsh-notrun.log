@@ -1,0 +1,44 @@
+M2-PACKAGED-AC1-DLL-DIAG / DSH execution log
+Date=2026-10-08  Interpreter=pwsh (DSH harness)  CWD=G:\CODEX\New Manga.worktrees\PACKAGED-AC1-DLL-DIAG-dsh
+RESULT=NOT_RUN (no shell command could be started in this session)
+
+--- ATTEMPT 1 ---
+COMMAND: git -C "G:/CODEX/New Manga.worktrees/PACKAGED-AC1-DLL-DIAG-dsh" rev-parse HEAD; git ... status --porcelain=v1; git ... branch --show-current
+EXIT: session-level setup failure (no process started)
+STDERR:
+Error: SetNamedSecurityInfoW failed (Win32 5): grantWrite(G:\CODEX\New Manga.worktrees\PACKAGED-AC1-DLL-DIAG-dsh)
+CLASSIFICATION: harness file-sandbox could not grant write on the workspace directory (ACL operation denied, Win32 5 = ERROR_ACCESS_DENIED)
+
+--- ATTEMPT 2 (minimal probe) ---
+COMMAND: git rev-parse HEAD   (workdir = the task worktree)
+EXIT: session-level setup failure (no process started)
+STDERR: Error: SetNamedSecurityInfoW failed (Win32 5): grantWrite(G:\CODEX\New Manga.worktrees\PACKAGED-AC1-DLL-DIAG-dsh)
+
+--- ATTEMPT 3 (escalation retry, same command) ---
+COMMAND: git rev-parse HEAD; git status --short --branch; git rev-parse --path-format=absolute --git-common-dir
+REQUESTED sandbox_permissions: danger-full-access
+EXIT: not executed
+STDERR:
+Error: sandbox escalation to "danger-full-access" requires approval, but no approval channel is available
+CLASSIFICATION: fail-closed; no approval answerer in this session
+
+--- NOT RUN (blocked by the above) ---
+- git rev-parse HEAD / branch --show-current / rev-parse --git-common-dir
+- git status --short --branch (clean check)
+- git diff --check
+- git diff 9063c317937b86bed1f6ff3e2f2c5d224dc10553 HEAD -- src apps tests packaging
+- Get-FileHash -Algorithm SHA256 -LiteralPath 'G:/CODEX/New Manga.worktrees/RUNNER-SNAPSHOT-DEBT-codex/apps/desktop/src-tauri/target/release/bundle/nsis/m2rc1-desktop_0.1.0_x64-setup.exe'
+- any execution of the packaged acceptance_bridge.exe (reproduction)
+- any ctypes/PE load test, dumpbin, or process-timeline capture
+- probe/run_dll_diag_probe.ps1 (created for Codex; NOT executed by DSH)
+
+--- WHAT WAS ACTUALLY DONE INSTEAD (read-only file tools) ---
+read verification/M2-PACKAGED-AC1-DLL-DIAG/{DSH_INSTRUCTION.md,release.md,input-manifest.json}
+read doc/tasks/M2-PACKAGED-AC1-DLL-DIAG.md
+read verification/M2-RUNNER-SNAPSHOT-DEBT/{build-fingerprint.json,result-summary.json}
+read verification/M2-RUNNER-SNAPSHOT-DEBT/raw/{sidecar-build.log,sidecar-weights-retry.log}
+read verification/M2-RUNNER-SNAPSHOT-DEBT/raw/packaged/{cleanstart-ac1-run1-stdout.log,cleanstart-gate.json}
+read src/bootstrap/acceptance_bridge.py (lines 150-199)
+read packaging/m2ac5/{core_sidecar.spec,build_sidecar.ps1,requirements-build.txt}
+glob/grep over the built bundle under RUNNER-SNAPSHOT-DEBT-codex (read-only; no writes there)
+NOTE: no file was created, modified or deleted inside RUNNER-SNAPSHOT-DEBT-codex; no command was run there.

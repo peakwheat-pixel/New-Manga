@@ -1,0 +1,112 @@
+{
+  "task": "M2-PACKAGED-AC1-DLL-DIAG",
+  "revision": "r2-evidence-integrated",
+  "produced_by": "DeepSeek Harness (Owner)",
+  "produced_at": "2026-10-08",
+  "fixed_evidence_head": "a84980c394ac9c5380c87e097e081065818aa265",
+  "evidence_heads_by_artifact": {
+    "icu_control_and_symbol_full_exports": "13804524c12dbf5bb97d9b2c824d947ff43cb276",
+    "loader_probe": "36765f4b8aa9b6126efc87a2bb531a69296f5c07",
+    "loader_system_icu_control": "5cd31ddaac70220ae1bcd36930423fdeb586e903"
+  },
+  "execution": {
+    "executor": "Codex (local isolated execution, own lab/fixture)",
+    "dsH_shell": "NOT_RUN",
+    "dsH_role": "read-only cross-check + report update; no re-run, no product change",
+    "child_env_purged_path": "C:\\WINDOWS/System32;C:\\WINDOWS",
+    "child_env_extra": "PATHEXT explicit, M2AC1_TEST_MODE=1, QT_QPA_PLATFORM=offscreen, APPDATA/LOCALAPPDATA/TEMP/TMP/NEWMANGA_DATA_ROOT pinned into own lab",
+    "stdin": "DEVNULL (EOF)",
+    "outer_wrapper_exit": 0,
+    "bridge_original_case": {"exit": 1, "elapsed_s": 0.8, "qtgui_import_error": true},
+    "bridge_counterfactual_case": {"case": "owned_icu_renamed", "exit": 0, "elapsed_s": 0.42},
+    "discipline": "outer wrapper EXIT0 is NOT a bridge PASS; only the bridge EXIT1/EXIT0 observed above are the measured facts"
+  },
+  "frozen_inputs": {
+    "diagnostic_base": "9063c317937b86bed1f6ff3e2f2c5d224dc10553",
+    "build_source_head": "cfb5d2eecc4d8ab7a3159cdbb1d5812547bb5cd2",
+    "installer_sha256": "1cecca95d25439fca682cbe4336123d3b3352db229dd58c4e7d724b4d6c6ccb8",
+    "installer_and_five_exe_hashes_measured_by": "Codex (local-evidence.md:4, match)",
+    "verified_by_dSH_this_round": "NOT_RUN (no shell)"
+  },
+  "root_cause": {
+    "verdict": "PROVEN",
+    "scope": "this fixed installer artifact on this host only; not a Gate fix and not generalized",
+    "mechanism": "the bundled _internal/icuuc.dll shadows the System32 icuuc.dll (bundle dir precedes System32 on the loader search path) and exposes only _78-suffixed exports, while Qt6Core.dll imports 20 unsuffixed ICU symbols (ucnv_*/UCNV_*); Qt6Core.dll therefore fails to load natively with WinError 127, and importing PySide6.QtGui raises the ImportError observed by the original runner",
+    "confidence": "high",
+    "win32_code_of_original_gate_run": "UNKNOWN",
+    "win32_code_note": "the original runner log records no GetLastError; WinError 127 comes from an independent native re-load of same-hash DLLs and must not be back-filled into the original Gate record",
+    "not_generalized_to": ["other builds", "other hosts", "a full 26-item Gate PASS"]
+  },
+  "evidence_chain": [
+    {"id": "E1", "artifact": "raw/loader-probe.log", "executor": "Codex", "head": "36765f4b8aa9b6126efc87a2bb531a69296f5c07", "finding": "same-hash Qt6Core/Qt6Gui/pyside6.abi3.dll/QtCore.pyd/QtGui.pyd -> loaded:false WinError 127; shiboken6.abi3.dll and bundled icuuc.dll -> loaded:true", "verdict": "PROVEN"},
+    {"id": "E2", "artifact": "raw/loader-system-icu-control.log", "executor": "Codex", "head": "5cd31ddaac70220ae1bcd36930423fdeb586e903", "finding": "after preloading absolute System32/icuuc.dll in an isolated process, the same-hash Qt6Core/Qt6Gui load successfully; native GetProcAddress resolves both sampled symbols", "verdict": "PROVEN (environment control)"},
+    {"id": "E3", "artifact": "raw/symbol-probe-full-exports.json", "executor": "Codex", "head": "13804524c12dbf5bb97d9b2c824d947ff43cb276", "finding": "Qt6Core -> icuuc.dll: imported=20, missing_symbols = 20 unsuffixed ucnv_*/UCNV_* names; bundled icuuc exported_names=3027", "verdict": "PROVEN"},
+    {"id": "E4", "artifact": "raw/binary-version-origin.json", "executor": "Codex", "finding": "icuuc.dll sha256 39aec884c7124d673d75b38cca7b44ac1909d9633d8366a812a6e1c269d74bdf identical in lab and installed, exports only ucnv_open_78 / ucnv_openAllNames_78 / ucnv_openCCSID_78 / ucnv_openPackage_78 / ucnv_openStandardNames_78 / ucnv_openU_78; Qt6Core (d6a3c37c...) and Qt6Gui (ae29b005...) identical across lab/installed/build_env at FileVersion 6.11.2.0", "verdict": "PROVEN (unmodified, three trees consistent)"},
+    {"id": "E5", "artifact": "raw/icu-control-result.json + raw/icu-control-original.log + raw/icu-control-owned_icu_renamed.log", "executor": "Codex", "finding": "same-hash EXE asserted against build-fingerprint, same env, stdin EOF: original case EXIT1 with QtGui import error; renaming only the bundled icuuc.dll (bytes preserved) yields EXIT0", "verdict": "PROVEN (causal counterfactual)"},
+    {"id": "E6", "artifact": "run_icu_control.py (DSH read-only logic review)", "executor": "DSH review of Codex code", "finding": "asserts the copy lives under the task lab, verifies source icuuc and EXE hashes, pins env into lab, stdin DEVNULL, rename-only (no byte deletion)", "verdict": "logic sound"}
+  ],
+  "candidates": [
+    {"id": "C1", "candidate": "PySide6 QtGui extension module not bundled", "verdict": "REJECTED", "note": "present in bundle; loads natively except for the ICU-dependent chain", "confidence": "high"},
+    {"id": "C2", "candidate": "Qt6Gui.dll missing", "verdict": "REJECTED", "confidence": "high"},
+    {"id": "C3", "candidate": "Qt6Core.dll missing", "verdict": "REJECTED (present; fails to load due to ICU symbol mismatch)", "confidence": "high"},
+    {"id": "C4", "candidate": "pyside6/shiboken6 ABI runtime DLLs missing", "verdict": "REJECTED (shiboken6.abi3.dll loads natively; pyside6.abi3.dll fails only through the same ICU-dependent chain)", "confidence": "medium"},
+    {"id": "C5", "candidate": "MSVC/CRT runtime not shipped", "verdict": "REJECTED", "confidence": "high"},
+    {"id": "C6", "candidate": "Qt absent from the PyInstaller analysis graph", "verdict": "REJECTED", "confidence": "high"},
+    {"id": "C7", "candidate": "build truncated by the weights-phase EXIT=1", "verdict": "REJECTED", "confidence": "high"},
+    {"id": "C8", "candidate": "ICU i18n DLL (icuin*) not observed in the scanned build tree", "verdict": "NOT_OBSERVED_IN_SCANNED_TREE; NOT part of this root cause; impact UNKNOWN", "confidence_observation": "medium", "confidence_impact": "low"},
+    {"id": "C9", "candidate": "d3dcompiler_47.dll not observed", "verdict": "NOT_OBSERVED_IN_SCANNED_TREE; NOT part of this root cause; impact UNKNOWN", "confidence_impact": "low"},
+    {"id": "C10", "candidate": "opengl32sw.dll not observed", "verdict": "NOT_OBSERVED_IN_SCANNED_TREE; NOT part of this root cause; impact UNKNOWN", "confidence_impact": "low"},
+    {"id": "C11", "candidate": "the actual unresolvable dependency", "verdict": "PROVEN: the bundled icuuc.dll lacks the 20 unsuffixed ICU symbols Qt6Core imports", "confidence": "high", "evidence": ["E1", "E2", "E3", "E4", "E5"]},
+    {"id": "C12", "candidate": "installed tree _internal incomplete", "verdict": "PARTIALLY_RESOLVED: Qt6Gui/Qt6Core/icuuc hashes identical between lab and installed (E4); no bridge-level counterfactual was run on the installed tree, so a full installed-tree control remains UNKNOWN", "confidence": "medium"},
+    {"id": "C13", "candidate": "runtime DLL search path / shadowing", "verdict": "PROVEN_RELEVANT: the bundle's _internal directory resolves the unsuffixed icuuc.dll name ahead of System32, shadowing the system ICU", "confidence": "high", "evidence": ["E2", "E3"]},
+    {"id": "C14", "candidate": "symbol-level mismatch", "verdict": "PROVEN: 20 unsuffixed symbols required vs only _78 exports provided", "confidence": "high", "evidence": ["E3", "E4"]}
+  ],
+  "erratum": [
+    {
+      "id": "ERR-1",
+      "artifact": "raw/symbol-probe.json",
+      "claim_to_discard": "'QtGui -> QtCore is missing 64 symbols'",
+      "cause": "pefile default export cap of 8192 truncated the export table",
+      "resolution": "with max_symbol_exports=100000 and full-name-count assertions the 64 entries disappear, and native GetProcAddress confirms the two sampled symbols exist",
+      "status": "MUST NOT be used as root-cause or defect evidence"
+    },
+    {
+      "id": "ERR-2",
+      "artifact": "raw/ (wrapper first runs)",
+      "claim_to_discard": "first wrapper run results",
+      "cause": "initial path pre-check failure (EXIT1, no child started) and initial static sub-env missing PATHEXT (step6 failure)",
+      "resolution": "original records preserved; re-runs after supplying the child-env recognition are recorded separately",
+      "status": "not a result"
+    },
+    {
+      "id": "ERR-3",
+      "artifact": "REPORT.md r1 / dll-closure-matrix.json r1",
+      "claim_to_discard": "'Win32 126 / ERROR_MOD_NOT_FOUND high confidence'",
+      "resolution": "the original log has no GetLastError; the original Gate's Win32 code stays UNKNOWN. WinError 127 is an independent native re-load observation and is not back-filled",
+      "status": "superseded"
+    }
+  ],
+  "probe_logic_review_by_dSH": {
+    "run_icu_control.py": {"logic": "sound", "limits": ["renames the bundled ICU away instead of supplying a working ICU78", "only two cases, single run", "timeout=20s", "env lacks ComSpec/SystemDrive (differs from run_local_probe.py env)", "counterfactual is a lab copy, not the installed tree"]},
+    "loader_probe.py": {"logic": "sound", "limits": ["host is T1.1.1-impl-py312 python.exe, not the frozen PyInstaller process", "preloading System32 ICU is a constructed control, not the original purged-PATH Gate"]},
+    "symbol_probe.py": {"logic": "sound (static import-table symbol matching; self-declares no loader/forwarder claim)", "limits": ["does not model API-set/forwarder semantics", "delay-import scanning was never independently validated, so it is excluded from the root-cause chain (same for DSH's own probe/pe_import_probe.py)"]},
+    "pefile_version": "2024.8.26"
+  },
+  "unknowns": [
+    "Win32 error code of the original Gate run (no GetLastError in the original log)",
+    "no rename counterfactual on the installed tree; no re-run in the true purged-PATH installed environment",
+    "which dependencies besides Qt still require the bundled ICU78 (forbids a global ICU78 deletion)",
+    "the full 26-item clean-start Gate and Tauri packaged acceptance were not run"
+  ],
+  "next_task_proposal": {
+    "task_id": "M2-PACKAGED-AC1-ICU-ISOLATION-FIX",
+    "status": "NOT_CREATED_NOT_RELEASED",
+    "suggested_owner": "Antigravity or ZCode",
+    "suggested_non_author_reviewer": "DeepSeek Harness",
+    "proposed_allowed_paths": ["packaging/m2ac5/**", "that task's own verification/**"],
+    "constraints": ["freeze scope first", "protect other dependencies that still need ICU78", "keep the original purged-PATH semantics", "dependency or shared-contract changes go to the user first"],
+    "completion_gate": "fresh Sidecar + NSIS -> fixed installer SHA -> full 26-item clean-start Gate -> non-author review -> Codex integration",
+    "fix_implemented": false
+  },
+  "runner_debt_unlocked": false
+}

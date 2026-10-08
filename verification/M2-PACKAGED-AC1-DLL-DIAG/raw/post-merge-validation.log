@@ -1,0 +1,18 @@
+SHELL=PowerShell; HEAD=4431754845fc25795058534f21656705ef701cd6; COMMAND=["C:/Python314/python.exe", "verification/M2-PACKAGED-AC1-DLL-DIAG/verify_local_evidence.py"]
+PASS: bridge causal pair; 20 ICU symbol gaps; full Qt exports; native control; product diff zero
+EXIT=0; ELAPSED=0.09s
+SHELL=PowerShell; HEAD=4431754845fc25795058534f21656705ef701cd6; COMMAND=["git", "diff", "--name-only", "3268b910", "4431754845fc25795058534f21656705ef701cd6", "--", "src", "apps", "tests", "packaging"]
+EXIT=0; ELAPSED=0.03s
+SHELL=PowerShell; HEAD=4431754845fc25795058534f21656705ef701cd6; COMMAND=["git", "diff", "--check", "dc75f419", "4431754845fc25795058534f21656705ef701cd6"]
+EXIT=0; ELAPSED=0.04s
+SHELL=PowerShell; HEAD=4431754845fc25795058534f21656705ef701cd6; COMMAND=["git", "status", "--short", "--branch"]
+## main...origin/main [ahead 1106]
+ M .qoder-credits/report.json
+?? ".qoder-credits/\351\200\232\350\267\257\346\216\242\346\265\213__8602db50.canvas.tsx"
+EXIT=0; ELAPSED=0.09s
+SHELL=PowerShell; HEAD=4431754845fc25795058534f21656705ef701cd6; COMMAND=["git", "rev-parse", "--path-format=absolute", "--git-common-dir"]
+G:/CODEX/New Manga/.git
+EXIT=0; ELAPSED=0.02s
+OWN_PYTHON_IN_MEMORY_COMPILE=PASS
+APPROVED_REPORT_IDENTICAL=PASS; REAL_DSH_FINAL_BYTES=PASS; SHA256=f16dc8153549de3f317d11730b1310575c6acc68054920667f5167d581e16aa1
+DIAGNOSIS_GATE=PASS; PRODUCT_FIXED=NO; FULL_26_GATE=NOT_RUN

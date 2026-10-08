@@ -1,0 +1,36 @@
+CWD=G:\CODEX\New Manga; COMMAND=git status --short --branch
+## main...origin/main [ahead 1082]
+ M .qoder-credits/report.json
+ M doc/REBASELINE_PLAN.md
+ M doc/STATUS.md
+?? ".qoder-credits/\351\200\232\350\267\257\346\216\242\346\265\213__8602db50.canvas.tsx"
+?? verification/M2-PACKAGED-AC1-DLL-DIAG/DSH_INSTRUCTION.md
+?? verification/M2-PACKAGED-AC1-DLL-DIAG/release.md
+EXIT=0
+CWD=G:\CODEX\New Manga; COMMAND=git rev-parse HEAD
+4330b792479c7d251b6dd2389aefa4b1a1b7fe6f
+EXIT=0
+CWD=G:\CODEX\New Manga; COMMAND=git rev-parse --path-format=absolute --git-common-dir
+G:/CODEX/New Manga/.git
+EXIT=0
+CWD=G:\CODEX\New Manga; COMMAND=git diff --check
+warning: in the working copy of '.qoder-credits/report.json', LF will be replaced by CRLF the next time Git touches it
+EXIT=0
+CWD=G:/CODEX/New Manga.worktrees/PACKAGED-AC1-DLL-DIAG-dsh; COMMAND=git status --short --branch
+## agent/deepseek/M2-PACKAGED-AC1-DLL-DIAG
+EXIT=0
+CWD=G:/CODEX/New Manga.worktrees/PACKAGED-AC1-DLL-DIAG-dsh; COMMAND=git rev-parse HEAD
+4330b792479c7d251b6dd2389aefa4b1a1b7fe6f
+EXIT=0
+CWD=G:/CODEX/New Manga.worktrees/PACKAGED-AC1-DLL-DIAG-dsh; COMMAND=git rev-parse --path-format=absolute --git-common-dir
+G:/CODEX/New Manga/.git
+EXIT=0
+CWD=G:/CODEX/New Manga.worktrees/PACKAGED-AC1-DLL-DIAG-dsh; COMMAND=git diff --check
+EXIT=0
+COMMAND=git diff --name-only 9063c317937b86bed1f6ff3e2f2c5d224dc10553 4330b792479c7d251b6dd2389aefa4b1a1b7fe6f -- src apps tests packaging
+EXIT=0; ZERO_OUTPUT
+COMMAND=git diff --name-only 9063c317937b86bed1f6ff3e2f2c5d224dc10553 4330b792479c7d251b6dd2389aefa4b1a1b7fe6f -- verification/M2-RC2 verification/M2-RUNNER-SNAPSHOT-DEBT
+EXIT=0; ZERO_OUTPUT
+COMMAND=git merge-base --is-ancestor cea610ed 4330b792479c7d251b6dd2389aefa4b1a1b7fe6f
+EXIT=0; ZERO_OUTPUT
+DIAGNOSTIC=NOT_RUN; DISPATCH=NOT_STARTED; OWNER_READY_CLEAN; SOURCE_AND_HISTORICAL_EVIDENCE_DIFF_ZERO

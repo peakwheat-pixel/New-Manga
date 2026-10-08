@@ -1,0 +1,56 @@
+primary status
+COMMAND: ['git', 'status', '--short', '--branch']
+EXIT: 0
+## main...origin/main [ahead 1109]
+ M .qoder-credits/report.json
+?? ".qoder-credits/\351\200\232\350\267\257\346\216\242\346\265\213__8602db50.canvas.tsx"
+?? verification/M2-PACKAGED-AC1-ICU-ISOLATION-FIX/
+
+
+primary head
+COMMAND: ['git', 'rev-parse', 'HEAD']
+EXIT: 0
+3d6d8743f662cb850e570e1fa248b96258fee714
+
+
+common-dir
+COMMAND: ['git', 'rev-parse', '--path-format=absolute', '--git-common-dir']
+EXIT: 0
+G:/CODEX/New Manga/.git
+
+
+release scope
+COMMAND: ['git', 'diff', '--name-only', '5a72db9e3c5778ce4700b7d404250853e474c5de', '3d6d8743f662cb850e570e1fa248b96258fee714']
+EXIT: 0
+doc/00_INDEX.md
+doc/REBASELINE_PLAN.md
+doc/STATUS.md
+doc/tasks/M2-PACKAGED-AC1-ICU-ISOLATION-FIX.md
+doc/tasks/README.md
+
+
+release whitespace
+COMMAND: ['git', 'diff', '--check', '5a72db9e3c5778ce4700b7d404250853e474c5de', '3d6d8743f662cb850e570e1fa248b96258fee714']
+EXIT: 0
+
+
+owner status
+COMMAND: ['git', '-C', 'G:/CODEX/New Manga.worktrees/PACKAGED-AC1-ICU-ISOLATION-FIX-antigravity', 'status', '--short', '--branch']
+EXIT: 0
+## agent/antigravity/M2-PACKAGED-AC1-ICU-ISOLATION-FIX
+
+
+owner head
+COMMAND: ['git', '-C', 'G:/CODEX/New Manga.worktrees/PACKAGED-AC1-ICU-ISOLATION-FIX-antigravity', 'rev-parse', 'HEAD']
+EXIT: 0
+3d6d8743f662cb850e570e1fa248b96258fee714
+
+
+owner common-dir
+COMMAND: ['git', '-C', 'G:/CODEX/New Manga.worktrees/PACKAGED-AC1-ICU-ISOLATION-FIX-antigravity', 'rev-parse', '--path-format=absolute', '--git-common-dir']
+EXIT: 0
+G:/CODEX/New Manga/.git
+
+
+RESULT: governance release scope only; product diff zero; owner synced clean.
+PRODUCT TESTS: NOT_RUN. External Agent: NOT_DISPATCHED.

@@ -1,0 +1,10 @@
+COMMAND: Start-Process G:\CODEX\New Manga.worktrees\PACKAGED-AC1-ICU-ISOLATION-FIX-antigravity\apps\desktop\src-tauri\target\core-sidecar\core-sidecar\acceptance_bridge.exe (purged PATH=C:\Windows\System32;C:\Windows, M2AC1_TEST_MODE=1, QT_QPA_PLATFORM=offscreen, stdin=EOF)
+GIT_HEAD: 4499217d7b2249da16d5dbf27a3219a43876aac7
+START_TIME: 2026-10-08 12:56:49
+END_TIME: 2026-10-08 12:56:50
+EXIT: 0
+ELAPSED_SECONDS: 0.4672841
+STDOUT:
+
+STDERR:
+

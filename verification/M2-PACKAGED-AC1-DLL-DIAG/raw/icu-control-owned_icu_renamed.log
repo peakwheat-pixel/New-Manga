@@ -1,0 +1,6 @@
+HEAD=13804524c12dbf5bb97d9b2c824d947ff43cb276
+COMMAND=["G:\\CODEX\\New Manga.worktrees\\PACKAGED-AC1-DLL-DIAG-dsh\\verification\\M2-PACKAGED-AC1-DLL-DIAG\\lab\\icu-control-f1e20c86\\core-sidecar\\acceptance_bridge.exe"]
+ENV={"SystemRoot": "C:\\WINDOWS", "WINDIR": "C:\\WINDOWS", "PATH": "C:\\WINDOWS/System32;C:\\WINDOWS", "PATHEXT": ".EXE;.COM", "M2AC1_TEST_MODE": "1", "QT_QPA_PLATFORM": "offscreen", "APPDATA": "G:\\CODEX\\New Manga.worktrees\\PACKAGED-AC1-DLL-DIAG-dsh\\verification\\M2-PACKAGED-AC1-DLL-DIAG\\lab\\icu-control-f1e20c86\\roaming", "LOCALAPPDATA": "G:\\CODEX\\New Manga.worktrees\\PACKAGED-AC1-DLL-DIAG-dsh\\verification\\M2-PACKAGED-AC1-DLL-DIAG\\lab\\icu-control-f1e20c86\\local", "TEMP": "G:\\CODEX\\New Manga.worktrees\\PACKAGED-AC1-DLL-DIAG-dsh\\verification\\M2-PACKAGED-AC1-DLL-DIAG\\lab\\icu-control-f1e20c86\\temp", "TMP": "G:\\CODEX\\New Manga.worktrees\\PACKAGED-AC1-DLL-DIAG-dsh\\verification\\M2-PACKAGED-AC1-DLL-DIAG\\lab\\icu-control-f1e20c86\\temp", "NEWMANGA_DATA_ROOT": "G:\\CODEX\\New Manga.worktrees\\PACKAGED-AC1-DLL-DIAG-dsh\\verification\\M2-PACKAGED-AC1-DLL-DIAG\\lab\\icu-control-f1e20c86\\data"}
+STDIN=EOF; CASE=owned_icu_renamed
+
+EXIT=0; ELAPSED=0.42s

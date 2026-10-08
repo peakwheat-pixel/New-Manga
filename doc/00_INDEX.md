@@ -1,6 +1,8 @@
 # 项目文档索引与 Source of Truth
 
-当前唯一 Active：[M2-RUNNER-SNAPSHOT-DEBT](tasks/M2-RUNNER-SNAPSHOT-DEBT.md) **in_progress / Codex**；非作者Reviewer=DeepSeek Harness，执行ACTIVE。已认领实施，旧FAIL保持；[恢复点](../verification/M2-RUNNER-SNAPSHOT-DEBT/release.md)。GC-2 done@cea610ed。
+当前 `M2-PACKAGED-AC1-ICU-ISOLATION-FIX` 已 `done` @`65ba30144048a0b8daae22205c01f8049b44b8a7`；Runner Snapshot Debt 的原 packaged AC1 阻塞条件已解除，下一步按 Plan/STATUS 恢复该已授权 Task。详见 [当前状态](STATUS.md)、[规划](REBASELINE_PLAN.md) 与 [ICU 集成验证](../verification/M2-PACKAGED-AC1-ICU-ISOLATION-FIX/integration-validation.log)。下方旧指针均保留为历史记录。
+
+当前唯一Active Task处于 changes_requested：[M2-PACKAGED-AC1-ICU-ISOLATION-FIX](tasks/M2-PACKAGED-AC1-ICU-ISOLATION-FIX.md)，Owner=Antigravity、Reviewer=DSH、Integrator=Codex；原代码head=aa099f2a 未集成，R1 findings 待修。runner debt仍blocked。详见REBASELINE_PLAN/STATUS最近checkpoint。
 
 
 当前全量盘点：2026-10-07，审计输入 `main@32f9b932`。[REBASELINE 审计报告与下一步派发指令](../verification/REBASELINE-20261007/REPORT.md)；[全部 190 任务节点的台账与流程图](../verification/REBASELINE-20261007/TASK_GRAPH.md)；[完整 Git/Owner/Reviewer/worktree 参数](../verification/REBASELINE-20261007/inventory.json)。当前无 Active、无 released；正式授权仍由 REBASELINE_PLAN / STATUS 决定，下面旧日期正文只作历史记录。

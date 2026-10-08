@@ -1,0 +1,17 @@
+{
+  "task": "M2-PACKAGED-AC1-DLL-DIAG",
+  "diagnostic_base": "9063c317937b86bed1f6ff3e2f2c5d224dc10553",
+  "allocated_head": "9063c317937b86bed1f6ff3e2f2c5d224dc10553",
+  "branch": "agent/deepseek/M2-PACKAGED-AC1-DLL-DIAG",
+  "worktree": "G:/CODEX/New Manga.worktrees/PACKAGED-AC1-DLL-DIAG-dsh",
+  "common_dir": "G:/CODEX/New Manga/.git",
+  "related_blocked_task": "M2-RUNNER-SNAPSHOT-DEBT",
+  "source_head": "cfb5d2eecc4d8ab7a3159cdbb1d5812547bb5cd2",
+  "evidence_head": "15cd788f10e83f6a1a215e71538bfa175b435785",
+  "installer": "G:\\CODEX\\New Manga.worktrees\\RUNNER-SNAPSHOT-DEBT-codex\\apps\\desktop\\src-tauri\\target\\release\\bundle\\nsis\\m2rc1-desktop_0.1.0_x64-setup.exe",
+  "installer_sha256": "1cecca95d25439fca682cbe4336123d3b3352db229dd58c4e7d724b4d6c6ccb8",
+  "installer_bytes": 589904619,
+  "release_preflight_installer_hash": "MATCH_REMEASURED",
+  "diagnostic_tests": "NOT_RUN",
+  "dispatch": "NOT_STARTED"
+}

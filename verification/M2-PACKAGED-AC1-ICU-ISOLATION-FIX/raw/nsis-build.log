@@ -1,0 +1,92 @@
+COMMAND: npx.cmd --yes @tauri-apps/cli@2 build (CWD=apps/desktop)
+GIT_HEAD: 4499217d7b2249da16d5dbf27a3219a43876aac7
+NODE_VERSION: v24.15.0
+TAURI_CLI: 2.x (via npx @tauri-apps/cli@2)
+START_TIME: 2026-10-08 12:57:05
+npm notice run npx
+npm notice run tauri build
+        Info Looking up installed tauri packages to check mismatched versions...
+   Compiling m2rc1-desktop v0.1.0 (G:\CODEX\New Manga.worktrees\PACKAGED-AC1-ICU-ISOLATION-FIX-antigravity\apps\desktop\src-tauri)
+warning: unused import: `std::sync::Arc`
+  --> src\main.rs:47:5
+   |
+47 | use std::sync::Arc;
+   |     ^^^^^^^^^^^^^^
+   |
+   = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: struct `MockCoreChannel` is never constructed
+   --> src\core_bridge.rs:335:12
+    |
+335 | pub struct MockCoreChannel {
+    |            ^^^^^^^^^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: struct `MockEntry` is never constructed
+   --> src\core_bridge.rs:350:12
+    |
+350 | pub struct MockEntry {
+    |            ^^^^^^^^^
+
+warning: associated items `new`, `register`, and `issue_internal` are never used
+   --> src\core_bridge.rs:359:12
+    |
+358 | impl MockCoreChannel {
+    | -------------------- associated items in this implementation
+359 |     pub fn new() -> Self {
+    |            ^^^
+...
+370 |     pub fn register(&self, resource_id: &str, rel_path: &str) -> Result<(), CoreError> {
+    |            ^^^^^^^^
+...
+378 |     fn issue_internal(
+    |        ^^^^^^^^^^^^^^
+
+warning: associated function `spawn` is never used
+   --> src\library_bridge.rs:197:12
+    |
+196 | impl StdioLibraryChannel {
+    | ------------------------ associated function in this implementation
+197 |     pub fn spawn(
+    |            ^^^^^
+
+warning: methods `set_books`, `set_books_error`, `set_settings_result`, `set_retype_result`, `set_regions_result`, and `set_domain_result` are never used
+   --> src\library_bridge.rs:585:12
+    |
+564 | impl MockLibraryChannel {
+    | ----------------------- methods in this implementation
+...
+585 |     pub fn set_books(&self, books: Vec<BookSummary>) {
+    |            ^^^^^^^^^
+...
+589 |     pub fn set_books_error(&self, error: LibraryError) {
+    |            ^^^^^^^^^^^^^^^
+...
+595 |     pub fn set_settings_result(&self, result: Result<serde_json::Value, LibraryError>) {
+    |            ^^^^^^^^^^^^^^^^^^^
+...
+601 |     pub fn set_retype_result(&self, result: Result<serde_json::Value, LibraryError>) {
+    |            ^^^^^^^^^^^^^^^^^
+...
+605 |     pub fn set_regions_result(&self, result: Result<serde_json::Value, LibraryError>) {
+    |            ^^^^^^^^^^^^^^^^^^
+...
+612 |     pub fn set_domain_result(&self, result: Result<serde_json::Value, LibraryError>) {
+    |            ^^^^^^^^^^^^^^^^^
+
+warning: `m2rc1-desktop` (bin "m2rc1-desktop") generated 6 warnings (run `cargo fix --bin "m2rc1-desktop" -p m2rc1-desktop` to apply 1 suggestion)
+    Finished `release` profile [optimized] target(s) in 6.33s
+       Built application at: G:\CODEX\New Manga.worktrees\PACKAGED-AC1-ICU-ISOLATION-FIX-antigravity\apps\desktop\src-tauri\target\release\m2rc1-desktop.exe
+        Info Patching G:\CODEX\New Manga.worktrees\PACKAGED-AC1-ICU-ISOLATION-FIX-antigravity\apps\desktop\src-tauri\target\release\m2rc1-desktop.exe with bundle type information: nsis
+        Info Target: x64
+     Running makensis to produce G:\CODEX\New Manga.worktrees\PACKAGED-AC1-ICU-ISOLATION-FIX-antigravity\apps\desktop\src-tauri\target\release\bundle\nsis\m2rc1-desktop_0.1.0_x64-setup.exe
+    Finished 1 bundle at:
+        G:\CODEX\New Manga.worktrees\PACKAGED-AC1-ICU-ISOLATION-FIX-antigravity\apps\desktop\src-tauri\target\release\bundle\nsis\m2rc1-desktop_0.1.0_x64-setup.exe (552.68 MiB)
+
+END_TIME: 2026-10-08 13:02:32
+EXIT: 0
+ELAPSED_SECONDS: 326.8241483
+INSTALLER_PATH: G:\CODEX\New Manga.worktrees\PACKAGED-AC1-ICU-ISOLATION-FIX-antigravity\apps\desktop\src-tauri\target\release\bundle\nsis\m2rc1-desktop_0.1.0_x64-setup.exe
+INSTALLER_SIZE: 579525817
+INSTALLER_SHA256: f2a4e2e7e92f083739bb92d2055539ea859461991b43559c3fe1f759b2c195ae

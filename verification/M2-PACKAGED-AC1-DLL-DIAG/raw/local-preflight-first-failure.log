@@ -1,0 +1,3 @@
+HEAD=1f186a8f; COMMAND=C:/Python314/python.exe verification/M2-PACKAGED-AC1-DLL-DIAG/run_local_probe.py static
+EXIT=1; PRECHECK FileNotFoundError because wrapper installer.parents[4] resolved to src-tauri rather than target.
+No PowerShell probe or packaged exe was started. Corrected to verified target parents[3]; subsequent runs are separate logs.
