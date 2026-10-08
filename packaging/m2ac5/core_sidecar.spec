@@ -268,6 +268,41 @@ def _assert_sfx_probe_closure(analysis, exe_name: str) -> None:
     )
 
 
+def _is_within_dir(path_norm: str, root_norm: str) -> bool:
+    """Check if path_norm is exactly root_norm or inside root_norm with boundary safety."""
+    if path_norm == root_norm:
+        return True
+    sep = os.sep
+    prefix = root_norm if root_norm.endswith(sep) else root_norm + sep
+    return path_norm.startswith(prefix)
+
+
+KNOWN_CONTAMINANT_SHA256 = (
+    "39aec884c7124d673d75b38cca7b44ac1909d9633d8366a812a6e1c269d74bdf"
+)
+
+
+def _is_confirmed_contaminant(src_path: str, src_norm: str) -> bool:
+    """
+    R-004 fact-boundary fix:
+    The ONLY confirmed contaminant source is the external poppler native toolchain
+    icuuc.dll (SHA256: 39aec884c7124d673d75b38cca7b44ac1909d9633d8366a812a6e1c269d74bdf)
+    harvested from host PATH. Never broadly match generic dependencies/native or codex-runtimes.
+    """
+    sep = os.sep
+    poppler_bin_marker = f"{sep}poppler{sep}library{sep}bin"
+    if poppler_bin_marker not in src_norm and "poppler" not in src_norm:
+        return False
+    if os.path.isfile(src_path):
+        import hashlib
+        try:
+            with open(src_path, "rb") as f:
+                return hashlib.sha256(f.read()).hexdigest().lower() == KNOWN_CONTAMINANT_SHA256
+        except Exception:
+            return False
+    return False
+
+
 def _isolate_icu_closure(analysis, exe_name: str) -> None:
     """M2-PACKAGED-AC1-ICU-ISOLATION-FIX:
     Qt6Core.dll dynamically imports Windows System32 ICU (icuuc.dll) with
@@ -281,10 +316,10 @@ def _isolate_icu_closure(analysis, exe_name: str) -> None:
     Per AC-1 matrix and DSH r1 findings R-004 & R-005:
     1. Source-bounded isolation: inspect `entry[1]` (source path).
        - In-venv / in-repo ICU binaries are preserved (never globally deleted).
-       - Confirmed alien toolchain ICU binaries (e.g. poppler/codex-runtimes on host PATH)
+       - Confirmed alien toolchain ICU binaries (verified poppler SHA256)
          are isolated to prevent shadowing.
        - Unclassified external ICU candidates fail closed with explicit diagnostic evidence.
-    2. Discriminative guard assertion: verify no alien toolchain ICU remains in binaries,
+    2. Discriminative guard assertion: verify no confirmed alien toolchain ICU remains in binaries,
        and verify that if Qt6Core is present, no shadowing icuuc.dll exists in the bundle.
     """
     cleaned_binaries = []
@@ -311,15 +346,11 @@ def _isolate_icu_closure(analysis, exe_name: str) -> None:
             cleaned_binaries.append(entry)
             continue
 
-        # Candidate is an ICU binary. Inspect source path.
+        # Candidate is an ICU binary. Inspect source path with boundary safety.
         is_in_venv_or_repo = (
-            src_norm.startswith(venv_prefix) or src_norm.startswith(repo_root)
+            _is_within_dir(src_norm, venv_prefix) or _is_within_dir(src_norm, repo_root)
         )
-        is_confirmed_alien = (
-            "poppler" in src_norm
-            or "dependencies\\native" in src_norm
-            or "codex-runtimes" in src_norm
-        )
+        is_confirmed_alien = _is_confirmed_contaminant(src_path, src_norm)
 
         if is_in_venv_or_repo:
             preserved.append((dest_name, src_path))
@@ -353,13 +384,12 @@ def _isolate_icu_closure(analysis, exe_name: str) -> None:
     analysis.binaries = cleaned_binaries
 
     # Discriminative guard assertions (R-005):
-    # 1. Verify no confirmed alien toolchain binary leaked through
+    # 1. Verify no confirmed alien contaminant leaked through
     for entry in analysis.binaries:
         src_norm = os.path.normcase(os.path.abspath(entry[1]))
-        dest_base = os.path.basename(entry[0].replace("\\", "/")).lower()
-        if ("poppler" in src_norm or "dependencies\\native" in src_norm) and ("icu" in dest_base):
+        if _is_confirmed_contaminant(entry[1], src_norm):
             raise SystemExit(
-                f"ICU isolation guard FAILED for {exe_name}: alien toolchain binary {entry[0]} leaked through!"
+                f"ICU isolation guard FAILED for {exe_name}: confirmed alien contaminant {entry[0]} leaked through!"
             )
 
     # 2. If Qt6Core is bundled, verify no shadowing icuuc.dll is packaged that would collide with System32
@@ -453,11 +483,10 @@ for stem, name, is_ml_entry in ENTRIES:
 # M2-PACKAGED-AC1-ICU-ISOLATION-FIX (R-005): Final closure verification across all aggregated binaries before COLLECT
 for entry_binaries in all_binaries:
     for dest_name, src_path, _ in entry_binaries:
-        d_base = os.path.basename(dest_name.replace("\\", "/")).lower()
         s_norm = os.path.normcase(os.path.abspath(src_path))
-        if ("poppler" in s_norm or "dependencies\\native" in s_norm) and ("icu" in d_base):
+        if _is_confirmed_contaminant(src_path, s_norm):
             raise SystemExit(
-                f"Final COLLECT closure assertion FAILED: alien toolchain ICU binary {dest_name} (from {src_path}) leaked into bundle collection!"
+                f"Final COLLECT closure assertion FAILED: confirmed alien contaminant {dest_name} (from {src_path}) leaked into bundle collection!"
             )
 
 coll = COLLECT(
