@@ -1,8 +1,12 @@
 # Project Rebaseline Plan
 
-**当前位置：P08 D1–D7已确认并完成；DSH R7与Codex集成Gate通过，P08=done。P系列done 1/21、proposed / 未释放20。下一候选为P03，尚未建立正式Task或释放。**
+**当前位置：P08=done；P03=ready / 已正式释放（唯一Active Task）。P系列共21项：done 1、ready 1、proposed / 未释放19。唯一当前执行状态见[STATUS](STATUS.md)，P03恢复点见[RESUME](../verification/P03-PACKAGED-SFX-ENTRY/RESUME.md)。**
 
-## 2026-10-09 P08集成完成 / P03候选未释放
+## 2026-10-09 P03正式释放 / READY
+
+P03「Packaged 第五 SFX 入口验收补齐」已基于live `main@31abde9bf4b73aea2851931dcd48faa0f750b318`建立正式Task并释放 `ready`。Owner=Antigravity，非作者Reviewer=DeepSeek Harness，Integrator=Codex；依赖 `M2-PROD-SFX-PROBE-1@177b356a6453ecc7ae1ec3ae1d5c60f453104007`、`M2-RUNNER-SNAPSHOT-DEBT@73588624b70c337ca4fcb36a4d42e91d3b03f5b0`、`M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD@e7d1f7f8528a6186baec6f642ac8422572103527` 均已done。branch=`agent/antigravity/P03-packaged-sfx-entry`；worktree=`G:/CODEX/New Manga.worktrees/P03-packaged-sfx-entry-antigravity`；allowed_paths=`packaging/m2ac5/run_clean_start_e2e.py`、新增 `tests/packaging/test_packaged_fifth_sfx_entry.py`、`verification/P03-PACKAGED-SFX-ENTRY/**`、P03 Task 与其 Handoff。产品 `src/**`、`apps/**`、IPC/contracts、Schema、依赖、spec/build script 均禁止修改。真实K07页面与v2b权重的外部只读输入SHA、所有AC、构建Hash时序、full Gate、交接和恢复条件见[正式Task](tasks/P03.md)及[恢复点](../verification/P03-PACKAGED-SFX-ENTRY/RESUME.md)。release metadata commit 及Owner初始HEAD由后置 RESUME 记录；fresh installer尚未构建（`NOT_SET`），产品/packaged验收未运行，不能视为通过。
+
+## 历史检查点：2026-10-09 P08集成完成 / P03候选未释放
 
 P08 DSH R7已对base=ecb3b520ce68c2ddcc0c5ec94596e2f50a17f369、reviewed_head=fe222464616152e9c95208e06c248565f2fd86a6批准，session=session-bf5b0be5-bd1e-41b8-83cc-152c28227485，报告SHA256=2D8165B95A702B40607840889208C62A1CEC4E89C4A445D0591BE9ED2A719C03。canonical报告与JSONL final正文逐字节一致。Codex在精确R7 worktree复跑两个validator、fixed-range git diff --check、clean/common-dir及protected path检查均通过。R7-01 P3已由P08 Task-local approval/status映射处置，R7-02已由Codex Gate关闭，R7-03历史字面量已清理。Task status=done；integration_commit=fe222464616152e9c95208e06c248565f2fd86a6，交付直接在main。DSH自身命令因Win32 5为NOT_RUN/NOT_VERIFIED；产品验收仍NOT_RUN。P03的PROBE-1/Runner Debt/Guard前置条件在Plan已记录为满足，但P03未创建或释放；下次需在live main重核并冻结hash/paths后建立正式Task。
 
@@ -31,7 +35,7 @@ P08 DSH R7已对base=ecb3b520ce68c2ddcc0c5ec94596e2f50a17f369、reviewed_head=fe
 |---|---|---|---|---|---|
 | P01 | proposed / 未释放 | 台账元数据与Review载体取证 | 当前基线；只读取证先行 | Codex；DSH | GC2 null、DETECT3错SHA、R2/SYNTH Review逐项处置；找不到标NOT_VERIFIED，不补造批准 |
 | P02 | proposed / 未释放 | 真UI行为、300ms刷新与对比度验证 | 现有Workbench；冻结harness范围 | ZCode；DSH | DOM/真实WebView取证，区分mock与实际；覆盖切页、写后刷新、键盘、token |
-| P03 | proposed / 未释放 | Packaged第五SFX入口验收补齐 | PROBE-1/Runner Debt/Guard已done | Antigravity；DSH | 固定新source/installer hash；第五入口执行成功＋失败对照，不只assert文件存在；完整受影响Gate |
+| P03 | ready / 可启动 | Packaged第五SFX入口验收补齐 | PROBE-1/Runner Debt/Guard已done | Antigravity；DSH | 固定新source/installer hash；第五入口执行成功＋失败对照，不只assert文件存在；完整受影响Gate |
 | P04 | proposed / 未释放 | 生产命令族/桥接并发定向验证 | PAGE-NAV done；先检查现有断言 | Antigravity；DSH | 独立常量成员断言；同会话并发响应与协议核验候选先复现；无缺口不加修复 |
 | P05 | proposed / 未释放 | category/retryable契约注记收敛 | CATEGORY done；RC4-08等deferred | Codex；DSH | 文档一致与反向链接；不更改冻结错误语义 |
 | P06 | proposed / 未释放 | GC分发迁移安全补证 | GC2 done；受控旧版本/隔离根可用 | ZCode；DSH | G7旧runtime退出/所有入口参与证据；未知保留、迁移不满足BLOCKED；不重做GC2 |
@@ -51,11 +55,11 @@ P08 DSH R7已对base=ecb3b520ce68c2ddcc0c5ec94596e2f50a17f369、reviewed_head=fe
 | P20 | proposed / 未释放 | 最终Windows发布Gate | P19＋P03＋P06；目标环境可用；Architecture Documentation Rebaseline Task先映射目标架构发布/打包/UI要求 | ZCode；DSH；Codex集成 | 新fixed-head/hash安装包；按RG1净化基线验收；Win10单独验证后声明支持；尊重RG1本机裁决，不外推未测环境，不继承PySide6/QML PASS |
 | P21 | proposed / 未释放 | Legacy归档/移除（可选） | P20＋独立移除授权 | Codex；非作者DSH | parity＋数据迁移/回退；不继续修Legacy，不作为当前完整产品必做前提 |
 
-P08集成并收口后，推荐下一项为P03（Packaged第五SFX入口验收补齐）：其PROBE-1、Runner Debt与Guard前置条件已满足，建议Owner=Antigravity、非作者Reviewer=DeepSeek Harness；Codex须先基于当时live main核定受影响入口、固定source/installer hash、冻结allowed_paths并登记正式Task/STATUS，未完成这些步骤不得派发实现。P02（真UI行为验证）亦为可并行候选，但需另行冻结真实WebView harness范围并由ZCode负责。
+P08集成后Codex已复核并释放P03；Owner=Antigravity、非作者Reviewer=DeepSeek Harness。完整base、allowed_paths、输入Hash与fresh installer生成时序见正式Task。P02（真UI行为验证）仍为未释放候选：需先冻结真实WebView harness范围并由ZCode负责，不能与当前唯一Active Task状态混淆。
 
 保留：Manga109永久取消；BJ13维持0.90、手工改标＋skip，补标/补画不释放；Reader范围：仅跨页联动/页缩略图继续延期；基础Reader已由D1解冻，P16/P17实施仍未释放。LaMa/AOT/BrushNet/FLUX learned inpaint没有production实现，不默认投入；SimpleFill/EdgeBleed已在现有链路，是否足够由P08/P18质量证据决定。GC长会话总磁盘有界没有承诺，不为了漂亮路线图扩大删除能力。
 
-当前步骤：**下一次恢复先核对live main与P03前置，再创建正式P03 Task、冻结source/installer hash与allowed_paths、登记Owner=Antigravity和非作者Reviewer=DeepSeek Harness后继续自动推进。**当前P03仅是推荐候选，尚未创建、释放或派发。
+当前步骤：**P03已正式ready；下一步从指定Task worktree派发Antigravity实现，生成fresh source/installer hash并完成正向、失败对照和完整packaged Gate；固定交付head后由DSH非作者Review，再由Codex集成。**
 
 ## 2026-10-08 完成：M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD
 

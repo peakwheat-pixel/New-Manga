@@ -1,12 +1,12 @@
 # New Manga 一眼路线图（2026-10-08）
 
-最新工作点：P08=done；DSH R7与Codex集成Gate通过，integration_commit=fe222464616152e9c95208e06c248565f2fd86a6。P03为下一候选，尚未创建或释放；详情见P08 RESUME。
+最新工作点：P08=done；P03=ready / 已正式释放，Owner=Antigravity、Reviewer=DeepSeek Harness。当前恢复点见[P03 RESUME](../../verification/P03-PACKAGED-SFX-ENTRY/RESUME.md)。
 
-**当前位置：P08=done；P系列done 1/21、proposed / 未释放20。P03尚未创建或释放。**
+**当前位置：P08=done；P03=ready / 已正式释放；P系列共21项：done 1、ready 1、proposed / 未释放19。**
 
 人员更新：用户已移除Qoder，图中未来UI/UX责任由ZCode承担；非作者Review与正式Task释放Gate保持。
 
-派生视图；排期事实以 [REBASELINE_PLAN](../../doc/REBASELINE_PLAN.md) 当前覆盖层为准。基线：`main@e4242ecd`。箭头表示启动依赖，不是工期；没有可靠估算，不编造百分比或日期。`P01–P21` 是规划节点，产品实施均未释放；P08已创建正式文档Task，其余尚无正式Task文件。
+派生视图；排期事实以 [REBASELINE_PLAN](../../doc/REBASELINE_PLAN.md) 当前覆盖层为准。原审计基线：`main@e4242ecd`；当前释放覆盖见Plan与STATUS。箭头表示启动依赖，不是工期；没有可靠估算，不编造百分比或日期。`P01–P21` 是规划节点；P08已done，P03有正式Task且ready，其余候选未释放。
 
 ## 已做到哪里
 
@@ -31,7 +31,7 @@ flowchart TB
 flowchart TB
   BASE["当前位置：P08 DSH R7与Codex集成Gate通过<br/>P系列done 1/21；P08：done"] --> P01["P01<br/>proposed / 未释放<br/>台账取证<br/>修正陈旧metadata；追溯两份Review"]
   BASE --> P02["P02<br/>proposed / 未释放<br/>真UI验证<br/>点击/300ms刷新/对比度/失效窗口"]
-  BASE --> P03["P03<br/>proposed / 未释放<br/>第五入口Gate<br/>验证SFX frozen入口；不只确认文件存在"]
+  BASE --> P03["P03<br/>ready / 可启动<br/>第五入口Gate<br/>验证SFX frozen入口；不只确认文件存在"]
   BASE --> P04["P04<br/>proposed / 未释放<br/>生产命令面验证<br/>常量成员与并发响应；先复现再决定修复"]
   BASE --> P05["P05<br/>proposed / 未释放<br/>错误语义澄清<br/>category与retryable注记一致"]
   BASE --> P06["P06<br/>proposed / 未释放<br/>GC迁移补证<br/>旧版本退出/命名空间保护；未知保留"]
@@ -40,7 +40,7 @@ flowchart TB
   style P08 fill:#d1e7dd,stroke:#198754,stroke-width:3px
 ```
 
-取证与验证候选任务 不存在必须全部串行的技术依赖。P01已由本轮提供取证结论；推荐先准备P08完整产品范围，范围裁决前可做P02/P03，余项按风险插入。启动每个实现前仍须正式 Task、独立 Reviewer 和 allowed_paths。共享主线/契约/启动文件串行集成。P06 是已完成 GC-2 的分发补证，不重新实现 GC-2，也不声称长会话磁盘有界。
+取证与验证候选任务不存在必须全部串行的技术依赖。P08范围准备已done；P03已完成live main核对、正式Task冻结并释放，当前按P03 RESUME执行。P02需先冻结真实WebView harness Task后再安排；其余候选按当前Plan依赖和风险顺序释放。启动每个实现前仍须正式Task、独立Reviewer和allowed_paths。共享主线/契约/启动文件串行集成。P06是已完成GC-2的分发补证，不重新实现GC-2，也不声称长会话磁盘有界。
 
 ## 完整产品：现在就看清后续，而不是每次临时猜下一件
 
@@ -69,7 +69,7 @@ flowchart TB
   P17 --> P19
   P18 --> P19
   P19 --> P20["P20<br/>proposed / 未释放<br/>最终Windows发布Gate<br/>新fixed-head安装包；声明矩阵；独立审查"]
-  P03["P03<br/>proposed / 未释放<br/>第五入口补证"] --> P20
+  P03["P03<br/>ready / 可启动<br/>第五入口补证"] --> P20
   P06["P06<br/>proposed / 未释放<br/>GC分发补证"] --> P20
   P20 -. "另行授权，可选" .-> P21["P21<br/>proposed / 未释放<br/>Legacy归档/移除<br/>新架构parity通过后；不修旧架构"]
   style P08 fill:#d1e7dd,stroke:#198754,stroke-width:3px

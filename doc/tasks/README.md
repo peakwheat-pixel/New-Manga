@@ -1,8 +1,8 @@
 # Task 索引
 
-2026-10-08新增：P08完整产品范围与验收冻结准备已done；D1–D7范围确认，DSH R7与Codex集成Gate通过。P03仍是Plan候选，未创建/释放。
+2026-10-09新增：P03「Packaged第五SFX入口验收补齐」正式Task已创建并释放为`ready`；Owner=Antigravity、非作者Reviewer=DeepSeek Harness、Integrator=Codex。P08完整产品范围与验收冻结准备已done。
 
-当前无Active Task。最近完成：P08完整产品范围与验收冻结准备，Owner=Codex、非作者Reviewer=DeepSeek Harness；R7 reviewed head=fe222464616152e9c95208e06c248565f2fd86a6，integration_commit=fe222464616152e9c95208e06c248565f2fd86a6，Task=done。下一候选P03未创建/释放。此前完成M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD done@integration e7d1f7f8，Owner=Antigravity、非作者Reviewer=DeepSeek Harness、Integrator=Codex；R-003仍未释放。下方旧状态为历史。
+当前唯一Active/released Task：[P03](P03.md) `ready`；固定base=`31abde9bf4b73aea2851931dcd48faa0f750b318`，Owner worktree=`G:/CODEX/New Manga.worktrees/P03-packaged-sfx-entry-antigravity`。最近完成P08：Owner=Codex、非作者Reviewer=DeepSeek Harness；R7 reviewed head及integration=`fe222464616152e9c95208e06c248565f2fd86a6`，Task=`done`。此前M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD done@integration `e7d1f7f8528a6186baec6f642ac8422572103527`；P03承接其R-003。下方旧状态为历史。
 
 
 > **2026-09-21 audit**：本索引与 TASK-001～065 文件是历史证据。当前分类、依赖和唯一下一任务见 [REBASELINE_PLAN](../REBASELINE_PLAN.md)，当前 checkpoint 见 [STATUS](../STATUS.md)。不要根据旧 frontmatter 的 `status: done` 单独判定完成。

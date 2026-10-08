@@ -1,8 +1,12 @@
 # Current Development Status
 
-**当前位置：P08 D1–D7已确认并完成；DSH R7与Codex集成Gate通过，P08=done。P系列done 1/21、proposed / 未释放20。下一候选P03尚未创建或释放；当前无Active/released Task。**
+**当前位置：P08=done；P03=ready / 已正式释放（唯一Active Task）。P系列共21项：done 1、ready 1、proposed / 未释放19。Owner=Antigravity；非作者Reviewer=DeepSeek Harness；Integrator=Codex。当前状态与恢复点见本页首checkpoint及[P03 RESUME](../verification/P03-PACKAGED-SFX-ENTRY/RESUME.md)。**
 
-## 2026-10-09 P08集成完成 / P03候选未释放
+## 2026-10-09 P03正式释放 / READY
+
+Task=`[P03](tasks/P03.md)` `ready`；唯一Active/released Task。base=`31abde9bf4b73aea2851931dcd48faa0f750b318`；branch=`agent/antigravity/P03-packaged-sfx-entry`；worktree=`G:/CODEX/New Manga.worktrees/P03-packaged-sfx-entry-antigravity`；Owner=Antigravity，非作者Reviewer=DeepSeek Harness，Integrator=Codex。release metadata commit、worktree当前HEAD与完整恢复信息由[`P03 RESUME`](../verification/P03-PACKAGED-SFX-ENTRY/RESUME.md)记录。三个依赖均done：PROBE-1 `177b356a6453ecc7ae1ec3ae1d5c60f453104007`、Runner Debt `73588624b70c337ca4fcb36a4d42e91d3b03f5b0`、Runner Guard `e7d1f7f8528a6186baec6f642ac8422572103527`。fresh installer尚未构建，source/installer指纹=`NOT_SET`；测试/build/packaged gate/Review均NOT_RUN，不可称PASS。allowed_paths、K07/weights hash与禁止修改范围见Task。保护主checkout `.qoder-credits/**`、M2 Runner Guard dispatch artifacts、P08 DSH raw与所有其他Agent dirty/untracked；不stage、不覆盖、不stash、不清理。
+
+## 历史检查点：2026-10-09 P08集成完成 / P03候选未释放
 
 P08完成事实：DSH R7对base=ecb3b520ce68c2ddcc0c5ec94596e2f50a17f369、reviewed_head=fe222464616152e9c95208e06c248565f2fd86a6正式approved，session=session-bf5b0be5-bd1e-41b8-83cc-152c28227485，报告SHA256=2D8165B95A702B40607840889208C62A1CEC4E89C4A445D0591BE9ED2A719C03；Codex集成Gate EXIT=0，Task status=done，integration_commit=fe222464616152e9c95208e06c248565f2fd86a6（直接集成main）。报告与raw JSONL final字节相等；P08全部AC、Task、Plan、Status、依赖图与恢复点已收口。DSH自身shell/git/python仍为NOT_RUN/NOT_VERIFIED（Win32 5）；产品pytest/cargo/vitest/GUI/build/model为NOT_RUN。
 
@@ -14,6 +18,8 @@ P08完成事实：DSH R7对base=ecb3b520ce68c2ddcc0c5ec94596e2f50a17f369、revie
 用户指示已登记到[GOV-001追加范围](tasks/GOV-001.md)、AGENTS与协作协议；Qoder退出本项目任务分配、非作者Review、UI设计和额度故障转移名单。UI/UX/React/Tauri设计及实现由ZCode主责；Codex契约/协调/集成、DSH非作者审查。项目fallback=ZCode→Antigravity。该人员裁决记录形成时P08等待Codex集成Gate；当前状态以本页首部与最新[P08恢复点](../verification/P08/RESUME.md)为准。既有`.qoder-credits`及dispatch dirty未清理，也未终止全局应用；原审计和历史署名保留。
 
 ## 2026-10-08 全项目规划盘点（PLAN_ONLY / CHECKPOINTED）
+
+本节记录2026-10-08盘点时的状态快照；其中“无Active/released、P03未创建/释放”已由上方2026-10-09正式释放checkpoint取代。
 
 用户本轮请求已完成三路GPT-6.1 Sol high代码/文档审计与整体依赖规划；这是规划交付，**当前仍无 Active / released产品Task**。审计输入=`main@e4242ecd`；[报告](../verification/PROJECT-ROADMAP-20261008/REPORT.md)、[中文图](../verification/PROJECT-ROADMAP-20261008/ROADMAP.md)、[196节点完整台账](../verification/PROJECT-ROADMAP-20261008/task-inventory.csv)、[恢复点](../verification/PROJECT-ROADMAP-20261008/RESUME.md)。167登记完成/文档交付＋29历史局限/归档，不作为产品完成率；新架构有界Task全部收口，正式四页与完整用户链仍缺。
 
