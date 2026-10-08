@@ -35,7 +35,7 @@ cmd += ["-InstallDir", install]
 if mode == "copy":
     cmd.append("-CopyBundle")
 win = os.environ.get("SystemRoot", r"C:/Windows")
-env = {"SystemRoot": win, "WINDIR": win, "ComSpec": win + r"/System32/cmd.exe", "PATH": win + r"/System32;" + win}
+env = {"SystemRoot": win, "WINDIR": win, "ComSpec": win + r"/System32/cmd.exe", "PATH": win + r"/System32;" + win, "PATHEXT": ".COM;.EXE;.BAT;.CMD"}
 for key, sub in [("APPDATA", "roaming"), ("LOCALAPPDATA", "local"), ("TEMP", "temp"), ("TMP", "temp"), ("NEWMANGA_DATA_ROOT", "data")]:
     dest = lab / sub
     dest.mkdir(exist_ok=True)
