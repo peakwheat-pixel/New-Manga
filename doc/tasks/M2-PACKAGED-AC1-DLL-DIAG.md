@@ -115,3 +115,19 @@ DSH通路探测CLI EXIT0，返回“收到”；版本0.1.7-rc.2。用户明确�
 Codex登记ready→in_progress；Owner=DSH。原release4330b792之后仅恢复文档和本认领治理变更，
 Owner将clean fast-forward到本认领提交，再执行真实DSH；实际start_head写入主仓库dispatch.md，
 冻结诊断输入source_head与installer SHA不变。不得跟随未冻结生产差量。
+
+## 运行记录（DSH Owner，2026-10-08，status=in_progress 不变）
+
+- 本会话 start_head 期望=`24e0ec6e5c6d64a35daad006565919818616b317`；**git 未实测**（shell NOT_RUN）。
+- 执行限制：`pwsh` 每次启动前置失败 `SetNamedSecurityInfoW failed (Win32 5): grantWrite(<worktree>)`；
+  `danger-full-access` 升级被拒（无审批通道）。故 AC1/AC2 = NOT_RUN，仅用只读文件工具。
+- 静态结论：PyInstaller `-Force` 全量构建成功（COLLECT+5 exe+ML/SFX 闭包断言），EXIT=1 出现在
+  其后的 `Copy-MangaWeights`（`Get-FileHash` CommandNotFound）；PS7 无 `-Force` 重试走增量短路只补 weights（EXIT=0）。
+- 闭包静态事实：`_internal/PySide6/{Qt6Core,Qt6Gui}.dll`、`pyside6.abi3.dll`、`shiboken6/shiboken6.abi3.dll`、
+  MSVC/CRT 均存在；`icuin*`、`d3dcompiler_47.dll`、`opengl32sw.dll` 未见（影响 UNKNOWN）。
+  失败点在 `src/bootstrap/acceptance_bridge.py:173` import 语句，早于 `QGuiApplication` 构造。
+- 判定：根因类别高置信="QtGui 依赖链 Win32 126 未解析模块"；**具体 DLL/符号 UNKNOWN**；安装态 `_internal`
+  完整性 UNKNOWN（无清单证据）。未实施修复，未解除 runner debt，未自审，未置 done。
+- 交付（**未提交**，delivery_head 未固定）：`verification/M2-PACKAGED-AC1-DLL-DIAG/{REPORT.md,dll-closure-matrix.json,
+  raw/exec-20261008-dsh-notrun.log,probe/**}`、`doc/handoffs/M2-PACKAGED-AC1-DLL-DIAG-20261008-dsh.md`。
+  probe 由 Codex 实跑后非作者审查。

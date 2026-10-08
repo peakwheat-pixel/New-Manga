@@ -1,0 +1,181 @@
+{
+  "task": "M2-PACKAGED-AC1-DLL-DIAG",
+  "produced_by": "DeepSeek Harness (Owner)",
+  "produced_at": "2026-10-08",
+  "execution_capability": {
+    "shell": "NOT_RUN",
+    "reason": "pwsh sandbox setup failed every call: SetNamedSecurityInfoW failed (Win32 5): grantWrite(G:\\CODEX\\New Manga.worktrees\\PACKAGED-AC1-DLL-DIAG-dsh); danger-full-access escalation denied (no approval channel)",
+    "method": "read-only file tools only (read/glob/grep)"
+  },
+  "frozen_inputs": {
+    "build_source_head": "cfb5d2eecc4d8ab7a3159cdbb1d5812547bb5cd2",
+    "runner_evidence_head": "15cd788f10e83f6a1a215e71538bfa175b435785",
+    "declared_start_head": "24e0ec6e5c6d64a35daad006565919818616b317",
+    "declared_start_head_verified": false,
+    "installer_path": "G:\\CODEX\\New Manga.worktrees\\RUNNER-SNAPSHOT-DEBT-codex\\apps\\desktop\\src-tauri\\target\\release\\bundle\\nsis\\m2rc1-desktop_0.1.0_x64-setup.exe",
+    "installer_sha256": "1cecca95d25439fca682cbe4336123d3b3352db229dd58c4e7d724b4d6c6ccb8",
+    "installer_bytes": 589904619,
+    "installer_sha256_reverified_this_session": "NOT_RUN",
+    "installer_sha256_doc_crosscheck": "MATCH across input-manifest.json / build-fingerprint.json / release.md"
+  },
+  "observed_failure": {
+    "id": "CS-A1-run1-completed",
+    "exit": 1,
+    "traceback_frame": "bootstrap\\acceptance_bridge.py:173 in assemble_acceptance_core",
+    "error": "ImportError: DLL load failed while importing QtGui: 找不到指定的模块。",
+    "win32_code_implied": 126,
+    "failure_precedes_qguiapplication_construction": true,
+    "evidence": "verification/M2-RUNNER-SNAPSHOT-DEBT/raw/packaged/cleanstart-ac1-run1-stdout.log:4-9"
+  },
+  "scanned_bundle": "G:/CODEX/New Manga.worktrees/RUNNER-SNAPSHOT-DEBT-codex/apps/desktop/src-tauri/target/core-sidecar/core-sidecar",
+  "candidates": [
+    {
+      "id": "C1",
+      "candidate": "PySide6 QtGui extension module not bundled",
+      "observed": "present: _internal/PySide6/QtGui.pyd",
+      "verdict": "REJECTED",
+      "confidence": "high",
+      "loadability_verified": false
+    },
+    {
+      "id": "C2",
+      "candidate": "Qt6Gui.dll missing from bundle",
+      "observed": "present: _internal/PySide6/Qt6Gui.dll",
+      "verdict": "REJECTED",
+      "confidence": "high",
+      "loadability_verified": false
+    },
+    {
+      "id": "C3",
+      "candidate": "Qt6Core.dll missing from bundle",
+      "observed": "present: _internal/PySide6/Qt6Core.dll",
+      "verdict": "REJECTED",
+      "confidence": "high",
+      "loadability_verified": false
+    },
+    {
+      "id": "C4",
+      "candidate": "PySide6/shiboken6 ABI runtime DLLs missing",
+      "observed": "present: _internal/PySide6/pyside6.abi3.dll, _internal/shiboken6/shiboken6.abi3.dll",
+      "verdict": "REJECTED",
+      "confidence": "high",
+      "loadability_verified": false
+    },
+    {
+      "id": "C5",
+      "candidate": "MSVC/CRT runtime not shipped in bundle",
+      "observed": "present: _internal/{msvcp140,MSVCP140_1,MSVCP140_ATOMIC_WAIT,VCRUNTIME140,VCRUNTIME140_1,VCRUNTIME140_THREADS,ucrtbase}.dll + api-ms-win-crt-* set",
+      "verdict": "REJECTED",
+      "confidence": "high",
+      "loadability_verified": false
+    },
+    {
+      "id": "C6",
+      "candidate": "Qt absent from PyInstaller analysis graph (ModuleNotFoundError class)",
+      "observed": "sidecar-build.log:239-243 ran hook-PySide6, hook-shiboken6, hook-PySide6.QtNetwork, hook-PySide6.QtCore, hook-PySide6.QtGui for entry_acceptance_bridge",
+      "verdict": "REJECTED",
+      "confidence": "high"
+    },
+    {
+      "id": "C7",
+      "candidate": "PyInstaller build truncated by the weights-phase EXIT=1",
+      "observed": "sidecar-build.log:548-552 COLLECT completed successfully / Build complete!; EXIT=1 at :560-569 is Get-FileHash CommandNotFound inside Copy-MangaWeights, after the build",
+      "verdict": "REJECTED",
+      "confidence": "high"
+    },
+    {
+      "id": "C8",
+      "candidate": "ICU i18n DLL (icuin*) missing from bundle",
+      "observed": "top-level _internal/*.dll listing contains icudt78.dll and icuuc.dll only; no icuin*.dll",
+      "verdict": "PRESENCE_ABSENCE_PROVEN_IMPACT_UNKNOWN",
+      "confidence_presence": "high",
+      "confidence_impact": "low"
+    },
+    {
+      "id": "C9",
+      "candidate": "d3dcompiler_47.dll missing from bundle",
+      "observed": "glob **/d3dcompiler* over the whole bundle: 0 hits",
+      "verdict": "PRESENCE_ABSENCE_PROVEN_IMPACT_UNKNOWN",
+      "note": "Windows 11 System32 may satisfy this name; not measurable in this session",
+      "confidence_presence": "high",
+      "confidence_impact": "low"
+    },
+    {
+      "id": "C10",
+      "candidate": "opengl32sw.dll missing from bundle",
+      "observed": "not present in top-level _internal/*.dll listing",
+      "verdict": "PRESENCE_ABSENCE_PROVEN_IMPACT_UNKNOWN",
+      "confidence_presence": "medium",
+      "confidence_impact": "low"
+    },
+    {
+      "id": "C11",
+      "candidate": "the actual unresolvable module (specific DLL or export symbol)",
+      "observed": "requires real load / import-table walk; not executable this session",
+      "verdict": "UNKNOWN",
+      "confidence": "n/a"
+    },
+    {
+      "id": "C12",
+      "candidate": "installed tree _internal incomplete (NSIS drop / long path / missing file)",
+      "observed": "no installed-tree _internal manifest in the evidence set; cleanstart-gate.json CS-I1 only proves 4 exes under resources/core-sidecar",
+      "verdict": "UNKNOWN",
+      "confidence": "n/a"
+    },
+    {
+      "id": "C13",
+      "candidate": "runtime DLL search-path difference (AddDllDirectory / purged PATH)",
+      "observed": "build-time search dirs include ...\\site-packages\\PySide6 (sidecar-build.log:186,324); runtime search set not measured",
+      "verdict": "UNKNOWN",
+      "confidence": "n/a"
+    },
+    {
+      "id": "C14",
+      "candidate": "ABI/symbol mismatch inside the PySide6 pair",
+      "observed": "PySide6_Essentials==6.11.2 and shiboken6==6.11.2 pinned equal (packaging/m2ac5/requirements-build.txt:43-44)",
+      "verdict": "MISMATCH_REJECTED_FOR_THAT_PAIR; other symbol-level mismatch UNKNOWN",
+      "confidence": "medium"
+    }
+  ],
+  "root_cause": {
+    "class": "packaged process cannot resolve a module of the PySide6.QtGui dependency chain (Win32 126 ERROR_MOD_NOT_FOUND)",
+    "class_confidence": "high",
+    "specific_dll_or_symbol": "UNKNOWN",
+    "rule_followed": "not inferred from the QtGui module name"
+  },
+  "environment_delta_proven": {
+    "full_build": {
+      "command": "[\"powershell\",\"-NoProfile\",\"-File\",\"packaging/m2ac5/build_sidecar.ps1\",\"-Force\"]",
+      "log": "verification/M2-RUNNER-SNAPSHOT-DEBT/raw/sidecar-build.log",
+      "head": "cfb5d2eecc4d8ab7a3159cdbb1d5812547bb5cd2",
+      "pyinstaller": "6.22.3",
+      "python": "3.12.3",
+      "venv": "G:/CODEX/New Manga.task-envs/m2ac5-build",
+      "result": "PyInstaller SUCCESS (COLLECT + 5 exes + ML/SFX closure assertions), then Copy-MangaWeights Get-FileHash CommandNotFound",
+      "exit": 1,
+      "elapsed_s": 417.3
+    },
+    "weights_retry": {
+      "command": "[\"C:/Program Files/PowerShell/7/pwsh.exe\",\"-NoProfile\",\"-File\",\"packaging/m2ac5/build_sidecar.ps1\"]",
+      "log": "verification/M2-RUNNER-SNAPSHOT-DEBT/raw/sidecar-weights-retry.log",
+      "path_taken": "incremental short-circuit (build_sidecar.ps1:173): target exists, skipping",
+      "result": "weights sha256 verified copies only; no exe rebuilt",
+      "exit": 0,
+      "elapsed_s": 0.8
+    },
+    "consequence": "all shipped exes come from the PS5.1 -Force run; the weights EXIT=1 did not alter them"
+  },
+  "coverage_gaps": [
+    "installed-tree _internal manifest not present in evidence",
+    "no runtime load test / import-table walk performed",
+    "installer SHA256 not re-measured this session",
+    "git HEAD/branch/clean/common-dir and git diff --check not verifiable this session"
+  ],
+  "minimal_proposed_fix_allowed_paths": [
+    "packaging/m2ac5/core_sidecar.spec",
+    "packaging/m2ac5/build_sidecar.ps1",
+    "packaging/m2ac5/requirements-build.txt"
+  ],
+  "fix_not_implemented": true,
+  "runner_debt_unlocked": false
+}
