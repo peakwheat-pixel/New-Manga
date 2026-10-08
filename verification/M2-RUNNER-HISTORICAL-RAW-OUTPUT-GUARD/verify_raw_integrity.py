@@ -4,8 +4,8 @@ Target directories:
   - verification/M2-RC2/raw/
   - verification/M2-AC5/raw/
 
-Computes SHA-256 for all tracked files, checks git blob hashes and working tree status,
-and compares snapshots before and after regression test execution.
+Computes SHA-256 for all tracked files, checks git blob hashes and Git status scoped
+to those two raw paths, and compares snapshots before and after regression execution.
 """
 
 from __future__ import annotations
@@ -13,7 +13,6 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
-import os
 from pathlib import Path
 import subprocess
 import sys
@@ -101,12 +100,12 @@ def main() -> int:
                 errors.append(f"{key}: sha256 changed from {b_info.get('sha256')} to {a_info.get('sha256')}")
 
         if not clean_status:
-            errors.append(f"git status not clean:\n{status_msg}")
+            errors.append(f"historical raw paths have Git changes:\n{status_msg}")
 
         print("=== BEFORE/AFTER RAW INTEGRITY COMPARISON ===")
         print(f"Files tracked in historical raw directories: {len(before)}")
         print(f"Files matching byte-identical before and after: {len(before_keys & after_keys) - len(errors)}")
-        print(f"Working tree clean: {clean_status}")
+        print(f"Historical raw paths clean: {clean_status}")
         if errors:
             print(f"FAIL: {len(errors)} discrepancies found:")
             for e in errors:
@@ -125,7 +124,7 @@ def main() -> int:
     print("=== HISTORICAL RAW INTEGRITY CHECK ===")
     print(f"Total tracked files checked: {len(snapshot)}")
     print(f"All git blob hashes match index: {all(v.get('status') == 'OK' for v in snapshot.values())}")
-    print(f"Working tree status clean: {clean_status}")
+    print(f"Historical raw paths clean: {clean_status}")
     if not clean_status:
         print(f"Dirty files:\n{status_msg}")
     print(f"RESULT: {'PASS' if all_ok else 'FAIL'}")

@@ -11,8 +11,8 @@
 3. **R-03 (P2)**：入库可复现脚本 `verification/M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD/verify_raw_integrity.py`，支持运行前后快照比对，验证 61 个历史文件的 SHA-256 及 git blob hash，日志记录规范，明确非 Gate PASS。
 4. **R-04 (P2)**：从 `tests/packaging/test_runner_output_dir_required.py` 移除外部 VCS 状态断言（移除 `test_tracked_raw_evidence_directories_unmodified`），保持测试纯粹与 hermetic。
 5. **R-05 (P3)**：在 `test_ac5_main_interception_after_parse_args` 中将 monkeypatch 拦截点提前至 `Path.mkdir`，实现零目录创建副作用拦截。
-6. **R-06 (P3)**：简化子进程缺失参数的断言为 `assert "required" in err`。
-7. **R-07 (P3)**：遵守治理边界，Owner 未修改 `doc/STATUS.md`、`doc/REBASELINE_PLAN.md` 等全局文件。
+6. **R-06 (P3)**：简化子进程缺失参数的断言为 `assert "required" in err`；整体加载 runner/conftest 的复杂度仍 deferred，属于可选建议，不扩大本 Task。
+7. **R-07 (P3)**：Owner 遵守治理边界；Codex 已通过主线治理提交 `8ad092d2` 更新 `doc/STATUS.md`、`doc/REBASELINE_PLAN.md` 和导航元数据。
 
 ---
 
@@ -39,7 +39,7 @@
 |---|---|---|---|---|---|
 | **AC1/AC2/AC4 参数回归测试 (Python 3.14)** | `python -m pytest -v tests/packaging/test_runner_output_dir_required.py` | Python 3.14.6 @ `e167e723` | 0 | **8 passed** (0.51s)；涵盖两个 runner 的 CLI 缺省调用子进程 exit 2 报错、解析器 SystemExit(2)、显式路径解析、main 提前拦截（无目录创建副作用） | [`pytest-regression.log`](pytest-regression.log) |
 | **AC1/AC2/AC4 参数回归测试 (Python 3.12)** | `& "G:\CODEX\New Manga.task-envs\TASK-012-py312\Scripts\python.exe" -m pytest -v tests/packaging/test_runner_output_dir_required.py` | Python 3.12.3 @ `e167e723` | 0 | **8 passed** (0.55s) | [`pytest-regression-py312.log`](pytest-regression-py312.log) |
-| **AC4 历史 raw 完整性前后比对 (R-03)** | `python verification/M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD/verify_raw_integrity.py --compare-after ...` | Python 3.14.6 @ `e167e723` | 0 | **PASS (byte-identical)**；全部 61 个已跟踪文件与运行前快照逐位一致，working tree clean，0 修改，0 未跟踪 | [`raw-integrity.log`](raw-integrity.log) |
+| **AC4 历史 raw 完整性前后比对 (R-03)** | `python verification/M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD/verify_raw_integrity.py --compare-after ...` | Python 3.14.6 @ `e167e723` | 0 | **PASS (byte-identical)**；全部 61 个已跟踪文件与运行前快照逐位一致；两个历史 raw 路径的 Git status clean，无修改或 untracked 文件 | [`raw-integrity.log`](raw-integrity.log) |
 | **快照护栏回归** | `python verification/M2-RUNNER-SNAPSHOT-DEBT/check_snapshots.py` | Python 3.14.6 @ `e167e723` | 0 | **16 actual-predicate cases PASS**；两个 runner 的语法与静态期望对齐完全正常 | [`check-snapshots.log`](check-snapshots.log) |
 | **AC5 范围检查 (git diff --name-only)** | `git diff --name-only d12ebc7a..e167e723` | Git CLI @ `e167e723` | 0 | 变更仅限 4 个 allowed_paths 代码文件：`packaging/m2ac5/README.md`、`packaging/m2ac5/run_clean_start_e2e.py`、`tests/packaging/test_runner_output_dir_required.py`、`verification/M2-RC2/run_e2e.py` | [`git-diff-name-only.log`](git-diff-name-only.log) |
 | **AC5 代码增减统计 (git diff --stat)** | `git diff --stat d12ebc7a..e167e723` | Git CLI @ `e167e723` | 0 | 纯代码 4 文件：`179 insertions(+), 16 deletions(-)` | [`git-diff-stat.log`](git-diff-stat.log) |
@@ -48,5 +48,7 @@
 ---
 
 ## 4. 未执行项目说明（NOT_RUN）
+
+- **派发状态说明**：本轮 `agy` 进程 EXIT=0，但输出 JSON 的 `status` 字段为 `ERROR`。Codex 不以该字段作为成功依据，已在实际 Owner worktree 独立核验提交、测试、raw 快照和 Git 范围；DSH r2 仍是必需 Gate。
 
 - **完整 Dev Gate / Packaged Gate / NSIS 安装 / Sidecar 构建**：按 Task 明确规定 **NOT_RUN**。本 Task 属于 CLI 参数保护回归（parser-only 边界防护），禁止运行或触发完整产品构建与 Gate。参数测试已通过在 `parse_args` 后拦截执行，确保不进入 runner 主体。本报告不将 parser 回归测试表述为产品 Gate PASS。
