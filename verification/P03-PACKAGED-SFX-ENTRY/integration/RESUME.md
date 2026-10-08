@@ -1,26 +1,25 @@
 # P03 Codex Integration Checkpoint
 
-时间：2026-10-09（Asia/Shanghai）；Task=`P03`；TaskStatus=`in_review`；ExecutionState=`R6_APPROVED_CODEX_INTEGRATION_PENDING`。
+时间：2026-10-09（Asia/Shanghai）；Task=`P03`；TaskStatus=`done`；ExecutionState=`CODEX_INTEGRATION_GATE_PASS`。
 
 ## 当前恢复点
 
-- Repository=`G:/CODEX/New Manga`；integration worktree=`G:/CODEX/New Manga.worktrees/P03-review-prep-85482c5b`；branch=`codex/P03-integration-4c04459`；common-dir=`G:/CODEX/New Manga/.git`。恢复时核对 live `main` 与 worktree HEAD/status。
-- Task base=`31abde9bf4b73aea2851931dcd48faa0f750b318`; Owner=Antigravity; Reviewer=DeepSeek Harness; Integrator=Codex. Existing integration commit=`d717c049a41544a6d592943a0b0fe1b76a41a050`.
-- DSH R5 session=`session-089283e0-246f-44e3-9c2f-14dea850e4e2`; reviewed head=`7677e9c324da2fde618e7cd6fdba2363abeb1f1b`; decision=`approved`; unresolved P0/P1/P2=0/0/0, P3=1, P4=4. Report/prompt/raw/exit and hashes are recorded in Task/manifest; session mounted to this worktree. DSH own shell/Git/tests/Gate=`NOT_RUN` because of Win32 5; web/Desktop visibility=`unverified`. Codex non-author review of the same head found no new P0–P3.
-- DSH R6 session=`session-21ca547a-c9ba-4b60-9e9c-afe54db7009a`; reviewed head=`f09100d5b96aea26e4f525fb4c7c10d6d9d9f1cb`; decision=`approved`; unresolved P0/P1/P2=0/0/0, P3=2, P4=3. Report/prompt/raw/exit and hashes are recorded in Task/manifest; session mounted. DSH own shell/Git/tests/Gate=`NOT_RUN` due Win32 5; web/Desktop visibility=`unverified`. Codex non-author review of this same head found no new P0–P3.
-- Logs 28/29 version exact-head scope and both read-only normalization results; log 30 compares every one of the 11 members of `raw-finalhead-d717-gate-output.zip` byte-for-byte against the retained directory, EXIT=0. Manifest records hashes.
-- R6 log 31 records 155 paths, zero out-of-scope and `git diff --check` EXIT=0 for `f09100d5`. Before marking done, update the six authoritative navigation/status docs to remove the stale R4/R5-pending instructions (R6-02).
-- Exact tested source remains `d717c049`: snapshot 16 cases PASS, targeted suite 40 passed / 0 skipped, same-installer packaged Gate 28/28 PASS; all EXIT=0. No runner/test blob changes after that source commit.
-- Preserve root checkout's 24 existing dirty/untracked entries and both untracked retained raw Gate folders. P03 remains `in_review` pending Codex AC5 integration.
+- Root `main` 已集成 `552464238a69ad2cea63cff18abe98f412dbae87`；P03=`done`，`integration_commit=552464238a69ad2cea63cff18abe98f412dbae87`。当前没有Active Task；P01为Plan中的下一候选，待在live main上正式释放。
+- DSH R5只批准 `31abde9b..7677e9c3`；DSH R6只批准 `31abde9b..f09100d5`。两轮均approved且未解决P0/P1/P2=0；Codex非作者复核未发现新P0–P3。DSH自身shell/Git/tests/Gate仍`NOT_RUN`（Win32 5），Web/Desktop visibility=`unverified`。
+- Codex integration Gate：base..552共162 paths、零越界、`git diff --check` EXIT=0；d717..552产品/runner/test/build路径零差量。Gate报告见[`codex-integration-gate.md`](codex-integration-gate.md)。Manifest的55组artifact SHA/size已在本worktree 552下55/55逐字节匹配；main的`core.autocrlf=true`只导致工作树换行编码差异，未覆盖源artifact。R5 prompt精确5463 bytes及manifest hash仍保存在本worktree。
+- Snapshot 16 actual-predicate cases、targeted tests 40/40（0 skipped）与packaged Gate 28/28 PASS均绑定source `d717c049a41544a6d592943a0b0fe1b76a41a050`及installer SHA `2de124f387bfaf1d0d01b1b0279ad319cd453850d223efa9620b0103ce88a814`。d717 structured JSON保存在`raw-finalhead-d717-gate-output.zip`内的`cleanstart-gate.json`；log 30核对归档11项逐字节一致。
+- 根checkout原有24项用户/Qoder/Agent dirty和untracked仍须保留；不stage、不stash、不覆盖、不清理。
 
 ## 下一条直接指令
 
-Recheck Git and the authority docs, verify the manifest/review/evidence hashes, update the six current navigation/status docs, and finish Codex AC5 integration. DSH R6 and Codex R6 approvals apply to base `31abde9b…` / reviewed head `f09100d5…`; do not describe a later commit as DSH-reviewed. Because runtime/test blobs match tested source `d717c049`, use range/evidence/integration checks instead of rerunning the installer. Fast-forward only after the gate passes, then set P03 `done` and release P01 after rechecking authoritative Plan dependencies.
+先核对live `main`、Plan、Status和P01恢复点。按已经审核的P01范围建立Codex worktree并正式释放：Owner=Codex、Reviewer=DeepSeek Harness。核实GC2/DETECT3 Git对象与交付证据；缺失的ANNOTATE-R2/SYNTH独立Review载体必须记为`NOT_VERIFIED`。完成后派发DSH固定head Review，再由Codex完成集成Gate、更新Task/Plan/Status/依赖图与恢复点。
 
 ## 保护边界
 
 Keep the root's 24 dirty entries, retained raw Gate folders, Owner worktree, user data, locks, current/pinned revisions, K07/ONNX inputs and Qoder evidence untouched. No push, external message, deployment or deletion.
-## 修订验证进展
+> 以下各节记录已完成的历史阶段证据；其中当时写的“下一步”是阶段日志，不覆盖本文件顶部的当前恢复点与下一条直接指令。
+
+## 历史执行记录：修订验证进展
 
 - 2026-10-09，固定代码修订提交 `db2c1e9390b0b8601877c366d4a43699b1d12ee5`：R-003 现在要求有效 weights path 必须可证明位于非空 install_dir 下；省略 install_dir 时返回 FAIL。同步修正 AC3/input table hash、R-005 token 数与 C-001 相对链接。
 - 定向命令：`C:\Python314\python.exe -m pytest -v tests/packaging/test_packaged_fifth_sfx_entry.py tests/packaging/test_runner_output_dir_required.py`；PowerShell 7.6.6；Python 3.14.6；40 passed，0 skipped，EXIT=0。日志：`build-logs/01-targeted-tests.log`。

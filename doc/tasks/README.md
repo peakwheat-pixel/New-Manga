@@ -2,7 +2,7 @@
 
 历史释放记录（2026-10-09）：P03「Packaged第五SFX入口验收补齐」由Codex正式创建并释放为`ready`；Owner=Antigravity、非作者Reviewer=DeepSeek Harness、Integrator=Codex。
 
-当前唯一Active Task：[P03](P03.md) `in_review`；base=`31abde9bf4b73aea2851931dcd48faa0f750b318`；Owner worktree=`G:/CODEX/New Manga.worktrees/P03-packaged-sfx-entry-antigravity`；Codex integration branch=`codex/P03-integration-4c04459`，integration commit=`d717c049a41544a6d592943a0b0fe1b76a41a050`。DSH R4 approved；R4 dispositions、16-case snapshot、40/40 targeted tests、28/28 same-installer packaged Gate 与 fixed-head traces 已保存，R5/Codex review 待执行。恢复见[P03 RESUME](../../verification/P03-PACKAGED-SFX-ENTRY/RESUME.md)。P08已done；此前M2 Runner Guard done@`e7d1f7f8528a6186baec6f642ac8422572103527`。下方旧状态为历史。
+当前没有Active Task；P03已done，下一候选P01尚未释放。P03 integration=`552464238a69ad2cea63cff18abe98f412dbae87`；完整Review与Gate记录见[P03 RESUME](../../verification/P03-PACKAGED-SFX-ENTRY/RESUME.md)。
 
 
 > **2026-09-21 audit**：本索引与 TASK-001～065 文件是历史证据。当前分类、依赖和唯一下一任务见 [REBASELINE_PLAN](../REBASELINE_PLAN.md)，当前 checkpoint 见 [STATUS](../STATUS.md)。不要根据旧 frontmatter 的 `status: done` 单独判定完成。

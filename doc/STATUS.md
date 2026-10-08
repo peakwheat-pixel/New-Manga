@@ -1,12 +1,12 @@
 # Current Development Status
 
-**当前位置：P08=done；P03=in_review。P系列共21项：done 1、in_review 1、proposed / 未释放19。P03 integration commit=`d717c049a41544a6d592943a0b0fe1b76a41a050`；DSH R4 approved（0 unresolved P0/P1）；snapshot 16/16、定向测试40/40、同installer packaged Gate 28/28均在该head复跑通过。R3-03是P20范围外风险。当前唯一Active Task与恢复点见下方P03 checkpoint。**
+**当前位置：P08=done；P03=done。P系列共21项：done 2、proposed / 未释放19。P03 integration commit=`552464238a69ad2cea63cff18abe98f412dbae87`；DSH R5/R6对各自fixed head均approved、Codex AC5集成Gate PASS。16-case snapshot、40/40定向测试和同installer packaged Gate 28/28绑定产品head `d717c049`，集成候选无产品路径差量。R3-03为P20范围外风险。下一候选P01尚未释放；当前执行状态见下方P03 closeout。**
 
-## 2026-10-09 P03 R4 Review 与 Codex exact-head 补证 / IN_REVIEW
+## 2026-10-09 P03 Review 与 Codex 集成完成 / DONE
 
-Task=`[P03](tasks/P03.md)` `in_review`；唯一Active Task。Owner=Antigravity，非作者Reviewer=DeepSeek Harness，Integrator=Codex。Task base=`31abde9bf4b73aea2851931dcd48faa0f750b318`；Owner delivery=`85482c5b001d452953c3ed797ce3c4ed64cae4e3`；DSH R4对`d717c049a41544a6d592943a0b0fe1b76a41a050` approved（0 unresolved P0/P1）；Codex在该head复跑snapshot oracle 16/16、定向测试40/40、同一installer SHA=`2de124f387bfaf1d0d01b1b0279ad319cd453850d223efa9620b0103ce88a814` 的完整packaged Gate 28/28，均EXIT=0。R4 dispositions 与完整复跑日志已保存于P03 verification。当前integration branch=`codex/P03-integration-4c04459`、worktree=`G:/CODEX/New Manga.worktrees/P03-review-prep-85482c5b`、integration commit=`d717c049a41544a6d592943a0b0fe1b76a41a050`。下一Gate：对包含R4修订的exact candidate做DSH R5与Codex独立复核，之后才可关闭AC5。恢复见[P03 RESUME](../verification/P03-PACKAGED-SFX-ENTRY/RESUME.md)。
+Task=`[P03](tasks/P03.md)` `done`；当前没有Active Task，下一候选P01待按Plan核验后释放。Owner=Antigravity、Reviewer=DeepSeek Harness、Integrator=Codex；base=`31abde9bf4b73aea2851931dcd48faa0f750b318`，delivery=`85482c5b001d452953c3ed797ce3c4ed64cae4e3`，integration=`552464238a69ad2cea63cff18abe98f412dbae87`。DSH R5/R6 approved各自固定head，Codex非作者复核无新P0–P3；集成162 paths、零越界、diff-check EXIT=0。Gate证据与限制见[P03 RESUME](../verification/P03-PACKAGED-SFX-ENTRY/RESUME.md)。
 
-## 历史快照：P03正式释放时状态 / READY（已由当前IN_REVIEW checkpoint取代）
+## 历史快照：P03正式释放时状态 / READY（已由当前DONE checkpoint取代）
 
 Task=`[P03](tasks/P03.md)` `ready`；唯一Active/released Task。base=`31abde9bf4b73aea2851931dcd48faa0f750b318`；branch=`agent/antigravity/P03-packaged-sfx-entry`；worktree=`G:/CODEX/New Manga.worktrees/P03-packaged-sfx-entry-antigravity`；Owner=Antigravity，非作者Reviewer=DeepSeek Harness，Integrator=Codex。release metadata commit、worktree当前HEAD与完整恢复信息由[`P03 RESUME`](../verification/P03-PACKAGED-SFX-ENTRY/RESUME.md)记录。三个依赖均done：PROBE-1 `177b356a6453ecc7ae1ec3ae1d5c60f453104007`、Runner Debt `73588624b70c337ca4fcb36a4d42e91d3b03f5b0`、Runner Guard `e7d1f7f8528a6186baec6f642ac8422572103527`。fresh installer尚未构建，source/installer指纹=`NOT_SET`；测试/build/packaged gate/Review均NOT_RUN，不可称PASS。allowed_paths、K07/weights hash与禁止修改范围见Task。保护主checkout `.qoder-credits/**`、M2 Runner Guard dispatch artifacts、P08 DSH raw与所有其他Agent dirty/untracked；不stage、不覆盖、不stash、不清理。
 

@@ -1,12 +1,12 @@
 # 项目文档索引与 Source of Truth
 
-当前工作：P08已done；P03仍为唯一`in_review` Task。DSH R4对`d717c049…` approved（未解决P0/P1=0/0）；R4 findings 与 Codex C-004/C-005 已记录处置及新证据，等待 exact-head R5/Codex复核。R3-03仍按P03范围外风险留给P20；恢复点见[P03 RESUME](../verification/P03-PACKAGED-SFX-ENTRY/RESUME.md)。
+当前工作：P08与P03均已done；P系列done 2/21，剩余19项proposed / 未释放。P03完成与恢复见[P03 RESUME](../verification/P03-PACKAGED-SFX-ENTRY/RESUME.md)。
 
 2026-10-08人员更新：Qoder已退出本项目。当前角色/接管名单见[协作协议](09_COLLABORATION.md)；未来UI设计/实现归ZCode，历史Qoder署名仅作证据。整体路线与恢复材料已同步，不新增产品释放。
 
-**整体规划入口**：[权威Plan与候选Task](REBASELINE_PLAN.md)、[中文依赖图](../verification/PROJECT-ROADMAP-20261008/ROADMAP.md)、[全项目报告](../verification/PROJECT-ROADMAP-20261008/REPORT.md)、[196节点历史台账](../verification/PROJECT-ROADMAP-20261008/task-inventory.csv)、[恢复点](../verification/PROJECT-ROADMAP-20261008/RESUME.md)。历史审计基线为e4242ecd；P08已完成，P03当前in_review。167项登记完成或文档交付不代表新架构产品完成率。
+**整体规划入口**：[权威Plan与候选Task](REBASELINE_PLAN.md)、[中文依赖图](../verification/PROJECT-ROADMAP-20261008/ROADMAP.md)、[全项目报告](../verification/PROJECT-ROADMAP-20261008/REPORT.md)、[196节点历史台账](../verification/PROJECT-ROADMAP-20261008/task-inventory.csv)、[恢复点](../verification/PROJECT-ROADMAP-20261008/RESUME.md)。历史审计基线为e4242ecd；P08与P03已完成。167项登记完成或文档交付不代表新架构产品完成率。
 
-P08 Task已done；当前唯一Active产品Task为[P03](tasks/P03.md) `in_review`，`integration_commit=d717c049a41544a6d592943a0b0fe1b76a41a050`。最新证据与复审状态见[P03 RESUME](../verification/P03-PACKAGED-SFX-ENTRY/RESUME.md)；P01仅在P03 done后按Plan复核依赖再释放。
+P08 Task已done；[P03](tasks/P03.md)已done，当前没有Active产品Task；下一候选P01尚未释放。P03集成与证据见[P03 RESUME](../verification/P03-PACKAGED-SFX-ENTRY/RESUME.md)。
 
 全任务盘点与 inventory 下方段落是其各自审计时的历史快照，不反映当前总数或授权状态；以本页首段、[Plan](REBASELINE_PLAN.md) 与 [STATUS](STATUS.md) 为当前事实。
 

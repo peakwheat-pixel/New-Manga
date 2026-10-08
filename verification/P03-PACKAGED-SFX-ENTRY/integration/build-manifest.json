@@ -1,6 +1,6 @@
 {
   "task_id": "P03",
-  "phase": "r6_approved_codex_integration_pending",
+  "phase": "p03_done",
   "integration_branch": "codex/P03-integration-4c04459",
   "integration_worktree": "G:/CODEX/New Manga.worktrees/P03-review-prep-85482c5b",
   "task_base_commit": "31abde9bf4b73aea2851931dcd48faa0f750b318",
@@ -258,8 +258,8 @@
     ],
     "note": "Checks include the C-002 test correction and are bound to its committed head. Repeat against the exact final DSH review head after committing the current documentation checkpoint."
   },
-  "candidate_head": "f09100d5b96aea26e4f525fb4c7c10d6d9d9f1cb",
-  "integration_commit": "d717c049a41544a6d592943a0b0fe1b76a41a050",
+  "candidate_head": "552464238a69ad2cea63cff18abe98f412dbae87",
+  "integration_commit": "552464238a69ad2cea63cff18abe98f412dbae87",
   "dsh_r3": {
     "session_id": "session-4401e9bb-28cb-42a1-8447-608b7fc80b8e",
     "base_commit": "31abde9bf4b73aea2851931dcd48faa0f750b318",
@@ -927,16 +927,44 @@
       "size_bytes": 1430
     }
   },
+  "codex_integration_gate": {
+    "path": "integration/codex-integration-gate.md",
+    "sha256": "2b3c300bfe1a193bdca7c1340f990ca48682b8ab187b9c4a462e096fc6a44295",
+    "sha256_basis": "SHA-256 of canonical UTF-8/LF Git blob content",
+    "git_blob_oid": "952168dc1446744a0edf868fa81077937fbf944a",
+    "candidate_head": "552464238a69ad2cea63cff18abe98f412dbae87",
+    "changed_path_count": 162,
+    "out_of_scope_path_count": 0,
+    "diff_check_exit": 0,
+    "product_path_diff_from_d717": 0,
+    "source_gate_archive": "integration/raw-finalhead-d717-gate-output.zip",
+    "source_gate_json_member": "cleanstart-gate.json",
+    "artifact_hash_verification": {
+      "source_worktree": "G:/CODEX/New Manga.worktrees/P03-review-prep-85482c5b",
+      "source_worktree_head": "552464238a69ad2cea63cff18abe98f412dbae87",
+      "manifest_artifacts_checked": 55,
+      "source_worktree_mismatches": 0,
+      "main_core_autocrlf": true,
+      "main_text_artifact_eol_reencodings": 11,
+      "main_uniform_crlf_to_lf_matches": 10,
+      "r5_prompt_source_sha256": "8f8fc57059d931caafb85e79eea8b007e0b4233ad51777971ae541b77ca3f3ac",
+      "r5_prompt_source_size_bytes": 5463,
+      "r5_prompt_source_eol": "one CRLF; 47 standalone LF (48 LF bytes total)",
+      "r5_prompt_main_checkout_size_bytes": 5510,
+      "r5_prompt_main_lf_normalized_matches_git_blob": true
+    },
+    "decision": "PASS"
+  },
   "r6_findings_disposition": {
     "R6-01": "fixed: log 31 versions the exact f09100d5 reviewed-head scope/diff-check result: 155 paths, zero out of scope, EXIT=0.",
-    "R6-02": "Codex AC5 closeout must update STATUS, REBASELINE_PLAN, 00_INDEX, tasks/README, 12_ROADMAP and the current derived ROADMAP to the integrated P03 / next P01 state.",
+    "R6-02": "fixed: STATUS, REBASELINE_PLAN, 00_INDEX, tasks/README, 12_ROADMAP and derived ROADMAP now report P03 done and identify P01 as the next proposed candidate; no pending-review wording remains in the current navigation layer.",
     "R4-07": "deferred, cosmetic; unchanged test-description condition with no behavior or AC effect.",
     "R5-04": "deferred, cosmetic; retain frozen CS-Z2 scenario ID, identify inputs as lab fixtures.",
     "R5-05": "noted; log 23's expected negative-case FAIL entries precede final 16-case oracle PASS summary."
   },
   "r5_findings_disposition": {
     "R5-01": "fixed: logs 28/29 bind 146-path, zero-out-of-scope, diff-check EXIT=0 and both normalization verifiers 6/6 to exact reviewed head 7677e9c3.",
-    "R5-02": "fixed: phase, candidate_head, and both current RESUME execution states identify the R5-approved candidate and pending Codex integration.",
+    "R5-02": "fixed: phase and candidate_head identify the integrated P03 evidence candidate; exact DSH reviewed heads remain separately recorded and Codex integration is complete.",
     "R5-03": "fixed: log 30 compares every member and entry list of the d717 Gate archive byte-for-byte against the retained directory; the R5 prompt remains preserved as the original review request.",
     "R5-04": "deferred, cosmetic: retain the frozen CS-Z2 scenario ID; AC4 and manifest identify its inputs as lab fixtures.",
     "R5-05": "noted: log 23 contains expected negative-case FAIL lines before the final snapshot-oracle PASS line; no gate result ambiguity in its final summary."
