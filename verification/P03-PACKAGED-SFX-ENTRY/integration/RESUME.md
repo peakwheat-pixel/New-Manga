@@ -1,0 +1,34 @@
+# P03 Codex Integration Checkpoint
+
+时间：2026-10-09（Asia/Shanghai）；Task=`P03`；TaskStatus=`in_review`；ExecutionState=`CHECKPOINTED`。
+
+## 固定状态
+
+- Repository=`G:/CODEX/New Manga`；integration worktree=`G:/CODEX/New Manga.worktrees/P03-review-prep-85482c5b`；branch=`codex/P03-integration-4c04459`；start HEAD=`4c04459bc6b8bf9ef6cba596829ac47f37bc02af`；common-dir=`G:/CODEX/New Manga/.git`。
+- Task base=`31abde9bf4b73aea2851931dcd48faa0f750b318`；Owner delivery=`85482c5b001d452953c3ed797ce3c4ed64cae4e3`；formal DSH review head=`4c04459bc6b8bf9ef6cba596829ac47f37bc02af`；DSH decision=`approved`, 0 unresolved P0/P1, 3 open P2 and 3 P3 including 2 deferred.
+- Root `main` remains `0a31bbc52447b87a3f04145df62a5ad19baa4b44`, with user/previous-agent uncommitted files. The Antigravity Owner worktree remains at `85482c5b...` with its three untracked dispatch/follow-up files. Both are protected and untouched.
+
+## Completed
+
+- Rechecked Plan, Index, Status, Collaboration Protocol, P08 RESUME, P03 Task/Handoff/RESUME, current root and linked worktrees.
+- Reviewed DSH formal R2 raw output and independent Codex review. DSH approved the fixed R2 head; Codex identified C-001 bad relative Handoff link.
+- Verified `evaluate_sfx_probe_success` has one production caller passing `install_dir`; several negative tests omit it, but none currently supplies otherwise-valid payload. DSH R-003 is a real fail-open for future callers.
+
+## Open findings / next work
+
+1. Correct P03 AC3 and input table to final installer SHA-256 `5a14c0a98008442bf4e3b70ec1fcc17373e33313cbadf69414fd9584a25a2fa0` (579,528,233 bytes), labeling `d21e89b6...` as the superseded initial revision-2 installer.
+2. Make `evaluate_sfx_probe_success` fail closed when `install_dir` is omitted; add a focused test using valid probe payload and omitted `install_dir`.
+3. Fix Handoff token count 6,704→6,702 and RESUME link to `../../doc/handoffs/...`.
+4. Build a fresh installer from a clean fixed source commit, rerun the focused packaging tests, snapshot oracle, and full packaged Gate; record exact command/shell/versions/exit/hash evidence.
+5. Capture `git diff --check` with command, shell, output and EXIT against a fixed head; independently rerun normalization verifier and scope checks.
+6. Freeze the corrected delivery head, request a new formal DSH Review (Reviewer remains non-author), disposition R-004/R-006 and any new findings, then complete Codex integration Gate and update Task/Plan/Status/index/roadmap/graph/resume.
+
+## Blockers / risks
+
+- No unresolved product decision currently blocks this integration.
+- Code change to the acceptance runner requires fresh packaged verification because it changes the predicate used for acceptance.
+- DSH was unable to execute shell/Python in its sandbox during R2; Codex must provide host-side validation evidence. DSH Web visibility remains unverified.
+
+## Resume safety
+
+No Owner worktree, main-worktree dirty file, historical raw artifact, build input, user data, or reviewer workspace has been changed. Current integration worktree was clean at fixed approved head before this checkpoint was created.
