@@ -1,6 +1,6 @@
 # Project Rebaseline Plan
 
-**当前位置：P08/P03=done；P系列共21项：done 2、in_progress 1、proposed 18。唯一当前Task=P01（台账元数据与独立 Review 载体核验），状态=`in_progress` / ExecutionState=`ACTIVE` / Reality Check=`RESUME_SAFE`；base=`826bea12a132c5af2ac0cd1244d00e9170093c71`，Owner=Codex、非作者Reviewer=DeepSeek Harness；branch=`agent/codex/P01-metadata-audit`，worktree=`G:/CODEX/New Manga.worktrees/P01-metadata-audit-codex`。只读取证；允许路径、恢复与下一步见[P01 Task](tasks/P01.md)及[P01 RESUME](../verification/P01/RESUME.md)。P03 integration=`552464238a69ad2cea63cff18abe98f412dbae87`；其产品验证仍绑定source `d717c049`。**
+**当前位置：P08/P03=done；P系列共21项：done 2、in_progress 1、proposed 18。唯一当前Task=P01（台账元数据与独立 Review 载体核验），状态=`in_progress` / ExecutionState=`ACTIVE`；AC1–AC6已完成，交付=`9b12493616326af9cdd50a055282426c72516a5a`，待Handoff、DSH Review及Codex Integration Gate。base=`826bea12a132c5af2ac0cd1244d00e9170093c71`，Owner=Codex、非作者Reviewer=DeepSeek Harness；branch=`agent/codex/P01-metadata-audit`，worktree=`G:/CODEX/New Manga.worktrees/P01-metadata-audit-codex`。允许路径、恢复与下一步见[P01 Task](tasks/P01.md)及[P01 RESUME](../verification/P01/RESUME.md)。P03 integration=`552464238a69ad2cea63cff18abe98f412dbae87`；其产品验证仍绑定source `d717c049`。**
 
 ## 2026-10-09 P01 正式启动 / IN_PROGRESS
 
@@ -67,7 +67,7 @@ P08 DSH R7已对base=ecb3b520ce68c2ddcc0c5ec94596e2f50a17f369、reviewed_head=fe
 
 保留：Manga109永久取消；BJ13维持0.90、手工改标＋skip，补标/补画不释放；Reader范围：仅跨页联动/页缩略图继续延期；基础Reader已由D1解冻，P16/P17实施仍未释放。LaMa/AOT/BrushNet/FLUX learned inpaint没有production实现，不默认投入；SimpleFill/EdgeBleed已在现有链路，是否足够由P08/P18质量证据决定。GC长会话总磁盘有界没有承诺，不为了漂亮路线图扩大删除能力。
 
-当前步骤：**P01已在`main@826bea12a132c5af2ac0cd1244d00e9170093c71`正式释放，并从release metadata head=`714138de3da06013e3ea35395e0c11b3d15fc371`启动；实际Reality Check=`RESUME_SAFE`。按冻结allowed_paths从指定P01 worktree执行只读取证；如实保留`NOT_VERIFIED`和用户裁决边界。完成后由DeepSeek Harness固定head Review、Codex集成Gate，再从Plan选下一项。**
+当前步骤：**P01已在`main@826bea12a132c5af2ac0cd1244d00e9170093c71`正式释放，并从release metadata head=`714138de3da06013e3ea35395e0c11b3d15fc371`启动；实际Reality Check=`RESUME_SAFE`。AC2–AC6已完成，3处可核验来源元数据已修正，交付=`9b12493616326af9cdd50a055282426c72516a5a`；R2/SYNTH未找到独立Review原件仍记`NOT_VERIFIED`，产品裁决边界保留。当前先完成Handoff并固定Review候选head，由DeepSeek Harness审查，再由Codex执行Integration Gate，通过后从Plan选下一项。**
 
 ## 2026-10-08 完成：M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD
 

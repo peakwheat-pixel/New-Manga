@@ -4,7 +4,7 @@
 
 ## 2026-10-09 P01 正式启动 / IN_PROGRESS
 
-当前唯一 Active/released Task=`[P01](tasks/P01.md)`，Owner=Codex，非作者Reviewer=DeepSeek Harness，Integrator=Codex；TaskStatus=`in_progress` / ExecutionState=`ACTIVE`。base=`826bea12a132c5af2ac0cd1244d00e9170093c71`；branch=`agent/codex/P01-metadata-audit`；worktree=`G:/CODEX/New Manga.worktrees/P01-metadata-audit-codex`；depends_on=`[]`。worktree release起点=`826bea12a132c5af2ac0cd1244d00e9170093c71`；P01启动前HEAD=`714138de3da06013e3ea35395e0c11b3d15fc371`，clean、common-dir正确。按[恢复点](../verification/P01/RESUME.md)已完成Reality Check=`RESUME_SAFE`；主工作区24项既有dirty/untracked未触碰。当前进入AC2–AC6来源证据追溯阶段，尚未更改来源Task元数据、尚未派发P01 DSH Review；产品测试`NOT_RUN`。
+当前唯一 Active/released Task=`[P01](tasks/P01.md)`，Owner=Codex，非作者Reviewer=DeepSeek Harness，Integrator=Codex；TaskStatus=`in_progress` / ExecutionState=`ACTIVE`。base=`826bea12a132c5af2ac0cd1244d00e9170093c71`；branch=`agent/codex/P01-metadata-audit`；worktree=`G:/CODEX/New Manga.worktrees/P01-metadata-audit-codex`；depends_on=`[]`。worktree release起点=`826bea12a132c5af2ac0cd1244d00e9170093c71`；P01启动前HEAD=`714138de3da06013e3ea35395e0c11b3d15fc371`，clean、common-dir正确。按[恢复点](../verification/P01/RESUME.md)已完成Reality Check=`RESUME_SAFE`；主工作区24项既有dirty/untracked未触碰。AC1–AC6与允许的3处来源字段修正已完成；交付提交=`9b12493616326af9cdd50a055282426c72516a5a`，16项均在allowed paths，`git diff --check`与路线图验证器EXIT=0。当前准备P01 Handoff及DeepSeek Harness固定head非作者Review；Codex Integration Gate尚未执行。产品pytest/cargo/vitest/GUI/build=`NOT_RUN`（本Task不改产品/测试代码）。
 
 ## 历史完成记录：2026-10-09 P03 Review 与 Codex 集成完成 / DONE
 
