@@ -1,0 +1,580 @@
+Shell: PowerShell 7.6.6 (C:\Program Files\PowerShell\7\pwsh.exe); inner build shell: Windows PowerShell 5.1
+WorkingDirectory: G:\CODEX\New Manga.worktrees\P03-review-prep-85482c5b
+Source HEAD: a7161ca316052d14aefd24b920b146afd1969017
+Working tree before command: clean
+Isolated Tauri target directory before command: absent
+Command: powershell.exe -NoProfile -ExecutionPolicy Bypass -File packaging/m2ac5/build_sidecar.ps1 -Force
+Build Python: G:/CODEX/New Manga.task-envs/m2ac5-build/Scripts/python.exe (Python 3.12.3; PyInstaller 6.22.3)
+--- sidecar output ---
+build_sidecar: git HEAD=a7161ca316052d14aefd24b920b146afd1969017 pyinstaller=6.22.3 python=G:\CODEX\New Manga.task-envs\m2ac5-build\Scripts\python.exe
+build_sidecar: sanitized 1 confirmed alien toolchain entries from PATH for PyInstaller execution:
+  [PATH-SANITIZED] C:\Users\49745\.cache\codex-runtimes\codex-primary-runtime\dependencies\native\poppler\Library\bin
+114 INFO: PyInstaller: 6.22.3, contrib hooks: 2026.7
+114 INFO: Python: 3.12.3
+134 INFO: Platform: Windows-11-10.0.26300-SP0
+134 INFO: Python environment: G:\CODEX\New Manga.task-envs\m2ac5-build
+139 INFO: Removing temporary files and cleaning cache in C:\Users\49745\AppData\Local\pyinstaller
+148 INFO: Module search paths (PYTHONPATH):
+['G:\\CODEX\\New Manga.worktrees\\P03-review-prep-85482c5b',
+ 'C:\\Users\\49745\\AppData\\Local\\Programs\\Python\\Python312\\python312.zip',
+ 'C:\\Users\\49745\\AppData\\Local\\Programs\\Python\\Python312\\DLLs',
+ 'C:\\Users\\49745\\AppData\\Local\\Programs\\Python\\Python312\\Lib',
+ 'C:\\Users\\49745\\AppData\\Local\\Programs\\Python\\Python312',
+ 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build',
+ 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages',
+ 'G:\\CODEX\\New '
+ 'Manga.worktrees\\P03-review-prep-85482c5b\\packaging\\m2ac5\\entries',
+ 'G:\\CODEX\\New Manga.worktrees\\P03-review-prep-85482c5b\\src']
+480 INFO: checking Analysis
+480 INFO: Building Analysis because Analysis-00.toc is non existent
+480 INFO: Looking for Python shared library...
+480 INFO: Using Python shared library: C:\Users\49745\AppData\Local\Programs\Python\Python312\python312.dll
+480 INFO: Running Analysis Analysis-00.toc
+480 INFO: Target bytecode optimization level: 1
+482 INFO: Initializing module dependency graph...
+484 INFO: Initializing module graph hook caches...
+493 INFO: Analyzing modules for base_library.zip ...
+1348 INFO: Processing standard module hook 'hook-encodings.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\PyInstaller\\hooks'
+1746 INFO: Processing standard module hook 'hook-math.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\PyInstaller\\hooks'
+2279 INFO: Processing standard module hook 'hook-pickle.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\PyInstaller\\hooks'
+2766 INFO: Processing standard module hook 'hook-heapq.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\PyInstaller\\hooks'
+3039 INFO: Caching module dependency graph...
+3088 INFO: Analyzing G:\CODEX\New Manga.worktrees\P03-review-prep-85482c5b\packaging\m2ac5\entries\entry_host_bridge.py
+3150 INFO: Processing standard module hook 'hook-sqlite3.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\PyInstaller\\hooks'
+3446 INFO: Processing standard module hook 'hook-platform.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\PyInstaller\\hooks'
+3498 INFO: Processing standard module hook 'hook-_ctypes.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\PyInstaller\\hooks'
+3559 INFO: Processing module hooks (post-graph stage)...
+3581 INFO: Performing binary vs. data reclassification (1 entries)
+3581 INFO: Looking for ctypes DLLs
+3591 INFO: Analyzing run-time hooks ...
+3593 INFO: Including run-time hook 'pyi_rth_inspect.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\PyInstaller\\hooks\\rthooks'
+3596 INFO: Creating base_library.zip...
+3789 INFO: Looking for dynamic libraries
+3961 INFO: Extra DLL search directories (AddDllDirectory): []
+3961 INFO: Extra DLL search directories (PATH): []
+4242 INFO: Warnings written to G:\CODEX\New Manga.worktrees\P03-review-prep-85482c5b\apps\desktop\src-tauri\target\pyinstaller-work\core_sidecar\warn-core_sidecar.txt
+4252 INFO: Graph cross-reference written to G:\CODEX\New Manga.worktrees\P03-review-prep-85482c5b\apps\desktop\src-tauri\target\pyinstaller-work\core_sidecar\xref-core_sidecar.html
+4271 INFO: checking PYZ
+4271 INFO: Building PYZ because PYZ-00.toc is non existent
+4271 INFO: Building PYZ (ZlibArchive) G:\CODEX\New Manga.worktrees\P03-review-prep-85482c5b\apps\desktop\src-tauri\target\pyinstaller-work\core_sidecar\PYZ-00.pyz
+4738 INFO: Building PYZ (ZlibArchive) G:\CODEX\New Manga.worktrees\P03-review-prep-85482c5b\apps\desktop\src-tauri\target\pyinstaller-work\core_sidecar\PYZ-00.pyz completed successfully.
+4741 INFO: checking PKG
+4741 INFO: Building PKG because PKG-00.toc is non existent
+4741 INFO: Building PKG (CArchive) host_bridge.pkg
+4758 INFO: Building PKG (CArchive) host_bridge.pkg completed successfully.
+4758 INFO: Bootloader G:\CODEX\New Manga.task-envs\m2ac5-build\Lib\site-packages\PyInstaller\bootloader\Windows-64bit-intel\run.exe
+4758 INFO: checking EXE
+4758 INFO: Building EXE because EXE-00.toc is non existent
+4760 INFO: Building EXE from EXE-00.toc
+4760 INFO: Copying bootloader EXE to G:\CODEX\New Manga.worktrees\P03-review-prep-85482c5b\apps\desktop\src-tauri\target\pyinstaller-work\core_sidecar\host_bridge.exe
+4787 INFO: Copying icon to EXE
+4811 INFO: Copying 0 resources to EXE
+4811 INFO: Embedding manifest in EXE
+4836 INFO: Appending PKG archive to EXE
+4861 INFO: Fixing EXE headers
+4997 INFO: Building EXE from EXE-00.toc completed successfully.
+4998 INFO: Module search paths (PYTHONPATH):
+['G:\\CODEX\\New Manga.worktrees\\P03-review-prep-85482c5b',
+ 'C:\\Users\\49745\\AppData\\Local\\Programs\\Python\\Python312\\python312.zip',
+ 'C:\\Users\\49745\\AppData\\Local\\Programs\\Python\\Python312\\DLLs',
+ 'C:\\Users\\49745\\AppData\\Local\\Programs\\Python\\Python312\\Lib',
+ 'C:\\Users\\49745\\AppData\\Local\\Programs\\Python\\Python312',
+ 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build',
+ 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages',
+ 'G:\\CODEX\\New '
+ 'Manga.worktrees\\P03-review-prep-85482c5b\\packaging\\m2ac5\\entries',
+ 'G:\\CODEX\\New Manga.worktrees\\P03-review-prep-85482c5b\\src',
+ 'G:\\CODEX\\New '
+ 'Manga.worktrees\\P03-review-prep-85482c5b\\packaging\\m2ac5\\entries',
+ 'G:\\CODEX\\New Manga.worktrees\\P03-review-prep-85482c5b\\src']
+5310 INFO: checking Analysis
+5310 INFO: Building Analysis because Analysis-01.toc is non existent
+5310 INFO: Looking for Python shared library...
+5310 INFO: Using Python shared library: C:\Users\49745\AppData\Local\Programs\Python\Python312\python312.dll
+5310 INFO: Running Analysis Analysis-01.toc
+5310 INFO: Target bytecode optimization level: 1
+5310 INFO: Reusing cached module dependency graph...
+5324 INFO: Initializing module graph hook caches...
+5338 INFO: Analyzing G:\CODEX\New Manga.worktrees\P03-review-prep-85482c5b\packaging\m2ac5\entries\entry_core_service.py
+5403 INFO: Processing standard module hook 'hook-sqlite3.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\PyInstaller\\hooks'
+5743 INFO: Processing standard module hook 'hook-platform.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\PyInstaller\\hooks'
+5786 INFO: Processing standard module hook 'hook-math.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\PyInstaller\\hooks'
+6203 INFO: Processing standard module hook 'hook-difflib.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\PyInstaller\\hooks'
+6205 INFO: Processing standard module hook 'hook-heapq.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\PyInstaller\\hooks'
+6394 INFO: Processing standard module hook 'hook-PySide6.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\PyInstaller\\hooks'
+6545 INFO: Processing standard module hook 'hook-shiboken6.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\PyInstaller\\hooks'
+6679 INFO: Processing standard module hook 'hook-PySide6.QtNetwork.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\PyInstaller\\hooks'
+7434 INFO: Processing standard module hook 'hook-PySide6.QtCore.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\PyInstaller\\hooks'
+8296 INFO: Processing standard module hook 'hook-PySide6.QtGui.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\PyInstaller\\hooks'
+8721 INFO: Processing standard module hook 'hook-pypdfium2.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\_pyinstaller_hooks_contrib\\stdhooks'
+8745 INFO: Processing standard module hook 'hook-pypdfium2_raw.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\_pyinstaller_hooks_contrib\\stdhooks'
+8768 INFO: Processing standard module hook 'hook-_ctypes.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\PyInstaller\\hooks'
+8928 INFO: Processing standard module hook 'hook-PIL.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\PyInstaller\\hooks'
+9011 INFO: Processing standard module hook 'hook-PIL.Image.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\PyInstaller\\hooks'
+9305 INFO: Processing standard module hook 'hook-numpy.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\PyInstaller\\hooks'
+9499 INFO: Processing standard module hook 'hook-pickle.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\PyInstaller\\hooks'
+9588 INFO: Processing pre-safe-import-module hook 'hook-typing_extensions.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\PyInstaller\\hooks\\pre_safe_import_module'
+9590 INFO: SetuptoolsInfo: initializing cached setuptools info...
+10215 INFO: Processing standard module hook 'hook-multiprocessing.util.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\PyInstaller\\hooks'
+10422 INFO: Processing standard module hook 'hook-xml.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\PyInstaller\\hooks'
+11170 INFO: Processing standard module hook 'hook-sysconfig.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\PyInstaller\\hooks'
+11308 INFO: Processing standard module hook 'hook-webbrowser.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\PyInstaller\\hooks'
+12780 INFO: Processing standard module hook 'hook-xml.etree.cElementTree.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\PyInstaller\\hooks'
+12919 INFO: Processing standard module hook 'hook-PIL.ImageFilter.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\PyInstaller\\hooks'
+13366 INFO: Processing pre-safe-import-module hook 'hook-importlib_resources.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\PyInstaller\\hooks\\pre_safe_import_module'
+13405 INFO: Processing standard module hook 'hook-cv2.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\_pyinstaller_hooks_contrib\\stdhooks'
+13800 INFO: Processing standard module hook 'hook-scipy.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\PyInstaller\\hooks'
+14381 INFO: Processing standard module hook 'hook-scipy.linalg.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\PyInstaller\\hooks'
+14532 INFO: Processing standard module hook 'hook-torch.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\_pyinstaller_hooks_contrib\\stdhooks'
+1246 WARNING: Failed to collect submodules for 'torch.utils.tensorboard' because importing 'torch.utils.tensorboard' raised: ModuleNotFoundError: No module named 'tensorboard'
+G:\CODEX\New Manga.task-envs\m2ac5-build\Lib\site-packages\PyInstaller\utils\hooks\__init__.py:665: DeprecationWarning: `torch.distributed._sharding_spec` will be deprecated, use `torch.distributed._shard.sharding_spec` instead
+  __import__(name)
+G:\CODEX\New Manga.task-envs\m2ac5-build\Lib\site-packages\PyInstaller\utils\hooks\__init__.py:665: DeprecationWarning: `torch.distributed._sharded_tensor` will be deprecated, use `torch.distributed._shard.sharded_tensor` instead
+  __import__(name)
+G:\CODEX\New Manga.task-envs\m2ac5-build\Lib\site-packages\PyInstaller\utils\hooks\__init__.py:665: DeprecationWarning: `torch.distributed._shard.checkpoint` will be deprecated, use `torch.distributed.checkpoint` instead
+  __import__(name)
+26818 INFO: hook-torch: this torch build does not depend on MKL...
+34247 INFO: Processing standard module hook 'hook-scipy.special._ufuncs.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\PyInstaller\\hooks'
+36837 INFO: Processing standard module hook 'hook-encodings.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\PyInstaller\\hooks'
+40229 INFO: Processing pre-safe-import-module hook 'hook-win32com.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\_pyinstaller_hooks_contrib\\pre_safe_import_module'
+47245 INFO: Processing standard module hook 'hook-onnxruntime.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\_pyinstaller_hooks_contrib\\stdhooks'
+47298 INFO: Processing pre-safe-import-module hook 'hook-tensorflow.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\_pyinstaller_hooks_contrib\\pre_safe_import_module'
+51304 INFO: Processing standard module hook 'hook-scipy.spatial._ckdtree.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\PyInstaller\\hooks'
+51768 INFO: Processing standard module hook 'hook-scipy.spatial.transform.rotation.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\PyInstaller\\hooks'
+52392 INFO: Processing standard module hook 'hook-scipy.stats._stats.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\PyInstaller\\hooks'
+52834 INFO: Processing standard module hook 'hook-scipy.sparse.csgraph.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\PyInstaller\\hooks'
+56037 INFO: Processing standard module hook 'hook-torchvision.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\_pyinstaller_hooks_contrib\\stdhooks'
+56076 INFO: Processing standard module hook 'hook-torchvision.io.image.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\_pyinstaller_hooks_contrib\\stdhooks'
+56652 INFO: Processing standard module hook 'hook-scipy.io.matlab.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\PyInstaller\\hooks'
+56999 INFO: Processing standard module hook 'hook-h5py.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\_pyinstaller_hooks_contrib\\stdhooks'
+63353 INFO: Processing standard module hook 'hook-jinja2.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\_pyinstaller_hooks_contrib\\stdhooks'
+65482 INFO: Processing standard module hook 'hook-rich.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\_pyinstaller_hooks_contrib\\stdhooks'
+66031 INFO: Processing standard module hook 'hook-pygments.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\PyInstaller\\hooks'
+69378 INFO: Processing standard module hook 'hook-fsspec.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\_pyinstaller_hooks_contrib\\stdhooks'
+69874 INFO: Processing pre-safe-import-module hook 'hook-backports.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\PyInstaller\\hooks\\pre_safe_import_module'
+69876 INFO: Setuptools: 'backports' appears to be a full setuptools-vendored copy - creating alias to 'setuptools._vendor.backports'!
+73381 INFO: Processing standard module hook 'hook-scipy.special._ellip_harm_2.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\PyInstaller\\hooks'
+74589 INFO: Processing standard module hook 'hook-xml.dom.domreg.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\PyInstaller\\hooks'
+77140 INFO: Processing standard module hook 'hook-shapely.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\_pyinstaller_hooks_contrib\\stdhooks'
+77928 INFO: Processing standard module hook 'hook-langdetect.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\_pyinstaller_hooks_contrib\\stdhooks'
+77978 INFO: Processing pre-safe-import-module hook 'hook-six.moves.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\PyInstaller\\hooks\\pre_safe_import_module'
+78398 INFO: Processing standard module hook 'hook-certifi.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\_pyinstaller_hooks_contrib\\stdhooks'
+78495 INFO: Processing standard module hook 'hook-anyio.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\_pyinstaller_hooks_contrib\\stdhooks'
+80615 INFO: Processing pre-safe-import-module hook 'hook-packaging.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\PyInstaller\\hooks\\pre_safe_import_module'
+81359 INFO: Analyzing hidden import 'transformers'
+81375 INFO: Processing standard module hook 'hook-transformers.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\_pyinstaller_hooks_contrib\\stdhooks'
+84081 INFO: Processing standard module hook 'hook-regex.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\_pyinstaller_hooks_contrib\\stdhooks'
+104907 INFO: Analyzing hidden import 'torchvision._C_stable'
+104907 INFO: Analyzing hidden import 'torchvision.image_stable'
+104907 INFO: Processing module hooks (post-graph stage)...
+109895 WARNING: Hidden import "torchvision.image" not found!
+109897 WARNING: Hidden import "torchvision._C" not found!
+110190 INFO: Processing standard module hook 'hook-PIL.SpiderImagePlugin.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\PyInstaller\\hooks'
+111721 WARNING: Hidden import "scipy.special._cdflib" not found!
+111777 INFO: Performing binary vs. data reclassification (459 entries)
+111871 INFO: Looking for ctypes DLLs
+112024 WARNING: Ignoring /usr/lib64/libgomp.so.1 imported from G:\CODEX\New Manga.task-envs\m2ac5-build\Lib\site-packages\torch\_inductor\codecache.py - only basenames are supported with ctypes imports!
+112434 INFO: Analyzing run-time hooks ...
+112451 INFO: Including run-time hook 'pyi_rth_pkgutil.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\PyInstaller\\hooks\\rthooks'
+112452 INFO: Including run-time hook 'pyi_rth_multiprocessing.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\PyInstaller\\hooks\\rthooks'
+112454 INFO: Including run-time hook 'pyi_rth_inspect.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\PyInstaller\\hooks\\rthooks'
+112457 INFO: Including run-time hook 'pyi_rth_pyside6.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\PyInstaller\\hooks\\rthooks'
+112457 INFO: Processing pre-find-module-path hook 'hook-_pyi_rth_utils.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\PyInstaller\\hooks\\pre_find_module_path'
+112458 INFO: Processing standard module hook 'hook-_pyi_rth_utils.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\PyInstaller\\hooks'
+112566 INFO: Creating base_library.zip...
+112720 INFO: Looking for dynamic libraries
+G:\CODEX\New Manga.task-envs\m2ac5-build\Lib\site-packages\PyInstaller\building\build_main.py:227: DeprecationWarning: `torch.distributed._sharding_spec` will be deprecated, use `torch.distributed._shard.sharding_spec` instead
+  __import__(package)
+G:\CODEX\New Manga.task-envs\m2ac5-build\Lib\site-packages\PyInstaller\building\build_main.py:227: DeprecationWarning: `torch.distributed._sharded_tensor` will be deprecated, use `torch.distributed._shard.sharded_tensor` instead
+  __import__(package)
+G:\CODEX\New Manga.task-envs\m2ac5-build\Lib\site-packages\PyInstaller\building\build_main.py:227: DeprecationWarning: `torch.distributed._shard.checkpoint` will be deprecated, use `torch.distributed.checkpoint` instead
+  __import__(package)
+126290 INFO: Extra DLL search directories (AddDllDirectory): ['G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\shiboken6', 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\torch\\lib', 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\numpy.libs', 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\torchvision', 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\torchvision', 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\onnx.libs', 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\ml_dtypes.libs', 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\scipy.libs', 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\cv2\\../../x64/vc17/bin', 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\shapely.libs', 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\rapidfuzz.libs']
+126290 INFO: Extra DLL search directories (PATH): ['G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\cv2\\../../x64/vc17/bin', 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\PySide6']
+130427 INFO: Warnings written to G:\CODEX\New Manga.worktrees\P03-review-prep-85482c5b\apps\desktop\src-tauri\target\pyinstaller-work\core_sidecar\warn-core_sidecar.txt
+131145 INFO: Graph cross-reference written to G:\CODEX\New Manga.worktrees\P03-review-prep-85482c5b\apps\desktop\src-tauri\target\pyinstaller-work\core_sidecar\xref-core_sidecar.html
+131382 INFO: checking PYZ
+131382 INFO: Building PYZ because PYZ-01.toc is non existent
+131382 INFO: Building PYZ (ZlibArchive) G:\CODEX\New Manga.worktrees\P03-review-prep-85482c5b\apps\desktop\src-tauri\target\pyinstaller-work\core_sidecar\PYZ-01.pyz
+152788 INFO: Building PYZ (ZlibArchive) G:\CODEX\New Manga.worktrees\P03-review-prep-85482c5b\apps\desktop\src-tauri\target\pyinstaller-work\core_sidecar\PYZ-01.pyz completed successfully.
+152951 INFO: checking PKG
+152951 INFO: Building PKG because PKG-01.toc is non existent
+152951 INFO: Building PKG (CArchive) core_service.pkg
+152995 INFO: Building PKG (CArchive) core_service.pkg completed successfully.
+152997 INFO: Bootloader G:\CODEX\New Manga.task-envs\m2ac5-build\Lib\site-packages\PyInstaller\bootloader\Windows-64bit-intel\run.exe
+152997 INFO: checking EXE
+152997 INFO: Building EXE because EXE-01.toc is non existent
+152997 INFO: Building EXE from EXE-01.toc
+152997 INFO: Copying bootloader EXE to G:\CODEX\New Manga.worktrees\P03-review-prep-85482c5b\apps\desktop\src-tauri\target\pyinstaller-work\core_sidecar\core_service.exe
+153025 INFO: Copying icon to EXE
+153048 INFO: Copying 0 resources to EXE
+153048 INFO: Embedding manifest in EXE
+153073 INFO: Appending PKG archive to EXE
+153134 INFO: Fixing EXE headers
+153451 INFO: Building EXE from EXE-01.toc completed successfully.
+153452 INFO: Module search paths (PYTHONPATH):
+['G:\\CODEX\\New Manga.worktrees\\P03-review-prep-85482c5b',
+ 'C:\\Users\\49745\\AppData\\Local\\Programs\\Python\\Python312\\python312.zip',
+ 'C:\\Users\\49745\\AppData\\Local\\Programs\\Python\\Python312\\DLLs',
+ 'C:\\Users\\49745\\AppData\\Local\\Programs\\Python\\Python312\\Lib',
+ 'C:\\Users\\49745\\AppData\\Local\\Programs\\Python\\Python312',
+ 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build',
+ 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages',
+ 'G:\\CODEX\\New '
+ 'Manga.worktrees\\P03-review-prep-85482c5b\\packaging\\m2ac5\\entries',
+ 'G:\\CODEX\\New Manga.worktrees\\P03-review-prep-85482c5b\\src',
+ 'G:\\CODEX\\New '
+ 'Manga.worktrees\\P03-review-prep-85482c5b\\packaging\\m2ac5\\entries',
+ 'G:\\CODEX\\New Manga.worktrees\\P03-review-prep-85482c5b\\src',
+ 'G:\\CODEX\\New '
+ 'Manga.worktrees\\P03-review-prep-85482c5b\\packaging\\m2ac5\\entries',
+ 'G:\\CODEX\\New Manga.worktrees\\P03-review-prep-85482c5b\\src']
+153763 INFO: checking Analysis
+153763 INFO: Building Analysis because Analysis-02.toc is non existent
+153763 INFO: Looking for Python shared library...
+153763 INFO: Using Python shared library: C:\Users\49745\AppData\Local\Programs\Python\Python312\python312.dll
+153763 INFO: Running Analysis Analysis-02.toc
+153763 INFO: Target bytecode optimization level: 1
+153763 INFO: Reusing cached module dependency graph...
+153785 INFO: Initializing module graph hook caches...
+153806 INFO: Analyzing G:\CODEX\New Manga.worktrees\P03-review-prep-85482c5b\packaging\m2ac5\entries\entry_acceptance_bridge.py
+153898 INFO: Processing standard module hook 'hook-platform.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\PyInstaller\\hooks'
+153958 INFO: Processing standard module hook 'hook-sqlite3.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\PyInstaller\\hooks'
+154246 INFO: Processing standard module hook 'hook-math.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\PyInstaller\\hooks'
+154388 INFO: Processing standard module hook 'hook-difflib.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\PyInstaller\\hooks'
+154388 INFO: Processing standard module hook 'hook-heapq.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\PyInstaller\\hooks'
+154512 INFO: Processing standard module hook 'hook-PySide6.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\PyInstaller\\hooks'
+154517 INFO: Processing standard module hook 'hook-shiboken6.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\PyInstaller\\hooks'
+154654 INFO: Processing standard module hook 'hook-PySide6.QtNetwork.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\PyInstaller\\hooks'
+155531 INFO: Processing standard module hook 'hook-PySide6.QtCore.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\PyInstaller\\hooks'
+156240 INFO: Processing standard module hook 'hook-PySide6.QtGui.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\PyInstaller\\hooks'
+156633 INFO: Processing standard module hook 'hook-pypdfium2.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\_pyinstaller_hooks_contrib\\stdhooks'
+156651 INFO: Processing standard module hook 'hook-pypdfium2_raw.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\_pyinstaller_hooks_contrib\\stdhooks'
+156674 INFO: Processing standard module hook 'hook-_ctypes.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\PyInstaller\\hooks'
+156797 INFO: Processing standard module hook 'hook-PIL.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\PyInstaller\\hooks'
+156890 INFO: Processing standard module hook 'hook-PIL.Image.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\PyInstaller\\hooks'
+157178 INFO: Processing standard module hook 'hook-numpy.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\PyInstaller\\hooks'
+157325 INFO: Processing standard module hook 'hook-pickle.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\PyInstaller\\hooks'
+157392 INFO: Processing pre-safe-import-module hook 'hook-typing_extensions.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\PyInstaller\\hooks\\pre_safe_import_module'
+157562 INFO: Processing standard module hook 'hook-multiprocessing.util.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\PyInstaller\\hooks'
+157779 INFO: Processing standard module hook 'hook-xml.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\PyInstaller\\hooks'
+158680 INFO: Processing standard module hook 'hook-sysconfig.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\PyInstaller\\hooks'
+158828 INFO: Processing standard module hook 'hook-webbrowser.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\PyInstaller\\hooks'
+160390 INFO: Processing standard module hook 'hook-xml.etree.cElementTree.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\PyInstaller\\hooks'
+160526 INFO: Processing standard module hook 'hook-PIL.ImageFilter.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\PyInstaller\\hooks'
+160903 INFO: Processing pre-safe-import-module hook 'hook-importlib_resources.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\PyInstaller\\hooks\\pre_safe_import_module'
+160950 INFO: Processing standard module hook 'hook-cv2.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\_pyinstaller_hooks_contrib\\stdhooks'
+161350 INFO: Processing standard module hook 'hook-scipy.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\PyInstaller\\hooks'
+161930 INFO: Processing standard module hook 'hook-scipy.linalg.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\PyInstaller\\hooks'
+162082 INFO: Processing standard module hook 'hook-torch.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\_pyinstaller_hooks_contrib\\stdhooks'
+1258 WARNING: Failed to collect submodules for 'torch.utils.tensorboard' because importing 'torch.utils.tensorboard' raised: ModuleNotFoundError: No module named 'tensorboard'
+G:\CODEX\New Manga.task-envs\m2ac5-build\Lib\site-packages\PyInstaller\utils\hooks\__init__.py:665: DeprecationWarning: `torch.distributed._sharding_spec` will be deprecated, use `torch.distributed._shard.sharding_spec` instead
+  __import__(name)
+G:\CODEX\New Manga.task-envs\m2ac5-build\Lib\site-packages\PyInstaller\utils\hooks\__init__.py:665: DeprecationWarning: `torch.distributed._sharded_tensor` will be deprecated, use `torch.distributed._shard.sharded_tensor` instead
+  __import__(name)
+G:\CODEX\New Manga.task-envs\m2ac5-build\Lib\site-packages\PyInstaller\utils\hooks\__init__.py:665: DeprecationWarning: `torch.distributed._shard.checkpoint` will be deprecated, use `torch.distributed.checkpoint` instead
+  __import__(name)
+174027 INFO: hook-torch: this torch build does not depend on MKL...
+180794 INFO: Processing standard module hook 'hook-scipy.special._ufuncs.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\PyInstaller\\hooks'
+183525 INFO: Processing standard module hook 'hook-encodings.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\PyInstaller\\hooks'
+187781 INFO: Processing pre-safe-import-module hook 'hook-win32com.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\_pyinstaller_hooks_contrib\\pre_safe_import_module'
+194232 INFO: Processing standard module hook 'hook-onnxruntime.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\_pyinstaller_hooks_contrib\\stdhooks'
+194281 INFO: Processing pre-safe-import-module hook 'hook-tensorflow.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\_pyinstaller_hooks_contrib\\pre_safe_import_module'
+198131 INFO: Processing standard module hook 'hook-scipy.spatial._ckdtree.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\PyInstaller\\hooks'
+198589 INFO: Processing standard module hook 'hook-scipy.spatial.transform.rotation.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\PyInstaller\\hooks'
+199333 INFO: Processing standard module hook 'hook-scipy.stats._stats.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\PyInstaller\\hooks'
+199756 INFO: Processing standard module hook 'hook-scipy.sparse.csgraph.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\PyInstaller\\hooks'
+203132 INFO: Processing standard module hook 'hook-torchvision.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\_pyinstaller_hooks_contrib\\stdhooks'
+203197 INFO: Processing standard module hook 'hook-torchvision.io.image.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\_pyinstaller_hooks_contrib\\stdhooks'
+203763 INFO: Processing standard module hook 'hook-scipy.io.matlab.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\PyInstaller\\hooks'
+204035 INFO: Processing standard module hook 'hook-h5py.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\_pyinstaller_hooks_contrib\\stdhooks'
+210454 INFO: Processing standard module hook 'hook-jinja2.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\_pyinstaller_hooks_contrib\\stdhooks'
+212432 INFO: Processing standard module hook 'hook-rich.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\_pyinstaller_hooks_contrib\\stdhooks'
+212979 INFO: Processing standard module hook 'hook-pygments.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\PyInstaller\\hooks'
+215420 INFO: Processing standard module hook 'hook-fsspec.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\_pyinstaller_hooks_contrib\\stdhooks'
+215945 INFO: Processing pre-safe-import-module hook 'hook-backports.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\PyInstaller\\hooks\\pre_safe_import_module'
+215945 INFO: Setuptools: 'backports' appears to be a full setuptools-vendored copy - creating alias to 'setuptools._vendor.backports'!
+220002 INFO: Processing standard module hook 'hook-scipy.special._ellip_harm_2.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\PyInstaller\\hooks'
+221188 INFO: Processing standard module hook 'hook-xml.dom.domreg.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\PyInstaller\\hooks'
+223733 INFO: Processing standard module hook 'hook-shapely.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\_pyinstaller_hooks_contrib\\stdhooks'
+224576 INFO: Processing standard module hook 'hook-langdetect.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\_pyinstaller_hooks_contrib\\stdhooks'
+224633 INFO: Processing pre-safe-import-module hook 'hook-six.moves.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\PyInstaller\\hooks\\pre_safe_import_module'
+225127 INFO: Processing standard module hook 'hook-certifi.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\_pyinstaller_hooks_contrib\\stdhooks'
+225192 INFO: Processing standard module hook 'hook-anyio.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\_pyinstaller_hooks_contrib\\stdhooks'
+227555 INFO: Processing pre-safe-import-module hook 'hook-packaging.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\PyInstaller\\hooks\\pre_safe_import_module'
+228137 INFO: Processing module hooks (post-graph stage)...
+231588 INFO: Processing standard module hook 'hook-transformers.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\_pyinstaller_hooks_contrib\\stdhooks'
+234204 INFO: Processing standard module hook 'hook-regex.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\_pyinstaller_hooks_contrib\\stdhooks'
+257069 WARNING: Hidden import "torchvision.image" not found!
+257069 WARNING: Hidden import "torchvision._C" not found!
+257296 INFO: Processing standard module hook 'hook-PIL.SpiderImagePlugin.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\PyInstaller\\hooks'
+258942 WARNING: Hidden import "scipy.special._cdflib" not found!
+258999 INFO: Performing binary vs. data reclassification (459 entries)
+259092 INFO: Looking for ctypes DLLs
+259275 WARNING: Ignoring /usr/lib64/libgomp.so.1 imported from G:\CODEX\New Manga.task-envs\m2ac5-build\Lib\site-packages\torch\_inductor\codecache.py - only basenames are supported with ctypes imports!
+259685 INFO: Analyzing run-time hooks ...
+259716 INFO: Including run-time hook 'pyi_rth_inspect.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\PyInstaller\\hooks\\rthooks'
+259717 INFO: Including run-time hook 'pyi_rth_pyside6.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\PyInstaller\\hooks\\rthooks'
+259719 INFO: Processing pre-find-module-path hook 'hook-_pyi_rth_utils.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\PyInstaller\\hooks\\pre_find_module_path'
+259720 INFO: Processing standard module hook 'hook-_pyi_rth_utils.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\PyInstaller\\hooks'
+259722 INFO: Including run-time hook 'pyi_rth_pkgutil.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\PyInstaller\\hooks\\rthooks'
+259725 INFO: Including run-time hook 'pyi_rth_multiprocessing.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\PyInstaller\\hooks\\rthooks'
+259821 INFO: Creating base_library.zip...
+260013 INFO: Looking for dynamic libraries
+G:\CODEX\New Manga.task-envs\m2ac5-build\Lib\site-packages\PyInstaller\building\build_main.py:227: DeprecationWarning: `torch.distributed._sharding_spec` will be deprecated, use `torch.distributed._shard.sharding_spec` instead
+  __import__(package)
+G:\CODEX\New Manga.task-envs\m2ac5-build\Lib\site-packages\PyInstaller\building\build_main.py:227: DeprecationWarning: `torch.distributed._sharded_tensor` will be deprecated, use `torch.distributed._shard.sharded_tensor` instead
+  __import__(package)
+G:\CODEX\New Manga.task-envs\m2ac5-build\Lib\site-packages\PyInstaller\building\build_main.py:227: DeprecationWarning: `torch.distributed._shard.checkpoint` will be deprecated, use `torch.distributed.checkpoint` instead
+  __import__(package)
+273098 INFO: Extra DLL search directories (AddDllDirectory): ['G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\shiboken6', 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\numpy.libs', 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\torch\\lib', 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\scipy.libs', 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\torchvision', 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\torchvision', 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\cv2\\../../x64/vc17/bin', 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\onnx.libs', 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\ml_dtypes.libs', 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\shapely.libs', 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\rapidfuzz.libs']
+273098 INFO: Extra DLL search directories (PATH): ['G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\cv2\\../../x64/vc17/bin', 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\PySide6']
+277395 INFO: Warnings written to G:\CODEX\New Manga.worktrees\P03-review-prep-85482c5b\apps\desktop\src-tauri\target\pyinstaller-work\core_sidecar\warn-core_sidecar.txt
+278119 INFO: Graph cross-reference written to G:\CODEX\New Manga.worktrees\P03-review-prep-85482c5b\apps\desktop\src-tauri\target\pyinstaller-work\core_sidecar\xref-core_sidecar.html
+278415 INFO: checking PYZ
+278415 INFO: Building PYZ because PYZ-02.toc is non existent
+278415 INFO: Building PYZ (ZlibArchive) G:\CODEX\New Manga.worktrees\P03-review-prep-85482c5b\apps\desktop\src-tauri\target\pyinstaller-work\core_sidecar\PYZ-02.pyz
+300815 INFO: Building PYZ (ZlibArchive) G:\CODEX\New Manga.worktrees\P03-review-prep-85482c5b\apps\desktop\src-tauri\target\pyinstaller-work\core_sidecar\PYZ-02.pyz completed successfully.
+301082 INFO: checking PKG
+301082 INFO: Building PKG because PKG-02.toc is non existent
+301084 INFO: Building PKG (CArchive) acceptance_bridge.pkg
+301135 INFO: Building PKG (CArchive) acceptance_bridge.pkg completed successfully.
+301135 INFO: Bootloader G:\CODEX\New Manga.task-envs\m2ac5-build\Lib\site-packages\PyInstaller\bootloader\Windows-64bit-intel\run.exe
+301135 INFO: checking EXE
+301135 INFO: Building EXE because EXE-02.toc is non existent
+301135 INFO: Building EXE from EXE-02.toc
+301135 INFO: Copying bootloader EXE to G:\CODEX\New Manga.worktrees\P03-review-prep-85482c5b\apps\desktop\src-tauri\target\pyinstaller-work\core_sidecar\acceptance_bridge.exe
+301164 INFO: Copying icon to EXE
+301188 INFO: Copying 0 resources to EXE
+301188 INFO: Embedding manifest in EXE
+301213 INFO: Appending PKG archive to EXE
+301269 INFO: Fixing EXE headers
+301594 INFO: Building EXE from EXE-02.toc completed successfully.
+301596 INFO: Module search paths (PYTHONPATH):
+['G:\\CODEX\\New Manga.worktrees\\P03-review-prep-85482c5b',
+ 'C:\\Users\\49745\\AppData\\Local\\Programs\\Python\\Python312\\python312.zip',
+ 'C:\\Users\\49745\\AppData\\Local\\Programs\\Python\\Python312\\DLLs',
+ 'C:\\Users\\49745\\AppData\\Local\\Programs\\Python\\Python312\\Lib',
+ 'C:\\Users\\49745\\AppData\\Local\\Programs\\Python\\Python312',
+ 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build',
+ 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages',
+ 'G:\\CODEX\\New '
+ 'Manga.worktrees\\P03-review-prep-85482c5b\\packaging\\m2ac5\\entries',
+ 'G:\\CODEX\\New Manga.worktrees\\P03-review-prep-85482c5b\\src',
+ 'G:\\CODEX\\New '
+ 'Manga.worktrees\\P03-review-prep-85482c5b\\packaging\\m2ac5\\entries',
+ 'G:\\CODEX\\New Manga.worktrees\\P03-review-prep-85482c5b\\src',
+ 'G:\\CODEX\\New '
+ 'Manga.worktrees\\P03-review-prep-85482c5b\\packaging\\m2ac5\\entries',
+ 'G:\\CODEX\\New Manga.worktrees\\P03-review-prep-85482c5b\\src',
+ 'G:\\CODEX\\New '
+ 'Manga.worktrees\\P03-review-prep-85482c5b\\packaging\\m2ac5\\entries',
+ 'G:\\CODEX\\New Manga.worktrees\\P03-review-prep-85482c5b\\src']
+301931 INFO: checking Analysis
+301931 INFO: Building Analysis because Analysis-03.toc is non existent
+301931 INFO: Looking for Python shared library...
+301931 INFO: Using Python shared library: C:\Users\49745\AppData\Local\Programs\Python\Python312\python312.dll
+301931 INFO: Running Analysis Analysis-03.toc
+301931 INFO: Target bytecode optimization level: 1
+301931 INFO: Reusing cached module dependency graph...
+301946 INFO: Initializing module graph hook caches...
+301964 INFO: Analyzing G:\CODEX\New Manga.worktrees\P03-review-prep-85482c5b\packaging\m2ac5\entries\entry_catalog_loader.py
+302010 INFO: Processing standard module hook 'hook-sqlite3.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\PyInstaller\\hooks'
+302328 INFO: Processing standard module hook 'hook-platform.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\PyInstaller\\hooks'
+302387 INFO: Processing standard module hook 'hook-_ctypes.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\PyInstaller\\hooks'
+302408 INFO: Processing standard module hook 'hook-math.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\PyInstaller\\hooks'
+302447 INFO: Processing module hooks (post-graph stage)...
+302447 INFO: Processing standard module hook 'hook-encodings.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\PyInstaller\\hooks'
+302707 INFO: Processing standard module hook 'hook-heapq.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\PyInstaller\\hooks'
+302708 INFO: Processing standard module hook 'hook-pickle.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\PyInstaller\\hooks'
+302722 INFO: Performing binary vs. data reclassification (1 entries)
+302724 INFO: Looking for ctypes DLLs
+302736 INFO: Analyzing run-time hooks ...
+302736 INFO: Including run-time hook 'pyi_rth_inspect.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\PyInstaller\\hooks\\rthooks'
+302742 INFO: Creating base_library.zip...
+302949 INFO: Looking for dynamic libraries
+303118 INFO: Extra DLL search directories (AddDllDirectory): []
+303118 INFO: Extra DLL search directories (PATH): []
+303428 INFO: Warnings written to G:\CODEX\New Manga.worktrees\P03-review-prep-85482c5b\apps\desktop\src-tauri\target\pyinstaller-work\core_sidecar\warn-core_sidecar.txt
+303445 INFO: Graph cross-reference written to G:\CODEX\New Manga.worktrees\P03-review-prep-85482c5b\apps\desktop\src-tauri\target\pyinstaller-work\core_sidecar\xref-core_sidecar.html
+303462 INFO: checking PYZ
+303462 INFO: Building PYZ because PYZ-03.toc is non existent
+303462 INFO: Building PYZ (ZlibArchive) G:\CODEX\New Manga.worktrees\P03-review-prep-85482c5b\apps\desktop\src-tauri\target\pyinstaller-work\core_sidecar\PYZ-03.pyz
+303909 INFO: Building PYZ (ZlibArchive) G:\CODEX\New Manga.worktrees\P03-review-prep-85482c5b\apps\desktop\src-tauri\target\pyinstaller-work\core_sidecar\PYZ-03.pyz completed successfully.
+304033 INFO: checking PKG
+304034 INFO: Building PKG because PKG-03.toc is non existent
+304034 INFO: Building PKG (CArchive) catalog_loader.pkg
+304050 INFO: Building PKG (CArchive) catalog_loader.pkg completed successfully.
+304051 INFO: Bootloader G:\CODEX\New Manga.task-envs\m2ac5-build\Lib\site-packages\PyInstaller\bootloader\Windows-64bit-intel\run.exe
+304051 INFO: checking EXE
+304051 INFO: Building EXE because EXE-03.toc is non existent
+304051 INFO: Building EXE from EXE-03.toc
+304051 INFO: Copying bootloader EXE to G:\CODEX\New Manga.worktrees\P03-review-prep-85482c5b\apps\desktop\src-tauri\target\pyinstaller-work\core_sidecar\catalog_loader.exe
+304079 INFO: Copying icon to EXE
+304105 INFO: Copying 0 resources to EXE
+304105 INFO: Embedding manifest in EXE
+304128 INFO: Appending PKG archive to EXE
+304154 INFO: Fixing EXE headers
+304275 INFO: Building EXE from EXE-03.toc completed successfully.
+304276 INFO: Module search paths (PYTHONPATH):
+['G:\\CODEX\\New Manga.worktrees\\P03-review-prep-85482c5b',
+ 'C:\\Users\\49745\\AppData\\Local\\Programs\\Python\\Python312\\python312.zip',
+ 'C:\\Users\\49745\\AppData\\Local\\Programs\\Python\\Python312\\DLLs',
+ 'C:\\Users\\49745\\AppData\\Local\\Programs\\Python\\Python312\\Lib',
+ 'C:\\Users\\49745\\AppData\\Local\\Programs\\Python\\Python312',
+ 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build',
+ 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages',
+ 'G:\\CODEX\\New '
+ 'Manga.worktrees\\P03-review-prep-85482c5b\\packaging\\m2ac5\\entries',
+ 'G:\\CODEX\\New Manga.worktrees\\P03-review-prep-85482c5b\\src',
+ 'G:\\CODEX\\New '
+ 'Manga.worktrees\\P03-review-prep-85482c5b\\packaging\\m2ac5\\entries',
+ 'G:\\CODEX\\New Manga.worktrees\\P03-review-prep-85482c5b\\src',
+ 'G:\\CODEX\\New '
+ 'Manga.worktrees\\P03-review-prep-85482c5b\\packaging\\m2ac5\\entries',
+ 'G:\\CODEX\\New Manga.worktrees\\P03-review-prep-85482c5b\\src',
+ 'G:\\CODEX\\New '
+ 'Manga.worktrees\\P03-review-prep-85482c5b\\packaging\\m2ac5\\entries',
+ 'G:\\CODEX\\New Manga.worktrees\\P03-review-prep-85482c5b\\src',
+ 'G:\\CODEX\\New '
+ 'Manga.worktrees\\P03-review-prep-85482c5b\\packaging\\m2ac5\\entries',
+ 'G:\\CODEX\\New Manga.worktrees\\P03-review-prep-85482c5b\\src']
+304607 INFO: checking Analysis
+304607 INFO: Building Analysis because Analysis-04.toc is non existent
+304607 INFO: Looking for Python shared library...
+304607 INFO: Using Python shared library: C:\Users\49745\AppData\Local\Programs\Python\Python312\python312.dll
+304607 INFO: Running Analysis Analysis-04.toc
+304607 INFO: Target bytecode optimization level: 1
+304607 INFO: Reusing cached module dependency graph...
+304629 INFO: Initializing module graph hook caches...
+304645 INFO: Analyzing G:\CODEX\New Manga.worktrees\P03-review-prep-85482c5b\packaging\m2ac5\entries\entry_sfx_detect_probe.py
+304706 INFO: Processing standard module hook 'hook-sqlite3.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\PyInstaller\\hooks'
+304983 INFO: Processing standard module hook 'hook-platform.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\PyInstaller\\hooks'
+305662 INFO: Processing standard module hook 'hook-math.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\PyInstaller\\hooks'
+305721 INFO: Processing standard module hook 'hook-numpy.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\PyInstaller\\hooks'
+305894 INFO: Processing standard module hook 'hook-pickle.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\PyInstaller\\hooks'
+305988 INFO: Processing pre-safe-import-module hook 'hook-typing_extensions.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\PyInstaller\\hooks\\pre_safe_import_module'
+306189 INFO: Processing standard module hook 'hook-heapq.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\PyInstaller\\hooks'
+306209 INFO: Processing standard module hook 'hook-multiprocessing.util.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\PyInstaller\\hooks'
+306297 INFO: Processing standard module hook 'hook-xml.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\PyInstaller\\hooks'
+306485 INFO: Processing standard module hook 'hook-_ctypes.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\PyInstaller\\hooks'
+307051 INFO: Processing standard module hook 'hook-sysconfig.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\PyInstaller\\hooks'
+307204 INFO: Processing standard module hook 'hook-webbrowser.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\PyInstaller\\hooks'
+308097 INFO: Processing standard module hook 'hook-difflib.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\PyInstaller\\hooks'
+308768 INFO: Processing standard module hook 'hook-xml.etree.cElementTree.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\PyInstaller\\hooks'
+308878 INFO: Processing pre-safe-import-module hook 'hook-importlib_resources.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\PyInstaller\\hooks\\pre_safe_import_module'
+308922 INFO: Processing standard module hook 'hook-cv2.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\_pyinstaller_hooks_contrib\\stdhooks'
+309304 INFO: Processing standard module hook 'hook-scipy.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\PyInstaller\\hooks'
+309854 INFO: Processing standard module hook 'hook-scipy.linalg.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\PyInstaller\\hooks'
+310007 INFO: Processing standard module hook 'hook-torch.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\_pyinstaller_hooks_contrib\\stdhooks'
+1245 WARNING: Failed to collect submodules for 'torch.utils.tensorboard' because importing 'torch.utils.tensorboard' raised: ModuleNotFoundError: No module named 'tensorboard'
+G:\CODEX\New Manga.task-envs\m2ac5-build\Lib\site-packages\PyInstaller\utils\hooks\__init__.py:665: DeprecationWarning: `torch.distributed._sharding_spec` will be deprecated, use `torch.distributed._shard.sharding_spec` instead
+  __import__(name)
+G:\CODEX\New Manga.task-envs\m2ac5-build\Lib\site-packages\PyInstaller\utils\hooks\__init__.py:665: DeprecationWarning: `torch.distributed._sharded_tensor` will be deprecated, use `torch.distributed._shard.sharded_tensor` instead
+  __import__(name)
+G:\CODEX\New Manga.task-envs\m2ac5-build\Lib\site-packages\PyInstaller\utils\hooks\__init__.py:665: DeprecationWarning: `torch.distributed._shard.checkpoint` will be deprecated, use `torch.distributed.checkpoint` instead
+  __import__(name)
+321907 INFO: hook-torch: this torch build does not depend on MKL...
+329284 INFO: Processing standard module hook 'hook-scipy.special._ufuncs.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\PyInstaller\\hooks'
+331715 INFO: Processing standard module hook 'hook-PIL.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\PyInstaller\\hooks'
+331786 INFO: Processing standard module hook 'hook-PIL.Image.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\PyInstaller\\hooks'
+332159 INFO: Processing standard module hook 'hook-PIL.ImageFilter.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\PyInstaller\\hooks'
+332615 INFO: Processing standard module hook 'hook-encodings.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\PyInstaller\\hooks'
+336244 INFO: Processing pre-safe-import-module hook 'hook-win32com.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\_pyinstaller_hooks_contrib\\pre_safe_import_module'
+343291 INFO: Processing standard module hook 'hook-onnxruntime.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\_pyinstaller_hooks_contrib\\stdhooks'
+343367 INFO: Processing pre-safe-import-module hook 'hook-tensorflow.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\_pyinstaller_hooks_contrib\\pre_safe_import_module'
+347295 INFO: Processing standard module hook 'hook-scipy.spatial._ckdtree.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\PyInstaller\\hooks'
+347705 INFO: Processing standard module hook 'hook-scipy.spatial.transform.rotation.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\PyInstaller\\hooks'
+348435 INFO: Processing standard module hook 'hook-scipy.stats._stats.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\PyInstaller\\hooks'
+348862 INFO: Processing standard module hook 'hook-scipy.sparse.csgraph.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\PyInstaller\\hooks'
+352169 INFO: Processing standard module hook 'hook-torchvision.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\_pyinstaller_hooks_contrib\\stdhooks'
+352218 INFO: Processing standard module hook 'hook-torchvision.io.image.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\_pyinstaller_hooks_contrib\\stdhooks'
+352749 INFO: Processing standard module hook 'hook-scipy.io.matlab.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\PyInstaller\\hooks'
+353089 INFO: Processing standard module hook 'hook-h5py.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\_pyinstaller_hooks_contrib\\stdhooks'
+359615 INFO: Processing standard module hook 'hook-jinja2.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\_pyinstaller_hooks_contrib\\stdhooks'
+361398 INFO: Processing standard module hook 'hook-rich.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\_pyinstaller_hooks_contrib\\stdhooks'
+361950 INFO: Processing standard module hook 'hook-pygments.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\PyInstaller\\hooks'
+365058 INFO: Processing standard module hook 'hook-fsspec.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\_pyinstaller_hooks_contrib\\stdhooks'
+365534 INFO: Processing pre-safe-import-module hook 'hook-backports.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\PyInstaller\\hooks\\pre_safe_import_module'
+365534 INFO: Setuptools: 'backports' appears to be a full setuptools-vendored copy - creating alias to 'setuptools._vendor.backports'!
+369101 INFO: Processing standard module hook 'hook-scipy.special._ellip_harm_2.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\PyInstaller\\hooks'
+370223 INFO: Processing standard module hook 'hook-xml.dom.domreg.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\PyInstaller\\hooks'
+372733 INFO: Processing standard module hook 'hook-shapely.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\_pyinstaller_hooks_contrib\\stdhooks'
+373424 INFO: Processing standard module hook 'hook-langdetect.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\_pyinstaller_hooks_contrib\\stdhooks'
+373476 INFO: Processing pre-safe-import-module hook 'hook-six.moves.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\PyInstaller\\hooks\\pre_safe_import_module'
+373940 INFO: Processing standard module hook 'hook-certifi.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\_pyinstaller_hooks_contrib\\stdhooks'
+374003 INFO: Processing standard module hook 'hook-anyio.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\_pyinstaller_hooks_contrib\\stdhooks'
+376045 INFO: Processing pre-safe-import-module hook 'hook-packaging.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\PyInstaller\\hooks\\pre_safe_import_module'
+376254 INFO: Processing standard module hook 'hook-pypdfium2.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\_pyinstaller_hooks_contrib\\stdhooks'
+376276 INFO: Processing standard module hook 'hook-pypdfium2_raw.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\_pyinstaller_hooks_contrib\\stdhooks'
+376481 INFO: Processing module hooks (post-graph stage)...
+379506 INFO: Processing standard module hook 'hook-transformers.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\_pyinstaller_hooks_contrib\\stdhooks'
+382104 INFO: Processing standard module hook 'hook-regex.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\_pyinstaller_hooks_contrib\\stdhooks'
+404372 WARNING: Hidden import "torchvision.image" not found!
+404372 WARNING: Hidden import "torchvision._C" not found!
+404572 INFO: Processing standard module hook 'hook-PIL.SpiderImagePlugin.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\PyInstaller\\hooks'
+406364 WARNING: Hidden import "scipy.special._cdflib" not found!
+406422 INFO: Performing binary vs. data reclassification (343 entries)
+406487 INFO: Looking for ctypes DLLs
+406611 WARNING: Ignoring /usr/lib64/libgomp.so.1 imported from G:\CODEX\New Manga.task-envs\m2ac5-build\Lib\site-packages\torch\_inductor\codecache.py - only basenames are supported with ctypes imports!
+407023 INFO: Analyzing run-time hooks ...
+407058 INFO: Including run-time hook 'pyi_rth_pkgutil.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\PyInstaller\\hooks\\rthooks'
+407060 INFO: Including run-time hook 'pyi_rth_multiprocessing.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\PyInstaller\\hooks\\rthooks'
+407063 INFO: Including run-time hook 'pyi_rth_inspect.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\PyInstaller\\hooks\\rthooks'
+407133 INFO: Creating base_library.zip...
+407302 INFO: Looking for dynamic libraries
+G:\CODEX\New Manga.task-envs\m2ac5-build\Lib\site-packages\PyInstaller\building\build_main.py:227: DeprecationWarning: `torch.distributed._sharding_spec` will be deprecated, use `torch.distributed._shard.sharding_spec` instead
+  __import__(package)
+G:\CODEX\New Manga.task-envs\m2ac5-build\Lib\site-packages\PyInstaller\building\build_main.py:227: DeprecationWarning: `torch.distributed._sharded_tensor` will be deprecated, use `torch.distributed._shard.sharded_tensor` instead
+  __import__(package)
+G:\CODEX\New Manga.task-envs\m2ac5-build\Lib\site-packages\PyInstaller\building\build_main.py:227: DeprecationWarning: `torch.distributed._shard.checkpoint` will be deprecated, use `torch.distributed.checkpoint` instead
+  __import__(package)
+418370 INFO: Extra DLL search directories (AddDllDirectory): ['G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\numpy.libs', 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\torch\\lib', 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\scipy.libs', 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\torchvision', 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\torchvision', 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\cv2\\../../x64/vc17/bin', 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\onnx.libs', 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\ml_dtypes.libs', 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\shapely.libs', 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\rapidfuzz.libs']
+418370 INFO: Extra DLL search directories (PATH): ['G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\cv2\\../../x64/vc17/bin']
+421411 INFO: Warnings written to G:\CODEX\New Manga.worktrees\P03-review-prep-85482c5b\apps\desktop\src-tauri\target\pyinstaller-work\core_sidecar\warn-core_sidecar.txt
+422120 INFO: Graph cross-reference written to G:\CODEX\New Manga.worktrees\P03-review-prep-85482c5b\apps\desktop\src-tauri\target\pyinstaller-work\core_sidecar\xref-core_sidecar.html
+422392 INFO: checking PYZ
+422392 INFO: Building PYZ because PYZ-04.toc is non existent
+422393 INFO: Building PYZ (ZlibArchive) G:\CODEX\New Manga.worktrees\P03-review-prep-85482c5b\apps\desktop\src-tauri\target\pyinstaller-work\core_sidecar\PYZ-04.pyz
+444670 INFO: Building PYZ (ZlibArchive) G:\CODEX\New Manga.worktrees\P03-review-prep-85482c5b\apps\desktop\src-tauri\target\pyinstaller-work\core_sidecar\PYZ-04.pyz completed successfully.
+444833 INFO: checking PKG
+444833 INFO: Building PKG because PKG-04.toc is non existent
+444833 INFO: Building PKG (CArchive) sfx_detect_probe.pkg
+444879 INFO: Building PKG (CArchive) sfx_detect_probe.pkg completed successfully.
+444880 INFO: Bootloader G:\CODEX\New Manga.task-envs\m2ac5-build\Lib\site-packages\PyInstaller\bootloader\Windows-64bit-intel\run.exe
+444880 INFO: checking EXE
+444880 INFO: Building EXE because EXE-04.toc is non existent
+444880 INFO: Building EXE from EXE-04.toc
+444880 INFO: Copying bootloader EXE to G:\CODEX\New Manga.worktrees\P03-review-prep-85482c5b\apps\desktop\src-tauri\target\pyinstaller-work\core_sidecar\sfx_detect_probe.exe
+444908 INFO: Copying icon to EXE
+444932 INFO: Copying 0 resources to EXE
+444932 INFO: Embedding manifest in EXE
+444957 INFO: Appending PKG archive to EXE
+445016 INFO: Fixing EXE headers
+445310 INFO: Building EXE from EXE-04.toc completed successfully.
+445392 INFO: checking COLLECT
+445392 INFO: Building COLLECT because COLLECT-00.toc is non existent
+445392 INFO: Building COLLECT COLLECT-00.toc
+450611 INFO: Building COLLECT COLLECT-00.toc completed successfully.
+450721 INFO: Build complete! The results are available in: G:\CODEX\New Manga.worktrees\P03-review-prep-85482c5b\apps\desktop\src-tauri\target\core-sidecar
+warn-archive: G:\CODEX\New Manga.worktrees\P03-review-prep-85482c5b\apps\desktop\src-tauri\target\pyinstaller-work\core_sidecar\warn-core_sidecar.txt -> G:\CODEX\New Manga.worktrees\P03-review-prep-85482c5b\apps\desktop\src-tauri\target\pyinstaller-work\core_sidecar\warn-archive\warn-host_bridge.txt
+warn-archive: G:\CODEX\New Manga.worktrees\P03-review-prep-85482c5b\apps\desktop\src-tauri\target\pyinstaller-work\core_sidecar\warn-core_sidecar.txt -> G:\CODEX\New Manga.worktrees\P03-review-prep-85482c5b\apps\desktop\src-tauri\target\pyinstaller-work\core_sidecar\warn-archive\warn-core_service.txt
+closure assertion: core_service PYZ carries transformers, transformers.models.rt_detr, transformers.models.rt_detr_v2, onnxruntime (8594 pure modules) + extensions torchvision/_C_stable.pyd, torchvision/image_stable.pyd, onnxruntime_pybind11_state.pyd, DirectML.dll
+warn-archive: G:\CODEX\New Manga.worktrees\P03-review-prep-85482c5b\apps\desktop\src-tauri\target\pyinstaller-work\core_sidecar\warn-core_sidecar.txt -> G:\CODEX\New Manga.worktrees\P03-review-prep-85482c5b\apps\desktop\src-tauri\target\pyinstaller-work\core_sidecar\warn-archive\warn-acceptance_bridge.txt
+warn-archive: G:\CODEX\New Manga.worktrees\P03-review-prep-85482c5b\apps\desktop\src-tauri\target\pyinstaller-work\core_sidecar\warn-core_sidecar.txt -> G:\CODEX\New Manga.worktrees\P03-review-prep-85482c5b\apps\desktop\src-tauri\target\pyinstaller-work\core_sidecar\warn-archive\warn-catalog_loader.txt
+warn-archive: G:\CODEX\New Manga.worktrees\P03-review-prep-85482c5b\apps\desktop\src-tauri\target\pyinstaller-work\core_sidecar\warn-core_sidecar.txt -> G:\CODEX\New Manga.worktrees\P03-review-prep-85482c5b\apps\desktop\src-tauri\target\pyinstaller-work\core_sidecar\warn-archive\warn-sfx_detect_probe.txt
+closure assertion: sfx_detect_probe PYZ carries onnxruntime (8455 pure modules) + extensions onnxruntime_pybind11_state.pyd, DirectML.dll
+build_sidecar: verified 0 shadowing ICU binaries across bundle layout under G:\CODEX\New Manga.worktrees\P03-review-prep-85482c5b\apps\desktop\src-tauri\target\core-sidecar\core-sidecar (fail-closed guard satisfied)
+build_sidecar: manga weights bundled (3 files, sha256 verified) -> G:\CODEX\New Manga.worktrees\P03-review-prep-85482c5b\apps\desktop\src-tauri\target\core-sidecar\core-sidecar\models\detector\ogkalu-comic-text-and-bubble-detector
+build_sidecar: sfx weights bundled (yolo11s-seg.onnx, sha256 verified) -> G:\CODEX\New Manga.worktrees\P03-review-prep-85482c5b\apps\desktop\src-tauri\target\core-sidecar\core-sidecar\models\detector
+build_sidecar: OK -> G:\CODEX\New Manga.worktrees\P03-review-prep-85482c5b\apps\desktop\src-tauri\target\core-sidecar\core-sidecar (HEAD=a7161ca316052d14aefd24b920b146afd1969017, pyinstaller=6.22.3)
+EXIT=0
+--- independent built-output check ---
+Bundle: apps/desktop/src-tauri/target/core-sidecar/core-sidecar
+host_bridge.exe present=true bytes=1826431
+core_service.exe present=true bytes=68542970
+acceptance_bridge.exe present=true bytes=68530186
+catalog_loader.exe present=true bytes=1824326
+sfx_detect_probe.exe present=true bytes=67902901
+SFX weight: present=true bytes=40824255 SHA256=944e811410933ad6ff8d32446fcc9eef90fb463794e1874ce83035e83acd418d
+Output directory assertion: PASS
