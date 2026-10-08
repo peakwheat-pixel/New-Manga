@@ -1,5 +1,20 @@
 # Project Rebaseline Plan
 
+## 2026-10-08 正式释放：M2-PACKAGED-AC1-DLL-DIAG ready / DSH
+
+唯一Active Task=[M2-PACKAGED-AC1-DLL-DIAG](tasks/M2-PACKAGED-AC1-DLL-DIAG.md)，TaskStatus=ready，ExecutionState=IDLE。
+Owner=DeepSeek Harness，非作者Reviewer=Codex，Integrator=Codex。用户授权单独释放，只读诊断，未派发/未开工。
+硬依赖M2-DERIVED-GC-2 done@cea610ed；M2-RUNNER-SNAPSHOT-DEBT只是固定失败证据来源，仍blocked、暂停恢复。
+base=9063c317937b86bed1f6ff3e2f2c5d224dc10553；branch=agent/deepseek/M2-PACKAGED-AC1-DLL-DIAG；
+worktree=G:/CODEX/New Manga.worktrees/PACKAGED-AC1-DLL-DIAG-dsh，已分配clean/common-dir=G:/CODEX/New Manga/.git。
+冻结范围：诊断Task、自有verification与Handoff；产品/src/apps/tests/packaging/spec/依赖只读，
+不启动Legacy诊断、不绕过purged PATH Gate、不实施修复。原installer SHA已重新实测匹配，诊断测试NOT_RUN。
+原构建source_head=cfb5d2eecc4d8ab7a3159cdbb1d5812547bb5cd2；证据head=15cd788f10e83f6a1a215e71538bfa175b435785。
+交付失败DLL/闭包/环境证据或UNKNOWN、最小修复范围建议；Codex非作者Review后才集成诊断文档。
+[输入参数](../verification/M2-PACKAGED-AC1-DLL-DIAG/input-manifest.json)；实际release/synced HEAD在提交后追加恢复记录。
+下方runner debt的“唯一Active”及未释放诊断描述为历史checkpoint，不覆盖本段；它的FAIL/BLOCKED不变。
+
+
 ## 2026-10-08 当前阻塞：M2-RUNNER-SNAPSHOT-DEBT blocked（DSH r3后）
 
 唯一Active Task=[M2-RUNNER-SNAPSHOT-DEBT](tasks/M2-RUNNER-SNAPSHOT-DEBT.md)，Owner=Codex，
