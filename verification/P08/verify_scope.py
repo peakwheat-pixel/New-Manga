@@ -28,7 +28,8 @@ if __name__ == "__main__":
                 assert (doc.parent / target).is_file(), (doc, target)
     print("PASS: P08 local links resolve")
     task = (ROOT / "doc/tasks/P08.md").read_text(encoding="utf-8")
-    assert "status: in_review" in task and "integration_commit: null" in task and "reviewer: DeepSeek Harness" in task
+    state = re.search(r"^status: (changes_requested|in_review)$", task, re.M)
+    assert state and "integration_commit: null" in task and "reviewer: DeepSeek Harness" in task
     assert "reviewed_head: 490f9bd9637de0812a3ef3d9bbfa754868d5c15f" in task
     assert "approval: user_scope_confirmed_review_pending" in task
     scope = (HERE / "SCOPE_DRAFT.md").read_text(encoding="utf-8")
@@ -41,9 +42,9 @@ if __name__ == "__main__":
         assert f"P08-FMT-{fmt}" in scope
     print("PASS: all seven decisions recorded; all P0/P1 included, six P2 extensions deferred; extra formats mapped")
     plan = (ROOT / "doc/REBASELINE_PLAN.md").read_text(encoding="utf-8")
-    assert "| P08 | in_review |" in plan
+    assert f"| P08 | {state.group(1)} |" in plan
     assert len(re.findall(r"^\| P\d{2} \| proposed / 未释放 \|", plan, re.M)) == 20
-    print("PASS: P08 in formal review, 20 successors/candidates unreleased; no fabricated approval")
+    print(f"PASS: P08 {state.group(1)}, 20 successors/candidates unreleased; no fabricated approval")
     paths = ["src", "apps", "tests", "packaging", "doc/contracts", "doc/reviews",
              "verification/PROJECT-ROADMAP-20261008/task-inventory.csv"]
     assert not subprocess.check_output(["git", "-C", str(ROOT), "diff", "--name-only", BASE, "--", *paths]).strip()

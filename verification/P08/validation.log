@@ -84,3 +84,35 @@ EXIT=0
 command=git diff --check ab2f813c0ce311a6712002cafd852b9e7a258380 490f9bd9637de0812a3ef3d9bbfa754868d5c15f -- doc verification/P08 verification/PROJECT-ROADMAP-20261008
 No whitespace errors; EXIT=0
 DSH PowerShell checks: NOT_RUN by DSH; its command sandbox failed with SetNamedSecurityInfoW Win32 5. The DSH read/search tools remained available; Codex ran the exact-head commands above.
+
+Formal DSH Review return checkpoint
+UTC=2026-10-08T13:39:13+00:00
+reviewed_head=490f9bd9637de0812a3ef3d9bbfa754868d5c15f
+review_worktree=G:\CODEX\New Manga.worktrees\P08-dsh-review-490f9bd
+worktree_status=clean; common_dir=G:/CODEX/New Manga/.git
+reviewer=DeepSeek Harness (non-author); session=session-f663b6eb-7648-4750-b84d-41becd54737b
+review_cli=dsh --profile headless --json; session exit=0; review verdict=changes_requested
+findings=0 P0; 4 P1; 6 P2; 5 P3 observations; authoritative report=verification/P08/review-dsh-490f9bd.md
+report_sha256=490a0c539c9fe76b918cfb1a26918e114b39c5b61df9b6f597f391f76cb05890
+DSH shell/interpreter checks=NOT_RUN (PowerShell workspace ACL setup failed: SetNamedSecurityInfoW Win32 5); no DSH verification PASS claimed.
+P2-1 STATUS wording was corrected at checkpoint bde69d3ee3d21e4a2b0681c83887a6b99229d25a; awaiting independent re-review.
+Remaining findings will be closed in P08-owned documentation and verification paths before a new fixed-head review.
+
+Review-return checkpoint validation by Codex
+UTC=2026-10-08T13:39:13+00:00
+repo=G:\CODEX\New Manga; branch=main; common_dir=G:/CODEX/New Manga/.git
+live_HEAD=bde69d3ee3d21e4a2b0681c83887a6b99229d25a; Task_reviewed_head=490f9bd9637de0812a3ef3d9bbfa754868d5c15f
+worktree_status=pre-existing four foreign dirty paths plus the P08 report and authorized P08 checkpoint edits; no foreign path staged
+shell=PowerShell 7.6.6
+python=C:\Python314\python.exe (Python 3.14.6)
+command=python -B -X utf8 verification/P08/verify_scope.py
+PASS: 193 numbered D08 criteria, AC-SMOKE, all §68–79 gates and local links; P08 changes_requested; successors unreleased; zero production/contracts/Review/inventory changes
+Product tests/build/GUI/model calls: NOT_RUN (document Task)
+EXIT=0
+command=python -B -X utf8 verification/PROJECT-ROADMAP-20261008/verify_plan.py
+PASS: 196 historical nodes; 105 architecture/governance records are audit-base ancestors; 21 roadmap nodes unique, dependencies and graphs valid; local links resolve; zero production/code delta
+Product tests/build/GUI: NOT_RUN (planning-only)
+EXIT=0
+command=git diff --check
+No whitespace errors; EXIT=0 (PowerShell emitted only line-ending warnings for existing dirty/status files).
+Repair note: first verify_scope invocation exposed a missing capture group in the newly added status assertion; corrected it and reran both validators successfully before checkpointing.
