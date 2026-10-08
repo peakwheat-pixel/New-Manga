@@ -142,11 +142,12 @@ Rust host 侧对接（packaged 判定与 fail-closed 语义见
 ## 4. 验收 runner
 
 ```powershell
-"G:/CODEX/New Manga.task-envs/TASK-012-py312/Scripts/python.exe" packaging/m2ac5/run_clean_start_e2e.py
+# --output-dir 为必选参数，调用方须显式提供全新隔离的输出目录，防止意外覆盖历史证据
+"G:/CODEX/New Manga.task-envs/TASK-012-py312/Scripts/python.exe" packaging/m2ac5/run_clean_start_e2e.py --output-dir "verification/M2-AC5/raw/run-isolated"
 ```
 
 净化 PATH（剔除 python/venv/conda/WindowsApps）+ 清空 `M2RC1_*` → NSIS `/S /D=`
 静默安装 → 安装态 library probe（P2-2）→ probe/ac1/production 三模式 →
 安装目录零写入、宿主真实 %APPDATA% 字节不变（CS-Z4）、源文件零触碰、sidecar
-进程零残留。证据落 `verification/M2-AC5/raw/`。口径=本机 host simulation；
+进程零残留。证据落显式指定的 `--output-dir` 隔离目录（runner 不再提供默认输出路径，省略参数将以 usage error / exit 2 报错退出，以保护历史 raw 证据）。口径=本机 host simulation；
 真干净 Windows 覆盖属 M2 Release Gate（NOT_RUN）。

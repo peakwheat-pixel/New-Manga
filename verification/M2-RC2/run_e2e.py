@@ -24,10 +24,9 @@ Exercises the REAL sidecar launch path and the hardened command surface:
      gate failures, the RC1 R-03 rule)
 
 Run (from the repository root):
-  python verification/M2-RC2/run_e2e.py [--exe PATH] [--skip-build] [--output-dir PATH]
+  python verification/M2-RC2/run_e2e.py --output-dir PATH [--exe PATH] [--skip-build]
 
-Artifacts land in --output-dir (default verification/M2-RC2/raw/)
-and a fresh runner-owned %TEMP%/m2rc2-lab-* directory.
+Artifacts land in --output-dir and a fresh runner-owned %TEMP%/m2rc2-lab-* directory.
 """
 
 from __future__ import annotations
@@ -494,14 +493,19 @@ def check_sidecar_dump(dump_path: Path, phase: str) -> tuple[bool, str]:
     return True, f"{phase}: {len(project)} project modules, all whitelisted"
 
 
-def main() -> int:
-    global RAW, LAB
+def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser()
     parser.add_argument("--exe", default=None, help="path to a prebuilt m2rc1-desktop.exe")
     # Each execution owns a fresh lab; --output-dir protects historical evidence.
     parser.add_argument("--skip-build", action="store_true", help="use the existing release build only")
-    parser.add_argument("--output-dir", type=Path, default=RAW, help="isolated evidence directory")
-    args = parser.parse_args()
+    parser.add_argument("--output-dir", type=Path, required=True, help="isolated evidence directory")
+    return parser
+
+
+def main(argv: list[str] | None = None) -> int:
+    global RAW, LAB
+    parser = build_parser()
+    args = parser.parse_args(argv)
     RAW = args.output_dir.resolve()
     LAB = Path(tempfile.mkdtemp(prefix="m2rc2-lab-"))
     RAW.mkdir(parents=True, exist_ok=True)
