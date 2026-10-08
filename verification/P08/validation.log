@@ -280,3 +280,17 @@ Product pytest/cargo/vitest/GUI/build/model calls=NOT_RUN (document-only Task)
 dsh --version=0.1.7-rc.2; connectivity probe `dsh headless "只回复两个字：收到"` returned `收到`, EXIT=0. Probe session not mounted.
 Dispatch state=R3 Handoff/Prompt prepared; actual review not yet dispatched; P08 remains changes_requested.
 Original external dirty paths remain untouched and unstaged; raw DSH probe had no project files.
+P08 R3 dispatch started
+UTC=2026-10-08T14:42:40+00:00
+reviewed_head=1ad05d99c924678f35a2558f6e15b6c548d92f09; base=ab2f813c0ce311a6712002cafd852b9e7a258380
+worktree=G:\CODEX\New Manga.worktrees\P08-dsh-review-1ad05d9-r3; detached; clean; common_dir=G:/CODEX/New Manga/.git
+command=dsh headless <verification/P08/DSH-REVIEW-PROMPT-R3.md contents>; working_directory=exact review worktree
+dispatch_state=running; Codex exec session_id=9823; DSH native session id pending; process exit pending
+stdout=verification/P08/dsh-r3.stdout.md; stderr=verification/P08/dsh-r3.stderr.log; task-created temporary files, not to commit; remove after extracting official final report
+dsh_version=0.1.7-rc.2; connectivity probe returned 收到, EXIT=0
+P08 state transitioned changes_requested -> in_review while formal non-author Review runs; P09-P20 remain unreleased
+command=python -B -X utf8 verification/P08/verify_scope.py after state sync; EXIT=0; 20 successors unreleased
+command=python -B -X utf8 verification/PROJECT-ROADMAP-20261008/verify_plan.py after state sync; EXIT=0; 196 snapshot nodes, 105 ancestry records, 21 plans; no cycles
+command=git diff --check; EXIT=0 (CRLF advisory warnings only for untouched original dirty file and P08 Handoff)
+command=git diff --name-only -- src apps tests packaging; EXIT=0; empty output
+Product pytest/cargo/vitest/GUI/build/model calls=NOT_RUN (document-only Task).
