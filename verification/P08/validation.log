@@ -294,3 +294,39 @@ command=python -B -X utf8 verification/PROJECT-ROADMAP-20261008/verify_plan.py a
 command=git diff --check; EXIT=0 (CRLF advisory warnings only for untouched original dirty file and P08 Handoff)
 command=git diff --name-only -- src apps tests packaging; EXIT=0; empty output
 Product pytest/cargo/vitest/GUI/build/model calls=NOT_RUN (document-only Task).
+P08 DSH R3 formal Review returned
+UTC=2026-10-08T14:47:31+00:00
+reviewed_head=1ad05d99c924678f35a2558f6e15b6c548d92f09; base=ab2f813c0ce311a6712002cafd852b9e7a258380
+review_worktree=G:\CODEX\New Manga.worktrees\P08-dsh-review-1ad05d9-r3; detached; clean; common_dir=G:/CODEX/New Manga/.git
+reviewer=DeepSeek Harness (non-author); dsh_version=0.1.7-rc.2
+command=dsh headless <verification/P08/DSH-REVIEW-PROMPT-R3.md contents>; Codex exec session_id=9823; process_exit=0
+DSH native session=session-655adbed-5a01-4526-b03e-580841a62f0f; mount_session.py --latest exit=0; mounted to workspace P08-dsh-review-1ad05d9-r3
+report=verification/P08/review-dsh-1ad05d99-r3.md; SHA256=4D4F6B3A9A18DDF4055A9A3862EF537CFDB90C7649F212D0E20C94AEBD58503C
+decision=changes_requested; 0 unresolved P0/P1; R1 P1 4/4 remain closed; R3 N-01..N-06 6/6 closed; new N-07 P2 and N-08 P3 open
+DSH shell/git/python checks=NOT_RUN: pwsh ACL setup failed SetNamedSecurityInfoW Win32 5; file-layer review completed; no escalation attempted. See report §§2,4.1,6.
+Product pytest/cargo/vitest/GUI/build/model calls=NOT_RUN (document-only Task).
+R3 raw output cleanup: official stdout Markdown copied to canonical report and SHA256 verified; task-created dsh-r3.stdout.md and dsh-r3.stderr.log removed. No DSH internal/raw stream retained; original external dirty paths remain untouched.
+P08 R3 result synchronization and N-07/N-08 author correction checkpoint validation
+local_time=2026-10-08 22:57:48 +08:00
+pre_commit_main_HEAD=1d6cfa275230c9986d0cc8c984e8b166cac6387b; Task=changes_requested; R3 reviewed_head=1ad05d99c924678f35a2558f6e15b6c548d92f09
+R3 session=session-655adbed-5a01-4526-b03e-580841a62f0f; CLI exit=0; decision=changes_requested; report SHA256=4D4F6B3A9A18DDF4055A9A3862EF537CFDB90C7649F212D0E20C94AEBD58503C
+R3 fixes: AC-EXPORT-001 now cites all five D08 formats and attributes PNG mapping to D1/D2; verify_scope.py enumerates filesystem doc/handoffs/P08-*.md for diff-check; current enumeration=3 Handoffs.
+command=python -B -X utf8 verification/P08/verify_scope.py; EXIT=0; 193 AC + AC-SMOKE + 12 gates, local links, D1-D7, protocol states, protected paths, full P08 diff-check passed
+command=python -B -X utf8 verification/PROJECT-ROADMAP-20261008/verify_plan.py; EXIT=0; 196 snapshot nodes, 105 ancestors, 21 planned nodes, Mermaid states and dependency graphs passed
+command=git diff --check ab2f813c0ce311a6712002cafd852b9e7a258380 -- authorized P08/governance paths; EXIT=0; only Git LF-to-CRLF advisory warnings
+command=git diff --name-only ab2f813c0ce311a6712002cafd852b9e7a258380 -- protected product/contracts/source paths; EXIT=0; empty
+command=Get-FileHash -Algorithm SHA256 verification/P08/review-dsh-1ad05d99-r3.md; matched archived report hash
+R3 exact review worktree remains detached and clean at 1ad05d99c924678f35a2558f6e15b6c548d92f09
+transient check recovery: verify_plan.py first returned EXIT=1 after the status diagram used a noncanonical P08 label; ROADMAP labels now match STATUS_LABELS and rerun EXIT=0
+DSH shell/git/python checks=NOT_RUN (SetNamedSecurityInfoW Win32 5); product pytest/cargo/vitest/GUI/build/model=NOT_RUN (document-only scope)
+Original external dirty paths remain untouched and unstaged.
+P08 N-07/N-08 candidate final navigation and validation sync
+local_time=2026-10-08 22:59:51 +08:00; main_HEAD_before_delivery=1d6cfa275230c9986d0cc8c984e8b166cac6387b
+Task state=changes_requested; N-07/N-08 author corrections present in candidate; R4 independent review pending
+command=python -B -X utf8 verification/P08/verify_scope.py; EXIT=0; P08 current state consistent; 3 P08 Handoffs dynamically included; 193 AC, AC-SMOKE, 12 gates and protected paths passed
+command=python -B -X utf8 verification/PROJECT-ROADMAP-20261008/verify_plan.py; EXIT=0; 196 historical nodes, 105 ancestors, 21 candidate nodes, all status labels/local links/dependency graph passed
+command=git diff --check ab2f813c0ce311a6712002cafd852b9e7a258380 -- authorized P08 and governance paths; EXIT=0; Git only emitted LF-to-CRLF advisory warnings
+command=git diff --name-only ab2f813c0ce311a6712002cafd852b9e7a258380 -- protected product/contracts/source paths; EXIT=0; empty
+current-state stale-reference scan across Plan/Status/Index/Roadmap/Task/P08 Resume/derived roadmap; no stale R3-running or N-07/N-08-waiting-for-author-fix hits
+R3 report SHA256 rechecked; exact DSH R3 review worktree remains detached/clean at 1ad05d99c924678f35a2558f6e15b6c548d92f09
+external author-owned .qoder-credits and historical dispatch dirty paths remain untouched and unstaged; product pytest/cargo/vitest/GUI/build/model=NOT_RUN

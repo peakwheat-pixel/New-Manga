@@ -139,7 +139,7 @@
 | AC-TRASH-002 | [P1] Batch Restore | P15 | DSH独立验证；Codex集成 | INCLUDED：用户D5/D7；维持D08现行要求 | NOT_RUN |
 | AC-TRASH-003 | [P0] 永久删除确认 | P15 | DSH独立验证；Codex集成 | INCLUDED：用户D5/D7；维持D08现行要求 | NOT_RUN |
 | AC-TRASH-004 | [P0] 源文件安全 | P15 | DSH独立验证；Codex集成 | INCLUDED：用户D5/D7；维持D08现行要求 | NOT_RUN |
-| AC-EXPORT-001 | [P0] 格式 | P16/P17；D08“单图”到PNG的映射按D1/D2用户选择并由P16契约冻结 | DSH独立验证；Codex集成 | INCLUDED：D08原文只写单图/ZIP；PNG是用户选定首发格式，不声称D08原文限定PNG | NOT_RUN |
+| AC-EXPORT-001 | [P0] 格式 | P16/P17；D08“单图”到PNG的映射按D1/D2用户选择并由P16契约冻结 | DSH独立验证；Codex集成 | INCLUDED：D08 AC-EXPORT-001列单图/ZIP/CBZ/PDF/文本五项；D1/D2将“单图”选为PNG，首发映射由P16契约冻结；D08未限定PNG | NOT_RUN |
 | AC-EXPORT-002 | [P1] ExportHistory | P16/P17 | DSH独立验证；Codex集成 | INCLUDED：用户D5/D7；维持D08现行要求 | NOT_RUN |
 | AC-EXPORT-003 | [P1] Stale 提示 | P16/P17 | DSH独立验证；Codex集成 | INCLUDED：用户D5/D7；维持D08现行要求 | NOT_RUN |
 | AC-READ-001 | [P0] Original / Translated | P16/P17 | DSH独立验证；Codex集成 | INCLUDED：用户D5/D7；维持D08现行要求 | NOT_RUN |

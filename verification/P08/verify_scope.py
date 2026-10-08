@@ -71,15 +71,17 @@ if __name__ == "__main__":
              "doc/AD-001_TARGET_DESKTOP_ARCHITECTURE.md",
              "verification/PROJECT-ROADMAP-20261008/task-inventory.csv"]
     assert not subprocess.check_output(["git", "-C", str(ROOT), "diff", "--name-only", BASE, "--", *paths]).strip()
+    handoffs = sorted(path.relative_to(ROOT).as_posix()
+                      for path in (ROOT / "doc/handoffs").glob("P08-*.md"))
+    assert handoffs, "P08 Handoff scope must not be empty"
     checked = subprocess.run(["git", "-C", str(ROOT), "diff", "--check", BASE, "--",
                               "verification/P08", "doc/tasks/P08.md", "doc/REBASELINE_PLAN.md",
                               "doc/STATUS.md", "doc/00_INDEX.md", "doc/12_ROADMAP.md",
-                              "doc/tasks/README.md", "doc/handoffs/P08-490f9bd9.md",
-                              "doc/handoffs/P08-31c26389-dsh-r2.md",
+                              "doc/tasks/README.md", *handoffs,
                               "verification/PROJECT-ROADMAP-20261008"],
                              capture_output=True, text=True)
     assert checked.returncode == 0, checked.stdout + checked.stderr
-    print("PASS: frozen product docs unchanged; full P08 subtree/task governance diff is whitespace-clean")
+    print(f"PASS: frozen product docs unchanged; full P08 subtree/task governance diff is whitespace-clean ({len(handoffs)} Handoffs)")
     for name in ("REBASELINE_PLAN.md", "STATUS.md"):
         old = subprocess.check_output(["git", "-C", str(ROOT), "show", f"{BASE}:doc/{name}"]).decode("utf-8").replace("\r\n", "\n")
         new = (ROOT / "doc" / name).read_text(encoding="utf-8")
