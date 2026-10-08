@@ -2,6 +2,7 @@
 
 时间：2026-10-09（Asia/Shanghai）；Task=`P03`；TaskStatus=`in_review`；ExecutionState=`TRACEABILITY_CANONICAL_NORMALIZATION_DELIVERED`。
 起点 delivery HEAD=`140a6686ef13e45d4c95de2c7929b61bdaef1d1e`；
+证据 delivery commit=`6d67c718f6b6ba710b11c8ac4b6d616ed00a2578`；
 NSIS build source HEAD=`29024a21939917c6d8eb15f1a2bb9ff46cd5bf23`；
 Fresh NSIS Installer SHA-256=`5a14c0a98008442bf4e3b70ec1fcc17373e33313cbadf69414fd9584a25a2fa0`（579,528,233 bytes）；
 复验 Packaged Gate=`PASS`（28/28 全量通过，EXIT=0）；
@@ -20,9 +21,11 @@ Handoff r3=[`doc/handoffs/P03-PACKAGED-SFX-ENTRY-140a6686-r3.md`](../handoffs/P0
 
 - 原始 `traceability-rerun/*.log` 原文件原字节完整保留，绝不修改或覆盖。
 - 在 `canonical-utf8/*.log` 建立了严格可读、零 NUL、保留完整执行记录与 EXIT=0 的规范副本。
-- 形式化 Token Grammar 证明 Body 严格由 `CHAR_TOKEN` 与 `NEWLINE_TOKEN` 构成，双向映射确定且 100% 可逆。
+- 形式化 Token Grammar（包含 `CHAR_TOKEN`、`NEWLINE_TOKEN`、`TRAILING_SPACE_TOKEN`）证明 Body 严格受控，双向映射确定且 100% 可逆。
+- 对 `03` 中两处原生控制台行尾空格引入无歧义可见符号 `U+2420 SYMBOL FOR SPACE`（`␠`），消除 `git diff --check` Whitespace 报错，实现检查 EXIT=0。
+- `verify_normalization.py` 为纯内存只读脚本，不写磁盘，运行前后 `git status` 零变化。
 - 运行 `verify_normalization.py` 完成全部 6 个日志文件的逆变换重构，证明重建字节与原始文件 100% 逐位一致（Bit-for-bit identical），零信息损失。
-- Manifest `07-encoding-normalization.json` 升级至 Schema 2.0，完整记录 Grammar 规范、转换规则、Token 统计与重构断言。
+- Manifest `07-encoding-normalization.json` 升级至 Schema 2.1，客观陈述编码事实，撤回未证实成因推测。
 - 证据派发文件 `antigravity-dispatch.json` 和 `antigravity-dispatch.stderr.log` 原样保留。
 - 本次为 evidence-only 修订，不改动产品代码、测试代码或构建配置；不重跑 Gate。
 
