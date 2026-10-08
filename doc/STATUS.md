@@ -1,10 +1,14 @@
 # Current Development Status
 
+## 2026-10-08 当前人员裁决：Qoder退出（已生效）
+
+用户指示已登记到[GOV-001追加范围](tasks/GOV-001.md)、AGENTS与协作协议；Qoder退出本项目任务分配、非作者Review、UI设计和额度故障转移名单。UI/UX/React/Tauri设计及实现由ZCode主责；Codex契约/协调/集成、DSH非作者审查。项目fallback=ZCode→Antigravity。当前仍无Active/released产品Task；人员变更不释放P08或后继实现。现行路线图/恢复指令已同步，原审计和历史署名保留；既有`.qoder-credits`及dispatch dirty未清理，也未终止全局应用。下一准备仍为Codex P08，ZCode后续单独设计Task。
+
 ## 2026-10-08 全项目规划盘点（PLAN_ONLY / CHECKPOINTED）
 
 用户本轮请求已完成三路GPT-6.1 Sol high代码/文档审计与整体依赖规划；这是规划交付，**当前仍无 Active / released产品Task**。审计输入=`main@e4242ecd`；[报告](../verification/PROJECT-ROADMAP-20261008/REPORT.md)、[中文图](../verification/PROJECT-ROADMAP-20261008/ROADMAP.md)、[196节点完整台账](../verification/PROJECT-ROADMAP-20261008/task-inventory.csv)、[恢复点](../verification/PROJECT-ROADMAP-20261008/RESUME.md)。167登记完成/文档交付＋29历史局限/归档，不作为产品完成率；新架构有界Task全部收口，正式四页与完整用户链仍缺。
 
-当前后续整体树以[Plan顶部P01–P21](REBASELINE_PLAN.md)为准，全部PLANNED_PLACEHOLDER。推荐Codex先准备P08完整产品范围/parity与验收，Qoder另做设计，DSH非作者Review；实施未释放，Reader/BJ13/缩略图等现行裁决保持。产品测试本轮NOT_RUN，仅规划/证据/依赖检查；历史PASS限定原commit/hash。额度恢复按RESUME核Git并复用已完成审计，不再全库重做；下方各ready/blocked段落继续作为历史恢复证据。
+当前后续整体树以[Plan顶部P01–P21](REBASELINE_PLAN.md)为准，全部PLANNED_PLACEHOLDER。推荐Codex先准备P08完整产品范围/parity与验收，ZCode另做设计，DSH非作者Review；实施未释放，Reader/BJ13/缩略图等现行裁决保持。产品测试本轮NOT_RUN，仅规划/证据/依赖检查；历史PASS限定原commit/hash。额度恢复按RESUME核Git并复用已完成审计，不再全库重做；下方各ready/blocked段落继续作为历史恢复证据。
 
 ## 2026-10-08 完成：M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD
 

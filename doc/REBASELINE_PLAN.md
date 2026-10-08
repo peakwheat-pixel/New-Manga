@@ -1,5 +1,9 @@
 # Project Rebaseline Plan
 
+## 2026-10-08 当前人员裁决：Qoder退出项目
+
+用户明确要求移除Qoder；追加治理范围已先登记于[GOV-001](tasks/GOV-001.md)，变更起点=`main@5b8aed4d`。活跃Agent为Codex、ZCode、DeepSeek Harness、Antigravity；Qoder不再承担Owner/Reviewer/设计或接管。下方当前P02/P07/P08/P12/P14/P15/P17及图、恢复指令已将未来UI/UX责任改为ZCode，DSH优先非作者审查，Codex保留契约/协调/集成。故障转移为ZCode→Antigravity，覆盖共享skill的Qoder默认候选。当前无Active/released产品Task，未启动新实现；历史Task/署名/原Review/台账/未提交内容原样保留。
+
 ## 2026-10-08 全项目整体路线（PLAN_ONLY，当前规划覆盖层）
 
 用户要求用 GPT-6.1 Sol high 深读代码和文档、整理全部任务与后续路线、绘中文图并保存额度恢复点。本轮三路审计使用该模型/effort；主协调会话配置保持实际值，不冒充已切换。审计输入=`main@e4242ecd419eb0eea098d2f63b40f709aa5caeea`。本段覆盖下方历史“下一步/ready/blocked”快照的排期解释，**不新增 Active、不释放产品实现、不改变已有产品裁决**。
@@ -17,22 +21,22 @@
 | 节点 | 简单中文描述 | 启动依赖/条件 | 建议责任方；非作者审查 | 完成 Gate / 边界 |
 |---|---|---|---|---|
 | P01 | 台账元数据与Review载体取证 | 当前基线；只读取证先行 | Codex；DSH | GC2 null、DETECT3错SHA、R2/SYNTH Review逐项处置；找不到标NOT_VERIFIED，不补造批准 |
-| P02 | 真UI行为、300ms刷新与对比度验证 | 现有Workbench；冻结harness范围 | Qoder；DSH | DOM/真实WebView取证，区分mock与实际；覆盖切页、写后刷新、键盘、token |
+| P02 | 真UI行为、300ms刷新与对比度验证 | 现有Workbench；冻结harness范围 | ZCode；DSH | DOM/真实WebView取证，区分mock与实际；覆盖切页、写后刷新、键盘、token |
 | P03 | Packaged第五SFX入口验收补齐 | PROBE-1/Runner Debt/Guard已done | Antigravity；DSH | 固定新source/installer hash；第五入口执行成功＋失败对照，不只assert文件存在；完整受影响Gate |
 | P04 | 生产命令族/桥接并发定向验证 | PAGE-NAV done；先检查现有断言 | Antigravity；DSH | 独立常量成员断言；同会话并发响应与协议核验候选先复现；无缺口不加修复 |
 | P05 | category/retryable契约注记收敛 | CATEGORY done；RC4-08等deferred | Codex；DSH | 文档一致与反向链接；不更改冻结错误语义 |
 | P06 | GC分发迁移安全补证 | GC2 done；受控旧版本/隔离根可用 | ZCode；DSH | G7旧runtime退出/所有入口参与证据；未知保留、迁移不满足BLOCKED；不重做GC2 |
-| P07 | 手输image读取/quiet-window交互修补 | P02证明剩余缺口；REGION-DEBOUNCE已done | Qoder；DSH | 最小实际缺口与判别用例；不重开已闭debounce |
-| P08 | 完整产品范围、四页设计与验收冻结 | 利用P01取证/明确处置（NOT_VERIFIED可保留）；用户产品裁决 | Codex管契约，Qoder另设计Task；DSH | 功能parity矩阵/质量阈值/数据保护/发布矩阵；格式/样式/维护边界逐项选入或deferred；Reader等明确不做项须新裁决；不扩一级页面 |
+| P07 | 手输image读取/quiet-window交互修补 | P02证明剩余缺口；REGION-DEBOUNCE已done | ZCode；DSH | 最小实际缺口与判别用例；不重开已闭debounce |
+| P08 | 完整产品范围、四页设计与验收冻结 | 利用P01取证/明确处置（NOT_VERIFIED可保留）；用户产品裁决 | Codex管契约，ZCode另设计Task；DSH | 功能parity矩阵/质量阈值/数据保护/发布矩阵；格式/样式/维护边界逐项选入或deferred；Reader等明确不做项须新裁决；不扩一级页面 |
 | P09 | 真实导入契约＋Core适配 | P08；先冻结来源能力，再实施 | Codex契约→Antigravity/ZCode实现；DSH | opaque受限来源、真实尺寸、Managed Copy、损坏/逃逸/部分失败；复用Import API与现有decoder |
 | P10 | Provider配置与凭据安全通道 | P08；secret exchange先冻结 | Codex契约→Antigravity实现；DSH | credential引用/存储/脱敏/启动配置与重启持久；secret不进入普通DTO/事件/日志 |
 | P11 | 长任务IPC生命周期契约 | P08；现有PipelineService语义 | Codex；DSH | StartRun快照/控制/恢复/错误/事件策略/有界工作；冻结接受时点；不造第二调度器 |
-| P12 | 书架＋导入的完整用户链 | P09；P08的Qoder设计通过 | Qoder；DSH | 建书/章节/选文件/导入报告/导航；React不得传任意路径或直接写DB |
+| P12 | 书架＋导入的完整用户链 | P09；P08的ZCode设计通过 | ZCode；DSH | 建书/章节/选文件/导入报告/导航；React不得传任意路径或直接写DB |
 | P13 | Pipeline后台执行与恢复接线 | P09＋P11；deterministic provider可先验收 | ZCode；DSH | durable accepted、执行/暂停取消重试/崩溃恢复、Lock/current/pinned保护；复用现有API |
-| P14 | 工作台启动/进度/控制/人工编辑闭环 | P13＋Qoder设计；编辑/Lock/Pin/region写命令先冻结 | Codex契约→ZCode/Antigravity Core→Qoder UI；DSH | 替换静态TaskProgress；真实快照查询与失效恢复；译文/Lock/Pin/区域增删几何修改按parity拆切片；expected revision冲突与人工修改保护 |
-| P15 | 完整设置页及所选维护能力 | P10＋Qoder设计；备份恢复需P13停写/排空设计 | Codex维护契约→Antigravity Core→Qoder UI；DSH | 使用冻结配置/凭据能力；诊断/回收站/DB备份或全库备份范围由P08选定；恢复先停写/连接回收/reassemble/rollback，不冒充全库备份；保留SFX语义 |
+| P14 | 工作台启动/进度/控制/人工编辑闭环 | P13＋ZCode设计；编辑/Lock/Pin/region写命令先冻结 | Codex契约→ZCode/Antigravity Core→ZCode UI；DSH | 替换静态TaskProgress；真实快照查询与失效恢复；译文/Lock/Pin/区域增删几何修改按parity拆切片；expected revision冲突与人工修改保护 |
+| P15 | 完整设置页及所选维护能力 | P10＋ZCode设计；备份恢复需P13停写/排空设计 | Codex维护契约→Antigravity Core→ZCode UI；DSH | 使用冻结配置/凭据能力；诊断/回收站/DB备份或全库备份范围由P08选定；恢复先停写/连接回收/reassemble/rollback，不冒充全库备份；保留SFX语义 |
 | P16 | 阅读/进度/导出的Core与IPC | P13＋P08中Reader解冻裁决（只读旧结果可另评估并行） | Codex契约→ZCode实现；DSH | ReaderProjection/进度/输出授权/lineage/取消；PNG/ZIP与PDF分别定格式Gate，PDFComposer现未注入；不把AC1测试模式当production |
-| P17 | 阅读器＋安全导出界面 | P16＋Qoder设计 | Qoder；DSH | 真实结果/进度/页序/导出；缩略图、跨页联动非默认范围 |
+| P17 | 阅读器＋安全导出界面 | P16＋ZCode设计 | ZCode；DSH | 真实结果/进度/页序/导出；缩略图、跨页联动非默认范围 |
 | P18 | JA/KO真实质量资格补齐 | P13＋P10；受控素材/模型/endpoint＋P08质量口径 | DSH；Codex或ZCode非作者 | JA自动对齐、无字页F4、K01 terminal/step历史不一致先核验、翻译相似度、修复/源样式质量；真值/阈值/样本/版本可复现，mock不替代 |
 | P19 | 四页完整E2E与数据安全验收 | P12＋P14＋P15＋P17＋P18；P08确实选择四页完整范围 | DSH；Codex非作者 | 用户正常/失败/恢复链；源hash/人工修改/Lock/current/pinned逐项证据；若Reader继续暂缓，改称选定范围验收，不称四页完成 |
 | P20 | 最终Windows发布Gate | P19＋P03＋P06；目标环境可用 | ZCode；DSH；Codex集成 | 新fixed-head/hash安装包；声明Win11/Win10矩阵与性能；尊重RG1本机裁决，不外推未测环境 |

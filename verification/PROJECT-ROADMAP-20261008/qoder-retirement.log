@@ -1,0 +1,20 @@
+Shell: PowerShell 7.6.6
+Base: 5b8aed4d0ef45a3e46d419fd64cd24e4dbd4929f
+Command: inline Python governance assertions; python verification/PROJECT-ROADMAP-20261008/verify_plan.py; git diff --check
+C:\Python314\python.exe
+PASS: historical Plan/Status preserved; all 21 future Owner/dependency rows exclude Qoder
+PASS: active roles/Reviewer/branch policy/UI responsibility/failover updated
+PASS: current graph/report/forwardable recovery instructions synchronized
+PASS: production code, original audit evidence and historical inventory unchanged
+Planning snapshot base=e4242ecd419eb0eea098d2f63b40f709aa5caeea; live HEAD=5b8aed4d0ef45a3e46d419fd64cd24e4dbd4929f
+PASS: 196 unique nodes, all classifications and dependency references
+PASS: 105 new architecture/governance integration records are audit-base ancestors
+PASS: 21 unique planned nodes and roadmap graphs have no dependency cycles
+PASS: delivery/navigation local links resolve
+PASS: zero production/code delta; governance whitespace check
+Product tests/build/GUI: NOT_RUN (planning-only)
+warning: in the working copy of 'verification/PROJECT-ROADMAP-20261008/REPORT.md', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'verification/PROJECT-ROADMAP-20261008/RESUME.md', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'verification/PROJECT-ROADMAP-20261008/ROADMAP.md', LF will be replaced by CRLF the next time Git touches it
+Project-identifiable Qoder process count: 0
+EXIT=0; Product tests: NOT_RUN (governance-only)

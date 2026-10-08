@@ -1,5 +1,7 @@
 # 全项目任务规划恢复点
 
+最新恢复约束（2026-10-08）：用户已将Qoder剔除本项目，当前未来UI/UX由ZCode主责，fallback_order=zcode,antigravity；恢复时以AGENTS/Plan/STATUS当前名单为准。旧审计报告、台账或共享skill默认候选不能恢复Qoder资格。人员调整基线=`main@5b8aed4d`，后续仅已知治理差量；当前无Active/released产品Task。人员变更检查见`qoder-retirement.log`，原代码审计与验证不重做。
+
 - 时间：2026-10-08（Asia/Shanghai）。协调者：Codex。
 - 授权：PLAN_ONLY；用户要求盘点、整体规划、中文图和额度中断恢复。未释放产品实现。
 - 仓库：`G:/CODEX/New Manga`；branch=`main`；common-dir=`G:/CODEX/New Manga/.git`。
@@ -8,7 +10,7 @@
 - 既有 dirty：`.qoder-credits/report.json`；`.qoder-credits/通路探测__8602db50.canvas.tsx`；`verification/M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD/antigravity-dispatch.json`；同目录 `antigravity-dispatch.stderr.log`。保留，不 stage、不 reset/clean/stash。
 - 已完成：Git Reality Check；三路GPT-6.1 Sol high审计与196节点台账；Core/Desktop调用链/产品可达性/Task集成祖先取证；REPORT/中文ROADMAP；Plan当前P01–P21依赖/责任方/Gate；Status/Index/短Roadmap新入口；有界规划一致性核对。
 - 当前工作点：完整规划已落盘。三审计及台账不再等待；规划一致性PC-01（此恢复点过时）已修订，PC-02（缺validation.log）已实际生成。生产代码零差量。
-- 下一确切步骤：复用报告准备P08完整产品范围、四页parity与验收矩阵，建议正式ID `M2-PRODUCT-COMPLETION-SCOPE`（尚未创建/释放）。Codex负责范围/契约、Qoder另设计Task、DSH非作者Review；先按下列Git核验，不再全仓审计。产品取舍/Reader解冻待用户裁决，禁止直接实施P09–P21。
+- 下一确切步骤：复用报告准备P08完整产品范围、四页parity与验收矩阵，建议正式ID `M2-PRODUCT-COMPLETION-SCOPE`（尚未创建/释放）。Codex负责范围/契约、ZCode另设计Task、DSH非作者Review；先按下列Git核验，不再全仓审计。产品取舍/Reader解冻待用户裁决，禁止直接实施P09–P21。
 - 本轮验证：`python verification/PROJECT-ROADMAP-20261008/verify_plan.py` EXIT=0；196唯一节点与分类/依赖、105新架构祖先、21规划节点/图无循环、局部导航链接、零生产差量、治理diff-check全部PASS，见validation.log。产品pytest/cargo/vitest/GUI/fresh build：NOT_RUN；历史测试仍限定原commit/环境。
 - 已知：STATUS 顶部无 Active/released；Runner R-003 未释放；GC-2 设计与实现均已完成，实现集成 `cea610ed`，分发迁移 Gate 仍须遵守；早期设计 checkpoint 中的后继 proposed 已被后续交付取代。
 - 恢复安全：恢复前比较 HEAD、branch、dirty 集合与 Plan/Status。相同则 RESUME_SAFE；有漂移记录 DRIFT_DETECTED，先分析，不覆盖。
