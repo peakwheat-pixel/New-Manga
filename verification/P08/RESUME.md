@@ -1,6 +1,6 @@
 # P08 完成与自动推进检查点
 
-时间：2026-10-09（Asia/Shanghai）；Task=P08；TaskStatus=done；ExecutionState=CHECKPOINTED。P08 done状态提交后，从live Git取得精确HEAD并记录为P08 done checkpoint commit。
+时间：2026-10-09（Asia/Shanghai）；Task=P08；TaskStatus=done；ExecutionState=CHECKPOINTED。P08 done closeout commit=15d902534ef2d3ae57c94ca57c261f4947c7e725；本恢复点文档所在提交即最终RESUME checkpoint，恢复时用git rev-parse HEAD读取其完整hash。
 
 ## P08 完成事实
 

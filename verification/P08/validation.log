@@ -546,4 +546,9 @@ command=python -B -X utf8 verification/P08/verify_scope.py on main with P08 done
 command=python -B -X utf8 verification/PROJECT-ROADMAP-20261008/verify_plan.py on main with P08 done metadata; EXIT=0; 196 nodes, 105 ancestry records, 21 planned nodes, graph labels/links/acyclicity passed
 command=git diff --check HEAD -- Task/Handoff/P08/Plan/Status/Index/README/ROADMAP/derived planning files; EXIT=0
 product pytest/cargo/vitest/GUI/build/model=NOT_RUN
-next=commit P08 done status/navigation; then update RESUME with actual Task-done commit hash and the full automatic-continuation prompt; verify final checkpoint before scheduling shutdown
+historical_next (completed below)=commit P08 done status/navigation; update RESUME with actual Task-done commit hash and full automatic-continuation prompt; verify final checkpoint before scheduling shutdown
+P08 closeout and final recovery checkpoint
+observed_time=2026-10-09 Asia/Shanghai; Task=P08 done; closeout_commit=15d902534ef2d3ae57c94ca57c261f4947c7e725; subject=docs(P08): close approved integration gate
+final_resume_checkpoint=the commit containing this final RESUME/Handoff/log update; exact HEAD is recorded in live Git at recovery
+protected_dirty_and_raw=remain untouched and unstaged; no push
+next=verify live main/status and resume prompt, then formalize P03 only after rechecking its prerequisites and freezing exact task scope
