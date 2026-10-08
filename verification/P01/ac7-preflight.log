@@ -1,0 +1,71 @@
+P01 AC7 preflight
+UTC not recorded; local date 2026-10-09 Asia/Shanghai
+BASE=826bea12a132c5af2ac0cd1244d00e9170093c71
+HEAD=714138de3da06013e3ea35395e0c11b3d15fc371
+BRANCH=agent/codex/P01-metadata-audit
+
+=== Working tree ===
+## agent/codex/P01-metadata-audit
+ M doc/00_INDEX.md
+ M doc/12_ROADMAP.md
+ M doc/REBASELINE_PLAN.md
+ M doc/STATUS.md
+ M doc/tasks/M2-DERIVED-GC-2.md
+ M doc/tasks/M2-PROD-DETECT-3.md
+ M doc/tasks/M2-SFX-SYNTH-BG-AUTO.md
+ M doc/tasks/P01.md
+ M doc/tasks/README.md
+ M verification/P01/NEXT-AUTOPROGRESS-PROMPT.md
+ M verification/P01/RESUME.md
+ M verification/PROJECT-ROADMAP-20261008/RESUME.md
+ M verification/PROJECT-ROADMAP-20261008/ROADMAP.md
+ M verification/PROJECT-ROADMAP-20261008/verify_plan.py
+?? verification/P01/ac7-preflight.log
+?? verification/P01/metadata-audit.md
+=== Changed paths from base ===
+doc/00_INDEX.md
+doc/12_ROADMAP.md
+doc/REBASELINE_PLAN.md
+doc/STATUS.md
+doc/tasks/M2-DERIVED-GC-2.md
+doc/tasks/M2-PROD-DETECT-3.md
+doc/tasks/M2-SFX-SYNTH-BG-AUTO.md
+doc/tasks/P01.md
+doc/tasks/README.md
+verification/P01/ac7-preflight.log
+verification/P01/metadata-audit.md
+verification/P01/NEXT-AUTOPROGRESS-PROMPT.md
+verification/P01/RESUME.md
+verification/PROJECT-ROADMAP-20261008/RESUME.md
+verification/PROJECT-ROADMAP-20261008/ROADMAP.md
+verification/PROJECT-ROADMAP-20261008/verify_plan.py
+=== Allowed-path gate ===
+PASS: every changed path is within the P01 allowed paths
+=== Staged paths ===
+none
+=== git diff --check ===
+warning: in the working copy of 'doc/00_INDEX.md', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'doc/12_ROADMAP.md', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'doc/REBASELINE_PLAN.md', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'doc/STATUS.md', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'doc/tasks/README.md', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'verification/PROJECT-ROADMAP-20261008/RESUME.md', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'verification/PROJECT-ROADMAP-20261008/ROADMAP.md', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'doc/tasks/P01.md', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'verification/P01/NEXT-AUTOPROGRESS-PROMPT.md', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'verification/P01/RESUME.md', LF will be replaced by CRLF the next time Git touches it
+EXIT=0
+=== Route verifier ===
+warning: in the working copy of 'doc/00_INDEX.md', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'doc/12_ROADMAP.md', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'doc/REBASELINE_PLAN.md', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'doc/STATUS.md', LF will be replaced by CRLF the next time Git touches it
+Planning snapshot base=e4242ecd419eb0eea098d2f63b40f709aa5caeea; live HEAD=714138de3da06013e3ea35395e0c11b3d15fc371
+PASS: 196 unique nodes, all classifications and dependency references
+PASS: 105 new architecture/governance integration records are audit-base ancestors
+PASS: 21 unique planned nodes and roadmap graphs have no dependency cycles
+PASS: delivery/navigation local links resolve
+PASS: zero production/code delta; governance whitespace check
+Product tests/build/GUI: NOT_RUN (planning-only)
+EXIT=0
+RESULT allowedPaths=True staged=0 diffCheckExit=0 routeVerifierExit=0

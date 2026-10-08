@@ -1,8 +1,8 @@
 # 全项目任务规划恢复点
 
-最新工作点：P08/P03=done，P01=`ready`；P系列done 2/21、ready 1、proposed 18。唯一当前Task P01，base=`826bea12a132c5af2ac0cd1244d00e9170093c71`，Owner=Codex、Reviewer=DeepSeek Harness，branch=`agent/codex/P01-metadata-audit`，worktree=`G:/CODEX/New Manga.worktrees/P01-metadata-audit-codex`。恢复先按[P01 RESUME](../P01/RESUME.md) Reality Check，不重做P03。
+最新工作点：P08/P03=done，P01=`in_progress`；P系列done 2/21、in_progress 1、proposed 18。唯一当前Task P01，base=`826bea12a132c5af2ac0cd1244d00e9170093c71`，Owner=Codex、Reviewer=DeepSeek Harness，branch=`agent/codex/P01-metadata-audit`，worktree=`G:/CODEX/New Manga.worktrees/P01-metadata-audit-codex`。当前Reality Check=`RESUME_SAFE`，恢复先按[P01 RESUME](../P01/RESUME.md)交叉核对，不重做P03。
 
-**当前位置：P08/P03=done；当前唯一释放Task=P01 `ready`。从其固定base/worktree继续已授权的取证，完成Review与Integration Gate后再按权威Plan自动释放下一项。**
+**当前位置：P08/P03=done；当前唯一Active Task=P01 `in_progress`。从其固定base/worktree继续已授权的取证，完成Review与Integration Gate后再按权威Plan自动释放下一项。**
 
 2026-10-08 编号裁决时的状态快照：任务编号沿用 `P01–P21`；当时P08=`in_review`，其余20项=`proposed / 未释放`。当前状态见本恢复点顶部及`doc/STATUS.md`；本编号裁决本身不释放产品实施、不改历史记录。
 
@@ -37,4 +37,4 @@ Get-ChildItem verification\PROJECT-ROADMAP-20261008
 
 ### 当前自动恢复入口（2026-10-09；取代下方历史 PLAN_ONLY 工作范围）
 
-额度耗尽或会话断开不表示任务完成。当前唯一释放Task是P01；下次继续时使用[verification/P01/NEXT-AUTOPROGRESS-PROMPT.md](../P01/NEXT-AUTOPROGRESS-PROMPT.md)，并先按[P01 RESUME](../P01/RESUME.md)核对Git和工作区。不要复用本文件上方2026-10-08规划审计中的“只完成规划、不启动产品Task”旧指令。
+额度耗尽或会话断开不表示任务完成。当前唯一Active Task仍是P01；下次继续时使用[verification/P01/NEXT-AUTOPROGRESS-PROMPT.md](../P01/NEXT-AUTOPROGRESS-PROMPT.md)，并先按[P01 RESUME](../P01/RESUME.md)核对Git和工作区。不要复用本文件上方2026-10-08规划审计中的“只完成规划、不启动产品Task”旧指令。

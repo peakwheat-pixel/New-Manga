@@ -1,36 +1,51 @@
 # P01 恢复点
 
-时间：2026-10-09（Asia/Shanghai）；Task=`P01`；TaskStatus=`ready`；ExecutionState=`CHECKPOINTED`（尚未开始 source Task 写入）。
+时间：2026-10-09（Asia/Shanghai）；Task=`P01`；TaskStatus=`in_progress`；ExecutionState=`ACTIVE`。
 
 ## 当前权威状态
 
 - P03 正式关闭与 Codex Integration Gate 提交：`826bea12a132c5af2ac0cd1244d00e9170093c71`；P03=`done`。其 16-case snapshot、40/40 targeted tests 与 packaged Gate 28/28 仍绑定 source `d717c049a41544a6d592943a0b0fe1b76a41a050`，未声称在 P03 集成头重跑。
-- P01 已基于该 commit 正式释放：base=`826bea12a132c5af2ac0cd1244d00e9170093c71`；branch=`agent/codex/P01-metadata-audit`；worktree=`G:/CODEX/New Manga.worktrees/P01-metadata-audit-codex`；Owner=Codex；非作者Reviewer=DeepSeek Harness；Integrator=Codex；depends_on=`[]`。
-- Worktree 初始 HEAD=`826bea12a132c5af2ac0cd1244d00e9170093c71`，创建时干净、common-dir=`G:/CODEX/New Manga/.git`。release metadata commit 是包含本恢复文件的 P01 branch 当前提交；可用 `git -C 'G:/CODEX/New Manga.worktrees/P01-metadata-audit-codex' log -1 --format=%H -- verification/P01/RESUME.md` 解析。恢复后以实际 `git rev-parse HEAD` 与状态文档交叉核验，不猜哈希。
+- P01 已基于该 commit 正式释放并进入执行：base=`826bea12a132c5af2ac0cd1244d00e9170093c71`；branch=`agent/codex/P01-metadata-audit`；worktree=`G:/CODEX/New Manga.worktrees/P01-metadata-audit-codex`；Owner=Codex；非作者Reviewer=DeepSeek Harness；Integrator=Codex；depends_on=`[]`。
+- Worktree 初始 HEAD=`826bea12a132c5af2ac0cd1244d00e9170093c71`，创建时干净、common-dir=`G:/CODEX/New Manga/.git`。P01 release metadata commit=`714138de3da06013e3ea35395e0c11b3d15fc371`；本轮从该 HEAD 开始执行，只读审计证据已完成，当前有本 Task 的文档/允许字段改动，精确集合见下方工作点。恢复时必须以实际 `git rev-parse HEAD`/status 为准，不从聊天或本段推测后续提交。
 - Root main 的原有用户/Qoder/Agent dirty 与 P03 raw-review evidence 均留在 root checkout，未复制进 P01 worktree、未 stage、未 stash、未覆盖或清理。P03关闭后 root 仍有24个既存 dirty/untracked 项；实际名称以 root `git status --short` 为准。
 
-## P01 冻结范围与已知调查锚点
+## 2026-10-09 Reality Check — RESUME_SAFE
+
+- 实测主工作区：branch=`main`，HEAD=`714138de3da06013e3ea35395e0c11b3d15fc371`，dirty/untracked=`24`；这24项与P01恢复前相同，未被写入或整理。
+- 实测P01 worktree：registered path=`G:/CODEX/New Manga.worktrees/P01-metadata-audit-codex`，branch=`agent/codex/P01-metadata-audit`，HEAD=`714138de3da06013e3ea35395e0c11b3d15fc371`，working tree clean，common-dir=`G:/CODEX/New Manga/.git`。
+- `base_commit=826bea12a132c5af2ac0cd1244d00e9170093c71` 是P01当前HEAD祖先。base至当前HEAD只包含已审查、已集成的Task/Plan/导航/Resume发布文档，不含产品源码或测试代码。核验命令与exit：`git worktree list --porcelain`、`git rev-parse --path-format=absolute --git-common-dir`、`git status --short --branch`、`git merge-base --is-ancestor <base> <HEAD>`，均exit 0。
+- 恢复判定=`RESUME_SAFE`。该段为启动前的历史 Reality Check；之后的源 Task 元数据更新与当前工作树状态见下方最新 P01 执行检查点。
+
+## 2026-10-09 P01 AC2–AC6 取证完成 / AC7_PENDING
+
+- 当前审计工作点起始HEAD=`714138de3da06013e3ea35395e0c11b3d15fc371`。尚未提交的工作树共16项、staged=0：`doc/00_INDEX.md`、`doc/12_ROADMAP.md`、`doc/REBASELINE_PLAN.md`、`doc/STATUS.md`、`doc/tasks/M2-DERIVED-GC-2.md`、`doc/tasks/M2-PROD-DETECT-3.md`、`doc/tasks/M2-SFX-SYNTH-BG-AUTO.md`、`doc/tasks/P01.md`、`doc/tasks/README.md`、`verification/P01/NEXT-AUTOPROGRESS-PROMPT.md`、`verification/P01/RESUME.md`、`verification/P01/ac7-preflight.log`、`verification/P01/metadata-audit.md`、`verification/PROJECT-ROADMAP-20261008/RESUME.md`、`verification/PROJECT-ROADMAP-20261008/ROADMAP.md`、`verification/PROJECT-ROADMAP-20261008/verify_plan.py`。均属于 P01 允许/已登记窄 scope；产品、测试、Schema、依赖和用户数据均未修改。
+- AC2 GC2 与 AC3 DETECT3 字段已有提交链/Handoff/Review/集成记录支撑并更正为完整真实 merge SHA；AC5 SYNTH 重复 `integration_commit` 已去重为完整 SHA。`verification/P01/metadata-audit.md` 保存逐项证据与 carrier SHA/blob。
+- AC4 ANNOTATE-R2 与 AC5 SYNTH 的独立 Review 原件、固定 reviewed head、decision原文仍=`NOT_VERIFIED`；Owner 报告/嵌入摘要没有冒充 Review。AC6 challenge空集/T2 release与 SYNTH 人工登录要求未改变。
+- `python -B -X utf8 verification/PROJECT-ROADMAP-20261008/verify_plan.py` EXIT=0：196节点分类/依赖、105祖先记录、21规划节点、依赖DAG、导航链接与P01 frozen-base 产品路径守卫均PASS。为适配权威当前状态，仅对该 verifier 的P01–P21计数/状态token、现存P08节点数与产品差量基线做了Task内Codex scope note限定的辅助修正。
+- P01 产品pytest/cargo/vitest/GUI/build=`NOT_RUN`（本Task不改产品/测试代码）。独立 P01 DSH Review、最终 fixed-head allowed-path Gate 与 Codex Integration Gate 尚未开始。
+
+## P01 取证结果与保留边界
 
 正式契约见[`doc/tasks/P01.md`](../../doc/tasks/P01.md)。唯一来源 Task：
 
-- `doc/tasks/M2-DERIVED-GC-2.md`：页头 `integration_commit: null`，正文/Plan 与 inventory 记录 `cea610ed`。live Git 中完整对象 `cea610ed3f3349f1d76361d151815445e991f7d7` 为 commit 且为 P01 base 祖先；P01 执行时仍须核对实际集成与 Handoff 证据，再决定是否只修该字段。
-- `doc/tasks/M2-PROD-DETECT-3.md`：页头 SHA `8fe5199c44b06e679a2f0e6ee47767032217eb47` 不是可解析的对象；inventory 候选 `8fe5199c6d05d144052141ad02ed054bbaa90645` 是 commit 且为 base 祖先。P01 执行时须继续核对交付/Handoff/集成证据，不得只信 inventory 后覆盖。
-- `doc/tasks/M2-SFX-ANNOTATE-R2.md`：`review_events: []`。只按允许范围查独立 Review carrier，并记录 fixed base/head/decision/hash；缺失记`NOT_VERIFIED`。
-- `doc/tasks/M2-SFX-SYNTH-BG-AUTO.md`：frontmatter `status: in_review`，含重复且冲突的`integration_commit`声明，正文提及历史 DSH Review。追踪真实独立报告；若集成证据充分，可只纠正重复字段；不得把它置为`done`。
+- `doc/tasks/M2-DERIVED-GC-2.md`：当前字段=`cea610ed3f3349f1d76361d151815445e991f7d7`；merge/Handoff/Codex r11 `approve` 与集成后记录一致。
+- `doc/tasks/M2-PROD-DETECT-3.md`：当前字段=`8fe5199c6d05d144052141ad02ed054bbaa90645`；原 SHA 对象不存在，真实 merge/DSH r1 条件闭合链已核验。
+- `doc/tasks/M2-SFX-ANNOTATE-R2.md`：`review_events: []`；独立 Review carrier=`NOT_VERIFIED`。Task、Handoff与 Owner 数据报告/summary 的指纹及其非Review身份见`metadata-audit.md`。
+- `doc/tasks/M2-SFX-SYNTH-BG-AUTO.md`：当前只剩`integration_commit: 913ca3a9f9c9a83c43d9a03af4bc80b54cc1cc66`；来源 `status: in_review` 原样保留。Plan/closeout 称已done，但Task/Handoff状态文字冲突登记为`STATE_CONFLICT`；独立Review carrier=`NOT_VERIFIED`。版本化真实冒烟证据存在，但人工登录要求与Task状态不由P01更改。
 
-上述是启动前可验证的调查锚点，不代表 P01 最终审计结论或 Review 已批准。R2 challenge 空集及 T2 是否释放是用户裁决，不由 P01 推断；SYNTH 的真实网页登录/冒烟要求也不得冒充通过。未找到 carrier 时如实记`NOT_VERIFIED`，P01 仍可在完整登记边界后完成。
+所有逐项对象、carrier path/base/head/decision/hash与`NOT_VERIFIED`边界均见[metadata audit](metadata-audit.md)。R2 challenge空集及T2是否释放是用户裁决，不由P01推断；SYNTH的真实网页登录/冒烟要求不得冒充通过。未找到carrier不表示其从未存在。
 
 ## 验证状态
 
-- 本次已核验：GC2 完整 commit 对象存在且为 base 祖先；DETECT3 错误完整 SHA 不存在，inventory 候选对象存在且为 base 祖先。
-- P01 来源 Task/Handoff 与 Review carriers 的完整逐项追溯：`NOT_RUN`。
+- AC1–AC6 的只读追溯与允许的元数据修正：已执行；路线图校验器EXIT=0；working-tree final `diff-check`/Handoff fixed head/DSH Review/Codex Gate仍待执行。
+- P01 来源 Task/Handoff 指纹与 Review carrier 搜索：已执行；ANNOTATE-R2、SYNTH Review原件=`NOT_VERIFIED`。
 - 产品 pytest/cargo/vitest、GUI、build：`NOT_RUN`（本 Task 不涉及产品代码）。
 - 独立 DSH Review 与 Codex Integration Gate：待 P01 完成时对最终固定 head 执行。
 - 目前没有需用户裁决的产品问题阻止 P01 启动；对已知裁决边界保持只记录、不决策。
 
 ## 下一条直接指令
 
-先重新阅读仓库 `AGENTS.md`、`doc/REBASELINE_PLAN.md`、`doc/00_INDEX.md`、`doc/STATUS.md`、`doc/09_COLLABORATION.md`、`doc/tasks/P01.md` 和本恢复点；核验 main 与 P01 worktree 的真实 branch/HEAD/dirty/common-dir，得到`RESUME_SAFE`或记录`DRIFT_DETECTED`。随后立即在指定 P01 worktree 执行只读取证，按 P01 AC2–AC6 逐项跟踪 Git 对象、Task/Handoff、review carrier 和 SHA；仅在充分证据下修正 GC2/DETECT3 的允许字段。完成后实际派发 DeepSeek Harness 固定 head 非作者 Review，收回并验证真实交付，再运行 Codex Integration Gate、更新权威文档/依赖图/恢复点并自动选择后续可释放 Task。继续保护root dirty、用户数据、Lock、current/pinned Revision及Qoder历史；不push、不发布、不部署、不删除。没有授权下次关机；不要再安排关机。
+恢复后先核对主工作区与指定P01 worktree的branch/HEAD/dirty/common-dir，并检查本恢复文件、Task和`metadata-audit.md`。AC2–AC6及路线图校验已完成，勿重复来源Task全量审计；AC7 preflight 已对16项登记改动执行 allowed-path 与 `git diff --check`，均EXIT=0，路线图校验EXIT=0；固定交付提交后的最终head仍须复查。提交P01证据/元数据/治理状态，随后生成引用真实delivery commit的P01 Handoff、将Task推进至`in_review`并固定reviewed head。阅读并使用已配置的`dsh-dispatch` Skill真实派发DeepSeek Harness非作者Review；验证原始交付/报告SHA和fixed head，再由Codex执行AC7 Integration Gate，修订/复审如有发现，并在Gate通过后更新Task/Plan/Status/依赖图/RESUME，自动释放下一个依赖满足且范围冻结的任务。继续保护root既有24项dirty、用户数据、Lock、current/pinned Revision及Qoder历史；不push、不发布、不部署、不删除。只在全项目目标完成、无待办Task/Review/Gate/阻塞时正常关机。
 
 ## 本次 release prompt
 

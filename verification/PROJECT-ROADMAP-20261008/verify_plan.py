@@ -69,14 +69,15 @@ if __name__ == "__main__":
     task_state = re.search(r"^status: ([a-z_]+)$", task, re.M)
     assert task_state and task_state.group(1) in TASK_STATES
     assert f"| P08 | {task_state.group(1)} |" in plan
-    assert len(re.findall(r"^\| P\d{2} \| proposed / 未释放 \|", plan, re.M)) == 20
+    status_counts = Counter(label.strip() for _, label in plan_rows)
+    assert status_counts == {"done": 2, "in_progress": 1, "proposed / 未释放": 18}, status_counts
     roadmap = (HERE / "ROADMAP.md").read_text(encoding="utf-8")
     diagram_nodes = re.findall(r'\["(P\d{2})<br/>([^<]+)', roadmap)
     assert {node for node, _ in diagram_nodes} == set(nodes)
-    accepted_labels = set(STATUS_LABELS.values())
-    assert all(label in accepted_labels for _, label in diagram_nodes)
-    p08_label = STATUS_LABELS[task_state.group(1)]
-    assert [label for node, label in diagram_nodes if node == "P08"] == [p08_label, p08_label]
+    diagram_states = [(node, label.split(" / ", 1)[0].strip()) for node, label in diagram_nodes]
+    assert all(state in TASK_STATES for _, state in diagram_states)
+    p08_states = [state for node, state in diagram_states if node == "P08"]
+    assert p08_states == [task_state.group(1)]
     for diagram in re.findall(r"```mermaid\n(.*?)```", roadmap, re.S):
         edges = re.findall(r"^\s*([\w-]+)\s+(?:-->|-\.->|-\. .*?\.->)\s*([\w-]+)", diagram, re.M)
         graph = {}
@@ -106,8 +107,11 @@ if __name__ == "__main__":
                 continue
             assert (doc.parent / target).is_file(), (str(doc), target)
     print("PASS: delivery/navigation local links resolve")
-    changed = git("diff", "--name-only", BASE, "--", "src", "apps", "tests", "packaging")
-    assert not changed, f"production/code paths changed: {changed}"
+    p01 = (ROOT / "doc/tasks/P01.md").read_text(encoding="utf-8")
+    p01_base = re.search(r"^base_commit: ([0-9a-f]{40})$", p01, re.M)
+    assert p01_base, "P01 base_commit missing or invalid"
+    changed = git("diff", "--name-only", p01_base.group(1), "--", "src", "apps", "tests", "packaging")
+    assert not changed, f"P01 product/code paths changed since frozen base: {changed}"
     subprocess.run(["git", "-C", str(ROOT), "diff", "--check", "--", "doc/REBASELINE_PLAN.md",
                     "doc/STATUS.md", "doc/00_INDEX.md", "doc/12_ROADMAP.md"], check=True)
     print("PASS: zero production/code delta; governance whitespace check")

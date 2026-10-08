@@ -3,7 +3,7 @@ id: M2-PROD-DETECT-3
 title: "core.detect 命令面扩展 + frozen 进程内真实 detect 端到端验证（M2-PROD-DETECT-2 AC5 PARTIAL 闭合；Goal T1，自治执行 2026-10-01）"
 kind: feature
 status: done
-integration_commit: 8fe5199c44b06e679a2f0e6ee47767032217eb47
+integration_commit: 8fe5199c6d05d144052141ad02ed054bbaa90645
 approval: user_autonomous_mode_2026-10-01
 suggested_owner: ZCode
 owner: ZCode

@@ -1,10 +1,10 @@
 # Current Development Status
 
-**当前位置：P08/P03=done；P系列共21项：done 2、ready 1、proposed 18。唯一当前释放Task=P01 `ready`，base=`826bea12a132c5af2ac0cd1244d00e9170093c71`，Owner=Codex、Reviewer=DeepSeek Harness，branch=`agent/codex/P01-metadata-audit`，worktree=`G:/CODEX/New Manga.worktrees/P01-metadata-audit-codex`。TaskStatus=`ready` / ExecutionState=`CHECKPOINTED`。范围与恢复点见[P01 Task](tasks/P01.md)和[P01 RESUME](../verification/P01/RESUME.md)。P03 integration=`552464238a69ad2cea63cff18abe98f412dbae87`；其测试仍绑定source `d717c049`。**
+**当前位置：P08/P03=done；P系列共21项：done 2、in_progress 1、proposed 18。唯一当前Task=P01 `in_progress`，base=`826bea12a132c5af2ac0cd1244d00e9170093c71`，Owner=Codex、Reviewer=DeepSeek Harness，branch=`agent/codex/P01-metadata-audit`，worktree=`G:/CODEX/New Manga.worktrees/P01-metadata-audit-codex`。TaskStatus=`in_progress` / ExecutionState=`ACTIVE`；Reality Check=`RESUME_SAFE`。范围与恢复点见[P01 Task](tasks/P01.md)和[P01 RESUME](../verification/P01/RESUME.md)。P03 integration=`552464238a69ad2cea63cff18abe98f412dbae87`；其测试仍绑定source `d717c049`。**
 
-## 2026-10-09 P01 正式释放 / READY
+## 2026-10-09 P01 正式启动 / IN_PROGRESS
 
-当前唯一 Active/released Task=`[P01](tasks/P01.md)`，Owner=Codex，非作者Reviewer=DeepSeek Harness，Integrator=Codex；TaskStatus=`ready` / ExecutionState=`CHECKPOINTED`。base=`826bea12a132c5af2ac0cd1244d00e9170093c71`；branch=`agent/codex/P01-metadata-audit`；worktree=`G:/CODEX/New Manga.worktrees/P01-metadata-audit-codex`；depends_on=`[]`。Task release状态随本节提交记录；worktree起始HEAD=`826bea12a132c5af2ac0cd1244d00e9170093c71`。完整allowed_paths、dirty保护、AC与恢复提示见[P01 RESUME](../verification/P01/RESUME.md)。尚未开始来源元数据修改、尚未派发 P01 DSH Review、产品测试`NOT_RUN`。
+当前唯一 Active/released Task=`[P01](tasks/P01.md)`，Owner=Codex，非作者Reviewer=DeepSeek Harness，Integrator=Codex；TaskStatus=`in_progress` / ExecutionState=`ACTIVE`。base=`826bea12a132c5af2ac0cd1244d00e9170093c71`；branch=`agent/codex/P01-metadata-audit`；worktree=`G:/CODEX/New Manga.worktrees/P01-metadata-audit-codex`；depends_on=`[]`。worktree release起点=`826bea12a132c5af2ac0cd1244d00e9170093c71`；P01启动前HEAD=`714138de3da06013e3ea35395e0c11b3d15fc371`，clean、common-dir正确。按[恢复点](../verification/P01/RESUME.md)已完成Reality Check=`RESUME_SAFE`；主工作区24项既有dirty/untracked未触碰。当前进入AC2–AC6来源证据追溯阶段，尚未更改来源Task元数据、尚未派发P01 DSH Review；产品测试`NOT_RUN`。
 
 ## 历史完成记录：2026-10-09 P03 Review 与 Codex 集成完成 / DONE
 

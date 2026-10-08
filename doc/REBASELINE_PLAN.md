@@ -1,10 +1,10 @@
 # Project Rebaseline Plan
 
-**当前位置：P08/P03=done；P系列共21项：done 2、ready 1、proposed 18。唯一当前释放Task=P01（台账元数据与独立 Review 载体核验），base=`826bea12a132c5af2ac0cd1244d00e9170093c71`，Owner=Codex、非作者Reviewer=DeepSeek Harness；branch=`agent/codex/P01-metadata-audit`，worktree=`G:/CODEX/New Manga.worktrees/P01-metadata-audit-codex`。只读取证；允许路径、恢复与下一步见[P01 Task](tasks/P01.md)及[P01 RESUME](../verification/P01/RESUME.md)。P03 integration=`552464238a69ad2cea63cff18abe98f412dbae87`；其产品验证仍绑定source `d717c049`。**
+**当前位置：P08/P03=done；P系列共21项：done 2、in_progress 1、proposed 18。唯一当前Task=P01（台账元数据与独立 Review 载体核验），状态=`in_progress` / ExecutionState=`ACTIVE` / Reality Check=`RESUME_SAFE`；base=`826bea12a132c5af2ac0cd1244d00e9170093c71`，Owner=Codex、非作者Reviewer=DeepSeek Harness；branch=`agent/codex/P01-metadata-audit`，worktree=`G:/CODEX/New Manga.worktrees/P01-metadata-audit-codex`。只读取证；允许路径、恢复与下一步见[P01 Task](tasks/P01.md)及[P01 RESUME](../verification/P01/RESUME.md)。P03 integration=`552464238a69ad2cea63cff18abe98f412dbae87`；其产品验证仍绑定source `d717c049`。**
 
-## 2026-10-09 P01 正式释放 / READY
+## 2026-10-09 P01 正式启动 / IN_PROGRESS
 
-Task=`[P01](tasks/P01.md)`，`status=ready`；Owner=Codex，非作者Reviewer=DeepSeek Harness，Integrator=Codex。Task base=`826bea12a132c5af2ac0cd1244d00e9170093c71`；branch=`agent/codex/P01-metadata-audit`；worktree=`G:/CODEX/New Manga.worktrees/P01-metadata-audit-codex`；依赖为空。只核对 GC2/DETECT3 commit 元数据和 R2/SYNTH 独立 Review 载体；只在 Git对象、提交链及交付证据充分时修正来源Task允许的三类frontmatter元数据：GC2集成SHA、DETECT3集成SHA、SYNTH重复integration_commit；禁止改动来源Task状态或产品裁决。R2 challenge 空集/T2 release 保留给用户；缺失的 Review carrier 如实记`NOT_VERIFIED`，不补造批准，不把来源 Task 改`done`。初始 worktree 从 P03 closeout=`826bea12`创建且干净；本 Task release commit 可从该 worktree `git log -1 --format=%H -- verification/P01/RESUME.md` 解析。当前恢复指令见[verification/P01/RESUME.md](../verification/P01/RESUME.md)及[下次自动推进提示词](../verification/P01/NEXT-AUTOPROGRESS-PROMPT.md)。
+Task=`[P01](tasks/P01.md)`，`status=in_progress`；Owner=Codex，非作者Reviewer=DeepSeek Harness，Integrator=Codex。Task base=`826bea12a132c5af2ac0cd1244d00e9170093c71`；branch=`agent/codex/P01-metadata-audit`；worktree=`G:/CODEX/New Manga.worktrees/P01-metadata-audit-codex`；依赖为空。Reality Check=`RESUME_SAFE`，启动HEAD=`714138de3da06013e3ea35395e0c11b3d15fc371`，P01 worktree clean；root 24项既有dirty/untracked未触碰。当前只核对 GC2/DETECT3 commit 元数据和 R2/SYNTH 独立 Review 载体；只在 Git对象、提交链及交付证据充分时修正来源Task允许的三类frontmatter元数据：GC2集成SHA、DETECT3集成SHA、SYNTH重复integration_commit；禁止改动来源Task状态或产品裁决。R2 challenge 空集/T2 release 保留给用户；缺失的 Review carrier 如实记`NOT_VERIFIED`，不补造批准，不把来源 Task 改`done`。当前恢复指令见[verification/P01/RESUME.md](../verification/P01/RESUME.md)及[下次自动推进提示词](../verification/P01/NEXT-AUTOPROGRESS-PROMPT.md)。
 
 ## 2026-10-09 P03 R5/R6 Review 与 Codex 集成关闭 / DONE
 
@@ -37,11 +37,11 @@ P08 DSH R7已对base=ecb3b520ce68c2ddcc0c5ec94596e2f50a17f369、reviewed_head=fe
 
 ### 预先定义的任务依赖树与 Gate
 
-以下 P01–P21 中 **P08、P03=done；P01=ready；其余18项为proposed / 未释放**；候选任务状态以本表和STATUS为准。
+以下 P01–P21 中 **P08、P03=done；P01=in_progress；其余18项为proposed / 未释放**；候选任务状态以本表和STATUS为准。
 
 | 候选任务编号 | 状态 | 简单中文描述 | 启动依赖/条件 | 建议责任方；非作者审查 | 完成 Gate / 边界 |
 |---|---|---|---|---|---|
-| P01 | ready / 当前唯一释放Task | 台账元数据与Review载体取证 | 无Task依赖；冻结基线`826bea12`；只读取证 | Codex；非作者DeepSeek Harness | GC2/DETECT3 Git对象与集成证据；R2/SYNTH独立Review载体；缺证标`NOT_VERIFIED`，不改产品裁决或来源Task状态 |
+| P01 | in_progress | 台账元数据与Review载体取证 | 无Task依赖；冻结基线`826bea12`；只读取证 | Codex；非作者DeepSeek Harness | GC2/DETECT3 Git对象与集成证据；R2/SYNTH独立Review载体；缺证标`NOT_VERIFIED`，不改产品裁决或来源Task状态 |
 | P02 | proposed / 未释放 | 真UI行为、300ms刷新与对比度验证 | 现有Workbench；冻结harness范围 | ZCode；DSH | DOM/真实WebView取证，区分mock与实际；覆盖切页、写后刷新、键盘、token |
 | P03 | done | Packaged第五SFX入口验收补齐 | PROBE-1/Runner Debt/Guard已done；DSH R5/R6与Codex集成Gate通过 | Antigravity；DSH | integration=`552464238a69ad2cea63cff18abe98f412dbae87`；Gate evidence绑定source=`d717c049`与固定installer SHA；R3-03留给P20 |
 | P04 | proposed / 未释放 | 生产命令族/桥接并发定向验证 | PAGE-NAV done；先检查现有断言 | Antigravity；DSH | 独立常量成员断言；同会话并发响应与协议核验候选先复现；无缺口不加修复 |
@@ -67,7 +67,7 @@ P08 DSH R7已对base=ecb3b520ce68c2ddcc0c5ec94596e2f50a17f369、reviewed_head=fe
 
 保留：Manga109永久取消；BJ13维持0.90、手工改标＋skip，补标/补画不释放；Reader范围：仅跨页联动/页缩略图继续延期；基础Reader已由D1解冻，P16/P17实施仍未释放。LaMa/AOT/BrushNet/FLUX learned inpaint没有production实现，不默认投入；SimpleFill/EdgeBleed已在现有链路，是否足够由P08/P18质量证据决定。GC长会话总磁盘有界没有承诺，不为了漂亮路线图扩大删除能力。
 
-当前步骤：**P01已在`main@826bea12a132c5af2ac0cd1244d00e9170093c71`正式释放。按冻结allowed_paths从P01 worktree启动只读取证；如实保留`NOT_VERIFIED`和用户裁决边界。完成后由DeepSeek Harness固定head Review、Codex集成Gate，再从Plan选下一项。**
+当前步骤：**P01已在`main@826bea12a132c5af2ac0cd1244d00e9170093c71`正式释放，并从release metadata head=`714138de3da06013e3ea35395e0c11b3d15fc371`启动；实际Reality Check=`RESUME_SAFE`。按冻结allowed_paths从指定P01 worktree执行只读取证；如实保留`NOT_VERIFIED`和用户裁决边界。完成后由DeepSeek Harness固定head Review、Codex集成Gate，再从Plan选下一项。**
 
 ## 2026-10-08 完成：M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD
 

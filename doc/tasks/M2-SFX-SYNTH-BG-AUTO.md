@@ -10,10 +10,9 @@ reviewer: DeepSeek Harness（非作者）
 integrator: 编排会话代行 Codex（用户全权授权）
 depends_on: [M2-SFX-DATA-INFRA]
 base_commit: 6f1117d6
-integration_commit: 913ca3a9
+integration_commit: 913ca3a9f9c9a83c43d9a03af4bc80b54cc1cc66
 branch: agent/zcode/M2-SFX-SYNTH-BG-AUTO
 worktree: G:/CODEX/New Manga.worktrees/M2-SFX-SYNTH-BG-AUTO-zcode
-integration_commit: null
 ---
 
 # M2-SFX-SYNTH-BG-AUTO：SFX 合成底图自动 provider
