@@ -1,5 +1,17 @@
 # Project Rebaseline Plan
 
+## 2026-10-08 M2-PACKAGED-AC1-ICU-ISOLATION-FIX ready / IDLE
+
+用户单独释放[ICU隔离修复](tasks/M2-PACKAGED-AC1-ICU-ISOLATION-FIX.md)：Owner=Antigravity，非作者Reviewer=DeepSeek Harness，Integrator=Codex。
+唯一ready Task；无运行中Task，本轮未派发实施。硬依赖诊断done@44317548与GC-2 done@cea610ed均已集成。
+base=5a72db9e3c5778ce4700b7d404250853e474c5de；branch=agent/antigravity/M2-PACKAGED-AC1-ICU-ISOLATION-FIX；
+worktree=G:/CODEX/New Manga.worktrees/PACKAGED-AC1-ICU-ISOLATION-FIX-antigravity，新分配初始clean，共享唯一Git common-dir。
+生产允许仅packaging/m2ac5/**；先核实ICU78消费者；禁止src/apps/tests/Schema/依赖变更或全局删ICU。
+完整fresh五入口/NSIS、dev10+probe13、packaged26项Gate及真实DSH审查/集成后验证为done条件；本轮产品测试NOT_RUN。
+固定runner来源2af6b71a仅本Task隔离验证复用，原M2-RUNNER-SNAPSHOT-DEBT仍blocked、未集成/关闭。
+[释放恢复点与可转发指令](../verification/M2-PACKAGED-AC1-ICU-ISOLATION-FIX/release.md)由Codex追加。
+下方旧ready/in_progress或“无ready”均为历史checkpoint，不覆盖本段。
+
 ## 2026-10-08 M2-PACKAGED-AC1-DLL-DIAG done @merge 44317548
 
 诊断Task=[M2-PACKAGED-AC1-DLL-DIAG](tasks/M2-PACKAGED-AC1-DLL-DIAG.md) done；Owner=DSH，非作者Reviewer/Integrator=Codex。

@@ -1,6 +1,6 @@
 # Task 索引
 
-当前无运行中/ready Task；M2-PACKAGED-AC1-DLL-DIAG **done @merge 44317548 / DSH**（Codex非作者审查）。原runner debt仍blocked，ICU隔离修复候选未创建/释放。
+当前唯一ready / IDLE：[ICU隔离修复](M2-PACKAGED-AC1-ICU-ISOLATION-FIX.md)，Owner=Antigravity、非作者Reviewer=DSH、Integrator=Codex。已分配独立worktree；未启动实现。诊断done@44317548；runner debt仍blocked。下方旧状态为历史。
 
 
 > **2026-09-21 audit**：本索引与 TASK-001～065 文件是历史证据。当前分类、依赖和唯一下一任务见 [REBASELINE_PLAN](../REBASELINE_PLAN.md)，当前 checkpoint 见 [STATUS](../STATUS.md)。不要根据旧 frontmatter 的 `status: done` 单独判定完成。
