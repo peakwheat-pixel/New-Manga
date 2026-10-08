@@ -8,7 +8,7 @@
 
 项目已完成大量基础设施、AI生产集成与工作台竖切，**还没有完成从空安装态导入漫画、启动翻译、查看进度、人工修订、阅读和导出的完整四页产品**。目前“做完一个才知道下一个”的主要原因，是既有图记录了已交付 Task 历史，而未来产品能力尚未展开为依赖树；历史 checkpoint、旧候选和新完成状态又混在导航里。
 
-本轮将整体路线放在唯一权威 [REBASELINE_PLAN](../../doc/REBASELINE_PLAN.md) 顶部，分为“当前范围内收口”与“完整产品待范围裁决”，中文图见 [ROADMAP](ROADMAP.md)。以后只刷新受影响子图，不需要每完成一个小任务重新全仓推演。21个 M2 候选任务是未释放规划节点，正式Task冻结时再拆契约、Core/Host、UI和验收；没有编造工期或完成百分比。
+本轮将整体路线放在唯一权威 [REBASELINE_PLAN](../../doc/REBASELINE_PLAN.md) 顶部，分为“当前范围内收口”与“完整产品待范围裁决”，中文图见 [ROADMAP](ROADMAP.md)。以后只刷新受影响子图，不需要每完成一个小任务重新全仓推演。P01–P21 候选任务是未释放规划节点，正式Task冻结时再拆契约、Core/Host、UI和验收；没有编造工期或完成百分比。
 
 ## 完成了哪些任务
 
@@ -43,32 +43,32 @@ M2前缀正式Task为101个；加GOV-001、两个DIAG-M2与DOC-FIX，新架构/�
 
 | 能力 | 当前真实代码 | 未完成部分与后继 |
 |---|---|---|
-| 四页产品壳 | `App.tsx:74,478`：Console↔Workbench；Library/Settings section | 不是书架/工作台/阅读器/设置四页导航。M2-PRODUCT-COMPLETION-SCOPE先复用UI1冻结范围/设计，M2-LIBRARY-IMPORT-UI/M2-WORKBENCH-FULL-OPERATIONS/M2-SETTINGS-MAINTENANCE/M2-READER-EXPORT-UI分别落地 |
-| 空库建书与导入 | LibraryPanel只读ListBooks；Core已有Library/Import API | 无production创建/导入IPC与受控选文件链；`core_service.py:313,369` decoder恒1×1。M2-REAL-IMPORT-ADAPTERS真实decoder/受限来源与Managed Copy，M2-LIBRARY-IMPORT-UI接UI |
-| 翻译启动与任务控制 | `core_assembly.py`已有PipelineService；生产15条Tauri命令不含StartRun | `WorkbenchToolbar`仅上下文；`TaskProgressPanel:1,31`静态占位。M2-LONG-RUN-IPC-CONTRACT冻结接受/快照/控制语义，M2-PIPELINE-RUNTIME-RECOVERY复用后台执行，M2-WORKBENCH-FULL-OPERATIONS接真实进度 |
-| 人工编辑与保护操作 | EditingService/Revision/Lock/pin后端能力、当前改标/restore部分接通 | 译文编辑、Lock/Pin、region增删/几何修改完整UI/IPC parity未接通。M2-WORKBENCH-FULL-OPERATIONS按已批准需求拆冻结写命令，保护expected revision |
-| 设置/Provider凭据 | SettingsPanel真实读取保存SFX三策略 | 完整profiles、credentials、网络/诊断设置与secret exchange未产品化。M2-PROVIDER-CREDENTIALS先安全契约/能力，M2-SETTINGS-MAINTENANCE接设置页 |
-| 阅读与导出 | Python reading/export存在；AC1测试模式可调用 | 无React Reader、production ReaderProjection/进度/Export命令。M2-READER-EXPORT-CORE/M2-READER-EXPORT-UI待Reader范围解冻，不能借AC1测试桥代替 |
-| 真实质量 | 生产manga/SFX、PaddleOCR、remote translation与指定素材run已有证据 | JA G1自动对齐、F4无字页、翻译相似度口径、修复实际质量和域覆盖仍有局限。M2-JA-KO-QUALITY-QUALIFICATION按样本/阈值验收；不默认开启模型训练 |
-| 修复模型 | SimpleFill/EdgeBleed可运行；learned registry条目仅登记 | LaMa/AOT/BrushNet/FLUX `implements=False`，不记为实现。是否新增由M2-PRODUCT-COMPLETION-SCOPE/M2-JA-KO-QUALITY-QUALIFICATION质量差距决定，避免提前堆ML依赖 |
-| 源样式/导出格式/维护 | 生产样式分析器返回空列表；PDFComposer未注入；maintenance服务存在 | M2-PRODUCT-COMPLETION-SCOPE明确样式保持、图片/PDF/MOBI与PNG/ZIP/PDF所选格式；M2-SETTINGS-MAINTENANCE明确回收站/DB-only或全库备份，接安全停写/回滚；M2-READER-EXPORT-CORE逐格式验收。已有服务不等于production能力 |
-| 包与安全生命周期 | 第五SFX入口已构建；GC2 namespace/retired保护已实现 | R-003 packaged入口coverage仍未释放；GC G7多版本分发迁移仍是Gate；Windows10未测。M2-PACKAGED-SFX-ENTRY-GATE/M2-GC-DISTRIBUTION-MIGRATION-GATE/M2-WINDOWS-RELEASE-GATE补限定证据 |
+| 四页产品壳 | `App.tsx:74,478`：Console↔Workbench；Library/Settings section | 不是书架/工作台/阅读器/设置四页导航。P08先复用UI1冻结范围/设计，P12/P14/P15/P17分别落地 |
+| 空库建书与导入 | LibraryPanel只读ListBooks；Core已有Library/Import API | 无production创建/导入IPC与受控选文件链；`core_service.py:313,369` decoder恒1×1。P09真实decoder/受限来源与Managed Copy，P12接UI |
+| 翻译启动与任务控制 | `core_assembly.py`已有PipelineService；生产15条Tauri命令不含StartRun | `WorkbenchToolbar`仅上下文；`TaskProgressPanel:1,31`静态占位。P11冻结接受/快照/控制语义，P13复用后台执行，P14接真实进度 |
+| 人工编辑与保护操作 | EditingService/Revision/Lock/pin后端能力、当前改标/restore部分接通 | 译文编辑、Lock/Pin、region增删/几何修改完整UI/IPC parity未接通。P14按已批准需求拆冻结写命令，保护expected revision |
+| 设置/Provider凭据 | SettingsPanel真实读取保存SFX三策略 | 完整profiles、credentials、网络/诊断设置与secret exchange未产品化。P10先安全契约/能力，P15接设置页 |
+| 阅读与导出 | Python reading/export存在；AC1测试模式可调用 | 无React Reader、production ReaderProjection/进度/Export命令。P16/P17待Reader范围解冻，不能借AC1测试桥代替 |
+| 真实质量 | 生产manga/SFX、PaddleOCR、remote translation与指定素材run已有证据 | JA G1自动对齐、F4无字页、翻译相似度口径、修复实际质量和域覆盖仍有局限。P18按样本/阈值验收；不默认开启模型训练 |
+| 修复模型 | SimpleFill/EdgeBleed可运行；learned registry条目仅登记 | LaMa/AOT/BrushNet/FLUX `implements=False`，不记为实现。是否新增由P08/P18质量差距决定，避免提前堆ML依赖 |
+| 源样式/导出格式/维护 | 生产样式分析器返回空列表；PDFComposer未注入；maintenance服务存在 | P08明确样式保持、图片/PDF/MOBI与PNG/ZIP/PDF所选格式；P15明确回收站/DB-only或全库备份，接安全停写/回滚；P16逐格式验收。已有服务不等于production能力 |
+| 包与安全生命周期 | 第五SFX入口已构建；GC2 namespace/retired保护已实现 | R-003 packaged入口coverage仍未释放；GC G7多版本分发迁移仍是Gate；Windows10未测。P03/P06/P20补限定证据 |
 
 详见 [Core深读](core-audit.md) 与 [Desktop深读](desktop-audit.md)。实际调用链覆盖入口、装配、业务服务、持久化、资源句柄、React消费者、Tauri白名单/ACL、runner与测试证据；不以源码存在测试类直接宣布运行PASS。Core仍有惰性Qt图像读取seam，现有Pillow渲染是真的；不为“Qt-free”口号强制全库重写，按新架构实际功能和packaged执行结果决定适配。
 
 ## 整体规划怎样使用
 
-1. **完整产品范围先可审查**：M2-PRODUCT-COMPLETION-SCOPE决定四页最小parity、验收质量、控制语义、Windows声明矩阵；利用现有UI1和本轮取证，不重做视觉研究。
-2. **接通真实输入**：M2-REAL-IMPORT-ADAPTERS/M2-PROVIDER-CREDENTIALS/M2-LONG-RUN-IPC-CONTRACT可先并行设计，共享契约串行集成；随后M2-LIBRARY-IMPORT-UI导入界面、M2-PIPELINE-RUNTIME-RECOVERY后台Pipeline。
-3. **接通真实输出与操作**：M2-WORKBENCH-FULL-OPERATIONS工作台完整运行/编辑、M2-SETTINGS-MAINTENANCE设置、M2-READER-EXPORT-CORE/M2-READER-EXPORT-UI阅读导出按依赖落实。
-4. **质量与发布合流**：M2-JA-KO-QUALITY-QUALIFICATION真质量→M2-PRODUCT-E2E-ACCEPTANCE四页真实E2E→M2-WINDOWS-RELEASE-GATE声明范围内的固定包发布；M2-PACKAGED-SFX-ENTRY-GATE第五入口与M2-GC-DISTRIBUTION-MIGRATION-GATE迁移安全提前补证。
-5. **小债务按风险插入**：M2-TASK-EVIDENCE-RECONCILIATION元数据/报告取证、M2-WORKBENCH-REAL-UI-VERIFICATION真实DOM、M2-PRODUCTION-BRIDGE-VERIFICATION并发/命令族验证、M2-ERROR-CONTRACT-NOTES注记、M2-WORKBENCH-INPUT-INTERACTION-FIX真实剩余交互。无证据缺口直接销项，不制造新抽象。
+1. **完整产品范围先可审查**：P08决定四页最小parity、验收质量、控制语义、Windows声明矩阵；利用现有UI1和本轮取证，不重做视觉研究。
+2. **接通真实输入**：P09/P10/P11可先并行设计，共享契约串行集成；随后P12导入界面、P13后台Pipeline。
+3. **接通真实输出与操作**：P14工作台完整运行/编辑、P15设置、P16/P17阅读导出按依赖落实。
+4. **质量与发布合流**：P18真质量→P19四页真实E2E→P20声明范围内的固定包发布；P03第五入口与P06迁移安全提前补证。
+5. **小债务按风险插入**：P01元数据/报告取证、P02真实DOM、P04并发/命令族验证、P05注记、P07真实剩余交互。无证据缺口直接销项，不制造新抽象。
 
 远期任务是工作包，不是一个Owner同时拥有契约、Core、UI所有路径。正式释放拆为“契约→实现→UI→非作者验收”，各自固定base/允许路径；产品未知项保留proposed / 未释放/等待裁决。Owner与Reviewer不同，Codex集成验证不能替代独立Review。
 
-当前Reader面/跨页联动/页缩略图的“明确不做”没有解除；M2-READER-EXPORT-CORE/M2-READER-EXPORT-UI是可提前看清的条件路线。缩略图/跨页不作为默认范围。BJ13补标补画仍暂缓。Legacy29个非完全技术完成节点保留历史，不为提高计数继续实施。M2-LEGACY-RETIREMENT移除Legacy是可选、另授权、parity之后的事。
+当前Reader面/跨页联动/页缩略图的“明确不做”没有解除；P16/P17是可提前看清的条件路线。缩略图/跨页不作为默认范围。BJ13补标补画仍暂缓。Legacy29个非完全技术完成节点保留历史，不为提高计数继续实施。P21移除Legacy是可选、另授权、parity之后的事。
 
-若M2-PRODUCT-COMPLETION-SCOPE继续裁决暂缓Reader，则M2-PRODUCT-E2E-ACCEPTANCE/M2-WINDOWS-RELEASE-GATE必须命名为“选定范围验收/发布”，保留Reader缺口，不能将未做项N/A后宣称完整四页。M2-TASK-EVIDENCE-RECONCILIATION取证找不到原Review也可明确NOT_VERIFIED处置，不要求先找齐全部报告才准备M2-PRODUCT-COMPLETION-SCOPE。B3的8/8 export OK不代表每个Run严格状态都COMPLETED；K01 terminal/step不一致在M2-JA-KO-QUALITY-QUALIFICATION先核验，不凭旧报告宣布当前bug。
+若P08继续裁决暂缓Reader，则P19/P20必须命名为“选定范围验收/发布”，保留Reader缺口，不能将未做项N/A后宣称完整四页。P01取证找不到原Review也可明确NOT_VERIFIED处置，不要求先找齐全部报告才准备P08。B3的8/8 export OK不代表每个Run严格状态都COMPLETED；K01 terminal/step不一致在P18先核验，不凭旧报告宣布当前bug。
 
 ## 文档冲突与证据限制
 
@@ -76,7 +76,7 @@ M2前缀正式Task为101个；加GOV-001、两个DIAG-M2与DOC-FIX，新架构/�
 - `M2-PROD-DETECT-3.md`页头完整SHA不存在；真实短hash解析为`8fe5199c6d05d144052141ad02ed054bbaa90645`且为HEAD祖先，CSV保留来源，不掩盖错字段。
 - ANNOTATE-R2、SYNTH-BG-AUTO页头落后于集成；两份原独立Review载体尚NOT_VERIFIED，不能把祖先核验当独立批准。
 - AD-001与12_ROADMAP的早期“当前”现实、旧图ready/blocked与后继完成不一致。本轮仅在Plan/Index/Roadmap导航加最新入口与历史标签；不篡改历史报告/原日志或产品需求。
-- stdio两锁/响应关联、卡死/超时为静态候选，尚未动态复现。M2-PRODUCTION-BRIDGE-VERIFICATION先验证；不能直接宣布bug、直接修或造通用RPC框架。
+- stdio两锁/响应关联、卡死/超时为静态候选，尚未动态复现。P04先验证；不能直接宣布bug、直接修或造通用RPC框架。
 
 Packaged26/26的已入库证据绑定source=`3d532c1f99e49da703d2076bd67d46b710866637`与installer SHA=`ef617573ab39c0469079203489f4db4af78ae4e3437f8d97d87a3565bb40fa75`；Guard的测试范围不含本轮fresh整包重建。尊重RG1用户“本机视为干净Windows基座，通过即PASS”裁决，该Task结论有效；不额外强加独立干净机作为既有Gate条件，也不把限定结果扩写成Win10或完整四页发布通过。
 
@@ -98,12 +98,12 @@ Packaged26/26的已入库证据绑定source=`3d532c1f99e49da703d2076bd67d46b7108
 
 ## 推荐下一任务与可直接转发指令
 
-**Task**：M2-PRODUCT-COMPLETION-SCOPE“完整产品范围、四页parity与验收冻结准备”（proposed / 未释放，尚未创建正式 Task 文件）。**Agent**：Codex负责范围/契约；后续ZCode另开设计Task；建议非作者Reviewer=DSH。本次用户请求只规划，准备可以只读进行，产品取舍/Reader解冻必须等待用户裁决，不能启动后继实现。
+**Task**：P08“完整产品范围、四页parity与验收冻结准备”（proposed / 未释放，尚未创建正式 Task 文件）。**Agent**：Codex负责范围/契约；后续ZCode另开设计Task；建议非作者Reviewer=DSH。本次用户请求只规划，准备可以只读进行，产品取舍/Reader解冻必须等待用户裁决，不能启动后继实现。
 
 **Recovery point**：唯一仓库/branch=`G:/CODEX/New Manga`/`main`；审计base=head=`e4242ecd419eb0eea098d2f63b40f709aa5caeea`。后续治理提交与实际HEAD须live核验；正式Task branch/worktree待Codex创建，不臆造。**Scope**：只读src/apps/tests/Task/契约；新正式Task范围拟限自有Task、范围/验收草案、自有verification、Handoff，Plan/STATUS/索引由Codex维护。禁止生产src/apps、Schema、依赖、用户数据、已有raw、既有dirty写入；草案不修改冻结wire或需求。
 
 **Deliverables**：逐产品能力的must/deferred/out矩阵；每个现有命令/后继契约映射；Reader解冻与发布矩阵需用户裁决的具体选项；后继产品与发布候选任务逐步正式Task草案/依赖/Owner/Reviewer/allowlist/Gate。复用UI1，不再造一套视觉规范。**Verification**：PowerShell下Git Reality Check与`git diff --check`、相对固定base路径核验；每项需求能追溯D01/D04/D05/D08/现行Task和源码，草案/UNKNOWN/NOT_RUN如实保留。固定文档交付经非作者Review、Codex集成后才登记该设计Task done；这不释放任何产品实现。
 
 ```text
-在 G:/CODEX/New Manga 继续；先读取 AGENTS.md、doc/REBASELINE_PLAN.md 当前整体路线、doc/STATUS.md，以及 verification/PROJECT-ROADMAP-20261008/{RESUME,REPORT,ROADMAP}.md。审计base/head=e4242ecd419eb0eea098d2f63b40f709aa5caeea，当前branch main；实测HEAD/status/common-dir，保留.qoder-credits和历史dispatch dirty，不reset/clean/stash。建议下一准备=M2-PRODUCT-COMPLETION-SCOPE，正式ID M2-PRODUCT-COMPLETION-SCOPE 尚未创建/释放；Codex主责范围/契约、DSH建议非作者审查，ZCode设计另开Task；branch/worktree待Codex实际创建。先复用本轮Core/Desktop/Plan审计和CSV，形成四页must/deferred/out与质量/Windows验收矩阵，提前拆后继产品与发布候选任务的契约/Core/Host/UI/验收依赖，不再每做一个才猜下一步。允许只读生产代码；写集合仅拟议自有Task、范围/验收草案、verification/Handoff与Codex治理导航，禁止生产src/apps、Schema、依赖、冻结wire、用户数据、已有raw和他人dirty。Reader/跨页/缩略图保持当前明确不做，若完整目标需要Reader先列产品裁决，不默认解冻；Manga109永久取消，BJ13維持0.90手工改标+skip。逐项写需求/代码证据、允许路径、实际Owner/Reviewer、可复制测试计划和Gate；planned/NOT_RUN/UNKNOWN不记PASS。仅准备范围，不实施、不派发未释放产品Task。文档固定提交后交非作者Review与Codex集成验证，再更新checkpoint；只有正式释放范围后才逐节点实现。
+在 G:/CODEX/New Manga 继续；先读取 AGENTS.md、doc/REBASELINE_PLAN.md 当前整体路线、doc/STATUS.md，以及 verification/PROJECT-ROADMAP-20261008/{RESUME,REPORT,ROADMAP}.md。审计base/head=e4242ecd419eb0eea098d2f63b40f709aa5caeea，当前branch main；实测HEAD/status/common-dir，保留.qoder-credits和历史dispatch dirty，不reset/clean/stash。建议下一准备=P08，正式ID P08 尚未创建/释放；Codex主责范围/契约、DSH建议非作者审查，ZCode设计另开Task；branch/worktree待Codex实际创建。先复用本轮Core/Desktop/Plan审计和CSV，形成四页must/deferred/out与质量/Windows验收矩阵，提前拆后继产品与发布候选任务的契约/Core/Host/UI/验收依赖，不再每做一个才猜下一步。允许只读生产代码；写集合仅拟议自有Task、范围/验收草案、verification/Handoff与Codex治理导航，禁止生产src/apps、Schema、依赖、冻结wire、用户数据、已有raw和他人dirty。Reader/跨页/缩略图保持当前明确不做，若完整目标需要Reader先列产品裁决，不默认解冻；Manga109永久取消，BJ13維持0.90手工改标+skip。逐项写需求/代码证据、允许路径、实际Owner/Reviewer、可复制测试计划和Gate；planned/NOT_RUN/UNKNOWN不记PASS。仅准备范围，不实施、不派发未释放产品Task。文档固定提交后交非作者Review与Codex集成验证，再更新checkpoint；只有正式释放范围后才逐节点实现。
 ```
