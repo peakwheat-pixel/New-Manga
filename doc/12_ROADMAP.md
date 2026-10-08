@@ -1,5 +1,11 @@
 # Roadmap
 
+## 当前整体路线（2026-10-08，PLAN_ONLY）
+
+权威排期见 [Plan顶部P01–P21](REBASELINE_PLAN.md)，[中文分层依赖图](../verification/PROJECT-ROADMAP-20261008/ROADMAP.md)，[代码深读与完整台账](../verification/PROJECT-ROADMAP-20261008/REPORT.md)，[额度中断恢复](../verification/PROJECT-ROADMAP-20261008/RESUME.md)。当前无Active/released；完整产品条件主链为：范围/parity冻结→真实导入/凭据/长任务契约→书架/后台Pipeline→工作台/设置/阅读导出→真实质量→整体E2E→Windows发布。Reader解冻需要新产品裁决。下一准备建议P08；所有规划节点未释放。
+
+下方2026-09早期导航保留历史，不覆盖本段或Plan；其中旧“ready/planning only”任务多已由后继完成，不能作为当前待办。
+
 This file is a short navigation view. The authoritative roadmap, dependency
 graph, acceptance boundaries and historical Task audit live in
 [REBASELINE_PLAN.md](REBASELINE_PLAN.md). Live execution state lives in
@@ -11,7 +17,7 @@ graph, acceptance boundaries and historical Task audit live in
 
 自 2026-09-28 用户裁决起，后续 Task、缺陷和验收只在 React + TypeScript + Tauri + Python Core + SQLite 新架构推进。Legacy PySide6/QML 台账只作历史追溯，不再生成工作项；相关产品行为统一转写为 M2 需求。
 
-## Current order
+## Historical order（早期迁移快照，无当前排期效力）
 
 1. **T1.1.2, T1.1.1, T1.2.1, T2.1.1, T2.2.1, T3.1.1**: verified complete; fixed commits and evidence are in the authoritative Plan.
 2. **[T3.2.1 — Windows Packaging & Release Gate](tasks/T3.2.1.md)**：`CLOSED_WITH_LIMITATIONS / SUPERSEDED_BY_M2`；原 AC6/AC8/AC9 `PARTIAL` 与 NOT_RUN 清单均保留。未完成 Legacy AC 不阻塞 M2。详见 [closure evidence](../verification/T3.2.1/legacy-closure-audit-20260926.md)。
@@ -24,7 +30,7 @@ graph, acceptance boundaries and historical Task audit live in
 9. **[M2-RC2 — Resource Channel Command Surface and Sidecar Boundary Hardening](tasks/M2-RC2.md)**：done；base=`22a2c2bf`，FIX/reviewed head=`eac5cb3e`，DSH Review=approved，Codex integration=`88f972fe`；Codex 集成复验及 SHA256 导入清单见 [integration record](../verification/M2-RC2/integration-88f972fe/integration.md)。
 10. **[M2-AC1 — end-to-end acceptance on the M2 baseline](tasks/M2-AC1.md)**：`done`；fixed base=`7db0e7b6`，Owner tip=`51f70ed1`，DSH r4 `approved` @`d102bf70`（静态），Codex merge=`f162193b`。Codex 独立复跑 Core/Cargo/Vitest/E2E 全通过；[integration evidence](../verification/M2-AC1/integration-51f70ed1/integration.md)。
 
-### Released next Task and ordered follow-ups
+### Historical released Task and follow-ups（已由后继状态取代）
 
 1. [DIAG-M2-REGIONLESS-LOCK-CHANGED-001](tasks/DIAG-M2-REGIONLESS-LOCK-CHANGED-001.md)：`ready / AWAITING_EXTERNAL_DISPATCH`；Owner=DeepSeek Harness，Reviewer=Antigravity，Integrator=Codex，fixed base=`5789b30b`。只诊断，不改产品代码。
 2. `M2-P1 Regionless Detection Fan-out and Guard Rebinding`：planning only；等待 DIAG 根因与最小范围，不得提前实施。

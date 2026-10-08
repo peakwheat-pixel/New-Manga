@@ -1,5 +1,7 @@
 # 项目文档索引与 Source of Truth
 
+**2026-10-08整体规划入口**：[权威Plan当前P01–P21路线](REBASELINE_PLAN.md)、[一眼中文图](../verification/PROJECT-ROADMAP-20261008/ROADMAP.md)、[全项目报告](../verification/PROJECT-ROADMAP-20261008/REPORT.md)、[196节点台账](../verification/PROJECT-ROADMAP-20261008/task-inventory.csv)、[额度恢复点](../verification/PROJECT-ROADMAP-20261008/RESUME.md)。三路GPT-6.1 Sol high审计；不释放实现。当前无Active/released；完整产品未来树与历史done图分层，167登记完成/文档交付不代表产品完成率。下面旧Architecture/盘点段落是其当时的快照。
+
 当前无 Active/released Task。最近完成=`M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD done@integration e7d1f7f8`；Owner=Antigravity、非作者 Reviewer=DSH（r2 approved）、Integrator=Codex。集成验证见 [Runner Guard integration log](../verification/M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD/integration-validation.log)，恢复点与未运行 Gate 边界见 [STATUS](STATUS.md) 和 [Task](tasks/M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD.md)。R-06 模块加载复杂度 deferred；R-003 仍未释放。
 
 全任务盘点与 inventory 下方段落是其各自审计时的历史快照，不反映当前总数或授权状态；以本页首段、[Plan](REBASELINE_PLAN.md) 与 [STATUS](STATUS.md) 为当前事实。

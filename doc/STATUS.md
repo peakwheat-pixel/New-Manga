@@ -1,5 +1,11 @@
 # Current Development Status
 
+## 2026-10-08 全项目规划盘点（PLAN_ONLY / CHECKPOINTED）
+
+用户本轮请求已完成三路GPT-6.1 Sol high代码/文档审计与整体依赖规划；这是规划交付，**当前仍无 Active / released产品Task**。审计输入=`main@e4242ecd`；[报告](../verification/PROJECT-ROADMAP-20261008/REPORT.md)、[中文图](../verification/PROJECT-ROADMAP-20261008/ROADMAP.md)、[196节点完整台账](../verification/PROJECT-ROADMAP-20261008/task-inventory.csv)、[恢复点](../verification/PROJECT-ROADMAP-20261008/RESUME.md)。167登记完成/文档交付＋29历史局限/归档，不作为产品完成率；新架构有界Task全部收口，正式四页与完整用户链仍缺。
+
+当前后续整体树以[Plan顶部P01–P21](REBASELINE_PLAN.md)为准，全部PLANNED_PLACEHOLDER。推荐Codex先准备P08完整产品范围/parity与验收，Qoder另做设计，DSH非作者Review；实施未释放，Reader/BJ13/缩略图等现行裁决保持。产品测试本轮NOT_RUN，仅规划/证据/依赖检查；历史PASS限定原commit/hash。额度恢复按RESUME核Git并复用已完成审计，不再全库重做；下方各ready/blocked段落继续作为历史恢复证据。
+
 ## 2026-10-08 完成：M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD
 
 Task=`[M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD](tasks/M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD.md)` 为 `done`。Owner=Antigravity，非作者 Reviewer=DeepSeek Harness，Integrator=Codex；依赖 `M2-RUNNER-SNAPSHOT-DEBT done@73588624`。Code delivery=`e167e72351d6f725653d1f16b210a54f435e621f`，reviewed head=`8b867e0208246e2e478a2906a2198c60c7d88aa6`；DSH r2=`approved`（0 P0/P1/P2，Reviewer 自身运行命令因 sandbox 环境故障为 `NOT_RUN`），报告见 [DSH r2 Review](reviews/M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD-8b867e02-dsh-r2.md)。Codex integration merge=`e7d1f7f8528a6186baec6f642ac8422572103527`；集成验证记录见 [`integration-validation.log`](../verification/M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD/integration-validation.log)：Python 3.14/3.12 各 8 passed，两个缺省 runner CLI 均 exit 2，snapshot oracle 16 项 PASS，61 个历史 raw 文件 SHA-256 一致、两个 raw 路径 clean；17 个 Owner 路径中 4 个实现/测试路径全部获准、零 forbidden。R-06 剩余模块加载复杂度 deferred；完整 Dev/Packaged Gate、Sidecar、NSIS 按冻结范围 `NOT_RUN`。当前无 Active/released Task；R-003 仍是未释放候选。Owner branch/worktree 固定为 `agent/antigravity/M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD` / `G:/CODEX/New Manga.worktrees/RUNNER-HISTORICAL-RAW-OUTPUT-GUARD-antigravity`。主工作区 Qoder `.qoder-credits/report.json` modified、`通路探测__8602db50.canvas.tsx` untracked，以及本地 dispatch artifacts 由其原作者保留，未加入本 Task。

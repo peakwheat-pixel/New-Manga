@@ -1,5 +1,49 @@
 # Project Rebaseline Plan
 
+## 2026-10-08 全项目整体路线（PLAN_ONLY，当前规划覆盖层）
+
+用户要求用 GPT-6.1 Sol high 深读代码和文档、整理全部任务与后续路线、绘中文图并保存额度恢复点。本轮三路审计使用该模型/effort；主协调会话配置保持实际值，不冒充已切换。审计输入=`main@e4242ecd419eb0eea098d2f63b40f709aa5caeea`。本段覆盖下方历史“下一步/ready/blocked”快照的排期解释，**不新增 Active、不释放产品实现、不改变已有产品裁决**。
+
+交付：[报告与能力缺口](../verification/PROJECT-ROADMAP-20261008/REPORT.md)、[中文分层路线图](../verification/PROJECT-ROADMAP-20261008/ROADMAP.md)、[完整 Task 台账](../verification/PROJECT-ROADMAP-20261008/task-inventory.csv)、[额度/中断恢复点](../verification/PROJECT-ROADMAP-20261008/RESUME.md)。详细源码取证见同目录 Core/Desktop/Plan 三份审计；这些文件是证据/派生视图，排期仍以本 Plan 为准，运行仍以 STATUS 为准。
+
+当前：195 个正式 Task 文件＋T1.1.2 历史映射＝196 节点；114 DONE_RECORDED＋48 Legacy VERIFIED_COMPLETE＋5 DOC_ONLY＝167 登记完成/文档交付，另有29个历史 PARTIAL/归档/受限关闭/被取代节点。新架构/治理105节点（其中 M2前缀101）均登记完成，**登记 done 不等于研究质量 PASS、四页全部实现或最终发布通过**。无 Active/released。GC-2实现已done@cea610ed，设计后继 proposed 已被取代；ICU修复、Runner Debt与Guard均已done。旧素材/endpoint/BJ13 blocker不得复活。
+
+实际产品：React目前是 Console↔Workbench，书目与SFX设置是 Console 中的真实IPC小面板；Workbench已接页导航、图像资源、region改标、修订恢复、重渲染。完整四页导航、导入/整条Pipeline启动控制/任务快照/Reader/导出尚未接通。Core里已有业务API，不重写；真实导入适配、异步生命周期与受控IPC需补齐。见报告代码证据。
+
+### 预先定义的任务依赖树与 Gate
+
+以下 `P-*` 为 **PLANNED_PLACEHOLDER**，不是正式 Task ID，不计入196节点。表内人员为建议，不是实际认领；正式释放时为每个契约/实现切片单独填 Task、fixed base/head、branch/worktree、allowed_paths与非作者Reviewer，不能一行授予跨层无限写权限。没有正式 M3/M4 树，不虚构新 Milestone。估算需在范围冻结后给出，不按Task数计算产品完成百分比。
+
+| 节点 | 简单中文描述 | 启动依赖/条件 | 建议责任方；非作者审查 | 完成 Gate / 边界 |
+|---|---|---|---|---|
+| P01 | 台账元数据与Review载体取证 | 当前基线；只读取证先行 | Codex；DSH | GC2 null、DETECT3错SHA、R2/SYNTH Review逐项处置；找不到标NOT_VERIFIED，不补造批准 |
+| P02 | 真UI行为、300ms刷新与对比度验证 | 现有Workbench；冻结harness范围 | Qoder；DSH | DOM/真实WebView取证，区分mock与实际；覆盖切页、写后刷新、键盘、token |
+| P03 | Packaged第五SFX入口验收补齐 | PROBE-1/Runner Debt/Guard已done | Antigravity；DSH | 固定新source/installer hash；第五入口执行成功＋失败对照，不只assert文件存在；完整受影响Gate |
+| P04 | 生产命令族/桥接并发定向验证 | PAGE-NAV done；先检查现有断言 | Antigravity；DSH | 独立常量成员断言；同会话并发响应与协议核验候选先复现；无缺口不加修复 |
+| P05 | category/retryable契约注记收敛 | CATEGORY done；RC4-08等deferred | Codex；DSH | 文档一致与反向链接；不更改冻结错误语义 |
+| P06 | GC分发迁移安全补证 | GC2 done；受控旧版本/隔离根可用 | ZCode；DSH | G7旧runtime退出/所有入口参与证据；未知保留、迁移不满足BLOCKED；不重做GC2 |
+| P07 | 手输image读取/quiet-window交互修补 | P02证明剩余缺口；REGION-DEBOUNCE已done | Qoder；DSH | 最小实际缺口与判别用例；不重开已闭debounce |
+| P08 | 完整产品范围、四页设计与验收冻结 | 利用P01取证/明确处置（NOT_VERIFIED可保留）；用户产品裁决 | Codex管契约，Qoder另设计Task；DSH | 功能parity矩阵/质量阈值/数据保护/发布矩阵；格式/样式/维护边界逐项选入或deferred；Reader等明确不做项须新裁决；不扩一级页面 |
+| P09 | 真实导入契约＋Core适配 | P08；先冻结来源能力，再实施 | Codex契约→Antigravity/ZCode实现；DSH | opaque受限来源、真实尺寸、Managed Copy、损坏/逃逸/部分失败；复用Import API与现有decoder |
+| P10 | Provider配置与凭据安全通道 | P08；secret exchange先冻结 | Codex契约→Antigravity实现；DSH | credential引用/存储/脱敏/启动配置与重启持久；secret不进入普通DTO/事件/日志 |
+| P11 | 长任务IPC生命周期契约 | P08；现有PipelineService语义 | Codex；DSH | StartRun快照/控制/恢复/错误/事件策略/有界工作；冻结接受时点；不造第二调度器 |
+| P12 | 书架＋导入的完整用户链 | P09；P08的Qoder设计通过 | Qoder；DSH | 建书/章节/选文件/导入报告/导航；React不得传任意路径或直接写DB |
+| P13 | Pipeline后台执行与恢复接线 | P09＋P11；deterministic provider可先验收 | ZCode；DSH | durable accepted、执行/暂停取消重试/崩溃恢复、Lock/current/pinned保护；复用现有API |
+| P14 | 工作台启动/进度/控制/人工编辑闭环 | P13＋Qoder设计；编辑/Lock/Pin/region写命令先冻结 | Codex契约→ZCode/Antigravity Core→Qoder UI；DSH | 替换静态TaskProgress；真实快照查询与失效恢复；译文/Lock/Pin/区域增删几何修改按parity拆切片；expected revision冲突与人工修改保护 |
+| P15 | 完整设置页及所选维护能力 | P10＋Qoder设计；备份恢复需P13停写/排空设计 | Codex维护契约→Antigravity Core→Qoder UI；DSH | 使用冻结配置/凭据能力；诊断/回收站/DB备份或全库备份范围由P08选定；恢复先停写/连接回收/reassemble/rollback，不冒充全库备份；保留SFX语义 |
+| P16 | 阅读/进度/导出的Core与IPC | P13＋P08中Reader解冻裁决（只读旧结果可另评估并行） | Codex契约→ZCode实现；DSH | ReaderProjection/进度/输出授权/lineage/取消；PNG/ZIP与PDF分别定格式Gate，PDFComposer现未注入；不把AC1测试模式当production |
+| P17 | 阅读器＋安全导出界面 | P16＋Qoder设计 | Qoder；DSH | 真实结果/进度/页序/导出；缩略图、跨页联动非默认范围 |
+| P18 | JA/KO真实质量资格补齐 | P13＋P10；受控素材/模型/endpoint＋P08质量口径 | DSH；Codex或ZCode非作者 | JA自动对齐、无字页F4、K01 terminal/step历史不一致先核验、翻译相似度、修复/源样式质量；真值/阈值/样本/版本可复现，mock不替代 |
+| P19 | 四页完整E2E与数据安全验收 | P12＋P14＋P15＋P17＋P18；P08确实选择四页完整范围 | DSH；Codex非作者 | 用户正常/失败/恢复链；源hash/人工修改/Lock/current/pinned逐项证据；若Reader继续暂缓，改称选定范围验收，不称四页完成 |
+| P20 | 最终Windows发布Gate | P19＋P03＋P06；目标环境可用 | ZCode；DSH；Codex集成 | 新fixed-head/hash安装包；声明Win11/Win10矩阵与性能；尊重RG1本机裁决，不外推未测环境 |
+| P21 | Legacy归档/移除（可选） | P20＋独立移除授权 | Codex；非作者DSH | parity＋数据迁移/回退；不继续修Legacy，不作为当前完整产品必做前提 |
+
+推荐下一准备是P08（完整产品范围与验收冻结），先利用本轮P01取证结论，不再全库重新审计；范围裁决前可处理P02/P03当前范围内验证，余下收口按风险插入。完整产品条件主链：P08→P09/P10/P11→P12/P13→P14/P15/P16→P17/P18→P19→P20。这是一份提前可见的依赖计划；未来发现缺口仅刷新受影响子图，不能继续用零散历史段落替代全局路线。
+
+保留：Manga109永久取消；BJ13维持0.90、手工改标＋skip，补标/补画不释放；Reader面/跨页联动/页缩略图在现行切片明确不做，P16/P17只是待裁决条件规划。LaMa/AOT/BrushNet/FLUX learned inpaint没有production实现，不默认投入；SimpleFill/EdgeBleed已在现有链路，是否足够由P08/P18质量证据决定。GC长会话总磁盘有界没有承诺，不为了漂亮路线图扩大删除能力。
+
+本轮推荐下一步：**Codex进行P08完整产品范围与验收冻结准备**，指令、base/head、范围与验证见[报告末尾](../verification/PROJECT-ROADMAP-20261008/REPORT.md)。产品范围取舍待用户裁决，实施仍未释放。额度恢复先读RESUME并核Live Git，不重跑全仓审计；只在交付/审查/集成等边界保存checkpoint。
+
 ## 2026-10-08 完成：M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD
 
 [M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD](tasks/M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD.md) 已完成，关闭 Runner DSH r4 deferred R-001。Owner=Antigravity，非作者 Reviewer=DeepSeek Harness，Integrator=Codex；依赖 `M2-RUNNER-SNAPSHOT-DEBT done@73588624`。实现基线=`e9b66455356c56e0fe6720d658b46bdbdbeb53b5`；release/start head=`d12ebc7a0bbd5617e7a376e00f45c9ee114c8c10`；code delivery=`e167e72351d6f725653d1f16b210a54f435e621f`；reviewed head=`8b867e0208246e2e478a2906a2198c60c7d88aa6`。DSH r1 `changes_requested` 已修订；DSH r2 `approved`（0 P0/P1/P2），报告见 [DSH r2 Review](reviews/M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD-8b867e02-dsh-r2.md)。Codex integration merge=`e7d1f7f8528a6186baec6f642ac8422572103527`。集成验证：Python 3.14/3.12 各 8 passed；两个 runner 缺省 CLI 均 exit 2；snapshot oracle 16 项 PASS；历史 raw 61/61 SHA-256 一致；Owner 17 路径中 4 个实现/测试路径均在允许范围；证据见 [集成验证记录](../verification/M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD/integration-validation.log)。R-06 剩余模块加载复杂度 deferred；完整 Dev/Packaged Gate、Sidecar、NSIS 按 Task 范围 `NOT_RUN`。R-003（第五入口 packaged 覆盖）仍未释放；当前无 Active/released Task。

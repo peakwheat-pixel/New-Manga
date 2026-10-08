@@ -1,0 +1,80 @@
+# New Manga 一眼路线图（2026-10-08）
+
+派生视图；排期事实以 [REBASELINE_PLAN](../../doc/REBASELINE_PLAN.md) 当前覆盖层为准。基线：`main@e4242ecd`。箭头表示启动依赖，不是工期；没有可靠估算，不编造百分比或日期。`P-*` 是规划节点，全部未释放，不是现有正式 Task。
+
+## 已做到哪里
+
+```mermaid
+flowchart TB
+  A["已完成：基础架构<br/>Python Core · SQLite · Managed Copy"] --> B["已完成：安全桥接<br/>Tauri IPC · 大图资源通道 · Windows打包"]
+  B --> C["已完成：业务竖切<br/>书目/页导航 · 区域改标 · 撤销 · 重渲染"]
+  A --> D["已完成：AI生产与实验链<br/>manga检测 · SFX · OCR适配 · JA/KO素材"]
+  C --> E["当前产品：部分可操作<br/>Console＋Workbench；任务进度仍占位"]
+  D --> E
+  E --> F["未完成：完整用户闭环<br/>导入 → 翻译运行/恢复 → 阅读/导出"]
+  E --> G["未完成：完整四页界面<br/>书架 / 工作台 / 阅读器 / 设置"]
+  F --> H["未完成：整体产品验收<br/>真实质量＋四页行为＋声明的Windows矩阵"]
+  G --> H
+```
+
+“已完成”仅针对各 Task 冻结范围。AI实验有如实 FAIL 的结论；后端 API 可用、测试模式端到端成功，均不能代替正式界面链路。
+
+## 当前范围内：先收口，再进入整产品主链
+
+```mermaid
+flowchart TB
+  BASE["当前基线：无 Active / released"] --> P01["P01 台账取证<br/>修正陈旧metadata；追溯两份Review"]
+  BASE --> P02["P02 真UI验证<br/>点击/300ms刷新/对比度/失效窗口"]
+  BASE --> P03["P03 第五入口Gate<br/>验证SFX frozen入口；不只确认文件存在"]
+  BASE --> P04["P04 生产命令面验证<br/>常量成员与并发响应；先复现再决定修复"]
+  BASE --> P05["P05 错误语义澄清<br/>category与retryable注记一致"]
+  BASE --> P06["P06 GC迁移补证<br/>旧版本退出/命名空间保护；未知保留"]
+  P02 -. "确认实际缺口后" .-> P07["P07 小交互修补<br/>手输image读取/quiet-window busy"]
+  P01 --> S["P08 完整产品范围与验收冻结<br/>Codex汇总；用户裁决；Qoder设计"]
+```
+
+P01–P06 不存在必须全部串行的技术依赖。P01已由本轮提供取证结论；推荐先准备P08完整产品范围，范围裁决前可做P02/P03，余项按风险插入。启动每个实现前仍须正式 Task、独立 Reviewer 和 allowed_paths。共享主线/契约/启动文件串行集成。P06 是已完成 GC-2 的分发补证，不重新实现 GC-2，也不声称长会话磁盘有界。
+
+## 完整产品：现在就看清后续，而不是每次临时猜下一件
+
+```mermaid
+flowchart TB
+  P08["P08 范围＋四页设计冻结<br/>保留四页；Reader解冻须用户裁决"] --> P09["P09 真实导入契约与Core适配<br/>受限来源引用；真实尺寸；Managed Copy"]
+  P08 --> P10["P10 设置与凭据安全通道<br/>Provider配置可验证；secret不进普通DTO"]
+  P08 --> P11["P11 长任务契约冻结<br/>启动/快照/暂停取消重试/恢复语义"]
+  P09 --> P12["P12 书架与导入产品链<br/>建书/章节/选文件/结果；Qoder接UI"]
+  P09 --> P13["P13 Pipeline后台运行与恢复<br/>复用现有调度；持久状态；ZCode实现"]
+  P11 --> P13
+  P13 --> P14["P14 工作台完整操作链<br/>运行/进度/人工译文/Lock/Pin/区域编辑"]
+  P10 --> P15["P15 完整设置页<br/>配置/凭据/诊断；Qoder实现"]
+  P13 --> P16["P16 阅读与导出契约＋Core<br/>进度/lineage/受控输出；待范围解冻"]
+  P08 -. "Reader解冻裁决" .-> P16
+  P16 --> P17["P17 阅读器与导出UI<br/>读取真实结果/保存进度/安全导出"]
+  P10 --> P18["P18 真JA/KO质量资格<br/>检测/OCR/翻译/修复/无字页；DSH验收"]
+  P13 --> P18
+  P12 --> P19["P19 四页完整E2E与数据安全<br/>正常/失败/人工修改/Lock/重启；非作者验收"]
+  P14 --> P19
+  P15 --> P19
+  P17 --> P19
+  P18 --> P19
+  P19 --> P20["P20 最终Windows发布Gate<br/>新fixed-head安装包；声明矩阵；独立审查"]
+  P03["P03 第五入口补证"] --> P20
+  P06["P06 GC分发补证"] --> P20
+  P20 -. "另行授权，可选" .-> P21["P21 Legacy归档/移除<br/>新架构parity通过后；不修旧架构"]
+```
+
+P08–P21 是完整目标的条件规划，不解除当前 Reader/跨页联动/页缩略图“明确不做”的冻结。缩略图、跨页联动不作为默认任务。P09/P10/P11 内部先契约后实现，正式释放时拆为独立 Task；P14新增编辑能力同样先Codex冻结命令、ZCode/Antigravity实现Core、再Qoder接UI；P16先Core/IPC后P17 UI。Pipeline 最小成功链可先用 deterministic provider，真实质量 Gate 依赖 P10 和可用受控模型/endpoint，不能将 mock PASS 当真质量 PASS。
+
+长会话/磁盘总量、模型扩展与训练不是默认关键路径。BJ13 维持 0.90、手工改标＋skip；Manga109 永久取消。不重新打开已完成 TA3-B2/B3、GC-2、ICU 或 Runner Guard。
+
+## 每一步怎么算完成
+
+```mermaid
+flowchart LR
+  A["冻结Task<br/>依赖/范围/Owner/基线"] --> B["实现交付<br/>代码＋可复现测试＋Handoff"]
+  B --> C["非作者Review<br/>固定提交；条件闭合"]
+  C --> D["Codex集成验证<br/>核路径/数据安全/受影响回归"]
+  D --> E["done＋更新台账<br/>提前解锁下一规划节点"]
+```
+
+额度中断时：读 [RESUME](RESUME.md) → 核 Git/当前 STATUS → 复用报告 → 只重算变化的依赖子图。等待额度恢复无需重做全仓审计；外部 Agent 接管须按协作协议分配，Owner 不得审自己。
