@@ -1,6 +1,8 @@
 P08草案独立预审后修订验证
 
-目标输入HEAD：f7d4a947594cc41663a9ab557551f267c3070cd6（P08初次交付）；working-tree修改仅P08文档、导航和脚本。原作者dirty不在写入范围。
+范围审查修订目标commit：4de7fb444d0abfb62c3eec327a7071a18f8ad90c；P08初次交付commit：f7d4a947594cc41663a9ab557551f267c3070cd6。以下命令在修订内容集成提交后的4de7fb4上重新执行；原作者dirty不在写入范围。
+
+
 
 命令：`python verification/P08/verify_scope.py`
 结果：PASS，D08 193条编号AC + AC-SMOKE + §68–79 12项总Gate映射，所有产品结果保持NOT_RUN；local links PASS；P08仍blocked、20节点未释放；production/contracts/original Reviews/inventory零差量；Plan/Status历史区段不变。EXIT=0。
@@ -14,3 +16,5 @@ P08草案独立预审后修订验证
 独立Reviewer预审：Codex只读子代理（非项目指定DSH Review）；P1/P2意见已按范围修订并保存至`preliminary-review.md`。DSH Review尚未派发/取得。
 
 产品pytest/cargo/vitest/GUI/build、外部endpoint/model、真实推理：NOT_RUN（仅范围/文档准备）。
+
+Git提交 `4de7fb444d0abfb62c3eec327a7071a18f8ad90c`后再次现场验证以上两脚本，EXIT=0；P08仍blocked。
