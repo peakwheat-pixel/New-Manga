@@ -71,6 +71,30 @@ if __name__ == "__main__":
              "doc/AD-001_TARGET_DESKTOP_ARCHITECTURE.md",
              "verification/PROJECT-ROADMAP-20261008/task-inventory.csv"]
     assert not subprocess.check_output(["git", "-C", str(ROOT), "diff", "--name-only", BASE, "--", *paths]).strip()
+    allowed_files = {
+        "doc/tasks/P08.md", "doc/REBASELINE_PLAN.md", "doc/STATUS.md", "doc/00_INDEX.md",
+        "doc/12_ROADMAP.md", "doc/tasks/README.md",
+        "verification/PROJECT-ROADMAP-20261008/REPORT.md",
+        "verification/PROJECT-ROADMAP-20261008/ROADMAP.md",
+        "verification/PROJECT-ROADMAP-20261008/RESUME.md",
+        "verification/PROJECT-ROADMAP-20261008/verify_plan.py",
+    }
+    handoff_prefix = "doc/handoffs/P08-"
+
+    def allowed(path):
+        return (path in allowed_files or path.startswith("verification/P08/")
+                or (path.startswith(handoff_prefix) and path.endswith(".md")
+                    and "/" not in path[len(handoff_prefix):]))
+
+    assert allowed("verification/P08/review-example.md") and allowed("doc/handoffs/P08-r5.md")
+    assert not allowed("doc/10_CURRENT_STATE_AND_GAPS.md")
+    assert not allowed("doc/handoffs/P08/nested.md")
+    # Check the fixed commit range without attributing pre-existing worktree dirt to P08.
+    changed = subprocess.check_output(["git", "-C", str(ROOT), "diff", "--name-only",
+                                       "--no-renames", BASE, "HEAD"], text=True).splitlines()
+    outside_scope = [path for path in changed if not allowed(path)]
+    assert not outside_scope, f"committed P08 diff escapes allowed paths: {outside_scope}"
+    print(f"PASS: committed BASE..HEAD diff is within P08 allowed paths ({len(changed)} files)")
     handoffs = sorted(path.relative_to(ROOT).as_posix()
                       for path in (ROOT / "doc/handoffs").glob("P08-*.md"))
     assert handoffs, "P08 Handoff scope must not be empty"
