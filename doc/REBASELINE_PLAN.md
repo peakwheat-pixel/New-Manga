@@ -1,8 +1,8 @@
 # Project Rebaseline Plan
 
-## 2026-10-08 Changes requested：M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD
+## 2026-10-08 In Review：M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD
 
-[M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD](tasks/M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD.md) 已单独冻结并释放，处理 Runner DSH r4 deferred R-001。Owner=Antigravity，非作者 Reviewer=DeepSeek Harness，Integrator=Codex；硬依赖 `M2-RUNNER-SNAPSHOT-DEBT done@73588624`。实现基线=`e9b66455356c56e0fe6720d658b46bdbdbeb53b5`；release/start head=`d12ebc7a0bbd5617e7a376e00f45c9ee114c8c10`；初始交付 head=`0ea16b832dcf32297d8c73df2ccdcf764c694368`。DSH r1 对该 head 的 decision=`changes_requested`：R-01 P1（README 示例仍落在历史 raw 树）；R-02 至 R-04 P2（统计口径、完整性证据不可复现、测试依赖仓库全局 Git 状态）；R-05/R-06 为可选 P3，R-07 是 Codex 元数据工作。Antigravity 正在原冻结范围内修订；修订 head 固定后交 DSH r2，批准前不集成。审查报告暂存于 DSH reviewer worktree `G:/CODEX/New Manga.worktrees/RUNNER-HISTORICAL-RAW-OUTPUT-GUARD-dsh-r1/doc/reviews/M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD-1c49fe38-dsh-r1.md`。
+[M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD](tasks/M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD.md) 已单独冻结并释放，处理 Runner DSH r4 deferred R-001。Owner=Antigravity，非作者 Reviewer=DeepSeek Harness，Integrator=Codex；硬依赖 `M2-RUNNER-SNAPSHOT-DEBT done@73588624`。实现基线=`e9b66455356c56e0fe6720d658b46bdbdbeb53b5`；release/start head=`d12ebc7a0bbd5617e7a376e00f45c9ee114c8c10`；r1 原始交付=`0ea16b832dcf32297d8c73df2ccdcf764c694368`。DSH r1 decision=`changes_requested`；R-01 至 R-04 已修订，R-05 已加固，R-06 的断言简化已做但模块加载复杂度作为可选项 deferred，R-07 由 Codex 在 `8ad092d2` 更新治理元数据。当前代码交付 head=`e167e72351d6f725653d1f16b210a54f435e621f`，Owner Task/Handoff/evidence head=`8b867e0208246e2e478a2906a2198c60c7d88aa6`。DSH r2 正在独立审查该固定 head，未批准前不集成。R1 报告位于 DSH r1 reviewer worktree；r2 worktree=`G:/CODEX/New Manga.worktrees/RUNNER-HISTORICAL-RAW-OUTPUT-GUARD-dsh-r2`。
 
 ## 2026-10-08 完成：M2-RUNNER-SNAPSHOT-DEBT @integration `73588624`
 
@@ -10,7 +10,7 @@ ICU 修复 Task 已 done@`65ba30144048a0b8daae22205c01f8049b44b8a7`；fresh Side
 
 Task=`[M2-RUNNER-SNAPSHOT-DEBT](tasks/M2-RUNNER-SNAPSHOT-DEBT.md)` 已 `done`；Owner=Codex、非作者 Reviewer=DeepSeek Harness、Integrator=Codex。reviewed head=`5c2d047804eb4a802c04e53b5e8e5e5459570b24`，AC4 实际代码/测试 head=`3d532c1f99e49da703d2076bd67d46b710866637`，integration fast-forward=`73588624b70c337ca4fcb36a4d42e91d3b03f5b0`。Fresh Sidecar/NSIS/Dev/Packaged 与 snapshot oracle 均 PASS；Packaged 26/26，installer SHA=`ef617573ab39c0469079203489f4db4af78ae4e3437f8d97d87a3565bb40fa75`。DSH r4=`approved`、0 P0/P1；集成后核验与 snapshot 16 项 PASS 见 [integration-validation.log](../verification/M2-RUNNER-SNAPSHOT-DEBT/integration-validation.log)。R-001/R-003 为非阻断 deferred，未自动创建后续 Task。
 
-当前 Active Task 为 `M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD`（changes_requested；Antigravity 修订中，待 DSH r2）；R-003（Packaged Gate 覆盖第五入口）仍是未释放候选。下方 ICU/Runner 旧 release、blocked 与 changes_requested 段落仅为历史 checkpoint。
+当前 Active Task 为 `M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD`（in_review；DSH r2 正在复核）；R-003（Packaged Gate 覆盖第五入口）仍是未释放候选。下方 ICU/Runner 旧 release、blocked 与 changes_requested 段落仅为历史 checkpoint。
 
 ICU 集成证据：[integration-validation.log](../verification/M2-PACKAGED-AC1-ICU-ISOLATION-FIX/integration-validation.log)；[DSH r2 Review](reviews/M2-PACKAGED-AC1-ICU-ISOLATION-FIX-4499217d-dsh-r2.md)。
 

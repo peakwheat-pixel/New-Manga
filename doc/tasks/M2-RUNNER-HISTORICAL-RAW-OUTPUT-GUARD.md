@@ -2,7 +2,7 @@
 id: M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD
 title: Require explicit isolated output directories for M2 runner commands
 kind: implementation
-status: changes_requested
+status: in_review
 approval: user_authorized_release_20261008
 suggested_owner: Antigravity
 owner: Antigravity
