@@ -6,6 +6,7 @@ import subprocess
 import sys
 from pathlib import Path
 
+sys.stdout.reconfigure(encoding="utf-8")
 reviewed = sys.argv[1]
 source = "cfb5d2eecc4d8ab7a3159cdbb1d5812547bb5cd2"
 
@@ -13,14 +14,20 @@ source = "cfb5d2eecc4d8ab7a3159cdbb1d5812547bb5cd2"
 def git(*args):
     print("COMMAND=" + json.dumps(["git", *args]))
     result = subprocess.run(["git", *args], capture_output=True, text=True, encoding="utf-8")
-    print(result.stdout, end="")
+    if args and args[0] == "show":
+        print("SOURCE_CONTENT_BYTES_SHA256=" + hashlib.sha256(result.stdout.encode("utf-8")).hexdigest())
+    else:
+        print(result.stdout, end="")
     print(result.stderr, end="")
     print("EXIT=" + str(result.returncode))
     assert result.returncode == 0
     return result.stdout.strip()
 
 
-assert git("rev-parse", "HEAD") == reviewed
+current = git("rev-parse", "HEAD")
+git("merge-base", "--is-ancestor", reviewed, current)
+print("ACTUAL_EVIDENCE_PARENT_HEAD=" + current)
+git("diff", "--name-only", reviewed, current)
 print("FIXED_REVIEWED_CODE_HEAD=" + reviewed)
 git("rev-parse", "41d77f98")
 git("diff", "--name-only", source, "41d77f98")
