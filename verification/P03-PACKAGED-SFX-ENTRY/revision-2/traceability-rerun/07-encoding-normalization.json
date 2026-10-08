@@ -7,7 +7,7 @@
   "all_reconstructions_verified": true,
   "grammar_specification": {
     "description": "Formal grammar defining the mixed-encoding body byte stream and its bijective mapping to canonical UTF-8",
-    "encoding_mixed_explanation": "Observed objective token structure in raw captures: UTF-8 header and footer enclosing a body consisting of [c, 0x00] (UTF-16LE ASCII units) and newline sequence 0D 0A 00 0D 0A 00. Mixed encoding directly stems from PowerShell 5.1 Out-File and Tee-Object usage; specific internal mechanism producing the expanded newline sequence is unverified.",
+    "encoding_mixed_explanation": "Observed factual token structure in raw captures: UTF-8 header and footer enclosing a body consisting of [c, 0x00] (UTF-16LE ASCII units) and newline sequence 0D 0A 00 0D 0A 00. It is observed that run_traceable.ps1 uses Out-File and Tee-Object commands and that raw captures contain the documented byte tokens; the origin and mechanism of the encoding mix and expanded newline sequence remain unverified.",
     "segments": {
       "header": "UTF-8-SIG bytes from start to separator =====================================\\r\\n",
       "body": "Token stream between header separator and footer separator =====================================\\r\\nEndTime:",

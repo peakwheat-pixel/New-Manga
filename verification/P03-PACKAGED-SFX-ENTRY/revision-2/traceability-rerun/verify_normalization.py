@@ -2,11 +2,13 @@
 Read-Only Verification Script for P03 Traceability Logs Normalization.
 
 This script strictly performs in-memory verification and assertions:
-- Does NOT create directories or write/modify any files on disk.
+- Does NOT create directories or write/modify any files on disk (idempotent read-only).
 - Asserts that all 6 canonical logs match in-memory formal grammar derivations bit-for-bit.
 - Asserts that canonical logs are NUL-free, decodable UTF-8, and free of trailing whitespace.
+- Explicitly asserts that U+2420 UTF-8 bytes do NOT occur in original raw body.
 - Performs inverse token mapping on canonical logs and asserts 100% bit-for-bit reconstruction of raw files.
-- Verifies that 07-encoding-normalization.json matches all computed hashes, sizes, and assertions.
+- Fully verifies that 07-encoding-normalization.json matches all computed hashes, sizes, NUL counts,
+  reconstruction properties, and per-file assertion statuses.
 """
 
 import os
@@ -30,13 +32,15 @@ def verify_all():
     sep_u8 = b"=====================================\r\n"
     footer_tag = b"=====================================\r\nEndTime:"
     ESCAPE_SPACE = "\u2420"  # U+2420 SYMBOL FOR SPACE (␠)
+    ESCAPE_SPACE_UTF8 = ESCAPE_SPACE.encode("utf-8")  # b"\xe2\x90\xa0"
 
     with open(manifest_path, "r", encoding="utf-8") as f:
         manifest = json.load(f)
 
     assert manifest.get("schema_version") == "2.1", "Expected manifest schema_version 2.1"
-    assert manifest.get("all_assertions_passed") is True
-    assert manifest.get("all_reconstructions_verified") is True
+    assert manifest.get("files_count") == 6, "Expected manifest files_count == 6"
+    assert manifest.get("all_assertions_passed") is True, "Manifest all_assertions_passed must be True"
+    assert manifest.get("all_reconstructions_verified") is True, "Manifest all_reconstructions_verified must be True"
 
     manifest_file_map = {item["filename"]: item for item in manifest["files"]}
     assert len(manifest_file_map) == 6, "Manifest must document all 6 files"
@@ -53,12 +57,14 @@ def verify_all():
             raw_bytes = f.read()
         raw_sha256 = hashlib.sha256(raw_bytes).hexdigest()
         raw_len = len(raw_bytes)
+        actual_raw_nul_count = raw_bytes.count(b"\x00")
 
         # 2. Read canonical bytes from disk
         with open(canon_path, "rb") as f:
             disk_canon_bytes = f.read()
         disk_canon_sha256 = hashlib.sha256(disk_canon_bytes).hexdigest()
         disk_canon_len = len(disk_canon_bytes)
+        actual_canon_nul_count = disk_canon_bytes.count(b"\x00")
 
         # 3. Structural partition of raw file
         hdr_end = raw_bytes.find(sep_u8) + len(sep_u8)
@@ -69,6 +75,9 @@ def verify_all():
         raw_hdr = raw_bytes[:hdr_end]
         raw_body = raw_bytes[hdr_end:footer_start]
         raw_footer = raw_bytes[footer_start:]
+
+        # Explicit assertion: U+2420 UTF-8 bytes must not appear anywhere in original raw body
+        assert ESCAPE_SPACE_UTF8 not in raw_body, f"{fname}: U+2420 UTF-8 bytes found in original raw body!"
 
         # 4. In-memory derivation of expected canonical
         if fname == "05-rerun-diff-check.log":
@@ -100,7 +109,7 @@ def verify_all():
         assert disk_canon_bytes == expected_canon_bytes, f"{fname}: disk canonical diverges from formal grammar!"
 
         # 5. Quality assertions on canonical file
-        assert b"\x00" not in disk_canon_bytes, f"{fname}: NUL byte found in canonical output!"
+        assert actual_canon_nul_count == 0, f"{fname}: NUL byte found in canonical output!"
         canon_text = disk_canon_bytes.decode("utf-8-sig")
         assert "=== Traceability Execution Record ===" in canon_text, f"{fname}: header record missing"
         assert "EXIT=0" in canon_text, f"{fname}: EXIT=0 missing"
@@ -138,19 +147,58 @@ def verify_all():
 
         assert reconstructed_raw == raw_bytes, f"{fname}: inverse reconstruction failed to match original bytes bit-for-bit!"
 
-        # 7. Validate manifest consistency
+        # 7. Validate manifest consistency with complete assertions
         meta = manifest_file_map[fname]
-        assert meta["original"]["size_bytes"] == raw_len
-        assert meta["original"]["sha256"] == raw_sha256
-        assert meta["canonical"]["size_bytes"] == disk_canon_len
-        assert meta["canonical"]["sha256"] == disk_canon_sha256
-        assert meta["reconstruction_verification"]["reconstructed_matches_original_bit_for_bit"] is True
+
+        # 7a. Original properties
+        assert meta["original"]["size_bytes"] == raw_len, f"{fname}: original size mismatch"
+        assert meta["original"]["sha256"] == raw_sha256, f"{fname}: original sha256 mismatch"
+        assert meta["original"]["nul_bytes_count"] == actual_raw_nul_count, (
+            f"{fname}: manifest original nul_bytes_count ({meta['original']['nul_bytes_count']}) != actual ({actual_raw_nul_count})"
+        )
+
+        # 7b. Canonical properties
+        assert meta["canonical"]["size_bytes"] == disk_canon_len, f"{fname}: canonical size mismatch"
+        assert meta["canonical"]["sha256"] == disk_canon_sha256, f"{fname}: canonical sha256 mismatch"
+        assert meta["canonical"]["nul_bytes_count"] == actual_canon_nul_count, (
+            f"{fname}: manifest canonical nul_bytes_count ({meta['canonical']['nul_bytes_count']}) != actual ({actual_canon_nul_count})"
+        )
+
+        # 7c. Reconstruction verification properties
+        recon_computed_sha256 = hashlib.sha256(reconstructed_raw).hexdigest()
+        recon_computed_len = len(reconstructed_raw)
+        assert meta["reconstruction_verification"]["reconstructed_sha256"] == recon_computed_sha256, (
+            f"{fname}: manifest reconstructed_sha256 ({meta['reconstruction_verification']['reconstructed_sha256']}) != computed ({recon_computed_sha256})"
+        )
+        assert meta["reconstruction_verification"]["reconstructed_size_bytes"] == recon_computed_len, (
+            f"{fname}: manifest reconstructed_size_bytes ({meta['reconstruction_verification']['reconstructed_size_bytes']}) != computed ({recon_computed_len})"
+        )
+        assert meta["reconstruction_verification"]["reconstructed_matches_original_bit_for_bit"] is True, (
+            f"{fname}: manifest reconstructed_matches_original_bit_for_bit must be True"
+        )
+
+        # 7d. Per-file assertion statuses
+        assertions = meta["assertions"]
+        assert assertions["nul_free"] is True, f"{fname}: manifest nul_free assertion is not True"
+        assert assertions["trailing_whitespace_free"] is True, f"{fname}: manifest trailing_whitespace_free assertion is not True"
+        assert assertions["utf8_decodable"] is True, f"{fname}: manifest utf8_decodable assertion is not True"
+        assert assertions["header_record_present"] is True, f"{fname}: manifest header_record_present assertion is not True"
+        assert assertions["exit_zero_present"] is True, f"{fname}: manifest exit_zero_present assertion is not True"
+        assert assertions["footer_delimiter_present"] is True, f"{fname}: manifest footer_delimiter_present assertion is not True"
+        assert assertions["reconstruction_verified"] is True, f"{fname}: manifest reconstruction_verified assertion is not True"
+        assert assertions["status"] == "PASS", f"{fname}: manifest assertion status is not PASS"
+
+        if fname == "05-rerun-diff-check.log":
+            assert assertions["byte_copy_for_05"] is True, f"{fname}: manifest byte_copy_for_05 must be True"
+        else:
+            assert assertions["byte_copy_for_05"] is None, f"{fname}: manifest byte_copy_for_05 must be None"
 
         print(f"  [PASS] {fname}:")
-        print(f"         raw: {raw_len} B ({raw_sha256[:12]}...) | canon: {disk_canon_len} B ({disk_canon_sha256[:12]}...)")
-        print(f"         NUL-free: TRUE | trailing-whitespace-free: TRUE | bit-for-bit inverse reconstruction: MATCH")
+        print(f"         raw: {raw_len} B ({raw_sha256[:12]}..., NUL={actual_raw_nul_count}) | canon: {disk_canon_len} B ({disk_canon_sha256[:12]}..., NUL={actual_canon_nul_count})")
+        print(f"         U+2420 absent from raw body: TRUE | NUL-free: TRUE | trailing-whitespace-free: TRUE")
+        print(f"         bit-for-bit inverse reconstruction: MATCH | manifest consistency: 100% VERIFIED")
 
-    print("\nALL 6 FILES VERIFIED READ-ONLY: Grammar, Hashes, Trailing Whitespace & Bijective Reconstruction 100% PASS.")
+    print("\nALL 6 FILES VERIFIED READ-ONLY: Grammar, Hashes, Trailing Whitespace, Bijective Reconstruction & Manifest Consistency 100% PASS.")
     return 0
 
 if __name__ == "__main__":
