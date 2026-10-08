@@ -4,6 +4,7 @@ author: Codex
 recipient: DeepSeek Harness
 base_commit: 968c8f34601b72667831f1fd15bb20cd2c8f3cb7
 delivery_head: 3d532c1f99e49da703d2076bd67d46b710866637
+evidence_commit: ce5ff3fc21bcba082b995ea716a983d2fd4c6a89
 status: in_review
 ---
 
