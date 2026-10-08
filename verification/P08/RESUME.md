@@ -1,10 +1,10 @@
 # P08 可恢复检查点
 
-时间：2026-10-09 00:01（Asia/Shanghai）；Agent=Codex；TaskStatus=in_review；ExecutionState=ACTIVE（R6 Review材料已备妥，正式DSH派发待执行）。
+时间：2026-10-09 00:02（Asia/Shanghai）；Agent=Codex；TaskStatus=in_review；ExecutionState=ACTIVE（R6 Review材料已备妥，正式DSH派发待执行）。
 
 ## 当前事实
 
-- 唯一仓库：`G:/CODEX/New Manga`；主工作区branch=`main`；本次恢复起始HEAD=`ecb3b520ce68c2ddcc0c5ec94596e2f50a17f369`；common-dir=`G:/CODEX/New Manga/.git`。R6固定交付head仍是该commit；R6准备文档/状态同步须显式提交后再派发，恢复时以实时Git为准。
+- 唯一仓库：`G:/CODEX/New Manga`；主工作区branch=`main`；R6准备文档/状态同步checkpoint commit=`547894f59dc2e9ab89812d27efc511d432c6b6a9`；common-dir=`G:/CODEX/New Manga/.git`。R6固定交付head=`ecb3b520ce68c2ddcc0c5ec94596e2f50a17f369`；恢复时以实时Git为准。
 - R6精确Review worktree=`G:/CODEX/New Manga.worktrees/P08-dsh-review-ecb3b520-r6`；已现场核验detached、clean、HEAD=`ecb3b520ce68c2ddcc0c5ec94596e2f50a17f369`、common-dir正确、`git diff --exit-code HEAD -- .` EXIT=0。
 - R6 base=`af1ddeec1b998f2ddaf121a85f5fd382561aae1e`，reviewed_head=`ecb3b520ce68c2ddcc0c5ec94596e2f50a17f369`；正式Prompt=`verification/P08/DSH-REVIEW-PROMPT-R6.md`，post-delivery Handoff=`doc/handoffs/P08-ecb3b520-dsh-r6.md`；预期报告=`verification/P08/review-dsh-ecb3b520-r6.md`。DSH native session当前为pending，尚未派发。
 - R6固定head已由Codex在精确worktree验证：`verify_scope.py` EXIT=0（193项D08 AC、AC-SMOKE、12 gates、31个allowlist差量文件、5份head内P08 Handoff链接/whitespace覆盖）；`verify_plan.py` EXIT=0（196历史节点、105 ancestry、21计划节点及依赖图/链接）；base..head `git diff --check` EXIT=0；受保护产品/契约路径差量为空；clean worktree身份检查EXIT=0。证据在`verification/P08/validation.log`，均为Codex结果，不是DSH结果。产品pytest/cargo/vitest/GUI/build/model=`NOT_RUN`（本Task没有产品代码/测试修改）。
@@ -15,7 +15,7 @@
 
 ## 下一条可直接执行的指令
 
-1. 复核`git status --short --branch`、HEAD、common-dir及本文件；确认R6准备文件已提交，且受保护dirty文件仍未stage。
+1. 复核`git status --short --branch`、HEAD、common-dir及本文件；准备提交`547894f59dc2e9ab89812d27efc511d432c6b6a9`已保存R6 Prompt/Handoff与状态导航，确认受保护dirty文件仍未stage。
 2. 读取`verification/P08/DSH-REVIEW-PROMPT-R6.md`，从精确worktree`G:/CODEX/New Manga.worktrees/P08-dsh-review-ecb3b520-r6`派发正式只读DSH Review。按`dsh-dispatch`技能保存stdout/stderr，记录CLI exit；成功后核实唯一新session、按session ID挂载，并将原文SHA256与canonical report逐字节核对。
 3. R6返回后分别记录DSH实际执行/NOT_RUN/NOT_VERIFIED与Codex Gate。若approved且无未关闭Finding，继续Codex集成Gate；若changes_requested，按允许路径修订、固定新head并再次独立Review。不得把ecb3b520上的批准延伸到新head。
 4. P08满足所有AC、Review、集成和集成后验证后，更新Task/Plan/Status/依赖图/RESUME。再按`doc/REBASELINE_PLAN.md`和`doc/STATUS.md`选择依赖已满足、范围冻结的下一Task，创建正式Task、核对共享范围、登记释放状态并指定不同Owner/Reviewer，然后继续自动推进。

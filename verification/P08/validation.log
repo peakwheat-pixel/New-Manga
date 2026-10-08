@@ -443,3 +443,5 @@ checkpoint_audit=read-only Reviewer subagent found and Codex corrected stale P08
 protected_uncommitted=.qoder-credits/report.json; .qoder-credits/通路探测__8602db50.canvas.tsx; verification/M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD/antigravity-dispatch.json; antigravity-dispatch.stderr.log; verification/P08/dsh-r4.*; verification/P08/dsh-r5.*; all remain un-staged
 product pytest/cargo/vitest/GUI/build/model=NOT_RUN (documentation/validation-only Task)
 DSH R6=not yet dispatched; R5-01/R5-02 remain open pending independent confirmation
+pre_dispatch_checkpoint_commit=547894f59dc2e9ab89812d27efc511d432c6b6a9; subject=docs(P08): record R6 review checkpoint; only explicit authorized P08/governance/roadmap paths staged; external author dirty and R4/R5 raw logs excluded
+post_checkpoint_status=main clean for committed P08 preparation; only protected original dirty/untracked and R4/R5 raw outputs remain; exact R6 Review worktree still detached clean at ecb3b520ce68c2ddcc0c5ec94596e2f50a17f369
