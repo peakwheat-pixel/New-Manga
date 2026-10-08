@@ -1,0 +1,8 @@
+HOST=Windows; HARNESS_PYTHON=G:\CODEX\New Manga.task-envs\T1.1.1-impl-py312\Scripts\python.exe; CWD=G:\CODEX\New Manga.worktrees\RUNNER-SNAPSHOT-DEBT-codex
+HEAD=cfb5d2eecc4d8ab7a3159cdbb1d5812547bb5cd2
+COMMAND=["C:/Program Files/PowerShell/7/pwsh.exe", "-NoProfile", "-File", "packaging/m2ac5/build_sidecar.ps1"]
+build_sidecar: target exists, skipping (use -Force to rebuild)
+build_sidecar: manga weights bundled (3 files, sha256 verified) -> G:\CODEX\New Manga.worktrees\RUNNER-SNAPSHOT-DEBT-codex\apps\desktop\src-tauri\target\core-sidecar\core-sidecar\models\detector\ogkalu-comic-text-and-bubble-detector
+build_sidecar: sfx weights bundled (yolo11s-seg.onnx, sha256 verified) -> G:\CODEX\New Manga.worktrees\RUNNER-SNAPSHOT-DEBT-codex\apps\desktop\src-tauri\target\core-sidecar\core-sidecar\models\detector
+
+EXIT=0; ELAPSED=0.8s

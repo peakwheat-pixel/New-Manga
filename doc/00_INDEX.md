@@ -1,6 +1,6 @@
 # 项目文档索引与 Source of Truth
 
-当前唯一 Active：[M2-RUNNER-SNAPSHOT-DEBT](tasks/M2-RUNNER-SNAPSHOT-DEBT.md) **in_progress / Codex**；非作者Reviewer=DeepSeek Harness，执行ACTIVE。已认领实施，旧FAIL保持；[恢复点](../verification/M2-RUNNER-SNAPSHOT-DEBT/release.md)。GC-2 done@cea610ed。
+当前唯一Active：[M2-RUNNER-SNAPSHOT-DEBT](tasks/M2-RUNNER-SNAPSHOT-DEBT.md) **blocked / Codex**；dev10/10+probe13/13 PASS，packaged CS-L1 PASS但AC1 QtGui DLL失败，20PASS/1FAIL/5NOT_RUN。主线只登记证据，不集成runner实现。范围外诊断候选未释放；实时状态以Plan/STATUS为准。
 
 
 当前全量盘点：2026-10-07，审计输入 `main@32f9b932`。[REBASELINE 审计报告与下一步派发指令](../verification/REBASELINE-20261007/REPORT.md)；[全部 190 任务节点的台账与流程图](../verification/REBASELINE-20261007/TASK_GRAPH.md)；[完整 Git/Owner/Reviewer/worktree 参数](../verification/REBASELINE-20261007/inventory.json)。当前无 Active、无 released；正式授权仍由 REBASELINE_PLAN / STATUS 决定，下面旧日期正文只作历史记录。

@@ -1,0 +1,15 @@
+HOST=Windows; HARNESS_PYTHON=G:\CODEX\New Manga.task-envs\T1.1.1-impl-py312\Scripts\python.exe; CWD=G:\CODEX\New Manga.worktrees\RUNNER-SNAPSHOT-DEBT-codex\apps\desktop\frontend
+HEAD=cfb5d2eecc4d8ab7a3159cdbb1d5812547bb5cd2
+COMMAND=["npm.cmd", "run", "build"]
+npm notice run m2rc1-frontend@0.1.0 build
+npm notice run tsc && vite build
+vite v5.4.21 building for production...
+transforming...
+✓ 50 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                  0.28 kB │ gzip:  0.21 kB
+dist/assets/index-B18Ljq2O.js  198.72 kB │ gzip: 63.05 kB
+✓ built in 492ms
+
+EXIT=0; ELAPSED=3.1s
