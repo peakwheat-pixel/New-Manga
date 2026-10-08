@@ -502,3 +502,10 @@ observed_time=2026-10-09 00:41 Asia/Shanghai; TaskStatus=in_review; fixed R7 del
 attempt=after updating the derived ROADMAP state to in_review, python -B -X utf8 verification/P08/verify_scope.py EXIT=0; python -B -X utf8 verification/PROJECT-ROADMAP-20261008/verify_plan.py EXIT=1 because graph nodes used label `in_review / Review中`, not the validator's required STATUS_LABELS[`in_review`]=`in_review / DSH Review复审中`
 fix=changed both P08 graph node labels to the exact registered `in_review / DSH Review复审中`; updated stale R6-era Task/Handoff wording to identify it as historical and retain R7 as the current Gate
 rerun=python -B -X utf8 verification/P08/verify_scope.py EXIT=0; python -B -X utf8 verification/PROJECT-ROADMAP-20261008/verify_plan.py EXIT=0; all 7 current P08 Handoffs and current `in_review` state passed. Product tests/build/GUI/model remain NOT_RUN.
+
+P08 R7 dispatch-readiness checkpoint
+post_delivery_state_commit=65a75e3dea387c0a0e09d0dd113d50eb1792e975; status metadata, R7 Prompt/Handoff, navigation and exact-head evidence committed after fixed delivery fe222464616152e9c95208e06c248565f2fd86a6
+command=dsh --version; EXIT=0; version=0.1.7-rc.2; command=dsh --profile headless --help; EXIT=0; JSONL and --session-id options confirmed
+availability_probe=from G:/CODEX/New Manga, `dsh --profile headless "只回复两个字：收到"`; CLI EXIT=0; stdout exactly `收到`; stderr empty; probe output stored under the OS temp directory; this is not a formal P08 Review or Review session
+R7 formal dispatch=not yet started; P08 Task status=in_review; review_session=pending; exact target remains fe222464616152e9c95208e06c248565f2fd86a6
+next_gate=save this dispatch-readiness checkpoint, then run `dsh --profile headless --json` with the full R7 Prompt from the exact R7 worktree
