@@ -2,7 +2,7 @@
 id: M2-PACKAGED-AC1-DLL-DIAG
 title: 新架构安装态 AC1 QtGui DLL 加载失败只读诊断
 kind: research
-status: blocked
+status: in_progress
 previous_status: in_progress
 blocker: dsh_exec_sandbox_and_unverified_dynamic_diagnosis
 approval: user_authorized_release_20261008
@@ -154,3 +154,14 @@ Owner将clean fast-forward到本认领提交，再执行真实DSH；实际start_
 Codex r1 changes_requested安全问题已返修，r2固定head静态核对；动态运行NOT_RUN，TaskStatus=blocked、previous=in_progress、ExecutionState=CHECKPOINTED。
 Owner报告/probe在分配worktree；主线仅同步治理/报告/Review，probe未集成也未运行批准。原runner debt不解锁。
 下一步为同Task补隔离加载实测，不释放未证明范围的生产修复。
+
+## 2026-10-08 本机执行支持范围冻结（用户“下一步”授权）
+
+Codex串行恢复in_progress；Owner仍为DSH，非作者Reviewer/Integrator=Codex。
+允许Codex作为独立验证执行者，在verification/M2-PACKAGED-AC1-DLL-DIAG/内写执行wrapper、raw、lab、
+输入hash与独立验证日志，维护本Task/checkpoint；只执行固定d3006691探针，不修改DSH诊断结论代替作者。
+lab只使用自有复制/隔离数据，忽略其二进制fixture，不提交模型/installer。
+执行前固定installer和5个bundle exe hash，子进程环境显式隔离NEWMANGA_DATA_ROOT/APPDATA等，
+清除继承的M2配置/Python路径，stdin EOF，超时只终止自己启动的进程树。
+产品/打包配置/共享环境仍只读；诊断允许本机执行不等于生产修复授权。
+本轮固定probe head=d30066917759b62133840ac6767c7ef67153be06；恢复Owner HEAD=db65b6cf已clean实测。
