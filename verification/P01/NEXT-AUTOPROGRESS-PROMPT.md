@@ -1,0 +1,5 @@
+请在 `G:/CODEX/New Manga` 继续自动推进项目。开始时按仓库 `AGENTS.md` 读取入口文档，核对真实 Git main/status、REBASELINE_PLAN、STATUS、P01 Task 与 `verification/P01/RESUME.md`；从已正式释放的 P01 接续，branch=`agent/codex/P01-metadata-audit`，worktree=`G:/CODEX/New Manga.worktrees/P01-metadata-audit-codex`，base=`826bea12a132c5af2ac0cd1244d00e9170093c71`。先比较 checkpoint HEAD、branch、worktree/common-dir 和 dirty 集合，记录 `RESUME_SAFE` 或 `DRIFT_DETECTED`；不要重复P03或全库审计。
+
+立即按冻结的 `doc/tasks/P01.md` 执行台账元数据与Review载体取证。核查GC2和DETECT3的commit对象、祖先关系、Handoff/集成证据；只有证据充分才更正Task frontmatter指定字段。追踪ANNOTATE-R2和SYNTH真实独立Review carrier并绑定fixed base/head/decision/hash；找不到的记录`NOT_VERIFIED`，不得伪造批准、把Owner报告当Review或把来源Task标`done`。不裁决R2 challenge空集/T2 release，不替用户处理SYNTH登录冒烟。Owner=Codex、非作者Reviewer=DeepSeek Harness；P01完成后直接使用配置的 `dsh-dispatch` Skill 派发固定head正式Review，跟踪并验证交付，再由Codex执行Integration Gate。
+
+严格遵守P01 `allowed_paths`；根checkout既有用户/Qoder/Agent dirty、raw evidence、用户数据、数据库、Lock、current/pinned Revision均保护。Qoder已退出不得分配。Task Gate通过后更新Task、Plan、Status、索引、依赖图、Handoff/Review与恢复点，再从权威Plan选出所有依赖满足、范围冻结的下一Task并正式分配和继续执行。日常实现细节不询问我；若遇必须由我裁决的产品问题，先完成不依赖裁决的部分，再一次性说明问题与影响。无push、发布、部署、删除等外部不可逆操作授权。不要关机，也不要预先规划关机。

@@ -1,10 +1,14 @@
 # Current Development Status
 
-**当前位置：P08=done；P03=done。P系列共21项：done 2、proposed / 未释放19。P03 integration commit=`552464238a69ad2cea63cff18abe98f412dbae87`；DSH R5/R6对各自fixed head均approved、Codex AC5集成Gate PASS。16-case snapshot、40/40定向测试和同installer packaged Gate 28/28绑定产品head `d717c049`，集成候选无产品路径差量。R3-03为P20范围外风险。下一候选P01尚未释放；当前执行状态见下方P03 closeout。**
+**当前位置：P08/P03=done；P系列共21项：done 2、ready 1、proposed 18。唯一当前释放Task=P01 `ready`，base=`826bea12a132c5af2ac0cd1244d00e9170093c71`，Owner=Codex、Reviewer=DeepSeek Harness，branch=`agent/codex/P01-metadata-audit`，worktree=`G:/CODEX/New Manga.worktrees/P01-metadata-audit-codex`。TaskStatus=`ready` / ExecutionState=`CHECKPOINTED`。范围与恢复点见[P01 Task](tasks/P01.md)和[P01 RESUME](../verification/P01/RESUME.md)。P03 integration=`552464238a69ad2cea63cff18abe98f412dbae87`；其测试仍绑定source `d717c049`。**
 
-## 2026-10-09 P03 Review 与 Codex 集成完成 / DONE
+## 2026-10-09 P01 正式释放 / READY
 
-Task=`[P03](tasks/P03.md)` `done`；当前没有Active Task，下一候选P01待按Plan核验后释放。Owner=Antigravity、Reviewer=DeepSeek Harness、Integrator=Codex；base=`31abde9bf4b73aea2851931dcd48faa0f750b318`，delivery=`85482c5b001d452953c3ed797ce3c4ed64cae4e3`，integration=`552464238a69ad2cea63cff18abe98f412dbae87`。DSH R5/R6 approved各自固定head，Codex非作者复核无新P0–P3；集成162 paths、零越界、diff-check EXIT=0。Gate证据与限制见[P03 RESUME](../verification/P03-PACKAGED-SFX-ENTRY/RESUME.md)。
+当前唯一 Active/released Task=`[P01](tasks/P01.md)`，Owner=Codex，非作者Reviewer=DeepSeek Harness，Integrator=Codex；TaskStatus=`ready` / ExecutionState=`CHECKPOINTED`。base=`826bea12a132c5af2ac0cd1244d00e9170093c71`；branch=`agent/codex/P01-metadata-audit`；worktree=`G:/CODEX/New Manga.worktrees/P01-metadata-audit-codex`；depends_on=`[]`。Task release状态随本节提交记录；worktree起始HEAD=`826bea12a132c5af2ac0cd1244d00e9170093c71`。完整allowed_paths、dirty保护、AC与恢复提示见[P01 RESUME](../verification/P01/RESUME.md)。尚未开始来源元数据修改、尚未派发 P01 DSH Review、产品测试`NOT_RUN`。
+
+## 历史完成记录：2026-10-09 P03 Review 与 Codex 集成完成 / DONE
+
+Task=`[P03](tasks/P03.md)` `done`。Owner=Antigravity、Reviewer=DeepSeek Harness、Integrator=Codex；base=`31abde9bf4b73aea2851931dcd48faa0f750b318`，delivery=`85482c5b001d452953c3ed797ce3c4ed64cae4e3`，integration=`552464238a69ad2cea63cff18abe98f412dbae87`。DSH R5/R6 approved各自固定head，Codex非作者复核无新P0–P3；集成162 paths、零越界、diff-check EXIT=0。Gate证据与限制见[P03 RESUME](../verification/P03-PACKAGED-SFX-ENTRY/RESUME.md)。
 
 ## 历史快照：P03正式释放时状态 / READY（已由当前DONE checkpoint取代）
 

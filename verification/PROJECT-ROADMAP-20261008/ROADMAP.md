@@ -1,12 +1,12 @@
 # New Manga 一眼路线图（2026-10-08）
 
-最新工作点：P08与P03均done；P03 integration=`552464238a69ad2cea63cff18abe98f412dbae87`，DSH R5/R6和Codex AC5 Gate已通过。16/40/28验证仍绑定source `d717c049`与同一installer；集成无产品/runner/test/build差量。下一候选P01尚未释放。恢复见[P03 RESUME](../../verification/P03-PACKAGED-SFX-ENTRY/RESUME.md)。
+最新工作点：P08/P03=done；唯一释放Task=P01 `ready`，Owner=Codex、Reviewer=DeepSeek Harness，base=`826bea12a132c5af2ac0cd1244d00e9170093c71`。继续指令见[P01 RESUME](../../verification/P01/RESUME.md)。P03验证绑定source `d717c049`与同一installer，集成无产品/runner/test/build差量。
 
-**当前位置：P08=done；P03=done；P系列done 2/21，proposed 19项。P03 integration=`552464238a69ad2cea63cff18abe98f412dbae87`；DSH R5/R6 approved；Codex integration Gate PASS。**
+**当前位置：P08/P03=done；P系列done 2/21、ready 1、proposed 18。唯一ready Task=P01；P03 integration=`552464238a69ad2cea63cff18abe98f412dbae87`，DSH R5/R6与Codex Integration Gate PASS。**
 
 人员更新：用户已移除Qoder，图中未来UI/UX责任由ZCode承担；非作者Review与正式Task释放Gate保持。
 
-派生视图；排期事实以 [REBASELINE_PLAN](../../doc/REBASELINE_PLAN.md) 当前覆盖层为准。原审计基线：`main@e4242ecd`；箭头表示启动依赖，不是工期；没有可靠估算，不编造百分比或日期。P03已完成固定head Review、Codex集成Gate与状态收口；下一候选P01尚未释放，其余候选按Plan依赖推进。
+派生视图；排期事实以 [REBASELINE_PLAN](../../doc/REBASELINE_PLAN.md) 当前覆盖层为准。原审计基线：`main@e4242ecd`；箭头表示启动依赖，不是工期；没有可靠估算，不编造百分比或日期。P03已完成；当前按Plan释放P01，其余候选仍按各自依赖与范围Gate排期。
 
 ## 已做到哪里
 
@@ -29,19 +29,17 @@ flowchart TB
 
 ```mermaid
 flowchart TB
-  BASE["当前位置：P08/P03 DSH Review与Codex集成Gate通过<br/>P系列done 2/21；下一候选P01：proposed"] --> P01["P01<br/>proposed / 未释放<br/>台账取证<br/>GC2/DETECT3 metadata与Review载体"]
+  BASE["当前位置：P08/P03 done<br/>P系列done 2/21、ready 1、proposed 18"] --> P01["P01<br/>ready / 唯一释放Task<br/>台账取证<br/>Owner Codex · Reviewer DSH<br/>base 826bea12"]
   BASE --> P02["P02<br/>proposed / 未释放<br/>真UI验证<br/>点击/300ms刷新/对比度/失效窗口"]
   BASE --> P03["P03<br/>done / Review与Codex集成Gate通过<br/>第五入口Gate<br/>集成55246423；Gate绑定d717"]
   BASE --> P04["P04<br/>proposed / 未释放<br/>生产命令面验证<br/>常量成员与并发响应；先复现再决定修复"]
   BASE --> P05["P05<br/>proposed / 未释放<br/>错误语义澄清<br/>category与retryable注记一致"]
   BASE --> P06["P06<br/>proposed / 未释放<br/>GC迁移补证<br/>旧版本退出/命名空间保护；未知保留"]
   P02 -. "确认实际缺口后" .-> P07["P07<br/>proposed / 未释放<br/>小交互修补<br/>手输image读取/quiet-window busy"]
-  P01 --> P08["P08<br/>done / DSH Review与Codex集成通过<br/>完整产品范围与验收冻结<br/>R7 fixed head fe222464；Task与Gate已收口"]
-  style P08 fill:#d1e7dd,stroke:#198754,stroke-width:3px
   style P03 fill:#d1e7dd,stroke:#198754,stroke-width:3px
 ```
 
-P03已完成Review、Codex packaged Gate复核和导航状态收口。P01是下一候选；当前尚未释放，必须先在live main确认依赖和冻结Task边界。P02需先冻结真实WebView harness Task；P06仍需实证旧runtime可用性。其余候选按Plan依赖释放。启动每个Task前仍需正式Task、不同Owner/Reviewer和allowed_paths。
+P01已正式释放并冻结allowed_paths、Owner/Reviewer、base、branch和worktree；恢复与自动推进指令见P01 RESUME。P02仍需先冻结真实WebView harness Task；P06仍需实证旧runtime可用性。其余候选按Plan依赖释放。启动每个Task前仍需正式Task、不同Owner/Reviewer和allowed_paths。
 
 ## 完整产品：现在就看清后续，而不是每次临时猜下一件
 

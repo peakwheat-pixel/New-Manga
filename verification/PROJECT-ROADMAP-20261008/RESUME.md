@@ -1,12 +1,12 @@
 # 全项目任务规划恢复点
 
-最新工作点：P08与P03均done；P系列done 2/21、proposed 19。P03 integration=`552464238a69ad2cea63cff18abe98f412dbae87`，DSH R5/R6与Codex AC5 Gate通过；下一候选P01尚未正式释放。恢复后按本文件顶部检查live Git、Plan、Status及P01检查点，不重做P03。
+最新工作点：P08/P03=done，P01=`ready`；P系列done 2/21、ready 1、proposed 18。唯一当前Task P01，base=`826bea12a132c5af2ac0cd1244d00e9170093c71`，Owner=Codex、Reviewer=DeepSeek Harness，branch=`agent/codex/P01-metadata-audit`，worktree=`G:/CODEX/New Manga.worktrees/P01-metadata-audit-codex`。恢复先按[P01 RESUME](../P01/RESUME.md) Reality Check，不重做P03。
 
-**当前位置：P08/P03=done；下一候选P01尚未释放。恢复时先核对live main、Plan/Status及P01检查点，按授权路线继续，不重做已关闭任务。**
+**当前位置：P08/P03=done；当前唯一释放Task=P01 `ready`。从其固定base/worktree继续已授权的取证，完成Review与Integration Gate后再按权威Plan自动释放下一项。**
 
 2026-10-08 编号裁决时的状态快照：任务编号沿用 `P01–P21`；当时P08=`in_review`，其余20项=`proposed / 未释放`。当前状态见本恢复点顶部及`doc/STATUS.md`；本编号裁决本身不释放产品实施、不改历史记录。
 
-最新恢复约束（2026-10-08）：用户已将Qoder剔除本项目，当前未来UI/UX由ZCode主责，fallback_order=zcode,antigravity；恢复时以AGENTS/Plan/STATUS当前名单为准。旧审计报告、台账或共享skill默认候选不能恢复Qoder资格。人员调整基线=`main@5b8aed4d`，后续仅已知治理差量；当前无Active/released产品Task。人员变更检查见`qoder-retirement.log`，原代码审计与验证不重做。
+最新恢复约束（2026-10-08）：用户已将Qoder剔除本项目，当前未来UI/UX由ZCode主责，fallback_order=zcode,antigravity；恢复时以AGENTS/Plan/STATUS当前名单为准。旧审计报告、台账或共享skill默认候选不能恢复Qoder资格。人员调整基线=`main@5b8aed4d`；该日checkpoint无Active/released产品Task，后续释放状态见本文件顶部及`doc/STATUS.md`。人员变更检查见`qoder-retirement.log`，原代码审计与验证不重做。
 
 - 时间：2026-10-08（Asia/Shanghai）。协调者：Codex。
 - 授权：PLAN_ONLY；用户要求盘点、整体规划、中文图和额度中断恢复。未释放产品实现。
@@ -18,7 +18,7 @@
 - 当前工作点：完整规划已落盘。三审计及台账不再等待；规划一致性PC-01（此恢复点过时）已修订，PC-02（缺validation.log）已实际生成。生产代码零差量。
 - 历史步骤（已被顶部P08恢复点取代）：复用报告准备P08完整产品范围、四页parity与验收矩阵，状态为 `proposed / 未释放`（尚未创建正式 Task 文件）。Codex负责范围/契约、ZCode另设计Task、DSH非作者Review；先按下列Git核验，不再全仓审计。产品取舍/Reader解冻待用户裁决，禁止直接实施后继产品候选任务。
 - 本轮验证：`python verification/PROJECT-ROADMAP-20261008/verify_plan.py` EXIT=0；196唯一节点与分类/依赖、105新架构祖先、21规划节点/图无循环、局部导航链接、零生产差量、治理diff-check全部PASS，见validation.log。产品pytest/cargo/vitest/GUI/fresh build：NOT_RUN；历史测试仍限定原commit/环境。
-- 已知：STATUS 顶部无 Active/released；Runner R-003 未释放；GC-2 设计与实现均已完成，实现集成 `cea610ed`，分发迁移 Gate 仍须遵守；早期设计 checkpoint 中的后继 proposed 已被后续交付取代。
+- 2026-10-08 规划快照当时记录：无 Active/released；Runner R-003 未释放；GC-2 设计与实现已完成。此状态快照已由本文件顶部 2026-10-09 P01 release 状态取代。
 - 恢复安全：恢复前比较 HEAD、branch、dirty 集合与 Plan/Status。相同则 RESUME_SAFE；有漂移记录 DRIFT_DETECTED，先分析，不覆盖。
 
 本轮受控文件：`doc/REBASELINE_PLAN.md`、`doc/STATUS.md`、`doc/00_INDEX.md`、`doc/12_ROADMAP.md`，以及本目录 `REPORT.md`、`ROADMAP.md`、`RESUME.md`、`core-audit.md`、`desktop-audit.md`、`plan-audit.md`、`planning-check.md`、`task-inventory.csv`、`verify_plan.py`、`validation.log`、`usage.json`。仅这些文件属于本轮规划交付。usage.json为本轮local trace统计，不是账户账单或Task事实源。
@@ -35,6 +35,6 @@ Get-Content verification\PROJECT-ROADMAP-20261008\RESUME.md
 Get-ChildItem verification\PROJECT-ROADMAP-20261008
 ```
 
-额度耗尽或会话断开不表示任务完成。恢复后直接转发：
+### 当前自动恢复入口（2026-10-09；取代下方历史 PLAN_ONLY 工作范围）
 
-> 在 G:/CODEX/New Manga 继续 PROJECT-ROADMAP-20261008 规划盘点。先读取 verification/PROJECT-ROADMAP-20261008/RESUME.md，核验 Live Git 与 doc/STATUS.md、doc/REBASELINE_PLAN.md。复用已落盘审计，不重复全库分析。只完成报告/任务路线图/恢复材料，不启动产品 Task，不覆盖既有 dirty 文件。若证据与检查点漂移，记录后由 Codex 决策。
+额度耗尽或会话断开不表示任务完成。当前唯一释放Task是P01；下次继续时使用[verification/P01/NEXT-AUTOPROGRESS-PROMPT.md](../P01/NEXT-AUTOPROGRESS-PROMPT.md)，并先按[P01 RESUME](../P01/RESUME.md)核对Git和工作区。不要复用本文件上方2026-10-08规划审计中的“只完成规划、不启动产品Task”旧指令。

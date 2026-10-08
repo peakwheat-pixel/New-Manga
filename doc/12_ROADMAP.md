@@ -1,12 +1,12 @@
 # Roadmap
 
-当前工作：P08与P03均已done；P03 integration=`552464238a69ad2cea63cff18abe98f412dbae87`，DSH R5/R6及Codex AC5 Gate已通过；16/40/28产品Gate仍绑定d717 source与固定installer SHA。下一候选P01尚未释放。恢复见[verification/P03-PACKAGED-SFX-ENTRY/RESUME.md](../verification/P03-PACKAGED-SFX-ENTRY/RESUME.md)。
+当前工作：P08/P03=done；唯一释放Task=P01 `ready`，Owner=Codex、Reviewer=DeepSeek Harness，base=`826bea12a132c5af2ac0cd1244d00e9170093c71`，branch=`agent/codex/P01-metadata-audit`。恢复见[P01 RESUME](../verification/P01/RESUME.md)。P03证据仍在[P03 RESUME](../verification/P03-PACKAGED-SFX-ENTRY/RESUME.md)。
 
-## 当前整体路线（2026-10-08，PLAN_ONLY）
+## 当前整体路线（权威候选与P01执行状态见Plan/Status）
 
 最新人员裁决：Qoder退出，未来UI/UX设计及React/Tauri实现由ZCode主责，DSH非作者审查，Codex契约/集成；额度接管候选为ZCode、Antigravity。历史交付中的Qoder署名保留。
 
-权威排期见REBASELINE_PLAN中的P01–P21路线、中文依赖图、审计报告和恢复材料。P08与P03=done；P03 integration=`552464238a69ad2cea63cff18abe98f412dbae87`。R3-03的release-gate第五sidecar同源遗漏仍超出P03范围，留待P20登记。下一候选P01尚未释放。
+权威排期见REBASELINE_PLAN中的P01–P21路线、中文依赖图、审计报告和恢复材料。P08/P03=done，P01是唯一ready Task；base、Owner/Reviewer、branch和worktree详见Plan与STATUS。P03 R3-03仍留待P20登记。
 
 下方2026-09早期导航保留历史，不覆盖本段或Plan；其中旧“ready/planning only”任务多已由后继完成，不能作为当前待办。
 
