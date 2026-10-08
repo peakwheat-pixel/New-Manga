@@ -2,7 +2,7 @@
 id: M2-RUNNER-SNAPSHOT-DEBT
 title: 修复验收 runner 协议与生产命令快照漂移
 kind: maintenance
-status: in_progress
+status: blocked
 approval: user_authorized_release_20261008
 suggested_owner: Codex
 owner: Codex
@@ -12,6 +12,8 @@ depends_on: [M2-DERIVED-GC-2]
 base_commit: 968c8f34601b72667831f1fd15bb20cd2c8f3cb7
 branch: codex/M2-RUNNER-SNAPSHOT-DEBT
 worktree: G:/CODEX/New Manga.worktrees/RUNNER-SNAPSHOT-DEBT-codex
+previous_status: in_progress
+blocker: packaged_ac1_QtGui_DLL_import_failure
 integration_commit: null
 ---
 
@@ -43,17 +45,17 @@ minor-3 请求若原意为兼容测试，保留并说明；严格核对服务端
 和 Codex 集成后检查闭合，才在当前状态登记这两个债务闭合；不追认旧 FAIL 为 PASS，
 不扩大成干净机/全产品发布批准，不改变 GC-2 G7 分发迁移阻断边界。
 
-## Acceptance Criteria（全部 planned / NOT_RUN）
+## Acceptance Criteria（本轮实际结果见末尾/Handoff）
 
-- [ ] AC1 两处漂移在固定 base 上可复核；旧失败、当前契约/代码、期望差量有证据。
-- [ ] AC2 CS-L1 严格核对当前协议1.6；生产命令完整15条且顺序/内容与冻结面相符，
+- [x] AC1 两处漂移在固定 base 上可复核；旧失败、当前契约/代码、期望差量有证据。
+- [x] AC2 CS-L1 严格核对当前协议1.6；生产命令完整15条且顺序/内容与冻结面相符，
       probe7条及 fail-closed 行为不变。不得放宽成长度/包含关系/接受任意 minor。
-- [ ] AC3 最小判别检查：旧minor/缺命令/额外命令/错误顺序或probe混入仍失败；
+- [x] AC3 最小判别检查：旧minor/缺命令/额外命令/错误顺序或probe混入仍失败；
       正确期望通过；对比独立冻结来源，不能将实现原样复制成无判别测试。
 - [ ] AC4 真实dev M2-RC2 runner probe/production全Gate通过，真实packaged m2ac5
       全Gate通过含CS-L1；fresh构建与固定代码head/installer SHA256/执行日志相互绑定。
       依赖缺失记BLOCKED/NOT_RUN，不使用旧产品PASS替代本次验收。
-- [ ] AC5 旧报告/日志/冻结probe原字节保持，运行输出只入本Task隔离目录；无生产/
+- [x] AC5 旧报告/日志/冻结probe原字节保持，运行输出只入本Task隔离目录；无生产/
       wire/Schema/依赖差量；语法、diff检查和受影响测试通过。
 - [ ] AC6 代码head、日志、Handoff固定后真实DSH非作者Review；条件闭合，Codex集成
       后受影响检查才done。作者不得自己批准，产品测试未跑不伪造PASS。
@@ -123,3 +125,22 @@ doc/handoffs/M2-RUNNER-SNAPSHOT-DEBT-<head>.md；下一接收者真实DeepSeek H
 按本Task冻结范围修复两处runner快照并做最小判别检查；保留历史FAIL，fresh构建并真实
 复跑dev+packaged Gate，保存独立证据和固定代码head/Handoff；交真实DSH非作者审核，
 批准与条件闭合后由Codex集成验证，最后更新done。不可改产品或弱化Gate。
+
+## 2026-10-08 实施结果与阻塞（Codex）
+
+代码head=d1c279db45904c6009dbc696d95a0b4a63ebd837；含日志harness固定head=
+cfb5d2eecc4d8ab7a3159cdbb1d5812547bb5cd2。两处快照、output-dir、自有lab已实现。
+12个实际谓词检查PASS，frontend构建PASS；dev全Gate10/10、probe13/13 PASS。
+fresh PyInstaller成功但PowerShell5 weights复制EXIT1（Get-FileHash不可用）；
+PowerShell7按既有脚本恢复hash校验复制EXIT0；fresh NSIS EXIT0。
+packaged CS-L1 PASS，但AC1 run1的acceptance_bridge.exe导入QtGui时DLL失败，
+随后超时，完整Gate FAIL/EXIT1。不是旧minor3快照失败，不宣称新AC4 PASS。
+
+TaskStatus=blocked，previous_status=in_progress，ExecutionState=CHECKPOINTED。
+禁止范围外spec/依赖/acceptance_bridge修复；主线不集成两处runner实现，
+先保存证据并交真实非作者DSH审查。解除条件：单独授权的打包/入口诊断或修复Task，
+固定head新构建后AC1及完整packaged Gate通过，再回本Task完成AC4/AC6。
+AC1/AC2/AC3/AC5已执行证据见Handoff；AC4=FAIL/BLOCKED、AC6=PENDING。
+旧日志/报告原字节保留；源src/apps/tests/依赖没有提交差量。
+
+packaged实际结果=20 PASS / 1 FAIL；AC1 run1失败后的run2/restart/saved/reader/export五项NOT_RUN，不计PASS。详细计数见result-summary.json。

@@ -1,0 +1,16 @@
+{
+  "source_head": "cfb5d2eecc4d8ab7a3159cdbb1d5812547bb5cd2",
+  "installer": "G:\\CODEX\\New Manga.worktrees\\RUNNER-SNAPSHOT-DEBT-codex\\apps\\desktop\\src-tauri\\target\\release\\bundle\\nsis\\m2rc1-desktop_0.1.0_x64-setup.exe",
+  "installer_sha256": "1cecca95d25439fca682cbe4336123d3b3352db229dd58c4e7d724b4d6c6ccb8",
+  "installer_bytes": 589904619,
+  "sidecar_exes": {
+    "acceptance_bridge.exe": "f58936bdc25a40db71d4ec4b9fcf13d9b979b26ddd9b4be6c5cf97a52325f715",
+    "catalog_loader.exe": "cf449b12eb09505a1403e49defe335c5a1f27279f7b7914fe9d1c0153458b62f",
+    "core_service.exe": "a64e6904770b25603d01b7e200f9a861aec6a5c6da874496f2f944dddeca4b8c",
+    "host_bridge.exe": "64928a65a7e3ed3a77fe1119bedca5314cda86545554ad62d843cd5e3258766e",
+    "sfx_detect_probe.exe": "d629f9c32fccda4ccd726fda2208795e7553eb2fc489f594cd6fb4639caa0abf"
+  },
+  "sidecar_fresh_pyinstaller": "raw/sidecar-build.log (PyInstaller success, weights phase EXIT1)",
+  "weights_verified_resume": "raw/sidecar-weights-retry.log EXIT0",
+  "nsis_build": "raw/nsis-build.log EXIT0"
+}

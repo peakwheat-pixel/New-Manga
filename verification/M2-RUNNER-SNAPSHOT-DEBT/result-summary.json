@@ -1,0 +1,20 @@
+{
+  "fixed_source_head": "cfb5d2eecc4d8ab7a3159cdbb1d5812547bb5cd2",
+  "dev_gate": "PASS",
+  "dev_checks": 10,
+  "dev_probe_pass": 13,
+  "packaged_pass": 20,
+  "packaged_fail": 1,
+  "failed_ids": [
+    "CS-A1-run1-completed"
+  ],
+  "installer_sha256": "1cecca95d25439fca682cbe4336123d3b3352db229dd58c4e7d724b4d6c6ccb8",
+  "task_status": "blocked",
+  "not_run_after_ac1_run1_failure": [
+    "CS-A1-run2-completed",
+    "CS-A2-restart-new-pids",
+    "CS-A3-saved-summary-complete",
+    "CS-A4-restored-reader-matches-saved",
+    "CS-A5-export-png-digest-matches"
+  ]
+}

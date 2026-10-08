@@ -1,0 +1,24 @@
+$ python -m infrastructure.resource_channel.catalog_loader --db C:\Users\49745\AppData\Local\Temp\m2rc2-lab-6osbx9gc\catalog.sqlite --set ... (5 rows)
+exit=0
+{
+  "res-boundary": {
+    "scope_class": "derived-read-only",
+    "rel_path": "boundary.bin"
+  },
+  "res-cataloged": {
+    "scope_class": "derived-read-only",
+    "rel_path": "asset.png"
+  },
+  "res-hot": {
+    "scope_class": "derived-read-only",
+    "rel_path": "typical.png"
+  },
+  "res-oversize": {
+    "scope_class": "derived-read-only",
+    "rel_path": "oversize.bin"
+  },
+  "res-probe": {
+    "scope_class": "derived-read-only",
+    "rel_path": "asset.png"
+  }
+}
