@@ -1,0 +1,17 @@
+Shell: PowerShell 7.6.6 (C:\Program Files\PowerShell\7\pwsh.exe)
+WorkingDirectory: G:\CODEX\New Manga.worktrees\P03-review-prep-85482c5b\apps\desktop\frontend
+Source HEAD: 19f5348ff8ad88c4d5baaefc6fa1ab65968210e0
+Working tree before command: clean
+Command: npm run build
+--- npm output ---
+npm notice run m2rc1-frontend@0.1.0 build
+npm notice run tsc && vite build
+vite v5.4.21 building for production...
+transforming...
+✓ 50 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                  0.28 kB │ gzip:  0.21 kB
+dist/assets/index-B18Ljq2O.js  198.72 kB │ gzip: 63.05 kB
+✓ built in 499ms
+EXIT=0
