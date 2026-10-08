@@ -1,0 +1,56 @@
+SHELL=PowerShell; DATE=2026-10-08 Asia/Shanghai; GOVERNANCE_ONLY
+PRODUCT_TESTS=NOT_RUN
+
+git status --porcelain
+EXIT=0
+
+git -C G:/CODEX/New Manga.worktrees/RUNNER-SNAPSHOT-DEBT-codex status --porcelain
+EXIT=0
+
+git -C G:/CODEX/New Manga.worktrees/RUNNER-SNAPSHOT-DEBT-codex rev-parse HEAD
+968c8f34601b72667831f1fd15bb20cd2c8f3cb7
+EXIT=0
+
+git -C G:/CODEX/New Manga.worktrees/RUNNER-SNAPSHOT-DEBT-codex branch --show-current
+codex/M2-RUNNER-SNAPSHOT-DEBT
+EXIT=0
+
+git -C G:/CODEX/New Manga.worktrees/RUNNER-SNAPSHOT-DEBT-codex rev-parse --path-format=absolute --git-common-dir
+G:/CODEX/New Manga/.git
+EXIT=0
+
+git -C G:/CODEX/New Manga.worktrees/RUNNER-SNAPSHOT-DEBT-codex merge --ff-only 1ac7aa8307baf4ca81af0ada3b181e1531525c37
+Updating 968c8f34..1ac7aa83
+Fast-forward
+ doc/00_INDEX.md                                 |   2 +-
+ doc/REBASELINE_PLAN.md                          |  15 +++
+ doc/STATUS.md                                   |  15 +++
+ doc/tasks/M2-RUNNER-SNAPSHOT-DEBT.md            | 125 ++++++++++++++++++++++++
+ doc/tasks/README.md                             |   2 +-
+ verification/M2-RUNNER-SNAPSHOT-DEBT/release.md |  12 +++
+ 6 files changed, 169 insertions(+), 2 deletions(-)
+ create mode 100644 doc/tasks/M2-RUNNER-SNAPSHOT-DEBT.md
+ create mode 100644 verification/M2-RUNNER-SNAPSHOT-DEBT/release.md
+EXIT=0
+
+git -C G:/CODEX/New Manga.worktrees/RUNNER-SNAPSHOT-DEBT-codex rev-parse HEAD
+1ac7aa8307baf4ca81af0ada3b181e1531525c37
+EXIT=0
+
+git -C G:/CODEX/New Manga.worktrees/RUNNER-SNAPSHOT-DEBT-codex status --porcelain
+EXIT=0
+
+git diff 968c8f34601b72667831f1fd15bb20cd2c8f3cb7 1ac7aa8307baf4ca81af0ada3b181e1531525c37 --check
+EXIT=0
+
+git diff --name-only 968c8f34601b72667831f1fd15bb20cd2c8f3cb7 1ac7aa8307baf4ca81af0ada3b181e1531525c37 -- src apps tests packaging verification/M2-RC2/run_e2e.py requirements.txt
+EXIT=0
+
+git diff --name-only 968c8f34601b72667831f1fd15bb20cd2c8f3cb7 1ac7aa8307baf4ca81af0ada3b181e1531525c37
+doc/00_INDEX.md
+doc/REBASELINE_PLAN.md
+doc/STATUS.md
+doc/tasks/M2-RUNNER-SNAPSHOT-DEBT.md
+doc/tasks/README.md
+verification/M2-RUNNER-SNAPSHOT-DEBT/release.md
+EXIT=0
