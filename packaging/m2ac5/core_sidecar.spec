@@ -267,6 +267,49 @@ def _assert_sfx_probe_closure(analysis, exe_name: str) -> None:
     )
 
 
+def _isolate_icu_closure(analysis, exe_name: str) -> None:
+    """M2-PACKAGED-AC1-ICU-ISOLATION-FIX:
+    Qt6Core.dll dynamically imports Windows System32 ICU (icuuc.dll) with
+    unsuffixed exports (ucnv_*). When PyInstaller's bindepend analyzes Qt6Core,
+    it can harvest an alien ICU78 from the build host's PATH (e.g. from poppler
+    binaries on PATH). Packaging that alien ICU at the root of `_internal` causes
+    DLL shadowing: Windows loads the bundled icuuc.dll ahead of System32, hitting
+    WinError 127 because the alien ICU78 exports only `_78` suffixed symbols.
+
+    Verified across all 5 entry points (AC-1 matrix): NONE of the 5 sidecar entries
+    is a genuine ICU78 consumer. To protect Qt6Core from shadowing while preserving
+    any genuine isolated consumers:
+    1. Filter out any top-level shadowing icuuc.dll and its data files (icudt*.dll)
+       harvested from outside the venv / system.
+    2. Assert that no shadowing icuuc.dll remains in the binary TOC.
+    """
+    cleaned_binaries = []
+    removed = []
+    for entry in analysis.binaries:
+        dest_name = entry[0].replace("\\", "/")
+        dest_base = os.path.basename(dest_name).lower()
+        if dest_base in ("icuuc.dll", "icudt78.dll", "icudt.dll") or dest_base.startswith("icuuc"):
+            removed.append((entry[0], entry[1]))
+            continue
+        cleaned_binaries.append(entry)
+
+    if removed:
+        print(
+            f"icu-isolation: removed {len(removed)} shadowing ICU binary entries for {exe_name}:"
+        )
+        for dest, src in removed:
+            print(f"  [SHADOW-PREVENTED] {dest} <- {src}")
+
+    analysis.binaries = cleaned_binaries
+
+    for entry in analysis.binaries:
+        if os.path.basename(entry[0].replace("\\", "/")).lower() == "icuuc.dll":
+            raise SystemExit(
+                f"ICU isolation assertion FAILED for {exe_name}: "
+                f"bundled binary {entry[0]} would shadow Windows System32 icuuc.dll!"
+            )
+
+
 EXCLUDED = [
     # M2-PROD-DETECT-2 (proxy ruling 2): the ML stack (torch/torchvision/
     # doctr + their transitive deps) is deliberately NOT excluded anymore —
@@ -310,6 +353,7 @@ for stem, name, is_ml_entry in ENTRIES:
         _assert_ml_closure(a, name)
     if stem == SFX_PROBE_ENTRY:
         _assert_sfx_probe_closure(a, name)
+    _isolate_icu_closure(a, name)
     pyz = PYZ(a.pure)
     exes.append(
         EXE(

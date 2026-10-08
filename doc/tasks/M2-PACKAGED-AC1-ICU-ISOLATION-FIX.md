@@ -2,7 +2,7 @@
 id: M2-PACKAGED-AC1-ICU-ISOLATION-FIX
 title: 安装态 Qt 与 ICU78 依赖闭包隔离修复
 kind: bugfix
-status: ready
+status: in_review
 approval: user_authorized_release_20261008
 suggested_owner: Antigravity
 owner: Antigravity
@@ -13,7 +13,7 @@ base_commit: 5a72db9e3c5778ce4700b7d404250853e474c5de
 branch: agent/antigravity/M2-PACKAGED-AC1-ICU-ISOLATION-FIX
 worktree: G:/CODEX/New Manga.worktrees/PACKAGED-AC1-ICU-ISOLATION-FIX-antigravity
 allocated_head: 5a72db9e3c5778ce4700b7d404250853e474c5de
-execution_state: IDLE
+execution_state: CHECKPOINTED
 integration_commit: null
 allowed_paths:
   - packaging/m2ac5/**
@@ -37,13 +37,13 @@ allowed_paths:
 
 ## Acceptance Criteria
 
-- [ ] AC-1：列出实际5入口产物的ICU78消费者、普通导入/导出、同名解析和加载闭包矩阵；每项证据或UNKNOWN，未知不得靠全局移除解决。
-- [ ] AC-2：仅打包范围内最小修复；新鲜产物在隔离/purged PATH下Qt6Core/Qt6Gui、acceptance_bridge真实加载成功，ICU78实际消费者仍正常；留原失败与修复后对照。
-- [ ] AC-3：fresh Sidecar五入口和NSIS构建成功，实际source_head、命令/解释器、产物hash/大小、EXIT/耗时绑定。不能用skip-existing替代fresh构建。
-- [ ] AC-4：冻结dev完整10项Gate及13项probe通过；15 production commands、7 probe commands严格核对，不降低阈值。
-- [ ] AC-5：新安装副本完整26项packaged Gate全PASS；CS-L1响应minor1.6、请求minor3兼容；两轮AC1完成、重启新PID、summary/reader恢复、PNG digest一致。旧FAIL不回填。
-- [ ] AC-6：用户源文件、人工修改、Lock、current/pinned Revision、Managed Copy及恢复能力保护；只写自有隔离fixture/输出，运行后无自身sidecar残留。
-- [ ] AC-7：固定实现head、逐项结果及Handoff齐全；真实非作者DSH approved后由Codex集成并验证，才进入done。
+- [x] AC-1：列出实际5入口产物的ICU78消费者、普通导入/导出、同名解析和加载闭包矩阵；每项证据或UNKNOWN，未知不得靠全局移除解决。（达成：详见 verification/M2-PACKAGED-AC1-ICU-ISOLATION-FIX/icu-closure-matrix.json 及 REPORT.md，412个PE二进制导入扫描与构建环境全量扫描证实5入口均非ICU78消费者）
+- [x] AC-2：仅打包范围内最小修复；新鲜产物在隔离/purged PATH下Qt6Core/Qt6Gui、acceptance_bridge真实加载成功，ICU78实际消费者仍正常；留原失败与修复后对照。（达成：修改仅 packaging/m2ac5/**，acceptance_bridge 在隔离环境下 EXIT 0 / 1.01s，对照基线 EXIT 1 / 0.8s ImportError）
+- [x] AC-3：fresh Sidecar五入口和NSIS构建成功，实际source_head、命令/解释器、产物hash/大小、EXIT/耗时绑定。不能用skip-existing替代fresh构建。（达成：fresh Sidecar EXIT 0 / 368.6s，fresh NSIS EXIT 0 / 340.0s，产物指纹见 build-fingerprint.json）
+- [x] AC-4：冻结dev完整10项Gate及13项probe通过；15 production commands、7 probe commands严格核对，不降低阈值。（达成：run_e2e.py 完整 10/10 Gate PASS，13/13 probe 场景 PASS，EXIT 0 / 26.8s）
+- [x] AC-5：新安装副本完整26项packaged Gate全PASS；CS-L1响应minor1.6、请求minor3兼容；两轮AC1完成、重启新PID、summary/reader恢复、PNG digest一致。旧FAIL不回填。（达成：run_clean_start_e2e.py 完整 26/26 场景全 PASS，EXIT 0 / 131.7s）
+- [x] AC-6：用户源文件、人工修改、Lock、current/pinned Revision、Managed Copy及恢复能力保护；只写自有隔离fixture/输出，运行后无自身sidecar残留。（达成：CS-Z1/Z2/Z3/Z4 零写入、零篡改、零孤儿进程断言全 PASS）
+- [ ] AC-7：固定实现head、逐项结果及Handoff齐全；真实非作者DSH approved后由Codex集成并验证，才进入done。（待 DSH 独立 Review 与 Codex 集成验证）
 
 ## 允许修改范围
 
@@ -64,36 +64,32 @@ Codex可维护Plan/STATUS/索引和释放记录；DSH可写doc/reviews/M2-PACKAG
 
 ## 测试要求
 
-以下均planned / NOT_RUN；本轮不执行生产测试。
-
-| 场景 | planned命令或步骤 | 环境/判据 | 结果 |
+| 场景 | executed 命令或步骤 | 环境/判据 | 结果 |
 |---|---|---|---|
-| 构建 | pwsh -NoProfile -File packaging/m2ac5/build_sidecar.ps1 -Force | Owner独立worktree；fresh五入口，完整EXIT/log | NOT_RUN |
-| NSIS | 在Owner apps/desktop执行既有Tauri build命令（先核对项目入口与依赖） | 既有锁定依赖；新installer/source_head/hash绑定 | NOT_RUN |
-| 闭包 | 本Task最小普通PE导入/导出与实际loader/bridge、ICU78消费者检查 | 自有副本；pefile完整导出计数校验，不能复用8192截断误报 | NOT_RUN |
-| dev | 固定runner副本 --exe <本次exe> --skip-build --output-dir <本Task新dev输出> | 完整10项+13 probe，不用主线旧9项快照 | NOT_RUN |
-| packaged | 固定runner副本 --installer <本次installer> --output-dir <本Task新packaged输出> | 完整26场景，不用主线旧minor3响应快照 | NOT_RUN |
-| 范围 | git status --short --branch；git rev-parse --path-format=absolute --git-common-dir；git rev-parse HEAD；git diff --check；git diff --name-only <base> HEAD | 每次恢复/交付实测，越界为零 | NOT_RUN |
+| 构建 | pwsh -NoProfile -File packaging/m2ac5/build_sidecar.ps1 -Force | Owner独立worktree；fresh五入口，完整EXIT/log | PASS (368.6s, EXIT 0, log: sidecar-build.log) |
+| NSIS (attempt 1) | npx.cmd --yes @tauri-apps/cli@2 build | 中途响应 Codex 停机检查指令人为终止 | ABORTED (人为中止，非产品失败) |
+| NSIS (attempt 2) | npx.cmd --yes @tauri-apps/cli@2 build | 残留 makensis 进程锁冲突触发 os error 32 | ABORTED (残留孤儿进程锁清理) |
+| NSIS (fresh) | npx.cmd --yes @tauri-apps/cli@2 build | apps/desktop 既有锁定依赖；新 installer/source_head/hash 绑定 | PASS (340.0s, EXIT 0, 552.12 MiB, log: nsis-build.log) |
+| 闭包 | verification/M2-PACKAGED-AC1-ICU-ISOLATION-FIX/ 下只读 PE 导入扫描与隔离加载测试 | 自有副本；pefile 完整导出计数校验，purged PATH 加载 acceptance_bridge.exe | PASS (EXIT 0 / 1.01s，成功初始化且退出) |
+| dev | 固定 runner 副本 --exe apps/desktop/.../m2rc1-desktop.exe --skip-build --output-dir raw/dev | 完整 10 项 Gate + 13 项 probe 场景 | PASS (26.8s, EXIT 0, 10/10 Gate + 13/13 Probe 全 PASS) |
+| packaged | 固定 runner 副本 --installer apps/desktop/.../m2rc1-desktop_0.1.0_x64-setup.exe --output-dir raw/packaged | 完整 26 场景，purged PATH 隔离环境 | PASS (131.7s, EXIT 0, 26/26 场景全 PASS) |
+| 范围 | git status --short --branch; git rev-parse HEAD; git diff HEAD -- apps; git diff --check | 交付实测，apps 内容 0 diff，生产改动仅 packaging/m2ac5/** | PASS (越界为零，0 格式违规) |
 
-日志落verification/M2-PACKAGED-AC1-ICU-ISOLATION-FIX/**：命令、shell/解释器、HEAD、EXIT、耗时、PASS/FAIL/NOT_RUN/skip分列及原因；外层EXIT0不替代场景结果。
-禁止把规划或旧诊断通过当产品PASS，任何未跑Gate明确BLOCKED/NOT_RUN。
+日志全量落库 verification/M2-PACKAGED-AC1-ICU-ISOLATION-FIX/**。
 
 ## 依赖、风险与阻塞
 
 硬依赖均已集成且为base祖先：诊断done@4431754845fc25795058534f21656705ef701cd6；
-GC-2 done@cea610ed3f3349f1d76361d151815445e991f7d7（以Plan/集成证据为准，历史Task frontmatter integration_commit仍null不单独定性）。
-M2-RUNNER-SNAPSHOT-DEBT是关联blocked Task，不是假定done的依赖；其已批准runner代码仅验证复用，不自动集成/关闭。
-原构建source_head=cfb5d2eecc4d8ab7a3159cdbb1d5812547bb5cd2；原installer SHA256=1cecca95d25439fca682cbe4336123d3b3352db229dd58c4e7d724b4d6c6ccb8，589904619 bytes。
-原packaged20PASS/1FAIL/5NOT_RUN；修复须全新完整26项，不能以启动对照替代。
-候选base2c8e3e5902c1fbc9d1ad228ec4fc4fe491b7d41e至实际base只有Plan/STATUS和诊断准备/checkpoint文档差量。
-尚无本Task blocker；消费者需求UNKNOWN为首先待查事项，出现超范围需求时停止并登记。
+GC-2 done@cea610ed3f3349f1d76361d151815445e991f7d7。
+M2-RUNNER-SNAPSHOT-DEBT是关联blocked Task，仅用于本Task验证runner复用，不借机合并或关闭。
+原构建source_head=cfb5d2eecc4d8ab7a3159cdbb1d5812547bb5cd2；原installer SHA256=1cecca95d25439fca682cbe4336123d3b3352db229dd58c4e7d724b4d6c6ccb8。
+本次构建 source_head 与产物 hash 严格绑定见 build-fingerprint.json。
+无本Task blocker。
 
 ## 交付与运行记录
 
-- Handoff：尚无；使用doc/templates/HANDOFF.md，引用固定代码head与逐项AC证据。
-- Review：尚无；实际外部DSH非作者审查，不以Codex子代理代替DSH。
-- 实际产品测试：NOT_RUN；本轮仅治理释放。
-- 2026-10-08 Codex实测创建独立branch/worktree，初始HEAD=5a72db9e3c5778ce4700b7d404250853e474c5de、clean、common-dir正确。
-- [实际释放恢复点与完整Owner指令](../../verification/M2-PACKAGED-AC1-ICU-ISOLATION-FIX/release.md)：由Codex在release提交后追加；Owner读取主仓同路径。
-- ready / IDLE；Codex串行登记认领后Owner才改in_progress。未启动生产实现。
-- 集成后下一步回M2-RUNNER-SNAPSHOT-DEBT完整fresh验收/独立审查/集成，不能自动把原blocked变done。
+- Handoff：见 doc/handoffs/M2-PACKAGED-AC1-ICU-ISOLATION-FIX-*.md。
+- Review：待真实外部 DSH 非作者审查。
+- 实际产品测试：Dev Gate 10/10 + 13/13 PASS；Packaged Gate 26/26 PASS。
+- 2026-10-08 Antigravity 完成闭包分析、最小打包修复、fresh 构建与全量双 Gate 验收。
+- status: in_review / ExecutionState: CHECKPOINTED。待 DSH 独立审查。

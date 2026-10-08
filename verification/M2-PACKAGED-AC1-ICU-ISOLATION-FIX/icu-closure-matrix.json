@@ -1,0 +1,71 @@
+{
+  "task": "M2-PACKAGED-AC1-ICU-ISOLATION-FIX",
+  "generated_by": "Antigravity (Owner)",
+  "date": "2026-10-08",
+  "status": "PASS",
+  "root_cause_confirmation": {
+    "verdict": "PROVEN",
+    "mechanism": "PyInstaller's bindepend scanned host PATH during Qt6Core analysis and harvested alien ICU78 from external native toolchain (C:\\Users\\49745\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\poppler\\Library\\bin\\icuuc.dll), copying it to _internal/icuuc.dll. Windows loader resolved _internal/icuuc.dll ahead of C:\\Windows\\System32\\icuuc.dll. The alien ICU78 exported only _78-suffixed symbols, lacking the 20 unsuffixed symbols (ucnv_*) demanded by Qt6Core.dll, causing WinError 127 and PySide6.QtGui ImportError.",
+    "alien_icu_source": "C:\\Users\\49745\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\poppler\\Library\\bin\\icuuc.dll",
+    "alien_icu_sha256": "39aec884c7124d673d75b38cca7b44ac1909d9633d8366a812a6e1c269d74bdf",
+    "system_icu_location": "C:\\Windows\\System32\\icuuc.dll",
+    "system_icu_exports_total": 542,
+    "system_icu_unsuffixed_ucnv_open_present": true
+  },
+  "entries_icu_consumer_analysis": [
+    {
+      "entry_name": "host_bridge.exe",
+      "module": "infrastructure.resource_channel.host_bridge",
+      "binary_dependencies": "Python stdlib + in-repo packages only; 0 external C-extensions",
+      "is_icu78_consumer": false,
+      "evidence": "Static import graph scan + binary PE import table scan (0 icu imports)",
+      "status": "PROVEN_NON_CONSUMER"
+    },
+    {
+      "entry_name": "core_service.exe",
+      "module": "bootstrap.core_service",
+      "binary_dependencies": "Python stdlib + SQLite + PyTorch/torchvision/transformers/onnxruntime/doctr ML stack",
+      "is_icu78_consumer": false,
+      "evidence": "PE import table scan of all bundled ML binaries (torch, torchvision, doctr, transformers, onnxruntime, DirectML.dll) shows 0 references to icu*.dll",
+      "status": "PROVEN_NON_CONSUMER"
+    },
+    {
+      "entry_name": "acceptance_bridge.exe",
+      "module": "bootstrap.acceptance_bridge",
+      "binary_dependencies": "Python stdlib + PySide6 (Qt6Core, Qt6Gui)",
+      "is_icu78_consumer": false,
+      "is_system_icu_consumer": true,
+      "evidence": "Qt6Core.dll imports 20 unsuffixed ICU symbols (ucnv_*) supplied by Windows System32 icuuc.dll; it does NOT consume ICU78. Bundling alien ICU78 broke it via shadowing.",
+      "status": "PROVEN_SYSTEM_ICU_ONLY"
+    },
+    {
+      "entry_name": "catalog_loader.exe",
+      "module": "infrastructure.resource_channel.catalog_loader",
+      "binary_dependencies": "Python stdlib + in-repo SQLite catalog access only; 0 external C-extensions",
+      "is_icu78_consumer": false,
+      "evidence": "Static import graph scan + binary PE import table scan (0 icu imports)",
+      "status": "PROVEN_NON_CONSUMER"
+    },
+    {
+      "entry_name": "sfx_detect_probe.exe",
+      "module": "bootstrap.sfx_detect_probe",
+      "binary_dependencies": "Python stdlib + onnxruntime-directml + transitive torch/doctr ML stack",
+      "is_icu78_consumer": false,
+      "evidence": "PE import table scan shows onnxruntime_pybind11_state.pyd and DirectML.dll do not import icu*.dll",
+      "status": "PROVEN_NON_CONSUMER"
+    }
+  ],
+  "bundle_binary_scan": {
+    "total_pe_binaries_scanned": 412,
+    "binaries_importing_icuuc": [
+      "_internal/PySide6/Qt6Core.dll"
+    ],
+    "binaries_importing_icu78": [],
+    "verdict": "ZERO bundled components require ICU78. Bundled ICU78 was 100% build host PATH contamination."
+  },
+  "isolation_fix": {
+    "packaging_spec": "packaging/m2ac5/core_sidecar.spec: _isolate_icu_closure strips alien icuuc.dll / icudt*.dll from a.binaries and asserts absence of shadowing icuuc.dll",
+    "packaging_build_script": "packaging/m2ac5/build_sidecar.ps1: local PATH sanitization during PyInstaller execution removes poppler/codex-runtimes paths + post-build layout assertion verifies no _internal/icuuc.dll",
+    "diff_contained_in_allowed_paths": true
+  }
+}

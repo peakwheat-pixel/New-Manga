@@ -194,13 +194,30 @@ $workPath = Join-Path $targetRoot "pyinstaller-work"
 $pyinstallerVersion = (& $PythonExe -m PyInstaller --version)
 Write-Host "build_sidecar: git HEAD=$gitHead pyinstaller=$pyinstallerVersion python=$PythonExe"
 
-& $PythonExe -m PyInstaller `
-    --noconfirm `
-    --clean `
-    --distpath $distPath `
-    --workpath $workPath `
-    (Join-Path $repoRoot "packaging/m2ac5/core_sidecar.spec")
-if ($LASTEXITCODE -ne 0) { throw "PyInstaller failed (exit=$LASTEXITCODE)" }
+# M2-PACKAGED-AC1-ICU-ISOLATION-FIX: Sanitize local PATH during PyInstaller
+# execution to prevent bindepend from harvesting alien native binaries (e.g. ICU78
+# from host poppler caches) that shadow Windows System32 components required by Qt6Core.
+$origPath = $env:PATH
+try {
+    $pathEntries = $env:PATH -split ';' | Where-Object {
+        $_ -and (Test-Path -LiteralPath $_) -and
+        $_ -notmatch '(?i)codex-runtimes' -and
+        $_ -notmatch '(?i)poppler'
+    }
+    $env:PATH = ($pathEntries -join ';')
+    Write-Host "build_sidecar: sanitized PATH for PyInstaller execution"
+
+    & $PythonExe -m PyInstaller `
+        --noconfirm `
+        --clean `
+        --distpath $distPath `
+        --workpath $workPath `
+        (Join-Path $repoRoot "packaging/m2ac5/core_sidecar.spec")
+    if ($LASTEXITCODE -ne 0) { throw "PyInstaller failed (exit=$LASTEXITCODE)" }
+}
+finally {
+    $env:PATH = $origPath
+}
 
 # layout sanity gate: the Rust host resolves exactly these names
 # (M2-PROD-SFX-PROBE-1: + sfx_detect_probe.exe, the one-shot frozen SFX-detect
@@ -210,6 +227,14 @@ foreach ($exe in @("host_bridge.exe", "core_service.exe", "acceptance_bridge.exe
     if (-not (Test-Path -LiteralPath (Join-Path $bundle $exe) -PathType Leaf)) {
         throw "sidecar bundle incomplete: missing $exe under $bundle"
     }
+}
+
+# M2-PACKAGED-AC1-ICU-ISOLATION-FIX: assert that no shadowing icuuc.dll was placed in the bundle.
+# Qt6Core requires Windows System32 icuuc.dll; bundling a shadowing icuuc.dll in _internal
+# causes native WinError 127 symbol missing failure at runtime.
+$shadowingIcu = Join-Path $bundle "_internal/icuuc.dll"
+if (Test-Path -LiteralPath $shadowingIcu -PathType Leaf) {
+    throw "sidecar bundle contains shadowing icuuc.dll at $shadowingIcu — this breaks Qt6Core on Windows!"
 }
 
 if (-not $SkipWeights) {

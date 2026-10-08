@@ -1,0 +1,35 @@
+{
+  "task": "M2-PACKAGED-AC1-ICU-ISOLATION-FIX",
+  "installer": {
+    "path": "G:\\CODEX\\New Manga.worktrees\\PACKAGED-AC1-ICU-ISOLATION-FIX-antigravity\\apps\\desktop\\src-tauri\\target\\release\\bundle\\nsis\\m2rc1-desktop_0.1.0_x64-setup.exe",
+    "sha256": "a17a9708d5c18d79b0e009f9bf1da8c0de8701ddd7a06af8356a08dd7766ceb2",
+    "size": 578944542
+  },
+  "sidecars": {
+    "host_bridge.exe": {
+      "path": "G:\\CODEX\\New Manga.worktrees\\PACKAGED-AC1-ICU-ISOLATION-FIX-antigravity\\apps\\desktop\\src-tauri\\target\\core-sidecar\\core-sidecar\\host_bridge.exe",
+      "sha256": "717c9369d75530aee268f984bea444d0063c07c5a9e94af08ff187a06e4a1bc8",
+      "size": 1826431
+    },
+    "core_service.exe": {
+      "path": "G:\\CODEX\\New Manga.worktrees\\PACKAGED-AC1-ICU-ISOLATION-FIX-antigravity\\apps\\desktop\\src-tauri\\target\\core-sidecar\\core-sidecar\\core_service.exe",
+      "sha256": "31309052dfa025b5687c0b2b0924c3e96e0715bd7753636ec6eb550a333b5431",
+      "size": 68542970
+    },
+    "acceptance_bridge.exe": {
+      "path": "G:\\CODEX\\New Manga.worktrees\\PACKAGED-AC1-ICU-ISOLATION-FIX-antigravity\\apps\\desktop\\src-tauri\\target\\core-sidecar\\core-sidecar\\acceptance_bridge.exe",
+      "sha256": "9cea43db8e9f96f51338dd1a1481c647efbdfa79972077ceb3ddf9ee74f1ecfa",
+      "size": 68530186
+    },
+    "catalog_loader.exe": {
+      "path": "G:\\CODEX\\New Manga.worktrees\\PACKAGED-AC1-ICU-ISOLATION-FIX-antigravity\\apps\\desktop\\src-tauri\\target\\core-sidecar\\core-sidecar\\catalog_loader.exe",
+      "sha256": "99b6dd76e04c29ac961c5cf852c87bb18d6015d59b587f15072ffab9a66bc166",
+      "size": 1824326
+    },
+    "sfx_detect_probe.exe": {
+      "path": "G:\\CODEX\\New Manga.worktrees\\PACKAGED-AC1-ICU-ISOLATION-FIX-antigravity\\apps\\desktop\\src-tauri\\target\\core-sidecar\\core-sidecar\\sfx_detect_probe.exe",
+      "sha256": "9f7896d4552f173783bdfc2a8fe631a06753312e7f7ebf4bdcf74ea9e8345d1e",
+      "size": 67902901
+    }
+  }
+}

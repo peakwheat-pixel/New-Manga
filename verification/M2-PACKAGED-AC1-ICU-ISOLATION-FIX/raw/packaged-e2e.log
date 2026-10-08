@@ -1,0 +1,2 @@
+HOST=Windows; HEAD=df824182e813fc6d9045872da51d263f28db87f0; TIME=2026-10-08T11:25:47.8663190+08:00
+COMMAND: python verification/M2-PACKAGED-AC1-ICU-ISOLATION-FIX/run_clean_start_e2e.py --installer apps/desktop/src-tauri/target/release/bundle/nsis/m2rc1-desktop_0.1.0_x64-setup.exe --output-dir verification/M2-PACKAGED-AC1-ICU-ISOLATION-FIX/raw/packaged
