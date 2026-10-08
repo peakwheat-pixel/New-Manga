@@ -1,6 +1,6 @@
 # 全项目任务盘点与整体规划
 
-最新工作点：P08首轮DSH findings已修订并固定于`31c26389`，第二轮非作者Review正在运行（session=`session-d9ecc0fb-6e88-41a1-ad89-e2d3f877a1f6`，shell NOT_RUN因Win32 5）。恢复状态见[最新恢复点](../P08/RESUME.md)。后继产品实现未释放；本报告其余审计结论保留为`e4242ecd`时点快照。
+最新工作点：DSH R2对P08首轮修订head `31c26389`返回`changes_requested`；首轮P1已关闭，N-01..N-06待修订，shell NOT_RUN因Win32 5。恢复状态见[最新恢复点](../P08/RESUME.md)。后继产品实现未释放；本报告其余审计结论保留为`e4242ecd`时点快照。
 
 2026-10-08后续用户裁决：Qoder退出本项目；本报告的未来分配/可转发指令已改为ZCode主责UI/UX，Codex契约与集成、DSH非作者审查，fallback=ZCode→Antigravity。原Core/Desktop/Plan审计、台账、历史署名和Review保留审计时事实；它们的旧推荐不覆盖当前Plan/AGENTS人员资格。本更新不启动产品Task。
 

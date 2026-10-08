@@ -227,3 +227,43 @@ PASS: no whitespace errors; EXIT=0
 command=git diff --name-only -- src apps tests packaging
 PASS: no protected production paths changed; EXIT=0
 Product tests/build/GUI/model calls=NOT_RUN (document Task)
+
+Formal DSH round-2 Review returned
+UTC=2026-10-08T14:19:30+00:00
+reviewed_head=31c263892605fdc984982b9ba1875fa6eb609cb6
+base=ab2f813c0ce311a6712002cafd852b9e7a258380
+review_worktree=G:\CODEX\New Manga.worktrees\P08-dsh-review-31c2638
+reviewer=DeepSeek Harness (non-author)
+dsh_version=0.1.7-rc.2
+command=dsh --profile headless --json with verification/P08/DSH-REVIEW-PROMPT-R2.md as prompt
+process_worktree_HEAD=31c263892605fdc984982b9ba1875fa6eb609cb6
+process_worktree_status=clean
+common_dir=G:/CODEX/New Manga/.git
+session=session-d9ecc0fb-6e88-41a1-ad89-e2d3f877a1f6
+session_mounted_to_exact_worktree=yes
+process_exit=0
+stderr=empty
+DSH command execution=NOT_RUN: pwsh ACL initialization failed SetNamedSecurityInfoW Win32 5; escalation unavailable. DSH file/read/grep tools supplied static evidence; see §1/§2/§4.1 of report.
+review_decision=changes_requested; 0 unresolved P0; 0 unresolved P1; first-round P1 4/4 closed; first-round P2 5/6 closed; one P2 residual and one new P2; four new P3.
+report=verification/P08/review-dsh-31c2638.md
+report_sha256=DC21EA7325BF4DDDE1271A52291AAD97AE0E4067C48D1CC57ADC52795D815054
+Product pytest/cargo/vitest/GUI/build/model calls=NOT_RUN (document-only Task).
+R2 raw event stream cleanup
+The DSH JSONL stdout was used to extract the complete official Markdown final report; canonical report SHA256 verified as DC21EA7325BF4DDDE1271A52291AAD97AE0E4067C48D1CC57ADC52795D815054. Task-created dsh-r2.stdout.jsonl and empty dsh-r2.stderr.log were removed after archival. No original/other-author dirty paths were touched.
+
+P08 R2 decision/state checkpoint
+UTC=2026-10-08T14:24:15+00:00
+repo=G:\CODEX\New Manga; branch=main; live_HEAD=0a7a1ac5d4d7770fee768e79fb0f59650d94eeff
+state=authorized R2 result, Task/Plan/Status/navigation synchronized to changes_requested; findings N-01..N-06 remain open for author repair
+report=verification/P08/review-dsh-31c2638.md; SHA256=DC21EA7325BF4DDDE1271A52291AAD97AE0E4067C48D1CC57ADC52795D815054
+raw stdout/stderr task temp files removed after final report archival; original external dirty paths remain untouched and unstaged
+next=commit this result checkpoint, then fix N-01..N-06 and run document validators before a new exact-head DSH review
+P08 R2 result checkpoint working-tree validation
+UTC=2026-10-08T14:25:36+00:00
+repo=G:\CODEX\New Manga; branch=main; HEAD=0a7a1ac5d4d7770fee768e79fb0f59650d94eeff; PowerShell 7.6.6; Python 3.14.6 (C:\Python314\python.exe)
+command=python -B -X utf8 verification/P08/verify_scope.py; EXIT=0; P08 changes_requested; 20 successors unreleased
+command=python -B -X utf8 verification/PROJECT-ROADMAP-20261008/verify_plan.py; EXIT=0; 196 snapshot nodes, 105 ancestry records, 21 planning nodes, no dependency cycles
+command=git diff --check; EXIT=0 (line-ending advisory warnings only; original .qoder-credits/report.json not staged or modified by this task)
+command=git diff --name-only -- src apps tests packaging; EXIT=0; empty output
+command=git diff --cached --check for the explicit R2 result checkpoint; EXIT=0
+Product tests/build/GUI/model calls=NOT_RUN (document-only Task)

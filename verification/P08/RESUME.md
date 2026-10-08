@@ -1,10 +1,10 @@
 # P08 可恢复检查点
 
-时间：2026-10-08 22:04（Asia/Shanghai）；Agent=Codex；TaskStatus=in_review；ExecutionState=ACTIVE（第二轮正式DSH Review运行中）。
+时间：2026-10-08 22:24（Asia/Shanghai）；Agent=Codex；TaskStatus=changes_requested；ExecutionState=ACTIVE（DSH R2 findings返修准备中）。
 
 ## Reality Check
 
-- 仓库=`G:/CODEX/New Manga`；Owner branch/worktree=`main` / `G:/CODEX/New Manga`；HEAD=`cefbc1377567e62bd7982b84ea9beebfe60a86b9`（证据checkpoint）；common-dir=`G:/CODEX/New Manga/.git`。
+- 仓库=`G:/CODEX/New Manga`；Owner branch/worktree=`main` / `G:/CODEX/New Manga`；HEAD=`0a7a1ac5d4d7770fee768e79fb0f59650d94eeff`（R2运行状态checkpoint）；common-dir=`G:/CODEX/New Manga/.git`。
 - 主工作区既有、归原作者的四个dirty路径未碰触：`.qoder-credits/report.json` modified；`.qoder-credits/通路探测__8602db50.canvas.tsx` untracked；`verification/M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD/antigravity-dispatch.json` untracked；对应`antigravity-dispatch.stderr.log` untracked。不得stage、覆盖、stash或清理。
 - DSH首轮精确目标=`490f9bd9637de0812a3ef3d9bbfa754868d5c15f`，非作者报告=`verification/P08/review-dsh-490f9bd.md`，decision=`changes_requested`（0 P0、4 P1、6 P2、5 P3观察）；旧worktree/session留存且不变。
 - 首轮Finding修订固定head=`31c263892605fdc984982b9ba1875fa6eb609cb6`，base=`ab2f813c0ce311a6712002cafd852b9e7a258380`。精确Review worktree=`G:/CODEX/New Manga.worktrees/P08-dsh-review-31c2638`，detached、clean、common-dir正确。
@@ -21,7 +21,7 @@ Codex在上述精确head与干净Review worktree中执行：
 
 ## 当前工作点与下一精确步骤
 
-Task=`in_review`，所有首轮Finding独立closure状态仍pending。下一步执行中：DSH已从精确Review worktree使用项目正式CLI启动独立会话并挂载；session=`session-d9ecc0fb-6e88-41a1-ad89-e2d3f877a1f6`。首个DSH PowerShell命令因SetNamedSecurityInfoW Win32 5失败，DSH shell检查NOT_RUN；静态审查继续。保存stdout/stderr并等待完整decision；Reviewer实际批准、Codex复核并完成集成Gate之前，不将P08标为done，不释放P09–P20。
+Task=`changes_requested`。DSH R2对固定head=`31c263892605fdc984982b9ba1875fa6eb609cb6`返回changes_requested，0未闭合P0/P1；R1四项P1已关闭，仍有N-01/N-02两项P2与N-03..N-06四项P3待处置。canonical报告=`verification/P08/review-dsh-31c2638.md`，session=`session-d9ecc0fb-6e88-41a1-ad89-e2d3f877a1f6`、CLI exit=0、shell checks NOT_RUN（Win32 5）；完整结果写入`validation.log`。下一步修正N-01..N-06，运行改进后的范围/路线检查，建立新fixed head和R3 Handoff，再派发真实DSH复审。新head非作者Review及Codex最终集成Gate前，不将P08标为done，不释放P09–P20。
 
 DSH R2 prompt=`verification/P08/DSH-REVIEW-PROMPT-R2.md`；Handoff=`doc/handoffs/P08-31c26389-dsh-r2.md`；首轮报告和历史Handoff不覆盖。Architecture Documentation Rebaseline Task未登记，AC-DOC-001..003必须在P09释放前处理；P18/P20及发布栈专属AC映射Gate仍按Plan阻断。用户D1–D7已确定，不需再次询问。
 
