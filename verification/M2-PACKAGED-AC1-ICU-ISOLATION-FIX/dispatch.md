@@ -26,3 +26,13 @@ Owner只写自己的Task/production allowed_paths/verification/Handoff；Codex�
 下一Exact Step：等待本次进程返回；读取run-r1.json/out-r1.json，固定Owner实际HEAD与Handoff、逐项核对范围和验收证据。
 禁止重复启动第二个写入同worktree的Agent；若原进程已退出需先Reality Check，再用同conversation_id续接。
 通过后按dsh-dispatch调用真实DSH只读审查固定代码head（使用独立审查checkout），approved与Codex集成后验证前不标done。
+
+## 2026-10-08 delivery / independent DSH review dispatch
+
+- Antigravity conversation=d0af5e1f-1da8-4842-a5e6-ededa3b2d651; CLI final `SUCCESS`; session is idle.
+- Fixed implementation commit=aa099f2a013408bf53c3466ab8361bc028289743; Owner subsequently committed Handoff, final Task state, fresh comparison/build evidence, raw logfile whitespace attributes at docs checkpoint=46f50a097d25a1893dd1f43b0a38479952242161; branch clean at checkpoint.
+- AC gates: Sidecar fresh five entry EXIT0; NSIS fresh EXIT0; Dev Gate 10/10 +13/13; packaged 26/26. Full logs and 5 entry/install hashes in Owner REPORT/build fingerprint.
+- Reconciled earlier scope alarm: Tauri refreshed metadata/timestamps only; all 24 apps status paths have identical blob object IDs to committed `HEAD`, and `git diff HEAD -- apps` is empty. No tracked apps content was changed.
+- DSH CLI `0.1.7-rc.2`; probe `dsh headless` returned `收到`; independent fixed-head review r1 now running against code=aa099f2a013408bf53c3466ab8361bc028289743 and evidence/Handoff docs checkpoint=46f50a097d25a1893dd1f43b0a38479952242161. DSH has read-only instructions and is asked to output Review Markdown only.
+- Explicit review concern: builder logs record command-time `HEAD=df824182...` before production fix commit, while build-fingerprint binds `source_head=aa099f2a013408bf53c3466ab8361bc028289743` afterward. DSH to verify byte-equivalent source/claim and classify any provenance gap.
+- No production merge/integration yet. DSH decision pending.

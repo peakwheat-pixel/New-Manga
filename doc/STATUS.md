@@ -1,6 +1,16 @@
 # Current Development Status
 
-## 2026-10-08 自动派发：M2-PACKAGED-AC1-ICU-ISOLATION-FIX in_progress / ACTIVE
+## 2026-10-08 Antigravity交付：M2-PACKAGED-AC1-ICU-ISOLATION-FIX in_review / DSH审查中
+
+当前唯一Active Task处于in_review：Owner=Antigravity，非作者Reviewer=DeepSeek Harness，Integrator=Codex；生产实现尚未集成。
+Owner branch=agent/antigravity/M2-PACKAGED-AC1-ICU-ISOLATION-FIX；worktree=G:/CODEX/New Manga.worktrees/PACKAGED-AC1-ICU-ISOLATION-FIX-antigravity；base=5a72db9e3c5778ce4700b7d404250853e474c5de；实际start_head=df824182e813fc6d9045872da51d263f28db87f0。
+固定代码交付head=aa099f2a013408bf53c3466ab8361bc028289743；Task/Handoff/最终Gate证据checkpoint=46f50a097d25a1893dd1f43b0a38479952242161；Owner worktree clean，common-dir=G:/CODEX/New Manga/.git。
+Sidecar fresh五入口EXIT0（368.6s）；NSIS fresh EXIT0（340s）；Dev Gate 10/10 + probes 13/13 PASS；Packaged Gate 26/26 PASS（131.7s）。安装器552.12MiB、hash及五入口指纹记录在Owner verification/build-fingerprint.json。用户目录/既有安装未触碰；isolated zero-touch检查PASS。
+初次Tauri构建被Codex停机后makensis手工终止，该次只记ABORTED；随后fresh Tauri/NSIS EXIT0。Tauri触碰的24个apps路径逐blob与HEAD一致，`git diff HEAD -- apps`为空，没有apps内容差异。
+DSH CLI 0.1.7-rc.2只读探测EXIT0/收到；真实独立r1审查已派发，结论待回。Review重点含builder执行时HEAD=df824182（修复仍dirty）与后续fingerprint source_head=aa099f2a的制品溯源口径，需审查是否有充分commit绑定。
+Owner Task: G:/CODEX/New Manga.worktrees/PACKAGED-AC1-ICU-ISOLATION-FIX-antigravity/doc/tasks/M2-PACKAGED-AC1-ICU-ISOLATION-FIX.md；Handoff与详细报告均在同worktree，集成前不标done。
+原M2-RUNNER-SNAPSHOT-DEBT继续blocked；本Task集成/关闭后推荐由Codex按当前runner快照 debt恢复完整验收与治理。
+
 
 用户授权“下一步”；Codex串行登记唯一Active Task=[ICU隔离修复](tasks/M2-PACKAGED-AC1-ICU-ISOLATION-FIX.md)，Owner=Antigravity，非作者Reviewer=DSH，Integrator=Codex。
 真实agy CLI=1.3.1；探测EXIT0/SUCCESS。实际派发start_head=df824182e813fc6d9045872da51d263f28db87f0，
