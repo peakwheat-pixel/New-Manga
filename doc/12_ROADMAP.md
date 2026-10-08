@@ -1,12 +1,12 @@
 # Roadmap
 
-当前工作：P08设计范围已冻结；DSH R7正式批准fixed head fe222464，Codex集成Gate通过，P08=approved、Task收口提交待完成；P03为下一候选但未创建/释放；最新恢复点见verification/P08/RESUME.md。
+当前工作：P08设计/验收准备Task已done，DSH R7与Codex集成Gate通过；integration_commit=fe222464616152e9c95208e06c248565f2fd86a6。下一候选P03尚未创建或释放；恢复提示词见verification/P08/RESUME.md。
 
 ## 当前整体路线（2026-10-08，PLAN_ONLY）
 
 最新人员裁决：Qoder退出，未来UI/UX设计及React/Tauri实现由ZCode主责，DSH非作者审查，Codex契约/集成；额度接管候选为ZCode、Antigravity。历史交付中的Qoder署名保留。
 
-权威排期见 Plan顶部P01–P21候选任务路线、中文分层依赖图、代码深读与完整台账、额度中断恢复材料。当前P08=approved：DSH R7已批准fe222464，Codex集成Gate通过，Task收口提交待完成；P03仍未创建/释放。完整产品条件主链为：范围/parity冻结→真实导入/凭据/长任务契约→书架/后台Pipeline→工作台/设置/阅读导出→真实质量→整体E2E→Windows发布。基础Reader已由D1解冻，跨页/缩略图延期。
+权威排期见REBASELINE_PLAN中的P01–P21路线、中文依赖图、审计报告和恢复材料。P08=done；P03是下一推荐候选，尚未创建或释放，必须在下次从live main核验前置条件并冻结Task、hash与allowed_paths后再派发。完整产品条件主链为：范围/parity冻结→真实导入/凭据/长任务契约→书架/后台Pipeline→工作台/设置/阅读导出→真实质量→整体E2E→Windows发布。基础Reader已由D1解冻，跨页/缩略图延期。
 
 下方2026-09早期导航保留历史，不覆盖本段或Plan；其中旧“ready/planning only”任务多已由后继完成，不能作为当前待办。
 

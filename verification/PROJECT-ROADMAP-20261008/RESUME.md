@@ -1,8 +1,8 @@
 # 全项目任务规划恢复点
 
-最新工作点：P08=approved；DSH R7批准固定head=fe222464，Codex集成Gate已通过，Task收口提交待完成。P03为下一候选，尚未创建或释放；恢复步骤见P08 RESUME。
+最新工作点：P08=done；P系列done 1/21、proposed / 未释放20。DSH R7与Codex集成Gate通过，Task收口记录见P08 RESUME。P03尚未创建或释放。
 
-**当前位置：P08=approved；P系列done 0/21、approved 1、proposed / 未释放20。R7 fixed head=fe222464已获DSH批准，Codex集成Gate已通过，等待Task收口提交。**
+**当前位置：P08=done；下一推荐候选P03未创建/未释放。请恢复时核对live main与Plan/Status，先正式创建并冻结P03 Task，再进入自动推进。**
 
 2026-10-08 编号裁决时的状态快照：任务编号沿用 `P01–P21`；当时P08=`in_review`，其余20项=`proposed / 未释放`。当前状态见本恢复点顶部及`doc/STATUS.md`；本编号裁决本身不释放产品实施、不改历史记录。
 

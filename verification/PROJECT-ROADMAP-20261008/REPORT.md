@@ -1,6 +1,6 @@
 # 全项目任务盘点与整体规划
 
-最新工作点：P08状态=approved；DSH R7批准固定head=fe222464616152e9c95208e06c248565f2fd86a6，Codex集成Gate已通过，Task收口提交待完成。完整恢复和验证边界见P08 RESUME；其余审计结论保留为e4242ecd时点快照。
+最新工作点：P08=done；DSH R7与Codex集成Gate通过，integration_commit=fe222464616152e9c95208e06c248565f2fd86a6。P03为下一推荐候选，尚未创建或释放；当前路线详见REBASELINE_PLAN与P08 RESUME。其他审计结论保留为e4242ecd时点快照。
 
 2026-10-08后续用户裁决：Qoder退出本项目；本报告的未来分配/可转发指令已改为ZCode主责UI/UX，Codex契约与集成、DSH非作者审查，fallback=ZCode→Antigravity。原Core/Desktop/Plan审计、台账、历史署名和Review保留审计时事实；它们的旧推荐不覆盖当前Plan/AGENTS人员资格。本更新不启动产品Task。
 
@@ -100,9 +100,9 @@ Packaged26/26的已入库证据绑定source=`3d532c1f99e49da703d2076bd67d46b7108
 
 ## 推荐下一任务与可直接转发指令
 
-当前执行点：P08 DSH R7已对fe222464正式approved，Codex集成Gate通过待Task收口。下方长指令为早期规划快照，不得替代当前Task与恢复点。
+当前执行点：P08 D1–D7范围/验收Task已done；P09–P20及P03均未释放。下方原始审计指令为历史快照，不得替代当前Task与RESUME。
 
-**Task**：P08“完整产品范围与验收冻结准备”（approved / R7固定head已获DSH Review与Codex集成Gate）。Owner=Codex，非作者Reviewer=DeepSeek Harness。P03尚未创建或释放。
+**Task**：P08“完整产品范围与验收冻结准备”=done（R7固定head获DSH approved，Codex integration Gate通过）。Owner=Codex，非作者Reviewer=DeepSeek Harness。下一候选P03尚未创建或释放。
 
 **Recovery point**：唯一仓库/branch=`G:/CODEX/New Manga`/`main`；审计base=head=`e4242ecd419eb0eea098d2f63b40f709aa5caeea`。后续治理提交与实际HEAD须live核验；正式Task branch/worktree待Codex创建，不臆造。**Scope**：只读src/apps/tests/Task/契约；新正式Task范围拟限自有Task、范围/验收草案、自有verification、Handoff，Plan/STATUS/索引由Codex维护。禁止生产src/apps、Schema、依赖、用户数据、已有raw、既有dirty写入；草案不修改冻结wire或需求。
 

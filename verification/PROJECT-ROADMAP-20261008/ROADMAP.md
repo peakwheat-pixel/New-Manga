@@ -1,8 +1,8 @@
 # New Manga 一眼路线图（2026-10-08）
 
-最新工作点：P08状态=approved；R7 fixed head fe222464已获DSH正式批准，Codex集成Gate通过，Task收口提交待完成；下一候选P03尚未创建/释放。恢复与验证边界见P08 RESUME。
+最新工作点：P08=done；DSH R7与Codex集成Gate通过，integration_commit=fe222464616152e9c95208e06c248565f2fd86a6。P03为下一候选，尚未创建或释放；详情见P08 RESUME。
 
-**当前位置：P08状态=approved；R7 fixed head=fe222464已获DSH正式批准，Codex集成Gate通过待Task收口。P系列done 0/21、approved 1、proposed / 未释放20。**
+**当前位置：P08=done；P系列done 1/21、proposed / 未释放20。P03尚未创建或释放。**
 
 人员更新：用户已移除Qoder，图中未来UI/UX责任由ZCode承担；非作者Review与正式Task释放Gate保持。
 
@@ -29,15 +29,15 @@ flowchart TB
 
 ```mermaid
 flowchart TB
-  BASE["当前位置：P08 DSH R7已approved<br/>P系列done 0/21；P08：approved"] --> P01["P01<br/>proposed / 未释放<br/>台账取证<br/>修正陈旧metadata；追溯两份Review"]
+  BASE["当前位置：P08 DSH R7与Codex集成Gate通过<br/>P系列done 1/21；P08：done"] --> P01["P01<br/>proposed / 未释放<br/>台账取证<br/>修正陈旧metadata；追溯两份Review"]
   BASE --> P02["P02<br/>proposed / 未释放<br/>真UI验证<br/>点击/300ms刷新/对比度/失效窗口"]
   BASE --> P03["P03<br/>proposed / 未释放<br/>第五入口Gate<br/>验证SFX frozen入口；不只确认文件存在"]
   BASE --> P04["P04<br/>proposed / 未释放<br/>生产命令面验证<br/>常量成员与并发响应；先复现再决定修复"]
   BASE --> P05["P05<br/>proposed / 未释放<br/>错误语义澄清<br/>category与retryable注记一致"]
   BASE --> P06["P06<br/>proposed / 未释放<br/>GC迁移补证<br/>旧版本退出/命名空间保护；未知保留"]
   P02 -. "确认实际缺口后" .-> P07["P07<br/>proposed / 未释放<br/>小交互修补<br/>手输image读取/quiet-window busy"]
-  P01 --> P08["P08<br/>approved / Review通过待Codex集成<br/>完整产品范围与验收冻结<br/>R7 fixed head fe222464；Codex Gate已通过"]
-  style P08 fill:#fff3cd,stroke:#b58105,stroke-width:3px
+  P01 --> P08["P08<br/>done / DSH Review与Codex集成通过<br/>完整产品范围与验收冻结<br/>R7 fixed head fe222464；Task与Gate已收口"]
+  style P08 fill:#d1e7dd,stroke:#198754,stroke-width:3px
 ```
 
 取证与验证候选任务 不存在必须全部串行的技术依赖。P01已由本轮提供取证结论；推荐先准备P08完整产品范围，范围裁决前可做P02/P03，余项按风险插入。启动每个实现前仍须正式 Task、独立 Reviewer 和 allowed_paths。共享主线/契约/启动文件串行集成。P06 是已完成 GC-2 的分发补证，不重新实现 GC-2，也不声称长会话磁盘有界。
@@ -46,7 +46,7 @@ flowchart TB
 
 ```mermaid
 flowchart TB
-  P08["P08<br/>approved / Review通过待Codex集成<br/>范围＋四页设计冻结<br/>R7 fixed head fe222464；Codex Gate已通过"] --> ARCHDOC["Architecture Documentation Rebaseline Task<br/>未登记 / 未释放<br/>AC-DOC先于P09；stack-specific映射先于P18/P20"]
+  P08["P08<br/>done / DSH Review与Codex集成通过<br/>范围＋四页设计冻结<br/>R7 fixed head fe222464；Task与Gate已收口"] --> ARCHDOC["Architecture Documentation Rebaseline Task<br/>未登记 / 未释放<br/>AC-DOC先于P09；stack-specific映射先于P18/P20"]
   ARCHDOC --> P09["P09<br/>proposed / 未释放<br/>真实导入契约与Core适配<br/>图片/PDF/MOBI；真实尺寸；Managed Copy"]
   ARCHDOC -.-> P18
   ARCHDOC -.-> P20
@@ -72,7 +72,7 @@ flowchart TB
   P03["P03<br/>proposed / 未释放<br/>第五入口补证"] --> P20
   P06["P06<br/>proposed / 未释放<br/>GC分发补证"] --> P20
   P20 -. "另行授权，可选" .-> P21["P21<br/>proposed / 未释放<br/>Legacy归档/移除<br/>新架构parity通过后；不修旧架构"]
-  style P08 fill:#fff3cd,stroke:#b58105,stroke-width:3px
+  style P08 fill:#d1e7dd,stroke:#198754,stroke-width:3px
 ```
 
 P12/P14/P15/P17另需P08范围确认后分别释放的ZCode页面设计Task通过非作者Review；这些设计切片不额外增加P01–P21产品节点。

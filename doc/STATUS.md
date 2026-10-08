@@ -1,10 +1,10 @@
 # Current Development Status
 
-**当前位置：P08 D1–D7已确认；DSH R7已批准固定head=fe222464616152e9c95208e06c248565f2fd86a6。P08=approved，Codex集成Gate已核验，Task收口提交待完成；P系列done 0/21、approved 1、proposed / 未释放20。**
+**当前位置：P08 D1–D7已确认并完成；DSH R7与Codex集成Gate通过，P08=done。P系列done 1/21、proposed / 未释放20。下一候选P03尚未创建或释放；当前无Active/released Task。**
 
-## 2026-10-09 当前工作：P08 Codex集成Gate / approved
+## 2026-10-09 P08集成完成 / P03候选未释放
 
-DSH R7正式Review：base=ecb3b520ce68c2ddcc0c5ec94596e2f50a17f369，reviewed_head=fe222464616152e9c95208e06c248565f2fd86a6，decision=approved，session=session-bf5b0be5-bd1e-41b8-83cc-152c28227485，报告SHA256=2D8165B95A702B40607840889208C62A1CEC4E89C4A445D0591BE9ED2A719C03。R7 canonical报告与raw JSONL final逐字节相等；精确worktree Codex集成Gate已通过。Task=approved；准备提交done状态。DSH命令因Win32 5为NOT_RUN/NOT_VERIFIED；产品pytest/cargo/vitest/GUI/build/model保持NOT_RUN。R6批准只适用于旧head。
+P08完成事实：DSH R7对base=ecb3b520ce68c2ddcc0c5ec94596e2f50a17f369、reviewed_head=fe222464616152e9c95208e06c248565f2fd86a6正式approved，session=session-bf5b0be5-bd1e-41b8-83cc-152c28227485，报告SHA256=2D8165B95A702B40607840889208C62A1CEC4E89C4A445D0591BE9ED2A719C03；Codex集成Gate EXIT=0，Task status=done，integration_commit=fe222464616152e9c95208e06c248565f2fd86a6（直接集成main）。报告与raw JSONL final字节相等；P08全部AC、Task、Plan、Status、依赖图与恢复点已收口。DSH自身shell/git/python仍为NOT_RUN/NOT_VERIFIED（Win32 5）；产品pytest/cargo/vitest/GUI/build/model为NOT_RUN。
 
 
 2026-10-08 最新编号裁决：规划任务ID沿用 `P01–P21`；本句仅说明编号，不表达节点状态或任务释放。当前状态与授权以本文件开头的Active Task及REBASELINE_PLAN顶部为准。原始审计、台账与历史验证日志保留为固定快照。
@@ -17,7 +17,7 @@ DSH R7正式Review：base=ecb3b520ce68c2ddcc0c5ec94596e2f50a17f369，reviewed_he
 
 用户本轮请求已完成三路GPT-6.1 Sol high代码/文档审计与整体依赖规划；这是规划交付，**当前仍无 Active / released产品Task**。审计输入=`main@e4242ecd`；[报告](../verification/PROJECT-ROADMAP-20261008/REPORT.md)、[中文图](../verification/PROJECT-ROADMAP-20261008/ROADMAP.md)、[196节点完整台账](../verification/PROJECT-ROADMAP-20261008/task-inventory.csv)、[恢复点](../verification/PROJECT-ROADMAP-20261008/RESUME.md)。167登记完成/文档交付＋29历史局限/归档，不作为产品完成率；新架构有界Task全部收口，正式四页与完整用户链仍缺。
 
-当前后续整体树以Plan顶部P01–P21候选任务为准，P08=approved（R7固定head=fe222464已获DSH批准，Codex集成Gate通过待Task收口提交），其余20项proposed / 未释放。下一候选为P03；尚未创建或释放。新旧head、报告与验证边界见P08恢复点；Architecture Documentation Rebaseline仍是P09/P18/P20相应Gate的先决条件。
+当前后续整体树以Plan顶部P01–P21候选为准；P08=done，20个候选保持proposed / 未释放。下一推荐P03（Packaged第五SFX入口验收补齐），Owner建议Antigravity、非作者Reviewer建议DeepSeek Harness；前置和source/installer hash、allowed_paths须在下次从live main核对后登记正式Task。P03未创建、未释放；恢复见verification/P08/RESUME.md。
 
 ## 2026-10-08 完成：M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD
 

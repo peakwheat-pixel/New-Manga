@@ -538,3 +538,12 @@ product pytest/cargo/vitest/GUI/build/model=NOT_RUN
 next_gate=stage explicit P08-authorized files plus canonical R7 report (never raw JSONL/stderr or protected dirty), commit the approved Review checkpoint, then set P08 done and save final next-session automatic-advance prompt
 
 navigation_review_followup=independent read-only agent rechecked stale-current-gate and ExecutionState wording; Codex corrected Plan/Task/Handoff/RESUME. Final state remains P08=approved, DSH R7=approved, Codex fixed-head integration=passed, done checkpoint pending. No new Gate blocker.
+
+P08 done-state closeout validation
+observed_time=2026-10-09 Asia/Shanghai; last committed approved-review checkpoint=aecd630130dd8f3d8b20604cd4cff37e620c172c; Task status updated in working tree to done; previous_status=approved; approval=user_scope_confirmed_review_approved; integration_commit=fe222464616152e9c95208e06c248565f2fd86a6 (delivery directly on main)
+acceptance=final Codex integration criterion checked; R7-01/02/03 dispositions recorded; all P08 AC are checked; P03 remains proposed/unreleased
+command=python -B -X utf8 verification/P08/verify_scope.py on main with P08 done metadata; EXIT=0; 193 D08 criteria, AC-SMOKE, 12 gates mapped; 20 successors/candidates remain unreleased; 37 committed BASE..HEAD P08-scope files authorized; seven P08 Handoffs checked; product results stay NOT_RUN
+command=python -B -X utf8 verification/PROJECT-ROADMAP-20261008/verify_plan.py on main with P08 done metadata; EXIT=0; 196 nodes, 105 ancestry records, 21 planned nodes, graph labels/links/acyclicity passed
+command=git diff --check HEAD -- Task/Handoff/P08/Plan/Status/Index/README/ROADMAP/derived planning files; EXIT=0
+product pytest/cargo/vitest/GUI/build/model=NOT_RUN
+next=commit P08 done status/navigation; then update RESUME with actual Task-done commit hash and the full automatic-continuation prompt; verify final checkpoint before scheduling shutdown
