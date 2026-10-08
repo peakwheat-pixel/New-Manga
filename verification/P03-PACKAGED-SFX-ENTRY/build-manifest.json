@@ -1,0 +1,28 @@
+{
+  "task": "P03",
+  "source_head": "51f6b10c9621c07d5ad7087918d1b904106f0218",
+  "build_timestamp": "2026-10-09T02:02:20+08:00",
+  "installer_path": "G:/CODEX/New Manga.worktrees/P03-packaged-sfx-entry-antigravity/apps/desktop/src-tauri/target/release/bundle/nsis/m2rc1-desktop_0.1.0_x64-setup.exe",
+  "installer_bytes": 579539399,
+  "installer_sha256": "af25a4b7230cf0f9d64c2509f541fe7124112cf188a00d473d7ef4455c551ada",
+  "tools": {
+    "node": "v22.14.0",
+    "npm": "10.9.2",
+    "rustc": "rustc 1.85.0 (4d91de4e4 2025-02-17)",
+    "cargo": "cargo 1.85.0 (d49265f2a 2025-02-18)",
+    "python_build": "3.12.3",
+    "pyinstaller": "6.22.3"
+  },
+  "external_inputs": {
+    "k07_anchor_page": {
+      "path": "G:/CODEX/New Manga.task-envs/M2-DOCTR-QUAL-work/regions/K07_R123.png",
+      "bytes": 1020887,
+      "sha256": "28dab503aca3c903111488c03e857b430d309421a4a54bab335a63bbe7b9cec4"
+    },
+    "sfx_weights_v2b": {
+      "path": "G:/CODEX/New Manga.task-envs/M2-SFX-DETECT/weights-v2b/yolo11s-seg.onnx",
+      "bytes": 40824255,
+      "sha256": "944e811410933ad6ff8d32446fcc9eef90fb463794e1874ce83035e83acd418d"
+    }
+  }
+}
