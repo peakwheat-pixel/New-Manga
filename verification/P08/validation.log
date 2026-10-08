@@ -420,3 +420,26 @@ command=python -B -X utf8 verification/P08/verify_scope.py on main worktree HEAD
 command=python -B -X utf8 verification/PROJECT-ROADMAP-20261008/verify_plan.py; EXIT=0; 196 nodes, 105 ancestry records, 21 planned nodes, updated in_progress state and roadmap passed
 command=git diff --name-only af1ddeec1b998f2ddaf121a85f5fd382561aae1e -- protected product/contracts/source paths; EXIT=0; empty
 Product pytest/cargo/vitest/GUI/build/model=NOT_RUN; P08 changes are documentation and validation-script-only
+
+P08 R5-01/R5-02 fixed delivery and exact R6 worktree verification
+delivery_base=af1ddeec1b998f2ddaf121a85f5fd382561aae1e; delivery_head=ecb3b520ce68c2ddcc0c5ec94596e2f50a17f369; subject=docs(P08): address R5 verifier findings
+exact_review_worktree=G:\CODEX\New Manga.worktrees\P08-dsh-review-ecb3b520-r6; detached; clean; HEAD=ecb3b520ce68c2ddcc0c5ec94596e2f50a17f369; common_dir=G:/CODEX/New Manga/.git; git diff --exit-code HEAD -- . EXIT=0
+environment=PowerShell 7.6.6; Python=C:\Python314\python.exe 3.14.6
+command=python -B -X utf8 verification/P08/verify_scope.py in exact R6 worktree; EXIT=0; 193 D08 criteria, AC-SMOKE, 12 gates, all decisions, committed BASE..HEAD positive allowlist (31 files), 5 P08 Handoffs link/whitespace scope
+command=python -B -X utf8 verification/PROJECT-ROADMAP-20261008/verify_plan.py in exact R6 worktree; EXIT=0; 196 nodes, 105 ancestry records, 21 planned nodes, labels/links/acyclic graph
+command=git diff --check af1ddeec1b998f2ddaf121a85f5fd382561aae1e ecb3b520ce68c2ddcc0c5ec94596e2f50a17f369 -- authorized P08/governance paths; EXIT=0
+command=git diff --name-only af1ddeec1b998f2ddaf121a85f5fd382561aae1e ecb3b520ce68c2ddcc0c5ec94596e2f50a17f369 -- protected product/contracts/docs paths; EXIT=0; empty
+R5-01/R5-02=author-fixed at ecb3b520; remain open until independent R6 confirms; DSH R6 not yet dispatched
+Product pytest/cargo/vitest/GUI/build/model=NOT_RUN (no product source/test changes)
+
+P08 R6 post-delivery metadata checkpoint preparation
+observed_time=2026-10-09 00:01 Asia/Shanghai; main HEAD before checkpoint commit=ecb3b520ce68c2ddcc0c5ec94596e2f50a17f369; exact R6 reviewed_head unchanged
+scope=Task/Plan/Status/index/derived-roadmap/Resume state synchronization plus post-delivery R6 Prompt/Handoff; no product source/test changes
+environment=PowerShell 7.6.6; Python 3.14.6
+command=python -B -X utf8 verification/P08/verify_scope.py on main working tree; EXIT=0; 193 D08 criteria, AC-SMOKE, 12 gates, seven decisions, 31 committed allowlist paths; six P08 Handoff links/whitespace checks passed; P08 in_review and successors unreleased
+command=python -B -X utf8 verification/PROJECT-ROADMAP-20261008/verify_plan.py on main working tree; EXIT=0; 196 nodes, 105 ancestry records, 21 planned nodes; status labels, graph links, dependency cycles and local links passed
+command=git diff --check -- authorized P08/governance/roadmap files; EXIT=0
+checkpoint_audit=read-only Reviewer subagent found and Codex corrected stale P08 in_review state, R4 N-07/N-08 disposition, outdated 21-proposed wording, old report execution link, and clarified fixed-head vs post-delivery metadata/Prompt location; no files written by reviewer
+protected_uncommitted=.qoder-credits/report.json; .qoder-credits/通路探测__8602db50.canvas.tsx; verification/M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD/antigravity-dispatch.json; antigravity-dispatch.stderr.log; verification/P08/dsh-r4.*; verification/P08/dsh-r5.*; all remain un-staged
+product pytest/cargo/vitest/GUI/build/model=NOT_RUN (documentation/validation-only Task)
+DSH R6=not yet dispatched; R5-01/R5-02 remain open pending independent confirmation

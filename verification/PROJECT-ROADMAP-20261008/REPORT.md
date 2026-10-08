@@ -1,6 +1,6 @@
 # 全项目任务盘点与整体规划
 
-最新工作点：DSH R3对P08固定head `1ad05d99`返回`changes_requested`；R1 P1及R2 N-01..N-06关闭，R4在`16fb07a9`关闭N-07/N-08，DSH R5批准`af1ddeec`并关闭R4-01..03；Codex已修订R5-01/R5-02，等待R6独立复核。R3/R5的DSH shell命令因Win32 5为NOT_RUN。恢复状态见[最新恢复点](../P08/RESUME.md)。后继产品实现未释放；本报告其余审计结论保留为`e4242ecd`时点快照。
+最新工作点：P08状态=`in_review`；DSH R5对固定head `af1ddeec`返回`approved`并关闭R4-01..03；Codex修订R5-01/R5-02固定于delivery=`ecb3b520ce68c2ddcc0c5ec94596e2f50a17f369`，R6正式DSH非作者Review待派发。R4已关闭N-07/N-08；R3/R5的DSH shell命令因Win32 5为NOT_RUN。恢复状态见[最新恢复点](../P08/RESUME.md)。后继产品实现未释放；本报告其余审计结论保留为`e4242ecd`时点快照。
 
 2026-10-08后续用户裁决：Qoder退出本项目；本报告的未来分配/可转发指令已改为ZCode主责UI/UX，Codex契约与集成、DSH非作者审查，fallback=ZCode→Antigravity。原Core/Desktop/Plan审计、台账、历史署名和Review保留审计时事实；它们的旧推荐不覆盖当前Plan/AGENTS人员资格。本更新不启动产品Task。
 
@@ -100,9 +100,9 @@ Packaged26/26的已入库证据绑定source=`3d532c1f99e49da703d2076bd67d46b7108
 
 ## 推荐下一任务与可直接转发指令
 
-当前执行点：[P08 DSH正式Review指令](../P08/DSH-REVIEW-PROMPT.md)。D1–D7已全部确认，无需再次询问；固定head、Reviewer与DSH session已登记。下方长指令是此前规划快照，不得替代当前Task与恢复点。
+当前执行点：[P08 R6恢复点](../P08/RESUME.md)与[固定R6 Prompt](../P08/DSH-REVIEW-PROMPT-R6.md)。P08=`in_review`；R5-01/R5-02修订delivery=`ecb3b520`，正式DSH R6待派发。D1–D7已全部确认，无需再次询问。下方长指令为早期规划快照，不得替代当前Task与恢复点。
 
-**Task**：[P08](../../doc/tasks/P08.md)“完整产品范围与验收冻结准备”（changes_requested / CHECKPOINTED；D1–D7已确认，首轮固定范围head=`490f9bd9`，DSH报告含4 P1/6 P2）。**Agent**：Codex负责范围/契约，DeepSeek Harness非作者Review；后续ZCode另开设计Task。P08完成前及单独释放前均不得启动后继产品实现。
+**Task**：[P08](../../doc/tasks/P08.md)“完整产品范围与验收冻结准备”（`in_review` / ACTIVE；R5-01/R5-02修订delivery=`ecb3b520`，正式DSH R6待派发）。**Agent**：Codex负责范围/契约，DeepSeek Harness非作者Review；后续ZCode另开设计Task。P08完成前及单独释放前均不得启动后继产品实现。
 
 **Recovery point**：唯一仓库/branch=`G:/CODEX/New Manga`/`main`；审计base=head=`e4242ecd419eb0eea098d2f63b40f709aa5caeea`。后续治理提交与实际HEAD须live核验；正式Task branch/worktree待Codex创建，不臆造。**Scope**：只读src/apps/tests/Task/契约；新正式Task范围拟限自有Task、范围/验收草案、自有verification、Handoff，Plan/STATUS/索引由Codex维护。禁止生产src/apps、Schema、依赖、用户数据、已有raw、既有dirty写入；草案不修改冻结wire或需求。
 
