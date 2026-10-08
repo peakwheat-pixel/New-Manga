@@ -30,9 +30,9 @@ M2 Release Gate scope and stays explicitly NOT_RUN here.
 The RUNNER may use the dev venv Python (acceptance tooling); every spawned
 instance of the app runs under the purged environment. Usage:
 
-    python packaging/m2ac5/run_clean_start_e2e.py [--installer <path>]
+    python packaging/m2ac5/run_clean_start_e2e.py [--installer <path>] [--output-dir <path>]
 
-Artifacts land in verification/M2-AC5/raw/ (via stdout redirection) and the
+Artifacts land in --output-dir (default verification/M2-AC5/raw/) and the
 lab temp dir. The gate fails closed: FAIL/MISSING verdicts fail the run.
 """
 
@@ -440,12 +440,8 @@ def run_library_probe(gate: Gate, install_dir: Path, env: dict, lab: Path) -> No
     lenv["APPDATA"] = str(lab / "library-probe" / "roaming")
 
     def envelope(request_id: str, command: str) -> str:
-        # M2-PROD-DETECT-3: protocol minor 1.0 -> 1.1 (core.detect added; the
-        # server still accepts minor-0 requests -- backwards-compatible
-        # widening). This runner now speaks the current protocol and asserts
-        # the SAME strict equality as before, just against 1.1.
-        # M2-REGION-RETYPE-CORE: minor 2 -> 3 (set_region_type/list_regions
-        # added; same backwards-compatible widening, contract rev 1.4 §5.4).
+        # Keep the minor-3 request as a backwards-compatibility probe.
+        # The response must still declare the current protocol 1.6.
         return json.dumps(
             {
                 "protocol": "new-manga.core",
@@ -501,7 +497,7 @@ def run_library_probe(gate: Gate, install_dir: Path, env: dict, lab: Path) -> No
     gate.pass_or(
         ping.get("error") is None
         and ping_result.get("status") == "ready"
-        and ping_result.get("protocol_version") == {"major": 1, "minor": 3}
+        and ping_result.get("protocol_version") == {"major": 1, "minor": 6}
         and "library.list_books" in (ping_result.get("capabilities") or []),
         "CS-L1-packaged-core-ping",
         {"result": ping_result, "error": ping.get("error")},
@@ -736,9 +732,12 @@ def run_production_phase(gate: Gate, exe: Path, env: dict, lab: Path) -> None:
 
 
 def main() -> int:
+    global RAW
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("--installer", type=Path, default=DEFAULT_INSTALLER)
+    parser.add_argument("--output-dir", type=Path, default=RAW, help="isolated evidence directory")
     args = parser.parse_args()
+    RAW = args.output_dir.resolve()
 
     RAW.mkdir(parents=True, exist_ok=True)
     lab = Path(tempfile.mkdtemp(prefix="m2ac5-cleanstart-"))
@@ -759,7 +758,7 @@ def main() -> int:
         print(f"\nGATE: {gate.verdict}")
         return 1
 
-    install_dir = Path(tempfile.gettempdir()) / "m2ac5-cleanstart" / "install"
+    install_dir = lab / "install"
     # P3-6: NSIS /D= must stay unquoted and space-free — fail closed here
     # with an actionable message instead of an ambiguous silent install.
     if " " in str(install_dir):

@@ -40,6 +40,7 @@ import shutil
 import subprocess
 import sys
 import threading
+import tempfile
 import time
 from pathlib import Path
 
@@ -306,6 +307,8 @@ ALLOWLIST_RE = re.compile(r"\[m2rc2-allowlist\] (probe|production):(.*)")
 #: (set_region_type / list_regions, M2-C1 rev 1.4 §5.4) -- bypass sync done
 #: by the Owner branch this time (the M2-SETTINGS-IPC-CHANNEL r1 R1 lesson:
 #: the expectations must move in the same commit as the surface).
+#: RC4 / page resolve / page navigation widen production to 15 commands;
+#: keep exact ordered equality with the frozen main.rs production surface.
 PRODUCTION_EXPECTED = [
     "issue_resource_url",
     "revoke_ref",
@@ -316,6 +319,12 @@ PRODUCTION_EXPECTED = [
     "settings_update_section",
     "set_region_type",
     "list_regions",
+    "list_region_revisions",
+    "restore_region_revision",
+    "rerender_page",
+    "resolve_page_resource",
+    "list_chapters",
+    "list_chapter_pages",
 ]
 #: M2-IPC1 ruling (DSH r2 P2-1 option B): test modes keep the frozen RC2
 #: surface — the production-only IPC1 commands are absent from the probe
@@ -362,7 +371,7 @@ def run_interactive_phase(exe: Path, catalog_db: str) -> tuple[bool, str]:
     - the host's stderr allowlist announcement (emitted at startup from the
       `command_allowlist` CONSTANT ARRAY -- one of THREE hand-maintained
       views of the command surface, see main.rs; R2-04) must be exactly the
-      3 production commands in this mode;
+      15 production commands in this mode;
     - the process must stay alive (an early death = probe_exit leak);
     - no probe results file may appear (a write = probe_write_results leak).
 
@@ -485,10 +494,15 @@ def check_sidecar_dump(dump_path: Path, phase: str) -> tuple[bool, str]:
 
 
 def main() -> int:
+    global RAW, LAB
     parser = argparse.ArgumentParser()
     parser.add_argument("--exe", default=None, help="path to a prebuilt m2rc1-desktop.exe")
+    # Each execution owns a fresh lab; --output-dir protects historical evidence.
     parser.add_argument("--skip-build", action="store_true", help="use the existing release build only")
+    parser.add_argument("--output-dir", type=Path, default=RAW, help="isolated evidence directory")
     args = parser.parse_args()
+    RAW = args.output_dir.resolve()
+    LAB = Path(tempfile.mkdtemp(prefix="m2rc2-lab-"))
     RAW.mkdir(parents=True, exist_ok=True)
 
     gate: dict[str, str] = {}
