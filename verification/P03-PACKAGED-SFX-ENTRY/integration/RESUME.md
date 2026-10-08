@@ -1,19 +1,21 @@
 # P03 Codex Integration Checkpoint
 
-时间：2026-10-09（Asia/Shanghai）；Task=`P03`；TaskStatus=`in_review`；ExecutionState=`R5_APPROVED_CODEX_INTEGRATION_PENDING`。
+时间：2026-10-09（Asia/Shanghai）；Task=`P03`；TaskStatus=`in_review`；ExecutionState=`R6_APPROVED_CODEX_INTEGRATION_PENDING`。
 
 ## 当前恢复点
 
 - Repository=`G:/CODEX/New Manga`；integration worktree=`G:/CODEX/New Manga.worktrees/P03-review-prep-85482c5b`；branch=`codex/P03-integration-4c04459`；common-dir=`G:/CODEX/New Manga/.git`。恢复时核对 live `main` 与 worktree HEAD/status。
 - Task base=`31abde9bf4b73aea2851931dcd48faa0f750b318`; Owner=Antigravity; Reviewer=DeepSeek Harness; Integrator=Codex. Existing integration commit=`d717c049a41544a6d592943a0b0fe1b76a41a050`.
 - DSH R5 session=`session-089283e0-246f-44e3-9c2f-14dea850e4e2`; reviewed head=`7677e9c324da2fde618e7cd6fdba2363abeb1f1b`; decision=`approved`; unresolved P0/P1/P2=0/0/0, P3=1, P4=4. Report/prompt/raw/exit and hashes are recorded in Task/manifest; session mounted to this worktree. DSH own shell/Git/tests/Gate=`NOT_RUN` because of Win32 5; web/Desktop visibility=`unverified`. Codex non-author review of the same head found no new P0–P3.
+- DSH R6 session=`session-21ca547a-c9ba-4b60-9e9c-afe54db7009a`; reviewed head=`f09100d5b96aea26e4f525fb4c7c10d6d9d9f1cb`; decision=`approved`; unresolved P0/P1/P2=0/0/0, P3=2, P4=3. Report/prompt/raw/exit and hashes are recorded in Task/manifest; session mounted. DSH own shell/Git/tests/Gate=`NOT_RUN` due Win32 5; web/Desktop visibility=`unverified`. Codex non-author review of this same head found no new P0–P3.
 - Logs 28/29 version exact-head scope and both read-only normalization results; log 30 compares every one of the 11 members of `raw-finalhead-d717-gate-output.zip` byte-for-byte against the retained directory, EXIT=0. Manifest records hashes.
+- R6 log 31 records 155 paths, zero out-of-scope and `git diff --check` EXIT=0 for `f09100d5`. Before marking done, update the six authoritative navigation/status docs to remove the stale R4/R5-pending instructions (R6-02).
 - Exact tested source remains `d717c049`: snapshot 16 cases PASS, targeted suite 40 passed / 0 skipped, same-installer packaged Gate 28/28 PASS; all EXIT=0. No runner/test blob changes after that source commit.
 - Preserve root checkout's 24 existing dirty/untracked entries and both untracked retained raw Gate folders. P03 remains `in_review` pending Codex AC5 integration.
 
 ## 下一条直接指令
 
-Recheck Git and the authority docs, verify the manifest/review/evidence hashes, and finish Codex AC5 integration. The DSH and Codex approvals apply to base `31abde9b…` / reviewed head `7677e9c3…`; do not describe a later commit as DSH-reviewed. Because runtime/test blobs match tested source `d717c049`, use range/evidence/integration checks instead of rerunning the installer. Fast-forward only after the gate passes, then set P03 `done` and release P01 after rechecking authoritative Plan dependencies.
+Recheck Git and the authority docs, verify the manifest/review/evidence hashes, update the six current navigation/status docs, and finish Codex AC5 integration. DSH R6 and Codex R6 approvals apply to base `31abde9b…` / reviewed head `f09100d5…`; do not describe a later commit as DSH-reviewed. Because runtime/test blobs match tested source `d717c049`, use range/evidence/integration checks instead of rerunning the installer. Fast-forward only after the gate passes, then set P03 `done` and release P01 after rechecking authoritative Plan dependencies.
 
 ## 保护边界
 

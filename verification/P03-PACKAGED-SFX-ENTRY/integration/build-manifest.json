@@ -1,6 +1,6 @@
 {
   "task_id": "P03",
-  "phase": "r5_approved_codex_integration_pending",
+  "phase": "r6_approved_codex_integration_pending",
   "integration_branch": "codex/P03-integration-4c04459",
   "integration_worktree": "G:/CODEX/New Manga.worktrees/P03-review-prep-85482c5b",
   "task_base_commit": "31abde9bf4b73aea2851931dcd48faa0f750b318",
@@ -258,7 +258,7 @@
     ],
     "note": "Checks include the C-002 test correction and are bound to its committed head. Repeat against the exact final DSH review head after committing the current documentation checkpoint."
   },
-  "candidate_head": "7677e9c324da2fde618e7cd6fdba2363abeb1f1b",
+  "candidate_head": "f09100d5b96aea26e4f525fb4c7c10d6d9d9f1cb",
   "integration_commit": "d717c049a41544a6d592943a0b0fe1b76a41a050",
   "dsh_r3": {
     "session_id": "session-4401e9bb-28cb-42a1-8447-608b7fc80b8e",
@@ -872,6 +872,67 @@
       "sha256": "12647f1106813e6dda48e3842b549c4c13236df70bc4dca62859ae2cdbfb8cbe",
       "size_bytes": 2045
     }
+  },
+  "r6_reviewed_head_checks": {
+    "candidate_head": "f09100d5b96aea26e4f525fb4c7c10d6d9d9f1cb",
+    "task_base_commit": "31abde9bf4b73aea2851931dcd48faa0f750b318",
+    "changed_path_count": 155,
+    "out_of_scope_path_count": 0,
+    "diff_check_exit": 0,
+    "log": {
+      "path": "integration/build-logs/31-r6-exact-head-scope-diff-check.log",
+      "sha256": "77b100a367fa5d01b4a8e4b596b4b75860b52690bb7989aa00ecbe8ed37203ed",
+      "size_bytes": 12957
+    }
+  },
+  "dsh_r6": {
+    "session_id": "session-21ca547a-c9ba-4b60-9e9c-afe54db7009a",
+    "base_commit": "31abde9bf4b73aea2851931dcd48faa0f750b318",
+    "reviewed_head": "f09100d5b96aea26e4f525fb4c7c10d6d9d9f1cb",
+    "decision": "approved",
+    "unresolved_findings": { "P0": 0, "P1": 0, "P2": 0, "P3": 2, "P4": 3 },
+    "report": {
+      "path": "integration/dsh-review-r6.md",
+      "sha256": "c4ccbbd08ba21a664bcdb51b30bc8b3bee58af652de0c624791040ef78f0d184",
+      "size_bytes": 2317
+    },
+    "prompt": {
+      "path": "integration/dsh-review-r6.prompt.md",
+      "sha256": "41b7cea8a78566e18081572e31953f8887eb3aa75866bc6ee743e99f6d4daff6",
+      "size_bytes": 3656
+    },
+    "raw_jsonl": {
+      "path": "integration/dsh-review-r6.stdout.jsonl",
+      "sha256": "d31c2c6a7dce9d8b13f2e30dcc201da0a268c6b0905725c303265eea5440944a",
+      "size_bytes": 242737
+    },
+    "stderr": {
+      "path": "integration/dsh-review-r6.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size_bytes": 0
+    },
+    "exit": { "path": "integration/dsh-review-r6.exit", "value": 0 },
+    "desktop_session_mounted": true,
+    "web_desktop_visibility": "unverified",
+    "reviewer_shell_git_tests_gate": "NOT_RUN; Win32 5 workspace security error"
+  },
+  "codex_r6_independent_review": {
+    "reviewer": "Codex non-author review agent",
+    "base_commit": "31abde9bf4b73aea2851931dcd48faa0f750b318",
+    "reviewed_head": "f09100d5b96aea26e4f525fb4c7c10d6d9d9f1cb",
+    "decision": "no_new_p0_through_p3_findings",
+    "report": {
+      "path": "integration/codex-review-r6-f09100d5.md",
+      "sha256": "e682d1c740301423b80e799758d140d7d81bed56704d6914e055f05020a7d673",
+      "size_bytes": 1430
+    }
+  },
+  "r6_findings_disposition": {
+    "R6-01": "fixed: log 31 versions the exact f09100d5 reviewed-head scope/diff-check result: 155 paths, zero out of scope, EXIT=0.",
+    "R6-02": "Codex AC5 closeout must update STATUS, REBASELINE_PLAN, 00_INDEX, tasks/README, 12_ROADMAP and the current derived ROADMAP to the integrated P03 / next P01 state.",
+    "R4-07": "deferred, cosmetic; unchanged test-description condition with no behavior or AC effect.",
+    "R5-04": "deferred, cosmetic; retain frozen CS-Z2 scenario ID, identify inputs as lab fixtures.",
+    "R5-05": "noted; log 23's expected negative-case FAIL entries precede final 16-case oracle PASS summary."
   },
   "r5_findings_disposition": {
     "R5-01": "fixed: logs 28/29 bind 146-path, zero-out-of-scope, diff-check EXIT=0 and both normalization verifiers 6/6 to exact reviewed head 7677e9c3.",
