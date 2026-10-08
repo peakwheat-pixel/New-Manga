@@ -1,13 +1,14 @@
 # P03 Codex Integration Resume Point
 
-时间：2026-10-09（Asia/Shanghai）；Task=`P03`；TaskStatus=`in_review`；ExecutionState=`FINAL_REVIEW_CHECKPOINT_PENDING`。
+时间：2026-10-09（Asia/Shanghai）；Task=`P03`；TaskStatus=`in_review`；ExecutionState=`C002_TEST_FIX_CHECKPOINT_PENDING`。
 
 ## 固定状态
 
 - Repository=`G:/CODEX/New Manga`；root `main`=`0a31bbc52447b87a3f04145df62a5ad19baa4b44`，其中用户/Qoder/旧 Agent dirty 与 raw evidence 保持原样。
-- Integration worktree=`G:/CODEX/New Manga.worktrees/P03-review-prep-85482c5b`；branch=`codex/P03-integration-4c04459`；common-dir=`G:/CODEX/New Manga/.git`；当前 committed candidate=`2d114480e04528c3340247d41fe463c4c72c1b72`；固定范围检查与两份只读规范化复核日志已重采，正纳入本 checkpoint。
+- Integration worktree=`G:/CODEX/New Manga.worktrees/P03-review-prep-85482c5b`；branch=`codex/P03-integration-4c04459`；common-dir=`G:/CODEX/New Manga/.git`；last committed candidate=`fb5782c51eab0d5dc3267770c9a0a7df8f343175`；其 exact checks 已记录。当前有 C-002 test-only 修复与 Task 文档未提交，刚完成 40 项定向测试。
 - Task base=`31abde9bf4b73aea2851931dcd48faa0f750b318`；Owner delivery=`85482c5b001d452953c3ed797ce3c4ed64cae4e3`；DSH R2 reviewed head=`4c04459bc6b8bf9ef6cba596829ac47f37bc02af`，已 approved；本轮后续必须对最终固定 head 请求新一轮非作者 DSH Review。
-- R-003 已在 `db2c1e9390b0b8601877c366d4a43699b1d12ee5` 修复 fail-open，回归断言在 40/40 定向测试内通过。R-001/R-005/C-001 已修正文档；R-004 deferred/non-blocking。R-002 已有对 candidate `2d114480…` 的固定范围 shell/command/output/EXIT trace（114 paths、zero out-of-scope、diff-check EXIT=0）；提交此恢复检查点后须对最终固定 DSH review head 再跑一次，并把实际结果纳入派发材料。
+- R-003 已在 `db2c1e9390b0b8601877c366d4a43699b1d12ee5` 修复 fail-open。Codex 独立 Review 对 `fb5782c5…` 发现 C-002 P2：success-negative 参数化用例未传 `install_dir`，其断言被 fail-closed 条件遮蔽；现已改为有效安装目录 + 目录内 weights path、每次先确认 baseline PASS 再施加负例，独立缺省目录拒绝断言仍保留。定向 40/40 PASS，证据=`integration/build-logs/14-targeted-regression-tests.log`。
+- R-001/R-005/C-001/C-003 已修正文档；R-004 deferred/non-blocking。R-002 已在已提交 candidate `2d114480…` 有 trace；candidate `fb5782c5…` 的精确复验 `12` 记录 117 paths、zero out-of-scope 与 `git diff --check` EXIT=0。C-002 checkpoint 提交后必须为新 fixed Review head 重跑 scope/diff/normalization checks。
 
 ## 已完成验证
 
@@ -20,10 +21,10 @@
 
 ## 下一条直接指令
 
-直接续接：在此 integration worktree 提交 Task、两份 RESUME、manifest 与 `build-logs/09–11` 三份证据；记录新 commit 为 fixed DSH review head。随后以 `31abde9bf4b73aea2851931dcd48faa0f750b318..HEAD` 重跑 scope + `git diff --check`，并对相同 head 重跑两份只读 normalization verifier；保留真实命令、输出与 EXIT。派发非作者 DSH 正式复审该精确 head，并触发现有独立 Codex Reviewer 更新审查同一范围。若发现可修 findings，先修、验证、固定新 head 并重新 Review；若 0 个未解决 P0/P1，完成 Codex 集成 Gate，收口 P03 Task/Plan/Status/index/roadmap/依赖图/恢复点。随后按用户本轮指示保存“下一次自动推进”提示词并关闭计算机；下次从最新 Live Git 与 STATUS 恢复，而非从聊天推断。
+直接续接：补全 manifest/两份 RESUME 对 C-002/C-003 的记载并明确 Gate 已 PASS；检查并提交仅限 P03 Task/test/evidence/checkpoint 的变更，记下新 HEAD。再以 `31abde9bf4b73aea2851931dcd48faa0f750b318..HEAD` 重跑 scope + `git diff --check` 和两份只读 normalization verifier，保存真实输出与 EXIT。针对该精确 head 派发 DSH 正式非作者 Review，并触发现有 Codex Reviewer 同范围复审。发现项先修复、验证、固定新 head 后复审；0 个未解决 P0/P1 且 Codex 集成 Gate 通过后，收口 P03 Task/Plan/Status/index/roadmap/依赖图/恢复点，并释放路线图下一任务。随后保存下次续推 prompt，按用户本轮指示关闭计算机。
 
 ## 保护与限制
 
 - 主 checkout `.qoder-credits/**`、historical dispatch/P08 DSH raw、root P03 DSH R2 原始 JSONL/提示词/报告与 Owner worktree 三个 untracked helper 均保持原位，不 stage、不改写、不 stash、不清理。
 - 不修改 `src/**`、`apps/**`、Schema、contracts、依赖、build spec/script；K07 与 ONNX 外部输入只读；应用数据与 WebView 数据均留在各自 Gate TEMP lab。
-- 仍未完成：提交此 checkpoint；最终 fixed-head checks；新 DSH formal Review；P03 集成与治理文档收口；写入下一次自动推进提示词。机器关机由用户明确授权，但仅在上述 P03 工作与恢复材料保存后执行。
+- 仍未完成：提交 C-002 test-only 修复 checkpoint；新 fixed-head checks；DSH formal Review；P03 集成与治理文档收口；创建下一任务与下次自动推进 prompt。机器关机由用户明确授权，但仅在 P03 收口和恢复材料落盘后执行。

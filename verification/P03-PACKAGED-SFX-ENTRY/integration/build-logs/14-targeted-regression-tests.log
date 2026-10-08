@@ -1,0 +1,55 @@
+Shell: PowerShell 7.6.6
+Source commit: fb5782c51eab0d5dc3267770c9a0a7df8f343175 plus uncommitted test-only C-002 fix
+Command: C:/Python314/python.exe -m pytest -v tests/packaging/test_packaged_fifth_sfx_entry.py tests/packaging/test_runner_output_dir_required.py
+Output:
+============================= test session starts =============================
+platform win32 -- Python 3.14.6, pytest-9.1.1, pluggy-1.6.0 -- C:\Python314\python.exe
+cachedir: .pytest_cache
+rootdir: G:\CODEX\New Manga.worktrees\P03-review-prep-85482c5b
+configfile: pytest.ini
+plugins: anyio-4.14.2
+collecting ... collected 40 items
+
+tests/packaging/test_packaged_fifth_sfx_entry.py::test_sidecar_exes_includes_fifth_sfx_entry PASSED [  2%]
+tests/packaging/test_packaged_fifth_sfx_entry.py::test_survivor_reaping_judgement_includes_fifth_sfx_entry PASSED [  5%]
+tests/packaging/test_packaged_fifth_sfx_entry.py::test_evaluate_sfx_probe_success_valid PASSED [  7%]
+tests/packaging/test_packaged_fifth_sfx_entry.py::test_evaluate_sfx_probe_success_with_cpu_fallback PASSED [ 10%]
+tests/packaging/test_packaged_fifth_sfx_entry.py::test_evaluate_sfx_probe_rejects_external_env_or_outside_weights PASSED [ 12%]
+tests/packaging/test_packaged_fifth_sfx_entry.py::test_evaluate_sfx_probe_success_negative_cases[1-<lambda>-<lambda>-nonzero exit code] PASSED [ 15%]
+tests/packaging/test_packaged_fifth_sfx_entry.py::test_evaluate_sfx_probe_success_negative_cases[0-<lambda>-<lambda>-multiple marker lines] PASSED [ 17%]
+tests/packaging/test_packaged_fifth_sfx_entry.py::test_evaluate_sfx_probe_success_negative_cases[0-<lambda>-<lambda>-missing marker line] PASSED [ 20%]
+tests/packaging/test_packaged_fifth_sfx_entry.py::test_evaluate_sfx_probe_success_negative_cases[0-<lambda>-<lambda>-malformed json] PASSED [ 22%]
+tests/packaging/test_packaged_fifth_sfx_entry.py::test_evaluate_sfx_probe_success_negative_cases[0-<lambda>-<lambda>-json payload is list not dict] PASSED [ 25%]
+tests/packaging/test_packaged_fifth_sfx_entry.py::test_evaluate_sfx_probe_success_negative_cases[0-<lambda>-<lambda>-json payload is string not dict] PASSED [ 27%]
+tests/packaging/test_packaged_fifth_sfx_entry.py::test_evaluate_sfx_probe_success_negative_cases[0-<lambda>-<lambda>-json payload is integer not dict] PASSED [ 30%]
+tests/packaging/test_packaged_fifth_sfx_entry.py::test_evaluate_sfx_probe_success_negative_cases[0-<lambda>-<lambda>-json payload is bool not dict] PASSED [ 32%]
+tests/packaging/test_packaged_fifth_sfx_entry.py::test_evaluate_sfx_probe_success_negative_cases[0-<lambda>-<lambda>-not frozen] PASSED [ 35%]
+tests/packaging/test_packaged_fifth_sfx_entry.py::test_evaluate_sfx_probe_success_negative_cases[0-<lambda>-<lambda>-error not null] PASSED [ 37%]
+tests/packaging/test_packaged_fifth_sfx_entry.py::test_evaluate_sfx_probe_success_negative_cases[0-<lambda>-<lambda>-missing error key] PASSED [ 40%]
+tests/packaging/test_packaged_fifth_sfx_entry.py::test_evaluate_sfx_probe_success_negative_cases[0-<lambda>-<lambda>-zero candidates] PASSED [ 42%]
+tests/packaging/test_packaged_fifth_sfx_entry.py::test_evaluate_sfx_probe_success_negative_cases[0-<lambda>-<lambda>-n_candidates is boolean True] PASSED [ 45%]
+tests/packaging/test_packaged_fifth_sfx_entry.py::test_evaluate_sfx_probe_success_negative_cases[0-<lambda>-<lambda>-n_candidates is float] PASSED [ 47%]
+tests/packaging/test_packaged_fifth_sfx_entry.py::test_evaluate_sfx_probe_success_negative_cases[0-<lambda>-<lambda>-weights sha mismatch] PASSED [ 50%]
+tests/packaging/test_packaged_fifth_sfx_entry.py::test_evaluate_sfx_probe_success_negative_cases[0-<lambda>-<lambda>-weights resolved_from env] PASSED [ 52%]
+tests/packaging/test_packaged_fifth_sfx_entry.py::test_evaluate_sfx_probe_failure_valid PASSED [ 55%]
+tests/packaging/test_packaged_fifth_sfx_entry.py::test_evaluate_sfx_probe_failure_negative_cases[0-<lambda>-<lambda>-exit code 0 instead of 1] PASSED [ 57%]
+tests/packaging/test_packaged_fifth_sfx_entry.py::test_evaluate_sfx_probe_failure_negative_cases[1-<lambda>-<lambda>-multiple marker lines] PASSED [ 60%]
+tests/packaging/test_packaged_fifth_sfx_entry.py::test_evaluate_sfx_probe_failure_negative_cases[1-<lambda>-<lambda>-missing marker] PASSED [ 62%]
+tests/packaging/test_packaged_fifth_sfx_entry.py::test_evaluate_sfx_probe_failure_negative_cases[1-<lambda>-<lambda>-failure payload is list] PASSED [ 65%]
+tests/packaging/test_packaged_fifth_sfx_entry.py::test_evaluate_sfx_probe_failure_negative_cases[1-<lambda>-<lambda>-failure payload is string] PASSED [ 67%]
+tests/packaging/test_packaged_fifth_sfx_entry.py::test_evaluate_sfx_probe_failure_negative_cases[1-<lambda>-<lambda>-not frozen] PASSED [ 70%]
+tests/packaging/test_packaged_fifth_sfx_entry.py::test_evaluate_sfx_probe_failure_negative_cases[1-<lambda>-<lambda>-error is None] PASSED [ 72%]
+tests/packaging/test_packaged_fifth_sfx_entry.py::test_evaluate_sfx_probe_failure_negative_cases[1-<lambda>-<lambda>-error is empty dict] PASSED [ 75%]
+tests/packaging/test_packaged_fifth_sfx_entry.py::test_evaluate_sfx_probe_failure_negative_cases[1-<lambda>-<lambda>-error is string not dict] PASSED [ 77%]
+tests/packaging/test_packaged_fifth_sfx_entry.py::test_ac5_parser_supports_sfx_real_page PASSED [ 80%]
+tests/packaging/test_runner_output_dir_required.py::test_cli_omission_fails_usage_error_exit_2_subprocess[rc2_run_e2e] PASSED [ 82%]
+tests/packaging/test_runner_output_dir_required.py::test_cli_omission_fails_usage_error_exit_2_subprocess[ac5_run_clean_start] PASSED [ 85%]
+tests/packaging/test_runner_output_dir_required.py::test_rc2_parser_omission_raises_system_exit_2 PASSED [ 87%]
+tests/packaging/test_runner_output_dir_required.py::test_ac5_parser_omission_raises_system_exit_2 PASSED [ 90%]
+tests/packaging/test_runner_output_dir_required.py::test_rc2_parser_accepts_explicit_output_dir PASSED [ 92%]
+tests/packaging/test_runner_output_dir_required.py::test_ac5_parser_accepts_explicit_output_dir PASSED [ 95%]
+tests/packaging/test_runner_output_dir_required.py::test_rc2_main_interception_after_parse_args PASSED [ 97%]
+tests/packaging/test_runner_output_dir_required.py::test_ac5_main_interception_after_parse_args PASSED [100%]
+
+============================= 40 passed in 0.59s ==============================
+EXIT=0

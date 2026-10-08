@@ -1,17 +1,18 @@
 # P03 Codex Integration Checkpoint
 
-时间：2026-10-09（Asia/Shanghai）；Task=`P03`；TaskStatus=`in_review`；ExecutionState=`FINAL_REVIEW_CHECKPOINT_PENDING`。
+时间：2026-10-09（Asia/Shanghai）；Task=`P03`；TaskStatus=`in_review`；ExecutionState=`C002_TEST_FIX_CHECKPOINT_PENDING`。
 
 ## 当前恢复点（优先于下方历史阶段记录）
 
 - Repository=`G:/CODEX/New Manga`；integration worktree=`G:/CODEX/New Manga.worktrees/P03-review-prep-85482c5b`；branch=`codex/P03-integration-4c04459`；common-dir=`G:/CODEX/New Manga/.git`。
-- Task base=`31abde9bf4b73aea2851931dcd48faa0f750b318`；Owner delivery=`85482c5b001d452953c3ed797ce3c4ed64cae4e3`；pre-review candidate=`2d114480e04528c3340247d41fe463c4c72c1b72`。旧 DSH R2 对 `4c04459…` 的 approved 不覆盖修复/新 Gate；需对本 checkpoint 产生的新固定 head 再正式 DSH Review。
-- 当前有 Task/RESUME/manifest 修改与三个 Task-local untracked trace；这些是本次受控 P03 checkpoint，不属于用户或其他 Agent 文件。Root `main` 的用户/历史 Agent dirty/raw、Antigravity Owner worktree 三个 untracked helper 与 DSH raw 均保持保护。
-- 40 项定向测试、16 项 Snapshot oracle、frontend/Sidecar/Tauri NSIS builds 及新 installer packaged Gate 28/28 PASS 均已完成。Installer SHA=`2de124f387bfaf1d0d01b1b0279ad319cd453850d223efa9620b0103ce88a814`。细节见 P03 Task 与下方历史验证阶段。
-- 两份只读 normalization verifier 对 candidate `2d114480…` 均 EXIT=0；trace 在 `build-logs/09-existing-normalization-readonly.log` 与 `10-gate-normalization-readonly.log`。固定范围检查 `31abde9…2d114480` 为 114 paths、zero out-of-scope，`git diff --check` 空输出/EXIT=0，trace=`build-logs/11-fixed-head-diff-check.log`。
-- **立即下一步：**仅 stage Task、RESUME、manifest 与这三份日志；跑 `git diff --cached --check` 后提交；读出新 commit 作为 fixed DSH review head。再对该精确 head 运行 scope check、`git diff --check` 和两份只读 normalization verifier，将真实输出/EXIT 纳入正式 DSH prompt/证据；然后派发 DSH 非作者 Review，并让独立 Codex Reviewer 对同一 base/head 更新报告。修复所有需要阻塞集成的问题并重新固定/Review；通过后完成 Codex 集成 Gate 与 P03 治理收口。
-- 用户新增指示：P03 当前任务完成并把下一次自动推进提示词保存后，关闭计算机；无需等全路线图完成再关机。下次启动应先读当前 Live Git、STATUS 与本 RESUME，再接着已释放 Task 自动推进。
-- 以下 `## 修订验证进展` 起为按时间记录的历史阶段，不再作为当前待办清单。
+- Task base=`31abde9bf4b73aea2851931dcd48faa0f750b318`；Owner delivery=`85482c5b001d452953c3ed797ce3c4ed64cae4e3`；last committed candidate=`fb5782c51eab0d5dc3267770c9a0a7df8f343175`。独立 Codex Review 对该 head 发现 C-002 P2：success-negative 参数化用例省略 `install_dir`，因此 fail-closed 前置条件遮蔽了被测负例；旧 DSH R2 对 `4c04459…` 的 approved 不覆盖当前候选。
+- 当前变更是 C-002 的 test-only 修复：建立实际 `install_dir` 与内部 weights path，每个负例先断言未修改基线会通过，再应用目标坏条件。对应 40/40 测试通过，`build-logs/14-targeted-regression-tests.log`。Task 文档已登记 C-002/C-003，需随此 checkpoint 一并提交。
+- Root `main` 用户/历史 Agent dirty/raw、Antigravity Owner worktree 三个 untracked helper 与 DSH raw 均保持保护；Integration worktree 当前有 C-002 测试、Task 修改，以及 `build-logs/12–14` 和一份未派发的 R3 prompt 草稿。
+- Fresh installer SHA=`2de124f387bfaf1d0d01b1b0279ad319cd453850d223efa9620b0103ce88a814`；前序 frontend/Sidecar/Tauri NSIS build、同 installer packaged Gate 28/28 PASS、16 项 Snapshot 与原始/规范化日志验证均已完成，见 P03 Task 与下方历史阶段。
+- 上一固定 head `fb5782c5…` 的 scope/diff trace=`build-logs/12`（117 paths、zero out-of-scope、`git diff --check` EXIT=0）；normalization trace=`build-logs/13`（两份 verifier EXIT=0）。这两项发生在 C-002 测试修改之前，提交后必须对新 head 重跑并更新 trace/prompt。
+- **立即下一步：**已更新 manifest、两份 RESUME 和 Task；仅 stage P03 Task/test/evidence/checkpoint paths，跑 `git diff --cached --check` 后提交。取得新 HEAD 后重跑 `base..HEAD` scope + diff-check 和两份 normalization verifier；再触发正式 DSH Review 与 Codex 独立复审，二者都使用同一精确 head。Review findings 要先处理并重审；approved 且 Codex 集成 Gate 通过后才收口 P03。
+- 用户指示：P03 当前任务完成、下一次自动推进 prompt 保存后关闭计算机；下次先核对 Live Git、STATUS 与此 RESUME，再自动进入路线图推进。
+- 以下 `## 修订验证进展` 起为按时间记录的历史阶段，非当前待办清单。
 
 ## 修订验证进展
 

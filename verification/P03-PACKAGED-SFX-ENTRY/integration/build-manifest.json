@@ -230,5 +230,16 @@
       "integration/build-logs/11-fixed-head-diff-check.log"
     ],
     "note": "Checks bind the committed candidate above. Repeat all fixed-head checks after committing this resume checkpoint and before dispatching formal DSH review."
+  },
+  "negative_predicate_test_repair": {
+    "review_finding": "C-002",
+    "last_committed_candidate": "fb5782c51eab0d5dc3267770c9a0a7df8f343175",
+    "test_path": "tests/packaging/test_packaged_fifth_sfx_entry.py",
+    "test_change": "Each success-negative case now supplies an in-directory weights path and a valid install_dir, asserts the unmodified baseline passes, then mutates one negative condition; the missing-install_dir fail-closed assertion remains separate.",
+    "targeted_command": "C:/Python314/python.exe -m pytest -v tests/packaging/test_packaged_fifth_sfx_entry.py tests/packaging/test_runner_output_dir_required.py",
+    "targeted_exit": 0,
+    "targeted_result": "40 passed, 0 skipped",
+    "targeted_log": "integration/build-logs/14-targeted-regression-tests.log",
+    "note": "Test-only change; existing installer and 28/28 packaged Gate remain bound to unchanged production code."
   }
 }

@@ -247,14 +247,17 @@ def test_evaluate_sfx_probe_rejects_external_env_or_outside_weights(ac5_mod: Mod
     ],
 )
 def test_evaluate_sfx_probe_success_negative_cases(
-    ac5_mod: ModuleType, exit_code, payload_modifier, stdout_modifier, desc
+    ac5_mod: ModuleType, tmp_path: Path, exit_code, payload_modifier, stdout_modifier, desc
 ):
     """AC2 / R-005 / R-007: evaluate_sfx_probe_success fails closed on any violation of contract."""
+    install_dir = tmp_path / "install"
+    weights_path = install_dir / "resources" / "core-sidecar" / "models" / "detector" / "yolo11s-seg.onnx"
+    weights_path.parent.mkdir(parents=True)
     base_payload = {
         "probe": "m2-prod-sfx-probe-1.sfx_detect_probe",
         "python": {"frozen": True},
         "weights": {
-            "path": "C:\\fake\\models\\yolo11s-seg.onnx",
+            "path": str(weights_path),
             "resolved_from": "bundle_probe",
             "sha256": PINNED_WEIGHTS_SHA256,
         },
@@ -266,6 +269,10 @@ def test_evaluate_sfx_probe_success_negative_cases(
         },
         "error": None,
     }
+    baseline_stdout = f"SFX_PROBE_JSON: {json.dumps(base_payload)}\n"
+    baseline_passed, _ = ac5_mod.evaluate_sfx_probe_success(0, baseline_stdout, "", install_dir=install_dir)
+    assert baseline_passed, "The unmodified payload must pass before each negative case is applied."
+
     payload = payload_modifier(base_payload)
     if any(k in desc for k in ("invalid json", "list", "string not dict", "integer not dict", "bool not dict")):
         stdout = stdout_modifier("")
@@ -273,7 +280,7 @@ def test_evaluate_sfx_probe_success_negative_cases(
         json_line = f"SFX_PROBE_JSON: {json.dumps(payload)}\n"
         stdout = stdout_modifier(json_line)
 
-    passed, _ = ac5_mod.evaluate_sfx_probe_success(exit_code, stdout, "")
+    passed, _ = ac5_mod.evaluate_sfx_probe_success(exit_code, stdout, "", install_dir=install_dir)
     assert passed is False, f"Expected failure for case: {desc}"
 
 
