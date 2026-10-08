@@ -68,7 +68,10 @@ SIDECAR_EXES = (
     "core_service.exe",
     "acceptance_bridge.exe",
     "catalog_loader.exe",
+    "sfx_detect_probe.exe",
 )
+SFX_WEIGHTS_SHA256 = "944e811410933ad6ff8d32446fcc9eef90fb463794e1874ce83035e83acd418d"
+SFX_PROBE_JSON_MARKER = "SFX_PROBE_JSON: "
 #: The HOST's real user-data root — READ-ONLY for the P2-4 untouched proof
 #: (hashed before/after the whole run, never written, never deleted). The app
 #: itself never sees this path: every launch env pins APPDATA into the lab
@@ -731,10 +734,221 @@ def run_production_phase(gate: Gate, exe: Path, env: dict, lab: Path) -> None:
     )
 
 
+
+def evaluate_sfx_probe_success(
+    exit_code: int,
+    stdout: str,
+    stderr: str,
+    expected_weights_sha: str = SFX_WEIGHTS_SHA256,
+) -> tuple[bool, dict]:
+    lines = [line for line in stdout.splitlines() if line.startswith(SFX_PROBE_JSON_MARKER)]
+    marker_count = len(lines)
+    payload = None
+    if marker_count == 1:
+        try:
+            payload = json.loads(lines[0][len(SFX_PROBE_JSON_MARKER):])
+        except json.JSONDecodeError:
+            payload = None
+
+    result = (payload or {}).get("result") or {}
+    weights = (payload or {}).get("weights") or {}
+    python_info = (payload or {}).get("python") or {}
+    error = (payload or {}).get("error")
+
+    frozen = python_info.get("frozen") is True
+    weights_sha = weights.get("sha256")
+    weights_match = weights_sha == expected_weights_sha
+    n_candidates = result.get("n_candidates")
+    candidates_valid = isinstance(n_candidates, int) and n_candidates > 0
+    error_is_null = error is None
+
+    # Fallback provenance keys from M2-SFX-GPU-EP-1:
+    device = result.get("device")
+    sfx_ep = result.get("sfx_ep")
+    sfx_ep_fallback = result.get("sfx_ep_fallback")
+
+    passed = (
+        exit_code == 0
+        and marker_count == 1
+        and payload is not None
+        and frozen
+        and error_is_null
+        and candidates_valid
+        and weights_match
+    )
+
+    observed = {
+        "exit": exit_code,
+        "marker_count": marker_count,
+        "json_parsed": payload is not None,
+        "frozen": frozen,
+        "error": error,
+        "n_candidates": n_candidates,
+        "weights_sha256": weights_sha,
+        "weights_sha256_matches_pin": weights_match,
+        "device": device,
+        "sfx_ep": sfx_ep,
+        "sfx_ep_fallback": sfx_ep_fallback,
+        "elapsed_ms": result.get("elapsed_ms"),
+        "options": result.get("options"),
+    }
+    return passed, observed
+
+
+def evaluate_sfx_probe_failure(
+    exit_code: int,
+    stdout: str,
+    stderr: str,
+) -> tuple[bool, dict]:
+    lines = [line for line in stdout.splitlines() if line.startswith(SFX_PROBE_JSON_MARKER)]
+    marker_count = len(lines)
+    payload = None
+    if marker_count == 1:
+        try:
+            payload = json.loads(lines[0][len(SFX_PROBE_JSON_MARKER):])
+        except json.JSONDecodeError:
+            payload = None
+
+    python_info = (payload or {}).get("python") or {}
+    error = (payload or {}).get("error")
+    frozen = python_info.get("frozen") is True
+    error_non_empty = error is not None and isinstance(error, dict) and len(error) > 0
+
+    passed = (
+        exit_code == 1
+        and marker_count == 1
+        and payload is not None
+        and frozen
+        and error_non_empty
+    )
+
+    observed = {
+        "exit": exit_code,
+        "marker_count": marker_count,
+        "json_parsed": payload is not None,
+        "frozen": frozen,
+        "error": error,
+    }
+    return passed, observed
+
+
+def run_sfx_probe_phase(
+    gate: Gate,
+    install_dir: Path,
+    env: dict,
+    lab: Path,
+    real_page: Path,
+) -> None:
+    log("phase 4.5: packaged fifth SFX entry probe (opt-in --sfx-real-page)")
+    probe_exe = install_dir / "resources" / "core-sidecar" / "sfx_detect_probe.exe"
+
+    # 1. 真实成功场景
+    real_page_resolved = real_page.resolve()
+    real_log = RAW / "sfx-probe-real-page.log"
+    real_out = RAW / "sfx-probe-real-page.json"
+
+    if not real_page_resolved.is_file():
+        gate.record(
+            "CS-S1-packaged-sfx-real-page",
+            "FAIL",
+            {"reason": f"real page file missing: {real_page_resolved}"},
+        )
+    elif not probe_exe.is_file():
+        gate.record(
+            "CS-S1-packaged-sfx-real-page",
+            "FAIL",
+            {"reason": f"probe exe missing: {probe_exe}"},
+        )
+    else:
+        started = time.perf_counter()
+        proc = subprocess.run(
+            [
+                str(probe_exe),
+                "--page", str(real_page_resolved),
+                "--out", str(real_out),
+                "--label", "injected-real-page",
+            ],
+            env=env,
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            timeout=300,
+        )
+        elapsed_ms = int((time.perf_counter() - started) * 1000)
+        real_log.write_text(
+            f"$ <installed>\\resources\\core-sidecar\\sfx_detect_probe.exe --page {real_page_resolved} (purged PATH)\n"
+            f"exit={proc.returncode} wall_ms={elapsed_ms}\n--- stdout ---\n{proc.stdout}\n--- stderr ---\n{proc.stderr}",
+            encoding="utf-8",
+        )
+        ok, observed = evaluate_sfx_probe_success(
+            exit_code=proc.returncode,
+            stdout=proc.stdout,
+            stderr=proc.stderr,
+            expected_weights_sha=SFX_WEIGHTS_SHA256,
+        )
+        observed["wall_ms"] = elapsed_ms
+        observed["page_path"] = str(real_page_resolved)
+        gate.pass_or(ok, "CS-S1-packaged-sfx-real-page", observed)
+
+    # 2. 预期失败场景
+    missing_dir = lab / "sfx-probe-missing-isolation"
+    missing_page = missing_dir / "guaranteed-nonexistent-page.png"
+    if missing_dir.exists():
+        import shutil
+        shutil.rmtree(missing_dir, ignore_errors=True)
+
+    fail_log = RAW / "sfx-probe-missing-page.log"
+    fail_out = RAW / "sfx-probe-missing-page.json"
+
+    if not probe_exe.is_file():
+        gate.record(
+            "CS-S2-packaged-sfx-missing-page-failure",
+            "FAIL",
+            {"reason": f"probe exe missing: {probe_exe}"},
+        )
+    else:
+        started = time.perf_counter()
+        proc = subprocess.run(
+            [
+                str(probe_exe),
+                "--page", str(missing_page),
+                "--out", str(fail_out),
+                "--label", "missing-page-failure",
+            ],
+            env=env,
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            timeout=120,
+        )
+        elapsed_ms = int((time.perf_counter() - started) * 1000)
+        fail_log.write_text(
+            f"$ <installed>\\resources\\core-sidecar\\sfx_detect_probe.exe --page {missing_page} (purged PATH)\n"
+            f"exit={proc.returncode} wall_ms={elapsed_ms}\n--- stdout ---\n{proc.stdout}\n--- stderr ---\n{proc.stderr}",
+            encoding="utf-8",
+        )
+        ok, observed = evaluate_sfx_probe_failure(
+            exit_code=proc.returncode,
+            stdout=proc.stdout,
+            stderr=proc.stderr,
+        )
+        observed["wall_ms"] = elapsed_ms
+        observed["missing_path"] = str(missing_page)
+        gate.pass_or(ok, "CS-S2-packaged-sfx-missing-page-failure", observed)
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("--installer", type=Path, default=DEFAULT_INSTALLER)
     parser.add_argument("--output-dir", type=Path, required=True, help="isolated evidence directory")
+    parser.add_argument(
+        "--sfx-real-page",
+        type=Path,
+        default=None,
+        help="opt-in real page path for packaged fifth entry probe verification",
+    )
     return parser
 
 
@@ -807,6 +1021,8 @@ def main(argv: list[str] | None = None) -> int:
     run_probe_phase(gate, exe, env, lab)
     run_ac1_phase(gate, exe, env, lab, install_dir)
     run_production_phase(gate, exe, env, lab)
+    if args.sfx_real_page is not None:
+        run_sfx_probe_phase(gate, install_dir, env, lab, args.sfx_real_page)
 
     log("phase 5: AC4 zero-touch assertions")
     install_hashes_after = dir_tree_hashes(install_dir)
@@ -849,18 +1065,26 @@ def main(argv: list[str] | None = None) -> int:
     gate.pass_or(before == after, "CS-Z2-user-source-files-byte-identical", {"files": len(after)})
 
     survivors = list_processes(
-        ("host_bridge.exe", "core_service.exe", "acceptance_bridge.exe", "catalog_loader.exe", "python.exe")
+        (
+            "host_bridge.exe",
+            "core_service.exe",
+            "acceptance_bridge.exe",
+            "catalog_loader.exe",
+            "sfx_detect_probe.exe",
+            "python.exe",
+        )
     )
     # python.exe is a RECORD-ONLY count here: this host machine legitimately
     # runs unrelated python processes (the acceptance runner itself among
     # them); "no system Python" is proven by the CS-E1 purged-PATH assertion
     # plus the frozen exes serving every workflow above. The gate asserts the
-    # four packaged sidecar exes are fully reaped.
+    # five packaged sidecar exes are fully reaped.
     gate.pass_or(
         survivors["host_bridge.exe"] == 0
         and survivors["core_service.exe"] == 0
         and survivors["acceptance_bridge.exe"] == 0
-        and survivors["catalog_loader.exe"] == 0,
+        and survivors["catalog_loader.exe"] == 0
+        and survivors["sfx_detect_probe.exe"] == 0,
         "CS-Z3-no-surviving-sidecar-processes",
         survivors,
     )
