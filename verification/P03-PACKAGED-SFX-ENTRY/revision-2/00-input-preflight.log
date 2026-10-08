@@ -1,0 +1,22 @@
+﻿PowerShell Version: 5.1.26100.9549
+Command: powershell -NoProfile -ExecutionPolicy Bypass -File verification/P03-PACKAGED-SFX-ENTRY/revision-2/preflight.ps1
+Timestamp: 2026-10-09T02:30:48+08:00
+
+1. K07 Anchor Page:
+   Path: G:/CODEX/New Manga.task-envs/M2-DOCTR-QUAL-work/regions/K07_R123.png
+   Exists: True
+   Bytes: 1020887
+   Expected SHA-256: 28dab503aca3c903111488c03e857b430d309421a4a54bab335a63bbe7b9cec4
+   Actual SHA-256:   28dab503aca3c903111488c03e857b430d309421a4a54bab335a63bbe7b9cec4
+   Match: True
+
+2. SFX v2b Pinned Weights:
+   Path: G:/CODEX/New Manga.task-envs/M2-SFX-DETECT/weights-v2b/yolo11s-seg.onnx
+   Exists: True
+   Bytes: 40824255
+   Expected SHA-256: 944e811410933ad6ff8d32446fcc9eef90fb463794e1874ce83035e83acd418d
+   Actual SHA-256:   944e811410933ad6ff8d32446fcc9eef90fb463794e1874ce83035e83acd418d
+   Match: True
+
+Preflight Verdict: PASS
+EXIT=0

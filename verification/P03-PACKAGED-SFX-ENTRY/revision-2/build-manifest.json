@@ -1,0 +1,48 @@
+{
+  "task": "P03",
+  "revision": 2,
+  "source_head": "29024a21939917c6d8eb15f1a2bb9ff46cd5bf23",
+  "installer": {
+    "relative_path": "apps/desktop/src-tauri/target/release/bundle/nsis/m2rc1-desktop_0.1.0_x64-setup.exe",
+    "sha256": "d21e89b6d9f81c3499840a687da0f68d1cad6f9e11e9058078e510ecfa0d8721",
+    "bytes": 579527358
+  },
+  "tool_versions": {
+    "node": "v24.15.0",
+    "npm": "12.0.1",
+    "rustc": "1.98.1 (48a229cea 2026-09-01)",
+    "cargo": "1.98.1 (797e8a9bc 2026-08-05)",
+    "python_build": "3.12.3",
+    "pyinstaller": "6.22.3",
+    "powershell": "5.1.26100.9549"
+  },
+  "build_notes": {
+    "npm_warnings": [
+      "npm warn deprecated whatwg-encoding@3.1.1",
+      "npm warn install-scripts 1 package had install scripts blocked because they are not covered by allowScripts: esbuild@0.21.5 (postinstall: node install.js)"
+    ],
+    "rust_warnings_count": 6,
+    "rust_warnings_summary": [
+      "unused import: std::sync::Arc in src/main.rs:47",
+      "struct MockCoreChannel is never constructed in src/core_bridge.rs:335",
+      "struct MockEntry is never constructed in src/core_bridge.rs:350",
+      "associated items new, register, and issue_internal are never used in src/core_bridge.rs:359",
+      "associated function spawn is never used in src/library_bridge.rs:197",
+      "methods set_books, set_books_error, set_settings_result, set_retype_result, set_regions_result, and set_domain_result are never used in src/library_bridge.rs:585"
+    ]
+  },
+  "inputs": {
+    "k07_real_page": {
+      "path": "G:/CODEX/New Manga.task-envs/M2-DOCTR-QUAL-work/regions/K07_R123.png",
+      "sha256": "28dab503aca3c903111488c03e857b430d309421a4a54bab335a63bbe7b9cec4",
+      "bytes": 1020887,
+      "preflight_verdict": "PASS"
+    },
+    "sfx_v2b_weights": {
+      "path": "G:/CODEX/New Manga.task-envs/M2-SFX-DETECT/weights-v2b/yolo11s-seg.onnx",
+      "sha256": "944e811410933ad6ff8d32446fcc9eef90fb463794e1874ce83035e83acd418d",
+      "bytes": 40824255,
+      "preflight_verdict": "PASS"
+    }
+  }
+}

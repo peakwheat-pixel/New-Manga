@@ -1,0 +1,8 @@
+=== Environment ===
+v24.15.0
+12.0.1
+=== Command: npm ci --no-audit --no-fund ===
+
+added 140 packages in 3s
+\
+EXIT=0\

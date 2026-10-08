@@ -1,0 +1,17 @@
+{
+  "probe": "m2-prod-sfx-probe-1.sfx_detect_probe",
+  "label": "missing-page-failure",
+  "python": {
+    "frozen": true,
+    "executable": "C:\\Users\\49745\\AppData\\Local\\Temp\\m2ac5-cleanstart-_l0xfp6o\\install\\resources\\core-sidecar\\sfx_detect_probe.exe"
+  },
+  "page": null,
+  "weights": null,
+  "provider": null,
+  "result": null,
+  "error": {
+    "class": "FileNotFoundError",
+    "error_code": null,
+    "message_head": "[Errno 2] No such file or directory: 'C:\\\\Users\\\\49745\\\\AppData\\\\Local\\\\Temp\\\\m2ac5-cleanstart-_l0xfp6o\\\\sfx-probe-missing-isolation\\\\guaranteed-nonexistent-page.png'"
+  }
+}
