@@ -481,3 +481,24 @@ command=python -B -X utf8 verification/PROJECT-ROADMAP-20261008/verify_plan.py a
 command=git diff --check ab2f813c0ce311a6712002cafd852b9e7a258380 after final RESUME update; EXIT=0
 command=Get-FileHash canonical R6 report and raw stdout; both SHA256=7E486D1EC46CD0EBF3BEC280EDDDB837CE600715549E2E528027FF2FEB883C28; cmd /c fc /b; no differences
 command=git diff --name-only BASE -- protected product/contracts/frozen-spec/inventory paths; EXIT=0; empty
+
+P08 R7 fixed delivery and exact Review worktree verification
+delivery_base=ecb3b520ce68c2ddcc0c5ec94596e2f50a17f369; delivery_head=fe222464616152e9c95208e06c248565f2fd86a6; subject=docs(P08): fix ellipsis link guard; main was HEAD=fe222464616152e9c95208e06c248565f2fd86a6 before post-delivery metadata
+exact_review_worktree=G:\CODEX\New Manga.worktrees\P08-dsh-review-fe222464-r7; detached; clean; HEAD=fe222464616152e9c95208e06c248565f2fd86a6; common_dir=G:/CODEX/New Manga/.git; git diff --exit-code HEAD -- . EXIT=0
+environment=PowerShell 7.6.6; Python=C:\Python314\python.exe 3.14.6
+command=python -B -X utf8 verification/P08/verify_scope.py in exact R7 worktree; EXIT=0; 193 D08 criteria, AC-SMOKE, 12 gates, seven decisions, committed BASE..HEAD allowlist (34 files), six P08 Handoffs link/whitespace scope
+command=python -B -X utf8 verification/PROJECT-ROADMAP-20261008/verify_plan.py in exact R7 worktree; EXIT=0; 196 nodes, 105 ancestry records, 21 planned nodes, labels/links/acyclic graph
+command=git diff --check ecb3b520ce68c2ddcc0c5ec94596e2f50a17f369 fe222464616152e9c95208e06c248565f2fd86a6; EXIT=0
+command=git diff --name-only ecb3b520ce68c2ddcc0c5ec94596e2f50a17f369 fe222464616152e9c95208e06c248565f2fd86a6 -- protected product/contracts/frozen-spec/inventory paths; EXIT=0; empty
+command=Get-FileHash canonical R6 report and raw stdout; both SHA256=7E486D1EC46CD0EBF3BEC280EDDDB837CE600715549E2E528027FF2FEB883C28; cmd /c fc /b; no differences
+command=dsh --version; output=0.1.7-rc.2; `dsh --profile headless --help` confirms supported JSONL/session-id flags; formal R7 review not yet dispatched
+delivery_post_state=Task moving from in_progress to in_review; reviewed_head is R7 fixed delivery; review_session=pending until the native JSONL session event is read
+product pytest/cargo/vitest/GUI/build/model=NOT_RUN (documentation/validator-only delivery)
+protected_dirty=.qoder-credits/report.json; .qoder-credits/通路探测__8602db50.canvas.tsx; verification/M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD/antigravity-dispatch.json; antigravity-dispatch.stderr.log; verification/P08/dsh-r4.*; dsh-r5.*; dsh-r6.*; none staged
+next_gate=run main validators on post-delivery metadata, commit exact R7 Prompt/Handoff/state checkpoint, then dispatch formal read-only DSH Review
+
+P08 post-delivery metadata label correction
+observed_time=2026-10-09 00:41 Asia/Shanghai; TaskStatus=in_review; fixed R7 delivery remains fe222464616152e9c95208e06c248565f2fd86a6
+attempt=after updating the derived ROADMAP state to in_review, python -B -X utf8 verification/P08/verify_scope.py EXIT=0; python -B -X utf8 verification/PROJECT-ROADMAP-20261008/verify_plan.py EXIT=1 because graph nodes used label `in_review / Review中`, not the validator's required STATUS_LABELS[`in_review`]=`in_review / DSH Review复审中`
+fix=changed both P08 graph node labels to the exact registered `in_review / DSH Review复审中`; updated stale R6-era Task/Handoff wording to identify it as historical and retain R7 as the current Gate
+rerun=python -B -X utf8 verification/P08/verify_scope.py EXIT=0; python -B -X utf8 verification/PROJECT-ROADMAP-20261008/verify_plan.py EXIT=0; all 7 current P08 Handoffs and current `in_review` state passed. Product tests/build/GUI/model remain NOT_RUN.

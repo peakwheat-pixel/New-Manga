@@ -1,23 +1,23 @@
 # Current Development Status
 
-**当前位置：P08 D1–D7已确认，DSH R6对`ecb3b520`正式`approved`；Codex集成预检发现正式Review报告中的省略号示例链接触发本地链接守卫误报，验证器窄范围修订和新fixed head复审进行中。P08=`in_progress`；P系列done 0/21、in_progress 1、proposed / 未释放20。**
+**当前位置：P08 D1–D7已确认；R6仅批准旧head=`ecb3b520`。窄范围修订已固定于`fe222464616152e9c95208e06c248565f2fd86a6`，精确R7 worktree验证通过，等待DSH正式Review。P08=`in_review`；P系列done 0/21、in_review 1、proposed / 未释放20。**
 
-## 2026-10-09 当前工作：P08 Review报告占位链接守卫修订 / in_progress
+## 2026-10-09 当前工作：P08 DSH R7正式Review / in_review
 
-P08文档交付=`ecb3b520ce68c2ddcc0c5ec94596e2f50a17f369`；DSH R6正式Review=`approved`，session=`session-44947a36-b277-4118-8f82-635e1e803dd1`，报告SHA256=`7E486D1EC46CD0EBF3BEC280EDDDB837CE600715549E2E528027FF2FEB883C28`。Codex主线集成预检发现canonical报告及raw stdout中的省略号示例链接导致`verify_scope.py`误报；报告和原始输出不改写，已把验证器改为跳过明确的`…`/`...`目标，真实本地路径仍检查。P08转为`in_progress`，须固定新head、复跑两验证器并请DSH独立Review；这次修订获批且集成Gate通过后再置`done`。R6对原head的批准不冒充新head批准。
+R6原delivery=`ecb3b520ce68c2ddcc0c5ec94596e2f50a17f369`；DSH R6=`approved`，session=`session-44947a36-b277-4118-8f82-635e1e803dd1`，报告SHA256=`7E486D1EC46CD0EBF3BEC280EDDDB837CE600715549E2E528027FF2FEB883C28`。Codex主线集成预检发现canonical报告与raw stdout中的省略号示例目标导致`verify_scope.py`误报；报告和raw输出未改写。精确目标`…`/`...`修订已固定为R7 delivery=`fe222464616152e9c95208e06c248565f2fd86a6`，worktree=`G:/CODEX/New Manga.worktrees/P08-dsh-review-fe222464-r7`，两个validator、base/head whitespace和受保护路径检查均通过。Task=`in_review`，review_session=`pending`；DSH R7 approved且Codex集成Gate通过后才置`done`。R6批准只适用于旧head。
 
 
 2026-10-08 最新编号裁决：规划任务ID沿用 `P01–P21`；本句仅说明编号，不表达节点状态或任务释放。当前状态与授权以本文件开头的Active Task及REBASELINE_PLAN顶部为准。原始审计、台账与历史验证日志保留为固定快照。
 
 ## 2026-10-08 当前人员裁决：Qoder退出（已生效）
 
-用户指示已登记到[GOV-001追加范围](tasks/GOV-001.md)、AGENTS与协作协议；Qoder退出本项目任务分配、非作者Review、UI设计和额度故障转移名单。UI/UX/React/Tauri设计及实现由ZCode主责；Codex契约/协调/集成、DSH非作者审查。项目fallback=ZCode→Antigravity。P08当前等待Codex集成Gate；Gate通过后按权威Plan从已满足依赖的候选中正式登记下一Task。既有`.qoder-credits`及dispatch dirty未清理，也未终止全局应用；原审计和历史署名保留。
+用户指示已登记到[GOV-001追加范围](tasks/GOV-001.md)、AGENTS与协作协议；Qoder退出本项目任务分配、非作者Review、UI设计和额度故障转移名单。UI/UX/React/Tauri设计及实现由ZCode主责；Codex契约/协调/集成、DSH非作者审查。项目fallback=ZCode→Antigravity。该人员裁决记录形成时P08等待Codex集成Gate；当前状态以本页首部与最新[P08恢复点](../verification/P08/RESUME.md)为准。既有`.qoder-credits`及dispatch dirty未清理，也未终止全局应用；原审计和历史署名保留。
 
 ## 2026-10-08 全项目规划盘点（PLAN_ONLY / CHECKPOINTED）
 
 用户本轮请求已完成三路GPT-6.1 Sol high代码/文档审计与整体依赖规划；这是规划交付，**当前仍无 Active / released产品Task**。审计输入=`main@e4242ecd`；[报告](../verification/PROJECT-ROADMAP-20261008/REPORT.md)、[中文图](../verification/PROJECT-ROADMAP-20261008/ROADMAP.md)、[196节点完整台账](../verification/PROJECT-ROADMAP-20261008/task-inventory.csv)、[恢复点](../verification/PROJECT-ROADMAP-20261008/RESUME.md)。167登记完成/文档交付＋29历史局限/归档，不作为产品完成率；新架构有界Task全部收口，正式四页与完整用户链仍缺。
 
-当前后续整体树以[Plan顶部P01–P21 候选任务](REBASELINE_PLAN.md)为准，P08=`in_progress`（R6原head approved，验证器最小修订待新head Review），其余20项proposed / 未释放。新旧head、报告与验证边界见[P08恢复点](../verification/P08/RESUME.md)；后继Task未释放，Architecture Documentation Rebaseline仍是P09/P18/P20相应Gate的先决条件。
+当前后续整体树以[Plan顶部P01–P21 候选任务](REBASELINE_PLAN.md)为准，P08=`in_review`（R7 fixed head=`fe222464`，DSH正式Review待进行），其余20项proposed / 未释放。新旧head、报告与验证边界见[P08恢复点](../verification/P08/RESUME.md)；后继Task未释放，Architecture Documentation Rebaseline仍是P09/P18/P20相应Gate的先决条件。
 
 ## 2026-10-08 完成：M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD
 

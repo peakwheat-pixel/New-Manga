@@ -61,4 +61,4 @@ DSH session=`session-44947a36-b277-4118-8f82-635e1e803dd1`，CLI EXIT=0，decisi
 
 ## 风险与遗留
 
-R6对固定head=`ecb3b520`已approved并关闭R5-01/R5-02；R6-01已由post-delivery `547894f5`修正并由Codex记录关闭。之后Codex主线集成预检发现R6报告中的占位Markdown链接触发`verify_scope.py`误报；canonical报告与raw stdout保持原样，验证器最小修订现位于新delivery工作区，P08已回到`in_progress`并须由DSH对新fixed head正式R7复审。R6批准只覆盖`ecb3b520`，不覆盖R7新head。原作者dirty和P08 R4/R5/R6原始stdout/stderr均保持未暂存、不清理。
+R6对固定head=`ecb3b520`已approved并关闭R5-01/R5-02；R6-01已由post-delivery `547894f5`修正并由Codex记录关闭。之后Codex主线集成预检发现R6报告中的占位Markdown链接触发`verify_scope.py`误报；canonical报告与raw stdout保持原样。Task在该修订期间曾为`in_progress`；验证器修订现已固定于R7 delivery=`fe222464616152e9c95208e06c248565f2fd86a6`，P08当前=`in_review`并等待正式DSH R7 Review。R6批准只覆盖`ecb3b520`，不覆盖R7新head。原作者dirty和P08 R4/R5/R6原始stdout/stderr均保持未暂存、不清理。

@@ -1,6 +1,6 @@
 # 项目文档索引与 Source of Truth
 
-当前工作：P08的D1–D7设计范围已冻结，DSH R6对`ecb3b520`正式approved；集成预检发现正式报告的省略号示例链接触发本地验证器误报，修订及新head独立复审进行中。P08=`in_progress`；后继Task未释放；[最新恢复点](../verification/P08/RESUME.md)。
+当前工作：P08的D1–D7设计范围已冻结；R6仅批准旧head `ecb3b520`。链接守卫窄范围修订delivery=`fe222464`已通过精确head Codex验证，现等待DSH正式R7 Review。P08=`in_review`；后继Task未释放；[最新恢复点](../verification/P08/RESUME.md)。
 
 2026-10-08人员更新：Qoder已退出本项目。当前角色/接管名单见[协作协议](09_COLLABORATION.md)；未来UI设计/实现归ZCode，历史Qoder署名仅作证据。整体路线与恢复材料已同步，不新增产品释放。
 

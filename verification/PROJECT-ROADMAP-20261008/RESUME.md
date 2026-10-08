@@ -1,8 +1,8 @@
 # 全项目任务规划恢复点
 
-最新工作点：P08状态=`in_progress`；R6原head `ecb3b520`正式approved；集成预检发现canonical Review报告的省略号示例链接导致验证器误报，修订与新head Review进行中。恢复指令与完整证据见[P08 RESUME](../P08/RESUME.md)。
+最新工作点：P08状态=`in_review`；R6原head `ecb3b520`正式approved；R7 delivery=`fe222464616152e9c95208e06c248565f2fd86a6`精确head验证通过，等待DSH正式Review。恢复指令与完整证据见[P08 RESUME](../P08/RESUME.md)。
 
-**当前位置：P08=`in_progress`；P系列done 0/21、in_progress 1、proposed / 未释放20。R6原head已approved；验证器修订及新head Review通过后完成Codex集成Gate。**
+**当前位置：P08=`in_review`；P系列done 0/21、in_review 1、proposed / 未释放20。R7固定head=`fe222464`；DSH正式Review通过后完成Codex集成Gate。**
 
 2026-10-08 编号裁决时的状态快照：任务编号沿用 `P01–P21`；当时P08=`in_review`，其余20项=`proposed / 未释放`。当前状态见本恢复点顶部及`doc/STATUS.md`；本编号裁决本身不释放产品实施、不改历史记录。
 
