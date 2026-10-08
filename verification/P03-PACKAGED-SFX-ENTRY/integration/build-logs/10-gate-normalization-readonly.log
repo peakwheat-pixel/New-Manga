@@ -1,0 +1,13 @@
+Shell: PowerShell 7.6.6
+Fixed reviewed candidate: 2d114480e04528c3340247d41fe463c4c72c1b72
+Command: C:/Python314/python.exe verification/P03-PACKAGED-SFX-ENTRY/integration/normalize_gate_logs.py --verify-only
+Read-only status before/after command: UNCHANGED (existing untracked evidence logs remain present)
+Output:
+PASS cleanstart-ac1-catalog-initialize.log: archived raw + canonical hash + inverse reconstruction
+PASS cleanstart-ac1-run1-stdout.log: archived raw + canonical hash + inverse reconstruction
+PASS cleanstart-ac1-run2-stdout.log: archived raw + canonical hash + inverse reconstruction
+PASS cleanstart-probe-stdout.log: archived raw + canonical hash + inverse reconstruction
+PASS cleanstart-production-stdout.log: archived raw + canonical hash + inverse reconstruction
+PASS r1-library-probe.log: archived raw + canonical hash + inverse reconstruction
+READ-ONLY NORMALIZATION VERIFICATION: ALL SIX LOGS PASS
+VERIFY_EXIT=0

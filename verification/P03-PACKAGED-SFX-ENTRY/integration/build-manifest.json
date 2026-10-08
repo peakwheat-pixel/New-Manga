@@ -214,5 +214,21 @@
     "verification_command": "C:/Python314/python.exe verification/P03-PACKAGED-SFX-ENTRY/integration/normalize_gate_logs.py --verify-only",
     "read_only_verification_exit": 0,
     "verification_log": "integration/build-logs/08-gate-log-normalization-verify.log"
+  },
+  "pre_review_checks": {
+    "candidate_head": "2d114480e04528c3340247d41fe463c4c72c1b72",
+    "task_base_commit": "31abde9bf4b73aea2851931dcd48faa0f750b318",
+    "shell": "PowerShell 7.6.6",
+    "changed_path_count": 114,
+    "out_of_scope_path_count": 0,
+    "diff_check_exit": 0,
+    "traceability_normalization_exit": 0,
+    "gate_log_normalization_exit": 0,
+    "logs": [
+      "integration/build-logs/09-existing-normalization-readonly.log",
+      "integration/build-logs/10-gate-normalization-readonly.log",
+      "integration/build-logs/11-fixed-head-diff-check.log"
+    ],
+    "note": "Checks bind the committed candidate above. Repeat all fixed-head checks after committing this resume checkpoint and before dispatching formal DSH review."
   }
 }
