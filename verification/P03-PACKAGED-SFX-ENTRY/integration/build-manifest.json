@@ -768,5 +768,28 @@
       "integration/build-logs/21-finalfixedhead-scope-diff-check.log",
       "integration/build-logs/22-finalfixedhead-normalization.log"
     ]
+  },
+  "r4_closeout_candidate_checks": {
+    "candidate_head": "051c086879e52058be80a83bd0b01c3ce080b67e",
+    "task_base_commit": "31abde9bf4b73aea2851931dcd48faa0f750b318",
+    "changed_path_count": 144,
+    "out_of_scope_path_count": 0,
+    "diff_check_exit": 0,
+    "normalization_verifier_cases": 6,
+    "normalization_verifier_exit": 0,
+    "gate_log_normalization_cases": 6,
+    "gate_log_normalization_exit": 0,
+    "logs": [
+      {
+        "path": "integration/build-logs/26-r4-closeout-fixed-head-scope-diff-check.log",
+        "sha256": "84bbad899134db65b7b66fb182739a549b4683947132e748a1d65276c96f62d6",
+        "size_bytes": 11947
+      },
+      {
+        "path": "integration/build-logs/27-r4-closeout-fixed-head-normalization.log",
+        "sha256": "593e29b21544fdf87d408f3370608a58a68666c36f5ac52ad9e743f76030c2c9",
+        "size_bytes": 3257
+      }
+    ]
   }
 }

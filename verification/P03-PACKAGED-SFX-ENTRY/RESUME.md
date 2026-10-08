@@ -8,7 +8,7 @@
 - Task base=`31abde9bf4b73aea2851931dcd48faa0f750b318`；Owner delivery=`85482c5b001d452953c3ed797ce3c4ed64cae4e3`；Owner=Antigravity；非作者 Reviewer=DeepSeek Harness；Integrator=Codex。
 - `doc/tasks/P03.md` 与 manifest 将 source integration commit 记为 `d717c049a41544a6d592943a0b0fe1b76a41a050`。R4 报告指出 main 已于 review 前从 `423ea5f1` fast-forward 到该提交；该历史事实已如实记录。后续候选必须按项目 Gate 复审，不把历史 fast-forward 当成 Review。
 - DSH R4 session=`session-d27e8ea9-f983-4c1c-9258-a76cdaba0ac0`，base=`31abde9b…`，reviewed head=`d717c049…`，decision=`approved`，未解决 P0/P1=0/0；报告 SHA256=`3a389c2385f5fb7956636b3e94911875f80bc677a4c8673d4f8ec2c294fa755d`，raw JSONL SHA256=`39737ec10538469b8d8fa063b10d3e33f6be998b5fd7c61af0a69cd5d33ff8d3`。会话已挂载到本 worktree；DSH 自身 Git/pytest/Gate 仍为 `NOT_RUN`，Web/Desktop 可见性未核验。
-- DSH R4 的 R4-01..06 与 Codex C-004/C-005 已按 Task 逐项处置；R4-07 为不影响行为的 P4 cosmetic，明确延期。固定 head `d717c049` 的 snapshot 16/16、targeted tests 40/40、packaged Gate 28/28 均 EXIT=0；证据为 logs 21–25 与 `raw-finalhead-d717-gate-output.zip`，manifest 记录 SHA。
+- DSH R4 的 R4-01..06 与 Codex C-004/C-005 已按 Task 逐项处置；R4-07 为不影响行为的 P4 cosmetic，明确延期。固定 head `d717c049` 的 snapshot 16/16、targeted tests 40/40、packaged Gate 28/28 均 EXIT=0；证据为 logs 21–25 与 `raw-finalhead-d717-gate-output.zip`，manifest 记录 SHA。 在 R4 处置提交 `051c086879e52058be80a83bd0b01c3ce080b67e` 上又做了 base..HEAD 固定范围核验：144 paths、0 out-of-scope、diff-check EXIT=0、两项 normalization 各6/6，logs 26/27。R5 审查应以恢复时 worktree 的 live HEAD 为准；该提交之后只加入这两份证据和 manifest/RESUME 指针。
 - `P03` 仍为 `in_review`。R3-03 release-gate 第五 sidecar 遗漏继续登记给 P20，禁止在 P03 中修改范围外 runner 或历史 `main.rs` 注释。
 - 恢复链接：[P03 r3 Handoff](../../doc/handoffs/P03-PACKAGED-SFX-ENTRY-140a6686-r3.md)。
 
