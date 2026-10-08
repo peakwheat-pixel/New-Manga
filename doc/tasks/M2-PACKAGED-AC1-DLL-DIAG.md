@@ -2,7 +2,7 @@
 id: M2-PACKAGED-AC1-DLL-DIAG
 title: 新架构安装态 AC1 QtGui DLL 加载失败只读诊断
 kind: research
-status: in_review
+status: approved
 previous_status: in_progress
 blocker: dsh_exec_sandbox_and_unverified_dynamic_diagnosis
 approval: user_authorized_release_20261008
@@ -204,3 +204,9 @@ lab只使用自有复制/隔离数据，忽略其二进制fixture，不提交模
 补充验证冻结：允许Codex在本Task自有lab子进程内追加只读LoadLibrary/GetLastError候选DLL与导入/导出符号核对；只写自有verification日志/最小probe。DSH仍为诊断作者，须用实际日志更新矩阵，不改产品或共享依赖。
 
 对照冻结：仅在本Task新建独占复制fixture内改名icuuc.dll副本（保留原字节，不删除），以同一hash bridge/EOF/隔离data-root比较导入。原installer/原bundle/安装树/产品不变，不将该fixture操作当发行修复或完整Gate PASS。
+
+## Codex非作者审查批准（待文档集成）
+
+报告head=229c6c371d34234b65bbdd67fff73f341c60930f；Codex r3 approved，0P0/P1。
+TaskStatus=approved；AC5尚需文档集成和集成后独立检查，不自行done。原runner debt仍blocked。
+Root为固定产物/本机ICU同名遮蔽和20符号缺口；副本对照不是发行修复或完整Gate。

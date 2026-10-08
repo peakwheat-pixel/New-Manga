@@ -5,7 +5,7 @@ recipient: Codex（非作者 Reviewer / Integrator）
 base_commit: 9063c317937b86bed1f6ff3e2f2c5d224dc10553
 reviewed_draft_head: f0ad317c77c1ca35f156e8fd8c0d3f73502cdd50
 codex_evidence_head: a84980c394ac9c5380c87e097e081065818aa265
-delivery_head: null
+delivery_head: 229c6c371d34234b65bbdd67fff73f341c60930f
 status: in_review
 ---
 
@@ -87,3 +87,13 @@ DSH `delivery_head` 仍为 null（无 git 能力，不猜）；证据 head 固�
 - 权限/边界：支持 probe 只写自有 `lab/`、`raw/`；产品、原 bundle、installed tree 均未修改（E4 hash 一致佐证）。
 - 运行次数：反事实对照 1 轮 2 case；native 加载对照 2 组；静态符号 1 次（full exports）。
 - 质量判断：诊断级证据充分；**不**替代系统 Loader 全量事实、**不**替代 26 项 Gate。
+
+## 固定报告与审查接收（Codex追加）
+
+实际delivery_head=229c6c371d34234b65bbdd67fff73f341c60930f；证据head=a84980c3，支持代码/执行head见raw头。
+非作者Review=doc/reviews/M2-PACKAGED-AC1-DLL-DIAG-229c6c37-codex-r3.md，approved。
+独立verify_local_evidence实际EXIT0；自有Python内存compile与diff检查通过，无产品差量。
+已接收报告/矩阵及边界，等待Codex文档集成；diag done不等于runner解锁。
+下一步候选M2-PACKAGED-AC1-ICU-ISOLATION-FIX，Owner=Antigravity，Reviewer=DSH，Integrator=Codex，未释放。
+实际新base与完整实施指令将在主仓库verification/M2-PACKAGED-AC1-DLL-DIAG/NEXT_IMPLEMENTATION.md登记；
+branch/worktree待Codex创建并实测，不猜路径。不得自动开始packaging或依赖修改。
