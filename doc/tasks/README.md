@@ -1,6 +1,6 @@
 # Task 索引
 
-当前唯一 Active：[M2-RUNNER-SNAPSHOT-DEBT](M2-RUNNER-SNAPSHOT-DEBT.md) **ready / Codex**；非作者Reviewer=DeepSeek Harness，执行IDLE待认领。GC-2已done；完整授权见Plan/STATUS，冻结路径/Gate与可转发指令见Task。
+当前唯一 Active：[M2-RUNNER-SNAPSHOT-DEBT](M2-RUNNER-SNAPSHOT-DEBT.md) **in_progress / Codex**；非作者Reviewer=DeepSeek Harness，执行ACTIVE。GC-2已done；完整授权见Plan/STATUS，冻结路径/Gate与可转发指令见Task。
 
 
 > **2026-09-21 audit**：本索引与 TASK-001～065 文件是历史证据。当前分类、依赖和唯一下一任务见 [REBASELINE_PLAN](../REBASELINE_PLAN.md)，当前 checkpoint 见 [STATUS](../STATUS.md)。不要根据旧 frontmatter 的 `status: done` 单独判定完成。

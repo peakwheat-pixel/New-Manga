@@ -2,7 +2,7 @@
 id: M2-RUNNER-SNAPSHOT-DEBT
 title: 修复验收 runner 协议与生产命令快照漂移
 kind: maintenance
-status: ready
+status: in_progress
 approval: user_authorized_release_20261008
 suggested_owner: Codex
 owner: Codex
@@ -17,8 +17,8 @@ integration_commit: null
 
 # M2-RUNNER-SNAPSHOT-DEBT：runner 快照债务
 
-2026-10-08 用户明确要求释放，Owner=Codex。本轮只登记 ready 和同步恢复点；
-ExecutionState=IDLE / AWAITING_OWNER_CLAIM，尚未实现。非作者 Reviewer=DeepSeek Harness，
+2026-10-08 用户明确授权 Codex 认领并实施；TaskStatus=in_progress，
+ExecutionState=ACTIVE。Codex 已核对分配工作区、固定release与纯治理追加差量。非作者 Reviewer=DeepSeek Harness，
 Integrator=Codex；作者不得自己批准实现。唯一 Active Task 为本 Task。
 
 ## 来源、实际证据与冻结目标

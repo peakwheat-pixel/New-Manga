@@ -1,16 +1,16 @@
 # Project Rebaseline Plan
 
-## 2026-10-08 正式释放：M2-RUNNER-SNAPSHOT-DEBT ready
+## 2026-10-08 正式释放：M2-RUNNER-SNAPSHOT-DEBT in_progress
 
 唯一 Active Task=[M2-RUNNER-SNAPSHOT-DEBT](tasks/M2-RUNNER-SNAPSHOT-DEBT.md)，
-TaskStatus=ready，ExecutionState=IDLE / AWAITING_OWNER_CLAIM。用户明确释放，
+TaskStatus=in_progress，ExecutionState=ACTIVE。用户明确释放，
 Owner=Codex，非作者Reviewer=DeepSeek Harness，Integrator=Codex。
 依赖M2-DERIVED-GC-2 done@cea610ed；base=968c8f34601b72667831f1fd15bb20cd2c8f3cb7。
 branch=codex/M2-RUNNER-SNAPSHOT-DEBT；
 worktree=G:/CODEX/New Manga.worktrees/RUNNER-SNAPSHOT-DEBT-codex。
 只修m2ac5协议ping快照与M2-RC2生产命令快照及最小判别/证据隔离；
 允许路径与Gate冻结在Task，不改生产/wire/Schema/依赖、不弱化验收。
-本轮只释放，未开始实现；旧两个FAIL保持，AC与dev/packaged验收全部NOT_RUN。
+用户已授权Codex认领实施；先修复快照和输出隔离，再执行定向/dev/packaged验收。旧两个FAIL保持到新Gate闭合，当前验收NOT_RUN。
 [实际释放恢复点](../verification/M2-RUNNER-SNAPSHOT-DEBT/release.md)。
 下方GC-2记录及无Active/未释放debt描述是历史checkpoint，不覆盖本段。
 

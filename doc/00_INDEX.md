@@ -1,6 +1,6 @@
 # 项目文档索引与 Source of Truth
 
-当前唯一 Active：[M2-RUNNER-SNAPSHOT-DEBT](tasks/M2-RUNNER-SNAPSHOT-DEBT.md) **ready / Codex**；非作者Reviewer=DeepSeek Harness，执行IDLE待认领。只释放未实施，旧FAIL保持；[恢复点](../verification/M2-RUNNER-SNAPSHOT-DEBT/release.md)。GC-2 done@cea610ed。
+当前唯一 Active：[M2-RUNNER-SNAPSHOT-DEBT](tasks/M2-RUNNER-SNAPSHOT-DEBT.md) **in_progress / Codex**；非作者Reviewer=DeepSeek Harness，执行ACTIVE。已认领实施，旧FAIL保持；[恢复点](../verification/M2-RUNNER-SNAPSHOT-DEBT/release.md)。GC-2 done@cea610ed。
 
 
 当前全量盘点：2026-10-07，审计输入 `main@32f9b932`。[REBASELINE 审计报告与下一步派发指令](../verification/REBASELINE-20261007/REPORT.md)；[全部 190 任务节点的台账与流程图](../verification/REBASELINE-20261007/TASK_GRAPH.md)；[完整 Git/Owner/Reviewer/worktree 参数](../verification/REBASELINE-20261007/inventory.json)。当前无 Active、无 released；正式授权仍由 REBASELINE_PLAN / STATUS 决定，下面旧日期正文只作历史记录。
