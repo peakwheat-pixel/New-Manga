@@ -2,7 +2,9 @@
 id: M2-PACKAGED-AC1-DLL-DIAG
 title: 新架构安装态 AC1 QtGui DLL 加载失败只读诊断
 kind: research
-status: in_progress
+status: blocked
+previous_status: in_progress
+blocker: dsh_exec_sandbox_and_unverified_dynamic_diagnosis
 approval: user_authorized_release_20261008
 suggested_owner: DeepSeek Harness
 owner: DeepSeek Harness
@@ -145,3 +147,10 @@ Owner将clean fast-forward到本认领提交，再执行真实DSH；实际start_
 - 保留：r1 原始最终回答与 `raw/exec-20261008-dsh-notrun.log` 原文未改动。
 - 交付仍**未提交**（无 git），delivery_head 未固定；新 head 与独立验证由 Codex 记录。
   未改 Plan/STATUS/索引，未改 src/apps/tests/packaging，未加框架依赖，未置 done，未解除 runner debt。
+
+## Codex自动派发收口（尚未完成诊断）
+
+真实DSH两轮CLI EXIT0，session=session-7de56368-5e9b-44ed-9e2d-0c288fdc67ff；draft=f0ad317c，返修=d30066917759b62133840ac6767c7ef67153be06。
+Codex r1 changes_requested安全问题已返修，r2固定head静态核对；动态运行NOT_RUN，TaskStatus=blocked、previous=in_progress、ExecutionState=CHECKPOINTED。
+Owner报告/probe在分配worktree；主线仅同步治理/报告/Review，probe未集成也未运行批准。原runner debt不解锁。
+下一步为同Task补隔离加载实测，不释放未证明范围的生产修复。
