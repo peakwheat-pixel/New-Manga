@@ -1,6 +1,6 @@
 # 项目文档索引与 Source of Truth
 
-当前 Active / released Task=`[M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD](tasks/M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD.md)`，ready / IDLE，Owner=Antigravity、Reviewer=DSH、Integrator=Codex。基于 Runner DSH r4 deferred R-001 冻结；恢复点和允许路径见 [STATUS](STATUS.md) 与 [Task](tasks/M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD.md)。最近完成=`M2-RUNNER-SNAPSHOT-DEBT done@integration 73588624`；证据见 [Runner Handoff](handoffs/M2-RUNNER-SNAPSHOT-DEBT-3d532c1f.md)、[DSH r4 Review](reviews/M2-RUNNER-SNAPSHOT-DEBT-3d532c1f-dsh-r4.md) 与 [集成验证](../verification/M2-RUNNER-SNAPSHOT-DEBT/integration-validation.log)。R-003 仍未释放。
+当前 Active Task=`[M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD](tasks/M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD.md)`，`changes_requested / REVISION_ACTIVE`，Owner=Antigravity、非作者 Reviewer=DSH、Integrator=Codex。DSH r1 固定审查 head=`0ea16b832dcf32297d8c73df2ccdcf764c694368`，P1/P2 修订项与恢复点见 [STATUS](STATUS.md)、[Task](tasks/M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD.md) 及 DSH reviewer worktree 报告。最近完成=`M2-RUNNER-SNAPSHOT-DEBT done@integration 73588624`；证据见 [Runner Handoff](handoffs/M2-RUNNER-SNAPSHOT-DEBT-3d532c1f.md)、[DSH r4 Review](reviews/M2-RUNNER-SNAPSHOT-DEBT-3d532c1f-dsh-r4.md) 与 [集成验证](../verification/M2-RUNNER-SNAPSHOT-DEBT/integration-validation.log)。R-003 仍未释放。
 
 全任务盘点与 inventory 下方段落是其各自审计时的历史快照，不反映当前总数或授权状态；以本页首段、[Plan](REBASELINE_PLAN.md) 与 [STATUS](STATUS.md) 为当前事实。
 
