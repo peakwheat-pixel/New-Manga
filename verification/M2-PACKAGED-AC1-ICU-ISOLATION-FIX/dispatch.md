@@ -36,3 +36,15 @@ Owner只写自己的Task/production allowed_paths/verification/Handoff；Codex�
 - DSH CLI `0.1.7-rc.2`; probe `dsh headless` returned `收到`; independent fixed-head review r1 now running against code=aa099f2a013408bf53c3466ab8361bc028289743 and evidence/Handoff docs checkpoint=46f50a097d25a1893dd1f43b0a38479952242161. DSH has read-only instructions and is asked to output Review Markdown only.
 - Explicit review concern: builder logs record command-time `HEAD=df824182...` before production fix commit, while build-fingerprint binds `source_head=aa099f2a013408bf53c3466ab8361bc028289743` afterward. DSH to verify byte-equivalent source/claim and classify any provenance gap.
 - No production merge/integration yet. DSH decision pending.
+
+
+## 2026-10-08 DSH r1 Review / changes_requested
+
+- Reviewer=DeepSeek Harness（非作者），session=session-4655cd71-226a-4eec-91a7-78dad7e84fab；真实 headless Review 已成功返回，session 已挂载到 New Manga workspace。桌面可见性待用户下次启动核对。
+- reviewed_head=aa099f2a013408bf53c3466ab8361bc028289743；evidence/Handoff checkpoint=46f50a097d25a1893dd1f43b0a38479952242161；decision=changes_requested。
+- P1 R-001：Gate JSON installer SHA a17a9708… 与 fingerprint/交付 installer f76b91d6… 不同；f76b91d6 只剩两行无结果日志。
+- P1 R-002：Sidecar/NSIS/Dev/Packaged 日志 HEAD=df824182，source input 字节与后续 aa099f2a 无法证明一致。
+- P2 R-003：PE 扫描脚本/原始 artefact 缺失，closure-matrix.json 链接断裂。P2 R-004：spec 以名称做来源/深度无关的全局 ICU 移除，与冻结 Task 禁止项冲突。
+- P3 R-005/R-006/R-007：spec 断言死代码、报告/日志的计时/PID/版本/hash口径不一致、System32 ICU 运行期依赖/Windows基线未记录。
+- DSH 未执行产品/build/Gate 命令；以上 PASS 仅引用提交内证据。完整 Review 原文在 review-dsh-r1.md。
+- Rework branch/worktree 起点仍为 agent/antigravity/M2-PACKAGED-AC1-ICU-ISOLATION-FIX @ 46f50a097d25a1893dd1f43b0a38479952242161，clean；Codex准备 change-request-r1.md，待用同一 Antigravity conversation 续接。

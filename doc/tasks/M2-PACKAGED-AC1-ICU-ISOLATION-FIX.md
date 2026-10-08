@@ -2,7 +2,7 @@
 id: M2-PACKAGED-AC1-ICU-ISOLATION-FIX
 title: 安装态 Qt 与 ICU78 依赖闭包隔离修复
 kind: bugfix
-status: ready
+status: changes_requested
 approval: user_authorized_release_20261008
 suggested_owner: Antigravity
 owner: Antigravity
@@ -13,7 +13,12 @@ base_commit: 5a72db9e3c5778ce4700b7d404250853e474c5de
 branch: agent/antigravity/M2-PACKAGED-AC1-ICU-ISOLATION-FIX
 worktree: G:/CODEX/New Manga.worktrees/PACKAGED-AC1-ICU-ISOLATION-FIX-antigravity
 allocated_head: 5a72db9e3c5778ce4700b7d404250853e474c5de
-execution_state: IDLE
+start_head: df824182e813fc6d9045872da51d263f28db87f0
+implementation_head: aa099f2a013408bf53c3466ab8361bc028289743
+evidence_head: 46f50a097d25a1893dd1f43b0a38479952242161
+reviewed_head: aa099f2a013408bf53c3466ab8361bc028289743
+review_report: ../../verification/M2-PACKAGED-AC1-ICU-ISOLATION-FIX/review-dsh-r1.md
+execution_state: CHECKPOINTED
 integration_commit: null
 allowed_paths:
   - packaging/m2ac5/**
@@ -44,6 +49,18 @@ allowed_paths:
 - [ ] AC-5：新安装副本完整26项packaged Gate全PASS；CS-L1响应minor1.6、请求minor3兼容；两轮AC1完成、重启新PID、summary/reader恢复、PNG digest一致。旧FAIL不回填。
 - [ ] AC-6：用户源文件、人工修改、Lock、current/pinned Revision、Managed Copy及恢复能力保护；只写自有隔离fixture/输出，运行后无自身sidecar残留。
 - [ ] AC-7：固定实现head、逐项结果及Handoff齐全；真实非作者DSH approved后由Codex集成并验证，才进入done。
+
+## DSH Review r1：changes_requested
+
+固定审查输入：base=5a72db9e3c5778ce4700b7d404250853e474c5de、reviewed_head=aa099f2a013408bf53c3466ab8361bc028289743、证据/Handoff checkpoint=46f50a097d25a1893dd1f43b0a38479952242161。完整报告：[review-dsh-r1.md](../../verification/M2-PACKAGED-AC1-ICU-ISOLATION-FIX/review-dsh-r1.md)。
+
+- P1 R-001：26项 packaged Gate JSON 的 installer SHA=a17a9708…，与交付 fingerprint SHA=f76b91d6… 不同；后者无完整 Gate 结果日志。
+- P1 R-002：构建/Gate 日志记录 HEAD=df824182，修复当时未提交；fingerprint 声明 source_head=aa099f2a，输入字节相同无法由证据确认。
+- P2 R-003/R-004：412 PE 扫描没有脚本/原始输出，closure-matrix.json 引用断链；spec 按名称/深度全局删除 ICU，不能证明保留未知消费者。
+- P3 R-005/R-006/R-007：spec 断言不可达且文档名称不符；报告数字/CS-E2 hash 比对表述与日志/runner不符；System32 ICU 运行期依赖及OS基线未记录。
+
+Decision=changes_requested；AC-5 对交付 installer 为 BLOCKED，AC-3 来源绑定 FAIL，AC-1 关键扫描 artefact NOT_RUN。现有 PASS 只适用于提交内各自记录的那次运行，DSH未现场重跑。禁止集成或标记Task done；修订仍受原 allowed_paths 限制。
+
 
 ## 允许修改范围
 
@@ -86,14 +103,14 @@ M2-RUNNER-SNAPSHOT-DEBT是关联blocked Task，不是假定done的依赖；其�
 原构建source_head=cfb5d2eecc4d8ab7a3159cdbb1d5812547bb5cd2；原installer SHA256=1cecca95d25439fca682cbe4336123d3b3352db229dd58c4e7d724b4d6c6ccb8，589904619 bytes。
 原packaged20PASS/1FAIL/5NOT_RUN；修复须全新完整26项，不能以启动对照替代。
 候选base2c8e3e5902c1fbc9d1ad228ec4fc4fe491b7d41e至实际base只有Plan/STATUS和诊断准备/checkpoint文档差量。
-尚无本Task blocker；消费者需求UNKNOWN为首先待查事项，出现超范围需求时停止并登记。
+当前阻塞为DSH r1的R-001/R-002 P1及R-003/R-004；消费者需求仍需以可复核artefact澄清。超范围需求停止并交Codex/用户裁决。
 
 ## 交付与运行记录
 
-- Handoff：尚无；使用doc/templates/HANDOFF.md，引用固定代码head与逐项AC证据。
-- Review：尚无；实际外部DSH非作者审查，不以Codex子代理代替DSH。
-- 实际产品测试：NOT_RUN；本轮仅治理释放。
-- 2026-10-08 Codex实测创建独立branch/worktree，初始HEAD=5a72db9e3c5778ce4700b7d404250853e474c5de、clean、common-dir正确。
+- Handoff：Owner checkpoint=46f50a097d25a1893dd1f43b0a38479952242161，位于指定 Antigravity worktree；引用代码head=aa099f2a013408bf53c3466ab8361bc028289743。
+- Review：真实外部 DSH r1=changes_requested；完整报告见 [review-dsh-r1.md](../../verification/M2-PACKAGED-AC1-ICU-ISOLATION-FIX/review-dsh-r1.md)，session=session-4655cd71-226a-4eec-91a7-78dad7e84fab。
+- 实际产品测试：Owner提交内记录 Sidecar/NSIS EXIT 0、Dev 10/10+13/13、packaged 26/26；但 packaged JSON installer hash 与 fingerprint 不同，构建时 HEAD 与 source_head 不一致；不得据此宣称交付产物 Gate 完成。DSH未现场重跑。
+- 2026-10-08 Codex复核：Owner分支仍在 46f50a097d25a1893dd1f43b0a38479952242161，clean、common-dir正确；下一修订须从该实际HEAD继续，原 Task base保持不变。
 - [实际释放恢复点与完整Owner指令](../../verification/M2-PACKAGED-AC1-ICU-ISOLATION-FIX/release.md)：由Codex在release提交后追加；Owner读取主仓同路径。
-- ready / IDLE；Codex串行登记认领后Owner才改in_progress。未启动生产实现。
+- 当前 changes_requested / CHECKPOINTED；未集成。由Antigravity在同一Task与分支修订，先固定新代码commit，再重建并验证；不得使用未提交输入绑定产物。
 - 集成后下一步回M2-RUNNER-SNAPSHOT-DEBT完整fresh验收/独立审查/集成，不能自动把原blocked变done。

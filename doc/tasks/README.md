@@ -1,6 +1,6 @@
 # Task 索引
 
-当前唯一Active Task：[M2-PACKAGED-AC1-ICU-ISOLATION-FIX](M2-PACKAGED-AC1-ICU-ISOLATION-FIX.md)处于in_review / DSH审查中；Owner=Antigravity、Integrator=Codex，固定代码head=aa099f2a，尚未集成。下方旧状态为历史。
+当前唯一Active Task：[M2-PACKAGED-AC1-ICU-ISOLATION-FIX](M2-PACKAGED-AC1-ICU-ISOLATION-FIX.md)处于changes_requested；Owner=Antigravity、Reviewer=DSH、Integrator=Codex，原代码head=aa099f2a，尚未集成。下方旧状态为历史。
 
 
 > **2026-09-21 audit**：本索引与 TASK-001～065 文件是历史证据。当前分类、依赖和唯一下一任务见 [REBASELINE_PLAN](../REBASELINE_PLAN.md)，当前 checkpoint 见 [STATUS](../STATUS.md)。不要根据旧 frontmatter 的 `status: done` 单独判定完成。

@@ -1,6 +1,6 @@
 # 项目文档索引与 Source of Truth
 
-当前唯一Active Task处于 in_review / DSH独立审查中：[M2-PACKAGED-AC1-ICU-ISOLATION-FIX](tasks/M2-PACKAGED-AC1-ICU-ISOLATION-FIX.md)，Owner=Antigravity、Integrator=Codex；代码head=aa099f2a，集成待Review。runner debt仍blocked。详见REBASELINE_PLAN/STATUS最近checkpoint。
+当前唯一Active Task处于 changes_requested：[M2-PACKAGED-AC1-ICU-ISOLATION-FIX](tasks/M2-PACKAGED-AC1-ICU-ISOLATION-FIX.md)，Owner=Antigravity、Reviewer=DSH、Integrator=Codex；原代码head=aa099f2a 未集成，R1 findings 待修。runner debt仍blocked。详见REBASELINE_PLAN/STATUS最近checkpoint。
 
 
 当前全量盘点：2026-10-07，审计输入 `main@32f9b932`。[REBASELINE 审计报告与下一步派发指令](../verification/REBASELINE-20261007/REPORT.md)；[全部 190 任务节点的台账与流程图](../verification/REBASELINE-20261007/TASK_GRAPH.md)；[完整 Git/Owner/Reviewer/worktree 参数](../verification/REBASELINE-20261007/inventory.json)。当前无 Active、无 released；正式授权仍由 REBASELINE_PLAN / STATUS 决定，下面旧日期正文只作历史记录。
