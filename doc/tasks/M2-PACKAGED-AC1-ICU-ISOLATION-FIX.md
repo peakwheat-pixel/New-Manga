@@ -12,7 +12,11 @@ depends_on: [M2-PACKAGED-AC1-DLL-DIAG, M2-DERIVED-GC-2]
 base_commit: 5a72db9e3c5778ce4700b7d404250853e474c5de
 branch: agent/antigravity/M2-PACKAGED-AC1-ICU-ISOLATION-FIX
 worktree: G:/CODEX/New Manga.worktrees/PACKAGED-AC1-ICU-ISOLATION-FIX-antigravity
+start_head: df824182e813fc6d9045872da51d263f28db87f0
 allocated_head: 5a72db9e3c5778ce4700b7d404250853e474c5de
+implementation_head: aa099f2a013408bf53c3466ab8361bc028289743
+gate_evidence: verification/M2-PACKAGED-AC1-ICU-ISOLATION-FIX/REPORT.md
+handoff_doc: doc/handoffs/M2-PACKAGED-AC1-ICU-ISOLATION-FIX-aa099f2a.md
 execution_state: CHECKPOINTED
 integration_commit: null
 allowed_paths:
@@ -37,7 +41,7 @@ allowed_paths:
 
 ## Acceptance Criteria
 
-- [x] AC-1：列出实际5入口产物的ICU78消费者、普通导入/导出、同名解析和加载闭包矩阵；每项证据或UNKNOWN，未知不得靠全局移除解决。（达成：详见 verification/M2-PACKAGED-AC1-ICU-ISOLATION-FIX/icu-closure-matrix.json 及 REPORT.md，412个PE二进制导入扫描与构建环境全量扫描证实5入口均非ICU78消费者）
+- [x] AC-1：列出实际5入口产物的ICU78消费者、普通导入/导出、同名解析和加载闭包矩阵；每项证据或UNKNOWN，未知不得靠全局移除解决。（达成：详见 verification/M2-PACKAGED-AC1-ICU-ISOLATION-FIX/icu-closure-matrix.json、closure-matrix.json 及 REPORT.md，412个PE二进制导入扫描与构建环境全量扫描证实5入口均非ICU78消费者）
 - [x] AC-2：仅打包范围内最小修复；新鲜产物在隔离/purged PATH下Qt6Core/Qt6Gui、acceptance_bridge真实加载成功，ICU78实际消费者仍正常；留原失败与修复后对照。（达成：修改仅 packaging/m2ac5/**，acceptance_bridge 在隔离环境下 EXIT 0 / 1.01s，对照基线 EXIT 1 / 0.8s ImportError）
 - [x] AC-3：fresh Sidecar五入口和NSIS构建成功，实际source_head、命令/解释器、产物hash/大小、EXIT/耗时绑定。不能用skip-existing替代fresh构建。（达成：fresh Sidecar EXIT 0 / 368.6s，fresh NSIS EXIT 0 / 340.0s，产物指纹见 build-fingerprint.json）
 - [x] AC-4：冻结dev完整10项Gate及13项probe通过；15 production commands、7 probe commands严格核对，不降低阈值。（达成：run_e2e.py 完整 10/10 Gate PASS，13/13 probe 场景 PASS，EXIT 0 / 26.8s）
@@ -88,8 +92,10 @@ M2-RUNNER-SNAPSHOT-DEBT是关联blocked Task，仅用于本Task验证runner复�
 
 ## 交付与运行记录
 
-- Handoff：见 doc/handoffs/M2-PACKAGED-AC1-ICU-ISOLATION-FIX-*.md。
+- Handoff：见 [M2-PACKAGED-AC1-ICU-ISOLATION-FIX-aa099f2a.md](../handoffs/M2-PACKAGED-AC1-ICU-ISOLATION-FIX-aa099f2a.md)。
 - Review：待真实外部 DSH 非作者审查。
 - 实际产品测试：Dev Gate 10/10 + 13/13 PASS；Packaged Gate 26/26 PASS。
 - 2026-10-08 Antigravity 完成闭包分析、最小打包修复、fresh 构建与全量双 Gate 验收。
-- status: in_review / ExecutionState: CHECKPOINTED。待 DSH 独立审查。
+- start_head: df824182e813fc6d9045872da51d263f28db87f0
+- implementation_head: aa099f2a013408bf53c3466ab8361bc028289743
+- status: in_review / ExecutionState: CHECKPOINTED。待 DSH 独立审查与 Codex 集成。
