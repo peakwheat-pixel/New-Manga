@@ -21,13 +21,14 @@ for rel in ["_internal/PySide6/Qt6Core.dll", "_internal/PySide6/Qt6Gui.dll"]:
         candidate = next((d / name for d in dirs if (d / name).is_file()), None)
         edge = {"dll": name, "candidate": str(candidate) if candidate else None}
         if candidate:
-            exports = pefile.PE(str(candidate), fast_load=True)
+            exports = pefile.PE(str(candidate), fast_load=True, max_symbol_exports=100000)
             exports.parse_data_directories(directories=[pefile.DIRECTORY_ENTRY["IMAGE_DIRECTORY_ENTRY_EXPORT"]])
             symbols = getattr(exports, "DIRECTORY_ENTRY_EXPORT", None)
             names = {s.name for s in symbols.symbols if s.name} if symbols else set()
             ordinals = {s.ordinal for s in symbols.symbols} if symbols else set()
             missing = [i.name.decode("ascii") if i.name else "ordinal:" + str(i.ordinal) for i in desc.imports if (i.name not in names if i.name else i.ordinal not in ordinals)]
-            edge.update(sha256=hashlib.sha256(candidate.read_bytes()).hexdigest(), imported=len(desc.imports), missing_symbols=missing)
+            assert symbols is None or len(names) == symbols.struct.NumberOfNames
+            edge.update(exported_names=len(names), sha256=hashlib.sha256(candidate.read_bytes()).hexdigest(), imported=len(desc.imports), missing_symbols=missing)
             exports.close()
         row["dependencies"].append(edge)
     binary.close()

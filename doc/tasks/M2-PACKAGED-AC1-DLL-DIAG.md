@@ -167,3 +167,5 @@ lab只使用自有复制/隔离数据，忽略其二进制fixture，不提交模
 本轮固定probe head=d30066917759b62133840ac6767c7ef67153be06；恢复Owner HEAD=db65b6cf已clean实测。
 
 补充验证冻结：允许Codex在本Task自有lab子进程内追加只读LoadLibrary/GetLastError候选DLL与导入/导出符号核对；只写自有verification日志/最小probe。DSH仍为诊断作者，须用实际日志更新矩阵，不改产品或共享依赖。
+
+对照冻结：仅在本Task新建独占复制fixture内改名icuuc.dll副本（保留原字节，不删除），以同一hash bridge/EOF/隔离data-root比较导入。原installer/原bundle/安装树/产品不变，不将该fixture操作当发行修复或完整Gate PASS。
