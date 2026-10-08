@@ -1,0 +1,44 @@
+{
+  "task": "M2-PACKAGED-AC1-ICU-ISOLATION-FIX",
+  "source_head": "4499217d7b2249da16d5dbf27a3219a43876aac7",
+  "build_timestamp": "2026-10-08T13:02:32",
+  "installer": {
+    "path": "apps/desktop/src-tauri/target/release/bundle/nsis/m2rc1-desktop_0.1.0_x64-setup.exe",
+    "size": 579525817,
+    "sha256": "f2a4e2e7e92f083739bb92d2055539ea859461991b43559c3fe1f759b2c195ae"
+  },
+  "sidecar_entries": {
+    "acceptance_bridge.exe": {
+      "path": "apps/desktop/src-tauri/target/core-sidecar/core-sidecar/acceptance_bridge.exe",
+      "size": 68530186,
+      "sha256": "9e4a0068e153e376c02bf802435e9dbffe7442b014fee7e420197e50e4d7eae8"
+    },
+    "catalog_loader.exe": {
+      "path": "apps/desktop/src-tauri/target/core-sidecar/core-sidecar/catalog_loader.exe",
+      "size": 1824326,
+      "sha256": "f0a59794fb6c6beefa49305506ec0e97b2e31adf4edf78c56a3b0f151c67bf6f"
+    },
+    "core_service.exe": {
+      "path": "apps/desktop/src-tauri/target/core-sidecar/core-sidecar/core_service.exe",
+      "size": 68542970,
+      "sha256": "7a1a78525dae14ac862e2da518fc493c7993b0ffbbe953cebd42b5823d70e10a"
+    },
+    "host_bridge.exe": {
+      "path": "apps/desktop/src-tauri/target/core-sidecar/core-sidecar/host_bridge.exe",
+      "size": 1826431,
+      "sha256": "6ca28abaf9ec0d1ba4e21a237b7d733f5c72b8d0fa4831e3051cf69efea346a2"
+    },
+    "sfx_detect_probe.exe": {
+      "path": "apps/desktop/src-tauri/target/core-sidecar/core-sidecar/sfx_detect_probe.exe",
+      "size": 67902901,
+      "sha256": "f9b31287136e44262c37ce342ee663c0210a6a33090ba67533c3c0b40aaa9456"
+    }
+  },
+  "build_environment": {
+    "python": "Python 3.12.3",
+    "pyinstaller": "6.22.3",
+    "node": "v24.15.0",
+    "rustc": "1.98.1",
+    "cargo": "1.98.1"
+  }
+}

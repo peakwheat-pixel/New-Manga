@@ -1,0 +1,71 @@
+COMMAND: G:\CODEX\New Manga.task-envs\T1.1.1-impl-py312\Scripts\python.exe G:\CODEX\New Manga.worktrees\PACKAGED-AC1-ICU-ISOLATION-FIX-antigravity\verification\M2-PACKAGED-AC1-ICU-ISOLATION-FIX\run_e2e.py --exe G:\CODEX\New Manga.worktrees\PACKAGED-AC1-ICU-ISOLATION-FIX-antigravity\apps\desktop\src-tauri\target\release\m2rc1-desktop.exe --skip-build --output-dir G:\CODEX\New Manga.worktrees\PACKAGED-AC1-ICU-ISOLATION-FIX-antigravity\verification\M2-PACKAGED-AC1-ICU-ISOLATION-FIX\raw\dev
+GIT_HEAD: 4499217d7b2249da16d5dbf27a3219a43876aac7
+PYTHON_INTERPRETER: G:\CODEX\New Manga.task-envs\T1.1.1-impl-py312\Scripts\python.exe (Python 3.12.3)
+START_TIME: 2026-10-08 13:03:07
+
+=== 0. environment ===
+{
+  "python": "Python 3.12.3",
+  "cargo": "cargo 1.98.1 (797e8a9bc 2026-08-05)",
+  "rustc": "rustc 1.98.1 (48a229cea 2026-09-01)",
+  "node": "v24.15.0",
+  "npm": "12.0.1"
+}
+
+=== 1. synthetic lab ===
+lab ready: C:\Users\49745\AppData\Local\Temp\m2rc2-lab-yil9joy6
+
+=== 2. catalog seeding (real loader entry point) ===
+catalog loader exit=0 db=C:\Users\49745\AppData\Local\Temp\m2rc2-lab-yil9joy6\catalog.sqlite
+
+=== 3. sidecar import isolation (headless, F-05) ===
+PASS: 10 project modules, all whitelisted
+
+=== 4. desktop runtime build ===
+exe: G:\CODEX\New Manga.worktrees\PACKAGED-AC1-ICU-ISOLATION-FIX-antigravity\apps\desktop\src-tauri\target\release\m2rc1-desktop.exe
+
+=== 5. PROBE phase (E2E matrix through the real sidecar) ===
+  [runtime] [m2rc2-allowlist] probe:issue_resource_url,revoke_ref,revoke_resource_refs,probe_config,probe_write_results,probe_exit,probe_issue_url
+  [runtime] [m2rc1-title] M2-RC1 resource channel runtime
+  [runtime] [m2rc1-title] M2-RC1 resource channel runtime
+  [runtime] [m2rc1-title] M2-RC1 resource channel runtime
+  [runtime] [1008/130316.049:ERROR:ui\gfx\win\window_impl.cc:172] Failed to unregister class Chrome_WidgetWin_0. Error = 1412
+probe phase: exit_code=0 elapsed=7.1s
+E-00-probe-mode-detected                   PASS
+E-01-issue-fetch-digest                    PASS
+E-02-img-render                            PASS
+E-03-unknown-id                            PASS
+E-04-revoke-after-cached-fetch             PASS
+E-05-expired-ttl                           PASS
+E-06-remount-fresh-references              PASS
+E-07-per-reference-first-byte-p95          PASS
+E-08-boundary-256mib                       PASS
+E-09-over-limit-typed                      PASS
+D-01-register-catalog-denied               PASS
+D-02-ttl-override-inert                    PASS
+D-03-probe-issue-allowed-in-probe-mode     PASS
+summary: {'PASS': 13}
+PASS: probe allowlist exactly ['issue_resource_url', 'revoke_ref', 'revoke_resource_refs', 'probe_config', 'probe_write_results', 'probe_exit', 'probe_issue_url']
+PASS: probe: 9 project modules, all whitelisted
+
+=== 6. INTERACTIVE phase (production-surface facts; the in-page IP/IA ===
+
+===    matrix is NOT machine-verified here �� R2-03, see gate name) ===
+PASS: production allowlist exactly ['issue_resource_url', 'revoke_ref', 'revoke_resource_refs', 'core_ping', 'library_list_books', 'settings_get', 'settings_update_section', 'set_region_type', 'list_regions', 'list_region_revisions', 'restore_region_revision', 'rerender_page', 'resolve_page_resource', 'list_chapters', 'list_chapter_pages']; process stayed alive through the 10s watch; no probe results written; the in-page IP/IA matrix itself is NOT machine-verified (R2-03)
+PASS: interactive: 9 project modules, all whitelisted
+
+=== 7. gate ===
+environment                        PASS
+lab                                PASS
+catalog-seeding                    PASS
+sidecar-import-isolation           PASS
+runtime-build                      PASS
+probe-phase                        PASS
+probe-allowlist-announcement       PASS
+sidecar-module-dump-probe          PASS
+interactive-production-surface     PASS
+sidecar-module-dump-interactive    PASS
+GATE PASS: all phases green
+END_TIME: 2026-10-08 13:03:26
+EXIT: 0
+ELAPSED_SECONDS: 19.3714139
