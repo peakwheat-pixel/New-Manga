@@ -22,6 +22,9 @@ evidence_commit: ce5ff3fc21bcba082b995ea716a983d2fd4c6a89
 review_base_commit: 2b780120d1eb94f93afadf073790f65899a618e6
 review_report: doc/reviews/M2-RUNNER-SNAPSHOT-DEBT-3d532c1f-dsh-r4.md
 handoff_doc: doc/handoffs/M2-RUNNER-SNAPSHOT-DEBT-3d532c1f.md
+review_decision: approved
+reviewed_head: 5c2d047804eb4a802c04e53b5e8e5e5459570b24
+review_session_id: session-1aa0514a-fb63-474e-8911-1cf78821df49
 ---
 
 # M2-RUNNER-SNAPSHOT-DEBT：runner 快照债务
@@ -196,4 +199,14 @@ TaskStatus=`in_review`，previous_status=`in_progress`，ExecutionState=`CHECKPO
 
 前述三次 Tauri 生成文件检查记录在 `dev-generated-tauri-hash-check.log`、`dev-generated-tauri-diff-cleanup.log`、`nsis-generated-tauri-cleanup.log`；生成前后已核对 tracked 文件内容与固定 head 一致，最终相关路径无差量。一次最初 NSIS wrapper 参数错误的尝试在启动构建前 EXIT=1，记录于 `nsis-build.log`，不作为 Gate；有效构建为 `nsis-build-r1.log`。PyInstaller 有可选 `torch.utils.tensorboard`、`torchvision.image/_C` 模块收集警告但命令完整 EXIT=0；Dev 日志中的 Chromium class unregister 错误消息未改变 Gate 结果。已知边界：Dev in-page IP/IA matrix 仍为 R2-03、未机器验证；本地 host simulation 不替代干净 Windows 分发验收。
 
-AC1–AC5 当前均为 PASS；AC6 仍待真实 DSH r4 非作者审查和 Codex 集成后检查。Review packet=`doc/handoffs/M2-RUNNER-SNAPSHOT-DEBT-3d532c1f.md`；拟存原始 Review=`doc/reviews/M2-RUNNER-SNAPSHOT-DEBT-3d532c1f-dsh-r4.md`。不得因 AC4 PASS 将 Task 提前标 done；旧 FAIL 保留为历史记录。
+AC1–AC5 当前均为 PASS；AC6 仍待 Codex 集成与集成后检查。真实 DSH r4 在 `reviewed_head=5c2d047804eb4a802c04e53b5e8e5e5459570b24` 给出 `approved`，CLI EXIT=0、session=`session-1aa0514a-fb63-474e-8911-1cf78821df49`；DSH 本轮现场 Windows Gate=`NOT_RUN`，使用已入库实际运行日志评估，未伪称重跑。原始报告=`doc/reviews/M2-RUNNER-SNAPSHOT-DEBT-3d532c1f-dsh-r4.md`；dispatch/session 与集成前核验见 `verification/M2-RUNNER-SNAPSHOT-DEBT/raw/resume/dsh-r4-dispatch.md` 和 `dsh-r4-integration-precheck.log`。
+
+### DSH r4 Findings disposition（不扩大实现范围）
+
+- R-001 P2（`--output-dir` 缺省仍指向历史 raw）：本轮所有实际运行显式使用隔离目录，历史文件未覆盖；作为非阻断开放风险 deferred，不在本 Task 改为 required，避免扩大冻结范围。后续任何复跑继续显式传 `--output-dir`。
+- R-002 P2（缺少范围/空白核验日志及两份 docs-only commit 的代码恒等证据）：已由 `dsh-r4-integration-precheck.log` 关闭。实际 `review_base..reviewed_head` 路径全集、allowlist 判定、`git diff --check` EXIT=0 均入库；`3d532c1f..5c2d0478` 与 `ce5ff3fc..5c2d0478` 对两处 runner 的 diff 均为空；src/apps/tests/contracts/dependency forbidden path 为 0。
+- R-003 P2（Packaged 装载 Gate 仅断言 4 个 sidecar、fingerprint 有 5 个）：基线已有、非本轮引入且超出冻结范围，deferred 为后续验收债务；当前不声称第 5 个入口已由 Packaged Gate 覆盖。
+- R-004 P2（Handoff 变更行数疑似不一致）：未复现；Git 实际 `2b780120..3d532c1f` 对两处 runner 的统计为 `27 insertions / 13 deletions`，与 Handoff 一致，核验记录见 `dsh-r4-integration-precheck.log`。Reviewer 的 +26/−12 计算不采纳，Review 原文不修改。
+- R-005 P2 judgement（`global RAW, LAB` 模块状态）：按 Task 的最小 runner 结构要求接受此判断项，不增加抽象或本轮返工。
+
+DSH workspace 注册已在 `C:/Users/49745/.dsh/storages/workspace.json` 核实指向精确 linked worktree；DSH desktop 可见性未现场验证，记录 `web_visibility=unverified`。AC6 仍待 Codex 集成与集成后检查，当前不得标 `done`；旧 FAIL 保留为历史记录。

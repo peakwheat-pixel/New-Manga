@@ -1,8 +1,8 @@
 # 项目文档索引与 Source of Truth
 
-当前唯一 Active Task=`M2-RUNNER-SNAPSHOT-DEBT`（Codex / DSH Reviewer），状态=`in_review`；AC4 已在代码 head `3d532c1f99e49da703d2076bd67d46b710866637` 完成 fresh Dev 与 Packaged Gate，等待真实 DSH r4、再由 Codex 集成。ICU 前置已 done@`65ba30144048a0b8daae22205c01f8049b44b8a7`。见 [STATUS](STATUS.md)、[Plan](REBASELINE_PLAN.md)、[Runner Handoff](handoffs/M2-RUNNER-SNAPSHOT-DEBT-3d532c1f.md) 与 [AC4 原始证据](../verification/M2-RUNNER-SNAPSHOT-DEBT/raw/resume/)。下方旧指针均为历史记录。
+当前唯一 Active Task=`M2-RUNNER-SNAPSHOT-DEBT`（Codex / DSH Reviewer），状态=`in_review`；DSH r4 对固定 reviewed head=`5c2d0478` 批准，Codex 集成与 AC6 集成后检查待完成。AC4 fresh Gate 绑定代码 head `3d532c1f99e49da703d2076bd67d46b710866637`。ICU 前置已 done@`65ba30144048a0b8daae22205c01f8049b44b8a7`。见 [STATUS](STATUS.md)、[Plan](REBASELINE_PLAN.md)、[Runner Handoff](handoffs/M2-RUNNER-SNAPSHOT-DEBT-3d532c1f.md)、[DSH r4 Review](reviews/M2-RUNNER-SNAPSHOT-DEBT-3d532c1f-dsh-r4.md) 与 [AC4 原始证据](../verification/M2-RUNNER-SNAPSHOT-DEBT/raw/resume/)。下方旧指针均为历史记录。
 
-当前唯一Active Task处于 changes_requested：[M2-PACKAGED-AC1-ICU-ISOLATION-FIX](tasks/M2-PACKAGED-AC1-ICU-ISOLATION-FIX.md)，Owner=Antigravity、Reviewer=DSH、Integrator=Codex；原代码head=aa099f2a 未集成，R1 findings 待修。runner debt仍blocked。详见REBASELINE_PLAN/STATUS最近checkpoint。
+此前 `M2-PACKAGED-AC1-ICU-ISOLATION-FIX` 的 changes_requested 与 `M2-RUNNER-SNAPSHOT-DEBT` blocked 均为历史 checkpoint；ICU Task 已完成集成，Runner 当前 DSH r4 approved、等待 Codex AC6 集成。以本页首段、[Plan](REBASELINE_PLAN.md) 与 [STATUS](STATUS.md) 为当前事实。
 
 
 当前全量盘点：2026-10-07，审计输入 `main@32f9b932`。[REBASELINE 审计报告与下一步派发指令](../verification/REBASELINE-20261007/REPORT.md)；[全部 190 任务节点的台账与流程图](../verification/REBASELINE-20261007/TASK_GRAPH.md)；[完整 Git/Owner/Reviewer/worktree 参数](../verification/REBASELINE-20261007/inventory.json)。当前无 Active、无 released；正式授权仍由 REBASELINE_PLAN / STATUS 决定，下面旧日期正文只作历史记录。

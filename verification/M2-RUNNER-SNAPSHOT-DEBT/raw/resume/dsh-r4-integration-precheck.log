@@ -1,0 +1,54 @@
+HOST=Windows; SHELL=PowerShell 7.6.6; CWD=G:\CODEX\New Manga.worktrees\RUNNER-SNAPSHOT-DEBT-codex
+review_base=2b780120d1eb94f93afadf073790f65899a618e6
+code_delivery_head=3d532c1f99e49da703d2076bd67d46b710866637
+reviewed_head=5c2d047804eb4a802c04e53b5e8e5e5459570b24
+current_HEAD=5c2d047804eb4a802c04e53b5e8e5e5459570b24
+COMMAND=git diff --name-only review_base reviewed_head
+doc/00_INDEX.md
+doc/REBASELINE_PLAN.md
+doc/STATUS.md
+doc/handoffs/M2-RUNNER-SNAPSHOT-DEBT-3d532c1f.md
+doc/tasks/M2-RUNNER-SNAPSHOT-DEBT.md
+packaging/m2ac5/run_clean_start_e2e.py
+verification/M2-RC2/run_e2e.py
+verification/M2-RUNNER-SNAPSHOT-DEBT/raw/resume/build-fingerprint.json
+verification/M2-RUNNER-SNAPSHOT-DEBT/raw/resume/check-snapshots.log
+verification/M2-RUNNER-SNAPSHOT-DEBT/raw/resume/dev-generated-tauri-diff-cleanup.log
+verification/M2-RUNNER-SNAPSHOT-DEBT/raw/resume/dev-generated-tauri-hash-check.log
+verification/M2-RUNNER-SNAPSHOT-DEBT/raw/resume/dev-runner.log
+verification/M2-RUNNER-SNAPSHOT-DEBT/raw/resume/dev/e2e-cargo-build.log
+verification/M2-RUNNER-SNAPSHOT-DEBT/raw/resume/dev/e2e-catalog-loader.log
+verification/M2-RUNNER-SNAPSHOT-DEBT/raw/resume/dev/e2e-environment.json
+verification/M2-RUNNER-SNAPSHOT-DEBT/raw/resume/dev/e2e-gate.json
+verification/M2-RUNNER-SNAPSHOT-DEBT/raw/resume/dev/e2e-probe-results.json
+verification/M2-RUNNER-SNAPSHOT-DEBT/raw/resume/dev/e2e-sidecar-import-isolation.log
+verification/M2-RUNNER-SNAPSHOT-DEBT/raw/resume/dev/e2e-sidecar-modules-probe.json
+verification/M2-RUNNER-SNAPSHOT-DEBT/raw/resume/nsis-build-r1.log
+verification/M2-RUNNER-SNAPSHOT-DEBT/raw/resume/nsis-build.log
+verification/M2-RUNNER-SNAPSHOT-DEBT/raw/resume/nsis-generated-tauri-cleanup.log
+verification/M2-RUNNER-SNAPSHOT-DEBT/raw/resume/packaged-runner.log
+verification/M2-RUNNER-SNAPSHOT-DEBT/raw/resume/packaged/cleanstart-ac1-catalog-initialize.log
+verification/M2-RUNNER-SNAPSHOT-DEBT/raw/resume/packaged/cleanstart-ac1-run1-stdout.log
+verification/M2-RUNNER-SNAPSHOT-DEBT/raw/resume/packaged/cleanstart-ac1-run2-stdout.log
+verification/M2-RUNNER-SNAPSHOT-DEBT/raw/resume/packaged/cleanstart-gate.json
+verification/M2-RUNNER-SNAPSHOT-DEBT/raw/resume/packaged/cleanstart-probe-stdout.log
+verification/M2-RUNNER-SNAPSHOT-DEBT/raw/resume/packaged/cleanstart-production-stdout.log
+verification/M2-RUNNER-SNAPSHOT-DEBT/raw/resume/packaged/r1-library-probe.log
+verification/M2-RUNNER-SNAPSHOT-DEBT/raw/resume/sidecar-build.log
+EXIT=0
+COMMAND=check reviewed range paths against frozen allowlist
+RESULT=PASS; disallowed_paths=0
+COMMAND=git diff --check review_base reviewed_head
+EXIT=0
+COMMAND=git diff --stat review_base code_delivery_head -- two runner paths
+ packaging/m2ac5/run_clean_start_e2e.py | 19 +++++++++----------
+ verification/M2-RC2/run_e2e.py         | 21 ++++++++++++++++++---
+ 2 files changed, 27 insertions(+), 13 deletions(-)
+EXIT=0
+COMMAND=git diff --name-only code_delivery_head reviewed_head -- two runner paths
+EXIT=0
+COMMAND=git diff --name-only evidence_commit reviewed_head -- two runner paths
+EXIT=0
+COMMAND=git diff --name-only review_base code_delivery_head -- forbidden product/contracts/dependency paths
+RESULT=PASS; forbidden_paths=0
+OVERALL_EXIT=0

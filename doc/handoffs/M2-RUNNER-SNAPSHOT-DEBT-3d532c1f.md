@@ -1,7 +1,7 @@
 ---
 task_id: M2-RUNNER-SNAPSHOT-DEBT
 author: Codex
-recipient: DeepSeek Harness
+recipient: Codex（Integrator）
 base_commit: 968c8f34601b72667831f1fd15bb20cd2c8f3cb7
 delivery_head: 3d532c1f99e49da703d2076bd67d46b710866637
 evidence_commit: ce5ff3fc21bcba082b995ea716a983d2fd4c6a89
@@ -33,28 +33,32 @@ CS-L1 保留 minor-3 请求作为 backwards-compatibility probe，但严格要�
 
 ## 接收方式
 
-Reviewer 请从 Owner worktree 只读审查：
+DSH 已从 Owner worktree 完成只读审查：
 
 - branch=`codex/M2-RUNNER-SNAPSHOT-DEBT`
 - worktree=`G:/CODEX/New Manga.worktrees/RUNNER-SNAPSHOT-DEBT-codex`
 - common-dir=`G:/CODEX/New Manga/.git`
 - review base=`2b780120d1eb94f93afadf073790f65899a618e6`
 - code delivery head=`3d532c1f99e49da703d2076bd67d46b710866637`
+- reviewed head=`5c2d047804eb4a802c04e53b5e8e5e5459570b24`
+- DSH r4=`approved`，session=`session-1aa0514a-fb63-474e-8911-1cf78821df49`，CLI EXIT=0；原始报告与 JSONL、stderr、exit 及 workspace dispatch 记录见 `doc/reviews/M2-RUNNER-SNAPSHOT-DEBT-3d532c1f-dsh-r4.md` 和 `verification/M2-RUNNER-SNAPSHOT-DEBT/raw/resume/dsh-r4-*`。
 
-请完整检查上述两处 runner diff、对应 Task AC、review base 到交付 head 的实际路径范围、完整 Gate 原始日志和 SHA 指纹。不要修改 worktree。结论须覆盖 Architecture 与 Verification、P0/P1/P2 findings（无发现也明确写覆盖与风险）、实际运行证据适用的固定 head，并保存至 `doc/reviews/M2-RUNNER-SNAPSHOT-DEBT-3d532c1f-dsh-r4.md`。历史 r1/r3 报告保持原字节。
+Reviewer 未在自己的环境重跑 Windows Gate（NOT_RUN），批准基于已入库 producer logs；批准仅适用于固定 reviewed head，不替代 Codex 集成 Gate。DSH Review 原文列有 4 项非阻断 P2 和 1 个 judgement：R-002 范围/diff-check 日志、doc-only 代码恒等已由 `raw/resume/dsh-r4-integration-precheck.log` 关闭；R-004 的统计疑点未复现，Git 证实 Handoff `+27/−13` 正确；R-001 输出目录默认、R-003 第五入口断言继续 deferred；R-005 judgement 接受且不改代码。DSH Web/desktop session visibility=`unverified`，workspace.json 的精确 worktree 注册已核实。
+
+Codex 作为 Integrator 下一步应：在主线只做 fast-forward 集成，保留其他 worktree 的工作；集成后核对 Task merge 范围及两处 runner blob 与已审查代码一致，`git diff --check`，用固定代码 Gate 已通过的证据引用关系做适用性核查，并至少复跑最小 snapshot oracle。补入 `dsh-r4-integration-precheck.log` 的范围/空白检查输出和完整 findings disposition；只在 AC6 检查闭合后标 Task done。Reviewer 报告、旧历史 FAIL 及当前四项遗留限制均不改写。
 
 ## 下一任务建议
 
-- Task ID / 标题：`M2-RUNNER-SNAPSHOT-DEBT` 非作者 Review 阶段
-- 推荐 Agent / Reviewer：DeepSeek Harness（Reviewer，非作者）
-- 推荐原因与前置依赖：AC4 已在 fresh 固定 head 通过，需独立审查代码与证据后才能交 Codex 集成；ICU blocker Task 已集成完成。
-- Recovery point：唯一仓库 `G:/CODEX/New Manga`；branch/worktree 如上；review base=`2b780120d1eb94f93afadf073790f65899a618e6`；代码 head=`3d532c1f99e49da703d2076bd67d46b710866637`。
-- 允许修改路径：Review 报告与 dispatch/session 证据，仅由 Reviewer/Codex 按协议写入；DSH 审查本身只读。
-- 禁止范围与新增授权条件：不得改 runner/产品/契约/依赖，不得合并；发现需修复时交 Codex 按 Task 变更路径处理并重新固定 head。
-- 交付物：固定 `reviewed_head` 的真实 DSH Review 与原始 CLI/session 证据。
-- 验证命令、环境与完成 Gate：遵循 `doc/09_COLLABORATION.md` §6.1，从上述 linked worktree 根目录运行 `dsh --profile headless --json`，记录 JSONL session、stdout/stderr 与 EXIT；只有批准及条件闭合后进入 Codex 集成。
-- 可直接转发给 Agent 的指令：请只读审查 `2b780120d1eb94f93afadf073790f65899a618e6..3d532c1f99e49da703d2076bd67d46b710866637`，覆盖两处 runner 文件、AC 与全部 `raw/resume/` 证据。按仓库 Review 模板产出 Architecture + Verification 判断及 P0/P1/P2 findings，固定 reviewed head；不修改文件，不把前置 ICU Gate 当成本 Task AC4 证据，不把历史 FAIL 改写为 PASS。
+- Task ID / 标题：`M2-RUNNER-SNAPSHOT-DEBT` Codex 集成 Gate
+- 推荐 Agent / Reviewer：Codex（Integrator；原非作者 Reviewer=DeepSeek Harness 已批准）
+- 推荐原因与前置依赖：r4=`approved`、0 P0/P1；review 要求的真实范围/空白与 doc-only 差量检查已保存，进入唯一剩余的 AC6 集成阶段。
+- Recovery point：唯一仓库 `G:/CODEX/New Manga`；branch=`codex/M2-RUNNER-SNAPSHOT-DEBT`；worktree=`G:/CODEX/New Manga.worktrees/RUNNER-SNAPSHOT-DEBT-codex`；review base=`2b780120d1eb94f93afadf073790f65899a618e6`；reviewed head=`5c2d047804eb4a802c04e53b5e8e5e5459570b24`；代码 delivery=`3d532c1f99e49da703d2076bd67d46b710866637`。
+- 允许修改路径：review/dispatch/precheck 证据与 Task/Handoff/Plan/Status 治理记录；集成时只合并该 branch 的冻结两处 runner 修改和本 Task 证据。
+- 禁止范围与新增授权条件：不改产品 src/apps/tests、Schema/依赖/IPC，不扩大到 packaged 第五入口 assertion；不触碰主工作区 Qoder dirty 文件；不 reset/clean/stash。
+- 交付物：merge commit、集成后最小 Gate/范围验证日志、Task AC6 disposition 和 done 状态（通过后）。
+- 验证命令、环境与完成 Gate：应用 `raw/resume/dsh-r4-integration-precheck.log` 中的实际 `git diff --stat`/`git diff --check`；合并后核对 runner blob 等于 reviewed head，复跑 Windows snapshot oracle；其它 fresh Dev/NSIS/Packaged Gate仍绑定 `3d532c1f`，只有证明代码字节一致才可引用，不重建 installer。
+- 可直接转发给 Agent 的指令：无须转发，Codex 当前已授权担任 Integrator；按 Task 与 DSH r4 报告逐项完成合并前核验及 AC6 集成后检查。R-001/R-003 保留为非阻断 deferred，R-005 接受；不要因 DSH approved 单独标 done。
 
 ## 风险与遗留
 
-AC1–AC5 当前已满足；AC6（DSH Review + Codex integration/post-merge check）仍 pending，故 Task 保持 `in_review`，不能标 `done`。已披露限制：Dev in-page matrix R2-03 未机器验证；host simulation 不替代干净 Windows 分发 Gate；PyInstaller 可选模块警告仍可见。旧 packaged AC1 QtGui DLL FAIL 作为历史原文保留，不回填为 PASS；本次新鲜 packaged Gate 在 ICU 修复集成后重新完成 26/26 PASS。
+AC1–AC5 当前已满足；DSH r4 对固定 reviewed head 批准，AC6 的 Codex integration/post-merge check 仍 pending，故 Task 保持 `in_review`，不能标 `done`。已披露限制：R-001 默认 raw 输出目录的潜在覆盖、R-003 第五 sidecar 未被 packaged assertion 验证、Dev in-page matrix R2-03 未机器验证；host simulation 不替代干净 Windows 分发 Gate；PyInstaller 可选模块警告仍可见。旧 packaged AC1 QtGui DLL FAIL 作为历史原文保留，不回填为 PASS；本次新鲜 packaged Gate 在 ICU 修复集成后重新完成 26/26 PASS。
