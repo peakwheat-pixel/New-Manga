@@ -165,3 +165,5 @@ lab只使用自有复制/隔离数据，忽略其二进制fixture，不提交模
 清除继承的M2配置/Python路径，stdin EOF，超时只终止自己启动的进程树。
 产品/打包配置/共享环境仍只读；诊断允许本机执行不等于生产修复授权。
 本轮固定probe head=d30066917759b62133840ac6767c7ef67153be06；恢复Owner HEAD=db65b6cf已clean实测。
+
+补充验证冻结：允许Codex在本Task自有lab子进程内追加只读LoadLibrary/GetLastError候选DLL与导入/导出符号核对；只写自有verification日志/最小probe。DSH仍为诊断作者，须用实际日志更新矩阵，不改产品或共享依赖。
