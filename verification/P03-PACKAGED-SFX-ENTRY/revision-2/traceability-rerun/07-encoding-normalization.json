@@ -1,12 +1,13 @@
 {
-  "schema_version": "2.0",
+  "schema_version": "2.1",
   "title": "Traceability Logs Canonical UTF-8 Normalization and Formal Bijective Verification",
-  "timestamp_iso": "2026-10-08T19:26:40.635463+00:00",
+  "timestamp_iso": "2026-10-08T19:33:00+00:00",
   "files_count": 6,
   "all_assertions_passed": true,
   "all_reconstructions_verified": true,
   "grammar_specification": {
     "description": "Formal grammar defining the mixed-encoding body byte stream and its bijective mapping to canonical UTF-8",
+    "encoding_mixed_explanation": "Observed objective token structure in raw captures: UTF-8 header and footer enclosing a body consisting of [c, 0x00] (UTF-16LE ASCII units) and newline sequence 0D 0A 00 0D 0A 00. Mixed encoding directly stems from PowerShell 5.1 Out-File and Tee-Object usage; specific internal mechanism producing the expanded newline sequence is unverified.",
     "segments": {
       "header": "UTF-8-SIG bytes from start to separator =====================================\\r\\n",
       "body": "Token stream between header separator and footer separator =====================================\\r\\nEndTime:",
@@ -23,16 +24,25 @@
       "NEWLINE_TOKEN": {
         "raw_byte_pattern": "0x0D 0x0A 0x00 0x0D 0x0A 0x00 (hex: 0d 0a 00 0d 0a 00)",
         "raw_byte_length": 6,
-        "interpretation": "Splitline-crlf expansion: UTF-16LE CR (0x0D 0x00) and LF (0x0A 0x00) separated by UTF-8 splitlines re-encoding into \\r\\n\\x00\\r\\n\\x00. Under raw UTF-16LE decoding, this sequence corresponds to U+0A0D U+0D00 U+000A",
+        "interpretation": "Expanded newline sequence in raw captures (under raw UTF-16LE decoding interpreted as U+0A0D U+0D00 U+000A)",
         "forward_canonical_mapping": "\\r\\n\\r\\n (hex: 0d 0a 0d 0a, CRLF CRLF, 4 bytes)",
         "inverse_mapping": "b'\\r\\n\\x00\\r\\n\\x00' (6 bytes)"
+      },
+      "TRAILING_SPACE_TOKEN": {
+        "raw_byte_pattern": "0x20 0x00 0x0D 0x0A 0x00 0x0D 0x0A 0x00 (hex: 20 00 0d 0a 00 0d 0a 00)",
+        "raw_byte_length": 8,
+        "interpretation": "UTF-16LE ASCII space (0x20 0x00) immediately preceding a NEWLINE_TOKEN, representing trailing whitespace at line end in raw output stream",
+        "forward_canonical_mapping": "U+2420 SYMBOL FOR SPACE (␠, UTF-8 hex: e2 90 a0) followed by \\r\\n\\r\\n",
+        "inverse_mapping": "b' \\x00\\r\\n\\x00\\r\\n\\x00' (8 bytes)",
+        "escape_character_assertion": "U+2420 does not appear anywhere in raw captured body text; bijective and unambiguous"
       }
     },
     "transform_properties": {
       "deterministic": true,
       "bijective": true,
       "information_loss": false,
-      "lossless_reconstruction_verified": true
+      "lossless_reconstruction_verified": true,
+      "git_whitespace_check_clean": true
     }
   },
   "files": [
@@ -61,15 +71,17 @@
         "body": {
           "start_byte": 366,
           "end_byte": 12526,
-          "raw_encoding": "utf-16le-ascii-with-splitline-crlf",
+          "raw_encoding": "mixed-utf16le-ascii-expanded-crlf",
           "canonical_encoding": "utf-8",
           "raw_body_bytes": 12160,
           "canonical_body_bytes": 6130,
           "token_statistics": {
             "char_tokens_count": 5930,
             "newline_tokens_count": 50,
+            "trailing_space_tokens_count": 0,
             "total_tokens": 5980
           },
+          "trailing_space_locations": null,
           "byte_transform": "bijective_token_mapping"
         },
         "footer": {
@@ -88,6 +100,7 @@
       },
       "assertions": {
         "nul_free": true,
+        "trailing_whitespace_free": true,
         "utf8_decodable": true,
         "header_record_present": true,
         "exit_zero_present": true,
@@ -122,15 +135,17 @@
         "body": {
           "start_byte": 309,
           "end_byte": 6099,
-          "raw_encoding": "utf-16le-ascii-with-splitline-crlf",
+          "raw_encoding": "mixed-utf16le-ascii-expanded-crlf",
           "canonical_encoding": "utf-8",
           "raw_body_bytes": 5790,
           "canonical_body_bytes": 2920,
           "token_statistics": {
             "char_tokens_count": 2820,
             "newline_tokens_count": 25,
+            "trailing_space_tokens_count": 0,
             "total_tokens": 2845
           },
+          "trailing_space_locations": null,
           "byte_transform": "bijective_token_mapping"
         },
         "footer": {
@@ -149,6 +164,7 @@
       },
       "assertions": {
         "nul_free": true,
+        "trailing_whitespace_free": true,
         "utf8_decodable": true,
         "header_record_present": true,
         "exit_zero_present": true,
@@ -168,8 +184,8 @@
       },
       "canonical": {
         "relative_path": "verification/P03-PACKAGED-SFX-ENTRY/revision-2/traceability-rerun/canonical-utf8/03-rerun-tauri-nsis-build.log",
-        "size_bytes": 7623,
-        "sha256": "a8b5bbe91a36804a79a48eefdca9d10f3cbc365b0c42379c91096f418d99e4a4",
+        "size_bytes": 7627,
+        "sha256": "eed0153fa9dc6a3b23c2a32c38cd9d7bb9a56fea62777f98d4dee3c070a6134d",
         "nul_bytes_count": 0
       },
       "segments": {
@@ -183,15 +199,28 @@
         "body": {
           "start_byte": 249,
           "end_byte": 14479,
-          "raw_encoding": "utf-16le-ascii-with-splitline-crlf",
+          "raw_encoding": "mixed-utf16le-ascii-expanded-crlf",
           "canonical_encoding": "utf-8",
           "raw_body_bytes": 14230,
-          "canonical_body_bytes": 7252,
+          "canonical_body_bytes": 7256,
           "token_statistics": {
-            "char_tokens_count": 6704,
+            "char_tokens_count": 6702,
             "newline_tokens_count": 137,
-            "total_tokens": 6841
+            "trailing_space_tokens_count": 2,
+            "total_tokens": 6839
           },
+          "trailing_space_locations": [
+            {
+              "raw_offset": 945,
+              "canonical_line": 19,
+              "context": "single space line between ndError and npm notice"
+            },
+            {
+              "raw_offset": 7043,
+              "canonical_line": 149,
+              "context": "trailing space after and in rustc compiler warning wrap"
+            }
+          ],
           "byte_transform": "bijective_token_mapping"
         },
         "footer": {
@@ -210,6 +239,7 @@
       },
       "assertions": {
         "nul_free": true,
+        "trailing_whitespace_free": true,
         "utf8_decodable": true,
         "header_record_present": true,
         "exit_zero_present": true,
@@ -244,15 +274,17 @@
         "body": {
           "start_byte": 350,
           "end_byte": 7820,
-          "raw_encoding": "utf-16le-ascii-with-splitline-crlf",
+          "raw_encoding": "mixed-utf16le-ascii-expanded-crlf",
           "canonical_encoding": "utf-8",
           "raw_body_bytes": 7470,
           "canonical_body_bytes": 3785,
           "token_statistics": {
             "char_tokens_count": 3585,
             "newline_tokens_count": 50,
+            "trailing_space_tokens_count": 0,
             "total_tokens": 3635
           },
+          "trailing_space_locations": null,
           "byte_transform": "bijective_token_mapping"
         },
         "footer": {
@@ -271,6 +303,7 @@
       },
       "assertions": {
         "nul_free": true,
+        "trailing_whitespace_free": true,
         "utf8_decodable": true,
         "header_record_present": true,
         "exit_zero_present": true,
@@ -312,8 +345,10 @@
           "token_statistics": {
             "char_tokens_count": 0,
             "newline_tokens_count": 0,
+            "trailing_space_tokens_count": 0,
             "total_tokens": 0
           },
+          "trailing_space_locations": null,
           "byte_transform": "identity"
         },
         "footer": {
@@ -332,6 +367,7 @@
       },
       "assertions": {
         "nul_free": true,
+        "trailing_whitespace_free": true,
         "utf8_decodable": true,
         "header_record_present": true,
         "exit_zero_present": true,
@@ -366,15 +402,17 @@
         "body": {
           "start_byte": 548,
           "end_byte": 10644,
-          "raw_encoding": "utf-16le-ascii-with-splitline-crlf",
+          "raw_encoding": "mixed-utf16le-ascii-expanded-crlf",
           "canonical_encoding": "utf-8",
           "raw_body_bytes": 10096,
           "canonical_body_bytes": 5100,
           "token_statistics": {
             "char_tokens_count": 4892,
             "newline_tokens_count": 52,
+            "trailing_space_tokens_count": 0,
             "total_tokens": 4944
           },
+          "trailing_space_locations": null,
           "byte_transform": "bijective_token_mapping"
         },
         "footer": {
@@ -393,6 +431,7 @@
       },
       "assertions": {
         "nul_free": true,
+        "trailing_whitespace_free": true,
         "utf8_decodable": true,
         "header_record_present": true,
         "exit_zero_present": true,

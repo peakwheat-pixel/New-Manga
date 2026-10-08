@@ -1,204 +1,157 @@
+"""
+Read-Only Verification Script for P03 Traceability Logs Normalization.
+
+This script strictly performs in-memory verification and assertions:
+- Does NOT create directories or write/modify any files on disk.
+- Asserts that all 6 canonical logs match in-memory formal grammar derivations bit-for-bit.
+- Asserts that canonical logs are NUL-free, decodable UTF-8, and free of trailing whitespace.
+- Performs inverse token mapping on canonical logs and asserts 100% bit-for-bit reconstruction of raw files.
+- Verifies that 07-encoding-normalization.json matches all computed hashes, sizes, and assertions.
+"""
+
 import os
 import glob
 import hashlib
 import json
-import datetime
+import sys
 
-base_dir = r"verification/P03-PACKAGED-SFX-ENTRY/revision-2/traceability-rerun"
-out_dir = os.path.join(base_dir, "canonical-utf8")
-os.makedirs(out_dir, exist_ok=True)
+def verify_all():
+    base_dir = os.path.dirname(os.path.abspath(__file__))
+    out_dir = os.path.join(base_dir, "canonical-utf8")
+    manifest_path = os.path.join(base_dir, "07-encoding-normalization.json")
 
-raw_files = sorted(glob.glob(os.path.join(base_dir, "*.log")))
-assert len(raw_files) == 6, f"Expected 6 log files, found {len(raw_files)}"
+    # Ensure required paths exist
+    assert os.path.isdir(out_dir), f"Directory missing: {out_dir}"
+    assert os.path.isfile(manifest_path), f"Manifest missing: {manifest_path}"
 
-sep_u8 = b"=====================================\r\n"
-footer_tag = b"=====================================\r\nEndTime:"
+    raw_files = sorted(glob.glob(os.path.join(base_dir, "*.log")))
+    assert len(raw_files) == 6, f"Expected 6 raw log files, found {len(raw_files)}"
 
-files_meta = []
+    sep_u8 = b"=====================================\r\n"
+    footer_tag = b"=====================================\r\nEndTime:"
+    ESCAPE_SPACE = "\u2420"  # U+2420 SYMBOL FOR SPACE (␠)
 
-for filepath in raw_files:
-    fname = os.path.basename(filepath)
-    with open(filepath, "rb") as f:
-        orig_bytes = f.read()
+    with open(manifest_path, "r", encoding="utf-8") as f:
+        manifest = json.load(f)
 
-    orig_sha256 = hashlib.sha256(orig_bytes).hexdigest()
-    orig_len = len(orig_bytes)
-    orig_nul_count = orig_bytes.count(b"\x00")
+    assert manifest.get("schema_version") == "2.1", "Expected manifest schema_version 2.1"
+    assert manifest.get("all_assertions_passed") is True
+    assert manifest.get("all_reconstructions_verified") is True
 
-    hdr_end = orig_bytes.find(sep_u8) + len(sep_u8)
-    footer_start = orig_bytes.find(footer_tag)
-    assert hdr_end > len(sep_u8), f"Invalid header in {fname}"
-    assert footer_start >= hdr_end, f"Invalid footer in {fname}"
+    manifest_file_map = {item["filename"]: item for item in manifest["files"]}
+    assert len(manifest_file_map) == 6, "Manifest must document all 6 files"
 
-    hdr_bytes = orig_bytes[:hdr_end]
-    body_bytes = orig_bytes[hdr_end:footer_start]
-    footer_bytes = orig_bytes[footer_start:]
+    print("=== P03 Traceability Logs Read-Only Verification ===")
 
-    token_stats = {
-        "char_tokens_count": 0,
-        "newline_tokens_count": 0,
-        "total_tokens": 0,
-    }
+    for raw_path in raw_files:
+        fname = os.path.basename(raw_path)
+        canon_path = os.path.join(out_dir, fname)
+        assert os.path.isfile(canon_path), f"Canonical file missing: {canon_path}"
 
-    if fname == "05-rerun-diff-check.log":
-        assert len(body_bytes) == 0, "05 should have empty body"
-        assert orig_nul_count == 0, "05 should have 0 NULs"
-        canonical_bytes = orig_bytes
-        reconstructed_bytes = orig_bytes
-    else:
-        # Tokenize body according to strict bijective grammar
-        idx = 0
-        canonical_body = bytearray()
-        while idx < len(body_bytes):
-            if body_bytes.startswith(b"\r\n\x00\r\n\x00", idx):
-                canonical_body.extend(b"\r\n\r\n")
-                token_stats["newline_tokens_count"] += 1
-                idx += 6
-            elif idx + 1 < len(body_bytes) and body_bytes[idx + 1] == 0:
-                c = body_bytes[idx]
-                assert c not in (ord("\r"), ord("\n")), f"Unexpected raw newline in {fname} at {idx}"
-                canonical_body.append(c)
-                token_stats["char_tokens_count"] += 1
-                idx += 2
-            else:
-                raise ValueError(f"Malformed byte at {idx} in {fname}: {body_bytes[idx:idx+10]!r}")
+        # 1. Read raw bytes
+        with open(raw_path, "rb") as f:
+            raw_bytes = f.read()
+        raw_sha256 = hashlib.sha256(raw_bytes).hexdigest()
+        raw_len = len(raw_bytes)
 
-        token_stats["total_tokens"] = token_stats["char_tokens_count"] + token_stats["newline_tokens_count"]
-        canonical_bytes = hdr_bytes + bytes(canonical_body) + footer_bytes
+        # 2. Read canonical bytes from disk
+        with open(canon_path, "rb") as f:
+            disk_canon_bytes = f.read()
+        disk_canon_sha256 = hashlib.sha256(disk_canon_bytes).hexdigest()
+        disk_canon_len = len(disk_canon_bytes)
 
-        # Inverse transform to prove bijectivity and zero information loss
-        recon_idx = 0
-        reconstructed_body = bytearray()
-        while recon_idx < len(canonical_body):
-            if canonical_body.startswith(b"\r\n\r\n", recon_idx):
-                reconstructed_body.extend(b"\r\n\x00\r\n\x00")
-                recon_idx += 4
-            else:
-                c = canonical_body[recon_idx]
-                reconstructed_body.extend([c, 0])
-                recon_idx += 1
+        # 3. Structural partition of raw file
+        hdr_end = raw_bytes.find(sep_u8) + len(sep_u8)
+        footer_start = raw_bytes.find(footer_tag)
+        assert hdr_end > len(sep_u8), f"{fname}: malformed header partition"
+        assert footer_start >= hdr_end, f"{fname}: malformed footer partition"
 
-        reconstructed_bytes = hdr_bytes + bytes(reconstructed_body) + footer_bytes
+        raw_hdr = raw_bytes[:hdr_end]
+        raw_body = raw_bytes[hdr_end:footer_start]
+        raw_footer = raw_bytes[footer_start:]
 
-    # Bit-for-bit assertion
-    assert reconstructed_bytes == orig_bytes, f"Reconstruction failed for {fname}"
+        # 4. In-memory derivation of expected canonical
+        if fname == "05-rerun-diff-check.log":
+            assert len(raw_body) == 0, f"{fname}: expected empty body"
+            expected_canon_bytes = raw_bytes
+        else:
+            idx = 0
+            expected_body_tokens = []
+            while idx < len(raw_body):
+                if raw_body.startswith(b" \x00\r\n\x00\r\n\x00", idx):
+                    expected_body_tokens.append(ESCAPE_SPACE + "\r\n\r\n")
+                    idx += 8
+                elif raw_body.startswith(b"\r\n\x00\r\n\x00", idx):
+                    expected_body_tokens.append("\r\n\r\n")
+                    idx += 6
+                elif idx + 1 < len(raw_body) and raw_body[idx + 1] == 0:
+                    c = chr(raw_body[idx])
+                    assert c not in ("\r", "\n"), f"{fname}: unexpected unescaped newline char at {idx}"
+                    expected_body_tokens.append(c)
+                    idx += 2
+                else:
+                    raise ValueError(f"{fname}: malformed byte at {idx}")
 
-    # Save canonical
-    out_path = os.path.join(out_dir, fname)
-    with open(out_path, "wb") as f:
-        f.write(canonical_bytes)
+            expected_body_text = "".join(expected_body_tokens)
+            expected_canon_text = raw_hdr.decode("utf-8-sig") + expected_body_text + raw_footer.decode("utf-8")
+            expected_canon_bytes = expected_canon_text.encode("utf-8-sig")
 
-    # Assertions on canonical
-    assert b"\x00" not in canonical_bytes, f"NUL detected in canonical {fname}"
-    canon_text = canonical_bytes.decode("utf-8")
-    assert "=== Traceability Execution Record ===" in canon_text, f"Missing header in {fname}"
-    assert "EXIT=0" in canon_text, f"Missing EXIT=0 in {fname}"
-    assert canon_text.strip().endswith("====================================="), f"Missing footer in {fname}"
+        # Assert disk canonical matches memory derivation bit-for-bit
+        assert disk_canon_bytes == expected_canon_bytes, f"{fname}: disk canonical diverges from formal grammar!"
 
-    canon_sha256 = hashlib.sha256(canonical_bytes).hexdigest()
-    canon_len = len(canonical_bytes)
-    canon_nul_count = canonical_bytes.count(b"\x00")
+        # 5. Quality assertions on canonical file
+        assert b"\x00" not in disk_canon_bytes, f"{fname}: NUL byte found in canonical output!"
+        canon_text = disk_canon_bytes.decode("utf-8-sig")
+        assert "=== Traceability Execution Record ===" in canon_text, f"{fname}: header record missing"
+        assert "EXIT=0" in canon_text, f"{fname}: EXIT=0 missing"
+        assert canon_text.strip().endswith("====================================="), f"{fname}: footer missing"
 
-    files_meta.append({
-        "filename": fname,
-        "original": {
-            "relative_path": os.path.relpath(filepath, ".").replace("\\", "/"),
-            "size_bytes": orig_len,
-            "sha256": orig_sha256,
-            "nul_bytes_count": orig_nul_count,
-        },
-        "canonical": {
-            "relative_path": os.path.relpath(out_path, ".").replace("\\", "/"),
-            "size_bytes": canon_len,
-            "sha256": canon_sha256,
-            "nul_bytes_count": canon_nul_count,
-        },
-        "segments": {
-            "header": {
-                "start_byte": 0,
-                "end_byte": hdr_end,
-                "raw_encoding": "utf-8-sig",
-                "canonical_encoding": "utf-8-sig",
-                "byte_transform": "identity",
-            },
-            "body": {
-                "start_byte": hdr_end,
-                "end_byte": footer_start,
-                "raw_encoding": "utf-16le-ascii-with-splitline-crlf" if len(body_bytes) > 0 else "empty",
-                "canonical_encoding": "utf-8" if len(body_bytes) > 0 else "empty",
-                "raw_body_bytes": len(body_bytes),
-                "canonical_body_bytes": len(canonical_bytes) - len(hdr_bytes) - len(footer_bytes),
-                "token_statistics": token_stats,
-                "byte_transform": "bijective_token_mapping" if len(body_bytes) > 0 else "identity",
-            },
-            "footer": {
-                "start_byte": footer_start,
-                "end_byte": orig_len,
-                "raw_encoding": "utf-8",
-                "canonical_encoding": "utf-8",
-                "byte_transform": "identity",
-            },
-        },
-        "reconstruction_verification": {
-            "reconstructed_matches_original_bit_for_bit": True,
-            "reconstructed_sha256": orig_sha256,
-            "reconstructed_size_bytes": orig_len,
-            "inverse_transform": "inverse_token_mapping" if len(body_bytes) > 0 else "identity",
-        },
-        "assertions": {
-            "nul_free": True,
-            "utf8_decodable": True,
-            "header_record_present": True,
-            "exit_zero_present": True,
-            "footer_delimiter_present": True,
-            "byte_copy_for_05": (canon_sha256 == orig_sha256) if fname == "05-rerun-diff-check.log" else None,
-            "reconstruction_verified": True,
-            "status": "PASS",
-        },
-    })
+        # Trailing whitespace check on all canonical lines
+        for line_no, line in enumerate(canon_text.splitlines(), start=1):
+            assert not line.endswith(" ") and not line.endswith("\t"), (
+                f"{fname}:{line_no}: trailing whitespace found in canonical line: {line!r}"
+            )
 
-full_manifest = {
-    "schema_version": "2.0",
-    "title": "Traceability Logs Canonical UTF-8 Normalization and Formal Bijective Verification",
-    "timestamp_iso": datetime.datetime.now(datetime.timezone.utc).isoformat(),
-    "files_count": len(files_meta),
-    "all_assertions_passed": True,
-    "all_reconstructions_verified": True,
-    "grammar_specification": {
-        "description": "Formal grammar defining the mixed-encoding body byte stream and its bijective mapping to canonical UTF-8",
-        "segments": {
-            "header": "UTF-8-SIG bytes from start to separator =====================================\\r\\n",
-            "body": "Token stream between header separator and footer separator =====================================\\r\\nEndTime:",
-            "footer": "UTF-8 bytes from footer separator to file EOF",
-        },
-        "tokens": {
-            "CHAR_TOKEN": {
-                "raw_byte_pattern": "[0x00-0x7F, 0x00] excluding CR/LF in byte 0",
-                "raw_byte_length": 2,
-                "interpretation": "Standard UTF-16LE encoding of single-byte ASCII characters",
-                "forward_canonical_mapping": "Single byte c (UTF-8 ASCII)",
-                "inverse_mapping": "bytes([c, 0])",
-            },
-            "NEWLINE_TOKEN": {
-                "raw_byte_pattern": "0x0D 0x0A 0x00 0x0D 0x0A 0x00 (hex: 0d 0a 00 0d 0a 00)",
-                "raw_byte_length": 6,
-                "interpretation": "Splitline-crlf expansion: UTF-16LE CR (0x0D 0x00) and LF (0x0A 0x00) separated by UTF-8 splitlines re-encoding into \\r\\n\\x00\\r\\n\\x00. Under raw UTF-16LE decoding, this sequence corresponds to U+0A0D U+0D00 U+000A",
-                "forward_canonical_mapping": "\\r\\n\\r\\n (hex: 0d 0a 0d 0a, CRLF CRLF, 4 bytes)",
-                "inverse_mapping": "b'\\r\\n\\x00\\r\\n\\x00' (6 bytes)",
-            },
-        },
-        "transform_properties": {
-            "deterministic": True,
-            "bijective": True,
-            "information_loss": False,
-            "lossless_reconstruction_verified": True,
-        },
-    },
-    "files": files_meta,
-}
+        # 6. Inverse transform: reconstruct raw bytes from canonical
+        if fname == "05-rerun-diff-check.log":
+            reconstructed_raw = disk_canon_bytes
+        else:
+            canon_hdr_end = disk_canon_bytes.find(sep_u8) + len(sep_u8)
+            canon_footer_start = disk_canon_bytes.find(footer_tag)
+            canon_body_text = disk_canon_bytes[canon_hdr_end:canon_footer_start].decode("utf-8")
 
-meta_path = os.path.join(base_dir, "07-encoding-normalization.json")
-with open(meta_path, "w", encoding="utf-8") as f:
-    json.dump(full_manifest, f, indent=2, ensure_ascii=False)
+            recon_idx = 0
+            recon_body = bytearray()
+            while recon_idx < len(canon_body_text):
+                if canon_body_text.startswith(ESCAPE_SPACE + "\r\n\r\n", recon_idx):
+                    recon_body.extend(b" \x00\r\n\x00\r\n\x00")
+                    recon_idx += len(ESCAPE_SPACE) + 4
+                elif canon_body_text.startswith("\r\n\r\n", recon_idx):
+                    recon_body.extend(b"\r\n\x00\r\n\x00")
+                    recon_idx += 4
+                else:
+                    c = ord(canon_body_text[recon_idx])
+                    recon_body.extend([c, 0])
+                    recon_idx += 1
 
-print("SUCCESS: 07-encoding-normalization.json generated and verified!")
+            reconstructed_raw = raw_hdr + bytes(recon_body) + raw_footer
+
+        assert reconstructed_raw == raw_bytes, f"{fname}: inverse reconstruction failed to match original bytes bit-for-bit!"
+
+        # 7. Validate manifest consistency
+        meta = manifest_file_map[fname]
+        assert meta["original"]["size_bytes"] == raw_len
+        assert meta["original"]["sha256"] == raw_sha256
+        assert meta["canonical"]["size_bytes"] == disk_canon_len
+        assert meta["canonical"]["sha256"] == disk_canon_sha256
+        assert meta["reconstruction_verification"]["reconstructed_matches_original_bit_for_bit"] is True
+
+        print(f"  [PASS] {fname}:")
+        print(f"         raw: {raw_len} B ({raw_sha256[:12]}...) | canon: {disk_canon_len} B ({disk_canon_sha256[:12]}...)")
+        print(f"         NUL-free: TRUE | trailing-whitespace-free: TRUE | bit-for-bit inverse reconstruction: MATCH")
+
+    print("\nALL 6 FILES VERIFIED READ-ONLY: Grammar, Hashes, Trailing Whitespace & Bijective Reconstruction 100% PASS.")
+    return 0
+
+if __name__ == "__main__":
+    sys.exit(verify_all())

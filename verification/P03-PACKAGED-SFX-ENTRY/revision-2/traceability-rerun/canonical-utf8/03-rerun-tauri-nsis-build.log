@@ -16,7 +16,7 @@ At line:1 char:1
 
     + FullyQualifiedErrorId : NativeCommandError
 
- 
+␠
 
 npm notice run tauri build --verbose
 
@@ -146,7 +146,7 @@ warning: associated function `spawn` is never used
 
 
 
-warning: methods `set_books`, `set_books_error`, `set_settings_result`, `set_retype_result`, `set_regions_result`, and 
+warning: methods `set_books`, `set_books_error`, `set_settings_result`, `set_retype_result`, `set_regions_result`, and␠
 
 `set_domain_result` are never used
 
