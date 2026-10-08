@@ -110,9 +110,9 @@ if __name__ == "__main__":
     p01 = (ROOT / "doc/tasks/P01.md").read_text(encoding="utf-8")
     p01_base = re.search(r"^base_commit: ([0-9a-f]{40})$", p01, re.M)
     assert p01_base, "P01 base_commit missing or invalid"
-    changed = git("diff", "--name-only", p01_base.group(1), "--", "src", "apps", "tests", "packaging")
+    changed = git("diff", "--name-only", f"{p01_base.group(1)}..HEAD", "--", "src", "apps", "tests", "packaging")
     assert not changed, f"P01 product/code paths changed since frozen base: {changed}"
-    subprocess.run(["git", "-C", str(ROOT), "diff", "--check", "--", "doc/REBASELINE_PLAN.md",
-                    "doc/STATUS.md", "doc/00_INDEX.md", "doc/12_ROADMAP.md"], check=True)
+    subprocess.run(["git", "-C", str(ROOT), "diff", "--check", f"{p01_base.group(1)}..HEAD", "--",
+                    "doc/REBASELINE_PLAN.md", "doc/STATUS.md", "doc/00_INDEX.md", "doc/12_ROADMAP.md"], check=True)
     print("PASS: zero production/code delta; governance whitespace check")
     print("Product tests/build/GUI: NOT_RUN (planning-only)")

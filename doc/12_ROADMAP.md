@@ -1,6 +1,6 @@
 # Roadmap
 
-当前工作：P08/P03=done；唯一Active Task=P01 `blocked`，Owner=Codex、Reviewer=DeepSeek Harness，base=`826bea12a132c5af2ac0cd1244d00e9170093c71`，branch=`agent/codex/P01-metadata-audit`。DSH R1未批准，恢复条件与报告见[P01 RESUME](../verification/P01/RESUME.md)。P03证据仍在[P03 RESUME](../verification/P03-PACKAGED-SFX-ENTRY/RESUME.md)。
+当前工作：P08/P03=done；唯一Active Task=P01 `blocked`，Owner=Codex、Reviewer=DeepSeek Harness，base=`826bea12a132c5af2ac0cd1244d00e9170093c71`，branch=`agent/codex/P01-metadata-audit`。DSH R1 findings已修订，当前候选fixed-head验证待执行；见[P01 RESUME](../verification/P01/RESUME.md)。P03证据仍在[P03 RESUME](../verification/P03-PACKAGED-SFX-ENTRY/RESUME.md)。
 
 ## 当前整体路线（权威候选与P01执行状态见Plan/Status）
 

@@ -1,0 +1,84 @@
+P01 R1 blocked checkpoint fixed-head verification
+CAPTURED_UTC=2026-10-08T23:01:33.270488+00:00
+CAPTURED_LOCAL=2026-10-09T07:01:33.270488+08:00
+SHELL=PowerShell 7.6.6
+PYTHON=3.14.6 (C:\Python314\python.exe)
+COMMAND=git version: git --version
+git version 2.52.0.windows.1
+EXIT=0
+COMMAND=git rev-parse HEAD: git rev-parse HEAD
+aaa27767f1ca8cd5014cda0796033b3f9268cf90
+EXIT=0
+COMMAND=git branch --show-current: git branch --show-current
+agent/codex/P01-metadata-audit
+EXIT=0
+COMMAND=git common-dir: git rev-parse --path-format=absolute --git-common-dir
+G:/CODEX/New Manga/.git
+EXIT=0
+COMMAND=git status --porcelain: git status --porcelain
+EXIT=0
+P01_WORKTREE_CLEAN=PASS
+P01_BRANCH=PASS
+P01_COMMON_DIR=PASS
+COMMAND=base ancestor: git merge-base --is-ancestor 826bea12a132c5af2ac0cd1244d00e9170093c71 aaa27767f1ca8cd5014cda0796033b3f9268cf90
+EXIT=0
+BASE_ANCESTOR=PASS
+COMMAND=fixed range paths: git diff --name-only 826bea12a132c5af2ac0cd1244d00e9170093c71..aaa27767f1ca8cd5014cda0796033b3f9268cf90
+doc/00_INDEX.md
+doc/12_ROADMAP.md
+doc/REBASELINE_PLAN.md
+doc/STATUS.md
+doc/handoffs/P01-9b124936.md
+doc/reviews/P01-6f24006c-dsh-r1.md
+doc/tasks/M2-DERIVED-GC-2.md
+doc/tasks/M2-PROD-DETECT-3.md
+doc/tasks/M2-SFX-SYNTH-BG-AUTO.md
+doc/tasks/P01.md
+doc/tasks/README.md
+verification/P01/NEXT-AUTOPROGRESS-PROMPT.md
+verification/P01/RESUME.md
+verification/P01/ac1-root-status.log
+verification/P01/ac7-candidate-check.log
+verification/P01/ac7-fixed-head-check.log
+verification/P01/ac7-preflight.log
+verification/P01/dsh-preflight-mount.json
+verification/P01/dsh-preflight-prompt.md
+verification/P01/dsh-preflight-version.txt
+verification/P01/dsh-preflight.exit
+verification/P01/dsh-preflight.stderr.log
+verification/P01/dsh-preflight.stdout.txt
+verification/P01/dsh-review-r1-session.json
+verification/P01/dsh-review-r1.exit
+verification/P01/dsh-review-r1.prompt.md
+verification/P01/metadata-audit.md
+verification/PROJECT-ROADMAP-20261008/RESUME.md
+verification/PROJECT-ROADMAP-20261008/ROADMAP.md
+verification/PROJECT-ROADMAP-20261008/verify_plan.py
+EXIT=0
+FIXED_RANGE_PATH_COUNT=30
+OUTSIDE_ALLOWED_COUNT=0
+ALLOWED_PATHS=PASS
+PRODUCT_PATH_COUNT=0
+NO_PRODUCT_DELTA=PASS
+COMMAND=git diff --check frozen base..HEAD: git diff --check 826bea12a132c5af2ac0cd1244d00e9170093c71..aaa27767f1ca8cd5014cda0796033b3f9268cf90
+EXIT=0
+RANGE_DIFF_CHECK=PASS
+COMMAND=route validator: C:\Python314\python.exe -B -X utf8 verification/PROJECT-ROADMAP-20261008/verify_plan.py
+Planning snapshot base=e4242ecd419eb0eea098d2f63b40f709aa5caeea; live HEAD=aaa27767f1ca8cd5014cda0796033b3f9268cf90
+PASS: 196 unique nodes, all classifications and dependency references
+PASS: 105 new architecture/governance integration records are audit-base ancestors
+PASS: 21 unique planned nodes and roadmap graphs have no dependency cycles
+PASS: delivery/navigation local links resolve
+PASS: zero production/code delta; governance whitespace check
+Product tests/build/GUI: NOT_RUN (planning-only)
+EXIT=0
+ROUTE_VALIDATOR=PASS
+COMMAND=R2 source Task unchanged from frozen base: git diff --quiet 826bea12a132c5af2ac0cd1244d00e9170093c71..aaa27767f1ca8cd5014cda0796033b3f9268cf90 -- doc/tasks/M2-SFX-ANNOTATE-R2.md
+EXIT=0
+R2_TASK_READ_ONLY=PASS
+ROOT_HEAD=714138de3da06013e3ea35395e0c11b3d15fc371
+ROOT_DIRTY_COUNT=24
+ROOT_PATH_SET_UNCHANGED=PASS
+ROOT_HEAD_EXPECTED=PASS
+FIXED_HEAD=aaa27767f1ca8cd5014cda0796033b3f9268cf90
+RESULT=PASS

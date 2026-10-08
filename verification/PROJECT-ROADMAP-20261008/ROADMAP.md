@@ -1,8 +1,8 @@
 # New Manga 一眼路线图（2026-10-08）
 
-最新工作点：P08/P03=done；唯一Active Task=P01 `blocked`，Owner=Codex、Reviewer=DeepSeek Harness，base=`826bea12a132c5af2ac0cd1244d00e9170093c71`。DSH R1恢复指令见[P01 RESUME](../../verification/P01/RESUME.md)。P03验证绑定source `d717c049`与同一installer，集成无产品/runner/test/build差量。
+最新工作点：P08/P03=done；唯一Active Task=P01 `blocked`，Owner=Codex、Reviewer=DeepSeek Harness，base=`826bea12a132c5af2ac0cd1244d00e9170093c71`。DSH R1 findings已修订，当前修订candidate fixed-head检查待执行，恢复见[P01 RESUME](../../verification/P01/RESUME.md)。P03验证绑定source `d717c049`与同一installer，集成无产品/runner/test/build差量。
 
-**当前位置：P08/P03=done；P系列done 2/21、blocked 1、proposed 18。唯一blocked Task=P01；DSH R1未批准，修订和复审条件见恢复点；P03 integration=`552464238a69ad2cea63cff18abe98f412dbae87`，DSH R5/R6与Codex Integration Gate PASS。**
+**当前位置：P08/P03=done；P系列done 2/21、blocked 1、proposed 18。唯一blocked Task=P01；DSH R1=`blocked` findings已修订，fixed-head验证通过后恢复Review；P03 integration=`552464238a69ad2cea63cff18abe98f412dbae87`，DSH R5/R6与Codex Integration Gate PASS。**
 
 人员更新：用户已移除Qoder，图中未来UI/UX责任由ZCode承担；非作者Review与正式Task释放Gate保持。
 

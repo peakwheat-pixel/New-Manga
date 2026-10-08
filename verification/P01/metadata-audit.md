@@ -17,7 +17,7 @@
 | AC4 ANNOTATE-R2 Review carrier | PASS / 独立原件 `NOT_VERIFIED` | 已追踪 Task、Handoff、Owner 报告、数据摘要与 `doc/reviews/`；没有可核验的 R2 独立报告/fixed reviewed head。来源Task的`in_review`与Plan/历史集成完成冲突登记为`STATE_CONFLICT`，未修改来源Task。没有据此宣称 Review 从未发生。 |
 | AC5 SYNTH Review / 元数据冲突 | PASS / 独立原件 `NOT_VERIFIED` | Codex closeout、真实 integration commit、Plan 与 Handoff 足以证明重复字段中的 `null` 陈旧；已合并为唯一完整 SHA。Task 仍为 `in_review`，独立 Review 原件/fixed head/decision/hash 仍 `NOT_VERIFIED`。 |
 | AC6 产品裁决保护 | PASS | 记录 R2 challenge 空集/T2 release 交用户裁决；保留 SYNTH 人工登录前置与来源 Task `in_review` 文本，不代用户决定、不冒称已正式 Review。 |
-| AC7 最终 Review 与 Integration Gate | BLOCKED at R1 | R1固定head=`6f24006c21281df485375674d20a1d3b7b48ca63`，decision=`blocked`；见本报告末尾R1记录。修订后需新fixed-head DSH Review和Codex Integration Gate。 |
+| AC7 最终 Review 与 Integration Gate | R1 `blocked`；R2 pending | R1固定head=`6f24006c21281df485375674d20a1d3b7b48ca63`与原结论见报告末尾；R1 findings已修订，当前新candidate须固定并交DeepSeek Harness Review，随后再做Codex Integration Gate。 |
 
 ## AC2 — M2-DERIVED-GC-2
 
@@ -71,7 +71,7 @@
 | 路线图状态/依赖验证器 | `python -B -X utf8 verification/PROJECT-ROADMAP-20261008/verify_plan.py` | EXECUTED EXIT=0：196节点分类/依赖、105祖先记录、21规划节点、DAG、导航链接、P01 frozen-base零产品差量均PASS。校验器的状态分布/标签、P08节点计数及代码差量基线已按P01 Task scope note收窄更新。 |
 | AC7 路径/空白预检 | P01 allowed-path gate；`git diff --check 826bea12a132c5af2ac0cd1244d00e9170093c71`；同一命令运行路线图校验器 | `verification/P01/ac7-preflight.log`，SHA-256=`75aa3a3db5d6893ba60387271a255ee45ac8d818dfedc5c44eb4d1fcf71d63c9`；Git blob=`6d6de83ff6b7ce38d78ffa8cabc62aa72162682f` | 16项均在Task允许路径，staged=0，diff-check EXIT=0，路线图验证器 EXIT=0。此为交付前预检；固定 delivery/final head 的复核、DSH Review 与 Integration Gate仍待执行。 |
 | 产品代码/测试 | 本 Task 冻结为只读取证和少量 Task frontmatter 修正 | `NOT_RUN`；本 Task未修改产品/测试代码。 |
-| 固定 head / allowed paths / diff-check / DSH Review / Integration Gate | P01 AC7 | `BLOCKED`；R1已对fixed head=`6f24006c21281df485375674d20a1d3b7b48ca63`正式返回`blocked`，不得进入Integration Gate；恢复条件见R1记录。 |
+| 固定 head / allowed paths / diff-check / DSH Review / Integration Gate | P01 AC7 | R1=`blocked`（fixed head=`6f24006c21281df485375674d20a1d3b7b48ca63`）；发现已修订，R2固定head Review和后续Codex Gate待完成。 |
 
 ## 正式 DSH Review R1（2026-10-08 UTC）
 

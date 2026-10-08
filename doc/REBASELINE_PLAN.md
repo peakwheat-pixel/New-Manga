@@ -1,10 +1,10 @@
 # Project Rebaseline Plan
 
-**当前位置：P08/P03=done；P系列共21项：done 2、blocked 1、proposed 18。唯一当前Task=P01（台账元数据与独立 Review 载体核验），状态=`blocked` / ExecutionState=`ACTIVE`；AC1–AC6已完成，R1对固定head=`6f24006c21281df485375674d20a1d3b7b48ca63`的decision=`blocked`。恢复条件、报告与Codex fixed-head检查见P01恢复点；先修正R1发现及证据绑定，再对新head复审，暂不进入Codex Integration Gate。base=`826bea12a132c5af2ac0cd1244d00e9170093c71`，Owner=Codex、非作者Reviewer=DeepSeek Harness；branch=`agent/codex/P01-metadata-audit`，worktree=`G:/CODEX/New Manga.worktrees/P01-metadata-audit-codex`。允许路径、恢复与下一步见[P01 Task](tasks/P01.md)及[P01 RESUME](../verification/P01/RESUME.md)。P03 integration=`552464238a69ad2cea63cff18abe98f412dbae87`；其产品验证仍绑定source `d717c049`。**
+**当前位置：P08/P03=done；P系列共21项：done 2、blocked 1、proposed 18。唯一当前Task=P01（台账元数据与独立 Review 载体核验），状态=`blocked` / ExecutionState=`ACTIVE`；R1 fixed head=`6f24006c21281df485375674d20a1d3b7b48ca63`的decision=`blocked`及修订均有记录，修订candidate仍需固定head检查后再转入R2 Review。恢复点见P01 RESUME；未完成新fixed-head检查和R2前不进入Codex Integration Gate。base=`826bea12a132c5af2ac0cd1244d00e9170093c71`，Owner=Codex、非作者Reviewer=DeepSeek Harness；branch=`agent/codex/P01-metadata-audit`，worktree=`G:/CODEX/New Manga.worktrees/P01-metadata-audit-codex`。允许路径、恢复与下一步见[P01 Task](tasks/P01.md)及[P01 RESUME](../verification/P01/RESUME.md)。P03 integration=`552464238a69ad2cea63cff18abe98f412dbae87`；其产品验证仍绑定source `d717c049`。**
 
-## 2026-10-09 P01 DSH R1 / BLOCKED
+## 2026-10-09 P01 R1 findings fixed / fixed-head validation pending
 
-P01 AC1–AC6与允许的三处来源字段更正已完成，delivery=`9b12493616326af9cdd50a055282426c72516a5a`。DSH R1对fixed head=`6f24006c21281df485375674d20a1d3b7b48ca63`给出`blocked`；报告与SHA见[P01 RESUME](../verification/P01/RESUME.md)。已将Task登记为`blocked`并记录恢复条件；R1所列关键验证未运行，Codex结果仅归于Codex fixed-head日志。先修正事实错误和验证证据绑定，形成新fixed head并复审；产品测试仍`NOT_RUN`，当前不得进入Codex Integration Gate。
+P01 AC1–AC6与允许的三处来源字段更正已完成，delivery=`9b12493616326af9cdd50a055282426c72516a5a`。DSH R1对`6f24006c21281df485375674d20a1d3b7b48ca63`的`blocked` findings已在P01允许路径修订；P1事实已更正，固定范围空白检查和测试证据绑定已修复，root/C3/C4检查均有各自head日志。当前R1修订candidate的状态仍为`blocked`，待本次candidate固定提交并完成fixed-head检查后再恢复`in_review`、派发DSH R2；R1原始报告和NOT_RUN结论保留，产品测试仍`NOT_RUN`。
 
 ## 历史记录：2026-10-09 P01 正式启动 / IN_PROGRESS
 
@@ -45,7 +45,7 @@ P08 DSH R7已对base=ecb3b520ce68c2ddcc0c5ec94596e2f50a17f369、reviewed_head=fe
 
 | 候选任务编号 | 状态 | 简单中文描述 | 启动依赖/条件 | 建议责任方；非作者审查 | 完成 Gate / 边界 |
 |---|---|---|---|---|---|
-| P01 | blocked | 台账元数据与Review载体取证 | 无Task依赖；冻结基线`826bea12`；AC1–AC6交付已冻结；R1固定head `6f24006c` blocked，按恢复条件修订后重新Review | Codex；非作者DeepSeek Harness | 修正R1 P1-1及证据绑定；修订head固定日志与DSH复审通过后Codex Gate；R2/SYNTH独立Review carrier缺失保持`NOT_VERIFIED`，不改产品裁决或来源Task状态 |
+| P01 | blocked | 台账元数据与Review载体取证 | 无Task依赖；冻结基线`826bea12`；AC1–AC6交付已冻结；R1 findings已修订，当前candidate fixed-head检查未完成 | Codex；非作者DeepSeek Harness | 候选fixed-head检查通过后转R2 Review；R1 finding不得删改；R2/SYNTH独立Review carrier缺失保持`NOT_VERIFIED`，不改产品裁决或来源Task状态 |
 | P02 | proposed / 未释放 | 真UI行为、300ms刷新与对比度验证 | 现有Workbench；冻结harness范围 | ZCode；DSH | DOM/真实WebView取证，区分mock与实际；覆盖切页、写后刷新、键盘、token |
 | P03 | done | Packaged第五SFX入口验收补齐 | PROBE-1/Runner Debt/Guard已done；DSH R5/R6与Codex集成Gate通过 | Antigravity；DSH | integration=`552464238a69ad2cea63cff18abe98f412dbae87`；Gate evidence绑定source=`d717c049`与固定installer SHA；R3-03留给P20 |
 | P04 | proposed / 未释放 | 生产命令族/桥接并发定向验证 | PAGE-NAV done；先检查现有断言 | Antigravity；DSH | 独立常量成员断言；同会话并发响应与协议核验候选先复现；无缺口不加修复 |
@@ -71,7 +71,7 @@ P08 DSH R7已对base=ecb3b520ce68c2ddcc0c5ec94596e2f50a17f369、reviewed_head=fe
 
 保留：Manga109永久取消；BJ13维持0.90、手工改标＋skip，补标/补画不释放；Reader范围：仅跨页联动/页缩略图继续延期；基础Reader已由D1解冻，P16/P17实施仍未释放。LaMa/AOT/BrushNet/FLUX learned inpaint没有production实现，不默认投入；SimpleFill/EdgeBleed已在现有链路，是否足够由P08/P18质量证据决定。GC长会话总磁盘有界没有承诺，不为了漂亮路线图扩大删除能力。
 
-当前步骤：**P01的首轮固定head Review已执行，DSH R1 decision=`blocked`，reviewed_head=`6f24006c21281df485375674d20a1d3b7b48ca63`。AC2–AC6仍以既有证据为准，不重做；当前先按R1修正报告事实、测试/Commit绑定和范围内的治理校验器，记录含UTC/环境的全新候选检查，再派发新head复审。R2/SYNTH carrier继续`NOT_VERIFIED`，不改用户裁决或来源Task状态；独立Review和Codex Integration Gate均未通过前不得集成或释放后续Task。**
+当前步骤：**P01首轮Review R1=`blocked`（fixed head=`6f24006c21281df485375674d20a1d3b7b48ca63`）的可修复发现已修订；报告已更正R2 `in_review`与R2 `STATE_CONFLICT`，SYNTH Task/Handoff状态已分开表述，验证证据绑定准确，路线校验器以冻结P01 base..HEAD检查范围。当前Task仍=`blocked`，下一步提交该修订checkpoint并对实际fixed HEAD运行验证，全部通过后再更新状态为`in_review`并派发DSH R2。R2/SYNTH carrier仍`NOT_VERIFIED`，不改用户裁决或来源Task状态。**
 
 ## 2026-10-08 完成：M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD
 

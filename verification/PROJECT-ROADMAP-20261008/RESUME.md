@@ -1,8 +1,8 @@
 # 全项目任务规划恢复点
 
-最新工作点：P08/P03=done，P01=`blocked`；P系列done 2/21、blocked 1、proposed 18。唯一当前Task P01，base=`826bea12a132c5af2ac0cd1244d00e9170093c71`，Owner=Codex、Reviewer=DeepSeek Harness，branch=`agent/codex/P01-metadata-audit`，worktree=`G:/CODEX/New Manga.worktrees/P01-metadata-audit-codex`。DSH R1 decision=`blocked`；恢复条件和本地Reality Check按[P01 RESUME](../P01/RESUME.md)核对，不重做P03。
+最新工作点：P08/P03=done，P01=`blocked`；P系列done 2/21、blocked 1、proposed 18。唯一当前Task P01，base=`826bea12a132c5af2ac0cd1244d00e9170093c71`，Owner=Codex、Reviewer=DeepSeek Harness，branch=`agent/codex/P01-metadata-audit`，worktree=`G:/CODEX/New Manga.worktrees/P01-metadata-audit-codex`。DSH R1 `blocked` findings已修订；候选fixed-head检查待执行，不重做P03。
 
-**当前位置：P08/P03=done；当前唯一Active Task=P01 `blocked`。R1固定head=`6f24006c21281df485375674d20a1d3b7b48ca63`未获批准；先完成允许范围内的修订并对新fixed head复审，Integration Gate暂不启动。**
+**当前位置：P08/P03=done；当前唯一Active Task=P01 `blocked`。R1 fixed head=`6f24006c21281df485375674d20a1d3b7b48ca63`及`blocked`原始结论保留；其发现已修订，等待修订candidate fixed-head验证。**
 
 2026-10-08 编号裁决时的状态快照：任务编号沿用 `P01–P21`；当时P08=`in_review`，其余20项=`proposed / 未释放`。当前状态见本恢复点顶部及`doc/STATUS.md`；本编号裁决本身不释放产品实施、不改历史记录。
 
