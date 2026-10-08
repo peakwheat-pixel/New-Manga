@@ -1,0 +1,14 @@
+{
+  "probeVersion": "0.1.7-rc.2",
+  "probePrompt": "只回复两个字：收到",
+  "probeExit": 0,
+  "probeStdout": "verification/P01/dsh-preflight.stdout.txt",
+  "probeStdoutSha256": "0d4e49cb97c1da06ceda344892c72e0c919c580b02592a3bbe365173ef767671",
+  "probeStderr": "verification/P01/dsh-preflight.stderr.log",
+  "probeStderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "sessionId": "session-27b2c99c-65b3-4ae0-8559-8b6af35f7de5",
+  "mountCommand": "python C:/Users/49745/.agents/skills/dsh-dispatch/scripts/mount_session.py --latest",
+  "mountExit": 0,
+  "workspace": "G:/CODEX/New Manga.worktrees/P01-metadata-audit-codex",
+  "visibility": "DSH Desktop reads mounted sessions on next startup; current visibility not inspected"
+}
