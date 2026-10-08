@@ -4,7 +4,7 @@
 
 最新人员裁决：Qoder退出，未来UI/UX设计及React/Tauri实现由ZCode主责，DSH非作者审查，Codex契约/集成；额度接管候选为ZCode、Antigravity。历史交付中的Qoder署名保留。
 
-权威排期见 [Plan顶部P01–P21](REBASELINE_PLAN.md)，[中文分层依赖图](../verification/PROJECT-ROADMAP-20261008/ROADMAP.md)，[代码深读与完整台账](../verification/PROJECT-ROADMAP-20261008/REPORT.md)，[额度中断恢复](../verification/PROJECT-ROADMAP-20261008/RESUME.md)。当前无Active/released；完整产品条件主链为：范围/parity冻结→真实导入/凭据/长任务契约→书架/后台Pipeline→工作台/设置/阅读导出→真实质量→整体E2E→Windows发布。Reader解冻需要新产品裁决。下一准备建议P08；所有规划节点未释放。
+权威排期见 [Plan顶部21个 M2 候选任务](REBASELINE_PLAN.md)，[中文分层依赖图](../verification/PROJECT-ROADMAP-20261008/ROADMAP.md)，[代码深读与完整台账](../verification/PROJECT-ROADMAP-20261008/REPORT.md)，[额度中断恢复](../verification/PROJECT-ROADMAP-20261008/RESUME.md)。当前无Active/released；完整产品条件主链为：范围/parity冻结→真实导入/凭据/长任务契约→书架/后台Pipeline→工作台/设置/阅读导出→真实质量→整体E2E→Windows发布。Reader解冻需要新产品裁决。下一准备建议M2-PRODUCT-COMPLETION-SCOPE；所有规划节点未释放。
 
 下方2026-09早期导航保留历史，不覆盖本段或Plan；其中旧“ready/planning only”任务多已由后继完成，不能作为当前待办。
 

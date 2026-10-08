@@ -1,0 +1,11 @@
+编号统一验证；base=3fad9cbb6f5b96f50f56ce385167ca3dbdea4740
+PASS: 当前21个候选均为M2-xxx，proposed / 未释放；无原Task编号冲突
+PASS: 当前导航、报告、恢复指令无旧候选编号；图中21个候选均显式标注未释放
+PASS: Plan/Status历史段落、原Task/Review、CSV及原始审计保持不变
+Planning snapshot base=e4242ecd419eb0eea098d2f63b40f709aa5caeea; live HEAD=3fad9cbb6f5b96f50f56ce385167ca3dbdea4740
+PASS: 196 unique nodes, all classifications and dependency references
+PASS: 105 new architecture/governance integration records are audit-base ancestors
+PASS: 21 unique planned nodes and roadmap graphs have no dependency cycles
+PASS: delivery/navigation local links resolve
+PASS: zero production/code delta; governance whitespace check
+Product tests/build/GUI: NOT_RUN (planning-only)

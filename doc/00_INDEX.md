@@ -2,7 +2,7 @@
 
 2026-10-08人员更新：Qoder已退出本项目。当前角色/接管名单见[协作协议](09_COLLABORATION.md)；未来UI设计/实现归ZCode，历史Qoder署名仅作证据。整体路线与恢复材料已同步，不新增产品释放。
 
-**2026-10-08整体规划入口**：[权威Plan当前P01–P21路线](REBASELINE_PLAN.md)、[一眼中文图](../verification/PROJECT-ROADMAP-20261008/ROADMAP.md)、[全项目报告](../verification/PROJECT-ROADMAP-20261008/REPORT.md)、[196节点台账](../verification/PROJECT-ROADMAP-20261008/task-inventory.csv)、[额度恢复点](../verification/PROJECT-ROADMAP-20261008/RESUME.md)。三路GPT-6.1 Sol high审计；不释放实现。当前无Active/released；完整产品未来树与历史done图分层，167登记完成/文档交付不代表产品完成率。下面旧Architecture/盘点段落是其当时的快照。
+**2026-10-08整体规划入口**：[权威Plan当前21个 M2 候选任务路线](REBASELINE_PLAN.md)、[一眼中文图](../verification/PROJECT-ROADMAP-20261008/ROADMAP.md)、[全项目报告](../verification/PROJECT-ROADMAP-20261008/REPORT.md)、[196节点台账](../verification/PROJECT-ROADMAP-20261008/task-inventory.csv)、[额度恢复点](../verification/PROJECT-ROADMAP-20261008/RESUME.md)。三路GPT-6.1 Sol high审计；不释放实现。当前无Active/released；完整产品未来树与历史done图分层，167登记完成/文档交付不代表产品完成率。下面旧Architecture/盘点段落是其当时的快照。
 
 当前无 Active/released Task。最近完成=`M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD done@integration e7d1f7f8`；Owner=Antigravity、非作者 Reviewer=DSH（r2 approved）、Integrator=Codex。集成验证见 [Runner Guard integration log](../verification/M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD/integration-validation.log)，恢复点与未运行 Gate 边界见 [STATUS](STATUS.md) 和 [Task](tasks/M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD.md)。R-06 模块加载复杂度 deferred；R-003 仍未释放。
 
