@@ -1,6 +1,6 @@
 {
   "task_id": "P03",
-  "phase": "fresh_build_gate_retry_pending",
+  "phase": "packaged_gate_pass_dsh_review_pending",
   "integration_branch": "codex/P03-integration-4c04459",
   "integration_worktree": "G:/CODEX/New Manga.worktrees/P03-review-prep-85482c5b",
   "task_base_commit": "31abde9bf4b73aea2851931dcd48faa0f750b318",
@@ -64,7 +64,7 @@
     "tracked_diff_after_restore": "none"
   },
   "packaged_gate": {
-    "status": "NOT_RUN",
+    "status": "PASS",
     "required_installer_sha256": "2de124f387bfaf1d0d01b1b0279ad319cd453850d223efa9620b0103ce88a814",
     "planned_output_dir": "verification/P03-PACKAGED-SFX-ENTRY/integration/run-2de124f3-py314",
     "execution_attempts": [
@@ -77,9 +77,142 @@
         "gate_scenarios_started": false,
         "cause": "ModuleNotFoundError: No module named 'pytest' from tests/m2_resource_channel/conftest.py",
         "log_path": "integration/run-2de124f3/00-packaged-gate.log"
+      },
+      {
+        "attempt": 2,
+        "stage": "full packaged clean-start acceptance",
+        "interpreter": "C:/Python314/python.exe",
+        "python_version": "3.14.6",
+        "exit": 0,
+        "verdict": "PASS",
+        "scenario_count": 28,
+        "scenarios_passed": 28,
+        "installer_sha256": "2de124f387bfaf1d0d01b1b0279ad319cd453850d223efa9620b0103ce88a814",
+        "output_dir": "integration/run-2de124f3-py314",
+        "temp_root": "C:/Users/49745/AppData/Local/Temp/codex-p03-gate-2de124f3-py314",
+        "log_path": "integration/run-2de124f3-py314/00-packaged-gate.log",
+        "json_path": "integration/run-2de124f3-py314/cleanstart-gate.json"
       }
     ],
     "runner_python": "C:/Python314/python.exe",
-    "runner_python_version": "3.14.6"
+    "runner_python_version": "3.14.6",
+    "verdict": "PASS",
+    "exit": 0,
+    "scenario_count": 28,
+    "scenarios_passed": 28,
+    "installer_sha256": "2de124f387bfaf1d0d01b1b0279ad319cd453850d223efa9620b0103ce88a814",
+    "output_dir": "integration/run-2de124f3-py314",
+    "temp_root": "C:/Users/49745/AppData/Local/Temp/codex-p03-gate-2de124f3-py314",
+    "gate_json": "integration/run-2de124f3-py314/cleanstart-gate.json",
+    "console_log": "integration/run-2de124f3-py314/00-packaged-gate.log",
+    "sfx_real_page": {
+      "exit": 0,
+      "frozen": true,
+      "n_candidates": 1,
+      "weights_sha256_matches_pin": true,
+      "weights_in_install_dir": true,
+      "device": "dml",
+      "sfx_ep": "dml",
+      "fallback": null
+    },
+    "sfx_missing_page": {
+      "exit": 1,
+      "frozen": true,
+      "error": "FileNotFoundError",
+      "path_precondition": "absent"
+    },
+    "zero_touch_assertions": {
+      "install_dir_changed_entries": 0,
+      "host_appdata_files": 4,
+      "host_appdata_changed_entries": 0,
+      "source_files_byte_identical": true,
+      "surviving_sidecars": 0
+    },
+    "evidence_files": [
+      {
+        "path": "integration/run-2de124f3-py314/00-packaged-gate.log",
+        "size_bytes": 6136,
+        "sha256": "c2dced080254dfe6de69fdf4a9284ec41e37a1a0f53144e97fb51158c7c13164"
+      },
+      {
+        "path": "integration/run-2de124f3-py314/cleanstart-ac1-catalog-initialize.log",
+        "size_bytes": 13,
+        "sha256": "c879e584a7f6b43cd5fe6f0de7f45c98cec280408fbab49cea26889ba0919ca4"
+      },
+      {
+        "path": "integration/run-2de124f3-py314/cleanstart-ac1-run1-stdout.log",
+        "size_bytes": 318,
+        "sha256": "0e35c8b832b3b1e6a64f2f90a3862b29c4914138ea5bcae659b1f9208c7b66bf"
+      },
+      {
+        "path": "integration/run-2de124f3-py314/cleanstart-ac1-run2-stdout.log",
+        "size_bytes": 318,
+        "sha256": "b0de776a38b3407bb67cb814ef2f42f12e0d3e8737dfcf0a159382320b9acdbe"
+      },
+      {
+        "path": "integration/run-2de124f3-py314/cleanstart-gate.json",
+        "size_bytes": 11285,
+        "sha256": "d3ec22edb1d459f32ddb0bd8c689d7ff118f345abf99d0ff0f3532133097b780"
+      },
+      {
+        "path": "integration/run-2de124f3-py314/cleanstart-probe-stdout.log",
+        "size_bytes": 476,
+        "sha256": "049f6b1ddb97be4a84b1a58563e2c31c3f432d815d88dce380bb213a2f2cf85a"
+      },
+      {
+        "path": "integration/run-2de124f3-py314/cleanstart-production-stdout.log",
+        "size_bytes": 634,
+        "sha256": "08fa605fea3924e394424bef8f159e8e107717ad6eeee5540a81e130da4d4eb8"
+      },
+      {
+        "path": "integration/run-2de124f3-py314/r1-library-probe.log",
+        "size_bytes": 635,
+        "sha256": "9fce09b751c2c6717bb685767e31fde3a302247c5bd585f8e89a47be5d61c1de"
+      },
+      {
+        "path": "integration/run-2de124f3-py314/raw-auxiliary-logs.zip",
+        "size_bytes": 2211,
+        "sha256": "089dd82f2368eda615f745981f1c4dd5f401a73cdd3173266d115cbe47c4fd1d"
+      },
+      {
+        "path": "integration/run-2de124f3-py314/raw-log-normalization.json",
+        "size_bytes": 3953,
+        "sha256": "03fbc59a04fa8c9f75ee68c59a8593d54b3f3399c96029930188a6fdaa9e974b"
+      },
+      {
+        "path": "integration/run-2de124f3-py314/sfx-probe-missing-page.json",
+        "size_bytes": 703,
+        "sha256": "6f4752da9f47e37376fabfb022610abc13cdcf83bdc305b8c0dd1a4e7fd8b8aa"
+      },
+      {
+        "path": "integration/run-2de124f3-py314/sfx-probe-missing-page.log",
+        "size_bytes": 1478,
+        "sha256": "c390080596ce23e992d17c76a087f6679fab4a8a5fd2cf04bec196f87dc6b9fd"
+      },
+      {
+        "path": "integration/run-2de124f3-py314/sfx-probe-real-page.json",
+        "size_bytes": 1732,
+        "sha256": "451f6ee1cf9d31f6278e9899805693c716a0c3f833fa9b74c6ea39d3decd0b91"
+      },
+      {
+        "path": "integration/run-2de124f3-py314/sfx-probe-real-page.log",
+        "size_bytes": 1679,
+        "sha256": "5dce48485b39e6fe7a65ceabeb5e7eb856beec7ca1cf2ee5dcd48dfff68a29a3"
+      }
+    ]
+  },
+  "raw_log_normalization": {
+    "status": "PASS",
+    "files_count": 6,
+    "all_assertions_passed": true,
+    "archive_path": "verification/P03-PACKAGED-SFX-ENTRY/integration/run-2de124f3-py314/raw-auxiliary-logs.zip",
+    "archive_size_bytes": 2211,
+    "archive_sha256": "089dd82f2368eda615f745981f1c4dd5f401a73cdd3173266d115cbe47c4fd1d",
+    "manifest_path": "verification/P03-PACKAGED-SFX-ENTRY/integration/run-2de124f3-py314/raw-log-normalization.json",
+    "script_path": "verification/P03-PACKAGED-SFX-ENTRY/integration/normalize_gate_logs.py",
+    "execution_log": "integration/build-logs/07-gate-log-normalization.log",
+    "verification_command": "C:/Python314/python.exe verification/P03-PACKAGED-SFX-ENTRY/integration/normalize_gate_logs.py --verify-only",
+    "read_only_verification_exit": 0,
+    "verification_log": "integration/build-logs/08-gate-log-normalization-verify.log"
   }
 }

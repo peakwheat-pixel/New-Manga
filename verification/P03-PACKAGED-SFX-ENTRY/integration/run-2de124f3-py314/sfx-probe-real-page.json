@@ -1,0 +1,54 @@
+{
+  "probe": "m2-prod-sfx-probe-1.sfx_detect_probe",
+  "label": "injected-real-page",
+  "python": {
+    "frozen": true,
+    "executable": "C:\\Users\\49745\\AppData\\Local\\Temp\\codex-p03-gate-2de124f3-py314\\m2ac5-cleanstart-8ftayvd7\\install\\resources\\core-sidecar\\sfx_detect_probe.exe"
+  },
+  "page": {
+    "source": "injected",
+    "path": "G:\\CODEX\\New Manga.task-envs\\M2-DOCTR-QUAL-work\\regions\\K07_R123.png",
+    "width": 690,
+    "height": 1408,
+    "sha256": "b3b7c4a6951e5a61f4677674830041c7850eeb68e1eced9cba236f1339ec7306"
+  },
+  "weights": {
+    "path": "C:\\Users\\49745\\AppData\\Local\\Temp\\codex-p03-gate-2de124f3-py314\\m2ac5-cleanstart-8ftayvd7\\install\\resources\\core-sidecar\\models\\detector\\yolo11s-seg.onnx",
+    "exists": true,
+    "resolved_from": "bundle_probe",
+    "sha256": "944e811410933ad6ff8d32446fcc9eef90fb463794e1874ce83035e83acd418d",
+    "expected_sha256": "944e811410933ad6ff8d32446fcc9eef90fb463794e1874ce83035e83acd418d"
+  },
+  "provider": {
+    "id": "local-sfx",
+    "type": "local-sfx",
+    "model": "sfx/yolo11s-seg.onnx",
+    "conf_threshold": "0.5"
+  },
+  "result": {
+    "n_candidates": 1,
+    "elapsed_ms": 771,
+    "wall_ms_incl_provider_build": 771,
+    "device": "dml",
+    "sfx_ep": "dml",
+    "sfx_ep_fallback": null,
+    "confidences": [
+      0.9046692252159119
+    ],
+    "labels": [
+      "sfx-1"
+    ],
+    "options": {
+      "arch": "yolo11s_seg_onnx",
+      "device": "dml",
+      "sfx_ep": "dml",
+      "conf_threshold": "0.5",
+      "nms_iou": "0.7",
+      "imgsz": "1024",
+      "imgsz_source": "metadata_parsed",
+      "class_filter": "sfx",
+      "sfx_route": "letterbox"
+    }
+  },
+  "error": null
+}

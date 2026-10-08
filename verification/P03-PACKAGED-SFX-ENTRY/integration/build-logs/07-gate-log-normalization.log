@@ -1,0 +1,14 @@
+Shell: PowerShell 7.6.6
+WorkingDirectory: G:\CODEX\New Manga.worktrees\P03-review-prep-85482c5b
+Python: Python 3.14.6
+Command: C:/Python314/python.exe verification/P03-PACKAGED-SFX-ENTRY/integration/normalize_gate_logs.py
+Raw archive is reused; canonical outputs and inverse byte reconstruction are reasserted.
+raw archive SHA256=089dd82f2368eda615f745981f1c4dd5f401a73cdd3173266d115cbe47c4fd1d
+PASS cleanstart-ac1-catalog-initialize.log: raw=3a9a546263872cd9c0cc1afd0dbf0a92554582bf7a6b47e0cfd80dc964bc3b84 canonical=c879e584a7f6b43cd5fe6f0de7f45c98cec280408fbab49cea26889ba0919ca4 tokens={'trailing_spaces': 0, 'trailing_tabs': 0, 'bare_carriage_returns': 0, 'final_blank_lines': 1} inverse=bit-for-bit
+PASS cleanstart-ac1-run1-stdout.log: raw=9df730ad90d8ca060f734fa3f7727dd5026d2e259a4bc377bb1473c97b135428 canonical=0e35c8b832b3b1e6a64f2f90a3862b29c4914138ea5bcae659b1f9208c7b66bf tokens={'trailing_spaces': 0, 'trailing_tabs': 0, 'bare_carriage_returns': 1, 'final_blank_lines': 0} inverse=bit-for-bit
+PASS cleanstart-ac1-run2-stdout.log: raw=be550edfa434dd9b8c7846eef152002e9406bb5dc528723459ce4e9ec267a8a6 canonical=b0de776a38b3407bb67cb814ef2f42f12e0d3e8737dfcf0a159382320b9acdbe tokens={'trailing_spaces': 0, 'trailing_tabs': 0, 'bare_carriage_returns': 1, 'final_blank_lines': 0} inverse=bit-for-bit
+PASS cleanstart-probe-stdout.log: raw=b9048d268b415028f6dcc7e0ae63955f9ba88d5cb7774c8fb009e862b37785c8 canonical=049f6b1ddb97be4a84b1a58563e2c31c3f432d815d88dce380bb213a2f2cf85a tokens={'trailing_spaces': 0, 'trailing_tabs': 0, 'bare_carriage_returns': 1, 'final_blank_lines': 0} inverse=bit-for-bit
+PASS cleanstart-production-stdout.log: raw=f761c9251af584a1f9ff23bccc8ededa532ab4f69db89d678797b09db6097eba canonical=08fa605fea3924e394424bef8f159e8e107717ad6eeee5540a81e130da4d4eb8 tokens={'trailing_spaces': 0, 'trailing_tabs': 0, 'bare_carriage_returns': 1, 'final_blank_lines': 0} inverse=bit-for-bit
+PASS r1-library-probe.log: raw=4bfbb7b99128483c2a3155df0385cd1e6a1926cd4a6b9b0be3aaea064c17a699 canonical=9fce09b751c2c6717bb685767e31fde3a302247c5bd585f8e89a47be5d61c1de tokens={'trailing_spaces': 0, 'trailing_tabs': 0, 'bare_carriage_returns': 4, 'final_blank_lines': 0} inverse=bit-for-bit
+ALL AUXILIARY LOGS: raw archive, hashes, canonical form, and inverse reconstruction PASS
+NORMALIZATION_EXIT=0

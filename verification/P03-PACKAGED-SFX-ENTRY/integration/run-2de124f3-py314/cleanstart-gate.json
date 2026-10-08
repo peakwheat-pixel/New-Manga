@@ -1,0 +1,357 @@
+{
+  "gate": "m2ac5-clean-start",
+  "installer": "G:\\CODEX\\New Manga.worktrees\\P03-review-prep-85482c5b\\apps\\desktop\\src-tauri\\target\\release\\bundle\\nsis\\m2rc1-desktop_0.1.0_x64-setup.exe",
+  "installer_sha256": "2de124f387bfaf1d0d01b1b0279ad319cd453850d223efa9620b0103ce88a814",
+  "install_dir": "C:\\Users\\49745\\AppData\\Local\\Temp\\codex-p03-gate-2de124f3-py314\\m2ac5-cleanstart-8ftayvd7\\install",
+  "lab": "C:\\Users\\49745\\AppData\\Local\\Temp\\codex-p03-gate-2de124f3-py314\\m2ac5-cleanstart-8ftayvd7",
+  "appdata_isolation": {
+    "app_env_appdata": "pinned into the lab (probe/ac1/production)",
+    "host_real_appdata": "C:\\Users\\49745\\AppData\\Roaming\\com.newmanga.m2rc1.desktop",
+    "host_real_appdata_files": 4
+  },
+  "sfx_verification": {
+    "requested": true,
+    "page_path": "G:\\CODEX\\New Manga.task-envs\\M2-DOCTR-QUAL-work\\regions\\K07_R123.png",
+    "scenarios_executed": [
+      "CS-S1-packaged-sfx-real-page",
+      "CS-S2-packaged-sfx-missing-page-failure"
+    ],
+    "verdict": "PASS"
+  },
+  "verdict": "PASS",
+  "scenarios": [
+    {
+      "id": "CS-E1-python-purged-from-path",
+      "status": "PASS",
+      "observed": {
+        "detail": "python not on purged PATH (where exit=1); host_bridge.exe resolves: False",
+        "removed_entries": [
+          "C:\\Python314\\Scripts\\",
+          "C:\\Python314\\",
+          "C:\\Users\\49745\\AppData\\Local\\Programs\\Python\\Python310\\Scripts\\",
+          "C:\\Users\\49745\\AppData\\Local\\Programs\\Python\\Python310\\",
+          "C:\\Users\\49745\\AppData\\Local\\Programs\\Python\\Python312\\Scripts\\",
+          "C:\\Users\\49745\\AppData\\Local\\Programs\\Python\\Python312\\",
+          "C:\\Users\\49745\\AppData\\Local\\Programs\\Python\\Python311\\Scripts\\",
+          "C:\\Users\\49745\\AppData\\Local\\Programs\\Python\\Python311\\",
+          "C:\\Users\\49745\\AppData\\Local\\Microsoft\\WindowsApps",
+          "C:\\Users\\49745\\AppData\\Local\\Python\\bin",
+          "C:\\Users\\49745\\AppData\\Roaming\\Python\\Python314\\Scripts"
+        ]
+      }
+    },
+    {
+      "id": "CS-E2-installer-present",
+      "status": "PASS",
+      "observed": {
+        "installer": "G:\\CODEX\\New Manga.worktrees\\P03-review-prep-85482c5b\\apps\\desktop\\src-tauri\\target\\release\\bundle\\nsis\\m2rc1-desktop_0.1.0_x64-setup.exe",
+        "sha256": "2de124f387bfaf1d0d01b1b0279ad319cd453850d223efa9620b0103ce88a814"
+      }
+    },
+    {
+      "id": "CS-E3-install-path-no-spaces",
+      "status": "PASS",
+      "observed": {
+        "install_dir": "C:\\Users\\49745\\AppData\\Local\\Temp\\codex-p03-gate-2de124f3-py314\\m2ac5-cleanstart-8ftayvd7\\install",
+        "space_free": true
+      }
+    },
+    {
+      "id": "CS-I1-silent-install",
+      "status": "PASS",
+      "observed": {
+        "detail": "installed to C:\\Users\\49745\\AppData\\Local\\Temp\\codex-p03-gate-2de124f3-py314\\m2ac5-cleanstart-8ftayvd7\\install with resources/core-sidecar/host_bridge.exe, core_service.exe, acceptance_bridge.exe, catalog_loader.exe, sfx_detect_probe.exe"
+      }
+    },
+    {
+      "id": "CS-I2-catalog-seeded-packaged-loader",
+      "status": "PASS",
+      "observed": {
+        "detail": "catalog seeded (5 rows) via packaged catalog_loader.exe"
+      }
+    },
+    {
+      "id": "CS-L1-packaged-core-ping",
+      "status": "PASS",
+      "observed": {
+        "result": {
+          "status": "ready",
+          "protocol_version": {
+            "major": 1,
+            "minor": 6
+          },
+          "capabilities": [
+            "library.list_books"
+          ]
+        },
+        "error": null
+      }
+    },
+    {
+      "id": "CS-L2-packaged-ListBooks-structure",
+      "status": "PASS",
+      "observed": {
+        "count": 0,
+        "envelope_valid": true,
+        "error": null
+      }
+    },
+    {
+      "id": "CS-L3-packaged-core-shutdown",
+      "status": "PASS",
+      "observed": {
+        "result": {
+          "status": "stopped"
+        },
+        "exit": 0
+      }
+    },
+    {
+      "id": "CS-P1-probe-results-written",
+      "status": "PASS",
+      "observed": {
+        "path": "C:\\Users\\49745\\AppData\\Local\\Temp\\codex-p03-gate-2de124f3-py314\\m2ac5-cleanstart-8ftayvd7\\probe\\probe-results.json"
+      }
+    },
+    {
+      "id": "CS-P2-probe-scenarios-all-pass",
+      "status": "PASS",
+      "observed": {
+        "count": 13,
+        "failed": [],
+        "ids": [
+          "E-00-probe-mode-detected",
+          "E-01-issue-fetch-digest",
+          "E-02-img-render",
+          "E-03-unknown-id",
+          "E-04-revoke-after-cached-fetch",
+          "E-05-expired-ttl",
+          "E-06-remount-fresh-references",
+          "E-07-per-reference-first-byte-p95",
+          "E-08-boundary-256mib",
+          "E-09-over-limit-typed",
+          "D-01-register-catalog-denied",
+          "D-02-ttl-override-inert",
+          "D-03-probe-issue-allowed-in-probe-mode"
+        ]
+      }
+    },
+    {
+      "id": "CS-P3-sidecar-roundtrip-digest",
+      "status": "PASS",
+      "observed": {
+        "e01": {
+          "id": "E-01-issue-fetch-digest",
+          "status": "PASS",
+          "observed": {
+            "bytes": 49363,
+            "sha256": "476b6ba12e40daefd37b1baa9089334f8f40081da0e600b15aa207d89195eaf3",
+            "expected_sha256": "476b6ba12e40daefd37b1baa9089334f8f40081da0e600b15aa207d89195eaf3"
+          }
+        }
+      }
+    },
+    {
+      "id": "CS-A0-ac1-catalog-prebind",
+      "status": "PASS",
+      "observed": {
+        "exit": 0,
+        "stderr": ""
+      }
+    },
+    {
+      "id": "CS-A1-run1-completed",
+      "status": "PASS",
+      "observed": {
+        "exit": 0,
+        "phase": "run1"
+      }
+    },
+    {
+      "id": "CS-A1-run2-completed",
+      "status": "PASS",
+      "observed": {
+        "exit": 0,
+        "phase": "run2"
+      }
+    },
+    {
+      "id": "CS-A2-restart-new-pids",
+      "status": "PASS",
+      "observed": {
+        "run1": [
+          39832,
+          41992
+        ],
+        "run2": [
+          38356,
+          4192
+        ]
+      }
+    },
+    {
+      "id": "CS-A3-saved-summary-complete",
+      "status": "PASS",
+      "observed": {
+        "run_status": "completed",
+        "pages": 2,
+        "providers": {
+          "ocr": "m2ac1-mock-ocr",
+          "translate": "m2ac1-mock-translate"
+        }
+      }
+    },
+    {
+      "id": "CS-A4-restored-reader-matches-saved",
+      "status": "PASS",
+      "observed": {
+        "viewed": [
+          {
+            "index": 0,
+            "sha": "f66af60a9846"
+          },
+          {
+            "index": 1,
+            "sha": "4afc67386c25"
+          }
+        ]
+      }
+    },
+    {
+      "id": "CS-A5-export-png-digest-matches",
+      "status": "PASS",
+      "observed": {
+        "size": 1122,
+        "sha": "4afc67386c25"
+      }
+    },
+    {
+      "id": "CS-R1-production-process-alive",
+      "status": "PASS",
+      "observed": {
+        "poll": null
+      }
+    },
+    {
+      "id": "CS-R2-userdata-layout-created",
+      "status": "PASS",
+      "observed": {
+        "dirs": {
+          "catalog": true,
+          "derived": true,
+          "managed": true,
+          "data": true
+        },
+        "catalog.sqlite": true,
+        "root": "C:\\Users\\49745\\AppData\\Local\\Temp\\codex-p03-gate-2de124f3-py314\\m2ac5-cleanstart-8ftayvd7\\production\\roaming\\com.newmanga.m2rc1.desktop",
+        "appdata_isolated": true
+      }
+    },
+    {
+      "id": "CS-R3-production-surface-announced",
+      "status": "PASS",
+      "observed": {
+        "announcement": "[m2rc2-allowlist] production:",
+        "present": true
+      }
+    },
+    {
+      "id": "CS-R4-no-spawn-failures-in-log",
+      "status": "PASS",
+      "observed": {
+        "spawn_failed_mentions": 0
+      }
+    },
+    {
+      "id": "CS-S1-packaged-sfx-real-page",
+      "status": "PASS",
+      "observed": {
+        "exit": 0,
+        "marker_count": 1,
+        "json_parsed": true,
+        "frozen": true,
+        "has_error_key": true,
+        "error": null,
+        "n_candidates": 1,
+        "weights_sha256": "944e811410933ad6ff8d32446fcc9eef90fb463794e1874ce83035e83acd418d",
+        "weights_sha256_matches_pin": true,
+        "weights_resolved_from": "bundle_probe",
+        "weights_path": "C:\\Users\\49745\\AppData\\Local\\Temp\\codex-p03-gate-2de124f3-py314\\m2ac5-cleanstart-8ftayvd7\\install\\resources\\core-sidecar\\models\\detector\\yolo11s-seg.onnx",
+        "weights_in_install_dir": true,
+        "page_pixel_sha256": "b3b7c4a6951e5a61f4677674830041c7850eeb68e1eced9cba236f1339ec7306",
+        "device": "dml",
+        "sfx_ep": "dml",
+        "sfx_ep_fallback": null,
+        "elapsed_ms": 771,
+        "options": {
+          "arch": "yolo11s_seg_onnx",
+          "class_filter": "sfx",
+          "conf_threshold": "0.5",
+          "device": "dml",
+          "imgsz": "1024",
+          "imgsz_source": "metadata_parsed",
+          "nms_iou": "0.7",
+          "sfx_ep": "dml",
+          "sfx_route": "letterbox"
+        },
+        "wall_ms": 1086,
+        "page_path": "G:\\CODEX\\New Manga.task-envs\\M2-DOCTR-QUAL-work\\regions\\K07_R123.png",
+        "page_file_sha256": "28dab503aca3c903111488c03e857b430d309421a4a54bab335a63bbe7b9cec4"
+      }
+    },
+    {
+      "id": "CS-S2-packaged-sfx-missing-page-failure",
+      "status": "PASS",
+      "observed": {
+        "exit": 1,
+        "marker_count": 1,
+        "json_parsed": true,
+        "frozen": true,
+        "error": {
+          "class": "FileNotFoundError",
+          "error_code": null,
+          "message_head": "[Errno 2] No such file or directory: 'C:\\\\Users\\\\49745\\\\AppData\\\\Local\\\\Temp\\\\codex-p03-gate-2de124f3-py314\\\\m2ac5-cleanstart-8ftayvd7\\\\sfx-probe-missing-isolation\\\\guaranteed-nonexistent-page.png'"
+        },
+        "wall_ms": 104,
+        "missing_path": "C:\\Users\\49745\\AppData\\Local\\Temp\\codex-p03-gate-2de124f3-py314\\m2ac5-cleanstart-8ftayvd7\\sfx-probe-missing-isolation\\guaranteed-nonexistent-page.png",
+        "path_precondition": "absent"
+      }
+    },
+    {
+      "id": "CS-Z1-install-dir-zero-write",
+      "status": "PASS",
+      "observed": {
+        "changed_entries": []
+      }
+    },
+    {
+      "id": "CS-Z4-host-real-appdata-untouched",
+      "status": "PASS",
+      "observed": {
+        "root": "C:\\Users\\49745\\AppData\\Roaming\\com.newmanga.m2rc1.desktop",
+        "files": 4,
+        "changed_entries": [],
+        "note": "runner never deletes here; app APPDATA pinned into the lab"
+      }
+    },
+    {
+      "id": "CS-Z2-user-source-files-byte-identical",
+      "status": "PASS",
+      "observed": {
+        "files": 4
+      }
+    },
+    {
+      "id": "CS-Z3-no-surviving-sidecar-processes",
+      "status": "PASS",
+      "observed": {
+        "host_bridge.exe": 0,
+        "core_service.exe": 0,
+        "acceptance_bridge.exe": 0,
+        "catalog_loader.exe": 0,
+        "sfx_detect_probe.exe": 0,
+        "python.exe": 7
+      }
+    }
+  ]
+}

@@ -1,0 +1,67 @@
+Shell: PowerShell 7.6.6 (C:\Program Files\PowerShell\7\pwsh.exe)
+WorkingDirectory: G:\CODEX\New Manga.worktrees\P03-review-prep-85482c5b
+Source HEAD: 08c7d4fa0c5f1b6e88029dc0ad98651218eb52b2
+Working tree before Gate: clean
+Python: C:\Python314\python.exe
+Python version: Python 3.14.6
+TEMP=C:\Users\49745\AppData\Local\Temp\codex-p03-gate-2de124f3-py314
+TMP=C:\Users\49745\AppData\Local\Temp\codex-p03-gate-2de124f3-py314
+Installer SHA256=2de124f387bfaf1d0d01b1b0279ad319cd453850d223efa9620b0103ce88a814
+Installer size=579537342
+K07 SHA256=28dab503aca3c903111488c03e857b430d309421a4a54bab335a63bbe7b9cec4
+Previous attempt preserved at integration/run-2de124f3/ (runner import stopped before Gate scenarios).
+Command: C:/Python314/python.exe packaging/m2ac5/run_clean_start_e2e.py --installer apps/desktop/src-tauri/target/release/bundle/nsis/m2rc1-desktop_0.1.0_x64-setup.exe --output-dir verification/P03-PACKAGED-SFX-ENTRY/integration/run-2de124f3-py314 --sfx-real-page <pinned K07_R123.png>
+--- runner output ---
+
+=== phase 0: environment record + PATH purge ===
+  [PASS] CS-E1-python-purged-from-path: {"detail": "python not on purged PATH (where exit=1); host_bridge.exe resolves: False", "removed_entries": ["C:\\Python314\\Scripts\\", "C:\\Python314\\", "C:\\Users\\49745\\AppData\\Local\\Programs\\Python\\Python310\\S
+  [PASS] CS-E2-installer-present: {"installer": "G:\\CODEX\\New Manga.worktrees\\P03-review-prep-85482c5b\\apps\\desktop\\src-tauri\\target\\release\\bundle\\nsis\\m2rc1-desktop_0.1.0_x64-setup.exe", "sha256": "2de124f387bfaf1d0d01b1b0279ad319cd453850d22
+  [PASS] CS-E3-install-path-no-spaces: {"install_dir": "C:\\Users\\49745\\AppData\\Local\\Temp\\codex-p03-gate-2de124f3-py314\\m2ac5-cleanstart-8ftayvd7\\install", "space_free": true}
+
+=== phase 0.5: host real %APPDATA% snapshot (P2-4 untouched proof) ===
+  host user root: C:\Users\49745\AppData\Roaming\com.newmanga.m2rc1.desktop (present, files=4)
+
+=== phase 1: NSIS silent install ===
+  [PASS] CS-I1-silent-install: {"detail": "installed to C:\\Users\\49745\\AppData\\Local\\Temp\\codex-p03-gate-2de124f3-py314\\m2ac5-cleanstart-8ftayvd7\\install with resources/core-sidecar/host_bridge.exe, core_service.exe, acceptance_bridge.exe, cat
+  install dir files: 5610
+  [PASS] CS-I2-catalog-seeded-packaged-loader: {"detail": "catalog seeded (5 rows) via packaged catalog_loader.exe"}
+
+=== phase 1.5: packaged library sidecar probe (install-state stdio, P2-2) ===
+  [PASS] CS-L1-packaged-core-ping: {"error": null, "result": {"capabilities": ["library.list_books"], "protocol_version": {"major": 1, "minor": 6}, "status": "ready"}}
+  [PASS] CS-L2-packaged-ListBooks-structure: {"count": 0, "envelope_valid": true, "error": null}
+  [PASS] CS-L3-packaged-core-shutdown: {"exit": 0, "result": {"status": "stopped"}}
+
+=== phase 2: PROBE mode (resource channel matrix, packaged sidecar) ===
+  [PASS] CS-P1-probe-results-written: {"path": "C:\\Users\\49745\\AppData\\Local\\Temp\\codex-p03-gate-2de124f3-py314\\m2ac5-cleanstart-8ftayvd7\\probe\\probe-results.json"}
+  [PASS] CS-P2-probe-scenarios-all-pass: {"count": 13, "failed": [], "ids": ["E-00-probe-mode-detected", "E-01-issue-fetch-digest", "E-02-img-render", "E-03-unknown-id", "E-04-revoke-after-cached-fetch", "E-05-expired-ttl", "E-06-remount-fresh-references", "E-0
+  [PASS] CS-P3-sidecar-roundtrip-digest: {"e01": {"id": "E-01-issue-fetch-digest", "observed": {"bytes": 49363, "expected_sha256": "476b6ba12e40daefd37b1baa9089334f8f40081da0e600b15aa207d89195eaf3", "sha256": "476b6ba12e40daefd37b1baa9089334f8f40081da0e600b15aa
+
+=== phase 3: AC1 test mode (acceptance loop, packaged sidecar) ===
+  [PASS] CS-A0-ac1-catalog-prebind: {"exit": 0, "stderr": ""}
+  [PASS] CS-A1-run1-completed: {"exit": 0, "phase": "run1"}
+  [PASS] CS-A1-run2-completed: {"exit": 0, "phase": "run2"}
+  [PASS] CS-A2-restart-new-pids: {"run1": [39832, 41992], "run2": [38356, 4192]}
+  [PASS] CS-A3-saved-summary-complete: {"pages": 2, "providers": {"ocr": "m2ac1-mock-ocr", "translate": "m2ac1-mock-translate"}, "run_status": "completed"}
+  [PASS] CS-A4-restored-reader-matches-saved: {"viewed": [{"index": 0, "sha": "f66af60a9846"}, {"index": 1, "sha": "4afc67386c25"}]}
+  [PASS] CS-A5-export-png-digest-matches: {"sha": "4afc67386c25", "size": 1122}
+
+=== phase 4: PRODUCTION mode (real window, isolated %APPDATA% userData) ===
+  [PASS] CS-R1-production-process-alive: {"poll": null}
+  [PASS] CS-R2-userdata-layout-created: {"appdata_isolated": true, "catalog.sqlite": true, "dirs": {"catalog": true, "data": true, "derived": true, "managed": true}, "root": "C:\\Users\\49745\\AppData\\Local\\Temp\\codex-p03-gate-2de124f3-py314\\m2ac5-cleansta
+  [PASS] CS-R3-production-surface-announced: {"announcement": "[m2rc2-allowlist] production:", "present": true}
+  [PASS] CS-R4-no-spawn-failures-in-log: {"spawn_failed_mentions": 0}
+
+=== phase 4.5: packaged fifth SFX entry probe (opt-in --sfx-real-page) ===
+  [PASS] CS-S1-packaged-sfx-real-page: {"device": "dml", "elapsed_ms": 771, "error": null, "exit": 0, "frozen": true, "has_error_key": true, "json_parsed": true, "marker_count": 1, "n_candidates": 1, "options": {"arch": "yolo11s_seg_onnx", "class_filter": "sf
+  [PASS] CS-S2-packaged-sfx-missing-page-failure: {"error": {"class": "FileNotFoundError", "error_code": null, "message_head": "[Errno 2] No such file or directory: 'C:\\\\Users\\\\49745\\\\AppData\\\\Local\\\\Temp\\\\codex-p03-gate-2de124f3-py314\\\\m2ac5-cleanstart-8f
+
+=== phase 5: AC4 zero-touch assertions ===
+  [PASS] CS-Z1-install-dir-zero-write: {"changed_entries": []}
+  [PASS] CS-Z4-host-real-appdata-untouched: {"changed_entries": [], "files": 4, "note": "runner never deletes here; app APPDATA pinned into the lab", "root": "C:\\Users\\49745\\AppData\\Roaming\\com.newmanga.m2rc1.desktop"}
+  [PASS] CS-Z2-user-source-files-byte-identical: {"files": 4}
+  [PASS] CS-Z3-no-surviving-sidecar-processes: {"acceptance_bridge.exe": 0, "catalog_loader.exe": 0, "core_service.exe": 0, "host_bridge.exe": 0, "python.exe": 7, "sfx_detect_probe.exe": 0}
+
+=== gate ===
+
+GATE: PASS
+GATE_EXIT=0
