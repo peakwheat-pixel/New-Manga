@@ -1,6 +1,6 @@
 # 项目文档索引与 Source of Truth
 
-当前工作：[P08范围草案与验收矩阵](../verification/P08/SCOPE_DRAFT.md)已准备；[正式Task](tasks/P08.md)为in_review，D1–D7已确认；DSH R4已关闭N-07/N-08，R4-01..03修订于`af1ddeec`，R5固定head的Prompt/Handoff已备妥、待正式派发。产品实现未释放；[最新恢复点](../verification/P08/RESUME.md)。下方原规划建议按此当前工作点续接。
+当前工作：[P08范围草案与验收矩阵](../verification/P08/SCOPE_DRAFT.md)已准备；[正式Task](tasks/P08.md)为in_progress；D1–D7已确认；DSH R5已关闭R4-01..03，Codex已修订R5-01/R5-02，等待R6独立复核。产品实现未释放；[最新恢复点](../verification/P08/RESUME.md)。下方原规划建议按此当前工作点续接。
 
 2026-10-08人员更新：Qoder已退出本项目。当前角色/接管名单见[协作协议](09_COLLABORATION.md)；未来UI设计/实现归ZCode，历史Qoder署名仅作证据。整体路线与恢复材料已同步，不新增产品释放。
 

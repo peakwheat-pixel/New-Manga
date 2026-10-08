@@ -22,7 +22,8 @@ if __name__ == "__main__":
     assert len(rows) == len(expected) + 1 + 12
     assert all(line.endswith("| NOT_RUN |") for line in rows)
     print(f"PASS: {len(actual)} numbered D08 criteria, AC-SMOKE and all 12 §68–79 gates mapped; results remain NOT_RUN")
-    for doc in list(HERE.glob("*.md")) + [ROOT / "doc/tasks/P08.md"]:
+    handoffs = list((ROOT / "doc/handoffs").glob("P08-*.md"))
+    for doc in list(HERE.glob("*.md")) + [ROOT / "doc/tasks/P08.md"] + handoffs:
         content = doc.read_text(encoding="utf-8")
         for target in re.findall(r"\]\(([^)]+)\)", content):
             target = target.strip("<>").split("#", 1)[0]
@@ -89,6 +90,8 @@ if __name__ == "__main__":
     assert allowed("verification/P08/review-example.md") and allowed("doc/handoffs/P08-r5.md")
     assert not allowed("doc/10_CURRENT_STATE_AND_GAPS.md")
     assert not allowed("doc/handoffs/P08/nested.md")
+    assert not allowed("doc/handoffs/M2-x.md")
+    assert not allowed("doc/reviews/x.md")
     # Check the fixed commit range without attributing pre-existing worktree dirt to P08.
     changed = subprocess.check_output(["git", "-C", str(ROOT), "diff", "--name-only",
                                        "--no-renames", BASE, "HEAD"], text=True).splitlines()

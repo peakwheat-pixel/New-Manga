@@ -1,6 +1,6 @@
 # 全项目任务盘点与整体规划
 
-最新工作点：DSH R3对P08固定head `1ad05d99`返回`changes_requested`；R1 P1及R2 N-01..N-06关闭，N-07/N-08修订于`16fb07a9`，R4-01..03修订固定于`af1ddeec`，DSH R5独立Review材料已备妥、待正式派发；R3的DSH shell因Win32 5为NOT_RUN。恢复状态见[最新恢复点](../P08/RESUME.md)。后继产品实现未释放；本报告其余审计结论保留为`e4242ecd`时点快照。
+最新工作点：DSH R3对P08固定head `1ad05d99`返回`changes_requested`；R1 P1及R2 N-01..N-06关闭，R4在`16fb07a9`关闭N-07/N-08，DSH R5批准`af1ddeec`并关闭R4-01..03；Codex已修订R5-01/R5-02，等待R6独立复核。R3/R5的DSH shell命令因Win32 5为NOT_RUN。恢复状态见[最新恢复点](../P08/RESUME.md)。后继产品实现未释放；本报告其余审计结论保留为`e4242ecd`时点快照。
 
 2026-10-08后续用户裁决：Qoder退出本项目；本报告的未来分配/可转发指令已改为ZCode主责UI/UX，Codex契约与集成、DSH非作者审查，fallback=ZCode→Antigravity。原Core/Desktop/Plan审计、台账、历史署名和Review保留审计时事实；它们的旧推荐不覆盖当前Plan/AGENTS人员资格。本更新不启动产品Task。
 

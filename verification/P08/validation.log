@@ -405,5 +405,18 @@ command=python -B -X utf8 verification/P08/verify_scope.py; EXIT=0; 193 numbered
 command=python -B -X utf8 verification/PROJECT-ROADMAP-20261008/verify_plan.py; EXIT=0; 196 unique nodes, 105 ancestry records, 21 planned nodes, labels, links and acyclic graphs passed
 command=git diff --check -- authorized tracked P08/governance paths; EXIT=0
 command=git diff --name-only 16fb07a973b36b0b129945bc3a85f9ae51234982 af1ddeec1b998f2ddaf121a85f5fd382561aae1e -- src apps tests packaging; EXIT=0; empty
-R4-01..03=author fixes on af1ddeec; remain open pending independent R5 confirmation; R5 Prompt/Handoff prepared; dispatch not yet started; no R5 session/report/exit exists
+R4-01..03=author fixes on af1ddeec; R5 independently confirmed closed; R5-01/R5-02 are two new open/non-blocking P3 observations, addressed by Codex for R6 confirmation
 Product pytest/cargo/vitest/GUI/build/model=NOT_RUN (documentation/acceptance Task; no product code/test changes)
+
+P08 DSH R5 formal Review returned and archived
+reviewed_head=af1ddeec1b998f2ddaf121a85f5fd382561aae1e; base=16fb07a973b36b0b129945bc3a85f9ae51234982
+review_worktree=G:\CODEX\New Manga.worktrees\P08-dsh-review-af1ddeec-r5; DSH verified HEAD/detached/common-dir from worktree metadata; shell/git/python commands NOT_RUN/NOT_VERIFIED due SetNamedSecurityInfoW Win32 5
+reviewer=DeepSeek Harness (non-author); dsh_version=0.1.7-rc.2; native_session=session-14106c72-634b-4f94-a8d4-c72c91119d8f; CLI exit=0; decision=approved
+canonical_report=verification/P08/review-dsh-af1ddeec-r5.md; SHA256=2EA2ADA0A2CA99FC881FD9ADFC9F180461A3B427980635EFF05613A833A3B7EF; stdout hash matches canonical byte-for-byte
+mount_session.py --id session-14106c72-634b-4f94-a8d4-c72c91119d8f; EXIT=0; mounted to New Manga workspace; desktop visibility on next launch, no app restart
+findings=R4-01/R4-02/R4-03 and N-07/N-08 independently closed; 0 open P0/P1/P2; R5-01 and R5-02 are open non-blocking P3
+R5-01 Codex fix: explicit false samples for non-P08 Handoff and doc/reviews paths; R5-02 Codex fix: include doc/handoffs/P08-*.md in local Markdown link validation
+command=python -B -X utf8 verification/P08/verify_scope.py on main worktree HEAD=bfd70958f1c915a29683d8ffb7f37aabc63af415 with R5-01/R5-02 working-tree fixes; EXIT=0; 193 criteria, 12 gates, 30 committed allowlist files, expanded Handoff link check passed
+command=python -B -X utf8 verification/PROJECT-ROADMAP-20261008/verify_plan.py; EXIT=0; 196 nodes, 105 ancestry records, 21 planned nodes, updated in_progress state and roadmap passed
+command=git diff --name-only af1ddeec1b998f2ddaf121a85f5fd382561aae1e -- protected product/contracts/source paths; EXIT=0; empty
+Product pytest/cargo/vitest/GUI/build/model=NOT_RUN; P08 changes are documentation and validation-script-only
