@@ -2,7 +2,7 @@
 
 时间：2026-10-08（Asia/Shanghai）；Owner=Codex；TaskStatus=blocked；ExecutionState=CHECKPOINTED；原因=正式DSH Reviewer未认领/派发，不是用户尚未回答。
 
-仓库G:/CODEX/New Manga；branch=main；common-dir=G:/CODEX/New Manga/.git；Task base=ab2f813c0ce311a6712002cafd852b9e7a258380；本轮输入HEAD=d44cb5cc05820a36804e3e4d1434ad23b1f2ea87。固定范围交付head由下一份Handoff和DSH-REVIEW-PROMPT记录；恢复须实测Live Git，不回退到base。
+仓库G:/CODEX/New Manga；branch=main；common-dir=G:/CODEX/New Manga/.git；Task base=ab2f813c0ce311a6712002cafd852b9e7a258380；本轮输入HEAD=d44cb5cc05820a36804e3e4d1434ad23b1f2ea87。固定范围交付head=490f9bd9637de0812a3ef3d9bbfa754868d5c15f，见[Handoff](../../doc/handoffs/P08-490f9bd9.md)与DSH-REVIEW-PROMPT；恢复须实测Live Git，不回退到base。
 
 已完成：D1–D7全部确认，见[SCOPE_DRAFT](SCOPE_DRAFT.md)决策表；193条D08编号AC＋AC-SMOKE＋12总Gate覆盖；新增MOBI/CBZ/PDF/文本验收；P09–P20切片和中文图已同步。全库DB＋Managed Copy备份、模型下载、现行全部P0/P1维护和完整主流程均纳入；基础Reader已解冻，扩展延期明确。产品能力和全部验收结果仍NOT_RUN。
 
