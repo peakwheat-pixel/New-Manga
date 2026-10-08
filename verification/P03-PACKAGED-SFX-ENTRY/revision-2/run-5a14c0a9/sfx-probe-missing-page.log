@@ -1,0 +1,12 @@
+$ <installed>\resources\core-sidecar\sfx_detect_probe.exe --page C:\Users\49745\AppData\Local\Temp\m2ac5-cleanstart-tvk268q2\sfx-probe-missing-isolation\guaranteed-nonexistent-page.png (purged PATH)
+exit=1 wall_ms=102
+--- stdout ---
+SFX_PROBE_JSON: {"error": {"class": "FileNotFoundError", "error_code": null, "message_head": "[Errno 2] No such file or directory: 'C:\\\\Users\\\\49745\\\\AppData\\\\Local\\\\Temp\\\\m2ac5-cleanstart-tvk268q2\\\\sfx-probe-missing-isolation\\\\guaranteed-nonexistent-page.png'"}, "label": "missing-page-failure", "page": null, "probe": "m2-prod-sfx-probe-1.sfx_detect_probe", "provider": null, "python": {"executable": "C:\\Users\\49745\\AppData\\Local\\Temp\\m2ac5-cleanstart-tvk268q2\\install\\resources\\core-sidecar\\sfx_detect_probe.exe", "frozen": true}, "result": null, "weights": null}
+
+--- stderr ---
+sfx_detect_probe: FAILED (FileNotFoundError) �� detail in the JSON line; traceback follows on stderr
+Traceback (most recent call last):
+  File "bootstrap\sfx_detect_probe.py", line 336, in main
+  File "bootstrap\sfx_detect_probe.py", line 186, in load_injected_page
+  File "PIL\Image.py", line 3639, in open
+FileNotFoundError: [Errno 2] No such file or directory: 'C:\\Users\\49745\\AppData\\Local\\Temp\\m2ac5-cleanstart-tvk268q2\\sfx-probe-missing-isolation\\guaranteed-nonexistent-page.png'

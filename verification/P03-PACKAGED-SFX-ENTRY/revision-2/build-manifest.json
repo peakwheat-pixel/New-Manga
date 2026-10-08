@@ -4,8 +4,9 @@
   "source_head": "29024a21939917c6d8eb15f1a2bb9ff46cd5bf23",
   "installer": {
     "relative_path": "apps/desktop/src-tauri/target/release/bundle/nsis/m2rc1-desktop_0.1.0_x64-setup.exe",
-    "sha256": "d21e89b6d9f81c3499840a687da0f68d1cad6f9e11e9058078e510ecfa0d8721",
-    "bytes": 579527358
+    "sha256": "5a14c0a98008442bf4e3b70ec1fcc17373e33313cbadf69414fd9584a25a2fa0",
+    "bytes": 579528233,
+    "initial_revision2_sha256": "d21e89b6d9f81c3499840a687da0f68d1cad6f9e11e9058078e510ecfa0d8721"
   },
   "tool_versions": {
     "node": "v24.15.0",
