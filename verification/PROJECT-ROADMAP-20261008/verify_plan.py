@@ -44,7 +44,7 @@ if __name__ == "__main__":
     current = plan.split("## 2026-10-08 完成：", 1)[0]
     assert nodes == [f"P{i:02}" for i in range(1, 22)], "candidate numbering is not consecutive"
     roadmap = (HERE / "ROADMAP.md").read_text(encoding="utf-8")
-    assert set(re.findall(r'\["(P\d{2})<br/>(?:proposed / 未释放|blocked / 草案待裁决与Review)', roadmap)) == set(nodes)
+    assert set(re.findall(r'\["(P\d{2})<br/>(?:proposed / 未释放|blocked / 范围已确认待Review)', roadmap)) == set(nodes)
     for diagram in re.findall(r"```mermaid\n(.*?)```", roadmap, re.S):
         edges = re.findall(r"^\s*([\w-]+)\s+(?:-->|-\.->|-\. .*?\.->)\s*([\w-]+)", diagram, re.M)
         graph = {}

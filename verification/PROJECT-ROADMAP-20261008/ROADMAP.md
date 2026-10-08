@@ -1,12 +1,12 @@
 # New Manga 一眼路线图（2026-10-08）
 
-最新工作点：用户已授权准备P08，[范围草案](../P08/SCOPE_DRAFT.md)与[逐AC索引](../P08/AC_COVERAGE.md)已落盘；P08正式设计Task为blocked，未done。按[最新恢复点](../P08/RESUME.md)完成产品裁决与非作者Review，下方原“准备P08”指令作为此前快照保留。
+最新工作点：用户已授权准备P08，[范围草案](../P08/SCOPE_DRAFT.md)与[逐AC索引](../P08/AC_COVERAGE.md)已落盘；P08正式设计Task为blocked，未done。D1–D7已确认；按[最新恢复点](../P08/RESUME.md)进入非作者正式Review，下方原“准备P08”指令作为此前快照保留。
 
-**当前位置：P08范围草案已准备，等待D1–D7裁决、DSH正式Review；独立预审已修订（blocked / CHECKPOINTED）；P系列完成0/21，blocked 1，proposed / 未释放20。产品实施未释放。下一步：完成P08范围裁决与审查；P01–P07按依赖单独处理。**
+**当前位置：P08的D1–D7全部确认，范围交付等待DSH非作者正式Review（blocked / CHECKPOINTED）；P系列完成0/21，blocked 1，proposed / 未释放20。用户决策已收齐，产品实现未释放。下一步：固定提交并审查P08；P01–P07按依赖单独处理。**
 
 人员更新：用户已移除Qoder，图中未来UI/UX责任由ZCode承担；非作者Review与正式Task释放Gate保持。
 
-派生视图；排期事实以 [REBASELINE_PLAN](../../doc/REBASELINE_PLAN.md) 当前覆盖层为准。基线：`main@e4242ecd`。箭头表示启动依赖，不是工期；没有可靠估算，不编造百分比或日期。`P01–P21` 是规划节点，全部未释放，尚未创建正式 Task 文件。
+派生视图；排期事实以 [REBASELINE_PLAN](../../doc/REBASELINE_PLAN.md) 当前覆盖层为准。基线：`main@e4242ecd`。箭头表示启动依赖，不是工期；没有可靠估算，不编造百分比或日期。`P01–P21` 是规划节点，产品实施均未释放；P08已创建正式文档Task，其余尚无正式Task文件。
 
 ## 已做到哪里
 
@@ -29,14 +29,14 @@ flowchart TB
 
 ```mermaid
 flowchart TB
-  BASE["当前位置：规划完成，实施未启动<br/>P系列完成0/21；P08草案：D1–D7裁决待办"] --> P01["P01<br/>proposed / 未释放<br/>台账取证<br/>修正陈旧metadata；追溯两份Review"]
+  BASE["当前位置：规划完成，实施未启动<br/>P系列完成0/21；P08：D1–D7已确认，待正式审查"] --> P01["P01<br/>proposed / 未释放<br/>台账取证<br/>修正陈旧metadata；追溯两份Review"]
   BASE --> P02["P02<br/>proposed / 未释放<br/>真UI验证<br/>点击/300ms刷新/对比度/失效窗口"]
   BASE --> P03["P03<br/>proposed / 未释放<br/>第五入口Gate<br/>验证SFX frozen入口；不只确认文件存在"]
   BASE --> P04["P04<br/>proposed / 未释放<br/>生产命令面验证<br/>常量成员与并发响应；先复现再决定修复"]
   BASE --> P05["P05<br/>proposed / 未释放<br/>错误语义澄清<br/>category与retryable注记一致"]
   BASE --> P06["P06<br/>proposed / 未释放<br/>GC迁移补证<br/>旧版本退出/命名空间保护；未知保留"]
   P02 -. "确认实际缺口后" .-> P07["P07<br/>proposed / 未释放<br/>小交互修补<br/>手输image读取/quiet-window busy"]
-  P01 --> P08["P08<br/>blocked / 草案待裁决与Review<br/>完整产品范围与验收冻结<br/>Codex汇总；用户裁决；ZCode设计"]
+  P01 --> P08["P08<br/>blocked / 范围已确认待Review<br/>完整产品范围与验收冻结<br/>用户D1–D7已确认；DSH正式审查"]
   style P08 fill:#fff3cd,stroke:#b58105,stroke-width:3px
 ```
 
@@ -46,16 +46,17 @@ flowchart TB
 
 ```mermaid
 flowchart TB
-  P08["P08<br/>blocked / 草案待裁决与Review<br/>范围＋四页设计冻结<br/>保留四页；Reader解冻须用户裁决"] --> P09["P09<br/>proposed / 未释放<br/>真实导入契约与Core适配<br/>受限来源引用；真实尺寸；Managed Copy"]
+  P08["P08<br/>blocked / 范围已确认待Review<br/>范围＋四页设计冻结<br/>保留四页；基础Reader已解冻"] --> P09["P09<br/>proposed / 未释放<br/>真实导入契约与Core适配<br/>图片/PDF/MOBI；真实尺寸；Managed Copy"]
   P08 --> P10["P10<br/>proposed / 未释放<br/>设置与凭据安全通道<br/>Provider配置可验证；secret不进普通DTO"]
   P08 --> P11["P11<br/>proposed / 未释放<br/>长任务契约冻结<br/>启动/快照/暂停取消重试/恢复语义"]
   P09 --> P12["P12<br/>proposed / 未释放<br/>书架与导入产品链<br/>建书/章节/选文件/结果；ZCode接UI"]
   P09 --> P13["P13<br/>proposed / 未释放<br/>Pipeline后台运行与恢复<br/>复用现有调度；持久状态；ZCode实现"]
   P11 --> P13
   P13 --> P14["P14<br/>proposed / 未释放<br/>工作台完整操作链<br/>运行/进度/人工译文/Lock/Pin/区域编辑"]
-  P10 --> P15["P15<br/>proposed / 未释放<br/>完整设置页<br/>配置/凭据/诊断；ZCode实现"]
-  P13 --> P16["P16<br/>proposed / 未释放<br/>阅读与导出契约＋Core<br/>进度/lineage/受控输出；待范围解冻"]
-  P08 -. "Reader解冻裁决" .-> P16
+  P10 --> P15["P15<br/>proposed / 未释放<br/>完整设置页<br/>模型下载/全库备份/P0/P1维护"]
+  P13 --> P15
+  P13 --> P16["P16<br/>proposed / 未释放<br/>阅读与导出契约＋Core<br/>进度/PNG/ZIP/CBZ/PDF/文本安全输出"]
+  P08 -. "D1基础Reader已选入" .-> P16
   P16 --> P17["P17<br/>proposed / 未释放<br/>阅读器与导出UI<br/>读取真实结果/保存进度/安全导出"]
   P10 --> P18["P18<br/>proposed / 未释放<br/>真JA/KO质量资格<br/>检测/OCR/翻译/修复/无字页；DSH验收"]
   P13 --> P18
@@ -71,7 +72,7 @@ flowchart TB
   style P08 fill:#fff3cd,stroke:#b58105,stroke-width:3px
 ```
 
-完整产品候选任务 是完整目标的条件规划，不解除当前 Reader/跨页联动/页缩略图“明确不做”的冻结。缩略图、跨页联动不作为默认任务。P09/P10/P11 内部先契约后实现，正式释放时拆为独立 Task；P14新增编辑能力同样先Codex冻结命令、ZCode/Antigravity实现Core、再ZCode接UI；P16先Core/IPC后P17 UI。Pipeline 最小成功链可先用 deterministic provider，真实质量 Gate 依赖 P10 和可用受控模型/endpoint，不能将 mock PASS 当真质量 PASS。
+完整产品候选任务尚未释放。D1已解冻基础Reader；跨页联动/页缩略图继续延期。缩略图、跨页联动不作为默认任务。P09/P10/P11 内部先契约后实现，正式释放时拆为独立 Task；P14新增编辑能力同样先Codex冻结命令、ZCode/Antigravity实现Core、再ZCode接UI；P16先Core/IPC后P17 UI。Pipeline 最小成功链可先用 deterministic provider，真实质量 Gate 依赖 P10 和可用受控模型/endpoint，不能将 mock PASS 当真质量 PASS。
 
 长会话/磁盘总量、模型扩展与训练不是默认关键路径。BJ13 维持 0.90、手工改标＋skip；Manga109 永久取消。不重新打开已完成 TA3-B2/B3、GC-2、ICU 或 Runner Guard。
 

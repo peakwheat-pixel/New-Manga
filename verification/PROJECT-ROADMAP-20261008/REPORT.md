@@ -1,6 +1,6 @@
 # 全项目任务盘点与整体规划
 
-最新工作点：用户已授权准备P08，[范围草案](../P08/SCOPE_DRAFT.md)与[逐AC索引](../P08/AC_COVERAGE.md)已落盘；P08正式设计Task为blocked，未done。按[最新恢复点](../P08/RESUME.md)完成产品裁决与非作者Review，下方原“准备P08”指令作为此前快照保留。
+最新工作点：用户已授权准备P08，[范围草案](../P08/SCOPE_DRAFT.md)与[逐AC索引](../P08/AC_COVERAGE.md)已落盘；P08正式设计Task为blocked，未done。D1–D7已确认；按[最新恢复点](../P08/RESUME.md)进入非作者正式Review，下方原“准备P08”指令作为此前快照保留。
 
 2026-10-08后续用户裁决：Qoder退出本项目；本报告的未来分配/可转发指令已改为ZCode主责UI/UX，Codex契约与集成、DSH非作者审查，fallback=ZCode→Antigravity。原Core/Desktop/Plan审计、台账、历史署名和Review保留审计时事实；它们的旧推荐不覆盖当前Plan/AGENTS人员资格。本更新不启动产品Task。
 
@@ -50,10 +50,10 @@ M2前缀正式Task为101个；加GOV-001、两个DIAG-M2与DOC-FIX，新架构/�
 | 翻译启动与任务控制 | `core_assembly.py`已有PipelineService；生产15条Tauri命令不含StartRun | `WorkbenchToolbar`仅上下文；`TaskProgressPanel:1,31`静态占位。P11冻结接受/快照/控制语义，P13复用后台执行，P14接真实进度 |
 | 人工编辑与保护操作 | EditingService/Revision/Lock/pin后端能力、当前改标/restore部分接通 | 译文编辑、Lock/Pin、region增删/几何修改完整UI/IPC parity未接通。P14按已批准需求拆冻结写命令，保护expected revision |
 | 设置/Provider凭据 | SettingsPanel真实读取保存SFX三策略 | 完整profiles、credentials、网络/诊断设置与secret exchange未产品化。P10先安全契约/能力，P15接设置页 |
-| 阅读与导出 | Python reading/export存在；AC1测试模式可调用 | 无React Reader、production ReaderProjection/进度/Export命令。P16/P17待Reader范围解冻，不能借AC1测试桥代替 |
+| 阅读与导出 | Python reading/export存在；AC1测试模式可调用 | 无React Reader、production ReaderProjection/进度/Export命令。P16/P17的基础Reader范围已确认，实施待释放，不能借AC1测试桥代替 |
 | 真实质量 | 生产manga/SFX、PaddleOCR、remote translation与指定素材run已有证据 | JA G1自动对齐、F4无字页、翻译相似度口径、修复实际质量和域覆盖仍有局限。P18按样本/阈值验收；不默认开启模型训练 |
 | 修复模型 | SimpleFill/EdgeBleed可运行；learned registry条目仅登记 | LaMa/AOT/BrushNet/FLUX `implements=False`，不记为实现。是否新增由P08/P18质量差距决定，避免提前堆ML依赖 |
-| 源样式/导出格式/维护 | 生产样式分析器返回空列表；PDFComposer未注入；maintenance服务存在 | P08明确样式保持、图片/PDF/MOBI与PNG/ZIP/PDF所选格式；P15明确回收站/DB-only或全库备份，接安全停写/回滚；P16逐格式验收。已有服务不等于production能力 |
+| 源样式/导出格式/维护 | 生产样式分析器返回空列表；PDFComposer未注入；maintenance服务存在 | P08明确样式保持、图片/PDF/MOBI与PNG/ZIP/PDF所选格式；P15落实现行P0/P1维护与DB＋Managed Copy全库备份，接安全停写/回滚；P16逐格式验收。已有服务不等于production能力 |
 | 包与安全生命周期 | 第五SFX入口已构建；GC2 namespace/retired保护已实现 | R-003 packaged入口coverage仍未释放；GC G7多版本分发迁移仍是Gate；Windows10未测。P03/P06/P20补限定证据 |
 
 详见 [Core深读](core-audit.md) 与 [Desktop深读](desktop-audit.md)。实际调用链覆盖入口、装配、业务服务、持久化、资源句柄、React消费者、Tauri白名单/ACL、runner与测试证据；不以源码存在测试类直接宣布运行PASS。Core仍有惰性Qt图像读取seam，现有Pillow渲染是真的；不为“Qt-free”口号强制全库重写，按新架构实际功能和packaged执行结果决定适配。
@@ -68,9 +68,9 @@ M2前缀正式Task为101个；加GOV-001、两个DIAG-M2与DOC-FIX，新架构/�
 
 远期任务是工作包，不是一个Owner同时拥有契约、Core、UI所有路径。正式释放拆为“契约→实现→UI→非作者验收”，各自固定base/允许路径；产品未知项保留proposed / 未释放/等待裁决。Owner与Reviewer不同，Codex集成验证不能替代独立Review。
 
-当前Reader面/跨页联动/页缩略图的“明确不做”没有解除；P16/P17是可提前看清的条件路线。缩略图/跨页不作为默认范围。BJ13补标补画仍暂缓。Legacy29个非完全技术完成节点保留历史，不为提高计数继续实施。P21移除Legacy是可选、另授权、parity之后的事。
+D1已解冻基础Reader，跨页联动/页缩略图仍延期；P16/P17待P08正式Review/集成后单独释放。缩略图/跨页不作为默认范围。BJ13补标补画仍暂缓。Legacy29个非完全技术完成节点保留历史，不为提高计数继续实施。P21移除Legacy是可选、另授权、parity之后的事。
 
-若P08继续裁决暂缓Reader，则P19/P20必须命名为“选定范围验收/发布”，保留Reader缺口，不能将未做项N/A后宣称完整四页。P01取证找不到原Review也可明确NOT_VERIFIED处置，不要求先找齐全部报告才准备P08。B3的8/8 export OK不代表每个Run严格状态都COMPLETED；K01 terminal/step不一致在P18先核验，不凭旧报告宣布当前bug。
+P08已选择基础Reader；P19/P20保持全部P0/P1和完整主流程，不将未做项N/A后宣称完成。P01取证找不到原Review也可明确NOT_VERIFIED处置，不要求先找齐全部报告才准备P08。B3的8/8 export OK不代表每个Run严格状态都COMPLETED；K01 terminal/step不一致在P18先核验，不凭旧报告宣布当前bug。
 
 ## 文档冲突与证据限制
 
@@ -99,6 +99,8 @@ Packaged26/26的已入库证据绑定source=`3d532c1f99e49da703d2076bd67d46b7108
 无法承诺额度恢复后自动唤醒，也不需要为此新建自动化。若用户选择ZCode/Antigravity接管，本恢复材料可转发，接管者按AGENTS/协作协议核验授权与角色边界；Owner不得审核自己，主协调者只能在安全边界回切。报告、台账与图保存为仓库文件，即使换会话也可恢复。
 
 ## 推荐下一任务与可直接转发指令
+
+当前可转发的下一步：[P08 DSH正式Review指令](../P08/DSH-REVIEW-PROMPT.md)。D1–D7已全部确认，无需再次询问；DSH未派发/认领。下方长指令仅为此前规划快照，不可用于当前派发。
 
 **Task**：[P08](../../doc/tasks/P08.md)“完整产品范围与验收冻结准备”（blocked / CHECKPOINTED；已落草案，等用户D1–D7裁决及正式DSH Review）。**Agent**：Codex负责范围/契约；后续ZCode另开设计Task；建议非作者Reviewer=DSH。本次用户请求只规划，准备可以只读进行，产品取舍/Reader解冻必须等待用户裁决，不能启动后继实现。
 

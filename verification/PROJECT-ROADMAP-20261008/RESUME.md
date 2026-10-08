@@ -1,8 +1,8 @@
 # 全项目任务规划恢复点
 
-最新工作点：用户已授权准备P08，[范围草案](../P08/SCOPE_DRAFT.md)与[逐AC索引](../P08/AC_COVERAGE.md)已落盘；P08正式设计Task为blocked，未done。按[最新恢复点](../P08/RESUME.md)完成产品裁决与非作者Review，下方原“准备P08”指令作为此前快照保留。
+最新工作点：用户已授权准备P08，[范围草案](../P08/SCOPE_DRAFT.md)与[逐AC索引](../P08/AC_COVERAGE.md)已落盘；P08正式设计Task为blocked，未done。D1–D7已确认；按[最新恢复点](../P08/RESUME.md)进入非作者正式Review，下方原“准备P08”指令作为此前快照保留。
 
-**当前位置：P08范围草案已准备，等待用户裁决与非作者Review（blocked / CHECKPOINTED）；P系列完成0/21，blocked 1，proposed / 未释放20。产品实施未释放。下一步：完成P08范围裁决与审查；P01–P07按依赖单独处理。**
+**当前位置：P08的D1–D7全部确认，范围交付等待DSH非作者正式Review（blocked / CHECKPOINTED）；P系列完成0/21，blocked 1，proposed / 未释放20。用户决策已收齐，产品实现未释放。下一步：固定提交并审查P08；P01–P07按依赖单独处理。**
 
 2026-10-08 最新编号裁决：当前21个候选任务沿用 `P01–P21`，状态为 `proposed / 未释放`；仅统一编号，不释放实施、不改原有任务及完成记录。原始审计、台账与历史验证日志保留为固定快照。
 
@@ -16,7 +16,7 @@
 - 既有 dirty：`.qoder-credits/report.json`；`.qoder-credits/通路探测__8602db50.canvas.tsx`；`verification/M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD/antigravity-dispatch.json`；同目录 `antigravity-dispatch.stderr.log`。保留，不 stage、不 reset/clean/stash。
 - 已完成：Git Reality Check；三路GPT-6.1 Sol high审计与196节点台账；Core/Desktop调用链/产品可达性/Task集成祖先取证；REPORT/中文ROADMAP；Plan当前P01–P21 候选任务依赖/责任方/Gate；Status/Index/短Roadmap新入口；有界规划一致性核对。
 - 当前工作点：完整规划已落盘。三审计及台账不再等待；规划一致性PC-01（此恢复点过时）已修订，PC-02（缺validation.log）已实际生成。生产代码零差量。
-- 下一确切步骤：复用报告准备P08完整产品范围、四页parity与验收矩阵，状态为 `proposed / 未释放`（尚未创建正式 Task 文件）。Codex负责范围/契约、ZCode另设计Task、DSH非作者Review；先按下列Git核验，不再全仓审计。产品取舍/Reader解冻待用户裁决，禁止直接实施后继产品候选任务。
+- 历史步骤（已被顶部P08恢复点取代）：复用报告准备P08完整产品范围、四页parity与验收矩阵，状态为 `proposed / 未释放`（尚未创建正式 Task 文件）。Codex负责范围/契约、ZCode另设计Task、DSH非作者Review；先按下列Git核验，不再全仓审计。产品取舍/Reader解冻待用户裁决，禁止直接实施后继产品候选任务。
 - 本轮验证：`python verification/PROJECT-ROADMAP-20261008/verify_plan.py` EXIT=0；196唯一节点与分类/依赖、105新架构祖先、21规划节点/图无循环、局部导航链接、零生产差量、治理diff-check全部PASS，见validation.log。产品pytest/cargo/vitest/GUI/fresh build：NOT_RUN；历史测试仍限定原commit/环境。
 - 已知：STATUS 顶部无 Active/released；Runner R-003 未释放；GC-2 设计与实现均已完成，实现集成 `cea610ed`，分发迁移 Gate 仍须遵守；早期设计 checkpoint 中的后继 proposed 已被后续交付取代。
 - 恢复安全：恢复前比较 HEAD、branch、dirty 集合与 Plan/Status。相同则 RESUME_SAFE；有漂移记录 DRIFT_DETECTED，先分析，不覆盖。

@@ -1,59 +1,61 @@
 # P08 产品范围与验收草案
 
-状态：DRAFT / 等待用户裁决与非作者 Review。本文是 P08 的审查材料，范围生效以 Plan 与正式 Task 为准，不修改任何冻结契约或既有产品裁决。
+状态：USER_SCOPE_CONFIRMED / D1–D7已确认，等待非作者正式Review。本文是 P08 的审查材料，范围生效以 Plan 与正式 Task 为准，不修改任何冻结契约或既有产品裁决。
 
 ## 当前完成位置
 
-已完成整体代码/任务审计和 P01–P21 路线规划。本轮完成范围草案准备；P08 尚未 done，后继产品实施未释放。现有新架构已登记任务105项收口；196节点历史台账是固定审计快照，不是最新 Task 文件数。不能用这两项数字计算产品完成率。
+已完成整体代码/任务审计和 P01–P21 路线规划。本轮完成用户D1–D7决策归档与范围准备；P08 尚未 done，后继产品实施未释放。现有新架构已登记任务105项收口；196节点历史台账是固定审计快照，不是最新 Task 文件数。不能用这两项数字计算产品完成率。
 
 生产能力复核输入：`ab2f813c0ce311a6712002cafd852b9e7a258380`；与审计输入 e4242ecd 比较，src/apps/tests/packaging 无差量。复用[Core审计](../PROJECT-ROADMAP-20261008/core-audit.md)、[Desktop审计](../PROJECT-ROADMAP-20261008/desktop-audit.md)。旧报告的人员建议由当前协作协议覆盖；Qoder不参与。
 
-## 建议首个完整产品范围（等待批准）
+## 用户确认的首发范围（2026-10-08）
 
-建议以“四页最小用户闭环”作为首个发布目标：空库建书与导入图片 → 配置可用Provider → 翻译运行/暂停/停止/恢复 → 校对与保护 → 阅读结果与导出PNG/ZIP。这只是首个范围建议，不等于 D01/D08 所有目标能力全部完成。
+D1–D7已全部收到，不再等待用户回答。产品取舍已确认；P08正式Review与集成尚未通过，后继实现仍未释放。D2按用户选项中列出的整组格式纳入，不只选择其中一个。
 
-`must`、`deferred`、`out` 都是本草案建议分类。已冻结的数据保护为必须遵守的现行约束；新增能力和对目标需求的延期都须用户裁决。没有裁决的条目不可改为 N/A 或 PASS。
+| 决策 | 用户确认结果 | 实现/验收落点 |
+|---|---|---|
+| D1 | 解冻基础Reader：分页/Webtoon阅读、独立阅读进度恢复、PNG/ZIP导出；跨页联动、页缩略图继续延期 | P16契约/Core→P17 UI；保留四个一级页面 |
+| D2 | 图片/文件夹及PDF/MOBI输入；PNG/ZIP、CBZ/PDF/文本输出 | P09/P12逐输入格式；P16/P17逐输出格式Gate；未测不声明支持 |
+| D3 | JA/KO分别真实测试；按现行RG1净化基线；Win10单独验证后再声明支持 | P18资格方案/实测；P20环境与安装包绑定；Win10不是首发硬门槛 |
+| D4 | 整个漫画库备份恢复：数据库＋Managed Copy | P15依赖P13停写/排空/连接回收；纳入一致恢复所需Revision、artifact和元数据；失败回滚；DB-only不能替代 |
+| D5 | 保持D08现行发布门槛：P0/P1全部通过、AC-SMOKE完整主流程全部通过 | P19/P20；未执行不标PASS，不用延期豁免P0/P1 |
+| D6 | 保留模型下载；Plugin/Hook、字体上传、Sakura监控、Plugin Agent首发延期 | P15下载/进度/中断恢复/完整性Ready；现有Sakura翻译Provider不因监控延期而删除 |
+| D7 | 设置、回收站、TM管理及其他维护满足D08现行P0/P1要求 | P10/P14/P15按AC落实；不再笼统延期完整TM或回收站；不自动纳入所有可选扩展 |
 
-| 能力 | 建议分类 | 实际能力与缺口 | 来源 | 后继任务与可观察验收 |
-|---|---|---|---|---|
-| 四页入口/默认书架/上下文保留 | must，Reader等待解冻 | App目前Console↔Workbench；Library/Settings在Console内 | D01§1/3；D04§1/15/33；D08 AC-NAV | P12/P14/P15/P17：真实窗口四页切换、空态/错误、重开上下文，不增加第五页 |
-| Book/Chapter/Page基本管理 | must基本创建与列表；标签/收藏/归档等细项待裁决 | LibraryService存在，生产只读列表已接；写入口未接 | D04§3–10；D08 AC-LIB/CH/PAGE | P09由Codex冻结CreateBook/CreateChapter契约、Antigravity实现Core/Host写路径；候选允许路径`doc/contracts/`自有契约、`src/application/library/`、`src/bootstrap/core_service.py`、`src/bootstrap/core_assembly.py`、`apps/desktop/src-tauri/src/main.rs`与IPC bridge。P12由ZCode接UI。空安装态验收真实建Book/Chapter/导入 |
-| 图片/文件夹导入与真实尺寸 | must | ImportImagesUseCase可复用；生产decoder恒1×1，正式导入命令缺失 | D04§8；D08 AC-IMPORT | P09/P12：PNG/JPEG受控选源，损坏/逃逸/重复/中断/Unicode判别；源hash零变化 |
-| PDF/MOBI输入 | deferred建议 | 存在解析服务与Qt路径；生产闭包未资格验证 | D01§2；D04§8；D08 AC-EXT | P09仅实现获选格式；PDF/MOBI延期须在用户决定矩阵标注，并逐条核对D08 P0/P1与AC-SMOKE影响 |
-| paged/Webtoon、长图预算 | must基础行为；容量边界待实测冻结 | tile/坐标基础存在，完整React Reader与长图预算未证实 | D04§9/34/35；D08 AC-WEBTOON/CAP/MEM | P09/P13/P17：一张长图仍一Page、坐标回映、按宽滚动、恢复；预算按D07原目标核验，不臆造数值 |
-| 全章/选页翻译与重跑族 | must基础翻译/跳过已翻译/重OCR/重修/重渲染；单Region重全翻译单切片 | PipelineService与九步handler存在；正式StartRun/控制命令缺失 | D04§11–14/22.1/30；D08 AC-CMD/RFULL/PIPE | P11/P13/P14：开始时冻结目标，复用有效步骤，缺Clean重渲染禁止补修复；RFULL锁覆盖必须单独确认 |
-| 暂停/继续/停止/失败重试/崩溃恢复 | must | 后端可复用；任务进度面板静态占位 | D04§30/31/51；D08 AC-PAUSE/STOP/CRASH/RETRY/PROGRESS | P11/P13/P14：持久接受后响应、安全边界停步、无半提交、重开恢复；UI请求响应指标沿D08 |
-| Region改标/几何/增删/人工译文 | must，按命令拆切片 | 改标/历史恢复已接；文本保存/几何/增删写命令未接 | D04§18/27/32；D08 AC-REGION/TRANS/AUTO | P14：expected_revision冲突、保存后重开真实一致；自动保护人工译文，不只本地改图 |
-| 四类Lock/current/pinned/Revision | must现行安全约束 | Core事务守卫存在；UI写入口需接 | D04§28/29；D08 AC-LOCK/REV/CONFLICT/ART | P13/P14/P19：所有新写入口复核锁与输入版本；失败保current、pin不清理、恢复留历史 |
-| 翻译约束/术语/TM | must保护现有语义；完整管理UI建议deferred | 后端基础存在，未证明全部生产管理界面可达 | D01§3；D04§20–22；D08 AC-CONSTRAINT/TM | P10/P13/P14：未确认机器结果不写TM、不覆盖人工；完整编辑界面另裁决，不能当全部目标达成 |
-| SFX策略/检测/OCR/翻译 | must保留现行能力 | 检测/OCR/翻译有真实实验；BJ13维持0.90+改标/skip；产品配置缺口 | D04§17/19；D08 AC-OCR/SFX/PROVIDER | P10/P13/P18：真实JA/KO样本、可用性与失败原因投影；不复活Manga109任务 |
-| 修复与排版 | must可用基线；源样式自动提取/高质量模型待裁决 | SimpleFill/EdgeBleed真实；生产style analyzer空；learned descriptors implements=False | D04§23–26；D08 AC-STYLE/INPAINT/RENDER | P13/P18：mask/版本/文字溢出/源背景可审查；若质量不达标阻止声明支持，不默认引入ML训练 |
-| Provider/凭据/网络 | must最小可用配置与安全凭据；完整代理覆盖待裁决 | 普通SFX设置已接；CredentialRef exchange缺失 | D04§38–42；D08 AC-PROVIDER/NET/SEC/SET | P10/P15：密钥不进普通DTO/日志，连接失败可见；配置生效时点/重启/替换/清除须冻结 |
-| Reader/阅读进度 | must建议，当前明确不做项须新裁决 | ReadingService存在；正式Projection/SaveProgress与React Reader缺失 | D04§33–36；D08 AC-READ | P16/P17：原图/译图，paged方向/Webtoon按宽、关闭重开进度；跨页联动/页缩略图继续deferred |
-| PNG/ZIP导出 | must建议 | ExportService与lineage基础存在；正式授权输出/StartExport/Cancel缺失 | D04§37；D08 AC-EXPORT | P16/P17：stale/missing策略先冻结；临时文件发布、取消清理、来源/顺序/hash、源零写 |
-| PDF/CBZ/文本等导出 | deferred建议 | PDFComposer未注入生产装配；其他格式逐项资格未核 | D01§3；D04§37；D08 AC-EXPORT/EXT | P16分格式独立Gate；未测格式显示不可用，不借PNG PASS代替 |
-| 回收站/诊断/维护 | must诊断与失败提示；删除/恢复建议单独切片 | Trash/diagnostics可复用，生产维护命令未接 | D04§43/44；D08 AC-TRASH/LOG/CLEAN | P15：同batch恢复、managed-only删除、current/pinned保护；不扩大全局删除范围 |
-| DB备份/全库备份恢复 | deferred建议，另行选择 | 备份服务存在；新worker/连接停写恢复未接；DB备份不含Managed Copy | D04§38；D08 AC-BACKUP | P15：若选入必须停写/排空/关闭连接/reassemble/回滚＋隔离故障注入；DB-only明确不可替代全库灾备 |
-| 发布/安装/模型运行 | must选定Windows环境 | 固定旧包26/26与本机裁决有效；第五入口/G7迁移/Win10资格缺口 | D07平台；D08 AC-PKG/SMOKE/OPTIONAL | P03/P06/P19/P20：fresh source/installer五入口绑定、受影响Gate；未测Win10不声明支持 |
-| 插件Agent/自动更新/签名/模型训练/Legacy移除 | out首轮建议；P21可选 | 未授权新增；Legacy只留证据 | D01扩展目标；Plan现行约束 | 另行范围授权；首轮不投入，不改变这些功能的历史记录 |
+## 能力范围与真实缺口
 
-## 必须裁决的选项
+以下must表示首发必须，deferred表示用户明确延期。源码缺口复用既有审计，选入范围不等于已经实现。逐项可观察验收见[AC覆盖索引](AC_COVERAGE.md)，全部产品结果仍为NOT_RUN。
 
-| 决策 | 推荐方案 | 其他选项与影响 | 当前批准 |
+| 能力 | 已确认范围 | 当前缺口/来源 | 后继实现与验收 |
 |---|---|---|---|
-| D1 阅读器 | 解冻基础Reader：paged/Webtoon阅读、进度恢复、PNG/ZIP导出 | Reader暂缓则首个版本只能称“选定范围版本”；仍保留Reader缺口 | 等待用户 |
-| D2 输入/输出格式 | 首轮图片/文件夹输入、PNG/ZIP输出 | 增加PDF/MOBI输入、CBZ/PDF/文本输出逐格式增加适配及安装包Gate；校验D08 P0/P1 | 等待用户 |
-| D3 质量与Windows环境 | JA/KO分别真实资格；先按已裁决Windows净化基线；Win10实测后才声明支持；复杂背景依据真实样本限制能力声明 | Win10可定首发硬门槛；环境不足则BLOCKED。指标在资格实验方案审定后冻结 | 等待用户 |
-| D4 D08备份/恢复发布Gate | 保留D08 §73，纳入备份恢复并按所选保护范围验收；P15/P13设计停写、排空、回滚 | 若首轮延期，须明确批准修改D08正式Release基线；修订集成前不得称READY。选择DB-only或包含Managed Copy，二者不能混称 | 等待用户 |
-| D5 D08 P0/P1与AC-SMOKE | 保持D08 P0/P1 100%及§53主流程全部PASS | 若裁剪，逐AC注明、更新目标文档并经用户批准；未做项不能标N/A | 等待用户 |
-| D6 模型下载/扩展能力 | 必须先明确AC-MODEL-001/002是否首发要求；建议纳入P15下载/进度/中断恢复。Plugin/Hook、字体上传、Sakura、Plugin Agent分别作选项 | 若延期模型下载，须显式修改D08 P1/P0边界与READY条件；扩展逐项延期或另开实现切片 | 等待用户 |
-| D7 维护与内容编辑 | 保留Lock/Revision/人工保护；TM管理和回收站按D08优先级逐项核对 | D08 P0/P1已列要求不得静默延期 | 等待用户 |
+| 四页与书目/章节/页管理 | must：D08全部P0/P1，包括标签、收藏/归档等要求 | App仅Console↔Workbench，生产Library主要只读；D04§3–10、D08 AC-NAV/LIB/CH/PAGE | P09冻结CreateBook/CreateChapter等写契约并接Core/Host；P12 ZCode导航/书架/导入UI；真实空库建书闭环 |
+| 图片/文件夹/PDF/MOBI导入 | must：整组选定格式 | production decoder恒1×1；PDF/MOBI解析存在但生产闭包未验证；D04§8、AC-IMPORT/EXT | P09真实尺寸/受控来源/Managed Copy；P12选源与结果；损坏、加密、逃逸、重复、中断与Unicode；源hash零变化 |
+| 长图与阅读 | must：分页RTL/LTR、Webtoon、进度恢复、原图/译图；跨页联动/页缩略图deferred | ReadingService/tile基础存在，正式ReaderProjection/SaveProgress和React Reader缺失；D04§9/33–36 | P16 Core/IPC→P17 UI；一长图一Page、坐标回映/预算/关闭重开；D07/D08容量性能要求保留 |
+| 全章/选页翻译、重跑/控制/恢复 | must：D08 P0/P1全部命令行为 | PipelineService与九步handler可复用；正式StartRun/控制命令缺失，进度面板占位；D04§11–14/22/30–31/51 | P11生命周期契约→P13 runtime→P14 UI；持久接受、安全停步、失败重试、崩溃恢复；不得造第二调度器 |
+| 人工译文/Region几何增删/四类Lock/current/pinned | must：完整现行保护与冲突语义 | 改标/修订恢复已接，其他写命令和UI仍需接线；D04§18/27–29/32 | P14分命令切片；P13/P19所有入口复核expected_revision、Lock/人工保护，无半提交，pin不清理 |
+| 约束/术语/TM管理 | must：全部现行P0/P1管理与保护 | 后端基础存在，生产管理UI未全面可达；D04§20–22、AC-CONSTRAINT/TM | P10/P13/P14/P15按AC映射；机器未确认结果不写TM、不覆盖人工；管理能力不得笼统延期 |
+| Provider/凭据/网络/设置 | must：全部现行P0/P1 | CredentialRef exchange缺失；普通settings DTO不能载secret；D04§38–42 | P10安全通道→P15 UI；替换/清除/持久/配置生效、网络失败可见、日志脱敏 |
+| 模型下载与运行 | must：AC-MODEL-001/002 | 生产下载/进度/完整性Ready链需资格验证 | P15契约/Core/Host/UI；P18真实模型资格、P20包验证分别执行，不能互相替代 |
+| SFX/OCR/翻译/修复/排版 | must：D08现行质量与性能要求 | SimpleFill/EdgeBleed真实，style analyzer空，learned registry implements=False；D04§17/19/23–26 | P13生产接线、P18 JA/KO分别资格；无字页/复杂背景/溢出逐项证据；不足即阻止声明，不默认训练新模型 |
+| PNG/ZIP/CBZ/PDF/文本输出 | must：整组选定格式 | ExportService/lineage可复用，PDFComposer未注入，授权/StartExport/Cancel缺失；D04§37 | P16逐格式契约/Core→P17 UI；stale/missing策略、临时发布/取消清理、顺序/hash/lineage与源零写 |
+| 回收站/诊断/其他维护 | must：D08 P0/P1 | Trash/diagnostics可复用，production维护命令未接；D04§43/44 | P15同batch恢复、managed-only删除、current/pinned保护；P19故障注入；不扩大全局删除范围 |
+| 全库备份恢复 | must：DB＋Managed Copy及一致性所需库内资产 | 备份服务存在，但新worker/连接停写恢复未接；D04§38、AC-BACKUP | P15先契约→Core→UI；依赖P13停写/排空/关闭连接/reassemble/rollback；隔离恢复验证，秘密不得以普通配置明文备份 |
+| Windows发布 | must：D08 P0/P1、AC-SMOKE与发布总Gate；Win10实测后声明 | 旧26/26仅原source/hash，第五入口/G7迁移缺口保留；D07/D08 | P03/P06/P19/P20；RG1净化基线与fresh source/installer五入口绑定；未知环境不外推 |
+| Plugin/Hook、字体上传、Sakura监控、Plugin Agent | deferred：首发延期 | 对应AC-EXT-PLUGIN/FONT/SAKURA为P2；Plugin Agent独立扩展目标 | 保留目标与历史记录；不当PASS/N/A，不释放实现Task；现有翻译Provider行为仍按P0/P1验收 |
+| 自动更新/签名/模型训练/Legacy移除 | 不新增默认实施授权；D08已有发布要求仍须逐条满足 | P21需独立移除授权 | 不得用本行豁免D08任一现行P0/P1或发布清单条目 |
 
-任何延期都须列出受影响AC和Release Gate，并取得用户批准及版本化文档修订。本文不自行豁免D08 §73/76。
+## D08发布口径
 
-### D08规范门槛冲突
+D08源文件本轮不变。§53完整主流程全部PASS；§68–79总Gate逐项保留；§73 Backup/Restore PASS及P0/P1 100%，§76 READY条件与干净Windows smoke依现行RG1基线执行。首发延期仅涉及D6明确列出的扩展与D1跨页/缩略图，不降低任何P0/P1门槛。新增MOBI、CBZ、文本等格式不能因D08缺独立编号就漏验，另在下方新增格式验收表列出。
 
-D08 §53规定发布主流程全部PASS；§68–77规定自动化、UI手工验收、Benchmark、数据保护、发布清单及READY条件；§73明确Backup/Restore PASS、P0/P1 100%，§76要求干净Windows smoke。`D08-AC-SMOKE`与`D08-GATE-*`已列入[AC覆盖索引](AC_COVERAGE.md)。任何首发裁剪都必须先取得用户对具体AC的裁决并版本化修订D08，P08不能自行将需求标为N/A。
+| 新增格式验收项 | 必须验证 | 实现/验收 |
+|---|---|---|
+| P08-FMT-MOBI | 受控来源、页序/尺寸/Managed Copy、损坏/不支持/加密安全拒绝、无半成品、源hash不变、生产安装包实际导入 | P09/P12；P19/P20 |
+| P08-FMT-CBZ | 受控输出、页序/命名/压缩包可重开、lineage、取消/失败清理、源零写、安装包实际导出 | P16/P17；P19/P20 |
+| P08-FMT-PDF | 真正PDF装配、页序/分页或长图策略、可重开、缺失/stale/取消/失败安全、源零写、安装包实际导出 | P16/P17；P19/P20 |
+| P08-FMT-TEXT | 文本编码、章节/页/Region顺序、人工与当前修订选择、空页/缺失策略、受控输出/失败清理/源零写 | P16/P17；P19/P20 |
+
+上述格式结果均NOT_RUN；编码、MOBI支持子集及加密策略、分页和缺失策略由P09/P16契约设计冻结，不额外扩大首发格式范围。
 
 ## 质量与验收口径草案
 
@@ -70,24 +72,24 @@ D08 §53规定发布主流程全部PASS；§68–77规定自动化、UI手工验
 
 | 工作包 | 先后切片与依赖 | 建议Owner / 非作者Reviewer | 拟议允许路径与Gate |
 |---|---|---|---|
-| P09 | contract→Core/Host真实decoder与受控来源；依赖P08裁决 | Codex→Antigravity；DSH | contract自有修订；src/application/library、src/application/importing、src/bootstrap/core_service.py、core_assembly.py、apps/desktop/src-tauri/src/main.rs及经Task列明的bridge/contract边界；只选定格式与最小目标，源保护/损坏/中断Gate |
+| P09 | contract→Core/Host真实decoder与受控来源；依赖P08正式Review/集成 | Codex→Antigravity；DSH | contract自有修订；src/application/library、src/application/importing、src/bootstrap/core_service.py、core_assembly.py、apps/desktop/src-tauri/src/main.rs及经Task列明的bridge/contract边界；只选定格式与最小目标，源保护/损坏/中断Gate |
 | P10 | credential/config契约→Core/Host；依赖P08 | Codex→Antigravity；DSH | 自有契约、settings/provider安全接线；凭据读写与脱敏Gate，不借普通settings DTO传secret |
 | P11 | durable accepted/快照/控制/恢复契约；依赖P08 | Codex；DSH | 自有契约设计与verification；不写runtime，不造第二调度器 |
 | P12 | 四页导航设计切片→书架与导入UI；依赖P09＋设计Review | ZCode；DSH | frontend/library与路由最小切片；真实Tauri空库链，保留已有Workbench/SFX能力 |
 | P13 | Run接线→控制→恢复；依赖P09/P11 | ZCode；DSH | src/application/tasks既有复用、bootstrap/bridge冻结边界；工作线程/连接所有权、durable状态与故障恢复Gate |
 | P14 | 编辑/Lock/Pin写契约→Core→Workbench UI；进度依赖P13 | Codex→Antigravity/ZCode→ZCode；DSH | editing和Task单独指定Rust/React文件；每条写命令逐项冲突/保护，不跨层无限授权 |
-| P15 | 设置/模型管理UI；备份恢复依D08裁决先契约→Core→UI且必须P13停写排空 | Codex→Antigravity→ZCode；DSH | settings及已选择maintenance组件；错误/配置生效/诊断Gate；D08现行门槛要求Backup/Restore PASS，纳入实现或先经用户批准修订D08 |
-| P16 | 阅读/输出授权契约→Core；依赖Reader裁决/P13 | Codex→ZCode；DSH | application/reading/export＋桥冻结范围；进度、lineage、取消、格式逐项Gate |
+| P15 | 设置/模型管理UI；模型下载及全库备份恢复先契约→Core→UI，恢复必须P13停写排空 | Codex→Antigravity→ZCode；DSH | settings及已选择maintenance组件；错误/配置生效/诊断Gate；D08全部P0/P1及全库Backup/Restore PASS，不再等待范围选择 |
+| P16 | 阅读/输出授权契约→Core；依赖P08正式Review/集成与P13 | Codex→ZCode；DSH | application/reading/export＋桥冻结范围；进度、lineage、取消、格式逐项Gate |
 | P17 | Reader设计→Reader/导出UI；依赖P16＋设计Review | ZCode；DSH | frontend拟议reader/export目录；真实结果、重开进度/长图/受控输出，禁静态mock冒充 |
-| P18 | 资格方案→JA/KO真实实验；依赖P10/P13/质量裁决 | DSH；Codex或ZCode非作者 | 自有experiments/verification；素材许可、hash、阈值/真值与逐步terminal一致性；生产修复须另Task |
-| P19 | 所选范围production E2E；依赖P12/P14/P15/P17/P18 | DSH；Codex非作者 | 自有验证工具/证据；按选定范围验收，正常/失败/重启/人工保护逐项，不将缺Reader称四页完成 |
+| P18 | 资格方案→JA/KO真实实验；依赖P10/P13与已确认质量口径 | DSH；Codex或ZCode非作者 | 自有experiments/verification；素材许可、hash、阈值/真值与逐步terminal一致性；生产修复须另Task |
+| P19 | 所选范围production E2E；依赖P12/P14/P15/P17/P18 | DSH；Codex非作者 | 自有验证工具/证据；按选定范围验收，正常/失败/重启/人工保护逐项，按D08完整主流程验收，不以未测项冒充完成 |
 | P20 | fresh Windows Gate；依赖P19/P03/P06 | ZCode；DSH；Codex集成 | 自有packaging/verification冻结范围；source/installer/五入口/环境矩阵，未知不外推 |
 
 ## 看图定位
 
 ```mermaid
 flowchart LR
-  A["已完成<br/>整体审计与路线规划"] --> B["P08 草案已准备<br/>当前：等待产品裁决＋独立Review"]
+  A["已完成<br/>整体审计与路线规划"] --> B["P08 草案已准备<br/>D1–D7已确认：等待独立正式Review"]
   B --> C["P09/P10/P11<br/>导入／凭据／长任务契约"]
   C --> D["P12/P13<br/>书架导入／后台运行恢复"]
   D --> E["P14/P15/P16/P17<br/>编辑控制／设置／阅读导出"]
@@ -97,4 +99,4 @@ flowchart LR
 
 ## 下一步可转发指令
 
-Task=P08范围裁决与草案复核；Owner=Codex，建议非作者Reviewer=DeepSeek Harness（尚未认领，不能冒充已审）。仓库G:/CODEX/New Manga，branch/worktree=main/当前主工作区，base=ab2f813c0ce311a6712002cafd852b9e7a258380，交付head用`git log -1 -- verification/P08`实测；Review工作区待Codex创建。只读src/apps/tests与既有Task/原始证据；仅写P08自有草案、Task、verification/Handoff及Codex导航。禁止Schema/依赖/冻结wire/用户数据/历史raw/他人dirty变更。先取得本文D1–D7裁决；再逐D08覆盖表审查traceability/延期/性能和质量口径，固定提交给非作者审查，执行文档链接/依赖/路径检查；缺陷记changes_requested、缺环境NOT_RUN/BLOCKED。通过Review与集成后P08才done；P09以后仍需分别释放。
+推荐DeepSeek Harness对P08固定交付提交进行非作者正式Review，具体恢复点、base/head、允许路径与完成Gate见[Review指令](DSH-REVIEW-PROMPT.md)。D1–D7全部已确认，不重复询问。只写P08自有Review报告，生产/契约/历史证据只读；审查D08覆盖、额外格式验收、全库恢复依赖、数据保护和质量口径；未知记NOT_VERIFIED/NOT_RUN，不能造批准。当前未派发/认领；P08通过正式Review和Codex集成检查后才done，P09以后仍需分别释放。
