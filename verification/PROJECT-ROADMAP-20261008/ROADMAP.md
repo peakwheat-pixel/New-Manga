@@ -2,7 +2,7 @@
 
 最新工作点：用户已授权准备P08，[范围草案](../P08/SCOPE_DRAFT.md)与[逐AC索引](../P08/AC_COVERAGE.md)已落盘；P08正式设计Task为blocked，未done。按[最新恢复点](../P08/RESUME.md)完成产品裁决与非作者Review，下方原“准备P08”指令作为此前快照保留。
 
-**当前位置：P08范围草案已准备，等待用户裁决与非作者Review（blocked / CHECKPOINTED）；P系列完成0/21，blocked 1，proposed / 未释放20。产品实施未释放。下一步：完成P08范围裁决与审查；P01–P07按依赖单独处理。**
+**当前位置：P08范围草案已准备，等待D1–D7裁决、DSH正式Review；独立预审已修订（blocked / CHECKPOINTED）；P系列完成0/21，blocked 1，proposed / 未释放20。产品实施未释放。下一步：完成P08范围裁决与审查；P01–P07按依赖单独处理。**
 
 人员更新：用户已移除Qoder，图中未来UI/UX责任由ZCode承担；非作者Review与正式Task释放Gate保持。
 
@@ -29,7 +29,7 @@ flowchart TB
 
 ```mermaid
 flowchart TB
-  BASE["当前位置：规划完成，实施未启动<br/>P系列完成0/21；P08草案待裁决"] --> P01["P01<br/>proposed / 未释放<br/>台账取证<br/>修正陈旧metadata；追溯两份Review"]
+  BASE["当前位置：规划完成，实施未启动<br/>P系列完成0/21；P08草案：D1–D7裁决待办"] --> P01["P01<br/>proposed / 未释放<br/>台账取证<br/>修正陈旧metadata；追溯两份Review"]
   BASE --> P02["P02<br/>proposed / 未释放<br/>真UI验证<br/>点击/300ms刷新/对比度/失效窗口"]
   BASE --> P03["P03<br/>proposed / 未释放<br/>第五入口Gate<br/>验证SFX frozen入口；不只确认文件存在"]
   BASE --> P04["P04<br/>proposed / 未释放<br/>生产命令面验证<br/>常量成员与并发响应；先复现再决定修复"]

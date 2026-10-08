@@ -17,9 +17,9 @@
 | 能力 | 建议分类 | 实际能力与缺口 | 来源 | 后继任务与可观察验收 |
 |---|---|---|---|---|
 | 四页入口/默认书架/上下文保留 | must，Reader等待解冻 | App目前Console↔Workbench；Library/Settings在Console内 | D01§1/3；D04§1/15/33；D08 AC-NAV | P12/P14/P15/P17：真实窗口四页切换、空态/错误、重开上下文，不增加第五页 |
-| Book/Chapter/Page基本管理 | must基本创建与列表；标签/收藏/归档等细项待裁决 | LibraryService存在，生产只读列表已接；写入口未接 | D04§3–10；D08 AC-LIB/CH/PAGE | P09/P12：空安装态建Book/Chapter、顺序稳定、失败可见；管理细项见D08逐项覆盖表 |
+| Book/Chapter/Page基本管理 | must基本创建与列表；标签/收藏/归档等细项待裁决 | LibraryService存在，生产只读列表已接；写入口未接 | D04§3–10；D08 AC-LIB/CH/PAGE | P09由Codex冻结CreateBook/CreateChapter契约、Antigravity实现Core/Host写路径；候选允许路径`doc/contracts/`自有契约、`src/application/library/`、`src/bootstrap/core_service.py`、`src/bootstrap/core_assembly.py`、`apps/desktop/src-tauri/src/main.rs`与IPC bridge。P12由ZCode接UI。空安装态验收真实建Book/Chapter/导入 |
 | 图片/文件夹导入与真实尺寸 | must | ImportImagesUseCase可复用；生产decoder恒1×1，正式导入命令缺失 | D04§8；D08 AC-IMPORT | P09/P12：PNG/JPEG受控选源，损坏/逃逸/重复/中断/Unicode判别；源hash零变化 |
-| PDF/MOBI输入 | deferred建议 | 存在解析服务与Qt路径；生产闭包未资格验证 | D01§2；D04§8；D08 AC-EXT | P09预留独立格式切片；每个格式单独解析/尺寸/依赖/包内运行Gate，延期不能称全格式支持 |
+| PDF/MOBI输入 | deferred建议 | 存在解析服务与Qt路径；生产闭包未资格验证 | D01§2；D04§8；D08 AC-EXT | P09仅实现获选格式；PDF/MOBI延期须在用户决定矩阵标注，并逐条核对D08 P0/P1与AC-SMOKE影响 |
 | paged/Webtoon、长图预算 | must基础行为；容量边界待实测冻结 | tile/坐标基础存在，完整React Reader与长图预算未证实 | D04§9/34/35；D08 AC-WEBTOON/CAP/MEM | P09/P13/P17：一张长图仍一Page、坐标回映、按宽滚动、恢复；预算按D07原目标核验，不臆造数值 |
 | 全章/选页翻译与重跑族 | must基础翻译/跳过已翻译/重OCR/重修/重渲染；单Region重全翻译单切片 | PipelineService与九步handler存在；正式StartRun/控制命令缺失 | D04§11–14/22.1/30；D08 AC-CMD/RFULL/PIPE | P11/P13/P14：开始时冻结目标，复用有效步骤，缺Clean重渲染禁止补修复；RFULL锁覆盖必须单独确认 |
 | 暂停/继续/停止/失败重试/崩溃恢复 | must | 后端可复用；任务进度面板静态占位 | D04§30/31/51；D08 AC-PAUSE/STOP/CRASH/RETRY/PROGRESS | P11/P13/P14：持久接受后响应、安全边界停步、无半提交、重开恢复；UI请求响应指标沿D08 |
@@ -39,13 +39,21 @@
 
 ## 必须裁决的选项
 
-| 决策 | 推荐 | 替代与影响 | 当前是否已批准 |
+| 决策 | 推荐方案 | 其他选项与影响 | 当前批准 |
 |---|---|---|---|
-| D1 产品终点 | 四页最小闭环，解冻Reader基础阅读/进度/PNG与ZIP导出 | 暂缓Reader则只能称“选定范围版本”；仍保留Reader缺口 | 否；当前Reader限制仍有效 |
-| D2 扩展边界 | 首轮图片输入＋PNG/ZIP输出；暂缓PDF/MOBI/其他格式、完整TM管理、复杂修复模型、备份恢复及插件Agent | 将某项纳入必须增加独立契约/实现/验收切片，不能混进P09/P15无限范围 | 否；deferred只是草案建议 |
-| D3 质量与发布 | JA与KO分别资格；先验证当前已裁决本机环境，Win10声明需实测；复杂背景不达标则限制能力声明 | 要求Win10或高质量复杂背景作为首发门槛，则相关环境/模型/真值缺失持续BLOCKED | 否；不能默认降低D07/D08要求 |
+| D1 阅读器 | 解冻基础Reader：paged/Webtoon阅读、进度恢复、PNG/ZIP导出 | Reader暂缓则首个版本只能称“选定范围版本”；仍保留Reader缺口 | 等待用户 |
+| D2 输入/输出格式 | 首轮图片/文件夹输入、PNG/ZIP输出 | 增加PDF/MOBI输入、CBZ/PDF/文本输出逐格式增加适配及安装包Gate；校验D08 P0/P1 | 等待用户 |
+| D3 质量与Windows环境 | JA/KO分别真实资格；先按已裁决Windows净化基线；Win10实测后才声明支持；复杂背景依据真实样本限制能力声明 | Win10可定首发硬门槛；环境不足则BLOCKED。指标在资格实验方案审定后冻结 | 等待用户 |
+| D4 D08备份/恢复发布Gate | 保留D08 §73，纳入备份恢复并按所选保护范围验收；P15/P13设计停写、排空、回滚 | 若首轮延期，须明确批准修改D08正式Release基线；修订集成前不得称READY。选择DB-only或包含Managed Copy，二者不能混称 | 等待用户 |
+| D5 D08 P0/P1与AC-SMOKE | 保持D08 P0/P1 100%及§53主流程全部PASS | 若裁剪，逐AC注明、更新目标文档并经用户批准；未做项不能标N/A | 等待用户 |
+| D6 模型下载/扩展能力 | 必须先明确AC-MODEL-001/002是否首发要求；建议纳入P15下载/进度/中断恢复。Plugin/Hook、字体上传、Sakura、Plugin Agent分别作选项 | 若延期模型下载，须显式修改D08 P1/P0边界与READY条件；扩展逐项延期或另开实现切片 | 等待用户 |
+| D7 维护与内容编辑 | 保留Lock/Revision/人工保护；TM管理和回收站按D08优先级逐项核对 | D08 P0/P1已列要求不得静默延期 | 等待用户 |
 
-D1–D3可逐项批准或修改。即使批准范围，P08仍须非作者Review和集成检查，P09等实现仍逐Task释放。
+任何延期都须列出受影响AC和Release Gate，并取得用户批准及版本化文档修订。本文不自行豁免D08 §73/76。
+
+### D08规范门槛冲突
+
+D08 §53规定发布主流程全部PASS；§68–77规定自动化、UI手工验收、Benchmark、数据保护、发布清单及READY条件；§73明确Backup/Restore PASS、P0/P1 100%，§76要求干净Windows smoke。`D08-AC-SMOKE`与`D08-GATE-*`已列入[AC覆盖索引](AC_COVERAGE.md)。任何首发裁剪都必须先取得用户对具体AC的裁决并版本化修订D08，P08不能自行将需求标为N/A。
 
 ## 质量与验收口径草案
 
@@ -62,13 +70,13 @@ D1–D3可逐项批准或修改。即使批准范围，P08仍须非作者Review�
 
 | 工作包 | 先后切片与依赖 | 建议Owner / 非作者Reviewer | 拟议允许路径与Gate |
 |---|---|---|---|
-| P09 | contract→Core/Host真实decoder与受控来源；依赖P08裁决 | Codex→Antigravity；DSH | contract自有修订；src/application/importing、src/bootstrap、apps/desktop/src-tauri相关边界；只选定格式与最小目标，源保护/损坏/中断Gate |
+| P09 | contract→Core/Host真实decoder与受控来源；依赖P08裁决 | Codex→Antigravity；DSH | contract自有修订；src/application/library、src/application/importing、src/bootstrap/core_service.py、core_assembly.py、apps/desktop/src-tauri/src/main.rs及经Task列明的bridge/contract边界；只选定格式与最小目标，源保护/损坏/中断Gate |
 | P10 | credential/config契约→Core/Host；依赖P08 | Codex→Antigravity；DSH | 自有契约、settings/provider安全接线；凭据读写与脱敏Gate，不借普通settings DTO传secret |
 | P11 | durable accepted/快照/控制/恢复契约；依赖P08 | Codex；DSH | 自有契约设计与verification；不写runtime，不造第二调度器 |
 | P12 | 四页导航设计切片→书架与导入UI；依赖P09＋设计Review | ZCode；DSH | frontend/library与路由最小切片；真实Tauri空库链，保留已有Workbench/SFX能力 |
 | P13 | Run接线→控制→恢复；依赖P09/P11 | ZCode；DSH | src/application/tasks既有复用、bootstrap/bridge冻结边界；工作线程/连接所有权、durable状态与故障恢复Gate |
 | P14 | 编辑/Lock/Pin写契约→Core→Workbench UI；进度依赖P13 | Codex→Antigravity/ZCode→ZCode；DSH | editing和Task单独指定Rust/React文件；每条写命令逐项冲突/保护，不跨层无限授权 |
-| P15 | 设置UI；维护先契约→Core→UI；备份若选需P13排空 | Codex→Antigravity→ZCode；DSH | settings及已选择maintenance组件；错误/配置生效/诊断Gate，备份另切片 |
+| P15 | 设置/模型管理UI；备份恢复依D08裁决先契约→Core→UI且必须P13停写排空 | Codex→Antigravity→ZCode；DSH | settings及已选择maintenance组件；错误/配置生效/诊断Gate；D08现行门槛要求Backup/Restore PASS，纳入实现或先经用户批准修订D08 |
 | P16 | 阅读/输出授权契约→Core；依赖Reader裁决/P13 | Codex→ZCode；DSH | application/reading/export＋桥冻结范围；进度、lineage、取消、格式逐项Gate |
 | P17 | Reader设计→Reader/导出UI；依赖P16＋设计Review | ZCode；DSH | frontend拟议reader/export目录；真实结果、重开进度/长图/受控输出，禁静态mock冒充 |
 | P18 | 资格方案→JA/KO真实实验；依赖P10/P13/质量裁决 | DSH；Codex或ZCode非作者 | 自有experiments/verification；素材许可、hash、阈值/真值与逐步terminal一致性；生产修复须另Task |
@@ -89,4 +97,4 @@ flowchart LR
 
 ## 下一步可转发指令
 
-Task=P08范围裁决与草案复核；Owner=Codex，建议非作者Reviewer=DeepSeek Harness（尚未认领，不能冒充已审）。仓库G:/CODEX/New Manga，branch/worktree=main/当前主工作区，base=ab2f813c0ce311a6712002cafd852b9e7a258380，交付head用`git log -1 -- verification/P08`实测；Review工作区待Codex创建。只读src/apps/tests与既有Task/原始证据；仅写P08自有草案、Task、verification/Handoff及Codex导航。禁止Schema/依赖/冻结wire/用户数据/历史raw/他人dirty变更。先取得本文D1–D3裁决；再逐D08覆盖表审查traceability/延期/性能和质量口径，固定提交给非作者审查，执行文档链接/依赖/路径检查；缺陷记changes_requested、缺环境NOT_RUN/BLOCKED。通过Review与集成后P08才done；P09以后仍需分别释放。
+Task=P08范围裁决与草案复核；Owner=Codex，建议非作者Reviewer=DeepSeek Harness（尚未认领，不能冒充已审）。仓库G:/CODEX/New Manga，branch/worktree=main/当前主工作区，base=ab2f813c0ce311a6712002cafd852b9e7a258380，交付head用`git log -1 -- verification/P08`实测；Review工作区待Codex创建。只读src/apps/tests与既有Task/原始证据；仅写P08自有草案、Task、verification/Handoff及Codex导航。禁止Schema/依赖/冻结wire/用户数据/历史raw/他人dirty变更。先取得本文D1–D7裁决；再逐D08覆盖表审查traceability/延期/性能和质量口径，固定提交给非作者审查，执行文档链接/依赖/路径检查；缺陷记changes_requested、缺环境NOT_RUN/BLOCKED。通过Review与集成后P08才done；P09以后仍需分别释放。

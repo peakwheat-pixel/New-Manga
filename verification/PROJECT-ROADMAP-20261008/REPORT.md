@@ -100,12 +100,12 @@ Packaged26/26的已入库证据绑定source=`3d532c1f99e49da703d2076bd67d46b7108
 
 ## 推荐下一任务与可直接转发指令
 
-**Task**：P08“完整产品范围、四页parity与验收冻结准备”（proposed / 未释放，尚未创建正式 Task 文件）。**Agent**：Codex负责范围/契约；后续ZCode另开设计Task；建议非作者Reviewer=DSH。本次用户请求只规划，准备可以只读进行，产品取舍/Reader解冻必须等待用户裁决，不能启动后继实现。
+**Task**：[P08](../../doc/tasks/P08.md)“完整产品范围与验收冻结准备”（blocked / CHECKPOINTED；已落草案，等用户D1–D7裁决及正式DSH Review）。**Agent**：Codex负责范围/契约；后续ZCode另开设计Task；建议非作者Reviewer=DSH。本次用户请求只规划，准备可以只读进行，产品取舍/Reader解冻必须等待用户裁决，不能启动后继实现。
 
 **Recovery point**：唯一仓库/branch=`G:/CODEX/New Manga`/`main`；审计base=head=`e4242ecd419eb0eea098d2f63b40f709aa5caeea`。后续治理提交与实际HEAD须live核验；正式Task branch/worktree待Codex创建，不臆造。**Scope**：只读src/apps/tests/Task/契约；新正式Task范围拟限自有Task、范围/验收草案、自有verification、Handoff，Plan/STATUS/索引由Codex维护。禁止生产src/apps、Schema、依赖、用户数据、已有raw、既有dirty写入；草案不修改冻结wire或需求。
 
 **Deliverables**：逐产品能力的must/deferred/out矩阵；每个现有命令/后继契约映射；Reader解冻与发布矩阵需用户裁决的具体选项；后继产品与发布候选任务逐步正式Task草案/依赖/Owner/Reviewer/allowlist/Gate。复用UI1，不再造一套视觉规范。**Verification**：PowerShell下Git Reality Check与`git diff --check`、相对固定base路径核验；每项需求能追溯D01/D04/D05/D08/现行Task和源码，草案/UNKNOWN/NOT_RUN如实保留。固定文档交付经非作者Review、Codex集成后才登记该设计Task done；这不释放任何产品实现。
 
 ```text
-在 G:/CODEX/New Manga 继续；先读取 AGENTS.md、doc/REBASELINE_PLAN.md 当前整体路线、doc/STATUS.md，以及 verification/PROJECT-ROADMAP-20261008/{RESUME,REPORT,ROADMAP}.md。审计base/head=e4242ecd419eb0eea098d2f63b40f709aa5caeea，当前branch main；实测HEAD/status/common-dir，保留.qoder-credits和历史dispatch dirty，不reset/clean/stash。建议下一准备=P08，正式ID P08 尚未创建/释放；Codex主责范围/契约、DSH建议非作者审查，ZCode设计另开Task；branch/worktree待Codex实际创建。先复用本轮Core/Desktop/Plan审计和CSV，形成四页must/deferred/out与质量/Windows验收矩阵，提前拆后继产品与发布候选任务的契约/Core/Host/UI/验收依赖，不再每做一个才猜下一步。允许只读生产代码；写集合仅拟议自有Task、范围/验收草案、verification/Handoff与Codex治理导航，禁止生产src/apps、Schema、依赖、冻结wire、用户数据、已有raw和他人dirty。Reader/跨页/缩略图保持当前明确不做，若完整目标需要Reader先列产品裁决，不默认解冻；Manga109永久取消，BJ13維持0.90手工改标+skip。逐项写需求/代码证据、允许路径、实际Owner/Reviewer、可复制测试计划和Gate；planned/NOT_RUN/UNKNOWN不记PASS。仅准备范围，不实施、不派发未释放产品Task。文档固定提交后交非作者Review与Codex集成验证，再更新checkpoint；只有正式释放范围后才逐节点实现。
+在 G:/CODEX/New Manga 继续；先读取 AGENTS.md、doc/REBASELINE_PLAN.md 当前整体路线、doc/STATUS.md，以及 verification/PROJECT-ROADMAP-20261008/{RESUME,REPORT,ROADMAP}.md。审计base/head=e4242ecd419eb0eea098d2f63b40f709aa5caeea，当前branch main；实测HEAD/status/common-dir，保留.qoder-credits和历史dispatch dirty，不reset/clean/stash。建议当前准备=P08，已进入blocked等待裁决/审查，正式ID P08 尚未创建/释放；Codex主责范围/契约、DSH建议非作者审查，ZCode设计另开Task；branch/worktree待Codex实际创建。先复用本轮Core/Desktop/Plan审计和CSV，形成四页must/deferred/out与质量/Windows验收矩阵，提前拆后继产品与发布候选任务的契约/Core/Host/UI/验收依赖，不再每做一个才猜下一步。允许只读生产代码；写集合仅拟议自有Task、范围/验收草案、verification/Handoff与Codex治理导航，禁止生产src/apps、Schema、依赖、冻结wire、用户数据、已有raw和他人dirty。Reader/跨页/缩略图保持当前明确不做，若完整目标需要Reader先列产品裁决，不默认解冻；Manga109永久取消，BJ13維持0.90手工改标+skip。逐项写需求/代码证据、允许路径、实际Owner/Reviewer、可复制测试计划和Gate；planned/NOT_RUN/UNKNOWN不记PASS。仅准备范围，不实施、不派发未释放产品Task。文档固定提交后交非作者Review与Codex集成验证，再更新checkpoint；只有正式释放范围后才逐节点实现。
 ```

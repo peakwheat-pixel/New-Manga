@@ -4,7 +4,7 @@
 
 ## 2026-10-08 当前工作：P08草案已准备 / blocked
 
-用户已授权Codex准备[P08](tasks/P08.md)，准备范围仅文档；正式Task已登记，Owner=Codex，建议Reviewer=DSH（未认领，未派发）。base=`ab2f813c0ce311a6712002cafd852b9e7a258380`，branch/worktree=`main` / `G:/CODEX/New Manga`。交付：[范围/验收草案](../verification/P08/SCOPE_DRAFT.md)、[193项D08覆盖索引](../verification/P08/AC_COVERAGE.md)、[恢复点](../verification/P08/RESUME.md)。当前等待D1–D3产品裁决、质量指标冻结和独立审查，previous=in_progress，ExecutionState=CHECKPOINTED；P08未done，后继实施均未释放。历史196节点CSV仍是审计快照；本轮新增P08正式设计Task，不改原任务及完成记录。现行Reader限制仍有效，deferred建议未获批准，不能当N/A。
+用户已授权Codex准备[P08](tasks/P08.md)，准备范围仅文档；正式Task已登记，Owner=Codex，建议Reviewer=DSH（未认领，未派发）。base=`ab2f813c0ce311a6712002cafd852b9e7a258380`，branch/worktree=`main` / `G:/CODEX/New Manga`。交付：[范围/验收草案](../verification/P08/SCOPE_DRAFT.md)、[D08逐AC及总Gate覆盖索引](../verification/P08/AC_COVERAGE.md)、[恢复点](../verification/P08/RESUME.md)。当前等待D1–D7产品裁决、质量指标冻结和独立审查，previous=in_progress，ExecutionState=CHECKPOINTED；P08未done，后继实施均未释放。历史196节点CSV仍是审计快照；本轮新增P08正式设计Task，不改原任务及完成记录。现行Reader限制仍有效，deferred建议未获批准，不能当N/A。
 
 
 2026-10-08 最新编号裁决：当前21个规划节点沿用 `P01–P21`，状态为 `proposed / 未释放`；仅统一编号，不释放实施、不改原有任务及完成记录。原始审计、台账与历史验证日志保留为固定快照。
