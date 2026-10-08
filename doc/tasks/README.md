@@ -1,6 +1,6 @@
 # Task 索引
 
-当前唯一Active：[M2-PACKAGED-AC1-DLL-DIAG](M2-PACKAGED-AC1-DLL-DIAG.md) **blocked / DSH**；真实外部CLI两轮返回，Codex有界审查；动态DLL验证NOT_RUN，根因UNKNOWN。M2-RUNNER-SNAPSHOT-DEBT保持blocked；正式范围/恢复点以Plan、STATUS、Task为准。
+当前唯一Active：[M2-PACKAGED-AC1-DLL-DIAG](M2-PACKAGED-AC1-DLL-DIAG.md) **in_progress / DSH**；Codex提供本机隔离验证支持，随后回传DSH更新矩阵并非作者审查。M2-RUNNER-SNAPSHOT-DEBT保持blocked；正式范围/恢复点以Plan、STATUS、Task为准。
 
 
 > **2026-09-21 audit**：本索引与 TASK-001～065 文件是历史证据。当前分类、依赖和唯一下一任务见 [REBASELINE_PLAN](../REBASELINE_PLAN.md)，当前 checkpoint 见 [STATUS](../STATUS.md)。不要根据旧 frontmatter 的 `status: done` 单独判定完成。

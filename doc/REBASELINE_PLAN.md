@@ -1,5 +1,13 @@
 # Project Rebaseline Plan
 
+## 2026-10-08 恢复隔离实测：M2-PACKAGED-AC1-DLL-DIAG in_progress
+
+用户授权“下一步”；Codex串行恢复本Task in_progress / ACTIVE，Owner=DSH，Reviewer/Integrator=Codex。
+Codex提供本机独立验证执行支持，冻结允许范围在Task末尾；原probe代码head=d3006691，Owner恢复db65b6cf。
+先固定installer/bundle hash、隔离环境/自有lab、stdin EOF和自身进程超时，再实跑DSH探针、回传DSH更新报告。
+src/apps/tests/packaging/依赖/Schema仍只读；生产修复未释放，原runner debt保持blocked。
+下方blocked是历史checkpoint，根因在取得新证据前继续UNKNOWN。
+
 ## 2026-10-08 DSH自动诊断返回：M2-PACKAGED-AC1-DLL-DIAG blocked
 
 当前Task=[M2-PACKAGED-AC1-DLL-DIAG](tasks/M2-PACKAGED-AC1-DLL-DIAG.md)，Owner=DeepSeek Harness，非作者Reviewer/Integrator=Codex。
