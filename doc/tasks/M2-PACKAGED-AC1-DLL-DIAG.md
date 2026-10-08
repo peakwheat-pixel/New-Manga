@@ -131,3 +131,17 @@ Owner将clean fast-forward到本认领提交，再执行真实DSH；实际start_
 - 交付（**未提交**，delivery_head 未固定）：`verification/M2-PACKAGED-AC1-DLL-DIAG/{REPORT.md,dll-closure-matrix.json,
   raw/exec-20261008-dsh-notrun.log,probe/**}`、`doc/handoffs/M2-PACKAGED-AC1-DLL-DIAG-20261008-dsh.md`。
   probe 由 Codex 实跑后非作者审查。
+
+## 运行记录（DSH r1 返修，2026-10-08，status=in_progress 不变）
+
+- 输入：Codex 非作者 Review r1 = `changes_requested`（`doc/reviews/M2-PACKAGED-AC1-DLL-DIAG-f0ad317c-codex-r1.md`）；
+  reviewed draft head=`f0ad317c77c1ca35f156e8fd8c0d3f73502cdd50`（引用，未实测）。
+- 本轮仍无 shell（Win32 5 沙箱前置失败）；按 r1 指示未再重复权限尝试，实跑项 **NOT_RUN** 不变。
+- R1 已修：`probe/run_dll_diag_probe.ps1` 步骤 1 installer 缺失/SHA256 漂移 → `throw` fail-closed，不再继续。
+- R2 已修：默认 static-read-only、不启动 exe；仅 `-CopyBundle` 且 copy-only（无 `/MIR`）复制成功、
+  自有 lab 内 exe/Qt DLL SHA256 核验通过后才运行 lab 副本；复制或核验失败立即 stop，禁止从原 bundle 运行。
+- R3 已修：`REPORT.md`/`dll-closure-matrix.json`/Handoff 改记具体 Win32 错误码 **UNKNOWN**（原日志无 GetLastError），
+  删除"126 高置信"；明确"某 DLL 未出现在枚举的构建树"不证明安装态缺失、不证明加载失败，并加矩阵作用域声明。
+- 保留：r1 原始最终回答与 `raw/exec-20261008-dsh-notrun.log` 原文未改动。
+- 交付仍**未提交**（无 git），delivery_head 未固定；新 head 与独立验证由 Codex 记录。
+  未改 Plan/STATUS/索引，未改 src/apps/tests/packaging，未加框架依赖，未置 done，未解除 runner debt。

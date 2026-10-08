@@ -1,12 +1,17 @@
 {
   "task": "M2-PACKAGED-AC1-DLL-DIAG",
+  "revision": "r1-fix",
   "produced_by": "DeepSeek Harness (Owner)",
   "produced_at": "2026-10-08",
+  "reviewed_draft_head": "f0ad317c77c1ca35f156e8fd8c0d3f73502cdd50",
+  "reviewed_draft_head_verified_by_git": false,
+  "review_r1": "doc/reviews/M2-PACKAGED-AC1-DLL-DIAG-f0ad317c-codex-r1.md",
   "execution_capability": {
     "shell": "NOT_RUN",
-    "reason": "pwsh sandbox setup failed every call: SetNamedSecurityInfoW failed (Win32 5): grantWrite(G:\\CODEX\\New Manga.worktrees\\PACKAGED-AC1-DLL-DIAG-dsh); danger-full-access escalation denied (no approval channel)",
+    "reason": "pwsh sandbox setup failed every call: SetNamedSecurityInfoW failed (Win32 5): grantWrite(G:\\CODEX\\New Manga.worktrees\\PACKAGED-AC1-DLL-DIAG-dsh); danger-full-access escalation denied (no approval channel). No further permission retries attempted per review r1.",
     "method": "read-only file tools only (read/glob/grep)"
   },
+  "scope_note": "Every PRESENT/ABSENT observation below is a one-shot static file enumeration of the SCANNED tree only. It does not prove presence/absence in the installed tree, does not prove Windows-loader resolution, and does not prove actual load success or failure. Enumeration tooling has a path cap, so 'not listed' is not a complete proof of non-existence.",
   "frozen_inputs": {
     "build_source_head": "cfb5d2eecc4d8ab7a3159cdbb1d5812547bb5cd2",
     "runner_evidence_head": "15cd788f10e83f6a1a215e71538bfa175b435785",
@@ -22,8 +27,9 @@
     "id": "CS-A1-run1-completed",
     "exit": 1,
     "traceback_frame": "bootstrap\\acceptance_bridge.py:173 in assemble_acceptance_core",
-    "error": "ImportError: DLL load failed while importing QtGui: 找不到指定的模块。",
-    "win32_code_implied": 126,
+    "error_text_verbatim": "ImportError: DLL load failed while importing QtGui: <localized 'module not found' text>",
+    "win32_error_code": "UNKNOWN",
+    "win32_error_code_note": "The original log contains only the CPython ImportError text; it records no GetLastError() / Win32 code, so no numeric code (e.g. 126) may be asserted.",
     "failure_precedes_qguiapplication_construction": true,
     "evidence": "verification/M2-RUNNER-SNAPSHOT-DEBT/raw/packaged/cleanstart-ac1-run1-stdout.log:4-9"
   },
@@ -32,116 +38,130 @@
     {
       "id": "C1",
       "candidate": "PySide6 QtGui extension module not bundled",
-      "observed": "present: _internal/PySide6/QtGui.pyd",
-      "verdict": "REJECTED",
-      "confidence": "high",
-      "loadability_verified": false
+      "observed_in_scanned_build_tree": "present: _internal/PySide6/QtGui.pyd",
+      "verdict": "NOT_THE_ISSUE_IN_THIS_SCANNED_TREE",
+      "installed_tree_implies": "UNKNOWN",
+      "loadability_verified": false,
+      "confidence": "medium"
     },
     {
       "id": "C2",
       "candidate": "Qt6Gui.dll missing from bundle",
-      "observed": "present: _internal/PySide6/Qt6Gui.dll",
-      "verdict": "REJECTED",
-      "confidence": "high",
-      "loadability_verified": false
+      "observed_in_scanned_build_tree": "present: _internal/PySide6/Qt6Gui.dll",
+      "verdict": "NOT_THE_ISSUE_IN_THIS_SCANNED_TREE",
+      "installed_tree_implies": "UNKNOWN",
+      "loadability_verified": false,
+      "confidence": "medium"
     },
     {
       "id": "C3",
       "candidate": "Qt6Core.dll missing from bundle",
-      "observed": "present: _internal/PySide6/Qt6Core.dll",
-      "verdict": "REJECTED",
-      "confidence": "high",
-      "loadability_verified": false
+      "observed_in_scanned_build_tree": "present: _internal/PySide6/Qt6Core.dll",
+      "verdict": "NOT_THE_ISSUE_IN_THIS_SCANNED_TREE",
+      "installed_tree_implies": "UNKNOWN",
+      "loadability_verified": false,
+      "confidence": "medium"
     },
     {
       "id": "C4",
       "candidate": "PySide6/shiboken6 ABI runtime DLLs missing",
-      "observed": "present: _internal/PySide6/pyside6.abi3.dll, _internal/shiboken6/shiboken6.abi3.dll",
-      "verdict": "REJECTED",
-      "confidence": "high",
-      "loadability_verified": false
+      "observed_in_scanned_build_tree": "present: _internal/PySide6/pyside6.abi3.dll, _internal/shiboken6/shiboken6.abi3.dll",
+      "verdict": "NOT_THE_ISSUE_IN_THIS_SCANNED_TREE",
+      "installed_tree_implies": "UNKNOWN",
+      "loadability_verified": false,
+      "confidence": "medium"
     },
     {
       "id": "C5",
       "candidate": "MSVC/CRT runtime not shipped in bundle",
-      "observed": "present: _internal/{msvcp140,MSVCP140_1,MSVCP140_ATOMIC_WAIT,VCRUNTIME140,VCRUNTIME140_1,VCRUNTIME140_THREADS,ucrtbase}.dll + api-ms-win-crt-* set",
-      "verdict": "REJECTED",
-      "confidence": "high",
-      "loadability_verified": false
+      "observed_in_scanned_build_tree": "present: _internal/{msvcp140,MSVCP140_1,MSVCP140_ATOMIC_WAIT,VCRUNTIME140,VCRUNTIME140_1,VCRUNTIME140_THREADS,ucrtbase}.dll + api-ms-win-crt-* set",
+      "verdict": "NOT_THE_ISSUE_IN_THIS_SCANNED_TREE",
+      "installed_tree_implies": "UNKNOWN",
+      "loadability_verified": false,
+      "confidence": "medium"
     },
     {
       "id": "C6",
       "candidate": "Qt absent from PyInstaller analysis graph (ModuleNotFoundError class)",
-      "observed": "sidecar-build.log:239-243 ran hook-PySide6, hook-shiboken6, hook-PySide6.QtNetwork, hook-PySide6.QtCore, hook-PySide6.QtGui for entry_acceptance_bridge",
+      "observed_in_scanned_build_tree": "sidecar-build.log:239-243 ran hook-PySide6, hook-shiboken6, hook-PySide6.QtNetwork, hook-PySide6.QtCore, hook-PySide6.QtGui for entry_acceptance_bridge",
       "verdict": "REJECTED",
       "confidence": "high"
     },
     {
       "id": "C7",
       "candidate": "PyInstaller build truncated by the weights-phase EXIT=1",
-      "observed": "sidecar-build.log:548-552 COLLECT completed successfully / Build complete!; EXIT=1 at :560-569 is Get-FileHash CommandNotFound inside Copy-MangaWeights, after the build",
+      "observed_in_scanned_build_tree": "sidecar-build.log:548-552 COLLECT completed successfully / Build complete!; EXIT=1 at :560-569 is Get-FileHash CommandNotFound inside Copy-MangaWeights, after the build",
       "verdict": "REJECTED",
       "confidence": "high"
     },
     {
       "id": "C8",
-      "candidate": "ICU i18n DLL (icuin*) missing from bundle",
-      "observed": "top-level _internal/*.dll listing contains icudt78.dll and icuuc.dll only; no icuin*.dll",
-      "verdict": "PRESENCE_ABSENCE_PROVEN_IMPACT_UNKNOWN",
-      "confidence_presence": "high",
+      "candidate": "ICU i18n DLL (icuin*) absent",
+      "observed_in_scanned_build_tree": "top-level _internal/*.dll listing contains icudt78.dll and icuuc.dll only; no icuin*.dll observed",
+      "verdict": "NOT_OBSERVED_IN_SCANNED_BUILD_TREE_IMPACT_UNKNOWN",
+      "installed_tree_implies": "UNKNOWN",
+      "runtime_impact": "UNKNOWN",
+      "confidence_observation": "medium",
       "confidence_impact": "low"
     },
     {
       "id": "C9",
-      "candidate": "d3dcompiler_47.dll missing from bundle",
-      "observed": "glob **/d3dcompiler* over the whole bundle: 0 hits",
-      "verdict": "PRESENCE_ABSENCE_PROVEN_IMPACT_UNKNOWN",
-      "note": "Windows 11 System32 may satisfy this name; not measurable in this session",
-      "confidence_presence": "high",
+      "candidate": "d3dcompiler_47.dll absent",
+      "observed_in_scanned_build_tree": "glob **/d3dcompiler* over the scanned bundle: 0 hits",
+      "verdict": "NOT_OBSERVED_IN_SCANNED_BUILD_TREE_IMPACT_UNKNOWN",
+      "installed_tree_implies": "UNKNOWN",
+      "runtime_impact": "UNKNOWN",
+      "note": "Windows may supply this name from System32; not measured",
+      "confidence_observation": "medium",
       "confidence_impact": "low"
     },
     {
       "id": "C10",
-      "candidate": "opengl32sw.dll missing from bundle",
-      "observed": "not present in top-level _internal/*.dll listing",
-      "verdict": "PRESENCE_ABSENCE_PROVEN_IMPACT_UNKNOWN",
-      "confidence_presence": "medium",
+      "candidate": "opengl32sw.dll absent",
+      "observed_in_scanned_build_tree": "not observed in the top-level _internal/*.dll listing",
+      "verdict": "NOT_OBSERVED_IN_SCANNED_BUILD_TREE_IMPACT_UNKNOWN",
+      "installed_tree_implies": "UNKNOWN",
+      "runtime_impact": "UNKNOWN",
+      "confidence_observation": "medium",
       "confidence_impact": "low"
     },
     {
       "id": "C11",
       "candidate": "the actual unresolvable module (specific DLL or export symbol)",
-      "observed": "requires real load / import-table walk; not executable this session",
+      "observed_in_scanned_build_tree": "requires a real load and a GetLastError observation; not executable this session",
       "verdict": "UNKNOWN",
       "confidence": "n/a"
     },
     {
       "id": "C12",
       "candidate": "installed tree _internal incomplete (NSIS drop / long path / missing file)",
-      "observed": "no installed-tree _internal manifest in the evidence set; cleanstart-gate.json CS-I1 only proves 4 exes under resources/core-sidecar",
+      "observed_in_scanned_build_tree": "no installed-tree _internal manifest in the evidence set; cleanstart-gate.json CS-I1 only proves 4 exes under resources/core-sidecar",
       "verdict": "UNKNOWN",
       "confidence": "n/a"
     },
     {
       "id": "C13",
       "candidate": "runtime DLL search-path difference (AddDllDirectory / purged PATH)",
-      "observed": "build-time search dirs include ...\\site-packages\\PySide6 (sidecar-build.log:186,324); runtime search set not measured",
+      "observed_in_scanned_build_tree": "build-time search dirs include ...\\site-packages\\PySide6 (sidecar-build.log:186,324); runtime search set not measured",
       "verdict": "UNKNOWN",
       "confidence": "n/a"
     },
     {
       "id": "C14",
       "candidate": "ABI/symbol mismatch inside the PySide6 pair",
-      "observed": "PySide6_Essentials==6.11.2 and shiboken6==6.11.2 pinned equal (packaging/m2ac5/requirements-build.txt:43-44)",
+      "observed_in_scanned_build_tree": "PySide6_Essentials==6.11.2 and shiboken6==6.11.2 pinned equal (packaging/m2ac5/requirements-build.txt:43-44)",
       "verdict": "MISMATCH_REJECTED_FOR_THAT_PAIR; other symbol-level mismatch UNKNOWN",
       "confidence": "medium"
     }
   ],
   "root_cause": {
-    "class": "packaged process cannot resolve a module of the PySide6.QtGui dependency chain (Win32 126 ERROR_MOD_NOT_FOUND)",
-    "class_confidence": "high",
+    "proven_fact": "the packaged run raised ImportError while importing PySide6.QtGui (log verbatim)",
+    "class": "an unresolved dependency at module-load time is ONLY an unverified inference",
+    "class_confidence": "medium",
+    "win32_error_code": "UNKNOWN",
     "specific_dll_or_symbol": "UNKNOWN",
-    "rule_followed": "not inferred from the QtGui module name"
+    "installed_tree_relation": "UNKNOWN",
+    "rule_followed": "not inferred from the QtGui module name, and not from build-tree file enumeration"
   },
   "environment_delta_proven": {
     "full_build": {
@@ -167,10 +187,15 @@
   },
   "coverage_gaps": [
     "installed-tree _internal manifest not present in evidence",
-    "no runtime load test / import-table walk performed",
+    "no runtime load test and no GetLastError observation performed",
     "installer SHA256 not re-measured this session",
     "git HEAD/branch/clean/common-dir and git diff --check not verifiable this session"
   ],
+  "review_r1_fixes": {
+    "R1": "run_dll_diag_probe.ps1 step 1 is fail-closed: missing installer or SHA256 drift THROWS (non-zero exit) instead of printing BLOCKED/DRIFT and continuing",
+    "R2": "probe defaults to static-read-only and never starts the exe; it runs acceptance_bridge.exe only from a self-owned lab copy that was copied (copy-only, no /MIR, no delete) AND hash-verified in the same run; copy failure or verification failure stops the run and never falls back to the original bundle",
+    "R3": "REPORT/matrix/Handoff now record the specific Win32 error code as UNKNOWN (original log has no GetLastError), drop the '126 high confidence' wording, and state that a DLL not observed in the enumerated build tree does not prove absence in the installed tree nor an actual load failure; a matrix scope note was added"
+  },
   "minimal_proposed_fix_allowed_paths": [
     "packaging/m2ac5/core_sidecar.spec",
     "packaging/m2ac5/build_sidecar.ps1",
