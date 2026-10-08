@@ -7,3 +7,8 @@ common-dir=G:/CODEX/New Manga/.git；release后纯治理，无src/apps/tests/pac
 原sourcehead/installer SHA保持Task冻结值。执行session/报告由CLI结束后追加，不预填成功。
 
 实际CLI session=session-7de56368-5e9b-44ed-9e2d-0c288fdc67ff；transport=task.jsonl；状态RUNNING，EXIT/交付尚未知。
+
+完成r1/r2 CLI均EXIT0；返回报告与返修，实际加载NOT_RUN；draft=f0ad317c，fixed_r2=d30066917759b62133840ac6767c7ef67153be06。
+Codex r2审查未批准Task完成；Task blocked，无生产修复。
+r1 CLI_EXIT=0; EXACT_FINAL_BYTES_SHA256=e67aebe6af419360b3f419bdb59b7777df991e99ef504dda6072b811707ff1bc
+r2 CLI_EXIT=0; EXACT_FINAL_BYTES_SHA256=c7ab50527372b620f8e1f948ba220dfc1e5e349c073ed20661bb9c9c0de05464

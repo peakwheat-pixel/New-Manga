@@ -1,5 +1,20 @@
 # Current Development Status
 
+## 2026-10-08 DSH自动诊断返回：M2-PACKAGED-AC1-DLL-DIAG blocked
+
+当前Task=[M2-PACKAGED-AC1-DLL-DIAG](tasks/M2-PACKAGED-AC1-DLL-DIAG.md)，Owner=DeepSeek Harness，非作者Reviewer/Integrator=Codex。
+TaskStatus=blocked，previous=in_progress，ExecutionState=CHECKPOINTED。真实dsh CLI两轮EXIT0；
+session=session-7de56368-5e9b-44ed-9e2d-0c288fdc67ff，已精确挂载，桌面下次启动可发现；当前可见性未验证。
+Owner分支agent/deepseek/M2-PACKAGED-AC1-DLL-DIAG；worktree=G:/CODEX/New Manga.worktrees/PACKAGED-AC1-DLL-DIAG-dsh。
+固定返修head=d30066917759b62133840ac6767c7ef67153be06；原start_head=24e0ec6e5c6d64a35daad006565919818616b317；base=9063c317。
+DSH交付报告/矩阵/最小probe，运行被pwsh沙箱Win32 5阻塞，实际加载仍NOT_RUN，具体DLL/符号/错误码UNKNOWN。
+Codex r1发现安全/证据问题，已自动回传DSH；r2有界静态核对通过，不能替代动态验证或完成批准。
+[REPORT](../verification/M2-PACKAGED-AC1-DLL-DIAG/REPORT.md)；[Codex r2](reviews/M2-PACKAGED-AC1-DLL-DIAG-d3006691-codex-r2.md)。
+主线只同步治理/报告/Review，probe留在Owner分支待执行核验；src/apps/tests/packaging零差量。
+下一步同Task补可信隔离运行和实际加载证据，再回DSH更新矩阵并由Codex重审；生产修复未释放。
+M2-RUNNER-SNAPSHOT-DEBT继续blocked，完整packaged Gate未通过。下方in_progress/ready为历史checkpoint。
+
+
 ## 2026-10-08 自动派发：M2-PACKAGED-AC1-DLL-DIAG in_progress / DSH
 
 唯一Active Task=[M2-PACKAGED-AC1-DLL-DIAG](tasks/M2-PACKAGED-AC1-DLL-DIAG.md)，TaskStatus=in_progress，ExecutionState=ACTIVE。
