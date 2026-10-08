@@ -7,7 +7,7 @@ integrator: Codex
 base_commit: 31abde9bf4b73aea2851931dcd48faa0f750b318
 release_commit: ece8765461ce19f7493ce636ff7d69ae6a3e1c4b
 start_head: 140a6686ef13e45d4c95de2c7929b61bdaef1d1e
-delivery_commit: 6d67c718f6b6ba710b11c8ac4b6d616ed00a2578
+evidence_commit: e3319990216699357c8b5a37c494010505535bb6
 build_source_head: 29024a21939917c6d8eb15f1a2bb9ff46cd5bf23
 installer_sha256: 5a14c0a98008442bf4e3b70ec1fcc17373e33313cbadf69414fd9584a25a2fa0
 status: in_review
@@ -25,7 +25,7 @@ status: in_review
 3. **尾随空格可见转义（消除 Whitespace 报错）**：对 `03` 中两处原生控制台行尾空格引入专用的无歧义可见符号 `U+2420 SYMBOL FOR SPACE` (`␠`)，既不删减/截断任何文本，又消除 `git diff --check` 错误，实现格式检查 EXIT=0；
 4. **真正只读验证脚本**：将 [`verify_normalization.py`](../../verification/P03-PACKAGED-SFX-ENTRY/revision-2/traceability-rerun/verify_normalization.py) 重构为纯内存计算与只读断言脚本，不写磁盘、不更动时间戳，运行前后 `git status` 零变化；
 5. **逐位逆变换验证（Bit-for-Bit Reversible）**：通过内联断言验证，从规范副本经逆变换重建的字节与原始二进制文件 100% 逐位、逐字节完全一致（01~06 全部重建成功，零信息损失，零猜测）；
-6. **升级 Manifest (Schema 2.1)**：在 [`07-encoding-normalization.json`](../../verification/P03-PACKAGED-SFX-ENTRY/revision-2/traceability-rerun/07-encoding-normalization.json) 中完整记录形式化 Grammar 规范、`TRAILING_SPACE_TOKEN`、逐文件 Token 统计、原始与规范哈希以及可逆性重建断言结果。
+6. **升级 Manifest (Schema 2.1)**：在 [`07-encoding-normalization.json`](../../verification/P03-PACKAGED-SFX-ENTRY/revision-2/traceability-rerun/07-encoding-normalization.json) 中完整记录形式化 Grammar 规范、`TRAILING_SPACE_TOKEN`、逐文件 Token 统计、原始与规范哈希、完整断言状态及可逆性重建断言结果，并彻底移除未经证实的因果推断。
 
 ---
 
@@ -35,8 +35,8 @@ status: in_review
 
 当前原始证据观察到的客观编码/换行 token 结构如下：
 1. **Header Segment**：由 `run_traceable.ps1` 经 `Out-File -Encoding utf8` 写入带 BOM 的 UTF-8 头部，以 `=====================================\r\n` 结尾；
-2. **Body Segment**：由 `Tee-Object -Append` 捕获控制台输出，由 `[c, 0x00]`（单字节 ASCII 的 UTF-16LE 表示）与固定 6 字节序列 `0D 0A 00 0D 0A 00`（`\r\n\x00\r\n\x00`）交替构成。混合编码直接源于 PowerShell 5.1 `Out-File` 与 `Tee-Object` 的混用；至于 Tee/Out-File 产生该具体扩展换行序列的底层机制未证实，本次处理仅基于观察到的确定性字节事实建立形式化映射；
-3. **Footer Segment**：由 `$footer | Out-File -Append -Encoding utf8` 追加写入标准的 UTF-8 尾部，以 `EXIT=0` 及结束分隔线结尾。
+2. **Body Segment**：包含 `[c, 0x00]`（单字节 ASCII 的 UTF-16LE 表示）与固定 6 字节序列 `0D 0A 00 0D 0A 00`（`\r\n\x00\r\n\x00`）。事实观察表明 `run_traceable.ps1` 使用了 `Out-File` 与 `Tee-Object` 命令，且原始 raw 捕获中包含上述字节 token；关于混合编码以及具体扩展换行序列的产生来源与底层机制均**未证实（unverified）**。本次处理完全基于观察到的客观字节事实建立形式化 Token 语法与双向保真映射，不依赖未证实的过程推断；
+3. **Footer Segment**：由 `run_traceable.ps1` 追加写入标准的 UTF-8 尾部，以 `EXIT=0` 及结束分隔线结尾。
 
 ### 1.2 形式化 Token 语法（Formal Token Grammar）
 
@@ -66,11 +66,19 @@ status: in_review
 | `06-rerun-packaged-gate.log` | 10,766 B | `63f0410c4d0d5b88...` | 5,770 B | `70497d2f1ac269fc...` | 4,892 | 52 / 0 | **MATCH (10766/10766)** |
 
 ### 2.2 规范副本质量断言
-- **零 NUL 字符**：全部规范日志中的 `\x00` 字节计数严格为 0；
+- **零 NUL 字符**：全部规范日志中的 `\x00` 字节计数严格为 0，且与 Manifest 记录一致；
 - **零尾随空格（Trailing Whitespace Free）**：经行尾检查，全部规范日志行尾均无任何 ASCII space (0x20) 或 tab (0x09)；
 - **UTF-8 纯净解码**：全部规范日志严格通过 UTF-8 / UTF-8-SIG 解码，无任何异常；
 - **结构完整**：以 `=== Traceability Execution Record ===` 开始，包含完整命令、工作目录、StartTime、EndTime、`EXIT=0`，并以 `=====================================` 结束；
 - **逆变换完全闭合**：从规范副本执行逆向 Token 映射生成的重建字节与原始文件比对，`reconstructed_orig == orig` 100% 成立，证明正向映射无信息损失、无主观猜测修剪。
+
+### 2.3 只读验证强化断言（Read-Only Verifier Assertions）
+只读验证脚本 [`verify_normalization.py`](../../verification/P03-PACKAGED-SFX-ENTRY/revision-2/traceability-rerun/verify_normalization.py) 执行了全面的 Manifest Consistency 断言：
+1. 实际读取 bytes 计算并比对原始/规范文件的 NUL 字节计数；
+2. 实际计算重建后字节的 SHA-256 和长度，断言与 Manifest 记录完全一致；
+3. 校验适用的全部 per-file assertion statuses（`nul_free`, `trailing_whitespace_free`, `utf8_decodable`, `header_record_present`, `exit_zero_present`, `footer_delimiter_present`, `reconstruction_verified`, `status == "PASS"`, 以及 05 专用的 `byte_copy_for_05`）；
+4. 显式断言 `U+2420` 的 UTF-8 字节（`\xe2\x90\xa0`）未在原始 raw body 中出现；
+5. 脚本为纯只读，执行后 `git status` 零变化。
 
 ---
 
@@ -92,7 +100,7 @@ status: in_review
 
 ## 4. 复审指令
 
-所有证据及双向可逆性证明完备。Task 保持在 `in_review`，交由非作者 Reviewer `DeepSeek Harness` 正式复审。
+所有证据及双向可逆性证明完备。Task 保持在 `in_review`，交由非作者 Reviewer `DeepSeek Harness` 正式复审。当前尚未分发，审查尚未开始或通过。
 
 ```markdown
 # DeepSeek Harness Reviewer 指令：P03 r3 复审
@@ -104,7 +112,8 @@ status: in_review
 - Worktree: G:/CODEX/New Manga.worktrees/P03-packaged-sfx-entry-antigravity
 - Branch: agent/antigravity/P03-packaged-sfx-entry
 - Base Commit: 31abde9bf4b73aea2851931dcd48faa0f750b318
-- Delivery Commit: 6d67c718f6b6ba710b11c8ac4b6d616ed00a2578
+- Evidence Commit: e3319990216699357c8b5a37c494010505535bb6
+- Review Head: agent/antigravity/P03-packaged-sfx-entry
 - Build Source HEAD: 29024a21939917c6d8eb15f1a2bb9ff46cd5bf23
 - Delivery Handoff: doc/handoffs/P03-PACKAGED-SFX-ENTRY-140a6686-r3.md
 - 规范 UTF-8 日志: verification/P03-PACKAGED-SFX-ENTRY/revision-2/traceability-rerun/canonical-utf8/**
