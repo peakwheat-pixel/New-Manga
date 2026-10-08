@@ -1,6 +1,6 @@
 {
   "task_id": "P03",
-  "phase": "r3_conditions_closed_r4_review_pending",
+  "phase": "r5_approved_codex_integration_pending",
   "integration_branch": "codex/P03-integration-4c04459",
   "integration_worktree": "G:/CODEX/New Manga.worktrees/P03-review-prep-85482c5b",
   "task_base_commit": "31abde9bf4b73aea2851931dcd48faa0f750b318",
@@ -258,7 +258,7 @@
     ],
     "note": "Checks include the C-002 test correction and are bound to its committed head. Repeat against the exact final DSH review head after committing the current documentation checkpoint."
   },
-  "candidate_head": "d717c049a41544a6d592943a0b0fe1b76a41a050",
+  "candidate_head": "7677e9c324da2fde618e7cd6fdba2363abeb1f1b",
   "integration_commit": "d717c049a41544a6d592943a0b0fe1b76a41a050",
   "dsh_r3": {
     "session_id": "session-4401e9bb-28cb-42a1-8447-608b7fc80b8e",
@@ -791,5 +791,93 @@
         "size_bytes": 3257
       }
     ]
+  },
+  "r5_reviewed_head_checks": {
+    "candidate_head": "7677e9c324da2fde618e7cd6fdba2363abeb1f1b",
+    "task_base_commit": "31abde9bf4b73aea2851931dcd48faa0f750b318",
+    "changed_path_count": 146,
+    "out_of_scope_path_count": 0,
+    "diff_check_exit": 0,
+    "normalization_verifier_cases": 6,
+    "normalization_verifier_exit": 0,
+    "gate_log_normalization_cases": 6,
+    "gate_log_normalization_exit": 0,
+    "logs": [
+      {
+        "path": "integration/build-logs/28-r5-reviewed-head-scope-diff-check.log",
+        "sha256": "a26f2e4220bb9137aa707112db701624cbf571165f286003abfe589424684389",
+        "size_bytes": 12235
+      },
+      {
+        "path": "integration/build-logs/29-r5-reviewed-head-normalization.log",
+        "sha256": "9c96f172262f7b11efad8bd78c680cafeb672ca6f71f0c377f401c6a0849faaf",
+        "size_bytes": 3339
+      }
+    ]
+  },
+  "d717_archive_byte_comparison": {
+    "candidate_head": "7677e9c324da2fde618e7cd6fdba2363abeb1f1b",
+    "gate_source_head": "d717c049a41544a6d592943a0b0fe1b76a41a050",
+    "archive": "integration/raw-finalhead-d717-gate-output.zip",
+    "archive_sha256": "755f07cfc266df98a749717546cc8b13dd12cb076b355cfd688394e0c1b22591",
+    "retained_folder": "integration/run-2de124f3-finalhead-d717-py314/",
+    "entry_count": 11,
+    "entry_list_equal": true,
+    "all_entries_byte_equal": true,
+    "verification_log": {
+      "path": "integration/build-logs/30-d717-archive-byte-comparison.log",
+      "sha256": "59afb8c6abd56c5a17134d51f04e9bfbcf1f9f0ed3c8573a75ff8cd89cbf60c7",
+      "size_bytes": 3492
+    }
+  },
+  "dsh_r5": {
+    "session_id": "session-089283e0-246f-44e3-9c2f-14dea850e4e2",
+    "base_commit": "31abde9bf4b73aea2851931dcd48faa0f750b318",
+    "reviewed_head": "7677e9c324da2fde618e7cd6fdba2363abeb1f1b",
+    "decision": "approved",
+    "unresolved_findings": { "P0": 0, "P1": 0, "P2": 0, "P3": 1, "P4": 4 },
+    "report": {
+      "path": "integration/dsh-review-r5.md",
+      "sha256": "4e078d0c889a63d8cfcf79b86578e1e57fb1ffc54ca30719ec9016dbdba888b0",
+      "size_bytes": 22421
+    },
+    "prompt": {
+      "path": "integration/dsh-review-r5.prompt.md",
+      "sha256": "8f8fc57059d931caafb85e79eea8b007e0b4233ad51777971ae541b77ca3f3ac",
+      "size_bytes": 5463
+    },
+    "raw_jsonl": {
+      "path": "integration/dsh-review-r5.stdout.jsonl",
+      "sha256": "bdb862e84bdcc84b0203570d59c7671d80e2dd0e88c8992c903c91474cd917c8",
+      "size_bytes": 357864
+    },
+    "stderr": {
+      "path": "integration/dsh-review-r5.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size_bytes": 0
+    },
+    "exit": { "path": "integration/dsh-review-r5.exit", "value": 0 },
+    "desktop_session_mounted": true,
+    "web_desktop_visibility": "unverified",
+    "reviewer_shell_git_tests_gate": "NOT_RUN; Win32 5 workspace security error"
+  },
+  "codex_r5_independent_review": {
+    "reviewer": "Codex non-author review agent",
+    "base_commit": "31abde9bf4b73aea2851931dcd48faa0f750b318",
+    "reviewed_head": "7677e9c324da2fde618e7cd6fdba2363abeb1f1b",
+    "decision": "approved",
+    "new_p0_through_p3_findings": 0,
+    "report": {
+      "path": "integration/codex-review-r5-7677e9c3.md",
+      "sha256": "12647f1106813e6dda48e3842b549c4c13236df70bc4dca62859ae2cdbfb8cbe",
+      "size_bytes": 2045
+    }
+  },
+  "r5_findings_disposition": {
+    "R5-01": "fixed: logs 28/29 bind 146-path, zero-out-of-scope, diff-check EXIT=0 and both normalization verifiers 6/6 to exact reviewed head 7677e9c3.",
+    "R5-02": "fixed: phase, candidate_head, and both current RESUME execution states identify the R5-approved candidate and pending Codex integration.",
+    "R5-03": "fixed: log 30 compares every member and entry list of the d717 Gate archive byte-for-byte against the retained directory; the R5 prompt remains preserved as the original review request.",
+    "R5-04": "deferred, cosmetic: retain the frozen CS-Z2 scenario ID; AC4 and manifest identify its inputs as lab fixtures.",
+    "R5-05": "noted: log 23 contains expected negative-case FAIL lines before the final snapshot-oracle PASS line; no gate result ambiguity in its final summary."
   }
 }
