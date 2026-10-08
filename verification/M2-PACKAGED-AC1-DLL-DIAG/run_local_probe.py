@@ -12,7 +12,7 @@ root = Path(__file__).resolve().parents[2]
 task = Path(__file__).resolve().parent
 meta = json.loads((root / "verification/M2-RUNNER-SNAPSHOT-DEBT/build-fingerprint.json").read_text(encoding="utf-8"))
 # The NSIS installer is under target/release/bundle/nsis; the bundle is under target/core-sidecar.
-bundle = Path(meta["installer"]).parents[4] / "core-sidecar/core-sidecar"
+bundle = Path(meta["installer"]).parents[3] / "core-sidecar/core-sidecar"
 mode = sys.argv[1]
 assert mode in ("static", "copy")
 run_id = mode + "-" + uuid.uuid4().hex[:10]
