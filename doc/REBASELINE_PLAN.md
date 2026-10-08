@@ -2,7 +2,7 @@
 
 ## 2026-10-08 Ready：M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD
 
-[M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD](tasks/M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD.md) 已单独冻结并释放，处理 Runner DSH r4 的 deferred R-001：两个 Gate runner 缺省写入历史 tracked raw。Owner=Antigravity，非作者 Reviewer=DeepSeek Harness，Integrator=Codex；硬依赖 `M2-RUNNER-SNAPSHOT-DEBT done@73588624`。实现基线=`e9b66455356c56e0fe6720d658b46bdbdbeb53b5`；branch=`agent/antigravity/M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD`；worktree=`G:/CODEX/New Manga.worktrees/RUNNER-HISTORICAL-RAW-OUTPUT-GUARD-antigravity`。只要求两个 runner 显式传 `--output-dir`、更新当前 README 用法并加入最小 parser regression；不碰历史证据或运行产品 Gate。Task 已 ready，派发/开工状态以 STATUS 和 release evidence 更新为准。
+[M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD](tasks/M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD.md) 已单独冻结并释放，处理 Runner DSH r4 的 deferred R-001：两个 Gate runner 缺省写入历史 tracked raw。Owner=Antigravity，非作者 Reviewer=DeepSeek Harness，Integrator=Codex；硬依赖 `M2-RUNNER-SNAPSHOT-DEBT done@73588624`。实现基线=`e9b66455356c56e0fe6720d658b46bdbdbeb53b5`；release/start head=`d12ebc7a0bbd5617e7a376e00f45c9ee114c8c10`；branch=`agent/antigravity/M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD`；worktree=`G:/CODEX/New Manga.worktrees/RUNNER-HISTORICAL-RAW-OUTPUT-GUARD-antigravity`（clean，共享正确 Git common-dir）。只要求两个 runner 显式传 `--output-dir`、更新当前 README 用法并加入最小 parser regression；不碰历史证据或运行产品 Gate。Task ready，实际派发状态以 STATUS 和 release evidence 更新为准。
 
 ## 2026-10-08 完成：M2-RUNNER-SNAPSHOT-DEBT @integration `73588624`
 
