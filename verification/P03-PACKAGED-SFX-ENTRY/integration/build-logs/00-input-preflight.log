@@ -1,0 +1,18 @@
+Shell: PowerShell 7.6.6
+WorkingDirectory: G:\CODEX\New Manga.worktrees\P03-review-prep-85482c5b
+Command: Get-FileHash SHA256 for G:/CODEX/New Manga.task-envs/M2-DOCTR-QUAL-work/regions/K07_R123.png and G:/CODEX/New Manga.task-envs/M2-SFX-DETECT/weights-v2b/yolo11s-seg.onnx; query Node/npm/Rust/Python/PyInstaller/NSIS versions
+Preflight commit HEAD: 14ed25be0670ae5dc1286cc0a9cff0d5b7492409
+Working tree before preflight: clean
+K07 page: G:/CODEX/New Manga.task-envs/M2-DOCTR-QUAL-work/regions/K07_R123.png (1020887 bytes), SHA256=28dab503aca3c903111488c03e857b430d309421a4a54bab335a63bbe7b9cec4
+Expected K07 SHA256: 28dab503aca3c903111488c03e857b430d309421a4a54bab335a63bbe7b9cec4
+SFX weights: G:/CODEX/New Manga.task-envs/M2-SFX-DETECT/weights-v2b/yolo11s-seg.onnx (40824255 bytes), SHA256=944e811410933ad6ff8d32446fcc9eef90fb463794e1874ce83035e83acd418d
+Expected SFX weights SHA256: 944e811410933ad6ff8d32446fcc9eef90fb463794e1874ce83035e83acd418d
+Node: v24.15.0
+npm: 12.0.1
+rustc: rustc 1.98.1 (48a229cea 2026-09-01)
+cargo: cargo 1.98.1 (797e8a9bc 2026-08-05)
+Build Python: G:/CODEX/New Manga.task-envs/m2ac5-build/Scripts/python.exe (Python 3.12.3)
+PyInstaller: 6.22.3
+NSIS: C:/Users/49745/AppData/Local/tauri/NSIS/makensis.exe (v3.11)
+Exit status: all reads/version queries completed successfully
+EXIT=0
