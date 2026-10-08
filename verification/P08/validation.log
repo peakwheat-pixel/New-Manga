@@ -348,3 +348,24 @@ command=python -B -X utf8 verification/PROJECT-ROADMAP-20261008/verify_plan.py; 
 command=git diff --cached --check; EXIT=0
 command=git diff --name-only -- protected product/contracts/source paths; EXIT=0; empty
 R4 Prompt/Handoff are post-delivery documents and do not change reviewed_head; exact reviewer worktree remains clean at delivery HEAD.
+
+P08 R4正式Review运行检查点与自动续跑恢复
+local_time=2026-10-08 23:08:00 +08:00
+main_HEAD=1ec14aa29505c7fbf5c15dae3525430cab89c4d3; R4 delivery_head=16fb07a973b36b0b129945bc3a85f9ae51234982; Task=in_review
+review_worktree=G:\CODEX\New Manga.worktrees\P08-dsh-review-16fb07a9-r4; detached clean; common_dir=G:/CODEX/New Manga/.git
+command=dsh headless <verification/P08/DSH-REVIEW-PROMPT-R4.md contents>; working_directory=exact R4 review worktree
+Codex exec session_id=90862; process still running at checkpoint; one 30-second poll returned no output; DSH native session id, process exit, and canonical report pending
+stdout=verification/P08/dsh-r4.stdout.md; stderr=verification/P08/dsh-r4.stderr.log; temporary outputs must remain untouched until actual report is captured, hashed, and archived
+DSH CLI version=0.1.7-rc.2; do not resubmit while process is active
+command=python -B -X utf8 verification/P08/verify_scope.py; EXIT=0 at fixed delivery head; 193 AC, AC-SMOKE, 12 gates, 3 fixed-head P08 Handoffs; verify again after current governance sync
+command=python -B -X utf8 verification/PROJECT-ROADMAP-20261008/verify_plan.py; EXIT=0 at fixed delivery preflight; verify again after current governance sync
+P08 Task/Plan/Status/Index/navigation state synced to in_review in current working tree; metadata sync commit pending. Task''s DSH native session stays pending until verified through mount.
+User instruction: close computer only after the entire currently authorized automatic-advance goal is complete; current R4 Review is active, so do not shut down now. User also requested the complete Chinese resume prompt in verification/P08/RESUME.md.
+Original external dirty paths and current R4 temporary output files remain unstaged. Product pytest/cargo/vitest/GUI/build/model=NOT_RUN (document-only scope); no P08 production paths changed.
+
+P08 R4 in_review状态同步复验
+command=python -B -X utf8 verification/P08/verify_scope.py; EXIT=0; 193 AC, AC-SMOKE, 12 gates, full P08/governance whitespace check dynamically included 4 P08 Handoffs
+command=python -B -X utf8 verification/PROJECT-ROADMAP-20261008/verify_plan.py; EXIT=0; 196 nodes, 105 ancestry records, 21 planned nodes, local links and acyclic dependency graphs
+command=git diff --cached --check; EXIT=0
+command=git diff --cached --name-only -- protected product/contracts/source paths; EXIT=0; empty
+Transient validation: the first verify_scope.py run after appending this log returned EXIT=1 due one blank line at EOF; normalized to a single final newline and reran validator and diff-check successfully.

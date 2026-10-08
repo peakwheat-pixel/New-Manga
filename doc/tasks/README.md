@@ -1,8 +1,8 @@
 # Task 索引
 
-2026-10-08新增：[P08 完整产品范围与验收冻结准备](P08.md)，Codex文档准备已交付，changes_requested / D1–D7已确认；DSH R3已关闭R1的4项P1及R2 N-01..N-06，N-07 P2、N-08 P3已作者修订，待R4独立Review；不释放后继产品实现。历史Task与完成记录不变。
+2026-10-08新增：[P08 完整产品范围与验收冻结准备](P08.md)，Codex文档准备已交付，in_review / D1–D7已确认；DSH R3已关闭R1的4项P1及R2 N-01..N-06，N-07/N-08修订于16fb07a9，R4独立Review正在运行；不释放后继产品实现。历史Task与完成记录不变。
 
-当前唯一Active Task：[P08](P08.md) `changes_requested`；Owner=Codex、非作者Reviewer=DeepSeek Harness；第三轮报告[DSH R3](../../verification/P08/review-dsh-1ad05d99-r3.md)已返回，N-01..N-06关闭，N-07/N-08已作者修订、待R4复审；Codex集成Gate完成前不释放产品实现。最近完成：[M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD](M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD.md) `done@integration e7d1f7f8`；Owner=Antigravity、非作者 Reviewer=DeepSeek Harness（r2 approved）、Integrator=Codex。集成验证见 `verification/M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD/integration-validation.log`；R-003保持未释放。下方旧状态为历史。
+当前唯一Active Task：[P08](P08.md) `in_review`；Owner=Codex、非作者Reviewer=DeepSeek Harness；R4固定head=`16fb07a973b36b0b129945bc3a85f9ae51234982`，review结果待返回；Codex集成Gate完成前不释放产品实现。最近完成：[M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD](M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD.md) `done@integration e7d1f7f8`；Owner=Antigravity、非作者 Reviewer=DeepSeek Harness（r2 approved）、Integrator=Codex。集成验证见 `verification/M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD/integration-validation.log`；R-003保持未释放。下方旧状态为历史。
 
 
 > **2026-09-21 audit**：本索引与 TASK-001～065 文件是历史证据。当前分类、依赖和唯一下一任务见 [REBASELINE_PLAN](../REBASELINE_PLAN.md)，当前 checkpoint 见 [STATUS](../STATUS.md)。不要根据旧 frontmatter 的 `status: done` 单独判定完成。
