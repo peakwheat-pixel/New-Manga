@@ -24,9 +24,10 @@ Exercises the REAL sidecar launch path and the hardened command surface:
      gate failures, the RC1 R-03 rule)
 
 Run (from the repository root):
-  python verification/M2-RC2/run_e2e.py [--exe PATH] [--skip-build]
+  python verification/M2-RC2/run_e2e.py [--exe PATH] [--skip-build] [--output-dir PATH]
 
-Artifacts land in ``verification/M2-RC2/raw/`` and ``%TEMP%/m2rc2-lab``.
+Artifacts land in --output-dir (default verification/M2-RC2/raw/)
+and a fresh runner-owned %TEMP%/m2rc2-lab-* directory.
 """
 
 from __future__ import annotations

@@ -29,8 +29,17 @@ def main():
                      {"re": re, "Path": Path})
     rust = (ROOT / "apps/desktop/src-tauri/src/main.rs").read_text(encoding="utf-8")
     body = rust.split("pub const PRODUCTION_COMMANDS:", 1)[1].split("= &[", 1)[1].split("];", 1)[0]
-    frozen = re.findall(r'"([a-z_]+)"', re.sub(r"//[^\n]*", "", body))
-    assert len(frozen) == 15 and rc["PRODUCTION_EXPECTED"] == frozen
+    implemented = re.findall(r'"([a-z_]+)"', re.sub(r"//[^\n]*", "", body))
+    # Independent pinned oracle: released Task scope + M2-C1 rev1.8 section 5.
+    # Do not derive expected values from either runner or the runtime response.
+    frozen = [
+        "issue_resource_url", "revoke_ref", "revoke_resource_refs", "core_ping",
+        "library_list_books", "settings_get", "settings_update_section",
+        "set_region_type", "list_regions", "list_region_revisions",
+        "restore_region_revision", "rerender_page", "resolve_page_resource",
+        "list_chapters", "list_chapter_pages",
+    ]
+    assert implemented == frozen and rc["PRODUCTION_EXPECTED"] == frozen
     core = ast.parse((ROOT / "src/bootstrap/core_service.py").read_text(encoding="utf-8"))
     protocol = {}
     for node in core.body:
@@ -55,7 +64,17 @@ def main():
         assert rc["check_announcement"](announcement, "probe")[0]
         assert not rc["check_announcement"](announcement, "production")[0]
         count += 2
-        for response_version in [version, {"major": 1, "minor": 3}, {"major": 1, "minor": 7}, None]:
+        ping_cases = [
+            (version, ["library.list_books"], "ready", None),
+            ({"major": 1, "minor": 3}, ["library.list_books"], "ready", None),
+            ({"major": 1, "minor": 7}, ["library.list_books"], "ready", None),
+            (None, ["library.list_books"], "ready", None),
+            (version, [], "ready", None),
+            (version, ["unrelated"], "ready", None),
+            (version, ["library.list_books"], "starting", None),
+            (version, ["library.list_books"], "ready", {"code": "FAIL"}),
+        ]
+        for response_version, capabilities, status, error in ping_cases:
             class Process:
                 returncode = 0
 
@@ -63,8 +82,8 @@ def main():
                     requests = [json.loads(line) for line in input.decode().splitlines()]
                     assert all(r["version"] == {"major": 1, "minor": 3} for r in requests)
                     replies = [
-                        {"request_id": "r1", "result": {"status": "ready", "protocol_version": response_version,
-                                                         "capabilities": ["library.list_books"]}},
+                        {"request_id": "r1", "error": error, "result": {"status": status, "protocol_version": response_version,
+                                                         "capabilities": capabilities}},
                         {"request_id": "r2", "result": []},
                         {"request_id": "r3", "result": {"status": "stopped"}},
                     ]
@@ -77,7 +96,7 @@ def main():
             gate = packaged["Gate"]()
             packaged["run_library_probe"](gate, output, {}, output)
             ping = next(s for s in gate.scenarios if s["id"] == "CS-L1-packaged-core-ping")
-            assert (ping["status"] == "PASS") == (response_version == version)
+            assert (ping["status"] == "PASS") == (response_version == version and "library.list_books" in capabilities and status == "ready" and error is None)
             count += 1
     for path in ["verification/M2-RC2/run_e2e.py", "packaging/m2ac5/run_clean_start_e2e.py"]:
         compile((ROOT / path).read_text(encoding="utf-8"), path, "exec")

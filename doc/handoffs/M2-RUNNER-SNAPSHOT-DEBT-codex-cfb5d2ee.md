@@ -23,7 +23,8 @@ output-dir隔离产物；RC2 fresh lab，packaged本次自有lab/install，
 **dev Gate PASS；packaged CS-L1 PASS；完整packaged Gate FAIL/BLOCKED**。
 真实安装态acceptance_bridge.exe导入QtGui失败：
 ImportError: DLL load failed while importing QtGui。
-AC1 run1无结果，既有240秒上限超时退出；未改timeout或场景阈值。
+AC1 run1无结果，返回exit=1；整个runner耗时312.8秒。既有240秒上限未改，
+但旧日志没有记录run_app单次起止/timeout分支，精确退出时间线UNKNOWN。
 本轮不修禁止范围spec/依赖/acceptance_bridge，不合并两处runner实现到main。
 
 ## AC 与真实验证
@@ -46,7 +47,8 @@ node24.15.0、npm12.0.1；真实环境记录见raw/dev-r2/e2e-environment.json�
 - 初次dev EXIT1：fresh checkout没有sidecar bundle，raw/dev-runner.log及raw/dev/保留。
 - fresh PyInstaller完成所有入口，但原PowerShell5脚本weights阶段Get-FileHash解析失败，
   整条命令EXIT1：raw/sidecar-build.log。
-- 用PowerShell7运行同一未改脚本，复用本次fresh bundle完成两组模型哈希校验与复制，
+- 用PowerShell7运行同一未改脚本，走skip-existing路径复用本次fresh bundle，仅完成两组模型哈希校验与复制；
+  没有重跑PyInstaller，
   EXIT0：raw/sidecar-weights-retry.log。没有SkipWeights，没有旧bundle拷贝。
 - dev重跑完整Gate10/10+probe13/13、无missing/unexpected/non-PASS，EXIT0：
   raw/dev-runner-r2.log、raw/dev-r2/e2e-gate.json。
