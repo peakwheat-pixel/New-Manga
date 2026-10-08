@@ -2,7 +2,7 @@
 id: M2-RUNNER-SNAPSHOT-DEBT
 title: 修复验收 runner 协议与生产命令快照漂移
 kind: maintenance
-status: blocked
+status: in_progress
 approval: user_authorized_release_20261008
 suggested_owner: Codex
 owner: Codex
@@ -12,9 +12,11 @@ depends_on: [M2-DERIVED-GC-2]
 base_commit: 968c8f34601b72667831f1fd15bb20cd2c8f3cb7
 branch: codex/M2-RUNNER-SNAPSHOT-DEBT
 worktree: G:/CODEX/New Manga.worktrees/RUNNER-SNAPSHOT-DEBT-codex
-previous_status: in_progress
-blocker: packaged_ac1_QtGui_DLL_import_failure
+previous_status: blocked
+blocker: null
 integration_commit: null
+execution_state: ACTIVE
+resume_code_head: bc337fcbef676d4d75befae03e6ea3f5d406e076
 ---
 
 # M2-RUNNER-SNAPSHOT-DEBT：runner 快照债务
@@ -166,3 +168,11 @@ P2-1/2/3父侧实际补raw/review-binding-r3-supplement.log（EXIT0）：6af→6
 原始bytes SHA256（旧verified日志hash由text归一化计算，原文保留）、release968 Rust源码hash
 及968→cfb Rust零差量。P2-4 Handoff AC3改指r3的16项日志。补充未重跑产品Gate。
 下一步仍为单独释放DSH只读DLL诊断；不继续范围外实现、不合并runner。
+
+## 2026-10-08 ICU 修复后恢复 AC4
+
+此前唯一 blocker=`packaged_ac1_QtGui_DLL_import_failure` 已满足解除条件：独立 ICU 修复 Task `done@65ba30144048a0b8daae22205c01f8049b44b8a7`，其 fresh Sidecar/NSIS 与 packaged AC1、完整 26/26 Packaged Gate 在固定 source head `4499217d7b2249da16d5dbf27a3219a43876aac7` 上通过并绑定 installer SHA。**这些是前置 Task 的证据，不替代本 Task AC4。**
+
+本 Task 按用户先前的明确释放与“Codex 认领并实施”授权恢复 `in_progress / ACTIVE`。唯一 Owner worktree `G:/CODEX/New Manga.worktrees/RUNNER-SNAPSHOT-DEBT-codex` 在 `codex/M2-RUNNER-SNAPSHOT-DEBT` 上从原 delivery/evidence head `15cd788f10e83f6a1a215e71538bfa175b435785` 干净同步主线 `cd09c4d9d39685979d06cc4930d12e4719caccd4`，合并恢复点=`bc337fcbef676d4d75befae03e6ea3f5d406e076`，common-dir=`G:/CODEX/New Manga/.git`；与同步主线相比 Owner 差量仍仅两个冻结 runner 文件。主线同步及状态恢复证据见 `verification/M2-RUNNER-SNAPSHOT-DEBT/resume-after-icu-fix.md`。
+
+当前恢复 head 只确认 ICU 修复已作为测试前置纳入；**本 Task 在组合代码 head 上的 AC4 fresh build/dev/packaged Gate 尚未运行，状态 NOT_RUN**。继续按原 AC4 绑定组合 source head、五入口 Sidecar、NSIS installer hash 与 Gate；旧 FAIL 不回填。DSH r3 是此前 runner 代码的有界批准，不代表本次 AC4 已通过或 Task 可 done；新鲜 Gate 后仍须以固定新 head 取得真实非作者 DSH Review，再由 Codex 集成。

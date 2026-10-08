@@ -1,12 +1,12 @@
 # Project Rebaseline Plan
 
-## 2026-10-08 M2-PACKAGED-AC1-ICU-ISOLATION-FIX done；恢复 Runner Snapshot Debt
+## 2026-10-08 当前执行：M2-RUNNER-SNAPSHOT-DEBT
 
-当前唯一后继工作是恢复此前已获用户授权的 [`M2-RUNNER-SNAPSHOT-DEBT`](tasks/M2-RUNNER-SNAPSHOT-DEBT.md)，Owner=Codex，非作者 Reviewer=DeepSeek Harness，Integrator=Codex。ICU 前置 Task 已集成并 `done`：Owner code/test head=`4499217d7b2249da16d5dbf27a3219a43876aac7`，Owner evidence=`2c79645939635beef4a391f4bd9071ffeacd300b`，DSH r2 APPROVED（0 P0/P1），integration=`65ba30144048a0b8daae22205c01f8049b44b8a7`。Owner fresh packaged 26/26 PASS 与 installer fingerprint 一致；集成后产品 Gate 未重跑，production paths 对 approved code head 零差量。R2-002/R2-003 为接受的非阻断证据局限。
+ICU 修复 Task 已 done@`65ba30144048a0b8daae22205c01f8049b44b8a7`；fresh Sidecar/NSIS 与 packaged AC1、完整 26/26 Gate 均绑定 source=`4499217d7b2249da16d5dbf27a3219a43876aac7` 和 installer SHA，满足 Runner Debt 原 blocker 的解除条件。集成后未重跑 ICU Gate，production 差量为零。
 
-M2-RUNNER-SNAPSHOT-DEBT 原 blocker `packaged_ac1_QtGui_DLL_import_failure` 已由上述固定 head 的 AC1 修复、fresh NSIS 与完整 packaged 26/26 Gate 通过所满足。恢复前须在分配 worktree 核对 clean/common-dir/HEAD，并将 ICU 隔离修复作为已集成依赖引入后 fresh 运行 Task AC4；不改变 Task 允许范围，不追认旧 FAIL。当前 Task/Plan/STATUS 运行点随后按实际 claim commit 更新。旧 ICU r1/r2 段落保留为历史证据，不再代表当前状态。
+唯一 Active=`[M2-RUNNER-SNAPSHOT-DEBT](tasks/M2-RUNNER-SNAPSHOT-DEBT.md)`，Task 已按原用户授权恢复 `in_progress`，Owner=Codex、Reviewer=DeepSeek Harness（非作者）、Integrator=Codex。Owner recovery branch/worktree 与冻结路径见 [`STATUS`](STATUS.md) 和 [恢复记录](../verification/M2-RUNNER-SNAPSHOT-DEBT/resume-after-icu-fix.md)。下一 Gate 为组合 head 上 fresh dev/packaged AC4；ICU 前置 Gate 不替代本 Task Gate，旧 FAIL 不追认。此前 ICU r1/r2 与 runner blocked sections 均为历史记录。
 
-集成证据：[ICU 集成验证](../verification/M2-PACKAGED-AC1-ICU-ISOLATION-FIX/integration-validation.log)；[DSH r2 Review](reviews/M2-PACKAGED-AC1-ICU-ISOLATION-FIX-4499217d-dsh-r2.md)。
+ICU 集成证据：[integration-validation.log](../verification/M2-PACKAGED-AC1-ICU-ISOLATION-FIX/integration-validation.log)；[DSH r2 Review](reviews/M2-PACKAGED-AC1-ICU-ISOLATION-FIX-4499217d-dsh-r2.md)。
 
 ## 2026-10-08 DSH Review r1：M2-PACKAGED-AC1-ICU-ISOLATION-FIX changes_requested
 
