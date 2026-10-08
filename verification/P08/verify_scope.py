@@ -6,6 +6,8 @@ import subprocess
 ROOT = Path(__file__).resolve().parents[2]
 HERE = Path(__file__).resolve().parent
 BASE = "ab2f813c0ce311a6712002cafd852b9e7a258380"
+TASK_STATES = {"proposed", "ready", "in_progress", "blocked", "in_review",
+               "changes_requested", "approved", "done", "closed_with_limitations"}
 
 if __name__ == "__main__":
     source = (ROOT / "doc/08_ACCEPTANCE_CRITERIA.md").read_text(encoding="utf-8")
@@ -28,10 +30,17 @@ if __name__ == "__main__":
                 assert (doc.parent / target).is_file(), (doc, target)
     print("PASS: P08 local links resolve")
     task = (ROOT / "doc/tasks/P08.md").read_text(encoding="utf-8")
-    state = re.search(r"^status: (changes_requested|in_review|done)$", task, re.M)
+    protocol = (ROOT / "doc/09_COLLABORATION.md").read_text(encoding="utf-8")
+    state_block = re.search(r"^状态：proposed.*?(?=^Task 的开发状态)", protocol, re.M | re.S)
+    assert state_block, "task status definitions missing from collaboration protocol"
+    protocol_states = set(re.findall(r"^- ([a-z_]+)：", state_block.group(0), re.M))
+    assert protocol_states == TASK_STATES, (protocol_states, TASK_STATES)
+    state = re.search(r"^status: ([a-z_]+)$", task, re.M)
     integration = re.search(r"^integration_commit: (null|[0-9a-f]{40})$", task, re.M)
-    assert state and integration and "reviewer: DeepSeek Harness" in task
-    assert (integration.group(1) == "null") == (state.group(1) != "done")
+    approval = re.search(r"^approval: .+$", task, re.M)
+    assert state and state.group(1) in TASK_STATES and integration and approval
+    assert "reviewer: DeepSeek Harness" in task
+    assert state.group(1) != "done" or integration.group(1) != "null"
     reviewed_head = re.search(r"^reviewed_head: ([0-9a-f]{40})$", task, re.M)
     assert reviewed_head, "P08 must record a full reviewed_head"
     assert "approval: user_scope_confirmed_review_pending" in task
@@ -54,6 +63,7 @@ if __name__ == "__main__":
     assert len(re.findall(r"^\| P\d{2} \| proposed / 未释放 \|", plan, re.M)) == 20
     print(f"PASS: P08 {state.group(1)}, 20 successors/candidates unreleased; no fabricated approval")
     paths = ["src", "apps", "tests", "packaging", "doc/contracts", "doc/reviews",
+             "AGENTS.md", "doc/09_COLLABORATION.md",
              "doc/01_FUNCTIONAL_ARCHITECTURE.md", "doc/02_TECHNICAL_ARCHITECTURE_.md",
              "doc/03_DATA_MODEL.md", "doc/04_USER_FLOW.md", "doc/05_UI_MAPPING.md",
              "doc/06_TRANSLATION_PIPELINE.md", "doc/07_NON_FUNCTIONAL_REQUIREMENTS.md",
@@ -63,7 +73,10 @@ if __name__ == "__main__":
     assert not subprocess.check_output(["git", "-C", str(ROOT), "diff", "--name-only", BASE, "--", *paths]).strip()
     checked = subprocess.run(["git", "-C", str(ROOT), "diff", "--check", BASE, "--",
                               "verification/P08", "doc/tasks/P08.md", "doc/REBASELINE_PLAN.md",
-                              "doc/STATUS.md", "doc/00_INDEX.md", "doc/12_ROADMAP.md"],
+                              "doc/STATUS.md", "doc/00_INDEX.md", "doc/12_ROADMAP.md",
+                              "doc/tasks/README.md", "doc/handoffs/P08-490f9bd9.md",
+                              "doc/handoffs/P08-31c26389-dsh-r2.md",
+                              "verification/PROJECT-ROADMAP-20261008"],
                              capture_output=True, text=True)
     assert checked.returncode == 0, checked.stdout + checked.stderr
     print("PASS: frozen product docs unchanged; full P08 subtree/task governance diff is whitespace-clean")

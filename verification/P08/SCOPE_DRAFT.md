@@ -37,7 +37,7 @@ D1–D7已全部收到，不再等待用户回答。产品取舍已确认；P08�
 | Provider/凭据/网络/设置 | must：全部现行P0/P1 | CredentialRef exchange缺失；普通settings DTO不能载secret；D04§38–42 | P10安全通道→P15 UI；替换/清除/持久/配置生效、网络失败可见、日志脱敏 |
 | 模型下载与运行 | must：AC-MODEL-001/002 | 生产下载/进度/完整性Ready链需资格验证 | P15契约/Core/Host/UI；P18真实模型资格、P20包验证分别执行，不能互相替代 |
 | SFX/OCR/翻译/修复/排版 | must：D08现行质量与性能要求 | SimpleFill/EdgeBleed真实，style analyzer空，learned registry implements=False；D04§17/19/23–26 | P13生产接线、P18 JA/KO分别资格；无字页/复杂背景/溢出逐项证据；不足即阻止声明，不默认训练新模型 |
-| 单图/ZIP/CBZ/PDF/文本输出 | must：D08单图/ZIP要求及D1/D2选定的PNG/ZIP/CBZ/PDF/文本格式 | ExportService/lineage可复用，PDFComposer未注入，授权/StartExport/Cancel缺失；D04§37仅写单图/ZIP，AC-EXPORT-001不把“单图”等同于PNG | P16逐格式契约/Core→P17 UI；P16冻结用户已选择的PNG与D08“单图”对应实现；stale/missing策略、临时发布/取消清理、顺序/hash/lineage与源零写 |
+| 单图/ZIP/CBZ/PDF/文本输出 | must：D04 §37与D08 AC-EXPORT-001列出的单图、ZIP、CBZ、PDF、文本全部覆盖；用户D1/D2将单图映射为PNG，并选入PNG/ZIP/CBZ/PDF/文本 | ExportService/lineage可复用，PDFComposer未注入，授权/StartExport/Cancel缺失；D04 §37与AC-EXPORT-001均列五种输出格式，PNG映射来自用户D1/D2 | P16逐格式契约/Core→P17 UI；P16冻结用户已选择的PNG与D08“单图”对应实现；stale/missing策略、临时发布/取消清理、顺序/hash/lineage与源零写 |
 | 回收站/诊断/其他维护 | must：D08 P0/P1 | Trash/diagnostics可复用，production维护命令未接；D04§43/44描述回收站与错误处理流程，不含诊断包验收；诊断按D08 AC-LOG-003 | P15同batch恢复、managed-only删除、current/pinned保护；P19故障注入；不扩大全局删除范围 |
 | 全库备份恢复 | must：DB＋Managed Copy及一致性所需库内资产 | 备份服务存在，但新worker/连接停写恢复未接；D04:1499仅有备份分区名，没有完整流程；行为按D08 AC-BACKUP-001..004 | P15先契约→Core→UI；依赖P13停写/排空/关闭连接/reassemble/rollback；隔离恢复验证，秘密不得以普通配置明文备份 |
 | Windows发布 | must：D08 P0/P1、AC-SMOKE与发布总Gate；Win10实测后声明 | 旧26/26仅原source/hash，第五入口/G7迁移缺口保留；D07/D08 | P03/P06/P19/P20；RG1净化基线与fresh source/installer五入口绑定；未知环境不外推 |
@@ -68,19 +68,19 @@ D08源文件本轮不变。§53要求完整主流程通过（当前NOT_RUN）；
 
 ## 后继工作包拆分（全部未释放）
 
-每个子Task须独立填写base/head、branch/worktree、allowlist和非作者Reviewer。以下是未认领的草案切片，父编号固定P09–P20，尚无正式Task。P12/P14/P15/P17的产品UI实现须等P08范围确认后另行释放的ZCode页面设计Task通过非作者Review；M2-UI1仅复用其视觉参考，不替代新设计Task。P09开发释放前须先完成Architecture Documentation Rebaseline Task所需的AC-DOC-001..003目标架构Gate；该Task尚未登记或释放，P08不扩大范围创建它。P18/P20及最终发布引用stack-specific D08条目之前，也必须先由该Task完成目标架构映射。
+每个子Task须独立填写base/head、branch/worktree、allowlist和非作者Reviewer。以下是未认领的草案切片，父编号固定P09–P20，尚无正式Task。路径明确标为“现存可复用”或“拟议新增”：已存在不等于授权修改，未存在的目录也须由正式Task创建并列入allowed_paths。P12/P14/P15/P17的产品UI实现须等P08范围确认后另行释放的ZCode页面设计Task通过非作者Review；M2-UI1仅复用其视觉参考，不替代新设计Task。P09开发释放前须先完成Architecture Documentation Rebaseline Task所需的AC-DOC-001..003目标架构Gate；该Task尚未登记或释放，P08不扩大范围创建它。P18/P20及最终发布引用stack-specific D08条目之前，也必须先由该Task完成目标架构映射。
 
 | 工作包 | 先后切片与依赖 | 建议Owner / 非作者Reviewer | 拟议允许路径与Gate |
 |---|---|---|---|
 | P09 | contract→Core/Host真实decoder与受控来源；依赖P08正式Review/集成及P09释放前完成AC-DOC-001..003目标架构Gate | Codex→Antigravity；DSH | 拟议路径：contract自有修订；src/application/library、src/application/importing、src/bootstrap/core_service.py、src/bootstrap/core_assembly.py、apps/desktop/src-tauri/src/main.rs及经Task列明的bridge/contract边界；只选定格式与最小目标，源保护/损坏/中断Gate |
 | P10 | credential/config契约→Core/Host；依赖P08 | Codex→Antigravity；DSH | 自有契约、settings/provider安全接线；凭据读写与脱敏Gate，不借普通settings DTO传secret |
 | P11 | durable accepted/快照/控制/恢复契约；依赖P08 | Codex；DSH | 自有契约设计与verification；不写runtime，不造第二调度器 |
-| P12 | 四页导航设计切片→书架与导入UI；依赖P09＋P08后另行释放并通过DSH非作者Review的ZCode书架设计Task | ZCode；DSH | 拟议路径：apps/desktop/frontend/src/library/、apps/desktop/frontend/src/App.tsx；真实Tauri空库链，保留已有Workbench/SFX能力 |
+| P12 | 四页导航设计切片→书架与导入UI；依赖P09＋P08后另行释放并通过DSH非作者Review的ZCode书架设计Task | ZCode；DSH | 现存可复用：apps/desktop/frontend/src/library/、apps/desktop/frontend/src/App.tsx；正式Task再限定修改文件。真实Tauri空库链，保留已有Workbench/SFX能力 |
 | P13 | Run接线→控制→恢复；依赖P09/P11 | ZCode；DSH | src/application/tasks既有复用、bootstrap/bridge冻结边界；工作线程/连接所有权、durable状态与故障恢复Gate |
-| P14 | 编辑/Lock/Pin写契约→Core→Workbench UI；进度依赖P13；UI依赖P08后另行释放并通过DSH非作者Review的ZCode工作台设计Task | Codex→Antigravity/ZCode→ZCode；DSH | 拟议路径：src/application/editing/、apps/desktop/src-tauri/src/、apps/desktop/frontend/src/workbench/；每条写命令逐项冲突/保护，不跨层无限授权 |
-| P15 | 设置/模型管理UI；依赖P10＋P08后另行释放并通过DSH非作者Review的ZCode设置设计Task；模型下载/全库备份恢复先契约→Core→UI，恢复必须P13停写排空 | Codex→Antigravity→ZCode；DSH | 拟议路径：src/application/settings/（若Task确认存在）、apps/desktop/frontend/src/settings/、经Task具体化的maintenance组件；错误/配置生效/诊断Gate；D08全部P0/P1及全库Backup/Restore仍须通过 |
+| P14 | 编辑/Lock/Pin写契约→Core→Workbench UI；进度依赖P13；UI依赖P08后另行释放并通过DSH非作者Review的ZCode工作台设计Task | Codex→Antigravity/ZCode→ZCode；DSH | 现存可复用：src/application/editing/、apps/desktop/src-tauri/src/、apps/desktop/frontend/src/workbench/；正式Task再限定修改文件。每条写命令逐项冲突/保护，不跨层无限授权 |
+| P15 | 设置/模型管理UI；依赖P10＋P08后另行释放并通过DSH非作者Review的ZCode设置设计Task；模型下载/全库备份恢复先契约→Core→UI，恢复必须P13停写排空 | Codex→Antigravity→ZCode；DSH | 现存可复用：src/application/settings/（已有bindings.py、errors.py、models.py、network.py、pipeline_defaults.py、privacy.py、resolution.py、snapshots.py）与apps/desktop/frontend/src/settings/；新maintenance组件路径须由正式Task具体化。错误/配置生效/诊断Gate；D08全部P0/P1及全库Backup/Restore仍须通过 |
 | P16 | 阅读/输出授权契约→Core；依赖P08正式Review/集成与P13 | Codex→ZCode；DSH | application/reading/export＋桥冻结范围；进度、lineage、取消、格式逐项Gate |
-| P17 | Reader设计→Reader/导出UI；依赖P16＋P08后另行释放并通过DSH非作者Review的ZCode Reader设计Task | ZCode；DSH | 拟议路径：apps/desktop/frontend/src/reader/、apps/desktop/frontend/src/export/（两个子目录目前不存在）；真实结果、重开进度/长图/受控输出，禁静态mock冒充 |
+| P17 | Reader设计→Reader/导出UI；依赖P16＋P08后另行释放并通过DSH非作者Review的ZCode Reader设计Task | ZCode；DSH | 现存Core可复用：src/application/reading/与src/application/export/；拟议新增UI目录：apps/desktop/frontend/src/reader/、apps/desktop/frontend/src/export/（目前均不存在）。创建/修改范围由正式Task明确；真实结果、重开进度/长图/受控输出，禁静态mock冒充 |
 | P18 | 资格方案→JA/KO真实实验；依赖P10/P13、已确认质量口径和Architecture Documentation Rebaseline Task目标架构映射 | DSH；Codex或ZCode非作者 | 拟议路径：仓库根experiments/与verification/下的Task专属目录；二者是独立目录，不存在verification/experiments/；素材许可、hash、阈值/真值与逐步terminal一致性；生产修复须另Task |
 | P19 | 所选范围production E2E；依赖P12/P14/P15/P17/P18 | DSH；Codex非作者 | 自有验证工具/证据；按选定范围验收，正常/失败/重启/人工保护逐项，按D08完整主流程验收，不以未测项冒充完成 |
 | P20 | fresh Windows Gate；依赖P19/P03/P06和Architecture Documentation Rebaseline Task对目标架构发布/打包/UI条目的映射 | ZCode；DSH；Codex集成 | 拟议路径：packaging/与仓库根verification/的Task专属目录；source/installer/五入口/环境矩阵，未知不外推 |
