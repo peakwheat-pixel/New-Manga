@@ -1,0 +1,9 @@
+HOST=HOME-MY; SHELL=pwsh 7.6.6; PYTHON=C:\Python314\python.exe; VER=Python 3.14.6; HEAD=e167e72351d6f725653d1f16b210a54f435e621f
+COMMAND=python verification/M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD/verify_raw_integrity.py --compare-after verification/M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD/raw-snapshot-before.json
+=== BEFORE/AFTER RAW INTEGRITY COMPARISON ===
+Files tracked in historical raw directories: 61
+Files matching byte-identical before and after: 61
+Historical raw paths clean: True
+RESULT: PASS (all 61 tracked historical raw files byte-identical before and after; zero modifications or untracked files)
+Note: This is a historical raw evidence integrity verification. It does not claim product Gate PASS.
+EXIT=0

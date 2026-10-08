@@ -1,0 +1,19 @@
+BASE=d12ebc7a0bbd5617e7a376e00f45c9ee114c8c10
+HEAD=e167e72351d6f725653d1f16b210a54f435e621f
+COMMAND=git diff --stat d12ebc7a0bbd5617e7a376e00f45c9ee114c8c10...e167e72351d6f725653d1f16b210a54f435e621f
+ ...-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD-1c49fe38.md | 138 +++++++++++++++++++
+ doc/tasks/M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD.md |  30 ++--
+ packaging/m2ac5/README.md                          |   5 +-
+ packaging/m2ac5/run_clean_start_e2e.py             |  19 ++-
+ tests/packaging/test_runner_output_dir_required.py | 153 +++++++++++++++++++++
+ verification/M2-RC2/run_e2e.py                     |  18 ++-
+ .../VERIFICATION.md                                |  49 +++++++
+ .../check-snapshots.log                            |   5 +
+ .../git-diff-check.log                             |   3 +
+ .../git-diff-name-only.log                         |   7 +
+ .../git-diff-stat.log                              |   8 ++
+ .../pytest-regression-py312.log                    |   6 +
+ .../pytest-regression.log                          |   6 +
+ .../raw-integrity.log                              |  66 +++++++++
+ 14 files changed, 485 insertions(+), 28 deletions(-)
+EXIT=0

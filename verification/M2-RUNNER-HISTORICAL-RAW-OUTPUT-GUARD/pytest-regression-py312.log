@@ -1,0 +1,20 @@
+HOST=HOME-MY; SHELL=pwsh; PYTHON=G:/CODEX/New Manga.task-envs/TASK-012-py312/Scripts/python.exe; VER=Python 3.12.3; HEAD=e167e72351d6f725653d1f16b210a54f435e621f
+COMMAND=G:/CODEX/New Manga.task-envs/TASK-012-py312/Scripts/python.exe -m pytest -v tests/packaging/test_runner_output_dir_required.py
+============================= test session starts =============================
+platform win32 -- Python 3.12.3, pytest-9.1.1, pluggy-1.6.0 -- G:\CODEX\New Manga.task-envs\TASK-012-py312\Scripts\python.exe
+cachedir: .pytest_cache
+rootdir: G:\CODEX\New Manga.worktrees\RUNNER-HISTORICAL-RAW-OUTPUT-GUARD-antigravity
+configfile: pytest.ini
+collecting ... collected 8 items
+
+tests/packaging/test_runner_output_dir_required.py::test_cli_omission_fails_usage_error_exit_2_subprocess[rc2_run_e2e] PASSED [ 12%]
+tests/packaging/test_runner_output_dir_required.py::test_cli_omission_fails_usage_error_exit_2_subprocess[ac5_run_clean_start] PASSED [ 25%]
+tests/packaging/test_runner_output_dir_required.py::test_rc2_parser_omission_raises_system_exit_2 PASSED [ 37%]
+tests/packaging/test_runner_output_dir_required.py::test_ac5_parser_omission_raises_system_exit_2 PASSED [ 50%]
+tests/packaging/test_runner_output_dir_required.py::test_rc2_parser_accepts_explicit_output_dir PASSED [ 62%]
+tests/packaging/test_runner_output_dir_required.py::test_ac5_parser_accepts_explicit_output_dir PASSED [ 75%]
+tests/packaging/test_runner_output_dir_required.py::test_rc2_main_interception_after_parse_args PASSED [ 87%]
+tests/packaging/test_runner_output_dir_required.py::test_ac5_main_interception_after_parse_args PASSED [100%]
+
+============================== 8 passed in 0.55s ==============================
+EXIT=0

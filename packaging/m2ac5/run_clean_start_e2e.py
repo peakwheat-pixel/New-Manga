@@ -30,10 +30,10 @@ M2 Release Gate scope and stays explicitly NOT_RUN here.
 The RUNNER may use the dev venv Python (acceptance tooling); every spawned
 instance of the app runs under the purged environment. Usage:
 
-    python packaging/m2ac5/run_clean_start_e2e.py [--installer <path>] [--output-dir <path>]
+    python packaging/m2ac5/run_clean_start_e2e.py --output-dir <path> [--installer <path>]
 
-Artifacts land in --output-dir (default verification/M2-AC5/raw/) and the
-lab temp dir. The gate fails closed: FAIL/MISSING verdicts fail the run.
+Artifacts land in --output-dir and the lab temp dir. The gate fails closed:
+FAIL/MISSING verdicts fail the run.
 """
 
 from __future__ import annotations
@@ -731,12 +731,17 @@ def run_production_phase(gate: Gate, exe: Path, env: dict, lab: Path) -> None:
     )
 
 
-def main() -> int:
-    global RAW
+def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("--installer", type=Path, default=DEFAULT_INSTALLER)
-    parser.add_argument("--output-dir", type=Path, default=RAW, help="isolated evidence directory")
-    args = parser.parse_args()
+    parser.add_argument("--output-dir", type=Path, required=True, help="isolated evidence directory")
+    return parser
+
+
+def main(argv: list[str] | None = None) -> int:
+    global RAW
+    parser = build_parser()
+    args = parser.parse_args(argv)
     RAW = args.output_dir.resolve()
 
     RAW.mkdir(parents=True, exist_ok=True)
