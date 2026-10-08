@@ -102,9 +102,13 @@ def main() -> int:
         if not clean_status:
             errors.append(f"historical raw paths have Git changes:\n{status_msg}")
 
+        identical_count = sum(
+            before[key].get("sha256") == after[key].get("sha256")
+            for key in before_keys & after_keys
+        )
         print("=== BEFORE/AFTER RAW INTEGRITY COMPARISON ===")
         print(f"Files tracked in historical raw directories: {len(before)}")
-        print(f"Files matching byte-identical before and after: {len(before_keys & after_keys) - len(errors)}")
+        print(f"Files with identical SHA-256 before and after: {identical_count}")
         print(f"Historical raw paths clean: {clean_status}")
         if errors:
             print(f"FAIL: {len(errors)} discrepancies found:")
@@ -112,7 +116,7 @@ def main() -> int:
                 print(f"  - {e}")
             return 1
 
-        print("RESULT: PASS (all 61 tracked historical raw files byte-identical before and after; zero modifications or untracked files)")
+        print("RESULT: PASS (all tracked historical raw files are byte-identical before and after; both historical raw paths have no Git changes)")
         print("Note: This is a historical raw evidence integrity verification. It does not claim product Gate PASS.")
         return 0
 

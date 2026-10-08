@@ -1,0 +1,157 @@
+# Codex integration validation
+
+Integration worktree: G:/CODEX/New Manga.worktrees/RUNNER-HISTORICAL-RAW-OUTPUT-GUARD-codex-integration
+Branch: codex/M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD-integration
+Fixed reviewed owner HEAD: 8b867e0208246e2e478a2906a2198c60c7d88aa6
+Owner code delivery: e167e72351d6f725653d1f16b210a54f435e621f
+DSH r2 decision: approved; runtime review commands NOT_RUN by DSH due reviewer sandbox failure.
+
+## Python 3.14 runtime
+Command: python --version
+Python 3.14.6
+EXIT=0
+
+## Python 3.14 parser regression
+Command: python -m pytest -v tests/packaging/test_runner_output_dir_required.py
+============================= test session starts =============================
+platform win32 -- Python 3.14.6, pytest-9.1.1, pluggy-1.6.0 -- C:\Python314\python.exe
+cachedir: .pytest_cache
+rootdir: G:\CODEX\New Manga.worktrees\RUNNER-HISTORICAL-RAW-OUTPUT-GUARD-codex-integration
+configfile: pytest.ini
+plugins: anyio-4.14.2
+collecting ... collected 8 items
+
+tests/packaging/test_runner_output_dir_required.py::test_cli_omission_fails_usage_error_exit_2_subprocess[rc2_run_e2e] PASSED [ 12%]
+tests/packaging/test_runner_output_dir_required.py::test_cli_omission_fails_usage_error_exit_2_subprocess[ac5_run_clean_start] PASSED [ 25%]
+tests/packaging/test_runner_output_dir_required.py::test_rc2_parser_omission_raises_system_exit_2 PASSED [ 37%]
+tests/packaging/test_runner_output_dir_required.py::test_ac5_parser_omission_raises_system_exit_2 PASSED [ 50%]
+tests/packaging/test_runner_output_dir_required.py::test_rc2_parser_accepts_explicit_output_dir PASSED [ 62%]
+tests/packaging/test_runner_output_dir_required.py::test_ac5_parser_accepts_explicit_output_dir PASSED [ 75%]
+tests/packaging/test_runner_output_dir_required.py::test_rc2_main_interception_after_parse_args PASSED [ 87%]
+tests/packaging/test_runner_output_dir_required.py::test_ac5_main_interception_after_parse_args PASSED [100%]
+
+============================== 8 passed in 0.50s ==============================
+EXIT=0
+
+## Python 3.12 runtime
+Command: & "G:\CODEX\New Manga.task-envs\TASK-012-py312\Scripts\python.exe" --version
+Python 3.12.3
+EXIT=0
+
+## Python 3.12 parser regression
+Command: & "G:\CODEX\New Manga.task-envs\TASK-012-py312\Scripts\python.exe" -m pytest -v tests/packaging/test_runner_output_dir_required.py
+============================= test session starts =============================
+platform win32 -- Python 3.12.3, pytest-9.1.1, pluggy-1.6.0 -- G:\CODEX\New Manga.task-envs\TASK-012-py312\Scripts\python.exe
+cachedir: .pytest_cache
+rootdir: G:\CODEX\New Manga.worktrees\RUNNER-HISTORICAL-RAW-OUTPUT-GUARD-codex-integration
+configfile: pytest.ini
+collecting ... collected 8 items
+
+tests/packaging/test_runner_output_dir_required.py::test_cli_omission_fails_usage_error_exit_2_subprocess[rc2_run_e2e] PASSED [ 12%]
+tests/packaging/test_runner_output_dir_required.py::test_cli_omission_fails_usage_error_exit_2_subprocess[ac5_run_clean_start] PASSED [ 25%]
+tests/packaging/test_runner_output_dir_required.py::test_rc2_parser_omission_raises_system_exit_2 PASSED [ 37%]
+tests/packaging/test_runner_output_dir_required.py::test_ac5_parser_omission_raises_system_exit_2 PASSED [ 50%]
+tests/packaging/test_runner_output_dir_required.py::test_rc2_parser_accepts_explicit_output_dir PASSED [ 62%]
+tests/packaging/test_runner_output_dir_required.py::test_ac5_parser_accepts_explicit_output_dir PASSED [ 75%]
+tests/packaging/test_runner_output_dir_required.py::test_rc2_main_interception_after_parse_args PASSED [ 87%]
+tests/packaging/test_runner_output_dir_required.py::test_ac5_main_interception_after_parse_args PASSED [100%]
+
+============================== 8 passed in 0.55s ==============================
+EXIT=0
+
+## RC2 missing output-dir rejection
+Command: python verification/M2-RC2/run_e2e.py
+usage: run_e2e.py [-h] [--exe EXE] [--skip-build] --output-dir OUTPUT_DIR
+run_e2e.py: error: the following arguments are required: --output-dir
+EXIT=2
+
+## AC5 missing output-dir rejection
+Command: python packaging/m2ac5/run_clean_start_e2e.py
+usage: run_clean_start_e2e.py [-h] [--installer INSTALLER]
+                              --output-dir OUTPUT_DIR
+run_clean_start_e2e.py: error: the following arguments are required: --output-dir
+EXIT=2
+
+## Runner snapshot oracle
+Command: python verification/M2-RUNNER-SNAPSHOT-DEBT/check_snapshots.py
+  [PASS] CS-L1-packaged-core-ping: {"error": null, "result": {"capabilities": ["library.list_books"], "protocol_version": {"major": 1, "minor": 6}, "status": "ready"}}
+  [PASS] CS-L2-packaged-ListBooks-structure: {"count": 0, "envelope_valid": true, "error": null}
+  [PASS] CS-L3-packaged-core-shutdown: {"exit": 0, "result": {"status": "stopped"}}
+  [FAIL] CS-L1-packaged-core-ping: {"error": null, "result": {"capabilities": ["library.list_books"], "protocol_version": {"major": 1, "minor": 3}, "status": "ready"}}
+  [PASS] CS-L2-packaged-ListBooks-structure: {"count": 0, "envelope_valid": true, "error": null}
+  [PASS] CS-L3-packaged-core-shutdown: {"exit": 0, "result": {"status": "stopped"}}
+  [FAIL] CS-L1-packaged-core-ping: {"error": null, "result": {"capabilities": ["library.list_books"], "protocol_version": {"major": 1, "minor": 7}, "status": "ready"}}
+  [PASS] CS-L2-packaged-ListBooks-structure: {"count": 0, "envelope_valid": true, "error": null}
+  [PASS] CS-L3-packaged-core-shutdown: {"exit": 0, "result": {"status": "stopped"}}
+  [FAIL] CS-L1-packaged-core-ping: {"error": null, "result": {"capabilities": ["library.list_books"], "protocol_version": null, "status": "ready"}}
+  [PASS] CS-L2-packaged-ListBooks-structure: {"count": 0, "envelope_valid": true, "error": null}
+  [PASS] CS-L3-packaged-core-shutdown: {"exit": 0, "result": {"status": "stopped"}}
+  [FAIL] CS-L1-packaged-core-ping: {"error": null, "result": {"capabilities": [], "protocol_version": {"major": 1, "minor": 6}, "status": "ready"}}
+  [PASS] CS-L2-packaged-ListBooks-structure: {"count": 0, "envelope_valid": true, "error": null}
+  [PASS] CS-L3-packaged-core-shutdown: {"exit": 0, "result": {"status": "stopped"}}
+  [FAIL] CS-L1-packaged-core-ping: {"error": null, "result": {"capabilities": ["unrelated"], "protocol_version": {"major": 1, "minor": 6}, "status": "ready"}}
+  [PASS] CS-L2-packaged-ListBooks-structure: {"count": 0, "envelope_valid": true, "error": null}
+  [PASS] CS-L3-packaged-core-shutdown: {"exit": 0, "result": {"status": "stopped"}}
+  [FAIL] CS-L1-packaged-core-ping: {"error": null, "result": {"capabilities": ["library.list_books"], "protocol_version": {"major": 1, "minor": 6}, "status": "starting"}}
+  [PASS] CS-L2-packaged-ListBooks-structure: {"count": 0, "envelope_valid": true, "error": null}
+  [PASS] CS-L3-packaged-core-shutdown: {"exit": 0, "result": {"status": "stopped"}}
+  [FAIL] CS-L1-packaged-core-ping: {"error": {"code": "FAIL"}, "result": {"capabilities": ["library.list_books"], "protocol_version": {"major": 1, "minor": 6}, "status": "ready"}}
+  [PASS] CS-L2-packaged-ListBooks-structure: {"count": 0, "envelope_valid": true, "error": null}
+  [PASS] CS-L3-packaged-core-shutdown: {"exit": 0, "result": {"status": "stopped"}}
+PASS: 16 actual-predicate cases; source alignment and syntax; no product/runtime claim
+EXIT=0
+
+## Historical raw integrity comparison
+Command: python verification/M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD/verify_raw_integrity.py --compare-after verification/M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD/raw-snapshot-before.json
+=== BEFORE/AFTER RAW INTEGRITY COMPARISON ===
+Files tracked in historical raw directories: 61
+Files with identical SHA-256 before and after: 61
+Historical raw paths clean: True
+RESULT: PASS (all tracked historical raw files are byte-identical before and after; both historical raw paths have no Git changes)
+Note: This is a historical raw evidence integrity verification. It does not claim product Gate PASS.
+EXIT=0
+
+## Owner scope path list
+Command: git diff --name-only d12ebc7a0bbd5617e7a376e00f45c9ee114c8c10..8b867e0208246e2e478a2906a2198c60c7d88aa6
+doc/handoffs/M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD-1c49fe38.md
+doc/handoffs/M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD-e167e723.md
+doc/tasks/M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD.md
+packaging/m2ac5/README.md
+packaging/m2ac5/run_clean_start_e2e.py
+tests/packaging/test_runner_output_dir_required.py
+verification/M2-RC2/run_e2e.py
+verification/M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD/VERIFICATION.md
+verification/M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD/check-snapshots.log
+verification/M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD/git-diff-check.log
+verification/M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD/git-diff-name-only.log
+verification/M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD/git-diff-stat.log
+verification/M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD/pytest-regression-py312.log
+verification/M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD/pytest-regression.log
+verification/M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD/raw-integrity.log
+verification/M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD/raw-snapshot-before.json
+verification/M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD/verify_raw_integrity.py
+EXIT=0
+
+Owner scope summary: 17 paths total; 4 implementation/test paths, all allowed; 0 forbidden implementation paths.
+
+## Owner diff whitespace check
+Command: git diff --check d12ebc7a0bbd5617e7a376e00f45c9ee114c8c10..8b867e0208246e2e478a2906a2198c60c7d88aa6
+EXIT=0
+
+## Integration worktree whitespace check
+Command: git diff --check
+EXIT=0
+
+Product Dev Gate / Packaged Gate / Sidecar / NSIS: NOT_RUN by Task scope.
+
+## Owner implementation/test diff statistic (explicit allowed pathspec)
+Command: git diff --stat d12ebc7a0bbd5617e7a376e00f45c9ee114c8c10...e167e72351d6f725653d1f16b210a54f435e621f -- packaging/m2ac5/README.md packaging/m2ac5/run_clean_start_e2e.py tests/packaging/test_runner_output_dir_required.py verification/M2-RC2/run_e2e.py
+4 files changed, 179 insertions(+), 16 deletions(-)
+EXIT=0
+
+Command: git diff --numstat d12ebc7a0bbd5617e7a376e00f45c9ee114c8c10...e167e72351d6f725653d1f16b210a54f435e621f -- packaging/m2ac5/README.md packaging/m2ac5/run_clean_start_e2e.py tests/packaging/test_runner_output_dir_required.py verification/M2-RC2/run_e2e.py
+3 2 packaging/m2ac5/README.md
+12 7 packaging/m2ac5/run_clean_start_e2e.py
+153 0 tests/packaging/test_runner_output_dir_required.py
+11 7 verification/M2-RC2/run_e2e.py
+EXIT=0

@@ -1,6 +1,6 @@
 # Task 索引
 
-当前唯一 Active Task：[M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD](M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD.md) 为 in_review / CHECKPOINTED；Owner=Antigravity、非作者 Reviewer=DeepSeek Harness、Integrator=Codex。代码交付 head=`e167e723`，当前 Owner evidence head=`8b867e02`，DSH r2 正在复核。ICU 修复与 Runner Debt 均已 done；下方旧状态为历史。
+当前无 Active/released Task。最近完成：[M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD](M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD.md) `done@integration e7d1f7f8`；Owner=Antigravity、非作者 Reviewer=DeepSeek Harness（r2 approved）、Integrator=Codex。集成验证见 `verification/M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD/integration-validation.log`；R-003 保持未释放。下方旧状态为历史。
 
 
 > **2026-09-21 audit**：本索引与 TASK-001～065 文件是历史证据。当前分类、依赖和唯一下一任务见 [REBASELINE_PLAN](../REBASELINE_PLAN.md)，当前 checkpoint 见 [STATUS](../STATUS.md)。不要根据旧 frontmatter 的 `status: done` 单独判定完成。

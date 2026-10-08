@@ -143,7 +143,7 @@ Rust host 侧对接（packaged 判定与 fail-closed 语义见
 
 ```powershell
 # --output-dir 为必选参数，调用方须显式提供历史 raw 树之外的全新隔离输出目录，防止意外覆盖历史证据
-"G:/CODEX/New Manga.task-envs/TASK-012-py312/Scripts/python.exe" packaging/m2ac5/run_clean_start_e2e.py --output-dir "$env:TEMP/m2ac5-cleanstart-artifacts"
+"G:/CODEX/New Manga.task-envs/TASK-012-py312/Scripts/python.exe" packaging/m2ac5/run_clean_start_e2e.py --output-dir "$env:TEMP/m2ac5-cleanstart-artifacts-$(Get-Date -Format yyyyMMdd-HHmmss-fff)"
 ```
 
 净化 PATH（剔除 python/venv/conda/WindowsApps）+ 清空 `M2RC1_*` → NSIS `/S /D=`

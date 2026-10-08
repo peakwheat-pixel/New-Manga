@@ -2,7 +2,7 @@
 id: M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD
 title: Require explicit isolated output directories for M2 runner commands
 kind: implementation
-status: in_review
+status: done
 approval: user_authorized_release_20261008
 suggested_owner: Antigravity
 owner: Antigravity
@@ -12,7 +12,7 @@ depends_on: [M2-RUNNER-SNAPSHOT-DEBT]
 base_commit: e9b66455356c56e0fe6720d658b46bdbdbeb53b5
 branch: agent/antigravity/M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD
 worktree: G:/CODEX/New Manga.worktrees/RUNNER-HISTORICAL-RAW-OUTPUT-GUARD-antigravity
-integration_commit: null
+integration_commit: e7d1f7f8528a6186baec6f642ac8422572103527
 ---
 
 # M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD：阻止默认覆盖历史 raw 证据
@@ -29,7 +29,7 @@ integration_commit: null
 - [x] AC2：传入显式 `--output-dir <isolated-path>` 时 argparse 接受参数，并继续将该路径作为本次运行输出根；不改变 Gate 场景、阈值、产物结构或其他 runner 行为。
 - [x] AC3：更新 `packaging/m2ac5/README.md` 当前验收命令，示范新建/隔离输出目录；用法说明不再声称 runner 会默认落入历史 raw 目录。历史 Handoff / verification 原始记录不改写。
 - [x] AC4：新增回归测试覆盖两个 runner 的“省略参数拒绝”和“显式参数解析”；测试在调用 runner 主体前停止，避免触发构建、安装或产品 Gate。确认 `verification/M2-RC2/raw/` 与 `verification/M2-AC5/raw/` 的 tracked 文件集合及内容未被测试改变。
-- [ ] AC5：实现差量严格限于本 Task allowed_paths；交付固定 commit、测试日志及 Handoff；非作者 DSH 独立审查通过后由 Codex 集成并完成集成验证。
+- [x] AC5：实现差量严格限于本 Task allowed_paths；交付固定 commit、测试日志及 Handoff；非作者 DSH 独立审查通过后由 Codex 集成并完成集成验证。
 
 ## 允许修改范围
 
@@ -54,19 +54,23 @@ integration_commit: null
 
 | 场景/AC | 计划命令或步骤 | 前提/环境 | 实际结果 | 证据 |
 |---|---|---|---|---|
-| AC1/AC2 parser regression | `python -m pytest -q tests/packaging/test_runner_output_dir_required.py` | Windows/Python；测试在 `parse_args` 成功后拦截，不进入 runner 主体 | PASS (9/9 passed) | `verification/M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD/pytest-regression.log` |
+| AC1/AC2 parser regression | `python -m pytest -v tests/packaging/test_runner_output_dir_required.py` | Windows/Python；测试在 `parse_args` 成功后拦截，不进入 runner 主体 | PASS (8/8 passed；Python 3.14 与 3.12) | `verification/M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD/pytest-regression.log`、`pytest-regression-py312.log` |
 | AC4 历史 raw 不变 | 对两个 tracked raw 目录运行前后文件集合/内容摘要对比 | 与 parser regression 同一 checkout | PASS (61 files byte-identical) | `verification/M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD/raw-integrity.log` |
-| 范围与空白 | `git diff --name-only <base>...<head>`；`git diff --check <base>...<head>` | 固定 owner base/head | PASS (EXIT=0，零空白错误) | `verification/M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD/git-diff-check.log` |
+| 集成验证 | 两套 Python parser tests；两个 CLI 缺省调用；snapshot oracle；raw before/after；范围与 diff check | Codex integration worktree，验证记录固定于 integration merge `e7d1f7f8` | PASS (3.14/3.12 各 8 passed；两个 CLI exit 2；snapshot 16 cases；61/61 raw SHA256 identical；Owner 17 路径中 4 个实现/测试文件均在允许范围；零 forbidden paths) | `verification/M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD/integration-validation.log` |
 
 ## 依赖、风险与阻塞
 
 - 硬依赖：`M2-RUNNER-SNAPSHOT-DEBT` 已 done @ `73588624`。
 - R-001 为防误操作的 CLI 边界修复；required 参数不能阻止操作者显式选中历史路径，因此本 Task 仅消除危险的隐式默认，不新增路径策略或清理行为。
+- 旧验证脚本/Handoff 中不带 `--output-dir` 的命令是冻结历史记录，按 AC3 不改写；它们不再可原样重放。
 - 运行完整产品 Gate 非本 Task 的必要条件；不得将 parser 回归测试表述为产品 Gate PASS。
 
 ## 交付与运行记录
 
 - Code delivery HEAD：`e167e72351d6f725653d1f16b210a54f435e621f` (`e167e723`)
+- Reviewed HEAD：`8b867e0208246e2e478a2906a2198c60c7d88aa6`
+- DSH r2：`approved`（0 P0/P1/P2）；`doc/reviews/M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD-8b867e02-dsh-r2.md`
+- Codex integration merge：`e7d1f7f8528a6186baec6f642ac8422572103527`
 - Handoff：`doc/handoffs/M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD-e167e723.md`
 - 验证报告：`verification/M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD/VERIFICATION.md`
 - 实际测试：
@@ -74,5 +78,7 @@ integration_commit: null
   - `& "G:\CODEX\New Manga.task-envs\TASK-012-py312\Scripts\python.exe" -m pytest -v tests/packaging/test_runner_output_dir_required.py` -> EXIT=0 (8 passed)
   - `python verification/M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD/verify_raw_integrity.py --compare-after ...` -> EXIT=0 (61 个历史 raw 文件 byte-identical 核查 PASS)
   - `python verification/M2-RUNNER-SNAPSHOT-DEBT/check_snapshots.py` -> EXIT=0 (16 actual-predicate cases PASS)
-  - `git diff --check d12ebc7a..e167e723` -> EXIT=0
-  - `git diff --name-only d12ebc7a..e167e723` -> 4 个 allowed_paths 代码文件（零超界）
+  - `git diff --check d12ebc7a..8b867e02` -> EXIT=0；集成工作树 `git diff --check` -> EXIT=0
+  - `git diff --name-only d12ebc7a..8b867e02` -> 17 条 Owner 文件路径（含 Task/Handoff/verification）；其中 4 个 implementation/test 文件落在 allowed_paths，零 forbidden paths
+  - 两个 runner 缺省 CLI 调用均 exit 2 并显示 `--output-dir` 为必需参数；集成后证据见 `integration-validation.log`
+  - 完整 Dev/Packaged Gate、Sidecar、NSIS -> NOT_RUN（符合 Task 冻结范围）
