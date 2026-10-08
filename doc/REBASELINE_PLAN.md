@@ -3,7 +3,9 @@
 ## 2026-10-08 自动派发：M2-PACKAGED-AC1-ICU-ISOLATION-FIX in_progress / ACTIVE
 
 用户授权“下一步”；Codex串行登记唯一Active Task=[ICU隔离修复](tasks/M2-PACKAGED-AC1-ICU-ISOLATION-FIX.md)，Owner=Antigravity，非作者Reviewer=DSH，Integrator=Codex。
-真实agy CLI=1.3.1，只读通路探测EXIT0/status=SUCCESS；执行恢复点在派发前同步本登记提交。
+真实agy CLI=1.3.1；探测EXIT0/SUCCESS。实际派发start_head=df824182e813fc6d9045872da51d263f28db87f0，
+conversation=d0af5e1f-1da8-4842-a5e6-ededa3b2d651；状态CASCADE_RUN_STATUS_RUNNING，最终EXIT/交付待返回。
+[自动派发恢复记录](../verification/M2-PACKAGED-AC1-ICU-ISOLATION-FIX/dispatch.md)；禁止重复派发同worktree写入。
 base=5a72db9e3c5778ce4700b7d404250853e474c5de；branch=agent/antigravity/M2-PACKAGED-AC1-ICU-ISOLATION-FIX；
 worktree=G:/CODEX/New Manga.worktrees/PACKAGED-AC1-ICU-ISOLATION-FIX-antigravity；生产仅packaging/m2ac5/**，其余范围/Gate按正式Task冻结不变。
 Owner开工将Task ready改in_progress；此处是Codex串行认领授权。产品测试目前NOT_RUN。
