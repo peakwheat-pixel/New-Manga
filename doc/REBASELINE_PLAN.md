@@ -1,10 +1,10 @@
 # Project Rebaseline Plan
 
-**当前位置：P08的D1–D7全部确认，固定范围交付进入DSH非作者正式Review（in_review / CHECKPOINTED）；P系列完成0/21，in_review 1，proposed / 未释放20。用户决策已收齐，产品实现未释放。下一步：完成P08 Review与Codex集成检查；之后按依赖逐项处理P01–P07。**
+**当前位置：P08的D1–D7全部确认，固定范围交付正在DSH非作者正式Review（in_review / ACTIVE）；P系列完成0/21，in_review 1，proposed / 未释放20。用户决策已收齐，产品实现未释放。下一步：完成P08 Review与Codex集成检查；之后按依赖逐项处理P01–P07。**
 
 ## 2026-10-08 当前工作：P08 DSH正式Review / in_review
 
-用户已授权Codex准备[P08](tasks/P08.md)，准备范围仅文档；正式Task的非作者Reviewer=DeepSeek Harness。范围交付head=`490f9bd9637de0812a3ef3d9bbfa754868d5c15f`，独立审查worktree=`G:/CODEX/New Manga.worktrees/P08-dsh-review-490f9bd`，当前状态=`in_review / CHECKPOINTED`。base=`ab2f813c0ce311a6712002cafd852b9e7a258380`，Owner branch/worktree=`main` / `G:/CODEX/New Manga`。详见[Task](tasks/P08.md)、[范围/验收草案](../verification/P08/SCOPE_DRAFT.md)、[D08逐AC及总Gate覆盖索引](../verification/P08/AC_COVERAGE.md)和[恢复点](../verification/P08/RESUME.md)。D1–D7已全部确认；DSH正式Review即将派发，P18补充数值指标在资格方案Task实验前冻结。P08未done，后继实施均未释放。历史196节点CSV仍是审计快照；本轮新增P08正式设计Task，不改原任务及完成记录。D1已解冻基础Reader；跨页联动/页缩略图仍延期。D2选入PDF/MOBI输入、CBZ/PDF/文本输出；D3按RG1净化基线且JA/KO分别实测、Win10实测后声明；D4全库备份；D5保持D08全部P0/P1及完整主流程；D6保留模型下载、延期Plugin/Hook/字体上传/Sakura监控/Plugin Agent；D7维护满足现行P0/P1。全部产品验收仍NOT_RUN。
+用户已授权Codex准备[P08](tasks/P08.md)，准备范围仅文档；正式Task的非作者Reviewer=DeepSeek Harness。范围交付head=`490f9bd9637de0812a3ef3d9bbfa754868d5c15f`，独立审查worktree=`G:/CODEX/New Manga.worktrees/P08-dsh-review-490f9bd`，DSH session=`session-f663b6eb-7648-4750-b84d-41becd54737b`，当前状态=`in_review / ACTIVE`。base=`ab2f813c0ce311a6712002cafd852b9e7a258380`，Owner branch/worktree=`main` / `G:/CODEX/New Manga`。详见[Task](tasks/P08.md)、[范围/验收草案](../verification/P08/SCOPE_DRAFT.md)、[D08逐AC及总Gate覆盖索引](../verification/P08/AC_COVERAGE.md)和[恢复点](../verification/P08/RESUME.md)。D1–D7已全部确认；DSH正式Review已派发，P18补充数值指标在资格方案Task实验前冻结。P08未done，后继实施均未释放。历史196节点CSV仍是审计快照；本轮新增P08正式设计Task，不改原任务及完成记录。D1已解冻基础Reader；跨页联动/页缩略图仍延期。D2选入PDF/MOBI输入、CBZ/PDF/文本输出；D3按RG1净化基线且JA/KO分别实测、Win10实测后声明；D4全库备份；D5保持D08全部P0/P1及完整主流程；D6保留模型下载、延期Plugin/Hook/字体上传/Sakura监控/Plugin Agent；D7维护满足现行P0/P1。全部产品验收仍NOT_RUN。
 
 
 2026-10-08 最新编号裁决：当前21个规划节点沿用 `P01–P21`，状态为 `proposed / 未释放`；仅统一编号，不释放实施、不改原有任务及完成记录。原始审计、台账与历史验证日志保留为固定快照。

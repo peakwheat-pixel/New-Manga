@@ -1,6 +1,6 @@
 # Roadmap
 
-当前工作：[P08范围草案与验收矩阵](../verification/P08/SCOPE_DRAFT.md)已准备；[正式Task](tasks/P08.md)为in_review，D1–D7已确认，DeepSeek Harness非作者Review即将派发。产品实现未释放；[最新恢复点](../verification/P08/RESUME.md)。下方原规划建议按此当前工作点续接。
+当前工作：[P08范围草案与验收矩阵](../verification/P08/SCOPE_DRAFT.md)已准备；[正式Task](tasks/P08.md)为in_review，D1–D7已确认，DeepSeek Harness非作者Review已派发。产品实现未释放；[最新恢复点](../verification/P08/RESUME.md)。下方原规划建议按此当前工作点续接。
 
 ## 当前整体路线（2026-10-08，PLAN_ONLY）
 

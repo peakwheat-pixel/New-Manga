@@ -1,10 +1,10 @@
 # Current Development Status
 
-**当前位置：P08的D1–D7全部确认，固定范围交付进入DSH非作者正式Review（in_review / CHECKPOINTED）；P系列完成0/21，in_review 1，proposed / 未释放20。用户决策已收齐，产品实现未释放。下一步：完成P08 Review与Codex集成检查；之后按依赖逐项处理P01–P07。**
+**当前位置：P08的D1–D7全部确认，固定范围交付正在DSH非作者正式Review（in_review / ACTIVE）；P系列完成0/21，in_review 1，proposed / 未释放20。用户决策已收齐，产品实现未释放。下一步：完成P08 Review与Codex集成检查；之后按依赖逐项处理P01–P07。**
 
 ## 2026-10-08 当前工作：P08 DSH正式Review / in_review
 
-用户已授权Codex准备[P08](tasks/P08.md)，准备范围仅文档；Owner=Codex，非作者Reviewer=DeepSeek Harness。范围交付head=`490f9bd9637de0812a3ef3d9bbfa754868d5c15f`，审查worktree=`G:/CODEX/New Manga.worktrees/P08-dsh-review-490f9bd`，Task状态=`in_review` / ExecutionState=`CHECKPOINTED`。base=`ab2f813c0ce311a6712002cafd852b9e7a258380`，Owner branch/worktree=`main` / `G:/CODEX/New Manga`。D1–D7已全部确认；正式DSH Review即将派发，补充数值指标在P18资格方案Task实验前冻结；P08未done，后继实施均未释放。历史196节点CSV仍是审计快照；本轮新增P08正式设计Task，不改原任务及完成记录。D1已解冻基础Reader；跨页联动/页缩略图仍延期。D2选入PDF/MOBI输入、CBZ/PDF/文本输出；D3按RG1净化基线且JA/KO分别实测、Win10实测后声明；D4全库备份；D5保持D08全部P0/P1及完整主流程；D6保留模型下载、延期Plugin/Hook/字体上传/Sakura监控/Plugin Agent；D7维护满足现行P0/P1。全部产品验收仍NOT_RUN。
+用户已授权Codex准备[P08](tasks/P08.md)，准备范围仅文档；Owner=Codex，非作者Reviewer=DeepSeek Harness。范围交付head=`490f9bd9637de0812a3ef3d9bbfa754868d5c15f`，审查worktree=`G:/CODEX/New Manga.worktrees/P08-dsh-review-490f9bd`，DSH session=`session-f663b6eb-7648-4750-b84d-41becd54737b`，Task状态=`in_review` / ExecutionState=`ACTIVE`。base=`ab2f813c0ce311a6712002cafd852b9e7a258380`，Owner branch/worktree=`main` / `G:/CODEX/New Manga`。D1–D7已全部确认；正式DSH Review已派发，补充数值指标在P18资格方案Task实验前冻结；P08未done，后继实施均未释放。历史196节点CSV仍是审计快照；本轮新增P08正式设计Task，不改原任务及完成记录。D1已解冻基础Reader；跨页联动/页缩略图仍延期。D2选入PDF/MOBI输入、CBZ/PDF/文本输出；D3按RG1净化基线且JA/KO分别实测、Win10实测后声明；D4全库备份；D5保持D08全部P0/P1及完整主流程；D6保留模型下载、延期Plugin/Hook/字体上传/Sakura监控/Plugin Agent；D7维护满足现行P0/P1。全部产品验收仍NOT_RUN。
 
 
 2026-10-08 最新编号裁决：当前21个规划节点沿用 `P01–P21`，状态为 `proposed / 未释放`；仅统一编号，不释放实施、不改原有任务及完成记录。原始审计、台账与历史验证日志保留为固定快照。
@@ -17,7 +17,7 @@
 
 用户本轮请求已完成三路GPT-6.1 Sol high代码/文档审计与整体依赖规划；这是规划交付，**当前仍无 Active / released产品Task**。审计输入=`main@e4242ecd`；[报告](../verification/PROJECT-ROADMAP-20261008/REPORT.md)、[中文图](../verification/PROJECT-ROADMAP-20261008/ROADMAP.md)、[196节点完整台账](../verification/PROJECT-ROADMAP-20261008/task-inventory.csv)、[恢复点](../verification/PROJECT-ROADMAP-20261008/RESUME.md)。167登记完成/文档交付＋29历史局限/归档，不作为产品完成率；新架构有界Task全部收口，正式四页与完整用户链仍缺。
 
-当前后续整体树以[Plan顶部P01–P21 候选任务](REBASELINE_PLAN.md)为准，P08 in_review，其余20项proposed / 未释放。P08范围已确认，DSH非作者正式Review即将派发；ZCode后续设计另开Task；产品实施未释放，Reader/BJ13/缩略图等现行裁决保持。产品验收仍NOT_RUN；历史PASS限定原commit/hash。额度恢复按[P08 RESUME](../verification/P08/RESUME.md)核Git并复用已完成审计，不再全库重做；下方各ready/blocked段落继续作为历史恢复证据。
+当前后续整体树以[Plan顶部P01–P21 候选任务](REBASELINE_PLAN.md)为准，P08 in_review，其余20项proposed / 未释放。P08范围已确认，DSH非作者正式Review已派发；ZCode后续设计另开Task；产品实施未释放，Reader/BJ13/缩略图等现行裁决保持。产品验收仍NOT_RUN；历史PASS限定原commit/hash。额度恢复按[P08 RESUME](../verification/P08/RESUME.md)核Git并复用已完成审计，不再全库重做；下方各ready/blocked段落继续作为历史恢复证据。
 
 ## 2026-10-08 完成：M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD
 

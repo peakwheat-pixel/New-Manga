@@ -1,23 +1,23 @@
 # P08 可恢复检查点
 
-时间：2026-10-08 21:14（Asia/Shanghai）；Agent=Codex；TaskStatus=in_review；ExecutionState=CHECKPOINTED。
+时间：2026-10-08 21:21（Asia/Shanghai）；Agent=Codex；TaskStatus=in_review；ExecutionState=ACTIVE。
 
 ## 固定范围与Review工作区
 
-仓库=`G:/CODEX/New Manga`；Owner branch/worktree=`main` / `G:/CODEX/New Manga`；common-dir=`G:/CODEX/New Manga/.git`。本检查点开始前主工作区HEAD=`22a008ae97c53f964c231db70dfb97f117763dce`。P08原始base=`ab2f813c0ce311a6712002cafd852b9e7a258380`；固定范围交付及DSH `reviewed_head`=`490f9bd9637de0812a3ef3d9bbfa754868d5c15f`，见[Handoff](../../doc/handoffs/P08-490f9bd9.md)。
+仓库=`G:/CODEX/New Manga`；Owner branch/worktree=`main` / `G:/CODEX/New Manga`；common-dir=`G:/CODEX/New Manga/.git`。Review起始检查点commit=`8617e18496ededb605aee7f06533ef4a7e1ba2dc`。P08原始base=`ab2f813c0ce311a6712002cafd852b9e7a258380`；固定范围交付及DSH `reviewed_head`=`490f9bd9637de0812a3ef3d9bbfa754868d5c15f`，见[Handoff](../../doc/handoffs/P08-490f9bd9.md)。
 
-独立Reviewer=DeepSeek Harness。Review worktree=`G:/CODEX/New Manga.worktrees/P08-dsh-review-490f9bd`，detached HEAD=`490f9bd9637de0812a3ef3d9bbfa754868d5c15f`，status clean，common-dir与主仓一致。DSH正式任务已就绪，当前checkpoint写入前尚未执行Review派发；不得记为已审查或批准。
+独立Reviewer=DeepSeek Harness。Review worktree=`G:/CODEX/New Manga.worktrees/P08-dsh-review-490f9bd`，detached HEAD=`490f9bd9637de0812a3ef3d9bbfa754868d5c15f`，status clean，common-dir与主仓一致。正式DSH CLI=`dsh --profile headless --json`，session=`session-f663b6eb-7648-4750-b84d-41becd54737b`；JSONL原始输出暂存于本机Temp，当前仍在Review中。DSH内部PowerShell无法启动（SetNamedSecurityInfoW Win32 5），只读搜索/文件读取工具可用；尚无结论，不得记为批准。
 
 ## 已完成
 
 - D1–D7已确认；范围、193条D08验收映射、AC-SMOKE与12个总Gate、P09–P20建议切片均在固定head交付。
 - 当前HEAD相对固定范围提交仅有5个文档提交；差量限于Task/Handoff/Review指令/恢复点/验证日志，没有产品代码差量。
-- DSH通路探测：`dsh --version`=`0.1.7-rc.2`；项目目录探测输出`收到`、EXIT=0。
+- DSH通路探测：`dsh --version`=`0.1.7-rc.2`；项目目录探测输出`收到`、EXIT=0。正式Review已派发，session如上。
 - P08范围验证旧证据见[validation.log](validation.log)，绑定于`490f9bd9`；产品pytest/cargo/vitest/GUI/build/model仍为`NOT_RUN`。
 
 ## 当前工作点与下一步
 
-当前：P08已登记`in_review`，Reviewer和固定head/worktree已确认；准备提交Review起始状态检查点。紧接着从Review worktree根目录运行真实`dsh headless`，只读审查固定`reviewed_head=490f9bd9`，输出结论、P0/P1/P2 findings、覆盖范围、验证命令和NOT_RUN项。之后依实际结果更新Review报告和本检查点；不虚构批准，不释放P09–P20。
+当前：P08正式Review正由上述DSH session执行；不要重复派发。等待同一session返回完整结论后，核对JSONL session事件与EXIT码，按Skill将精确session挂载到该Review worktree，再把原始输出和Review报告入库。Reviewer报告需带 findings、覆盖范围、验证命令及NOT_RUN项；不虚构批准，不释放P09–P20。
 
 正式Review之前需核实当前Git状态。原主工作区中归原作者的dirty文件：`.qoder-credits/report.json`（modified）、`.qoder-credits/通路探测__8602db50.canvas.tsx`（untracked）、`verification/M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD/antigravity-dispatch.json`（untracked）、`verification/M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD/antigravity-dispatch.stderr.log`（untracked）。不得stage、覆盖、stash或清理；提交时只显式stage本Task路径。
 

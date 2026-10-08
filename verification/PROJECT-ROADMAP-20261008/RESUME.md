@@ -2,7 +2,7 @@
 
 最新工作点：P08 D1–D7已确认，正式Task处于`in_review`；固定交付`490f9bd9`已分配DeepSeek Harness做非作者Review，审查worktree及恢复步骤见[最新检查点](../P08/RESUME.md)。后继产品实现未释放；下方历史审计与规划材料按各自时间点保留。
 
-**当前位置：P08的D1–D7全部确认，固定范围交付进入DSH非作者正式Review（in_review / CHECKPOINTED）；P系列完成0/21，in_review 1，proposed / 未释放20。用户决策已收齐，产品实现未释放。下一步：完成P08 Review与Codex集成检查；之后按依赖逐项处理P01–P07。**
+**当前位置：P08的D1–D7全部确认，固定范围交付正在DSH非作者正式Review（in_review / ACTIVE）；P系列完成0/21，in_review 1，proposed / 未释放20。用户决策已收齐，产品实现未释放。下一步：完成P08 Review与Codex集成检查；之后按依赖逐项处理P01–P07。**
 
 2026-10-08 最新编号裁决：当前21个候选任务沿用 `P01–P21`，状态为 `proposed / 未释放`；仅统一编号，不释放实施、不改原有任务及完成记录。原始审计、台账与历史验证日志保留为固定快照。
 

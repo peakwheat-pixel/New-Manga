@@ -100,7 +100,7 @@ Packaged26/26的已入库证据绑定source=`3d532c1f99e49da703d2076bd67d46b7108
 
 ## 推荐下一任务与可直接转发指令
 
-当前执行点：[P08 DSH正式Review指令](../P08/DSH-REVIEW-PROMPT.md)。D1–D7已全部确认，无需再次询问；固定head与Reviewer已登记。下方长指令是此前规划快照，不得替代当前Task与恢复点。
+当前执行点：[P08 DSH正式Review指令](../P08/DSH-REVIEW-PROMPT.md)。D1–D7已全部确认，无需再次询问；固定head、Reviewer与DSH session已登记。下方长指令是此前规划快照，不得替代当前Task与恢复点。
 
 **Task**：[P08](../../doc/tasks/P08.md)“完整产品范围与验收冻结准备”（in_review / CHECKPOINTED；D1–D7已确认，固定范围head=`490f9bd9`，DeepSeek Harness正式Review）。**Agent**：Codex负责范围/契约，DeepSeek Harness非作者Review；后续ZCode另开设计Task。P08完成前及单独释放前均不得启动后继产品实现。
 
