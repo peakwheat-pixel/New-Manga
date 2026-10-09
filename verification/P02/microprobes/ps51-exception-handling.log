@@ -1,0 +1,169 @@
+# P02 Windows PowerShell 5.1 Exception Handling & Failure Path Microprobe Evidence (R5-02, R5-03, R5-04)
+
+Host OS: Windows 11 Enterprise / Pro (Build 10.0.26100)
+PowerShell Engine: Windows PowerShell 5.1.26100.9549 (Desktop edition)
+Execution Target: verification/P02/run-webview.ps1
+Timestamp: 2026-10-09T16:58:34+08:00
+Test Type: Live failure-path injection & exception handler verification
+
+================================================================================
+Test Scenario A: Deterministic Child Process Failure Injection (R4-06, R5-03)
+================================================================================
+
+Objective:
+Prove that when a child process (e.g., node / tsc) fails with non-zero exit code and multi-line stderr diagnostics,
+`run-webview.ps1` captures the full multi-line stderr output (not truncated to a single line), records the exact
+child exit code, writes an explicit [FAILURE] block with Status: FAILED (EXIT=1), and immediately flushes to disk.
+
+Execution Command:
+  powershell.exe -NoProfile -ExecutionPolicy Bypass -Command @"
+    $env:NODE_OPTIONS = '--require=C:\__p02_missing_preload__.js'
+    & powershell.exe -NoProfile -ExecutionPolicy Bypass -File verification/P02/run-webview.ps1
+  "@
+
+Console Observed Output:
+  ExitCode: 1
+  Error Diagnostics:
+    node:internal/modules/cjs/loader:1479
+      throw err;
+      ^
+    Error: Cannot find module 'C:\__p02_missing_preload__.js'
+    Require stack:
+    - internal/preload
+        at Module._resolveFilename (node:internal/modules/cjs/loader:1476:15)
+        at wrapResolveFilename (node:internal/modules/cjs/loader:1049:27)
+        at defaultResolveImplForCJSLoading (node:internal/modules/cjs/loader:1073:10)
+        at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1094:12)
+        at Module._load (node:internal/modules/cjs/loader:1262:25)
+        at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)
+        at Module.require (node:internal/modules/cjs/loader:1576:12)
+        at node:internal/modules/cjs/loader:2122:12
+        at loadPreloadModules (node:internal/process/pre_execution:711:5)
+        at initializeModuleLoaders (node:internal/process/pre_execution:243:5) {
+      code: 'MODULE_NOT_FOUND',
+      requireStack: [ 'internal/preload' ]
+    }
+    Node.js v24.15.0
+    [Step 2: TypeScript Protocol Check] Failed with exit code 1
+
+Log Recorded on Disk (probe-execution-full.log tail):
+  --- [Step 2: TypeScript Protocol Check] ---
+  Command: node G:\CODEX\New Manga\apps\desktop\frontend\node_modules\typescript\bin\tsc --noEmit --strict --skipLibCheck --target ES2021 --lib ES2021,DOM G:\CODEX\New Manga.worktrees\P02-real-webview-harness-antigravity\apps\desktop\frontend\e2e\workbench_driver_protocol.ts
+  OUTPUT:
+  node.exe : node:internal/modules/cjs/loader:1479
+  At G:\CODEX\New Manga.worktrees\P02-real-webview-harness-antigravity\verification\P02\run-webview.ps1:87 char:9
+  +         & $Command @Arguments 2>&1
+  +         ~~~~~~~~~~~~~~~~~~~~~~~~~~
+      + CategoryInfo          : NotSpecified: (node:internal/modules/cjs/loader:1479:String) [], RemoteException
+      + FullyQualifiedErrorId : NativeCommandError
+
+    throw err;
+    ^
+
+  Error: Cannot find module 'C:\__p02_missing_preload__.js'
+  Require stack:
+  - internal/preload
+      at Module._resolveFilename (node:internal/modules/cjs/loader:1476:15)
+      at wrapResolveFilename (node:internal/modules/cjs/loader:1049:27)
+      at defaultResolveImplForCJSLoading (node:internal/modules/cjs/loader:1073:10)
+      at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1094:12)
+      at Module._load (node:internal/modules/cjs/loader:1262:25)
+      at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)
+      at Module.require (node:internal/modules/cjs/loader:1576:12)
+      at node:internal/modules/cjs/loader:2122:12
+      at loadPreloadModules (node:internal/process/pre_execution:711:5)
+      at initializeModuleLoaders (node:internal/process/pre_execution:243:5) {
+    code: 'MODULE_NOT_FOUND',
+    requireStack: [ 'internal/preload' ]
+  }
+
+  Node.js v24.15.0
+  EXIT: 1
+
+  [FAILURE] [Step 2: TypeScript Protocol Check] Failed with exit code 1
+  Status: FAILED (EXIT=1)
+
+Verdict: PASS
+Full multi-line diagnostic captured; exact exit code 1 recorded; Status: FAILED (EXIT=1) reliably persisted.
+
+================================================================================
+Test Scenario B: Finalizer Failure Handling & Log State Isolation (R5-02)
+================================================================================
+
+Objective:
+Prove that if `--finalize` fails with non-zero exit code (e.g., injected exit 42):
+1. The runner does NOT claim success or write "completed successfully with EXIT=0".
+2. The failure is recorded in the execution log with command, output, and exit code.
+3. The log is flushed to disk with Status: FAILED (EXIT=42).
+4. The runner process exits with code 42.
+
+Execution Command:
+  powershell.exe -NoProfile -ExecutionPolicy Bypass -File verification/P02/run-webview.ps1 -FinalizeFailTest
+
+Console Observed Output:
+  [Step 5: Finalize Evidence Hashes] Executing: C:\Python314\python.exe G:\CODEX\New Manga.worktrees\P02-real-webview-harness-antigravity\verification\P02\harness\workbench_cdp_harness.py --finalize --finalize-fail-test...
+  python.exe : [Finalize] Injected failure test activated: exiting with code 42
+  Evidence finalization failed with exit code 42
+
+Runner Process Exit Code:
+  42
+
+Log Recorded on Disk (probe-execution-full.log tail):
+  --- [Step 5: Finalize Evidence Hashes] ---
+  Command: C:\Python314\python.exe G:\CODEX\New Manga.worktrees\P02-real-webview-harness-antigravity\verification\P02\harness\workbench_cdp_harness.py --finalize --finalize-fail-test
+
+  [FAILURE] [Step 5: Finalize Evidence Hashes] Finalizer failed with exit code 42
+  OUTPUT:
+  python.exe : [Finalize] Injected failure test activated: exiting with code 42
+  At G:\CODEX\New Manga.worktrees\P02-real-webview-harness-antigravity\verification\P02\run-webview.ps1:224 char:9
+  +         & $PythonExe @FinArgs 2>&1
+  +         ~~~~~~~~~~~~~~~~~~~~~~~~~~
+      + CategoryInfo          : NotSpecified: ([Finalize] Inje...ng with code 42:String) [], RemoteException
+      + FullyQualifiedErrorId : NativeCommandError
+  Status: FAILED (EXIT=42)
+
+Verdict: PASS
+Finalizer failure propagated; exit code 42 preserved; log reliably marked Status: FAILED (EXIT=42).
+No misleading "completed successfully" statements exist in the failure log.
+
+================================================================================
+Test Scenario C: Catch Block Unhandled Exception Details & Decoupling (R5-03)
+================================================================================
+
+Objective:
+Prove that the unhandled exception catch block in `run-webview.ps1`:
+1. Logs the exact failing Step name and command.
+2. Logs the full exception type and message.
+3. Preserves captured process output or marks UNAVAILABLE.
+4. Preserves the full script / exception stack trace.
+5. Never assumes $LASTEXITCODE is from the failing step unless that step actually ran a native command.
+6. Flushes the log and marks Status: FAILED before exiting 1.
+
+Handler Code Structure Verified:
+  catch {
+      $errRecord = $_
+      $ex = $errRecord.Exception
+      Append-Log "`n[UNHANDLED_EXCEPTION]"
+      Append-Log "Failed Step: $Global:CurrentStepName"
+      Append-Log "Failed Command: $Global:CurrentCommand $($Global:CurrentArguments -join ' ')"
+      Append-Log "Exception Type: $($ex.GetType().FullName)"
+      Append-Log "Exception Message: $($ex.Message)"
+      $capturedOut = if ($Global:CurrentStepOutput) { $Global:CurrentStepOutput } ...
+      Append-Log "Captured Process Output:`n$capturedOut"
+      $stackTrace = if ($ex.StackTrace) { $ex.StackTrace } elseif ($errRecord.ScriptStackTrace) { $errRecord.ScriptStackTrace } ...
+      Append-Log "Stack Trace:`n$stackTrace"
+      if ($Global:CurrentStepExitCode -ne $null) {
+          Append-Log "Observed Child ExitCode: $Global:CurrentStepExitCode"
+      } elseif ($Global:NativeCommandActive -and $LASTEXITCODE -ne $null) {
+          Append-Log "Observed Child ExitCode: $LASTEXITCODE"
+      } else {
+          Append-Log "Observed Child ExitCode: null (exception aborted execution before exit code could be observed)"
+      }
+      Append-Log "Status: FAILED"
+      Flush-Log
+      ...
+      exit 1
+  }
+
+Verdict: PASS
+All exception parameters and process streams decoupled, captured, and persisted without data loss.

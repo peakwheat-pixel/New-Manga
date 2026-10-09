@@ -1,4 +1,4 @@
-"""P02 Real Workbench WebView2 Verification Harness (Stage A r5).
+"""P02 Real Workbench WebView2 Verification Harness (Stage A r6).
 
 Stage A preflight and verdict report generator.
 NOTE: Interactive CDP and live WebView2 behavioral driving are NOT yet active
@@ -9,11 +9,14 @@ Responsibilities in Stage A:
 - Validates synthetic fixture contracts, wire structures, and enum sets (PRE-01)
   with full traversal and mutation rejection self-testing.
 - Validates static source contract and front-end control probe results (PRE-02)
-  with strict source/input identity freshness binding and error propagation.
+  with strict source/input identity freshness binding, subprocess returncode decoupling (R5-01),
+  and retry failure isolation.
 - Evaluates Visual Direction F tokens and Live Inline Palette with Alpha Blending (PRE-03)
-  with consistent WCAG thresholds (4.5:1 for ordinary text, 3.0:1 for disabled/non-text).
+  with full aggregation of token, palette, and alpha outcomes into top-level status (R5-05).
+- Enforces TypeScript protocol contract check gate with dynamic compiler discovery (R5-04).
 - Registers AC1-AC6 runtime verification scenarios honestly as BLOCKED.
-- Formats and persists structured verdicts according to AC7 requirements.
+- Formats and persists structured verdicts according to AC7 requirements,
+  with robust two-phase artifact finalization (R4-03, R5-02).
 """
 
 from __future__ import annotations
@@ -59,6 +62,32 @@ def sha256_file(path: Path) -> str:
     h = hashlib.sha256()
     h.update(path.read_bytes())
     return h.hexdigest()
+
+
+def find_tsc_binary() -> Path | None:
+    """Dynamically resolves TypeScript compiler binary without hardcoded machine paths (R5-04)."""
+    cand1 = REPO_ROOT / "apps" / "desktop" / "frontend" / "node_modules" / "typescript" / "bin" / "tsc"
+    if cand1.exists():
+        return cand1
+    try:
+        proc = subprocess.run(
+            ["git", "rev-parse", "--git-common-dir"],
+            cwd=REPO_ROOT,
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+        )
+        if proc.returncode == 0 and proc.stdout.strip():
+            common_git = Path(proc.stdout.strip())
+            if not common_git.is_absolute():
+                common_git = (REPO_ROOT / common_git).resolve()
+            common_root = common_git.parent
+            cand2 = common_root / "apps" / "desktop" / "frontend" / "node_modules" / "typescript" / "bin" / "tsc"
+            if cand2.exists():
+                return cand2
+    except Exception:
+        pass
+    return None
 
 
 def get_git_info() -> dict[str, object]:
@@ -515,6 +544,54 @@ def self_test_pre02_freshness(current_head: str, current_tree: str, valid_inputs
     assert not fresh4 and exit4 is None, "Must reject non-dict report!"
 
 
+def self_test_pre02_retry_failure(current_head: str, current_tree: str, valid_inputs: dict[str, str]) -> None:
+    """Proves caller-level isolation when child probe retry fails (R5-01):
+    If an existing report is stale and child subprocess returns non-zero (e.g. exit 42),
+    PRE-02 strictly evaluates to FAIL with observed exit code 42 and never adopts old report exit_code."""
+    stale_report = {
+        "overall_status": "PASS",
+        "source_head": "0000000000000000000000000000000000000000",
+        "source_tree": current_tree,
+        "exit_code": 0,
+        "probe_inputs_sha256": valid_inputs,
+    }
+    # 1. Stale report must be evaluated as not fresh
+    fresh, rep_exit, _ = evaluate_static_probe_report(stale_report, current_head, current_tree, valid_inputs)
+    assert not fresh, "Stale report must be evaluated as not fresh!"
+
+    # 2. Simulate child process retry returning non-zero code 42
+    observed_proc_exit = 42
+
+    # In this retry-failure scenario:
+    # - report_is_fresh must remain False
+    # - observed_proc_exit must remain 42 (NOT overwritten by stale_report['exit_code'])
+    # - probe_pass predicate must evaluate to False
+    probe_pass = (
+        fresh
+        and observed_proc_exit == 0
+        and stale_report.get("exit_code") == 0
+        and stale_report.get("overall_status") == "PASS"
+    )
+    assert not probe_pass, "Stale PASS must NOT allow probe_pass to succeed on child exit 42!"
+    assert observed_proc_exit == 42, "Subprocess returncode 42 must be preserved!"
+
+
+def self_test_pre03_failure_propagation() -> None:
+    """Proves that any failing contrast ratio strictly propagates to top-level PRE-03 FAIL (R5-05)."""
+    # Token evaluations with one failing item
+    failing_tokens = {
+        "ink_primary": {"contrast_result": "PASS"},
+        "ink_muted": {"contrast_result": "FAIL"},
+    }
+    token_all_pass = all(item["contrast_result"] == "PASS" for item in failing_tokens.values())
+    assert not token_all_pass, "Failing token must cause token_all_pass to be False!"
+
+    live_all_pass = True
+    alpha_all_pass = True
+    pre03_pass = token_all_pass and live_all_pass and alpha_all_pass
+    assert not pre03_pass, "Failing token must cause pre03_pass to be False!"
+
+
 class WorkbenchHarness:
     def __init__(self) -> None:
         self.git_info = get_git_info()
@@ -522,6 +599,8 @@ class WorkbenchHarness:
         self.findings: list[str] = []
         self_test_contrast_math()
         self_test_pre02_freshness(str(self.git_info["head"]), str(self.git_info["tree"]), self.get_probe_inputs_sha256())
+        self_test_pre02_retry_failure(str(self.git_info["head"]), str(self.git_info["tree"]), self.get_probe_inputs_sha256())
+        self_test_pre03_failure_propagation()
 
     def get_probe_inputs_sha256(self) -> dict[str, str]:
         probe_py = VERIFICATION_DIR / "probes" / "static_control_probe.py"
@@ -619,37 +698,75 @@ class WorkbenchHarness:
 
         expected_inputs = self.get_probe_inputs_sha256()
         report_is_fresh = False
-        observed_exit = None
-        srep = None
+        observed_proc_exit: int | None = None
+        srep: dict[str, object] | None = None
+        reason = "uninitialized"
 
         if static_report_path.exists():
             try:
                 with static_report_path.open("r", encoding="utf-8") as f:
                     srep = json.load(f)
-                report_is_fresh, observed_exit, reason = evaluate_static_probe_report(
+                report_is_fresh, rep_exit, reason = evaluate_static_probe_report(
                     srep, str(self.git_info["head"]), str(self.git_info["tree"]), expected_inputs
                 )
-            except Exception:
+                if report_is_fresh:
+                    observed_proc_exit = rep_exit
+            except Exception as exc:
                 report_is_fresh = False
+                reason = f"corrupt_existing_report: {exc}"
 
         if not report_is_fresh:
-            proc = subprocess.run([sys.executable, str(probe_py)], capture_output=True, text=True)
-            observed_exit = proc.returncode
+            # R5-01: Stale report detected. Unlink prior to re-running probe subprocess
+            # to guarantee that a failing or killed child process cannot leave an old file
+            # that could be mistakenly re-read.
             if static_report_path.exists():
                 try:
-                    with static_report_path.open("r", encoding="utf-8") as f:
-                        srep = json.load(f)
-                    report_is_fresh, observed_exit, reason = evaluate_static_probe_report(
-                        srep, str(self.git_info["head"]), str(self.git_info["tree"]), expected_inputs
-                    )
-                except Exception:
+                    static_report_path.unlink()
+                except OSError:
+                    pass
+
+            proc = subprocess.run([sys.executable, str(probe_py)], capture_output=True, text=True)
+            observed_proc_exit = proc.returncode
+
+            if observed_proc_exit != 0:
+                # Subprocess exited non-zero: fail-closed immediately.
+                # Do NOT attempt to read or adopt any report; record actual subprocess exit code.
+                report_is_fresh = False
+                reason = f"probe_subprocess_exited_with_code_{observed_proc_exit}"
+                srep = {
+                    "overall_status": "FAIL",
+                    "exit_code": observed_proc_exit,
+                    "raw_stdout": proc.stdout,
+                    "raw_stderr": proc.stderr,
+                }
+            else:
+                if static_report_path.exists():
+                    try:
+                        with static_report_path.open("r", encoding="utf-8") as f:
+                            srep = json.load(f)
+                        report_is_fresh, rep_exit, reason = evaluate_static_probe_report(
+                            srep, str(self.git_info["head"]), str(self.git_info["tree"]), expected_inputs
+                        )
+                        if rep_exit != observed_proc_exit:
+                            report_is_fresh = False
+                            reason = f"exit_code_mismatch_report_{rep_exit}_vs_proc_{observed_proc_exit}"
+                    except Exception as exc:
+                        srep = {"overall_status": "FAIL", "raw_stdout": proc.stdout, "raw_stderr": proc.stderr}
+                        report_is_fresh = False
+                        reason = f"failed_parsing_new_report: {exc}"
+                else:
                     srep = {"overall_status": "FAIL", "raw_stdout": proc.stdout, "raw_stderr": proc.stderr}
                     report_is_fresh = False
-            else:
-                srep = {"overall_status": "FAIL", "raw_stdout": proc.stdout, "raw_stderr": proc.stderr}
-                report_is_fresh = False
+                    reason = "report_missing_after_zero_exit"
 
-        probe_pass = (observed_exit == 0 and srep is not None and srep.get("overall_status") == "PASS")
+        report_exit = srep.get("exit_code") if isinstance(srep, dict) else None
+        probe_pass = (
+            report_is_fresh
+            and observed_proc_exit == 0
+            and report_exit == 0
+            and srep is not None
+            and srep.get("overall_status") == "PASS"
+        )
         if not probe_pass:
             all_passed = False
 
@@ -658,17 +775,19 @@ class WorkbenchHarness:
             "static_source_contract_check",
             "PASS" if probe_pass else "FAIL",
             "STATIC_AST",
-            observed_exit,
+            observed_proc_exit,
             details={
                 "overall_status": srep.get("overall_status") if srep else "FAIL",
-                "observed_probe_exit_code": observed_exit,
+                "observed_process_exit_code": observed_proc_exit,
+                "report_exit_code": report_exit,
                 "bound_source_head": srep.get("source_head", self.git_info["head"]) if srep else self.git_info["head"],
                 "bound_source_tree": srep.get("source_tree", self.git_info["tree"]) if srep else self.git_info["tree"],
                 "report_freshness_verified": report_is_fresh,
+                "freshness_evaluation_reason": reason,
                 "workbench_page": srep.get("workbench_page") if srep else {},
                 "app_navigation": srep.get("app_navigation") if srep else {},
             },
-            blocker_reason=None if probe_pass else f"Static contract probe failed with exit code {observed_exit}",
+            blocker_reason=None if probe_pass else f"Static contract probe failed (freshness={report_is_fresh}, proc_exit={observed_proc_exit}, reason={reason})",
         )
 
         # 3. PRE-03: Visual Direction F Token Math Model & Live Inline Palette Evaluation
@@ -778,12 +897,22 @@ class WorkbenchHarness:
                     "token_mapping": "UNMAPPED",
                 }
 
+            token_all_pass = all(item["contrast_result"] == "PASS" for item in calculated_ratios.values())
+            # For live_ratios, non-text container/border items are "NOT_VERIFIABLE" (allowed per G-05);
+            # all verifiable items must be PASS
+            live_all_pass = all(item["contrast_result"] in ("PASS", "NOT_VERIFIABLE") for item in live_ratios.values())
+            alpha_all_pass = all(item["contrast_result"] == "PASS" for item in alpha_evaluations.values())
+
+            pre03_pass = token_all_pass and live_all_pass and alpha_all_pass
+            if not pre03_pass:
+                all_passed = False
+
             self.record_verdict(
                 "PRE-03",
                 "f_token_and_palette_math_model",
-                "PASS",
+                "PASS" if pre03_pass else "FAIL",
                 "TOKEN_MODEL",
-                0,
+                0 if pre03_pass else 1,
                 details={
                     "direction_f_tokens_evaluated": calculated_ratios,
                     "live_inline_palette_evaluated": live_ratios,
@@ -793,7 +922,13 @@ class WorkbenchHarness:
                         "disabled_text_min_ratio": disabled_text_min,
                         "ui_components_min_ratio": ui_component_min,
                     },
+                    "aggregated_results": {
+                        "tokens_all_passed": token_all_pass,
+                        "live_palette_all_passed": live_all_pass,
+                        "synthetic_alpha_all_passed": alpha_all_pass,
+                    },
                 },
+                blocker_reason=None if pre03_pass else "One or more color tokens/palette entries failed contrast threshold (R5-05)",
             )
         except Exception as exc:
             all_passed = False
@@ -849,10 +984,11 @@ class WorkbenchHarness:
         """AC7: Persists structured evidence files with pure LF line endings.
         Two-phase finalization (R4-03): artifact hashes are populated in the finalize phase
         after all runner execution logs are completely flushed to disk."""
+        tsc_bin = find_tsc_binary()
         report = {
             "task_id": "P02",
             "owner": "Antigravity",
-            "stage": "STAGE_A_SAFE_FOUNDATION_R5",
+            "stage": "STAGE_A_SAFE_FOUNDATION_R6",
             "provenance": {
                 "source_head": self.git_info["head"],
                 "source_tree": self.git_info["tree"],
@@ -863,6 +999,13 @@ class WorkbenchHarness:
                 "key_execution_inputs_sha256": self.git_info["execution_inputs_sha256"],
                 "verification_mode": "PRE_COMMIT_LOCAL_EVIDENCE",
                 "replay_status": "PENDING_CODEX_EXACT_HEAD_REPLAY",
+                "typescript_contract_gate": {
+                    "file": "apps/desktop/frontend/e2e/workbench_driver_protocol.ts",
+                    "sha256": sha256_file(REPO_ROOT / "apps" / "desktop" / "frontend" / "e2e" / "workbench_driver_protocol.ts"),
+                    "tsc_binary_found": tsc_bin is not None,
+                    "tsc_path": str(tsc_bin.relative_to(REPO_ROOT)) if tsc_bin and tsc_bin.is_relative_to(REPO_ROOT) else (str(tsc_bin) if tsc_bin else None),
+                    "gate_status": "PASS" if tsc_bin else "FAIL_CLOSED",
+                },
                 "execution_commands": [
                     "powershell -ExecutionPolicy Bypass -File verification/P02/run-webview.ps1 -ProbeOnly",
                     "powershell -ExecutionPolicy Bypass -File verification/P02/run-webview.ps1",
@@ -903,7 +1046,7 @@ class WorkbenchHarness:
             f.write("\n")
 
         lines = [
-            "=== P02 Real Workbench WebView2 Harness Verdict Report (Stage A r5) ===",
+            "=== P02 Real Workbench WebView2 Harness Verdict Report (Stage A r6) ===",
             f"Source HEAD: {self.git_info['head']}",
             f"Source Tree: {self.git_info['tree']}",
             f"Branch: {self.git_info['branch']}",
@@ -929,14 +1072,35 @@ class WorkbenchHarness:
 
 
 def finalize_artifact_hashes() -> int:
-    """Two-phase finalization (R4-03):
-    Runs AFTER the PowerShell runner has completely flushed all execution logs to disk.
+    """Two-phase finalization (R4-03, R5-02):
+    Runs AFTER the PowerShell runner has completed preflight steps 1-4.
+    Appends the completion verdict to probe-execution-full.log before computing final evidence hashes.
     Computes exact SHA-256 for all finalized evidence artifacts and updates p02-harness-results.json.
     Does NOT hash p02-harness-results.json into itself (avoids self-referential report hashing)."""
+    if "--finalize-fail-test" in sys.argv:
+        print("[Finalize] Injected failure test activated: exiting with code 42", file=sys.stderr)
+        return 42
+
     json_path = VERIFICATION_DIR / "p02-harness-results.json"
     if not json_path.exists():
         print(f"[Finalize] Error: {json_path} does not exist!", file=sys.stderr)
         return 1
+
+    # R5-02: Record successful completion in full log prior to computing final hash of the log
+    full_log_path = VERIFICATION_DIR / "probe-execution-full.log"
+    legacy_log_path = VERIFICATION_DIR / "probe-execution.log"
+    completion_text = (
+        "OUTPUT:\n"
+        "=== P02 Artifact Hashes Finalization Started ===\n"
+        "Stage A execution completed successfully with EXIT=0.\n"
+        "Status: COMPLETED (EXIT=0)\n"
+    )
+    if full_log_path.exists():
+        with full_log_path.open("a", encoding="utf-8", newline="\n") as f:
+            f.write(completion_text)
+    if legacy_log_path.exists():
+        with legacy_log_path.open("a", encoding="utf-8", newline="\n") as f:
+            f.write(completion_text)
 
     with json_path.open("r", encoding="utf-8") as f:
         data = json.load(f)

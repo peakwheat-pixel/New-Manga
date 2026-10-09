@@ -6,27 +6,25 @@ Node Runtime: v24.15.0
 npm Tool: 12.0.1
 Python Executable: C:\Python314\python.exe
 Git Branch: agent/antigravity/P02-real-webview-harness
-Source HEAD: cc1bd7505f3fc48079db7ea2719040e77a8c58dd
-Source Tree: d2569f6c4854c05e18cf22fa363397525962eec8
+Source HEAD: 172eee84240e101186b12f1aa09e8a2f9ec92d68
+Source Tree: a5b1af3e0708463df6865c8e49c9679e57e3fa85
 Git Clean Status: False
 Behavior Baseline: 241ff3b70b6fc0490ea238efd486cc707f849031
 Porcelain Status:
-M apps/desktop/frontend/e2e/workbench_driver_protocol.ts
- M doc/handoffs/P02-stage-a-foundation-handoff.md
- M doc/tasks/P02.md
- M verification/P02/RESUME.md
- M verification/P02/env-identity-report.json
- M verification/P02/env-identity-report.txt
- M verification/P02/fixtures/workbench_synthetic_data.json
- M verification/P02/harness/workbench_cdp_harness.py
- M verification/P02/p02-harness-results.json
- M verification/P02/p02-harness-results.txt
- M verification/P02/probe-execution-full.log
- M verification/P02/probe-execution-probeonly.log
- M verification/P02/probe-execution.log
- M verification/P02/probes/static_control_probe.py
- M verification/P02/run-webview.ps1
- M verification/P02/static-control-report.json
+M  doc/handoffs/P02-stage-a-foundation-handoff.md
+M  doc/tasks/P02.md
+M  verification/P02/RESUME.md
+MM verification/P02/env-identity-report.json
+MM verification/P02/env-identity-report.txt
+M  verification/P02/harness/workbench_cdp_harness.py
+A  verification/P02/microprobes/ps51-exception-handling.log
+M  verification/P02/p02-harness-results.json
+M  verification/P02/p02-harness-results.txt
+MM verification/P02/probe-execution-full.log
+MM verification/P02/probe-execution-probeonly.log
+MM verification/P02/probe-execution.log
+M  verification/P02/run-webview.ps1
+MM verification/P02/static-control-report.json
 frontend/dist Exists: False
 cargo-target Exists: False
 Hard Build Barrier Active: True
