@@ -1,0 +1,8 @@
+shell=PowerShell 7.6.6
+interpreter=C:\Python314\python.exe
+version=Python 3.14.6
+branch=codex/P02-harness-scope
+HEAD=241ff3b70b6fc0490ea238efd486cc707f849031
+command=python -B -X utf8 verification/P02/route-validator-mutation-probe.py
+PASS: both roadmap status drift probes were rejected
+EXIT=0

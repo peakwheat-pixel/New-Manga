@@ -1,0 +1,16 @@
+shell=PowerShell 7.6.6
+interpreter=C:\Python314\python.exe
+version=Python 3.14.6
+branch=codex/P02-harness-scope
+HEAD=241ff3b70b6fc0490ea238efd486cc707f849031
+command=python -B -X utf8 verification/PROJECT-ROADMAP-20261008/verify_plan.py
+Planning snapshot base=e4242ecd419eb0eea098d2f63b40f709aa5caeea; live HEAD=241ff3b70b6fc0490ea238efd486cc707f849031
+PASS: 196 unique nodes, all classifications and dependency references
+PASS: 105 new architecture/governance integration records are audit-base ancestors
+PASS: live P01/P02/P03/P08 Task states match the Plan; remaining P nodes stay proposed
+PASS: every roadmap P-node declaration matches the Plan state
+PASS: 21 unique planned nodes and roadmap graphs have no dependency cycles
+PASS: delivery/navigation local links resolve
+PASS: zero production/code delta; governance whitespace check
+Product tests/build/GUI: NOT_RUN (planning-only)
+EXIT=0

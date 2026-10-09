@@ -1,10 +1,14 @@
 # Project Rebaseline Plan
 
-**当前位置：P08/P03/P01=done；P系列共21项：done 3、proposed 18。P01由Antigravity完成D3正式Review（approved，0 findings），C1与D7 Codex closeout Gate=`PASS`；M0=`13e66ec5bf9a2fc59f4e6c5623feb0bde22884c8`已由main fast-forward接纳，D7=`b7ad98b29196e9859cbfbfe187e6822569f79367`，post-FF复核通过。R1/R2 blocked、C8 changes_requested历史结论保留；R2/SYNTH Review carrier仍为`NOT_VERIFIED`，来源Task状态与产品裁决不改。P02仍proposed，正式Task与harness范围尚未冻结。P03 integration=`552464238a69ad2cea63cff18abe98f412dbae87`；其产品验证仍绑定source `d717c049`。
+**当前位置：Live `main@241ff3b70b6fc0490ea238efd486cc707f849031`，该提交为 P02 验证基线；P08/P03/P01=done、P02=ready / 已释放；P系列共21项：done 3、ready 1、proposed 17。P01 integration=M0=`13e66ec5bf9a2fc59f4e6c5623feb0bde22884c8`（D7=`b7ad98b29196e9859cbfbfe187e6822569f79367`）仍为原集成事实；后续 Live main 指针以 Git 为准。P02 Owner=ZCode、非作者实现 Reviewer=DeepSeek Harness、Integrator=Codex；依赖 P08 与两项 debounce Task 均已完成；AC/Owner范围 r2 approved，Codex-only路线validator治理增量 r4 approved；正式 Task=`[P02](tasks/P02.md)`，真实 WebView 实现/验证已释放，当前 checkpoint 见 [`P02 RESUME`](../verification/P02/RESUME.md)。实现与产品 Gate 尚未运行，不能视为验收通过。R1/R2 blocked、C8 changes_requested历史结论保留；R2/SYNTH Review carrier仍为`NOT_VERIFIED`，来源Task状态与产品裁决不改。P03 integration=`552464238a69ad2cea63cff18abe98f412dbae87`；其产品验证仍绑定source `d717c049`。
+
+## 2026-10-09 P02 真实 Workbench WebView 验证 / READY
+
+P02 范围已正式冻结并释放。Owner=ZCode，非作者 Reviewer=DeepSeek Harness，Integrator=Codex；Task 允许范围、AC、真实/Mock 证据边界及前置依赖见[正式 Task](tasks/P02.md)。范围 Reviewer r1 的三项 finding 已修订，r2 对固定 AC/Owner allowlist 契约 SHA-256=`27DC31A8CF3304ABA6783E243F36895FFE4AAA3CCBCA76D58E8B766C403E1425`批准；后续 Codex-only 路线validator增量经 r3 修订、r4 approved并关闭 `P02-SCOPE-R3-01`。这些范围/治理审查不替代实现 Review。实现 Worktree/dispatch 与执行证据见[P02恢复点](../verification/P02/RESUME.md)。不修改产品 UI、不新增依赖；所有真实 WebView2、构建和产品行为检查在实现阶段执行，尚未 PASS。
 
 ## 2026-10-09 P01 D3 Review、Codex closeout与main集成完成 / DONE
 
-P01已集成完成：Owner/Integrator=Codex，非作者Reviewer=Antigravity。base=`826bea12a132c5af2ac0cd1244d00e9170093c71`；C9 fixed head=`7645577ab374b581eb7081fd57675c32793249f5`和最终D3=`51bc01fec2652c0e2bc39bb119f8dd7ca3c294cb`均正式approved，D3 tree=`69d9d655cf9aecb1581cf4d3c86c500f265b61ab`、findings=0，report SHA-256=`749c20db44938a5cca9e18995923465e42aba07a960303387483b67ff58fc1ee`。C1=`c28a9e49e684105eebc7f62555086d6cccad75a4` fixed-head Integration Gate通过，D1=`322b757933dce0e7333fc495706cc0d424cccaad`；D5=`cf11183d8185b1b0f78396bd0976b1bbdb42bef0` / tree=`57e275d138e537a62c3f2e9b1ecbef7c1e275e6f`的92-path Codex closeout Gate=`PASS_PRE_FF`。随后M0=`13e66ec5bf9a2fc59f4e6c5623feb0bde22884c8`已fast-forward，D7/root `main@b7ad98b29196e9859cbfbfe187e6822569f79367`的post-FF复核=`PASS`：base..HEAD 92 paths、越界/产品/测试/build路径0；路线validator、base/M0祖先关系、`git diff --check`均通过；root原24项manifest逐项匹配、与差量交集0。C9 P3 `OBS-C9-01`及旧DSH分配文字已处置。C8 `ENV-01`截断事实保留，未补造文本。R2/SYNTH carrier仍`NOT_VERIFIED`，不改来源Task状态或产品裁决；产品测试/build/GUI均`NOT_RUN`（本Task无产品代码差量）。P02保持`proposed / 未释放`，harness范围与正式Task尚未冻结。
+P01已集成完成：Owner/Integrator=Codex，非作者Reviewer=Antigravity。base=`826bea12a132c5af2ac0cd1244d00e9170093c71`；C9 fixed head=`7645577ab374b581eb7081fd57675c32793249f5`和最终D3=`51bc01fec2652c0e2bc39bb119f8dd7ca3c294cb`均正式approved，D3 tree=`69d9d655cf9aecb1581cf4d3c86c500f265b61ab`、findings=0，report SHA-256=`749c20db44938a5cca9e18995923465e42aba07a960303387483b67ff58fc1ee`。C1=`c28a9e49e684105eebc7f62555086d6cccad75a4` fixed-head Integration Gate通过，D1=`322b757933dce0e7333fc495706cc0d424cccaad`；D5=`cf11183d8185b1b0f78396bd0976b1bbdb42bef0` / tree=`57e275d138e537a62c3f2e9b1ecbef7c1e275e6f`的92-path Codex closeout Gate=`PASS_PRE_FF`。随后M0=`13e66ec5bf9a2fc59f4e6c5623feb0bde22884c8`已fast-forward，D7/root `main@b7ad98b29196e9859cbfbfe187e6822569f79367`的post-FF复核=`PASS`：base..HEAD 92 paths、越界/产品/测试/build路径0；路线validator、base/M0祖先关系、`git diff --check`均通过；root原24项manifest逐项匹配、与差量交集0。C9 P3 `OBS-C9-01`及旧DSH分配文字已处置。C8 `ENV-01`截断事实保留，未补造文本。R2/SYNTH carrier仍`NOT_VERIFIED`，不改来源Task状态或产品裁决；产品测试/build/GUI均`NOT_RUN`（本Task无产品代码差量）。截至该 P01 closeout checkpoint，P02 当时仍为 proposed；后续已在本 Plan 顶部的 P02 release checkpoint 中正式释放。
 
 ## 历史检查点：2026-10-09 P01 DSH R2 BLOCKED（由C8 in_review取代）
 
@@ -45,12 +49,12 @@ P08 DSH R7已对base=ecb3b520ce68c2ddcc0c5ec94596e2f50a17f369、reviewed_head=fe
 
 ### 预先定义的任务依赖树与 Gate
 
-以下 P01–P21 中 **P08、P03、P01=done；其余18项为proposed / 未释放**；P01已完成main fast-forward与post-FF closeout；候选任务状态以本表和STATUS为准。
+以下 P01–P21 中 **P08、P03、P01=done，P02=ready / 已释放，另17项为proposed / 未释放**；P01已完成main fast-forward与post-FF closeout，P02进入正式实现验证；候选任务状态以本表和STATUS为准。
 
 | 候选任务编号 | 状态 | 简单中文描述 | 启动依赖/条件 | 建议责任方；非作者审查 | 完成 Gate / 边界 |
 |---|---|---|---|---|---|
 | P01 | done | 台账元数据与Review载体取证 | 无Task依赖；固定base=826bea12；最终D3 reviewed head=51bc01fe由Antigravity正式approved（0 findings）；C1 Gate已PASS；integration=`13e66ec5bf9a2fc59f4e6c5623feb0bde22884c8` | Codex；非作者Antigravity | D7 Codex closeout Gate=`PASS`；main=`b7ad98b29196e9859cbfbfe187e6822569f79367`，base..HEAD 92 paths、越界/产品路径0；post-FF manifest 24/24匹配。证据=`verification/P01/integration-gate.md`、`doc/reviews/P01-51bc01fe-antigravity-d3.md`、`verification/P01/closeout-gate.md`与P01 RESUME；R2/SYNTH carrier仍NOT_VERIFIED |
-| P02 | proposed / 未释放 | 真UI行为、300ms刷新与对比度验证 | 现有Workbench；冻结harness范围 | ZCode；DSH | DOM/真实WebView取证，区分mock与实际；覆盖切页、写后刷新、键盘、token |
+| P02 | ready | 真实 Workbench WebView 行为、300ms 刷新与对比度验证 | P08、M2-RESOLVE-DEBOUNCE-1、M2-REGION-DEBOUNCE-1 均已完成；AC/Owner范围 r2及Codex-only validator增量 r4 approved | ZCode；DeepSeek Harness 非作者审查 | AC1–AC7 真实 Tauri/WebView2 取证；区分 mock/Core/JSDOM；300ms quiet-period、retype/undo/restore 写后刷新、键盘焦点、F token 映射和对比度；独立实现 Review 与 Codex 集成 Gate 后才可 done |
 | P03 | done | Packaged第五SFX入口验收补齐 | PROBE-1/Runner Debt/Guard已done；DSH R5/R6与Codex集成Gate通过 | Antigravity；DSH | integration=`552464238a69ad2cea63cff18abe98f412dbae87`；Gate evidence绑定source=`d717c049`与固定installer SHA；R3-03留给P20 |
 | P04 | proposed / 未释放 | 生产命令族/桥接并发定向验证 | PAGE-NAV done；先检查现有断言 | Antigravity；DSH | 独立常量成员断言；同会话并发响应与协议核验候选先复现；无缺口不加修复 |
 | P05 | proposed / 未释放 | category/retryable契约注记收敛 | CATEGORY done；RC4-08等deferred | Codex；DSH | 文档一致与反向链接；不更改冻结错误语义 |
@@ -71,7 +75,7 @@ P08 DSH R7已对base=ecb3b520ce68c2ddcc0c5ec94596e2f50a17f369、reviewed_head=fe
 | P20 | proposed / 未释放 | 最终Windows发布Gate | P19＋P03＋P06；目标环境可用；Architecture Documentation Rebaseline Task先映射目标架构发布/打包/UI要求 | ZCode；DSH；Codex集成 | 新fixed-head/hash安装包；按RG1净化基线验收；Win10单独验证后声明支持；尊重RG1本机裁决，不外推未测环境，不继承PySide6/QML PASS |
 | P21 | proposed / 未释放 | Legacy归档/移除（可选） | P20＋独立移除授权 | Codex；非作者DSH | parity＋数据迁移/回退；不继续修Legacy，不作为当前完整产品必做前提 |
 
-历史执行提示（已由2026-10-09 P03关闭记录取代）：P03已完成DSH R5/R6和Codex非作者复核；本计划顶部、STATUS与P03 RESUME记录当前状态。P02仍需先冻结真实WebView harness范围并由ZCode负责。
+历史执行提示（已由2026-10-09 P03关闭与P02 release记录取代）：P03已完成DSH R5/R6和Codex非作者复核；P02已由Codex冻结范围并释放给ZCode，当前状态见本计划顶部、STATUS与P02 RESUME。
 
 保留：Manga109永久取消；BJ13维持0.90、手工改标＋skip，补标/补画不释放；Reader范围：仅跨页联动/页缩略图继续延期；基础Reader已由D1解冻，P16/P17实施仍未释放。LaMa/AOT/BrushNet/FLUX learned inpaint没有production实现，不默认投入；SimpleFill/EdgeBleed已在现有链路，是否足够由P08/P18质量证据决定。GC长会话总磁盘有界没有承诺，不为了漂亮路线图扩大删除能力。
 

@@ -1,12 +1,12 @@
 # New Manga 一眼路线图（2026-10-08）
 
-最新工作点：P08/P03/P01=done；P01 D3 fixed-head Antigravity Review=approved（0 findings）、C1与D7 Codex closeout Gate=`PASS`。M0已fast-forward至`main@b7ad98b29196e9859cbfbfe187e6822569f79367`，post-FF复核通过。P02仍proposed，正式Task与真实WebView harness范围尚未冻结。
+最新工作点：Live P02验证基线=`main@241ff3b70b6fc0490ea238efd486cc707f849031`；P08/P03/P01=done，P02=`ready / 已释放`。P01 integration=M0=`13e66ec5bf9a2fc59f4e6c5623feb0bde22884c8`（原D7=`b7ad98b29196e9859cbfbfe187e6822569f79367`）。P02 AC/Owner范围r2及Codex-only validator治理增量r4独立审查approved；Owner=ZCode，Reviewer=DeepSeek Harness，Integrator=Codex；产品/真实GUI验收尚未开始。
 
-**当前位置：P08/P03/P01=done；P系列done 3/21、proposed 18。P01已集成至`main@b7ad98b29196e9859cbfbfe187e6822569f79367`，Owner/Integrator=Codex、非作者Reviewer=Antigravity；C9 fixed head `7645577a`及最终D3=`51bc01fec2652c0e2bc39bb119f8dd7ca3c294cb`正式approved（D3 findings=0），C1与D7 Codex closeout Gate=`PASS`。post-FF base..HEAD=92 paths、越界/产品/测试/build路径0，24项root保护manifest匹配。C8 DSH changes_requested与R1/R2 blocked历史报告均保留；R2/SYNTH carrier仍NOT_VERIFIED。**
+**当前位置：P08/P03/P01=done，P02=ready / 已释放；P系列done 3/21、ready 1、proposed 17。P01已集成至`main@b7ad98b29196e9859cbfbfe187e6822569f79367`，Owner/Integrator=Codex、非作者Reviewer=Antigravity；C9 fixed head `7645577a`及最终D3=`51bc01fec2652c0e2bc39bb119f8dd7ca3c294cb`正式approved（D3 findings=0），C1与D7 Codex closeout Gate=`PASS`。当前 P02 验证基线=`241ff3b70b6fc0490ea238efd486cc707f849031`；P02 AC/Owner范围r2及Codex-only validator治理增量r4 approved，真实实现、构建和UI测试均NOT_RUN。C8 DSH changes_requested与R1/R2 blocked历史报告均保留；R2/SYNTH carrier仍NOT_VERIFIED。**
 
 人员更新：用户已移除Qoder，图中未来UI/UX责任由ZCode承担；非作者Review与正式Task释放Gate保持。
 
-派生视图；排期事实以 [REBASELINE_PLAN](../../doc/REBASELINE_PLAN.md) 当前覆盖层为准。原审计基线：`main@e4242ecd`；箭头表示启动依赖，不是工期；没有可靠估算，不编造百分比或日期。P03、P01已完成；P01 D3 Review、C1与D7 closeout Gate已通过并集成main。P02仍proposed，先冻结harness范围并正式登记Task后再释放。
+派生视图；排期事实以 [REBASELINE_PLAN](../../doc/REBASELINE_PLAN.md) 当前覆盖层为准。原审计基线：`main@e4242ecd`；箭头表示启动依赖，不是工期；没有可靠估算，不编造百分比或日期。P03、P01已完成；P01 D3 Review、C1与D7 closeout Gate已通过并集成main。P02范围已冻结并释放，Owner/实现状态以正式 Task 与恢复点为准。
 
 ## 已做到哪里
 
@@ -29,17 +29,18 @@ flowchart TB
 
 ```mermaid
 flowchart TB
-  BASE["当前位置：P08/P03/P01 done<br/>P系列done 3/21、proposed 18"] --> P01["P01<br/>done / D7 Codex closeout PASS；D3 Antigravity Review approved，C1 Gate PASS<br/>台账取证<br/>Owner/Integrator Codex · Reviewer Antigravity<br/>main b7ad98b2"]
-  BASE --> P02["P02<br/>proposed / 未释放<br/>真UI验证<br/>点击/300ms刷新/对比度/失效窗口"]
+  BASE["当前位置：P08/P03/P01 done，P02 ready<br/>P系列done 3/21、ready 1、proposed 17"] --> P01["P01<br/>done / D7 Codex closeout PASS；D3 Antigravity Review approved，C1 Gate PASS<br/>台账取证<br/>Owner/Integrator Codex · Reviewer Antigravity<br/>integration M0 13e66ec5"]
+  BASE --> P02["P02<br/>ready / 已释放，等待ZCode开工<br/>真实 Workbench WebView 验证<br/>真实鼠标键盘/300ms/写后刷新/对比度<br/>范围 r2 approved · DeepSeek Harness 非作者Review"]
   BASE --> P03["P03<br/>done / Review与Codex集成Gate通过<br/>第五入口Gate<br/>集成55246423；Gate绑定d717"]
   BASE --> P04["P04<br/>proposed / 未释放<br/>生产命令面验证<br/>常量成员与并发响应；先复现再决定修复"]
   BASE --> P05["P05<br/>proposed / 未释放<br/>错误语义澄清<br/>category与retryable注记一致"]
   BASE --> P06["P06<br/>proposed / 未释放<br/>GC迁移补证<br/>旧版本退出/命名空间保护；未知保留"]
   P02 -. "确认实际缺口后" .-> P07["P07<br/>proposed / 未释放<br/>小交互修补<br/>手输image读取/quiet-window busy"]
+  style P02 fill:#fff3cd,stroke:#b58105,stroke-width:3px
   style P03 fill:#d1e7dd,stroke:#198754,stroke-width:3px
 ```
 
-P01的D3正式Review、C1及D7 fixed-head closeout Gate均已通过；main fast-forward和post-FF核验完成。P02仍需由Codex冻结真实WebView harness范围并建立正式Task；它未释放实现。P06仍需实证旧runtime可用性。启动每个Task前仍需正式Task、不同Owner/Reviewer和allowed_paths。
+P01的D3正式Review、C1及D7 fixed-head closeout Gate均已通过；main fast-forward和post-FF核验完成。P02范围r2已通过并已正式释放；ZCode实现、真实WebView2驱动可用性、所有测试/build仍待执行。P07仅在P02证实其依赖的实际缺口后释放；P06仍需实证旧runtime可用性。启动每个Task前仍需正式Task、不同Owner/Reviewer和allowed_paths。
 
 ## 完整产品：现在就看清后续，而不是每次临时猜下一件
 

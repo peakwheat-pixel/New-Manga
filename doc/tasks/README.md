@@ -1,8 +1,8 @@
 # Task 索引
 
-历史释放记录（2026-10-09）：P03「Packaged第五SFX入口验收补齐」由Codex正式创建并释放为`ready`；Owner=Antigravity、非作者Reviewer=DeepSeek Harness、Integrator=Codex。
+当前释放记录（2026-10-09）：[P02](P02.md)「真实 Workbench WebView 行为、300ms 刷新与对比度验证」已由Codex正式冻结范围并释放为`ready`；Owner=ZCode、非作者Reviewer=DeepSeek Harness、Integrator=Codex。AC/Owner范围契约 r2、Codex-only validator治理增量 r4 均 approved；实施与验收尚未开始，恢复见[RESUME](../../verification/P02/RESUME.md)。此前[P03](P03.md)「Packaged第五SFX入口验收补齐」由Codex释放并已完成，Owner=Antigravity、Reviewer=DeepSeek Harness。
 
-P08/P03/P01已done；P01 D3正式Review=`approved`（0 findings），C1与D7 fixed-head closeout Gate=`PASS`；M0已fast-forward至`main@b7ad98b29196e9859cbfbfe187e6822569f79367`，post-FF保护复核通过。C8 changes_requested保留为历史。P02仍proposed且无正式Task，下一步见P01 RESUME与NEXT-AUTOPROGRESS-PROMPT；P03证据见P03 RESUME。
+P08/P03/P01已done，P02为唯一ready / released Task。P01 D3正式Review=`approved`（0 findings），C1与D7 fixed-head closeout Gate=`PASS`；P01 integration=M0=`13e66ec5bf9a2fc59f4e6c5623feb0bde22884c8`，当前Live P02验证基线=`241ff3b70b6fc0490ea238efd486cc707f849031`。C8 changes_requested保留为历史。P02 Owner worktree、派发和下一步以[P02 RESUME](../../verification/P02/RESUME.md)与[自动续跑提示词](../../verification/P02/NEXT-AUTOPROGRESS-PROMPT.md)为准；P03证据见P03 RESUME。
 
 
 > **2026-09-21 audit**：本索引与 TASK-001～065 文件是历史证据。当前分类、依赖和唯一下一任务见 [REBASELINE_PLAN](../REBASELINE_PLAN.md)，当前 checkpoint 见 [STATUS](../STATUS.md)。不要根据旧 frontmatter 的 `status: done` 单独判定完成。

@@ -1,0 +1,9 @@
+Planning snapshot base=e4242ecd419eb0eea098d2f63b40f709aa5caeea; live HEAD=241ff3b70b6fc0490ea238efd486cc707f849031
+PASS: 196 unique nodes, all classifications and dependency references
+PASS: 105 new architecture/governance integration records are audit-base ancestors
+Traceback (most recent call last):
+  File "G:\CODEX\New Manga.worktrees\P02-harness-scope\verification\PROJECT-ROADMAP-20261008\verify_plan.py", line 63, in <module>
+    assert all(label.strip() in allowed_plan_states for _, label in plan_rows)
+           ~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError
+EXIT=1

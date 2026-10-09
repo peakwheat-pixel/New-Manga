@@ -1,12 +1,12 @@
 # Roadmap
 
-当前工作：P08/P03/P01均已done；P01的D3正式Review approved（0 findings）、C1与D7 Codex closeout Gate=`PASS`。M0=`13e66ec5bf9a2fc59f4e6c5623feb0bde22884c8`已集成至`main@b7ad98b29196e9859cbfbfe187e6822569f79367`，post-FF复核完成。C8 changes_requested、R1/R2 blocked保持历史原样。P02仍proposed，需先冻结真实WebView harness范围并创建正式Task；详情见P01 RESUME。
+当前工作：P08/P03/P01均已done；P02=`ready / 已释放`，Owner=ZCode、非作者Reviewer=DeepSeek Harness、Integrator=Codex。P02 AC/Owner范围 r2 与 Codex-only validator治理增量 r4 均 approved；真实 WebView2、300ms、键盘/焦点、写后刷新、对比度与build仍`NOT_RUN`。P01 integration=M0=`13e66ec5bf9a2fc59f4e6c5623feb0bde22884c8`，P02验证基线=`main@241ff3b70b6fc0490ea238efd486cc707f849031`；详细当前状态见P02 RESUME。C8 changes_requested、R1/R2 blocked保持历史原样。
 
 ## 当前整体路线（权威候选与P01执行状态见Plan/Status）
 
 最新人员裁决：Qoder退出，未来UI/UX设计及React/Tauri实现由ZCode主责，DSH非作者审查，Codex契约/集成；额度接管候选为ZCode、Antigravity。历史交付中的Qoder署名保留。
 
-权威排期见REBASELINE_PLAN中的P01–P21路线、中文依赖图、审计报告和恢复材料。P08/P03/P01=done；P01 D3 Review、C1与D7 Codex closeout Gate通过，root fast-forward及post-FF集成复核完成。P02依赖现有Workbench，但尚未冻结harness范围、未建正式Task或释放实现。P03 R3-03仍留待P20登记。
+权威排期见REBASELINE_PLAN中的P01–P21路线、中文依赖图、审计报告和恢复材料。P08/P03/P01=done，P02已冻结真实 WebView harness 范围并正式释放给ZCode；Owner开工与所有真实验收仍待执行。P03 R3-03仍留待P20登记。
 
 下方2026-09早期导航保留历史，不覆盖本段或Plan；其中旧“ready/planning only”任务多已由后继完成，不能作为当前待办。
 

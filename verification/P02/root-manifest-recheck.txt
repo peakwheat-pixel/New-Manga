@@ -1,0 +1,11 @@
+shell=PowerShell
+task_root=G:\CODEX\New Manga
+branch=main
+head=241ff3b70b6fc0490ea238efd486cc707f849031
+command=compare verification/P01/root-dirty-manifest-pre-ff.txt status/path/SHA-256 against Live root git status and file hashes
+entries=24
+live_dirty_paths=24
+mismatches=0
+result=PASS
+manifest_sha256=b41835453b693b4e62818216e4d67801c01eca6e33450f8d3d3dd72849d578e7
+exit=0
