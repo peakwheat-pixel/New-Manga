@@ -1,0 +1,39 @@
+P02 scope release post-FF verification
+timestamp_utc=2026-10-09T03:30:19Z
+shell=PowerShell 7.6.6
+interpreter=C:\Python314\python.exe
+version=Python 3.14.6
+root=G:\CODEX\New Manga
+branch=main
+base=241ff3b70b6fc0490ea238efd486cc707f849031
+release_commit=3c3e4687785e65f668f1146052e78c3da074ba99
+common_dir=.git
+root_status_paths=24
+command=git diff --check 241ff3b70b6fc0490ea238efd486cc707f849031 3c3e4687785e65f668f1146052e78c3da074ba99
+diff_check_exit=0
+product_paths_under_src_apps_tests_packaging=0
+route_validator_command=python -B -X utf8 verification/PROJECT-ROADMAP-20261008/verify_plan.py
+route_validator_exit=0
+Planning snapshot base=e4242ecd419eb0eea098d2f63b40f709aa5caeea; live HEAD=3c3e4687785e65f668f1146052e78c3da074ba99
+PASS: 196 unique nodes, all classifications and dependency references
+PASS: 105 new architecture/governance integration records are audit-base ancestors
+PASS: live P01/P02/P03/P08 Task states match the Plan; remaining P nodes stay proposed
+PASS: every roadmap P-node declaration matches the Plan state
+PASS: 21 unique planned nodes and roadmap graphs have no dependency cycles
+PASS: delivery/navigation local links resolve
+PASS: zero production/code delta; governance whitespace check
+Product tests/build/GUI: NOT_RUN (planning-only)
+mutation_probe_command=python -B -X utf8 verification/P02/route-validator-mutation-probe.py
+mutation_probe_exit=0
+PASS: both roadmap status drift probes were rejected
+local_link_check=inline Python regex over doc/tasks/P02.md and verification/P02/*.md
+local_link_exit=0
+markdown_files=8 local_links=12 broken=0
+root_manifest_status_hash_and_path_intersection=inline read-only Python comparison
+manifest_exit=0
+manifest_entries=24 live_dirty_paths=24 mismatches=0 manifest_sha256=b41835453b693b4e62818216e4d67801c01eca6e33450f8d3d3dd72849d578e7
+release_paths=28 protected_path_intersection=0
+manifest_and_intersection=PASS
+owner_worktree_path_exists=False
+owner_branch_exists=False
+result=PASS
