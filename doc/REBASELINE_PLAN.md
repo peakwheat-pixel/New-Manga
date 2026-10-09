@@ -1,12 +1,16 @@
 # Project Rebaseline Plan
 
-**当前位置：P02行为验证基线=`241ff3b70b6fc0490ea238efd486cc707f849031`；Owner元数据修订起点 Live `main@4b54f304dc201d129d4ba1c62d0368252e6301b1`；P08/P03/P01=done、P02=ready / 已释放；P系列共21项：done 3、ready 1、proposed 17。P01 integration=M0=`13e66ec5bf9a2fc59f4e6c5623feb0bde22884c8`（D7=`b7ad98b29196e9859cbfbfe187e6822569f79367`）仍为原集成事实；后续 Live main 指针以 Git 为准。P02 Owner转移候选=Antigravity（DSH r7 `approved_with_conditions`@`c2cbee43d4917bca385c9b0fa81ee49fc696ea9e`；C-1、F-02、F-04已在`ec207865348be65c7aa8abb7da163938fccb353d`修订，C-2须快进前闭合；Live main快进前Owner仍为ZCode），非作者实现 Reviewer=DeepSeek Harness、Integrator=Codex；依赖 P08 与两项 debounce Task 均已完成；AC/Owner范围 r2 approved，Codex-only路线validator治理增量 r4 approved；正式 Task=`[P02](tasks/P02.md)` 的 AC/Owner 范围已释放；Antigravity Owner 转移待完成 fixed-head Review 与 Codex 集成 Gate，当前 checkpoint 见 [`P02 RESUME`](../verification/P02/RESUME.md)。实现与产品 Gate 尚未运行，不能视为验收通过。R1/R2 blocked、C8 changes_requested历史结论保留；R2/SYNTH Review carrier仍为`NOT_VERIFIED`，来源Task状态与产品裁决不改。P03 integration=`552464238a69ad2cea63cff18abe98f412dbae87`；其产品验证仍绑定source `d717c049`。
+**当前位置：P02行为验证基线=`241ff3b70b6fc0490ea238efd486cc707f849031`；Owner元数据修订起点 Live `main@4b54f304dc201d129d4ba1c62d0368252e6301b1`；P08/P03/P01=done、P02=ready / 已释放；P系列共21项：done 3、ready 1、proposed 17。P01 integration=M0=`13e66ec5bf9a2fc59f4e6c5623feb0bde22884c8`（D7=`b7ad98b29196e9859cbfbfe187e6822569f79367`）仍为原集成事实；后续 Live main 指针以 Git 为准。P02 Owner转移候选=Antigravity（DSH r8 `approved_with_conditions`@`55be5dab7b6d7bebf94c9ad6524f57c023616249`；C-1、F-02、F-04已在`ec207865348be65c7aa8abb7da163938fccb353d`修订，C-2须快进前闭合；Live main快进前Owner仍为ZCode），非作者实现 Reviewer=DeepSeek Harness、Integrator=Codex；依赖 P08 与两项 debounce Task 均已完成；AC/Owner范围 r2 approved，Codex-only路线validator治理增量 r4 approved；正式 Task=`[P02](tasks/P02.md)` 的 AC/Owner 范围已释放；Antigravity Owner 转移待完成 fixed-head Review 与 Codex 集成 Gate，当前 checkpoint 见 [`P02 RESUME`](../verification/P02/RESUME.md)。实现与产品 Gate 尚未运行，不能视为验收通过。R1/R2 blocked、C8 changes_requested历史结论保留；R2/SYNTH Review carrier仍为`NOT_VERIFIED`，来源Task状态与产品裁决不改。P03 integration=`552464238a69ad2cea63cff18abe98f412dbae87`；其产品验证仍绑定source `d717c049`。
 
 ## 2026-10-09 P02 真实 Workbench WebView 验证 / READY；Owner 转移 Gate 收口中
 
 P02 AC/Owner范围 r1–r4 已正式冻结并释放，不重复冻结；当前 Live `main` 的初始 Owner 仍为 ZCode，Antigravity 故障转移候选须通过 fixed-head Review 与 Codex 集成 Gate 后才生效。候选 Task 保持 `ready / IDLE`，直到新 Owner 真实接单并保存 start checkpoint。DSH r7 对候选 `c2cbee43d4917bca385c9b0fa81ee49fc696ea9e` 作出 `approved_with_conditions`；Task 摘要口径及 r6 Review 直链已修订，剩余 C-2 为快进前恢复文件同步与 P01 manifest 证据，详见 [P02 恢复点](../verification/P02/RESUME.md)。Owner 目标=Antigravity；非作者 Reviewer=DeepSeek Harness，Integrator=Codex。范围 Reviewer r1 的三项 finding 已修订，r2 对固定 AC/Owner allowlist 契约 SHA-256=`27DC31A8CF3304ABA6783E243F36895FFE4AAA3CCBCA76D58E8B766C403E1425`批准；后续 Codex-only 路线validator增量经 r3 修订、r4 approved并关闭 `P02-SCOPE-R3-01`。这些范围/治理审查不替代实现 Review。不修改产品 UI、不新增依赖；所有真实 WebView2、构建和产品行为检查尚未 PASS。
 
 
+
+## 2026-10-09 P02 Owner 转移 / DSH r8 治理 Review 条件批准
+
+DSH r8 固定审查候选 55be5dab7b6d7bebf94c9ad6524f57c023616249，decision=approved_with_conditions，findings P0/P1/P2/P3=0/0/0/2。Codex 已补齐 DSH shell 环境无法执行的 tree、差量、Task digest 与路线 Gate 实测；r8 两个 P3 的精确 head/tree 登记及动态恢复指针已在治理 checkpoint 处置。r7 C-2 仍是快进前唯一条件，须同步 P02 两份 recovery，记录 hashes/status 并 fresh-recheck P01 manifest。Live main 快进前 Owner 仍为 ZCode，候选 Task 保持 ready / IDLE。产品实现和产品验收未运行；详见 [P02 RESUME](../verification/P02/RESUME.md) 与 [owner-transfer Gate log](../verification/P02/owner-transfer-r7-gate.log)。
 
 ## 2026-10-09 P02 Owner 故障转移 / r6 Review approved；Codex 集成 Gate 收口中
 

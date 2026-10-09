@@ -108,3 +108,58 @@ recovery_files_synchronized_to_root=NOT_RUN; required after final Review and bef
 product_AC1_AC7_Vitest_Cargo_Tauri_WebView_GUI_contrast=NOT_RUN
 
 After c3, recovery summaries were advanced to reference c3 and the remaining C-2. Their focused P02 link check returned PASS / 22 links / 0 missing; these checkpoint updates are pending their own fixed commit and DSH review.
+
+
+=== DSH r8 exact-head formal Review and Codex command-level supplement ===
+review_id=P02 Owner transfer Task exact-head re-review r8
+reviewer=DeepSeek Harness (non-author; read-only)
+reviewed_head=55be5dab7b6d7bebf94c9ad6524f57c023616249
+reviewed_tree=f74afc39b307ca7f388bda8b3de8e73d23e00163
+parent=ec207865348be65c7aa8abb7da163938fccb353d
+DSH_version=0.2.0-rc.2
+DSH_session=session-5e8be65b-515f-41fc-b444-c80e22121c95
+DSH_cli_exit=0
+DSH_decision=approved_with_conditions
+DSH_findings=P0:0;P1:0;P2:0;P3:2
+DSH_report=verification/P02/owner-transfer-r8-review/review.md
+DSH_report_sha256=C094043D89BBD2F11D44A552A16A3696A9103AEE549A1BB19B25033C2B4AE9AB
+DSH_prompt=verification/P02/owner-transfer-r8-review/prompt.md
+DSH_prompt_sha256=A1F2F4D7A29158361BC0E25A399514B0D20B2A66C1736D3AAD01F58ADBF66197
+DSH_exit=verification/P02/owner-transfer-r8-review/exit.txt
+DSH_stdout_sha256=C094043D89BBD2F11D44A552A16A3696A9103AEE549A1BB19B25033C2B4AE9AB
+DSH_stderr_sha256=736C4C4FCDD08064FD587786362FEF74214F44EA22AA90B746DB7EDA9EA655A0
+DSH_stderr_private_log=C:/Users/49745/.dsh/private-logs/P02-owner-transfer-r8.stderr.log
+DSH_mount=verification/P02/owner-transfer-r8-review/mount.md
+DSH_mount_workspace=G:/CODEX/New Manga.worktrees/P02-owner-transfer-integration-codex
+DSH_desktop_visibility=NOT_VERIFIED
+
+DSH_method_limit=Reviewer pwsh shell failed before any command with Win32 5 during Windows sandbox initialization; no Git/hash/validator/manifest/test commands ran, no ACL changes were attempted. Review marks tree/diff/cleanliness/hash NOT_VERIFIED.
+Codex_fixed_head_command_check=PASS; exact HEAD/tree/parent independently verified with Git as above
+Codex_verify_plan=PASS; 196 nodes; Plan/Task/roadmap states and navigation links consistent; dependency graph acyclic
+Codex_route_validator_mutation_probe=PASS; both injected P-node state drifts rejected
+Codex_base_to_c4_git_diff_check=PASS; EXIT=0; base=4b54f304dc201d129d4ba1c62d0368252e6301b1
+Codex_changed_paths=26
+Codex_allowed_paths=26
+Codex_out_of_scope_paths=0
+Codex_product_code_paths=0
+Codex_Task_worktree_bytes_sha256=325D613E410793F565A4128B55B76A86827F79DBFD8A01395B2DABCEADDD2443
+Codex_Task_LF_sha256=325D613E410793F565A4128B55B76A86827F79DBFD8A01395B2DABCEADDD2443
+Codex_Task_Git_blob=97c3d61e52620b5d07538a2a2ac07dd62950c7cd
+Codex_Task_hash_matches_prior_c3_Gate=TRUE
+Codex_candidate_head_worktree_cleanliness_at_dispatch=tracked clean; review output, prompt and exit were untracked dispatch carriers outside c4 tree; stderr moved to private local log and excluded from Git
+
+R8-01_P3=Resolved in this governance checkpoint: this log explicitly binds reviewed_head/tree and records the current Task bytes/LF/Git blob hashes with the report/session.
+R8-02_P3=Resolved in this governance checkpoint: RESUME/NEXT identify c4 as the last reviewed object, but require each continuation to query and pin the actual current branch HEAD/tree/status before dispatch; no parent commit is hard-coded as next review target.
+Independent_reviewer_c4_P3_stale_ec207_pointer=Resolved by the same dynamic-current-HEAD recovery instruction.
+DSH_r7_C2=NOT_CLOSED; must only sync the final P02 RESUME.md and NEXT-AUTOPROGRESS-PROMPT.md into Live root before fast-forward, recording immediate pre/post hashes/status and a fresh P01 manifest check.
+Live_root_pre_sync_snapshot_at_2026-10-09T05:10Z=HEAD 4b54f304dc201d129d4ba1c62d0368252e6301b1; branch main; dirty/untracked 38.
+Live_root_pre_sync_RESUME= porcelain ' M'; sha256=D64FD02C1EDC5179827017627D3F504333BB8B4146641C6BCB4005037C754D2D
+Live_root_pre_sync_NEXT= porcelain ' M'; sha256=527B2B194E9841315C3050585B4E66970A0D4A27D9EC4C2C63A5D8152FA658F9
+Fresh_P01_manifest_check_before_sync=24/24 path/status/content SHA matches; 0 mismatch; body digest=b41835453b693b4e62818216e4d67801c01eca6e33450f8d3d3dd72849d578e7
+Fresh_root_status_paths=38
+Candidate_vs_P01_manifest_path_intersection=0
+Candidate_vs_root_dirty_path_intersection=verification/P02/RESUME.md;verification/P02/NEXT-AUTOPROGRESS-PROMPT.md
+C2_immediate_pre_sync_snapshot_required=TRUE; above snapshot is reference only and must be refreshed immediately before copy
+Product_AC1_AC7_Vitest_Cargo_Tauri_sidecar_real_WebView2_GUI_keyboard_focus_contrast=NOT_RUN
+Owner_acceptance_start_checkpoint=NOT_RUN
+Codex_fast_forward=NOT_RUN
