@@ -1,0 +1,13 @@
+# P02 R5 Review Repair — Validation Checkpoint
+
+- Recorded at: 2026-10-10 03:56:58 +0800; state: `R5_FINDINGS_DISPOSITION_VALIDATED / READY_TO_FREEZE_REPAIR`.
+- Active Task=P02 remains `in_progress / ACTIVE`; Owner/Integrator=Codex; non-author Reviewer=DeepSeek Harness.
+- Current Owner HEAD=`844aec282416111310d9a9efcac5bc9e0c6eb451`, tree=`79ec85adc5aabcd3e93d6a7d08bb8986fdfed16b`; branch=`codex/P02-process-isolation`; worktree=`C:/Users/49745/.codex/worktrees/p02-process-isolation-plan/New Manga`.
+- Current code/document delta before this checkpoint: 17 paths, all within the four authorized current-status documents and `verification/P02/**`; adding this checkpoint makes 18 paths. Root dirty-path overlap=0.
+- R5 review disposition: F-01 P2 fixed; F-02/F-03/F-05/F-06/F-07/F-08/F-09 fixed; F-04/F-10 explicitly accepted with limits; F-11 current-summary whitespace fixed with the immutable R10 prompt warning retained. Full detail: [finding disposition](codex-preflight-r5-review-disposition.md).
+- R3 observations canonical LF bytes=21,705; SHA-256=`39c484f52fcb1c3e040b5ffdbab62b50e13d2b45c41d9d93d59221bd0fbbb74c`; 16/16 thresholds true; pins=20 hashes / 14 registered sizes / 6 unregistered sizes. Captured measurement values are unchanged.
+- Route validator `python -B -X utf8 verification/PROJECT-ROADMAP-20261008/verify_plan.py`: EXIT=0; 196 nodes, 105 integration ancestors, and 21-node DAG validated.
+- Root protection: live root `main@ceffb7479cb1f79bd3b620afdaf6e9eaa0ae6d50`; frozen manifest HEAD=`549a6544f0be1eec66c09ece393fd1a409f10bf3`; 203/203 contents/status match, missing/extra/status/content mismatches=0, digest=`3a54fa978bf228bfae366a4c4de35b90e4fab609447d3370ed81370299da10e2`, candidate/root overlap=0.
+- Focused link check: 16 added/changed local links, 0 broken. `git diff --check HEAD`: EXIT=0. Full check back to the R10 base reports only the known trailing blank line in immutable dispatched prompt `dsh-review-p02-preflight-r4-condition-closure.prompt.md`; no other whitespace finding remains.
+- No clone, Sandbox, Smoke, build, runner, Vitest, GUI, or product acceptance has run. Stage-1 remains PASS; complete preflight=`BLOCKED / INCOMPLETE`; Smoke=`NOT_ADMITTED`; Build Gate=`BLOCKED`; build=`NOT_AUTHORIZED / NOT_RUN`; AC1–AC7=`BLOCKED / NOT_RUN`; Hard Build Barrier=`EFFECTIVE`.
+- Next exact action: stage only the validated 18 paths, inspect the staged path set and canonical JSON blob hash, commit the repair, then create a clean independent DSH review worktree and dispatch incremental exact-head Review. Do not create the fixed clone or start Sandbox before the new Review is `APPROVED` and Codex records a separate Smoke admission checkpoint.

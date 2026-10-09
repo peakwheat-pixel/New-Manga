@@ -1,0 +1,27 @@
+{
+  "schema_version": 1,
+  "agent": "DeepSeek Harness",
+  "operation": "read-only exact-head Review",
+  "session_id": "session-d7d77b5a-f0b5-442b-8e51-8f16f1a60a06",
+  "reviewed_head": "844aec282416111310d9a9efcac5bc9e0c6eb451",
+  "reviewed_tree": "79ec85adc5aabcd3e93d6a7d08bb8986fdfed16b",
+  "reviewed_base": "92dc7361194f1db8fdf7aff3a15a3d234ae56678",
+  "review_worktree": "C:/Users/49745/.codex/worktrees/P02-preflight-r5-844aec28-review-dsh",
+  "review_branch": "review/deepseek/P02-preflight-r5-844aec28",
+  "prompt_path": "verification/P02/dsh-review-p02-preflight-r5.prompt.md",
+  "prompt_sha256": "1a0146d532666c63f2cb77ce2a6d7f8674fdae1986fe6755d64e0d223f906feb",
+  "response_path": "verification/P02/dsh-review-p02-preflight-r5.response.md",
+  "response_sha256": "f77c3981e577795fa105b650eb2f1d27b584772b2fbe723c571c261542490409",
+  "exit_path": "verification/P02/dsh-review-p02-preflight-r5.exit.txt",
+  "exit": "0",
+  "decision": "APPROVED_WITH_CONDITIONS",
+  "findings": {
+    "P0": 0,
+    "P1": 0,
+    "P2": 1,
+    "P3": 10
+  },
+  "mounted": true,
+  "mount_helper": "C:/Users/49745/.agents/skills/dsh-dispatch/scripts/mount_session.py --latest",
+  "mounted_worktree": "C:/Users/49745/.codex/worktrees/P02-preflight-r5-844aec28-review-dsh"
+}

@@ -472,6 +472,7 @@
   "config": {
     "path": "C:\\Users\\49745\\.codex\\worktrees\\p02-process-isolation-plan\\New Manga\\verification\\P02\\codex-p02-wsb-smoke-config-r3.xml",
     "bytes": 2609,
+    "bytes_basis": "canonical LF bytes after CRLF normalization",
     "sha256": "9af445134c6c6d3cec900b6d5c903a3c7fe19a104e0eab10f7c0886280de664d",
     "xml_mapped_folders": 11
   },
@@ -514,6 +515,7 @@
     "HostFolder verification covers mapped root existence and root-level reparse-point state only; no recursive tree or reparse traversal was performed.",
     "The initial manifest aggregation counted untracked ?? entries as staged; corrected porcelain index-column parsing yields staged=0, unstaged=4, untracked=199, with the same 203/203 content digest.",
     "Measurement correction: the first aggregate evaluation referenced a non-existent FreeSpace property on the normalized disk records and therefore returned false for both disk thresholds. The captured free_bytes values are unchanged; recomputation using the recorded fields gives C: and G: above 1 GiB and the complete stage-1 threshold set passes.",
-    "Root recheck enumerated the four tracked modified paths; none is a candidate target or current P02 status document. Root candidate-path overlap remains 0."
+    "Root recheck enumerated the four tracked modified paths; none is a candidate target or current P02 status document. Root candidate-path overlap remains 0.",
+    "The frozen inputs TSV has six rows with blank expectedBytes and legacy sizeMatch=True; that legacy field is not treated as a fresh size pass. R3 records expected_bytes=null and size_match=null for these six unregistered sizes."
   ]
 }

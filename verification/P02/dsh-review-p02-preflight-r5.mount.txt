@@ -1,0 +1,4 @@
+session_id=session-d7d77b5a-f0b5-442b-8e51-8f16f1a60a06
+mount_helper_exit=0
+review_worktree=C:/Users/49745/.codex/worktrees/P02-preflight-r5-844aec28-review-dsh
+desktop_restart=not_performed

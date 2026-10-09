@@ -1,6 +1,6 @@
 # P02 Scratch Isolation Preflight R5 Start Checkpoint
 
-- Start time: 2026-10-10 03:27:31 +08:00; state: R5_FRESH_STAGE1_CAPTURE / AWAITING_CANDIDATE_VALIDATION.
+- Start time: 2026-10-10 03:27:31 +08:00; state: R5_FRESH_STAGE1_CAPTURE / AWAITING_CANDIDATE_VALIDATION; last updated 2026-10-10 03:53:17 +0800 after the 03:30:19 Stage-1 capture.
 - Parent Task=P02 remains in_progress / ACTIVE. Codex-only isolation subtask: Owner=Codex, non-author Reviewer=DeepSeek Harness, Integrator=Codex.
 - Live root: main@ceffb7479cb1f79bd3b620afdaf6e9eaa0ae6d50; common Git directory=G:\CODEX\New Manga\.git.
 - Owner branch/worktree: codex/P02-process-isolation / C:\Users\49745\.codex\worktrees\p02-process-isolation-plan\New Manga. Starting fixed HEAD=92dc7361194f1db8fdf7aff3a15a3d234ae56678, tree=73511f7ba03d6b2215f4dad9c5a3c7f442471a6f, parent=083d2b47f7051c2dedd0d9ae4346ae1affab6c1b.
