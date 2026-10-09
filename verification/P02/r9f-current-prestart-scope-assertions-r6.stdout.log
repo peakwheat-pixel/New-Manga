@@ -1,0 +1,16 @@
+HEAD: 3f243b1993dc577ea98aa8130c1a822ac57763a4
+Tree: 7c1e4c3a180b268e3f8a6b10da913c869a25cfba
+Complete diff path count: 103
+Out-of-scope path count: 0
+verification/P02/dsh-review-p02-current-prestart-r2.response.md|9869F229DADD4A173C74B737321270AEF504C5266B2AA2A100CF999B41696612
+verification/P02/dsh-review-p02-current-prestart-r3.response.md|A07E7DE8DA8C2F1466763EDC037227C39E7E2C5900E616122B19CC3FB5D1A565
+verification/P02/dsh-review-p02-current-prestart-r4.response.md|A2F962B6494579C162F1D0FD36EE8985819108860967E189A3EA25B3BD04B3B4
+path_scope: True
+r2_blob_hash_matches_metadata: True
+r3_blob_hash_matches_metadata: True
+r4_blob_hash_matches_metadata: True
+raw_hashes_separate: True
+r2_scope_log_erratum: True
+index_current_pointer: True
+plan_current_pointer: True
+hard_build_barrier_preserved: False
