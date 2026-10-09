@@ -1,0 +1,64 @@
+==========================================================
+P02 Probe Execution Log
+Date: 2026-10-09T15:51:22+08:00
+PowerShell: 5.1.26100.9549
+Python: C:\Python314\python.exe (Python 3.14.6)
+Node: v24.15.0
+npm: 12.0.1
+Worktree: G:\CODEX\New Manga.worktrees\P02-real-webview-harness-antigravity
+Mode: ProbeOnly
+LogFile: probe-execution-probeonly.log
+==========================================================
+
+--- [Step 1: Environment Identity Probe] ---
+Command: C:\Python314\python.exe G:\CODEX\New Manga.worktrees\P02-real-webview-harness-antigravity\verification\P02\probes\env_identity_probe.py
+OUTPUT:
+=== P02 Read-Only Environment & Identity Report ===
+Host OS: Windows-11-10.0.26300-SP0
+WebView2 Detected Version: 154.0.4258.62
+WebView2 Verified Key: {F3017226-FE2A-4295-8BDF-00C3A9A7E4C5}
+Node Runtime: v24.15.0
+npm Tool: 12.0.1
+Python Executable: C:\Python314\python.exe
+Git Branch: agent/antigravity/P02-real-webview-harness
+Source HEAD: 5fa8a41f1fbda56dd88fb3a87e1604fd0a14a59e
+Source Tree: ce6e44c9b21cd6cfe9832aa89e71a72650f4e5f7
+Git Clean Status: False
+Behavior Baseline: 241ff3b70b6fc0490ea238efd486cc707f849031
+Porcelain Status:
+M apps/desktop/frontend/e2e/workbench_driver_protocol.ts
+ M doc/handoffs/P02-stage-a-foundation-handoff.md
+ M doc/tasks/P02.md
+ M verification/P02/RESUME.md
+ M verification/P02/env-identity-report.json
+ M verification/P02/env-identity-report.txt
+ M verification/P02/fixtures/workbench_synthetic_data.json
+ M verification/P02/harness/workbench_cdp_harness.py
+ M verification/P02/p02-harness-results.json
+ M verification/P02/p02-harness-results.txt
+ M verification/P02/probe-execution.log
+ M verification/P02/probes/static_control_probe.py
+ M verification/P02/run-webview.ps1
+ M verification/P02/static-control-report.json
+?? verification/P02/probe-execution-full.log
+?? verification/P02/probe-execution-probeonly.log
+frontend/dist Exists: False
+cargo-target Exists: False
+Hard Build Barrier Active: True
+Barrier Rationale: tauri_build writes into source tree (gen/schemas and command permission TOMLs), and fixed baseline lacks trusted sidecar inputs. Cargo/Tauri builds prohibited in this Owner worktree.
+EXIT: 0
+
+--- [Step 2: Static Source Contract Probe] ---
+Command: C:\Python314\python.exe G:\CODEX\New Manga.worktrees\P02-real-webview-harness-antigravity\verification\P02\probes\static_control_probe.py
+OUTPUT:
+=== P02 Static Source Contract Control Report ===
+Overall Status: PASS
+WorkbenchPage Status: PASS
+  - resolveDebounceMs default 300: True
+  - regionDebounceMs default 300: True
+App Navigation Status: PASS
+  - app-nav testid present: True
+  - nav-workbench testid present: True
+EXIT: 0
+
+ProbeOnly execution completed successfully with EXIT=0.

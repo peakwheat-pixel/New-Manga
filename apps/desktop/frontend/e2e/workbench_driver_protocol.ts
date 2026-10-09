@@ -1,5 +1,5 @@
 /**
- * P02 Workbench Real WebView2 Driver & Assertion Protocol (Stage A r3).
+ * P02 Workbench Real WebView2 Driver & Assertion Protocol (Stage A r4).
  *
  * NOTE: This file specifies Stage A data contracts, type structures, and WCAG 2.1
  * mathematical models. Full interactive CDP / WebView behavioral driving is NOT yet
@@ -32,9 +32,12 @@ export interface ContrastSample {
   notes?: string;
 }
 
+/**
+ * Scenario verdict contract matching the exact schema emitted by the Python harness (H-07).
+ */
 export interface ScenarioVerdict {
-  acId: string;
-  scenarioName: string;
+  scenario_id: string;
+  scenario_name: string;
   status: "PASS" | "FAIL" | "BLOCKED" | "NOT_RUN";
   layer:
     | "REAL_WEBVIEW2"
@@ -43,12 +46,10 @@ export interface ScenarioVerdict {
     | "STATIC_AST"
     | "TOKEN_MODEL"
     | "BLOCKED_NO_BUILD";
-  exitCode: number | null;
-  timingData?: TimingSample[];
-  contrastData?: ContrastSample[];
+  exit_code: number | null;
   details?: Record<string, unknown>;
-  findings?: string[];
-  blockerReason?: string;
+  blocker_reason?: string | null;
+  timestamp: string;
 }
 
 /**

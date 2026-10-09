@@ -1,4 +1,4 @@
-"""P02 Static Source Contract & Front-End Control Probe (Stage A r2).
+"""P02 Static Source Contract & Front-End Control Probe (Stage A r4).
 
 Performs static analysis of live Workbench frontend source files to verify:
 - WorkbenchPage debounce default parameters (resolveDebounceMs=300, regionDebounceMs=300)
@@ -13,7 +13,9 @@ from __future__ import annotations
 
 import json
 import re
+import subprocess
 import sys
+import time
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parents[3]
@@ -133,16 +135,36 @@ def check_child_components() -> dict[str, object]:
     return results
 
 
+def get_git_rev(args: list[str]) -> str:
+    try:
+        proc = subprocess.run(
+            ["git"] + args,
+            cwd=REPO_ROOT,
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+        )
+        return proc.stdout.strip()
+    except Exception:
+        return "UNKNOWN"
+
+
 def main() -> int:
     wb_report = check_workbench_page()
     app_report = check_app_navigation()
     children_report = check_child_components()
 
     overall_pass = (wb_report["status"] == "PASS" and app_report["status"] == "PASS")
+    exit_code = 0 if overall_pass else 1
 
     report = {
         "probe": "P02_STATIC_SOURCE_CONTRACT_CONTROL",
         "overall_status": "PASS" if overall_pass else "FAIL",
+        "source_head": get_git_rev(["rev-parse", "HEAD"]),
+        "source_tree": get_git_rev(["rev-parse", "HEAD^{tree}"]),
+        "exit_code": exit_code,
+        "timestamp": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
         "workbench_page": wb_report,
         "app_navigation": app_report,
         "child_components": children_report,

@@ -1,6 +1,10 @@
 {
   "probe": "P02_STATIC_SOURCE_CONTRACT_CONTROL",
   "overall_status": "PASS",
+  "source_head": "5fa8a41f1fbda56dd88fb3a87e1604fd0a14a59e",
+  "source_tree": "ce6e44c9b21cd6cfe9832aa89e71a72650f4e5f7",
+  "exit_code": 0,
+  "timestamp": "2026-10-09T07:51:27Z",
   "workbench_page": {
     "status": "PASS",
     "file": "apps\\desktop\\frontend\\src\\workbench\\WorkbenchPage.tsx",

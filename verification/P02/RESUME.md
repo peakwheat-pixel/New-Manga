@@ -1,6 +1,31 @@
 # P02 恢复点
 
-## 当前检查点：P02 Stage A 定向修订 (r3) 已就绪；响应 DSH r2 复审；等待 Codex exact-commit 独立复跑与 DSH r3 复审
+## 当前检查点：P02 Stage A 定向修订 (r4) 已就绪；响应 DSH r3 条件项与 Codex 复跑要求
+
+- 时间：2026-10-09 UTC。
+- Task=`doc/tasks/P02.md`，status=`in_progress` / ExecutionState=`ACTIVE`；Owner=Antigravity、非作者实现Reviewer=DeepSeek Harness、Integrator=Codex。
+- 行为基线=`241ff3b70b6fc0490ea238efd486cc707f849031`，冻结 scope contract SHA-256=`27DC31A8CF3304ABA6783E243F36895FFE4AAA3CCBCA76D58E8B766C403E1425`。
+- 本轮定向修订源自非作者实现 Reviewer DeepSeek Harness 对 `reviewed_head=5fa8a41f1fbda56dd88fb3a87e1604fd0a14a59e` 的 DSH r3 Review (`approved_with_conditions`，P0/P1/P2/P3=`0/0/0/10`，开放 10 项全部为 P3，含 H-01~H-07 与 r2 残余) 以及 Codex supplemental review 提出的 P2 blocker 与 exact-commit 独立复跑要求。
+- r4 修订处置结果：
+  - AC6 文本对比度阈值统一 (P2 / H-01① / G-05)：所有普通文本（包括 secondary `ink_2`、tertiary `ink_3`、muted `#8a94a2`）严格统一要求 `>= 4.5:1`，仅 disabled 文本 (`ink_dis`) 与非文本组件 (`accent`) 维持 `3.0:1`，`min_required`、阈值配置与结果判定保持 100% 一致；
+  - PRE-01 深度全量遍历与 Mutation 自检 (P2 / H-03 / H-05)：全量遍历验证 books, chapters, pages, regions, revisions (10 wire 字段), post-write scenarios；动态从 `src/region/types.ts` 派生 `REGION_TYPE_VALUES`；内置 4 组 mutation self-test，确保非法枚举、缺字段、缺场景与外键破坏均被严格拒绝；
+  - PRE-02 新鲜度绑定与真实 EXIT 传播 (P2 / H-02)：严格校验报告绑定的 `source_head` 与 `source_tree`，陈旧/缺失时重新执行并记录真实观察到的退出码，子探针失败严格中断并传播；
+  - 失败日志与退出码可靠落盘 (P2 / H-01)：`run-webview.ps1` 采用 `try...catch...finally` 与统一 `Flush-Log`，确保无论步骤非零退出还是异常均先将失败命令、输出与 EXIT 落盘至纯 LF（无 BOM：`New-Object System.Text.UTF8Encoding($false)`）日志，杜绝残留旧 PASS 日志；已完成本地微探针验证（错误退出码 42 与 unhandled exception 均如实落盘并透出）；
+  - 逐次运行专属日志 (P2 / G-04)：`-ProbeOnly` 输出专属 `verification/P02/probe-execution-probeonly.log`，完整运行输出专属 `verification/P02/probe-execution-full.log`，杜绝相互覆盖；
+  - F-05 Exact Provenance 完善 (P2)：补齐 `key_execution_inputs_sha256`（harness, probes, runner, fixture, protocol TS），如实标注 `is_clean_worktree`、`verification_mode: PRE_COMMIT_LOCAL_EVIDENCE` 与 `replay_status: PENDING_CODEX_EXACT_HEAD_REPLAY`，去除自身结果文件哈希引用；
+  - DSH Finding 编号映射与一致性细节修复 (P3 / H-01 / H-04 / H-05 / H-06 / H-07)：修正边框值为真实来源 `#2a3038`，删除过度闭合断言；fixture 显式声明全局 SFX policy 前置配置；更新 `RegionOverlay.tsx:45-48` pill 背景文字配对（`#7eb287` 与 `#fbbf24`）；对齐 TS 契约接口字段至 snake_case emission；
+  - 保持 Hard Build Barrier 生效，前置探针与完整执行均通过（EXIT=0），运行时 AC1~AC6 规范保持 BLOCKED（exit_code: null）。
+- 实际验证状态（Exit=0）：
+  - `powershell -ExecutionPolicy Bypass -File verification/P02/run-webview.ps1 -ProbeOnly` -> **PASS** (EXIT=0) -> `verification/P02/probe-execution-probeonly.log`
+  - `powershell -ExecutionPolicy Bypass -File verification/P02/run-webview.ps1` -> **PASS** (EXIT=0) -> `verification/P02/probe-execution-full.log`
+  - `PRE-01` (synthetic_fixture_presence): **PASS** (Layer: `FILESYSTEM`, Exit: 0)
+  - `PRE-02` (static_source_contract_check): **PASS** (Layer: `STATIC_AST`, Exit: 0)
+  - `PRE-03` (f_token_and_palette_math_model): **PASS** (Layer: `TOKEN_MODEL`, Exit: 0)
+  - `AC1`~`AC6` 真实 WebView2 运行时场景: **BLOCKED** (Layer: `REAL_WEBVIEW2` / `REAL_WEBVIEW_MOCK_IPC`，Exit: `null`)
+- 硬构建屏障（Hard Build Barrier）继续生效：严禁在本 Owner worktree 运行 Cargo/Tauri/sidecar build。
+- 下一步操作：提交固定交付 commit，由 Codex 在 clean detached exact head 独立复跑 Stage A probes 并完成 Gate 复算；交由 DeepSeek Harness 进行 Stage A r4 复审。
+
+## 历史检查点：P02 Stage A 定向修订 (r3) 已就绪；响应 DSH r2 复审；等待 Codex exact-commit 独立复跑与 DSH r3 复审
 
 - 时间：2026-10-09 UTC。
 - Task=`doc/tasks/P02.md`，status=`in_progress` / ExecutionState=`ACTIVE`；Owner=Antigravity、非作者实现Reviewer=DeepSeek Harness、Integrator=Codex。

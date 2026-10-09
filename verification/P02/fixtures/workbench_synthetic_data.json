@@ -1,5 +1,5 @@
 {
-  "description": "P02 Workbench real WebView2 verification synthetic fixtures (Stage A r3)",
+  "description": "P02 Workbench real WebView2 verification synthetic fixtures (Stage A r4)",
   "fixtures": {
     "books": [
       {
@@ -144,6 +144,10 @@
       "retype": {
         "operation_name": "retype_region",
         "description": "Change region type from speech to sfx per Workbench relabelMachine allowed transition",
+        "assumed_global_config": {
+          "global_sfx_policy": "translate",
+          "note": "Per relabelMachine.ts:121-124, retype re-snapshots sfx_policy from current global config. Scenario assumes global sfx_policy is translate."
+        },
         "ipc_write": {
           "command": "set_region_type",
           "args": {
@@ -155,7 +159,8 @@
             "region_id": "synth-reg-01",
             "revision_no": 2,
             "region_type": "sfx",
-            "sfx_policy": "translate"
+            "sfx_policy": "translate",
+            "sfx_policy_is_config_dependent": true
           }
         },
         "post_write_readback": {
@@ -311,19 +316,21 @@
       "synthetic_alpha_cases": [
         {
           "rgba": "rgba(126, 178, 135, 0.16)",
-          "role": "sfx_region_highlight_overlay",
+          "role": "pill_skip_background",
           "source_file": "apps/desktop/frontend/src/region/RegionOverlay.tsx",
           "line": 47,
           "base_background_role": "app_base_background",
-          "foreground_text_hex": "#d8e0e8"
+          "foreground_text_hex": "#7eb287",
+          "foreground_text_source": "apps/desktop/frontend/src/region/RegionOverlay.tsx:48 (PILL_SKIP_TEXT)"
         },
         {
           "rgba": "rgba(251, 191, 36, 0.16)",
-          "role": "speech_region_highlight_overlay",
+          "role": "pill_warn_background",
           "source_file": "apps/desktop/frontend/src/region/RegionOverlay.tsx",
           "line": 45,
           "base_background_role": "app_base_background",
-          "foreground_text_hex": "#d8e0e8"
+          "foreground_text_hex": "#fbbf24",
+          "foreground_text_source": "apps/desktop/frontend/src/region/RegionOverlay.tsx:46 (PILL_WARN_TEXT)"
         }
       ]
     }

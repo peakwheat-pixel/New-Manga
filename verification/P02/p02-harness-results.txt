@@ -1,6 +1,6 @@
-=== P02 Real Workbench WebView2 Harness Verdict Report (Stage A r3) ===
-Source HEAD: 9b82e97b8aadc5b6b8710e03b5128a608697f56e
-Source Tree: 7fe67d0fb9bfc95e579c0fbda539de85eb73e4f4
+=== P02 Real Workbench WebView2 Harness Verdict Report (Stage A r4) ===
+Source HEAD: 5fa8a41f1fbda56dd88fb3a87e1604fd0a14a59e
+Source Tree: ce6e44c9b21cd6cfe9832aa89e71a72650f4e5f7
 Branch: agent/antigravity/P02-real-webview-harness
 Behavior Baseline: 241ff3b70b6fc0490ea238efd486cc707f849031
 Total Scenarios: 9
