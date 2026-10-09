@@ -1,0 +1,5 @@
+HEAD: 8851f726c3b20946a76d99fb74b6e19e7fc12953
+Tree: 8f11d67e223ffc153fec0308705524695cecc3ad
+HostFolder pointer/hash/time/stderr/exit assertion: PASS
+Host threshold criteria: 11/11 PASS
+Allowed paths: 37 unique paths; out-of-scope: 0
