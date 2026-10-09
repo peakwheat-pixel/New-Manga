@@ -8,3 +8,7 @@
 - 验收：报告逐项记录实际输出/exit、阈值、工具和 input pins、保护 manifest、状态边界与证据限制；独立 DSH exact-head Review；reviewed candidate 与 root dirty path overlap=0 后才可 FF；post-FF 验证 route validator、`git diff --check`、目标 HEAD、root manifest 和路径交集。
 - 明确保持：Feature=`UNKNOWN`（本轮未查询）；完整 preflight=`BLOCKED / INCOMPLETE`；Smoke admission=`NOT_ADMITTED`；Smoke=`NOT_AUTHORIZED / NOT_RUN`；Build Gate=`BLOCKED`；build=`NOT_AUTHORIZED / NOT_RUN`；P02 AC1–AC7=`BLOCKED / NOT_RUN`；Hard Build Barrier 有效。无 Windows Feature 查询/启用、提权、Sandbox、clone、Build、Vitest、GUI/WebView、产品测试。
 - 下一条准确动作：完成 evidence report/HostFolder TSV、核对全部允许路径与哈希、更新限定范围的当前状态段；固定交付 commit 后派发 DeepSeek Harness 审查 exact head，依据 Review 修订/复审，再进行本地 FF 与集成后验证。
+
+## R2 Review scope amendment
+
+- R1 exact-head Review returned APPROVED_WITH_CONDITIONS, P0/P1/P2/P3=0/0/1/5. Narrow repair scope was frozen in scope-delta r7 at commit cd3e86d6f072888270d0179627fe4c39cce4829c, under the user's persistent PROJECT_ORCHESTRATION_AUTHORIZATION and AGENTS.md Codex coordination role. See codex-checkpoint-p02-preflight-review-r1.md. This pointer does not change the original preflight capture time or measurements.

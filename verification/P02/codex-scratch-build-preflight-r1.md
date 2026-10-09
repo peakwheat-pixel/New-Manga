@@ -16,15 +16,21 @@
 | WSB sessions | `PASS` | `wsb list --raw` EXIT=0，stdout=`{ "WindowsSandboxEnvironments": [] }`，没有 running/stopped session；stderr 为空。 |
 | 固定 scratch clone 路径 | `PASS` | `G:/CODEX/P02-scratch-build-source` 不存在；未创建。 |
 | 架构 / 虚拟化 | `PASS` | `PROCESSOR_ARCHITECTURE=AMD64`，`Win32_Processor.Architecture=9`，`VirtualizationFirmwareEnabled=True`。 |
-| 内存 / CPU | `PASS` | 总 RAM=`31.647 GiB`（阈值≥4 GiB）；可用=`15,805 MiB`（阈值≥4,096 MiB）；物理核心=`16`（阈值≥2）。 |
-| C:/G: 空闲空间 | `PASS` | C:=`324.458 GiB`，G:=`1,299.930 GiB`；均≥1 GiB。 |
-| HostFolder 路径 | `PASS` | 固定 clone 预期不存在；其余 11 个 HostFolder 均存在。12 项逐路径记录见 [`codex-scratch-build-preflight-hostfolders-r1.tsv`](codex-scratch-build-preflight-hostfolders-r1.tsv)。 |
+| 内存 / CPU | `PASS`（两次非提权采集均满足数值阈值） | R1 原快照（00:03–00:09）：总 RAM=`31.647 GiB`、可用=`15,805 MiB`、物理核心=`16`；R2 复测（00:25）：`Win32_ComputerSystem.TotalPhysicalMemory=31.647 GiB`、`Win32_OperatingSystem.TotalVisibleMemorySize=31.647 GiB`、`FreePhysicalMemory=18,696 MiB`、物理核心=`16`。R2 字段来源与原始值见 [observations JSON](codex-scratch-build-preflight-observations-r1.json)。 |
+| C:/G: 空闲空间 | `PASS`（两次采集均满足阈值） | R1 原快照 C:`324.458 GiB`、G:`1,299.930 GiB`；R2 复测 C:`334.462 GiB`、G:`1,299.933 GiB`。R2 原始字节与 CIM 来源见 [observations JSON](codex-scratch-build-preflight-observations-r1.json)；资源会变化，Smoke 准入时须即时复测。 |
+| HostFolder 根路径 | `PASS`（逐路径存在性检查） | 12 行 = 10 个 Smoke 方案宿主根（1 个预期不存在的 scratch RW 根 + 9 个 Smoke 输入 RO 根）+ 2 个 Build-only Git RO 根。r3 Smoke XML 有 11 条映射，因为另含 clone 内 canary-local RO 子路径；这不是第 12 个宿主根。逐行 domain 标记见 [`codex-scratch-build-preflight-hostfolders-r1.tsv`](codex-scratch-build-preflight-hostfolders-r1.tsv)。 |
 | 固定文件 pins | `PASS` | 20 个文件的 SHA-256 与已登记值匹配；登记大小（有大小 pin 的项）也匹配。完整 expected/actual 与路径见 [`codex-scratch-build-preflight-inputs-r1.tsv`](codex-scratch-build-preflight-inputs-r1.tsv)。其中包括 4 个模型输入文件的哈希；未加载、解析或递归扫描权重目录。 |
-| Source commit pins | `PASS_WITH_LIMIT` | 固定来源 commit=`7ce3c40cd308e7093929bd5f53abc4f8a6c4ef7a` 的三个 Git blob 可读取；按冻结 `core.autocrlf=true` 对 LF blob 转 CRLF，所得 SHA-256 与已冻结 pins 完全匹配（完整 digest 见下表）。实际 scratch clone checkout bytes 仍 `NOT_RUN`，须在后续隔离 Gate 重核。 |
+| Source commit pins | `MATCH_PREDICTED / CHECKOUT_NOT_RUN` | 固定来源 commit=`7ce3c40cd308e7093929bd5f53abc4f8a6c4ef7a` 的三个 Git blob 可读取；按冻结 `core.autocrlf=true` 对 LF blob 转 CRLF，预测 SHA-256 与 pins 匹配（完整 digest 见下表）。实际 scratch clone checkout bytes 仍 `NOT_RUN`，此状态不表示 checkout PASS。 |
 | Windows Sandbox Feature | `UNKNOWN` | 本轮未查询/启用该 Feature。准入方案要求 Feature=`Enabled`；不得以其他检查推定。 |
 | 完整 preflight / Smoke admission | `BLOCKED / INCOMPLETE` / `NOT_ADMITTED` | Feature 证据缺失，不能满足 proposal 的完整 Smoke 前置条件。 |
 | Smoke / Build / 产品验收 | `NOT_AUTHORIZED / NOT_RUN` / `BLOCKED` | 未运行 `wsb start/connect/exec`、Sandbox、build、Cargo/Tauri、Vitest、GUI/WebView 或产品测试。P02 AC1–AC7=`BLOCKED / NOT_RUN`；Hard Build Barrier 仍有效。 |
 
+## R2 只读证据复核（2026-10-10 00:25 Asia/Shanghai）
+
+- DSH R1 exact-head Review=`APPROVED_WITH_CONDITIONS`，P0/P1/P2/P3=`0/0/1/5`；P2-01 在 scope-delta r7 冻结授权链后进入修订，R2 exact-head 复审前不集成。Review 与 session 证据见 [R1 Review](dsh-review-p02-preflight-r1.response.md) 和 [R2 start checkpoint](codex-checkpoint-p02-preflight-r2-start.md)。
+- `codex-process-isolation-root-start-manifest.json` 的 head=`549a6544f0be1eec66c09ece393fd1a409f10bf3` 是冻结清单的创建时 HEAD；live main 当时为 `6855c113e6a44320d9555777900cfb78a218d383`。这两个 HEAD 不需相同；清单冻结的 203 个 path/status/kind/size/hash 条目逐项与 live root 匹配，missing/extra/mismatch=`0/0/0`，canonical entries SHA-256=`3a54fa978bf228bfae366a4c4de35b90e4fab609447d3370ed81370299da10e2`。
+- R2 资源复测的非提权状态、PowerShell 版本、CIM class/property/value、Win32_ComputerSystem 与 Win32_OperatingSystem 两种内存口径、CPU 核心/虚拟化、C:/G: 原始空闲字节，以及当前用户 WSB AppX identity/exe size/version/SHA-256，均在 [machine-readable observations](codex-scratch-build-preflight-observations-r1.json)。R1 原始资源摘要保留；R2 复测显示可用内存与 C: 空闲空间已变化，后续 Smoke admission 前仍须即时复测。
+- 本节不查询 Windows Sandbox Feature。该 Feature 继续 `UNKNOWN`；完整 preflight=`BLOCKED / INCOMPLETE`；Smoke admission=`NOT_ADMITTED`；Smoke=`NOT_AUTHORIZED / NOT_RUN`；Build Gate=`BLOCKED`；build=`NOT_AUTHORIZED / NOT_RUN`；P02 AC1–AC7=`BLOCKED / NOT_RUN`；Hard Build Barrier 有效。
 ### 固定 source commit 的 EOL pins
 
 | Source path | Git blob (`LF`) SHA-256 | LF→CRLF SHA-256（与 Task pin 匹配） |

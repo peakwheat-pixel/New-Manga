@@ -1,0 +1,78 @@
+{
+  "schema_version": 1,
+  "captured_at": "2026-10-10T00:25:26.8980781+08:00",
+  "capture_context": {
+    "host": "HOME-MY",
+    "user": "49745",
+    "is_elevated": false,
+    "powershell_version": "7.6.6",
+    "processor_architecture_env": "AMD64"
+  },
+  "sources": {
+    "cim": {
+      "Win32_ComputerSystem": {
+        "TotalPhysicalMemory_bytes": 33981165568,
+        "TotalPhysicalMemory_GiB": 31.647
+      },
+      "Win32_OperatingSystem": {
+        "TotalVisibleMemorySize_KiB": 33184732,
+        "TotalVisibleMemory_GiB": 31.647,
+        "FreePhysicalMemory_KiB": 19144520,
+        "FreePhysicalMemory_MiB": 18696.0
+      },
+      "Win32_Processor": [
+        {
+          "Name": "AMD Ryzen 9 7950X3D 16-Core Processor          ",
+          "Architecture": 9,
+          "NumberOfCores": 16,
+          "VirtualizationFirmwareEnabled": true
+        }
+      ],
+      "summed_NumberOfCores": 16,
+      "Win32_LogicalDisk": [
+        {
+          "device": "C:",
+          "freeBytes": 359125831680,
+          "freeGiB": 334.462,
+          "sizeBytes": 998993031168
+        },
+        {
+          "device": "G:",
+          "freeBytes": 1395791908864,
+          "freeGiB": 1299.933,
+          "sizeBytes": 2048405794816
+        }
+      ]
+    },
+    "windows_sandbox_appx": {
+      "Name": "MicrosoftWindows.WindowsSandbox",
+      "PackageFullName": "MicrosoftWindows.WindowsSandbox_0.8.107.0_x64__cw5n1h2txyewy",
+      "Version": "0.8.107.0",
+      "InstallLocation": "C:\\Program Files\\WindowsApps\\MicrosoftWindows.WindowsSandbox_0.8.107.0_x64__cw5n1h2txyewy",
+      "TargetExe": "C:\\Program Files\\WindowsApps\\MicrosoftWindows.WindowsSandbox_0.8.107.0_x64__cw5n1h2txyewy\\wsb.exe",
+      "TargetLength_bytes": 156160,
+      "TargetFileVersion": "0.8.107.0",
+      "TargetSHA256": "247E092B5C5BD37820F225A7DD3DDF10AE37A67E2751A19C24B802C84769C441"
+    }
+  },
+  "commands": [
+    "[Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent().IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)",
+    "Get-CimInstance -ClassName Win32_ComputerSystem",
+    "Get-CimInstance -ClassName Win32_OperatingSystem",
+    "Get-CimInstance -ClassName Win32_Processor",
+    "Get-CimInstance -ClassName Win32_LogicalDisk -Filter \"DeviceID='C:' OR DeviceID='G:'\"",
+    "Get-AppxPackage -Name MicrosoftWindows.WindowsSandbox",
+    "Get-Item <Appx InstallLocation>\\wsb.exe; Get-FileHash -Algorithm SHA256 <Appx InstallLocation>\\wsb.exe"
+  ],
+  "related_cli_evidence": {
+    "version_stdout": "verification/P02/wsb-version-r1.stdout.txt",
+    "version_stderr": "verification/P02/wsb-version-r1.stderr.txt",
+    "list_raw_stdout": "verification/P02/wsb-list-raw-r1.stdout.txt",
+    "list_raw_stderr": "verification/P02/wsb-list-raw-r1.stderr.txt",
+    "captured_during_preflight": "2026-10-10T00:03..00:09+08:00",
+    "exit_codes": {
+      "list_raw": 0,
+      "version": 0
+    }
+  }
+}
