@@ -27,6 +27,13 @@
 - root仍`main@714138de3da06013e3ea35395e0c11b3d15fc371`；24项受保护路径逐项status/path/content SHA匹配，manifest SHA-256=`b41835453b693b4e62818216e4d67801c01eca6e33450f8d3d3dd72849d578e7`，候选路径交集=0。
 - `git merge --ff-only codex/P01-integration-20261009`尚未执行。执行前再次检查root仍在同一HEAD/branch且24项manifest匹配；快进后重跑route validator、祖先、range `git diff --check`、Task/Plan/Status和受保护文件核对，并把结果追加于本报告与RESUME。
 
+## D6固定头复验
+
+- D6=`65dd9456c52482ec194d23749e26451b4132b2aa`，tree=`54477f4cf0b1f437452c602cd1b0b7e765ceac5e`；D5 closeout结果同步到项目索引、Task、Handoff、RESUME和自动推进提示后形成。
+- D6固定头重跑`verify_plan.py` EXIT=0；base..D6=92 paths、outside=0、product/test/build=0；P01 base祖先检查、range `git diff --check`及clean worktree检查通过。
+- root仍`main@714138de3da06013e3ea35395e0c11b3d15fc371`；受保护manifest=24/24，digest=`b41835453b693b4e62818216e4d67801c01eca6e33450f8d3d3dd72849d578e7`，D6 range path交集=0。fast-forward前须再做一次即时复核。
+- 下一步创建只含P01恢复材料的D7 pre-FF checkpoint、固定后重跑同一套验证；通过后再按RESUME安全fast-forward。post-FF确认完成前本报告及关机状态均不得标完成。
+
 ## 保留的验证边界
 
 产品pytest/cargo/vitest/build/GUI/真实Tauri WebView均`NOT_RUN`，因为P01不修改产品或测试代码。R2/SYNTH Review carrier仍`NOT_VERIFIED`；来源Task状态及产品裁决保持原样。
