@@ -15,6 +15,13 @@
 - P01 保持 done，不重做；P02 scope r1–r4、AC、Owner allowlist 与行为基线保持冻结。P02 仍为 in_progress / ACTIVE。AC1–AC6 保持 BLOCKED；Hard Build Barrier 继续有效。
 - 本轮未运行 Cargo/Tauri/sidecar/frontend build、Vitest、GUI、真实 WebView/CDP、鼠标或键盘操作。未 push、发布、部署或关机。
 
+## 主仓库 Fast-forward 后现场
+
+- Codex Stage A closeout commit 9e0980aa57cda6f4d80b92a72987fd6334476fa7 已推进到 root main。该 commit 的 Owner P02 integration_commit 字段仍指向固定 Owner r8 tip 89413f45a601966eb40d7af7abea65cbdfc754b3。
+- 主仓库集成前保护清单 294 个路径中，92 个是本次集成的受控交集：88 个原有 untracked 证据文件逐字节未变并转为 tracked；4 个 Codex 管理的 Plan/Status/Index/RESUME 文档完成状态同步。其余 202 个 dirty/untracked 路径状态和内容 hash 与基线完全一致，0 mismatch。原 RESUME 文件另有逐字节快照，SHA-256=ca398170add5d9f61ceedfc59a04a3c79e7d6c85844c0f42afe815a83fde0706。
+- 路线校验器与路径/状态漂移变异探针已在 main@9e0980aa 实际运行，均 EXIT=0，日志见 [route stdout](r8-codex-post-ff-route-validator.stdout.log)、[route exit](r8-codex-post-ff-route-validator.exit)、[probe stdout](r8-codex-post-ff-route-validator-mutation-probe.stdout.log) 与 [probe exit](r8-codex-post-ff-route-validator-mutation-probe.exit)。后续提交若只包含本检查点和这些日志，P02 代码状态不变；每次恢复仍需读取 live HEAD/status。
+- ZCode 已在 AGENTS.md 和 doc/09_COLLABORATION.md 的项目调用/角色名单中，P02 本次分工不变；无需修改名单。
+- 没有关机、push、发布或部署；没有运行产品构建、Vitest、GUI 或真实 WebView/CDP。AC1–AC6 保持 BLOCKED。
 ## 后续获准路线
 
 Codex 先准备 P02 Task-local 隔离 scratch-build 方案，覆盖 build.rs 写入、输出路径、受信 sidecar provenance/hash、synthetic data root、保护路径与清理边界。方案须经独立 Review 和明确 Gate 批准后，才可考虑执行构建；准备期间不运行 build。

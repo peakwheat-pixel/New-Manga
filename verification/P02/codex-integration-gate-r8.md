@@ -23,6 +23,13 @@ PASS：固定 Stage A r8 交付可集成。该 Gate 仅覆盖安全基底、预�
 - 独立 Codex Reviewer 对 r7..r8 修订切片=approved，无新增实质缺陷；该意见为补充，不替代 DSH 正式 Review，见 r8-codex-independent-review.md。
 - DSH unable-to-run 事项：Windows 沙箱 SetNamedSecurityInfoW failed (Win32 5) 阻止其 shell/Git/hash/runner；其余命令级结论归属 Codex 执行，不归属 DSH。
 
+## 主仓库 Fast-forward 后复核
+
+- root main 从 gate 起始 commit 5de8d44c 前进到 post-FF 验证对象 9e0980aa57cda6f4d80b92a72987fd6334476fa7；分支仍为 main。集成差量覆盖保护清单中的 92 个原始 dirty/untracked 路径：88 个原有 untracked 文件纳入提交且 SHA-256 保持不变；4 个 Codex 管理的状态/恢复文档按已合并内容更新。其余 202 个路径的状态与内容 hash 全部匹配保护清单，mismatch=0。
+- 原 root RESUME 的逐字节快照 root-preintegration-RESUME.md 已核验 SHA-256=ca398170add5d9f61ceedfc59a04a3c79e7d6c85844c0f42afe815a83fde0706；该值与 pre-integration manifest 中 RESUME 条目一致。
+- 在 main@9e0980aa 实际重跑路线校验器与变异探针，两项均 EXIT=0；见 [validator stdout](r8-codex-post-ff-route-validator.stdout.log)、[validator exit](r8-codex-post-ff-route-validator.exit)、[probe stdout](r8-codex-post-ff-route-validator-mutation-probe.stdout.log) 与 [probe exit](r8-codex-post-ff-route-validator-mutation-probe.exit)。验证后的后续提交只更新这份 Gate/checkpoint 与保存上述同次复核日志。
+- ZCode 已存在 AGENTS.md 和 doc/09_COLLABORATION.md 的项目角色及 UI 主责/故障转移名单；本次未改调用名单，也未改变 P02 Owner/Reviewer 分工。
+- 未关机、未 push、未发布或部署。未运行 Cargo/Tauri/sidecar/frontend build、Vitest、GUI 或真实 WebView；AC1–AC6 仍 BLOCKED。
 ## Finding 处置
 
 - R7-01=closed：PRE-03 生产 verdict 构造/记录 helper 和顶层退出 helper 已同源，自检断言 FAIL/1 与 PASS/0；Codex 另从实际 run_preflight_checks() / main() 注入验证 FAIL/1 传播。
