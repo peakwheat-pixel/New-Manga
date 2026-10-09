@@ -1,0 +1,21 @@
+==========================================================
+P02 Probe Execution Log
+Date: 2026-10-09T17:36:41+08:00
+PowerShell: 5.1.26100.9549
+Worktree: G:\CODEX\New Manga.worktrees\P02-stage-a-validation-38959ba99-exact
+Mode: Full Stage A
+LogFile: probe-execution-full.log
+Status: IN_PROGRESS
+==========================================================
+
+[UNHANDLED_EXCEPTION]
+Failed Step: Injected Exception Test
+Failed Command: throw-synthetic-exception --force-unhandled
+Exception Type: System.InvalidOperationException
+Exception Message: Injected unhandled exception for Scenario C microprobe verification
+Captured Process Output:
+UNAVAILABLE (exception occurred before process output stream could be captured)
+Stack Trace:
+at <ScriptBlock>, G:\CODEX\New Manga.worktrees\P02-stage-a-validation-38959ba99-exact\verification\P02\run-webview.ps1: line 133
+Observed Child ExitCode: null (exception aborted execution before exit code could be observed)
+Status: FAILED

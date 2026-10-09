@@ -1,0 +1,30 @@
+{
+  "head": "38959ba99b84f771aba7010b53b9b47ecdc75488",
+  "tree": "5bf0c81a0ee814f857ad4c1f0b3f598f963fa1c5",
+  "parent": "38672473f93971a4681aef682e5635e64b0bd896",
+  "owner_worktree_clean": true,
+  "base_diff_path_count": 19,
+  "paths": [
+    "apps/desktop/frontend/e2e/workbench_driver_protocol.ts",
+    "doc/handoffs/P02-stage-a-foundation-handoff.md",
+    "doc/tasks/P02.md",
+    "verification/P02/RESUME.md",
+    "verification/P02/env-identity-report.json",
+    "verification/P02/env-identity-report.txt",
+    "verification/P02/fixtures/workbench_synthetic_data.json",
+    "verification/P02/harness/workbench_cdp_harness.py",
+    "verification/P02/microprobes/ps51-exception-handling.log",
+    "verification/P02/p02-harness-results.json",
+    "verification/P02/p02-harness-results.txt",
+    "verification/P02/probe-execution-full.log",
+    "verification/P02/probe-execution-probeonly.log",
+    "verification/P02/probe-execution.log",
+    "verification/P02/probes/env_identity_probe.py",
+    "verification/P02/probes/static_control_probe.py",
+    "verification/P02/run-webview.ps1",
+    "verification/P02/static-control-report.json",
+    "verification/P02/static-control-report.txt"
+  ],
+  "outside_allowlist": [],
+  "diff_check_exit": 0
+}

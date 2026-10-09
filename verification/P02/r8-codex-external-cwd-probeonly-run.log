@@ -1,0 +1,60 @@
+==========================================================
+P02 Probe Execution Log
+Date: 2026-10-09T18:02:49+08:00
+PowerShell: 5.1.26100.9549
+Worktree: C:\Users\49745\.codex\worktrees\p02-stage-a-r8-exact\New Manga
+Mode: ProbeOnly
+LogFile: probe-execution-probeonly.log
+Status: IN_PROGRESS
+==========================================================
+Python: C:\Python314\python.exe (Python 3.14.6)
+Node: v24.15.0
+npm: 12.0.1
+
+--- [Step 1: Environment Identity Probe] ---
+Command: C:\Python314\python.exe C:\Users\49745\.codex\worktrees\p02-stage-a-r8-exact\New Manga\verification\P02\probes\env_identity_probe.py
+OUTPUT:
+=== P02 Read-Only Environment & Identity Report ===
+Host OS: Windows-11-10.0.26300-SP0
+WebView2 Detected Version: 154.0.4258.62
+WebView2 Verified Key: {F3017226-FE2A-4295-8BDF-00C3A9A7E4C5}
+Node Runtime: v24.15.0
+npm Tool: 12.0.1
+Python Executable: C:\Python314\python.exe
+Git Branch: 
+Source HEAD: 89413f45a601966eb40d7af7abea65cbdfc754b3
+Source Tree: f1063c981b8f4164f51248f92b7825fc205dd07d
+Git Clean Status: False
+Behavior Baseline: 241ff3b70b6fc0490ea238efd486cc707f849031
+Porcelain Status:
+M verification/P02/p02-harness-results.json
+ M verification/P02/p02-harness-results.txt
+ M verification/P02/probe-execution-probeonly.log
+ M verification/P02/static-control-report.json
+ M verification/P02/static-control-report.txt
+frontend/dist Exists: False
+cargo-target Exists: False
+Hard Build Barrier Active: True
+Barrier Rationale: tauri_build writes into source tree (gen/schemas and command permission TOMLs), and fixed baseline lacks trusted sidecar inputs. Cargo/Tauri builds prohibited in this Owner worktree.
+EXIT: 0
+
+--- [Step 2: TypeScript Protocol Check] ---
+Command: node G:\CODEX\New Manga\apps\desktop\frontend\node_modules\typescript\bin\tsc --noEmit --strict --skipLibCheck --target ES2021 --lib ES2021,DOM C:\Users\49745\.codex\worktrees\p02-stage-a-r8-exact\New Manga\apps\desktop\frontend\e2e\workbench_driver_protocol.ts
+OUTPUT: [NO_OUTPUT]
+EXIT: 0
+
+--- [Step 3: Static Source Contract Probe] ---
+Command: C:\Python314\python.exe C:\Users\49745\.codex\worktrees\p02-stage-a-r8-exact\New Manga\verification\P02\probes\static_control_probe.py
+OUTPUT:
+=== P02 Static Source Contract Control Report ===
+Overall Status: PASS
+WorkbenchPage Status: PASS
+  - resolveDebounceMs default 300: True
+  - regionDebounceMs default 300: True
+App Navigation Status: PASS
+  - app-nav testid present: True
+  - nav-workbench testid present: True
+EXIT: 0
+
+ProbeOnly execution completed successfully with EXIT=0.
+Status: COMPLETED (EXIT=0)

@@ -1,0 +1,424 @@
+{
+  "task_id": "P02",
+  "owner": "Antigravity",
+  "stage": "STAGE_A_SAFE_FOUNDATION_R7",
+  "provenance": {
+    "source_head": "38959ba99b84f771aba7010b53b9b47ecdc75488",
+    "source_tree": "5bf0c81a0ee814f857ad4c1f0b3f598f963fa1c5",
+    "branch": "",
+    "is_clean_worktree": false,
+    "behavior_baseline_commit": "241ff3b70b6fc0490ea238efd486cc707f849031",
+    "key_source_files_sha256": {
+      "apps/desktop/frontend/src/workbench/WorkbenchPage.tsx": "1696bc6f350ac6daf1a84aa9f9350090bfd0d0594b9f88f45cfbc4e3b488d7b6",
+      "apps/desktop/frontend/src/workbench/relabelMachine.ts": "61c29e378158f7caf20297784b07d65b7212fb5c9d6930ee2e1def577db8ca10",
+      "apps/desktop/frontend/src/App.tsx": "8284874412d4dd95a39a4984110ad0762b749179a4a7e64427c45a0f136e11be",
+      "apps/desktop/frontend/src/region/client.ts": "158e51e9a2a43d5e6b4888fe84d993ba5a05320714f6d0eba75c60880f373d77",
+      "apps/desktop/frontend/src/region/types.ts": "c8e7bdff355d97d8efe74cf823b658fe8d902ad449627f47991f35b39cac1746",
+      "apps/desktop/frontend/src/library/client.ts": "31fcaf4616fb946941562cd17bda26bf499f54a3b23d938bfa384add9b95de88",
+      "apps/desktop/frontend/src/library/types.ts": "b2143a6850cbcfb8e5873e4055b95c19fb9b0e8ec346f34f7b2bfca1f26e4009"
+    },
+    "key_execution_inputs_sha256": {
+      "verification/P02/harness/workbench_cdp_harness.py": "b1c3721d37fb9d9dba580cfcfc5b065a6122ce5b7fac238e1d6549664c0dcccc",
+      "verification/P02/probes/env_identity_probe.py": "39230687cc534a7b8c8e9e7fe4be1d08a64e8ae79366beaec5fed4cd92fd2426",
+      "verification/P02/probes/static_control_probe.py": "499bb0b3bc054ddeab004d4075603f9196fa7f7deeb3ecfbc2edd0b957dc915e",
+      "verification/P02/run-webview.ps1": "6bcd397028e2e861daccddba4b7e54cdd8e409f4663f256f9de9b7894c2a34c0",
+      "verification/P02/fixtures/workbench_synthetic_data.json": "d873479d58f772ee1461eddc586afaa6fb1009c8af570a052ee392f93f686597",
+      "apps/desktop/frontend/e2e/workbench_driver_protocol.ts": "7889e24e047e0f05d272442c13510f2823e49c206c038406c15c0c8e4e21db45"
+    },
+    "verification_mode": "PRE_COMMIT_LOCAL_EVIDENCE",
+    "replay_status": "PENDING_CODEX_EXACT_HEAD_REPLAY",
+    "typescript_contract_gate": {
+      "file": "apps/desktop/frontend/e2e/workbench_driver_protocol.ts",
+      "sha256": "7889e24e047e0f05d272442c13510f2823e49c206c038406c15c0c8e4e21db45",
+      "tsc_binary_found": true,
+      "tsc_path": "G:\\CODEX\\New Manga\\apps\\desktop\\frontend\\node_modules\\typescript\\bin\\tsc",
+      "tsc_binary_resolution": "RESOLVED",
+      "execution_status": "PASS",
+      "observed_exit_code": 0,
+      "gate_status": "PASS",
+      "note": "TypeScript contract check executed and passed with exit code 0."
+    },
+    "execution_commands": [
+      "powershell -ExecutionPolicy Bypass -File verification/P02/run-webview.ps1 -ProbeOnly",
+      "powershell -ExecutionPolicy Bypass -File verification/P02/run-webview.ps1",
+      "python verification/P02/harness/workbench_cdp_harness.py",
+      "python verification/P02/harness/workbench_cdp_harness.py --finalize"
+    ],
+    "artifact_hashes": "PENDING_TWO_PHASE_FINALIZATION",
+    "finalization_status": "PENDING",
+    "note": "Pre-commit execution evidence. The final delivery commit will be created upon committing; exact head will be independently replayed and validated by Codex Gate on a clean detached worktree."
+  },
+  "host_platform": "Windows-11-10.0.26300-SP0",
+  "verdicts": [
+    {
+      "scenario_id": "PRE-01",
+      "scenario_name": "synthetic_fixture_presence",
+      "status": "PASS",
+      "layer": "FILESYSTEM",
+      "exit_code": 0,
+      "details": {
+        "sections_validated": [
+          "books",
+          "chapters",
+          "pages",
+          "regions",
+          "post_write_scenarios",
+          "visual_direction_f_tokens",
+          "live_inline_palette"
+        ],
+        "counts": {
+          "books_count": 1,
+          "chapters_count": 2,
+          "pages_count": 4,
+          "regions_count": 3,
+          "revisions_count": 3,
+          "scenarios_verified": [
+            "retype",
+            "undo",
+            "restore"
+          ],
+          "authoritative_enums_enforced": [
+            "narration",
+            "note",
+            "other",
+            "sfx",
+            "speech",
+            "title"
+          ]
+        },
+        "relabel_transition_verified": "speech -> sfx (relabelMachine authorized)",
+        "mutation_rejection_self_test": "4/4 executed and rejected (skipped: 0)",
+        "authoritative_enums_enforced": {
+          "region_types": [
+            "narration",
+            "note",
+            "other",
+            "sfx",
+            "speech",
+            "title"
+          ],
+          "sfx_policies": [
+            "manual",
+            "skip",
+            "translate"
+          ],
+          "region_origins": [
+            "imported",
+            "machine",
+            "restored",
+            "user"
+          ]
+        },
+        "file": "verification\\P02\\fixtures\\workbench_synthetic_data.json"
+      },
+      "blocker_reason": null,
+      "timestamp": "2026-10-09T09:38:09Z"
+    },
+    {
+      "scenario_id": "PRE-02",
+      "scenario_name": "static_source_contract_check",
+      "status": "PASS",
+      "layer": "STATIC_AST",
+      "exit_code": 0,
+      "details": {
+        "overall_status": "PASS",
+        "observed_process_exit_code": 0,
+        "report_exit_code": 0,
+        "bound_source_head": "38959ba99b84f771aba7010b53b9b47ecdc75488",
+        "bound_source_tree": "5bf0c81a0ee814f857ad4c1f0b3f598f963fa1c5",
+        "report_freshness_verified": true,
+        "freshness_evaluation_reason": "fresh_and_valid",
+        "workbench_page": {
+          "status": "PASS",
+          "file": "apps\\desktop\\frontend\\src\\workbench\\WorkbenchPage.tsx",
+          "checks": {
+            "resolveDebounceMs_default_300": true,
+            "regionDebounceMs_default_300": true,
+            "client_references": {
+              "LibraryClient": true,
+              "RegionClient": true,
+              "ResourceChannelClient": true
+            },
+            "command_surface_references": {
+              "library_list_books": true,
+              "list_regions": true,
+              "set_region_type": true,
+              "restore_region_revision": true,
+              "resolve_page_resource": true,
+              "list_chapters": true,
+              "list_chapter_pages": true
+            },
+            "component_references": {
+              "PageListPanel": true,
+              "ViewerPanel": true,
+              "RegionInspector": true,
+              "WorkbenchToolbar": true,
+              "TaskProgressPanel": true,
+              "RelabelConfirmDialog": true
+            }
+          }
+        },
+        "app_navigation": {
+          "status": "PASS",
+          "file": "apps\\desktop\\frontend\\src\\App.tsx",
+          "checks": {
+            "has_app_nav_testid": true,
+            "has_nav_console_testid": true,
+            "has_nav_workbench_testid": true,
+            "has_workbench_mount": true,
+            "has_nav_chrome_toggle": true,
+            "has_interactive_view_state": true
+          }
+        }
+      },
+      "blocker_reason": null,
+      "timestamp": "2026-10-09T09:38:09Z"
+    },
+    {
+      "scenario_id": "PRE-03",
+      "scenario_name": "f_token_and_palette_math_model",
+      "status": "FAIL",
+      "layer": "TOKEN_MODEL",
+      "exit_code": 1,
+      "details": {
+        "direction_f_tokens_evaluated": {
+          "ink": {
+            "hex": "#ececee",
+            "role": "primary_text",
+            "contrast_ratio": 1.0,
+            "min_required": 4.5,
+            "contrast_result": "FAIL",
+            "token_mapping": "MAPPED"
+          },
+          "ink_2": {
+            "hex": "#a9a9b3",
+            "role": "secondary_text",
+            "contrast_ratio": 1.0,
+            "min_required": 4.5,
+            "contrast_result": "FAIL",
+            "token_mapping": "MAPPED"
+          },
+          "ink_3": {
+            "hex": "#91919c",
+            "role": "tertiary_text",
+            "contrast_ratio": 1.0,
+            "min_required": 4.5,
+            "contrast_result": "FAIL",
+            "token_mapping": "MAPPED"
+          },
+          "ink_dis": {
+            "hex": "#70707b",
+            "role": "disabled_text",
+            "contrast_ratio": 1.0,
+            "min_required": 3.0,
+            "contrast_result": "FAIL",
+            "token_mapping": "MAPPED"
+          },
+          "accent": {
+            "hex": "#4d63e8",
+            "role": "interactive_accent",
+            "contrast_ratio": 1.0,
+            "min_required": 3.0,
+            "contrast_result": "FAIL",
+            "token_mapping": "MAPPED"
+          }
+        },
+        "live_inline_palette_evaluated": {
+          "#d8e0e8": {
+            "role": "app_primary_text",
+            "source": "apps/desktop/frontend/src/App.tsx:474",
+            "background_hex": "#101418",
+            "background_role": "app_base_background",
+            "contrast_ratio": 1.0,
+            "min_required": 4.5,
+            "token_mapping": "UNMAPPED",
+            "contrast_result": "FAIL"
+          },
+          "#161b22": {
+            "role": "nav_inactive_button_background",
+            "source": "apps/desktop/frontend/src/App.tsx:486",
+            "contrast_ratio": null,
+            "min_required": null,
+            "token_mapping": "UNMAPPED",
+            "contrast_result": "NOT_VERIFIABLE",
+            "notes": "Container background / border without standalone text pairing per G-05"
+          },
+          "#1c2430": {
+            "role": "nav_active_button_background",
+            "source": "apps/desktop/frontend/src/App.tsx:486",
+            "contrast_ratio": null,
+            "min_required": null,
+            "token_mapping": "UNMAPPED",
+            "contrast_result": "NOT_VERIFIABLE",
+            "notes": "Container background / border without standalone text pairing per G-05"
+          },
+          "#2a3038": {
+            "role": "nav_button_border",
+            "source": "apps/desktop/frontend/src/App.tsx:488",
+            "contrast_ratio": null,
+            "min_required": null,
+            "token_mapping": "UNMAPPED",
+            "contrast_result": "NOT_VERIFIABLE",
+            "notes": "Container background / border without standalone text pairing per G-05"
+          },
+          "#8a94a2": {
+            "role": "pagelist_muted_text",
+            "source": "apps/desktop/frontend/src/workbench/PageListPanel.tsx:53",
+            "background_hex": "#101418",
+            "background_role": "app_base_background",
+            "contrast_ratio": 1.0,
+            "min_required": 4.5,
+            "token_mapping": "UNMAPPED",
+            "contrast_result": "FAIL"
+          },
+          "#0b0e12": {
+            "role": "viewer_background",
+            "source": "apps/desktop/frontend/src/workbench/ViewerPanel.tsx:152",
+            "contrast_ratio": null,
+            "min_required": null,
+            "token_mapping": "UNMAPPED",
+            "contrast_result": "NOT_VERIFIABLE",
+            "notes": "Container background / border without standalone text pairing per G-05"
+          }
+        },
+        "synthetic_alpha_cases_evaluated": {
+          "pill_skip_background": {
+            "overlay_rgba": "rgba(126, 178, 135, 0.16)",
+            "source": "apps/desktop/frontend/src/region/RegionOverlay.tsx:47",
+            "composite_base_background": "#101418",
+            "foreground_text": "#7eb287",
+            "foreground_text_source": "apps/desktop/frontend/src/region/RegionOverlay.tsx:48 (PILL_SKIP_TEXT)",
+            "contrast_ratio": 1.0,
+            "min_required": 4.5,
+            "contrast_result": "FAIL",
+            "token_mapping": "UNMAPPED"
+          },
+          "pill_warn_background": {
+            "overlay_rgba": "rgba(251, 191, 36, 0.16)",
+            "source": "apps/desktop/frontend/src/region/RegionOverlay.tsx:45",
+            "composite_base_background": "#101418",
+            "foreground_text": "#fbbf24",
+            "foreground_text_source": "apps/desktop/frontend/src/region/RegionOverlay.tsx:46 (PILL_WARN_TEXT)",
+            "contrast_ratio": 1.0,
+            "min_required": 4.5,
+            "contrast_result": "FAIL",
+            "token_mapping": "UNMAPPED"
+          }
+        },
+        "contrast_thresholds_applied": {
+          "body_text_min_ratio": 4.5,
+          "disabled_text_min_ratio": 3.0,
+          "ui_components_min_ratio": 3.0
+        },
+        "aggregated_results": {
+          "tokens_all_passed": false,
+          "live_palette_all_passed": false,
+          "synthetic_alpha_all_passed": false
+        }
+      },
+      "blocker_reason": "One or more color tokens/palette entries failed contrast threshold (R5-05)",
+      "timestamp": "2026-10-09T09:38:09Z"
+    },
+    {
+      "scenario_id": "AC1",
+      "scenario_name": "real_webview2_harness_spawn",
+      "status": "BLOCKED",
+      "layer": "REAL_WEBVIEW2",
+      "exit_code": null,
+      "details": {
+        "source_head": "38959ba99b84f771aba7010b53b9b47ecdc75488",
+        "source_tree": "5bf0c81a0ee814f857ad4c1f0b3f598f963fa1c5",
+        "behavior_baseline": "241ff3b70b6fc0490ea238efd486cc707f849031",
+        "note": "Per task contract, blocked runtime scenario retains BLOCKED; cannot be satisfied with NOT_RUN or fake timers."
+      },
+      "blocker_reason": "Hard Build Barrier Active: tauri_build side-effects write into source tree (gen/schemas and permission TOMLs), and fixed baseline lacks trusted sidecar inputs. Building Cargo/Tauri binaries in this Owner worktree is strictly prohibited. Awaiting Codex scratch worktree registration and independent Review.",
+      "timestamp": "2026-10-09T09:38:09Z"
+    },
+    {
+      "scenario_id": "AC2",
+      "scenario_name": "workbench_navigation_and_interaction",
+      "status": "BLOCKED",
+      "layer": "REAL_WEBVIEW2",
+      "exit_code": null,
+      "details": {
+        "source_head": "38959ba99b84f771aba7010b53b9b47ecdc75488",
+        "source_tree": "5bf0c81a0ee814f857ad4c1f0b3f598f963fa1c5",
+        "behavior_baseline": "241ff3b70b6fc0490ea238efd486cc707f849031",
+        "note": "Per task contract, blocked runtime scenario retains BLOCKED; cannot be satisfied with NOT_RUN or fake timers."
+      },
+      "blocker_reason": "Hard Build Barrier Active: tauri_build side-effects write into source tree (gen/schemas and permission TOMLs), and fixed baseline lacks trusted sidecar inputs. Building Cargo/Tauri binaries in this Owner worktree is strictly prohibited. Awaiting Codex scratch worktree registration and independent Review.",
+      "timestamp": "2026-10-09T09:38:09Z"
+    },
+    {
+      "scenario_id": "AC3",
+      "scenario_name": "quiet_period_300ms_and_invalidation",
+      "status": "BLOCKED",
+      "layer": "REAL_WEBVIEW2",
+      "exit_code": null,
+      "details": {
+        "source_head": "38959ba99b84f771aba7010b53b9b47ecdc75488",
+        "source_tree": "5bf0c81a0ee814f857ad4c1f0b3f598f963fa1c5",
+        "behavior_baseline": "241ff3b70b6fc0490ea238efd486cc707f849031",
+        "note": "Per task contract, blocked runtime scenario retains BLOCKED; cannot be satisfied with NOT_RUN or fake timers."
+      },
+      "blocker_reason": "Hard Build Barrier Active: tauri_build side-effects write into source tree (gen/schemas and permission TOMLs), and fixed baseline lacks trusted sidecar inputs. Building Cargo/Tauri binaries in this Owner worktree is strictly prohibited. Awaiting Codex scratch worktree registration and independent Review.",
+      "timestamp": "2026-10-09T09:38:09Z"
+    },
+    {
+      "scenario_id": "AC4",
+      "scenario_name": "post_write_refresh_immediate",
+      "status": "BLOCKED",
+      "layer": "REAL_WEBVIEW_MOCK_IPC",
+      "exit_code": null,
+      "details": {
+        "source_head": "38959ba99b84f771aba7010b53b9b47ecdc75488",
+        "source_tree": "5bf0c81a0ee814f857ad4c1f0b3f598f963fa1c5",
+        "behavior_baseline": "241ff3b70b6fc0490ea238efd486cc707f849031",
+        "note": "Per task contract, blocked runtime scenario retains BLOCKED; cannot be satisfied with NOT_RUN or fake timers."
+      },
+      "blocker_reason": "Hard Build Barrier Active: tauri_build side-effects write into source tree (gen/schemas and permission TOMLs), and fixed baseline lacks trusted sidecar inputs. Building Cargo/Tauri binaries in this Owner worktree is strictly prohibited. Awaiting Codex scratch worktree registration and independent Review.",
+      "timestamp": "2026-10-09T09:38:09Z"
+    },
+    {
+      "scenario_id": "AC5",
+      "scenario_name": "keyboard_and_focus_navigation",
+      "status": "BLOCKED",
+      "layer": "REAL_WEBVIEW2",
+      "exit_code": null,
+      "details": {
+        "source_head": "38959ba99b84f771aba7010b53b9b47ecdc75488",
+        "source_tree": "5bf0c81a0ee814f857ad4c1f0b3f598f963fa1c5",
+        "behavior_baseline": "241ff3b70b6fc0490ea238efd486cc707f849031",
+        "note": "Per task contract, blocked runtime scenario retains BLOCKED; cannot be satisfied with NOT_RUN or fake timers."
+      },
+      "blocker_reason": "Hard Build Barrier Active: tauri_build side-effects write into source tree (gen/schemas and permission TOMLs), and fixed baseline lacks trusted sidecar inputs. Building Cargo/Tauri binaries in this Owner worktree is strictly prohibited. Awaiting Codex scratch worktree registration and independent Review.",
+      "timestamp": "2026-10-09T09:38:09Z"
+    },
+    {
+      "scenario_id": "AC6",
+      "scenario_name": "runtime_computed_color_extraction",
+      "status": "BLOCKED",
+      "layer": "REAL_WEBVIEW2",
+      "exit_code": null,
+      "details": {
+        "source_head": "38959ba99b84f771aba7010b53b9b47ecdc75488",
+        "source_tree": "5bf0c81a0ee814f857ad4c1f0b3f598f963fa1c5",
+        "behavior_baseline": "241ff3b70b6fc0490ea238efd486cc707f849031",
+        "note": "Per task contract, blocked runtime scenario retains BLOCKED; cannot be satisfied with NOT_RUN or fake timers."
+      },
+      "blocker_reason": "Hard Build Barrier Active: tauri_build side-effects write into source tree (gen/schemas and permission TOMLs), and fixed baseline lacks trusted sidecar inputs. Building Cargo/Tauri binaries in this Owner worktree is strictly prohibited. Awaiting Codex scratch worktree registration and independent Review.",
+      "timestamp": "2026-10-09T09:38:09Z"
+    }
+  ],
+  "summary": {
+    "total": 9,
+    "pass": 2,
+    "fail": 1,
+    "blocked": 6,
+    "not_run": 0
+  },
+  "hard_build_barrier": {
+    "active": true,
+    "reason": "Cargo/Tauri builds prohibited in Owner worktree to prevent source-tree corruption. Awaiting Codex scratch worktree registration and independent Review."
+  }
+}

@@ -31,6 +31,15 @@ def expect_rejected(old: str, new: str, expected: str) -> None:
 
 
 if __name__ == "__main__":
+    validator_scope = runpy.run_path(str(VALIDATOR), run_name="validator_scope_probe")
+    exceptions = validator_scope["P01_PRODUCT_PATH_EXCEPTIONS"]
+    assert exceptions == {"apps/desktop/frontend/e2e/workbench_driver_protocol.ts"}
+    unexpected = validator_scope["unexpected_p01_product_changes"]
+    e2e_driver = "apps/desktop/frontend/e2e/workbench_driver_protocol.ts"
+    product_source = "apps/desktop/frontend/src/App.tsx"
+    assert unexpected([e2e_driver]) == []
+    assert unexpected([e2e_driver, product_source]) == [product_source]
+    print("PASS: P02 E2E-only delta is allowed and adding a product source path is rejected")
     expect_rejected(
         "P04<br/>proposed / 未释放",
         "P04<br/>ready / 未释放",

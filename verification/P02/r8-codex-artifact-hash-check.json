@@ -1,0 +1,40 @@
+{
+  "declared_count": 5,
+  "tree": "f1063c981b8f4164f51248f92b7825fc205dd07d",
+  "head": "89413f45a601966eb40d7af7abea65cbdfc754b3",
+  "parent": "38959ba99b84f771aba7010b53b9b47ecdc75488",
+  "all_match": true,
+  "matching_count": 5,
+  "hashes": [
+    {
+      "actual": "9745c6c5753897dd49f3229620bae2689ad48394b2f354ea554eeb4a23beca15",
+      "expected": "9745c6c5753897dd49f3229620bae2689ad48394b2f354ea554eeb4a23beca15",
+      "match": true,
+      "path": "verification/P02/env-identity-report.json"
+    },
+    {
+      "actual": "137ec251c1663ce352d92242da22719c0e7c4cf4e886003eca8b9151215a3238",
+      "expected": "137ec251c1663ce352d92242da22719c0e7c4cf4e886003eca8b9151215a3238",
+      "match": true,
+      "path": "verification/P02/static-control-report.json"
+    },
+    {
+      "actual": "421bb659e0ab16fefa74600c585bdb63bde5aed789ddc0d88eb53f5ba5a38c48",
+      "expected": "421bb659e0ab16fefa74600c585bdb63bde5aed789ddc0d88eb53f5ba5a38c48",
+      "match": true,
+      "path": "verification/P02/p02-harness-results.txt"
+    },
+    {
+      "actual": "9c0450e93f89a3965c39a066bfef89c704ab2b5e958785622964066a07b59fdb",
+      "expected": "9c0450e93f89a3965c39a066bfef89c704ab2b5e958785622964066a07b59fdb",
+      "match": true,
+      "path": "verification/P02/probe-execution-probeonly.log"
+    },
+    {
+      "actual": "55714e0939a3da752f3e7ade0b97c64e088dccf4bf31d2cd896d18361069ce66",
+      "expected": "55714e0939a3da752f3e7ade0b97c64e088dccf4bf31d2cd896d18361069ce66",
+      "match": true,
+      "path": "verification/P02/probe-execution-full.log"
+    }
+  ]
+}

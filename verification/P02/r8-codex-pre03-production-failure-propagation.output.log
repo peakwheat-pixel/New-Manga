@@ -1,0 +1,21 @@
+=== P02 Real Workbench WebView2 Harness Verdict Report (Stage A r8) ===
+Source HEAD: 89413f45a601966eb40d7af7abea65cbdfc754b3
+Source Tree: f1063c981b8f4164f51248f92b7825fc205dd07d
+Branch: 
+Behavior Baseline: 241ff3b70b6fc0490ea238efd486cc707f849031
+Total Scenarios: 9
+  PASS: 2
+  FAIL: 1
+  BLOCKED: 6
+  NOT_RUN: 0
+--- Scenario Details ---
+[PRE-01] synthetic_fixture_presence: PASS (Layer: FILESYSTEM, Exit: 0)
+[PRE-02] static_source_contract_check: PASS (Layer: STATIC_AST, Exit: 0)
+[PRE-03] f_token_and_palette_math_model: FAIL (Layer: TOKEN_MODEL, Exit: 1) -> Blocker: One or more color tokens/palette entries failed contrast threshold (R5-05)
+[AC1] real_webview2_harness_spawn: BLOCKED (Layer: REAL_WEBVIEW2, Exit: null) -> Blocker: Hard Build Barrier Active: tauri_build side-effects write into source tree (gen/schemas and permission TOMLs), and fixed baseline lacks trusted sidecar inputs. Building Cargo/Tauri binaries in this Owner worktree is strictly prohibited. Awaiting Codex scratch worktree registration and independent Review.
+[AC2] workbench_navigation_and_interaction: BLOCKED (Layer: REAL_WEBVIEW2, Exit: null) -> Blocker: Hard Build Barrier Active: tauri_build side-effects write into source tree (gen/schemas and permission TOMLs), and fixed baseline lacks trusted sidecar inputs. Building Cargo/Tauri binaries in this Owner worktree is strictly prohibited. Awaiting Codex scratch worktree registration and independent Review.
+[AC3] quiet_period_300ms_and_invalidation: BLOCKED (Layer: REAL_WEBVIEW2, Exit: null) -> Blocker: Hard Build Barrier Active: tauri_build side-effects write into source tree (gen/schemas and permission TOMLs), and fixed baseline lacks trusted sidecar inputs. Building Cargo/Tauri binaries in this Owner worktree is strictly prohibited. Awaiting Codex scratch worktree registration and independent Review.
+[AC4] post_write_refresh_immediate: BLOCKED (Layer: REAL_WEBVIEW_MOCK_IPC, Exit: null) -> Blocker: Hard Build Barrier Active: tauri_build side-effects write into source tree (gen/schemas and permission TOMLs), and fixed baseline lacks trusted sidecar inputs. Building Cargo/Tauri binaries in this Owner worktree is strictly prohibited. Awaiting Codex scratch worktree registration and independent Review.
+[AC5] keyboard_and_focus_navigation: BLOCKED (Layer: REAL_WEBVIEW2, Exit: null) -> Blocker: Hard Build Barrier Active: tauri_build side-effects write into source tree (gen/schemas and permission TOMLs), and fixed baseline lacks trusted sidecar inputs. Building Cargo/Tauri binaries in this Owner worktree is strictly prohibited. Awaiting Codex scratch worktree registration and independent Review.
+[AC6] runtime_computed_color_extraction: BLOCKED (Layer: REAL_WEBVIEW2, Exit: null) -> Blocker: Hard Build Barrier Active: tauri_build side-effects write into source tree (gen/schemas and permission TOMLs), and fixed baseline lacks trusted sidecar inputs. Building Cargo/Tauri binaries in this Owner worktree is strictly prohibited. Awaiting Codex scratch worktree registration and independent Review.
+PRE03_STATUS=FAIL PRE03_EXIT=1 MAIN_EXIT=1

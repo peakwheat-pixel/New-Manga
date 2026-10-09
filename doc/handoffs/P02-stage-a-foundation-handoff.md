@@ -23,6 +23,9 @@ dsh_decision_r5: changes_requested
 reviewed_head_r6: 38672473f93971a4681aef682e5635e64b0bd896
 dsh_decision_r6: approved_with_conditions
 reviewed_head_r7: 38959ba99b84f771aba7010b53b9b47ecdc75488
+reviewed_head_r8: 89413f45a601966eb40d7af7abea65cbdfc754b3
+dsh_decision_r8: approved
+integration_commit: 89413f45a601966eb40d7af7abea65cbdfc754b3
 dsh_decision_r7: approved_with_conditions
 created_at: 2026-10-09T17:58:00+08:00
 ---
@@ -104,6 +107,14 @@ created_at: 2026-10-09T17:58:00+08:00
 
 所有变更严格位于 Owner 允许路径内，未修改任何生产源码、依赖或共享契约。
 
-## 6. 推荐下一步
+## 6. DSH r8 Review 与 Codex Stage A Integration Gate
 
-提交固定交付 commit，由 Codex 在 clean detached exact head 独立复跑 Stage A probes 并完成 Gate 复算与 `git diff --check` 证据归档；交由 DeepSeek Harness 续接会话进行 Stage A r8 复审。待隔离 scratch worktree 构建方案获批后，再推进 Stage B 真实 WebView2 运行时验证。
+DeepSeek Harness 已对固定 HEAD 89413f45a601966eb40d7af7abea65cbdfc754b3 / tree f1063c981b8f4164f51248f92b7825fc205dd07d / parent 38959ba99b84f771aba7010b53b9b47ecdc75488 完成非作者正式 Review，decision=approved（仅 Stage A），P0/P1/P2/P3=0/0/0/1、open=1。原文见 verification/P02/implementation-stage-a-r8-dsh-review.stdout.md；Codex exact-head 与 Integration Gate 见 verification/P02/r8-codex-exact-head-review.md 和 verification/P02/codex-integration-gate-r8.md。
+
+R7-01 已闭合；R7-02 按 DSH 裁决为 deferred P3。新 finding R8-01 是非阻断 P3：record_verdict 与 build_pre03_verdict 当前字段一致但由两处构造，未来 schema 演化可能漂移；Codex 接受 DSH 建议将其延期到 verdict schema 下一次变更时，通过统一构造入口收敛。该处置不把 DSH 原报告的 open=1 改写为 0，也不需要单独复审。
+
+Stage A integration_commit=89413f45a601966eb40d7af7abea65cbdfc754b3。Task 继续 in_progress / ACTIVE；AC1–AC6 仍 BLOCKED，Hard Build Barrier 生效。本次未运行任何 product build、Vitest、GUI 或真实 WebView。
+
+## 7. 下一步建议
+
+由 Codex 先把 P02 Stage B 的隔离 scratch-build 路径、Tauri build.rs 源码树副作用防护、sidecar 来源与 SHA-256、测试数据隔离及清理范围写入 Task-local 方案；交由独立 Reviewer 审查并通过 Gate 后，才决定是否执行构建。此处不授权在 Owner worktree 或任何含用户数据的路径构建。

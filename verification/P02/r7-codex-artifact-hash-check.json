@@ -1,0 +1,40 @@
+{
+  "all_match": true,
+  "parent": "38672473f93971a4681aef682e5635e64b0bd896",
+  "head": "38959ba99b84f771aba7010b53b9b47ecdc75488",
+  "tree": "5bf0c81a0ee814f857ad4c1f0b3f598f963fa1c5",
+  "matching_count": 5,
+  "declared_count": 5,
+  "hashes": [
+    {
+      "path": "verification/P02/env-identity-report.json",
+      "actual": "e8cd7c6085470483f29ee535b56a33a768adc9a6bb387dd6451df8dd559246c4",
+      "match": true,
+      "expected": "e8cd7c6085470483f29ee535b56a33a768adc9a6bb387dd6451df8dd559246c4"
+    },
+    {
+      "path": "verification/P02/static-control-report.json",
+      "actual": "9950b4823c11970d4c74566124de3b662b5dfa9088d331366efd7acaa875057f",
+      "match": true,
+      "expected": "9950b4823c11970d4c74566124de3b662b5dfa9088d331366efd7acaa875057f"
+    },
+    {
+      "path": "verification/P02/p02-harness-results.txt",
+      "actual": "2eff48dc95f60d25a822cedf6feed5c528681698bf749d367318d2847ada2a0a",
+      "match": true,
+      "expected": "2eff48dc95f60d25a822cedf6feed5c528681698bf749d367318d2847ada2a0a"
+    },
+    {
+      "path": "verification/P02/probe-execution-probeonly.log",
+      "actual": "3b328eb68062e49a78000fa510a00efb36c32658c5168fd78f122ef2e07e4b6a",
+      "match": true,
+      "expected": "3b328eb68062e49a78000fa510a00efb36c32658c5168fd78f122ef2e07e4b6a"
+    },
+    {
+      "path": "verification/P02/probe-execution-full.log",
+      "actual": "45e05f42d024d5dd5e093fef5ff83dfe1333c03f5dd14f7e88c45e64b226f5bb",
+      "match": true,
+      "expected": "45e05f42d024d5dd5e093fef5ff83dfe1333c03f5dd14f7e88c45e64b226f5bb"
+    }
+  ]
+}

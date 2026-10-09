@@ -1,0 +1,2 @@
+PASS: P02 E2E-only delta is allowed and adding a product source path is rejected
+PASS: both roadmap status drift probes were rejected

@@ -24,6 +24,16 @@ STATUS_LABELS = {
 assert set(STATUS_LABELS) == TASK_STATES
 
 
+# P02 explicitly authorizes this task-local E2E driver; it is not product code.
+P01_PRODUCT_PATH_EXCEPTIONS = {
+    "apps/desktop/frontend/e2e/workbench_driver_protocol.ts",
+}
+
+
+def unexpected_p01_product_changes(paths):
+    return [path for path in paths if path not in P01_PRODUCT_PATH_EXCEPTIONS]
+
+
 def git(*args):
     return subprocess.check_output(["git", "-C", str(ROOT), *args], text=True).strip()
 
@@ -129,9 +139,12 @@ if __name__ == "__main__":
     p01 = (ROOT / "doc/tasks/P01.md").read_text(encoding="utf-8")
     p01_base = re.search(r"^base_commit: ([0-9a-f]{40})$", p01, re.M)
     assert p01_base, "P01 base_commit missing or invalid"
-    changed = git("diff", "--name-only", f"{p01_base.group(1)}..HEAD", "--", "src", "apps", "tests", "packaging")
-    assert not changed, f"P01 product/code paths changed since frozen base: {changed}"
+    changed = git("diff", "--name-only", f"{p01_base.group(1)}..HEAD", "--", "src", "apps", "tests", "packaging").splitlines()
+    product_changed = unexpected_p01_product_changes(changed)
+    assert not product_changed, f"P01 product/code paths changed since frozen base: {product_changed}"
+    assert "apps/desktop/frontend/e2e/workbench_driver_protocol.ts" in P01_PRODUCT_PATH_EXCEPTIONS
+    assert "apps/desktop/frontend/src/App.tsx" not in P01_PRODUCT_PATH_EXCEPTIONS
     subprocess.run(["git", "-C", str(ROOT), "diff", "--check", f"{p01_base.group(1)}..HEAD", "--",
                     "doc/REBASELINE_PLAN.md", "doc/STATUS.md", "doc/00_INDEX.md", "doc/12_ROADMAP.md"], check=True)
-    print("PASS: zero production/code delta; governance whitespace check")
+    print("PASS: zero P01 production/code delta; P02 task-local E2E driver excluded; governance whitespace check")
     print("Product tests/build/GUI: NOT_RUN (planning-only)")
