@@ -1,6 +1,6 @@
 # 项目文档索引与 Source of Truth
 
-当前工作：P08/P03/P01均done，P02=`ready / IDLE`；P系列计数done 3/21、ready 1、proposed 17。P02 Owner转移已集成于`main` commit `3f4d16633a18a9ab7aea5b08b67653cd3f6bf8ff`；Owner=Antigravity、非作者实现Reviewer=DeepSeek Harness、Integrator=Codex，独立fixed-head Review=`bfc8790a` approved且0 findings。P02真实/Mock边界、AC与Owner allowlist已经scope r1–r4冻结，不重做；Owner worktree、真实接单/start checkpoint未建立，Task仍`ready / IDLE`。P01 integration=M0=`13e66ec5bf9a2fc59f4e6c5623feb0bde22884c8`，P02行为验证基线=`241ff3b70b6fc0490ea238efd486cc707f849031`。AC1–AC7、build、Vitest及真实GUI仍NOT_RUN；当前恢复见[P02 RESUME](../verification/P02/RESUME.md)与[P02自动推进提示词](../verification/P02/NEXT-AUTOPROGRESS-PROMPT.md)。
+当前工作：P08/P03/P01均done，P02=`in_progress / ACTIVE`；P系列计数done 3/21、in_progress 1、proposed 17、ready 0。P02 Owner转移已集成于`main` commit `3f4d16633a18a9ab7aea5b08b67653cd3f6bf8ff`；Owner=Antigravity、非作者实现Reviewer=DeepSeek Harness、Integrator=Codex，独立fixed-head Review=`bfc8790a` approved且0 findings。P02真实/Mock边界、AC与Owner allowlist由scope r1–r4冻结；Antigravity已真实接单，conversation=`054911c9-b133-4514-b471-143b80249fce`，acceptance/start checkpoint=`3c651f502d49de32f5b050cfefc1ea056354f663`。P01 integration=M0=`13e66ec5bf9a2fc59f4e6c5623feb0bde22884c8`，P02行为验证基线=`241ff3b70b6fc0490ea238efd486cc707f849031`。AC1–AC7、build、Vitest及真实GUI仍NOT_RUN；当前恢复见[P02 RESUME](../verification/P02/RESUME.md)与[P02自动推进提示词](../verification/P02/NEXT-AUTOPROGRESS-PROMPT.md)。
 
 2026-10-08人员更新：Qoder已退出本项目。当前角色/接管名单见[协作协议](09_COLLABORATION.md)；未来UI设计/实现归ZCode，历史Qoder署名仅作证据。整体路线与恢复材料已同步，不新增产品释放。
 

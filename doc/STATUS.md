@@ -1,6 +1,6 @@
 # Current Development Status
 
-**当前位置：P02行为验证基线=`241ff3b70b6fc0490ea238efd486cc707f849031`；Owner转移集成commit=`3f4d16633a18a9ab7aea5b08b67653cd3f6bf8ff`。P08/P03/P01=done，唯一已释放Task=`[P02](tasks/P02.md)`（`ready / IDLE`，等待Antigravity真实接单）；P系列共21项：done 3、ready 1、proposed 17。P01 integration=`13e66ec5bf9a2fc59f4e6c5623feb0bde22884c8`、原D7=`b7ad98b29196e9859cbfbfe187e6822569f79367`。P02 Owner=Antigravity、非作者实现Reviewer=DeepSeek Harness、Integrator=Codex；独立fixed-head Review=`bfc8790a` approved、findings=0，Codex Gate、fast-forward与post-FF复核通过。P02范围r1–r4保持冻结；Owner worktree、接单和start checkpoint尚未建立，Task尚未进入`in_progress`。AC1–AC7、Vitest、build、真实WebView2、GUI/键盘/焦点/对比度全部`NOT_RUN`。当前恢复见[`P02 RESUME`](../verification/P02/RESUME.md)。
+**当前位置：P02行为验证基线=`241ff3b70b6fc0490ea238efd486cc707f849031`；Owner转移集成commit=`3f4d16633a18a9ab7aea5b08b67653cd3f6bf8ff`。P08/P03/P01=done，唯一Active Task=`[P02](tasks/P02.md)`（`in_progress / ACTIVE`，Owner Antigravity已接单）；P系列共21项：done 3、in_progress 1、proposed 17、ready 0。P01 integration=`13e66ec5bf9a2fc59f4e6c5623feb0bde22884c8`、原D7=`b7ad98b29196e9859cbfbfe187e6822569f79367`。P02非作者实现Reviewer=DeepSeek Harness、Integrator=Codex；独立fixed-head Review=`bfc8790a` approved、findings=0，Codex Gate、fast-forward与post-FF复核通过。P02范围r1–r4保持冻结。Antigravity acceptance/start checkpoint=`3c651f502d49de32f5b050cfefc1ea056354f663`，同会话正式实现启动消息待本状态checkpoint集成后发送。AC1–AC7、Vitest、build、真实WebView2、GUI/键盘/焦点/对比度全部`NOT_RUN`。当前恢复见[`P02 RESUME`](../verification/P02/RESUME.md)。
 
 ## 历史检查点：2026-10-09 P02 Owner 转移 / r8 条件批准
 

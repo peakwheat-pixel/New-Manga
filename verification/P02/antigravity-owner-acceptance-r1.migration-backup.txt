@@ -1,0 +1,10 @@
+# Antigravity owner acceptance session migration backup
+
+- Conversation: `054911c9-b133-4514-b471-143b80249fce`
+- Migration command: `python -B -X utf8 C:/Users/49745/.agents/skills/antigravity-dispatch/scripts/migrate_session.py --id 054911c9-b133-4514-b471-143b80249fce`
+- Migration exit: `0`; stdout=`antigravity-owner-acceptance-r1.migration.stdout.log`; stderr=`antigravity-owner-acceptance-r1.migration.stderr.log` (empty); exit artifact=`antigravity-owner-acceptance-r1.migration.exit`.
+- Before migration, desktop summaries database was snapshotted using SQLite's online backup API.
+- Backup: `C:/Users/49745/.gemini/antigravity/conversation_summaries.db.codex-backup-P02-acceptance-20261009T0610Z`
+- Backup size: `94208` bytes.
+- Backup SHA-256: `d83ff1c8cb46aac9869c64d34837204af6465cef1583aaab9755a2587f47a627`.
+- Post-migration read-only check: the exact conversation row and trajectory file exist in desktop storage. Desktop UI visibility has not been verified. No restart was performed.
