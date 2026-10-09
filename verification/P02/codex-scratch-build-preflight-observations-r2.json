@@ -77,7 +77,7 @@
   "hostfolder_roots": [
     {
       "purpose": "fixed scratch clone",
-      "mapping_domain": null,
+      "mapping_domain": "Scratch RW",
       "path": "G:\\CODEX\\P02-scratch-build-source",
       "expected": "ABSENT",
       "exists": false,
@@ -85,7 +85,7 @@
     },
     {
       "purpose": "Python base",
-      "mapping_domain": null,
+      "mapping_domain": "Smoke RO",
       "path": "C:\\Users\\49745\\AppData\\Local\\Programs\\Python\\Python312",
       "expected": "PRESENT",
       "exists": true,
@@ -93,7 +93,7 @@
     },
     {
       "purpose": "pinned sidecar venv",
-      "mapping_domain": null,
+      "mapping_domain": "Smoke RO",
       "path": "G:\\CODEX\\New Manga.task-envs\\m2ac5-build",
       "expected": "PRESENT",
       "exists": true,
@@ -101,7 +101,7 @@
     },
     {
       "purpose": "detector weights",
-      "mapping_domain": null,
+      "mapping_domain": "Smoke RO",
       "path": "G:\\CODEX\\New Manga.task-envs\\M2-DOCTR-QUAL-C4\\weights\\ogkalu-comic-text-and-bubble-detector",
       "expected": "PRESENT",
       "exists": true,
@@ -109,7 +109,7 @@
     },
     {
       "purpose": "SFX weights",
-      "mapping_domain": null,
+      "mapping_domain": "Smoke RO",
       "path": "G:\\CODEX\\New Manga.task-envs\\M2-SFX-DETECT\\weights-v2b",
       "expected": "PRESENT",
       "exists": true,
@@ -117,7 +117,7 @@
     },
     {
       "purpose": "Node/npm",
-      "mapping_domain": null,
+      "mapping_domain": "Smoke RO",
       "path": "E:\\Program Files\\nodejs",
       "expected": "PRESENT",
       "exists": true,
@@ -125,7 +125,7 @@
     },
     {
       "purpose": "Rust stable MSVC",
-      "mapping_domain": null,
+      "mapping_domain": "Smoke RO",
       "path": "C:\\Users\\49745\\.rustup\\toolchains\\stable-x86_64-pc-windows-msvc",
       "expected": "PRESENT",
       "exists": true,
@@ -133,7 +133,7 @@
     },
     {
       "purpose": "VS Build Tools",
-      "mapping_domain": null,
+      "mapping_domain": "Smoke RO",
       "path": "C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools",
       "expected": "PRESENT",
       "exists": true,
@@ -141,7 +141,7 @@
     },
     {
       "purpose": "VS Installer",
-      "mapping_domain": null,
+      "mapping_domain": "Smoke RO",
       "path": "C:\\Program Files (x86)\\Microsoft Visual Studio\\Installer",
       "expected": "PRESENT",
       "exists": true,
@@ -149,7 +149,7 @@
     },
     {
       "purpose": "Windows SDK",
-      "mapping_domain": null,
+      "mapping_domain": "Smoke RO",
       "path": "C:\\Program Files (x86)\\Windows Kits\\10",
       "expected": "PRESENT",
       "exists": true,
@@ -157,7 +157,7 @@
     },
     {
       "purpose": "Git cmd",
-      "mapping_domain": null,
+      "mapping_domain": "Build-only RO",
       "path": "C:\\Program Files\\Git\\cmd",
       "expected": "PRESENT",
       "exists": true,
@@ -165,7 +165,7 @@
     },
     {
       "purpose": "Git mingw64",
-      "mapping_domain": null,
+      "mapping_domain": "Build-only RO",
       "path": "C:\\Program Files\\Git\\mingw64",
       "expected": "PRESENT",
       "exists": true,
@@ -206,7 +206,7 @@
         "actual_size_bytes": 325,
         "expected_sha256": "176502a215876bab911b824f97576c2a2fb4a15e88bbf871344f82178beb9a6d",
         "actual_sha256": "176502a215876bab911b824f97576c2a2fb4a15e88bbf871344f82178beb9a6d",
-        "size_match": true,
+        "size_match": null,
         "hash_match": true
       },
       {
@@ -217,7 +217,7 @@
         "actual_size_bytes": 151,
         "expected_sha256": "2638ce9e2500e572a5e0de7faed6661eb569d1b696fcba07b0dd223da5f5d224",
         "actual_sha256": "2638ce9e2500e572a5e0de7faed6661eb569d1b696fcba07b0dd223da5f5d224",
-        "size_match": true,
+        "size_match": null,
         "hash_match": true
       },
       {
@@ -360,7 +360,7 @@
         "actual_size_bytes": 171543900,
         "expected_sha256": "037930a861e67870eb345be01b28cc70d7e2b7956528e48ee0ebdb0c093df80d",
         "actual_sha256": "037930a861e67870eb345be01b28cc70d7e2b7956528e48ee0ebdb0c093df80d",
-        "size_match": true,
+        "size_match": null,
         "hash_match": true
       },
       {
@@ -371,7 +371,7 @@
         "actual_size_bytes": 2320,
         "expected_sha256": "b6d707933e12e9593a7025604be1c95add70a6db371fdd1532e8854e2256e072",
         "actual_sha256": "b6d707933e12e9593a7025604be1c95add70a6db371fdd1532e8854e2256e072",
-        "size_match": true,
+        "size_match": null,
         "hash_match": true
       },
       {
@@ -382,7 +382,7 @@
         "actual_size_bytes": 470,
         "expected_sha256": "7e9e2245806aa3ef068a5321f5eebee3116fa4cec560173231954ffaca930eca",
         "actual_sha256": "7e9e2245806aa3ef068a5321f5eebee3116fa4cec560173231954ffaca930eca",
-        "size_match": true,
+        "size_match": null,
         "hash_match": true
       },
       {
@@ -393,10 +393,15 @@
         "actual_size_bytes": 40824255,
         "expected_sha256": "944e811410933ad6ff8d32446fcc9eef90fb463794e1874ce83035e83acd418d",
         "actual_sha256": "944e811410933ad6ff8d32446fcc9eef90fb463794e1874ce83035e83acd418d",
-        "size_match": true,
+        "size_match": null,
         "hash_match": true
       }
-    ]
+    ],
+    "hash_comparison_count": 20,
+    "hash_mismatches": 0,
+    "size_comparison_count": 14,
+    "size_mismatches": 0,
+    "size_not_registered_count": 6
   },
   "smoke_config": {
     "path": "verification/P02/codex-p02-wsb-smoke-config-r3.xml",

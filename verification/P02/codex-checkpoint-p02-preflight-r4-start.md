@@ -10,3 +10,12 @@
 - No clone or Sandbox was created/started. Recursive pre-start manifest, object hardlinks, read-only/write/network canaries, screenshot/session binding, and post-run protection checks remain NOT_RUN. Build Gate=BLOCKED; build=NOT_AUTHORIZED / NOT_RUN; P02 AC1–AC7=BLOCKED / NOT_RUN.
 - Tests/checks so far: read-only host preflight only. Product tests/build/GUI/WebView=NOT_RUN.
 - Next exact step: validate the r9 candidate, freeze it at a commit, then dispatch DeepSeek Harness exact-head review. If approved, record a separate Codex Smoke admission and create the fixed clone; before any wsb start, verify its full Git and mapped-input boundaries.
+
+
+## R9 review and r10 condition-closure erratum (2026-10-10)
+
+The exact r9 candidate write set was: `verification/P02/codex-scratch-build-process-isolation-scope-delta-r1.md`, `verification/P02/codex-scratch-build-preflight-r2.md`, `verification/P02/codex-scratch-build-preflight-observations-r2.json`, `verification/P02/codex-checkpoint-p02-preflight-r4-start.md`, and `verification/P02/codex-preflight-r4-validation.md`. The r9 candidate received DSH `APPROVED_WITH_CONDITIONS` with zero P0/P1/P2 and six P3 record-precision findings; their exact dispositions are recorded in the r10 condition-closure checkpoint.
+
+Corrected pin counts: SHA-256=`20/20`; registered expected sizes=`14/14`; six empty expected-size pins are `NOT_APPLICABLE` for size comparison. The 12 HostFolder JSON classifications now match the frozen TSV. The r10 candidate adds exactly these seven paths: the five paths above plus `verification/P02/codex-checkpoint-p02-preflight-r4-condition-closure.md` and `verification/P02/codex-checkpoint-p02-smoke-admission-r1.md`; no shared status files are in this candidate.
+
+At this checkpoint, the shared current-status segments are intentionally still stale (`Feature=UNKNOWN`, preflight=`BLOCKED / INCOMPLETE`) pending r10 exact-head Review; the r10 scope extension records this known lag and the authorized update point. Smoke admission remains `NOT_ADMITTED`; no clone, Sandbox, Smoke, build, or product test has run.

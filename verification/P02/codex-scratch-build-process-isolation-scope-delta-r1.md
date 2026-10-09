@@ -151,3 +151,35 @@ Parent Task=P02 remains in_progress / ACTIVE; Owner=Codex for this Codex-only is
 3. DSH independently reviews this fixed r9 scope/preflight head and reports APPROVED (no unresolved P0/P1/P2; nonblocking P3s must be explicitly dispositioned) before Smoke admission.
 4. The route validator, Markdown links, exact path/scope check, and git diff --check pass; root protected manifest remains unchanged.
 5. Smoke admission is a separate Codex checkpoint. If any pre-start check fails or is unknown, do not run wsb start; preserve the clone/evidence and leave Build Gate blocked.
+
+
+## r10 exact-head Review condition closure (2026-10-10; based on DSH-reviewed r9 HEAD `083d2b47f7051c2dedd0d9ae4346ae1affab6c1b`)
+
+DeepSeek Harness returned `APPROVED_WITH_CONDITIONS` for exact HEAD `083d2b47f7051c2dedd0d9ae4346ae1affab6c1b`, tree `27a8051b95df3c2cf40be90737d09b324592a78e`, base `ceffb7479cb1f79bd3b620afdaf6e9eaa0ae6d50`: blocking P0/P1/P2=`0/0/0`, six nonblocking P3 record-precision findings, and one note. This r10 extension closes those six documentation/evidence findings before a second exact-head Review; it does not change Smoke, Build, product acceptance, or the Hard Build Barrier state.
+
+The authorization basis for the 2026-10-10 scope is cross-referenced in the r7 extension above under “Authorization basis” and in the P02 Task's Codex-only preflight checkpoint. The top-level shared documents still say Feature=`UNKNOWN` and full preflight=`BLOCKED / INCOMPLETE` because their update was deliberately deferred until the r9 exact-head Review. This is a known, temporary status-document lag; after r10 exact-head Review, Codex may update only the current P02 status/checkpoint segments allowed by r9 to record measured state. Historical checkpoints remain unchanged.
+
+### r10 condition dispositions
+
+- C-01 (size evidence): six records with empty `expected_size_bytes` now have `size_match=null`; observations count 20 hash comparisons, 14 registered-size comparisons, and 6 sizes not registered. The preflight report states those separate counts.
+- C-02 (write scope): the start checkpoint and this extension enumerate all seven r10 candidate paths exactly; the candidate validation records that same set.
+- C-03 (mapping domains): all 12 JSON roots now carry the `mapping_domain` classification from `codex-scratch-build-preflight-hostfolders-r1.tsv`.
+- C-04 (authorization traceability): this r10 record links the renewed authorization to the r7 authorization-basis entry and the P02 Task checkpoint.
+- C-05 (admission checklist): the separate Smoke admission checkpoint explicitly requires a non-elevated interactive host shell, a fresh empty `wsb list --raw`, and binding the started Sandbox UI window/screenshot to the same session.
+- C-06 (shared-status lag): this extension records why shared documents still show `UNKNOWN / BLOCKED` and when their current P02 segments may be updated.
+
+### Exact r10 closure candidate paths
+
+1. `verification/P02/codex-scratch-build-process-isolation-scope-delta-r1.md` (append this extension only).
+2. `verification/P02/codex-scratch-build-preflight-r2.md` (correct pin-check counts and next-step checklist).
+3. `verification/P02/codex-scratch-build-preflight-observations-r2.json` (mark unregistered size comparisons null and classify the 12 roots).
+4. `verification/P02/codex-checkpoint-p02-preflight-r4-start.md` (append an exact-path and evidence-count erratum; preserve the original start timestamp).
+5. `verification/P02/codex-preflight-r4-validation.md` (append exact r10 candidate validation).
+6. `verification/P02/codex-checkpoint-p02-preflight-r4-condition-closure.md` (record findings, dispositions, and next action).
+7. `verification/P02/codex-checkpoint-p02-smoke-admission-r1.md` (separate checklist; initially `NOT_ADMITTED`).
+
+No shared status file, product source/test, Task contract/AC, Owner allowlist, user-data path, r3 Smoke XML, or Build Gate input is in this condition-closure candidate. The r9 write authorization still allows current-segment updates in `doc/STATUS.md`, `doc/REBASELINE_PLAN.md`, `doc/00_INDEX.md`, and `doc/tasks/P02.md` only after the exact-head Review passes, and only to record measured gate state and the next checkpoint.
+
+### r10 acceptance and gate separation
+
+The exact seven-path candidate must pass the route validator, focused Markdown link validation, exact path containment, and `git diff --check`; the root protected manifest must remain unchanged with zero candidate-path overlap. DeepSeek Harness must review the fixed candidate HEAD/tree as a non-author. Only after all six P3 items are dispositioned and that exact-head Review passes may Codex refresh the shared P02 current-status segments and re-run the current non-elevated preflight. Smoke admission is a separate Codex checkpoint and remains `NOT_ADMITTED` until that fresh preflight passes. Clone verification, full recursive pre-start manifests, shell/list/session binding, and every Smoke check remain mandatory after admission. Build Gate stays `BLOCKED`; product acceptance and AC1–AC7 stay `BLOCKED / NOT_RUN`; no step here lifts the Hard Build Barrier.
