@@ -29,7 +29,7 @@ Task 的 P02 Codex-only scratch-build boundary 明确：输出仅可在一份 de
 - source HEAD 7ce 的只读 hashes：build_sidecar.ps1=07e12e80ceb2a35bab96150f4530b7a788b914a2467a32056098adbb775dd30e；core_sidecar.spec=c73d6fe02f005a3813b75d2c69e3d2ea7b9810f69eb408f0745f9920be0b859a；requirements-build.txt=c50edd6c3058197003d66049bc28662e9dc7e4175b499ffe9989ae8bca0e7a07；pyvenv.cfg=176502a215876bab911b824f97576c2a2fb4a15e88bbf871344f82178beb9a6d；venv Scripts/python.exe=864530d708039551a2c672ddd65e5900fbc08b0981479679723a5b468f8082bc。
 - 只读核验时，默认 WeightsSource=G:/CODEX/New Manga.task-envs/M2-DOCTR-QUAL-C4/weights/ogkalu-comic-text-and-bubble-detector，SfxWeightsSource=G:/CODEX/New Manga.task-envs/M2-SFX-DETECT/weights-v2b。四个 task-envs input 文件均存在且精确匹配 build_sidecar.ps1 的四个 pin：model.safetensors=037930a861e67870eb345be01b28cc70d7e2b7956528e48ee0ebdb0c093df80d；config.json=b6d707933e12e9593a7025604be1c95add70a6db371fdd1532e8854e2256e072；preprocessor_config.json=7e9e2245806aa3ef068a5321f5eebee3116fa4cec560173231954ffaca930eca；yolo11s-seg.onnx=944e811410933ad6ff8d32446fcc9eef90fb463794e1874ce83035e83acd418d。这不证明 root 既有 bundle 的 provenance，也不替代执行时复核。
 - build Gate 执行前还必须保存 Python base/venv 版本与 hash、pyvenv.cfg、pip freeze --all、venv .pth 文件清单、PYTHONPATH、PyInstaller/spec/requirements hashes 与 hook/子进程/缓存闭包。源码 spec 的 hookspath=[] 且仓库未找到本地 hooks 目录，不代表 PyInstaller 内置/第三方 hooks 没有副作用。执行前必须记录实际安装闭包与 hook 目录/代码 hash、子进程和缓存路径；核实不到包版本、hook 运行路径或缓存位置时，build 保持 BLOCKED。
-- 将 npm_config_cache、CARGO_HOME、CARGO_TARGET_DIR、TEMP、TMP、PYTHONPYCACHEPREFIX、PYINSTALLER_CONFIG_DIR 和实际 package cache variables 全部指向 scratch。PYTHONNOUSERSITE=1；只使用现成 Rust/Python toolchain，不安装或升级。须在执行前从实际 venv/package/hook 盘点会读写的环境变量；只要有 cache/subprocess 可能写到 scratch 外且无法禁用/重定向，就不运行 build。
+- 将 npm_config_cache、CARGO_HOME、CARGO_TARGET_DIR、TEMP、TMP、PYTHONPYCACHEPREFIX、PYINSTALLER_CONFIG_DIR、XDG_CACHE_HOME、TORCH_HOME、HF_HOME、HF_HUB_CACHE、HF_XET_CACHE、TRANSFORMERS_CACHE 和实际 package cache variables 全部指向 scratch；build 进程只继承明确列出的非敏感环境变量，清除凭据变量且禁止读取用户 token。PYTHONNOUSERSITE=1；只使用现成 Rust/Python toolchain，不安装或升级。须在执行前从实际 venv/package/hook 盘点会读写的环境变量；只要有 cache/subprocess 可能写到 scratch 外且无法禁用/重定向，就不运行 build。
 - 用户应用数据与工具链严格区分：禁止读写用户漫画库、数据库、Lock、current/pinned Revision、凭据与生产数据；唯一 AppData 下允许的读取是上述 pyvenv.cfg 明确指向的 Python base interpreter/runtime 文件，不允许在 AppData 缓存或写输出。
 
 ## 受审 Gate 通过后的单次执行顺序
@@ -49,6 +49,6 @@ Task 的 P02 Codex-only scratch-build boundary 明确：输出仅可在一份 de
 
 ## 状态
 
-- Plan commit=8de6827dff596fd0180920e2dd801e95f61e2965 的初审为 changes_requested；本修订待复审。
-- 当前 build=NOT_AUTHORIZED / NOT_RUN；Hard Build Barrier 保持。只有独立 Review 通过、Task scratch-only 边界登记、Python/hook/cache 闭包可证明且 Codex 写明单独 PASS Gate 后，才可考虑一次 isolated build。
+- 初版 commit `8de6827dff596fd0180920e2dd801e95f61e2965` 的初审为 changes_requested；修订 commit `803594e9c16f3c361e99fa5ffa7c35a95baaf43a` 的独立 Review=approved，仅批准计划与输出边界。
+- Codex Build Gate=`BLOCKED`；build=`NOT_AUTHORIZED / NOT_RUN`。直接 requirements pins 与当前 pip freeze 一致，但实际可达 PyInstaller hooks、Torch 子模块递归导入/子进程以及 Torch/Hugging Face cache/env 写入闭包未证明。详见 [`codex-scratch-build-gate.md`](codex-scratch-build-gate.md)。Hard Build Barrier 保持；只有闭包可证明 scratch-only 并由 Codex 写明单独 PASS Gate 后，才可考虑一次 isolated build。
 - 此 Gate 不授权应用启动、用户数据访问、runner/Vitest/GUI/WebView。AC1–AC6 继续 BLOCKED，直到各自实测证据完成。

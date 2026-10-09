@@ -1,6 +1,6 @@
 # P02 恢复点
 
-## 当前检查点：P02 Stage A r8 已通过 DSH Review 与 Codex Integration Gate
+## 当前检查点：P02 Stage A r8 已集成；Scratch Build Gate BLOCKED
 
 - 固定 Owner HEAD/tree/parent=89413f45a601966eb40d7af7abea65cbdfc754b3 / f1063c981b8f4164f51248f92b7825fc205dd07d / 38959ba99b84f771aba7010b53b9b47ecdc75488；branch=agent/antigravity/P02-real-webview-harness；scope SHA-256=27DC31A8CF3304ABA6783E243F36895FFE4AAA3CCBCA76D58E8B766C403E1425。P02 in_progress / ACTIVE，Owner=Antigravity、Reviewer=DeepSeek Harness、Integrator=Codex；integration_commit=89413f45a601966eb40d7af7abea65cbdfc754b3。P01=done，不重做；P02 scope r1–r4 冻结，不重冻结。
 - DSH session=session-9ab84346-f806-42f3-9f90-30245d488e65 对固定 r8 的正式 Review exit=0，decision=approved（Stage A only），P0/P1/P2/P3=0/0/0/1、open=1。报告=implementation-stage-a-r8-dsh-review.stdout.md。DSH 因 Windows 沙箱 Win32 5 未执行 Git/hash/runner；tree、scope、diff、命令与哈希由 Codex exact-head evidence 补齐。
@@ -8,7 +8,10 @@
 - Finding 状态：R7-01=closed；R7-02=deferred (P3)，触发、原因、后续方案见 Task/Handoff；R8-01=deferred (P3)（当前两个 verdict 构造点字段一致，未来 schema 演化有漂移风险；在下次 verdict schema 变更时统一构造入口）。DSH 原报告仍如实统计 open=1；Codex 延期不改写其计数。R6-01..04 无回归。
 - Hard Build Barrier 继续生效；PRE-01..03=PASS；AC1–AC6 均保持 BLOCKED / EXIT=null。禁止 Cargo/Tauri/sidecar/frontend build、Vitest、GUI、真实 WebView/CDP/鼠标/键盘操作。本轮未运行上述产品验证。
 - root 集成前保护清单记录 294 个 dirty/untracked path；文件状态/内容摘要见 root-preintegration-protection-manifest.json。集成只触及 P02 Owner 差量与明确授权的状态/恢复/Review 记录；用户及其他 Agent 的其余 dirty/untracked 必须保持不变。
-- 下一步：Codex 先在 Task 中准备隔离 scratch-build 方案，记录 scratch 输出目录、build.rs 写路径、sidecar provenance/hash、合成数据根与清理边界；独立审查并通过 Gate 前，不运行构建。
+- Codex-only scratch-build 方案与 Task 输出边界已由独立 Reviewer 批准（固定方案 commit=`803594e9c16f3c361e99fa5ffa7c35a95baaf43a`）；随后 Codex Build Gate=`BLOCKED`。pip inventory 的 62 个 distribution、零 direct-reference、9 个直接 requirements pins 仅证明安装版本快照，不构成 hook/cache/子进程写入闭包证明。详情见 [`codex-scratch-build-gate.md`](codex-scratch-build-gate.md) 与 [`codex-scratch-build-python-env-inventory.json`](codex-scratch-build-python-env-inventory.json)。
+- 本轮审计时 root 为 `main@7ce3c40cd308e7093929bd5f53abc4f8a6c4ef7a`，202 个既有 dirty/untracked 路径、0 staged；r8 integration worktree 为 `codex/P02-stage-a-r8-integration@803594e9c16f3c361e99fa5ffa7c35a95baaf43a`，common Git directory 相同。主仓库后续若快进，必须重新读取 live HEAD/status。root 保护清单中原始 294 项的基线 SHA-256=`f5175b610e7570859143ad35a6167b2ed0d155d737ac33e3c38953fc1e6aa5c1`。
+- ZCode 已在 `AGENTS.md` 与 `doc/09_COLLABORATION.md` 的项目调用/角色名单中；P02 Owner 仍为 Antigravity，不更改本 Task 分工。
+- 下一步：Codex 仅做只读 hook/hash、递归导入/子进程与 Torch/Hugging Face cache/env 闭包核验。无法证明所有写入限定在 scratch 时维持 Build Gate=`BLOCKED`，不得运行 build。P01 不重做，P02 不重冻结，不关机。
 
 ## 历史检查点：P02 Stage A 定向修订 (r7) 已就绪；响应 DSH r6 条件审查 (R6-01~R6-04) 与 Codex exact replay 证据
 
