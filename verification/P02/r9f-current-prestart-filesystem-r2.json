@@ -1,0 +1,45 @@
+{
+  "captured_at_utc": "2026-10-09T22:39:34.500282+00:00",
+  "clone": {
+    "alternates_present": false,
+    "clean": true,
+    "core_autocrlf_true": true,
+    "head": "7ce3c40cd308e7093929bd5f53abc4f8a6c4ef7a",
+    "private_common_dir": true,
+    "remote_count": 0,
+    "result": "PASS",
+    "tree": "ce8056b8ef4d2ebd11bb4754b206adf921a39e41"
+  },
+  "config": {
+    "bytes": 2609,
+    "canonical_lf": true,
+    "result": "PASS",
+    "sha256": "9af445134c6c6d3cec900b6d5c903a3c7fe19a104e0eab10f7c0886280de664d"
+  },
+  "input_pins": {
+    "count": 20,
+    "registered_size_matches": 14,
+    "registered_sizes": 14,
+    "result": "PASS",
+    "sha256_matches": 20,
+    "unregistered_size_match_values_null": true,
+    "unregistered_sizes": 6
+  },
+  "inventory": {
+    "present": 12,
+    "result": "PASS",
+    "root_count": 12,
+    "root_reparse_count": 0,
+    "scratch_clone_expected_present_in_current_phase": true
+  },
+  "result": "PASS",
+  "source_pins": {
+    "all_blob_and_clone_eol_pins_match": true,
+    "ancestor_of_live_main": true,
+    "clone_eol_pin_count": 3,
+    "commit": "7ce3c40cd308e7093929bd5f53abc4f8a6c4ef7a",
+    "commit_exists": true,
+    "result": "PASS"
+  },
+  "supersedes": "r1 compared pinned source EOL bytes in the current candidate worktree instead of the fixed scratch clone; that check is invalid for the clone EOL gate."
+}

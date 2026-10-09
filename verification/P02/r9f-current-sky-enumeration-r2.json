@@ -1,0 +1,12 @@
+{
+  "captured_at_utc": "2026-10-09T22:52:27.834Z",
+  "method": [
+    "@oai/sky.list_apps",
+    "@oai/sky.list_windows"
+  ],
+  "app_count": 40,
+  "window_count": 4,
+  "windows_sandbox_app_count": 0,
+  "windows_sandbox_window_count": 0,
+  "persisted_titles": false
+}

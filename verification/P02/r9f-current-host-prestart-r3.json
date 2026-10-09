@@ -1,0 +1,41 @@
+{
+  "captured_at": "2026-10-10T06:41:23.1505351+08:00",
+  "windows_identity": "HOME-MY\\49745",
+  "windows_user_sid": "S-1-5-21-2196946971-914346751-4210154634-1001",
+  "token_integrity_sid": "S-1-16-8192",
+  "token_integrity_label": "Mandatory Label\\Medium Mandatory Level Label",
+  "process_path": "C:\\Program Files\\PowerShell\\7\\pwsh.exe",
+  "process_pid": 3752,
+  "powershell_version": "7.6.6",
+  "environment_user_interactive": true,
+  "elevated": false,
+  "feature_install_state": 1,
+  "system_type": "x64-based PC",
+  "processor_architecture_cim": 9,
+  "firmware_virtualization_enabled": true,
+  "physical_cores": 16.0,
+  "total_ram_gib": 31.647,
+  "available_ram_mib": 17285.19,
+  "disks": [
+    {
+      "device": "C:",
+      "free_gib": 328.506
+    },
+    {
+      "device": "G:",
+      "free_gib": 1298.667
+    }
+  ],
+  "wsb_appx_name": "MicrosoftWindows.WindowsSandbox",
+  "wsb_package_full_name": "MicrosoftWindows.WindowsSandbox_0.8.107.0_x64__cw5n1h2txyewy",
+  "wsb_package_version": "0.8.107.0",
+  "wsb_executable": "C:\\Program Files\\WindowsApps\\MicrosoftWindows.WindowsSandbox_0.8.107.0_x64__cw5n1h2txyewy\\wsb.exe",
+  "wsb_executable_version": "0.8.107.0",
+  "wsb_executable_bytes": 156160,
+  "wsb_executable_sha256": "247e092b5c5bd37820f225a7dd3ddf10ae37a67e2751a19c24b802c84769c441",
+  "wsb_version_stdout": "0.8.107.0",
+  "wsb_version_exit": 0,
+  "wsb_list_raw_stdout": "{\n  \"WindowsSandboxEnvironments\": []\n}",
+  "wsb_list_raw_exit": 0,
+  "wsb_environment_count": 0
+}

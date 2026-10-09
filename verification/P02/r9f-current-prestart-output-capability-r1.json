@@ -1,0 +1,11 @@
+{
+  "bytes": 60,
+  "cleanup": "PASS",
+  "destination": "G:/CODEX/P02-scratch-build-source/verification/P02/tmp/smoke-readonly-probe",
+  "directory_restored_empty": true,
+  "finished_at_utc": "2026-10-09T22:41:51.262Z",
+  "sha256": "1a0c4c66e2bb8b48d59a173784facb2a910d0ebf373a7928aa9bcce385fac1b8",
+  "started_at_utc": "2026-10-09T22:41:51.260Z",
+  "synthetic_file": "ui-file-output-capability-1791585711260.txt",
+  "write_readback": "PASS"
+}

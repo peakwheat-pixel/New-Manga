@@ -1,0 +1,15 @@
+{
+  "branch": "main",
+  "candidate_root_dirty_overlap": [],
+  "candidate_touched_paths": 28,
+  "captured_at": "2026-10-10T06:47:07+08:00",
+  "digest": "3a54fa978bf228bfae366a4c4de35b90e4fab609447d3370ed81370299da10e2",
+  "entry_count": 203,
+  "expected_digest": "3a54fa978bf228bfae366a4c4de35b90e4fab609447d3370ed81370299da10e2",
+  "extra": 0,
+  "mismatch": 0,
+  "missing": 0,
+  "result": "PASS",
+  "root_head": "4183e7f7cf366c27aa8ad8a0bc7300af48783470",
+  "staged": 0
+}

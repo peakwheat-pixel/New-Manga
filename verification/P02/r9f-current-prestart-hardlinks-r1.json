@@ -1,0 +1,27 @@
+{
+  "captured_at": "2026-10-10T06:39:49.5020358+08:00",
+  "object_file_count": 3,
+  "checked": 3,
+  "link_count_one": 3,
+  "failed": 0,
+  "checks": [
+    {
+      "extension": ".idx",
+      "bytes": 753040,
+      "fsutil_exit": 0,
+      "link_count": 1
+    },
+    {
+      "extension": ".pack",
+      "bytes": 177441398,
+      "fsutil_exit": 0,
+      "link_count": 1
+    },
+    {
+      "extension": ".rev",
+      "bytes": 107476,
+      "fsutil_exit": 0,
+      "link_count": 1
+    }
+  ]
+}
