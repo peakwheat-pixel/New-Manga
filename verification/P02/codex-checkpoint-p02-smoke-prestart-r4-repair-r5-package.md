@@ -24,3 +24,9 @@
 当前 boundary=`R4_APPROVED / R4_P3_REPAIRED / R5_REVIEW_PENDING / NO_SANDBOX_START`。Smoke admission 仍只允许一次尝试；`wsb start=NOT_RUN`、Smoke=`NOT_RUN`、完整即时 preflight 未完成、Build Gate=`BLOCKED`、build=`NOT_AUTHORIZED / NOT_RUN`、hook/cache=`BLOCKED / NOT_VERIFIED`、AC1–AC7=`BLOCKED / NOT_RUN`、Hard Build Barrier=`EFFECTIVE`。
 
 下一步：提交此 package；在提交后的固定 exact HEAD 上重新运行路线 validator、base/parent diff-check 和逐文件 scope/status 断言，新断言应接受状态值的裸文本及 inline-code 写法并报告每个文件的结果。随后从 detached worktree 派发 DSH R5 只读 Review。R5 Review 与所有新的即时准入检查通过前，Sandbox 必须保持未启动。
+## R7 exact-head pre-review validation
+
+- R5 package D11=`86cd7da8ce413b36ec1560ffda7de16609bbb01b` / tree=`d6e166b3811f427996a3f9e5498e7d87d44ee3a4`：route validator=7/7 PASS / EXIT=0；base-to-HEAD 与 parent-to-HEAD `git diff --check` 均 EXIT=0；complete diff=115 paths、out-of-scope=0。
+- R7 scope/status assertions 为 EXIT=1：25 项状态短语中 24 项 PASS；唯一 false 为 Index 未显式写出 `wsb start=NOT_RUN`（原文为 `wsb start`、Smoke=NOT_RUN）。三个 current R5 checkpoint pointers、path scope 和其他 Gate 状态均 PASS。原 Index wording 有歧义，当前修订已补充明确状态；原 R7 失败记录保留。
+- 对应 logs：`r9f-current-prestart-route-validator-r7.*`、`r9f-current-prestart-diff-check-r7.*`、`r9f-current-prestart-parent-diff-check-r7.*`、`r9f-current-prestart-scope-assertions-r7.*`，均绑定 D11。R6 barrier assertion exit=1 同样保留，未留存其 one-off source；独立只读核查确认屏障语义未改变。
+- 当前候选在 D11 上追加 Index 状态澄清和 Task/checkpoint 记录；下一步对修订后的固定 HEAD 重新运行全部路线、差异、范围和状态校验，再派发 DSH R5 exact-head Review。
