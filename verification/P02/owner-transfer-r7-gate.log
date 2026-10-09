@@ -1,0 +1,87 @@
+P02 Owner-transfer DSH-r7 findings and remediation candidate
+
+live_root=G:/CODEX/New Manga
+live_branch=main
+live_head_at_reality_check=4b54f304dc201d129d4ba1c62d0368252e6301b1
+integration_worktree=G:/CODEX/New Manga.worktrees/P02-owner-transfer-integration-codex
+integration_branch=codex/P02-owner-transfer-integration
+previous_fixed_head=c2cbee43d4917bca385c9b0fa81ee49fc696ea9e
+P02_behavior_baseline=241ff3b70b6fc0490ea238efd486cc707f849031
+
+DSH_review_id=P02 Owner transfer Task carrier-path Review r7
+DSH_version=0.2.0-rc.2
+DSH_session=session-624148b5-07a6-414d-86e7-c9fbe74f3b3a
+DSH_reviewed_head=c2cbee43d4917bca385c9b0fa81ee49fc696ea9e
+DSH_decision=approved_with_conditions
+DSH_findings=P0:0;P1:0;P2:1;P3:3
+DSH_exit=0
+DSH_report=verification/P02/owner-transfer-r7-review/review.md
+DSH_report_sha256=297DB688DBCA0E9C09710381E3F525931FC7BA606107B942747BE3DDF6698B9E
+DSH_prompt_sha256=A2E50F8C01F6EA1220B285F273056DA5E13E7C41B2B92F9CCE2E5707D3C8567F
+DSH_exit_carrier_sha256=6A613DAEA73B94757E41548F1CDE6EB99015A8F9F4862E8D61884B3D83C3A9BC
+DSH_mount=verification/P02/owner-transfer-r7-review/mount.md
+DSH_mount_sha256=8EB2CD77F3B1ECC1E4FF23C0F7583811F88500791984242AB6FE78E69A9C22DB
+
+DSH_r7_required_C1=Clarify r6 Task hashes as historical to reviewed head 4458b35051dd847ceadad11c332a7e2de3b49512; link current fixed-head Task hashes to the corresponding integration Gate log.
+DSH_r7_required_C2=Before main fast-forward, synchronize only P02 RESUME.md and NEXT-AUTOPROGRESS-PROMPT.md to the final reviewed versions; record both root hashes/status and a fresh P01 protected-manifest check.
+DSH_r7_F02_P3=Add a path-level link to owner-transfer-r6-review/review.md.
+DSH_r7_F04_P3=Replace the malformed Plan punctuation with a semicolon.
+DSH_r7_limits=No product AC, Vitest, Cargo/Tauri/sidecar build, real WebView2, GUI, contrast, Owner acceptance, Task in_progress/done, integration or fast-forward was approved or run by the reviewer.
+
+Independent_integrator_subagent_review_of_previous_head=c2cbee43d4917bca385c9b0fa81ee49fc696ea9e
+Independent_integrator_decision=approved_for_fixed_owner-transfer_governance_delta
+Independent_integrator_findings=P0:0;P1:0;P2:0;P3:1
+Independent_integrator_F01=Task line 86 described r6 amendment hashes as current; this remediation narrows that reference and binds subsequent Task digests to integration Gate logs.
+Independent_integrator_report=verification/P02/owner-transfer-integration-review-c2cbee.md
+
+Condition-remediation changes prepared after the r7 fixed-head Review:
+- doc/tasks/P02.md identifies r6 hashes as historical and links current/head hashes to the P02 owner-transfer integration Gate log.
+- verification/P02/owner-transfer-amendment-r6.md explicitly limits its hash values to the r6 fixed head; it remains historical evidence.
+- verification/P02/RESUME.md adds a direct r6 Review report link.
+- doc/REBASELINE_PLAN.md fixes the r7-reported punctuation and states P02 scope is already frozen while the Antigravity owner transfer remains gated.
+- Plan, Status, Index and P02 recovery documents describe r7's conditional decision and preserve ready/IDLE until acceptance/start checkpoint.
+
+Prepared Task content SHA-256 before fixed-head commit:
+task_worktree_bytes_sha256=325D613E410793F565A4128B55B76A86827F79DBFD8A01395B2DABCEADDD2443
+task_lf_normalized_sha256=325D613E410793F565A4128B55B76A86827F79DBFD8A01395B2DABCEADDD2443
+task_git_blob_sha1=97c3d61e52620b5d07538a2a2ac07dd62950c7cd
+These values identify the exact prepared Task content. The independent fixed-head Review report supplies the actual commit/tree reviewed after this candidate is committed.
+
+Gate status at this preparation point:
+verify_plan.py=REQUIRES_RERUN_AFTER_EDITS
+route_validator_mutation_probe=REQUIRES_RERUN_AFTER_EDITS
+Task_Plan_Index_Status_and_recovery_consistency=REQUIRES_RERUN_AFTER_EDITS
+focused_local_links=REQUIRES_RERUN_AFTER_EDITS
+exact_changed_path_allowlist=REQUIRES_RERUN_AFTER_EDITS
+fixed_range_git_diff_check=REQUIRES_RERUN_AFTER_EDITS
+root_P01_manifest_fresh_pre_FF=NOT_RUN_THIS_ROUND
+P02_recovery_root_sync_fresh_pre_FF=NOT_RUN
+product_AC1_AC7_Vitest_Cargo_Tauri_WebView_GUI_contrast=NOT_RUN
+owner_acceptance_start_checkpoint=NOT_RUN
+main_fast_forward=NOT_RUN
+
+Focused durable-document link check after the r7 finding repairs:
+files=doc/tasks/P02.md;verification/P02/RESUME.md;verification/P02/NEXT-AUTOPROGRESS-PROMPT.md;verification/P02/owner-transfer-amendment-r6.md;verification/P02/owner-transfer-integration-r6.md
+result=PASS
+links_checked=20
+missing=0
+
+Broad all-Markdown link scan diagnostic:
+result=EXIT_1
+missing_hits=13
+scope_note=The scan included historical Plan/Status links outside the changed P02 sections and link-shaped references inside the reviewer-generated r7 report. These are not used by the focused P02 durable-document navigation check; existing roadmap/navigation validator remains a separate required check. No unrelated historical documents or reviewer report was rewritten.
+
+Prepared candidate checks (before fixed-head commit):
+staged_diff_check=PASS / EXIT=0 / base=4b54f304dc201d129d4ba1c62d0368252e6301b1
+staged_changed_paths=26
+staged_allowed_paths=26
+staged_out_of_scope=0
+Task_content_delta_vs_c2cbee43=exactly two one-line replacements (Task digest wording; Owner-transfer Review/Gate wording); AC/frontmatter/paths unchanged
+P01_manifest_entries=24
+P01_manifest_digest_recomputed=b41835453b693b4e62818216e4d67801c01eca6e33450f8d3d3dd72849d578e7
+candidate_P01_manifest_intersection=0
+Live_root_dirty_untracked_paths=38
+candidate_vs_root_collisions=verification/P02/NEXT-AUTOPROGRESS-PROMPT.md;verification/P02/RESUME.md
+focused_local_links=PASS / 20 links / 0 missing
+precommit_route_validator=PASS_at_HEAD_c2cbee43; does not inspect these staged edits and must be rerun after commit
+precommit_mutation_probe=PASS_at_HEAD_c2cbee43; does not inspect these staged edits and must be rerun after commit

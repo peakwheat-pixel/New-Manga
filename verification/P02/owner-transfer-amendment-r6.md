@@ -15,7 +15,7 @@
 - `doc/tasks/P02.md` worktree-byte SHA-256（CRLF checkout）=`B928814A051EC6E1C256BCDEF33968A2AB3F9C17654B0F086AA8163E56CAE78A`
 - 同一内容将 CRLF 规范化为 LF 后 SHA-256（Git clean-filter / committed blob 内容口径）=`DC19C27450BDF378DD6EA4D31ABBECDD4968412656F8C23E6059359E2B517EAF`
 
-固定 head Review 应复算并分别核对这两个口径；Task 哈希在本文件中登记，避免在 Task 内自引用。若候选 Task 在提交前再有任何文字修改，必须重算以上值并更新本记录。
+以上摘要仅绑定本 amendment 的固定候选 head=`4458b35051dd847ceadad11c332a7e2de3b49512`。后续 fixed-head 的 Task 摘要登记在对应的 Owner-transfer integration Gate log；不得将本节历史值解释为后续 head 的当前摘要，也不回写本历史记录。
 
 ## 本次唯一治理变更
 

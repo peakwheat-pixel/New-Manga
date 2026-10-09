@@ -1,0 +1,6 @@
+exit=0
+branch=codex/P02-owner-transfer-integration
+reviewed_head=c2cbee43d4917bca385c9b0fa81ee49fc696ea9e
+worktree=G:\CODEX\New Manga.worktrees\P02-owner-transfer-integration-codex
+stdout_sha256=297DB688DBCA0E9C09710381E3F525931FC7BA606107B942747BE3DDF6698B9E
+stderr_sha256=24E89F1A92AE8840672AA400E3C0F168C405E4738C2D4AD46D9A47FFF19FA7B2
