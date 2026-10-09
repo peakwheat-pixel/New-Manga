@@ -1,0 +1,11 @@
+# Checkpoint：P02 Smoke Pre-start Manifest R2 开始
+
+- 时间：2026-10-10 04:26:29 +08:00。状态边界：`R2_MANIFEST_REPAIR_IN_PROGRESS / NO_SANDBOX_START`。
+- 父 Task=P02 Hard Build Barrier；当前范围仍为已准入的一次隔离 Smoke 尝试。Smoke admission=`ADMITTED / PRESTART_CHECKS_PENDING`；Build Gate=`BLOCKED`；build=`NOT_AUTHORIZED / NOT_RUN`；AC1–AC7=`BLOCKED / NOT_RUN`；Hard Build Barrier=`EFFECTIVE`。
+- 受保护根目录仍为 `main@ceffb7479cb1f79bd3b620afdaf6e9eaa0ae6d50`；冻结的 root dirty/untracked manifest 含 203 项，摘要=`3a54fa978bf228bfae366a4c4de35b90e4fab609447d3370ed81370299da10e2`。没有修改 root 文件。
+- 候选 worktree=`C:\Users\49745\.codex\worktrees\p02-process-isolation-plan\New Manga`，branch=`codex/P02-process-isolation`，当时已提交检查点=`b3d36dd4db1a156e3db1057d40b32869880546cf`（parent=`c85a041c514f3c0dd1c355a2d09f064dbc64e749`）。DSH 对 `c85a041c` 的 R6 exact-head Review=`APPROVED`，P0/P1/P2/P3=`0/0/0/0`。
+- 固定 scratch clone=`G:\CODEX\P02-scratch-build-source`，detached HEAD=`7ce3c40cd308e7093929bd5f53abc4f8a6c4ef7a`，tree=`ce8056b8ef4d2ebd11bb4754b206adf921a39e41`；private common dir=`clone\.git`，无 remote/alternates，`core.autocrlf=true`，source/EOL pins=`3/3 MATCH`，Git object files=`3/3` 且每个 hardlink count=`1`。仅创建了空目录 `verification/P02/tmp/smoke-readonly-probe/`。
+- 捕获 shell 为 PowerShell 7.6.6，PID `8440`，`Environment.UserInteractive=True`，elevated=`False`，identity=`HOME-MY\49745`。尚未运行 Sandbox、Smoke、Build、runner、Vitest、GUI 或产品测试。
+- R1 manifest 扫描基于已审查的 r3 XML（2609 bytes，SHA-256=`9af445134c6c6d3cec900b6d5c903a3c7fe19a104e0eab10f7c0886280de664d`），覆盖固定 11 个映射；扫描到第 4 个 mapping 时停止。原因是 `DirEntry.stat()` 在此 Windows 文件系统报告 `st_ino=0`，而 `os.lstat()`/`fstat()` 可取得文件 ID；R1 结果因此是无效 partial evidence，保留在 `verification/P02/smoke-prestart-manifests-r1/`，未修改宿主输入。
+- 后续修复要求：使用 `os.lstat(full_path)` 获取 no-follow 元数据，保留 R1 文件，写入新的 R2 输出目录；按冻结 canonical JSON 规则重新扫描 11 个映射。若发现 reparse point、unsupported object、枚举/哈希错误、Windows 大小写冲突、缺少必需样本或扫描期间变更，均应阻断，不启动 Sandbox。
+- 当时的准确下一步：创建 `codex-smoke-prestart-manifest-r2.py` 和 R2 输出，进行 AST 检查，并在同一 live 非提权交互 PowerShell 会话执行。完成后立即复核启动前系统、资源、WSB、配置、root 与映射状态；只有所有冻结检查均 PASS 才考虑唯一一次 `wsb start`。现状和后续动作见 [R2 delivery checkpoint](codex-checkpoint-p02-smoke-prestart-r2-delivery.md)。
