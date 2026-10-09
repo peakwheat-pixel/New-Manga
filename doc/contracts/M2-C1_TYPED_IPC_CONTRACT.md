@@ -139,7 +139,7 @@ Event<T> = {
 | `ResolvePageResource` | `{page_id}` → `{resource_id, revision}` \| `PAGE_NOT_FOUND` | **`1.7` 冻结（M2-PAGE-RESOURCE-RESOLVE-1）**：wire `resolve_page_resource`，页显示图 → 可 issue 的资源目录键（确定性 `page-original-{page_id}`，幂等；`revision` 恒 `"original"`，产物丢失自愈同键重发布）。发布/查找语义、错误面与 host 不轮换裁定以 Revision history `1.7` 为准，协议 minor 5。 |
 | `ListChapters` | `{book_id}` → `{"chapters": [{chapter_id, title, chapter_number, sort_order}]}` | **`1.8` 冻结（M2-PAGE-NAV-PROJECTION-1）**：wire `list_chapters`，book→chapter 导航读取面第一刀；`sort_order` 升序，未知 book_id 返回空数组（零新错误码），协议 minor 6；上方原 PROPOSAL 组合行中的 `ListChapters` 转本行冻结，`CreateChapter`/`DeleteChapter` 仍为 PROPOSAL。 |
 | `ListChapterPages` | `{chapter_id}` → `{"pages": [{page_id, source_filename, sort_order}]}` | **`1.8` 冻结（M2-PAGE-NAV-PROJECTION-1）**：wire `list_chapter_pages`，chapter→page 导航读取面第一刀（新名避开 `GetReaderProjection` 的 ReaderProjection 大对象）；导航摘要行不含 managed_original_ref/宽高/锁态，`sort_order` 升序，未知 chapter_id 返回空数组，协议 minor 6。 |
-| `RerenderPage` | `{page_id}` → artifact/reports/preview | **1.6 RC-4 冻结**：wire `rerender_page`，同步复用既有 RenderService，无 AI/PipelineRun；错误、skip 原图回填与资源撤销以 [RC-4 契约](M2-RC4_DOMAIN_COMMANDS.md) 为准，协议 minor 4。**category 澄清（M2-CATEGORY-CLARIFY-1，2026-10-07；RC-4 r1 RC4-10）**：失败 envelope 的 `MISSING_REQUIRED_INPUT` → `category="unavailable"`（required input missing 属 §8 值域中的可用性失败，非 not_found 的「目标不存在」；category 值此前从未被任何 revision 冻结，taxonomy 表仍为 Proposal，本注记为实现口径登记，非修订）；`TARGET_NOT_FOUND`→`not_found`、`INPUT_REVISION_CHANGED`→`conflict`、`ARTIFACT_WRITE_FAILED`/其余→`internal` 不变。 |
+| <a id="rerender-page-command"></a>`RerenderPage` | `{page_id}` → artifact/reports/preview | **1.6 RC-4 冻结**：wire `rerender_page`，同步复用既有 RenderService，无 AI/PipelineRun；错误、skip 原图回填与资源撤销以 [RC-4 契约](M2-RC4_DOMAIN_COMMANDS.md) 为准，协议 minor 4。**category 澄清（M2-CATEGORY-CLARIFY-1，2026-10-07；RC-4 r1 RC4-10）**：失败 envelope 的 `MISSING_REQUIRED_INPUT` → `category="unavailable"`（required input missing 属 §8 值域中的可用性失败，非 not_found 的「目标不存在」；category 值此前从未被任何 revision 冻结，taxonomy 表仍为 Proposal，本注记为实现口径登记，非修订）；`TARGET_NOT_FOUND`→`not_found`、`INPUT_REVISION_CHANGED`→`conflict`、`ARTIFACT_WRITE_FAILED`/其余→`internal` 不变；category/retryable 观察见[RC-4 命令行](M2-RC4_DOMAIN_COMMANDS.md#rc4-rerender-page-command)与[§8 注记](#rerender-page-error-envelope-observation)。 |
 | `GetReaderProjection` / `SaveReadingProgress` | `{chapter_id}` / `{chapter_id, page_id?, scroll_offset?}` → `ReaderProjection` / `Unit` | Reader VM 读取章节页并保存滚动偏移；page navigation、display mode 为 presentation state。 |
 | `GetSettings` / `SaveSettings` | `{section?}` / `{section, values}` → `SettingsProjection` / `SettingsProjection` | AS-IS 仅证明 Settings VM 在进程内调用 profiles/defaults/credentials services；没有已定义的 `CredentialRef` 类型或 IPC exchange。Credential DTO/exchange 为 UNKNOWN / DEFERRED；secret 不得进入普通事件或日志。**`1.3` 修订（M2-SETTINGS-IPC-CHANNEL）**：本行 transport-neutral 命令名与其 PROPOSAL 等级不变；产品 Tauri 面落地为 §5.3 的 `settings_get` / `settings_update_section`（请求/响应/错误码与写入端校验以 §5.3 为准）。 |
 | `StartExport` / `CancelExport` | `{export_request: ExportRequestDto}` / `{export_id}` → `ExportAccepted` / `Unit` | ViewModel 调 Export service 与本地 worker；实际输出文件选择/宿主能力需后续 host contract，当前导出 IPC 未实现。 |
@@ -347,6 +347,17 @@ ErrorEnvelope = {
 | unclassified Python exception / worker crash | `unknown` or `internal` | Exact mapping/redaction policy **UNKNOWN**; never leak traceback to UI. |
 
 `retryable` defaults to `unknown` unless Core has an evidence-backed decision. `message` is diagnostic text, not a stable programmatic selector. UI branches on `code` / `category`, never English text.
+
+<a id="rerender-page-error-envelope-observation"></a>
+**命令级实现观察（2026-10-10；非全局规范）**：本节仍为 `PROPOSAL`；以下只记录当前 handler 的命令级 envelope 映射，不冻结 `ErrorEnvelope` taxonomy。交叉引用：[§5 `RerenderPage` 行](#rerender-page-command)、[RC-4 `rerender_page` 行](M2-RC4_DOMAIN_COMMANDS.md#rc4-rerender-page-command)。`category` 与 `retryable` 是独立字段；`category="unavailable"` 不推出 `retryable=true`。
+
+| 命令 | 源 code | 当前 category | 当前 retryable |
+|---|---|---|---|
+| `rerender_page` | `MISSING_REQUIRED_INPUT` | `unavailable` | `false` |
+| `rerender_page` | `ARTIFACT_WRITE_FAILED` | `internal` | `false` |
+| `resolve_page_resource` | `ARTIFACT_WRITE_FAILED` | `internal` | `true` |
+
+以上值是命令级实现现状，不能推广为同一 code 的全局映射。证据：[Core rerender category mapping](../../src/bootstrap/core_service.py#L905-L923)、[rerender envelope wrapper](../../src/bootstrap/core_service.py#L1515-L1528)、[category test](../../tests/core/test_rc4_category_clarify.py#L78-L91)、[resolve publish mapping](../../src/bootstrap/core_service.py#L1660-L1664) 与 [retryable test](../../tests/core/test_page_resource_resolve.py#L249-L269)。宿主 `CORE_UNAVAILABLE` 在 Tauri `rerender_page` invocation 中作为拒绝的 code string 返回（[host command](../../apps/desktop/src-tauri/src/main.rs#L341-L348)）；此处不为它推断或添加 Core `ErrorEnvelope` 映射。
 
 ## 9. Region geometry contract
 
