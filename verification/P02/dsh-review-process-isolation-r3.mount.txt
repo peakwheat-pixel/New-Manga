@@ -1,0 +1,5 @@
+command=C:\Python314\python.exe -X utf8 C:\Users\49745\.agents\skills\dsh-dispatch\scripts\mount_session.py --id session-fea5e641-6352-45a4-b5db-01f4424e3c6b --project C:\Users\49745\.codex\worktrees\P02-process-isolation-review-dsh-r3
+exit=0
+stdout:
+无需挂载: session-fea5e641-6352-45a4-b5db-01f4424e3c6b 已在工作区 P02-process-isolation-review-dsh-r3 中
+stderr:

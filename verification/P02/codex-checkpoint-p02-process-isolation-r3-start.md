@@ -10,7 +10,7 @@
 | `??` | `verification/P02/codex-checkpoint-p02-process-isolation-r2-delivery.md` | 2551 | `81e653dc795745c0a05bebe9405ab7142d1031b660a74515be03926e55ea5eed` |
 | `??` | `verification/P02/codex-checkpoint-p02-process-isolation-r2-review.md` | 2628 | `b7473578bb458bc2fcd209055a6bf9c812c82c557a790facd03ea749f14feaf5` |
 | `??` | `verification/P02/codex-p02-wsb-smoke-config-r3.xml` | 2609 | `9af445134c6c6d3cec900b6d5c903a3c7fe19a104e0eab10f7c0886280de664d` |
-| `??` | `verification/P02/codex-scratch-build-input-host-inventory-r2-build-addendum.md` | 4280 | `1acbe6711a9762b190cad9c23a0f89b8fe8223762072a17f7f3aa1ec7ff7ddbc` |
+| `??` (14:34 UTC start snapshot) | `verification/P02/codex-scratch-build-input-host-inventory-r2-build-addendum.md` | 4280 (r3 delivery: 4790) | `1acbe6711a9762b190cad9c23a0f89b8fe8223762072a17f7f3aa1ec7ff7ddbc` (r3 delivery: `dfaa8ecc8e49f5c70e1835d5adeb23a2a4da76e09ec94fe4c39ddf9cbc107c47`) |
 | `??` | `verification/P02/dsh-review-process-isolation-r2.dispatch.md` | 1992 | `c12c493189362a3bcffbe55a465ca613231b81cb096f5822dae5ab95800dc4de` |
 | `??` | `verification/P02/dsh-review-process-isolation-r2.exit.txt` | 2 | `9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa` |
 | `??` | `verification/P02/dsh-review-process-isolation-r2.mount.txt` | 315 | `a9861b6ac5a8cc8ff9e8bd78d8577155ba42a321d91b50544b794af39bdde7af` |
@@ -20,7 +20,7 @@
 | `??` | `verification/P02/dsh-review-process-isolation-r2.stderr.txt` | 0 | `e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855` |
 
 - DSH r2 对固定 `3555213a...` 的独立方案 Review=`APPROVED`，P0/P1/P2=0、P3=10；Review 仅批准方案，不授权 Smoke/Build。正式报告/dispatch/prompt/exit/session/mount/stderr 由上表列出的候选 evidence 保存。包含 thinking events 的原始 JSONL 留在 checkout 外归档 `C:/Users/49745/.codex/worktrees/p02-process-isolation-plan/dsh-review-logs/dsh-review-process-isolation-r2.stdout.jsonl`，size=431099，SHA-256=`e59473d78b491a6bba66df69480ed8eb5fd032c6d2a73476e5e59f45ee2f1f1a`，不复制进 Git。
-- R2 findings F-01–F-09 待在固定范围内补齐：Build-only Git/MSVC inputs、CLI token silent-ignore fail-closed、Build memory unknown deferral、数值 smoke resource thresholds、clone clean stop, clone-local RO canary、可复算分级 hash/tree manifest 与 cache secret scan、canonical hash erratum。F-10 用报告+prompt+dispatch 与 raw path/hash 留审计。
+- R2 findings F-01–F-09 待在固定范围内补齐：Build-only Git inputs、MSVC/SDK 的显式 guest 工具定位与环境、CLI token silent-ignore fail-closed、Build memory unknown deferral、数值 smoke resource thresholds、clone clean stop、clone-local RO canary、可复算分级 hash/tree manifest 与 cache secret scan、canonical hash erratum。F-10 用报告+prompt+dispatch 与 raw path/hash 留审计。
 - 下一条准确动作：在 branch `codex/P02-process-isolation` 修订已批准 r2 方案，冻结 r3 WSB config/hash 和 finding dispositions；运行文档/结构/路线/manifest checks；形成固定 r3 commit 后派 DeepSeek Harness exact-head 独立 Review。
 - Sandbox feature=`UNKNOWN`，Smoke=`NOT_AUTHORIZED / NOT_RUN`，Build Gate=`BLOCKED`，build=`NOT_AUTHORIZED / NOT_RUN`，AC1–AC6=`BLOCKED`，Hard Build Barrier 有效。当前未启动/连接 Sandbox、未查询/修改 Windows Feature、未提权、未运行产品 build/tests/runner/GUI/WebView。
-- 本 checkpoint 自身创建后新增为 untracked 文件；之前记录的 11 个 carry-forward artifacts 未修改。恢复前重核 root manifest、branch/head 和 worktree status；若变化，先登记 drift。
+- 本 checkpoint 创建后成为当时的 untracked 文件。14:34 UTC start snapshot 中列出的 11 个 carry-forward artifacts 在该时点与已记录快照一致；后续 r3 repair 曾修订其中的 Build addendum。它在 r3 delivery commit `92361e3578eedb93d7cf6c4c5a4db06652d31fe9` 中的真实内容为 4790 bytes / SHA-256=`dfaa8ecc8e49f5c70e1835d5adeb23a2a4da76e09ec94fe4c39ddf9cbc107c47`。恢复前重核 root manifest、branch/head 和 worktree status；若变化，先登记 drift。

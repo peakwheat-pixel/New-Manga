@@ -1,0 +1,11 @@
+# Dispatch：P02 Process Isolation r3 exact-head Review
+
+- 完成时间：2026-10-09 14:54 UTC（2026-10-09 22:54 Asia/Shanghai）。Agent=DeepSeek Harness；CLI=`dsh 0.2.0-rc.2`；命令=`dsh --profile headless --json -`。
+- Working directory=`C:/Users/49745/.codex/worktrees/P02-process-isolation-review-dsh-r3`，detached、clean；Base=`3555213a748a7b407400589e1490a387353dec16`，Candidate=`92361e3578eedb93d7cf6c4c5a4db06652d31fe9`，tree=`919e10809390a7fa6c4cf7133ae36ac600a9b517`。
+- 自包含 Prompt=`dsh-review-process-isolation-r3.prompt.md`；正式 final response=`dsh-review-process-isolation-r3.response.md`（19419 bytes，SHA-256=`6a121e0d6cd56efef4ed0bd70dde2e35fb83c9965c040edcc8bba0b05d82f94e`）。
+- 原始 stdout JSONL 在 checkout 外：`C:/Users/49745/.codex/worktrees/p02-process-isolation-plan/dsh-review-logs/dsh-review-process-isolation-r3.stdout.jsonl`，313007 bytes，SHA-256=`8d16c4ec39da295bff9cc02d7b03cd02784414c58a2d9c8ce5c4b667b50c285e`。包含 thinking events，不复制进 Git。stderr=0 bytes；CLI exit=0。
+- Session=`session-fea5e641-6352-45a4-b5db-01f4424e3c6b`，已按 dsh-dispatch skill 通过 `mount_session.py --id ... --project <exact review checkout>` 幂等确认挂载在 `P02-process-isolation-review-dsh-r3`；mount 输出记录在 `dsh-review-process-isolation-r3.mount.txt`。Desktop 下次启动后可见；本轮不重启应用。
+- Decision=`APPROVED_WITH_CONDITIONS`（仅设计）；P0/P1/P2/P3=`0/0/2/4`；finding R3-01..R3-06。C1/C2 必须在任何 `wsb start` 与 Build config 冻结之前关闭；C3/C4 在 Smoke preflight 证据定稿前关闭；本轮选定先关闭全部条件。
+- Review 不授权提权/更改/启用 Windows Feature、启动/连接 Sandbox、Smoke、build、产品 tests/runner/Vitest/GUI/WebView 或 AC1–AC6 PASS。Feature=`UNKNOWN`；Smoke=`NOT_RUN / NOT_AUTHORIZED`，Build Gate=`BLOCKED`，build=`NOT_AUTHORIZED / NOT_RUN`，AC1–AC6=`BLOCKED`，Hard Build Barrier 有效。
+- Reviewer 静态核验受 ConstrainedLanguage 限制，无法用 PowerShell .NET 方式重算 manifest；其 shell 将 Unicode path 转义呈现为一条路径差异。本地 Codex 用 `git status --porcelain=v1 --untracked-files=all -z` 原始状态与 Python `os.fsdecode` 对固定 manifest 独立复算：203/203 path/status/size/SHA-256 MATCH，missing/extra/mismatch=0，canonical entries hash=`3a54fa978bf228bfae366a4c4de35b90e4fab609447d3370ed81370299da10e2`。该差异不构成 root drift。
+- DSH token usage (reported): input=1191, cacheRead=142336, output=8449, total=151976. 该 JSON usage 的 total 为调用端所报累计数，保留原始值，不与 Codex model token 账单混算。

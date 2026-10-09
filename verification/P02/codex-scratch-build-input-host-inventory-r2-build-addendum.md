@@ -1,6 +1,6 @@
-# P02 Build-only 输入清单增补 r2
+# P02 Build Gate 输入清单增补 r2（Build-only Git + Smoke/Build 共用 VS/SDK）
 
-- 记录时间：2026-10-09（Asia/Shanghai）。Owner=Codex；范围=verification/P02/**。本清单只为未来 Build Gate 固定只读工具链输入，不授权 build，也不修改 r2 Smoke config。
+- 记录时间：2026-10-09（Asia/Shanghai）。Owner=Codex；范围=verification/P02/**。本清单为未来 Build Gate 固定只读工具链输入，不授权 build，也不改 Smoke XML：Git for Windows 两个根只属于 Build；Visual Studio BuildTools、Installer 与 Windows SDK 根已在 Smoke 内，属于 Smoke/Build 共用只读映射。
 - 证据来源：本机非提权 PowerShell 的只读文件属性、版本、SHA-256 检查。Build 启动前必须再次检查实际 HostFolder 的完整 manifest、reparse points、文件数、大小和 hash；值变化即 BLOCKED/Review pending。
 
 ## Git for Windows（Build config only）
@@ -12,9 +12,9 @@
 
 以上 HostFolder 均需 ReadOnly=true，r2 Smoke config 不含这些 mapping。Build 阶段的独立 config 需加这 2 项并单独冻结/Review config hash。Guest PATH 需加入 C:\P02\inputs\git\cmd 与 C:\P02\inputs\git\mingw64\bin；GIT_EXEC_PATH 指向 C:\P02\inputs\git\mingw64\libexec\git-core。preflight 必须确认 git --version 与上述版本一致，git -C C:\P02\scratch rev-parse HEAD 返回固定 source commit。Git 不读取、不映射 user profile、global config、凭据；若本机包装器要求未登记的 Git 目录/配置，立即 BLOCKED。
 
-## MSVC / Windows SDK（Build config only）
+## Visual Studio / Windows SDK（Smoke 与未来 Build 共用只读映射）
 
-BuildTools 与 SDK 根目录已在 r2 smoke mapping 表中列出，但 link.exe/cl.exe 从 host PATH 无法解析。Host 文件只读检查结果：
+BuildTools、Installer 与 SDK 根目录已在 Smoke mapping 表中列出，是 Smoke 与未来 Build 的共用只读 HostFolder；Build config 复用这些路径，不另加重复映射。此前把这些根标为 Build-only 是本文件的文案错误。
 
 | 工具 | Host path（映射至同路径） | 版本 | 大小 | SHA-256 |
 |---|---|---|---:|---|
@@ -23,7 +23,7 @@ BuildTools 与 SDK 根目录已在 r2 smoke mapping 表中列出，但 link.exe/
 | rc.exe | C:\Program Files (x86)\Windows Kits\10\bin\10.0.26100.0\x64\rc.exe | 10.0.26100.8249 | 55,736 | 65DB0D7B4F10BA0F55973FD9356543A556DA9EC1C777A0C05F05A0329C8A100A |
 | mt.exe | C:\Program Files (x86)\Windows Kits\10\bin\10.0.26100.0\x64\mt.exe | 10.0.26100.8249 | 1,972,672 | FB1AB75294B78619BD6AC8CADF30CB95BEFBC7324703CBE2654EF800DDD2BF4D |
 
-BuildTools release directory=14.44.35207; Windows SDK version=10.0.26100.0. HostFolder roots are ReadOnly=true and must be verified recursively before Build. Do not rely on host PATH, host environment variables, or guest VS registry discovery.
+BuildTools release directory=14.44.35207; Windows SDK version=10.0.26100.0. HostFolder roots are ReadOnly=true, shared between Smoke and future Build, and must be verified recursively before Build. Do not rely on host PATH, host environment variables, or guest VS registry discovery.
 
 ## 固定的 Build guest 环境
 
@@ -39,9 +39,9 @@ Build config 通过后，在 guest 执行前按上表固定以下环境（都只
 
 Build preflight 要记录 guest where.exe git/cl.exe/link.exe/rc.exe/mt.exe 的绝对路径、版本与 SHA-256，并与本清单逐项匹配；同时记录 Git HEAD/tree、cargo -Vv、rustc -Vv 及有效 PATH/INCLUDE/LIB 的 path-only 结果。任何工具缺失、路径/哈希不符、链接库目录缺失或实际 cargo/link 解析未验证，均为 BLOCKED；不能依赖 %USERPROFILE%、注册表探测或 host 安装状态猜测。
 
-这些 Build-only mappings 会让 Build config 与 Smoke config 不同；它必须作为独立配置冻结并核 hash。任何 mapping/环境变化都重新 Review。当前 Build Gate 仍 BLOCKED、build=NOT_AUTHORIZED/NOT_RUN。
+这些共用 VS/SDK roots 在 Smoke 与 Build 中各映射一次；仅 Git for Windows 两个根为 Build-only mappings。Build config 因 Git、配置字段和资源门槛不同而单独冻结/hash；不得重复添加 VS/SDK roots。
 
 
 ## Separate Build config gate
 
-This inventory is for a future Build-only config. Its Git/MSVC mappings must not be added to the r3 Smoke config. Each Build-only mapping, exact config bytes/hash, resource limit, PATH/INCLUDE/LIB values and tool-resolution evidence requires its own preflight and independent Review before any product build. No observed host path/version/hash in this addendum proves the guest can resolve the toolchain; guest resolution remains `NOT_VERIFIED` until an authorized Build Gate.
+This inventory supports a future separately reviewed Build config. The two Git for Windows roots are Build-only; the Visual Studio BuildTools, Installer, and Windows SDK roots listed above already exist in the r3 Smoke config and are shared read-only inputs. Reuse each shared HostFolder mapping once; do not duplicate it. Do not add the Build-only Git roots to Smoke. Each config, its distinct fields/resource limits, canonical bytes/hash, PATH/INCLUDE/LIB and tool-resolution evidence requires its own preflight and independent Review before any product build. No observed host path/version/hash in this addendum proves the guest can resolve the toolchain; guest resolution remains `NOT_VERIFIED` until an authorized Build Gate.

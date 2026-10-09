@@ -54,6 +54,6 @@
 ## 2026-10-09 Process isolation r2 Review 后续
 
 - DeepSeek Harness r2 对 `3555213a748a7b407400589e1490a387353dec16` 的方案 Review=`APPROVED`（仅设计），P0/P1/P2=0、P3=10；详情见 [`r2 DSH Review`](dsh-review-process-isolation-r2.response.md) 与 [`r2 review checkpoint`](codex-checkpoint-p02-process-isolation-r2-review.md)。批准最多允许在当前候选通过复审、完成 preflight 后尝试一次 isolation smoke；未授权 Smoke 自动 PASS 或 Build。
-- Codex 已登记 DSH r2 的 F-01–F-09 处置：Build-only Git/MSVC inputs、网络静默忽略 fail-closed、未来 Build memory 范围仍 UNKNOWN、Smoke 系统/资源阈值、clone clean stop、scratch-local RO canary、可复算分级 manifest/hash 与 cache secret scan、r2 hash erratum。F-10 的原始 JSONL 因包含 thinking events 留在 checkout 外并登记 SHA；最终 response/prompt/dispatch 已进入版本化证据。
-- 最新候选 r3 的 exact-head 独立 Review 尚待进行；Smoke=`NOT_AUTHORIZED / NOT_RUN`。即使 r3 Review 通过，也仅允许执行本机非提权、只读 feature/resource preflight；所有前置条件满足后才尝试隔离 smoke。
+- R2 时 Codex 曾将 Git 与 MSVC/SDK 一并标为 Build-only；DSH r3 在 R3-01 指出这与 r3 XML 中的 VS/SDK 根映射不符。该历史口径已由 r4 候选改为“两个 Git 根 Build-only、VS/SDK 根 Smoke/Build 共用只读”，待 DSH exact-head r4 Review。其他 F-01–F-10 处置及 raw JSONL 留档说明见前述 r2 Review record。
+- r3 exact-head Review 已完成：[`DSH 正式报告`](dsh-review-process-isolation-r3.response.md) decision=`APPROVED_WITH_CONDITIONS`，P0/P1/P2/P3=`0/0/2/4`，仅批准设计。C1/C2 必须在任何 `wsb start` 或 Build config 冻结前关闭；C3/C4 在 Smoke preflight 证据定稿前关闭。该 Review 最多允许非提权只读 preflight，不代表 Smoke admission。r4 已修复 R3-01..R3-05 并通过作者侧静态自检，现待独立 exact-head Review；Smoke=`NOT_AUTHORIZED / NOT_RUN`。
 - 本 Gate 继续=`BLOCKED`，build=`NOT_AUTHORIZED / NOT_RUN`，Hard Build Barrier 有效，P02 AC1–AC6=`BLOCKED`。本轮不运行产品 build、runner、Vitest、GUI 或 WebView。

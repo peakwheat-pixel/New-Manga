@@ -1,6 +1,6 @@
 # P02 Codex Windows Sandbox 进程隔离方案 r3
 
-版本状态：r1 在 `c542a31b102cdc5c129efd9df155a2760ed777b2` 被 DeepSeek Harness 判为 `CHANGES_REQUESTED`；r2 固定于 `3555213a748a7b407400589e1490a387353dec16`，DSH 方案 Review=`APPROVED`（P0/P1/P2=0，P3=10）；当前 r3=`REVIEW_PENDING`。r2 批准仅覆盖方案，不授权 Sandbox Smoke 或产品 build。r3 修订前置条件与 F-01–F-09 的设计处置；不改 P02 产品范围、AC、Owner allowlist、行为基线或用户数据边界。
+版本状态：r1 在 `c542a31b102cdc5c129efd9df155a2760ed777b2` 被 DeepSeek Harness 判为 `CHANGES_REQUESTED`；r2 固定于 `3555213a748a7b407400589e1490a387353dec16`，DSH 方案 Review=`APPROVED`（P0/P1/P2=0，P3=10）；r3 固定于 `92361e3578eedb93d7cf6c4c5a4db06652d31fe9` 后获 DSH `APPROVED_WITH_CONDITIONS`（仅设计，P0/P1/P2/P3=0/0/2/4）；当前 r4 定向修订，待 exact-head Review。r3 Review 仅允许非提权只读 preflight，不授权 Sandbox Smoke 或产品 build。r4 处理 R3-01–R3-05；R3-06（AC 计数文案）留待 P02 收口。全过程不改 P02 产品范围、AC、Owner allowlist、行为基线或用户数据边界。
 ## 目标与固定来源
 
 P02 live root 为 G:/CODEX/New Manga，HEAD 549a6544f0be1eec66c09ece393fd1a409f10bf3，203 项 dirty/untracked。未来 build source 固定为 committed commit 7ce3c40cd308e7093929bd5f53abc4f8a6c4ef7a；该 commit 是 549 HEAD 祖先，之间差异仅有 doc/ 与 verification/ 路径，但 clone 前必须重核。dirty root 不作为工作树副本、输入映射或可写边界。
@@ -14,7 +14,7 @@ P02 live root 为 G:/CODEX/New Manga，HEAD 549a6544f0be1eec66c09ece393fd1a409f1
 独立 Review 通过后才可创建 clone：
 
 1. 对 live root 只读核验 HEAD/tree 与 203 项保护 manifest；确认固定 source commit 可达。
-2. 用 git clone --no-local --no-hardlinks --no-checkout --single-branch --branch main "G:\CODEX\New Manga" "G:\CODEX\P02-scratch-build-source" 创建普通 clone。不得用 git worktree，也不得复制 .git、工作树或 shared common directory。
+2. 使用与 [`P02 Task boundary`](../../doc/tasks/P02.md) 相同的 PowerShell 命令顺序：`git clone --no-local --no-hardlinks --no-checkout --single-branch --branch main "G:\CODEX\New Manga" "G:\CODEX\P02-scratch-build-source"`；`git -C "G:\CODEX\P02-scratch-build-source" remote remove origin`；`git -C "G:\CODEX\P02-scratch-build-source" config core.autocrlf true`；`git -C "G:\CODEX\P02-scratch-build-source" checkout --detach 7ce3c40cd308e7093929bd5f53abc4f8a6c4ef7a`。不得用 git worktree，也不得复制 .git、工作树或 shared common directory。
 3. 只在 clone 内设置 core.autocrlf=true，再 checkout --detach 7ce3c40cd308e7093929bd5f53abc4f8a6c4ef7a。复核 HEAD、tree、clean status 和 pinned file SHA-256，尤其是 build_sidecar.ps1、core_sidecar.spec、requirements-build.txt。任何 pin 不符即 BLOCKED，不覆盖 hash、不临时改 EOL。
 4. 运行 git rev-parse --path-format=absolute --git-common-dir，并确认输出等于该 clone 的 .git；git remote -v 为空；.git/objects/info/alternates 不存在；对 .git/objects 下每个文件运行 fsutil hardlink list 并确认只列出一个路径。任何 object 链接计数不是 1、命令权限不足、reparse point 越出 clone、common dir 外置或检查无法完成时，都不得启动 Sandbox。
 5. 再次核对 live root 起点 manifest；203 项路径集合与逐文件 SHA-256 必须完全匹配。clone 内不得含 root dirty/untracked 文件。
@@ -35,13 +35,13 @@ clone 有自己的 .git；guest 只通过唯一 writable mapping 看见 clone �
 | SFX weights | G:\CODEX\New Manga.task-envs\M2-SFX-DETECT\weights-v2b | C:\P02\inputs\weights\sfx | ReadOnly=true；显式覆盖 SfxWeightsSource |
 | Node/npm | E:\Program Files\nodejs | C:\P02\inputs\nodejs | ReadOnly=true；显式调用 guest npm.cmd |
 | Rust stable MSVC toolchain | C:\Users\49745\.rustup\toolchains\stable-x86_64-pc-windows-msvc | C:\P02\inputs\rust-toolchain | ReadOnly=true；显式指定 guest cargo.exe/rustc.exe |
-| Visual Studio Build Tools | C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools | 同一绝对路径 | ReadOnly=true |
-| Visual Studio Installer / vswhere | C:\Program Files (x86)\Microsoft Visual Studio\Installer | 同一绝对路径 | ReadOnly=true |
-| Windows SDK | C:\Program Files (x86)\Windows Kits\10 | 同一绝对路径 | ReadOnly=true；已盘点版本 10.0.26100.0 |
+| Visual Studio Build Tools | C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools | 同一绝对路径 | ReadOnly=true；Smoke 与未来 Build 共用的只读输入映射 |
+| Visual Studio Installer / vswhere | C:\Program Files (x86)\Microsoft Visual Studio\Installer | 同一绝对路径 | ReadOnly=true；Smoke 与未来 Build 共用的只读输入映射 |
+| Windows SDK | C:\Program Files (x86)\Windows Kits\10 | 同一绝对路径 | ReadOnly=true；Smoke 与未来 Build 共用的只读输入映射；已盘点版本 10.0.26100.0 |
 
 不能依靠 Sandbox 中 host 的 G:/E: 驱动器存在；guest 使用表中明确的 C:\P02 路径。build_sidecar.ps1 的 PythonExe/WeightsSource/SfxWeightsSource 默认值为 host G: 路径，后续必须显式传入 guest 路径。不得映射整个 user profile、AppData 根、root checkout、common .git、其他 worktree、凭据或用户数据。Python base interpreter 的精确子目录是 pyvenv.cfg 指向的只读输入，不代表允许映射其他 AppData 路径。
 
-Host pre-start manifest 对每条 mapping 固定精确 host/guest path、`ReadOnly`、用途、reparse-point 结果与版本。固定 source clone、Python venv、模型权重等相对较小的输入需递归记录所有相对路径、类型、大小及逐文件 SHA-256；Git/Node/Rust/VS Build Tools/Windows SDK 等大型工具链可采用分级配方：完整目录树路径/类型/大小清单的聚合 SHA-256，加上 Smoke/未来 Build 实际执行的每个二进制和选定权威样本的 SHA-256。路径用 `/`，以 `(casefold(path), path)` 排序，拒绝大小写冲突；规范 JSON 使用 `json.dumps(records, ensure_ascii=False, sort_keys=True, separators=(',', ':'))` 的 UTF-8 bytes 计算 SHA-256，不含时间戳。发现 reparse point、越界目标、清单/hash/版本漂移或未登记路径即 BLOCKED。分级目录 hash 只绑定路径/类型/大小；它不声称大型根内每个文件字节均已哈希，必须在报告明确这个边界。
+Host pre-start manifest 对每条 mapping 固定精确 host/guest path、`ReadOnly`、用途、reparse-point 结果与版本。固定 source clone、Python venv、模型权重等较小输入递归记录完整相对树和每个文件的 SHA-256；Git/Node/Rust/VS Build Tools/Windows SDK 等大型工具链可采用 metadata-only 分级：完整目录树的路径/类型/大小清单，加上实际执行二进制和选定权威样本的文件 SHA-256。每条 JSON record 的字段固定为：`schema_version`（整数 `1`）、`path`（相对当前 HostFolder 根的 `/` 分隔路径；根目录写 `.`；保留原 Unicode code points，不做规范化）、`type`（`file` 或 `directory`）、`size_bytes`（文件为非负整数、目录为 `null`）、`sha256`（文件实算时为 64 位小写 hex，否则 `null`）、`sha256_status`（`verified`、`not_computed` 或 `not_applicable`）。目录必须为 `size_bytes=null, sha256=null, sha256_status=not_applicable`；完整哈希或被选中的样本文件为整数大小、哈希值、`verified`；大型根中其余文件为整数大小、`sha256=null, sha256_status=not_computed`。每个目录及普通文件各一条 record；reparse point、其他对象类型、越界目标或 Windows 大小写冲突均 BLOCKED。记录按 `(path.casefold(), path)` 排序，根记录 `.` 也包含在内。对 records 数组使用 `json.dumps(records, ensure_ascii=False, sort_keys=True, separators=(',', ':'))` 编码为无 BOM UTF-8，再计算 SHA-256；不含时间戳、ACL、alternate streams。聚合 hash 绑定所有条目的路径/类型/大小和 hash 状态，并绑定每个 `sha256_status=verified` 文件的实际内容 SHA-256；它不证明 `not_computed` 文件内容未变，也不声称大型根内每个文件字节均已哈希，报告必须披露该限制。
 
 ## Offline cache seed
 
@@ -61,7 +61,7 @@ Smoke 配置通过 Windows Sandbox CLI 的 `--config` formatted-string 参数传
 
 其他字段：vGPU、ClipboardRedirection、AudioInput、VideoInput、PrinterRedirection 均为 `Disable`，ProtectedClient=`Enable`；不配置 `LogonCommand`，不运行时调用 `wsb share` 或扩大 HostFolder。ProtectedClient 若被拒、`wsb exec`/连接不可用，或无法从唯一 Sandbox UI 窗口保存证据，均 `BLOCKED / NOT_VERIFIED`，不关闭 ProtectedClient、不使用 clipboard、不换映射。`wsb list` 只证明 session ID/status/uptime，不是配置生效证据。
 
-Smoke 固定 `MemoryInMB=2048`。Windows Sandbox 官方最低要求包含 AMD64/ARM64、BIOS virtualization、host RAM 至少 4 GiB、free disk 至少 1 GiB、至少 2 个 CPU core；本 Task 另要求 host **available** memory 至少 4096 MiB（Guest 配置值 2048 MiB + 2048 MiB safety margin），C: 与 G: 均至少有 1 GiB free。任一实时资源/架构/虚拟化事实不可读或低于阈值即 `BLOCKED`。Build Gate 的内存值和 resource threshold 必须基于 workload inventory 另行冻结；`>4096 MiB` 的 WSB 接受范围仍 `UNKNOWN`，未经实测不得用于 Build config。
+Smoke 固定 `MemoryInMB=2048`。Windows Sandbox 官方最低要求包含 AMD64/ARM64、BIOS virtualization、host total RAM 至少 4 GiB、free disk 至少 1 GiB、至少 2 个 CPU core；本 Task 另要求 host available memory 至少 4096 MiB（Guest 配置值 2048 MiB + 2048 MiB safety margin）。这两个 RAM 条件是并列要求，因此恰好 4 GiB 总 RAM 的机器不能通过 available-memory 阈值；实际需有更高总内存且实时可用内存达标，任何无法读取或低于阈值均 BLOCKED。C: 与 G: 均至少有 1 GiB free。Build Gate 的内存值和 resource threshold 必须基于 workload inventory 另行冻结；`>4096 MiB` 的 WSB 接受范围仍 `UNKNOWN`，未经实测不得用于 Build config。
 
 ## 执行身份、会话与 UI 证据
 
@@ -76,7 +76,7 @@ UI 截图使用 computer-use 技能规定的 node_repl + @oai/sky（Windows.Grap
 固定 r3 head/config 经非作者 Review 后，Codex 才能执行一次不含产品代码的 isolation smoke。启动前必须完成并保存 preflight；任何硬件/系统 feature/路径/manifest/UI 前置项未知或不满足时，不运行 `wsb start`。
 
 1. 在当前非提权交互 PowerShell 中重核 root HEAD/branch/common-dir 与 203 项保护 manifest；查询 `Containers-DisposableClientVM` feature 必须得出 `Enabled`，查询失败或需提权则 BLOCKED（不提权、不启用）；确认 `wsb` identity/version、`wsb list` 无 running session、固定 clone 路径不存在、AMD64/ARM64 与 BIOS virtualization、host RAM、available memory、C:/G: free space、CPU core 满足上一节阈值，并重核所有 HostFolder 及 pinned inputs。WSB stopped session 可存在。
-2. 仅在 Review 批准和完整 preflight 通过后，创建固定 ordinary clone；`git clone --no-local --no-hardlinks --no-checkout`，clone 内设置 `core.autocrlf=true`，detach checkout 固定 source commit。检查 HEAD/tree、pinned hashes、private common dir、空 remotes、无 alternates、每个 Git object hardlink count=1，以及 `git status --porcelain --untracked-files=all` **为空**。任何状态项/未登记文件、检查权限不足或路径占用均 BLOCKED；保留现场，不清理、不换路径。
+2. 仅在设计 Review 条件全部关闭、Codex 记录 Smoke admission 且完整只读 preflight 通过后，创建固定 ordinary clone；严格执行相同命令序列：`git clone --no-local --no-hardlinks --no-checkout --single-branch --branch main "G:\CODEX\New Manga" "G:\CODEX\P02-scratch-build-source"`；`git -C "G:\CODEX\P02-scratch-build-source" remote remove origin`；`git -C "G:\CODEX\P02-scratch-build-source" config core.autocrlf true`；`git -C "G:\CODEX\P02-scratch-build-source" checkout --detach 7ce3c40cd308e7093929bd5f53abc4f8a6c4ef7a`。检查 HEAD/tree、pinned hashes、private common dir、空 remotes、无 alternates、每个 Git object hardlink count=1，以及 `git status --porcelain --untracked-files=all` **为空**。任何状态项/未登记文件、检查权限不足或路径占用均 BLOCKED；保留现场，不清理、不换路径。
 3. 在 clone 内只创建空的 `verification/P02/tmp/smoke-readonly-probe/` canary dir；按固定 r3 config 启动并连接唯一 session。Guest 对每个只读 input mapping 仅读取登记的样本/hash；经 `C:\P02\readonly-canary` 尝试唯一 nonce 写入；经 `C:\P02\scratch\verification\P02\tmp\...` 写入 scratch RW canary。只读写入成功时新文件只会留在 Task scratch clone，记录其精确路径/hash、设 Smoke BLOCKED，禁止删除；RW canary 则必须在对应 scratch path 可由 host 精确看到。
 4. Guest 检查 root checkout 的绝对路径与 common `.git` 路径均不可见。Host 先验证受控 TCP endpoint 可达，再由 guest 读取 network interfaces/routes 并确认无 default route、对同一 endpoint 的 TCP probe 失败；若 CLI 返回成功但配置 token 被忽略导致有 default route/连接成功，立即 BLOCKED。Host control probe 失败时 network result=`NOT_VERIFIED`。
 5. 使用 `computer-use` 方式捕获唯一 Sandbox UI 窗口，并绑定 session/window/process、时间戳、截图大小与 hash。Guest 命令/输出/exit、RO/RW/unmapped/network probes、CLI stdout/stderr/exit 与 UI evidence 只写 scratch evidence；不从 UI 执行命令。
@@ -86,7 +86,7 @@ UI 截图使用 computer-use 技能规定的 node_repl + @oai/sky（Windows.Grap
 
 ## Build Gate 与当前阻断
 
-只有 smoke 完整证据经独立 Review，Codex 对 exact HEAD/runtime config/hash、offline seed、工具链闭包与 host resource preflight 全部复核通过，才可另行记录 Build Gate=PASS 并授权一次 clone-only build。Build 必须在同一 WSB 隔离模型、相同真实 HostFolder mapping 集合、单独冻结的 config/hash 中执行；网络禁用、package manager offline，cache 写入 scratch。Build config 与 smoke config 任一字段/hash 不同，必须重新核验和复审后才可提交 Build Gate。
+只有 Smoke 完整证据经独立 Review、Codex 对 exact HEAD/runtime config/hash、offline seed、工具链闭包与 host resource preflight 全部复核通过，才可另行记录 Build Gate=PASS 并授权一次 clone-only build。Build config 使用与 Smoke **共有**的 scratch RW 根及 Python、模型权重、Node/npm、Rust、Visual Studio BuildTools、Installer、Windows SDK 输入映射；省略 Smoke-only 的 clone-local RO canary，并只新增 Build-only 的两个 Git for Windows RO mappings。不得重复映射同一 HostFolder/SandboxFolder；超出该集合的新增映射必须另行冻结、说明用途并独立 Review。Build 使用单独冻结的 config/hash，网络禁用、package manager offline，cache 写入 scratch。配置或映射不同，必须重新核验和复审后才可提交 Build Gate。
 
 build 后检查 clone 完整 porcelain、tracked diff、ignored outputs、directory trees 与 root manifests。所有输出必须在 doc/tasks/P02.md 登记的 scratch allowlist 内；allowlist 外路径、写回其他 host 目录、输入 hash 变化、link 出界、cache 写出或不能解释的结果都阻断。产品 build 不代表 AC1–AC6 通过；runner、Vitest、GUI/WebView 都是独立产品 Gate。
 
@@ -115,11 +115,11 @@ build 后检查 clone 完整 porcelain、tracked diff、ignored outputs、direct
 
 | Finding | r3 disposition | Gate |
 |---|---|---|
-| F-01 guest Git missing | Build-only Git read-only mapping and exact executable/runtime inventory are recorded in `codex-scratch-build-input-host-inventory-r2-build-addendum.md`; Smoke config unchanged. | Must recheck guest resolution before any separately authorized Build. |
-| F-02 MSVC linker/SDK environment | Build-only paths, versions/hashes, explicit PATH/INCLUDE/LIB and `where.exe` checks are recorded in the same addendum and Build plan. | Guest resolution remains `NOT_VERIFIED`; Build Gate stays blocked. |
+| F-01 guest Git missing | 两个 Git for Windows 根目录作为 Build-only RO mappings 及 guest executable/runtime inventory 登记于 addendum；r3 Smoke XML 不含 Git。 | Guest 解析仍 `NOT_VERIFIED`，只在独立 Build Gate 核验。 |
+| F-02 MSVC linker/SDK environment | VS BuildTools、Installer 与 Windows SDK 三个 RO roots 已列于 r3 Smoke；未来 Build 复用同一映射，不重复添加。工具路径/版本/hash 与 PATH/INCLUDE/LIB/`where.exe` 检查见 addendum/Build plan。 | Guest 解析仍 `NOT_VERIFIED`；Build Gate 保持 BLOCKED。 |
 | F-03 Networking token may be ignored | `wsb start` success is insufficient; host endpoint must be reachable while guest has no default route and TCP to the same endpoint fails. | Runtime Smoke evidence required. |
 | F-04 `MemoryInMB > 4096` acceptance | Not guessed; reserved for a future workload-based Build config. | `UNKNOWN`; no Build memory value above 4096 may be used without runtime evidence. |
-| F-05 resource preflight numeric thresholds | Added official platform minimums plus this smoke's 2048 MiB config and 4096 MiB available-memory threshold; check at least 2 CPU cores and 1 GiB free on C: and G:. | Must pass immediately before start. |
+| F-05 resource preflight numeric thresholds | Added platform minimums plus this smoke's 2048 MiB guest and 4096 MiB host-available thresholds; total host RAM must also be at least 4 GiB, with at least 2 CPU cores and 1 GiB free on C: and G:. | Both RAM conditions apply; fail-closed immediately before any authorized start. |
 | F-06 dirty clone stop rule | Exact source clone must have empty `git status --porcelain --untracked-files=all`; any extra path blocks and is retained. | Clone preflight. |
 | F-07 RO canary could write into real input | Canary is now a new empty directory inside task-owned scratch, mapped separately read-only. A successful write stays inside that scratch clone, is recorded, and is never deleted. No write attempt targets real toolchain/weight inputs. | Runtime Smoke evidence required. |
 | F-08 manifest recipe and cache scan | Added deterministic canonical tree inventory recipe, full hashes for smaller inputs, selected executable hashes for large roots, explicit limits, and credential/token scan before future cache seed. | Manifest before Smoke; secret scan only before Build cache seed. |
@@ -127,3 +127,17 @@ build 后检查 clone 完整 porcelain、tracked diff、ignored outputs、direct
 | F-10 raw r1 JSONL outside Git | Preserve external raw path+SHA because JSONL contains thinking events; version the prompt/final response/dispatch/exit/session/mount evidence in Git. | Accepted evidence-retention boundary; report remains the review record. |
 
 These are design dispositions, not execution results. DSH r2 approved the r2 plan only. r3 Smoke config and updated stop conditions require an exact-head independent Review. Until the r3 Review and runtime Smoke evidence pass, `Smoke=NOT_AUTHORIZED / NOT_RUN`, `Build Gate=BLOCKED`, `build=NOT_AUTHORIZED / NOT_RUN`, P02 AC1–AC6=`BLOCKED`, and the Hard Build Barrier remains active.
+
+
+## DSH r3 finding disposition（r4 author repair；exact-head Review pending）
+
+| Finding | r4 author disposition | Gate |
+|---|---|---|
+| R3-01 Shared VS/SDK mapping wording | 修正为 Smoke/Build 共用只读映射，Git for Windows 两个根才是 Build-only；r3 XML 与 canonical hash 不变。 | Awaiting independent r4 Review；Build config 未冻结。 |
+| R3-02 r3-start checkpoint hash | 保留 14:34 start snapshot，新增 r3 delivery bytes/hash 并更正“未改动”时间口径。 | Awaiting independent r4 Review。 |
+| R3-03 manifest record schema | 固定 schema_version、path/type/size_bytes/sha256/sha256_status、枚举与 null 规则。 | Awaiting independent r4 Review；无 runtime manifest。 |
+| R3-04 clone command drift | P02 Task boundary、proposal、plan 与 Smoke step 2 使用相同 clone/remote/config/checkout 命令序列。 | Awaiting independent r4 Review；未创建 clone。 |
+| R3-05 scope/checkpoint traceability | 追加 scope extension；r3 delivery checkpoint 补 scope link、18-path diff、XML hash 与 Review 结果。 | Awaiting independent r4 Review。 |
+| R3-06 AC count wording | 既存差异，按 DSH 要求留待 P02 closeout。 | Deferred; no product acceptance claim. |
+
+r3 formal report=`dsh-review-process-isolation-r3.response.md`；decision=`APPROVED_WITH_CONDITIONS`，P0/P1/P2/P3=`0/0/2/4`。 r3 Review 只授权本机非提权只读 preflight；r4 Review 未通过前不尝试 `wsb start`，Smoke/Build/product gates 均不获授权。
