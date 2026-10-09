@@ -119,3 +119,13 @@
 4. Antigravity如返回changes_requested/blocked，逐项修订并复审；如approved，由Codex按P01 base_commit..reviewed_head独立核验，再集成并处理F-C8-04、更新Task/Plan/Status/依赖图/RESUME/NEXT-AUTOPROGRESS-PROMPT。P01未达到Task所有AC前不得置done或关机。
 
 旧C6→C7/C8启动命令均为历史；从上述C9直接指令继续，不重跑AC2–AC6或P03/P08。
+
+## 2026-10-09 P01 C9固定头Gate通过 / Antigravity正式Review待派
+
+- Reality Check=`RESUME_SAFE`。root=`G:/CODEX/New Manga`，branch=`main`，HEAD=`714138de3da06013e3ea35395e0c11b3d15fc371`，既有24项dirty/untracked与`ac1-root-status.log`路径集合一致；不得触碰、暂存、stash或清理。P01 owner worktree=`G:/CODEX/New Manga.worktrees/P01-metadata-audit-codex`，branch=`agent/codex/P01-metadata-audit`，common-dir=`G:/CODEX/New Manga/.git`，HEAD=C9 `7645577ab374b581eb7081fd57675c32793249f5`，tree=`8dafbccda120e718aeb6f40613146320a4d2564f`。
+- P01 Task=`in_review`，Reviewer=`Antigravity`；C8 DSH decision=`changes_requested`历史记录不变，C8 F-C8-04仍是P01集成Gate动作；AC7及Task关闭均未完成。
+- C9 fixed-head Gate真实结果：57 range paths、越界0、产品/代码路径0；base祖先、`git diff --check`、绝对路径`verify_plan.py`均EXIT=0；路线校验196节点/105祖先/21规划节点及DAG和链接通过；root HEAD/path set保持；产品测试/build/GUI=`NOT_RUN`。Gate=`verification/P01/ac7-c9-fixed-head-check.log`，SHA-256=`3a4619fd5418cddf37e6347eae4f6c492ea588ded35a9e2c007a66fa271f7fe3`。
+- Antigravity正式Review的固定对象为base=`826bea12a132c5af2ac0cd1244d00e9170093c71`、head=`7645577ab374b581eb7081fd57675c32793249f5`、tree=`8dafbccda120e718aeb6f40613146320a4d2564f`。完整diff packet为262525 bytes/2811 lines，SHA-256=`59dba7c5d563ace3c16921ceeb9838236aa9ec35d0d36bb28ee8bcebc2b1a749`；生成命令与指纹见`agy-review-c9-input.note.md`。只读自包含Review prompt=`agy-review-c9.prompt.md`。
+- 独立Reviewer工作树已创建为detached `G:/CODEX/New Manga.worktrees/P01-c9-review-antigravity`，HEAD/tree分别与C9精确匹配且初始clean。Review packet目前为该worktree下未跟踪输入，不属于被审差量；不得在该worktree修改源码。
+- Owner worktree下一步：完成C10 evidence/checkpoint commit（只包含C9 fixed-head log/sha、prompt、packet fingerprint note、Resume与Handoff更新），运行C10 fixed-head文档/路线检查，核对root 24项仍一致；然后将C9 Gate log、prompt、fingerprint note复制到detached Reviewer worktree，核验packet hash及reviewer HEAD/tree，再从该worktree通过`antigravity-dispatch` Skill派发`agy -p ... --project "New Manga" --output-format json --dangerously-skip-permissions`。保存准确JSON、response、stderr、exit、session ID及SHA，并用`migrate_session.py --id <conversation_id>`迁移成功会话。
+- Antigravity如`changes_requested`或`blocked`，如实保存决定并对P01允许路径修订/重审；如`approved`，先保存正式Review carrier，然后Codex对base..C9与后续仅证据性的checkpoint提交执行Integration Gate。F-C8-04必须在集成变更更新`verify_plan.py`、允许`P01=done`/正确done计数并运行EXIT=0。未经Review、Integration Gate、集成后验证与恢复提示持久化，不得将P01置为done或执行本轮一次性关机。
