@@ -5,7 +5,7 @@
 - Boundary: R2_FINDING_REPAIRED / R3_REVIEW_PENDING / NO_SANDBOX_START.
 - Owner / non-author Reviewer / Integrator: Codex / DeepSeek Harness / Codex.
 - Delivery D6 HEAD / tree / base: `3a16570b306081d1f3c52a90f80fe80406a40c98` / `65a5f62fcd2542c6e8efb0c1e75fb263764162bd` / `4183e7f7cf366c27aa8ad8a0bc7300af48783470`.
-- R2 Review target D5: `9bd1999c76ff65994d6e7bca44ba568553fe26ec` / tree `907b462057fc1f8ac54fe75243ca10fc5d521d57`; DSH returned `CHANGES_REQUESTED`, P0/P1/P2/P3=`0/0/0/1`, open=1. Report SHA-256=`D5C7A65322C14CA1C1EB1992E78CE6B00617AA5067724C0C423CCCD0982ABC86`; session=`session-68dd4ddb-bc98-4f8a-98e5-a0e57c22c520`, CLI exit=0, mount exit=0.
+- R2 Review target D5: `9bd1999c76ff65994d6e7bca44ba568553fe26ec` / tree `907b462057fc1f8ac54fe75243ca10fc5d521d57`; DSH returned `CHANGES_REQUESTED`, P0/P1/P2/P3=`0/0/0/1`, open=1. Committed response Git blob SHA-256 (UTF-8 LF)=`9869F229DADD4A173C74B737321270AEF504C5266B2AA2A100CF999B41696612`; original DSH worktree byte SHA-256=`D5C7A65322C14CA1C1EB1992E78CE6B00617AA5067724C0C423CCCD0982ABC86` (mixed EOL, not committed bytes). Session=`session-68dd4ddb-bc98-4f8a-98e5-a0e57c22c520`, CLI exit=0, mount exit=0.
 
 ## Repair and D6 validation
 

@@ -5,7 +5,7 @@
 - Boundary: REVIEW_CHANGES_REQUESTED / NO_SANDBOX_START.
 - Owner / non-author Reviewer / Integrator: Codex / DeepSeek Harness / Codex.
 - Reviewed package HEAD / tree / base: `9bd1999c76ff65994d6e7bca44ba568553fe26ec` / `907b462057fc1f8ac54fe75243ca10fc5d521d57` / `4183e7f7cf366c27aa8ad8a0bc7300af48783470`.
-- DSH: CLI `0.2.0-rc.2`; session `session-68dd4ddb-bc98-4f8a-98e5-a0e57c22c520`; CLI exit=0; mount exit=0; mounted workspace=`P02-current-prestart-review-dsh-r2`. Final response SHA-256=`D5C7A65322C14CA1C1EB1992E78CE6B00617AA5067724C0C423CCCD0982ABC86`; evidence in `dsh-review-p02-current-prestart-r2.response.md`, `.exit`, `.session.json`.
+- DSH: CLI `0.2.0-rc.2`; session `session-68dd4ddb-bc98-4f8a-98e5-a0e57c22c520`; CLI exit=0; mount exit=0; mounted workspace=`P02-current-prestart-review-dsh-r2`. Committed response Git blob SHA-256 (UTF-8 LF)=`9869F229DADD4A173C74B737321270AEF504C5266B2AA2A100CF999B41696612`; original DSH worktree bytes SHA-256=`D5C7A65322C14CA1C1EB1992E78CE6B00617AA5067724C0C423CCCD0982ABC86` (12049-byte mixed-EOL source; not the committed artifact bytes). Evidence in `dsh-review-p02-current-prestart-r2.response.md`, `.exit`, `.session.json`.
 
 ## Review result and disposition
 

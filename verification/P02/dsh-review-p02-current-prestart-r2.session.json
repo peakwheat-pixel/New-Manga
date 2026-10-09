@@ -7,7 +7,11 @@
   "mounted_workspace": "P02-current-prestart-review-dsh-r2",
   "reviewed_head": "9bd1999c76ff65994d6e7bca44ba568553fe26ec",
   "reviewed_tree": "907b462057fc1f8ac54fe75243ca10fc5d521d57",
-  "response_sha256": "D5C7A65322C14CA1C1EB1992E78CE6B00617AA5067724C0C423CCCD0982ABC86",
+  "response_sha256": "9869F229DADD4A173C74B737321270AEF504C5266B2AA2A100CF999B41696612",
+  "response_sha256_basis": "Git blob bytes, UTF-8 LF, committed in 3a16570b306081d1f3c52a90f80fe80406a40c98",
+  "original_dsh_worktree_response_sha256": "D5C7A65322C14CA1C1EB1992E78CE6B00617AA5067724C0C423CCCD0982ABC86",
+  "original_dsh_worktree_response_bytes": 12049,
+  "original_dsh_worktree_line_endings": "83 LF + 1 CRLF; original worktree byte provenance, not committed artifact hash",
   "decision": "CHANGES_REQUESTED",
   "findings": {
     "P0": 0,
