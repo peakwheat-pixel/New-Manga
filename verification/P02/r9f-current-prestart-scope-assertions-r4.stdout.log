@@ -1,0 +1,12 @@
+HEAD: 3a16570b306081d1f3c52a90f80fe80406a40c98
+Tree: 65a5f62fcd2542c6e8efb0c1e75fb263764162bd
+Complete diff path count: 66
+Out-of-scope path count: 0
+R2 response SHA-256: D5C7A65322C14CA1C1EB1992E78CE6B00617AA5067724C0C423CCCD0982ABC86
+path_scope: True
+status_paragraph_boundary: True
+plan_snapshot_dated: True
+plan_current_tasks_aligned: True
+r3_logs_explicitly_bind_d4: True
+r2_report_hash_bound: True
+hard_build_barrier_preserved: True
