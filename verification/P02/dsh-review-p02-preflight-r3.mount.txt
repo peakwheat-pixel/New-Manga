@@ -1,0 +1,4 @@
+mount_session.py exit=0.
+Session: session-defbe730-82c4-4c8b-9fa8-c332e9e42578
+Mounted into DSH workspace: P02-preflight-review-dsh-r3
+Workspace: C:\Users\49745\.codex\worktrees\P02-preflight-review-dsh-r3

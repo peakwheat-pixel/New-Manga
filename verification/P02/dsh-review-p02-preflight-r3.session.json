@@ -1,0 +1,17 @@
+{
+  "reviewed_parent": "9a96b5ae0695f56da9f19bfaf0771adda7999ea7",
+  "cli_version": "0.2.0-rc.2",
+  "task_base": "6855c113e6a44320d9555777900cfb78a218d383",
+  "reviewer": "DeepSeek Harness",
+  "session_id": "session-defbe730-82c4-4c8b-9fa8-c332e9e42578",
+  "reviewed_tree": "cba4d7f25bf8d68827b41449d0cfbde62539fd7f",
+  "mount_exit_code": 0,
+  "command": "dsh --profile headless --json -",
+  "raw_jsonl_committed": false,
+  "mounted_project": "C:\\Users\\49745\\.codex\\worktrees\\P02-preflight-review-dsh-r3",
+  "captured_at_utc": "2026-10-09T17:07:46.0826092Z",
+  "exit_code": 0,
+  "raw_jsonl_external_path": "C:\\Users\\49745\\.codex\\worktrees\\p02-process-isolation-plan\\dsh-review-logs\\dsh-review-p02-preflight-r3.stdout.jsonl",
+  "reviewed_head": "c36435aec5042143b816c01aa6da2ff3e80ba154",
+  "stderr_bytes": 0
+}
