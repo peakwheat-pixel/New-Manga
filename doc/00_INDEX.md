@@ -6,7 +6,7 @@
 
 **整体规划入口**：[权威Plan与候选Task](REBASELINE_PLAN.md)、[中文依赖图](../verification/PROJECT-ROADMAP-20261008/ROADMAP.md)、[全项目报告](../verification/PROJECT-ROADMAP-20261008/REPORT.md)、[196节点历史台账](../verification/PROJECT-ROADMAP-20261008/task-inventory.csv)、[恢复点](../verification/PROJECT-ROADMAP-20261008/RESUME.md)。历史审计基线为e4242ecd；P08/P03/P01已完成，P01 post-FF保护复核通过。167项登记完成或文档交付不代表新架构产品完成率。
 
-P08/P03/P01均为done，P02=`ready / IDLE`；Antigravity是Owner转移候选，DSH r7对`55be5dab7b6d7bebf94c9ad6524f57c023616249`作出`approved_with_conditions`；C-1/F-02/F-04已在`ec207865`修订，C-2要求的快进前恢复点同步与manifest复核待执行；Live main快进前Owner仍为ZCode。P01 D3 Review=`approved`、C1及D7 closeout Gate=`PASS`，root fast-forward/post-FF复核完成。C8 formal Review=changes_requested仅保留为历史证据；P02与P03的当前证据分别见P02/P03 RESUME。
+P08/P03/P01均为done，P02=`ready / IDLE`；Antigravity是Owner转移候选，DSH r8对`55be5dab7b6d7bebf94c9ad6524f57c023616249`作出`approved_with_conditions`；C-1/F-02/F-04已在`ec207865`修订，C-2要求的快进前恢复点同步与manifest复核待执行；Live main快进前Owner仍为ZCode。P01 D3 Review=`approved`、C1及D7 closeout Gate=`PASS`，root fast-forward/post-FF复核完成。C8 formal Review=changes_requested仅保留为历史证据；P02与P03的当前证据分别见P02/P03 RESUME。
 
 全任务盘点与 inventory 下方段落是其各自审计时的历史快照，不反映当前总数或授权状态；以本页首段、[Plan](REBASELINE_PLAN.md) 与 [STATUS](STATUS.md) 为当前事实。
 
