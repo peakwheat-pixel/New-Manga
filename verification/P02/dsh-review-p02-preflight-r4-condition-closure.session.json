@@ -1,0 +1,29 @@
+{
+  "reviewed_head": "92dc7361194f1db8fdf7aff3a15a3d234ae56678",
+  "reviewed_tree": "73511f7ba03d6b2215f4dad9c5a3c7f442471a6f",
+  "base": "083d2b47f7051c2dedd0d9ae4346ae1affab6c1b",
+  "reviewer": "DeepSeek Harness",
+  "cli_version": "0.2.0-rc.2",
+  "session_id": "session-3843fce8-356d-4efe-bc56-7fb492f6ca57",
+  "review_worktree": "C:/Users/49745/.codex/worktrees/P02-preflight-r4-condition-closure-92dc7361-review-dsh",
+  "review_branch": "review/deepseek/P02-preflight-r4-condition-closure-92dc7361",
+  "review_worktree_clean_before_after": true,
+  "main_report": {
+    "command": "dsh headless -",
+    "exit_code": 0,
+    "stdout_path": "verification/P02/dsh-review-p02-preflight-r4-condition-closure.response.md",
+    "stdout_bytes": 16468,
+    "decision": "APPROVED",
+    "counts": "P0/P1/P2/P3=0/0/0/0; five nonblocking observations in first report"
+  },
+  "erratum_followup": {
+    "command": "dsh headless --session-id session-3843fce8-356d-4efe-bc56-7fb492f6ca57 <correction prompt>",
+    "exit_code": 0,
+    "stdout_path": "verification/P02/dsh-review-p02-preflight-r4-condition-closure-correction.response.md",
+    "stdout_bytes": 4054,
+    "corrects": "candidate path status count 3A+4M -> 2A+5M; withdraws O-3; corrects NOTE-01 anchor"
+  },
+  "mount_exit_code": 0,
+  "mounted_project": "C:/Users/49745/.codex/worktrees/P02-preflight-r4-condition-closure-92dc7361-review-dsh",
+  "raw_stderr": "not committed; process-only output, formal responses and exit evidence retained"
+}

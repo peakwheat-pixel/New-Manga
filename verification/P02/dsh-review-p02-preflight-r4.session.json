@@ -1,0 +1,26 @@
+{
+  "reviewed_head": "083d2b47f7051c2dedd0d9ae4346ae1affab6c1b",
+  "reviewed_tree": "27a8051b95df3c2cf40be90737d09b324592a78e",
+  "base": "ceffb7479cb1f79bd3b620afdaf6e9eaa0ae6d50",
+  "reviewer": "DeepSeek Harness",
+  "cli_version": "0.2.0-rc.2",
+  "session_id": "session-fd6fdd4d-bc54-43d5-83ac-79207730b30c",
+  "review_worktree": "C:/Users/49745/.codex/worktrees/P02-preflight-r4-083d2b47-review-dsh",
+  "first_dispatch": {
+    "command": "dsh headless <prompt>",
+    "exit_code": 0,
+    "stdout_bytes": 0,
+    "disposition": "no formal response; continued same session"
+  },
+  "formal_followup": {
+    "command": "dsh headless --session-id session-fd6fdd4d-bc54-43d5-83ac-79207730b30c <prompt>",
+    "exit_code": 0,
+    "stdout_path": "verification/P02/dsh-review-p02-preflight-r4.response.md",
+    "stdout_bytes": 17211,
+    "decision": "APPROVED_WITH_CONDITIONS",
+    "counts": "P0/P1/P2=0/0/0; P3=6; NOTE=1"
+  },
+  "mount_exit_code": 0,
+  "mounted_project": "C:/Users/49745/.codex/worktrees/P02-preflight-r4-083d2b47-review-dsh",
+  "raw_stderr": "not committed; process-only output, formal response and exit evidence retained"
+}

@@ -1,0 +1,11 @@
+# P02 R10 Condition Closure — Review Start checkpoint
+
+- Timestamp: 2026-10-10 03:09 +08:00. State boundary: `CANDIDATE_FROZEN / DSH_REVIEW_IN_PROGRESS`.
+- Parent Task=P02 remains `in_progress / ACTIVE`; Owner=Codex for this Codex-only process-isolation evidence subtask; Reviewer=DeepSeek Harness (non-author); Integrator=Codex.
+- Fixed candidate: branch=`codex/P02-process-isolation`; worktree=`C:/Users/49745/.codex/worktrees/p02-process-isolation-plan/New Manga`; HEAD=`92dc7361194f1db8fdf7aff3a15a3d234ae56678`; tree=`73511f7ba03d6b2215f4dad9c5a3c7f442471a6f`; parent/base=`083d2b47f7051c2dedd0d9ae4346ae1affab6c1b`.
+- Exact reviewed diff: seven paths listed in the r10 scope extension and R10 validation record. Candidate frozen after `git diff --cached --check` EXIT=0, exact staged paths 7/7, route validator EXIT=0 (196 nodes), focused Markdown links 6 with 0 new missing, JSON/TSV assertions passed, root protected manifest 203/203 with zero mismatches/staged/path overlap.
+- Root snapshot during validation: `main@ceffb7479cb1f79bd3b620afdaf6e9eaa0ae6d50`; protected manifest digest=`3a54fa978bf228bfae366a4c4de35b90e4fab609447d3370ed81370299da10e2`.
+- Dispatch: prompt=`verification/P02/dsh-review-p02-preflight-r4-condition-closure.prompt.md`; reviewer worktree=`C:/Users/49745/.codex/worktrees/P02-preflight-r4-condition-closure-92dc7361-review-dsh`, branch=`review/deepseek/P02-preflight-r4-condition-closure-92dc7361`; DSH CLI=`0.2.0-rc.2`.
+- Review scope is only closure of the six P3 documentation/evidence conditions in prior r9 Review. It does not authorize a Sandbox launch and cannot mark Smoke, Build, barrier, or product AC as passed.
+- Current states: Smoke admission=`NOT_ADMITTED`; clone=`NOT_CREATED`; Sandbox/Smoke=`NOT_RUN`; Build Gate=`BLOCKED`; build=`NOT_AUTHORIZED / NOT_RUN`; AC1–AC7=`BLOCKED / NOT_RUN`; Hard Build Barrier remains effective.
+- Next exact action: run the self-contained prompt from the clean reviewer worktree, capture the formal stdout decision and exit code, and attach the DSH session. If Review passes, update only the authorized current P02 status/Plan/Index/Task segments and rerun stage-1 preflight before the separate Smoke admission decision.

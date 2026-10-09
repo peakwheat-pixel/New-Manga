@@ -1,0 +1,519 @@
+{
+  "schema_version": 1,
+  "captured_at": "2026-10-10T03:30:19.8096628+08:00",
+  "scope": "P02 Codex-only isolation Smoke preflight; fresh stage 1 only; no clone or Sandbox started",
+  "authorization_reference": "verification/P02/codex-checkpoint-p02-preflight-r4-start.md:7; scope-delta r7/r9 authorization basis",
+  "shell": {
+    "path": "C:\\Program Files\\PowerShell\\7\\pwsh.exe",
+    "version": "7.6.6",
+    "pid": 19480,
+    "host_name": "ConsoleHost",
+    "elevated": false,
+    "environment_user_interactive": true
+  },
+  "commands": {
+    "feature": "Get-CimInstance -ClassName Win32_OptionalFeature -Filter \"Name = 'Containers-DisposableClientVM'\"",
+    "hardware": "Get-CimInstance Win32_ComputerSystem, Win32_OperatingSystem, Win32_Processor, Win32_LogicalDisk",
+    "wsb_version": "C:\\Program Files\\WindowsApps\\MicrosoftWindows.WindowsSandbox_0.8.107.0_x64__cw5n1h2txyewy\\wsb.exe --version",
+    "wsb_list": "C:\\Program Files\\WindowsApps\\MicrosoftWindows.WindowsSandbox_0.8.107.0_x64__cw5n1h2txyewy\\wsb.exe list --raw",
+    "pins": "Get-FileHash -Algorithm SHA256 over the 20 paths in codex-scratch-build-preflight-inputs-r1.tsv",
+    "hostfolders": "Test-Path and Get-Item Attributes for all roots in codex-scratch-build-preflight-hostfolders-r1.tsv",
+    "root_manifest": "git status --porcelain=v1 --untracked-files=all -z; exact 203 path/status/kind/size/SHA-256 comparison; canonical digest replay",
+    "source": "git show <source-commit>:<path>; LF/CRLF SHA-256; git merge-base --is-ancestor"
+  },
+  "root": {
+    "captured_at": "2026-10-10T03:30:22.853128+08:00",
+    "path": "G:\\CODEX\\New Manga",
+    "branch": "main",
+    "head": "ceffb7479cb1f79bd3b620afdaf6e9eaa0ae6d50",
+    "common_git_dir": "G:\\CODEX\\New Manga\\.git",
+    "manifest_path": "C:\\Users\\49745\\.codex\\worktrees\\p02-process-isolation-plan\\New Manga\\verification\\P02\\codex-process-isolation-root-start-manifest.json",
+    "manifest_entries": 203,
+    "live_entries": 203,
+    "missing": 0,
+    "extra": 0,
+    "mismatches": 0,
+    "mismatch_details": [],
+    "staged": 0,
+    "unstaged": 4,
+    "untracked": 199,
+    "status_counts": {
+      " M": 4,
+      "??": 199
+    },
+    "recorded_entries_sha256": "3a54fa978bf228bfae366a4c4de35b90e4fab609447d3370ed81370299da10e2",
+    "recomputed_entries_sha256": "3a54fa978bf228bfae366a4c4de35b90e4fab609447d3370ed81370299da10e2",
+    "digest_match": true,
+    "result": "PASS",
+    "protected_path_count": 203,
+    "candidate_dirty_path_count": 17,
+    "candidate_root_dirty_intersection": [],
+    "candidate_root_overlap_count": 0,
+    "candidate_head": "92dc7361194f1db8fdf7aff3a15a3d234ae56678",
+    "candidate_tree": "73511f7ba03d6b2215f4dad9c5a3c7f442471a6f",
+    "candidate_parent": "083d2b47f7051c2dedd0d9ae4346ae1affab6c1b",
+    "source_commit": "7ce3c40cd308e7093929bd5f53abc4f8a6c4ef7a",
+    "source_object_exit": 0,
+    "source_is_ancestor_of_live_main": true,
+    "source_ancestor_exit": 0,
+    "source_eol_pins": [
+      {
+        "path": "packaging/m2ac5/build_sidecar.ps1",
+        "git_show_exit": 0,
+        "lf_sha256": "44513fbd470c9a4b22fd4a3f8b65fe8f275f3884206bc3394219dffc508e91b1",
+        "expected_lf_sha256": "44513fbd470c9a4b22fd4a3f8b65fe8f275f3884206bc3394219dffc508e91b1",
+        "crlf_sha256": "07e12e80ceb2a35bab96150f4530b7a788b914a2467a32056098adbb775dd30e",
+        "expected_crlf_sha256": "07e12e80ceb2a35bab96150f4530b7a788b914a2467a32056098adbb775dd30e",
+        "match": true
+      },
+      {
+        "path": "packaging/m2ac5/core_sidecar.spec",
+        "git_show_exit": 0,
+        "lf_sha256": "3865a579a2f29e2ff44ba675a0e5d583299aa9d9b875f633ef8f137f021dbb65",
+        "expected_lf_sha256": "3865a579a2f29e2ff44ba675a0e5d583299aa9d9b875f633ef8f137f021dbb65",
+        "crlf_sha256": "c73d6fe02f005a3813b75d2c69e3d2ea7b9810f69eb408f0745f9920be0b859a",
+        "expected_crlf_sha256": "c73d6fe02f005a3813b75d2c69e3d2ea7b9810f69eb408f0745f9920be0b859a",
+        "match": true
+      },
+      {
+        "path": "packaging/m2ac5/requirements-build.txt",
+        "git_show_exit": 0,
+        "lf_sha256": "73f0845b14fd934a36fb58e301dc79ebb0070b22ba1bf43517501cc3db1a6f2a",
+        "expected_lf_sha256": "73f0845b14fd934a36fb58e301dc79ebb0070b22ba1bf43517501cc3db1a6f2a",
+        "crlf_sha256": "c50edd6c3058197003d66049bc28662e9dc7e4175b499ffe9989ae8bca0e7a07",
+        "expected_crlf_sha256": "c50edd6c3058197003d66049bc28662e9dc7e4175b499ffe9989ae8bca0e7a07",
+        "match": true
+      }
+    ],
+    "source_eol_pins_match": true,
+    "fixed_clone_path": "G:\\CODEX\\P02-scratch-build-source",
+    "fixed_clone_exists": false,
+    "tracked_modified_paths": [
+      ".qoder-credits/report.json",
+      "doc/12_ROADMAP.md",
+      "doc/tasks/README.md",
+      "verification/PROJECT-ROADMAP-20261008/ROADMAP.md"
+    ]
+  },
+  "candidate": {
+    "worktree": "C:\\Users\\49745\\.codex\\worktrees\\p02-process-isolation-plan\\New Manga",
+    "head": "92dc7361194f1db8fdf7aff3a15a3d234ae56678",
+    "tree": "73511f7ba03d6b2215f4dad9c5a3c7f442471a6f",
+    "parent": "083d2b47f7051c2dedd0d9ae4346ae1affab6c1b",
+    "dirty_paths_at_capture": 17,
+    "root_overlap_count": 0
+  },
+  "feature": {
+    "name": "Containers-DisposableClientVM",
+    "install_state": 1,
+    "state": "Enabled"
+  },
+  "hardware": {
+    "system_type": "x64-based PC",
+    "processor_architecture_cim": 9,
+    "virtualization_firmware_enabled": true,
+    "hypervisor_present": true,
+    "vm_monitor_mode_extensions": false,
+    "second_level_address_translation_extensions": false,
+    "physical_cores": 16,
+    "total_ram_bytes": 33981165568,
+    "total_ram_gib": 31.647,
+    "available_ram_kib": 17181176,
+    "available_ram_mib": 16778.0,
+    "disks": [
+      {
+        "device": "C:",
+        "free_bytes": 353921073152,
+        "free_gib": 329.615
+      },
+      {
+        "device": "G:",
+        "free_bytes": 1395254259712,
+        "free_gib": 1299.432
+      }
+    ]
+  },
+  "sandbox": {
+    "package_name": "MicrosoftWindows.WindowsSandbox",
+    "package_full_name": "MicrosoftWindows.WindowsSandbox_0.8.107.0_x64__cw5n1h2txyewy",
+    "package_version": "0.8.107.0",
+    "install_location": "C:\\Program Files\\WindowsApps\\MicrosoftWindows.WindowsSandbox_0.8.107.0_x64__cw5n1h2txyewy",
+    "executable": "C:\\Program Files\\WindowsApps\\MicrosoftWindows.WindowsSandbox_0.8.107.0_x64__cw5n1h2txyewy\\wsb.exe",
+    "executable_bytes": 156160,
+    "executable_version": "0.8.107.0",
+    "executable_sha256": "247e092b5c5bd37820f225a7dd3ddf10ae37a67e2751a19c24b802c84769c441",
+    "version_stdout": "0.8.107.0",
+    "version_exit": 0,
+    "list_raw_stdout": "{\n  \"WindowsSandboxEnvironments\": []\n}",
+    "list_raw_exit": 0,
+    "environment_count": 0
+  },
+  "fixed_clone": {
+    "path": "G:\\CODEX\\P02-scratch-build-source",
+    "exists": false
+  },
+  "hostfolders": [
+    {
+      "purpose": "fixed scratch clone",
+      "mapping_domain": "Scratch RW",
+      "path": "G:\\CODEX\\P02-scratch-build-source",
+      "expected": "ABSENT",
+      "exists": false,
+      "is_reparse_point": false,
+      "match": true
+    },
+    {
+      "purpose": "Python base",
+      "mapping_domain": "Smoke RO",
+      "path": "C:\\Users\\49745\\AppData\\Local\\Programs\\Python\\Python312",
+      "expected": "PRESENT",
+      "exists": true,
+      "is_reparse_point": false,
+      "match": true
+    },
+    {
+      "purpose": "pinned sidecar venv",
+      "mapping_domain": "Smoke RO",
+      "path": "G:\\CODEX\\New Manga.task-envs\\m2ac5-build",
+      "expected": "PRESENT",
+      "exists": true,
+      "is_reparse_point": false,
+      "match": true
+    },
+    {
+      "purpose": "detector weights",
+      "mapping_domain": "Smoke RO",
+      "path": "G:\\CODEX\\New Manga.task-envs\\M2-DOCTR-QUAL-C4\\weights\\ogkalu-comic-text-and-bubble-detector",
+      "expected": "PRESENT",
+      "exists": true,
+      "is_reparse_point": false,
+      "match": true
+    },
+    {
+      "purpose": "SFX weights",
+      "mapping_domain": "Smoke RO",
+      "path": "G:\\CODEX\\New Manga.task-envs\\M2-SFX-DETECT\\weights-v2b",
+      "expected": "PRESENT",
+      "exists": true,
+      "is_reparse_point": false,
+      "match": true
+    },
+    {
+      "purpose": "Node/npm",
+      "mapping_domain": "Smoke RO",
+      "path": "E:\\Program Files\\nodejs",
+      "expected": "PRESENT",
+      "exists": true,
+      "is_reparse_point": false,
+      "match": true
+    },
+    {
+      "purpose": "Rust stable MSVC",
+      "mapping_domain": "Smoke RO",
+      "path": "C:\\Users\\49745\\.rustup\\toolchains\\stable-x86_64-pc-windows-msvc",
+      "expected": "PRESENT",
+      "exists": true,
+      "is_reparse_point": false,
+      "match": true
+    },
+    {
+      "purpose": "VS Build Tools",
+      "mapping_domain": "Smoke RO",
+      "path": "C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools",
+      "expected": "PRESENT",
+      "exists": true,
+      "is_reparse_point": false,
+      "match": true
+    },
+    {
+      "purpose": "VS Installer",
+      "mapping_domain": "Smoke RO",
+      "path": "C:\\Program Files (x86)\\Microsoft Visual Studio\\Installer",
+      "expected": "PRESENT",
+      "exists": true,
+      "is_reparse_point": false,
+      "match": true
+    },
+    {
+      "purpose": "Windows SDK",
+      "mapping_domain": "Smoke RO",
+      "path": "C:\\Program Files (x86)\\Windows Kits\\10",
+      "expected": "PRESENT",
+      "exists": true,
+      "is_reparse_point": false,
+      "match": true
+    },
+    {
+      "purpose": "Git cmd",
+      "mapping_domain": "Build-only RO",
+      "path": "C:\\Program Files\\Git\\cmd",
+      "expected": "PRESENT",
+      "exists": true,
+      "is_reparse_point": false,
+      "match": true
+    },
+    {
+      "purpose": "Git mingw64",
+      "mapping_domain": "Build-only RO",
+      "path": "C:\\Program Files\\Git\\mingw64",
+      "expected": "PRESENT",
+      "exists": true,
+      "is_reparse_point": false,
+      "match": true
+    }
+  ],
+  "pins": {
+    "records": [
+      {
+        "purpose": "Python base",
+        "path": "C:\\Users\\49745\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+        "expected_bytes": 103192,
+        "actual_bytes": 103192,
+        "size_match": true,
+        "expected_sha256": "15b41a488c356c0e331facdea6c836a6cec021f12d5fde9844e7ca4a1aa0361a",
+        "actual_sha256": "15b41a488c356c0e331facdea6c836a6cec021f12d5fde9844e7ca4a1aa0361a",
+        "hash_match": true
+      },
+      {
+        "purpose": "pinned venv Python",
+        "path": "G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Scripts\\python.exe",
+        "expected_bytes": 274712,
+        "actual_bytes": 274712,
+        "size_match": true,
+        "expected_sha256": "864530d708039551a2c672ddd65e5900fbc08b0981479679723a5b468f8082bc",
+        "actual_sha256": "864530d708039551a2c672ddd65e5900fbc08b0981479679723a5b468f8082bc",
+        "hash_match": true
+      },
+      {
+        "purpose": "pyvenv.cfg",
+        "path": "G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\pyvenv.cfg",
+        "expected_bytes": null,
+        "actual_bytes": 325,
+        "size_match": null,
+        "expected_sha256": "176502a215876bab911b824f97576c2a2fb4a15e88bbf871344f82178beb9a6d",
+        "actual_sha256": "176502a215876bab911b824f97576c2a2fb4a15e88bbf871344f82178beb9a6d",
+        "hash_match": true
+      },
+      {
+        "purpose": "distutils-precedence.pth",
+        "path": "G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\distutils-precedence.pth",
+        "expected_bytes": null,
+        "actual_bytes": 151,
+        "size_match": null,
+        "expected_sha256": "2638ce9e2500e572a5e0de7faed6661eb569d1b696fcba07b0dd223da5f5d224",
+        "actual_sha256": "2638ce9e2500e572a5e0de7faed6661eb569d1b696fcba07b0dd223da5f5d224",
+        "hash_match": true
+      },
+      {
+        "purpose": "Node",
+        "path": "E:\\Program Files\\nodejs\\node.exe",
+        "expected_bytes": 91694408,
+        "actual_bytes": 91694408,
+        "size_match": true,
+        "expected_sha256": "3331e1ffe19874215472217c5e94f5a0c6d8e18c4ac7111d3937aa0ad5e9b4a5",
+        "actual_sha256": "3331e1ffe19874215472217c5e94f5a0c6d8e18c4ac7111d3937aa0ad5e9b4a5",
+        "hash_match": true
+      },
+      {
+        "purpose": "npm.cmd",
+        "path": "E:\\Program Files\\nodejs\\npm.cmd",
+        "expected_bytes": 538,
+        "actual_bytes": 538,
+        "size_match": true,
+        "expected_sha256": "21b46c69ad6e2f231f02a9e120f4ba6c8e75fef5a45637103002eab99f888ab8",
+        "actual_sha256": "21b46c69ad6e2f231f02a9e120f4ba6c8e75fef5a45637103002eab99f888ab8",
+        "hash_match": true
+      },
+      {
+        "purpose": "cargo",
+        "path": "C:\\Users\\49745\\.rustup\\toolchains\\stable-x86_64-pc-windows-msvc\\bin\\cargo.exe",
+        "expected_bytes": 31435776,
+        "actual_bytes": 31435776,
+        "size_match": true,
+        "expected_sha256": "c37545ec61d48d31bdefce53280ecab61c4ea54eaace372fac6a0316c6e165d9",
+        "actual_sha256": "c37545ec61d48d31bdefce53280ecab61c4ea54eaace372fac6a0316c6e165d9",
+        "hash_match": true
+      },
+      {
+        "purpose": "rustc",
+        "path": "C:\\Users\\49745\\.rustup\\toolchains\\stable-x86_64-pc-windows-msvc\\bin\\rustc.exe",
+        "expected_bytes": 110592,
+        "actual_bytes": 110592,
+        "size_match": true,
+        "expected_sha256": "ca9988af88b1463f6857fdfe909299fee50a63260b3e5f7dbcb5b4d3318b27bc",
+        "actual_sha256": "ca9988af88b1463f6857fdfe909299fee50a63260b3e5f7dbcb5b4d3318b27bc",
+        "hash_match": true
+      },
+      {
+        "purpose": "vcvars64.bat",
+        "path": "C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\VC\\Auxiliary\\Build\\vcvars64.bat",
+        "expected_bytes": 39,
+        "actual_bytes": 39,
+        "size_match": true,
+        "expected_sha256": "6b516d8fcf543c14b2d861e1f45661e0029230fe0dc48e86ce78522801822209",
+        "actual_sha256": "6b516d8fcf543c14b2d861e1f45661e0029230fe0dc48e86ce78522801822209",
+        "hash_match": true
+      },
+      {
+        "purpose": "vswhere.exe",
+        "path": "C:\\Program Files (x86)\\Microsoft Visual Studio\\Installer\\vswhere.exe",
+        "expected_bytes": 469456,
+        "actual_bytes": 469456,
+        "size_match": true,
+        "expected_sha256": "c54f3b7c9164ea9a0db8641e81ecdda80c2664ef5a47c4191406f848cc07c662",
+        "actual_sha256": "c54f3b7c9164ea9a0db8641e81ecdda80c2664ef5a47c4191406f848cc07c662",
+        "hash_match": true
+      },
+      {
+        "purpose": "cl.exe",
+        "path": "C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\VC\\Tools\\MSVC\\14.44.35207\\bin\\Hostx64\\x64\\cl.exe",
+        "expected_bytes": 677968,
+        "actual_bytes": 677968,
+        "size_match": true,
+        "expected_sha256": "6cadddca8c19e76991bbb44dff2eab5cab6807f9145e8bce9a800235a5975e51",
+        "actual_sha256": "6cadddca8c19e76991bbb44dff2eab5cab6807f9145e8bce9a800235a5975e51",
+        "hash_match": true
+      },
+      {
+        "purpose": "link.exe",
+        "path": "C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\VC\\Tools\\MSVC\\14.44.35207\\bin\\Hostx64\\x64\\link.exe",
+        "expected_bytes": 3252808,
+        "actual_bytes": 3252808,
+        "size_match": true,
+        "expected_sha256": "85dfbeb6e52282fbc4f34c015709754677fd170f11768c7098fab913a6c570df",
+        "actual_sha256": "85dfbeb6e52282fbc4f34c015709754677fd170f11768c7098fab913a6c570df",
+        "hash_match": true
+      },
+      {
+        "purpose": "rc.exe",
+        "path": "C:\\Program Files (x86)\\Windows Kits\\10\\bin\\10.0.26100.0\\x64\\rc.exe",
+        "expected_bytes": 55736,
+        "actual_bytes": 55736,
+        "size_match": true,
+        "expected_sha256": "65db0d7b4f10ba0f55973fd9356543a556da9ec1c777a0c05f05a0329c8a100a",
+        "actual_sha256": "65db0d7b4f10ba0f55973fd9356543a556da9ec1c777a0c05f05a0329c8a100a",
+        "hash_match": true
+      },
+      {
+        "purpose": "mt.exe",
+        "path": "C:\\Program Files (x86)\\Windows Kits\\10\\bin\\10.0.26100.0\\x64\\mt.exe",
+        "expected_bytes": 1972672,
+        "actual_bytes": 1972672,
+        "size_match": true,
+        "expected_sha256": "fb1ab75294b78619bd6ac8cadf30cb95befbc7324703cbe2654ef800ddd2bf4d",
+        "actual_sha256": "fb1ab75294b78619bd6ac8cadf30cb95befbc7324703cbe2654ef800ddd2bf4d",
+        "hash_match": true
+      },
+      {
+        "purpose": "Git cmd git.exe",
+        "path": "C:\\Program Files\\Git\\cmd\\git.exe",
+        "expected_bytes": 46480,
+        "actual_bytes": 46480,
+        "size_match": true,
+        "expected_sha256": "3cbd024d9d11ef08bd6a0cb5a973613c50825b4952bc6006f3f4222f436091e5",
+        "actual_sha256": "3cbd024d9d11ef08bd6a0cb5a973613c50825b4952bc6006f3f4222f436091e5",
+        "hash_match": true
+      },
+      {
+        "purpose": "Git mingw64 git.exe",
+        "path": "C:\\Program Files\\Git\\mingw64\\bin\\git.exe",
+        "expected_bytes": 4321168,
+        "actual_bytes": 4321168,
+        "size_match": true,
+        "expected_sha256": "fc0f1cae1304fcdcf4d0749f421c5ed21471efc856301f92f56d4b844be84363",
+        "actual_sha256": "fc0f1cae1304fcdcf4d0749f421c5ed21471efc856301f92f56d4b844be84363",
+        "hash_match": true
+      },
+      {
+        "purpose": "detector model",
+        "path": "G:\\CODEX\\New Manga.task-envs\\M2-DOCTR-QUAL-C4\\weights\\ogkalu-comic-text-and-bubble-detector\\model.safetensors",
+        "expected_bytes": null,
+        "actual_bytes": 171543900,
+        "size_match": null,
+        "expected_sha256": "037930a861e67870eb345be01b28cc70d7e2b7956528e48ee0ebdb0c093df80d",
+        "actual_sha256": "037930a861e67870eb345be01b28cc70d7e2b7956528e48ee0ebdb0c093df80d",
+        "hash_match": true
+      },
+      {
+        "purpose": "detector config",
+        "path": "G:\\CODEX\\New Manga.task-envs\\M2-DOCTR-QUAL-C4\\weights\\ogkalu-comic-text-and-bubble-detector\\config.json",
+        "expected_bytes": null,
+        "actual_bytes": 2320,
+        "size_match": null,
+        "expected_sha256": "b6d707933e12e9593a7025604be1c95add70a6db371fdd1532e8854e2256e072",
+        "actual_sha256": "b6d707933e12e9593a7025604be1c95add70a6db371fdd1532e8854e2256e072",
+        "hash_match": true
+      },
+      {
+        "purpose": "detector preprocessor",
+        "path": "G:\\CODEX\\New Manga.task-envs\\M2-DOCTR-QUAL-C4\\weights\\ogkalu-comic-text-and-bubble-detector\\preprocessor_config.json",
+        "expected_bytes": null,
+        "actual_bytes": 470,
+        "size_match": null,
+        "expected_sha256": "7e9e2245806aa3ef068a5321f5eebee3116fa4cec560173231954ffaca930eca",
+        "actual_sha256": "7e9e2245806aa3ef068a5321f5eebee3116fa4cec560173231954ffaca930eca",
+        "hash_match": true
+      },
+      {
+        "purpose": "SFX ONNX model",
+        "path": "G:\\CODEX\\New Manga.task-envs\\M2-SFX-DETECT\\weights-v2b\\yolo11s-seg.onnx",
+        "expected_bytes": null,
+        "actual_bytes": 40824255,
+        "size_match": null,
+        "expected_sha256": "944e811410933ad6ff8d32446fcc9eef90fb463794e1874ce83035e83acd418d",
+        "actual_sha256": "944e811410933ad6ff8d32446fcc9eef90fb463794e1874ce83035e83acd418d",
+        "hash_match": true
+      }
+    ],
+    "hash_matches": 20,
+    "registered_size_matches": 14,
+    "size_not_registered": 6
+  },
+  "config": {
+    "path": "C:\\Users\\49745\\.codex\\worktrees\\p02-process-isolation-plan\\New Manga\\verification\\P02\\codex-p02-wsb-smoke-config-r3.xml",
+    "bytes": 2609,
+    "sha256": "9af445134c6c6d3cec900b6d5c903a3c7fe19a104e0eab10f7c0886280de664d",
+    "xml_mapped_folders": 11
+  },
+  "ui_helper": {
+    "captured_at": "2026-10-09T19:29:16.092Z",
+    "module": "@oai/sky",
+    "app_count": 40,
+    "window_count": 4,
+    "sandbox_apps": [],
+    "sandbox_windows": [],
+    "screenshot_saved": false
+  },
+  "thresholds": {
+    "architecture": true,
+    "firmware_virtualization": true,
+    "physical_cores": true,
+    "available_ram": true,
+    "c_drive_free": true,
+    "g_drive_free": true,
+    "feature_enabled": true,
+    "wsb_identity_version_list": true,
+    "hostfolder_roots": true,
+    "pins_hash": true,
+    "pins_registered_sizes": true,
+    "config_hash": true,
+    "source_pins": true,
+    "root_manifest": true,
+    "fixed_clone_absent": true,
+    "total_ram": true
+  },
+  "stage1_result": "PRESTART_STAGE_1_PASS",
+  "complete_preflight": "BLOCKED / INCOMPLETE",
+  "smoke_admission": "NOT_ADMITTED",
+  "smoke": "NOT_RUN",
+  "build_gate": "BLOCKED",
+  "build": "NOT_AUTHORIZED / NOT_RUN",
+  "product_ac1_ac7": "BLOCKED / NOT_RUN",
+  "hard_build_barrier": "EFFECTIVE",
+  "notes": [
+    "HostFolder verification covers mapped root existence and root-level reparse-point state only; no recursive tree or reparse traversal was performed.",
+    "The initial manifest aggregation counted untracked ?? entries as staged; corrected porcelain index-column parsing yields staged=0, unstaged=4, untracked=199, with the same 203/203 content digest.",
+    "Measurement correction: the first aggregate evaluation referenced a non-existent FreeSpace property on the normalized disk records and therefore returned false for both disk thresholds. The captured free_bytes values are unchanged; recomputation using the recorded fields gives C: and G: above 1 GiB and the complete stage-1 threshold set passes.",
+    "Root recheck enumerated the four tracked modified paths; none is a candidate target or current P02 status document. Root candidate-path overlap remains 0."
+  ]
+}

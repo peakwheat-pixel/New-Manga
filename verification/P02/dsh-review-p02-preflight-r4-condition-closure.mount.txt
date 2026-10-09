@@ -1,0 +1,5 @@
+mount_session.py exit=0
+Session: session-3843fce8-356d-4efe-bc56-7fb492f6ca57
+Mounted into DSH workspace: P02-preflight-r4-condition-closure-92dc7361-review-dsh
+Workspace: C:/Users/49745/.codex/worktrees/P02-preflight-r4-condition-closure-92dc7361-review-dsh
+Desktop will show the session after its next launch; no restart was performed.
