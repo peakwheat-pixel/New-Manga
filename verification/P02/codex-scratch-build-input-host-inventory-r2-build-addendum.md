@@ -10,7 +10,7 @@
 | C:\Program Files\Git\cmd | C:\P02\inputs\git\cmd | git.exe 2.52.0.windows.1，46,480 bytes，SHA-256=3CBD024D9D11EF08BD6A0CB5A973613C50825B4952BC6006F3F4222F436091E5 |
 | C:\Program Files\Git\mingw64 | C:\P02\inputs\git\mingw64 | 运行时支持树；其中 mingw64\bin\git.exe 2.52.0.windows.1，4,321,168 bytes，SHA-256=FC0F1CAE1304FCDCF4D0749F421C5ED21471EFC856301F92F56D4B844BE84363 |
 
-以上 HostFolder 均需 ReadOnly=true，r2 Smoke config 不含这些 mapping。Build 阶段的独立 config 需加这 2 项并单独冻结/Review config hash。Guest PATH 需加入 C:\P02\inputs\git\cmd 与 C:\P02\inputs\git\mingw64\bin；GIT_EXEC_PATH 指向 C:\P02\inputs\git\mingw64\libexec\git-core。preflight 必须确认 git --version 与上述版本一致，git -C C:\P02\scratch rev-parse HEAD 返回固定 source commit。Git 不读取、不映射 user profile、global config、凭据；若本机包装器要求未登记的 Git 目录/配置，立即 BLOCKED。
+以上 HostFolder 均需 ReadOnly=true，当前冻结的 r3 Smoke config 不含这两个 Git roots。Build 阶段的独立 config 需加这 2 项并单独冻结/Review config hash。Guest PATH 需加入 C:\P02\inputs\git\cmd 与 C:\P02\inputs\git\mingw64\bin；GIT_EXEC_PATH 指向 C:\P02\inputs\git\mingw64\libexec\git-core。preflight 必须确认 git --version 与上述版本一致，git -C C:\P02\scratch rev-parse HEAD 返回固定 source commit。Git 不读取、不映射 user profile、global config、凭据；若本机包装器要求未登记的 Git 目录/配置，立即 BLOCKED。
 
 ## Visual Studio / Windows SDK（Smoke 与未来 Build 共用只读映射）
 
