@@ -1,0 +1,36 @@
+P01 C10 fixed-head verification
+CAPTURED_UTC=2026-10-09T00:11:13.591Z
+SHELL=ConsoleHost Core 7.6.6
+POWERSHELL_PATH=C:\Program Files\PowerShell\7\pwsh.exe
+PYTHON=Python 3.14.6
+GIT=git version 2.52.0.windows.1
+OWNER_WORKTREE=G:\CODEX\New Manga.worktrees\P01-metadata-audit-codex
+BRANCH=agent/codex/P01-metadata-audit
+COMMON_DIR=G:/CODEX/New Manga/.git
+HEAD=06bc4d0634a420fddf27edd44077539a099b7cce
+TREE=35e9c714736395a2a61968c27508818dfca83afc
+BASE=826bea12a132c5af2ac0cd1244d00e9170093c71
+WORKTREE_CLEAN=True
+RANGE_PATH_COUNT=61
+OUTSIDE_ALLOWED_COUNT=0
+PRODUCT_CODE_PATH_COUNT=0
+OUTSIDE_ALLOWED_PATHS_BEGIN
+OUTSIDE_ALLOWED_PATHS_END
+BASE_ANCESTOR_EXIT=0
+RANGE_DIFF_CHECK_EXIT=0
+VALIDATOR_ABSOLUTE=G:\CODEX\New Manga.worktrees\P01-metadata-audit-codex\verification\PROJECT-ROADMAP-20261008\verify_plan.py
+VALIDATOR_OUTPUT_BEGIN
+Planning snapshot base=e4242ecd419eb0eea098d2f63b40f709aa5caeea; live HEAD=06bc4d0634a420fddf27edd44077539a099b7cce
+PASS: 196 unique nodes, all classifications and dependency references
+PASS: 105 new architecture/governance integration records are audit-base ancestors
+PASS: 21 unique planned nodes and roadmap graphs have no dependency cycles
+PASS: delivery/navigation local links resolve
+PASS: zero production/code delta; governance whitespace check
+Product tests/build/GUI: NOT_RUN (planning-only)
+VALIDATOR_OUTPUT_END
+VALIDATOR_EXIT=0
+ROOT_BRANCH=main
+ROOT_HEAD=714138de3da06013e3ea35395e0c11b3d15fc371
+ROOT_DIRTY_COUNT=24
+ROOT_PATH_SET_UNCHANGED=True
+PRODUCT_TESTS=NOT_RUN (documentation/governance-only changes)
