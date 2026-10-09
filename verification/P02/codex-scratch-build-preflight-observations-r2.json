@@ -1,0 +1,439 @@
+{
+  "schema_version": 1,
+  "captured_at": "2026-10-10T02:52:29.27584+08:00",
+  "scope": "P02 Codex-only isolation Smoke preflight; stage 1 only; no clone or Sandbox started",
+  "authorization": "User renewed PROJECT_ORCHESTRATION_AUTHORIZATION on 2026-10-10 and explicitly required real P02 isolation evidence before lifting the Hard Build Barrier.",
+  "shell": {
+    "path": "C:\\Program Files\\PowerShell\\7\\pwsh.exe",
+    "version": "7.6.6",
+    "elevated": false
+  },
+  "root": {
+    "path": "G:\\CODEX\\New Manga",
+    "branch": "main",
+    "head": "ceffb7479cb1f79bd3b620afdaf6e9eaa0ae6d50",
+    "common_git_dir": "G:/CODEX/New Manga/.git",
+    "protected_manifest": {
+      "manifest_entries": 203,
+      "live_entries": 203,
+      "missing": 0,
+      "extra": 0,
+      "mismatches": 0,
+      "staged": 0,
+      "entries_sha256": "3a54fa978bf228bfae366a4c4de35b90e4fab609447d3370ed81370299da10e2",
+      "recorded_sha256": "3a54fa978bf228bfae366a4c4de35b90e4fab609447d3370ed81370299da10e2",
+      "result": "PASS"
+    },
+    "manifest_python_exit": 0
+  },
+  "source": {
+    "commit": "7ce3c40cd308e7093929bd5f53abc4f8a6c4ef7a",
+    "is_ancestor_of_live_main": true
+  },
+  "feature": {
+    "name": "Containers-DisposableClientVM",
+    "install_state": 1,
+    "state": "Enabled",
+    "query_command": "Get-CimInstance -ClassName Win32_OptionalFeature -Filter \"Name = 'Containers-DisposableClientVM'\"",
+    "query_exit": 0,
+    "reference": "https://learn.microsoft.com/en-us/windows/win32/cimwin32prov/win32-optionalfeature",
+    "dism_cmdlet_attempt": {
+      "command": "Get-WindowsOptionalFeature -Online -FeatureName Containers-DisposableClientVM",
+      "exit": 1,
+      "error": "请求的操作需要提升。",
+      "elevation_performed": false
+    }
+  },
+  "hardware": {
+    "processor_architecture": "AMD64",
+    "processor_architecture_cim": 9,
+    "virtualization_firmware_enabled": true,
+    "physical_cores": 16.0,
+    "total_ram_gib": 31.647,
+    "available_ram_mib": 16854.0,
+    "disks": [
+      {
+        "device": "C:",
+        "free_gib": 330.108
+      },
+      {
+        "device": "G:",
+        "free_gib": 1299.434
+      }
+    ]
+  },
+  "sandbox": {
+    "appx_identity": "MicrosoftWindows.WindowsSandbox_0.8.107.0_x64__cw5n1h2txyewy",
+    "exe": "C:\\Program Files\\WindowsApps\\MicrosoftWindows.WindowsSandbox_0.8.107.0_x64__cw5n1h2txyewy\\wsb.exe",
+    "exe_size_bytes": 156160,
+    "exe_sha256": "247e092b5c5bd37820f225a7dd3ddf10ae37a67e2751a19c24b802c84769c441",
+    "version": "0.8.107.0",
+    "version_exit": 0,
+    "list_raw": "{\r\n  \"WindowsSandboxEnvironments\": []\r\n}",
+    "list_exit": 0,
+    "fixed_clone_path": "G:\\CODEX\\P02-scratch-build-source",
+    "fixed_clone_exists": false
+  },
+  "hostfolder_roots": [
+    {
+      "purpose": "fixed scratch clone",
+      "mapping_domain": null,
+      "path": "G:\\CODEX\\P02-scratch-build-source",
+      "expected": "ABSENT",
+      "exists": false,
+      "root_is_reparse_point": false
+    },
+    {
+      "purpose": "Python base",
+      "mapping_domain": null,
+      "path": "C:\\Users\\49745\\AppData\\Local\\Programs\\Python\\Python312",
+      "expected": "PRESENT",
+      "exists": true,
+      "root_is_reparse_point": false
+    },
+    {
+      "purpose": "pinned sidecar venv",
+      "mapping_domain": null,
+      "path": "G:\\CODEX\\New Manga.task-envs\\m2ac5-build",
+      "expected": "PRESENT",
+      "exists": true,
+      "root_is_reparse_point": false
+    },
+    {
+      "purpose": "detector weights",
+      "mapping_domain": null,
+      "path": "G:\\CODEX\\New Manga.task-envs\\M2-DOCTR-QUAL-C4\\weights\\ogkalu-comic-text-and-bubble-detector",
+      "expected": "PRESENT",
+      "exists": true,
+      "root_is_reparse_point": false
+    },
+    {
+      "purpose": "SFX weights",
+      "mapping_domain": null,
+      "path": "G:\\CODEX\\New Manga.task-envs\\M2-SFX-DETECT\\weights-v2b",
+      "expected": "PRESENT",
+      "exists": true,
+      "root_is_reparse_point": false
+    },
+    {
+      "purpose": "Node/npm",
+      "mapping_domain": null,
+      "path": "E:\\Program Files\\nodejs",
+      "expected": "PRESENT",
+      "exists": true,
+      "root_is_reparse_point": false
+    },
+    {
+      "purpose": "Rust stable MSVC",
+      "mapping_domain": null,
+      "path": "C:\\Users\\49745\\.rustup\\toolchains\\stable-x86_64-pc-windows-msvc",
+      "expected": "PRESENT",
+      "exists": true,
+      "root_is_reparse_point": false
+    },
+    {
+      "purpose": "VS Build Tools",
+      "mapping_domain": null,
+      "path": "C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools",
+      "expected": "PRESENT",
+      "exists": true,
+      "root_is_reparse_point": false
+    },
+    {
+      "purpose": "VS Installer",
+      "mapping_domain": null,
+      "path": "C:\\Program Files (x86)\\Microsoft Visual Studio\\Installer",
+      "expected": "PRESENT",
+      "exists": true,
+      "root_is_reparse_point": false
+    },
+    {
+      "purpose": "Windows SDK",
+      "mapping_domain": null,
+      "path": "C:\\Program Files (x86)\\Windows Kits\\10",
+      "expected": "PRESENT",
+      "exists": true,
+      "root_is_reparse_point": false
+    },
+    {
+      "purpose": "Git cmd",
+      "mapping_domain": null,
+      "path": "C:\\Program Files\\Git\\cmd",
+      "expected": "PRESENT",
+      "exists": true,
+      "root_is_reparse_point": false
+    },
+    {
+      "purpose": "Git mingw64",
+      "mapping_domain": null,
+      "path": "C:\\Program Files\\Git\\mingw64",
+      "expected": "PRESENT",
+      "exists": true,
+      "root_is_reparse_point": false
+    }
+  ],
+  "pinned_inputs": {
+    "count": 20,
+    "mismatches": 0,
+    "records": [
+      {
+        "purpose": "Python base",
+        "path": "C:\\Users\\49745\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+        "exists": true,
+        "expected_size_bytes": "103192",
+        "actual_size_bytes": 103192,
+        "expected_sha256": "15b41a488c356c0e331facdea6c836a6cec021f12d5fde9844e7ca4a1aa0361a",
+        "actual_sha256": "15b41a488c356c0e331facdea6c836a6cec021f12d5fde9844e7ca4a1aa0361a",
+        "size_match": true,
+        "hash_match": true
+      },
+      {
+        "purpose": "pinned venv Python",
+        "path": "G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Scripts\\python.exe",
+        "exists": true,
+        "expected_size_bytes": "274712",
+        "actual_size_bytes": 274712,
+        "expected_sha256": "864530d708039551a2c672ddd65e5900fbc08b0981479679723a5b468f8082bc",
+        "actual_sha256": "864530d708039551a2c672ddd65e5900fbc08b0981479679723a5b468f8082bc",
+        "size_match": true,
+        "hash_match": true
+      },
+      {
+        "purpose": "pyvenv.cfg",
+        "path": "G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\pyvenv.cfg",
+        "exists": true,
+        "expected_size_bytes": "",
+        "actual_size_bytes": 325,
+        "expected_sha256": "176502a215876bab911b824f97576c2a2fb4a15e88bbf871344f82178beb9a6d",
+        "actual_sha256": "176502a215876bab911b824f97576c2a2fb4a15e88bbf871344f82178beb9a6d",
+        "size_match": true,
+        "hash_match": true
+      },
+      {
+        "purpose": "distutils-precedence.pth",
+        "path": "G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\distutils-precedence.pth",
+        "exists": true,
+        "expected_size_bytes": "",
+        "actual_size_bytes": 151,
+        "expected_sha256": "2638ce9e2500e572a5e0de7faed6661eb569d1b696fcba07b0dd223da5f5d224",
+        "actual_sha256": "2638ce9e2500e572a5e0de7faed6661eb569d1b696fcba07b0dd223da5f5d224",
+        "size_match": true,
+        "hash_match": true
+      },
+      {
+        "purpose": "Node",
+        "path": "E:\\Program Files\\nodejs\\node.exe",
+        "exists": true,
+        "expected_size_bytes": "91694408",
+        "actual_size_bytes": 91694408,
+        "expected_sha256": "3331e1ffe19874215472217c5e94f5a0c6d8e18c4ac7111d3937aa0ad5e9b4a5",
+        "actual_sha256": "3331e1ffe19874215472217c5e94f5a0c6d8e18c4ac7111d3937aa0ad5e9b4a5",
+        "size_match": true,
+        "hash_match": true
+      },
+      {
+        "purpose": "npm.cmd",
+        "path": "E:\\Program Files\\nodejs\\npm.cmd",
+        "exists": true,
+        "expected_size_bytes": "538",
+        "actual_size_bytes": 538,
+        "expected_sha256": "21b46c69ad6e2f231f02a9e120f4ba6c8e75fef5a45637103002eab99f888ab8",
+        "actual_sha256": "21b46c69ad6e2f231f02a9e120f4ba6c8e75fef5a45637103002eab99f888ab8",
+        "size_match": true,
+        "hash_match": true
+      },
+      {
+        "purpose": "cargo",
+        "path": "C:\\Users\\49745\\.rustup\\toolchains\\stable-x86_64-pc-windows-msvc\\bin\\cargo.exe",
+        "exists": true,
+        "expected_size_bytes": "31435776",
+        "actual_size_bytes": 31435776,
+        "expected_sha256": "c37545ec61d48d31bdefce53280ecab61c4ea54eaace372fac6a0316c6e165d9",
+        "actual_sha256": "c37545ec61d48d31bdefce53280ecab61c4ea54eaace372fac6a0316c6e165d9",
+        "size_match": true,
+        "hash_match": true
+      },
+      {
+        "purpose": "rustc",
+        "path": "C:\\Users\\49745\\.rustup\\toolchains\\stable-x86_64-pc-windows-msvc\\bin\\rustc.exe",
+        "exists": true,
+        "expected_size_bytes": "110592",
+        "actual_size_bytes": 110592,
+        "expected_sha256": "ca9988af88b1463f6857fdfe909299fee50a63260b3e5f7dbcb5b4d3318b27bc",
+        "actual_sha256": "ca9988af88b1463f6857fdfe909299fee50a63260b3e5f7dbcb5b4d3318b27bc",
+        "size_match": true,
+        "hash_match": true
+      },
+      {
+        "purpose": "vcvars64.bat",
+        "path": "C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\VC\\Auxiliary\\Build\\vcvars64.bat",
+        "exists": true,
+        "expected_size_bytes": "39",
+        "actual_size_bytes": 39,
+        "expected_sha256": "6b516d8fcf543c14b2d861e1f45661e0029230fe0dc48e86ce78522801822209",
+        "actual_sha256": "6b516d8fcf543c14b2d861e1f45661e0029230fe0dc48e86ce78522801822209",
+        "size_match": true,
+        "hash_match": true
+      },
+      {
+        "purpose": "vswhere.exe",
+        "path": "C:\\Program Files (x86)\\Microsoft Visual Studio\\Installer\\vswhere.exe",
+        "exists": true,
+        "expected_size_bytes": "469456",
+        "actual_size_bytes": 469456,
+        "expected_sha256": "c54f3b7c9164ea9a0db8641e81ecdda80c2664ef5a47c4191406f848cc07c662",
+        "actual_sha256": "c54f3b7c9164ea9a0db8641e81ecdda80c2664ef5a47c4191406f848cc07c662",
+        "size_match": true,
+        "hash_match": true
+      },
+      {
+        "purpose": "cl.exe",
+        "path": "C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\VC\\Tools\\MSVC\\14.44.35207\\bin\\Hostx64\\x64\\cl.exe",
+        "exists": true,
+        "expected_size_bytes": "677968",
+        "actual_size_bytes": 677968,
+        "expected_sha256": "6cadddca8c19e76991bbb44dff2eab5cab6807f9145e8bce9a800235a5975e51",
+        "actual_sha256": "6cadddca8c19e76991bbb44dff2eab5cab6807f9145e8bce9a800235a5975e51",
+        "size_match": true,
+        "hash_match": true
+      },
+      {
+        "purpose": "link.exe",
+        "path": "C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\VC\\Tools\\MSVC\\14.44.35207\\bin\\Hostx64\\x64\\link.exe",
+        "exists": true,
+        "expected_size_bytes": "3252808",
+        "actual_size_bytes": 3252808,
+        "expected_sha256": "85dfbeb6e52282fbc4f34c015709754677fd170f11768c7098fab913a6c570df",
+        "actual_sha256": "85dfbeb6e52282fbc4f34c015709754677fd170f11768c7098fab913a6c570df",
+        "size_match": true,
+        "hash_match": true
+      },
+      {
+        "purpose": "rc.exe",
+        "path": "C:\\Program Files (x86)\\Windows Kits\\10\\bin\\10.0.26100.0\\x64\\rc.exe",
+        "exists": true,
+        "expected_size_bytes": "55736",
+        "actual_size_bytes": 55736,
+        "expected_sha256": "65db0d7b4f10ba0f55973fd9356543a556da9ec1c777a0c05f05a0329c8a100a",
+        "actual_sha256": "65db0d7b4f10ba0f55973fd9356543a556da9ec1c777a0c05f05a0329c8a100a",
+        "size_match": true,
+        "hash_match": true
+      },
+      {
+        "purpose": "mt.exe",
+        "path": "C:\\Program Files (x86)\\Windows Kits\\10\\bin\\10.0.26100.0\\x64\\mt.exe",
+        "exists": true,
+        "expected_size_bytes": "1972672",
+        "actual_size_bytes": 1972672,
+        "expected_sha256": "fb1ab75294b78619bd6ac8cadf30cb95befbc7324703cbe2654ef800ddd2bf4d",
+        "actual_sha256": "fb1ab75294b78619bd6ac8cadf30cb95befbc7324703cbe2654ef800ddd2bf4d",
+        "size_match": true,
+        "hash_match": true
+      },
+      {
+        "purpose": "Git cmd git.exe",
+        "path": "C:\\Program Files\\Git\\cmd\\git.exe",
+        "exists": true,
+        "expected_size_bytes": "46480",
+        "actual_size_bytes": 46480,
+        "expected_sha256": "3cbd024d9d11ef08bd6a0cb5a973613c50825b4952bc6006f3f4222f436091e5",
+        "actual_sha256": "3cbd024d9d11ef08bd6a0cb5a973613c50825b4952bc6006f3f4222f436091e5",
+        "size_match": true,
+        "hash_match": true
+      },
+      {
+        "purpose": "Git mingw64 git.exe",
+        "path": "C:\\Program Files\\Git\\mingw64\\bin\\git.exe",
+        "exists": true,
+        "expected_size_bytes": "4321168",
+        "actual_size_bytes": 4321168,
+        "expected_sha256": "fc0f1cae1304fcdcf4d0749f421c5ed21471efc856301f92f56d4b844be84363",
+        "actual_sha256": "fc0f1cae1304fcdcf4d0749f421c5ed21471efc856301f92f56d4b844be84363",
+        "size_match": true,
+        "hash_match": true
+      },
+      {
+        "purpose": "detector model",
+        "path": "G:\\CODEX\\New Manga.task-envs\\M2-DOCTR-QUAL-C4\\weights\\ogkalu-comic-text-and-bubble-detector\\model.safetensors",
+        "exists": true,
+        "expected_size_bytes": "",
+        "actual_size_bytes": 171543900,
+        "expected_sha256": "037930a861e67870eb345be01b28cc70d7e2b7956528e48ee0ebdb0c093df80d",
+        "actual_sha256": "037930a861e67870eb345be01b28cc70d7e2b7956528e48ee0ebdb0c093df80d",
+        "size_match": true,
+        "hash_match": true
+      },
+      {
+        "purpose": "detector config",
+        "path": "G:\\CODEX\\New Manga.task-envs\\M2-DOCTR-QUAL-C4\\weights\\ogkalu-comic-text-and-bubble-detector\\config.json",
+        "exists": true,
+        "expected_size_bytes": "",
+        "actual_size_bytes": 2320,
+        "expected_sha256": "b6d707933e12e9593a7025604be1c95add70a6db371fdd1532e8854e2256e072",
+        "actual_sha256": "b6d707933e12e9593a7025604be1c95add70a6db371fdd1532e8854e2256e072",
+        "size_match": true,
+        "hash_match": true
+      },
+      {
+        "purpose": "detector preprocessor",
+        "path": "G:\\CODEX\\New Manga.task-envs\\M2-DOCTR-QUAL-C4\\weights\\ogkalu-comic-text-and-bubble-detector\\preprocessor_config.json",
+        "exists": true,
+        "expected_size_bytes": "",
+        "actual_size_bytes": 470,
+        "expected_sha256": "7e9e2245806aa3ef068a5321f5eebee3116fa4cec560173231954ffaca930eca",
+        "actual_sha256": "7e9e2245806aa3ef068a5321f5eebee3116fa4cec560173231954ffaca930eca",
+        "size_match": true,
+        "hash_match": true
+      },
+      {
+        "purpose": "SFX ONNX model",
+        "path": "G:\\CODEX\\New Manga.task-envs\\M2-SFX-DETECT\\weights-v2b\\yolo11s-seg.onnx",
+        "exists": true,
+        "expected_size_bytes": "",
+        "actual_size_bytes": 40824255,
+        "expected_sha256": "944e811410933ad6ff8d32446fcc9eef90fb463794e1874ce83035e83acd418d",
+        "actual_sha256": "944e811410933ad6ff8d32446fcc9eef90fb463794e1874ce83035e83acd418d",
+        "size_match": true,
+        "hash_match": true
+      }
+    ]
+  },
+  "smoke_config": {
+    "path": "verification/P02/codex-p02-wsb-smoke-config-r3.xml",
+    "canonical_bytes": 2609,
+    "sha256": "9af445134c6c6d3cec900b6d5c903a3c7fe19a104e0eab10f7c0886280de664d",
+    "expected_sha256": "9af445134c6c6d3cec900b6d5c903a3c7fe19a104e0eab10f7c0886280de664d"
+  },
+  "commands": [
+    {
+      "command": "Get-CimInstance Win32_OptionalFeature -Filter \"Name = 'Containers-DisposableClientVM'\"",
+      "exit": 0,
+      "result": "InstallState=1"
+    },
+    {
+      "command": "Get-WindowsOptionalFeature -Online -FeatureName Containers-DisposableClientVM",
+      "exit": 1,
+      "result": "requires elevation; no elevation performed"
+    },
+    {
+      "command": "wsb.exe --version",
+      "exit": 0,
+      "stdout": "0.8.107.0"
+    },
+    {
+      "command": "wsb.exe list --raw",
+      "exit": 0,
+      "stdout": "{\r\n  \"WindowsSandboxEnvironments\": []\r\n}"
+    }
+  ],
+  "result": "PRESTART_STAGE_1_PASS; scratch clone checkout and recursive HostFolder manifest remain NOT_RUN; WSB start not yet admitted",
+  "computer_use": {
+    "package": "@oai/sky",
+    "initialized": true,
+    "list_apps": "SUCCESS",
+    "app_count": 40,
+    "targetable_window_count": 4,
+    "sandbox_app_active": false,
+    "target_screenshot_and_scratch_save": "NOT_RUN; must be verified during the one authorized Smoke"
+  }
+}

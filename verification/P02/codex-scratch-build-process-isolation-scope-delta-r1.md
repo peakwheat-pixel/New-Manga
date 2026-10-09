@@ -121,3 +121,33 @@ Allowed paths and exact scope:
 - doc/tasks/P02.md: update only the existing Codex Scratch Isolation Preflight checkpoint rows; preserve AC, Owner allowlist, dependency graph, and parent state.
 
 R3 acceptance: N-01 explicitly distinguishes R1-frozen inherited paths from r7 additions and reports the fixed-change and reviewed-HEAD counts with their exact commits; N-02 records the independent exact-head 7d8951c2 validator/link/diff results and the author-side final-candidate rerun; N-03 makes the start checkpoint timeline internally consistent without rewriting its historical timestamp. Re-run the route validator, Markdown link checks, and `git diff --check`; verify the exact candidate path set is within the union of the R1 freeze and r7/r8 allowlists; recheck the root protected manifest at 203/203 with zero candidate overlap; obtain DeepSeek Harness review of the exact final R3 HEAD before local fast-forward. Feature remains UNKNOWN; full preflight BLOCKED / INCOMPLETE; Smoke NOT_ADMITTED / NOT_AUTHORIZED / NOT_RUN; Build Gate BLOCKED and build NOT_AUTHORIZED / NOT_RUN; AC1–AC7 BLOCKED / NOT_RUN; Hard Build Barrier remains effective.
+
+## r9 explicit authorization for one reviewed isolation Smoke (2026-10-10; based on live main ceffb7479cb1f79bd3b620afdaf6e9eaa0ae6d50)
+
+The user renewed the persistent PROJECT_ORCHESTRATION_AUTHORIZATION and explicitly directed Codex to obtain real isolation evidence before lifting the P02 Hard Build Barrier. This authorization supersedes earlier r6/r7/r8 prohibitions only to the narrow extent below. It does not replace independent Review, Smoke admission, the separate Build Gate, or product acceptance.
+
+Parent Task=P02 remains in_progress / ACTIVE; Owner=Codex for this Codex-only isolation subtask, non-author Reviewer=DeepSeek Harness, Integrator=Codex. The process-isolation design and r3 Smoke config remain unchanged from their reviewed fixed heads; DSH R6 follow-up closed N-06, and the final preflight R3 evidence was independently approved with all documented findings addressed.
+
+### Newly authorized, bounded actions
+
+- Use only non-elevated read-only Get-CimInstance Win32_OptionalFeature to query Containers-DisposableClientVM; the current observation is InstallState=1 (Enabled). Do not elevate or enable/disable any feature. A query that cannot return a known state blocks execution.
+- After independent exact-head review of this r9 scope/preflight candidate, Codex may record a separate Smoke admission=ADMITTED only while the complete current preflight passes.
+- At the exact Task-fixed path G:\CODEX\P02-scratch-build-source, create one ordinary non-linked clone from the committed source and verify the exact checkout, clean status, private common Git directory, no remote/no alternates, object hardlink counts, and all source pins.
+- Run one isolation Smoke using only the already-reviewed r3 config/hash and mappings. Verify read-only/write canaries, root/common Git invisibility, network-disabled behavior, required Sandbox UI/session screenshot, clean stop, and before/after protected/input manifests as specified in [P02 Task](../../doc/tasks/P02.md) and [process-isolation proposal](codex-scratch-build-process-isolation-proposal-r1.md). All outputs stay in the fixed scratch clone and Codex-owned verification/P02/**.
+- The smoke attempt is not a product build: no PyInstaller/Cargo/Tauri/frontend build, P02 runner, Vitest, GUI, WebView product test, feature mutation, user-data access, or output copied into root/Owner worktree is authorized by this extension.
+- Build Gate remains separate and BLOCKED until its own exact-head review and Codex Gate pass. Smoke cannot mark any P02 AC as PASS or close the parent Task.
+
+### Exact r9 write scope
+
+- verification/P02/codex-scratch-build-process-isolation-scope-delta-r1.md (append this extension only).
+- verification/P02/codex-scratch-build-preflight-r2.md, codex-scratch-build-preflight-observations-r2.json, and a Task-local checkpoint, validation, dispatch, and independent Review packet for r9.
+- verification/P02/** subsequent single-Smoke evidence and checkpoints, only as prescribed above.
+- No change to P02 product code/tests, contracts, dependency/schema/IPC, Owner allowlist, D01–D08 product requirements, user data, other worktrees, or existing root dirty files. Update shared STATUS/Plan/Index and the P02 Task execution record only after exact-head review, and only to report observed gate state and next checkpoint.
+
+### r9 acceptance / review gate
+
+1. The exact authorization is recorded without interpreting it as an override to technical gates; no elevation or feature mutation occurs.
+2. The WMI/CIM state, volatile resources, WSB identity/list, 12 HostFolder roots, 20 pins, config hash, source ancestry, and protected root manifest are bound to a timestamp and exact live root HEAD. Source checkout pins and recursive manifests remain pending until the clone is created.
+3. DSH independently reviews this fixed r9 scope/preflight head and reports APPROVED (no unresolved P0/P1/P2; nonblocking P3s must be explicitly dispositioned) before Smoke admission.
+4. The route validator, Markdown links, exact path/scope check, and git diff --check pass; root protected manifest remains unchanged.
+5. Smoke admission is a separate Codex checkpoint. If any pre-start check fails or is unknown, do not run wsb start; preserve the clone/evidence and leave Build Gate blocked.
