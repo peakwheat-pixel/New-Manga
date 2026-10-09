@@ -1,0 +1,10 @@
+# Checkpoint：P02 宿主预检交付与状态同步范围冻结
+
+- 时间：2026-10-10 00:07 Asia/Shanghai（2026-10-09 16:07 UTC）。状态边界：PREFLIGHT_EVIDENCE_AND_STATUS_SCOPE_FROZEN。
+- Parent Task=P02 Hard Build Barrier；Codex-only scratch-build isolation follow-up。Owner/author=Codex，非作者 Reviewer=DeepSeek Harness，Integrator=Codex。
+- 基线：branch=`codex/P02-process-isolation`，author worktree=`C:\Users\49745\.codex\worktrees\p02-process-isolation-plan\New Manga`，HEAD=`6855c113e6a44320d9555777900cfb78a218d383`；root=`main@6855c113e6a44320d9555777900cfb78a218d383`，203-entry manifest `203/203 MATCH`、staged=0，canonical SHA-256=`3a54fa978bf228bfae366a4c4de35b90e4fab609447d3370ed81370299da10e2`。
+- 已执行非提权只读采集。其后续交付仅允许修改/新增以下路径：`verification/P02/codex-scratch-build-preflight-r1.md`、`verification/P02/codex-scratch-build-preflight-inputs-r1.tsv`、`verification/P02/codex-scratch-build-preflight-hostfolders-r1.tsv`、`verification/P02/wsb-version-r1.{stdout,stderr}.txt`、`verification/P02/wsb-list-raw-r1.{stdout,stderr}.txt`、`verification/P02/codex-checkpoint-p02-non-elevated-preflight-start.md`、本 delivery/review/integration checkpoint；以及 `doc/tasks/P02.md` 中 Codex-only scratch-build Gate 最新记录、`doc/REBASELINE_PLAN.md`/`doc/STATUS.md`/`doc/00_INDEX.md` 各自顶部当前状态段。
+- 这些共享文档改动只同步已观察的 P02 当前状态、引用证据与恢复动作；不得改 P02 AC/用户范围/Owner allowlist/产品实现、不改 Task 依赖图节点状态、不将 `UNKNOWN/BLOCKED/NOT_RUN` 改写为 PASS，也不释放 Smoke、Build 或产品验收。
+- 验收：报告逐项记录实际输出/exit、阈值、工具和 input pins、保护 manifest、状态边界与证据限制；独立 DSH exact-head Review；reviewed candidate 与 root dirty path overlap=0 后才可 FF；post-FF 验证 route validator、`git diff --check`、目标 HEAD、root manifest 和路径交集。
+- 明确保持：Feature=`UNKNOWN`（本轮未查询）；完整 preflight=`BLOCKED / INCOMPLETE`；Smoke admission=`NOT_ADMITTED`；Smoke=`NOT_AUTHORIZED / NOT_RUN`；Build Gate=`BLOCKED`；build=`NOT_AUTHORIZED / NOT_RUN`；P02 AC1–AC7=`BLOCKED / NOT_RUN`；Hard Build Barrier 有效。无 Windows Feature 查询/启用、提权、Sandbox、clone、Build、Vitest、GUI/WebView、产品测试。
+- 下一条准确动作：完成 evidence report/HostFolder TSV、核对全部允许路径与哈希、更新限定范围的当前状态段；固定交付 commit 后派发 DeepSeek Harness 审查 exact head，依据 Review 修订/复审，再进行本地 FF 与集成后验证。
