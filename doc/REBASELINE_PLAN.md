@@ -10,7 +10,7 @@ P02 AC/Owner范围 r1–r4 已正式冻结并释放，不重复冻结；当前 L
 
 ## 2026-10-09 P02 Owner 转移 / DSH r8 治理 Review 条件批准
 
-DSH r8 固定审查候选 55be5dab7b6d7bebf94c9ad6524f57c023616249，decision=approved_with_conditions，findings P0/P1/P2/P3=0/0/0/2。Codex 已补齐 DSH shell 环境无法执行的 tree、差量、Task digest 与路线 Gate 实测；r8 两个 P3 的精确 head/tree 登记及动态恢复指针已在治理 checkpoint 处置。r7 C-2 仍是快进前唯一条件，须同步 P02 两份 recovery，记录 hashes/status 并 fresh-recheck P01 manifest。Live main 快进前 Owner 仍为 ZCode，候选 Task 保持 ready / IDLE。产品实现和产品验收未运行；详见 [P02 RESUME](../verification/P02/RESUME.md) 与 [owner-transfer Gate log](../verification/P02/owner-transfer-r7-gate.log)。
+DSH r8 固定审查候选 55be5dab7b6d7bebf94c9ad6524f57c023616249，decision=approved_with_conditions，findings P0/P1/P2/P3=0/0/0/2。Codex 已补齐 DSH shell 环境无法执行的 tree、差量、Task digest 与路线 Gate 实测；r8 两个 P3 的精确 head/tree 登记及动态恢复指针已在治理 checkpoint 处置。r7 C-2 对 f18720a 审查版本的首次同步与manifest复核已通过；后续恢复文件更新后须按最新Gate log hash/status再次确认最终版本，快进仍受该条件约束。Live main 快进前 Owner 仍为 ZCode，候选 Task 保持 ready / IDLE。产品实现和产品验收未运行；详见 [P02 RESUME](../verification/P02/RESUME.md) 与 [owner-transfer Gate log](../verification/P02/owner-transfer-r7-gate.log)。
 
 ## 2026-10-09 P02 Owner 故障转移 / r6 Review approved；Codex 集成 Gate 收口中
 
