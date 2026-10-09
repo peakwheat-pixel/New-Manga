@@ -1,16 +1,23 @@
 # P01 恢复点
 
-## 2026-10-09 P01 integration closeout candidate checkpoint
+## 当前检查点：C1 fixed-head Integration Gate PASS；Task closeout待版本化
 
-- Timestamp=`2026-10-09T00:45:43Z`；Task=P01；root `main@714138de3da06013e3ea35395e0c11b3d15fc371`仍是当前权威线，P01仍`in_review`。owner worktree `agent/codex/P01-metadata-audit`已提交于`a22a0d935bb1b99be006601a7a2c49cd305b1910`且C9 Antigravity正式Review=`approved`；Codex正在独立集成worktree `G:/CODEX/New Manga.worktrees/P01-integration-codex` / branch=`codex/P01-integration-20261009` / HEAD=`13e66ec5bf9a2fc59f4e6c5623feb0bde22884c8`准备关闭Gate。
-- 集成worktree当前有12个候选修改文件，staged=0；独立Review指出原草稿提前写入`done`/AC7完成态和Gate PASS。已纠正为Task=`in_review`、AC7 pending、`integration_commit=null`；先前对done草稿运行的候选检查不作为当前证据，须在这次修订后重跑。
-- 当前集成候选M0=`13e66ec5bf9a2fc59f4e6c5623feb0bde22884c8`，其base..M0范围此前读数为75 paths；final C0 commit需重新计算allowed paths、产品路径差量、validator、`git diff --check`和root dirty集合。最终Gate carrier尚未创建。
-- C0=`8fdade48c7a10ee1fe56f61cfb974b32a67920ff`现已固定并保持clean；两名独立Subagent Review和两轴`code-review`复核完成。Spec轴0项；Standards轴指出Task表提前写了未版本化候选validator PASS，已在当前未提交修订中改为PENDING；此修订须固定为C1后再重跑Gate。已完成但未版本化的C0命令输出不作为AC7证据。
-- Protected root尚为`main@714138de3da06013e3ea35395e0c11b3d15fc371`，24项dirty/untracked与`ac1-root-status.log`中的路径集合相同，比较差异0；没有stage、stash、覆盖、清理这些文件。此检查点仍需在fast-forward前复核。
-- C9 reviewer report的canonical SHA-256=`a378eb0395f59b0ce12f494c33a9310e991f6ac9f35da9603f599a0a8578175e`、response=`d3d71f0c9ce382bbd58798e4c670c64d3901b816de5fa06e94b825ee506ed3cd`、stdout JSON=`46efa931900dd40a72c02e6011b867355f9b9eff872c522c9bac90cc7ba23abc`存于session metadata；集成worktree `core.autocrlf=true`，`Get-FileHash`对checkout后的CRLF字节给出不同值，Gate须以Git blob/canonical LF bytes复核这三个SHA，不得把行尾转换误报为Review载体被篡改。
-- 下一精确步骤：提交当前一行证据状态修订为P01 fixed-head Gate candidate C1（Task继续in_review、AC7未勾选）；在C1上重新运行并保存allowed-path、canonical C9 hashes、Task source-state保护、route validator、`git diff --check`、root dirty pathset与内容hash结果。完成C1独立Review后，版本化`integration-gate.md`并更新Task/Plan/Status/恢复文件为done，运行收口状态validator后提交closeout evidence commit。最后仅在root dirty pathset无交集且hash不变时fast-forward main，保存实际main HEAD/branch/status，再创建正式P02 Task并持续自动推进。
+- Timestamp=`2026-10-09T00:58:16Z`；Task=P01仍`in_review`、AC7尚未勾选。集成worktree=`G:/CODEX/New Manga.worktrees/P01-integration-codex`，branch=`codex/P01-integration-20261009`，fixed HEAD C1=`c28a9e49e684105eebc7f62555086d6cccad75a4`，tree=`30611cd144f7b148aaf44ea487aff8359b43be82`，parent=C0=`8fdade48c7a10ee1fe56f61cfb974b32a67920ff`；worktree clean，common-dir=`G:/CODEX/New Manga/.git`。合入候选M0=`13e66ec5bf9a2fc59f4e6c5623feb0bde22884c8`；`integration_commit`保持null直至主线集成完成。
+- 环境：PowerShell Core 7.6.6、Python 3.14.6、Git 2.52.0.windows.1。固定Gate结果：base祖先EXIT=0；`git diff --check 826bea12a132c5af2ac0cd1244d00e9170093c71..C1` EXIT=0；clean worktree `git diff --check` EXIT=0；路线validator `python -B -X utf8 verification/PROJECT-ROADMAP-20261008/verify_plan.py` EXIT=0（196唯一节点、105条新架构/治理集成记录祖先、21规划节点及DAG、导航链接有效、零产品代码差量）。75个base..C1路径全部符合P01 allowed_paths；越界0、生产/测试路径0。
+- 来源保护：GC2、DETECT3、SYNTH Task除获准的`integration_commit` frontmatter外字节一致；ANNOTATE-R2 Task blob完全不变。C9正式报告/response/stdout三个canonical Git blob SHA均与session记录吻合；C9 approved fixed head/tree及祖先关系通过。正式Antigravity C9 `OBS-C9-01` P3已在Handoff处置；R2/SYNTH carrier保持`NOT_VERIFIED`，C8/R1/R2历史决定不改写。
+- 独立复核：C0 integration reviewer要求的旧Handoff P3文字已修复；C1 `code-review` Standards轴最终0项、Spec轴0项。先前触发的Standards证据绑定finding已由PENDING修订关闭。无待处理review finding。
+- Protected root仍为`main@714138de3da06013e3ea35395e0c11b3d15fc371`；dirty path count=24，与`ac1-root-status.log`记录的24项路径集合相同；与P01集成差量交集=0。现以版本化清单`root-dirty-manifest-pre-ff.txt`记录状态、路径、当前文件SHA-256；manifest SHA-256=`b41835453b693b4e62818216e4d67801c01eca6e33450f8d3d3dd72849d578e7`。旧检查点digest=`deeb9a3b…`没有留下序列化算法或输入manifest，无法从仓库重算；不据此推断内容变化。fast-forward后将按新清单算法逐项比较。
+- C9 fixed head=`7645577ab374b581eb7081fd57675c32793249f5`，tree=`8dafbccda120e718aeb6f40613146320a4d2564f`，formal decision=`approved`，session=`a421a45b-67fc-464b-896f-07084ca763f4`。report SHA-256=`a378eb0395f59b0ce12f494c33a9310e991f6ac9f35da9603f599a0a8578175e`；response SHA-256=`d3d71f0c9ce382bbd58798e4c670c64d3901b816de5fa06e94b825ee506ed3cd`；stdout JSON SHA-256=`46efa931900dd40a72c02e6011b867355f9b9eff872c522c9bac90cc7ba23abc`。所有指纹均按Git canonical blob bytes计算；未用CRLF checkout raw hash。
+- 产品pytest/cargo/vitest/build/GUI/真实WebView=`NOT_RUN`；P01无产品/测试差量，不将其写成PASS。C1 Gate结果目前记录在此checkpoint候选中；下一提交必须新增版本化`verification/P01/integration-gate.md`并引用C1，再完成Task/Plan/Status/依赖图的done收口与主线fast-forward。
+- 下一精确步骤：先让独立Reviewer只读复核当前Gate证据候选和done态修改范围；更新全部P01当前导航/Handoff并运行done态validator、allowed-path及`git diff --check`，把结果版本化后再更新P01为done及`integration_commit=M0`。完成候选最终Review与closeout Gate后，在root再次确认HEAD=`714138de3da06013e3ea35395e0c11b3d15fc371`、24项dirty path/content manifest逐项匹配`root-dirty-manifest-pre-ff.txt`且与集成差量无交集；满足才运行`git merge --ff-only codex/P01-integration-20261009`。fast-forward后重算manifest并复核main/status/Task。随后保存面向下次的P02范围冻结/正式释放指令；用户已授权本轮P01完成后关机，本轮关机不得延续到后续Task。
 
-时间：2026-10-09（Asia/Shanghai）；Task=P01；TaskStatus=in_review；ExecutionState=ACTIVE。最后已提交fixed head=C8 91ab1ef8ddaa1d00b0b34880a103937b4831590d，C8 DSH Review=changes_requested；C9 Reviewer已转派Antigravity，恢复时以末尾最新checkpoint核对Live Git。C8 Gate=PASS，见ac7-c8-fixed-head-check.log及ac7-c8-postreview-check.log。
+## 历史草稿检查点：M0临时done候选（已被C0/C1取代）
+
+2026-10-09T00:45:43Z的未提交草稿曾将Task/AC7提前写为done。该草稿经独立review后已改正并提交C0、C1；当时候选命令输出未版本化，不作为P01 AC7 Gate证据。相关原始Review及修改链保留在Git历史，不重做C9 Review或P01取证。
+
+## 历史检查点：C8 DSH Review changes_requested（已由C9取代）
+
+C8 fixed head=`91ab1ef8ddaa1d00b0b34880a103937b4831590d`，DSH正式Review=`changes_requested`；C8 Gate日志见`ac7-c8-fixed-head-check.log`及`ac7-c8-postreview-check.log`。R1/R2 historical decisions保留；当前P01状态见本文件顶部C1检查点。
 
 ## 当前权威状态
 

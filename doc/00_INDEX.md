@@ -1,12 +1,12 @@
 # 项目文档索引与 Source of Truth
 
-当前工作：P08/P03=done；P系列done 2/21、in_review 1、proposed 18。唯一Active Task=P01；C9固定头由Antigravity正式approved，Codex final Integration Gate待完成。R1/R2 blocked与C8 changes_requested保留为历史，R2/SYNTH carrier仍NOT_VERIFIED。P02保持proposed，尚无正式Task；当前恢复见[P01 RESUME](../verification/P01/RESUME.md)。
+当前工作：P08/P03=done；P系列done 2/21、in_review 1、proposed 18。唯一Active Task=P01 in_review；C9 Antigravity Review与C1 Codex Integration Gate均通过，最终closeout与main fast-forward待完成。R1/R2 blocked与C8 changes_requested保留为历史，R2/SYNTH carrier仍NOT_VERIFIED。P02保持proposed，尚无正式Task；当前恢复见[P01 RESUME](../verification/P01/RESUME.md)。
 
 2026-10-08人员更新：Qoder已退出本项目。当前角色/接管名单见[协作协议](09_COLLABORATION.md)；未来UI设计/实现归ZCode，历史Qoder署名仅作证据。整体路线与恢复材料已同步，不新增产品释放。
 
-**整体规划入口**：[权威Plan与候选Task](REBASELINE_PLAN.md)、[中文依赖图](../verification/PROJECT-ROADMAP-20261008/ROADMAP.md)、[全项目报告](../verification/PROJECT-ROADMAP-20261008/REPORT.md)、[196节点历史台账](../verification/PROJECT-ROADMAP-20261008/task-inventory.csv)、[恢复点](../verification/PROJECT-ROADMAP-20261008/RESUME.md)。历史审计基线为e4242ecd；P08与P03已完成，P01 final Integration Gate待执行。167项登记完成或文档交付不代表新架构产品完成率。
+**整体规划入口**：[权威Plan与候选Task](REBASELINE_PLAN.md)、[中文依赖图](../verification/PROJECT-ROADMAP-20261008/ROADMAP.md)、[全项目报告](../verification/PROJECT-ROADMAP-20261008/REPORT.md)、[196节点历史台账](../verification/PROJECT-ROADMAP-20261008/task-inventory.csv)、[恢复点](../verification/PROJECT-ROADMAP-20261008/RESUME.md)。历史审计基线为e4242ecd；P08与P03已完成，P01 C1 Gate已通过，closeout与main fast-forward仍待完成。167项登记完成或文档交付不代表新架构产品完成率。
 
-P08/P03均已done；当前唯一Active Task为P01 in_review。P01 C9 Review=approved，Codex Gate待完成；C8 formal Review=changes_requested仅保留为历史证据。P02仍未正式释放；P03证据见P03 RESUME。
+P08/P03均已done；当前唯一Active Task为P01 in_review。P01 C9 Review=approved、C1 Codex Gate=PASS；main fast-forward与最终状态验证待完成。C8 formal Review=changes_requested仅保留为历史证据。P02仍proposed且未正式释放；P03证据见P03 RESUME。
 
 全任务盘点与 inventory 下方段落是其各自审计时的历史快照，不反映当前总数或授权状态；以本页首段、[Plan](REBASELINE_PLAN.md) 与 [STATUS](STATUS.md) 为当前事实。
 

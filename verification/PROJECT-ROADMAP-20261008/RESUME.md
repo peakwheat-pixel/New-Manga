@@ -1,8 +1,8 @@
 # 全项目任务规划恢复点
 
-最新工作点：P08/P03=done；P系列21项中done=2、in_review=1、proposed=18。唯一Active Task=P01；Antigravity C9 fixed-head正式approved，Codex final Integration Gate待完成；恢复见`verification/P01/RESUME.md`与`verification/P01/NEXT-AUTOPROGRESS-PROMPT.md`。P02仍proposed，尚无正式Task，harness范围须先冻结。
+最新工作点：P08/P03=done；P系列21项中done=2、in_review=1、proposed=18。唯一Active Task=P01 in_review；Antigravity C9 fixed-head正式approved，Codex C1 Integration Gate=PASS；closeout与main fast-forward待完成。恢复见`verification/P01/RESUME.md`与`verification/P01/NEXT-AUTOPROGRESS-PROMPT.md`。P02仍proposed，尚无正式Task，harness范围须先冻结。
 
-**当前位置：P08/P03=done；P01=in_review，Owner/Integrator=Codex、非作者Reviewer=Antigravity；C9 fixed head `7645577ab374b581eb7081fd57675c32793249f5`正式approved，Codex Integration Gate pending。C8 changes_requested、R1/R2 blocked和DSH Win32 5环境事实均保留为历史；R2/SYNTH carrier仍NOT_VERIFIED。**
+**当前位置：P08/P03=done；P01=in_review，Owner/Integrator=Codex、非作者Reviewer=Antigravity；C9 fixed head `7645577ab374b581eb7081fd57675c32793249f5`正式approved，C1 Codex Integration Gate=PASS，closeout与main fast-forward待完成。C8 changes_requested、R1/R2 blocked和DSH Win32 5环境事实均保留为历史；R2/SYNTH carrier仍NOT_VERIFIED。**
 
 2026-10-08 编号裁决时的状态快照：任务编号沿用 `P01–P21`；当时P08=`in_review`，其余20项=`proposed / 未释放`。当前状态见本恢复点顶部及`doc/STATUS.md`；本编号裁决本身不释放产品实施、不改历史记录。
 
@@ -37,4 +37,4 @@ Get-ChildItem verification\PROJECT-ROADMAP-20261008
 
 ### 当前自动恢复入口（2026-10-09；取代下方历史 PLAN_ONLY 工作范围）
 
-额度耗尽或会话断开不表示任务完成。当前Active Task仍为P01；下次使用[verification/P01/NEXT-AUTOPROGRESS-PROMPT.md](../P01/NEXT-AUTOPROGRESS-PROMPT.md)，先按[P01 RESUME](../P01/RESUME.md)核对Git和工作区并完成Integration Gate。不要复用本文件上方2026-10-08规划审计中的“只完成规划、不启动产品Task”旧指令。
+额度耗尽或会话断开不表示任务完成。此处仅为历史P01进行中时的恢复提示，现行步骤以[P01 RESUME](../P01/RESUME.md)最上方检查点和[自动续跑提示词](../P01/NEXT-AUTOPROGRESS-PROMPT.md)为准；P01 Gate后完成fast-forward与关闭态验证，再按权威Plan开始P02范围冻结。不要复用本文件上方2026-10-08规划审计中的“只完成规划、不启动产品Task”旧指令。
