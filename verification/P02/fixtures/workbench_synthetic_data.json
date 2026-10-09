@@ -1,68 +1,57 @@
 {
-  "description": "P02 Workbench real WebView2 verification synthetic fixtures (isolated test data, no user data)",
+  "description": "P02 Workbench real WebView2 verification synthetic fixtures (Stage A r3)",
   "fixtures": {
     "books": [
       {
-        "id": "synth-book-alpha",
+        "book_id": "synth-book-alpha",
         "title": "Synthetic Test Manga Alpha",
-        "chapter_count": 2,
+        "original_title": "Synthetic Manga Alpha Orig",
+        "is_favorite": false,
+        "is_archived": false,
         "page_count": 4,
-        "cover_page_id": "synth-page-101"
+        "created_at": "2026-10-09T00:00:00Z",
+        "updated_at": "2026-10-09T00:00:00Z"
       }
     ],
     "chapters": {
       "synth-book-alpha": [
         {
-          "id": "synth-chap-01",
-          "book_id": "synth-book-alpha",
+          "chapter_id": "synth-chap-01",
           "title": "Chapter 1: The Synthetic Encounter",
-          "chapter_number": 1,
-          "page_count": 2
+          "chapter_number": "1",
+          "sort_order": 1
         },
         {
-          "id": "synth-chap-02",
-          "book_id": "synth-book-alpha",
+          "chapter_id": "synth-chap-02",
           "title": "Chapter 2: The Quiet Period",
-          "chapter_number": 2,
-          "page_count": 2
+          "chapter_number": "2",
+          "sort_order": 2
         }
       ]
     },
     "pages": {
       "synth-chap-01": [
         {
-          "id": "synth-page-101",
-          "chapter_id": "synth-chap-01",
-          "page_number": 1,
-          "width": 1200,
-          "height": 1800,
-          "has_regions": true
+          "page_id": "synth-page-101",
+          "source_filename": "p101_clean.png",
+          "sort_order": 1
         },
         {
-          "id": "synth-page-102",
-          "chapter_id": "synth-chap-01",
-          "page_number": 2,
-          "width": 1200,
-          "height": 1800,
-          "has_regions": true
+          "page_id": "synth-page-102",
+          "source_filename": "p102_clean.png",
+          "sort_order": 2
         }
       ],
       "synth-chap-02": [
         {
-          "id": "synth-page-201",
-          "chapter_id": "synth-chap-02",
-          "page_number": 1,
-          "width": 1200,
-          "height": 1800,
-          "has_regions": false
+          "page_id": "synth-page-201",
+          "source_filename": "p201_clean.png",
+          "sort_order": 1
         },
         {
-          "id": "synth-page-202",
-          "chapter_id": "synth-chap-02",
-          "page_number": 2,
-          "width": 1200,
-          "height": 1800,
-          "has_regions": false
+          "page_id": "synth-page-202",
+          "source_filename": "p202_clean.png",
+          "sort_order": 2
         }
       ]
     },
@@ -86,7 +75,11 @@
               "origin": "user",
               "review_state": "approved",
               "is_pinned": false,
-              "restored_from_revision_id": null
+              "restored_from_revision_id": null,
+              "created_at": "2026-10-09T00:00:00Z",
+              "region_type": "speech",
+              "sfx_policy": "skip",
+              "is_current": true
             }
           ]
         },
@@ -108,7 +101,11 @@
               "origin": "machine",
               "review_state": "pending",
               "is_pinned": false,
-              "restored_from_revision_id": null
+              "restored_from_revision_id": null,
+              "created_at": "2026-10-09T00:00:00Z",
+              "region_type": "sfx",
+              "sfx_policy": "translate",
+              "is_current": true
             }
           ]
         }
@@ -117,7 +114,7 @@
         {
           "region_id": "synth-reg-03",
           "page_id": "synth-page-102",
-          "region_type": "narration",
+          "region_type": "speech",
           "sfx_policy": "skip",
           "origin": "user",
           "revision_no": 1,
@@ -132,29 +129,33 @@
               "origin": "user",
               "review_state": "approved",
               "is_pinned": false,
-              "restored_from_revision_id": null
+              "restored_from_revision_id": null,
+              "created_at": "2026-10-09T00:00:00Z",
+              "region_type": "speech",
+              "sfx_policy": "skip",
+              "is_current": true
             }
           ]
         }
       ]
     },
     "post_write_scenarios": {
-      "description": "AC4 write-then-refresh operations with explicit IPC commands and readback expectations",
+      "description": "AC4 write-then-refresh operations adhering to relabelMachine speech<->sfx contract",
       "retype": {
         "operation_name": "retype_region",
-        "description": "Change region type from speech to narration via set_region_type",
+        "description": "Change region type from speech to sfx per Workbench relabelMachine allowed transition",
         "ipc_write": {
           "command": "set_region_type",
           "args": {
             "regionId": "synth-reg-01",
-            "newRegionType": "narration",
+            "newRegionType": "sfx",
             "expectedRevision": 1
           },
           "expected_result": {
             "region_id": "synth-reg-01",
             "revision_no": 2,
-            "region_type": "narration",
-            "sfx_policy": "skip"
+            "region_type": "sfx",
+            "sfx_policy": "translate"
           }
         },
         "post_write_readback": {
@@ -179,7 +180,9 @@
           },
           "expected_result": {
             "region_id": "synth-reg-01",
-            "revision_no": 3
+            "revision_no": 3,
+            "region_type": "speech",
+            "sfx_policy": "skip"
           }
         },
         "post_write_readback": {
@@ -203,7 +206,9 @@
           },
           "expected_result": {
             "region_id": "synth-reg-01",
-            "revision_no": 4
+            "revision_no": 4,
+            "region_type": "speech",
+            "sfx_policy": "skip"
           }
         },
         "post_write_readback": {
@@ -265,37 +270,60 @@
           "hex": "#d8e0e8",
           "role": "app_primary_text",
           "source_file": "apps/desktop/frontend/src/App.tsx",
-          "line": 474
+          "line": 474,
+          "expected_background_role": "app_base_background"
         },
         {
           "hex": "#161b22",
           "role": "nav_inactive_button_background",
           "source_file": "apps/desktop/frontend/src/App.tsx",
-          "line": 486
+          "line": 486,
+          "expected_background_role": "app_base_background"
         },
         {
           "hex": "#1c2430",
           "role": "nav_active_button_background",
           "source_file": "apps/desktop/frontend/src/App.tsx",
-          "line": 486
+          "line": 486,
+          "expected_background_role": "app_base_background"
         },
         {
           "hex": "#2a3038",
           "role": "nav_button_border",
           "source_file": "apps/desktop/frontend/src/App.tsx",
-          "line": 488
+          "line": 488,
+          "expected_background_role": "app_base_background"
         },
         {
           "hex": "#8a94a2",
           "role": "pagelist_muted_text",
           "source_file": "apps/desktop/frontend/src/workbench/PageListPanel.tsx",
-          "line": 53
+          "line": 53,
+          "expected_background_role": "app_base_background"
         },
         {
           "hex": "#0b0e12",
           "role": "viewer_background",
           "source_file": "apps/desktop/frontend/src/workbench/ViewerPanel.tsx",
           "line": 152
+        }
+      ],
+      "synthetic_alpha_cases": [
+        {
+          "rgba": "rgba(126, 178, 135, 0.16)",
+          "role": "sfx_region_highlight_overlay",
+          "source_file": "apps/desktop/frontend/src/region/RegionOverlay.tsx",
+          "line": 47,
+          "base_background_role": "app_base_background",
+          "foreground_text_hex": "#d8e0e8"
+        },
+        {
+          "rgba": "rgba(251, 191, 36, 0.16)",
+          "role": "speech_region_highlight_overlay",
+          "source_file": "apps/desktop/frontend/src/region/RegionOverlay.tsx",
+          "line": 45,
+          "base_background_role": "app_base_background",
+          "foreground_text_hex": "#d8e0e8"
         }
       ]
     }

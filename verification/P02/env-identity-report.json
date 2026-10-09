@@ -24,12 +24,12 @@
     "npm": "12.0.1"
   },
   "git_state": {
-    "head": "972049f991b5c119555647eeea816e89dd4769f3",
-    "tree": "657095fa6790b6d21091dd58f9f862bc08818455",
+    "head": "9b82e97b8aadc5b6b8710e03b5128a608697f56e",
+    "tree": "7fe67d0fb9bfc95e579c0fbda539de85eb73e4f4",
     "branch": "agent/antigravity/P02-real-webview-harness",
     "is_clean": false,
     "behavior_baseline_commit": "241ff3b70b6fc0490ea238efd486cc707f849031",
-    "porcelain_status": "M apps/desktop/frontend/e2e/workbench_driver_protocol.ts\n M verification/P02/env-identity-report.json\n M verification/P02/env-identity-report.txt\n M verification/P02/fixtures/workbench_synthetic_data.json\n M verification/P02/harness/workbench_cdp_harness.py\n M verification/P02/p02-harness-results.json\n M verification/P02/p02-harness-results.txt\n M verification/P02/probes/env_identity_probe.py\n M verification/P02/probes/static_control_probe.py\n M verification/P02/run-webview.ps1\n M verification/P02/static-control-report.json\n M verification/P02/static-control-report.txt\n?? verification/P02/probe-execution.log"
+    "porcelain_status": "M apps/desktop/frontend/e2e/workbench_driver_protocol.ts\n M doc/handoffs/P02-stage-a-foundation-handoff.md\n M doc/tasks/P02.md\n M verification/P02/RESUME.md\n M verification/P02/env-identity-report.json\n M verification/P02/env-identity-report.txt\n M verification/P02/fixtures/workbench_synthetic_data.json\n M verification/P02/harness/workbench_cdp_harness.py\n M verification/P02/p02-harness-results.json\n M verification/P02/p02-harness-results.txt\n M verification/P02/probe-execution.log\n M verification/P02/probes/env_identity_probe.py\n M verification/P02/run-webview.ps1"
   },
   "build_output_directories": {
     "frontend_dist": {

@@ -1,6 +1,30 @@
 # P02 恢复点
 
-## 当前检查点：P02 Stage A 定向修订已完成；等待 DSH 复审与 Codex 隔离构建 Gate
+## 当前检查点：P02 Stage A 定向修订 (r3) 已就绪；响应 DSH r2 复审；等待 Codex exact-commit 独立复跑与 DSH r3 复审
+
+- 时间：2026-10-09 UTC。
+- Task=`doc/tasks/P02.md`，status=`in_progress` / ExecutionState=`ACTIVE`；Owner=Antigravity、非作者实现Reviewer=DeepSeek Harness、Integrator=Codex。
+- 行为基线=`241ff3b70b6fc0490ea238efd486cc707f849031`，冻结 scope contract SHA-256=`27DC31A8CF3304ABA6783E243F36895FFE4AAA3CCBCA76D58E8B766C403E1425`。
+- 本轮定向修订源自非作者实现 Reviewer DeepSeek Harness 对 `base=5de8d44c784cbd20b23bcd41a8f1a7258c7addff` / `reviewed_head=9b82e97b8aadc5b6b8710e03b5128a608697f56e` 的 `decision=changes_requested` 及 findings（P0/P1/P2/P3=`0/0/2/8`，含 F-05, G-01~G-07 等），以及 Codex exact-commit preflight 补证要求。
+- r3 修订处置结果：
+  - G-01 (P2) + F-05 (P2): 消除证据自引用死结。`p02-harness-results.json` 移除未提交前的交付 hash 自占位，仅如实记录被测检出的 `source_head`、`source_tree` 与关键源码文件 SHA-256 清单 (`key_source_files_sha256`)；明确区分测试运行输出与后续提交的 delivery commit，指出 Codex 将在新提交产生后于 clean detached exact head 独立复跑验证。
+  - G-02 (P3) / F-08: 消除底色硬编码。背景色从 fixture 中按语义角色 (`role == "app_base_background"`) 动态获取；对真实半透明样式 (`synthetic_alpha_cases`，源自 `RegionOverlay.tsx`) 执行合成数学计算；对缺失不透明底色的半透明元素判定为 `NOT_VERIFIABLE`。
+  - G-03 (P3) / F-10: 修复 AC4 fixture `retype` 操作。严格对齐 `relabelMachine.ts` 源码状态机规则，仅允许 `speech` ↔ `sfx` 互相转移（原 `speech -> narration` 违反状态机）。
+  - G-04 (P3) / F-10: 深入对齐 Region 与书/章/页真实 wire 契约。补充 `RevisionSummary` 真实字段（`created_at`, `region_type`, `sfx_policy`, `is_current`），字段命名统一对齐契约（`book_id`, `chapter_id`, `page_id`, `chapter_number` 作为 string 等）。
+  - G-05 (P3): 规范容器背景与边框判定。对无独立文本配对的纯容器底色与边框标为 `contrast_result: NOT_VERIFIABLE` 并说明原因，不作为文本对比度计算，消除伪对比度缺陷。
+  - G-06 (P3): 优化执行链路与契约深度断言。PRE-02 优化为单次执行，直接消费静态探针报告；PRE-01 引入深度结构与枚举断言，在根部阻断契约漂移。
+  - G-07 (P3): 修复 PowerShell 换行兼容性与退出码聚合。`run-webview.ps1` 采用内存缓冲与纯 LF 输出（`[System.IO.File]::WriteAllText`），彻底解决 Windows PowerShell 5.1 下 CRLF 引起的 trailing-whitespace 报警；明确区分 `-ProbeOnly` 与完整执行模式，聚合传播子探针退出码。
+- 实际验证状态（Exit=0）：
+  - `powershell -ExecutionPolicy Bypass -File verification/P02/run-webview.ps1 -ProbeOnly` -> **PASS** (EXIT=0)
+  - `powershell -ExecutionPolicy Bypass -File verification/P02/run-webview.ps1` -> **PASS** (EXIT=0)
+  - `PRE-01` (synthetic_fixture_presence): **PASS** (Layer: `FILESYSTEM`, Exit: 0)
+  - `PRE-02` (static_source_contract_check): **PASS** (Layer: `STATIC_AST`, Exit: 0)
+  - `PRE-03` (f_token_and_palette_math_model): **PASS** (Layer: `TOKEN_MODEL`, Exit: 0)
+  - `AC1`~`AC6` 真实 WebView2 运行时场景: **BLOCKED** (Layer: `REAL_WEBVIEW2` / `REAL_WEBVIEW_MOCK_IPC`，Exit: `null`)
+- 硬构建屏障（Hard Build Barrier）继续生效：严禁在本 Owner worktree 运行 Cargo/Tauri/sidecar build。
+- 下一步操作：提交固定交付 commit，由 Codex 在 clean detached exact head 独立复跑 Stage A probes 并完成 Gate 复算；交由 DeepSeek Harness 进行 Stage A r3 复审。
+
+## 历史检查点：P02 Stage A 定向修订 (r2) 已完成；等待 DSH 复审与 Codex 隔离构建 Gate
 
 - 时间：2026-10-09 UTC。
 - Task=`doc/tasks/P02.md`，status=`in_progress` / ExecutionState=`ACTIVE`；Owner=Antigravity、非作者实现Reviewer=DeepSeek Harness、Integrator=Codex。

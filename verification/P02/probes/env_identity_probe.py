@@ -1,4 +1,4 @@
-"""P02 Read-Only Environment and Source Identity Probe (Stage A r2).
+"""P02 Read-Only Environment and Source Identity Probe (Stage A r3).
 
 Collects and verifies host environment, Edge WebView2 Runtime presence,
 Git repository/worktree baseline, and build artifact directory status
@@ -8,7 +8,6 @@ without running any Cargo/Tauri builds or modifying product source code.
 from __future__ import annotations
 
 import json
-import os
 import platform
 import shutil
 import subprocess
@@ -39,7 +38,7 @@ def run_cmd(cmd: list[str], cwd: Path | None = None) -> tuple[int, str, str]:
         return -1, "", str(exc)
 
 
-def get_git_state() -> dict[str, str | bool]:
+def get_git_state() -> dict[str, object]:
     _, head, _ = run_cmd(["git", "rev-parse", "HEAD"])
     _, tree, _ = run_cmd(["git", "rev-parse", "HEAD^{tree}"])
     _, branch, _ = run_cmd(["git", "branch", "--show-current"])
@@ -58,7 +57,6 @@ def get_git_state() -> dict[str, str | bool]:
 
 def query_webview2_runtime() -> dict[str, str]:
     results = {}
-    # Verified WebView2 Runtime Client GUID: {F3017226-FE2A-4295-8BDF-00C3A9A7E4C5}
     wv2_guid = "{F3017226-FE2A-4295-8BDF-00C3A9A7E4C5}"
     reg_paths = [
         (winreg.HKEY_LOCAL_MACHINE, rf"SOFTWARE\WOW6432Node\Microsoft\EdgeUpdate\Clients\{wv2_guid}"),
@@ -75,7 +73,6 @@ def query_webview2_runtime() -> dict[str, str]:
         except OSError:
             continue
 
-    # File system installation directory check
     app_dir = Path(r"C:\Program Files (x86)\Microsoft\EdgeWebView\Application")
     if app_dir.exists():
         for child in app_dir.iterdir():
@@ -185,12 +182,18 @@ def main() -> int:
         f"Git Branch: {git_state['branch']}",
         f"Source HEAD: {git_state['head']}",
         f"Source Tree: {git_state['tree']}",
+        f"Git Clean Status: {git_state['is_clean']}",
         f"Behavior Baseline: {git_state['behavior_baseline_commit']}",
+    ]
+    if git_state.get("porcelain_status"):
+        txt_lines.append(f"Porcelain Status:\n{git_state['porcelain_status']}")
+    txt_lines.extend([
         f"frontend/dist Exists: {dist_state['exists']}",
         f"cargo-target Exists: {cargo_target_state['exists']}",
         f"Hard Build Barrier Active: {report['build_barrier']['hard_barrier_active']}",
         f"Barrier Rationale: {report['build_barrier']['reason']}",
-    ]
+    ])
+
     with txt_path.open("w", encoding="utf-8", newline="\n") as f:
         f.write("\n".join(txt_lines) + "\n")
 

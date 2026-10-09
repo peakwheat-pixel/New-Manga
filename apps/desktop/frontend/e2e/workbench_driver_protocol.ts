@@ -1,5 +1,5 @@
 /**
- * P02 Workbench Real WebView2 Driver & Assertion Protocol (Stage A r2).
+ * P02 Workbench Real WebView2 Driver & Assertion Protocol (Stage A r3).
  *
  * NOTE: This file specifies Stage A data contracts, type structures, and WCAG 2.1
  * mathematical models. Full interactive CDP / WebView behavioral driving is NOT yet
@@ -88,19 +88,19 @@ export function calculateRelativeLuminance(r: number, g: number, b: number): num
 }
 
 /**
- * Performs alpha blending of foreground over an opaque background.
- * Composite = alpha * fg + (1 - alpha) * bg
+ * Performs alpha blending of a color over an opaque background.
+ * Composite = alpha * color + (1 - alpha) * background
  */
 export function blendAlpha(
-  fgRgba: [number, number, number, number],
-  bgRgb: [number, number, number],
+  colorRgba: [number, number, number, number],
+  opaqueBaseRgb: [number, number, number],
 ): [number, number, number] {
-  const [rf, gf, bf, a] = fgRgba;
-  const [rb, gb, bb] = bgRgb;
+  const [rc, gc, bc, a] = colorRgba;
+  const [rb, gb, bb] = opaqueBaseRgb;
   return [
-    Math.round(a * rf + (1 - a) * rb),
-    Math.round(a * gf + (1 - a) * gb),
-    Math.round(a * bf + (1 - a) * bb),
+    Math.round(a * rc + (1 - a) * rb),
+    Math.round(a * gc + (1 - a) * gb),
+    Math.round(a * bc + (1 - a) * bb),
   ];
 }
 
@@ -134,20 +134,39 @@ export function parseCssColor(colorStr: string): [number, number, number, number
 }
 
 /**
- * AC6 Math Model: Calculates contrast ratio between foreground (with alpha) and background.
- * Performs alpha blending before computing relative luminance.
- * Ratio = (L1 + 0.05) / (L2 + 0.05)
+ * AC6 Math Model: Calculates contrast ratio between foreground and background.
+ * If background has alpha, an opaque base background must be supplied; otherwise NOT_VERIFIABLE.
+ * Composite foreground is then blended over the effective background before calculating WCAG ratio.
  */
 export function calculateContrastRatio(
   fgRgba: [number, number, number, number],
-  bgRgb: [number, number, number],
-): number {
-  const effectiveFg = blendAlpha(fgRgba, bgRgb);
+  bgRgba: [number, number, number, number],
+  knownOpaqueBaseRgb?: [number, number, number],
+): { ratio: number | null; status: "PASS" | "FAIL" | "NOT_VERIFIABLE"; notes?: string } {
+  let effectiveBg: [number, number, number];
+
+  if (bgRgba[3] < 1.0) {
+    if (!knownOpaqueBaseRgb) {
+      return {
+        ratio: null,
+        status: "NOT_VERIFIABLE",
+        notes: "Background has alpha < 1.0 but no known opaque base background was provided",
+      };
+    }
+    effectiveBg = blendAlpha(bgRgba, knownOpaqueBaseRgb);
+  } else {
+    effectiveBg = [bgRgba[0], bgRgba[1], bgRgba[2]];
+  }
+
+  const effectiveFg = fgRgba[3] < 1.0 ? blendAlpha(fgRgba, effectiveBg) : [fgRgba[0], fgRgba[1], fgRgba[2]];
+
   const l1 = calculateRelativeLuminance(...effectiveFg);
-  const l2 = calculateRelativeLuminance(...bgRgb);
+  const l2 = calculateRelativeLuminance(...effectiveBg);
   const brighter = Math.max(l1, l2);
   const darker = Math.min(l1, l2);
-  return Number(((brighter + 0.05) / (darker + 0.05)).toFixed(2));
+  const ratio = Number(((brighter + 0.05) / (darker + 0.05)).toFixed(2));
+
+  return { ratio, status: "PASS" };
 }
 
 /**
@@ -159,6 +178,7 @@ export function evaluateContrast(
   role: "text" | "large_text" | "ui_component" | "disabled",
   selector: string,
   tokenMapping: "MAPPED" | "UNMAPPED" | "NOT_APPLICABLE" = "UNMAPPED",
+  knownOpaqueBaseRgb?: [number, number, number],
 ): ContrastSample {
   const fg = parseCssColor(fgStr);
   const bg = parseCssColor(bgStr);
@@ -176,10 +196,22 @@ export function evaluateContrast(
     };
   }
 
-  const bgOpaque: [number, number, number] = [bg[0], bg[1], bg[2]];
-  const ratio = calculateContrastRatio(fg, bgOpaque);
+  const result = calculateContrastRatio(fg, bg, knownOpaqueBaseRgb);
+  if (result.status === "NOT_VERIFIABLE" || result.ratio === null) {
+    return {
+      elementSelector: selector,
+      role,
+      computedForeground: fgStr,
+      computedBackground: bgStr,
+      tokenMapping,
+      contrastRatio: null,
+      contrastResult: "NOT_VERIFIABLE",
+      notes: result.notes,
+    };
+  }
+
   const minRequired = role === "text" ? 4.5 : 3.0;
-  const isPass = ratio >= minRequired;
+  const isPass = result.ratio >= minRequired;
 
   return {
     elementSelector: selector,
@@ -187,8 +219,8 @@ export function evaluateContrast(
     computedForeground: fgStr,
     computedBackground: bgStr,
     tokenMapping,
-    contrastRatio: ratio,
+    contrastRatio: result.ratio,
     contrastResult: isPass ? "PASS" : "FAIL",
-    notes: `Required: >=${minRequired}:1, Actual: ${ratio}:1`,
+    notes: `Required: >=${minRequired}:1, Actual: ${result.ratio}:1`,
   };
 }
