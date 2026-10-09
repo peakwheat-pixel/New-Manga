@@ -1,0 +1,12 @@
+HEAD: a5557be49e1c2abd993814ddcc01a71ef1aa09cd
+Tree: 4e8157cd703393bcd3b42173fd44a77d30b21d16
+Complete diff path count: 49
+Out-of-scope path count: 0
+HostFolder stdout SHA-256: 54128239AA482E4CC4E6DEAB50CBCF8876CB76E9674E6B0432DCAAE4F0D1F855
+HostFolder stderr bytes: 0
+HostFolder exit: 0
+path_scope: True
+hostfolder_hash: True
+hostfolder_pointer: True
+hostfolder_exit_and_stderr: True
+hostfolder_time: True

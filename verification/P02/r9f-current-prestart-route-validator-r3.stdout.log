@@ -1,0 +1,12 @@
+Command: python -B -X utf8 verification/PROJECT-ROADMAP-20261008/verify_plan.py
+HEAD: a5557be49e1c2abd993814ddcc01a71ef1aa09cd
+Tree: 4e8157cd703393bcd3b42173fd44a77d30b21d16
+Planning snapshot base=e4242ecd419eb0eea098d2f63b40f709aa5caeea; live HEAD=a5557be49e1c2abd993814ddcc01a71ef1aa09cd
+PASS: 196 unique nodes, all classifications and dependency references
+PASS: 105 new architecture/governance integration records are audit-base ancestors
+PASS: every registered P Task state matches the Plan; unregistered P nodes stay proposed
+PASS: dated roadmap node set is intact; live states are validated from Plan/Task
+PASS: 21 unique planned nodes and roadmap graphs have no dependency cycles
+PASS: delivery/navigation local links resolve
+PASS: zero P01 production/code delta; P02 task-local E2E driver excluded; governance whitespace check
+Product tests/build/GUI: NOT_RUN (planning-only)
