@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# INVALID_PARTIAL_HISTORY: R1 was cancelled after DirEntry.stat() returned st_ino=0.
+# Never treat R1 records as R2 or Gate evidence; use the corrected R2 collector.
 import argparse
 import hashlib
 import json

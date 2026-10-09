@@ -279,7 +279,7 @@ def main():
         "scratch_clone_tree": run_git(args.clone, "rev-parse", "HEAD^{tree}"),
         "mapping_count": len(results),
         "writable_mapping_count": sum(1 for item in results if not item["read_only"]),
-        "reparse_points_followed": 0,
+        "reparse_point_issue_count": sum(1 for issue in global_issues if issue.get("reason") == "reparse_point_not_followed"),
         "overall_status": "PASS" if not global_issues else "BLOCKED",
         "hashing_limit": "metadata-only roots bind path/type/size and only selected executable/sample content; unselected file bytes are not verified",
         "mappings": results,

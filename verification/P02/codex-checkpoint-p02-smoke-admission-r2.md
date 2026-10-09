@@ -11,13 +11,13 @@
 - Evidence: [R6 Review](dsh-review-p02-preflight-r6.response.md), [R6 session metadata](dsh-review-p02-preflight-r6.session.json), [current pre-admission report](codex-smoke-admission-preflight-r2.md), [observations JSON](codex-smoke-admission-preflight-r2.json), [prior NOT_ADMITTED checklist](codex-checkpoint-p02-smoke-admission-r1.md).
 - Admission scope: exactly one isolation Smoke attempt using the independently reviewed r3 WSB config/hash and only the fixed ordinary clone path `G:\CODEX\P02-scratch-build-source`. This admission permits the clone and pre-start checks; it does not permit `wsb start` until every post-admission checklist item below is verified.
 
-## Required before any `wsb start`
+## Required pre-start checks and post-start binding
 
 1. From the approved live, interactive, non-elevated host PowerShell process, create the fixed clone using the exact Task sequence: `git clone --no-local --no-hardlinks --no-checkout --single-branch --branch main "G:\CODEX\New Manga" "G:\CODEX\P02-scratch-build-source"`; remove `origin`; set `core.autocrlf=true`; checkout detached at `7ce3c40cd308e7093929bd5f53abc4f8a6c4ef7a`. If the path is occupied, stop and mark blocked.
 2. Verify clone HEAD/tree, empty porcelain, private common Git directory, no remote, no alternates, source pins, and `fsutil hardlink list` link count=1 for every file under `.git/objects`.
-3. Produce and verify recursive pre-start manifests for every mapped HostFolder; enumerate reparse points without following unsafe links and prove the approved root set plus scratch-only output boundary.
+3. Produce and verify recursive pre-start manifests for each of the 11 HostFolders in the fixed Smoke r3 XML (this is not the same set as the Stage-1 12-root inventory; Build-only Git roots are excluded); enumerate reparse points without following unsafe links and prove the approved root set plus scratch-only output boundary.
 4. Recheck the exact r3 XML canonical bytes/hash and all mappings; immediately before start run `wsb list --raw` and prove `WindowsSandboxEnvironments=[]`, binding its raw output/time to the one attempt.
-5. Bind the running session to the unique visible Windows Sandbox UI window and saved screenshot in the fixed scratch clone. Any unknown/failure means no start or, if already started, stop the same session and preserve all state.
+5. After the single authorized `wsb start` returns a session ID, bind that running session to the unique visible Windows Sandbox UI window and saved screenshot in the fixed scratch clone before any guest command. Any binding/capture failure means stop that same session if it exists, preserve all state, mark Smoke `BLOCKED / NOT_VERIFIED`, and do not retry. This timing-only clarification is recorded in [R3 sequencing clarification](codex-checkpoint-p02-smoke-admission-r3-sequencing.md).
 
 ## Independent gates and current state
 
