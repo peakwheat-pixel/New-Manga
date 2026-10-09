@@ -1,10 +1,10 @@
 # Project Rebaseline Plan
 
-**当前位置：P08/P03=done；P系列共21项：done 2、in_review 1、proposed 18。唯一Active Task=P01（台账元数据与Review载体取证），Owner/Integrator=Codex、非作者Reviewer=Antigravity；C9正式Review已approved，C1 fixed-head Codex Integration Gate=`PASS`。新的关闭候选固定头Review、最终closeout Gate与main fast-forward仍待完成，故P01仍为in_review、`integration_commit=null`。R1/R2 blocked、C8 changes_requested历史结论保留；R2/SYNTH Review carrier仍为`NOT_VERIFIED`，来源Task状态与产品裁决不改。恢复见Task与`verification/P01/RESUME.md`；P02仍proposed，正式Task与harness范围尚未冻结。P03 integration=`552464238a69ad2cea63cff18abe98f412dbae87`；其产品验证仍绑定source `d717c049`。
+**当前位置：P08/P03=done；P系列共21项：done 2、approved 1、proposed 18。P01等待Codex最终集成，Owner/Integrator=Codex、非作者Reviewer=Antigravity；C9与最终D3正式Review均approved，C1 fixed-head Codex Integration Gate=`PASS`。Codex final closeout Gate、root main fast-forward与post-FF保护复核仍待完成，故P01为`approved`、`integration_commit=null`。R1/R2 blocked、C8 changes_requested历史结论保留；R2/SYNTH Review carrier仍为`NOT_VERIFIED`，来源Task状态与产品裁决不改。恢复见Task与`verification/P01/RESUME.md`；P02仍proposed，正式Task与harness范围尚未冻结。P03 integration=`552464238a69ad2cea63cff18abe98f412dbae87`；其产品验证仍绑定source `d717c049`。
 
-## 2026-10-09 P01 Antigravity Review approved；C1 Integration Gate PASS，closeout Review pending
+## 2026-10-09 P01最终D3 Antigravity Review approved；Codex closeout Gate pending
 
-P01仍`in_review`；Owner/Integrator=Codex，非作者Reviewer=Antigravity。base=`826bea12a132c5af2ac0cd1244d00e9170093c71`；C9正式Review fixed head=`7645577ab374b581eb7081fd57675c32793249f5`、tree=`8dafbccda120e718aeb6f40613146320a4d2564f`、decision=`approved`。C1=`c28a9e49e684105eebc7f62555086d6cccad75a4` fixed-head Integration Gate通过，D1证据提交=`322b757933dce0e7333fc495706cc0d424cccaad`。新的固定关闭候选须由Antigravity独立Review；通过后Codex再完成最终done态Gate、更新`integration_commit`并保护root main fast-forward。C9 P3 `OBS-C9-01`及旧DSH分配文字已在Handoff/导航处置。C8 `ENV-01`截断事实保留，未补造文本。R2/SYNTH carrier仍`NOT_VERIFIED`，不改来源Task状态或产品裁决；产品测试/build/GUI均`NOT_RUN`（本Task无产品代码差量）。P02保持`proposed / 未释放`，harness范围与正式Task尚未冻结。
+P01现为`approved`；Owner/Integrator=Codex，非作者Reviewer=Antigravity。base=`826bea12a132c5af2ac0cd1244d00e9170093c71`；C9正式Review fixed head=`7645577ab374b581eb7081fd57675c32793249f5`、decision=`approved`；最终D3 Review head=`51bc01fec2652c0e2bc39bb119f8dd7ca3c294cb`、tree=`69d9d655cf9aecb1581cf4d3c86c500f265b61ab`、decision=`approved`、findings=0，报告SHA-256=`749c20db44938a5cca9e18995923465e42aba07a960303387483b67ff58fc1ee`。C1=`c28a9e49e684105eebc7f62555086d6cccad75a4` fixed-head Integration Gate通过，D1=`322b757933dce0e7333fc495706cc0d424cccaad`。Codex现在执行final closeout Gate与root protection；仅在所有检查通过后标记done并安全fast-forward。C9 P3 `OBS-C9-01`及旧DSH分配文字已处置。C8 `ENV-01`截断事实保留，未补造文本。R2/SYNTH carrier仍`NOT_VERIFIED`，不改来源Task状态或产品裁决；产品测试/build/GUI均`NOT_RUN`（本Task无产品代码差量）。P02保持`proposed / 未释放`，harness范围与正式Task尚未冻结。
 
 ## 历史检查点：2026-10-09 P01 DSH R2 BLOCKED（由C8 in_review取代）
 
@@ -45,11 +45,11 @@ P08 DSH R7已对base=ecb3b520ce68c2ddcc0c5ec94596e2f50a17f369、reviewed_head=fe
 
 ### 预先定义的任务依赖树与 Gate
 
-以下 P01–P21 中 **P08、P03=done；P01=in_review；其余18项为proposed / 未释放**；候选任务状态以本表和STATUS为准。
+以下 P01–P21 中 **P08、P03=done；P01=approved；其余18项为proposed / 未释放**；候选任务状态以本表和STATUS为准。
 
 | 候选任务编号 | 状态 | 简单中文描述 | 启动依赖/条件 | 建议责任方；非作者审查 | 完成 Gate / 边界 |
 |---|---|---|---|---|---|
-| P01 | in_review | 台账元数据与Review载体取证 | 无Task依赖；固定base=826bea12；C9 reviewed head=7645577a由Antigravity正式approved；C1 Codex Integration Gate已PASS | Codex；非作者Antigravity | Gate evidence=`verification/P01/integration-gate.md`；D1=`322b7579`已版本化C1 Gate与root pre-FF manifest；新的fixed closeout Review/Gate及post-FF复核待完成。R2/SYNTH carrier仍NOT_VERIFIED，不改来源Task状态或产品裁决 |
+| P01 | approved | 台账元数据与Review载体取证 | 无Task依赖；固定base=826bea12；最终D3 reviewed head=51bc01fe由Antigravity正式approved；C1 Codex Integration Gate已PASS | Codex；非作者Antigravity | C1 Gate=`verification/P01/integration-gate.md`；正式D3 Review=`doc/reviews/P01-51bc01fe-antigravity-d3.md`；root pre-FF manifest=24项完全匹配。Codex final closeout Gate、integration_commit及main fast-forward/post-FF复核待完成；R2/SYNTH carrier仍NOT_VERIFIED，不改产品裁决或来源Task状态 |
 | P02 | proposed / 未释放 | 真UI行为、300ms刷新与对比度验证 | 现有Workbench；冻结harness范围 | ZCode；DSH | DOM/真实WebView取证，区分mock与实际；覆盖切页、写后刷新、键盘、token |
 | P03 | done | Packaged第五SFX入口验收补齐 | PROBE-1/Runner Debt/Guard已done；DSH R5/R6与Codex集成Gate通过 | Antigravity；DSH | integration=`552464238a69ad2cea63cff18abe98f412dbae87`；Gate evidence绑定source=`d717c049`与固定installer SHA；R3-03留给P20 |
 | P04 | proposed / 未释放 | 生产命令族/桥接并发定向验证 | PAGE-NAV done；先检查现有断言 | Antigravity；DSH | 独立常量成员断言；同会话并发响应与协议核验候选先复现；无缺口不加修复 |

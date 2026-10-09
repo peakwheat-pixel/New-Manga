@@ -75,7 +75,7 @@ if __name__ == "__main__":
     status_counts = Counter(label.strip() for _, label in plan_rows)
     p01_state = next(label.strip() for node, label in plan_rows if node == "P01")
     assert p01_state == p01_task_state.group(1), (p01_state, p01_task_state.group(1))
-    assert p01_state in {"in_progress", "in_review", "blocked", "done"}, p01_state
+    assert p01_state in {"in_progress", "in_review", "approved", "blocked", "done"}, p01_state
     expected_counts = {"done": 2, "proposed / 未释放": 18}
     expected_counts[p01_state] = expected_counts.get(p01_state, 0) + 1
     assert status_counts == expected_counts, status_counts

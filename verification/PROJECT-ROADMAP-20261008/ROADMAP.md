@@ -1,8 +1,8 @@
 # New Manga 一眼路线图（2026-10-08）
 
-最新工作点：P08/P03=done；唯一Active Task=P01 in_review。P01 C9 fixed-head Antigravity Review=approved，C1 Codex Integration Gate=PASS，新的固定关闭候选Review与closeout待完成；P02仍proposed，正式Task与真实WebView harness范围尚未冻结。
+最新工作点：P08/P03=done；唯一Active Task=P01 approved，等待Codex最终集成关闭。P01 C9及最终D3 fixed-head Antigravity Review=approved（D3 findings=0），C1 Codex Integration Gate=PASS；最终closeout Gate、main fast-forward与post-FF复核待完成。P02仍proposed，正式Task与真实WebView harness范围尚未冻结。
 
-**当前位置：P08/P03=done；P系列done 2/21、in_review 1、proposed 18。唯一Active Task=P01 in_review，Owner/Integrator=Codex、非作者Reviewer=Antigravity；C9 fixed head `7645577a`正式approved，C1 Codex Integration Gate=PASS，新的fixed closeout Review待完成。C8 DSH changes_requested与R1/R2 blocked历史报告均保留；R2/SYNTH carrier仍NOT_VERIFIED。**
+**当前位置：P08/P03=done；P系列done 2/21、approved 1、proposed 18。唯一Active Task=P01 approved，Owner/Integrator=Codex、非作者Reviewer=Antigravity；C9 fixed head `7645577a`及最终D3=`51bc01fec2652c0e2bc39bb119f8dd7ca3c294cb`正式approved（D3 findings=0），C1 Codex Integration Gate=PASS；最终Codex closeout Gate、main fast-forward及post-FF复核待完成。C8 DSH changes_requested与R1/R2 blocked历史报告均保留；R2/SYNTH carrier仍NOT_VERIFIED。**
 
 人员更新：用户已移除Qoder，图中未来UI/UX责任由ZCode承担；非作者Review与正式Task释放Gate保持。
 
@@ -29,7 +29,7 @@ flowchart TB
 
 ```mermaid
 flowchart TB
-  BASE["当前位置：P08/P03 done<br/>P系列done 2/21、in_review 1、proposed 18"] --> P01["P01<br/>in_review / C9 Antigravity Review approved；C1 Codex Integration Gate PASS，final closeout Review待完成<br/>台账取证<br/>Owner/Integrator Codex · Reviewer Antigravity<br/>base 826bea12"]
+  BASE["当前位置：P08/P03 done<br/>P系列done 2/21、approved 1、proposed 18"] --> P01["P01<br/>approved / D3 Antigravity Review approved；C1 Codex Integration Gate PASS，final closeout Gate待完成<br/>台账取证<br/>Owner/Integrator Codex · Reviewer Antigravity<br/>base 826bea12"]
   BASE --> P02["P02<br/>proposed / 未释放<br/>真UI验证<br/>点击/300ms刷新/对比度/失效窗口"]
   BASE --> P03["P03<br/>done / Review与Codex集成Gate通过<br/>第五入口Gate<br/>集成55246423；Gate绑定d717"]
   BASE --> P04["P04<br/>proposed / 未释放<br/>生产命令面验证<br/>常量成员与并发响应；先复现再决定修复"]
@@ -39,7 +39,7 @@ flowchart TB
   style P03 fill:#d1e7dd,stroke:#198754,stroke-width:3px
 ```
 
-P01仍为唯一in_review Task；C9 Review与C1 Gate均已通过，新的固定关闭候选Review、closeout和main fast-forward待完成。P02仍需由Codex冻结真实WebView harness范围并建立正式Task；它未释放实现。P06仍需实证旧runtime可用性。启动每个Task前仍需正式Task、不同Owner/Reviewer和allowed_paths。
+P01现为唯一approved Task；C9与最终D3正式Review及C1 Gate均已通过，Codex最终closeout、main fast-forward和post-FF核验待完成。P02仍需由Codex冻结真实WebView harness范围并建立正式Task；它未释放实现。P06仍需实证旧runtime可用性。启动每个Task前仍需正式Task、不同Owner/Reviewer和allowed_paths。
 
 ## 完整产品：现在就看清后续，而不是每次临时猜下一件
 
