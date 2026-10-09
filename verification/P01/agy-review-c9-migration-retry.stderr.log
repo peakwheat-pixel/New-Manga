@@ -1,0 +1,17 @@
+Traceback (most recent call last):
+  File "C:\Users\49745\.agents\skills\antigravity-dispatch\scripts\migrate_session.py", line 138, in <module>
+    main()
+    ~~~~^^
+  File "C:\Users\49745\.agents\skills\antigravity-dispatch\scripts\migrate_session.py", line 128, in main
+    migrate_one(cid)
+    ~~~~~~~~~~~^^^^^
+  File "C:\Users\49745\.agents\skills\antigravity-dispatch\scripts\migrate_session.py", line 60, in migrate_one
+    ide.execute(
+    ~~~~~~~~~~~^
+        f"INSERT INTO conversation_summaries ({','.join(cols)}) VALUES ({','.join('?' * len(cols))})",
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        [rec[c] for c in cols],
+        ^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+sqlite3.IntegrityError: UNIQUE constraint failed: conversation_summaries.conversation_id
