@@ -1,0 +1,3 @@
+session_id=session-e94ff6f7-0701-4dc2-955d-018c373ebe79
+cwd=C:\Users\49745\.codex\worktrees\P02-process-isolation-review-dsh-r5
+review_checkout_head=1c7efb172b8e9d766e38f84cf3728a90bb5953d0

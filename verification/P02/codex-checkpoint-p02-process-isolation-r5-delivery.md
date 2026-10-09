@@ -1,0 +1,11 @@
+# Checkpoint：P02 process isolation r5 delivery 已固定，待 exact-head 独立 Review
+
+- 时间：2026-10-09 15:22 UTC（2026-10-09 23:22 Asia/Shanghai）。状态边界：R5_DELIVERED / REVIEW_DISPATCH_READY。
+- Parent Task=P02 Hard Build Barrier（唯一 Active Task）；Codex-only process-isolation 子任务。Owner/author=Codex，非作者 Reviewer=DeepSeek Harness，Integrator=Codex。
+- 固定 delivery branch=`codex/P02-process-isolation`，candidate=`1c7efb172b8e9d766e38f84cf3728a90bb5953d0`，tree=`f50f9716a87ffe7a6272370a92b0eeb862e75079`，parent/base=`fb0a7668d948ae68f15fd59aaffd6aedf6663c99`；author worktree=`C:\Users\49745\.codex\worktrees\p02-process-isolation-plan\New Manga`，common Git directory=`G:/CODEX/New Manga/.git`。候选提交前 author worktree clean；本 checkpoint 是提交后新增审计附件。
+- R5 diff 相对 r4 base 共 16 paths：4 个既有设计/治理文档差量（P02 boundary 段、host inventory addendum、Build plan、scope delta）与 P02 verification 审计附件。无产品代码/测试、Schema/IPC/依赖、Owner allowlist、`STATUS`、`REBASELINE_PLAN` 或 r3 WSB XML 改动。r5 validation=`verification/P02/codex-process-isolation-r5-validation.md`；路线 validator EXIT=0，`git diff --check` EXIT=0，r3 XML 仍 2609 bytes / SHA-256=`9af445134c6c6d3cec900b6d5c903a3c7fe19a104e0eab10f7c0886280de664d`。
+- R4 DSH formal Design Review=`APPROVED`（P0/P1/P2/P3=0/0/0/3）；N-01..N-03 按 r5 validation 修复，精确 scope 为 `scope-delta-r1.md` § r5 P3 documentation closure。r5 DSH exact-head Review 尚未开始。
+- Root=`G:/CODEX/New Manga`=`main@549a6544f0be1eec66c09ece393fd1a409f10bf3`；保护 manifest 203/203 match，missing/extra/mismatch=0，staged=0，canonical entries SHA-256=`3a54fa978bf228bfae366a4c4de35b90e4fab609447d3370ed81370299da10e2`；r5 16 path candidate 与 root dirty 集合 overlap=0。未改 root 或用户/其他作者文件。
+- 新建 reviewer worktree=`C:/Users/49745/.codex/worktrees/P02-process-isolation-review-dsh-r5`，detached exact candidate=`1c7efb172b8e9d766e38f84cf3728a90bb5953d0`，common dir 共用但工作区只读、expected clean。R5 prompt 已版本化。DSH raw JSONL 留在 reviewer checkout 外；复审只读、不提权。
+- Gate：Windows Sandbox Feature=`UNKNOWN`；Smoke admission=`NOT_ADMITTED`；Smoke=`NOT_AUTHORIZED / NOT_RUN`；Build Gate=`BLOCKED`；build=`NOT_AUTHORIZED / NOT_RUN`；P02 AC1–AC7=`BLOCKED / NOT_RUN`；Hard Build Barrier 有效。
+- 下一条准确动作：在该 detached clean worktree 运行 DSH exact-head Review，记录 session、prompt、response、exit/stderr/mount 与 raw JSONL 的外置路径/哈希；若 Review findings，按冻结范围修复并复审；未经审查不得集成。

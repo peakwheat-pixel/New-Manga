@@ -63,7 +63,17 @@ DSH r4 exact-head design Review=`APPROVED`（P0/P1/P2/P3=`0/0/0/3`），仅发�
 - `doc/tasks/P02.md`：只允许改现有 `Codex-only scratch-build output boundary` 段中的 scope 标题引用，将其统一为实际标题 `§ r3/r4 scope extension`（N-03）。
 - `verification/P02/codex-scratch-build-input-host-inventory-r2-build-addendum.md`：只允许修复 N-01 的旧 r2 config 指代，准确写明当前冻结的 r3 Smoke config 不含两个 Git roots。
 - `verification/P02/codex-scratch-build-plan.md`：只允许修复 N-01 的旧 proposal review state，登记 r3=`APPROVED_WITH_CONDITIONS`、r4=`APPROVED`（仅设计）、N-01..N-03 待关闭；保留 Smoke/Build/产品验收为原有 BLOCKED / NOT_AUTHORIZED / NOT_RUN 状态。
-- `verification/P02/codex-scratch-build-process-isolation-scope-delta-r1.md`：只追加本 r5 extension，用于修复 N-02 文件级许可描述过窄。
+- `verification/P02/codex-scratch-build-process-isolation-scope-delta-r1.md`：允许追加本 r5 extension，并只就地扩写 r3/r4 extension 中 r3-start 的许可行（原 :52；不改其他文字），用于修复 N-02 文件级许可描述过窄及闭合 N-04。
 - `verification/P02/**`：只允许新增本 r5 的 start/delivery/review checkpoint、validation record 以及 `dsh-review-process-isolation-r4.*`、`dsh-review-process-isolation-r5.*` 正式 Review 附件；包括 `codex-checkpoint-p02-process-isolation-r4-review.md`。
 
-不得修改 r3 WSB XML 或其 canonical hash；不得改 `doc/STATUS.md`、`doc/REBASELINE_PLAN.md`、P02 Owner allowlist、产品实现/测试、Schema/IPC/依赖、root/其他作者 dirty 文件或用户数据。此修订不授权 Windows Feature 查询/变更、提权、Sandbox、Smoke、Build 或产品测试；Hard Build Barrier 继续有效。R5 exact-head 非作者 Review 通过后，最多进入本机非提权只读 preflight。`n
+不得修改 r3 WSB XML 或其 canonical hash；不得改 `doc/STATUS.md`、`doc/REBASELINE_PLAN.md`、P02 Owner allowlist、产品实现/测试、Schema/IPC/依赖、root/其他作者 dirty 文件或用户数据。此修订不授权 Windows Feature 查询/变更、提权、Sandbox、Smoke、Build 或产品测试；Hard Build Barrier 继续有效。R5 exact-head 非作者 Review 通过后，最多进入本机非提权只读 preflight。
+
+## r6 N-04/N-05 documentation repair (2026-10-09; based on reviewed candidate `1c7efb172b8e9d766e38f84cf3728a90bb5953d0`)
+
+DSH r5 exact-head design Review=`APPROVED_WITH_CONDITIONS`（P0/P1/P2/P3=`0/0/0/2`）。本 extension 在 PROJECT_ORCHESTRATION_AUTHORIZATION 下将 N-04/N-05 两项新 P3 条件冻结为 `FROZEN_FOR_R6_REVIEW`；父 Task=P02，Codex-only process-isolation 子任务，Owner/author=Codex，非作者 Reviewer=DeepSeek Harness，Integrator=Codex。
+
+- `verification/P02/codex-scratch-build-process-isolation-scope-delta-r1.md`：仅允许按上文 r5 extension 的授权，扩写 r3/r4 extension 中 r3-start 的一行文件许可；删除本文件 r5 extension 末尾误留的两个字符 `` `n `` 并补 LF 文件尾；追加本 r6 extension。不得改其他既有文字。
+- `verification/P02/**`：允许入库 r5 delivery/review checkpoints、r5 DSH dispatch/response/session/mount/exit/stderr 附件、r6 start/delivery/review checkpoints、r6 validation，以及 `dsh-review-process-isolation-r6.*` 正式 Review 附件。
+- 不得修改 P02 Task boundary、Build plan、host inventory、`doc/STATUS.md`、`doc/REBASELINE_PLAN.md`、P02 Owner allowlist、产品实现/测试、Schema/IPC/依赖、r3 WSB XML/canonical hash、root/其他作者 dirty 文件或用户数据。
+- R6验收：N-04 许可精确覆盖上述 :52 一行就地扩写；N-05 移除字面 `` `n `` 且文件以 LF 结束；r3 XML bytes/hash 不变；路线 validator 与 `git diff --check` 通过；DSH exact-head 非作者复审通过。
+- 本 extension 不授权 Windows Feature 查询/变更、提权、Sandbox、Smoke、Build 或产品测试。Smoke admission=`NOT_ADMITTED`；Smoke=`NOT_AUTHORIZED / NOT_RUN`；Build Gate=`BLOCKED`；build=`NOT_AUTHORIZED / NOT_RUN`；Hard Build Barrier 继续有效。R6 review 通过后最多进入本机非提权只读 preflight。

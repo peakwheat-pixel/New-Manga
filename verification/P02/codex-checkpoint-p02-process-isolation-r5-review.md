@@ -1,0 +1,11 @@
+# Checkpoint：P02 process isolation r5 Review 完成，2 项 P3 条件待修
+
+- 时间：2026-10-09 15:31 UTC（2026-10-09 23:31 Asia/Shanghai）。状态边界：R5_REVIEWED / R6_REPAIR_REQUIRED。
+- Parent Task=P02 Hard Build Barrier（唯一 Active Task）；Codex-only process-isolation 子任务。Owner/author=Codex，非作者 Reviewer=DeepSeek Harness，Integrator=Codex。
+- delivery branch=`codex/P02-process-isolation`，candidate=`1c7efb172b8e9d766e38f84cf3728a90bb5953d0`，tree=`f50f9716a87ffe7a6272370a92b0eeb862e75079`，base=`fb0a7668d948ae68f15fd59aaffd6aedf6663c99`；author worktree=`C:\Users\49745\.codex\worktrees\p02-process-isolation-plan\New Manga`。Author checkout 目前有 7 条未提交证据记录；candidate commit 本身未改动。Reviewer checkout=`C:/Users/49745/.codex/worktrees/P02-process-isolation-review-dsh-r5`，detached exact candidate，审查前后 clean。
+- DSH session=`session-e94ff6f7-0701-4dc2-955d-018c373ebe79`；正式 response=`verification/P02/dsh-review-process-isolation-r5.response.md`；Decision=`APPROVED_WITH_CONDITIONS`（仅 Design Review），P0/P1/P2/P3=`0/0/0/2`。N-01..N-03=`CLOSED`。新增条件：N-04 P3（r5 extension 许可写“只追加”，但实际就地替换 :52）；N-05 P3（scope 文件末尾误留字面 `` `n `` 且无文件尾换行）。两项均纯文档，无运行态、Gate 或产品影响。
+- R5 raw DSH JSONL 留在 checkout 外 `C:/Users/49745/.codex/worktrees/p02-process-isolation-plan/dsh-review-logs/dsh-review-process-isolation-r5.stdout.jsonl`，269485 bytes，SHA-256=`f9b4a9ad2f270fe1774e3892b12b627bed708f79b344ef9bf2c94b4c775b19f9`，含 thinking events，未入库；CLI exit=0，stderr=0，session mount exit=0。
+- R5 reviewer 独立在 candidate HEAD 重跑路线 validator=`EXIT=0`；r3 WSB XML canonical 2609 bytes/SHA=`9af445134c6c6d3cec900b6d5c903a3c7fe19a104e0eab10f7c0886280de664d` 不变；root manifest 独立 203/203 全匹配，candidate 16 paths 与 root dirty intersection=0。
+- Gate：Feature=`UNKNOWN`；Smoke admission=`NOT_ADMITTED`；Smoke=`NOT_AUTHORIZED / NOT_RUN`；Build Gate=`BLOCKED`；build=`NOT_AUTHORIZED / NOT_RUN`；P02 AC1–AC7=`BLOCKED / NOT_RUN`；Hard Build Barrier 有效。R5 条件闭合前不运行 preflight（R6 修复及复审通过后再继续）。
+- 已完成：R5 DSH formal review、报告和 dispatch evidence 外置归档；无修改 reviewer checkout、root、Git index 或 Gate 状态。
+- 下一条准确动作：创建 R6 scope extension，精确授权修改 r5 extension :66 来闭合 N-04、删除文件末尾字面 `` `n `` 并补 LF 来闭合 N-05；同时允许入库 r5 dispatch/delivery/review checkpoint 与 DSH r5 formal Review attachments。冻结后才执行两处文档修复、验证、固定提交、exact-head 复审。
