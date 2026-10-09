@@ -1,0 +1,11 @@
+started_utc=2026-10-09T03:54:02.6944189Z
+ended_utc=2026-10-09T04:01:01.6988827Z
+shell=PowerShell 7.6.6
+dsh_version=0.2.0-rc.2
+cwd=G:\CODEX\New Manga.worktrees\P02-fallback-scope-codex
+branch=codex/P02-fallback-scope
+reviewed_head=0b95c6a1024f89ae341c637c0d531611175acdc5
+command=dsh headless <scope-review-r5.prompt.md>
+exit=0
+stdout_file=verification/P02/scope-review-r5.stdout.md
+stderr_file=verification/P02/scope-review-r5.stderr.log

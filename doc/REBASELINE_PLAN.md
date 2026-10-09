@@ -1,10 +1,16 @@
 # Project Rebaseline Plan
 
-**当前位置：Live `main@241ff3b70b6fc0490ea238efd486cc707f849031`，该提交为 P02 验证基线；P08/P03/P01=done、P02=ready / 已释放；P系列共21项：done 3、ready 1、proposed 17。P01 integration=M0=`13e66ec5bf9a2fc59f4e6c5623feb0bde22884c8`（D7=`b7ad98b29196e9859cbfbfe187e6822569f79367`）仍为原集成事实；后续 Live main 指针以 Git 为准。P02 Owner=ZCode、非作者实现 Reviewer=DeepSeek Harness、Integrator=Codex；依赖 P08 与两项 debounce Task 均已完成；AC/Owner范围 r2 approved，Codex-only路线validator治理增量 r4 approved；正式 Task=`[P02](tasks/P02.md)`，真实 WebView 实现/验证已释放，当前 checkpoint 见 [`P02 RESUME`](../verification/P02/RESUME.md)。实现与产品 Gate 尚未运行，不能视为验收通过。R1/R2 blocked、C8 changes_requested历史结论保留；R2/SYNTH Review carrier仍为`NOT_VERIFIED`，来源Task状态与产品裁决不改。P03 integration=`552464238a69ad2cea63cff18abe98f412dbae87`；其产品验证仍绑定source `d717c049`。
+**当前位置：Live `main@241ff3b70b6fc0490ea238efd486cc707f849031`，该提交为 P02 验证基线；P08/P03/P01=done、P02=ready / 已释放；P系列共21项：done 3、ready 1、proposed 17。P01 integration=M0=`13e66ec5bf9a2fc59f4e6c5623feb0bde22884c8`（D7=`b7ad98b29196e9859cbfbfe187e6822569f79367`）仍为原集成事实；后续 Live main 指针以 Git 为准。P02 Owner=Antigravity（r5仅批准故障转移方案；实际Task元数据须经r6固定head Review和集成后才可派发），非作者实现 Reviewer=DeepSeek Harness、Integrator=Codex；依赖 P08 与两项 debounce Task 均已完成；AC/Owner范围 r2 approved，Codex-only路线validator治理增量 r4 approved；正式 Task=`[P02](tasks/P02.md)`，真实 WebView 实现/验证已释放，当前 checkpoint 见 [`P02 RESUME`](../verification/P02/RESUME.md)。实现与产品 Gate 尚未运行，不能视为验收通过。R1/R2 blocked、C8 changes_requested历史结论保留；R2/SYNTH Review carrier仍为`NOT_VERIFIED`，来源Task状态与产品裁决不改。P03 integration=`552464238a69ad2cea63cff18abe98f412dbae87`；其产品验证仍绑定source `d717c049`。
 
 ## 2026-10-09 P02 真实 Workbench WebView 验证 / READY
 
-P02 范围已正式冻结并释放。Owner=ZCode，非作者 Reviewer=DeepSeek Harness，Integrator=Codex；Task 允许范围、AC、真实/Mock 证据边界及前置依赖见[正式 Task](tasks/P02.md)。范围 Reviewer r1 的三项 finding 已修订，r2 对固定 AC/Owner allowlist 契约 SHA-256=`27DC31A8CF3304ABA6783E243F36895FFE4AAA3CCBCA76D58E8B766C403E1425`批准；后续 Codex-only 路线validator增量经 r3 修订、r4 approved并关闭 `P02-SCOPE-R3-01`。这些范围/治理审查不替代实现 Review。实现 Worktree/dispatch 与执行证据见[P02恢复点](../verification/P02/RESUME.md)。不修改产品 UI、不新增依赖；所有真实 WebView2、构建和产品行为检查在实现阶段执行，尚未 PASS。
+P02 范围已正式冻结并释放。Owner=Antigravity（候选元数据；r5批准仅限转移方案，r6固定head Review与集成前不派发），非作者 Reviewer=DeepSeek Harness，Integrator=Codex；Task 允许范围、AC、真实/Mock 证据边界及前置依赖见[正式 Task](tasks/P02.md)。范围 Reviewer r1 的三项 finding 已修订，r2 对固定 AC/Owner allowlist 契约 SHA-256=`27DC31A8CF3304ABA6783E243F36895FFE4AAA3CCBCA76D58E8B766C403E1425`批准；后续 Codex-only 路线validator增量经 r3 修订、r4 approved并关闭 `P02-SCOPE-R3-01`。这些范围/治理审查不替代实现 Review。实现 Worktree/dispatch 与执行证据见[P02恢复点](../verification/P02/RESUME.md)。不修改产品 UI、不新增依赖；所有真实 WebView2、构建和产品行为检查在实现阶段执行，尚未 PASS。
+
+
+
+## 2026-10-09 P02 Owner 故障转移候选 / 固定 head Review 待完成
+
+候选 branch=`codex/P02-owner-amendment` 由 Live main=`4b54f304dc201d129d4ba1c62d0368252e6301b1` 建立；DSH r5 对固定提案 `0b95c6a1024f89ae341c637c0d531611175acdc5` 作出限定 `approved`；Owner=Antigravity、branch=`agent/antigravity/P02-real-webview-harness`、目标 worktree=`G:/CODEX/New Manga.worktrees/P02-real-webview-harness-antigravity` 的实际 Task/Plan/Status 元数据尚待独立 r6 固定 head Review 与 Codex 集成。Owner worktree 尚未创建、Task 仍 `ready / IDLE`，AC1–AC7及所有产品验证仍 `NOT_RUN`。r2产品范围契约、r4 Codex-only路线校验器治理批准不变；r5报告见[`scope-review-r5.stdout.md`](../verification/P02/scope-review-r5.stdout.md)，r6 Task完整SHA与历史批准绑定见[`owner-transfer-amendment-r6.md`](../verification/P02/owner-transfer-amendment-r6.md)。
 
 ## 2026-10-09 P01 D3 Review、Codex closeout与main集成完成 / DONE
 

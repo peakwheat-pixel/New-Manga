@@ -1,0 +1,35 @@
+P02 owner-transfer amendment pre-commit validation
+shell=PowerShell 7.6.6
+interpreter=Python 3.14.6
+worktree=G:\CODEX\New Manga.worktrees\P02-owner-amendment-codex
+branch=codex/P02-owner-amendment
+base=4b54f304dc201d129d4ba1c62d0368252e6301b1
+
+command=route-validator
+Planning snapshot base=e4242ecd419eb0eea098d2f63b40f709aa5caeea; live HEAD=4b54f304dc201d129d4ba1c62d0368252e6301b1
+PASS: 196 unique nodes, all classifications and dependency references
+PASS: 105 new architecture/governance integration records are audit-base ancestors
+PASS: live P01/P02/P03/P08 Task states match the Plan; remaining P nodes stay proposed
+PASS: every roadmap P-node declaration matches the Plan state
+PASS: 21 unique planned nodes and roadmap graphs have no dependency cycles
+PASS: delivery/navigation local links resolve
+PASS: zero production/code delta; governance whitespace check
+Product tests/build/GUI: NOT_RUN (planning-only)
+exit=0
+
+command=route-mutation-probe
+PASS: both roadmap status drift probes were rejected
+exit=0
+
+command=git-diff-check
+warning: in the working copy of 'doc/STATUS.md', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'verification/P02/NEXT-AUTOPROGRESS-PROMPT.md', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'verification/P02/RESUME.md', LF will be replaced by CRLF the next time Git touches it
+exit=0
+
+command=task-hash-and-linked-evidence
+task_worktree_sha256=B928814A051EC6E1C256BCDEF33968A2AB3F9C17654B0F086AA8163E56CAE78A
+task_lf_normalized_sha256=DC19C27450BDF378DD6EA4D31ABBECDD4968412656F8C23E6059359E2B517EAF
+new_local_links=11 missing=0
+PASS
+exit=0

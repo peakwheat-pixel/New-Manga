@@ -1,0 +1,8 @@
+shell=PowerShell 7.6.6; interpreter=Python 3.14.6
+command=inline read-only P01 manifest/status/content SHA comparison
+manifest_sort=preserve exact recorded order (original PowerShell Sort-Object path collation)
+root=G:\CODEX\New Manga; branch=main; HEAD=4b54f304dc201d129d4ba1c62d0368252e6301b1
+manifest_entries=24; live_entries_checked=24; expected_manifest_sha256=b41835453b693b4e62818216e4d67801c01eca6e33450f8d3d3dd72849d578e7; recomputed_manifest_sha256=b41835453b693b4e62818216e4d67801c01eca6e33450f8d3d3dd72849d578e7
+digest_match=True; mismatches=0
+result=PASS
+exit=0
