@@ -1,0 +1,11 @@
+# P05 Review checkpoint
+
+- 时间：2026-10-10 02:34 Asia/Shanghai（2026-10-09 18:34 UTC）。
+- Task 状态：`in_review`；独立 Review=`APPROVED`、零 finding；Codex Integration Gate 与集成后验证待执行。
+- 当前 Owner worktree：`codex/P05-category-retryable-notes` @ `bc9aaf87189608b61c585aafdd976aa1c5fcd23b`，common dir=`G:/CODEX/New Manga/.git`。
+- 固定 Task base=`c7a41f52aec961b30ad5e3c7e7569bac042bb847`；固定 delivery head=`a2569f38c46b7a7003cf5f729f65e3644344390f`，tree=`83d082807765c3f685550573e484d0df3a03c16b`，parent=`b5e44d604f0d7c3ff1431904301163fd5111414b`。
+- Reviewer：Antigravity（非作者；DSH 首轮因无法核验 Git 对象而 `BLOCKED`）。AGY CLI=`1.3.2`；正式派发 exit=`0`、JSON status=`SUCCESS`，conversation=`154725bd-67b7-4c66-92e1-16d487ef0119`。固定 head Review=`APPROVED`，审查报告对 AC1–AC4 范围项判定通过，P0/P1/P2/P3=`0/0/0/0`。Task 的 AC4 还包含 Codex Integration Gate 与集成后复核，此部分仍待执行。报告、原始 JSON、派发 prompt 和 CLI exit 分别见 [response](antigravity-review-a2569f38.response.md)、[JSON](antigravity-review-a2569f38.stdout.json)、[prompt](antigravity-review-a2569f38.prompt.md)、[exit](antigravity-review-a2569f38.exit)。
+- Antigravity 与 Codex 均实际运行 `python verification/PROJECT-ROADMAP-20261008/verify_plan.py`，工作区 HEAD=`bc9aaf87189608b61c585aafdd976aa1c5fcd23b` 时得到 PASS（196 audit nodes、21 planned nodes、Task/Plan 状态与本地链接通过）；Codex 的复核还包含本轮 Review 状态登记工作树。产品构建与测试保持 `NOT_RUN`。Codex 将在主线集成后再运行集成后路线验证和差异/链接检查。
+- 桌面会话迁移：目标 conversation 的 dispatch JSON=`SUCCESS`；按 skill 对 Antigravity desktop 数据库做了 SQLite online backup，路径=`C:/Users/49745/.gemini/antigravity/conversation_summaries.db.bak-20261009-183229Z`。`migrate_session.py --id 154725bd-67b7-4c66-92e1-16d487ef0119` 调用后只读查询确认 desktop DB row 存在、`app_data_dir=antigravity`、title 非空、trajectory 文件存在。PowerShell/Python wrapper 在解码本地化 stdout 时失败，故迁移脚本退出码未捕获；DB 与 trajectory 的实际状态确认迁移完成。桌面 UI 刷新/可见性=`NOT_VERIFIED`，未重启应用。详见 [migration state check](antigravity-review-migration-check.json)。
+- 主线集成前核验：`main@f52095ebf2a46f41905edede199c77f4668b8a09`；既存 dirty/untracked 内容留在原工作区。P05 已提交路径集与 root 既存改动无路径冲突；根工作区保护文件仍由原作者持有，不得清理或覆盖。
+- 下一条准确动作：在 root `main` 复查 P05 incoming path set 与当前 dirty/untracked 清单及保护清单，然后只 fast-forward 到已 Review 的 P05 branch tip；集成后运行 `verify_plan.py`、`git diff --check`、P05 link/anchor checks 与保护清单校验。全部通过后记录 integration commit 和 checkpoint，将 P05/AC4 标为 `done`，刷新 STATUS/Plan/Index，再按依赖图选择下一项。

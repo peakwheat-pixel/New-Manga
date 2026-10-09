@@ -1,0 +1,14 @@
+{
+  "conversation_id": "154725bd-67b7-4c66-92e1-16d487ef0119",
+  "dispatch_status": "SUCCESS",
+  "desktop_migration_command": "migrate_session.py --id 154725bd-67b7-4c66-92e1-16d487ef0119",
+  "desktop_migration_exit_capture": "UNKNOWN: wrapper stdout decoding failed after invocation",
+  "post_invocation_readonly_check": {
+    "conversation_row_present": true,
+    "app_data_dir": "antigravity",
+    "title_nonempty": true,
+    "trajectory_file_present": true
+  },
+  "desktop_ui_visibility": "NOT_VERIFIED",
+  "database_backup": "C:/Users/49745/.gemini/antigravity/conversation_summaries.db.bak-20261009-183229Z"
+}
