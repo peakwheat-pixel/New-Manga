@@ -2,12 +2,13 @@
 
 ## 当前检查点：P01 D7 已集成，post-FF Gate PASS
 
-- Timestamp=`2026-10-09T02:03:18Z`。Live Plan/Status显示用户提示中的P08检查点已过时：实际P08=`done`、P01已完成；P08 DSH R7报告/证据保留，不重跑、不改写。
+- Timestamp=`2026-10-09T02:05:13Z`。Live Plan/Status显示用户提示中的P08检查点已过时：实际P08=`done`、P01已完成；P08 DSH R7报告/证据保留，不重跑、不改写。
 - root=`G:/CODEX/New Manga`，branch=`main`，common-dir=`G:/CODEX/New Manga/.git`；D7集成HEAD=`b7ad98b29196e9859cbfbfe187e6822569f79367`。集成分支`codex/P01-integration-20261009`已fast-forward至D7。
 - D3正式Antigravity Review：base=`826bea12a132c5af2ac0cd1244d00e9170093c71`，reviewed_head=`51bc01fec2652c0e2bc39bb119f8dd7ca3c294cb`、tree=`69d9d655cf9aecb1581cf4d3c86c500f265b61ab`，decision=`approved`，findings=0，session=`86e7e1d1-3d2f-496b-9558-08c14f95c4d3`；report=`doc/reviews/P01-51bc01fe-antigravity-d3.md`。report/response SHA-256=`749c20db44938a5cca9e18995923465e42aba07a960303387483b67ff58fc1ee`；session metadata SHA-256=`89bad760d4ae2e85802654e594b2ee99dc12c0075df481a0d15cbaa27f65e2cb`；stdout SHA-256=`dbc5158ddbfdf1910e1da21efd0dc1b7e7be4570c868264372feeec36b18d310`；prompt SHA-256=`cd011871f2fb73029e461451e3a93dc714ef3ba107b8c5fa9fa9ee67f317d974`；输入packet SHA-256=`7e061bbf0445ceab03d2797b877d43eeedd9bb23b374c312784a2387ecd9c90f`。review exit=`0`，会话迁移命令exit=`0`；桌面会话列表是否显示未验证。
 - Task=`done`、AC1–AC7均勾选、`integration_commit=M0=13e66ec5bf9a2fc59f4e6c5623feb0bde22884c8`；D3 Antigravity Review=`approved`、0 findings、77 paths，C1 Codex Gate=`PASS`，D5=`PASS_PRE_FF`，D7 fast-forward后复核=`PASS`。D7固定base..HEAD=92 paths、allowed-path外0、产品/测试/build路径0，done-state路线validator EXIT=0（196节点、done=3/proposed=18），base与M0祖先、`git diff --check`均通过。正式报告=`verification/P01/closeout-gate.md`。
 - post-FF root保护复核：原24项dirty/untracked的status/path/content SHA逐项匹配，manifest SHA-256=`b41835453b693b4e62818216e4d67801c01eca6e33450f8d3d3dd72849d578e7`，与D7差量path交集=0；不stage、不stash、不覆盖或清理。
 - 完整post-FF命令和逐项PASS结果见[`post-ff-recheck.log`](post-ff-recheck.log)；该日志固定检查的是`main@b7ad98b29196e9859cbfbfe187e6822569f79367`的D7 integration range。
+- P01收尾导航/Closeout文档提交=`a9d8a84f3d9123e2fd29375a305c954d47bb56fc`（12个授权路径）；提交后重新运行路线validator、祖先、D7/closeout `git diff --check`、路径范围、Task AC与24项保护manifest检查，base..当前HEAD=93 paths、越界/产品/测试/build路径0，结果均PASS，详见`post-ff-recheck.log`。本恢复点和日志的最终指针更新将叠加在该提交上；恢复时仍以Live `git rev-parse HEAD`为准。
 - 产品pytest/cargo/vitest/build/GUI/真实Tauri WebView均`NOT_RUN`；R2/SYNTH carrier仍`NOT_VERIFIED`，不改来源Task状态/产品裁决。
 - **下一精确步骤**：P01已完成，无需重做Review、Gate或审计。按[下次自动推进提示词](NEXT-AUTOPROGRESS-PROMPT.md)从Live main恢复，自动开始P02真实WebView harness范围冻结；P02仍`proposed / 未释放`，先建正式Task并冻结AC/allowed paths，再分配Owner与非作者Reviewer。用户本次仅授权P01后关机；排程该次关机后授权即消费，下次不得延用。
 

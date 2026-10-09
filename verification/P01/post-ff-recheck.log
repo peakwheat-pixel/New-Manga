@@ -35,3 +35,18 @@ protected root manifest entries=24/24 content/status/path=True digest=b41835453b
 D7 scope paths=92 outside=0 product/test/build=0
 staged paths=0
 POST-UPDATE RESULT=PASS
+Post-closeout-commit recheck UTC=2026-10-09T02:05:13Z root=G:\CODEX\New Manga branch=main HEAD=a9d8a84f3d9123e2fd29375a305c954d47bb56fc
+closeout documentation commit paths=12 doc/00_INDEX.md, doc/12_ROADMAP.md, doc/REBASELINE_PLAN.md, doc/STATUS.md, doc/handoffs/P01-9b124936.md, doc/tasks/P01.md, doc/tasks/README.md, verification/P01/RESUME.md, verification/P01/closeout-gate.md, verification/P01/post-ff-recheck.log, verification/PROJECT-ROADMAP-20261008/RESUME.md, verification/PROJECT-ROADMAP-20261008/ROADMAP.md
+route validator EXIT=0
+Planning snapshot base=e4242ecd419eb0eea098d2f63b40f709aa5caeea; live HEAD=a9d8a84f3d9123e2fd29375a305c954d47bb56fc
+PASS: 196 unique nodes, all classifications and dependency references
+PASS: 105 new architecture/governance integration records are audit-base ancestors
+PASS: 21 unique planned nodes and roadmap graphs have no dependency cycles
+PASS: delivery/navigation local links resolve
+PASS: zero production/code delta; governance whitespace check
+Product tests/build/GUI: NOT_RUN (planning-only)
+P01 base ancestor EXIT=0; M0 ancestor EXIT=0; D7 range diff-check EXIT=0; closeout commit diff-check EXIT=0
+root protected manifest entries=24/24 status/path/content=True digest=b41835453b693b4e62818216e4d67801c01eca6e33450f8d3d3dd72849d578e7
+base..current HEAD paths=93 outside=0 product/test/build=0
+Task status=done AC_checked=7 integration_commit=M0
+POST-CLOSEOUT-COMMIT RESULT=PASS
