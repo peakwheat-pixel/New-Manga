@@ -19,6 +19,7 @@ P02 AC、真实/Mock 证据边界、退出判据及 Owner allowlist 已由 scope
 - 所有差量限于 `doc/00_INDEX.md`、`doc/REBASELINE_PLAN.md`、`doc/STATUS.md`、`doc/tasks/P02.md` 与 `verification/P02/**`。
 - 与 P01 固定保护清单交集=`0`。P01 保护清单=`24/24`、`0 mismatch`，digest=`b41835453b693b4e62818216e4d67801c01eca6e33450f8d3d3dd72849d578e7`。
 - root dirty/untracked=`38`；root 与候选差量交集仅为 `verification/P02/RESUME.md` 和 `verification/P02/NEXT-AUTOPROGRESS-PROMPT.md`。Gate 复算的 root status/content map SHA-256=`41ab8b09b3aeb2cfd2b9954c336c70584304195a80841d2884acfae34a86c693`。除已记录的两份恢复文件同步外，其余 36 项均未触碰。
+复现口径（PowerShell 7.6.6）：运行 `git -C <root> -c core.quotepath=false status --porcelain=v1 --untracked-files=all`；对每项读取原样两字符 XY 状态、相对路径及文件内容 `Get-FileHash -Algorithm SHA256` 的小写摘要；用 `Sort-Object Path` 排序，按 `XY|path|sha256` 行格式、UTF-8 无 BOM、行间 LF、末尾无 LF 序列化后计算 SHA-256。复算摘要=`41ab8b09b3aeb2cfd2b9954c336c70584304195a80841d2884acfae34a86c693`。
 
 Task 保持 `ready / IDLE`；Owner=`Antigravity`、非作者 Reviewer=`DeepSeek Harness`、Integrator=`Codex`，角色互异。正式 Task bytes SHA-256=`325D613E410793F565A4128B55B76A86827F79DBFD8A01395B2DABCEADDD2443`，Git blob=`97c3d61e52620b5d07538a2a2ac07dd62950c7cd`。AC/frontmatter/allowlist/base/dependencies 与已审查版本一致。Owner worktree/真实接单/start checkpoint 仍未建立；未提前改为 `in_progress`。
 
@@ -41,6 +42,9 @@ Task 保持 `ready / IDLE`；Owner=`Antigravity`、非作者 Reviewer=`DeepSeek 
 | C-2 最新同步记录与 root/candidate 当前 recovery SHA/status | PASS；精确匹配 |
 | root P01 保护 manifest 与 38 项 dirty/content map | PASS；24/24、0 mismatch、未触碰其余 36 项 |
 
+## Independent Review finding disposition
+
+- `OT-FINAL-01`（P3；fixed-head=`4ad49ae8b65cec1da0ab94767e6b11144f7a25b0`；报告 `owner-transfer-integration-review-4ad49ae8.md`，SHA-256=`633033827BFDE50C4A1FF5298FF262D549F9AB506FB50E47BA9D50FE7C95CC9E`）已由本节补记 PowerShell 7.6.6 的环境、排序和序列化公式；原报告记录的 Python 排序差异及 PowerShell 复算证据保留。请由同一非作者 Reviewer 对修订后的精确 HEAD/tree 复核此 finding。
 ## 尚未通过/未运行项
 
 - 最终候选的非作者 exact-head Review：`PENDING`。本报告提交后会形成新候选 HEAD，Review 必须覆盖该真实 HEAD/tree 后方能 fast-forward。
