@@ -65,13 +65,13 @@ P08 DSH R7已对base=ecb3b520ce68c2ddcc0c5ec94596e2f50a17f369、reviewed_head=fe
 
 交付：[报告与能力缺口](../verification/PROJECT-ROADMAP-20261008/REPORT.md)、[中文分层路线图](../verification/PROJECT-ROADMAP-20261008/ROADMAP.md)、[完整 Task 台账](../verification/PROJECT-ROADMAP-20261008/task-inventory.csv)、[额度/中断恢复点](../verification/PROJECT-ROADMAP-20261008/RESUME.md)。详细源码取证见同目录 Core/Desktop/Plan 三份审计；这些文件是证据/派生视图，排期仍以本 Plan 为准，运行仍以 STATUS 为准。
 
-当前：195 个正式 Task 文件＋T1.1.2 历史映射＝196 节点；114 DONE_RECORDED＋48 Legacy VERIFIED_COMPLETE＋5 DOC_ONLY＝167 登记完成/文档交付，另有29个历史 PARTIAL/归档/受限关闭/被取代节点。新架构/治理105节点（其中 M2前缀101）均登记完成，**登记 done 不等于研究质量 PASS、四页全部实现或最终发布通过**。无 Active/released。GC-2实现已done@cea610ed，设计后继 proposed 已被取代；ICU修复、Runner Debt与Guard均已done。旧素材/endpoint/BJ13 blocker不得复活。
+截至 2026-10-08 规划审计输入时点：195 个正式 Task 文件＋T1.1.2 历史映射＝196 节点；114 DONE_RECORDED＋48 Legacy VERIFIED_COMPLETE＋5 DOC_ONLY＝167 登记完成/文档交付，另有29个历史 PARTIAL/归档/受限关闭/被取代节点。新架构/治理105节点（其中 M2前缀101）均登记完成，**登记 done 不等于研究质量 PASS、四页全部实现或最终发布通过**。该审计输入时点无 Active/released；这是历史快照，不代表当前 Task 状态。当前以本 Plan 下方 P01–P21 表和 [STATUS](STATUS.md) 为准。GC-2实现已done@cea610ed，设计后继 proposed 已被取代；ICU修复、Runner Debt与Guard均已done。旧素材/endpoint/BJ13 blocker不得复活。
 
 实际产品：React目前是 Console↔Workbench，书目与SFX设置是 Console 中的真实IPC小面板；Workbench已接页导航、图像资源、region改标、修订恢复、重渲染。完整四页导航、导入/整条Pipeline启动控制/任务快照/Reader/导出尚未接通。Core里已有业务API，不重写；真实导入适配、异步生命周期与受控IPC需补齐。见报告代码证据。
 
 ### 预先定义的任务依赖树与 Gate
 
-以下 P01–P21 中 **P08、P03、P01=done，P02=in_progress / ACTIVE，P05=in_review / ACTIVE（独立文档 Task），其余16项为proposed / 未释放**；P01已完成main fast-forward与post-FF closeout，P02进入正式实现验证；候选任务状态以本表和STATUS为准。
+以下 P01–P21 当前状态中 **P08、P05、P03、P01=done，P02=in_progress / ACTIVE，其余16项为proposed / 未释放**；P01已完成main fast-forward与post-FF closeout，P02进入正式实现验证；候选任务状态以本表和STATUS为准。
 
 | 候选任务编号 | 状态 | 简单中文描述 | 启动依赖/条件 | 建议责任方；非作者审查 | 完成 Gate / 边界 |
 |---|---|---|---|---|---|
