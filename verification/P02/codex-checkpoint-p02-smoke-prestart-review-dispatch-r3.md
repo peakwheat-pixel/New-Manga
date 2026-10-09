@@ -12,7 +12,7 @@
 - DSH R2 finding `P02-PRESTART-R2-01` (P3) is corrected in D6 by adding the missing current/history paragraph boundary. R3 must independently confirm it.
 - R2's Plan observations were corrected in scope: 2026-10-08 audit metrics are dated historical evidence; the current P01–P21 prose matches P05 done / P02 active / 16 proposed.
 - The R2 dispatch checkpoint explicitly binds R3 logs to D4 and says they are not validation of later heads.
-- D6 route validator=7/7 PASS, base/parent diff checks=exit 0; scope/focused assertions=PASS over 66 paths, out-of-scope=0. Logs `r9f-current-prestart-*-r4.*` bind to D6. R3 must independently rerun checks at the final package HEAD.
+- D6-only route validator=7/7 PASS, base/parent diff checks=exit 0; D6-only scope/focused assertions=PASS over 66 D6 paths, out-of-scope=0. The `r9f-current-prestart-*-r4.*` logs bind only to D6 and do not state the R3 package path count. R3 independently measured its final package as 80 paths, out-of-scope=0. Logs `r4.*` bind to D6; each later package requires fresh exact-head checks.
 - Review scope: complete base-to-package diff limited to `doc/00_INDEX.md`, `doc/REBASELINE_PLAN.md`, `doc/STATUS.md`, `doc/tasks/P02.md`, and `verification/P02/**`; no product source, dependency, shared contract/schema, HostFolder writes, Sandbox, Build, or product tests.
 - R3 prompt=`dsh-review-p02-current-prestart-r3.prompt.md`.
 

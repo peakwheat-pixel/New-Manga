@@ -1,0 +1,19 @@
+{
+  "session_id": "session-5a2c5ddb-56d0-4dbb-8cd6-3a85426de99f",
+  "cwd": "C:\\Users\\49745\\.codex\\worktrees\\P02-current-prestart-review-dsh-r3",
+  "cli_version": "0.2.0-rc.2",
+  "cli_exit": 0,
+  "mount_exit": 0,
+  "mounted_workspace": "P02-current-prestart-review-dsh-r3",
+  "reviewed_head": "322526fcde650ea9dcfde4a14f828afeb8808ead",
+  "reviewed_tree": "0298f62f29bd0c6c4a737255a7f857adb168b9af",
+  "response_sha256": "9D508F71381B16E7638869766D83B4556004C400BE0BDD5DF9993BA834C5468D",
+  "decision": "APPROVED",
+  "findings": {
+    "P0": 0,
+    "P1": 0,
+    "P2": 0,
+    "P3": 1,
+    "open": 1
+  }
+}
