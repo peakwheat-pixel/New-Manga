@@ -45,3 +45,10 @@ Historical next action at the initial R2 repair snapshot; superseded by the R2 e
 - Fresh exact-target reviewer validation: route EXIT=0 (196 nodes), diff check EXIT=0, changed Markdown=20 files / 772 relative targets / 10 base-existing missing / 0 new missing; root manifest=203/203, all five path/status/kind/size/SHA-256 mismatch counts=0, staged=0, candidate/root overlap=0.
 - Exact reviewed candidate scope: 35 base-relative paths; DSH independently confirmed `35 paths ⊆ original R1 frozen scope ∪ r7 ∪ r8`, outside-union=0. The fixed-change and earlier review snapshots remain separately anchored at `80cf5651`=24 and `7d8951c2`=26.
 - R3-N-03 is closed by this explicit containment record. R3-N-01/N-02 are closed by the current status refresh and R3 delivery checkpoint, which state that the repair is fixed/approved and link to the latest R3 recovery point.
+## Post-fast-forward verification at `2be02783b21938c7a6eb0efbb89f017b6963cde6`
+
+- Integration=`FAST_FORWARD`; exact main HEAD=`2be02783b21938c7a6eb0efbb89f017b6963cde6`; tree=`cd39ccf2a2ff3ea86afc4c8746bd54112d9b1034`; parent=`c36435aec5042143b816c01aa6da2ff3e80ba154`.
+- Route validator EXIT=0 (196 nodes; Task/Plan/dependencies/links consistent); `git diff --check 6855c113..HEAD` EXIT=0; Markdown scan=22 files / 778 relative targets / 10 base-existing missing / 0 new missing.
+- Protected root after FF: 203/203 path/status/content matches; staged=0; manifest SHA-256 unchanged; integrated candidate paths=41; root dirty-path overlap=0; user working files preserved.
+- Allowed-path union check: all 41 paths are covered by R1 freeze ∪ r7 ∪ r8; 35 exact-reviewed implementation/evidence paths were independently checked by DSH and six R3 review packet artifacts are listed in r8; outside-union=0.
+- Product tests/build/GUI remain `NOT_RUN`; Windows Feature remains `UNKNOWN`; Smoke, Build and AC1–AC7 remain blocked/not run as recorded above.
