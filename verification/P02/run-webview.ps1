@@ -1,6 +1,6 @@
 <#
 .SYNOPSIS
-    P02 Workbench Real WebView2 Verification Runner (Stage A r6).
+    P02 Workbench Real WebView2 Verification Runner (Stage A r7).
 .DESCRIPTION
     Runs read-only environment identity probe, TypeScript protocol check,
     static frontend control probe, Stage A preflight verification harness,
@@ -11,11 +11,14 @@
     and static contract probes, logging output to probe-execution-probeonly.log.
 .PARAMETER FinalizeFailTest
     If specified, passes --finalize-fail-test to verify finalizer failure handling (R5-02).
+.PARAMETER ExceptionTest
+    If specified, injects a synthetic unhandled exception to verify catch block handling (R6-04).
 #>
 
 param(
     [switch]$ProbeOnly,
-    [switch]$FinalizeFailTest
+    [switch]$FinalizeFailTest,
+    [switch]$ExceptionTest
 )
 
 $ErrorActionPreference = "Stop"
@@ -116,12 +119,20 @@ function Execute-Step {
 }
 
 Write-Host "==========================================================" -ForegroundColor Cyan
-Write-Host " P02 Real Workbench WebView2 Verification Harness (Stage A r6)" -ForegroundColor Cyan
+Write-Host " P02 Real Workbench WebView2 Verification Harness (Stage A r7)" -ForegroundColor Cyan
 Write-Host " Worktree: $RepoRoot" -ForegroundColor Cyan
 Write-Host " Mode: $(if ($ProbeOnly) { 'ProbeOnly' } else { 'Full Stage A' })" -ForegroundColor Cyan
 Write-Host "==========================================================" -ForegroundColor Cyan
 
 try {
+    # R6-04: Injected unhandled exception test for Scenario C microprobe verification
+    if ($ExceptionTest) {
+        $Global:CurrentStepName = "Injected Exception Test"
+        $Global:CurrentCommand = "throw-synthetic-exception"
+        $Global:CurrentArguments = @("--force-unhandled")
+        throw [System.InvalidOperationException]::new("Injected unhandled exception for Scenario C microprobe verification")
+    }
+
     $PythonExe = (Get-Command python).Source
     $NodeVer = try { (node -v) } catch { "UNAVAILABLE" }
     $NpmVer = try { (npm.cmd -v) } catch { "UNAVAILABLE" }
@@ -134,13 +145,14 @@ try {
     $EnvProbe = Join-Path $ScriptDir "probes\env_identity_probe.py"
     Execute-Step "Step 1: Environment Identity Probe" $PythonExe @($EnvProbe)
 
-    # 2. TypeScript E2E Protocol Contract Check (R4-01, R5-04)
+    # 2. TypeScript E2E Protocol Contract Check (R4-01, R5-04, R6-01)
     # Dynamically resolve tsc binary from current worktree or git common dir root
     $TscCandidate1 = Join-Path $RepoRoot "apps\desktop\frontend\node_modules\typescript\bin\tsc"
     $TscPath = if (Test-Path $TscCandidate1) {
         $TscCandidate1
     } else {
-        $GitCommonDir = try { (git rev-parse --git-common-dir 2>$null).Trim() } catch { "" }
+        # R6-01: Explicitly pass -C $RepoRoot so git resolves common dir independent of caller CWD
+        $GitCommonDir = try { (git -C $RepoRoot rev-parse --git-common-dir 2>$null).Trim() } catch { "" }
         if ($GitCommonDir) {
             $CommonRoot = if ([System.IO.Path]::IsPathRooted($GitCommonDir)) {
                 Split-Path -Parent $GitCommonDir
@@ -180,6 +192,7 @@ try {
         "--lib", "ES2021,DOM",
         $E2eProtocolTs
     )
+    $TscExitCode = $Global:CurrentStepExitCode
 
     # 3. Static Source Contract Control Probe
     $StaticProbe = Join-Path $ScriptDir "probes\static_control_probe.py"
@@ -194,9 +207,10 @@ try {
         exit 0
     }
 
-    # 4. Stage A Harness & Verdict Generator
+    # 4. Stage A Harness & Verdict Generator (R6-02: pass observed tsc exit code)
     $HarnessPy = Join-Path $ScriptDir "harness\workbench_cdp_harness.py"
-    Execute-Step "Step 4: Stage A Verdict Harness" $PythonExe @($HarnessPy)
+    $HarnessArgs = @($HarnessPy, "--tsc-exit", "$TscExitCode")
+    Execute-Step "Step 4: Stage A Verdict Harness" $PythonExe $HarnessArgs
 
     Write-Host "`n==========================================================" -ForegroundColor Green
     Write-Host " P02 Stage A Preflight & Verdict Complete (EXIT=0)" -ForegroundColor Green

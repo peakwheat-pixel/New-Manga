@@ -127,7 +127,7 @@ Finalizer failure propagated; exit code 42 preserved; log reliably marked Status
 No misleading "completed successfully" statements exist in the failure log.
 
 ================================================================================
-Test Scenario C: Catch Block Unhandled Exception Details & Decoupling (R5-03)
+Test Scenario C: Catch Block Unhandled Exception Details & Decoupling (R5-03, R6-04)
 ================================================================================
 
 Objective:
@@ -139,7 +139,36 @@ Prove that the unhandled exception catch block in `run-webview.ps1`:
 5. Never assumes $LASTEXITCODE is from the failing step unless that step actually ran a native command.
 6. Flushes the log and marks Status: FAILED before exiting 1.
 
-Handler Code Structure Verified:
+Method:
+Dual verification consisting of live execution reproduction via `-ExceptionTest` and static AST/code review.
+
+1. Live Execution Command:
+  powershell.exe -ExecutionPolicy Bypass -File verification/P02/run-webview.ps1 -ExceptionTest
+
+Process Exit Code: 1
+
+Console Output:
+==========================================================
+ P02 Real Workbench WebView2 Verification Harness (Stage A r7)
+ Worktree: G:\CODEX\New Manga.worktrees\P02-real-webview-harness-antigravity
+ Mode: Full Stage A
+==========================================================
+Unhandled exception in [Injected Exception Test]: Injected unhandled exception for Scenario C microprobe verification
+
+Log Tail Recorded in `probe-execution-full.log`:
+  [UNHANDLED_EXCEPTION]
+  Failed Step: Injected Exception Test
+  Failed Command: throw-synthetic-exception --force-unhandled
+  Exception Type: System.InvalidOperationException
+  Exception Message: Injected unhandled exception for Scenario C microprobe verification
+  Captured Process Output:
+  UNAVAILABLE (exception occurred before process output stream could be captured)
+  Stack Trace:
+  at <ScriptBlock>, G:\CODEX\New Manga.worktrees\P02-real-webview-harness-antigravity\verification\P02\run-webview.ps1: line 133
+  Observed Child ExitCode: null (exception aborted execution before exit code could be observed)
+  Status: FAILED
+
+2. Handler Code Structure Verified (Static Review):
   catch {
       $errRecord = $_
       $ex = $errRecord.Exception
@@ -165,5 +194,5 @@ Handler Code Structure Verified:
       exit 1
   }
 
-Verdict: PASS
-All exception parameters and process streams decoupled, captured, and persisted without data loss.
+Verdict: PASS (Live Execution Tested & Code Structure Verified per R6-04)
+All exception parameters and process streams decoupled, captured, and persisted without data loss. Exit code 1 reliably returned.

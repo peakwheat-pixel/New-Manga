@@ -1,8 +1,8 @@
 ---
 task_id: P02
-title: 真实 Workbench WebView 行为、300ms 刷新与对比度验证 (Stage A 定向修订 Handoff r6)
+title: 真实 Workbench WebView 行为、300ms 刷新与对比度验证 (Stage A 定向修订 Handoff r7)
 status: in_progress
-stage: STAGE_A_SAFE_FOUNDATION_R6
+stage: STAGE_A_SAFE_FOUNDATION_R7
 author: Antigravity
 reviewer: DeepSeek Harness
 integrator: Codex
@@ -20,18 +20,20 @@ reviewed_head_r4: cc1bd7505f3fc48079db7ea2719040e77a8c58dd
 dsh_decision_r4: changes_requested
 reviewed_head_r5: 172eee84240e101186b12f1aa09e8a2f9ec92d68
 dsh_decision_r5: changes_requested
-created_at: 2026-10-09T17:05:00+08:00
+reviewed_head_r6: 38672473f93971a4681aef682e5635e64b0bd896
+dsh_decision_r6: approved_with_conditions
+created_at: 2026-10-09T17:30:00+08:00
 ---
 
-# P02 Stage A 安全基底定向修订交付报告 (r6)
+# P02 Stage A 安全基底定向修订交付报告 (r7)
 
 ## 1. 修订概述
 
-本交付响应非作者实现 Reviewer DeepSeek Harness 对 Stage A r5 交付（`reviewed_head=172eee84240e101186b12f1aa09e8a2f9ec92d68`）作出的 `changes_requested` 审查意见（`verification/P02/implementation-stage-a-r5-dsh-review.md`，P0/P1/P2/P3=`0/0/2/4`，开放 6 项全部为 R5-01~R5-06）以及 Codex independent review 与 clean commit exact replay 证据。
+本交付响应非作者实现 Reviewer DeepSeek Harness 对 Stage A r6 交付（`reviewed_head=38672473f93971a4681aef682e5635e64b0bd896`）作出的 `approved_with_conditions` 审查意见（`verification/P02/implementation-stage-a-r6-dsh-review.md`，P0/P1/P2/P3=`0/0/0/4`，开放 4 项条件项 R6-01~R6-04；早期 R5-01~R5-06 全部 closed）以及 Codex exact replay（`r6-codex-exact-head-review.md`，5/5 工件哈希匹配）证据。
 
-在严格恪守 **Hard Build Barrier（硬构建屏障）** 的前提下，本轮修订在已冻结的 Owner 授权路径内彻底处置闭合了 R5-01 至 R5-06 全部 6 项 findings，澄清了历史 Review 编号与残余状态，加固了整个 Stage A 验证脚手架的确定性与证据可靠性。
+在严格恪守 **Hard Build Barrier（硬构建屏障）** 的前提下，本轮修订在已冻结的 Owner 授权路径内彻底处置闭合了 R6-01 至 R6-04 全部 4 项条件项，加固了整个 Stage A 验证脚手架的跨目录解析鲁棒性、机器门判定真实性与自检覆盖真实生产路径的严密性。
 
-## 2. 历史 Review 编号映射与残余澄清（R5-06）
+## 2. 历史 Review 编号映射与残余澄清（R5-06, R6-01~04）
 
 为消除多轮 Review 过程中的编号语义混淆并如实反映各阶段闭合状态（所有历史快照原样保留，历史闭合项不重新开放）：
 
@@ -40,19 +42,18 @@ created_at: 2026-10-09T17:05:00+08:00
 | **DSH r1** | `doc/reviews/P02-972049f9-dsh-review.md` | `changes_requested` | F-01 ~ F-12 | F-01 ~ F-12 | 全部闭合于 r2/r3 |
 | **DSH r2** | `doc/reviews/P02-9b82e97b-dsh-r2-review.md` | `changes_requested` | 复核 F-01~12 并新增 7 项 | G-01 ~ G-07 | 全部闭合于 r3/r4 |
 | **DSH r3** | `doc/reviews/P02-5fa8a41f-dsh-r3-review.md` | `approved_with_conditions` | 10 项条件项（含 r2 残余） | H-01 ~ H-07（Codex 独立列为 C1~C5） | 全部闭合于 r4 |
-| **DSH r4** | `verification/P02/implementation-stage-a-r4-dsh-review.md` | `changes_requested` | **R4-01 ~ R4-11** (P2: 3 项, P3: 8 项) | **R4-01 ~ R4-11** | R4-01..03, 05, 07..11 于 r5 闭合；R4-04 于 r5 为 partial 并升为 R5-01；R4-06 于 r5 为 partial 并升为 R5-03 |
-| **DSH r5** | `verification/P02/implementation-stage-a-r5-dsh-review.md` | `changes_requested` | **R5-01 ~ R5-06** (P2: 2 项, P3: 4 项) | **R5-01 ~ R5-06** | **全部闭合于本轮 r6** |
+| **DSH r4** | `verification/P02/implementation-stage-a-r4-dsh-review.md` | `changes_requested` | **R4-01 ~ R4-11** (P2: 3 项, P3: 8 项) | **R4-01 ~ R4-11** | R4-01..03, 05, 07..11 于 r5 闭合；R4-04 与 R4-06 于 r6 彻底闭合 |
+| **DSH r5** | `verification/P02/implementation-stage-a-r5-dsh-review.md` | `changes_requested` | **R5-01 ~ R5-06** (P2: 2 项, P3: 4 项) | **R5-01 ~ R5-06** | 全部闭合于 r6 |
+| **DSH r6** | `verification/P02/implementation-stage-a-r6-dsh-review.md` | `approved_with_conditions` | **R6-01 ~ R6-04** (全部 P3，4 项) | **R6-01 ~ R6-04** | **全部闭合于本轮 r7** |
 
-## 3. DSH r5 Findings (R5-01 ~ R5-06) 逐项处置与证据对照表
+## 3. DSH r6 条件项 (R6-01 ~ R6-04) 逐项处置与证据对照表
 
-| Finding 编号 | 级别 | 核心问题 | r6 修订处置与证据 | 状态 |
+| Finding 编号 | 级别 | 核心问题 | r7 修订处置与证据 | 状态 |
 |---|---|---|---|---|
-| **R5-01** | **P2** | PRE-02 新鲜度失败重试时，若子进程未覆写报告崩溃，重读会用旧报告 exit 覆盖真实 `returncode`；PASS 谓词未含 `report_is_fresh` | 1. PRE-02 解耦子进程实际返回码 `observed_proc_exit` 与报告字段 `report_exit`，绝不相互覆盖；<br>2. 重新执行子探针前，先显式 `unlink()` 磁盘旧报告，防止崩溃后误读残留工件；<br>3. 子进程非零退出时立即 fail-closed，记录真实退出码与 stdout/stderr；<br>4. PASS 谓词严格要求：`report_is_fresh and observed_proc_exit == 0 and report_exit == 0 and srep.overall_status == "PASS"`；<br>5. 增加自检函数 `self_test_pre02_retry_failure`，实测旧有效报告 + 模拟子进程返回 42 时判定为 FAIL 且退出码为 42。 | **closed** |
-| **R5-02** | **P2** | `--finalize` 非零（未抛异常）时，日志已定稿宣称成功且不再写入，失败运行永久假报成功；header `Status: IN_PROGRESS` 未被终结 | 1. 调整日志时序：runner 不在 `--finalize` 前写入成功声明；<br>2. 由 `--finalize` 在定稿哈希计算前向日志写入定稿结论与 `Status: COMPLETED (EXIT=0)`，哈希精确覆盖该定稿字节，消除时序矛盾；<br>3. runner 严密监听 finalizer 退出码，若非零（实测 `-FinalizeFailTest` 退出 42），追加记录 `[FAILURE] ... Finalizer failed with exit code $finExit` 与 `Status: FAILED (EXIT=$finExit)` 并强制落盘；<br>4. 成功路径由两阶段定稿确保 5/5 工件哈希 100% 精确匹配磁盘字节。 | **closed** |
-| **R5-03** | P3 | 异常路径未持久化子进程完整 stdout/stderr（Message 仅首行）；`$LASTEXITCODE` 可能取到陈旧值；无 StackTrace；微探针无归档证据 | 1. `run-webview.ps1` catch 块完整持久化失败步骤名、命令、参数、异常类型、全量异常信息、子进程完整多行输出（如 Node require stack 全量 20+ 行诊断，不截断）、脚本堆栈（StackTrace）；<br>2. 仅在步骤执行过原生命令时记录真实子退出码，否则显式记录 `null (exception aborted execution...)`，杜绝复用前一命令遗留的 `$LASTEXITCODE`；<br>3. 在 Windows 11 / PowerShell 5.1 环境下执行故障注入与异常微探针，将完整命令、输出与退出码归档于持久证据文件 [`verification/P02/microprobes/ps51-exception-handling.log`](../../verification/P02/microprobes/ps51-exception-handling.log)。 | **closed** |
-| **R5-04** | P3 | 缺失 `tsc` 时仅 Warning 并走通 exit 0 (fail-open)；候选 2 硬编码机器绝对路径；无机器可读 TS 检查门 | 1. 消除硬编码 `G:\CODEX\New Manga` 路径，动态从当前工作区或 `git rev-parse --git-common-dir` 上溯解析主仓库 `apps/desktop/frontend/node_modules/typescript/bin/tsc`；<br>2. 采取 fail-closed 策略：若找不到编译器，记录显式 `[FAILURE] ... (fail-closed per R5-04)`，置 `Status: FAILED (EXIT=1)` 并以退出码 1 中断；<br>3. 在 [`verification/P02/p02-harness-results.json`](../../verification/P02/p02-harness-results.json) 的 `provenance` 中增加 `typescript_contract_gate` 结构化机器证据。 | **closed** |
-| **R5-05** | P3 | PRE-03 顶层 `status` 恒为 `"PASS"`，不受单项 token/live/alpha FAIL 影响，`all_passed` 亦未置假 | 1. PRE-03 顶层 `status` 与退出码严格由所有 token、live inline palette 以及 alpha pill 样例对比度结果聚合派生；<br>2. 只要有任何一项低于 WCAG 阈值，顶层判定置为 `FAIL` (exit 1)，且 `all_passed = False`；<br>3. 增加自检函数 `self_test_pre03_failure_propagation`，断言任何单项失败必然传播至顶层 FAIL。 | **closed** |
-| **R5-06** | P3 | Handoff/Task/RESUME 历史编号与残余状态过度闭合（R4-04 与 R4-06 仅 partial 却声称彻底 closed） | 1. 更新文档精确标注：R4-04 与 R4-06 在 r5 为 partial 并在本轮 r6 作为 R5-01 与 R5-03 彻底闭合；<br>2. 区分早期微探针声明与本次归档的持久证据文件；<br>3. 保持所有历史报告与快照原貌，杜绝过度声明。 | **closed** |
+| **R6-01** | P3 | `run-webview.ps1` 中的 `git rev-parse --git-common-dir` 未带 `-C $RepoRoot`，导致从仓库外以绝对路径调用时解析到错误 common root，误报缺少编译器并退出 1 | 1. `run-webview.ps1` 改为 `git -C $RepoRoot rev-parse --git-common-dir`，与 Python 侧 `cwd=REPO_ROOT` 逻辑完全对齐；<br>2. 实测在外部目录（如 `C:\Users\49745`）以绝对路径调用 `run-webview.ps1 -ProbeOnly`，精准解析 Git common root 下的 `tsc` 并顺利通过（EXIT=0），彻底杜绝误报缺失编译器。 | **closed** |
+| **R6-02** | P3 | `typescript_contract_gate.gate_status` 仅表示编译器存在，不表示已运行；harness 独立执行时不运行 TS 却报告 PASS，且未入总退出码 | 1. `run-webview.ps1` 在 Step 4 将 Step 2 实际观察到的 `tsc` 退出码通过 `--tsc-exit` 传入 harness；<br>2. `workbench_cdp_harness.py` 区分 `tsc_binary_resolution`（RESOLVED / NOT_FOUND）与实际 `execution_status`（PASS / FAIL / NOT_RUN）；<br>3. 若独立执行未传入退出码，机器门如实记录为 `NOT_RUN`（observed_exit_code: null）而绝不虚报 `PASS`；<br>4. 若传入非零退出码（如 1），harness 主程序严格退出 1，将 TS 门彻底纳入总退出码逻辑。 | **closed** |
+| **R6-03** | P3 | `self_test_pre02_retry_failure` 与 `self_test_pre03_failure_propagation` 硬编码变量并复制布尔公式，未覆盖生产派发与聚合函数 | 1. 抽取生产 PRE-02 重试派发 helper `dispatch_and_evaluate_static_probe` 与生产 PRE-03 聚合 helper `aggregate_pre03_verdict`；<br>2. 生产 PRE-02 与 PRE-03 运行路径直接接入这两个 helper；<br>3. 重构自检函数，直接调用生产 helper，断言最终判决 verdict、exit code、报告未过时谓词、旧报告主动 unlink 清理与聚合布尔字典。 | **closed** |
+| **R6-04** | P3 | `microprobes/ps51-exception-handling.log` 中的 Scenario C 为静态代码审查推断，未实际运行却标为 `Verdict: PASS` | 1. `run-webview.ps1` 增加 `-ExceptionTest` 参数；<br>2. 真实执行一次 Windows PowerShell 5.1 未捕获异常并拦截捕获（退出 1）；<br>3. 将真实执行命令、终端输出、完整 `[UNHANDLED_EXCEPTION]` 日志尾（Failed Step/Command、Exception Type/Message、Captured Process Output: UNAVAILABLE、StackTrace、Observed Child ExitCode: null）与静态代码结构审查一并归档至 `verification/P02/microprobes/ps51-exception-handling.log`，形成实测执行与静态结构双重闭环证据。 | **closed** |
 
 ## 4. 验收场景执行结果（单一事实源）
 
@@ -75,11 +76,11 @@ created_at: 2026-10-09T17:05:00+08:00
 ### 两阶段定稿工件哈希核验（5/5 匹配）
 
 在完整运行后，`p02-harness-results.json` 记录的 5 项工件 SHA-256 与磁盘字节 100% 精确一致：
-1. `verification/P02/env-identity-report.json`: `4cfc44e4b8a6658ac5899cba280fff8e689978a8916d99afc0a4a54a851ef7f6` (MATCH)
-2. `verification/P02/static-control-report.json`: `7f5adc19258cb4a63af5fc08612a772901f68b1a5e74fc0eb63a72a3bf759988` (MATCH)
-3. `verification/P02/p02-harness-results.txt`: `58959776d3b918092412db9bcbdd5080e6c4b01e6bfa9d4866be8819b0d5125e` (MATCH)
-4. `verification/P02/probe-execution-probeonly.log`: `733af6a91bbc4b6cfc260dd8dfff38312dc079765fd8484968717e856f95709a` (MATCH)
-5. `verification/P02/probe-execution-full.log`: `c768acc78b0e7d88b24ac1ba81ab91c833800db92c5772b0acf46874ad6f6441` (MATCH)
+1. `verification/P02/env-identity-report.json`: `2ad5bc8549a84d6d9bdd430b72dbd1de673a981074c78a5781781e2735de02f9` (MATCH)
+2. `verification/P02/static-control-report.json`: `de7878612e175f989487e92512d00a2945554279e858e9fd48b6deaa9b8063a3` (MATCH)
+3. `verification/P02/p02-harness-results.txt`: `de2ebd60ae5f6b5767c550fd7f0411014982954fa035f88fea8595e7824e94ea` (MATCH)
+4. `verification/P02/probe-execution-probeonly.log`: `2bdcda3c084af7901b07eabc0f0a69b1915a374ec6f2278b4534afb2511c8e54` (MATCH)
+5. `verification/P02/probe-execution-full.log`: `94c4cebc25e58d1c0c5980ef63231ff79dbd804f3ee9e19b8423f9371e90a1cf` (MATCH)
 
 ## 5. 交付文件清单
 
@@ -104,4 +105,4 @@ created_at: 2026-10-09T17:05:00+08:00
 
 ## 6. 推荐下一步
 
-提交固定交付 commit，由 Codex 在 clean detached exact head 独立复跑 Stage A probes 并完成 Gate 复算与 `git diff --check` 证据归档；交由 DeepSeek Harness 进行 Stage A r6 复审。待隔离 scratch worktree 构建方案获批后，再推进 Stage B 真实 WebView2 运行时验证。
+提交固定交付 commit，由 Codex 在 clean detached exact head 独立复跑 Stage A probes 并完成 Gate 复算与 `git diff --check` 证据归档；交由 DeepSeek Harness 进行 Stage A r7 复审。待隔离 scratch worktree 构建方案获批后，再推进 Stage B 真实 WebView2 运行时验证。

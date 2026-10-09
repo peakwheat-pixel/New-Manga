@@ -1,10 +1,10 @@
 {
   "task_id": "P02",
   "owner": "Antigravity",
-  "stage": "STAGE_A_SAFE_FOUNDATION_R6",
+  "stage": "STAGE_A_SAFE_FOUNDATION_R7",
   "provenance": {
-    "source_head": "172eee84240e101186b12f1aa09e8a2f9ec92d68",
-    "source_tree": "a5b1af3e0708463df6865c8e49c9679e57e3fa85",
+    "source_head": "38672473f93971a4681aef682e5635e64b0bd896",
+    "source_tree": "2aa967bbf961a0e9e58dd3e1489d74635491e28f",
     "branch": "agent/antigravity/P02-real-webview-harness",
     "is_clean_worktree": false,
     "behavior_baseline_commit": "241ff3b70b6fc0490ea238efd486cc707f849031",
@@ -18,10 +18,10 @@
       "apps/desktop/frontend/src/library/types.ts": "37cb2088302368e5917a0d80a8bc5355c7902cc4b4e31b9783ef2f91b47b36b9"
     },
     "key_execution_inputs_sha256": {
-      "verification/P02/harness/workbench_cdp_harness.py": "fd047c9bdc2df88cb942ea02c451b08b6cb39f75aab64751e7c54f594740f163",
+      "verification/P02/harness/workbench_cdp_harness.py": "2c22c41a7eefd51e96a8d55868522995f61c1b6a1a4c3e60673dc0d87db9e3ce",
       "verification/P02/probes/env_identity_probe.py": "af0c8717d7aa336a97a3ae54d8565c28b8ff693ba973e3b2f5d7c3c5aea4897b",
       "verification/P02/probes/static_control_probe.py": "d9262a43331fff1cda865af465ca090ef21468b429911e56f29507d3f4a370eb",
-      "verification/P02/run-webview.ps1": "0bc9c52ff12d0b6119b61dd843e76a62e0c4d9cd0fd682e444bb2bfb20d42efd",
+      "verification/P02/run-webview.ps1": "546202295e20fdf1d4d5064b5c00faf229bd845fc3bcfe671e6facc30b9258aa",
       "verification/P02/fixtures/workbench_synthetic_data.json": "87f9c9cc7662f0583002357639098e98afafc82733f38b315f8eb4ff87f39fb1",
       "apps/desktop/frontend/e2e/workbench_driver_protocol.ts": "4735e17a73786efeabef8a8cedfd1dd4140c1fe500c1d11b0b9b0584115873fb"
     },
@@ -32,7 +32,11 @@
       "sha256": "4735e17a73786efeabef8a8cedfd1dd4140c1fe500c1d11b0b9b0584115873fb",
       "tsc_binary_found": true,
       "tsc_path": "G:\\CODEX\\New Manga\\apps\\desktop\\frontend\\node_modules\\typescript\\bin\\tsc",
-      "gate_status": "PASS"
+      "tsc_binary_resolution": "RESOLVED",
+      "execution_status": "PASS",
+      "observed_exit_code": 0,
+      "gate_status": "PASS",
+      "note": "TypeScript contract check executed and passed with exit code 0."
     },
     "execution_commands": [
       "powershell -ExecutionPolicy Bypass -File verification/P02/run-webview.ps1 -ProbeOnly",
@@ -41,15 +45,15 @@
       "python verification/P02/harness/workbench_cdp_harness.py --finalize"
     ],
     "artifact_hashes": {
-      "verification/P02/env-identity-report.json": "4cfc44e4b8a6658ac5899cba280fff8e689978a8916d99afc0a4a54a851ef7f6",
-      "verification/P02/static-control-report.json": "7f5adc19258cb4a63af5fc08612a772901f68b1a5e74fc0eb63a72a3bf759988",
-      "verification/P02/p02-harness-results.txt": "58959776d3b918092412db9bcbdd5080e6c4b01e6bfa9d4866be8819b0d5125e",
-      "verification/P02/probe-execution-probeonly.log": "733af6a91bbc4b6cfc260dd8dfff38312dc079765fd8484968717e856f95709a",
-      "verification/P02/probe-execution-full.log": "c768acc78b0e7d88b24ac1ba81ab91c833800db92c5772b0acf46874ad6f6441"
+      "verification/P02/env-identity-report.json": "2ad5bc8549a84d6d9bdd430b72dbd1de673a981074c78a5781781e2735de02f9",
+      "verification/P02/static-control-report.json": "de7878612e175f989487e92512d00a2945554279e858e9fd48b6deaa9b8063a3",
+      "verification/P02/p02-harness-results.txt": "de2ebd60ae5f6b5767c550fd7f0411014982954fa035f88fea8595e7824e94ea",
+      "verification/P02/probe-execution-probeonly.log": "2bdcda3c084af7901b07eabc0f0a69b1915a374ec6f2278b4534afb2511c8e54",
+      "verification/P02/probe-execution-full.log": "94c4cebc25e58d1c0c5980ef63231ff79dbd804f3ee9e19b8423f9371e90a1cf"
     },
     "finalization_status": "FINALIZED",
     "note": "Pre-commit execution evidence. The final delivery commit will be created upon committing; exact head will be independently replayed and validated by Codex Gate on a clean detached worktree.",
-    "finalized_at": "2026-10-09T09:02:40Z"
+    "finalized_at": "2026-10-09T09:30:01Z"
   },
   "host_platform": "Windows-11-10.0.26300-SP0",
   "verdicts": [
@@ -115,7 +119,7 @@
         "file": "verification\\P02\\fixtures\\workbench_synthetic_data.json"
       },
       "blocker_reason": null,
-      "timestamp": "2026-10-09T09:02:40Z"
+      "timestamp": "2026-10-09T09:30:01Z"
     },
     {
       "scenario_id": "PRE-02",
@@ -127,8 +131,8 @@
         "overall_status": "PASS",
         "observed_process_exit_code": 0,
         "report_exit_code": 0,
-        "bound_source_head": "172eee84240e101186b12f1aa09e8a2f9ec92d68",
-        "bound_source_tree": "a5b1af3e0708463df6865c8e49c9679e57e3fa85",
+        "bound_source_head": "38672473f93971a4681aef682e5635e64b0bd896",
+        "bound_source_tree": "2aa967bbf961a0e9e58dd3e1489d74635491e28f",
         "report_freshness_verified": true,
         "freshness_evaluation_reason": "fresh_and_valid",
         "workbench_page": {
@@ -175,7 +179,7 @@
         }
       },
       "blocker_reason": null,
-      "timestamp": "2026-10-09T09:02:40Z"
+      "timestamp": "2026-10-09T09:30:01Z"
     },
     {
       "scenario_id": "PRE-03",
@@ -320,7 +324,7 @@
         }
       },
       "blocker_reason": null,
-      "timestamp": "2026-10-09T09:02:40Z"
+      "timestamp": "2026-10-09T09:30:01Z"
     },
     {
       "scenario_id": "AC1",
@@ -329,13 +333,13 @@
       "layer": "REAL_WEBVIEW2",
       "exit_code": null,
       "details": {
-        "source_head": "172eee84240e101186b12f1aa09e8a2f9ec92d68",
-        "source_tree": "a5b1af3e0708463df6865c8e49c9679e57e3fa85",
+        "source_head": "38672473f93971a4681aef682e5635e64b0bd896",
+        "source_tree": "2aa967bbf961a0e9e58dd3e1489d74635491e28f",
         "behavior_baseline": "241ff3b70b6fc0490ea238efd486cc707f849031",
         "note": "Per task contract, blocked runtime scenario retains BLOCKED; cannot be satisfied with NOT_RUN or fake timers."
       },
       "blocker_reason": "Hard Build Barrier Active: tauri_build side-effects write into source tree (gen/schemas and permission TOMLs), and fixed baseline lacks trusted sidecar inputs. Building Cargo/Tauri binaries in this Owner worktree is strictly prohibited. Awaiting Codex scratch worktree registration and independent Review.",
-      "timestamp": "2026-10-09T09:02:40Z"
+      "timestamp": "2026-10-09T09:30:01Z"
     },
     {
       "scenario_id": "AC2",
@@ -344,13 +348,13 @@
       "layer": "REAL_WEBVIEW2",
       "exit_code": null,
       "details": {
-        "source_head": "172eee84240e101186b12f1aa09e8a2f9ec92d68",
-        "source_tree": "a5b1af3e0708463df6865c8e49c9679e57e3fa85",
+        "source_head": "38672473f93971a4681aef682e5635e64b0bd896",
+        "source_tree": "2aa967bbf961a0e9e58dd3e1489d74635491e28f",
         "behavior_baseline": "241ff3b70b6fc0490ea238efd486cc707f849031",
         "note": "Per task contract, blocked runtime scenario retains BLOCKED; cannot be satisfied with NOT_RUN or fake timers."
       },
       "blocker_reason": "Hard Build Barrier Active: tauri_build side-effects write into source tree (gen/schemas and permission TOMLs), and fixed baseline lacks trusted sidecar inputs. Building Cargo/Tauri binaries in this Owner worktree is strictly prohibited. Awaiting Codex scratch worktree registration and independent Review.",
-      "timestamp": "2026-10-09T09:02:40Z"
+      "timestamp": "2026-10-09T09:30:01Z"
     },
     {
       "scenario_id": "AC3",
@@ -359,13 +363,13 @@
       "layer": "REAL_WEBVIEW2",
       "exit_code": null,
       "details": {
-        "source_head": "172eee84240e101186b12f1aa09e8a2f9ec92d68",
-        "source_tree": "a5b1af3e0708463df6865c8e49c9679e57e3fa85",
+        "source_head": "38672473f93971a4681aef682e5635e64b0bd896",
+        "source_tree": "2aa967bbf961a0e9e58dd3e1489d74635491e28f",
         "behavior_baseline": "241ff3b70b6fc0490ea238efd486cc707f849031",
         "note": "Per task contract, blocked runtime scenario retains BLOCKED; cannot be satisfied with NOT_RUN or fake timers."
       },
       "blocker_reason": "Hard Build Barrier Active: tauri_build side-effects write into source tree (gen/schemas and permission TOMLs), and fixed baseline lacks trusted sidecar inputs. Building Cargo/Tauri binaries in this Owner worktree is strictly prohibited. Awaiting Codex scratch worktree registration and independent Review.",
-      "timestamp": "2026-10-09T09:02:40Z"
+      "timestamp": "2026-10-09T09:30:01Z"
     },
     {
       "scenario_id": "AC4",
@@ -374,13 +378,13 @@
       "layer": "REAL_WEBVIEW_MOCK_IPC",
       "exit_code": null,
       "details": {
-        "source_head": "172eee84240e101186b12f1aa09e8a2f9ec92d68",
-        "source_tree": "a5b1af3e0708463df6865c8e49c9679e57e3fa85",
+        "source_head": "38672473f93971a4681aef682e5635e64b0bd896",
+        "source_tree": "2aa967bbf961a0e9e58dd3e1489d74635491e28f",
         "behavior_baseline": "241ff3b70b6fc0490ea238efd486cc707f849031",
         "note": "Per task contract, blocked runtime scenario retains BLOCKED; cannot be satisfied with NOT_RUN or fake timers."
       },
       "blocker_reason": "Hard Build Barrier Active: tauri_build side-effects write into source tree (gen/schemas and permission TOMLs), and fixed baseline lacks trusted sidecar inputs. Building Cargo/Tauri binaries in this Owner worktree is strictly prohibited. Awaiting Codex scratch worktree registration and independent Review.",
-      "timestamp": "2026-10-09T09:02:40Z"
+      "timestamp": "2026-10-09T09:30:01Z"
     },
     {
       "scenario_id": "AC5",
@@ -389,13 +393,13 @@
       "layer": "REAL_WEBVIEW2",
       "exit_code": null,
       "details": {
-        "source_head": "172eee84240e101186b12f1aa09e8a2f9ec92d68",
-        "source_tree": "a5b1af3e0708463df6865c8e49c9679e57e3fa85",
+        "source_head": "38672473f93971a4681aef682e5635e64b0bd896",
+        "source_tree": "2aa967bbf961a0e9e58dd3e1489d74635491e28f",
         "behavior_baseline": "241ff3b70b6fc0490ea238efd486cc707f849031",
         "note": "Per task contract, blocked runtime scenario retains BLOCKED; cannot be satisfied with NOT_RUN or fake timers."
       },
       "blocker_reason": "Hard Build Barrier Active: tauri_build side-effects write into source tree (gen/schemas and permission TOMLs), and fixed baseline lacks trusted sidecar inputs. Building Cargo/Tauri binaries in this Owner worktree is strictly prohibited. Awaiting Codex scratch worktree registration and independent Review.",
-      "timestamp": "2026-10-09T09:02:40Z"
+      "timestamp": "2026-10-09T09:30:01Z"
     },
     {
       "scenario_id": "AC6",
@@ -404,13 +408,13 @@
       "layer": "REAL_WEBVIEW2",
       "exit_code": null,
       "details": {
-        "source_head": "172eee84240e101186b12f1aa09e8a2f9ec92d68",
-        "source_tree": "a5b1af3e0708463df6865c8e49c9679e57e3fa85",
+        "source_head": "38672473f93971a4681aef682e5635e64b0bd896",
+        "source_tree": "2aa967bbf961a0e9e58dd3e1489d74635491e28f",
         "behavior_baseline": "241ff3b70b6fc0490ea238efd486cc707f849031",
         "note": "Per task contract, blocked runtime scenario retains BLOCKED; cannot be satisfied with NOT_RUN or fake timers."
       },
       "blocker_reason": "Hard Build Barrier Active: tauri_build side-effects write into source tree (gen/schemas and permission TOMLs), and fixed baseline lacks trusted sidecar inputs. Building Cargo/Tauri binaries in this Owner worktree is strictly prohibited. Awaiting Codex scratch worktree registration and independent Review.",
-      "timestamp": "2026-10-09T09:02:40Z"
+      "timestamp": "2026-10-09T09:30:01Z"
     }
   ],
   "summary": {
