@@ -1,10 +1,10 @@
 # Current Development Status
 
-**当前位置：P08/P03=done；P系列共21项：done 2、in_review 1、proposed 18。唯一Active Task=P01，base=826bea12a132c5af2ac0cd1244d00e9170093c71，Owner/Integrator=Codex、非作者Reviewer=Antigravity；C9 reviewed_head=7645577ab374b581eb7081fd57675c32793249f5，decision=approved；C1 fixed-head Codex Integration Gate=`PASS`，报告见`verification/P01/integration-gate.md`。候选merge=13e66ec5bf9a2fc59f4e6c5623feb0bde22884c8尚未fast-forward至root main；closeout状态验证和root内容hash复核待完成。R1/R2 blocked及C8 changes_requested保持历史原样；R2/SYNTH Review carrier仍NOT_VERIFIED。P02仍proposed，harness范围与正式Task未冻结。P03 integration=552464238a69ad2cea63cff18abe98f412dbae87；其测试仍绑定source d717c049。
+**当前位置：P08/P03=done；P系列共21项：done 2、in_review 1、proposed 18。唯一Active Task=P01，base=826bea12a132c5af2ac0cd1244d00e9170093c71，Owner/Integrator=Codex、非作者Reviewer=Antigravity；C9 reviewed_head=7645577ab374b581eb7081fd57675c32793249f5，decision=approved；C1 fixed-head Codex Integration Gate=`PASS`，证据见`verification/P01/integration-gate.md`。D1=`322b757933dce0e7333fc495706cc0d424cccaad`已版本化C1报告和root pre-FF manifest；新的固定关闭候选Review、final closeout Gate与main fast-forward待完成。R1/R2 blocked及C8 changes_requested保持历史原样；R2/SYNTH Review carrier仍NOT_VERIFIED。P02仍proposed，harness范围与正式Task未冻结。P03 integration=552464238a69ad2cea63cff18abe98f412dbae87；其测试仍绑定source d717c049。
 
-## 2026-10-09 P01 C9 Review approved；C1 Integration Gate PASS，closeout pending
+## 2026-10-09 P01 C9 Review approved；C1 Integration Gate PASS，closeout Review pending
 
-P01 AC1–AC6已完成；C1 fixed-head Integration Gate已通过并由`verification/P01/integration-gate.md`记录；Task仍`in_review`、AC7待closeout。Antigravity对base=`826bea12a132c5af2ac0cd1244d00e9170093c71`、reviewed_head=`7645577ab374b581eb7081fd57675c32793249f5`、tree=`8dafbccda120e718aeb6f40613146320a4d2564f`正式`approved`。Codex集成worktree merge候选=`13e66ec5bf9a2fc59f4e6c5623feb0bde22884c8`；done态validator与保护root内容hash后的fast-forward待完成。恢复步骤见[`P01 RESUME`](../verification/P01/RESUME.md)。P02仍为候选，不释放任何未登记实现。
+P01 AC1–AC6已完成；C1 fixed-head Integration Gate已通过并由`verification/P01/integration-gate.md`记录；Task仍`in_review`、AC7待最终Review/closeout。Antigravity对base=`826bea12a132c5af2ac0cd1244d00e9170093c71`、reviewed_head=`7645577ab374b581eb7081fd57675c32793249f5`、tree=`8dafbccda120e718aeb6f40613146320a4d2564f`正式`approved`。新的固定关闭候选须由Antigravity独立Review；待Codex最终Gate、安全fast-forward与post-FF保护复核。恢复步骤见[`P01 RESUME`](../verification/P01/RESUME.md)。P02仍为候选，不释放任何未登记实现。
 
 ## 历史检查点：2026-10-09 P01 DSH R2 BLOCKED（由C8 in_review取代）
 

@@ -1,8 +1,8 @@
 # 全项目任务规划恢复点
 
-最新工作点：P08/P03=done；P系列21项中done=2、in_review=1、proposed=18。唯一Active Task=P01 in_review；Antigravity C9 fixed-head正式approved，Codex C1 Integration Gate=PASS；closeout与main fast-forward待完成。恢复见`verification/P01/RESUME.md`与`verification/P01/NEXT-AUTOPROGRESS-PROMPT.md`。P02仍proposed，尚无正式Task，harness范围须先冻结。
+最新工作点：P08/P03=done；P系列21项中done=2、in_review=1、proposed=18。唯一Active Task=P01 in_review；Antigravity C9 fixed-head正式approved，Codex C1 Integration Gate=PASS；新的正式关闭候选Review与closeout待完成。恢复见`verification/P01/RESUME.md`与`verification/P01/NEXT-AUTOPROGRESS-PROMPT.md`。P02仍proposed，尚无正式Task，harness范围须先冻结。
 
-**当前位置：P08/P03=done；P01=in_review，Owner/Integrator=Codex、非作者Reviewer=Antigravity；C9 fixed head `7645577ab374b581eb7081fd57675c32793249f5`正式approved，C1 Codex Integration Gate=PASS，closeout与main fast-forward待完成。C8 changes_requested、R1/R2 blocked和DSH Win32 5环境事实均保留为历史；R2/SYNTH carrier仍NOT_VERIFIED。**
+**当前位置：P08/P03=done；P01=in_review，Owner/Integrator=Codex、非作者Reviewer=Antigravity；C9 fixed head `7645577ab374b581eb7081fd57675c32793249f5`正式approved，C1 Codex Integration Gate=PASS，新的关闭候选Review待完成。C8 changes_requested、R1/R2 blocked和DSH Win32 5环境事实均保留为历史；R2/SYNTH carrier仍NOT_VERIFIED。**
 
 2026-10-08 编号裁决时的状态快照：任务编号沿用 `P01–P21`；当时P08=`in_review`，其余20项=`proposed / 未释放`。当前状态见本恢复点顶部及`doc/STATUS.md`；本编号裁决本身不释放产品实施、不改历史记录。
 

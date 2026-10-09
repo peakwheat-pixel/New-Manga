@@ -1,6 +1,6 @@
 # Roadmap
 
-当前工作：P08/P03=done；唯一Active Task=P01 in_review。P01 Antigravity C9 Review与Codex C1 Integration Gate均通过；最终closeout和main fast-forward待完成。C8 changes_requested、R1/R2 blocked保持历史原样。P02仍为候选，须待P01关闭后先冻结真实WebView harness范围与正式Task；详情见P01 RESUME。
+当前工作：P08/P03=done；唯一Active Task=P01 in_review。P01 Antigravity C9 Review与Codex C1 Integration Gate均通过；新的固定关闭候选Review与最终closeout待完成。C8 changes_requested、R1/R2 blocked保持历史原样。P02仍为候选，须先冻结真实WebView harness范围并创建正式Task；详情见P01 RESUME。
 
 ## 当前整体路线（权威候选与P01执行状态见Plan/Status）
 

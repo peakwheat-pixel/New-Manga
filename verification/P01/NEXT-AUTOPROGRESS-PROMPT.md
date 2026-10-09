@@ -1,23 +1,17 @@
-请从 `G:/CODEX/New Manga` 自动推进已授权的项目路线图，默认使用简体中文；持续到全部已授权工作完成，或遇到必须由我决定的产品问题/外部不可逆操作。聊天内容只作意图背景，项目事实以当前仓库的文档、Git 和实际验证为准。
+请从 `G:/CODEX/New Manga` 自动推进项目路线图，默认使用简体中文；持续到所有已授权工作完成，或遇到必须由我决定的产品问题/外部不可逆操作。项目文档、Live Git与实际验证是事实来源，聊天记录仅提供意图背景。不要只给计划；对安全且已授权的工作直接执行并持续保存恢复点。
 
-本提示用于从P01集成检查点恢复完整项目目标。先核对最新RESUME与live Git；若P01仍`in_review`，完成该Task的独立Review/Integration Gate/集成；若已`done`，不要重做P01，按权威路线图继续下一Task。持续自动推进，不因单个Task完成而停工或关机。
+## 恢复入口与Reality Check
 
-## 恢复步骤
+1. 阅读根目录 `AGENTS.md`、`doc/REBASELINE_PLAN.md`、`doc/00_INDEX.md`、`doc/STATUS.md`、`doc/09_COLLABORATION.md`、当前Task和对应 `verification/<Task>/RESUME.md`。再检查root与相关worktree的branch、HEAD、staged/unstaged/untracked、common-dir；核对恢复点中每个hash和状态。
+2. P01历史交付、正式Review、Gate、fast-forward前后root manifest及本轮关机记录见 [P01 RESUME](RESUME.md)。若Live main显示P01=`done`，不要重做P01；若尚未`done`，按该RESUME最新一步继续，不能依据本提示的旧hash推测已集成。
+3. 保护root工作区中已有用户/人工/其他Agent修改、Qoder历史文件、Lock、current/pinned Revision、密钥与所有未提交数据。不得 reset、clean、覆盖、stage或stash未授权内容；如Git快进因冲突或受保护数据漂移而拒绝，保留现场并记录证据。
 
-1. 阅读仓库 `AGENTS.md`、`doc/REBASELINE_PLAN.md`、`doc/00_INDEX.md`、`doc/STATUS.md`、`doc/09_COLLABORATION.md`、当前 Task 与其 `verification/<Task>/RESUME.md`。
-2. 核对 root 与对应 worktree 的 branch、HEAD、dirty/staged、登记状态和 common-dir。若与恢复点不符，先记录漂移并按协作规则保护人工/Agent改动；不得 reset、clean、覆盖、stage 或 stash 未授权内容。
-3. 本恢复点的详细证据与可执行步骤见 [P01 RESUME](RESUME.md)。此处不假设 P01 当前是 pending、done 或其他状态；按 Live Git 和权威 STATUS 选择对应下一步，已完成的审计不得重复。
-4. 每项 Task 都要满足验收条件、真实测试证据、不同于 Owner 的独立 Review 与 Codex Integration Gate 后，才可记为 `done`；更新 Task、Plan、Status、依赖图与恢复点，再从权威路线图释放满足条件的下一 Task 并继续。
-5. 按项目规则使用合适 Agent/Skill 并跟踪真实交付。Qoder 已退出，绝不分配；Owner 不得审核自己的实现。共享接口、Schema、依赖或协作规则仅按已冻结 Task 修改。不得伪造交付、测试、Review、PASS 或 DONE。
-6. 不因已确认决策、常规实现细节或任务分配再次询问我；遇到真正未决产品取舍时，继续独立工作并一次性列明问题与影响，暂停依赖该决定的工作。
-7. 保护用户文件、人工修改、Lock、current/pinned Revision、密钥及其他 Agent 的未提交内容。不 push、不发布、不部署、不删除、不影响项目外部状态，除非用户另行明确授权。
-8. 持续推进路线图，不因P01或后续单个Task完成而停工或关机。只有当权威Plan/Status证明项目目标已完成、没有待办Task/Review/Gate/阻塞，且我明确要求关机时才关机；任何关机前都先完成所有可安全准备并保存最终恢复点。
+## 自动推进规则
 
-## 当前恢复信息
+4. 从权威Plan选择依赖已满足的最早候选。P02「真UI行为、300ms刷新与对比度验证」仍需先由Codex基于Live main和真实React/Tauri入口冻结只读harness范围、实际WebView能力、逐项验收、允许/禁止路径及退出判据；创建正式Task与RESUME、更新Plan/Status并登记Owner和非作者Reviewer后，才可释放。P02当前建议Owner=ZCode，Reviewer=DeepSeek Harness；正式释放时重新核对Reviewer通路，若DSH确实不可用，按项目故障转移规则改用Antigravity并记下证据。不得分配Qoder。
+5. 每项工作均核对AC、逐条测试/`NOT_RUN`与skip、独立Review、Codex Integration Gate和集成后验证；更新Task、Plan、Status、依赖图、Handoff、RESUME与下一自动推进提示。Task完成后直接选择并释放安全可执行的下一项，不因单个Task完成而停下来等待我。
+6. 产品实现严格限定到当前Windows / React + TypeScript / Tauri / Python Core / SQLite / Managed Copy架构；UI任务先验证现有真实行为，不以JSDOM/mock冒充WebView。共享接口、Schema、依赖或协作规则须先登记范围；产品取舍未决时继续独立工作并一次性列明问题及影响，暂停仅依赖该决定的工作。
+7. 依据仓库规则使用适用Skill与真实Agent通路；Owner和Reviewer必须不同。保存实际commit、测试输出/exit、Review载体、session和fingerprint；不得伪造派发、交付、Review、PASS或DONE。
+8. 未经新的明确授权，不push、发布、部署、删除生产/用户数据，也不执行其他影响项目外部状态的操作。此前“P01完成后关机”是仅适用于上一会话的一次性要求，不能继承为本次或后续任务的关机授权；除非我再次明确要求，否则保持计算机运行。
 
-- Task 与精确步骤：`verification/P01/RESUME.md`。
-- 当前恢复状态和最终main head以 `verification/P01/RESUME.md` 为准。P01 integration candidate位于`G:/CODEX/New Manga.worktrees/P01-integration-codex`；分支：`codex/P01-integration-20261009`；C9正式Review fixed head=`7645577ab374b581eb7081fd57675c32793249f5`，候选merge=`13e66ec5bf9a2fc59f4e6c5623feb0bde22884c8`。Owner证据worktree：`G:/CODEX/New Manga.worktrees/P01-metadata-audit-codex`。
-- P01 checkpoint 可能随本轮继续推进；每次恢复以 `git rev-parse HEAD`、`git status --short --branch` 与 RESUME 最新检查点为准，不依赖此提示词中的历史 SHA。
-- root `main` 既有 dirty/untracked 是用户与其他 Agent 的内容，当前检查清单见 `verification/P01/ac1-root-status.log` 与最新RESUME；未经明确授权，不要改动、暂存、stash 或清理。
-
-开始后直接执行可安全进行的下一步，不要只返回计划或要求我再次说“下一步”。
+恢复后直接执行可安全开展的下一步，不要要求我再次说“下一步”。
