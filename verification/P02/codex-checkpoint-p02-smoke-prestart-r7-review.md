@@ -1,0 +1,10 @@
+# Checkpoint：P02 R7 独立 Review 返回 CHANGES_REQUESTED
+
+- 时间：2026-10-10 04:49:12 +08:00。状态边界：`REVIEW_CHANGES_REQUESTED / NO_SANDBOX_START`。
+- Candidate branch=`codex/P02-process-isolation`，Delivery HEAD=`ab3958e1270084d80f2edb228aebc6e463233602`，tree=`c2829a7f3186ad4c7efe9c872d6e0932c58a1b7b`，base=`b3d36dd4db1a156e3db1057d40b32869880546cf`。受保护根仍为 `main@ceffb7479cb1f79bd3b620afdaf6e9eaa0ae6d50`，冻结 203-entry root manifest，候选路径交集=`0`。
+- Owner/author=Codex（本次 Codex-only preflight evidence）；非作者 Reviewer=DeepSeek Harness，version=`0.2.0-rc.2`，session=`session-80708e61-a161-4173-850a-9f1b8bb9a0c7`。Review 的正式输出/请求/exit 分别见 [R7 response](dsh-review-p02-smoke-prestart-r7.response.md)、[R7 prompt](dsh-review-p02-smoke-prestart-r7.prompt.md)、[R7 exit](dsh-review-p02-smoke-prestart-r7-followup.exit)。首次 headless 调用未留下最终 stdout/exit；同一 DSH session 已续接完成，follow-up exit=`0`。
+- Decision=`CHANGES_REQUESTED`；P0/P1/P2/P3=`0/0/3/7`。R3 sequencing clarification 本身获认可，R2 artifacts 的 SHA/canonical/schema/order/count 内部一致性获独立复算；10 项 findings 及最小修复见正式报告。
+- 阻断启动的 finding：F-02 要求启动前复核 11 个 HostFolder manifests，但 R2 collector 固定已有输出路径并使用 `exist_ok=False`/`xb`，无法重跑且无 compare mode。其余需处理包括独立 validator/原始捕获退出证据、R2 admission item 5 的 superseded 标记、12-root 与 11-mapping 域差、R1 无效目录内标识、reparse 计数字段、UI readiness 原始记录、INDEX 覆盖限制，以及恢复已闭合的 P05 历史说明。
+- Reviewer 实际只读运行 route validator=`PASS / EXIT=0`，重算 R2 artifacts 与配置 hash；未启动 WSB、未读取/扫描/哈希宿主 HostFolder、未运行 Build/Product tests/Smoke。其报告明确指出这不证明当前宿主映射状态，139k 未算文件的内容仍无 hash。
+- 当前状态：Smoke admission 仍限一次；Smoke=`NOT_RUN`；完整 preflight=`BLOCKED / INCOMPLETE`；Build Gate=`BLOCKED`；build=`NOT_AUTHORIZED / NOT_RUN`；AC1–AC7=`BLOCKED / NOT_RUN`；Hard Build Barrier=`EFFECTIVE`。
+- 下一准确动作：先持久化本 Review 边界；修复 F-02 的只读 manifest compare/recheck 执行路径及其余 findings，更新 Task/Plan/Status/Index 和证据；固定新 commit/tree 后向 DeepSeek Harness 派发 exact-head 复审。复审 approved 且立即 pre-start checks 全 PASS 前不得运行 `wsb start`。
