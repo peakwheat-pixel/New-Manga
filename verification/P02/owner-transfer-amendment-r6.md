@@ -3,7 +3,7 @@
 ## 固定事实与批准边界
 
 - Live main amendment base=`4b54f304dc201d129d4ba1c62d0368252e6301b1`；候选 branch=`codex/P02-owner-amendment`。
-- DSH r5 对提案 head=`0b95c6a1024f89ae341c637c0d531611175acdc5` 作出 `approved`，但仅批准项目既有 fallback 下的 Owner 转移原则、新 Owner branch/worktree 方案及产品契约不变；它明确不替代本候选元数据的固定 head Review。报告=`scope-review-r5.stdout.md`，session=`session-5f773271-e7f0-427f-982b-2d794d6e52d2`。
+- DSH r5 对提案 head=`0b95c6a1024f89ae341c637c0d531611175acdc5` 作出 `approved`，但仅批准项目既有 fallback 下的 Owner 转移原则、新 Owner branch/worktree 方案及产品契约不变；它明确不替代本候选元数据的固定 head Review。报告=`owner-transfer-r5-review/report.md`、mount=`owner-transfer-r5-review/mount.md`，session=`session-5f773271-e7f0-427f-982b-2d794d6e52d2`。
 - P02 行为基线仍=`241ff3b70b6fc0490ea238efd486cc707f849031`；唯一产品 AC/Owner allowlist 契约仍使用 r2 SHA-256=`27DC31A8CF3304ABA6783E243F36895FFE4AAA3CCBCA76D58E8B766C403E1425`。该 SHA 只绑定产品范围，不是当前整份 Task 文件。
 - r4 Codex-only 路线校验治理审查历史上绑定的 Task SHA=`5879A9FFA92931BB49183D4BD03E0D12DAAD3BFE21862993D6666FE0194013AA`、validator SHA=`FDE0012DF2ED21ADF4147B9744D88C06235401A6FA8211E5272B2501A1152B5B`、mutation probe SHA=`D37A0B3479B2EEA2F0D65B858FE013C2D5437F25468AF376F849928A7CB3FD15`；这些仅绑定 r4 当时的固定对象，不扩展到本 Task amendment。
 - 本候选 checkout 的 EOL 核对：validator worktree bytes SHA=`FDE0012DF2ED21ADF4147B9744D88C06235401A6FA8211E5272B2501A1152B5B`，其当前 Git `HEAD` blob SHA=`6E05032C4BC26859BFE7FD7E5C256E8784B73F2F06F55B66D8824B53E0878DFE`；mutation probe worktree bytes SHA=`1E3C6AF28A4F29904B1DF89146701CBCFDC6FC7F55C13883CB202358054777A9`、其 Git `HEAD` blob SHA=`D37A0B3479B2EEA2F0D65B858FE013C2D5437F25468AF376F849928A7CB3FD15`。历史 r4 值照原记录保留；本次 Task SHA明确同时报告 worktree 与 LF-normalized 内容，避免把 Windows CRLF checkout 与 Git blob 误当同一字节串。

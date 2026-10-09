@@ -1,0 +1,11 @@
+started_utc=2026-10-09T04:15:09.5252886Z
+ended_utc=2026-10-09T04:19:34.7544354Z
+shell=PowerShell 7.6.6
+dsh_version=0.2.0-rc.2
+cwd=G:\CODEX\New Manga.worktrees\P02-owner-amendment-codex
+branch=codex/P02-owner-amendment
+reviewed_head=4458b35051dd847ceadad11c332a7e2de3b49512
+command=dsh headless <scope-review-r6.prompt.md>
+exit=0
+stdout_file=verification/P02/scope-review-r6.stdout.md
+stderr_file=verification/P02/scope-review-r6.stderr.log

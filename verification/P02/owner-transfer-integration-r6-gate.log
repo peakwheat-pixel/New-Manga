@@ -1,0 +1,79 @@
+P02 owner-transfer integration candidate gate
+shell=PowerShell 7.6.6
+python=3.14.6
+live_root=G:/CODEX/New Manga
+live_branch=main
+live_head_at_check=4b54f304dc201d129d4ba1c62d0368252e6301b1
+integration_worktree=G:/CODEX/New Manga.worktrees/P02-owner-transfer-integration-codex
+integration_branch=codex/P02-owner-transfer-integration
+integration_head_at_check=4458b35051dd847ceadad11c332a7e2de3b49512
+base=4b54f304dc201d129d4ba1c62d0368252e6301b1
+
+command=python -B -X utf8 verification/PROJECT-ROADMAP-20261008/verify_plan.py
+result=PASS
+exit=0
+evidence=196 unique nodes; all classifications/dependencies; 105 integration ancestors; P01/P02/P03/P08 Task/Plan/roadmap state consistency; 21-node acyclic graph; delivery/navigation links; zero production/code delta.
+note=An earlier run before owner-transfer-integration-r6.md existed exited 1 because RESUME linked to the missing report. The report was added and the exact command was rerun successfully.
+
+command=python -B -X utf8 verification/P02/route-validator-mutation-probe.py
+result=PASS
+exit=0
+evidence=Both roadmap status-drift probes were rejected.
+
+command=Task digest cross-check
+reviewed_head=4458b35051dd847ceadad11c332a7e2de3b49512
+reviewed_task_checkout_bytes_sha256=B928814A051EC6E1C256BCDEF33968A2AB3F9C17654B0F086AA8163E56CAE78A
+reviewed_task_lf_sha256=DC19C27450BDF378DD6EA4D31ABBECDD4968412656F8C23E6059359E2B517EAF
+reviewed_task_git_blob=af25caae52b00d8cf4f3da9a56870fe8262ad15d
+result=PASS
+integration_task_bytes_sha256=A9DC6BE38327F3860C33D2CC0830FF23388D6BF9474A952470B58A7322EDBC77
+integration_task_lf_sha256=A9DC6BE38327F3860C33D2CC0830FF23388D6BF9474A952470B58A7322EDBC77
+integration_task_git_blob=dced2d204177e5c1d540541f09a183b7e101212a
+integration_task_delta=Only the r5 Review/mount relative paths and durable Owner-transfer gate wording changed after r6; requires DSH review at the new fixed head.
+
+command=Task/Plan/Index/Status consistency assertions
+result=PASS
+exit=0
+evidence=Task Owner Antigravity, reviewer DeepSeek Harness, integrator Codex, status ready; Plan P02 row and current owner; Index and Status agree.
+
+command=Focused markdown local-link validation
+result=PASS
+exit=0
+evidence=19 links in P02 Task/recovery/amendment/integration and r5/r6 Review carriers; missing=0.
+
+command=Exact path allowlist and Live root collision / P01 manifest intersection
+result=PASS
+exit=0
+candidate_changed_paths=20
+allowed_paths=20
+out_of_scope=0
+live_root_dirty_untracked_paths=38
+p01_protected_manifest_entries=24
+p01_protected_manifest_intersection=0
+candidate_vs_root_collisions=verification/P02/RESUME.md;verification/P02/NEXT-AUTOPROGRESS-PROMPT.md
+collision_handling=Both colliding files are this Task's recovery files; synchronize their final reviewed versions before fast-forward. Root r5 raw files are not candidate paths and remain untouched.
+
+command=git diff --cached --check 4b54f304dc201d129d4ba1c62d0368252e6301b1
+result=PASS
+exit=0
+git_core_autocrlf=true
+note=The explicit diagnostic override core.autocrlf=false flagged CRLF bytes as trailing whitespace; the repository's actual Windows configuration and default check pass. No files were rewritten by either check.
+
+command=Live P01 manifest content/status/hash recheck
+result=PASS
+exit=0
+entries=24
+mismatches=0
+manifest_sha256=b41835453b693b4e62818216e4d67801c01eca6e33450f8d3d3dd72849d578e7
+root_status_paths=38
+
+product_AC1_AC7=NOT_RUN
+vitest=NOT_RUN
+tauri_cargo_sidecar_build=NOT_RUN
+real_webview_gui_contrast=NOT_RUN
+codex_integration_gate=IN_PROGRESS
+main_fast_forward=NOT_RUN
+owner_dispatch_or_acceptance=NOT_RUN
+final_staged_diff_check_after_gate_log=PASS / EXIT=0
+final_exact_path_allowlist=PASS / 20 allowed paths / 0 out of scope
+final_link_state_assertions=PASS / 19 links / 0 missing / Task-Plan-Index-Status consistent
