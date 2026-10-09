@@ -1,0 +1,31 @@
+{
+  "task_id": "P01",
+  "purpose": "read-only command execution capability probe for C9 Reviewer reassignment",
+  "agy_version": "1.3.1",
+  "project": "New Manga",
+  "conversation_id": "43ad4bac-6e67-4c9e-a81b-69bf5fade807",
+  "status": "SUCCESS",
+  "cli_exit": 0,
+  "workdir": "G:\\CODEX\\New Manga.worktrees\\P01-metadata-audit-codex",
+  "target_worktree": "G:\\CODEX\\New Manga.worktrees\\P01-c8-review-dsh",
+  "commands": [
+    {
+      "exit_code": 0,
+      "command": "git -C \"G:\\CODEX\\New Manga.worktrees\\P01-c8-review-dsh\" rev-parse HEAD",
+      "stdout": "91ab1ef8ddaa1d00b0b34880a103937b4831590d"
+    },
+    {
+      "exit_code": 0,
+      "command": "git -C \"G:\\CODEX\\New Manga.worktrees\\P01-c8-review-dsh\" rev-parse \"HEAD^{tree}\"",
+      "stdout": "6f8477d7fbc428b94aa031ae4fce1196cfb7e647"
+    }
+  ],
+  "response": "Both requested commands returned exit 0 with the expected C8 commit and tree.",
+  "stdout_json_sha256": "e5e3b6647c1744d21dff67b022f2637b89c37944b861ee8e7adc3e5ec1c9e4ac",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "report_path": "verification/P01/agy-reviewer-shell-probe.stdout.md",
+  "report_sha256": "fb2f890ff5b1f058063115ce5df47c3e5eb1ace5f71bb380ad0230452baac802",
+  "session_migrated_to_desktop": true,
+  "migration_script": "C:\\Users\\49745\\.agents\\skills\\antigravity-dispatch\\scripts\\migrate_session.py",
+  "note": "Probe only, not formal P01 Review. No project files were modified by Antigravity."
+}

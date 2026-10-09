@@ -1,0 +1,28 @@
+P01 R2 blocked-status working-tree candidate verification (not fixed-head)
+CAPTURED_UTC=2026-10-08T23:23:08.6281383+00:00
+SHELL=PowerShell 7.6.6
+PYTHON=Python 3.14.6
+GIT=git version 2.52.0.windows.1
+BRANCH=agent/codex/P01-metadata-audit
+HEAD=3e67d53be6363e0eaabbd1ce038c226b82b8a494
+WORKTREE=G:\CODEX\New Manga.worktrees\P01-metadata-audit-codex
+COMMON_DIR=G:/CODEX/New Manga/.git
+WORKTREE_DIRTY_PATH_COUNT_BEFORE_LOG=17
+CANDIDATE_TASK_STATUS=status: blocked
+PRE_FIX_OBSERVATION=An earlier candidate run exited 1 because verify_plan.py asserted in_review while the candidate state was blocked; the permitted P01 status assertion was then corrected to accept in_progress/in_review/blocked dynamically.
+COMMAND=git diff --check (working-tree candidate only)
+EXIT=0
+WORKTREE_DIFF_CHECK_PASS=True
+COMMAND=python -B -X utf8 verification/PROJECT-ROADMAP-20261008/verify_plan.py (working-tree candidate)
+Planning snapshot base=e4242ecd419eb0eea098d2f63b40f709aa5caeea; live HEAD=3e67d53be6363e0eaabbd1ce038c226b82b8a494
+PASS: 196 unique nodes, all classifications and dependency references
+PASS: 105 new architecture/governance integration records are audit-base ancestors
+PASS: 21 unique planned nodes and roadmap graphs have no dependency cycles
+PASS: delivery/navigation local links resolve
+PASS: zero production/code delta; governance whitespace check
+Product tests/build/GUI: NOT_RUN (planning-only)
+EXIT=0
+ROUTE_VALIDATOR_PASS=True
+NOTE=HEAD is still C6; this candidate check includes uncommitted C7 governance files. It does not establish the fixed-head range gate for C7.
+PRODUCT_TESTS=NOT_RUN (governance-only candidate)
+RESULT=PASS_CANDIDATE_ONLY

@@ -16,7 +16,7 @@ allocation_state: release_synced_clean
 allocated_head: e093f0106bf62476c640dbcf8bb47448c8cc644c
 release_commit: 5896db8c64b90b53b015eb9c46c7dab6ab29210b
 synced_head: 5896db8c64b90b53b015eb9c46c7dab6ab29210b
-integration_commit: null
+integration_commit: cea610ed3f3349f1d76361d151815445e991f7d7
 ---
 
 # M2-DERIVED-GC-2：正式释放，待 ZCode 认领

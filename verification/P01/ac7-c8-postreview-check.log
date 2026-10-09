@@ -1,0 +1,31 @@
+P01 C8 post-review fixed-head evidence
+CAPTURED_UTC=2026-10-08T23:55:32.2193485Z
+SHELL=ConsoleHost Core 7.6.6
+POWERSHELL_PATH=C:\Program Files\PowerShell\7
+PYTHON=Python 3.14.6
+GIT=git version 2.52.0.windows.1
+OWNER_WORKTREE=G:\CODEX\New Manga.worktrees\P01-metadata-audit-codex
+COMMON_DIR=G:/CODEX/New Manga/.git
+COMMAND=git rev-parse HEAD
+91ab1ef8ddaa1d00b0b34880a103937b4831590d
+EXIT=0
+COMMAND=git rev-parse HEAD^{tree}
+6f8477d7fbc428b94aa031ae4fce1196cfb7e647
+EXIT=0
+COMMAND=git show -s --format=%T 91ab1ef8ddaa1d00b0b34880a103937b4831590d
+6f8477d7fbc428b94aa031ae4fce1196cfb7e647
+EXIT=0
+COMMAND=git merge-base --is-ancestor base HEAD
+EXIT=0
+COMMAND=git diff --check base..HEAD
+EXIT=0
+COMMAND=python -B -X utf8 G:\CODEX\New Manga.worktrees\P01-metadata-audit-codex\verification\PROJECT-ROADMAP-20261008\verify_plan.py
+Planning snapshot base=e4242ecd419eb0eea098d2f63b40f709aa5caeea; live HEAD=91ab1ef8ddaa1d00b0b34880a103937b4831590d
+PASS: 196 unique nodes, all classifications and dependency references
+PASS: 105 new architecture/governance integration records are audit-base ancestors
+PASS: 21 unique planned nodes and roadmap graphs have no dependency cycles
+PASS: delivery/navigation local links resolve
+PASS: zero production/code delta; governance whitespace check
+Product tests/build/GUI: NOT_RUN (planning-only)
+EXIT=0
+NOTE=Git object commands verify committed C8 HEAD/tree. The P01 worktree also contains later uncommitted Resume/Task/roadmap changes; validator ran against live worktree contents, not a clean C8 index. The original ac7-c8-fixed-head-check.log carries the clean C8 validator result.

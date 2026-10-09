@@ -1,0 +1,16 @@
+{
+  "task_id": "P01",
+  "session_id": "session-cb559db2-a394-4464-ac87-a99566611780",
+  "session_cwd": "G:\\CODEX\\New Manga",
+  "profile": "headless",
+  "command": "dsh --profile headless --json -",
+  "cli_exit_code": 0,
+  "prompt_path": "verification/P01/dsh-preflight-canonical-root.prompt.md",
+  "final_report_path": "verification/P01/dsh-preflight-canonical-root.md",
+  "stdout_temp_path": "C:\\Users\\49745\\AppData\\Local\\Temp\\P01-C7-canonical-root-preflight.stdout.jsonl",
+  "stdout_sha256": "d1776e80d7a23311293c0d30658375b8958480a5c232225ed9ff4bbaa3beacd2",
+  "jsonl_internal_reasoning_preserved_outside_repository": true,
+  "stderr_temp_path": "C:\\Users\\49745\\AppData\\Local\\Temp\\P01-C7-canonical-root-preflight.stderr.log",
+  "stderr_bytes": 0,
+  "scope": "read-only execution preflight; not a formal Review"
+}

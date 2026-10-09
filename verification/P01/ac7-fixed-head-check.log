@@ -1,0 +1,101 @@
+P01 AC7 fixed candidate checks
+CAPTURED_UTC=2026-10-08T22:54:29Z
+POWERSHELL=7.6.6
+PYTHON=Python 3.14.6
+GIT=git version 2.52.0.windows.1
+BASE=826bea12a132c5af2ac0cd1244d00e9170093c71
+REVIEWED_HEAD=6f24006c21281df485375674d20a1d3b7b48ca63
+LIVE_HEAD=6f24006c21281df485375674d20a1d3b7b48ca63
+BRANCH=agent/codex/P01-metadata-audit
+=== working tree after DSH R1 artifacts were saved ===
+?? doc/reviews/P01-6f24006c-dsh-r1.md
+?? verification/P01/ac1-root-status.log
+?? verification/P01/dsh-review-r1-session.json
+?? verification/P01/dsh-review-r1.exit
+?? verification/P01/dsh-review-r1.prompt.md
+The 4 dsh-review-r1 / ac1-root-status evidence files are post-review artifacts and are not part of base..reviewed_head.
+FIXED_HEAD_MATCH=True
+CHANGED_PATH_COUNT=24
+=== committed candidate paths ===
+doc/00_INDEX.md
+doc/12_ROADMAP.md
+doc/handoffs/P01-9b124936.md
+doc/REBASELINE_PLAN.md
+doc/STATUS.md
+doc/tasks/M2-DERIVED-GC-2.md
+doc/tasks/M2-PROD-DETECT-3.md
+doc/tasks/M2-SFX-SYNTH-BG-AUTO.md
+doc/tasks/P01.md
+doc/tasks/README.md
+verification/P01/ac7-candidate-check.log
+verification/P01/ac7-preflight.log
+verification/P01/dsh-preflight-mount.json
+verification/P01/dsh-preflight-prompt.md
+verification/P01/dsh-preflight-version.txt
+verification/P01/dsh-preflight.exit
+verification/P01/dsh-preflight.stderr.log
+verification/P01/dsh-preflight.stdout.txt
+verification/P01/metadata-audit.md
+verification/P01/NEXT-AUTOPROGRESS-PROMPT.md
+verification/P01/RESUME.md
+verification/PROJECT-ROADMAP-20261008/RESUME.md
+verification/PROJECT-ROADMAP-20261008/ROADMAP.md
+verification/PROJECT-ROADMAP-20261008/verify_plan.py
+=== allowed-path gate ===
+PASS
+=== git diff --check base..reviewed_head ===
+EXIT=0
+=== route verifier ===
+Planning snapshot base=e4242ecd419eb0eea098d2f63b40f709aa5caeea; live HEAD=6f24006c21281df485375674d20a1d3b7b48ca63
+PASS: 196 unique nodes, all classifications and dependency references
+PASS: 105 new architecture/governance integration records are audit-base ancestors
+PASS: 21 unique planned nodes and roadmap graphs have no dependency cycles
+PASS: delivery/navigation local links resolve
+PASS: zero production/code delta; governance whitespace check
+Product tests/build/GUI: NOT_RUN (planning-only)
+EXIT=0
+=== base ancestor ===
+EXIT=0
+=== source Task diff (base..reviewed_head) ===
+diff --git a/doc/tasks/M2-DERIVED-GC-2.md b/doc/tasks/M2-DERIVED-GC-2.md
+index bad659fd..c4414f56 100644
+--- a/doc/tasks/M2-DERIVED-GC-2.md
++++ b/doc/tasks/M2-DERIVED-GC-2.md
+@@ -17,5 +17,5 @@ allocated_head: e093f0106bf62476c640dbcf8bb47448c8cc644c
+ release_commit: 5896db8c64b90b53b015eb9c46c7dab6ab29210b
+ synced_head: 5896db8c64b90b53b015eb9c46c7dab6ab29210b
+-integration_commit: null
++integration_commit: cea610ed3f3349f1d76361d151815445e991f7d7
+ ---
+
+diff --git a/doc/tasks/M2-PROD-DETECT-3.md b/doc/tasks/M2-PROD-DETECT-3.md
+index 7ca47ad9..58d4433d 100644
+--- a/doc/tasks/M2-PROD-DETECT-3.md
++++ b/doc/tasks/M2-PROD-DETECT-3.md
+@@ -4,5 +4,5 @@ title: "core.detect 命令面扩展 + frozen 进程内真实 detect 端到端验
+ kind: feature
+ status: done
+-integration_commit: 8fe5199c44b06e679a2f0e6ee47767032217eb47
++integration_commit: 8fe5199c6d05d144052141ad02ed054bbaa90645
+ approval: user_autonomous_mode_2026-10-01
+ suggested_owner: ZCode
+diff --git a/doc/tasks/M2-SFX-SYNTH-BG-AUTO.md b/doc/tasks/M2-SFX-SYNTH-BG-AUTO.md
+index 9f475861..a9720c76 100644
+--- a/doc/tasks/M2-SFX-SYNTH-BG-AUTO.md
++++ b/doc/tasks/M2-SFX-SYNTH-BG-AUTO.md
+@@ -11,8 +11,7 @@ integrator: 编排会话代行 Codex（用户全权授权）
+ depends_on: [M2-SFX-DATA-INFRA]
+ base_commit: 6f1117d6
+-integration_commit: 913ca3a9
++integration_commit: 913ca3a9f9c9a83c43d9a03af4bc80b54cc1cc66
+ branch: agent/zcode/M2-SFX-SYNTH-BG-AUTO
+ worktree: G:/CODEX/New Manga.worktrees/M2-SFX-SYNTH-BG-AUTO-zcode
+-integration_commit: null
+ ---
+
+=== source merge object types ===
+cea610ed3f3349f1d76361d151815445e991f7d7 type=commit
+8fe5199c6d05d144052141ad02ed054bbaa90645 type=commit
+913ca3a9f9c9a83c43d9a03af4bc80b54cc1cc66 type=commit
+R1_REVIEW_REPORT=doc/reviews/P01-6f24006c-dsh-r1.md SHA256=9d30def7e8d683b79b4265c808199523ea9aa375489fce556f477d5c506ab9ff
+RESULT fixedHeadMatch=True paths=24 outside=0 diffCheckExit=0 routeExit=0 ancestorExit=0

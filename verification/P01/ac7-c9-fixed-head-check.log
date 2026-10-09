@@ -1,0 +1,98 @@
+P01 C9 fixed-head verification
+CAPTURED_UTC=2026-10-09T00:08:13.9420206Z
+SHELL=ConsoleHost Core 7.6.6
+POWERSHELL_PATH=C:\Program Files\PowerShell\7
+PYTHON=Python 3.14.6
+GIT=git version 2.52.0.windows.1
+OWNER_WORKTREE=G:\CODEX\New Manga.worktrees\P01-metadata-audit-codex
+COMMAND=git rev-parse --show-toplevel
+G:/CODEX/New Manga.worktrees/P01-metadata-audit-codex
+EXIT=0
+BRANCH=agent/codex/P01-metadata-audit
+COMMON_DIR=G:/CODEX/New Manga/.git
+HEAD=7645577ab374b581eb7081fd57675c32793249f5
+TREE=8dafbccda120e718aeb6f40613146320a4d2564f
+BASE=826bea12a132c5af2ac0cd1244d00e9170093c71
+WORKTREE_CLEAN=True
+RANGE_PATH_COUNT=57
+OUTSIDE_ALLOWED_COUNT=0
+PRODUCT_CODE_PATH_COUNT=0
+RANGE_PATHS_BEGIN
+doc/00_INDEX.md
+doc/12_ROADMAP.md
+doc/handoffs/P01-9b124936.md
+doc/REBASELINE_PLAN.md
+doc/reviews/P01-3e67d53-dsh-r2.md
+doc/reviews/P01-6f24006c-dsh-r1.md
+doc/reviews/P01-91ab1ef8-dsh-c8.md
+doc/STATUS.md
+doc/tasks/M2-DERIVED-GC-2.md
+doc/tasks/M2-PROD-DETECT-3.md
+doc/tasks/M2-SFX-SYNTH-BG-AUTO.md
+doc/tasks/P01.md
+doc/tasks/README.md
+verification/P01/ac1-root-status.log
+verification/P01/ac7-c6-fixed-head-check.log
+verification/P01/ac7-c7-fixed-head-check.log
+verification/P01/ac7-c8-fixed-head-check.log
+verification/P01/ac7-c8-postreview-check.log
+verification/P01/ac7-c8-postreview-check.sha256
+verification/P01/ac7-candidate-check.log
+verification/P01/ac7-fixed-head-check.log
+verification/P01/ac7-preflight.log
+verification/P01/ac7-r1-blocked-checkpoint.log
+verification/P01/ac7-r1-remediation-check.log
+verification/P01/ac7-r2-blocked-candidate-check.log
+verification/P01/agy-reviewer-probe.json
+verification/P01/agy-reviewer-shell-probe-session.json
+verification/P01/agy-reviewer-shell-probe.stdout.md
+verification/P01/dsh-c9-shell-probe-session.json
+verification/P01/dsh-c9-shell-probe.prompt.md
+verification/P01/dsh-c9-shell-probe.stdout.md
+verification/P01/dsh-preflight-canonical-root-session.json
+verification/P01/dsh-preflight-canonical-root.exit
+verification/P01/dsh-preflight-canonical-root.md
+verification/P01/dsh-preflight-canonical-root.prompt.md
+verification/P01/dsh-preflight-mount.json
+verification/P01/dsh-preflight-prompt.md
+verification/P01/dsh-preflight-version.txt
+verification/P01/dsh-preflight.exit
+verification/P01/dsh-preflight.stderr.log
+verification/P01/dsh-preflight.stdout.txt
+verification/P01/dsh-review-c8-addendum-session.json
+verification/P01/dsh-review-c8-addendum.prompt.md
+verification/P01/dsh-review-c8-addendum.stdout.md
+verification/P01/dsh-review-c8.prompt.md
+verification/P01/dsh-review-r1-session.json
+verification/P01/dsh-review-r1.exit
+verification/P01/dsh-review-r1.prompt.md
+verification/P01/dsh-review-r2-session.json
+verification/P01/dsh-review-r2.exit
+verification/P01/dsh-review-r2.prompt.md
+verification/P01/metadata-audit.md
+verification/P01/NEXT-AUTOPROGRESS-PROMPT.md
+verification/P01/RESUME.md
+verification/PROJECT-ROADMAP-20261008/RESUME.md
+verification/PROJECT-ROADMAP-20261008/ROADMAP.md
+verification/PROJECT-ROADMAP-20261008/verify_plan.py
+RANGE_PATHS_END
+COMMAND=git merge-base --is-ancestor base HEAD
+EXIT=0
+COMMAND=git diff --check base..HEAD
+EXIT=0
+VALIDATOR_ABSOLUTE=G:\CODEX\New Manga.worktrees\P01-metadata-audit-codex\verification\PROJECT-ROADMAP-20261008\verify_plan.py
+VALIDATOR_CWD=G:\CODEX\New Manga.worktrees\P01-metadata-audit-codex
+COMMAND=python -B -X utf8 G:\CODEX\New Manga.worktrees\P01-metadata-audit-codex\verification\PROJECT-ROADMAP-20261008\verify_plan.py
+Planning snapshot base=e4242ecd419eb0eea098d2f63b40f709aa5caeea; live HEAD=7645577ab374b581eb7081fd57675c32793249f5
+PASS: 196 unique nodes, all classifications and dependency references
+PASS: 105 new architecture/governance integration records are audit-base ancestors
+PASS: 21 unique planned nodes and roadmap graphs have no dependency cycles
+PASS: delivery/navigation local links resolve
+PASS: zero production/code delta; governance whitespace check
+Product tests/build/GUI: NOT_RUN (planning-only)
+EXIT=0
+ROOT_BRANCH=main
+ROOT_HEAD=714138de3da06013e3ea35395e0c11b3d15fc371
+ROOT_DIRTY_COUNT=24
+ROOT_PATH_SET_UNCHANGED=True
+PRODUCT_TESTS=NOT_RUN (documentation/governance-only change)

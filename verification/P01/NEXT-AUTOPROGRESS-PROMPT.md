@@ -1,5 +1,21 @@
-请在 `G:/CODEX/New Manga` 继续自动推进项目。开始时按仓库 `AGENTS.md` 读取入口文档，核对真实 Git main/status、REBASELINE_PLAN、STATUS、P01 Task 与 `verification/P01/RESUME.md`；从已正式释放的 P01 接续，branch=`agent/codex/P01-metadata-audit`，worktree=`G:/CODEX/New Manga.worktrees/P01-metadata-audit-codex`，base=`826bea12a132c5af2ac0cd1244d00e9170093c71`。先比较 checkpoint HEAD、branch、worktree/common-dir 和 dirty 集合，记录 `RESUME_SAFE` 或 `DRIFT_DETECTED`；不要重复P03或全库审计。
+请从 `G:/CODEX/New Manga` 自动推进已授权的项目路线图，默认使用简体中文；持续到全部已授权工作完成，或遇到必须由我决定的产品问题/外部不可逆操作。聊天内容只作意图背景，项目事实以当前仓库的文档、Git 和实际验证为准。
 
-立即按冻结的 `doc/tasks/P01.md` 执行台账元数据与Review载体取证。核查GC2和DETECT3的commit对象、祖先关系、Handoff/集成证据；只有证据充分才更正Task frontmatter指定字段。追踪ANNOTATE-R2和SYNTH真实独立Review carrier并绑定fixed base/head/decision/hash；找不到的记录`NOT_VERIFIED`，不得伪造批准、把Owner报告当Review或把来源Task标`done`。不裁决R2 challenge空集/T2 release，不替用户处理SYNTH登录冒烟。Owner=Codex、非作者Reviewer=DeepSeek Harness；P01完成后直接使用配置的 `dsh-dispatch` Skill 派发固定head正式Review，跟踪并验证交付，再由Codex执行Integration Gate。
+## 恢复步骤
 
-严格遵守P01 `allowed_paths`；根checkout既有用户/Qoder/Agent dirty、raw evidence、用户数据、数据库、Lock、current/pinned Revision均保护。Qoder已退出不得分配。Task Gate通过后更新Task、Plan、Status、索引、依赖图、Handoff/Review与恢复点，再从权威Plan选出所有依赖满足、范围冻结的下一Task并正式分配和继续执行。日常实现细节不询问我；若遇必须由我裁决的产品问题，先完成不依赖裁决的部分，再一次性说明问题与影响。无push、发布、部署、删除等外部不可逆操作授权。不要关机，也不要预先规划关机。
+1. 阅读仓库 `AGENTS.md`、`doc/REBASELINE_PLAN.md`、`doc/00_INDEX.md`、`doc/STATUS.md`、`doc/09_COLLABORATION.md`、当前 Task 与其 `verification/<Task>/RESUME.md`。
+2. 核对 root 与对应 worktree 的 branch、HEAD、dirty/staged、登记状态和 common-dir。若与恢复点不符，先记录漂移并按协作规则保护人工/Agent改动；不得 reset、clean、覆盖、stage 或 stash 未授权内容。
+3. 本恢复点的详细证据与可执行步骤见 [P01 RESUME](RESUME.md)。此处不假设 P01 当前是 pending、done 或其他状态；按 Live Git 和权威 STATUS 选择对应下一步，已完成的审计不得重复。
+4. 每项 Task 都要满足验收条件、真实测试证据、不同于 Owner 的独立 Review 与 Codex Integration Gate 后，才可记为 `done`；更新 Task、Plan、Status、依赖图与恢复点，再从权威路线图释放满足条件的下一 Task 并继续。
+5. 按项目规则使用合适 Agent/Skill 并跟踪真实交付。Qoder 已退出，绝不分配；Owner 不得审核自己的实现。共享接口、Schema、依赖或协作规则仅按已冻结 Task 修改。不得伪造交付、测试、Review、PASS 或 DONE。
+6. 不因已确认决策、常规实现细节或任务分配再次询问我；遇到真正未决产品取舍时，继续独立工作并一次性列明问题与影响，暂停依赖该决定的工作。
+7. 保护用户文件、人工修改、Lock、current/pinned Revision、密钥及其他 Agent 的未提交内容。不 push、不发布、不部署、不删除、不影响项目外部状态，除非用户另行明确授权。
+8. 只有在 P01 按本轮指示完成并且续跑提示已安全保存后，才执行本轮授权的关机。此关机授权仅限本轮 P01 收口；重启后的自动推进不得据此在后续 Task 完成时再次关机。
+
+## 当前恢复信息
+
+- Task 与精确步骤：`verification/P01/RESUME.md`。
+- P01 worktree：`G:/CODEX/New Manga.worktrees/P01-metadata-audit-codex`；分支：`agent/codex/P01-metadata-audit`；base：`826bea12a132c5af2ac0cd1244d00e9170093c71`。
+- P01 checkpoint 可能随本轮继续推进；每次恢复以 `git rev-parse HEAD`、`git status --short --branch` 与 RESUME 最新检查点为准，不依赖此提示词中的历史 SHA。
+- root `main` 既有 dirty/untracked 是用户与其他 Agent 的内容，当前检查清单见 `verification/P01/ac1-root-status.log`；未经明确授权，不要改动、暂存、stash 或清理。
+
+开始后直接执行可安全进行的下一步，不要只返回计划或要求我再次说“下一步”。
