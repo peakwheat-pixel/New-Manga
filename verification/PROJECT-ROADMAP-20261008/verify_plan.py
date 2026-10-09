@@ -69,10 +69,16 @@ if __name__ == "__main__":
     task_state = re.search(r"^status: ([a-z_]+)$", task, re.M)
     assert task_state and task_state.group(1) in TASK_STATES
     assert f"| P08 | {task_state.group(1)} |" in plan
+    p01_task = (ROOT / "doc/tasks/P01.md").read_text(encoding="utf-8")
+    p01_task_state = re.search(r"^status: ([a-z_]+)$", p01_task, re.M)
+    assert p01_task_state and p01_task_state.group(1) in TASK_STATES
     status_counts = Counter(label.strip() for _, label in plan_rows)
     p01_state = next(label.strip() for node, label in plan_rows if node == "P01")
-    assert p01_state in {"in_progress", "in_review", "blocked"}, p01_state
-    assert status_counts == {"done": 2, p01_state: 1, "proposed / 未释放": 18}, status_counts
+    assert p01_state == p01_task_state.group(1), (p01_state, p01_task_state.group(1))
+    assert p01_state in {"in_progress", "in_review", "blocked", "done"}, p01_state
+    expected_counts = {"done": 2, "proposed / 未释放": 18}
+    expected_counts[p01_state] = expected_counts.get(p01_state, 0) + 1
+    assert status_counts == expected_counts, status_counts
     roadmap = (HERE / "ROADMAP.md").read_text(encoding="utf-8")
     diagram_nodes = re.findall(r'\["(P\d{2})<br/>([^<]+)', roadmap)
     assert {node for node, _ in diagram_nodes} == set(nodes)
@@ -80,6 +86,8 @@ if __name__ == "__main__":
     assert all(state in TASK_STATES for _, state in diagram_states)
     p08_states = [state for node, state in diagram_states if node == "P08"]
     assert p08_states == [task_state.group(1)]
+    p01_states = [state for node, state in diagram_states if node == "P01"]
+    assert p01_states == [p01_task_state.group(1)]
     for diagram in re.findall(r"```mermaid\n(.*?)```", roadmap, re.S):
         edges = re.findall(r"^\s*([\w-]+)\s+(?:-->|-\.->|-\. .*?\.->)\s*([\w-]+)", diagram, re.M)
         graph = {}

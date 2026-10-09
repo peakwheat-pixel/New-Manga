@@ -1,6 +1,10 @@
 # Project Rebaseline Plan
 
-**当前位置：P08/P03=done；P系列共21项：done 2、in_review 1、proposed 18。唯一Active Task=P01（台账元数据与Review载体取证），状态=in_review，Owner=Codex、非作者Reviewer=Antigravity（C8 DSH Review后因其shell环境持续Win32 5而转派）；C8 reviewed_head=91ab1ef8ddaa1d00b0b34880a103937b4831590d 的DSH Review=changes_requested，C9修订和复审正在进行。R1/R2历史blocked结论保留；R2/SYNTH Review carrier缺失仍为NOT_VERIFIED，产品裁决与来源Task状态不改。P01 base=826bea12a132c5af2ac0cd1244d00e9170093c71；branch=agent/codex/P01-metadata-audit，worktree=G:/CODEX/New Manga.worktrees/P01-metadata-audit-codex。恢复见P01 Task及P01 RESUME。P03 integration=552464238a69ad2cea63cff18abe98f412dbae87；其产品验证仍绑定source d717c049。
+**当前位置：P08/P03=done；P系列共21项：done 2、in_review 1、proposed 18。唯一Active Task=P01（台账元数据与Review载体取证），Owner/Integrator=Codex、非作者Reviewer=Antigravity；C9正式Review已approved，最终Codex Integration Gate待完成。P01候选merge=`13e66ec5bf9a2fc59f4e6c5623feb0bde22884c8`尚未fast-forward到root main，不得提前记为done。R1/R2 blocked、C8 changes_requested历史结论保留；R2/SYNTH Review carrier仍为NOT_VERIFIED，来源Task状态与产品裁决不改。恢复见Task与`verification/P01/RESUME.md`；P02仍proposed，正式Task与harness范围尚未冻结。P03 integration=`552464238a69ad2cea63cff18abe98f412dbae87`；其产品验证仍绑定source `d717c049`。
+
+## 2026-10-09 P01 Antigravity Review approved；Codex Integration Gate pending
+
+P01仍为`in_review`；Owner/Integrator=Codex，非作者Reviewer=Antigravity。base=`826bea12a132c5af2ac0cd1244d00e9170093c71`；正式Review固定head=`7645577ab374b581eb7081fd57675c32793249f5`、tree=`8dafbccda120e718aeb6f40613146320a4d2564f`、decision=`approved`；报告SHA-256=`a378eb0395f59b0ce12f494c33a9310e991f6ac9f35da9603f599a0a8578175e`。集成分支候选merge=`13e66ec5bf9a2fc59f4e6c5623feb0bde22884c8`；最终fixed-head Integration Gate与fast-forward仍待完成。C9 P3 `OBS-C9-01`及辅助只读Review指出的旧DSH分配文字已在候选Handoff/导航处置，须由Gate核对。C8 `ENV-01`原始carrier截断事实保留，未补造文本。R2/SYNTH carrier仍`NOT_VERIFIED`，不改来源Task状态或用户裁决；产品测试/build/GUI均`NOT_RUN`（本Task无产品代码差量）。P02保持`proposed / 未释放`，harness范围与正式Task尚未冻结。
 
 ## 历史检查点：2026-10-09 P01 DSH R2 BLOCKED（由C8 in_review取代）
 
@@ -45,7 +49,7 @@ P08 DSH R7已对base=ecb3b520ce68c2ddcc0c5ec94596e2f50a17f369、reviewed_head=fe
 
 | 候选任务编号 | 状态 | 简单中文描述 | 启动依赖/条件 | 建议责任方；非作者审查 | 完成 Gate / 边界 |
 |---|---|---|---|---|---|
-| P01 | in_review | 台账元数据与Review载体取证 | 无Task依赖；冻结基线826bea12；AC1–AC6交付已冻结；C7=06f52f5a Codex fixed-head Gate PASS并已版本化 | Codex；非作者DeepSeek Harness | DSH shell Win32 5保留为NOT_RUN；使用只读文件工具审阅完整固定差量，Codex独立复核allowed paths、diff-check与路线校验；R2/SYNTH Review carrier仍NOT_VERIFIED，不改产品裁决或来源Task状态 |
+| P01 | in_review | 台账元数据与Review载体取证 | 无Task依赖；固定base=826bea12；C9 reviewed head=7645577a由Antigravity正式approved；Codex final Integration Gate待完成 | Codex；非作者Antigravity | 候选merge=`13e66ec5`尚未fast-forward；Gate待核对allowed paths、报告指纹、validator、diff-check与root dirty保护；R2/SYNTH carrier仍NOT_VERIFIED，不改产品裁决或来源Task状态 |
 | P02 | proposed / 未释放 | 真UI行为、300ms刷新与对比度验证 | 现有Workbench；冻结harness范围 | ZCode；DSH | DOM/真实WebView取证，区分mock与实际；覆盖切页、写后刷新、键盘、token |
 | P03 | done | Packaged第五SFX入口验收补齐 | PROBE-1/Runner Debt/Guard已done；DSH R5/R6与Codex集成Gate通过 | Antigravity；DSH | integration=`552464238a69ad2cea63cff18abe98f412dbae87`；Gate evidence绑定source=`d717c049`与固定installer SHA；R3-03留给P20 |
 | P04 | proposed / 未释放 | 生产命令族/桥接并发定向验证 | PAGE-NAV done；先检查现有断言 | Antigravity；DSH | 独立常量成员断言；同会话并发响应与协议核验候选先复现；无缺口不加修复 |

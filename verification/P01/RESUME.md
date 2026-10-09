@@ -1,5 +1,14 @@
 # P01 恢复点
 
+## 2026-10-09 P01 integration closeout candidate checkpoint
+
+- Timestamp=`2026-10-09T00:45:43Z`；Task=P01；root `main@714138de3da06013e3ea35395e0c11b3d15fc371`仍是当前权威线，P01仍`in_review`。owner worktree `agent/codex/P01-metadata-audit`已提交于`a22a0d935bb1b99be006601a7a2c49cd305b1910`且C9 Antigravity正式Review=`approved`；Codex正在独立集成worktree `G:/CODEX/New Manga.worktrees/P01-integration-codex` / branch=`codex/P01-integration-20261009` / HEAD=`13e66ec5bf9a2fc59f4e6c5623feb0bde22884c8`准备关闭Gate。
+- 集成worktree当前有12个候选修改文件，staged=0；独立Review指出原草稿提前写入`done`/AC7完成态和Gate PASS。已纠正为Task=`in_review`、AC7 pending、`integration_commit=null`；先前对done草稿运行的候选检查不作为当前证据，须在这次修订后重跑。
+- 当前集成候选M0=`13e66ec5bf9a2fc59f4e6c5623feb0bde22884c8`，其base..M0范围此前读数为75 paths；final C0 commit需重新计算allowed paths、产品路径差量、validator、`git diff --check`和root dirty集合。最终Gate carrier尚未创建。
+- Protected root尚为`main@714138de3da06013e3ea35395e0c11b3d15fc371`，24项dirty/untracked与`ac1-root-status.log`中的路径集合相同，比较差异0；没有stage、stash、覆盖、清理这些文件。此检查点仍需在fast-forward前复核。
+- C9 reviewer report的canonical SHA-256=`a378eb0395f59b0ce12f494c33a9310e991f6ac9f35da9603f599a0a8578175e`、response=`d3d71f0c9ce382bbd58798e4c670c64d3901b816de5fa06e94b825ee506ed3cd`、stdout JSON=`46efa931900dd40a72c02e6011b867355f9b9eff872c522c9bac90cc7ba23abc`存于session metadata；集成worktree `core.autocrlf=true`，`Get-FileHash`对checkout后的CRLF字节给出不同值，Gate须以Git blob/canonical LF bytes复核这三个SHA，不得把行尾转换误报为Review载体被篡改。
+- 下一精确步骤：在这12个文件上核对pending状态修订与Gate字段，然后提交P01 fixed-head Gate candidate C0（Task保持in_review/AC7未勾选）。对C0重新运行fixed-range allowed-path、canonical C9 hashes、Task source-state protection、route validator、`git diff --check`、root dirty pathset与hash保护检查；可让独立Reviewer只读复核C0。Gate成功后创建版本化`integration-gate.md`并更新Task/Plan/Status/恢复文件为done，运行收口状态validator后提交closeout evidence commit。最后仅在root dirty pathset无交集且hash不变时fast-forward main，保存实际main HEAD/branch/status，再创建正式P02 Task并持续自动推进。
+
 时间：2026-10-09（Asia/Shanghai）；Task=P01；TaskStatus=in_review；ExecutionState=ACTIVE。最后已提交fixed head=C8 91ab1ef8ddaa1d00b0b34880a103937b4831590d，C8 DSH Review=changes_requested；C9 Reviewer已转派Antigravity，恢复时以末尾最新checkpoint核对Live Git。C8 Gate=PASS，见ac7-c8-fixed-head-check.log及ac7-c8-postreview-check.log。
 
 ## 当前权威状态

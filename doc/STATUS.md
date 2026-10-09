@@ -1,6 +1,10 @@
 # Current Development Status
 
-**当前位置：P08/P03=done；P系列共21项：done 2、in_review 1、proposed 18。唯一当前Task=P01 in_review，base=826bea12a132c5af2ac0cd1244d00e9170093c71，Owner=Codex、Reviewer=Antigravity（由C8环境阻塞触发的非作者复审转派）、branch=agent/codex/P01-metadata-audit，worktree=G:/CODEX/New Manga.worktrees/P01-metadata-audit-codex。C8 reviewed_head=91ab1ef8ddaa1d00b0b34880a103937b4831590d 的DSH decision=changes_requested；C8修订与C9新头复审正在进行。R1/R2 blocked报告保持历史原样。P03 integration=552464238a69ad2cea63cff18abe98f412dbae87；其测试仍绑定source d717c049。
+**当前位置：P08/P03=done；P系列共21项：done 2、in_review 1、proposed 18。唯一Active Task=P01，base=826bea12a132c5af2ac0cd1244d00e9170093c71，Owner/Integrator=Codex、非作者Reviewer=Antigravity；C9 reviewed_head=7645577ab374b581eb7081fd57675c32793249f5，decision=approved；最终Codex Integration Gate及root main fast-forward待完成，候选merge=13e66ec5bf9a2fc59f4e6c5623feb0bde22884c8。R1/R2 blocked及C8 changes_requested保持历史原样；R2/SYNTH Review carrier仍NOT_VERIFIED。P02仍proposed，harness范围与正式Task未冻结。P03 integration=552464238a69ad2cea63cff18abe98f412dbae87；其测试仍绑定source d717c049。
+
+## 2026-10-09 P01 C9 Review approved；Codex Integration Gate pending
+
+P01 AC1–AC6已完成；AC7仍pending。Antigravity对base=`826bea12a132c5af2ac0cd1244d00e9170093c71`、reviewed_head=`7645577ab374b581eb7081fd57675c32793249f5`、tree=`8dafbccda120e718aeb6f40613146320a4d2564f`正式`approved`。Codex集成worktree已创建merge候选=`13e66ec5bf9a2fc59f4e6c5623feb0bde22884c8`；final fixed-head Gate、证据版本化及fast-forward尚未完成。完整恢复步骤见[`P01 RESUME`](../verification/P01/RESUME.md)。P02仍为候选，不释放任何未登记实现。
 
 ## 历史检查点：2026-10-09 P01 DSH R2 BLOCKED（由C8 in_review取代）
 

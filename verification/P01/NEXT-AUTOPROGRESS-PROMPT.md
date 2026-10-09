@@ -1,5 +1,7 @@
 请从 `G:/CODEX/New Manga` 自动推进已授权的项目路线图，默认使用简体中文；持续到全部已授权工作完成，或遇到必须由我决定的产品问题/外部不可逆操作。聊天内容只作意图背景，项目事实以当前仓库的文档、Git 和实际验证为准。
 
+本提示用于从P01集成检查点恢复完整项目目标。先核对最新RESUME与live Git；若P01仍`in_review`，完成该Task的独立Review/Integration Gate/集成；若已`done`，不要重做P01，按权威路线图继续下一Task。持续自动推进，不因单个Task完成而停工或关机。
+
 ## 恢复步骤
 
 1. 阅读仓库 `AGENTS.md`、`doc/REBASELINE_PLAN.md`、`doc/00_INDEX.md`、`doc/STATUS.md`、`doc/09_COLLABORATION.md`、当前 Task 与其 `verification/<Task>/RESUME.md`。
@@ -9,13 +11,13 @@
 5. 按项目规则使用合适 Agent/Skill 并跟踪真实交付。Qoder 已退出，绝不分配；Owner 不得审核自己的实现。共享接口、Schema、依赖或协作规则仅按已冻结 Task 修改。不得伪造交付、测试、Review、PASS 或 DONE。
 6. 不因已确认决策、常规实现细节或任务分配再次询问我；遇到真正未决产品取舍时，继续独立工作并一次性列明问题与影响，暂停依赖该决定的工作。
 7. 保护用户文件、人工修改、Lock、current/pinned Revision、密钥及其他 Agent 的未提交内容。不 push、不发布、不部署、不删除、不影响项目外部状态，除非用户另行明确授权。
-8. 只有在 P01 按本轮指示完成并且续跑提示已安全保存后，才执行本轮授权的关机。此关机授权仅限本轮 P01 收口；重启后的自动推进不得据此在后续 Task 完成时再次关机。
+8. 持续推进路线图，不因P01或后续单个Task完成而停工或关机。只有当权威Plan/Status证明项目目标已完成、没有待办Task/Review/Gate/阻塞，且我明确要求关机时才关机；任何关机前都先完成所有可安全准备并保存最终恢复点。
 
 ## 当前恢复信息
 
 - Task 与精确步骤：`verification/P01/RESUME.md`。
-- P01 worktree：`G:/CODEX/New Manga.worktrees/P01-metadata-audit-codex`；分支：`agent/codex/P01-metadata-audit`；base：`826bea12a132c5af2ac0cd1244d00e9170093c71`。
+- 当前恢复状态和最终main head以 `verification/P01/RESUME.md` 为准。P01 integration candidate位于`G:/CODEX/New Manga.worktrees/P01-integration-codex`；分支：`codex/P01-integration-20261009`；C9正式Review fixed head=`7645577ab374b581eb7081fd57675c32793249f5`，候选merge=`13e66ec5bf9a2fc59f4e6c5623feb0bde22884c8`。Owner证据worktree：`G:/CODEX/New Manga.worktrees/P01-metadata-audit-codex`。
 - P01 checkpoint 可能随本轮继续推进；每次恢复以 `git rev-parse HEAD`、`git status --short --branch` 与 RESUME 最新检查点为准，不依赖此提示词中的历史 SHA。
-- root `main` 既有 dirty/untracked 是用户与其他 Agent 的内容，当前检查清单见 `verification/P01/ac1-root-status.log`；未经明确授权，不要改动、暂存、stash 或清理。
+- root `main` 既有 dirty/untracked 是用户与其他 Agent 的内容，当前检查清单见 `verification/P01/ac1-root-status.log` 与最新RESUME；未经明确授权，不要改动、暂存、stash 或清理。
 
 开始后直接执行可安全进行的下一步，不要只返回计划或要求我再次说“下一步”。
