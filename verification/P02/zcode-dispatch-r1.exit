@@ -1,0 +1,13 @@
+started_utc=2026-10-09T03:38:26Z
+ended_utc=2026-10-09T03:38:26Z
+shell=PowerShell 7.6.6
+zcode_cli=E:\Program Files\ZCode\resources\glm\zcode.cjs
+zcode_version=0.16.9
+command=node <zcode.cjs> --prompt <official P02 Owner prompt> --cwd "G:\CODEX\New Manga.worktrees\P02-real-webview-harness-zcode" --mode yolo --json --locale zh-CN
+worktree=G:\CODEX\New Manga.worktrees\P02-real-webview-harness-zcode
+branch=agent/zcode/P02-real-webview-harness
+start_HEAD=e1948466082b3cadbfde1da53b791319e359a10b
+exit=1
+prompt_file=verification/P02/zcode-dispatch-r1.prompt.md
+stdout_file=verification/P02/zcode-dispatch-r1.stdout.jsonl
+stderr_file=verification/P02/zcode-dispatch-r1.stderr.log

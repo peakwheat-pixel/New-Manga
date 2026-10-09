@@ -1,21 +1,26 @@
 # P02 自动续跑提示词
 
-请在 `G:/CODEX/New Manga` 中自动继续 P02，并按权威路线推进所有依赖已满足、范围已冻结的后续工作，直到已授权工作完成或出现必须由我决定的产品问题。默认使用简体中文。本提示不授权关机、push、发布或部署。
+请从 `G:/CODEX/New Manga` 自动继续正式 P02，之后按权威路线推进依赖已满足且范围已冻结的任务；直到已授权工作完成或出现必须由用户决定的产品问题。默认简体中文。不得关机、push、发布或部署。
 
-## 恢复规则
+## 恢复入口
 
-1. 先读取当前仓库 `AGENTS.md`、`doc/REBASELINE_PLAN.md`、`doc/00_INDEX.md`、`doc/STATUS.md`、`doc/09_COLLABORATION.md`、`doc/tasks/P02.md` 和 `verification/P02/RESUME.md`。核对 Live main、所有 worktree/branch/common-dir、Task状态、固定基线、正式 Review与实际dispatch。若状态与恢复点不一致，先记录证据并按项目治理处理，不从聊天推断完成。
-2. P01 已完成，不重做。root 原作者24项 dirty/untracked 必须与 `verification/P01/root-dirty-manifest-pre-ff.txt` 逐项核对并保护；不得 stage、stash、覆盖或清理。任何Agent未提交内容同样受保护。
-3. 当前 P02 scope/release commit=`3c3e4687785e65f668f1146052e78c3da074ba99`，已从父=`241ff3b70b6fc0490ea238efd486cc707f849031` 本地 fast-forward 到 Live `main`；r1–r4范围治理Review完成，r4 approved关闭`P02-SCOPE-R3-01`。post-FF Gate和恢复证据见 `verification/P02/release-post-ff-check.txt`、`verification/P02/RESUME.md`。release commit只集成范围和治理文档，不代表任何P02产品AC通过。root原作者24项dirty/untracked必须继续保护；manifest SHA=`b41835453b693b4e62818216e4d67801c01eca6e33450f8d3d3dd72849d578e7`。
-4. P02 scope/release 与 post-FF Gate 已完成并提交。ZCode Owner worktree/path=`G:/CODEX/New Manga.worktrees/P02-real-webview-harness-zcode`、branch=`agent/zcode/P02-real-webview-harness`已创建，初始HEAD=`9c88165e0cb3fb1437bf711e3c770e7c8f917034`，并清洁快进同步至main checkpoint parent=`1cb54d82f0e261924866245da52ed01ef02092b0`。当前只待提交Codex-owned恢复点更新；仅stage `verification/P02/RESUME.md` 与 `verification/P02/NEXT-AUTOPROGRESS-PROMPT.md` 两条路径，并核对与P01 manifest无交集。不要stage root中其他内容。
-5. checkpoint提交后重新核对 P01 manifest与Live main，再将现有Owner linked worktree只快进同步到最新Live main实际HEAD，验证branch/common-dir/clean status。然后使用 `verification/P02/zcode-task.prompt.md` 和已安装 `zcode-dispatch` skill真实派发，保存真实CLI命令、prompt、session、handoff、exit与checkpoint。availability probe不等于实际派发；Owner接单后才可改`TaskStatus=in_progress`。ZCode不可用时按 `AGENTS.md` 顺序故障转移至Antigravity，绝不分配给Qoder。
-7. 每到 start、handoff、review、integration状态边界更新 `verification/P02/RESUME.md`。按 Task AC1–AC7执行固定源码HEAD上的真实 Windows Tauri/WebView2验证，分清真实Core/SQLite、真实WebView2+mock IPC/Core、JSDOM/Vitest。不得用Vite/Chrome、JSDOM、mock、SSR、fake timers或runner存活检查冒称真实Workbench验收。环境/驱动不可用时记录精确`BLOCKED`和命令，然后做其他安全可执行工作。
-8. 不改产品UI、颜色、键盘交互、debounce、共享契约或依赖；观察到的产品缺陷只记录证据，再按Plan决定是否另释后继Task。继续使用已确认F设计契约4.5:1/3.0:1，不重做P08 D1–D7。保护用户库、人工编辑、Lock、current/pinned Revision、凭据和生产数据。
-9. P02完成前逐项核对AC、PASS/FAIL/BLOCKED/NOT_RUN及证据、非作者DeepSeek Harness正式实现Review、Codex集成Gate和集成后检查；更新Task、Plan、Status、依赖图、RESUME和NEXT提示。完成后自动从权威Plan选择依赖已满足且范围已冻结的下一Task，落实Owner/Reviewer分离并继续。只在必须用户裁决或全部已授权工作完成时暂停。
+先读取根 `AGENTS.md`、Plan、Index、Status、协作协议、正式 P02 Task 和本恢复点；核对 live Git HEAD、主工作区、P02 worktrees/branches、Task 状态及 P01 manifest。以 Git/Plan/Status/Task/实际证据为事实；聊天只提供意图。P01 已完成，绝不重做。不要重复 P02 的 AC/路径范围冻结：scope r1–r4、release 与 post-FF Gate 已完成。
 
-## 本检查点的下一步
+## 当前 P02 检查点
 
-1. 核对并仅提交2个Codex-owned恢复点路径；保护原作者24项dirty/untracked。
-2. 对最新Live main再次核对P01 24项manifest，并仅快进同步已存在的clean ZCode worktree。
-3. 用正式`zcode-task.prompt.md`真实dispatch P02；保存接单证据后再更新Task为`in_progress`。
-4. 跟踪Owner实现、真实AC1–AC7、DeepSeek Harness正式Review、修订和Codex集成Gate直至Task完成，并从权威路线自动推进下一项已释放工作。
+- Live `main@e1948466082b3cadbfde1da53b791319e359a10b`；P02 正式 Task 仍 `ready` / `IDLE`，当前元数据 Owner=ZCode、Reviewer=DeepSeek Harness、Integrator=Codex；所有产品 AC1–AC7/build/真实 WebView 仍 `NOT_RUN`。
+- P01 原作者 root manifest SHA=`b41835453b693b4e62818216e4d67801c01eca6e33450f8d3d3dd72849d578e7`，24 项必须逐项保护；检查点最后一次复核为24/24且0 hash mismatch。不得 stage、stash、覆盖或清理。
+- ZCode headless r1 在模型启动前因缺少 Built-in Provider Config EXIT=1，证据=`verification/P02/zcode-dispatch-r1.*`。
+- Antigravity r1 已于 `2026-10-09T03:39:09Z` 启动，但因发现任务禁止的源树写入而被Codex中断；没有conversation ID、final JSON或CLI exit，不能算Owner接单。完整事实见 [`antigravity-dispatch-r1.interruption.md`](antigravity-dispatch-r1.interruption.md)。
+- 旧 `G:/CODEX/New Manga.worktrees/P02-real-webview-harness-zcode` / `agent/zcode/P02-real-webview-harness` HEAD=`e1948466082b3cadbfde1da53b791319e359a10b` 已 `DRIFT_DETECTED`：保留24个 `apps/desktop/src-tauri/**` 行尾变化、`verification/P02/cargo-target/**` 和未验证的 `cdp_probe.py`；严禁复用、切分支、reset、stash、覆盖、删除或把它们并入交付。具体列表和差异判据见 interruption record。
+
+## 下一步（按顺序，持续执行）
+
+1. 在新的 Codex scope worktree（从实际 live main HEAD 创建）准备一个**仅限 Owner 故障转移**的 P02 Task 修订：Owner 从 ZCode 改为 Antigravity；创建新的 `agent/antigravity/P02-real-webview-harness` branch 和全新 clean linked worktree。保持 AC、allowed/forbidden paths、行为基线=`241ff3b70b6fc0490ea238efd486cc707f849031`、Reviewer=DeepSeek Harness、Integrator=Codex全不变；解释失败/中断证据。重新计算 scope contract SHA，并同步 Plan/Status/Task/Resume/NEXT。不要把状态改成 `in_progress`。
+2. 使用已安装的 `dsh-dispatch` Skill，从修订 scope worktree 真实派发固定差量只读 Review；保存 prompt、session、原始结果、stderr、exit 和挂载证据。Owner 与 Reviewer 必须不同。若DSH scope Review要求修改，按意见修订并固定新head后复审；不能以 subagent 或 Codex 自审冒充 DSH。
+3. DSH 批准后，Codex 串行集成纯治理修订；复跑 `verification/PROJECT-ROADMAP-20261008/verify_plan.py`、P02 route mutation probe、`git diff --check`、路径 allowlist、本地链接和 P01 manifest。保存完整日志/exit，更新恢复点。
+4. 从新的 release HEAD 创建 Antigravity clean Owner worktree；重新派发 Task，只有真实 `conversation_id`/最终接单回应并写入 start checkpoint 后，才将 Task 设为 `in_progress`。旧 worktree 隔离保留。
+5. Owner 执行 AC1–AC7、Task-local synthetic evidence/Handoff；真实 Tauri/WebView2 不能由 Chrome/Vite/JSDOM/mock/fake timers冒充。Cargo构建在本机曾改写24个禁写的自动生成文件（内容忽略行尾后相同）；因此在新 worktree 派发前先用独立、无影响的预检确定如何使构建产物不改变任何禁止路径。若无法证明安全，记录精确 blocker 与证据，把相关 AC 标 `BLOCKED`，继续其他允许的只读证据；不得回滚或覆盖任何 Agent 内容。
+6. 所有 AC/测试/skip 与受影响源Hash完整交接后，派给非作者 DSH 正式实现 Review；按 findings 修订并复审；Codex 固定head作集成 Gate，复核路径、基线、测试证据及保护清单后才可集成、标 `done`。随后从权威 Plan 自动推进下一项已满足依赖的 Task。每到状态边界更新 RESUME。
+
+保持用户漫画数据、Lock、current/pinned Revision、人工编辑、密钥及其他 Agent 的未提交内容安全；不因 routine 分配询问用户。只有出现真正未决的产品取舍才一次性询问。不要继续或执行任何一次性关机授权。
