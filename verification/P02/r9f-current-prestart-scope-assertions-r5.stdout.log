@@ -1,0 +1,14 @@
+HEAD: 5bdda66889dc4a5b2ad20b1500fbf6487c774ed0
+Tree: 1dbf74dd54bdc7a29c825d82e1df33f9cec98626
+Complete diff path count: 84
+Out-of-scope path count: 0
+R3 response SHA-256: 9D508F71381B16E7638869766D83B4556004C400BE0BDD5DF9993BA834C5468D
+path_scope: True
+r3_review_report_committed: True
+r3_response_hash: True
+r2_paragraph_finding_closed: True
+d6_count_labeled_d6_only: True
+task_states_both_counts: True
+dispatch_checkpoint_scope_binding: True
+r3_review_approval_recorded: True
+hard_build_barrier_preserved: True
