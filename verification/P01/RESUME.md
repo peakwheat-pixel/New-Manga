@@ -1,11 +1,11 @@
 # P01 恢复点
 
-时间：2026-10-09（Asia/Shanghai）；Task=P01；C8候选状态=in_review；ExecutionState=ACTIVE。C7已提交；C8为从blocked恢复Review的治理候选，提交后以Live Git核对固定head。
+时间：2026-10-09（Asia/Shanghai）；Task=P01；TaskStatus=in_review；ExecutionState=ACTIVE。最后已提交fixed head=C8 91ab1ef8ddaa1d00b0b34880a103937b4831590d，C8 DSH Review=changes_requested；C9 Reviewer已转派Antigravity，恢复时以末尾最新checkpoint核对Live Git。C8 Gate=PASS，见ac7-c8-fixed-head-check.log及ac7-c8-postreview-check.log。
 
 ## 当前权威状态
 
 - P03 正式关闭与 Codex Integration Gate 提交：`826bea12a132c5af2ac0cd1244d00e9170093c71`；P03=`done`。其 16-case snapshot、40/40 targeted tests 与 packaged Gate 28/28 仍绑定 source `d717c049a41544a6d592943a0b0fe1b76a41a050`，未声称在 P03 集成头重跑。
-- P01 已基于该 commit 正式释放并进入执行：base=`826bea12a132c5af2ac0cd1244d00e9170093c71`；branch=`agent/codex/P01-metadata-audit`；worktree=`G:/CODEX/New Manga.worktrees/P01-metadata-audit-codex`；Owner=Codex；非作者Reviewer=DeepSeek Harness；Integrator=Codex；depends_on=`[]`。
+- P01 已基于该commit正式释放并进入执行：base=826bea12a132c5af2ac0cd1244d00e9170093c71；branch=agent/codex/P01-metadata-audit；worktree=G:/CODEX/New Manga.worktrees/P01-metadata-audit-codex；Owner=Codex；启动时非作者Reviewer=DeepSeek Harness（2026-10-09 C8后，C9 Reviewer转派为Antigravity）；Integrator=Codex；depends_on=[]。
 - Worktree 初始 HEAD=`826bea12a132c5af2ac0cd1244d00e9170093c71`，创建时干净、common-dir=`G:/CODEX/New Manga/.git`。P01 release metadata commit=`714138de3da06013e3ea35395e0c11b3d15fc371`；delivery=`9b12493616326af9cdd50a055282426c72516a5a`，后续治理checkpoint=`dfe31bbac2e61d5ace969a35f6727e4fd04a2331`。恢复时必须以实际 `git rev-parse HEAD`/status 为准，不从聊天或本段推测后续提交。
 - Root main 的原有用户/Qoder/Agent dirty 与 P03 raw-review evidence 均留在 root checkout，未复制进 P01 worktree、未 stage、未 stash、未覆盖或清理。P03关闭后 root 仍有24个既存 dirty/untracked 项；实际名称以 root `git status --short` 为准。
 
@@ -35,7 +35,7 @@
 
 所有逐项对象、carrier path/base/head/decision/hash与`NOT_VERIFIED`边界均见[metadata audit](metadata-audit.md)。R2 challenge空集及T2是否释放是用户裁决，不由P01推断；SYNTH的真实网页登录/冒烟要求不得冒充通过。未找到carrier不表示其从未存在。
 
-## 验证状态
+## 验证状态（截至C7历史checkpoint；当前C8/C9状态见文末）
 
 - AC1–AC6 与允许的元数据修正：已执行，delivery=`9b12493616326af9cdd50a055282426c72516a5a`；path/diff preflight EXIT=0；DSH R1=`blocked`及修订C5 fixed-head Gate PASS已留证；DSH R2对C6=`3e67d53be6363e0eaabbd1ce038c226b82b8a494`返回`blocked`，报告及C6 Gate日志已纳入当前C7工作树候选。
 - P01 来源 Task/Handoff 指纹与 Review carrier 搜索：已执行；ANNOTATE-R2、SYNTH Review原件=`NOT_VERIFIED`。
@@ -45,7 +45,7 @@
 
 ## 下一条直接指令
 
-当前精确指令见本文件末尾最新R2/C7检查点；恢复时先核对Live Git与文档中记录的C6→C7状态漂移，再决定`RESUME_SAFE`或`DRIFT_DETECTED`。不要重复AC2–AC6或P03/P08。解决R2环境/证据问题、完成新的非作者Review与Codex Gate后，再按权威Plan释放下一项并自动继续。保护root现存24项dirty、用户数据、Lock、current/pinned Revision及Qoder历史；不push、不发布、不部署、不删除。
+当前精确指令见本文件末尾最新C8/C9检查点；恢复时以Live Git与末尾checkpoint为准，不重复AC2–AC6或P03/P08。完成C9修订、固定头Gate及Antigravity非作者复审后，按结果进入Codex Integration Gate或继续修订。保护root现存24项dirty、用户数据、Lock、current/pinned Revision及Qoder历史；不push、不发布、不部署、不删除。
 
 ## 本次 release prompt
 
@@ -86,9 +86,36 @@
 - 历史C7下一步已完成：C7在06f52f5a644079afeb57abb38f0ac674c02531c8提交，fixed-head Gate现已实际PASS并版本化。当前以文末最新C8检查点为准。
 - 自动推进及关机提示已保存在[`NEXT-AUTOPROGRESS-PROMPT.md`](NEXT-AUTOPROGRESS-PROMPT.md)：必须从Live Task继续，不重做已完成审计；本轮P01完成并持久化续跑提示后执行一次关机，此授权不延伸到以后Task。
 
-## 2026-10-09 P01 C8：Review恢复候选（提交前）
+## 历史：2026-10-09 P01 C8 Review恢复候选（提交前）
 
 - Live P01 C7=06f52f5a644079afeb57abb38f0ac674c02531c8，branch=agent/codex/P01-metadata-audit，worktree=G:/CODEX/New Manga.worktrees/P01-metadata-audit-codex，之前clean；root main=714138de3da06013e3ea35395e0c11b3d15fc371并保留24项dirty/untracked。C7 Codex fixed-head Gate真实PASS，现已保存为ac7-c7-fixed-head-check.log。
 - DSH canonical-root只读预检 session=session-cb559db2-a394-4464-ac87-a99566611780，CLI exit=0；pwsh tool 4次均因SetNamedSecurityInfoW failed (Win32 5)报错，Git类Gate命令NOT_RUN；DSH glob/read可访问精确P01 linked worktree及validator。最终报告、prompt、session元数据与exit码已分别保存；原JSONL/verbose reasoning仅保留在Temp，不入库。此预检不是正式Review。
 - 状态从C7的blocked恢复为in_review，只因启动一轮新的DSH read-only fixed-diff Review；不得改写R1/C3或R2/C6的blocked决定。Reviewer须完整读取base=826bea12a132c5af2ac0cd1244d00e9170093c71至新固定head的差量和来源证据。禁止调用shell；Codex独立固定头Gate执行allowed-path、祖先、git diff --check及P01 roadmap validator。
-- 当前候选尚未commit；下一步先执行git diff --check与路线校验，确认仅P01 allowed paths后提交C8。随后用Live git rev-parse HEAD记录真实C8，跑fixed-head Gate，创建独立Review worktree，在其中生成/读取完整差量包，正式派发DSH Review。若不能完整读取或新Review未批准，保持blocked/changes_requested并继续保存checkpoint，不关机。
+- 历史提交前指令已完成；以文末C8 fixed-head检查点为准。
+
+
+## 2026-10-09 P01 C8 fixed-head Gate通过 / DSH正式Review待派
+
+- P01 owner worktree branch=agent/codex/P01-metadata-audit，path=G:/CODEX/New Manga.worktrees/P01-metadata-audit-codex，common-dir=G:/CODEX/New Manga/.git；fixed HEAD=91ab1ef8ddaa1d00b0b34880a103937b4831590d，tree=6f8477d7fbc428b94aa031ae4fce1196cfb7e647，C8提交后worktree clean。
+- C8状态=Task in_review；P01 base=826bea12a132c5af2ac0cd1244d00e9170093c71。Fixed-head Gate真实PASS：43 range paths、outside allowed=0、product/code paths=0、base ancestor EXIT=0、git diff --check EXIT=0、绝对路径路线validator EXIT=0、ANNOTATE-R2 source Task unchanged、root main仍714138de3da06013e3ea35395e0c11b3d15fc371且24项dirty/untracked pathset相同。完整日志verification/P01/ac7-c8-fixed-head-check.log，SHA-256=3c000cbeeca7ab7f0cd06362fb3c0a9403491b9078005ef5ef28b95ff48a0554。
+- DSH shell ACL错误仍为已记录事实；只读文件工具可读P01路径。正式Review将由DSH在独立detached review worktree从C8精确SHA启动；Review只使用glob/read，不调用pwsh/shell/Git。调用方提供base..C8完整diff packet、C8 Gate日志、P01 Task与相关来源证据；DSH须列明全量覆盖文件、未覆盖项、Architecture/Verification、finding disposition与decision。DSH侧命令NOT_RUN须如实记载，Codex Gate不冒充Reviewer执行。
+- 下一精确步骤：创建G:/CODEX/New Manga.worktrees/P01-c8-review-dsh并detached checkout到C8；核对clean、HEAD/tree一致；在该Review worktree生成完整diff packet并记录SHA/行数；保存自包含prompt后使用dsh --profile headless --json从该worktree派发正式非作者Review，记录session事件ID并挂载到该精确Review路径。若read工具不能读完整差量或DSH拒绝批准，AC7保持未完成并记录新的checkpoint；此时不关机。
+
+## 2026-10-09 C8 Review=changes_requested / C9修订与Reviewer转派checkpoint
+
+- 当前已提交P01 head=C8 91ab1ef8ddaa1d00b0b34880a103937b4831590d，tree=6f8477d7fbc428b94aa031ae4fce1196cfb7e647；Task仍in_review、AC7未勾选。Owner branch/worktree/common-dir保持既定值；root main=714138de3da06013e3ea35395e0c11b3d15fc371的24项原有dirty/untracked不得改动。
+- DSH C8正式报告decision=changes_requested，session=session-c3af998d-bf66-4a75-965e-470bcbe5d370；报告doc/reviews/P01-91ab1ef8-dsh-c8.md，report SHA-256=06e7d436d8ec958b04d3b3d87c53444fce477ea703e90444a27b0c7d12145eb5；最终输出原文dsh-review-c8-addendum.stdout.md，session metadata=dsh-review-c8-addendum-session.json。
+- C8原始clean Gate验证日志为ac7-c8-fixed-head-check.log；supplemental check=ac7-c8-postreview-check.log，SHA-256=39e96658c62e171946dd266187292075fe78c686a298332180cfc791cbbad526，记录PowerShell Core 7.6.6、Python 3.14.6、Git 2.52.0.windows.1、C8 HEAD/tree、base祖先及range diff-check EXIT=0。该supplemental脚本在含后续文档编辑的live owner worktree运行validator；clean C8 validator EXIT=0以原始Gate日志为证。
+- C8 findings：F-C8-01/F-C8-02由当前候选文档更新修复；F-C8-03/F-C8-05由C8 supplemental Gate/log补齐shell、tree和版本化证据；F-C8-04保留为Integration Gate动作项，P01转done前须在集成提交更新verify_plan.py允许状态与done计数并运行validator。ENV-01真实重试仍失败，不抹去DSH NOT_RUN。
+- DSH session mount到精确review worktree成功，但只读shell探测仍因SetNamedSecurityInfoW failed (Win32 5)在命令执行前被拒；Get-Location与git rev-parse HEAD/HEAD^{tree}均NOT_RUN。原文与session metadata见dsh-c9-shell-probe.stdout.md、dsh-c9-shell-probe-session.json。为确保新fixed head有可执行的独立复审，P01 frontmatter Reviewer转派为Antigravity，DSH C8报告和decision保留。
+- Antigravity探测：agy 1.3.1，New Manga通路probe status=SUCCESS、exit 0、response=收到，conversation=998a2926-b79a-401b-8945-fa91457b3c9c；随后在独立C8 review worktree只读执行git rev-parse HEAD与HEAD^{tree}，两项EXIT=0且输出91ab1ef8/6f8477d7与Codex Gate一致，conversation=43ad4bac-6e67-4c9e-a81b-69bf5fade807。两者均只是环境探测，不是P01正式Review；完整报告/session/hash见agy-reviewer-probe.json及agy-reviewer-shell-probe-session.json。
+- 当前Codex工作区修改是后续候选，尚未提交；先以git status --short --branch/git diff确认，不要假设C9已有commit。预期修订只在P01允许路径：Task审查分配/AC7、当前导航/状态、P01 Handoff/Resume和verification/P01/**，C8 Review载体及C8补充Gate。
+
+## 下一条直接指令（C9）
+
+1. 核对owner worktree的实际branch、HEAD、dirty路径；不得碰root 24项dirty。确认C8 F-C8-01/02导航状态文本与Reviewer=Antigravity的Task前置重指一致；Review分配变更有本Task的C8 Win32 5证据及agy probe支撑。
+2. 完成并审阅仅P01允许路径的候选diff；运行git diff --check、从P01 worktree绝对路径执行verify_plan.py并生成new-head fixed Gate（记录UTC、PowerShell Core版本、Python/Git版本、HEAD与HEAD^{tree}、allowed paths、base祖先、diff-check、root dirty pathset）。
+3. 只提交核验过的P01范围变更，固定新的C9 reviewed_head；生成完整base..C9 diff包和hash，不再改该head。通过antigravity-dispatch派发只读正式非作者Review，要求对C8 F-C8-01~05、ENV-01的修订逐项给disposition，检查P01 AC1–AC7、所有验证状态、数据/裁决边界；派发后用migrate_session.py --id <conversation_id>挂载，保存实际response/exit/prompt/session/hash。
+4. Antigravity如返回changes_requested/blocked，逐项修订并复审；如approved，由Codex按P01 base_commit..reviewed_head独立核验，再集成并处理F-C8-04、更新Task/Plan/Status/依赖图/RESUME/NEXT-AUTOPROGRESS-PROMPT。P01未达到Task所有AC前不得置done或关机。
+
+旧C6→C7/C8启动命令均为历史；从上述C9直接指令继续，不重跑AC2–AC6或P03/P08。

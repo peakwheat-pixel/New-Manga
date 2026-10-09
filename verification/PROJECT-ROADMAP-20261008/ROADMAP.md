@@ -1,8 +1,8 @@
 # New Manga 一眼路线图（2026-10-08）
 
-最新工作点：P08/P03=done；唯一Active Task=P01 in_review；C7=06f52f5a Codex fixed-head Gate PASS。DSH shell受Win32 5限制，但文件工具可访问P01路径；C8准备完整差量只读Review。
+最新工作点：P08/P03=done；唯一Active Task=P01 in_review。C8 reviewed_head=91ab1ef8的DSH Review=changes_requested；C9修订后的非作者Reviewer=Antigravity，正式fixed-head Review待执行。
 
-**当前位置：P08/P03=done；P系列done 2/21、in_review 1、proposed 18。唯一Active Task=P01 in_review；C7固定头Gate PASS。DSH shell NOT_RUN但文件工具可访问；R1/R2 blocked报告保留，当前为C8只读复审准备。**
+**当前位置：P08/P03=done；P系列done 2/21、in_review 1、proposed 18。唯一Active Task=P01 in_review，Owner=Codex、Reviewer=Antigravity；C8 DSH changes_requested与R1/R2 blocked历史报告均保留，C9修订和复审进行中。**
 
 人员更新：用户已移除Qoder，图中未来UI/UX责任由ZCode承担；非作者Review与正式Task释放Gate保持。
 
@@ -29,7 +29,7 @@ flowchart TB
 
 ```mermaid
 flowchart TB
-  BASE["当前位置：P08/P03 done<br/>P系列done 2/21、in_review 1、proposed 18"] --> P01["P01<br/>in_review / DSH固定差量只读复核中<br/>台账取证<br/>Owner Codex · Reviewer DSH<br/>base 826bea12"]
+  BASE["当前位置：P08/P03 done<br/>P系列done 2/21、in_review 1、proposed 18"] --> P01["P01<br/>in_review / C9 Antigravity非作者复审待执行<br/>台账取证<br/>Owner Codex · Reviewer Antigravity<br/>base 826bea12"]
   BASE --> P02["P02<br/>proposed / 未释放<br/>真UI验证<br/>点击/300ms刷新/对比度/失效窗口"]
   BASE --> P03["P03<br/>done / Review与Codex集成Gate通过<br/>第五入口Gate<br/>集成55246423；Gate绑定d717"]
   BASE --> P04["P04<br/>proposed / 未释放<br/>生产命令面验证<br/>常量成员与并发响应；先复现再决定修复"]

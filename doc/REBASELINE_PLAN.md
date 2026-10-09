@@ -1,10 +1,10 @@
 # Project Rebaseline Plan
 
-**当前位置：P08/P03=done；P系列共21项：done 2、in_review 1、proposed 18。唯一Active Task=P01（台账元数据与Review载体取证），状态=in_review；C7=06f52f5a644079afeb57abb38f0ac674c02531c8的Codex fixed-head Gate PASS且已版本化。DSH shell因Win32 5不能运行；只读文件工具可访问P01精确worktree路径，现由Codex固定差量/独立Gate配合DSH只读Review。R1/R2 blocked结论保持原样；R2/SYNTH Review carrier缺失仍为NOT_VERIFIED，产品裁决与来源Task状态不改。P01 base=826bea12a132c5af2ac0cd1244d00e9170093c71；Owner=Codex、非作者Reviewer=DeepSeek Harness；branch=agent/codex/P01-metadata-audit，worktree=G:/CODEX/New Manga.worktrees/P01-metadata-audit-codex。恢复见P01 Task及P01 RESUME。P03 integration=552464238a69ad2cea63cff18abe98f412dbae87；其产品验证仍绑定source d717c049。**
+**当前位置：P08/P03=done；P系列共21项：done 2、in_review 1、proposed 18。唯一Active Task=P01（台账元数据与Review载体取证），状态=in_review，Owner=Codex、非作者Reviewer=Antigravity（C8 DSH Review后因其shell环境持续Win32 5而转派）；C8 reviewed_head=91ab1ef8ddaa1d00b0b34880a103937b4831590d 的DSH Review=changes_requested，C9修订和复审正在进行。R1/R2历史blocked结论保留；R2/SYNTH Review carrier缺失仍为NOT_VERIFIED，产品裁决与来源Task状态不改。P01 base=826bea12a132c5af2ac0cd1244d00e9170093c71；branch=agent/codex/P01-metadata-audit，worktree=G:/CODEX/New Manga.worktrees/P01-metadata-audit-codex。恢复见P01 Task及P01 RESUME。P03 integration=552464238a69ad2cea63cff18abe98f412dbae87；其产品验证仍绑定source d717c049。
 
 ## 历史检查点：2026-10-09 P01 DSH R2 BLOCKED（由C8 in_review取代）
 
-P01 AC1–AC6与允许的三处来源字段更正已完成，delivery=`9b12493616326af9cdd50a055282426c72516a5a`。DSH R1对`6f24006c21281df485375674d20a1d3b7b48ca63`的`blocked` findings已在P01允许路径修订；C5=`e95ebbf56c9747ad97f2d4e9fa9d1bb10f128364` Codex fixed-head Gate PASS。DSH R2对C6=`3e67d53be6363e0eaabbd1ce038c226b82b8a494`返回`blocked`：Reviewer因sandbox Win32 5未运行Git/Python，另提出C6 Gate日志需版本化（R2-02）及Integration Gate显式绑定P01校验器路径（R2-03）。报告与C6日志已加入C7 committed blocked checkpoint；下一步解决R2-01执行环境并固定新Review head。R1原始报告及DSH `NOT_RUN`事实保留，产品测试仍`NOT_RUN`。
+截至C7历史checkpoint：P01 AC1–AC6与允许的三处来源字段更正已完成，delivery=`9b12493616326af9cdd50a055282426c72516a5a`。DSH R1对`6f24006c21281df485375674d20a1d3b7b48ca63`的`blocked` findings已在P01允许路径修订；C5=`e95ebbf56c9747ad97f2d4e9fa9d1bb10f128364` Codex fixed-head Gate PASS。DSH R2对C6=`3e67d53be6363e0eaabbd1ce038c226b82b8a494`返回`blocked`，报告与C6日志已纳入C7 checkpoint；该状态由C8 `in_review`取代。R1/R2原始报告及DSH `NOT_RUN`事实保留，产品测试仍`NOT_RUN`。
 
 ## 历史记录：2026-10-09 P01 正式启动 / IN_PROGRESS
 
@@ -71,7 +71,7 @@ P08 DSH R7已对base=ecb3b520ce68c2ddcc0c5ec94596e2f50a17f369、reviewed_head=fe
 
 保留：Manga109永久取消；BJ13维持0.90、手工改标＋skip，补标/补画不释放；Reader范围：仅跨页联动/页缩略图继续延期；基础Reader已由D1解冻，P16/P17实施仍未释放。LaMa/AOT/BrushNet/FLUX learned inpaint没有production实现，不默认投入；SimpleFill/EdgeBleed已在现有链路，是否足够由P08/P18质量证据决定。GC长会话总磁盘有界没有承诺，不为了漂亮路线图扩大删除能力。
 
-当前步骤：**P01 R1 findings已修订；C5固定范围31 paths Gate PASS。DSH R2对C6=`3e67d53be6363e0eaabbd1ce038c226b82b8a494`为`blocked`：报告中的R2-01是Reviewer sandbox无法执行任何外部命令，R2-02要求将C6 Gate日志与reviewed_head版本化，R2-03为P3加固建议。R2原始报告、prompt、exit、session metadata及C6 Gate日志进入C7 committed blocked checkpoint；后续尝试可执行的临时Review镜像，同时保证精确commit/tree不变；独立Review实际通过且Codex Integration Gate全部通过前不关闭AC7。R2/SYNTH carrier仍`NOT_VERIFIED`，不改用户裁决或来源Task状态。**
+历史步骤（截至C7，已被C8/C9取代）：P01 R1 findings已修订；C5固定范围31 paths Gate PASS。DSH R2对C6=`3e67d53be6363e0eaabbd1ce038c226b82b8a494`返回`blocked`；R2报告、prompt、exit、session metadata及C6 Gate日志进入C7 checkpoint。当时计划寻找可执行的临时Review镜像；C8后实际采用固定差量只读Review。C8 fixed head `91ab1ef8ddaa1d00b0b34880a103937b4831590d` 的正式decision=`changes_requested`，C9修订和复审为当前步骤。R2/SYNTH carrier仍`NOT_VERIFIED`，不改用户裁决或来源Task状态。当前恢复以页首和P01 RESUME最新checkpoint为准。
 
 ## 2026-10-08 完成：M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD
 

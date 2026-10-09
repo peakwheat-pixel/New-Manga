@@ -1,0 +1,22 @@
+{
+  "task_id": "P01",
+  "purpose": "verify Antigravity dispatch availability for non-author C9 review reassignment",
+  "agy_version": "1.3.1",
+  "project": "New Manga",
+  "prompt": "只回复两个字：收到",
+  "exit_code": 0,
+  "status": "SUCCESS",
+  "response": "收到",
+  "conversation_id": "998a2926-b79a-401b-8945-fa91457b3c9c",
+  "command": "agy -p <prompt> --project New Manga --output-format json --dangerously-skip-permissions",
+  "note": "Availability probe only; not a P01 Review or task delivery.",
+  "stdout_json_sha256": "563e78e5804492d2f26f7ffe6f96a5a747593719e79af6a771e8b690fb248446",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "raw_stdout_path": "C:\\Users\\49745\\AppData\\Local\\Temp\\P01-agy-probe.json",
+  "raw_stderr_path": "C:\\Users\\49745\\AppData\\Local\\Temp\\P01-agy-probe.stderr.log",
+  "shell_probe_conversation_id": "43ad4bac-6e67-4c9e-a81b-69bf5fade807",
+  "shell_probe_status": "SUCCESS",
+  "shell_probe_head": "91ab1ef8ddaa1d00b0b34880a103937b4831590d",
+  "shell_probe_tree": "6f8477d7fbc428b94aa031ae4fce1196cfb7e647",
+  "shell_probe_report": "verification/P01/agy-reviewer-shell-probe.stdout.md"
+}

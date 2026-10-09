@@ -1,0 +1,19 @@
+{
+  "purpose": "read-only DSH shell availability probe after mount",
+  "review_session_id": "session-c3af998d-bf66-4a75-965e-470bcbe5d370",
+  "cwd": "G:\\CODEX\\New Manga.worktrees\\P01-c8-review-dsh",
+  "cli": "dsh --profile headless --json --session-id session-c3af998d-bf66-4a75-965e-470bcbe5d370 -",
+  "cli_exit": 0,
+  "result": "SHELL_BLOCKED_WIN32_5",
+  "attempted_commands": [
+    "Get-Location",
+    "git rev-parse HEAD",
+    "git rev-parse 'HEAD^{tree}'"
+  ],
+  "all_commands_not_run": true,
+  "report_path": "verification/P01/dsh-c9-shell-probe.stdout.md",
+  "report_sha256": "d0869b7f1257fd7593ec320c39e0fe4378491393e797b373e6579fb157818bdd",
+  "stdout_jsonl_sha256": "0896a7e6afdac4f9694f4b0ce8c79c434cbd640f23bc30ac5047a6a515480c42",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "report_note": "C8 formal report and decision were not changed; no shell command ran; no repo files were changed by DSH."
+}

@@ -1,12 +1,12 @@
 # 项目文档索引与 Source of Truth
 
-当前工作：P08/P03=done；P01为唯一`blocked` Task，P系列done 2/21、blocked 1、proposed 18。R2因DSH执行环境无法运行Git/Python而blocked，恢复见[P01 RESUME](../verification/P01/RESUME.md)。
+当前工作：P08/P03=done；P01为唯一in_review Task，P系列done 2/21、in_review 1、proposed 18。C8 fixed head 91ab1ef8 的DeepSeek Harness Review=changes_requested；修订后的C9固定头由Antigravity执行非作者复审。R1/R2历史blocked决定保留，恢复见P01 RESUME。
 
 2026-10-08人员更新：Qoder已退出本项目。当前角色/接管名单见[协作协议](09_COLLABORATION.md)；未来UI设计/实现归ZCode，历史Qoder署名仅作证据。整体路线与恢复材料已同步，不新增产品释放。
 
 **整体规划入口**：[权威Plan与候选Task](REBASELINE_PLAN.md)、[中文依赖图](../verification/PROJECT-ROADMAP-20261008/ROADMAP.md)、[全项目报告](../verification/PROJECT-ROADMAP-20261008/REPORT.md)、[196节点历史台账](../verification/PROJECT-ROADMAP-20261008/task-inventory.csv)、[恢复点](../verification/PROJECT-ROADMAP-20261008/RESUME.md)。历史审计基线为e4242ecd；P08与P03已完成。167项登记完成或文档交付不代表新架构产品完成率。
 
-P08/P03 Task均已done；当前唯一Active Task为[P01](tasks/P01.md) `blocked`。DSH R2对C6=`3e67d53be6363e0eaabbd1ce038c226b82b8a494`返回`blocked`；R1 finding修订与C6 Codex fixed-head Gate均已核验，当前工作树candidate收录R2报告及C6 Gate日志，恢复见[P01 RESUME](../verification/P01/RESUME.md)。P03证据见[P03 RESUME](../verification/P03-PACKAGED-SFX-ENTRY/RESUME.md)。
+P08/P03 Task均已done；当前唯一Active Task为P01 in_review，当前C9 Reviewer=Antigravity。C8正式Review=changes_requested，修订/固定头复审进度与证据见P01 RESUME和doc/reviews/P01-91ab1ef8-dsh-c8.md。P03证据见P03 RESUME。
 
 全任务盘点与 inventory 下方段落是其各自审计时的历史快照，不反映当前总数或授权状态；以本页首段、[Plan](REBASELINE_PLAN.md) 与 [STATUS](STATUS.md) 为当前事实。
 
