@@ -1,4 +1,4 @@
-"""P02 Real Workbench WebView2 Verification Harness (Stage A r4).
+"""P02 Real Workbench WebView2 Verification Harness (Stage A r5).
 
 Stage A preflight and verdict report generator.
 NOTE: Interactive CDP and live WebView2 behavioral driving are NOT yet active
@@ -98,16 +98,43 @@ def get_git_info() -> dict[str, object]:
     }
 
 
-def load_authoritative_region_types() -> set[str]:
+def load_authoritative_enums() -> dict[str, set[str]]:
+    """Loads closed enum sets verbatim from apps/desktop/frontend/src/region/types.ts.
+    Fails closed if the authoritative source file is missing or unparseable (R4-02, R4-07)."""
     types_file = REPO_ROOT / "apps" / "desktop" / "frontend" / "src" / "region" / "types.ts"
     if not types_file.exists():
-        return {"speech", "sfx", "narration", "title", "note", "other"}
+        raise RuntimeError(f"Authoritative enum source missing: {types_file} (fail closed per R4-07)")
     text = types_file.read_text(encoding="utf-8")
-    m = re.search(r"export\s+const\s+REGION_TYPE_VALUES\s*=\s*\[([^\]]+)\]", text)
-    if not m:
-        return {"speech", "sfx", "narration", "title", "note", "other"}
-    vals = re.findall(r'["\']([^"\']+)["\']', m.group(1))
-    return set(vals)
+
+    # 1. REGION_TYPE_VALUES
+    m_types = re.search(r"export\s+const\s+REGION_TYPE_VALUES\s*=\s*\[([^\]]+)\]", text)
+    if not m_types:
+        raise RuntimeError(f"Failed to parse REGION_TYPE_VALUES from {types_file} (fail closed per R4-07)")
+    region_types = set(re.findall(r'["\']([^"\']+)["\']', m_types.group(1)))
+    if not region_types:
+        raise RuntimeError(f"Parsed empty REGION_TYPE_VALUES from {types_file} (fail closed per R4-07)")
+
+    # 2. SfxPolicy: export type SfxPolicy = "skip" | "translate" | "manual";
+    m_sfx = re.search(r"export\s+type\s+SfxPolicy\s*=\s*([^;]+);", text)
+    if not m_sfx:
+        raise RuntimeError(f"Failed to parse SfxPolicy from {types_file} (fail closed per R4-07)")
+    sfx_policies = set(re.findall(r'["\']([^"\']+)["\']', m_sfx.group(1)))
+    if not sfx_policies:
+        raise RuntimeError(f"Parsed empty SfxPolicy from {types_file} (fail closed per R4-07)")
+
+    # 3. RegionOrigin: export type RegionOrigin = "machine" | "user" | "imported" | "restored";
+    m_orig = re.search(r"export\s+type\s+RegionOrigin\s*=\s*([^;]+);", text)
+    if not m_orig:
+        raise RuntimeError(f"Failed to parse RegionOrigin from {types_file} (fail closed per R4-07)")
+    region_origins = set(re.findall(r'["\']([^"\']+)["\']', m_orig.group(1)))
+    if not region_origins:
+        raise RuntimeError(f"Parsed empty RegionOrigin from {types_file} (fail closed per R4-07)")
+
+    return {
+        "region_types": region_types,
+        "sfx_policies": sfx_policies,
+        "region_origins": region_origins,
+    }
 
 
 def hex_to_rgb(hex_str: str) -> tuple[int, int, int]:
@@ -197,9 +224,13 @@ def self_test_contrast_math() -> None:
 
 def validate_fixtures_data(
     fixtures: dict[str, object],
-    authoritative_region_types: set[str],
+    enums: dict[str, set[str]],
 ) -> dict[str, object]:
     """Performs deep full-traversal validation across all books, chapters, pages, regions, revisions, and scenarios."""
+    authoritative_region_types = enums["region_types"]
+    authoritative_sfx_policies = enums["sfx_policies"]
+    authoritative_region_origins = enums["region_origins"]
+
     # 1. Books
     books = fixtures.get("books")
     assert isinstance(books, list) and len(books) > 0, "books fixture must be a non-empty list"
@@ -210,7 +241,8 @@ def validate_fixtures_data(
             assert isinstance(b.get(key), str) and b.get(key), f"Missing or invalid string field {key} in book"
         for bkey in ["is_favorite", "is_archived"]:
             assert isinstance(b.get(bkey), bool), f"Field {bkey} in book must be boolean"
-        assert isinstance(b.get("page_count"), int), "page_count in book must be int"
+        # R4-11: page_count can be null per library/types.ts:23
+        assert b.get("page_count") is None or isinstance(b.get("page_count"), int), "page_count in book must be int or None"
         book_ids.add(b["book_id"])
 
     # 2. Chapters
@@ -256,14 +288,25 @@ def validate_fixtures_data(
             assert isinstance(reg.get("region_id"), str) and reg.get("region_id"), "Missing region_id"
             assert reg.get("page_id") == page_id_key, f"Region page_id mismatch: {reg.get('page_id')} != {page_id_key}"
             assert reg.get("region_type") in authoritative_region_types, f"Invalid region_type: {reg.get('region_type')}"
-            assert reg.get("sfx_policy") in ["skip", "translate", "ignore"], f"Invalid sfx_policy: {reg.get('sfx_policy')}"
-            assert reg.get("origin") in ["user", "machine", "legacy"], f"Invalid origin: {reg.get('origin')}"
+            # R4-02: exact closed enum from region/types.ts:33
+            assert reg.get("sfx_policy") in authoritative_sfx_policies, f"Invalid sfx_policy: {reg.get('sfx_policy')}"
+            # R4-02: exact closed enum from region/types.ts:37
+            assert reg.get("origin") in authoritative_region_origins, f"Invalid origin: {reg.get('origin')}"
             assert isinstance(reg.get("revision_no"), int), "revision_no must be int"
 
+            # R4-11: Validate NormalizedRegionGeometry bbox and polygon
             geom = reg.get("geometry")
             assert isinstance(geom, dict), "geometry must be dict"
             bbox = geom.get("bbox")
             assert isinstance(bbox, list) and len(bbox) == 4, "bbox must be 4-element list"
+            for bi, bv in enumerate(bbox):
+                assert isinstance(bv, (int, float)) and not isinstance(bv, bool) and 0.0 <= bv <= 1.0, f"bbox[{bi}] must be number in [0, 1], got {bv}"
+            poly = geom.get("polygon")
+            assert isinstance(poly, list), "polygon must be list"
+            for pi, pt in enumerate(poly):
+                assert isinstance(pt, list) and len(pt) == 2, f"polygon[{pi}] must be [x, y], got {pt}"
+                for ci, coord in enumerate(pt):
+                    assert isinstance(coord, (int, float)) and not isinstance(coord, bool) and 0.0 <= coord <= 1.0, f"polygon[{pi}][{ci}] must be in [0, 1], got {coord}"
 
             revs = reg.get("revisions")
             assert isinstance(revs, list) and len(revs) > 0, f"Region {reg.get('region_id')} has no revisions"
@@ -272,13 +315,13 @@ def validate_fixtures_data(
                 total_revisions += 1
                 assert isinstance(rev.get("region_revision_id"), str) and rev.get("region_revision_id"), "Missing region_revision_id"
                 assert isinstance(rev.get("revision_no"), int), "revision_no must be int"
-                assert rev.get("origin") in ["user", "machine", "legacy"], f"Invalid revision origin: {rev.get('origin')}"
+                assert rev.get("origin") in authoritative_region_origins, f"Invalid revision origin: {rev.get('origin')}"
                 assert isinstance(rev.get("review_state"), str), "Missing review_state"
                 assert isinstance(rev.get("is_pinned"), bool), "is_pinned must be bool"
                 assert rev.get("restored_from_revision_id") is None or isinstance(rev.get("restored_from_revision_id"), str), "Invalid restored_from_revision_id"
                 assert isinstance(rev.get("created_at"), str) and rev.get("created_at"), "Missing created_at in revision"
                 assert rev.get("region_type") in authoritative_region_types, f"Invalid revision region_type: {rev.get('region_type')}"
-                assert rev.get("sfx_policy") in ["skip", "translate", "ignore"], f"Invalid revision sfx_policy: {rev.get('sfx_policy')}"
+                assert rev.get("sfx_policy") in authoritative_sfx_policies, f"Invalid revision sfx_policy: {rev.get('sfx_policy')}"
                 assert isinstance(rev.get("is_current"), bool), "is_current must be bool"
 
     # 5. Post-write scenarios
@@ -320,64 +363,156 @@ def validate_fixtures_data(
     }
 
 
-def self_test_pre01_mutations(fixtures_raw: dict[str, object], authoritative_types: set[str]) -> None:
-    """Proves that mutating beyond the first item, illegal enums, missing fields, or broken FKs are strictly rejected."""
+def self_test_pre01_mutations(fixtures_raw: dict[str, object], enums: dict[str, set[str]]) -> dict[str, object]:
+    """Proves that mutating beyond the first item, illegal enums, missing fields, or broken FKs are strictly rejected (R4-08)."""
+    results: dict[str, str] = {}
+    total_configured = 4
+    executed_count = 0
+    rejected_count = 0
+    skipped_count = 0
+
     # Mutation 1: second region has invalid enum
     mut1 = copy.deepcopy(fixtures_raw)
     first_page_regs = next(iter(mut1["regions"].values()))
     if len(first_page_regs) > 1:
         first_page_regs[1]["region_type"] = "illegal_mutant_type"
+        executed_count += 1
         try:
-            validate_fixtures_data(mut1, authoritative_types)
+            validate_fixtures_data(mut1, enums)
             raise RuntimeError("Mutation 1 failed to trigger validation error!")
         except AssertionError:
-            pass
+            rejected_count += 1
+            results["mutation_1_second_region_invalid_enum"] = "REJECTED_AS_EXPECTED"
+    else:
+        skipped_count += 1
+        results["mutation_1_second_region_invalid_enum"] = "SKIPPED_INSUFFICIENT_REGIONS"
 
     # Mutation 2: second revision missing is_current
     mut2 = copy.deepcopy(fixtures_raw)
     first_page_regs = next(iter(mut2["regions"].values()))
     if len(first_page_regs) > 1 and len(first_page_regs[1].get("revisions", [])) > 0:
         del first_page_regs[1]["revisions"][0]["is_current"]
+        executed_count += 1
         try:
-            validate_fixtures_data(mut2, authoritative_types)
+            validate_fixtures_data(mut2, enums)
             raise RuntimeError("Mutation 2 failed to trigger validation error!")
         except AssertionError:
-            pass
+            rejected_count += 1
+            results["mutation_2_second_rev_missing_field"] = "REJECTED_AS_EXPECTED"
+    else:
+        skipped_count += 1
+        results["mutation_2_second_rev_missing_field"] = "SKIPPED_INSUFFICIENT_REVISIONS"
 
     # Mutation 3: missing restore scenario
     mut3 = copy.deepcopy(fixtures_raw)
     del mut3["post_write_scenarios"]["restore"]
+    executed_count += 1
     try:
-        validate_fixtures_data(mut3, authoritative_types)
+        validate_fixtures_data(mut3, enums)
         raise RuntimeError("Mutation 3 failed to trigger validation error!")
     except AssertionError:
-        pass
+        rejected_count += 1
+        results["mutation_3_missing_restore_scenario"] = "REJECTED_AS_EXPECTED"
 
     # Mutation 4: chapter references non-existent book
     mut4 = copy.deepcopy(fixtures_raw)
     mut4["chapters"]["non_existent_book_id"] = [
         {"chapter_id": "c1", "chapter_number": "1", "title": "t", "sort_order": 1}
     ]
+    executed_count += 1
     try:
-        validate_fixtures_data(mut4, authoritative_types)
+        validate_fixtures_data(mut4, enums)
         raise RuntimeError("Mutation 4 failed to trigger validation error!")
     except AssertionError:
-        pass
+        rejected_count += 1
+        results["mutation_4_broken_foreign_key"] = "REJECTED_AS_EXPECTED"
+
+    all_passed = (executed_count == total_configured and rejected_count == total_configured and skipped_count == 0)
+    return {
+        "total_configured": total_configured,
+        "executed_count": executed_count,
+        "rejected_count": rejected_count,
+        "skipped_count": skipped_count,
+        "all_rejected_as_expected": all_passed,
+        "details": results,
+    }
 
 
-def self_test_pre02_freshness(current_head: str, current_tree: str) -> None:
-    """Proves that a stale static probe report is rejected by freshness verification."""
-    stale_report = {
+def evaluate_static_probe_report(
+    report_data: dict[str, object] | None,
+    current_head: str,
+    current_tree: str,
+    expected_inputs_sha256: dict[str, str],
+) -> tuple[bool, int | None, str]:
+    """
+    Evaluates freshness and integrity of static probe report (R4-04, R4-05).
+    Returns (is_fresh_and_valid, observed_exit_code, reason).
+    """
+    if not isinstance(report_data, dict):
+        return False, None, "report_not_a_dict"
+
+    # Exit code must be present and integer (R4-04: missing exit_code must not be synthesized)
+    exit_code = report_data.get("exit_code")
+    if not isinstance(exit_code, int):
+        return False, None, "missing_or_non_integer_exit_code"
+
+    # Check git provenance
+    if report_data.get("source_head") != current_head:
+        return False, exit_code, "stale_source_head"
+    if report_data.get("source_tree") != current_tree:
+        return False, exit_code, "stale_source_tree"
+
+    # Check input hashes (R4-04: prevent reusing same-HEAD stale PASS when working directory is dirty)
+    rep_inputs = report_data.get("probe_inputs_sha256")
+    if not isinstance(rep_inputs, dict):
+        return False, exit_code, "missing_probe_inputs_sha256"
+    for k, expected_hash in expected_inputs_sha256.items():
+        if rep_inputs.get(k) != expected_hash:
+            return False, exit_code, f"input_hash_mismatch_{k}"
+
+    if report_data.get("overall_status") != "PASS":
+        return True, exit_code, "valid_report_with_fail_status"
+
+    return True, exit_code, "fresh_and_valid"
+
+
+def self_test_pre02_freshness(current_head: str, current_tree: str, valid_inputs: dict[str, str]) -> None:
+    """Proves that evaluate_static_probe_report rejects stale head, dirty inputs, missing exit_code, and malformed data (R4-05)."""
+    # 1. Stale head
+    r1 = {
         "overall_status": "PASS",
         "source_head": "0000000000000000000000000000000000000000",
-        "source_tree": "0000000000000000000000000000000000000000",
+        "source_tree": current_tree,
         "exit_code": 0,
+        "probe_inputs_sha256": valid_inputs,
     }
-    is_fresh = (
-        stale_report.get("source_head") == current_head
-        and stale_report.get("source_tree") == current_tree
-    )
-    assert not is_fresh, "Stale report must NOT be considered fresh!"
+    fresh1, exit1, _ = evaluate_static_probe_report(r1, current_head, current_tree, valid_inputs)
+    assert not fresh1, "Must reject stale head!"
+
+    # 2. Dirty input hash mismatch (same head/tree)
+    r2 = {
+        "overall_status": "PASS",
+        "source_head": current_head,
+        "source_tree": current_tree,
+        "exit_code": 0,
+        "probe_inputs_sha256": {**valid_inputs, "workbench_page_tsx": "mutated_hash_xyz"},
+    }
+    fresh2, exit2, _ = evaluate_static_probe_report(r2, current_head, current_tree, valid_inputs)
+    assert not fresh2, "Must reject dirty input mismatch!"
+
+    # 3. Missing exit code (R4-04: must remain unverifiable/None)
+    r3 = {
+        "overall_status": "PASS",
+        "source_head": current_head,
+        "source_tree": current_tree,
+        "probe_inputs_sha256": valid_inputs,
+    }
+    fresh3, exit3, _ = evaluate_static_probe_report(r3, current_head, current_tree, valid_inputs)
+    assert not fresh3 and exit3 is None, "Must reject missing exit code and keep exit None!"
+
+    # 4. Malformed report
+    fresh4, exit4, _ = evaluate_static_probe_report(None, current_head, current_tree, valid_inputs)
+    assert not fresh4 and exit4 is None, "Must reject non-dict report!"
 
 
 class WorkbenchHarness:
@@ -386,7 +521,15 @@ class WorkbenchHarness:
         self.verdicts: list[dict[str, object]] = []
         self.findings: list[str] = []
         self_test_contrast_math()
-        self_test_pre02_freshness(str(self.git_info["head"]), str(self.git_info["tree"]))
+        self_test_pre02_freshness(str(self.git_info["head"]), str(self.git_info["tree"]), self.get_probe_inputs_sha256())
+
+    def get_probe_inputs_sha256(self) -> dict[str, str]:
+        probe_py = VERIFICATION_DIR / "probes" / "static_control_probe.py"
+        return {
+            "workbench_page_tsx": sha256_file(REPO_ROOT / "apps" / "desktop" / "frontend" / "src" / "workbench" / "WorkbenchPage.tsx"),
+            "app_tsx": sha256_file(REPO_ROOT / "apps" / "desktop" / "frontend" / "src" / "App.tsx"),
+            "probe_script": sha256_file(probe_py),
+        }
 
     def record_verdict(
         self,
@@ -430,12 +573,15 @@ class WorkbenchHarness:
                 data = json.load(f)
             fixtures = data.get("fixtures", {})
 
-            authoritative_types = load_authoritative_region_types()
-            # Run mutation self-check to prove rejection capability
-            self_test_pre01_mutations(fixtures, authoritative_types)
+            # R4-02 & R4-07: Load authoritative closed enums (fails closed on failure)
+            enums = load_authoritative_enums()
 
-            # Full traversal validation across all fixtures
-            val_summary = validate_fixtures_data(fixtures, authoritative_types)
+            # R4-08: Run mutation self-check to prove rejection capability with exact counting
+            mut_res = self_test_pre01_mutations(fixtures, enums)
+            assert mut_res["all_rejected_as_expected"], f"Mutation self-test incomplete: {mut_res}"
+
+            # Full traversal validation across all fixtures (R4-02, R4-11)
+            val_summary = validate_fixtures_data(fixtures, enums)
 
             self.record_verdict(
                 "PRE-01",
@@ -447,7 +593,12 @@ class WorkbenchHarness:
                     "sections_validated": list(fixtures.keys()),
                     "counts": val_summary,
                     "relabel_transition_verified": "speech -> sfx (relabelMachine authorized)",
-                    "mutation_rejection_self_test": "PASS (4 mutation cases rejected)",
+                    "mutation_rejection_self_test": f"{mut_res['executed_count']}/{mut_res['total_configured']} executed and rejected (skipped: {mut_res['skipped_count']})",
+                    "authoritative_enums_enforced": {
+                        "region_types": sorted(list(enums["region_types"])),
+                        "sfx_policies": sorted(list(enums["sfx_policies"])),
+                        "region_origins": sorted(list(enums["region_origins"])),
+                    },
                     "file": str(FIXTURES_PATH.relative_to(REPO_ROOT)),
                 },
             )
@@ -466,6 +617,7 @@ class WorkbenchHarness:
         static_report_path = VERIFICATION_DIR / "static-control-report.json"
         probe_py = VERIFICATION_DIR / "probes" / "static_control_probe.py"
 
+        expected_inputs = self.get_probe_inputs_sha256()
         report_is_fresh = False
         observed_exit = None
         srep = None
@@ -474,11 +626,9 @@ class WorkbenchHarness:
             try:
                 with static_report_path.open("r", encoding="utf-8") as f:
                     srep = json.load(f)
-                head_match = (srep.get("source_head") == self.git_info["head"])
-                tree_match = (srep.get("source_tree") == self.git_info["tree"])
-                if head_match and tree_match:
-                    report_is_fresh = True
-                    observed_exit = srep.get("exit_code", 0 if srep.get("overall_status") == "PASS" else 1)
+                report_is_fresh, observed_exit, reason = evaluate_static_probe_report(
+                    srep, str(self.git_info["head"]), str(self.git_info["tree"]), expected_inputs
+                )
             except Exception:
                 report_is_fresh = False
 
@@ -489,10 +639,15 @@ class WorkbenchHarness:
                 try:
                     with static_report_path.open("r", encoding="utf-8") as f:
                         srep = json.load(f)
+                    report_is_fresh, observed_exit, reason = evaluate_static_probe_report(
+                        srep, str(self.git_info["head"]), str(self.git_info["tree"]), expected_inputs
+                    )
                 except Exception:
                     srep = {"overall_status": "FAIL", "raw_stdout": proc.stdout, "raw_stderr": proc.stderr}
+                    report_is_fresh = False
             else:
                 srep = {"overall_status": "FAIL", "raw_stdout": proc.stdout, "raw_stderr": proc.stderr}
+                report_is_fresh = False
 
         probe_pass = (observed_exit == 0 and srep is not None and srep.get("overall_status") == "PASS")
         if not probe_pass:
@@ -509,7 +664,7 @@ class WorkbenchHarness:
                 "observed_probe_exit_code": observed_exit,
                 "bound_source_head": srep.get("source_head", self.git_info["head"]) if srep else self.git_info["head"],
                 "bound_source_tree": srep.get("source_tree", self.git_info["tree"]) if srep else self.git_info["tree"],
-                "report_freshness_verified": True,
+                "report_freshness_verified": report_is_fresh,
                 "workbench_page": srep.get("workbench_page") if srep else {},
                 "app_navigation": srep.get("app_navigation") if srep else {},
             },
@@ -691,24 +846,13 @@ class WorkbenchHarness:
             )
 
     def persist_results(self) -> None:
-        """AC7: Persists structured evidence files with pure LF line endings."""
-        artifact_files = [
-            "verification/P02/env-identity-report.json",
-            "verification/P02/static-control-report.json",
-            "verification/P02/p02-harness-results.txt",
-            "verification/P02/probe-execution-probeonly.log",
-            "verification/P02/probe-execution-full.log",
-        ]
-        artifact_hashes = {}
-        for af in artifact_files:
-            af_p = REPO_ROOT / af
-            if af_p.exists():
-                artifact_hashes[af] = sha256_file(af_p)
-
+        """AC7: Persists structured evidence files with pure LF line endings.
+        Two-phase finalization (R4-03): artifact hashes are populated in the finalize phase
+        after all runner execution logs are completely flushed to disk."""
         report = {
             "task_id": "P02",
             "owner": "Antigravity",
-            "stage": "STAGE_A_SAFE_FOUNDATION_R4",
+            "stage": "STAGE_A_SAFE_FOUNDATION_R5",
             "provenance": {
                 "source_head": self.git_info["head"],
                 "source_tree": self.git_info["tree"],
@@ -723,8 +867,10 @@ class WorkbenchHarness:
                     "powershell -ExecutionPolicy Bypass -File verification/P02/run-webview.ps1 -ProbeOnly",
                     "powershell -ExecutionPolicy Bypass -File verification/P02/run-webview.ps1",
                     "python verification/P02/harness/workbench_cdp_harness.py",
+                    "python verification/P02/harness/workbench_cdp_harness.py --finalize",
                 ],
-                "artifact_hashes": artifact_hashes,
+                "artifact_hashes": "PENDING_TWO_PHASE_FINALIZATION",
+                "finalization_status": "PENDING",
                 "note": (
                     "Pre-commit execution evidence. The final delivery commit will be created "
                     "upon committing; exact head will be independently replayed and validated "
@@ -757,7 +903,7 @@ class WorkbenchHarness:
             f.write("\n")
 
         lines = [
-            "=== P02 Real Workbench WebView2 Harness Verdict Report (Stage A r4) ===",
+            "=== P02 Real Workbench WebView2 Harness Verdict Report (Stage A r5) ===",
             f"Source HEAD: {self.git_info['head']}",
             f"Source Tree: {self.git_info['tree']}",
             f"Branch: {self.git_info['branch']}",
@@ -782,7 +928,52 @@ class WorkbenchHarness:
         print("\n".join(lines))
 
 
+def finalize_artifact_hashes() -> int:
+    """Two-phase finalization (R4-03):
+    Runs AFTER the PowerShell runner has completely flushed all execution logs to disk.
+    Computes exact SHA-256 for all finalized evidence artifacts and updates p02-harness-results.json.
+    Does NOT hash p02-harness-results.json into itself (avoids self-referential report hashing)."""
+    json_path = VERIFICATION_DIR / "p02-harness-results.json"
+    if not json_path.exists():
+        print(f"[Finalize] Error: {json_path} does not exist!", file=sys.stderr)
+        return 1
+
+    with json_path.open("r", encoding="utf-8") as f:
+        data = json.load(f)
+
+    artifact_files = [
+        "verification/P02/env-identity-report.json",
+        "verification/P02/static-control-report.json",
+        "verification/P02/p02-harness-results.txt",
+        "verification/P02/probe-execution-probeonly.log",
+        "verification/P02/probe-execution-full.log",
+    ]
+    hashes: dict[str, str] = {}
+    for af in artifact_files:
+        p = REPO_ROOT / af
+        if p.exists():
+            hashes[af] = sha256_file(p)
+        else:
+            hashes[af] = "FILE_MISSING"
+
+    data["provenance"]["artifact_hashes"] = hashes
+    data["provenance"]["finalization_status"] = "FINALIZED"
+    data["provenance"]["finalized_at"] = time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
+
+    with json_path.open("w", encoding="utf-8", newline="\n") as f:
+        json.dump(data, f, indent=2, ensure_ascii=False)
+        f.write("\n")
+
+    print("=== P02 Artifact Hashes Finalized (Two-Phase R4-03) ===")
+    for af, h in hashes.items():
+        print(f"  {af}: {h}")
+    return 0
+
+
 def main() -> int:
+    if "--finalize" in sys.argv:
+        return finalize_artifact_hashes()
+
     harness = WorkbenchHarness()
     preflight_ok = harness.run_preflight_checks()
     harness.register_runtime_blocked_scenarios()

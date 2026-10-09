@@ -11,6 +11,7 @@ Produces structured JSON and human-readable text verification reports with pure 
 
 from __future__ import annotations
 
+import hashlib
 import json
 import re
 import subprocess
@@ -150,6 +151,16 @@ def get_git_rev(args: list[str]) -> str:
         return "UNKNOWN"
 
 
+def sha256_file(path: Path) -> str:
+    if not path.exists():
+        return "MISSING"
+    h = hashlib.sha256()
+    with path.open("rb") as f:
+        while chunk := f.read(65536):
+            h.update(chunk)
+    return h.hexdigest()
+
+
 def main() -> int:
     wb_report = check_workbench_page()
     app_report = check_app_navigation()
@@ -158,11 +169,18 @@ def main() -> int:
     overall_pass = (wb_report["status"] == "PASS" and app_report["status"] == "PASS")
     exit_code = 0 if overall_pass else 1
 
+    probe_inputs = {
+        "workbench_page_tsx": sha256_file(FRONTEND_SRC / "workbench" / "WorkbenchPage.tsx"),
+        "app_tsx": sha256_file(FRONTEND_SRC / "App.tsx"),
+        "probe_script": sha256_file(Path(__file__).resolve()),
+    }
+
     report = {
         "probe": "P02_STATIC_SOURCE_CONTRACT_CONTROL",
         "overall_status": "PASS" if overall_pass else "FAIL",
         "source_head": get_git_rev(["rev-parse", "HEAD"]),
         "source_tree": get_git_rev(["rev-parse", "HEAD^{tree}"]),
+        "probe_inputs_sha256": probe_inputs,
         "exit_code": exit_code,
         "timestamp": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
         "workbench_page": wb_report,

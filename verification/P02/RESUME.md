@@ -1,6 +1,42 @@
 # P02 恢复点
 
-## 当前检查点：P02 Stage A 定向修订 (r4) 已就绪；响应 DSH r3 条件项与 Codex 复跑要求
+## 当前检查点：P02 Stage A 定向修订 (r5) 已就绪；响应 DSH r4 审查 (R4-01~R4-11) 与 Codex exact replay 证据
+
+- 时间：2026-10-09 UTC。
+- Task=`doc/tasks/P02.md`，status=`in_progress` / ExecutionState=`ACTIVE`；`integration_commit: null`；Owner=Antigravity、非作者实现Reviewer=DeepSeek Harness、Integrator=Codex。
+- 行为基线=`241ff3b70b6fc0490ea238efd486cc707f849031`，冻结 scope contract SHA-256=`27DC31A8CF3304ABA6783E243F36895FFE4AAA3CCBCA76D58E8B766C403E1425`。
+- 本轮定向修订源自非作者实现 Reviewer DeepSeek Harness 对 `reviewed_head=cc1bd7505f3fc48079db7ea2719040e77a8c58dd` 的 DSH r4 Review (`changes_requested`，P0/P1/P2/P3=`0/0/3/8`，open=11：R4-01~R4-11) 以及 Codex independent review (`r4-codex-independent-review.md`)。
+- 历史 Review 编号映射说明（保留历史快照，明确报告归属与作者侧标签）：
+  - DSH r1 报告（`doc/reviews/P02-972049f9-dsh-review.md`）：F-01~F-12（全部 closed）；
+  - DSH r2 报告（`doc/reviews/P02-9b82e97b-dsh-r2-review.md`）：新增 7 项，作者侧对应标记为 G-01~G-07（全部 closed）；
+  - DSH r3 报告（`doc/reviews/P02-5fa8a41f-dsh-r3-review.md`）：approved_with_conditions，10 项条件项，作者侧对应标记为 H-01~H-07 与 r2 残余，Codex 独立核验对应列为 C1~C5（全部 closed）；
+  - DSH r4 报告（`verification/P02/implementation-stage-a-r4-dsh-review.md`）：正式列出 R4-01~R4-11（P2 3 项，P3 8 项），即本轮 r5 的唯一定向修复对象。
+- r5 修订处置结果（逐项闭环）：
+  - **R4-01 (P2)**: 修复 `apps/desktop/frontend/e2e/workbench_driver_protocol.ts` 第 162 行 `effectiveFg` 的元组注解，彻底消除 `TS2556`；在 `run-webview.ps1` 中集成可运行的 focused TypeScript 类型检查（`node .../tsc ...`，实测 EXIT=0）。
+  - **R4-02 (P2)**: `sfx_policy` 与 `origin` 严格依据 `apps/desktop/frontend/src/region/types.ts` 源码闭集校验；合法值包括 `manual`、`imported` 与 `restored`，非法值（`ignore`、`legacy`）绝不通过。
+  - **R4-03 (P2)**: 重构为两阶段 Finalization（Two-Phase Artifact Finalization）；在 PowerShell runner 将运行日志完全定稿落盘（含 `EXIT=0`）后，通过 `--finalize` 独立步骤计算生成工件的真实字节 SHA-256 并更新 `p02-harness-results.json`；杜绝未落盘提前哈希的时序矛盾，不将结果文件哈希记录于自身，彻底消除自引用死结。
+  - **R4-04 (P3)**: 探针新鲜度不仅校验 HEAD 与 tree，还校验 `probe_inputs_sha256`（杜绝同 HEAD 下 dirty 文件误用旧 PASS）；缺失 `exit_code` 时保持 `None` 并判定为未验证，不进行状态猜测合成。
+  - **R4-05 (P3)**: PRE-02 自检真实调用评估函数 `evaluate_static_probe_report` 检验失效用例；`report_freshness_verified` 根据观察到的结果动态计算，绝非硬编码常量。
+  - **R4-06 (P3)**: `run-webview.ps1` 异常路径完整捕获当前步骤名、命令、参数、异常类型与详细信息；通过本地微探针在 Windows PowerShell 5.1 环境下实测验证落盘有效性。
+  - **R4-07 (P3)**: 权威枚举解析 `load_authoritative_enums()` 采取 fail-closed 策略；若源文件缺失或正则解析失败直接抛出异常中断，绝不静默回退硬编码值。
+  - **R4-08 (P3)**: Mutation 自检精准统计执行、拒绝与跳过组数；仅当 4 组均执行且拒绝且无跳过时才报告 4/4 拒绝；实测 `4/4 executed and rejected (skipped: 0)`。
+  - **R4-09 (P3)**: 协议层 `workbench_driver_protocol.ts` 与夹具 `workbench_synthetic_data.json` 中统一 `large_text` 阈值为严格的 `>= 4.5:1`，绝不给文本放宽至 3.0:1。
+  - **R4-10 (P3)**: `run-webview.ps1` 启动时立即向磁盘写入头并截断日志，标记 `Status: IN_PROGRESS`，杜绝任何 pre-`try` 异常或中断导致残留旧 PASS 日志。
+  - **R4-11 (P3)**: `validate_fixtures_data` 允许 `page_count` 为 `null`（符合 `library/types.ts:23`）；geometry 增加 `bbox` 4 个 0..1 数值范围及 `polygon` 点结构严密校验。
+- 实际验证状态（全部 EXIT=0）：
+  - `TypeScript Protocol Check`: `node .../tsc ...` -> **PASS (EXIT=0)**
+  - `powershell.exe -NoProfile -ExecutionPolicy Bypass -File verification/P02/run-webview.ps1 -ProbeOnly` -> **PASS (EXIT=0)** -> `probe-execution-probeonly.log`
+  - `powershell.exe -NoProfile -ExecutionPolicy Bypass -File verification/P02/run-webview.ps1` -> **PASS (EXIT=0)** -> `probe-execution-full.log`
+  - `python verification/P02/harness/workbench_cdp_harness.py --finalize` -> **PASS (EXIT=0)**
+  - `PRE-01` (synthetic_fixture_presence): **PASS** (Layer: `FILESYSTEM`, Exit: 0)
+  - `PRE-02` (static_source_contract_check): **PASS** (Layer: `STATIC_AST`, Exit: 0)
+  - `PRE-03` (f_token_and_palette_math_model): **PASS** (Layer: `TOKEN_MODEL`, Exit: 0)
+  - `AC1`~`AC6` 真实 WebView2 运行时场景: **BLOCKED** (Layer: `REAL_WEBVIEW2` / `REAL_WEBVIEW_MOCK_IPC`，Exit: `null`)
+  - 5 项落盘工件 SHA-256 与 `p02-harness-results.json` 记录值 100% 精确一致。
+- 硬构建屏障（Hard Build Barrier）继续生效：严禁在本 Owner worktree 运行 Cargo/Tauri/sidecar build。
+- 下一步操作：提交固定交付 commit，由 Codex 在 clean detached exact head 独立复跑 Stage A probes 并完成 Gate 复算；交由 DeepSeek Harness 进行 Stage A r5 复审。
+
+## 历史检查点：P02 Stage A 定向修订 (r4) 已就绪；响应 DSH r3 条件项与 Codex 复跑要求
 
 - 时间：2026-10-09 UTC。
 - Task=`doc/tasks/P02.md`，status=`in_progress` / ExecutionState=`ACTIVE`；Owner=Antigravity、非作者实现Reviewer=DeepSeek Harness、Integrator=Codex。

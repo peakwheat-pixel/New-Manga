@@ -159,7 +159,8 @@ export function calculateContrastRatio(
     effectiveBg = [bgRgba[0], bgRgba[1], bgRgba[2]];
   }
 
-  const effectiveFg = fgRgba[3] < 1.0 ? blendAlpha(fgRgba, effectiveBg) : [fgRgba[0], fgRgba[1], fgRgba[2]];
+  const effectiveFg: [number, number, number] =
+    fgRgba[3] < 1.0 ? blendAlpha(fgRgba, effectiveBg) : [fgRgba[0], fgRgba[1], fgRgba[2]];
 
   const l1 = calculateRelativeLuminance(...effectiveFg);
   const l2 = calculateRelativeLuminance(...effectiveBg);
@@ -211,7 +212,9 @@ export function evaluateContrast(
     };
   }
 
-  const minRequired = role === "text" ? 4.5 : 3.0;
+  // AC6 & R4-09: All ordinary text (including large_text) requires >= 4.5:1;
+  // only disabled text and non-text UI components use 3.0:1.
+  const minRequired = (role === "disabled" || role === "ui_component") ? 3.0 : 4.5;
   const isPass = result.ratio >= minRequired;
 
   return {
