@@ -1,0 +1,19 @@
+{
+  "reviewed_parent": "b14c7d2750cc53f0ae4edae6f3f5435398edccc9",
+  "completed_at": "2026-10-09T16:47:07.7374097Z",
+  "cli_version": "0.2.0-rc.2",
+  "stderr_bytes": 0,
+  "reviewer": "DeepSeek Harness",
+  "mount_exit_code": 0,
+  "exit_code": 0,
+  "raw_jsonl_external_path": "C:\\Users\\49745\\.codex\\worktrees\\p02-process-isolation-plan\\dsh-review-logs\\dsh-review-p02-preflight-r2.stdout.jsonl",
+  "mount_script": "mount_session.py --id session-b269500a-6fba-46dd-b843-60bc020f59c2 --project P02-preflight-review-dsh-r2",
+  "reviewed_tree": "1340c5282e32361c117f0aeacb670d412fe568c9",
+  "command": "dsh --profile headless --json -",
+  "reviewed_head": "7d8951c28cd954d7e325cd53e7991f3bec87d971",
+  "mounted_project": "C:\\Users\\49745\\.codex\\worktrees\\P02-preflight-review-dsh-r2",
+  "dispatched_at": "2026-10-09T16:39Z",
+  "task_base": "6855c113e6a44320d9555777900cfb78a218d383",
+  "session_id": "session-b269500a-6fba-46dd-b843-60bc020f59c2",
+  "raw_jsonl_committed": false
+}
