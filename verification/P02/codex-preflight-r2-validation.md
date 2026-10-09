@@ -2,7 +2,7 @@
 
 - Verification time: 2026-10-10 00:34 Asia/Shanghai (2026-10-09 16:34 UTC).
 - Fixed change commit: 80cf56514e7b079fc18c71730558edd6913f80f3; tree=234cd26f735774400838f898910fc2454f7f9dde; parent=cd3e86d6f072888270d0179627fe4c39cce4829c; base=6855c113e6a44320d9555777900cfb78a218d383. Branch=codex/P02-process-isolation; author worktree clean; three commits from base through fixed change.
-- Scope delta r7 authorizes the exact changes and evidence in this candidate. The 24 current candidate paths equal the 24-path allowlist; unexpected paths=0. Product source, tests, dependencies, IPC, Schema, build inputs, user data, and Owner allowlist are unchanged.
+- At fixed change HEAD `80cf56514e7b079fc18c71730558edd6913f80f3`, the base-relative diff was 24 paths; at exact-head review HEAD `7d8951c28cd954d7e325cd53e7991f3bec87d971`, it was 26. Authorization is the union of the original R1 frozen scope (`codex-checkpoint-p02-preflight-scope-frozen.md:6`) and r7, not r7 alone. Six unchanged R1 carry-forward files omitted from r7's enumeration are `codex-scratch-build-preflight-inputs-r1.tsv`, `wsb-version-r1.stdout.txt`, `wsb-version-r1.stderr.txt`, `wsb-list-raw-r1.stdout.txt`, `wsb-list-raw-r1.stderr.txt`, and `codex-checkpoint-p02-non-elevated-preflight-start.md`; all six are byte-identical from R1 candidate `561f4105` through reviewed HEAD `7d8951c2`. R7 enumerates 27 paths, seven of which (the R2 review checkpoint and six R2 review packet artifacts) did not yet exist at `7d8951c2`. The exact 24/26 path counts have commit anchors; unexpected paths under the union=0. Product source, tests, dependencies, IPC, Schema, build inputs, user data, and Owner allowlist are unchanged.
 
 ## Validation results
 
@@ -10,10 +10,10 @@
 |---|---|---|
 | Project route validator | `python -B -X utf8 verification/PROJECT-ROADMAP-20261008/verify_plan.py` at fixed change commit | EXIT=0; 196 nodes/classifications/dependencies valid; Task states and Plan align; all 21 planned nodes acyclic; navigation links resolve; zero P01 production/code delta; product tests/build/GUI=`NOT_RUN`. |
 | Diff whitespace | `git diff --check 6855c113e6a44320d9555777900cfb78a218d383 HEAD` | EXIT=0. |
-| Focused Markdown links | Changed Markdown files, relative links resolved from their source files and compared with the base snapshot | 13 Markdown files; 765 relative targets scanned; 10 pre-existing historical missing targets; new missing targets=0. The project route validator also reports its delivery/navigation links resolve. |
+| Focused Markdown links | Changed Markdown files at fixed change HEAD `80cf5651`; relative links resolved from source files and compared with base | 13 Markdown files; 765 relative targets scanned; 10 pre-existing historical missing targets; new missing targets=0. Exact reviewed HEAD `7d8951c2` was independently rescanned by DSH as 15 Markdown files / 766 targets / 10 base-existing missing / 0 new missing (see R2 Review checkpoint). |
 | Frozen root manifest | Replayed manifest path/status/kind/size/SHA-256 against live root `git status --porcelain=v1 --untracked-files=all -z` | 203/203 match; missing/extra/mismatch=0; staged=0; canonical entries SHA-256=`3a54fa978bf228bfae366a4c4de35b90e4fab609447d3370ed81370299da10e2`. Manifest `head=549a6544f0be1eec66c09ece393fd1a409f10bf3` is its frozen creation HEAD; live root remains `main@6855c113e6a44320d9555777900cfb78a218d383`. |
-| Candidate/root collision | Exact candidate path set versus the 203 live root dirty paths | Candidate paths=24; path overlap=0; author worktree clean. |
-| R1 condition repair | R1 DSH findings P2-01 and P3-01..P3-05 | Authorization basis is registered in scope-delta r7; predicted source pin state no longer says PASS; machine-readable CIM/WSB observations and provenance added; delivery count corrected; frozen manifest HEAD explained; mapping domains labeled. Independent R2 confirmation is still pending. |
+| Candidate/root collision | Exact fixed-change candidate path set versus the 203 live root dirty paths | At `80cf5651`: 24 base-relative candidate paths; path overlap=0; author worktree clean. At reviewed `7d8951c2`: 26 paths and overlap=0 (independent DSH exact-head check). |
+| R1 condition repair | R1 DSH findings P2-01 and P3-01..P3-05 | DSH exact-head R2 Review at `7d8951c2` returned `APPROVED` (P0/P1/P2/P3=`0/0/0/3`) and independently closed all six R1 conditions. R2 N-01..N-03 are nonblocking documentation/evidence findings; the r8 repair scope is frozen at `6ffba27b`. |
 
 ## Gate status
 
@@ -23,4 +23,11 @@
 
 ## Exact next action
 
-Add this validation record and the R2 delivery checkpoint under the frozen scope, run validation once more on the resulting review target HEAD, and dispatch DeepSeek Harness for exact-head R2 Review. Do not fast-forward until P2-01/P3-01..P3-05 are independently closed.
+Historical next action at the initial R2 repair snapshot; superseded by the R2 exact-head decision and the r8 follow-up below.
+## R2 exact-head review and N-01..N-03 follow-up
+
+- DeepSeek Harness reviewed exact HEAD=`7d8951c28cd954d7e325cd53e7991f3bec87d971` / tree=`1340c5282e32361c117f0aeacb670d412fe568c9`; decision=`APPROVED`, P0/P1/P2/P3=`0/0/0/3`. R1 P2-01 and P3-01..P3-05 are closed. Full independent report: [R2 response](dsh-review-p02-preflight-r2.response.md).
+- N-01 path authorization is the R1 frozen scope ∪ r7. The six inherited paths are enumerated above and unchanged from `561f4105`; 24 paths is the `80cf5651` snapshot, 26 is the reviewed `7d8951c2` snapshot. At reviewed HEAD, no candidate path was outside the union.
+- N-02 exact-head rerun was performed and recorded by the independent DSH reviewer on `7d8951c2`: route validator EXIT=0 (196 nodes); `git diff --check 6855c113..HEAD` EXIT=0; changed-Markdown scan=15 files / 766 relative targets / 10 already missing in base / 0 new missing. Root manifest=203/203, staged=0, candidate/root path overlap=0. The full command/result record is in the R2 response and [R2 review checkpoint](codex-checkpoint-p02-preflight-r2-review.md).
+- N-03 is resolved in `codex-checkpoint-p02-non-elevated-preflight-start.md`: the original `23:58` scope-freeze timestamp is retained, and its completion sentence is explicitly labeled as a retrospective delivery-time note. The collection window starts after the freeze checkpoint as recorded in the report.
+- R3 will rerun route/link/diff/protected-root checks on the final repair candidate before exact-head DSH review. Product source/tests/contracts/dependencies remain unchanged; all product gates remain blocked or not run as stated above.
