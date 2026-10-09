@@ -2,7 +2,7 @@
 
 ## Gate 状态
 
-当前状态=`PASS_PRE_FF`。D3独立Review、C1 Codex Integration Gate及D5固定差量closeout检查均已通过。待执行root `main` fast-forward和post-FF复核；两者完成前不安排关机，也不把本报告描述为post-FF完成。
+当前状态=`PASS`。D3独立Review、C1 Codex Integration Gate、D5固定差量closeout与D7 fast-forward后复核均已通过。
 
 ## 正式非作者 Review
 
@@ -37,3 +37,13 @@
 ## 保留的验证边界
 
 产品pytest/cargo/vitest/build/GUI/真实Tauri WebView均`NOT_RUN`，因为P01不修改产品或测试代码。R2/SYNTH Review carrier仍`NOT_VERIFIED`；来源Task状态及产品裁决保持原样。
+
+## D7 main fast-forward 与 post-FF Gate
+
+- root fast-forward成功：`main`从`714138de3da06013e3ea35395e0c11b3d15fc371` fast-forward至D7=`b7ad98b29196e9859cbfbfe187e6822569f79367`；工作区中原有24项受保护dirty/untracked未纳入集成提交。
+- D7固定差量base..D7=`826bea12a132c5af2ac0cd1244d00e9170093c71..b7ad98b29196e9859cbfbfe187e6822569f79367`共92 paths；全部符合P01允许路径，范围外=0、产品/测试/build路径=0。
+- post-FF运行`python -B -X utf8 verification/PROJECT-ROADMAP-20261008/verify_plan.py`成功（EXIT=0）：196个唯一节点、105祖先记录、21项规划DAG及链接通过，P01=`done`，计数done=3 / proposed=18。
+- `git merge-base --is-ancestor`对P01 base及M0均EXIT=0；`git diff --check <base>..D7` EXIT=0；Task status=`done`、AC1–AC7已勾选、`integration_commit=M0`；Plan/Status/路线节点一致。
+- root受保护manifest 24/24项的status/path/content SHA与pre-FF清单相同，digest=`b41835453b693b4e62818216e4d67801c01eca6e33450f8d3d3dd72849d578e7`，P01 D7差量路径交集=0。
+- post-FF固定检查逐项原始结果见[`post-ff-recheck.log`](post-ff-recheck.log)，包含HEAD/branch/common-dir、路线validator、祖先关系、range空白检查、92-path范围分类、24项manifest、Task状态与未暂存状态核验。
+- Gate=`PASS`。本次授权仅用于P01完结后安排一次本机关机；关机命令成功排程后授权即消费，后续会话不得延伸使用。

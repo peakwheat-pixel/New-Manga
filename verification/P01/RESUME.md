@@ -1,15 +1,15 @@
 # P01 恢复点
 
-## 当前检查点：D6 固定头复核PASS；root fast-forward待执行
+## 当前检查点：P01 D7 已集成，post-FF Gate PASS
 
-- Timestamp=`2026-10-09T01:54:14Z`。Live Plan/Status显示用户提示中的P08检查点已过时：实际P08=`done`、P01从`in_review`推进；P08 DSH R7报告/证据保留，不重跑、不改写。
-- P01 integration worktree=`G:/CODEX/New Manga.worktrees/P01-integration-codex`，branch=`codex/P01-integration-20261009`，common-dir=`G:/CODEX/New Manga/.git`。D6 fixed HEAD=`65dd9456c52482ec194d23749e26451b4132b2aa`，tree=`54477f4cf0b1f437452c602cd1b0b7e765ceac5e`；D6固定复核后worktree clean。后续同步本Resume/report/Handoff将形成新的文档checkpoint；恢复时以Live `git status --short --branch`为准。
-- D3正式Antigravity Review：base=`826bea12a132c5af2ac0cd1244d00e9170093c71`，reviewed_head/tree与上列一致，decision=`approved`，findings=0，session=`86e7e1d1-3d2f-496b-9558-08c14f95c4d3`；report=`doc/reviews/P01-51bc01fe-antigravity-d3.md`。report/response SHA-256=`749c20db44938a5cca9e18995923465e42aba07a960303387483b67ff58fc1ee`；session metadata SHA-256=`89bad760d4ae2e85802654e594b2ee99dc12c0075df481a0d15cbaa27f65e2cb`；stdout SHA-256=`dbc5158ddbfdf1910e1da21efd0dc1b7e7be4570c868264372feeec36b18d310`；prompt SHA-256=`cd011871f2fb73029e461451e3a93dc714ef3ba107b8c5fa9fa9ee67f317d974`；输入packet SHA-256=`7e061bbf0445ceab03d2797b877d43eeedd9bb23b374c312784a2387ecd9c90f`。review exit=`0`，会话迁移命令exit=`0`；桌面会话列表是否显示未验证。
-- Task=`done`、AC7已勾选、`integration_commit=M0=13e66ec5bf9a2fc59f4e6c5623feb0bde22884c8`；D3 Antigravity Review=`approved`、0 findings、77 paths，C1 Codex Gate=`PASS`。D5 Codex closeout Gate=`PASS_PRE_FF`；D6 fixed-head recheck=`PASS`：D6 base..HEAD=92 paths、allowed-path外0、产品/测试/build路径0，done-state路线validator EXIT=0（196节点、done=3/proposed=18），祖先、`git diff --check`与worktree clean均通过。正式报告=`verification/P01/closeout-gate.md`。
+- Timestamp=`2026-10-09T02:03:18Z`。Live Plan/Status显示用户提示中的P08检查点已过时：实际P08=`done`、P01已完成；P08 DSH R7报告/证据保留，不重跑、不改写。
+- root=`G:/CODEX/New Manga`，branch=`main`，common-dir=`G:/CODEX/New Manga/.git`；D7集成HEAD=`b7ad98b29196e9859cbfbfe187e6822569f79367`。集成分支`codex/P01-integration-20261009`已fast-forward至D7。
+- D3正式Antigravity Review：base=`826bea12a132c5af2ac0cd1244d00e9170093c71`，reviewed_head=`51bc01fec2652c0e2bc39bb119f8dd7ca3c294cb`、tree=`69d9d655cf9aecb1581cf4d3c86c500f265b61ab`，decision=`approved`，findings=0，session=`86e7e1d1-3d2f-496b-9558-08c14f95c4d3`；report=`doc/reviews/P01-51bc01fe-antigravity-d3.md`。report/response SHA-256=`749c20db44938a5cca9e18995923465e42aba07a960303387483b67ff58fc1ee`；session metadata SHA-256=`89bad760d4ae2e85802654e594b2ee99dc12c0075df481a0d15cbaa27f65e2cb`；stdout SHA-256=`dbc5158ddbfdf1910e1da21efd0dc1b7e7be4570c868264372feeec36b18d310`；prompt SHA-256=`cd011871f2fb73029e461451e3a93dc714ef3ba107b8c5fa9fa9ee67f317d974`；输入packet SHA-256=`7e061bbf0445ceab03d2797b877d43eeedd9bb23b374c312784a2387ecd9c90f`。review exit=`0`，会话迁移命令exit=`0`；桌面会话列表是否显示未验证。
+- Task=`done`、AC1–AC7均勾选、`integration_commit=M0=13e66ec5bf9a2fc59f4e6c5623feb0bde22884c8`；D3 Antigravity Review=`approved`、0 findings、77 paths，C1 Codex Gate=`PASS`，D5=`PASS_PRE_FF`，D7 fast-forward后复核=`PASS`。D7固定base..HEAD=92 paths、allowed-path外0、产品/测试/build路径0，done-state路线validator EXIT=0（196节点、done=3/proposed=18），base与M0祖先、`git diff --check`均通过。正式报告=`verification/P01/closeout-gate.md`。
+- post-FF root保护复核：原24项dirty/untracked的status/path/content SHA逐项匹配，manifest SHA-256=`b41835453b693b4e62818216e4d67801c01eca6e33450f8d3d3dd72849d578e7`，与D7差量path交集=0；不stage、不stash、不覆盖或清理。
+- 完整post-FF命令和逐项PASS结果见[`post-ff-recheck.log`](post-ff-recheck.log)；该日志固定检查的是`main@b7ad98b29196e9859cbfbfe187e6822569f79367`的D7 integration range。
 - 产品pytest/cargo/vitest/build/GUI/真实Tauri WebView均`NOT_RUN`；R2/SYNTH carrier仍`NOT_VERIFIED`，不改来源Task状态/产品裁决。
-- root checkout仍`main@714138de3da06013e3ea35395e0c11b3d15fc371`、24项原有dirty/untracked。受保护manifest=`verification/P01/root-dirty-manifest-pre-ff.txt`，SHA-256=`b41835453b693b4e62818216e4d67801c01eca6e33450f8d3d3dd72849d578e7`；fast-forward前必须重新核对root branch/HEAD、每项status/path/content SHA和manifest digest，并确认候选差量交集为0。不可stage、stash、覆盖或清理这些root文件。
-- **下一精确步骤**：在integration branch先把D6 fixed recheck写入closeout report、Resume与Handoff，提交新的pre-FF recovery checkpoint D7并对D7重跑route/ancestor/diff-check/scope。随后立即重核root仍`main@714138de3da06013e3ea35395e0c11b3d15fc371`、24项每个status/path/content SHA与manifest digest完全匹配，候选差量交集=0；通过后从root运行`git merge --ff-only codex/P01-integration-20261009`。合入后确认HEAD为D7并重跑route validator、ancestor、range/worktree diff-check、P01 Task/Plan/Status及24项manifest；把post-FF结果追加到closeout report/Handoff/Resume并提交只含P01允许路径的恢复点。若发生任何漂移、冲突或检查失败，保留现场并停止关机。
-- 用户本轮一次性授权“P01完整关闭后关机”。当前D5 Gate通过但main fast-forward/post-FF/最终恢复点仍未完成；尚未消费授权。只有post-FF验证及最终RESUME/提示词已提交并复核后，才安排这一次关机；下次自动推进P02不得延用此授权。
+- **下一精确步骤**：P01已完成，无需重做Review、Gate或审计。按[下次自动推进提示词](NEXT-AUTOPROGRESS-PROMPT.md)从Live main恢复，自动开始P02真实WebView harness范围冻结；P02仍`proposed / 未释放`，先建正式Task并冻结AC/allowed paths，再分配Owner与非作者Reviewer。用户本次仅授权P01后关机；排程该次关机后授权即消费，下次不得延用。
 
 ## 历史草稿检查点：M0临时done候选（已被C0/C1取代）
 
@@ -19,14 +19,14 @@
 
 C8 fixed head=`91ab1ef8ddaa1d00b0b34880a103937b4831590d`，DSH正式Review=`changes_requested`；C8 Gate日志见`ac7-c8-fixed-head-check.log`及`ac7-c8-postreview-check.log`。R1/R2 historical decisions保留；当前P01状态见本文件顶部C1检查点。
 
-## 当前权威状态
+## 历史权威状态快照（P01启动时）
 
 - P03 正式关闭与 Codex Integration Gate 提交：`826bea12a132c5af2ac0cd1244d00e9170093c71`；P03=`done`。其 16-case snapshot、40/40 targeted tests 与 packaged Gate 28/28 仍绑定 source `d717c049a41544a6d592943a0b0fe1b76a41a050`，未声称在 P03 集成头重跑。
 - P01 已基于该commit正式释放并进入执行：base=826bea12a132c5af2ac0cd1244d00e9170093c71；branch=agent/codex/P01-metadata-audit；worktree=G:/CODEX/New Manga.worktrees/P01-metadata-audit-codex；Owner=Codex；启动时非作者Reviewer=DeepSeek Harness（2026-10-09 C8后，C9 Reviewer转派为Antigravity）；Integrator=Codex；depends_on=[]。
 - Worktree 初始 HEAD=`826bea12a132c5af2ac0cd1244d00e9170093c71`，创建时干净、common-dir=`G:/CODEX/New Manga/.git`。P01 release metadata commit=`714138de3da06013e3ea35395e0c11b3d15fc371`；delivery=`9b12493616326af9cdd50a055282426c72516a5a`，后续治理checkpoint=`dfe31bbac2e61d5ace969a35f6727e4fd04a2331`。恢复时必须以实际 `git rev-parse HEAD`/status 为准，不从聊天或本段推测后续提交。
 - Root main 的原有用户/Qoder/Agent dirty 与 P03 raw-review evidence 均留在 root checkout，未复制进 P01 worktree、未 stage、未 stash、未覆盖或清理。P03关闭后 root 仍有24个既存 dirty/untracked 项；实际名称以 root `git status --short` 为准。
 
-## 2026-10-09 Reality Check — RESUME_SAFE
+## 2026-10-09 历史 Reality Check — RESUME_SAFE（P01启动时）
 
 - 实测主工作区：branch=`main`，HEAD=`714138de3da06013e3ea35395e0c11b3d15fc371`，dirty/untracked=`24`；这24项与P01恢复前相同，未被写入或整理。
 - 实测P01 worktree：registered path=`G:/CODEX/New Manga.worktrees/P01-metadata-audit-codex`，branch=`agent/codex/P01-metadata-audit`，HEAD=`714138de3da06013e3ea35395e0c11b3d15fc371`，working tree clean，common-dir=`G:/CODEX/New Manga/.git`。
