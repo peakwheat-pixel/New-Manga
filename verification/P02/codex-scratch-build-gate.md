@@ -39,3 +39,13 @@
 - Windows Sandbox 方案=`PROPOSED / REVIEW_PENDING`，详见 [`WSB process isolation proposal`](codex-scratch-build-process-isolation-proposal-r1.md)。环境探针为 Windows 11 Pro build 26300、`wsb 0.8.107.0`、无运行 session。查询 Sandbox Windows Feature 需要提升权限，所以 feature enabled 状态为 `UNKNOWN`；未提权、启用功能或启动 Sandbox。
 - 下一步：固定该 proposal HEAD 并派 DeepSeek Harness 做非作者 exact-head Review。Review approval 仅允许后续尝试隔离 smoke；真实 smoke 前不得运行产品 build。当前 `Build Gate=BLOCKED`、build=`NOT_AUTHORIZED / NOT_RUN`、P02 AC1–AC6=`BLOCKED`、Hard Build Barrier 有效。
 - 本轮没有运行 PyInstaller、Cargo/Tauri/frontend build、P02 runner、Vitest、GUI 或 WebView，也未运行 Sandbox smoke。
+
+## 2026-10-09 Process Isolation r2（Review r1 CHANGES_REQUESTED 后修订）
+
+- DeepSeek Harness 对固定 r1 commit c542a31b102cdc5c129efd9df155a2760ed777b2 的正式结论为 CHANGES_REQUESTED（P1=1、P2=7、P3=3），报告见 dsh-review-process-isolation-r1.response.md。r1 未授权 isolation smoke 或 build；Hard Build Barrier 继续生效。
+- Codex 提交了 scope delta；唯一跨出 verification/P02/** 的授权修改是 doc/tasks/P02.md 中 Codex-only scratch-build output boundary 一行。固定输出目录为 G:\CODEX\P02-scratch-build-source，普通 clone 使用 --no-local --no-hardlinks，私有 common directory、无 alternates/origin；路径已存在即阻塞。
+- r2 逐项回应 R01–R11：隔离对象、映射表和 guest path、固定 RW clone、离线 npm/Cargo cache seed、ProtectedClient/config hash、session/window screenshot、core.autocrlf=true、真实映射 smoke、stopped session 检查、MemoryInMB=2048、root entries hash recipe。
+- 真实输入 host inventory 见 codex-scratch-build-input-host-inventory-r1.md。真实 pre-start tree manifest、cache seed hash、Sandbox feature/UI/runtime probes 尚未生成，不能记为 PASS。
+- 受保护 root 起点仍是 main@549a6544f0be1eec66c09ece393fd1a409f10bf3，203 个 dirty/untracked entries、0 staged；起始清单 hash 未变。产品 AC1–AC6=BLOCKED、Build Gate=BLOCKED、build=NOT_AUTHORIZED / NOT_RUN、Sandbox/smoke=NOT_RUN、Sandbox feature=UNKNOWN；未提升权限、未启用 feature、未启动 Sandbox。
+- Process isolation proposal 当前为 PROPOSED / REVIEW_PENDING。下一步先固定 r2 candidate commit，再派 DeepSeek Harness 对 exact head 独立 Review；Review 通过最多只允许尝试 isolation smoke，不允许 build。
+- r2 Smoke XML artifact 为 codex-p02-wsb-smoke-config-r2.xml，SHA-256=dcb95da5252709f9ada9899cd92dcc90c388fa81f4ba23cdb60f18663ac691b6，2397 bytes。候选 Networking token 跟随官方 wsb start --config 示例的 Disabled；WSB 文件参考列出 Disable，运行时 CLI/parser 接受状态仍 NOT_VERIFIED。SHA-256 对应 UTF-8 无 BOM/LF 的 Git blob canonical bytes；core.autocrlf 可能转换 checkout 行尾，运行时须归一 CRLF→LF 后对同一字符串核 hash 并传入 CLI。Python XML parser 只验证 XML 结构、10 mappings、1 RW/9 RO 和字段，不证明 WSB 接受或执行该配置。

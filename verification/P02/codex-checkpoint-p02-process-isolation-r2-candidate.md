@@ -1,0 +1,21 @@
+# Checkpoint：P02 Process Isolation r2 候选交付准备
+
+- 时间：2026-10-09 13:39 UTC（2026-10-09 21:39 Asia/Shanghai）。状态边界：DELIVERY_PREP / PRE_REVIEW。
+- 当前 Task：P02 Hard Build Barrier；Owner/author=Codex，非作者 Reviewer=DeepSeek Harness，Integrator=Codex。冻结范围依据 scope delta：codex-scratch-build-process-isolation-scope-delta-r1.md。
+- live root=G:/CODEX/New Manga，main@549a6544f0be1eec66c09ece393fd1a409f10bf3，parent=803594e9c16f3c361e99fa5ffa7c35a95baaf43a；203 项 dirty/untracked、0 staged。root 起始保护 manifest 的 203 个路径、状态、文件大小和 SHA-256 逐项匹配；canonical entries SHA-256=3a54fa978bf228bfae366a4c4de35b90e4fab609447d3370ed81370299da10e2（36,985 UTF-8 bytes）。root doc/tasks/P02.md clean；固定 scratch clone G:\CODEX\P02-scratch-build-source 仍不存在。本轮没有修改 root 或其他作者 worktree。
+- 作者工作区=C:/Users/49745/.codex/worktrees/p02-process-isolation-plan/New Manga，branch=codex/P02-process-isolation，checkpoint 记录时 HEAD=09bb1a2783052cdb6d514070e32f0ca9a2e48a04，Git common directory=G:/CODEX/New Manga/.git。当前 r2 修订尚未提交、index 无 staged changes。
+- 工作区差异（记录时工作树内容 SHA-256）：
+  - M doc/tasks/P02.md — 8C18336145A3CEDFE3300EEF157472CCF27FA37DC37F103AC2261196430D9D19
+  - M verification/P02/codex-process-isolation-root-start-manifest.json — 46C877DDB3C637A4C69F5B7892FB6592FC1FA5F6E0D4328439D8616C9B990A05
+  - M verification/P02/codex-scratch-build-gate.md — 542FCB2B23DAF01907DB0D40EBD6B559EAB50D8CE7A2405E4657C253FE2FED19
+  - M verification/P02/codex-scratch-build-plan.md — 6DEE48BF6FB3C0D38FA662AD79050A1D115F49C89D3D72709003BBB70094C38D
+  - M verification/P02/codex-scratch-build-process-isolation-proposal-r1.md — 070F16D4A18DFAF8AEAEA3B01323CD999BD44BE364AB834BF710D9E15B9840AD
+  - M verification/P02/dsh-review-process-isolation-r1.dispatch.md — 33E0F3D63F015E9800CDE7DE72C0BD00D129A1FDAF747DD12783507ABE733D38
+  - ?? verification/P02/codex-p02-wsb-smoke-config-r2.xml — DCB95DA5252709F9ADA9899CD92DCC90C388FA81F4BA23CDB60F18663AC691B6
+  - ?? verification/P02/codex-checkpoint-p02-process-isolation-r2-candidate.md — 本文件在候选提交前生成。
+- 允许修改范围：doc/tasks/P02.md 中 Codex-only scratch-build output boundary 的单行更新，以及 verification/P02/**；未改产品代码、Task graph、STATUS 或 Rebaseline Plan。
+- r2 回应 DSH r1 的 R-01–R-11：普通 clone 使用 --no-local/--no-hardlinks、固定路径和 private common directory 检查；host/guest mappings 与 offline cache seed；受保护 config/hash 与交互 UI 截图证据；EOL pins、真实 mappings、stopped session 规则、显式 memory 和 root manifest hash recipe。r1 源文件路径为冻结 scope delta 指定路径；旧 r1 内容仍可从 c542a31b102cdc5c129efd9df155a2760ed777b2 精确取回，r1 Review response/commit 不变。
+- 官方 CLI 示例的 Networking=Disabled 与 WSB 文件参考中的 Disable 拼写不同；r2 XML 按 CLI 示例固定为 Disabled。候选 canonical XML 为 UTF-8 无 BOM、LF 行尾，SHA-256=dcb95da5252709f9ada9899cd92dcc90c388fa81f4ba23cdb60f18663ac691b6（2,397 bytes）。core.autocrlf=true 的 checkout 变体只允许 CRLF→LF 后校验；同一规范字符串传给 CLI。本机 CLI/parser 接受状态未验证；被拒绝时 BLOCKED，不能尝试 fallback。
+- 验证证据：verify_plan.py EXIT=0，196 个节点及路线引用 PASS；XML assert self-check PASS（10 mappings，1 RW / 9 RO，并验证 CRLF normalization 与 canonical hash）；root manifest canonical hash recipe PASS；root 203 项保护清单逐项状态/路径/大小/hash comparison PASS；git diff --check EXIT=0（仅提示 CRLF 转换）。未运行产品测试、build、runner、Vitest、GUI/WebView、Sandbox 或 P02 smoke。
+- 当前 Gate：P02 AC1–AC6=BLOCKED，Sandbox feature=UNKNOWN，Sandbox/smoke=NOT_RUN，Build Gate=BLOCKED，build=NOT_AUTHORIZED / NOT_RUN，Hard Build Barrier 有效。未提权、未启用 Windows Feature、未启动 Sandbox。
+- 下一条准确动作：固定仅含上述授权文件的 r2 candidate commit；从该 exact commit 建立 detached read-only review worktree，实际派发 DeepSeek Harness 对 R-01–R-11、Task 边界、canonical XML/hash、CLI token 差异、证据完整性及 Gate 分离作 exact-head Review。Review 未通过前不得启动 smoke；通过最多只允许尝试隔离 smoke，不授权 build。

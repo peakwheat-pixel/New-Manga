@@ -1429,5 +1429,12 @@
       "size": 16185,
       "sha256": "98d74149c46d14ea374f12ae76a2f5312436a55a8a48d547be4ed2356aad2ad0"
     }
-  ]
+  ],
+  "entries_sha256_recipe": {
+    "algorithm": "SHA-256",
+    "serialization": "Python json.dumps(entries, ensure_ascii=False, sort_keys=True, separators=(',', ':'))",
+    "encoding": "UTF-8, without BOM or trailing newline",
+    "input_bytes": 36985,
+    "replay_command": "python -B -X utf8 -c \"import json,hashlib; from pathlib import Path; m=json.loads(Path('verification/P02/codex-process-isolation-root-start-manifest.json').read_text(encoding='utf-8')); b=json.dumps(m['entries'],ensure_ascii=False,sort_keys=True,separators=(',',':')).encode('utf-8'); print(hashlib.sha256(b).hexdigest())\""
+  }
 }
