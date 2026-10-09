@@ -85,3 +85,26 @@ candidate_vs_root_collisions=verification/P02/NEXT-AUTOPROGRESS-PROMPT.md;verifi
 focused_local_links=PASS / 20 links / 0 missing
 precommit_route_validator=PASS_at_HEAD_c2cbee43; does not inspect these staged edits and must be rerun after commit
 precommit_mutation_probe=PASS_at_HEAD_c2cbee43; does not inspect these staged edits and must be rerun after commit
+
+Fixed candidate c3 Codex Gate (commit ec207865348be65c7aa8abb7da163938fccb353d; tree 856d71e30cd568b9599392eae5ccb51d79cdc330; parent c2cbee43d4917bca385c9b0fa81ee49fc696ea9e):
+worktree_at_check=clean
+verify_plan.py=PASS / EXIT=0 / 196 nodes / Task-Plan-roadmap state consistent / graph acyclic
+route_validator_mutation_probe=PASS / EXIT=0 / both injected state drifts rejected
+git_diff_check=PASS / EXIT=0 / base=4b54f304dc201d129d4ba1c62d0368252e6301b1..HEAD
+changed_paths=26
+allowed_paths=26
+out_of_scope=0
+Task_worktree_bytes_sha256=325D613E410793F565A4128B55B76A86827F79DBFD8A01395B2DABCEADDD2443
+Task_LF_sha256=325D613E410793F565A4128B55B76A86827F79DBFD8A01395B2DABCEADDD2443
+Task_git_blob=97c3d61e52620b5d07538a2a2ac07dd62950c7cd
+Task_delta_vs_c2cbee43=two one-line governance wording replacements; AC/frontmatter/allowlist/base/dependencies unchanged
+focused_links_on_c3=PASS / 20 links / 0 missing
+Task_ownership_scope_state_assertions=PASS
+root_P01_manifest_recheck=PASS / 24 entries / 24 paths / 0 status/hash mismatches / digest=b41835453b693b4e62818216e4d67801c01eca6e33450f8d3d3dd72849d578e7
+root_status_paths_at_recheck=38
+candidate_P01_manifest_path_intersection=0
+candidate_vs_root_dirty_path_intersection=verification/P02/NEXT-AUTOPROGRESS-PROMPT.md;verification/P02/RESUME.md
+recovery_files_synchronized_to_root=NOT_RUN; required after final Review and before fast-forward
+product_AC1_AC7_Vitest_Cargo_Tauri_WebView_GUI_contrast=NOT_RUN
+
+After c3, recovery summaries were advanced to reference c3 and the remaining C-2. Their focused P02 link check returned PASS / 22 links / 0 missing; these checkpoint updates are pending their own fixed commit and DSH review.
