@@ -136,3 +136,9 @@
 - C10 fixed-head Gate真实PASS，HEAD=`06bc4d0634a420fddf27edd44077539a099b7cce`、tree=`35e9c714736395a2a61968c27508818dfca83afc`；61 range paths、allowed-path外0、product/code paths 0；P01 base祖先、range `git diff --check`、绝对路径路线validator EXIT=0；validator报告196节点、105祖先、21规划节点及无环/链接通过。Owner worktree clean。Gate日志=`verification/P01/ac7-c10-fixed-head-check.log`，SHA-256=`fa37a72c07d1feeba7a1a32afdcca234c5e3e22c487e36f0ca2cddabbe9f822b`。
 - root仍`main@714138de3da06013e3ea35395e0c11b3d15fc371`，原24项dirty/untracked逐项状态path set与AC1基线相同。产品pytest/cargo/vitest/build/GUI=`NOT_RUN`（文档/治理Task）。
 - 下一精确步骤：把C10 fixed-head Gate及`agy-review-c9.prompt.md`、`agy-review-c9-input.note.md`复制到detached review worktree；独立复核该worktree `HEAD=7645577ab374b581eb7081fd57675c32793249f5` / tree=`8dafbccda120e718aeb6f40613146320a4d2564f`，packet SHA-256=`59dba7c5d563ace3c16921ceeb9838236aa9ec35d0d36bb28ee8bcebc2b1a749`；通过antigravity-dispatch Skill正式只读Review，再保存准确输出、JSON、stderr/exit/session与report fingerprint，成功后迁移会话。根据真实decision继续修订/复审，或执行Codex Integration Gate及F-C8-04修复。只有Task完整完成、恢复提示写入且后续工作可恢复时，才可执行本轮一次性关机；提示词必须明确重启后未来Task不得再次关机。
+
+## 2026-10-09 Antigravity C9正式Review已派发 / CLI响应待取回
+
+- 派发已从detached reviewer worktree发起：`agy -p <agy-review-c9.prompt.md内容> --project "New Manga" --output-format json --dangerously-skip-permissions`；只读prompt的C9 head/tree及完整diff packet指纹见前节。Antigravity会话迁移尚未执行，须在CLI成功返回且JSON `status=SUCCESS`、核对`conversation_id`后执行。
+- 截至本检查点，CLI进程PID=`7204`仍在运行；版本化候选carrier `agy-review-c9.stdout.json`与`agy-review-c9.stderr.log`均为0 bytes，尚无exit carrier或可验证Review响应。不得将此状态当作blocked/approved/failed，也不得重复派发。
+- **下次精确步骤**：先查看PID 7204及文件`verification/P01/agy-review-c9.{stdout.json,stderr.log,exit}`。若原进程仍运行，继续等待同一调用；若已退出，按真实stdout/stderr/exit诊断，并从stdout核对`conversation_id/status/response`。只有成功真实response才写入正式Review、计算hash、保存完整session metadata并迁移会话。若返回非零或AGY_ERROR，保留原件、把Task状态和恢复点如实调整后按项目Reviewer故障转移继续；不要把空输出或本机conversation数据库文件名单独当作最终delivery。
