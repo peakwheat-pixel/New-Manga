@@ -29,3 +29,13 @@
 - 审计时 root=`G:/CODEX/New Manga`、branch=`main`、HEAD=`7ce3c40cd308e7093929bd5f53abc4f8a6c4ef7a`；202 个既存 dirty/untracked 路径、0 staged。r8 integration worktree=`C:/Users/49745/.codex/worktrees/p02-stage-a-r8-integration/New Manga`、branch=`codex/P02-stage-a-r8-integration`、HEAD=`803594e9c16f3c361e99fa5ffa7c35a95baaf43a`；common Git directory 相同。保护清单原始 294 项的 entries SHA-256=`f5175b610e7570859143ad35a6167b2ed0d155d737ac33e3c38953fc1e6aa5c1`。
 - 继续项仅为只读核对可达 hook 文件/hash、递归 import/subprocess 与所有 cache/env 写路径。只有能证明写入仅在固定 scratch allowlist 内，Codex 才能另行记录 PASS Gate；若静态闭包不能证明，则须补充可执行的进程级隔离设计并经 Review。此记录本身不授权 build。
 - 本轮未运行 Cargo/Tauri/sidecar/frontend build、Vitest、GUI、真实 WebView/CDP 或 P02 runner；未关机、push、发布或部署。
+
+## 2026-10-09 当前续跑：闭包审计完成，进程隔离方案待审
+
+本节更新前文的“继续只读 hook/cache 核验”动作；该动作已完成，但结果仍是 BLOCKED。
+
+- 当前 live root=`main@549a6544f0be1eec66c09ece393fd1a409f10bf3`，parent=`803594e9c16f3c361e99fa5ffa7c35a95baaf43a`；`7ce3c40...`、已审计划 `803594e...` 均为祖先。root 当前 203 条 status entries、0 staged；完整逐路径 SHA 起点见 [`process-isolation root manifest`](codex-process-isolation-root-start-manifest.json)，entries SHA=`3a54fa978bf228bfae366a4c4de35b90e4fab609447d3370ed81370299da10e2`。这些 dirty/untracked 内容未修改。
+- Codex 子代理在固定 549 HEAD 检查实际安装 hook、isolated subprocess 环境继承与 Torch/Hugging Face cache 路径；结论=`BLOCKED / NOT_VERIFIED`，报告见 [`hook/cache audit r1`](codex-hook-cache-closure-audit-r1.md)。静态清单不能证明递归 import/子进程完整写入闭包。
+- Windows Sandbox 方案=`PROPOSED / REVIEW_PENDING`，详见 [`WSB process isolation proposal`](codex-scratch-build-process-isolation-proposal-r1.md)。环境探针为 Windows 11 Pro build 26300、`wsb 0.8.107.0`、无运行 session。查询 Sandbox Windows Feature 需要提升权限，所以 feature enabled 状态为 `UNKNOWN`；未提权、启用功能或启动 Sandbox。
+- 下一步：固定该 proposal HEAD 并派 DeepSeek Harness 做非作者 exact-head Review。Review approval 仅允许后续尝试隔离 smoke；真实 smoke 前不得运行产品 build。当前 `Build Gate=BLOCKED`、build=`NOT_AUTHORIZED / NOT_RUN`、P02 AC1–AC6=`BLOCKED`、Hard Build Barrier 有效。
+- 本轮没有运行 PyInstaller、Cargo/Tauri/frontend build、P02 runner、Vitest、GUI 或 WebView，也未运行 Sandbox smoke。

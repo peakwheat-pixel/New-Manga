@@ -52,3 +52,11 @@ Task 的 P02 Codex-only scratch-build boundary 明确：输出仅可在一份 de
 - 初版 commit `8de6827dff596fd0180920e2dd801e95f61e2965` 的初审为 changes_requested；修订 commit `803594e9c16f3c361e99fa5ffa7c35a95baaf43a` 的独立 Review=approved，仅批准计划与输出边界。
 - Codex Build Gate=`BLOCKED`；build=`NOT_AUTHORIZED / NOT_RUN`。直接 requirements pins 与当前 pip freeze 一致，但实际可达 PyInstaller hooks、Torch 子模块递归导入/子进程以及 Torch/Hugging Face cache/env 写入闭包未证明。详见 [`codex-scratch-build-gate.md`](codex-scratch-build-gate.md)。Hard Build Barrier 保持；只有闭包可证明 scratch-only 并由 Codex 写明单独 PASS Gate 后，才可考虑一次 isolated build。
 - 此 Gate 不授权应用启动、用户数据访问、runner/Vitest/GUI/WebView。AC1–AC6 继续 BLOCKED，直到各自实测证据完成。
+
+## 2026-10-09 Process boundary supplement r1（独立 Review 待进行）
+
+- live root HEAD=`549a6544f0be1eec66c09ece393fd1a409f10bf3`，parent=`803594e9c16f3c361e99fa5ffa7c35a95baaf43a`；现有已审方案 commit `803594e9c16f3c361e99fa5ffa7c35a95baaf43a` 为祖先。root 的 203 项 dirty/untracked 保持不动；启动 manifest=`codex-process-isolation-root-start-manifest.json`。
+- Codex 静态 hook/cache 闭包审计绑定 HEAD=`549a6544...`，结论=`BLOCKED / NOT_VERIFIED`，完整 hash/路径证据见 [`codex-hook-cache-closure-audit-r1.md`](codex-hook-cache-closure-audit-r1.md)。
+- 新增 Windows Sandbox 进程边界提案 [`codex-scratch-build-process-isolation-proposal-r1.md`](codex-scratch-build-process-isolation-proposal-r1.md)：单一 writable HostFolder 为新建 task scratch clone；其他工具链/权重只读；Networking/Clipboard 等禁用；真实无产品代码 smoke、宿主前后 manifest 与 Build Gate 分开。当前状态=`PROPOSED / REVIEW_PENDING`，不授权启动 Sandbox 或 build。
+- 当前只读环境结果：Windows 11 Pro build 26300、`wsb` 0.8.107.0、运行中 session `[]`；feature 查询需要 elevation，故实际 Sandbox 可用性仍 `UNKNOWN`。无 feature enable、提权或 Sandbox 启动。
+- 本补充取代“继续只读 hook/cache 枚举”为当前下一步：冻结包含该提案的文件/HEAD，发送 DeepSeek Harness exact-head 独立 Review。Review 通过仅开放尝试 isolation smoke；smoke 通过也不自动授予 product build。
