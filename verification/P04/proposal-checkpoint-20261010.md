@@ -1,4 +1,4 @@
-# P04 Proposal Checkpoint
+# P04 Initial Proposal Draft Checkpoint (pre-review; historical)
 
 - Timestamp: 2026-10-09 17:27:20 UTC (2026-10-10 01:27:20 Asia/Shanghai)
 - Agent / Task ID: Codex / P04
