@@ -1,0 +1,13 @@
+{
+  "session_id": "session-37855a0a-4ae4-4247-ae30-6f7e5b1bd7f1",
+  "reviewer": "DeepSeek Harness",
+  "reviewer_worktree": "C:\\Users\\49745\\.codex\\worktrees\\P02-preflight-review-dsh-r1",
+  "cwd": "C:\\Users\\49745\\.codex\\worktrees\\P02-preflight-review-dsh-r1",
+  "candidate": "561f4105171b99910d739698380787f35203d3f2",
+  "cli": "dsh --profile headless --json -",
+  "exit": 0,
+  "stderr_bytes": 0,
+  "mounted": true,
+  "mount_target": "P02-preflight-review-dsh-r1",
+  "mount_script": "C:\\Users\\49745\\.agents\\skills\\dsh-dispatch\\scripts\\mount_session.py"
+}

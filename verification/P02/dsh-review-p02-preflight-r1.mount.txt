@@ -1,0 +1,1 @@
+mount_session.py --id session-37855a0a-4ae4-4247-ae30-6f7e5b1bd7f1 --project C:\Users\49745\.codex\worktrees\P02-preflight-review-dsh-r1; exit=0; mounted to P02-preflight-review-dsh-r1; desktop visibility requires restart/refresh per skill.
