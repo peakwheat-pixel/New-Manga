@@ -29,4 +29,8 @@ P02 AC1–AC7、Vitest、Cargo/Tauri/sidecar build、真实WebView2、GUI、键�
 
 Gate总结：`PASS`。Live main与owner-transfer候选同为`3f4d16633a18a9ab7aea5b08b67653cd3f6bf8ff` / tree=`66b3c305943a8c497418f262acbf8d4cde5ed5f0`；候选clean，P01 manifest与root 36项dirty保护复核通过，产品AC仍NOT_RUN。root当前45个status路径还包括本轮8份治理/恢复文档修改及本Gate证据；排除这些Codex路径后的既有36项map与FF后快照相同。未stage或修改其他Agent原有dirty/untracked内容。若后续发现路径/状态漂移，先停下并保护现场。
 
-下一步：完成本文post-FF验证，提交Owner转移状态与恢复文档；随后从最新release `main` HEAD创建全新的Antigravity Owner worktree，并执行只读acceptance/start-intent握手。Task保持`ready / IDLE`直到取得真实接单和start checkpoint。
+Gate创建时的下一步现已完成：治理同步提交=`9d1da4d144f9c86be2d0077de0babc873082c85c`（parent=`3f4d16633a18a9ab7aea5b08b67653cd3f6bf8ff`，tree=`5064009a58dc06e20ec876f8a8ee3a4d4b7edc9a`），仅9份已授权治理/恢复文档、无产品差量；暂存`git diff --cached --check`、路线validator及漂移探针均`EXIT=0`。提交后root仍为原有36项dirty/untracked，PowerShell `Sort-Object Path`口径map SHA-256仍=`e3554db4bbaaf45c35c46dfa7814d8ab818f977b95a79869df78e4f8e0c9b2ee`。
+
+后续状态：已从`main@9d1da4d144f9c86be2d0077de0babc873082c85c`创建Antigravity Owner branch=`agent/antigravity/P02-real-webview-harness`及worktree=`G:/CODEX/New Manga.worktrees/P02-real-webview-harness-antigravity`；HEAD/tree=`9d1da4d`/`5064009a`，common-dir=`G:/CODEX/New Manga/.git`，worktree-local `core.autocrlf=false`，创建后clean。P02仍`ready / IDLE`；尚未接单、开始实施或执行产品Gate。
+
+当前下一步：先提交这次恢复点，将clean Owner worktree fast-forward至最新main，然后执行只读acceptance/start-intent握手；在真实接单及start checkpoint形成前，P02保持`ready / IDLE`。
