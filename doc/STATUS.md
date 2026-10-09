@@ -1,10 +1,10 @@
 # Current Development Status
 
-**当前位置：P08/P03=done；P系列共21项：done 2、approved 1、proposed 18。P01等待Codex最终集成，base=826bea12a132c5af2ac0cd1244d00e9170093c71，Owner/Integrator=Codex、非作者Reviewer=Antigravity；C9与最终D3 reviewed_head=`51bc01fec2652c0e2bc39bb119f8dd7ca3c294cb`均正式`approved`（D3 findings=0）；C1 fixed-head Codex Integration Gate=`PASS`。D1=`322b757933dce0e7333fc495706cc0d424cccaad`已版本化C1报告和root pre-FF manifest；Codex final closeout Gate、integration_commit更新、main fast-forward与post-FF复核待完成。R1/R2 blocked及C8 changes_requested保持历史原样；R2/SYNTH Review carrier仍NOT_VERIFIED。P02仍proposed，harness范围与正式Task未冻结。P03 integration=552464238a69ad2cea63cff18abe98f412dbae87；其测试仍绑定source d717c049。
+**当前位置：P08/P03=done；P系列共21项：done 3、proposed 18。P01 done-state candidate=`13e66ec5bf9a2fc59f4e6c5623feb0bde22884c8`，base=`826bea12a132c5af2ac0cd1244d00e9170093c71`，Owner/Integrator=Codex、非作者Reviewer=Antigravity；C9与最终D3 reviewed_head=`51bc01fec2652c0e2bc39bb119f8dd7ca3c294cb`均正式approved（D3 findings=0）；C1 Codex Integration Gate=`PASS`。D4 fixed-head 91-path检查、done-state validator与closeout检查正在执行；root fast-forward及post-FF manifest复核待完成。R1/R2 blocked及C8 changes_requested保持历史原样；R2/SYNTH Review carrier仍NOT_VERIFIED。P02仍proposed，harness范围与正式Task未冻结。P03 integration=552464238a69ad2cea63cff18abe98f412dbae87；其测试仍绑定source d717c049。
 
-## 2026-10-09 P01 final D3 Antigravity Review approved；Codex closeout Gate pending
+## 2026-10-09 P01 D3 Antigravity Review approved；done-state closeout candidate
 
-P01 AC1–AC6已完成；Antigravity对C9=`7645577ab374b581eb7081fd57675c32793249f5`和最终D3=`51bc01fec2652c0e2bc39bb119f8dd7ca3c294cb`均正式`approved`。D3报告=`doc/reviews/P01-51bc01fe-antigravity-d3.md`，findings=0；C1 fixed-head Integration Gate已通过并由`verification/P01/integration-gate.md`记录。Task当前`approved`、AC7仍待Codex最终Gate、main fast-forward与集成后保护复核；`integration_commit`仍为null。恢复步骤见[`P01 RESUME`](../verification/P01/RESUME.md)。P02仍为候选，不释放任何未登记实现。
+P01的AC1–AC6已完成；Antigravity对C9=`7645577ab374b581eb7081fd57675c32793249f5`和最终D3=`51bc01fec2652c0e2bc39bb119f8dd7ca3c294cb`均正式approved。D3 report=`doc/reviews/P01-51bc01fe-antigravity-d3.md`、findings=0；C1 fixed-head Integration Gate=`PASS`，D4 fixed range=91 paths且允许路径外0。done-state候选正在完成路线/空白/manifest Gate；`integration_commit=M0`为候选值，root main fast-forward与post-FF保护复核待完成。恢复见[`P01 RESUME`](../verification/P01/RESUME.md)。P02仍为候选，不释放未登记实现。
 
 ## 历史检查点：2026-10-09 P01 DSH R2 BLOCKED（由C8 in_review取代）
 
