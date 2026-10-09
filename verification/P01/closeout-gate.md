@@ -2,7 +2,7 @@
 
 ## Gate 状态
 
-当前状态=`IN_PROGRESS`。D3独立Review、C1 Codex Integration Gate及D4固定差量检查均已通过；done-state路线验证也在本地候选上返回EXIT=0。最终closeout证据尚需绑定一个包含状态/Task/Handoff/RESUME更新的固定提交，并在该固定头重跑完整Gate。只有最终固定头复验通过、root fast-forward前保护清单逐项匹配后才可标为`PASS`；fast-forward后还要执行集成后复核。
+当前状态=`PASS_PRE_FF`。D3独立Review、C1 Codex Integration Gate及D5固定差量closeout检查均已通过。待执行root `main` fast-forward和post-FF复核；两者完成前不安排关机，也不把本报告描述为post-FF完成。
 
 ## 正式非作者 Review
 
@@ -18,17 +18,14 @@
 - D4时路线validator核验196节点分类与依赖、105个祖先记录、21项规划DAG及链接。done-state候选另一次验证返回EXIT=0，确认计数`done=3 / proposed=18`；输出随最终fixed-head复验一起归档。
 - root在`main@714138de3da06013e3ea35395e0c11b3d15fc371`，受保护24项manifest的status/path/content SHA-256全部匹配，digest=`b41835453b693b4e62818216e4d67801c01eca6e33450f8d3d3dd72849d578e7`，与候选差量交集=0。此检查须在fast-forward前再次执行。
 
-## 最终固定头复验（待执行）
+## D5固定头结果
 
-把done-state计划/状态、P01 Task/AC7、Handoff、RESUME和本报告整理为单一固定候选提交后，重新运行：
-
-1. `python -B -X utf8 verification/PROJECT-ROADMAP-20261008/verify_plan.py`
-2. `git merge-base --is-ancestor 826bea12a132c5af2ac0cd1244d00e9170093c71 HEAD`
-3. `git diff --check 826bea12a132c5af2ac0cd1244d00e9170093c71..HEAD` 与 `git diff --check`
-4. base..HEAD及worktree差量的P01 allowed-path、产品/测试/build零路径检查。
-5. root branch/HEAD、24项protected manifest逐项status/path/content SHA、manifest digest及差量交集检查。
-
-任何检查失败都保持Gate未通过，不fast-forward、不安排关机。全部PASS后更新本报告的实际fixed HEAD/tree与结果，再按`verification/P01/RESUME.md`核对root并执行`git merge --ff-only codex/P01-integration-20261009`。成功后必须做post-FF复验并追加结果。
+- Gate target=`cf11183d8185b1b0f78396bd0976b1bbdb42bef0`，tree=`57e275d138e537a62c3f2e9b1ecbef7c1e275e6f`，branch=`codex/P01-integration-20261009`；固定提交后worktree clean。
+- `python -B -X utf8 verification/PROJECT-ROADMAP-20261008/verify_plan.py` EXIT=0；196个唯一节点、105祖先记录、21项规划DAG与链接通过，done=3 / proposed=18。
+- P01 base..D5共92 paths；全部在P01允许范围内，越界=0，产品/测试/build路径=0。`git merge-base --is-ancestor` EXIT=0；`git diff --check <base>..D5` EXIT=0。
+- Antigravity D3 Review carrier与session metadata匹配：decision=`approved`、findings=0、reviewed_head与tree精确匹配、response SHA与报告一致。
+- root仍`main@714138de3da06013e3ea35395e0c11b3d15fc371`；24项受保护路径逐项status/path/content SHA匹配，manifest SHA-256=`b41835453b693b4e62818216e4d67801c01eca6e33450f8d3d3dd72849d578e7`，候选路径交集=0。
+- `git merge --ff-only codex/P01-integration-20261009`尚未执行。执行前再次检查root仍在同一HEAD/branch且24项manifest匹配；快进后重跑route validator、祖先、range `git diff --check`、Task/Plan/Status和受保护文件核对，并把结果追加于本报告与RESUME。
 
 ## 保留的验证边界
 

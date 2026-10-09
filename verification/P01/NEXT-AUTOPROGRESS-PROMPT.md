@@ -12,6 +12,6 @@
 5. 每项工作均核对AC、逐条测试/`NOT_RUN`与skip、独立Review、Codex Integration Gate和集成后验证；更新Task、Plan、Status、依赖图、Handoff、RESUME与下一自动推进提示。Task完成后直接选择并释放安全可执行的下一项，不因单个Task完成而停下来等待我。
 6. 产品实现严格限定到当前Windows / React + TypeScript / Tauri / Python Core / SQLite / Managed Copy架构；UI任务先验证现有真实行为，不以JSDOM/mock冒充WebView。共享接口、Schema、依赖或协作规则须先登记范围；产品取舍未决时继续独立工作并一次性列明问题及影响，暂停仅依赖该决定的工作。
 7. 依据仓库规则使用适用Skill与真实Agent通路；Owner和Reviewer必须不同。保存实际commit、测试输出/exit、Review载体、session和fingerprint；不得伪造派发、交付、Review、PASS或DONE。
-8. 未经新的明确授权，不push、发布、部署、删除生产/用户数据，也不执行其他影响项目外部状态的操作。此前“P01完成后关机”是仅适用于上一会话的一次性要求，不能继承为本次或后续任务的关机授权；除非我再次明确要求，否则保持计算机运行。
+8. 未经新的明确授权，不push、发布、部署、删除生产/用户数据，也不执行其他影响项目外部状态的操作。用户已授权当前会话在P01完整关闭后安排一次关机；只有当前会话完成P01、main fast-forward、post-FF复核并保存最终恢复点后，才可执行。下次读取本提示时，该一次性授权应视为已消费；不得延伸到P02或后续Task，也不得再次自动关机，除非用户重新明确授权。
 
 恢复后直接执行可安全开展的下一步，不要要求我再次说“下一步”。

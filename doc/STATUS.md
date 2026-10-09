@@ -1,10 +1,10 @@
 # Current Development Status
 
-**当前位置：P08/P03=done；P系列共21项：done 3、proposed 18。P01 done-state candidate=`13e66ec5bf9a2fc59f4e6c5623feb0bde22884c8`，base=`826bea12a132c5af2ac0cd1244d00e9170093c71`，Owner/Integrator=Codex、非作者Reviewer=Antigravity；C9与最终D3 reviewed_head=`51bc01fec2652c0e2bc39bb119f8dd7ca3c294cb`均正式approved（D3 findings=0）；C1 Codex Integration Gate=`PASS`。D4 fixed-head 91-path检查、done-state validator与closeout检查正在执行；root fast-forward及post-FF manifest复核待完成。R1/R2 blocked及C8 changes_requested保持历史原样；R2/SYNTH Review carrier仍NOT_VERIFIED。P02仍proposed，harness范围与正式Task未冻结。P03 integration=552464238a69ad2cea63cff18abe98f412dbae87；其测试仍绑定source d717c049。
+**当前位置：P08/P03=done；P系列共21项：done 3、proposed 18。P01 done-state candidate=`13e66ec5bf9a2fc59f4e6c5623feb0bde22884c8`，base=`826bea12a132c5af2ac0cd1244d00e9170093c71`，Owner/Integrator=Codex、非作者Reviewer=Antigravity；D3 Review与C1 Gate=`PASS`。D5=`cf11183d8185b1b0f78396bd0976b1bbdb42bef0`固定头Codex closeout Gate=`PASS_PRE_FF`，92 paths、越界0、产品路径0；root pre-FF 24项manifest逐项匹配。main fast-forward及post-FF复核待执行。R1/R2 blocked及C8 changes_requested保持历史原样；R2/SYNTH Review carrier仍NOT_VERIFIED。P02仍proposed，harness范围与正式Task未冻结。P03 integration=552464238a69ad2cea63cff18abe98f412dbae87；其测试仍绑定source d717c049。
 
-## 2026-10-09 P01 D3 Antigravity Review approved；done-state closeout candidate
+## 2026-10-09 P01 D3 Antigravity Review与Codex closeout Gate通过；main fast-forward待执行
 
-P01的AC1–AC6已完成；Antigravity对C9=`7645577ab374b581eb7081fd57675c32793249f5`和最终D3=`51bc01fec2652c0e2bc39bb119f8dd7ca3c294cb`均正式approved。D3 report=`doc/reviews/P01-51bc01fe-antigravity-d3.md`、findings=0；C1 fixed-head Integration Gate=`PASS`，D4 fixed range=91 paths且允许路径外0。done-state候选正在完成路线/空白/manifest Gate；`integration_commit=M0`为候选值，root main fast-forward与post-FF保护复核待完成。恢复见[`P01 RESUME`](../verification/P01/RESUME.md)。P02仍为候选，不释放未登记实现。
+P01的AC1–AC7已通过候选Gate；Antigravity对C9=`7645577ab374b581eb7081fd57675c32793249f5`和最终D3=`51bc01fec2652c0e2bc39bb119f8dd7ca3c294cb`均正式approved。D3 report=`doc/reviews/P01-51bc01fe-antigravity-d3.md`、findings=0；C1 Gate=`PASS`；D5 fixed-head closeout Gate=`PASS_PRE_FF`，92 paths、范围外0。`integration_commit=M0`；root main fast-forward与post-FF保护复核待完成。恢复见[`P01 RESUME`](../verification/P01/RESUME.md)。P02仍为候选，不释放未登记实现。
 
 ## 历史检查点：2026-10-09 P01 DSH R2 BLOCKED（由C8 in_review取代）
 

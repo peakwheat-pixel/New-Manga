@@ -1,8 +1,8 @@
 # 全项目任务规划恢复点
 
-最新工作点：P08/P03=done；P系列21项中done=3、proposed=18。P01 done-state候选位于integration branch，Antigravity D3 fixed-head正式Review=approved（0 findings），Codex C1 Gate=PASS；done-state validator/closeout、main fast-forward与post-FF复核正在执行。恢复见`verification/P01/RESUME.md`与`verification/P01/NEXT-AUTOPROGRESS-PROMPT.md`。P02仍proposed，尚无正式Task，harness范围须先冻结。
+最新工作点：P08/P03=done；P系列21项中done=3、proposed=18。P01 done-state candidate的Antigravity D3 Review=`approved`（0 findings），Codex C1与D5 fixed-head closeout Gate=`PASS_PRE_FF`；main fast-forward与post-FF复核待执行。恢复见`verification/P01/RESUME.md`与`verification/P01/NEXT-AUTOPROGRESS-PROMPT.md`。P02仍proposed，尚无正式Task，harness范围须先冻结。
 
-**当前位置：P08/P03=done；P01 done-state候选，Owner/Integrator=Codex、非作者Reviewer=Antigravity；C9 fixed head `7645577ab374b581eb7081fd57675c32793249f5`及D3=`51bc01fec2652c0e2bc39bb119f8dd7ca3c294cb`正式approved（0 findings），C1 Codex Integration Gate=PASS；done-state closeout Gate正在执行，main fast-forward与post-FF复核待完成。C8 changes_requested、R1/R2 blocked和DSH Win32 5环境事实均保留为历史；R2/SYNTH carrier仍NOT_VERIFIED。**
+**当前位置：P08/P03=done；P01 done-state candidate，Owner/Integrator=Codex、非作者Reviewer=Antigravity；C9 fixed head `7645577ab374b581eb7081fd57675c32793249f5`及D3=`51bc01fec2652c0e2bc39bb119f8dd7ca3c294cb`正式approved（0 findings），C1与D5 Codex closeout Gate=`PASS_PRE_FF`；root main fast-forward与post-FF复核待执行。C8 changes_requested、R1/R2 blocked和DSH Win32 5环境事实均保留为历史；R2/SYNTH carrier仍NOT_VERIFIED。**
 
 2026-10-08 编号裁决时的状态快照：任务编号沿用 `P01–P21`；当时P08=`in_review`，其余20项=`proposed / 未释放`。当前状态见本恢复点顶部及`doc/STATUS.md`；本编号裁决本身不释放产品实施、不改历史记录。
 
