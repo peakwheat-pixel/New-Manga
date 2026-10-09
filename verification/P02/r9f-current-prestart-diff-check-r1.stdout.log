@@ -1,0 +1,3 @@
+Command: git diff HEAD^ HEAD --check
+HEAD: 3fcaee2f59de362c21c7d4e721da9336742ca75e
+Tree: 4fb5027cefe90bb21fcbfbfd5d8594093e2c47fc
