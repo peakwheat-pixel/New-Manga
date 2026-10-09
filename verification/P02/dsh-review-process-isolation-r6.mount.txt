@@ -1,0 +1,2 @@
+mount_session.py exit=0
+Mounted session into P02-process-isolation-review-dsh-r6; desktop session visibility may require app refresh.
