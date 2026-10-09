@@ -1,0 +1,159 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "description": "P02 Workbench real WebView2 verification synthetic fixtures (isolated test data, no user data)",
+  "fixtures": {
+    "books": [
+      {
+        "id": "synth-book-alpha",
+        "title": "Synthetic Test Manga Alpha",
+        "chapter_count": 2,
+        "page_count": 4,
+        "cover_page_id": "synth-page-101"
+      }
+    ],
+    "chapters": {
+      "synth-book-alpha": [
+        {
+          "id": "synth-chap-01",
+          "book_id": "synth-book-alpha",
+          "title": "Chapter 1: The Synthetic Encounter",
+          "chapter_number": 1,
+          "page_count": 2
+        },
+        {
+          "id": "synth-chap-02",
+          "book_id": "synth-book-alpha",
+          "title": "Chapter 2: The Quiet Period",
+          "chapter_number": 2,
+          "page_count": 2
+        }
+      ]
+    },
+    "pages": {
+      "synth-chap-01": [
+        {
+          "id": "synth-page-101",
+          "chapter_id": "synth-chap-01",
+          "page_number": 1,
+          "width": 1200,
+          "height": 1800,
+          "has_regions": true
+        },
+        {
+          "id": "synth-page-102",
+          "chapter_id": "synth-chap-01",
+          "page_number": 2,
+          "width": 1200,
+          "height": 1800,
+          "has_regions": true
+        }
+      ],
+      "synth-chap-02": [
+        {
+          "id": "synth-page-201",
+          "chapter_id": "synth-chap-02",
+          "page_number": 1,
+          "width": 1200,
+          "height": 1800,
+          "has_regions": false
+        },
+        {
+          "id": "synth-page-202",
+          "chapter_id": "synth-chap-02",
+          "page_number": 2,
+          "width": 1200,
+          "height": 1800,
+          "has_regions": false
+        }
+      ]
+    },
+    "regions": {
+      "synth-page-101": [
+        {
+          "id": "synth-reg-01",
+          "page_id": "synth-page-101",
+          "region_type": "dialogue",
+          "coordinates": {
+            "x": 100,
+            "y": 150,
+            "width": 300,
+            "height": 200
+          },
+          "translation": "Synthetic dialogue text for quiet period verification",
+          "current_revision": 1,
+          "is_locked": false,
+          "is_suspect": false,
+          "revisions": [
+            {
+              "revision_no": 1,
+              "region_type": "dialogue",
+              "created_at": "2026-10-09T00:00:00Z"
+            }
+          ]
+        },
+        {
+          "id": "synth-reg-02",
+          "page_id": "synth-page-101",
+          "region_type": "sfx",
+          "coordinates": {
+            "x": 500,
+            "y": 400,
+            "width": 150,
+            "height": 100
+          },
+          "translation": "BAM",
+          "current_revision": 1,
+          "is_locked": false,
+          "is_suspect": false,
+          "revisions": [
+            {
+              "revision_no": 1,
+              "region_type": "sfx",
+              "created_at": "2026-10-09T00:00:00Z"
+            }
+          ]
+        }
+      ]
+    },
+    "post_write_scenarios": {
+      "description": "AC4 write-then-refresh actions for retype, undo, and restore",
+      "retype": {
+        "operation": "set_region_type",
+        "page_id": "synth-page-101",
+        "region_id": "synth-reg-01",
+        "target_type": "thought",
+        "expected_revision": 2
+      },
+      "undo": {
+        "operation": "undo_retype",
+        "page_id": "synth-page-101",
+        "region_id": "synth-reg-01",
+        "target_revision": 1
+      },
+      "restore": {
+        "operation": "restore_region_revision",
+        "page_id": "synth-page-101",
+        "region_id": "synth-reg-01",
+        "revision_no": 1
+      }
+    },
+    "visual_direction_f_tokens": {
+      "description": "UI/UX GUI Design Contract §7.2 / §9 and Visual Direction F token specifications",
+      "contrast_thresholds": {
+        "body_text_min_ratio": 4.5,
+        "large_text_min_ratio": 3.0,
+        "ui_components_min_ratio": 3.0,
+        "disabled_text_min_ratio": 3.0
+      },
+      "reference_tokens": {
+        "bg_dark_base": "#101418",
+        "bg_surface_panel": "#161b22",
+        "bg_surface_active": "#1c2430",
+        "border_subtle": "#2a3038",
+        "fg_primary_text": "#d8e0e8",
+        "fg_muted_text": "#8b949e",
+        "accent_active": "#58a6ff"
+      }
+    }
+  }
+}

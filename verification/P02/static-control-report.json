@@ -1,0 +1,63 @@
+{
+  "probe": "P02_STATIC_SOURCE_CONTRACT_CONTROL",
+  "overall_status": "PASS",
+  "workbench_page": {
+    "status": "PASS",
+    "file": "apps\\desktop\\frontend\\src\\workbench\\WorkbenchPage.tsx",
+    "checks": {
+      "resolveDebounceMs_default_300": true,
+      "regionDebounceMs_default_300": true,
+      "client_references": {
+        "LibraryClient": true,
+        "RegionClient": true,
+        "ResourceChannelClient": true
+      },
+      "command_surface_references": {
+        "library_list_books": true,
+        "list_regions": true,
+        "set_region_type": true,
+        "restore_region_revision": true,
+        "resolve_page_resource": true,
+        "list_chapters": true,
+        "list_chapter_pages": true
+      },
+      "component_references": {
+        "PageListPanel": true,
+        "ViewerPanel": true,
+        "RegionInspector": true,
+        "WorkbenchToolbar": true,
+        "TaskProgressPanel": true,
+        "RelabelConfirmDialog": true
+      }
+    }
+  },
+  "app_navigation": {
+    "status": "PASS",
+    "file": "apps\\desktop\\frontend\\src\\App.tsx",
+    "checks": {
+      "has_app_nav_testid": true,
+      "has_nav_console_testid": true,
+      "has_nav_workbench_testid": true,
+      "has_workbench_mount": true,
+      "has_nav_chrome_toggle": true,
+      "has_interactive_view_state": true
+    }
+  },
+  "child_components": {
+    "workbench/PageListPanel.tsx": {
+      "exists": true,
+      "line_count": 188,
+      "has_keyboard_or_focus": false
+    },
+    "workbench/ViewerPanel.tsx": {
+      "exists": true,
+      "line_count": 291,
+      "has_keyboard_or_focus": true
+    },
+    "workbench/RegionInspector.tsx": {
+      "exists": true,
+      "line_count": 314,
+      "has_keyboard_or_focus": false
+    }
+  }
+}

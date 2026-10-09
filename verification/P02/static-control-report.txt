@@ -1,0 +1,8 @@
+=== P02 Static Source Contract Control Report ===
+Overall Status: PASS
+WorkbenchPage Status: PASS
+  - resolveDebounceMs default 300: True
+  - regionDebounceMs default 300: True
+App Navigation Status: PASS
+  - app-nav testid present: True
+  - nav-workbench testid present: True

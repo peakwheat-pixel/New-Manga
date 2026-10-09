@@ -1,0 +1,53 @@
+{
+  "probe": "P02_READONLY_ENV_IDENTITY",
+  "task_id": "P02",
+  "owner": "Antigravity",
+  "host_os": {
+    "system": "Windows",
+    "release": "11",
+    "version": "10.0.26300",
+    "machine": "AMD64",
+    "platform": "Windows-11-10.0.26300-SP0"
+  },
+  "webview2_runtime": {
+    "findings": {
+      "HKLM_{56EB18F8-B008-4CBD-B6D2-8C97FE7E9062}": "154.0.4258.62",
+      "HKLM_{F3017226-FE2A-4295-8BDF-00C3A9A7E4C5}": "154.0.4258.62",
+      "HKLM_{F3C4FE00-EFD5-403B-9569-398A20F1BA4A}": "1.3.279.5",
+      "FS_154.0.4258.62": "C:\\Program Files (x86)\\Microsoft\\EdgeWebView\\Application\\154.0.4258.62"
+    },
+    "detected_version": "154.0.4258.62"
+  },
+  "runtimes": {
+    "python": "3.14.6 (tags/v3.14.6:c63aec6, Jun 10 2026, 10:26:10) [MSC v.1944 64 bit (AMD64)]",
+    "node": "v24.15.0",
+    "npm": ""
+  },
+  "git_state": {
+    "head": "5de8d44c784cbd20b23bcd41a8f1a7258c7addff",
+    "tree": "f27d12a7f8db1a3946f5832d865653d1dcf380b3",
+    "branch": "agent/antigravity/P02-real-webview-harness",
+    "is_clean": false,
+    "porcelain_status": "?? apps/desktop/frontend/e2e/\n?? verification/P02/env-identity-report.json\n?? verification/P02/env-identity-report.txt\n?? verification/P02/fixtures/\n?? verification/P02/harness/\n?? verification/P02/p02-harness-results.json\n?? verification/P02/p02-harness-results.txt\n?? verification/P02/probes/\n?? verification/P02/run-webview.ps1\n?? verification/P02/static-control-report.json\n?? verification/P02/static-control-report.txt"
+  },
+  "build_output_directories": {
+    "frontend_dist": {
+      "path": "G:\\CODEX\\New Manga.worktrees\\P02-real-webview-harness-antigravity\\apps\\desktop\\frontend\\dist",
+      "exists": false,
+      "is_dir": false,
+      "entry_count": 0,
+      "entries": []
+    },
+    "cargo_target": {
+      "path": "G:\\CODEX\\New Manga.worktrees\\P02-real-webview-harness-antigravity\\verification\\P02\\cargo-target",
+      "exists": false,
+      "is_dir": false,
+      "entry_count": 0,
+      "entries": []
+    }
+  },
+  "build_barrier": {
+    "hard_barrier_active": true,
+    "reason": "tauri_build writes into source tree (gen/schemas and command permission TOMLs), and fixed baseline lacks trusted sidecar inputs. Cargo/Tauri builds prohibited in this Owner worktree."
+  }
+}
