@@ -1,6 +1,6 @@
 ==========================================================
 P02 Probe Execution Log
-Date: 2026-10-09T17:30:00+08:00
+Date: 2026-10-09T17:58:32+08:00
 PowerShell: 5.1.26100.9549
 Worktree: G:\CODEX\New Manga.worktrees\P02-real-webview-harness-antigravity
 Mode: Full Stage A
@@ -22,8 +22,8 @@ Node Runtime: v24.15.0
 npm Tool: 12.0.1
 Python Executable: C:\Python314\python.exe
 Git Branch: agent/antigravity/P02-real-webview-harness
-Source HEAD: 38672473f93971a4681aef682e5635e64b0bd896
-Source Tree: 2aa967bbf961a0e9e58dd3e1489d74635491e28f
+Source HEAD: 38959ba99b84f771aba7010b53b9b47ecdc75488
+Source Tree: 5bf0c81a0ee814f857ad4c1f0b3f598f963fa1c5
 Git Clean Status: False
 Behavior Baseline: 241ff3b70b6fc0490ea238efd486cc707f849031
 Porcelain Status:
@@ -33,7 +33,6 @@ M doc/handoffs/P02-stage-a-foundation-handoff.md
  M verification/P02/env-identity-report.json
  M verification/P02/env-identity-report.txt
  M verification/P02/harness/workbench_cdp_harness.py
- M verification/P02/microprobes/ps51-exception-handling.log
  M verification/P02/p02-harness-results.json
  M verification/P02/p02-harness-results.txt
  M verification/P02/probe-execution-full.log
@@ -68,9 +67,9 @@ EXIT: 0
 --- [Step 4: Stage A Verdict Harness] ---
 Command: C:\Python314\python.exe G:\CODEX\New Manga.worktrees\P02-real-webview-harness-antigravity\verification\P02\harness\workbench_cdp_harness.py --tsc-exit 0
 OUTPUT:
-=== P02 Real Workbench WebView2 Harness Verdict Report (Stage A r7) ===
-Source HEAD: 38672473f93971a4681aef682e5635e64b0bd896
-Source Tree: 2aa967bbf961a0e9e58dd3e1489d74635491e28f
+=== P02 Real Workbench WebView2 Harness Verdict Report (Stage A r8) ===
+Source HEAD: 38959ba99b84f771aba7010b53b9b47ecdc75488
+Source Tree: 5bf0c81a0ee814f857ad4c1f0b3f598f963fa1c5
 Branch: agent/antigravity/P02-real-webview-harness
 Behavior Baseline: 241ff3b70b6fc0490ea238efd486cc707f849031
 Total Scenarios: 9

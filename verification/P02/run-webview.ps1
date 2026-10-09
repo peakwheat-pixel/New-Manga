@@ -1,6 +1,6 @@
 <#
 .SYNOPSIS
-    P02 Workbench Real WebView2 Verification Runner (Stage A r7).
+    P02 Workbench Real WebView2 Verification Runner (Stage A r8).
 .DESCRIPTION
     Runs read-only environment identity probe, TypeScript protocol check,
     static frontend control probe, Stage A preflight verification harness,
@@ -119,7 +119,7 @@ function Execute-Step {
 }
 
 Write-Host "==========================================================" -ForegroundColor Cyan
-Write-Host " P02 Real Workbench WebView2 Verification Harness (Stage A r7)" -ForegroundColor Cyan
+Write-Host " P02 Real Workbench WebView2 Verification Harness (Stage A r8)" -ForegroundColor Cyan
 Write-Host " Worktree: $RepoRoot" -ForegroundColor Cyan
 Write-Host " Mode: $(if ($ProbeOnly) { 'ProbeOnly' } else { 'Full Stage A' })" -ForegroundColor Cyan
 Write-Host "==========================================================" -ForegroundColor Cyan

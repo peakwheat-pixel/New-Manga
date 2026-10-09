@@ -1,8 +1,8 @@
 ---
 task_id: P02
-title: 真实 Workbench WebView 行为、300ms 刷新与对比度验证 (Stage A 定向修订 Handoff r7)
+title: 真实 Workbench WebView 行为、300ms 刷新与对比度验证 (Stage A 定向修订 Handoff r8)
 status: in_progress
-stage: STAGE_A_SAFE_FOUNDATION_R7
+stage: STAGE_A_SAFE_FOUNDATION_R8
 author: Antigravity
 reviewer: DeepSeek Harness
 integrator: Codex
@@ -22,18 +22,20 @@ reviewed_head_r5: 172eee84240e101186b12f1aa09e8a2f9ec92d68
 dsh_decision_r5: changes_requested
 reviewed_head_r6: 38672473f93971a4681aef682e5635e64b0bd896
 dsh_decision_r6: approved_with_conditions
-created_at: 2026-10-09T17:30:00+08:00
+reviewed_head_r7: 38959ba99b84f771aba7010b53b9b47ecdc75488
+dsh_decision_r7: approved_with_conditions
+created_at: 2026-10-09T17:58:00+08:00
 ---
 
-# P02 Stage A 安全基底定向修订交付报告 (r7)
+# P02 Stage A 安全基底定向修订交付报告 (r8)
 
 ## 1. 修订概述
 
-本交付响应非作者实现 Reviewer DeepSeek Harness 对 Stage A r6 交付（`reviewed_head=38672473f93971a4681aef682e5635e64b0bd896`）作出的 `approved_with_conditions` 审查意见（`verification/P02/implementation-stage-a-r6-dsh-review.md`，P0/P1/P2/P3=`0/0/0/4`，开放 4 项条件项 R6-01~R6-04；早期 R5-01~R5-06 全部 closed）以及 Codex exact replay（`r6-codex-exact-head-review.md`，5/5 工件哈希匹配）证据。
+本交付响应非作者实现 Reviewer DeepSeek Harness 对 Stage A r7 交付（`reviewed_head=38959ba99b84f771aba7010b53b9b47ecdc75488`）作出的 `approved_with_conditions` 审查意见（`verification/P02/implementation-stage-a-r7-dsh-review.stdout.md`，P0/P1/P2/P3=`0/0/0/2`，开放 2 项 P3 条件项 R7-01、R7-02；前序 R6-01~R6-04 全部 closed）以及 Codex exact replay（`r7-codex-exact-head-review.md`，5/5 工件哈希匹配）证据。
 
-在严格恪守 **Hard Build Barrier（硬构建屏障）** 的前提下，本轮修订在已冻结的 Owner 授权路径内彻底处置闭合了 R6-01 至 R6-04 全部 4 项条件项，加固了整个 Stage A 验证脚手架的跨目录解析鲁棒性、机器门判定真实性与自检覆盖真实生产路径的严密性。
+在严格恪守 **Hard Build Barrier（硬构建屏障）** 的前提下，本轮修订在已冻结的 Owner 授权路径内彻底处置闭合了 R7-01，并对 DSH 明确允许延期的 R7-02 进行了显式债务登记（Deferred P3），使仓库内的测试套件建立了对 PRE-03 生产 verdict 记录及顶层退出判决的持久自足回归守卫。
 
-## 2. 历史 Review 编号映射与残余澄清（R5-06, R6-01~04）
+## 2. 历史 Review 编号映射与残余澄清
 
 为消除多轮 Review 过程中的编号语义混淆并如实反映各阶段闭合状态（所有历史快照原样保留，历史闭合项不重新开放）：
 
@@ -44,16 +46,15 @@ created_at: 2026-10-09T17:30:00+08:00
 | **DSH r3** | `doc/reviews/P02-5fa8a41f-dsh-r3-review.md` | `approved_with_conditions` | 10 项条件项（含 r2 残余） | H-01 ~ H-07（Codex 独立列为 C1~C5） | 全部闭合于 r4 |
 | **DSH r4** | `verification/P02/implementation-stage-a-r4-dsh-review.md` | `changes_requested` | **R4-01 ~ R4-11** (P2: 3 项, P3: 8 项) | **R4-01 ~ R4-11** | R4-01..03, 05, 07..11 于 r5 闭合；R4-04 与 R4-06 于 r6 彻底闭合 |
 | **DSH r5** | `verification/P02/implementation-stage-a-r5-dsh-review.md` | `changes_requested` | **R5-01 ~ R5-06** (P2: 2 项, P3: 4 项) | **R5-01 ~ R5-06** | 全部闭合于 r6 |
-| **DSH r6** | `verification/P02/implementation-stage-a-r6-dsh-review.md` | `approved_with_conditions` | **R6-01 ~ R6-04** (全部 P3，4 项) | **R6-01 ~ R6-04** | **全部闭合于本轮 r7** |
+| **DSH r6** | `verification/P02/implementation-stage-a-r6-dsh-review.md` | `approved_with_conditions` | **R6-01 ~ R6-04** (全部 P3，4 项) | **R6-01 ~ R6-04** | 全部闭合于 r7 |
+| **DSH r7** | `verification/P02/implementation-stage-a-r7-dsh-review.stdout.md` | `approved_with_conditions` | **R7-01, R7-02** (全部 P3，2 项) | **R7-01, R7-02** | **R7-01 闭合于本轮 r8；R7-02 显式延期 (Deferred P3)** |
 
-## 3. DSH r6 条件项 (R6-01 ~ R6-04) 逐项处置与证据对照表
+## 3. DSH r7 条件项 (R7-01, R7-02) 逐项处置与证据对照表
 
-| Finding 编号 | 级别 | 核心问题 | r7 修订处置与证据 | 状态 |
+| Finding 编号 | 级别 | 核心问题 | r8 修订处置与证据 | 状态 |
 |---|---|---|---|---|
-| **R6-01** | P3 | `run-webview.ps1` 中的 `git rev-parse --git-common-dir` 未带 `-C $RepoRoot`，导致从仓库外以绝对路径调用时解析到错误 common root，误报缺少编译器并退出 1 | 1. `run-webview.ps1` 改为 `git -C $RepoRoot rev-parse --git-common-dir`，与 Python 侧 `cwd=REPO_ROOT` 逻辑完全对齐；<br>2. 实测在外部目录（如 `C:\Users\49745`）以绝对路径调用 `run-webview.ps1 -ProbeOnly`，精准解析 Git common root 下的 `tsc` 并顺利通过（EXIT=0），彻底杜绝误报缺失编译器。 | **closed** |
-| **R6-02** | P3 | `typescript_contract_gate.gate_status` 仅表示编译器存在，不表示已运行；harness 独立执行时不运行 TS 却报告 PASS，且未入总退出码 | 1. `run-webview.ps1` 在 Step 4 将 Step 2 实际观察到的 `tsc` 退出码通过 `--tsc-exit` 传入 harness；<br>2. `workbench_cdp_harness.py` 区分 `tsc_binary_resolution`（RESOLVED / NOT_FOUND）与实际 `execution_status`（PASS / FAIL / NOT_RUN）；<br>3. 若独立执行未传入退出码，机器门如实记录为 `NOT_RUN`（observed_exit_code: null）而绝不虚报 `PASS`；<br>4. 若传入非零退出码（如 1），harness 主程序严格退出 1，将 TS 门彻底纳入总退出码逻辑。 | **closed** |
-| **R6-03** | P3 | `self_test_pre02_retry_failure` 与 `self_test_pre03_failure_propagation` 硬编码变量并复制布尔公式，未覆盖生产派发与聚合函数 | 1. 抽取生产 PRE-02 重试派发 helper `dispatch_and_evaluate_static_probe` 与生产 PRE-03 聚合 helper `aggregate_pre03_verdict`；<br>2. 生产 PRE-02 与 PRE-03 运行路径直接接入这两个 helper；<br>3. 重构自检函数，直接调用生产 helper，断言最终判决 verdict、exit code、报告未过时谓词、旧报告主动 unlink 清理与聚合布尔字典。 | **closed** |
-| **R6-04** | P3 | `microprobes/ps51-exception-handling.log` 中的 Scenario C 为静态代码审查推断，未实际运行却标为 `Verdict: PASS` | 1. `run-webview.ps1` 增加 `-ExceptionTest` 参数；<br>2. 真实执行一次 Windows PowerShell 5.1 未捕获异常并拦截捕获（退出 1）；<br>3. 将真实执行命令、终端输出、完整 `[UNHANDLED_EXCEPTION]` 日志尾（Failed Step/Command、Exception Type/Message、Captured Process Output: UNAVAILABLE、StackTrace、Observed Child ExitCode: null）与静态代码结构审查一并归档至 `verification/P02/microprobes/ps51-exception-handling.log`，形成实测执行与静态结构双重闭环证据。 | **closed** |
+| **R7-01** | P3 | `self_test_pre03_failure_propagation()` 仅断言布尔字典 `aggregate_pre03_verdict()`，不断言被记录的 verdict（status/exit_code）与 `main()` 顶层返回值；仓库内缺少自足的回归防线 | 1. 抽取生产 PRE-03 结构构建与判定 helper `build_pre03_verdict`，返回 `(pre03_pass, verdict_dict)`，权威派生 `status: PASS/FAIL` 与 `exit_code: 0/1`；<br>2. 抽取生产顶层退出决策 pure helper `compute_harness_exit_code(preflight_ok, tsc_gate_status)`，统一由 `main()` 消费；<br>3. 在 `WorkbenchHarness` 类上增加生产记录方法 `record_pre03_evaluation`，由 `run_preflight_checks` 直接消费；<br>4. 重构 `self_test_pre03_failure_propagation`：断言生产 `build_pre03_verdict` 在注入低对比度时生成 `status=="FAIL"` 与 `exit_code==1`，验证 `record_pre03_evaluation` 在 Harness 实例上追加 FAIL verdict 且 `compute_harness_exit_code` 返回 1；在全绿场景断言 PASS 与 0，构建自足回归守卫。 | **closed** |
+| **R7-02** | P3 | runner 若在 Step 2/3 失败则提前退出，磁盘上保留上一轮的 `FINALIZED` JSON 报告，在 HEAD 相同的本地迭代中可能产生混淆 | 依据 DSH 裁决与授权范围，本轮**明确延期为记录的技术债务（Deferred P3）**，不在本轮改动 runner 行为。<br>**触发条件**：运行在 Step 2 (tsc) 或 Step 3 (static probe) 失败中断，未到达 Step 4/5。<br>**延期原因**：避免在未经独立架构设计的情况下扩大 runner 状态机。<br>**后续方案**：可在 runner 启动阶段重置既有报告为 `SUPERSEDED` 或在报告与日志中注入统一 `run_id`。 | **deferred (P3)** |
 
 ## 4. 验收场景执行结果（单一事实源）
 
@@ -63,7 +64,7 @@ created_at: 2026-10-09T17:30:00+08:00
 |---|---|---|---|---|---|
 | `PRE-01` | 合成 Fixture 契约完整性 | **PASS** | `FILESYSTEM` | 0 | 全量遍历 1 book, 2 chapters, 4 pages, 3 regions, 3 revisions；fail-closed 派生权威枚举闭集（含 manual/imported/restored）；4/4 组 mutation 拒绝自检全部执行并通过；验证 relabel 转移与 normalized geometry |
 | `PRE-02` | 静态源码契约控制检查 | **PASS** | `STATIC_AST` | 0 | 新鲜度严格绑定当前 HEAD/tree 与关键输入哈希；子进程退出码与报告解耦，stale 重试先 unlink；PASS 谓词严格要求 fresh + proc_exit=0 + report_exit=0 + status=PASS；自检验证子进程非零重试失败隔离 |
-| `PRE-03` | 视觉 F Token / 内联色数学模型 | **PASS** | `TOKEN_MODEL` | 0 | 全量聚合 token、live palette 与 alpha evaluations；方向 F Token 真实计算：`ink` 14.72:1 (>=4.5), `ink-2` 7.45:1 (>=4.5), `ink-3` 5.57:1 (>=4.5), `ink-dis` 3.55:1 (>=3.0), `accent` 3.53:1 (>=3.0)；Live 内联正文 `#d8e0e8` 13.87:1 (>=4.5), `#8a94a2` 6.02:1 (>=4.5)；Pill 背景合成 `#7eb287` 5.83:1 (>=4.5), `#fbbf24` 7.97:1 (>=4.5)；普通文本一律 >=4.5:1；边框与容器背景 `NOT_VERIFIABLE`；自检验证失败传播 |
+| `PRE-03` | 视觉 F Token / 内联色数学模型 | **PASS** | `TOKEN_MODEL` | 0 | 全量聚合 token、live palette 与 alpha evaluations；方向 F Token 真实计算：`ink` 14.72:1 (>=4.5), `ink-2` 7.45:1 (>=4.5), `ink-3` 5.57:1 (>=4.5), `ink-dis` 3.55:1 (>=3.0), `accent` 3.53:1 (>=3.0)；Live 内联正文 `#d8e0e8` 13.87:1 (>=4.5), `#8a94a2` 6.02:1 (>=4.5)；Pill 背景合成 `#7eb287` 5.83:1 (>=4.5), `#fbbf24` 7.97:1 (>=4.5)；普通文本一律 >=4.5:1；边框与容器背景 `NOT_VERIFIABLE`；自检全面验证生产 verdict 与退出码传播 |
 | `AC1` | 真实 WebView2 启动与证明 | **BLOCKED** | `REAL_WEBVIEW2` | `null` | **Hard Build Barrier 生效**：tauri_build 写入源码树且缺少受信 sidecar 输入，等待 Codex 登记 scratch worktree |
 | `AC2` | Workbench 导航与真实输入 | **BLOCKED** | `REAL_WEBVIEW2` | `null` | 同上 |
 | `AC3` | 300ms 静默期与页面失效窗口 | **BLOCKED** | `REAL_WEBVIEW2` | `null` | 同上 |
@@ -76,11 +77,11 @@ created_at: 2026-10-09T17:30:00+08:00
 ### 两阶段定稿工件哈希核验（5/5 匹配）
 
 在完整运行后，`p02-harness-results.json` 记录的 5 项工件 SHA-256 与磁盘字节 100% 精确一致：
-1. `verification/P02/env-identity-report.json`: `2ad5bc8549a84d6d9bdd430b72dbd1de673a981074c78a5781781e2735de02f9` (MATCH)
-2. `verification/P02/static-control-report.json`: `de7878612e175f989487e92512d00a2945554279e858e9fd48b6deaa9b8063a3` (MATCH)
-3. `verification/P02/p02-harness-results.txt`: `de2ebd60ae5f6b5767c550fd7f0411014982954fa035f88fea8595e7824e94ea` (MATCH)
-4. `verification/P02/probe-execution-probeonly.log`: `2bdcda3c084af7901b07eabc0f0a69b1915a374ec6f2278b4534afb2511c8e54` (MATCH)
-5. `verification/P02/probe-execution-full.log`: `94c4cebc25e58d1c0c5980ef63231ff79dbd804f3ee9e19b8423f9371e90a1cf` (MATCH)
+1. `verification/P02/env-identity-report.json`: `808765d40da9f73e713b2833f98da5aa63f5d26d4b5102148594dcc31d273207` (MATCH)
+2. `verification/P02/static-control-report.json`: `ae9f56ec3ad8a86140028284e4ed1ac3737f0f82b835c6c79a58b922f37d3674` (MATCH)
+3. `verification/P02/p02-harness-results.txt`: `9b58d273f2eff1a889aa427647bd9ffb6340348bf3bbd45644d502d0131bc7dc` (MATCH)
+4. `verification/P02/probe-execution-probeonly.log`: `d850ac34b97a1a8ceb394b69d008469a595ba3e002454ba40116b99e15a4cbf8` (MATCH)
+5. `verification/P02/probe-execution-full.log`: `e4fe95714713e25ef7f738cb79862fbe855f52c2e226c1b3727082dcb6c091df` (MATCH)
 
 ## 5. 交付文件清单
 
@@ -105,4 +106,4 @@ created_at: 2026-10-09T17:30:00+08:00
 
 ## 6. 推荐下一步
 
-提交固定交付 commit，由 Codex 在 clean detached exact head 独立复跑 Stage A probes 并完成 Gate 复算与 `git diff --check` 证据归档；交由 DeepSeek Harness 进行 Stage A r7 复审。待隔离 scratch worktree 构建方案获批后，再推进 Stage B 真实 WebView2 运行时验证。
+提交固定交付 commit，由 Codex 在 clean detached exact head 独立复跑 Stage A probes 并完成 Gate 复算与 `git diff --check` 证据归档；交由 DeepSeek Harness 续接会话进行 Stage A r8 复审。待隔离 scratch worktree 构建方案获批后，再推进 Stage B 真实 WebView2 运行时验证。

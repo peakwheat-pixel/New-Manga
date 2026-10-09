@@ -1,4 +1,4 @@
-"""P02 Real Workbench WebView2 Verification Harness (Stage A r7).
+"""P02 Real Workbench WebView2 Verification Harness (Stage A r8).
 
 Stage A preflight and verdict report generator.
 NOTE: Interactive CDP and live WebView2 behavioral driving are NOT yet active
@@ -12,7 +12,7 @@ Responsibilities in Stage A:
   with strict source/input identity freshness binding, subprocess returncode decoupling (R5-01),
   production dispatch helper execution, and retry failure isolation (R6-03).
 - Evaluates Visual Direction F tokens and Live Inline Palette with Alpha Blending (PRE-03)
-  with production aggregation helper covering token, palette, and alpha outcomes (R5-05, R6-03).
+  with production aggregation & verdict helpers, self-check failure propagation (R5-05, R6-03, R7-01).
 - Enforces TypeScript protocol contract check gate with dynamic compiler discovery (R5-04),
   runner exit code propagation, execution status differentiation, and main exit code aggregation (R6-02).
 - Registers AC1-AC6 runtime verification scenarios honestly as BLOCKED.
@@ -652,6 +652,53 @@ def aggregate_pre03_verdict(
     return pre03_pass, aggregated
 
 
+def build_pre03_verdict(
+    calculated_ratios: dict[str, dict[str, object]],
+    live_ratios: dict[str, dict[str, object]],
+    alpha_evaluations: dict[str, dict[str, object]],
+    contrast_thresholds: dict[str, float] | None = None,
+) -> tuple[bool, dict[str, object]]:
+    """Production helper for PRE-03 verdict evaluation and structure generation (R7-01).
+    Aggregates contrast ratios via aggregate_pre03_verdict and derives authoritative
+    verdict status ('PASS'/'FAIL'), exit code (0/1), details, and blocker reason.
+    Returns (pre03_pass, verdict_dict)."""
+    pre03_pass, aggregated_results = aggregate_pre03_verdict(
+        calculated_ratios, live_ratios, alpha_evaluations
+    )
+    status = "PASS" if pre03_pass else "FAIL"
+    exit_code = 0 if pre03_pass else 1
+    blocker_reason = (
+        None
+        if pre03_pass
+        else "One or more color tokens/palette entries failed contrast threshold (R5-05)"
+    )
+    details: dict[str, object] = {
+        "direction_f_tokens_evaluated": calculated_ratios,
+        "live_inline_palette_evaluated": live_ratios,
+        "synthetic_alpha_cases_evaluated": alpha_evaluations,
+        "contrast_thresholds_applied": contrast_thresholds or {},
+        "aggregated_results": aggregated_results,
+    }
+    verdict: dict[str, object] = {
+        "scenario_id": "PRE-03",
+        "scenario_name": "f_token_and_palette_math_model",
+        "status": status,
+        "layer": "TOKEN_MODEL",
+        "exit_code": exit_code,
+        "details": details,
+        "blocker_reason": blocker_reason,
+        "timestamp": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+    }
+    return pre03_pass, verdict
+
+
+def compute_harness_exit_code(preflight_ok: bool, tsc_gate_status: str) -> int:
+    """Production decision logic for harness top-level exit code (R6-02, R7-01).
+    Returns 0 if preflight_ok is True AND tsc_gate_status is in ('PASS', 'NOT_RUN'), else 1."""
+    tsc_ok = tsc_gate_status in ("PASS", "NOT_RUN")
+    return 0 if (preflight_ok and tsc_ok) else 1
+
+
 def self_test_pre02_retry_failure(current_head: str, current_tree: str, valid_inputs: dict[str, str]) -> None:
     """Proves caller-level isolation when child probe retry fails (R5-01, R6-03):
     Invokes production dispatch_and_evaluate_static_probe helper with a stale PASS report
@@ -697,8 +744,12 @@ def self_test_pre02_retry_failure(current_head: str, current_tree: str, valid_in
 
 
 def self_test_pre03_failure_propagation() -> None:
-    """Proves that failing tokens or alpha cases propagate to top-level PRE-03 FAIL via production helper (R5-05, R6-03)."""
-    # 1. Failing token
+    """Proves that failing tokens, live items, or alpha cases propagate to:
+    1. aggregate_pre03_verdict failure,
+    2. production build_pre03_verdict generating status='FAIL' and exit_code=1,
+    3. WorkbenchHarness.record_pre03_evaluation appending authoritative FAIL verdict,
+    4. top-level compute_harness_exit_code evaluating to 1 (R5-05, R6-03, R7-01)."""
+    # 1. Failing token scenario
     tokens_fail = {"ink_primary": {"contrast_result": "PASS"}, "ink_muted": {"contrast_result": "FAIL"}}
     live_ok = {"card_bg": {"contrast_result": "PASS"}, "divider": {"contrast_result": "NOT_VERIFIABLE"}}
     alpha_ok = {"alpha_pill": {"contrast_result": "PASS"}}
@@ -708,23 +759,74 @@ def self_test_pre03_failure_propagation() -> None:
     assert not agg1["tokens_all_passed"], "tokens_all_passed must be False!"
     assert agg1["live_palette_all_passed"], "live_palette_all_passed must remain True with NOT_VERIFIABLE!"
 
-    # 2. Failing live palette
+    v_pass1, verd1 = build_pre03_verdict(tokens_fail, live_ok, alpha_ok)
+    assert not v_pass1, "build_pre03_verdict must return False for failing token!"
+    assert verd1["status"] == "FAIL", f"Expected FAIL status, got {verd1['status']}"
+    assert verd1["exit_code"] == 1, f"Expected exit_code 1, got {verd1['exit_code']}"
+    assert verd1["blocker_reason"] is not None, "blocker_reason must be populated on failure"
+    assert compute_harness_exit_code(preflight_ok=v_pass1, tsc_gate_status="PASS") == 1
+    assert compute_harness_exit_code(preflight_ok=v_pass1, tsc_gate_status="NOT_RUN") == 1
+
+    # 2. Failing live palette scenario
     tokens_ok = {"ink_primary": {"contrast_result": "PASS"}, "ink_muted": {"contrast_result": "PASS"}}
     live_fail = {"card_bg": {"contrast_result": "FAIL"}}
     p_pass2, agg2 = aggregate_pre03_verdict(tokens_ok, live_fail, alpha_ok)
     assert not p_pass2, "Failing live item must cause PRE-03 to fail!"
     assert not agg2["live_palette_all_passed"], "live_palette_all_passed must be False!"
 
-    # 3. Failing alpha case
+    v_pass2, verd2 = build_pre03_verdict(tokens_ok, live_fail, alpha_ok)
+    assert not v_pass2, "build_pre03_verdict must return False for failing live item!"
+    assert verd2["status"] == "FAIL", f"Expected FAIL status, got {verd2['status']}"
+    assert verd2["exit_code"] == 1, f"Expected exit_code 1, got {verd2['exit_code']}"
+    assert compute_harness_exit_code(preflight_ok=v_pass2, tsc_gate_status="PASS") == 1
+    assert compute_harness_exit_code(preflight_ok=v_pass2, tsc_gate_status="NOT_RUN") == 1
+
+    # 3. Failing alpha case scenario
     alpha_fail = {"alpha_pill": {"contrast_result": "FAIL"}}
     p_pass3, agg3 = aggregate_pre03_verdict(tokens_ok, live_ok, alpha_fail)
     assert not p_pass3, "Failing alpha case must cause PRE-03 to fail!"
     assert not agg3["synthetic_alpha_all_passed"], "synthetic_alpha_all_passed must be False!"
 
-    # 4. All passing (including NOT_VERIFIABLE non-text containers)
-    p_pass4, agg4 = aggregate_pre03_verdict(tokens_ok, live_ok, alpha_ok)
-    assert p_pass4, "All valid items must result in PRE-03 PASS!"
-    assert agg4["tokens_all_passed"] and agg4["live_palette_all_passed"] and agg4["synthetic_alpha_all_passed"]
+    v_pass3, verd3 = build_pre03_verdict(tokens_ok, live_ok, alpha_fail)
+    assert not v_pass3, "build_pre03_verdict must return False for failing alpha case!"
+    assert verd3["status"] == "FAIL", f"Expected FAIL status, got {verd3['status']}"
+    assert verd3["exit_code"] == 1, f"Expected exit_code 1, got {verd3['exit_code']}"
+    assert compute_harness_exit_code(preflight_ok=v_pass3, tsc_gate_status="PASS") == 1
+    assert compute_harness_exit_code(preflight_ok=v_pass3, tsc_gate_status="NOT_RUN") == 1
+
+    # 4. Harness method integration test (without triggering full __init__ self-test recursion)
+    dummy_harness = WorkbenchHarness.__new__(WorkbenchHarness)
+    dummy_harness.verdicts = []
+    h_pass = dummy_harness.record_pre03_evaluation(tokens_fail, live_ok, alpha_ok)
+    assert not h_pass, "record_pre03_evaluation must return False on failing input!"
+    assert len(dummy_harness.verdicts) == 1, "Expected exactly 1 recorded verdict in dummy harness!"
+    recorded = dummy_harness.verdicts[0]
+    assert recorded["scenario_id"] == "PRE-03", f"Expected scenario_id PRE-03, got {recorded['scenario_id']}"
+    assert recorded["status"] == "FAIL", f"Expected recorded status FAIL, got {recorded['status']}"
+    assert recorded["exit_code"] == 1, f"Expected recorded exit_code 1, got {recorded['exit_code']}"
+    assert compute_harness_exit_code(preflight_ok=h_pass, tsc_gate_status="PASS") == 1
+
+    # 5. All passing scenario (including NOT_VERIFIABLE non-text containers)
+    p_pass5, agg5 = aggregate_pre03_verdict(tokens_ok, live_ok, alpha_ok)
+    assert p_pass5, "All valid items must result in PRE-03 PASS!"
+    assert agg5["tokens_all_passed"] and agg5["live_palette_all_passed"] and agg5["synthetic_alpha_all_passed"]
+
+    v_pass5, verd5 = build_pre03_verdict(tokens_ok, live_ok, alpha_ok)
+    assert v_pass5, "build_pre03_verdict must return True for all passing!"
+    assert verd5["status"] == "PASS", f"Expected PASS status, got {verd5['status']}"
+    assert verd5["exit_code"] == 0, f"Expected exit_code 0, got {verd5['exit_code']}"
+    assert verd5["blocker_reason"] is None, "blocker_reason must be None on pass"
+    assert compute_harness_exit_code(preflight_ok=v_pass5, tsc_gate_status="PASS") == 0
+    assert compute_harness_exit_code(preflight_ok=v_pass5, tsc_gate_status="NOT_RUN") == 0
+
+    pass_harness = WorkbenchHarness.__new__(WorkbenchHarness)
+    pass_harness.verdicts = []
+    h_pass5 = pass_harness.record_pre03_evaluation(tokens_ok, live_ok, alpha_ok)
+    assert h_pass5, "record_pre03_evaluation must return True on passing input!"
+    assert len(pass_harness.verdicts) == 1
+    assert pass_harness.verdicts[0]["status"] == "PASS"
+    assert pass_harness.verdicts[0]["exit_code"] == 0
+    assert compute_harness_exit_code(preflight_ok=h_pass5, tsc_gate_status="PASS") == 0
 
 
 class WorkbenchHarness:
@@ -767,6 +869,21 @@ class WorkbenchHarness:
             "blocker_reason": blocker_reason,
             "timestamp": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
         })
+
+    def record_pre03_evaluation(
+        self,
+        calculated_ratios: dict[str, dict[str, object]],
+        live_ratios: dict[str, dict[str, object]],
+        alpha_evaluations: dict[str, dict[str, object]],
+        contrast_thresholds: dict[str, float] | None = None,
+    ) -> bool:
+        """Evaluates contrast ratios, appends authoritative PRE-03 verdict to self.verdicts,
+        and returns boolean pre03_pass (R7-01)."""
+        pre03_pass, verdict = build_pre03_verdict(
+            calculated_ratios, live_ratios, alpha_evaluations, contrast_thresholds
+        )
+        self.verdicts.append(verdict)
+        return pre03_pass
 
     def run_preflight_checks(self) -> bool:
         """Runs Stage A preflight checks (fixtures, static contract, token math)."""
@@ -977,31 +1094,19 @@ class WorkbenchHarness:
                     "token_mapping": "UNMAPPED",
                 }
 
-            pre03_pass, aggregated_results = aggregate_pre03_verdict(
-                calculated_ratios, live_ratios, alpha_evaluations
+            thresholds_applied = {
+                "body_text_min_ratio": body_text_min,
+                "disabled_text_min_ratio": disabled_text_min,
+                "ui_components_min_ratio": ui_component_min,
+            }
+            pre03_pass = self.record_pre03_evaluation(
+                calculated_ratios,
+                live_ratios,
+                alpha_evaluations,
+                contrast_thresholds=thresholds_applied,
             )
             if not pre03_pass:
                 all_passed = False
-
-            self.record_verdict(
-                "PRE-03",
-                "f_token_and_palette_math_model",
-                "PASS" if pre03_pass else "FAIL",
-                "TOKEN_MODEL",
-                0 if pre03_pass else 1,
-                details={
-                    "direction_f_tokens_evaluated": calculated_ratios,
-                    "live_inline_palette_evaluated": live_ratios,
-                    "synthetic_alpha_cases_evaluated": alpha_evaluations,
-                    "contrast_thresholds_applied": {
-                        "body_text_min_ratio": body_text_min,
-                        "disabled_text_min_ratio": disabled_text_min,
-                        "ui_components_min_ratio": ui_component_min,
-                    },
-                    "aggregated_results": aggregated_results,
-                },
-                blocker_reason=None if pre03_pass else "One or more color tokens/palette entries failed contrast threshold (R5-05)",
-            )
         except Exception as exc:
             all_passed = False
             self.record_verdict(
@@ -1082,7 +1187,7 @@ class WorkbenchHarness:
         report = {
             "task_id": "P02",
             "owner": "Antigravity",
-            "stage": "STAGE_A_SAFE_FOUNDATION_R7",
+            "stage": "STAGE_A_SAFE_FOUNDATION_R8",
             "provenance": {
                 "source_head": self.git_info["head"],
                 "source_tree": self.git_info["tree"],
@@ -1144,7 +1249,7 @@ class WorkbenchHarness:
             f.write("\n")
 
         lines = [
-            "=== P02 Real Workbench WebView2 Harness Verdict Report (Stage A r7) ===",
+            "=== P02 Real Workbench WebView2 Harness Verdict Report (Stage A r8) ===",
             f"Source HEAD: {self.git_info['head']}",
             f"Source Tree: {self.git_info['tree']}",
             f"Branch: {self.git_info['branch']}",
@@ -1248,9 +1353,8 @@ def main() -> int:
     preflight_ok = harness.run_preflight_checks()
     harness.register_runtime_blocked_scenarios()
     harness.persist_results()
-    # R6-02: Failure in typescript gate (if run or fail-closed) fails harness main exit code
-    tsc_ok = harness.tsc_gate_status in ("PASS", "NOT_RUN")
-    return 0 if (preflight_ok and tsc_ok) else 1
+    # R6-02, R7-01: Top-level exit code computed via production decision helper
+    return compute_harness_exit_code(preflight_ok, harness.tsc_gate_status)
 
 
 if __name__ == "__main__":
