@@ -1,0 +1,10 @@
+# Checkpoint：P02 Process Isolation r2 Review
+
+- 时间：2026-10-09 14:02 UTC（2026-10-09 22:02 Asia/Shanghai）。状态边界：REVIEW_COMPLETE / FINDINGS_OPEN。
+- Task=P02 Hard Build Barrier；Owner/author=Codex，非作者 Reviewer=DeepSeek Harness，Integrator=Codex。Review exact head=3555213a748a7b407400589e1490a387353dec16，tree=38f312374c88713b7e10269c9b4ecc5eb8e1eeda；base=09bb1a2783052cdb6d514070e32f0ca9a2e48a04。
+- DSH CLI=0.2.0-rc.2；session=session-852928a7-3686-49ff-a2c0-3d0488498ea5，已挂载到 P02-process-isolation-review-dsh-r2。正式报告=dsh-review-process-isolation-r2.response.md，dispatch 证据=dsh-review-process-isolation-r2.dispatch.md；Decision=APPROVED（仅方案），P0/P1/P2=0，P3=10。Review worktree detached、全过程 clean；未运行 Sandbox/WSB、Windows Feature、build、产品测试或 GUI/WebView。
+- Finding 状态：F-01 Build 阶段缺 guest Git；F-02 MSVC linker/SDK 环境缺显式定位；F-03 CLI 可能静默忽略 Networking token；F-04 Build memory >4096 的接受范围未知；F-05 preflight 磁盘/CPU 无数值；F-06 clone clean/untracked 停止条件不明确；F-07 现有 RO canary 可能向真实工具链/输入 HostFolder 落盘；F-08 manifest 无逐项可复算 hash 规则，cache seed 缺 secret scan；F-09 r2 candidate checkpoint 的 raw worktree hashes 不能跨 core.autocrlf checkout 复算；F-10 r1 raw stdout 外部归档，仓库内仅有最终 response 与 path/hash 登记。
+- F-01/F-02 已有只读 host 线索：Git for Windows 2.52.0.windows.1，host git.exe=C:\Program Files\Git\cmd\git.exe；BuildTools MSVC=14.44.35207，cl.exe/link.exe 与 SDK rc.exe/mt.exe 的精确路径/hash 已查实，待登记到 Build-only input inventory。现有 Smoke XML 不包含 Git mapping。
+- 受保护 root 仍 main@549a6544f0be1eec66c09ece393fd1a409f10bf3，203 dirty/untracked；DSH 在 Review 内复核一致。本轮仍未改 root 或其他作者 worktree。
+- Gate 未变化：Sandbox feature=UNKNOWN，Smoke=NOT_RUN，Build Gate=BLOCKED，build=NOT_AUTHORIZED / NOT_RUN，AC1–AC6=BLOCKED。Review APPROVED 不授权 Smoke 或 Build；所有运行态事实均非 PASS。
+- 下一条准确动作：在当前 Codex branch 修复/登记 F-01–F-09；重设计 RO canary，避免写任何真实输入映射；为新 Smoke config 固定 canonical hash；以统一 Git blob/LF SHA-256 errata 修正 F-09；保存本报告和 checkpoint。然后再固定 exact-head candidate 并派 DSH 独立复审。F-10 保留外部 raw stdout + SHA 登记，不把 thinking JSONL 纳入仓库；在 dispatch record 说明此归档选择。

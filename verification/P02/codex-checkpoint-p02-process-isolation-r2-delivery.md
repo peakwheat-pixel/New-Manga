@@ -1,0 +1,10 @@
+# Checkpoint：P02 Process Isolation r2 Delivery
+
+- 时间：2026-10-09 13:40 UTC（2026-10-09 21:40 Asia/Shanghai）。状态边界：DELIVERY / REVIEW_PENDING。
+- Active Task=P02 Hard Build Barrier。Owner/author=Codex，非作者 Reviewer=DeepSeek Harness，Integrator=Codex。冻结 scope delta=codex-scratch-build-process-isolation-scope-delta-r1.md。
+- 已固定 delivery commit=3555213a748a7b407400589e1490a387353dec16，tree=38f312374c88713b7e10269c9b4ecc5eb8e1eeda；branch=codex/P02-process-isolation。commit 的 8 个路径全部属于 doc/tasks/P02.md 授权 boundary 段落或 verification/P02/**。作者工作区在 checkpoint 创建前 clean，HEAD 与 delivery commit 一致。
+- Source worktree=C:/Users/49745/.codex/worktrees/p02-process-isolation-plan/New Manga；common Git directory=G:/CODEX/New Manga/.git。root main@549a6544f0be1eec66c09ece393fd1a409f10bf3 的 203 个 dirty/untracked entries、0 staged；最后逐项 manifest comparison PASS（13:39 UTC），root doc/tasks/P02.md clean。clone 目的地 G:\CODEX\P02-scratch-build-source 仍未创建。
+- 本交付只更新 P02 Codex-only scratch-build boundary 一段；提交 r2 隔离方案、plan/gate、root manifest hash recipe、XML config canonical hash 规则、r1 DSH raw stdout 外部归档位置与本轮 checkpoint。r1 proposal 的历史版本可从 c542a31b102cdc5c129efd9df155a2760ed777b2 精确还原。
+- 核验：路线 validator EXIT=0（196 nodes）；XML parse/assert EXIT=0（10 mappings，1 RW / 9 RO；canonical UTF-8/LF hash dcb95da5252709f9ada9899cd92dcc90c388fa81f4ba23cdb60f18663ac691b6；CRLF checkout normalization PASS）；root entries hash recipe PASS；203 项 root manifest 的路径、status、size、SHA-256 逐项一致；git diff --cached --check PASS。
+- WSB CLI 官方示例与 WSB 文件配置参考的 Networking token spelling 不同；候选选择 CLI 示例的 Disabled，本机 parser/runtime 接受状态仍 NOT_VERIFIED。Sandbox feature=UNKNOWN，Smoke=NOT_RUN，Build Gate=BLOCKED，build=NOT_AUTHORIZED / NOT_RUN，产品 AC1–AC6=BLOCKED；未提权、未启用功能、未启动 Sandbox。
+- 下一条准确动作：在 C:/Users/49745/.codex/worktrees/P02-process-isolation-review-dsh-r2 创建 detached clean checkout，固定 HEAD=3555213a748a7b407400589e1490a387353dec16；按 dsh-dispatch skill 实际派发 exact-head 只读 Review，保存 prompt/stdout/stderr/exit/session/mount 与正式 response。Review 不通过则修订并复审；Review 通过最多只开放尝试隔离 smoke，不开放 build。

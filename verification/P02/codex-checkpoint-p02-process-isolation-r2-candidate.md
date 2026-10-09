@@ -19,3 +19,18 @@
 - 验证证据：verify_plan.py EXIT=0，196 个节点及路线引用 PASS；XML assert self-check PASS（10 mappings，1 RW / 9 RO，并验证 CRLF normalization 与 canonical hash）；root manifest canonical hash recipe PASS；root 203 项保护清单逐项状态/路径/大小/hash comparison PASS；git diff --check EXIT=0（仅提示 CRLF 转换）。未运行产品测试、build、runner、Vitest、GUI/WebView、Sandbox 或 P02 smoke。
 - 当前 Gate：P02 AC1–AC6=BLOCKED，Sandbox feature=UNKNOWN，Sandbox/smoke=NOT_RUN，Build Gate=BLOCKED，build=NOT_AUTHORIZED / NOT_RUN，Hard Build Barrier 有效。未提权、未启用 Windows Feature、未启动 Sandbox。
 - 下一条准确动作：固定仅含上述授权文件的 r2 candidate commit；从该 exact commit 建立 detached read-only review worktree，实际派发 DeepSeek Harness 对 R-01–R-11、Task 边界、canonical XML/hash、CLI token 差异、证据完整性及 Gate 分离作 exact-head Review。Review 未通过前不得启动 smoke；通过最多只允许尝试隔离 smoke，不授权 build。
+
+## Erratum: canonical identity for the reviewed r2 candidate (DSH F-09)
+
+The earlier “worktree content SHA-256” table records mixed checkout line-ending forms and contains values that are not consistently reproducible. Keep it as a historical capture only; do not use it as candidate identity. The table below identifies bytes committed in exact reviewed HEAD `3555213a748a7b407400589e1490a387353dec16` using the Git blob SHA-1 plus canonical text SHA-256. Recipe: `git rev-parse <commit>:<path>` for blob identity; `git cat-file blob <blob>`; reject UTF-8 BOM and bare CR, normalize CRLF to LF only, then `hashlib.sha256(canonical_utf8_bytes).hexdigest()`. It describes committed candidate content, not any later worktree file.
+
+| Path | Git blob SHA-1 | Canonical UTF-8/LF SHA-256 | Bytes |
+|---|---|---|---:|
+| `doc/tasks/P02.md` | `7200ffb6784bfdb73e4fd7ad85f8efa58da7fa1c` | `6a1b2d18ce407c37a08cacbda30c4fd9df920946303345eb01686aa84af91a3d` | 43106 |
+| `verification/P02/codex-checkpoint-p02-process-isolation-r2-candidate.md` | `7f050e26688d022e15f4b02c55d7eeb73c5bfea5` | `22561c54ad5f8190a9b3e1cf26f7ae75021d036d1db8bad905b2ccd56529b66a` | 4531 |
+| `verification/P02/codex-p02-wsb-smoke-config-r2.xml` | `4d030b6b44241e4583d2fbf9066a04d0d0653e2e` | `dcb95da5252709f9ada9899cd92dcc90c388fa81f4ba23cdb60f18663ac691b6` | 2397 |
+| `verification/P02/codex-process-isolation-root-start-manifest.json` | `279bdd263d839ad90d023f8809e1fdb9c8fe4639` | `3a9e6f7ba8890aea390c170aa22a876f3723f4235cab661ecc79022cbe291a8a` | 48115 |
+| `verification/P02/codex-scratch-build-gate.md` | `3603a290e6adfaf0269e17870dd9d5307ba5ba01` | `542fcb2b23daf01907db0d40ebd6b559eab50d8ce7a2405e4657c253fe2fed19` | 8855 |
+| `verification/P02/codex-scratch-build-plan.md` | `f241a53973cffe5cc9ce6c2f9d94c0cc2c8a8131` | `6dee48bf6fb3c0d38fa662ad79050a1d115f49c89d3d72709003bbb70094c38d` | 15020 |
+| `verification/P02/codex-scratch-build-process-isolation-proposal-r1.md` | `a56a93ee83cbf856c830891fd8524e6ff436de46` | `06d7c4ecf83711e49fcb2aa5586fa8240c4fb4314a78dd9a14e5b6dcdc853261` | 16136 |
+| `verification/P02/dsh-review-process-isolation-r1.dispatch.md` | `39c5ef4bde5ecf3ce791c62999dc10053230900c` | `a5172632bf4ff195785bca854c4db6c13b2885e902019c4f9958e5e454366b51` | 2269 |

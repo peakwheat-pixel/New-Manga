@@ -1,0 +1,23 @@
+<Configuration>
+  <vGPU>Disable</vGPU>
+  <Networking>Disabled</Networking>
+  <ClipboardRedirection>Disable</ClipboardRedirection>
+  <AudioInput>Disable</AudioInput>
+  <VideoInput>Disable</VideoInput>
+  <PrinterRedirection>Disable</PrinterRedirection>
+  <ProtectedClient>Enable</ProtectedClient>
+  <MemoryInMB>2048</MemoryInMB>
+  <MappedFolders>
+    <MappedFolder><HostFolder>G:\CODEX\P02-scratch-build-source</HostFolder><SandboxFolder>C:\P02\scratch</SandboxFolder><ReadOnly>false</ReadOnly></MappedFolder>
+    <MappedFolder><HostFolder>G:\CODEX\P02-scratch-build-source\verification\P02\tmp\smoke-readonly-probe</HostFolder><SandboxFolder>C:\P02\readonly-canary</SandboxFolder><ReadOnly>true</ReadOnly></MappedFolder>
+    <MappedFolder><HostFolder>C:\Users\49745\AppData\Local\Programs\Python\Python312</HostFolder><SandboxFolder>C:\Users\49745\AppData\Local\Programs\Python\Python312</SandboxFolder><ReadOnly>true</ReadOnly></MappedFolder>
+    <MappedFolder><HostFolder>G:\CODEX\New Manga.task-envs\m2ac5-build</HostFolder><SandboxFolder>C:\P02\inputs\python-venv</SandboxFolder><ReadOnly>true</ReadOnly></MappedFolder>
+    <MappedFolder><HostFolder>G:\CODEX\New Manga.task-envs\M2-DOCTR-QUAL-C4\weights\ogkalu-comic-text-and-bubble-detector</HostFolder><SandboxFolder>C:\P02\inputs\weights\detector</SandboxFolder><ReadOnly>true</ReadOnly></MappedFolder>
+    <MappedFolder><HostFolder>G:\CODEX\New Manga.task-envs\M2-SFX-DETECT\weights-v2b</HostFolder><SandboxFolder>C:\P02\inputs\weights\sfx</SandboxFolder><ReadOnly>true</ReadOnly></MappedFolder>
+    <MappedFolder><HostFolder>E:\Program Files\nodejs</HostFolder><SandboxFolder>C:\P02\inputs\nodejs</SandboxFolder><ReadOnly>true</ReadOnly></MappedFolder>
+    <MappedFolder><HostFolder>C:\Users\49745\.rustup\toolchains\stable-x86_64-pc-windows-msvc</HostFolder><SandboxFolder>C:\P02\inputs\rust-toolchain</SandboxFolder><ReadOnly>true</ReadOnly></MappedFolder>
+    <MappedFolder><HostFolder>C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools</HostFolder><SandboxFolder>C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools</SandboxFolder><ReadOnly>true</ReadOnly></MappedFolder>
+    <MappedFolder><HostFolder>C:\Program Files (x86)\Microsoft Visual Studio\Installer</HostFolder><SandboxFolder>C:\Program Files (x86)\Microsoft Visual Studio\Installer</SandboxFolder><ReadOnly>true</ReadOnly></MappedFolder>
+    <MappedFolder><HostFolder>C:\Program Files (x86)\Windows Kits\10</HostFolder><SandboxFolder>C:\Program Files (x86)\Windows Kits\10</SandboxFolder><ReadOnly>true</ReadOnly></MappedFolder>
+  </MappedFolders>
+</Configuration>

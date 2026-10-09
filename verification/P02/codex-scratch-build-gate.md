@@ -49,3 +49,11 @@
 - 受保护 root 起点仍是 main@549a6544f0be1eec66c09ece393fd1a409f10bf3，203 个 dirty/untracked entries、0 staged；起始清单 hash 未变。产品 AC1–AC6=BLOCKED、Build Gate=BLOCKED、build=NOT_AUTHORIZED / NOT_RUN、Sandbox/smoke=NOT_RUN、Sandbox feature=UNKNOWN；未提升权限、未启用 feature、未启动 Sandbox。
 - Process isolation proposal 当前为 PROPOSED / REVIEW_PENDING。下一步先固定 r2 candidate commit，再派 DeepSeek Harness 对 exact head 独立 Review；Review 通过最多只允许尝试 isolation smoke，不允许 build。
 - r2 Smoke XML artifact 为 codex-p02-wsb-smoke-config-r2.xml，SHA-256=dcb95da5252709f9ada9899cd92dcc90c388fa81f4ba23cdb60f18663ac691b6，2397 bytes。候选 Networking token 跟随官方 wsb start --config 示例的 Disabled；WSB 文件参考列出 Disable，运行时 CLI/parser 接受状态仍 NOT_VERIFIED。SHA-256 对应 UTF-8 无 BOM/LF 的 Git blob canonical bytes；core.autocrlf 可能转换 checkout 行尾，运行时须归一 CRLF→LF 后对同一字符串核 hash 并传入 CLI。Python XML parser 只验证 XML 结构、10 mappings、1 RW/9 RO 和字段，不证明 WSB 接受或执行该配置。
+
+
+## 2026-10-09 Process isolation r2 Review 后续
+
+- DeepSeek Harness r2 对 `3555213a748a7b407400589e1490a387353dec16` 的方案 Review=`APPROVED`（仅设计），P0/P1/P2=0、P3=10；详情见 [`r2 DSH Review`](dsh-review-process-isolation-r2.response.md) 与 [`r2 review checkpoint`](codex-checkpoint-p02-process-isolation-r2-review.md)。批准最多允许在当前候选通过复审、完成 preflight 后尝试一次 isolation smoke；未授权 Smoke 自动 PASS 或 Build。
+- Codex 已登记 DSH r2 的 F-01–F-09 处置：Build-only Git/MSVC inputs、网络静默忽略 fail-closed、未来 Build memory 范围仍 UNKNOWN、Smoke 系统/资源阈值、clone clean stop、scratch-local RO canary、可复算分级 manifest/hash 与 cache secret scan、r2 hash erratum。F-10 的原始 JSONL 因包含 thinking events 留在 checkout 外并登记 SHA；最终 response/prompt/dispatch 已进入版本化证据。
+- 最新候选 r3 的 exact-head 独立 Review 尚待进行；Smoke=`NOT_AUTHORIZED / NOT_RUN`。即使 r3 Review 通过，也仅允许执行本机非提权、只读 feature/resource preflight；所有前置条件满足后才尝试隔离 smoke。
+- 本 Gate 继续=`BLOCKED`，build=`NOT_AUTHORIZED / NOT_RUN`，Hard Build Barrier 有效，P02 AC1–AC6=`BLOCKED`。本轮不运行产品 build、runner、Vitest、GUI 或 WebView。
