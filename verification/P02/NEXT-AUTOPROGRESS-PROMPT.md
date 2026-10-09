@@ -1,28 +1,27 @@
 # P02 自动续跑提示词
 
-从 G:/CODEX/New Manga 持续推进权威路线图。P01=done，绝不重做；P02 AC/Owner allowlist、真实/Mock边界和退出判据已由 scope r1–r4 冻结并释放，不重复冻结。用户授权自动推进已满足条件的项目任务，可读写项目文件、用 worktree、运行适当检查、提交并本地集成通过 Review/Gate 的工作。默认简体中文；没有新授权不关机、不push、不发布、不部署。
+从`G:/CODEX/New Manga`持续推进权威项目路线图，默认简体中文。用户已授权安全且已释放的实现、检查、任务/worktree管理、提交与本地集成；持续到已授权工作完成或出现必须由用户决定的产品取舍。没有新授权不关机、不push、不发布、不部署、不执行破坏性用户数据操作。
 
-## 恢复 Reality Check
+## 每次恢复先核对
 
-读取根 AGENTS.md、Plan、Index、Status、协作协议、P02正式Task、本文件和 verification/P02/RESUME.md。核对Live root及所有相关branch/worktree的HEAD/tree/status/dirty/untracked，并比较Task、Plan、Status、Gate log与恢复点。文档、Git和实际验证是事实来源。保护用户数据、人工编辑、Lock、current/pinned Revision、密钥和其他Agent未提交内容。P01已经done，不重做；P02范围r1–r4已经冻结，不重冻结。
+读取根`AGENTS.md`、`doc/REBASELINE_PLAN.md`、`doc/00_INDEX.md`、`doc/STATUS.md`、`doc/09_COLLABORATION.md`、`doc/tasks/P02.md`、本提示词与`verification/P02/RESUME.md`。检查Live root和相关worktree/branch的HEAD、tree、common-dir、staged/unstaged/untracked、Task/Plan/Status和Gate证据。下面hash只作历史锚点，绝不代替Live Git。
 
-## 历史固定对象和审查事实（不代表恢复时Live Git仍停在该处）
+P01已`done`，绝不重做。P02真实/Mock边界、AC1–AC7、Owner allowlist和退出判据已由scope r1–r4冻结并释放，不重冻结。P02行为验证基线为`241ff3b70b6fc0490ea238efd486cc707f849031`；Owner转移治理已集成于历史release commit `3f4d16633a18a9ab7aea5b08b67653cd3f6bf8ff`，独立Review `bfc8790a` approved且0 findings，Codex Gate/fast-forward/post-FF Gate均已完成。恢复时核对Live main与`verification/P02/owner-transfer-post-ff-gate.md`，不要重跑C-2同步或Owner转移Review，除非Live Git出现新漂移。
 
-- Live main 最近记录为4b54f304dc201d129d4ba1c62d0368252e6301b1，P02 ready / IDLE、Owner=ZCode；root当时dirty/untracked=38。
-- 候选branch=codex/P02-owner-transfer-integration，worktree=G:/CODEX/New Manga.worktrees/P02-owner-transfer-integration-codex。DSH r8 reviewed c4=55be5dab7b6d7bebf94c9ad6524f57c023616249，tree=f74afc39b307ca7f388bda8b3de8e73d23e00163，decision=approved_with_conditions，findings=0/0/0/2，session=session-5e8be65b-515f-41fc-b444-c80e22121c95。报告/prompt/mount位于verification/P02/owner-transfer-r8-review/。
-- c5 aa404aaa的独立Review发现索引AA-01，已在f18720a修正。f18720a exact-head/tree=d2a6c3482d2842d6ffe79a324d6e7dae87cccf6a；独立review decision=approved_with_conditions，findings=0/0/0/0。报告分别为verification/P02/owner-transfer-integration-review-aa404aa.md与owner-transfer-integration-review-f18720a.md。
-- DSH r8自身shell受Win32 5限制，未运行Git/hash/validator/manifest；Codex在c4实际补证，历史结果见owner-transfer-r7-gate.log。c4 tree/head已由Codex和独立Reviewer命令核验。最新候选可能已有新commit，恢复时先解析Live Git真实HEAD/tree/status再固定本轮对象。
-- P02 behavior base=241ff3b70b6fc0490ea238efd486cc707f849031；scope contract SHA-256=27DC31A8CF3304ABA6783E243F36895FFE4AAA3CCBCA76D58E8B766C403E1425。候选Owner=Antigravity，Reviewer=DeepSeek Harness，Integrator=Codex；Live main快进前Owner=ZCode。Task AC/frontmatter/allowlist不得因治理集成而扩张。
-- P01 protected manifest最近核验24/24、0 mismatch、body digest=b41835453b693b4e62818216e4d67801c01eca6e33450f8d3d3dd72849d578e7；root dirty/untracked=38；候选和manifest交集=0；和root交集仅两份P02 recovery。核验后两份恢复文件已执行一次C-2同步，但恢复点随后更新；该次同步记录于Gate log，只对当时的文件hash有效。C-2的最终closure必须重新比较Gate log最新final-sync行与候选和root现有两份文件hash/status，若不匹配则仍pending。
-- 旧ZCode Owner worktree标记DRIFT_DETECTED，源码行尾差异、cargo-target和cdp_probe.py原地保护，不复用。Tauri build.rs会写源码树，Owner worktree构建前需要独立审查和登记scratch方案；其完成前不运行Cargo/Tauri/sidecar build。AC1–AC7、Vitest、构建、真实WebView/GUI/键盘焦点/对比度保持NOT_RUN。
+## 保护现场与协作
 
-## 自动持续推进
+- FF前root dirty=38；集成两份Recovery后预期剩余36项既有dirty/untracked。P01保护manifest应为24/24、0 mismatch。以恢复点的path/status/hash复核当前现场；不得stage、stash、覆盖、清理或解释成P02的其它Agent内容。
+- 旧ZCode worktree=`G:/CODEX/New Manga.worktrees/P02-real-webview-harness-zcode`固定在`e1948466082b3cadbfde1da53b791319e359a10b`，`DRIFT_DETECTED`；24个Tauri生成文件行尾差异、`verification/P02/cargo-target/**`与`cdp_probe.py`均保留，不复用。中断的旧Antigravity会话曾使用错误worktree，不续用、不迁移。
+- Owner=Antigravity；Reviewer=DeepSeek Harness；Integrator=Codex。Qoder已退出，绝不分配。Owner无真实接单和start checkpoint前，Task保持`ready / IDLE`。
+- 所有测试写明真实/Mock层、命令、环境、Hash、EXIT、逐项PASS/FAIL/BLOCKED/NOT_RUN与skip原因。Chrome/Vite/JSDOM/mock/旧EXE不能冒充真实Tauri/WebView2；P02发现产品缺口只登记finding，不自行修产品UI、样式或debounce。
 
-1. 从Live Git读取实际候选head/tree/status，读最新review和Gate log；P01、P02 frozen scope均不重做。让非作者Reviewer审查最新治理差量，特别核对Owner/Reviewer不同、精确head/tree、Task hash、根目录保护现场与C-2状态。
-2. C-2按精确hash绑定：仅在Gate log最新review明确覆盖当前恢复文件后，同步verification/P02/RESUME.md和NEXT-AUTOPROGRESS-PROMPT.md到Live root；记录即时pre/post hash/status。逐项fresh-check P01 manifest 24/24、root dirty/untracked和候选交集。若恢复文件在审查后发生改变，再重审并重同步；不能用历史C-2 pass替代当前文件hash。
-3. Codex Integration Gate与非作者集成Review均通过后，只在本机git merge --ff-only，不push。Post-FF重跑路线validator/mutation probe、manifest、dirty工作区和完整差量边界。
-4. 从release HEAD创建全新干净agent/antigravity/P02-real-webview-harness worktree。按Antigravity dispatch Skill执行只读Owner acceptance/start-intent握手，记录实际conversation ID、CLI JSON、exit、session/mount和start checkpoint。无真实接单和checkpoint之前Task不得改为in_progress。
-5. Owner实现真实Tauri/WebView2 harness及P02 AC1–AC7；Chrome/Vite/JSDOM/mock/旧EXE不是真实WebView。严守allowlist与synthetic data。先解决构建副作用隔离与任务范围授权；未能安全运行的gate如实为BLOCKED/NOT_RUN，并继续独立允许项。
-6. 交付后由非作者DSH正式Review，修复并复审findings。Codex验证Task AC、测试、hash、manifest、allowlist与Integration Gate后才集成并更新Plan/Status/Task/依赖/恢复点。之后从权威路线图挑选依赖已满足且范围已冻结的下一Task并继续，不等用户催促。
+## 下一条直接执行
 
-只有必须由用户决定的真实产品取舍或外部不可逆动作才暂停询问；其他已授权、安全工作持续推进。
+1. 核实当前Live main、治理文档同步状态和Post-FF Gate。若Plan/Status/Index/Task导航/RESUME仍指向旧`4b54f304`快进前Owner状态，先更新并仅提交明确授权的治理文档，重跑`python -B -X utf8 verification/PROJECT-ROADMAP-20261008/verify_plan.py`、`python -B -X utf8 verification/P02/route-validator-mutation-probe.py`、`git diff --check`、P01 manifest与root dirty map。
+2. 从最新集成后的release `main` HEAD创建目标branch=`agent/antigravity/P02-real-webview-harness`、worktree=`G:/CODEX/New Manga.worktrees/P02-real-webview-harness-antigravity`。如目标已存在，先核验而不覆盖。创建后设置worktree-local `core.autocrlf=false`，记录branch/HEAD/tree/common-dir/status，必须clean。
+3. 使用Antigravity dispatch Skill执行**只读**Owner acceptance/start-intent握手：自包含说明P02 Task、worktree、行为base、scope SHA、允许/禁止路径和构建副作用限制；要求明确接受/拒绝，若接受则给出实现start checkpoint与第一步，但禁止修改/暂存/提交。保存真实CLI JSON、stderr、exit及conversation ID，并在worktree确认无文件变化。
+4. 无真实接受或checkpoint时保持`ready / IDLE`并按Skill记录dispatch失败；不得声称已派发/开工。真实接受后，Codex先把Plan/Status/Task更新至`in_progress`并集成该状态，再快进Owner分支到最新main HEAD；随后在同一Antigravity会话发送正式实现任务并持续跟踪。
+5. Tauri `build.rs`会写源码树，当前还缺少受信sidecar输入；`verification/P02/build-preflight-lf-r1.md`只是未运行build的前置调查。Cargo/Tauri/sidecar build之前，由Codex登记具体scratch worktree、生成/合成sidecar来源和准确命令，再交非作者Review；不得在Owner worktree直接触发构建器写入禁止路径。此技术安全门不改变P02已冻结的AC或产品范围。
+6. Owner按AC1–AC7交付真实Tauri/WebView2证据与Handoff；DeepSeek Harness对固定head正式独立Review，Codex逐项复核allowlist、测试、恢复点与Integration Gate，再仅本地快进并做post-FF验证。Task未满足全部已释放AC前不得标`done`。完成后立即从权威Plan选择依赖已满足、范围已冻结的下一Task并继续，除非遇到真实用户产品裁决或外部不可逆动作。
+
+保存Task-local恢复点，记录实际commit、验证命令和结果、owner session、dirty路径和下一条精确指令。始终以Live Git和当前项目文档为事实，不依据本提示的旧状态推断完成。

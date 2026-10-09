@@ -1,12 +1,12 @@
 # 项目文档索引与 Source of Truth
 
-当前工作：P08/P03/P01均done，P02=`ready / 已释放`；P系列计数done 3/21、ready 1、proposed 17。P02 Owner转移候选为Antigravity（DSH r8条件批准；Task摘要、r6直链和Plan标点已修订，C-2按Gate log最新恢复hash/status核验，最终集成Gate仍待完成），DeepSeek Harness为非作者实现Reviewer，Codex集成；AC/Owner范围 r2与Codex-only路线validator治理增量r4均approved，产品验证尚未执行。P01 integration=M0=`13e66ec5bf9a2fc59f4e6c5623feb0bde22884c8`（原 D7=`b7ad98b29196e9859cbfbfe187e6822569f79367`），P02行为验证基线=`241ff3b70b6fc0490ea238efd486cc707f849031`；Owner元数据修订起点=`main@4b54f304dc201d129d4ba1c62d0368252e6301b1`。R1/R2 blocked与C8 changes_requested保留为历史，R2/SYNTH carrier仍NOT_VERIFIED。当前恢复见[P02 RESUME](../verification/P02/RESUME.md)及[P02自动续跑提示词](../verification/P02/NEXT-AUTOPROGRESS-PROMPT.md)。
+当前工作：P08/P03/P01均done，P02=`ready / IDLE`；P系列计数done 3/21、ready 1、proposed 17。P02 Owner转移已集成于`main` commit `3f4d16633a18a9ab7aea5b08b67653cd3f6bf8ff`；Owner=Antigravity、非作者实现Reviewer=DeepSeek Harness、Integrator=Codex，独立fixed-head Review=`bfc8790a` approved且0 findings。P02真实/Mock边界、AC与Owner allowlist已经scope r1–r4冻结，不重做；Owner worktree、真实接单/start checkpoint未建立，Task仍`ready / IDLE`。P01 integration=M0=`13e66ec5bf9a2fc59f4e6c5623feb0bde22884c8`，P02行为验证基线=`241ff3b70b6fc0490ea238efd486cc707f849031`。AC1–AC7、build、Vitest及真实GUI仍NOT_RUN；当前恢复见[P02 RESUME](../verification/P02/RESUME.md)与[P02自动推进提示词](../verification/P02/NEXT-AUTOPROGRESS-PROMPT.md)。
 
 2026-10-08人员更新：Qoder已退出本项目。当前角色/接管名单见[协作协议](09_COLLABORATION.md)；未来UI设计/实现归ZCode，历史Qoder署名仅作证据。整体路线与恢复材料已同步，不新增产品释放。
 
 **整体规划入口**：[权威Plan与候选Task](REBASELINE_PLAN.md)、[中文依赖图](../verification/PROJECT-ROADMAP-20261008/ROADMAP.md)、[全项目报告](../verification/PROJECT-ROADMAP-20261008/REPORT.md)、[196节点历史台账](../verification/PROJECT-ROADMAP-20261008/task-inventory.csv)、[恢复点](../verification/PROJECT-ROADMAP-20261008/RESUME.md)。历史审计基线为e4242ecd；P08/P03/P01已完成，P01 post-FF保护复核通过。167项登记完成或文档交付不代表新架构产品完成率。
 
-P08/P03/P01均为done，P02=`ready / IDLE`；Antigravity是Owner转移候选，DSH r8对`55be5dab7b6d7bebf94c9ad6524f57c023616249`作出`approved_with_conditions`；C-1/F-02/F-04已在`ec207865`修订，C-2首次同步记录见Gate log；最终闭合以匹配当前恢复文件hash/status的最新记录为准；Live main快进前Owner仍为ZCode。P01 D3 Review=`approved`、C1及D7 closeout Gate=`PASS`，root fast-forward/post-FF复核完成。C8 formal Review=changes_requested仅保留为历史证据；P02与P03的当前证据分别见P02/P03 RESUME。
+历史索引快照：P02 Owner转移未集成前的r8/C-2现场保留为历史证据；当前Owner、集成与接单状态以本页首段、Plan、Status和[P02 RESUME](../verification/P02/RESUME.md)为准。P01 D3 Review=`approved`、C1及D7 closeout Gate=`PASS`；C8 formal Review=changes_requested仍为历史证据。P03证据见[P03 RESUME](../verification/P03-PACKAGED-SFX-ENTRY/RESUME.md)。
 
 全任务盘点与 inventory 下方段落是其各自审计时的历史快照，不反映当前总数或授权状态；以本页首段、[Plan](REBASELINE_PLAN.md) 与 [STATUS](STATUS.md) 为当前事实。
 

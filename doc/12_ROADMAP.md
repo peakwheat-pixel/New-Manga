@@ -1,12 +1,12 @@
 # Roadmap
 
-当前工作：P08/P03/P01均已done；P02=`ready / 已释放`，Owner=ZCode、非作者Reviewer=DeepSeek Harness、Integrator=Codex。P02 AC/Owner范围 r2 与 Codex-only validator治理增量 r4 均 approved；真实 WebView2、300ms、键盘/焦点、写后刷新、对比度与build仍`NOT_RUN`。P01 integration=M0=`13e66ec5bf9a2fc59f4e6c5623feb0bde22884c8`，P02验证基线=`main@241ff3b70b6fc0490ea238efd486cc707f849031`；详细当前状态见P02 RESUME。C8 changes_requested、R1/R2 blocked保持历史原样。
+当前工作：P08/P03/P01均已done；P02=`ready / IDLE`，Owner=Antigravity、非作者Reviewer=DeepSeek Harness、Integrator=Codex。Owner转移已于`main` commit `3f4d16633a18a9ab7aea5b08b67653cd3f6bf8ff`集成，fixed-head Review approved且0 findings；r1–r4范围仍有效。Owner尚未接单，AC1–AC7、真实WebView2、300ms、键盘/焦点、写后刷新、对比度与build仍`NOT_RUN`。P01 integration=M0=`13e66ec5bf9a2fc59f4e6c5623feb0bde22884c8`，P02行为基线=`241ff3b70b6fc0490ea238efd486cc707f849031`；详细状态见P02 RESUME。C8 changes_requested、R1/R2 blocked保持历史原样。
 
 ## 当前整体路线（权威候选与P01执行状态见Plan/Status）
 
 最新人员裁决：Qoder退出，未来UI/UX设计及React/Tauri实现由ZCode主责，DSH非作者审查，Codex契约/集成；额度接管候选为ZCode、Antigravity。历史交付中的Qoder署名保留。
 
-权威排期见REBASELINE_PLAN中的P01–P21路线、中文依赖图、审计报告和恢复材料。P08/P03/P01=done，P02已冻结真实 WebView harness 范围并正式释放给ZCode；Owner开工与所有真实验收仍待执行。P03 R3-03仍留待P20登记。
+权威排期见REBASELINE_PLAN中的P01–P21路线、中文依赖图、审计报告和恢复材料。P08/P03/P01=done，P02真实WebView harness范围已冻结并由Antigravity接任Owner；Owner开工与所有真实验收仍待执行。P03 R3-03仍留待P20登记。
 
 下方2026-09早期导航保留历史，不覆盖本段或Plan；其中旧“ready/planning only”任务多已由后继完成，不能作为当前待办。
 

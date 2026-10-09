@@ -1,6 +1,20 @@
 # P02 恢复点
 
-## 当前检查点：r8 条件批准及 c6 独立复核完成；C-2 必须匹配最新恢复文件 hash 后才可快进
+## 当前检查点：Owner 转移已集成；P02 ready / IDLE，等待 Antigravity 真实接单
+
+- Reality Check=`2026-10-09T05:54:55Z`。Live root=`G:/CODEX/New Manga`，branch=`main`，HEAD=`3f4d16633a18a9ab7aea5b08b67653cd3f6bf8ff`，tree=`66b3c305943a8c497418f262acbf8d4cde5ed5f0`，common-dir=`G:/CODEX/New Manga/.git`；相对`origin/main` ahead 1265，未push。Owner-transfer候选worktree与main同HEAD/tree且clean。
+- P01=`done`，不重做。P02真实/Mock边界、AC1–AC7、Owner allowlist和退出判据已由scope r1–r4冻结与释放，scope contract SHA-256=`27DC31A8CF3304ABA6783E243F36895FFE4AAA3CCBCA76D58E8B766C403E1425`；不重冻结。P02行为基线仍为`241ff3b70b6fc0490ea238efd486cc707f849031`。
+- Owner-transfer integration commit=`3f4d16633a18a9ab7aea5b08b67653cd3f6bf8ff`。独立fixed-head Review=`bfc8790af9a7842a6da732084b26714367a7c742` / tree=`a28eb4fa063f951534b11ee8bc8aef87c1573250`，decision=`approved`，findings P0/P1/P2/P3=`0/0/0/0`；报告Git blob=`5ab21fe7ebdeb2ddf1f778ea65a2e3ce53185a59`；`OT-FINAL-01` closed。owner transfer pre-FF Gate记载C-2=`PASS`、P01 manifest 24/24、candidate范围36/36；post-FF验证=`verification/P02/owner-transfer-post-ff-gate.md`。
+- Task=`doc/tasks/P02.md`，status=`ready` / ExecutionState=`IDLE`；Owner=Antigravity、非作者实现Reviewer=DeepSeek Harness、Integrator=Codex；行为base=`241ff3b70b6fc0490ea238efd486cc707f849031`；目标branch=`agent/antigravity/P02-real-webview-harness`、目标worktree=`G:/CODEX/New Manga.worktrees/P02-real-webview-harness-antigravity`当前均不存在。尚无真实acceptance、conversation ID或start checkpoint；Owner转移commit不等同P02产品integration，`integration_commit`仍null。
+- Post-FF Gate现场：main相对FF前`38→36`项dirty/untracked，减量仅为已集成的两份P02 recovery。36项既有root status/path/content map SHA-256=`e3554db4bbaaf45c35c46dfa7814d8ab818f977b95a79869df78e4f8e0c9b2ee`；P01 manifest 24/24匹配、0 mismatch，body digest=`b41835453b693b4e62818216e4d67801c01eca6e33450f8d3d3dd72849d578e7`。C2不再是当前待办。
+- 旧ZCode worktree=`G:/CODEX/New Manga.worktrees/P02-real-webview-harness-zcode@e1948466082b3cadbfde1da53b791319e359a10b`仍为`DRIFT_DETECTED`；其24个src-tauri生成文件行尾差异、`verification/P02/cargo-target/**`和`cdp_probe.py`受保护，不复用、覆盖、stage、stash或清理。root其它36项也受保护。
+- AC1–AC7、Vitest、Cargo/Tauri/sidecar build、真实WebView2、GUI、键盘/焦点、对比度均`NOT_RUN`。`verification/P02/build-preflight-lf-r1.md`指出build.rs会写源码树且缺少受信sidecar输入；未完成独立scratch-build/sidecar范围登记和审查前，不在Owner worktree运行Cargo/Tauri/sidecar build。此前一次性关机授权已消费；当前用户明确不延续关机，不关机、不push、不发布、不部署。
+
+## 下一条直接执行
+
+先完成当前Post-FF治理文档同步（包含任务导航`doc/tasks/README.md`）并提交，
+
+## 历史检查点：r8条件批准及c6独立复核（后续C-2与快进已完成）
 
 - Reality check 最近时点：2026-10-09T05:21Z。Live root=G:/CODEX/New Manga，branch=main，HEAD=4b54f304dc201d129d4ba1c62d0368252e6301b1，dirty/untracked=38。P01=done，不重做；P02 AC/Owner allowlist、真实/Mock边界和退出判据已由 scope r1–r4 冻结并释放，不重冻结。
 - 候选 branch=codex/P02-owner-transfer-integration，worktree=G:/CODEX/New Manga.worktrees/P02-owner-transfer-integration-codex。最后一个 DSH Review 固定对象 c4：HEAD=55be5dab7b6d7bebf94c9ad6524f57c023616249，tree=f74afc39b307ca7f388bda8b3de8e73d23e00163，parent=ec207865348be65c7aa8abb7da163938fccb353d。最新候选 head 不能从本文件推断；每次恢复必须从 Live Git 查询实际 HEAD/tree/status 后再固定对象。
@@ -12,6 +26,6 @@
 - 旧 ZCode Owner worktree=G:/CODEX/New Manga.worktrees/P02-real-webview-harness-zcode@e1948466082b3cadbfde1da53b791319e359a10b 为 DRIFT_DETECTED；其24个src-tauri行尾差异、verification/P02/cargo-target/**、cdp_probe.py原地保护，不复用/覆盖/清理/集成。Tauri build.rs 源码树生成副作用尚未由独立审查的 scratch-build 治理方案覆盖，不能在Owner worktree运行Cargo/Tauri/sidecar build。
 - P02 AC1–AC7、Vitest、Cargo/Tauri/sidecar、真实WebView2、GUI、键盘/焦点、对比度均 NOT_RUN。不上线/发布、不push、不关机；此前一次性关机授权已消费。保护用户数据、人工编辑、Lock、current/pinned Revision、密钥及其他Agent未提交内容。
 
-## 下一条直接执行
+## 历史旧指令（Owner转移快进前，已被当前检查点取代）
 
-先核对 Live root、候选 branch/worktree、Git HEAD/tree/status、Task/Plan/Status；始终以实际最新候选 commit/tree 为准，不使用 ec207865 或 c4 当作当前 head。检查 Gate log 最新 final-sync 记录是否精确匹配当前 RESUME 与 NEXT bytes/status；若不匹配，先由非作者 Reviewer 审查当前候选差量，然后只同步这两份 recovery 并记录即时 pre/post hash/status、P01 manifest 24/24、root dirty count和所有冲突。Integration Gate 与非作者集成 Review 全部通过后才本地 --ff-only，不push；Post-FF复跑路线、manifest、工作区保护。再从release HEAD创建全新Antigravity Owner worktree并做只读acceptance/start-intent握手；取得真实conversation ID和start checkpoint前，Task保持 ready / IDLE。
+该旧检查点要求复核C-2并快进；这些步骤已由`3f4d16633a18a9ab7aea5b08b67653cd3f6bf8ff`集成并由post-FF Gate复核，不得重复执行。
