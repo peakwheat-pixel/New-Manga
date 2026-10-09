@@ -1,0 +1,8 @@
+warning: in the working copy of 'doc/00_INDEX.md', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'doc/REBASELINE_PLAN.md', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'doc/STATUS.md', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'doc/tasks/P02.md', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'verification/P02/codex-checkpoint-p02-smoke-prestart-r2-delivery.md', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'verification/P02/codex-smoke-prestart-manifest-check-selftest.py', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'verification/P02/codex-smoke-prestart-manifest-check.py', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'verification/P02/codex-smoke-prestart-manifest-r2-errata.md', LF will be replaced by CRLF the next time Git touches it

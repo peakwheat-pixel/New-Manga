@@ -60,7 +60,8 @@ def validate_artifacts(scanner):
     require(xml_mappings == expected and len(xml_mappings) == 11, "r3 XML differs from the fixed Smoke mappings")
 
     summary_path = os.path.join(BASELINE_DIR, "summary.json")
-    summary_bytes = open(summary_path, "rb").read()
+    with open(summary_path, "rb") as stream:
+        summary_bytes = stream.read()
     summary = json.loads(summary_bytes.decode("utf-8"))
     require(summary["overall_status"] == "PASS" and summary["mapping_count"] == 11, "R2 summary is not PASS/11")
     require(summary["scratch_clone_head"] == scanner.PINNED_HEAD and summary["scratch_clone_tree"] == PINNED_TREE, "R2 scratch clone pin mismatch")
@@ -81,7 +82,8 @@ def validate_artifacts(scanner):
         expected_file = names[index - 1] + ".records.json"
         require(mapping["records_file"] == expected_file, f"mapping {index} records filename mismatch")
         path = os.path.join(BASELINE_DIR, expected_file)
-        raw = open(path, "rb").read()
+        with open(path, "rb") as stream:
+            raw = stream.read()
         require(sha256(raw) == mapping["records_sha256"], f"mapping {index} records SHA-256 mismatch")
         records = json.loads(raw.decode("utf-8"))
         require(len(records) == mapping["records_count"], f"mapping {index} record count mismatch")
@@ -170,8 +172,10 @@ def recheck(scanner, summary, summary_sha):
               f"issues={len(current['issues'])}", flush=True)
     completed = datetime.now().astimezone().isoformat(timespec="seconds")
     result = "PASS" if not mismatches else "BLOCKED"
+    with open(__file__, "rb") as stream:
+        tool_sha = sha256(stream.read())
     print(json.dumps({"result": result, "started_at": started, "completed_at": completed,
-                      "tool_sha256": sha256(open(__file__, "rb").read()),
+                      "tool_sha256": tool_sha,
                       "baseline_summary_sha256": summary_sha, "mapping_count": 11,
                       "mismatch_count": len(mismatches), "mismatches": mismatches,
                       "mappings": mapping_results}, ensure_ascii=False, sort_keys=True), flush=True)
@@ -184,7 +188,9 @@ def main():
     args = parser.parse_args()
     scanner = load_scanner()
     summary, summary_sha, totals, reparse_issue_count = validate_artifacts(scanner)
-    print(json.dumps({"artifact_validation": "PASS", "validated_at": datetime.now().astimezone().isoformat(timespec="seconds"), "tool_sha256": sha256(open(__file__, "rb").read()), "summary_sha256": summary_sha, "reparse_point_issue_count": reparse_issue_count, **totals},
+    with open(__file__, "rb") as stream:
+        tool_sha = sha256(stream.read())
+    print(json.dumps({"artifact_validation": "PASS", "validated_at": datetime.now().astimezone().isoformat(timespec="seconds"), "tool_sha256": tool_sha, "summary_sha256": summary_sha, "reparse_point_issue_count": reparse_issue_count, **totals},
                      ensure_ascii=False, sort_keys=True), flush=True)
     if args.operation == "validate":
         return 0
