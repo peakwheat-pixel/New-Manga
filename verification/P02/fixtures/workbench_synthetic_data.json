@@ -1,5 +1,4 @@
 {
-  "$schema": "http://json-schema.org/draft-07/schema#",
   "description": "P02 Workbench real WebView2 verification synthetic fixtures (isolated test data, no user data)",
   "fixtures": {
     "books": [
@@ -70,90 +69,235 @@
     "regions": {
       "synth-page-101": [
         {
-          "id": "synth-reg-01",
+          "region_id": "synth-reg-01",
           "page_id": "synth-page-101",
-          "region_type": "dialogue",
-          "coordinates": {
-            "x": 100,
-            "y": 150,
-            "width": 300,
-            "height": 200
+          "region_type": "speech",
+          "sfx_policy": "skip",
+          "origin": "user",
+          "revision_no": 1,
+          "geometry": {
+            "bbox": [0.08, 0.08, 0.25, 0.12],
+            "polygon": []
           },
-          "translation": "Synthetic dialogue text for quiet period verification",
-          "current_revision": 1,
-          "is_locked": false,
-          "is_suspect": false,
           "revisions": [
             {
+              "region_revision_id": "synth-rev-01-1",
               "revision_no": 1,
-              "region_type": "dialogue",
-              "created_at": "2026-10-09T00:00:00Z"
+              "origin": "user",
+              "review_state": "approved",
+              "is_pinned": false,
+              "restored_from_revision_id": null
             }
           ]
         },
         {
-          "id": "synth-reg-02",
+          "region_id": "synth-reg-02",
           "page_id": "synth-page-101",
           "region_type": "sfx",
-          "coordinates": {
-            "x": 500,
-            "y": 400,
-            "width": 150,
-            "height": 100
+          "sfx_policy": "translate",
+          "origin": "machine",
+          "revision_no": 1,
+          "geometry": {
+            "bbox": [0.42, 0.22, 0.12, 0.06],
+            "polygon": []
           },
-          "translation": "BAM",
-          "current_revision": 1,
-          "is_locked": false,
-          "is_suspect": false,
           "revisions": [
             {
+              "region_revision_id": "synth-rev-02-1",
               "revision_no": 1,
-              "region_type": "sfx",
-              "created_at": "2026-10-09T00:00:00Z"
+              "origin": "machine",
+              "review_state": "pending",
+              "is_pinned": false,
+              "restored_from_revision_id": null
+            }
+          ]
+        }
+      ],
+      "synth-page-102": [
+        {
+          "region_id": "synth-reg-03",
+          "page_id": "synth-page-102",
+          "region_type": "narration",
+          "sfx_policy": "skip",
+          "origin": "user",
+          "revision_no": 1,
+          "geometry": {
+            "bbox": [0.15, 0.05, 0.70, 0.10],
+            "polygon": []
+          },
+          "revisions": [
+            {
+              "region_revision_id": "synth-rev-03-1",
+              "revision_no": 1,
+              "origin": "user",
+              "review_state": "approved",
+              "is_pinned": false,
+              "restored_from_revision_id": null
             }
           ]
         }
       ]
     },
     "post_write_scenarios": {
-      "description": "AC4 write-then-refresh actions for retype, undo, and restore",
+      "description": "AC4 write-then-refresh operations with explicit IPC commands and readback expectations",
       "retype": {
-        "operation": "set_region_type",
-        "page_id": "synth-page-101",
-        "region_id": "synth-reg-01",
-        "target_type": "thought",
-        "expected_revision": 2
+        "operation_name": "retype_region",
+        "description": "Change region type from speech to narration via set_region_type",
+        "ipc_write": {
+          "command": "set_region_type",
+          "args": {
+            "regionId": "synth-reg-01",
+            "newRegionType": "narration",
+            "expectedRevision": 1
+          },
+          "expected_result": {
+            "region_id": "synth-reg-01",
+            "revision_no": 2,
+            "region_type": "narration",
+            "sfx_policy": "skip"
+          }
+        },
+        "post_write_readback": {
+          "command": "list_regions",
+          "args": {
+            "pageId": "synth-page-101"
+          },
+          "expected_sequence": "write_returns_then_list_regions_fires_immediately",
+          "max_quiet_period_delay_ms": 100
+        }
       },
       "undo": {
-        "operation": "undo_retype",
-        "page_id": "synth-page-101",
-        "region_id": "synth-reg-01",
-        "target_revision": 1
+        "operation_name": "undo_retype",
+        "description": "UI undo action restoring previous revision using restore_region_revision IPC",
+        "ui_action": "trigger_undo",
+        "ipc_write": {
+          "command": "restore_region_revision",
+          "args": {
+            "regionId": "synth-reg-01",
+            "revisionNo": 1,
+            "expectedRevision": 2
+          },
+          "expected_result": {
+            "region_id": "synth-reg-01",
+            "revision_no": 3
+          }
+        },
+        "post_write_readback": {
+          "command": "list_regions",
+          "args": {
+            "pageId": "synth-page-101"
+          },
+          "expected_sequence": "write_returns_then_list_regions_fires_immediately",
+          "max_quiet_period_delay_ms": 100
+        }
       },
       "restore": {
-        "operation": "restore_region_revision",
-        "page_id": "synth-page-101",
-        "region_id": "synth-reg-01",
-        "revision_no": 1
+        "operation_name": "restore_revision",
+        "description": "Explicit restore of a historical revision via restore_region_revision IPC",
+        "ipc_write": {
+          "command": "restore_region_revision",
+          "args": {
+            "regionId": "synth-reg-01",
+            "revisionNo": 1,
+            "expectedRevision": 3
+          },
+          "expected_result": {
+            "region_id": "synth-reg-01",
+            "revision_no": 4
+          }
+        },
+        "post_write_readback": {
+          "command": "list_regions",
+          "args": {
+            "pageId": "synth-page-101"
+          },
+          "expected_sequence": "write_returns_then_list_regions_fires_immediately",
+          "max_quiet_period_delay_ms": 100
+        }
       }
     },
     "visual_direction_f_tokens": {
-      "description": "UI/UX GUI Design Contract §7.2 / §9 and Visual Direction F token specifications",
+      "description": "Visual Direction F token specifications per design contract §7.2 / §9",
       "contrast_thresholds": {
         "body_text_min_ratio": 4.5,
         "large_text_min_ratio": 3.0,
         "ui_components_min_ratio": 3.0,
         "disabled_text_min_ratio": 3.0
       },
-      "reference_tokens": {
-        "bg_dark_base": "#101418",
-        "bg_surface_panel": "#161b22",
-        "bg_surface_active": "#1c2430",
-        "border_subtle": "#2a3038",
-        "fg_primary_text": "#d8e0e8",
-        "fg_muted_text": "#8b949e",
-        "accent_active": "#58a6ff"
+      "tokens": {
+        "bg_page": {
+          "hex": "#1a1a1d",
+          "role": "page_background"
+        },
+        "ink": {
+          "hex": "#ececee",
+          "role": "primary_text"
+        },
+        "ink_2": {
+          "hex": "#a9a9b3",
+          "role": "secondary_text"
+        },
+        "ink_3": {
+          "hex": "#91919c",
+          "role": "tertiary_text"
+        },
+        "ink_dis": {
+          "hex": "#70707b",
+          "role": "disabled_text"
+        },
+        "accent": {
+          "hex": "#4d63e8",
+          "role": "interactive_accent"
+        }
       }
+    },
+    "live_inline_palette": {
+      "description": "Actual inline styles used in live frontend src/** components, recorded per file:line",
+      "token_mapping_status": "UNMAPPED",
+      "colors": [
+        {
+          "hex": "#101418",
+          "role": "app_base_background",
+          "source_file": "apps/desktop/frontend/src/App.tsx",
+          "line": 475
+        },
+        {
+          "hex": "#d8e0e8",
+          "role": "app_primary_text",
+          "source_file": "apps/desktop/frontend/src/App.tsx",
+          "line": 474
+        },
+        {
+          "hex": "#161b22",
+          "role": "nav_inactive_button_background",
+          "source_file": "apps/desktop/frontend/src/App.tsx",
+          "line": 486
+        },
+        {
+          "hex": "#1c2430",
+          "role": "nav_active_button_background",
+          "source_file": "apps/desktop/frontend/src/App.tsx",
+          "line": 486
+        },
+        {
+          "hex": "#2a3038",
+          "role": "nav_button_border",
+          "source_file": "apps/desktop/frontend/src/App.tsx",
+          "line": 488
+        },
+        {
+          "hex": "#8a94a2",
+          "role": "pagelist_muted_text",
+          "source_file": "apps/desktop/frontend/src/workbench/PageListPanel.tsx",
+          "line": 53
+        },
+        {
+          "hex": "#0b0e12",
+          "role": "viewer_background",
+          "source_file": "apps/desktop/frontend/src/workbench/ViewerPanel.tsx",
+          "line": 152
+        }
+      ]
     }
   }
 }

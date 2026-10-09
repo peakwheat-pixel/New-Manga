@@ -1,6 +1,6 @@
-"""P02 Read-Only Environment and Source Identity Probe.
+"""P02 Read-Only Environment and Source Identity Probe (Stage A r2).
 
-Collects and verifies host environment, WebView2 Runtime presence,
+Collects and verifies host environment, Edge WebView2 Runtime presence,
 Git repository/worktree baseline, and build artifact directory status
 without running any Cargo/Tauri builds or modifying product source code.
 """
@@ -10,6 +10,7 @@ from __future__ import annotations
 import json
 import os
 import platform
+import shutil
 import subprocess
 import sys
 import winreg
@@ -19,6 +20,7 @@ REPO_ROOT = Path(__file__).resolve().parents[3]
 VERIFICATION_DIR = REPO_ROOT / "verification" / "P02"
 DIST_DIR = REPO_ROOT / "apps" / "desktop" / "frontend" / "dist"
 CARGO_TARGET_DIR = VERIFICATION_DIR / "cargo-target"
+BEHAVIOR_BASELINE_COMMIT = "241ff3b70b6fc0490ea238efd486cc707f849031"
 
 
 def run_cmd(cmd: list[str], cwd: Path | None = None) -> tuple[int, str, str]:
@@ -49,35 +51,31 @@ def get_git_state() -> dict[str, str | bool]:
         "tree": tree,
         "branch": branch,
         "is_clean": is_clean,
+        "behavior_baseline_commit": BEHAVIOR_BASELINE_COMMIT,
         "porcelain_status": status_out,
     }
 
 
 def query_webview2_runtime() -> dict[str, str]:
     results = {}
+    # Verified WebView2 Runtime Client GUID: {F3017226-FE2A-4295-8BDF-00C3A9A7E4C5}
+    wv2_guid = "{F3017226-FE2A-4295-8BDF-00C3A9A7E4C5}"
     reg_paths = [
-        (winreg.HKEY_LOCAL_MACHINE, r"SOFTWARE\WOW6432Node\Microsoft\EdgeUpdate\Clients"),
-        (winreg.HKEY_CURRENT_USER, r"Software\Microsoft\EdgeUpdate\Clients"),
-        (winreg.HKEY_LOCAL_MACHINE, r"SOFTWARE\Microsoft\EdgeUpdate\Clients"),
+        (winreg.HKEY_LOCAL_MACHINE, rf"SOFTWARE\WOW6432Node\Microsoft\EdgeUpdate\Clients\{wv2_guid}"),
+        (winreg.HKEY_CURRENT_USER, rf"Software\Microsoft\EdgeUpdate\Clients\{wv2_guid}"),
+        (winreg.HKEY_LOCAL_MACHINE, rf"SOFTWARE\Microsoft\EdgeUpdate\Clients\{wv2_guid}"),
     ]
 
     for hive, subkey in reg_paths:
         try:
-            with winreg.OpenKey(hive, subkey) as root_key:
-                num_subkeys = winreg.QueryInfoKey(root_key)[0]
-                for i in range(num_subkeys):
-                    sub_name = winreg.EnumKey(root_key, i)
-                    try:
-                        with winreg.OpenKey(root_key, sub_name) as client_key:
-                            pv, _ = winreg.QueryValueEx(client_key, "pv")
-                            hive_name = "HKLM" if hive == winreg.HKEY_LOCAL_MACHINE else "HKCU"
-                            results[f"{hive_name}_{sub_name}"] = str(pv)
-                    except OSError:
-                        continue
+            with winreg.OpenKey(hive, subkey) as key:
+                pv, _ = winreg.QueryValueEx(key, "pv")
+                hive_name = "HKLM" if hive == winreg.HKEY_LOCAL_MACHINE else "HKCU"
+                results[f"{hive_name}_{subkey}"] = str(pv)
         except OSError:
             continue
 
-    # File system check
+    # File system installation directory check
     app_dir = Path(r"C:\Program Files (x86)\Microsoft\EdgeWebView\Application")
     if app_dir.exists():
         for child in app_dir.iterdir():
@@ -102,22 +100,35 @@ def check_directory_state(path: Path) -> dict[str, object]:
     }
 
 
+def get_npm_version() -> str:
+    npm_exe = shutil.which("npm.cmd") or shutil.which("npm")
+    if not npm_exe:
+        return "UNAVAILABLE: npm binary not found in PATH"
+    code, stdout, stderr = run_cmd([npm_exe, "-v"])
+    if code == 0 and stdout:
+        return stdout
+    return f"ERROR: exit={code}, stderr={stderr}"
+
+
 def main() -> int:
     git_state = get_git_state()
     wv2_findings = query_webview2_runtime()
     dist_state = check_directory_state(DIST_DIR)
     cargo_target_state = check_directory_state(CARGO_TARGET_DIR)
 
-    _, node_ver, _ = run_cmd(["node", "-v"])
-    _, npm_ver, _ = run_cmd(["npm", "-v"])
+    _, node_ver, node_err = run_cmd(["node", "-v"])
+    if not node_ver and node_err:
+        node_ver = f"ERROR: {node_err}"
+    npm_ver = get_npm_version()
 
     detected_ver = "UNKNOWN"
     for k, v in wv2_findings.items():
-        if k.startswith("FS_") or "F3017226-9E4A-4437-B3B1-FD94E1568A91" in k:
-            detected_ver = k.replace("FS_", "") if k.startswith("FS_") else v
+        if k.startswith("FS_"):
+            detected_ver = k.replace("FS_", "")
             break
-    if detected_ver == "UNKNOWN" and wv2_findings:
-        detected_ver = next(iter(wv2_findings.values()))
+        if "{F3017226-FE2A-4295-8BDF-00C3A9A7E4C5}" in k:
+            detected_ver = v
+            break
 
     report = {
         "probe": "P02_READONLY_ENV_IDENTITY",
@@ -133,9 +144,11 @@ def main() -> int:
         "webview2_runtime": {
             "findings": wv2_findings,
             "detected_version": detected_ver,
+            "verified_client_guid": "{F3017226-FE2A-4295-8BDF-00C3A9A7E4C5}",
         },
         "runtimes": {
-            "python": sys.version,
+            "python": sys.version.splitlines()[0],
+            "python_executable": sys.executable,
             "node": node_ver,
             "npm": npm_ver,
         },
@@ -157,23 +170,28 @@ def main() -> int:
     json_path = VERIFICATION_DIR / "env-identity-report.json"
     txt_path = VERIFICATION_DIR / "env-identity-report.txt"
 
-    with json_path.open("w", encoding="utf-8") as f:
+    with json_path.open("w", encoding="utf-8", newline="\n") as f:
         json.dump(report, f, indent=2, ensure_ascii=False)
+        f.write("\n")
 
     txt_lines = [
         "=== P02 Read-Only Environment & Identity Report ===",
         f"Host OS: {report['host_os']['platform']}",
         f"WebView2 Detected Version: {report['webview2_runtime']['detected_version']}",
+        f"WebView2 Verified Key: {report['webview2_runtime']['verified_client_guid']}",
+        f"Node Runtime: {report['runtimes']['node']}",
+        f"npm Tool: {report['runtimes']['npm']}",
+        f"Python Executable: {report['runtimes']['python_executable']}",
         f"Git Branch: {git_state['branch']}",
-        f"Git HEAD: {git_state['head']}",
-        f"Git Tree: {git_state['tree']}",
-        f"Git Clean Status: {git_state['is_clean']}",
+        f"Source HEAD: {git_state['head']}",
+        f"Source Tree: {git_state['tree']}",
+        f"Behavior Baseline: {git_state['behavior_baseline_commit']}",
         f"frontend/dist Exists: {dist_state['exists']}",
         f"cargo-target Exists: {cargo_target_state['exists']}",
         f"Hard Build Barrier Active: {report['build_barrier']['hard_barrier_active']}",
         f"Barrier Rationale: {report['build_barrier']['reason']}",
     ]
-    with txt_path.open("w", encoding="utf-8") as f:
+    with txt_path.open("w", encoding="utf-8", newline="\n") as f:
         f.write("\n".join(txt_lines) + "\n")
 
     print("\n".join(txt_lines))

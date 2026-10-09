@@ -1,10 +1,14 @@
 === P02 Read-Only Environment & Identity Report ===
 Host OS: Windows-11-10.0.26300-SP0
 WebView2 Detected Version: 154.0.4258.62
+WebView2 Verified Key: {F3017226-FE2A-4295-8BDF-00C3A9A7E4C5}
+Node Runtime: v24.15.0
+npm Tool: 12.0.1
+Python Executable: C:\Python314\python.exe
 Git Branch: agent/antigravity/P02-real-webview-harness
-Git HEAD: 5de8d44c784cbd20b23bcd41a8f1a7258c7addff
-Git Tree: f27d12a7f8db1a3946f5832d865653d1dcf380b3
-Git Clean Status: False
+Source HEAD: 972049f991b5c119555647eeea816e89dd4769f3
+Source Tree: 657095fa6790b6d21091dd58f9f862bc08818455
+Behavior Baseline: 241ff3b70b6fc0490ea238efd486cc707f849031
 frontend/dist Exists: False
 cargo-target Exists: False
 Hard Build Barrier Active: True

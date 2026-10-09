@@ -1,4 +1,4 @@
-"""P02 Static Source Contract & Front-End Control Probe.
+"""P02 Static Source Contract & Front-End Control Probe (Stage A r2).
 
 Performs static analysis of live Workbench frontend source files to verify:
 - WorkbenchPage debounce default parameters (resolveDebounceMs=300, regionDebounceMs=300)
@@ -6,7 +6,7 @@ Performs static analysis of live Workbench frontend source files to verify:
 - Child component structure (PageListPanel, ViewerPanel, RegionInspector)
 - Expected IPC command surface consumption in Workbench
 
-Produces structured JSON and human-readable text verification reports.
+Produces structured JSON and human-readable text verification reports with pure LF.
 """
 
 from __future__ import annotations
@@ -152,8 +152,9 @@ def main() -> int:
     json_path = VERIFICATION_DIR / "static-control-report.json"
     txt_path = VERIFICATION_DIR / "static-control-report.txt"
 
-    with json_path.open("w", encoding="utf-8") as f:
+    with json_path.open("w", encoding="utf-8", newline="\n") as f:
         json.dump(report, f, indent=2, ensure_ascii=False)
+        f.write("\n")
 
     txt_lines = [
         "=== P02 Static Source Contract Control Report ===",
@@ -165,7 +166,7 @@ def main() -> int:
         f"  - app-nav testid present: {app_report.get('checks', {}).get('has_app_nav_testid')}",
         f"  - nav-workbench testid present: {app_report.get('checks', {}).get('has_nav_workbench_testid')}",
     ]
-    with txt_path.open("w", encoding="utf-8") as f:
+    with txt_path.open("w", encoding="utf-8", newline="\n") as f:
         f.write("\n".join(txt_lines) + "\n")
 
     print("\n".join(txt_lines))

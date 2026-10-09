@@ -1,6 +1,34 @@
 # P02 恢复点
 
-## 当前检查点：Antigravity 已接单；P02 in_progress / ACTIVE
+## 当前检查点：P02 Stage A 定向修订已完成；等待 DSH 复审与 Codex 隔离构建 Gate
+
+- 时间：2026-10-09 UTC。
+- Task=`doc/tasks/P02.md`，status=`in_progress` / ExecutionState=`ACTIVE`；Owner=Antigravity、非作者实现Reviewer=DeepSeek Harness、Integrator=Codex。
+- 行为基线=`241ff3b70b6fc0490ea238efd486cc707f849031`，冻结 scope contract SHA-256=`27DC31A8CF3304ABA6783E243F36895FFE4AAA3CCBCA76D58E8B766C403E1425`。
+- 本轮定向修订源自非作者实现 Reviewer DeepSeek Harness 对 `base=5de8d44c784cbd20b23bcd41a8f1a7258c7addff` / `reviewed_head=972049f991b5c119555647eeea816e89dd4769f3` 的 `decision=changes_requested` 及 12 项 findings（F-01 P1, F-02~F-07 P2, F-08~F-12 P3），以及 Codex 独立 Review 发现的 293 条 trailing-whitespace 诊断。
+- 修订处置结果：
+  - F-01: 准确纠正 Stage A 为 preflight/verdict report generator，明确交互驱动与 CDP 尚未实现并移除死代码与未用参数；
+  - F-02: 真实区分视觉方向 F Token（`bg-page #1a1a1d`、`ink #ececee`、`ink-2 #a9a9b3`、`ink-3 #91919c`、`ink-dis #70707b`、`accent #4d63e8`）与当前 live inline palette（标注 `App.tsx:475`、`PageListPanel.tsx:53` 等来源），未映射者标注 `token_mapping=UNMAPPED`；
+  - F-03: 消除数字矛盾，以机器生成的 `verification/P02/p02-harness-results.json` 作为唯一事实源；
+  - F-04: 将前置数学模型检查重命名为 `PRE-03`，真实运行时 AC6 继续单独记录为 `BLOCKED`，未执行绝不报 PASS；
+  - F-05: 纠正 provenance，明确区分行为基线、被测 source commit、tree 与交付 commit；
+  - F-06: 未执行场景的 `exit_code` 设为 `null`（绝非硬编码 126），真实执行命令生成完整原始日志 `verification/P02/probe-execution.log`，子检查失败均正确传播并导致非零退出；
+  - F-07: 更新本恢复点至 Stage A 修订就绪状态；
+  - F-08: 实现包含 Alpha Blending（合成底色）的 WCAG 2.1 对比度数学模型与自检断言；
+  - F-09: 修正 WebView2 Runtime Client GUID 为真实的 `{F3017226-FE2A-4295-8BDF-00C3A9A7E4C5}`，修复 `npm.cmd` 探测，统一 PowerShell 与 Python 解释器；
+  - F-10: 修复 synthetic fixture，采用真实 Region wire 契约（`region_id`、`revision_no`、`speech/narration/sfx` 等真实 enum），补齐 `synth-page-102` 区域数据，明确 AC4 写后刷新的 IPC 与 readback 期望，删除不适用的 `$schema`；
+  - F-11: 修正 `apps/desktop/frontend/e2e/workbench_driver_protocol.ts` 的 layer union 并标注当前为 Stage A 数据契约定义；
+  - F-12: 更新 Task 测试表，分行明确记录 preflight controls (PASS) 与 runtime scenarios (BLOCKED)；
+  - Codex Whitespace: 所有交付文件统一使用纯 LF，消除所有 trailing-whitespace，`git diff --check` 通过 (EXIT=0)。
+- 实际验证状态（Exit=0）：
+  - `PRE-01` (synthetic_fixture_presence): **PASS** (Layer: `FILESYSTEM`)
+  - `PRE-02` (static_source_contract_check): **PASS** (Layer: `STATIC_AST`)
+  - `PRE-03` (f_token_and_palette_math_model): **PASS** (Layer: `TOKEN_MODEL`)
+  - `AC1`~`AC6` 真实 WebView2 运行时场景: **BLOCKED** (Layer: `REAL_WEBVIEW2` / `REAL_WEBVIEW_MOCK_IPC`，Exit: `null`)
+- 硬构建屏障（Hard Build Barrier）继续生效：严禁在本 Owner worktree 运行 Cargo/Tauri/sidecar build。
+- 下一条直接执行：由 Codex 对本 Stage A 修订交付进行 Gate 复算与集成复核，并交由 DeepSeek Harness 进行 Stage A 复审；随后由 Codex 在独立隔离环境中建立 scratch worktree 构建方案。
+
+## 历史检查点：Antigravity 已接单；P02 in_progress / ACTIVE
 
 - Acceptance start checkpoint=`2026-10-09`。Live root在状态同步前为`main@3c651f502d49de32f5b050cfefc1ea056354f663` / tree=`f8e32f9b64b0f0b1dbcfc14c74f2649c61629f7f`，common-dir=`G:/CODEX/New Manga/.git`；后续须从Live Git读取本次状态同步commit，禁止用旧hash推断。P02 Owner转移release仍为`3f4d16633a18a9ab7aea5b08b67653cd3f6bf8ff`。Owner branch=`agent/antigravity/P02-real-webview-harness`、worktree=`G:/CODEX/New Manga.worktrees/P02-real-webview-harness-antigravity`；接单时HEAD/tree为上述3c651f50/f8e32f9b，worktree-local `core.autocrlf=false`。
 - P01=`done`，不重做。P02真实/Mock边界、AC1–AC7、Owner allowlist和退出判据已由scope r1–r4冻结与释放，scope contract SHA-256=`27DC31A8CF3304ABA6783E243F36895FFE4AAA3CCBCA76D58E8B766C403E1425`；不重冻结。P02行为基线仍为`241ff3b70b6fc0490ea238efd486cc707f849031`。
@@ -10,10 +38,6 @@
 - 旧ZCode worktree=`G:/CODEX/New Manga.worktrees/P02-real-webview-harness-zcode@e1948466082b3cadbfde1da53b791319e359a10b`仍为`DRIFT_DETECTED`；其24个src-tauri生成文件行尾差异、`verification/P02/cargo-target/**`和`cdp_probe.py`受保护，不复用、覆盖、stage、stash或清理。root其它36项也受保护。
 - root保护现场原36项status/path/content map SHA-256仍为`e3554db4bbaaf45c35c46dfa7814d8ab818f977b95a79869df78e4f8e0c9b2ee`；P01 post-FF manifest=`24/24`、0 mismatch，body digest=`b41835453b693b4e62818216e4d67801c01eca6e33450f8d3d3dd72849d578e7`。握手prompt/stdout/stderr/exit/version与migration stdout/stderr/exit均保存于`verification/P02/antigravity-owner-acceptance-r1.*`；desktop summaries DB migration前online backup SHA-256=`d83ff1c8cb46aac9869c64d34837204af6465cef1583aaab9755a2587f47a627`，路径记录于同目录migration-backup evidence。
 - AC1–AC7、Vitest、Cargo/Tauri/sidecar build、真实WebView2、GUI、键盘/焦点、对比度均`NOT_RUN`。`verification/P02/build-preflight-lf-r1.md`指出build.rs会写源码树且缺少受信sidecar输入；未完成独立scratch-build/sidecar范围登记和审查前，不在Owner worktree运行Cargo/Tauri/sidecar build。此前一次性关机授权已消费；当前用户明确不延续关机，不关机、不push、不发布、不部署。
-
-## 下一条直接执行
-
-先提交Plan/Status/Task/ROADMAP与接单证据的状态同步checkpoint，并运行路线validator及漂移探针；随后将clean Owner branch fast-forward至该main commit，再通过同一conversation=`054911c9-b133-4514-b471-143b80249fce`发送[`formal implementation prompt`](antigravity-owner-implementation-r1.prompt.md)。接单已真实成立，Task应保持`in_progress / ACTIVE`；实现消息尚未发送前不声称Owner已开始改代码。
 
 ## 历史检查点：r8条件批准及c6独立复核（后续C-2与快进已完成）
 

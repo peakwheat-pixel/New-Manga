@@ -1,14 +1,10 @@
 /**
- * P02 Workbench Real WebView2 Driver & Assertion Protocol.
+ * P02 Workbench Real WebView2 Driver & Assertion Protocol (Stage A r2).
  *
- * Designed to execute in embedded Windows WebView2 runtime to verify:
- * - AC1: Host environment proving real WebView2 (not JSDOM/SSR/vanilla browser)
- * - AC2: Navigation & interaction via simulated/native events
- * - AC3: 300ms quiet-period monotonic timing & page invalidation
- * - AC4: Post-write immediate refresh sequence for retype, undo, and restore
- * - AC5: Keyboard focus navigation and activeElement tracking
- * - AC6: Computed color extraction, F token mapping, and WCAG 2.1 contrast calculation
- * - AC7: Structured verdict formatting (PASS/FAIL/BLOCKED/NOT_RUN)
+ * NOTE: This file specifies Stage A data contracts, type structures, and WCAG 2.1
+ * mathematical models. Full interactive CDP / WebView behavioral driving is NOT yet
+ * active in Stage A (held BLOCKED under the Hard Build Barrier awaiting authorized
+ * scratch-build registration by Codex).
  */
 
 export interface HostRuntimeProof {
@@ -40,8 +36,14 @@ export interface ScenarioVerdict {
   acId: string;
   scenarioName: string;
   status: "PASS" | "FAIL" | "BLOCKED" | "NOT_RUN";
-  layer: "REAL_WEBVIEW2" | "REAL_WEBVIEW_MOCK_IPC" | "BLOCKED_NO_BUILD";
-  exitCode: number;
+  layer:
+    | "REAL_WEBVIEW2"
+    | "REAL_WEBVIEW_MOCK_IPC"
+    | "FILESYSTEM"
+    | "STATIC_AST"
+    | "TOKEN_MODEL"
+    | "BLOCKED_NO_BUILD";
+  exitCode: number | null;
   timingData?: TimingSample[];
   contrastData?: ContrastSample[];
   details?: Record<string, unknown>;
@@ -50,7 +52,7 @@ export interface ScenarioVerdict {
 }
 
 /**
- * AC1: Proves whether the current execution context is a real Windows WebView2
+ * AC1 Contract: Proves whether the current execution context is a real Windows WebView2
  * host rather than JSDOM, external Chrome/Firefox, or SSR.
  */
 export function proveWebView2Runtime(): HostRuntimeProof {
@@ -86,6 +88,23 @@ export function calculateRelativeLuminance(r: number, g: number, b: number): num
 }
 
 /**
+ * Performs alpha blending of foreground over an opaque background.
+ * Composite = alpha * fg + (1 - alpha) * bg
+ */
+export function blendAlpha(
+  fgRgba: [number, number, number, number],
+  bgRgb: [number, number, number],
+): [number, number, number] {
+  const [rf, gf, bf, a] = fgRgba;
+  const [rb, gb, bb] = bgRgb;
+  return [
+    Math.round(a * rf + (1 - a) * rb),
+    Math.round(a * gf + (1 - a) * gb),
+    Math.round(a * bf + (1 - a) * bb),
+  ];
+}
+
+/**
  * Parses CSS rgb/rgba/hex string into [r, g, b, a].
  */
 export function parseCssColor(colorStr: string): [number, number, number, number] | null {
@@ -115,11 +134,16 @@ export function parseCssColor(colorStr: string): [number, number, number, number
 }
 
 /**
- * AC6: Calculates contrast ratio between foreground and background.
+ * AC6 Math Model: Calculates contrast ratio between foreground (with alpha) and background.
+ * Performs alpha blending before computing relative luminance.
  * Ratio = (L1 + 0.05) / (L2 + 0.05)
  */
-export function calculateContrastRatio(fgRgb: [number, number, number], bgRgb: [number, number, number]): number {
-  const l1 = calculateRelativeLuminance(...fgRgb);
+export function calculateContrastRatio(
+  fgRgba: [number, number, number, number],
+  bgRgb: [number, number, number],
+): number {
+  const effectiveFg = blendAlpha(fgRgba, bgRgb);
+  const l1 = calculateRelativeLuminance(...effectiveFg);
   const l2 = calculateRelativeLuminance(...bgRgb);
   const brighter = Math.max(l1, l2);
   const darker = Math.min(l1, l2);
@@ -152,7 +176,8 @@ export function evaluateContrast(
     };
   }
 
-  const ratio = calculateContrastRatio([fg[0], fg[1], fg[2]], [bg[0], bg[1], bg[2]]);
+  const bgOpaque: [number, number, number] = [bg[0], bg[1], bg[2]];
+  const ratio = calculateContrastRatio(fg, bgOpaque);
   const minRequired = role === "text" ? 4.5 : 3.0;
   const isPass = ratio >= minRequired;
 
