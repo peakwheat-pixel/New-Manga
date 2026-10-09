@@ -1,0 +1,76 @@
+{
+  "assessment": "P02 host prestart threshold derivation",
+  "source_report": "r9f-current-host-prestart-r3.json",
+  "source_captured_at": "2026-10-10T06:41:23.1505351+08:00",
+  "threshold_source": "codex-scratch-build-process-isolation-proposal-r1.md, WSB configuration and Isolation smoke sections",
+  "criteria": [
+    {
+      "id": "architecture",
+      "criterion": "AMD64 or ARM64",
+      "actual": "x64-based PC; CIM=9",
+      "pass": true
+    },
+    {
+      "id": "firmware_virtualization",
+      "criterion": "true",
+      "actual": true,
+      "pass": true
+    },
+    {
+      "id": "sandbox_feature",
+      "criterion": "InstallState=1",
+      "actual": 1,
+      "pass": true
+    },
+    {
+      "id": "host_total_ram",
+      "criterion": ">=4 GiB",
+      "actual_gib": 31.647,
+      "pass": true
+    },
+    {
+      "id": "host_available_ram",
+      "criterion": ">=4096 MiB",
+      "actual_mib": 17285.19,
+      "pass": true
+    },
+    {
+      "id": "physical_cores",
+      "criterion": ">=2",
+      "actual": 16.0,
+      "pass": true
+    },
+    {
+      "id": "C_free_space",
+      "criterion": ">=1 GiB",
+      "actual_gib": 328.506,
+      "pass": true
+    },
+    {
+      "id": "G_free_space",
+      "criterion": ">=1 GiB",
+      "actual_gib": 1298.667,
+      "pass": true
+    },
+    {
+      "id": "interactive_non_elevated",
+      "criterion": "UserInteractive=true and elevated=false",
+      "actual": "UserInteractive=True; elevated=False",
+      "pass": true
+    },
+    {
+      "id": "wsb_version",
+      "criterion": "exit=0 and version matches executable",
+      "actual": "exit=0; reported=0.8.107.0; executable=0.8.107.0",
+      "pass": true
+    },
+    {
+      "id": "wsb_list_empty",
+      "criterion": "exit=0 and environment_count=0",
+      "actual": "exit=0; environment_count=0",
+      "pass": true
+    }
+  ],
+  "overall": "PASS",
+  "limitation": "Derived from the saved host report; immediate prestart recheck remains required after independent Review."
+}

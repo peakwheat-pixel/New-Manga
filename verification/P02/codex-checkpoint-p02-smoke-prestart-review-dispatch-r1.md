@@ -30,3 +30,6 @@
 Commit this review package with the validator and diff-check evidence, create a detached C: review worktree at that fixed head, dispatch the read-only DSH review prompt in dsh-review-p02-current-prestart-r1.prompt.md, save stdout/exit/session evidence, and mount the successful session per dsh-dispatch. If approved, rerun immediate WSB/UI/XML/source/root checks before considering the one permitted Sandbox start. If not approved, repair only the authorized documentation/evidence scope and request a new exact-head review.
 
 - Resume safety: RESUME_SAFE after verifying branch, worktree, candidate HEAD/tree and root dirty manifest. Do not stage unrelated carried files.
+
+
+Head-binding clarification: the saved route-validator and diff-check logs in this checkpoint are tied to delivery commit 3fcaee2f59de362c21c7d4e721da9336742ca75e / tree 4fb5027cefe90bb21fcbfbfd5d8594093e2c47fc. Review-package HEAD e6227e0b adds only the review checkpoint/prompt and verification logs; the DSH reviewer independently reran verify_plan.py at e6227e0b (7/7 PASS, exit=0) and git diff --check at the exact review HEAD (exit=0), documented in codex-checkpoint-p02-smoke-prestart-r1-review.md.
