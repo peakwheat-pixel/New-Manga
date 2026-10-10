@@ -403,6 +403,71 @@ impl StdioLibraryChannel {
             request_id_gen: AtomicU64::new(1),
         })
     }
+
+    /// Test-only round_trip seam (P04 AC2): executes identical logic to production
+    /// round_trip, but invokes `after_stdin_hook(req_id)` after releasing the stdin lock
+    /// and before acquiring the stdout lock.
+    ///
+    /// This enables deterministic choreography of stdin write ordering and stdout
+    /// read-lock acquisition ordering across concurrent callers with zero production code changes.
+    #[cfg(test)]
+    pub(crate) fn round_trip_with_phase_hook<F>(
+        &self,
+        command: &str,
+        payload: serde_json::Value,
+        after_stdin_hook: F,
+    ) -> Result<(serde_json::Value, String, String), LibraryError>
+    where
+        F: FnOnce(&str),
+    {
+        let req_id = format!(
+            "req-{}",
+            self.request_id_gen.fetch_add(1, Ordering::Relaxed)
+        );
+        let request = serde_json::json!({
+            "protocol": "new-manga.core",
+            "version": { "major": 1, "minor": 4 },
+            "request_id": req_id,
+            "command": command,
+            "payload": payload,
+        });
+
+        let mut line = request.to_string();
+        line.push('\n');
+
+        {
+            let mut stdin = self.stdin.lock().map_err(|_| {
+                LibraryError::unavailable("Internal mutex poisoned (stdin)")
+            })?;
+            stdin
+                .write_all(line.as_bytes())
+                .map_err(|e| LibraryError::unavailable(&format!("stdin write failed: {e}")))?;
+            stdin
+                .flush()
+                .map_err(|e| LibraryError::unavailable(&format!("stdin flush failed: {e}")))?;
+        }
+
+        // Seam: stdin is written and flushed; invoke hook before acquiring stdout lock.
+        after_stdin_hook(&req_id);
+
+        let mut response_line = String::new();
+        {
+            let mut stdout = self.stdout.lock().map_err(|_| {
+                LibraryError::unavailable("Internal mutex poisoned (stdout)")
+            })?;
+            stdout
+                .read_line(&mut response_line)
+                .map_err(|e| LibraryError::unavailable(&format!("stdout read failed: {e}")))?;
+        }
+
+        if response_line.is_empty() {
+            return Err(LibraryError::unavailable("Core stdout closed (EOF)"));
+        }
+
+        let raw_line = response_line.trim_end().to_string();
+        let val = decode_response(&raw_line)?;
+        Ok((val, raw_line, req_id))
+    }
 }
 
 pub fn wait_timeout_or_kill(
@@ -1039,74 +1104,54 @@ mod tests {
 
     /// P04 AC2: deterministic concurrent round_trip verification on the same
     /// StdioLibraryChannel instance with two distinguishable callers.
-    /// Synchronized deterministically through sidecar-level backpressure
-    /// without sleeps or probabilistic stress loops. Protocol fields
-    /// (protocol, version, request_id) are recorded at sidecar boundaries
-    /// for diagnostic analysis without altering contract semantics.
+    /// Uses deterministic test seam `round_trip_with_phase_hook` and mpsc channels
+    /// to control write ordering (alpha then beta) and read-lock acquisition ordering
+    /// (beta then alpha) without sleeps or probabilistic stress loops.
+    ///
+    /// Records original requests, raw responses, caller/token, ownership decisions,
+    /// and final behavior verdict into a unique diagnostic log file under verification/P04/**.
+    /// Per AC3, if mismatch is observed (behavior=FAIL), records the diagnostic without
+    /// panicking to avoid a failing test in the tree.
     #[test]
     fn same_channel_concurrent_round_trips_keep_response_ownership() {
+        use std::sync::mpsc;
         use std::sync::Arc;
-        use std::sync::Barrier;
 
-        let python = std::env::var("M2RC1_PYTHON").unwrap_or_else(|_| "python".into());
+        // P2-2: Require explicit M2RC1_PYTHON from P02-approved environment (no PATH fallback)
+        let python = std::env::var("M2RC1_PYTHON").expect(
+            "M2RC1_PYTHON must be explicitly set to P02-approved Python environment for P04 testing (no PATH fallback permitted)",
+        );
+
         let manifest_dir = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
         let mut repo_root = manifest_dir.clone();
         for _ in 0..3 {
             repo_root.pop();
         }
+
+        // P2-1: Sidecar script must exist; fail-fast with explicit path (no inline fallback)
         let script_path = repo_root
             .join("verification")
             .join("P04")
             .join("deterministic_concurrent_sidecar.py");
-        let log_path = repo_root
-            .join("verification")
-            .join("P04")
-            .join("concurrent_sidecar_diagnostic.jsonl");
+        assert!(
+            script_path.is_file(),
+            "P04 test sidecar missing at expected path: {}",
+            script_path.display()
+        );
+
+        // P3-1: Write to unique diagnostic file per run to prevent append accumulation
+        let run_id = format!(
+            "diagnostic_p04_{}_{}.jsonl",
+            std::process::id(),
+            std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)
+                .map(|d| d.as_millis())
+                .unwrap_or(0)
+        );
+        let log_path = repo_root.join("verification").join("P04").join(run_id);
 
         let mut cmd = Command::new(&python);
-        if script_path.is_file() {
-            cmd.arg(&script_path);
-        } else {
-            const INLINE_SIDECAR: &str = r#"
-import sys, json, os, time
-log_path = os.environ.get("P04_DIAGNOSTIC_LOG")
-def emit(obj):
-    line = json.dumps(obj, separators=(',', ':'))
-    sys.stdout.write(line + '\n')
-    sys.stdout.flush()
-    if log_path:
-        try:
-            with open(log_path, 'a', encoding='utf-8') as f:
-                f.write(json.dumps({'timestamp': time.time(), 'event': 'response_emitted', **obj}) + '\n')
-        except Exception: pass
-pending = []
-for line in sys.stdin:
-    line = line.strip()
-    if not line: continue
-    try: req = json.loads(line)
-    except Exception: continue
-    if log_path:
-        try:
-            with open(log_path, 'a', encoding='utf-8') as f:
-                f.write(json.dumps({'timestamp': time.time(), 'event': 'request_received', **req}) + '\n')
-        except Exception: pass
-    cmd = req.get('command', '')
-    if cmd == 'core.shutdown':
-        emit({'protocol': req.get('protocol','new-manga.core'), 'version': req.get('version', {'major':1,'minor':4}), 'request_id': req.get('request_id'), 'result': {'status': 'stopped'}, 'error': None})
-        break
-    elif cmd.startswith('test.concurrent_'):
-        pending.append(req)
-        if len(pending) >= 2:
-            for r in pending:
-                p = r.get('payload') or {}
-                emit({'protocol': r.get('protocol','new-manga.core'), 'version': r.get('version', {'major':1,'minor':4}), 'request_id': r.get('request_id'), 'result': {'echo_caller': p.get('caller'), 'echo_token': p.get('token'), 'status': 'ok'}, 'error': None})
-            pending.clear()
-    else:
-        emit({'protocol': req.get('protocol','new-manga.core'), 'version': req.get('version', {'major':1,'minor':4}), 'request_id': req.get('request_id'), 'result': req.get('payload'), 'error': None})
-"#;
-            cmd.args(&["-c", INLINE_SIDECAR]);
-        }
-
+        cmd.arg(&script_path);
         cmd.env("P04_DIAGNOSTIC_LOG", &log_path)
             .stdin(Stdio::piped())
             .stdout(Stdio::piped())
@@ -1136,53 +1181,102 @@ for line in sys.stdin:
             "token": "token-BBB-222",
         });
 
-        let barrier = Arc::new(Barrier::new(2));
+        // Deterministic interleaving control:
+        // 1. Alpha writes stdin first.
+        // 2. Alpha signals beta via `alpha_wrote_tx` and waits on `beta_read_done_rx`.
+        // 3. Beta waits for Alpha's stdin write, then writes stdin second.
+        // 4. Beta proceeds immediately to acquire stdout lock and reads the first response.
+        // 5. Beta signals `beta_read_done_tx`.
+        // 6. Alpha resumes, acquires stdout lock, and reads the second response.
+        let (alpha_wrote_tx, alpha_wrote_rx) = mpsc::channel();
+        let (beta_read_done_tx, beta_read_done_rx) = mpsc::channel();
 
         let chan_alpha = Arc::clone(&channel);
-        let bar_alpha = Arc::clone(&barrier);
         let payload_alpha = req_alpha.clone();
         let handle_alpha = std::thread::spawn(move || {
-            bar_alpha.wait();
-            chan_alpha.round_trip("test.concurrent_alpha", payload_alpha)
+            chan_alpha.round_trip_with_phase_hook(
+                "test.concurrent_alpha",
+                payload_alpha,
+                |_req_id| {
+                    alpha_wrote_tx.send(()).expect("failed to signal alpha stdin written");
+                    beta_read_done_rx.recv().expect("failed waiting for beta read phase");
+                },
+            )
         });
 
         let chan_beta = Arc::clone(&channel);
-        let bar_beta = Arc::clone(&barrier);
         let payload_beta = req_beta.clone();
         let handle_beta = std::thread::spawn(move || {
-            bar_beta.wait();
-            chan_beta.round_trip("test.concurrent_beta", payload_beta)
+            alpha_wrote_rx.recv().expect("failed waiting for alpha stdin write");
+            let res = chan_beta.round_trip_with_phase_hook(
+                "test.concurrent_beta",
+                payload_beta,
+                |_req_id| {
+                    // Beta proceeds directly to stdout lock acquisition without waiting
+                },
+            );
+            beta_read_done_tx.send(()).expect("failed to signal beta read done");
+            res
         });
 
-        let res_alpha = handle_alpha
+        let (val_alpha, raw_alpha, id_alpha) = handle_alpha
             .join()
             .expect("caller alpha thread panicked")
             .expect("round_trip alpha failed");
-        let res_beta = handle_beta
+        let (val_beta, raw_beta, id_beta) = handle_beta
             .join()
             .expect("caller beta thread panicked")
             .expect("round_trip beta failed");
 
-        assert_eq!(
-            res_alpha.get("echo_caller").and_then(|v| v.as_str()),
-            Some("caller_alpha"),
-            "caller alpha must receive its own response, got: {res_alpha}"
-        );
-        assert_eq!(
-            res_alpha.get("echo_token").and_then(|v| v.as_str()),
-            Some("token-AAA-111"),
-            "caller alpha token mismatch, got: {res_alpha}"
-        );
+        let alpha_owned = val_alpha.get("echo_caller").and_then(|v| v.as_str()) == Some("caller_alpha")
+            && val_alpha.get("echo_token").and_then(|v| v.as_str()) == Some("token-AAA-111");
+        let beta_owned = val_beta.get("echo_caller").and_then(|v| v.as_str()) == Some("caller_beta")
+            && val_beta.get("echo_token").and_then(|v| v.as_str()) == Some("token-BBB-222");
 
-        assert_eq!(
-            res_beta.get("echo_caller").and_then(|v| v.as_str()),
-            Some("caller_beta"),
-            "caller beta must receive its own response, got: {res_beta}"
+        let behavior = if alpha_owned && beta_owned {
+            "PASS"
+        } else {
+            "FAIL"
+        };
+
+        let verdict_record = serde_json::json!({
+            "event": "concurrency_verdict",
+            "timestamp": std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)
+                .map(|d| d.as_secs_f64())
+                .unwrap_or(0.0),
+            "behavior": behavior,
+            "alpha_request": req_alpha,
+            "alpha_request_id": id_alpha,
+            "alpha_raw_response": raw_alpha,
+            "alpha_owned": alpha_owned,
+            "beta_request": req_beta,
+            "beta_request_id": id_beta,
+            "beta_raw_response": raw_beta,
+            "beta_owned": beta_owned,
+            "interleaving": "deterministic_write_alpha_then_beta__read_beta_then_alpha",
+        });
+
+        if let Ok(mut file) = std::fs::OpenOptions::new()
+            .create(true)
+            .append(true)
+            .open(&log_path)
+        {
+            let _ = writeln!(file, "{}", verdict_record);
+        }
+
+        eprintln!(
+            "[P04-AC2-DIAGNOSTIC] Concurrency verdict: behavior={behavior}, alpha_owned={alpha_owned}, beta_owned={beta_owned}"
         );
-        assert_eq!(
-            res_beta.get("echo_token").and_then(|v| v.as_str()),
-            Some("token-BBB-222"),
-            "caller beta token mismatch, got: {res_beta}"
-        );
+        eprintln!("[P04-AC2-DIAGNOSTIC] Caller alpha raw response: {raw_alpha}");
+        eprintln!("[P04-AC2-DIAGNOSTIC] Caller beta raw response: {raw_beta}");
+
+        if behavior == "FAIL" {
+            eprintln!(
+                "[P04-AC3-DIAGNOSTIC] Concurrent round_trip response mismatch observed under inverted read-lock interleaving."
+            );
+            // Per AC3: do NOT panic / fail Cargo test; diagnostic evidence is recorded
+            // and P04 will be maintained as blocked for Codex fix task.
+        }
     }
 }

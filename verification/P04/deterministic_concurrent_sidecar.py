@@ -4,9 +4,9 @@
 Provides deterministic request/response synchronization across multiple
 concurrent callers on the same StdioLibraryChannel instance.
 
-Records protocol fields (protocol, version, request_id) at the boundary
-into verification/P04/** for diagnostic evidence without altering
-contract semantics.
+Records protocol fields (protocol, version, request_id) and Python runtime
+provenance (sys.executable, sys.version) at the boundary into verification/P04/**
+for diagnostic evidence without altering contract semantics.
 """
 
 from __future__ import annotations
@@ -62,7 +62,14 @@ def main() -> int:
     log_path = os.environ.get("P04_DIAGNOSTIC_LOG")
     if not log_path:
         here = os.path.dirname(os.path.abspath(__file__))
-        log_path = os.path.join(here, "concurrent_sidecar_diagnostic.jsonl")
+        log_path = os.path.join(here, f"diagnostic_sidecar_{os.getpid()}_{int(time.time()*1000)}.jsonl")
+
+    # P2-2: Record Python runtime provenance for P02-approved environment verification
+    log_event(log_path, "sidecar_provenance", {
+        "sys_executable": sys.executable,
+        "sys_version": sys.version,
+        "pid": os.getpid(),
+    })
 
     pending_requests: list[dict[str, Any]] = []
 
@@ -111,7 +118,8 @@ def main() -> int:
             }), log_path)
         elif command.startswith("test.concurrent_"):
             pending_requests.append(req)
-            # Deterministic sync barrier: wait until 2 concurrent requests arrive
+            # Deterministic sync barrier: wait until 2 concurrent requests arrive,
+            # then emit responses in received order (FIFO)
             if len(pending_requests) >= 2:
                 for r in pending_requests:
                     p = r.get("payload") or {}
