@@ -1,6 +1,14 @@
 # P02 恢复点
 
-## 当前检查点：P02 Stage A r8 已集成；Scratch Build Gate BLOCKED
+## 当前检查点：2026-10-10 用户裁决改为本机验证
+
+- 用户裁决：P02/P04 本机 Windows 验证按本项目验收口径等同于 Windows Sandbox 验证；无需查询、安装、启用或启动 Windows Sandbox Feature，也无需 guest 验证。此决定不表示本机具备虚拟机隔离能力，不豁免数据/写入保护，也不修改全产品干净 Windows 发布 Gate。
+- P02 仍=`in_progress / ACTIVE`，Owner=Antigravity、Reviewer=DeepSeek Harness、Integrator=Codex；AC/Owner allowlist/行为基线不变。此前 Feature query=`UNKNOWN` 不再阻断；Build Gate 仍=`BLOCKED`，hook/cache/子进程写入边界和本机证据未闭合，build=`NOT_AUTHORIZED / NOT_RUN`，AC1–AC7=`BLOCKED / NOT_RUN`，Hard Build Barrier=`EFFECTIVE`。
+- D22 exact-head follow-up Review 仍待完成；之后继续本机非提权 preflight 和受限 scratch Gate。不得运行 Sandbox/guest，不得因等效验收裁决将未运行项记为 PASS。
+- P04 已释放 `ready`，Owner=Antigravity、Reviewer=DeepSeek Harness，base=`8a0685c9bf5aec7e7cc51f466f3fec7b176c35de`；可开始编写测试，Cargo/Tauri 测试仍等待 P02 本机 Build Gate 与 Codex 提供 provenance-bound scratch sidecar。详情见 [P04 Task](../../doc/tasks/P04.md) 与 [释放 checkpoint](../P04/local-validation-release-checkpoint-20261010.md)。
+- 本次状态记录见 [P02 local-validation checkpoint](codex-checkpoint-local-validation-r1.md)。
+
+## 历史检查点：P02 Stage A r8 已集成；Scratch Build Gate BLOCKED
 
 - 固定 Owner HEAD/tree/parent=89413f45a601966eb40d7af7abea65cbdfc754b3 / f1063c981b8f4164f51248f92b7825fc205dd07d / 38959ba99b84f771aba7010b53b9b47ecdc75488；branch=agent/antigravity/P02-real-webview-harness；scope SHA-256=27DC31A8CF3304ABA6783E243F36895FFE4AAA3CCBCA76D58E8B766C403E1425。P02 in_progress / ACTIVE，Owner=Antigravity、Reviewer=DeepSeek Harness、Integrator=Codex；integration_commit=89413f45a601966eb40d7af7abea65cbdfc754b3。P01=done，不重做；P02 scope r1–r4 冻结，不重冻结。
 - DSH session=session-9ab84346-f806-42f3-9f90-30245d488e65 对固定 r8 的正式 Review exit=0，decision=approved（Stage A only），P0/P1/P2/P3=0/0/0/1、open=1。报告=implementation-stage-a-r8-dsh-review.stdout.md。DSH 因 Windows 沙箱 Win32 5 未执行 Git/hash/runner；tree、scope、diff、命令与哈希由 Codex exact-head evidence 补齐。

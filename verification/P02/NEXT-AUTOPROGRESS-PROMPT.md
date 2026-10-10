@@ -2,6 +2,8 @@
 
 从`G:/CODEX/New Manga`持续推进权威项目路线图，默认简体中文。用户已授权安全且已释放的实现、检查、任务/worktree管理、提交与本地集成；持续到已授权工作完成或出现必须由用户决定的产品取舍。没有新授权不关机、不push、不发布、不部署、不执行破坏性用户数据操作。
 
+**最新用户裁决（2026-10-10，优先于本提示内的旧 Sandbox 步骤）：**P02/P04 本机 Windows 验证按项目验收口径等同于 Windows Sandbox 验证，不查询、安装、启用或启动 Windows Sandbox Feature，不做 guest 验证。P02 Build Gate 仍因 hook/cache/子进程写入边界未闭合而 `BLOCKED`；不得把 WSB 免测写成 Build Gate/AC PASS。P04 已释放 `ready` 供测试代码实现，Cargo/Tauri 运行仍需 Codex 先通过 P02 本机 Build Gate 并提供 provenance-bound scratch sidecar。全产品干净 Windows 发布 Gate 与数据保护不变。详细事实以 [P02 Task](../../doc/tasks/P02.md)、[STATUS](../../doc/STATUS.md) 和 [当前 checkpoint](codex-checkpoint-local-validation-r1.md) 为准。
+
 ## 每次恢复先核对
 
 读取根`AGENTS.md`、`doc/REBASELINE_PLAN.md`、`doc/00_INDEX.md`、`doc/STATUS.md`、`doc/09_COLLABORATION.md`、`doc/tasks/P02.md`、本提示词与`verification/P02/RESUME.md`。检查Live root和相关worktree/branch的HEAD、tree、common-dir、staged/unstaged/untracked、Task/Plan/Status和Gate证据。下面hash只作历史锚点，绝不代替Live Git。
