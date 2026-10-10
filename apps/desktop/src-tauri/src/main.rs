@@ -1160,6 +1160,38 @@ mod tests {
         assert_eq!(command_allowlist(false, true).len(), 6);
     }
 
+    /// P04 AC1: Literal exact assertions for PAGE_NAV_PRODUCTION_ONLY_COMMANDS.
+    /// Pin exact members with a fixed literal expectation (not derived from the constant
+    /// itself) and verify that the group stays on the production surface while absent
+    /// from probe and M2-AC1 surfaces.
+    #[test]
+    fn page_nav_production_only_commands_are_exact() {
+        assert_eq!(
+            PAGE_NAV_PRODUCTION_ONLY_COMMANDS,
+            &["list_chapters", "list_chapter_pages"]
+        );
+
+        let production = command_allowlist(false, false);
+        let probe = command_allowlist(true, false);
+        let ac1 = command_allowlist(false, true);
+
+        const EXPECTED_PAGE_NAV_COMMANDS: &[&str] = &["list_chapters", "list_chapter_pages"];
+        for command in EXPECTED_PAGE_NAV_COMMANDS {
+            assert!(
+                production.contains(command),
+                "{command} must stay in production surface"
+            );
+            assert!(
+                !probe.contains(command),
+                "{command} must not appear in probe surface"
+            );
+            assert!(
+                !ac1.contains(command),
+                "{command} must not appear in ac1 surface"
+            );
+        }
+    }
+
     #[test]
     fn production_and_probe_surfaces_never_gain_ac1_commands() {
         for command in AC1_TEST_COMMANDS {

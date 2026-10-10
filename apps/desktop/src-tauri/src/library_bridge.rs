@@ -1036,4 +1036,153 @@ mod tests {
         assert_eq!(ping.status, "ready");
         assert!(catalog_db.is_file(), "the core bound the fresh catalog");
     }
+
+    /// P04 AC2: deterministic concurrent round_trip verification on the same
+    /// StdioLibraryChannel instance with two distinguishable callers.
+    /// Synchronized deterministically through sidecar-level backpressure
+    /// without sleeps or probabilistic stress loops. Protocol fields
+    /// (protocol, version, request_id) are recorded at sidecar boundaries
+    /// for diagnostic analysis without altering contract semantics.
+    #[test]
+    fn same_channel_concurrent_round_trips_keep_response_ownership() {
+        use std::sync::Arc;
+        use std::sync::Barrier;
+
+        let python = std::env::var("M2RC1_PYTHON").unwrap_or_else(|_| "python".into());
+        let manifest_dir = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
+        let mut repo_root = manifest_dir.clone();
+        for _ in 0..3 {
+            repo_root.pop();
+        }
+        let script_path = repo_root
+            .join("verification")
+            .join("P04")
+            .join("deterministic_concurrent_sidecar.py");
+        let log_path = repo_root
+            .join("verification")
+            .join("P04")
+            .join("concurrent_sidecar_diagnostic.jsonl");
+
+        let mut cmd = Command::new(&python);
+        if script_path.is_file() {
+            cmd.arg(&script_path);
+        } else {
+            const INLINE_SIDECAR: &str = r#"
+import sys, json, os, time
+log_path = os.environ.get("P04_DIAGNOSTIC_LOG")
+def emit(obj):
+    line = json.dumps(obj, separators=(',', ':'))
+    sys.stdout.write(line + '\n')
+    sys.stdout.flush()
+    if log_path:
+        try:
+            with open(log_path, 'a', encoding='utf-8') as f:
+                f.write(json.dumps({'timestamp': time.time(), 'event': 'response_emitted', **obj}) + '\n')
+        except Exception: pass
+pending = []
+for line in sys.stdin:
+    line = line.strip()
+    if not line: continue
+    try: req = json.loads(line)
+    except Exception: continue
+    if log_path:
+        try:
+            with open(log_path, 'a', encoding='utf-8') as f:
+                f.write(json.dumps({'timestamp': time.time(), 'event': 'request_received', **req}) + '\n')
+        except Exception: pass
+    cmd = req.get('command', '')
+    if cmd == 'core.shutdown':
+        emit({'protocol': req.get('protocol','new-manga.core'), 'version': req.get('version', {'major':1,'minor':4}), 'request_id': req.get('request_id'), 'result': {'status': 'stopped'}, 'error': None})
+        break
+    elif cmd.startswith('test.concurrent_'):
+        pending.append(req)
+        if len(pending) >= 2:
+            for r in pending:
+                p = r.get('payload') or {}
+                emit({'protocol': r.get('protocol','new-manga.core'), 'version': r.get('version', {'major':1,'minor':4}), 'request_id': r.get('request_id'), 'result': {'echo_caller': p.get('caller'), 'echo_token': p.get('token'), 'status': 'ok'}, 'error': None})
+            pending.clear()
+    else:
+        emit({'protocol': req.get('protocol','new-manga.core'), 'version': req.get('version', {'major':1,'minor':4}), 'request_id': req.get('request_id'), 'result': req.get('payload'), 'error': None})
+"#;
+            cmd.args(&["-c", INLINE_SIDECAR]);
+        }
+
+        cmd.env("P04_DIAGNOSTIC_LOG", &log_path)
+            .stdin(Stdio::piped())
+            .stdout(Stdio::piped())
+            .stderr(Stdio::inherit());
+
+        #[cfg(windows)]
+        {
+            use std::os::windows::process::CommandExt;
+            const CREATE_NO_WINDOW: u32 = 0x0800_0000;
+            cmd.creation_flags(CREATE_NO_WINDOW);
+        }
+
+        let child = cmd
+            .spawn()
+            .expect("deterministic concurrency test sidecar spawn failed");
+        let channel = Arc::new(
+            StdioLibraryChannel::adopt_child_for_test(child)
+                .expect("adopt child process into StdioLibraryChannel failed"),
+        );
+
+        let req_alpha = serde_json::json!({
+            "caller": "caller_alpha",
+            "token": "token-AAA-111",
+        });
+        let req_beta = serde_json::json!({
+            "caller": "caller_beta",
+            "token": "token-BBB-222",
+        });
+
+        let barrier = Arc::new(Barrier::new(2));
+
+        let chan_alpha = Arc::clone(&channel);
+        let bar_alpha = Arc::clone(&barrier);
+        let payload_alpha = req_alpha.clone();
+        let handle_alpha = std::thread::spawn(move || {
+            bar_alpha.wait();
+            chan_alpha.round_trip("test.concurrent_alpha", payload_alpha)
+        });
+
+        let chan_beta = Arc::clone(&channel);
+        let bar_beta = Arc::clone(&barrier);
+        let payload_beta = req_beta.clone();
+        let handle_beta = std::thread::spawn(move || {
+            bar_beta.wait();
+            chan_beta.round_trip("test.concurrent_beta", payload_beta)
+        });
+
+        let res_alpha = handle_alpha
+            .join()
+            .expect("caller alpha thread panicked")
+            .expect("round_trip alpha failed");
+        let res_beta = handle_beta
+            .join()
+            .expect("caller beta thread panicked")
+            .expect("round_trip beta failed");
+
+        assert_eq!(
+            res_alpha.get("echo_caller").and_then(|v| v.as_str()),
+            Some("caller_alpha"),
+            "caller alpha must receive its own response, got: {res_alpha}"
+        );
+        assert_eq!(
+            res_alpha.get("echo_token").and_then(|v| v.as_str()),
+            Some("token-AAA-111"),
+            "caller alpha token mismatch, got: {res_alpha}"
+        );
+
+        assert_eq!(
+            res_beta.get("echo_caller").and_then(|v| v.as_str()),
+            Some("caller_beta"),
+            "caller beta must receive its own response, got: {res_beta}"
+        );
+        assert_eq!(
+            res_beta.get("echo_token").and_then(|v| v.as_str()),
+            Some("token-BBB-222"),
+            "caller beta token mismatch, got: {res_beta}"
+        );
+    }
 }
