@@ -19,7 +19,7 @@
 - `r9f-current-prestart-parent-diff-check-r6.*`：parent 到 HEAD，exit=0。
 - `r9f-current-prestart-scope-assertions-r6.stdout.log`：103 tracked paths、out-of-scope=0；R2/R3/R4 blob hashes、原始哈希分离、R2 erratum、current pointers 均匹配。最后一项 `hard_build_barrier_preserved` 为 false，整体 `.exit=1`。独立只读 Review 未发现状态漂移：STATUS/Plan/Task/R4 checkpoint 使用 inline code 包裹状态值；Index 中写作裸文本 `Hard Build Barrier=EFFECTIVE`。R6 one-off checker 源码未留存，无法还原其确切字符串表达式。R6 必须保持 exit=1 的原始记录，不能改记为 PASS；屏障仍为 `EFFECTIVE`，Build 仍为 blocked。
 
-## 当前 Gate 与下一步
+## D10 时点 Gate 与下一步（历史记录，已由 R8 更新）
 
 当前 boundary=`R4_APPROVED / R4_P3_REPAIRED / R5_REVIEW_PENDING / NO_SANDBOX_START`。Smoke admission 仍只允许一次尝试；`wsb start=NOT_RUN`、Smoke=`NOT_RUN`、完整即时 preflight 未完成、Build Gate=`BLOCKED`、build=`NOT_AUTHORIZED / NOT_RUN`、hook/cache=`BLOCKED / NOT_VERIFIED`、AC1–AC7=`BLOCKED / NOT_RUN`、Hard Build Barrier=`EFFECTIVE`。
 
@@ -30,3 +30,16 @@
 - R7 scope/status assertions 为 EXIT=1：25 项状态短语中 24 项 PASS；唯一 false 为 Index 未显式写出 `wsb start=NOT_RUN`（原文为 `wsb start`、Smoke=NOT_RUN）。三个 current R5 checkpoint pointers、path scope 和其他 Gate 状态均 PASS。原 Index wording 有歧义，当前修订已补充明确状态；原 R7 失败记录保留。
 - 对应 logs：`r9f-current-prestart-route-validator-r7.*`、`r9f-current-prestart-diff-check-r7.*`、`r9f-current-prestart-parent-diff-check-r7.*`、`r9f-current-prestart-scope-assertions-r7.*`，均绑定 D11。R6 barrier assertion exit=1 同样保留，未留存其 one-off source；独立只读核查确认屏障语义未改变。
 - 当前候选在 D11 上追加 Index 状态澄清和 Task/checkpoint 记录；下一步对修订后的固定 HEAD 重新运行全部路线、差异、范围和状态校验，再派发 DSH R5 exact-head Review。
+## D12 exact-head verification and R5 review release
+
+- D12=`21f1283b288621f8e07fd7cb9858ba3253ea6247` / tree=`240e9726ce12adbdbc52b0e28d2754851783d018`：route validator=7/7 PASS / EXIT=0；base-to-HEAD 与 parent-to-HEAD `git diff --check` 均 EXIT=0；complete diff=126 paths、out-of-scope=0。
+- R8 status/scope assertions=EXIT 0：inline-code 与 bare-text normalization self-check PASS；5 份文件的 25 项 gate/status 短语、Index/Plan/Status 的 3 个 current checkpoint pointers、scope 全部 PASS。D11/R7 的单项 false 及 EXIT=1 记录保留，已将 Index 写法修正为 `wsb start=NOT_RUN`。
+- R5 frozen review slice：P02 current-prestart 的 R4-01/02 文档/证据修复；Owner/Reviewer/Integrator=Codex / DeepSeek Harness / Codex；完整 review base=`4183e7f7cf366c27aa8ad8a0bc7300af48783470`；finding origin=`6ffa2a9c5375d21bb905f4d6adbccb9124ed531b`；branch/worktree 与 allowed paths 见本 Task。
+- Acceptance：DSH report 必须绑定实际 exact HEAD/tree；独立确认 response SHA 的 Git blob UTF-8 LF 口径及 raw provenance 分离、R4-01/02 闭合、当前指针准确、R6/R7 失败及 R8 通过记录忠实，完整差异均在允许路径。任何 P0/P1/P2 阻断接受；P3 须明确分类和处置。
+- Review 期间不得运行 Sandbox/`wsb start`、guest command、HostFolder scan/hash/list、Build、GUI 或产品测试；Hard Build Barrier 保持 `EFFECTIVE`。R5 Review 准入通过且新的即时 prestart 项全部 PASS 前不得考虑唯一一次 Sandbox start。
+## 当前 Gate 与下一步（D12 package 状态）
+
+- 当前 HEAD=`21f1283b288621f8e07fd7cb9858ba3253ea6247` / tree=`240e9726ce12adbdbc52b0e28d2754851783d018`，branch=`codex/P02-process-isolation`。D12 上 R8 route/scope/status/diff 检查全部 PASS；DSH R5 exact-head Review 尚未派发。
+- 当前 worktree 有 5 个已跟踪文档处于修改状态：`doc/00_INDEX.md`、`doc/REBASELINE_PLAN.md`、`doc/STATUS.md`、`doc/tasks/P02.md`、本 checkpoint；新增未跟踪文件 12 个：R5 prompt 1 个、R8 验证日志 11 个。candidate status 总计 122 项，其中其余既有 P02 evidence 未认领或清理，保持原样；本轮只暂存上列 R5/R8 文件。
+- 当前 boundary=`R4_APPROVED / R4_P3_REPAIRED / R7_STATUS_CLARIFIED / R5_REVIEW_PACKAGE_PREPARING / R8_VALIDATED / NO_SANDBOX_START`。`wsb start=NOT_RUN`、Smoke=`NOT_RUN`、完整 immediate preflight 未完成、Build Gate=`BLOCKED`、build=`NOT_AUTHORIZED / NOT_RUN`、hook/cache=`BLOCKED / NOT_VERIFIED`、AC1–AC7=`BLOCKED / NOT_RUN`、Hard Build Barrier=`EFFECTIVE`。
+- 下一步：提交 docs、prompt 与 R8 logs 为固定 R5 Review package；在新 exact HEAD 重跑路线、base/parent diff-check 和逐文件 scope/status assertions；通过后从 detached reviewer worktree 派发 DSH R5。Sandbox 保持未启动。
