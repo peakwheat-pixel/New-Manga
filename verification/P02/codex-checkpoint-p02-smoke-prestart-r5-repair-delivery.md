@@ -1,0 +1,10 @@
+# 恢复点：P02 current-prestart R5 findings 修复交付
+
+- Timestamp=`2026-10-10 08:16 +08:00`；Agent=Codex；Task=`P02` 父状态=`in_progress / ACTIVE`；切片 Owner=Codex、非作者 Reviewer=DeepSeek Harness、Integrator=Codex；ExecutionState=`CHECKPOINTED`。
+- Candidate branch=`codex/P02-process-isolation`，worktree=`C:\Users\49745\.codex\worktrees\p02-process-isolation-plan\New Manga`，common Git dir=`G:\CODEX\New Manga\.git`。D14 HEAD=`72c8e5c68c93759f61bb9ef07cae2b199d0af732` / tree=`dedd58f34d94fa6e6ee28af645c40a0932f37bb3`，parent=`68bafd3741f376bfab297b8ced911191e96bd424`；full-review base=`4183e7f7cf366c27aa8ad8a0bc7300af48783470`。
+- DSH R5 原始 decision=`CHANGES_REQUESTED`，P0/P1/P2/P3=`0/0/1/4`、open=5。R5-01..05 修复均已提交于 D14，尚未经新 exact-head Reviewer 确认，故 finding statuses=`FIXED_PENDING_REVIEW`。
+- R5-01 STATUS history/current-pointer repair；R5-02 D13 HEAD=`68bafd3741f376bfab297b8ced911191e96bd424` run logs 归档；R5-03 errata 点名 R2/R3 raw-hash log labels；R5-04 Index 补充 hook/cache blocked 状态；R5-05 R4 session metadata hash basis 指向实际 commit `3f243b1993dc577ea98aa8130c1a822ac57763a4`。
+- R5 report canonical Git blob SHA=`A55411B9C664BA5FF407E06CA8C608559B36FEF27CF59040DC21B3D58746297C`（12504 bytes），与 session metadata 一致，D14 HEAD blob 复算通过。R6/R7 exit=1 historical evidence 保留。
+- Working tree 在 D14 前 tracked clean；candidate 有 105 条 untracked 历史 verification 产物，均未清理/暂存；本轮无冲突文件覆盖。Main root checkout `main@4183e7f7cf366c27aa8ad8a0bc7300af48783470` 的 203 dirty/untracked manifest 尚未重算，尚未修改/集成 main。
+- 当前产品 Gate：`wsb start=NOT_RUN`、Smoke=`NOT_RUN`、完整 immediate preflight 未完成、Build Gate=`BLOCKED`、build=`NOT_AUTHORIZED / NOT_RUN`、hook/cache=`BLOCKED / NOT_VERIFIED`、AC1–AC7=`BLOCKED / NOT_RUN`、Hard Build Barrier=`EFFECTIVE`。不授权 Sandbox/guest、HostFolder scan/list/hash、Build、GUI 或产品测试。
+- 下一准确动作：在 D14 exact HEAD 运行路线 validator、base/parent diff-check、范围/状态/恢复指针 assertions，保存各命令 stdout/stderr/exit；复核全部路径仍在 allowlist 后提交 R5 repair validation package；从新的 detached worktree 以 `dsh --profile headless --json` 派发 exact-head read-only follow-up Review。
