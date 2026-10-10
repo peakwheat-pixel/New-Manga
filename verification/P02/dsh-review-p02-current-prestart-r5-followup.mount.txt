@@ -1,0 +1,4 @@
+mount_session.py --latest
+mount_exit=0
+workspace=P02-current-prestart-review-dsh-r5-followup
+session_id=session-2f7296f8-395c-4277-95bf-a84a4404c551

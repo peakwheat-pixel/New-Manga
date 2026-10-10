@@ -1,0 +1,37 @@
+{
+  "tool": "dsh --profile headless --json",
+  "cli_version": "0.2.0-rc.2",
+  "cli_exit": 0,
+  "session_id": "session-2f7296f8-395c-4277-95bf-a84a4404c551",
+  "mount_exit": 0,
+  "mounted_workspace": "P02-current-prestart-review-dsh-r5-followup",
+  "reviewer_worktree": "C:\\Users\\49745\\.codex\\worktrees\\P02-current-prestart-review-dsh-r5-followup",
+  "expected_base": "4183e7f7cf366c27aa8ad8a0bc7300af48783470",
+  "reviewed_head": "999e6adfc229698344c0cbf9bfb6d636fe73fb7c",
+  "reviewed_tree": "5da44588cbc791d4cf1d34aa3d20f0316fc320d5",
+  "response_sha256": "CE4B405D1C296B540C7BC00684786FCE675A67C20D78BEE256AA624BFA074E65",
+  "response_sha256_basis": "UTF-8 LF final response bytes; committed Git blob verification is recorded in the integration checkpoint.",
+  "decision": "APPROVED",
+  "malformed_jsonl_line_count": 0,
+  "event_type_counts": {
+    "session": 1,
+    "status": 72,
+    "thinking": 31,
+    "text": 7,
+    "tool_call": 46,
+    "tool_result": 46,
+    "final": 1
+  },
+  "finding_counts": {
+    "P0": 0,
+    "P1": 0,
+    "P2": 0,
+    "P3": 3
+  },
+  "open_findings": 3,
+  "codex_findings_disposition": {
+    "R5F-01": "false_positive; STATUS and INDEX state D15 validation passed, with only DSH follow-up pending.",
+    "R5F-02": "false_positive; the cited P02 r7 stdout and exit paths exist in the reviewed commit and preserve the actual exit=1.",
+    "R5F-03": "deferred_non_blocking; optional checkpoint timing clarification; no factual defect."
+  }
+}
