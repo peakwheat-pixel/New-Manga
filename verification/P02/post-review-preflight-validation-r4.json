@@ -1,0 +1,27 @@
+{
+  "captured_at": "2026-10-10T09:33:20+08:00",
+  "head": "0a843a65c28818f92726bd91ae4c244e66fb37ea",
+  "tree": "68e8059b7f7c4cdcaeff73679fdc06e7288e55b1",
+  "parent": "d92c405304cb88712cb8777d8ec59618f4806df7",
+  "base": "1d5845e2b185179d7b683e5279f6520fc0882d97",
+  "checks": {
+    "route": {
+      "command": "C:\\Python314\\python.exe -B -X utf8 verification/PROJECT-ROADMAP-20261008/verify_plan.py",
+      "exit": 0,
+      "stdout_sha256": "ea211312a76c830082f993866a914cf066373382e5512f735c4c2f2345926805",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "base_diffcheck": {
+      "command": "git diff 1d5845e2b185179d7b683e5279f6520fc0882d97 0a843a65c28818f92726bd91ae4c244e66fb37ea --check",
+      "exit": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "commit_diffcheck": {
+      "command": "git diff HEAD^ HEAD --check",
+      "exit": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  }
+}

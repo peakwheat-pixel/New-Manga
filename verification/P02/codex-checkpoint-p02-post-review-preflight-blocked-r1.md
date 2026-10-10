@@ -7,6 +7,7 @@
 - Root start：`G:\CODEX\New Manga`，`main@1d5845e2b185179d7b683e5279f6520fc0882d97` / tree=`e8b97f012db2086f7c33008070ba960d4e51cbd5`，common dir=`G:\CODEX\New Manga\.git`。
 - Candidate：branch=`codex/P02-post-review-preflight`，worktree=`C:\Users\49745\.codex\worktrees\p02-post-review-preflight\New Manga`，base HEAD/tree 与 root D19 相同。Pinned scratch clone=`7ce3c40cd308e7093929bd5f53abc4f8a6c4ef7a` / tree=`ce8056b8ef4d2ebd11bb4754b206adf921a39e41`。R3 XML 仅为 checker 读取而从 Git blob 临时物化 canonical LF；检查完成后已恢复此 worktree 默认 CRLF 字节，未将该 EOL 变化纳入候选差异。
 - Fixed delivery D20=`915566a96b7cdd1b294952127b7b7e2550ba117a` / tree=`3fc60789b2e6c8d1daea64a8653d55bf2b54a431`。Exact-D20 `verify_plan.py`=7/7 PASS / EXIT=0；stdout SHA-256=`8382983313f9107b81e127d38565c31cf4fb445f93e15a182ef34ca6e1ce1fb4`，stderr empty。`git diff HEAD^ HEAD --check`=EXIT 0，stdout/stderr empty。对应 `post-review-preflight-{route,diffcheck}-r2.*` 六个 artifacts 已生成。
+- P3 repair delivery D22=0a843a65c28818f92726bd91ae4c244e66fb37ea / tree=68e8059b7f7c4cdcaeff73679fdc06e7288e55b1；parent D21=d92c405304cb88712cb8777d8ec59618f4806df7。仅文档与 P02 evidence paths；R1 的 P3-1..4 已返修并随 D22 提交。
 - Main root protected manifest（09:04 +08:00）：203/203 MATCH；missing/extra/mismatch/staged=`0/0/0/0`；entries SHA-256=`3a54fa978bf228bfae366a4c4de35b90e4fab609447d3370ed81370299da10e2`；candidate overlap=`0`。机器报告 `post-review-preflight-root-protection-r1.json` SHA-256=`a613ea61ba05f81478651815bde52e7360f1b3af07f02c04b36a919825f23ee2`。
 
 ## Fresh evidence
@@ -33,10 +34,16 @@
 - verify_plan.py 在固定 D21 HEAD=d92c405304cb88712cb8777d8ec59618f4806df7 / tree=e49a8842f351edebaaacda60e1a6727aabf9996f 上 7/7 PASS / EXIT=0。
 - git diff 1d5845e2b185179d7b683e5279f6520fc0882d97 d92c405304cb88712cb8777d8ec59618f4806df7 --check EXIT=0。完整命令、stdout/stderr/exit 与 hash 见 post-review-preflight-validation-r3.json 和 post-review-preflight-{route,diffcheck}-r3.*。
 
+### Exact D22 validation
+
+- Fixed D22 HEAD=0a843a65c28818f92726bd91ae4c244e66fb37ea / tree=68e8059b7f7c4cdcaeff73679fdc06e7288e55b1 上 route validator=7/7 PASS / EXIT=0。
+- Base diffcheck 的精确命令为 git diff 1d5845e2b185179d7b683e5279f6520fc0882d97 0a843a65c28818f92726bd91ae4c244e66fb37ea --check，EXIT=0；commit diffcheck HEAD^..HEAD EXIT=0。
+- Commands、HEAD/tree/parent/base、stdout/stderr SHA 与 exit 记录在 post-review-preflight-validation-r4.json；该文件 SHA-256=dc53e26e6495e998bc581165e9abab2781576e7990becdc405897f05be1108c6。对应 route/base-diffcheck/commit-diffcheck r4 日志。
+
 ## Gate 与恢复
 
 - Windows Sandbox Feature 必须有 fresh `Enabled` 证据。当前查询失败且状态 `UNKNOWN`，所以完整 immediate preflight=`BLOCKED`；不尝试提权或启用 Feature，不运行唯一一次已准入的 `wsb start`。
 - Product gates 保持：`wsb start=NOT_RUN`，Smoke=`NOT_RUN`，Build Gate=`BLOCKED`，build=`NOT_AUTHORIZED / NOT_RUN`，hook/cache=`BLOCKED / NOT_VERIFIED`，AC1–AC7=`BLOCKED / NOT_RUN`，Hard Build Barrier=`EFFECTIVE`，P04=`proposed`。未运行 guest command、Build、Cargo/Tauri、Vitest、GUI/WebView 或产品验收。
 - 当前 R5 design/repair Review=APPROVED；fresh preflight evidence Review @D21=APPROVED（P0/P1/P2/P3=0/0/0/4）；P3-1..4 文档返修已写入候选，follow-up Review pending。方案审查、Smoke 准入、Build Gate 与产品验收仍为不同 Gate。
-- 下一准确动作：P3-1..4 文档返修已写入候选；固定修正后重跑 route/status/diff 校验，记录新的 exact HEAD/tree，再由 DeepSeek Harness 在 detached worktree 对 follow-up exact head 和 finding closure 做非作者 Review。Review 通过后 fast-forward 集成并再次核对 203-entry root manifest。P02 仍等待当前 Feature state 的可核验结果；未知或失败继续禁止 wsb start。只有 Feature fresh=Enabled 且所有即时准入项通过，才可尝试唯一一次 Smoke。
+- 下一准确动作：D22 已包含 P3-1..4 返修；exact D22 route=7/7 PASS、base/commit diffcheck=EXIT 0。下一步创建 detached Reviewer worktree 并由 DeepSeek Harness 对 exact D22 的 P3 closure 与 fresh preflight fail-closed 判定做 follow-up Review；通过后 fast-forward 集成并复核 main root manifest。P02 仍等待 Feature fresh=Enabled 的可核验结果，UNKNOWN/FAIL 继续禁止 wsb start。
 - Recovery：main root 在本轮末次复核仍是 203/203 MATCH，missing/extra/mismatch/staged=`0/0/0/0`、entries digest=`3a54fa978bf228bfae366a4c4de35b90e4fab609447d3370ed81370299da10e2`、candidate dirty overlap=0。fresh measurements 全部来自上述 branch/worktree；恢复先核对 main/head/tree、candidate/head/status 与 root manifest digest。旧 D16 branch/worktree 中另有既存未提交证据；本候选没有借用或暂存那些文件。
