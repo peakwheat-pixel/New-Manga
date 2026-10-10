@@ -25,8 +25,9 @@ worktree: G:/CODEX/New Manga.worktrees/P04-prod-command-concurrency-antigravity
 
 - `apps/desktop/src-tauri/src/library_bridge.rs`：仅修改 `#[cfg(test)]` 范围：
   1. 纠正测试注释，明确其定位为 **AC3 确定性负向诊断复现器 (Deterministic Negative Reproducer)**；
-  2. 引入 10 秒 `recv_timeout` 的 bounded wait，防止异常路径通道永久挂起；
-  3. verdict 诊断文件写入失败时通过 `.expect(...)` 显式失败，消除静默吞错。
+  2. 标记 `#[ignore = "P04 AC3 reproducer: deterministic negative diagnostic, run explicitly via cargo test -- --ignored"]`，使其不再进入默认 Cargo 测试套件；仅在 P02 批准且具备 `M2RC1_PYTHON` 的隔离环境中通过显式 `-- --ignored` 选择器有意运行；
+  3. 引入 10 秒 `recv_timeout` 的 bounded wait；
+  4. verdict 诊断文件写入失败时通过 `.expect(...)` 显式失败，消除静默吞错。
   生产代码零改动。
 - `verification/P04/deterministic_concurrent_sidecar.py`：`log_event` 写入失败时显式 `raise RuntimeError`，杜绝静默吞错。
 - `verification/P04/antigravity-owner-implementation-r1.handoff.md`：校准过期的 AC2 描述，消除严格断言、Barrier 与旧文件名，记录 `round_trip` 内的 `cfg(test)` hook。
@@ -46,7 +47,7 @@ worktree: G:/CODEX/New Manga.worktrees/P04-prod-command-concurrency-antigravity
 | **R2-003** | **P2** | `antigravity-owner-implementation-r1.handoff.md` 过期描述（严格归属断言、Barrier、旧文件名）与现状自相矛盾 | 已全面更正该 Handoff：删除过时的 Barrier 与严格归属断言描述，更新为基于 `#[cfg(test)]` hook 与 `mpsc` 的确定性交错编排，记录 `round_trip` 体内嵌入 test seam 的事实，与当前 revision handoff 保持一致。 | **CLOSED** |
 | **R2-004** | **P2** | 判别力 verdict artefact 写入失败被 best-effort 吞错（Rust 侧 `if let Ok`，sidecar 侧 `except` 仅打 stderr） | 1. Rust 侧：`library_bridge.rs` 将文件打开与写入改为 `.expect("failed to open/create P04 diagnostic verdict log file")` 与 `.expect("failed to write concurrency verdict record to diagnostic log")`，写入失败时显式让测试 panic；<br>2. sidecar 侧：`deterministic_concurrent_sidecar.py` 的 `log_event` 出现写入异常时显式 `raise RuntimeError(...)`，终止进程并暴露失败。 | **CLOSED** |
 | **R2-005** | **P3** | `library_bridge.rs` 存在过时注释 `round_trip_with_phase_hook` | 已更正注释，准确描述现有的 `set_test_after_stdin_hook` 与 `set_test_response_observer` 以及带超时控制的通道编排。 | **CLOSED** |
-| **R2-006** | **P3** | 异常路径无超时导致测试永久挂起放大效应未说明 | 1. 在测试通道接收端引入 10 秒 `recv_timeout` 的 bounded wait（`recv_timeout(Duration::from_secs(10)).expect(...)`），超时显式 panic 报错，消除通道永久挂起；<br>2. 在 Handoff 登记该挂起抑制机制，并说明若 sidecar 进程异常挂起仍受 `Drop` 机制 5 秒 budget 保护的已知限制。 | **CLOSED / NOTED** |
+| **R2-006** | **P3** | 异常路径无超时导致测试永久挂起放大效应未说明 | 1. 在测试通道接收端引入 10 秒 `recv_timeout` 的 bounded wait（`recv_timeout(Duration::from_secs(10)).expect(...)`），超时显式 panic 报错；<br>2. 架构边界修正（R3-4）：准确说明 `recv_timeout` 仅限制 mpsc 通道等待；若 sidecar 异常（如发出第 1 行后挂起或无回包），子线程内的 `read_line` 会阻塞在 stdout 锁或读操作，导致主线程 `handle_alpha.join()` / `handle_beta.join()` 仍可能无界等待；此时测试函数无法返回，通道实例无法被 drop，因此 `Drop` 机制的 5 秒 budget 根本不可达，并不能保护该挂起路径。此为已知架构限制，不增加 watchdog 或产品代码范围。 | **CLOSED / NOTED** |
 | **R2-007** | **P3** | `doc/tasks/P04.md` 的“交付与运行记录”写“Handoff：尚无”，未同步历史审查与交付事实 | 已更新 `doc/tasks/P04.md` 的交付与运行记录，完整登记 R1/R2 Handoff 路径、DSH 提案与实现审查结论，保持 Cargo 测试为 `BLOCKED / NOT_RUN`，未改动 frontmatter 状态。 | **CLOSED** |
 | **R2-008** | **P3** | 唯一命名诊断日志在 `verification/P04/**` 累积无清理策略 | 确立诊断日志保留策略：唯一命名日志默认保留供当前运行审计与证据复核；严禁在代码或脚本中通过通配符删除既有或来源不明文件；由 Codex 在集成构建阶段统一轮转。 | **CLOSED** |
 
@@ -62,7 +63,7 @@ worktree: G:/CODEX/New Manga.worktrees/P04-prod-command-concurrency-antigravity
 | 场景 / AC | 计划命令 | 前提与环境 | 实际执行结果 | 证据 / 说明 |
 |---|---|---|---|---|
 | **AC1 Rust allowlist 常量成员** | `cargo test --manifest-path apps/desktop/src-tauri/Cargo.toml --bin m2rc1-desktop page_nav_production_only_commands_are_exact` | Codex 先通过 P02 本机 Build Gate 并 provision 隔离环境；固定 inputs 与 SHA-256 | **BLOCKED / NOT_RUN** | 未运行 Cargo（硬屏障有效；DSH R1/R2 均已确认静态满足） |
-| **AC2 同通道并发响应归属** | `cargo test --manifest-path apps/desktop/src-tauri/Cargo.toml --bin m2rc1-desktop same_channel_concurrent_round_trips_keep_response_ownership` | Codex 先通过 P02 本机 Build Gate 并提供批准环境 `M2RC1_PYTHON` | **BLOCKED / NOT_RUN** | 未运行 Cargo；静态推导预期为 `static_expected_behavior=FAIL`，作为 AC3 负向复现器保留 |
+| **AC2 同通道并发响应归属** | `cargo test --manifest-path apps/desktop/src-tauri/Cargo.toml --bin m2rc1-desktop same_channel_concurrent_round_trips_keep_response_ownership -- --ignored` | Codex 先通过 P02 本机 Build Gate 并提供批准环境 `M2RC1_PYTHON` | **BLOCKED / NOT_RUN** | 未运行 Cargo；已标记 `#[ignore]`，不再进入默认 Cargo 测试套件；仅能在 P02 批准隔离环境中通过 `-- --ignored` 选择器有意运行；静态推导预期为 `static_expected_behavior=FAIL`，作为 AC3 负向复现器保留 |
 | **AC3 错配阻断与修复解耦** | 结构化诊断记录与 P04 保持 blocked | 观察到响应错配时输出证据并不 panic | **STATIC READY / NOT_RUN** | 规则与代码完全就绪，保持 P04 为 blocked |
 | **P04 集成后定向验证** | 复跑上述测试及 `git diff --check` | 独立 Review 通过、Codex 授权集成并在 scratch checkout 运行 | **BLOCKED / NOT_RUN** | 未运行 |
 

@@ -1101,6 +1101,7 @@ mod tests {
     /// Per AC3, if mismatch is observed (behavior=FAIL), records the diagnostic evidence without panicking
     /// so the reproducer evidence is preserved for Codex to establish an independent fix task.
     #[test]
+    #[ignore = "P04 AC3 reproducer: deterministic negative diagnostic, run explicitly via cargo test -- --ignored"]
     fn same_channel_concurrent_round_trips_keep_response_ownership() {
         use std::sync::mpsc;
         use std::sync::Arc;
