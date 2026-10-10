@@ -1,0 +1,43 @@
+{
+  "task": "P02",
+  "slice": "DSH R2-1 docs-only closeout",
+  "base": "506bbd9bafa52d95472074cb5e418b50554a23a7",
+  "head": "242a3a919b63d1f794c95113cc3a60c481fcd196",
+  "tree": "c139d68227fb43ac7d1c4d21c640c0eabb710367",
+  "parent": "506bbd9bafa52d95472074cb5e418b50554a23a7",
+  "scope_count": 9,
+  "scope_paths": [
+    "doc/tasks/P02.md",
+    "verification/P02/codex-checkpoint-local-validation-r1.md",
+    "verification/P02/codex-checkpoint-p02-post-review-preflight-blocked-r1.md",
+    "verification/P02/codex-checkpoint-p02-r2-review-closeout-start-20261010.md",
+    "verification/P02/dsh-review-p02-post-review-preflight-r2.exit",
+    "verification/P02/dsh-review-p02-post-review-preflight-r2.mount.exit",
+    "verification/P02/dsh-review-p02-post-review-preflight-r2.mount.md",
+    "verification/P02/dsh-review-p02-post-review-preflight-r2.prompt.md",
+    "verification/P02/dsh-review-p02-post-review-preflight-r2.stdout.md"
+  ],
+  "checks": [
+    {
+      "name": "p02-r2-closeout-route-r1",
+      "command": "python -B -X utf8 verification/PROJECT-ROADMAP-20261008/verify_plan.py",
+      "exit": 0,
+      "stdout_sha256": "14f4dc19f1b104dcec491d3c7e7f28bb830fd4df67902674cc4afb2eedb84de1",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "p02-r2-closeout-base-diffcheck-r1",
+      "command": "git diff 506bbd9bafa52d95472074cb5e418b50554a23a7 242a3a919b63d1f794c95113cc3a60c481fcd196 --check",
+      "exit": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "p02-r2-closeout-commit-diffcheck-r1",
+      "command": "git diff HEAD^ HEAD --check",
+      "exit": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ]
+}

@@ -18,5 +18,5 @@
 ## 恢复安全与下一步
 
 - 保护主工作区已有 dirty/untracked 文件；只提交本次明确修改的项目文档和新增 checkpoint，不 stage 或清理其他文件。
-- 下一步：完成 R2-1 的 docs-only 精度修复与 DSH exact-head 复审；随后闭合 hook/cache/子进程写入范围，并取得解除 Hard Build Barrier 所需的真实隔离证据，再完成 Codex 本机 Build Gate。任何 Gate 未通过前 build 保持 NOT_AUTHORIZED / NOT_RUN；通过后才为固定 P04 head provision provenance-bound scratch sidecar。
+- 下一步：DSH 对本 P02 docs-only closeout 的固定 tip 做 exact-head Review；通过后集成此文档收口，再闭合 hook/cache/子进程写入范围，并取得解除 Hard Build Barrier 所需的真实隔离证据，最后完成 Codex 本机 Build Gate。任何 Gate 未通过前 build 保持 NOT_AUTHORIZED / NOT_RUN；通过后才为固定 P04 head provision provenance-bound scratch sidecar。
 - 已知限制：本机验证是项目接受的 Sandbox 验收替代口径，不是 Windows Sandbox VM 隔离的技术证明；发布级干净 Windows Gate 未被豁免。
