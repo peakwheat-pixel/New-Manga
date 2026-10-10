@@ -7,7 +7,7 @@ integrator: Codex
 status: completed_revision_static_only
 base_commit: 8a0685c9bf5aec7e7cc51f466f3fec7b176c35de
 reviewed_head_r1: 751abae2277e975eddacc385a423bcd796334f97
-implementation_head: 1eff64ada9ebf9f0e2c4695100eec1deb6204f78
+implementation_head: 4d38ee077c2711533558142c1339aaea1da9b3f8
 branch: agent/antigravity/P04-prod-command-concurrency
 worktree: G:/CODEX/New Manga.worktrees/P04-prod-command-concurrency-antigravity
 ---
@@ -23,8 +23,8 @@ worktree: G:/CODEX/New Manga.worktrees/P04-prod-command-concurrency-antigravity
 ### 1.1 变更路径集（严格限制在授权范围）
 
 - `apps/desktop/src-tauri/src/library_bridge.rs`：仅修改 `#[cfg(test)]` 范围：
-  1. 新增最小 test-only seam `StdioLibraryChannel::round_trip_with_phase_hook`；
-  2. 重构 `same_channel_concurrent_round_trips_keep_response_ownership` 测试：引入通道编排确定性交错控制、强制 `M2RC1_PYTHON`、删除 inline fallback、写入唯一诊断日志。生产代码零改动。
+  1. 在真实的 `StdioLibraryChannel::round_trip` 内部嵌入 `#[cfg(test)]` 的 thread-local phase hook（`TEST_AFTER_STDIN_HOOK`）与 response observer（`TEST_RESPONSE_OBSERVER`），确保非 test 编译完全剥除、零开销、零字段与零生产行为改变；
+  2. 重构 `same_channel_concurrent_round_trips_keep_response_ownership` 测试：直接调用真实的 `StdioLibraryChannel::round_trip`，消除对生产逻辑的重复复制；通过 thread-local hook 与通道编排实现确定性交错控制、强制 `M2RC1_PYTHON`、删除 inline fallback、写入唯一诊断日志。生产代码零改动。
 - `verification/P04/deterministic_concurrent_sidecar.py`：新增 Python runtime provenance（`sys.executable`、`sys.version`、`pid`）记录与唯一默认日志机制。
 - `verification/P04/antigravity-owner-revision-r1.handoff.md`：本返修报告。
 - `verification/P04/antigravity-owner-implementation-r1.handoff.md`：更新字段与关联说明。
@@ -37,7 +37,7 @@ worktree: G:/CODEX/New Manga.worktrees/P04-prod-command-concurrency-antigravity
 
 | 编号 | 等级 | 审查 Finding 描述 | 返修处理与实现证据 | 结论 |
 |---|---|---|---|---|
-| **P1-1** | **P1** | AC2 交错顺序不受控：写序与读锁序缺乏约束，存在漏检与不可复现 | 1. 在 `library_bridge.rs` 的 `#[cfg(test)]` 内引入 `round_trip_with_phase_hook`（生产零改动）；<br>2. 测试使用 `mpsc` 通道进行确定性编排：Alpha 写入 stdin 后释放锁并等待；Beta 确认 Alpha 写入完毕后再写 stdin，随后立即抢占获取空闲的 stdout 锁并读出第 1 笔回包；Beta 读毕后通知 Alpha 获取 stdout 锁读出第 2 笔回包；<br>3. 彻底排除 `sleep` 与概率循环；<br>4. 完整收集双请求、双原始回包、caller/token、归属判断与 `behavior=PASS\|FAIL` 写入唯一诊断日志；<br>5. 遵循 AC3：若反序交错导致错配，记录 `behavior=FAIL` 与精确回包，不提交故意 panic 的断言，不修改生产行为。 | **CLOSED** |
+| **P1-1** | **P1** | AC2 交错顺序不受控：写序与读锁序缺乏约束，存在漏检与不可复现；真实方法调用合规性 | 1. 消除复制生产逻辑的 duplicate helper；测试直接调用生产方法 `StdioLibraryChannel::round_trip`；<br>2. 仅在 `#[cfg(test)]` 范围内于 `round_trip` 释放 stdin 锁后及读取 stdout 后分别触发 thread-local hook 与 response observer，生产构建完全剥除；<br>3. 测试使用 `mpsc` 通道进行确定性编排：Alpha 写入 stdin 后释放锁并等待；Beta 确认 Alpha 写入完毕后再写 stdin，随后立即抢占获取空闲的 stdout 锁并读出第 1 笔回包；Beta 读毕后通知 Alpha 获取 stdout 锁读出第 2 笔回包；<br>4. 彻底排除 `sleep` 与概率循环；<br>5. 完整收集双请求、双原始回包、caller/token、归属判断与 `behavior=PASS\|FAIL` 写入唯一诊断日志；<br>6. 遵循 AC3：若反序交错导致错配，记录 `behavior=FAIL` 与精确回包，不提交故意 panic 的断言，不修改生产行为。 | **CLOSED** |
 | **P2-1** | **P2** | sidecar 缺失时静默降级为 inline 变体，掩盖证据来源 | 彻底删除 `INLINE_SIDECAR` 及 `if script_path.is_file() { ... } else { ... }` 降级逻辑。改为 `assert!(script_path.is_file(), "P04 test sidecar missing at: {}", script_path.display())`，缺失时立即 fail-fast 并指出明确路径。 | **CLOSED** |
 | **P2-2** | **P2** | `M2RC1_PYTHON` provenance 未强制、未记录 | 1. Rust 测试中删除 `unwrap_or_else("python")`，改为 `std::env::var("M2RC1_PYTHON").expect(...)`，严禁 PATH 回退；<br>2. Sidecar 启动时将 `sys.executable`、`sys.version`、`pid` 写入诊断日志，供运行时核对 P02 批准环境。 | **CLOSED** |
 | **P3-1** | **P3** | 诊断日志写死静态存根路径导致 append 累积污染 | 测试每次运行生成携带 `pid` 与毫秒时间戳的唯一诊断文件名 `diagnostic_p04_{pid}_{time}.jsonl`，完全隔离多次运行的副作用。 | **CLOSED** |
@@ -68,7 +68,7 @@ worktree: G:/CODEX/New Manga.worktrees/P04-prod-command-concurrency-antigravity
 - **分支**：`agent/antigravity/P04-prod-command-concurrency`
 - **Base Commit**：`8a0685c9bf5aec7e7cc51f466f3fec7b176c35de`
 - **R1 被审 Head**：`751abae2277e975eddacc385a423bcd796334f97`
-- **本次返修 Head**：见 Git 提交
+- **本次返修代码 Head（implementation_head）**：`4d38ee077c2711533558142c1339aaea1da9b3f8`
 - **静态检查命令**：
   ```pwsh
   git diff --check 0a469e15..HEAD
@@ -97,7 +97,7 @@ R1 被审 Head：751abae2277e975eddacc385a423bcd796334f97
 返修交付报告：verification/P04/antigravity-owner-revision-r1.handoff.md
 
 重点核对 R1 findings 闭合情况：
-1. P1-1 AC2 确定性交错控制：library_bridge.rs cfg(test) 内的 round_trip_with_phase_hook 与通道编排是否在生产零改动前提下消除交错随机性，原始请求/回包/caller/token/归属判定/behavior 是否结构化记录，AC3 错配处理是否合规；
+1. P1-1 AC2 确定性交错控制与真实方法调用：确认测试直接调用生产方法 StdioLibraryChannel::round_trip（消除重复 helper），仅通过 #[cfg(test)] 的 thread-local hook 与通道编排在生产零改动前提下控制交错与捕获原始回包，caller/token/归属判定/behavior 是否结构化记录，AC3 错配处理是否合规；
 2. P2-1 sidecar fallback：是否彻底删除 inline sidecar 变体并对脚本缺失 fail-fast；
 3. P2-2 Python provenance：是否禁止 PATH 回退并强制 M2RC1_PYTHON，sidecar 是否记录 sys.executable / sys.version；
 4. P3-1 ~ P3-4：唯一诊断文件名、Handoff 字段 implementation_head 与无超时限制说明。
