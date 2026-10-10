@@ -1,0 +1,21 @@
+{
+  "tool": "dsh --profile headless --json",
+  "cli_exit": 0,
+  "session_id": "session-853da1ad-437b-4865-9395-06e86ec3d5e6",
+  "mount_exit": 0,
+  "mounted_workspace": "P02-current-prestart-review-dsh-r5",
+  "expected_base": "4183e7f7cf366c27aa8ad8a0bc7300af48783470",
+  "reviewed_head": "68bafd3741f376bfab297b8ced911191e96bd424",
+  "reviewed_tree": "e4f6d50ed5f7de2404743feeb6d51c90ae6e5994",
+  "response_sha256": "A55411B9C664BA5FF407E06CA8C608559B36FEF27CF59040DC21B3D58746297C",
+  "response_sha256_basis": "Git blob bytes, UTF-8 LF, committed with the R5 review result package",
+  "decision": "CHANGES_REQUESTED",
+  "malformed_jsonl_line_count": 0,
+  "findings": {
+    "P0": 0,
+    "P1": 0,
+    "P2": 1,
+    "P3": 4,
+    "open": 5
+  }
+}

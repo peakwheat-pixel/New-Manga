@@ -1,0 +1,35 @@
+HEAD: 68bafd3741f376bfab297b8ced911191e96bd424
+Tree: e4f6d50ed5f7de2404743feeb6d51c90ae6e5994
+Complete diff path count: 138
+Out-of-scope path count: 0
+normalization_self_check_inline_and_bare: True
+doc/00_INDEX.md|Build Gate=BLOCKED|True
+doc/00_INDEX.md|build=NOT_AUTHORIZED / NOT_RUN|True
+doc/00_INDEX.md|AC1–AC7=BLOCKED / NOT_RUN|True
+doc/00_INDEX.md|Hard Build Barrier=EFFECTIVE|True
+doc/00_INDEX.md|wsb start=NOT_RUN|True
+doc/REBASELINE_PLAN.md|Build Gate=BLOCKED|True
+doc/REBASELINE_PLAN.md|build=NOT_AUTHORIZED / NOT_RUN|True
+doc/REBASELINE_PLAN.md|AC1–AC7=BLOCKED / NOT_RUN|True
+doc/REBASELINE_PLAN.md|Hard Build Barrier=EFFECTIVE|True
+doc/REBASELINE_PLAN.md|wsb start=NOT_RUN|True
+doc/STATUS.md|Build Gate=BLOCKED|True
+doc/STATUS.md|build=NOT_AUTHORIZED / NOT_RUN|True
+doc/STATUS.md|AC1–AC7=BLOCKED / NOT_RUN|True
+doc/STATUS.md|Hard Build Barrier=EFFECTIVE|True
+doc/STATUS.md|wsb start=NOT_RUN|True
+doc/tasks/P02.md|Build Gate=BLOCKED|True
+doc/tasks/P02.md|build=NOT_AUTHORIZED / NOT_RUN|True
+doc/tasks/P02.md|AC1–AC7=BLOCKED / NOT_RUN|True
+doc/tasks/P02.md|Hard Build Barrier=EFFECTIVE|True
+doc/tasks/P02.md|wsb start=NOT_RUN|True
+verification/P02/codex-checkpoint-p02-smoke-prestart-r4-repair-r5-package.md|Build Gate=BLOCKED|True
+verification/P02/codex-checkpoint-p02-smoke-prestart-r4-repair-r5-package.md|build=NOT_AUTHORIZED / NOT_RUN|True
+verification/P02/codex-checkpoint-p02-smoke-prestart-r4-repair-r5-package.md|AC1–AC7=BLOCKED / NOT_RUN|True
+verification/P02/codex-checkpoint-p02-smoke-prestart-r4-repair-r5-package.md|Hard Build Barrier=EFFECTIVE|True
+verification/P02/codex-checkpoint-p02-smoke-prestart-r4-repair-r5-package.md|wsb start=NOT_RUN|True
+doc/00_INDEX.md|current_R5_checkpoint_pointer|True
+doc/REBASELINE_PLAN.md|current_R5_checkpoint_pointer|True
+doc/STATUS.md|current_R5_checkpoint_pointer|True
+path_scope: True
+all_status_and_pointer_assertions: True

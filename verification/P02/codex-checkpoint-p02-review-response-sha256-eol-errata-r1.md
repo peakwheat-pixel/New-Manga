@@ -17,6 +17,6 @@ The DSH worktree preserved response text with mixed line endings. The project ca
 
 ## Historical log interpretation
 
-`r9f-current-prestart-scope-assertions-r4.stdout.log` remains unchanged as a run record. Its R2 response hash assertion checked the copied worktree bytes at D6 before the later Git normalization; it does not claim that the committed response blob has that digest. The canonical committed report hash is the R2 value in the table above. The earlier R1 report digest is unchanged because it already matched its committed blob.
+`r9f-current-prestart-scope-assertions-r4.stdout.log` and `r9f-current-prestart-scope-assertions-r5.stdout.log` remain unchanged as run records. Their R2 and R3 response SHA labels respectively refer to the copied DSH worktree bytes before the later Git normalization; neither is the committed response blob digest. The canonical committed report hashes are the R2/R3 values in the table above. The earlier R1 report digest is unchanged because it already matched its committed blob.
 
 To reproduce a canonical value, hash the bytes returned by `git cat-file blob <commit>:verification/P02/<response-file>`; do not hash a CRLF working-tree checkout and call it a Git blob hash.

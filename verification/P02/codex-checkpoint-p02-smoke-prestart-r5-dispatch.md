@@ -1,0 +1,9 @@
+# 恢复点：P02 current-prestart R5 Review dispatch
+
+- Task=`P02` current-prestart R4-01/02 文档与证据修复复核；状态=`READY_FOR_REVIEW_DISPATCH`。Owner=Codex；独立 Reviewer=DeepSeek Harness；Integrator=Codex。
+- 冻结 delivery HEAD=`68bafd3741f376bfab297b8ced911191e96bd424`，tree=`e4f6d50ed5f7de2404743feeb6d51c90ae6e5994`；parent=`21f1283b288621f8e07fd7cb9858ba3253ea6247`；package base=`4183e7f7cf366c27aa8ad8a0bc7300af48783470`；R4 finding origin=`6ffa2a9c5375d21bb905f4d6adbccb9124ed531b`。
+- Candidate branch=`codex/P02-process-isolation`；worktree=`C:\Users\49745\.codex\worktrees\p02-process-isolation-plan\New Manga`；Reviewer detached worktree=`C:\Users\49745\.codex\worktrees\P02-current-prestart-review-dsh-r5`，HEAD/tree 与 delivery 一致，status entries=0。
+- 冻结范围：`doc/00_INDEX.md`、`doc/REBASELINE_PLAN.md`、`doc/STATUS.md`、`doc/tasks/P02.md`、`verification/P02/**`。Review acceptance 与禁区详见 `dsh-review-p02-current-prestart-r5.prompt.md`。
+- D13 exact-head checks：路线 validator=7/7 PASS / exit=0；base-to-HEAD 和 parent-to-HEAD `git diff --check` 均 exit=0；complete diff=138 paths，out-of-scope=0；normalizer self-check、25 项文件状态、3 个 current checkpoint pointers 和 path scope assertions 均 PASS。原 R6、R7 EXIT=1 证据保留。
+- 当前产品边界：`wsb start=NOT_RUN`、Smoke=`NOT_RUN`、完整 immediate preflight 未完成、Build Gate=`BLOCKED`、build=`NOT_AUTHORIZED / NOT_RUN`、hook/cache=`BLOCKED / NOT_VERIFIED`、AC1–AC7=`BLOCKED / NOT_RUN`、Hard Build Barrier=`EFFECTIVE`。Review slice 不授权 Sandbox、HostFolder scan/list/hash、Build、GUI 或产品测试。
+- 下一准确动作：从 Reviewer detached worktree 以 `dsh --profile headless --json` 派发只读 R5 Review；用 DSH final event 生成 response/report 与 session metadata，随后用 `mount_session.py --latest` 挂载新 session。不要读取 raw JSONL 或 `*.stderr.txt`。

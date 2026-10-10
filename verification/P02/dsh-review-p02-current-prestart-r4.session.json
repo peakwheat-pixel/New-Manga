@@ -8,7 +8,7 @@
   "reviewed_head": "6ffa2a9c5375d21bb905f4d6adbccb9124ed531b",
   "reviewed_tree": "48f3a0fda229e15c0ed0f225239ef1d9a3c44986",
   "response_sha256": "A2F962B6494579C162F1D0FD36EE8985819108860967E189A3EA25B3BD04B3B4",
-  "response_sha256_basis": "canonical UTF-8 LF bytes; intended to match committed Git blob",
+  "response_sha256_basis": "Git blob bytes, UTF-8 LF, committed in 3f243b1993dc577ea98aa8130c1a822ac57763a4",
   "decision": "APPROVED",
   "findings": {
     "P0": 0,
