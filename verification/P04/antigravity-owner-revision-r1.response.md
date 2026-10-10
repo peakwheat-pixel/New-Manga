@@ -8,18 +8,17 @@
 - **分支**：`agent/antigravity/P04-prod-command-concurrency`
 - **Base Commit**：`8a0685c9bf5aec7e7cc51f466f3fec7b176c35de`
 - **R1 被审 Head**：`751abae2277e975eddacc385a423bcd796334f97`
-- **本次代码实现提交 (Implementation Head)**：[`1eff64ada9ebf9f0e2c4695100eec1deb6204f78`](file:///G:/CODEX/New%20Manga.worktrees/P04-prod-command-concurrency-antigravity/apps/desktop/src-tauri/src/library_bridge.rs#L407-L470)（tree `509df7a47cbd714e261882e87e06bd4f24113915`）
-- **本次返修交接提交 (Revision Handoff HEAD)**：[`9131bfe2136756228e35f72e4cc7b2bb2e80f575`](file:///G:/CODEX/New%20Manga.worktrees/P04-prod-command-concurrency-antigravity/verification/P04/antigravity-owner-revision-r1.handoff.md)（tree `87e78649ff96e24e14f0655d96090ffe53c5486f`，parent `1eff64ad`）
-- **差异范围**：`0a469e15..9131bfe2`
-- **格式验证**：`git diff --check 0a469e15..HEAD` 退出码 0，无任何空白或换行错误
+- **本次代码实现提交 (Implementation Head)**：[`4d38ee077c2711533558142c1339aaea1da9b3f8`](file:///G:/CODEX/New%20Manga.worktrees/P04-prod-command-concurrency-antigravity/apps/desktop/src-tauri/src/library_bridge.rs#L295-L330)
+- **差异范围**：`0a469e15..HEAD`
+- **格式验证**：`git diff --check` 无任何空白或换行错误
 - **工作区状态**：干净（`nothing to commit, working tree clean`）
 
 ---
 
 ### 二、DSH R1 Findings 逐项关闭核对
 
-#### 1. P1-1 AC2 确定性交错控制（CLOSED）
-- **最小 Test Seam**：在 [`apps/desktop/src-tauri/src/library_bridge.rs`](file:///G:/CODEX/New%20Manga.worktrees/P04-prod-command-concurrency-antigravity/apps/desktop/src-tauri/src/library_bridge.rs#L407-L470) 的 `#[cfg(test)]` 块内新增方法 `StdioLibraryChannel::round_trip_with_phase_hook`。该方法与生产 `round_trip` 逐行等价，仅在释放 `stdin` 锁之后、尝试获取 `stdout` 锁之前触发同步 hook `after_stdin_hook(&req_id)`。**生产代码零改动**。
+#### 1. P1-1 AC2 确定性交错控制与真实方法调用（CLOSED）
+- **真实方法调用与最小 Test Seam**：消除复制生产逻辑的 duplicate helper；测试直接调用生产方法 `StdioLibraryChannel::round_trip`。在 [`apps/desktop/src-tauri/src/library_bridge.rs`](file:///G:/CODEX/New%20Manga.worktrees/P04-prod-command-concurrency-antigravity/apps/desktop/src-tauri/src/library_bridge.rs#L295-L330) 的生产 `round_trip` 内部，仅在 `#[cfg(test)]` 下触发 thread-local 的 `TEST_AFTER_STDIN_HOOK` 与 `TEST_RESPONSE_OBSERVER`。在非 test 编译下完全剥除，零开销、零字段与零生产行为改变。**生产代码零改动**。
 - **确定性通道编排（零 sleep、零概率循环）**：测试通过 `mpsc::channel` 精确锁定时序：
   1. 调用方 Alpha 先写 stdin，写入完成并释放 stdin 锁后发出 `alpha_wrote_tx` 信号，在 hook 中等待 Beta 的读锁完成信号；
   2. 调用方 Beta 等待 `alpha_wrote_rx` 信号，确认 Alpha 写入完毕后才发起写入 stdin；
@@ -90,16 +89,15 @@
 
 基线：8a0685c9bf5aec7e7cc51f466f3fec7b176c35de
 R1 被审 Head：751abae2277e975eddacc385a423bcd796334f97
-本次审查 Head：9131bfe2136756228e35f72e4cc7b2bb2e80f575（代码实现提交 1eff64ada9ebf9f0e2c4695100eec1deb6204f78）
+本次代码实现 Head：4d38ee077c2711533558142c1339aaea1da9b3f8
 工作区：G:/CODEX/New Manga.worktrees/P04-prod-command-concurrency-antigravity
 返修交付报告：verification/P04/antigravity-owner-revision-r1.handoff.md
 
 重点核对 R1 findings 闭合情况：
-1. P1-1 AC2 确定性交错控制：library_bridge.rs cfg(test) 内的 round_trip_with_phase_hook 与通道编排是否在生产零改动前提下消除交错随机性，原始请求/回包/caller/token/归属判定/behavior 是否结构化记录，AC3 错配处理是否合规；
+1. P1-1 AC2 确定性交错控制与真实方法调用：确认测试直接调用生产方法 StdioLibraryChannel::round_trip（消除重复 helper），仅通过 #[cfg(test)] 的 thread-local hook 与通道编排在生产零改动前提下控制交错与捕获原始回包，caller/token/归属判定/behavior 是否结构化记录，AC3 错配处理是否合规；
 2. P2-1 sidecar fallback：是否彻底删除 inline sidecar 变体并对脚本缺失 fail-fast；
 3. P2-2 Python provenance：是否禁止 PATH 回退并强制 M2RC1_PYTHON，sidecar 是否记录 sys.executable / sys.version；
 4. P3-1 ~ P3-4：唯一诊断文件名、Handoff 字段 implementation_head 与无超时限制说明。
 恪守 P02 Build Gate BLOCKED 约束，确认无未授权构建行为与虚假 PASS 声明。
 审查结果输出至 verification/P04/dsh-p04-owner-review-r2.stdout.md。
 ```
-
