@@ -1,4 +1,4 @@
-# Checkpoint：P02 DSH Review 后 fresh immediate preflight 被 Sandbox Feature 查询阻断（候选交付）
+# Checkpoint（历史快照）：P02 DSH Review 后 fresh immediate preflight 被 Sandbox Feature 查询阻断（候选交付）
 
 - Timestamp / Agent / Task：2026-10-10 09:05 +08:00 / Codex / P02。
 - TaskStatus / ExecutionState：P02=in_progress / ACTIVE；preflight slice=BLOCKED / DSH_REVIEW_APPROVED / P3_REPAIRED_FOLLOWUP_REVIEW_PENDING / NO_SANDBOX_START。
@@ -44,6 +44,6 @@
 
 - Windows Sandbox Feature 必须有 fresh `Enabled` 证据。当前查询失败且状态 `UNKNOWN`，所以完整 immediate preflight=`BLOCKED`；不尝试提权或启用 Feature，不运行唯一一次已准入的 `wsb start`。
 - Product gates 保持：`wsb start=NOT_RUN`，Smoke=`NOT_RUN`，Build Gate=`BLOCKED`，build=`NOT_AUTHORIZED / NOT_RUN`，hook/cache=`BLOCKED / NOT_VERIFIED`，AC1–AC7=`BLOCKED / NOT_RUN`，Hard Build Barrier=`EFFECTIVE`，P04=`proposed`。未运行 guest command、Build、Cargo/Tauri、Vitest、GUI/WebView 或产品验收。
-- 当前 R5 design/repair Review=APPROVED；fresh preflight evidence Review @D21=APPROVED（P0/P1/P2/P3=0/0/0/4）；P3-1..4 文档返修已写入候选，follow-up Review pending。方案审查、Smoke 准入、Build Gate 与产品验收仍为不同 Gate。
-- 下一准确动作：D22 已包含 P3-1..4 返修；exact D22 route=7/7 PASS、base/commit diffcheck=EXIT 0。下一步创建 detached Reviewer worktree 并由 DeepSeek Harness 对 exact D22 的 P3 closure 与 fresh preflight fail-closed 判定做 follow-up Review；通过后 fast-forward 集成并复核 main root manifest。P02 仍等待 Feature fresh=Enabled 的可核验结果，UNKNOWN/FAIL 继续禁止 wsb start。
+- 历史状态：R5 design/repair Review=APPROVED；fresh preflight evidence Review @D21=APPROVED（P0/P1/P2/P3=0/0/0/4）；D23 exact-head follow-up Review=APPROVED（P0/P1/P2/P3=0/0/0/1，唯一 R2-1/P3 为目标 hash 命名精度），具体报告见 dsh-review-p02-post-review-preflight-r2.stdout.md。审查和 D23 集成均已完成；本文件不再是当前恢复点。
+- 历史后续动作已完成：D23 包含 P3-1..4 返修；DSH 对 exact D23 的 follow-up Review=APPROVED，D23 已 fast-forward 集成。之后用户裁决将 Sandbox Feature blocker 替换为本机验证验收口径；当前恢复见 codex-checkpoint-local-validation-r1.md。P02 Build Gate 与 Hard Build Barrier 仍受 hook/cache/子进程写入闭包与真实隔离证据约束。
 - Recovery：main root 在本轮末次复核仍是 203/203 MATCH，missing/extra/mismatch/staged=`0/0/0/0`、entries digest=`3a54fa978bf228bfae366a4c4de35b90e4fab609447d3370ed81370299da10e2`、candidate dirty overlap=0。fresh measurements 全部来自上述 branch/worktree；恢复先核对 main/head/tree、candidate/head/status 与 root manifest digest。旧 D16 branch/worktree 中另有既存未提交证据；本候选没有借用或暂存那些文件。
