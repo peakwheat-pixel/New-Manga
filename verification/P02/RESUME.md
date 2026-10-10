@@ -4,8 +4,8 @@
 
 - 用户裁决：P02/P04 本机 Windows 验证按本项目验收口径等同于 Windows Sandbox 验证；无需查询、安装、启用或启动 Windows Sandbox Feature，也无需 guest 验证。此决定不表示本机具备虚拟机隔离能力，不豁免数据/写入保护，也不修改全产品干净 Windows 发布 Gate。
 - P02 仍=`in_progress / ACTIVE`，Owner=Antigravity、Reviewer=DeepSeek Harness、Integrator=Codex；AC/Owner allowlist/行为基线不变。此前 Feature query=`UNKNOWN` 不再阻断；Build Gate 仍=`BLOCKED`，hook/cache/子进程写入边界和本机证据未闭合，build=`NOT_AUTHORIZED / NOT_RUN`，AC1–AC7=`BLOCKED / NOT_RUN`，Hard Build Barrier=`EFFECTIVE`。
-- D22 exact-head follow-up Review 仍待完成；之后继续本机非提权 preflight 和受限 scratch Gate。不得运行 Sandbox/guest，不得因等效验收裁决将未运行项记为 PASS。
-- P04 已释放 `ready`，Owner=Antigravity、Reviewer=DeepSeek Harness，base=`8a0685c9bf5aec7e7cc51f466f3fec7b176c35de`；可开始编写测试，Cargo/Tauri 测试仍等待 P02 本机 Build Gate 与 Codex 提供 provenance-bound scratch sidecar。详情见 [P04 Task](../../doc/tasks/P04.md) 与 [释放 checkpoint](../P04/local-validation-release-checkpoint-20261010.md)。
+- D23 exact-head follow-up Review 已 APPROVED（P0/P1/P2=0/0/0，仅 1 项非阻断 P3）并于 2026-10-10 09:41 fast-forward 集成；R2-1 指针已收口。当前继续闭合 P02 hook/cache/子进程写入边界，并确定能提供真实隔离证据的获准机制。Build Gate=`BLOCKED`、Hard Build Barrier=`EFFECTIVE`；本机验收等效裁决不构成隔离证明，不得运行 Build 或因裁决把未运行项记为 PASS。
+- P04 Owner=Antigravity 的实现分支固定在 `751abae2277e975eddacc385a423bcd796334f97`，branch=`agent/antigravity/P04-prod-command-concurrency`；DeepSeek Harness R1 exact-head Review=`CHANGES_REQUESTED`，指出 AC2 缺乏确定性交错控制（P1），并有 sidecar fallback 与 Python provenance 记录缺口（P2）。已向原 Owner 派发范围内返修；根 `main` 尚保留 D25 的 `ready` 状态，待审查/集成时同步项目状态。Cargo/Tauri 测试仍为 `BLOCKED / NOT_RUN`，等待 P02 Build Gate 与 Codex provenance-bound scratch sidecar。详情见 [P04 Task](../../doc/tasks/P04.md) 与 [释放 checkpoint](../P04/local-validation-release-checkpoint-20261010.md)。
 - 本次状态记录见 [P02 local-validation checkpoint](codex-checkpoint-local-validation-r1.md)。
 
 ## 历史检查点：P02 Stage A r8 已集成；Scratch Build Gate BLOCKED
