@@ -22,18 +22,18 @@ worktree: G:/CODEX/New Manga.worktrees/P04-prod-command-concurrency-antigravity
 ### 1.1 变更路径集（严格受限于授权 Allowlist）
 
 - `apps/desktop/src-tauri/src/main.rs`：仅修改测试模块（`#[cfg(test)] mod tests`），新增 AC1 测试 `page_nav_production_only_commands_are_exact`。
-- `apps/desktop/src-tauri/src/library_bridge.rs`：仅修改测试模块（`#[cfg(test)] mod tests`），利用既有 test seam `adopt_child_for_test` 新增 AC2 测试 `same_channel_concurrent_round_trips_keep_response_ownership`。生产代码零改动。
-- `verification/P04/deterministic_concurrent_sidecar.py`：新增确定性同步测试 sidecar 脚本，实现无 sleep 的管道反压并发同步与边界协议字段旁录。
-- `verification/P04/antigravity-owner-implementation-r1.handoff.md`：本交付报告。
+- `apps/desktop/src-tauri/src/library_bridge.rs`：仅修改 `#[cfg(test)]` 范围：在生产 `round_trip` 体内嵌入 `#[cfg(test)]` 隔离的 thread-local phase hook 与 response observer（生产零改动），并在测试模块中利用 test seam `adopt_child_for_test` 新增 AC2 测试 `same_channel_concurrent_round_trips_keep_response_ownership`。
+- `verification/P04/deterministic_concurrent_sidecar.py`：新增确定性同步测试 sidecar 脚本，实现无 sleep 的确定性同步与边界协议字段旁录，强制记录 Python 运行环境 provenance。
+- `verification/P04/antigravity-owner-implementation-r1.handoff.md`：本交付报告（包含 R1 初始交付记录及 R1/R2 返修状态校准说明）。
 
 ### 1.2 AC 逐项实现对照
 
 | 验收标准 (AC) | 实现状态 | 代码位置与实现机制说明 |
 |---|---|---|
 | **AC1：生产专属命令族常量字面断言** | **代码已实现 (STATIC)** | 在 `main.rs:mod tests` 中实现 `page_nav_production_only_commands_are_exact`：<br>1. 执行字面精确断言：`assert_eq!(PAGE_NAV_PRODUCTION_ONLY_COMMANDS, &["list_chapters", "list_chapter_pages"]);`；<br>2. 期望值采用字面独立常量 `EXPECTED_PAGE_NAV_COMMANDS`，杜绝从被测常量自身推导；<br>3. 严格验证该组命令仅存在于生产命令面（`command_allowlist(false, false)`），且绝对不出现在 probe 面（`command_allowlist(true, false)`）或 M2-AC1 面（`command_allowlist(false, true)`）。 |
-| **AC2：同通道桥接确定性并发 round_trip 测试** | **代码已实现 (STATIC)** | 在 `library_bridge.rs:mod tests` 中实现 `same_channel_concurrent_round_trips_keep_response_ownership`：<br>1. 通过 `adopt_child_for_test` 启动并接管确定性测试 sidecar 进程，得到单个共享的 `Arc<StdioLibraryChannel>` 实例；<br>2. 构造两个明确可区分的请求载荷（`test.concurrent_alpha` 带 `caller_alpha` / `token-AAA-111`，`test.concurrent_beta` 带 `caller_beta` / `token-BBB-222`）；<br>3. 并发双线程通过 `Barrier` 同步起跑；sidecar 在未收到全部并发请求前不回包，利用管道反压在 Rust 侧分别造成读写交织，完全摒弃 `sleep` 或概率性重试；<br>4. sidecar 边界将请求/响应 `protocol`、`version`、`request_id`、`payload`、`result` 旁录到 `verification/P04/concurrent_sidecar_diagnostic.jsonl`，不改变合同语义；<br>5. 严格断言双调用方各自拿到所属响应，核验响应归属一致性。 |
-| **AC3：错配阻断与修复解耦规则** | **规则已嵌入** | 若实际运行发生响应错配，测试代码支持通过诊断日志记录精确请求与回包，并交由 Codex 立项独立修复 Task，当前交付不包含故意失败的测试。 |
-| **AC4：非作者独立 Review 与集成验证** | **等待中 (PENDING)** | 交付 HEAD 已锁定，等待 DeepSeek Harness 进行非作者实现审查。 |
+| **AC2：同通道桥接确定性并发 round_trip 测试** | **代码已实现 (STATIC/REPRODUCER)** | 在 `library_bridge.rs:mod tests` 中实现 `same_channel_concurrent_round_trips_keep_response_ownership`：<br>1. 通过 `adopt_child_for_test` 启动并接管确定性测试 sidecar 进程，得到单个共享的 `Arc<StdioLibraryChannel>` 实例；<br>2. 构造两个明确可区分的请求载荷（`test.concurrent_alpha` 带 `caller_alpha` / `token-AAA-111`，`test.concurrent_beta` 带 `caller_beta` / `token-BBB-222`）；<br>3. 并发双线程通过 `#[cfg(test)]` thread-local hook 与带超时的 `mpsc` 通道精确编排写序（Alpha 先写，Beta 后写）与读锁抢占序（Beta 先读，Alpha 后读），完全摒弃 `sleep` 或概率性重试；<br>4. 定位为 **AC3 确定性负向诊断/复现器**：在当前无 response demuxing 的生产实现下，静态推导必然产生响应错配（`static_expected_behavior=FAIL`）；<br>5. 不设使 Cargo 失败的 panic 断言，而是将双方原始请求、原始回包、caller/token 归属与判定严格写入单次运行唯一的 `verification/P04/diagnostic_p04_{pid}_{time}.jsonl`（写失败显式报错），为 Codex 另立独立修复 Task 留存确凿证据。 |
+| **AC3：错配阻断与修复解耦规则** | **规则已嵌入** | 若反序读锁交错导致错配（`behavior=FAIL`），测试记录结构化证据，不 panic，不破坏 Cargo 执行，并将 P04 保持为 blocked 移交 Codex 建立独立修复 Task。 |
+| **AC4：非作者独立 Review 与集成验证** | **已完成 R1/R2 审查** | 已经由 DeepSeek Harness 完成 R1 与 R2 独立审查；当前根据 R2 意见进行返修并等待 R3 复审。 |
 
 ---
 

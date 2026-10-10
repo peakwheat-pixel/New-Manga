@@ -1079,16 +1079,27 @@ mod tests {
         assert!(catalog_db.is_file(), "the core bound the fresh catalog");
     }
 
-    /// P04 AC2: deterministic concurrent round_trip verification on the same
+    /// P04 AC2/AC3: deterministic concurrent round_trip reproducer / diagnostic on the same
     /// StdioLibraryChannel instance with two distinguishable callers.
-    /// Uses deterministic test seam `round_trip_with_phase_hook` and mpsc channels
-    /// to control write ordering (alpha then beta) and read-lock acquisition ordering
-    /// (beta then alpha) without sleeps or probabilistic stress loops.
+    ///
+    /// NOTE: This test is an AC3 deterministic negative reproducer / diagnostic, NOT a passing
+    /// regression gate. Under current production round_trip implementation (where response demuxing /
+    /// request_id association is absent), this deterministic interleaving (Alpha writes first, Beta writes
+    /// second but Beta acquires stdout lock first) STATICALLY GUARANTEES response cross-talk mismatch:
+    /// Beta reads Alpha's response, and Alpha reads Beta's response (`static_expected_behavior = FAIL`).
+    ///
+    /// Cargo test exit 0 indicates successful execution and emission of diagnostic evidence only,
+    /// and MUST NOT be construed as response ownership PASS.
+    ///
+    /// Uses test-only thread-local hooks (`set_test_after_stdin_hook` and `set_test_response_observer`)
+    /// and bounded mpsc channels to control write ordering (Alpha then Beta) and read-lock acquisition
+    /// ordering (Beta then Alpha) deterministically without sleeps or probabilistic stress loops.
     ///
     /// Records original requests, raw responses, caller/token, ownership decisions,
-    /// and final behavior verdict into a unique diagnostic log file under verification/P04/**.
-    /// Per AC3, if mismatch is observed (behavior=FAIL), records the diagnostic without
-    /// panicking to avoid a failing test in the tree.
+    /// and behavior verdict into a unique diagnostic log file under verification/P04/**.
+    /// Verdict artefact write failures explicitly fail the test (no silent swallow).
+    /// Per AC3, if mismatch is observed (behavior=FAIL), records the diagnostic evidence without panicking
+    /// so the reproducer evidence is preserved for Codex to establish an independent fix task.
     #[test]
     fn same_channel_concurrent_round_trips_keep_response_ownership() {
         use std::sync::mpsc;
@@ -1160,8 +1171,8 @@ mod tests {
 
         // Deterministic interleaving control:
         // 1. Alpha writes stdin first.
-        // 2. Alpha signals beta via `alpha_wrote_tx` and waits on `beta_read_done_rx`.
-        // 3. Beta waits for Alpha's stdin write, then writes stdin second.
+        // 2. Alpha signals beta via `alpha_wrote_tx` and waits on `beta_read_done_rx` with bounded timeout.
+        // 3. Beta waits on `alpha_wrote_rx` with bounded timeout, then writes stdin second.
         // 4. Beta proceeds immediately to acquire stdout lock and reads the first response.
         // 5. Beta signals `beta_read_done_tx`.
         // 6. Alpha resumes, acquires stdout lock, and reads the second response.
@@ -1179,8 +1190,8 @@ mod tests {
                     .send(())
                     .expect("failed to signal alpha stdin written");
                 beta_read_done_rx
-                    .recv()
-                    .expect("failed waiting for beta read phase");
+                    .recv_timeout(std::time::Duration::from_secs(10))
+                    .expect("bounded wait timeout waiting for beta read phase");
             }));
 
             set_test_response_observer(Some(move |req_id: &str, raw: &str| {
@@ -1206,8 +1217,8 @@ mod tests {
         let payload_beta = req_beta.clone();
         let handle_beta = std::thread::spawn(move || {
             alpha_wrote_rx
-                .recv()
-                .expect("failed waiting for alpha stdin write");
+                .recv_timeout(std::time::Duration::from_secs(10))
+                .expect("bounded wait timeout waiting for alpha stdin write");
 
             let capture = Arc::new(std::sync::Mutex::new((String::new(), String::new())));
             let capture_clone = Arc::clone(&capture);
@@ -1261,6 +1272,7 @@ mod tests {
                 .map(|d| d.as_secs_f64())
                 .unwrap_or(0.0),
             "behavior": behavior,
+            "static_expected_behavior": "FAIL",
             "alpha_request": req_alpha,
             "alpha_request_id": id_alpha,
             "alpha_raw_response": raw_alpha,
@@ -1272,26 +1284,29 @@ mod tests {
             "interleaving": "deterministic_write_alpha_then_beta__read_beta_then_alpha",
         });
 
-        if let Ok(mut file) = std::fs::OpenOptions::new()
+        // R2-004: Explicitly fail on log write error; no silent swallow
+        let mut file = std::fs::OpenOptions::new()
             .create(true)
             .append(true)
             .open(&log_path)
-        {
-            let _ = writeln!(file, "{}", verdict_record);
-        }
+            .expect("failed to open/create P04 diagnostic verdict log file");
+        writeln!(file, "{}", verdict_record)
+            .expect("failed to write concurrency verdict record to diagnostic log");
 
         eprintln!(
-            "[P04-AC2-DIAGNOSTIC] Concurrency verdict: behavior={behavior}, alpha_owned={alpha_owned}, beta_owned={beta_owned}"
+            "[P04-AC3-DIAGNOSTIC] Concurrency verdict: behavior={behavior}, alpha_owned={alpha_owned}, beta_owned={beta_owned}"
         );
-        eprintln!("[P04-AC2-DIAGNOSTIC] Caller alpha raw response: {raw_alpha}");
-        eprintln!("[P04-AC2-DIAGNOSTIC] Caller beta raw response: {raw_beta}");
+        eprintln!("[P04-AC3-DIAGNOSTIC] Caller alpha raw response: {raw_alpha}");
+        eprintln!("[P04-AC3-DIAGNOSTIC] Caller beta raw response: {raw_beta}");
 
         if behavior == "FAIL" {
             eprintln!(
-                "[P04-AC3-DIAGNOSTIC] Concurrent round_trip response mismatch observed under inverted read-lock interleaving."
+                "[P04-AC3-DIAGNOSTIC] Expected negative reproducer triggered: cross-caller mismatch observed under inverted read-lock interleaving."
             );
-            // Per AC3: do NOT panic / fail Cargo test; diagnostic evidence is recorded
-            // and P04 will be maintained as blocked for Codex fix task.
+            eprintln!(
+                "[P04-AC3-DIAGNOSTIC] Per AC3 contract: diagnostic evidence recorded at {}; P04 remains blocked for independent Codex fix task.",
+                log_path.display()
+            );
         }
     }
 }

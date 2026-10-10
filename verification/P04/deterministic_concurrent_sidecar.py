@@ -33,6 +33,7 @@ def log_event(log_path: str | None, event_type: str, data: dict[str, Any]) -> No
     except Exception as exc:
         sys.stderr.write(f"[sidecar-log-error] {exc}\n")
         sys.stderr.flush()
+        raise RuntimeError(f"Failed to write sidecar diagnostic log event {event_type}: {exc}") from exc
 
 
 def make_response(req: dict[str, Any], result: Any = None, error: Any = None) -> dict[str, Any]:
