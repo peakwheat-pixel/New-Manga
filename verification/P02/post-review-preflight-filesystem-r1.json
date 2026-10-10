@@ -1,0 +1,413 @@
+{
+  "captured_at": "2026-10-10T09:00:36+08:00",
+  "root_inventory": {
+    "count": 12,
+    "present": 12,
+    "reparse_count": 0,
+    "results": [
+      {
+        "purpose": "fixed scratch clone",
+        "mapping_domain": "Scratch RW",
+        "current_expected": "PRESENT",
+        "exists": true,
+        "directory": true,
+        "reparse": false,
+        "pass": true
+      },
+      {
+        "purpose": "Python base",
+        "mapping_domain": "Smoke RO",
+        "current_expected": "PRESENT",
+        "exists": true,
+        "directory": true,
+        "reparse": false,
+        "pass": true
+      },
+      {
+        "purpose": "pinned sidecar venv",
+        "mapping_domain": "Smoke RO",
+        "current_expected": "PRESENT",
+        "exists": true,
+        "directory": true,
+        "reparse": false,
+        "pass": true
+      },
+      {
+        "purpose": "detector weights",
+        "mapping_domain": "Smoke RO",
+        "current_expected": "PRESENT",
+        "exists": true,
+        "directory": true,
+        "reparse": false,
+        "pass": true
+      },
+      {
+        "purpose": "SFX weights",
+        "mapping_domain": "Smoke RO",
+        "current_expected": "PRESENT",
+        "exists": true,
+        "directory": true,
+        "reparse": false,
+        "pass": true
+      },
+      {
+        "purpose": "Node/npm",
+        "mapping_domain": "Smoke RO",
+        "current_expected": "PRESENT",
+        "exists": true,
+        "directory": true,
+        "reparse": false,
+        "pass": true
+      },
+      {
+        "purpose": "Rust stable MSVC",
+        "mapping_domain": "Smoke RO",
+        "current_expected": "PRESENT",
+        "exists": true,
+        "directory": true,
+        "reparse": false,
+        "pass": true
+      },
+      {
+        "purpose": "VS Build Tools",
+        "mapping_domain": "Smoke RO",
+        "current_expected": "PRESENT",
+        "exists": true,
+        "directory": true,
+        "reparse": false,
+        "pass": true
+      },
+      {
+        "purpose": "VS Installer",
+        "mapping_domain": "Smoke RO",
+        "current_expected": "PRESENT",
+        "exists": true,
+        "directory": true,
+        "reparse": false,
+        "pass": true
+      },
+      {
+        "purpose": "Windows SDK",
+        "mapping_domain": "Smoke RO",
+        "current_expected": "PRESENT",
+        "exists": true,
+        "directory": true,
+        "reparse": false,
+        "pass": true
+      },
+      {
+        "purpose": "Git cmd",
+        "mapping_domain": "Build-only RO",
+        "current_expected": "PRESENT",
+        "exists": true,
+        "directory": true,
+        "reparse": false,
+        "pass": true
+      },
+      {
+        "purpose": "Git mingw64",
+        "mapping_domain": "Build-only RO",
+        "current_expected": "PRESENT",
+        "exists": true,
+        "directory": true,
+        "reparse": false,
+        "pass": true
+      }
+    ]
+  },
+  "input_pins": {
+    "count": 20,
+    "sha256_matches": 20,
+    "registered_size_count": 14,
+    "registered_size_matches": 14,
+    "unregistered_size_count": 6,
+    "pins": [
+      {
+        "purpose": "Python base",
+        "basename": "python.exe",
+        "expected_bytes": 103192,
+        "actual_bytes": 103192,
+        "size_match": true,
+        "expected_sha256": "15b41a488c356c0e331facdea6c836a6cec021f12d5fde9844e7ca4a1aa0361a",
+        "actual_sha256": "15b41a488c356c0e331facdea6c836a6cec021f12d5fde9844e7ca4a1aa0361a",
+        "hash_match": true
+      },
+      {
+        "purpose": "pinned venv Python",
+        "basename": "python.exe",
+        "expected_bytes": 274712,
+        "actual_bytes": 274712,
+        "size_match": true,
+        "expected_sha256": "864530d708039551a2c672ddd65e5900fbc08b0981479679723a5b468f8082bc",
+        "actual_sha256": "864530d708039551a2c672ddd65e5900fbc08b0981479679723a5b468f8082bc",
+        "hash_match": true
+      },
+      {
+        "purpose": "pyvenv.cfg",
+        "basename": "pyvenv.cfg",
+        "expected_bytes": null,
+        "actual_bytes": 325,
+        "size_match": null,
+        "expected_sha256": "176502a215876bab911b824f97576c2a2fb4a15e88bbf871344f82178beb9a6d",
+        "actual_sha256": "176502a215876bab911b824f97576c2a2fb4a15e88bbf871344f82178beb9a6d",
+        "hash_match": true
+      },
+      {
+        "purpose": "distutils-precedence.pth",
+        "basename": "distutils-precedence.pth",
+        "expected_bytes": null,
+        "actual_bytes": 151,
+        "size_match": null,
+        "expected_sha256": "2638ce9e2500e572a5e0de7faed6661eb569d1b696fcba07b0dd223da5f5d224",
+        "actual_sha256": "2638ce9e2500e572a5e0de7faed6661eb569d1b696fcba07b0dd223da5f5d224",
+        "hash_match": true
+      },
+      {
+        "purpose": "Node",
+        "basename": "node.exe",
+        "expected_bytes": 91694408,
+        "actual_bytes": 91694408,
+        "size_match": true,
+        "expected_sha256": "3331e1ffe19874215472217c5e94f5a0c6d8e18c4ac7111d3937aa0ad5e9b4a5",
+        "actual_sha256": "3331e1ffe19874215472217c5e94f5a0c6d8e18c4ac7111d3937aa0ad5e9b4a5",
+        "hash_match": true
+      },
+      {
+        "purpose": "npm.cmd",
+        "basename": "npm.cmd",
+        "expected_bytes": 538,
+        "actual_bytes": 538,
+        "size_match": true,
+        "expected_sha256": "21b46c69ad6e2f231f02a9e120f4ba6c8e75fef5a45637103002eab99f888ab8",
+        "actual_sha256": "21b46c69ad6e2f231f02a9e120f4ba6c8e75fef5a45637103002eab99f888ab8",
+        "hash_match": true
+      },
+      {
+        "purpose": "cargo",
+        "basename": "cargo.exe",
+        "expected_bytes": 31435776,
+        "actual_bytes": 31435776,
+        "size_match": true,
+        "expected_sha256": "c37545ec61d48d31bdefce53280ecab61c4ea54eaace372fac6a0316c6e165d9",
+        "actual_sha256": "c37545ec61d48d31bdefce53280ecab61c4ea54eaace372fac6a0316c6e165d9",
+        "hash_match": true
+      },
+      {
+        "purpose": "rustc",
+        "basename": "rustc.exe",
+        "expected_bytes": 110592,
+        "actual_bytes": 110592,
+        "size_match": true,
+        "expected_sha256": "ca9988af88b1463f6857fdfe909299fee50a63260b3e5f7dbcb5b4d3318b27bc",
+        "actual_sha256": "ca9988af88b1463f6857fdfe909299fee50a63260b3e5f7dbcb5b4d3318b27bc",
+        "hash_match": true
+      },
+      {
+        "purpose": "vcvars64.bat",
+        "basename": "vcvars64.bat",
+        "expected_bytes": 39,
+        "actual_bytes": 39,
+        "size_match": true,
+        "expected_sha256": "6b516d8fcf543c14b2d861e1f45661e0029230fe0dc48e86ce78522801822209",
+        "actual_sha256": "6b516d8fcf543c14b2d861e1f45661e0029230fe0dc48e86ce78522801822209",
+        "hash_match": true
+      },
+      {
+        "purpose": "vswhere.exe",
+        "basename": "vswhere.exe",
+        "expected_bytes": 469456,
+        "actual_bytes": 469456,
+        "size_match": true,
+        "expected_sha256": "c54f3b7c9164ea9a0db8641e81ecdda80c2664ef5a47c4191406f848cc07c662",
+        "actual_sha256": "c54f3b7c9164ea9a0db8641e81ecdda80c2664ef5a47c4191406f848cc07c662",
+        "hash_match": true
+      },
+      {
+        "purpose": "cl.exe",
+        "basename": "cl.exe",
+        "expected_bytes": 677968,
+        "actual_bytes": 677968,
+        "size_match": true,
+        "expected_sha256": "6cadddca8c19e76991bbb44dff2eab5cab6807f9145e8bce9a800235a5975e51",
+        "actual_sha256": "6cadddca8c19e76991bbb44dff2eab5cab6807f9145e8bce9a800235a5975e51",
+        "hash_match": true
+      },
+      {
+        "purpose": "link.exe",
+        "basename": "link.exe",
+        "expected_bytes": 3252808,
+        "actual_bytes": 3252808,
+        "size_match": true,
+        "expected_sha256": "85dfbeb6e52282fbc4f34c015709754677fd170f11768c7098fab913a6c570df",
+        "actual_sha256": "85dfbeb6e52282fbc4f34c015709754677fd170f11768c7098fab913a6c570df",
+        "hash_match": true
+      },
+      {
+        "purpose": "rc.exe",
+        "basename": "rc.exe",
+        "expected_bytes": 55736,
+        "actual_bytes": 55736,
+        "size_match": true,
+        "expected_sha256": "65db0d7b4f10ba0f55973fd9356543a556da9ec1c777a0c05f05a0329c8a100a",
+        "actual_sha256": "65db0d7b4f10ba0f55973fd9356543a556da9ec1c777a0c05f05a0329c8a100a",
+        "hash_match": true
+      },
+      {
+        "purpose": "mt.exe",
+        "basename": "mt.exe",
+        "expected_bytes": 1972672,
+        "actual_bytes": 1972672,
+        "size_match": true,
+        "expected_sha256": "fb1ab75294b78619bd6ac8cadf30cb95befbc7324703cbe2654ef800ddd2bf4d",
+        "actual_sha256": "fb1ab75294b78619bd6ac8cadf30cb95befbc7324703cbe2654ef800ddd2bf4d",
+        "hash_match": true
+      },
+      {
+        "purpose": "Git cmd git.exe",
+        "basename": "git.exe",
+        "expected_bytes": 46480,
+        "actual_bytes": 46480,
+        "size_match": true,
+        "expected_sha256": "3cbd024d9d11ef08bd6a0cb5a973613c50825b4952bc6006f3f4222f436091e5",
+        "actual_sha256": "3cbd024d9d11ef08bd6a0cb5a973613c50825b4952bc6006f3f4222f436091e5",
+        "hash_match": true
+      },
+      {
+        "purpose": "Git mingw64 git.exe",
+        "basename": "git.exe",
+        "expected_bytes": 4321168,
+        "actual_bytes": 4321168,
+        "size_match": true,
+        "expected_sha256": "fc0f1cae1304fcdcf4d0749f421c5ed21471efc856301f92f56d4b844be84363",
+        "actual_sha256": "fc0f1cae1304fcdcf4d0749f421c5ed21471efc856301f92f56d4b844be84363",
+        "hash_match": true
+      },
+      {
+        "purpose": "detector model",
+        "basename": "model.safetensors",
+        "expected_bytes": null,
+        "actual_bytes": 171543900,
+        "size_match": null,
+        "expected_sha256": "037930a861e67870eb345be01b28cc70d7e2b7956528e48ee0ebdb0c093df80d",
+        "actual_sha256": "037930a861e67870eb345be01b28cc70d7e2b7956528e48ee0ebdb0c093df80d",
+        "hash_match": true
+      },
+      {
+        "purpose": "detector config",
+        "basename": "config.json",
+        "expected_bytes": null,
+        "actual_bytes": 2320,
+        "size_match": null,
+        "expected_sha256": "b6d707933e12e9593a7025604be1c95add70a6db371fdd1532e8854e2256e072",
+        "actual_sha256": "b6d707933e12e9593a7025604be1c95add70a6db371fdd1532e8854e2256e072",
+        "hash_match": true
+      },
+      {
+        "purpose": "detector preprocessor",
+        "basename": "preprocessor_config.json",
+        "expected_bytes": null,
+        "actual_bytes": 470,
+        "size_match": null,
+        "expected_sha256": "7e9e2245806aa3ef068a5321f5eebee3116fa4cec560173231954ffaca930eca",
+        "actual_sha256": "7e9e2245806aa3ef068a5321f5eebee3116fa4cec560173231954ffaca930eca",
+        "hash_match": true
+      },
+      {
+        "purpose": "SFX ONNX model",
+        "basename": "yolo11s-seg.onnx",
+        "expected_bytes": null,
+        "actual_bytes": 40824255,
+        "size_match": null,
+        "expected_sha256": "944e811410933ad6ff8d32446fcc9eef90fb463794e1874ce83035e83acd418d",
+        "actual_sha256": "944e811410933ad6ff8d32446fcc9eef90fb463794e1874ce83035e83acd418d",
+        "hash_match": true
+      }
+    ]
+  },
+  "source_pins": {
+    "commit": "7ce3c40cd308e7093929bd5f53abc4f8a6c4ef7a",
+    "commit_exists": true,
+    "ancestor_of_main": true,
+    "clone_eol_pin_count": 3,
+    "results": [
+      {
+        "path": "packaging/m2ac5/build_sidecar.ps1",
+        "blob_exists": true,
+        "blob_sha256": "44513fbd470c9a4b22fd4a3f8b65fe8f275f3884206bc3394219dffc508e91b1",
+        "expected_blob_sha256": "44513fbd470c9a4b22fd4a3f8b65fe8f275f3884206bc3394219dffc508e91b1",
+        "blob_match": true,
+        "predicted_crlf_sha256": "07e12e80ceb2a35bab96150f4530b7a788b914a2467a32056098adbb775dd30e",
+        "expected_crlf_sha256": "07e12e80ceb2a35bab96150f4530b7a788b914a2467a32056098adbb775dd30e",
+        "predicted_crlf_match": true,
+        "clone_sha256": "07e12e80ceb2a35bab96150f4530b7a788b914a2467a32056098adbb775dd30e",
+        "clone_matches_predicted_crlf": true
+      },
+      {
+        "path": "packaging/m2ac5/core_sidecar.spec",
+        "blob_exists": true,
+        "blob_sha256": "3865a579a2f29e2ff44ba675a0e5d583299aa9d9b875f633ef8f137f021dbb65",
+        "expected_blob_sha256": "3865a579a2f29e2ff44ba675a0e5d583299aa9d9b875f633ef8f137f021dbb65",
+        "blob_match": true,
+        "predicted_crlf_sha256": "c73d6fe02f005a3813b75d2c69e3d2ea7b9810f69eb408f0745f9920be0b859a",
+        "expected_crlf_sha256": "c73d6fe02f005a3813b75d2c69e3d2ea7b9810f69eb408f0745f9920be0b859a",
+        "predicted_crlf_match": true,
+        "clone_sha256": "c73d6fe02f005a3813b75d2c69e3d2ea7b9810f69eb408f0745f9920be0b859a",
+        "clone_matches_predicted_crlf": true
+      },
+      {
+        "path": "packaging/m2ac5/requirements-build.txt",
+        "blob_exists": true,
+        "blob_sha256": "73f0845b14fd934a36fb58e301dc79ebb0070b22ba1bf43517501cc3db1a6f2a",
+        "expected_blob_sha256": "73f0845b14fd934a36fb58e301dc79ebb0070b22ba1bf43517501cc3db1a6f2a",
+        "blob_match": true,
+        "predicted_crlf_sha256": "c50edd6c3058197003d66049bc28662e9dc7e4175b499ffe9989ae8bca0e7a07",
+        "expected_crlf_sha256": "c50edd6c3058197003d66049bc28662e9dc7e4175b499ffe9989ae8bca0e7a07",
+        "predicted_crlf_match": true,
+        "clone_sha256": "c50edd6c3058197003d66049bc28662e9dc7e4175b499ffe9989ae8bca0e7a07",
+        "clone_matches_predicted_crlf": true
+      }
+    ]
+  },
+  "clone": {
+    "head": "7ce3c40cd308e7093929bd5f53abc4f8a6c4ef7a",
+    "tree": "ce8056b8ef4d2ebd11bb4754b206adf921a39e41",
+    "expected_head": "7ce3c40cd308e7093929bd5f53abc4f8a6c4ef7a",
+    "expected_tree": "ce8056b8ef4d2ebd11bb4754b206adf921a39e41",
+    "head_match": true,
+    "tree_match": true,
+    "private_common_dir": true,
+    "remote_count": 0,
+    "alternates_present": false,
+    "clean": true,
+    "core_autocrlf": "true",
+    "source_commit_exists": true,
+    "source_ancestor_of_main": true
+  },
+  "hardlinks": {
+    "object_file_count": 3,
+    "link_count_one": 3,
+    "failed": 0,
+    "objects": [
+      {
+        "object_relpath": "objects/pack/pack-76febc1ab9ad44d2f4e8fae6966badd9c9955f20.idx",
+        "exit": 0,
+        "link_count": 1,
+        "pass": true
+      },
+      {
+        "object_relpath": "objects/pack/pack-76febc1ab9ad44d2f4e8fae6966badd9c9955f20.pack",
+        "exit": 0,
+        "link_count": 1,
+        "pass": true
+      },
+      {
+        "object_relpath": "objects/pack/pack-76febc1ab9ad44d2f4e8fae6966badd9c9955f20.rev",
+        "exit": 0,
+        "link_count": 1,
+        "pass": true
+      }
+    ]
+  },
+  "result": "PASS",
+  "issues": []
+}

@@ -1,0 +1,18 @@
+{
+  "captured_at": "2026-10-10T09:04:15+08:00",
+  "main_head": "1d5845e2b185179d7b683e5279f6520fc0882d97",
+  "main_branch": "main",
+  "protected_entries": 203,
+  "live_entries": 203,
+  "missing": 0,
+  "extra": 0,
+  "mismatches": 0,
+  "staged_entries": 0,
+  "entries_sha256": "3a54fa978bf228bfae366a4c4de35b90e4fab609447d3370ed81370299da10e2",
+  "expected_sha256": "3a54fa978bf228bfae366a4c4de35b90e4fab609447d3370ed81370299da10e2",
+  "manifest_match": true,
+  "candidate_head": "1d5845e2b185179d7b683e5279f6520fc0882d97",
+  "candidate_branch": "codex/P02-post-review-preflight",
+  "candidate_dirty_entries": 13,
+  "candidate_protected_overlap": 0
+}

@@ -1,0 +1,123 @@
+{
+  "captured_at": "2026-10-10T09:00:55.9300903+08:00",
+  "shell": {
+    "user_interactive": true,
+    "token_integrity_matches_previous": true,
+    "edition": "Core",
+    "version": "7.6.6",
+    "token_integrity_label": "Medium",
+    "identity_matches_previous": true,
+    "elevated": false
+  },
+  "feature": {
+    "error_type": "COMException",
+    "state": "UNKNOWN",
+    "query_exit": 1
+  },
+  "host": {
+    "disks_free_mib": {
+      "G": 1329828.75,
+      "C": 333518.93
+    },
+    "total_ram_mib": 32406.96,
+    "available_ram_mib": 16419.95,
+    "physical_cores": 16.0,
+    "system_type": "x64-based PC",
+    "firmware_virtualization_enabled": true,
+    "query_error_type": null,
+    "processor_architecture_cim": [
+      9
+    ]
+  },
+  "wsb": {
+    "version_stderr_bytes": 0,
+    "list_stderr_bytes": 0,
+    "list_running": 0,
+    "version_exit": 0,
+    "executable_matches_previous_pin": true,
+    "list_environments": 0,
+    "list_exit": 0,
+    "package_full_name": "MicrosoftWindows.WindowsSandbox_0.8.107.0_x64__cw5n1h2txyewy",
+    "list_parse_error": null,
+    "executable_bytes": 156160,
+    "list_statuses_known": true,
+    "cli_error_type": null,
+    "version_stdout": "0.8.107.0",
+    "package_version": "0.8.107.0",
+    "executable_sha256": "247e092b5c5bd37820f225a7dd3ddf10ae37a67e2751a19c24b802c84769c441",
+    "executable_locator": "current-user Windows Sandbox AppX install location (path omitted)"
+  },
+  "thresholds": {
+    "overall": "BLOCKED",
+    "criteria": [
+      {
+        "criterion": "AMD64 or ARM64",
+        "pass": true,
+        "id": "architecture",
+        "actual": "x64-based PC; CIM=9"
+      },
+      {
+        "criterion": "true",
+        "pass": true,
+        "id": "firmware_virtualization",
+        "actual": true
+      },
+      {
+        "criterion": "State=Enabled",
+        "pass": false,
+        "id": "sandbox_feature",
+        "actual": "UNKNOWN"
+      },
+      {
+        "actual_mib": 32406.96,
+        "criterion": ">=4096 MiB",
+        "id": "host_total_ram",
+        "pass": true
+      },
+      {
+        "actual_mib": 16419.95,
+        "criterion": ">=4096 MiB",
+        "id": "host_available_ram",
+        "pass": true
+      },
+      {
+        "criterion": ">=2",
+        "pass": true,
+        "id": "physical_cores",
+        "actual": 16.0
+      },
+      {
+        "actual_mib": 333518.93,
+        "criterion": ">=1024 MiB",
+        "id": "C_free_space",
+        "pass": true
+      },
+      {
+        "actual_mib": 1329828.75,
+        "criterion": ">=1024 MiB",
+        "id": "G_free_space",
+        "pass": true
+      },
+      {
+        "criterion": "UserInteractive=true and elevated=false",
+        "pass": true,
+        "id": "interactive_non_elevated",
+        "actual": "UserInteractive=True; elevated=False; identity_matches_previous=True; token_integrity=Medium; token_matches_previous=True"
+      },
+      {
+        "criterion": "exit=0 and version matches AppX",
+        "pass": true,
+        "id": "wsb_version",
+        "actual": "exit=0; reported=0.8.107.0; package=0.8.107.0; executable_hash_pinned=True"
+      },
+      {
+        "criterion": "exit=0 and status parseable and no running environment",
+        "pass": true,
+        "id": "wsb_list_no_running",
+        "actual": "exit=0; environments=0; running=0; statuses_known=True"
+      }
+    ],
+    "passed": 10,
+    "total": 11
+  }
+}
