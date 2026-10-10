@@ -292,6 +292,13 @@ impl StdioLibraryChannel {
                 .map_err(|e| LibraryError::unavailable(&format!("stdin flush failed: {e}")))?;
         }
 
+        #[cfg(test)]
+        TEST_AFTER_STDIN_HOOK.with(|cell| {
+            if let Some(hook) = cell.borrow_mut().as_mut() {
+                hook(&req_id);
+            }
+        });
+
         let mut response_line = String::new();
         {
             let mut stdout = self.stdout.lock().map_err(|_| {
@@ -305,6 +312,13 @@ impl StdioLibraryChannel {
         if response_line.is_empty() {
             return Err(LibraryError::unavailable("Core stdout closed (EOF)"));
         }
+
+        #[cfg(test)]
+        TEST_RESPONSE_OBSERVER.with(|cell| {
+            if let Some(observer) = cell.borrow_mut().as_mut() {
+                observer(&req_id, response_line.trim_end());
+            }
+        });
 
         decode_response(response_line.trim_end())
     }
@@ -403,71 +417,34 @@ impl StdioLibraryChannel {
             request_id_gen: AtomicU64::new(1),
         })
     }
+}
 
-    /// Test-only round_trip seam (P04 AC2): executes identical logic to production
-    /// round_trip, but invokes `after_stdin_hook(req_id)` after releasing the stdin lock
-    /// and before acquiring the stdout lock.
-    ///
-    /// This enables deterministic choreography of stdin write ordering and stdout
-    /// read-lock acquisition ordering across concurrent callers with zero production code changes.
-    #[cfg(test)]
-    pub(crate) fn round_trip_with_phase_hook<F>(
-        &self,
-        command: &str,
-        payload: serde_json::Value,
-        after_stdin_hook: F,
-    ) -> Result<(serde_json::Value, String, String), LibraryError>
-    where
-        F: FnOnce(&str),
-    {
-        let req_id = format!(
-            "req-{}",
-            self.request_id_gen.fetch_add(1, Ordering::Relaxed)
-        );
-        let request = serde_json::json!({
-            "protocol": "new-manga.core",
-            "version": { "major": 1, "minor": 4 },
-            "request_id": req_id,
-            "command": command,
-            "payload": payload,
-        });
+#[cfg(test)]
+thread_local! {
+    static TEST_AFTER_STDIN_HOOK: std::cell::RefCell<Option<Box<dyn FnMut(&str)>>> =
+        std::cell::RefCell::new(None);
+    static TEST_RESPONSE_OBSERVER: std::cell::RefCell<Option<Box<dyn FnMut(&str, &str)>>> =
+        std::cell::RefCell::new(None);
+}
 
-        let mut line = request.to_string();
-        line.push('\n');
+#[cfg(test)]
+pub(crate) fn set_test_after_stdin_hook<F>(f: Option<F>)
+where
+    F: FnMut(&str) + 'static,
+{
+    TEST_AFTER_STDIN_HOOK.with(|cell| {
+        *cell.borrow_mut() = f.map(|func| Box::new(func) as Box<dyn FnMut(&str)>);
+    });
+}
 
-        {
-            let mut stdin = self.stdin.lock().map_err(|_| {
-                LibraryError::unavailable("Internal mutex poisoned (stdin)")
-            })?;
-            stdin
-                .write_all(line.as_bytes())
-                .map_err(|e| LibraryError::unavailable(&format!("stdin write failed: {e}")))?;
-            stdin
-                .flush()
-                .map_err(|e| LibraryError::unavailable(&format!("stdin flush failed: {e}")))?;
-        }
-
-        // Seam: stdin is written and flushed; invoke hook before acquiring stdout lock.
-        after_stdin_hook(&req_id);
-
-        let mut response_line = String::new();
-        {
-            let mut stdout = self.stdout.lock().map_err(|_| {
-                LibraryError::unavailable("Internal mutex poisoned (stdout)")
-            })?;
-            stdout
-                .read_line(&mut response_line)
-                .map_err(|e| LibraryError::unavailable(&format!("stdout read failed: {e}")))?;
-        }
-
-        if response_line.is_empty() {
-            return Err(LibraryError::unavailable("Core stdout closed (EOF)"));
-        }
-
-        let raw_line = response_line.trim_end().to_string();
-        let val = decode_response(&raw_line)?;
-        Ok((val, raw_line, req_id))
-    }
+#[cfg(test)]
+pub(crate) fn set_test_response_observer<F>(f: Option<F>)
+where
+    F: FnMut(&str, &str) + 'static,
+{
+    TEST_RESPONSE_OBSERVER.with(|cell| {
+        *cell.borrow_mut() = f.map(|func| Box::new(func) as Box<dyn FnMut(&str, &str)>);
+    });
 }
 
 pub fn wait_timeout_or_kill(
@@ -1194,39 +1171,77 @@ mod tests {
         let chan_alpha = Arc::clone(&channel);
         let payload_alpha = req_alpha.clone();
         let handle_alpha = std::thread::spawn(move || {
-            chan_alpha.round_trip_with_phase_hook(
-                "test.concurrent_alpha",
-                payload_alpha,
-                |_req_id| {
-                    alpha_wrote_tx.send(()).expect("failed to signal alpha stdin written");
-                    beta_read_done_rx.recv().expect("failed waiting for beta read phase");
-                },
-            )
+            let capture = Arc::new(std::sync::Mutex::new((String::new(), String::new())));
+            let capture_clone = Arc::clone(&capture);
+
+            set_test_after_stdin_hook(Some(move |_req_id: &str| {
+                alpha_wrote_tx
+                    .send(())
+                    .expect("failed to signal alpha stdin written");
+                beta_read_done_rx
+                    .recv()
+                    .expect("failed waiting for beta read phase");
+            }));
+
+            set_test_response_observer(Some(move |req_id: &str, raw: &str| {
+                let mut lock = capture_clone.lock().unwrap();
+                lock.0 = req_id.to_string();
+                lock.1 = raw.to_string();
+            }));
+
+            let res = chan_alpha.round_trip("test.concurrent_alpha", payload_alpha);
+
+            let (captured_id, captured_raw) = {
+                let lock = capture.lock().unwrap();
+                (lock.0.clone(), lock.1.clone())
+            };
+
+            set_test_after_stdin_hook::<fn(&str)>(None);
+            set_test_response_observer::<fn(&str, &str)>(None);
+
+            (res, captured_raw, captured_id)
         });
 
         let chan_beta = Arc::clone(&channel);
         let payload_beta = req_beta.clone();
         let handle_beta = std::thread::spawn(move || {
-            alpha_wrote_rx.recv().expect("failed waiting for alpha stdin write");
-            let res = chan_beta.round_trip_with_phase_hook(
-                "test.concurrent_beta",
-                payload_beta,
-                |_req_id| {
-                    // Beta proceeds directly to stdout lock acquisition without waiting
-                },
-            );
-            beta_read_done_tx.send(()).expect("failed to signal beta read done");
-            res
+            alpha_wrote_rx
+                .recv()
+                .expect("failed waiting for alpha stdin write");
+
+            let capture = Arc::new(std::sync::Mutex::new((String::new(), String::new())));
+            let capture_clone = Arc::clone(&capture);
+
+            set_test_response_observer(Some(move |req_id: &str, raw: &str| {
+                let mut lock = capture_clone.lock().unwrap();
+                lock.0 = req_id.to_string();
+                lock.1 = raw.to_string();
+            }));
+
+            let res = chan_beta.round_trip("test.concurrent_beta", payload_beta);
+            beta_read_done_tx
+                .send(())
+                .expect("failed to signal beta read done");
+
+            let (captured_id, captured_raw) = {
+                let lock = capture.lock().unwrap();
+                (lock.0.clone(), lock.1.clone())
+            };
+
+            set_test_response_observer::<fn(&str, &str)>(None);
+
+            (res, captured_raw, captured_id)
         });
 
-        let (val_alpha, raw_alpha, id_alpha) = handle_alpha
+        let (res_alpha, raw_alpha, id_alpha) = handle_alpha
             .join()
-            .expect("caller alpha thread panicked")
-            .expect("round_trip alpha failed");
-        let (val_beta, raw_beta, id_beta) = handle_beta
+            .expect("caller alpha thread panicked");
+        let (res_beta, raw_beta, id_beta) = handle_beta
             .join()
-            .expect("caller beta thread panicked")
-            .expect("round_trip beta failed");
+            .expect("caller beta thread panicked");
+
+        let val_alpha = res_alpha.expect("round_trip alpha failed");
+        let val_beta = res_beta.expect("round_trip beta failed");
 
         let alpha_owned = val_alpha.get("echo_caller").and_then(|v| v.as_str()) == Some("caller_alpha")
             && val_alpha.get("echo_token").and_then(|v| v.as_str()) == Some("token-AAA-111");
