@@ -1,0 +1,28 @@
+HEAD: 36fa990edca2e8d99edc9f7eb3e863ec1507f108
+Tree: 55699974cf6b2c84c5cbd1167b4bce90d4cee8ca
+Shell: PowerShell 7.6.6
+Python: C:\Python314\python.exe
+Command: python -B -X utf8 - (inline scope/status/findings/hash assertions)
+HEAD: 36fa990edca2e8d99edc9f7eb3e863ec1507f108
+Tree: 55699974cf6b2c84c5cbd1167b4bce90d4cee8ca
+Complete diff path count: 155
+Out-of-scope path count: 0
+doc/00_INDEX.md: status phrases 5/5; all=True
+doc/00_INDEX.md: hook/cache blocked state=True
+doc/REBASELINE_PLAN.md: status phrases 5/5; all=True
+doc/REBASELINE_PLAN.md: hook/cache blocked state=True
+doc/STATUS.md: status phrases 5/5; all=True
+doc/STATUS.md: hook/cache blocked state=True
+doc/tasks/P02.md: status phrases 5/5; all=True
+doc/tasks/P02.md: hook/cache blocked state=True
+verification/P02/codex-checkpoint-p02-smoke-prestart-r5-repair-delivery.md: status phrases 5/5; all=True
+verification/P02/codex-checkpoint-p02-smoke-prestart-r5-repair-delivery.md: hook/cache blocked state=True
+doc/00_INDEX.md: current pointer=True
+doc/REBASELINE_PLAN.md: current pointer=True
+doc/STATUS.md: current pointer=True
+R5-01: stale R4 current recovery pointer absent
+R5-02: D13 route/diff/scope records are committed
+R5-03: R2/R3 historical assertion logs named
+R5-04: Index hook/cache state present
+R5-05: R4 Git blob basis names commit
+R5 report Git blob SHA matches metadata: A55411B9C664BA5FF407E06CA8C608559B36FEF27CF59040DC21B3D58746297C

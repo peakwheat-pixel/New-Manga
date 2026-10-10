@@ -1,0 +1,11 @@
+HEAD: 36fa990edca2e8d99edc9f7eb3e863ec1507f108
+Tree: 55699974cf6b2c84c5cbd1167b4bce90d4cee8ca
+Shell: PowerShell 7.6.6
+Python: C:\Python314\python.exe
+Command: python -B -X utf8 - (inline scope/status/hash assertions)
+HEAD: 36fa990edca2e8d99edc9f7eb3e863ec1507f108
+Tree: 55699974cf6b2c84c5cbd1167b4bce90d4cee8ca
+Complete diff path count: 155
+Out-of-scope path count: 0
+doc/00_INDEX.md: statuses 6/6
+doc/REBASELINE_PLAN.md: statuses 5/6

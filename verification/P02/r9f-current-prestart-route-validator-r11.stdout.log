@@ -1,0 +1,14 @@
+HEAD: 36fa990edca2e8d99edc9f7eb3e863ec1507f108
+Tree: 55699974cf6b2c84c5cbd1167b4bce90d4cee8ca
+Shell: PowerShell 7.6.6
+Python: C:\Python314\python.exe
+Command: python -B -X utf8 verification/PROJECT-ROADMAP-20261008/verify_plan.py
+Planning snapshot base=e4242ecd419eb0eea098d2f63b40f709aa5caeea; live HEAD=36fa990edca2e8d99edc9f7eb3e863ec1507f108
+PASS: 196 unique nodes, all classifications and dependency references
+PASS: 105 new architecture/governance integration records are audit-base ancestors
+PASS: every registered P Task state matches the Plan; unregistered P nodes stay proposed
+PASS: dated roadmap node set is intact; live states are validated from Plan/Task
+PASS: 21 unique planned nodes and roadmap graphs have no dependency cycles
+PASS: delivery/navigation local links resolve
+PASS: zero P01 production/code delta; P02 task-local E2E driver excluded; governance whitespace check
+Product tests/build/GUI: NOT_RUN (planning-only)

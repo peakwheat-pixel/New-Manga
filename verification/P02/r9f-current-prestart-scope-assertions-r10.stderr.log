@@ -1,0 +1,3 @@
+Traceback (most recent call last):
+  File "<stdin>", line 20, in <module>
+AssertionError: ('doc/REBASELINE_PLAN.md', ['hook/cache=BLOCKED / NOT_VERIFIED'])
