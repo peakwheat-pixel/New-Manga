@@ -1,0 +1,20 @@
+{
+  "captured_at": "2026-10-10T09:27:36+08:00",
+  "head": "d92c405304cb88712cb8777d8ec59618f4806df7",
+  "tree": "e49a8842f351edebaaacda60e1a6727aabf9996f",
+  "base": "1d5845e2b185179d7b683e5279f6520fc0882d97",
+  "checks": {
+    "route": {
+      "command": "C:\\Python314\\python.exe -B -X utf8 verification/PROJECT-ROADMAP-20261008/verify_plan.py",
+      "exit": 0,
+      "stdout_sha256": "a1888a01771548d4f04d6b51a962f3b6d253a040bd1a2d96c4943f15eb17d945",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "diffcheck": {
+      "command": "git diff 1d5845e2b185179d7b683e5279f6520fc0882d97 d92c405304cb88712cb8777d8ec59618f4806df7 --check",
+      "exit": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  }
+}
