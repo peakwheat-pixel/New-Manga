@@ -1,0 +1,14 @@
+# Checkpoint：P02 DSH Review 后 fresh immediate preflight start
+
+- Timestamp / Agent / Task：2026-10-10 08:44 +08:00 / Codex / P02。
+- TaskStatus / ExecutionState：P02=`in_progress / ACTIVE`；preflight slice=`ACTIVE / PRESTART_RECHECK`。
+- P02 implementation Owner=Antigravity；本 evidence/recovery slice Integrator=Codex；最近的非作者 Reviewer=DeepSeek Harness。
+- Live root：`G:\CODEX\New Manga`，branch=`main`，HEAD at start=`54a3977030f5a37aa2ffe98898dcc1f26048ddd1`，tree=`b074c586c07c92f03c89647c6d4de34e8d2c16fa`，common dir=`G:\CODEX\New Manga\.git`。
+- Candidate branch/worktree：`codex/P02-process-isolation` / `C:\Users\49745\.codex\worktrees\p02-process-isolation-plan\New Manga`，reviewed D16=`999e6adfc229698344c0bf9bfb6d636fe73fb7c`。Fixed scratch clone=`G:\CODEX\P02-scratch-build-source`，previously pinned HEAD=`7ce3c40cd308e7093929bd5f53abc4f8a6c4ef7a`。
+- Root protection at main D18：frozen root manifest=`203/203 MATCH`；missing/extra/mismatch/staged=`0/0/0/0`；digest=`3a54fa978bf228bfae366a4c4de35b90e4fab609447d3370ed81370299da10e2`；base..main=187 paths；dirty overlap=0。Original user/Agent root entries remain protected.
+- Review gate：R5 follow-up Review=`APPROVED` on D16; P0/P1/P2/P3=`0/0/0/3`, open=3; R5-01..05 closed; Codex disposition for R5F-01/02=`false_positive`, R5F-03=`deferred_non_blocking`. See [integration checkpoint](codex-checkpoint-p02-smoke-prestart-r5-followup-integration.md).
+- Fresh check already performed：`@oai/sky` read-only inventory returned app_count=40, window_count=4, Windows Sandbox app_count=0, Sandbox window_count=0. No unrelated app names or window titles were persisted.
+- Not yet refreshed in this preflight：host/token identity, Windows Sandbox feature state, WSB executable/version/list, host CPU/RAM/disk thresholds, canonical XML/blob/EOL pins, scratch clone HEAD/tree/private Git/remotes/alternates/clean state, input/source pins, hardlink counts, and R2 HostFolder compare/recheck. Prior captures predate the approved DSH Review and remain historical, not current PASS.
+- Product gate remains unchanged：`wsb start=NOT_RUN`，Smoke=`NOT_RUN`，complete immediate preflight=`ACTIVE`，Build Gate=`BLOCKED`，build=`NOT_AUTHORIZED / NOT_RUN`，hook/cache=`BLOCKED / NOT_VERIFIED`，AC1–AC7=`BLOCKED / NOT_RUN`，Hard Build Barrier=`EFFECTIVE`。
+- Next exact action：run fresh host/WSB/resource/token measurements from the live user PowerShell session and the read-only R2 HostFolder recheck from the canonical-LF candidate worktree; record sanitized evidence and command exits. Any unknown, error, mismatch, or failed threshold blocks Sandbox start. Only if every frozen immediate gate passes may the single admitted `wsb start` be attempted; then bind the unique Sandbox window and capture the required screenshot before any guest command.
+- Resume safety：no Sandbox or guest operation has started in this slice. Recheck root/candidate HEADs and the 203-entry dirty manifest before continuing; do not overwrite or stage the original root entries.
