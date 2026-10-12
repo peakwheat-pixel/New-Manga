@@ -267,8 +267,13 @@ function ObserveProcesses($Record, [Nullable[int]]$ChildPid = $null) {
     } catch { $script:ProcessClosureBlocked=$true; throw }
 }
 function InvokeChild([string]$Executable, [string]$Cwd, [string[]]$Argv, [int[]]$AllowedExit = @(0)) {
-    Require (-not $ProcessClosureBlocked) 'Process closure already blocked; no child may start.'
+    $record = $null
+    $process = $null
+    $stdout = $null
+    $stderr = $null
+    $succeeded = $false
     try {
+        Require (-not $ProcessClosureBlocked) 'Process closure already blocked; no child may start.'
         Require ($Executable -ceq $Git -or $Executable -ceq $Pwsh) 'Unlisted executable.'
         Require ($Cwd -ceq $Root -or ($Executable -ceq $Git -and $Cwd -ceq $Owner)) 'Unlisted child CWD.'
         $record = [ordered]@{ executable = $Executable; cwd = $Cwd; argv = @($Argv); pid = $null; startedUtc = [DateTime]::UtcNow.ToString('o'); finishedUtc = $null; stdout = $null; stderr = $null; exit = $null; error = $null; lifecycle='NOT_STARTED'; outputCaptureState='NOT_STARTED'; observations = [Collections.Generic.List[object]]::new(); removedGitEnvironment = @() }
@@ -292,44 +297,49 @@ function InvokeChild([string]$Executable, [string]$Cwd, [string[]]$Argv, [int[]]
         $start.Environment['GIT_OPTIONAL_LOCKS'] = '0'; $start.Environment['GIT_TERMINAL_PROMPT'] = '0'
         $process = [Diagnostics.Process]::new(); $process.StartInfo = $start
         $stdout = [IO.MemoryStream]::new(); $stderr = [IO.MemoryStream]::new()
-        try {
-            ObserveProcesses $record $null
-            Require ($process.Start()) 'Child failed to start.'
-            $record.pid = $process.Id; $KnownChildren[$process.Id]=$Executable
-            $record.lifecycle='RUNNING'; $record.outputCaptureState='PARTIAL_UNCLOSED'
-            $outTask = $process.StandardOutput.BaseStream.CopyToAsync($stdout)
-            $errTask = $process.StandardError.BaseStream.CopyToAsync($stderr)
-            do { ObserveProcesses $record $process.Id } while (-not $process.WaitForExit(10))
-            ObserveProcesses $record $process.Id
-            $record.lifecycle='EXITED'; $record.exit=$process.ExitCode
-            if (-not [Threading.Tasks.Task]::WaitAll([Threading.Tasks.Task[]]@($outTask,$errTask),5000)) {
-                $script:ProcessClosureBlocked=$true
-                throw 'Unclosed stdout/stderr pipe or unexpected surviving descendant.'
-            }
-            $record.exit = $process.ExitCode
-            $outBytes = $stdout.ToArray(); $errBytes = $stderr.ToArray()
-            $record.stdout = ByteEvidence $outBytes; $record.stderr = ByteEvidence $errBytes
-            $record.outputCaptureState='COMPLETE'
-            Require ($AllowedExit -contains $record.exit) "Child exit $($record.exit): $Executable"
-            if ($Executable -ceq $Git) { Require ($errBytes.Length -eq 0) 'Unexpected Git stderr.' }
-            return [ordered]@{ record = $record; bytes = $outBytes; text = $Utf8.GetString($outBytes) }
-        } catch {
-            $script:ProcessClosureBlocked = $true
-            $record.error = ExceptionEvidence $_
-            if ($null -ne $stdout) { $record.stdout = ByteEvidence ($stdout.ToArray()) }
-            if ($null -ne $stderr) { $record.stderr = ByteEvidence ($stderr.ToArray()) }
-            if ($record.pid -and $process.HasExited) { $record.exit = $process.ExitCode }
-            throw
-        } finally {
-            $record.finishedUtc = [DateTime]::UtcNow.ToString('o')
-            # Live children are not killed or retried; their unknown state blocks all subsequent writes.
-            if ($null -ne $process) { $process.Dispose() }
-            if ($null -ne $stdout) { $stdout.Dispose() }
-            if ($null -ne $stderr) { $stderr.Dispose() }
+        ObserveProcesses $record $null
+        Require ($process.Start()) 'Child failed to start.'
+        $record.pid = $process.Id; $KnownChildren[$process.Id]=$Executable
+        $record.lifecycle='RUNNING'; $record.outputCaptureState='PARTIAL_UNCLOSED'
+        $outTask = $process.StandardOutput.BaseStream.CopyToAsync($stdout)
+        $errTask = $process.StandardError.BaseStream.CopyToAsync($stderr)
+        do { ObserveProcesses $record $process.Id } while (-not $process.WaitForExit(10))
+        ObserveProcesses $record $process.Id
+        $record.lifecycle='EXITED'; $record.exit=$process.ExitCode
+        if (-not [Threading.Tasks.Task]::WaitAll([Threading.Tasks.Task[]]@($outTask,$errTask),5000)) {
+            $script:ProcessClosureBlocked=$true
+            throw 'Unclosed stdout/stderr pipe or unexpected surviving descendant.'
         }
+        $record.exit = $process.ExitCode
+        $outBytes = $stdout.ToArray(); $errBytes = $stderr.ToArray()
+        $record.stdout = ByteEvidence $outBytes; $record.stderr = ByteEvidence $errBytes
+        $record.outputCaptureState='COMPLETE'
+        Require ($AllowedExit -contains $record.exit) "Child exit $($record.exit): $Executable"
+        if ($Executable -ceq $Git) { Require ($errBytes.Length -eq 0) 'Unexpected Git stderr.' }
+        $succeeded = $true
+        return [ordered]@{ record = $record; bytes = $outBytes; text = $Utf8.GetString($outBytes) }
     } catch {
         $script:ProcessClosureBlocked = $true
+        if ($null -ne $record) {
+            $record.error = ExceptionEvidence $_
+            if ($null -ne $stdout) { try { $record.stdout = ByteEvidence ($stdout.ToArray()) } catch { } }
+            if ($null -ne $stderr) { try { $record.stderr = ByteEvidence ($stderr.ToArray()) } catch { } }
+            if ($record.pid -and $null -ne $process) {
+                try { if ($process.HasExited) { $record.exit = $process.ExitCode } } catch { }
+            }
+        }
         throw
+    } finally {
+        if (-not $succeeded) {
+            $script:ProcessClosureBlocked = $true
+        }
+        if ($null -ne $record) {
+            try { $record.finishedUtc = [DateTime]::UtcNow.ToString('o') } catch { }
+        }
+        # Live children are not killed or retried; their unknown state blocks all subsequent writes.
+        if ($null -ne $process) { try { $process.Dispose() } catch { } }
+        if ($null -ne $stdout) { try { $stdout.Dispose() } catch { } }
+        if ($null -ne $stderr) { try { $stderr.Dispose() } catch { } }
     }
 }
 function InvokeGit([string]$Cwd, [string[]]$GitArgv, [int[]]$AllowedExit = @(0)) {

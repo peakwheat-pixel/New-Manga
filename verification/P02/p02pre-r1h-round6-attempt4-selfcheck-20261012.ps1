@@ -24,7 +24,7 @@ $ast = [Management.Automation.Language.Parser]::ParseFile($executorPath, [ref]$t
 Assert (@($parseErrors).Count -eq 0) "Candidate executor has zero parse errors (actual: $(@($parseErrors).Count))"
 
 # 2. Extract pure helper function ASTs from candidate executor
-$requiredFunctions = @('Require', 'GetToolhelpDefinitions', 'SelectProcessRecords')
+$requiredFunctions = @('Require', 'GetToolhelpDefinitions', 'SelectProcessRecords', 'InvokeChild')
 $extractedAsts = @{}
 foreach ($name in $requiredFunctions) {
     $funcAst = $ast.Find({ $args[0] -is [Management.Automation.Language.FunctionDefinitionAst] -and $args[0].Name -eq $name }, $true)
@@ -196,6 +196,56 @@ try {
 }
 Assert $survivorFailedClosed "Surviving descendant of exited parent fails closed in prelaunch sample"
 
+# 7. In-memory and AST validation of InvokeChild fail-closed preparation paths
+$invokeChildAst = $extractedAsts['InvokeChild']
+Assert ($null -ne $invokeChildAst) "Candidate executor defines InvokeChild function AST"
+
+# 7.1 AST structure verification: entire body enclosed in try-catch-finally
+$topTry = $invokeChildAst.Find({ $args[0] -is [Management.Automation.Language.TryStatementAst] }, $true)
+Assert ($null -ne $topTry) "InvokeChild body is enclosed in a try statement"
+Assert ($topTry.CatchClauses.Count -gt 0) "InvokeChild has at least one catch clause"
+Assert ($topTry.CatchClauses[0].Extent.Text -match '\$script:ProcessClosureBlocked\s*=\s*\$true') "InvokeChild catch clause sets ProcessClosureBlocked"
+
+# 7.2 In-memory execution verification of preparation failure paths
+$script:ProcessClosureBlocked = $false
+$script:Root = 'G:\CODEX\New Manga'
+$script:Owner = 'C:\Users\49745\.codex\worktrees\p02pre-r1h-codex'
+$script:Git = 'C:\Program Files\Git\cmd\git.exe'
+$script:Pwsh = 'C:\Program Files\PowerShell\7\pwsh.exe'
+$script:Evidence = [ordered]@{ processes = [Collections.Generic.List[object]]::new() }
+
+# Test 7.2.1: Unlisted executable preparation failure sets ProcessClosureBlocked before escaping
+$unlistedExeThrew = $false
+try {
+    $null = InvokeChild 'unlisted_binary.exe' $Root @()
+} catch {
+    $unlistedExeThrew = $_.Exception.Message -match 'Unlisted executable'
+}
+Assert $unlistedExeThrew "InvokeChild throws on unlisted executable"
+Assert ($script:ProcessClosureBlocked -eq $true) "InvokeChild sets ProcessClosureBlocked on unlisted executable preparation failure"
+
+# Test 7.2.2: Already blocked check preserves ProcessClosureBlocked
+$alreadyBlockedThrew = $false
+try {
+    $null = InvokeChild $Git $Root @()
+} catch {
+    $alreadyBlockedThrew = $_.Exception.Message -match 'Process closure already blocked'
+}
+Assert $alreadyBlockedThrew "InvokeChild throws when process closure already blocked"
+Assert ($script:ProcessClosureBlocked -eq $true) "ProcessClosureBlocked remains true"
+
+# Test 7.2.3: Unlisted CWD preparation failure sets ProcessClosureBlocked before escaping
+$script:ProcessClosureBlocked = $false
+$unlistedCwdThrew = $false
+try {
+    $null = InvokeChild $Git 'unlisted_directory' @()
+} catch {
+    $unlistedCwdThrew = $_.Exception.Message -match 'Unlisted child CWD'
+}
+Assert $unlistedCwdThrew "InvokeChild throws on unlisted child CWD"
+Assert ($script:ProcessClosureBlocked -eq $true) "InvokeChild sets ProcessClosureBlocked on unlisted CWD preparation failure"
+$script:ProcessClosureBlocked = $false
+
 # Output structured summary
 $summary = [ordered]@{
     task = 'P02PRE-R1H-R6-A4'
@@ -205,6 +255,7 @@ $summary = [ordered]@{
     definitionsCheck = 'PASS'
     typeBuilderCheck = 'PASS'
     processSelectionCheck = 'PASS'
+    invokeChildFailClosedCheck = 'PASS'
     isolationConfirmed = 'In-memory AST helper validation only; no native invocation, live process enumeration, filesystem write, or persistent assembly.'
 }
 
