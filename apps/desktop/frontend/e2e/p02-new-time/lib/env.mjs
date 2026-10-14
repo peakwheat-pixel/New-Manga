@@ -15,17 +15,18 @@ import { existsSync, readdirSync, statSync } from "node:fs";
 import path from "node:path";
 
 export const TASK_ENV_ROOT = "G:/CODEX/New Manga.workspace/task-envs/P02-NEW-TIME-X6-AC1-AC7";
-export const RUN_ROOT = path.join(TASK_ENV_ROOT, "run-r1");
+export const RUN_ROOT = path.join(TASK_ENV_ROOT, "run-i1");
 export const PINNED_EXE =
   "G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-X6-BUILD-CARGO/apps/desktop/src-tauri/target/release/m2rc1-desktop.exe";
 export const PINNED_EXE_SHA256 =
   "92AC7B8EFB646FE77DF8245B13C9AF9314BEF415B2F0E007B1CDCEA729BC13FD";
 export const SOURCE_BASELINE_COMMIT = "49d2a2f9c56462f5602b00ad4b824c5381abb1ab";
-export const RUN_ID = "p02-newtime-ac-20261014-r1";
+export const RUN_ID = "p02-newtime-ac-20261014-i1";
 export const CDP_PORT = 9333;
 
 export const REPO_ROOT = path.resolve(import.meta.dirname, "../../../../../..");
 export const CANONICAL_ROOT = path.join(REPO_ROOT, "verification", "P02-NEW-TIME-X6-AC1-AC7");
+export const CANONICAL_RUNS_ROOT = path.join(CANONICAL_ROOT, "runs", RUN_ID);
 
 /**
  * Resolve scenario directory; if prior attempt directory exists and has contents,

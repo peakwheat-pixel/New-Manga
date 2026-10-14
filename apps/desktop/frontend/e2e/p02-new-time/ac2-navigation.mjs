@@ -10,10 +10,10 @@
  */
 
 import path from "node:path";
-import { RUN_ROOT, launchDirs, CDP_PORT, PINNED_EXE_SHA256, CANONICAL_ROOT, resolveScenarioRoot } from "./lib/env.mjs";
+import { RUN_ROOT, launchDirs, CDP_PORT, PINNED_EXE, PINNED_EXE_SHA256, SOURCE_BASELINE_COMMIT, CANONICAL_RUNS_ROOT, resolveScenarioRoot, envEvidenceManifest } from "./lib/env.mjs";
 import { launchApp, assertLaunchTargetsClean } from "./lib/app.mjs";
 import { evaluate, mouseClick, pressKey, rectOf, sleep, typeText } from "./lib/cdp.mjs";
-import { EvidenceStore } from "./lib/evidence.mjs";
+import { EvidenceStore, sha256File } from "./lib/evidence.mjs";
 
 const { scenario, root: scenarioRoot, attempt } = resolveScenarioRoot("ac2-navigation");
 const dirs = launchDirs(scenarioRoot);
@@ -119,7 +119,16 @@ try {
   const exit = await session.teardown();
   note("teardown", exit);
   store.writeJson("ac2-navigation.json", record);
-  store.copyToCanonical(path.join(CANONICAL_ROOT, scenario));
+  store.writeMetadata({
+    scenario_name: scenario,
+    command: `node apps/desktop/frontend/e2e/p02-new-time/ac2-navigation.mjs`,
+    env_manifest: envEvidenceManifest(session.env),
+    pinned_source_commit: SOURCE_BASELINE_COMMIT,
+    pinned_exe_sha256: PINNED_EXE_SHA256,
+    stdout_path: session.logPaths.stdoutPath,
+    stderr_path: session.logPaths.stderrPath,
+  });
+  store.copyToCanonical(path.join(CANONICAL_RUNS_ROOT, scenario));
   console.log(JSON.stringify(record.verdict, null, 2));
 }
 

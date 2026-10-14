@@ -8,7 +8,8 @@
  */
 
 import { createHash } from "node:crypto";
-import { mkdirSync, readdirSync, statSync, writeFileSync, copyFileSync } from "node:fs";
+import { mkdirSync, readdirSync, statSync, writeFileSync, copyFileSync, constants, readFileSync as readFileBytes } from "node:fs";
+import os from "node:os";
 import path from "node:path";
 import { RUN_ID, SOURCE_BASELINE_COMMIT, PINNED_EXE, PINNED_EXE_SHA256 } from "./env.mjs";
 
@@ -19,8 +20,6 @@ export function sha256Hex(data) {
 export function sha256File(filePath) {
   return sha256Hex(readFileBytes(filePath));
 }
-
-import { readFileSync as readFileBytes } from "node:fs";
 
 export class EvidenceStore {
   /** @param {string} baseDir directory for this scenario's raw evidence */
@@ -33,6 +32,13 @@ export class EvidenceStore {
       source_baseline_commit: SOURCE_BASELINE_COMMIT,
       pinned_exe: PINNED_EXE,
       pinned_exe_sha256: PINNED_EXE_SHA256,
+      host_os: {
+        platform: os.platform(),
+        type: os.type(),
+        release: os.release(),
+        version: os.version(),
+        arch: os.arch(),
+      },
       shell: `node ${process.version}`,
       cwd: process.cwd(),
       argv: process.argv,
@@ -64,7 +70,20 @@ export class EvidenceStore {
     };
   }
 
-  /** Copy this scenario's directory into the canonical verification dir. */
+  writeMetadata(extraMeta = {}) {
+    const meta = {
+      ...this.meta,
+      ...extraMeta,
+      completed_at: new Date().toISOString(),
+      node_exit_code: process.exitCode || 0,
+    };
+    return this.writeJson("execution-metadata.json", meta);
+  }
+
+  /**
+   * Copy this scenario's directory into the canonical verification dir.
+   * Uses constants.COPYFILE_EXCL (fail-closed, no-overwrite).
+   */
   copyToCanonical(canonicalRoot) {
     mkdirSync(canonicalRoot, { recursive: true });
     const copied = [];
@@ -77,7 +96,7 @@ export class EvidenceStore {
         } else {
           const target = path.join(canonicalRoot, relPath);
           mkdirSync(path.dirname(target), { recursive: true });
-          copyFileSync(abs, target);
+          copyFileSync(abs, target, constants.COPYFILE_EXCL);
           copied.push({ file: relPath, sha256: sha256File(target) });
         }
       }

@@ -1,0 +1,8 @@
+﻿{
+  "node_exit_code": 0,
+  "status": "PASS",
+  "command": "node apps/desktop/frontend/e2e/p02-new-time/ac6-contrast.mjs",
+  "scenario": "ac6-contrast",
+  "ended_at": "2026-10-14T23:22:11.2147628+08:00",
+  "started_at": "2026-10-14T23:22:07.5829194+08:00"
+}

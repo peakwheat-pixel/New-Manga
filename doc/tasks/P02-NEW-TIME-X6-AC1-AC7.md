@@ -3,7 +3,7 @@ id: P02-NEW-TIME-X6-AC1-AC7
 title: P02 新时点 AC1–AC7 当前版本验收
 kind: verification
 governance_version: 2
-status: ready
+status: ready_for_review
 approval: user_authorized_new_time_baseline_20261014
 suggested_owner: Antigravity
 owner: Antigravity
@@ -14,8 +14,8 @@ base_commit: 49d2a2f9c56462f5602b00ad4b824c5381abb1ab
 branch: agent/antigravity/P02-NEW-TIME-X6-AC1-AC7
 worktree: G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-X6-AC1-AC7-ANTIGRAVITY
 integration_commit: null
-owner_start_commit: 6935aa38855553bdd8f8415a0765cd874acadf14
-delivery_head: 8d938581db8c1b6c3b785abe59b3767e9976d911
+owner_start_commit: 42f67683ec8c4712235105f3400a39e32ae364d4
+delivery_head: 159614a2f46e0ca89eec3aef0091d31637fafd83
 reviewed_head: null
 review_decision: pending
 integration_target: agent/codex/P02-NEW-TIME-X6-POSTRUN-REVIEW
@@ -23,11 +23,11 @@ integration_status: not_started
 dispatch_state: PREFLIGHT_PASS
 blocked_by: []
 profile: ANTIGRAVITY_FALLBACK
-revisions: {implementation: 0, test: 2, evidence: 4}
+revisions: {implementation: 0, test: 3, evidence: 6}
 canonical_evidence_status: complete
 resource_closeout_status: ready_for_review
-evidence_dir: verification/P02-NEW-TIME-X6-AC1-AC7
-run_id: p02-newtime-ac-20261014-r1
+evidence_dir: verification/P02-NEW-TIME-X6-AC1-AC7/runs/p02-newtime-ac-20261014-i1
+run_id: p02-newtime-ac-20261014-i1
 ---
 
 # P02-NEW-TIME-X6-AC1-AC7：P02 新时点 AC1–AC7 当前版本验收
@@ -87,13 +87,13 @@ run_id: p02-newtime-ac-20261014-r1
 | 场景/AC | 计划命令或手工步骤 | 前提/环境 | 实际结果 | 证据 |
 |---|---|---|---|---|
 | Preflight / release | 校验 Task、依赖门、binary/sidecar hashes、write scope、Task env；运行 official `preflight-agent.py` 与 Owner probes | fallback worktree 已登记；Build convergence approved；run-r1 synthetic env 为空 | ZCode 原 Owner 的 official preflight r3 在 HEAD=`3d94add1b8cf63b70cbe760c1cd4f7719e5df228` PASS。Antigravity execution-probe r1 曾从 Codex 集成 worktree 运行，保留但不计作目标 worktree 证据；r2 在 Owner HEAD=`a5f173c2779507e14344f60e4b20d473c9ff830d` 返回 node v24.15.0、准确 HEAD 和 clean branch，3 命令均 exit 0。EXE 与冻结 sidecar manifest Hash 复核匹配，5,610 files / 1,296,373,783 bytes verifier PASS；Task `run-r1` 是空目录。Antigravity official preflight attempt r1 在 target HEAD=`3dec6dae` 因配置漏列 fallback CLI 而 FAIL，target 的 mandatory checks 全 PASS；失败输出保留。Corrected official preflight r2 在 target HEAD=`acf1fefd` overall=PASS、dispatch_allowed=true（13 checks；ZCode CLI 被 helper 识别为 fallback，但其此前执行权限仍受 ENV-01 阻断）。Final preflight r3 在 HEAD=`24f3084c69a92771d34f735f2d9a895fb59d9a02` 也 PASS，dispatch_allowed=true、0 dirty entries。Codex static harness review r1 发现两项启动/隔离顺序问题及 AC6 syntax error，分类为测试驱动 T；详见 `preflight/codex-harness-static-review-r1/findings.md`。尚未启动产品；Owner 必须先修复并静态校验全部 10 个模块，之后再运行 AC。记录本次 static evidence 后将重新跑 exact-head preflight，再 dispatch | `preflight/agent-preflight-r3/`、`preflight/antigravity-agent-preflight-r1/`、`preflight/antigravity-agent-preflight-r2/`、`preflight/antigravity-execution-probe-r2/`、`preflight/antigravity-sidecar-recheck-r1/`、`preflight/antigravity-availability-r1/`；命令/环境/exit 同目录 |
-| AC1 runtime identity | 启动固定 packaged exe；采集 WebView2 host/runtime identity、process/window identity、source/binary pins | 本机 Windows；isolated synthetic env；不重建或安装 | PASS：真实 WebView2 (Edg/155.0.4283.45)、m2rc1-desktop.exe (PID 55192) 与 sidecar/EXE 哈希一致，allowlist 15 命令已宣布 | verification/P02-NEW-TIME-X6-AC1-AC7/ac1-identity-a3/ |
-| AC2 navigation / operation | 在真实 Workbench 窗口执行鼠标/键盘导航、输入与按钮状态操作 | AC1 PASS；真实 WebView2 窗口 | PASS：真实鼠标/键盘操作 Console/Workbench，页面 ID 输入与视口截图齐全 | verification/P02-NEW-TIME-X6-AC1-AC7/ac2-navigation/ |
-| AC3 debounce / stale response | 使用真实页面和单调时钟驱动连续输入、page ID 切换及延迟响应观察 | AC1 PASS；不以 fake timer 作为产品行为证据 | PASS：真实页面单调时钟观测静默期 302.6ms，无中间前缀读取，300ms 窗口内切换取消旧 timer，迟到响应防覆盖守卫生效 | verification/P02-NEW-TIME-X6-AC1-AC7/ac3-debounce-a6/ |
-| AC4 write/read freshness | 对 retype、undo、restore 分别记录 write return 与 list_regions readback；清晰标注 IPC/Core mock 边界 | AC1 PASS；synthetic state；三项均执行，否则 BLOCKED | PASS：retype (0.1ms, DOM rev 2, sfx)、undo (0.1ms, DOM rev 3, speech)、restore (0.1ms, DOM rev 5, speech, 8 revisions) 全部通过立即读回 | verification/P02-NEW-TIME-X6-AC1-AC7/ac4-write-refresh-a2/ |
-| AC5 keyboard / focus | 真实按键序列与 focus/active element 采集 | AC1 PASS；真实窗口输入 | PASS：Tab 遍历、Enter 激活、Shift+Tab、键盘输入、Space/禁用状态观察；Escape 对话框因真实空数据记 NOT_RUN (Finding P-04) | verification/P02-NEW-TIME-X6-AC1-AC7/ac5-keyboard-a2/ |
-| AC6 computed colors | 真实 DOM computed styles、token mapping、实际颜色/背景、WCAG ratio 和阈值 | AC1 PASS；颜色可采集；不得改样式 | PASS (with findings)：11 项 DOM 样本完成对比度计算；app root text 4.19:1 记 P-01；F Token 未接入记 P-02；无浅色模式记 NOT_APPLICABLE | verification/P02-NEW-TIME-X6-AC1-AC7/ac6-contrast/ |
-| AC7 adjudication | 固定证据 manifest；DSH bounded read-only Review；Codex official result/convergence、集成及验证 | AC1–AC6 状态齐全；最终 delivery head 固定 | PASS：汇总结算 AC1–AC6 证据与 findings，更新 Task 交付状态与指针，准备交接 DSH Review | verification/P02-NEW-TIME-X6-AC1-AC7/findings.md、verification/P02-NEW-TIME-X6-AC1-AC7/rollup-summary.json |
+| AC1 runtime identity | 启动固定 packaged exe；采集 WebView2 host/runtime identity、process/window identity、source/binary pins | 本机 Windows；isolated synthetic env；不重建或安装 | PASS：真实 WebView2 (Edg/155.0.4283.45)、m2rc1-desktop.exe (PID 14384) 与 sidecar/EXE 哈希一致，Node exit 0 | verification/P02-NEW-TIME-X6-AC1-AC7/runs/p02-newtime-ac-20261014-i1/ac1-identity/ |
+| AC2 navigation / operation | 在真实 Workbench 窗口执行鼠标/键盘导航、输入与按钮状态操作 | AC1 PASS；真实 WebView2 窗口 | PASS：真实鼠标/键盘操作 Console/Workbench，页面 ID 输入与视口截图齐全，Node exit 0 | verification/P02-NEW-TIME-X6-AC1-AC7/runs/p02-newtime-ac-20261014-i1/ac2-navigation/ |
+| AC3 debounce / stale response | 使用真实页面和单调时钟驱动连续输入、page ID 切换及延迟响应观察 | AC1 PASS；不以 fake timer 作为产品行为证据 | PASS：DOM input 事件抓取 performance.now()，首个真实 invoke 观测静默期 311ms（>=300ms），无中间前缀读取，防迟到/取消守卫生效，Node exit 0 | verification/P02-NEW-TIME-X6-AC1-AC7/runs/p02-newtime-ac-20261014-i1/ac3-debounce-a3/ |
+| AC4 write/read freshness | 对 retype、undo、restore 分别记录 write return 与 list_regions readback；清晰标注 IPC/Core mock 边界 | AC1 PASS；synthetic state；三项均执行，否则 BLOCKED | PASS：retype (0ms, DOM rev 2, sfx)、undo (0ms, DOM rev 3, speech)、restore (0ms, DOM rev 5, speech, 8 revisions) 全部通过立即读回，Node exit 0 | verification/P02-NEW-TIME-X6-AC1-AC7/runs/p02-newtime-ac-20261014-i1/ac4-write-refresh-a3/ |
+| AC5 keyboard / focus | 真实按键序列与 focus/active element 采集 | AC1 PASS；真实窗口输入 | PASS：Tab 遍历、Enter 激活（无 .click 回退）、Space 激活聚焦控件改标；确认对话框弹出并记录 Escape 按键（发现产品缺口 P-01），Node exit 0 | verification/P02-NEW-TIME-X6-AC1-AC7/runs/p02-newtime-ac-20261014-i1/ac5-keyboard-a2/ |
+| AC6 computed colors | 真实 DOM computed styles、token mapping、实际颜色/背景、WCAG ratio 和阈值 | AC1 PASS；颜色可采集；不得改样式 | PASS (with findings)：9 项真实样本合格（0 FAIL）；1 项输入框底色不可验证标为 NOT_VERIFIABLE；F Token 未接入记 P-02；无浅色模式记 P-03，Node exit 0 | verification/P02-NEW-TIME-X6-AC1-AC7/runs/p02-newtime-ac-20261014-i1/ac6-contrast/ |
+| AC7 adjudication | 固定证据 manifest；DSH bounded read-only Review；Codex official result/convergence、集成及验证 | AC1–AC6 状态齐全；最终 delivery head 固定 | PASS：汇总结算 AC1–AC6 证据与 findings，更新 Task 交付状态与指针，准备交接 DSH Review | verification/P02-NEW-TIME-X6-AC1-AC7/runs/p02-newtime-ac-20261014-i1/findings.md、verification/P02-NEW-TIME-X6-AC1-AC7/runs/p02-newtime-ac-20261014-i1/rollup-summary.json |
 
 以上 `PLANNED` / `NOT_RUN` 不是 PASS；Task 建立与 preflight 不会预先判定产品行为。
 
@@ -107,8 +107,12 @@ run_id: p02-newtime-ac-20261014-r1
 
 ## 交付与运行记录
 
-- 2026-10-14 ZCode attempt r1（RunId=`p02-newtime-ac-20261014-r1`）：AC1–AC6 未执行，session-only status=`BLOCKED`；AC7=`NOT_RUN`；ENV-01 与原 Handoff 保留。此记录不构成产品结果；Antigravity fallback 当前待 preflight。
-- Owner Handoff：`doc/handoffs/P02-NEW-TIME-X6-AC1-AC7-zcode-r1-20261014.md`（本文件同 commit；如 git 写通道不可用则未提交，见 Handoff dirty-state 说明）。
+- 2026-10-14 ZCode attempt r1（RunId=`p02-newtime-ac-20261014-r1`）：AC1–AC6 未执行，session-only status=`BLOCKED`；AC7=`NOT_RUN`；ENV-01 与原 Handoff 保留。
+- 2026-10-14 Antigravity attempt r1（RunId=`p02-newtime-ac-20261014-r1`）：交付 head `8d938581db8c1b6c3b785abe59b3767e9976d911`，完成初次全量 AC1–AC7 运行，提交 Handoff `doc/handoffs/P02-NEW-TIME-X6-AC1-AC7-antigravity-r1-20261014.md`。
+- 2026-10-14 DeepSeek Harness 独立 Review r2：报告位于 `verification/P02-NEW-TIME-X6-AC1-AC7/review/dsh-r2/review-report.md`，提出 R-01~R-04 共 4 项 findings，判定 NEED_REPAIR。
+- 2026-10-14 Codex 裁决与 I1 合同：在 `verification/P02-NEW-TIME-X6-AC1-AC7/review/dsh-r2/adjudication-r1/bounded-repair-contract-i1.md` 建立官方 I1 修复范围；固定起始恢复点为 `42f67683ec8c4712235105f3400a39e32ae364d4`。
+- 2026-10-14 Antigravity official I1 continuation（RunId=`p02-newtime-ac-20261014-i1`）：从 `42f67683` 恢复，严格遵守 write boundary（无产品源码改动、无依赖改动、无覆盖写入）；在全新 Task env `run-i1` 下完成 AC1–AC6 场景执行，所有有效场景外部 exit code 均为 0；完整闭合 R-01（真实 Space 激活与 Escape 捕获）、R-02（真实文本样本与自底向上 alpha 合成）、R-03（单调时钟静默期 311ms 且无提前/中间调用）、R-04（读回间隙 0ms 且历史刷新 8 revisions）；规范证据落盘于 `runs/p02-newtime-ac-20261014-i1/`；生成汇总摘要 `rollup-summary.json` 与调查报告 `findings.md`。
+- Owner Handoff：`doc/handoffs/P02-NEW-TIME-X6-AC1-AC7-antigravity-i1-20261014.md`。
 - 独立 Review：尚无；Reviewer=DeepSeek Harness，待 AC1–AC6 真实证据存在后再执行。
 - Codex adjudication / integration / post-integration check：尚无。
-- 当前状态：`ready / PREFLIGHT_PENDING`；ZCode 原会话结果与 ENV-01 已保留在其 Handoff/verification；当前 Owner 已依故障转移改为 Antigravity，等 exact-head PREFLIGHT 后启动真实 AC。产品 AC 仍未执行，AC6 驱动 syntax error 是待修 T finding。
+- 当前状态：`ready_for_review`；演进线为 `8d938581`（r1 delivery）-> `42f67683`（I1 base）-> 当前 delivery head；已完整闭合 R-01~R-04，准备提交固定 delivery commit 并交由 DeepSeek Harness 独立 Review。

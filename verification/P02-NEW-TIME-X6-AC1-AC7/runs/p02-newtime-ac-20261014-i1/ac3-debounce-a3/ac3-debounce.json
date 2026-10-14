@@ -1,0 +1,344 @@
+{
+  "steps": [
+    {
+      "step": "clean-targets-observed",
+      "at": "2026-10-14T15:10:15.855Z",
+      "roaming": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-i1\\ac3-debounce-a3\\appdata-roaming",
+        "state": "ABSENT"
+      },
+      "localAppData": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-i1\\ac3-debounce-a3\\appdata-local",
+        "state": "ABSENT"
+      },
+      "tmp": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-i1\\ac3-debounce-a3\\tmp",
+        "state": "ABSENT"
+      },
+      "dataRoot": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-i1\\ac3-debounce-a3\\data-root",
+        "state": "ABSENT"
+      },
+      "derived": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-i1\\ac3-debounce-a3\\scope\\derived",
+        "state": "ABSENT"
+      },
+      "managed": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-i1\\ac3-debounce-a3\\scope\\managed",
+        "state": "ABSENT"
+      },
+      "catalogDb": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-i1\\ac3-debounce-a3\\catalog\\catalog.sqlite",
+        "state": "ABSENT"
+      },
+      "webview2Udd": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-i1\\ac3-debounce-a3\\webview2-udd",
+        "state": "ABSENT"
+      },
+      "logs": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-i1\\ac3-debounce-a3\\logs",
+        "state": "ABSENT"
+      }
+    },
+    {
+      "step": "launched",
+      "at": "2026-10-14T15:10:16.711Z",
+      "pid": 52648
+    },
+    {
+      "step": "observer-installed",
+      "at": "2026-10-14T15:10:16.714Z",
+      "state": "ACTIVE",
+      "mock": "none (passthrough)"
+    },
+    {
+      "step": "phaseA-typing",
+      "at": "2026-10-14T15:10:17.653Z",
+      "text": "syn-page-a",
+      "pagePerfStart": 203,
+      "pagePerfEnd": 1127.2999999998137,
+      "domInputEventsCount": 10,
+      "lastDomInputPerfNow": 1034.3999999994412
+    },
+    {
+      "step": "phaseA-invoke-log",
+      "at": "2026-10-14T15:10:19.256Z",
+      "resolveCalls": [
+        {
+          "command": "resolve_page_resource",
+          "args": {
+            "pageId": "syn-page-a"
+          },
+          "pagePerfNow": 1345.3999999994412,
+          "pageEpoch": 1791990617872,
+          "kind": "invoke"
+        }
+      ],
+      "regionCalls": [
+        {
+          "command": "list_regions",
+          "args": {
+            "pageId": "syn-page-a"
+          },
+          "pagePerfNow": 1345.7999999998137,
+          "pageEpoch": 1791990617872,
+          "kind": "invoke"
+        }
+      ],
+      "fullLogTail": [
+        {
+          "command": "library_list_books",
+          "pagePerfNow": 197.79999999981374,
+          "pageEpoch": 1791990616724,
+          "kind": "invoke"
+        },
+        {
+          "kind": "settled",
+          "command": "library_list_books",
+          "status": "resolved",
+          "pagePerfNow": 218,
+          "pageEpoch": 1791990616745
+        },
+        {
+          "command": "resolve_page_resource",
+          "args": {
+            "pageId": "syn-page-a"
+          },
+          "pagePerfNow": 1345.3999999994412,
+          "pageEpoch": 1791990617872,
+          "kind": "invoke"
+        },
+        {
+          "command": "list_regions",
+          "args": {
+            "pageId": "syn-page-a"
+          },
+          "pagePerfNow": 1345.7999999998137,
+          "pageEpoch": 1791990617872,
+          "kind": "invoke"
+        },
+        {
+          "kind": "settled",
+          "command": "resolve_page_resource",
+          "status": "rejected",
+          "error": "PAGE_NOT_FOUND",
+          "pagePerfNow": 1348,
+          "pageEpoch": 1791990617875
+        },
+        {
+          "kind": "settled",
+          "command": "list_regions",
+          "status": "resolved",
+          "pagePerfNow": 1348,
+          "pageEpoch": 1791990617875
+        }
+      ]
+    },
+    {
+      "step": "phaseA-screenshot",
+      "at": "2026-10-14T15:10:19.315Z",
+      "file": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-i1\\ac3-debounce-a3\\logs\\ac3-phaseA.png",
+      "bytes": 27068,
+      "sha256": "02CFAC19592547F10ABF36DB6916CD033B16159A5BFD9C2469F1AC105A00C5AC"
+    },
+    {
+      "step": "phaseB-mocks-installed",
+      "at": "2026-10-14T15:10:19.316Z",
+      "commands": [
+        "resolve_page_resource",
+        "list_regions"
+      ],
+      "layer": "MOCK_IPC at invoke boundary"
+    },
+    {
+      "step": "phaseB1-typing",
+      "at": "2026-10-14T15:10:19.493Z",
+      "first": "syn-stale-old",
+      "then": "syn-stale-new",
+      "pagePerfStart": 2795,
+      "pagePerfEnd": 2967.899999999441
+    },
+    {
+      "step": "phaseB1-result",
+      "at": "2026-10-14T15:10:21.309Z",
+      "resolveCalls": [
+        {
+          "command": "resolve_page_resource",
+          "args": {
+            "pageId": "syn-stale-new"
+          },
+          "pagePerfNow": 3273.7000000001863,
+          "pageEpoch": 1791990619800,
+          "kind": "invoke"
+        }
+      ],
+      "state": {
+        "label": "B1-after-switch",
+        "pageId": "syn-stale-new",
+        "resourceId": "page-original-syn-stale-new",
+        "resolveBusy": false,
+        "resolveError": null,
+        "toolbarContext": "page syn-stale-new",
+        "perfNow": 4783.5999999996275
+      }
+    },
+    {
+      "step": "phaseB2-typing",
+      "at": "2026-10-14T15:10:21.850Z",
+      "old": "syn-stale-old",
+      "new": "syn-stale-new",
+      "switchPerfNow": 5325.200000000186
+    },
+    {
+      "step": "phaseB2-result",
+      "at": "2026-10-14T15:10:23.279Z",
+      "resolveCalls": [
+        {
+          "command": "resolve_page_resource",
+          "args": {
+            "pageId": "syn-stale-old"
+          },
+          "pagePerfNow": 5106.0999999996275,
+          "pageEpoch": 1791990621633,
+          "kind": "invoke"
+        },
+        {
+          "command": "resolve_page_resource",
+          "args": {
+            "pageId": "syn-stale-new"
+          },
+          "pagePerfNow": 5639.899999999441,
+          "pageEpoch": 1791990622166,
+          "kind": "invoke"
+        }
+      ],
+      "settled": [
+        {
+          "kind": "settled",
+          "command": "resolve_page_resource",
+          "status": "resolved",
+          "pagePerfNow": 5685.700000000186,
+          "pageEpoch": 1791990622212
+        },
+        {
+          "kind": "settled",
+          "command": "resolve_page_resource",
+          "status": "rejected",
+          "error": "PAGE_RESOURCE_UNAVAILABLE:STALE_OLD_LATE",
+          "pagePerfNow": 6009.200000000186,
+          "pageEpoch": 1791990622536
+        }
+      ],
+      "mid": {
+        "label": "B2-mid",
+        "pageId": "syn-stale-new",
+        "resourceId": "page-original-syn-stale-new",
+        "resolveBusy": false,
+        "resolveError": null,
+        "toolbarContext": "page syn-stale-new",
+        "perfNow": 6041
+      },
+      "end": {
+        "label": "B2-end",
+        "pageId": "syn-stale-new",
+        "resourceId": "page-original-syn-stale-new",
+        "resolveBusy": false,
+        "resolveError": null,
+        "toolbarContext": "page syn-stale-new",
+        "perfNow": 6753.299999999814
+      }
+    },
+    {
+      "step": "phaseB-screenshot",
+      "at": "2026-10-14T15:10:23.336Z",
+      "file": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-i1\\ac3-debounce-a3\\logs\\ac3-phaseB.png",
+      "bytes": 26583,
+      "sha256": "828B83A73999881F1921B084F5512D42B36708D523C1D5A215A1C02125EFBFE0"
+    },
+    {
+      "step": "teardown",
+      "at": "2026-10-14T15:10:24.546Z",
+      "exited": true,
+      "code": null,
+      "signal": "SIGTERM"
+    }
+  ],
+  "phaseA": {
+    "layer": "REAL_IPC (observer passthrough)",
+    "typed_text": "syn-page-a",
+    "resolve_page_resource_calls": 1,
+    "resolve_args": [
+      {
+        "pageId": "syn-page-a"
+      }
+    ],
+    "list_regions_calls": 1,
+    "regions_args": [
+      {
+        "pageId": "syn-page-a"
+      }
+    ],
+    "first_resolve_perf_now": 1345.3999999994412,
+    "first_regions_perf_now": 1345.7999999998137,
+    "last_dom_input_perf_now": 1034.3999999994412,
+    "typing_end_perf_now": 1127.2999999998137,
+    "quiet_period_observed_ms": 311,
+    "quiet_period_monotonic_verified": true
+  },
+  "phaseB1": {
+    "layer": "MOCK_IPC (resolve/list mocked; React effect chain real)",
+    "resolve_calls": [
+      {
+        "args": {
+          "pageId": "syn-stale-new"
+        },
+        "pagePerfNow": 3273.7000000001863
+      }
+    ],
+    "only_final_id_fired": true,
+    "resolved_resource_state": "page-original-syn-stale-new",
+    "stale_error_leaked": false
+  },
+  "phaseB2": {
+    "layer": "MOCK_IPC (delayed stale reply; guard logic real)",
+    "resolve_calls": [
+      {
+        "args": {
+          "pageId": "syn-stale-old"
+        },
+        "pagePerfNow": 5106.0999999996275
+      },
+      {
+        "args": {
+          "pageId": "syn-stale-new"
+        },
+        "pagePerfNow": 5639.899999999441
+      }
+    ],
+    "settled": [
+      {
+        "status": "resolved",
+        "pagePerfNow": 5685.700000000186
+      },
+      {
+        "status": "rejected",
+        "error": "PAGE_RESOURCE_UNAVAILABLE:STALE_OLD_LATE",
+        "pagePerfNow": 6009.200000000186
+      }
+    ],
+    "final_resource_state": "page-original-syn-stale-new",
+    "final_resolve_error": null,
+    "stale_reply_overwrote_current": false
+  },
+  "verdict": {
+    "ac": "AC3",
+    "quiet_period_final_id_only": true,
+    "no_intermediate_prefix_reads": true,
+    "dom_input_perf_now_captured": true,
+    "quiet_period_from_last_input_ms": 311,
+    "quiet_period_ge_300ms": true,
+    "switch_cancels_old_timer": true,
+    "stale_reply_guarded": true,
+    "clock": "page performance.now() monotonic from DOM input to invoke; no fake timers"
+  }
+}

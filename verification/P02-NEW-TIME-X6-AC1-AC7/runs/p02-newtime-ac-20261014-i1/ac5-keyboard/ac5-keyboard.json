@@ -1,0 +1,262 @@
+{
+  "steps": [
+    {
+      "step": "clean-targets-observed",
+      "at": "2026-10-14T15:16:08.254Z",
+      "roaming": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-i1\\ac5-keyboard\\appdata-roaming",
+        "state": "ABSENT"
+      },
+      "localAppData": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-i1\\ac5-keyboard\\appdata-local",
+        "state": "ABSENT"
+      },
+      "tmp": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-i1\\ac5-keyboard\\tmp",
+        "state": "ABSENT"
+      },
+      "dataRoot": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-i1\\ac5-keyboard\\data-root",
+        "state": "ABSENT"
+      },
+      "derived": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-i1\\ac5-keyboard\\scope\\derived",
+        "state": "ABSENT"
+      },
+      "managed": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-i1\\ac5-keyboard\\scope\\managed",
+        "state": "ABSENT"
+      },
+      "catalogDb": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-i1\\ac5-keyboard\\catalog\\catalog.sqlite",
+        "state": "ABSENT"
+      },
+      "webview2Udd": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-i1\\ac5-keyboard\\webview2-udd",
+        "state": "ABSENT"
+      },
+      "logs": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-i1\\ac5-keyboard\\logs",
+        "state": "ABSENT"
+      }
+    },
+    {
+      "step": "launched",
+      "at": "2026-10-14T15:16:09.094Z",
+      "pid": 42264
+    },
+    {
+      "step": "mocks-installed",
+      "at": "2026-10-14T15:16:09.518Z",
+      "mock_surface": "REAL_WEBVIEW_MOCK_IPC",
+      "mock_commands": [
+        "library_list_books",
+        "list_chapters",
+        "list_chapter_pages",
+        "resolve_page_resource",
+        "list_regions",
+        "list_region_revisions",
+        "set_region_type",
+        "restore_region_revision",
+        "settings_get",
+        "settings_update_section",
+        "core_ping"
+      ]
+    },
+    {
+      "step": "console-initial-focus",
+      "at": "2026-10-14T15:16:09.519Z",
+      "testid": null,
+      "tag": "BODY",
+      "text": "\n    ConsoleWorkbenchM2-RC2 resource cha",
+      "disabled": false,
+      "outline": "none",
+      "docHasFocus": true
+    },
+    {
+      "0": {
+        "testid": "nav-workbench",
+        "tag": "BUTTON",
+        "text": "Workbench",
+        "disabled": false,
+        "outline": "auto 1px",
+        "docHasFocus": true
+      },
+      "1": {
+        "testid": "library-refresh-btn",
+        "tag": "BUTTON",
+        "text": "刷新",
+        "disabled": false,
+        "outline": "auto 1px",
+        "docHasFocus": true
+      },
+      "2": {
+        "testid": "sfx-policy-select",
+        "tag": "SELECT",
+        "text": "跳过翻译 (skip)翻译 (translate)手动处理 (manual)",
+        "disabled": false,
+        "outline": "auto 1px",
+        "docHasFocus": true
+      },
+      "3": {
+        "testid": null,
+        "tag": "BODY",
+        "text": "\n    ConsoleWorkbenchM2-RC2 resource cha",
+        "disabled": false,
+        "outline": "none",
+        "docHasFocus": false
+      },
+      "4": {
+        "testid": "nav-workbench",
+        "tag": "BUTTON",
+        "text": "Workbench",
+        "disabled": false,
+        "outline": "auto 1px",
+        "docHasFocus": true
+      },
+      "5": {
+        "testid": "library-refresh-btn",
+        "tag": "BUTTON",
+        "text": "刷新",
+        "disabled": false,
+        "outline": "auto 1px",
+        "docHasFocus": true
+      },
+      "step": "console-tab-chain",
+      "at": "2026-10-14T15:16:10.451Z"
+    },
+    {
+      "step": "enter-activates-nav-workbench",
+      "at": "2026-10-14T15:16:11.273Z",
+      "focusBeforeEnter": {
+        "testid": "nav-workbench",
+        "tag": "BUTTON",
+        "text": "Workbench",
+        "disabled": false,
+        "outline": "auto 1px",
+        "docHasFocus": true
+      },
+      "workbenchVisible": true,
+      "keyDispatched": "Enter (rawKeyDown + char + keyUp; vk=13)"
+    },
+    {
+      "0": {
+        "testid": "page-id-input",
+        "tag": "INPUT",
+        "text": "",
+        "disabled": false,
+        "outline": "auto 1px",
+        "docHasFocus": true
+      },
+      "1": {
+        "testid": "book-tile-syn-book-ac5",
+        "tag": "BUTTON",
+        "text": "Synthetic Book(1)",
+        "disabled": false,
+        "outline": "auto 1px",
+        "docHasFocus": true
+      },
+      "2": {
+        "testid": "resource-id-input",
+        "tag": "INPUT",
+        "text": "",
+        "disabled": false,
+        "outline": "auto 1px",
+        "docHasFocus": true
+      },
+      "3": {
+        "testid": "resource-revision-input",
+        "tag": "INPUT",
+        "text": "",
+        "disabled": false,
+        "outline": "auto 1px",
+        "docHasFocus": true
+      },
+      "4": {
+        "testid": null,
+        "tag": "BODY",
+        "text": "\n    ConsoleWorkbenchno contextregions: ",
+        "disabled": false,
+        "outline": "none",
+        "docHasFocus": true
+      },
+      "5": {
+        "testid": "nav-console",
+        "tag": "BUTTON",
+        "text": "Console",
+        "disabled": false,
+        "outline": "auto 1px",
+        "docHasFocus": true
+      },
+      "6": {
+        "testid": "page-id-input",
+        "tag": "INPUT",
+        "text": "",
+        "disabled": false,
+        "outline": "auto 1px",
+        "docHasFocus": true
+      },
+      "7": {
+        "testid": "book-tile-syn-book-ac5",
+        "tag": "BUTTON",
+        "text": "Synthetic Book(1)",
+        "disabled": false,
+        "outline": "auto 1px",
+        "docHasFocus": true
+      },
+      "step": "workbench-tab-chain",
+      "at": "2026-10-14T15:16:12.515Z"
+    },
+    {
+      "step": "shift-tab-focus",
+      "at": "2026-10-14T15:16:12.825Z",
+      "testid": "book-tile-syn-book-ac5",
+      "tag": "BUTTON",
+      "text": "Synthetic Book(1)",
+      "disabled": false,
+      "outline": "auto 1px",
+      "docHasFocus": true
+    },
+    {
+      "0": "s",
+      "1": "y",
+      "2": "n",
+      "3": "-",
+      "4": "p",
+      "5": "a",
+      "6": "g",
+      "7": "e",
+      "8": "-",
+      "9": "a",
+      "10": "c",
+      "11": "5",
+      "step": "typed-page-id",
+      "at": "2026-10-14T15:16:14.253Z"
+    },
+    {
+      "step": "region-selected",
+      "at": "2026-10-14T15:16:14.657Z",
+      "testid": "viewer-stage",
+      "tag": "DIV",
+      "text": "RESOURCE_UNAVAILABLE",
+      "disabled": false,
+      "outline": "none",
+      "docHasFocus": true
+    },
+    {
+      "step": "teardown",
+      "at": "2026-10-14T15:16:16.188Z",
+      "exited": true,
+      "code": null,
+      "signal": "SIGTERM"
+    }
+  ],
+  "errors": [
+    "Error: element not found: [data-testid=\"inspector-revision-history\"]\n    at click (file:///G:/CODEX/New%20Manga.workspace/worktrees/P02-NEW-TIME-X6-AC1-AC7-ANTIGRAVITY/apps/desktop/frontend/e2e/p02-new-time/ac5-keyboard.mjs:201:17)\n    at async file:///G:/CODEX/New%20Manga.workspace/worktrees/P02-NEW-TIME-X6-AC1-AC7-ANTIGRAVITY/apps/desktop/frontend/e2e/p02-new-time/ac5-keyboard.mjs:404:3"
+  ],
+  "verdict": {
+    "ac": "AC5",
+    "status": "ERROR",
+    "error": "Error: element not found: [data-testid=\"inspector-revision-history\"]"
+  }
+}

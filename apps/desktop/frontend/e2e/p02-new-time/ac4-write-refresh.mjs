@@ -19,10 +19,10 @@
  */
 
 import path from "node:path";
-import { RUN_ROOT, launchDirs, CANONICAL_ROOT, resolveScenarioRoot } from "./lib/env.mjs";
+import { RUN_ROOT, launchDirs, CDP_PORT, PINNED_EXE, PINNED_EXE_SHA256, SOURCE_BASELINE_COMMIT, CANONICAL_RUNS_ROOT, resolveScenarioRoot, envEvidenceManifest } from "./lib/env.mjs";
 import { launchApp, assertLaunchTargetsClean } from "./lib/app.mjs";
 import { evaluate, mouseClick, rectOf, sleep, typeText } from "./lib/cdp.mjs";
-import { EvidenceStore } from "./lib/evidence.mjs";
+import { EvidenceStore, sha256File } from "./lib/evidence.mjs";
 
 const { scenario, root: scenarioRoot, attempt } = resolveScenarioRoot("ac4-write-refresh");
 const dirs = launchDirs(scenarioRoot);
@@ -150,8 +150,8 @@ async function installMocks() {
     const state = await evaluate(session.cdp, `(() => {
       if (typeof window.__p02TryHook === "function") window.__p02TryHook();
       return window.__p02InvokeWrapperState || "not-yet";
-    })()`, false);
-    const nav = await evaluate(session.cdp, `!!document.querySelector('[data-testid="nav-workbench"]')`, false);
+    })()`, false).catch(() => "not-yet");
+    const nav = await evaluate(session.cdp, `!!document.querySelector('[data-testid="nav-workbench"]')`, false).catch(() => false);
     if (state === "ACTIVE" && nav) return;
     await sleep(400);
   }
@@ -229,11 +229,18 @@ try {
   const input = await rectOf(session.cdp, '[data-testid="page-id-input"]');
   await mouseClick(session.cdp, input.cx, input.cy);
   await typeText(session.cdp, synth.pageId);
-  await sleep(1400); // 300ms region quiet period + mocked round trip
+
+  // Wait for the synthetic region frame to appear in the DOM
+  const frameSelector = `[data-testid="region-frame-${synth.regionId}"]`;
+  const frameDeadline = Date.now() + 15000;
+  while (Date.now() < frameDeadline) {
+    if (await evaluate(session.cdp, `!!document.querySelector(${JSON.stringify(frameSelector)})`, false)) break;
+    await sleep(300);
+  }
   note("page-loaded", await domState());
 
   // select the synthetic region (region frame rendered by the overlay)
-  await click(`[data-testid="region-frame-${synth.regionId}"]`);
+  await click(frameSelector);
   await sleep(400);
   note("region-selected", await domState());
 
@@ -344,6 +351,15 @@ try {
   const exit = await session.teardown();
   note("teardown", exit);
   store.writeJson("ac4-write-refresh.json", record);
-  store.copyToCanonical(path.join(CANONICAL_ROOT, scenario));
+  store.writeMetadata({
+    scenario_name: scenario,
+    command: `node apps/desktop/frontend/e2e/p02-new-time/ac4-write-refresh.mjs`,
+    env_manifest: envEvidenceManifest(session.env),
+    pinned_source_commit: SOURCE_BASELINE_COMMIT,
+    pinned_exe_sha256: PINNED_EXE_SHA256,
+    stdout_path: session.logPaths.stdoutPath,
+    stderr_path: session.logPaths.stderrPath,
+  });
+  store.copyToCanonical(path.join(CANONICAL_RUNS_ROOT, scenario));
   console.log(JSON.stringify(record.verdict, null, 2));
 }

@@ -19,7 +19,7 @@
  */
 
 import path from "node:path";
-import { RUN_ROOT, launchDirs, CANONICAL_ROOT, resolveScenarioRoot } from "./lib/env.mjs";
+import { RUN_ROOT, launchDirs, CDP_PORT, PINNED_EXE, PINNED_EXE_SHA256, SOURCE_BASELINE_COMMIT, CANONICAL_RUNS_ROOT, resolveScenarioRoot, envEvidenceManifest } from "./lib/env.mjs";
 import { launchApp, assertLaunchTargetsClean } from "./lib/app.mjs";
 import {
   evaluate,
@@ -29,7 +29,7 @@ import {
   sleep,
   typeText,
 } from "./lib/cdp.mjs";
-import { EvidenceStore } from "./lib/evidence.mjs";
+import { EvidenceStore, sha256File } from "./lib/evidence.mjs";
 
 const { scenario, root: scenarioRoot, attempt } = resolveScenarioRoot("ac3-debounce");
 const dirs = launchDirs(scenarioRoot);
@@ -63,18 +63,36 @@ async function installObserver() {
     }
   });
   await session.cdp.send("Page.addScriptToEvaluateOnNewDocument", { source: INVOKE_WRAPPER_SOURCE });
-  await session.cdp.send("Page.reload", { ignoreCache: true });
-  const deadline = Date.now() + 30000;
+  // Also evaluate in current document
+  await evaluate(session.cdp, INVOKE_WRAPPER_SOURCE, false).catch(() => {});
+
+  let state = await evaluate(session.cdp, `(() => {
+    if (typeof window.__p02TryHook === "function") window.__p02TryHook();
+    return window.__p02InvokeWrapperState || "not-yet";
+  })()`, false).catch(() => "error");
+
+  let nav = await evaluate(session.cdp, `!!document.querySelector('[data-testid="nav-workbench"]')`, false).catch(() => false);
+  if (state === "ACTIVE" && nav) return;
+
+  await session.cdp.send("Page.reload", { ignoreCache: true }).catch(() => {});
+
+  const deadline = Date.now() + 35000;
+  let lastDiag = null;
   while (Date.now() < deadline) {
-    const state = await evaluate(session.cdp, `(() => {
+    const diag = await evaluate(session.cdp, `(() => {
       if (typeof window.__p02TryHook === "function") window.__p02TryHook();
-      return window.__p02InvokeWrapperState || "not-yet";
-    })()`, false);
-    const nav = await evaluate(session.cdp, `!!document.querySelector('[data-testid="nav-workbench"]')`, false);
-    if (state === "ACTIVE" && nav) return;
+      return {
+        state: window.__p02InvokeWrapperState || "not-yet",
+        hasTauri: !!window.__TAURI__,
+        hasCore: !!(window.__TAURI__ && window.__TAURI__.core),
+        nav: !!document.querySelector('[data-testid="nav-workbench"]'),
+      };
+    })()`, false).catch((err) => ({ error: String(err) }));
+    lastDiag = diag;
+    if (diag && diag.state === "ACTIVE" && diag.nav) return;
     await sleep(400);
   }
-  throw new Error("observer wrapper never became ACTIVE");
+  throw new Error(`observer wrapper never became ACTIVE: lastDiag=${JSON.stringify(lastDiag)}`);
 }
 
 async function gotoWorkbench() {
@@ -124,11 +142,37 @@ try {
   await focusPageInput();
 
   // ---------- Phase A: real IPC quiet period --------------------------------
+  // Install DOM input event listener to capture performance.now() on the final input event
+  await evaluate(session.cdp, `(() => {
+    window.__p02InputHistory = [];
+    document.addEventListener("input", (e) => {
+      const testid = e.target?.getAttribute?.("data-testid") || e.target?.tagName;
+      window.__p02InputHistory.push({
+        testid,
+        value: e.target?.value || "",
+        pagePerfNow: performance.now(),
+      });
+    }, true);
+    return true;
+  })()`, false);
+
   session.nodeEvents.length = 0;
   const typingStart = await evaluate(session.cdp, "performance.now()", false);
   await typeText(session.cdp, "syn-page-a", 80); // 10 chars, ~80ms apart => well inside quiet period
   const typingEnd = await evaluate(session.cdp, "performance.now()", false);
-  note("phaseA-typing", { text: "syn-page-a", pagePerfStart: typingStart, pagePerfEnd: typingEnd });
+
+  // Extract DOM input events recorded in the page
+  const inputHistory = await evaluate(session.cdp, `(window.__p02InputHistory || [])`, false);
+  const lastInputEvent = inputHistory.filter((e) => e.testid === "page-id-input").pop() || inputHistory[inputHistory.length - 1];
+  const lastInputPerfNow = lastInputEvent ? lastInputEvent.pagePerfNow : null;
+
+  note("phaseA-typing", {
+    text: "syn-page-a",
+    pagePerfStart: typingStart,
+    pagePerfEnd: typingEnd,
+    domInputEventsCount: inputHistory.length,
+    lastDomInputPerfNow: lastInputPerfNow,
+  });
   await sleep(1600); // let the quiet period + real core round trip settle
 
   const logA = await invokeLog();
@@ -138,6 +182,11 @@ try {
 
   const firstResolveAfterTyping = resolveA.length ? resolveA[0].pagePerfNow : null;
   const firstRegionsAfterTyping = regionsA.length ? regionsA[0].pagePerfNow : null;
+  const quietPeriodMs =
+    firstResolveAfterTyping != null && lastInputPerfNow != null
+      ? Math.round((firstResolveAfterTyping - lastInputPerfNow) * 10) / 10
+      : null;
+
   record.phaseA = {
     layer: "REAL_IPC (observer passthrough)",
     typed_text: "syn-page-a",
@@ -147,11 +196,10 @@ try {
     regions_args: regionsA.map((c) => c.args),
     first_resolve_perf_now: firstResolveAfterTyping,
     first_regions_perf_now: firstRegionsAfterTyping,
+    last_dom_input_perf_now: lastInputPerfNow,
     typing_end_perf_now: typingEnd,
-    quiet_period_observed_ms:
-      firstResolveAfterTyping != null && typingEnd != null
-        ? Math.round((firstResolveAfterTyping - typingEnd) * 10) / 10
-        : null,
+    quiet_period_observed_ms: quietPeriodMs,
+    quiet_period_monotonic_verified: quietPeriodMs != null && quietPeriodMs >= 300,
   };
   const shot = await session.cdp.send("Page.captureScreenshot", { format: "png" });
   note("phaseA-screenshot", store.writeBinary("ac3-phaseA.png", Buffer.from(shot.data, "base64")));
@@ -238,9 +286,12 @@ try {
     ac: "AC3",
     quiet_period_final_id_only: record.phaseA.resolve_page_resource_calls === 1 && record.phaseA.list_regions_calls === 1,
     no_intermediate_prefix_reads: record.phaseA.resolve_args.every((a) => a.pageId === "syn-page-a"),
+    dom_input_perf_now_captured: record.phaseA.last_dom_input_perf_now != null,
+    quiet_period_from_last_input_ms: record.phaseA.quiet_period_observed_ms,
+    quiet_period_ge_300ms: record.phaseA.quiet_period_monotonic_verified === true,
     switch_cancels_old_timer: record.phaseB1.only_final_id_fired === true,
     stale_reply_guarded: record.phaseB2.stale_reply_overwrote_current === false,
-    clock: "page performance.now() monotonic; no fake timers",
+    clock: "page performance.now() monotonic from DOM input to invoke; no fake timers",
   };
 } catch (error) {
   record.errors = [String(error && error.stack ? error.stack : error)];
@@ -250,6 +301,15 @@ try {
   const exit = await session.teardown();
   note("teardown", exit);
   store.writeJson("ac3-debounce.json", record);
-  store.copyToCanonical(path.join(CANONICAL_ROOT, scenario));
+  store.writeMetadata({
+    scenario_name: scenario,
+    command: `node apps/desktop/frontend/e2e/p02-new-time/ac3-debounce.mjs`,
+    env_manifest: envEvidenceManifest(session.env),
+    pinned_source_commit: SOURCE_BASELINE_COMMIT,
+    pinned_exe_sha256: PINNED_EXE_SHA256,
+    stdout_path: session.logPaths.stdoutPath,
+    stderr_path: session.logPaths.stderrPath,
+  });
+  store.copyToCanonical(path.join(CANONICAL_RUNS_ROOT, scenario));
   console.log(JSON.stringify(record.verdict, null, 2));
 }

@@ -12,9 +12,10 @@
  *  - the mock surface of this session: NONE (full real IPC).
  */
 
+import os from "node:os";
 import { readFileSync } from "node:fs";
 import path from "node:path";
-import { CDP_PORT, PINNED_EXE, launchDirs, RUN_ROOT, CANONICAL_ROOT, resolveScenarioRoot } from "./lib/env.mjs";
+import { CDP_PORT, PINNED_EXE, launchDirs, RUN_ROOT, CANONICAL_RUNS_ROOT, SOURCE_BASELINE_COMMIT, resolveScenarioRoot, envEvidenceManifest } from "./lib/env.mjs";
 import { launchApp, assertLaunchTargetsClean } from "./lib/app.mjs";
 import { CdpConnection, evaluate, listProcesses, sleep } from "./lib/cdp.mjs";
 import { EvidenceStore, sha256File, describeTree } from "./lib/evidence.mjs";
@@ -26,18 +27,29 @@ const dirs = launchDirs(scenarioRoot);
 const cleanObserved = assertLaunchTargetsClean(scenarioRoot);
 
 // 2. Instantiate EvidenceStore (creates logs directory)
+const hostOs = {
+  platform: os.platform(),
+  type: os.type(),
+  release: os.release(),
+  version: os.version(),
+  arch: os.arch(),
+  source_baseline_commit: SOURCE_BASELINE_COMMIT,
+};
+
 const store = new EvidenceStore(dirs.logs, {
   scenario: "AC1 runtime identity",
   cdp_port: CDP_PORT,
   scenario_root: scenarioRoot,
   scenario_attempt: attempt,
+  host_os: hostOs,
 });
 
-const record = { steps: [], errors: [] };
+const record = { steps: [], errors: [], host_os_api: hostOs };
 const note = (step, detail) => {
   record.steps.push({ step, at: new Date().toISOString(), ...detail });
 };
 note("clean-targets-observed", cleanObserved);
+note("host-os-via-node-os-api", hostOs);
 
 // --- pre-launch pins -------------------------------------------------------
 const exeHash = sha256File(PINNED_EXE);
@@ -164,6 +176,8 @@ try {
     ),
     webview2_runtime_identified: Boolean(browserVersion && /Edg\//.test(browserVersion["User-Agent"] || "")),
     process_identity_captured: census.matched.length > 0,
+    windows_os_version_captured: Boolean(hostOs.release && hostOs.version),
+    source_baseline_commit_pinned: SOURCE_BASELINE_COMMIT === "49d2a2f9c56462f5602b00ad4b824c5381abb1ab",
     pinned_binary_hash_matches: exeHash === store.meta.pinned_exe_sha256.toUpperCase(),
     mock_surface: "NONE — full real Tauri IPC + packaged sidecar Core",
   };
@@ -175,7 +189,16 @@ try {
   const exit = await session.teardown();
   note("teardown", exit);
   store.writeJson("ac1-identity.json", record);
-  store.copyToCanonical(path.join(CANONICAL_ROOT, scenario));
+  store.writeMetadata({
+    scenario_name: scenario,
+    command: `node apps/desktop/frontend/e2e/p02-new-time/ac1-identity.mjs`,
+    env_manifest: envEvidenceManifest(session.env),
+    pinned_source_commit: SOURCE_BASELINE_COMMIT,
+    pinned_exe_sha256: exeHash,
+    stdout_path: session.logPaths.stdoutPath,
+    stderr_path: session.logPaths.stderrPath,
+  });
+  store.copyToCanonical(path.join(CANONICAL_RUNS_ROOT, scenario));
   console.log(JSON.stringify(record.verdict, null, 2));
   if (record.errors.length) {
     console.error(record.errors.join("\n"));

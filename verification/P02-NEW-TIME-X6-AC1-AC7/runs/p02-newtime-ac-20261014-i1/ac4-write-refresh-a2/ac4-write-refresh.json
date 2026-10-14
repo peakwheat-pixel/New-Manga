@@ -1,0 +1,87 @@
+{
+  "steps": [
+    {
+      "step": "clean-targets-observed",
+      "at": "2026-10-14T15:12:21.837Z",
+      "roaming": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-i1\\ac4-write-refresh-a2\\appdata-roaming",
+        "state": "ABSENT"
+      },
+      "localAppData": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-i1\\ac4-write-refresh-a2\\appdata-local",
+        "state": "ABSENT"
+      },
+      "tmp": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-i1\\ac4-write-refresh-a2\\tmp",
+        "state": "ABSENT"
+      },
+      "dataRoot": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-i1\\ac4-write-refresh-a2\\data-root",
+        "state": "ABSENT"
+      },
+      "derived": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-i1\\ac4-write-refresh-a2\\scope\\derived",
+        "state": "ABSENT"
+      },
+      "managed": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-i1\\ac4-write-refresh-a2\\scope\\managed",
+        "state": "ABSENT"
+      },
+      "catalogDb": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-i1\\ac4-write-refresh-a2\\catalog\\catalog.sqlite",
+        "state": "ABSENT"
+      },
+      "webview2Udd": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-i1\\ac4-write-refresh-a2\\webview2-udd",
+        "state": "ABSENT"
+      },
+      "logs": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-i1\\ac4-write-refresh-a2\\logs",
+        "state": "ABSENT"
+      }
+    },
+    {
+      "step": "launched",
+      "at": "2026-10-14T15:12:22.675Z",
+      "pid": 6676
+    },
+    {
+      "step": "mocks-installed",
+      "at": "2026-10-14T15:12:22.678Z",
+      "layer": "REAL_WEBVIEW_MOCK_IPC",
+      "synth": {
+        "regionId": "syn-region-ac4-001",
+        "pageId": "syn-page-ac4",
+        "revision": 1,
+        "type": "speech",
+        "policy": "skip"
+      }
+    },
+    {
+      "step": "page-loaded",
+      "at": "2026-10-14T15:12:37.973Z",
+      "revisionNo": null,
+      "regionType": null,
+      "feedback": null,
+      "undoAvailable": false,
+      "revisionListCount": 0,
+      "toolbarRegionCount": "regions: 0",
+      "perfNow": 15505.899999999441
+    },
+    {
+      "step": "teardown",
+      "at": "2026-10-14T15:12:39.191Z",
+      "exited": true,
+      "code": null,
+      "signal": "SIGTERM"
+    }
+  ],
+  "errors": [
+    "Error: element not found: [data-testid=\"region-frame-syn-region-ac4-001\"]\n    at click (file:///G:/CODEX/New%20Manga.workspace/worktrees/P02-NEW-TIME-X6-AC1-AC7-ANTIGRAVITY/apps/desktop/frontend/e2e/p02-new-time/ac4-write-refresh.mjs:173:17)\n    at async file:///G:/CODEX/New%20Manga.workspace/worktrees/P02-NEW-TIME-X6-AC1-AC7-ANTIGRAVITY/apps/desktop/frontend/e2e/p02-new-time/ac4-write-refresh.mjs:253:3"
+  ],
+  "verdict": {
+    "ac": "AC4",
+    "status": "ERROR",
+    "error": "Error: element not found: [data-testid=\"region-frame-syn-region-ac4-001\"]"
+  }
+}
