@@ -1,0 +1,1 @@
+Get-ChildItem -LiteralPath "G:\CODEX\New Manga.workspace\task-envs\P02-NEW-TIME-X6-AC1-AC7" -Force -Recurse | Select-Object FullName,PSIsContainer,Length,LastWriteTime; Get-ChildItem -LiteralPath "G:\CODEX\New Manga.workspace\task-envs\P02-NEW-TIME-X6-AC1-AC7\run-r1" -Force -Recurse | Measure-Object

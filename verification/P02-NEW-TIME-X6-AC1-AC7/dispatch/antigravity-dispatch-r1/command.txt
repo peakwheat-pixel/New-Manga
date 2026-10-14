@@ -1,0 +1,1 @@
+agy -p (Get-Content -Raw "G:\CODEX\New Manga.workspace\agent-output\antigravity\P02-NEW-TIME-X6-AC1-AC7\dispatch-r1\prompt.md") --project "New Manga" --output-format json --dangerously-skip-permissions

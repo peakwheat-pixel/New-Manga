@@ -1,0 +1,1 @@
+pwsh -NoProfile -File tools/governance/check.ps1

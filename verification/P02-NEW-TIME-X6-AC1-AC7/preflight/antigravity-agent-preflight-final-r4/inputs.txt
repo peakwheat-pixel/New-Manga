@@ -1,0 +1,1 @@
+Exact final live check ran from the Antigravity Owner worktree at HEAD e56384779aa2ec609e9ff574ed5c6b7610785e22. Agent config and attestation are the same contents recorded in preflight/antigravity-agent-preflight-r3/; copies are included here to keep the exact check reproducible.

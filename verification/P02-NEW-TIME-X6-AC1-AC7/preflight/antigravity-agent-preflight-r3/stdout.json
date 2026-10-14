@@ -1,0 +1,97 @@
+{
+  "agent": {
+    "name": "antigravity",
+    "cli": "agy",
+    "role": "task owner / fallback executor",
+    "required_commands": [
+      "node",
+      "git"
+    ],
+    "may_review": false
+  },
+  "dry_run": false,
+  "checks": [
+    {
+      "check": "python_runtime",
+      "status": "PASS",
+      "detail": "3.14.6 (stdlib-only helpers)",
+      "mandatory": true
+    },
+    {
+      "check": "cli_on_path",
+      "status": "PASS",
+      "detail": "agy: C:\\Users\\49745\\AppData\\Local\\agy\\bin\\agy.EXE",
+      "mandatory": true
+    },
+    {
+      "check": "cli_version",
+      "status": "PASS",
+      "detail": "1.3.5",
+      "mandatory": true
+    },
+    {
+      "check": "required_commands",
+      "status": "PASS",
+      "detail": "['node', 'git'] all resolvable",
+      "mandatory": true
+    },
+    {
+      "check": "git_on_path",
+      "status": "PASS",
+      "detail": "git required for frozen-evidence checks",
+      "mandatory": true
+    },
+    {
+      "check": "repo_worktree_exists",
+      "status": "PASS",
+      "detail": "git root G:\\CODEX\\New Manga.workspace\\worktrees\\P02-NEW-TIME-X6-AC1-AC7-ANTIGRAVITY",
+      "mandatory": true
+    },
+    {
+      "check": "branch_exists",
+      "status": "PASS",
+      "detail": "agent/antigravity/P02-NEW-TIME-X6-AC1-AC7",
+      "mandatory": true
+    },
+    {
+      "check": "worktree_state_known",
+      "status": "PASS",
+      "detail": "0 dirty entries",
+      "mandatory": true
+    },
+    {
+      "check": "write_scope_known",
+      "status": "PASS",
+      "detail": "all write-scope dirs exist (resolved: ['G:\\\\CODEX\\\\New Manga.workspace\\\\worktrees\\\\P02-NEW-TIME-X6-AC1-AC7-ANTIGRAVITY\\\\apps/desktop/frontend/e2e/p02-new-time', 'G:\\\\CODEX\\\\New Manga.workspace\\\\worktrees\\\\P02-NEW-TIME-X6-AC1-AC7-ANTIGRAVITY\\\\verification/P02-NEW-TIME-X6-AC1-AC7', 'G:\\\\CODEX\\\\New Manga.workspace\\\\worktrees\\\\P02-NEW-TIME-X6-AC1-AC7-ANTIGRAVITY\\\\doc/tasks', 'G:\\\\CODEX\\\\New Manga.workspace\\\\worktrees\\\\P02-NEW-TIME-X6-AC1-AC7-ANTIGRAVITY\\\\doc/handoffs', 'G:\\\\CODEX\\\\New Manga.workspace\\\\task-envs\\\\P02-NEW-TIME-X6-AC1-AC7', 'G:\\\\CODEX\\\\New Manga.workspace\\\\agent-output\\\\antigravity\\\\P02-NEW-TIME-X6-AC1-AC7'])",
+      "mandatory": true
+    },
+    {
+      "check": "fallback_agent_available",
+      "status": "PASS",
+      "detail": "zcode",
+      "mandatory": false
+    },
+    {
+      "check": "quota_status",
+      "status": "PASS",
+      "detail": "externally attested by the dispatching orchestrator",
+      "mandatory": true
+    },
+    {
+      "check": "permission_mode",
+      "status": "PASS",
+      "detail": "externally attested by the dispatching orchestrator",
+      "mandatory": true
+    },
+    {
+      "check": "conversation_usable",
+      "status": "PASS",
+      "detail": "externally attested by the dispatching orchestrator",
+      "mandatory": true
+    }
+  ],
+  "overall": "PASS",
+  "dispatch_allowed": true,
+  "fallback_suggested": null,
+  "verdict": "dispatch"
+}

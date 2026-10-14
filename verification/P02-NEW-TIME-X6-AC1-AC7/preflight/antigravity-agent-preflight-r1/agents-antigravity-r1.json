@@ -1,0 +1,14 @@
+{
+  "agents": [
+    {
+      "role": "task owner / fallback executor",
+      "cli": "agy",
+      "name": "antigravity",
+      "required_commands": [
+        "node",
+        "git"
+      ],
+      "may_review": false
+    }
+  ]
+}

@@ -5,15 +5,16 @@ kind: verification
 governance_version: 2
 status: in_progress
 approval: user_authorized_new_time_baseline_20261014
-suggested_owner: ZCode
-owner: ZCode
+suggested_owner: Antigravity
+owner: Antigravity
 reviewer: DeepSeek Harness
 integrator: Codex
 depends_on: [P02-NEW-TIME-BASELINE, P02-NEW-TIME-X6, P02-NEW-TIME-X6-POSTRUN-REVIEW, P02-NEW-TIME-X6-BUILD-CARGO]
 base_commit: 49d2a2f9c56462f5602b00ad4b824c5381abb1ab
-branch: agent/zcode/P02-NEW-TIME-X6-AC1-AC7
-worktree: G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-X6-AC1-AC7
+branch: agent/antigravity/P02-NEW-TIME-X6-AC1-AC7
+worktree: G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-X6-AC1-AC7-ANTIGRAVITY
 integration_commit: null
+owner_start_commit: 6935aa38855553bdd8f8415a0765cd874acadf14
 delivery_head: null
 reviewed_head: null
 review_decision: pending
@@ -21,8 +22,8 @@ integration_target: agent/codex/P02-NEW-TIME-X6-POSTRUN-REVIEW
 integration_status: not_started
 dispatch_state: DISPATCHED
 blocked_by: []
-profile: ZCODE_PRIMARY
-revisions: {implementation: 0, test: 0, evidence: 2}
+profile: ANTIGRAVITY_FALLBACK
+revisions: {implementation: 0, test: 1, evidence: 3}
 canonical_evidence_status: pending
 resource_closeout_status: pending
 evidence_dir: verification/P02-NEW-TIME-X6-AC1-AC7
@@ -62,7 +63,7 @@ run_id: p02-newtime-ac-20261014-r1
 - `verification/P02-NEW-TIME-X6-AC1-AC7/**`：仅本 Task 的 synthetic fixtures、runner、截图、日志、命令/环境记录、哈希清单、findings、immutable evidence manifest 与 checkpoint。输入数据必须为 Task-local synthetic data。
 - `doc/tasks/P02-NEW-TIME-X6-AC1-AC7.md`：Owner 仅更新状态、运行结果、证据链接与交付指针；AC、基线、依赖、范围和禁止项不得自行改动。
 - `doc/handoffs/P02-NEW-TIME-X6-AC1-AC7-*.md`：本 Task Handoff。
-- 非 Git 运行时数据、缓存与临时目录仅可写入 `G:/CODEX/New Manga.workspace/task-envs/P02-NEW-TIME-X6-AC1-AC7/` 和 `G:/CODEX/New Manga.workspace/agent-output/zcode/P02-NEW-TIME-X6-AC1-AC7/` 下的本 Task 专属目录；真实截图与 canonical 证据须复制到本 Task 的 `verification/` 路径并固定 hash。
+- 非 Git 运行时数据、缓存与临时目录仅可写入 `G:/CODEX/New Manga.workspace/task-envs/P02-NEW-TIME-X6-AC1-AC7/` 和 `G:/CODEX/New Manga.workspace/agent-output/antigravity/P02-NEW-TIME-X6-AC1-AC7/` 下的本 Task 专属目录；真实截图与 canonical 证据须复制到本 Task 的 `verification/` 路径并固定 hash。
 
 ## 禁止范围与用户数据保护
 
@@ -85,28 +86,29 @@ run_id: p02-newtime-ac-20261014-r1
 
 | 场景/AC | 计划命令或手工步骤 | 前提/环境 | 实际结果 | 证据 |
 |---|---|---|---|---|
-| Preflight / release | 校验 Task、依赖门、binary/sidecar hashes、write scope、Task env；运行 official `preflight-agent.py` 与 ZCode availability probe | 本 Task 已登记；Build convergence approved；独立 worktree 已创建；无其他 Owner 写入 | PASS：EXE SHA-256=`92AC7B8EFB646FE77DF8245B13C9AF9314BEF415B2F0E007B1CDCEA729BC13FD`；packaged sidecar 与冻结 5,610-file manifest 对比 PASS（5,610/5,610，1,296,373,783 bytes，无 missing/extra/hash mismatch）；Task env=0。ZCode CLI 0.16.9 fresh availability probe 返回“收到”，session=`sess_535da297-fa78-4788-8c19-d7f1201b8709`；official AGENT_PREFLIGHT r3 在 Owner HEAD=`3d94add1b8cf63b70cbe760c1cd4f7719e5df228` 返回 overall=PASS、dispatch_allowed=true、verdict=dispatch，13/13 checks PASS，worktree 0 dirty，Antigravity fallback available。未启动应用。历史 r2 原样保留；其 command 指向 r1 config/attestation，故不作为本次 canonical run。 | `preflight/sidecar-resource-copy.stdout.json`、`preflight/zcode-availability-final-r3/stdout.json`、`preflight/agent-preflight-r3/stdout.json`；命令、环境、helper hash、stderr、exit 同目录 |
-| AC1 runtime identity | 启动固定 packaged exe；采集 WebView2 host/runtime identity、process/window identity、source/binary pins | 本机 Windows；isolated synthetic env；不重建或安装 | NOT_RUN | Task-local AC1 logs / screenshots |
-| AC2 navigation / operation | 在真实 Workbench 窗口执行鼠标/键盘导航、输入与按钮状态操作 | AC1 PASS；真实 WebView2 窗口 | NOT_RUN | Task-local AC2 logs / screenshots |
-| AC3 debounce / stale response | 使用真实页面和单调时钟驱动连续输入、page ID 切换及延迟响应观察 | AC1 PASS；不以 fake timer 作为产品行为证据 | NOT_RUN | Task-local AC3 timing trace |
-| AC4 write/read freshness | 对 retype、undo、restore 分别记录 write return 与 list_regions readback；清晰标注 IPC/Core mock 边界 | AC1 PASS；synthetic state；三项均执行，否则 BLOCKED | NOT_RUN | Task-local AC4 event trace |
-| AC5 keyboard / focus | 真实按键序列与 focus/active element 采集 | AC1 PASS；真实窗口输入 | NOT_RUN | Task-local AC5 logs / screenshots |
-| AC6 computed colors | 真实 DOM computed styles、token mapping、实际颜色/背景、WCAG ratio 和阈值 | AC1 PASS；颜色可采集；不得改样式 | NOT_RUN | Task-local AC6 JSON / screenshots |
-| AC7 adjudication | 固定证据 manifest；DSH bounded read-only Review；Codex official result/convergence、集成及验证 | AC1–AC6 状态齐全；delivery head 固定 | NOT_RUN | Task-local AC7 review/adjudication manifest |
+| Preflight / release | 校验 Task、依赖门、binary/sidecar hashes、write scope、Task env；运行 official `preflight-agent.py` 与 Owner probes | fallback worktree 已登记；Build convergence approved；run-r1 synthetic env 为空 | ZCode 原 Owner 的 official preflight r3 在 HEAD=`3d94add1b8cf63b70cbe760c1cd4f7719e5df228` PASS。Antigravity execution-probe r1 曾从 Codex 集成 worktree 运行，保留但不计作目标 worktree 证据；r2 在 Owner HEAD=`a5f173c2779507e14344f60e4b20d473c9ff830d` 返回 node v24.15.0、准确 HEAD 和 clean branch，3 命令均 exit 0。EXE 与冻结 sidecar manifest Hash 复核匹配，5,610 files / 1,296,373,783 bytes verifier PASS；Task `run-r1` 是空目录。Antigravity official preflight attempt r1 在 target HEAD=`3dec6dae` 因配置漏列 fallback CLI 而 FAIL，target 的 mandatory checks 全 PASS；失败输出保留。Corrected official preflight r2 在 target HEAD=`acf1fefd` overall=PASS、dispatch_allowed=true（13 checks；ZCode CLI 被 helper 识别为 fallback，但其此前执行权限仍受 ENV-01 阻断）。Final preflight r3 在 HEAD=`24f3084c69a92771d34f735f2d9a895fb59d9a02` 也 PASS，dispatch_allowed=true、0 dirty entries。Codex static harness review r1 发现两项启动/隔离顺序问题及 AC6 syntax error，分类为测试驱动 T；详见 `preflight/codex-harness-static-review-r1/findings.md`。Antigravity 最终 exact-head preflight r4 在 HEAD=`e56384779aa2ec609e9ff574ed5c6b7610785e22` overall=PASS、dispatch_allowed=true（13 checks、0 dirty entries）。Owner 已 dispatch；指令要求先修复并静态校验全部 10 个模块，修复前不启动应用。AC1–AC7 尚无经 Codex 验证结果 | `preflight/agent-preflight-r3/`、`preflight/antigravity-agent-preflight-r1/`、`preflight/antigravity-agent-preflight-r2/`、`preflight/antigravity-execution-probe-r2/`、`preflight/antigravity-sidecar-recheck-r1/`、`preflight/antigravity-availability-r1/`、`preflight/antigravity-agent-preflight-final-r4/`、`preflight/codex-harness-static-review-r1/`；命令/环境/exit 同目录 |
+| AC1 runtime identity | 启动固定 packaged exe；采集 WebView2 host/runtime identity、process/window identity、source/binary pins | 本机 Windows；isolated synthetic env；不重建或安装 | NOT_RUN：Antigravity Owner 已 dispatch；必须先完成 Task-local T harness 修复与 10 个 `.mjs` 语法检查；未确认真实运行结果 | Task-local AC1 logs / screenshots |
+| AC2 navigation / operation | 在真实 Workbench 窗口执行鼠标/键盘导航、输入与按钮状态操作 | AC1 PASS；真实 WebView2 窗口 | NOT_RUN：等待 AC1 与 Owner harness gate | Task-local AC2 logs / screenshots |
+| AC3 debounce / stale response | 使用真实页面和单调时钟驱动连续输入、page ID 切换及延迟响应观察 | AC1 PASS；不以 fake timer 作为产品行为证据 | NOT_RUN：等待 AC1 与 Owner harness gate | Task-local AC3 timing trace |
+| AC4 write/read freshness | 对 retype、undo、restore 分别记录 write return 与 list_regions readback；清晰标注 IPC/Core mock 边界 | AC1 PASS；synthetic state；三项均执行，否则 BLOCKED | NOT_RUN：ZCode 尝试未启动产品；Antigravity 必须执行三项 | Task-local AC4 event trace |
+| AC5 keyboard / focus | 真实按键序列与 focus/active element 采集 | AC1 PASS；真实窗口输入 | NOT_RUN：等待 AC1 与 Owner harness gate | Task-local AC5 logs / screenshots |
+| AC6 computed colors | 真实 DOM computed styles、token mapping、实际颜色/背景、WCAG ratio 和阈值 | AC1 PASS；颜色可采集；不得改样式 | NOT_RUN：AC6 syntax error 已记录为 T harness 修复项；等待语法检查与运行 | Task-local AC6 JSON / screenshots |
+| AC7 adjudication | 固定证据 manifest；DSH bounded read-only Review；Codex official result/convergence、集成及验证 | AC1–AC6 状态齐全；最终 delivery head 固定 | NOT_RUN：Owner run 未交付；DSH review 与 Codex adjudication 尚未开始 | Task-local AC7 review/adjudication manifest |
 
 以上 `PLANNED` / `NOT_RUN` 不是 PASS；Task 建立与 preflight 不会预先判定产品行为。
 
 ## 依赖、Review 与阻塞
 
 - 前置节点：`P02-NEW-TIME-BASELINE=DONE`、`P02-NEW-TIME-X6=APPROVED`、`P02-NEW-TIME-X6-POSTRUN-REVIEW=APPROVED`、`P02-NEW-TIME-X6-BUILD-CARGO=INTEGRATED + official convergence APPROVED`。Build 的 BC-AC5=`PARTIAL` 与保留 residual 必须继续在 Plan、Status 和本 Task 可见；不得将其当作 PASS，也不得阻止本 Task 在官方批准范围内启动。
-- 开始运行的硬条件：Codex 已冻结 Task/Plan/Status，ZCode availability probe 与 live AGENT_PREFLIGHT 均通过，isolated worktree 和 Task env 已验证，binary/sidecar hashes 匹配，synthetic data 为空且 source pinned。任一失败时维持 `blocked` / `NOT_RUN` 并记录恢复条件；不自动升级为 `BLOCKED_WAITING_EXTERNAL_DECISION`。
-- ZCode 为主要执行 Owner；仅当 fresh probe 证明 ZCode 不可用时按项目故障转移顺序交由 Antigravity，并记录原因、probe artifact、branch/worktree 与新的 preflight。Qoder 不参与。
+- 开始运行的硬条件：Codex 已冻结 Task/Plan/Status；当前 Owner（含 fallback）的 availability probe 与 live AGENT_PREFLIGHT 均通过；isolated worktree 与 Task env 已验证，binary/sidecar hashes 匹配，synthetic data 为空且 source pinned。任一失败时记录 BLOCKED 与恢复条件；不自动升级为 `BLOCKED_WAITING_EXTERNAL_DECISION`。
+- Owner failover：ZCode attempt r1 因 `ENV-01`（permission client 缺失，无法 spawn process/git write）中止，原证据保留；官方 result protocol 判定 `PRESERVE_AND_RECOVER`。在 Antigravity live probe 成功后，当前同一 Task 由 Antigravity 按原 frozen scope 继续；不重写 AC、不改产品范围、不等待人工授权。
 - DeepSeek Harness 在固定 delivery head 上独立 Review，Codex 重算 evidence pins、scope 与 AC 结论并集成。Finding 按 `multi-agent-project-orchestrator` 的 I1/I2、bounded review、follow-up/resolution lineage 与 DAG replanning 处理；最多 I1、I2 两轮，禁止 I3 与无限返修。P0/P1/P2 blocker 未关闭不得批准；可安全关闭的非阻断 E 文档 finding 按协议处置；P3/P4 明确入 backlog，不为追求零 finding 无界重开。产品实现修复需 Codex 另立依赖 Task。
 - AC4 三项 retype/undo/restore 均是必需条件；任一被阻断则 Task 不能 `done`。旧 H1 / P2-1 状态不属于本 Task 的输入或验收范围。
 
 ## 交付与运行记录
 
-- Owner Handoff：尚无。
-- 独立 Review：尚无；Reviewer=DeepSeek Harness。
+- 2026-10-14 ZCode attempt r1（RunId=`p02-newtime-ac-20261014-r1`）：AC1–AC6 未执行，session-only status=`BLOCKED`；AC7=`NOT_RUN`；ENV-01 与原 Handoff 保留。此记录不构成产品结果；Antigravity fallback 当前待 preflight。
+- Owner Handoff：`doc/handoffs/P02-NEW-TIME-X6-AC1-AC7-zcode-r1-20261014.md`（本文件同 commit；如 git 写通道不可用则未提交，见 Handoff dirty-state 说明）。
+- 独立 Review：尚无；Reviewer=DeepSeek Harness，待 AC1–AC6 真实证据存在后再执行。
 - Codex adjudication / integration / post-integration check：尚无。
-- 当前状态：`in_progress / DISPATCHED`；ZCode CLI `edit` invocation 已启动，原始输出目录=`G:/CODEX/New Manga.workspace/agent-output/zcode/P02-NEW-TIME-X6-AC1-AC7/run-r1`，ZCode session ID 将在命令响应后登记。AC 结果尚未核验；不得据 dispatch 记 PASS。
+- 当前状态：`in_progress / DISPATCHED`；Antigravity Owner 已从冻结 HEAD dispatch，当前 run=`G:/CODEX/New Manga.workspace/agent-output/antigravity/P02-NEW-TIME-X6-AC1-AC7/dispatch-r1`；canonical prompt/command/environment=`verification/P02-NEW-TIME-X6-AC1-AC7/dispatch/antigravity-dispatch-r1/`。先修复 Codex 记录的 T harness findings 后才能启动 AC；所有 AC 结果等待交付与独立核验。

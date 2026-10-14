@@ -1,0 +1,3 @@
+Attempt r1 (official helper, target HEAD 3dec6dae): overall FAIL because the supplied config contained only the target Antigravity entry, so fallback_agent_available returned FAIL and the helper overall verdict became FAIL. All mandatory target checks passed. The result is retained as a preflight configuration omission, not an Owner environment failure.
+
+Attempt r2 includes the real ZCode node entrypoint as a discoverable previous executor because it is the project fallback CLI. This confirms CLI/path presence only; ZCode execution attempt r1 remains blocked by ENV-01 and is not treated as a usable execution fallback for this release. The user-authorized current Owner remains Antigravity. This helper does not probe fallback permissions.

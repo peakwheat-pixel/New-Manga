@@ -15,7 +15,7 @@
 |P02-NEW-TIME-X6|`APPROVED`；59/59 checks PASS，Codex VERIFY PASS。|只支持新时点 X6。|
 |P02-NEW-TIME-X6-POSTRUN-REVIEW|`APPROVED`；7 项 P3/P4 留 backlog。|无返修；仅接受新时点 X6。|
 |P02-NEW-TIME-X6-BUILD-CARGO|`APPROVED + INTEGRATED`；convergence APPROVED；BC-AC5=`PARTIAL`，缓存 residual 保留。|只释放 AC1–AC7；Build Task 不标 done。|
-|P02-NEW-TIME-X6-AC1-AC7|`IN_PROGRESS / DISPATCHED`；Owner=ZCode，Reviewer=DeepSeek Harness，Integrator=Codex。依赖：基线、X6、post-run Review、Build/Cargo convergence。|只读固定 binary；Task-local synthetic data；禁止改产品代码/依赖、重建或安装。等待 Owner 交付、Codex VERIFY 与 DSH 独立 Review。|
+|P02-NEW-TIME-X6-AC1-AC7|`IN_PROGRESS / DISPATCHED`；Owner=Antigravity（ZCode r1 因 ENV-01 中止后按授权 failover）；Reviewer=DeepSeek Harness；Integrator=Codex。Owner final exact-head preflight PASS，13 checks、0 dirty。预启动 T harness findings 已固定，Owner 先修复再跑 AC。依赖：新时点基线、X6、post-run Review、Build/Cargo convergence。|只读 pinned binary，Task-local synthetic data；禁止产品改动、重建或安装。等待 AC1–AC7 交付、Codex VERIFY 与 DSH 独立 Review。|
 
 执行顺序：新时点基线 → X6 → post-run Review → Build/Cargo → AC1–AC7。当前唯一 runnable Task 已派发；后续按 finding、bounded review 与 DAG 重算规则继续。
 
