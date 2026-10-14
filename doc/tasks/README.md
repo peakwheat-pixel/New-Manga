@@ -4,7 +4,7 @@
 
 - 唯一 Task DAG 与释放状态：[REBASELINE_PLAN](../REBASELINE_PLAN.md)
 - 唯一 Active Task、运行状态与恢复点：[STATUS](../STATUS.md)
-- 当前唯一 READY Task：[P02 新时点 X6 后续 Build / Cargo 构建门](P02-NEW-TIME-X6-BUILD-CARGO.md)：Owner=ZCode，Reviewer=DeepSeek Harness；等待隔离 worktree 与 AGENT_PREFLIGHT PASS。preflight 前不派发构建命令。
+- 当前唯一 Active Task：[P02 新时点 X6 后续 Build / Cargo 构建门](P02-NEW-TIME-X6-BUILD-CARGO.md)：Owner=ZCode 已启动，Reviewer=DeepSeek Harness；最终冻结 Task commit `a1fd218a9f8adc587865311b3f3d9aa9076e22fc` 的 live AGENT_PREFLIGHT r2 PASS。构建结果待 Codex VERIFY；DSH Review 和 AC1–AC7 均未提前释放。
 - 前置 [P02-NEW-TIME-X6](P02-NEW-TIME-X6.md) 与 [post-run Review](P02-NEW-TIME-X6-POSTRUN-REVIEW.md) 均 approved；DSH APPROVED，Codex result protocol=ACCEPT/convergence=APPROVED，X6-PR-01..07 为 P3/P4 backlog。
 - 最近完成：[P02 新时点基线准入](P02-NEW-TIME-BASELINE.md)；AC3=PASS、AC5=ADMIT_X6，DSH bounded result Review 与 Codex convergence 完成；随后 X6 与其 post-run Review 也已通过。
 - 已完成 H2-RUN：[P02PRE-R1H-H2-RUN](P02PRE-R1H-H2-RUN.md)
