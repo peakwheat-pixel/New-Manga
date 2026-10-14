@@ -3,7 +3,7 @@ id: P02-NEW-TIME-X6-AC1-AC7
 title: P02 新时点 AC1–AC7 当前版本验收
 kind: verification
 governance_version: 2
-status: ready
+status: in_progress
 approval: user_authorized_new_time_baseline_20261014
 suggested_owner: ZCode
 owner: ZCode
@@ -19,10 +19,10 @@ reviewed_head: null
 review_decision: pending
 integration_target: agent/codex/P02-NEW-TIME-X6-POSTRUN-REVIEW
 integration_status: not_started
-dispatch_state: PREFLIGHT_PASS
+dispatch_state: DISPATCHED
 blocked_by: []
 profile: ZCODE_PRIMARY
-revisions: {implementation: 0, test: 0, evidence: 1}
+revisions: {implementation: 0, test: 0, evidence: 2}
 canonical_evidence_status: pending
 resource_closeout_status: pending
 evidence_dir: verification/P02-NEW-TIME-X6-AC1-AC7
@@ -109,4 +109,4 @@ run_id: p02-newtime-ac-20261014-r1
 - Owner Handoff：尚无。
 - 独立 Review：尚无；Reviewer=DeepSeek Harness。
 - Codex adjudication / integration / post-integration check：尚无。
-- 当前状态：`ready / PREFLIGHT_PASS`；产品 AC=`NOT_RUN`；Owner 尚未 dispatch，应用未启动。最终 live preflight r3 对 Owner HEAD=`3d94add1b8cf63b70cbe760c1cd4f7719e5df228` 返回 PASS。
+- 当前状态：`in_progress / DISPATCHED`；ZCode CLI `edit` invocation 已启动，原始输出目录=`G:/CODEX/New Manga.workspace/agent-output/zcode/P02-NEW-TIME-X6-AC1-AC7/run-r1`，ZCode session ID 将在命令响应后登记。AC 结果尚未核验；不得据 dispatch 记 PASS。
