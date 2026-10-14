@@ -1,5 +1,21 @@
 # P02 新时点 X6 恢复点
 
+## 最新恢复点（2026-10-14T12:52:34+08:00）
+
+- Agent / TaskStatus / ExecutionState：Codex `/root`；P02-NEW-TIME-X6 `in_progress`；`ACTIVE`。
+- Branch / Worktree / start commit / current HEAD：`agent/zcode/P02-NEW-TIME-X6`；`G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-X6`；base=`bc502e7aae07074fff7228d585674e87d53efcfd`；checkpoint 更新前 HEAD=`743845db176e3c2713796d049ff881e213bee03b`。代码 reviewed_head=`839e0089c971e9be984cd9e99a56ea0152ec1391`，无后续 executor/selftest 源码变更。
+- Working Tree：checkpoint 前为 clean；本次仅更新本 checkpoint，未改产品源码、共享契约或主仓文件。主仓已有 dirty/untracked 内容保持原状。
+- Completed Steps：Task AC2 attempt 2 Parser 与纯内存 selftest PASS（272 PASS / 0 FAIL / 7 SKIP；exit=0）；AC3 DSH bounded Review r2/r3 与 Codex adjudication PASS，未解决 P0/P1/P2=0；Task evidence commit=`743845db176e3c2713796d049ff881e213bee03b`。
+- Current Working Point：仅进入 AC4 Codex freeze/final pre-run；AC1 尚待唯一 RunId 与冻结输出清单落定；AC4 未通过前不得调用 executor。
+- Next Exact Step：读取 Task 当前 protocol/inventory 与 executor 的 freeze binding 要求；选取并核实 fresh RunId，确认冻结 manifest 目录此前不存在、六个 raw capture 目标与唯一 run-result target absent/unignored；复核普通盘符绝对路径、当前身份、工具路径/版本、branch/CWD、当前 Task HEAD 与 source pins；仅当所有预检通过时创建唯一 `freeze-manifest.json` 并执行只读 final pre-run。任何未知/漂移/碰撞均停止在 `NOT_RUN`。
+- Tests Already Run / Remaining / Current Errors：AC2 attempt 1 的 1 个 T-only assertion failure 保留为历史记录且已 bounded Review；attempt 2 Parser/selftest 均通过。Remaining：AC4、最多一次 AC5、AC6、AC7。当前无未解决测试错误。
+- Blockers / Decisions / Open Questions：无 `BLOCKED_WAITING_EXTERNAL_DECISION`；RunId 尚未选定/冻结；不得释放 post-run Review、Build/Cargo 或产品 AC1–AC7。
+- Evidence / Confidence / Resume Safety：AC2 报告=`verification/P02-NEW-TIME-X6/codex-ac2-verification-r2.md`（SHA-256=`73DE4DD881CBA86A2B09A8790D9349E1CE2F3AE362A0CF4AB900B80030ECB87E`）；raw output=`G:/CODEX/New Manga.workspace/agent-output/codex/P02-NEW-TIME-X6/codex-ac2-parser-selftest-r2/`；两次 fixtures 均按 Resource Manifest 原样保留。旧 H1/P2-1 与 13 项缺失来源未读取或更改；freeze/run targets 尚未创建。
+
+---
+
+以下为旧恢复点记录，已被上方最新恢复点取代，保留作历史导航。
+
 - 更新时间：2026-10-14；Task：P02-NEW-TIME-X6；状态：ACTIVE / in_review；ZCode I1 已交付，当前预算 I1/I2=1/2。
 - ZCode 已完成 owner preflight 并认领 Owner；认领/实施 session：sess_bd06f60b-b6d1-4cc8-a7e7-4dbcb647458f。用户授权按新版 multi-agent-project-orchestrator 自治推进（AUTO）。
 - Task worktree 已创建：G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-X6，branch=agent/zcode/P02-NEW-TIME-X6，派发前 HEAD=a9c3214b2d7806c2b8920897e5684c039ae14057（worktree clean，已核验）。
