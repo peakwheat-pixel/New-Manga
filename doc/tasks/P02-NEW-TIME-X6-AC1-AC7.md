@@ -63,7 +63,7 @@ run_id: p02-newtime-ac-20261014-r1
 - `verification/P02-NEW-TIME-X6-AC1-AC7/**`：仅本 Task 的 synthetic fixtures、runner、截图、日志、命令/环境记录、哈希清单、findings、immutable evidence manifest 与 checkpoint。输入数据必须为 Task-local synthetic data。
 - `doc/tasks/P02-NEW-TIME-X6-AC1-AC7.md`：Owner 仅更新状态、运行结果、证据链接与交付指针；AC、基线、依赖、范围和禁止项不得自行改动。
 - `doc/handoffs/P02-NEW-TIME-X6-AC1-AC7-*.md`：本 Task Handoff。
-- 非 Git 运行时数据、缓存与临时目录仅可写入 `G:/CODEX/New Manga.workspace/task-envs/P02-NEW-TIME-X6-AC1-AC7/` 和 `G:/CODEX/New Manga.workspace/agent-output/zcode/P02-NEW-TIME-X6-AC1-AC7/` 下的本 Task 专属目录；真实截图与 canonical 证据须复制到本 Task 的 `verification/` 路径并固定 hash。
+- 非 Git 运行时数据、缓存与临时目录仅可写入 `G:/CODEX/New Manga.workspace/task-envs/P02-NEW-TIME-X6-AC1-AC7/` 和 `G:/CODEX/New Manga.workspace/agent-output/antigravity/P02-NEW-TIME-X6-AC1-AC7/` 下的本 Task 专属目录；真实截图与 canonical 证据须复制到本 Task 的 `verification/` 路径并固定 hash。
 
 ## 禁止范围与用户数据保护
 
