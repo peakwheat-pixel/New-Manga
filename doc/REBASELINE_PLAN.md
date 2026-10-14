@@ -17,7 +17,7 @@
 |P02-NEW-TIME-X6-BUILD-CARGO|READY；Owner=ZCode，Reviewer=DeepSeek Harness；等待隔离 worktree 与 AGENT_PREFLIGHT PASS。|只在现有 AUTHORIZED_WITH_EXCEPTION 下执行新时点本地 Build/Cargo；产品 AC1–AC7 未释放。|
 |P02-NEW-TIME-X6-AC1-AC7|BLOCKED；依赖 Build/Cargo Gate。|逐项验收，不提前放行。|
 
-旧 H1/P2-1 原结论与 13 项缺失记录不变；新时点证据不替代旧路径。唯一 READY 为 Build/Cargo，等待 ZCode preflight；产品 AC1–AC7 仍 BLOCKED/NOT_RUN。无外部等待或 I3。
+READY 节点：P02-NEW-TIME-X6-BUILD-CARGO。
 
 ## 历史快照
 

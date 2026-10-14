@@ -4,7 +4,7 @@
 
 ## 当前 Task
 
-- 当前唯一 READY Task：[P02 新时点 X6 后续 Build / Cargo 构建门](tasks/P02-NEW-TIME-X6-BUILD-CARGO.md)，Owner=ZCode，Reviewer=DeepSeek Harness，Integrator=Codex；等待隔离 worktree 与 AGENT_PREFLIGHT。preflight PASS 前不派发 Build 命令。
+- 当前 Task：[P02 新时点 X6 后续 Build / Cargo 构建门](tasks/P02-NEW-TIME-X6-BUILD-CARGO.md)；唯一 READY，Owner=ZCode，Reviewer=DeepSeek Harness，Integrator=Codex；等待隔离 worktree 与 AGENT_PREFLIGHT。preflight PASS 前不派发 Build 命令。
 - 前置 X6=approved；唯一 RunId=x6-20261014T1305CST-p02-newtime-r1 exit=0、59/59 checks PASS，Codex VERIFY PASS；父 I1/I2=1/2。
 - 前置 post-run Review=approved；DSH=APPROVED，P0/P1/P2/P3/P4=0/0/0/1/6；Codex adjudication=ACCEPTED_WITH_BACKLOG；official result protocol=ACCEPT、convergence=APPROVED、wait_external=false。X6-PR-01..07 均为 P3/P4 backlog，无 follow-up/resolution。
 - 最近完成：[P02 新时点基线准入](tasks/P02-NEW-TIME-BASELINE.md)，DONE；AC3=PASS、AC5=ADMIT_X6，DSH bounded result Review=ACCEPTED_RESULT、official convergence=APPROVED。旧 H1/P2-1 与 13 项原始来源缺失记录保持原样。
