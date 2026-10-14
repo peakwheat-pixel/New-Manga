@@ -3,7 +3,7 @@ id: P02-NEW-TIME-X6
 title: P02 新时点 X6 动态闭包与一次性执行
 kind: verification
 governance_version: 2
-status: in_progress
+status: in_review
 approval: user_authorized_new_time_baseline_20261014
 suggested_owner: ZCode
 owner: ZCode
