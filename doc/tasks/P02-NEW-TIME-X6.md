@@ -3,7 +3,7 @@ id: P02-NEW-TIME-X6
 title: P02 新时点 X6 动态闭包与一次性执行
 kind: verification
 governance_version: 2
-status: in_progress
+status: in_review
 approval: user_authorized_new_time_baseline_20261014
 suggested_owner: ZCode
 owner: ZCode
@@ -19,7 +19,7 @@ reviewed_head: 839e0089c971e9be984cd9e99a56ea0152ec1391
 review_decision: approved
 integration_target: main
 integration_status: not_started
-dispatch_state: IN_PROGRESS
+dispatch_state: IN_REVIEW
 blocked_by: []
 profile: ZCODE_HEAVY
 revisions: {implementation: 2, test: 2, evidence: 12}
@@ -54,7 +54,7 @@ evidence_dir: verification/P02-NEW-TIME-X6
 - [x] X6-AC4：Codex 对当前 main source、实际运行 target、身份、argv/CWD、子进程边界、CreateNew 目标和替换目标完成 freeze；官方 pre-run=PRE_RUN_PASS。任何不确定项均停止在 NOT_RUN。
 - [x] X6-AC5：ZCode 在完整冻结条件成立时最多执行一次 X6；运行结果完整闭合、RunId 不复用、结果和 partial/failure 均保留在专属证据路径。X6 的通过只代表 X6，不代表 post-run Review、Build/Cargo 或产品 AC1–AC7。
 - [x] X6-AC6：Codex 对运行结果、输出 hash、source pins、未运行项和目标文件状态独立 VERIFY；只集成精确获准的新 Task 文件与证据，保留 root 既有 dirty/untracked 用户内容。
-- [ ] X6-AC7：Task 生命周期、Canonical Evidence、Resource Manifest、rolling checkpoint、STATUS/Plan/Task README 和只读 governance check 完成；只在 Codex 裁决 X6 成功后释放独立 post-run Review Task。
+- [ ] X6-AC7：Task 生命周期、Canonical Evidence、Resource Manifest、rolling checkpoint、STATUS/Plan/Task README 和只读 governance check 完成；Codex adjudicate 独立 post-run Review 前不得释放 Build/Cargo。
 
 ## 允许修改范围
 
@@ -80,13 +80,15 @@ evidence_dir: verification/P02-NEW-TIME-X6
 | X6-AC4 final pre-run | Codex freeze verifier 与只读 pre-run | source Review 与 parser/selftest PASS | PASS（PRE_RUN_PASS；18/18 pins；RunId=`x6-20261014T1305CST-p02-newtime-r1`；唯一结果与六项 capture 均 absent 后 freeze） | freeze manifest + `codex-x6-result-verification-r1.md` |
 | X6-AC5 one-shot | ZCode 执行唯一 RunId | final pre-run=PRE_RUN_PASS；目标 absent/unignored | PASS（唯一一次；exit=0；66 行闭合；59/59 checks PASS；无重试） | raw run bundle + closed result + Codex VERIFY |
 | X6-AC6 Codex VERIFY/integration | 官方 evidence verifier + 精确路径集成 | X6 完整运行记录已产生 | PASS（结果 hash/pointers/18 pins/六项 capture/目标状态均独立验证；Task 与证据纳入当前分支） | `codex-x6-result-verification-r1.md` + commit=`b92f75efea16504f11e68221426acf584b05cc4d` |
-| X6-AC7 closeout/governance | task manifest、Resource Manifest、只读 governance check | 所有 Gate 证据齐全 | PENDING（bounded DSH post-run Review 尚待释放；之后按结果 adjudicate，再完成 closeout/governance） | DSH post-run Review manifest/report + governance output |
+| X6-AC7 closeout/governance | task manifest、Resource Manifest、只读 governance check | X6 result VERIFY PASS；DSH post-run Review 与 Codex adjudication | IN_PROGRESS（独立 Review Task 已建立，preflight 完成；manifest/report/adjudication/governance 尚未完成） | `P02-NEW-TIME-X6-POSTRUN-REVIEW.md` + immutable input manifest/report + governance output |
 
 ## 依赖、风险与阻塞
 
 硬依赖仅为 P02-NEW-TIME-BASELINE=DONE；基线证据判定当前 Task 可进入 X6。旧 H1/P2-1 状态不作为本 Task 通过条件，也不因本 Task 而变化。本 Task 的源码基线为前置集成 commit bc502e7aae07074fff7228d585674e87d53efcfd；baseline collector 的 source HEAD=d285908f07ae1aa37a3e3af077d5902bb9abe661。已核实 tools/p02 下两者无源码差异，但完整 Git tree 不相同；执行前 Codex 必须重新固定当时的 main HEAD、实际 source/target 和所有 output pins，不能沿用旧 freeze。
 
 旧 attempt6 executor 将 root 固定为 main@343895fb，且写入 verification/P02/ 并 replacement 到旧 Owner candidate；其版本与写入边界不符合本 Task，因此禁止运行。X6 源码 Review 与最终执行前 Codex pre-run 均为强制 Gate。若出现超过授权范围的文件状态或未知外部等待，按 orchestrator 记录、收敛、重规划；仅当真实满足 BLOCKED_WAITING_EXTERNAL_DECISION 才请求人工裁决。
+
+结果审查需显式核验 source Review `reviewed_head=839e0089c971e9be984cd9e99a56ea0152ec1391` 与唯一 freeze manifest `deliveryHead=717b2c1ae0e0d30c266acb47694f1fce3504ff24` 的关系。Task/运行结果不替代旧 H1/P2-1。
 
 ## 交付与运行记录
 
@@ -117,6 +119,7 @@ evidence_dir: verification/P02-NEW-TIME-X6
 - Codex AC6 deterministic VERIFY=`PASS`：重验全部 18/18 frozen pins 与 size/hash；NDJSON 66 行/Meta 与 closed RunId/冻结 manifest SHA、59 checks/JSON pointers/observation exceptions、capture 目标和 hash、唯一结果目标均匹配；历史隔离 check PASS，`CANNOT_SUBSTITUTE_H1_P2_1_TIME_EVIDENCE`；postRunReview、Build/Cargo、产品 AC1–AC7 均 NOT_RUN。
 - ZCode 同时在 `G:/CODEX/New Manga.workspace/temp/P02-NEW-TIME-X6/x6-20261014T1305CST-p02-newtime-r1-capture/` 另留 `stdout.bytes` / `stderr.bytes` 两份辅助副本，大小与 SHA-256 与 RunId 内获准 `stdout.md` / `stderr.md` 完全相同。该路径未列在 r2 output inventory；未删除、未移动或覆盖，已纳入 Resource Manifest。官方 `classify-revision`=`E`、`counts_toward_repair_budget=false`、`reviewer_needed=true`；classification stdout SHA-256=`876874DCFC78FE7323DE05713C54AC514CEB7480C82247FE87FD8A9CDEC7E75D`，I1/I2 维持 `1/2`；交 bounded DSH post-run Review 审查。
 - Codex VERIFY 报告=`verification/P02-NEW-TIME-X6/codex-x6-result-verification-r1.md`（5,861 B / SHA-256=`5E1CC04AB8A452ACF897D92C0C455CAA47562000781EDD7C45C48BA5BB9BAA04`，commit=`b92f75efea16504f11e68221426acf584b05cc4d`）。X6 结果仅证明此新时点 X6；旧 H1/P2-1 及 13 项来源缺失记录不变。下一 Gate：独立 DSH post-run Review；Build/Cargo 与产品 AC1–AC7 未释放。
+- 2026-10-14：Codex result VERIFY 后建立独立 `P02-NEW-TIME-X6-POSTRUN-REVIEW`。DSH CLI `0.2.0-rc.2` 只读 availability probe、orchestrator `AGENT_PREFLIGHT` 均通过；Review Task 已释放并在冻结输入后单次派发。当前仅等待 DSH 固定结果与 Codex adjudication；Build/Cargo 与产品 AC1–AC7 仍 NOT_RELEASED / NOT_RUN。
 ## Canonical Evidence
 
 源码 bounded Review Gate 已通过；Task 继续处于 in_progress。关闭前仍须列出 Parser/selftest、freeze/pre-run、X6 result 与 Codex verification 的精确当前证据；mutable STATUS/Plan/checkpoint 不作 immutable hash pin。
@@ -185,8 +188,8 @@ r1 轮 SOURCE_PIN（executor/selftest/protocol-r1/inventory-r1/handoff-r1 @ 8b4d
 
 ## Closeout Record
 
-- Closeout date / Codex：待关闭时填写。
+- Closeout date / Codex：待 post-run Review、Codex adjudication、集成与 governance check 完成后填写。
 - canonical_evidence_status / resource_closeout_status：pending / pending。
 - 删除、迁移、归档数量/字节数：待关闭时填写；无操作填写 0。
-- 未关闭项及保留原因：Task 尚未执行。
-- 当前指针清理：STATUS / Plan / Task README / rolling checkpoint 待随 Gate 更新。
+- 未关闭项及保留原因：DSH post-run Review、Codex adjudication、main 集成與只读 governance check 尚未完成。
+- 当前指针清理：post-run Review active；Build/Cargo 与产品 AC1–AC7 尚未释放。

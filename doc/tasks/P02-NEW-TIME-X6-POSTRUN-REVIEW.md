@@ -3,7 +3,7 @@ id: P02-NEW-TIME-X6-POSTRUN-REVIEW
 title: P02 新时点 X6 post-run 独立结果审查
 kind: verification
 governance_version: 2
-status: proposed
+status: ready
 approval: user_authorized_new_time_baseline_20261014
 suggested_owner: DeepSeek Harness
 owner: DeepSeek Harness
@@ -14,13 +14,13 @@ base_commit: 303dbe5c7f5b8bcb1902b16ad5c208e205a6b50c
 branch: agent/zcode/P02-NEW-TIME-X6
 worktree: G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-X6
 integration_commit: null
-delivery_head: null
-reviewed_head: null
+delivery_head: 717b2c1ae0e0d30c266acb47694f1fce3504ff24
+reviewed_head: 303dbe5c7f5b8bcb1902b16ad5c208e205a6b50c
 review_decision: pending
 integration_target: main
 integration_status: not_started
-dispatch_state: NOT_DISPATCHED
-blocked_by: [P02-NEW-TIME-X6]
+dispatch_state: READY
+blocked_by: []
 profile: REVIEW_ONLY
 revisions: {implementation: 0, test: 0, evidence: 0}
 canonical_evidence_status: pending
@@ -73,14 +73,14 @@ DSH 仅核对：
 | 场景/AC | 计划命令或步骤 | 前提/环境 | 实际结果 | 证据 |
 |---|---|---|---|---|
 | PR-AC1 input freeze | 官方 evidence-manifest generator + verify；Codex 对仓外文件逐项核验 hash/size | 父 X6 Codex AC4–AC6 PASS；review Task 已冻结 | NOT_RUN | 待记录 manifest/raw pins |
-| PR-AC2 DSH review | `dsh headless`，只读、单次派发，stdout/stderr/exit 原样落盘 | AGENT_PREFLIGHT 通过；输入 manifest verify PASS | NOT_RUN | 待记录 DSH session/report |
+| PR-AC2 DSH review | `dsh --profile headless --json`，只读、单次派发，JSONL/stdout/stderr/exit 原样落盘 | AGENT_PREFLIGHT 通过；输入 manifest verify PASS | NOT_RUN | 待记录 DSH session/report |
 | PR-AC3 adjudication | Codex pin verification、result protocol、finding adjudication/convergence | DSH 产物完整且 reviewed head 匹配 | NOT_RUN | 待记录 adjudication/convergence |
 | PR-AC4 release gate | 更新依赖 DAG 并确认 Build/Cargo 是否 READY | unresolved blocker=0 且 X6 result accepted | NOT_RUN | STATUS/Plan/Build Task |
 | PR-AC5 closeout | Task manifest/resource review/checkpoint/governance check | 所有 AC 有结论，资源均保留并已盘点 | NOT_RUN | governance output + closeout record |
 
 ## 依赖、风险与阻塞
 
-硬依赖：`P02-NEW-TIME-X6` 必须 DONE，Codex 对 AC4/5/6 的确定性验证通过。当前 DSH 必须核对 freeze `deliveryHead=717b2c1...` 与 Task 中源码 `delivery_head/reviewed_head=839e0089...` 的语义及 pin 连贯性；若仍无法唯一解释，按实际严重级别处理，不能用摘要文字盖过。
+硬依赖：`P02-NEW-TIME-X6` 的 X6-AC4/5/6 已由 Codex 确定性 VERIFY PASS，Task 进入结果 Review；X6-AC7 的全量生命周期 closeout 可在本 Review adjudication 后完成。当前 DSH 必须核对 freeze `deliveryHead=717b2c1...` 与 Task 中源码 `delivery_head/reviewed_head=839e0089...` 的语义及 pin 连贯性；若仍无法唯一解释，按实际严重级别处理，不能用摘要文字盖过。
 
 X6 I1/I2=`1/2`；本 Review 不重置父 Task 的实现返修预算。运行是一次性结果，禁止重跑或伪造替代结果。P3/P4 只列 backlog，除非其实际影响触及当前 AC、安全、数据完整性、不可逆执行或可验证性；出现 blocker 时依赖官方 convergence 重规划，不请求重复人工授权。
 
@@ -103,6 +103,8 @@ X6 I1/I2=`1/2`；本 Review 不重置父 Task 的实现返修预算。运行是�
 | resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
 |---|---|---|---|---|---|
 | DSH result review raw output | G:/CODEX/New Manga.workspace/agent-output/codex/P02-NEW-TIME-X6-POSTRUN-REVIEW/dsh-postrun-review-r1/ | PRESERVE_REFERENCED | same | pending | preserve raw command/stdout/stderr/exit/session |
+| DSH availability probe | G:/CODEX/New Manga.workspace/agent-output/codex/P02-NEW-TIME-X6-POSTRUN-REVIEW/preflight-probe-r1/ | PRESERVE_REFERENCED | same | pending | separate `收到` probe; not a Review, not to be mounted |
+| DSH AGENT_PREFLIGHT bundle | G:/CODEX/New Manga.workspace/agent-output/codex/P02-NEW-TIME-X6-POSTRUN-REVIEW/ | PRESERVE_REFERENCED | same | `preflight-evidence-manifest-r1.json` SHA-256=`3634EDDAF275C81D52F1DA59C5AB6F1ABBC5220ECE2CAAE37049A13482890717`; 8 files pinned | DSH 0.2.0-rc.2; helper exit=0, overall=PASS, dispatch_allowed=true; availability probe and attestation retained |
 | X6 run bundle | G:/CODEX/New Manga.workspace/agent-output/zcode/P02-NEW-TIME-X6/x6-20261014T1305CST-p02-newtime-r1/ | PRESERVE_REFERENCED | same | pinned in parent Task | one-shot raw evidence; do not modify |
 | X6 auxiliary temp captures | G:/CODEX/New Manga.workspace/temp/P02-NEW-TIME-X6/x6-20261014T1305CST-p02-newtime-r1-capture/ | PRESERVE_REFERENCED | same | SHA-256 pinned in parent Task | byte-identical copy; retain for DSH finding adjudication |
 | X6 Task worktree | G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-X6 | PRESERVE_REFERENCED | same | branch/HEAD tracked in Task | shared by parent Task; do not remove here |
