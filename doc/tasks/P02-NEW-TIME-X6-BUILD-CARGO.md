@@ -3,7 +3,7 @@ id: P02-NEW-TIME-X6-BUILD-CARGO
 title: P02 新时点 X6 后续 Build / Cargo 构建门
 kind: verification
 governance_version: 2
-status: ready
+status: in_progress
 approval: user_authorized_new_time_baseline_20261014
 suggested_owner: ZCode
 owner: Antigravity
