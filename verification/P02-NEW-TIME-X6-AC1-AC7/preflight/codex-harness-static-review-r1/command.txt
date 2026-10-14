@@ -1,0 +1,1 @@
+rg -n -e "new EvidenceStore" -e "launchApp\\(" -e "RUN_ROOT =" -e "logs:" -e "String.raw" -e "colorResolved" -e "backgroundResolved" apps/desktop/frontend/e2e/p02-new-time

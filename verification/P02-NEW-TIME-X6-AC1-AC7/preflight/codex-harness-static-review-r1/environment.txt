@@ -1,0 +1,7 @@
+timestamp=2026-10-14T19:06:24.1086110+08:00
+branch=agent/antigravity/P02-NEW-TIME-X6-AC1-AC7
+head=24f3084c69a92771d34f735f2d9a895fb59d9a02
+worktree=G:\CODEX\New Manga.workspace\worktrees\P02-NEW-TIME-X6-AC1-AC7-ANTIGRAVITY
+read_only=true
+product_application_launched=false
+source_files=apps/desktop/frontend/e2e/p02-new-time/*.mjs

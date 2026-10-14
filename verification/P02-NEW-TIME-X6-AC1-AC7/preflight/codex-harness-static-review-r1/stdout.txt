@@ -1,0 +1,23 @@
+apps/desktop/frontend/e2e/p02-new-time\ac4-write-refresh.mjs:27:const store = new EvidenceStore(path.join(RUN_ROOT, "logs", "ac4-write-refresh"), {
+apps/desktop/frontend/e2e/p02-new-time\ac4-write-refresh.mjs:34:const session = await launchApp({ logDir: path.join(RUN_ROOT, "logs"), tag: "ac4" });
+apps/desktop/frontend/e2e/p02-new-time\ac6-contrast.mjs:28:const store = new EvidenceStore(path.join(RUN_ROOT, "logs", "ac6-contrast"), {
+apps/desktop/frontend/e2e/p02-new-time\ac6-contrast.mjs:36:const session = await launchApp({ logDir: path.join(RUN_ROOT, "logs"), tag: "ac6" });
+apps/desktop/frontend/e2e/p02-new-time\ac6-contrast.mjs:40:const COLLECT_SOURCE = String.raw`
+apps/desktop/frontend/e2e/p02-new-time\ac6-contrast.mjs:82:      colorResolved: fgEff ? `rgb(${fgEff.r.toFixed(1)}, ${fgEff.g.toFixed(1)}, ${fgEff.b.toFixed(1)})` : null,
+apps/desktop/frontend/e2e/p02-new-time\ac6-contrast.mjs:84:      backgroundResolved: bg.color ? `rgb(${bg.color.r.toFixed(1)}, ${bg.color.g.toFixed(1)}, ${bg.color.b.toFixed(1)})` : null,
+apps/desktop/frontend/e2e/p02-new-time\ac6-contrast.mjs:197:    const fg = parseRgb(sample.colorResolved || sample.color);
+apps/desktop/frontend/e2e/p02-new-time\ac6-contrast.mjs:198:    const bg = parseRgb(sample.backgroundResolved || sample.backgroundColor);
+apps/desktop/frontend/e2e/p02-new-time\ac6-contrast.mjs:207:      foreground: sample.colorResolved || sample.color,
+apps/desktop/frontend/e2e/p02-new-time\ac6-contrast.mjs:208:      background: sample.backgroundResolved || sample.backgroundColor,
+apps/desktop/frontend/e2e/p02-new-time\ac5-keyboard.mjs:16:const store = new EvidenceStore(path.join(RUN_ROOT, "logs", "ac5-keyboard"), {
+apps/desktop/frontend/e2e/p02-new-time\ac5-keyboard.mjs:23:const session = await launchApp({ logDir: path.join(RUN_ROOT, "logs"), tag: "ac5" });
+apps/desktop/frontend/e2e/p02-new-time\ac3-debounce.mjs:34:const store = new EvidenceStore(path.join(RUN_ROOT, "logs", "ac3-debounce"), {
+apps/desktop/frontend/e2e/p02-new-time\ac3-debounce.mjs:41:const session = await launchApp({ logDir: path.join(RUN_ROOT, "logs"), tag: "ac3" });
+apps/desktop/frontend/e2e/p02-new-time\ac1-identity.mjs:23:const store = new EvidenceStore(path.join(RUN_ROOT, "logs", "ac1-identity"), {
+apps/desktop/frontend/e2e/p02-new-time\ac1-identity.mjs:37:const session = await launchApp({ logDir: path.join(RUN_ROOT, "logs"), tag: "ac1" });
+apps/desktop/frontend/e2e/p02-new-time\ac2-navigation.mjs:18:const store = new EvidenceStore(path.join(RUN_ROOT, "logs", "ac2-navigation"), {
+apps/desktop/frontend/e2e/p02-new-time\ac2-navigation.mjs:26:const session = await launchApp({ logDir: path.join(RUN_ROOT, "logs"), tag: "ac2" });
+apps/desktop/frontend/e2e/p02-new-time\lib\app.mjs:22:export async function launchApp({ logDir, tag = "app" } = {}) {
+apps/desktop/frontend/e2e/p02-new-time\lib\cdp.mjs:134:export const INVOKE_WRAPPER_SOURCE = String.raw`
+apps/desktop/frontend/e2e/p02-new-time\lib\env.mjs:18:export const RUN_ROOT = path.join(TASK_ENV_ROOT, "run-r1");
+apps/desktop/frontend/e2e/p02-new-time\lib\env.mjs:37:  logs: path.join(RUN_ROOT, "logs"),
