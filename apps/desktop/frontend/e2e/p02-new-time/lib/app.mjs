@@ -8,7 +8,7 @@
  */
 
 import { spawn } from "node:child_process";
-import { createWriteStream, closeSync, openSync, writeSync } from "node:fs";
+import { createWriteStream, mkdirSync } from "node:fs";
 import path from "node:path";
 import {
   assertLaunchTargetsClean,
@@ -16,14 +16,17 @@ import {
   CDP_PORT,
   launchDirs,
   PINNED_EXE,
+  RUN_ROOT,
 } from "./env.mjs";
 import { CdpConnection, sleep } from "./cdp.mjs";
 
-export async function launchApp({ logDir, tag = "app" } = {}) {
-  const clean = assertLaunchTargetsClean();
-  const env = buildLaunchEnv();
-  const stderrPath = path.join(logDir, `${tag}.stderr.log`);
-  const stdoutPath = path.join(logDir, `${tag}.stdout.log`);
+export async function launchApp({ scenarioRoot = RUN_ROOT, logDir, tag = "app", cleanStateObserved } = {}) {
+  const clean = cleanStateObserved || assertLaunchTargetsClean(scenarioRoot);
+  const env = buildLaunchEnv(scenarioRoot);
+  const effectiveLogDir = logDir || launchDirs(scenarioRoot).logs;
+  mkdirSync(effectiveLogDir, { recursive: true });
+  const stderrPath = path.join(effectiveLogDir, `${tag}.stderr.log`);
+  const stdoutPath = path.join(effectiveLogDir, `${tag}.stdout.log`);
   const stderrSink = createWriteStream(stderrPath, { flags: "a" });
   const stdoutSink = createWriteStream(stdoutPath, { flags: "a" });
 
@@ -59,6 +62,8 @@ export async function launchApp({ logDir, tag = "app" } = {}) {
   if (!pageTarget) throw new Error("no page target on CDP endpoint");
 
   const cdp = await new CdpConnection(pageTarget.webSocketDebuggerUrl).open();
+  await cdp.send("Page.enable").catch(() => {});
+  await cdp.send("Runtime.enable").catch(() => {});
 
   return {
     child,

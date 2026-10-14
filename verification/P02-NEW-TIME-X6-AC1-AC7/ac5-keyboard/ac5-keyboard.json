@@ -1,0 +1,288 @@
+{
+  "steps": [
+    {
+      "step": "clean-targets-observed",
+      "at": "2026-10-14T11:44:00.218Z",
+      "roaming": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-r1\\ac5-keyboard\\appdata-roaming",
+        "state": "ABSENT"
+      },
+      "localAppData": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-r1\\ac5-keyboard\\appdata-local",
+        "state": "ABSENT"
+      },
+      "tmp": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-r1\\ac5-keyboard\\tmp",
+        "state": "ABSENT"
+      },
+      "dataRoot": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-r1\\ac5-keyboard\\data-root",
+        "state": "ABSENT"
+      },
+      "derived": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-r1\\ac5-keyboard\\scope\\derived",
+        "state": "ABSENT"
+      },
+      "managed": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-r1\\ac5-keyboard\\scope\\managed",
+        "state": "ABSENT"
+      },
+      "catalogDb": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-r1\\ac5-keyboard\\catalog\\catalog.sqlite",
+        "state": "ABSENT"
+      },
+      "webview2Udd": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-r1\\ac5-keyboard\\webview2-udd",
+        "state": "ABSENT"
+      },
+      "logs": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-r1\\ac5-keyboard\\logs",
+        "state": "ABSENT"
+      }
+    },
+    {
+      "step": "launched",
+      "at": "2026-10-14T11:44:01.066Z",
+      "pid": 47864
+    },
+    {
+      "step": "console-initial-focus",
+      "at": "2026-10-14T11:44:01.067Z",
+      "testid": null,
+      "tag": "BODY",
+      "text": "\n    ConsoleWorkbenchM2-RC2 resource cha",
+      "disabled": false,
+      "outline": "none",
+      "docHasFocus": true
+    },
+    {
+      "0": {
+        "testid": "nav-workbench",
+        "tag": "BUTTON",
+        "text": "Workbench",
+        "disabled": false,
+        "outline": "auto 1px",
+        "docHasFocus": true
+      },
+      "1": {
+        "testid": "library-refresh-btn",
+        "tag": "BUTTON",
+        "text": "刷新",
+        "disabled": false,
+        "outline": "auto 1px",
+        "docHasFocus": true
+      },
+      "2": {
+        "testid": "sfx-policy-select",
+        "tag": "SELECT",
+        "text": "跳过翻译 (skip)翻译 (translate)手动处理 (manual)",
+        "disabled": false,
+        "outline": "auto 1px",
+        "docHasFocus": true
+      },
+      "3": {
+        "testid": null,
+        "tag": "BODY",
+        "text": "\n    ConsoleWorkbenchM2-RC2 resource cha",
+        "disabled": false,
+        "outline": "none",
+        "docHasFocus": false
+      },
+      "4": {
+        "testid": "nav-workbench",
+        "tag": "BUTTON",
+        "text": "Workbench",
+        "disabled": false,
+        "outline": "auto 1px",
+        "docHasFocus": true
+      },
+      "5": {
+        "testid": "library-refresh-btn",
+        "tag": "BUTTON",
+        "text": "刷新",
+        "disabled": false,
+        "outline": "auto 1px",
+        "docHasFocus": true
+      },
+      "step": "console-tab-chain",
+      "at": "2026-10-14T11:44:02.006Z"
+    },
+    {
+      "step": "enter-activates-nav-workbench",
+      "at": "2026-10-14T11:44:02.830Z",
+      "focusBeforeEnter": {
+        "testid": "nav-workbench",
+        "tag": "BUTTON",
+        "text": "Workbench",
+        "disabled": false,
+        "outline": "auto 1px",
+        "docHasFocus": true
+      },
+      "workbenchVisible": false
+    },
+    {
+      "step": "enter-activation",
+      "at": "2026-10-14T11:44:02.830Z",
+      "status": "nav-workbench focus not reached in 8 tabs",
+      "chainHint": [
+        {
+          "testid": "nav-workbench",
+          "tag": "BUTTON",
+          "text": "Workbench",
+          "disabled": false,
+          "outline": "auto 1px",
+          "docHasFocus": true
+        },
+        {
+          "testid": "library-refresh-btn",
+          "tag": "BUTTON",
+          "text": "刷新",
+          "disabled": false,
+          "outline": "auto 1px",
+          "docHasFocus": true
+        },
+        {
+          "testid": "sfx-policy-select",
+          "tag": "SELECT",
+          "text": "跳过翻译 (skip)翻译 (translate)手动处理 (manual)",
+          "disabled": false,
+          "outline": "auto 1px",
+          "docHasFocus": true
+        },
+        {
+          "testid": null,
+          "tag": "BODY",
+          "text": "\n    ConsoleWorkbenchM2-RC2 resource cha",
+          "disabled": false,
+          "outline": "none",
+          "docHasFocus": false
+        },
+        {
+          "testid": "nav-workbench",
+          "tag": "BUTTON",
+          "text": "Workbench",
+          "disabled": false,
+          "outline": "auto 1px",
+          "docHasFocus": true
+        },
+        {
+          "testid": "library-refresh-btn",
+          "tag": "BUTTON",
+          "text": "刷新",
+          "disabled": false,
+          "outline": "auto 1px",
+          "docHasFocus": true
+        }
+      ]
+    },
+    {
+      "0": {
+        "testid": "library-refresh-btn",
+        "tag": "BUTTON",
+        "text": "刷新",
+        "disabled": false,
+        "outline": "auto 1px",
+        "docHasFocus": true
+      },
+      "1": {
+        "testid": "sfx-policy-select",
+        "tag": "SELECT",
+        "text": "跳过翻译 (skip)翻译 (translate)手动处理 (manual)",
+        "disabled": false,
+        "outline": "auto 1px",
+        "docHasFocus": true
+      },
+      "2": {
+        "testid": null,
+        "tag": "BODY",
+        "text": "\n    ConsoleWorkbenchM2-RC2 resource cha",
+        "disabled": false,
+        "outline": "none",
+        "docHasFocus": false
+      },
+      "3": {
+        "testid": "nav-workbench",
+        "tag": "BUTTON",
+        "text": "Workbench",
+        "disabled": false,
+        "outline": "auto 1px",
+        "docHasFocus": true
+      },
+      "4": {
+        "testid": "library-refresh-btn",
+        "tag": "BUTTON",
+        "text": "刷新",
+        "disabled": false,
+        "outline": "auto 1px",
+        "docHasFocus": true
+      },
+      "5": {
+        "testid": "sfx-policy-select",
+        "tag": "SELECT",
+        "text": "跳过翻译 (skip)翻译 (translate)手动处理 (manual)",
+        "disabled": false,
+        "outline": "auto 1px",
+        "docHasFocus": true
+      },
+      "6": {
+        "testid": "nav-workbench",
+        "tag": "BUTTON",
+        "text": "Workbench",
+        "disabled": false,
+        "outline": "auto 1px",
+        "docHasFocus": true
+      },
+      "7": {
+        "testid": "library-refresh-btn",
+        "tag": "BUTTON",
+        "text": "刷新",
+        "disabled": false,
+        "outline": "auto 1px",
+        "docHasFocus": true
+      },
+      "8": {
+        "testid": "sfx-policy-select",
+        "tag": "SELECT",
+        "text": "跳过翻译 (skip)翻译 (translate)手动处理 (manual)",
+        "disabled": false,
+        "outline": "auto 1px",
+        "docHasFocus": true
+      },
+      "9": {
+        "testid": null,
+        "tag": "BODY",
+        "text": "\n    ConsoleWorkbenchM2-RC2 resource cha",
+        "disabled": false,
+        "outline": "none",
+        "docHasFocus": false
+      },
+      "step": "workbench-tab-chain",
+      "at": "2026-10-14T11:44:04.388Z"
+    },
+    {
+      "step": "shift-tab-focus",
+      "at": "2026-10-14T11:44:04.701Z",
+      "testid": null,
+      "tag": "BODY",
+      "text": "\n    ConsoleWorkbenchM2-RC2 resource cha",
+      "disabled": false,
+      "outline": "none",
+      "docHasFocus": true
+    },
+    {
+      "step": "teardown",
+      "at": "2026-10-14T11:44:05.911Z",
+      "exited": true,
+      "code": null,
+      "signal": "SIGTERM"
+    }
+  ],
+  "errors": [
+    "TypeError: Cannot read properties of null (reading 'cx')\n    at file:///G:/CODEX/New%20Manga.workspace/worktrees/P02-NEW-TIME-X6-AC1-AC7-ANTIGRAVITY/apps/desktop/frontend/e2e/p02-new-time/ac5-keyboard.mjs:117:43"
+  ],
+  "verdict": {
+    "ac": "AC5",
+    "status": "ERROR",
+    "error": "TypeError: Cannot read properties of null (reading 'cx')"
+  }
+}

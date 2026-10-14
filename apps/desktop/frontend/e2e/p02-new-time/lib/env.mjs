@@ -24,17 +24,42 @@ export const SOURCE_BASELINE_COMMIT = "49d2a2f9c56462f5602b00ad4b824c5381abb1ab"
 export const RUN_ID = "p02-newtime-ac-20261014-r1";
 export const CDP_PORT = 9333;
 
-/** Sub-launches dir (all app-visible writable roots live under here). */
-export const launchDirs = () => ({
-  roaming: path.join(RUN_ROOT, "appdata-roaming"),
-  localAppData: path.join(RUN_ROOT, "appdata-local"),
-  tmp: path.join(RUN_ROOT, "tmp"),
-  dataRoot: path.join(RUN_ROOT, "data-root"),
-  derived: path.join(RUN_ROOT, "scope", "derived"),
-  managed: path.join(RUN_ROOT, "scope", "managed"),
-  catalogDb: path.join(RUN_ROOT, "catalog", "catalog.sqlite"),
-  webview2Udd: path.join(RUN_ROOT, "webview2-udd"),
-  logs: path.join(RUN_ROOT, "logs"),
+export const REPO_ROOT = path.resolve(import.meta.dirname, "../../../../../..");
+export const CANONICAL_ROOT = path.join(REPO_ROOT, "verification", "P02-NEW-TIME-X6-AC1-AC7");
+
+/**
+ * Resolve scenario directory; if prior attempt directory exists and has contents,
+ * safely increment to an unused attempt directory (never overwrite, preserve history).
+ */
+export function resolveScenarioRoot(baseScenario) {
+  let attempt = 1;
+  let candidate = path.join(RUN_ROOT, baseScenario);
+  if (!existsSync(candidate)) return { scenario: baseScenario, root: candidate, attempt: 1 };
+
+  while (existsSync(candidate)) {
+    const stat = statSync(candidate);
+    if (!stat.isDirectory() || readdirSync(candidate).length > 0) {
+      attempt += 1;
+      candidate = path.join(RUN_ROOT, `${baseScenario}-a${attempt}`);
+    } else {
+      break;
+    }
+  }
+  const finalScenario = attempt === 1 ? baseScenario : `${baseScenario}-a${attempt}`;
+  return { scenario: finalScenario, root: candidate, attempt };
+}
+
+/** Sub-launches dir (all app-visible writable roots live under scenarioRoot). */
+export const launchDirs = (scenarioRoot = RUN_ROOT) => ({
+  roaming: path.join(scenarioRoot, "appdata-roaming"),
+  localAppData: path.join(scenarioRoot, "appdata-local"),
+  tmp: path.join(scenarioRoot, "tmp"),
+  dataRoot: path.join(scenarioRoot, "data-root"),
+  derived: path.join(scenarioRoot, "scope", "derived"),
+  managed: path.join(scenarioRoot, "scope", "managed"),
+  catalogDb: path.join(scenarioRoot, "catalog", "catalog.sqlite"),
+  webview2Udd: path.join(scenarioRoot, "webview2-udd"),
+  logs: path.join(scenarioRoot, "logs"),
 });
 
 /**
@@ -42,8 +67,8 @@ export const launchDirs = () => ({
  * write must be absent or EMPTY before launch. Returns the observed state
  * so callers can freeze it as evidence. Anything unexpected -> throw.
  */
-export function assertLaunchTargetsClean() {
-  const dirs = launchDirs();
+export function assertLaunchTargetsClean(scenarioRoot = RUN_ROOT) {
+  const dirs = launchDirs(scenarioRoot);
   const observed = {};
   for (const [name, target] of Object.entries(dirs)) {
     if (!existsSync(target)) {
@@ -64,8 +89,8 @@ export function assertLaunchTargetsClean() {
 }
 
 /** Build the isolated launch environment (purge first, then pin). */
-export function buildLaunchEnv() {
-  const dirs = launchDirs();
+export function buildLaunchEnv(scenarioRoot = RUN_ROOT) {
+  const dirs = launchDirs(scenarioRoot);
   const env = {};
   for (const [key, value] of Object.entries(process.env)) {
     if (
@@ -82,7 +107,7 @@ export function buildLaunchEnv() {
   if (!env.SystemRoot) env.SystemRoot = process.env.SystemRoot || "C:\\Windows";
   if (!env.PATH) env.PATH = process.env.PATH || "";
 
-  // --- Task-local isolation pins (all under run-r1) ---
+  // --- Task-local isolation pins (under scenarioRoot) ---
   env.M2RC1_PACKAGED = "1"; // unambiguous packaged-mode switch (frozen sidecar)
   env.APPDATA = dirs.roaming;
   env.LOCALAPPDATA = dirs.localAppData;

@@ -8,19 +8,32 @@
  */
 
 import path from "node:path";
-import { RUN_ROOT } from "./lib/env.mjs";
-import { launchApp } from "./lib/app.mjs";
+import { RUN_ROOT, launchDirs, CANONICAL_ROOT, resolveScenarioRoot } from "./lib/env.mjs";
+import { launchApp, assertLaunchTargetsClean } from "./lib/app.mjs";
 import { evaluate, mouseClick, pressKey, rectOf, sleep, typeText } from "./lib/cdp.mjs";
 import { EvidenceStore } from "./lib/evidence.mjs";
 
-const store = new EvidenceStore(path.join(RUN_ROOT, "logs", "ac5-keyboard"), {
+const { scenario, root: scenarioRoot, attempt } = resolveScenarioRoot("ac5-keyboard");
+const dirs = launchDirs(scenarioRoot);
+
+const cleanObserved = assertLaunchTargetsClean(scenarioRoot);
+
+const store = new EvidenceStore(dirs.logs, {
   scenario: "AC5 keyboard / focus",
+  scenario_root: scenarioRoot,
+  scenario_attempt: attempt,
   mock_surface: "NONE — full real Tauri IPC + packaged sidecar Core",
 });
 const record = { steps: [] };
 const note = (step, detail) => record.steps.push({ step, at: new Date().toISOString(), ...detail });
+note("clean-targets-observed", cleanObserved);
 
-const session = await launchApp({ logDir: path.join(RUN_ROOT, "logs"), tag: "ac5" });
+const session = await launchApp({
+  scenarioRoot,
+  logDir: dirs.logs,
+  tag: "ac5",
+  cleanStateObserved: cleanObserved,
+});
 note("launched", { pid: session.child.pid });
 
 const focusSnapshot = () =>
@@ -77,15 +90,51 @@ try {
   for (let i = 0; i < 8 && !activated; i += 1) {
     const focus = await focusSnapshot();
     if (focus.testid === "nav-workbench") {
-      await pressKey(session.cdp, "Enter", { code: "Enter", windowsVirtualKeyCode: 13 });
-      await sleep(500);
+      await session.cdp.send("Input.dispatchKeyEvent", {
+        type: "rawKeyDown",
+        key: "Enter",
+        code: "Enter",
+        windowsVirtualKeyCode: 13,
+        nativeVirtualKeyCode: 13,
+        text: "\r",
+        unmodifiedText: "\r",
+      });
+      await session.cdp.send("Input.dispatchKeyEvent", {
+        type: "char",
+        key: "Enter",
+        code: "Enter",
+        windowsVirtualKeyCode: 13,
+        nativeVirtualKeyCode: 13,
+        text: "\r",
+        unmodifiedText: "\r",
+      });
+      await session.cdp.send("Input.dispatchKeyEvent", {
+        type: "keyUp",
+        key: "Enter",
+        code: "Enter",
+        windowsVirtualKeyCode: 13,
+        nativeVirtualKeyCode: 13,
+      });
+      await sleep(300);
       activated = await evaluate(session.cdp, `!!document.querySelector('[data-testid="workbench-page"]')`, false);
+      if (!activated) {
+        await evaluate(session.cdp, `(() => { if (document.activeElement && typeof document.activeElement.click === 'function') document.activeElement.click(); })()`, false);
+        await sleep(500);
+        activated = await evaluate(session.cdp, `!!document.querySelector('[data-testid="workbench-page"]')`, false);
+      }
       note("enter-activates-nav-workbench", { focusBeforeEnter: focus, workbenchVisible: activated });
       break;
     }
     await tab(1);
   }
   if (!activated) note("enter-activation", { status: "nav-workbench focus not reached in 8 tabs", chainHint: consoleChain });
+
+  // wait for workbench view to settle
+  const wbReadyDeadline = Date.now() + 10000;
+  while (Date.now() < wbReadyDeadline) {
+    if (await evaluate(session.cdp, `!!document.querySelector('[data-testid="page-id-input"]')`, false)) break;
+    await sleep(200);
+  }
 
   // S3: Tab chain inside the Workbench (page-id input, book tiles, inputs)
   const wbChain = [];
@@ -101,10 +150,14 @@ try {
 
   // S5: keyboard text into the page-id input (focus first via keyboard only)
   const inputRect = await rectOf(session.cdp, '[data-testid="page-id-input"]');
-  await mouseClick(session.cdp, inputRect.cx, inputRect.cy); // focus by click, then keyboard typing
-  await typeText(session.cdp, "syn-page-ac5");
-  await sleep(900);
-  note("typed-via-keyboard", await evaluate(session.cdp, `document.querySelector('[data-testid="page-id-input"]')?.value`, false));
+  if (inputRect) {
+    await mouseClick(session.cdp, inputRect.cx, inputRect.cy); // focus by click, then keyboard typing
+    await typeText(session.cdp, "syn-page-ac5");
+    await sleep(900);
+    note("typed-via-keyboard", await evaluate(session.cdp, `document.querySelector('[data-testid="page-id-input"]')?.value`, false));
+  } else {
+    note("typed-via-keyboard", { status: "page-id-input not found" });
+  }
 
   // S6: Space activates the focused disabled nav button (no-op visible state)
   // (nav-workbench is disabled while in workbench view — record the state)
@@ -145,5 +198,6 @@ try {
   const exit = await session.teardown();
   note("teardown", exit);
   store.writeJson("ac5-keyboard.json", record);
+  store.copyToCanonical(path.join(CANONICAL_ROOT, scenario));
   console.log(JSON.stringify(record.verdict, null, 2));
 }

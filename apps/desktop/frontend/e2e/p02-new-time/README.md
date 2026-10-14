@@ -1,6 +1,6 @@
 # P02-NEW-TIME-X6-AC1-AC7 — WebView2 e2e drivers
 
-零新增依赖的 Node 脚本组（Node >= 22，使用内置 `fetch`/`WebSocket`/`child_process`）。它们启动**固定 packaged EXE**（只读）并通过 WebView2 官方 `WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS=--remote-debugging-port=9333` 建立 CDP 驱动；所有可写路径全部隔离在 `G:/CODEX/New Manga.workspace/task-envs/P02-NEW-TIME-X6-AC1-AC7/run-r1/`（`lib/env.mjs` 在启动前断言目标目录为空，任何预存内容都会中止）。
+零新增依赖的 Node 脚本组（Node >= 22，使用内置 `fetch`/`WebSocket`/`child_process`）。它们启动**固定 packaged EXE**（只读）并通过 WebView2 官方 `WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS=--remote-debugging-port=9333` 建立 CDP 驱动；所有可写路径全部隔离在 `G:/CODEX/New Manga.workspace/task-envs/P02-NEW-TIME-X6-AC1-AC7/run-r1/<scenario>/`（`lib/env.mjs` 在启动前断言场景目标目录为空，任何预存内容都会中止）。
 
 ## 运行（按 AC 顺序）
 
@@ -13,7 +13,7 @@ node ac5-keyboard.mjs      # AC5 Tab/Shift+Tab/Enter/Space/Escape 与焦点（�
 node ac6-contrast.mjs      # AC6 computed colors + WCAG ratio + F token 映射（真实 IPC）
 ```
 
-每个脚本独立启动/退出应用；证据先落 `run-r1/logs/<scenario>/`，随后将整个目录复制为 canonical 证据到 `verification/P02-NEW-TIME-X6-AC1-AC7/<scenario>/`。
+每个脚本独立启动/退出应用；证据先落 `run-r1/<scenario>/logs/`，随后将整个目录复制为 canonical 证据到 `verification/P02-NEW-TIME-X6-AC1-AC7/<scenario>/`。
 
 ## 分层（mock 面，逐场景如实标注）
 
@@ -23,9 +23,9 @@ node ac6-contrast.mjs      # AC6 computed colors + WCAG ratio + F token 映射�
 
 ## 安全约束（编码在 `lib/env.mjs`）
 
-- 启动前 `assertLaunchTargetsClean()`：run-r1 内所有目标必须 ABSENT 或 EMPTY，否则中止。
+- 启动前 `assertLaunchTargetsClean(scenarioRoot)`：run-r1/<scenario>/ 内所有目标必须 ABSENT 或 EMPTY，否则中止。
 - 环境重建时清除全部 `M2RC1_* / M2RC2_* / M2AC1_* / NEWMANGA_*`；永不设置 `M2RC1_PROBE_OUT`、`M2AC1_TEST_MODE`（保持 production interactive 表面，Console/Workbench 导航才会出现）。
-- `APPDATA/LOCALAPPDATA/TEMP/TMP/NEWMANGA_DATA_ROOT/M2RC1_DERIVED_ROOT/M2RC1_MANAGED_ROOT/M2RC2_CATALOG_DB/WEBVIEW2_USER_DATA_FOLDER` 全部指向 run-r1 子目录。
+- `APPDATA/LOCALAPPDATA/TEMP/TMP/NEWMANGA_DATA_ROOT/M2RC1_DERIVED_ROOT/M2RC1_MANAGED_ROOT/M2RC2_CATALOG_DB/WEBVIEW2_USER_DATA_FOLDER` 全部指向 run-r1/<scenario>/ 子目录。
 
 ## 时钟
 

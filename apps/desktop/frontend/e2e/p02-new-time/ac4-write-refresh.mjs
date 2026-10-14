@@ -19,19 +19,32 @@
  */
 
 import path from "node:path";
-import { RUN_ROOT } from "./lib/env.mjs";
-import { launchApp } from "./lib/app.mjs";
+import { RUN_ROOT, launchDirs, CANONICAL_ROOT, resolveScenarioRoot } from "./lib/env.mjs";
+import { launchApp, assertLaunchTargetsClean } from "./lib/app.mjs";
 import { evaluate, mouseClick, rectOf, sleep, typeText } from "./lib/cdp.mjs";
 import { EvidenceStore } from "./lib/evidence.mjs";
 
-const store = new EvidenceStore(path.join(RUN_ROOT, "logs", "ac4-write-refresh"), {
+const { scenario, root: scenarioRoot, attempt } = resolveScenarioRoot("ac4-write-refresh");
+const dirs = launchDirs(scenarioRoot);
+
+const cleanObserved = assertLaunchTargetsClean(scenarioRoot);
+
+const store = new EvidenceStore(dirs.logs, {
   scenario: "AC4 write/read freshness (retype, undo, restore)",
+  scenario_root: scenarioRoot,
+  scenario_attempt: attempt,
   mock_surface: "REAL_WEBVIEW_MOCK_IPC — invoke boundary mocked with synthetic data; React/components/timers real; real Core/SQLite NOT claimed",
 });
 const record = { steps: [] };
 const note = (step, detail) => record.steps.push({ step, at: new Date().toISOString(), ...detail });
+note("clean-targets-observed", cleanObserved);
 
-const session = await launchApp({ logDir: path.join(RUN_ROOT, "logs"), tag: "ac4" });
+const session = await launchApp({
+  scenarioRoot,
+  logDir: dirs.logs,
+  tag: "ac4",
+  cleanStateObserved: cleanObserved,
+});
 note("launched", { pid: session.child.pid });
 
 /** The synthetic region state machine mirrored by the mock Core. */
@@ -134,7 +147,10 @@ async function installMocks() {
   await session.cdp.send("Page.reload", { ignoreCache: true });
   const deadline = Date.now() + 30000;
   while (Date.now() < deadline) {
-    const state = await evaluate(session.cdp, `window.__p02InvokeWrapperState || "not-yet"`, false);
+    const state = await evaluate(session.cdp, `(() => {
+      if (typeof window.__p02TryHook === "function") window.__p02TryHook();
+      return window.__p02InvokeWrapperState || "not-yet";
+    })()`, false);
     const nav = await evaluate(session.cdp, `!!document.querySelector('[data-testid="nav-workbench"]')`, false);
     if (state === "ACTIVE" && nav) return;
     await sleep(400);
@@ -145,7 +161,21 @@ async function installMocks() {
 async function click(selector) {
   const r = await rectOf(session.cdp, selector);
   if (!r) throw new Error(`element not found: ${selector}`);
-  await mouseClick(session.cdp, r.cx, r.cy);
+  if (r.tag && r.tag.toLowerCase() === "rect") {
+    // SVG rects with fill="none" only catch pointer events on stroke
+    await mouseClick(session.cdp, Math.round(r.x + 2), Math.round(r.y + 2));
+    await sleep(150);
+    await evaluate(
+      session.cdp,
+      `(() => {
+        const el = document.querySelector(${JSON.stringify(selector)});
+        if (el) el.dispatchEvent(new MouseEvent("click", { bubbles: true, cancelable: true }));
+      })()`,
+      false
+    );
+  } else {
+    await mouseClick(session.cdp, r.cx, r.cy);
+  }
 }
 
 async function invokeLog() {
@@ -314,5 +344,6 @@ try {
   const exit = await session.teardown();
   note("teardown", exit);
   store.writeJson("ac4-write-refresh.json", record);
+  store.copyToCanonical(path.join(CANONICAL_ROOT, scenario));
   console.log(JSON.stringify(record.verdict, null, 2));
 }

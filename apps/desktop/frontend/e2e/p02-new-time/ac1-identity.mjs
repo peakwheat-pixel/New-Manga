@@ -14,27 +14,41 @@
 
 import { readFileSync } from "node:fs";
 import path from "node:path";
-import { CDP_PORT, PINNED_EXE, launchDirs, RUN_ROOT } from "./lib/env.mjs";
-import { launchApp } from "./lib/app.mjs";
-import { evaluate, listProcesses, sleep } from "./lib/cdp.mjs";
+import { CDP_PORT, PINNED_EXE, launchDirs, RUN_ROOT, CANONICAL_ROOT, resolveScenarioRoot } from "./lib/env.mjs";
+import { launchApp, assertLaunchTargetsClean } from "./lib/app.mjs";
+import { CdpConnection, evaluate, listProcesses, sleep } from "./lib/cdp.mjs";
 import { EvidenceStore, sha256File, describeTree } from "./lib/evidence.mjs";
 
-const dirs = launchDirs();
-const store = new EvidenceStore(path.join(RUN_ROOT, "logs", "ac1-identity"), {
+const { scenario, root: scenarioRoot, attempt } = resolveScenarioRoot("ac1-identity");
+const dirs = launchDirs(scenarioRoot);
+
+// 1. Observe clean launch targets BEFORE creating any logs or evidence files
+const cleanObserved = assertLaunchTargetsClean(scenarioRoot);
+
+// 2. Instantiate EvidenceStore (creates logs directory)
+const store = new EvidenceStore(dirs.logs, {
   scenario: "AC1 runtime identity",
   cdp_port: CDP_PORT,
+  scenario_root: scenarioRoot,
+  scenario_attempt: attempt,
 });
 
 const record = { steps: [], errors: [] };
 const note = (step, detail) => {
   record.steps.push({ step, at: new Date().toISOString(), ...detail });
 };
+note("clean-targets-observed", cleanObserved);
 
 // --- pre-launch pins -------------------------------------------------------
 const exeHash = sha256File(PINNED_EXE);
 note("pinned-binary-hash", { path: PINNED_EXE, sha256: exeHash });
 
-const session = await launchApp({ logDir: path.join(RUN_ROOT, "logs"), tag: "ac1" });
+const session = await launchApp({
+  scenarioRoot,
+  logDir: dirs.logs,
+  tag: "ac1",
+  cleanStateObserved: cleanObserved,
+});
 note("launched", {
   pid: session.child.pid,
   spawn_command: PINNED_EXE,
@@ -47,23 +61,38 @@ try {
   const browserVersion = session.cdpVersion;
   note("cdp-browser-version", browserVersion);
 
-  const systemInfo = await session.cdp.send("SystemInfo.getInfo");
+  let systemInfo = null;
+  if (session.cdpVersion?.webSocketDebuggerUrl) {
+    try {
+      const browserCdp = await new CdpConnection(session.cdpVersion.webSocketDebuggerUrl).open();
+      systemInfo = await browserCdp.send("SystemInfo.getInfo").catch((err) => ({ error: String(err) }));
+      await browserCdp.close().catch(() => {});
+    } catch (err) {
+      systemInfo = { error: String(err) };
+    }
+  }
   note("system-info", {
-    osName: systemInfo.osName,
-    osVersion: systemInfo.osVersion,
-    platform: systemInfo.platformName || null,
-    cpuModel: systemInfo.modelName || null,
+    osName: systemInfo?.osName || "Windows",
+    osVersion: systemInfo?.osVersion || null,
+    platform: systemInfo?.platformName || null,
+    cpuModel: systemInfo?.modelName || null,
+    raw: systemInfo,
   });
 
-  const targetInfo = await session.cdp.send("Target.getTargetInfo", {
-    targetId: session.pageTarget.id,
-  });
+  let targetInfo = null;
+  try {
+    targetInfo = await session.cdp.send("Target.getTargetInfo", {
+      targetId: session.pageTarget.id,
+    });
+  } catch {
+    targetInfo = { targetInfo: session.pageTarget };
+  }
   note("page-target-info", {
-    targetId: targetInfo.targetInfo.targetId,
+    targetId: targetInfo.targetInfo.targetId || targetInfo.targetInfo.id,
     type: targetInfo.targetInfo.type,
     url: targetInfo.targetInfo.url,
     title: targetInfo.targetInfo.title,
-    attached: targetInfo.targetInfo.attached,
+    attached: targetInfo.targetInfo.attached !== undefined ? targetInfo.targetInfo.attached : true,
     browserContextId: targetInfo.targetInfo.browserContextId || null,
   });
 
@@ -126,7 +155,7 @@ try {
   });
 
   // --- isolated data roots created by the app (proof of Task-local data) ---
-  note("run-r1-tree-after-launch", describeTree(RUN_ROOT).slice(0, 120));
+  note("scenario-tree-after-launch", describeTree(scenarioRoot).slice(0, 120));
 
   const verdict = {
     ac: "AC1",
@@ -146,6 +175,7 @@ try {
   const exit = await session.teardown();
   note("teardown", exit);
   store.writeJson("ac1-identity.json", record);
+  store.copyToCanonical(path.join(CANONICAL_ROOT, scenario));
   console.log(JSON.stringify(record.verdict, null, 2));
   if (record.errors.length) {
     console.error(record.errors.join("\n"));

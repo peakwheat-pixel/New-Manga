@@ -17,23 +17,35 @@
 
 import { readFileSync } from "node:fs";
 import path from "node:path";
-import { RUN_ROOT } from "./lib/env.mjs";
-import { launchApp } from "./lib/app.mjs";
+import { RUN_ROOT, launchDirs, CANONICAL_ROOT, REPO_ROOT, resolveScenarioRoot } from "./lib/env.mjs";
+import { launchApp, assertLaunchTargetsClean } from "./lib/app.mjs";
 import { evaluate, mouseClick, rectOf, sleep, typeText } from "./lib/cdp.mjs";
 import { EvidenceStore } from "./lib/evidence.mjs";
 
-const REPO_ROOT = path.resolve(import.meta.dirname, "../../../../..");
 const F_TOKENS = JSON.parse(readFileSync(path.join(REPO_ROOT, "doc/design/tokens-cand-f.json"), "utf8"));
 
-const store = new EvidenceStore(path.join(RUN_ROOT, "logs", "ac6-contrast"), {
+const { scenario, root: scenarioRoot, attempt } = resolveScenarioRoot("ac6-contrast");
+const dirs = launchDirs(scenarioRoot);
+
+const cleanObserved = assertLaunchTargetsClean(scenarioRoot);
+
+const store = new EvidenceStore(dirs.logs, {
   scenario: "AC6 computed colors / contrast",
+  scenario_root: scenarioRoot,
+  scenario_attempt: attempt,
   mock_surface: "NONE — real IPC session; DOM computed styles are product truth",
   f_token_file: "doc/design/tokens-cand-f.json",
 });
 const record = { steps: [] };
 const note = (step, detail) => record.steps.push({ step, at: new Date().toISOString(), ...detail });
+note("clean-targets-observed", cleanObserved);
 
-const session = await launchApp({ logDir: path.join(RUN_ROOT, "logs"), tag: "ac6" });
+const session = await launchApp({
+  scenarioRoot,
+  logDir: dirs.logs,
+  tag: "ac6",
+  cleanStateObserved: cleanObserved,
+});
 note("launched", { pid: session.child.pid });
 
 /** Page-side collector: effective fg/bg with alpha compositing. */
@@ -79,9 +91,9 @@ const COLLECT_SOURCE = String.raw`
       selector, label, present: true, kind,
       text: (el.textContent || '').slice(0, 40),
       color: cs.color,
-      colorResolved: fgEff ? `rgb(${fgEff.r.toFixed(1)}, ${fgEff.g.toFixed(1)}, ${fgEff.b.toFixed(1)})` : null,
+      colorResolved: fgEff ? ('rgb(' + fgEff.r.toFixed(1) + ', ' + fgEff.g.toFixed(1) + ', ' + fgEff.b.toFixed(1) + ')') : null,
       backgroundColor: cs.backgroundColor,
-      backgroundResolved: bg.color ? `rgb(${bg.color.r.toFixed(1)}, ${bg.color.g.toFixed(1)}, ${bg.color.b.toFixed(1)})` : null,
+      backgroundResolved: bg.color ? ('rgb(' + bg.color.r.toFixed(1) + ', ' + bg.color.g.toFixed(1) + ', ' + bg.color.b.toFixed(1) + ')') : null,
       backgroundSource: bg.on,
       backgroundLayers: bg.layers,
       fontSize: cs.fontSize,
@@ -260,5 +272,6 @@ try {
   const exit = await session.teardown();
   note("teardown", exit);
   store.writeJson("ac6-contrast.json", record);
+  store.copyToCanonical(path.join(CANONICAL_ROOT, scenario));
   console.log(JSON.stringify(record.verdict, null, 2));
 }

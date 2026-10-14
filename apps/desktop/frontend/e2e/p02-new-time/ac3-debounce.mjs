@@ -19,8 +19,8 @@
  */
 
 import path from "node:path";
-import { RUN_ROOT } from "./lib/env.mjs";
-import { launchApp } from "./lib/app.mjs";
+import { RUN_ROOT, launchDirs, CANONICAL_ROOT, resolveScenarioRoot } from "./lib/env.mjs";
+import { launchApp, assertLaunchTargetsClean } from "./lib/app.mjs";
 import {
   evaluate,
   INVOKE_WRAPPER_SOURCE,
@@ -31,14 +31,27 @@ import {
 } from "./lib/cdp.mjs";
 import { EvidenceStore } from "./lib/evidence.mjs";
 
-const store = new EvidenceStore(path.join(RUN_ROOT, "logs", "ac3-debounce"), {
+const { scenario, root: scenarioRoot, attempt } = resolveScenarioRoot("ac3-debounce");
+const dirs = launchDirs(scenarioRoot);
+
+const cleanObserved = assertLaunchTargetsClean(scenarioRoot);
+
+const store = new EvidenceStore(dirs.logs, {
   scenario: "AC3 300ms quiet-period / stale response",
+  scenario_root: scenarioRoot,
+  scenario_attempt: attempt,
   mock_surface: "Phase A: observer wrapper only (passthrough). Phase B: MOCK_IPC for resolve_page_resource/list_regions at the invoke boundary; product React code and timers fully real.",
 });
 const record = { steps: [] };
 const note = (step, detail) => record.steps.push({ step, at: new Date().toISOString(), ...detail });
+note("clean-targets-observed", cleanObserved);
 
-const session = await launchApp({ logDir: path.join(RUN_ROOT, "logs"), tag: "ac3" });
+const session = await launchApp({
+  scenarioRoot,
+  logDir: dirs.logs,
+  tag: "ac3",
+  cleanStateObserved: cleanObserved,
+});
 note("launched", { pid: session.child.pid });
 
 async function installObserver() {
@@ -53,7 +66,10 @@ async function installObserver() {
   await session.cdp.send("Page.reload", { ignoreCache: true });
   const deadline = Date.now() + 30000;
   while (Date.now() < deadline) {
-    const state = await evaluate(session.cdp, `window.__p02InvokeWrapperState || "not-yet"`, false);
+    const state = await evaluate(session.cdp, `(() => {
+      if (typeof window.__p02TryHook === "function") window.__p02TryHook();
+      return window.__p02InvokeWrapperState || "not-yet";
+    })()`, false);
     const nav = await evaluate(session.cdp, `!!document.querySelector('[data-testid="nav-workbench"]')`, false);
     if (state === "ACTIVE" && nav) return;
     await sleep(400);
@@ -110,14 +126,14 @@ try {
   // ---------- Phase A: real IPC quiet period --------------------------------
   session.nodeEvents.length = 0;
   const typingStart = await evaluate(session.cdp, "performance.now()", false);
-  await typeText(session.cdp, "syn-page-a"); // 11 chars, ~80ms apart => well inside quiet period
+  await typeText(session.cdp, "syn-page-a", 80); // 10 chars, ~80ms apart => well inside quiet period
   const typingEnd = await evaluate(session.cdp, "performance.now()", false);
   note("phaseA-typing", { text: "syn-page-a", pagePerfStart: typingStart, pagePerfEnd: typingEnd });
   await sleep(1600); // let the quiet period + real core round trip settle
 
   const logA = await invokeLog();
-  const resolveA = logA.filter((e) => e.kind === "invoke" && e.command === "resolve_page_resource");
-  const regionsA = logA.filter((e) => e.kind === "invoke" && e.command === "list_regions");
+  const resolveA = logA.filter((e) => e.kind === "invoke" && e.command === "resolve_page_resource" && e.pagePerfNow >= typingStart);
+  const regionsA = logA.filter((e) => e.kind === "invoke" && e.command === "list_regions" && e.pagePerfNow >= typingStart);
   note("phaseA-invoke-log", { resolveCalls: resolveA, regionCalls: regionsA, fullLogTail: logA.slice(-12) });
 
   const firstResolveAfterTyping = resolveA.length ? resolveA[0].pagePerfNow : null;
@@ -177,7 +193,7 @@ try {
   await sleep(1800); // old-page late error would land ~900ms after its (never-fired) resolve... only relevant if a stale call slipped through
 
   const logB1 = await invokeLog();
-  const resolveB1 = logB1.filter((e) => e.kind === "invoke" && e.command === "resolve_page_resource");
+  const resolveB1 = logB1.filter((e) => e.kind === "invoke" && e.command === "resolve_page_resource" && e.pagePerfNow >= b1Start);
   const stateB1 = await snapshot("B1-after-switch");
   note("phaseB1-result", { resolveCalls: resolveB1, state: stateB1 });
   record.phaseB1 = {
@@ -192,6 +208,7 @@ try {
   // must not overwrite the new page's resolved state.
   await clearInput();
   session.nodeEvents.length = 0;
+  const b2Start = await evaluate(session.cdp, "performance.now()", false);
   await typeText(session.cdp, "syn-stale-old");
   await sleep(500); // old id DOES fire (past quiet period), its reply is delayed 900ms
   await clearInput();
@@ -203,8 +220,8 @@ try {
   await sleep(700); // well past the old page's late reply
   const stateEnd = await snapshot("B2-end");
   const logB2 = await invokeLog();
-  const resolveB2 = logB2.filter((e) => e.kind === "invoke" && e.command === "resolve_page_resource");
-  const settledB2 = logB2.filter((e) => e.kind === "settled" && e.command === "resolve_page_resource");
+  const resolveB2 = logB2.filter((e) => e.kind === "invoke" && e.command === "resolve_page_resource" && e.pagePerfNow >= b2Start);
+  const settledB2 = logB2.filter((e) => e.kind === "settled" && e.command === "resolve_page_resource" && e.pagePerfNow >= b2Start);
   note("phaseB2-result", { resolveCalls: resolveB2, settled: settledB2, mid: stateMid, end: stateEnd });
   record.phaseB2 = {
     layer: "MOCK_IPC (delayed stale reply; guard logic real)",
@@ -233,5 +250,6 @@ try {
   const exit = await session.teardown();
   note("teardown", exit);
   store.writeJson("ac3-debounce.json", record);
+  store.copyToCanonical(path.join(CANONICAL_ROOT, scenario));
   console.log(JSON.stringify(record.verdict, null, 2));
 }

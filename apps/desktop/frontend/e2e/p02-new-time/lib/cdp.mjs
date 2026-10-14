@@ -134,62 +134,241 @@ export async function evaluate(cdp, expression, awaitPromise = true) {
 export const INVOKE_WRAPPER_SOURCE = String.raw`
 (() => {
   if (window.__p02InvokeWrapperInstalled) return;
-  const core = window.__TAURI__ && window.__TAURI__.core;
-  if (!core || typeof core.invoke !== "function") {
-    window.__p02InvokeWrapperState = "TAURI_BRIDGE_MISSING";
-    return;
-  }
-  const realInvoke = core.invoke;
-  window.__p02InvokeLog = [];
-  window.__p02InvokeWrapperState = "ACTIVE";
+
+  window.__p02InvokeLog = window.__p02InvokeLog || [];
   window.__p02MockHandlers = window.__p02MockHandlers || {};
-  const report = (entry) => {
-    try { window.__p02Event(JSON.stringify(entry)); } catch {}
-  };
-  core.invoke = function patchedInvoke(command, args) {
-    const startedAt = performance.now();
-    const entry = {
-      command,
-      args,
-      pagePerfNow: startedAt,
-      pageEpoch: Math.floor(Date.now()),
-      kind: "invoke",
-    };
-    window.__p02InvokeLog.push(entry);
-    report(entry);
-    const handler = window.__p02MockHandlers[command];
-    if (handler) {
-      return Promise.resolve()
-        .then(() => handler(args || {}))
-        .then((value) => {
-          const done = { kind: "settled", command, status: "resolved", pagePerfNow: performance.now(), pageEpoch: Math.floor(Date.now()) };
+
+  function report(entry) {
+    try {
+      if (typeof window.__p02Event === "function") {
+        window.__p02Event(JSON.stringify(entry));
+      }
+    } catch {}
+  }
+
+  function makePatchedInvoke(realInvoke, realCore) {
+    const fn = function patchedInvoke(command, args) {
+      const startedAt = performance.now();
+      const entry = {
+        command,
+        args,
+        pagePerfNow: startedAt,
+        pageEpoch: Math.floor(Date.now()),
+        kind: "invoke",
+      };
+      window.__p02InvokeLog.push(entry);
+      report(entry);
+      const handler = window.__p02MockHandlers && window.__p02MockHandlers[command];
+      if (typeof handler === "function") {
+        return Promise.resolve()
+          .then(() => handler(args || {}))
+          .then((value) => {
+            const done = {
+              kind: "settled",
+              command,
+              status: "resolved",
+              pagePerfNow: performance.now(),
+              pageEpoch: Math.floor(Date.now()),
+            };
+            window.__p02InvokeLog.push(done);
+            report(done);
+            return value;
+          })
+          .catch(function failed(error) {
+            const done = {
+              kind: "settled",
+              command,
+              status: "rejected",
+              error: String(error && error.message ? error.message : error),
+              pagePerfNow: performance.now(),
+              pageEpoch: Math.floor(Date.now()),
+            };
+            window.__p02InvokeLog.push(done);
+            report(done);
+            throw error;
+          });
+      }
+      return realInvoke.call(realCore, command, args).then(
+        (value) => {
+          const done = {
+            kind: "settled",
+            command,
+            status: "resolved",
+            pagePerfNow: performance.now(),
+            pageEpoch: Math.floor(Date.now()),
+          };
           window.__p02InvokeLog.push(done);
           report(done);
           return value;
-        })
-        .catch (function failed(error) {
-          const done = { kind: "settled", command, status: "rejected", error: String(error && error.message ? error.message : error), pagePerfNow: performance.now(), pageEpoch: Math.floor(Date.now()) };
+        },
+        (error) => {
+          const done = {
+            kind: "settled",
+            command,
+            status: "rejected",
+            error: String(error && error.message ? error.message : error),
+            pagePerfNow: performance.now(),
+            pageEpoch: Math.floor(Date.now()),
+          };
           window.__p02InvokeLog.push(done);
           report(done);
           throw error;
+        },
+      );
+    };
+    fn.__isP02Patched = true;
+    return fn;
+  }
+
+  function wrapTauri(rawTauri) {
+    if (!rawTauri) return rawTauri;
+    const rawCore = rawTauri.core;
+    let wrappedCore = rawCore;
+    if (rawCore) {
+      const realInvoke = rawCore.invoke;
+      const patchedInvoke = (realInvoke && realInvoke.__isP02Patched)
+        ? realInvoke
+        : makePatchedInvoke(realInvoke, rawCore);
+      try { rawCore.invoke = patchedInvoke; } catch {}
+      try {
+        Object.defineProperty(rawCore, "invoke", {
+          value: patchedInvoke,
+          writable: true,
+          configurable: true,
         });
+      } catch {}
+      wrappedCore = new Proxy({}, {
+        get(t, prop) {
+          if (prop === "invoke") return patchedInvoke;
+          return rawCore[prop];
+        },
+        has(t, prop) {
+          return prop in rawCore;
+        },
+      });
     }
-    return realInvoke(command, args).then(
-      (value) => {
-        const done = { kind: "settled", command, status: "resolved", pagePerfNow: performance.now(), pageEpoch: Math.floor(Date.now()) };
-        window.__p02InvokeLog.push(done);
-        report(done);
-        return value;
+    return new Proxy({}, {
+      get(t, prop) {
+        if (prop === "__isP02Proxy") return true;
+        if (prop === "core") return wrappedCore;
+        return rawTauri[prop];
       },
-      (error) => {
-        const done = { kind: "settled", command, status: "rejected", error: String(error && error.message ? error.message : error), pagePerfNow: performance.now(), pageEpoch: Math.floor(Date.now()) };
-        window.__p02InvokeLog.push(done);
-        report(done);
-        throw error;
+      has(t, prop) {
+        return prop in rawTauri;
       },
-    );
-  };
-  window.__p02InvokeWrapperInstalled = true;
+    });
+  }
+
+  let rawTauriInstance = undefined;
+  function tryHook() {
+    if (window.__p02InvokeWrapperInstalled) return true;
+    const tauri = window.__TAURI__;
+    if (!tauri || !tauri.core || typeof tauri.core.invoke !== "function") {
+      return false;
+    }
+    const realInvoke = tauri.core.invoke;
+    if (realInvoke && realInvoke.__isP02Patched) {
+      window.__p02InvokeWrapperInstalled = true;
+      window.__p02InvokeWrapperState = "ACTIVE";
+      return true;
+    }
+
+    const patchedInvoke = makePatchedInvoke(realInvoke, tauri.core);
+
+    // 1. Try direct mutation on core.invoke
+    try {
+      tauri.core.invoke = patchedInvoke;
+    } catch {}
+    try {
+      Object.defineProperty(tauri.core, "invoke", {
+        value: patchedInvoke,
+        writable: true,
+        configurable: true,
+      });
+    } catch {}
+
+    if (tauri.core.invoke === patchedInvoke) {
+      window.__p02InvokeWrapperInstalled = true;
+      window.__p02InvokeWrapperState = "ACTIVE";
+      return true;
+    }
+
+    // 2. Fall back to proxying core and __TAURI__
+    const realCore = tauri.core;
+    const wrappedCore = new Proxy({}, {
+      get(t, prop) {
+        if (prop === "invoke") return patchedInvoke;
+        return realCore[prop];
+      },
+      has(t, prop) {
+        return prop in realCore;
+      },
+    });
+
+    try {
+      tauri.core = wrappedCore;
+    } catch {}
+    try {
+      Object.defineProperty(tauri, "core", {
+        value: wrappedCore,
+        writable: true,
+        configurable: true,
+      });
+    } catch {}
+
+    if (tauri.core.invoke === patchedInvoke) {
+      window.__p02InvokeWrapperInstalled = true;
+      window.__p02InvokeWrapperState = "ACTIVE";
+      return true;
+    }
+
+    const wrappedTauri = new Proxy({}, {
+      get(t, prop) {
+        if (prop === "__isP02Proxy") return true;
+        if (prop === "core") return wrappedCore;
+        return tauri[prop];
+      },
+      has(t, prop) {
+        return prop in tauri;
+      },
+      set(t, prop, val) {
+        tauri[prop] = val;
+        return true;
+      },
+    });
+
+    try {
+      delete window.__TAURI__;
+    } catch {}
+    try {
+      Object.defineProperty(window, "__TAURI__", {
+        value: wrappedTauri,
+        writable: true,
+        configurable: true,
+      });
+    } catch {
+      try {
+        window.__TAURI__ = wrappedTauri;
+      } catch {}
+    }
+
+    if (window.__TAURI__ && window.__TAURI__.core && window.__TAURI__.core.invoke === patchedInvoke) {
+      window.__p02InvokeWrapperInstalled = true;
+      window.__p02InvokeWrapperState = "ACTIVE";
+      return true;
+    }
+
+    return false;
+  }
+
+  window.__p02TryHook = tryHook;
+
+  if (!tryHook()) {
+    window.__p02InvokeWrapperState = "WAITING_FOR_BRIDGE";
+    const timer = setInterval(() => {
+      if (tryHook()) clearInterval(timer);
+    }, 5);
+  }
 })();
 `;
 
@@ -198,7 +377,7 @@ export const INVOKE_WRAPPER_SOURCE = String.raw`
  * character) into the currently focused element — the same pipeline real
  * keyboard input takes inside WebView2.
  */
-export async function typeText(cdp, text) {
+export async function typeText(cdp, text, delayMs = 0) {
   for (const char of text) {
     await cdp.send("Input.dispatchKeyEvent", {
       type: "keyDown",
@@ -214,6 +393,9 @@ export async function typeText(cdp, text) {
       windowsVirtualKeyCode: char.charCodeAt(0),
       nativeVirtualKeyCode: char.charCodeAt(0),
     });
+    if (delayMs > 0) {
+      await sleep(delayMs);
+    }
   }
 }
 
@@ -257,23 +439,42 @@ export function listProcesses(filterNames) {
     const child = spawn("tasklist", ["/FO", "CSV", "/NH"], {
       stdio: ["ignore", "pipe", "pipe"],
     });
-    let out = "";
-    let err = "";
-    child.stdout.on("data", (chunk) => (out += chunk.toString("utf16le")));
-    child.stderr.on("data", (chunk) => (err += chunk.toString("utf16le")));
+    const chunks = [];
+    const errChunks = [];
+    child.stdout.on("data", (chunk) => chunks.push(chunk));
+    child.stderr.on("data", (chunk) => errChunks.push(chunk));
     child.on("error", reject);
     child.on("close", (code) => {
-      // tasklist /FO CSV emits the console codepage; decode both ways and
-      // keep whichever parses (mbcs on zh-CN hosts).
-      let text = out;
-      const alt = Buffer.from(out, "binary").toString("latin1");
-      const lines = (text.length >= alt.length ? text : alt).split(/\r?\n/);
+      const buf = Buffer.concat(chunks);
+      let text = "";
+      try {
+        const dec = new TextDecoder("utf-8", { fatal: false });
+        text = dec.decode(buf);
+      } catch {
+        text = buf.toString("latin1");
+      }
+      const lines = text.split(/\r?\n/);
       const rows = [];
       for (const line of lines) {
-        const match = line.match(/^"([^"]+)","(\d+)","([^"]*)","(\d+)","(\d+)","(\d+)"/);
-        if (match) rows.push({ name: match[1], pid: Number(match[2]), session: match[4], memK: Number(match[5]) });
+        const match = line.match(/^"([^"]+)","(\d+)","([^"]*)","(\d+)","([^"]*)"/);
+        if (match) {
+          const memStr = match[5].replace(/[^\d]/g, "");
+          rows.push({
+            name: match[1],
+            pid: Number(match[2]),
+            session: match[4],
+            memK: Number(memStr) || 0,
+          });
+        }
       }
-      resolve({ exit: code, rows, stderr: err.trim(), matched: rows.filter((row) => filterNames.some((name) => row.name.toLowerCase() === name.toLowerCase())) });
+      resolve({
+        exit: code,
+        rows,
+        stderr: Buffer.concat(errChunks).toString("utf8").trim(),
+        matched: rows.filter((row) =>
+          filterNames.some((name) => row.name.toLowerCase() === name.toLowerCase()),
+        ),
+      });
     });
   });
 }

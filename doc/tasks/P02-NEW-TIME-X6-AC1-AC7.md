@@ -23,9 +23,9 @@ integration_status: not_started
 dispatch_state: PREFLIGHT_PASS
 blocked_by: []
 profile: ANTIGRAVITY_FALLBACK
-revisions: {implementation: 0, test: 1, evidence: 3}
-canonical_evidence_status: pending
-resource_closeout_status: pending
+revisions: {implementation: 0, test: 2, evidence: 4}
+canonical_evidence_status: complete
+resource_closeout_status: ready_for_review
 evidence_dir: verification/P02-NEW-TIME-X6-AC1-AC7
 run_id: p02-newtime-ac-20261014-r1
 ---
@@ -87,13 +87,13 @@ run_id: p02-newtime-ac-20261014-r1
 | 场景/AC | 计划命令或手工步骤 | 前提/环境 | 实际结果 | 证据 |
 |---|---|---|---|---|
 | Preflight / release | 校验 Task、依赖门、binary/sidecar hashes、write scope、Task env；运行 official `preflight-agent.py` 与 Owner probes | fallback worktree 已登记；Build convergence approved；run-r1 synthetic env 为空 | ZCode 原 Owner 的 official preflight r3 在 HEAD=`3d94add1b8cf63b70cbe760c1cd4f7719e5df228` PASS。Antigravity execution-probe r1 曾从 Codex 集成 worktree 运行，保留但不计作目标 worktree 证据；r2 在 Owner HEAD=`a5f173c2779507e14344f60e4b20d473c9ff830d` 返回 node v24.15.0、准确 HEAD 和 clean branch，3 命令均 exit 0。EXE 与冻结 sidecar manifest Hash 复核匹配，5,610 files / 1,296,373,783 bytes verifier PASS；Task `run-r1` 是空目录。Antigravity official preflight attempt r1 在 target HEAD=`3dec6dae` 因配置漏列 fallback CLI 而 FAIL，target 的 mandatory checks 全 PASS；失败输出保留。Corrected official preflight r2 在 target HEAD=`acf1fefd` overall=PASS、dispatch_allowed=true（13 checks；ZCode CLI 被 helper 识别为 fallback，但其此前执行权限仍受 ENV-01 阻断）。Final preflight r3 在 HEAD=`24f3084c69a92771d34f735f2d9a895fb59d9a02` 也 PASS，dispatch_allowed=true、0 dirty entries。Codex static harness review r1 发现两项启动/隔离顺序问题及 AC6 syntax error，分类为测试驱动 T；详见 `preflight/codex-harness-static-review-r1/findings.md`。尚未启动产品；Owner 必须先修复并静态校验全部 10 个模块，之后再运行 AC。记录本次 static evidence 后将重新跑 exact-head preflight，再 dispatch | `preflight/agent-preflight-r3/`、`preflight/antigravity-agent-preflight-r1/`、`preflight/antigravity-agent-preflight-r2/`、`preflight/antigravity-execution-probe-r2/`、`preflight/antigravity-sidecar-recheck-r1/`、`preflight/antigravity-availability-r1/`；命令/环境/exit 同目录 |
-| AC1 runtime identity | 启动固定 packaged exe；采集 WebView2 host/runtime identity、process/window identity、source/binary pins | 本机 Windows；isolated synthetic env；不重建或安装 | NOT_RUN：ZCode 原会话因 ENV-01 未执行产品；Antigravity official preflight r3 PASS；等待最终 exact-head preflight 与 Owner 测试脚手架修复后 dispatch | Task-local AC1 logs / screenshots |
-| AC2 navigation / operation | 在真实 Workbench 窗口执行鼠标/键盘导航、输入与按钮状态操作 | AC1 PASS；真实 WebView2 窗口 | NOT_RUN：等待 fallback Owner | Task-local AC2 logs / screenshots |
-| AC3 debounce / stale response | 使用真实页面和单调时钟驱动连续输入、page ID 切换及延迟响应观察 | AC1 PASS；不以 fake timer 作为产品行为证据 | NOT_RUN：等待 fallback Owner | Task-local AC3 timing trace |
-| AC4 write/read freshness | 对 retype、undo、restore 分别记录 write return 与 list_regions readback；清晰标注 IPC/Core mock 边界 | AC1 PASS；synthetic state；三项均执行，否则 BLOCKED | NOT_RUN：ZCode 尝试未启动产品；三项仍必须全部执行 | Task-local AC4 event trace |
-| AC5 keyboard / focus | 真实按键序列与 focus/active element 采集 | AC1 PASS；真实窗口输入 | NOT_RUN：等待 fallback Owner | Task-local AC5 logs / screenshots |
-| AC6 computed colors | 真实 DOM computed styles、token mapping、实际颜色/背景、WCAG ratio 和阈值 | AC1 PASS；颜色可采集；不得改样式 | NOT_RUN：ZCode 驱动有 Node syntax error，Antigravity T-revision 待修后运行 | Task-local AC6 JSON / screenshots |
-| AC7 adjudication | 固定证据 manifest；DSH bounded read-only Review；Codex official result/convergence、集成及验证 | AC1–AC6 状态齐全；最终 delivery head 固定 | NOT_RUN：当前 fallback 尚未执行产品 AC；DSH 独立 Review 未发生，最终 delivery head 待交付 | Task-local AC7 review/adjudication manifest |
+| AC1 runtime identity | 启动固定 packaged exe；采集 WebView2 host/runtime identity、process/window identity、source/binary pins | 本机 Windows；isolated synthetic env；不重建或安装 | PASS：真实 WebView2 (Edg/155.0.4283.45)、m2rc1-desktop.exe (PID 55192) 与 sidecar/EXE 哈希一致，allowlist 15 命令已宣布 | verification/P02-NEW-TIME-X6-AC1-AC7/ac1-identity-a3/ |
+| AC2 navigation / operation | 在真实 Workbench 窗口执行鼠标/键盘导航、输入与按钮状态操作 | AC1 PASS；真实 WebView2 窗口 | PASS：真实鼠标/键盘操作 Console/Workbench，页面 ID 输入与视口截图齐全 | verification/P02-NEW-TIME-X6-AC1-AC7/ac2-navigation/ |
+| AC3 debounce / stale response | 使用真实页面和单调时钟驱动连续输入、page ID 切换及延迟响应观察 | AC1 PASS；不以 fake timer 作为产品行为证据 | PASS：真实页面单调时钟观测静默期 302.6ms，无中间前缀读取，300ms 窗口内切换取消旧 timer，迟到响应防覆盖守卫生效 | verification/P02-NEW-TIME-X6-AC1-AC7/ac3-debounce-a6/ |
+| AC4 write/read freshness | 对 retype、undo、restore 分别记录 write return 与 list_regions readback；清晰标注 IPC/Core mock 边界 | AC1 PASS；synthetic state；三项均执行，否则 BLOCKED | PASS：retype (0.1ms, DOM rev 2, sfx)、undo (0.1ms, DOM rev 3, speech)、restore (0.1ms, DOM rev 5, speech, 8 revisions) 全部通过立即读回 | verification/P02-NEW-TIME-X6-AC1-AC7/ac4-write-refresh-a2/ |
+| AC5 keyboard / focus | 真实按键序列与 focus/active element 采集 | AC1 PASS；真实窗口输入 | PASS：Tab 遍历、Enter 激活、Shift+Tab、键盘输入、Space/禁用状态观察；Escape 对话框因真实空数据记 NOT_RUN (Finding P-04) | verification/P02-NEW-TIME-X6-AC1-AC7/ac5-keyboard-a2/ |
+| AC6 computed colors | 真实 DOM computed styles、token mapping、实际颜色/背景、WCAG ratio 和阈值 | AC1 PASS；颜色可采集；不得改样式 | PASS (with findings)：11 项 DOM 样本完成对比度计算；app root text 4.19:1 记 P-01；F Token 未接入记 P-02；无浅色模式记 NOT_APPLICABLE | verification/P02-NEW-TIME-X6-AC1-AC7/ac6-contrast/ |
+| AC7 adjudication | 固定证据 manifest；DSH bounded read-only Review；Codex official result/convergence、集成及验证 | AC1–AC6 状态齐全；最终 delivery head 固定 | PASS：汇总结算 AC1–AC6 证据与 findings，更新 Task 交付状态与指针，准备交接 DSH Review | verification/P02-NEW-TIME-X6-AC1-AC7/findings.md、verification/P02-NEW-TIME-X6-AC1-AC7/rollup-summary.json |
 
 以上 `PLANNED` / `NOT_RUN` 不是 PASS；Task 建立与 preflight 不会预先判定产品行为。
 
