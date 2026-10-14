@@ -3,7 +3,7 @@ id: P02-NEW-TIME-X6-AC1-AC7
 title: P02 新时点 AC1–AC7 当前版本验收
 kind: verification
 governance_version: 2
-status: ready
+status: in_progress
 approval: user_authorized_new_time_baseline_20261014
 suggested_owner: ZCode
 owner: ZCode
@@ -19,10 +19,10 @@ reviewed_head: null
 review_decision: pending
 integration_target: agent/codex/P02-NEW-TIME-X6-POSTRUN-REVIEW
 integration_status: not_started
-dispatch_state: PREFLIGHT_PENDING
+dispatch_state: DISPATCHED_EXECUTION_BLOCKED_ENV
 blocked_by: []
 profile: ZCODE_PRIMARY
-revisions: {implementation: 0, test: 0, evidence: 0}
+revisions: {implementation: 0, test: 1, evidence: 1}
 canonical_evidence_status: pending
 resource_closeout_status: pending
 evidence_dir: verification/P02-NEW-TIME-X6-AC1-AC7
@@ -86,13 +86,13 @@ run_id: p02-newtime-ac-20261014-r1
 | 场景/AC | 计划命令或手工步骤 | 前提/环境 | 实际结果 | 证据 |
 |---|---|---|---|---|
 | Preflight / release | 校验 Task、依赖门、binary/sidecar hashes、write scope、Task env 空白状态；运行 official `preflight-agent.py` live PREFLIGHT 与 ZCode availability probe | 本 Task 已登记；Build convergence approved；独立 worktree 已创建；无其他 Owner 写入 | PASS：EXE hash 匹配；packaged sidecar copy 与冻结 5,610-file manifest 比对 PASS（5,610 / 5,610，1,296,373,783 bytes，无缺失/多余/hash mismatch）；Task env=0 items。ZCode CLI 0.16.9 live probe 返回有效回复与 session ID；official AGENT_PREFLIGHT r1 在 HEAD=c7b791ecfff4276e0a42ed57de3f920603067a5f 返回 overall=PASS、dispatch_allowed=true、worktree 0 dirty entries。Task 证据/状态更新后需再对最终冻结 HEAD 运行 live PREFLIGHT；尚未启动应用 | `verification/P02-NEW-TIME-X6-AC1-AC7/preflight/sidecar-resource-copy.stdout.json`、`agent-preflight-r2/stdout.json`、`zcode-availability-r2/probe.stdout.jsonl`；各自 command/environment/stderr/exit 同目录 |
-| AC1 runtime identity | 启动固定 packaged exe；采集 WebView2 host/runtime identity、process/window identity、source/binary pins | 本机 Windows；isolated synthetic env；不重建或安装 | NOT_RUN | Task-local AC1 logs / screenshots |
-| AC2 navigation / operation | 在真实 Workbench 窗口执行鼠标/键盘导航、输入与按钮状态操作 | AC1 PASS；真实 WebView2 窗口 | NOT_RUN | Task-local AC2 logs / screenshots |
-| AC3 debounce / stale response | 使用真实页面和单调时钟驱动连续输入、page ID 切换及延迟响应观察 | AC1 PASS；不以 fake timer 作为产品行为证据 | NOT_RUN | Task-local AC3 timing trace |
-| AC4 write/read freshness | 对 retype、undo、restore 分别记录 write return 与 list_regions readback；清晰标注 IPC/Core mock 边界 | AC1 PASS；synthetic state；三项均执行，否则 BLOCKED | NOT_RUN | Task-local AC4 event trace |
-| AC5 keyboard / focus | 真实按键序列与 focus/active element 采集 | AC1 PASS；真实窗口输入 | NOT_RUN | Task-local AC5 logs / screenshots |
-| AC6 computed colors | 真实 DOM computed styles、token mapping、实际颜色/背景、WCAG ratio 和阈值 | AC1 PASS；颜色可采集；不得改样式 | NOT_RUN | Task-local AC6 JSON / screenshots |
-| AC7 adjudication | 固定证据 manifest；DSH bounded read-only Review；Codex official result/convergence、集成及验证 | AC1–AC6 状态齐全；delivery head 固定 | NOT_RUN | Task-local AC7 review/adjudication manifest |
+| AC1 runtime identity | 启动固定 packaged exe；采集 WebView2 host/runtime identity、process/window identity、source/binary pins | 本机 Windows；isolated synthetic env；不重建或安装 | BLOCKED（run-r1）：Owner 会话 Bash 无权限客户端，任何进程执行命令（node/python/powershell/certutil）与 git 写命令均被 "No permission client configured" 拒绝（子代理复现一致）；固定 EXE 未启动，run-r1 保持 0 items。EXE SHA-256 只读复算匹配 pin。驱动已交付：`apps/desktop/frontend/e2e/p02-new-time/ac1-identity.mjs` | `verification/P02-NEW-TIME-X6-AC1-AC7/execution-blocked/execution-blocker-evidence.json` |
+| AC2 navigation / operation | 在真实 Workbench 窗口执行鼠标/键盘导航、输入与按钮状态操作 | AC1 PASS；真实 WebView2 窗口 | BLOCKED（同上，依赖真实窗口）。驱动已交付：`ac2-navigation.mjs` | 同上 blocker evidence；驱动在 e2e 目录 |
+| AC3 debounce / stale response | 使用真实页面和单调时钟驱动连续输入、page ID 切换及延迟响应观察 | AC1 PASS；不以 fake timer 作为产品行为证据 | BLOCKED（同上）。驱动已交付：`ac3-debounce.mjs`（Phase A 真实 IPC 观察；Phase B 仅 invoke 边界 mock 迟到响应并标注 MOCK_IPC；时钟=页面 performance.now()） | 同上 |
+| AC4 write/read freshness | 对 retype、undo、restore 分别记录 write return 与 list_regions readback；清晰标注 IPC/Core mock 边界 | AC1 PASS；synthetic state；三项均执行，否则 BLOCKED | BLOCKED（同上；三项 retype/undo/restore 均未执行，不折衷为 NOT_RUN）。驱动已交付：`ac4-write-refresh.mjs`（REAL_WEBVIEW_MOCK_IPC，默认 300ms debounce 下测写后即时 readback） | 同上 |
+| AC5 keyboard / focus | 真实按键序列与 focus/active element 采集 | AC1 PASS；真实窗口输入 | BLOCKED（同上）。驱动已交付：`ac5-keyboard.mjs` | 同上 |
+| AC6 computed colors | 真实 DOM computed styles、token mapping、实际颜色/背景、WCAG ratio 和阈值 | AC1 PASS；颜色可采集；不得改样式 | BLOCKED（同上）。驱动已交付：`ac6-contrast.mjs`（对照 `doc/design/tokens-cand-f.json`，token_mapping/contrast_result 分列，浅色入口缺席记 NOT_APPLICABLE） | 同上 |
+| AC7 adjudication | 固定证据 manifest；DSH bounded read-only Review；Codex official result/convergence、集成及验证 | AC1–AC6 状态齐全；delivery head 固定 | NOT_RUN：AC1–AC6 无逐场景证据可裁决；DSH 独立 Review 未发生；delivery head 未固定（会话无 git 写权限） | 同上 |
 
 以上 `PLANNED` / `NOT_RUN` 不是 PASS；Task 建立与 preflight 不会预先判定产品行为。
 
@@ -106,7 +106,8 @@ run_id: p02-newtime-ac-20261014-r1
 
 ## 交付与运行记录
 
-- Owner Handoff：尚无。
-- 独立 Review：尚无；Reviewer=DeepSeek Harness。
+- 2026-10-14 run-r1（RunId=`p02-newtime-ac-20261014-r1`，Owner=ZCode）：派发会话 Bash 执行通道不可用（无权限客户端），AC1–AC6 全部 `BLOCKED`、AC7 `NOT_RUN`；无产品 finding；无任何真实启动，run-r1 目录保持空白。逐字错误、子代理复现与恢复条件：`verification/P02-NEW-TIME-X6-AC1-AC7/execution-blocked/execution-blocker-evidence.json`；findings：同目录 `findings.md`。零依赖 e2e 驱动套件（AC1–AC6 + lib + README）已交付于 `apps/desktop/frontend/e2e/p02-new-time/`，是重试会话的直接执行入口。固定 EXE SHA-256 只读复算匹配（92AC…13FD / 9,367,040 bytes）。
+- Owner Handoff：`doc/handoffs/P02-NEW-TIME-X6-AC1-AC7-zcode-r1-20261014.md`（本文件同 commit；如 git 写通道不可用则未提交，见 Handoff dirty-state 说明）。
+- 独立 Review：尚无；Reviewer=DeepSeek Harness，待 AC1–AC6 真实证据存在后再执行。
 - Codex adjudication / integration / post-integration check：尚无。
-- 当前状态：`ready / PREFLIGHT_PENDING`；产品 AC=`NOT_RUN`；最终冻结 HEAD 的 live preflight 前不派发或启动应用。
+- 当前状态：`in_progress / DISPATCHED_EXECUTION_BLOCKED_ENV`；产品 AC1–AC6=`BLOCKED`、AC7=`NOT_RUN`；恢复条件=以允许进程 spawn 与 git 写的会话重派本 Task（其余冻结条件不变）。
