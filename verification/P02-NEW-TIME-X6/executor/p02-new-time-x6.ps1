@@ -8,8 +8,8 @@
     PROPOSAL-ONLY delivery. Live execution is NOT authorized inside the Owner
     (ZCode) environment. Per Task X6-AC4/X6-AC5 the Codex freeze inputs are
     supplied EXTERNALLY (I2 design): Codex creates a freeze manifest OUTSIDE
-    the Git worktree/repository and binds its exact path and expected SHA-256
-    in the invocation argv:
+    BOTH the Task worktree AND the main repository checkout, and binds its
+    exact path and expected SHA-256 in the invocation argv:
 
         pwsh -NoProfile -File verification/P02-NEW-TIME-X6/executor/p02-new-time-x6.ps1 `
             -RunId <RunId> `
@@ -28,13 +28,15 @@
     independent integrity binding (no concurrent/tampered-input ambiguity).
 
     Validation order (everything fail-closed BEFORE the CreateNew output or
-    any child process): parameter syntax -> manifest path history isolation
-    and outside-repository check -> manifest bytes vs the argv-supplied SHA ->
-    strict JSON schema/shape validation -> binding validation against the
-    source-side structural baselines (RunId/base/branch/worktree/outputDir/
-    tools/identity) -> manifest path-manifest history isolation -> output
-    target absent/unignored checks -> CWD check. Failures/partial output
-    after the one-shot run starts keep the streamed-line preservation.
+    any child process): parameter syntax -> manifest path history isolation,
+    dot-segment rejection, lexically normalized outside-worktree-AND-main-
+    repository check and reparse-free path chain -> manifest bytes vs the
+    argv-supplied SHA -> strict JSON schema/shape validation -> binding
+    validation against the source-side structural baselines (RunId/base/
+    branch/worktree/outputDir/tools/identity) -> manifest path-manifest
+    history isolation -> output target absent/unignored checks -> CWD check.
+    Failures/partial output after the one-shot run starts keep the streamed-
+    line preservation.
 
     Contract source: doc/tasks/P02-NEW-TIME-X6.md (frozen scope and AC).
     Purpose: execute ONLY the new-time-point X6 dynamic closure of the current
@@ -111,17 +113,20 @@ $ErrorActionPreference = 'Stop'
 # full SHA-256) are NOT embedded here any more. They arrive exclusively via an
 # external Codex-frozen freeze manifest bound in the argv
 # (-FreezeManifestPath / -FreezeManifestSha256); the manifest must live
-# OUTSIDE the Git worktree/repository. The constants below are non-circular
-# structural baselines used to cross-validate the manifest (catching a
-# manifest aimed at the wrong checkout/output root) and to drive the
-# collection logic; the source contains no hash of itself and no hash of the
-# commit it runs under.
+# OUTSIDE BOTH the Task worktree AND the main repository checkout
+# ($script:MainRepositoryRoot), enforced with dot-segment rejection and
+# lexical path normalization before any comparison (X6-SR-02). The constants
+# below are non-circular structural baselines used to cross-validate the
+# manifest (catching a manifest aimed at the wrong checkout/output root) and
+# to drive the collection logic; the source contains no hash of itself and no
+# hash of the commit it runs under.
 # ===========================================================================
 $script:Schema = 'P02-NEW-TIME-X6-executor-1'
 $script:ManifestSchema = 'P02-NEW-TIME-X6-freeze-manifest-1'
 $script:TaskId = 'P02-NEW-TIME-X6'
 $script:OutputDir = 'G:/CODEX/New Manga.workspace/agent-output/zcode/P02-NEW-TIME-X6'
 $script:Worktree = 'G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-X6'
+$script:MainRepositoryRoot = 'G:/CODEX/New Manga'
 $script:BaseCommit = 'bc502e7aae07074fff7228d585674e87d53efcfd'
 $script:ExpectedBranch = 'agent/zcode/P02-NEW-TIME-X6'
 
@@ -569,16 +574,50 @@ function Get-ManifestField {
     return $result
 }
 
+function Test-PathContainsDotSegment {
+    # Pure string check (X6-SR-02): true when any path segment (both separators
+    # accepted) is exactly '.' or '..'. Such paths are rejected BEFORE any
+    # comparison so lexical-normalization differences can never alias a path
+    # into or out of a protected root. No filesystem access.
+    param([string]$Path)
+    if ([string]::IsNullOrWhiteSpace($Path)) { return $false }
+    $segments = (($Path -replace '/', '\') -split '\\')
+    foreach ($seg in $segments) {
+        if ($seg -ceq '.' -or $seg -ceq '..') { return $true }
+    }
+    return $false
+}
+
 function Test-PathOutsideRepository {
-    # Pure string check: true when the normalized path is NOT inside (or equal
-    # to) the worktree/repository. The freeze manifest must live outside the
-    # repository so pinning it can never create a commit-hash cycle.
-    param([string]$Path, [string]$Worktree)
-    if ([string]::IsNullOrWhiteSpace($Path) -or [string]::IsNullOrWhiteSpace($Worktree)) { return $false }
-    $p = ($Path -replace '/', '\').TrimEnd('\')
-    $w = ($Worktree -replace '/', '\').TrimEnd('\')
-    if ($p -ieq $w) { return $false }
-    return (-not $p.StartsWith($w + '\', [StringComparison]::OrdinalIgnoreCase))
+    # Pure lexical check (X6-SR-02 I1): true only when the path is provably NOT
+    # inside (or equal to) ANY protected repository root — the Task worktree
+    # AND the main repository checkout. Every comparison runs on
+    # [IO.Path]::GetFullPath-normalized absolute Windows paths (GetFullPath is
+    # purely lexical here: the input is an absolute path, so no CWD is
+    # consulted and no filesystem access happens), so separator/case/redundant
+    # alias forms cannot cross the boundary. A path containing a '.' or '..'
+    # segment, failing to normalize, or resolving relative NEVER counts as
+    # outside (fail-closed: the caller rejects it). The freeze manifest must
+    # live outside both roots so pinning it can never create a commit-hash
+    # cycle and it can never be planted inside the repository tree (including
+    # the historical verification/P02/ area).
+    param([string]$Path, [string[]]$RepositoryRoots)
+    if ([string]::IsNullOrWhiteSpace($Path)) { return $false }
+    if ($null -eq $RepositoryRoots -or @($RepositoryRoots).Count -eq 0) { return $false }
+    if (Test-PathContainsDotSegment -Path $Path) { return $false }
+    try {
+        $p = [IO.Path]::GetFullPath(($Path -replace '/', '\')).TrimEnd('\')
+    } catch { return $false }
+    if (-not [IO.Path]::IsPathRooted($p)) { return $false }
+    foreach ($root in @($RepositoryRoots)) {
+        if ([string]::IsNullOrWhiteSpace("$root")) { continue }
+        if (Test-PathContainsDotSegment -Path "$root") { return $false }
+        try {
+            $r = [IO.Path]::GetFullPath(("$root" -replace '/', '\')).TrimEnd('\')
+        } catch { return $false }
+        if ($p -ieq $r -or $p.StartsWith($r + '\', [StringComparison]::OrdinalIgnoreCase)) { return $false }
+    }
+    return $true
 }
 
 function Test-PathUnderAnyForbiddenPrefix {
@@ -1456,8 +1495,21 @@ try {
     Require (-not [string]::IsNullOrWhiteSpace($FreezeManifestPath)) 'FREEZE_MANIFEST_INVALID: FreezeManifestPath is empty'
     Require (-not [regex]::IsMatch($FreezeManifestPath, '[\x00-\x1F]')) 'FREEZE_MANIFEST_INVALID: FreezeManifestPath contains control characters'
     Require (-not (Test-PathContainsHistorySegment -Path $FreezeManifestPath -ForbiddenSegments $script:ForbiddenHistorySegments)) "HISTORY_SCOPE_VIOLATION: freeze manifest path references a historical evidence family: $FreezeManifestPath"
-    Require (Test-PathOutsideRepository -Path $FreezeManifestPath -Worktree $script:Worktree) "FREEZE_MANIFEST_INVALID: freeze manifest must live outside the Git worktree/repository: $FreezeManifestPath"
+    # X6-SR-02 (I1): dot-segment paths are rejected before any comparison so a
+    # lexical alias (e.g. G:\zz\..\worktrees\...) can never smuggle the manifest
+    # physically into a protected root.
+    Require (-not (Test-PathContainsDotSegment -Path $FreezeManifestPath)) "FREEZE_MANIFEST_INVALID: freeze manifest path contains a '.' or '..' segment (rejected before normalization and comparison): $FreezeManifestPath"
+    # X6-SR-02 (I1): the manifest must live outside BOTH the Task worktree AND
+    # the main repository checkout; comparison runs on lexically normalized
+    # absolute paths inside the pure helper.
+    Require (Test-PathOutsideRepository -Path $FreezeManifestPath -RepositoryRoots @($script:Worktree, $script:MainRepositoryRoot)) "FREEZE_MANIFEST_INVALID: freeze manifest must live outside BOTH the Task worktree and the main repository (normalized path check): $FreezeManifestPath"
     Require ([IO.File]::Exists($FreezeManifestPath)) "FREEZE_MANIFEST_INVALID: freeze manifest not found: $FreezeManifestPath"
+    # X6-SR-02 (I1): no reparse point (junction/symlink) may appear anywhere in
+    # the manifest path chain, so a link alias can never place the physical
+    # file inside a protected root. Checked BEFORE the manifest bytes are read.
+    $manifestChain = Test-PathAncestorsOrdinary -Path $FreezeManifestPath
+    Require ($manifestChain.leafExists -and (-not $manifestChain.leafReparsePoint) -and $manifestChain.allOrdinary) ("FREEZE_MANIFEST_INVALID: freeze manifest path chain is not fully ordinary (reparse/junction, non-directory, missing or errored component): " +
+        "reparse=$($manifestChain.reparseComponents -join ';') nonDir=$($manifestChain.nonDirectoryComponents -join ';') missing=$($manifestChain.missingComponents -join ';') leafAttributeError=$($manifestChain.leafAttributeError) path=$FreezeManifestPath")
 
     # ---- manifest bytes vs the independently argv-supplied expected SHA ----
     $manifestBytes = [IO.File]::ReadAllBytes($FreezeManifestPath)
@@ -1668,8 +1720,13 @@ try {
         -Result $(if ($toplevelOk) { 'PASS' } else { 'FAIL' }) `
         -Note 'the collector must never operate on a different checkout'
 
-    $revCommonDir = Invoke-GitHelper -Id 'git-common-dir' -Cwd $manifestWorktree -GitArgv @('rev-parse', '--git-common-dir')
-    $commonDirRaw = $revCommonDir.observation.output.value.stdout.text.Trim()
+    # X6-SR-01 (I1): the index integrity check must sample THIS linked
+    # worktree's own index. 'git rev-parse --absolute-git-dir' returns the
+    # worktree-private gitdir (<main-repo>/.git/worktrees/<name>), never the
+    # main repository .git, so the sampled index below is the one this run's
+    # git children could actually disturb.
+    $revGitDir = Invoke-GitHelper -Id 'git-absolute-git-dir' -Cwd $manifestWorktree -GitArgv @('rev-parse', '--absolute-git-dir')
+    $absoluteGitDirRaw = $revGitDir.observation.output.value.stdout.text.Trim()
     $gitVersion = Invoke-GitHelper -Id 'git-version' -Cwd $manifestWorktree -GitArgv @('--version')
     $gitVersionText = $gitVersion.observation.output.value.stdout.text.Trim()
     $gitVersionOk = ($gitVersionText -ceq $expGitVersion)
@@ -1796,14 +1853,18 @@ try {
     }
 
     # ---- 14) git index hash BEFORE (index must not be disturbed) ----
-    $commonDirNormalized = ($commonDirRaw -replace '/', '\')
-    if (-not [IO.Path]::IsPathRooted($commonDirNormalized)) {
-        $commonDirNormalized = Join-Path ($manifestWorktree -replace '/', '\') $commonDirNormalized
-    }
-    $rootIndexPath = Join-Path $commonDirNormalized 'index'
-    $rootIndexBefore = Invoke-InProcessGetter -Id 'git-index-hash-before' `
-        -Method 'IO.File.ReadAllBytes(worktree .git index) + SHA256 (read-only)' `
-        -GetterInput ([ordered]@{ path = $rootIndexPath }) `
+    # X6-SR-01 (I1): resolve the index through this worktree's OWN absolute
+    # git dir (--absolute-git-dir). Unlike the common-dir query (which returns
+    # the MAIN repository .git for a linked worktree), this always addresses
+    # the worktree-private gitdir; a non-absolute answer fails closed instead
+    # of being re-anchored against the worktree path (which could silently
+    # read the wrong index).
+    $worktreeGitDir = ($absoluteGitDirRaw -replace '/', '\')
+    Require ([IO.Path]::IsPathRooted($worktreeGitDir)) "GIT_ABSOLUTE_DIR_INVALID: git rev-parse --absolute-git-dir returned a non-absolute git dir: $absoluteGitDirRaw"
+    $rootIndexPath = Join-Path $worktreeGitDir 'index'
+    $rootIndexBefore = Invoke-InProcessGetter -Id 'worktree-git-index-hash-before' `
+        -Method 'IO.File.ReadAllBytes(worktree gitdir index resolved from git rev-parse --absolute-git-dir) + SHA256 (read-only; never the main repository index)' `
+        -GetterInput ([ordered]@{ path = $rootIndexPath; gitDirSource = 'git rev-parse --absolute-git-dir' }) `
         -Body {
             param($src)
             $bytes = [IO.File]::ReadAllBytes($src.path)
@@ -1852,9 +1913,9 @@ try {
     }
 
     # ---- 18) git index hash AFTER (final recheck before close) ----
-    $rootIndexAfter = Invoke-InProcessGetter -Id 'git-index-hash-after' `
-        -Method 'IO.File.ReadAllBytes(worktree .git/index) + SHA256 (final read-only recheck after ALL helper children and source-file reads; last observation before close)' `
-        -GetterInput ([ordered]@{ path = $rootIndexPath }) `
+    $rootIndexAfter = Invoke-InProcessGetter -Id 'worktree-git-index-hash-after' `
+        -Method 'IO.File.ReadAllBytes(worktree gitdir index resolved from git rev-parse --absolute-git-dir) + SHA256 (final read-only recheck after ALL helper children and source-file reads; last observation before close; never the main repository index)' `
+        -GetterInput ([ordered]@{ path = $rootIndexPath; gitDirSource = 'git rev-parse --absolute-git-dir' }) `
         -Body {
             param($src)
             $bytes = [IO.File]::ReadAllBytes($src.path)
@@ -1862,12 +1923,12 @@ try {
         }
     $indexUnchanged = ($rootIndexAfter.observation.output.value.sha256 -ceq $rootIndexBefore.observation.output.value.sha256) -and
                       ($rootIndexAfter.observation.output.value.bytesCount -eq $rootIndexBefore.observation.output.value.bytesCount)
-    Add-Check -Id 'git-index-after-unchanged' -Category 'index' `
-        -Expected 'worktree .git/index identical before/after the whole collection; the AFTER sample is the last observation before the closed line' `
+    Add-Check -Id 'worktree-git-index-after-unchanged' -Category 'index' `
+        -Expected "THIS worktree's own index (resolved from 'git rev-parse --absolute-git-dir', i.e. the linked-worktree gitdir index, NOT the main repository .git/index) identical before/after the whole collection; the AFTER sample is the last observation before the closed line" `
         -ObservedPointer "$($rootIndexAfter.pointer)/output/value" `
-        -ObservedSummary "before=$($rootIndexBefore.observation.output.value.sha256) after=$($rootIndexAfter.observation.output.value.sha256) unchanged=$indexUnchanged" `
+        -ObservedSummary "path=$rootIndexPath before=$($rootIndexBefore.observation.output.value.sha256) after=$($rootIndexAfter.observation.output.value.sha256) unchanged=$indexUnchanged" `
         -Result $(if ($indexUnchanged) { 'PASS' } else { 'FAIL' }) `
-        -Note 'closed JSON carries index before/after comparison; Git HEAD/ref/index must stay untouched by this collector'
+        -Note 'X6-SR-01: the sampled index belongs to this worktree gitdir per git rev-parse --absolute-git-dir; the main repository index is never read or written; closed JSON carries the index before/after comparison'
 
     # ---- close ----
     if ($script:BlockedReasons.Count -gt 0) {

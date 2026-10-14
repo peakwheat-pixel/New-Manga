@@ -32,6 +32,14 @@
     the case-insensitive compare, so the same absolute directory in slash or
     backslash form matches while a different volume/directory/leaf fails
     closed.
+    Adds the X6-SR-01/X6-SR-02 (I1 bounded repair) regressions: the index
+    integrity check must resolve its sampled index through THIS worktree's
+    own 'git rev-parse --absolute-git-dir' gitdir (never the main repository
+    .git that the common-dir form returns for a linked worktree), and the
+    freeze-manifest placement gate must protect BOTH the Task worktree AND
+    the main repository root, reject '.'/'..' path segments before any
+    comparison, compare on lexically normalized absolute paths, and require
+    a reparse-free manifest path chain before the manifest bytes are read.
     Runs NO live executor, NO git child, NO whoami child, NO dynamic process
     enumeration, NO profile/registry/ACL write API, NO post-run Review/
     Build/Cargo/AC1-AC7/Windows Sandbox — those are recorded as explicitly
@@ -145,7 +153,8 @@ $requiredFunctions = @(
     'Get-PathProbeValueFromAttributes', 'Get-ProbeCheckResult',
     'Get-CollectorFailureClassification',
     'Test-PathContainsHistorySegment', 'Assert-TaskPathIsolation',
-    'Test-FreezeManifestBytes', 'Get-ManifestField', 'Test-PathOutsideRepository',
+    'Test-FreezeManifestBytes', 'Get-ManifestField',
+    'Test-PathContainsDotSegment', 'Test-PathOutsideRepository',
     'Test-PathUnderAnyForbiddenPrefix',
     'Test-FreezeManifestShape', 'Test-FreezeManifestBinding',
     'New-GitPrefixArgv', 'New-StatusArgv', 'New-CheckIgnoreArgv',
@@ -208,7 +217,8 @@ foreach ($literal in @(
         'BLOCKED_OUTPUT_PRECHECK', 'BLOCKED_INPUT_NOT_FROZEN', 'BLOCKED_SOURCE_PIN_DRIFT',
         'BLOCKED_BY_FAILED_CHECKS', 'BLOCKED_EXCEPTION_FAIL_CLOSED',
         'core.hooksPath=NUL', 'core.fsmonitor=false', '--no-optional-locks',
-        'porcelain=v2', 'NOT_RUN', 'bc502e7aae07074fff7228d585674e87d53efcfd'
+        'porcelain=v2', 'NOT_RUN', 'bc502e7aae07074fff7228d585674e87d53efcfd',
+        '--absolute-git-dir', 'MainRepositoryRoot'
 )) {
     Assert-True ($collectorText.Contains($literal)) "ast-literal-present:$literal" 'literal not found in collector source'
 }
@@ -247,6 +257,24 @@ Assert-True (-not $collectorText.Contains('$branchRef -ceq $manifestBranch')) 'a
 $toplevelCompareCall = '$toplevelOk = Test-GitToplevelMatchesWorktree -Toplevel $toplevel -Worktree $manifestWorktree'
 Assert-True ($collectorText.Contains($toplevelCompareCall)) 'ast-toplevel-compare-via-pure-helper' 'git-toplevel-matches-worktree must route both sides through Test-GitToplevelMatchesWorktree'
 Assert-True (-not $collectorText.Contains('$toplevel -ieq ($manifestWorktree')) 'ast-toplevel-no-single-sided-normalization' 'a single-sided normalized compare (the AC3-GIT-TOPLEVEL-PATH-SEPARATOR defect) must stay removed'
+
+# git index source (X6-SR-01 fix): the index integrity check must resolve the
+# sampled index through THIS worktree's own absolute git dir; the common-dir
+# form (which returns the MAIN repository .git for a linked worktree, so the
+# old check sampled the wrong index and was vulnerable to unrelated main-repo
+# git activity) must never come back.
+Assert-True ($collectorText.Contains("@('rev-parse', '--absolute-git-dir')")) 'ast-index-git-dir-source-absolute-git-dir' 'the worktree git dir must be queried with rev-parse --absolute-git-dir (the linked-worktree gitdir, never the main repository .git)'
+Assert-True (-not $collectorText.Contains('--git-common-dir')) 'ast-ban-common-dir-index-source' 'the common-dir gitdir query (returns the MAIN repository .git for a linked worktree; the X6-SR-01 defect) must stay removed from the collector source'
+Assert-True ($collectorText.Contains("Add-Check -Id 'worktree-git-index-after-unchanged'")) 'ast-worktree-index-check-id-present' 'the index-unchanged check must be named for the worktree gitdir index it actually samples'
+
+# freeze-manifest placement (X6-SR-02 fix): the placement gate must reject
+# dot-segment paths before any comparison, compare on lexically normalized
+# paths, protect BOTH the Task worktree AND the main repository root, and
+# require a reparse-free manifest path chain before the bytes are read.
+Assert-True ($collectorText.Contains('Test-PathOutsideRepository -Path $FreezeManifestPath -RepositoryRoots @($script:Worktree, $script:MainRepositoryRoot)')) 'ast-freeze-placement-dual-root-gate' 'the freeze manifest must be gated outside BOTH the Task worktree and the main repository root'
+Assert-True ($collectorText.Contains('Test-PathContainsDotSegment -Path $FreezeManifestPath')) 'ast-freeze-placement-dot-segment-gate' 'a freeze manifest path containing a . or .. segment must be rejected before any comparison'
+Assert-True ($collectorText.Contains('Test-PathAncestorsOrdinary -Path $FreezeManifestPath')) 'ast-freeze-placement-reparse-chain-gate' 'the freeze manifest path chain must be verified reparse-free before the manifest bytes are read'
+Assert-True (-not $collectorText.Contains('Test-PathOutsideRepository -Path $FreezeManifestPath -Worktree $script:Worktree')) 'ast-freeze-placement-single-root-form-removed' 'the single-root worktree-only placement check (the X6-SR-02 defect) must stay removed'
 
 # --- helper-process observation output envelope (AC3-WHOAMI-HELPER-OUTPUT-SHAPE
 #     resolution): BOTH Invoke-HelperProcess producer paths (the success path
@@ -649,9 +677,33 @@ $histPaths = @($histManifest.taskDeliverablePins | ForEach-Object { $_.path })
 $histIso = Assert-TaskPathIsolation -Paths $histPaths -ForbiddenSegments $frozenSegments
 Assert-True ($histIso.anyUnderHistory -eq $true -and $histIso.underHistoryPaths[0] -like '*H2-COLLECTOR*') 'freeze-manifest-history-violating-paths-fail-closed' 'a manifest pinning a historical family directory must be rejected by the history gate before any side effect'
 
-Assert-True (Test-PathOutsideRepository -Path 'G:/outside/freeze.json' -Worktree 'G:/wt') 'freeze-manifest-outside-repo-accepted' 'a manifest outside the repository satisfies the placement rule'
-Assert-True (-not (Test-PathOutsideRepository -Path 'G:/wt/inside/freeze.json' -Worktree 'G:/wt')) 'freeze-manifest-inside-repo-rejected' 'a manifest inside the worktree must be rejected (no commit-cycle inputs)'
-Assert-True (-not (Test-PathOutsideRepository -Path 'G:/wt' -Worktree 'G:/wt')) 'freeze-manifest-worktree-root-rejected' 'the worktree root itself is inside the repository'
+# X6-SR-02 (I1): the placement rule now protects BOTH the Task worktree and
+# the main repository root, compares on lexically normalized absolute paths,
+# and rejects dot-segment/alias forms before any comparison. Pure in-memory
+# assertions only ([IO.Path]::GetFullPath over an absolute path is lexical;
+# no filesystem access).
+$dualRoots = @('G:/wt', 'G:/mainrepo')
+Assert-True (Test-PathOutsideRepository -Path 'G:/outside/freeze.json' -RepositoryRoots $dualRoots) 'freeze-manifest-outside-both-roots-accepted' 'a manifest outside BOTH the worktree and the main repository satisfies the placement rule'
+Assert-True (-not (Test-PathOutsideRepository -Path 'G:/wt/inside/freeze.json' -RepositoryRoots $dualRoots)) 'freeze-manifest-inside-worktree-rejected' 'a manifest inside the worktree must be rejected (no commit-cycle inputs)'
+Assert-True (-not (Test-PathOutsideRepository -Path 'G:/wt' -RepositoryRoots $dualRoots)) 'freeze-manifest-worktree-root-rejected' 'the worktree root itself is inside a protected root'
+Assert-True (-not (Test-PathOutsideRepository -Path 'G:/mainrepo/freeze.json' -RepositoryRoots $dualRoots)) 'freeze-manifest-inside-main-repository-rejected' 'a manifest inside the MAIN repository checkout must be rejected even though it is outside the worktree (X6-SR-02)'
+Assert-True (-not (Test-PathOutsideRepository -Path 'G:/mainrepo' -RepositoryRoots $dualRoots)) 'freeze-manifest-main-repository-root-rejected' 'the main repository root itself is a protected root'
+Assert-True (-not (Test-PathOutsideRepository -Path 'G:/mainrepo/verification/P02/freeze.json' -RepositoryRoots $dualRoots)) 'freeze-manifest-main-repo-historical-p02-rejected' 'a manifest planted in the main repository historical verification/P02/ tree must be rejected by the main-root guard'
+Assert-True (-not (Test-PathOutsideRepository -Path 'G:/zz/../wt/freeze.json' -RepositoryRoots $dualRoots)) 'freeze-manifest-dot-dot-alias-rejected' 'a path aliasing into the worktree through a .. segment must never count as outside (fail-closed before normalization)'
+Assert-True (-not (Test-PathOutsideRepository -Path 'G:/wt/./freeze.json' -RepositoryRoots $dualRoots)) 'freeze-manifest-dot-segment-alias-rejected' 'a path containing a . segment must never count as outside'
+Assert-True (-not (Test-PathOutsideRepository -Path 'G:\wt\inside\freeze.json' -RepositoryRoots $dualRoots)) 'freeze-manifest-backslash-form-inside-rejected' 'backslash separator forms must normalize to the same protected root'
+Assert-True (-not (Test-PathOutsideRepository -Path 'g:/WT/freeze.json' -RepositoryRoots $dualRoots)) 'freeze-manifest-case-insensitive-inside-rejected' 'case drift must not cross the root boundary (case-insensitive compare)'
+Assert-True (-not (Test-PathOutsideRepository -Path 'G:/outside/freeze.json' -RepositoryRoots @())) 'freeze-manifest-empty-root-list-fail-closed' 'an empty protected-root list must fail closed (never accept)'
+$realRoots = @('G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-X6', 'G:/CODEX/New Manga')
+Assert-True (Test-PathOutsideRepository -Path 'G:/CODEX/New Manga.workspace/agent-output/zcode/P02-NEW-TIME-X6/x6-run-1/freeze-manifest.json' -RepositoryRoots $realRoots) 'freeze-manifest-task-agent-output-root-accepted' 'the Task agent-output root stays a legal freeze location (outside BOTH real roots; the sibling .workspace directory is not the main repository)'
+Assert-True (-not (Test-PathOutsideRepository -Path 'G:/CODEX/New Manga/verification/P02-NEW-TIME-X6/freeze.json' -RepositoryRoots $realRoots)) 'freeze-manifest-main-repo-sibling-task-path-rejected' 'a path under the main repository (even a same-named Task directory) must be rejected'
+
+Assert-True (Test-PathContainsDotSegment -Path 'G:/a/../b.json') 'dot-segment-detector-hits-parent' 'the dot-segment detector must flag a .. segment'
+Assert-True (Test-PathContainsDotSegment -Path 'G:/a/./b.json') 'dot-segment-detector-hits-current' 'the dot-segment detector must flag a . segment'
+Assert-True (Test-PathContainsDotSegment -Path 'G:\a\..\b.json') 'dot-segment-detector-backslash-form' 'the dot-segment detector must accept backslash separators'
+Assert-True (-not (Test-PathContainsDotSegment -Path 'G:/a/b.json')) 'dot-segment-detector-clean-path-passes' 'an ordinary path must not be flagged'
+Assert-True (-not (Test-PathContainsDotSegment -Path 'G:/a/b.json.') -and -not (Test-PathContainsDotSegment -Path 'G:/a/.hidden')) 'dot-segment-detector-filename-dots-ignored' 'dots inside or around a filename (extension, dotfile) are not dot segments'
+Assert-True (-not (Test-PathContainsDotSegment -Path '')) 'dot-segment-detector-empty-safe' 'empty input must not throw or match'
 
 $manifestInvalidRes = Get-CollectorFailureClassification -Message 'FREEZE_MANIFEST_INVALID: manifest bytes do not match the argv-supplied expected SHA-256'
 Assert-True ($manifestInvalidRes.exitCode -eq 3 -and $manifestInvalidRes.disposition -ceq 'BLOCKED_INPUT_NOT_FROZEN') 'freeze-manifest-invalid-maps-to-exit-3' 'every freeze-manifest defect must map to exit 3 / BLOCKED_INPUT_NOT_FROZEN'

@@ -1,0 +1,138 @@
+{
+  "schema": "P02-NEW-TIME-X6-output-target-inventory-1",
+  "task": "P02-NEW-TIME-X6",
+  "revision": "i1-repair-r2",
+  "supersedes": "output-target-inventory-r1.json (kept verbatim as historical input of the r1 review round)",
+  "createdUtc": "2026-10-14T03:57:00Z",
+  "repairScope": "X6-SR-03 (P2): the r1 inventory authorized only <RunId>/freeze-manifest.json and omitted every run raw-capture target the Task text requires (command/stdout/stderr/exit/environment/session under <RunId>/). This r2 inventory explicitly authorizes the <RunId>/ directory as the frozen raw-capture root and lists each required capture file with actor/timing/absent/retention rules. Nothing else changed relative to r1.",
+  "candidateRunIds": {
+    "template": "x6-<YYYYMMDDTHHMM>CST-p02-newtime-r1",
+    "values": [
+      "x6-20261014T1500CST-p02-newtime-r1",
+      "x6-20261014T1530CST-p02-newtime-r1"
+    ],
+    "note": "candidate only; Codex freeze confirms or re-stamps exactly one RunId; any target below is created only after Codex freeze authorizes it; RunId never reused after any outcome"
+  },
+  "rawCaptureAuthorization": {
+    "root": "G:/CODEX/New Manga.workspace/agent-output/zcode/P02-NEW-TIME-X6/<RunId>/",
+    "rule": "the ONLY files ever created inside <RunId>/ are freeze-manifest.json (written by Codex freeze) and the six required raw-capture files listed below (written by the ZCode operator session around the one-shot X6 invocation). The freeze-manifest.json entry does NOT implicitly authorize any sibling file: every sibling is authorized here explicitly, item by item. No other file, subdirectory, cleanup or rewrite is authorized under <RunId>/.",
+    "requiredFiles": [
+      { "file": "<RunId>/command.md", "captures": "the exact one-shot invocation: full argv of pwsh, the executor path, RunId, FreezeManifestPath, FreezeManifestSha256, CWD, UTC timestamp before launch" },
+      { "file": "<RunId>/stdout.md", "captures": "the executor's raw stdout stream, byte-faithful, captured during the one-shot run" },
+      { "file": "<RunId>/stderr.md", "captures": "the executor's raw stderr stream, byte-faithful, captured during the one-shot run" },
+      { "file": "<RunId>/exit.md", "captures": "the observed OS exit code of the one-shot executor process and the UTC timestamp when it was observed" },
+      { "file": "<RunId>/environment.md", "captures": "environment summary of the operator session (shell, interpreter versions, identity, relevant GIT_* absence) recorded before launch" },
+      { "file": "<RunId>/session.md", "captures": "session identity/trace identifiers (ZCode session, dispatch reference) linking the run to its Handoff and Task records" }
+    ],
+    "absentPrecondition": "before the X6-AC5 stage begins, the whole <RunId>/ directory (and therefore every file above) must be absent; Codex freeze creates the directory with freeze-manifest.json as its first and only file; the six raw-capture files must each be absent at freeze time",
+    "retentionPolicy": "all six files plus freeze-manifest.json are preserved verbatim for ANY outcome (pass, fail, partial); never edited, moved, deleted or retried; a failed or partial one-shot keeps whatever subset was already written, and the missing remainder is recorded as absent in the Handoff — never re-created under the same RunId"
+  },
+  "targets": [
+    {
+      "path": "G:/CODEX/New Manga.workspace/agent-output/zcode/P02-NEW-TIME-X6/run-<RunId>.json",
+      "actor": "executor CreateNew (X6 one-shot)",
+      "timing": "X6-AC5 one-shot only",
+      "constraint": "single exclusive CreateNew NDJSON stream; must be absent/unignored before run; never overwritten or retried; sibling of this directory is outside any Git repository",
+      "forbiddenWriteRoots": [
+        "G:\\CODEX\\New Manga\\verification\\P02\\"
+      ],
+      "statusAtDelivery": "NOT_CREATED (path pattern; concrete file depends on frozen RunId)"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/agent-output/zcode/P02-NEW-TIME-X6/<RunId>/",
+      "actor": "Codex freeze (directory creation with the manifest as its first file); ZCode operator session (six raw-capture files only, per rawCaptureAuthorization)",
+      "timing": "X6-AC4 freeze stage (directory + manifest); X6-AC5 one-shot stage (raw captures)",
+      "constraint": "frozen raw-capture root; must be absent before the freeze stage; contains exactly freeze-manifest.json plus the six explicitly authorized raw-capture files; outside the Task worktree AND the main repository G:/CODEX/New Manga (executor-enforced dual-root, dot-segment and reparse-chain placement checks); never cleaned, rewritten or retried",
+      "statusAtDelivery": "NOT_CREATED"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/agent-output/zcode/P02-NEW-TIME-X6/<RunId>/freeze-manifest.json",
+      "actor": "Codex freeze",
+      "timing": "X6-AC4 freeze stage",
+      "constraint": "outside BOTH the Task worktree and the main repository (normalized path check); bound via argv SHA-256; does NOT authorize any sibling file — sibling authorization is explicit in rawCaptureAuthorization",
+      "statusAtDelivery": "NOT_CREATED"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/agent-output/zcode/P02-NEW-TIME-X6/<RunId>/command.md",
+      "actor": "ZCode operator session",
+      "timing": "X6-AC5 stage, written immediately BEFORE the one-shot process is launched",
+      "constraint": "exact argv/CWD/timestamp record of the single invocation; absent at freeze time; preserved verbatim for every outcome",
+      "statusAtDelivery": "NOT_CREATED"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/agent-output/zcode/P02-NEW-TIME-X6/<RunId>/stdout.md",
+      "actor": "ZCode operator session",
+      "timing": "X6-AC5 stage, finalized after the one-shot process exits",
+      "constraint": "raw stdout capture of the one-shot executor; absent at freeze time; partial output preserved verbatim on failure; never retried",
+      "statusAtDelivery": "NOT_CREATED"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/agent-output/zcode/P02-NEW-TIME-X6/<RunId>/stderr.md",
+      "actor": "ZCode operator session",
+      "timing": "X6-AC5 stage, finalized after the one-shot process exits",
+      "constraint": "raw stderr capture of the one-shot executor; absent at freeze time; partial output preserved verbatim on failure; never retried",
+      "statusAtDelivery": "NOT_CREATED"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/agent-output/zcode/P02-NEW-TIME-X6/<RunId>/exit.md",
+      "actor": "ZCode operator session",
+      "timing": "X6-AC5 stage, immediately after the one-shot process exits",
+      "constraint": "observed OS exit code + timestamp; recorded for every outcome including non-zero fail-closed exits; absent at freeze time",
+      "statusAtDelivery": "NOT_CREATED"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/agent-output/zcode/P02-NEW-TIME-X6/<RunId>/environment.md",
+      "actor": "ZCode operator session",
+      "timing": "X6-AC5 stage, written before the one-shot process is launched",
+      "constraint": "environment summary (shell/interpreter versions, identity, relevant GIT_* env absence); absent at freeze time; preserved verbatim",
+      "statusAtDelivery": "NOT_CREATED"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/agent-output/zcode/P02-NEW-TIME-X6/<RunId>/session.md",
+      "actor": "ZCode operator session",
+      "timing": "X6-AC5 stage, written before the one-shot process is launched",
+      "constraint": "session identity/trace identifiers linking the run to its Handoff and Task records; absent at freeze time; preserved verbatim",
+      "statusAtDelivery": "NOT_CREATED"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/agent-output/zcode/P02-NEW-TIME-X6/source-delivery-r1/",
+      "actor": "ZCode (r1 delivery stage)",
+      "timing": "r1 stage (historical, already created)",
+      "constraint": "raw dispatch prompt copy, command records, environment summary; outside the Git repository; kept verbatim as historical input of the r1 review round",
+      "statusAtDelivery": "CREATED (r1 stage raw records only; untouched by the I1 repair)"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/agent-output/zcode/P02-NEW-TIME-X6/source-delivery-r2/",
+      "actor": "ZCode (I1 repair stage, if a later dispatch authorizes agent-output writes)",
+      "timing": "not in the I1 repair round",
+      "constraint": "the I1 dispatch restricted writes to doc/tasks/P02-NEW-TIME-X6.md, verification/P02-NEW-TIME-X6/** and the new Handoff only; this repair round's raw command records therefore remain in the ZCode owner session evidence instead of this directory",
+      "statusAtDelivery": "NOT_CREATED (outside the authorized write scope of the I1 dispatch)"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/agent-output/zcode/P02-NEW-TIME-X6/selftest-r1/",
+      "actor": "Codex",
+      "timing": "parser/selftest stage after the next bounded DSH source Review",
+      "constraint": "raw stdout/stderr/exit/environment of the pure selftest run",
+      "statusAtDelivery": "NOT_CREATED"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/temp/P02-NEW-TIME-X6/<stamp>-pure-selftest/",
+      "actor": "selftest fixtures",
+      "timing": "when the pure selftest runs",
+      "constraint": "fixtures preserved, never cleaned; never mixed with user manga data",
+      "statusAtDelivery": "NOT_CREATED (no parser/selftest run in this stage)"
+    }
+  ],
+  "repositoryWriteScope": [
+    "doc/tasks/P02-NEW-TIME-X6.md",
+    "verification/P02-NEW-TIME-X6/**",
+    "doc/handoffs/P02-NEW-TIME-X6-<delivery-head>.md"
+  ],
+  "neverWriteScope": [
+    "verification/P02/** (historical evidence)",
+    "tools/**, product sources, shared contracts, schemas, dependencies",
+    "main-repo AGENTS.md / doc/STATUS.md / doc/REBASELINE_PLAN.md / doc/tasks/README.md (Codex-owned pointers)",
+    ".tmp.driveupload (never probed outside task workspace)",
+    "user manga library, manual edits, Lock, current/pinned revisions, root dirty/untracked content"
+  ]
+}
