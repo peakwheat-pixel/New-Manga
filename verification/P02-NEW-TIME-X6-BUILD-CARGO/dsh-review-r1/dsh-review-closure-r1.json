@@ -1,0 +1,17 @@
+{
+  "task_id": "P02-NEW-TIME-X6-BUILD-CARGO",
+  "agent": "dsh",
+  "reviewed_head": "708ac7938c72fbcccd0d68c7ca60635552cbcaaf",
+  "delivery_head": "db4870ab87d36f0663b5e45e4f7b2e3cf9b77917",
+  "session_ids": [
+    "session-516d6a2d-4196-450b-a6ff-980069d8d838"
+  ],
+  "exit_code": 0,
+  "stdout_jsonl_sha256": "83D2806082E567342B0715C0F32369B8B4C2E2B5BC404D8F449614EA4320762E",
+  "stderr_sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+  "prompt_sha256": "63B02FC9703B926B1CAE163D43902C489F01DF30B70E9950F1FECC5FB6A61C72",
+  "report_path": "G:\\CODEX\\New Manga.workspace\\agent-output\\dsh\\P02-NEW-TIME-X6-BUILD-CARGO\\dsh-review-r1\\dsh-review-report-r1.md",
+  "report_sha256": "9012D3EF74FF0E341E75D00DBD9AE480389EA92F95224AC173F5E143632086FF",
+  "dsh_version": "0.2.0-rc.2",
+  "web_visibility": "unverified; not restarted or opened"
+}

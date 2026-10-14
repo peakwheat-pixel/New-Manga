@@ -1,0 +1,23 @@
+{
+  "task_id": "P02-NEW-TIME-X6-BUILD-CARGO",
+  "reviewed_head": "708ac7938c72fbcccd0d68c7ca60635552cbcaaf",
+  "worktree": "G:\\CODEX\\New Manga.workspace\\worktrees\\P02-NEW-TIME-X6-BUILD-CARGO-DSH-REVIEW",
+  "target": "G:\\CODEX\\New Manga.workspace\\worktrees\\P02-NEW-TIME-X6-BUILD-CARGO-DSH-REVIEW\\.dsh-write-probe.tmp",
+  "before": {
+    "git_head": "708ac7938c72fbcccd0d68c7ca60635552cbcaaf",
+    "porcelain0_sha256": "9F505C3498FC4F1450C9EA50331302F0C2FD0ABD02BF54EA402458203597512E",
+    "porcelain0_bytes_hex": "3F3F202E6473682D77726974652D70726F62652E746D7000",
+    "file_bytes": 6,
+    "file_sha256": "25BE323556DAD377ABB57FE7EC8C4B99A6527F488DDA28D0C9B686528659C909",
+    "file_content_hex": "70726F62650A",
+    "last_write_time_utc": "2026-10-14T09:02:36.378645+00:00"
+  },
+  "disposition": "Remove only after matching the DSH report disclosure and confirming the exact status set contains only this reviewer-created probe.",
+  "after": {
+    "git_head": "708ac7938c72fbcccd0d68c7ca60635552cbcaaf",
+    "porcelain0_sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+    "porcelain0_bytes_hex": "",
+    "clean": true
+  },
+  "result": "PASS"
+}

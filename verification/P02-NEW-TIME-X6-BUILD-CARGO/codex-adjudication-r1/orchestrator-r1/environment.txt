@@ -1,0 +1,5 @@
+Python 3.14.6
+Executable: C:\Python314\python.exe
+Helper: C:\Users\49745\.agents\skills\multi-agent-project-orchestrator\scripts\decide-convergence.py
+Helper SHA-256: 8BF38778D65E7B1642CED13433C99D6DEFFB7DCE8162E68D63C61B1331768A4C
+Execution: --dry-run for all policy decisions; no subprocess creation

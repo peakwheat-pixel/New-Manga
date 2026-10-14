@@ -1,0 +1,48 @@
+{
+  "task_id": "P02-NEW-TIME-X6-BUILD-CARGO",
+  "agent": "codex",
+  "verification": "Delivery commit scope verification r2",
+  "task_source_base": "49d2a2f9c56462f5602b00ad4b824c5381abb1ab",
+  "owner_dispatch_base": "04ecc800aafefd6998f304ca7fbbbbc76f27217c",
+  "delivery_head": "db4870ab87d36f0663b5e45e4f7b2e3cf9b77917",
+  "reviewed_head": "708ac7938c72fbcccd0d68c7ca60635552cbcaaf",
+  "basis_note": "Task base_commit=49d2 is the source baseline; Antigravity dispatch/Handoff base=04ecc is the actual docs-only dispatch commit. The earlier r1 compared against the source base and falsely attributed prior Codex docs changes to Owner.",
+  "owner_dispatch_to_delivery_changes": [
+    {
+      "status": "A",
+      "path": "doc/handoffs/P02-NEW-TIME-X6-BUILD-CARGO-antigravity-handoff.md"
+    },
+    {
+      "status": "M",
+      "path": "doc/tasks/P02-NEW-TIME-X6-BUILD-CARGO.md"
+    },
+    {
+      "status": "A",
+      "path": "verification/P02-NEW-TIME-X6-BUILD-CARGO/build-artifacts-manifest-r1.json"
+    }
+  ],
+  "delivery_to_reviewed_metadata_delta": [
+    {
+      "status": "M",
+      "path": "doc/handoffs/P02-NEW-TIME-X6-BUILD-CARGO-antigravity-handoff.md"
+    },
+    {
+      "status": "M",
+      "path": "doc/tasks/P02-NEW-TIME-X6-BUILD-CARGO.md"
+    }
+  ],
+  "initial_incorrect_attempt": {
+    "path": "G:\\CODEX\\New Manga.workspace\\agent-output\\codex\\P02-NEW-TIME-X6-BUILD-CARGO\\codex-delivery-scope-r1.json",
+    "result": "FAIL",
+    "reason": "Compared source baseline 49d2 to delivery rather than actual Owner dispatch base 04ecc."
+  },
+  "checks": {
+    "owner_delta_from_actual_dispatch_head_within_task_handoff_verification_scope": true,
+    "no_product_source_dependency_lock_or_build_script_changes": true,
+    "708ac_is_two_file_metadata_only_descendant": true,
+    "task_source_base_and_owner_dispatch_base_documented_as_distinct": true
+  },
+  "violations": [],
+  "forbidden_source_dependency_changes": [],
+  "result": "PASS"
+}

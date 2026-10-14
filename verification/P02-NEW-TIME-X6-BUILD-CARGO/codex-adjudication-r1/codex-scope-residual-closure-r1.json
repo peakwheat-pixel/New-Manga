@@ -1,0 +1,687 @@
+{
+  "task_id": "P02-NEW-TIME-X6-BUILD-CARGO",
+  "agent": "codex",
+  "verification": "Preserved ignored Python cache residual closure r1",
+  "scope_audit_path": "G:\\CODEX\\New Manga.workspace\\agent-output\\codex\\P02-NEW-TIME-X6-BUILD-CARGO\\scope-audit-r1.json",
+  "scope_audit_sha256": "B847C162DBBA5A0AA7E028659CA2C1AF823A2E4F37E35CF2145FAB6DC580E923",
+  "source_pycache_dirs_recorded": 44,
+  "source_pyc_files_recorded": 87,
+  "pre_build_inventory": "missing; original creation/overwrite provenance remains UNKNOWN",
+  "current_inventory_files": 87,
+  "current_inventory_matches_scope_audit": true,
+  "tracked_pyc_files_under_src": [],
+  "derived_pycache_directories": [
+    "src/application/__pycache__",
+    "src/application/editing/__pycache__",
+    "src/application/export/__pycache__",
+    "src/application/importing/documents/__pycache__",
+    "src/application/importing/images/__pycache__",
+    "src/application/library/__pycache__",
+    "src/application/maintenance/__pycache__",
+    "src/application/reading/__pycache__",
+    "src/application/rendering/__pycache__",
+    "src/application/resource_channel/__pycache__",
+    "src/application/settings/__pycache__",
+    "src/application/tasks/__pycache__",
+    "src/application/translation/__pycache__",
+    "src/application/translation/color/__pycache__",
+    "src/application/translation/context/__pycache__",
+    "src/application/translation/inpaint/__pycache__",
+    "src/application/translation/knowledge/__pycache__",
+    "src/application/translation/pipeline/__pycache__",
+    "src/bootstrap/__pycache__",
+    "src/domain/__pycache__",
+    "src/domain/books/__pycache__",
+    "src/domain/constraints/__pycache__",
+    "src/domain/pages/__pycache__",
+    "src/domain/regions/__pycache__",
+    "src/domain/tasks/__pycache__",
+    "src/infrastructure/__pycache__",
+    "src/infrastructure/credentials/__pycache__",
+    "src/infrastructure/devices/__pycache__",
+    "src/infrastructure/filesystem/__pycache__",
+    "src/infrastructure/imaging/__pycache__",
+    "src/infrastructure/pipeline/__pycache__",
+    "src/infrastructure/providers/__pycache__",
+    "src/infrastructure/rendering/__pycache__",
+    "src/infrastructure/resource_channel/__pycache__",
+    "src/infrastructure/sqlite/__pycache__",
+    "src/infrastructure/transport/__pycache__",
+    "src/ports/detection/__pycache__",
+    "src/ports/inpaint/__pycache__",
+    "src/ports/network/__pycache__",
+    "src/ports/ocr/__pycache__",
+    "src/ports/providers/__pycache__",
+    "src/ports/rendering/__pycache__",
+    "src/ports/repositories/__pycache__",
+    "src/ports/translation/__pycache__"
+  ],
+  "checks": {
+    "scope_audit_lists_87_entries": true,
+    "all_audited_pyc_files_exist_and_match_bytes_hash_mtime": true,
+    "current_src_pyc_inventory_equals_scope_audit": true,
+    "derived_pycache_directory_count_matches_44": true,
+    "no_tracked_src_pyc_files": true,
+    "no_tracked_src_status_drift": true
+  },
+  "mismatches": [],
+  "files": [
+    {
+      "path": "src/application/editing/__pycache__/__init__.cpython-312.pyc",
+      "bytes": 544,
+      "sha256": "E6B26EB5090ABAD19811FFC08B91D0F712548822277C0DAE41D543D32E119D1A",
+      "mtime_utc": "2026-10-14T06:57:15.414903+00:00",
+      "matches_scope_audit": true
+    },
+    {
+      "path": "src/application/editing/__pycache__/errors.cpython-312.pyc",
+      "bytes": 2567,
+      "sha256": "F231DF12CB0961A6D7313B3807456E1B4C3A031BDCBF852DF645D0DB61999D29",
+      "mtime_utc": "2026-10-14T06:57:15.416433+00:00",
+      "matches_scope_audit": true
+    },
+    {
+      "path": "src/application/editing/__pycache__/ports.cpython-312.pyc",
+      "bytes": 4551,
+      "sha256": "E2A38DC47530A096EB2C0D306C6723EE3D27C4624059EFB591DE79A49950A02C",
+      "mtime_utc": "2026-10-14T06:57:15.425689+00:00",
+      "matches_scope_audit": true
+    },
+    {
+      "path": "src/application/editing/__pycache__/region_canvas.cpython-312.pyc",
+      "bytes": 8086,
+      "sha256": "FE2ACB1D1AED468DB89DF1D400DA30B2DC60E4A3ADB6A24D7D2C836CD4B25E14",
+      "mtime_utc": "2026-10-14T06:57:15.434767+00:00",
+      "matches_scope_audit": true
+    },
+    {
+      "path": "src/application/editing/__pycache__/service.cpython-312.pyc",
+      "bytes": 40592,
+      "sha256": "412FAA5DF88ADD71D5EB3865CF293F96EAA1509460AA7FF69370BF59B4A593BD",
+      "mtime_utc": "2026-10-14T06:57:15.424159+00:00",
+      "matches_scope_audit": true
+    },
+    {
+      "path": "src/application/export/__pycache__/__init__.cpython-312.pyc",
+      "bytes": 910,
+      "sha256": "DCD30ADBE3027D3D6C811B24224E0E4FC8562173B00344FD704DD329AABA2019",
+      "mtime_utc": "2026-10-14T06:57:16.027340+00:00",
+      "matches_scope_audit": true
+    },
+    {
+      "path": "src/application/export/__pycache__/ports.cpython-312.pyc",
+      "bytes": 4878,
+      "sha256": "AF665807F3741D2949425ACDEE5F476CB93639DE6AE4AA58A0C8A5FC56F20318",
+      "mtime_utc": "2026-10-14T06:57:16.028864+00:00",
+      "matches_scope_audit": true
+    },
+    {
+      "path": "src/application/export/__pycache__/service.cpython-312.pyc",
+      "bytes": 30163,
+      "sha256": "32304C5DF6E8CB6B03E2B45EF5D8063582D1F021B9C1FD122D5DD26584667554",
+      "mtime_utc": "2026-10-14T06:57:16.031938+00:00",
+      "matches_scope_audit": true
+    },
+    {
+      "path": "src/application/importing/documents/__pycache__/__init__.cpython-312.pyc",
+      "bytes": 627,
+      "sha256": "C02757392986CBAB7C39030CCC536E10267D3AC2CAF4F69046EAD16A4E715B24",
+      "mtime_utc": "2026-10-14T06:57:15.466982+00:00",
+      "matches_scope_audit": true
+    },
+    {
+      "path": "src/application/importing/documents/__pycache__/ports.cpython-312.pyc",
+      "bytes": 3459,
+      "sha256": "82F80A23D05633800C16D15105132F90DF040B08823ADC54F583FB0918FB43F1",
+      "mtime_utc": "2026-10-14T06:57:15.468509+00:00",
+      "matches_scope_audit": true
+    },
+    {
+      "path": "src/application/importing/documents/__pycache__/service.cpython-312.pyc",
+      "bytes": 11328,
+      "sha256": "E077F2C261CA2D23B03589E76F48D0BB3BD774CE6DE5674E68FAAFA1A8A96716",
+      "mtime_utc": "2026-10-14T06:57:15.470031+00:00",
+      "matches_scope_audit": true
+    },
+    {
+      "path": "src/application/importing/images/__pycache__/__init__.cpython-312.pyc",
+      "bytes": 875,
+      "sha256": "F72C60193F01607CD2A8AF0CDD14AECF5FBC76586569273305B227CF3D7DAD67",
+      "mtime_utc": "2026-10-14T06:57:15.471555+00:00",
+      "matches_scope_audit": true
+    },
+    {
+      "path": "src/application/importing/images/__pycache__/ports.cpython-312.pyc",
+      "bytes": 5270,
+      "sha256": "1AE4031A1ABCB228BE318E3F7DB1DA8CD10F978A50F068DC61E8E3D7E3EA715D",
+      "mtime_utc": "2026-10-14T06:57:15.471555+00:00",
+      "matches_scope_audit": true
+    },
+    {
+      "path": "src/application/importing/images/__pycache__/service.cpython-312.pyc",
+      "bytes": 5561,
+      "sha256": "50542D4D5BA86FB62DBFFF5E6C0B34701CA6E986DFBDEEF659E4C60D49A9415F",
+      "mtime_utc": "2026-10-14T06:57:15.479279+00:00",
+      "matches_scope_audit": true
+    },
+    {
+      "path": "src/application/importing/images/__pycache__/sorting.cpython-312.pyc",
+      "bytes": 2096,
+      "sha256": "A2E07E4462445A72886BA17E2B0743EB8A5E69454245EDBCF24B1F9EEE0615C4",
+      "mtime_utc": "2026-10-14T06:57:15.480802+00:00",
+      "matches_scope_audit": true
+    },
+    {
+      "path": "src/application/library/__pycache__/__init__.cpython-312.pyc",
+      "bytes": 560,
+      "sha256": "ACC9E713A31DD36C53A96F5F0C9768D4F7B34168BCB93E3EED3009943AFCA0A1",
+      "mtime_utc": "2026-10-14T06:57:16.022762+00:00",
+      "matches_scope_audit": true
+    },
+    {
+      "path": "src/application/library/__pycache__/errors.cpython-312.pyc",
+      "bytes": 2338,
+      "sha256": "02990FB64454722B285F15F89FD2040FB8E94C1DDC6A6554BAE20171F74A36B7",
+      "mtime_utc": "2026-10-14T06:57:16.022762+00:00",
+      "matches_scope_audit": true
+    },
+    {
+      "path": "src/application/library/__pycache__/ports.cpython-312.pyc",
+      "bytes": 5074,
+      "sha256": "284C674387926744E239E304910829E79F0C2D44508DE52A55372F3724B8AB5F",
+      "mtime_utc": "2026-10-14T06:57:16.025815+00:00",
+      "matches_scope_audit": true
+    },
+    {
+      "path": "src/application/library/__pycache__/service.cpython-312.pyc",
+      "bytes": 12273,
+      "sha256": "695FAA91392FF1C4B4FEF5A025005111F178F7F8B1CC8D2DE2E1886FD0D2D66F",
+      "mtime_utc": "2026-10-14T06:57:16.025815+00:00",
+      "matches_scope_audit": true
+    },
+    {
+      "path": "src/application/maintenance/__pycache__/__init__.cpython-312.pyc",
+      "bytes": 572,
+      "sha256": "00FAF338AC70D282FF93A26E4F4199F5F82C2CDAEAA400B8095528227ACC8D17",
+      "mtime_utc": "2026-10-14T06:57:16.016602+00:00",
+      "matches_scope_audit": true
+    },
+    {
+      "path": "src/application/maintenance/__pycache__/ports.cpython-312.pyc",
+      "bytes": 6045,
+      "sha256": "54419CB91EF9586CE6F5C0ADC5604ACA38E5724D6F1BBA903973A177D8485617",
+      "mtime_utc": "2026-10-14T06:57:16.018123+00:00",
+      "matches_scope_audit": true
+    },
+    {
+      "path": "src/application/maintenance/__pycache__/trash.cpython-312.pyc",
+      "bytes": 19978,
+      "sha256": "710B1C14ACFA125D2264644D45F445C361CDDB4BF22EF0AF9AB85601503707F7",
+      "mtime_utc": "2026-10-14T06:57:16.021239+00:00",
+      "matches_scope_audit": true
+    },
+    {
+      "path": "src/application/reading/__pycache__/__init__.cpython-312.pyc",
+      "bytes": 624,
+      "sha256": "143D94348EBBE81F0738861BFE5D580CF5677ABC403AB3AA7A368C3B9F3764B2",
+      "mtime_utc": "2026-10-14T06:57:15.539847+00:00",
+      "matches_scope_audit": true
+    },
+    {
+      "path": "src/application/reading/__pycache__/ports.cpython-312.pyc",
+      "bytes": 5813,
+      "sha256": "91DF5BF746202589CB365CB4852B4F707C6427027F6AF8A4F6C8EABB2786B83A",
+      "mtime_utc": "2026-10-14T06:57:15.541369+00:00",
+      "matches_scope_audit": true
+    },
+    {
+      "path": "src/application/reading/__pycache__/service.cpython-312.pyc",
+      "bytes": 22095,
+      "sha256": "D0A63236DFBC5793380F64527FA35E33057057FA9B7A68DD2ECC011B934C5511",
+      "mtime_utc": "2026-10-14T06:57:15.544481+00:00",
+      "matches_scope_audit": true
+    },
+    {
+      "path": "src/application/rendering/__pycache__/__init__.cpython-312.pyc",
+      "bytes": 340,
+      "sha256": "86C982F865B70C9EAA050F246CA71971C8A307B1412F67B36324006B73486C67",
+      "mtime_utc": "2026-10-14T06:57:16.016602+00:00",
+      "matches_scope_audit": true
+    },
+    {
+      "path": "src/application/resource_channel/__pycache__/__init__.cpython-312.pyc",
+      "bytes": 738,
+      "sha256": "5D2C84E516252769FAF66F9ED629CBFA38A7692186E4E847850F4E71B34BDF9A",
+      "mtime_utc": "2026-10-14T06:55:25.082143+00:00",
+      "matches_scope_audit": true
+    },
+    {
+      "path": "src/application/resource_channel/__pycache__/dto.cpython-312.pyc",
+      "bytes": 4838,
+      "sha256": "0EF6A74D58D7ACF710B5D17D3936A49C9D806912CF06C74AFE7E213F37699215",
+      "mtime_utc": "2026-10-14T06:55:25.083666+00:00",
+      "matches_scope_audit": true
+    },
+    {
+      "path": "src/application/resource_channel/__pycache__/service.cpython-312.pyc",
+      "bytes": 14171,
+      "sha256": "56BE6D490FDCC99B3999FB6AB08DDBD02E2E16404E280B56C14B87CA3E5AEDB6",
+      "mtime_utc": "2026-10-14T06:55:25.088299+00:00",
+      "matches_scope_audit": true
+    },
+    {
+      "path": "src/application/settings/__pycache__/__init__.cpython-312.pyc",
+      "bytes": 345,
+      "sha256": "1EFF1B55B449936EAE07FD5175DAED8A1FE80EAC16A636A45C290E0E889A7AE7",
+      "mtime_utc": "2026-10-14T06:57:15.538323+00:00",
+      "matches_scope_audit": true
+    },
+    {
+      "path": "src/application/tasks/__pycache__/__init__.cpython-312.pyc",
+      "bytes": 520,
+      "sha256": "FB34BC0D547872851BAF6EE20A6771357E98376C1D5BA1CA5BE2449CCC705DBC",
+      "mtime_utc": "2026-10-14T06:57:15.493071+00:00",
+      "matches_scope_audit": true
+    },
+    {
+      "path": "src/application/tasks/__pycache__/service.cpython-312.pyc",
+      "bytes": 56331,
+      "sha256": "473D8D69E9BE23A0D42F4FEE07C0BCB8430C509AE90ECC50517445365DDAC99B",
+      "mtime_utc": "2026-10-14T06:57:15.499213+00:00",
+      "matches_scope_audit": true
+    },
+    {
+      "path": "src/application/tasks/__pycache__/store.cpython-312.pyc",
+      "bytes": 19849,
+      "sha256": "2101A489BEF2739A9ABACEDE80BEC46FAF5E34D2388F12898ABFE056B01691F1",
+      "mtime_utc": "2026-10-14T06:57:15.502261+00:00",
+      "matches_scope_audit": true
+    },
+    {
+      "path": "src/application/translation/color/__pycache__/__init__.cpython-312.pyc",
+      "bytes": 281,
+      "sha256": "1A6446B658F0CDAA0C38E4366C63D9AAD5AF7A5ADC0E4605EE3986F0DFBFC056",
+      "mtime_utc": "2026-10-14T06:57:16.036591+00:00",
+      "matches_scope_audit": true
+    },
+    {
+      "path": "src/application/translation/context/__pycache__/__init__.cpython-312.pyc",
+      "bytes": 713,
+      "sha256": "79D66B85ADF9A099698D8C957ABCFD15CF94F95D4EA0B53C47B69714712D770E",
+      "mtime_utc": "2026-10-14T06:57:15.505317+00:00",
+      "matches_scope_audit": true
+    },
+    {
+      "path": "src/application/translation/context/__pycache__/builder.cpython-312.pyc",
+      "bytes": 18450,
+      "sha256": "9DF8A09ED7C48D7A1F871771968B325CB24FAC61BAAAEE36A8250E3E2D3619BF",
+      "mtime_utc": "2026-10-14T06:57:15.508360+00:00",
+      "matches_scope_audit": true
+    },
+    {
+      "path": "src/application/translation/context/__pycache__/gate.cpython-312.pyc",
+      "bytes": 2012,
+      "sha256": "1A43FB3FE1127E0B6C865E7D8058A4670A174B701CA77EBE4D1082AEB699E5C5",
+      "mtime_utc": "2026-10-14T06:57:15.511415+00:00",
+      "matches_scope_audit": true
+    },
+    {
+      "path": "src/application/translation/context/__pycache__/snapshot.cpython-312.pyc",
+      "bytes": 4263,
+      "sha256": "3D38030F72781AF624B0FFB5EC640C66C4D4E2D7418F6CE91C37D4ECE07CDADF",
+      "mtime_utc": "2026-10-14T06:57:15.514526+00:00",
+      "matches_scope_audit": true
+    },
+    {
+      "path": "src/application/translation/context/__pycache__/step.cpython-312.pyc",
+      "bytes": 10222,
+      "sha256": "1523CD655901568FF0475FF8AB749F94331AA8EF7FDDA85B3306FE56B3017FA2",
+      "mtime_utc": "2026-10-14T06:57:15.525232+00:00",
+      "matches_scope_audit": true
+    },
+    {
+      "path": "src/application/translation/inpaint/__pycache__/__init__.cpython-312.pyc",
+      "bytes": 282,
+      "sha256": "07A6D1222D944CB917F259D7E2126C7A9D320142FD3326C1B94F18DC2FB31EEB",
+      "mtime_utc": "2026-10-14T06:57:15.549073+00:00",
+      "matches_scope_audit": true
+    },
+    {
+      "path": "src/application/translation/knowledge/__pycache__/__init__.cpython-312.pyc",
+      "bytes": 300,
+      "sha256": "70CF806F0AA76717AB3BBF04AAFA9B1CB9E35392F5BE18C690EF3D309A7C5FD5",
+      "mtime_utc": "2026-10-14T06:57:15.526761+00:00",
+      "matches_scope_audit": true
+    },
+    {
+      "path": "src/application/translation/knowledge/__pycache__/tm.cpython-312.pyc",
+      "bytes": 13897,
+      "sha256": "F20F4358F354D36963CFCBB91E9127799AD209325FF0651D20AA60035A9C766A",
+      "mtime_utc": "2026-10-14T06:57:15.528343+00:00",
+      "matches_scope_audit": true
+    },
+    {
+      "path": "src/application/translation/pipeline/__pycache__/__init__.cpython-312.pyc",
+      "bytes": 398,
+      "sha256": "6254286C937E7F89639EF44D6FE128BAB7AA70478EFB96683A3156A0030FEEB4",
+      "mtime_utc": "2026-10-14T06:57:15.532909+00:00",
+      "matches_scope_audit": true
+    },
+    {
+      "path": "src/application/translation/pipeline/__pycache__/executor.cpython-312.pyc",
+      "bytes": 3991,
+      "sha256": "85EDA5D54E33C20C7BF8ACAEDA47D50103A2A435D150746F2DE6BF4CD4E48B57",
+      "mtime_utc": "2026-10-14T06:57:15.534428+00:00",
+      "matches_scope_audit": true
+    },
+    {
+      "path": "src/application/translation/__pycache__/__init__.cpython-312.pyc",
+      "bytes": 285,
+      "sha256": "D3F2FE489E4F89455838A87A9F8BD6A2C5A87D6C08ECEB60D91C391E74C15E29",
+      "mtime_utc": "2026-10-14T06:57:15.503783+00:00",
+      "matches_scope_audit": true
+    },
+    {
+      "path": "src/application/__pycache__/__init__.cpython-312.pyc",
+      "bytes": 258,
+      "sha256": "4A8D61F35E61972092CE9DB118BB54902F2A8B5F8DDC56130D0470D0C8C2E9DB",
+      "mtime_utc": "2026-10-14T06:55:25.082143+00:00",
+      "matches_scope_audit": true
+    },
+    {
+      "path": "src/bootstrap/__pycache__/__init__.cpython-312.pyc",
+      "bytes": 189,
+      "sha256": "EAD91918CC8B7D61612FEF601A5D623B62B3479F19D18FD8C7CFA1E586C8FF4B",
+      "mtime_utc": "2026-10-14T06:57:15.371995+00:00",
+      "matches_scope_audit": true
+    },
+    {
+      "path": "src/domain/books/__pycache__/__init__.cpython-312.pyc",
+      "bytes": 437,
+      "sha256": "FF4BFF0D15226BCE00D9F2E5E442BCEA8AF90526E2D8A6AD5FE153BA2FE5B4E8",
+      "mtime_utc": "2026-10-14T06:55:25.102039+00:00",
+      "matches_scope_audit": true
+    },
+    {
+      "path": "src/domain/books/__pycache__/entities.cpython-312.pyc",
+      "bytes": 9529,
+      "sha256": "67D5C76C2141A42320DCF081EE1535EDAE153D77C3C8EFEBBCAB104E1B1E8C92",
+      "mtime_utc": "2026-10-14T06:55:25.103629+00:00",
+      "matches_scope_audit": true
+    },
+    {
+      "path": "src/domain/constraints/__pycache__/__init__.cpython-312.pyc",
+      "bytes": 272,
+      "sha256": "F9D3F85A1B5D6ED7D097AC705ACFD812E51D97540905D79ACA25997879CFC2F5",
+      "mtime_utc": "2026-10-14T06:57:15.516070+00:00",
+      "matches_scope_audit": true
+    },
+    {
+      "path": "src/domain/constraints/__pycache__/entities.cpython-312.pyc",
+      "bytes": 12429,
+      "sha256": "CC1EDE861E9B33768DC165C79971D278E2047CCAB92C84A643A19CE2014423D7",
+      "mtime_utc": "2026-10-14T06:57:15.519132+00:00",
+      "matches_scope_audit": true
+    },
+    {
+      "path": "src/domain/constraints/__pycache__/merge.cpython-312.pyc",
+      "bytes": 4461,
+      "sha256": "AEE3AA398C8F014BDE3EFB96CC47E6F4E8495D757CB8989E27F28CDB049DBC3D",
+      "mtime_utc": "2026-10-14T06:57:15.522181+00:00",
+      "matches_scope_audit": true
+    },
+    {
+      "path": "src/domain/pages/__pycache__/__init__.cpython-312.pyc",
+      "bytes": 315,
+      "sha256": "D053945C17E8F0386FFC3DA8ADE2D9123BEAE96184B1AF0D7E5F22CD5F387655",
+      "mtime_utc": "2026-10-14T06:57:15.473092+00:00",
+      "matches_scope_audit": true
+    },
+    {
+      "path": "src/domain/pages/__pycache__/entities.cpython-312.pyc",
+      "bytes": 3033,
+      "sha256": "176DC9C0BC1C60742B3FC10D06291516188797BF3694882A6C466AFE17624C28",
+      "mtime_utc": "2026-10-14T06:57:15.474616+00:00",
+      "matches_scope_audit": true
+    },
+    {
+      "path": "src/domain/regions/__pycache__/__init__.cpython-312.pyc",
+      "bytes": 533,
+      "sha256": "142598F2E0085ECED8F74C44D666E67ED5E2976A7EBC58DA6AA53176AF01853D",
+      "mtime_utc": "2026-10-14T06:57:15.427124+00:00",
+      "matches_scope_audit": true
+    },
+    {
+      "path": "src/domain/regions/__pycache__/entities.cpython-312.pyc",
+      "bytes": 17919,
+      "sha256": "A120349FFF0A5FFDA9F4E8E2A31BB0A2163F3B54CDCF0D62FEC59834B874C3EE",
+      "mtime_utc": "2026-10-14T06:57:15.428652+00:00",
+      "matches_scope_audit": true
+    },
+    {
+      "path": "src/domain/tasks/__pycache__/__init__.cpython-312.pyc",
+      "bytes": 282,
+      "sha256": "33A5074A0DE6E272AE858F6A294229065A930B16605A4593FECEE9536072130D",
+      "mtime_utc": "2026-10-14T06:57:15.482385+00:00",
+      "matches_scope_audit": true
+    },
+    {
+      "path": "src/domain/tasks/__pycache__/models.cpython-312.pyc",
+      "bytes": 23384,
+      "sha256": "0D0C17B4E891B6F831D0CE645A79D2A125EF358F65D2F483AF595E06E798C3A6",
+      "mtime_utc": "2026-10-14T06:57:15.485458+00:00",
+      "matches_scope_audit": true
+    },
+    {
+      "path": "src/domain/__pycache__/__init__.cpython-312.pyc",
+      "bytes": 186,
+      "sha256": "90B9E5AB533A7B09D5FD107CA25A8EA61ACF2BF6720311EBD1C7623B680EA777",
+      "mtime_utc": "2026-10-14T06:55:25.100516+00:00",
+      "matches_scope_audit": true
+    },
+    {
+      "path": "src/infrastructure/credentials/__pycache__/__init__.cpython-312.pyc",
+      "bytes": 281,
+      "sha256": "1C85D130ED5C376E48B02FC1561DCE3AA7BE7ED1AD5E15EB6E24E9FB35F14E4B",
+      "mtime_utc": "2026-10-14T06:57:15.538323+00:00",
+      "matches_scope_audit": true
+    },
+    {
+      "path": "src/infrastructure/devices/__pycache__/__init__.cpython-312.pyc",
+      "bytes": 271,
+      "sha256": "E80F2BAA968C7EE7F346EE083681842EF484697098EC3B975654A4823B23CD0A",
+      "mtime_utc": "2026-10-14T06:57:15.550595+00:00",
+      "matches_scope_audit": true
+    },
+    {
+      "path": "src/infrastructure/filesystem/__pycache__/__init__.cpython-312.pyc",
+      "bytes": 264,
+      "sha256": "9E56FFA94BDE0591E240C2E7A7F84D31FAB5CDFC3F86563DC234A545F3C1D8ED",
+      "mtime_utc": "2026-10-14T06:55:25.106690+00:00",
+      "matches_scope_audit": true
+    },
+    {
+      "path": "src/infrastructure/imaging/__pycache__/__init__.cpython-312.pyc",
+      "bytes": 275,
+      "sha256": "3FD42BA947B4CE3028336EEAA3321B9A2C464BFAB730CD6F46206F3A341912FE",
+      "mtime_utc": "2026-10-14T06:57:16.015081+00:00",
+      "matches_scope_audit": true
+    },
+    {
+      "path": "src/infrastructure/pipeline/__pycache__/__init__.cpython-312.pyc",
+      "bytes": 427,
+      "sha256": "00BABC37181B819FC3B88A18B8A050E82DD245DC4A66F2BE0DE1E4E999D20C68",
+      "mtime_utc": "2026-10-14T06:57:16.005922+00:00",
+      "matches_scope_audit": true
+    },
+    {
+      "path": "src/infrastructure/pipeline/__pycache__/assembly.cpython-312.pyc",
+      "bytes": 1933,
+      "sha256": "1CD310D4354DE69BB0682B5BF3AFADCA9E52FD60003644F03BE5C9596DAA9FA3",
+      "mtime_utc": "2026-10-14T06:57:16.007446+00:00",
+      "matches_scope_audit": true
+    },
+    {
+      "path": "src/infrastructure/pipeline/__pycache__/executor.cpython-312.pyc",
+      "bytes": 3234,
+      "sha256": "506B06FD3786A8D32E4C23FBFEDEFB4B55D4530D4F2A6B75E52E58898D19BC39",
+      "mtime_utc": "2026-10-14T06:57:16.013563+00:00",
+      "matches_scope_audit": true
+    },
+    {
+      "path": "src/infrastructure/providers/__pycache__/__init__.cpython-312.pyc",
+      "bytes": 271,
+      "sha256": "E6206813CC3E46E707E1B960F52D03C0A55800ED257FEDC84E24043960E66E41",
+      "mtime_utc": "2026-10-14T06:57:15.399552+00:00",
+      "matches_scope_audit": true
+    },
+    {
+      "path": "src/infrastructure/rendering/__pycache__/__init__.cpython-312.pyc",
+      "bytes": 362,
+      "sha256": "61811A91FDD9DF3DF8739EE63B38663CBD46E5EAAFED87F50A499477BFCBB320",
+      "mtime_utc": "2026-10-14T06:57:15.399552+00:00",
+      "matches_scope_audit": true
+    },
+    {
+      "path": "src/infrastructure/resource_channel/__pycache__/__init__.cpython-312.pyc",
+      "bytes": 487,
+      "sha256": "722778F9692DB7953CB4AFA39509EB5280BC8A1D3BE43228E8DE0415F9135F80",
+      "mtime_utc": "2026-10-14T06:55:25.061220+00:00",
+      "matches_scope_audit": true
+    },
+    {
+      "path": "src/infrastructure/resource_channel/__pycache__/handle_resolver.cpython-312.pyc",
+      "bytes": 44032,
+      "sha256": "85CA5AB4D4F2ECA2B3A9EFEAF5637B36CE08FC643DC6BD3DB23C117AD693C749",
+      "mtime_utc": "2026-10-14T06:55:25.065804+00:00",
+      "matches_scope_audit": true
+    },
+    {
+      "path": "src/infrastructure/resource_channel/__pycache__/scope.cpython-312.pyc",
+      "bytes": 2370,
+      "sha256": "4BC89F7D02791920603EE7A75FD58E48884E5DB54BC9AFABE45D5BBBFEBBA476",
+      "mtime_utc": "2026-10-14T06:55:25.089841+00:00",
+      "matches_scope_audit": true
+    },
+    {
+      "path": "src/infrastructure/sqlite/__pycache__/__init__.cpython-312.pyc",
+      "bytes": 697,
+      "sha256": "B97BE48B3EAD2BDAB90E79FD08A8BD051D3244913C4FC38FDD6DAF66494F8292",
+      "mtime_utc": "2026-10-14T06:55:25.091363+00:00",
+      "matches_scope_audit": true
+    },
+    {
+      "path": "src/infrastructure/sqlite/__pycache__/pipeline.cpython-312.pyc",
+      "bytes": 48408,
+      "sha256": "730810CABC511CE842DC0A35717AF0CA22C951303B70A344650003E86934723E",
+      "mtime_utc": "2026-10-14T06:57:16.012040+00:00",
+      "matches_scope_audit": true
+    },
+    {
+      "path": "src/infrastructure/sqlite/__pycache__/reading_export.cpython-312.pyc",
+      "bytes": 25460,
+      "sha256": "85B8DE5D27DBF3645B3D4CE93E86C82E41540F0A72B41FDC8A1FBB10AFD06FB1",
+      "mtime_utc": "2026-10-14T06:55:25.094409+00:00",
+      "matches_scope_audit": true
+    },
+    {
+      "path": "src/infrastructure/transport/__pycache__/__init__.cpython-312.pyc",
+      "bytes": 279,
+      "sha256": "291FA1849A321A2687EBFFFD8081351F4C8228B9AF4CDEE3F18C96E47E182A03",
+      "mtime_utc": "2026-10-14T06:57:15.547541+00:00",
+      "matches_scope_audit": true
+    },
+    {
+      "path": "src/infrastructure/__pycache__/__init__.cpython-312.pyc",
+      "bytes": 1532,
+      "sha256": "1F834ED52B3DED65FBBB47ACE9D51E9F586992610E44A87CFA30FF145C8DF867",
+      "mtime_utc": "2026-10-14T06:55:25.061220+00:00",
+      "matches_scope_audit": true
+    },
+    {
+      "path": "src/ports/detection/__pycache__/__init__.cpython-312.pyc",
+      "bytes": 247,
+      "sha256": "4317650023447ED6E169CB4831142BAADB9F9BE7F0E552A7F3C7E919CF1D8F6B",
+      "mtime_utc": "2026-10-14T06:57:15.376633+00:00",
+      "matches_scope_audit": true
+    },
+    {
+      "path": "src/ports/inpaint/__pycache__/__init__.cpython-312.pyc",
+      "bytes": 243,
+      "sha256": "7843302C2FE49A9B2CF7B7068B4B85AEC30F271298EE6B11A1CE0D221DE884EF",
+      "mtime_utc": "2026-10-14T06:57:15.401075+00:00",
+      "matches_scope_audit": true
+    },
+    {
+      "path": "src/ports/network/__pycache__/__init__.cpython-312.pyc",
+      "bytes": 264,
+      "sha256": "38B074F263CB7618EFBD0812C16AA10746F223B167DD2FA7C76B8FCFF9E8CC02",
+      "mtime_utc": "2026-10-14T06:57:15.549073+00:00",
+      "matches_scope_audit": true
+    },
+    {
+      "path": "src/ports/ocr/__pycache__/__init__.cpython-312.pyc",
+      "bytes": 235,
+      "sha256": "0415C00D4ACC000E3C630AE7257F065C2541C91C4FAC3A3EE1EDBB0FDAC66605",
+      "mtime_utc": "2026-10-14T06:57:15.413381+00:00",
+      "matches_scope_audit": true
+    },
+    {
+      "path": "src/ports/providers/__pycache__/__init__.cpython-312.pyc",
+      "bytes": 267,
+      "sha256": "6A6FE799442484E40EFA88D839FEE5267D306A9ECCCA517787C01F92E2DFAB97",
+      "mtime_utc": "2026-10-14T06:57:15.375094+00:00",
+      "matches_scope_audit": true
+    },
+    {
+      "path": "src/ports/rendering/__pycache__/__init__.cpython-312.pyc",
+      "bytes": 344,
+      "sha256": "FB6461AFFB39D89F8ABACE53611AAE93ABC561BF783DCB9397A291B5BDC4C5E4",
+      "mtime_utc": "2026-10-14T06:57:15.437894+00:00",
+      "matches_scope_audit": true
+    },
+    {
+      "path": "src/ports/repositories/__pycache__/__init__.cpython-312.pyc",
+      "bytes": 683,
+      "sha256": "CFF8EED831829E011D7C723A3E276CA6DCC74F75DAE2387014FBBD7E0DC95DF6",
+      "mtime_utc": "2026-10-14T06:57:15.404122+00:00",
+      "matches_scope_audit": true
+    },
+    {
+      "path": "src/ports/repositories/__pycache__/artifacts.cpython-312.pyc",
+      "bytes": 7183,
+      "sha256": "127B52B5599DD521789B654873F5FE148F7D91AD6FA72FBC919624D54D0F1E2E",
+      "mtime_utc": "2026-10-14T06:57:15.404122+00:00",
+      "matches_scope_audit": true
+    },
+    {
+      "path": "src/ports/repositories/__pycache__/database.cpython-312.pyc",
+      "bytes": 2779,
+      "sha256": "BE35C5DBF42E1CFB1CEBD7F3F2A600E01967DA18D72E5935AC1C8BE81978AFF6",
+      "mtime_utc": "2026-10-14T06:57:15.408784+00:00",
+      "matches_scope_audit": true
+    },
+    {
+      "path": "src/ports/repositories/__pycache__/storage.cpython-312.pyc",
+      "bytes": 2982,
+      "sha256": "5A8AF591BD70F49E1849E3FAA29D6F08A72408D7DD8935182052F959451BD7F6",
+      "mtime_utc": "2026-10-14T06:57:15.411854+00:00",
+      "matches_scope_audit": true
+    },
+    {
+      "path": "src/ports/translation/__pycache__/__init__.cpython-312.pyc",
+      "bytes": 251,
+      "sha256": "BAE0F09130B762EBA41E5E3A9833C5DF520BF9537026F333BF3D1F3184C177E9",
+      "mtime_utc": "2026-10-14T06:57:15.402599+00:00",
+      "matches_scope_audit": true
+    }
+  ],
+  "pyinstaller_profile_cache": {
+    "path_seen_in_log": "C:\\Users\\49745\\AppData\\Local\\pyinstaller",
+    "scope_audit_observation": null,
+    "current_profile_state": "NOT_INSPECTED; this Task prohibits profile checks",
+    "disposition": "UNKNOWN_DO_NOT_DELETE; preserve and do not inspect/clean"
+  },
+  "disposition": "PRESERVE_ALL; the current 87 pyc files and 44 derived directories match the scope audit metadata; do not delete. This does not resolve whether they existed before the build.",
+  "result": "PASS_CURRENT_RESIDUAL_PRESERVED"
+}
