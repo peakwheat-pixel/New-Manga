@@ -762,7 +762,7 @@ Assert-True ($meta.frozenInputs.baseCommit -ceq 'bc502e7aae07074fff7228d585674e8
 Assert-True ($meta.freezeManifest.path -ceq 'G:/outside/freeze-selftest.json' -and $meta.freezeManifest.sha256 -ceq $goodSha -and $meta.freezeManifest.runId -ceq 'selftest-run') 'meta-shape-freeze-manifest-triple' 'meta line must name exactly which external freeze input produced the run (path + argv-bound sha + runId)'
 Assert-True ($meta.notRun.x6PostRunReview -ceq 'NOT_RUN' -and $meta.notRun.productAc1_Ac7 -like 'BLOCKED*') 'meta-shape-notrun-table' 'meta line must carry the NOT_RUN table (never PASS)'
 Assert-True (@($meta.forbiddenHistorySegments).Count -eq 3) 'meta-shape-history-segments' 'meta line must carry the frozen history segments'
-Assert-True ($meta.frozenTaskDeliverablePins[0].name -ceq 'collector-source' -and $meta.frozenTaskDeliverablePins[0].sha256 -ceq $collectorSelfSha) 'meta-shape-manifest-deliverable-pins' 'meta line must carry the manifest pins including the collector self-pin SHA'
+Assert-True ($meta.frozenTaskDeliverablePins[0].name -ceq $validManifest.taskDeliverablePins[0].name -and $meta.frozenTaskDeliverablePins[0].sha256 -ceq $collectorSelfSha) 'meta-shape-manifest-deliverable-pins' 'meta line must carry the manifest deliverable pins verbatim (name copied from the freeze manifest, executor self-pin SHA intact)'
 $metaJson = ConvertTo-Json -InputObject $meta -Depth 96 -Compress
 $reparsed = ConvertFrom-Json $metaJson
 Assert-True ($reparsed.task -ceq 'P02-NEW-TIME-X6' -and $null -ne $reparsed.frozenContractPins[0].sha256) 'meta-json-roundtrip' 'meta line must survive JSON round-trip with pins intact'
@@ -918,7 +918,7 @@ $finishedUtc = [DateTime]::UtcNow.ToString('o')
 $summary = [ordered]@{
     task = 'P02-NEW-TIME-X6'
     kind = 'pure-selftest-summary'
-    revision = 'x6-source-delivery-r1 (rebound from reviewed baseline i2-r3 lineage; adds forbidden-write-prefix guard)'
+    revision = 'x6-selftest-r2 (T-only AC2 assertion correction; executor r2 includes SR-01/02/03 repairs)'
     collectorPath = $CollectorPath
     collectorSha256 = (Get-FileHash -LiteralPath $CollectorPath -Algorithm SHA256).Hash
     selfPath = $SelfPath
