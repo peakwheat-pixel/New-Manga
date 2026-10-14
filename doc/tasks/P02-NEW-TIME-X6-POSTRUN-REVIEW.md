@@ -3,7 +3,7 @@ id: P02-NEW-TIME-X6-POSTRUN-REVIEW
 title: P02 新时点 X6 post-run 独立结果审查
 kind: verification
 governance_version: 2
-status: ready
+status: in_progress
 approval: user_authorized_new_time_baseline_20261014
 suggested_owner: DeepSeek Harness
 owner: DeepSeek Harness
@@ -19,7 +19,7 @@ reviewed_head: 303dbe5c7f5b8bcb1902b16ad5c208e205a6b50c
 review_decision: pending
 integration_target: main
 integration_status: not_started
-dispatch_state: READY
+dispatch_state: IN_PROGRESS
 blocked_by: []
 profile: REVIEW_ONLY
 revisions: {implementation: 0, test: 0, evidence: 0}
@@ -72,7 +72,7 @@ DSH 仅核对：
 
 | 场景/AC | 计划命令或步骤 | 前提/环境 | 实际结果 | 证据 |
 |---|---|---|---|---|
-| PR-AC1 input freeze | 官方 evidence-manifest generator + verify；Codex 对仓外文件逐项核验 hash/size | 父 X6 Codex AC4–AC6 PASS；review Task 已冻结 | NOT_RUN | 待记录 manifest/raw pins |
+| PR-AC1 input freeze | 官方 evidence-manifest generator dry-run/live/verify；Codex 对仓外文件逐项核验 hash/size | 父 X6 AC4–AC6 Codex VERIFY PASS；reviewed_head=`303dbe5c7f5b8bcb1902b16ad5c208e205a6b50c` | PASS（10/10 immutable Git evidence；14/14 external files/hash；RunId 目录精确 7 项；DSH output target absent；r1 审计尝试与被 supersede manifest 均保留） | `dsh-review-input-manifest-r2.json` + external input manifest/verification r2 + preserved r1 attempts |
 | PR-AC2 DSH review | `dsh --profile headless --json`，只读、单次派发，JSONL/stdout/stderr/exit 原样落盘 | AGENT_PREFLIGHT 通过；输入 manifest verify PASS | NOT_RUN | 待记录 DSH session/report |
 | PR-AC3 adjudication | Codex pin verification、result protocol、finding adjudication/convergence | DSH 产物完整且 reviewed head 匹配 | NOT_RUN | 待记录 adjudication/convergence |
 | PR-AC4 release gate | 更新依赖 DAG 并确认 Build/Cargo 是否 READY | unresolved blocker=0 且 X6 result accepted | NOT_RUN | STATUS/Plan/Build Task |
@@ -97,6 +97,9 @@ X6 I1/I2=`1/2`；本 Review 不重置父 Task 的实现返修预算。运行是�
 
 | evidence_id | AC/Gate | path（仓库相对路径或绝对路径） | commit | sha256 | class (`CANONICAL` / `SOURCE_PIN`) |
 |---|---|---|---|---|---|
+| PR-INPUT-MANIFEST-R2 | PR-AC1 frozen immutable inputs | verification/P02-NEW-TIME-X6-POSTRUN-REVIEW/dsh-review-input-manifest-r2.json | 1c43e138819ea4a0e6675b0b253846758ee2732a | BD049F9E4C20363E837900256CDFF21C3D972C44E915A7EC0B3F3DE234922DC4 | CANONICAL |
+| PR-EXTERNAL-X6-INPUTS-R2 | PR-AC1 X6 raw/capture/classifier inputs | G:/CODEX/New Manga.workspace/agent-output/codex/P02-NEW-TIME-X6-POSTRUN-REVIEW/external-input-manifest-r2.json | N/A (external) | F15013D1E23F05AB21004E33F3DAEF25F801FBB6524A3306DA7C842A1730CEE4 | SOURCE_PIN |
+| PR-EXTERNAL-X6-VERIFY-R2 | PR-AC1 deterministic raw input verification | G:/CODEX/New Manga.workspace/agent-output/codex/P02-NEW-TIME-X6-POSTRUN-REVIEW/external-input-verification-r2.json | N/A (external) | C4EA95701CD41211C049EA1900625CD9E3D7668CB97C17A12F71D09BD20C85F0 | CANONICAL |
 
 ## Resource Manifest
 
@@ -105,6 +108,11 @@ X6 I1/I2=`1/2`；本 Review 不重置父 Task 的实现返修预算。运行是�
 | DSH result review raw output | G:/CODEX/New Manga.workspace/agent-output/codex/P02-NEW-TIME-X6-POSTRUN-REVIEW/dsh-postrun-review-r1/ | PRESERVE_REFERENCED | same | pending | preserve raw command/stdout/stderr/exit/session |
 | DSH availability probe | G:/CODEX/New Manga.workspace/agent-output/codex/P02-NEW-TIME-X6-POSTRUN-REVIEW/preflight-probe-r1/ | PRESERVE_REFERENCED | same | pending | separate `收到` probe; not a Review, not to be mounted |
 | DSH AGENT_PREFLIGHT bundle | G:/CODEX/New Manga.workspace/agent-output/codex/P02-NEW-TIME-X6-POSTRUN-REVIEW/ | PRESERVE_REFERENCED | same | `preflight-evidence-manifest-r1.json` SHA-256=`3634EDDAF275C81D52F1DA59C5AB6F1ABBC5220ECE2CAAE37049A13482890717`; 8 files pinned | DSH 0.2.0-rc.2; helper exit=0, overall=PASS, dispatch_allowed=true; availability probe and attestation retained |
+| External X6 input verification r1 | G:/CODEX/New Manga.workspace/agent-output/codex/P02-NEW-TIME-X6-POSTRUN-REVIEW/external-input-manifest-r1.json + external-input-verification-r1.json | PRESERVE_REFERENCED | same | verification first attempt FAIL; expected empty stderr SHA had one extra `F`; no raw input changed | superseded by r2; preserve both files as evidence of verifier-input typo |
+| External X6 input verification r2 | G:/CODEX/New Manga.workspace/agent-output/codex/P02-NEW-TIME-X6-POSTRUN-REVIEW/external-input-manifest-r2.json + external-input-verification-r2.json | PRESERVE_REFERENCED | same | manifest SHA-256=`F15013D1E23F05AB21004E33F3DAEF25F801FBB6524A3306DA7C842A1730CEE4`; result SHA-256=`C4EA95701CD41211C049EA1900625CD9E3D7668CB97C17A12F71D09BD20C85F0` | 14/14 external inputs PASS; exact seven RunId-directory entries; temp captures byte-identical |
+| Codex evidence-preparation revision classifications | G:/CODEX/New Manga.workspace/agent-output/codex/P02-NEW-TIME-X6-POSTRUN-REVIEW/codex-pin-typo-classification-r1/ and `codex-manifest-scope-classification-r1/` | PRESERVE_REFERENCED | same | both official outputs SHA-256=`42B63044ED6F182F462D8C29CE328302DCE85B1D02AD601BDFF155E4589A77E6`; E / no I-budget use / reviewer_needed=true | E classifications disclose the corrected verifier hash and immutable-only r2 manifest scope |
+| Superseded immutable manifest r1 | verification/P02-NEW-TIME-X6-POSTRUN-REVIEW/dsh-review-input-manifest-r1.json | PRESERVE_REFERENCED | same | SHA-256=`D09383EA915CBD921DBEC936B89FE1A73482A6D06A2A5528AF574BAC6CE597B6` | superseded before Review dispatch because it pinned mutable Task state; no longer canonical |
+| Current immutable manifest r2 | verification/P02-NEW-TIME-X6-POSTRUN-REVIEW/dsh-review-input-manifest-r2.json | PRESERVE_REFERENCED | same | commit=`1c43e138819ea4a0e6675b0b253846758ee2732a`; SHA-256=`BD049F9E4C20363E837900256CDFF21C3D972C44E915A7EC0B3F3DE234922DC4` | official generator dry-run/live/verify all exit=0; verify PASS 10/10 |
 | X6 run bundle | G:/CODEX/New Manga.workspace/agent-output/zcode/P02-NEW-TIME-X6/x6-20261014T1305CST-p02-newtime-r1/ | PRESERVE_REFERENCED | same | pinned in parent Task | one-shot raw evidence; do not modify |
 | X6 auxiliary temp captures | G:/CODEX/New Manga.workspace/temp/P02-NEW-TIME-X6/x6-20261014T1305CST-p02-newtime-r1-capture/ | PRESERVE_REFERENCED | same | SHA-256 pinned in parent Task | byte-identical copy; retain for DSH finding adjudication |
 | X6 Task worktree | G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-X6 | PRESERVE_REFERENCED | same | branch/HEAD tracked in Task | shared by parent Task; do not remove here |
