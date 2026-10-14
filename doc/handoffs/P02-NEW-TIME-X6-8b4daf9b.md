@@ -19,7 +19,8 @@ status: delivered
 |---|---|
 | 83fb737e39ee663b85b14e6fa03168813a8624c6 | 生命周期：Task status→in_progress、dispatch_state→IN_PROGRESS；checkpoint→ACTIVE+session+next step |
 | 8b4daf9b0db452cb1b37768f570f04a1e8e589e6 | 执行包源码（5 files / 3016 insertions）：executor、selftest、protocol、source-manifest、output-inventory |
-| （本 Handoff commit） | Handoff + Task 交付记录/Canonical Evidence/Resource Manifest 回填 |
+| （Handoff 文档 commit） | Handoff + Task 交付记录/Canonical Evidence/Resource Manifest 回填；Task status→in_review |
+| （E 修正 commit） | 本 Handoff 按 Codex deterministic VERIFY finding `X6-CODEX-VERIFY-E-01` 自 `verification/P02-NEW-TIME-X6/handoff-source-delivery-r1.md` git mv 至协作协议 §5 正式路径 `doc/handoffs/P02-NEW-TIME-X6-8b4daf9b.md`；仅路径/Task 引用修正，正文与执行包源码未变。官方 `decide-convergence.py --mode classify-revision`：`revision_type=E`、`counts_toward_repair_budget=false`、`reviewer_needed=true`；I1/I2 保持 0/2。分类结果：G:/CODEX/New Manga.workspace/agent-output/codex/P02-NEW-TIME-X6/codex-verify-handoff-path-r1/ |
 
 交付文件（全部 LF、UTF-8 无 BOM、无 trailing whitespace；hash 见 source-manifest-r1.json 与 Task Canonical Evidence 表）：
 

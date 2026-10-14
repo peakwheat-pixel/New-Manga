@@ -22,7 +22,7 @@ integration_status: not_started
 dispatch_state: IN_PROGRESS
 blocked_by: []
 profile: ZCODE_HEAVY
-revisions: {implementation: 1, test: 1, evidence: 1}
+revisions: {implementation: 1, test: 1, evidence: 2}
 canonical_evidence_status: pending
 resource_closeout_status: pending
 evidence_dir: verification/P02-NEW-TIME-X6
@@ -74,7 +74,7 @@ evidence_dir: verification/P02-NEW-TIME-X6
 
 | 场景/AC | 计划命令或步骤 | 前提/环境 | 实际结果 | 证据 |
 |---|---|---|---|---|
-| X6-AC1 source delivery | ZCode 在 Task branch 创建专属执行包 | Task branch/worktree 与所有输出目标 fresh | PASS（交付部分）：executor/selftest/protocol/source-manifest/output-inventory 交付于 8b4daf9b0db452cb1b37768f570f04a1e8e589e6；唯一 CreateNew 目标仍 NOT_CREATED（待 Codex freeze） | handoff-source-delivery-r1.md + source-manifest-r1.json |
+| X6-AC1 source delivery | ZCode 在 Task branch 创建专属执行包 | Task branch/worktree 与所有输出目标 fresh | PASS（交付部分）：executor/selftest/protocol/source-manifest/output-inventory 交付于 8b4daf9b0db452cb1b37768f570f04a1e8e589e6；唯一 CreateNew 目标仍 NOT_CREATED（待 Codex freeze） | doc/handoffs/P02-NEW-TIME-X6-8b4daf9b.md + source-manifest-r1.json |
 | X6-AC2 parser/selftest | PowerShell 7.6.6 -NoProfile Parser + 纯内存断言 | DSH source Review 前后 pins 稳定 | NOT_RUN | command/stdout/stderr/exit/environment |
 | X6-AC3 DSH source Review | immutable input manifest + bounded Review | exact delivery HEAD 与 Task AC 冻结 | NOT_RUN | DSH report + manifest + Codex adjudication |
 | X6-AC4 final pre-run | Codex freeze verifier 与只读 pre-run | source Review 与 parser/selftest PASS | NOT_RUN | freeze manifest + pre-run result |
@@ -92,7 +92,8 @@ evidence_dir: verification/P02-NEW-TIME-X6
 
 - 2026-10-14 认领：ZCode preflight 通过并认领 Owner；生命周期 commit 83fb737e39ee663b85b14e6fa03168813a8624c6（status: in_progress / dispatch_state: IN_PROGRESS；checkpoint ACTIVE，session sess_bd06f60b-b6d1-4cc8-a7e7-4dbcb647458f）。
 - 2026-10-14 源码交付 r1：executor `verification/P02-NEW-TIME-X6/executor/p02-new-time-x6.ps1`、纯内存 selftest `.../p02-new-time-x6-selftest.ps1`、`protocol/x6-execution-protocol-r1.md`、`source-manifest-r1.json`、`output-target-inventory-r1.json` 交付于 delivery commit 8b4daf9b0db452cb1b37768f570f04a1e8e589e6（5 files / 3016 insertions）。实现血统：以已审查集成的 baseline collector/selftest（bc502e7a pin）为只读模式基础定点改绑；新增 Task X6 禁止写根 `ForbiddenWritePrefixes` 与纯函数 `Test-PathUnderAnyForbiddenPrefix`（分隔符边界，不误伤 verification/P02-NEW-TIME-X6/）。原始记录见 G:/CODEX/New Manga.workspace/agent-output/zcode/P02-NEW-TIME-X6/source-delivery-r1/。
-- Owner Handoff：verification/P02-NEW-TIME-X6/handoff-source-delivery-r1.md（见本 Task 的 Handoff commit）。
+- Owner Handoff：doc/handoffs/P02-NEW-TIME-X6-8b4daf9b.md（源码交付 r1；命名绑定 delivery commit 8b4daf9b）。
+- 2026-10-14 E 修正（X6-CODEX-VERIFY-E-01）：Codex deterministic VERIFY 固定 finding——Owner Handoff 原置于 `verification/P02-NEW-TIME-X6/handoff-source-delivery-r1.md`，违反 `doc/09_COLLABORATION.md` §5 正式交接路径 `doc/handoffs/TASK-xxx-<short-head>.md`。修正：git mv 至 `doc/handoffs/P02-NEW-TIME-X6-8b4daf9b.md`（目标已由 Codex 验证不存在），正文保留，Task/checkpoint 引用同步更新；executor/selftest/protocol 源码与 delivery commit 8b4daf9b0db452cb1b37768f570f04a1e8e589e6 完全未变。官方分类：`decide-convergence.py --mode classify-revision` 返回 `revision_type=E`、`counts_toward_repair_budget=false`、`reviewer_needed=true`（初始 DSH Review 尚未开始，之后照常执行）；I1/I2 保持 0/2，不启动 I1，不创建 follow-up Task。分类结果记录：G:/CODEX/New Manga.workspace/agent-output/codex/P02-NEW-TIME-X6/codex-verify-handoff-path-r1/。
 - DSH 源码 Review：NOT_RUN（待 Codex VERIFY delivery HEAD 后派发）。
 - Codex freeze / Parser / pre-run：NOT_RUN。
 - X6 one-shot 与 Codex result VERIFY：NOT_RUN。
