@@ -10,7 +10,7 @@ owner: ZCode
 reviewer: DeepSeek Harness
 integrator: Codex /root
 depends_on: [P02-NEW-TIME-BASELINE]
-base_commit: 9f2b653f9e5054cfca7cfe50e55f1e80533f8d46
+base_commit: bc502e7aae07074fff7228d585674e87d53efcfd
 branch: agent/zcode/P02-NEW-TIME-X6
 worktree: G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-X6
 integration_commit: null
@@ -84,7 +84,7 @@ evidence_dir: verification/P02-NEW-TIME-X6
 
 ## 依赖、风险与阻塞
 
-硬依赖仅为 P02-NEW-TIME-BASELINE=DONE；基线证据判定当前 Task 可进入 X6。旧 H1/P2-1 状态不作为本 Task 通过条件，也不因本 Task 而变化。当前 release main HEAD=9f2b653f9e5054cfca7cfe50e55f1e80533f8d46；该提交仅包含 Task/closeout 文档，运行源码沿用前置集成 commit bc502e7aae07074fff7228d585674e87d53efcfd。baseline collector 的 source HEAD=d285908f07ae1aa37a3e3af077d5902bb9abe661。已核实 tools/p02 下两者无源码差异，但完整 Git tree 不相同；Codex 必须在新 X6 freeze 中重新固定当前实际 source/target，不能沿用旧 freeze。
+硬依赖仅为 P02-NEW-TIME-BASELINE=DONE；基线证据判定当前 Task 可进入 X6。旧 H1/P2-1 状态不作为本 Task 通过条件，也不因本 Task 而变化。本 Task 的源码基线为前置集成 commit bc502e7aae07074fff7228d585674e87d53efcfd；baseline collector 的 source HEAD=d285908f07ae1aa37a3e3af077d5902bb9abe661。已核实 tools/p02 下两者无源码差异，但完整 Git tree 不相同；执行前 Codex 必须重新固定当时的 main HEAD、实际 source/target 和所有 output pins，不能沿用旧 freeze。
 
 旧 attempt6 executor 将 root 固定为 main@343895fb，且写入 verification/P02/ 并 replacement 到旧 Owner candidate；其版本与写入边界不符合本 Task，因此禁止运行。X6 源码 Review 与最终执行前 Codex pre-run 均为强制 Gate。若出现超过授权范围的文件状态或未知外部等待，按 orchestrator 记录、收敛、重规划；仅当真实满足 BLOCKED_WAITING_EXTERNAL_DECISION 才请求人工裁决。
 
