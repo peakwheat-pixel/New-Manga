@@ -1,15 +1,15 @@
 # P02 新时点 X6 恢复点
 
-## 最新恢复点（2026-10-14T14:30:00+08:00）
+## 最新恢复点（2026-10-14T13:32:07+08:00）
 
-- Agent / TaskStatus / ExecutionState：Codex `/root`；`P02-NEW-TIME-X6=in_review`；独立 `P02-NEW-TIME-X6-POSTRUN-REVIEW=ready`。
-- Branch / Worktree / base / current HEAD：`agent/zcode/P02-NEW-TIME-X6`；`G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-X6`；base=`bc502e7aae07074fff7228d585674e87d53efcfd`；HEAD=`3a3cea64a4ded0ec4e37aa37373bc286a8b4a05c`。X6 source Review=`839e0089...`; one-shot freeze manifest deliveryHead=`717b2c1...`; Codex result report committed at `b92f75ef...` and pinned in `303dbe5...`.
-- Completed Steps：X6-AC2/AC3/AC4/AC5/AC6 PASS；one-shot RunId=`x6-20261014T1305CST-p02-newtime-r1` exit=0, 59/59 checks PASS；Codex verified 18 pins, pointers and six raw captures. DSH availability probe exit=0; DSH AGENT_PREFLIGHT overall=PASS, dispatch_allowed=true.
-- Current Working Point：独立 post-run Review Task 已由 Codex 定义并释放；I1/I2=`1/2`。待冻结不可变 input manifest、verify 外部 RunId/capture/classifier/temp-copy pins，随后以 `dsh --profile headless --json` 单次只读派发。
-- Next Exact Step：调用 `generate-evidence-manifest.py` 冻结 review head=`303dbe5c7f5b8bcb1902b16ad5c208e205a6b50c` 的 Task、Codex result report、X6 source/protocol/inventory 与 prior DSH adjudication；官方 `--verify` PASS 后检查外部 SHA 与输出目录 absent，再派发 DSH。
-- Tests Already Run / Remaining / Current Errors：AC2 Parser/selftest 272 PASS / 0 FAIL / 7 SKIP；AC4 pre-run `PRE_RUN_PASS`；AC5 result 59 PASS / 0 FAIL / 0 NOT_RUN。Remaining：DSH post-run Review、Codex adjudication、AC7 closeout/governance；尚无 post-run finding。
-- Blockers / Decisions / Open Questions：无 `BLOCKED_WAITING_EXTERNAL_DECISION`；Build/Cargo 与产品 AC1–AC7 均 BLOCKED / NOT_RELEASED / NOT_RUN。DSH 必须判断 Task `delivery_head/reviewed_head=839e...`、freeze `deliveryHead=717b...` 与结果报告叙述之间的精确血缘；旧 H1/P2-1 与 13 项缺失记录不变。
-- Evidence / Confidence / Resume Safety：Codex report=`verification/P02-NEW-TIME-X6/codex-x6-result-verification-r1.md`，SHA-256=`5E1CC04AB8A452ACF897D92C0C455CAA47562000781EDD7C45C48BA5BB9BAA04`; external X6 run bundle 与两份 temp capture copy 原样保留；DSH probe session=`session-2b6cbf57-f46e-44bc-8040-5f37ee6490c3` 不是 Review session，不挂载。
+- Agent / TaskStatus / ExecutionState：Codex `/root`；`P02-NEW-TIME-X6=in_review`；独立 `P02-NEW-TIME-X6-POSTRUN-REVIEW=in_progress`。
+- Branch / Worktree / base / current HEAD：`agent/zcode/P02-NEW-TIME-X6`；`G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-X6`；base=`bc502e7aae07074fff7228d585674e87d53efcfd`；HEAD=`4e72e2b85fc89574741d71abd8f16cf2a4a65d61`。X6 source Review=`839e0089...`; one-shot freeze manifest `deliveryHead=717b2c1...`; Codex result evidence `reviewed_head=303dbe5...`.
+- Completed Steps：X6-AC2/AC3/AC4/AC5/AC6 PASS；唯一 RunId=`x6-20261014T1305CST-p02-newtime-r1` exit=0，59/59 checks PASS；Codex verified 18 pins、pointers 与六项 raw capture。DSH availability probe exit=0，AGENT_PREFLIGHT overall=PASS。官方 post-run manifest r2 verify PASS 10/10；外部输入哈希核验 PASS 14/14、RunId 目录精确 7 文件；两个 temp capture 与获准 stdout/stderr byte-identical。
+- Current Working Point：独立 post-run Review Task 已释放并进入 in_progress；I1/I2=`1/2`。Task `delivery_head=717b2c1...`、`reviewed_head=303dbe5...`；DSH 将只读核对唯一 X6 结果、超出 inventory 的临时副本、source-review/execution-head 血缘与历史隔离。
+- Next Exact Step：写入冻结 DSH prompt/command/environment，核对 DSH 输出路径 absent；然后从 Task worktree 根目录单次执行 `dsh --profile headless --json -`，保存 JSONL/stdout/stderr/exit/session。保留并引用 internal manifest r1（被 supersede）与 verifier attempt r1（预期 empty-stderr hash typo），当前有效清单为 immutable-only manifest r2。
+- Tests Already Run / Remaining / Current Errors：AC2 Parser/selftest 272 PASS / 0 FAIL / 7 SKIP；AC4 PRE_RUN_PASS；AC5 59 PASS / 0 FAIL / 0 NOT_RUN；manifest r2 dry-run/live/verify exit=0。Remaining：DSH Review、Codex adjudication、AC7 closeout/governance；无 X6 raw artifact mismatches。
+- Blockers / Decisions / Open Questions：无 `BLOCKED_WAITING_EXTERNAL_DECISION`；Build/Cargo 与产品 AC1–AC7 均 BLOCKED / NOT_RELEASED / NOT_RUN。DSH 须判断 Task `839e...` source review 与 freeze `717b...` execution snapshot 的可追溯关系；旧 H1/P2-1 与 13 项缺失记录不变。
+- Evidence / Confidence / Resume Safety：Codex report=`verification/P02-NEW-TIME-X6/codex-x6-result-verification-r1.md` SHA-256=`5E1CC04AB8A452ACF897D92C0C455CAA47562000781EDD7C45C48BA5BB9BAA04`；manifest r2=`verification/P02-NEW-TIME-X6-POSTRUN-REVIEW/dsh-review-input-manifest-r2.json` SHA-256=`BD049F9E4C20363E837900256CDFF21C3D972C44E915A7EC0B3F3DE234922DC4`，commit=`1c43e138819ea4a0e6675b0b253846758ee2732a`；r1 attempts preserved; DSH availability probe session=`session-2b6cbf57-f46e-44bc-8040-5f37ee6490c3` 不是 Review session，不挂载。
 
 ---
 
