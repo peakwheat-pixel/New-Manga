@@ -3,7 +3,7 @@ id: P02-NEW-TIME-X6
 title: P02 新时点 X6 动态闭包与一次性执行
 kind: verification
 governance_version: 2
-status: changes_requested
+status: in_review
 approval: user_authorized_new_time_baseline_20261014
 suggested_owner: ZCode
 owner: ZCode
@@ -14,15 +14,15 @@ base_commit: bc502e7aae07074fff7228d585674e87d53efcfd
 branch: agent/zcode/P02-NEW-TIME-X6
 worktree: G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-X6
 integration_commit: null
-delivery_head: 8b4daf9b0db452cb1b37768f570f04a1e8e589e6
-reviewed_head: 8b4daf9b0db452cb1b37768f570f04a1e8e589e6
-review_decision: changes_requested
+delivery_head: 3c707261556293bbc884e0b38c63161274aa1638
+reviewed_head: null
+review_decision: pending
 integration_target: main
 integration_status: not_started
 dispatch_state: IN_PROGRESS
 blocked_by: []
 profile: ZCODE_HEAVY
-revisions: {implementation: 1, test: 1, evidence: 3}
+revisions: {implementation: 2, test: 1, evidence: 4}
 canonical_evidence_status: pending
 resource_closeout_status: pending
 evidence_dir: verification/P02-NEW-TIME-X6
@@ -74,9 +74,9 @@ evidence_dir: verification/P02-NEW-TIME-X6
 
 | 场景/AC | 计划命令或步骤 | 前提/环境 | 实际结果 | 证据 |
 |---|---|---|---|---|
-| X6-AC1 source delivery | ZCode 在 Task branch 创建专属执行包 | Task branch/worktree 与所有输出目标 fresh | PASS（交付部分）：executor/selftest/protocol/source-manifest/output-inventory 交付于 8b4daf9b0db452cb1b37768f570f04a1e8e589e6；唯一 CreateNew 目标仍 NOT_CREATED（待 Codex freeze） | doc/handoffs/P02-NEW-TIME-X6-8b4daf9b.md + source-manifest-r1.json |
-| X6-AC2 parser/selftest | PowerShell 7.6.6 -NoProfile Parser + 纯内存断言 | DSH source Review 前后 pins 稳定 | NOT_RUN | command/stdout/stderr/exit/environment |
-| X6-AC3 DSH source Review | immutable input manifest + bounded Review | exact delivery HEAD 与 Task AC 冻结 | CHANGES_REQUESTED：3 个经 Codex 确认的 P2；Parser/selftest/freeze 暂停 | dsh-source-review-r1.md + dsh-source-review-input-manifest-r1.json + codex-source-review-adjudication-r1.md |
+| X6-AC1 source delivery | ZCode 在 Task branch 创建专属执行包 | Task branch/worktree 与所有输出目标 fresh | PASS（r2 交付部分，I1 repair 后）：executor/selftest 修复版 + protocol-r2/inventory-r2/source-manifest-r2 交付于 3c707261556293bbc884e0b38c63161274aa1638（5 files / +501 −46）；唯一 CreateNew 目标与 `<RunId>/` raw-capture 目标仍 NOT_CREATED（待 Codex freeze） | doc/handoffs/P02-NEW-TIME-X6-3c707261.md + source-manifest-r2.json |
+| X6-AC2 parser/selftest | PowerShell 7.6.6 -NoProfile Parser + 纯内存断言 | DSH bounded source Review r2 前后 pins 稳定 | NOT_RUN（I1 派发指令禁止运行；r2 源码已含 X6-SR-01/02 相关断言但未执行） | command/stdout/stderr/exit/environment |
+| X6-AC3 DSH source Review | immutable input manifest + bounded Review | exact delivery HEAD 与 Task AC 冻结 | r1=CHANGES_REQUESTED（3 P2 已由 I1 修复：X6-SR-01/02/03；P3/P4 留 backlog）；r2 bounded Review 待 Codex 冻结 r2 manifest 后派发，verdict=pending | dsh-source-review-r1.md + dsh-source-review-input-manifest-r1.json + codex-source-review-adjudication-r1.md + source-manifest-r2.json |
 | X6-AC4 final pre-run | Codex freeze verifier 与只读 pre-run | source Review 与 parser/selftest PASS | NOT_RUN | freeze manifest + pre-run result |
 | X6-AC5 one-shot | ZCode 执行唯一 RunId | final pre-run=PRE_RUN_PASS；目标 absent/unignored | NOT_RUN | raw run bundle + closed result |
 | X6-AC6 Codex VERIFY/integration | 官方 evidence verifier + 精确路径集成 | X6 完整运行记录已产生 | NOT_RUN | Codex verify + integration commit |
@@ -96,7 +96,9 @@ evidence_dir: verification/P02-NEW-TIME-X6
 - 2026-10-14 E 修正（X6-CODEX-VERIFY-E-01）：Codex deterministic VERIFY 固定 finding——Owner Handoff 原置于 `verification/P02-NEW-TIME-X6/handoff-source-delivery-r1.md`，违反 `doc/09_COLLABORATION.md` §5 正式交接路径 `doc/handoffs/TASK-xxx-<short-head>.md`。修正：git mv 至 `doc/handoffs/P02-NEW-TIME-X6-8b4daf9b.md`（目标已由 Codex 验证不存在），正文保留，Task/checkpoint 引用同步更新；executor/selftest/protocol 源码与 delivery commit 8b4daf9b0db452cb1b37768f570f04a1e8e589e6 完全未变。官方分类：`decide-convergence.py --mode classify-revision` 返回 `revision_type=E`、`counts_toward_repair_budget=false`、`reviewer_needed=true`（初始 DSH Review 尚未开始，之后照常执行）；I1/I2 保持 0/2，不启动 I1，不创建 follow-up Task。分类结果记录：G:/CODEX/New Manga.workspace/agent-output/codex/P02-NEW-TIME-X6/codex-verify-handoff-path-r1/。
 - DSH 源码 Review r1：`CHANGES_REQUESTED`，reviewed_head=`8b4daf9b0db452cb1b37768f570f04a1e8e589e6`，报告=`verification/P02-NEW-TIME-X6/dsh-source-review-r1.md`，SHA-256=`B3926A72201DA2EF842CDA75877F4B5EC561DAD2C60B3810F47B2510370EC343`；P2=`X6-SR-01/02/03`，P3/P4=`X6-SR-04..13` backlog。
 - Codex adjudication r1：`verification/P02-NEW-TIME-X6/codex-source-review-adjudication-r1.md`；official input manifest verify=PASS (7/7)，official result protocol=`ACCEPT`（artifact only），convergence=`IMPLEMENTATION_REPAIR_I1 + BOUNDED_REVIEW + REPLAN_DAG`；I1/I2=0/2，wait_external=false。
-- Codex freeze / Parser / pre-run：NOT_RUN。
+- 2026-10-14 I1 bounded implementation repair（source r2）：唯一一次 I1，repair base=`5f266b43078e66533676d24a82b2aeee444456c4`，delivery commit `3c707261556293bbc884e0b38c63161274aa1638`（5 files / +501 −46；I1/I2 消耗为 1/2）。仅修三个 P2：X6-SR-01——index 完整性检查改经 `git rev-parse --absolute-git-dir` 读本 linked worktree 私有 gitdir 的 index（观测/检查更名为 `worktree-git-index-hash-before/after`、`worktree-git-index-after-unchanged`，Expected/Note 写明真实路径语义，非绝对 gitdir fail-closed，主仓 index 零读取）；X6-SR-02——freeze-manifest 路径在读取字节前四层 fail-closed（新纯函数 `Test-PathContainsDotSegment` 拒 `.`/`..` 段、`Test-PathOutsideRepository` 改多根签名并在 GetFullPath 词法规范化上同时要求位于 Task worktree 与主仓 `G:/CODEX/New Manga`（新常量 `$script:MainRepositoryRoot`）之外、`Test-PathAncestorsOrdinary` 拒 manifest 路径链 reparse/junction；`ForbiddenWritePrefixes` 与历史段隔离保持多层）；X6-SR-03——新增 `output-target-inventory-r2.json` 显式授权 `<RunId>/` raw-capture 根与 `command/stdout/stderr/exit/environment/session` 六项必需记录（写入者/时点/absent 前提/partial 保留规则逐项写明；`freeze-manifest.json` 不自动授权同目录其它文件）。r1 全部文件（protocol/inventory/source-manifest r1、DSH report r1、adjudication r1）保留原样；新增 `protocol/x6-execution-protocol-r2.md`（§0 差异、§3.4 raw capture、§4 位置规则）与 `source-manifest-r2.json`（r2 pins；blob 与 `git ls-tree 3c707261` 一致）。P3/P4（X6-SR-04..13）按裁决留 backlog 未修。本阶段按派发指令未运行 Parser/selftest/executor/任何 probe（NOT_RUN）；未创建 freeze manifest/RunId 目标/raw output；未触碰 verification/P02/**、旧 H1/P2-1 证据或主仓 dirty/untracked 内容。
+- Owner Handoff r2：doc/handoffs/P02-NEW-TIME-X6-3c707261.md（I1 repair 交付；命名绑定 delivery commit 3c707261；SHA-256=`6D34DD92BE701CDE57AE2D403F4BF1FB716A22133B341148A56761F20C44E806`）。本修复轮的 raw 命令记录保留于 ZCode owner session 证据（I1 派发仅授权 repo 内 `verification/P02-NEW-TIME-X6/**`、本 Task 文件与新 Handoff 三个写入路径；未创建 agent-output/source-delivery-r2/）。
+- Codex freeze / Parser / pre-run：NOT_RUN（bounded Review r2 前保持）。
 - X6 one-shot 与 Codex result VERIFY：NOT_RUN。
 - post-run Review、Build/Cargo、产品 AC1–AC7：本 Task 不执行，等待后续 Task Gate。
 - 文档指针疑点（交 Codex，非阻塞）：主仓 doc/STATUS.md 引用 verification/P02PRE-R1H-H1-CURRENT-INPUT-REVIEW/codex-adjudication-r1.md，该文件在 Task worktree HEAD=a9c3214b 上不存在；ZCode 仅记录证据，未修改主仓文件。
@@ -107,14 +109,16 @@ evidence_dir: verification/P02-NEW-TIME-X6
 
 | evidence_id | AC/Gate | path | commit | sha256 | class |
 |---|---|---|---|---|---|
-| P02-X6-EXECUTOR-SOURCE | X6-AC1 | verification/P02-NEW-TIME-X6/executor/p02-new-time-x6.ps1 | 8b4daf9b0db452cb1b37768f570f04a1e8e589e6 | 61D35262C2BA396C4493792E229B5CCF3243A53F57BA039DEC12358E19D63A3B | SOURCE_PIN |
-| P02-X6-SELFTEST-SOURCE | X6-AC1 | verification/P02-NEW-TIME-X6/executor/p02-new-time-x6-selftest.ps1 | 8b4daf9b0db452cb1b37768f570f04a1e8e589e6 | EEF99635FE5A56FA4F3D275F18082F6DF400F6DA9F82A40739BDA46A1ABD9C27 | SOURCE_PIN |
-| P02-X6-PROTOCOL-R1 | X6-AC1/AC4 | verification/P02-NEW-TIME-X6/protocol/x6-execution-protocol-r1.md | 8b4daf9b0db452cb1b37768f570f04a1e8e589e6 | 443381124D7996C9B541369195F418469D16751FD25700BB6DE48A619F81FBDF | SOURCE_PIN |
-| P02-X6-OUTPUT-INVENTORY-R1 | X6-AC1 | verification/P02-NEW-TIME-X6/output-target-inventory-r1.json | 8b4daf9b0db452cb1b37768f570f04a1e8e589e6 | 1FC7ABE48C15CCB2C06306DEAAEF7E103598506CCFC58DCEB4F113DFB0C20B54 | SOURCE_PIN |
-| P02-X6-HANDOFF-R1 | X6-AC1/AC3 | doc/handoffs/P02-NEW-TIME-X6-8b4daf9b.md | 360b027146cdbdaa0944c1807151568267ee04d7 | C0372129D10AD0E62C9AD47160A83C9981CC673F5BE5B298B72D7CDDD38B5699 | SOURCE_PIN |
+| P02-X6-EXECUTOR-SOURCE | X6-AC1 | verification/P02-NEW-TIME-X6/executor/p02-new-time-x6.ps1 | 3c707261556293bbc884e0b38c63161274aa1638 | 43EE7BE2EEF449CC85C7FDDEECAF22BA689E60479CCD37D82137F4F405DDB9D4 | SOURCE_PIN |
+| P02-X6-SELFTEST-SOURCE | X6-AC1 | verification/P02-NEW-TIME-X6/executor/p02-new-time-x6-selftest.ps1 | 3c707261556293bbc884e0b38c63161274aa1638 | A8823F59AD1A1960217A32677116AA9EB1E30833E31D019769DCB0DE6AA75658 | SOURCE_PIN |
+| P02-X6-PROTOCOL-R2 | X6-AC1/AC4 | verification/P02-NEW-TIME-X6/protocol/x6-execution-protocol-r2.md | 3c707261556293bbc884e0b38c63161274aa1638 | 6216B0BC7FF33D4C9345A48ACFC0E65BF1668B5F68AF44889F024AD0FE67F9D1 | SOURCE_PIN |
+| P02-X6-OUTPUT-INVENTORY-R2 | X6-AC1 | verification/P02-NEW-TIME-X6/output-target-inventory-r2.json | 3c707261556293bbc884e0b38c63161274aa1638 | F980922ED7109D8109EBEB5419E4BA7AA013007B841FCB1E894D5281820010AC | SOURCE_PIN |
+| P02-X6-HANDOFF-R2 | X6-AC1/AC3 | doc/handoffs/P02-NEW-TIME-X6-3c707261.md | - | 6D34DD92BE701CDE57AE2D403F4BF1FB716A22133B341148A56761F20C44E806 | SOURCE_PIN |
 | P02-X6-DSH-INPUT-MANIFEST-R1 | X6-AC3 | verification/P02-NEW-TIME-X6/dsh-source-review-input-manifest-r1.json | 151fce3251f33e3b1409eead060833c396209c7f | 7B219C5C36723234409FFBB729FDD991FB956EC2FDD186C009FB4E10B11D394F | SOURCE_PIN |
 | P02-X6-DSH-REVIEW-R1 | X6-AC3 | verification/P02-NEW-TIME-X6/dsh-source-review-r1.md | - | B3926A72201DA2EF842CDA75877F4B5EC561DAD2C60B3810F47B2510370EC343 | CANONICAL |
 | P02-X6-CODEX-ADJUDICATION-R1 | X6-AC3 | verification/P02-NEW-TIME-X6/codex-source-review-adjudication-r1.md | - | EBB80D986A2CD25C0BA9DF17E940C403A45CF1A91B4C8AEC6B85C74C9B1E3073 | CANONICAL |
+
+r1 轮 SOURCE_PIN（executor/selftest/protocol-r1/inventory-r1/handoff-r1 @ 8b4daf9b/360b0271）已由上表 r2 pins 取代为“当前”证据；其字节仍由 delivery commit 8b4daf9b、`dsh-source-review-input-manifest-r1.json`（151fce32）与上表 r1 历史行完整保存，可经 git 历史复验。SMAN 自身不列 SOURCE_PIN（沿用 r1 口径，属 X6-SR-11 backlog；其完整性由 delivery commit 3c707261 与本表绑定）。
 
 ## Resource Manifest
 
@@ -123,7 +127,7 @@ evidence_dir: verification/P02-NEW-TIME-X6
 | resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
 |---|---|---|---|---|---|
 | Task worktree | G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-X6 | PRESERVE_REFERENCED | same | branch agent/zcode/P02-NEW-TIME-X6 | task scoped; removal not authorized |
-| ZCode raw output | G:/CODEX/New Manga.workspace/agent-output/zcode/P02-NEW-TIME-X6 | PRESERVE_REFERENCED | same | source-delivery-r1: dispatch-prompt.md / environment.md / commands.log | preserve all attempts and partial output |
+| ZCode raw output | G:/CODEX/New Manga.workspace/agent-output/zcode/P02-NEW-TIME-X6 | PRESERVE_REFERENCED | same | source-delivery-r1: dispatch-prompt.md / environment.md / commands.log；I1 修复轮未新增文件（派发仅授权 repo 内三个写入路径；source-delivery-r2/ NOT_CREATED，raw 命令记录保留于 ZCode owner session 证据） | preserve all attempts and partial output |
 | DSH source Review raw output | G:/CODEX/New Manga.workspace/agent-output/codex/P02-NEW-TIME-X6/dsh-source-review-r1 | PRESERVE_REFERENCED | same | stdout.md SHA-256 B3926A72201DA2EF842CDA75877F4B5EC561DAD2C60B3810F47B2510370EC343 | DSH session session-243cd38a-9c7c-405e-92a4-ac2af635748e mounted to this worktree |
 | Codex review verification | G:/CODEX/New Manga.workspace/agent-output/codex/P02-NEW-TIME-X6 | PRESERVE_REFERENCED | same | dsh-result-protocol-r1 / convergence-initial-review-r1 / codex-post-dsh-pin-verify-r1 | preserve inputs, commands, stdout, stderr, and exits |
 | Task temp/fixtures | G:/CODEX/New Manga.workspace/temp/P02-NEW-TIME-X6 | PRESERVE_REFERENCED | same | pending inventory | preserve; never mix with user manga data |
