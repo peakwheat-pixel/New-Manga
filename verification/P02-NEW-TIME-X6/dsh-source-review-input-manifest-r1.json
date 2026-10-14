@@ -1,0 +1,62 @@
+{
+  "task_id": "P02-NEW-TIME-X6",
+  "generated_at": "2026-10-14T03:14:44+00:00",
+  "source_commit": "360b027146cdbdaa0944c1807151568267ee04d7",
+  "review_head": "8b4daf9b0db452cb1b37768f570f04a1e8e589e6",
+  "generator": {
+    "name": "generate-evidence-manifest",
+    "version": 1,
+    "frozen_git_checked": true
+  },
+  "files": [
+    {
+      "relative_path": "doc/tasks/P02-NEW-TIME-X6.md",
+      "sha256": "e0891b4187093329e1202430ee3060a2b2a931dabb1b994d2553527c8642b963",
+      "bytes": 14357,
+      "git_blob": "d082917f63543bc4405984955451cb2442bd34d6",
+      "artifact_type": "doc"
+    },
+    {
+      "relative_path": "doc/handoffs/P02-NEW-TIME-X6-8b4daf9b.md",
+      "sha256": "c0372129d10ad0e62c9ad47160a83c9981cc673f5be5b298b72d7cddd38b5699",
+      "bytes": 10007,
+      "git_blob": "a96d6437dd1b72014a9eea26051ca4aca14ddaaa",
+      "artifact_type": "doc"
+    },
+    {
+      "relative_path": "verification/P02-NEW-TIME-X6/executor/p02-new-time-x6.ps1",
+      "sha256": "61d35262c2ba396c4493792e229b5ccf3243a53f57ba039dec12358e19d63a3b",
+      "bytes": 100394,
+      "git_blob": "6620602d9ba675487e3ac03c3a38de9fdc1baf30",
+      "artifact_type": "code"
+    },
+    {
+      "relative_path": "verification/P02-NEW-TIME-X6/executor/p02-new-time-x6-selftest.ps1",
+      "sha256": "eef99635fe5a56fa4f3d275f18082f6df400f6da9f82a40739bda46a1abd9c27",
+      "bytes": 78604,
+      "git_blob": "86c0b3ca79f4658e158fc5e5ae69a3ae1454c408",
+      "artifact_type": "code"
+    },
+    {
+      "relative_path": "verification/P02-NEW-TIME-X6/protocol/x6-execution-protocol-r1.md",
+      "sha256": "443381124d7996c9b541369195f418469d16751fd25700bb6de48a619f81fbdf",
+      "bytes": 9054,
+      "git_blob": "1f2fe264c73b4bd44b787bbb49e24a8adca35c26",
+      "artifact_type": "doc"
+    },
+    {
+      "relative_path": "verification/P02-NEW-TIME-X6/source-manifest-r1.json",
+      "sha256": "9dd97d632ded0c4a75f8f2514ab8f60f4899ced65b67a2faa625e2dfb4ba0c92",
+      "bytes": 3409,
+      "git_blob": "ea595509bdea2b1baebf5c22ac01a4318f2ae6ac",
+      "artifact_type": "data"
+    },
+    {
+      "relative_path": "verification/P02-NEW-TIME-X6/output-target-inventory-r1.json",
+      "sha256": "1fc7abe48c15ccb2c06306deaaef7e103598506ccfc58dceb4f113dfb0c20b54",
+      "bytes": 3041,
+      "git_blob": "010734c3971c50f7072d08efa375fa86a82e634f",
+      "artifact_type": "data"
+    }
+  ]
+}
