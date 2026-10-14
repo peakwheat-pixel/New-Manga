@@ -1,0 +1,6 @@
+{
+  "transport_status": "SUCCESS",
+  "artifact_status": "PARTIAL",
+  "agent_status": "BLOCKED_EXECUTION_ENV",
+  "verification_status": "NOT_VERIFIED"
+}

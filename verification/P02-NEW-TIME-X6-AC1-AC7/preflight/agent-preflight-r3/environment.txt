@@ -1,0 +1,1 @@
+PowerShell 7.6.6; Python 3.14.6; ZCode CLI 0.16.9; Task HEAD=3d94add1b8cf63b70cbe760c1cd4f7719e5df228; branch=agent/zcode/P02-NEW-TIME-X6-AC1-AC7; porcelain clean; live ZCode availability probe session=sess_535da297-fa78-4788-8c19-d7f1201b8709; user-authorized scoped edit mode attested; write-scope paths manually checked against frozen Task allowlist.

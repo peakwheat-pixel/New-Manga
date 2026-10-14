@@ -1,0 +1,9 @@
+{
+  "revision_type": "T",
+  "counts_toward_repair_budget": false,
+  "reviewer_needed": false,
+  "verification": "codex_deterministic_verification",
+  "rationale": "ordinary test revision needs no reviewer",
+  "mode": "classify-revision",
+  "dry_run": false
+}

@@ -1,0 +1,1 @@
+node "E:\Program Files\ZCode\resources\glm\zcode.cjs" --prompt '只回复两个字：收到' --cwd "G:\CODEX\New Manga.workspace\worktrees\P02-NEW-TIME-X6-AC1-AC7" --mode plan --json --locale zh-CN

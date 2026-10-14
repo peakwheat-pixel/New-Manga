@@ -1,0 +1,8 @@
+Task: P02-NEW-TIME-X6-AC1-AC7
+Type: Codex deterministic verification of ZCode-delivered test harness (no product launch)
+Owner worktree: G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-X6-AC1-AC7
+Node: v24.15.0
+Command: node --check <each *.mjs under apps/desktop/frontend/e2e/p02-new-time/>
+Result: 9 of 10 modules parse successfully. AC1–AC5 drivers and lib/app.mjs, lib/cdp.mjs, lib/env.mjs, lib/evidence.mjs PASS. `ac6-contrast.mjs` FAILS parse at line 82 with `SyntaxError: Unexpected identifier 'rgb'` (caret at `fgEff`).
+Interpretation: test-harness T-revision defect, not a product finding; AC6 cannot run until the test script is corrected. No app, installer, user data, or run-r1 directory was opened or changed by this check.
+Follow-up: Antigravity fallback owner to correct only the allowed e2e script, rerun `node --check` across all modules, then continue AC1–AC6 sequentially. Product code/contract/dependency changes remain forbidden.

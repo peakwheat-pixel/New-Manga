@@ -1,0 +1,1 @@
+PowerShell 7.6.6; cwd=G:\CODEX\New Manga.workspace\worktrees\P02-NEW-TIME-X6-POSTRUN-REVIEW; agy path=C:\Users\49745\AppData\Local\agy\bin\agy.exe; permission flag used only for no-file probe; no task files passed.

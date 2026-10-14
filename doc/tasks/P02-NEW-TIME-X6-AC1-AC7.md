@@ -3,26 +3,27 @@ id: P02-NEW-TIME-X6-AC1-AC7
 title: P02 新时点 AC1–AC7 当前版本验收
 kind: verification
 governance_version: 2
-status: in_progress
+status: ready
 approval: user_authorized_new_time_baseline_20261014
-suggested_owner: ZCode
-owner: ZCode
+suggested_owner: Antigravity
+owner: Antigravity
 reviewer: DeepSeek Harness
 integrator: Codex
 depends_on: [P02-NEW-TIME-BASELINE, P02-NEW-TIME-X6, P02-NEW-TIME-X6-POSTRUN-REVIEW, P02-NEW-TIME-X6-BUILD-CARGO]
 base_commit: 49d2a2f9c56462f5602b00ad4b824c5381abb1ab
-branch: agent/zcode/P02-NEW-TIME-X6-AC1-AC7
-worktree: G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-X6-AC1-AC7
+branch: agent/antigravity/P02-NEW-TIME-X6-AC1-AC7
+worktree: G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-X6-AC1-AC7-ANTIGRAVITY
 integration_commit: null
+owner_start_commit: 6935aa38855553bdd8f8415a0765cd874acadf14
 delivery_head: null
 reviewed_head: null
 review_decision: pending
 integration_target: agent/codex/P02-NEW-TIME-X6-POSTRUN-REVIEW
 integration_status: not_started
-dispatch_state: DISPATCHED_EXECUTION_BLOCKED_ENV
+dispatch_state: PREFLIGHT_PENDING
 blocked_by: []
-profile: ZCODE_PRIMARY
-revisions: {implementation: 0, test: 1, evidence: 1}
+profile: ANTIGRAVITY_FALLBACK
+revisions: {implementation: 0, test: 1, evidence: 3}
 canonical_evidence_status: pending
 resource_closeout_status: pending
 evidence_dir: verification/P02-NEW-TIME-X6-AC1-AC7
@@ -85,29 +86,29 @@ run_id: p02-newtime-ac-20261014-r1
 
 | 场景/AC | 计划命令或手工步骤 | 前提/环境 | 实际结果 | 证据 |
 |---|---|---|---|---|
-| Preflight / release | 校验 Task、依赖门、binary/sidecar hashes、write scope、Task env 空白状态；运行 official `preflight-agent.py` live PREFLIGHT 与 ZCode availability probe | 本 Task 已登记；Build convergence approved；独立 worktree 已创建；无其他 Owner 写入 | PASS：EXE hash 匹配；packaged sidecar copy 与冻结 5,610-file manifest 比对 PASS（5,610 / 5,610，1,296,373,783 bytes，无缺失/多余/hash mismatch）；Task env=0 items。ZCode CLI 0.16.9 live probe 返回有效回复与 session ID；official AGENT_PREFLIGHT r1 在 HEAD=c7b791ecfff4276e0a42ed57de3f920603067a5f 返回 overall=PASS、dispatch_allowed=true、worktree 0 dirty entries。Task 证据/状态更新后需再对最终冻结 HEAD 运行 live PREFLIGHT；尚未启动应用 | `verification/P02-NEW-TIME-X6-AC1-AC7/preflight/sidecar-resource-copy.stdout.json`、`agent-preflight-r2/stdout.json`、`zcode-availability-r2/probe.stdout.jsonl`；各自 command/environment/stderr/exit 同目录 |
-| AC1 runtime identity | 启动固定 packaged exe；采集 WebView2 host/runtime identity、process/window identity、source/binary pins | 本机 Windows；isolated synthetic env；不重建或安装 | BLOCKED（run-r1）：Owner 会话 Bash 无权限客户端，任何进程执行命令（node/python/powershell/certutil）与 git 写命令均被 "No permission client configured" 拒绝（子代理复现一致）；固定 EXE 未启动，run-r1 保持 0 items。EXE SHA-256 只读复算匹配 pin。驱动已交付：`apps/desktop/frontend/e2e/p02-new-time/ac1-identity.mjs` | `verification/P02-NEW-TIME-X6-AC1-AC7/execution-blocked/execution-blocker-evidence.json` |
-| AC2 navigation / operation | 在真实 Workbench 窗口执行鼠标/键盘导航、输入与按钮状态操作 | AC1 PASS；真实 WebView2 窗口 | BLOCKED（同上，依赖真实窗口）。驱动已交付：`ac2-navigation.mjs` | 同上 blocker evidence；驱动在 e2e 目录 |
-| AC3 debounce / stale response | 使用真实页面和单调时钟驱动连续输入、page ID 切换及延迟响应观察 | AC1 PASS；不以 fake timer 作为产品行为证据 | BLOCKED（同上）。驱动已交付：`ac3-debounce.mjs`（Phase A 真实 IPC 观察；Phase B 仅 invoke 边界 mock 迟到响应并标注 MOCK_IPC；时钟=页面 performance.now()） | 同上 |
-| AC4 write/read freshness | 对 retype、undo、restore 分别记录 write return 与 list_regions readback；清晰标注 IPC/Core mock 边界 | AC1 PASS；synthetic state；三项均执行，否则 BLOCKED | BLOCKED（同上；三项 retype/undo/restore 均未执行，不折衷为 NOT_RUN）。驱动已交付：`ac4-write-refresh.mjs`（REAL_WEBVIEW_MOCK_IPC，默认 300ms debounce 下测写后即时 readback） | 同上 |
-| AC5 keyboard / focus | 真实按键序列与 focus/active element 采集 | AC1 PASS；真实窗口输入 | BLOCKED（同上）。驱动已交付：`ac5-keyboard.mjs` | 同上 |
-| AC6 computed colors | 真实 DOM computed styles、token mapping、实际颜色/背景、WCAG ratio 和阈值 | AC1 PASS；颜色可采集；不得改样式 | BLOCKED（同上）。驱动已交付：`ac6-contrast.mjs`（对照 `doc/design/tokens-cand-f.json`，token_mapping/contrast_result 分列，浅色入口缺席记 NOT_APPLICABLE） | 同上 |
-| AC7 adjudication | 固定证据 manifest；DSH bounded read-only Review；Codex official result/convergence、集成及验证 | AC1–AC6 状态齐全；delivery head 固定 | NOT_RUN：AC1–AC6 无逐场景证据可裁决；DSH 独立 Review 未发生；delivery head 未固定（会话无 git 写权限） | 同上 |
+| Preflight / release | 校验 Task、依赖门、binary/sidecar hashes、write scope、Task env；运行 official `preflight-agent.py` 与 Owner probes | fallback worktree 已登记；Build convergence approved；run-r1 synthetic env 为空 | ZCode 原 Owner 的 official preflight r3 在 HEAD=`3d94add1b8cf63b70cbe760c1cd4f7719e5df228` PASS；`agy 1.3.5` availability probe `SUCCESS`，只读 process-capability probe的 node/git 均 exit 0。Codex syntax check：9/10 modules PASS；`ac6-contrast.mjs` parse error，修复后才能运行 AC6。Antigravity 新 branch 的 official live AGENT_PREFLIGHT 待完成；产品应用未启动 | `preflight/agent-preflight-r3/stdout.json`、`preflight/antigravity-availability-r1/stdout.json`、`preflight/antigravity-execution-probe-r1/stdout.json`、`execution-blocked/codex-node-syntax-check-zcode-r1.txt`；命令/环境/exit 同目录 |
+| AC1 runtime identity | 启动固定 packaged exe；采集 WebView2 host/runtime identity、process/window identity、source/binary pins | 本机 Windows；isolated synthetic env；不重建或安装 | NOT_RUN：ZCode 原会话因 ENV-01 未执行产品；Antigravity fallback 尚待 official preflight/dispatch | Task-local AC1 logs / screenshots |
+| AC2 navigation / operation | 在真实 Workbench 窗口执行鼠标/键盘导航、输入与按钮状态操作 | AC1 PASS；真实 WebView2 窗口 | NOT_RUN：等待 fallback Owner | Task-local AC2 logs / screenshots |
+| AC3 debounce / stale response | 使用真实页面和单调时钟驱动连续输入、page ID 切换及延迟响应观察 | AC1 PASS；不以 fake timer 作为产品行为证据 | NOT_RUN：等待 fallback Owner | Task-local AC3 timing trace |
+| AC4 write/read freshness | 对 retype、undo、restore 分别记录 write return 与 list_regions readback；清晰标注 IPC/Core mock 边界 | AC1 PASS；synthetic state；三项均执行，否则 BLOCKED | NOT_RUN：ZCode 尝试未启动产品；三项仍必须全部执行 | Task-local AC4 event trace |
+| AC5 keyboard / focus | 真实按键序列与 focus/active element 采集 | AC1 PASS；真实窗口输入 | NOT_RUN：等待 fallback Owner | Task-local AC5 logs / screenshots |
+| AC6 computed colors | 真实 DOM computed styles、token mapping、实际颜色/背景、WCAG ratio 和阈值 | AC1 PASS；颜色可采集；不得改样式 | NOT_RUN：ZCode 驱动有 Node syntax error，Antigravity T-revision 待修后运行 | Task-local AC6 JSON / screenshots |
+| AC7 adjudication | 固定证据 manifest；DSH bounded read-only Review；Codex official result/convergence、集成及验证 | AC1–AC6 状态齐全；最终 delivery head 固定 | NOT_RUN：当前 fallback 尚未执行产品 AC；DSH 独立 Review 未发生，最终 delivery head 待交付 | Task-local AC7 review/adjudication manifest |
 
 以上 `PLANNED` / `NOT_RUN` 不是 PASS；Task 建立与 preflight 不会预先判定产品行为。
 
 ## 依赖、Review 与阻塞
 
 - 前置节点：`P02-NEW-TIME-BASELINE=DONE`、`P02-NEW-TIME-X6=APPROVED`、`P02-NEW-TIME-X6-POSTRUN-REVIEW=APPROVED`、`P02-NEW-TIME-X6-BUILD-CARGO=INTEGRATED + official convergence APPROVED`。Build 的 BC-AC5=`PARTIAL` 与保留 residual 必须继续在 Plan、Status 和本 Task 可见；不得将其当作 PASS，也不得阻止本 Task 在官方批准范围内启动。
-- 开始运行的硬条件：Codex 已冻结 Task/Plan/Status，ZCode availability probe 与 live AGENT_PREFLIGHT 均通过，isolated worktree 和 Task env 已验证，binary/sidecar hashes 匹配，synthetic data 为空且 source pinned。任一失败时维持 `blocked` / `NOT_RUN` 并记录恢复条件；不自动升级为 `BLOCKED_WAITING_EXTERNAL_DECISION`。
-- ZCode 为主要执行 Owner；仅当 fresh probe 证明 ZCode 不可用时按项目故障转移顺序交由 Antigravity，并记录原因、probe artifact、branch/worktree 与新的 preflight。Qoder 不参与。
+- 开始运行的硬条件：Codex 已冻结 Task/Plan/Status；当前 Owner（含 fallback）的 availability probe 与 live AGENT_PREFLIGHT 均通过；isolated worktree 与 Task env 已验证，binary/sidecar hashes 匹配，synthetic data 为空且 source pinned。任一失败时记录 BLOCKED 与恢复条件；不自动升级为 `BLOCKED_WAITING_EXTERNAL_DECISION`。
+- Owner failover：ZCode attempt r1 因 `ENV-01`（permission client 缺失，无法 spawn process/git write）中止，原证据保留；官方 result protocol 判定 `PRESERVE_AND_RECOVER`。在 Antigravity live probe 成功后，当前同一 Task 由 Antigravity 按原 frozen scope 继续；不重写 AC、不改产品范围、不等待人工授权。
 - DeepSeek Harness 在固定 delivery head 上独立 Review，Codex 重算 evidence pins、scope 与 AC 结论并集成。Finding 按 `multi-agent-project-orchestrator` 的 I1/I2、bounded review、follow-up/resolution lineage 与 DAG replanning 处理；最多 I1、I2 两轮，禁止 I3 与无限返修。P0/P1/P2 blocker 未关闭不得批准；可安全关闭的非阻断 E 文档 finding 按协议处置；P3/P4 明确入 backlog，不为追求零 finding 无界重开。产品实现修复需 Codex 另立依赖 Task。
 - AC4 三项 retype/undo/restore 均是必需条件；任一被阻断则 Task 不能 `done`。旧 H1 / P2-1 状态不属于本 Task 的输入或验收范围。
 
 ## 交付与运行记录
 
-- 2026-10-14 run-r1（RunId=`p02-newtime-ac-20261014-r1`，Owner=ZCode）：派发会话 Bash 执行通道不可用（无权限客户端），AC1–AC6 全部 `BLOCKED`、AC7 `NOT_RUN`；无产品 finding；无任何真实启动，run-r1 目录保持空白。逐字错误、子代理复现与恢复条件：`verification/P02-NEW-TIME-X6-AC1-AC7/execution-blocked/execution-blocker-evidence.json`；findings：同目录 `findings.md`。零依赖 e2e 驱动套件（AC1–AC6 + lib + README）已交付于 `apps/desktop/frontend/e2e/p02-new-time/`，是重试会话的直接执行入口。固定 EXE SHA-256 只读复算匹配（92AC…13FD / 9,367,040 bytes）。
+- 2026-10-14 ZCode attempt r1（RunId=`p02-newtime-ac-20261014-r1`）：AC1–AC6 未执行，session-only status=`BLOCKED`；AC7=`NOT_RUN`；ENV-01 与原 Handoff 保留。此记录不构成产品结果；Antigravity fallback 当前待 preflight。
 - Owner Handoff：`doc/handoffs/P02-NEW-TIME-X6-AC1-AC7-zcode-r1-20261014.md`（本文件同 commit；如 git 写通道不可用则未提交，见 Handoff dirty-state 说明）。
 - 独立 Review：尚无；Reviewer=DeepSeek Harness，待 AC1–AC6 真实证据存在后再执行。
 - Codex adjudication / integration / post-integration check：尚无。
-- 当前状态：`in_progress / DISPATCHED_EXECUTION_BLOCKED_ENV`；产品 AC1–AC6=`BLOCKED`、AC7=`NOT_RUN`；恢复条件=以允许进程 spawn 与 git 写的会话重派本 Task（其余冻结条件不变）。
+- 当前状态：`ready / PREFLIGHT_PENDING`；ZCode 原会话结果与 ENV-01 已保留在其 Handoff/verification；当前 Owner 已依故障转移改为 Antigravity，等 exact-head PREFLIGHT 后启动真实 AC。产品 AC 仍未执行，AC6 驱动 syntax error 是待修 T finding。
