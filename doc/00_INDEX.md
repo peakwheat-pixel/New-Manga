@@ -2,7 +2,7 @@
 
 ## 2026-10-14 新时点准入路径（当前有效）
 
-P02 新时点基线已完成；X6 与 post-run Review 已批准；Build/Cargo 已集成并获 official convergence APPROVED。Build Task 的 BC-AC5 保持 PARTIAL，未知来源缓存及未检查的 profile cache 继续保留，未冒记为 PASS。当前产品验收 Task 为 [P02-NEW-TIME-X6-AC1-AC7](tasks/P02-NEW-TIME-X6-AC1-AC7.md)，Owner=ZCode，Reviewer=DeepSeek Harness，状态=ready / PREFLIGHT_PENDING；live preflight PASS 前不派发、不启动应用。旧 H1 / P2-1 结论及 13 项原始来源缺失记录保持不变。当前 DAG 与运行状态分别见 [REBASELINE_PLAN](REBASELINE_PLAN.md) 与 [STATUS](STATUS.md)；Task 清单见 [Task Index](tasks/README.md)。
+P02 新时点基线已完成；X6 与 post-run Review 已批准；Build/Cargo 已集成并获 official convergence APPROVED。Build Task 的 BC-AC5 保持 PARTIAL，未知来源缓存及未检查的 profile cache 继续保留，未冒记为 PASS。当前产品验收 Task 为 [P02-NEW-TIME-X6-AC1-AC7](tasks/P02-NEW-TIME-X6-AC1-AC7.md)，Owner=ZCode，Reviewer=DeepSeek Harness，状态=ready / PREFLIGHT_PASS；ZCode availability 与 exact-head live preflight 已通过，进入 AUTO 派发。旧 H1 / P2-1 结论及 13 项原始来源缺失记录保持不变。当前 DAG 与运行状态分别见 [REBASELINE_PLAN](REBASELINE_PLAN.md) 与 [STATUS](STATUS.md)；Task 清单见 [Task Index](tasks/README.md)。
 
 ## 2026-10-10 用户裁决（当前有效）
 

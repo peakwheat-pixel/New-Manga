@@ -1,0 +1,15 @@
+# P02-NEW-TIME-X6-AC1-AC7 — Codex Rolling Checkpoint r2
+
+- Timestamp / Agent / Task ID: 2026-10-14 18:22:19 +08:00 / Codex / P02-NEW-TIME-X6-AC1-AC7
+- TaskStatus / ExecutionState: eady / PREFLIGHT_PASS / ACTIVE (Codex PREFLIGHT complete; AUTO dispatch next)
+- Owner branch / worktree / base / current HEAD: gent/zcode/P02-NEW-TIME-X6-AC1-AC7 / G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-X6-AC1-AC7 / source baseline=49d2a2f9c56462f5602b00ad4b824c5381abb1ab / execution HEAD=3d94add1b8cf63b70cbe760c1cd4f7719e5df228.
+- Working Tree: Owner worktree clean, Task env contains 0 items; no Owner writes. Codex evidence and current pointers are recorded in the integration worktree. The primary checkout remains untouched.
+- Completed Steps:
+  - Frozen Task scope, acceptance, data-safety constraints, evidence rules and dependency gates remain unchanged.
+  - Packaged EXE SHA-256 matches 92AC7B8EFB646FE77DF8245B13C9AF9314BEF415B2F0E007B1CDCEA729BC13FD; packaged sidecar comparison passed 5,610/5,610 files, 1,296,373,783 bytes, no missing/extra/hash mismatches.
+  - Fresh ZCode CLI 0.16.9 availability probe returned 收到, session=sess_535da297-fa78-4788-8c19-d7f1201b8709; raw evidence is under erification/P02-NEW-TIME-X6-AC1-AC7/preflight/zcode-availability-final-r3/.
+  - Official preflight-agent.py r3 at exact Owner HEAD 3d94add1b8cf63b70cbe760c1cd4f7719e5df228: overall=PASS, dispatch_allowed=true, erdict=dispatch; 13/13 checks PASS, worktree clean, Antigravity fallback available. stdout.json SHA-256=7BF98A3097C7034B776E4C6ED34631569354315542EB0BEF378750C5A3F2488B; helper SHA-256=99A4977E40527E42035AE018BC63445550D119C1303EA0E4EBDCAF0DD1CAC08E.
+  - Historical gent-preflight-final-r2 is preserved; its command.txt references r1 config/attestation, so it is not the canonical final run. r3 has its own config and attestation files.
+- Tests Already Run / Tests Remaining: Binary/sidecar integrity and AGENT_PREFLIGHT PASS. No product UI test or application launch; AC1–AC7 remain NOT_RUN. Next: dispatch ZCode to execute AC1–AC6 and prepare fixed evidence/Handoff; then DSH independent bounded Review of the frozen delivery, followed by Codex VERIFY/adjudication/integration and DAG replan.
+- Blockers / Decisions / Open Questions: None; no BLOCKED_WAITING_EXTERNAL_DECISION. Build/Cargo stays approved with BC-AC5=PARTIAL and residuals preserved. Old H1/P2-1 and all 13 historical raw-source gaps remain unchanged.
+- Evidence / Resume Safety: Official preflight and probe outputs, commands, environment, exit codes and helper hash are copied under the Task-local erification/ path. No app, installer, user database, Lock, revision, credential, or user profile was opened. Governance checker 	ools/governance/check.ps1 is absent in the integration worktree and primary checkout; no substitute or bypass was used.
