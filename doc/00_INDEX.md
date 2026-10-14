@@ -1,5 +1,9 @@
 # 项目文档索引与 Source of Truth
 
+## 2026-10-14 新时点准入路径（当前有效）
+
+P02 新时点基线已完成；X6 与 post-run Review 已批准；Build/Cargo 已集成并获 official convergence APPROVED。Build Task 的 BC-AC5 保持 PARTIAL，未知来源缓存及未检查的 profile cache 继续保留，未冒记为 PASS。当前产品验收 Task 为 [P02-NEW-TIME-X6-AC1-AC7](tasks/P02-NEW-TIME-X6-AC1-AC7.md)，Owner=ZCode，Reviewer=DeepSeek Harness，状态=ready / PREFLIGHT_PENDING；live preflight PASS 前不派发、不启动应用。旧 H1 / P2-1 结论及 13 项原始来源缺失记录保持不变。当前 DAG 与运行状态分别见 [REBASELINE_PLAN](REBASELINE_PLAN.md) 与 [STATUS](STATUS.md)；Task 清单见 [Task Index](tasks/README.md)。
+
 ## 2026-10-10 用户裁决（当前有效）
 
 P02/P04 本机 Windows 验证按本项目验收口径等同于 Windows Sandbox 验证；不要求查询、安装、启用或启动 Windows Sandbox Feature，也不要求 guest 验证。此决定不表示本机具有虚拟机隔离能力，不豁免数据/写入保护，也不更改全产品干净 Windows 发布 Gate。P02 Build Gate 仍=`BLOCKED`（hook/cache/子进程写入边界及本机 Gate 证据未闭合）；P04 Owner R1 返修已交付于 `42b87f6bb6314fb42df3592f15a9fcd69866739b` 并进入只读实现 R2 Review，Cargo/Tauri 运行仍需 P02 本机 Build Gate=`PASS` 与 Codex provenance-bound scratch sidecar。当前详情见 [P02 checkpoint](../verification/P02/codex-checkpoint-local-validation-r1.md)、[P04 Task](tasks/P04.md) 与 [P04 R2 checkpoint](../verification/P04/codex-checkpoint-p04-r2-start-20261010.md)。

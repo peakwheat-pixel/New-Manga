@@ -3,7 +3,7 @@ id: P02-NEW-TIME-X6-BUILD-CARGO
 title: P02 新时点 X6 后续 Build / Cargo 构建门
 kind: verification
 governance_version: 2
-status: in_review
+status: approved
 approval: user_authorized_new_time_baseline_20261014
 suggested_owner: ZCode
 owner: Antigravity
@@ -13,19 +13,20 @@ depends_on: [P02-NEW-TIME-X6, P02-NEW-TIME-X6-POSTRUN-REVIEW]
 base_commit: 49d2a2f9c56462f5602b00ad4b824c5381abb1ab
 branch: agent/antigravity/P02-NEW-TIME-X6-BUILD-CARGO
 worktree: G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-X6-BUILD-CARGO
-integration_commit: null
+integration_commit: 20d554e5cb8a1b803a2ee32b079d103aa16e3198
 delivery_head: db4870ab87d36f0663b5e45e4f7b2e3cf9b77917
-reviewed_head: null
-review_decision: pending
-integration_target: main
-integration_status: not_started
-dispatch_state: IN_REVIEW
+reviewed_head: 708ac7938c72fbcccd0d68c7ca60635552cbcaaf
+review_decision: APPROVED
+integration_target: agent/codex/P02-NEW-TIME-X6-POSTRUN-REVIEW
+integration_status: INTEGRATED
+dispatch_state: APPROVED
 blocked_by: []
 profile: ANTIGRAVITY_FALLBACK
-revisions: {implementation: 0, test: 0, evidence: 0}
-canonical_evidence_status: pending
-resource_closeout_status: pending
+revisions: {implementation: 0, test: 0, evidence: 1}
+canonical_evidence_status: verified
+resource_closeout_status: accounted_with_preserved_residuals
 evidence_dir: verification/P02-NEW-TIME-X6-BUILD-CARGO
+canonical_evidence_manifest: verification/P02-NEW-TIME-X6-BUILD-CARGO/canonical-evidence-manifest-r1.json
 ---
 
 # P02-NEW-TIME-X6-BUILD-CARGO：P02 新时点 X6 后续 Build / Cargo 构建门
@@ -47,9 +48,9 @@ evidence_dir: verification/P02-NEW-TIME-X6-BUILD-CARGO
   - SFX `yolo11s-seg.onnx`: `944E811410933AD6FF8D32446FCC9EEF90FB463794E1874CE83035E83ACD418D`，来源目录 `G:/CODEX/New Manga.task-envs/M2-SFX-DETECT/weights-v2b/`。
   - Sidecar 目标位于隔离 Task worktree 的 `apps/desktop/src-tauri/target/core-sidecar/core-sidecar/`；五个入口 `host_bridge.exe`、`core_service.exe`、`acceptance_bridge.exe`、`catalog_loader.exe`、`sfx_detect_probe.exe` 均存在，权重逐项 hash 符合。
 - [x] BC-AC4：在 `apps/desktop/src-tauri/` 执行 `cargo build --locked --release` 与 `npx --yes @tauri-apps/cli@2.12.2 build`，均 exit=0，并将 npm_config_cache 与 CARGO_HOME 指向本 Task 独立 env。NSIS installer `target/release/bundle/nsis/m2rc1-desktop_0.1.0_x64-setup.exe` 存在（581,475,034 bytes，SHA-256=`A1DD05B64FABBA311A62FDCF9F496C3902B89614577BFDC85B71C70D7DB06C7B`）；实际 CLI/toolchain 版本、最终产物 size/SHA-256 与所有原始命令/stdout/stderr/exit 均已在 `06-cargo-build-attempt2` 和 `07-tauri-build-attempt1` 完整记录。
-- [ ] BC-AC5：Codex 确认本 Task 未改生产代码、共享契约、依赖清单、lockfile 或构建脚本；所有 cargo/frontend/sidecar/package 产物只在本隔离 worktree 的 ignored build 路径产生。若 Tauri 生成 tracked schema/permission 文件，先保留前后字节/hash；仅当逐文件证明内容除 CRLF/LF 外完全相同，才可恢复这些精确生成路径；任何其他变更原样保留并暂停在 Codex adjudication，不得 reset/clean/stash。
-- [ ] BC-AC6：DSH 对冻结 build 输入 manifest、构建命令与结果 manifest 做一次独立、只读 Review，绑定固定 delivery HEAD；列明 P0–P4、限制、finding ID 与影响。DSH 结果由 Codex 重算 pins、scope 与输出闭合性；不得仅凭 exit=0 或自然语言 PASS 接受。
-- [ ] BC-AC7：Codex 按 official `evaluate-result` / `classify-revision` / `decide-convergence.py --mode converge` adjudicate；仅在当前 P0/P1/P2 blocker=0 且输出安全可集成时将 Build/Cargo 标为通过，并把独立产品 AC1–AC7 Task 置为下一 READY。任何 Build finding 按 I1/I2 上限、bounded review、follow-up/resolution lineage 与 DAG 重规划处理；禁止 I3、无限返修和提前产品 AC 放行。
+- [ ] BC-AC5：Codex 确认本 Task 未改生产代码、共享契约、依赖清单、lockfile 或构建脚本；所有 cargo/frontend/sidecar/package 产物只在本隔离 worktree 的 ignored build 路径产生。若 Tauri 生成 tracked schema/permission 文件，先保留前后字节/hash；仅当逐文件证明内容除 CRLF/LF 外完全相同，才可恢复这些精确生成路径；任何其他变更原样保留并暂停在 Codex adjudication，不得 reset/clean/stash。结果=`PARTIAL`：24 个 tracked 生成文件的换行表示差异已核验并记录 post-restore 状态；44 个 `__pycache__` 目录/87 个 `.pyc` 来源仍未知，且日志提及未检查的 user-profile PyInstaller cache。所有残留均保留；该项不冒记为 PASS。
+- [x] BC-AC6：DSH 对冻结 build 输入 manifest、构建命令与结果 manifest 完成独立只读 Review，绑定 `reviewed_head=708ac7938c72fbcccd0d68c7ca60635552cbcaaf`；报告 `APPROVED`、P0/P1/P2=0。Codex deterministic verification 已重算 pins、scope 与输出闭合性。证据见 [`DSH Review`](../verification/P02-NEW-TIME-X6-BUILD-CARGO/dsh-review-r1/dsh-review-report-r1.md) 和 [`Codex adjudication`](../verification/P02-NEW-TIME-X6-BUILD-CARGO/codex-adjudication-r1.md)。
+- [x] BC-AC7：Codex official `evaluate-result`=`ACCEPT`、`classify-revision`=`E` / `reviewer_needed=false`、`decide-convergence.py --mode converge`=`APPROVED` / `wait_external=false`。I1/I2=`0/2`；未创建 follow-up/resolution；F01/F02/F04/F05/F06/F08/F12 为 P3/P4 backlog。Build/Cargo Gate 获准进入下一依赖节点；AC1–AC7 仍须独立 Task、preflight、执行与 Review。
 
 ## 允许修改范围
 
@@ -72,9 +73,9 @@ evidence_dir: verification/P02-NEW-TIME-X6-BUILD-CARGO
 | BC-AC2 frontend | `npm ci --no-audit --no-fund`; `npm run build` | Node v24.15.0/npm 12.0.1；`package-lock.json` pinned；npm cache 位于 task-env | PASS：两命令均 exit=0；dist entry/asset 存在；两个 package 文件哈希未变 | `agent-output/zcode/P02-NEW-TIME-X6-BUILD-CARGO/run-r1/{01-frontend-npm-ci,02-frontend-npm-run-build}/`；ZCode run evidence manifest；Codex partial verification manifest |
 | BC-AC3 sidecar | `python -m venv <task-env>/venv`; `pip install -r packaging/m2ac5/requirements-build.txt`; `powershell -NoProfile -ExecutionPolicy Bypass -File packaging/m2ac5/build_sidecar.ps1 -Force -PythonExe <task-env-python> -WeightsSource <pinned-source> -SfxWeightsSource <pinned-source>` | Python 3.12；PIP_CACHE_DIR 在 task-env；所有 pinned weight 输入可读且 hash 相符 | PASS：9/9 pinned package versions match；attempt 2 exit=0；5,610 files / 1,296,373,783 bytes 独立 hash 验证通过；attempt 1 失败日志保留 | `agent-output/zcode/P02-NEW-TIME-X6-BUILD-CARGO/run-r1/04-sidecar-pip-install/`、`05-sidecar-build/`、`05-sidecar-build-attempt2/`；sidecar-bundle-manifest；Codex partial verification manifest |
 | BC-AC4 cargo/package | `cargo build --locked --release`; `npx --yes @tauri-apps/cli@2.12.2 build` | Cargo 1.98.1/rustc 1.98.1 stable MSVC；frontend dist + sidecar 已 PASS；npm/Cargo cache 在 task-env | PASS：Cargo attempt 2 exit=0；Tauri attempt 1 exit=0；NSIS installer 存在且哈希验证通过 | `agent-output/antigravity/P02-NEW-TIME-X6-BUILD-CARGO/run-r1/{06-cargo-build-attempt2,07-tauri-build-attempt1}/`；`antigravity-run-evidence-manifest-r1.json`；`build-artifacts-manifest-r1.json` |
-| BC-AC5 scope/integrity | `git status --short`; before/after hash; generated-file normalization check | Build worktree tracked status clean；sidecar ignored outputs 已完成 hash audit | PARTIAL / Codex adjudication required：发现 44 ignored `__pycache__` dirs、87 `.pyc` files；缺少运行前 ignored inventory，无法证明创建或覆盖；构建过程生成 24 个 schema/permission 仅 CRLF 差异文件未暂存未恢复。均保留不删 | `scope-audit-r1.json`、Codex partial verification manifest；后续 Codex + DSH review 判断 AC disposition |
-| BC-AC6 DSH Review | 单次 DSH readonly result Review | build input/result manifests 已冻结验证 | NOT_RUN | DSH report/raw dispatch |
-| BC-AC7 adjudication | official result/convergence helper + DAG update | DSH report 完整且 pins 未漂移 | NOT_RUN | Codex adjudication/convergence |
+| BC-AC5 scope/integrity | `git status --short`; before/after hash; generated-file normalization check | Build worktree 与 Task env 固定；不得删除/重置 | PARTIAL（保留并接受为非阻断 residual，不是 PASS）：tracked source/依赖无内容 drift；24 个 Tauri 生成路径只出现行尾差异并有 post-restore 状态记录；44 个 `__pycache__` dirs / 87 `.pyc` 的创建/覆盖来源 UNKNOWN；profile PyInstaller cache 未检查。全部保留 | [`codex-final-verification-r2.json`](../verification/P02-NEW-TIME-X6-BUILD-CARGO/codex-adjudication-r1/codex-final-verification-r2.json)、[`codex-post-restore-status-r1.json`](../verification/P02-NEW-TIME-X6-BUILD-CARGO/codex-adjudication-r1/codex-post-restore-status-r1.json)、[`codex-scope-residual-closure-r1.json`](../verification/P02-NEW-TIME-X6-BUILD-CARGO/codex-adjudication-r1/codex-scope-residual-closure-r1.json)、DSH Review 与 adjudication |
+| BC-AC6 DSH Review | 单次 DSH readonly result Review | frozen inputs/result manifests；reviewed HEAD=`708ac793...` | PASS：DSH `APPROVED`、P0/P1/P2=0；Codex 独立复算输入与结果闭合 | [`dsh-review-r1/dsh-review-report-r1.md`](../verification/P02-NEW-TIME-X6-BUILD-CARGO/dsh-review-r1/dsh-review-report-r1.md)、[`dsh-review-closure-r1.json`](../verification/P02-NEW-TIME-X6-BUILD-CARGO/dsh-review-r1/dsh-review-closure-r1.json) |
+| BC-AC7 adjudication | official result/convergence helper + DAG update | DSH report 完整且 pins 未漂移 | PASS：Owner 与 DSH result 均 `ACCEPT`；revision=`E`；convergence=`APPROVED`、wait_external=false、P0/P1/P2=0；non-blockers 留 backlog | [`codex-adjudication-r1.md`](../verification/P02-NEW-TIME-X6-BUILD-CARGO/codex-adjudication-r1.md)、[`canonical-evidence-manifest-r1.json`](../verification/P02-NEW-TIME-X6-BUILD-CARGO/canonical-evidence-manifest-r1.json) |
 
 本 Task 不运行产品测试；所有未运行内容保留为 `NOT_RUN/BLOCKED`，不得填作 PASS。
 
@@ -87,7 +88,8 @@ Build 时显式复用 `packaging/m2ac5/README.md` 中的 Windows 构建链。模
 ## 交付与运行记录
 
 - Handoff：已完成，见 [P02-NEW-TIME-X6-BUILD-CARGO-antigravity-handoff.md](../handoffs/P02-NEW-TIME-X6-BUILD-CARGO-antigravity-handoff.md)。
-- DSH Review：待派发；Cargo 与 Tauri 构建已完成，安装包已生成。
+- DSH Review：APPROVED，固定 reviewed head=708ac7938c72fbcccd0d68c7ca60635552cbcaaf；Codex result protocol/convergence=ACCEPT / APPROVED，wait_external=false。完整报告与 closure 在 Canonical Evidence。
+- Codex integration/adjudication：evidence-only integration commit=20d554e5cb8a1b803a2ee32b079d103aa16e3198；此 Task 保持 approved，不升为 done，因为 BC-AC5 为 PARTIAL。
 - Build 命令：依测试表顺序执行，原样保留每步 stdout/stderr/exit 与环境版本；失败输出不覆盖、不重跑已经成功的输出目标。
 - 本 Task 完成不等于 AC1–AC7 通过；下游 AC Task 必须另行冻结、preflight、执行、Review 与 Codex adjudication。
 
@@ -122,6 +124,7 @@ Build 时显式复用 `packaging/m2ac5/README.md` 中的 Windows 构建链。模
 | BC-BUILD-PREFLIGHT-AGY-BUNDLE-R1 | BC-AC1 Antigravity live preflight attempts manifest | G:/CODEX/New Manga.workspace/agent-output/codex/P02-NEW-TIME-X6-BUILD-CARGO/preflight-antigravity-r1/preflight-evidence-manifest-r1.json | - | F5B058B907FFAEBFC401A4B21DB51F311B3761244C073DBE8E9793CD6315B859 | CANONICAL |
 | BC-BUILD-AGY-RUN-R1 | BC-AC4 Antigravity Cargo attempt 2 & Tauri attempt 1 run evidence manifest | G:/CODEX/New Manga.workspace/agent-output/antigravity/P02-NEW-TIME-X6-BUILD-CARGO/antigravity-run-evidence-manifest-r1.json | - | 9A68B95F8D7B55098A01104F1BC5CBF57438D6326065C6B50CCB035AF355F1B6 | CANONICAL |
 | BC-BUILD-ARTIFACTS-MANIFEST-R1 | BC-AC4 Cargo binary and NSIS installer artifacts manifest | verification/P02-NEW-TIME-X6-BUILD-CARGO/build-artifacts-manifest-r1.json | - | CA2BB6CEDD9CE267CAC947681D03CE073C773C08CFE40F5B71623BF16256B57B | CANONICAL |
+| BC-BUILD-CANONICAL-EVIDENCE-MANIFEST-R1 | Build/Cargo evidence closure (34 immutable files; official generator --verify PASS, files_checked=34; manifest omits self-hash) | verification/P02-NEW-TIME-X6-BUILD-CARGO/canonical-evidence-manifest-r1.json | aafae764f6293fc5d6540019ca16187477abcf48 | SHA-256 intentionally not self-recorded | CANONICAL |
 
 ## Resource Manifest
 
@@ -129,8 +132,9 @@ Build 时显式复用 `packaging/m2ac5/README.md` 中的 Windows 构建链。模
 
 | resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
 |---|---|---|---|---|---|
-| Build Task worktree | G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-X6-BUILD-CARGO | PRESERVE_REFERENCED | same | pending | ZCode branch HEAD `a1fd218a9f8adc587865311b3f3d9aa9076e22fc`; Codex updates will be fast-forwarded, then branch renamed to `agent/antigravity/P02-NEW-TIME-X6-BUILD-CARGO` before AGY preflight; existing artifacts retained |
-| Task Python env | G:/CODEX/New Manga.workspace/task-envs/P02-NEW-TIME-X6-BUILD-CARGO | PRESERVE_REFERENCED | same | pending | isolated npm cache and empty user/global npm config created; Python venv/build caches not yet created |
+| Build Task worktree | G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-X6-BUILD-CARGO | PRESERVE_REFERENCED | same | build-artifacts-manifest-r1.json; codex-schema-permission-integrity-r1.json SHA-256=7D6E0B1CE13A377ED630A2EB672BDE15DB504B79A54504E6AF407A869CE2658D | Antigravity branch HEAD=708ac7938c72fbcccd0d68c7ca60635552cbcaaf; 24 tracked generated schema/permission paths remain modified only by CRLF/LF representation and post-restore porcelain confirms state; untracked Codex integrity trace is retained. No reset/clean/stash. |
+| DSH Review worktree | G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-X6-BUILD-CARGO-DSH-REVIEW | PRESERVE_REFERENCED | same | cleanup-record-r1.json | HEAD=708ac7938c72fbcccd0d68c7ca60635552cbcaaf; clean after removal of the exact DSH-created probe; retain worktree and all review evidence. |
+| Task Python env | G:/CODEX/New Manga.workspace/task-envs/P02-NEW-TIME-X6-BUILD-CARGO | PRESERVE_REFERENCED | same | task-env retained in place | venv, npm/Cargo/pip caches, pycache, PyInstaller config, temp/tmp remain preserved; no cleanup. |
 | Codex preparation attempts | G:/CODEX/New Manga.workspace/agent-output/codex/P02-NEW-TIME-X6-BUILD-CARGO/ | PRESERVE_REFERENCED | same | G:/CODEX/New Manga.workspace/agent-output/codex/P02-NEW-TIME-X6-BUILD-CARGO/preparation-manifest-r1.json | manifest SHA-256=`4AD699F8986B0F67434A0540C0C5D1D8EFC4DDA6B1AE1410AF27898C20DD3E07`; contains helper selftest, npm metadata, and every recorded prep attempt including failures |
 | Codex preflight attempts | G:/CODEX/New Manga.workspace/agent-output/codex/P02-NEW-TIME-X6-BUILD-CARGO/preflight-evidence-manifest-r1.json | PRESERVE_REFERENCED | same | 40B0072BA46E1496C4890C9D311ACCDFA49752B572263661B77B93EF846E7261 | includes retained dry attempts and live r1 PASS; manifest SHA-256 verified |
 | Manga model.safetensors | G:/CODEX/New Manga.task-envs/M2-DOCTR-QUAL-C4/weights/ogkalu-comic-text-and-bubble-detector/model.safetensors | PRESERVE_REFERENCED | G:/CODEX/New Manga.task-envs/M2-DOCTR-QUAL-C4/weights/ogkalu-comic-text-and-bubble-detector/model.safetensors | 037930A861E67870EB345BE01B28CC70D7E2B7956528E48EE0EBDB0C093DF80D | read-only existing model source; verified against frozen expected hash |
@@ -141,14 +145,18 @@ Build 时显式复用 `packaging/m2ac5/README.md` 中的 Windows 构建链。模
 | Antigravity probe output | G:/CODEX/New Manga.workspace/agent-output/codex/P02-NEW-TIME-X6-BUILD-CARGO/agy-probe-r2 | PRESERVE_REFERENCED | same | 11CDC5065D919CFC42EB6DCB6B94FED582731E3B27772206C753DDF702C0BE2A | agy 1.3.5; JSON status SUCCESS; exit 0 |
 | Codex partial verification | G:/CODEX/New Manga.workspace/agent-output/codex/P02-NEW-TIME-X6-BUILD-CARGO/codex-partial-verification-manifest-r1.json | PRESERVE_REFERENCED | same | 19A28055E8C7FFC9B064345130E1A54F1C341CA2514CF3FA04082D1F0B0DE404 | AC2/AC3 output integrity independently checked; verifier r1 failure retained |
 | Scope audit and ignored Python caches | G:/CODEX/New Manga.workspace/agent-output/codex/P02-NEW-TIME-X6-BUILD-CARGO/scope-audit-r1.json | PRESERVE_REFERENCED | same | B847C162DBBA5A0AA7E028659CA2C1AF823A2E4F37E35CF2145FAB6DC580E923 | 44 dirs / 87 pyc files retained; no deletion or cleanup |
+| Unknown Python cache origin | Build worktree src/**/__pycache__ and .pyc entries | PRESERVE_UNCLASSIFIED | same | codex-scope-residual-closure-r1.json | 44 directories / 87 files; source/create-vs-overwrite remains UNKNOWN; preserved unchanged |
+| Mentioned profile PyInstaller cache | profile cache path in retained build log | NOT_INSPECTED_PRESERVE | same | codex-scope-residual-closure-r1.json | not inspected per Task prohibition; no profile/OS/cache probe performed |
 | Build artifacts | G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-X6-BUILD-CARGO/apps/desktop/**/target/** + frontend/dist + node_modules | PRESERVE_REFERENCED | same | CA2BB6CEDD9CE267CAC947681D03CE073C773C08CFE40F5B71623BF16256B57B | 当前 Gate 引用，逐文件 manifest 见 build-artifacts-manifest-r1.json |
 | Antigravity run output | G:/CODEX/New Manga.workspace/agent-output/antigravity/P02-NEW-TIME-X6-BUILD-CARGO | PRESERVE_REFERENCED | same | 9A68B95F8D7B55098A01104F1BC5CBF57438D6326065C6B50CCB035AF355F1B6 | 06-cargo-build-attempt2 exit=0, 07-tauri-build-attempt1 exit=0; tool versions and raw logs preserved |
 | NSIS Installer & Cargo binary | G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-X6-BUILD-CARGO/apps/desktop/src-tauri/target/release/ | PRESERVE_REFERENCED | same | CA2BB6CEDD9CE267CAC947681D03CE073C773C08CFE40F5B71623BF16256B57B | m2rc1-desktop.exe (9,367,040 B, 92AC7B8EFB646FE77DF8245B13C9AF9314BEF415B2F0E007B1CDCEA729BC13FD); m2rc1-desktop_0.1.0_x64-setup.exe (581,475,034 B, A1DD05B64FABBA311A62FDCF9F496C3902B89614577BFDC85B71C70D7DB06C7B) |
+| DSH review scratch probe | G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-X6-BUILD-CARGO-DSH-REVIEW/.dsh-write-probe.tmp | DELETED_EXACT_PROBE_ONLY | removed; cleanup record retained | cleanup-record-r1.json | only the DSH-created 6-byte probe was removed after exact path/content/hash verification; cleanup record SHA-256=348FC2408F76223D6B9F6B9BCB09EEB93FF2524C6B60C070DC6F78A167670500; no other cleanup |
+| Canonical evidence generation and verification | verification/P02-NEW-TIME-X6-BUILD-CARGO/canonical-evidence-manifest-r1/ | PRESERVE_CANONICAL | same | generator --verify PASS, files_checked=34, exit=0 | command, environment, dry-run/generate/verify stdout/stderr/exit and path list retained; manifest has no self-hash |
 
 ## Closeout Record
 
-- Closeout date / Codex：待完成时填写。
-- canonical_evidence_status / resource_closeout_status：pending / pending。
-- 删除、迁移、归档数量/字节数：0 / 0 B。
-- 未关闭项及保留原因：Task execution is active under Antigravity failover; Cargo/Tauri, BC-AC5 adjudication, DSH Review and Codex convergence remain pending.
-- 当前指针清理：Build Task 进入终态后更新 STATUS / Plan / Task README / rolling checkpoint。
+- Closeout date / Codex：2026-10-14 / Codex。
+- canonical_evidence_status / resource_closeout_status：verified / accounted_with_preserved_residuals。
+- 精确删除/迁移/归档数量与字节数：1 个 / 6 B（仅 DSH 创建的 exact probe，依据 cleanup record）；迁移和归档：0 / 0 B。
+- 未关闭项及保留原因：BC-AC5=PARTIAL；44 个 ignored __pycache__ / 87 个 .pyc 来源未知、profile PyInstaller cache 未检查，全部保留。F01/F02/F04/F05/F06/F08/F12 为已接受 P3/P4 backlog。Build Task 维持 approved，不是 done。
+- 当前指针：Build/Cargo convergence 已释放 P02-NEW-TIME-X6-AC1-AC7；更新 STATUS / Plan / Task README / P02 current-path status 与 rolling checkpoint。

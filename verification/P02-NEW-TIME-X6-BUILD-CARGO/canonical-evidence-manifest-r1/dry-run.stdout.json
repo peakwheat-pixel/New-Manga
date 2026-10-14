@@ -1,0 +1,256 @@
+{
+  "dry_run": true,
+  "would_write": "verification/P02-NEW-TIME-X6-BUILD-CARGO/canonical-evidence-manifest-r1.json",
+  "manifest": {
+    "task_id": "P02-NEW-TIME-X6-BUILD-CARGO",
+    "generated_at": "2026-10-14T09:43:29+00:00",
+    "source_commit": "aafae764f6293fc5d6540019ca16187477abcf48",
+    "review_head": "708ac7938c72fbcccd0d68c7ca60635552cbcaaf",
+    "generator": {
+      "name": "generate-evidence-manifest",
+      "version": 1,
+      "frozen_git_checked": false
+    },
+    "files": [
+      {
+        "relative_path": "verification/P02-NEW-TIME-X6-BUILD-CARGO/source-manifest-r1.json",
+        "sha256": "1b4e31fbcb5a174ec85f78fecc32ba573fd2fa552eb528abc0ed4ae40ca59402",
+        "bytes": 91429,
+        "git_blob": "dc24401ba824ec7655f9591d0f2c4d1fa890487b",
+        "artifact_type": "data"
+      },
+      {
+        "relative_path": "verification/P02-NEW-TIME-X6-BUILD-CARGO/supplemental-inputs-r1.json",
+        "sha256": "09eff15c58d9d646ade97f25e8f6f9250921780e1d84a2cc555e3281c9111848",
+        "bytes": 4598,
+        "git_blob": "f05a544f552d456af9a901d3dafedccab5eacaf0",
+        "artifact_type": "data"
+      },
+      {
+        "relative_path": "verification/P02-NEW-TIME-X6-BUILD-CARGO/build-artifacts-manifest-r1.json",
+        "sha256": "ca2bb6cedd9ce267cac947681d03ce073c773c08cfe40f5b71623bf16256b57b",
+        "bytes": 658,
+        "git_blob": "972a7eecda165df13448ea28fac842d6d02c044b",
+        "artifact_type": "data"
+      },
+      {
+        "relative_path": "verification/P02-NEW-TIME-X6-BUILD-CARGO/codex-failover-adjudication-r1.md",
+        "sha256": "5bd778c252b09e8d6fc2187280b240d5280c55bc906fe46794a5f221f2472eba",
+        "bytes": 3463,
+        "git_blob": "56a2961d32b21640095704e1375dc9414ea575ef",
+        "artifact_type": "doc"
+      },
+      {
+        "relative_path": "verification/P02-NEW-TIME-X6-BUILD-CARGO/codex-adjudication-r1.md",
+        "sha256": "714cf8c518e350aa1570997ba121d2b7a74e36ac2717e3d40e568b8cfdfa6ad5",
+        "bytes": 7739,
+        "git_blob": "c9d4a392c7af906ce3a0df9bf9125355fce62090",
+        "artifact_type": "doc"
+      },
+      {
+        "relative_path": "verification/P02-NEW-TIME-X6-BUILD-CARGO/codex-adjudication-r1/antigravity-run-evidence-manifest-r1.json",
+        "sha256": "9a68b95f8d7b55098a01104f1bc5cbf57438d6326065c6b50ccb035af355f1b6",
+        "bytes": 3725,
+        "git_blob": "e1a691004456a6a3c3aefdbd19cee5c027380ea2",
+        "artifact_type": "data"
+      },
+      {
+        "relative_path": "verification/P02-NEW-TIME-X6-BUILD-CARGO/codex-adjudication-r1/codex-delivery-scope-r2.json",
+        "sha256": "1c2aff013e93afaee3868a2fbb589584d6ce7ff0149b08cc73d890b7431a316c",
+        "bytes": 2001,
+        "git_blob": "623465eede1d6cb6994a9202eeab1c732f2b6c6d",
+        "artifact_type": "data"
+      },
+      {
+        "relative_path": "verification/P02-NEW-TIME-X6-BUILD-CARGO/codex-adjudication-r1/codex-final-verification-r2.json",
+        "sha256": "4452580fde1d1b71d4ab62ba94aac5431bd8c3efa3a69b1bf3b8dd6d9698da9d",
+        "bytes": 18795,
+        "git_blob": "a0ebbff25e8dbf1a9b532a614755c037ad06f0b4",
+        "artifact_type": "data"
+      },
+      {
+        "relative_path": "verification/P02-NEW-TIME-X6-BUILD-CARGO/codex-adjudication-r1/codex-post-restore-status-r1.json",
+        "sha256": "85e16744135cc9b6f60fe90af7699a3ca98847a1e29ecfa35c70cc848babc64b",
+        "bytes": 21815,
+        "git_blob": "0c59279cc5bf8f2b48fe4f8b2b9cd7861c8d2928",
+        "artifact_type": "data"
+      },
+      {
+        "relative_path": "verification/P02-NEW-TIME-X6-BUILD-CARGO/codex-adjudication-r1/codex-post-restore-status-r1.porcelain0",
+        "sha256": "64f1c9c0328e25b9f2f4f33ee22b7642aa3d210ea86520ca9b0c82962fe58d56",
+        "bytes": 1816,
+        "git_blob": "51ea7a74f030b245e73d3f6ca6a323f3f2012559",
+        "artifact_type": "artifact"
+      },
+      {
+        "relative_path": "verification/P02-NEW-TIME-X6-BUILD-CARGO/codex-adjudication-r1/codex-run-output-supplement-r1.json",
+        "sha256": "4e63416ec94fd795503aec73cb344462ef6f6d5488102d4954ceef3d6b75c281",
+        "bytes": 1832,
+        "git_blob": "bb3fbbfb48f3a4f379cd7fd7edad36bc976e7b51",
+        "artifact_type": "data"
+      },
+      {
+        "relative_path": "verification/P02-NEW-TIME-X6-BUILD-CARGO/codex-adjudication-r1/codex-schema-permission-integrity-r2.json",
+        "sha256": "40a2570ca0ac58b2080540c64ecd03fb65c419f083c2b6582cbb15c6fbbc3cbd",
+        "bytes": 28647,
+        "git_blob": "f23b21174cff9cfb589b923df26357f53eb97163",
+        "artifact_type": "data"
+      },
+      {
+        "relative_path": "verification/P02-NEW-TIME-X6-BUILD-CARGO/codex-adjudication-r1/codex-scope-residual-closure-r1.json",
+        "sha256": "33a8ac8d10f8cce58f691b6f3b64d62c360da838adc6fdb72d8da83051892be4",
+        "bytes": 29140,
+        "git_blob": "067254b095f7dc1798a0d9e10daa87fceae0d2e7",
+        "artifact_type": "data"
+      },
+      {
+        "relative_path": "verification/P02-NEW-TIME-X6-BUILD-CARGO/codex-adjudication-r1/orchestrator-r1/classify-closeout-input.json",
+        "sha256": "a679ab300390006d3ef4171b8347a69b3729d23a144f0e7fecb8493c112c3084",
+        "bytes": 277,
+        "git_blob": "7e623ea1be4cf12e3e31272a83f73dfa975315eb",
+        "artifact_type": "data"
+      },
+      {
+        "relative_path": "verification/P02-NEW-TIME-X6-BUILD-CARGO/codex-adjudication-r1/orchestrator-r1/classify-closeout.exit.txt",
+        "sha256": "5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9",
+        "bytes": 1,
+        "git_blob": "c227083464fb9af8955c90d2924774ee50abb547",
+        "artifact_type": "text"
+      },
+      {
+        "relative_path": "verification/P02-NEW-TIME-X6-BUILD-CARGO/codex-adjudication-r1/orchestrator-r1/classify-closeout.stderr.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0,
+        "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+        "artifact_type": "log"
+      },
+      {
+        "relative_path": "verification/P02-NEW-TIME-X6-BUILD-CARGO/codex-adjudication-r1/orchestrator-r1/classify-closeout.stdout.json",
+        "sha256": "49d4be941352f409139e2b1fe68eb8197127453417aa1330889a6d530d0b9583",
+        "bytes": 289,
+        "git_blob": "c37503ee35e003176c9275ef0575909463b5e7c7",
+        "artifact_type": "data"
+      },
+      {
+        "relative_path": "verification/P02-NEW-TIME-X6-BUILD-CARGO/codex-adjudication-r1/orchestrator-r1/converge-input.json",
+        "sha256": "9ea2e8449137f1dab87587a920584e6e3919c38096764dcccbf7ee1ab805b612",
+        "bytes": 332,
+        "git_blob": "226c989db5dac24951b8a5da20f62dab92ca9fe7",
+        "artifact_type": "data"
+      },
+      {
+        "relative_path": "verification/P02-NEW-TIME-X6-BUILD-CARGO/codex-adjudication-r1/orchestrator-r1/converge.exit.txt",
+        "sha256": "5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9",
+        "bytes": 1,
+        "git_blob": "c227083464fb9af8955c90d2924774ee50abb547",
+        "artifact_type": "text"
+      },
+      {
+        "relative_path": "verification/P02-NEW-TIME-X6-BUILD-CARGO/codex-adjudication-r1/orchestrator-r1/converge.stderr.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0,
+        "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+        "artifact_type": "log"
+      },
+      {
+        "relative_path": "verification/P02-NEW-TIME-X6-BUILD-CARGO/codex-adjudication-r1/orchestrator-r1/converge.stdout.json",
+        "sha256": "4d860cf3ebc9efdfde551e3c8de43f457338fa1d78a8fd0b96173e46f8fa79a7",
+        "bytes": 1298,
+        "git_blob": "f3520f306a6fdade349d123b8caceafecaa7149d",
+        "artifact_type": "data"
+      },
+      {
+        "relative_path": "verification/P02-NEW-TIME-X6-BUILD-CARGO/codex-adjudication-r1/orchestrator-r1/environment.txt",
+        "sha256": "35e2c2544afaae659aa4e5f62e4dae1ab81c609486bc4874843b46639536e748",
+        "bytes": 303,
+        "git_blob": "00e521597d8b0ed724bbf774970c732cbc0cb3ff",
+        "artifact_type": "text"
+      },
+      {
+        "relative_path": "verification/P02-NEW-TIME-X6-BUILD-CARGO/codex-adjudication-r1/orchestrator-r1/evaluate-dsh-input.json",
+        "sha256": "75ce47b28aaab3bb93b9b37eff56b885d3a944dfcf538f8b8cf414e6c4b8d75a",
+        "bytes": 116,
+        "git_blob": "14e4bf0c8283a84524550d6475f720656c8c621c",
+        "artifact_type": "data"
+      },
+      {
+        "relative_path": "verification/P02-NEW-TIME-X6-BUILD-CARGO/codex-adjudication-r1/orchestrator-r1/evaluate-dsh.exit.txt",
+        "sha256": "5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9",
+        "bytes": 1,
+        "git_blob": "c227083464fb9af8955c90d2924774ee50abb547",
+        "artifact_type": "text"
+      },
+      {
+        "relative_path": "verification/P02-NEW-TIME-X6-BUILD-CARGO/codex-adjudication-r1/orchestrator-r1/evaluate-dsh.stderr.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0,
+        "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+        "artifact_type": "log"
+      },
+      {
+        "relative_path": "verification/P02-NEW-TIME-X6-BUILD-CARGO/codex-adjudication-r1/orchestrator-r1/evaluate-dsh.stdout.json",
+        "sha256": "b7003e0921926eaefd8821de4c73b64f1b1e4969195af1cdfe04239ca93c4502",
+        "bytes": 375,
+        "git_blob": "becb31c80c3ee3fcf324d74b8b22ccf835df373f",
+        "artifact_type": "data"
+      },
+      {
+        "relative_path": "verification/P02-NEW-TIME-X6-BUILD-CARGO/codex-adjudication-r1/orchestrator-r1/evaluate-owner-input.json",
+        "sha256": "f368332088b896f599a3a28d495aa24808fc653beb6472aa2bcc7b841f47426a",
+        "bytes": 115,
+        "git_blob": "90deb6a3a44629a6261c893695037ed3ee603b60",
+        "artifact_type": "data"
+      },
+      {
+        "relative_path": "verification/P02-NEW-TIME-X6-BUILD-CARGO/codex-adjudication-r1/orchestrator-r1/evaluate-owner.exit.txt",
+        "sha256": "5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9",
+        "bytes": 1,
+        "git_blob": "c227083464fb9af8955c90d2924774ee50abb547",
+        "artifact_type": "text"
+      },
+      {
+        "relative_path": "verification/P02-NEW-TIME-X6-BUILD-CARGO/codex-adjudication-r1/orchestrator-r1/evaluate-owner.stderr.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0,
+        "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+        "artifact_type": "log"
+      },
+      {
+        "relative_path": "verification/P02-NEW-TIME-X6-BUILD-CARGO/codex-adjudication-r1/orchestrator-r1/evaluate-owner.stdout.json",
+        "sha256": "f02d3da6a7e070434b6f497ca62c2e25895d4c7ee73eb060465f6e388a71d05b",
+        "bytes": 374,
+        "git_blob": "d419afd1b9b2d4ad56578c5b7e604bc31d9d8a5d",
+        "artifact_type": "data"
+      },
+      {
+        "relative_path": "verification/P02-NEW-TIME-X6-BUILD-CARGO/dsh-review-r1/dsh-review-closure-r1.json",
+        "sha256": "13160cc4820b96e3b6d29ee988d8c5cb5acee1062254aaf853cef388cecbd473",
+        "bytes": 884,
+        "git_blob": "9e6265ce48f99916258587df5f8775b2d1352879",
+        "artifact_type": "data"
+      },
+      {
+        "relative_path": "verification/P02-NEW-TIME-X6-BUILD-CARGO/dsh-review-r1/dsh-review-report-r1.md",
+        "sha256": "9012d3ef74ff0e341e75d00dbd9ae480389ea92f95224ac173f5e143632086ff",
+        "bytes": 22732,
+        "git_blob": "a99f711d4fb989b847fd6b4cae5635b0e528e9c4",
+        "artifact_type": "doc"
+      },
+      {
+        "relative_path": "verification/P02-NEW-TIME-X6-BUILD-CARGO/dsh-worktree-cleanup-r1/cleanup-record-r1.json",
+        "sha256": "348fc2408f76223d6b9f6b9bcb09eeb93ff2524c6b60c070dc6f78a167670500",
+        "bytes": 1206,
+        "git_blob": "854c56ff24b78bed59cbc9f40ce48e5e1b9aa57a",
+        "artifact_type": "data"
+      },
+      {
+        "relative_path": "verification/P02-NEW-TIME-X6-BUILD-CARGO/dsh-worktree-cleanup-r1/after-status.porcelain0",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0,
+        "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+        "artifact_type": "artifact"
+      }
+    ]
+  },
+  "note": "no file written; no child process spawned; git check skipped"
+}
