@@ -12,4 +12,4 @@
 - 本 Task 的 post-run Review 尚未释放。X6 完成并经 Codex 验证后才建立独立 DSH post-run Review Task；Build/Cargo 与产品 AC1–AC7 继续 BLOCKED / NOT_RUN / NOT_RELEASED，Hard Build Barrier=EFFECTIVE。
 - 主仓与既有 worktree 的 dirty/untracked 用户内容继续保留，不 stash、不 reset、不删除、不并入 Task worktree。
 - 文档指针疑点（交 Codex 核实，非阻塞）：doc/STATUS.md 引用 verification/P02PRE-R1H-H1-CURRENT-INPUT-REVIEW/codex-adjudication-r1.md，该文件在 Task worktree HEAD=a9c3214b 上不存在；ZCode 未修改主仓文件。
-- Next exact step：ZCode 完成 owner 源码交付（executor/selftest/protocol/manifest/output inventory/Handoff，三段提交：生命周期 → 执行包 → Handoff）后停在 in_review；随后由 Codex 对 delivery HEAD 做 VERIFY，并派 DSH 独立 bounded source Review。
+- Next exact step：源码交付 r1 已完成（认领/生命周期 commit 83fb737e；执行包 delivery commit 8b4daf9b0db452cb1b37768f570f04a1e8e589e6；Handoff=verification/P02-NEW-TIME-X6/handoff-source-delivery-r1.md）。Task 停在 in_review。下一准确动作：Codex 对 delivery HEAD（含 Handoff commit）做 VERIFY，随后派 DSH 独立 bounded source Review；DSH 无未解决 P0/P1/P2 且 Codex adjudication 通过后，才由 Codex 运行 parser/纯内存 selftest 并进入 freeze → final pre-run → ZCode 至多一次 X6。
