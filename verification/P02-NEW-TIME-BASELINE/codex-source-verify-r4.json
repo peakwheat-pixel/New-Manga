@@ -1,0 +1,75 @@
+{
+  "schema": "P02-NEW-TIME-BASELINE-codex-source-verify-1",
+  "task": "P02-NEW-TIME-BASELINE",
+  "result": "PASS",
+  "ac2": "PASS",
+  "reviewedDeliveryHead": "318bc2a1d8ff33e82585f4fa835a9370fad73a4a",
+  "currentHead": "d285908f07ae1aa37a3e3af077d5902bb9abe661",
+  "taskSnapshotCommit": "d285908f07ae1aa37a3e3af077d5902bb9abe661",
+  "manifest": {
+    "path": "verification/P02-NEW-TIME-BASELINE/dsh-source-review-manifest-r3.json",
+    "sha256": "5B18C9B56E5BCAA3822290C7C78031A34C9EB23EA004321BF0840100709AB87D",
+    "verify": "PASS",
+    "filesChecked": 3,
+    "verifyReport": "verification/P02-NEW-TIME-BASELINE/dsh-source-review-manifest-r3-verify.json"
+  },
+  "files": [
+    {
+      "path": "tools/p02/p02-new-time-baseline.ps1",
+      "sha256": "ED1A48393F516934E285B17AE1E7210B3B4C5DADA7B1DD3568A68806E302AF66",
+      "currentBlob": "630833290e8e6be89ac38ab089bb8efae4872894",
+      "reviewedBlob": "630833290e8e6be89ac38ab089bb8efae4872894"
+    },
+    {
+      "path": "tools/p02/p02-new-time-baseline-selftest.ps1",
+      "sha256": "0E34F959EB564E4BE449AFA89CB774168F3EDB232B6204B37B7B54611744BF0B",
+      "currentBlob": "519a48c77e9d4db1c39aa12fd198573f5118a163",
+      "reviewedBlob": "519a48c77e9d4db1c39aa12fd198573f5118a163"
+    }
+  ],
+  "deliveryChangedPaths": [
+    "tools/p02/p02-new-time-baseline-selftest.ps1",
+    "tools/p02/p02-new-time-baseline.ps1"
+  ],
+  "deliveryScopeMatches": true,
+  "reviewedBlobsMatchCurrent": true,
+  "dshReview": {
+    "path": "verification/P02-NEW-TIME-BASELINE/dsh-source-review-r3.md",
+    "sha256": "66316BF7F923576E78D121B8DD6AE0C29D9ACD6D56E5A55C3FF8883EC02A4982",
+    "rawOutputPath": "G:\\CODEX\\New Manga.workspace\\agent-output\\dsh\\P02-NEW-TIME-BASELINE\\source-review-r3-20261014T0851CST\\stdout.md",
+    "rawOutputSha256": "66316BF7F923576E78D121B8DD6AE0C29D9ACD6D56E5A55C3FF8883EC02A4982",
+    "exitCode": 0,
+    "sessionId": "session-75f00e17-b2b6-4277-bb60-caf94b007501",
+    "verdict": "APPROVED",
+    "independentShellHashRecompute": false,
+    "blockingFindings": 0,
+    "backlogFindings": [
+      {
+        "priority": "P4",
+        "id": "BL-1"
+      },
+      {
+        "priority": "P4",
+        "id": "BL-2"
+      },
+      {
+        "priority": "P4",
+        "id": "BL-3"
+      },
+      {
+        "priority": "P4",
+        "id": "BL-4"
+      }
+    ]
+  },
+  "worktreeAtVerification": {
+    "trackedChanges": 0,
+    "untrackedEvidenceFiles": 87,
+    "untrackedRoot": "verification",
+    "preserved": true
+  },
+  "ac3": "NOT_RUN",
+  "oldH1P2_1Unchanged": true,
+  "downstream": "BLOCKED",
+  "externalDecisionWait": false
+}

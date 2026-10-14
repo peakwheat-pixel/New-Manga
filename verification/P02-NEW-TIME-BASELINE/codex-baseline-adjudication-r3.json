@@ -1,0 +1,46 @@
+{
+  "taskId": "P02-NEW-TIME-BASELINE",
+  "runId": "baseline-20261014T0915CST-p02-admission-r2",
+  "reviewedHead": "d285908f07ae1aa37a3e3af077d5902bb9abe661",
+  "freezeManifestSha256": "8662DEC583D2FD865532A414F0BEDE63B7F02872AB3C9232553C3B01E239006D",
+  "resultSha256": "CAAC6AFDE8D479CABCD839E2B74FDD86A1ECD8B59E5E8C88100A552382A9458E",
+  "resultBytes": 161783,
+  "resultLines": {
+    "meta": 1,
+    "observations": 62,
+    "checks": 57,
+    "checksPassed": 57,
+    "checksFailedOrUnknown": 0,
+    "closed": 1
+  },
+  "codexFreezeVerification": "PASS_17_OF_17",
+  "codexResultVerification": "PASS",
+  "dshResultReview": "ACCEPTED_RESULT",
+  "dshManifestVerification": {
+    "status": "PASS",
+    "filesChecked": 28,
+    "problems": []
+  },
+  "findings": {
+    "P0": 0,
+    "P1": 0,
+    "P2": 0,
+    "nonblockingBacklog": ["F-01", "F-02", "F-03", "F-04", "F-05"]
+  },
+  "ac3": "PASS",
+  "ac5": "ADMIT_X6",
+  "implementationRepairsUsed": 2,
+  "implementationRepairLimit": 2,
+  "I3Allowed": false,
+  "officialConvergence": "APPROVED",
+  "waitExternal": false,
+  "oldH1P21": {
+    "conclusionChanged": false,
+    "openFindingChanged": false,
+    "thirteenMissingSourcesChanged": false,
+    "newTimeEvidenceSubstitutes": false
+  },
+  "nextGate": "X6",
+  "postRunReviewBuildCargoProductACReleased": false,
+  "notRun": ["X6", "post-run Review", "Build/Cargo", "product AC1-AC7", "Windows Sandbox"]
+}

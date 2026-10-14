@@ -1,0 +1,402 @@
+
+Name                           Value
+----                           -----
+id                             history-isolation-fixed-paths
+category                       history-isolation
+expected                       no fixed path (output/worktree/tools/pins/mutable/cwd) contains a frozen historical tas¡­
+observedPointer                /observations/0/output/value
+observedSummary                pathCount=30 anyUnderHistory=False
+result                         PASS
+note                           full {path, underHistory} manifest retained in this observation's input and output; str¡­
+id                             output-path-chain-volume
+category                       pre-write
+expected                       PRE-CREATE (captured before CreateNew): target absent, output chain fully ordinary, vol¡­
+observedPointer                /observations/1/output/value
+observedSummary                preCreate.targetAbsent=True preCreate.chainAllOrdinary=True preCreate.volumeReady=True/¡­
+result                         PASS
+note                           preflight Required the same conditions before the stream opened; both captures are seri¡­
+id                             host-pwsh-runtime-matches-freeze
+category                       version
+expected                       pwsh 7.6.6 / Core / FullLanguage (frozen via the external freeze manifest)
+observedPointer                /observations/2/output/value
+observedSummary                version=7.6.6 edition=Core languageMode=FullLanguage psHome=C:\Program Files\PowerShell¡­
+result                         PASS
+note                           host facts recorded verbatim; any drift fails closed
+id                             identity-matches-freeze
+category                       identity
+expected                       whoami output 'HOME-MY\49745' (case-insensitive) and SID S-1-5-21-2196946971-914346751-¡­
+observedPointer                /observations/4/output/value
+observedSummary                whoamiRaw='home-my\49745¡­
+result                         PASS
+note                           whoami raw stdout retained byte-faithfully in its own observation
+id                             git-head-matches-freeze
+category                       git-pin
+expected                       worktree HEAD == frozen delivery commit d285908f07ae1aa37a3e3af077d5902bb9abe661 (from ¡­
+observedPointer                /observations/5/output/value/stdout
+observedSummary                head=d285908f07ae1aa37a3e3af077d5902bb9abe661 expected=d285908f07ae1aa37a3e3af077d5902b¡­
+result                         PASS
+note                           raw rev-parse stdout retained; drift fails closed
+id                             git-branch-matches-freeze
+category                       git-pin
+expected                       symbolic-ref HEAD == refs/heads/agent/zcode/P02-NEW-TIME-BASELINE
+observedPointer                /observations/7/output/value/stdout
+observedSummary                branch=refs/heads/agent/zcode/P02-NEW-TIME-BASELINE expected=refs/heads/agent/zcode/P02¡­
+result                         PASS
+note                           raw symbolic-ref stdout retained
+id                             git-toplevel-matches-worktree
+category                       git-pin
+expected                       git toplevel == frozen worktree path G:\CODEX\New Manga.workspace\worktrees\P02-NEW-TIM¡­
+observedPointer                /observations/8/output/value/stdout
+observedSummary                toplevel=G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-BASELINE expected=G:\CODEX¡­
+result                         PASS
+note                           the collector must never operate on a different checkout
+id                             git-version-matches-freeze
+category                       version
+expected                       git version output == 'git version 2.52.0.windows.1'
+observedPointer                /observations/10/output/value/stdout
+observedSummary                version='git version 2.52.0.windows.1' match=True
+result                         PASS
+note                           raw git --version stdout retained
+id                             git-base-commit-is-ancestor
+category                       git-pin
+expected                       base commit 23bec747df77e67e93ec1fa9fd859d077219e941 is an ancestor of delivery HEAD (d¡­
+observedPointer                /observations/11/exit
+observedSummary                mergeBaseExit=0 isAncestor=True
+result                         PASS
+note                           exit 0 = ancestor; exit 1 (allowed for capture) fails the check and blocks the run
+id                             git-status-captured
+category                       git-pin
+expected                       status --porcelain=v2 -z captured byte-faithfully (exit 0); content recorded verbatim, ¡­
+observedPointer                /observations/13/output/value
+observedSummary                exit=0 bytes=6801 records=93
+result                         PASS
+note                           full raw stdout (base64+sha256) lives in the git-status-verbatim observation
+id                             output-target-unignored-or-outside-repo
+category                       pre-write
+expected                       output target either git-unignored (repository path) or outside any repository (agent-o¡­
+observedPointer                /observations/14/output/value
+observedSummary                insideRepository=False targetAbsent=True
+result                         PASS
+note                           AC3 requires targets frozen and absent/unignored before live; the collector re-verifies¡­
+id                             collector-cwd-matches-freeze
+category                       freeze
+expected                       collector CWD == frozen CWD G:\CODEX\New Manga.workspace\worktrees\P02-NEW-TIME-BASELIN¡­
+observedPointer                /observations/15/output/value
+observedSummary                cwd=G:\CODEX\New Manga.workspace\worktrees\P02-NEW-TIME-BASELINE match=True
+result                         PASS
+note                           AC3 requires CWD frozen before live; every helper child uses its own explicit fixed Wor¡­
+id                             contract-pin-before-collaboration-contract
+category                       frozen-pin
+expected                       19131 / DAFBD1F65DFCE967F50561926C9CC92F2A7DAAE826C33F375A549573372ECD9D
+observedPointer                /observations/16/output/value
+observedSummary                19131 / DAFBD1F65DFCE967F50561926C9CC92F2A7DAAE826C33F375A549573372ECD9D
+result                         PASS
+note                           immutable contract pin; drift means a frozen shared input changed and blocks admission
+id                             contract-pin-before-target-architecture
+category                       frozen-pin
+expected                       7454 / 2E59AD6ADF049DA7450F11EB4BD420739FBA8E3E979261CA712902FEF7F3C3C0
+observedPointer                /observations/17/output/value
+observedSummary                7454 / 2E59AD6ADF049DA7450F11EB4BD420739FBA8E3E979261CA712902FEF7F3C3C0
+result                         PASS
+note                           immutable contract pin; drift means a frozen shared input changed and blocks admission
+id                             contract-pin-before-task-template
+category                       frozen-pin
+expected                       1541 / EBD10E49E50BB76281D5626523997D5A56307072FC2B967166FD8A67E3D4A278
+observedPointer                /observations/18/output/value
+observedSummary                1541 / EBD10E49E50BB76281D5626523997D5A56307072FC2B967166FD8A67E3D4A278
+result                         PASS
+note                           immutable contract pin; drift means a frozen shared input changed and blocks admission
+id                             contract-pin-before-handoff-template
+category                       frozen-pin
+expected                       1800 / 164BC78F3C5D80673D5D31CB4A22547D6CD8DF6A3B6EDCAD143729A3959D69E4
+observedPointer                /observations/19/output/value
+observedSummary                1800 / 164BC78F3C5D80673D5D31CB4A22547D6CD8DF6A3B6EDCAD143729A3959D69E4
+result                         PASS
+note                           immutable contract pin; drift means a frozen shared input changed and blocks admission
+id                             contract-pin-before-review-template
+category                       frozen-pin
+expected                       3972 / CB7FBE0C5B610405CF391AE4D86C6F473B69A0F110B4A12DD7E8432E19C40F1A
+observedPointer                /observations/20/output/value
+observedSummary                3972 / CB7FBE0C5B610405CF391AE4D86C6F473B69A0F110B4A12DD7E8432E19C40F1A
+result                         PASS
+note                           immutable contract pin; drift means a frozen shared input changed and blocks admission
+id                             mutable-observation-recorded-STATUS.md
+category                       mutable-observation
+expected                       current hash/size recorded as a plain observation; mutable STATUS/Plan/checkpoint are N¡­
+observedPointer                /observations/21/output/value
+observedSummary                2949 / 9253501FCBF00C4C704516A92AF9C2AEAB0BCA63EA0B79007D0C062F747121E2
+result                         PASS
+note                           Task evidence rule: mutable planning surfaces are recorded, not pinned
+id                             mutable-observation-recorded-REBASELINE_PLAN.md
+category                       mutable-observation
+expected                       current hash/size recorded as a plain observation; mutable STATUS/Plan/checkpoint are N¡­
+observedPointer                /observations/22/output/value
+observedSummary                2446 / 2380AABBF80BA0BCB6B25475C421394474A8F8634043ECB15082309096638F26
+result                         PASS
+note                           Task evidence rule: mutable planning surfaces are recorded, not pinned
+id                             mutable-observation-recorded-00_INDEX.md
+category                       mutable-observation
+expected                       current hash/size recorded as a plain observation; mutable STATUS/Plan/checkpoint are N¡­
+observedPointer                /observations/23/output/value
+observedSummary                6453 / 550F41E789298023A553BAB6D884616EB60D06784C443FEB3FFD75B99DB65F45
+result                         PASS
+note                           Task evidence rule: mutable planning surfaces are recorded, not pinned
+id                             mutable-observation-recorded-P02-NEW-TIME-BASELINE.md
+category                       mutable-observation
+expected                       current hash/size recorded as a plain observation; mutable STATUS/Plan/checkpoint are N¡­
+observedPointer                /observations/24/output/value
+observedSummary                39872 / 82CB835CA0459E9FFEDB261EEB7ABC5DB64114D42CFB8A3E7479EE8D35715FA7
+result                         PASS
+note                           Task evidence rule: mutable planning surfaces are recorded, not pinned
+id                             mutable-observation-recorded-checkpoint.md
+category                       mutable-observation
+expected                       current hash/size recorded as a plain observation; mutable STATUS/Plan/checkpoint are N¡­
+observedPointer                /observations/25/output/value
+observedSummary                2116 / 6443E9714D9872251D5ACB39B81A0B65DEDA5806CD5C62E232D6BE00812E0226
+result                         PASS
+note                           Task evidence rule: mutable planning surfaces are recorded, not pinned
+id                             deliverable-pin-before-collector-source
+category                       frozen-pin
+expected                       99513 / ED1A48393F516934E285B17AE1E7210B3B4C5DADA7B1DD3568A68806E302AF66
+observedPointer                /observations/26/output/value
+observedSummary                99513 / ED1A48393F516934E285B17AE1E7210B3B4C5DADA7B1DD3568A68806E302AF66
+result                         PASS
+note                           Task-deliverable source pin; drift means the reviewed source changed and blocks admissi¡­
+id                             deliverable-pin-before-selftest-source
+category                       frozen-pin
+expected                       76312 / 0E34F959EB564E4BE449AFA89CB774168F3EDB232B6204B37B7B54611744BF0B
+observedPointer                /observations/27/output/value
+observedSummary                76312 / 0E34F959EB564E4BE449AFA89CB774168F3EDB232B6204B37B7B54611744BF0B
+result                         PASS
+note                           Task-deliverable source pin; drift means the reviewed source changed and blocks admissi¡­
+id                             deliverable-pin-before-task-frozen-snapshot
+category                       frozen-pin
+expected                       35632 / 6F66B8444D0B2C818B424CEC617798EEC64A3EDBA25222DF07667E09274EB0D3
+observedPointer                /observations/28/output/value
+observedSummary                35632 / 6F66B8444D0B2C818B424CEC617798EEC64A3EDBA25222DF07667E09274EB0D3
+result                         PASS
+note                           Task-deliverable source pin; drift means the reviewed source changed and blocks admissi¡­
+id                             deliverable-pin-before-task-evidence-manifest-r7
+category                       frozen-pin
+expected                       31277 / E0B39EE2619A74F95E858F80F9C478F753FF0A418163366DA528EB3E59CAB70F
+observedPointer                /observations/29/output/value
+observedSummary                31277 / E0B39EE2619A74F95E858F80F9C478F753FF0A418163366DA528EB3E59CAB70F
+result                         PASS
+note                           Task-deliverable source pin; drift means the reviewed source changed and blocks admissi¡­
+id                             deliverable-pin-before-source-review-manifest-r3
+category                       frozen-pin
+expected                       1167 / 5B18C9B56E5BCAA3822290C7C78031A34C9EB23EA004321BF0840100709AB87D
+observedPointer                /observations/30/output/value
+observedSummary                1167 / 5B18C9B56E5BCAA3822290C7C78031A34C9EB23EA004321BF0840100709AB87D
+result                         PASS
+note                           Task-deliverable source pin; drift means the reviewed source changed and blocks admissi¡­
+id                             deliverable-pin-before-source-review-manifest-r3-verify
+category                       frozen-pin
+expected                       156 / 0E6AADAEE0383A06A4B2D87DF6D2C563FBD49D96DEBC762AAA5665D94D0F7944
+observedPointer                /observations/31/output/value
+observedSummary                156 / 0E6AADAEE0383A06A4B2D87DF6D2C563FBD49D96DEBC762AAA5665D94D0F7944
+result                         PASS
+note                           Task-deliverable source pin; drift means the reviewed source changed and blocks admissi¡­
+id                             deliverable-pin-before-dsh-exact-source-review-r3
+category                       frozen-pin
+expected                       15569 / 66316BF7F923576E78D121B8DD6AE0C29D9ACD6D56E5A55C3FF8883EC02A4982
+observedPointer                /observations/32/output/value
+observedSummary                15569 / 66316BF7F923576E78D121B8DD6AE0C29D9ACD6D56E5A55C3FF8883EC02A4982
+result                         PASS
+note                           Task-deliverable source pin; drift means the reviewed source changed and blocks admissi¡­
+id                             deliverable-pin-before-codex-source-verify-r4
+category                       frozen-pin
+expected                       2663 / 11D1DCED9059AF7D638BA1D7EAB3345801BAC2CB2B062DF54EBB89C44CB3C9FC
+observedPointer                /observations/33/output/value
+observedSummary                2663 / 11D1DCED9059AF7D638BA1D7EAB3345801BAC2CB2B062DF54EBB89C44CB3C9FC
+result                         PASS
+note                           Task-deliverable source pin; drift means the reviewed source changed and blocks admissi¡­
+id                             deliverable-pin-before-codex-source-adjudication-r3
+category                       frozen-pin
+expected                       1647 / 3643CE73B10884B28CA9EE9973ABFF4C213E0CAC48C124BF0624441E5711E72D
+observedPointer                /observations/34/output/value
+observedSummary                1647 / 3643CE73B10884B28CA9EE9973ABFF4C213E0CAC48C124BF0624441E5711E72D
+result                         PASS
+note                           Task-deliverable source pin; drift means the reviewed source changed and blocks admissi¡­
+id                             deliverable-pin-before-zcode-owner-preflight-r4
+category                       frozen-pin
+expected                       2548 / FE6E768FC9464A9D0207FE7D7EC8FAFBA7FB4129A4FD64FBB316CF86368EF22B
+observedPointer                /observations/35/output/value
+observedSummary                2548 / FE6E768FC9464A9D0207FE7D7EC8FAFBA7FB4129A4FD64FBB316CF86368EF22B
+result                         PASS
+note                           Task-deliverable source pin; drift means the reviewed source changed and blocks admissi¡­
+id                             deliverable-pin-before-failed-freeze-attempt-1-json
+category                       frozen-pin
+expected                       966 / D4C4CBC6D3F0AB46456083FCEC91920CD89369E5D449E82EE4D9B24B1F7D9C8E
+observedPointer                /observations/36/output/value
+observedSummary                966 / D4C4CBC6D3F0AB46456083FCEC91920CD89369E5D449E82EE4D9B24B1F7D9C8E
+result                         PASS
+note                           Task-deliverable source pin; drift means the reviewed source changed and blocks admissi¡­
+id                             deliverable-pin-before-failed-freeze-attempt-1-report
+category                       frozen-pin
+expected                       935 / 192A6A644D01E67E7EA7C9AA85DEBA0B237A1318563C7427F96B4E4EC0ABC547
+observedPointer                /observations/37/output/value
+observedSummary                935 / 192A6A644D01E67E7EA7C9AA85DEBA0B237A1318563C7427F96B4E4EC0ABC547
+result                         PASS
+note                           Task-deliverable source pin; drift means the reviewed source changed and blocks admissi¡­
+id                             static-contract-probe-STATUS.md
+category                       static-contract
+expected                       path exists as an ordinary file (probe only; never judged beyond the recorded values)
+observedPointer                /observations/39/output/value
+observedSummary                exists=True absent=False attributeError=
+result                         PASS
+note                           existence/metadata probe of a mutable planning surface; NOT a hash pin
+id                             static-contract-probe-REBASELINE_PLAN.md
+category                       static-contract
+expected                       path exists as an ordinary file (probe only; never judged beyond the recorded values)
+observedPointer                /observations/40/output/value
+observedSummary                exists=True absent=False attributeError=
+result                         PASS
+note                           existence/metadata probe of a mutable planning surface; NOT a hash pin
+id                             static-contract-probe-00_INDEX.md
+category                       static-contract
+expected                       path exists as an ordinary file (probe only; never judged beyond the recorded values)
+observedPointer                /observations/41/output/value
+observedSummary                exists=True absent=False attributeError=
+result                         PASS
+note                           existence/metadata probe of a mutable planning surface; NOT a hash pin
+id                             static-contract-probe-P02-NEW-TIME-BASELINE.md
+category                       static-contract
+expected                       path exists as an ordinary file (probe only; never judged beyond the recorded values)
+observedPointer                /observations/42/output/value
+observedSummary                exists=True absent=False attributeError=
+result                         PASS
+note                           existence/metadata probe of a mutable planning surface; NOT a hash pin
+id                             static-contract-probe-checkpoint.md
+category                       static-contract
+expected                       path exists as an ordinary file (probe only; never judged beyond the recorded values)
+observedPointer                /observations/43/output/value
+observedSummary                exists=True absent=False attributeError=
+result                         PASS
+note                           existence/metadata probe of a mutable planning surface; NOT a hash pin
+id                             contract-pin-after-collaboration-contract
+category                       frozen-pin
+expected                       unchanged until close: 19131 / DAFBD1F65DFCE967F50561926C9CC92F2A7DAAE826C33F375A549573¡­
+observedPointer                /observations/44/output/value
+observedSummary                before=DAFBD1F65DFCE967F50561926C9CC92F2A7DAAE826C33F375A549573372ECD9D after=DAFBD1F65¡­
+result                         PASS
+note                           before/after recheck; drift means the collection itself disturbed a frozen input
+id                             contract-pin-after-target-architecture
+category                       frozen-pin
+expected                       unchanged until close: 7454 / 2E59AD6ADF049DA7450F11EB4BD420739FBA8E3E979261CA712902FEF¡­
+observedPointer                /observations/45/output/value
+observedSummary                before=2E59AD6ADF049DA7450F11EB4BD420739FBA8E3E979261CA712902FEF7F3C3C0 after=2E59AD6AD¡­
+result                         PASS
+note                           before/after recheck; drift means the collection itself disturbed a frozen input
+id                             contract-pin-after-task-template
+category                       frozen-pin
+expected                       unchanged until close: 1541 / EBD10E49E50BB76281D5626523997D5A56307072FC2B967166FD8A67E¡­
+observedPointer                /observations/46/output/value
+observedSummary                before=EBD10E49E50BB76281D5626523997D5A56307072FC2B967166FD8A67E3D4A278 after=EBD10E49E¡­
+result                         PASS
+note                           before/after recheck; drift means the collection itself disturbed a frozen input
+id                             contract-pin-after-handoff-template
+category                       frozen-pin
+expected                       unchanged until close: 1800 / 164BC78F3C5D80673D5D31CB4A22547D6CD8DF6A3B6EDCAD143729A39¡­
+observedPointer                /observations/47/output/value
+observedSummary                before=164BC78F3C5D80673D5D31CB4A22547D6CD8DF6A3B6EDCAD143729A3959D69E4 after=164BC78F3¡­
+result                         PASS
+note                           before/after recheck; drift means the collection itself disturbed a frozen input
+id                             contract-pin-after-review-template
+category                       frozen-pin
+expected                       unchanged until close: 3972 / CB7FBE0C5B610405CF391AE4D86C6F473B69A0F110B4A12DD7E8432E1¡­
+observedPointer                /observations/48/output/value
+observedSummary                before=CB7FBE0C5B610405CF391AE4D86C6F473B69A0F110B4A12DD7E8432E19C40F1A after=CB7FBE0C5¡­
+result                         PASS
+note                           before/after recheck; drift means the collection itself disturbed a frozen input
+id                             deliverable-pin-after-collector-source
+category                       frozen-pin
+expected                       unchanged until close: 99513 / ED1A48393F516934E285B17AE1E7210B3B4C5DADA7B1DD3568A68806¡­
+observedPointer                /observations/49/output/value
+observedSummary                before=ED1A48393F516934E285B17AE1E7210B3B4C5DADA7B1DD3568A68806E302AF66 after=ED1A48393¡­
+result                         PASS
+note                           before/after recheck; drift means the collection itself disturbed a frozen input
+id                             deliverable-pin-after-selftest-source
+category                       frozen-pin
+expected                       unchanged until close: 76312 / 0E34F959EB564E4BE449AFA89CB774168F3EDB232B6204B37B7B5461¡­
+observedPointer                /observations/50/output/value
+observedSummary                before=0E34F959EB564E4BE449AFA89CB774168F3EDB232B6204B37B7B54611744BF0B after=0E34F959E¡­
+result                         PASS
+note                           before/after recheck; drift means the collection itself disturbed a frozen input
+id                             deliverable-pin-after-task-frozen-snapshot
+category                       frozen-pin
+expected                       unchanged until close: 35632 / 6F66B8444D0B2C818B424CEC617798EEC64A3EDBA25222DF07667E09¡­
+observedPointer                /observations/51/output/value
+observedSummary                before=6F66B8444D0B2C818B424CEC617798EEC64A3EDBA25222DF07667E09274EB0D3 after=6F66B8444¡­
+result                         PASS
+note                           before/after recheck; drift means the collection itself disturbed a frozen input
+id                             deliverable-pin-after-task-evidence-manifest-r7
+category                       frozen-pin
+expected                       unchanged until close: 31277 / E0B39EE2619A74F95E858F80F9C478F753FF0A418163366DA528EB3E¡­
+observedPointer                /observations/52/output/value
+observedSummary                before=E0B39EE2619A74F95E858F80F9C478F753FF0A418163366DA528EB3E59CAB70F after=E0B39EE26¡­
+result                         PASS
+note                           before/after recheck; drift means the collection itself disturbed a frozen input
+id                             deliverable-pin-after-source-review-manifest-r3
+category                       frozen-pin
+expected                       unchanged until close: 1167 / 5B18C9B56E5BCAA3822290C7C78031A34C9EB23EA004321BF08401007¡­
+observedPointer                /observations/53/output/value
+observedSummary                before=5B18C9B56E5BCAA3822290C7C78031A34C9EB23EA004321BF0840100709AB87D after=5B18C9B56¡­
+result                         PASS
+note                           before/after recheck; drift means the collection itself disturbed a frozen input
+id                             deliverable-pin-after-source-review-manifest-r3-verify
+category                       frozen-pin
+expected                       unchanged until close: 156 / 0E6AADAEE0383A06A4B2D87DF6D2C563FBD49D96DEBC762AAA5665D94D¡­
+observedPointer                /observations/54/output/value
+observedSummary                before=0E6AADAEE0383A06A4B2D87DF6D2C563FBD49D96DEBC762AAA5665D94D0F7944 after=0E6AADAEE¡­
+result                         PASS
+note                           before/after recheck; drift means the collection itself disturbed a frozen input
+id                             deliverable-pin-after-dsh-exact-source-review-r3
+category                       frozen-pin
+expected                       unchanged until close: 15569 / 66316BF7F923576E78D121B8DD6AE0C29D9ACD6D56E5A55C3FF8883E¡­
+observedPointer                /observations/55/output/value
+observedSummary                before=66316BF7F923576E78D121B8DD6AE0C29D9ACD6D56E5A55C3FF8883EC02A4982 after=66316BF7F¡­
+result                         PASS
+note                           before/after recheck; drift means the collection itself disturbed a frozen input
+id                             deliverable-pin-after-codex-source-verify-r4
+category                       frozen-pin
+expected                       unchanged until close: 2663 / 11D1DCED9059AF7D638BA1D7EAB3345801BAC2CB2B062DF54EBB89C44¡­
+observedPointer                /observations/56/output/value
+observedSummary                before=11D1DCED9059AF7D638BA1D7EAB3345801BAC2CB2B062DF54EBB89C44CB3C9FC after=11D1DCED9¡­
+result                         PASS
+note                           before/after recheck; drift means the collection itself disturbed a frozen input
+id                             deliverable-pin-after-codex-source-adjudication-r3
+category                       frozen-pin
+expected                       unchanged until close: 1647 / 3643CE73B10884B28CA9EE9973ABFF4C213E0CAC48C124BF0624441E5¡­
+observedPointer                /observations/57/output/value
+observedSummary                before=3643CE73B10884B28CA9EE9973ABFF4C213E0CAC48C124BF0624441E5711E72D after=3643CE73B¡­
+result                         PASS
+note                           before/after recheck; drift means the collection itself disturbed a frozen input
+id                             deliverable-pin-after-zcode-owner-preflight-r4
+category                       frozen-pin
+expected                       unchanged until close: 2548 / FE6E768FC9464A9D0207FE7D7EC8FAFBA7FB4129A4FD64FBB316CF863¡­
+observedPointer                /observations/58/output/value
+observedSummary                before=FE6E768FC9464A9D0207FE7D7EC8FAFBA7FB4129A4FD64FBB316CF86368EF22B after=FE6E768FC¡­
+result                         PASS
+note                           before/after recheck; drift means the collection itself disturbed a frozen input
+id                             deliverable-pin-after-failed-freeze-attempt-1-json
+category                       frozen-pin
+expected                       unchanged until close: 966 / D4C4CBC6D3F0AB46456083FCEC91920CD89369E5D449E82EE4D9B24B1F¡­
+observedPointer                /observations/59/output/value
+observedSummary                before=D4C4CBC6D3F0AB46456083FCEC91920CD89369E5D449E82EE4D9B24B1F7D9C8E after=D4C4CBC6D¡­
+result                         PASS
+note                           before/after recheck; drift means the collection itself disturbed a frozen input
+id                             deliverable-pin-after-failed-freeze-attempt-1-report
+category                       frozen-pin
+expected                       unchanged until close: 935 / 192A6A644D01E67E7EA7C9AA85DEBA0B237A1318563C7427F96B4E4EC0¡­
+observedPointer                /observations/60/output/value
+observedSummary                before=192A6A644D01E67E7EA7C9AA85DEBA0B237A1318563C7427F96B4E4EC0ABC547 after=192A6A644¡­
+result                         PASS
+note                           before/after recheck; drift means the collection itself disturbed a frozen input
+id                             git-index-after-unchanged
+category                       index
+expected                       worktree .git/index identical before/after the whole collection; the AFTER sample is th¡­
+observedPointer                /observations/61/output/value
+observedSummary                before=C5CA88842173A8FE4B9C6B6B675528347EECBDC73F85600ABA06F11E3A692B68 after=C5CA88842¡­
+result                         PASS
+note                           closed JSON carries index before/after comparison; Git HEAD/ref/index must stay untouch¡­

@@ -1,0 +1,29 @@
+{
+  "executable": "E:\\Program Files\\nodejs\\node.exe",
+  "argv": [
+    "E:\\Program Files\\ZCode\\resources\\glm\\zcode.cjs",
+    "--prompt",
+    "<contents of owner-dispatch-r2-prompt.md>",
+    "--cwd",
+    "G:\\CODEX\\New Manga.workspace\\worktrees\\P02-NEW-TIME-BASELINE",
+    "--mode",
+    "yolo",
+    "--json",
+    "--locale",
+    "zh-CN"
+  ],
+  "cwd": "G:\\CODEX\\New Manga.workspace\\worktrees\\P02-NEW-TIME-BASELINE",
+  "env": {
+    "ZCODE_DATA_BASE_DIR": "G:\\zcode",
+    "ZCODE_BUILTIN_PROVIDER_CONFIG_FILE": "E:\\Program Files\\ZCode\\resources\\config\\provider\\zcode-builtin.json",
+    "ZCODE_PERSONAL_PROVIDER_CONFIG_FILE": "G:\\zcode\\.zcode\\v2\\provider_config.json"
+  },
+  "targetAbsentAtDispatch": true,
+  "freezeManifestSha256": "8662DEC583D2FD865532A414F0BEDE63B7F02872AB3C9232553C3B01E239006D",
+  "promptPath": "G:\\CODEX\\New Manga.workspace\\agent-output\\zcode\\P02-NEW-TIME-BASELINE\\baseline-20261014T0915CST-p02-admission-r2\\owner-dispatch-r2-prompt.md",
+  "collectorStdout": "G:\\CODEX\\New Manga.workspace\\agent-output\\zcode\\P02-NEW-TIME-BASELINE\\baseline-20261014T0915CST-p02-admission-r2\\collector-r2.stdout.txt",
+  "collectorStderr": "G:\\CODEX\\New Manga.workspace\\agent-output\\zcode\\P02-NEW-TIME-BASELINE\\baseline-20261014T0915CST-p02-admission-r2\\collector-r2.stderr.txt",
+  "collectorExit": "G:\\CODEX\\New Manga.workspace\\agent-output\\zcode\\P02-NEW-TIME-BASELINE\\baseline-20261014T0915CST-p02-admission-r2\\collector-r2.exit.txt",
+  "collectorTarget": "G:\\CODEX\\New Manga.workspace\\agent-output\\zcode\\P02-NEW-TIME-BASELINE\\run-baseline-20261014T0915CST-p02-admission-r2.json",
+  "startedLocal": "2026-10-14T09:21:46.9414743+08:00"
+}
