@@ -22,7 +22,7 @@ integration_status: not_started
 dispatch_state: IN_PROGRESS
 blocked_by: []
 profile: ZCODE_HEAVY
-revisions: {implementation: 2, test: 2, evidence: 11}
+revisions: {implementation: 2, test: 2, evidence: 12}
 canonical_evidence_status: pending
 resource_closeout_status: pending
 evidence_dir: verification/P02-NEW-TIME-X6
@@ -48,12 +48,12 @@ evidence_dir: verification/P02-NEW-TIME-X6
 
 ## Acceptance Criteria
 
-- [ ] X6-AC1：交付独立的新时点 executor、protocol、Handoff 和唯一 RunId/输出清单；不得调用旧 attempt6 executor；所有写路径限于本 Task 专属目录及其经 Codex 明确冻结的候选目标。
+- [x] X6-AC1：交付独立的新时点 executor、protocol、Handoff 和唯一 RunId/输出清单；不得调用旧 attempt6 executor；所有写路径限于本 Task 专属目录及其经 Codex 明确冻结的候选目标。
 - [x] X6-AC2：PowerShell 7.6.6 Parser 零错误；无 dot-source 或 live invocation 的纯内存 selftest 通过；记录 shell、解释器、完整 exit 与逐项 skip。
 - [x] X6-AC3：DSH 对精确 delivery head 和 immutable evidence manifest 完成独立源码 Review；Codex 复核 pins 并逐项 adjudicate。未解决 P0/P1/P2 时不得进入 pre-run。
-- [ ] X6-AC4：Codex 对当前 main source、实际运行 target、身份、argv/CWD、子进程边界、CreateNew 目标和替换目标完成 freeze；官方 pre-run=PRE_RUN_PASS。任何不确定项均停止在 NOT_RUN。
-- [ ] X6-AC5：ZCode 在完整冻结条件成立时最多执行一次 X6；运行结果完整闭合、RunId 不复用、结果和 partial/failure 均保留在专属证据路径。X6 的通过只代表 X6，不代表 post-run Review、Build/Cargo 或产品 AC1–AC7。
-- [ ] X6-AC6：Codex 对运行结果、输出 hash、source pins、未运行项和目标文件状态独立 VERIFY；只集成精确获准的新 Task 文件与证据，保留 root 既有 dirty/untracked 用户内容。
+- [x] X6-AC4：Codex 对当前 main source、实际运行 target、身份、argv/CWD、子进程边界、CreateNew 目标和替换目标完成 freeze；官方 pre-run=PRE_RUN_PASS。任何不确定项均停止在 NOT_RUN。
+- [x] X6-AC5：ZCode 在完整冻结条件成立时最多执行一次 X6；运行结果完整闭合、RunId 不复用、结果和 partial/failure 均保留在专属证据路径。X6 的通过只代表 X6，不代表 post-run Review、Build/Cargo 或产品 AC1–AC7。
+- [x] X6-AC6：Codex 对运行结果、输出 hash、source pins、未运行项和目标文件状态独立 VERIFY；只集成精确获准的新 Task 文件与证据，保留 root 既有 dirty/untracked 用户内容。
 - [ ] X6-AC7：Task 生命周期、Canonical Evidence、Resource Manifest、rolling checkpoint、STATUS/Plan/Task README 和只读 governance check 完成；只在 Codex 裁决 X6 成功后释放独立 post-run Review Task。
 
 ## 允许修改范围
@@ -74,13 +74,13 @@ evidence_dir: verification/P02-NEW-TIME-X6
 
 | 场景/AC | 计划命令或步骤 | 前提/环境 | 实际结果 | 证据 |
 |---|---|---|---|---|
-| X6-AC1 source delivery | ZCode 在 Task branch 创建专属执行包 | Task branch/worktree 与所有输出目标 fresh | PASS（executor/protocol/inventory/source-manifest r2 于 `3c707261`；仅 selftest 的 T-only AC2 断言/标签更新于 `839e0089`）；唯一 CreateNew 目标与 `<RunId>/` raw-capture 目标仍 NOT_CREATED（待 Codex freeze） | Handoff r2 + source-manifest-r2.json + 当前 selftest source pin |
+| X6-AC1 source delivery | ZCode 在 Task branch 创建专属执行包 | Task branch/worktree 与所有输出目标 fresh | PASS（source r2 与 AC2 T-only 修正已审查；唯一 RunId 已冻结；RunId 目录最终仅含 manifest + 六项授权 capture；另有同字节 temp 副本，已按 E 登记并待 DSH Review） | Handoff r2 + source-manifest-r2.json + freeze manifest + Resource Manifest |
 | X6-AC2 parser/selftest | PowerShell 7.6.6 `-NoProfile` Parser + 纯内存断言 | DSH r2 source Review 与 DSH r3 T-review / Codex adjudication 均通过 | PASS（attempt 2：Parser 两脚本均 `PARSER_ZERO_ERRORS`、exit=0；selftest 272 PASS / 0 FAIL / 7 SKIP、exit=0；两 stderr=0 B；7 个 skip 名称及逐项原因保存在 raw stdout；live queries/collector/git child/historical input 均 false）。Attempt 1 的 271/1/7 失败记录保留，未复用 fixture | `codex-ac2-verification-r2.md` + attempt 2 raw output + T-classification + DSH T-review r3 + Codex adjudication r3 |
 | X6-AC3 DSH source Review | immutable input manifest + bounded Review | exact delivery head=`839e0089c971e9be984cd9e99a56ea0152ec1391` 与 Task AC 冻结 | PASS（DSH r2 审查 executor/protocol；DSH r3 bounded Review 审查 T-only selftest 修正；Codex adjudication r2/r3 approved）；未解决 P0/P1/P2=0，SR-01/02/03 CLOSED，I1/I2=`1/2` | manifests r2/r3 + DSH reports r1/r2/r3 + Codex adjudications r1/r2/r3 |
-| X6-AC4 final pre-run | Codex freeze verifier 与只读 pre-run | source Review 与 parser/selftest PASS | NOT_RUN | freeze manifest + pre-run result |
-| X6-AC5 one-shot | ZCode 执行唯一 RunId | final pre-run=PRE_RUN_PASS；目标 absent/unignored | NOT_RUN | raw run bundle + closed result |
-| X6-AC6 Codex VERIFY/integration | 官方 evidence verifier + 精确路径集成 | X6 完整运行记录已产生 | NOT_RUN | Codex verify + integration commit |
-| X6-AC7 closeout/governance | task manifest、Resource Manifest、只读 governance check | 所有 Gate 证据齐全 | NOT_RUN | manifest verify + governance output |
+| X6-AC4 final pre-run | Codex freeze verifier 与只读 pre-run | source Review 与 parser/selftest PASS | PASS（PRE_RUN_PASS；18/18 pins；RunId=`x6-20261014T1305CST-p02-newtime-r1`；唯一结果与六项 capture 均 absent 后 freeze） | freeze manifest + `codex-x6-result-verification-r1.md` |
+| X6-AC5 one-shot | ZCode 执行唯一 RunId | final pre-run=PRE_RUN_PASS；目标 absent/unignored | PASS（唯一一次；exit=0；66 行闭合；59/59 checks PASS；无重试） | raw run bundle + closed result + Codex VERIFY |
+| X6-AC6 Codex VERIFY/integration | 官方 evidence verifier + 精确路径集成 | X6 完整运行记录已产生 | PASS（结果 hash/pointers/18 pins/六项 capture/目标状态均独立验证；Task 与证据纳入当前分支） | `codex-x6-result-verification-r1.md` + Task evidence commit |
+| X6-AC7 closeout/governance | task manifest、Resource Manifest、只读 governance check | 所有 Gate 证据齐全 | PENDING（bounded DSH post-run Review 尚待释放；之后按结果 adjudicate，再完成 closeout/governance） | DSH post-run Review manifest/report + governance output |
 
 ## 依赖、风险与阻塞
 
@@ -107,11 +107,16 @@ evidence_dir: verification/P02-NEW-TIME-X6
 - DSH bounded T-review r3 input freeze：官方 `generate-evidence-manifest.py` 冻结 9 个文件；`source_commit=c83f65ade88d99046f26a1328f395af8621d12e7`、`review_head=839e0089c971e9be984cd9e99a56ea0152ec1391`，manifest commit=`b88548f8`，2986 B / SHA-256=`92E00F202E0CA460EBF33C5E61015C3CB4DDB5C3D119C0D7533CB35C20513180`；官方 verifier=`PASS`（9/9），原始结果=`G:/CODEX/New Manga.workspace/agent-output/codex/P02-NEW-TIME-X6/dsh-selftest-t-review-r3-manifest-verify/stdout.json`，SHA-256=`F574C00CA73A7CB9E403CB58872114E79669B56ACBCB35988CA3EE2B91A3B6CD`。Verifier 在 Task 写入 manifest 自身 pointer 前运行；随后 Task commit 记录该 pin，所以其 mutable Task file 当前字节不等于 source_commit 快照；这是有记录的两阶段 immutable manifest 流程，不作为输入漂移失败。DSH report pending。
 - DSH T-only bounded Review r3 与 Codex adjudication：DSH 对 exact `reviewed_head=839e0089c971e9be984cd9e99a56ea0152ec1391` 给出 `PASS`，P0/P1/P2=`0/0/0`；报告 SHA-256=`399D2F0619C5A442660C52F7F401A31F2CB1B6784073939DF2DACEDDB4D01294`，Codex adjudication SHA-256=`049D9E640F38AEA84F041C44AFF758DC2D59B26DB4F454815450558BC72E61F8`，commit=`753f304d`。Codex deterministic VERIFY 确认仅 selftest 两行变化、executor diff 为空、manifest disk hash / code blob 与 `839e0089` 相符；r2/r3 的标签重合为非阻塞可读性注记，不要求返修；DSH N-c 由 Codex diff 核验关闭。Orchestrator result protocol=`ACCEPT` 仅指 artifact+verification 完整。AC3=PASS；AC2 已于 attempt 2 通过（Codex 验证报告见下文）；Task 恢复 `in_progress`，下一 Gate 仅为 AC4 Codex freeze/final pre-run。X6 one-shot 仍 NOT_RUN。
 - 2026-10-14 Codex AC2 attempt 2：对 DSH r3 已审查源码以 PowerShell `7.6.6` / Core / FullLanguage、`-NoProfile` 重跑。Parser 两脚本均 `PARSER_ZERO_ERRORS`、exit=`0`；纯内存 selftest=`272 PASS / 0 FAIL / 7 SKIP`、exit=`0`；两 stderr 均 0 B。7 个 skip 名称与逐项理由见 raw stdout；`liveQueriesExecuted/liveCollectorExecuted/gitChildExecuted/historicalInputAccessed=false`。Raw output=`G:/CODEX/New Manga.workspace/agent-output/codex/P02-NEW-TIME-X6/codex-ac2-parser-selftest-r2/`；Parser stdout SHA-256=`E3A4691A98DA9AAB7EC25A3130FC3EA46FBB4FF176477F563AC10C8B71A1C3D9`，selftest stdout SHA-256=`1E169224436BF046471033445A65E72AFA18AD257BF08A664A8803B1EB66EB20`。完整命令、环境、stderr、exit pins 见下方 Resource Manifest。Codex 验证报告=`verification/P02-NEW-TIME-X6/codex-ac2-verification-r2.md`（2674 B / SHA-256=`73DE4DD881CBA86A2B09A8790D9349E1CE2F3AE362A0CF4AB900B80030ECB87E`，commit=`e30868718f2055032ca96069883c822d0d432a97`）；运行源码 head=`839e0089c971e9be984cd9e99a56ea0152ec1391`。新 fixture=`G:/CODEX/New Manga.workspace/temp/P02-NEW-TIME-X6/codex-ac2-r2-20261014-124643-pure-selftest/`，逐项 hash 见 Resource Manifest；与 attempt 1 fixture 分开且全部保留。AC2=`PASS`；未创建 RunId/freeze manifest，final pre-run 未运行，executor 未调用；下一 Gate 仅 AC4。
-- Codex Parser/selftest：PASS（X6-AC2）。Codex freeze/final pre-run：NOT_RUN；下一 Gate=AC4。
-- X6 one-shot 与 Codex result VERIFY：NOT_RUN。
-- post-run Review、Build/Cargo、产品 AC1–AC7：本 Task 不执行，等待后续 Task Gate。
+- Codex Parser/selftest、freeze/final pre-run、X6 one-shot 与 Codex result VERIFY：均 PASS；当前等待独立 DSH post-run Review。
+- X6 one-shot 与 Codex result VERIFY：PASS（唯一 RunId exit=0；59/59 checks PASS；result SHA-256=`6A2AA75A0E48A99DC9C414E76009E4D18398D85AFAB902F08A74045E5A53B196`）。
+- 下一 Gate：bounded DSH post-run Review（需核验已登记的 E 类辅助 temp 副本）；Build/Cargo 与产品 AC1–AC7 仍 NOT_RELEASED / NOT_RUN，等待该 Review 与 Codex adjudication。
 - 文档指针疑点（交 Codex，非阻塞）：主仓 doc/STATUS.md 引用 verification/P02PRE-R1H-H1-CURRENT-INPUT-REVIEW/codex-adjudication-r1.md，该文件在 Task worktree HEAD=a9c3214b 上不存在；ZCode 仅记录证据，未修改主仓文件。
 
+- 2026-10-14 Codex AC4 freeze/final pre-run：RunId=`x6-20261014T1305CST-p02-newtime-r1`；freeze manifest 6,617 B / SHA-256=`D4C0728C1D43E9531F236022287C267B7FB0F7200CE8833F0F7EA9E9B9908BB8`；current-main contract pins=5、Task deliverable pins=13（含 executor self-pin），最终 pre-run=`PRE_RUN_PASS`。冻结时结果 target 与六 capture 均 absent；manifest 目录仅含 manifest；路径为普通盘符绝对路径、NTFS、仓外、无 reparse；`replacementTargets=none`。Codex pre-run 实测 `GIT_PAGER`，但 ZCode operator session 的 `GIT_*` 为空；禁止的继承变量均缺失，不构成阻塞。
+- 2026-10-14 ZCode AC5 唯一 X6 one-shot：session=`sess_bd06f60b-b6d1-4cc8-a7e7-4dbcb647458f` / trace=`5104cd8c-84eb-4b4f-87b0-bf25d14adafe` / turn=`turn_063e42bc-edbe-459d-94c5-2ef2dfe1e60e`；RunId 未复用；OS exit=`0`。result=`G:/CODEX/New Manga.workspace/agent-output/zcode/P02-NEW-TIME-X6/run-x6-20261014T1305CST-p02-newtime-r1.json`，145,747 B / SHA-256=`6A2AA75A0E48A99DC9C414E76009E4D18398D85AFAB902F08A74045E5A53B196`；66 行（meta + 64 observations + closed），59 checks=`59 PASS / 0 FAIL / 0 NOT_RUN`，所有 observedPointer 可解、无异常/blocked reason，closed state=`COMPLETED`。六项 raw capture 的大小/hash 见 Resource Manifest；RunId 目录恰有 manifest + 六项文件。
+- Codex AC6 deterministic VERIFY=`PASS`：重验全部 18/18 frozen pins 与 size/hash；NDJSON 66 行/Meta 与 closed RunId/冻结 manifest SHA、59 checks/JSON pointers/observation exceptions、capture 目标和 hash、唯一结果目标均匹配；历史隔离 check PASS，`CANNOT_SUBSTITUTE_H1_P2_1_TIME_EVIDENCE`；postRunReview、Build/Cargo、产品 AC1–AC7 均 NOT_RUN。
+- ZCode 同时在 `G:/CODEX/New Manga.workspace/temp/P02-NEW-TIME-X6/x6-20261014T1305CST-p02-newtime-r1-capture/` 另留 `stdout.bytes` / `stderr.bytes` 两份辅助副本，大小与 SHA-256 与 RunId 内获准 `stdout.md` / `stderr.md` 完全相同。该路径未列在 r2 output inventory；未删除、未移动或覆盖，已纳入 Resource Manifest。官方 `classify-revision`=`E`、`counts_toward_repair_budget=false`、`reviewer_needed=true`；classification stdout SHA-256=`876874DCFC78FE7323DE05713C54AC514CEB7480C82247FE87FD8A9CDEC7E75D`，I1/I2 维持 `1/2`；交 bounded DSH post-run Review 审查。
+- Codex VERIFY 报告=`verification/P02-NEW-TIME-X6/codex-x6-result-verification-r1.md`（$reportSize B / SHA-256=`$reportSha`）。X6 结果仅证明此新时点 X6；旧 H1/P2-1 及 13 项来源缺失记录不变。下一 Gate：独立 DSH post-run Review；Build/Cargo 与产品 AC1–AC7 未释放。
 ## Canonical Evidence
 
 源码 bounded Review Gate 已通过；Task 继续处于 in_progress。关闭前仍须列出 Parser/selftest、freeze/pre-run、X6 result 与 Codex verification 的精确当前证据；mutable STATUS/Plan/checkpoint 不作 immutable hash pin。
@@ -143,6 +148,9 @@ evidence_dir: verification/P02-NEW-TIME-X6
 | P02-X6-AC2-TASK-E-CLASSIFICATION-R1 | X6-AC2/AC3 | G:/CODEX/New Manga.workspace/agent-output/codex/P02-NEW-TIME-X6/codex-ac2-task-evidence-classification-r1/stdout.json | - | 42B63044ED6F182F462D8C29CE328302DCE85B1D02AD601BDFF155E4589A77E6 | CANONICAL |
 | P02-X6-SELFTEST-SOURCE-R1 | X6-AC1 | verification/P02-NEW-TIME-X6/executor/p02-new-time-x6-selftest.ps1 | 3c707261556293bbc884e0b38c63161274aa1638 | A8823F59AD1A1960217A32677116AA9EB1E30833E31D019769DCB0DE6AA75658 | HISTORICAL |
 
+| P02-X6-FREEZE-MANIFEST-R1 | X6-AC4 | G:/CODEX/New Manga.workspace/agent-output/zcode/P02-NEW-TIME-X6/x6-20261014T1305CST-p02-newtime-r1/freeze-manifest.json | - | D4C0728C1D43E9531F236022287C267B7FB0F7200CE8833F0F7EA9E9B9908BB8 | CANONICAL |
+| P02-X6-RUN-RESULT-R1 | X6-AC5/AC6 | G:/CODEX/New Manga.workspace/agent-output/zcode/P02-NEW-TIME-X6/run-x6-20261014T1305CST-p02-newtime-r1.json | - | 6A2AA75A0E48A99DC9C414E76009E4D18398D85AFAB902F08A74045E5A53B196 | CANONICAL |
+| P02-X6-CODEX-VERIFY-R1 | X6-AC4/AC6 | verification/P02-NEW-TIME-X6/codex-x6-result-verification-r1.md | - | 5E1CC04AB8A452ACF897D92C0C455CAA47562000781EDD7C45C48BA5BB9BAA04 | CANONICAL |
 r1 轮 SOURCE_PIN（executor/selftest/protocol-r1/inventory-r1/handoff-r1 @ 8b4daf9b/360b0271）已由上表 r2 pins 取代为“当前”证据；其字节仍由 delivery commit 8b4daf9b、`dsh-source-review-input-manifest-r1.json`（151fce32）与上表 r1 历史行完整保存，可经 git 历史复验。SMAN 自身不列 SOURCE_PIN（沿用 r1 口径，属 X6-SR-11 backlog；其完整性由 delivery commit 3c707261 与本表绑定）。
 
 ## Resource Manifest
@@ -169,6 +177,11 @@ r1 轮 SOURCE_PIN（executor/selftest/protocol-r1/inventory-r1/handoff-r1 @ 8b4d
 | Selftest temp fixture attempt 2 | G:/CODEX/New Manga.workspace/temp/P02-NEW-TIME-X6/codex-ac2-r2-20261014-124643-pure-selftest | PRESERVE_REFERENCED | same | collision.bin 5 B / 74F81FE167D99B4CB41D6D0CCDA82278CAEE9F3E2F25D5E5A3936FF3DCEC60D0; exclusive.bin 1 B / 559AEAD08264D5795D3909718CDD05ABD49572E84FE55590EEF31A88A08FDFFD; partial-run.json 93 B / 695D4BF696D7988C3A4561810A004BFE29B84083700C52FED34987194302A45D | fresh fixture; preserved, never reused or removed |
 | Codex review verification | G:/CODEX/New Manga.workspace/agent-output/codex/P02-NEW-TIME-X6 | PRESERVE_REFERENCED | same | dsh-result-protocol-r1 / convergence-initial-review-r1 / codex-post-dsh-pin-verify-r1 / codex-i1-output-record-r1 / codex-i1-deterministic-verify-r4 / dsh-manifest-generate-r2 / dsh-manifest-verify-r2-i1 / codex-dsh-r2-input-classification-r1 / codex-ac2-selftest-failure-classification-r1 | preserve inputs, commands, stdout, stderr, and exits |
 | Task temp/fixtures | G:/CODEX/New Manga.workspace/temp/P02-NEW-TIME-X6 | PRESERVE_REFERENCED | same | attempts 1 and 2 enumerated individually above with per-file size/hash | preserve; never mix with user manga data |
+
+| ZCode X6 one-shot raw bundle | G:/CODEX/New Manga.workspace/agent-output/zcode/P02-NEW-TIME-X6/x6-20261014T1305CST-p02-newtime-r1 | PRESERVE_REFERENCED | same | freeze-manifest.json 6,617 B / D4C0728C1D43E9531F236022287C267B7FB0F7200CE8833F0F7EA9E9B9908BB8; command.md 1,039 B / C3F73FDE17AF661C8E2BC97AB017F8876C0B08C4D5D8F4E53702FB38C3C2AECF; stdout.md 32,426 B / 0109AED4FD474546EAC28D1B1BFA88510285F1F367C0F157007F93E1886A3602; stderr.md 0 B / E3B0C44298FC1C149AFBF4F8C8996FB92427AE41E4649B934CA495991B7852B855; exit.md 537 B / 97106D6E154F12F6B86CA2E93E5BEF944838B83243AEDA65521181B163FE11C5; environment.md 1,174 B / FD4C142C4AA0C396AD833151C17B77BE1130D32B0D55C2A7A361DC4B2C4E5CF2; session.md 328 B / C94398F2C2C2CB2D831458DB9248349406A8AC3AEAF4E6AA60E5615FAD46F235; result.json 145,747 B / 6A2AA75A0E48A99DC9C414E76009E4D18398D85AFAB902F08A74045E5A53B196 | one invocation; CreateNew only; closed 59/59; all files preserved; no same-RunId retry |
+| ZCode X6 auxiliary temp capture copy | G:/CODEX/New Manga.workspace/temp/P02-NEW-TIME-X6/x6-20261014T1305CST-p02-newtime-r1-capture | PRESERVE_REFERENCED | same | stdout.bytes 32,426 B / 0109AED4FD474546EAC28D1B1BFA88510285F1F367C0F157007F93E1886A3602; stderr.bytes 0 B / E3B0C44298FC1C149AFBF4F8C8996FB92427AE41E4649B934CA495991B7852B855 | byte-identical duplicates of the authorized RunId captures; path is outside output-target-inventory-r2 targets; official E classification reviewer_needed=true; retain untouched pending DSH post-run adjudication |
+| Codex X6 result verification | G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-X6/verification/P02-NEW-TIME-X6/codex-x6-result-verification-r1.md | PRESERVE_REFERENCED | same | 5,861 B / 5E1CC04AB8A452ACF897D92C0C455CAA47562000781EDD7C45C48BA5BB9BAA04 | Codex verified manifest/result/capture hashes, all 59 checks/pointers and downstream NOT_RUN disposition; Task review continues |
+| Codex orchestrator E classification | G:/CODEX/New Manga.workspace/agent-output/codex/P02-NEW-TIME-X6/codex-ac5-output-scope-classification-r1 | PRESERVE_REFERENCED | same | stdout.json 368 B / 876874DCFC78FE7323DE05713C54AC514CEB7480C82247FE87FD8A9CDEC7E75D; input.json 316 B / 287F0D29AEC4DADA83A952139190635FA291A90D716B7398EE28DDE4232D451C; stderr empty / E3B0C44298FC1C149AFBF4F8C8996FB92427AE41E4649B934CA495991B7852B855; exit=0 / 9A271F2A916B0B6EE6CECB2426F0B3206EF074578BE55D9BC94F6F3FE3AB86AA | E-only, no I budget consumption, independent reviewer required; included in DSH input |
 
 ## Closeout Record
 
