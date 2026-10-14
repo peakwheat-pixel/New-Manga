@@ -1,0 +1,1 @@
+python -B G:/CODEX/New Manga.workspace/agent-output/codex/P02-NEW-TIME-X6-AC1-AC7/sidecar-resource-copy-verify-r1.py G:/CODEX/New Manga.workspace/agent-output/zcode/P02-NEW-TIME-X6-BUILD-CARGO/run-r1/05-sidecar-build-attempt2/sidecar-bundle-manifest.json G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-X6-BUILD-CARGO/apps/desktop/src-tauri/target/release/resources/core-sidecar
