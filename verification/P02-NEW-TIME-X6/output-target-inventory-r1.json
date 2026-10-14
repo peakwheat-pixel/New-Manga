@@ -1,0 +1,65 @@
+{
+  "schema": "P02-NEW-TIME-X6-output-target-inventory-1",
+  "task": "P02-NEW-TIME-X6",
+  "revision": "source-delivery-r1",
+  "createdUtc": "2026-10-14T02:55:00Z",
+  "candidateRunIds": {
+    "template": "x6-<YYYYMMDDTHHMM>CST-p02-newtime-r1",
+    "values": [
+      "x6-20261014T1500CST-p02-newtime-r1",
+      "x6-20261014T1530CST-p02-newtime-r1"
+    ],
+    "note": "candidate only; Codex freeze confirms or re-stamps exactly one RunId; any target below is created only after Codex freeze authorizes it; RunId never reused after any outcome"
+  },
+  "targets": [
+    {
+      "path": "G:/CODEX/New Manga.workspace/agent-output/zcode/P02-NEW-TIME-X6/run-<RunId>.json",
+      "actor": "executor CreateNew (X6 one-shot)",
+      "timing": "X6-AC5 one-shot only",
+      "constraint": "single exclusive CreateNew NDJSON stream; must be absent/unignored before run; never overwritten or retried; sibling of this directory is outside any Git repository",
+      "forbiddenWriteRoots": [
+        "G:\\CODEX\\New Manga\\verification\\P02\\"
+      ],
+      "statusAtDelivery": "NOT_CREATED (path pattern; concrete file depends on frozen RunId)"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/agent-output/zcode/P02-NEW-TIME-X6/<RunId>/freeze-manifest.json",
+      "actor": "Codex freeze",
+      "timing": "X6-AC4 freeze stage",
+      "constraint": "outside the Git worktree/repository; bound via argv SHA-256",
+      "statusAtDelivery": "NOT_CREATED"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/agent-output/zcode/P02-NEW-TIME-X6/source-delivery-r1/",
+      "actor": "ZCode (this delivery stage)",
+      "timing": "now",
+      "constraint": "raw dispatch prompt copy, command records, environment summary; outside the Git repository",
+      "statusAtDelivery": "CREATED (contains this stage's raw records only)"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/agent-output/zcode/P02-NEW-TIME-X6/selftest-r1/",
+      "actor": "Codex",
+      "timing": "parser/selftest stage after DSH source Review",
+      "constraint": "raw stdout/stderr/exit/environment of the pure selftest run",
+      "statusAtDelivery": "NOT_CREATED"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/temp/P02-NEW-TIME-X6/<stamp>-pure-selftest/",
+      "actor": "selftest fixtures",
+      "timing": "when the pure selftest runs",
+      "constraint": "fixtures preserved, never cleaned; never mixed with user manga data",
+      "statusAtDelivery": "NOT_CREATED (no parser/selftest run in this stage)"
+    }
+  ],
+  "repositoryWriteScope": [
+    "doc/tasks/P02-NEW-TIME-X6.md",
+    "verification/P02-NEW-TIME-X6/**"
+  ],
+  "neverWriteScope": [
+    "verification/P02/** (historical evidence)",
+    "tools/**, product sources, shared contracts, schemas, dependencies",
+    "main-repo AGENTS.md / doc/STATUS.md / doc/REBASELINE_PLAN.md / doc/tasks/README.md (Codex-owned pointers)",
+    ".tmp.driveupload (never probed outside task workspace)",
+    "user manga library, manual edits, Lock, current/pinned revisions, root dirty/untracked content"
+  ]
+}
