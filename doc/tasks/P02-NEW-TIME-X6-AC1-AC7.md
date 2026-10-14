@@ -85,7 +85,7 @@ run_id: p02-newtime-ac-20261014-r1
 
 | 场景/AC | 计划命令或手工步骤 | 前提/环境 | 实际结果 | 证据 |
 |---|---|---|---|---|
-| Preflight / release | 校验 Task、依赖门、binary/sidecar hashes、write scope、Task env 空白状态；运行 official `preflight-agent.py` live PREFLIGHT 与 ZCode availability probe | 本 Task 已登记；Build convergence approved；独立 worktree 已创建；无其他 Owner 写入 | Codex read-only binary hash 匹配；packaged sidecar copy 与冻结 5,610-file manifest 比对 PASS（5,610 / 5,610，1,296,373,783 bytes，无缺失/多余/hash mismatch）；Task env=0 items。ZCode availability probe PASS；official live AGENT_PREFLIGHT pending；尚未启动应用 | `verification/P02-NEW-TIME-X6-AC1-AC7/preflight/sidecar-resource-copy.stdout.json`、同前缀 command/environment/stderr/exit；workspace ZCode availability-probe-r1 |
+| Preflight / release | 校验 Task、依赖门、binary/sidecar hashes、write scope、Task env 空白状态；运行 official `preflight-agent.py` live PREFLIGHT 与 ZCode availability probe | 本 Task 已登记；Build convergence approved；独立 worktree 已创建；无其他 Owner 写入 | PASS：EXE hash 匹配；packaged sidecar copy 与冻结 5,610-file manifest 比对 PASS（5,610 / 5,610，1,296,373,783 bytes，无缺失/多余/hash mismatch）；Task env=0 items。ZCode CLI 0.16.9 live probe 返回有效回复与 session ID；official AGENT_PREFLIGHT r1 在 HEAD=c7b791ecfff4276e0a42ed57de3f920603067a5f 返回 overall=PASS、dispatch_allowed=true、worktree 0 dirty entries。Task 证据/状态更新后需再对最终冻结 HEAD 运行 live PREFLIGHT；尚未启动应用 | `verification/P02-NEW-TIME-X6-AC1-AC7/preflight/sidecar-resource-copy.stdout.json`、`agent-preflight-r2/stdout.json`、`zcode-availability-r2/probe.stdout.jsonl`；各自 command/environment/stderr/exit 同目录 |
 | AC1 runtime identity | 启动固定 packaged exe；采集 WebView2 host/runtime identity、process/window identity、source/binary pins | 本机 Windows；isolated synthetic env；不重建或安装 | NOT_RUN | Task-local AC1 logs / screenshots |
 | AC2 navigation / operation | 在真实 Workbench 窗口执行鼠标/键盘导航、输入与按钮状态操作 | AC1 PASS；真实 WebView2 窗口 | NOT_RUN | Task-local AC2 logs / screenshots |
 | AC3 debounce / stale response | 使用真实页面和单调时钟驱动连续输入、page ID 切换及延迟响应观察 | AC1 PASS；不以 fake timer 作为产品行为证据 | NOT_RUN | Task-local AC3 timing trace |
@@ -109,4 +109,4 @@ run_id: p02-newtime-ac-20261014-r1
 - Owner Handoff：尚无。
 - 独立 Review：尚无；Reviewer=DeepSeek Harness。
 - Codex adjudication / integration / post-integration check：尚无。
-- 当前状态：`ready / PREFLIGHT_PENDING`；所有 AC=`NOT_RUN`，preflight PASS 前不派发或启动应用。
+- 当前状态：`ready / PREFLIGHT_PENDING`；产品 AC=`NOT_RUN`；最终冻结 HEAD 的 live preflight 前不派发或启动应用。

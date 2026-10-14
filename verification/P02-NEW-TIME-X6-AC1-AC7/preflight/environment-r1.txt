@@ -1,0 +1,5 @@
+Host shell: PowerShell 7.6.6; Python: 3.14.6; Git worktree HEAD at live helper run: c7b791ecfff4276e0a42ed57de3f920603067a5f; branch: agent/zcode/P02-NEW-TIME-X6-AC1-AC7; status: 0 dirty entries.
+ZCode CLI: 0.16.9 via node E:\Program Files\ZCode\resources\glm\zcode.cjs; availability probe exit=0, response=收到, sessionId=sess_20fa28a3-59b9-4257-a419-52cd1ddfb3c4.
+Live AGENT_PREFLIGHT: overall=PASS, dispatch_allowed=true; write_scope_known checks directory existence only, so Codex separately verified the Task's exact file allowlist and forbidden product paths.
+Permission attestation applies to the user-authorized scoped Task and edit mode only; no yolo escalation.
+No application launch occurred.
