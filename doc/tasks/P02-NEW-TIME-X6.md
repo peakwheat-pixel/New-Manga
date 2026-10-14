@@ -79,7 +79,7 @@ evidence_dir: verification/P02-NEW-TIME-X6
 | X6-AC3 DSH source Review | immutable input manifest + bounded Review | exact delivery head=`839e0089c971e9be984cd9e99a56ea0152ec1391` 与 Task AC 冻结 | PASS（DSH r2 审查 executor/protocol；DSH r3 bounded Review 审查 T-only selftest 修正；Codex adjudication r2/r3 approved）；未解决 P0/P1/P2=0，SR-01/02/03 CLOSED，I1/I2=`1/2` | manifests r2/r3 + DSH reports r1/r2/r3 + Codex adjudications r1/r2/r3 |
 | X6-AC4 final pre-run | Codex freeze verifier 与只读 pre-run | source Review 与 parser/selftest PASS | PASS（PRE_RUN_PASS；18/18 pins；RunId=`x6-20261014T1305CST-p02-newtime-r1`；唯一结果与六项 capture 均 absent 后 freeze） | freeze manifest + `codex-x6-result-verification-r1.md` |
 | X6-AC5 one-shot | ZCode 执行唯一 RunId | final pre-run=PRE_RUN_PASS；目标 absent/unignored | PASS（唯一一次；exit=0；66 行闭合；59/59 checks PASS；无重试） | raw run bundle + closed result + Codex VERIFY |
-| X6-AC6 Codex VERIFY/integration | 官方 evidence verifier + 精确路径集成 | X6 完整运行记录已产生 | PASS（结果 hash/pointers/18 pins/六项 capture/目标状态均独立验证；Task 与证据纳入当前分支） | `codex-x6-result-verification-r1.md` + Task evidence commit |
+| X6-AC6 Codex VERIFY/integration | 官方 evidence verifier + 精确路径集成 | X6 完整运行记录已产生 | PASS（结果 hash/pointers/18 pins/六项 capture/目标状态均独立验证；Task 与证据纳入当前分支） | `codex-x6-result-verification-r1.md` + commit=`b92f75efea16504f11e68221426acf584b05cc4d` |
 | X6-AC7 closeout/governance | task manifest、Resource Manifest、只读 governance check | 所有 Gate 证据齐全 | PENDING（bounded DSH post-run Review 尚待释放；之后按结果 adjudicate，再完成 closeout/governance） | DSH post-run Review manifest/report + governance output |
 
 ## 依赖、风险与阻塞
@@ -116,7 +116,7 @@ evidence_dir: verification/P02-NEW-TIME-X6
 - 2026-10-14 ZCode AC5 唯一 X6 one-shot：session=`sess_bd06f60b-b6d1-4cc8-a7e7-4dbcb647458f` / trace=`5104cd8c-84eb-4b4f-87b0-bf25d14adafe` / turn=`turn_063e42bc-edbe-459d-94c5-2ef2dfe1e60e`；RunId 未复用；OS exit=`0`。result=`G:/CODEX/New Manga.workspace/agent-output/zcode/P02-NEW-TIME-X6/run-x6-20261014T1305CST-p02-newtime-r1.json`，145,747 B / SHA-256=`6A2AA75A0E48A99DC9C414E76009E4D18398D85AFAB902F08A74045E5A53B196`；66 行（meta + 64 observations + closed），59 checks=`59 PASS / 0 FAIL / 0 NOT_RUN`，所有 observedPointer 可解、无异常/blocked reason，closed state=`COMPLETED`。六项 raw capture 的大小/hash 见 Resource Manifest；RunId 目录恰有 manifest + 六项文件。
 - Codex AC6 deterministic VERIFY=`PASS`：重验全部 18/18 frozen pins 与 size/hash；NDJSON 66 行/Meta 与 closed RunId/冻结 manifest SHA、59 checks/JSON pointers/observation exceptions、capture 目标和 hash、唯一结果目标均匹配；历史隔离 check PASS，`CANNOT_SUBSTITUTE_H1_P2_1_TIME_EVIDENCE`；postRunReview、Build/Cargo、产品 AC1–AC7 均 NOT_RUN。
 - ZCode 同时在 `G:/CODEX/New Manga.workspace/temp/P02-NEW-TIME-X6/x6-20261014T1305CST-p02-newtime-r1-capture/` 另留 `stdout.bytes` / `stderr.bytes` 两份辅助副本，大小与 SHA-256 与 RunId 内获准 `stdout.md` / `stderr.md` 完全相同。该路径未列在 r2 output inventory；未删除、未移动或覆盖，已纳入 Resource Manifest。官方 `classify-revision`=`E`、`counts_toward_repair_budget=false`、`reviewer_needed=true`；classification stdout SHA-256=`876874DCFC78FE7323DE05713C54AC514CEB7480C82247FE87FD8A9CDEC7E75D`，I1/I2 维持 `1/2`；交 bounded DSH post-run Review 审查。
-- Codex VERIFY 报告=`verification/P02-NEW-TIME-X6/codex-x6-result-verification-r1.md`（$reportSize B / SHA-256=`$reportSha`）。X6 结果仅证明此新时点 X6；旧 H1/P2-1 及 13 项来源缺失记录不变。下一 Gate：独立 DSH post-run Review；Build/Cargo 与产品 AC1–AC7 未释放。
+- Codex VERIFY 报告=`verification/P02-NEW-TIME-X6/codex-x6-result-verification-r1.md`（5,861 B / SHA-256=`5E1CC04AB8A452ACF897D92C0C455CAA47562000781EDD7C45C48BA5BB9BAA04`，commit=`b92f75efea16504f11e68221426acf584b05cc4d`）。X6 结果仅证明此新时点 X6；旧 H1/P2-1 及 13 项来源缺失记录不变。下一 Gate：独立 DSH post-run Review；Build/Cargo 与产品 AC1–AC7 未释放。
 ## Canonical Evidence
 
 源码 bounded Review Gate 已通过；Task 继续处于 in_progress。关闭前仍须列出 Parser/selftest、freeze/pre-run、X6 result 与 Codex verification 的精确当前证据；mutable STATUS/Plan/checkpoint 不作 immutable hash pin。
@@ -150,7 +150,7 @@ evidence_dir: verification/P02-NEW-TIME-X6
 
 | P02-X6-FREEZE-MANIFEST-R1 | X6-AC4 | G:/CODEX/New Manga.workspace/agent-output/zcode/P02-NEW-TIME-X6/x6-20261014T1305CST-p02-newtime-r1/freeze-manifest.json | - | D4C0728C1D43E9531F236022287C267B7FB0F7200CE8833F0F7EA9E9B9908BB8 | CANONICAL |
 | P02-X6-RUN-RESULT-R1 | X6-AC5/AC6 | G:/CODEX/New Manga.workspace/agent-output/zcode/P02-NEW-TIME-X6/run-x6-20261014T1305CST-p02-newtime-r1.json | - | 6A2AA75A0E48A99DC9C414E76009E4D18398D85AFAB902F08A74045E5A53B196 | CANONICAL |
-| P02-X6-CODEX-VERIFY-R1 | X6-AC4/AC6 | verification/P02-NEW-TIME-X6/codex-x6-result-verification-r1.md | - | 5E1CC04AB8A452ACF897D92C0C455CAA47562000781EDD7C45C48BA5BB9BAA04 | CANONICAL |
+| P02-X6-CODEX-VERIFY-R1 | X6-AC4/AC6 | verification/P02-NEW-TIME-X6/codex-x6-result-verification-r1.md | b92f75efea16504f11e68221426acf584b05cc4d | 5E1CC04AB8A452ACF897D92C0C455CAA47562000781EDD7C45C48BA5BB9BAA04 | CANONICAL |
 r1 轮 SOURCE_PIN（executor/selftest/protocol-r1/inventory-r1/handoff-r1 @ 8b4daf9b/360b0271）已由上表 r2 pins 取代为“当前”证据；其字节仍由 delivery commit 8b4daf9b、`dsh-source-review-input-manifest-r1.json`（151fce32）与上表 r1 历史行完整保存，可经 git 历史复验。SMAN 自身不列 SOURCE_PIN（沿用 r1 口径，属 X6-SR-11 backlog；其完整性由 delivery commit 3c707261 与本表绑定）。
 
 ## Resource Manifest
