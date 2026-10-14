@@ -1,16 +1,15 @@
 # P02 新时点 X6 恢复点
 
-## 最新恢复点（2026-10-14T12:52:34+08:00）
+## 最新恢复点（2026-10-14T14:30:00+08:00）
 
-- Agent / TaskStatus / ExecutionState：Codex `/root`；P02-NEW-TIME-X6 `in_progress`；`ACTIVE`。
-- Branch / Worktree / start commit / current HEAD：`agent/zcode/P02-NEW-TIME-X6`；`G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-X6`；base=`bc502e7aae07074fff7228d585674e87d53efcfd`；checkpoint 更新前 HEAD=`743845db176e3c2713796d049ff881e213bee03b`。代码 reviewed_head=`839e0089c971e9be984cd9e99a56ea0152ec1391`，无后续 executor/selftest 源码变更。
-- Working Tree：checkpoint 前为 clean；本次仅更新本 checkpoint，未改产品源码、共享契约或主仓文件。主仓已有 dirty/untracked 内容保持原状。
-- Completed Steps：Task AC2 attempt 2 Parser 与纯内存 selftest PASS（272 PASS / 0 FAIL / 7 SKIP；exit=0）；AC3 DSH bounded Review r2/r3 与 Codex adjudication PASS，未解决 P0/P1/P2=0；Task evidence commit=`743845db176e3c2713796d049ff881e213bee03b`。
-- Current Working Point：仅进入 AC4 Codex freeze/final pre-run；AC1 尚待唯一 RunId 与冻结输出清单落定；AC4 未通过前不得调用 executor。
-- Next Exact Step：读取 Task 当前 protocol/inventory 与 executor 的 freeze binding 要求；选取并核实 fresh RunId，确认冻结 manifest 目录此前不存在、六个 raw capture 目标与唯一 run-result target absent/unignored；复核普通盘符绝对路径、当前身份、工具路径/版本、branch/CWD、当前 Task HEAD 与 source pins；仅当所有预检通过时创建唯一 `freeze-manifest.json` 并执行只读 final pre-run。任何未知/漂移/碰撞均停止在 `NOT_RUN`。
-- Tests Already Run / Remaining / Current Errors：AC2 attempt 1 的 1 个 T-only assertion failure 保留为历史记录且已 bounded Review；attempt 2 Parser/selftest 均通过。Remaining：AC4、最多一次 AC5、AC6、AC7。当前无未解决测试错误。
-- Blockers / Decisions / Open Questions：无 `BLOCKED_WAITING_EXTERNAL_DECISION`；RunId 尚未选定/冻结；不得释放 post-run Review、Build/Cargo 或产品 AC1–AC7。
-- Evidence / Confidence / Resume Safety：AC2 报告=`verification/P02-NEW-TIME-X6/codex-ac2-verification-r2.md`（SHA-256=`73DE4DD881CBA86A2B09A8790D9349E1CE2F3AE362A0CF4AB900B80030ECB87E`）；raw output=`G:/CODEX/New Manga.workspace/agent-output/codex/P02-NEW-TIME-X6/codex-ac2-parser-selftest-r2/`；两次 fixtures 均按 Resource Manifest 原样保留。旧 H1/P2-1 与 13 项缺失来源未读取或更改；freeze/run targets 尚未创建。
+- Agent / TaskStatus / ExecutionState：Codex `/root`；`P02-NEW-TIME-X6=in_review`；独立 `P02-NEW-TIME-X6-POSTRUN-REVIEW=ready`。
+- Branch / Worktree / base / current HEAD：`agent/zcode/P02-NEW-TIME-X6`；`G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-X6`；base=`bc502e7aae07074fff7228d585674e87d53efcfd`；HEAD=`3a3cea64a4ded0ec4e37aa37373bc286a8b4a05c`。X6 source Review=`839e0089...`; one-shot freeze manifest deliveryHead=`717b2c1...`; Codex result report committed at `b92f75ef...` and pinned in `303dbe5...`.
+- Completed Steps：X6-AC2/AC3/AC4/AC5/AC6 PASS；one-shot RunId=`x6-20261014T1305CST-p02-newtime-r1` exit=0, 59/59 checks PASS；Codex verified 18 pins, pointers and six raw captures. DSH availability probe exit=0; DSH AGENT_PREFLIGHT overall=PASS, dispatch_allowed=true.
+- Current Working Point：独立 post-run Review Task 已由 Codex 定义并释放；I1/I2=`1/2`。待冻结不可变 input manifest、verify 外部 RunId/capture/classifier/temp-copy pins，随后以 `dsh --profile headless --json` 单次只读派发。
+- Next Exact Step：调用 `generate-evidence-manifest.py` 冻结 review head=`303dbe5c7f5b8bcb1902b16ad5c208e205a6b50c` 的 Task、Codex result report、X6 source/protocol/inventory 与 prior DSH adjudication；官方 `--verify` PASS 后检查外部 SHA 与输出目录 absent，再派发 DSH。
+- Tests Already Run / Remaining / Current Errors：AC2 Parser/selftest 272 PASS / 0 FAIL / 7 SKIP；AC4 pre-run `PRE_RUN_PASS`；AC5 result 59 PASS / 0 FAIL / 0 NOT_RUN。Remaining：DSH post-run Review、Codex adjudication、AC7 closeout/governance；尚无 post-run finding。
+- Blockers / Decisions / Open Questions：无 `BLOCKED_WAITING_EXTERNAL_DECISION`；Build/Cargo 与产品 AC1–AC7 均 BLOCKED / NOT_RELEASED / NOT_RUN。DSH 必须判断 Task `delivery_head/reviewed_head=839e...`、freeze `deliveryHead=717b...` 与结果报告叙述之间的精确血缘；旧 H1/P2-1 与 13 项缺失记录不变。
+- Evidence / Confidence / Resume Safety：Codex report=`verification/P02-NEW-TIME-X6/codex-x6-result-verification-r1.md`，SHA-256=`5E1CC04AB8A452ACF897D92C0C455CAA47562000781EDD7C45C48BA5BB9BAA04`; external X6 run bundle 与两份 temp capture copy 原样保留；DSH probe session=`session-2b6cbf57-f46e-44bc-8040-5f37ee6490c3` 不是 Review session，不挂载。
 
 ---
 
