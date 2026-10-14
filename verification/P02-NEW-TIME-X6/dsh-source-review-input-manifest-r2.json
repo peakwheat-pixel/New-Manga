@@ -1,0 +1,83 @@
+{
+  "task_id": "P02-NEW-TIME-X6",
+  "generated_at": "2026-10-14T04:18:39+00:00",
+  "source_commit": "db69a62c895eafcef354d5f3daee0047dd0c4b0c",
+  "review_head": "3c707261556293bbc884e0b38c63161274aa1638",
+  "generator": {
+    "name": "generate-evidence-manifest",
+    "version": 1,
+    "frozen_git_checked": true
+  },
+  "files": [
+    {
+      "relative_path": "doc/tasks/P02-NEW-TIME-X6.md",
+      "sha256": "21e33c2aaa2126b8ef424874f47fb7b6bced0a8cb189cdedcc6cf861f6210c2a",
+      "bytes": 20639,
+      "git_blob": "d842fcb848b6f319409ac1fac775fd1effb5de48",
+      "artifact_type": "doc"
+    },
+    {
+      "relative_path": "doc/handoffs/P02-NEW-TIME-X6-3c707261.md",
+      "sha256": "6d34dd92be701cde57ae2d403f4bf1fb716a22133b341148a56761f20c44e806",
+      "bytes": 13212,
+      "git_blob": "442a976d3e188a4a536995a7b56b9f73b3694640",
+      "artifact_type": "doc"
+    },
+    {
+      "relative_path": "verification/P02-NEW-TIME-X6/executor/p02-new-time-x6.ps1",
+      "sha256": "43ee7be2eef449cc85c7fddeecaf22ba689e60479ccd37d82137f4f405ddb9d4",
+      "bytes": 105343,
+      "git_blob": "54afebd90bff565bdde2a2834411cd1ee439bd5c",
+      "artifact_type": "code"
+    },
+    {
+      "relative_path": "verification/P02-NEW-TIME-X6/executor/p02-new-time-x6-selftest.ps1",
+      "sha256": "a8823f59ad1a1960217a32677116aa9eb1e30833e31d019769dcb0de6aa75658",
+      "bytes": 85767,
+      "git_blob": "9ee1c95a2b77f4337cf243969ac501c514cf5078",
+      "artifact_type": "code"
+    },
+    {
+      "relative_path": "verification/P02-NEW-TIME-X6/protocol/x6-execution-protocol-r2.md",
+      "sha256": "6216b0bc7ff33d4c9345a48acfc0e65bf1668b5f68af44889f024ad0fe67f9d1",
+      "bytes": 13555,
+      "git_blob": "24a622c310823c52ed46984a0a51880353bf5e72",
+      "artifact_type": "doc"
+    },
+    {
+      "relative_path": "verification/P02-NEW-TIME-X6/output-target-inventory-r2.json",
+      "sha256": "f980922ed7109d8109ebeb5419e4ba7aa013007b841fcb1e894d5281820010ac",
+      "bytes": 10072,
+      "git_blob": "b2f71fe20ef07dc569183f609a53c0341496ffda",
+      "artifact_type": "data"
+    },
+    {
+      "relative_path": "verification/P02-NEW-TIME-X6/source-manifest-r2.json",
+      "sha256": "806cc007d81b3a041ffa56fa8aa8ce2c1ae1aa8986551843d6f7a02b42123da1",
+      "bytes": 4964,
+      "git_blob": "6fe32005c3beb269cba04542dca8658834350595",
+      "artifact_type": "data"
+    },
+    {
+      "relative_path": "verification/P02-NEW-TIME-X6/dsh-source-review-input-manifest-r1.json",
+      "sha256": "7b219c5c36723234409ffbb729fdd991fb956ec2fdd186c009fb4e10b11d394f",
+      "bytes": 2364,
+      "git_blob": "b55d9740f1b9ddaa42fedb104f7b64d6131cf9f2",
+      "artifact_type": "data"
+    },
+    {
+      "relative_path": "verification/P02-NEW-TIME-X6/dsh-source-review-r1.md",
+      "sha256": "b3926a72201da2ef842cda75877f4b5ec561dad2c60b3810f47b2510370ec343",
+      "bytes": 22602,
+      "git_blob": "1d9b8f7ee62d9f32b37e17257a8120a01d15b144",
+      "artifact_type": "doc"
+    },
+    {
+      "relative_path": "verification/P02-NEW-TIME-X6/codex-source-review-adjudication-r1.md",
+      "sha256": "ebb80d986a2cd25c0ba9df17e940c403a45cf1a91b4c8aec6b85c74c9b1e3073",
+      "bytes": 6676,
+      "git_blob": "a741adeb5ad4a916c63cab37fd4befc5311d9aee",
+      "artifact_type": "doc"
+    }
+  ]
+}
