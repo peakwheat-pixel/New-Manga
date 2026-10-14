@@ -1,0 +1,19 @@
+{
+  "task_id": "P02-NEW-TIME-X6-BUILD-CARGO",
+  "agent": "antigravity",
+  "created_at": "2026-10-14T16:20:00.7217624+08:00",
+  "artifacts": [
+    {
+      "name": "cargo_release_binary",
+      "path": "apps/desktop/src-tauri/target/release/m2rc1-desktop.exe",
+      "bytes": 9367040,
+      "sha256": "92AC7B8EFB646FE77DF8245B13C9AF9314BEF415B2F0E007B1CDCEA729BC13FD"
+    },
+    {
+      "name": "tauri_nsis_installer",
+      "path": "apps/desktop/src-tauri/target/release/bundle/nsis/m2rc1-desktop_0.1.0_x64-setup.exe",
+      "bytes": 581475034,
+      "sha256": "A1DD05B64FABBA311A62FDCF9F496C3902B89614577BFDC85B71C70D7DB06C7B"
+    }
+  ]
+}
