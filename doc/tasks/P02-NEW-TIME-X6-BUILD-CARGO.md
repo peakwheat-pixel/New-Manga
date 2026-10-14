@@ -68,7 +68,7 @@ evidence_dir: verification/P02-NEW-TIME-X6-BUILD-CARGO
 
 | 场景/AC | 计划命令或步骤 | 前提/环境 | 实际结果 | 证据 |
 |---|---|---|---|---|
-| BC-AC1 freeze/preflight | official evidence manifest dry-run/live/verify；`preflight-agent.py --agent zcode --repo <worktree> --write-scope ...` | 两个 X6 依赖均 Codex APPROVED；Task/worktree/outputs 固定 | NOT_RUN | Task manifest、preflight bundle |
+| BC-AC1 freeze/preflight | official evidence manifest dry-run/live/verify；`preflight-agent.py --agent zcode --repo <worktree> --write-scope ...` | 两个 X6 依赖均 Codex APPROVED；Task/worktree/outputs 固定 | PARTIAL：318 tracked inputs manifest 与 supplemental pins 已 VERIFY PASS；ZCode live preflight 尚 NOT_RUN | source-manifest-r1、supplemental-inputs-r1、generator-verify-r2；preflight bundle 待生成 |
 | BC-AC2 frontend | `npm ci --no-audit --no-fund`; `npm run build` | Node v24.15.0/npm 12.0.1；`package-lock.json` pinned；npm cache 位于 task-env | NOT_RUN | 原始命令、日志、exit、dist hash |
 | BC-AC3 sidecar | `python -m venv <task-env>/venv`; `pip install -r packaging/m2ac5/requirements-build.txt`; `powershell -NoProfile -ExecutionPolicy Bypass -File packaging/m2ac5/build_sidecar.ps1 -Force -PythonExe <task-env-python> -WeightsSource <pinned-source> -SfxWeightsSource <pinned-source>` | Python 3.12；PIP_CACHE_DIR 在 task-env；所有 pinned weight 输入可读且 hash 相符 | NOT_RUN | venv/package version、命令输出、sidecar file manifest |
 | BC-AC4 cargo/package | `cargo build --locked --release`; `npx --yes @tauri-apps/cli@2.12.2 build` | Cargo 1.98.1/rustc 1.98.1 stable MSVC；frontend dist + sidecar 已 PASS；npm/Cargo cache 在 task-env | NOT_RUN | command/stdout/stderr/exit、installer manifest |
@@ -93,10 +93,13 @@ Build 时显式复用 `packaging/m2ac5/README.md` 中的 Windows 构建链。模
 
 ## Canonical Evidence
 
-待 BC-AC1 冻结后填入不可变源码/外部输入 pins；每个 AC 只记录当前唯一证据。
+源码清单冻结于 `source_manifest_commit=55ad82050a4b64f22b493998c9fc99523feeb92e`，产品源码相对 `49d2a2f9c56462f5602b00ad4b824c5381abb1ab` 未变。官方 generator 已 pin 318 个 tracked build inputs；其 mutable-name guard 排除 `Cargo.lock` 与两个 `snapshot` 命名源码文件，这 3 项均以独立 commit+SHA-256 记录在 supplement。四个外部模型权重/配置哈希匹配，Tauri CLI 2.12.2 两个 npm registry integrity 已复核。ZCode live preflight 仍是 BC-AC1 剩余 Gate。
 
 | evidence_id | AC/Gate | path | commit | sha256 | class (`CANONICAL` / `SOURCE_PIN`) |
 |---|---|---|---|---|---|
+| BC-BUILD-SOURCE-MANIFEST-R1 | BC-AC1 tracked source/dependency/build inputs (318 files) | verification/P02-NEW-TIME-X6-BUILD-CARGO/source-manifest-r1.json | e21765f4923ce820f3285e663af40aba724b40ec | 4E91A92291629C776F0B54A36E0805F0219F40778DA4EDB70B85E23B298B5E3B | CANONICAL |
+| BC-BUILD-SUPPLEMENTAL-INPUTS-R1 | BC-AC1 generator exclusions, external model pins, toolchain and npm metadata | verification/P02-NEW-TIME-X6-BUILD-CARGO/supplemental-inputs-r1.json | e21765f4923ce820f3285e663af40aba724b40ec | 09EFF15C58D9D646ADE97F25E8F6F9250921780E1D84A2CC555E3281C9111848 | CANONICAL |
+| BC-BUILD-MANIFEST-VERIFY-R2 | BC-AC1 official manifest verification (318 files) | G:/CODEX/New Manga.workspace/agent-output/codex/P02-NEW-TIME-X6-BUILD-CARGO/build-inputs-r1/generator-verify-r2/stdout.json | - | 4091F317BFFE7FBF7C9708BAF0E6EC1C962C981575BF2EA5A9CDB19AEE870B9B | CANONICAL |
 
 ## Resource Manifest
 
@@ -104,8 +107,13 @@ Build 时显式复用 `packaging/m2ac5/README.md` 中的 Windows 构建链。模
 
 | resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
 |---|---|---|---|---|---|
-| Build Task worktree | G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-X6-BUILD-CARGO | PRESERVE_REFERENCED | same | pending | 尚未创建 |
-| Task Python env | G:/CODEX/New Manga.workspace/task-envs/P02-NEW-TIME-X6-BUILD-CARGO | PRESERVE_REFERENCED | same | pending | build requirements 安装后逐项 pin |
+| Build Task worktree | G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-X6-BUILD-CARGO | PRESERVE_REFERENCED | same | pending | branch `agent/zcode/P02-NEW-TIME-X6-BUILD-CARGO` at e21765f; isolated under workspace; live preflight snapshot pending |
+| Task Python env | G:/CODEX/New Manga.workspace/task-envs/P02-NEW-TIME-X6-BUILD-CARGO | PRESERVE_REFERENCED | same | pending | isolated npm cache and empty user/global npm config created; Python venv/build caches not yet created |
+| Codex preparation attempts | G:/CODEX/New Manga.workspace/agent-output/codex/P02-NEW-TIME-X6-BUILD-CARGO/ | PRESERVE_REFERENCED | same | G:/CODEX/New Manga.workspace/agent-output/codex/P02-NEW-TIME-X6-BUILD-CARGO/preparation-manifest-r1.json | manifest SHA-256=`4AD699F8986B0F67434A0540C0C5D1D8EFC4DDA6B1AE1410AF27898C20DD3E07`; contains helper selftest, npm metadata, and every recorded prep attempt including failures |
+| Manga model.safetensors | G:/CODEX/New Manga.task-envs/M2-DOCTR-QUAL-C4/weights/ogkalu-comic-text-and-bubble-detector/model.safetensors | PRESERVE_REFERENCED | G:/CODEX/New Manga.task-envs/M2-DOCTR-QUAL-C4/weights/ogkalu-comic-text-and-bubble-detector/model.safetensors | 037930A861E67870EB345BE01B28CC70D7E2B7956528E48EE0EBDB0C093DF80D | read-only existing model source; verified against frozen expected hash |
+| Manga model config | G:/CODEX/New Manga.task-envs/M2-DOCTR-QUAL-C4/weights/ogkalu-comic-text-and-bubble-detector/config.json | PRESERVE_REFERENCED | G:/CODEX/New Manga.task-envs/M2-DOCTR-QUAL-C4/weights/ogkalu-comic-text-and-bubble-detector/config.json | B6D707933E12E9593A7025604BE1C95ADD70A6DB371FDD1532E8854E2256E072 | read-only existing model source; verified against frozen expected hash |
+| Manga preprocessor config | G:/CODEX/New Manga.task-envs/M2-DOCTR-QUAL-C4/weights/ogkalu-comic-text-and-bubble-detector/preprocessor_config.json | PRESERVE_REFERENCED | G:/CODEX/New Manga.task-envs/M2-DOCTR-QUAL-C4/weights/ogkalu-comic-text-and-bubble-detector/preprocessor_config.json | 7E9E2245806AA3EF068A5321F5EEBEE3116FA4CEC560173231954FFACA930ECA | read-only existing model source; verified against frozen expected hash |
+| SFX detector model | G:/CODEX/New Manga.task-envs/M2-SFX-DETECT/weights-v2b/yolo11s-seg.onnx | PRESERVE_REFERENCED | G:/CODEX/New Manga.task-envs/M2-SFX-DETECT/weights-v2b/yolo11s-seg.onnx | 944E811410933AD6FF8D32446FCC9EEF90FB463794E1874CE83035E83ACD418D | read-only existing model source; verified against frozen expected hash |
 | ZCode raw output | G:/CODEX/New Manga.workspace/agent-output/zcode/P02-NEW-TIME-X6-BUILD-CARGO | PRESERVE_REFERENCED | same | pending | 原样保留每次尝试 |
 | Build artifacts | G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-X6-BUILD-CARGO/apps/desktop/**/target/** + frontend/dist + node_modules | PRESERVE_REFERENCED | same | pending | 当前 Gate 引用，逐文件 manifest |
 
