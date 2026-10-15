@@ -1,0 +1,13 @@
+{
+  "experiment": "Experiment 1 - Clean Proxy Contrast",
+  "scenario": "ac6-contrast",
+  "command": "node apps/desktop/frontend/e2e/p02-new-time/ac6-contrast.mjs",
+  "started_at": "2026-10-15T10:57:51.8782171+08:00",
+  "ended_at": "2026-10-15T10:58:37.2857871+08:00",
+  "node_exit_code": 1,
+  "status": "FAIL",
+  "verdict": "ERROR",
+  "cdp_port": 9333,
+  "reason": "CDP endpoint never appeared: TypeError: fetch failed",
+  "app_panic": "Failed to setup app: runtime error: failed to create webview: WebView2 error: WindowsError(Error { code: HRESULT(0x80070578), message: \"无效的窗口句柄。\" })"
+}

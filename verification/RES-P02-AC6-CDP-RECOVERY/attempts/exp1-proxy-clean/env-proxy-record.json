@@ -1,0 +1,12 @@
+{
+  "experiment": "Experiment 1 - Clean Proxy Contrast",
+  "pre_clean_proxy_env": {
+    "HTTP_PROXY": "http://127.0.0.1:7890",
+    "HTTPS_PROXY": "http://127.0.0.1:7890",
+    "NO_PROXY": "localhost,127.0.0.1,::1",
+    "ZCODE_HTTP_PROXY": "http://127.0.0.1:7890"
+  },
+  "post_clean_proxy_env": {
+    "NO_PROXY": "localhost,127.0.0.1,::1"
+  }
+}
