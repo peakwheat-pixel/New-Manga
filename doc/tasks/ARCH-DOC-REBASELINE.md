@@ -91,3 +91,5 @@ P08已完成。Gate 消费者：P09（AC1–3）、P18（AC4）、P20（AC5）�
 ## Closeout Record
 - 2026-10-15 Owner 路由：`route-agent.py --role owner --task-profile heavy --owner-policy AUTO_SELECT` 选中 **antigravity**（较 codex 同分时由 router tie-break 决定）；权威参与状态以 `.orchestrator/tasks/ARCH-DOC-REBASELINE-role.json` 为准（owner=antigravity，codex 保留为 contributor）。Reviewer 仍为 DeepSeek Harness（非 Owner、非参与者）。
 - 2026-10-15 集成与审查：Owner 交付 `70208144` 经 R1 独立 Review（`approved_with_conditions；source-pins 10/10 复核一致）后合并入 main；AC1–AC3=PARTIAL、AC4–AC6=NOT_RUN，按 AC7 由各消费者 Gate（P09/P18/P20/P16/P17）裁决后本 Task 方可 done。
+
+- 2026-10-15 集成落库：合并 `codex/arch-doc-rebaseline` 入 main（merge=`4227e8b509e3a42736229b93df4bd9eec548153d`）。集成前按用户裁定先把主仓 5 个未提交文档固定为基线（`836a12c6`），再合并分支；5 个文档三方自动合并成功，`doc/tasks/ARCH-DOC-REBASELINE.md` 冲突按“双方记录并存”解决。本 Task 维持 `ready`（AC1–AC3=PARTIAL、AC4–AC6=NOT_RUN），按 AC7 待 P09/P18/P20/P16/P17 消费者裁决后方可 done。
