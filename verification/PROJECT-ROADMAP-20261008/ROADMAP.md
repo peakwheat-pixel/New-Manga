@@ -32,7 +32,7 @@ flowchart TB
   BASE["当前位置：P08/P03/P01 done，P02 in_progress<br/>P系列done 3/21、in_progress 1、proposed 17、ready 0"] --> P01["P01<br/>done / D7 Codex closeout PASS；D3 Antigravity Review approved，C1 Gate PASS<br/>台账取证<br/>Owner/Integrator Codex · Reviewer Antigravity<br/>integration M0 13e66ec5"]
   BASE --> P02["P02<br/>in_progress / 执行中，Antigravity已接单<br/>真实 Workbench WebView 验证<br/>真实鼠标键盘/300ms/写后刷新/对比度<br/>范围 r1–r4冻结 · DeepSeek Harness 非作者Review"]
   BASE --> P03["P03<br/>done / Review与Codex集成Gate通过<br/>第五入口Gate<br/>集成55246423；Gate绑定d717"]
-  BASE --> P04["P04<br/>in_progress / 测试代码实现中<br/>生产命令面验证<br/>常量成员与并发响应；先复现再决定修复"]
+  BASE --> P04["P04<br/>proposed / 未释放<br/>生产命令面验证<br/>常量成员与并发响应；先复现再决定修复"]
   BASE --> P05["P05<br/>proposed / 未释放<br/>错误语义澄清<br/>category与retryable注记一致"]
   BASE --> P06["P06<br/>proposed / 未释放<br/>GC迁移补证<br/>旧版本退出/命名空间保护；未知保留"]
   P02 -. "确认实际缺口后" .-> P07["P07<br/>proposed / 未释放<br/>小交互修补<br/>手输image读取/quiet-window busy"]
