@@ -1,0 +1,98 @@
+{
+  "generated_at": "2026-10-15T21:20:45+08:00",
+  "task_id": "ARCH-DOC-REBASELINE",
+  "base_commit": "4ef92f3daa527adac752b8fc52d492176697a292",
+  "description": "主仓工作区未提交(dirty)文档指纹锁定记录。本版本为未提交工作区内容，禁止原位覆盖主仓，仅作为来源追溯与核验参考。",
+  "pinned_files": [
+    {
+      "file": "doc/01_FUNCTIONAL_ARCHITECTURE.md",
+      "main_workspace_path": "G:/CODEX/New Manga/doc/01_FUNCTIONAL_ARCHITECTURE.md",
+      "sha256": "020e81f77ee78a34449984efa5d2c50424f339c0b1784ea1dd45f710427f40a4",
+      "bytes": 12925,
+      "mtime_utc": "2026-10-15T12:55:01.9700944Z",
+      "workspace_dirty_state": "uncommitted_workspace_content",
+      "note": "该版本为未提交工作区内容，禁止原位覆盖，本指纹用于来源追溯"
+    },
+    {
+      "file": "doc/02_TECHNICAL_ARCHITECTURE_.md",
+      "main_workspace_path": "G:/CODEX/New Manga/doc/02_TECHNICAL_ARCHITECTURE_.md",
+      "sha256": "9dd8d9c85e3f9199b707d513982050fb7dacf196970eea79ed7ed6be06e39b63",
+      "bytes": 38641,
+      "mtime_utc": "2026-10-15T12:55:01.9700944Z",
+      "workspace_dirty_state": "uncommitted_workspace_content",
+      "note": "该版本为未提交工作区内容，禁止原位覆盖，本指纹用于来源追溯"
+    },
+    {
+      "file": "doc/03_DATA_MODEL.md",
+      "main_workspace_path": "G:/CODEX/New Manga/doc/03_DATA_MODEL.md",
+      "sha256": "6bc957f23527d7fe55b00d6b880b592d325e22eb1e28129c92eeb50867ab0143",
+      "bytes": 58184,
+      "mtime_utc": "2026-10-15T12:55:01.9716231Z",
+      "workspace_dirty_state": "uncommitted_workspace_content",
+      "note": "该版本为未提交工作区内容，禁止原位覆盖，本指纹用于来源追溯"
+    },
+    {
+      "file": "doc/04_USER_FLOW.md",
+      "main_workspace_path": "G:/CODEX/New Manga/doc/04_USER_FLOW.md",
+      "sha256": "284f463c4511c306ca6ceb904d8d9ad0c1ab27f1b5086ae7f15b6026544515d1",
+      "bytes": 36533,
+      "mtime_utc": "2026-10-15T12:55:01.9716231Z",
+      "workspace_dirty_state": "uncommitted_workspace_content",
+      "note": "该版本为未提交工作区内容，禁止原位覆盖，本指纹用于来源追溯"
+    },
+    {
+      "file": "doc/05_UI_MAPPING.md",
+      "main_workspace_path": "G:/CODEX/New Manga/doc/05_UI_MAPPING.md",
+      "sha256": "bb5ddfd65d36b35a068e3223bdeb4e9be36182a7741497b01c5ff939321c94f3",
+      "bytes": 45231,
+      "mtime_utc": "2026-10-15T12:55:01.9731386Z",
+      "workspace_dirty_state": "uncommitted_workspace_content",
+      "note": "该版本为未提交工作区内容，禁止原位覆盖，本指纹用于来源追溯"
+    },
+    {
+      "file": "doc/06_TRANSLATION_PIPELINE.md",
+      "main_workspace_path": "G:/CODEX/New Manga/doc/06_TRANSLATION_PIPELINE.md",
+      "sha256": "8cbf8d24a6016d9dbaf1730fb182cb71774b489a0050c45a169228b6ba91f367",
+      "bytes": 52142,
+      "mtime_utc": "2026-10-15T12:55:01.9731386Z",
+      "workspace_dirty_state": "uncommitted_workspace_content",
+      "note": "该版本为未提交工作区内容，禁止原位覆盖，本指纹用于来源追溯"
+    },
+    {
+      "file": "doc/07_NON_FUNCTIONAL_REQUIREMENTS.md",
+      "main_workspace_path": "G:/CODEX/New Manga/doc/07_NON_FUNCTIONAL_REQUIREMENTS.md",
+      "sha256": "13809460029cc54da1a93809fdc74f649268cb89be8e5595a645e26a2b22df1e",
+      "bytes": 41183,
+      "mtime_utc": "2026-10-15T12:55:01.9746588Z",
+      "workspace_dirty_state": "uncommitted_workspace_content",
+      "note": "该版本为未提交工作区内容，禁止原位覆盖，本指纹用于来源追溯"
+    },
+    {
+      "file": "doc/08_ACCEPTANCE_CRITERIA.md",
+      "main_workspace_path": "G:/CODEX/New Manga/doc/08_ACCEPTANCE_CRITERIA.md",
+      "sha256": "c05ca718762b172844136bf4093bf1d63773c9f0fc7edfb69f7ab15a70bf8057",
+      "bytes": 48232,
+      "mtime_utc": "2026-10-15T12:55:01.9756633Z",
+      "workspace_dirty_state": "uncommitted_workspace_content",
+      "note": "该版本为未提交工作区内容，禁止原位覆盖，本指纹用于来源追溯"
+    },
+    {
+      "file": "doc/13_ACCEPTANCE_TRACEABILITY.md",
+      "main_workspace_path": "G:/CODEX/New Manga/doc/13_ACCEPTANCE_TRACEABILITY.md",
+      "sha256": "64d7b3e4c8281506c4c81754ce490db4567dca19f499596e6bb033c3d0587bd9",
+      "bytes": 29262,
+      "mtime_utc": "2026-10-15T12:55:01.9776809Z",
+      "workspace_dirty_state": "uncommitted_workspace_content",
+      "note": "该版本为未提交工作区内容，禁止原位覆盖，本指纹用于来源追溯"
+    },
+    {
+      "file": "doc/AD-001_TARGET_DESKTOP_ARCHITECTURE.md",
+      "main_workspace_path": "G:/CODEX/New Manga/doc/AD-001_TARGET_DESKTOP_ARCHITECTURE.md",
+      "sha256": "be1184f3c8a798bee943ec1f3f266123e3f73e07f913b98d48a1fc20f4909db3",
+      "bytes": 3346,
+      "mtime_utc": "2026-10-15T12:55:01.9776809Z",
+      "workspace_dirty_state": "uncommitted_workspace_content",
+      "note": "该版本为未提交工作区内容，禁止原位覆盖，本指纹用于来源追溯"
+    }
+  ]
+}

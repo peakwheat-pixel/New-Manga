@@ -1,4 +1,6 @@
-# 07 非功能需求（Target Non-Functional Requirements）
+# 07 非功能需求（产品要求 + Legacy 技术映射）
+
+> **分类：MIXED（2026-10-12）**。本文中的产品级性能、容量、数据安全、备份恢复、诊断和兼容性要求仍是需求基线，本次 rebaseline 不删除或放宽这些要求。PySide6/QML、Qt Thread 和 PyInstaller 等专属实现机制属于 `LEGACY`；它们不能定义 React/Tauri 的技术栈或直接成为新架构 Release Gate。新架构 Task 必须把相关产品要求映射到冻结架构并定义可执行验收；需求保留本身不自动授权实现或宣称通过。
 
 > 本文件定义新漫画翻译软件的目标非功能需求（To-Be），用于约束性能、稳定性、容量、资源占用、数据安全、备份恢复、网络、日志、可诊断性、Windows 兼容性、打包和测试质量。
 >
@@ -63,7 +65,7 @@ flowchart LR
 
 ---
 
-# 2. 目标平台
+# 2. Windows 平台要求与 Legacy 运行形态映射
 
 ## 2.1 主平台
 
@@ -73,7 +75,7 @@ flowchart LR
 Windows x64 Desktop
 ```
 
-目标运行形态：
+旧目标运行形态（`LEGACY / HISTORICAL`，注册时快照）：
 
 ```text
 PySide6
@@ -83,7 +85,7 @@ SQLite
 Managed File Storage
 ```
 
-不把浏览器 / Web SPA 作为主运行形态。
+当前交付仍是 Windows Desktop；React UI 托管于 Tauri。单独的浏览器 / Web SPA 不是主交付形态。当前技术栈以 [AD-001](AD-001_TARGET_DESKTOP_ARCHITECTURE.md) 为准。
 
 ## 2.2 Windows 版本策略
 

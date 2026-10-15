@@ -1,6 +1,8 @@
-# 08 验收标准与 Release Gate（Target Acceptance Criteria）
+# 08 产品验收标准与 Legacy Release Gate 映射
 
-> 本文件定义新漫画翻译软件的目标验收标准（To-Be），用于把 `01~07` 的功能、技术、数据、用户流程、UI、Pipeline 与非功能要求转换为可执行、可复现、可留证的验收项目。
+> **分类：MIXED（2026-10-12）**。产品行为、数据安全、性能与容量相关验收意图仍然保留，本次 rebaseline 不删除或放宽它们。PySide6/QML、PyInstaller、Qt DLL 等技术专属条目描述 Legacy Production Baseline / T3.2.1 历史 Gate，不是 React/Tauri 的验收结果。新架构 Task/contract 应将仍适用的产品要求映射到冻结架构并建立新证据；历史 PASS/NOT_RUN 语义不得改写、继承或迁移套用，保留要求本身不自动授权实现。
+
+> 本文件保留新漫画翻译软件的产品验收意图与旧技术 Gate 映射，用于把 `01~07` 的产品功能、数据、流程及非功能要求整理为验收项目。旧技术专属 Gate/结果仅作历史记录；当前架构的验收由 AD-001 下明确释放的 Task/contract 映射并建立新证据。
 >
 > 本文件基于：
 >
