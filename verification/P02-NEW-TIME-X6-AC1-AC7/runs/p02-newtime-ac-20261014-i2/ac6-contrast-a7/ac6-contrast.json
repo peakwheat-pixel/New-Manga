@@ -1,0 +1,717 @@
+{
+  "steps": [
+    {
+      "step": "clean-targets-observed",
+      "at": "2026-10-15T04:51:17.877Z",
+      "roaming": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-i2\\ac6-contrast-a7\\appdata-roaming",
+        "state": "ABSENT"
+      },
+      "localAppData": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-i2\\ac6-contrast-a7\\appdata-local",
+        "state": "ABSENT"
+      },
+      "tmp": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-i2\\ac6-contrast-a7\\tmp",
+        "state": "ABSENT"
+      },
+      "dataRoot": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-i2\\ac6-contrast-a7\\data-root",
+        "state": "ABSENT"
+      },
+      "derived": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-i2\\ac6-contrast-a7\\scope\\derived",
+        "state": "ABSENT"
+      },
+      "managed": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-i2\\ac6-contrast-a7\\scope\\managed",
+        "state": "ABSENT"
+      },
+      "catalogDb": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-i2\\ac6-contrast-a7\\catalog\\catalog.sqlite",
+        "state": "ABSENT"
+      },
+      "webview2Udd": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-i2\\ac6-contrast-a7\\webview2-udd",
+        "state": "ABSENT"
+      },
+      "logs": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-i2\\ac6-contrast-a7\\logs",
+        "state": "ABSENT"
+      }
+    },
+    {
+      "step": "launched",
+      "at": "2026-10-15T04:51:18.730Z",
+      "pid": 33732
+    },
+    {
+      "0": {
+        "selector": "[data-testid=\"nav-console\"]",
+        "label": "nav-console button (disabled/active view)",
+        "present": true,
+        "kind": "non-text-ui",
+        "text": "Console",
+        "color": "rgb(216, 224, 232)",
+        "colorResolved": "rgb(216.0, 224.0, 232.0)",
+        "backgroundColor": "rgb(28, 36, 48)",
+        "backgroundResolved": "rgb(28.0, 36.0, 48.0)",
+        "backgroundVerifiable": true,
+        "backgroundSource": "BUTTON[nav-console]",
+        "backgroundReason": null,
+        "backgroundLayers": [
+          {
+            "on": "BUTTON[nav-console]",
+            "color": {
+              "r": 28,
+              "g": 36,
+              "b": 48,
+              "a": 1
+            }
+          }
+        ],
+        "alphaCompositeApplied": false,
+        "fontSize": "12px",
+        "fontWeight": "400",
+        "disabled": true,
+        "opacity": "1"
+      },
+      "1": {
+        "selector": "[data-testid=\"nav-workbench\"]",
+        "label": "nav-workbench button (enabled)",
+        "present": true,
+        "kind": "text",
+        "text": "Workbench",
+        "color": "rgb(216, 224, 232)",
+        "colorResolved": "rgb(216.0, 224.0, 232.0)",
+        "backgroundColor": "rgb(22, 27, 34)",
+        "backgroundResolved": "rgb(22.0, 27.0, 34.0)",
+        "backgroundVerifiable": true,
+        "backgroundSource": "BUTTON[nav-workbench]",
+        "backgroundReason": null,
+        "backgroundLayers": [
+          {
+            "on": "BUTTON[nav-workbench]",
+            "color": {
+              "r": 22,
+              "g": 27,
+              "b": 34,
+              "a": 1
+            }
+          }
+        ],
+        "alphaCompositeApplied": false,
+        "fontSize": "12px",
+        "fontWeight": "400",
+        "disabled": false,
+        "opacity": "1"
+      },
+      "2": {
+        "selector": "h1",
+        "label": "console heading",
+        "present": true,
+        "kind": "text",
+        "text": "M2-RC2 resource channel runtime",
+        "color": "rgb(216, 224, 232)",
+        "colorResolved": "rgb(216.0, 224.0, 232.0)",
+        "backgroundColor": "rgba(0, 0, 0, 0)",
+        "backgroundResolved": "rgb(16.0, 20.0, 24.0)",
+        "backgroundVerifiable": true,
+        "backgroundSource": "DIV",
+        "backgroundReason": null,
+        "backgroundLayers": [
+          {
+            "on": "DIV",
+            "color": {
+              "r": 16,
+              "g": 20,
+              "b": 24,
+              "a": 1
+            }
+          }
+        ],
+        "alphaCompositeApplied": false,
+        "fontSize": "15px",
+        "fontWeight": "700",
+        "disabled": false,
+        "opacity": "1"
+      },
+      "step": "console-view-colors",
+      "at": "2026-10-15T04:51:19.135Z"
+    },
+    {
+      "0": {
+        "selector": "[data-testid=\"workbench-toolbar\"] [data-testid=\"toolbar-context\"]",
+        "label": "toolbar context text",
+        "present": true,
+        "kind": "text",
+        "text": "page syn-page-ac6-unknown",
+        "color": "rgb(216, 224, 232)",
+        "colorResolved": "rgb(216.0, 224.0, 232.0)",
+        "backgroundColor": "rgba(0, 0, 0, 0)",
+        "backgroundResolved": "rgb(16.0, 20.0, 24.0)",
+        "backgroundVerifiable": true,
+        "backgroundSource": "DIV",
+        "backgroundReason": null,
+        "backgroundLayers": [
+          {
+            "on": "DIV",
+            "color": {
+              "r": 16,
+              "g": 20,
+              "b": 24,
+              "a": 1
+            }
+          }
+        ],
+        "alphaCompositeApplied": false,
+        "fontSize": "12px",
+        "fontWeight": "400",
+        "disabled": false,
+        "opacity": "1"
+      },
+      "1": {
+        "selector": "[data-testid=\"toolbar-region-count\"]",
+        "label": "toolbar secondary text",
+        "present": true,
+        "kind": "text",
+        "text": "regions: 0",
+        "color": "rgb(138, 148, 162)",
+        "colorResolved": "rgb(138.0, 148.0, 162.0)",
+        "backgroundColor": "rgba(0, 0, 0, 0)",
+        "backgroundResolved": "rgb(16.0, 20.0, 24.0)",
+        "backgroundVerifiable": true,
+        "backgroundSource": "DIV",
+        "backgroundReason": null,
+        "backgroundLayers": [
+          {
+            "on": "DIV",
+            "color": {
+              "r": 16,
+              "g": 20,
+              "b": 24,
+              "a": 1
+            }
+          }
+        ],
+        "alphaCompositeApplied": false,
+        "fontSize": "11px",
+        "fontWeight": "400",
+        "disabled": false,
+        "opacity": "1"
+      },
+      "2": {
+        "selector": "[data-testid=\"page-id-input\"]",
+        "label": "page id input",
+        "present": true,
+        "kind": "text",
+        "text": "syn-page-ac6-unknown",
+        "color": "rgb(216, 224, 232)",
+        "colorResolved": "rgb(216.0, 224.0, 232.0)",
+        "backgroundColor": "rgb(16, 20, 24)",
+        "backgroundResolved": "rgb(16.0, 20.0, 24.0)",
+        "backgroundVerifiable": true,
+        "backgroundSource": "INPUT[page-id-input]",
+        "backgroundReason": null,
+        "backgroundLayers": [
+          {
+            "on": "INPUT[page-id-input]",
+            "color": {
+              "r": 16,
+              "g": 20,
+              "b": 24,
+              "a": 1
+            }
+          }
+        ],
+        "alphaCompositeApplied": false,
+        "fontSize": "13.3333px",
+        "fontWeight": "400",
+        "disabled": false,
+        "opacity": "1"
+      },
+      "3": {
+        "selector": "[data-testid=\"resource-resolve-error\"]",
+        "label": "resolve error text",
+        "present": true,
+        "kind": "text",
+        "text": "resource: PAGE_NOT_FOUND",
+        "color": "rgb(232, 160, 160)",
+        "colorResolved": "rgb(232.0, 160.0, 160.0)",
+        "backgroundColor": "rgba(0, 0, 0, 0)",
+        "backgroundResolved": "rgb(16.0, 20.0, 24.0)",
+        "backgroundVerifiable": true,
+        "backgroundSource": "DIV",
+        "backgroundReason": null,
+        "backgroundLayers": [
+          {
+            "on": "DIV",
+            "color": {
+              "r": 16,
+              "g": 20,
+              "b": 24,
+              "a": 1
+            }
+          }
+        ],
+        "alphaCompositeApplied": false,
+        "fontSize": "11px",
+        "fontWeight": "400",
+        "disabled": false,
+        "opacity": "1"
+      },
+      "4": {
+        "selector": "[data-testid=\"inspector-empty\"]",
+        "label": "inspector empty note",
+        "present": true,
+        "kind": "text",
+        "text": "no region selected",
+        "color": "rgb(138, 148, 162)",
+        "colorResolved": "rgb(138.0, 148.0, 162.0)",
+        "backgroundColor": "rgba(0, 0, 0, 0)",
+        "backgroundResolved": "rgb(16.0, 20.0, 24.0)",
+        "backgroundVerifiable": true,
+        "backgroundSource": "DIV",
+        "backgroundReason": null,
+        "backgroundLayers": [
+          {
+            "on": "DIV",
+            "color": {
+              "r": 16,
+              "g": 20,
+              "b": 24,
+              "a": 1
+            }
+          }
+        ],
+        "alphaCompositeApplied": false,
+        "fontSize": "11px",
+        "fontWeight": "400",
+        "disabled": false,
+        "opacity": "1"
+      },
+      "5": {
+        "selector": "[data-testid=\"task-progress-placeholder\"]",
+        "label": "task progress placeholder",
+        "present": true,
+        "kind": "text",
+        "text": "任务进度通道占位（GetTaskProjection runtime 未释放；占位不扩命令面）",
+        "color": "rgb(138, 148, 162)",
+        "colorResolved": "rgb(138.0, 148.0, 162.0)",
+        "backgroundColor": "rgba(0, 0, 0, 0)",
+        "backgroundResolved": "rgb(16.0, 20.0, 24.0)",
+        "backgroundVerifiable": true,
+        "backgroundSource": "DIV",
+        "backgroundReason": null,
+        "backgroundLayers": [
+          {
+            "on": "DIV",
+            "color": {
+              "r": 16,
+              "g": 20,
+              "b": 24,
+              "a": 1
+            }
+          }
+        ],
+        "alphaCompositeApplied": false,
+        "fontSize": "11px",
+        "fontWeight": "400",
+        "disabled": false,
+        "opacity": "1"
+      },
+      "6": {
+        "selector": "[data-testid=\"workbench-page\"]",
+        "label": "workbench panel surface",
+        "present": true,
+        "kind": "non-text-ui",
+        "text": "page syn-page-ac6-unknownregions: 0Pagespage_id (r",
+        "color": "rgb(216, 224, 232)",
+        "colorResolved": "rgb(216.0, 224.0, 232.0)",
+        "backgroundColor": "rgba(0, 0, 0, 0)",
+        "backgroundResolved": "rgb(16.0, 20.0, 24.0)",
+        "backgroundVerifiable": true,
+        "backgroundSource": "DIV",
+        "backgroundReason": null,
+        "backgroundLayers": [
+          {
+            "on": "DIV",
+            "color": {
+              "r": 16,
+              "g": 20,
+              "b": 24,
+              "a": 1
+            }
+          }
+        ],
+        "alphaCompositeApplied": false,
+        "fontSize": "12px",
+        "fontWeight": "400",
+        "disabled": false,
+        "opacity": "1"
+      },
+      "step": "workbench-view-colors",
+      "at": "2026-10-15T04:51:20.620Z"
+    },
+    {
+      "step": "screenshot",
+      "at": "2026-10-15T04:51:20.690Z",
+      "file": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-i2\\ac6-contrast-a7\\logs\\ac6-workbench.png",
+      "bytes": 27967,
+      "sha256": "72F2CD2703FAEE36CB7AB4E229C1AE7FD3540A1D70F70FEDF4A97C73F6ECECE2"
+    },
+    {
+      "step": "teardown",
+      "at": "2026-10-15T04:51:21.892Z",
+      "exited": true,
+      "code": null,
+      "signal": "SIGTERM"
+    }
+  ],
+  "contrast_table": [
+    {
+      "label": "nav-console button (disabled/active view)",
+      "selector": "[data-testid=\"nav-console\"]",
+      "text": "Console",
+      "kind": "non-text-ui",
+      "disabled": true,
+      "fontSize": "12px",
+      "fontWeight": "400",
+      "foreground": "rgb(216.0, 224.0, 232.0)",
+      "background": "rgb(28.0, 36.0, 48.0)",
+      "backgroundSource": "BUTTON[nav-console]",
+      "backgroundLayers": [
+        {
+          "on": "BUTTON[nav-console]",
+          "color": {
+            "r": 28,
+            "g": 36,
+            "b": 48,
+            "a": 1
+          }
+        }
+      ],
+      "alpha_compositing_applied": false,
+      "token_mapping": {
+        "status": "UNMAPPED",
+        "note": "inline React runtime colors; F token system not wired into this surface"
+      },
+      "contrast_ratio": 11.71,
+      "threshold": 3,
+      "contrast_result": "PASS"
+    },
+    {
+      "label": "nav-workbench button (enabled)",
+      "selector": "[data-testid=\"nav-workbench\"]",
+      "text": "Workbench",
+      "kind": "text",
+      "disabled": false,
+      "fontSize": "12px",
+      "fontWeight": "400",
+      "foreground": "rgb(216.0, 224.0, 232.0)",
+      "background": "rgb(22.0, 27.0, 34.0)",
+      "backgroundSource": "BUTTON[nav-workbench]",
+      "backgroundLayers": [
+        {
+          "on": "BUTTON[nav-workbench]",
+          "color": {
+            "r": 22,
+            "g": 27,
+            "b": 34,
+            "a": 1
+          }
+        }
+      ],
+      "alpha_compositing_applied": false,
+      "token_mapping": {
+        "status": "UNMAPPED",
+        "note": "inline React runtime colors; F token system not wired into this surface"
+      },
+      "contrast_ratio": 12.97,
+      "threshold": 4.5,
+      "contrast_result": "PASS"
+    },
+    {
+      "label": "console heading",
+      "selector": "h1",
+      "text": "M2-RC2 resource channel runtime",
+      "kind": "text",
+      "disabled": false,
+      "fontSize": "15px",
+      "fontWeight": "700",
+      "foreground": "rgb(216.0, 224.0, 232.0)",
+      "background": "rgb(16.0, 20.0, 24.0)",
+      "backgroundSource": "DIV",
+      "backgroundLayers": [
+        {
+          "on": "DIV",
+          "color": {
+            "r": 16,
+            "g": 20,
+            "b": 24,
+            "a": 1
+          }
+        }
+      ],
+      "alpha_compositing_applied": false,
+      "token_mapping": {
+        "status": "UNMAPPED",
+        "note": "inline React runtime colors; F token system not wired into this surface"
+      },
+      "contrast_ratio": 13.87,
+      "threshold": 4.5,
+      "contrast_result": "PASS"
+    },
+    {
+      "label": "toolbar context text",
+      "selector": "[data-testid=\"workbench-toolbar\"] [data-testid=\"toolbar-context\"]",
+      "text": "page syn-page-ac6-unknown",
+      "kind": "text",
+      "disabled": false,
+      "fontSize": "12px",
+      "fontWeight": "400",
+      "foreground": "rgb(216.0, 224.0, 232.0)",
+      "background": "rgb(16.0, 20.0, 24.0)",
+      "backgroundSource": "DIV",
+      "backgroundLayers": [
+        {
+          "on": "DIV",
+          "color": {
+            "r": 16,
+            "g": 20,
+            "b": 24,
+            "a": 1
+          }
+        }
+      ],
+      "alpha_compositing_applied": false,
+      "token_mapping": {
+        "status": "UNMAPPED",
+        "note": "inline React runtime colors; F token system not wired into this surface"
+      },
+      "contrast_ratio": 13.87,
+      "threshold": 4.5,
+      "contrast_result": "PASS"
+    },
+    {
+      "label": "toolbar secondary text",
+      "selector": "[data-testid=\"toolbar-region-count\"]",
+      "text": "regions: 0",
+      "kind": "text",
+      "disabled": false,
+      "fontSize": "11px",
+      "fontWeight": "400",
+      "foreground": "rgb(138.0, 148.0, 162.0)",
+      "background": "rgb(16.0, 20.0, 24.0)",
+      "backgroundSource": "DIV",
+      "backgroundLayers": [
+        {
+          "on": "DIV",
+          "color": {
+            "r": 16,
+            "g": 20,
+            "b": 24,
+            "a": 1
+          }
+        }
+      ],
+      "alpha_compositing_applied": false,
+      "token_mapping": {
+        "status": "UNMAPPED",
+        "note": "inline React runtime colors; F token system not wired into this surface"
+      },
+      "contrast_ratio": 6.02,
+      "threshold": 4.5,
+      "contrast_result": "PASS"
+    },
+    {
+      "label": "page id input",
+      "selector": "[data-testid=\"page-id-input\"]",
+      "text": "syn-page-ac6-unknown",
+      "kind": "text",
+      "disabled": false,
+      "fontSize": "13.3333px",
+      "fontWeight": "400",
+      "foreground": "rgb(216.0, 224.0, 232.0)",
+      "background": "rgb(16.0, 20.0, 24.0)",
+      "backgroundSource": "INPUT[page-id-input]",
+      "backgroundLayers": [
+        {
+          "on": "INPUT[page-id-input]",
+          "color": {
+            "r": 16,
+            "g": 20,
+            "b": 24,
+            "a": 1
+          }
+        }
+      ],
+      "alpha_compositing_applied": false,
+      "token_mapping": {
+        "status": "UNMAPPED",
+        "note": "inline React runtime colors; F token system not wired into this surface"
+      },
+      "contrast_ratio": 13.87,
+      "threshold": 4.5,
+      "contrast_result": "PASS"
+    },
+    {
+      "label": "resolve error text",
+      "selector": "[data-testid=\"resource-resolve-error\"]",
+      "text": "resource: PAGE_NOT_FOUND",
+      "kind": "text",
+      "disabled": false,
+      "fontSize": "11px",
+      "fontWeight": "400",
+      "foreground": "rgb(232.0, 160.0, 160.0)",
+      "background": "rgb(16.0, 20.0, 24.0)",
+      "backgroundSource": "DIV",
+      "backgroundLayers": [
+        {
+          "on": "DIV",
+          "color": {
+            "r": 16,
+            "g": 20,
+            "b": 24,
+            "a": 1
+          }
+        }
+      ],
+      "alpha_compositing_applied": false,
+      "token_mapping": {
+        "status": "UNMAPPED",
+        "note": "inline React runtime colors; F token system not wired into this surface"
+      },
+      "contrast_ratio": 8.78,
+      "threshold": 4.5,
+      "contrast_result": "PASS"
+    },
+    {
+      "label": "inspector empty note",
+      "selector": "[data-testid=\"inspector-empty\"]",
+      "text": "no region selected",
+      "kind": "text",
+      "disabled": false,
+      "fontSize": "11px",
+      "fontWeight": "400",
+      "foreground": "rgb(138.0, 148.0, 162.0)",
+      "background": "rgb(16.0, 20.0, 24.0)",
+      "backgroundSource": "DIV",
+      "backgroundLayers": [
+        {
+          "on": "DIV",
+          "color": {
+            "r": 16,
+            "g": 20,
+            "b": 24,
+            "a": 1
+          }
+        }
+      ],
+      "alpha_compositing_applied": false,
+      "token_mapping": {
+        "status": "UNMAPPED",
+        "note": "inline React runtime colors; F token system not wired into this surface"
+      },
+      "contrast_ratio": 6.02,
+      "threshold": 4.5,
+      "contrast_result": "PASS"
+    },
+    {
+      "label": "task progress placeholder",
+      "selector": "[data-testid=\"task-progress-placeholder\"]",
+      "text": "任务进度通道占位（GetTaskProjection runtime 未释放；占位不扩命令面）",
+      "kind": "text",
+      "disabled": false,
+      "fontSize": "11px",
+      "fontWeight": "400",
+      "foreground": "rgb(138.0, 148.0, 162.0)",
+      "background": "rgb(16.0, 20.0, 24.0)",
+      "backgroundSource": "DIV",
+      "backgroundLayers": [
+        {
+          "on": "DIV",
+          "color": {
+            "r": 16,
+            "g": 20,
+            "b": 24,
+            "a": 1
+          }
+        }
+      ],
+      "alpha_compositing_applied": false,
+      "token_mapping": {
+        "status": "UNMAPPED",
+        "note": "inline React runtime colors; F token system not wired into this surface"
+      },
+      "contrast_ratio": 6.02,
+      "threshold": 4.5,
+      "contrast_result": "PASS"
+    },
+    {
+      "label": "workbench panel surface",
+      "selector": "[data-testid=\"workbench-page\"]",
+      "text": "page syn-page-ac6-unknownregions: 0Pagespage_id (r",
+      "kind": "non-text-ui",
+      "disabled": false,
+      "fontSize": "12px",
+      "fontWeight": "400",
+      "foreground": "rgb(216.0, 224.0, 232.0)",
+      "background": "rgb(16.0, 20.0, 24.0)",
+      "backgroundSource": "DIV",
+      "backgroundLayers": [
+        {
+          "on": "DIV",
+          "color": {
+            "r": 16,
+            "g": 20,
+            "b": 24,
+            "a": 1
+          }
+        }
+      ],
+      "alpha_compositing_applied": false,
+      "token_mapping": {
+        "status": "UNMAPPED",
+        "note": "inline React runtime colors; F token system not wired into this surface"
+      },
+      "contrast_ratio": 13.87,
+      "threshold": 3,
+      "contrast_result": "PASS"
+    }
+  ],
+  "light_theme": {
+    "entry_point_present": false,
+    "how_checked": "DOM census of nav/settings surfaces in this session: no theme/toggle control exists",
+    "status": "NOT_APPLICABLE (no light theme entry in the React app)"
+  },
+  "verdict": {
+    "ac": "AC6",
+    "samples": 10,
+    "computed": 10,
+    "alpha_compositing_triggered": false,
+    "passed": [
+      "nav-console button (disabled/active view)",
+      "nav-workbench button (enabled)",
+      "console heading",
+      "toolbar context text",
+      "toolbar secondary text",
+      "page id input",
+      "resolve error text",
+      "inspector empty note",
+      "task progress placeholder",
+      "workbench panel surface"
+    ],
+    "fails": [],
+    "not_verifiable": [],
+    "token_mapping_summary": {
+      "mapped": 0,
+      "unmapped": 10
+    },
+    "light_theme": "NOT_APPLICABLE (no light theme entry in the React app)",
+    "thresholds": {
+      "text": "4.5:1",
+      "disabled_or_non_text": "3.0:1"
+    }
+  }
+}
