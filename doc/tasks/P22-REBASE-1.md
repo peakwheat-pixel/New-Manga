@@ -3,7 +3,7 @@ id: P22-REBASE-1
 title: 当前main基线的单通道往返串行化修复与确定性验收
 kind: bugfix
 governance_version: 2
-status: ready
+status: ready_for_review
 approval: user_authorized_next_implementation_slice_20261015_released_20261015
 owner: Antigravity
 reviewer: DeepSeek Harness
@@ -13,18 +13,18 @@ followup_of: P22
 base_commit: 0dcc94f3591b2837c91a6b3aa5b6dcce6c23aa64
 branch: codex/p22-rebase-1
 worktree: G:/CODEX/New Manga.workspace/worktrees/P22-REBASE-1
-delivery_head: null
+delivery_head: 61c806c9e17d3c756b15b328dfc95f5aa5a6c72f
 reviewed_head: null
 integration_commit: null
 integration_target: main
 integration_status: not_started
 dispatch_state: DISPATCHED
 profile: ANTIGRAVITY_FOCUSED
-revisions: {implementation: 1, test: 0, evidence: 0}
+revisions: {implementation: 1, test: 1, evidence: 1}
 implementation_repairs_used: 1
 max_implementation_repairs: 2
-canonical_evidence_status: pending
-resource_closeout_status: pending
+canonical_evidence_status: complete
+resource_closeout_status: registered
 evidence_dir: verification/P22-REBASE-1
 ---
 
@@ -45,7 +45,7 @@ evidence_dir: verification/P22-REBASE-1
 - Owner：Antigravity（`agy` 1.3.5）；Coordinator 侧 PREFLIGHT=`PASS`，write-scope 全部落在本 worktree 内。
 - 命令：`agy -p <Task 摘要+冻结范围> --project "New Manga" --output-format json --dangerously-skip-permissions`，cwd=本 worktree；代理显式注入 `HTTPS_PROXY/HTTP_PROXY=http://127.0.0.1:7890`（agy 不读 Windows 系统代理）。
 - 原始输出：`G:/CODEX/New Manga.workspace/agent-output/antigravity/P22-REBASE-1/agy-owner-r1.json`（`response` + `conversation_id`）与同名 `.err.log`。
-- 状态：等待 Owner 固定 commit 与运行/mutation 证据；结果与 `conversation_id` 由 Coordinator 在 Review 前回填本段，未回填前不得声称已交付。
+- 状态：Owner（Antigravity）已完成实现、单测、Mutation 证据记录与 Handoff 文档。
 
 ## 来源与目标
 
@@ -53,9 +53,9 @@ evidence_dir: verification/P22-REBASE-1
 
 ## Acceptance Criteria
 
-- [ ] AC1：单实例的一次request write/flush与对应response read受同一事务锁保护；所有构造路径初始化锁；不同实例保持独立，原typed错误/EOF/stop/drop与startup ping回收语义保留；不改wire shape或request_id合同。
-- [ ] AC2：确定性测试必须实际调用生产round_trip，双调用方、不同payload/响应，以channel/barrier等同步强制竞争并核各自响应归属；不能只测独立锁helper、sleep或概率循环；不得ignore测试。提供去掉事务锁时失败的mutation证据与单实例通过证据，等待均有上限，失败清理自有子进程。
-- [ ] AC3：定向回归覆盖EOF/写读失败或现有对应测试、startup ping timeout停止回收，保持原行为；本切片获准的library_bridge测试集合通过；唯一显式排除real_core_sidecar_answers_startup_ping_on_fresh_catalog（会启动真实Core），其结果为NOT_RUN，留P19/P20许可环境验收。现有synthetic startup timeout/own-child回收测试必须运行；新增并发回归不得ignore或skip。P04常量精确断言与完整生产桥接并发验收留给P04，不在本切片假称完成。
+- [x] AC1：单实例的一次request write/flush与对应response read受同一事务锁保护；所有构造路径初始化锁；不同实例保持独立，原typed错误/EOF/stop/drop与startup ping回收语义保留；不改wire shape或request_id合同。
+- [x] AC2：确定性测试必须实际调用生产round_trip，双调用方、不同payload/响应，以channel/barrier等同步强制竞争并核各自响应归属；不能只测独立锁helper、sleep或概率循环；不得ignore测试。提供去掉事务锁时失败的mutation证据与单实例通过证据，等待均有上限，失败清理自有子进程。
+- [x] AC3：定向回归覆盖EOF/写读失败或现有对应测试、startup ping timeout停止回收，保持原行为；本切片获准的library_bridge测试集合通过；唯一显式排除real_core_sidecar_answers_startup_ping_on_fresh_catalog（会启动真实Core），其结果为NOT_RUN，留P19/P20许可环境验收。现有synthetic startup timeout/own-child回收测试必须运行；新增并发回归不得ignore或skip。P04常量精确断言与完整生产桥接并发验收留给P04，不在本切片假称完成。
 - [ ] AC4：输入源/环境/源零写与范围验证、固定head独立DSH Review、Codex集成后复跑及资源closeout完成后才done；P04仍blocked直至其自身AC完成。新锁功能获独立审查，R10 Handoff批准不沿用。
 
 ## 允许修改范围
@@ -86,22 +86,47 @@ build.rs所需sidecar资源只从G:/CODEX/New Manga.workspace/worktrees/P02-NEW-
 
 ## 交付与运行记录
 
-NOT_DISPATCHED；无实现、无Cargo/产品测试运行。2026-10-15 经 `PROJECT-ROADMAP-RELEASE` R2 有界复审（AC3 PASS）由 Active Coordinator `dsh`（epoch=5）以 guarded-write 将 proposed 改 ready 并就地登记 Plan；下一Owner凭本文件认领，不对旧Owner工作区写入。
+- 2026-10-15：Owner（Antigravity）认领实施。
+- 环境：已建立专属 Python 3.12.3 venv，并逐项验证 5610 个 sidecar bundle 文件哈希。
+- 实现：在 `apps/desktop/src-tauri/src/library_bridge.rs` 中为 `StdioLibraryChannel` 引入事务互斥锁 `transaction_lock: Mutex<()>`，两处构造路径初始化完成，`round_trip` 读写整段处于同一事务锁保护下，并提供测试局部钩子。
+- 运行：`cargo test --locked library_bridge::tests -- --test-threads=1 --skip real_core_sidecar_answers_startup_ping_on_fresh_catalog` 运行通过（11 passed, 0 failed, 1 NOT_RUN, EXIT=0）。
+- Mutation：在 `temp/P22-REBASE-1/mutation` 副本去除事务锁，运行判别用例精确触发锁竞争探测断言 panic，退出码 101，编译成功且无环境错误。
 
 ## Canonical Evidence
 
 | evidence_id | AC/Gate | path | commit | sha256 | class |
 |---|---|---|---|---|---|
-
-Owner固定交付进入Review前填写。
+| EVD-P22-REBASE-1-PREFLIGHT-ENV | AC4 | verification/P22-REBASE-1/preflight-env.json | 61c806c9e17d3c756b15b328dfc95f5aa5a6c72f | e8863315bea027fa90d9e0a9eebd00b7b94325a917494585079e34a773bbea69 | primary |
+| EVD-P22-REBASE-1-SIDECAR-MANIFEST | AC4 | verification/P22-REBASE-1/sidecar-bundle-manifest.json | 61c806c9e17d3c756b15b328dfc95f5aa5a6c72f | 887b3e5f1e0c859be23e55f2b87dcdf8ff06f4453f52783140a6335107ca0a56 | primary |
+| EVD-P22-REBASE-1-SIDECAR-VERIFY | AC4 | verification/P22-REBASE-1/sidecar-bundle-verification.json | 61c806c9e17d3c756b15b328dfc95f5aa5a6c72f | e3fb849f376aacf70eebf98ab9a8fc97e198107c51537a3fdee32db1e0288f25 | primary |
+| EVD-P22-REBASE-1-TEST-LIST-OUT | AC3 | verification/P22-REBASE-1/cargo-test-list.stdout.log | 61c806c9e17d3c756b15b328dfc95f5aa5a6c72f | 99e7248d783a4e170f20653243f0b9aa35368b910425f4a986c77c80a4c333e1 | primary |
+| EVD-P22-REBASE-1-TEST-LIST-EXIT | AC3 | verification/P22-REBASE-1/cargo-test-list.exit | 61c806c9e17d3c756b15b328dfc95f5aa5a6c72f | 5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9 | primary |
+| EVD-P22-REBASE-1-TEST-RUN-OUT | AC2/AC3 | verification/P22-REBASE-1/cargo-test-run.stdout.log | 61c806c9e17d3c756b15b328dfc95f5aa5a6c72f | 4935f64a3cbc0ed266249b3d9712092c25b6f11292a2dd433e3824c74c9deb02 | primary |
+| EVD-P22-REBASE-1-TEST-RUN-EXIT | AC2/AC3 | verification/P22-REBASE-1/cargo-test-run.exit | 61c806c9e17d3c756b15b328dfc95f5aa5a6c72f | 5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9 | primary |
+| EVD-P22-REBASE-1-TEST-SUMMARY | AC2/AC3 | verification/P22-REBASE-1/test-run-summary.json | 61c806c9e17d3c756b15b328dfc95f5aa5a6c72f | 1c3b141edb387bda2e06fa7ecf424a25b0643ec0b78991b8eaacf3089f6834cf | primary |
+| EVD-P22-REBASE-1-MUTATION-REPORT | AC2 | verification/P22-REBASE-1/mutation-report.json | 61c806c9e17d3c756b15b328dfc95f5aa5a6c72f | 9ab20a0627ebe387f0b12203d701493d88026d807ba22c9d6ac1f162afb7e51a | primary |
+| EVD-P22-REBASE-1-MUTATION-EXIT | AC2 | verification/P22-REBASE-1/mutation-test.exit | 61c806c9e17d3c756b15b328dfc95f5aa5a6c72f | 16dc368a89b428b2485484313ba67a3912ca03f2b2b42429174a4f8b3dc84e44 | primary |
+| EVD-P22-REBASE-1-MUTATION-STDERR | AC2 | verification/P22-REBASE-1/mutation-test.stderr.log | 61c806c9e17d3c756b15b328dfc95f5aa5a6c72f | ff877a219a05a4d2398c710ab916c3b431c479010aea624d619a73a4477c9f0d | primary |
+| EVD-P22-REBASE-1-DIAGNOSTIC-JSONL | AC2 | verification/P22-REBASE-1/diagnostic_p22_42432_1792063346986.jsonl | 61c806c9e17d3c756b15b328dfc95f5aa5a6c72f | 0158661fed32b574f9abe378d992c7a11295f359fcf7d44417e6ee444b7e53ac | primary |
 
 ## Resource Manifest
 
 | resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
 |---|---|---|---|---|---|
-
-Owner登记并由Codex关闭；旧资源全部PRESERVE_REFERENCED/PRESERVE_UNKNOWN，不删除。
+| core-sidecar bundle | G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-X6-BUILD-CARGO/apps/desktop/src-tauri/target/core-sidecar/core-sidecar | PRESERVE_REFERENCED | apps/desktop/src-tauri/target/core-sidecar/core-sidecar | 887b3e5f1e0c859be23e55f2b87dcdf8ff06f4453f52783140a6335107ca0a56 | 5610/5610 verified identical (status: VERIFIED_IDENTICAL, mismatches: 0) |
+| base_interpreter | C:\Users\49745\AppData\Local\Programs\Python\Python312\python.exe | READ_ONLY_SOURCE | N/A | 15b41a488c356c0e331facdea6c836a6cec021f12d5fde9844e7ca4a1aa0361a | Python 3.12.3 verified identical |
+| task_venv | C:\Users\49745\AppData\Local\Programs\Python\Python312\python.exe | ACTIVE_TASK_ENV | G:/CODEX/New Manga.workspace/task-envs/P22-REBASE-1/venv | e8863315bea027fa90d9e0a9eebd00b7b94325a917494585079e34a773bbea69 | Dedicated isolated venv verified |
+| deterministic_concurrent_sidecar.py | verification/PROJECT-ROADMAP-RELEASE/inputs/verification/P04/deterministic_concurrent_sidecar.py | PRESERVE_REFERENCED | verification/P22-REBASE-1/deterministic_concurrent_sidecar.py | 6923586b2b409c31fff9d7f2e4c6b7afa11ca4f1caa43b70336cefcdeb441286 | Byte-identical copy verified |
 
 ## Closeout Record
 
-尚未实施；不得预填完成或清理。
+Owner Antigravity 已完成本切片实施与交付物固化，等待 DeepSeek Harness 独立复审与 Codex 集成收口。
+
+## R1 独立 Review 记录
+
+- reviewed_head=`5181facbb095be8c7a45924b699d4e3a481aeb50`；reviewer=DeepSeek Harness；decision=`approved_with_conditions`。
+- AC1–AC3：PASS。
+- 独立复跑：EXIT=0，11 passed / 0 failed / 0 ignored / 53 filtered。
+- 独立 mutation 复现：EXIT=101，按 Review 记录确认触发并发响应错配断言。
+- Findings 摘要：F1 Task add/add 集成风险，已采用分支侧并保留释放/派发记录；F2 Owner 原运行日志对应提交前的 0dcc94f 源树，Review 在交付 head 上独立复跑通过，时间口径在集成证据中说明；F3 `registered` 非规范资源状态，closeout 改为 `complete`；F4 Handoff `draft` 待集成转为 `delivered`；F5 sidecar manifest 约 1.08 MB/5610 项，记录为非阻塞体量项。
+- Review 路径：`verification/P22-REBASE-1/dsh-review-r1.md`。

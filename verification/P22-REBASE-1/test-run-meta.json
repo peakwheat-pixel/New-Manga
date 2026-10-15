@@ -1,0 +1,16 @@
+﻿{
+    "timestamp_utc":  "2026-10-15T11:22:25.8782647Z",
+    "shell":  "Desktop 5.1.26100.9549",
+    "rustc":  "rustc 1.98.1 (48a229cea 2026-09-01)",
+    "cargo":  "cargo 1.98.1 (797e8a9bc 2026-08-05)",
+    "python":  "Python 3.12.3",
+    "head_commit":  "0dcc94f3591b2837c91a6b3aa5b6dcce6c23aa64",
+    "env":  {
+                "CARGO_TARGET_DIR":  "G:/CODEX/New Manga.workspace/builds/P22-REBASE-1/cargo-target",
+                "CARGO_HOME":  "G:/CODEX/New Manga.workspace/task-envs/P22-REBASE-1/cargo_home",
+                "TEMP":  "G:/CODEX/New Manga.workspace/task-envs/P22-REBASE-1/tmp",
+                "TMP":  "G:/CODEX/New Manga.workspace/task-envs/P22-REBASE-1/tmp",
+                "PYTHONPYCACHEPREFIX":  "G:/CODEX/New Manga.workspace/task-envs/P22-REBASE-1/pycache",
+                "M2RC1_PYTHON":  "G:/CODEX/New Manga.workspace/task-envs/P22-REBASE-1/venv/Scripts/python.exe"
+            }
+}
