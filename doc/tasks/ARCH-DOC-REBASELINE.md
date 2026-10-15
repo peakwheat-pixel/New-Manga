@@ -12,8 +12,8 @@ base_commit: 4ef92f3daa527adac752b8fc52d492176697a292
 branch: codex/arch-doc-rebaseline
 worktree: G:/CODEX/New Manga.workspace/worktrees/ARCH-DOC-REBASELINE
 integration_commit: 4227e8b509e3a42736229b93df4bd9eec548153d
-canonical_evidence_status: pending
-resource_closeout_status: pending
+canonical_evidence_status: registered_blob_level
+resource_closeout_status: registered
 evidence_dir: verification/ARCH-DOC-REBASELINE
 ---
 
@@ -73,23 +73,57 @@ P08已完成。Gate 消费者：P09（AC1–3）、P18（AC4）、P20（AC5）�
 
 | evidence_id | AC/Gate | path | commit | sha256 | class |
 |---|---|---|---|---|---|
-| EVID-DOC-PIN | AC1/SourcePin | verification/ARCH-DOC-REBASELINE/source-pins.json | pending | 1200e967a03f7caad259244cc11e724b35f97e859120a4ef56dbfea54a01f977 | SOURCE_PIN |
-| EVID-DOC-AC1 | AC1 | verification/ARCH-DOC-REBASELINE/ac1-coverage-and-sources.md | pending | 577695c0ea10684def679a0bd76dc7553d89fe78837095e13208536a2eb5fb7b | CANONICAL |
-| EVID-DOC-AC2 | AC2 | verification/ARCH-DOC-REBASELINE/ac2-cross-document-consistency.md | pending | a28c60c5b1d2b8f6e8285c229c96269748fde08fa1905b61ebb6f6b6fe5d8778 | CANONICAL |
-| EVID-DOC-AC3 | AC3 | verification/ARCH-DOC-REBASELINE/ac3-four-pages-and-deferred.md | pending | 94bcd0722e820f1778cce2b943725fda8908df5e2f37242c01aa79caf8d9dc12 | CANONICAL |
-| EVID-DOC-AC4 | AC4 | verification/ARCH-DOC-REBASELINE/ac4-p18-quality-and-responsibility.md | pending | d8bb1a38af31c3ed76e5f081680b07515ad184aa307e3d87afc75776d71cc87d | CANONICAL |
-| EVID-DOC-AC5 | AC5 | verification/ARCH-DOC-REBASELINE/ac5-p20-nfr-stack-rebaseline.md | pending | bb29dc6fa2a154e8209987e7d4a6b2a259d081a0bb91147d36e62e64f4264044 | CANONICAL |
-| EVID-DOC-AC6 | AC6 | verification/ARCH-DOC-REBASELINE/ac6-p08-fmt-traceability.md | pending | b0276a9c78f217a2398e4367a83783345058bf2a70b89e23fad23af8d0d20ede | CANONICAL |
-| EVID-DOC-SUM | AC1-6/Summary | verification/ARCH-DOC-REBASELINE/rebaseline-summary.md | pending | 7703a92bea5cc55f516055ae29b66e8c1196533940e9dba6ea53cdd62614d4f5 | CANONICAL |
+| EVID-DOC-PIN | AC1/SourcePin | verification/ARCH-DOC-REBASELINE/source-pins.json | 702081442d44f74310f7ae9ae7cc412479f0766a | 1200e967a03f7caad259244cc11e724b35f97e859120a4ef56dbfea54a01f977 | SOURCE_PIN |
+| EVID-DOC-AC1 | AC1 | verification/ARCH-DOC-REBASELINE/ac1-coverage-and-sources.md | 702081442d44f74310f7ae9ae7cc412479f0766a | 577695c0ea10684def679a0bd76dc7553d89fe78837095e13208536a2eb5fb7b | CANONICAL |
+| EVID-DOC-AC2 | AC2 | verification/ARCH-DOC-REBASELINE/ac2-cross-document-consistency.md | 702081442d44f74310f7ae9ae7cc412479f0766a | a28c60c5b1d2b8f6e8285c229c96269748fde08fa1905b61ebb6f6b6fe5d8778 | CANONICAL |
+| EVID-DOC-AC3 | AC3 | verification/ARCH-DOC-REBASELINE/ac3-four-pages-and-deferred.md | 702081442d44f74310f7ae9ae7cc412479f0766a | 94bcd0722e820f1778cce2b943725fda8908df5e2f37242c01aa79caf8d9dc12 | CANONICAL |
+| EVID-DOC-AC4 | AC4 | verification/ARCH-DOC-REBASELINE/ac4-p18-quality-and-responsibility.md | 702081442d44f74310f7ae9ae7cc412479f0766a | d8bb1a38af31c3ed76e5f081680b07515ad184aa307e3d87afc75776d71cc87d | CANONICAL |
+| EVID-DOC-AC5 | AC5 | verification/ARCH-DOC-REBASELINE/ac5-p20-nfr-stack-rebaseline.md | 702081442d44f74310f7ae9ae7cc412479f0766a | bb29dc6fa2a154e8209987e7d4a6b2a259d081a0bb91147d36e62e64f4264044 | CANONICAL |
+| EVID-DOC-AC6 | AC6 | verification/ARCH-DOC-REBASELINE/ac6-p08-fmt-traceability.md | 702081442d44f74310f7ae9ae7cc412479f0766a | b0276a9c78f217a2398e4367a83783345058bf2a70b89e23fad23af8d0d20ede | CANONICAL |
+| EVID-DOC-SUM | AC1-6/Summary | verification/ARCH-DOC-REBASELINE/rebaseline-summary.md | 702081442d44f74310f7ae9ae7cc412479f0766a | 7703a92bea5cc55f516055ae29b66e8c1196533940e9dba6ea53cdd62614d4f5 | CANONICAL |
+| EVID-DOC-REVIEW | AC7 | verification/ARCH-DOC-REBASELINE/dsh-review-r1.md | 79ed01fd | （Review 文件，未自算入库 pin；复核见 Recovery 证据） | REVIEW |
+| EVID-DOC-RECOVERY | Recovery/R1–R6 | verification/ARCH-DOC-REBASELINE/recovery-r1-r6-20261015.md | pending | （本轮产出，见该文件） | RECOVERY |
+
+### Pin 语义（2026-10-15 R1–R6 恢复核验，blob 层零信任复核）
+
+- 上表 `sha256` 为**冻结 git blob（LF 规范内容）**的 SHA-256；主仓 `core.autocrlf=true`，工作区
+  checkout 为 CRLF，故对主仓磁盘文件直接 `Get-FileHash` 会得到不同值 —— 这是行尾转换，**不是内容漂移**。
+- 复核方式（可重放）：`git cat-file blob HEAD:<path> | sha256`。2026-10-15 实测：上表 8 项证据
+  **8/8 与磁盘 blob 完全一致**，`0 mismatch`。
+- `source-pins.json` 内的 `sha256` 为**主仓未提交工作区（含 CRLF）**内容指纹，与本表 pin 语义不同，
+  两者不可互相替代；10 个 pin 文件在恢复轮复算后 **10/10 与 pin 记录一致**（未被任何 Agent 覆盖）。
+- 冻结 commit 取交付提交 `70208144`（该 8 个文件在 `HEAD` 中 blob 未变，见 Recovery 证据的
+  `git diff --stat 70208144 HEAD`）。
 
 ## Resource Manifest
 
 | resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
 |---|---|---|---|---|---|
-| worktree | G:/CODEX/New Manga.workspace/worktrees/ARCH-DOC-REBASELINE | PRESERVE_REFERENCED | G:/CODEX/New Manga.workspace/worktrees/ARCH-DOC-REBASELINE | pending | 任务交付分支 worktree，保留供 Review 与下游集成 |
+| worktree | G:/CODEX/New Manga.workspace/worktrees/ARCH-DOC-REBASELINE | PRESERVE_REFERENCED | G:/CODEX/New Manga.workspace/worktrees/ARCH-DOC-REBASELINE | worktree@70208144（分支 codex/arch-doc-rebaseline，HEAD 可达 70208144；内容 pin 见上表） | 任务交付分支 worktree，保留供 Review 与下游集成；**不删除、不 prune**。2026-10-15 R1–R6 核验：主仓工作区 10 个 pin 文件内容未被该 worktree 覆盖，worktree 未被清理 |
 
 ## Closeout Record
 - 2026-10-15 Owner 路由：`route-agent.py --role owner --task-profile heavy --owner-policy AUTO_SELECT` 选中 **antigravity**（较 codex 同分时由 router tie-break 决定）；权威参与状态以 `.orchestrator/tasks/ARCH-DOC-REBASELINE-role.json` 为准（owner=antigravity，codex 保留为 contributor）。Reviewer 仍为 DeepSeek Harness（非 Owner、非参与者）。
 - 2026-10-15 集成与审查：Owner 交付 `70208144` 经 R1 独立 Review（`approved_with_conditions；source-pins 10/10 复核一致）后合并入 main；AC1–AC3=PARTIAL、AC4–AC6=NOT_RUN，按 AC7 由各消费者 Gate（P09/P18/P20/P16/P17）裁决后本 Task 方可 done。
 
 - 2026-10-15 集成落库：合并 `codex/arch-doc-rebaseline` 入 main（merge=`4227e8b509e3a42736229b93df4bd9eec548153d`）。集成前按用户裁定先把主仓 5 个未提交文档固定为基线（`836a12c6`），再合并分支；5 个文档三方自动合并成功，`doc/tasks/ARCH-DOC-REBASELINE.md` 冲突按“双方记录并存”解决。本 Task 维持 `ready`（AC1–AC3=PARTIAL、AC4–AC6=NOT_RUN），按 AC7 待 P09/P18/P20/P16/P17 消费者裁决后方可 done。
+
+### 2026-10-15 AC7/C3 closeout 登记（Coordinator dsh, epoch=5）
+
+- 来源：R1–R6 恢复轮（证据 `verification/ARCH-DOC-REBASELINE/recovery-r1-r6-20261015.md`），
+  Coordinator 主控 dsh，lease `264c2000541748298000f93fb25a52de`（`assert` = `LEASE_VALID`）。
+- **Canonical Evidence pin 已登记**：8 个证据的 `commit` 列由 `pending` 冻结为交付提交 `70208144`；
+  `sha256` 经 blob 层零信任复核 **8/8 一致**。新增 `EVID-DOC-REVIEW`（`79ed01fd`）与
+  `EVID-DOC-RECOVERY`（本轮恢复证据）两条登记；pin 语义与 `source-pins.json` 的差异见上节。
+- **Resource Manifest 已登记**：交付 worktree `PRESERVE_REFERENCED`，`sha256/manifest` 由 `pending`
+  更新为 `worktree@70208144`；未执行任何删除/prune。
+- **集成语义取舍（F-2，Merge Conflict 规则）**：merge `4227e8b5` 对
+  `doc/02_TECHNICAL_ARCHITECTURE_.md` 采用第一父（用户基线 `7af44a3c`）的标题
+  「02 Legacy Production Technical Architecture（历史生产基线）」，分支 `70208144` 的标题
+  「02 目标技术架构（Target Technical Architecture）」未进入 main；其余 4 个 allowlist 文档
+  （`05/07/08/13`）分支与 `HEAD` **blob 完全一致**，无内容丢失。取舍依据：该文档正文首行分类即
+  `LEGACY / HISTORICAL — 非当前目标架构`，分支标题「目标技术架构」与之自相矛盾；用户基线标题与
+  正文分类一致，故**保留 HEAD 内容，不回改、不机械合并**。双方有效修改均已核验在库
+  （用户基线 = `836a12c6`，分支交付 = `70208144` 且 4/5 文件同内容）。
+- **AC7 剩余项**：逐消费者 Gate 裁决（P09/P18/P20/P16/P17）。消费者在 Plan 中均为 `proposed`，
+  尚未冻结；释放任一消费者时须引用本 Task 证据作 Gate 输入（R1 review F3/C2）。
+- 本 Task 维持 `ready`：AC1–AC3=PARTIAL、AC4–AC6=NOT_RUN；**不因 closeout 登记而标 done**。
