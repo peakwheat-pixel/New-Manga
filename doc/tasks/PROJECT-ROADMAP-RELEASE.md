@@ -3,7 +3,7 @@ id: PROJECT-ROADMAP-RELEASE
 title: 完整产品路线恢复、Gate裁决与下一实施切片释放
 kind: governance
 governance_version: 2
-status: in_review
+status: done
 approval: user_authorized_roadmap_restore_gate_recheck_and_next_slice_release_20261015
 owner: Codex
 reviewer: DeepSeek Harness
@@ -12,12 +12,12 @@ depends_on: [P08, P02-MAINLINE-INTEGRATION]
 base_commit: 0dcc94f3591b2837c91a6b3aa5b6dcce6c23aa64
 branch: main
 worktree: G:/CODEX/New Manga
-integration_commit: null
-delivery_head: null
-canonical_evidence_status: pending
-resource_closeout_status: pending
+integration_commit: a43c6b9fed681e7cb123123eeb6b5ccb7fd4d4b6
+delivery_head: a43c6b9fed681e7cb123123eeb6b5ccb7fd4d4b6
+canonical_evidence_status: complete
+resource_closeout_status: complete
 evidence_dir: verification/PROJECT-ROADMAP-RELEASE
-revisions: {implementation: 0, test: 0, evidence: 1}
+revisions: {implementation: 0, test: 0, evidence: 2}
 ---
 
 # PROJECT-ROADMAP-RELEASE
@@ -28,14 +28,14 @@ revisions: {implementation: 0, test: 0, evidence: 1}
 
 ## Acceptance Criteria
 
-- [ ] AC1：P01–P22完整路线恢复到唯一Plan；保留P02限定完成与其它节点未释放语义；P19明确接收P04/P22并发安全验收。
-- [ ] AC2：固定Git命令验证P22/P04交付可达性与代码/文档审查边界；不以R10批准源码；复核架构Gate。
-- [ ] AC3：下一P22-REBASE-1独立分支/worktree、Owner/Reviewer、允许/禁止路径、执行环境和判别力测试冻结，非作者Review接受后才ready；其它候选不激活。
-- [ ] AC4：保留用户文件；治理检查/固定head独立Review/Codex裁决/证据与资源关闭完成。
+- [x] AC1：P01–P22完整路线恢复到唯一Plan；保留P02限定完成与其它节点未释放语义；P19明确接收P04/P22并发安全验收。
+- [x] AC2：固定Git命令验证P22/P04交付可达性与代码/文档审查边界；不以R10批准源码；复核架构Gate。
+- [x] AC3：下一P22-REBASE-1独立分支/worktree、Owner/Reviewer、允许/禁止路径、执行环境和判别力测试冻结，非作者Review接受后才ready；其它候选不激活。
+- [x] AC4：保留用户文件；治理检查/固定head独立Review/Codex裁决/证据与资源关闭完成。
 
 ## 允许修改范围
 
-仅doc/STATUS.md、doc/REBASELINE_PLAN.md、doc/tasks/README.md、本Task、doc/tasks/P22-REBASE-1.md、doc/tasks/ARCH-DOC-REBASELINE.md、自有Handoff与verification/PROJECT-ROADMAP-RELEASE/**。当前权威写入走epoch=4 guarded-write。共享业务接口、Schema、依赖变更授权=无。
+仅doc/STATUS.md、doc/REBASELINE_PLAN.md、doc/tasks/README.md、本Task、doc/tasks/P22-REBASE-1.md、doc/tasks/ARCH-DOC-REBASELINE.md、自有Handoff与verification/PROJECT-ROADMAP-RELEASE/**。当前权威写入走epoch=5 guarded-write。共享业务接口、Schema、依赖变更授权=无。
 
 ## 禁止范围
 
@@ -47,7 +47,7 @@ revisions: {implementation: 0, test: 0, evidence: 1}
 
 ## 交付与运行记录
 
-检查基线0dcc94f3591b2837c91a6b3aa5b6dcce6c23aa64；既有提案DSH Review只作来源，新增授权与ready切片须本轮审查。helper自测127/127 PASS，0 skip；本轮业务运行NOT_RUN。恢复点位于workspace同名agent-output；未触碰未知资源。
+检查基线0dcc94f3591b2837c91a6b3aa5b6dcce6c23aa64；既有提案DSH Review只作来源，新增授权与ready切片须本轮审查。helper自测127/127 PASS，0 skip；本轮业务运行NOT_RUN。恢复点位于workspace同名agent-output；未触碰未知资源。R2复审时DSH已具备live git/hash能力，object_binding=VERIFIED，不外推为固定review worktree可移植。
 
 ## Canonical Evidence
 
@@ -72,18 +72,41 @@ revisions: {implementation: 0, test: 0, evidence: 1}
 | R-25 | AC1–4 source | verification/PROJECT-ROADMAP-RELEASE/REPORT.md | da8bb7ce22f853fd477f29072069a5eff57d16f0 | 1e23530bccb690324ceacd6794de303bbeae2c89f791996b2d9d6d907d1cacc5 | CANONICAL |
 | R-26 | AC1–4 source | verification/PROJECT-ROADMAP-RELEASE/source-manifest.json | da8bb7ce22f853fd477f29072069a5eff57d16f0 | 5456280e85a94ed1869d44668728f48ad0c581d938cf519d470ac39cd903ea6f | CANONICAL |
 | R-27 | AC1–4 source | verification/PROJECT-ROADMAP-RELEASE/verification.json | da8bb7ce22f853fd477f29072069a5eff57d16f0 | d2f76ff4be174db128e3248453d1d99bdee99bdfc36b68f01a3107f563bd22d5 | CANONICAL |
+| R-28 | AC4 裁决 | verification/PROJECT-ROADMAP-RELEASE/adjudication-r1.md | a43c6b9fed681e7cb123123eeb6b5ccb7fd4d4b6 | 64d5a054dbfe83ab25c90109e6c046fbe3f93b62d2ba8866e0f0e7ed22578397 | CANONICAL |
+| R-29 | AC4 R2Review | verification/PROJECT-ROADMAP-RELEASE/dsh-review-r2.md | 7fd8ea069cbc9cedd17d7d5bfa297b3725cbcbc9 | 4f98979e8a76f53d01594fe74deb96ddf9d6b80059a36f7f600326c4f0ac0c2e | CANONICAL |
+| R-30 | AC4 资源 | verification/PROJECT-ROADMAP-RELEASE/resource-retention.json | 4482b64636710009503e77ca55b57d74fb2ff4e6 | 808f100182ea5f3fe9afbe8191a65fd4c1dd1cf8f9bc266a63f93bfdac4037cb | CANONICAL |
 
 ## Resource Manifest
 
 | resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
 |---|---|---|---|---|---|
+| repo_user_content | G:/CODEX/New Manga | PRESERVE_USER_DATA | G:/CODEX/New Manga | verification/PROJECT-ROADMAP-RELEASE/resource-retention.json | 1245 项 dirty/untracked 原位保留；仅按精确路径 add，未删除、未 push |
+| review_worktree_r1 | G:/CODEX/New Manga.workspace/worktrees/PROJECT-ROADMAP-RELEASE-REVIEW | PRESERVE_REFERENCED | G:/CODEX/New Manga.workspace/worktrees/PROJECT-ROADMAP-RELEASE-REVIEW | verification/PROJECT-ROADMAP-RELEASE/resource-retention.json | HEAD a43c6b9f、dirty=0；R1 审查坐标，未删除 |
+| next_slice_worktree | G:/CODEX/New Manga.workspace/worktrees/P22-REBASE-1 | PRESERVE_REFERENCED | G:/CODEX/New Manga.workspace/worktrees/P22-REBASE-1 | verification/PROJECT-ROADMAP-RELEASE/resource-retention.json | HEAD 0dcc94f3、branch=codex/p22-rebase-1；按 AC3 已建，未实施 |
+| coordinator_checkpoint | G:/CODEX/New Manga.workspace/agent-output/dsh/PROJECT-ROADMAP-RELEASE/checkpoint.md | PRESERVE_REFERENCED | G:/CODEX/New Manga.workspace/agent-output/dsh/PROJECT-ROADMAP-RELEASE/checkpoint.md | verification/PROJECT-ROADMAP-RELEASE/resource-retention.json | 4137 bytes；sha256 记入 manifest；仓外保留 |
+| source_snapshot | verification/PROJECT-ROADMAP-RELEASE/inputs | PRESERVE_REFERENCED | verification/PROJECT-ROADMAP-RELEASE/inputs | verification/PROJECT-ROADMAP-RELEASE/resource-retention.json | 12 文件只读快照；R2 重验 19/19 pin 字节一致 |
 
 关闭时登记：主仓用户内容、下一切片worktree、独立Review worktree、CLI输出和源快照；全部保留，无清理操作。
 
 ## Closeout Record
 
-待固定Review/集成验证后填写；未提前标done。
+- 关闭时间：2026-10-15（Asia/Shanghai）；关闭者=Active Coordinator `dsh`（epoch=5，lease=`264c2000541748298000f93fb25a52de`），经 `guarded-write` 提交治理文件。
+- 三轮证据链：R1 Review `657096b4`（DSH，APPROVED 限 AC1–3，object_binding=NOT_VERIFIED）→ Codex `adjudication-r1`（随 `a43c6b9f` 提交，逐项处置 P2-1/1b/2–9、P3-6/P3-10）→ R2 有界复审（DSH，固定 head `a43c6b9f`，object_binding=VERIFIED，19/19 pin 一致，`approved_with_conditions`）。
+- 时间口径（原始记录不回写）：source base=`0dcc94f3`；deterministic capture head=`571d8970`；R1 review head=`657096b4`；修正后固定 head=`a43c6b9f`；证据固定 commit：adjudication=`a43c6b9f`、R2 Review=`7fd8ea06`、资源清单=`4482b646`。
+- 集成：本 Task 为 governance 类型，**无产品源码交付**；`0dcc94f3..4482b646` 的非 doc/verification 差量为 0；`integration_commit`=`a43c6b9f`（交付本体已在 main 提交），无额外源码合并；front-matter `integrator: Codex` 为原角色分配记录，本轮登记与固定由 Coordinator 治理权限执行，未冒充 Codex 运行。
+- 治理检查：`pwsh -NoProfile -File tools/governance/check.ps1 -TaskPath doc/tasks/PROJECT-ROADMAP-RELEASE.md` → `Governance check: PASS`；R2 报告的过程文件未登记项已由 R-28/R-29/R-30 消解。
+- 保护与资源：1245 项 dirty/untracked 用户内容与 3 个相关 worktree 原位保留；未删除、未 push、未 gc/prune/repair。commit `7fd8ea06`/`4482b646` 触发自动 maintenance，repack 因既有坏 `refs/codex/turn-diffs/**` checkpoint 失败而中止，commit 成功（同 `verification.json.prior_auto_gc` 成因）。
+- 未完成项（明确不外推）：Cargo/产品测试/GUI/模型/真实 Core 一律 NOT_RUN（属本 Task 禁止范围）；架构文档 Gate 仍 `PARTIAL/NOT_CLOSED`。
 
 ## R1 Review处置窗口
 
 DSH APPROVED限AC1–3文本，AC4待收口；本轮作为E1文档/执行边界修正，P2逐项处置后有界复审。没有产品源码修改，不改变P22继承1/2预算。P2-6以Plan持续冻结引用规则消解：Plan仍是唯一DAG，REPORT不独立维护状态；只要Plan/当前Gate仍引用，证据不得因作者Task关闭而降级/移动。当前Truth Map已覆盖Plan指向的Task/evidence，无新增平行架构或规划来源。
+
+## R2 有界复审与释放结论
+
+`dsh-review-r2.md` 的 `approved_with_conditions` 已在本次关闭中逐条处置：
+
+- **C1（证据登记）**：本表新增 R-28（裁决）、R-29（R2 Review）、R-30（资源清单）；`evidence_dir` 未登记过程文件清零。
+- **C2（Plan 预算）**：Plan 关闭时为 1602/2500 bytes、34/35 行；释放 `P22-REBASE-1` 采用**就地改写**（见 `doc/REBASELINE_PLAN.md` 与 `doc/tasks/P22-REBASE-1.md`），不净增行。
+- **C3（closeout）**：Resource Manifest、Closeout Record、AC1–AC4 勾选与关闭前治理检查在本记录完成。
+- R2 新增 finding：R2-01/R2-02 已处置；R2-03 在"时间口径"写明；R2-04（缺索引）不阻塞关闭。

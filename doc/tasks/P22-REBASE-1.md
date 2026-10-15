@@ -3,8 +3,8 @@ id: P22-REBASE-1
 title: 当前main基线的单通道往返串行化修复与确定性验收
 kind: bugfix
 governance_version: 2
-status: proposed
-approval: user_authorized_next_implementation_slice_20261015_pending_release_review
+status: ready
+approval: user_authorized_next_implementation_slice_20261015_released_20261015
 owner: Antigravity
 reviewer: DeepSeek Harness
 integrator: Codex
@@ -29,6 +29,15 @@ evidence_dir: verification/P22-REBASE-1
 ---
 
 # P22-REBASE-1
+
+## 释放记录
+
+- 释放时间：2026-10-15（Asia/Shanghai）；释放者=Active Coordinator `dsh`（epoch=5，lease=`264c2000541748298000f93fb25a52de`），经 `guarded-write` 将 `proposed` 改 `ready` 并就地登记 Plan（READY 节点）。
+- 依据：`PROJECT-ROADMAP-RELEASE` AC3（范围/分支/worktree/Owner/Reviewer/路径/环境/判别力冻结）通过，且其 R2 有界复审为 `approved_with_conditions`（`object_binding=VERIFIED`，19/19 pin 一致）；用户 2026-10-15 授权释放一个下一实施切片。
+- 冻结坐标：base=`0dcc94f3`；branch=`codex/p22-rebase-1`；worktree=`G:/CODEX/New Manga.workspace/worktrees/P22-REBASE-1`（已存在，HEAD=`0dcc94f3`）。
+- 角色：Owner=Antigravity；Reviewer=DeepSeek Harness（`Reviewer != Owner`，且非本 Task 参与者）；Integrator=Codex。
+- 返修预算：继承 P22 的 `implementation_repairs_used=1/2`，**不因本切片重置**；同 finding 最多一次 I2，不允许 I3。
+- 派发边界：本 Task 已 `ready`，但**释放不等于自动派发**（见 PROJECT-ROADMAP-RELEASE 禁止范围）；须由 Coordinator `route-agent.py`/`preflight-agent.py` 确认 Owner 与独立 Reviewer 后，由 Owner 凭本文件认领启动。
 
 ## 来源与目标
 
@@ -69,7 +78,7 @@ build.rs所需sidecar资源只从G:/CODEX/New Manga.workspace/worktrees/P02-NEW-
 
 ## 交付与运行记录
 
-NOT_DISPATCHED；无实现、无Cargo/产品测试运行。本Task获审后由Codex将proposed改ready并登记Plan；下一Owner凭本文件认领，不对旧Owner工作区写入。
+NOT_DISPATCHED；无实现、无Cargo/产品测试运行。2026-10-15 经 `PROJECT-ROADMAP-RELEASE` R2 有界复审（AC3 PASS）由 Active Coordinator `dsh`（epoch=5）以 guarded-write 将 proposed 改 ready 并就地登记 Plan；下一Owner凭本文件认领，不对旧Owner工作区写入。
 
 ## Canonical Evidence
 
