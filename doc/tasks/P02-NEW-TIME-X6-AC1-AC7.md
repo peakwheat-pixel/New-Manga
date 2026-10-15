@@ -6,7 +6,7 @@ governance_version: 2
 status: blocked
 approval: user_authorized_new_time_baseline_20261014
 suggested_owner: Antigravity
-owner: Antigravity
+owner: Codex
 reviewer: DeepSeek Harness
 integrator: Codex
 depends_on: [P02-NEW-TIME-BASELINE, P02-NEW-TIME-X6, P02-NEW-TIME-X6-POSTRUN-REVIEW, P02-NEW-TIME-X6-BUILD-CARGO]
@@ -15,11 +15,11 @@ branch: agent/antigravity/P02-NEW-TIME-X6-AC1-AC7
 worktree: G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-X6-AC1-AC7-ANTIGRAVITY
 integration_commit: null
 owner_start_commit: 42f67683ec8c4712235105f3400a39e32ae364d4
-delivery_head: e3061df6719b7ff6f6c61fec51aacb1164ae2c9a
-reviewed_head: null
-review_decision: pending
+delivery_head: f7924d08f87ada37543f628aae9d31f4843aab23
+reviewed_head: f7924d08f87ada37543f628aae9d31f4843aab23
+review_decision: changes_requested
 integration_target: agent/codex/P02-NEW-TIME-X6-POSTRUN-REVIEW
-integration_status: not_started
+integration_status: blocked
 dispatch_state: PREFLIGHT_PASS
 blocked_by: ["R3-01: AC6 CDP endpoint unavailable", "AC6: no live DOM sample"]
 profile: ANTIGRAVITY_FALLBACK
@@ -28,6 +28,7 @@ canonical_evidence_status: complete
 resource_closeout_status: blocked
 evidence_dir: verification/P02-NEW-TIME-X6-AC1-AC7/runs/p02-newtime-ac-20261014-i2
 run_id: p02-newtime-ac-20261014-i2
+resolution_task: RES-P02-AC6-CDP-RECOVERY
 ---
 
 # P02-NEW-TIME-X6-AC1-AC7：P02 新时点 AC1–AC7 当前版本验收
