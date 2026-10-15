@@ -1,5 +1,7 @@
 # 需求与验收追踪（接管基线）
 
+> **分类：HISTORICAL / LEGACY TRACEABILITY**。本表保留旧验收编号与当时任务映射；其中仍适用的产品要求继续保留，但 PyInstaller/QML 条目不代表当前 React/Tauri Release Gate，旧结果须以该表绑定的 reviewed head 与证据解释且不得继承。新架构 Task/contract 应映射适用要求并单独登记新证据；本表自身不释放实现任务。
+
 来源：[D08 验收标准](08_ACCEPTANCE_CRITERIA.md)。2026-09-17 更新：193 个编号条目（104 个 P0、81 个 P1、8 个 P2、0 个 P3）。主责任 Task 用于安排最终行为交付；设计、底层存储及 UI 等依赖仍须共同验证。任务完成不自动将 AC 改成 PASS。
 
 此表是派生的覆盖路由，不重新定义验收预期。TASK-008 切片相关条目已绑定固定 reviewed_head、Review 与主线集成验证；其余产品级验收结果仍为 NOT_RUN。后续每项证据必须绑定测试commit/环境/命令/产物，不能用文档证据替代未执行的产品行为验证。

@@ -1,14 +1,17 @@
-# 02 目标技术架构（Target Technical Architecture）
+# 02 Legacy Production Technical Architecture（历史生产基线）
 
-> 本文件定义新漫画翻译软件的 **To-Be 技术架构**，用于指导后续实现、重构、测试和模块边界控制。
-> 本架构与 `01_FUNCTIONAL_ARCHITECTURE.md`、`03_DATA_MODEL.md` 保持一致：**书架、工作台、阅读器、设置为四个同级一级页面**；软件默认启动进入书架。书架中的章节可跳转到工作台或阅读器；其他业务内容优先使用固定面板，不适合固定展示的内容使用悬浮窗。
+> **分类：LEGACY / HISTORICAL — 非当前目标架构。** 本文保留 PySide6/Qt Quick/QML、PyInstaller 的旧生产设计与验证背景，供迁移对照和历史 Task 审计使用；不得据此释放新的 QML 实现 Task，也不得将其当作当前架构、Review 标准或未来路线。
+>
+> 当前冻结目标为 **Windows + React + TypeScript + Tauri/Rust + Python Core + SQLite + Managed Copy**，权威依据为 [AD-001](AD-001_TARGET_DESKTOP_ARCHITECTURE.md)。仍适用的产品功能/数据约束按当前 AD 与已冻结 contract 加载；本文的旧技术栈和图表不覆盖它们。
+>
+> 本文保留的功能说明与 `01_FUNCTIONAL_ARCHITECTURE.md`、`03_DATA_MODEL.md` 同源：**书架、工作台、阅读器、设置为四个同级一级页面**；软件默认启动进入书架。书架中的章节可跳转到工作台或阅读器；其他业务内容优先使用固定面板，不适合固定展示的内容使用悬浮窗。
 > 核心原则：**UI 不直接访问数据库、文件存储或模型实现；翻译管线不放在 UI/QML 中；重型 AI 依赖保持可选；领域模型与基础设施解耦。**
 
 ---
 
-## 1. 目标技术栈
+## 1. 旧技术栈（历史设计）
 
-| 层 / 能力 | 目标技术 | 设计说明 |
+| 层 / 能力 | 旧技术选择 | 历史设计说明 |
 |---|---|---|
 | 目标平台 | Windows 桌面端 | 新项目只面向 Windows，不以浏览器/Web SPA 作为主运行形态 |
 | 桌面 UI | PySide6 + Qt Quick / QML | 负责书架、工作台、阅读器、设置等一级界面 |
