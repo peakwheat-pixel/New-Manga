@@ -1,0 +1,11 @@
+
+running 1 test
+test library_bridge::tests::same_channel_concurrent_round_trips_keep_response_ownership ... FAILED
+
+failures:
+
+failures:
+    library_bridge::tests::same_channel_concurrent_round_trips_keep_response_ownership
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 63 filtered out; finished in 0.11s
+
