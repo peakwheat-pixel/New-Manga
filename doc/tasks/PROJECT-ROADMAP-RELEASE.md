@@ -3,7 +3,7 @@ id: PROJECT-ROADMAP-RELEASE
 title: 完整产品路线恢复、Gate裁决与下一实施切片释放
 kind: governance
 governance_version: 2
-status: in_progress
+status: in_review
 approval: user_authorized_roadmap_restore_gate_recheck_and_next_slice_release_20261015
 owner: Codex
 reviewer: DeepSeek Harness
@@ -54,7 +54,23 @@ revisions: {implementation: 0, test: 0, evidence: 0}
 | evidence_id | AC/Gate | path | commit | sha256 | class |
 |---|---|---|---|---|---|
 
-首次证据提交后、进入in_review前回填固定pins。
+| R-00 | AC1–4 source | verification/PROJECT-ROADMAP-RELEASE/.gitattributes | aa629c7c70eb33a9ec84bed4003f911dc73500ee | 705fd4d6451a31d36b3df7de96f83f30ac976c9b4a6d1e51671d8e2f33e2d0da | CANONICAL |
+| R-01 | AC1–4 source | verification/PROJECT-ROADMAP-RELEASE/environment-sources.json | aa629c7c70eb33a9ec84bed4003f911dc73500ee | 46d86551ab9a9c7a2a4ce3b4e430badd384e528cdb4042845744e815c2444038 | CANONICAL |
+| R-02 | AC1–4 source | verification/PROJECT-ROADMAP-RELEASE/git-verification.log | aa629c7c70eb33a9ec84bed4003f911dc73500ee | 75bc60d1db789d22abd5dfc4ff92c594dc0752d0bd3c95cbf83fa777f1d065e9 | CANONICAL |
+| R-05 | AC1–4 source | verification/PROJECT-ROADMAP-RELEASE/inputs/doc/00_INDEX.md | aa629c7c70eb33a9ec84bed4003f911dc73500ee | 550f41e789298023a553bab6d884616eb60d06784c443feb3ffd75b99db65f45 | CANONICAL |
+| R-06 | AC1–4 source | verification/PROJECT-ROADMAP-RELEASE/inputs/doc/08_ACCEPTANCE_CRITERIA.md | aa629c7c70eb33a9ec84bed4003f911dc73500ee | 1badfc0769b5af9b53746bc263a90856cfb6f61f5f6d65a63aca31fd8f8284b5 | CANONICAL |
+| R-07 | AC1–4 source | verification/PROJECT-ROADMAP-RELEASE/inputs/doc/09_COLLABORATION.md | aa629c7c70eb33a9ec84bed4003f911dc73500ee | 581b4876b17c52e5a06e30b9b68d860fca7fd08fb1e3a8982441c8fc20247956 | CANONICAL |
+| R-08 | AC1–4 source | verification/PROJECT-ROADMAP-RELEASE/inputs/doc/AD-001_TARGET_DESKTOP_ARCHITECTURE.md | aa629c7c70eb33a9ec84bed4003f911dc73500ee | be1184f3c8a798bee943ec1f3f266123e3f73e07f913b98d48a1fc20f4909db3 | CANONICAL |
+| R-10 | AC1–4 source | verification/PROJECT-ROADMAP-RELEASE/inputs/doc/tasks/P04.md | aa629c7c70eb33a9ec84bed4003f911dc73500ee | ec427f7dd1542bc12faf7162588276c6e35ea83ea92af8067642959ed2f2c66c | CANONICAL |
+| R-11 | AC1–4 source | verification/PROJECT-ROADMAP-RELEASE/inputs/doc/tasks/P08.md | aa629c7c70eb33a9ec84bed4003f911dc73500ee | 1df21de52938d8d3f28fb793e8ceb5f8ae8dea4628b1fbdda70fc0aff9732d03 | CANONICAL |
+| R-12 | AC1–4 source | verification/PROJECT-ROADMAP-RELEASE/inputs/doc/tasks/P22.md | aa629c7c70eb33a9ec84bed4003f911dc73500ee | 79b9258ad705f7582b30ede94495d44fb56e93d7546a5de4821f2f71027ce2ef | CANONICAL |
+| R-13 | AC1–4 source | verification/PROJECT-ROADMAP-RELEASE/inputs/doc/WORKSPACE_GOVERNANCE.md | aa629c7c70eb33a9ec84bed4003f911dc73500ee | 873c7b3a012e705f5a454bf5863a1fac1ab4c9dea52ac2109f91d7d373671e0d | CANONICAL |
+| R-16 | AC1–4 source | verification/PROJECT-ROADMAP-RELEASE/inputs/verification/P08/SCOPE_DRAFT.md | aa629c7c70eb33a9ec84bed4003f911dc73500ee | 2562222a80caf0f2f803d89c7b21fa0a4c5af74c3b4a67e58de839a8cdfa75bc | CANONICAL |
+| R-18 | AC1–4 source | verification/PROJECT-ROADMAP-RELEASE/inputs/verification/P22/codex-p22-r10-review-adjudication.md | aa629c7c70eb33a9ec84bed4003f911dc73500ee | c301a5f66c7820ecc3d45a2f9d340056a976de11dfe476794357f524954b64f3 | CANONICAL |
+| R-19 | AC1–4 source | verification/PROJECT-ROADMAP-RELEASE/REPORT.md | aa629c7c70eb33a9ec84bed4003f911dc73500ee | cf1bedf69b07a8c1daa91628b0a293185166bd117037e3068a778b7996794058 | CANONICAL |
+| R-20 | AC1–4 source | verification/PROJECT-ROADMAP-RELEASE/source-manifest.json | aa629c7c70eb33a9ec84bed4003f911dc73500ee | 7a2e7e2a61ab2d12355501cbf6aec509d68740c2e437563a136c3e0132785356 | CANONICAL |
+
+固定Review对象由dispatch prompt给出；verification.json将在关闭时pin。
 
 ## Resource Manifest
 

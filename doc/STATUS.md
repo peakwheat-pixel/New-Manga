@@ -4,7 +4,7 @@
 
 ## 当前 Task
 
-- 当前 Task：[PROJECT-ROADMAP-RELEASE](tasks/PROJECT-ROADMAP-RELEASE.md)，in_progress；用户已授权恢复Plan、复核Gate并释放下一实施切片。
+- 当前 Task：[PROJECT-ROADMAP-RELEASE](tasks/PROJECT-ROADMAP-RELEASE.md)，in_review；用户已授权恢复Plan、复核Gate并释放下一实施切片。
 - Owner/Integrator=Codex；Reviewer=DeepSeek Harness；Coordinator=codex，epoch=4。
 - 基线 main @ 0dcc94f3；P22源码92093792与P04交付faea1a2c均未集成；R10仅Handoff批准。
 - 架构文档Gate=PARTIAL/NOT_CLOSED；P09/P18/P20对应映射仍NOT_RUN，不继承旧QML/PyInstaller结果。

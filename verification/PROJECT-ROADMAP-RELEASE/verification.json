@@ -1,0 +1,15 @@
+{
+  "shell": "Python subprocess",
+  "python": "3.14.6",
+  "cwd": "G:\\CODEX\\New Manga",
+  "head": "aa629c7c70eb33a9ec84bed4003f911dc73500ee",
+  "source_pins": 10,
+  "source_file_and_git_blob_hashes": "PASS",
+  "protected_paths": 1525,
+  "protected_bytes": "PASS",
+  "unknown_preserved": [],
+  "product_tests": "NOT_RUN",
+  "new_product_code_changes": 0,
+  "prior_auto_gc": "git commit invoked automatic maintenance; repack failed on existing checkpoint ref; commit succeeded; no manual gc/prune/repair",
+  "helper_selftests": "127 passed / 0 skipped"
+}
