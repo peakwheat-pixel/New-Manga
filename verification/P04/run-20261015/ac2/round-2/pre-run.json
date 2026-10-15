@@ -1,0 +1,7 @@
+{
+  "captured_at_utc": "2026-10-15T12:46:48.9609970Z",
+  "head": "0e36da4a4e4aebd0cd57cf067542d97a70f7a24d",
+  "tracked_cargo_dirty_before": [],
+  "diagnostic_sidecars_before": [],
+  "command": "cargo test --locked library_bridge::tests::same_channel_concurrent_round_trips_keep_response_ownership -- --test-threads=1"
+}

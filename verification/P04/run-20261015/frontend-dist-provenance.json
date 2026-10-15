@@ -1,0 +1,413 @@
+{
+  "recorded_at_utc": "2026-10-15T12:45:03.2522314Z",
+  "worktree": "G:\\CODEX\\New Manga.worktrees\\P04-prod-command-concurrency-antigravity",
+  "branch": "agent/antigravity/P04-prod-command-concurrency",
+  "worktree_head": "0e36da4a4e4aebd0cd57cf067542d97a70f7a24d",
+  "main_source_root": "G:\\CODEX\\New Manga\\apps\\desktop\\frontend\\dist",
+  "main_commit": "fe533fe6288adada94131363b1eeafca8cff568d",
+  "source_dist_manifest": {
+    "file_count": 2,
+    "total_bytes": 196591,
+    "files": [
+      {
+        "relative_path": "assets/index-CUM67Q41.js",
+        "bytes": 196315,
+        "sha256": "b3a098d493051d337633bf888462dd1025668639d4b17243e1370d23f8dd3858"
+      },
+      {
+        "relative_path": "index.html",
+        "bytes": 276,
+        "sha256": "6cedfa28a384443d33109a2956e078c32e2095b4337b89fd54c0e914840f186f"
+      }
+    ],
+    "ignored_by_git": "apps/desktop/.gitignore:3:frontend/dist/\tapps/desktop/frontend/dist/index.html\r\napps/desktop/.gitignore:3:frontend/dist/\tapps/desktop/frontend/dist/assets/index-CUM67Q41.js",
+    "tracked_files": []
+  },
+  "frontend_src_parity": {
+    "main_path": "G:\\CODEX\\New Manga\\apps\\desktop\\frontend\\src",
+    "p04_path": "G:\\CODEX\\New Manga.worktrees\\P04-prod-command-concurrency-antigravity\\apps\\desktop\\frontend\\src",
+    "comparison_command": "git diff --no-index --no-ext-diff -- \"G:\\CODEX\\New Manga\\apps\\desktop\\frontend\\src\" \"G:\\CODEX\\New Manga.worktrees\\P04-prod-command-concurrency-antigravity\\apps\\desktop\\frontend\\src\"",
+    "git_diff_exit": 0,
+    "git_diff_stdout": "",
+    "git_diff_stderr": "",
+    "per_file_manifest_equal": true,
+    "file_count_main": 37,
+    "file_count_p04": 37,
+    "conclusion": "No differences; git diff stdout/stderr empty and per-file SHA-256 manifests equal.",
+    "main_manifest": [
+      {
+        "relative_path": "ac1/driver.test.ts",
+        "bytes": 616,
+        "sha256": "f8010bc2e3ebdd875e850d77f957f9c1acd8dbed4493c8d8c558fd0eedea3ca3"
+      },
+      {
+        "relative_path": "ac1/driver.ts",
+        "bytes": 7753,
+        "sha256": "e45be4c7a34357053da3f0bd5a214a1a820a840ca7a2cc9b2d87fe0a3f6f9649"
+      },
+      {
+        "relative_path": "App.tsx",
+        "bytes": 21707,
+        "sha256": "8284874412d4dd95a39a4984110ad0762b749179a4a7e64427c45a0f136e11be"
+      },
+      {
+        "relative_path": "library/client.test.ts",
+        "bytes": 7548,
+        "sha256": "18a7109569861d54653eb8523c0a0f931f7aeb027acc9dec3077f4fa844d9e92"
+      },
+      {
+        "relative_path": "library/client.ts",
+        "bytes": 5292,
+        "sha256": "31fcaf4616fb946941562cd17bda26bf499f54a3b23d938bfa384add9b95de88"
+      },
+      {
+        "relative_path": "library/LibraryPanel.test.tsx",
+        "bytes": 9049,
+        "sha256": "46a1ab0fd015ba18b88f4578ed593286c1a8f14102510dc16d80290bdafc0731"
+      },
+      {
+        "relative_path": "library/LibraryPanel.tsx",
+        "bytes": 5297,
+        "sha256": "711e6a1f7a755bde64a7d4e7d908b8eef5592d967a49da03d8178b55a709f207"
+      },
+      {
+        "relative_path": "library/types.ts",
+        "bytes": 1751,
+        "sha256": "b2143a6850cbcfb8e5873e4055b95c19fb9b0e8ec346f34f7b2bfca1f26e4009"
+      },
+      {
+        "relative_path": "main.tsx",
+        "bytes": 231,
+        "sha256": "2fd4bb748911a65146d3a0d44168224f7beb4d1d1cd3de4827b90367ec7d7844"
+      },
+      {
+        "relative_path": "region/client.test.ts",
+        "bytes": 9570,
+        "sha256": "06492ef30c4e723fd7b065e4f501a7d427db42ff3005030e81f0e58bfcd66dac"
+      },
+      {
+        "relative_path": "region/client.ts",
+        "bytes": 7229,
+        "sha256": "158e51e9a2a43d5e6b4888fe84d993ba5a05320714f6d0eba75c60880f373d77"
+      },
+      {
+        "relative_path": "region/geometry.test.ts",
+        "bytes": 3692,
+        "sha256": "b6dbc27e8ea6dbe5df09020cc226265c8e6dc336dec821ca2ee59b8a9d9d7303"
+      },
+      {
+        "relative_path": "region/geometry.ts",
+        "bytes": 3078,
+        "sha256": "5ce2194e4747ec801c81e342b0f255be92eb58d28f25e07149bcd8ae942651fe"
+      },
+      {
+        "relative_path": "region/RegionOverlay.tsx",
+        "bytes": 8645,
+        "sha256": "1bc082821a281bbf4a678409f453a3126fa8d0ebbbbe0fa09b35d77b6a525ddd"
+      },
+      {
+        "relative_path": "region/types.ts",
+        "bytes": 4427,
+        "sha256": "c8e7bdff355d97d8efe74cf823b658fe8d902ad449627f47991f35b39cac1746"
+      },
+      {
+        "relative_path": "resourceChannel/client.test.ts",
+        "bytes": 4275,
+        "sha256": "966df62d44768bec940292a6b0720e45194c0eb6964b1aeb6a16e478df1f997f"
+      },
+      {
+        "relative_path": "resourceChannel/client.ts",
+        "bytes": 3436,
+        "sha256": "1d4227b55610433f8aa24256e72911513647b1e70a405aa22e14e378f3674b98"
+      },
+      {
+        "relative_path": "resourceChannel/commandSurface.test.ts",
+        "bytes": 14593,
+        "sha256": "8346b996ebc92857d4dfb0502cfebab88f3ca366df057a9d2fc09b1c8c374c64"
+      },
+      {
+        "relative_path": "settings/client.test.ts",
+        "bytes": 3950,
+        "sha256": "71b122a904d8f4e843a27de855b441084165ae49f481bc79707d67996ec32c2b"
+      },
+      {
+        "relative_path": "settings/client.ts",
+        "bytes": 4575,
+        "sha256": "9d43891ff76231a7cd9e3c7627e9ca7423cc5d044be50fc8146e93472a8f7a9f"
+      },
+      {
+        "relative_path": "settings/SettingsPanel.test.tsx",
+        "bytes": 7057,
+        "sha256": "f0a3f608976e193ccfc6b7a0269f1488e5497a46d7b7bba0045bbc0efeb22ec0"
+      },
+      {
+        "relative_path": "settings/SettingsPanel.tsx",
+        "bytes": 8490,
+        "sha256": "58054a51a03e19b8cf3fe2bba3c7b8e48b9b2b72a7a347425d01253aa212d54f"
+      },
+      {
+        "relative_path": "settings/types.ts",
+        "bytes": 1459,
+        "sha256": "0001c2ecd0373e47896dd7f592476041816f3d181b8c81a70b0e31f7046b9d0a"
+      },
+      {
+        "relative_path": "testSupport/mockDom.ts",
+        "bytes": 4456,
+        "sha256": "97947d9ebdb6dd772ea70f4466f119f2ff7ac57a715af67caa2b0eebcc993a22"
+      },
+      {
+        "relative_path": "workbench/pageImage.ts",
+        "bytes": 1118,
+        "sha256": "be09e70f42ea3564713980cf4b7177614ee503c937f9cf725f32d28756cfbc9e"
+      },
+      {
+        "relative_path": "workbench/PageListPanel.test.tsx",
+        "bytes": 5700,
+        "sha256": "d81f691a91f75a1e6015267bcf817b8e2159b97b98ac2d44646ad9242191533b"
+      },
+      {
+        "relative_path": "workbench/PageListPanel.tsx",
+        "bytes": 6036,
+        "sha256": "a6a716b753e73bcf016774db94d83c5a19478f089b2f02eaa10ccdfcb485289e"
+      },
+      {
+        "relative_path": "workbench/RegionInspector.tsx",
+        "bytes": 13899,
+        "sha256": "0dc2a64bb8f6915f5ac2a14f2d4b38fe13c57f442ccd1800d7741def0f1c6985"
+      },
+      {
+        "relative_path": "workbench/RelabelConfirmDialog.tsx",
+        "bytes": 3943,
+        "sha256": "a147ddab204ecf937b85043a63f327441da45c32f6d662caceb1f2fddfb6ee12"
+      },
+      {
+        "relative_path": "workbench/RelabelContextMenu.tsx",
+        "bytes": 3943,
+        "sha256": "20f5584e24399404666823c598837062cdd012846c5674393eef98d44ab4052b"
+      },
+      {
+        "relative_path": "workbench/relabelMachine.test.ts",
+        "bytes": 7564,
+        "sha256": "021e39bdb19de1cb66dc89edb9df16415a9dee72a8f168ca6c49c37334c9ae60"
+      },
+      {
+        "relative_path": "workbench/relabelMachine.ts",
+        "bytes": 7782,
+        "sha256": "61c29e378158f7caf20297784b07d65b7212fb5c9d6930ee2e1def577db8ca10"
+      },
+      {
+        "relative_path": "workbench/TaskProgressPanel.tsx",
+        "bytes": 1076,
+        "sha256": "f63b7f726e8296df3dbffeebd9cf4c1de2aa91d06544ceaf4af600a97fdc8aa3"
+      },
+      {
+        "relative_path": "workbench/ViewerPanel.tsx",
+        "bytes": 10293,
+        "sha256": "94f825f3aa55ca51103ae7c35c5dbbf3c90db152c9f14839f8cb00118a552c64"
+      },
+      {
+        "relative_path": "workbench/WorkbenchPage.test.tsx",
+        "bytes": 50889,
+        "sha256": "072390bed36c8c52ae7d8c05f95f05c3f269eae988862dda97feaae5615396a8"
+      },
+      {
+        "relative_path": "workbench/WorkbenchPage.tsx",
+        "bytes": 39344,
+        "sha256": "1696bc6f350ac6daf1a84aa9f9350090bfd0d0594b9f88f45cfbc4e3b488d7b6"
+      },
+      {
+        "relative_path": "workbench/WorkbenchToolbar.tsx",
+        "bytes": 1222,
+        "sha256": "127ab9d84afcf61a1e0494185a192e247f8a345272cd987322bc691d52b1fe85"
+      }
+    ],
+    "p04_manifest": [
+      {
+        "relative_path": "ac1/driver.test.ts",
+        "bytes": 616,
+        "sha256": "f8010bc2e3ebdd875e850d77f957f9c1acd8dbed4493c8d8c558fd0eedea3ca3"
+      },
+      {
+        "relative_path": "ac1/driver.ts",
+        "bytes": 7753,
+        "sha256": "e45be4c7a34357053da3f0bd5a214a1a820a840ca7a2cc9b2d87fe0a3f6f9649"
+      },
+      {
+        "relative_path": "App.tsx",
+        "bytes": 21707,
+        "sha256": "8284874412d4dd95a39a4984110ad0762b749179a4a7e64427c45a0f136e11be"
+      },
+      {
+        "relative_path": "library/client.test.ts",
+        "bytes": 7548,
+        "sha256": "18a7109569861d54653eb8523c0a0f931f7aeb027acc9dec3077f4fa844d9e92"
+      },
+      {
+        "relative_path": "library/client.ts",
+        "bytes": 5292,
+        "sha256": "31fcaf4616fb946941562cd17bda26bf499f54a3b23d938bfa384add9b95de88"
+      },
+      {
+        "relative_path": "library/LibraryPanel.test.tsx",
+        "bytes": 9049,
+        "sha256": "46a1ab0fd015ba18b88f4578ed593286c1a8f14102510dc16d80290bdafc0731"
+      },
+      {
+        "relative_path": "library/LibraryPanel.tsx",
+        "bytes": 5297,
+        "sha256": "711e6a1f7a755bde64a7d4e7d908b8eef5592d967a49da03d8178b55a709f207"
+      },
+      {
+        "relative_path": "library/types.ts",
+        "bytes": 1751,
+        "sha256": "b2143a6850cbcfb8e5873e4055b95c19fb9b0e8ec346f34f7b2bfca1f26e4009"
+      },
+      {
+        "relative_path": "main.tsx",
+        "bytes": 231,
+        "sha256": "2fd4bb748911a65146d3a0d44168224f7beb4d1d1cd3de4827b90367ec7d7844"
+      },
+      {
+        "relative_path": "region/client.test.ts",
+        "bytes": 9570,
+        "sha256": "06492ef30c4e723fd7b065e4f501a7d427db42ff3005030e81f0e58bfcd66dac"
+      },
+      {
+        "relative_path": "region/client.ts",
+        "bytes": 7229,
+        "sha256": "158e51e9a2a43d5e6b4888fe84d993ba5a05320714f6d0eba75c60880f373d77"
+      },
+      {
+        "relative_path": "region/geometry.test.ts",
+        "bytes": 3692,
+        "sha256": "b6dbc27e8ea6dbe5df09020cc226265c8e6dc336dec821ca2ee59b8a9d9d7303"
+      },
+      {
+        "relative_path": "region/geometry.ts",
+        "bytes": 3078,
+        "sha256": "5ce2194e4747ec801c81e342b0f255be92eb58d28f25e07149bcd8ae942651fe"
+      },
+      {
+        "relative_path": "region/RegionOverlay.tsx",
+        "bytes": 8645,
+        "sha256": "1bc082821a281bbf4a678409f453a3126fa8d0ebbbbe0fa09b35d77b6a525ddd"
+      },
+      {
+        "relative_path": "region/types.ts",
+        "bytes": 4427,
+        "sha256": "c8e7bdff355d97d8efe74cf823b658fe8d902ad449627f47991f35b39cac1746"
+      },
+      {
+        "relative_path": "resourceChannel/client.test.ts",
+        "bytes": 4275,
+        "sha256": "966df62d44768bec940292a6b0720e45194c0eb6964b1aeb6a16e478df1f997f"
+      },
+      {
+        "relative_path": "resourceChannel/client.ts",
+        "bytes": 3436,
+        "sha256": "1d4227b55610433f8aa24256e72911513647b1e70a405aa22e14e378f3674b98"
+      },
+      {
+        "relative_path": "resourceChannel/commandSurface.test.ts",
+        "bytes": 14593,
+        "sha256": "8346b996ebc92857d4dfb0502cfebab88f3ca366df057a9d2fc09b1c8c374c64"
+      },
+      {
+        "relative_path": "settings/client.test.ts",
+        "bytes": 3950,
+        "sha256": "71b122a904d8f4e843a27de855b441084165ae49f481bc79707d67996ec32c2b"
+      },
+      {
+        "relative_path": "settings/client.ts",
+        "bytes": 4575,
+        "sha256": "9d43891ff76231a7cd9e3c7627e9ca7423cc5d044be50fc8146e93472a8f7a9f"
+      },
+      {
+        "relative_path": "settings/SettingsPanel.test.tsx",
+        "bytes": 7057,
+        "sha256": "f0a3f608976e193ccfc6b7a0269f1488e5497a46d7b7bba0045bbc0efeb22ec0"
+      },
+      {
+        "relative_path": "settings/SettingsPanel.tsx",
+        "bytes": 8490,
+        "sha256": "58054a51a03e19b8cf3fe2bba3c7b8e48b9b2b72a7a347425d01253aa212d54f"
+      },
+      {
+        "relative_path": "settings/types.ts",
+        "bytes": 1459,
+        "sha256": "0001c2ecd0373e47896dd7f592476041816f3d181b8c81a70b0e31f7046b9d0a"
+      },
+      {
+        "relative_path": "testSupport/mockDom.ts",
+        "bytes": 4456,
+        "sha256": "97947d9ebdb6dd772ea70f4466f119f2ff7ac57a715af67caa2b0eebcc993a22"
+      },
+      {
+        "relative_path": "workbench/pageImage.ts",
+        "bytes": 1118,
+        "sha256": "be09e70f42ea3564713980cf4b7177614ee503c937f9cf725f32d28756cfbc9e"
+      },
+      {
+        "relative_path": "workbench/PageListPanel.test.tsx",
+        "bytes": 5700,
+        "sha256": "d81f691a91f75a1e6015267bcf817b8e2159b97b98ac2d44646ad9242191533b"
+      },
+      {
+        "relative_path": "workbench/PageListPanel.tsx",
+        "bytes": 6036,
+        "sha256": "a6a716b753e73bcf016774db94d83c5a19478f089b2f02eaa10ccdfcb485289e"
+      },
+      {
+        "relative_path": "workbench/RegionInspector.tsx",
+        "bytes": 13899,
+        "sha256": "0dc2a64bb8f6915f5ac2a14f2d4b38fe13c57f442ccd1800d7741def0f1c6985"
+      },
+      {
+        "relative_path": "workbench/RelabelConfirmDialog.tsx",
+        "bytes": 3943,
+        "sha256": "a147ddab204ecf937b85043a63f327441da45c32f6d662caceb1f2fddfb6ee12"
+      },
+      {
+        "relative_path": "workbench/RelabelContextMenu.tsx",
+        "bytes": 3943,
+        "sha256": "20f5584e24399404666823c598837062cdd012846c5674393eef98d44ab4052b"
+      },
+      {
+        "relative_path": "workbench/relabelMachine.test.ts",
+        "bytes": 7564,
+        "sha256": "021e39bdb19de1cb66dc89edb9df16415a9dee72a8f168ca6c49c37334c9ae60"
+      },
+      {
+        "relative_path": "workbench/relabelMachine.ts",
+        "bytes": 7782,
+        "sha256": "61c29e378158f7caf20297784b07d65b7212fb5c9d6930ee2e1def577db8ca10"
+      },
+      {
+        "relative_path": "workbench/TaskProgressPanel.tsx",
+        "bytes": 1076,
+        "sha256": "f63b7f726e8296df3dbffeebd9cf4c1de2aa91d06544ceaf4af600a97fdc8aa3"
+      },
+      {
+        "relative_path": "workbench/ViewerPanel.tsx",
+        "bytes": 10293,
+        "sha256": "94f825f3aa55ca51103ae7c35c5dbbf3c90db152c9f14839f8cb00118a552c64"
+      },
+      {
+        "relative_path": "workbench/WorkbenchPage.test.tsx",
+        "bytes": 50889,
+        "sha256": "072390bed36c8c52ae7d8c05f95f05c3f269eae988862dda97feaae5615396a8"
+      },
+      {
+        "relative_path": "workbench/WorkbenchPage.tsx",
+        "bytes": 39344,
+        "sha256": "1696bc6f350ac6daf1a84aa9f9350090bfd0d0594b9f88f45cfbc4e3b488d7b6"
+      },
+      {
+        "relative_path": "workbench/WorkbenchToolbar.tsx",
+        "bytes": 1222,
+        "sha256": "127ab9d84afcf61a1e0494185a192e247f8a345272cd987322bc691d52b1fe85"
+      }
+    ]
+  },
+  "frontend_build_used": false
+}

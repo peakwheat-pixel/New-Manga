@@ -1,0 +1,6 @@
+{
+  "captured_at_utc": "2026-10-15T12:45:25.0659162Z",
+  "head": "0e36da4a4e4aebd0cd57cf067542d97a70f7a24d",
+  "tracked_dirty_before": [],
+  "command": "cargo test --locked --bin m2rc1-desktop page_nav_production_only_commands_are_exact"
+}
