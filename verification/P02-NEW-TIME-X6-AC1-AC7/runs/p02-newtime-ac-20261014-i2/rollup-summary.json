@@ -1,0 +1,192 @@
+{
+  "task_id": "P02-NEW-TIME-X6-AC1-AC7",
+  "run_id": "p02-newtime-ac-20261014-i2",
+  "owner": "Codex (Owner role substituted for Antigravity)",
+  "status": "BLOCKED",
+  "pinned_exe": {
+    "path": "G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-X6-BUILD-CARGO/apps/desktop/src-tauri/target/release/m2rc1-desktop.exe",
+    "sha256": "92AC7B8EFB646FE77DF8245B13C9AF9314BEF415B2F0E007B1CDCEA729BC13FD",
+    "bytes": 9367040
+  },
+  "source_baseline": "49d2a2f9c56462f5602b00ad4b824c5381abb1ab",
+  "ac_results": {
+    "AC1": {
+      "name": "Runtime Identity",
+      "status": "PASS",
+      "layer": "REAL_IPC",
+      "evidence_dir": "verification/P02-NEW-TIME-X6-AC1-AC7/runs/p02-newtime-ac-20261014-i1/ac1-identity",
+      "node_exit_code": 0
+    },
+    "AC2": {
+      "name": "Navigation & Operation",
+      "status": "PASS",
+      "layer": "REAL_IPC",
+      "evidence_dir": "verification/P02-NEW-TIME-X6-AC1-AC7/runs/p02-newtime-ac-20261014-i1/ac2-navigation",
+      "node_exit_code": 0
+    },
+    "AC3": {
+      "name": "300ms Quiet-Period & Stale Guard",
+      "status": "PASS",
+      "layer": "REAL_IPC (A) / MOCK_IPC (B)",
+      "quiet_period_ms": 311,
+      "quiet_period_ge_300ms": true,
+      "intermediate_prefix_reads_called": 0,
+      "stale_reply_guarded": true,
+      "evidence_dir": "verification/P02-NEW-TIME-X6-AC1-AC7/runs/p02-newtime-ac-20261014-i1/ac3-debounce-a3",
+      "node_exit_code": 0
+    },
+    "AC4": {
+      "name": "Write-Refresh Immediacy",
+      "status": "PASS",
+      "layer": "REAL_WEBVIEW_MOCK_IPC",
+      "retype_gap_ms": 0,
+      "undo_gap_ms": 0,
+      "restore_gap_ms": 0,
+      "history_refreshed_revisions": 8,
+      "immediate_under_300ms": true,
+      "evidence_dir": "verification/P02-NEW-TIME-X6-AC1-AC7/runs/p02-newtime-ac-20261014-i1/ac4-write-refresh-a3",
+      "node_exit_code": 0
+    },
+    "AC5": {
+      "name": "Keyboard & Focus",
+      "status": "PASS",
+      "layer": "REAL_WEBVIEW_MOCK_IPC",
+      "tab_traversal_captured": true,
+      "shift_tab_captured": true,
+      "enter_activation_on_focused_control": true,
+      "space_activation_on_focused_control": true,
+      "dialog_opened": true,
+      "escape_dismissed_dialog": false,
+      "escape_finding": "FINDING — confirm dialog does not attach Escape key dismiss handler in product React code (dialog remained open)",
+      "evidence_dir": "verification/P02-NEW-TIME-X6-AC1-AC7/runs/p02-newtime-ac-20261014-i1/ac5-keyboard-a2",
+      "node_exit_code": 0
+    },
+    "AC6": {
+      "name": "Contrast & Token Mapping",
+      "status": "BLOCKED",
+      "layer": "NOT_OBSERVED (CDP collector did not attach)",
+      "node_exit_code": null,
+      "node_exit_code_note": "Aggregate is null because no collector run completed; all four launcher attempts have node_exit_code=1.",
+      "samples_total": null,
+      "computed_count": null,
+      "passed_count": null,
+      "fails_count": null,
+      "not_verifiable_count": null,
+      "token_mapping_summary": {
+        "mapped": null,
+        "unmapped": null
+      },
+      "alpha_compositing_triggered": false,
+      "alpha_compositing_status": "NOT_TRIGGERED — collector never attached; no DOM sample was recorded",
+      "light_theme": "NOT_RECHECKED",
+      "evidence_dir": "verification/P02-NEW-TIME-X6-AC1-AC7/runs/p02-newtime-ac-20261014-i2/attempts/",
+      "blocker": "CDP endpoint did not appear in four AC6 attempts, including recovery on free port 9333; no ac6-contrast.json contrast table was produced"
+    },
+    "AC7": {
+      "name": "Rollup & Findings",
+      "status": "Owner scope 完成；DSH Review 与 Codex Gate 仍 pending",
+      "evidence_dir": "verification/P02-NEW-TIME-X6-AC1-AC7/runs/p02-newtime-ac-20261014-i2/findings.md、verification/P02-NEW-TIME-X6-AC1-AC7/runs/p02-newtime-ac-20261014-i2/rollup-summary.json"
+    }
+  },
+  "findings": [
+    {
+      "id": "P-01",
+      "type": "PRODUCT_A11Y_KEYBOARD",
+      "target": "RelabelConfirmDialog / RevisionRestoreDialog",
+      "observed": "Confirm dialog does not attach Escape key dismiss handler in product React code (dialog remained open upon real CDP Escape key event)",
+      "severity": "P3"
+    },
+    {
+      "id": "P-02",
+      "type": "PRODUCT_DESIGN_TOKENS",
+      "target": "Workbench & Console React DOM",
+      "observed": "All 9 sampled elements use inline React runtime colors; F token system is not wired into this surface (0 mapped, 9 unmapped)",
+      "severity": "P3"
+    },
+    {
+      "id": "P-03",
+      "type": "PRODUCT_FEATURE_SCOPE",
+      "target": "Theme system",
+      "observed": "NOT_APPLICABLE — No light theme toggle or entry point exists in current React app",
+      "severity": "P3"
+    },
+    {
+      "id": "P-04",
+      "type": "HARNESS_OBSERVATION",
+      "target": "page id input background",
+      "observed": "I1 的 textContent-only 过滤漏采 page-id-input；I2 已改用 value/placeholder，但 CDP 未连通，无法取得新对比度。输入框真实 ratio 与 PASS/FAIL 未核验；本轮 alpha 合成未触发（采样器未运行）。",
+      "severity": "P2"
+    }
+  ],
+  "i1_preserved_failed_attempts": [
+    {
+      "node_exit_code": null,
+      "scenario": "ac3-debounce-a2",
+      "reason": "observer wrapper never became ACTIVE",
+      "verdict": "ERROR",
+      "status": "FAIL"
+    },
+    {
+      "node_exit_code": null,
+      "scenario": "ac4-write-refresh",
+      "reason": "element not found: [data-testid=\"region-frame-syn-region-ac4-001\"]",
+      "verdict": "ERROR",
+      "status": "FAIL"
+    },
+    {
+      "node_exit_code": null,
+      "scenario": "ac4-write-refresh-a2",
+      "reason": "element not found: [data-testid=\"region-frame-syn-region-ac4-001\"]",
+      "verdict": "ERROR",
+      "status": "FAIL"
+    },
+    {
+      "node_exit_code": null,
+      "scenario": "ac5-keyboard",
+      "reason": "element not found: [data-testid=\"inspector-revision-history\"]",
+      "verdict": "ERROR",
+      "status": "FAIL"
+    }
+  ],
+  "i2_ac6_attempts": [
+    {
+      "scenario": "ac6-contrast",
+      "status": "FAIL",
+      "node_exit_code": 1,
+      "cdp_port": 9334,
+      "verdict": "ERROR",
+      "evidence_dir": "verification/P02-NEW-TIME-X6-AC1-AC7/runs/p02-newtime-ac-20261014-i2/attempts/ac6-contrast-a1-failed",
+      "attempt": "a1"
+    },
+    {
+      "scenario": "ac6-contrast-a2",
+      "status": "FAIL",
+      "node_exit_code": 1,
+      "cdp_port": 9335,
+      "verdict": "ERROR",
+      "evidence_dir": "verification/P02-NEW-TIME-X6-AC1-AC7/runs/p02-newtime-ac-20261014-i2/attempts/ac6-contrast-a2-failed",
+      "attempt": "a2"
+    },
+    {
+      "scenario": "ac6-contrast-a3",
+      "status": "FAIL",
+      "node_exit_code": 1,
+      "cdp_port": 9336,
+      "verdict": "ERROR",
+      "evidence_dir": "verification/P02-NEW-TIME-X6-AC1-AC7/runs/p02-newtime-ac-20261014-i2/attempts/ac6-contrast-a3-failed",
+      "attempt": "a3"
+    },
+    {
+      "scenario": "ac6-contrast",
+      "status": "FAIL",
+      "node_exit_code": 1,
+      "cdp_port": 9333,
+      "verdict": "ERROR",
+      "reason": "CDP endpoint never appeared: TypeError: fetch failed; port 9333 was free before and after this attempt",
+      "evidence_dir": "verification/P02-NEW-TIME-X6-AC1-AC7/runs/p02-newtime-ac-20261014-i2/attempts/ac6-contrast-a4-failed",
+      "attempt": "a4-recovery"
+    }
+  ],
+  "blocker": "R3-01 remains open: after Coordinator cleared the previous 9333 listeners, one recovery attempt on the correct port 9333 still produced no CDP endpoint. The cause is unresolved; no page-id-input sample row or AC6 contrast table exists.",
+  "note": "AC1–AC5 and earlier valid AC6 observations are carried forward from I1 evidence only; they were not rerun in I2. AC6 is BLOCKED and must not be treated as PASS."
+}

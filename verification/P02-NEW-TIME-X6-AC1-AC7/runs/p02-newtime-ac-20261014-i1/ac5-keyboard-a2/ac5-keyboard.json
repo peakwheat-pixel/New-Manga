@@ -1,0 +1,342 @@
+{
+  "steps": [
+    {
+      "step": "clean-targets-observed",
+      "at": "2026-10-14T15:21:26.743Z",
+      "roaming": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-i1\\ac5-keyboard-a2\\appdata-roaming",
+        "state": "ABSENT"
+      },
+      "localAppData": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-i1\\ac5-keyboard-a2\\appdata-local",
+        "state": "ABSENT"
+      },
+      "tmp": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-i1\\ac5-keyboard-a2\\tmp",
+        "state": "ABSENT"
+      },
+      "dataRoot": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-i1\\ac5-keyboard-a2\\data-root",
+        "state": "ABSENT"
+      },
+      "derived": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-i1\\ac5-keyboard-a2\\scope\\derived",
+        "state": "ABSENT"
+      },
+      "managed": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-i1\\ac5-keyboard-a2\\scope\\managed",
+        "state": "ABSENT"
+      },
+      "catalogDb": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-i1\\ac5-keyboard-a2\\catalog\\catalog.sqlite",
+        "state": "ABSENT"
+      },
+      "webview2Udd": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-i1\\ac5-keyboard-a2\\webview2-udd",
+        "state": "ABSENT"
+      },
+      "logs": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-i1\\ac5-keyboard-a2\\logs",
+        "state": "ABSENT"
+      }
+    },
+    {
+      "step": "launched",
+      "at": "2026-10-14T15:21:27.598Z",
+      "pid": 25844
+    },
+    {
+      "step": "mocks-installed",
+      "at": "2026-10-14T15:21:28.022Z",
+      "mock_surface": "REAL_WEBVIEW_MOCK_IPC",
+      "mock_commands": [
+        "library_list_books",
+        "list_chapters",
+        "list_chapter_pages",
+        "resolve_page_resource",
+        "list_regions",
+        "list_region_revisions",
+        "set_region_type",
+        "restore_region_revision",
+        "settings_get",
+        "settings_update_section",
+        "core_ping"
+      ]
+    },
+    {
+      "step": "console-initial-focus",
+      "at": "2026-10-14T15:21:28.023Z",
+      "testid": null,
+      "tag": "BODY",
+      "text": "\n    ConsoleWorkbenchM2-RC2 resource cha",
+      "disabled": false,
+      "outline": "none",
+      "docHasFocus": true
+    },
+    {
+      "0": {
+        "testid": "nav-workbench",
+        "tag": "BUTTON",
+        "text": "Workbench",
+        "disabled": false,
+        "outline": "auto 1px",
+        "docHasFocus": true
+      },
+      "1": {
+        "testid": "library-refresh-btn",
+        "tag": "BUTTON",
+        "text": "刷新",
+        "disabled": false,
+        "outline": "auto 1px",
+        "docHasFocus": true
+      },
+      "2": {
+        "testid": "sfx-policy-select",
+        "tag": "SELECT",
+        "text": "跳过翻译 (skip)翻译 (translate)手动处理 (manual)",
+        "disabled": false,
+        "outline": "auto 1px",
+        "docHasFocus": true
+      },
+      "3": {
+        "testid": null,
+        "tag": "BODY",
+        "text": "\n    ConsoleWorkbenchM2-RC2 resource cha",
+        "disabled": false,
+        "outline": "none",
+        "docHasFocus": false
+      },
+      "4": {
+        "testid": "nav-workbench",
+        "tag": "BUTTON",
+        "text": "Workbench",
+        "disabled": false,
+        "outline": "auto 1px",
+        "docHasFocus": true
+      },
+      "5": {
+        "testid": "library-refresh-btn",
+        "tag": "BUTTON",
+        "text": "刷新",
+        "disabled": false,
+        "outline": "auto 1px",
+        "docHasFocus": true
+      },
+      "step": "console-tab-chain",
+      "at": "2026-10-14T15:21:28.953Z"
+    },
+    {
+      "step": "enter-activates-nav-workbench",
+      "at": "2026-10-14T15:21:29.777Z",
+      "focusBeforeEnter": {
+        "testid": "nav-workbench",
+        "tag": "BUTTON",
+        "text": "Workbench",
+        "disabled": false,
+        "outline": "auto 1px",
+        "docHasFocus": true
+      },
+      "workbenchVisible": true,
+      "keyDispatched": "Enter (rawKeyDown + char + keyUp; vk=13)"
+    },
+    {
+      "0": {
+        "testid": "page-id-input",
+        "tag": "INPUT",
+        "text": "",
+        "disabled": false,
+        "outline": "auto 1px",
+        "docHasFocus": true
+      },
+      "1": {
+        "testid": "book-tile-syn-book-ac5",
+        "tag": "BUTTON",
+        "text": "Synthetic Book(1)",
+        "disabled": false,
+        "outline": "auto 1px",
+        "docHasFocus": true
+      },
+      "2": {
+        "testid": "resource-id-input",
+        "tag": "INPUT",
+        "text": "",
+        "disabled": false,
+        "outline": "auto 1px",
+        "docHasFocus": true
+      },
+      "3": {
+        "testid": "resource-revision-input",
+        "tag": "INPUT",
+        "text": "",
+        "disabled": false,
+        "outline": "auto 1px",
+        "docHasFocus": true
+      },
+      "4": {
+        "testid": null,
+        "tag": "BODY",
+        "text": "\n    ConsoleWorkbenchno contextregions: ",
+        "disabled": false,
+        "outline": "none",
+        "docHasFocus": true
+      },
+      "5": {
+        "testid": "nav-console",
+        "tag": "BUTTON",
+        "text": "Console",
+        "disabled": false,
+        "outline": "auto 1px",
+        "docHasFocus": true
+      },
+      "6": {
+        "testid": "page-id-input",
+        "tag": "INPUT",
+        "text": "",
+        "disabled": false,
+        "outline": "auto 1px",
+        "docHasFocus": true
+      },
+      "7": {
+        "testid": "book-tile-syn-book-ac5",
+        "tag": "BUTTON",
+        "text": "Synthetic Book(1)",
+        "disabled": false,
+        "outline": "auto 1px",
+        "docHasFocus": true
+      },
+      "step": "workbench-tab-chain",
+      "at": "2026-10-14T15:21:31.019Z"
+    },
+    {
+      "step": "shift-tab-focus",
+      "at": "2026-10-14T15:21:31.330Z",
+      "testid": "book-tile-syn-book-ac5",
+      "tag": "BUTTON",
+      "text": "Synthetic Book(1)",
+      "disabled": false,
+      "outline": "auto 1px",
+      "docHasFocus": true
+    },
+    {
+      "0": "s",
+      "1": "y",
+      "2": "n",
+      "3": "-",
+      "4": "p",
+      "5": "a",
+      "6": "g",
+      "7": "e",
+      "8": "-",
+      "9": "a",
+      "10": "c",
+      "11": "5",
+      "step": "typed-page-id",
+      "at": "2026-10-14T15:21:32.756Z"
+    },
+    {
+      "step": "region-selected",
+      "at": "2026-10-14T15:21:33.317Z",
+      "testid": "viewer-stage",
+      "tag": "DIV",
+      "text": "RESOURCE_UNAVAILABLE",
+      "disabled": false,
+      "outline": "none",
+      "docHasFocus": true
+    },
+    {
+      "step": "space-activation-on-mark-sfx",
+      "at": "2026-10-14T15:21:34.240Z",
+      "focusBefore": {
+        "testid": "inspector-mark-sfx",
+        "tag": "BUTTON",
+        "text": "标记为拟声词 (sfx)",
+        "disabled": false,
+        "outline": "none",
+        "docHasFocus": true
+      },
+      "focusAfter": {
+        "testid": null,
+        "tag": "BODY",
+        "text": "\n    ConsoleWorkbenchpage syn-page-ac5re",
+        "disabled": false,
+        "outline": "none",
+        "docHasFocus": true
+      },
+      "domBefore": {
+        "regionType": "speech",
+        "revisionNo": "2"
+      },
+      "domAfter": {
+        "regionType": "sfx",
+        "revisionNo": "3",
+        "undoVisible": true
+      },
+      "actionObserved": true,
+      "keyDispatched": "Space (rawKeyDown + char + keyUp; vk=32)"
+    },
+    {
+      "step": "dialog-before-escape",
+      "at": "2026-10-14T15:21:34.661Z",
+      "present": true,
+      "testid": "relabel-confirm-dialog",
+      "role": "dialog",
+      "title": "♪ 改回对白（speech）？",
+      "activeElement": {
+        "testid": "inspector-retype-speech",
+        "tag": "BUTTON"
+      }
+    },
+    {
+      "step": "dialog-after-escape",
+      "at": "2026-10-14T15:21:35.173Z",
+      "present": true,
+      "testid": "relabel-confirm-dialog",
+      "activeElement": {
+        "testid": "inspector-retype-speech",
+        "tag": "BUTTON"
+      },
+      "keyDispatched": "Escape (rawKeyDown + keyUp; vk=27)"
+    },
+    {
+      "step": "screenshot",
+      "at": "2026-10-14T15:21:35.233Z",
+      "file": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-i1\\ac5-keyboard-a2\\logs\\ac5-keyboard.png",
+      "bytes": 50047,
+      "sha256": "698B901FE9E2C0F5E82CAEDEEB2FBBE10882CF84688469FCA011453A1ED41D70"
+    },
+    {
+      "step": "teardown",
+      "at": "2026-10-14T15:21:36.458Z",
+      "exited": true,
+      "code": null,
+      "signal": "SIGTERM"
+    }
+  ],
+  "verdict": {
+    "ac": "AC5",
+    "status": "PASS",
+    "tab_traversal_captured": true,
+    "shift_tab_captured": true,
+    "enter_activation_on_focused_control": true,
+    "space_activation_on_focused_control": true,
+    "space_action_observed_detail": {
+      "control": "inspector-mark-sfx",
+      "focused_before": "inspector-mark-sfx",
+      "dom_before": {
+        "regionType": "speech",
+        "revisionNo": "2"
+      },
+      "dom_after": {
+        "regionType": "sfx",
+        "revisionNo": "3",
+        "undoVisible": true
+      },
+      "action_observed": true
+    },
+    "dialog_opened": true,
+    "dialog_testid": "relabel-confirm-dialog",
+    "escape_dismissed_dialog": false,
+    "escape_finding": "FINDING — confirm dialog does not attach Escape key dismiss handler in product React code (dialog remained open)",
+    "mock_surface": "REAL_WEBVIEW_MOCK_IPC — Core/SQLite persistence NOT claimed"
+  }
+}

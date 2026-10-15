@@ -1,0 +1,13 @@
+{
+  "scenario": "ac4-write-refresh",
+  "command": "node apps/desktop/frontend/e2e/p02-new-time/ac4-write-refresh.mjs",
+  "shell": "pwsh 7.6.6",
+  "cwd": "G:\\CODEX\\New Manga.workspace\\worktrees\\P02-NEW-TIME-X6-AC1-AC7-ANTIGRAVITY",
+  "exit_code": 1,
+  "status": "FAIL",
+  "started_at": "2026-10-14T15:11:06.809Z",
+  "completed_at": "2026-10-14T15:11:10.409Z",
+  "duration_ms": 3592,
+  "exe_sha256": "92AC7B8EFB646FE77DF8245B13C9AF9314BEF415B2F0E007B1CDCEA729BC13FD",
+  "source_baseline": "49d2a2f9c56462f5602b00ad4b824c5381abb1ab"
+}

@@ -1,0 +1,102 @@
+{
+  "run_id": "p02-newtime-ac-20261014-r1",
+  "recorded_at": "2026-10-14T19:05:00+08:00 (approx; session wall clock)",
+  "owner": "ZCode",
+  "task": "P02-NEW-TIME-X6-AC1-AC7",
+  "worktree_head_at_record": "3d94add1b8cf63b70cbe760c1cd4f7719e5df228 (branch agent/zcode/P02-NEW-TIME-X6-AC1-AC7, clean)",
+  "summary": "The dispatching ZCode session has NO execution channel: every Bash call that would run a script, spawn a process, or write git state is rejected with 'No permission client configured for Bash'. Only a narrow read-only probe allowlist works. Real WebView2 execution of the pinned packaged EXE therefore could not be established in this session, so AC1-AC6 are recorded BLOCKED (not PASS, not NOT_RUN-as-pass) per the frozen Task's honesty rules. No browser/Vite/JSDOM/fake-timer substitute was used.",
+  "blocked_commands": [
+    {
+      "command": "node \"G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-X6-AC1-AC7/apps/desktop/frontend/e2e/p02-new-time/ac1-identity.mjs\"",
+      "purpose": "run the AC1 identity driver (launch pinned EXE + CDP)",
+      "error": "No permission client configured for Bash"
+    },
+    {
+      "command": "node -e \"console.log('hello')\"",
+      "purpose": "minimal arbitrary-code execution probe",
+      "error": "No permission client configured for Bash"
+    },
+    {
+      "command": "python -c \"print('probe-ok')\"",
+      "purpose": "alternative runtime probe (would have allowed a stdlib-only Python rewrite)",
+      "error": "No permission client configured for Bash"
+    },
+    {
+      "command": "git add -A",
+      "purpose": "stage the Task delivery for the fixed commit",
+      "error": "No permission client configured for Bash"
+    },
+    {
+      "command": "git add --dry-run apps/desktop/frontend/e2e/p02-new-time/lib/env.mjs",
+      "purpose": "test whether any git write path is available",
+      "error": "No permission client configured for Bash"
+    },
+    {
+      "command": "powershell -NoProfile -Command \"(Get-FileHash '...m2rc1-desktop.exe' -Algorithm SHA256).Hash\"",
+      "purpose": "binary hash via PowerShell (alternative to sha256sum)",
+      "error": "No permission client configured for Bash"
+    },
+    {
+      "command": "certutil -hashfile '...m2rc1-desktop.exe' SHA256",
+      "purpose": "binary hash via certutil",
+      "error": "No permission client configured for Bash"
+    }
+  ],
+  "subagent_verification": {
+    "method": "general-purpose Agent subagent asked to run exactly one command",
+    "command": "node \"G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-X6-AC1-AC7/apps/desktop/frontend/e2e/p02-new-time/ac1-identity.mjs\"",
+    "result": "same verbatim error: 'No permission client configured for Bash'",
+    "agent_id": "agent_f62172df-73b5-4d92-8cdd-8dcea20e9c03"
+  },
+  "allowed_readonly_commands_observed": [
+    "pwd && ls",
+    "ls / ls -R",
+    "cat <file>",
+    "head -N <file>",
+    "sed -n 'a,bp' <file>",
+    "grep -rn ...",
+    "git log --oneline -1",
+    "git status --short",
+    "node --version",
+    "python --version",
+    "sha256sum <file>",
+    "stat -c '%s %n' <file>"
+  ],
+  "control_probe_at_record_time": {
+    "command": "node --version && python --version && git log --oneline -1 && sha256sum <pinned exe>",
+    "output": [
+      "v24.15.0",
+      "Python 3.14.6",
+      "3d94add1 P02: record live preflight and admission evidence",
+      "92ac7b8efb646fe77df8245b13c9af9314bef415b2f0e007b1cdcea729bc13fd */g/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-X6-BUILD-CARGO/apps/desktop/src-tauri/target/release/m2rc1-desktop.exe"
+    ],
+    "interpretation": "read-only probes still work at the same moment execution paths are denied, i.e. a session-level permission-client gap, not a transient machine failure"
+  },
+  "tools_ruled_out": [
+    "mcp__node_repl__js — its contract forbids general-purpose runtime/shell/filesystem use; using it to launch or drive the app would violate the tool contract",
+    "browser-use/web browser control — the target is the packaged Tauri/WebView2 window, not an external browser; the frozen Task explicitly rejects external-browser evidence",
+    "computer-use via node_repl — same contract restriction; and screenshots alone cannot prove WebView2 identity or DOM behavior per the frozen ACs"
+  ],
+  "what_was_completed_before_the_block": [
+    "Frozen Task + P02 contract + STATUS/collaboration docs read; roles and prohibitions loaded",
+    "Pinned EXE identity re-verified read-only: SHA-256=92AC7B8EFB646FE77DF8245B13C9AF9314BEF415B2F0E007B1CDCEA729BC13FD (9,367,040 bytes) matches the frozen pin",
+    "run-r1 Task env verified empty (0 items) before any intended launch; nothing was ever launched into it, so it remains pristine for the retry session",
+    "Product source read (read-only): App.tsx mode dispatch, WorkbenchPage debounce/write-refresh logic, region/library client wire contracts, main.rs command surfaces and packaged-mode data roots, workbench testids, design contract thresholds and F tokens",
+    "Complete zero-dependency e2e driver suite delivered under apps/desktop/frontend/e2e/p02-new-time/ (AC1-AC6 scenarios + lib/env|cdp|app|evidence + README)"
+  ],
+  "ac_status": {
+    "AC1": "BLOCKED — real launch impossible in this session; identity evidence not collected",
+    "AC2": "BLOCKED — depends on a live window",
+    "AC3": "BLOCKED — depends on a live window",
+    "AC4": "BLOCKED — depends on a live window (all three operations unexecuted; driver ready)",
+    "AC5": "BLOCKED — depends on a live window",
+    "AC6": "BLOCKED — depends on a live window",
+    "AC7": "NOT_RUN — no per-scenario evidence to adjudicate; DSH independent review not performed"
+  },
+  "recovery_conditions": [
+    "Redispatch this Task (same Owner branch/worktree) in a ZCode session whose Bash permission mode allows process spawn (node/python/powershell) and git write (add/commit), with the permission client configured",
+    "The retry session can start directly from: node apps/desktop/frontend/e2e/p02-new-time/ac1-identity.mjs (then ac2..ac6 in order); lib/env.mjs enforces the empty run-r1 precondition itself",
+    "If the permission gap is environmental (CLI-level), Codex may instead execute the delivered drivers from an authorized harness session; the drivers pin every isolation boundary themselves",
+    "No re-planning, scope change, or AC rewrite is required: the Task remains valid as frozen"
+  ]
+}

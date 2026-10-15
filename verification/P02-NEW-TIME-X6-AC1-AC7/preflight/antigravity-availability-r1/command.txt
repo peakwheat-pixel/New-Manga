@@ -1,0 +1,1 @@
+agy -p "只回复两个字：收到" --project "New Manga" --output-format json --dangerously-skip-permissions

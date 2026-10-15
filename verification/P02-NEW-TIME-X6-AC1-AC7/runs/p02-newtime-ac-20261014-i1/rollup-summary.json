@@ -1,0 +1,117 @@
+{
+  "task_id": "P02-NEW-TIME-X6-AC1-AC7",
+  "run_id": "p02-newtime-ac-20261014-i1",
+  "owner": "Antigravity",
+  "status": "COMPLETED",
+  "pinned_exe": {
+    "path": "G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-X6-BUILD-CARGO/apps/desktop/src-tauri/target/release/m2rc1-desktop.exe",
+    "sha256": "92AC7B8EFB646FE77DF8245B13C9AF9314BEF415B2F0E007B1CDCEA729BC13FD",
+    "bytes": 9367040
+  },
+  "source_baseline": "49d2a2f9c56462f5602b00ad4b824c5381abb1ab",
+  "ac_results": {
+    "AC1": {
+      "name": "Runtime Identity",
+      "status": "PASS",
+      "layer": "REAL_IPC",
+      "exit_code": 0,
+      "evidence_dir": "verification/P02-NEW-TIME-X6-AC1-AC7/runs/p02-newtime-ac-20261014-i1/ac1-identity"
+    },
+    "AC2": {
+      "name": "Navigation & Operation",
+      "status": "PASS",
+      "layer": "REAL_IPC",
+      "exit_code": 0,
+      "evidence_dir": "verification/P02-NEW-TIME-X6-AC1-AC7/runs/p02-newtime-ac-20261014-i1/ac2-navigation"
+    },
+    "AC3": {
+      "name": "300ms Quiet-Period & Stale Guard",
+      "status": "PASS",
+      "layer": "REAL_IPC (A) / MOCK_IPC (B)",
+      "exit_code": 0,
+      "quiet_period_ms": 311,
+      "quiet_period_ge_300ms": true,
+      "intermediate_prefix_reads_called": 0,
+      "stale_reply_guarded": true,
+      "evidence_dir": "verification/P02-NEW-TIME-X6-AC1-AC7/runs/p02-newtime-ac-20261014-i1/ac3-debounce-a3"
+    },
+    "AC4": {
+      "name": "Write-Refresh Immediacy",
+      "status": "PASS",
+      "layer": "REAL_WEBVIEW_MOCK_IPC",
+      "exit_code": 0,
+      "retype_gap_ms": 0,
+      "undo_gap_ms": 0,
+      "restore_gap_ms": 0,
+      "history_refreshed_revisions": 8,
+      "immediate_under_300ms": true,
+      "evidence_dir": "verification/P02-NEW-TIME-X6-AC1-AC7/runs/p02-newtime-ac-20261014-i1/ac4-write-refresh-a3"
+    },
+    "AC5": {
+      "name": "Keyboard & Focus",
+      "status": "PASS",
+      "layer": "REAL_WEBVIEW_MOCK_IPC",
+      "exit_code": 0,
+      "tab_traversal_captured": true,
+      "shift_tab_captured": true,
+      "enter_activation_on_focused_control": true,
+      "space_activation_on_focused_control": true,
+      "dialog_opened": true,
+      "escape_dismissed_dialog": false,
+      "escape_finding": "FINDING — confirm dialog does not attach Escape key dismiss handler in product React code (dialog remained open)",
+      "evidence_dir": "verification/P02-NEW-TIME-X6-AC1-AC7/runs/p02-newtime-ac-20261014-i1/ac5-keyboard-a2"
+    },
+    "AC6": {
+      "name": "Contrast & Token Mapping",
+      "status": "PASS",
+      "layer": "REAL_IPC",
+      "exit_code": 0,
+      "samples_total": 10,
+      "computed_count": 9,
+      "passed_count": 9,
+      "fails_count": 0,
+      "not_verifiable_count": 1,
+      "token_mapping_summary": {
+        "mapped": 0,
+        "unmapped": 9
+      },
+      "light_theme": "NOT_APPLICABLE (no light theme entry in the React app)",
+      "evidence_dir": "verification/P02-NEW-TIME-X6-AC1-AC7/runs/p02-newtime-ac-20261014-i1/ac6-contrast"
+    },
+    "AC7": {
+      "name": "Rollup & Findings",
+      "status": "PASS",
+      "evidence_dir": "verification/P02-NEW-TIME-X6-AC1-AC7/runs/p02-newtime-ac-20261014-i1"
+    }
+  },
+  "findings": [
+    {
+      "id": "P-01",
+      "type": "PRODUCT_A11Y_KEYBOARD",
+      "target": "RelabelConfirmDialog / RevisionRestoreDialog",
+      "observed": "Confirm dialog does not attach Escape key dismiss handler in product React code (dialog remained open upon real CDP Escape key event)",
+      "severity": "P3"
+    },
+    {
+      "id": "P-02",
+      "type": "PRODUCT_DESIGN_TOKENS",
+      "target": "Workbench & Console React DOM",
+      "observed": "All 9 sampled elements use inline React runtime colors; F token system is not wired into this surface (0 mapped, 9 unmapped)",
+      "severity": "P3"
+    },
+    {
+      "id": "P-03",
+      "type": "PRODUCT_FEATURE_SCOPE",
+      "target": "Theme system",
+      "observed": "NOT_APPLICABLE — No light theme toggle or entry point exists in current React app",
+      "severity": "P3"
+    },
+    {
+      "id": "P-04",
+      "type": "HARNESS_OBSERVATION",
+      "target": "page id input background",
+      "observed": "Background cannot be resolved to an opaque base in ancestor chain; strictly recorded as NOT_VERIFIABLE (transparent black false fail prevented)",
+      "severity": "P4"
+    }
+  ]
+}

@@ -1,0 +1,7 @@
+{
+  "command": "python \"C:\\Users\\49745\\.agents\\skills\\multi-agent-project-orchestrator\\scripts\\generate-evidence-manifest.py\" --repo \"G:\\CODEX\\New Manga.workspace\\worktrees\\P02-NEW-TIME-X6-AC1-AC7-ANTIGRAVITY\" --verify verification/RES-P02-AC6-CDP-RECOVERY/manifest/owner-evidence-manifest.json",
+  "exit_code": 0,
+  "manifest_sha256": "6D0897259F975189FAC28FC72BE6D3700CE785F9C1B2E5620FFD53285448216E",
+  "stdout": "{\r\n  \"verify\": \"PASS\",\r\n  \"problems\": [],\r\n  \"manifest\": \"verification/RES-P02-AC6-CDP-RECOVERY/manifest/owner-evidence-manifest.json\",\r\n  \"source_commit\": \"e4233e72728cd7526892b98e754c392f7fd65528\",\r\n  \"review_head\": \"e4233e72728cd7526892b98e754c392f7fd65528\",\r\n  \"files_checked\": 17\r\n}",
+  "recorded_at": "2026-10-15T03:09:29.8341044Z"
+}

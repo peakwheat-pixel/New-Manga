@@ -1,0 +1,1 @@
+agy -p <read-only request: node --version and git -C <repo> status --short --branch, no writes> --project "New Manga" --output-format json --dangerously-skip-permissions

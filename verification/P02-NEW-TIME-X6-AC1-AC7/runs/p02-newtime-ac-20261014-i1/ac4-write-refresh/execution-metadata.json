@@ -1,0 +1,56 @@
+{
+  "run_id": "p02-newtime-ac-20261014-i1",
+  "recorded_at": "2026-10-14T15:11:06.863Z",
+  "source_baseline_commit": "49d2a2f9c56462f5602b00ad4b824c5381abb1ab",
+  "pinned_exe": "G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-X6-BUILD-CARGO/apps/desktop/src-tauri/target/release/m2rc1-desktop.exe",
+  "pinned_exe_sha256": "92AC7B8EFB646FE77DF8245B13C9AF9314BEF415B2F0E007B1CDCEA729BC13FD",
+  "host_os": {
+    "platform": "win32",
+    "type": "Windows_NT",
+    "release": "10.0.26300",
+    "version": "Windows 11 Pro",
+    "arch": "x64"
+  },
+  "shell": "node v24.15.0",
+  "cwd": "G:\\CODEX\\New Manga.workspace\\worktrees\\P02-NEW-TIME-X6-AC1-AC7-ANTIGRAVITY",
+  "argv": [
+    "E:\\Program Files\\nodejs\\node.exe",
+    "G:\\CODEX\\New Manga.workspace\\worktrees\\P02-NEW-TIME-X6-AC1-AC7-ANTIGRAVITY\\apps\\desktop\\frontend\\e2e\\p02-new-time\\ac4-write-refresh.mjs"
+  ],
+  "scenario": "AC4 write/read freshness (retype, undo, restore)",
+  "scenario_root": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-i1\\ac4-write-refresh",
+  "scenario_attempt": 1,
+  "mock_surface": "REAL_WEBVIEW_MOCK_IPC — invoke boundary mocked with synthetic data; React/components/timers real; real Core/SQLite NOT claimed",
+  "scenario_name": "ac4-write-refresh",
+  "command": "node apps/desktop/frontend/e2e/p02-new-time/ac4-write-refresh.mjs",
+  "env_manifest": {
+    "M2RC1_PACKAGED": "1",
+    "APPDATA": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-i1\\ac4-write-refresh\\appdata-roaming",
+    "LOCALAPPDATA": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-i1\\ac4-write-refresh\\appdata-local",
+    "TEMP": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-i1\\ac4-write-refresh\\tmp",
+    "TMP": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-i1\\ac4-write-refresh\\tmp",
+    "NEWMANGA_DATA_ROOT": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-i1\\ac4-write-refresh\\data-root",
+    "M2RC1_DERIVED_ROOT": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-i1\\ac4-write-refresh\\scope\\derived",
+    "M2RC1_MANAGED_ROOT": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-i1\\ac4-write-refresh\\scope\\managed",
+    "M2RC2_CATALOG_DB": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-i1\\ac4-write-refresh\\catalog\\catalog.sqlite",
+    "WEBVIEW2_USER_DATA_FOLDER": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-i1\\ac4-write-refresh\\webview2-udd",
+    "WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS": "--remote-debugging-port=9333",
+    "__purgedPrefixes": [
+      "M2RC1_*",
+      "M2RC2_*",
+      "M2AC1_*",
+      "NEWMANGA_*"
+    ],
+    "__neverSet": [
+      "M2RC1_PROBE_OUT",
+      "M2AC1_TEST_MODE",
+      "M2RC1_SRC_ROOT",
+      "M2RC1_PROBE_LOG"
+    ]
+  },
+  "pinned_source_commit": "49d2a2f9c56462f5602b00ad4b824c5381abb1ab",
+  "stdout_path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-i1\\ac4-write-refresh\\logs\\ac4.stdout.log",
+  "stderr_path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-i1\\ac4-write-refresh\\logs\\ac4.stderr.log",
+  "completed_at": "2026-10-14T15:11:10.392Z",
+  "node_exit_code": 1
+}

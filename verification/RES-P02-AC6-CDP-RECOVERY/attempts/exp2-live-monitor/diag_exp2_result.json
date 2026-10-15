@@ -1,0 +1,16 @@
+{
+  "Experiment": "Experiment 2 - Live Process & Port Monitor",
+  "StartTime": "2026-10-15T11:01:06.0193439+08:00",
+  "EndTime": "2026-10-15T11:01:51.4406805+08:00",
+  "ExitCode": 1,
+  "PreProxy": "\r\nName                           Value\r\n----                           -----\r\nNO_PROXY                       localhost,127.0.0.1,::1\r\n\r\n",
+  "CapturedProcesses": {
+    "ProcessId": 20920,
+    "ParentProcessId": 33148,
+    "Name": "m2rc1-desktop.exe",
+    "CommandLine": "\"G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-X6-BUILD-CARGO/apps/desktop/src-tauri/target/release/m2rc1-desktop.exe\""
+  },
+  "CapturedListeningPorts": null,
+  "Stdout": null,
+  "Stderr": "file:///G:/CODEX/New%20Manga.workspace/worktrees/P02-NEW-TIME-X6-AC1-AC7-ANTIGRAVITY/apps/desktop/frontend/e2e/p02-new-time/lib/cdp.mjs:52\r\n    throw new Error(`CDP endpoint never appeared: ${lastError}`);\r\n          ^\r\n\r\nError: CDP endpoint never appeared: TypeError: fetch failed\r\n    at CdpConnection.waitForEndpoint (file:///G:/CODEX/New%20Manga.workspace/worktrees/P02-NEW-TIME-X6-AC1-AC7-ANTIGRAVITY/apps/desktop/frontend/e2e/p02-new-time/lib/cdp.mjs:52:11)\r\n    at async launchApp (file:///G:/CODEX/New%20Manga.workspace/worktrees/P02-NEW-TIME-X6-AC1-AC7-ANTIGRAVITY/apps/desktop/frontend/e2e/p02-new-time/lib/app.mjs:49:22)\r\n    at async file:///G:/CODEX/New%20Manga.workspace/worktrees/P02-NEW-TIME-X6-AC1-AC7-ANTIGRAVITY/apps/desktop/frontend/e2e/p02-new-time/ac6-contrast.mjs:56:17\r\n\r\nNode.js v24.15.0\r\n"
+}

@@ -1,0 +1,16 @@
+{
+  "experiment": "Experiment 2 - Live Process & Port Monitor",
+  "scenario": "ac6-contrast-a4",
+  "command": "pwsh -NoProfile -File scratch/diag_proc_monitor.ps1 -> node apps/desktop/frontend/e2e/p02-new-time/ac6-contrast.mjs",
+  "started_at": "2026-10-15T11:01:06.0193439+08:00",
+  "ended_at": "2026-10-15T11:01:51.4406805+08:00",
+  "node_exit_code": 1,
+  "status": "FAIL",
+  "verdict": "ERROR",
+  "cdp_port": 9333,
+  "captured_m2rc1_pid": 20920,
+  "captured_msedgewebview2_count": 0,
+  "captured_listening_ports_9330_9340": 0,
+  "reason": "CDP endpoint never appeared: TypeError: fetch failed",
+  "app_panic": "Failed to setup app: runtime error: failed to create webview: WebView2 error: WindowsError(Error { code: HRESULT(0x80070578), message: \"无效的窗口句柄。\" })"
+}

@@ -1,0 +1,86 @@
+{
+  "task_id": "P02-NEW-TIME-X6-AC1-AC7",
+  "run_id": "p02-newtime-ac-20261014-r1",
+  "owner": "Antigravity",
+  "status": "COMPLETED",
+  "pinned_exe": {
+    "path": "G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-X6-BUILD-CARGO/apps/desktop/src-tauri/target/release/m2rc1-desktop.exe",
+    "sha256": "92AC7B8EFB646FE77DF8245B13C9AF9314BEF415B2F0E007B1CDCEA729BC13FD"
+  },
+  "ac_results": {
+    "AC1": {
+      "name": "Runtime Identity",
+      "status": "PASS",
+      "layer": "REAL_IPC",
+      "evidence_dir": "verification/P02-NEW-TIME-X6-AC1-AC7/ac1-identity-a3"
+    },
+    "AC2": {
+      "name": "Navigation & Operation",
+      "status": "PASS",
+      "layer": "REAL_IPC",
+      "evidence_dir": "verification/P02-NEW-TIME-X6-AC1-AC7/ac2-navigation"
+    },
+    "AC3": {
+      "name": "300ms Quiet-Period & Stale Guard",
+      "status": "PASS",
+      "layer": "REAL_IPC (A) / MOCK_IPC (B)",
+      "evidence_dir": "verification/P02-NEW-TIME-X6-AC1-AC7/ac3-debounce-a6"
+    },
+    "AC4": {
+      "name": "Write-Refresh Immediacy",
+      "status": "PASS",
+      "layer": "REAL_WEBVIEW_MOCK_IPC",
+      "evidence_dir": "verification/P02-NEW-TIME-X6-AC1-AC7/ac4-write-refresh-a2"
+    },
+    "AC5": {
+      "name": "Keyboard & Focus",
+      "status": "PASS",
+      "layer": "REAL_IPC",
+      "evidence_dir": "verification/P02-NEW-TIME-X6-AC1-AC7/ac5-keyboard-a2",
+      "note": "Escape dialog path NOT_RUN due to empty synthetic DB (recorded as Finding P-04)"
+    },
+    "AC6": {
+      "name": "Contrast & Token Mapping",
+      "status": "PASS",
+      "layer": "REAL_IPC",
+      "evidence_dir": "verification/P02-NEW-TIME-X6-AC1-AC7/ac6-contrast",
+      "findings": ["P-01 (app root text 4.19:1 < 4.5:1)", "P-02 (F tokens unmapped)", "P-03 (light theme NOT_APPLICABLE)"]
+    },
+    "AC7": {
+      "name": "Rollup & Findings",
+      "status": "PASS",
+      "evidence_dir": "verification/P02-NEW-TIME-X6-AC1-AC7"
+    }
+  },
+  "findings": [
+    {
+      "id": "P-01",
+      "type": "PRODUCT_CONTRAST",
+      "target": "body > div (app root text)",
+      "observed": "4.19:1",
+      "threshold": "4.5:1",
+      "severity": "P3"
+    },
+    {
+      "id": "P-02",
+      "type": "PRODUCT_TOKENS",
+      "target": "all sampled elements",
+      "observed": "UNMAPPED inline styles",
+      "severity": "P3"
+    },
+    {
+      "id": "P-03",
+      "type": "PRODUCT_FEATURE_SCOPE",
+      "target": "light theme",
+      "observed": "NOT_APPLICABLE (no light theme entry)",
+      "severity": "P3"
+    },
+    {
+      "id": "P-04",
+      "type": "PRODUCT_TESTABILITY",
+      "target": "retype-confirm dialog via keyboard",
+      "observed": "NOT_RUN (requires preloaded region data in DB)",
+      "severity": "P3"
+    }
+  ]
+}

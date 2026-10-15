@@ -1,0 +1,2 @@
+START_TRACE
+[11:03:21.424] PID=12972 PPID=21344 NAME=m2rc1-desktop.exe CMD="G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-X6-BUILD-CARGO/apps/desktop/src-tauri/target/release/m2rc1-desktop.exe"

@@ -1,0 +1,15 @@
+{
+  "after_run_observed_at": "2026-10-15T09:34:52.4310806+08:00",
+  "port": 9333,
+  "before_run": {
+    "state": "FREE",
+    "source": "Owner pre-run shell output: netstat query returned no matching listener",
+    "timestamp_recorded": false
+  },
+  "after_run": {
+    "state": "FREE",
+    "source": "netstat query returned no matching listener",
+    "observed_at": "2026-10-15T09:34:52.4310806+08:00"
+  },
+  "matching_app_processes": []
+}

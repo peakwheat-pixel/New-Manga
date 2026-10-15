@@ -1,0 +1,22 @@
+{
+  "transport_status": "SUCCESS",
+  "agent_status": "BLOCKED_EXECUTION_ENV",
+  "artifact_status": "PARTIAL",
+  "verification_status": "NOT_VERIFIED",
+  "decision": "PRESERVE_AND_RECOVER",
+  "rerun_owner": false,
+  "use_fallback_owner": true,
+  "preserve_diff": true,
+  "discard": false,
+  "inspect_order": [
+    "commits",
+    "dirty diff",
+    "logs",
+    "handoff",
+    "generated artifacts",
+    "test evidence"
+  ],
+  "rationale": "partial work is recoverable; never delete/restart (request #17)",
+  "mode": "evaluate-result",
+  "dry_run": false
+}
