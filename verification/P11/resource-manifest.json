@@ -1,0 +1,22 @@
+{
+  "schema_version": 1,
+  "task_id": "P11",
+  "generated_at": "2026-10-15T15:05:00Z",
+  "generated_by": "dsh (Active Coordinator, epoch 5)",
+  "note": "Resource manifest referenced by doc/tasks/P11.md Resource Manifest integrity column; worktree is a directory so a file-level SHA-256 cannot apply.",
+  "resources": [
+    {
+      "resource_type": "worktree",
+      "source_path": "G:/CODEX/New Manga.workspace/worktrees/P11-LONG-TASK-LIFECYCLE-CONTRACT",
+      "disposition": "PRESERVE_REFERENCED",
+      "destination_path": "G:/CODEX/New Manga.workspace/worktrees/P11-LONG-TASK-LIFECYCLE-CONTRACT",
+      "branch": "codex/P11-long-task-lifecycle-contract",
+      "base_commit": "68fbdde891b05920d689f3521a3d26b7b6a98f5d",
+      "delivery_head": "c7922ae1c62f4cac8721a2730fc19c7c973c7e83",
+      "integration_commit": "ceca572135dd1b8b4df7eb8de203c9ca1ec09d92",
+      "deleted": false,
+      "pruned": false,
+      "process_check": "2026-10-15 closeout: worktree clean at c7922ae1; main repo 19 tracked dirty entries unchanged by this worktree; no delete/migrate/archive performed (0/0/0)."
+    }
+  ]
+}
