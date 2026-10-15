@@ -38,13 +38,14 @@ evidence_dir: verification/P22-REBASE-1
 
 - [ ] AC1：单实例的一次request write/flush与对应response read受同一事务锁保护；所有构造路径初始化锁；不同实例保持独立，原typed错误/EOF/stop/drop与startup ping回收语义保留；不改wire shape或request_id合同。
 - [ ] AC2：确定性测试必须实际调用生产round_trip，双调用方、不同payload/响应，以channel/barrier等同步强制竞争并核各自响应归属；不能只测独立锁helper、sleep或概率循环；不得ignore测试。提供去掉事务锁时失败的mutation证据与单实例通过证据，等待均有上限，失败清理自有子进程。
-- [ ] AC3：定向回归覆盖EOF/写读失败或现有对应测试、startup ping timeout停止回收，保持原行为；完整library_bridge测试集通过且skip原因逐项分列。P04常量精确断言与完整生产桥接并发验收留给P04，不在本切片假称完成。
+- [ ] AC3：定向回归覆盖EOF/写读失败或现有对应测试、startup ping timeout停止回收，保持原行为；本切片获准的library_bridge测试集合通过；唯一显式排除real_core_sidecar_answers_startup_ping_on_fresh_catalog（会启动真实Core），其结果为NOT_RUN，留P19/P20许可环境验收。现有synthetic startup timeout/own-child回收测试必须运行；新增并发回归不得ignore或skip。P04常量精确断言与完整生产桥接并发验收留给P04，不在本切片假称完成。
 - [ ] AC4：输入源/环境/源零写与范围验证、固定head独立DSH Review、Codex集成后复跑及资源closeout完成后才done；P04仍blocked直至其自身AC完成。新锁功能获独立审查，R10 Handoff批准不沿用。
 
 ## 允许修改范围
 
 - apps/desktop/src-tauri/src/library_bridge.rs：仅per-channel串行化、所有构造初始化、必要test-only同步钩子和对应测试；先查全部round_trip/构造/startup/Drop调用方。
-- verification/P22-REBASE-1/**：自有确定性Python sidecar/测试运行脚本、运行与mutation证据；复用旧sidecar设计，拷入本切片新路径后改，不写旧证据。
+- verification/P22-REBASE-1/**：自有确定性Python sidecar/测试运行脚本、运行与mutation证据；只读输入固定为git 92093792ba0bc653f9423dda2486d558226caf86:verification/P04/deterministic_concurrent_sidecar.py；准确快照/hash见verification/PROJECT-ROADMAP-RELEASE/source-manifest.json。Owner复制到本切片新路径后适配；若改为全新最小echo fixture需说明映射，不写旧证据。
+- 本worktree的apps/desktop/src-tauri/target/core-sidecar/core-sidecar/**：Owner仅从冻结只读来源复制完整bundle并逐项hash，不修改内容、不执行真实Core；该ignored资源是build.rs按CARGO_MANIFEST_DIR要求的输入，不受CARGO_TARGET_DIR重定向。
 - 本Task与doc/handoffs/P22-REBASE-1-*.md。
 - 自有workspace下builds/P22-REBASE-1、task-envs/P22-REBASE-1、temp/P22-REBASE-1、agent-output/antigravity/P22-REBASE-1；先冻结manifest再执行。
 
@@ -54,13 +55,13 @@ evidence_dir: verification/P22-REBASE-1
 
 ## 执行授权与环境
 
-本Task的ready释放单独授权上述有界Cargo单测及测试Python子进程，不是沿用旧P02 Build许可，也不解除旧Technical Gate/13项缺失。仅使用自有复制/新建scratch env；不运行真实Core/用户数据库。CARGO_TARGET_DIR=G:/CODEX/New Manga.workspace/builds/P22-REBASE-1/cargo-target；CARGO_HOME、TEMP/TMP、PYTHONPYCACHEPREFIX均在自有task-envs/P22-REBASE-1。M2RC1_PYTHON使用独立Python3.12 venv；基础Python exe源见本轮environment-sources.json，创建后重验exe/version/hash。公开Cargo锁定依赖可在该cache按--locked下载，不修改lock；禁解析凭据/私有registry。
+本Task的ready释放单独授权上述有界Cargo单测及测试Python子进程，不是沿用旧P02 Build许可，也不解除旧Technical Gate/13项缺失。仅使用自有复制/新建scratch env；不运行真实Core/用户数据库。CARGO_TARGET_DIR=G:/CODEX/New Manga.workspace/builds/P22-REBASE-1/cargo-target；CARGO_HOME、TEMP/TMP、PYTHONPYCACHEPREFIX均在自有task-envs/P22-REBASE-1。M2RC1_PYTHON使用独立Python3.12 venv；真实基础解释器见本轮environment-sources.json中kind=base_interpreter项（从旧venv的sys._base_executable实测）；不可把venv launcher当独立安装。创建后重验exe/version/hash、pyvenv.cfg与sys.base_prefix。公开Cargo锁定依赖可在该cache按--locked下载，不修改lock；禁解析凭据/私有registry。
 
 build.rs所需sidecar资源只从G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-X6-BUILD-CARGO/apps/desktop/src-tauri/target/core-sidecar/core-sidecar只读来源复制到本worktree期望路径。不得创建空目录/假exe绕过build.rs；复制前冻结完整相对路径/size/hash清单、复制后逐项一致；测试不执行该真实Core bundle。源不可用/散列不符则测试NOT_RUN并交Codex，不能冒称READY即前置预检已PASS。该步骤是本Task AC4执行前置，不要求重跑完整打包。
 
 ## 测试要求
 
-在本worktree/apps/desktop/src-tauri：cargo test --locked library_bridge::tests -- --test-threads=1（包括新增并发回归）；mutation在自有temp副本执行同一判别用例，去锁必须非零exit且不是编译/环境错误。脚本记录shell、toolchain/Python版本、commit、argv/env、stdout/stderr/EXIT、passed/skip/timeout与所有输入hash。启动前先Owner PREFLIGHT；无真实调用不标in_progress。
+在本worktree/apps/desktop/src-tauri：cargo test --locked library_bridge::tests -- --test-threads=1 --skip real_core_sidecar_answers_startup_ping_on_fresh_catalog（包括新增并发回归；唯一授权排除项如上）；mutation在自有temp副本执行同一判别用例，去锁必须非零exit且不是编译/环境错误。每条Cargo命令wall timeout=1800s；单测试同步等待/测试sidecar响应超时≤30s；超时FAIL并清理本Task自有子进程，不枚举或结束未知进程。预先cargo test --locked library_bridge::tests -- --list保存筛选集，分别统计passed/ignored/filtered，明列该生产Core集成项NOT_RUN，不宣称完整集成套件PASS。脚本记录shell、toolchain/Python版本、commit、argv/env、stdout/stderr/EXIT、passed/skip/timeout与所有输入hash。启动前先Owner PREFLIGHT；无真实调用不标in_progress。
 
 ## 依赖、风险与阻塞
 

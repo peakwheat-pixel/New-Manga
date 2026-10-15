@@ -10,5 +10,17 @@
     "bytes": 274712,
     "sha256": "864530d708039551a2c672ddd65e5900fbc08b0981479679723a5b468f8082bc",
     "access": "READ_ONLY_SOURCE; copy to own task env before use"
+  },
+  {
+    "path": "C:\\Users\\49745\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+    "kind": "base_interpreter",
+    "bytes": 103192,
+    "sha256": "15b41a488c356c0e331facdea6c836a6cec021f12d5fde9844e7ca4a1aa0361a",
+    "observation": {
+      "base_executable": "C:\\Users\\49745\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+      "base_prefix": "C:\\Users\\49745\\AppData\\Local\\Programs\\Python\\Python312",
+      "version": "3.12.3 (tags/v3.12.3:f6650f9, Apr  9 2024, 14:05:25) [MSC v.1938 64 bit (AMD64)]"
+    },
+    "access": "READ_ONLY_SOURCE"
   }
 ]

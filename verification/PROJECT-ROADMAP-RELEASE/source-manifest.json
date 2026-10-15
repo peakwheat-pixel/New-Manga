@@ -78,5 +78,21 @@
     "bytes": 2953,
     "git_status": "?? verification/P22/codex-p22-r10-review-adjudication.md",
     "authority": "SOURCE_PIN_NOT_NEW_IMPLEMENTATION"
+  },
+  {
+    "source": "verification/P04/deterministic_concurrent_sidecar.py",
+    "copy": "verification/PROJECT-ROADMAP-RELEASE/inputs/verification/P04/deterministic_concurrent_sidecar.py",
+    "sha256": "6923586b2b409c31fff9d7f2e4c6b7afa11ca4f1caa43b70336cefcdeb441286",
+    "bytes": 4609,
+    "git_status": "git:92093792ba0bc653f9423dda2486d558226caf86",
+    "authority": "SOURCE_PIN_NOT_NEW_IMPLEMENTATION"
+  },
+  {
+    "source": "tools/governance/check.ps1",
+    "copy": "verification/PROJECT-ROADMAP-RELEASE/inputs/tools/governance/check.ps1",
+    "sha256": "25477a5d0554742526ab83c7cf9453125ad20047788ce17bed78c286d9996466",
+    "bytes": 18153,
+    "git_status": "untracked_live_root",
+    "authority": "SOURCE_PIN_NOT_NEW_IMPLEMENTATION"
   }
 ]

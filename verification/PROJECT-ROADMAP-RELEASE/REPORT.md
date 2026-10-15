@@ -20,11 +20,11 @@
 | P20 | 已禁止继承旧Qt/PyInstaller PASS | Tauri/WebView2/Python sidecar、Windows/DPI/多屏/可选模型等价验收 | NOT_RUN |
 | P16/17 格式 | P08已选PNG/ZIP/CBZ/PDF/文本 | 将P08-FMT转录长期需求追踪，保留源零写/取消/lineage | NOT_RUN |
 
-因此P09保持proposed；另需冻结Architecture Documentation Rebaseline Task，不能将2026-10-13分类整理当Gate已关闭。不降低任何P0/P1，不修改产品取舍或共享Schema。P10/P11可按P08先冻结自身契约，但本轮仅释放P22-REBASE-1。
+因此P09保持proposed；已登记proposed ARCH-DOC-REBASELINE，执行坐标与逐文件scope仍待冻结；不能将2026-10-13分类整理当Gate已关闭。不降低任何P0/P1，不修改产品取舍或共享Schema。P10/P11可按P08先冻结自身契约，但本轮仅释放P22-REBASE-1。
 
 ## 整产品范围与依赖展开
 
-P01/P03/P05/P08原冻结范围done；P02新时点验收限定关闭。P06为GC分发迁移补证，P07仅实际剩余image/quiet-window交互。P09受控来源/真实解码/Managed Copy；P10配置与凭据；P11启动/快照/暂停取消重试恢复契约；P12书架导入；P13后台执行恢复；P14工作台人工修改/Lock/Pin；P15模型/维护/全库备份恢复（停写/排空子范围依赖P13）；P16阅读进度和五种导出Core/IPC；P17Reader与安全导出UI；P18真实JA/KO资格；P19四页正常/失败/重启/数据安全E2E并须P04闭合；P20新fixed-head Windows发布Gate；P21可选Legacy归档，另需独立授权。P12/P14/P15/P17各需ZCode分别设计与非作者Review。
+P01/P03/P05/P08原冻结范围done；P02新时点验收限定关闭。P06为GC分发迁移补证，P07仅实际剩余image/quiet-window交互。P09受控来源/真实解码/Managed Copy；P10配置与凭据；P11启动/快照/暂停取消重试恢复契约；P12书架导入；P13后台执行恢复；P14工作台人工修改/Lock/Pin；P15模型/维护/全库备份恢复（停写/排空子范围依赖P13）；P16阅读进度和五种导出Core/IPC、P17Reader与安全导出UI均须DOC的AC6格式追踪完成；P18真实JA/KO资格；P19四页正常/失败/重启/数据安全E2E并须P04闭合；P20新fixed-head Windows发布Gate；P21可选Legacy归档，另需独立授权。P12/P14/P15/P17各需ZCode分别设计与非作者Review。
 
 Manga109永久取消，不恢复旧申请待办；BJ13维持0.90、手工改标+skip；基础Reader在内，跨页联动/页缩略图仍延期。旧Task仅历史证据，不重新释放QML。完整既有Task历史台账不复制进当前Plan。
 
@@ -58,6 +58,17 @@ flowchart TD
 
 ## 验证、证据与资源边界
 
-原始Git输出附argv/shell/Python/cwd/EXIT；源快照逐项hash与dirty身份见source-manifest.json；只读来源exe pins见environment-sources.json。受保护原文件全部保留，任何名为INTERRUPTED...的真实文件也是文件，不按名称推断成日志叙述；CON等不可读路径明确PRESERVE_UNKNOWN。旧提案的staged/untracked不触碰。独立审查对象能力不足时记录NOT_VERIFIED并保留确定性复核原始输出；不编造产品测试PASS。本轮没有产品源码修改与Cargo/GUI/模型运行。
+原始Git输出附argv/shell/Python/cwd/EXIT；源快照逐项hash与dirty身份见source-manifest.json；只读来源exe pins见environment-sources.json。受保护原文件全部保留，任何名为INTERRUPTED...的真实文件也是文件，不按名称推断成日志叙述；本轮保护集合为1525个可读文件、unknown_preserved=[]；本次git status集合不包含CON，不推断其不存在或可删除。PRESERVE_UNKNOWN是遇到不可读项时的策略，不是本集合存在此类项的断言。旧提案的staged/untracked不触碰。独立审查对象能力不足时记录NOT_VERIFIED并保留确定性复核原始输出；不编造产品测试PASS。本轮没有产品源码修改与Cargo/GUI/模型运行。
 
 下一Owner的可转发指令见doc/tasks/P22-REBASE-1.md：Antigravity在已分配worktree/branch按固定base和仅允许路径认领，先预检环境、读全调用链，再做当前基线最小修复、确定性实测与去锁mutation，提交固定commit/测试/Handoff，DSH独立Review，Codex集成。不得在旧worktree继续文案返修或自行合并main。具体启动HEAD由本轮审查通过后的release记录给出。
+
+
+## R1复审修正与持续引用规则
+
+DSH R1为限定APPROVED（AC1–3文本），提出P2-1/1b/2–9。P2-1的两HEAD是不同时间：git-verification.log记录初始source base 0dcc94f3；verification.json记录确定性复核时capture HEAD 571d8970，review HEAD为657096b4；该区间仅治理/证据，产品源码差量0，不能把capture HEAD当source base。原始日志和JSON不回写。初次23d5612f的Git blob检查发现EOL转换，aa629c7c追加-text精确快照并验证10/10；历史失败稿留在Git历史，未修改来源原件。
+
+P2-2/3：Owner可在自有worktree的target/core-sidecar/core-sidecar/**按原始源完整hash复制；test sidecar输入已从92093792固定blob快照，禁止写旧证据。P2-4：明确排除唯一真实Core集成测试，完整synthetic子集/确定性并发/mutation仍必须运行，生产Core该项NOT_RUN不伪装skip或PASS。
+
+P2-5/7：DOC正式登记为ARCH-DOC-REBASELINE（proposed），AC1–3/P09、AC4/P18、AC5/P20、AC6/P16/P17均可追踪；未释放第二实施切片。P2-6：本Plan持续引用REPORT作为冻结Gate输入，Task关闭不撤销该引用；报告不另维护状态，唯一DAG仍是Plan。按现有Truth Map“Plan指定Task/证据”和Workspace“当前Gate/source pin引用必须保留”规则，引用移除前不降级/迁移或删除此冻结输入；后续需求变化须经新Task审查，而非修改已冻结报告。
+
+P2-8：治理检查执行上下文是live root，含未提交的当前治理文档；不是声称固定review worktree可直接执行。准确checker源码已SOURCE_PIN，Root原脚本hash一致。原始argv/EXIT/stdout及root上下文摘要保留在workspace governance-r1.*，关闭后再运行最终检查。固定head独立CLI/Git/hash仍NOT_VERIFIED，不外推可移植自包含环境。P2-9：来源快照/环境源记录统一SOURCE_PIN，结果与裁决为CANONICAL。

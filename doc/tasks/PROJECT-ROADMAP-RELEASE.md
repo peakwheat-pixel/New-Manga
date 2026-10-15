@@ -3,7 +3,7 @@ id: PROJECT-ROADMAP-RELEASE
 title: 完整产品路线恢复、Gate裁决与下一实施切片释放
 kind: governance
 governance_version: 2
-status: in_review
+status: in_progress
 approval: user_authorized_roadmap_restore_gate_recheck_and_next_slice_release_20261015
 owner: Codex
 reviewer: DeepSeek Harness
@@ -17,7 +17,7 @@ delivery_head: null
 canonical_evidence_status: pending
 resource_closeout_status: pending
 evidence_dir: verification/PROJECT-ROADMAP-RELEASE
-revisions: {implementation: 0, test: 0, evidence: 0}
+revisions: {implementation: 0, test: 0, evidence: 1}
 ---
 
 # PROJECT-ROADMAP-RELEASE
@@ -35,7 +35,7 @@ revisions: {implementation: 0, test: 0, evidence: 0}
 
 ## 允许修改范围
 
-仅doc/STATUS.md、doc/REBASELINE_PLAN.md、doc/tasks/README.md、本Task、doc/tasks/P22-REBASE-1.md、自有Handoff与verification/PROJECT-ROADMAP-RELEASE/**。当前权威写入走epoch=4 guarded-write。共享业务接口、Schema、依赖变更授权=无。
+仅doc/STATUS.md、doc/REBASELINE_PLAN.md、doc/tasks/README.md、本Task、doc/tasks/P22-REBASE-1.md、doc/tasks/ARCH-DOC-REBASELINE.md、自有Handoff与verification/PROJECT-ROADMAP-RELEASE/**。当前权威写入走epoch=4 guarded-write。共享业务接口、Schema、依赖变更授权=无。
 
 ## 禁止范围
 
@@ -82,3 +82,7 @@ revisions: {implementation: 0, test: 0, evidence: 0}
 ## Closeout Record
 
 待固定Review/集成验证后填写；未提前标done。
+
+## R1 Review处置窗口
+
+DSH APPROVED限AC1–3文本，AC4待收口；本轮作为E1文档/执行边界修正，P2逐项处置后有界复审。没有产品源码修改，不改变P22继承1/2预算。P2-6以Plan持续冻结引用规则消解：Plan仍是唯一DAG，REPORT不独立维护状态；只要Plan/当前Gate仍引用，证据不得因作者Task关闭而降级/移动。当前Truth Map已覆盖Plan指向的Task/evidence，无新增平行架构或规划来源。
