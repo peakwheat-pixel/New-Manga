@@ -1,0 +1,31 @@
+{
+  "schema_version": 1,
+  "task_id": "P06",
+  "generated_at": "2026-10-15T23:42:00+0800",
+  "resources": [
+    {
+      "resource_type": "worktree",
+      "source_path": "G:/CODEX/New Manga.workspace/worktrees/P06-GC-DISTRIBUTION-MIGRATION",
+      "disposition": "PRESERVE_REFERENCED",
+      "destination_path": "G:/CODEX/New Manga.workspace/worktrees/P06-GC-DISTRIBUTION-MIGRATION",
+      "status": "active_worktree",
+      "branch": "codex/P06-gc-distribution-migration-evidence",
+      "base_commit": "b8f39d667ba5f23ba03a5bea4e61c5b930dbcd1a"
+    },
+    {
+      "resource_type": "isolated-run-root",
+      "source_path": "G:/CODEX/New Manga.workspace/P06-GC-DISTRIBUTION-MIGRATION",
+      "disposition": "PRESERVE_REFERENCED",
+      "destination_path": "G:/CODEX/New Manga.workspace/P06-GC-DISTRIBUTION-MIGRATION",
+      "status": "preserved_construction_root",
+      "subdirectories": [
+        "old-runtime/worktree",
+        "ac2-run",
+        "ac3-case1a-unbound-no-lock",
+        "ac3-case1b-unbound-with-lock",
+        "ac3-case2-legacy-schema",
+        "old-sidecar-probe"
+      ]
+    }
+  ]
+}

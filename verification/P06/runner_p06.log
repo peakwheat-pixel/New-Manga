@@ -1,0 +1,22 @@
+=== Running AC2: Controlled Quiet Window Migration ===
+Initialized clean namespace: derived=G:\CODEX\New Manga.workspace\P06-GC-DISTRIBUTION-MIGRATION\ac2-run\data\derived, catalog=G:\CODEX\New Manga.workspace\P06-GC-DISTRIBUTION-MIGRATION\ac2-run\data\catalog\catalog.sqlite
+Holder child running (PID=4568) holding shared lease.
+New Core launched under Phase 1 (PID=42952).
+Phase 1 Core finished with exit code 0.
+Phase 1 Core stderr:
+[core.derived_gc] skipped: namespace busy (a managed peer holds a shared lease)
+
+Killing holder process PID=4568...
+Holder process terminated. OS releases kernel lease.
+New Core launched under Phase 2 (PID=45944).
+Phase 2 Core finished with exit code 0.
+Phase 2 Core stderr:
+[core.derived_gc] orphan_files_removed=1 dead_rows_removed=1
+
+=== Running AC3: Legacy Catalog Fail-Closed Strategy ===
+Case 1A (unbound, no lock) exit code: 1
+Case 1B (unbound, with lock) exit code: 1
+Case 2 (legacy schema, missing lifecycle) exit code: 1
+Case 2 explicit claim correctly rejected: preview namespace unavailable: catalog carries resource rows but predates the lifecycle schema; unknown history is never claimed
+=== Probing Old Runtime Sidecar Execution (ad75fadc) ===
+ALL VERIFICATIONS COMPLETED SUCCESSFULLY.

@@ -1,0 +1,40 @@
+{
+  "ac": "AC3",
+  "case1a_unbound_with_rows_no_lock": {
+    "catalog_path": "G:\\CODEX\\New Manga.workspace\\P06-GC-DISTRIBUTION-MIGRATION\\ac3-case1a-unbound-no-lock\\data\\catalog\\catalog.sqlite",
+    "sha256_before": "1e30df7d1a3b53f4f07d5d5f0d8629f465efd13393c588a6e55adea7d1a93385",
+    "sha256_after": "1e30df7d1a3b53f4f07d5d5f0d8629f465efd13393c588a6e55adea7d1a93385",
+    "sha_invariant": true,
+    "core_exit_code": 1,
+    "core_stderr": "[core.derived_gc] skipped: namespace busy (a managed peer holds a shared lease)\nTraceback (most recent call last):\n  File \"<string>\", line 1, in <module>\n  File \"G:\\CODEX\\New Manga.workspace\\worktrees\\P06-GC-DISTRIBUTION-MIGRATION\\src\\bootstrap\\core_service.py\", line 1789, in main\n    shared_lease = acquire_shared_lease(\n                   ^^^^^^^^^^^^^^^^^^^^^\n  File \"G:\\CODEX\\New Manga.workspace\\worktrees\\P06-GC-DISTRIBUTION-MIGRATION\\src\\infrastructure\\resource_channel\\handle_resolver.py\", line 639, in acquire_shared_lease\n    handle = _open_lock_handle(derived_str, exclusive=False)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"G:\\CODEX\\New Manga.workspace\\worktrees\\P06-GC-DISTRIBUTION-MIGRATION\\src\\infrastructure\\resource_channel\\handle_resolver.py\", line 552, in _open_lock_handle\n    raise FileNotFoundError(str(lock_path))\nFileNotFoundError: G:\\CODEX\\New Manga.workspace\\P06-GC-DISTRIBUTION-MIGRATION\\ac3-case1a-unbound-no-lock\\data\\derived\\.preview-lifecycle.lock\n",
+    "explicit_claim_rejected": true,
+    "explicit_claim_error": "preview namespace unavailable: catalog carries resource rows but predates the lifecycle schema; unknown history is never claimed",
+    "verdict": "FAIL_CLOSED_STARTUP_REFUSED_ZERO_SILENT_MIGRATION",
+    "t_start": "2026-10-15T23:41:50+0800",
+    "t_end": "2026-10-15T23:41:50+0800"
+  },
+  "case1b_unbound_with_rows_with_lock": {
+    "catalog_path": "G:\\CODEX\\New Manga.workspace\\P06-GC-DISTRIBUTION-MIGRATION\\ac3-case1b-unbound-with-lock\\data\\catalog\\catalog.sqlite",
+    "sha256_before": "32eb3b7eaf47a8bfe5c91cacc8b376e57a65ef48550dbcac47a7d9e13e5fc3d5",
+    "sha256_after": "32eb3b7eaf47a8bfe5c91cacc8b376e57a65ef48550dbcac47a7d9e13e5fc3d5",
+    "sha_invariant": true,
+    "core_exit_code": 1,
+    "core_stderr": "[core.derived_gc] skipped: namespace busy (a managed peer holds a shared lease)\nTraceback (most recent call last):\n  File \"G:\\CODEX\\New Manga.workspace\\worktrees\\P06-GC-DISTRIBUTION-MIGRATION\\src\\infrastructure\\resource_channel\\handle_resolver.py\", line 586, in _read_lock_binding\n    return NamespaceBinding.from_dict(json.loads(data.decode(\"utf-8\")))\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"G:\\CODEX\\New Manga.workspace\\worktrees\\P06-GC-DISTRIBUTION-MIGRATION\\src\\infrastructure\\resource_channel\\handle_resolver.py\", line 454, in from_dict\n    derived_identity = payload[\"derived_identity\"]\n                       ~~~~~~~^^^^^^^^^^^^^^^^^^^^\nKeyError: 'derived_identity'\n\nThe above exception was the direct cause of the following exception:\n\nTraceback (most recent call last):\n  File \"<string>\", line 1, in <module>\n  File \"G:\\CODEX\\New Manga.workspace\\worktrees\\P06-GC-DISTRIBUTION-MIGRATION\\src\\bootstrap\\core_service.py\", line 1789, in main\n    shared_lease = acquire_shared_lease(\n                   ^^^^^^^^^^^^^^^^^^^^^\n  File \"G:\\CODEX\\New Manga.workspace\\worktrees\\P06-GC-DISTRIBUTION-MIGRATION\\src\\infrastructure\\resource_channel\\handle_resolver.py\", line 641, in acquire_shared_lease\n    binding = _read_lock_binding(handle)\n              ^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"G:\\CODEX\\New Manga.workspace\\worktrees\\P06-GC-DISTRIBUTION-MIGRATION\\src\\infrastructure\\resource_channel\\handle_resolver.py\", line 588, in _read_lock_binding\n    raise namespace_unavailable(f\"namespace lock content unusable: {error}\") from error\napplication.resource_channel.dto.TypedResourceChannelError: preview namespace unavailable: namespace lock content unusable: 'derived_identity'\n",
+    "verdict": "FAIL_CLOSED_STARTUP_REFUSED_ZERO_SILENT_MIGRATION",
+    "t_start": "2026-10-15T23:41:50+0800",
+    "t_end": "2026-10-15T23:41:51+0800"
+  },
+  "case2_legacy_schema_missing_lifecycle": {
+    "catalog_path": "G:\\CODEX\\New Manga.workspace\\P06-GC-DISTRIBUTION-MIGRATION\\ac3-case2-legacy-schema\\data\\catalog\\catalog.sqlite",
+    "sha256_before": "8f7b804477ed147a32b1eb53cf226548097d3793b9fcb29d5881b1ab38f96c01",
+    "sha256_after": "8f7b804477ed147a32b1eb53cf226548097d3793b9fcb29d5881b1ab38f96c01",
+    "sha_invariant": true,
+    "core_exit_code": 1,
+    "core_stderr": "[core.derived_gc] skipped: namespace busy (a managed peer holds a shared lease)\nTraceback (most recent call last):\n  File \"<string>\", line 1, in <module>\n  File \"G:\\CODEX\\New Manga.workspace\\worktrees\\P06-GC-DISTRIBUTION-MIGRATION\\src\\bootstrap\\core_service.py\", line 1789, in main\n    shared_lease = acquire_shared_lease(\n                   ^^^^^^^^^^^^^^^^^^^^^\n  File \"G:\\CODEX\\New Manga.workspace\\worktrees\\P06-GC-DISTRIBUTION-MIGRATION\\src\\infrastructure\\resource_channel\\handle_resolver.py\", line 639, in acquire_shared_lease\n    handle = _open_lock_handle(derived_str, exclusive=False)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"G:\\CODEX\\New Manga.workspace\\worktrees\\P06-GC-DISTRIBUTION-MIGRATION\\src\\infrastructure\\resource_channel\\handle_resolver.py\", line 552, in _open_lock_handle\n    raise FileNotFoundError(str(lock_path))\nFileNotFoundError: G:\\CODEX\\New Manga.workspace\\P06-GC-DISTRIBUTION-MIGRATION\\ac3-case2-legacy-schema\\data\\derived\\.preview-lifecycle.lock\n",
+    "explicit_claim_rejected": true,
+    "explicit_claim_error": "preview namespace unavailable: catalog carries resource rows but predates the lifecycle schema; unknown history is never claimed",
+    "verdict": "FAIL_CLOSED_STARTUP_REFUSED_ZERO_SILENT_MIGRATION",
+    "t_start": "2026-10-15T23:41:51+0800",
+    "t_end": "2026-10-15T23:41:51+0800"
+  }
+}
