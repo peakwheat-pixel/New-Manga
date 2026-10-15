@@ -18,7 +18,7 @@ reviewed_head: null
 integration_commit: null
 integration_target: main
 integration_status: not_started
-dispatch_state: NOT_DISPATCHED
+dispatch_state: DISPATCHED
 profile: ANTIGRAVITY_FOCUSED
 revisions: {implementation: 1, test: 0, evidence: 0}
 implementation_repairs_used: 1
@@ -38,6 +38,14 @@ evidence_dir: verification/P22-REBASE-1
 - 角色：Owner=Antigravity；Reviewer=DeepSeek Harness（`Reviewer != Owner`，且非本 Task 参与者）；Integrator=Codex。
 - 返修预算：继承 P22 的 `implementation_repairs_used=1/2`，**不因本切片重置**；同 finding 最多一次 I2，不允许 I3。
 - 派发边界：本 Task 已 `ready`，但**释放不等于自动派发**（见 PROJECT-ROADMAP-RELEASE 禁止范围）；须由 Coordinator `route-agent.py`/`preflight-agent.py` 确认 Owner 与独立 Reviewer 后，由 Owner 凭本文件认领启动。
+
+## 派发记录
+
+- 时间：2026-10-15（本地 19:05，Asia/Shanghai）；派发者=Active Coordinator `dsh`（epoch=5，lease=`264c2000541748298000f93fb25a52de`）。
+- Owner：Antigravity（`agy` 1.3.5）；Coordinator 侧 PREFLIGHT=`PASS`，write-scope 全部落在本 worktree 内。
+- 命令：`agy -p <Task 摘要+冻结范围> --project "New Manga" --output-format json --dangerously-skip-permissions`，cwd=本 worktree；代理显式注入 `HTTPS_PROXY/HTTP_PROXY=http://127.0.0.1:7890`（agy 不读 Windows 系统代理）。
+- 原始输出：`G:/CODEX/New Manga.workspace/agent-output/antigravity/P22-REBASE-1/agy-owner-r1.json`（`response` + `conversation_id`）与同名 `.err.log`。
+- 状态：等待 Owner 固定 commit 与运行/mutation 证据；结果与 `conversation_id` 由 Coordinator 在 Review 前回填本段，未回填前不得声称已交付。
 
 ## 来源与目标
 
