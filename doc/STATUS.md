@@ -6,7 +6,7 @@
 
 - 当前 Task：[ARCH-DOC-REBASELINE](tasks/ARCH-DOC-REBASELINE.md) **ready / integrated**（唯一非终态 READY）：AC1–AC3=PARTIAL、AC4–AC6=NOT_RUN、AC7 逐消费者裁决待做；消费者 P09/P18/P20/P16/P17 均 `proposed` 未冻结。
 - 本轮完成：[P11](tasks/P11.md) 长任务生命周期契约 **done**：交付 head=`c7922ae1`、Review=`09797eab`、集成 `ceca5721`（契约 §4 状态机、§7.1 单一 scheduler、§8 实证 4 项实现缺口）。[P10](tasks/P10.md) 凭据与配置通道契约 **done**：交付 head=`fa20602d`、Review=`d4907acc`、集成 `c46c0df0`（契约 [P10](contracts/P10_CREDENTIAL_CONFIG_CONTRACT.md) 覆盖 CredentialRef exchange、secret 边界、Network/Provider 回退）。
-- 下一释放候选：P06（GC补证，无依赖）；P09 释放仍需用户选定首发输入格式（BL-2）。
+- 已释放待认领：[P06](tasks/P06.md) GC 分发迁移安全补证 **ready**（base=`d3b26ebf`；范围=GC-2 G7 边界 §2 的 (a)(b)(c)，不重做 GC2）；P09 释放仍需用户选定首发输入格式（BL-2）。
 - 已关闭：[P04](tasks/P04.md)（merge=7bfcf16a）、[P22-REBASE-1](tasks/P22-REBASE-1.md)（merge=4e5c71d9）、[PROJECT-ROADMAP-RELEASE](tasks/PROJECT-ROADMAP-RELEASE.md)。
 - **P09 释放前置（BL-2）**：需用户选定首发输入格式与最小目标（SCOPE_DRAFT 第 75 行）。
 - Coordinator=dsh，epoch=5，lease=264c2000541748298000f93fb25a52de（LEASE_VALID）。
