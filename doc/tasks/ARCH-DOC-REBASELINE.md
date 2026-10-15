@@ -5,7 +5,7 @@ kind: design
 governance_version: 2
 status: ready
 approval: user_authorized_arch_doc_rebaseline_release_20261015
-owner: Codex
+owner: Antigravity
 reviewer: DeepSeek Harness
 depends_on: [P08]
 base_commit: 4ef92f3daa527adac752b8fc52d492176697a292
@@ -78,3 +78,4 @@ P08已完成；本Task未冻结执行坐标、未分配worktree，保持proposed
 ## Closeout Record
 
 未启动，无可关闭资源。
+- 2026-10-15 Owner 路由：`route-agent.py --role owner --task-profile heavy --owner-policy AUTO_SELECT` 选中 **antigravity**（较 codex 同分时由 router tie-break 决定）；权威参与状态以 `.orchestrator/tasks/ARCH-DOC-REBASELINE-role.json` 为准（owner=antigravity，codex 保留为 contributor）。Reviewer 仍为 DeepSeek Harness（非 Owner、非参与者）。
