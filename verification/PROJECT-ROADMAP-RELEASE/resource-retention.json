@@ -1,0 +1,56 @@
+{
+  "schema_version": 1,
+  "task_id": "PROJECT-ROADMAP-RELEASE",
+  "recorded_utc": "2026-10-15T11:05:00+00:00",
+  "recorder": "Active Coordinator dsh (epoch=5, lease=264c2000541748298000f93fb25a52de) via guarded-write",
+  "recorded_at_head": "7fd8ea069cbc9cedd17d7d5bfa297b3725cbcbc9",
+  "policy": "no deletion, no migration, no push, no gc/prune/repair; every listed resource preserved in place",
+  "resources": [
+    {
+      "resource_type": "repo_user_content",
+      "path": "G:/CODEX/New Manga",
+      "disposition": "PRESERVE_USER_DATA",
+      "dirty_untracked_entries_at_recording": 1245,
+      "note": "recording preceded this manifest and the closeout edits; only controlled governance paths were staged by exact path during this task"
+    },
+    {
+      "resource_type": "review_worktree_r1",
+      "path": "G:/CODEX/New Manga.workspace/worktrees/PROJECT-ROADMAP-RELEASE-REVIEW",
+      "disposition": "PRESERVE_REFERENCED",
+      "head": "a43c6b9fed681e7cb123123eeb6b5ccb7fd4d4b6",
+      "dirty_entries": 0,
+      "note": "R1 review coordinate; detached HEAD; not removed"
+    },
+    {
+      "resource_type": "next_slice_worktree",
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P22-REBASE-1",
+      "disposition": "PRESERVE_REFERENCED",
+      "head": "0dcc94f3591b2837c91a6b3aa5b6dcce6c23aa64",
+      "branch": "codex/p22-rebase-1",
+      "note": "created per AC3 freeze; no implementation started"
+    },
+    {
+      "resource_type": "coordinator_checkpoint",
+      "path": "G:/CODEX/New Manga.workspace/agent-output/dsh/PROJECT-ROADMAP-RELEASE/checkpoint.md",
+      "disposition": "PRESERVE_REFERENCED",
+      "bytes": 4137,
+      "sha256": "08d2c929eab03d68b167131de0a28f913b30d759de2c2424113318c9f82a6fac",
+      "note": "takeover and R2 record held in the sibling workspace, outside Git"
+    },
+    {
+      "resource_type": "source_snapshot",
+      "path": "verification/PROJECT-ROADMAP-RELEASE/inputs",
+      "disposition": "PRESERVE_REFERENCED",
+      "files": 12,
+      "note": "read-only snapshot; all 19 canonical evidence pins re-verified byte-identical in R2"
+    }
+  ],
+  "verification": {
+    "canonical_evidence_pins_reverified": "19/19",
+    "protected_paths_reported_by_owner": 1525,
+    "unknown_preserved": [],
+    "product_source_delta_0dcc94f3_to_fixed_head": 0,
+    "governance_check": "PASS",
+    "cargo_product_tests_gui_models_real_core": "NOT_RUN"
+  }
+}
