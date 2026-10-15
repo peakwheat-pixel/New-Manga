@@ -1,16 +1,14 @@
 # Current Development Status
 
-状态刷新：2026-10-15；主控 dsh（epoch 5）；P22-REBASE-1 已集成并 done；P04 已释放为 ready，Owner 由用户指定为 Codex。
+状态刷新：2026-10-15；主控 dsh（epoch 5）；P04 已集成并关闭；当前无 READY，唯一待冻结治理项为 ARCH-DOC-REBASELINE。
 
 ## 当前 Task
 
-- 当前 Task：[P04](tasks/P04.md)，**ready**（2026-10-15 释放）；**Owner=Codex（用户指定，原 Owner Antigravity 转为 contributor）**、Reviewer=DeepSeek Harness、Integrator=Codex；base/branch/worktree/allowlist 沿用冻结值。
-- P04 待办：测试代码同步到当前 main（`library_bridge.rs` 已被 P22-REBASE-1 改动；AC2 测试 `same_channel_concurrent_round_trips_keep_response_ownership` 已在 main，AC1 测试 `page_nav_production_only_commands_are_exact` 不在 main）→ provision `target/core-sidecar/core-sidecar`（当前缺失，`build.rs` 会 panic）→ 真实运行 AC1/AC2 Cargo 定向测试 → 固定 commit/证据/Handoff → 独立 Review → 集成。
-- 已关闭：[P22-REBASE-1](tasks/P22-REBASE-1.md) done；merge=4e5c71d9、证据=a2391e64、closeout=0ce07254；R1 独立 Review 后集成复跑 EXIT=0（11 passed/0 failed/0 ignored/53 filtered）；P22-R2-001 lineage resolution=P22-REBASE-1。
-- 已关闭：[PROJECT-ROADMAP-RELEASE](tasks/PROJECT-ROADMAP-RELEASE.md) done（R1→adjudication-r1→R2，22/22 pin 一致）。
-- 治理修复：P04 R1 原始证据已从旧 worktree 归档至 `verification/P04/`（5 文件 hash 一致），先前失效引用问题消除；默认模式治理检查 PASS。
+- 当前 Task：[ARCH-DOC-REBASELINE](tasks/ARCH-DOC-REBASELINE.md)，proposed（**未释放**）；Owner=Codex、Reviewer=DeepSeek Harness；执行坐标与逐文件 scope 仍待冻结，架构文档 Gate 保持 PARTIAL/NOT_CLOSED。
+- 已关闭：[P04](tasks/P04.md) done；merge=7bfcf16a（分支 agent/antigravity/P04-prod-command-concurrency 已并入 main）、C1 修正=a4419167；R5 独立 Review（DSH，object_binding=VERIFIED，reviewed_head=f9ae75b6）；集成后复跑 AC1/AC2 均 EXIT=0（各 1 passed / 0 failed / 0 ignored / 64 filtered）。
+- 已关闭：[P22-REBASE-1](tasks/P22-REBASE-1.md) done（merge=4e5c71d9、证据=a2391e64、closeout=0ce07254）；[PROJECT-ROADMAP-RELEASE](tasks/PROJECT-ROADMAP-RELEASE.md) done。
+- P04 遗留 NOT_RUN：`real_core_sidecar_answers_startup_ping_on_fresh_catalog` 与其它真实 Core/GUI/打包项，留 P19/P20。
 - Coordinator=dsh，epoch=5，lease=264c2000541748298000f93fb25a52de。
-- 冻结基线=0dcc94f3；P22源码92093792与P04交付faea1a2c均未集成；R10仅Handoff批准。
 - 架构文档Gate=PARTIAL/NOT_CLOSED；P09/P18/P20对应映射仍NOT_RUN，不继承旧QML/PyInstaller结果。
 - 恢复点：G:/CODEX/New Manga.workspace/agent-output/dsh/P22-REBASE-1/AUTO-CLOSURE-20261015.md。
 
@@ -20,5 +18,5 @@ P02新时点验收/AC6恢复/主线集成完成，父P02限定关闭。Technical
 
 ## 当前权威指针
 
-- DAG：[REBASELINE_PLAN](REBASELINE_PLAN.md)；READY=P04。
-- 本轮证据：P22-REBASE-1 R1 [dsh-review-r1](../verification/P22-REBASE-1/dsh-review-r1.md)；集成 [integration-meta](../verification/P22-REBASE-1/integration/integration-meta.json)；Gate裁决 [REPORT](../verification/PROJECT-ROADMAP-RELEASE/REPORT.md)。
+- DAG：[REBASELINE_PLAN](REBASELINE_PLAN.md)；READY=无。
+- 本轮证据：P04 R5 [dsh-p04-owner-review-r5](../verification/P04/dsh-p04-owner-review-r5.stdout.md)；集成复跑 [integration](../verification/P04/integration/)；P22-REBASE-1 [dsh-review-r1](../verification/P22-REBASE-1/dsh-review-r1.md)。

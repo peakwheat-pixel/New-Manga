@@ -1,0 +1,20 @@
+{
+  "recorded_at_utc": "2026-10-15T12:59:42.7655636Z",
+  "source": "G:\\CODEX\\New Manga.workspace\\worktrees\\P02-NEW-TIME-X6-BUILD-CARGO\\apps\\desktop\\src-tauri\\target\\core-sidecar\\core-sidecar",
+  "destination": "G:\\CODEX\\New Manga\\apps\\desktop\\src-tauri\\target\\core-sidecar\\core-sidecar",
+  "copy_command": "robocopy <source> <destination> /E /COPY:DAT /DCOPY:DAT /R:1 /W:1 /NFL /NDL /NJH /NJS /NP",
+  "wall_ms": 3428,
+  "wall_timeout_ms": 1800000,
+  "robocopy_exit": 1,
+  "source_file_count": 5610,
+  "destination_file_count": 5610,
+  "source_total_bytes": 1296373783,
+  "destination_total_bytes": 1296373783,
+  "all_paths_sizes_sha256_match": true,
+  "mismatch_count": 0,
+  "mismatch_paths": [],
+  "source_manifest": "sidecar-source-manifest.json",
+  "stdout_file": "sidecar-robocopy.stdout.log",
+  "stderr_file": "sidecar-robocopy.stderr.log",
+  "result": "VERIFIED_IDENTICAL"
+}
