@@ -1,6 +1,6 @@
 # Project Rebaseline Plan
 
-唯一DAG；运行见[STATUS](STATUS.md)。2026-10-15恢复完整产品路线并释放P22-REBASE-1。
+唯一DAG；运行见[STATUS](STATUS.md)。2026-10-15恢复完整产品路线；P22-REBASE-1已集成。
 
 |节点/目标|依赖|状态|
 |---|---|---|
@@ -26,9 +26,9 @@
 |P19 四页安全E2E|P12/14/15/17/18/P04|proposed|
 |P20 Windows发布|P19/P03/P06/DOC|proposed|
 |P21 旧栈归档|P20+另授权|可选proposed|
-|P22 响应归属|P22-REBASE-1|in_review来源|
+|P22 响应归属|P22-REBASE-1|切片已集成|
 
-本轮：[PROJECT-ROADMAP-RELEASE](tasks/PROJECT-ROADMAP-RELEASE.md) done；[P22-REBASE-1](tasks/P22-REBASE-1.md) ready，释放不等于自动派发。
+本轮：[PROJECT-ROADMAP-RELEASE](tasks/PROJECT-ROADMAP-RELEASE.md) done；[P22-REBASE-1](tasks/P22-REBASE-1.md) done（集成4e5c71d9）。
 DOC=[架构映射Task](tasks/ARCH-DOC-REBASELINE.md)未关闭；UI=四页分别经ZCode设计审查；P13*仅备份停写。详细范围/Gate见[本轮裁决](../verification/PROJECT-ROADMAP-RELEASE/REPORT.md)，为本Plan持续冻结的Gate输入，Task关闭不撤销引用；状态仍只在本Plan。
-P02新时点链已集成；旧H1/P2-1/13项缺失、BC-AC5 PARTIAL及产品backlog保留，不自动放行P22/P04。
-READY 节点：P22-REBASE-1。
+P02新时点链与P22-REBASE-1已集成；P04前置满足但不自动放行，仍待独立释放授权；旧H1/P2-1/13项缺失、BC-AC5 PARTIAL及产品backlog保留。
+READY 节点：无。
