@@ -1,0 +1,132 @@
+{
+  "task_id": "RES-P02-AC6-CDP-RECOVERY",
+  "generated_at": "2026-10-15T03:09:21+00:00",
+  "source_commit": "e4233e72728cd7526892b98e754c392f7fd65528",
+  "review_head": "e4233e72728cd7526892b98e754c392f7fd65528",
+  "generator": {
+    "name": "generate-evidence-manifest",
+    "version": 2,
+    "frozen_git_checked": true
+  },
+  "files": [
+    {
+      "relative_path": "doc/tasks/RES-P02-AC6-CDP-RECOVERY.md",
+      "sha256": "2c0019ff05cd9fa31a4ab93cbbb49fa75331025f45efb676c8381378ebac3e3d",
+      "bytes": 3580,
+      "git_blob": "a4188a25c5033c2dfcb4c932f79954cb5c328a0f",
+      "artifact_type": "doc"
+    },
+    {
+      "relative_path": "doc/handoffs/RES-P02-AC6-CDP-RECOVERY-antigravity-20261015.md",
+      "sha256": "163cef86673c4113facb54c0cd1f3be686178130c300e5644ba079de11c47fe0",
+      "bytes": 5094,
+      "git_blob": "03212c69b557f2c011a50b6571fbf83d56ab61e8",
+      "artifact_type": "doc"
+    },
+    {
+      "relative_path": "verification/RES-P02-AC6-CDP-RECOVERY/report.md",
+      "sha256": "c14d1459dce86f3b4fc68f8662376a300f8ef5170c43598cfd6536a922bc6aaa",
+      "bytes": 8714,
+      "git_blob": "1dda3b65924df9e395c5e5a6d7a9c009bb2f749f",
+      "artifact_type": "doc"
+    },
+    {
+      "relative_path": "verification/RES-P02-AC6-CDP-RECOVERY/attempts/exp1-proxy-clean/app.stderr.log",
+      "sha256": "d8dbd8083021300ae98780129c6380a8dbaa54ee2e1cbcc4d9a76a50155dd0a3",
+      "bytes": 787,
+      "git_blob": "cab7d83eeb6fef07d39c23d8ed5ebe2dd5633c72",
+      "artifact_type": "log"
+    },
+    {
+      "relative_path": "verification/RES-P02-AC6-CDP-RECOVERY/attempts/exp1-proxy-clean/env-proxy-record.json",
+      "sha256": "e9be96570ad6cd28b1f43eff874cf23bea82b9a1788c958a814d97ccb5841c11",
+      "bytes": 343,
+      "git_blob": "6d092b64f3342ee57faf15c28c18b6afef0f98de",
+      "artifact_type": "data"
+    },
+    {
+      "relative_path": "verification/RES-P02-AC6-CDP-RECOVERY/attempts/exp1-proxy-clean/node.stderr.log",
+      "sha256": "1124b4de6e8866ad770b93791d1db0c4c402cb194e40ec3022b9a148fa1a4861",
+      "bytes": 814,
+      "git_blob": "72aada053652aae28f9580aba96d35472a50626d",
+      "artifact_type": "log"
+    },
+    {
+      "relative_path": "verification/RES-P02-AC6-CDP-RECOVERY/attempts/exp1-proxy-clean/node.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0,
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "artifact_type": "log"
+    },
+    {
+      "relative_path": "verification/RES-P02-AC6-CDP-RECOVERY/attempts/exp1-proxy-clean/runner-execution.json",
+      "sha256": "1cb5bf4b164fe6635403464b0cbd7c6e3fa057ec2737b34c17fbd1c84000fedb",
+      "bytes": 607,
+      "git_blob": "b99f087b76560e09b2d1bcabf2112ba3df361683",
+      "artifact_type": "data"
+    },
+    {
+      "relative_path": "verification/RES-P02-AC6-CDP-RECOVERY/attempts/exp2-live-monitor/app.stderr.log",
+      "sha256": "722d5a4f9120d34fbee8ca3c6b7576d4fc25f4dce919ed67a7b81d363e6150dd",
+      "bytes": 787,
+      "git_blob": "791cc0410bf98482070c4f93d1ee0861a7b8bffe",
+      "artifact_type": "log"
+    },
+    {
+      "relative_path": "verification/RES-P02-AC6-CDP-RECOVERY/attempts/exp2-live-monitor/diag_exp2_result.json",
+      "sha256": "e82f852fddabdad1f385ca23d3845cda28255d60ede24260c5f26df813f9a65c",
+      "bytes": 1531,
+      "git_blob": "46c7f25fba36623a92c5b9e5dedc0c2c618ad5c7",
+      "artifact_type": "data"
+    },
+    {
+      "relative_path": "verification/RES-P02-AC6-CDP-RECOVERY/attempts/exp2-live-monitor/node.stderr.log",
+      "sha256": "1124b4de6e8866ad770b93791d1db0c4c402cb194e40ec3022b9a148fa1a4861",
+      "bytes": 814,
+      "git_blob": "72aada053652aae28f9580aba96d35472a50626d",
+      "artifact_type": "log"
+    },
+    {
+      "relative_path": "verification/RES-P02-AC6-CDP-RECOVERY/attempts/exp2-live-monitor/node.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0,
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "artifact_type": "log"
+    },
+    {
+      "relative_path": "verification/RES-P02-AC6-CDP-RECOVERY/attempts/exp2-live-monitor/runner-execution.json",
+      "sha256": "30e7834f8e72f625b0102f594e3409e6ee87159621c9177c577c1bf1d584f155",
+      "bytes": 784,
+      "git_blob": "adeaf4b5b77b1d92bd479d1c895f5568c301a516",
+      "artifact_type": "data"
+    },
+    {
+      "relative_path": "verification/RES-P02-AC6-CDP-RECOVERY/attempts/exp3-direct-trace/app.stderr.log",
+      "sha256": "6b8185a8c521d863a4167b45c4edc1cb4212bde429c65915eb0a4e65c7be8797",
+      "bytes": 787,
+      "git_blob": "c1b8c94a80b3727a7ce5f63807dbeb80e8d84eff",
+      "artifact_type": "log"
+    },
+    {
+      "relative_path": "verification/RES-P02-AC6-CDP-RECOVERY/attempts/exp3-direct-trace/direct_node.log",
+      "sha256": "1124b4de6e8866ad770b93791d1db0c4c402cb194e40ec3022b9a148fa1a4861",
+      "bytes": 814,
+      "git_blob": "72aada053652aae28f9580aba96d35472a50626d",
+      "artifact_type": "log"
+    },
+    {
+      "relative_path": "verification/RES-P02-AC6-CDP-RECOVERY/attempts/exp3-direct-trace/proc_trace.txt",
+      "sha256": "6edd43316299e82874bc69f23ae907e86223556b4584f28c15e2d03d16a87375",
+      "bytes": 202,
+      "git_blob": "852c6e228d6b5477a968494cf0c9ec16ebcd7193",
+      "artifact_type": "text"
+    },
+    {
+      "relative_path": "verification/RES-P02-AC6-CDP-RECOVERY/attempts/exp3-direct-trace/runner-execution.json",
+      "sha256": "9fd35a2ce594a15614a120ee95e3c22481f27eb25b0869aa1462fec48f40b378",
+      "bytes": 757,
+      "git_blob": "edbd0a0dd8d1298a643cbd772cd86223ab887428",
+      "artifact_type": "data"
+    }
+  ]
+}
