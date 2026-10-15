@@ -21,7 +21,7 @@ evidence_dir: verification/ARCH-DOC-REBASELINE
 
 ## 来源与目标
 
-来自P08 SCOPE_DRAFT §49/58/71及本轮路线恢复授权。仅登记proposed，不释放或认领；base/branch/worktree在正式释放时由Codex创建并冻结。目标是把既有产品要求映射至AD-001新栈，不降低P0/P1、不重写Schema、不新增产品范围。
+来自P08 SCOPE_DRAFT §49/58/71及本轮路线恢复授权。目标是把既有产品要求映射至AD-001新栈，不降低P0/P1、不重写Schema、不新增产品范围。
 
 ## Acceptance Criteria
 
@@ -42,7 +42,7 @@ evidence_dir: verification/ARCH-DOC-REBASELINE
 
 ## 禁止范围
 
-当前proposed不允许实施。后续也不授权产品代码、Schema、依赖、模型、OS操作或旧QML实现；不降低阈值或作用户产品取舍。
+不授权产品代码、Schema、依赖、模型、OS操作或旧QML实现；不降低阈值或作用户产品取舍。不合 main、不 push。
 
 ## 测试要求
 
@@ -50,11 +50,15 @@ planned：需求逐项映射/引用有效性/跨文档一致/193 AC及P08-FMT与
 
 ## 依赖、风险与阻塞
 
-P08已完成；本Task未冻结执行坐标、未分配worktree，保持proposed。仅P22-REBASE-1是拟释放实施切片。Gate消费者：P09（AC1–3）、P18（AC4）、P20（AC5）、P16/P17（AC6）。
+P08已完成。Gate 消费者：P09（AC1–3）、P18（AC4）、P20（AC5）、P16/P17（AC6）。
 
 ## 交付与运行记录
 
-仅登记，无实现、无Review、无运行。
+- 2026-10-15 Owner 路由与认领：Antigravity 认领 Owner，在 worktree `G:/CODEX/New Manga.workspace/worktrees/ARCH-DOC-REBASELINE` 执行。
+- 2026-10-15 来源 pin 锁定：扫描主仓 10 个未提交架构文档工作区内容，计算 SHA-256、字节数、mtime 并产出 `verification/ARCH-DOC-REBASELINE/source-pins.json`。
+- 2026-10-15 AC1~AC6 逐项核验完成：产出 6 份专项证据报告与 1 份总览报告至 `verification/ARCH-DOC-REBASELINE/`。
+- 2026-10-15 架构文档对齐：基于 worktree HEAD 版本在 allowlist 文档（`doc/02, 05, 07, 08, 13`）顶栏增加重基线与 AD-001 目标架构对齐说明，旧实现归为 LEGACY / HISTORICAL，不降阈值，不原位覆盖主仓。
+- 2026-10-15 交付 Handoff：提交固定 commit，编写 Handoff 报告，移交 DeepSeek Harness 审查。
 
 ### 2026-10-15 冻结与释放（Coordinator dsh, epoch=5，guarded-write）
 
@@ -69,13 +73,21 @@ P08已完成；本Task未冻结执行坐标、未分配worktree，保持proposed
 
 | evidence_id | AC/Gate | path | commit | sha256 | class |
 |---|---|---|---|---|---|
+| EVID-DOC-PIN | AC1/SourcePin | verification/ARCH-DOC-REBASELINE/source-pins.json | pending | 1200e967a03f7caad259244cc11e724b35f97e859120a4ef56dbfea54a01f977 | SOURCE_PIN |
+| EVID-DOC-AC1 | AC1 | verification/ARCH-DOC-REBASELINE/ac1-coverage-and-sources.md | pending | 577695c0ea10684def679a0bd76dc7553d89fe78837095e13208536a2eb5fb7b | CANONICAL |
+| EVID-DOC-AC2 | AC2 | verification/ARCH-DOC-REBASELINE/ac2-cross-document-consistency.md | pending | a28c60c5b1d2b8f6e8285c229c96269748fde08fa1905b61ebb6f6b6fe5d8778 | CANONICAL |
+| EVID-DOC-AC3 | AC3 | verification/ARCH-DOC-REBASELINE/ac3-four-pages-and-deferred.md | pending | 94bcd0722e820f1778cce2b943725fda8908df5e2f37242c01aa79caf8d9dc12 | CANONICAL |
+| EVID-DOC-AC4 | AC4 | verification/ARCH-DOC-REBASELINE/ac4-p18-quality-and-responsibility.md | pending | d8bb1a38af31c3ed76e5f081680b07515ad184aa307e3d87afc75776d71cc87d | CANONICAL |
+| EVID-DOC-AC5 | AC5 | verification/ARCH-DOC-REBASELINE/ac5-p20-nfr-stack-rebaseline.md | pending | bb29dc6fa2a154e8209987e7d4a6b2a259d081a0bb91147d36e62e64f4264044 | CANONICAL |
+| EVID-DOC-AC6 | AC6 | verification/ARCH-DOC-REBASELINE/ac6-p08-fmt-traceability.md | pending | b0276a9c78f217a2398e4367a83783345058bf2a70b89e23fad23af8d0d20ede | CANONICAL |
+| EVID-DOC-SUM | AC1-6/Summary | verification/ARCH-DOC-REBASELINE/rebaseline-summary.md | pending | 7703a92bea5cc55f516055ae29b66e8c1196533940e9dba6ea53cdd62614d4f5 | CANONICAL |
 
 ## Resource Manifest
 
 | resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
 |---|---|---|---|---|---|
+| worktree | G:/CODEX/New Manga.workspace/worktrees/ARCH-DOC-REBASELINE | PRESERVE_REFERENCED | G:/CODEX/New Manga.workspace/worktrees/ARCH-DOC-REBASELINE | pending | 任务交付分支 worktree，保留供 Review 与下游集成 |
 
 ## Closeout Record
-
-未启动，无可关闭资源。
 - 2026-10-15 Owner 路由：`route-agent.py --role owner --task-profile heavy --owner-policy AUTO_SELECT` 选中 **antigravity**（较 codex 同分时由 router tie-break 决定）；权威参与状态以 `.orchestrator/tasks/ARCH-DOC-REBASELINE-role.json` 为准（owner=antigravity，codex 保留为 contributor）。Reviewer 仍为 DeepSeek Harness（非 Owner、非参与者）。
+- 2026-10-15 集成与审查：Owner 交付 `70208144` 经 R1 独立 Review（`approved_with_conditions；source-pins 10/10 复核一致）后合并入 main；AC1–AC3=PARTIAL、AC4–AC6=NOT_RUN，按 AC7 由各消费者 Gate（P09/P18/P20/P16/P17）裁决后本 Task 方可 done。
