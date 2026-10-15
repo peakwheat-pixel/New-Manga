@@ -82,7 +82,7 @@ P08已完成。Gate 消费者：P09（AC1–3）、P18（AC4）、P20（AC5）�
 | EVID-DOC-AC6 | AC6 | verification/ARCH-DOC-REBASELINE/ac6-p08-fmt-traceability.md | 702081442d44f74310f7ae9ae7cc412479f0766a | b0276a9c78f217a2398e4367a83783345058bf2a70b89e23fad23af8d0d20ede | CANONICAL |
 | EVID-DOC-SUM | AC1-6/Summary | verification/ARCH-DOC-REBASELINE/rebaseline-summary.md | 702081442d44f74310f7ae9ae7cc412479f0766a | 7703a92bea5cc55f516055ae29b66e8c1196533940e9dba6ea53cdd62614d4f5 | CANONICAL |
 | EVID-DOC-REVIEW | AC7 | verification/ARCH-DOC-REBASELINE/dsh-review-r1.md | 79ed01fd | （Review 文件，未自算入库 pin；复核见 Recovery 证据） | REVIEW |
-| EVID-DOC-RECOVERY | Recovery/R1–R6 | verification/ARCH-DOC-REBASELINE/recovery-r1-r6-20261015.md | pending | （本轮产出，见该文件） | RECOVERY |
+| EVID-DOC-RECOVERY | Recovery/R1–R6 | verification/ARCH-DOC-REBASELINE/recovery-r1-r6-20261015.md | 8db66b2489796f0e48ebcc01e327d9c3248c4187 | 8d04158e10b16989173a402c573c794a095c76af8fd56ebfa5bea32b78eaab5f | RECOVERY |
 
 ### Pin 语义（2026-10-15 R1–R6 恢复核验，blob 层零信任复核）
 
@@ -127,3 +127,5 @@ P08已完成。Gate 消费者：P09（AC1–3）、P18（AC4）、P20（AC5）�
 - **AC7 剩余项**：逐消费者 Gate 裁决（P09/P18/P20/P16/P17）。消费者在 Plan 中均为 `proposed`，
   尚未冻结；释放任一消费者时须引用本 Task 证据作 Gate 输入（R1 review F3/C2）。
 - 本 Task 维持 `ready`：AC1–AC3=PARTIAL、AC4–AC6=NOT_RUN；**不因 closeout 登记而标 done**。
+- 本轮提交：`8db66b2489796f0e48ebcc01e327d9c3248c4187`（R1–R6 恢复证据 + AC7/C3 closeout pin + `STATUS`/`REBASELINE_PLAN` 指针刷新 + `.orchestrator` 运行日志设施）。
+- **F-4（环境问题，非本 Task scope）**：`refs/codex/turn-diffs/checkpoints/2a21a8a6…/ba2cc422-…` 是 Codex CLI 遗留的 **broken ref**（指向不存在对象），使 `git gc --auto` 报 `fatal: bad object` 并失败；commit 本身不受影响。该 ref 归属 Codex 工具，按 External Change Protection **不擅自删除**，登记为 BACKLOG 交 Codex 处置。
