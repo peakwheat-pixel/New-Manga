@@ -40,7 +40,7 @@
 
 每个会创建新 Run 的操作（`StartRun`、Interrupted Run 的 `restart`、`RetryFailedTargets`）MUST 携带调用方生成的 `idempotency_key`。此键在同一个 Core 数据库内唯一并随 Run History 保留；调用方在 IPC 超时、断线或响应丢失后重发时 MUST 复用原键。相同内容但不同键表示用户有意创建另一 Run。该规则落实 P08 `SCOPE_DRAFT` 第 34 行的 durable accepted 目标，不将“命令内容相同”误作去重依据。
 
-随键保存一个规范化 `request_fingerprint`，其输入为命令类型、规范化 scope（含显式选中目标及顺序）与用户提供的执行选项。它不包含调用时可能变化的当前 revision、Lock、settings、Provider、目标展开结果；这些内容只在首次成功接受时读取并冻结。
+随键保存一个规范化 `request_fingerprint`，其输入为操作类型、规范化 scope（含显式选中目标及顺序）、来源 Run（适用时）与用户提供的执行选项。它不包含调用时可能变化的当前 revision、Lock、settings、Provider、目标展开结果；这些内容只在首次成功接受时读取并冻结。RetryFailedTargets 的 fingerprint 包含来源 Run 与其冻结的失败 Page 集合；Restart 的 fingerprint 包含被处置的 Interrupted Run。
 
 | 请求情况 | 结果 |
 |---|---|
@@ -53,7 +53,7 @@
 
 Run **仅在以下数据作为一个持久化事务成功提交后才算 Accepted**：
 
-1. `run_id`、`idempotency_key`、`request_fingerprint`、命令、规范化 scope 与初始 `Pending` 状态；
+1. `run_id`、`idempotency_key`、`request_fingerprint`、命令、规范化 scope 与初始 `Pending` 状态；Restart 还须在同一事务记录原 Run 的 `interruption_disposition=restarted`；
 2. 完整、固定顺序的目标成员列表（等价于 `RunTarget`，包括目标身份与接受时的目标快照）；
 3. 影响执行的 settings、Provider binding、constraint reference、context policy 快照。
 
@@ -180,7 +180,7 @@ Run / Page Task / StepRun 是不同生命周期层级：Run 状态汇总批次�
 ### 6.2 Continue / Restart / Abandon
 
 - **Continue：** 同一 Run 使用原冻结快照；验证已提交 revision / Lock 与 Step 有效性，从第一个未完成或 stale Step 继续。已完成且仍有效的 Step 不重跑；stale 或未安全提交的 Step 才重跑（D08 AC-PAUSE-003、AC-CRASH-002；TASK-002 合同 §6.2）。
-- **Restart：** 创建新 Run，沿用原叶子目标，但重新读取当前 Region、Lock、Settings、Provider、Constraint 并规划；新 Run 记录 `source_run_id` 与 `retry_reason=restart_after_interruption`。旧 Run 保持 `Interrupted`，记录 `interruption_disposition=restarted`，不再显示重复处置动作（TASK-002 合同 §6.2）。
+- **Restart：** 创建新 Run，沿用原叶子目标，但重新读取当前 Region、Lock、Settings、Provider、Constraint 并规划；新 Run 记录 `source_run_id` 与 `retry_reason=restart_after_interruption`。新 Run 的 durable acceptance 与旧 Run 的 `interruption_disposition=restarted` 必须原子提交。旧 Run 保持 `Interrupted`，不再显示重复处置动作；相同 `idempotency_key` 重放返回同一个 child Run（TASK-002 合同 §6.2）。
 - **Abandon：** 原 Interrupted Run 转 `Cancelled`，记录 `termination_reason=abandoned_after_interruption`；不建新 Run、不回滚或删除已提交成果（TASK-002 合同 §6.2）。
 
 ### 6.3 重放边界
