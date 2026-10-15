@@ -1,0 +1,14 @@
+library_bridge::tests::book_summary_page_count_known_zero_and_null_are_distinguishable: test
+library_bridge::tests::decode_response_parses_success_and_error: test
+library_bridge::tests::mock_channel_round_trip: test
+library_bridge::tests::page_nav_mock_channel_round_trip_and_typed_pass_through: test
+library_bridge::tests::page_resolve_mock_channel_round_trip_and_typed_rejection: test
+library_bridge::tests::real_core_sidecar_answers_startup_ping_on_fresh_catalog: test
+library_bridge::tests::retype_mock_channel_round_trip_and_typed_rejection: test
+library_bridge::tests::same_channel_concurrent_round_trips_keep_response_ownership: test
+library_bridge::tests::settings_mock_channel_round_trip_and_typed_rejection: test
+library_bridge::tests::spawn_args_target_core_service_module: test
+library_bridge::tests::startup_ping_deadline_kills_own_child_and_joins_worker: test
+library_bridge::tests::wait_timeout_or_kill_terminates_hanging_process: test
+
+12 tests, 0 benchmarks

@@ -1,0 +1,46 @@
+   Compiling m2rc1-desktop v0.1.0 (G:\CODEX\New Manga.workspace\temp\P22-REBASE-1\mutation\apps\desktop\src-tauri)
+warning: unused import: `CHUNK_SIZE`
+   --> src\main.rs:892:54
+    |
+892 |         build_url, handle_m2res_request, ScopeRoots, CHUNK_SIZE, ID_LENGTH,
+    |                                                      ^^^^^^^^^^
+    |
+    = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: unused variable: `out`
+    --> src\main.rs:2166:13
+     |
+2166 |         let out = rotate_render_preview(&core, "page", result, &mut current).unwrap();
+     |             ^^^ help: if this is intentional, prefix it with an underscore: `_out`
+     |
+     = note: `#[warn(unused_variables)]` (part of `#[warn(unused)]`) on by default
+
+warning: calls to `std::mem::drop` with a value that implements `Copy` does nothing
+   --> src\library_bridge.rs:331:9
+    |
+331 |         drop(_tx_guard);
+    |         ^^^^^---------^
+    |              |
+    |              argument has type `()`
+    |
+    = note: `#[warn(dropping_copy_types)]` on by default
+help: use `let _ = ...` to ignore the expression or result
+    |
+331 -         drop(_tx_guard);
+331 +         let _ = _tx_guard;
+    |
+
+warning: `m2rc1-desktop` (bin "m2rc1-desktop" test) generated 3 warnings (run `cargo fix --bin "m2rc1-desktop" -p m2rc1-desktop --tests` to apply 2 suggestions)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 6.85s
+     Running unittests src\main.rs (G:/CODEX/New Manga.workspace/builds/P22-REBASE-1/cargo-target-mutation\debug\deps\m2rc1_desktop-c2118cdc632a8f23.exe)
+
+thread '<unnamed>' (33132) panicked at src\library_bridge.rs:1275:13:
+Beta must observe Alpha holding transaction_lock (WouldBlock) before entering round_trip, got: Ok("Unlocked")
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+thread '<unnamed>' (25608) panicked at src\library_bridge.rs:1128:21:
+coordination channel disconnected (sender dropped or panicked) waiting for beta calling round_trip announcement
+
+thread 'library_bridge::tests::same_channel_concurrent_round_trips_keep_response_ownership' (29472) panicked at src\library_bridge.rs:1317:14:
+caller alpha thread panicked: Any { .. }
+error: test failed, to rerun pass `--bin m2rc1-desktop`

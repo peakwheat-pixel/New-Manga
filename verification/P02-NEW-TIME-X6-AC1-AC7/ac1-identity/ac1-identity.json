@@ -1,0 +1,120 @@
+{
+  "steps": [
+    {
+      "step": "clean-targets-observed",
+      "at": "2026-10-14T11:18:08.312Z",
+      "roaming": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-r1\\ac1-identity\\appdata-roaming",
+        "state": "ABSENT"
+      },
+      "localAppData": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-r1\\ac1-identity\\appdata-local",
+        "state": "ABSENT"
+      },
+      "tmp": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-r1\\ac1-identity\\tmp",
+        "state": "ABSENT"
+      },
+      "dataRoot": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-r1\\ac1-identity\\data-root",
+        "state": "ABSENT"
+      },
+      "derived": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-r1\\ac1-identity\\scope\\derived",
+        "state": "ABSENT"
+      },
+      "managed": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-r1\\ac1-identity\\scope\\managed",
+        "state": "ABSENT"
+      },
+      "catalogDb": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-r1\\ac1-identity\\catalog\\catalog.sqlite",
+        "state": "ABSENT"
+      },
+      "webview2Udd": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-r1\\ac1-identity\\webview2-udd",
+        "state": "ABSENT"
+      },
+      "logs": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-r1\\ac1-identity\\logs",
+        "state": "ABSENT"
+      }
+    },
+    {
+      "step": "pinned-binary-hash",
+      "at": "2026-10-14T11:18:08.318Z",
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-X6-BUILD-CARGO/apps/desktop/src-tauri/target/release/m2rc1-desktop.exe",
+      "sha256": "92AC7B8EFB646FE77DF8245B13C9AF9314BEF415B2F0E007B1CDCEA729BC13FD"
+    },
+    {
+      "step": "launched",
+      "at": "2026-10-14T11:18:09.293Z",
+      "pid": 44212,
+      "spawn_command": "G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-X6-BUILD-CARGO/apps/desktop/src-tauri/target/release/m2rc1-desktop.exe",
+      "cwd": "G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-X6-BUILD-CARGO/apps/desktop/src-tauri/target/release",
+      "clean_state": {
+        "roaming": {
+          "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-r1\\ac1-identity\\appdata-roaming",
+          "state": "ABSENT"
+        },
+        "localAppData": {
+          "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-r1\\ac1-identity\\appdata-local",
+          "state": "ABSENT"
+        },
+        "tmp": {
+          "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-r1\\ac1-identity\\tmp",
+          "state": "ABSENT"
+        },
+        "dataRoot": {
+          "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-r1\\ac1-identity\\data-root",
+          "state": "ABSENT"
+        },
+        "derived": {
+          "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-r1\\ac1-identity\\scope\\derived",
+          "state": "ABSENT"
+        },
+        "managed": {
+          "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-r1\\ac1-identity\\scope\\managed",
+          "state": "ABSENT"
+        },
+        "catalogDb": {
+          "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-r1\\ac1-identity\\catalog\\catalog.sqlite",
+          "state": "ABSENT"
+        },
+        "webview2Udd": {
+          "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-r1\\ac1-identity\\webview2-udd",
+          "state": "ABSENT"
+        },
+        "logs": {
+          "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-r1\\ac1-identity\\logs",
+          "state": "ABSENT"
+        }
+      }
+    },
+    {
+      "step": "cdp-browser-version",
+      "at": "2026-10-14T11:18:09.293Z",
+      "Browser": "Edg/155.0.4283.45",
+      "Protocol-Version": "1.3",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/155.0.0.0 Safari/537.36 Edg/155.0.0.0",
+      "V8-Version": "15.5.9.4",
+      "WebKit-Version": "537.36 (@50f24ef2aa5369a074b8888b7db82d9c0652d642)",
+      "webSocketDebuggerUrl": "ws://127.0.0.1:9333/devtools/browser/9f73726e-e1fe-4d10-a0ad-e6420cc30bcc"
+    },
+    {
+      "step": "teardown",
+      "at": "2026-10-14T11:18:10.524Z",
+      "exited": true,
+      "code": null,
+      "signal": "SIGTERM"
+    }
+  ],
+  "errors": [
+    "Error: CDP SystemInfo.getInfo is only supported on the browser target\n    at #onMessage (file:///G:/CODEX/New%20Manga.workspace/worktrees/P02-NEW-TIME-X6-AC1-AC7-ANTIGRAVITY/apps/desktop/frontend/e2e/p02-new-time/lib/cdp.mjs:75:33)\n    at WebSocket.<anonymous> (file:///G:/CODEX/New%20Manga.workspace/worktrees/P02-NEW-TIME-X6-AC1-AC7-ANTIGRAVITY/apps/desktop/frontend/e2e/p02-new-time/lib/cdp.mjs:57:67)\n    at [nodejs.internal.kHybridDispatch] (node:internal/event_target:843:20)\n    at WebSocket.dispatchEvent (node:internal/event_target:776:26)\n    at fireEvent (node:internal/deps/undici/undici:14147:14)\n    at #onMessage (node:internal/deps/undici/undici:15425:9)\n    at Object.onMessage (node:internal/deps/undici/undici:15138:76)\n    at websocketMessageReceived (node:internal/deps/undici/undici:14151:15)\n    at node:internal/deps/undici/undici:14857:19\n    at node:internal/deps/undici/undici:14671:11"
+  ],
+  "verdict": {
+    "ac": "AC1",
+    "status": "ERROR",
+    "error": "Error: CDP SystemInfo.getInfo is only supported on the browser target"
+  }
+}

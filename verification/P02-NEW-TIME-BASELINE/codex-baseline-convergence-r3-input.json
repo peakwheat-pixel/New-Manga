@@ -1,0 +1,33 @@
+{
+  "open_blockers": [],
+  "other_ready_tasks": [],
+  "continuation_harmful": false,
+  "delivery_safely_integrable": true,
+  "nonblockers": [
+    {
+      "severity": "P3",
+      "id": "F-01"
+    },
+    {
+      "severity": "P4",
+      "id": "F-02"
+    },
+    {
+      "severity": "P4",
+      "id": "F-03"
+    },
+    {
+      "severity": "P4",
+      "id": "F-04"
+    },
+    {
+      "severity": "P4",
+      "id": "F-05"
+    }
+  ],
+  "implementation_repairs_used": 2,
+  "max_implementation_repairs": 2,
+  "task_id": "P02-NEW-TIME-BASELINE",
+  "needs_user_only_input": false,
+  "blocker_on_critical_path": false
+}

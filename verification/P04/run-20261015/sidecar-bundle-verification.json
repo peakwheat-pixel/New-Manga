@@ -1,0 +1,13 @@
+{
+  "schema_version": 1,
+  "verified_utc": "2026-10-15T12:32:42.4526957Z",
+  "source_dir": "G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-X6-BUILD-CARGO/apps/desktop/src-tauri/target/core-sidecar/core-sidecar",
+  "target_dir": "G:\\CODEX\\New Manga.worktrees\\P04-prod-command-concurrency-antigravity\\apps\\desktop\\src-tauri\\target\\core-sidecar\\core-sidecar",
+  "expected_files": 5610,
+  "verified_files": 5610,
+  "total_bytes": 1296373783,
+  "mismatches": 0,
+  "manifest_sha256": "49e1f9a91d2ef551cb8160accc4b16531ed5e61085c324e22605976e0cd922ad",
+  "real_core_executed": false,
+  "status": "VERIFIED_IDENTICAL"
+}

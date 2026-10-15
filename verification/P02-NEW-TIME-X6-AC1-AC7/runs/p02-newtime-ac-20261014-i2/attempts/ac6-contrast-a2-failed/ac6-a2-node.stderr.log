@@ -1,0 +1,10 @@
+file:///G:/CODEX/New%20Manga.workspace/worktrees/P02-NEW-TIME-X6-AC1-AC7-ANTIGRAVITY/apps/desktop/frontend/e2e/p02-new-time/lib/cdp.mjs:52
+    throw new Error(`CDP endpoint never appeared: ${lastError}`);
+          ^
+
+Error: CDP endpoint never appeared: TypeError: fetch failed
+    at CdpConnection.waitForEndpoint (file:///G:/CODEX/New%20Manga.workspace/worktrees/P02-NEW-TIME-X6-AC1-AC7-ANTIGRAVITY/apps/desktop/frontend/e2e/p02-new-time/lib/cdp.mjs:52:11)
+    at async launchApp (file:///G:/CODEX/New%20Manga.workspace/worktrees/P02-NEW-TIME-X6-AC1-AC7-ANTIGRAVITY/apps/desktop/frontend/e2e/p02-new-time/lib/app.mjs:49:22)
+    at async file:///G:/CODEX/New%20Manga.workspace/worktrees/P02-NEW-TIME-X6-AC1-AC7-ANTIGRAVITY/apps/desktop/frontend/e2e/p02-new-time/ac6-contrast.mjs:56:17
+
+Node.js v24.15.0

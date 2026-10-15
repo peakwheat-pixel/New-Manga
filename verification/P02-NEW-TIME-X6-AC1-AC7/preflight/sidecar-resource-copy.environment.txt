@@ -1,0 +1,5 @@
+PowerShell 7.6.6; Python 3.14.6; command: python -B sidecar-resource-copy-verify-r1.py <frozen-sidecar-manifest> <packaged-resources/core-sidecar>.
+Expected manifest SHA-256: CA0F531ADE3B83D5FFD7627643A2393443702F2B48FF60080EF1284B6BAD8175.
+Verifier SHA-256: 7F1D95A8AB140128B88616FB74C9EF15370211ED624C17FA86BA85F9586CAB44.
+Packaged executable SHA-256: 92AC7B8EFB646FE77DF8245B13C9AF9314BEF415B2F0E007B1CDCEA729BC13FD.
+Read-only comparison; no application launched and no build, install, user profile, OS, ACL, registry, or user data was accessed.

@@ -1,0 +1,28 @@
+{
+  "base_interpreter": {
+    "path": "C:\\Users\\49745\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+    "sha256": "15b41a488c356c0e331facdea6c836a6cec021f12d5fde9844e7ca4a1aa0361a",
+    "bytes": 103192
+  },
+  "task_venv": {
+    "path": "G:/CODEX/New Manga.workspace/task-envs/P22-REBASE-1/venv/Scripts/python.exe",
+    "sha256": "864530d708039551a2c672ddd65e5900fbc08b0981479679723a5b468f8082bc",
+    "bytes": 274712,
+    "pyvenv_cfg": "home = C:\\Users\\49745\\AppData\\Local\\Programs\\Python\\Python312\r\ninclude-system-site-packages = false\r\nversion = 3.12.3\r\nexecutable = C:\\Users\\49745\\AppData\\Local\\Programs\\Python\\Python312\\python.exe\r\ncommand = C:\\Users\\49745\\AppData\\Local\\Programs\\Python\\Python312\\python.exe -m venv G:\\CODEX\\New Manga.workspace\\task-envs\\P22-REBASE-1\\venv\r\n",
+    "probe": {
+      "executable": "G:\\CODEX\\New Manga.workspace\\task-envs\\P22-REBASE-1\\venv\\Scripts\\python.exe",
+      "version": "3.12.3 (tags/v3.12.3:f6650f9, Apr  9 2024, 14:05:25) [MSC v.1938 64 bit (AMD64)]",
+      "base_prefix": "C:\\Users\\49745\\AppData\\Local\\Programs\\Python\\Python312",
+      "prefix": "G:\\CODEX\\New Manga.workspace\\task-envs\\P22-REBASE-1\\venv",
+      "base_executable": "C:\\Users\\49745\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+      "cwd": "G:\\CODEX\\New Manga.workspace\\worktrees\\P22-REBASE-1"
+    }
+  },
+  "directories": {
+    "cargo_target_dir": "G:/CODEX/New Manga.workspace/builds/P22-REBASE-1/cargo-target",
+    "task_env_dir": "G:/CODEX/New Manga.workspace/task-envs/P22-REBASE-1",
+    "temp_dir": "G:/CODEX/New Manga.workspace/temp/P22-REBASE-1",
+    "agent_output_dir": "G:/CODEX/New Manga.workspace/agent-output/antigravity/P22-REBASE-1",
+    "verification_dir": "verification/P22-REBASE-1"
+  }
+}

@@ -1,0 +1,142 @@
+{
+  "schema": "P02-NEW-TIME-BASELINE-freeze-manifest-1",
+  "task": "P02-NEW-TIME-BASELINE",
+  "runId": "baseline-20261014T0915CST-p02-admission-r2",
+  "deliveryHead": "d285908f07ae1aa37a3e3af077d5902bb9abe661",
+  "baseCommit": "23bec747df77e67e93ec1fa9fd859d077219e941",
+  "cwd": "G:\\CODEX\\New Manga.workspace\\worktrees\\P02-NEW-TIME-BASELINE",
+  "branch": "agent/zcode/P02-NEW-TIME-BASELINE",
+  "worktree": "G:\\CODEX\\New Manga.workspace\\worktrees\\P02-NEW-TIME-BASELINE",
+  "outputDir": "G:\\CODEX\\New Manga.workspace\\agent-output\\zcode\\P02-NEW-TIME-BASELINE",
+  "outputTargets": [
+    "run-baseline-20261014T0915CST-p02-admission-r2.json"
+  ],
+  "identity": {
+    "name": "HOME-MY\\49745",
+    "sid": "S-1-5-21-2196946971-914346751-4210154634-1001"
+  },
+  "tools": {
+    "pwshExe": "C:/Program Files/PowerShell/7/pwsh.exe",
+    "gitExe": "C:/Program Files/Git/cmd/git.exe",
+    "whoamiExe": "C:/Windows/System32/whoami.exe"
+  },
+  "expectedRuntime": {
+    "psVersion": "7.6.6",
+    "psEdition": "Core",
+    "languageMode": "FullLanguage",
+    "gitVersion": "git version 2.52.0.windows.1"
+  },
+  "contractPins": [
+    {
+      "name": "collaboration-contract",
+      "path": "G:\\CODEX\\New Manga.workspace\\worktrees\\P02-NEW-TIME-BASELINE\\doc\\09_COLLABORATION.md",
+      "size": 19131,
+      "sha256": "DAFBD1F65DFCE967F50561926C9CC92F2A7DAAE826C33F375A549573372ECD9D"
+    },
+    {
+      "name": "target-architecture",
+      "path": "G:\\CODEX\\New Manga.workspace\\worktrees\\P02-NEW-TIME-BASELINE\\doc\\AD-001_TARGET_DESKTOP_ARCHITECTURE.md",
+      "size": 7454,
+      "sha256": "2E59AD6ADF049DA7450F11EB4BD420739FBA8E3E979261CA712902FEF7F3C3C0"
+    },
+    {
+      "name": "task-template",
+      "path": "G:\\CODEX\\New Manga.workspace\\worktrees\\P02-NEW-TIME-BASELINE\\doc\\templates\\TASK.md",
+      "size": 1541,
+      "sha256": "EBD10E49E50BB76281D5626523997D5A56307072FC2B967166FD8A67E3D4A278"
+    },
+    {
+      "name": "handoff-template",
+      "path": "G:\\CODEX\\New Manga.workspace\\worktrees\\P02-NEW-TIME-BASELINE\\doc\\templates\\HANDOFF.md",
+      "size": 1800,
+      "sha256": "164BC78F3C5D80673D5D31CB4A22547D6CD8DF6A3B6EDCAD143729A3959D69E4"
+    },
+    {
+      "name": "review-template",
+      "path": "G:\\CODEX\\New Manga.workspace\\worktrees\\P02-NEW-TIME-BASELINE\\doc\\templates\\REVIEW.md",
+      "size": 3972,
+      "sha256": "CB7FBE0C5B610405CF391AE4D86C6F473B69A0F110B4A12DD7E8432E19C40F1A"
+    }
+  ],
+  "taskDeliverablePins": [
+    {
+      "name": "collector-source",
+      "path": "G:\\CODEX\\New Manga.workspace\\worktrees\\P02-NEW-TIME-BASELINE\\tools\\p02\\p02-new-time-baseline.ps1",
+      "size": 99513,
+      "sha256": "ED1A48393F516934E285B17AE1E7210B3B4C5DADA7B1DD3568A68806E302AF66"
+    },
+    {
+      "name": "selftest-source",
+      "path": "G:\\CODEX\\New Manga.workspace\\worktrees\\P02-NEW-TIME-BASELINE\\tools\\p02\\p02-new-time-baseline-selftest.ps1",
+      "size": 76312,
+      "sha256": "0E34F959EB564E4BE449AFA89CB774168F3EDB232B6204B37B7B54611744BF0B"
+    },
+    {
+      "name": "task-frozen-snapshot",
+      "path": "G:\\CODEX\\New Manga.workspace\\worktrees\\P02-NEW-TIME-BASELINE\\doc\\tasks\\P02-NEW-TIME-BASELINE.md",
+      "size": 35632,
+      "sha256": "6F66B8444D0B2C818B424CEC617798EEC64A3EDBA25222DF07667E09274EB0D3"
+    },
+    {
+      "name": "task-evidence-manifest-r7",
+      "path": "G:\\CODEX\\New Manga.workspace\\worktrees\\P02-NEW-TIME-BASELINE\\verification\\P02-NEW-TIME-BASELINE\\p02-new-time-baseline-evidence-manifest-r7.json",
+      "size": 31277,
+      "sha256": "E0B39EE2619A74F95E858F80F9C478F753FF0A418163366DA528EB3E59CAB70F"
+    },
+    {
+      "name": "source-review-manifest-r3",
+      "path": "G:\\CODEX\\New Manga.workspace\\worktrees\\P02-NEW-TIME-BASELINE\\verification\\P02-NEW-TIME-BASELINE\\dsh-source-review-manifest-r3.json",
+      "size": 1167,
+      "sha256": "5B18C9B56E5BCAA3822290C7C78031A34C9EB23EA004321BF0840100709AB87D"
+    },
+    {
+      "name": "source-review-manifest-r3-verify",
+      "path": "G:\\CODEX\\New Manga.workspace\\worktrees\\P02-NEW-TIME-BASELINE\\verification\\P02-NEW-TIME-BASELINE\\dsh-source-review-manifest-r3-verify.json",
+      "size": 156,
+      "sha256": "0E6AADAEE0383A06A4B2D87DF6D2C563FBD49D96DEBC762AAA5665D94D0F7944"
+    },
+    {
+      "name": "dsh-exact-source-review-r3",
+      "path": "G:\\CODEX\\New Manga.workspace\\worktrees\\P02-NEW-TIME-BASELINE\\verification\\P02-NEW-TIME-BASELINE\\dsh-source-review-r3.md",
+      "size": 15569,
+      "sha256": "66316BF7F923576E78D121B8DD6AE0C29D9ACD6D56E5A55C3FF8883EC02A4982"
+    },
+    {
+      "name": "codex-source-verify-r4",
+      "path": "G:\\CODEX\\New Manga.workspace\\worktrees\\P02-NEW-TIME-BASELINE\\verification\\P02-NEW-TIME-BASELINE\\codex-source-verify-r4.json",
+      "size": 2663,
+      "sha256": "11D1DCED9059AF7D638BA1D7EAB3345801BAC2CB2B062DF54EBB89C44CB3C9FC"
+    },
+    {
+      "name": "codex-source-adjudication-r3",
+      "path": "G:\\CODEX\\New Manga.workspace\\worktrees\\P02-NEW-TIME-BASELINE\\verification\\P02-NEW-TIME-BASELINE\\codex-source-review-adjudication-r3.md",
+      "size": 1647,
+      "sha256": "3643CE73B10884B28CA9EE9973ABFF4C213E0CAC48C124BF0624441E5711E72D"
+    },
+    {
+      "name": "zcode-owner-preflight-r4",
+      "path": "G:\\CODEX\\New Manga.workspace\\worktrees\\P02-NEW-TIME-BASELINE\\verification\\P02-NEW-TIME-BASELINE\\zcode-owner-preflight-r4.json",
+      "size": 2548,
+      "sha256": "FE6E768FC9464A9D0207FE7D7EC8FAFBA7FB4129A4FD64FBB316CF86368EF22B"
+    },
+    {
+      "name": "failed-freeze-attempt-1-json",
+      "path": "G:\\CODEX\\New Manga.workspace\\worktrees\\P02-NEW-TIME-BASELINE\\verification\\P02-NEW-TIME-BASELINE\\codex-freeze-build-attempt-1.json",
+      "size": 966,
+      "sha256": "D4C4CBC6D3F0AB46456083FCEC91920CD89369E5D449E82EE4D9B24B1F7D9C8E"
+    },
+    {
+      "name": "failed-freeze-attempt-1-report",
+      "path": "G:\\CODEX\\New Manga.workspace\\worktrees\\P02-NEW-TIME-BASELINE\\verification\\P02-NEW-TIME-BASELINE\\codex-freeze-build-attempt-1.md",
+      "size": 935,
+      "sha256": "192A6A644D01E67E7EA7C9AA85DEBA0B237A1318563C7427F96B4E4EC0ABC547"
+    }
+  ],
+  "mutableObservationPaths": [
+    "G:\\CODEX\\New Manga\\doc\\STATUS.md",
+    "G:\\CODEX\\New Manga\\doc\\REBASELINE_PLAN.md",
+    "G:\\CODEX\\New Manga\\doc\\00_INDEX.md",
+    "G:\\CODEX\\New Manga\\doc\\tasks\\P02-NEW-TIME-BASELINE.md",
+    "G:\\CODEX\\New Manga\\verification\\P02-NEW-TIME-BASELINE\\checkpoint.md"
+  ]
+}

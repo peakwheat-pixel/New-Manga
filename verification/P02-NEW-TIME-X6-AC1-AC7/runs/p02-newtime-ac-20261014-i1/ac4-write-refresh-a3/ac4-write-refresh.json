@@ -1,0 +1,266 @@
+{
+  "steps": [
+    {
+      "step": "clean-targets-observed",
+      "at": "2026-10-14T15:14:39.371Z",
+      "roaming": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-i1\\ac4-write-refresh-a3\\appdata-roaming",
+        "state": "ABSENT"
+      },
+      "localAppData": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-i1\\ac4-write-refresh-a3\\appdata-local",
+        "state": "ABSENT"
+      },
+      "tmp": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-i1\\ac4-write-refresh-a3\\tmp",
+        "state": "ABSENT"
+      },
+      "dataRoot": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-i1\\ac4-write-refresh-a3\\data-root",
+        "state": "ABSENT"
+      },
+      "derived": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-i1\\ac4-write-refresh-a3\\scope\\derived",
+        "state": "ABSENT"
+      },
+      "managed": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-i1\\ac4-write-refresh-a3\\scope\\managed",
+        "state": "ABSENT"
+      },
+      "catalogDb": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-i1\\ac4-write-refresh-a3\\catalog\\catalog.sqlite",
+        "state": "ABSENT"
+      },
+      "webview2Udd": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-i1\\ac4-write-refresh-a3\\webview2-udd",
+        "state": "ABSENT"
+      },
+      "logs": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-i1\\ac4-write-refresh-a3\\logs",
+        "state": "ABSENT"
+      }
+    },
+    {
+      "step": "launched",
+      "at": "2026-10-14T15:14:40.211Z",
+      "pid": 18764
+    },
+    {
+      "step": "mocks-installed",
+      "at": "2026-10-14T15:14:40.625Z",
+      "layer": "REAL_WEBVIEW_MOCK_IPC",
+      "synth": {
+        "regionId": "syn-region-ac4-001",
+        "pageId": "syn-page-ac4",
+        "revision": 1,
+        "type": "speech",
+        "policy": "skip"
+      }
+    },
+    {
+      "step": "page-loaded",
+      "at": "2026-10-14T15:14:40.953Z",
+      "revisionNo": null,
+      "regionType": null,
+      "feedback": null,
+      "undoAvailable": false,
+      "revisionListCount": 0,
+      "toolbarRegionCount": "regions: 1",
+      "perfNow": 739.3999999985099
+    },
+    {
+      "step": "region-selected",
+      "at": "2026-10-14T15:14:41.515Z",
+      "revisionNo": "1",
+      "regionType": "speech",
+      "feedback": null,
+      "undoAvailable": false,
+      "revisionListCount": 2,
+      "toolbarRegionCount": "regions: 1",
+      "perfNow": 1301.199999999255
+    },
+    {
+      "step": "op1-retype",
+      "at": "2026-10-14T15:14:42.245Z",
+      "timing": {
+        "found": true,
+        "writeInvokePerfNow": 1303.0999999996275,
+        "writeSettledPerfNow": 1303.3999999985099,
+        "writeResult": "resolved",
+        "readInvokePerfNow": 1303.3999999985099,
+        "readArgs": {
+          "pageId": "syn-page-ac4"
+        },
+        "gapSettledToReadMs": 0
+      },
+      "dom": {
+        "revisionNo": "2",
+        "regionType": "sfx",
+        "feedback": "✅ 已标记为拟声词（SFX · 拟声词翻译链）——将按拟声词翻译链重新翻译；原图完好；已渲染成品图需重跑渲染才恢复原文",
+        "undoAvailable": true,
+        "revisionListCount": 2,
+        "toolbarRegionCount": "regions: 1",
+        "perfNow": 2031.3999999985099
+      }
+    },
+    {
+      "step": "op2-undo",
+      "at": "2026-10-14T15:14:42.959Z",
+      "timing": {
+        "found": true,
+        "writeInvokePerfNow": 2033,
+        "writeSettledPerfNow": 2033.3999999985099,
+        "writeResult": "resolved",
+        "readInvokePerfNow": 2033.3999999985099,
+        "readArgs": {
+          "pageId": "syn-page-ac4"
+        },
+        "gapSettledToReadMs": 0
+      },
+      "dom": {
+        "revisionNo": "3",
+        "regionType": "speech",
+        "feedback": "✅ 已撤销改标：新增 restored revision 3，Core 已恢复改标前状态",
+        "undoAvailable": false,
+        "revisionListCount": 2,
+        "toolbarRegionCount": "regions: 1",
+        "perfNow": 2745.39999999851
+      }
+    },
+    {
+      "step": "before-restore",
+      "at": "2026-10-14T15:14:56.141Z",
+      "revisionNo": "4",
+      "regionType": "sfx",
+      "feedback": "✅ 已标记为拟声词（SFX · 拟声词翻译链）——将按拟声词翻译链重新翻译；原图完好；已渲染成品图需重跑渲染才恢复原文",
+      "undoAvailable": true,
+      "revisionListCount": 2,
+      "toolbarRegionCount": "regions: 1",
+      "perfNow": 15926.599999999627
+    },
+    {
+      "step": "history-open",
+      "at": "2026-10-14T15:14:56.613Z",
+      "revisionNo": "4",
+      "regionType": "sfx",
+      "feedback": "✅ 已标记为拟声词（SFX · 拟声词翻译链）——将按拟声词翻译链重新翻译；原图完好；已渲染成品图需重跑渲染才恢复原文",
+      "undoAvailable": true,
+      "revisionListCount": 7,
+      "toolbarRegionCount": "regions: 1",
+      "perfNow": 16398.799999998882
+    },
+    {
+      "step": "restore-dialog",
+      "at": "2026-10-14T15:14:56.934Z",
+      "visible": true
+    },
+    {
+      "step": "op3-restore",
+      "at": "2026-10-14T15:14:57.749Z",
+      "timing": {
+        "found": true,
+        "writeInvokePerfNow": 16722.099999999627,
+        "writeSettledPerfNow": 16722.5,
+        "writeResult": "resolved",
+        "readInvokePerfNow": 16722.5,
+        "readArgs": {
+          "pageId": "syn-page-ac4"
+        },
+        "gapSettledToReadMs": 0
+      },
+      "dom": {
+        "revisionNo": "5",
+        "regionType": "speech",
+        "feedback": "✅ 已恢复 revision 1；新增 current restored revision 5",
+        "undoAvailable": false,
+        "revisionListCount": 8,
+        "toolbarRegionCount": "regions: 1",
+        "perfNow": 17535.5
+      }
+    },
+    {
+      "step": "final-screenshot",
+      "at": "2026-10-14T15:14:57.811Z",
+      "file": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-i1\\ac4-write-refresh-a3\\logs\\ac4-after-restore.png",
+      "bytes": 72482,
+      "sha256": "21E53D6C993BC9B29F5C179096849EE1D96D030D30D3923E9E28AEFD9B7044A9"
+    },
+    {
+      "step": "teardown",
+      "at": "2026-10-14T15:14:59.018Z",
+      "exited": true,
+      "code": null,
+      "signal": "SIGTERM"
+    }
+  ],
+  "op1_retype": {
+    "layer": "REAL_WEBVIEW_MOCK_IPC",
+    "write_command": "set_region_type",
+    "write_return": "resolved",
+    "readback_command": "list_regions",
+    "readback_gap_ms": 0,
+    "immediate_under_300ms": true,
+    "dom_revision_no_after": "2",
+    "dom_region_type_after": "sfx",
+    "undo_offer_visible": true
+  },
+  "op2_undo": {
+    "layer": "REAL_WEBVIEW_MOCK_IPC",
+    "write_command": "restore_region_revision",
+    "write_return": "resolved",
+    "readback_command": "list_regions",
+    "readback_gap_ms": 0,
+    "immediate_under_300ms": true,
+    "dom_revision_no_after": "3",
+    "dom_region_type_after": "speech"
+  },
+  "op3_restore": {
+    "layer": "REAL_WEBVIEW_MOCK_IPC",
+    "write_command": "restore_region_revision",
+    "write_return": "resolved",
+    "readback_command": "list_regions",
+    "readback_gap_ms": 0,
+    "immediate_under_300ms": true,
+    "dom_revision_no_after": "5",
+    "dom_region_type_after": "speech",
+    "history_refreshed_revisions": 8
+  },
+  "verdict": {
+    "ac": "AC4",
+    "all_three_operations_executed": true,
+    "retype": {
+      "layer": "REAL_WEBVIEW_MOCK_IPC",
+      "write_command": "set_region_type",
+      "write_return": "resolved",
+      "readback_command": "list_regions",
+      "readback_gap_ms": 0,
+      "immediate_under_300ms": true,
+      "dom_revision_no_after": "2",
+      "dom_region_type_after": "sfx",
+      "undo_offer_visible": true
+    },
+    "undo": {
+      "layer": "REAL_WEBVIEW_MOCK_IPC",
+      "write_command": "restore_region_revision",
+      "write_return": "resolved",
+      "readback_command": "list_regions",
+      "readback_gap_ms": 0,
+      "immediate_under_300ms": true,
+      "dom_revision_no_after": "3",
+      "dom_region_type_after": "speech"
+    },
+    "restore": {
+      "layer": "REAL_WEBVIEW_MOCK_IPC",
+      "write_command": "restore_region_revision",
+      "write_return": "resolved",
+      "readback_command": "list_regions",
+      "readback_gap_ms": 0,
+      "immediate_under_300ms": true,
+      "dom_revision_no_after": "5",
+      "dom_region_type_after": "speech",
+      "history_refreshed_revisions": 8
+    },
+    "clock": "page performance.now() monotonic; regionDebounceMs=300 default unchanged",
+    "mock_surface": "REAL_WEBVIEW_MOCK_IPC — real Core/SQLite persistence NOT claimed"
+  }
+}

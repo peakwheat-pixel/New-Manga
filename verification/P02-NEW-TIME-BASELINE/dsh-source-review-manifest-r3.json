@@ -1,0 +1,34 @@
+{
+  "task_id": "P02-NEW-TIME-BASELINE",
+  "generated_at": "2026-10-14T00:52:57+00:00",
+  "source_commit": "d285908f07ae1aa37a3e3af077d5902bb9abe661",
+  "review_head": "318bc2a1d8ff33e82585f4fa835a9370fad73a4a",
+  "generator": {
+    "name": "generate-evidence-manifest",
+    "version": 1,
+    "frozen_git_checked": true
+  },
+  "files": [
+    {
+      "relative_path": "tools/p02/p02-new-time-baseline.ps1",
+      "sha256": "ed1a48393f516934e285b17ae1e7210b3b4c5dada7b1dd3568a68806e302af66",
+      "bytes": 99513,
+      "git_blob": "630833290e8e6be89ac38ab089bb8efae4872894",
+      "artifact_type": "code"
+    },
+    {
+      "relative_path": "tools/p02/p02-new-time-baseline-selftest.ps1",
+      "sha256": "0e34f959eb564e4be449afa89cb774168f3edb232b6204b37b7b54611744bf0b",
+      "bytes": 76312,
+      "git_blob": "519a48c77e9d4db1c39aa12fd198573f5118a163",
+      "artifact_type": "code"
+    },
+    {
+      "relative_path": "doc/tasks/P02-NEW-TIME-BASELINE.md",
+      "sha256": "6f66b8444d0b2c818b424cec617798eec64a3edba25222df07667e09274eb0d3",
+      "bytes": 35632,
+      "git_blob": "dfe88b9174ab938f6e4a1baba13f9d19588489af",
+      "artifact_type": "doc"
+    }
+  ]
+}

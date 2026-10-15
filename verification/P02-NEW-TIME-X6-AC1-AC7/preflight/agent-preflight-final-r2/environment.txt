@@ -1,0 +1,1 @@
+PowerShell 7.6.6; Python 3.14.6; Task HEAD=3d94add1b8cf63b70cbe760c1cd4f7719e5df228; branch=agent/zcode/P02-NEW-TIME-X6-AC1-AC7; preflight-entry porcelain empty; ZCode CLI=0.16.9; live probe session=sess_20fa28a3-59b9-4257-a419-52cd1ddfb3c4; manifest paths were manually checked against the Task exact allowlist.

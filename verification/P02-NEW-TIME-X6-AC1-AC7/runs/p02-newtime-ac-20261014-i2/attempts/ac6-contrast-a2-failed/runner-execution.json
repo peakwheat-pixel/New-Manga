@@ -1,0 +1,12 @@
+{
+  "run_id": "p02-newtime-ac-20261014-i2",
+  "scenario": "ac6-contrast-a2",
+  "command": "node apps/desktop/frontend/e2e/p02-new-time/ac6-contrast.mjs",
+  "shell": "pwsh 7.6.6 / node v24.15.0",
+  "cwd": "G:\\CODEX\\New Manga.workspace\\worktrees\\P02-NEW-TIME-X6-AC1-AC7-ANTIGRAVITY",
+  "status": "FAIL",
+  "node_exit_code": 1,
+  "started_at": "2026-10-15T01:07:43.319005Z",
+  "completed_at": "2026-10-15T01:08:28.7908416Z",
+  "reason": "CDP endpoint never appeared on port 9335; CdpConnection.waitForEndpoint threw TypeError: fetch failed"
+}

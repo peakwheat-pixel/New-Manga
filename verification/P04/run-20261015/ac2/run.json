@@ -1,0 +1,37 @@
+{
+  "status": "NOT_RUN",
+  "test_status": "NOT_RUN",
+  "command": "cargo test --locked library_bridge::tests::same_channel_concurrent_round_trips_keep_response_ownership -- --test-threads=1",
+  "argv": [
+    "test",
+    "--locked",
+    "library_bridge::tests::same_channel_concurrent_round_trips_keep_response_ownership",
+    "--",
+    "--test-threads=1"
+  ],
+  "cwd": "G:\\CODEX\\New Manga.worktrees\\P04-prod-command-concurrency-antigravity\\apps\\desktop\\src-tauri",
+  "environment": {
+    "CARGO_TARGET_DIR": "G:\\CODEX\\New Manga.workspace\\builds\\P04\\cargo-target",
+    "CARGO_HOME": "G:\\CODEX\\New Manga.workspace\\task-envs\\P04\\cargo_home",
+    "TEMP": "G:\\CODEX\\New Manga.workspace\\task-envs\\P04\\tmp",
+    "TMP": "G:\\CODEX\\New Manga.workspace\\task-envs\\P04\\tmp",
+    "PYTHONPYCACHEPREFIX": "G:\\CODEX\\New Manga.workspace\\task-envs\\P04\\pycache",
+    "M2RC1_PYTHON": "G:/CODEX/New Manga.workspace/task-envs/P22-REBASE-1/venv/Scripts/python.exe"
+  },
+  "assessment_utc": "2026-10-15T12:35:27.7535725Z",
+  "started_utc": null,
+  "finished_utc": null,
+  "wall_ms": null,
+  "wall_timeout_seconds": 1800,
+  "exit": null,
+  "counts": {
+    "passed": null,
+    "failed": null,
+    "ignored": null,
+    "filtered": null
+  },
+  "blocking_reason": "AC1 cargo compilation failed before test execution because tauri::generate_context! requires missing apps/desktop/frontend/dist; stopped per instruction and did not launch a second Cargo command.",
+  "stdout_stream": "empty because command was not invoked",
+  "stderr_stream": "empty because command was not invoked",
+  "real_core_executed": false
+}

@@ -1,0 +1,9 @@
+{
+  "agent": "dsh",
+  "session_id": "session-e22dd9de-bdd7-4927-9daf-d2159a405f42",
+  "reviewed_head": "4abb8d288e005dc58e3270b12389d33cd7a52ac1",
+  "exit_code": 0,
+  "stdout_sha256": "f885ea2a3d49affa76a7df77f775e8d9dd35c140d9b45b1acbfcd972625fa610",
+  "prompt_sha256": "1e619db0942e16262c560a5a28938471be96619b1dd83646b355307e91472660",
+  "reviewer_independence": "route + preflight PASS for both Task IDs; dsh excluded from owner/contributor/repair sets"
+}

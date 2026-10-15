@@ -1,0 +1,11 @@
+{
+  "run_id": "p02-newtime-ac-20261014-i2",
+  "scenario": "ac6-contrast-a3",
+  "command": "node apps/desktop/frontend/e2e/p02-new-time/ac6-contrast.mjs",
+  "shell": "pwsh 7.6.6 / node v24.15.0",
+  "cwd": "G:\\CODEX\\New Manga.workspace\\worktrees\\P02-NEW-TIME-X6-AC1-AC7-ANTIGRAVITY",
+  "status": "FAIL",
+  "verdict": "ERROR",
+  "node_exit_code": 1,
+  "reason": "CDP endpoint never appeared (TypeError: fetch failed) on port 9336; during the live process snapshot, the WebView2 command line for the isolated run-i2 user-data folder omitted --remote-debugging-port"
+}

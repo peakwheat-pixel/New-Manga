@@ -1,0 +1,102 @@
+{
+  "resources": [
+    {
+      "resource_type": "owner_worktree",
+      "source_path": "G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-X6-AC1-AC7-ANTIGRAVITY",
+      "destination_path": "G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-X6-AC1-AC7-ANTIGRAVITY",
+      "disposition": "PRESERVE_REFERENCED",
+      "exists": true,
+      "reference_and_process_check": "fixed reviewed HEAD, raw evidence and original untracked manifest; Owner launcher exit 0; no second writer started",
+      "head": "4abb8d288e005dc58e3270b12389d33cd7a52ac1",
+      "git_status": [
+        "?? verification/P02-NEW-TIME-X6-AC1-AC7/integration-verify-i2/"
+      ]
+    },
+    {
+      "resource_type": "prior_integration_worktree",
+      "source_path": "G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-X6-POSTRUN-REVIEW",
+      "destination_path": "G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-X6-POSTRUN-REVIEW",
+      "disposition": "PRESERVE_UNKNOWN",
+      "exists": true,
+      "reference_and_process_check": "dirty/untracked historical Review and governance retained; not staged/reset/cleaned",
+      "head": "2f38141d6c8e56bd66b483114b107dead88fdb6d",
+      "git_status": [
+        " M doc/REBASELINE_PLAN.md",
+        " M doc/STATUS.md",
+        " M doc/tasks/P02-NEW-TIME-X6-AC1-AC7.md",
+        " M doc/tasks/README.md",
+        "?? 0",
+        "?? \"dsh --version\"",
+        "?? verification/P02-NEW-TIME-X6-AC1-AC7/adjudication/",
+        "?? verification/P02-NEW-TIME-X6-AC1-AC7/checkpoint-i1-dispatched-r2.md",
+        "?? verification/P02-NEW-TIME-X6-AC1-AC7/checkpoint-i1-paused-20261014-r1.md",
+        "?? verification/P02-NEW-TIME-X6-AC1-AC7/codex-verify-i1/",
+        "?? verification/P02-NEW-TIME-X6-AC1-AC7/codex-verify-r1/",
+        "?? verification/P02-NEW-TIME-X6-AC1-AC7/codex-verify-r2/",
+        "?? verification/P02-NEW-TIME-X6-AC1-AC7/dispatch/antigravity-dispatch-i1-attempt1-interrupted/",
+        "?? verification/P02-NEW-TIME-X6-AC1-AC7/dispatch/antigravity-dispatch-i1-attempt2/",
+        "?? verification/P02-NEW-TIME-X6-AC1-AC7/dispatch/antigravity-dispatch-i1-attempt3-resume/",
+        "?? verification/P02-NEW-TIME-X6-AC1-AC7/execution/",
+        "?? verification/P02-NEW-TIME-X6-AC1-AC7/preflight/antigravity-agent-preflight-i1-r1/",
+        "?? verification/P02-NEW-TIME-X6-AC1-AC7/preflight/antigravity-agent-preflight-i1-r2/",
+        "?? verification/P02-NEW-TIME-X6-AC1-AC7/preflight/antigravity-agent-preflight-i1-resume-r1/",
+        "?? verification/P02-NEW-TIME-X6-AC1-AC7/preflight/codex-coordinator-attestation-r1.json",
+        "?? verification/P02-NEW-TIME-X6-AC1-AC7/preflight/dsh-agent-preflight-r1/",
+        "?? verification/P02-NEW-TIME-X6-AC1-AC7/preflight/dsh-attestation-r1.json",
+        "?? verification/P02-NEW-TIME-X6-AC1-AC7/preflight/dsh-availability-r1/",
+        "?? verification/P02-NEW-TIME-X6-AC1-AC7/preflight/manifest-r1/",
+        "?? verification/P02-NEW-TIME-X6-AC1-AC7/preflight/orchestrator-selftest-r1/",
+        "?? verification/P02-NEW-TIME-X6-AC1-AC7/review-attempts/",
+        "?? verification/P02-NEW-TIME-X6-AC1-AC7/review-inputs/",
+        "?? verification/P02-NEW-TIME-X6-AC1-AC7/review/"
+      ]
+    },
+    {
+      "resource_type": "integration_worktree",
+      "source_path": "G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-X6-AC1-AC7-INTEGRATION",
+      "destination_path": "G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-X6-AC1-AC7-INTEGRATION",
+      "disposition": "PRESERVE_REFERENCED",
+      "exists": true,
+      "reference_and_process_check": "new content integration and immutable final evidence branch retained; readonly E reviewer may be active",
+      "head": "738759cd3cbd2ca47177b95c64402b57c491ba40",
+      "git_status": []
+    },
+    {
+      "resource_type": "synthetic_task_env",
+      "source_path": "G:/CODEX/New Manga.workspace/task-envs/P02-NEW-TIME-X6-AC1-AC7",
+      "destination_path": "G:/CODEX/New Manga.workspace/task-envs/P02-NEW-TIME-X6-AC1-AC7",
+      "disposition": "PRESERVE_REFERENCED",
+      "exists": true,
+      "reference_and_process_check": "isolated synthetic run-i1/run-i2/failed diagnostics; no cleanup or GUI rerun"
+    },
+    {
+      "resource_type": "fixed_build_artifacts",
+      "source_path": "G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-X6-BUILD-CARGO",
+      "destination_path": "G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-X6-BUILD-CARGO",
+      "disposition": "PRESERVE_REFERENCED",
+      "exists": true,
+      "reference_and_process_check": "pinned executable/sidecar immutable input; EXE SHA checked; Build cache residuals retained"
+    },
+    {
+      "resource_type": "codex_agent_output",
+      "source_path": "G:/CODEX/New Manga.workspace/agent-output/codex/TAKEOVER-20261015",
+      "destination_path": "G:/CODEX/New Manga.workspace/agent-output/codex/TAKEOVER-20261015",
+      "disposition": "PRESERVE_REFERENCED",
+      "exists": true,
+      "reference_and_process_check": "original dispatch logs/prompts/exits/pre-AUTO governance snapshots/recovery scripts retained"
+    },
+    {
+      "resource_type": "dsh_agent_output",
+      "source_path": "G:/CODEX/New Manga.workspace/agent-output/dsh/P02-NEW-TIME-X6-AC1-AC7",
+      "destination_path": "G:/CODEX/New Manga.workspace/agent-output/dsh/P02-NEW-TIME-X6-AC1-AC7",
+      "disposition": "PRESERVE_REFERENCED",
+      "exists": true,
+      "reference_and_process_check": "previous takeover/convergence/interactive collection proof retained"
+    }
+  ],
+  "deleted": 0,
+  "moved": 0,
+  "archived": 0,
+  "destructive_actions": [],
+  "limitations": "Presence/reference inventory only, not recursive content inspection of retained env/cache/model directories; no deletion authorization inferred"
+}

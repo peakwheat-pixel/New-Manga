@@ -1,0 +1,28 @@
+
+running 11 tests
+test library_bridge::tests::book_summary_page_count_known_zero_and_null_are_distinguishable ... ok
+test library_bridge::tests::decode_response_parses_success_and_error ... ok
+test library_bridge::tests::mock_channel_round_trip ... ok
+test library_bridge::tests::page_nav_mock_channel_round_trip_and_typed_pass_through ... ok
+test library_bridge::tests::page_resolve_mock_channel_round_trip_and_typed_rejection ... ok
+test library_bridge::tests::retype_mock_channel_round_trip_and_typed_rejection ... ok
+test library_bridge::tests::same_channel_concurrent_round_trips_keep_response_ownership ... FAILED
+test library_bridge::tests::settings_mock_channel_round_trip_and_typed_rejection ... ok
+test library_bridge::tests::spawn_args_target_core_service_module ... ok
+test library_bridge::tests::startup_ping_deadline_kills_own_child_and_joins_worker ... ok
+test library_bridge::tests::wait_timeout_or_kill_terminates_hanging_process ... ok
+
+failures:
+
+---- library_bridge::tests::same_channel_concurrent_round_trips_keep_response_ownership stdout ----
+
+thread 'library_bridge::tests::same_channel_concurrent_round_trips_keep_response_ownership' (10644) panicked at src\library_bridge.rs:1156:9:
+test sidecar missing at expected path: G:\CODEX\New Manga.workspace\temp\P22-REBASE-1\integration-snapshot-4e5c71d9\verification\P04\deterministic_concurrent_sidecar.py
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    library_bridge::tests::same_channel_concurrent_round_trips_keep_response_ownership
+
+test result: FAILED. 10 passed; 1 failed; 0 ignored; 0 measured; 53 filtered out; finished in 1.14s
+

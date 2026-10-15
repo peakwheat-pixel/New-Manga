@@ -1,0 +1,212 @@
+{
+  "steps": [
+    {
+      "step": "clean-targets-observed",
+      "at": "2026-10-14T11:23:02.315Z",
+      "roaming": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-r1\\ac2-navigation\\appdata-roaming",
+        "state": "ABSENT"
+      },
+      "localAppData": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-r1\\ac2-navigation\\appdata-local",
+        "state": "ABSENT"
+      },
+      "tmp": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-r1\\ac2-navigation\\tmp",
+        "state": "ABSENT"
+      },
+      "dataRoot": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-r1\\ac2-navigation\\data-root",
+        "state": "ABSENT"
+      },
+      "derived": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-r1\\ac2-navigation\\scope\\derived",
+        "state": "ABSENT"
+      },
+      "managed": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-r1\\ac2-navigation\\scope\\managed",
+        "state": "ABSENT"
+      },
+      "catalogDb": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-r1\\ac2-navigation\\catalog\\catalog.sqlite",
+        "state": "ABSENT"
+      },
+      "webview2Udd": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-r1\\ac2-navigation\\webview2-udd",
+        "state": "ABSENT"
+      },
+      "logs": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-r1\\ac2-navigation\\logs",
+        "state": "ABSENT"
+      }
+    },
+    {
+      "step": "launched",
+      "at": "2026-10-14T11:23:03.180Z",
+      "pid": 38644
+    },
+    {
+      "step": "console-view-initial",
+      "at": "2026-10-14T11:23:03.182Z",
+      "title": "M2RC1|interactive|deny=5/6|allow=0/1|results=7",
+      "navPresent": true,
+      "workbenchPresent": false,
+      "bodyHead": "Console\nWorkbench\nM2-RC2 resource channel runtime\ninteractive|deny=5/6|allow=0/1\nIP-1-register-catalog-denied PASS\nIP-2-probe-config-denied PASS\nIP-3-probe-write-results-denied PASS\nIP-4-probe-exit-de"
+    },
+    {
+      "step": "screenshot:ac2-s1-console-initial.png",
+      "at": "2026-10-14T11:23:03.229Z",
+      "file": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-r1\\ac2-navigation\\logs\\ac2-s1-console-initial.png",
+      "bytes": 34839,
+      "sha256": "151F781617B50D3BF523BFD3F0611D8ADC3B3D5C241B8F274732E5CD485E342A"
+    },
+    {
+      "0": {
+        "id": "nav-console",
+        "disabled": true,
+        "bg": "rgb(28, 36, 48)"
+      },
+      "1": {
+        "id": "nav-workbench",
+        "disabled": false,
+        "bg": "rgb(22, 27, 34)"
+      },
+      "step": "nav-states-before",
+      "at": "2026-10-14T11:23:03.230Z"
+    },
+    {
+      "step": "nav-workbench-rect",
+      "at": "2026-10-14T11:23:03.230Z",
+      "x": 92.03125,
+      "y": 12,
+      "width": 82.484375,
+      "height": 22,
+      "cx": 133.2734375,
+      "cy": 23,
+      "tag": "BUTTON",
+      "text": "Workbench"
+    },
+    {
+      "step": "workbench-entered",
+      "at": "2026-10-14T11:23:03.241Z",
+      "title": "M2RC1|interactive|deny=5/6|allow=0/1|results=7",
+      "navPresent": true,
+      "workbenchPresent": true,
+      "bodyHead": "Console\nWorkbench\nno context\nregions: 0\nPages\npage_id (region read channel)\nno books\nViewer\nno page resource addressed\nInspector\n\nno region selected\n\nTasks\n\n任务进度通道占位（GetTaskProjection runtime 未释放；占位不扩"
+    },
+    {
+      "0": {
+        "id": "nav-console",
+        "disabled": false,
+        "bg": "rgb(22, 27, 34)"
+      },
+      "1": {
+        "id": "nav-workbench",
+        "disabled": true,
+        "bg": "rgb(28, 36, 48)"
+      },
+      "step": "nav-states-after",
+      "at": "2026-10-14T11:23:03.241Z"
+    },
+    {
+      "step": "screenshot:ac2-s2-workbench-entered.png",
+      "at": "2026-10-14T11:23:03.303Z",
+      "file": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-r1\\ac2-navigation\\logs\\ac2-s2-workbench-entered.png",
+      "bytes": 24074,
+      "sha256": "06B5BBD5127A9A1D5A3B078C442DDC251B1FE965CBF23E5E4C89D2F27DFB07FF"
+    },
+    {
+      "step": "zones",
+      "at": "2026-10-14T11:23:03.304Z",
+      "toolbar": true,
+      "pageList": true,
+      "viewer": true,
+      "inspector": true,
+      "taskProgress": true,
+      "toolbarContext": "no context",
+      "regionCount": "regions: 0",
+      "bookListEmpty": true
+    },
+    {
+      "step": "page-input-focus",
+      "at": "2026-10-14T11:23:03.306Z",
+      "testid": "page-id-input",
+      "tag": "INPUT",
+      "focused": true
+    },
+    {
+      "step": "after-typing",
+      "at": "2026-10-14T11:23:04.928Z",
+      "inputValue": "syn-page-ac2-001",
+      "toolbarContext": "page syn-page-ac2-001",
+      "viewerEmpty": true,
+      "resolveError": "resource: PAGE_NOT_FOUND",
+      "resolveBusyGone": true,
+      "activeElement": "page-id-input"
+    },
+    {
+      "step": "screenshot:ac2-s3-page-id-typed.png",
+      "at": "2026-10-14T11:23:05.002Z",
+      "file": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-r1\\ac2-navigation\\logs\\ac2-s3-page-id-typed.png",
+      "bytes": 27793,
+      "sha256": "02DBEEC80D39BD4DA3663B2D53BFADAA7221355D303EA89D28557F9DA6F4BE9E"
+    },
+    {
+      "step": "after-enter",
+      "at": "2026-10-14T11:23:05.317Z",
+      "title": "M2RC1|interactive|deny=5/6|allow=0/1|results=7",
+      "navPresent": true,
+      "workbenchPresent": true,
+      "bodyHead": "Console\nWorkbench\npage syn-page-ac2-001\nregions: 0\nPages\npage_id (region read channel)\nno books\nViewer\nno page resource addressed\nInspector\n\nno region selected\n\nTasks\n\n任务进度通道占位（GetTaskProjection runti"
+    },
+    {
+      "step": "console-returned",
+      "at": "2026-10-14T11:23:05.321Z",
+      "title": "M2RC1|interactive|deny=5/6|allow=0/1|results=7",
+      "navPresent": true,
+      "workbenchPresent": false,
+      "bodyHead": "Console\nWorkbench\nM2-RC2 resource channel runtime\ninteractive|deny=5/6|allow=0/1\nIP-1-register-catalog-denied PASS\nIP-2-probe-config-denied PASS\nIP-3-probe-write-results-denied PASS\nIP-4-probe-exit-de"
+    },
+    {
+      "0": {
+        "id": "nav-console",
+        "disabled": true,
+        "bg": "rgb(28, 36, 48)"
+      },
+      "1": {
+        "id": "nav-workbench",
+        "disabled": false,
+        "bg": "rgb(22, 27, 34)"
+      },
+      "step": "nav-states-console",
+      "at": "2026-10-14T11:23:05.321Z"
+    },
+    {
+      "step": "screenshot:ac2-s4-console-returned.png",
+      "at": "2026-10-14T11:23:05.377Z",
+      "file": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-r1\\ac2-navigation\\logs\\ac2-s4-console-returned.png",
+      "bytes": 34839,
+      "sha256": "151F781617B50D3BF523BFD3F0611D8ADC3B3D5C241B8F274732E5CD485E342A"
+    },
+    {
+      "step": "teardown",
+      "at": "2026-10-14T11:23:06.589Z",
+      "exited": true,
+      "code": null,
+      "signal": "SIGTERM"
+    }
+  ],
+  "verdict": {
+    "ac": "AC2",
+    "real_mouse_navigation": true,
+    "real_keyboard_input": true,
+    "button_state_transitions": true,
+    "screenshots": [
+      "ac2-s1-console-initial.png",
+      "ac2-s2-workbench-entered.png",
+      "ac2-s3-page-id-typed.png",
+      "ac2-s4-console-returned.png"
+    ],
+    "mock_surface": "NONE"
+  }
+}

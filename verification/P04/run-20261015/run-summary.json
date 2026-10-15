@@ -1,0 +1,30 @@
+{
+  "recorded_utc": "2026-10-15T12:35:27.7578691Z",
+  "sidecar_bundle": "VERIFIED_IDENTICAL",
+  "sidecar_files": 5610,
+  "sidecar_bytes": 1296373783,
+  "ac1": {
+    "command": "cargo test --locked --bin m2rc1-desktop page_nav_production_only_commands_are_exact",
+    "cargo_exit": 101,
+    "test_status": "NOT_RUN",
+    "passed": null,
+    "failed": null,
+    "ignored": null,
+    "filtered": null,
+    "reason": "Compilation stopped before test execution: tauri::generate_context! reports configured frontendDist ../frontend/dist is missing."
+  },
+  "ac2": {
+    "command": "cargo test --locked library_bridge::tests::same_channel_concurrent_round_trips_keep_response_ownership -- --test-threads=1",
+    "cargo_exit": null,
+    "test_status": "NOT_RUN",
+    "passed": null,
+    "failed": null,
+    "ignored": null,
+    "filtered": null,
+    "reason": "AC1 cargo compilation failed before test execution because tauri::generate_context! requires missing apps/desktop/frontend/dist; stopped per instruction and did not launch a second Cargo command."
+  },
+  "blocking_path": "apps/desktop/frontend/dist",
+  "frontend_dist_exists": false,
+  "real_core_executed": false,
+  "windows_sandbox_queried": false
+}

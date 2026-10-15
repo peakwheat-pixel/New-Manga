@@ -1,0 +1,459 @@
+{
+  "task_id": "P02-NEW-TIME-X6-BUILD-CARGO",
+  "agent": "codex",
+  "verification": "Final deterministic build delivery verification r2",
+  "delivery_head": "db4870ab87d36f0663b5e45e4f7b2e3cf9b77917",
+  "reviewed_head": "708ac7938c72fbcccd0d68c7ca60635552cbcaaf",
+  "reviewed_head_relation": "708ac793 is a metadata-only descendant of delivery_head db4870ab, changing only the Task and Handoff delivery_head fields.",
+  "prior_attempt": {
+    "path": "G:\\CODEX\\New Manga.workspace\\agent-output\\codex\\P02-NEW-TIME-X6-BUILD-CARGO\\codex-final-verification-r1.json",
+    "result": "FAIL",
+    "reason": "The report parser trimmed leading whitespace from the first porcelain status row, misreading one valid path; all other checks passed. Recomputed with NUL-delimited porcelain."
+  },
+  "checks": {
+    "official_source_manifest_verify_pass_318": true,
+    "run_manifest_has_exactly_two_expected_wrapper_differences": true,
+    "codex_output_supplement_matches": true,
+    "binary_and_installer_match": true,
+    "build_commands_match_and_exit_zero": true,
+    "24_generated_paths_match_frozen_crlf": true,
+    "24_post_build_lf_snapshots_preserved": true,
+    "build_tracked_status_exactly_24_paths": true,
+    "build_untracked_status_only_r1_note": true,
+    "dsh_worktree_clean_at_708ac": true,
+    "708ac_changes_only_task_handoff": true,
+    "scope_audit_counts_pinned": true,
+    "antigravity_preflight_manifest_exists": true
+  },
+  "result": "PASS",
+  "pins": {
+    "source_manifest": {
+      "path": "G:\\CODEX\\New Manga.workspace\\worktrees\\P02-NEW-TIME-X6-BUILD-CARGO\\verification\\P02-NEW-TIME-X6-BUILD-CARGO\\source-manifest-r1.json",
+      "sha256": "4E91A92291629C776F0B54A36E0805F0219F40778DA4EDB70B85E23B298B5E3B",
+      "files": 318
+    },
+    "supplemental_inputs": {
+      "path": "G:\\CODEX\\New Manga.workspace\\worktrees\\P02-NEW-TIME-X6-BUILD-CARGO\\verification\\P02-NEW-TIME-X6-BUILD-CARGO\\supplemental-inputs-r1.json",
+      "sha256": "09EFF15C58D9D646ADE97F25E8F6F9250921780E1D84A2CC555E3281C9111848"
+    },
+    "official_source_verify_r4": {
+      "path": "G:\\CODEX\\New Manga.workspace\\agent-output\\codex\\P02-NEW-TIME-X6-BUILD-CARGO\\build-inputs-r1\\generator-verify-r4\\stdout.json",
+      "exit": "0",
+      "stdout_sha256": "4091F317BFFE7FBF7C9708BAF0E6EC1C962C981575BF2EA5A9CDB19AEE870B9B",
+      "stderr_sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855"
+    },
+    "build_artifacts_manifest": {
+      "path": "G:\\CODEX\\New Manga.workspace\\worktrees\\P02-NEW-TIME-X6-BUILD-CARGO\\verification\\P02-NEW-TIME-X6-BUILD-CARGO\\build-artifacts-manifest-r1.json",
+      "sha256": "CA2BB6CEDD9CE267CAC947681D03CE073C773C08CFE40F5B71623BF16256B57B"
+    },
+    "antigravity_run_manifest": {
+      "path": "G:\\CODEX\\New Manga.workspace\\agent-output\\antigravity\\P02-NEW-TIME-X6-BUILD-CARGO\\antigravity-run-evidence-manifest-r1.json",
+      "sha256": "9A68B95F8D7B55098A01104F1BC5CBF57438D6326065C6B50CCB035AF355F1B6",
+      "verified": 13,
+      "total": 15,
+      "expected_wrapper_mismatches": [
+        "agent-output/antigravity/P02-NEW-TIME-X6-BUILD-CARGO/run-r1/stderr.log",
+        "agent-output/antigravity/P02-NEW-TIME-X6-BUILD-CARGO/run-r1/stdout.json"
+      ]
+    },
+    "codex_output_supplement": {
+      "path": "G:\\CODEX\\New Manga.workspace\\agent-output\\codex\\P02-NEW-TIME-X6-BUILD-CARGO\\codex-run-output-supplement-r1.json",
+      "sha256": "4E63416EC94FD795503AEC73CB344462EF6F6D5488102D4954CEEF3D6B75C281",
+      "files": [
+        {
+          "path": "agent-output/antigravity/P02-NEW-TIME-X6-BUILD-CARGO/run-r1/stdout.json",
+          "match": true,
+          "actual": {
+            "bytes": 9750,
+            "sha256": "6F3BFF490CF2065534C5863113A4F691EAA5EB94F54550E17D0052A6F241B8DC"
+          },
+          "expected": {
+            "bytes": 9750,
+            "sha256": "6F3BFF490CF2065534C5863113A4F691EAA5EB94F54550E17D0052A6F241B8DC"
+          }
+        },
+        {
+          "path": "agent-output/antigravity/P02-NEW-TIME-X6-BUILD-CARGO/run-r1/stderr.log",
+          "match": true,
+          "actual": {
+            "bytes": 63,
+            "sha256": "505FECFBDAE3628F3859B78CB89F33911BDB071965B1302C677435BB1893A28D"
+          },
+          "expected": {
+            "bytes": 63,
+            "sha256": "505FECFBDAE3628F3859B78CB89F33911BDB071965B1302C677435BB1893A28D"
+          }
+        },
+        {
+          "path": "agent-output/antigravity/P02-NEW-TIME-X6-BUILD-CARGO/run-r1/exit.txt",
+          "match": true,
+          "actual": {
+            "bytes": 3,
+            "sha256": "13BF7B3039C63BF5A50491FA3CFD8EB4E699D1BA1436315AEF9CBE5711530354"
+          },
+          "expected": {
+            "bytes": 3,
+            "sha256": "13BF7B3039C63BF5A50491FA3CFD8EB4E699D1BA1436315AEF9CBE5711530354"
+          }
+        },
+        {
+          "path": "agent-output/antigravity/P02-NEW-TIME-X6-BUILD-CARGO/run-r1/prompt.md",
+          "match": true,
+          "actual": {
+            "bytes": 4320,
+            "sha256": "914328B51FF29D7281BB55C56647BE7A3E4B39D24FDBE477BAF7C673EC88CE98"
+          },
+          "expected": {
+            "bytes": 4320,
+            "sha256": "914328B51FF29D7281BB55C56647BE7A3E4B39D24FDBE477BAF7C673EC88CE98"
+          }
+        },
+        {
+          "path": "agent-output/antigravity/P02-NEW-TIME-X6-BUILD-CARGO/antigravity-run-evidence-manifest-r1.json",
+          "match": true,
+          "actual": {
+            "bytes": 3725,
+            "sha256": "9A68B95F8D7B55098A01104F1BC5CBF57438D6326065C6B50CCB035AF355F1B6"
+          },
+          "expected": {
+            "bytes": 3725,
+            "sha256": "9A68B95F8D7B55098A01104F1BC5CBF57438D6326065C6B50CCB035AF355F1B6"
+          }
+        }
+      ]
+    },
+    "line_ending_provenance": {
+      "path": "G:\\CODEX\\New Manga.workspace\\agent-output\\codex\\P02-NEW-TIME-X6-BUILD-CARGO\\codex-schema-permission-integrity-r2.json",
+      "sha256": "40A2570CA0AC58B2080540C64ECD03FB65C419F083C2B6582CBB15C6FBBC3CBD",
+      "files_checked": 24,
+      "files": [
+        {
+          "path": "apps/desktop/src-tauri/gen/schemas/desktop-schema.json",
+          "matches_manifest": true,
+          "matches_reconstructed_crlf_blob": true,
+          "snapshot_matches_post_build_lf": true
+        },
+        {
+          "path": "apps/desktop/src-tauri/gen/schemas/windows-schema.json",
+          "matches_manifest": true,
+          "matches_reconstructed_crlf_blob": true,
+          "snapshot_matches_post_build_lf": true
+        },
+        {
+          "path": "apps/desktop/src-tauri/permissions/autogenerated/ac1_exit.toml",
+          "matches_manifest": true,
+          "matches_reconstructed_crlf_blob": true,
+          "snapshot_matches_post_build_lf": true
+        },
+        {
+          "path": "apps/desktop/src-tauri/permissions/autogenerated/ac1_request.toml",
+          "matches_manifest": true,
+          "matches_reconstructed_crlf_blob": true,
+          "snapshot_matches_post_build_lf": true
+        },
+        {
+          "path": "apps/desktop/src-tauri/permissions/autogenerated/ac1_write_results.toml",
+          "matches_manifest": true,
+          "matches_reconstructed_crlf_blob": true,
+          "snapshot_matches_post_build_lf": true
+        },
+        {
+          "path": "apps/desktop/src-tauri/permissions/autogenerated/core_ping.toml",
+          "matches_manifest": true,
+          "matches_reconstructed_crlf_blob": true,
+          "snapshot_matches_post_build_lf": true
+        },
+        {
+          "path": "apps/desktop/src-tauri/permissions/autogenerated/issue_resource_url.toml",
+          "matches_manifest": true,
+          "matches_reconstructed_crlf_blob": true,
+          "snapshot_matches_post_build_lf": true
+        },
+        {
+          "path": "apps/desktop/src-tauri/permissions/autogenerated/library_list_books.toml",
+          "matches_manifest": true,
+          "matches_reconstructed_crlf_blob": true,
+          "snapshot_matches_post_build_lf": true
+        },
+        {
+          "path": "apps/desktop/src-tauri/permissions/autogenerated/list_chapter_pages.toml",
+          "matches_manifest": true,
+          "matches_reconstructed_crlf_blob": true,
+          "snapshot_matches_post_build_lf": true
+        },
+        {
+          "path": "apps/desktop/src-tauri/permissions/autogenerated/list_chapters.toml",
+          "matches_manifest": true,
+          "matches_reconstructed_crlf_blob": true,
+          "snapshot_matches_post_build_lf": true
+        },
+        {
+          "path": "apps/desktop/src-tauri/permissions/autogenerated/list_region_revisions.toml",
+          "matches_manifest": true,
+          "matches_reconstructed_crlf_blob": true,
+          "snapshot_matches_post_build_lf": true
+        },
+        {
+          "path": "apps/desktop/src-tauri/permissions/autogenerated/list_regions.toml",
+          "matches_manifest": true,
+          "matches_reconstructed_crlf_blob": true,
+          "snapshot_matches_post_build_lf": true
+        },
+        {
+          "path": "apps/desktop/src-tauri/permissions/autogenerated/probe_config.toml",
+          "matches_manifest": true,
+          "matches_reconstructed_crlf_blob": true,
+          "snapshot_matches_post_build_lf": true
+        },
+        {
+          "path": "apps/desktop/src-tauri/permissions/autogenerated/probe_exit.toml",
+          "matches_manifest": true,
+          "matches_reconstructed_crlf_blob": true,
+          "snapshot_matches_post_build_lf": true
+        },
+        {
+          "path": "apps/desktop/src-tauri/permissions/autogenerated/probe_issue_url.toml",
+          "matches_manifest": true,
+          "matches_reconstructed_crlf_blob": true,
+          "snapshot_matches_post_build_lf": true
+        },
+        {
+          "path": "apps/desktop/src-tauri/permissions/autogenerated/probe_write_results.toml",
+          "matches_manifest": true,
+          "matches_reconstructed_crlf_blob": true,
+          "snapshot_matches_post_build_lf": true
+        },
+        {
+          "path": "apps/desktop/src-tauri/permissions/autogenerated/rerender_page.toml",
+          "matches_manifest": true,
+          "matches_reconstructed_crlf_blob": true,
+          "snapshot_matches_post_build_lf": true
+        },
+        {
+          "path": "apps/desktop/src-tauri/permissions/autogenerated/resolve_page_resource.toml",
+          "matches_manifest": true,
+          "matches_reconstructed_crlf_blob": true,
+          "snapshot_matches_post_build_lf": true
+        },
+        {
+          "path": "apps/desktop/src-tauri/permissions/autogenerated/restore_region_revision.toml",
+          "matches_manifest": true,
+          "matches_reconstructed_crlf_blob": true,
+          "snapshot_matches_post_build_lf": true
+        },
+        {
+          "path": "apps/desktop/src-tauri/permissions/autogenerated/revoke_ref.toml",
+          "matches_manifest": true,
+          "matches_reconstructed_crlf_blob": true,
+          "snapshot_matches_post_build_lf": true
+        },
+        {
+          "path": "apps/desktop/src-tauri/permissions/autogenerated/revoke_resource_refs.toml",
+          "matches_manifest": true,
+          "matches_reconstructed_crlf_blob": true,
+          "snapshot_matches_post_build_lf": true
+        },
+        {
+          "path": "apps/desktop/src-tauri/permissions/autogenerated/set_region_type.toml",
+          "matches_manifest": true,
+          "matches_reconstructed_crlf_blob": true,
+          "snapshot_matches_post_build_lf": true
+        },
+        {
+          "path": "apps/desktop/src-tauri/permissions/autogenerated/settings_get.toml",
+          "matches_manifest": true,
+          "matches_reconstructed_crlf_blob": true,
+          "snapshot_matches_post_build_lf": true
+        },
+        {
+          "path": "apps/desktop/src-tauri/permissions/autogenerated/settings_update_section.toml",
+          "matches_manifest": true,
+          "matches_reconstructed_crlf_blob": true,
+          "snapshot_matches_post_build_lf": true
+        }
+      ]
+    },
+    "scope_audit": {
+      "path": "G:\\CODEX\\New Manga.workspace\\agent-output\\codex\\P02-NEW-TIME-X6-BUILD-CARGO\\scope-audit-r1.json",
+      "sha256": "B847C162DBBA5A0AA7E028659CA2C1AF823A2E4F37E35CF2145FAB6DC580E923",
+      "pycache_dirs": 44,
+      "pyc_files": 87,
+      "prebuild_inventory": "missing; preserve and keep BC-AC5 partial"
+    },
+    "antigravity_preflight_manifest": {
+      "path": "G:\\CODEX\\New Manga.workspace\\agent-output\\codex\\P02-NEW-TIME-X6-BUILD-CARGO\\preflight-antigravity-r1\\preflight-evidence-manifest-r1.json",
+      "sha256": "F5B058B907FFAEBFC401A4B21DB51F311B3761244C073DBE8E9793CD6315B859"
+    }
+  },
+  "artifacts": [
+    {
+      "name": "cargo_release_binary",
+      "path": "apps/desktop/src-tauri/target/release/m2rc1-desktop.exe",
+      "match": true,
+      "actual": {
+        "bytes": 9367040,
+        "sha256": "92AC7B8EFB646FE77DF8245B13C9AF9314BEF415B2F0E007B1CDCEA729BC13FD"
+      },
+      "expected": {
+        "bytes": 9367040,
+        "sha256": "92AC7B8EFB646FE77DF8245B13C9AF9314BEF415B2F0E007B1CDCEA729BC13FD"
+      }
+    },
+    {
+      "name": "tauri_nsis_installer",
+      "path": "apps/desktop/src-tauri/target/release/bundle/nsis/m2rc1-desktop_0.1.0_x64-setup.exe",
+      "match": true,
+      "actual": {
+        "bytes": 581475034,
+        "sha256": "A1DD05B64FABBA311A62FDCF9F496C3902B89614577BFDC85B71C70D7DB06C7B"
+      },
+      "expected": {
+        "bytes": 581475034,
+        "sha256": "A1DD05B64FABBA311A62FDCF9F496C3902B89614577BFDC85B71C70D7DB06C7B"
+      }
+    }
+  ],
+  "commands": [
+    {
+      "step": "06-cargo-build-attempt2",
+      "command_matches": true,
+      "exit_code": "0",
+      "stdout": {
+        "bytes": 0,
+        "sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855"
+      },
+      "stderr": {
+        "bytes": 18015,
+        "sha256": "FC972B3DCC047B0F86594648481A053F7D99F38ECDB68F2475DEFAAB42957694"
+      },
+      "environment_sha256": "CF02BB19CFF3449883A32764F19E5388C28345167E63E80692B730139CAE9233",
+      "tool_versions_sha256": "655DEC6F63300DD84B727605701C34CE9A0A99964A501BF18407C39CE2EF0B4B"
+    },
+    {
+      "step": "07-tauri-build-attempt1",
+      "command_matches": true,
+      "exit_code": "0",
+      "stdout": {
+        "bytes": 0,
+        "sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855"
+      },
+      "stderr": {
+        "bytes": 3576,
+        "sha256": "FDA0A2039FBE5B876DFDF9BCDCDC16D67B47B85FC9B3B59E4CA7DEF34DA81C96"
+      },
+      "environment_sha256": "CF02BB19CFF3449883A32764F19E5388C28345167E63E80692B730139CAE9233",
+      "tool_versions_sha256": "CA5F44A8A3594B9DF4E88160B7917E7CC9D1149B9F51FFC1AECC33F30041B3BC"
+    }
+  ],
+  "worktrees": {
+    "build_head": "708ac7938c72fbcccd0d68c7ca60635552cbcaaf",
+    "build_branch": "agent/antigravity/P02-NEW-TIME-X6-BUILD-CARGO",
+    "build_status": [
+      {
+        "status": " M",
+        "path": "apps/desktop/src-tauri/gen/schemas/desktop-schema.json"
+      },
+      {
+        "status": " M",
+        "path": "apps/desktop/src-tauri/gen/schemas/windows-schema.json"
+      },
+      {
+        "status": " M",
+        "path": "apps/desktop/src-tauri/permissions/autogenerated/ac1_exit.toml"
+      },
+      {
+        "status": " M",
+        "path": "apps/desktop/src-tauri/permissions/autogenerated/ac1_request.toml"
+      },
+      {
+        "status": " M",
+        "path": "apps/desktop/src-tauri/permissions/autogenerated/ac1_write_results.toml"
+      },
+      {
+        "status": " M",
+        "path": "apps/desktop/src-tauri/permissions/autogenerated/core_ping.toml"
+      },
+      {
+        "status": " M",
+        "path": "apps/desktop/src-tauri/permissions/autogenerated/issue_resource_url.toml"
+      },
+      {
+        "status": " M",
+        "path": "apps/desktop/src-tauri/permissions/autogenerated/library_list_books.toml"
+      },
+      {
+        "status": " M",
+        "path": "apps/desktop/src-tauri/permissions/autogenerated/list_chapter_pages.toml"
+      },
+      {
+        "status": " M",
+        "path": "apps/desktop/src-tauri/permissions/autogenerated/list_chapters.toml"
+      },
+      {
+        "status": " M",
+        "path": "apps/desktop/src-tauri/permissions/autogenerated/list_region_revisions.toml"
+      },
+      {
+        "status": " M",
+        "path": "apps/desktop/src-tauri/permissions/autogenerated/list_regions.toml"
+      },
+      {
+        "status": " M",
+        "path": "apps/desktop/src-tauri/permissions/autogenerated/probe_config.toml"
+      },
+      {
+        "status": " M",
+        "path": "apps/desktop/src-tauri/permissions/autogenerated/probe_exit.toml"
+      },
+      {
+        "status": " M",
+        "path": "apps/desktop/src-tauri/permissions/autogenerated/probe_issue_url.toml"
+      },
+      {
+        "status": " M",
+        "path": "apps/desktop/src-tauri/permissions/autogenerated/probe_write_results.toml"
+      },
+      {
+        "status": " M",
+        "path": "apps/desktop/src-tauri/permissions/autogenerated/rerender_page.toml"
+      },
+      {
+        "status": " M",
+        "path": "apps/desktop/src-tauri/permissions/autogenerated/resolve_page_resource.toml"
+      },
+      {
+        "status": " M",
+        "path": "apps/desktop/src-tauri/permissions/autogenerated/restore_region_revision.toml"
+      },
+      {
+        "status": " M",
+        "path": "apps/desktop/src-tauri/permissions/autogenerated/revoke_ref.toml"
+      },
+      {
+        "status": " M",
+        "path": "apps/desktop/src-tauri/permissions/autogenerated/revoke_resource_refs.toml"
+      },
+      {
+        "status": " M",
+        "path": "apps/desktop/src-tauri/permissions/autogenerated/set_region_type.toml"
+      },
+      {
+        "status": " M",
+        "path": "apps/desktop/src-tauri/permissions/autogenerated/settings_get.toml"
+      },
+      {
+        "status": " M",
+        "path": "apps/desktop/src-tauri/permissions/autogenerated/settings_update_section.toml"
+      },
+      {
+        "status": "??",
+        "path": "verification/P02-NEW-TIME-X6-BUILD-CARGO/codex-schema-permission-integrity-r1.json"
+      }
+    ],
+    "dsh_worktree_head": "708ac7938c72fbcccd0d68c7ca60635552cbcaaf",
+    "dsh_status": []
+  },
+  "limitations": [
+    "No cargo test, product AC1-AC7, installer execution, application launch/install, UI/OS/profile/registry/ACL checks were run."
+  ]
+}

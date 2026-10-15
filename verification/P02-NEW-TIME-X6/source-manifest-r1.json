@@ -1,0 +1,68 @@
+{
+  "schema": "P02-NEW-TIME-X6-source-manifest-1",
+  "task": "P02-NEW-TIME-X6",
+  "revision": "source-delivery-r1",
+  "createdUtc": "2026-10-14T02:55:00Z",
+  "ownerSession": "sess_bd06f60b-b6d1-4cc8-a7e7-4dbcb647458f",
+  "branch": "agent/zcode/P02-NEW-TIME-X6",
+  "baseCommit": "bc502e7aae07074fff7228d585674e87d53efcfd",
+  "lifecycleCommit": "83fb737e39ee663b85b14e6fa03168813a8624c6",
+  "byteFormat": "UTF-8 no BOM, LF line endings, no trailing whitespace",
+  "lineage": {
+    "modeledAfter": "reviewed+integrated baseline collector lineage",
+    "executorModelSource": {
+      "path": "tools/p02/p02-new-time-baseline.ps1",
+      "pinnedCommit": "bc502e7aae07074fff7228d585674e87d53efcfd",
+      "sha256": "ED1A48393F516934E285B17AE1E7210B3B4C5DADA7B1DD3568A68806E302AF66",
+      "note": "read-only reference; never executed; old attempt6 executor never referenced"
+    },
+    "selftestModelSource": {
+      "path": "tools/p02/p02-new-time-baseline-selftest.ps1",
+      "pinnedCommit": "bc502e7aae07074fff7228d585674e87d53efcfd",
+      "sha256": "0E34F959EB564E4BE449AFA89CB774168F3EDB232B6204B37B7B54611744BF0B"
+    }
+  },
+  "files": [
+    {
+      "name": "executor-source",
+      "path": "verification/P02-NEW-TIME-X6/executor/p02-new-time-x6.ps1",
+      "role": "X6 one-shot executor (freeze-manifest driven, single CreateNew NDJSON output, fail-closed, history isolation + forbidden-write-prefix guard)",
+      "sizeBytes": 100394,
+      "lineCount": 1896,
+      "sha256": "61D35262C2BA396C4493792E229B5CCF3243A53F57BA039DEC12358E19D63A3B",
+      "gitBlobId": "6620602d9ba675487e3ac03c3a38de9fdc1baf30"
+    },
+    {
+      "name": "selftest-source",
+      "path": "verification/P02-NEW-TIME-X6/executor/p02-new-time-x6-selftest.ps1",
+      "role": "pure in-memory selftest (Parser AST extraction; never executes or dot-sources the executor; adds forbidden-write-prefix guard assertions)",
+      "sizeBytes": 78604,
+      "lineCount": 892,
+      "sha256": "EEF99635FE5A56FA4F3D275F18082F6DF400F6DA9F82A40739BDA46A1ABD9C27",
+      "gitBlobId": "86c0b3ca79f4658e158fc5e5ae69a3ae1454c408"
+    },
+    {
+      "name": "execution-protocol",
+      "path": "verification/P02-NEW-TIME-X6/protocol/x6-execution-protocol-r1.md",
+      "role": "gate order, exact candidate commands, candidate RunIds, output-target inventory, freeze-manifest required fields",
+      "sizeBytes": 9054,
+      "sha256": "443381124D7996C9B541369195F418469D16751FD25700BB6DE48A619F81FBDF"
+    },
+    {
+      "name": "output-target-inventory",
+      "path": "verification/P02-NEW-TIME-X6/output-target-inventory-r1.json",
+      "role": "complete list of candidate output targets with creation actor/timing; every target absent until Codex freeze authorizes it",
+      "sizeBytes": 3041,
+      "sha256": "1FC7ABE48C15CCB2C06306DEAAEF7E103598506CCFC58DCEB4F113DFB0C20B54"
+    }
+  ],
+  "selfExclusionNote": "this manifest records every delivered source file except itself (no self-hash); its own integrity is bound by the delivery commit and the Handoff/Task evidence tables",
+  "notRun": {
+    "parserCheck": "NOT_RUN (this delivery stage; released to Codex after DSH source Review per Task Gate)",
+    "pureSelftest": "NOT_RUN (same gate)",
+    "x6OneShot": "NOT_RUN (requires Codex freeze + final pre-run = PRE_RUN_PASS)",
+    "buildCargo": "NOT_RUN",
+    "productAc1ToAc7": "BLOCKED / NOT_RUN",
+    "postRunReview": "NOT_RELEASED"
+  }
+}

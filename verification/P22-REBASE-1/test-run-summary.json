@@ -1,0 +1,17 @@
+﻿{
+    "test_suite":  "library_bridge::tests",
+    "list_command":  "cargo test --locked library_bridge::tests -- --list",
+    "list_exit":  0,
+    "run_command":  "cargo test --locked library_bridge::tests -- --test-threads=1 --skip real_core_sidecar_answers_startup_ping_on_fresh_catalog",
+    "run_exit":  0,
+    "passed":  11,
+    "failed":  0,
+    "ignored":  0,
+    "not_run":  [
+                    "library_bridge::tests::real_core_sidecar_answers_startup_ping_on_fresh_catalog"
+                ],
+    "not_run_reason":  "Explicitly excluded per AC3; requires starting real Core on fresh catalog; deferred to P19/P20 environment",
+    "filtered_out":  53,
+    "concurrent_regression_status":  "PASS",
+    "timestamp_utc":  "2026-10-15T11:22:28.1737253Z"
+}

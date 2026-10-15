@@ -1,0 +1,641 @@
+dsh: reasoning:
+让我开始这个只读审查任务。首先需要了解仓库状态和固定对象。
+
+我需要：
+1. 确认 Git 元数据可读能力（commit、tree、父 commit）
+2. 读取 Task 文件 P04.md
+3. 读取 R3 原报告
+4. 读取待审 commit 的 diff
+5. 检查 library_bridge.rs 和 handoff.md
+
+我不能修改文件、不能运行测试/构建等。可以运行只读的 git 命令（这算不算"宿主写权限探测"？不算，git log/show 是只读的）。但要小心不要运行 git 命令导致写入。`git show`, `git log`, `git diff`, `git rev-parse`, `git cat-file` 都是只读的。
+
+先并行执行一些只读命令和文件读取。
+
+让我先做 todo list？这个任务比较中等复杂度，可能需要。先开始探索。
+
+首先运行只读 git 命令确认绑定。用 pwsh。
+
+注意：工作目录是 G:\CODEX\New Manga.worktrees\P04-prod-command-concurrency-antigravity。
+
+让我先并行发起：
+- git rev-parse HEAD, git log 等
+- git cat-file -t faea1a2c... 
+- 读取 doc/tasks/P04.md
+- 读取 verification/P04/dsh-p04-owner-review-r3.stdout.md
+
+先做基础绑定检查。
+dsh: reasoning:
+奇怪的错误：SetNamedSecurityInfoW failed —— 沙箱尝试 grantWrite 失败。这是 DSH 沙箱自身的问题，可能是 workspace-write 模式下尝试设置 ACL 失败（Win32 5 = access denied）。
+
+按照工具描述，被阻塞的文件操作会报告 `[sandbox: file access denied under <mode> mode]`。但这里是一个 ACL 设置错误，是沙箱初始化失败。
+
+我应该按照指引：不要用另一种方式重试同一操作，而是升级或重构。但这个错误不是"策略拒绝"，而是沙箱内部错误。
+
+也许我可以试试只读操作是否可行。让我试试读文件（read 工具走文件系统后端，可能不同）。
+
+另外，有一个 skill：`diagnose-windows-sandbox-acl`，专门针对 Windows 上 DSH 沙箱访问被拒绝的情况。但那个 skill 会执行修复 ACL 的命令——这会写 ACL，属于"宿主写权限探测"吗？用户明确禁止"宿主写权限探测"。修复 ACL 会修改宿主权限，可能违反只读要求。我应该谨慎。
+
+先试试其他方式。也许 pwsh 以只读模式运行会好一些？不，policy 是 workspace-write。
+
+让我试试简单的 pwsh 命令，看是不是所有命令都失败。也试试 read 工具。
+
+实际上错误发生在启动时 grantWrite 目录 ACL。这可能是沙箱在 workspace 上设置 ACL 失败。可能该目录的 ACL 不允许当前用户修改。
+
+替代方案：使用 `danger-full-access` sandbox_permissions 一次性重试？工具描述说：用于"the exact operation the sandbox just denied"，并请求用户批准。但批准策略是 ask，且这可能被视为绕过沙箱。不过这里的失败不是策略拒绝，而是沙箱机制故障。用户禁止宿主写权限探测——但读取 git 元数据不是写权限探测。
+
+先测试 read 工具和 glob，看能否至少读取文件。如果 read 也失败，那整个审查都无法进行，就需要报告 NOT_VERIFIED。
+
+注意：read 工具经 filesystem backend，可能也会触发同样的 ACL 设置。
+
+试一下。
+dsh: reasoning:
+glob 可用。pwsh 完全不可用（沙箱 ACL 失败）。所以我无法运行 git 命令 → 无法独立读取 Git 元数据（除非通过 read 工具读取 .git 文件，但 .git 在 worktree 里是一个文件指向 gitdir）。
+
+工具描述提到 skill `diagnose-windows-sandbox-acl` 用于这种情况。但它会修复 ACL（写入）。用户禁止宿主写权限探测。运行 ACL 修复是修改宿主权限——这超出了只读审查范围，且有风险。不过，该 skill 的目的是修复沙箱可用性，而非探测写权限。但用户明确说"不得……运行……宿主写权限探测"。修复 ACL 不是"探测"，但是写操作。
+
+嗯。让我先思考：没有 git 命令，我能验证 commit/tree 绑定吗？
+
+Worktree 的 .git 是一个文件，内容形如 `gitdir: G:/CODEX/New Manga/.git/worktrees/P04-prod-command-concurrency-antigravity`。我可以用 read 工具读取 .git 文件获取 gitdir 路径，然后读取其中的文件，如 `HEAD`、`ORIG_HEAD`、`logs/HEAD`（reflog）。但对象（commit/tree/blob）是 zlib 压缩的，无法直接读。
+
+不过 reflog 会包含 commit hash 记录。`logs/HEAD` 是文本，包含每次 HEAD 变更的 old/new hash。这可以让我确认 HEAD 当前位置（如果 HEAD 指向分支，还要读 refs）。
+
+但对象内容（diff）无法解压——除非有 loose object 是未压缩的？不，都是 zlib。我无法解压（不能运行 pwsh）。read 工具读二进制会乱码。
+
+所以：Git 元数据无法独立核验 —— 我应该明确说明限制。
+
+但是等等，我可以通过 glob/read 读取工作区文件。如果工作区文件与 commit 内容一致（工作树 clean），那么文件内容就是 commit 内容。但我无法验证 clean 状态或 hash。
+
+我可以尝试读取 `.git` 文件和 gitdir 下的文本文件（HEAD、logs/HEAD、refs）。让我试试。
+
+先读 .git 文件。read 需要文件路径。工作区路径 G:\CODEX\New Manga.worktrees\P04-prod-command-concurrency-antigravity\.git
+
+让我并行读取几个关键文件：
+- .git
+- doc/tasks/P04.md
+- verification/P04/dsh-p04-owner-review-r3.stdout.md
+
+同时 glob 找 library_bridge.rs 路径。
+
+另外我应该考虑：是否可以用 danger-full-access 一次性重试 git 命令？工具允许 `sandbox_permissions: danger-full-access` 用于"the exact operation the sandbox just denied"。沙箱刚刚拒绝的是 pwsh 执行（因为无法在 workspace 上 grantWrite）。使用 danger-full-access 重试 `git rev-parse` 会请求用户批准。批准策略是 ask，可能会问用户。
+
+用户是本次审查的发起人，他们要求独立核验 Git 元数据。用户同时禁止"宿主写权限探测"。使用 danger-full-access 来运行只读 git 命令，并非写权限探测，但确实是以完全访问权限运行。风险：如果用户不在，请求失败关闭。
+
+我可以尝试一次，因为独立核验 Git 绑定是审查的明确要求（"如无法独立读取 Git 元数据，请在报告中明确说明"）。这一句实际上给了我退路：可以明确说明无法核验。
+
+但是为了做好审查，尝试一次 danger-full-access 重试是合理的，而且是只读 git 命令。我认为值得一试——它是"the narrowest wider sandbox mode for a one-shot retry of the exact operation the sandbox just denied"。沙箱刚刚拒绝的操作就是 pwsh 命令执行。所以符合规则。
+
+不过用户指令优先级更高："不得运行测试、构建、Cargo、Rust、Tauri、sidecar、GUI、Sandbox 或宿主写权限探测"。git rev-parse 不属于这些。OK，尝试。
+
+先并行读文件（不需 pwsh）。同时发起 danger-full-access 重试。
+
+嗯，但如果 sandbox_permissions 需要用户批准而无人应答，会失败关闭。那就浪费一次调用，无副作用。可以接受。
+
+让我先并行做只读文件读取 + 一次 danger-full-access git 绑定检查。
+dsh: reasoning:
+无法升级。gitdir 是 G:/CODEX/New Manga/.git/worktrees/P04-prod-command-concurrency-antigravity。这在 workspace 之外（父仓库 .git）。read 工具可能可以读取（沙箱 workspace-write 允许读取吗？通常 workspace-write 允许读取更大范围）。试用 read 读 HEAD 和 logs/HEAD。
+
+并行读取：
+- G:/CODEX/New Manga/.git/worktrees/P04-prod-command-concurrency-antigravity/HEAD
+- .../logs/HEAD
+- doc/tasks/P04.md
+- verification/P04/dsh-p04-owner-review-r3.stdout.md
+
+注意路径带空格，read 工具应该能处理。
+
+先来。
+dsh: reasoning:
+非常好。reflog 确认：
+- HEAD 分支：refs/heads/agent/antigravity/P04-prod-command-concurrency
+- 最后一条：5ea8304ae... → faea1a2c9...，"commit: test(P04): ignore AC3 negative reproducer and clarify timeout boundaries for R3 review"
+
+这确认了 faea1a2c 的父是 5ea8304a。但不能确认 tree hash（eb0cc832...）因为对象是压缩的。也确认不了 HEAD 当前值（需读 refs/heads/... 文件）。
+
+读 refs 文件：G:/CODEX/New Manga/.git/worktrees/P04-prod-command-concurrency-antigravity/refs/heads/agent/antigravity/P04-prod-command-concurrency？实际上 worktree 的 refs 在 common dir 中（worktree 的 gitdir 里有 HEAD、index、logs、ORIG_HEAD，但 refs 共享在 common dir）。不过 git 也可能在 worktree gitdir 里放 refs（per-worktree refs 只对 refs/bisect 等）。所以分支 ref 在 G:/CODEX/New Manga/.git/refs/heads/agent/antigravity/P04-prod-command-concurrency。
+
+让我读那个文件，以及 worktree gitdir 的 index（二进制，无用）。
+
+另外，tree hash 无法验证，因为对象压缩。但我可以通过 git 的 commit-graph 或 pack 文件？pack 需要解压。不可行。
+
+不过还有一个可能：`G:/CODEX/New Manga/.git/worktrees/.../` 里可能有 `commondir` 文件。让我读几个文件看看：
+- refs/heads/agent/antigravity/P04-prod-command-concurrency (common dir)
+- worktree gitdir 下的 commondir
+
+同时开始读 P04.md 和 R3 报告。
+
+先并行读取。
+dsh: reasoning:
+Task frontmatter 确认：status: blocked, blocked_by: [P22], owner Antigravity, reviewer DSH, integrator Codex, base_commit 8a0685c9...
+
+现在读 R3 报告、R2 handoff（待改文件）、以及 library_bridge.rs。
+
+注意：工作树文件是否等于 commit faea1a2c 的内容？我无法运行 git status。但 reflog 显示最后提交就是 faea1a2c，且分支 ref 指向 faea1a2c，HEAD 指向该分支 → HEAD = faea1a2c。工作树是否 clean 无法验证（不能跑 git status）。但可以检查是否存在尚未提交的迹象——不能。
+
+不过我可以用另一种方式：commit 对象的 tree hash 是 eb0cc832...，无法验证。我需要如实说明。
+
+还有一个可能：`.git` 目录中的 index 文件是二进制的，无法解析。所以工作树 clean 状态无法核验。
+
+不过，Codex 的复核差异路径只有两个文件，我可以读取这两个文件并与 handoff 描述比对。
+
+现在读：
+- verification/P04/dsh-p04-owner-review-r3.stdout.md（R3 报告）
+- verification/P04/antigravity-owner-revision-r2.handoff.md（唯一差异路径之一）
+- apps/desktop/src-tauri/src/library_bridge.rs（唯一差异路径之一）
+
+library_bridge.rs 可能很长，先读。
+
+并行读取三个文件。handoff 可能长，R3 报告也长。先读 R3 报告和 handoff，同时 glob 找 library_bridge.rs 大小。
+
+我直接并行 read 三个。library_bridge.rs 用 offset/limit 分段读。先读前 200 行？其实我需要看测试部分。先整体读，若很长再分段。
+
+先并行：read R3 report, read handoff。然后 grep library_bridge.rs 中的 ignore / recv_timeout。
+
+注意：grep 工具可用（之前 glob 可用）。grep 走 ripgrep，可能不需要 pwsh 沙箱 ACL。试试。
+dsh: reasoning:
+注意：handoff 文件 `antigravity-owner-revision-r2.handoff.md` 是被 Codex 列为"唯一差异路径"之一。但这里我读到的内容……其 R2-006 行（第 50 行）已经包含 R3-4 要求修正的表述：
+
+"2. 架构边界修正（R3-4）：准确说明 `recv_timeout` 仅限制 mpsc 通道等待；若 sidecar 异常（如发出第 1 行后挂起或无回包），子线程内的 `read_line` 会阻塞在 stdout 锁或读操作，导致主线程 `handle_alpha.join()` / `handle_beta.join()` 仍可能无界等待；此时测试函数无法返回，通道实例无法被 drop，因此 `Drop` 机制的 5 秒 budget 根本不可达，并不能保护该挂起路径。此为已知架构限制，不增加 watchdog 或产品代码范围。"
+
+这是修正后的版本。但 R3-4 说的是 `revision-r2.handoff.md:49`，即第 49 行是 R2-006 那一行。现在第 50 行是 R2-006。文件似乎被改过（可能新增了 R2-005 行？）。等等，需要核对 baseline 5ea8304a 的版本才能确认改了什么。我无法运行 git diff。
+
+关键问题：待审 commit faea1a2c 的 diff 无法直接获取（不能 git）。但我可以尝试读取其他线索：
+1. commit message 说 "test(P04): ignore AC3 negative reproducer and clarify timeout boundaries for R3 review"。
+2. Codex 复核的唯一差异路径：library_bridge.rs 与 antigravity-owner-revision-r2.handoff.md。这与 R3-1（library_bridge.rs 加 #[ignore]）和 R3-4（handoff 表述修正）一致。
+
+现在需要检查 library_bridge.rs 当前内容：
+- 目标测试是否有 `#[ignore = "..."]`
+- 是否其他测试/生产逻辑被误改
+- 是否只改了测试范围
+
+还要检查 handoff 中是否还有其它地方错误声称 Drop 保护（R3-4 说必须全部改，且不得声称已修复）。我看到第 50 行的修正。还需检查 §1.1 第 28 行：
+
+"2. 标记 `#[ignore = "P04 AC3 reproducer: deterministic negative diagnostic, run explicitly via cargo test -- --ignored"]`，使其不再进入默认 Cargo 测试套件；仅在 P02 批准且具备 `M2RC1_PYTHON` 的隔离环境中通过显式 `-- --ignored` 选择器有意运行；"
+
+好，这准确。
+
+但注意：第 29 行 "3. 引入 10 秒 `recv_timeout` 的 bounded wait；" —— 这仍然可能被视为夸大？它只说引入 bounded wait，未说解决了挂起。第 50 行明确说明。可接受，但需检查 handoff 是否在别处仍有"受 Drop 5 秒 budget 保护"的旧表述残留（如 R2-006 第 115 行的转发指令 §5 里写的 "确认测试通道已引入 10 秒 recv_timeout 的 bounded wait，并在 Handoff 登记挂起抑制与异常边界限制" —— 这是给 R3 的旧指令，属于历史文本，且是本 handoff 的转发块，可能被视为旧表述残留。R3-4 只要求修正挂起/Drop 表述，转发块中的"挂起抑制"措辞轻微，但需要评估）。
+
+另外还需检查该 handoff 中是否声明了本次 R4 变更。待审 commit 改了该 handoff，那 handoff 中应该有记录 R4 修订？目前它的 status 是 `completed_revision_r2_static_only`，且 §1.1 提到 `#[ignore]`（这是 R4 才加的）。这有点矛盾？不，R2 handoff 被 R4 commit 修改，加上了 R3-4 修正和 `#[ignore]` 描述。但文件标题仍是 Revision r2，状态仍是 revision_r2_static_only。这可能是可接受的（作为同一文件更新），但可能是个 minor finding：handoff 未标注 R4 修订时间/来源，或者需要新 handoff 文件。
+
+不过 Codex 的 R4 授权指令（codex-antigravity-r4.prompt.md）会说明要求。让我读取：
+- verification/P04/codex-antigravity-r4.prompt.md
+- verification/P04/codex-antigravity-r4.response.md
+- verification/P04/codex-dsh-owner-r4-review.prompt.md（这是我本轮的 prompt 存档？）
+- verification/P04/antigravity-owner-revision-r2.handoff.md 已读
+
+还要读 library_bridge.rs 的目标测试与生产 round_trip 部分。
+
+另外还要读 doc/STATUS.md 确认 P04 blocked / P22。
+
+让我并行读取多个文件：
+- codex-antigravity-r4.prompt.md
+- codex-antigravity-r4.response.md
+- library_bridge.rs（分段）
+
+先读 prompt 和 response，同时 grep library_bridge.rs 的 ignore。
+dsh: reasoning:
+注意 prompt 说可以写到新的 `verification/P04/antigravity-owner-revision-r3.handoff.md`（可选："可以"）。实际 Owner 没有创建新文件，而是更新了已有的 r2.handoff.md —— 这也被允许（第 2 条唯一写入范围就是修改 r2.handoff.md）。Codex 复核确认差异路径只有两个文件，与授权一致（没有第三个新文件）。
+
+现在需要检查 library_bridge.rs。先 grep 关键符号，再读取相关区段。
+
+grep 目标：
+- `#[ignore`
+- `#[test]` 数量
+- `recv_timeout`
+- `same_channel_concurrent_round_trips_keep_response_ownership`
+
+以及检查是否有其他改动 —— 无法 diff。但我可以检查 R3 报告中列出的行号是否仍与现在一致，从而判断改动范围：
+
+R3-1 说 `library_bridge.rs:1103-1104`（`#[test]`，无 `#[ignore]`）。如果现在加了两行（`#[ignore = ...]`），那么后续行号会 +1。R3 报告说测试在 `:1082-1311`。Codex response 说链接指向 `#L1101-L1106`。
+
+我需要读取 library_bridge.rs 的 1080-1320 区域，以及生产 round_trip 区段（263-330）、Drop（466-483）、seam（392-448）。
+
+并行 grep + read。先 grep ignore 和 test 属性数量。
+
+grep pattern: `#\[ignore` in library_bridge.rs。也 grep `#\[test\]`。
+
+同时读取 library_bridge.rs 1080-1330。
+
+注意 read 工具限制 2000 行，文件可能 1300+ 行。先读 1000-1330。
+
+让我做多个并行调用。
+dsh: reasoning:
+确认：
+- 第 1103-1104：`#[test]` + `#[ignore = "P04 AC3 reproducer: deterministic negative diagnostic, run explicitly via cargo test -- --ignored"]`，函数名正确 `same_channel_concurrent_round_trips_keep_response_ownership`。
+- 只有一处 `#[ignore]`（grep 显示仅 1104 行）。
+- `#[test]` 共 13 处（742,751,765,797,831,868,910,943,990,1012,1051,1103 → 12 处？数一下：742,751,765,797,831,868,910,943,990,1012,1051,1103 = 12 处）。grep 输出中 `#[test]` 匹配 12 行 + `#[ignore]` 1 行 = 13 matches，加 8 个 cfg(test) = 21 matches。对，21 matches。
+
+R3 报告中提到的 cfg(test) 清单是 `:295`/`:316`/`:392`/`:403`/`:422`/`:430`/`:440`/`:737` — 与当前一致（8 处），说明没有新增 seam。但要注意：加 `#[ignore]` 会使其后行号 +1；当前 1103/1104 与 R3 报告的 1103-1104（`#[test]`，无 `#[ignore]`）关系：R3 说 1103-1104 是 `#[test]`（可能跨两行是属性+fn？）。实际上现在 1103 `#[test]`、1104 `#[ignore]`、1105 fn。R3 报告说 `:1103-1104`（`#[test]`，无 `#[ignore]`）→ 那原来是 1103 `#[test]`、1104 fn。加一行后 fn 到 1105，后续全部 +1。这可以核对：R3 提到 `:1288-1294` 是 `.expect(...)` 区段，现在是 1288-1295（1288 注释，1289-1295 是 expect 链）。R3 报告说 `:1288-1294` 改为 `.expect(...)`。现在 1289-1295 是文件打开写入。差 1 行 —— 与"在其上方插入一行 `#[ignore]`"一致。R3 说 `:1274-1275`（artefact 记录同时含运行期 behavior 与静态期望）→ 现在 1275-1276。差 1。R3 说 `:1302-1310` FAIL 分支只打印 → 现在 1303-1311。差 1。R3 说 `:1257-1266` 只计算 behavior → 现在 1258-1267。差 1。R3 说 `:1192-1194`、`:1219-1221` recv_timeout → 现在 1193-1195、1220-1222。差 1。R3 说 `:1247-1252` join → 现在 1248-1253。差 1。R3 说测试范围 `:1082-1311` → 现在 1082-1312，尾行 +1。完美一致性。
+
+这说明**测试函数体内除新增一行 `#[ignore]` 外，行内内容与 R3 审阅时一致**（至少行数偏移全局一致 +1）。这是一个强证据表明只插入了一行。不过我也要检查函数之前的内容（1082 之前）是否有改动。R3 报告说 test 范围 1082-1311，现在 1082 开始是同一个 docstring（行号未变），说明 1082 行之前无插入/删除。如果测试前的某处有等行数替换改动，无法检测。但 grep 的 cfg(test) 位置与 R3 报告一致，`#[test]` 位置：R3 报告提到 `:992`/`:1014`/`:1053` 的 `unwrap_or_else(|_| "python")`。现在 990、1012、1051 是 `#[test]`，那么 992、1014、1053 应该就是 unwrap_or_else 行。一致（前后一致，因为都在 1103 之前）。好。
+
+现在还需检查：
+1. 生产代码部分（round_trip 263-330、Drop 466-483、seam 392-448）应与 R3 审阅时一致（R3 引用的行号在 1103 之前，不受影响；但我无法验证内容是否被等行替换）。我应该读取这些区段，确认其逻辑与 R3 报告描述一致，并且没有出现 watchdog/kill_for_test 新代码。
+2. handoff 中 R3-4 修正是否完整、准确，是否还有其他地方仍声称 Drop 保护或声称已修复。
+3. handoff 是否声明了 R4 修订（文件内是否提到本次修正），以及是否声称已修复挂起（不得）。
+4. P04.md 未被修改（不在差异路径中）——但 P04.md 第 78 行提到 "R3-1（P2）与 R3-4（P3）分配给 Owner R4 最小返修" 且第 76 行提到 R3 报告 SHA-256。这与未修改一致（Codex 在 5ea8304a 时已写入？实际上 P04.md 在 worktree 中是未提交状态还是已提交？reflog 中 5ea8304a 是 "docs(P04): archive R2 review report"。P04.md 的 R3 相关内容（74-82 行）提到 R3-1/R3-4 分配 R4 返修和 R3 报告 SHA —— 这在 5ea8304a 时 Codex 是否已写入？R3 报告刚生成，Codex 在 faea1a2c 之前就记录了 R3 findings 并派发 R4。所以 P04.md 可能在更早的未提交状态或者 P04.md 修改还没提交。
+
+关键点：工作树状态是否 clean？我怀疑 P04.md 的 R3 记录是未提交的（因为 Codex 说"未触碰 doc/tasks/P04.md 中的未提交记录"，Owner response 第 19 行）。所以工作树里 P04.md 处于修改未提交状态。我无法用 git status 验证——需如实说明。
+
+不过 handoff 提到"未改动 frontmatter 状态"。当前 P04.md frontmatter 是 blocked + blocked_by [P22]，符合要求 3。
+
+5. 检查 R3 报告提到的问题：`doc/STATUS.md:5` 现在应该是 P04 blocked。读 doc/STATUS.md。
+
+6. 检查 handoff 是否说 "本轮不加入 watchdog"（是的，第 50 行有）。
+
+7. 检查 handoff 是否仍存在其它不准确表述，比如 §3 表格中 AC2 行说 "已标记 `#[ignore]`，不再进入默认 Cargo 测试套件"（第 66 行）——准确。但需注意 handoff §1.1 第 28 行说 `#[ignore = "P04 AC3 reproducer: deterministic negative diagnostic, run explicitly via cargo test -- --ignored"]` 与实际代码字符串一致吗？实际代码的字符串是 `"P04 AC3 reproducer: deterministic negative diagnostic, run explicitly via cargo test -- --ignored"` —— 完全一致。好。
+
+8. R3-1 要求 "从默认 Cargo 集合排除" + "explicit ignored 命令是否仍只会在 P02 批准且设置 M2RC1_PYTHON 的隔离环境中执行" —— handoff §3 第 66 行说 "仅能在 P02 批准隔离环境中通过 `-- --ignored` 选择器有意运行"。好。
+
+但要注意一个细节：R3-1 备选项 (a) 要求"给该测试加 `#[ignore = ...]` 并在 Handoff 写明未 ignore 的理由"。选了 ignore 所以不需要写未 ignore 理由。OK。
+
+9. 检查是否误改其他测试/生产逻辑。我需要读取生产代码区域确认无 watchdog（grep "kill_for_test" / "watchdog"）。
+
+10. 需要验证 handoff 中 R3-4 修正是否"只更新事实描述，没有增加 watchdog/产品范围"。
+
+11. 检查 handoff 其他地方是否还有 "Drop" 的旧表述。grep "Drop" 在 handoff。
+
+12. 还应检查 implementation-r1.handoff.md 或其它文件是否有类似错误表述 —— 但那些不在授权范围内，不应改（R3-4 只指向 revision-r2.handoff.md:49）。不过如果其他地方仍错误声称 Drop 保护，那就是遗留（但 R3-4 只要求该处）。也应检查 R3 报告中 R3-4 提及的 `:1194`/`:1221` 的文案把所有 recv_timeout 失败描述为 timeout —— R3-4 的"最小修复"里提到这条"另"项。当前代码第 1195 行 `.expect("bounded wait timeout waiting for beta read phase")` 和第 1222 行 `.expect("bounded wait timeout waiting for alpha stdin write")`。这些 expect 消息仍把所有失败（含 sender 断开/Disconnected）描述为 timeout。R3-4 的描述里说"另 `:1194`/`:1221` 的文案把所有 `recv_timeout` 失败（含 sender 断开）都描述为 timeout。"，其"最小修复"主要要求修正 Handoff 表述；可选加 watchdog。这句文案问题是否算需要修？R3-4 的"最小修复"列只写了"修正 Handoff 表述为..."，watchdog 标注为"可选"。所以 expect 消息文案未改不算未完成项，但可作为 P3 观察项（如果 R4 授权范围限定为两处，未修是可接受的）。
+
+我可以把它列为 P3 残留观察（非阻断），但要小心：R4 授权 prompt 明确只允许两处修改，所以不改文案是合规的。我应说明这一点。
+
+现在继续读取：生产区段、STATUS.md、handoff 的 grep。
+
+并行：
+- read library_bridge.rs 255-340（round_trip 生产）
+- read library_bridge.rs 385-500（seam + Drop）
+- read doc/STATUS.md
+- grep handoff 中 "Drop|watchdog|read_line|join"
+
+让我组织调用。
+dsh: reasoning:
+重要发现：doc/STATUS.md:5 仍写 "P04 已进入 in_progress（Owner=Antigravity、Reviewer=DeepSeek Harness；仅实现测试代码）"。这是 R3-3 的问题（P04 应 blocked）。R3-3 是 Codex 侧责任，R3 报告说 Codex 已在主仓落地 P04=blocked、blocked_by: [P22]，且 P04.md 第 80 行说 "R3-3（P2）由 Codex 在主仓 doc/tasks/P04.md、doc/STATUS.md 已落地：P04=blocked、blocked_by: [P22]；Owner 分支 Task frontmatter 同步至相同状态。"
+
+但我在该 worktree 的 doc/STATUS.md:5 看到仍是 "已进入 in_progress"。这可能是因为：
+- STATUS.md 在主仓（root checkout）已更新，而该 worktree 的 STATUS.md 未更新（worktree 有独立 checkout，共享 Git 历史但不共享工作树文件）。
+- Codex 说 "在主仓 doc/tasks/P04.md、doc/STATUS.md 已落地"。主仓即 G:/CODEX/New Manga。所以 worktree 的 STATUS.md 仍是旧内容（因为主仓的改动未提交到分支？或已提交在 main 上，worktree 分支未同步）。
+
+不过 P04.md 的 frontmatter 在该 worktree 中是 blocked + blocked_by [P22] —— 说明 frontmatter 已同步。"Owner 分支 Task frontmatter 同步至相同状态"。
+
+那为什么 STATUS.md 未同步？可能 Codex 只在主仓更新未提交，或者 worktree 的 STATUS.md 是未提交修改。我无法 git status。
+
+这个问题是否属于本次 R4 审查范围？R4 授权只允许改两处文件（library_bridge.rs 和 r2.handoff.md），并明确"不得改 doc/tasks/P04.md、共享计划/状态"。所以 STATUS.md 的 in_progress 是 Codex 侧问题（R3-3 的落地），不属于 Owner R4 的未完成项。但作为 Reviewer，我应报告该事实：在该 worktree 的 doc/STATUS.md:5 仍显示 P04 in_progress，与 P04.md frontmatter=blocked 以及 P04.md:80 声称"Codex 已在 doc/STATUS.md 落地 blocked"不一致 → 需要在报告中列为发现（P3？或 NOT_VERIFIED，因为可能是 worktree/主仓差异）。
+
+审查重点 3 要求："P02 Hard Build Barrier 是否仍为 EFFECTIVE，Cargo/sidecar/runtime 是否仍为 BLOCKED / NOT_RUN，P04 是否仍 blocked 且依赖 P22"。所以 STATUS.md 的不一致值得报告。
+
+但要谨慎：也许主仓 STATUS.md 已改而 worktree 未改。我应该检查主仓路径的 STATUS.md：G:/CODEX/New Manga/doc/STATUS.md（workspace 外，read 可能允许）。这是只读读取，符合规则。还有主仓的 doc/tasks/P04.md。
+
+也可以通过 reflog 或 COMMIT_EDITMSG 查看。不过读取主仓文件更直接。
+
+另外还要确认：faea1a2c 是否包含了 doc/STATUS.md 的修改？Codex 的复核说唯一差异路径只有两个文件（library_bridge.rs 与 r2.handoff.md），而 git 判断需要 Codex 执行。R4 response 说 staged path list 精确两项。但注意：在 faea1a2c 之前，P04.md 和 STATUS.md 可能有未提交修改，Owner 提交时只暂存两文件，其他保持未提交 —— 这解释了为什么 worktree 的 P04.md 有 R3 记录但未提交（属于 Codex 的未提交工作）。
+
+嗯，等等。P04.md:76-82 提到 R3 报告与 R3-1..R3-4 分配，这些内容必然是在 R3 报告产生之后写的。R3 报告由 DSH 在会话中产生，Codex 随后写入 P04.md（可能未提交）。而 faea1a2c 只改两文件。所以 P04.md 当前内容 = 工作树未提交状态（或已在 5ea8304a 里？5ea8304a 消息是 "docs(P04): archive R2 review report"，不太可能包含 R3 内容）。
+
+所以结论：worktree 存在未提交的文档改动（P04.md 等），这是 Codex 的写入窗口。我应如实报告：无法用 git 验证提交/工作树状态。
+
+现在读取主仓的 STATUS.md 和 P04.md 以比较。同时读 handoff 的完整版本？已读全文（120 行）。
+
+还需要检查 R3-4：handoff 中是否仍遗留"Drop 5 秒保护"的旧表述。grep handoff。
+
+另外检查其它文件（如 implementation-r1.handoff.md、P04.md 第 78 行等）是否仍有"Drop 保护"或"挂起抑制"的表述 —— R3-4 只要求 r2.handoff.md:49。P04.md:78 说 "Handoff 准确说明 `recv_timeout` 只覆盖 mpsc 等待，`read_line`/`join` 仍可能无界，本轮不加入 watchdog" —— 这是 Codex 的表述，准确。
+
+让我 grep handoff 中 "Drop"、"挂起"、"budget"、"watchdog"、"recv_timeout"。以及 grep 整个 verification/P04 目录中 "Drop 机制 5 秒" 之类。
+
+同时读取主仓 STATUS.md 第 5 行与主仓 P04.md frontmatter。
+
+注意主仓路径：G:/CODEX/New Manga/doc/STATUS.md 和 G:/CODEX/New Manga/doc/tasks/P04.md。
+
+并行调用：
+1. grep handoff: `Drop|budget|watchdog|挂起|recv_timeout|read_line|join`
+2. read 主仓 doc/STATUS.md limit 10
+3. read 主仓 doc/tasks/P04.md limit 20 (frontmatter)
+4. grep verification/P04 全目录: `Drop 机制|5 秒 budget|Drop.{0,10}保护` to find stale claims.
+
+Let me do it.
+dsh: reasoning:
+主仓 doc/tasks/P04.md: status: blocked, blocked_by: [P22] ✓（87 行 vs worktree 93 行 —— 说明主仓版本与 worktree 版本不同！worktree 版本有 R3 记录（93 行），主仓版本 87 行。嗯，这需要检查主仓 P04.md 是否有 R3 记录。等等，也许主仓是 87 行含 R3 记录但更简洁？让我读主仓 P04.md 的 60-87 行。
+
+关键：worktree 的 P04.md 有 93 行，含 R3 段落（74-82）。主仓 87 行。差异 6 行。可能 Codex 在主仓写的内容不同，或者主仓尚未同步。
+
+另外主仓 STATUS.md 需要检查第 5 行是否说 blocked。
+
+还发现：`verification/P04/codex-dsh-owner-r4-review.stderr.log` 包含我本次会话的思考文本？!第 157/170/176/234/258/300/302/312 行似乎是我当前会话的推理内容被记录。这很奇怪——说明这个 .stderr.log 是 Codex 派发我时捕获的输出，但里面已经有我的思考……这意味着该文件是本次运行中实时写入的（Codex 在后台捕获我的 stdout/stderr）。注意：这是宿主在捕获我的输出。这说明我当前会话正在被记录到该文件。我不应被此影响，但要意识到：读取该文件会看到自己的思考 —— 这可能是本轮派发的日志。
+
+等等，这有可能是一个 prompt injection / 混淆源？不，它是本机 Codex 派发我的日志。里面包含我之前的 thinking。这意味着派发是 headless、捕获 stdout/stderr。
+
+这带来一个审查纪律问题：该文件在 verification/P04/ 下被写入，属于 Codex 的派发工作区。不是 Owner R4 变更。OK。
+
+不过要注意：我的 grep 结果显示 `verification\P04\codex-dsh-owner-r4-review.stderr.log` 和 `.stdout.json` 已存在。这些是 Codex 的 artifact，不是我创建的（我是只读的）。好。
+
+现在还要检查：
+1. 主仓 doc/STATUS.md:5 是否说 P04 blocked。
+2. 主仓 P04.md 的 R3 段落内容。
+3. worktree 是否还有其他未提交改动 —— 无法验证。
+
+另外，重要一点：R3 报告提到 R3-2（R2 报告归档）——现在 `verification/P04/dsh-p04-owner-review-r2.stdout.md` 存在（glob 列表里有）。✓ R3-2 已解决。
+
+R3-3：主仓 P04.md frontmatter = blocked ✓。但主仓 STATUS.md 呢？还有 worktree 的 STATUS.md 仍是 in_progress。
+
+worktree 的 doc/STATUS.md 与主仓的 doc/STATUS.md 是两个不同文件（linked worktree 有独立工作树）。Codex 说"在主仓 doc/tasks/P04.md、doc/STATUS.md 已落地"。所以 worktree 未同步是预期的？但 worktree 的 P04.md frontmatter 已是 blocked（"Owner 分支 Task frontmatter 同步至相同状态"）。那为什么 worktree 的 STATUS.md 没同步？可能 Codex 只同步了 Task frontmatter，STATUS.md 只在主仓改。这是差异，我应报告为事实。
+
+让我读主仓 STATUS.md 前 6 行。
+
+还有：检查 worktree 的 `doc/STATUS.md` 是否包含对 P04 blocked 的描述。第 5 行明确说 "P04 已进入 in_progress"。这是与 P04.md:80 声称不符的事实（在 worktree 语境下）。
+
+不过要小心：P04.md:80 说 "R3-3（P2）由 Codex 在主仓 doc/tasks/P04.md、doc/STATUS.md 已落地：P04=blocked、blocked_by: [P22]；Owner 分支 Task frontmatter 同步至相同状态。" —— 它明确说的是"主仓"。所以主仓 STATUS.md 应已更新；worktree 的 STATUS.md 不是该声明的一部分。若主仓 STATUS.md 确实更新，则 Codex 的声明准确，worktree 的 stale 不构成 findings（只是 worktree 内不一致，因为 Owner 不允许改共享状态文件）。
+
+所以必须读主仓 doc/STATUS.md。
+
+现在读取：
+- 主仓 doc/STATUS.md 前 8 行
+- 主仓 doc/tasks/P04.md 60-87 行
+- worktree 的 verification/P04/antigravity-owner-revision-r2.handoff.md 已在上面完整读过。
+
+另外我还需检查 handoff 第 115 行的"挂起抑制"表述（§5 转发指令）。它说"确认测试通道已引入 10 秒 recv_timeout 的 bounded wait，并在 Handoff 登记挂起抑制与异常边界限制"。这是旧的 R3 派发指令文本，措辞上"挂起抑制"可能暗示已抑制挂起。R3-4 要求修正错误安全描述 —— 第 50 行的主要表述已修正。第 115 行属于历史转发块（给 R3 的指令，当时指向 R3 审查）。它是"历史指令副本"，但会误导吗？"引入 bounded wait"+"登记挂起抑制与异常边界限制"——"挂起抑制"（hang suppression）与修正后的"Drop 不可达"有轻微张力，但不是明确错误声称。可作为 P3 观察项/改进建议。我应该评估其严重性：这是 handoff §5 的转发指令，描述的是 R3 审查应确认的内容，属于历史文本。R3-4 的授权范围是"修正 R3-4 指出的错误安全描述"，指第 49/50 行的 Drop 保护表述。P3 观察项合适。
+
+再看 §1.1 第 29 行 "3. 引入 10 秒 `recv_timeout` 的 bounded wait；" —— 位于"本轮变更路径集"列举。这个列举描述的是 R2 轮次的变更（在 §1 概述里被写成"本轮返修"），现在文件被 R4 复用，混杂了 R2 与 R4 内容。第 28 行是 R4 加的 `#[ignore]` 描述，第 50 行是 R4 加的修正。但文件标题/status 仍是 revision_r2_static_only，未声明 R4 修订。这是一个可报告的 P3：handoff 元数据未反映 R4 修订（status 仍 `completed_revision_r2_static_only`，无 R4 说明/时间戳），可能导致读者误以为该 handoff 未包含 R4 变更。不过 Codex 授权允许在该文件内修正，且没要求必须改 status。R4 授权 prompt 说"可以将最终交付报告写到新的 verification/P04/antigravity-owner-revision-r3.handoff.md；不得覆盖任何现有文件"——注意"不得覆盖任何现有文件"，但第 2 条唯一写入范围允许修改 r2.handoff.md。有点矛盾（"不得覆盖"应指"不得用新报告覆盖其他现有文件"）。实际执行：只修改 r2.handoff.md，未创建 r3 handoff。
+
+这引出一个问题：交付报告从哪里能找到 R4 的完整说明？codex-antigravity-r4.response.md 由 Codex 捕获（不在 Owner 的控制内，但已存在于 verification/P04/）。r2.handoff.md 内有 R4 变更描述（第 28、50 行）。所以证据链可追溯。可接受，但 status 未更新可作 P3。
+
+嗯，还有一个重要点要检查：R3-4 要求 handoff 不得声称该问题已被修复。第 50 行结论是 "**CLOSED / NOTED**"。这里 "CLOSED" 可能被读作"问题已修复/已关闭"。R3-4 说"不得声称该问题已被修复或由 Drop 保护"。虽然正文明确说"并不能保护该挂起路径"、"不增加 watchdog"，结论 "CLOSED / NOTED" 是对 finding 的处置状态（finding 的表述问题已修正 → CLOSED），不是声称挂起问题已修复。有轻微歧义。R2-006 finding 的内容是"异常路径无超时导致测试永久挂起放大效应未说明" —— 处置是"已说明/已记录（NOTED）"，而非修复。所以 "CLOSED / NOTED" 可接受，但可提 P3 建议更明确写 "DOC-CORRECTED / HANG RISK REMAINS"。我认为这值得作为 P3 观察项，或不提。让我权衡：R3-4 的正文修正充分且明确，结论标签的歧义很小。我可以把它列为一个 P3 观察（非阻断），说明其不足以误导，因为同格文字明确。
+
+再检查 handoff 中 R2-006 行是否同时声称 "10 秒 recv_timeout ... 超时显式 panic 报错"。这是事实（expect panic）。OK。
+
+现在检查另一个 R3-1 的关键点："explicit ignored 命令是否仍只会在 P02 批准且设置 M2RC1_PYTHON 的隔离环境中执行"。代码中 `M2RC1_PYTHON` 硬 expect 仍保留（1110-1112），脚本存在断言（1125-1129），写日志到 repo（1140）。加了 `#[ignore]` 后默认不跑。✓
+
+还需检查 `#[ignore]` 是否有理由字符串 ✓（工具要求好）。
+
+还需检查是否有其他测试被误加 ignore —— grep 只有一处 `#[ignore]` ✓。
+
+还需检查生产代码未改 —— 我无法 diff，但可以说明：
+- grep 未发现 watchdog/kill_for_test 新增（kill_for_test 在 392-398，是既有 seam，R3 报告确认它在 R3 审阅时已存在，行号 392-398 与 R3 报告一致，说明 392 之前无行增删）。
+- 行号一致性强证据：R3 报告引用的所有 1103 之前行号（263-324、295、316、392、403、422、430、440、466-483、737、992、1012、1053）与当前文件完全一致 → 1103 之前的文件内容行数未变。1103 之后整体 +1（仅 `#[ignore]` 插入）→ 测试体内内容未变。
+- 唯一无法排除的是 1103 之前的"等行数内容替换"（无 diff 不可检测）。我可以诚实标注这一点。
+
+实际上我可以用另一种方式：R3 报告内容本身按行号引用了大量位置的内容描述，我抽查若干处确认内容与描述一致（263-324 round_trip 我已读，392-448 seam 我读了，466-483 Drop 我读了，1082-1105 我读了）。这足以支持"未发现误改"。
+
+现在，我还想确认 worktree 的 library_bridge.rs 与 commit 一致 —— 无法直接验证。但是 faea1a2c 是 HEAD，且 reflog 显示工作树最后操作是 commit。如果之后有未提交修改，无法检测。我应说明此限制，并把"已读内容即 commit 内容"作为假设（有间接证据：`#[ignore]` 字符串与 faea1a2c commit message "ignore AC3 negative reproducer" 一致，且 Codex 报告中的行号 #L1101-L1106 与当前一致）。
+
+再检查 main.rs 是否被改（不在差异路径）。R3-1 无关。grep main.rs 的 ignore？不必要。但要确认没有新增 `#[ignore]` 在其他文件。glob 范围太大。可以 grep `#\[ignore` 在整个 apps/desktop/src-tauri/src 目录。这能验证"只有目标测试被 ignore"。
+
+还要检查 sidecar 文件未被改（不在差异路径）：`verification/P04/deterministic_concurrent_sidecar.py` —— 我可以用 Codex 声明的两文件范围 + 我的静态核对来交叉验证。至少检查其 mtime？glob 不给 mtime。read 不给 mtime。pwsh 不可用。
+
+嗯，另一个可用的间接证据：文件的 mtime 无法获取。跳过。
+
+现在读取主仓 STATUS.md 和主仓 P04.md 60-87。并 grep ignore 在 src-tauri/src。
+dsh: reasoning:
+重要发现：
+
+1. 主仓 `doc/STATUS.md:5`：P04=`BLOCKED`、`blocked_by:[P22]`，P22=`BLOCKED` 等待 P04 R4 Review ✓。所以 R3-3 在主仓已落地。worktree 的 STATUS.md 是旧版（in_progress），属于 worktree 未同步的共享文件（Owner 无权改，符合授权）。这解释了不一致，且 Codex 的声明（"主仓已落地"）准确。我会说明。
+
+2. 主仓 `doc/tasks/P04.md`（87 行）与 worktree 版本（93 行）不同 —— 主仓版本尚未包含 R3 段（其 74-82 是 R2 段落）。所以 worktree 的 P04.md（含 R3 记录）是未提交修改，由 Codex 维护。这符合"Owner 未触碰 doc/tasks/P04.md 中的未提交记录"。注意主仓 P04.md:84 说 R3 "Review=IN_PROGRESS, final report pending" —— 主仓状态落后于 worktree（R3 报告已完成）。这可能是主仓未提交/未同步。这属于 Codex 侧的元数据状态，不在 R4 范围。但值得作为事实提及（P3 观察，非 Owner 问题）。
+
+3. `main.rs:1478-1484` 存在另一个 `#[ignore]`（无理由字符串）—— 这是既有测试（R3 报告说 main.rs 的 AC1 测试在 1167-1193；1478 是另一个）。需要确认这不是本次 R4 新增。R3 报告未提及 main.rs:1478 的 ignore。R3 报告说"cfg(test) 清单"只针对 library_bridge.rs。Codex 的差异路径只有 library_bridge.rs 与 handoff → main.rs 未变。而且该 ignore 位于 main.rs（不在差异路径），且 R4 授权不允许改 main.rs。所以它是既有代码。我可以读一下 main.rs:1470-1495 确认它是既有测试（例如 jail/ignore 的既有模式），并确认它不涉及 P04 AC1/AC2。这有助于排除"误改其他测试"。既然 main.rs 未在差异路径，且内容带有 "measured explicitly, never in the default suite" 的先例注释 —— 这实际上支持 R3-1 的 `#[ignore]` 方案在仓库有先例。好，读一下确认。
+
+另外尚需检查：`verification/P04/dsh-p04-owner-review-r3.prompt.md` 是否存在（R3 报告 §6 说它不存在）。glob 列表中无 `dsh-p04-owner-review-r3.prompt.md`，但有 `dsh-p04-owner-review-r3-resume2.prompt.md`。这不是本次 R4 关注点。
+
+现在的关键待办：
+a) 确认 handoff 的 R4 修正文本已生效（已确认第 50 行）——但需确认这确实是 faea1a2c 引入的，而不是 5ea8304a 时就有的。无法 diff。不过 R3 报告引用 `revision-r2.handoff.md:49` 的旧表述"sidecar 异常挂起仍受 Drop 5 秒 budget 保护"，而现在该文件对应内容在 50 行且已改为 R3-4 修正文本 —— 行号 +1 说明文件在 49 行上方插入了一行（第 28 行 `#[ignore]` 描述？不，第 28 行在 §1.1，会使 49 之后的全部 +1）。等等：如果在第 28 行附近插入一行，则原 49 行变成 50 行 ✓ 与 R3 报告说旧表述在 :49 而现在是 :50 一致。这强烈支持"在 §1.1 第 28 行插入了一行 `#[ignore]` 描述 + 修正了原 49 行文本（现在 50 行）"。
+
+R3 报告还引用 handoff `:20`（引用了不存在的 R2 报告路径）与 `:44`、`:66`、`:51`、`:45` 等。当前文件：第 20 行 "本轮返修严格遵循...（`verification/P04/dsh-p04-owner-review-r2.stdout.md`...）" ✓ 存在（R3-2 已由 Codex 归档该文件，glob 确认存在）。第 44 行？当前 44 行是表头分隔符，R3 说 `:44` 是 "P04 保持 blocked" 声明 —— 现在 R2-001 行在 45 行，其中含 "确认 P04 保持 `blocked`（previous=`in_progress`）" ✓。所以 44→45，+1 一致。第 66 行 R3 引用 AC2 的 BLOCKED 行 —— 现在 66 行正是 AC2 行 ✓ 未偏移？嗯，R3 说 `:66` 是 Handoff 的 "P04 保持 blocked"（R3-2 表格那行说的是 `revision-r2.handoff.md:44`/`:66`）。当前 66 行是 AC2 表格行，含 "已标记 `#[ignore]`" —— 这行必然被 R4 修改过（原 66 行说的应该是别的，现在加了 ignore 描述）。行号相同但内容改了 ✓ 这完全符合"R4 就地修改第 66 行 + 在 28 行插入"。
+
+Hmm，但插入一行后 66 行会变成 67 行（如果插入点在 28）。除非 66 行附近有删除一行。让我更仔细：
+
+R3 报告引用 handoff 行号（R3 审阅时的版本）：
+- `:20` → 引用 R2 报告路径（当前 20 行相同内容）✓ 无偏移
+- `:44` → "P04 保持 blocked" 声明（当前 45 行 R2-001 行含此声明）
+- `:49` → Drop 5 秒 budget 表述（当前 50 行）
+- `:51` → 保留策略（当前 52 行 R2-008）
+- `:66` → "P04 保持 blocked"（当前 66 行是 AC2 行；也许 R3 说的 :66 是别的内容）
+- §1.1 `:28`？R3 未引用。
+
+如果插入发生在第 28 行（§1.1 新增 `#[ignore]` 条目），则在 28 行之后的引用：44→45 ✓、49→50 ✓、51→52 ✓，而 66→67，但 R3 说 66 是"P04 保持 blocked"，当前 66 行是 AC2 行、67 行是 AC3 行 "结构化诊断记录与 P04 保持 blocked" ✓ —— 完美！R3 引用 `:66` 应该指 AC3 行的"保持 P04 为 blocked"，现在在 67 行。所以全局 +1 一致。
+
+结论：r2.handoff.md 的修改 = 在 §1.1 列表插入一条 `#[ignore]` 描述（行为 +1）+ 就地修正第 50 行（原 49）的 Drop 表述 + 可能就地更新 AC2 表格行（66 行）。这与 faea1a2c 的两路径范围完全一致。✓ 非常强的静态一致性证据。
+
+等等，AC2 表格行（66 行）加了 "已标记 `#[ignore]`，不再进入默认 Cargo 测试套件..." —— R3 报告引用 `:66` 时内容是 "P04 保持 blocked"（在 AC3 行），而 AC2 行原本是否有 ignore 描述？原 AC2 行（R3 时）应该只是 `-- --ignored` 前的内容？原始命令是 `... same_channel_concurrent_round_trips_keep_response_ownership`（无 `-- --ignored`），R3 报告 R3-1 引用 handoff §3 的 AC2 命令。现在 66 行的命令带 `-- --ignored`。所以 AC2 表格行也被 R4 就地更新了 —— 这属于"更新调用说明"，在授权范围内（"只修事实与调用说明"）✓。
+
+好。现在还需要确认 handoff 没有声称"挂起问题已修复"。第 50 行明确说"并不能保护该挂起路径"、"不增加 watchdog"。§3 表格 AC2 行也没说修复。✓
+
+还需检查 handoff 是否新增 watchdog 代码 —— library_bridge.rs grep 无 watchdog ✓，无新 kill_for_test 调用（grep kill_for_test 只在 393 定义处；测试代码里没有调用 kill_for_test）。✓ 确认"没有增加 watchdog"。
+
+嗯，grep pattern `watchdog|kill_for_test|ignore|Drop for` 结果：只有 335（注释中 "ignored"）、393（定义）、466（Drop for）、1104（ignore）。所以测试中未调用 kill_for_test ✓，无 watchdog 线程 ✓。
+
+现在读 main.rs 1470-1495 确认既有 ignore 先例与 AC1 测试未受影响。
+
+还需要确认 AC1 测试仍在 main.rs（R3 说 1167-1193），未被改（main.rs 不在差异路径，且我无 diff）。读 main.rs 1160-1200 确认字面断言仍在。这也回应审查重点 1 的"是否误改其他测试"。
+
+并行：
+- read main.rs 1160-1200
+- read main.rs 1470-1495
+
+另外考虑检查 sidecar 文件是否被改（无法验证 mtime，但可以看内容中是否有 R4 相关改动痕迹，比如版本注释）。跳过，靠 Codex 范围声明 + 我的说明。
+
+还有一点：需要检查 `verification/P04/antigravity-owner-revision-r2.handoff.md` 是否是 faea1a2c 的一部分，还是工作树未提交修改。无法验证。但 R3 报告 SHA 与 Codex 声明可交叉引用。
+
+再有一点关键：任务要求"P02 Hard Build Barrier 是否仍为 EFFECTIVE，Cargo/sidecar/runtime 是否仍为 BLOCKED / NOT_RUN"。
+- r2.handoff §3 表：AC1 BLOCKED/NOT_RUN ✓、AC2 BLOCKED/NOT_RUN ✓、AC3 STATIC READY / NOT_RUN ✓、集成后 BLOCKED/NOT_RUN ✓；Barrier EFFECTIVE ✓（第 59 行）。
+- P04.md worktree 60-62: BLOCKED/NOT_RUN ✓。
+- P04.md frontmatter: blocked + blocked_by [P22] ✓。
+- 主仓 STATUS.md:5: P04 BLOCKED / blocked_by [P22]，P02 in_progress/ACTIVE、Build Gate BLOCKED、Hard Build Barrier EFFECTIVE ✓。
+- codex-antigravity-r4.response.md §3: Barrier EFFECTIVE、P02 Build Gate BLOCKED、AC1/AC2 BLOCKED/NOT_RUN、宿主写权限/Sandbox NOT_RUN ✓。
+
+现在可以着手写报告。但还有几项待核实：
+
+(1) R3-1 要求 "explicit ignored 命令是否仍只会在 P02 批准且设置 M2RC1_PYTHON 的隔离环境中执行" —— handoff 准确说明 ✓。但还要检查：`#[ignore]` 是否只从"默认集合"排除，而在 `cargo test -- --ignored` 时仍会执行 → 是，且它的前置 `M2RC1_PYTHON` expect 仍在 ✓（这是设计）。
+
+(2) 检查 handoff 的 `status: completed_revision_r2_static_only` 是否应更新 —— P3 观察。
+
+(3) R3 报告 §7 建议 Codex 派 R4 复审；本轮即 R4 ✓。
+
+(4) R3-4 的"另 `:1194`/`:1221` 的文案把所有 recv_timeout 失败（含 sender 断开）都描述为 timeout" —— 代码未改（授权未覆盖），但 handoff 第 50 行也未提这一点。R3-4 的最小修复清单只要求修正 Drop 表述；expect 文案是 R3-4 描述中的附带观察。可作 P3 残留观察项（非 R4 未完成项，因为 R4 授权范围限定两处且未要求改代码 expect 文案 —— 实际上 prompt 第 14 行说"只给...测试加 #[ignore]...生产代码和其他测试不得改动"，所以 R4 无权改 expect 文案）。
+
+(5) 是否有任何"声称赞同修复"的表述需要检查的：handoff §1.1 第 30 行 "4. verdict 诊断文件写入失败时通过 `.expect(...)` 显式失败，消除静默吞错。" 这是 R2 变更描述 ✓。
+
+(6) 需要确认 handoff 的 R3-4 修正文本没有夸大（比如说"已在回归测试中覆盖"）。第 50 行准确 ✓。
+
+(7) 检查 P04.md（worktree，未提交）第 78 行说 "Handoff 准确说明 `recv_timeout` 只覆盖 mpsc 等待，`read_line`/`join` 仍可能无界，本轮不加入 watchdog。" ✓ 与实际 handoff 一致。
+
+好，我认为证据足够。还需要检查一件事：审查重点要求"是否误改其他测试/生产逻辑"。除 library_bridge.rs 外，我应至少扫描一下 apps/desktop/src-tauri/src 下其他文件是否有 R4 痕迹。但这不可行（无 diff）。我可以说明：Codex 声明范围两文件；我的静态核对（行号锚点一致 + 唯一 `#[ignore]` 新增 + 无 watchdog 符号）与声明一致；但等行数内容替换无法排除 → 记为 NOT_VERIFIED 的限制之一（非阻断，因为 Codex 已用 git 独立验证差异路径）。
+
+嗯，Codex 的验证是"复核的唯一差异路径"——用户给定的固定对象里说"Codex 复核的唯一差异路径"。这是 Codex 的 git 层证据。我的静态审查不能复现，但可以与之一致性交叉验证。
+
+现在读 main.rs 区段。
+
+另外，我想确认 `verification/P04/deterministic_concurrent_sidecar.py` 是否含 R4 改动痕迹（比如版本号或 ignore 提及）。读前 40 行快速扫一遍。实际不必，但为稳健，我 grep 该文件 "ignore"。
+
+并行三个调用：read main.rs 1160-1200、read main.rs 1470-1495、grep sidecar ignore。
+
+其实 main.rs 的 1478-1484 ignore 是既有先例，值得引用。读 1470-1495。
+dsh: reasoning:
+确认：
+- main.rs AC1 测试（1167-1193）与 R3 报告描述一致（1169-1172 字面断言、1178 独立字面期望、1174-1192 三面边界）✓，未被改。
+- main.rs:1483-1485 是既有 ignore 先例（perf probe，注释说明 "measured explicitly, never in the default suite. Run with ... -- --ignored"）—— 支持 R3-1 方案有仓库先例，且 R4 采用了与先例一致的风格（不过先例用裸 `#[ignore]` + 注释，R4 用 `#[ignore = "reason"]`，更好）。注意该先例的路径是 main.rs，R3 报告未提及 —— 潜在小问题：R3-1 说 "本测试是该 crate 首个硬失败前置" 而没说 ignore 先例在 main.rs 存在；R3-1 引用的是提案 review 的建议。不影响 R4 判定。
+- sidecar 无 ignore/watchdog/recv_timeout/kill_for_test 匹配 → 未被 R4 触碰的痕迹合理。
+
+现在还有一个我想确认的点：handoff 是否在 R4 中被更新以声明"R4 修正"？我读了全文，没有提到"R4"字样。文件 status 未变。这是 P3 观察。
+
+另外，需要检查 handoff 中是否明确登记"默认测试套件口径已变化"。R3-1 备选 (a) 要求"给该测试加 #[ignore] 并在 Handoff 写明未 ignore 的理由" —— 选了 ignore，所以不需要。而 handoff §3 AC2 行明确写了"不再进入默认 Cargo 测试套件；仅能在 P02 批准隔离环境中通过 -- --ignored 选择器有意运行" ✓ 这就是口径登记。好。
+
+R3-1 的"登记默认测试套件口径变化"要求在选 (a) 时其实就是"在 Handoff 写明"。已登记 ✓。
+
+现在，还有一个审查点：任务说 "R3-1：唯一目标测试 ... 是否被准确标记为 #[ignore]，从默认 Cargo 集合排除"。我确认了。但严格说，"从默认 Cargo 集合排除" 的语义依赖 Cargo/rustc 对 `#[ignore]` 的处理：默认 `cargo test` 会编译并列出但跳过运行。这是标准语义。我无法运行验证（NOT_RUN），应说明这是静态判断（依据 Rust 标准属性语义），不是运行验证。
+
+另一个潜在问题：`#[ignore = "..."]` 的字符串里含 `-- --ignored`，OK。
+
+还有：R3-1 提到"每次运行都会在仓库内产生 untracked 诊断产物" —— 加 ignore 后默认不产生 ✓（仍会在显式运行时产生，属预期）。
+
+现在评估是否存在需要 CHANGES_REQUESTED 的问题：
+- R3-1 修复：✓ 完整、准确、范围最小。
+- R3-4 修复：✓ handoff 表述准确且未声称修复；未加 watchdog；生产/测试代码未扩大。
+- 范围：✓ 两文件；无越界（据 Codex git 证据 + 我的静态一致性）。
+- 状态：P04 blocked + blocked_by P22 ✓（worktree frontmatter 与主仓两者）；Build Barrier EFFECTIVE ✓；Cargo/sidecar/runtime BLOCKED/NOT_RUN ✓。
+- 遗留：R3-2（归档 R2 报告）已解决（文件存在）✓；R3-3（状态落地）主仓已解决 ✓（worktree STATUS.md 陈旧，但 Owner 无权改，且 Codex 声明限"主仓"）。
+
+所以总体应为 APPROVED。但有一个疑问：R3 报告的 R3-3 说 P04 应 blocked；worktree 的 doc/STATUS.md:5 仍 in_progress。这会造成"同一 worktree 内 Task=blocked 而 STATUS=in_progress"的不一致。但 Owner R4 明确不得改共享状态；Codex 已在主仓落地。作为 Reviewer 我应报告为事实 + 建议 Codex 检查 worktree 内 stale STATUS（P3，归属 Codex）。这不影响对 Owner R4 的 APPROVED 判定。
+
+另一个需要判断的：R3-4 的第一句要求"修正 `revision-r2.handoff.md:49` 的挂起/Drop 表述"。已修正 ✓。
+
+handoff §5 第 115 行 "确认测试通道已引入 10 秒 recv_timeout 的 bounded wait，并在 Handoff 登记挂起抑制与异常边界限制" —— "挂起抑制"（hang suppression）措辞在 R3-4 修正后显得不一致（该 bounded wait 并不能抑制 join 无界挂起）。这是 §5 转发给 R3 的历史指令块（指向已经完成的 R3 审查），现在文件被 R4 更新，但该块未同步。它会误导吗？§5 是"下一步任务建议"，其内容要求 R3 审查者确认的事项之一；审查已完成。而且 prompt 第 17 行说"不得覆盖任何现有文件"、第 2 条只允许修改 handoff 的"错误安全描述"（R3-4 指出的）。第 115 行的措辞属于 R3-4 的边界内吗？R3-4 说 "修正 Handoff 表述为'仅覆盖 mpsc 通道等待；read_line 阻塞导致 join 无界时 Drop 不可达'"。严格说第 115 行的"挂起抑制"也是对挂起保护能力的暗示（"登记挂起抑制"）。它是 P3 级别的措辞残留。我认为值得作为 P3 观察项报告，但不构成 CHANGES_REQUESTED（因为 R3-4 的核心错误安全声称"Drop 5 秒 budget 保护"已被移除，且第 115 行并未声称 Drop 保护，只是说"登记…限制"）。
+
+嗯，但我要谨慎：如果我把 P3 报为"未解决"，是否意味着 CHANGES_REQUESTED？规则：P3 通常不阻断。R3 报告本身总体 CHANGES_REQUESTED 是因为有 3 个 P2。本次 R4 的两项修复都达标。APPROVED + P3 观察项是合理的（类似 R9F `0/0/0/3` approved）。
+
+但等等 —— 有一个可能更实质的问题：**R4 未创建新 Handoff 或更新 handoff 元数据**。R3 报告 §7 第 3 项要求 Owner 做最小修复；R4 prompt 允许（可选）写新报告 `antigravity-owner-revision-r3.handoff.md`。Owner 选择就地更新 r2.handoff.md。这导致：
+1. 文件 frontmatter `status: completed_revision_r2_static_only` 与内容（含 R4 修正）不符；
+2. R4 的"交付报告"实际上分散在 r2.handoff.md（部分）+ Codex 捕获的 response（verification/P04/codex-antigravity-r4.response.md，非 Owner 提交路径）。
+3. 但 r2.handoff.md §1.1 已新增 R4 变更描述（第 28 行）→ 读者能看到。R3-4 修正也在第 50 行。
+
+严重性：P3。归属：Owner（可选改进）。不影响批准。
+
+另一个潜在问题：handoff §1.1 第 28 行说 "标记 `#[ignore = "P04 AC3 reproducer: deterministic negative diagnostic, run explicitly via cargo test -- --ignored"]`" —— 与代码完全一致 ✓（我逐字对比：代码 1104 行字符串 = "P04 AC3 reproducer: deterministic negative diagnostic, run explicitly via cargo test -- --ignored"；handoff 28 行 = 同）。✓
+
+再一个：R3-1 要求"是否误改其他测试/生产逻辑"。我的证据：`#[ignore]` 全仓（apps/desktop/src-tauri/src）仅 2 处，其中 library_bridge.rs 1 处为新增目标，main.rs 1 处为既有 perf probe。`#[test]` 数量 12（library_bridge）与 R3 报告一致。生产 round_trip 与 Drop 代码未被改（行号锚点一致 + 内容与 R3 描述一致 + 无 watchdog/new seam）。
+
+我还可以数 `#[cfg(test)]` 出现次数以强化：grep 结果 8 处，与 R3 报告列出的 8 个行号完全一致 ✓。这非常有力：若 R4 在生产代码中新增任何 `#[cfg(test)]` seam，数量会变。
+
+好，还要检查一个问题：1167-1193 的 AC1 测试是否在 R4 之后行号未变 —— R3 报告说 main.rs:1167-1193，现在一致（main.rs 不在差异路径）✓。
+
+最后，我应当尝试尽可能确认 faea1a2c 的 tree hash。无法（对象压缩）。但有一个可能的间接来源：commit message 或 `.git/worktrees/.../` 里可能有其他文件？还有 `G:/CODEX/New Manga/.git/worktrees/P04-prod-command-concurrency-antigravity/ORIG_HEAD`？以及 git 的 `COMMIT_EDITMSG`（在 gitdir 下）—— 它包含最后一次提交的 message，可以验证 commit message（虽然消息不是 hash）。让我读 COMMIT_EDITMSG 验证 message。这能佐证 reflog 的 message。
+
+其实 reflog 已经给了 message。
+
+另外，是否有办法验证 tree hash？packed-refs 不含 tree。commit-graph 文件是二进制的，但可能包含 hash 和 tree 的映射（commit-graph 含 commit OIDs 和 tree OIDs，二进制格式，未压缩）。理论上我可以读 commit-graph 的二进制内容——但 read 工具对二进制可能显示乱码/截断。commit-graph 是 `G:/CODEX/New Manga/.git/objects/info/commit-graph`。它是二进制，包含 OID 的原始 20 字节。通过 read 工具读会得到 lossy 文本，无法可靠解析。不值得。
+
+可以尝试 glob 确认 commit-graph 是否存在，但无法解析。
+
+因此：tree hash `eb0cc832...` 无法独立核验 → 我应写 NOT_VERIFIED（针对 tree），但 commit 绑定链（HEAD→refs→faea1a2c，parent=5ea8304a）通过 reflog 得到较强证据（reflog 是本机 git 写入的元数据，非 Owner 声明）。注意：reflog 也不直接证明 faea1a2c 对象的 tree/内容，但它证明该 commit 存在且父为 5ea8304a（reflog 记录了 old→new，隐含 faea1a2c 是 5ea8304a 的后继提交）。严格说 reflog 的 old 值是提交前的 HEAD，所以 faea1a2c 的父=5ea8304a 是"高度可信但非对象级证明"。我应精确表述。
+
+还有一点：工作树是否等于 faea1a2c 的内容 —— 无法验证（无 git status）。但可以给间接证据：文件内容与 commit message 主题一致；Codex 声明 worktree 无 tracked changes（但那是对 5ea8304a 时点的声明，第 79 行说 "Codex 已验证...worktree 无 tracked changes"）。
+
+嗯，P04.md（worktree）有 R3 记录而主仓没有 → 说明 worktree 有未提交改动（至少 P04.md、STATUS.md 等 Codex 维护文件），这与"worktree 无 tracked changes"矛盾？第 79 行说的是 R2 交付时点的验证（5ea8304a 之前）。之后 Codex 又写了 R3 记录，所以现在 worktree 有未提交改动是预期的。
+
+这也意味着：我读到的 worktree P04.md 可能是 Codex 未提交修改（含 R3 段落）→ 我在报告中应说明"worktree P04.md 内容含 R3 段落但主仓版本无，说明存在未提交的 Codex 侧元数据改动；我无法用 git 验证这些状态"。这点很重要，因为审查重点 3 要求"P04 是否仍 blocked 且依赖 P22"。两个版本 frontmatter 都是 blocked + blocked_by [P22] ✓，所以结论不受影响。
+
+现在准备写报告。报告要保持简洁但完整，符合用户要求的结构：
+1. Git/文件绑定能力与实际核验结果（含 NOT_VERIFIED 说明）
+2. 逐项 Finding 与 disposition（R3-1、R3-4、范围、状态）
+3. APPROVED/CHANGES_REQUESTED + P0/P1/P2/P3 数量
+
+我是只读 Reviewer，不能写文件（用户说不得修改文件）。所以报告直接输出在回答中。
+
+是否需要 todo_write？任务已接近完成，不需要。
+
+关于 P3 数量，我列出：
+- P3-1：handoff 元数据未反映 R4（status 仍 completed_revision_r2_static_only，无 R4 标注/时间戳）→ 归属 Owner，可选。
+- P3-2：handoff §5 第 115 行"挂起抑制"措辞残留，与第 50 行修正后的边界表述不完全一致 → 归属 Owner，可选。
+- P3-3：代码内 `expect` 文案"bounded wait timeout ..."把所有 recv_timeout 失败（含 sender 断开）描述为 timeout（R3-4 曾附带指出，R4 授权未覆盖此代码）→ 归属 Codex/后续修复 Task，非 R4 未完成项。
+- P3-4：worktree 内 `doc/STATUS.md:5` 仍写 P04 in_progress，与同 worktree P04.md frontmatter=blocked 不一致（主仓已改正）→ 归属 Codex；建议在 P22 释放/集成前同步或在报告中说明 worktree 快照陈旧。
+- 也许 P3-5：主仓 `doc/tasks/P04.md:84` 仍写 R3 `IN_PROGRESS / final report pending`，而 R3 报告已完成且 worktree 版本已更新 → Codex 侧元数据待同步。
+
+这些都是 P3 观察，不阻断。数量：5 个 P3？我要注意不要滥报。让我筛选：
+- P3-1、P3-2 是 Owner 侧 handoff 观察，有效。
+- P3-3 是 R3-4 的遗留代码文案，有效（但明确非 R4 范围）。
+- P3-4 worktree STATUS.md 陈旧：有效且值得 Codex 注意。
+- P3-5 主仓 P04.md R3 状态过期：与 P3-4 类似，可合并为一条"元数据同步"。我合并为 P3-5 或合并进 P3-4。
+
+我倾向报 4 条 P3：Owner 侧 2 条（P3-1 handoff 元数据/R4 标注、P3-2 §5 措辞残留），Codex 侧 2 条（P3-3 expect 文案、P3-4 元数据同步：worktree STATUS.md 与主仓 P04.md R3 状态）。
+
+P0/P1/P2 = 0/0/0。
+
+decision：APPROVED。但要注意：R3 报告本身的总体是 CHANGES_REQUESTED，包含 3 个 P2，其中 R3-2/R3-3 属 Codex。R3-2 已解决（文件存在 ✓），R3-3 主仓已解决 ✓。所以 R3 遗留项全部关闭。R3-1/R3-4 已由 faea1a2c 修复 ✓。
+
+但严格说：P04 整体仍 blocked（依赖 P22），AC1/AC2 仍 BLOCKED/NOT_RUN，所以我的 APPROVED 只能针对"R4 修正范围（R3-1/R3-4 的修复）"—— 不能等同于 P04 可集成或 done。我要在报告中明确这个限定，就像 R3F 的 approved 语义。
+
+我必须明确：本 Review 为静态只读审查，未运行任何 Cargo/Rust/Tauri/sidecar/GUI/Sandbox；`#[ignore]` 的默认集合排除效果依据 Rust 标准属性语义作静态判断，运行期未验证。
+
+另外要说明 Git 能力限制：
+- 可以读：worktree gitdir 的 HEAD、logs/HEAD（reflog）、commondir、分支 ref 文件。
+- 不能：运行 git（pwsh 被沙箱 ACL 错误阻断，danger-full-access 升级无审批通道）、无法解压 commit/tree 对象 → tree=eb0cc832... 与"工作树内容==faea1a2c"无法独立验证；无 `git diff`/`git status`/`git diff --check`。
+
+关于 Codex 给定的差异路径：我核对了两个文件的内容，与 R4 授权范围一致；但"只有这两个路径"这一点我无法独立复现（无 diff），依赖 Codex 的 git 层声明 + 我的静态一致性证据（行号锚点、`#[ignore]` 计数、`#[cfg(test)]` 计数、无 watchdog）。
+
+好，我还想再核实一下 `#[cfg(test)]` 计数在 library_bridge.rs 是否真的只有 8 处（R3 报告列了 8 个行号：295/316/392/403/422/430/440/737）。grep 结果正好这 8 行 ✓。
+
+还有 grep 中 `#[test]` 12 处：742,751,765,797,831,868,910,943,990,1012,1051,1103。R3 报告说 "同文件既有测试用了 unwrap_or_else(|_| "python")（:992/:1014/:1053）" → 992/1014/1053 在 990/1012/1051 的 `#[test]` 之后 +2 行 ✓ 一致。
+
+好，证据充分。现在写最终报告（中文）。
+
+报告结构：
+
+# Review：P04 Owner R4 修正（R3-1/R3-4）exact-head 复审
+
+## 0. 结论摘要（先给 verdict？用户要求"最后给 APPROVED 或 CHANGES_REQUESTED"。用户说"先列 Git/文件绑定能力和实际核验结果，再逐项给 Finding 与 disposition，最后给 APPROVED"）。所以最后给 verdict。
+
+## 1. 对象绑定与能力
+表格：环境能力（可用/不可用）
+- HEAD/分支/reflog 可读 ✓
+- commit faea1a2c 在 reflog 中存在，parent=5ea8304a，message
+- tree eb0cc832 NOT_VERIFIED
+- 工作树==commit 内容 NOT_VERIFIED
+- 差异路径穷举 NOT_VERIFIED（无 diff）
+- 提供间接证据强度
+
+## 2. R3-1 核查
+- 1103-1104 属性、字符串、函数名
+- 全仓唯一新增 ignore；main.rs 既有先例
+- `#[cfg(test)]` 8 处与 R3 一致；`#[test]` 12 处
+- 未加 watchdog/kill_for_test 调用
+- 生产 round_trip / Drop 未变（行号锚点）
+- explicit ignored 环境限定在 handoff 中登记 ✓
+- 静态判据：默认集合排除依据 Rust 语义（未运行）
+
+## 3. R3-4 核查
+- handoff:50 修正文本逐点对照
+- 未声称修复、明确 Drop 不可达、不加 watchdog
+- 无产品范围扩大
+- 残留：§5 第 115 行措辞
+
+## 4. 范围与状态
+- 两路径
+- P04 blocked/P22、Barrier EFFECTIVE、BLOCKED/NOT_RUN
+- worktree STATUS.md 陈旧、主仓已更新
+
+## 5. Findings / disposition 表
+
+## 6. 限制与未覆盖
+
+## 7. 判定：APPROVED，P0/P1/P2/P3 = 0/0/0/4
+
+还要给出下一步建议（AGENTS.md 要求：最终回复必须给出基于当前仓库状态的推荐下一步）。推荐：Codex 继续 P22 释放/集成流程，并将 R4 报告归档为 dsh-p04-owner-review-r4.stdout.md；同步 P04 元数据。
+
+注意：我不能创建文件（只读）。所以我建议 Codex 归档我的报告。
+
+另外我要不要提到"我发现 codex-dsh-owner-r4-review.stderr.log 已包含本会话输出"？这不是必须。但可能值得一句：本会话输出被宿主捕获到该路径（说明派发是 headless）。嗯，这属于噪音，我简要提一句在能力说明里（说明我读取了哪些文件）。可以略过。
+
+让我再确认一下 handoff 第 28 行的实际文本与第 50 行文本（已读过，行号 28/50）。是的。
+
+我还想检查一下 handoff 是否有 R4 相关的其他改动，比如 §3 表 AC2 命令加了 `-- --ignored`（第 66 行）✓、以及 §1.1 第 28 行 ✓。以及 §1 是否有"本轮返修"改成 R4？第 20 行仍写"本轮返修严格遵循...R2 审查报告"。若读者以为这是 R2 报告，会看不到 R4 内容 → 支持 P3-1。
+
+好，写报告。要控制长度但信息完整。使用中文，代码/路径/hash 保持英文。
+
+关于"P3 数量"，我列 4 条。
+
+再核对一次 P3-3 的表述准确性：代码 1195 行 `.expect("bounded wait timeout waiting for beta read phase")` 与 1222 行 `.expect("bounded wait timeout waiting for alpha stdin write")`。R3-4 说 "另 `:1194`/`:1221` 的文案把所有 `recv_timeout` 失败（含 sender 断开）都描述为 timeout"。R3 的行号 1194/1221 现在对应 1195/1222 ✓（+1）。我的报告用当前行号 1195/1222。
+
+好。另外，关于 P3-4 的表述：worktree doc/STATUS.md:5 "P04 已进入 in_progress"；worktree doc/tasks/P04.md:5 status: blocked；主仓 doc/STATUS.md:5 "P04=`BLOCKED`、`blocked_by:[P22]`"。以及主仓 doc/tasks/P04.md:84 说 R3 "IN_PROGRESS / final report pending"（主仓 P04.md 74-87 是 R2 段落；主仓版本没有 R3 段）。嗯，主仓 P04.md 87 行 vs worktree 93 行。主仓 84 行提到 R3 IN_PROGRESS。所以主仓 P04.md 落后于 worktree（worktree 是 Codex 的未提交新版本）。这是 Codex 工作区状态，属正常"写入窗口未提交"。我作为 Reviewer 应报告事实，但不当作缺陷（因为 Codex 明确说未触碰/未提交）。我会把它列为 P3 观察：集成前需确保 worktree 与主仓元数据一致（Codex 侧）。
+
+好，最后写。要注明本轮是只读静态审查，未运行任何命令，未创建/修改文件；不把静态审查说成运行验证。
+
+关于 Git 能力：我需要说明 pwsh 不可用（沙箱 ACL `SetNamedSecurityInfoW failed (Win32 5): grantWrite(...)`，与 R3 报告 §5 记录的同一限制一致），以及 danger-full-access 升级因无审批通道失败关闭。
+
+开始写。长度控制在合理范围（约 120-180 行）。

@@ -1,0 +1,1 @@
+quota_status=OK: live ZCode plan probe exit=0 with valid response/session ID sess_20fa28a3-59b9-4257-a419-52cd1ddfb3c4. permission_mode=OK: user authorized this exact Task and the planned ZCode invocation uses edit mode; no yolo escalation. conversation_usable=true: probe returned response and session ID.

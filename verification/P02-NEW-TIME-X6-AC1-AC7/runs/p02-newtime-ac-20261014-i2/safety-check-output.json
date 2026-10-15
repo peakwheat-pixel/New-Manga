@@ -1,0 +1,7 @@
+{
+  "status": "PASS",
+  "failClosed": true,
+  "errorCode": "EEXIST",
+  "preexistingPreserved": true,
+  "verifiedPath": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-i2\\tmp\\no-overwrite-check\\target.txt"
+}

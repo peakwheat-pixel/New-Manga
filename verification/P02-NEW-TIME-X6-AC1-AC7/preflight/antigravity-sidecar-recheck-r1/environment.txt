@@ -1,0 +1,17 @@
+timestamp=2026-10-14T18:57:37.7386683+08:00
+PowerShell=7.6.6
+Python=Python 3.14.6
+worktree=G:\CODEX\New Manga.workspace\worktrees\P02-NEW-TIME-X6-AC1-AC7-ANTIGRAVITY
+owner_HEAD=a5f173c2779507e14344f60e4b20d473c9ff830d
+binary=G:\CODEX\New Manga.workspace\worktrees\P02-NEW-TIME-X6-BUILD-CARGO\apps\desktop\src-tauri\target\release\m2rc1-desktop.exe
+binary_sha256=92AC7B8EFB646FE77DF8245B13C9AF9314BEF415B2F0E007B1CDCEA729BC13FD
+manifest=G:\CODEX\New Manga.workspace\agent-output\zcode\P02-NEW-TIME-X6-BUILD-CARGO\run-r1\05-sidecar-build-attempt2\sidecar-bundle-manifest.json
+manifest_sha256=CA0F531ADE3B83D5FFD7627643A2393443702F2B48FF60080EF1284B6BAD8175
+verifier=G:\CODEX\New Manga.workspace\agent-output\codex\P02-NEW-TIME-X6-AC1-AC7\sidecar-resource-copy-verify-r1.py
+verifier_sha256=7F1D95A8AB140128B88616FB74C9EF15370211ED624C17FA86BA85F9586CAB44
+task_env=G:\CODEX\New Manga.workspace\task-envs\P02-NEW-TIME-X6-AC1-AC7
+task_env_recursive_item_count=1
+application_launched=false
+build_or_install=false
+no_user_data_or_profile_access
+Task env follow-up: run-r1 is the sole child directory; it is empty (0 children, 0 files). The initial recursive item count of 1 counted this empty directory, not data.

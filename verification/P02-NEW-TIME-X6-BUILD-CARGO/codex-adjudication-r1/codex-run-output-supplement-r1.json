@@ -1,0 +1,45 @@
+{
+  "task_id": "P02-NEW-TIME-X6-BUILD-CARGO",
+  "agent": "codex",
+  "verification": "AGY wrapper output closure r1",
+  "source_commit": "708ac7938c72fbcccd0d68c7ca60635552cbcaaf",
+  "source_agent_manifest": {
+    "path": "agent-output/antigravity/P02-NEW-TIME-X6-BUILD-CARGO/antigravity-run-evidence-manifest-r1.json",
+    "sha256": "9A68B95F8D7B55098A01104F1BC5CBF57438D6326065C6B50CCB035AF355F1B6",
+    "verified_entries": 13,
+    "total_entries": 15,
+    "stale_or_mismatched_entries": [
+      "agent-output/antigravity/P02-NEW-TIME-X6-BUILD-CARGO/run-r1/stderr.log",
+      "agent-output/antigravity/P02-NEW-TIME-X6-BUILD-CARGO/run-r1/stdout.json"
+    ]
+  },
+  "result": "PASS",
+  "files": [
+    {
+      "path": "agent-output/antigravity/P02-NEW-TIME-X6-BUILD-CARGO/run-r1/stdout.json",
+      "bytes": 9750,
+      "sha256": "6F3BFF490CF2065534C5863113A4F691EAA5EB94F54550E17D0052A6F241B8DC"
+    },
+    {
+      "path": "agent-output/antigravity/P02-NEW-TIME-X6-BUILD-CARGO/run-r1/stderr.log",
+      "bytes": 63,
+      "sha256": "505FECFBDAE3628F3859B78CB89F33911BDB071965B1302C677435BB1893A28D"
+    },
+    {
+      "path": "agent-output/antigravity/P02-NEW-TIME-X6-BUILD-CARGO/run-r1/exit.txt",
+      "bytes": 3,
+      "sha256": "13BF7B3039C63BF5A50491FA3CFD8EB4E699D1BA1436315AEF9CBE5711530354"
+    },
+    {
+      "path": "agent-output/antigravity/P02-NEW-TIME-X6-BUILD-CARGO/run-r1/prompt.md",
+      "bytes": 4320,
+      "sha256": "914328B51FF29D7281BB55C56647BE7A3E4B39D24FDBE477BAF7C673EC88CE98"
+    },
+    {
+      "path": "agent-output/antigravity/P02-NEW-TIME-X6-BUILD-CARGO/antigravity-run-evidence-manifest-r1.json",
+      "bytes": 3725,
+      "sha256": "9A68B95F8D7B55098A01104F1BC5CBF57438D6326065C6B50CCB035AF355F1B6"
+    }
+  ],
+  "created_at": "2026-10-14T08:40:24+00:00"
+}

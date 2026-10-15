@@ -1,0 +1,2 @@
+
+SELFTEST_SUMMARY {"selftest": "PASS", "tests": 65, "failures": 0, "errors": 0, "helper_frozen": true, "na_items": [{"item": "powershell version differences", "reason": "Python helpers do not depend on PowerShell. validate-skill.ps1 is the only PS component; it is text-only, reads files with an explicit -Encoding UTF8 and is saved UTF-8-with-BOM so Chinese literals parse identically on Windows PowerShell 5.1 and PowerShell 7 (both verified)."}]}

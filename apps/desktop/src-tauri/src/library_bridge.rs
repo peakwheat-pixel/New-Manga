@@ -190,6 +190,7 @@ pub struct StdioLibraryChannel {
     child: Mutex<Child>,
     stdin: Mutex<ChildStdin>,
     stdout: Mutex<BufReader<ChildStdout>>,
+    transaction_lock: Mutex<()>,
     request_id_gen: AtomicU64,
 }
 
@@ -256,6 +257,7 @@ impl StdioLibraryChannel {
             child: Mutex::new(child),
             stdin: Mutex::new(stdin),
             stdout: Mutex::new(BufReader::new(stdout)),
+            transaction_lock: Mutex::new(()),
             request_id_gen: AtomicU64::new(1),
         })
     }
@@ -280,6 +282,17 @@ impl StdioLibraryChannel {
         let mut line = request.to_string();
         line.push('\n');
 
+        let _tx_guard = self.transaction_lock.lock().map_err(|_| {
+            LibraryError::unavailable("Internal mutex poisoned (transaction)")
+        })?;
+
+        #[cfg(test)]
+        TEST_AFTER_TRANSACTION_LOCK_HOOK.with(|cell| {
+            if let Some(hook) = cell.borrow_mut().as_mut() {
+                hook(&req_id);
+            }
+        });
+
         {
             let mut stdin = self.stdin.lock().map_err(|_| {
                 LibraryError::unavailable("Internal mutex poisoned (stdin)")
@@ -292,13 +305,6 @@ impl StdioLibraryChannel {
                 .map_err(|e| LibraryError::unavailable(&format!("stdin flush failed: {e}")))?;
         }
 
-        #[cfg(test)]
-        TEST_AFTER_STDIN_HOOK.with(|cell| {
-            if let Some(hook) = cell.borrow_mut().as_mut() {
-                hook(&req_id);
-            }
-        });
-
         let mut response_line = String::new();
         {
             let mut stdout = self.stdout.lock().map_err(|_| {
@@ -309,16 +315,25 @@ impl StdioLibraryChannel {
                 .map_err(|e| LibraryError::unavailable(&format!("stdout read failed: {e}")))?;
         }
 
-        if response_line.is_empty() {
-            return Err(LibraryError::unavailable("Core stdout closed (EOF)"));
-        }
-
         #[cfg(test)]
         TEST_RESPONSE_OBSERVER.with(|cell| {
             if let Some(observer) = cell.borrow_mut().as_mut() {
                 observer(&req_id, response_line.trim_end());
             }
         });
+
+        #[cfg(test)]
+        TEST_BEFORE_TRANSACTION_UNLOCK_HOOK.with(|cell| {
+            if let Some(hook) = cell.borrow_mut().as_mut() {
+                hook(&req_id);
+            }
+        });
+
+        drop(_tx_guard);
+
+        if response_line.is_empty() {
+            return Err(LibraryError::unavailable("Core stdout closed (EOF)"));
+        }
 
         decode_response(response_line.trim_end())
     }
@@ -414,37 +429,10 @@ impl StdioLibraryChannel {
             child: Mutex::new(child),
             stdin: Mutex::new(stdin),
             stdout: Mutex::new(BufReader::new(stdout)),
+            transaction_lock: Mutex::new(()),
             request_id_gen: AtomicU64::new(1),
         })
     }
-}
-
-#[cfg(test)]
-thread_local! {
-    static TEST_AFTER_STDIN_HOOK: std::cell::RefCell<Option<Box<dyn FnMut(&str)>>> =
-        std::cell::RefCell::new(None);
-    static TEST_RESPONSE_OBSERVER: std::cell::RefCell<Option<Box<dyn FnMut(&str, &str)>>> =
-        std::cell::RefCell::new(None);
-}
-
-#[cfg(test)]
-pub(crate) fn set_test_after_stdin_hook<F>(f: Option<F>)
-where
-    F: FnMut(&str) + 'static,
-{
-    TEST_AFTER_STDIN_HOOK.with(|cell| {
-        *cell.borrow_mut() = f.map(|func| Box::new(func) as Box<dyn FnMut(&str)>);
-    });
-}
-
-#[cfg(test)]
-pub(crate) fn set_test_response_observer<F>(f: Option<F>)
-where
-    F: FnMut(&str, &str) + 'static,
-{
-    TEST_RESPONSE_OBSERVER.with(|cell| {
-        *cell.borrow_mut() = f.map(|func| Box::new(func) as Box<dyn FnMut(&str, &str)>);
-    });
 }
 
 pub fn wait_timeout_or_kill(
@@ -480,6 +468,46 @@ impl Drop for StdioLibraryChannel {
             let _ = wait_timeout_or_kill(&mut child, std::time::Duration::from_secs(5));
         }
     }
+}
+
+#[cfg(test)]
+thread_local! {
+    static TEST_AFTER_TRANSACTION_LOCK_HOOK: std::cell::RefCell<Option<Box<dyn FnMut(&str)>>> =
+        std::cell::RefCell::new(None);
+    static TEST_BEFORE_TRANSACTION_UNLOCK_HOOK: std::cell::RefCell<Option<Box<dyn FnMut(&str)>>> =
+        std::cell::RefCell::new(None);
+    static TEST_RESPONSE_OBSERVER: std::cell::RefCell<Option<Box<dyn FnMut(&str, &str)>>> =
+        std::cell::RefCell::new(None);
+}
+
+#[cfg(test)]
+pub(crate) fn set_test_after_transaction_lock_hook<F>(f: Option<F>)
+where
+    F: FnMut(&str) + 'static,
+{
+    TEST_AFTER_TRANSACTION_LOCK_HOOK.with(|cell| {
+        *cell.borrow_mut() = f.map(|func| Box::new(func) as Box<dyn FnMut(&str)>);
+    });
+}
+
+#[cfg(test)]
+pub(crate) fn set_test_before_transaction_unlock_hook<F>(f: Option<F>)
+where
+    F: FnMut(&str) + 'static,
+{
+    TEST_BEFORE_TRANSACTION_UNLOCK_HOOK.with(|cell| {
+        *cell.borrow_mut() = f.map(|func| Box::new(func) as Box<dyn FnMut(&str)>);
+    });
+}
+
+#[cfg(test)]
+pub(crate) fn set_test_response_observer<F>(f: Option<F>)
+where
+    F: FnMut(&str, &str) + 'static,
+{
+    TEST_RESPONSE_OBSERVER.with(|cell| {
+        *cell.borrow_mut() = f.map(|func| Box::new(func) as Box<dyn FnMut(&str, &str)>);
+    });
 }
 
 impl LibraryChannel for StdioLibraryChannel {
@@ -1079,36 +1107,32 @@ mod tests {
         assert!(catalog_db.is_file(), "the core bound the fresh catalog");
     }
 
-    /// P04 AC2/AC3: deterministic concurrent round_trip reproducer / diagnostic on the same
-    /// StdioLibraryChannel instance with two distinguishable callers.
-    ///
-    /// NOTE: This test is an AC3 deterministic negative reproducer / diagnostic, NOT a passing
-    /// regression gate. Under current production round_trip implementation (where response demuxing /
-    /// request_id association is absent), this deterministic interleaving (Alpha writes first, Beta writes
-    /// second but Beta acquires stdout lock first) STATICALLY GUARANTEES response cross-talk mismatch:
-    /// Beta reads Alpha's response, and Alpha reads Beta's response (`static_expected_behavior = FAIL`).
-    ///
-    /// Cargo test exit 0 indicates successful execution and emission of diagnostic evidence only,
-    /// and MUST NOT be construed as response ownership PASS.
-    ///
-    /// Uses test-only thread-local hooks (`set_test_after_stdin_hook` and `set_test_response_observer`)
-    /// and bounded mpsc channels to control write ordering (Alpha then Beta) and read-lock acquisition
-    /// ordering (Beta then Alpha) deterministically without sleeps or probabilistic stress loops.
-    ///
-    /// Records original requests, raw responses, caller/token, ownership decisions,
-    /// and behavior verdict into a unique diagnostic log file under verification/P04/**.
-    /// Verdict artefact write failures explicitly fail the test (no silent swallow).
-    /// Per AC3, if mismatch is observed (behavior=FAIL), records the diagnostic evidence without panicking
-    /// so the reproducer evidence is preserved for Codex to establish an independent fix task.
+    /// Regression test for P22 AC2 (concurrent round_trip response ownership).
+    /// Asserts that concurrent callers on the same StdioLibraryChannel instance
+    /// receive their own responses deterministically under the per-channel transaction lock.
     #[test]
-    #[ignore = "P04 AC3 reproducer: deterministic negative diagnostic, run explicitly via cargo test -- --ignored"]
     fn same_channel_concurrent_round_trips_keep_response_ownership() {
+        use std::sync::atomic::AtomicBool;
         use std::sync::mpsc;
         use std::sync::Arc;
 
-        // P2-2: Require explicit M2RC1_PYTHON from P02-approved environment (no PATH fallback)
+        fn recv_bounded<T>(
+            rx: &mpsc::Receiver<T>,
+            timeout: std::time::Duration,
+            phase: &str,
+        ) -> T {
+            rx.recv_timeout(timeout).unwrap_or_else(|err| match err {
+                mpsc::RecvTimeoutError::Timeout => {
+                    panic!("bounded wait timed out after {timeout:?} waiting for {phase}");
+                }
+                mpsc::RecvTimeoutError::Disconnected => {
+                    panic!("coordination channel disconnected (sender dropped or panicked) waiting for {phase}");
+                }
+            })
+        }
+
         let python = std::env::var("M2RC1_PYTHON").expect(
-            "M2RC1_PYTHON must be explicitly set to P02-approved Python environment for P04 testing (no PATH fallback permitted)",
+            "M2RC1_PYTHON must be explicitly set to P02-approved Python environment for testing",
         );
 
         let manifest_dir = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
@@ -1117,27 +1141,36 @@ mod tests {
             repo_root.pop();
         }
 
-        // P2-1: Sidecar script must exist; fail-fast with explicit path (no inline fallback)
-        let script_path = repo_root
+        let p22_rebase_script = repo_root
             .join("verification")
-            .join("P04")
+            .join("P22-REBASE-1")
             .join("deterministic_concurrent_sidecar.py");
+        let script_path = if p22_rebase_script.is_file() {
+            p22_rebase_script
+        } else {
+            repo_root
+                .join("verification")
+                .join("P04")
+                .join("deterministic_concurrent_sidecar.py")
+        };
         assert!(
             script_path.is_file(),
-            "P04 test sidecar missing at expected path: {}",
+            "test sidecar missing at expected path: {}",
             script_path.display()
         );
 
-        // P3-1: Write to unique diagnostic file per run to prevent append accumulation
         let run_id = format!(
-            "diagnostic_p04_{}_{}.jsonl",
+            "diagnostic_p22_{}_{}.jsonl",
             std::process::id(),
             std::time::SystemTime::now()
                 .duration_since(std::time::UNIX_EPOCH)
                 .map(|d| d.as_millis())
                 .unwrap_or(0)
         );
-        let log_path = repo_root.join("verification").join("P04").join(run_id);
+        let log_path = repo_root
+            .join("verification")
+            .join("P04")
+            .join(run_id);
 
         let mut cmd = Command::new(&python);
         cmd.arg(&script_path);
@@ -1170,29 +1203,37 @@ mod tests {
             "token": "token-BBB-222",
         });
 
-        // Deterministic interleaving control:
-        // 1. Alpha writes stdin first.
-        // 2. Alpha signals beta via `alpha_wrote_tx` and waits on `beta_read_done_rx` with bounded timeout.
-        // 3. Beta waits on `alpha_wrote_rx` with bounded timeout, then writes stdin second.
-        // 4. Beta proceeds immediately to acquire stdout lock and reads the first response.
-        // 5. Beta signals `beta_read_done_tx`.
-        // 6. Alpha resumes, acquires stdout lock, and reads the second response.
-        let (alpha_wrote_tx, alpha_wrote_rx) = mpsc::channel();
-        let (beta_read_done_tx, beta_read_done_rx) = mpsc::channel();
+        let (alpha_locked_tx, alpha_locked_rx) = mpsc::channel();
+        let (beta_calling_tx, beta_calling_rx) = mpsc::channel();
+
+        let alpha_finished_read = Arc::new(AtomicBool::new(false));
+        let beta_acquired_lock = Arc::new(AtomicBool::new(false));
 
         let chan_alpha = Arc::clone(&channel);
         let payload_alpha = req_alpha.clone();
+        let alpha_finished_read_alpha = Arc::clone(&alpha_finished_read);
+        let beta_acquired_lock_alpha = Arc::clone(&beta_acquired_lock);
         let handle_alpha = std::thread::spawn(move || {
             let capture = Arc::new(std::sync::Mutex::new((String::new(), String::new())));
             let capture_clone = Arc::clone(&capture);
 
-            set_test_after_stdin_hook(Some(move |_req_id: &str| {
-                alpha_wrote_tx
+            set_test_after_transaction_lock_hook(Some(move |_req_id: &str| {
+                alpha_locked_tx
                     .send(())
-                    .expect("failed to signal alpha stdin written");
-                beta_read_done_rx
-                    .recv_timeout(std::time::Duration::from_secs(10))
-                    .expect("bounded wait timeout waiting for beta read phase");
+                    .expect("failed to signal that alpha acquired transaction lock");
+                recv_bounded(
+                    &beta_calling_rx,
+                    std::time::Duration::from_secs(10),
+                    "beta calling round_trip announcement",
+                );
+            }));
+
+            set_test_before_transaction_unlock_hook(Some(move |_req_id: &str| {
+                alpha_finished_read_alpha.store(true, Ordering::SeqCst);
+                assert!(
+                    !beta_acquired_lock_alpha.load(Ordering::SeqCst),
+                    "Beta must not have acquired transaction lock before Alpha releases it"
+                );
             }));
 
             set_test_response_observer(Some(move |req_id: &str, raw: &str| {
@@ -1208,18 +1249,42 @@ mod tests {
                 (lock.0.clone(), lock.1.clone())
             };
 
-            set_test_after_stdin_hook::<fn(&str)>(None);
+            set_test_after_transaction_lock_hook::<fn(&str)>(None);
+            set_test_before_transaction_unlock_hook::<fn(&str)>(None);
             set_test_response_observer::<fn(&str, &str)>(None);
 
             (res, captured_raw, captured_id)
         });
 
         let chan_beta = Arc::clone(&channel);
+        let chan_beta_probe = Arc::clone(&channel);
         let payload_beta = req_beta.clone();
+        let alpha_finished_read_beta = Arc::clone(&alpha_finished_read);
+        let beta_acquired_lock_beta = Arc::clone(&beta_acquired_lock);
         let handle_beta = std::thread::spawn(move || {
-            alpha_wrote_rx
-                .recv_timeout(std::time::Duration::from_secs(10))
-                .expect("bounded wait timeout waiting for alpha stdin write");
+            recv_bounded(
+                &alpha_locked_rx,
+                std::time::Duration::from_secs(10),
+                "alpha transaction lock acquisition",
+            );
+
+            // Deterministic lock contention probe:
+            // Alpha is held inside TEST_AFTER_TRANSACTION_LOCK_HOOK waiting on beta_calling_rx.
+            // Alpha is guaranteed to be holding transaction_lock. Assert that Beta's try_lock observes WouldBlock.
+            let probe_result = chan_beta_probe.transaction_lock.try_lock();
+            assert!(
+                matches!(probe_result, Err(std::sync::TryLockError::WouldBlock)),
+                "Beta must observe Alpha holding transaction_lock (WouldBlock) before entering round_trip, got: {:?}",
+                probe_result.map(|_| "Unlocked")
+            );
+
+            set_test_after_transaction_lock_hook(Some(move |_req_id: &str| {
+                beta_acquired_lock_beta.store(true, Ordering::SeqCst);
+                assert!(
+                    alpha_finished_read_beta.load(Ordering::SeqCst),
+                    "Beta must acquire transaction_lock only after Alpha has finished its transaction read"
+                );
+            }));
 
             let capture = Arc::new(std::sync::Mutex::new((String::new(), String::new())));
             let capture_clone = Arc::clone(&capture);
@@ -1230,16 +1295,18 @@ mod tests {
                 lock.1 = raw.to_string();
             }));
 
-            let res = chan_beta.round_trip("test.concurrent_beta", payload_beta);
-            beta_read_done_tx
+            beta_calling_tx
                 .send(())
-                .expect("failed to signal beta read done");
+                .expect("failed to signal that beta is calling round_trip");
+
+            let res = chan_beta.round_trip("test.concurrent_beta", payload_beta);
 
             let (captured_id, captured_raw) = {
                 let lock = capture.lock().unwrap();
                 (lock.0.clone(), lock.1.clone())
             };
 
+            set_test_after_transaction_lock_hook::<fn(&str)>(None);
             set_test_response_observer::<fn(&str, &str)>(None);
 
             (res, captured_raw, captured_id)
@@ -1267,13 +1334,12 @@ mod tests {
         };
 
         let verdict_record = serde_json::json!({
-            "event": "concurrency_verdict",
             "timestamp": std::time::SystemTime::now()
                 .duration_since(std::time::UNIX_EPOCH)
                 .map(|d| d.as_secs_f64())
                 .unwrap_or(0.0),
             "behavior": behavior,
-            "static_expected_behavior": "FAIL",
+            "static_expected_behavior": "PASS",
             "alpha_request": req_alpha,
             "alpha_request_id": id_alpha,
             "alpha_raw_response": raw_alpha,
@@ -1282,32 +1348,36 @@ mod tests {
             "beta_request_id": id_beta,
             "beta_raw_response": raw_beta,
             "beta_owned": beta_owned,
-            "interleaving": "deterministic_write_alpha_then_beta__read_beta_then_alpha",
+            "interleaving": "deterministic_serialized_alpha_then_beta_under_transaction_lock",
         });
 
-        // R2-004: Explicitly fail on log write error; no silent swallow
+        if let Some(parent) = log_path.parent() {
+            std::fs::create_dir_all(parent)
+                .expect("failed to create parent directory for P22 diagnostic verdict log");
+        }
+
         let mut file = std::fs::OpenOptions::new()
             .create(true)
             .append(true)
             .open(&log_path)
-            .expect("failed to open/create P04 diagnostic verdict log file");
+            .expect("failed to open/create P22 diagnostic verdict log file");
         writeln!(file, "{}", verdict_record)
             .expect("failed to write concurrency verdict record to diagnostic log");
 
         eprintln!(
-            "[P04-AC3-DIAGNOSTIC] Concurrency verdict: behavior={behavior}, alpha_owned={alpha_owned}, beta_owned={beta_owned}"
+            "[P22-REGRESSION] Concurrency verdict: behavior={behavior}, alpha_owned={alpha_owned}, beta_owned={beta_owned}"
         );
-        eprintln!("[P04-AC3-DIAGNOSTIC] Caller alpha raw response: {raw_alpha}");
-        eprintln!("[P04-AC3-DIAGNOSTIC] Caller beta raw response: {raw_beta}");
+        eprintln!("[P22-REGRESSION] Caller alpha raw response: {raw_alpha}");
+        eprintln!("[P22-REGRESSION] Caller beta raw response: {raw_beta}");
 
-        if behavior == "FAIL" {
-            eprintln!(
-                "[P04-AC3-DIAGNOSTIC] Expected negative reproducer triggered: cross-caller mismatch observed under inverted read-lock interleaving."
-            );
-            eprintln!(
-                "[P04-AC3-DIAGNOSTIC] Per AC3 contract: diagnostic evidence recorded at {}; P04 remains blocked for independent Codex fix task.",
-                log_path.display()
-            );
-        }
+        assert!(
+            alpha_owned,
+            "Caller alpha must receive its own echo (expected caller_alpha/token-AAA-111), got val_alpha={val_alpha:?}"
+        );
+        assert!(
+            beta_owned,
+            "Caller beta must receive its own echo (expected caller_beta/token-BBB-222), got val_beta={val_beta:?}"
+        );
+        assert_eq!(behavior, "PASS", "concurrency behavior verdict must be PASS");
     }
 }

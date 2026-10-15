@@ -1,0 +1,96 @@
+{
+  "task_id": "P02-NEW-TIME-X6-BUILD-CARGO",
+  "frozen_at": "2026-10-14T14:40:36.0467649+08:00",
+  "source_code_baseline": "49d2a2f9c56462f5602b00ad4b824c5381abb1ab",
+  "source_manifest_commit": "55ad82050a4b64f22b493998c9fc99523feeb92e",
+  "source_manifest": {
+    "path": "verification/P02-NEW-TIME-X6-BUILD-CARGO/source-manifest-r1.json",
+    "sha256": "4E91A92291629C776F0B54A36E0805F0219F40778DA4EDB70B85E23B298B5E3B",
+    "files_checked": 318,
+    "generator": "official generate-evidence-manifest.py v1",
+    "verified": "PASS"
+  },
+  "supplemental_git_inputs": [
+    {
+      "path": "apps/desktop/src-tauri/Cargo.lock",
+      "commit": "55ad82050a4b64f22b493998c9fc99523feeb92e",
+      "bytes": 113745,
+      "sha256": "9D5E29D5BEF85388A822107E88AFBCF3C82A56EEA3BE801AD1B15DB8E919A5BF",
+      "reason": "official evidence generator excludes mutable-name/lock path; explicit commit and SHA-256 pin"
+    },
+    {
+      "path": "src/application/settings/snapshots.py",
+      "commit": "55ad82050a4b64f22b493998c9fc99523feeb92e",
+      "bytes": 4557,
+      "sha256": "DAB7F090169F33DD0220BFACCCF9F054BC774881E2195DF2E9A62C4B0CC0DEE4",
+      "reason": "official evidence generator excludes mutable-name/lock path; explicit commit and SHA-256 pin"
+    },
+    {
+      "path": "src/application/translation/context/snapshot.py",
+      "commit": "55ad82050a4b64f22b493998c9fc99523feeb92e",
+      "bytes": 2509,
+      "sha256": "4F62AFDFD376C48FCC2B4C711C9842D3B87D2864AF033D46A6542A4B79E7A902",
+      "reason": "official evidence generator excludes mutable-name/lock path; explicit commit and SHA-256 pin"
+    }
+  ],
+  "external_inputs": [
+    {
+      "path": "G:\\CODEX\\New Manga.task-envs\\M2-DOCTR-QUAL-C4\\weights\\ogkalu-comic-text-and-bubble-detector\\model.safetensors",
+      "bytes": 171543900,
+      "sha256": "037930A861E67870EB345BE01B28CC70D7E2B7956528E48EE0EBDB0C093DF80D",
+      "role": "Manga detector weight",
+      "disposition": "read-only source"
+    },
+    {
+      "path": "G:\\CODEX\\New Manga.task-envs\\M2-DOCTR-QUAL-C4\\weights\\ogkalu-comic-text-and-bubble-detector\\config.json",
+      "bytes": 2320,
+      "sha256": "B6D707933E12E9593A7025604BE1C95ADD70A6DB371FDD1532E8854E2256E072",
+      "role": "Manga detector config",
+      "disposition": "read-only source"
+    },
+    {
+      "path": "G:\\CODEX\\New Manga.task-envs\\M2-DOCTR-QUAL-C4\\weights\\ogkalu-comic-text-and-bubble-detector\\preprocessor_config.json",
+      "bytes": 470,
+      "sha256": "7E9E2245806AA3EF068A5321F5EEBEE3116FA4CEC560173231954FFACA930ECA",
+      "role": "Manga detector preprocessor config",
+      "disposition": "read-only source"
+    },
+    {
+      "path": "G:\\CODEX\\New Manga.task-envs\\M2-SFX-DETECT\\weights-v2b\\yolo11s-seg.onnx",
+      "bytes": 40824255,
+      "sha256": "944E811410933AD6FF8D32446FCC9EEF90FB463794E1874CE83035E83ACD418D",
+      "role": "SFX detector weight",
+      "disposition": "read-only source"
+    }
+  ],
+  "tauri_cli_metadata": [
+    {
+      "package": "@tauri-apps/cli",
+      "version": "2.12.2",
+      "integrity": "sha512-PMSppzAnlT+BvZtRKuidxjRSm2r5t8kDpJ/czmmQUa0AtDNTwrjLE8vApK3phCWGg7isfnYL46Dl1jB4ArI0hA==",
+      "registry": "https://registry.npmjs.org/",
+      "raw_metadata": "G:\\CODEX\\New Manga.workspace\\agent-output\\codex\\P02-NEW-TIME-X6-BUILD-CARGO\\build-inputs-r1\\npm-metadata-r1\\main.json",
+      "raw_sha256": "8503B20A71E95B6D543916EF0E477A29F65881A8D020F47BC2A5118D73A7C290"
+    },
+    {
+      "package": "@tauri-apps/cli-win32-x64-msvc",
+      "version": "2.12.2",
+      "integrity": "sha512-cQXI2ZaZmwBDt0XATCqASVanYizxkEE3ceQVlVHXaQ51HzsQUWA04c9Nz7LrrY2lgAu3jFMyat+8Yz3Z2R2qBA==",
+      "registry": "https://registry.npmjs.org/",
+      "raw_metadata": "G:\\CODEX\\New Manga.workspace\\agent-output\\codex\\P02-NEW-TIME-X6-BUILD-CARGO\\build-inputs-r1\\npm-metadata-r1\\windows.json",
+      "raw_sha256": "542273C76DECA21DF32EBA7E9D257BDA17E9BC50A997EE5AB6A2DC84E22DF0E6"
+    }
+  ],
+  "toolchain": {
+    "node": "v24.15.0",
+    "npm": "12.0.1",
+    "python": "3.12.3",
+    "python_exe": "C:\\Users\\49745\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+    "cargo": "cargo 1.98.1 (797e8a9bc 2026-08-05)",
+    "rustc": "rustc 1.98.1 (48a229cea 2026-09-01)",
+    "zcode_cli": "0.16.9",
+    "tauri_cli": "2.12.2"
+  },
+  "cache_root": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-BUILD-CARGO",
+  "model_source_note": "Existing legacy task-env model sources verified in place; no move, rewrite, or cleanup."
+}

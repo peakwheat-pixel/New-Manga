@@ -1,0 +1,462 @@
+{
+  "steps": [
+    {
+      "step": "clean-targets-observed",
+      "at": "2026-10-14T11:39:43.050Z",
+      "roaming": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-r1\\ac3-debounce-a5\\appdata-roaming",
+        "state": "ABSENT"
+      },
+      "localAppData": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-r1\\ac3-debounce-a5\\appdata-local",
+        "state": "ABSENT"
+      },
+      "tmp": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-r1\\ac3-debounce-a5\\tmp",
+        "state": "ABSENT"
+      },
+      "dataRoot": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-r1\\ac3-debounce-a5\\data-root",
+        "state": "ABSENT"
+      },
+      "derived": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-r1\\ac3-debounce-a5\\scope\\derived",
+        "state": "ABSENT"
+      },
+      "managed": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-r1\\ac3-debounce-a5\\scope\\managed",
+        "state": "ABSENT"
+      },
+      "catalogDb": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-r1\\ac3-debounce-a5\\catalog\\catalog.sqlite",
+        "state": "ABSENT"
+      },
+      "webview2Udd": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-r1\\ac3-debounce-a5\\webview2-udd",
+        "state": "ABSENT"
+      },
+      "logs": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-r1\\ac3-debounce-a5\\logs",
+        "state": "ABSENT"
+      }
+    },
+    {
+      "step": "launched",
+      "at": "2026-10-14T11:39:43.892Z",
+      "pid": 45972
+    },
+    {
+      "step": "observer-installed",
+      "at": "2026-10-14T11:39:44.304Z",
+      "state": "ACTIVE",
+      "mock": "none (passthrough)"
+    },
+    {
+      "step": "phaseA-typing",
+      "at": "2026-10-14T11:39:45.251Z",
+      "text": "syn-page-a",
+      "pagePerfStart": 420.79999999701977,
+      "pagePerfEnd": 1355.8999999910593
+    },
+    {
+      "step": "phaseA-invoke-log",
+      "at": "2026-10-14T11:39:46.866Z",
+      "resolveCalls": [
+        {
+          "command": "resolve_page_resource",
+          "args": {
+            "pageId": "syn-page-a"
+          },
+          "pagePerfNow": 1576.2999999970198,
+          "pageEpoch": 1791977985472,
+          "kind": "invoke"
+        }
+      ],
+      "regionCalls": [
+        {
+          "command": "list_regions",
+          "args": {
+            "pageId": "syn-page-a"
+          },
+          "pagePerfNow": 1576.7999999970198,
+          "pageEpoch": 1791977985472,
+          "kind": "invoke"
+        }
+      ],
+      "fullLogTail": [
+        {
+          "command": "probe_issue_url",
+          "args": {
+            "resourceId": "res-x",
+            "revision": "rev-1",
+            "ttlSeconds": 0.001
+          },
+          "pagePerfNow": 24.700000002980232,
+          "pageEpoch": 1791977983920,
+          "kind": "invoke"
+        },
+        {
+          "kind": "settled",
+          "command": "probe_issue_url",
+          "status": "rejected",
+          "error": "Command probe_issue_url not found",
+          "pagePerfNow": 25.399999991059303,
+          "pageEpoch": 1791977983921
+        },
+        {
+          "command": "issue_resource_url",
+          "args": {
+            "resourceId": "res-cataloged",
+            "revision": "rev-1",
+            "ttlOverride": 0.001
+          },
+          "pagePerfNow": 25.399999991059303,
+          "pageEpoch": 1791977983921,
+          "kind": "invoke"
+        },
+        {
+          "kind": "settled",
+          "command": "issue_resource_url",
+          "status": "rejected",
+          "error": "RESOURCE_NOT_CATALOGED",
+          "pagePerfNow": 26.299999997019768,
+          "pageEpoch": 1791977983922
+        },
+        {
+          "command": "issue_resource_url",
+          "args": {
+            "resourceId": "res-cataloged",
+            "revision": "rev-1"
+          },
+          "pagePerfNow": 26.299999997019768,
+          "pageEpoch": 1791977983922,
+          "kind": "invoke"
+        },
+        {
+          "kind": "settled",
+          "command": "issue_resource_url",
+          "status": "rejected",
+          "error": "RESOURCE_NOT_CATALOGED",
+          "pagePerfNow": 27,
+          "pageEpoch": 1791977983923
+        },
+        {
+          "command": "library_list_books",
+          "pagePerfNow": 417.20000000298023,
+          "pageEpoch": 1791977984313,
+          "kind": "invoke"
+        },
+        {
+          "kind": "settled",
+          "command": "library_list_books",
+          "status": "resolved",
+          "pagePerfNow": 420.8999999910593,
+          "pageEpoch": 1791977984316
+        },
+        {
+          "command": "resolve_page_resource",
+          "args": {
+            "pageId": "syn-page-a"
+          },
+          "pagePerfNow": 1576.2999999970198,
+          "pageEpoch": 1791977985472,
+          "kind": "invoke"
+        },
+        {
+          "command": "list_regions",
+          "args": {
+            "pageId": "syn-page-a"
+          },
+          "pagePerfNow": 1576.7999999970198,
+          "pageEpoch": 1791977985472,
+          "kind": "invoke"
+        },
+        {
+          "kind": "settled",
+          "command": "resolve_page_resource",
+          "status": "rejected",
+          "error": "PAGE_NOT_FOUND",
+          "pagePerfNow": 1578.2999999970198,
+          "pageEpoch": 1791977985474
+        },
+        {
+          "kind": "settled",
+          "command": "list_regions",
+          "status": "resolved",
+          "pagePerfNow": 1579.2999999970198,
+          "pageEpoch": 1791977985475
+        }
+      ]
+    },
+    {
+      "step": "phaseA-screenshot",
+      "at": "2026-10-14T11:39:46.938Z",
+      "file": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-r1\\ac3-debounce-a5\\logs\\ac3-phaseA.png",
+      "bytes": 27068,
+      "sha256": "02CFAC19592547F10ABF36DB6916CD033B16159A5BFD9C2469F1AC105A00C5AC"
+    },
+    {
+      "step": "phaseB-mocks-installed",
+      "at": "2026-10-14T11:39:46.938Z",
+      "commands": [
+        "resolve_page_resource",
+        "list_regions"
+      ],
+      "layer": "MOCK_IPC at invoke boundary"
+    },
+    {
+      "step": "phaseB1-typing",
+      "at": "2026-10-14T11:39:47.099Z",
+      "first": "syn-stale-old",
+      "then": "syn-stale-new",
+      "pagePerfStart": 3046.5999999940395,
+      "pagePerfEnd": 3204.5
+    },
+    {
+      "step": "phaseB1-result",
+      "at": "2026-10-14T11:39:48.907Z",
+      "resolveCalls": [
+        {
+          "command": "resolve_page_resource",
+          "args": {
+            "pageId": "syn-page-a"
+          },
+          "pagePerfNow": 1576.2999999970198,
+          "pageEpoch": 1791977985472,
+          "kind": "invoke"
+        },
+        {
+          "command": "resolve_page_resource",
+          "args": {
+            "pageId": "syn-stale-new"
+          },
+          "pagePerfNow": 3514.7000000029802,
+          "pageEpoch": 1791977987410,
+          "kind": "invoke"
+        }
+      ],
+      "state": {
+        "label": "B1-after-switch",
+        "pageId": "syn-stale-new",
+        "resourceId": "page-original-syn-stale-new",
+        "resolveBusy": false,
+        "resolveError": null,
+        "toolbarContext": "page syn-stale-new",
+        "perfNow": 5012.0999999940395
+      }
+    },
+    {
+      "step": "phaseB2-typing",
+      "at": "2026-10-14T11:39:49.449Z",
+      "old": "syn-stale-old",
+      "new": "syn-stale-new",
+      "switchPerfNow": 5554.29999999702
+    },
+    {
+      "step": "phaseB2-result",
+      "at": "2026-10-14T11:39:50.864Z",
+      "resolveCalls": [
+        {
+          "command": "resolve_page_resource",
+          "args": {
+            "pageId": "syn-page-a"
+          },
+          "pagePerfNow": 1576.2999999970198,
+          "pageEpoch": 1791977985472,
+          "kind": "invoke"
+        },
+        {
+          "command": "resolve_page_resource",
+          "args": {
+            "pageId": "syn-stale-new"
+          },
+          "pagePerfNow": 3514.7000000029802,
+          "pageEpoch": 1791977987410,
+          "kind": "invoke"
+        },
+        {
+          "command": "resolve_page_resource",
+          "args": {
+            "pageId": "syn-stale-old"
+          },
+          "pagePerfNow": 5339.899999991059,
+          "pageEpoch": 1791977989235,
+          "kind": "invoke"
+        },
+        {
+          "command": "resolve_page_resource",
+          "args": {
+            "pageId": "syn-stale-new"
+          },
+          "pagePerfNow": 5869.29999999702,
+          "pageEpoch": 1791977989765,
+          "kind": "invoke"
+        }
+      ],
+      "settled": [
+        {
+          "kind": "settled",
+          "command": "resolve_page_resource",
+          "status": "rejected",
+          "error": "PAGE_NOT_FOUND",
+          "pagePerfNow": 1578.2999999970198,
+          "pageEpoch": 1791977985474
+        },
+        {
+          "kind": "settled",
+          "command": "resolve_page_resource",
+          "status": "resolved",
+          "pagePerfNow": 3561.5999999940395,
+          "pageEpoch": 1791977987457
+        },
+        {
+          "kind": "settled",
+          "command": "resolve_page_resource",
+          "status": "resolved",
+          "pagePerfNow": 5915,
+          "pageEpoch": 1791977989811
+        },
+        {
+          "kind": "settled",
+          "command": "resolve_page_resource",
+          "status": "rejected",
+          "error": "PAGE_RESOURCE_UNAVAILABLE:STALE_OLD_LATE",
+          "pagePerfNow": 6240.70000000298,
+          "pageEpoch": 1791977990136
+        }
+      ],
+      "mid": {
+        "label": "B2-mid",
+        "pageId": "syn-stale-new",
+        "resourceId": "page-original-syn-stale-new",
+        "resolveBusy": false,
+        "resolveError": null,
+        "toolbarContext": "page syn-stale-new",
+        "perfNow": 6256.399999991059
+      },
+      "end": {
+        "label": "B2-end",
+        "pageId": "syn-stale-new",
+        "resourceId": "page-original-syn-stale-new",
+        "resolveBusy": false,
+        "resolveError": null,
+        "toolbarContext": "page syn-stale-new",
+        "perfNow": 6968.899999991059
+      }
+    },
+    {
+      "step": "phaseB-screenshot",
+      "at": "2026-10-14T11:39:50.905Z",
+      "file": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-r1\\ac3-debounce-a5\\logs\\ac3-phaseB.png",
+      "bytes": 26583,
+      "sha256": "828B83A73999881F1921B084F5512D42B36708D523C1D5A215A1C02125EFBFE0"
+    },
+    {
+      "step": "teardown",
+      "at": "2026-10-14T11:39:52.119Z",
+      "exited": true,
+      "code": null,
+      "signal": "SIGTERM"
+    }
+  ],
+  "phaseA": {
+    "layer": "REAL_IPC (observer passthrough)",
+    "typed_text": "syn-page-a",
+    "resolve_page_resource_calls": 1,
+    "resolve_args": [
+      {
+        "pageId": "syn-page-a"
+      }
+    ],
+    "list_regions_calls": 1,
+    "regions_args": [
+      {
+        "pageId": "syn-page-a"
+      }
+    ],
+    "first_resolve_perf_now": 1576.2999999970198,
+    "first_regions_perf_now": 1576.7999999970198,
+    "typing_end_perf_now": 1355.8999999910593,
+    "quiet_period_observed_ms": 220.4
+  },
+  "phaseB1": {
+    "layer": "MOCK_IPC (resolve/list mocked; React effect chain real)",
+    "resolve_calls": [
+      {
+        "args": {
+          "pageId": "syn-page-a"
+        },
+        "pagePerfNow": 1576.2999999970198
+      },
+      {
+        "args": {
+          "pageId": "syn-stale-new"
+        },
+        "pagePerfNow": 3514.7000000029802
+      }
+    ],
+    "only_final_id_fired": false,
+    "resolved_resource_state": "page-original-syn-stale-new",
+    "stale_error_leaked": false
+  },
+  "phaseB2": {
+    "layer": "MOCK_IPC (delayed stale reply; guard logic real)",
+    "resolve_calls": [
+      {
+        "args": {
+          "pageId": "syn-page-a"
+        },
+        "pagePerfNow": 1576.2999999970198
+      },
+      {
+        "args": {
+          "pageId": "syn-stale-new"
+        },
+        "pagePerfNow": 3514.7000000029802
+      },
+      {
+        "args": {
+          "pageId": "syn-stale-old"
+        },
+        "pagePerfNow": 5339.899999991059
+      },
+      {
+        "args": {
+          "pageId": "syn-stale-new"
+        },
+        "pagePerfNow": 5869.29999999702
+      }
+    ],
+    "settled": [
+      {
+        "status": "rejected",
+        "error": "PAGE_NOT_FOUND",
+        "pagePerfNow": 1578.2999999970198
+      },
+      {
+        "status": "resolved",
+        "pagePerfNow": 3561.5999999940395
+      },
+      {
+        "status": "resolved",
+        "pagePerfNow": 5915
+      },
+      {
+        "status": "rejected",
+        "error": "PAGE_RESOURCE_UNAVAILABLE:STALE_OLD_LATE",
+        "pagePerfNow": 6240.70000000298
+      }
+    ],
+    "final_resource_state": "page-original-syn-stale-new",
+    "final_resolve_error": null,
+    "stale_reply_overwrote_current": false
+  },
+  "verdict": {
+    "ac": "AC3",
+    "quiet_period_final_id_only": true,
+    "no_intermediate_prefix_reads": true,
+    "switch_cancels_old_timer": false,
+    "stale_reply_guarded": true,
+    "clock": "page performance.now() monotonic; no fake timers"
+  }
+}

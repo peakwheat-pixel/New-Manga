@@ -1,0 +1,24 @@
+{
+  "agents": [
+    {
+      "role": "primary executor",
+      "required_commands": [
+        "node",
+        "git"
+      ],
+      "may_review": false,
+      "name": "zcode",
+      "cli": [
+        "node",
+        "E:\\Program Files\\ZCode\\resources\\glm\\zcode.cjs"
+      ]
+    },
+    {
+      "role": "fallback",
+      "required_commands": [],
+      "may_review": false,
+      "name": "antigravity",
+      "cli": "agy"
+    }
+  ]
+}

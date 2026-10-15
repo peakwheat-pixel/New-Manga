@@ -1,0 +1,52 @@
+{
+  "status": "PASS",
+  "reviewed_head": "4abb8d288e005dc58e3270b12389d33cd7a52ac1",
+  "integration_commit": "38d926026e9032a528ce578dba7290c5ce65356b",
+  "protected_product_paths": "unchanged vs 49d2a2f9",
+  "reviewed_content": "No M/D in reviewed e2e/evidence paths after merge; union only adds prior target preflight evidence",
+  "i1_unchanged": true,
+  "a7_samples": 10,
+  "a7_computed": 10,
+  "a7_failed": 0,
+  "input_ratio": 13.87,
+  "exe_sha256": "92AC7B8EFB646FE77DF8245B13C9AF9314BEF415B2F0E007B1CDCEA729BC13FD",
+  "i1_failed_attempts": [
+    {
+      "scenario": "ac3-debounce-a2",
+      "node_exit_code": 1,
+      "runner_exit_code": 1,
+      "metadata_sha256": "a8bb61ffebad44665e8b6eb98ca9c9fa6201c35aec07656aa7e598893ea24b38"
+    },
+    {
+      "scenario": "ac4-write-refresh",
+      "node_exit_code": 1,
+      "runner_exit_code": 1,
+      "metadata_sha256": "22c49431ea3664fe7ddaadb2614c314a18441b2203b6cdd5c4c4d37f41f5365e"
+    },
+    {
+      "scenario": "ac4-write-refresh-a2",
+      "node_exit_code": 1,
+      "runner_exit_code": 1,
+      "metadata_sha256": "21802a38753c5fa0fa8f49c129f5d2a2a1e9791b6ae19b12edbdd1a05764c3fd"
+    },
+    {
+      "scenario": "ac5-keyboard",
+      "node_exit_code": 1,
+      "runner_exit_code": 1,
+      "metadata_sha256": "c509f0bd27b1ed2406e857531c81c3ac10c36b164b8137b47df85fe547214869"
+    }
+  ],
+  "review_findings": {
+    "P0": 0,
+    "P1": 0,
+    "P2": 0,
+    "P3": 3,
+    "P4": 3
+  },
+  "nonblocking_residuals": [
+    "Original resolution report.md:106 trailing whitespace retained (merge diff-check exit 2)",
+    "Git automatic gc/repack failed on pre-existing refs/codex/turn-diffs/checkpoints bad object; integration commit exists and parents/pins resolve; no ref deleted or repaired",
+    "Build BC-AC5 PARTIAL/cache residuals retained",
+    "P-01 Escape dismiss; P-02 tokens unmapped; P-03 no light theme; real end-to-end business persistence not validated"
+  ]
+}

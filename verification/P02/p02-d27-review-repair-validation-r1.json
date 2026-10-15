@@ -1,0 +1,43 @@
+{
+  "task_id": "P02",
+  "kind": "docs-only-review-repair-validation",
+  "base_commit": "4d5a0864495d9482ad162d05588b4921aaece3ac",
+  "head_commit": "f366124ecb6194ff9ea4ee0d6c684ccb2b781a07",
+  "head_tree": "f6740e55014f7f49dc265912e087772de32e554c",
+  "head_parent": "c4129c7e66123442a22c5e4dffe761c6a63097fe",
+  "scope": ["doc/tasks/P02.md", "verification/P02/**"],
+  "route_validation": {
+    "command": "python -B -X utf8 verification/PROJECT-ROADMAP-20261008/verify_plan.py",
+    "exit": 0,
+    "summary": "7/7 PASS; live HEAD=f366124ecb6194ff9ea4ee0d6c684ccb2b781a07; Product tests/build/GUI: NOT_RUN (planning-only)",
+    "stdout_path": "verification/P02/p02-d27-review-repair-route-r1.stdout.log",
+    "stdout_sha256": "7D4E986C9C97B8EA041988F9B2266E01AD73C7EBBC64034A2B23192F7B846150",
+    "stderr_sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+    "exit_file_sha256": "13BF7B3039C63BF5A50491FA3CFD8EB4E699D1BA1436315AEF9CBE5711530354"
+  },
+  "diff_check": {
+    "command": "git diff 4d5a0864495d9482ad162d05588b4921aaece3ac f366124ecb6194ff9ea4ee0d6c684ccb2b781a07 --check",
+    "exit": 0,
+    "stdout_sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+    "stderr_sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+    "exit_file_sha256": "13BF7B3039C63BF5A50491FA3CFD8EB4E699D1BA1436315AEF9CBE5711530354"
+  },
+  "independent_review": {
+    "reviewer": "DeepSeek Harness",
+    "session": "session-a6ebdc4e-a053-481f-b330-3918c328fca8",
+    "review_head": "f366124ecb6194ff9ea4ee0d6c684ccb2b781a07",
+    "review_tree": "f6740e55014f7f49dc265912e087772de32e554c",
+    "verdict": "APPROVED",
+    "findings": {"P0": 0, "P1": 0, "P2": 0, "P3": 0},
+    "closure": {"F1": "CLOSED", "F2": "CLOSED", "F3": "CLOSED"},
+    "report_path": "verification/P02/dsh-p02-r2-closeout-review-r2.stdout.md",
+    "report_sha256": "C88C98F59DDBFF786EC12048E64BE0AA7EE269BB9858C40530976F06E70E6C55",
+    "prompt_sha256": "56D8A1B4C0E5E4B8143E54DF8ADF36943D2908EF08ADBCEB606DF002520C55B6",
+    "mount_exit": 0
+  },
+  "product_tests": "NOT_RUN",
+  "build": "NOT_RUN",
+  "p02_build_gate": "BLOCKED",
+  "hard_build_barrier": "EFFECTIVE",
+  "genuine_isolation_evidence": "NOT_PROVEN"
+}

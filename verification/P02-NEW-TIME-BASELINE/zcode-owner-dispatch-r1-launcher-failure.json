@@ -1,0 +1,13 @@
+{
+  "attempt": "owner-dispatch-r1",
+  "status": "PRECHECK_SYNTAX_ERROR_BEFORE_ZCODE_START",
+  "zcodeProcessStarted": false,
+  "collectorInvoked": false,
+  "collectorRunIdConsumed": false,
+  "outputTargetAbsent": true,
+  "freezeManifestSha256": "8662DEC583D2FD865532A414F0BEDE63B7F02872AB3C9232553C3B01E239006D",
+  "promptSha256": "575C7BBBA7B29334BED507738BD8C9C4BDCA2A8F1E0794441188F9B853E0E96B",
+  "failedCheck": "Test-Path -LiteralPath $v -PathType Leaf -or (Test-Path ...)",
+  "error": "PowerShell Test-Path parameter binding error: cannot bind parameter name or.",
+  "timestampLocal": "2026-10-14T09:21:09.8894420+08:00"
+}

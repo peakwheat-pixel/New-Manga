@@ -1,0 +1,18 @@
+{
+  "schema": "P02-NEW-TIME-BASELINE-codex-freeze-build-attempt-1",
+  "task": "P02-NEW-TIME-BASELINE",
+  "status": "ABANDONED_BEFORE_DISPATCH",
+  "runId": "baseline-20261014T091112CST-p02-admission",
+  "freezeManifestPath": "G:\\CODEX\\New Manga.workspace\\agent-output\\zcode\\P02-NEW-TIME-BASELINE\\baseline-20261014T091112CST-p02-admission\\freeze-manifest.json",
+  "freezeManifestSha256": "C160010A590CE73641A4A3FE2F57A33887902D20B83F2C35C673C79C3DD735B0",
+  "problem": "mutableObservationPaths is empty; shape contract requires at least one absolute observation path",
+  "collectorDispatched": false,
+  "zcodeDispatched": false,
+  "outputTarget": "G:\\CODEX\\New Manga.workspace\\agent-output\\zcode\\P02-NEW-TIME-BASELINE\\run-baseline-20261014T091112CST-p02-admission.json",
+  "outputTargetAbsent": true,
+  "sourceFilesChanged": false,
+  "sourceReviewStillValid": true,
+  "i1i2": "2/2",
+  "i3Allowed": false,
+  "externalDecisionWait": false
+}

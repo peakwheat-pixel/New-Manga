@@ -1,0 +1,14 @@
+{
+  "task_id": "RES-P02-AC6-CDP-RECOVERY",
+  "implementation_repairs_used": 0,
+  "max_implementation_repairs": 2,
+  "open_blockers": [],
+  "nonblockers": [
+    {
+      "id": "DSH-A7-06",
+      "severity": "P4"
+    }
+  ],
+  "delivery_safely_integrable": true,
+  "other_ready_tasks": []
+}

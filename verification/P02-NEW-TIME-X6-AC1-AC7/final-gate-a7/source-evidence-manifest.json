@@ -1,0 +1,727 @@
+{
+  "task_id": "P02-NEW-TIME-X6-AC1-AC7",
+  "generated_at": "2026-10-15T06:31:55+00:00",
+  "source_commit": "4abb8d288e005dc58e3270b12389d33cd7a52ac1",
+  "review_head": "4abb8d288e005dc58e3270b12389d33cd7a52ac1",
+  "generator": {
+    "name": "generate-evidence-manifest",
+    "version": 2,
+    "frozen_git_checked": true
+  },
+  "files": [
+    {
+      "relative_path": "apps/desktop/frontend/e2e/p02-new-time/README.md",
+      "sha256": "cbace4a979fc1779187dee913a3f4ee5f3f749dee155e42fc127db52b0e3cf2e",
+      "bytes": 2883,
+      "git_blob": "c810815afd496a31a8241d84d3c454f52296058c",
+      "artifact_type": "doc"
+    },
+    {
+      "relative_path": "apps/desktop/frontend/e2e/p02-new-time/ac1-identity.mjs",
+      "sha256": "703e928883abca55ff133fcbf8be271b783d284ab6a2f236a248cd17f8917280",
+      "bytes": 8130,
+      "git_blob": "58f5b14371ca937ef2ab806ab5079d24022dac80",
+      "artifact_type": "artifact"
+    },
+    {
+      "relative_path": "apps/desktop/frontend/e2e/p02-new-time/ac2-navigation.mjs",
+      "sha256": "0f2dac43f8426e8dce48c79638c4d7cdb42bb54a83514ae304f1f9524ce001f0",
+      "bytes": 8090,
+      "git_blob": "76951daa2c0fdc8ca6f12a559047ec0615eda872",
+      "artifact_type": "artifact"
+    },
+    {
+      "relative_path": "apps/desktop/frontend/e2e/p02-new-time/ac3-debounce.mjs",
+      "sha256": "42c9c052a20a2b2ae8b3ef1ed5b1e534f706acee1ac77f1e93a9172879d1c371",
+      "bytes": 15869,
+      "git_blob": "ad26c065004d6468e03539060cbd332f3db37e0f",
+      "artifact_type": "artifact"
+    },
+    {
+      "relative_path": "apps/desktop/frontend/e2e/p02-new-time/ac4-write-refresh.mjs",
+      "sha256": "607b7ae699b62707d38775307b4e7c737b1c8d3a5f82e42d77191f7d8f46b9e8",
+      "bytes": 17809,
+      "git_blob": "7381634e0e49b5dfe452e1704a1e475333ba9be0",
+      "artifact_type": "artifact"
+    },
+    {
+      "relative_path": "apps/desktop/frontend/e2e/p02-new-time/ac5-keyboard.mjs",
+      "sha256": "6032779e6e614724c42a9a518f8bcb94a6c0014912cb4cacc4bf970e9192ee6a",
+      "bytes": 21173,
+      "git_blob": "99b240e60e5a62967c75f48b5496f7889a94185f",
+      "artifact_type": "artifact"
+    },
+    {
+      "relative_path": "apps/desktop/frontend/e2e/p02-new-time/ac6-contrast.mjs",
+      "sha256": "f94c10a22a76ce3f28df5b0a6a1cce4a6ef05d06dc3db486069f5e538dedf2f6",
+      "bytes": 16645,
+      "git_blob": "261e8c28b593bb8dfd752c516327fc41ac2e2a61",
+      "artifact_type": "artifact"
+    },
+    {
+      "relative_path": "apps/desktop/frontend/e2e/p02-new-time/lib/app.mjs",
+      "sha256": "3e9bbe6d932cc0e1e172dbe55739f0317cc387be75f36d5c3c153687b983bf7b",
+      "bytes": 3155,
+      "git_blob": "5ac5ea1e8439bdda7f0e2b3da8521e43d2d8d2dc",
+      "artifact_type": "artifact"
+    },
+    {
+      "relative_path": "apps/desktop/frontend/e2e/p02-new-time/lib/cdp.mjs",
+      "sha256": "b83cf605d4ee863f4e1f5d62b04a5f4c35cb5a1b4a995b3cb56e643e9f3fc71d",
+      "bytes": 14969,
+      "git_blob": "995ca34c380c514ced2b033a53137a7a7923ba91",
+      "artifact_type": "artifact"
+    },
+    {
+      "relative_path": "apps/desktop/frontend/e2e/p02-new-time/lib/env.mjs",
+      "sha256": "3fe0cc882b063ab1e63d3536c6080edf94a8e4c243494594a337e4e670868e44",
+      "bytes": 6137,
+      "git_blob": "0e75af873f6699a3bf0a76aef20e20a8e76f3d5f",
+      "artifact_type": "artifact"
+    },
+    {
+      "relative_path": "apps/desktop/frontend/e2e/p02-new-time/lib/evidence.mjs",
+      "sha256": "a46ee03f613d44bcfcf7fad30aebc16af255d6e3662d17fbdd871f97fe63059f",
+      "bytes": 4062,
+      "git_blob": "b1fe50650ce95c0fa9e8914ba794c3a76c5b960d",
+      "artifact_type": "artifact"
+    },
+    {
+      "relative_path": "apps/desktop/frontend/e2e/p02-new-time/lib/safety-check.mjs",
+      "sha256": "3f8372ec5c9fd1928f4031ba031c7b74024f28a9946e11ac30cc6bcdf5a12db5",
+      "bytes": 1879,
+      "git_blob": "184512a069ae5a175671b7571e01a1d03fa9b387",
+      "artifact_type": "artifact"
+    },
+    {
+      "relative_path": "verification/P02-NEW-TIME-X6-AC1-AC7/runs/p02-newtime-ac-20261014-i1/ac1-identity/ac1-identity.json",
+      "sha256": "623fe640d4d1e896f6ee0e31ab20b8fbe55e31da51df044f777a0f2e7293979a",
+      "bytes": 51911,
+      "git_blob": "03c6bbdf1ae553b44d9d6875654148a15a448371",
+      "artifact_type": "data"
+    },
+    {
+      "relative_path": "verification/P02-NEW-TIME-X6-AC1-AC7/runs/p02-newtime-ac-20261014-i1/ac1-identity/ac1-window-boot.png",
+      "sha256": "151f781617b50d3bf523bfd3f0611d8adc3b3d5c241b8f274732e5cd485e342a",
+      "bytes": 34839,
+      "git_blob": "d5835bb7c046d084b684a2442d84a2aa9a96463d",
+      "artifact_type": "artifact"
+    },
+    {
+      "relative_path": "verification/P02-NEW-TIME-X6-AC1-AC7/runs/p02-newtime-ac-20261014-i1/ac1-identity/ac1.stderr.log",
+      "sha256": "6714dabe4dd9851073cce63c4b818248d1dd90dc000b62585ca27bbbc1dee49b",
+      "bytes": 400,
+      "git_blob": "c782c74e1489c31b415407dcf98248bef2c07caa",
+      "artifact_type": "log"
+    },
+    {
+      "relative_path": "verification/P02-NEW-TIME-X6-AC1-AC7/runs/p02-newtime-ac-20261014-i1/ac1-identity/ac1.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0,
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "artifact_type": "log"
+    },
+    {
+      "relative_path": "verification/P02-NEW-TIME-X6-AC1-AC7/runs/p02-newtime-ac-20261014-i1/ac1-identity/execution-metadata.json",
+      "sha256": "9e678cef1f13ea5e93cbbab9e34573b89345f011012b2fd954205a8c5b88a0f6",
+      "bytes": 3211,
+      "git_blob": "aaf65b5b04904650449d921e968bf627cc62199e",
+      "artifact_type": "data"
+    },
+    {
+      "relative_path": "verification/P02-NEW-TIME-X6-AC1-AC7/runs/p02-newtime-ac-20261014-i1/ac1-identity/runner-execution.json",
+      "sha256": "af670c09c2216a49b41940b4f035ff495de2db031655e128149df93a46cda3b2",
+      "bytes": 598,
+      "git_blob": "d564ecfda835066e3ec5e3f6fecddfee50467f10",
+      "artifact_type": "data"
+    },
+    {
+      "relative_path": "verification/P02-NEW-TIME-X6-AC1-AC7/runs/p02-newtime-ac-20261014-i1/ac2-navigation/ac2-navigation.json",
+      "sha256": "412d46b2f0b8e01a3b36fe8627c3956d7f4580ca9b954e1e6542eafc9a7fd06e",
+      "bytes": 7728,
+      "git_blob": "9ec2884a501b37130fb43edc58fa9b9b0977d37d",
+      "artifact_type": "data"
+    },
+    {
+      "relative_path": "verification/P02-NEW-TIME-X6-AC1-AC7/runs/p02-newtime-ac-20261014-i1/ac2-navigation/ac2-s1-console-initial.png",
+      "sha256": "151f781617b50d3bf523bfd3f0611d8adc3b3d5c241b8f274732e5cd485e342a",
+      "bytes": 34839,
+      "git_blob": "d5835bb7c046d084b684a2442d84a2aa9a96463d",
+      "artifact_type": "artifact"
+    },
+    {
+      "relative_path": "verification/P02-NEW-TIME-X6-AC1-AC7/runs/p02-newtime-ac-20261014-i1/ac2-navigation/ac2-s2-workbench-entered.png",
+      "sha256": "06b5bbd5127a9a1d5a3b078c442ddc251b1fe965cbf23e5e4c89d2f27dfb07ff",
+      "bytes": 24074,
+      "git_blob": "243d02c1178eeee3f2cbe586bbdbdf8125281369",
+      "artifact_type": "artifact"
+    },
+    {
+      "relative_path": "verification/P02-NEW-TIME-X6-AC1-AC7/runs/p02-newtime-ac-20261014-i1/ac2-navigation/ac2-s3-page-id-typed.png",
+      "sha256": "02dbeec80d39bd4da3663b2d53bfadaa7221355d303ea89d28557f9da6f4be9e",
+      "bytes": 27793,
+      "git_blob": "1d75eac14b0c33f3e69d15f40ddadf7759ee4681",
+      "artifact_type": "artifact"
+    },
+    {
+      "relative_path": "verification/P02-NEW-TIME-X6-AC1-AC7/runs/p02-newtime-ac-20261014-i1/ac2-navigation/ac2-s4-console-returned.png",
+      "sha256": "151f781617b50d3bf523bfd3f0611d8adc3b3d5c241b8f274732e5cd485e342a",
+      "bytes": 34839,
+      "git_blob": "d5835bb7c046d084b684a2442d84a2aa9a96463d",
+      "artifact_type": "artifact"
+    },
+    {
+      "relative_path": "verification/P02-NEW-TIME-X6-AC1-AC7/runs/p02-newtime-ac-20261014-i1/ac2-navigation/ac2.stderr.log",
+      "sha256": "6714dabe4dd9851073cce63c4b818248d1dd90dc000b62585ca27bbbc1dee49b",
+      "bytes": 400,
+      "git_blob": "c782c74e1489c31b415407dcf98248bef2c07caa",
+      "artifact_type": "log"
+    },
+    {
+      "relative_path": "verification/P02-NEW-TIME-X6-AC1-AC7/runs/p02-newtime-ac-20261014-i1/ac2-navigation/ac2.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0,
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "artifact_type": "log"
+    },
+    {
+      "relative_path": "verification/P02-NEW-TIME-X6-AC1-AC7/runs/p02-newtime-ac-20261014-i1/ac2-navigation/execution-metadata.json",
+      "sha256": "4b93877d13ab007faff9dd62934d48011aaddc56b8eb832273e68aa45b67b74e",
+      "bytes": 3247,
+      "git_blob": "a641ee763c52d3670164b03195297075382f9672",
+      "artifact_type": "data"
+    },
+    {
+      "relative_path": "verification/P02-NEW-TIME-X6-AC1-AC7/runs/p02-newtime-ac-20261014-i1/ac2-navigation/runner-execution.json",
+      "sha256": "1c04395263f03111161edc2c115b1e9d4d2f5b2eb6c8bea77f48ba39dd876505",
+      "bytes": 551,
+      "git_blob": "b79909d707c00fbf36092071b8618d921bca7596",
+      "artifact_type": "data"
+    },
+    {
+      "relative_path": "verification/P02-NEW-TIME-X6-AC1-AC7/runs/p02-newtime-ac-20261014-i1/ac3-debounce-a2/ac3-debounce.json",
+      "sha256": "8e14bd8bf944aac6cf90b334c32b81db2f0fed2f2baa1dabd9aca498262e0ff9",
+      "bytes": 2557,
+      "git_blob": "d0701c1f6589ed85f6e909502b81f5a76c378da8",
+      "artifact_type": "data"
+    },
+    {
+      "relative_path": "verification/P02-NEW-TIME-X6-AC1-AC7/runs/p02-newtime-ac-20261014-i1/ac3-debounce-a2/ac3.stderr.log",
+      "sha256": "7d1183be84318c00a8876099bf3ee1e36fe2c2083d50ec76e8a28a85e4a8a354",
+      "bytes": 1058,
+      "git_blob": "e9411ef6a30d48a6019344b70fb224c695b90eff",
+      "artifact_type": "log"
+    },
+    {
+      "relative_path": "verification/P02-NEW-TIME-X6-AC1-AC7/runs/p02-newtime-ac-20261014-i1/ac3-debounce-a2/ac3.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0,
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "artifact_type": "log"
+    },
+    {
+      "relative_path": "verification/P02-NEW-TIME-X6-AC1-AC7/runs/p02-newtime-ac-20261014-i1/ac3-debounce-a2/execution-metadata.json",
+      "sha256": "a8bb61ffebad44665e8b6eb98ca9c9fa6201c35aec07656aa7e598893ea24b38",
+      "bytes": 3364,
+      "git_blob": "2da1ceb90763fa15230711cd7ef95afe4a74a9b9",
+      "artifact_type": "data"
+    },
+    {
+      "relative_path": "verification/P02-NEW-TIME-X6-AC1-AC7/runs/p02-newtime-ac-20261014-i1/ac3-debounce-a2/runner-execution.json",
+      "sha256": "769585fca77beb985b34e647cfed6a14b146519cbe6c0a5cb66c4c4a9d7eb956",
+      "bytes": 543,
+      "git_blob": "d9f22b5768451a8f6cb559eeb15a0104f61695c6",
+      "artifact_type": "data"
+    },
+    {
+      "relative_path": "verification/P02-NEW-TIME-X6-AC1-AC7/runs/p02-newtime-ac-20261014-i1/ac3-debounce-a3/ac3-debounce.json",
+      "sha256": "aea02c2d972c38525e71cb568f0a3dbd4e69fd891fb8da67545831d434d77e11",
+      "bytes": 10387,
+      "git_blob": "d3ad6fab808473a2cedd3231636572922ff69d6b",
+      "artifact_type": "data"
+    },
+    {
+      "relative_path": "verification/P02-NEW-TIME-X6-AC1-AC7/runs/p02-newtime-ac-20261014-i1/ac3-debounce-a3/ac3-phaseA.png",
+      "sha256": "02cfac19592547f10abf36db6916cd033b16159a5bfd9c2469f1ac105a00c5ac",
+      "bytes": 27068,
+      "git_blob": "de4aa468ec585ef800b714818e6b576dcd953644",
+      "artifact_type": "artifact"
+    },
+    {
+      "relative_path": "verification/P02-NEW-TIME-X6-AC1-AC7/runs/p02-newtime-ac-20261014-i1/ac3-debounce-a3/ac3-phaseB.png",
+      "sha256": "828b83a73999881f1921b084f5512d42b36708d523c1d5a215a1c02125efbfe0",
+      "bytes": 26583,
+      "git_blob": "eb5b7d0ef46b651c6a701850499bad1b9165a534",
+      "artifact_type": "artifact"
+    },
+    {
+      "relative_path": "verification/P02-NEW-TIME-X6-AC1-AC7/runs/p02-newtime-ac-20261014-i1/ac3-debounce-a3/ac3.stderr.log",
+      "sha256": "81d651d139583527df2e4c6bd3bc89f5eac2eb0198c1260f7fe32c7e9049a1a5",
+      "bytes": 494,
+      "git_blob": "e3162e2f6daef382b58c98dd58457db5888bd411",
+      "artifact_type": "log"
+    },
+    {
+      "relative_path": "verification/P02-NEW-TIME-X6-AC1-AC7/runs/p02-newtime-ac-20261014-i1/ac3-debounce-a3/ac3.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0,
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "artifact_type": "log"
+    },
+    {
+      "relative_path": "verification/P02-NEW-TIME-X6-AC1-AC7/runs/p02-newtime-ac-20261014-i1/ac3-debounce-a3/execution-metadata.json",
+      "sha256": "1cd9565b95f35e4934beb14832cc6c9da6f3484b43d0c81232983bbcdca166ce",
+      "bytes": 3364,
+      "git_blob": "50fb06568eded3bf5702cdd021a1d25a633a620b",
+      "artifact_type": "data"
+    },
+    {
+      "relative_path": "verification/P02-NEW-TIME-X6-AC1-AC7/runs/p02-newtime-ac-20261014-i1/ac3-debounce-a3/runner-execution.json",
+      "sha256": "0650fdc491bc2506c17f0e24e76abb1e86559367229ef67e2c67abddcc08288a",
+      "bytes": 542,
+      "git_blob": "f6cc7ce783e1b3a27493301e2b392b06b590c5f7",
+      "artifact_type": "data"
+    },
+    {
+      "relative_path": "verification/P02-NEW-TIME-X6-AC1-AC7/runs/p02-newtime-ac-20261014-i1/ac4-write-refresh-a2/ac4-write-refresh.json",
+      "sha256": "ee5f64c8e120be9d7e3a42c950e5ab21680d755ea30a17000b46e02e5b495948",
+      "bytes": 3287,
+      "git_blob": "399305f17df5273bbf5e5e7f44d4cf4efd036428",
+      "artifact_type": "data"
+    },
+    {
+      "relative_path": "verification/P02-NEW-TIME-X6-AC1-AC7/runs/p02-newtime-ac-20261014-i1/ac4-write-refresh-a2/ac4.stderr.log",
+      "sha256": "ac0d31a1f1847ab3e735e84833d83c658a63e0d3938f13e827d5aae81d54c1d4",
+      "bytes": 729,
+      "git_blob": "35d33f7b422a154637084eefb3c1ba170d13e69a",
+      "artifact_type": "log"
+    },
+    {
+      "relative_path": "verification/P02-NEW-TIME-X6-AC1-AC7/runs/p02-newtime-ac-20261014-i1/ac4-write-refresh-a2/ac4.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0,
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "artifact_type": "log"
+    },
+    {
+      "relative_path": "verification/P02-NEW-TIME-X6-AC1-AC7/runs/p02-newtime-ac-20261014-i1/ac4-write-refresh-a2/execution-metadata.json",
+      "sha256": "21802a38753c5fa0fa8f49c129f5d2a2a1e9791b6ae19b12edbdd1a05764c3fd",
+      "bytes": 3408,
+      "git_blob": "3e5da6a12836b7ddadc1c69bdd4a2559d0785d55",
+      "artifact_type": "data"
+    },
+    {
+      "relative_path": "verification/P02-NEW-TIME-X6-AC1-AC7/runs/p02-newtime-ac-20261014-i1/ac4-write-refresh-a2/runner-execution.json",
+      "sha256": "ab957948f77e20cf2d5a452334f51fc2f6f22a4877346239dfeb2216458ce093",
+      "bytes": 553,
+      "git_blob": "c03c3df98028677026ba01ed80a4f2f8f45d723c",
+      "artifact_type": "data"
+    },
+    {
+      "relative_path": "verification/P02-NEW-TIME-X6-AC1-AC7/runs/p02-newtime-ac-20261014-i1/ac4-write-refresh-a3/ac4-after-restore.png",
+      "sha256": "21e53d6c993bc9b29f5c179096849ee1d96d030d30d3923e9e28aefd9b7044a9",
+      "bytes": 72482,
+      "git_blob": "6b2b1bc1a4127669ef68887b709d0ff9f9938663",
+      "artifact_type": "artifact"
+    },
+    {
+      "relative_path": "verification/P02-NEW-TIME-X6-AC1-AC7/runs/p02-newtime-ac-20261014-i1/ac4-write-refresh-a3/ac4-write-refresh.json",
+      "sha256": "01f25167eae537c91316b82ea6686e8d5811e65d9fb2614f47ce9b888047c233",
+      "bytes": 9106,
+      "git_blob": "b8cb83221be128497d4a13a8d7343175ecbd5691",
+      "artifact_type": "data"
+    },
+    {
+      "relative_path": "verification/P02-NEW-TIME-X6-AC1-AC7/runs/p02-newtime-ac-20261014-i1/ac4-write-refresh-a3/ac4.stderr.log",
+      "sha256": "596afabcfa248c718841df521513b949332f1153a6743330104db1657a123204",
+      "bytes": 776,
+      "git_blob": "9930e86a04caf8fb4909284a118d93a851317fb4",
+      "artifact_type": "log"
+    },
+    {
+      "relative_path": "verification/P02-NEW-TIME-X6-AC1-AC7/runs/p02-newtime-ac-20261014-i1/ac4-write-refresh-a3/ac4.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0,
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "artifact_type": "log"
+    },
+    {
+      "relative_path": "verification/P02-NEW-TIME-X6-AC1-AC7/runs/p02-newtime-ac-20261014-i1/ac4-write-refresh-a3/execution-metadata.json",
+      "sha256": "93111a7cd00fb47eaf6eb6a68c16ad7630290cfa85bdf4db5dd162cfcb177660",
+      "bytes": 3408,
+      "git_blob": "0a23dda5b9abe11e48714565fa46cb7104369c5b",
+      "artifact_type": "data"
+    },
+    {
+      "relative_path": "verification/P02-NEW-TIME-X6-AC1-AC7/runs/p02-newtime-ac-20261014-i1/ac4-write-refresh-a3/runner-execution.json",
+      "sha256": "6349a17bdfa02af9f803b2f2d176141c0e08d4e8ebb48b6d5f86c943a691392a",
+      "bytes": 553,
+      "git_blob": "39cf0855e2bfc74558ceb447ffb0cfcf9fdafb14",
+      "artifact_type": "data"
+    },
+    {
+      "relative_path": "verification/P02-NEW-TIME-X6-AC1-AC7/runs/p02-newtime-ac-20261014-i1/ac4-write-refresh/ac4-write-refresh.json",
+      "sha256": "812af13a8be0f30465e5485ca2016ab08be6a6d880c9717c9b8bd0dd3a35e574",
+      "bytes": 3249,
+      "git_blob": "84e2156a1b6303a9201880c0b60d28265bb02749",
+      "artifact_type": "data"
+    },
+    {
+      "relative_path": "verification/P02-NEW-TIME-X6-AC1-AC7/runs/p02-newtime-ac-20261014-i1/ac4-write-refresh/ac4.stderr.log",
+      "sha256": "6714dabe4dd9851073cce63c4b818248d1dd90dc000b62585ca27bbbc1dee49b",
+      "bytes": 400,
+      "git_blob": "c782c74e1489c31b415407dcf98248bef2c07caa",
+      "artifact_type": "log"
+    },
+    {
+      "relative_path": "verification/P02-NEW-TIME-X6-AC1-AC7/runs/p02-newtime-ac-20261014-i1/ac4-write-refresh/ac4.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0,
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "artifact_type": "log"
+    },
+    {
+      "relative_path": "verification/P02-NEW-TIME-X6-AC1-AC7/runs/p02-newtime-ac-20261014-i1/ac4-write-refresh/execution-metadata.json",
+      "sha256": "22c49431ea3664fe7ddaadb2614c314a18441b2203b6cdd5c4c4d37f41f5365e",
+      "bytes": 3369,
+      "git_blob": "cd53f103f4484118bd700ba52dfb20a3f834854b",
+      "artifact_type": "data"
+    },
+    {
+      "relative_path": "verification/P02-NEW-TIME-X6-AC1-AC7/runs/p02-newtime-ac-20261014-i1/ac4-write-refresh/runner-execution.json",
+      "sha256": "1cf7f619682f047e2e2493be8068c8fa7902a8c2f0ee41718577d39f8e6cd982",
+      "bytes": 549,
+      "git_blob": "fc63205341daa03741fc2a1d2df9e49eb835f4d5",
+      "artifact_type": "data"
+    },
+    {
+      "relative_path": "verification/P02-NEW-TIME-X6-AC1-AC7/runs/p02-newtime-ac-20261014-i1/ac5-keyboard-a2/ac5-keyboard.json",
+      "sha256": "59ef9a1b522213648f8fdd74c0acba0cf41fd96066aee67ef821a36547c11a84",
+      "bytes": 10032,
+      "git_blob": "dc39c0dbf00686fd4bf4860d8921c5646dd4cc3c",
+      "artifact_type": "data"
+    },
+    {
+      "relative_path": "verification/P02-NEW-TIME-X6-AC1-AC7/runs/p02-newtime-ac-20261014-i1/ac5-keyboard-a2/ac5-keyboard.png",
+      "sha256": "698b901fe9e2c0f5e82caedeeb2fbbe10882cf84688469fca011453a1ed41d70",
+      "bytes": 50047,
+      "git_blob": "8c7893dbe2606793e01bbe6d081c248678e1dd91",
+      "artifact_type": "artifact"
+    },
+    {
+      "relative_path": "verification/P02-NEW-TIME-X6-AC1-AC7/runs/p02-newtime-ac-20261014-i1/ac5-keyboard-a2/ac5.stderr.log",
+      "sha256": "0a2ca09b2499775abd5bb1671c2589be79368444509f2cec1e71ecb0ca8c708d",
+      "bytes": 541,
+      "git_blob": "7a60a1b43a6bfdb000afc99344a3bdc56d48818f",
+      "artifact_type": "log"
+    },
+    {
+      "relative_path": "verification/P02-NEW-TIME-X6-AC1-AC7/runs/p02-newtime-ac-20261014-i1/ac5-keyboard-a2/ac5.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0,
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "artifact_type": "log"
+    },
+    {
+      "relative_path": "verification/P02-NEW-TIME-X6-AC1-AC7/runs/p02-newtime-ac-20261014-i1/ac5-keyboard-a2/execution-metadata.json",
+      "sha256": "1eb9ad1100308a9fd1fcd1ce54a26dc0ca9916692442f7202605a46d88b68f83",
+      "bytes": 3371,
+      "git_blob": "efaedc0118e9149b5f6a22901d2fd6f183c6a814",
+      "artifact_type": "data"
+    },
+    {
+      "relative_path": "verification/P02-NEW-TIME-X6-AC1-AC7/runs/p02-newtime-ac-20261014-i1/ac5-keyboard-a2/runner-execution.json",
+      "sha256": "4ab52b44f88635c813f19bdd0e8c3c76c07d68949b79d5e2c339596177243ac2",
+      "bytes": 269,
+      "git_blob": "56eda729f3c43cf4115a6a0d0eb40af714443ec8",
+      "artifact_type": "data"
+    },
+    {
+      "relative_path": "verification/P02-NEW-TIME-X6-AC1-AC7/runs/p02-newtime-ac-20261014-i1/ac5-keyboard/ac5-keyboard.json",
+      "sha256": "d2b703534e82e536d703818ea308e9042216b749d6fe40de90c6b4c3f853623e",
+      "bytes": 7759,
+      "git_blob": "ec37696b52c6aae9b0b9dc6ff05faf32fc2dc9f4",
+      "artifact_type": "data"
+    },
+    {
+      "relative_path": "verification/P02-NEW-TIME-X6-AC1-AC7/runs/p02-newtime-ac-20261014-i1/ac5-keyboard/ac5.stderr.log",
+      "sha256": "81d651d139583527df2e4c6bd3bc89f5eac2eb0198c1260f7fe32c7e9049a1a5",
+      "bytes": 494,
+      "git_blob": "e3162e2f6daef382b58c98dd58457db5888bd411",
+      "artifact_type": "log"
+    },
+    {
+      "relative_path": "verification/P02-NEW-TIME-X6-AC1-AC7/runs/p02-newtime-ac-20261014-i1/ac5-keyboard/ac5.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0,
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "artifact_type": "log"
+    },
+    {
+      "relative_path": "verification/P02-NEW-TIME-X6-AC1-AC7/runs/p02-newtime-ac-20261014-i1/ac5-keyboard/execution-metadata.json",
+      "sha256": "c509f0bd27b1ed2406e857531c81c3ac10c36b164b8137b47df85fe547214869",
+      "bytes": 3332,
+      "git_blob": "1031f1339d0a827a0851393ff7ffcad5ee5a9dde",
+      "artifact_type": "data"
+    },
+    {
+      "relative_path": "verification/P02-NEW-TIME-X6-AC1-AC7/runs/p02-newtime-ac-20261014-i1/ac5-keyboard/runner-execution.json",
+      "sha256": "4d55e5176f6e425acf4fe0f2a1a74f6a9dcf2893a5749379a74ed9e132642e73",
+      "bytes": 539,
+      "git_blob": "26ef32be5206abf190dea5d8d7b67eddd90eecd2",
+      "artifact_type": "data"
+    },
+    {
+      "relative_path": "verification/P02-NEW-TIME-X6-AC1-AC7/runs/p02-newtime-ac-20261014-i2/ac6-contrast-a7/ac6-contrast.json",
+      "sha256": "2c299a58148281cee822d61eed7c72c1520cdb61d5a1b93bf709fe2857fa7c24",
+      "bytes": 21917,
+      "git_blob": "84a7826806799790d9ace97827333ff522d55ad7",
+      "artifact_type": "data"
+    },
+    {
+      "relative_path": "verification/P02-NEW-TIME-X6-AC1-AC7/runs/p02-newtime-ac-20261014-i2/ac6-contrast-a7/ac6-workbench.png",
+      "sha256": "72f2cd2703faee36cb7ab4e229c1ae7fd3540a1d70f70fedf4a97c73f6ecece2",
+      "bytes": 27967,
+      "git_blob": "820ac7cf5018254f28ff909e908675f2dd36cf34",
+      "artifact_type": "artifact"
+    },
+    {
+      "relative_path": "verification/P02-NEW-TIME-X6-AC1-AC7/runs/p02-newtime-ac-20261014-i2/ac6-contrast-a7/ac6.stderr.log",
+      "sha256": "6714dabe4dd9851073cce63c4b818248d1dd90dc000b62585ca27bbbc1dee49b",
+      "bytes": 400,
+      "git_blob": "c782c74e1489c31b415407dcf98248bef2c07caa",
+      "artifact_type": "log"
+    },
+    {
+      "relative_path": "verification/P02-NEW-TIME-X6-AC1-AC7/runs/p02-newtime-ac-20261014-i2/ac6-contrast-a7/ac6.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0,
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "artifact_type": "log"
+    },
+    {
+      "relative_path": "verification/P02-NEW-TIME-X6-AC1-AC7/runs/p02-newtime-ac-20261014-i2/ac6-contrast-a7/execution-metadata.json",
+      "sha256": "f247fee682e624089074baf5cded85f8360718a9bb3536e4f813a12f812a153f",
+      "bytes": 3324,
+      "git_blob": "934c24335f64c5951cd45378e19b25d933fd4b15",
+      "artifact_type": "data"
+    },
+    {
+      "relative_path": "verification/P02-NEW-TIME-X6-AC1-AC7/runs/p02-newtime-ac-20261014-i2/attempts/ac6-contrast-a1-failed/app.stderr.log",
+      "sha256": "a8683bb591a8691d4e3efb736ff494d9c7aa59bbc257cd9d43c50b2c358dae2a",
+      "bytes": 1340,
+      "git_blob": "4897bee4ae8b7e46e52394a9f65894e4b3279be1",
+      "artifact_type": "log"
+    },
+    {
+      "relative_path": "verification/P02-NEW-TIME-X6-AC1-AC7/runs/p02-newtime-ac-20261014-i2/attempts/ac6-contrast-a1-failed/app.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0,
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "artifact_type": "log"
+    },
+    {
+      "relative_path": "verification/P02-NEW-TIME-X6-AC1-AC7/runs/p02-newtime-ac-20261014-i2/attempts/ac6-contrast-a1-failed/execution-metadata.json",
+      "sha256": "44cf6591ba50ef727e77aeab48c2409c0e4d156723cb541e9fec986c5c4438c2",
+      "bytes": 2493,
+      "git_blob": "f364ad53e3420cf9c1a42a7f005bf0b66b29b59d",
+      "artifact_type": "data"
+    },
+    {
+      "relative_path": "verification/P02-NEW-TIME-X6-AC1-AC7/runs/p02-newtime-ac-20261014-i2/attempts/ac6-contrast-a1-failed/node.stderr.log",
+      "sha256": "1124b4de6e8866ad770b93791d1db0c4c402cb194e40ec3022b9a148fa1a4861",
+      "bytes": 814,
+      "git_blob": "72aada053652aae28f9580aba96d35472a50626d",
+      "artifact_type": "log"
+    },
+    {
+      "relative_path": "verification/P02-NEW-TIME-X6-AC1-AC7/runs/p02-newtime-ac-20261014-i2/attempts/ac6-contrast-a1-failed/node.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0,
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "artifact_type": "log"
+    },
+    {
+      "relative_path": "verification/P02-NEW-TIME-X6-AC1-AC7/runs/p02-newtime-ac-20261014-i2/attempts/ac6-contrast-a1-failed/runner-execution.json",
+      "sha256": "7feeb316ef24ff5ec7e1426dd68af161d5f064993bd23ffdb60730e9c79feaf1",
+      "bytes": 726,
+      "git_blob": "a25c629054134fa61f8063440d244eb6dd4a14a2",
+      "artifact_type": "data"
+    },
+    {
+      "relative_path": "verification/P02-NEW-TIME-X6-AC1-AC7/runs/p02-newtime-ac-20261014-i2/attempts/ac6-contrast-a2-failed/ac6-a2-node.stderr.log",
+      "sha256": "1124b4de6e8866ad770b93791d1db0c4c402cb194e40ec3022b9a148fa1a4861",
+      "bytes": 814,
+      "git_blob": "72aada053652aae28f9580aba96d35472a50626d",
+      "artifact_type": "log"
+    },
+    {
+      "relative_path": "verification/P02-NEW-TIME-X6-AC1-AC7/runs/p02-newtime-ac-20261014-i2/attempts/ac6-contrast-a2-failed/ac6-a2-node.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0,
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "artifact_type": "log"
+    },
+    {
+      "relative_path": "verification/P02-NEW-TIME-X6-AC1-AC7/runs/p02-newtime-ac-20261014-i2/attempts/ac6-contrast-a2-failed/ac6.stderr.log",
+      "sha256": "1e3e0687755c749177b82a294734cb2a518aaba220921917088201bbd28910a9",
+      "bytes": 1387,
+      "git_blob": "850414be737292909c1f404b934589b6504d06a2",
+      "artifact_type": "log"
+    },
+    {
+      "relative_path": "verification/P02-NEW-TIME-X6-AC1-AC7/runs/p02-newtime-ac-20261014-i2/attempts/ac6-contrast-a2-failed/ac6.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0,
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "artifact_type": "log"
+    },
+    {
+      "relative_path": "verification/P02-NEW-TIME-X6-AC1-AC7/runs/p02-newtime-ac-20261014-i2/attempts/ac6-contrast-a2-failed/execution-metadata.json",
+      "sha256": "3929ba8a813d30ff05504498c9eb193e78797da6a3b3bfb06cf71998280fd5c2",
+      "bytes": 2364,
+      "git_blob": "08db74efe9951d2a3aae6bcbe15348ddd02243ed",
+      "artifact_type": "data"
+    },
+    {
+      "relative_path": "verification/P02-NEW-TIME-X6-AC1-AC7/runs/p02-newtime-ac-20261014-i2/attempts/ac6-contrast-a2-failed/runner-execution.json",
+      "sha256": "661a2d81a4d6ec7cd263d706a01c4a1b29b9582896b22e385aab35e77eccf206",
+      "bytes": 556,
+      "git_blob": "2668368811d4616a7977c2b31c0f2f61d07397c0",
+      "artifact_type": "data"
+    },
+    {
+      "relative_path": "verification/P02-NEW-TIME-X6-AC1-AC7/runs/p02-newtime-ac-20261014-i2/attempts/ac6-contrast-a3-failed/app.stderr.log",
+      "sha256": "1e3e0687755c749177b82a294734cb2a518aaba220921917088201bbd28910a9",
+      "bytes": 1387,
+      "git_blob": "850414be737292909c1f404b934589b6504d06a2",
+      "artifact_type": "log"
+    },
+    {
+      "relative_path": "verification/P02-NEW-TIME-X6-AC1-AC7/runs/p02-newtime-ac-20261014-i2/attempts/ac6-contrast-a3-failed/app.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0,
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "artifact_type": "log"
+    },
+    {
+      "relative_path": "verification/P02-NEW-TIME-X6-AC1-AC7/runs/p02-newtime-ac-20261014-i2/attempts/ac6-contrast-a3-failed/execution-metadata.json",
+      "sha256": "91b96a1784ee749594d0727a9f28a89c295019e639e1564ca9eedb04847b0ea4",
+      "bytes": 2623,
+      "git_blob": "9a50da38b08231eb2aaf52f3993659482d0b4786",
+      "artifact_type": "data"
+    },
+    {
+      "relative_path": "verification/P02-NEW-TIME-X6-AC1-AC7/runs/p02-newtime-ac-20261014-i2/attempts/ac6-contrast-a3-failed/node.stderr.log",
+      "sha256": "1124b4de6e8866ad770b93791d1db0c4c402cb194e40ec3022b9a148fa1a4861",
+      "bytes": 814,
+      "git_blob": "72aada053652aae28f9580aba96d35472a50626d",
+      "artifact_type": "log"
+    },
+    {
+      "relative_path": "verification/P02-NEW-TIME-X6-AC1-AC7/runs/p02-newtime-ac-20261014-i2/attempts/ac6-contrast-a3-failed/node.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0,
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "artifact_type": "log"
+    },
+    {
+      "relative_path": "verification/P02-NEW-TIME-X6-AC1-AC7/runs/p02-newtime-ac-20261014-i2/attempts/ac6-contrast-a3-failed/runner-execution.json",
+      "sha256": "c4643a95db54bb06c151b38a277e4050a7e93028c04fbc28fb4876854e71eaf3",
+      "bytes": 579,
+      "git_blob": "e9484d26a34a646e317874b481ed5b7834b14e13",
+      "artifact_type": "data"
+    },
+    {
+      "relative_path": "verification/P02-NEW-TIME-X6-AC1-AC7/runs/p02-newtime-ac-20261014-i2/attempts/ac6-contrast-a4-failed/app.stderr.log",
+      "sha256": "1e3e0687755c749177b82a294734cb2a518aaba220921917088201bbd28910a9",
+      "bytes": 1387,
+      "git_blob": "850414be737292909c1f404b934589b6504d06a2",
+      "artifact_type": "log"
+    },
+    {
+      "relative_path": "verification/P02-NEW-TIME-X6-AC1-AC7/runs/p02-newtime-ac-20261014-i2/attempts/ac6-contrast-a4-failed/app.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0,
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "artifact_type": "log"
+    },
+    {
+      "relative_path": "verification/P02-NEW-TIME-X6-AC1-AC7/runs/p02-newtime-ac-20261014-i2/attempts/ac6-contrast-a4-failed/execution-metadata.json",
+      "sha256": "8c63b4b036fa25a9d135d1b6f5b814940fedccf8f4286f1a94e6990f4990efd3",
+      "bytes": 3301,
+      "git_blob": "54dfe41cc9501eb5c1164bde05bec9c0e3441beb",
+      "artifact_type": "data"
+    },
+    {
+      "relative_path": "verification/P02-NEW-TIME-X6-AC1-AC7/runs/p02-newtime-ac-20261014-i2/attempts/ac6-contrast-a4-failed/node.stderr.log",
+      "sha256": "1124b4de6e8866ad770b93791d1db0c4c402cb194e40ec3022b9a148fa1a4861",
+      "bytes": 814,
+      "git_blob": "72aada053652aae28f9580aba96d35472a50626d",
+      "artifact_type": "log"
+    },
+    {
+      "relative_path": "verification/P02-NEW-TIME-X6-AC1-AC7/runs/p02-newtime-ac-20261014-i2/attempts/ac6-contrast-a4-failed/node.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0,
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "artifact_type": "log"
+    },
+    {
+      "relative_path": "verification/P02-NEW-TIME-X6-AC1-AC7/runs/p02-newtime-ac-20261014-i2/attempts/ac6-contrast-a4-failed/port-state.json",
+      "sha256": "54f558ab672d2a8037fc804724f5b715ea70d6f7fca234f7325dbd96a7416007",
+      "bytes": 454,
+      "git_blob": "cc9f63dd523e23842ef4e914e546b973add7a725",
+      "artifact_type": "data"
+    },
+    {
+      "relative_path": "verification/P02-NEW-TIME-X6-AC1-AC7/runs/p02-newtime-ac-20261014-i2/attempts/ac6-contrast-a4-failed/runner-execution.json",
+      "sha256": "0872a56e5d0a13e4cd9da9cfadce17a80e4fd230c01ed89668830ba61793048a",
+      "bytes": 390,
+      "git_blob": "d7a228a248eef8518382c7af8caf1bd399809602",
+      "artifact_type": "data"
+    },
+    {
+      "relative_path": "verification/P02-NEW-TIME-X6-AC1-AC7/runs/p02-newtime-ac-20261014-i2/node-check-summary.json",
+      "sha256": "738b93852d8f084daf11e1028973ab01073d0e948b82162300b51120bf4a22e7",
+      "bytes": 3391,
+      "git_blob": "d0b688441c2274500470e692b6d9322c594bf8b0",
+      "artifact_type": "data"
+    },
+    {
+      "relative_path": "verification/P02-NEW-TIME-X6-AC1-AC7/runs/p02-newtime-ac-20261014-i2/safety-check-output.json",
+      "sha256": "28ee4155d9670309c0439640783316c2a34d35124502503f63cb7afa93c11ae8",
+      "bytes": 242,
+      "git_blob": "8bb0ff7564b15469c5ca913552417fececfa61a9",
+      "artifact_type": "data"
+    },
+    {
+      "relative_path": "verification/RES-P02-AC6-CDP-RECOVERY/closeout-a7/findings.md",
+      "sha256": "feea31d266f1549e0379c03b76ce577647c4c0868a8bf74f76c7b1a719941692",
+      "bytes": 8094,
+      "git_blob": "93043ce061b9e6c8e75bbd93723537de3aba1e9e",
+      "artifact_type": "doc"
+    },
+    {
+      "relative_path": "verification/RES-P02-AC6-CDP-RECOVERY/closeout-a7/handoff.md",
+      "sha256": "4d12ffd3f4403e3b8da54f3dfbdc8c20733c7f52281cfb413f93c44a14cb05a9",
+      "bytes": 5973,
+      "git_blob": "0e98f98cca7b015036cee02a55d51b6caed1e98f",
+      "artifact_type": "doc"
+    },
+    {
+      "relative_path": "verification/RES-P02-AC6-CDP-RECOVERY/closeout-a7/owner-evidence-manifest.json",
+      "sha256": "c287cdc1b774b3980d93ed0a673f282a21e7e2c0b6d4398d4461c43fc72db694",
+      "bytes": 3006,
+      "git_blob": "db64eed29090b25180a4649de3c64ad684c5f9f9",
+      "artifact_type": "data"
+    },
+    {
+      "relative_path": "verification/RES-P02-AC6-CDP-RECOVERY/closeout-a7/rollup-summary.json",
+      "sha256": "d1d022f7e3bca7e2ac5732e981fa5b7e9dd7202dc76a5cc576efe6dcc36bf147",
+      "bytes": 9709,
+      "git_blob": "8f37de57e8e670dd007c580c33ebd1727892cdc1",
+      "artifact_type": "data"
+    }
+  ]
+}

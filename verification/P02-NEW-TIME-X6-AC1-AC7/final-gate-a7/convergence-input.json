@@ -1,0 +1,53 @@
+{
+  "task_id": "P02-NEW-TIME-X6-AC1-AC7",
+  "implementation_repairs_used": 2,
+  "max_implementation_repairs": 2,
+  "open_blockers": [],
+  "nonblockers": [
+    {
+      "id": "DSH-A7-01",
+      "severity": "P3"
+    },
+    {
+      "id": "DSH-A7-02",
+      "severity": "P3"
+    },
+    {
+      "id": "DSH-A7-03",
+      "severity": "P3"
+    },
+    {
+      "id": "DSH-A7-04",
+      "severity": "P4"
+    },
+    {
+      "id": "DSH-A7-05",
+      "severity": "P4"
+    },
+    {
+      "id": "DSH-A7-06",
+      "severity": "P4"
+    },
+    {
+      "id": "CV-A7-01",
+      "severity": "P3"
+    },
+    {
+      "id": "P-01",
+      "severity": "P3"
+    },
+    {
+      "id": "P-02",
+      "severity": "P3"
+    },
+    {
+      "id": "P-03",
+      "severity": "P3"
+    }
+  ],
+  "delivery_safely_integrable": true,
+  "other_ready_tasks": [],
+  "blocker_on_critical_path": false,
+  "continuation_harmful": false,
+  "needs_user_only_input": false
+}

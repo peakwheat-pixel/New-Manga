@@ -1,0 +1,8 @@
+Python 3.14.6
+Executable: C:\Python314\python.exe
+Helper: C:\Users\49745\.agents\skills\multi-agent-project-orchestrator\scripts\generate-evidence-manifest.py
+Helper SHA-256: 921440C0D2E9B7D6B55BCCDEF6474AA28D69B399E416C4CA4152E5120E22CD95
+Pre-run helper selftest: PASS, 65 tests, 0 failures, 0 errors; helper_frozen=true; existing preparation-manifest-r1 evidence
+Dry-run: exit 0
+Generate: source_commit=aafae764f6293fc5d6540019ca16187477abcf48, review_head=708ac7938c72fbcccd0d68c7ca60635552cbcaaf, exit 0
+Verify: 34 files, PASS, exit 0

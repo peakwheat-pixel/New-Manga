@@ -1,0 +1,11 @@
+﻿{
+    "mutation_target":  "apps/desktop/src-tauri/src/library_bridge.rs",
+    "mutation_description":  "Bypassed transaction_lock by replacing guard with () in round_trip",
+    "exit_code":  101,
+    "expected_non_zero":  true,
+    "compilation_succeeded":  true,
+    "panic_detected":  true,
+    "panic_message":  "panicked at src\\library_bridge.rs:1275:13:",
+    "status":  "MUTATION_DISCRIMINATED",
+    "timestamp_utc":  "2026-10-15T11:21:46.5569001Z"
+}

@@ -1,0 +1,146 @@
+{
+  "task_id": "P02-NEW-TIME-X6-AC1-AC7",
+  "generated_at": "2026-10-15T06:37:38+00:00",
+  "source_commit": "e41e3c1805618a7feac06616a8ab520a908acbdc",
+  "review_head": "e41e3c1805618a7feac06616a8ab520a908acbdc",
+  "generator": {
+    "name": "generate-evidence-manifest",
+    "version": 2,
+    "frozen_git_checked": true
+  },
+  "files": [
+    {
+      "relative_path": "verification/P02-NEW-TIME-X6-AC1-AC7/final-gate-a7/codex-verification.json",
+      "sha256": "c246e299752768fb4675822ccc2204807df9da8884823255d185c4d7ed939e1d",
+      "bytes": 1924,
+      "git_blob": "c0586f73672f2e49e98641e6873bbc03ecf2d7a6",
+      "artifact_type": "data"
+    },
+    {
+      "relative_path": "verification/P02-NEW-TIME-X6-AC1-AC7/final-gate-a7/completion-adjudication.md",
+      "sha256": "799b56e19120a81ef5d95643eb90633f4ccbb6d9b2461a736c1b487628b3c0e9",
+      "bytes": 2660,
+      "git_blob": "bf72de93b890193e5e0b766e00e2edf3854460ae",
+      "artifact_type": "doc"
+    },
+    {
+      "relative_path": "verification/P02-NEW-TIME-X6-AC1-AC7/final-gate-a7/convergence-dry.json",
+      "sha256": "86954bfb7ef5aeaeaf41c81658afd2a4a2a0d2709a153d3e328b726f41d01cd9",
+      "bytes": 1409,
+      "git_blob": "1918d268b2084297d43e334b781e44dcbac703ad",
+      "artifact_type": "data"
+    },
+    {
+      "relative_path": "verification/P02-NEW-TIME-X6-AC1-AC7/final-gate-a7/convergence-input.json",
+      "sha256": "5a86224c72d4132d8ad4e3d908aca1a4ea0a6eb10b43c77cedf5850541e9cd3d",
+      "bytes": 923,
+      "git_blob": "cce2716b547f9991469cef655f7868b3c7cefc44",
+      "artifact_type": "data"
+    },
+    {
+      "relative_path": "verification/P02-NEW-TIME-X6-AC1-AC7/final-gate-a7/convergence-output.json",
+      "sha256": "71206ce8ad187e5c8070c89a6f96c9c57ad2ab80450fa02cd5fa4d04e2114340",
+      "bytes": 1410,
+      "git_blob": "1a94f78e10c533b757d9b3a319e5ca1e2666672f",
+      "artifact_type": "data"
+    },
+    {
+      "relative_path": "verification/P02-NEW-TIME-X6-AC1-AC7/final-gate-a7/current-summary.json",
+      "sha256": "46b47088e76fb783ab5a8e6a29cb15a654ac7310d78afa4977e098b3212472e1",
+      "bytes": 10122,
+      "git_blob": "9dd8cf46c87add636240111141369643ede24001",
+      "artifact_type": "data"
+    },
+    {
+      "relative_path": "verification/P02-NEW-TIME-X6-AC1-AC7/final-gate-a7/dsh-bounded-review.md",
+      "sha256": "f885ea2a3d49affa76a7df77f775e8d9dd35c140d9b45b1acbfcd972625fa610",
+      "bytes": 22784,
+      "git_blob": "43541d723777f4466a8d2e6f881026eca78a1840",
+      "artifact_type": "doc"
+    },
+    {
+      "relative_path": "verification/P02-NEW-TIME-X6-AC1-AC7/final-gate-a7/dsh-e-erratum-review.md",
+      "sha256": "be9995acc29d4282d5a631041383cb404ca8df22f6787cbd886605536db9cc32",
+      "bytes": 10367,
+      "git_blob": "22129b4e1b533167c937f013f3a6d13e883f9f6f",
+      "artifact_type": "doc"
+    },
+    {
+      "relative_path": "verification/P02-NEW-TIME-X6-AC1-AC7/final-gate-a7/integration-adjudication.md",
+      "sha256": "96cc982aa93d4d8ae984961d4e446ebf3a273bad5bc5a5360e30364082154f19",
+      "bytes": 2431,
+      "git_blob": "1ba653689f2090d1f6b9064006562772c18d3b9f",
+      "artifact_type": "doc"
+    },
+    {
+      "relative_path": "verification/P02-NEW-TIME-X6-AC1-AC7/final-gate-a7/resolution-convergence-input.json",
+      "sha256": "0c9cdd1d1d6053959a3e2421df5dd86236ba9b8dba4452488cb7929cc42133f3",
+      "bytes": 301,
+      "git_blob": "9ba5441bc1acb324bf630c8bff48dc6292896876",
+      "artifact_type": "data"
+    },
+    {
+      "relative_path": "verification/P02-NEW-TIME-X6-AC1-AC7/final-gate-a7/resolution-convergence-output.json",
+      "sha256": "7bed0870d5fcf1323278bcaca9e9e6181b3f16b96915d61cc5b5c8fc5b8d6215",
+      "bytes": 1264,
+      "git_blob": "a9150bdfd9ad39df5ed8e2dfe3ce4aed3adab7d5",
+      "artifact_type": "data"
+    },
+    {
+      "relative_path": "verification/P02-NEW-TIME-X6-AC1-AC7/final-gate-a7/resource-inventory.json",
+      "sha256": "02aba7355e084820be913781d1c746703bfff0691e9b32848a90f5846ee07dd6",
+      "bytes": 5817,
+      "git_blob": "b1f9b34eea3fb5deda60f3fbf7a373174b5b84e6",
+      "artifact_type": "data"
+    },
+    {
+      "relative_path": "verification/P02-NEW-TIME-X6-AC1-AC7/final-gate-a7/result-input.json",
+      "sha256": "d6fd98e3afdcb21a0a14acae0675aeb6da51a8a0494ffb72451aaf4170060fc3",
+      "bytes": 131,
+      "git_blob": "9e672e8b1c644011143bd530638aa8f0b78c2f7c",
+      "artifact_type": "data"
+    },
+    {
+      "relative_path": "verification/P02-NEW-TIME-X6-AC1-AC7/final-gate-a7/result-output.json",
+      "sha256": "c2c7473f861644e569092465fc799e25fb9c7365a85e57851823de589f4e50df",
+      "bytes": 375,
+      "git_blob": "42965905df0517ff59519e2e19e6691b722a1b10",
+      "artifact_type": "data"
+    },
+    {
+      "relative_path": "verification/P02-NEW-TIME-X6-AC1-AC7/final-gate-a7/review-dispatch.json",
+      "sha256": "2e26857fbed1a82e25732e8a300c2869aabc199ba94c465c1a6e71270e73be70",
+      "bytes": 460,
+      "git_blob": "4b3a01bcef094293bd38693772be5596dec3b7ba",
+      "artifact_type": "data"
+    },
+    {
+      "relative_path": "verification/P02-NEW-TIME-X6-AC1-AC7/final-gate-a7/revision-input.json",
+      "sha256": "725c1b17e5341762f54a7ca54ad4f09778f8f71eb585782f4315c1306a60dd4c",
+      "bytes": 148,
+      "git_blob": "185b995a45b72d210ac77f01b53842243bf82bae",
+      "artifact_type": "data"
+    },
+    {
+      "relative_path": "verification/P02-NEW-TIME-X6-AC1-AC7/final-gate-a7/revision-output.json",
+      "sha256": "5d964f23b3de0c48c5b89c63400824d128bd5f50f391b8fbbc63c8a8601da1fe",
+      "bytes": 371,
+      "git_blob": "07f1e8771be7c289cab6d76addf75888aac37bd2",
+      "artifact_type": "data"
+    },
+    {
+      "relative_path": "verification/P02-NEW-TIME-X6-AC1-AC7/final-gate-a7/source-evidence-manifest.json",
+      "sha256": "06a1cedfc53fc79607a9fcb99299ae0f9e3b0ba4df50d7dedc5a32c530698ac1",
+      "bytes": 34693,
+      "git_blob": "201de53067c4d0169741bf65c7925d2a5eac6be8",
+      "artifact_type": "data"
+    },
+    {
+      "relative_path": "verification/P02-NEW-TIME-X6-AC1-AC7/final-gate-a7/source-manifest-verify.json",
+      "sha256": "b59f3556f91be12be61dbeb9f44fc0bfec59d8348ba60b2610d6a1c384782e99",
+      "bytes": 295,
+      "git_blob": "9ba4c866ff791ea5c3e66b98b3b4c2f8d9bf045a",
+      "artifact_type": "data"
+    }
+  ]
+}

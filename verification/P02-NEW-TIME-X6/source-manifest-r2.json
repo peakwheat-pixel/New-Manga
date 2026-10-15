@@ -1,0 +1,86 @@
+{
+  "schema": "P02-NEW-TIME-X6-source-manifest-1",
+  "task": "P02-NEW-TIME-X6",
+  "revision": "i1-repair-r2",
+  "createdUtc": "2026-10-14T04:05:00Z",
+  "supersedes": "source-manifest-r1.json (kept verbatim as historical input of the r1 review round; its pins remain valid against delivery commit 8b4daf9b0db452cb1b37768f570f04a1e8e589e6)",
+  "ownerSession": "sess_bd06f60b-b6d1-4cc8-a7e7-4dbcb647458f",
+  "branch": "agent/zcode/P02-NEW-TIME-X6",
+  "repairBaseCommit": "5f266b43078e66533676d24a82b2aeee444456c4",
+  "baseCommit": "bc502e7aae07074fff7228d585674e87d53efcfd",
+  "repairRound": {
+    "kind": "IMPLEMENTATION_REPAIR_I1",
+    "budgetBefore": "I1/I2=0/2",
+    "budgetAfter": "I1/I2=1/2",
+    "adjudication": "verification/P02-NEW-TIME-X6/codex-source-review-adjudication-r1.md",
+    "reviewInput": "verification/P02-NEW-TIME-X6/dsh-source-review-r1.md",
+    "fixedBlockers": ["X6-SR-01", "X6-SR-02", "X6-SR-03"],
+    "backlogUntouched": ["X6-SR-04", "X6-SR-05", "X6-SR-06", "X6-SR-07", "X6-SR-08", "X6-SR-09", "X6-SR-10", "X6-SR-11", "X6-SR-12", "X6-SR-13"]
+  },
+  "byteFormat": "UTF-8 no BOM, LF line endings, no trailing whitespace",
+  "lineage": {
+    "modeledAfter": "reviewed+integrated baseline collector lineage",
+    "r1Delivery": {
+      "executorCommit": "8b4daf9b0db452cb1b37768f570f04a1e8e589e6",
+      "note": "r1 executor/selftest bytes are preserved by that delivery commit and by dsh-source-review-input-manifest-r1.json; this r2 manifest pins the I1-repaired bytes that replace them on the same paths"
+    },
+    "executorModelSource": {
+      "path": "tools/p02/p02-new-time-baseline.ps1",
+      "pinnedCommit": "bc502e7aae07074fff7228d585674e87d53efcfd",
+      "sha256": "ED1A48393F516934E285B17AE1E7210B3B4C5DADA7B1DD3568A68806E302AF66",
+      "note": "read-only reference; never executed; old attempt6 executor never referenced"
+    },
+    "selftestModelSource": {
+      "path": "tools/p02/p02-new-time-baseline-selftest.ps1",
+      "pinnedCommit": "bc502e7aae07074fff7228d585674e87d53efcfd",
+      "sha256": "0E34F959EB564E4BE449AFA89CB774168F3EDB2328B6204B37B7B54611744BF0B"
+    }
+  },
+  "files": [
+    {
+      "name": "executor-source",
+      "path": "verification/P02-NEW-TIME-X6/executor/p02-new-time-x6.ps1",
+      "role": "X6 one-shot executor (freeze-manifest driven, single CreateNew NDJSON output, fail-closed, history isolation + forbidden-write-prefix guard; I1: worktree-own index via --absolute-git-dir, dual-root dot-segment/reparse-hardened manifest placement)",
+      "sizeBytes": 105343,
+      "lineCount": 1957,
+      "sha256": "43EE7BE2EEF449CC85C7FDDEECAF22BA689E60479CCD37D82137F4F405DDB9D4",
+      "gitBlobId": "54afebd90bff565bdde2a2834411cd1ee439bd5c"
+    },
+    {
+      "name": "selftest-source",
+      "path": "verification/P02-NEW-TIME-X6/executor/p02-new-time-x6-selftest.ps1",
+      "role": "pure in-memory selftest (Parser AST extraction; never executes or dot-sources the executor; adds X6-SR-01/02 regressions and dual-root placement boundary assertions)",
+      "sizeBytes": 85767,
+      "lineCount": 944,
+      "sha256": "A8823F59AD1A1960217A32677116AA9EB1E30833E31D019769DCB0DE6AA75658",
+      "gitBlobId": "9ee1c95a2b77f4337cf243969ac501c514cf5078"
+    },
+    {
+      "name": "execution-protocol",
+      "path": "verification/P02-NEW-TIME-X6/protocol/x6-execution-protocol-r2.md",
+      "role": "gate order, exact candidate commands, candidate RunIds, output-target inventory incl. <RunId>/ raw-capture authorization, freeze-manifest required fields, I1 repair delta (protocol r1 kept verbatim)",
+      "sizeBytes": 13555,
+      "lineCount": 118,
+      "sha256": "6216B0BC7FF33D4C9345A48ACFC0E65BF1668B5F68AF44889F024AD0FE67F9D1",
+      "gitBlobId": "24a622c310823c52ed46984a0a51880353bf5e72"
+    },
+    {
+      "name": "output-target-inventory",
+      "path": "verification/P02-NEW-TIME-X6/output-target-inventory-r2.json",
+      "role": "complete list of candidate output targets with creation actor/timing; explicitly authorizes the <RunId>/ raw-capture root and the six required capture files (X6-SR-03); inventory r1 kept verbatim",
+      "sizeBytes": 10072,
+      "lineCount": 138,
+      "sha256": "F980922ED7109D8109EBEB5419E4BA7AA013007B841FCB1E894D5281820010AC",
+      "gitBlobId": "b2f71fe20ef07dc569183f609a53c0341496ffda"
+    }
+  ],
+  "selfExclusionNote": "this manifest records every delivered source file except itself (no self-hash); its own integrity is bound by the delivery commit and the Handoff/Task evidence tables",
+  "notRun": {
+    "parserCheck": "NOT_RUN (forbidden by the I1 dispatch instruction; released to Codex after the next bounded DSH source Review per Task Gate)",
+    "pureSelftest": "NOT_RUN (same gate; selftest source updated but never executed in this round)",
+    "x6OneShot": "NOT_RUN (requires Codex freeze + final pre-run = PRE_RUN_PASS)",
+    "buildCargo": "NOT_RUN",
+    "productAc1ToAc7": "BLOCKED / NOT_RUN",
+    "postRunReview": "NOT_RELEASED"
+  }
+}

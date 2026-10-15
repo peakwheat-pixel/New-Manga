@@ -1,0 +1,908 @@
+{
+  "steps": [
+    {
+      "step": "clean-targets-observed",
+      "at": "2026-10-14T11:20:58.478Z",
+      "roaming": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-r1\\ac1-identity-a2\\appdata-roaming",
+        "state": "ABSENT"
+      },
+      "localAppData": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-r1\\ac1-identity-a2\\appdata-local",
+        "state": "ABSENT"
+      },
+      "tmp": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-r1\\ac1-identity-a2\\tmp",
+        "state": "ABSENT"
+      },
+      "dataRoot": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-r1\\ac1-identity-a2\\data-root",
+        "state": "ABSENT"
+      },
+      "derived": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-r1\\ac1-identity-a2\\scope\\derived",
+        "state": "ABSENT"
+      },
+      "managed": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-r1\\ac1-identity-a2\\scope\\managed",
+        "state": "ABSENT"
+      },
+      "catalogDb": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-r1\\ac1-identity-a2\\catalog\\catalog.sqlite",
+        "state": "ABSENT"
+      },
+      "webview2Udd": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-r1\\ac1-identity-a2\\webview2-udd",
+        "state": "ABSENT"
+      },
+      "logs": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-r1\\ac1-identity-a2\\logs",
+        "state": "ABSENT"
+      }
+    },
+    {
+      "step": "pinned-binary-hash",
+      "at": "2026-10-14T11:20:58.484Z",
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-X6-BUILD-CARGO/apps/desktop/src-tauri/target/release/m2rc1-desktop.exe",
+      "sha256": "92AC7B8EFB646FE77DF8245B13C9AF9314BEF415B2F0E007B1CDCEA729BC13FD"
+    },
+    {
+      "step": "launched",
+      "at": "2026-10-14T11:20:59.334Z",
+      "pid": 21560,
+      "spawn_command": "G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-X6-BUILD-CARGO/apps/desktop/src-tauri/target/release/m2rc1-desktop.exe",
+      "cwd": "G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-X6-BUILD-CARGO/apps/desktop/src-tauri/target/release",
+      "clean_state": {
+        "roaming": {
+          "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-r1\\ac1-identity-a2\\appdata-roaming",
+          "state": "ABSENT"
+        },
+        "localAppData": {
+          "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-r1\\ac1-identity-a2\\appdata-local",
+          "state": "ABSENT"
+        },
+        "tmp": {
+          "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-r1\\ac1-identity-a2\\tmp",
+          "state": "ABSENT"
+        },
+        "dataRoot": {
+          "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-r1\\ac1-identity-a2\\data-root",
+          "state": "ABSENT"
+        },
+        "derived": {
+          "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-r1\\ac1-identity-a2\\scope\\derived",
+          "state": "ABSENT"
+        },
+        "managed": {
+          "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-r1\\ac1-identity-a2\\scope\\managed",
+          "state": "ABSENT"
+        },
+        "catalogDb": {
+          "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-r1\\ac1-identity-a2\\catalog\\catalog.sqlite",
+          "state": "ABSENT"
+        },
+        "webview2Udd": {
+          "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-r1\\ac1-identity-a2\\webview2-udd",
+          "state": "ABSENT"
+        },
+        "logs": {
+          "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-r1\\ac1-identity-a2\\logs",
+          "state": "ABSENT"
+        }
+      }
+    },
+    {
+      "step": "cdp-browser-version",
+      "at": "2026-10-14T11:20:59.334Z",
+      "Browser": "Edg/155.0.4283.45",
+      "Protocol-Version": "1.3",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/155.0.0.0 Safari/537.36 Edg/155.0.0.0",
+      "V8-Version": "15.5.9.4",
+      "WebKit-Version": "537.36 (@50f24ef2aa5369a074b8888b7db82d9c0652d642)",
+      "webSocketDebuggerUrl": "ws://127.0.0.1:9333/devtools/browser/853362fd-0e86-4d35-aacb-f05466a25caa"
+    },
+    {
+      "step": "system-info",
+      "at": "2026-10-14T11:20:59.337Z",
+      "osName": "Windows",
+      "osVersion": null,
+      "platform": null,
+      "cpuModel": null,
+      "raw": {
+        "gpu": {
+          "devices": [
+            {
+              "vendorId": 4318,
+              "deviceId": 11269,
+              "subSysId": 542906225,
+              "revision": 161,
+              "vendorString": "",
+              "deviceString": "NVIDIA GeForce RTX 5070 Ti",
+              "driverVendor": "NVIDIA",
+              "driverVersion": "32.0.16.1692"
+            },
+            {
+              "vendorId": 4318,
+              "deviceId": 11269,
+              "subSysId": 542906225,
+              "revision": 161,
+              "vendorString": "",
+              "deviceString": "NVIDIA GeForce RTX 5070 Ti",
+              "driverVendor": "",
+              "driverVersion": "32.0.16.1692"
+            },
+            {
+              "vendorId": 4318,
+              "deviceId": 11269,
+              "subSysId": 542906225,
+              "revision": 161,
+              "vendorString": "",
+              "deviceString": "NVIDIA GeForce RTX 5070 Ti",
+              "driverVendor": "",
+              "driverVersion": "32.0.16.1692"
+            },
+            {
+              "vendorId": 4318,
+              "deviceId": 11269,
+              "subSysId": 542906225,
+              "revision": 161,
+              "vendorString": "",
+              "deviceString": "NVIDIA GeForce RTX 5070 Ti",
+              "driverVendor": "",
+              "driverVersion": "32.0.16.1692"
+            },
+            {
+              "vendorId": 5140,
+              "deviceId": 140,
+              "subSysId": 0,
+              "revision": 0,
+              "vendorString": "",
+              "deviceString": "Microsoft Basic Render Driver",
+              "driverVendor": "",
+              "driverVersion": "10.0.26100.9549"
+            }
+          ],
+          "auxAttributes": {
+            "amdSwitchable": false,
+            "bgra8OverlaySupport": "SCALING",
+            "canSupportThreadedTextureMailbox": false,
+            "directComposition": true,
+            "directMLFeatureLevel": "Not supported",
+            "directRenderingVersion": "",
+            "displayType": "ANGLE_D3D11",
+            "dx12FeatureLevel": "Not supported",
+            "glExtensions": "GL_AMD_performance_monitor GL_ANGLE_base_vertex_base_instance_shader_builtin GL_ANGLE_blob_cache GL_ANGLE_client_arrays GL_ANGLE_clip_cull_distance GL_ANGLE_copy_texture_3d GL_ANGLE_depth_texture GL_ANGLE_framebuffer_blit GL_ANGLE_framebuffer_multisample GL_ANGLE_get_serialized_context_string GL_ANGLE_get_tex_level_parameter GL_ANGLE_instanced_arrays GL_ANGLE_memory_size GL_ANGLE_multiview_multisample GL_ANGLE_pack_reverse_row_order GL_ANGLE_polygon_mode GL_ANGLE_program_binary_readiness_query GL_ANGLE_program_cache_control GL_ANGLE_provoking_vertex GL_ANGLE_renderability_validation GL_ANGLE_request_extension GL_ANGLE_robust_client_memory GL_ANGLE_shader_pixel_local_storage GL_ANGLE_shader_pixel_local_storage_coherent GL_ANGLE_stencil_texturing GL_ANGLE_texture_compression_dxt3 GL_ANGLE_texture_compression_dxt5 GL_ANGLE_texture_multisample GL_ANGLE_texture_usage GL_ANGLE_translated_shader_source GL_APPLE_clip_distance GL_ARM_rgba8 GL_CHROMIUM_bind_generates_resource GL_CHROMIUM_bind_uniform_location GL_CHROMIUM_copy_compressed_texture GL_CHROMIUM_copy_texture GL_CHROMIUM_lose_context GL_EXT_EGL_image_external_wrap_modes GL_EXT_base_instance GL_EXT_blend_func_extended GL_EXT_blend_minmax GL_EXT_clip_control GL_EXT_clip_cull_distance GL_EXT_color_buffer_float GL_EXT_color_buffer_half_float GL_EXT_conservative_depth GL_EXT_debug_label GL_EXT_debug_marker GL_EXT_depth_clamp GL_EXT_discard_framebuffer GL_EXT_disjoint_timer_query GL_EXT_draw_buffers GL_EXT_draw_buffers_indexed GL_EXT_draw_elements_base_vertex GL_EXT_float_blend GL_EXT_frag_depth GL_EXT_instanced_arrays GL_EXT_map_buffer_range GL_EXT_occlusion_query_boolean GL_EXT_polygon_offset_clamp GL_EXT_read_format_bgra GL_EXT_render_snorm GL_EXT_robustness GL_EXT_sRGB GL_EXT_shader_texture_lod GL_EXT_texture_border_clamp GL_EXT_texture_compression_bptc GL_EXT_texture_compression_dxt1 GL_EXT_texture_compression_rgtc GL_EXT_texture_compression_s3tc_srgb GL_EXT_texture_filter_anisotropic GL_EXT_texture_format_BGRA8888 GL_EXT_texture_mirror_clamp_to_edge GL_EXT_texture_norm16 GL_EXT_texture_rg GL_EXT_texture_storage GL_EXT_texture_type_2_10_10_10_REV GL_EXT_unpack_subimage GL_KHR_debug GL_KHR_parallel_shader_compile GL_KHR_robustness GL_NV_EGL_stream_consumer_external GL_NV_fence GL_NV_framebuffer_blit GL_NV_pack_subimage GL_NV_pixel_buffer_object GL_NV_shader_noperspective_interpolation GL_OES_EGL_image GL_OES_EGL_image_external GL_OES_EGL_image_external_essl3 GL_OES_depth24 GL_OES_depth32 GL_OES_draw_buffers_indexed GL_OES_draw_elements_base_vertex GL_OES_element_index_uint GL_OES_fbo_render_mipmap GL_OES_get_program_binary GL_OES_mapbuffer GL_OES_packed_depth_stencil GL_OES_required_internalformat GL_OES_rgb8_rgba8 GL_OES_sample_variables GL_OES_shader_multisample_interpolation GL_OES_standard_derivatives GL_OES_surfaceless_context GL_OES_texture_border_clamp GL_OES_texture_float GL_OES_texture_float_linear GL_OES_texture_half_float GL_OES_texture_half_float_linear GL_OES_texture_npot GL_OES_texture_stencil8 GL_OES_texture_storage_multisample_2d_array GL_OES_vertex_array_object GL_OVR_multiview GL_OVR_multiview2 ",
+            "glImplementationParts": "(gl=egl-angle,angle=d3d11)",
+            "glRenderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 5070 Ti (0x00002C05) Direct3D11 vs_5_0 ps_5_0, D3D11-32.0.16.1692)",
+            "glResetNotificationStrategy": 33362,
+            "glVendor": "Google Inc. (NVIDIA)",
+            "glVersion": "OpenGL ES 3.0 (ANGLE 2.1.48255 git hash: 0b3540a71fa0)",
+            "glWsExtensions": "EGL_EXT_create_context_robustness EGL_ANGLE_d3d_share_handle_client_buffer EGL_ANGLE_d3d_texture_client_buffer EGL_ANGLE_surface_d3d_texture_2d_share_handle EGL_ANGLE_query_surface_pointer EGL_ANGLE_window_fixed_size EGL_ANGLE_keyed_mutex EGL_ANGLE_surface_orientation EGL_ANGLE_direct_composition EGL_NV_post_sub_buffer EGL_KHR_create_context EGL_KHR_image EGL_KHR_image_base EGL_KHR_gl_texture_2D_image EGL_KHR_gl_texture_cubemap_image EGL_KHR_gl_renderbuffer_image EGL_KHR_get_all_proc_addresses EGL_KHR_stream EGL_KHR_stream_consumer_gltexture EGL_NV_stream_consumer_gltexture_yuv EGL_ANGLE_stream_producer_d3d_texture EGL_ANGLE_create_context_webgl_compatibility EGL_CHROMIUM_create_context_bind_generates_resource EGL_CHROMIUM_sync_control EGL_EXT_pixel_format_float EGL_KHR_surfaceless_context EGL_ANGLE_display_texture_share_group EGL_ANGLE_display_semaphore_share_group EGL_ANGLE_create_context_client_arrays EGL_ANGLE_program_cache_control EGL_ANGLE_robust_resource_initialization EGL_ANGLE_create_context_extensions_enabled EGL_ANDROID_blob_cache EGL_ANDROID_recordable EGL_ANGLE_image_d3d11_texture EGL_ANGLE_create_context_backwards_compatible EGL_KHR_no_config_context EGL_KHR_create_context_no_error EGL_KHR_reusable_sync EGL_ANGLE_memory_usage_report ",
+            "glWsVendor": "Google Inc. (NVIDIA)",
+            "glWsVersion": "1.5 (ANGLE 2.1.48255 git hash: 0b3540a71fa0)",
+            "inProcessGpu": false,
+            "initializationTime": 0.184075,
+            "isAsan": false,
+            "isClangCoverage": false,
+            "jpegDecodeAcceleratorSupported": false,
+            "maxMsaaSamples": "8",
+            "nv12OverlaySupport": "SCALING",
+            "optimus": false,
+            "p010OverlaySupport": "SCALING",
+            "passthroughCmdDecoder": true,
+            "pixelShaderVersion": "5.0",
+            "playreadyHardwareDrmSupport": false,
+            "processCrashCount": 0,
+            "rgb10a2OverlaySupport": "SCALING",
+            "sandboxed": true,
+            "skiaBackendType": "GaneshGL",
+            "subpixelFontRendering": true,
+            "supportsD3dSharedImages": true,
+            "supportsDirectML": false,
+            "supportsDx12": false,
+            "supportsOverlays": true,
+            "supportsVulkan": false,
+            "targetCpuBits": 64,
+            "vertexShaderVersion": "5.0",
+            "visibilityCallbackCallCount": 0,
+            "vulkanVersion": "Not supported",
+            "yuy2OverlaySupport": "SCALING"
+          },
+          "featureStatus": {
+            "2d_canvas": "enabled",
+            "direct_rendering_display_compositor": "disabled_off_ok",
+            "gpu_compositing": "enabled",
+            "multiple_raster_threads": "enabled_on",
+            "opengl": "enabled_on",
+            "rasterization": "enabled",
+            "raw_draw": "disabled_off_ok",
+            "skia_graphite": "disabled_off",
+            "trees_in_viz": "disabled_off",
+            "video_decode": "enabled",
+            "video_encode": "enabled",
+            "webgl": "enabled",
+            "webgpu": "enabled",
+            "webnn": "disabled_off"
+          },
+          "driverBugWorkarounds": [
+            "disable_d3d11_vp9_ksvc_decoding",
+            "enable_webgl_timer_query_extensions",
+            "exit_on_context_lost",
+            "unpack_overlapping_rows_separately_unpack_buffer",
+            "use_g22_topleft_color_space_for_yuv_vp",
+            "disabled_extension_GL_KHR_blend_equation_advanced",
+            "disabled_extension_GL_KHR_blend_equation_advanced_coherent"
+          ],
+          "videoDecoding": [],
+          "videoEncoding": []
+        },
+        "modelName": "",
+        "modelVersion": "",
+        "commandLine": "\"C:\\Program Files (x86)\\Microsoft\\EdgeWebView\\Application\\155.0.4283.45\\msedgewebview2.exe\" --embedded-browser-webview=1 --webview-exe-name=m2rc1-desktop.exe --webview-exe-version=0.1.0 --user-data-dir=\"G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-r1\\ac1-identity-a2\\webview2-udd\\EBWebView\" --noerrdialogs --embedded-browser-webview-dpi-awareness=2 --autoplay-policy=no-user-gesture-required --disable-features=msWebOOUI,msPdfOOUI,msSmartScreenProtection --remote-debugging-port=9333 --lang=zh-CN --mojo-named-platform-channel-pipe=21560.39236.2035079876776581862 /pfhostedapp:569f69a61a84569b2e07f0a8c7700c1f7a30cdba --flag-switches-begin --flag-switches-end --no-default-browser-check --disable-component-extensions-with-background-pages --no-first-run --disable-default-apps --internet-explorer-integration=none --disable-popup-blocking --disable-sync --sdsm-state=off"
+      }
+    },
+    {
+      "step": "page-target-info",
+      "at": "2026-10-14T11:20:59.338Z",
+      "targetId": "6B5A9C0550B96974F786C080FBCDACFA",
+      "type": "page",
+      "url": "http://tauri.localhost/",
+      "title": "M2RC1|interactive|deny=5/6|allow=0/1|results=7",
+      "attached": true,
+      "browserContextId": "AC05A19A86E0EA94CA7CF4DC89CE8D88"
+    },
+    {
+      "step": "page-boot",
+      "at": "2026-10-14T11:20:59.339Z",
+      "readyState": "complete",
+      "title": "M2RC1|interactive|deny=5/6|allow=0/1|results=7",
+      "hasTauriBridge": true,
+      "navPresent": true,
+      "navConsolePresent": true,
+      "navWorkbenchPresent": true,
+      "bodyText": "Console\nWorkbench\nM2-RC2 resource channel runtime\ninteractive|deny=5/6|allow=0/1\nIP-1-register-catalog-denied PASS\nIP-2-probe-config-denied PASS\nIP-3-probe-write-results-denied PASS\nIP-4-probe-exit-denied PASS\nIP-5-probe-issue-denied PASS\nIP-6-ttl-override-inert FAIL\nIA-1-production-issue-allowed FAIL\n书库书目 (Library)\n刷新\n书架为空，暂无书目。\n设置 (Settings)\n翻译与检测 (Translation & Detection)\nSFX 翻译策略\n跳过翻译 (skip)\n翻",
+      "ua": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/155.0.0.0 Safari/537.36 Edg/155.0.0.0",
+      "perfNow": 213.8999999910593
+    },
+    {
+      "step": "process-census",
+      "at": "2026-10-14T11:20:59.726Z",
+      "exit": 0,
+      "matched": [],
+      "webview2Count": 0
+    },
+    {
+      "step": "screenshot",
+      "at": "2026-10-14T11:20:59.773Z",
+      "file": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-r1\\ac1-identity-a2\\logs\\ac1-window-boot.png",
+      "bytes": 34839,
+      "sha256": "151F781617B50D3BF523BFD3F0611D8ADC3B3D5C241B8F274732E5CD485E342A"
+    },
+    {
+      "step": "host-stderr-announcement",
+      "at": "2026-10-14T11:21:01.284Z",
+      "has_production_allowlist": true,
+      "excerpt": "[core.derived_gc] orphan_files_removed=0 dead_rows_removed=0\r\n[m2rc2-allowlist] production:issue_resource_url,revoke_ref,revoke_resource_refs,core_ping,library_list_books,settings_get,settings_update_section,set_region_type,list_regions,list_region_revisions,restore_region_revision,rerender_page,resolve_page_resource,list_chapters,list_chapter_pages\n[m2rc1-title] M2-RC1 resource channel runtime\n"
+    },
+    {
+      "0": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-r1\\ac1-identity-a2\\appdata-local",
+        "type": "dir",
+        "bytes": null
+      },
+      "1": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-r1\\ac1-identity-a2\\appdata-local\\Microsoft",
+        "type": "dir",
+        "bytes": null
+      },
+      "2": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-r1\\ac1-identity-a2\\appdata-local\\Microsoft\\Windows",
+        "type": "dir",
+        "bytes": null
+      },
+      "3": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-r1\\ac1-identity-a2\\appdata-local\\Microsoft\\Windows\\Caches",
+        "type": "dir",
+        "bytes": null
+      },
+      "4": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-r1\\ac1-identity-a2\\catalog",
+        "type": "dir",
+        "bytes": null
+      },
+      "5": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-r1\\ac1-identity-a2\\catalog\\catalog.sqlite",
+        "type": "file",
+        "bytes": 24576
+      },
+      "6": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-r1\\ac1-identity-a2\\data-root",
+        "type": "dir",
+        "bytes": null
+      },
+      "7": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-r1\\ac1-identity-a2\\data-root\\library.db",
+        "type": "file",
+        "bytes": 4096
+      },
+      "8": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-r1\\ac1-identity-a2\\data-root\\library.db-shm",
+        "type": "file",
+        "bytes": 32768
+      },
+      "9": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-r1\\ac1-identity-a2\\data-root\\library.db-wal",
+        "type": "file",
+        "bytes": 395552
+      },
+      "10": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-r1\\ac1-identity-a2\\data-root\\managed",
+        "type": "dir",
+        "bytes": null
+      },
+      "11": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-r1\\ac1-identity-a2\\data-root\\managed\\temp",
+        "type": "dir",
+        "bytes": null
+      },
+      "12": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-r1\\ac1-identity-a2\\logs",
+        "type": "dir",
+        "bytes": null
+      },
+      "13": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-r1\\ac1-identity-a2\\logs\\ac1-window-boot.png",
+        "type": "file",
+        "bytes": 34839
+      },
+      "14": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-r1\\ac1-identity-a2\\logs\\ac1.stderr.log",
+        "type": "file",
+        "bytes": 398
+      },
+      "15": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-r1\\ac1-identity-a2\\logs\\ac1.stdout.log",
+        "type": "file",
+        "bytes": 0
+      },
+      "16": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-r1\\ac1-identity-a2\\scope",
+        "type": "dir",
+        "bytes": null
+      },
+      "17": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-r1\\ac1-identity-a2\\scope\\derived",
+        "type": "dir",
+        "bytes": null
+      },
+      "18": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-r1\\ac1-identity-a2\\scope\\derived\\.preview-lifecycle.lock",
+        "type": "file",
+        "bytes": 389
+      },
+      "19": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-r1\\ac1-identity-a2\\webview2-udd",
+        "type": "dir",
+        "bytes": null
+      },
+      "20": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-r1\\ac1-identity-a2\\webview2-udd\\EBWebView",
+        "type": "dir",
+        "bytes": null
+      },
+      "21": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-r1\\ac1-identity-a2\\webview2-udd\\EBWebView\\AutoLaunchProtocolsComponent",
+        "type": "dir",
+        "bytes": null
+      },
+      "22": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-r1\\ac1-identity-a2\\webview2-udd\\EBWebView\\CertificateRevocation",
+        "type": "dir",
+        "bytes": null
+      },
+      "23": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-r1\\ac1-identity-a2\\webview2-udd\\EBWebView\\component_crx_cache",
+        "type": "dir",
+        "bytes": null
+      },
+      "24": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-r1\\ac1-identity-a2\\webview2-udd\\EBWebView\\Crashpad",
+        "type": "dir",
+        "bytes": null
+      },
+      "25": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-r1\\ac1-identity-a2\\webview2-udd\\EBWebView\\Crashpad\\attachments",
+        "type": "dir",
+        "bytes": null
+      },
+      "26": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-r1\\ac1-identity-a2\\webview2-udd\\EBWebView\\Crashpad\\metadata",
+        "type": "file",
+        "bytes": 0
+      },
+      "27": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-r1\\ac1-identity-a2\\webview2-udd\\EBWebView\\Crashpad\\reports",
+        "type": "dir",
+        "bytes": null
+      },
+      "28": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-r1\\ac1-identity-a2\\webview2-udd\\EBWebView\\Crashpad\\settings.dat",
+        "type": "file",
+        "bytes": 288
+      },
+      "29": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-r1\\ac1-identity-a2\\webview2-udd\\EBWebView\\Crashpad\\throttle_store.dat",
+        "type": "file",
+        "bytes": 20
+      },
+      "30": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-r1\\ac1-identity-a2\\webview2-udd\\EBWebView\\Default",
+        "type": "dir",
+        "bytes": null
+      },
+      "31": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-r1\\ac1-identity-a2\\webview2-udd\\EBWebView\\Default\\AutofillAiModelCache",
+        "type": "dir",
+        "bytes": null
+      },
+      "32": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-r1\\ac1-identity-a2\\webview2-udd\\EBWebView\\Default\\AutofillStrikeDatabase",
+        "type": "dir",
+        "bytes": null
+      },
+      "33": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-r1\\ac1-identity-a2\\webview2-udd\\EBWebView\\Default\\blob_storage",
+        "type": "dir",
+        "bytes": null
+      },
+      "34": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-r1\\ac1-identity-a2\\webview2-udd\\EBWebView\\Default\\BookmarkMergedSurfaceOrdering",
+        "type": "file",
+        "bytes": 6
+      },
+      "35": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-r1\\ac1-identity-a2\\webview2-udd\\EBWebView\\Default\\BudgetDatabase",
+        "type": "dir",
+        "bytes": null
+      },
+      "36": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-r1\\ac1-identity-a2\\webview2-udd\\EBWebView\\Default\\Cache",
+        "type": "dir",
+        "bytes": null
+      },
+      "37": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-r1\\ac1-identity-a2\\webview2-udd\\EBWebView\\Default\\ClientCertificates",
+        "type": "dir",
+        "bytes": null
+      },
+      "38": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-r1\\ac1-identity-a2\\webview2-udd\\EBWebView\\Default\\Code Cache",
+        "type": "dir",
+        "bytes": null
+      },
+      "39": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-r1\\ac1-identity-a2\\webview2-udd\\EBWebView\\Default\\commerce_subscription_db",
+        "type": "dir",
+        "bytes": null
+      },
+      "40": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-r1\\ac1-identity-a2\\webview2-udd\\EBWebView\\Default\\DawnGraphiteCache",
+        "type": "dir",
+        "bytes": null
+      },
+      "41": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-r1\\ac1-identity-a2\\webview2-udd\\EBWebView\\Default\\DawnWebGPUCache",
+        "type": "dir",
+        "bytes": null
+      },
+      "42": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-r1\\ac1-identity-a2\\webview2-udd\\EBWebView\\Default\\declarative_performance_observer.db",
+        "type": "file",
+        "bytes": 32768
+      },
+      "43": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-r1\\ac1-identity-a2\\webview2-udd\\EBWebView\\Default\\declarative_performance_observer.db-journal",
+        "type": "file",
+        "bytes": 0
+      },
+      "44": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-r1\\ac1-identity-a2\\webview2-udd\\EBWebView\\Default\\DIPS",
+        "type": "file",
+        "bytes": 4096
+      },
+      "45": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-r1\\ac1-identity-a2\\webview2-udd\\EBWebView\\Default\\DIPS-wal",
+        "type": "file",
+        "bytes": 45352
+      },
+      "46": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-r1\\ac1-identity-a2\\webview2-udd\\EBWebView\\Default\\discounts_db",
+        "type": "dir",
+        "bytes": null
+      },
+      "47": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-r1\\ac1-identity-a2\\webview2-udd\\EBWebView\\Default\\discount_infos_db",
+        "type": "dir",
+        "bytes": null
+      },
+      "48": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-r1\\ac1-identity-a2\\webview2-udd\\EBWebView\\Default\\EdgeSessions",
+        "type": "dir",
+        "bytes": null
+      },
+      "49": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-r1\\ac1-identity-a2\\webview2-udd\\EBWebView\\Default\\Extension Rules",
+        "type": "dir",
+        "bytes": null
+      },
+      "50": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-r1\\ac1-identity-a2\\webview2-udd\\EBWebView\\Default\\Extension Scripts",
+        "type": "dir",
+        "bytes": null
+      },
+      "51": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-r1\\ac1-identity-a2\\webview2-udd\\EBWebView\\Default\\Extension State",
+        "type": "dir",
+        "bytes": null
+      },
+      "52": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-r1\\ac1-identity-a2\\webview2-udd\\EBWebView\\Default\\ExtensionActivityEdge",
+        "type": "file",
+        "bytes": 32768
+      },
+      "53": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-r1\\ac1-identity-a2\\webview2-udd\\EBWebView\\Default\\ExtensionActivityEdge-journal",
+        "type": "file",
+        "bytes": 0
+      },
+      "54": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-r1\\ac1-identity-a2\\webview2-udd\\EBWebView\\Default\\Favicons",
+        "type": "file",
+        "bytes": 20480
+      },
+      "55": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-r1\\ac1-identity-a2\\webview2-udd\\EBWebView\\Default\\Favicons-journal",
+        "type": "file",
+        "bytes": 0
+      },
+      "56": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-r1\\ac1-identity-a2\\webview2-udd\\EBWebView\\Default\\favorites_diagnostic.log",
+        "type": "file",
+        "bytes": 906
+      },
+      "57": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-r1\\ac1-identity-a2\\webview2-udd\\EBWebView\\Default\\Feature Engagement Tracker",
+        "type": "dir",
+        "bytes": null
+      },
+      "58": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-r1\\ac1-identity-a2\\webview2-udd\\EBWebView\\Default\\GPUCache",
+        "type": "dir",
+        "bytes": null
+      },
+      "59": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-r1\\ac1-identity-a2\\webview2-udd\\EBWebView\\Default\\History",
+        "type": "file",
+        "bytes": 249856
+      },
+      "60": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-r1\\ac1-identity-a2\\webview2-udd\\EBWebView\\Default\\History-journal",
+        "type": "file",
+        "bytes": 66176
+      },
+      "61": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-r1\\ac1-identity-a2\\webview2-udd\\EBWebView\\Default\\JumpListIconsRecentWorkspacesV2",
+        "type": "dir",
+        "bytes": null
+      },
+      "62": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-r1\\ac1-identity-a2\\webview2-udd\\EBWebView\\Default\\Local Storage",
+        "type": "dir",
+        "bytes": null
+      },
+      "63": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-r1\\ac1-identity-a2\\webview2-udd\\EBWebView\\Default\\LOCK",
+        "type": "file",
+        "bytes": 0
+      },
+      "64": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-r1\\ac1-identity-a2\\webview2-udd\\EBWebView\\Default\\LOG",
+        "type": "file",
+        "bytes": 0
+      },
+      "65": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-r1\\ac1-identity-a2\\webview2-udd\\EBWebView\\Default\\Login Data",
+        "type": "file",
+        "bytes": 43008
+      },
+      "66": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-r1\\ac1-identity-a2\\webview2-udd\\EBWebView\\Default\\Login Data For Account",
+        "type": "file",
+        "bytes": 43008
+      },
+      "67": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-r1\\ac1-identity-a2\\webview2-udd\\EBWebView\\Default\\Login Data For Account-journal",
+        "type": "file",
+        "bytes": 0
+      },
+      "68": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-r1\\ac1-identity-a2\\webview2-udd\\EBWebView\\Default\\Login Data-journal",
+        "type": "file",
+        "bytes": 0
+      },
+      "69": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-r1\\ac1-identity-a2\\webview2-udd\\EBWebView\\Default\\Network",
+        "type": "dir",
+        "bytes": null
+      },
+      "70": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-r1\\ac1-identity-a2\\webview2-udd\\EBWebView\\Default\\Network Action Predictor",
+        "type": "file",
+        "bytes": 53248
+      },
+      "71": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-r1\\ac1-identity-a2\\webview2-udd\\EBWebView\\Default\\Network Action Predictor-journal",
+        "type": "file",
+        "bytes": 0
+      },
+      "72": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-r1\\ac1-identity-a2\\webview2-udd\\EBWebView\\Default\\optimization_guide_hint_cache_store",
+        "type": "dir",
+        "bytes": null
+      },
+      "73": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-r1\\ac1-identity-a2\\webview2-udd\\EBWebView\\Default\\parcel_tracking_db",
+        "type": "dir",
+        "bytes": null
+      },
+      "74": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-r1\\ac1-identity-a2\\webview2-udd\\EBWebView\\Default\\PersistentOriginTrials",
+        "type": "dir",
+        "bytes": null
+      },
+      "75": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-r1\\ac1-identity-a2\\webview2-udd\\EBWebView\\Default\\README",
+        "type": "file",
+        "bytes": 182
+      },
+      "76": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-r1\\ac1-identity-a2\\webview2-udd\\EBWebView\\Default\\ServerCertificate",
+        "type": "file",
+        "bytes": 20480
+      },
+      "77": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-r1\\ac1-identity-a2\\webview2-udd\\EBWebView\\Default\\ServerCertificate-journal",
+        "type": "file",
+        "bytes": 0
+      },
+      "78": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-r1\\ac1-identity-a2\\webview2-udd\\EBWebView\\Default\\Session Storage",
+        "type": "dir",
+        "bytes": null
+      },
+      "79": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-r1\\ac1-identity-a2\\webview2-udd\\EBWebView\\Default\\Sessions",
+        "type": "dir",
+        "bytes": null
+      },
+      "80": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-r1\\ac1-identity-a2\\webview2-udd\\EBWebView\\Default\\settings_diagnostic.log",
+        "type": "file",
+        "bytes": 17473
+      },
+      "81": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-r1\\ac1-identity-a2\\webview2-udd\\EBWebView\\Default\\Shared Dictionary",
+        "type": "dir",
+        "bytes": null
+      },
+      "82": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-r1\\ac1-identity-a2\\webview2-udd\\EBWebView\\Default\\shared_proto_db",
+        "type": "dir",
+        "bytes": null
+      },
+      "83": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-r1\\ac1-identity-a2\\webview2-udd\\EBWebView\\Default\\Site Characteristics Database",
+        "type": "dir",
+        "bytes": null
+      },
+      "84": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-r1\\ac1-identity-a2\\webview2-udd\\EBWebView\\Default\\Sync Data",
+        "type": "dir",
+        "bytes": null
+      },
+      "85": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-r1\\ac1-identity-a2\\webview2-udd\\EBWebView\\Default\\Top Sites",
+        "type": "file",
+        "bytes": 20480
+      },
+      "86": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-r1\\ac1-identity-a2\\webview2-udd\\EBWebView\\Default\\Top Sites-journal",
+        "type": "file",
+        "bytes": 0
+      },
+      "87": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-r1\\ac1-identity-a2\\webview2-udd\\EBWebView\\Default\\Vpn Tokens",
+        "type": "file",
+        "bytes": 28672
+      },
+      "88": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-r1\\ac1-identity-a2\\webview2-udd\\EBWebView\\Default\\Vpn Tokens-journal",
+        "type": "file",
+        "bytes": 0
+      },
+      "89": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-r1\\ac1-identity-a2\\webview2-udd\\EBWebView\\Default\\Web Data",
+        "type": "file",
+        "bytes": 223232
+      },
+      "90": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-r1\\ac1-identity-a2\\webview2-udd\\EBWebView\\Default\\Web Data-journal",
+        "type": "file",
+        "bytes": 0
+      },
+      "91": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-r1\\ac1-identity-a2\\webview2-udd\\EBWebView\\GPUPersistentCache",
+        "type": "dir",
+        "bytes": null
+      },
+      "92": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-r1\\ac1-identity-a2\\webview2-udd\\EBWebView\\GPUPersistentCache\\DawnGraphiteCache",
+        "type": "dir",
+        "bytes": null
+      },
+      "93": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-r1\\ac1-identity-a2\\webview2-udd\\EBWebView\\GrShaderCache",
+        "type": "dir",
+        "bytes": null
+      },
+      "94": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-r1\\ac1-identity-a2\\webview2-udd\\EBWebView\\GrShaderCache\\data_0",
+        "type": "file",
+        "bytes": 45056
+      },
+      "95": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-r1\\ac1-identity-a2\\webview2-udd\\EBWebView\\GrShaderCache\\data_1",
+        "type": "file",
+        "bytes": 270336
+      },
+      "96": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-r1\\ac1-identity-a2\\webview2-udd\\EBWebView\\GrShaderCache\\data_2",
+        "type": "file",
+        "bytes": 8192
+      },
+      "97": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-r1\\ac1-identity-a2\\webview2-udd\\EBWebView\\GrShaderCache\\data_3",
+        "type": "file",
+        "bytes": 4202496
+      },
+      "98": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-r1\\ac1-identity-a2\\webview2-udd\\EBWebView\\GrShaderCache\\index",
+        "type": "file",
+        "bytes": 262512
+      },
+      "99": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-r1\\ac1-identity-a2\\webview2-udd\\EBWebView\\hyphen-data",
+        "type": "dir",
+        "bytes": null
+      },
+      "100": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-r1\\ac1-identity-a2\\webview2-udd\\EBWebView\\Last Version",
+        "type": "file",
+        "bytes": 13
+      },
+      "101": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-r1\\ac1-identity-a2\\webview2-udd\\EBWebView\\Local State",
+        "type": "file",
+        "bytes": 2438
+      },
+      "102": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-r1\\ac1-identity-a2\\webview2-udd\\EBWebView\\lockfile",
+        "type": "file",
+        "bytes": 0
+      },
+      "103": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-r1\\ac1-identity-a2\\webview2-udd\\EBWebView\\MEIPreload",
+        "type": "dir",
+        "bytes": null
+      },
+      "104": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-r1\\ac1-identity-a2\\webview2-udd\\EBWebView\\OriginTrials",
+        "type": "dir",
+        "bytes": null
+      },
+      "105": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-r1\\ac1-identity-a2\\webview2-udd\\EBWebView\\PKIMetadata",
+        "type": "dir",
+        "bytes": null
+      },
+      "106": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-r1\\ac1-identity-a2\\webview2-udd\\EBWebView\\ShaderCache",
+        "type": "dir",
+        "bytes": null
+      },
+      "107": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-r1\\ac1-identity-a2\\webview2-udd\\EBWebView\\ShaderCache\\data_0",
+        "type": "file",
+        "bytes": 8192
+      },
+      "108": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-r1\\ac1-identity-a2\\webview2-udd\\EBWebView\\ShaderCache\\data_1",
+        "type": "file",
+        "bytes": 270336
+      },
+      "109": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-r1\\ac1-identity-a2\\webview2-udd\\EBWebView\\ShaderCache\\data_2",
+        "type": "file",
+        "bytes": 8192
+      },
+      "110": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-r1\\ac1-identity-a2\\webview2-udd\\EBWebView\\ShaderCache\\data_3",
+        "type": "file",
+        "bytes": 8192
+      },
+      "111": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-r1\\ac1-identity-a2\\webview2-udd\\EBWebView\\ShaderCache\\index",
+        "type": "file",
+        "bytes": 262512
+      },
+      "112": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-r1\\ac1-identity-a2\\webview2-udd\\EBWebView\\Speech Recognition",
+        "type": "dir",
+        "bytes": null
+      },
+      "113": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-r1\\ac1-identity-a2\\webview2-udd\\EBWebView\\Subresource Filter",
+        "type": "dir",
+        "bytes": null
+      },
+      "114": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-r1\\ac1-identity-a2\\webview2-udd\\EBWebView\\Subresource Filter\\Unindexed Rules",
+        "type": "dir",
+        "bytes": null
+      },
+      "115": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-r1\\ac1-identity-a2\\webview2-udd\\EBWebView\\Trust Protection Lists",
+        "type": "dir",
+        "bytes": null
+      },
+      "116": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-r1\\ac1-identity-a2\\webview2-udd\\EBWebView\\TrustTokenKeyCommitments",
+        "type": "dir",
+        "bytes": null
+      },
+      "117": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-r1\\ac1-identity-a2\\webview2-udd\\EBWebView\\Variations",
+        "type": "file",
+        "bytes": 86
+      },
+      "118": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-r1\\ac1-identity-a2\\webview2-udd\\EBWebView\\VariationsRuntimeSeedV2",
+        "type": "file",
+        "bytes": 19
+      },
+      "119": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-r1\\ac1-identity-a2\\webview2-udd\\EBWebView\\VariationsSafeSeedV2",
+        "type": "file",
+        "bytes": 19
+      },
+      "step": "scenario-tree-after-launch",
+      "at": "2026-10-14T11:21:01.293Z"
+    },
+    {
+      "step": "teardown",
+      "at": "2026-10-14T11:21:02.513Z",
+      "exited": true,
+      "code": null,
+      "signal": "SIGTERM"
+    }
+  ],
+  "errors": [],
+  "verdict": {
+    "ac": "AC1",
+    "window_and_webview2_real": false,
+    "webview2_runtime_identified": true,
+    "process_identity_captured": false,
+    "pinned_binary_hash_matches": true,
+    "mock_surface": "NONE — full real Tauri IPC + packaged sidecar Core"
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "sessionId": "sess_fcfcf277-d7e8-4e0f-88d5-8f583c2571b0",
+  "traceId": "e98a1de1-6c66-4d54-8e41-3f5ee2201bc7",
+  "turnId": "turn_6827f1e1-184e-4672-b838-73b11d41f45c",
+  "response": "采集完成。执行前后 git 状态逐行完全一致（93 行未跟踪证据文件，无增无减），tracked 文件零修改。\n\n## P02 新时点基线采集报告（r2）\n\n**执行结果**\n- RunId：`baseline-20261014T0915CST-p02-admission-r2`\n- 采集器进程 ExitCode：**0**（已原样写入 `collector-r2.exit.txt`，内容为 `0`）\n- 唯一输出目标 `run-baseline-20261014T0915CST-p02-admission-r2.json`：**已生成，存在**\n\n**前置确认（执行前完成）**\n- 工作目录确认无误；采集器脚本与 pwsh 7 均存在。\n- Freeze Manifest 实测 SHA-256 `8662dec583d2fd865532a414f0bede63b7f02872ab3c9232553c3b01e239006d`，与给定值一致。\n- 输出目标及 `collector-r2.*` 日志均不存在，无同 RunId 运行痕迹，未发生覆盖。\n\n**输出文件清单（SHA-256 / 大小）**\n\n| 文件 | 大小（字节） | SHA-256 |\n|---|---|---|\n| run-baseline-…-r2.json（采集结果） | 161,783 | `caac6afde8d479cabcd839e2b74fdd86a1ecd8b59e5e8c88100a552382a9458e` |\n| collector-r2.stdout.txt | 31,211 | `12bfeabb91a1c2aa18d645aff58cc64e1e93ca85aab67170ba3afc45838efcf9` |\n| collector-r2.stderr.txt | 0 | `e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855`（空文件） |\n| collector-r2.exit.txt | 1 | `5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9`（字符 `0`） |\n\n**意外修改检查**：无。执行前后 `git status --porcelain` 逐行 diff 完全一致；`git diff --stat` 与 `git diff --cached --stat` 均为空。所有 stdout/stderr/exit 日志均位于外部 agent-output，未在仓库内创建任何文件。\n\n**执行过程披露**：第一次 launcher 尝试使用 `pwsh -Command -` 从 stdin 读入多行脚本，该方式下多行脚本整体未被执行（已用不涉及采集器的探针证实），`Start-Process` 从未被调用——当时 `collector-r2.*` 重定向文件与目标 json 均未创建，即采集器进程从未启动、未产生任何运行，属 launcher 失败（与目录中 `owner-dispatch-r1-launcher-failure.json` 记录的 r1 情形同类）。随后改用 `-EncodedCommand` 方式执行 launcher，采集器完成其首次且唯一一次实际运行（ExitCode 0），未以相同 RunId 重复运行采集器。本报告未对采集数据内容做任何解释性改写，本次也不声称补齐或替代旧 H1 / P2-1 证据。\n\n**推荐下一步**：将 `run-baseline-20261014T0915CST-p02-admission-r2.json`（SHA-256 见上表）连同 `collector-r2.*` 三份日志交 Codex 做准入审定，判断当前版本是否具备继续 X6 的资格；采集成功（退出码 0）不等于准入结论。本 Task 未授权 X6 执行、post-run Review 或数据解读，故 ZCode 侧到此为止，无需其他操作。",
+  "usage": {
+    "source": "provider",
+    "modelRequestCount": 9,
+    "inputTokens": 296384,
+    "outputTokens": 21878,
+    "totalTokens": 318262,
+    "cacheReadTokens": 262912,
+    "cacheWriteTokens": 0,
+    "reasoningTokens": 0,
+    "webFetchRequests": 0,
+    "webSearchRequests": 0
+  },
+  "eventCount": 17466,
+  "projection": {
+    "status": "idle",
+    "turnCount": 1,
+    "totalTokenCount": 318262,
+    "contextUsed": 44900,
+    "contextWindow": 200000
+  }
+}

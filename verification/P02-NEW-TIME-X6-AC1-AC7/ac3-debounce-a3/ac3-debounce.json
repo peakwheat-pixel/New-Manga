@@ -1,0 +1,187 @@
+{
+  "steps": [
+    {
+      "step": "clean-targets-observed",
+      "at": "2026-10-14T11:27:57.572Z",
+      "roaming": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-r1\\ac3-debounce-a3\\appdata-roaming",
+        "state": "ABSENT"
+      },
+      "localAppData": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-r1\\ac3-debounce-a3\\appdata-local",
+        "state": "ABSENT"
+      },
+      "tmp": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-r1\\ac3-debounce-a3\\tmp",
+        "state": "ABSENT"
+      },
+      "dataRoot": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-r1\\ac3-debounce-a3\\data-root",
+        "state": "ABSENT"
+      },
+      "derived": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-r1\\ac3-debounce-a3\\scope\\derived",
+        "state": "ABSENT"
+      },
+      "managed": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-r1\\ac3-debounce-a3\\scope\\managed",
+        "state": "ABSENT"
+      },
+      "catalogDb": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-r1\\ac3-debounce-a3\\catalog\\catalog.sqlite",
+        "state": "ABSENT"
+      },
+      "webview2Udd": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-r1\\ac3-debounce-a3\\webview2-udd",
+        "state": "ABSENT"
+      },
+      "logs": {
+        "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-r1\\ac3-debounce-a3\\logs",
+        "state": "ABSENT"
+      }
+    },
+    {
+      "step": "launched",
+      "at": "2026-10-14T11:27:58.410Z",
+      "pid": 55136
+    },
+    {
+      "step": "observer-installed",
+      "at": "2026-10-14T11:27:58.835Z",
+      "state": "ACTIVE",
+      "mock": "none (passthrough)"
+    },
+    {
+      "step": "phaseA-typing",
+      "at": "2026-10-14T11:27:58.860Z",
+      "text": "syn-page-a",
+      "pagePerfStart": 434.5,
+      "pagePerfEnd": 447.40000000596046
+    },
+    {
+      "step": "phaseA-invoke-log",
+      "at": "2026-10-14T11:28:00.465Z",
+      "resolveCalls": [],
+      "regionCalls": [],
+      "fullLogTail": []
+    },
+    {
+      "step": "phaseA-screenshot",
+      "at": "2026-10-14T11:28:00.537Z",
+      "file": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-r1\\ac3-debounce-a3\\logs\\ac3-phaseA.png",
+      "bytes": 27068,
+      "sha256": "02CFAC19592547F10ABF36DB6916CD033B16159A5BFD9C2469F1AC105A00C5AC"
+    },
+    {
+      "step": "phaseB-mocks-installed",
+      "at": "2026-10-14T11:28:00.537Z",
+      "commands": [
+        "resolve_page_resource",
+        "list_regions"
+      ],
+      "layer": "MOCK_IPC at invoke boundary"
+    },
+    {
+      "step": "phaseB1-typing",
+      "at": "2026-10-14T11:28:00.694Z",
+      "first": "syn-stale-old",
+      "then": "syn-stale-new",
+      "pagePerfStart": 2127.9000000059605,
+      "pagePerfEnd": 2282.1000000089407
+    },
+    {
+      "step": "phaseB1-result",
+      "at": "2026-10-14T11:28:02.509Z",
+      "resolveCalls": [],
+      "state": {
+        "label": "B1-after-switch",
+        "pageId": "syn-stale-new",
+        "resourceId": "",
+        "resolveBusy": false,
+        "resolveError": "resource: PAGE_NOT_FOUND",
+        "toolbarContext": "page syn-stale-new",
+        "perfNow": 4097.100000008941
+      }
+    },
+    {
+      "step": "phaseB2-typing",
+      "at": "2026-10-14T11:28:03.048Z",
+      "old": "syn-stale-old",
+      "new": "syn-stale-new",
+      "switchPerfNow": 4636.4000000059605
+    },
+    {
+      "step": "phaseB2-result",
+      "at": "2026-10-14T11:28:04.466Z",
+      "resolveCalls": [],
+      "settled": [],
+      "mid": {
+        "label": "B2-mid",
+        "pageId": "syn-stale-new",
+        "resourceId": "",
+        "resolveBusy": false,
+        "resolveError": "resource: PAGE_NOT_FOUND",
+        "toolbarContext": "page syn-stale-new",
+        "perfNow": 5352.4000000059605
+      },
+      "end": {
+        "label": "B2-end",
+        "pageId": "syn-stale-new",
+        "resourceId": "",
+        "resolveBusy": false,
+        "resolveError": "resource: PAGE_NOT_FOUND",
+        "toolbarContext": "page syn-stale-new",
+        "perfNow": 6053.5
+      }
+    },
+    {
+      "step": "phaseB-screenshot",
+      "at": "2026-10-14T11:28:04.522Z",
+      "file": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-r1\\ac3-debounce-a3\\logs\\ac3-phaseB.png",
+      "bytes": 27166,
+      "sha256": "FB347E64A661F09A73C3BC8AFD345E3C679DF1AEBAB9D0C21EFA6E21E6034D54"
+    },
+    {
+      "step": "teardown",
+      "at": "2026-10-14T11:28:05.731Z",
+      "exited": true,
+      "code": null,
+      "signal": "SIGTERM"
+    }
+  ],
+  "phaseA": {
+    "layer": "REAL_IPC (observer passthrough)",
+    "typed_text": "syn-page-a",
+    "resolve_page_resource_calls": 0,
+    "resolve_args": [],
+    "list_regions_calls": 0,
+    "regions_args": [],
+    "first_resolve_perf_now": null,
+    "first_regions_perf_now": null,
+    "typing_end_perf_now": 447.40000000596046,
+    "quiet_period_observed_ms": null
+  },
+  "phaseB1": {
+    "layer": "MOCK_IPC (resolve/list mocked; React effect chain real)",
+    "resolve_calls": [],
+    "only_final_id_fired": false,
+    "resolved_resource_state": "",
+    "stale_error_leaked": true
+  },
+  "phaseB2": {
+    "layer": "MOCK_IPC (delayed stale reply; guard logic real)",
+    "resolve_calls": [],
+    "settled": [],
+    "final_resource_state": "",
+    "final_resolve_error": "resource: PAGE_NOT_FOUND",
+    "stale_reply_overwrote_current": true
+  },
+  "verdict": {
+    "ac": "AC3",
+    "quiet_period_final_id_only": false,
+    "no_intermediate_prefix_reads": true,
+    "switch_cancels_old_timer": false,
+    "stale_reply_guarded": false,
+    "clock": "page performance.now() monotonic; no fake timers"
+  }
+}
