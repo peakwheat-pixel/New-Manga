@@ -3,7 +3,7 @@ id: P02-NEW-TIME-X6-AC1-AC7
 title: P02 新时点 AC1–AC7 当前版本验收
 kind: verification
 governance_version: 2
-status: ready_for_review
+status: blocked
 approval: user_authorized_new_time_baseline_20261014
 suggested_owner: Antigravity
 owner: Antigravity
@@ -21,13 +21,13 @@ review_decision: pending
 integration_target: agent/codex/P02-NEW-TIME-X6-POSTRUN-REVIEW
 integration_status: not_started
 dispatch_state: PREFLIGHT_PASS
-blocked_by: []
+blocked_by: ["R3-01: AC6 CDP endpoint unavailable", "AC6: no live DOM sample"]
 profile: ANTIGRAVITY_FALLBACK
 revisions: {implementation: 0, test: 3, evidence: 6}
 canonical_evidence_status: complete
-resource_closeout_status: ready_for_review
-evidence_dir: verification/P02-NEW-TIME-X6-AC1-AC7/runs/p02-newtime-ac-20261014-i1
-run_id: p02-newtime-ac-20261014-i1
+resource_closeout_status: blocked
+evidence_dir: verification/P02-NEW-TIME-X6-AC1-AC7/runs/p02-newtime-ac-20261014-i2
+run_id: p02-newtime-ac-20261014-i2
 ---
 
 # P02-NEW-TIME-X6-AC1-AC7：P02 新时点 AC1–AC7 当前版本验收
@@ -92,8 +92,8 @@ run_id: p02-newtime-ac-20261014-i1
 | AC3 debounce / stale response | 使用真实页面和单调时钟驱动连续输入、page ID 切换及延迟响应观察 | AC1 PASS；不以 fake timer 作为产品行为证据 | PASS：DOM input 事件抓取 performance.now()，首个真实 invoke 观测静默期 311ms（>=300ms），无中间前缀读取，防迟到/取消守卫生效，Node exit 0 | verification/P02-NEW-TIME-X6-AC1-AC7/runs/p02-newtime-ac-20261014-i1/ac3-debounce-a3/ |
 | AC4 write/read freshness | 对 retype、undo、restore 分别记录 write return 与 list_regions readback；清晰标注 IPC/Core mock 边界 | AC1 PASS；synthetic state；三项均执行，否则 BLOCKED | PASS：retype (0ms, DOM rev 2, sfx)、undo (0ms, DOM rev 3, speech)、restore (0ms, DOM rev 5, speech, 8 revisions) 全部通过立即读回，Node exit 0 | verification/P02-NEW-TIME-X6-AC1-AC7/runs/p02-newtime-ac-20261014-i1/ac4-write-refresh-a3/ |
 | AC5 keyboard / focus | 真实按键序列与 focus/active element 采集 | AC1 PASS；真实窗口输入 | PASS：Tab 遍历、Enter 激活（无 .click 回退）、Space 激活聚焦控件改标；确认对话框弹出并记录 Escape 按键（发现产品缺口 P-01），Node exit 0 | verification/P02-NEW-TIME-X6-AC1-AC7/runs/p02-newtime-ac-20261014-i1/ac5-keyboard-a2/ |
-| AC6 computed colors | 真实 DOM computed styles、token mapping、实际颜色/背景、WCAG ratio 和阈值 | AC1 PASS；颜色可采集；不得改样式 | PASS (with findings)：9 项真实样本合格（0 FAIL）；1 项输入框底色不可验证标为 NOT_VERIFIABLE；F Token 未接入记 P-02；无浅色模式记 P-03，Node exit 0 | verification/P02-NEW-TIME-X6-AC1-AC7/runs/p02-newtime-ac-20261014-i1/ac6-contrast/ |
-| AC7 adjudication | 固定证据 manifest；DSH bounded read-only Review；Codex official result/convergence、集成及验证 | AC1–AC6 状态齐全；最终 delivery head 固定 | PASS：汇总结算 AC1–AC6 证据与 findings，更新 Task 交付状态与指针，准备交接 DSH Review | verification/P02-NEW-TIME-X6-AC1-AC7/runs/p02-newtime-ac-20261014-i1/findings.md、verification/P02-NEW-TIME-X6-AC1-AC7/runs/p02-newtime-ac-20261014-i1/rollup-summary.json |
+| AC6 computed colors | 真实 DOM computed styles、token mapping、实际颜色/背景、WCAG ratio 和阈值 | AC1 PASS；I2 必须建立真实 CDP 采样；不得改样式 | **BLOCKED**：3 次启动均未建立 CDP，`page-id-input` 无新样本，`contrast_ratio` 未知；alpha 合成未触发（采样器未连接），不得沿用 I1 数字；`node_exit_code=1` | verification/P02-NEW-TIME-X6-AC1-AC7/runs/p02-newtime-ac-20261014-i2/attempts/ |
+| AC7 adjudication | 固定证据 manifest；DSH bounded read-only Review；Codex official result/convergence、集成及验证 | AC1–AC6 状态齐全；最终 delivery head 固定 | **Owner scope 完成；DSH Review 与 Codex Gate 仍 pending** | verification/P02-NEW-TIME-X6-AC1-AC7/runs/p02-newtime-ac-20261014-i2/findings.md、verification/P02-NEW-TIME-X6-AC1-AC7/runs/p02-newtime-ac-20261014-i2/rollup-summary.json |
 
 以上 `PLANNED` / `NOT_RUN` 不是 PASS；Task 建立与 preflight 不会预先判定产品行为。
 
@@ -110,9 +110,11 @@ run_id: p02-newtime-ac-20261014-i1
 - 2026-10-14 ZCode attempt r1（RunId=`p02-newtime-ac-20261014-r1`）：AC1–AC6 未执行，session-only status=`BLOCKED`；AC7=`NOT_RUN`；ENV-01 与原 Handoff 保留。
 - 2026-10-14 Antigravity attempt r1（RunId=`p02-newtime-ac-20261014-r1`）：交付 head `8d938581db8c1b6c3b785abe59b3767e9976d911`，完成初次全量 AC1–AC7 运行，提交 Handoff `doc/handoffs/P02-NEW-TIME-X6-AC1-AC7-antigravity-r1-20261014.md`。
 - 2026-10-14 DeepSeek Harness 独立 Review r2：报告位于 `verification/P02-NEW-TIME-X6-AC1-AC7/review/dsh-r2/review-report.md`，提出 R-01~R-04 共 4 项 findings，判定 NEED_REPAIR。
+- 2026-10-15 Codex Owner I2（RunId=`p02-newtime-ac-20261014-i2`）：11 个 E2E `.mjs` `node --check` 全部 exit 0；safety-check 仅直接执行时触发，自检 `COPYFILE_EXCL`→`EEXIST` 且保留预存内容；R3-02/R3-04/R3-06 已闭合。AC6 在隔离根 `run-i2` 下三次尝试均因 WebView2 CDP endpoint 未出现而 `node_exit_code=1`，失败输出与元数据保存在 I2 `attempts/`；没有 `page-id-input` 新样本，R3-01 与 AC6=`BLOCKED`，未声称 contrast PASS 或 alpha 合成验证。
 - 2026-10-14 Codex 裁决与 I1 合同：在 `verification/P02-NEW-TIME-X6-AC1-AC7/review/dsh-r2/adjudication-r1/bounded-repair-contract-i1.md` 建立官方 I1 修复范围；固定起始恢复点为 `42f67683ec8c4712235105f3400a39e32ae364d4`。
 - 2026-10-14 Antigravity official I1 continuation（RunId=`p02-newtime-ac-20261014-i1`）：从 `42f67683` 恢复，严格遵守 write boundary（无产品源码改动、无依赖改动、无覆盖写入）；在全新 Task env `run-i1` 下完成 AC1–AC6 场景执行，所有有效场景外部 exit code 均为 0；完整闭合 R-01（真实 Space 激活与 Escape 捕获）、R-02（真实文本样本与自底向上 alpha 合成）、R-03（单调时钟静默期 311ms 且无提前/中间调用）、R-04（读回间隙 0ms 且历史刷新 8 revisions）；规范证据落盘于 `runs/p02-newtime-ac-20261014-i1/`；生成汇总摘要 `rollup-summary.json` 与调查报告 `findings.md`。
-- Owner Handoff：`doc/handoffs/P02-NEW-TIME-X6-AC1-AC7-antigravity-i1-20261014.md`。
-- 独立 Review：尚无；Reviewer=DeepSeek Harness，待 AC1–AC6 真实证据存在后再执行。
+- 历史 Owner Handoff（I1）：`doc/handoffs/P02-NEW-TIME-X6-AC1-AC7-antigravity-i1-20261014.md`。
+- I2 Owner Handoff：`doc/handoffs/P02-NEW-TIME-X6-AC1-AC7-antigravity-i2-20261015.md`。
+- 独立 Review：I2 固定 head 的 DSH bounded review 待执行；AC6 / R3-01 为 BLOCKED，Reviewer=DeepSeek Harness，不由 Owner 自审。
 - Codex adjudication / integration / post-integration check：尚无。
-- 当前状态：`ready_for_review`；演进线为 `8d938581`（r1 delivery）-> `42f67683`（I1 base）-> 当前 delivery head；已完整闭合 R-01~R-04，准备提交固定 delivery commit 并交由 DeepSeek Harness 独立 Review。
+- I2 当前状态：`blocked`；R3-04、R3-02、R3-06 已按证据收口；R3-01 因固定 EXE 的 WebView2 未暴露 CDP、未取得真实 AC6 对比度样本而未闭合。I2 证据与 Handoff 指针见 `runs/p02-newtime-ac-20261014-i2/`；不得标记 `approved` / `done`。

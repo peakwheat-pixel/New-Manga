@@ -7,6 +7,7 @@
 
 import { copyFileSync, constants, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import path from "node:path";
+import { pathToFileURL } from "node:url";
 import { launchDirs, RUN_ROOT } from "./env.mjs";
 
 export function runNoOverwriteSafetyCheck(scenarioRoot = RUN_ROOT) {
@@ -43,7 +44,7 @@ export function runNoOverwriteSafetyCheck(scenarioRoot = RUN_ROOT) {
   };
 }
 
-if (process.argv[1] && process.argv[1].endsWith("safety-check.mjs")) {
+if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
   const result = runNoOverwriteSafetyCheck();
   console.log(JSON.stringify(result, null, 2));
 }

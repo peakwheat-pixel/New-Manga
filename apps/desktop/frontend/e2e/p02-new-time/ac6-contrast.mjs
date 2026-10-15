@@ -125,6 +125,7 @@ const COLLECT_SOURCE = String.raw`
       return {
         color: null,
         isVerifiable: false,
+        alphaCompositeApplied: false,
         reason: 'no opaque background found in ancestor chain',
         layers,
       };
@@ -135,6 +136,7 @@ const COLLECT_SOURCE = String.raw`
     // find index of opaque base in layers
     const baseIdx = layers.findIndex((l) => l.color === opaqueBase);
     const topLayers = baseIdx >= 0 ? layers.slice(baseIdx + 1) : layers;
+    const alphaCompositeApplied = topLayers.some((layer) => layer.color.a < 0.999);
     for (const layer of topLayers) {
       acc = composite(layer.color, acc);
     }
@@ -144,6 +146,7 @@ const COLLECT_SOURCE = String.raw`
       isVerifiable: true,
       on: layers.map((l) => l.on).join(' -> '),
       layerCount: layers.length,
+      alphaCompositeApplied,
       layers,
     };
   };
@@ -154,7 +157,8 @@ const COLLECT_SOURCE = String.raw`
     const cs = getComputedStyle(el);
 
     // If kind is text, verify non-empty text and visibility
-    const text = (el.textContent || '').trim();
+    const isFormControl = el instanceof HTMLInputElement || el instanceof HTMLTextAreaElement || el instanceof HTMLSelectElement;
+    const text = (isFormControl ? (el.value || el.getAttribute('placeholder') || '') : el.textContent || '').trim();
     if (kind === 'text' && !text) {
       return { selector, label, present: false, reason: 'element has no visible text content' };
     }
@@ -165,8 +169,10 @@ const COLLECT_SOURCE = String.raw`
     const bg = effectiveBackground(el);
     const fg = parseColor(cs.color);
     let fgEff = fg;
+    let foregroundAlphaCompositeApplied = false;
     if (fg && bg.color && fg.a < 0.999) {
       fgEff = composite(fg, bg.color);
+      foregroundAlphaCompositeApplied = true;
     }
 
     return {
@@ -183,6 +189,7 @@ const COLLECT_SOURCE = String.raw`
       backgroundSource: bg.on || null,
       backgroundReason: bg.reason || null,
       backgroundLayers: bg.layers || [],
+      alphaCompositeApplied: bg.alphaCompositeApplied || foregroundAlphaCompositeApplied,
       fontSize: cs.fontSize,
       fontWeight: cs.fontWeight,
       disabled: el.disabled === true,
@@ -346,6 +353,7 @@ try {
       background: sample.backgroundResolved || sample.backgroundColor,
       backgroundSource: sample.backgroundSource,
       backgroundLayers: sample.backgroundLayers,
+      alpha_compositing_applied: sample.alphaCompositeApplied,
     };
 
     row.token_mapping =
@@ -378,6 +386,7 @@ try {
     ac: "AC6",
     samples: contrastRows.length,
     computed: contrastRows.filter((r) => typeof r.contrast_ratio === "number").length,
+    alpha_compositing_triggered: contrastRows.some((r) => r.alpha_compositing_applied === true),
     passed: contrastRows.filter((r) => r.contrast_result === "PASS").map((r) => r.label),
     fails: contrastRows.filter((r) => r.contrast_result === "FAIL").map((r) => r.label),
     not_verifiable: contrastRows.filter((r) => r.contrast_result === "NOT_VERIFIABLE").map((r) => r.label),

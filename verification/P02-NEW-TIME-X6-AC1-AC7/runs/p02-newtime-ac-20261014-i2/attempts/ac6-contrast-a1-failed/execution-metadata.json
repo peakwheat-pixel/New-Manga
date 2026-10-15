@@ -1,0 +1,46 @@
+{
+  "run_id": "p02-newtime-ac-20261014-i2",
+  "recorded_at": "2026-10-15T01:06:54.896743Z",
+  "command": "node apps/desktop/frontend/e2e/p02-new-time/ac6-contrast.mjs",
+  "shell": "node v24.15.0",
+  "cwd": "G:\\CODEX\\New Manga.workspace\\worktrees\\P02-NEW-TIME-X6-AC1-AC7-ANTIGRAVITY",
+  "scenario": "ac6-contrast",
+  "scenario_root": "G:/CODEX/New Manga.workspace/task-envs/P02-NEW-TIME-X6-AC1-AC7/run-i2/ac6-contrast",
+  "host_os": {
+    "platform": "win32",
+    "type": "Windows_NT",
+    "release": "10.0.26300.0",
+    "version": "Microsoft Windows 11 专业版",
+    "arch": "AMD64"
+  },
+  "pinned_source_commit": "49d2a2f9c56462f5602b00ad4b824c5381abb1ab",
+  "pinned_exe": "G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-X6-BUILD-CARGO/apps/desktop/src-tauri/target/release/m2rc1-desktop.exe",
+  "pinned_exe_sha256": "92AC7B8EFB646FE77DF8245B13C9AF9314BEF415B2F0E007B1CDCEA729BC13FD",
+  "env_manifest": {
+    "M2RC1_PACKAGED": "1",
+    "APPDATA": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-i2\\ac6-contrast\\appdata-roaming",
+    "LOCALAPPDATA": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-i2\\ac6-contrast\\appdata-local",
+    "TEMP": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-i2\\ac6-contrast\\tmp",
+    "TMP": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-i2\\ac6-contrast\\tmp",
+    "NEWMANGA_DATA_ROOT": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-i2\\ac6-contrast\\data-root",
+    "M2RC1_DERIVED_ROOT": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-i2\\ac6-contrast\\scope\\derived",
+    "M2RC1_MANAGED_ROOT": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-i2\\ac6-contrast\\scope\\managed",
+    "M2RC2_CATALOG_DB": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-i2\\ac6-contrast\\catalog\\catalog.sqlite",
+    "WEBVIEW2_USER_DATA_FOLDER": "G:\\CODEX\\New Manga.workspace\\task-envs\\P02-NEW-TIME-X6-AC1-AC7\\run-i2\\ac6-contrast\\webview2-udd",
+    "WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS": "--remote-debugging-port=9334",
+    "__purgedPrefixes": [
+      "M2RC1_*",
+      "M2RC2_*",
+      "M2AC1_*",
+      "NEWMANGA_*"
+    ],
+    "__neverSet": [
+      "M2RC1_PROBE_OUT",
+      "M2AC1_TEST_MODE",
+      "M2RC1_SRC_ROOT",
+      "M2RC1_PROBE_LOG"
+    ]
+  },
+  "node_exit_code": 1,
+  "scenario_attempt": 1
+}

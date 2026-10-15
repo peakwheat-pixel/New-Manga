@@ -1,0 +1,64 @@
+{
+  "run_id": "p02-newtime-ac-20261014-i2",
+  "shell": "pwsh 7.6.6 / node v24.15.0",
+  "cwd": "G:\\CODEX\\New Manga.workspace\\worktrees\\P02-NEW-TIME-X6-AC1-AC7-ANTIGRAVITY",
+  "file_count": 11,
+  "aggregate_exit": 0,
+  "results": [
+    {
+      "file": "apps/desktop/frontend/e2e/p02-new-time/ac1-identity.mjs",
+      "command": "node --check G:\\CODEX\\New Manga.workspace\\worktrees\\P02-NEW-TIME-X6-AC1-AC7-ANTIGRAVITY\\apps\\desktop\\frontend\\e2e\\p02-new-time\\ac1-identity.mjs",
+      "exit_code": 0
+    },
+    {
+      "file": "apps/desktop/frontend/e2e/p02-new-time/ac2-navigation.mjs",
+      "command": "node --check G:\\CODEX\\New Manga.workspace\\worktrees\\P02-NEW-TIME-X6-AC1-AC7-ANTIGRAVITY\\apps\\desktop\\frontend\\e2e\\p02-new-time\\ac2-navigation.mjs",
+      "exit_code": 0
+    },
+    {
+      "file": "apps/desktop/frontend/e2e/p02-new-time/ac3-debounce.mjs",
+      "command": "node --check G:\\CODEX\\New Manga.workspace\\worktrees\\P02-NEW-TIME-X6-AC1-AC7-ANTIGRAVITY\\apps\\desktop\\frontend\\e2e\\p02-new-time\\ac3-debounce.mjs",
+      "exit_code": 0
+    },
+    {
+      "file": "apps/desktop/frontend/e2e/p02-new-time/ac4-write-refresh.mjs",
+      "command": "node --check G:\\CODEX\\New Manga.workspace\\worktrees\\P02-NEW-TIME-X6-AC1-AC7-ANTIGRAVITY\\apps\\desktop\\frontend\\e2e\\p02-new-time\\ac4-write-refresh.mjs",
+      "exit_code": 0
+    },
+    {
+      "file": "apps/desktop/frontend/e2e/p02-new-time/ac5-keyboard.mjs",
+      "command": "node --check G:\\CODEX\\New Manga.workspace\\worktrees\\P02-NEW-TIME-X6-AC1-AC7-ANTIGRAVITY\\apps\\desktop\\frontend\\e2e\\p02-new-time\\ac5-keyboard.mjs",
+      "exit_code": 0
+    },
+    {
+      "file": "apps/desktop/frontend/e2e/p02-new-time/ac6-contrast.mjs",
+      "command": "node --check G:\\CODEX\\New Manga.workspace\\worktrees\\P02-NEW-TIME-X6-AC1-AC7-ANTIGRAVITY\\apps\\desktop\\frontend\\e2e\\p02-new-time\\ac6-contrast.mjs",
+      "exit_code": 0
+    },
+    {
+      "file": "apps/desktop/frontend/e2e/p02-new-time/lib/app.mjs",
+      "command": "node --check G:\\CODEX\\New Manga.workspace\\worktrees\\P02-NEW-TIME-X6-AC1-AC7-ANTIGRAVITY\\apps\\desktop\\frontend\\e2e\\p02-new-time\\lib\\app.mjs",
+      "exit_code": 0
+    },
+    {
+      "file": "apps/desktop/frontend/e2e/p02-new-time/lib/cdp.mjs",
+      "command": "node --check G:\\CODEX\\New Manga.workspace\\worktrees\\P02-NEW-TIME-X6-AC1-AC7-ANTIGRAVITY\\apps\\desktop\\frontend\\e2e\\p02-new-time\\lib\\cdp.mjs",
+      "exit_code": 0
+    },
+    {
+      "file": "apps/desktop/frontend/e2e/p02-new-time/lib/env.mjs",
+      "command": "node --check G:\\CODEX\\New Manga.workspace\\worktrees\\P02-NEW-TIME-X6-AC1-AC7-ANTIGRAVITY\\apps\\desktop\\frontend\\e2e\\p02-new-time\\lib\\env.mjs",
+      "exit_code": 0
+    },
+    {
+      "file": "apps/desktop/frontend/e2e/p02-new-time/lib/evidence.mjs",
+      "command": "node --check G:\\CODEX\\New Manga.workspace\\worktrees\\P02-NEW-TIME-X6-AC1-AC7-ANTIGRAVITY\\apps\\desktop\\frontend\\e2e\\p02-new-time\\lib\\evidence.mjs",
+      "exit_code": 0
+    },
+    {
+      "file": "apps/desktop/frontend/e2e/p02-new-time/lib/safety-check.mjs",
+      "command": "node --check G:\\CODEX\\New Manga.workspace\\worktrees\\P02-NEW-TIME-X6-AC1-AC7-ANTIGRAVITY\\apps\\desktop\\frontend\\e2e\\p02-new-time\\lib\\safety-check.mjs",
+      "exit_code": 0
+    }
+  ]
+}
