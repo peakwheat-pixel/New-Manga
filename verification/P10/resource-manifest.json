@@ -1,0 +1,22 @@
+{
+  "schema_version": 1,
+  "task_id": "P10",
+  "generated_at": "2026-10-15T15:25:00Z",
+  "generated_by": "dsh (Active Coordinator, epoch 5)",
+  "note": "Resource manifest referenced by doc/tasks/P10.md Resource Manifest integrity column; worktree is a directory so a file-level SHA-256 cannot apply.",
+  "resources": [
+    {
+      "resource_type": "worktree",
+      "source_path": "G:/CODEX/New Manga.workspace/worktrees/P10-CREDENTIAL-CONFIG-CONTRACT",
+      "disposition": "PRESERVE_REFERENCED",
+      "destination_path": "G:/CODEX/New Manga.workspace/worktrees/P10-CREDENTIAL-CONFIG-CONTRACT",
+      "branch": "codex/P10-credential-config-contract",
+      "base_commit": "2f4144b4ae53220e768071ee5e2a53a42fd990d0",
+      "delivery_head": "fa20602debb2d5f16f315bbed4180eae6f8821c5",
+      "integration_commit": "c46c0df0",
+      "deleted": false,
+      "pruned": false,
+      "process_check": "2026-10-15 closeout: worktree clean at fa20602d; main repo 19 tracked dirty entries unchanged by this worktree; no delete/migrate/archive performed (0/0/0)."
+    }
+  ]
+}
