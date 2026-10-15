@@ -17,7 +17,7 @@ run_id: p02-newtime-ac-20261014-i2
 
 ## 修改与固定交付
 
-- I2 初次内容与证据提交：`7981794cde784b01f28fe589c25dbffe7e9dc08c`；本次 evidence recovery 与文档增量将另行提交，并在新最终 head 上重建 manifest。
+- I2 初次内容与证据提交：`7981794cde784b01f28fe589c25dbffe7e9dc08c`；evidence recovery 首次增量：`96d8228fa5f3753b2bf8c8751bda0aebfe97ab03`。该 head 的 DSH review 发现 rollup 聚合精度问题，Owner 正在同一 I2 内修正文档与证据映射；最终 head/commit 以最新提交及 manifest 为准。
 - 分支：`agent/antigravity/P02-NEW-TIME-X6-AC1-AC7`；worktree：`G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-X6-AC1-AC7-ANTIGRAVITY`。
 - 基线：`251ea54169584505543207b22757d0eb96242499`；产品源码基线保持 `49d2a2f9c56462f5602b00ad4b824c5381abb1ab`。
 - 固定 EXE 只读：`G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-X6-BUILD-CARGO/apps/desktop/src-tauri/target/release/m2rc1-desktop.exe`，9,367,040 bytes，SHA-256=`92AC7B8EFB646FE77DF8245B13C9AF9314BEF415B2F0E007B1CDCEA729BC13FD`。
@@ -54,8 +54,8 @@ run_id: p02-newtime-ac-20261014-i2
 - 隔离根：`G:/CODEX/New Manga.workspace/task-envs/P02-NEW-TIME-X6-AC1-AC7/run-i2/`；创建时为空。
 - RunId：`p02-newtime-ac-20261014-i2`。
 - 初次 a1/a2/a3 分别尝试 9334/9335/9336，均失败；原 9333 当时被两个 DSH 探测进程占用。Coordinator 后续清除了这两个进程。
-- Evidence recovery a4 在启动前确认 9333 空闲，并使用清洁的场景目录执行同一命令；仍以 `node_exit_code=1` 结束。`node.stderr.log` 关键行：`Error: CDP endpoint never appeared: TypeError: fetch failed`（`lib/cdp.mjs:52`）。运行后 `netstat -ano | Select-String ':9333'` 无匹配行，固定 EXE 进程快照为空。完整 Node/App stdout/stderr、`runner-execution.json`、`execution-metadata.json` 和 `port-state.json` 保存在 `attempts/ac6-contrast-a4-failed/`。本次在端口空闲时仍失败，根因未确定；不据此归咎于固定 EXE。
-- 因采集器从未连接，I2 没有 `ac6-contrast.json` 对比表，也没有 `[data-testid="page-id-input"]` 样本行。因此该行没有实际 `contrast_result`、数值 `contrast_ratio` 或采样器 `reason`；runner 的实际失败原因为 `CDP endpoint never appeared: TypeError: fetch failed`。这不是 `NOT_VERIFIABLE` 的颜色判定。
+- Evidence recovery a4 的 pre-run shell 检查显示 9333 空闲；先前临时场景目录被改名为 `ac6-contrast-pre-recovery`，运行器随后选择新的 `ac6-contrast` 路径。该 absent 检查的终端输出未单独落成时间戳证据文件，因此这里只作为执行记录，不声称有独立清场证明。a4 仍以 `node_exit_code=1` 结束。`node.stderr.log` 关键行：`Error: CDP endpoint never appeared: TypeError: fetch failed`（`lib/cdp.mjs:52`）。运行后 netstat 无 9333 listener，固定 EXE 进程快照为空。`attempts/ac6-contrast-a4-failed/` 包含 `app.stderr.log`、`app.stdout.log`、`node.stderr.log`、`node.stdout.log`、`runner-execution.json`、`execution-metadata.json`、`port-state.json`。端口快照只有事后时间戳；pre-run 空闲观察来自 Owner shell 输出。失败根因未确定，不据此归咎于固定 EXE。
+- 因采集器从未连接，I2 没有 `ac6-contrast.json` 对比表，也没有 `[data-testid="page-id-input"]` 样本行。因此该行没有实际 `contrast_result`、数值 `contrast_ratio` 或采样器 `reason`；runner 的实际失败原因为 `CDP endpoint never appeared: TypeError: fetch failed`。rollup 的 AC6 聚合 `node_exit_code=null` 表示没有 collector run 完成；四个 launcher attempts 各自为 `node_exit_code=1`。这不是 `NOT_VERIFIABLE` 的颜色判定。
 - **Alpha 合成分支本轮未触发**：采样器未连接，不能声称已验证合成分支，也不能声称实际输入框对比度 PASS。
 
 ## Findings 与 AC 状态
@@ -87,3 +87,7 @@ I1 的退出码表述限定为“**I1 有效场景**退出码为 0”。以下�
 ## Previous DSH review provenance
 
 上一轮 `NOT_APPROVED` 报告由 Codex Owner 发起的独立 DSH CLI 会话生成，并非 Codex 自己撰写的 review：session=`session-b1b461f2-420c-43d9-a33e-6fd408c25311`；CLI invocation=`dsh --profile headless --json`（read-only bounded-review prompt 作为 positional argument）；结果文件位于 `G:/CODEX/New Manga.workspace/task-envs/P02-NEW-TIME-X6-AC1-AC7/run-i2/dsh-review/dsh-r4-final.md`。它是独立 Reviewer 的意见，但不是 Coordinator 的正式 adjudication；正式 `dsh-r3`=`CHANGES_REQUESTED` 仍按 Coordinator 证据处理。该 `NOT_APPROVED` 不授予或替代 Codex Gate 结论。
+
+其后的 recovery review 由 DSH 独立 Reviewer 对 `96d8228fa5f3753b2bf8c8751bda0aebfe97ab03` 执行，verdict=`NOT_APPROVED`；报告已保存在 Task-local `run-i2/dsh-review/dsh-r5-recovery-final.md`。RF-1 blocker 次数已改为 four；RF-2 已区分聚合 `node_exit_code=null`（没有 collector run 完成）与四个 attempts 各自 exit `1`。RF-3 的旧 runner/metadata 原始 schema 差异保留，并在 findings 中说明 a2 汇总 verdict 不是原始字段；RF-4 明确 pre-run absence/port 检查没有单独时间戳落档；RF-5 列出 a4 全部文件，`delivery_head` 按 R3-03 留给 Codex；RF-6 的最终 head 官方 verifier stdout 保存于下列 Task-local 文件；RF-8 的层级现标 `NOT_OBSERVED`。RF-7/RF-9/RF-10 属旧汇总/集成文档枚举问题，留给 Codex 集成处置。该 DSH 意见不构成 Codex/Coordinator Gate。
+
+Recovery attempt `a4` 的完整文件清单为 `app.stderr.log`、`app.stdout.log`、`execution-metadata.json`、`node.stderr.log`、`node.stdout.log`、`port-state.json`、`runner-execution.json`。官方 manifest `--verify` 的当前最终 head 输出保存在 Task-local `run-i2/dsh-review/owner-manifest-verify-final.json`。frontmatter 的 `delivery_head` 仍是初始内容 head `7981794cde784b01f28fe589c25dbffe7e9dc08c`；按冻结契约 §2.4 / R3-03，归一由 Codex 集成处理，Owner 未修改。

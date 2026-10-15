@@ -20,6 +20,8 @@ AC6 采集器已改为对表单控件读取 `value` / `placeholder`，且逐行�
 | a3 | `ac6-contrast-a3` / 9336 | `FAIL / ERROR / node_exit_code=1`；进程快照确认对应 WebView2 命令行没有 `--remote-debugging-port`，端口无 listener | `attempts/ac6-contrast-a3-failed/` |
 | a4 recovery | `ac6-contrast` / 9333 | `FAIL / ERROR / node_exit_code=1`；启动前 9333 空闲，仍在 45 秒后报 `CDP endpoint never appeared: TypeError: fetch failed`；失败后 9333 仍无 listener | `attempts/ac6-contrast-a4-failed/` |
 
+a1–a4 的原始 `runner-execution.json` / `execution-metadata.json` 保持各次执行时的原样，字段集合和日志名不完全一致；rollup 的状态是汇总层。特别是 a2 的 runner 原始记录没有 `verdict` 字段，rollup 的 `ERROR` 是汇总判定，不应当作原始 JSON 已记录字段。
+
 Coordinator 已清除占用 9333 的两个 DSH 探测进程；本次按正确端口 9333 重跑前后该端口均空闲，但 CDP 端点仍未出现。当前证据不能把本次失败归因于端口占用，也不足以断言固定 EXE 不支持 CDP。因采集器未连接，`[data-testid="page-id-input"]` 在 I2 **没有样本行**，故无实际 `contrast_result`、`contrast_ratio` 或采样器 `reason` 可报告；运行器错误为 `CDP endpoint never appeared: TypeError: fetch failed`。**Alpha 合成分支本轮未触发**（采样器未连接，不能据此证明合成算法行为）。
 
 ## AC6 与 P-04

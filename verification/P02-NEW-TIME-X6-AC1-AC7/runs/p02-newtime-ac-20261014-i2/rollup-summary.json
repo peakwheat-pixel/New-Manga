@@ -64,8 +64,9 @@
     "AC6": {
       "name": "Contrast & Token Mapping",
       "status": "BLOCKED",
-      "layer": "REAL_IPC",
+      "layer": "NOT_OBSERVED (CDP collector did not attach)",
       "node_exit_code": null,
+      "node_exit_code_note": "Aggregate is null because no collector run completed; all four launcher attempts have node_exit_code=1.",
       "samples_total": null,
       "computed_count": null,
       "passed_count": null,
@@ -79,7 +80,7 @@
       "alpha_compositing_status": "NOT_TRIGGERED — collector never attached; no DOM sample was recorded",
       "light_theme": "NOT_RECHECKED",
       "evidence_dir": "verification/P02-NEW-TIME-X6-AC1-AC7/runs/p02-newtime-ac-20261014-i2/attempts/",
-      "blocker": "CDP endpoint did not appear in three AC6 attempts; no ac6-contrast.json contrast table was produced"
+      "blocker": "CDP endpoint did not appear in four AC6 attempts, including recovery on free port 9333; no ac6-contrast.json contrast table was produced"
     },
     "AC7": {
       "name": "Rollup & Findings",
