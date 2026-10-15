@@ -3,7 +3,7 @@ task_id: P11
 author: Codex
 recipient: DeepSeek Harness Review / Codex Coordinator
 base_commit: 68fbdde891b05920d689f3521a3d26b7b6a98f5d
-delivery_head: b7fb6773a45542ca07c419d7212f9877c7acbcf0
+delivery_head: b7fb677338af56eaebbfa9c5b642646dd8b5ae90
 status: in_review
 ---
 
@@ -11,14 +11,15 @@ status: in_review
 
 ## 交付结果
 
-契约交付 head `b7fb6773a45542ca07c419d7212f9877c7acbcf0`，branch=`codex/P11-long-task-lifecycle-contract`，worktree=`G:/CODEX/New Manga.workspace/worktrees/P11-LONG-TASK-LIFECYCLE-CONTRACT`，base=`68fbdde891b05920d689f3521a3d26b7b6a98f5d`。Task 证据记录固定于 `e3a8fab32a4b89ad9103fd3c9eb11af3a49d075d`（以 `git rev-parse HEAD` 实测）；该 commit 含 Task 状态与 Canonical Evidence 更新。文件名中的短 hash 指契约交付 head。
+契约交付 head `b7fb677338af56eaebbfa9c5b642646dd8b5ae90`，branch=`codex/P11-long-task-lifecycle-contract`，worktree=`G:/CODEX/New Manga.workspace/worktrees/P11-LONG-TASK-LIFECYCLE-CONTRACT`，base=`68fbdde891b05920d689f3521a3d26b7b6a98f5d`。Task 证据记录固定于 `d57f8d3d661b5ea80d3cf34fb5b8636fca391195`（以 `git rev-parse HEAD` 实测）；该 commit 含正确的 Canonical Evidence hash。文件名中的短 hash 指契约交付 head。
 
 提交列表：
 
 - `01c20fbc28323664553ab0a2fcc981690ead9881` — `docs(P11): define long task lifecycle contract`
 - `470e2264ae689157dd45a0c8d9ec329907d71fc7` — `docs(P11): make child-run retries idempotent`
-- `b7fb6773a45542ca07c419d7212f9877c7acbcf0` — `docs(P11): record lifecycle implementation gaps`
+- `b7fb677338af56eaebbfa9c5b642646dd8b5ae90` — `docs(P11): record lifecycle implementation gaps`
 - `e3a8fab32a4b89ad9103fd3c9eb11af3a49d075d` — `docs(P11): record static evidence and review state`（含 `doc/tasks/P11.md` 的 AC 状态与 Canonical Evidence）。
+- `d57f8d3d661b5ea80d3cf34fb5b8636fca391195` — `docs(P11): correct canonical evidence hash`（按 Git blob 重新计算并修正证据元数据）。
 - 本 Handoff 单独追加；按仓库约定引用先前的契约交付 head。
 
 变更路径仅有本 Task 允许的三项：
@@ -35,7 +36,7 @@ status: in_review
 | AC4 | 完成（静态计划与来源检查） | 同文件 §10；`doc/tasks/P11.md` 测试表。Runtime、真实 Pipeline 和 UI 均 `NOT_RUN`。 |
 | AC5 | `NOT_RUN` | 独立 DSH Review 和 Coordinator 集成未执行；本 Task 保持 `in_review`，不标 `done`。 |
 
-契约 blob 由 `git hash-object --path=...` 定位，再通过 `git cat-file blob <blob>` 流式计算 SHA-256：`fcbbb40905906eb7c9e73b07213eef2e8eda1ece0d66a078f4829e370ad1fd8c`。Canonical Evidence 已写入 `doc/tasks/P11.md`。
+契约 blob 由 `git hash-object --path=...` 定位（blob=`f075d3a06c126fe72f644992a6774f520e38d366`），再通过 `git cat-file blob <blob>` 原始内容流式计算 SHA-256：`63a65cc13934fd962514b217f5fedee897075a034769cc2d5d4ca7e9aeb65914`。Canonical Evidence 已写入 `doc/tasks/P11.md`。
 
 ## 验证证据
 
@@ -54,7 +55,7 @@ status: in_review
 ## 接收方式
 
 - 仓库：`G:/CODEX/New Manga` 的 linked worktree；worktree=`G:/CODEX/New Manga.workspace/worktrees/P11-LONG-TASK-LIFECYCLE-CONTRACT`。
-- branch=`codex/P11-long-task-lifecycle-contract`；base=`68fbdde891b05920d689f3521a3d26b7b6a98f5d`；契约交付 head=`b7fb6773a45542ca07c419d7212f9877c7acbcf0`。
+- branch=`codex/P11-long-task-lifecycle-contract`；base=`68fbdde891b05920d689f3521a3d26b7b6a98f5d`；契约交付 head=`b7fb677338af56eaebbfa9c5b642646dd8b5ae90`。
 - 后续审查须对 P11 当前固定分支 head 只读检查，并对照 P11 AC、D04 / D07 / D08、P08 P11 范围与契约 §8 现状差异。请检查 Blocked Stop、Pending Pause、重试状态门、Restart 原子性、SQLite durable acceptance / Step 提交原子性及 P13/P14 分界。
 - Review 阶段不写仓库文件；Review 结果交回 Codex，由 Codex 在本 Task 允许的 Handoff 路径记录。不得修改 `src/**`、`apps/**`、`packaging/**`、`tests/**`、Schema、D04/D07/D08，亦不得 push / merge / rebase / reset / stash 或清理 worktree。
 
@@ -63,14 +64,14 @@ status: in_review
 - Task ID / 标题：P11 AC5 非作者 Review 与集成 Gate（当前 P11 的剩余验收，不创建新 Task）。
 - 推荐 Agent / Reviewer：DeepSeek Harness（非作者 Reviewer）；Codex 为 Owner / 后续 Coordinator。
 - 推荐原因与前置依赖：AC1–AC4 静态交付完成；AC5 要求固定 head 非作者 Review 与 Coordinator 集成。先 Review，再由 Coordinator 按独立授权决定集成；本次任务禁止 merge。
-- Recovery point：worktree `G:/CODEX/New Manga.workspace/worktrees/P11-LONG-TASK-LIFECYCLE-CONTRACT`；branch `codex/P11-long-task-lifecycle-contract`；base `68fbdde891b05920d689f3521a3d26b7b6a98f5d`；固定 Review head `e3a8fab32a4b89ad9103fd3c9eb11af3a49d075d`；contract delivery head `b7fb6773a45542ca07c419d7212f9877c7acbcf0`。后续只追加 Handoff，不改契约内容。
+- Recovery point：worktree `G:/CODEX/New Manga.workspace/worktrees/P11-LONG-TASK-LIFECYCLE-CONTRACT`；branch `codex/P11-long-task-lifecycle-contract`；base `68fbdde891b05920d689f3521a3d26b7b6a98f5d`；固定 Review head `d57f8d3d661b5ea80d3cf34fb5b8636fca391195`；contract delivery head `b7fb677338af56eaebbfa9c5b642646dd8b5ae90`。后续只追加 Handoff，不改契约内容。
 - 允许修改路径：Reviewer 只读，不写文件；Codex 仅可在已有 `doc/handoffs/P11-*.md` 中记录 Review 结果。Coordinator 集成须另按授权执行。
 - 禁止范围与新增授权条件：不得改实现、Schema 或 D04/D07/D08；不得改变本契约语义；不得 push / merge / rebase / reset / stash / 删除文件或 worktree。任何产品终态取舍须等待用户裁决。
 - 交付物：固定 head 的独立 Review findings / 结论；随后在同一 Handoff 记录 Review 路径或 `NOT_RUN`，并由 Coordinator 记录集成决定与 commit。
 - 验证命令、环境与完成 Gate：只读检查 `git rev-parse HEAD`、`git status --short --branch`、`git diff --stat 68fbdde891b05920d689f3521a3d26b7b6a98f5d...<reviewed_head>`；逐项核实 AC1–AC5 与契约引用。Review 未批准、P0/P1 finding 未关或未集成时不得将 P11 置为 `done`；未执行命令写 `NOT_RUN`。
 - 可直接转发给 Agent 的指令：
 
-  > 请以 DeepSeek Harness 非作者 Reviewer 身份，对 P11 固定 Review head `e3a8fab32a4b89ad9103fd3c9eb11af3a49d075d` 做只读 Review。仓库 worktree：`G:/CODEX/New Manga.workspace/worktrees/P11-LONG-TASK-LIFECYCLE-CONTRACT`；branch：`codex/P11-long-task-lifecycle-contract`；base：`68fbdde891b05920d689f3521a3d26b7b6a98f5d`；契约交付 head：`b7fb6773a45542ca07c419d7212f9877c7acbcf0`。检查 `doc/contracts/P11_LONG_TASK_LIFECYCLE_CONTRACT.md`、`doc/tasks/P11.md` 与 P11 来源文档，重点验证来源映射、状态矩阵与拒绝清单、idempotency / durable acceptance、重试退避、恢复重放边界、单 scheduler / store 所有权、§8 实现事实与 P13/P14 消费边界。只读并返回 findings 与 AC 状态，不改文件、不运行 runtime / Pipeline / UI、不 push / merge / 清理 worktree；未验证项明确 `NOT_RUN`。Review 后由 Codex 决定 Coordinator 集成。
+  > 请以 DeepSeek Harness 非作者 Reviewer 身份，对 P11 固定 Review head `d57f8d3d661b5ea80d3cf34fb5b8636fca391195` 做只读 Review。仓库 worktree：`G:/CODEX/New Manga.workspace/worktrees/P11-LONG-TASK-LIFECYCLE-CONTRACT`；branch：`codex/P11-long-task-lifecycle-contract`；base：`68fbdde891b05920d689f3521a3d26b7b6a98f5d`；契约交付 head：`b7fb677338af56eaebbfa9c5b642646dd8b5ae90`。检查 `doc/contracts/P11_LONG_TASK_LIFECYCLE_CONTRACT.md`、`doc/tasks/P11.md` 与 P11 来源文档，重点验证来源映射、状态矩阵与拒绝清单、idempotency / durable acceptance、重试退避、恢复重放边界、单 scheduler / store 所有权、§8 实现事实与 P13/P14 消费边界。只读并返回 findings 与 AC 状态，不改文件、不运行 runtime / Pipeline / UI、不 push / merge / 清理 worktree；未验证项明确 `NOT_RUN`。Review 后由 Codex 决定 Coordinator 集成。
 
 ## 风险与遗留
 
