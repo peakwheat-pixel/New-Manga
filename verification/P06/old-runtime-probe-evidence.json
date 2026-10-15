@@ -1,0 +1,12 @@
+{
+  "commit": "ad75fadc2944983b4322f353176ba70cf0b0b7ae",
+  "exe_path": "G:\\CODEX\\New Manga.workspace\\P06-GC-DISTRIBUTION-MIGRATION\\old-runtime\\worktree\\apps\\desktop\\src-tauri\\target\\core-sidecar\\core-sidecar\\core_service.exe",
+  "sha256": "ec8a03bd7bbd8b9184c70b685e9616ab755e675c8b4bfc35d5ac11deea80542a",
+  "exit_code": 0,
+  "stdout": "",
+  "stderr": "[core.derived_gc] orphan_files_removed=0 dead_rows_removed=0\n",
+  "has_lock_file": false,
+  "characterization": "Old runtime runs pre-namespace code: it does not create or verify .preview-lifecycle.lock, confirming it is unaware of the lease protocol.",
+  "t_start": "2026-10-15T23:41:51+0800",
+  "t_end": "2026-10-15T23:41:53+0800"
+}
