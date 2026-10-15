@@ -1,0 +1,94 @@
+{
+  "schema_version": 1,
+  "task_id": "P22-REBASE-1",
+  "generated_at": "2026-10-15T19:57:42.9125530+08:00",
+  "integration_commit": "4e5c71d9f0a6191c85002fc287d55454e3bfcde8",
+  "delivery_head": "61c806c9e17d3c756b15b328dfc95f5aa5a6c72f",
+  "reviewed_head": "5181facbb095be8c7a45924b699d4e3a481aeb50",
+  "shell": {"name": "PowerShell", "edition": "Core", "version": "7.6.6", "executable": "C:/Program Files/PowerShell/7/pwsh.exe"},
+  "toolchain": {"cargo": "cargo 1.98.1 (797e8a9bc 2026-08-05)", "rustc": "rustc 1.98.1 (48a229cea 2026-09-01)"},
+  "execution": {
+    "working_directory": "G:/CODEX/New Manga.workspace/temp/P22-REBASE-1/integration-snapshot-4e5c71d9/apps/desktop/src-tauri",
+    "mode": "git archive snapshot of integrated commit",
+    "reason": "Main checkout lacks ignored apps/desktop/src-tauri/target/core-sidecar/core-sidecar; writing there is outside the explicit allowlist. The exact tracked src-tauri snapshot was tested from authorized temp/P22-REBASE-1.",
+    "main_checkout_sidecar_present": false,
+    "integration_snapshot_source_commit": "4e5c71d9f0a6191c85002fc287d55454e3bfcde8",
+    "integrated_library_bridge_sha256": "bb0f4cabe31bd93178e14cbe89bfa8cf371389bcbaff4490fe381ba41af8c96f",
+    "snapshot_library_bridge_sha256": "bb0f4cabe31bd93178e14cbe89bfa8cf371389bcbaff4490fe381ba41af8c96f",
+    "frontend_dist": {"main_and_delivery_source_identical": true, "file_count": 2, "copied_into_snapshot": true},
+    "sidecar_bundle": {
+      "source": "G:/CODEX/New Manga.workspace/worktrees/P22-REBASE-1/apps/desktop/src-tauri/target/core-sidecar/core-sidecar",
+      "destination": "G:/CODEX/New Manga.workspace/temp/P22-REBASE-1/integration-snapshot-4e5c71d9/apps/desktop/src-tauri/target/core-sidecar/core-sidecar",
+      "source_file_count": 5610,
+      "destination_file_count": 5610,
+      "sha256_tree_match": true
+    },
+    "deterministic_fixture": {
+      "source": "verification/P22-REBASE-1/deterministic_concurrent_sidecar.py",
+      "destination": "G:/CODEX/New Manga.workspace/temp/P22-REBASE-1/integration-snapshot-4e5c71d9/verification/P22-REBASE-1/deterministic_concurrent_sidecar.py",
+      "sha256": "a5e999e507b7bfa74961010119b37b1c45ae370c6337a61f1116cef3547c67f5",
+      "identical": true
+    }
+  },
+  "environment": {
+    "CARGO_TARGET_DIR": "G:/CODEX/New Manga.workspace/builds/P22-REBASE-1/cargo-target",
+    "CARGO_HOME": "G:/CODEX/New Manga.workspace/task-envs/P22-REBASE-1/cargo_home",
+    "TEMP": "G:/CODEX/New Manga.workspace/task-envs/P22-REBASE-1/tmp",
+    "TMP": "G:/CODEX/New Manga.workspace/task-envs/P22-REBASE-1/tmp",
+    "PYTHONPYCACHEPREFIX": "G:/CODEX/New Manga.workspace/task-envs/P22-REBASE-1/pycache",
+    "M2RC1_PYTHON": "G:/CODEX/New Manga.workspace/task-envs/P22-REBASE-1/venv/Scripts/python.exe"
+  },
+  "commands": [
+    {
+      "id": "AC4-test-list",
+      "argv": ["cargo", "test", "--locked", "library_bridge::tests", "--", "--list"],
+      "started_at": "2026-10-15T19:52:39.8782216+08:00",
+      "finished_at": "2026-10-15T19:52:46.8843810+08:00",
+      "wall_seconds": 7.006,
+      "wall_timeout_seconds": 1800,
+      "exit": 0,
+      "result": {"listed_tests": 12, "benchmarks": 0, "real_core_test_present": true},
+      "stdout": "verification/P22-REBASE-1/integration/cargo-test-list.stdout.log",
+      "stderr": "verification/P22-REBASE-1/integration/cargo-test-list.stderr.log",
+      "exit_file": "verification/P22-REBASE-1/integration/cargo-test-list.exit"
+    },
+    {
+      "id": "AC4-focused-run",
+      "argv": ["cargo", "test", "--locked", "library_bridge::tests", "--", "--test-threads=1", "--skip", "real_core_sidecar_answers_startup_ping_on_fresh_catalog"],
+      "started_at": "2026-10-15T19:53:38.9566029+08:00",
+      "finished_at": "2026-10-15T19:53:40.6674504+08:00",
+      "wall_seconds": 1.711,
+      "wall_timeout_seconds": 1800,
+      "exit": 0,
+      "result": {"passed": 11, "failed": 0, "ignored": 0, "filtered": 53},
+      "stdout": "verification/P22-REBASE-1/integration/cargo-test-run.stdout.log",
+      "stderr": "verification/P22-REBASE-1/integration/cargo-test-run.stderr.log",
+      "exit_file": "verification/P22-REBASE-1/integration/cargo-test-run.exit"
+    }
+  ],
+  "explicit_not_run": [
+    {"test": "real_core_sidecar_answers_startup_ping_on_fresh_catalog", "status": "NOT_RUN", "reason": "Explicitly passed to cargo test --skip as required; it starts the real Core sidecar and is deferred to P19/P20."}
+  ],
+  "setup_attempts": [
+    {
+      "argv": ["cargo", "test", "--locked", "library_bridge::tests", "--", "--list"],
+      "exit": 101,
+      "status": "SETUP_FAILURE",
+      "reason": "Initial isolated snapshot lacked frontend/dist; not a product/test failure.",
+      "stdout": "verification/P22-REBASE-1/integration/preflight-failure-cargo-test-list.stdout.log",
+      "stderr": "verification/P22-REBASE-1/integration/preflight-failure-cargo-test-list.stderr.log",
+      "exit_file": "verification/P22-REBASE-1/integration/preflight-failure-cargo-test-list.exit"
+    },
+    {
+      "argv": ["cargo", "test", "--locked", "library_bridge::tests", "--", "--test-threads=1", "--skip", "real_core_sidecar_answers_startup_ping_on_fresh_catalog"],
+      "exit": 101,
+      "status": "SETUP_FAILURE",
+      "reason": "Initial isolated snapshot lacked the repository-relative deterministic P22 fixture; fixture was copied from the integrated P22 evidence path with matching SHA-256 before the successful rerun.",
+      "stdout": "verification/P22-REBASE-1/integration/snapshot-setup-failure-cargo-test-run.stdout.log",
+      "stderr": "verification/P22-REBASE-1/integration/snapshot-setup-failure-cargo-test-run.stderr.log",
+      "exit_file": "verification/P22-REBASE-1/integration/snapshot-setup-failure-cargo-test-run.exit"
+    }
+  ],
+  "merge_method": "git merge --no-ff codex/p22-rebase-1",
+  "conflict_resolution": "Only doc/tasks/P22-REBASE-1.md add/add; branch version used and R1 section appended."
+}
