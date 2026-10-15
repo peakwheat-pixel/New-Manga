@@ -1,0 +1,5 @@
+Governance scope: 12 current documents; no historical directory scan.
+Task: doc\tasks\P04.md
+WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：1693 bytes / 34 lines
+WARN: 当前 Task 是 lifecycle v1；保留其原状态与证据，不强制回填旧 Task。
+Governance check: PASS (2 warnings)
