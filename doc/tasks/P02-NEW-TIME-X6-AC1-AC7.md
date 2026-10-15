@@ -3,7 +3,7 @@ id: P02-NEW-TIME-X6-AC1-AC7
 title: P02 新时点 AC1–AC7 当前版本验收
 kind: verification
 governance_version: 2
-status: blocked
+status: done
 approval: user_authorized_new_time_baseline_20261014
 suggested_owner: Antigravity
 owner: Codex
@@ -13,25 +13,41 @@ depends_on: [P02-NEW-TIME-BASELINE, P02-NEW-TIME-X6, P02-NEW-TIME-X6-POSTRUN-REV
 base_commit: 49d2a2f9c56462f5602b00ad4b824c5381abb1ab
 branch: agent/antigravity/P02-NEW-TIME-X6-AC1-AC7
 worktree: G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-X6-AC1-AC7-ANTIGRAVITY
-integration_commit: null
+integration_commit: 1135d9879ae02521b2a2b30a3eeeff55664aa36b
 owner_start_commit: 42f67683ec8c4712235105f3400a39e32ae364d4
-delivery_head: f7924d08f87ada37543f628aae9d31f4843aab23
-reviewed_head: f7924d08f87ada37543f628aae9d31f4843aab23
-review_decision: changes_requested
-integration_target: agent/codex/P02-NEW-TIME-X6-POSTRUN-REVIEW
-integration_status: blocked
+delivery_head: 738759cd3cbd2ca47177b95c64402b57c491ba40
+reviewed_head: 738759cd3cbd2ca47177b95c64402b57c491ba40
+review_decision: approved
+integration_target: codex/p02-newtime-ac-integration-20261015
+integration_status: integrated
 dispatch_state: PREFLIGHT_PASS
-blocked_by: ["R3-01: AC6 CDP endpoint unavailable", "AC6: no live DOM sample"]
+blocked_by: []
 profile: ANTIGRAVITY_FALLBACK
 revisions: {implementation: 0, test: 3, evidence: 6}
 canonical_evidence_status: complete
-resource_closeout_status: blocked
-evidence_dir: verification/P02-NEW-TIME-X6-AC1-AC7/runs/p02-newtime-ac-20261014-i2
+resource_closeout_status: complete
+evidence_dir: G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-X6-AC1-AC7-INTEGRATION/verification/P02-NEW-TIME-X6-AC1-AC7/final-gate-a7
 run_id: p02-newtime-ac-20261014-i2
 resolution_task: RES-P02-AC6-CDP-RECOVERY
+
+owner_delivery_head: 4abb8d288e005dc58e3270b12389d33cd7a52ac1
+
+integration_worktree: G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-X6-AC1-AC7-INTEGRATION
+
+implementation_repairs_used: 2
+
+max_implementation_repairs: 2
 ---
 
 # P02-NEW-TIME-X6-AC1-AC7：P02 新时点 AC1–AC7 当前版本验收
+
+## 当前结论（2026-10-15 / DONE）
+
+DSH 内容 bounded Review @ 4abb8d288e005dc58e3270b12389d33cd7a52ac1=APPROVED；E 勘误专项 @ 738759cd3cbd2ca47177b95c64402b57c491ba40=APPROVED。Codex result=ACCEPT / convergence=APPROVED / wait_external=false，102 项 source pins 与 19 项 Gate capsule 已实际验证。集成位于 codex/p02-newtime-ac-integration-20261015 @ 1135d9879ae02521b2a2b30a3eeeff55664aa36b，未合并 main。
+本 Task 的 harness/证据层 AC1–AC7 完成：AC1–AC5 沿用已审 I1；AC6 a7=10/10、page-id-input=13.87、alpha=false，token 0 mapped/10 unmapped；AC7=独立 Review、Codex VERIFY/集成与资源保留收口完成。不得解读为产品全面 PASS 或完整 Core/SQLite 真业务验收。
+当前 immutable 结果/限制/勘误见 `G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-X6-AC1-AC7-INTEGRATION/verification/P02-NEW-TIME-X6-AC1-AC7/final-gate-a7`；旧 i2 BLOCKED、旧 Handoff 与旧 mutable manifest 为 HISTORICAL，不回改。原 revisions 字段保持，implementation_repairs_used=2/2 才是当前返修预算；未新增 I3。
+以下保留冻结范围与历史过程；历史 pending/BLOCKED 叙述均被本节的当前 Gate 结论取代，不作为当前状态。
+
 
 ## 来源、准入与目标
 
@@ -48,13 +64,13 @@ resolution_task: RES-P02-AC6-CDP-RECOVERY
 
 ## Acceptance Criteria
 
-- [ ] **AC1 真实 WebView2 harness**：从固定源码对应的现有 packaged binary 启动 Windows Tauri 窗口，证明交互发生于嵌入式 WebView2，而非 Vite/外部浏览器/JSDOM。记录 OS、WebView2 Runtime、源码与二进制 Hash、启动命令、进程/窗口身份、隔离测试数据和驱动；标明 mock 面。
-- [ ] **AC2 导航与操作**：用真实鼠标和键盘操作 Console/Workbench、Workbench 页面选择、输入、按钮和状态；记录可见结果、焦点/可访问性状态和截图。预期行为缺失时登记 finding，不在本 Task 修复。
-- [ ] **AC3 300ms quiet-period 与失效窗口**：真实 WebView2 连续输入/切换 page ID，分别观察 `resolve_page_resource` 与 `list_regions`；中间前缀不得提前读取；300ms 未到不得触发，到期后仅对最终 page ID 各触发一次；页面变化取消旧 timer，旧 page 迟到响应不得覆盖当前状态。记录单调时钟与可见结果。
-- [ ] **AC4 写后刷新即时性**：在真实 WebView、默认 `resolveDebounceMs=300` / `regionDebounceMs=300` 下，对 retype、undo、restore 三种操作分别构造合成状态并判别写后刷新；逐项记录 write 返回与随后 `list_regions` 的次序/单调时钟，确认读回不再等待 300ms。允许 IPC/Core 明确标为 mock（`REAL_WEBVIEW_MOCK_IPC`），但不得声称验证了真实 Core/SQLite 持久化。三种操作均为必要覆盖；任一项不能安全或可靠执行时，该项记 `BLOCKED` 并阻止 Task 进入 `done`，不得用 `NOT_RUN` 满足 AC4。
-- [ ] **AC5 键盘与焦点**：以真实按键检查选择/输入/按钮/对话框的 Tab、Shift+Tab、Enter/Space、Escape 及焦点位置。仅覆盖 P02 Workbench 操作面，不声称完成全应用 WCAG 审计；观察到的缺失只登记 finding。
-- [ ] **AC6 F token / 对比度**：采集真实 WebView2 代表性状态的 computed foreground/background、F token 映射状态、算法和 contrast ratio。将 `token_mapping`（`MAPPED` / `UNMAPPED` / `NOT_APPLICABLE`）与 `contrast_result`（`PASS` / `FAIL` / `NOT_VERIFIABLE`）分开记录。只要实际前景、背景及必要的合成底色可确定，就必须计算 contrast ratio；token 未映射或 CSS fallback 不得跳过计算。只有无法确定实际合成背景时，ratio 才可为 `NOT_VERIFIABLE`，并附原因。按 UI/UX GUI design contract `7.2` / `9`：文本至少 4.5:1，禁用文字/非文本至少 3.0:1，状态不得仅靠颜色表达。不另定阈值、不改视觉样式。React 当前无浅色主题入口时记录 `NOT_APPLICABLE`。
-- [ ] **AC7 固定证据与发现处置**：逐场景记录 PASS/FAIL/BLOCKED/NOT_RUN、真实/模拟层、命令、环境、源码/二进制 Hash、退出码、时序/颜色数据、截图/日志和逐项 skip 原因。产品缺口单独登记 finding 与建议后继路线；测试脚手架 Gate PASS 不等于产品 UI 质量 PASS。固定 delivery head 经 DSH 独立 Review、Codex 范围/验证/集成 Gate 后才可 `done`。
+- [x] **AC1 真实 WebView2 harness**：从固定源码对应的现有 packaged binary 启动 Windows Tauri 窗口，证明交互发生于嵌入式 WebView2，而非 Vite/外部浏览器/JSDOM。记录 OS、WebView2 Runtime、源码与二进制 Hash、启动命令、进程/窗口身份、隔离测试数据和驱动；标明 mock 面。
+- [x] **AC2 导航与操作**：用真实鼠标和键盘操作 Console/Workbench、Workbench 页面选择、输入、按钮和状态；记录可见结果、焦点/可访问性状态和截图。预期行为缺失时登记 finding，不在本 Task 修复。
+- [x] **AC3 300ms quiet-period 与失效窗口**：真实 WebView2 连续输入/切换 page ID，分别观察 `resolve_page_resource` 与 `list_regions`；中间前缀不得提前读取；300ms 未到不得触发，到期后仅对最终 page ID 各触发一次；页面变化取消旧 timer，旧 page 迟到响应不得覆盖当前状态。记录单调时钟与可见结果。
+- [x] **AC4 写后刷新即时性**：在真实 WebView、默认 `resolveDebounceMs=300` / `regionDebounceMs=300` 下，对 retype、undo、restore 三种操作分别构造合成状态并判别写后刷新；逐项记录 write 返回与随后 `list_regions` 的次序/单调时钟，确认读回不再等待 300ms。允许 IPC/Core 明确标为 mock（`REAL_WEBVIEW_MOCK_IPC`），但不得声称验证了真实 Core/SQLite 持久化。三种操作均为必要覆盖；任一项不能安全或可靠执行时，该项记 `BLOCKED` 并阻止 Task 进入 `done`，不得用 `NOT_RUN` 满足 AC4。
+- [x] **AC5 键盘与焦点**：以真实按键检查选择/输入/按钮/对话框的 Tab、Shift+Tab、Enter/Space、Escape 及焦点位置。仅覆盖 P02 Workbench 操作面，不声称完成全应用 WCAG 审计；观察到的缺失只登记 finding。
+- [x] **AC6 F token / 对比度**：采集真实 WebView2 代表性状态的 computed foreground/background、F token 映射状态、算法和 contrast ratio。将 `token_mapping`（`MAPPED` / `UNMAPPED` / `NOT_APPLICABLE`）与 `contrast_result`（`PASS` / `FAIL` / `NOT_VERIFIABLE`）分开记录。只要实际前景、背景及必要的合成底色可确定，就必须计算 contrast ratio；token 未映射或 CSS fallback 不得跳过计算。只有无法确定实际合成背景时，ratio 才可为 `NOT_VERIFIABLE`，并附原因。按 UI/UX GUI design contract `7.2` / `9`：文本至少 4.5:1，禁用文字/非文本至少 3.0:1，状态不得仅靠颜色表达。不另定阈值、不改视觉样式。React 当前无浅色主题入口时记录 `NOT_APPLICABLE`。
+- [x] **AC7 固定证据与发现处置**：逐场景记录 PASS/FAIL/BLOCKED/NOT_RUN、真实/模拟层、命令、环境、源码/二进制 Hash、退出码、时序/颜色数据、截图/日志和逐项 skip 原因。产品缺口单独登记 finding 与建议后继路线；测试脚手架 Gate PASS 不等于产品 UI 质量 PASS。固定 delivery head 经 DSH 独立 Review、Codex 范围/验证/集成 Gate 后才可 `done`。
 
 产品观察即使为 FAIL，也不授权 Owner 修复产品实现。所有产品缺口只记 finding，交 Codex 按严重度、依赖和新版 orchestrator 规则重算 DAG。
 
@@ -98,7 +114,7 @@ resolution_task: RES-P02-AC6-CDP-RECOVERY
 
 以上 `PLANNED` / `NOT_RUN` 不是 PASS；Task 建立与 preflight 不会预先判定产品行为。
 
-## 依赖、Review 与阻塞
+## 依赖与历史 Review/阻塞（已由 a7 Gate 收口）
 
 - 前置节点：`P02-NEW-TIME-BASELINE=DONE`、`P02-NEW-TIME-X6=APPROVED`、`P02-NEW-TIME-X6-POSTRUN-REVIEW=APPROVED`、`P02-NEW-TIME-X6-BUILD-CARGO=INTEGRATED + official convergence APPROVED`。Build 的 BC-AC5=`PARTIAL` 与保留 residual 必须继续在 Plan、Status 和本 Task 可见；不得将其当作 PASS，也不得阻止本 Task 在官方批准范围内启动。
 - 开始运行的硬条件：Codex 已冻结 Task/Plan/Status；当前 Owner（含 fallback）的 availability probe 与 live AGENT_PREFLIGHT 均通过；isolated worktree 与 Task env 已验证，binary/sidecar hashes 匹配，synthetic data 为空且 source pinned。任一失败时记录 BLOCKED 与恢复条件；不自动升级为 `BLOCKED_WAITING_EXTERNAL_DECISION`。
@@ -106,7 +122,7 @@ resolution_task: RES-P02-AC6-CDP-RECOVERY
 - DeepSeek Harness 在固定 delivery head 上独立 Review，Codex 重算 evidence pins、scope 与 AC 结论并集成。Finding 按 `multi-agent-project-orchestrator` 的 I1/I2、bounded review、follow-up/resolution lineage 与 DAG replanning 处理；最多 I1、I2 两轮，禁止 I3 与无限返修。P0/P1/P2 blocker 未关闭不得批准；可安全关闭的非阻断 E 文档 finding 按协议处置；P3/P4 明确入 backlog，不为追求零 finding 无界重开。产品实现修复需 Codex 另立依赖 Task。
 - AC4 三项 retype/undo/restore 均是必需条件；任一被阻断则 Task 不能 `done`。旧 H1 / P2-1 状态不属于本 Task 的输入或验收范围。
 
-## 交付与运行记录
+## 历史交付与运行记录（截至 I2-a4，当前结论见上）
 
 - 2026-10-14 ZCode attempt r1（RunId=`p02-newtime-ac-20261014-r1`）：AC1–AC6 未执行，session-only status=`BLOCKED`；AC7=`NOT_RUN`；ENV-01 与原 Handoff 保留。
 - 2026-10-14 Antigravity attempt r1（RunId=`p02-newtime-ac-20261014-r1`）：交付 head `8d938581db8c1b6c3b785abe59b3767e9976d911`，完成初次全量 AC1–AC7 运行，提交 Handoff `doc/handoffs/P02-NEW-TIME-X6-AC1-AC7-antigravity-r1-20261014.md`。
@@ -119,3 +135,51 @@ resolution_task: RES-P02-AC6-CDP-RECOVERY
 - 独立 Review：本次恢复交付后的 I2 固定 head 仍须由 DeepSeek Harness bounded read-only review；AC6 / R3-01 为 BLOCKED，Reviewer=DeepSeek Harness，不由 Owner 自审。
 - Codex adjudication / integration / post-integration check：尚无。
 - I2 当前状态：`blocked`；R3-04、R3-02、R3-06 已按证据收口；R3-01 因正确且空闲的 9333 端口上仍未建立 CDP、没有真实 AC6 对比度样本而未闭合，具体根因未确定。I2 证据与 Handoff 指针见 `runs/p02-newtime-ac-20261014-i2/`；不得标记 `approved` / `done`。
+
+## Canonical Evidence
+
+| evidence_id | AC/Gate | path | commit | sha256 | class |
+|---|---|---|---|---|---|
+| FINAL-01 | AC6/AC7 + Review/Integration | G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-X6-AC1-AC7-INTEGRATION/verification/P02-NEW-TIME-X6-AC1-AC7/final-gate-a7/codex-verification.json | - | c246e299752768fb4675822ccc2204807df9da8884823255d185c4d7ed939e1d | CANONICAL |
+| FINAL-02 | AC6/AC7 + Review/Integration | G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-X6-AC1-AC7-INTEGRATION/verification/P02-NEW-TIME-X6-AC1-AC7/final-gate-a7/completion-adjudication.md | - | 799b56e19120a81ef5d95643eb90633f4ccbb6d9b2461a736c1b487628b3c0e9 | CANONICAL |
+| FINAL-03 | AC6/AC7 + Review/Integration | G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-X6-AC1-AC7-INTEGRATION/verification/P02-NEW-TIME-X6-AC1-AC7/final-gate-a7/convergence-dry.json | - | 86954bfb7ef5aeaeaf41c81658afd2a4a2a0d2709a153d3e328b726f41d01cd9 | CANONICAL |
+| FINAL-04 | AC6/AC7 + Review/Integration | G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-X6-AC1-AC7-INTEGRATION/verification/P02-NEW-TIME-X6-AC1-AC7/final-gate-a7/convergence-input.json | - | 5a86224c72d4132d8ad4e3d908aca1a4ea0a6eb10b43c77cedf5850541e9cd3d | CANONICAL |
+| FINAL-05 | AC6/AC7 + Review/Integration | G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-X6-AC1-AC7-INTEGRATION/verification/P02-NEW-TIME-X6-AC1-AC7/final-gate-a7/convergence-output.json | - | 71206ce8ad187e5c8070c89a6f96c9c57ad2ab80450fa02cd5fa4d04e2114340 | CANONICAL |
+| FINAL-06 | AC6/AC7 + Review/Integration | G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-X6-AC1-AC7-INTEGRATION/verification/P02-NEW-TIME-X6-AC1-AC7/final-gate-a7/current-summary.json | - | 46b47088e76fb783ab5a8e6a29cb15a654ac7310d78afa4977e098b3212472e1 | CANONICAL |
+| FINAL-07 | AC6/AC7 + Review/Integration | G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-X6-AC1-AC7-INTEGRATION/verification/P02-NEW-TIME-X6-AC1-AC7/final-gate-a7/dsh-bounded-review.md | - | f885ea2a3d49affa76a7df77f775e8d9dd35c140d9b45b1acbfcd972625fa610 | CANONICAL |
+| FINAL-08 | AC6/AC7 + Review/Integration | G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-X6-AC1-AC7-INTEGRATION/verification/P02-NEW-TIME-X6-AC1-AC7/final-gate-a7/dsh-e-erratum-review.md | - | be9995acc29d4282d5a631041383cb404ca8df22f6787cbd886605536db9cc32 | CANONICAL |
+| FINAL-09 | AC6/AC7 + Review/Integration | G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-X6-AC1-AC7-INTEGRATION/verification/P02-NEW-TIME-X6-AC1-AC7/final-gate-a7/gate-evidence-manifest.json | - | d334037061ab01ba4aed3da12e78392633817047e027157c11cf0fbf14967c8c | CANONICAL |
+| FINAL-10 | AC6/AC7 + Review/Integration | G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-X6-AC1-AC7-INTEGRATION/verification/P02-NEW-TIME-X6-AC1-AC7/final-gate-a7/integration-adjudication.md | - | 96cc982aa93d4d8ae984961d4e446ebf3a273bad5bc5a5360e30364082154f19 | CANONICAL |
+| FINAL-11 | AC6/AC7 + Review/Integration | G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-X6-AC1-AC7-INTEGRATION/verification/P02-NEW-TIME-X6-AC1-AC7/final-gate-a7/resolution-convergence-input.json | - | 0c9cdd1d1d6053959a3e2421df5dd86236ba9b8dba4452488cb7929cc42133f3 | CANONICAL |
+| FINAL-12 | AC6/AC7 + Review/Integration | G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-X6-AC1-AC7-INTEGRATION/verification/P02-NEW-TIME-X6-AC1-AC7/final-gate-a7/resolution-convergence-output.json | - | 7bed0870d5fcf1323278bcaca9e9e6181b3f16b96915d61cc5b5c8fc5b8d6215 | CANONICAL |
+| FINAL-13 | AC6/AC7 + Review/Integration | G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-X6-AC1-AC7-INTEGRATION/verification/P02-NEW-TIME-X6-AC1-AC7/final-gate-a7/resource-inventory.json | - | 02aba7355e084820be913781d1c746703bfff0691e9b32848a90f5846ee07dd6 | CANONICAL |
+| FINAL-14 | AC6/AC7 + Review/Integration | G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-X6-AC1-AC7-INTEGRATION/verification/P02-NEW-TIME-X6-AC1-AC7/final-gate-a7/result-input.json | - | d6fd98e3afdcb21a0a14acae0675aeb6da51a8a0494ffb72451aaf4170060fc3 | CANONICAL |
+| FINAL-15 | AC6/AC7 + Review/Integration | G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-X6-AC1-AC7-INTEGRATION/verification/P02-NEW-TIME-X6-AC1-AC7/final-gate-a7/result-output.json | - | c2c7473f861644e569092465fc799e25fb9c7365a85e57851823de589f4e50df | CANONICAL |
+| FINAL-16 | AC6/AC7 + Review/Integration | G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-X6-AC1-AC7-INTEGRATION/verification/P02-NEW-TIME-X6-AC1-AC7/final-gate-a7/review-dispatch.json | - | 2e26857fbed1a82e25732e8a300c2869aabc199ba94c465c1a6e71270e73be70 | CANONICAL |
+| FINAL-17 | AC6/AC7 + Review/Integration | G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-X6-AC1-AC7-INTEGRATION/verification/P02-NEW-TIME-X6-AC1-AC7/final-gate-a7/revision-input.json | - | 725c1b17e5341762f54a7ca54ad4f09778f8f71eb585782f4315c1306a60dd4c | CANONICAL |
+| FINAL-18 | AC6/AC7 + Review/Integration | G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-X6-AC1-AC7-INTEGRATION/verification/P02-NEW-TIME-X6-AC1-AC7/final-gate-a7/revision-output.json | - | 5d964f23b3de0c48c5b89c63400824d128bd5f50f391b8fbbc63c8a8601da1fe | CANONICAL |
+| FINAL-19 | AC6/AC7 + Review/Integration | G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-X6-AC1-AC7-INTEGRATION/verification/P02-NEW-TIME-X6-AC1-AC7/final-gate-a7/source-evidence-manifest.json | - | 06a1cedfc53fc79607a9fcb99299ae0f9e3b0ba4df50d7dedc5a32c530698ac1 | CANONICAL |
+| FINAL-20 | AC6/AC7 + Review/Integration | G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-X6-AC1-AC7-INTEGRATION/verification/P02-NEW-TIME-X6-AC1-AC7/final-gate-a7/source-manifest-verify.json | - | b59f3556f91be12be61dbeb9f44fc0bfec59d8348ba60b2610d6a1c384782e99 | CANONICAL |
+
+## Resource Manifest
+
+| resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
+|---|---|---|---|---|---|
+| owner_worktree | G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-X6-AC1-AC7-ANTIGRAVITY | PRESERVE_REFERENCED | G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-X6-AC1-AC7-ANTIGRAVITY | G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-X6-AC1-AC7-INTEGRATION/verification/P02-NEW-TIME-X6-AC1-AC7/final-gate-a7/resource-inventory.json | fixed reviewed HEAD, raw evidence and original untracked manifest; Owner launcher exit 0; no second writer started；所有权/引用未解除，原位保留 |
+| prior_integration_worktree | G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-X6-POSTRUN-REVIEW | PRESERVE_UNKNOWN | G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-X6-POSTRUN-REVIEW | G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-X6-AC1-AC7-INTEGRATION/verification/P02-NEW-TIME-X6-AC1-AC7/final-gate-a7/resource-inventory.json | dirty/untracked historical Review and governance retained; not staged/reset/cleaned；所有权/引用未解除，原位保留 |
+| integration_worktree | G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-X6-AC1-AC7-INTEGRATION | PRESERVE_REFERENCED | G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-X6-AC1-AC7-INTEGRATION | G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-X6-AC1-AC7-INTEGRATION/verification/P02-NEW-TIME-X6-AC1-AC7/final-gate-a7/resource-inventory.json | new content integration and immutable final evidence branch retained; readonly E reviewer may be active；所有权/引用未解除，原位保留 |
+| synthetic_task_env | G:/CODEX/New Manga.workspace/task-envs/P02-NEW-TIME-X6-AC1-AC7 | PRESERVE_REFERENCED | G:/CODEX/New Manga.workspace/task-envs/P02-NEW-TIME-X6-AC1-AC7 | G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-X6-AC1-AC7-INTEGRATION/verification/P02-NEW-TIME-X6-AC1-AC7/final-gate-a7/resource-inventory.json | isolated synthetic run-i1/run-i2/failed diagnostics; no cleanup or GUI rerun；所有权/引用未解除，原位保留 |
+| fixed_build_artifacts | G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-X6-BUILD-CARGO | PRESERVE_REFERENCED | G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-X6-BUILD-CARGO | G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-X6-AC1-AC7-INTEGRATION/verification/P02-NEW-TIME-X6-AC1-AC7/final-gate-a7/resource-inventory.json | pinned executable/sidecar immutable input; EXE SHA checked; Build cache residuals retained；所有权/引用未解除，原位保留 |
+| codex_agent_output | G:/CODEX/New Manga.workspace/agent-output/codex/TAKEOVER-20261015 | PRESERVE_REFERENCED | G:/CODEX/New Manga.workspace/agent-output/codex/TAKEOVER-20261015 | G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-X6-AC1-AC7-INTEGRATION/verification/P02-NEW-TIME-X6-AC1-AC7/final-gate-a7/resource-inventory.json | original dispatch logs/prompts/exits/pre-AUTO governance snapshots/recovery scripts retained；所有权/引用未解除，原位保留 |
+| dsh_agent_output | G:/CODEX/New Manga.workspace/agent-output/dsh/P02-NEW-TIME-X6-AC1-AC7 | PRESERVE_REFERENCED | G:/CODEX/New Manga.workspace/agent-output/dsh/P02-NEW-TIME-X6-AC1-AC7 | G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-X6-AC1-AC7-INTEGRATION/verification/P02-NEW-TIME-X6-AC1-AC7/final-gate-a7/resource-inventory.json | previous takeover/convergence/interactive collection proof retained；所有权/引用未解除，原位保留 |
+
+## Closeout Record
+
+- Closeout date / Codex：2026-10-15；Coordinator epoch=3。
+- canonical_evidence_status / resource_closeout_status：complete / complete。
+- 内容 merge：38d926026e9032a528ce578dba7290c5ce65356b；已审 E head：738759cd3cbd2ca47177b95c64402b57c491ba40；最终集成证据 commit：1135d9879ae02521b2a2b30a3eeeff55664aa36b。
+- source manifest 官方 VERIFY：102/102 PASS；gate capsule：19/19 PASS；DSH 内容/E Review 均 APPROVED，新增 P0/P1/P2=0。
+- 删除、迁移、归档：0 项 / 0 B；全部资源原位保留，不删除 worktree/模型/用户内容。
+- 未关闭产品项：P-01 Escape、P-02 tokens、P-03 theme 与其它 P3/P4 backlog；BC-AC5=PARTIAL、旧 H1/P2-1/13 项缺失来源不变。Git 自动维护的旧 checkpoint 坏引用保留，当前 pins 可解析。
+- 当前指针：主 checkout STATUS / Plan / Task Index 与 rolling checkpoint 收口；该副本是主控 fenced state 的版本化镜像；无 shadow runtime/lease。
+- 下一任务建议：当前无已释放 READY，不为 P3/P4 开新实现轮；无需下一步操作。

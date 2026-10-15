@@ -4,20 +4,21 @@
 
 ## 当前 DAG（2026-10-14 新时点准入）
 
-|节点|依赖 / 状态|释放边界|
+|节点|依赖/状态|释放边界|
 |---|---|---|
-|A4→A5→A6→R6→V6|历史：A4 done；A5 blocked；A6 条件接受；V6 pass。|不代表 H1、Build 或产品 AC 通过。|
-|H1：P02PRE-R1H-R6-ZCODE-H1|`IN_REVIEW`；DSH=`CHANGES_REQUESTED`；P2-1=`OPEN`。|旧结论保持原样，新时点路径独立。|
-|P2-1 evidence closure|`BLOCKED`；13 项缺 item-level raw source。|不关闭或替代旧 finding。|
-|Forensic / H2 / H1-current-input / P2-1 trace|`DONE`；P2-1 仍 `OPEN`。|仅历史证据。|
-|P02 新时点基线|`DONE`；AC3=`PASS`、AC5=`ADMIT_X6`。|仅释放 X6。|
-|AC3 resolutions|`DONE`；DSH approved。|完成基线依赖。|
-|P02-NEW-TIME-X6|`APPROVED`；59/59 checks PASS，Codex VERIFY PASS。|只支持新时点 X6。|
-|P02-NEW-TIME-X6-POSTRUN-REVIEW|`APPROVED`；7 项 P3/P4 留 backlog。|无返修；仅接受新时点 X6。|
-|P02-NEW-TIME-X6-BUILD-CARGO|`APPROVED + INTEGRATED`；convergence APPROVED；BC-AC5=`PARTIAL`，缓存 residual 保留。|只释放 AC1–AC7；Build Task 不标 done。|
-|P02-NEW-TIME-X6-AC1-AC7|`IN_PROGRESS / DISPATCHED`；Owner=Antigravity（ZCode r1 因 ENV-01 中止后按授权 failover）；Reviewer=DeepSeek Harness；Integrator=Codex。Owner final exact-head preflight PASS，13 checks、0 dirty。预启动 T harness findings 已固定，Owner 先修复再跑 AC。依赖：新时点基线、X6、post-run Review、Build/Cargo convergence。|只读 pinned binary，Task-local synthetic data；禁止产品改动、重建或安装。等待 AC1–AC7 交付、Codex VERIFY 与 DSH 独立 Review。|
+|A4→A5→A6→R6→V6|A4 done；A5 blocked；A6 条件接受；V6 pass。|不代表 H1、Build 或 AC 通过。|
+|H1：P02PRE-R1H-R6-ZCODE-H1|in_review；DSH CHANGES_REQUESTED。|旧 H1 的 P2-1 OPEN；新 X6 是独立准入路径。|
+|P2-1 evidence closure|blocked；13 项无 item-level raw source。|H2 不替代 H1。|
+|Forensic/H2/H1-current-input/P2-1 trace|done；P2-1 finding 仍 OPEN。|不改写旧结论。|
+|P02 新时点准入|DONE；AC3 PASS、AC5 ADMIT_X6；DSH/ Codex Gate 通过。|仅释放 X6。|
+|AC3 resolutions|DONE；DSH approved；P4 留 backlog。|仅完成基线依赖。|
+|P02-NEW-TIME-X6|APPROVED；I1/I2=1/2；唯一 RunId exit=0、59/59 checks PASS；Codex VERIFY PASS；X6-AC7 lifecycle/governance PASS。|结果只支持新时点 X6；旧 H1/P2-1 不变。|
+|P02-NEW-TIME-X6-POSTRUN-REVIEW|APPROVED；DSH APPROVED，P0/P1/P2/P3/P4=0/0/0/1/6；Codex adjudication/convergence=APPROVED；10/10 Git pins、14/14 external pins。|X6-PR-01..07 作为 P3/P4 backlog；仅接受新时点 X6 结果。|
+|P02-NEW-TIME-X6-BUILD-CARGO|APPROVED + INTEGRATED；BC-AC5=PARTIAL，缓存 residual 保留。|已释放新时点 AC1–AC7；不标 done。|
+|P02-NEW-TIME-X6-AC1-AC7|DONE；I1/I2=2/2；DSH 内容/E Review APPROVED、Codex convergence APPROVED。|仅完成新时点 harness/证据验收；产品 P3/P4 backlog 保留。|
+|RES-P02-AC6-CDP-RECOVERY|DONE；R3-01 CLOSED；a7 10/10，input ratio=13.87；两层 manifest VERIFY PASS。|仅证据恢复，未新增 I3；资源全保留。|
 
-执行顺序：新时点基线 → X6 → post-run Review → Build/Cargo → AC1–AC7。当前唯一 runnable Task 已派发；后续按 finding、bounded review 与 DAG 重算规则继续。
+READY 节点：无。新时点验收链收口；旧 H1/P2-1 与未释放产品改进不自动激活。
 
 ## 历史快照
 

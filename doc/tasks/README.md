@@ -4,7 +4,7 @@
 
 - 唯一 Task DAG 与释放状态：[REBASELINE_PLAN](../REBASELINE_PLAN.md)
 - 唯一 Active Task、运行状态与恢复点：[STATUS](../STATUS.md)
-- 当前 Orchestration Task：[P02 新时点 AC1–AC7 当前版本验收](P02-NEW-TIME-X6-AC1-AC7.md)，状态为 in_progress / DISPATCHED，由 Antigravity 按授权 fallback 执行，DeepSeek Harness 独立 Review，Codex VERIFY/裁决/集成；T harness 预启动修复后再运行 AC。前置 [Build/Cargo Gate](P02-NEW-TIME-X6-BUILD-CARGO.md) 已 integrated + convergence APPROVED；BC-AC5=PARTIAL residual 继续保留。
+- 最近完成：[新时点 AC1–AC7](P02-NEW-TIME-X6-AC1-AC7.md) 与 [AC6 resolution](RES-P02-AC6-CDP-RECOVERY.md)，DONE；无已释放 READY，下一步见 Plan/STATUS。
 - 前置 [P02-NEW-TIME-X6](P02-NEW-TIME-X6.md) 与 [post-run Review](P02-NEW-TIME-X6-POSTRUN-REVIEW.md) 均 approved；DSH APPROVED，Codex result protocol=ACCEPT/convergence=APPROVED，X6-PR-01..07 为 P3/P4 backlog。
 - 最近完成：[P02 新时点基线准入](P02-NEW-TIME-BASELINE.md)；AC3=PASS、AC5=ADMIT_X6，DSH bounded result Review 与 Codex convergence 完成；随后 X6 与其 post-run Review 也已通过。
 - 已完成 H2-RUN：[P02PRE-R1H-H2-RUN](P02PRE-R1H-H2-RUN.md)
