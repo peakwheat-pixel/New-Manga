@@ -1,0 +1,9 @@
+{
+  "revision_type": "E",
+  "counts_toward_repair_budget": false,
+  "reviewer_needed": false,
+  "verification": "lint + deterministic_verification",
+  "rationale": "evidence/governance-only fix never triggers full review",
+  "mode": "classify-revision",
+  "dry_run": false
+}

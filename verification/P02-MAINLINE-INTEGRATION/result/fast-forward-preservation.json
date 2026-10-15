@@ -1,0 +1,30 @@
+{
+  "status": "PASS",
+  "old_head": "a9c3214b2d7806c2b8920897e5684c039ae14057",
+  "main_head": "9e3c5310d5652f5491f3dc11825d86c03dac22ee",
+  "native_ff_exit": 0,
+  "protected_files_checked": 38,
+  "protected_bytes_unchanged": true,
+  "unrelated_untracked_preserved": true,
+  "staged_after": [],
+  "index_only_approved_paths": [
+    "doc/00_INDEX.md",
+    "doc/REBASELINE_PLAN.md",
+    "doc/STATUS.md",
+    "doc/tasks/P02-NEW-TIME-X6-AC1-AC7.md",
+    "doc/tasks/P02-NEW-TIME-X6-BUILD-CARGO.md",
+    "doc/tasks/P02-NEW-TIME-X6-POSTRUN-REVIEW.md",
+    "doc/tasks/P02-NEW-TIME-X6.md",
+    "doc/tasks/P02.md",
+    "doc/tasks/README.md",
+    "doc/tasks/RES-P02-AC6-CDP-RECOVERY.md",
+    "verification/P02-NEW-TIME-X6-POSTRUN-REVIEW/checkpoint-r1.md",
+    "verification/P02-NEW-TIME-X6-POSTRUN-REVIEW/codex-adjudication-r1.md",
+    "verification/P02-NEW-TIME-X6-POSTRUN-REVIEW/dsh-review-input-manifest-r1.json",
+    "verification/P02-NEW-TIME-X6-POSTRUN-REVIEW/dsh-review-input-manifest-r2.json",
+    "verification/P02-NEW-TIME-X6-POSTRUN-REVIEW/dsh-review-r1.md",
+    "verification/P02-NEW-TIME-X6/checkpoint.md",
+    "verification/P02-NEW-TIME-X6/codex-x6-result-verification-r1.md"
+  ],
+  "no_user_content_committed": true
+}

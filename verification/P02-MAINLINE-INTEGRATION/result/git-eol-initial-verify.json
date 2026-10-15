@@ -1,0 +1,23 @@
+{
+  "verify": "FAIL",
+  "problems": [
+    "byte count drifted: verification/P02-NEW-TIME-X6-AC1-AC7/final-gate-a7/codex-verification.json",
+    "sha256 mismatch: verification/P02-NEW-TIME-X6-AC1-AC7/final-gate-a7/codex-verification.json",
+    "byte count drifted: verification/P02-NEW-TIME-X6-AC1-AC7/final-gate-a7/convergence-input.json",
+    "sha256 mismatch: verification/P02-NEW-TIME-X6-AC1-AC7/final-gate-a7/convergence-input.json",
+    "byte count drifted: verification/P02-NEW-TIME-X6-AC1-AC7/final-gate-a7/integration-adjudication.md",
+    "sha256 mismatch: verification/P02-NEW-TIME-X6-AC1-AC7/final-gate-a7/integration-adjudication.md",
+    "byte count drifted: verification/P02-NEW-TIME-X6-AC1-AC7/final-gate-a7/result-input.json",
+    "sha256 mismatch: verification/P02-NEW-TIME-X6-AC1-AC7/final-gate-a7/result-input.json",
+    "byte count drifted: verification/P02-NEW-TIME-X6-AC1-AC7/final-gate-a7/review-dispatch.json",
+    "sha256 mismatch: verification/P02-NEW-TIME-X6-AC1-AC7/final-gate-a7/review-dispatch.json",
+    "byte count drifted: verification/P02-NEW-TIME-X6-AC1-AC7/final-gate-a7/revision-input.json",
+    "sha256 mismatch: verification/P02-NEW-TIME-X6-AC1-AC7/final-gate-a7/revision-input.json",
+    "byte count drifted: verification/P02-NEW-TIME-X6-AC1-AC7/final-gate-a7/source-evidence-manifest.json",
+    "sha256 mismatch: verification/P02-NEW-TIME-X6-AC1-AC7/final-gate-a7/source-evidence-manifest.json"
+  ],
+  "manifest": "verification/P02-NEW-TIME-X6-AC1-AC7/final-gate-a7/gate-evidence-manifest.json",
+  "source_commit": "e41e3c1805618a7feac06616a8ab520a908acbdc",
+  "review_head": "e41e3c1805618a7feac06616a8ab520a908acbdc",
+  "files_checked": 19
+}

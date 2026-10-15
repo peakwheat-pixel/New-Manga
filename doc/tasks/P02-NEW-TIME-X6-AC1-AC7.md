@@ -13,12 +13,12 @@ depends_on: [P02-NEW-TIME-BASELINE, P02-NEW-TIME-X6, P02-NEW-TIME-X6-POSTRUN-REV
 base_commit: 49d2a2f9c56462f5602b00ad4b824c5381abb1ab
 branch: agent/antigravity/P02-NEW-TIME-X6-AC1-AC7
 worktree: G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-X6-AC1-AC7-ANTIGRAVITY
-integration_commit: 1135d9879ae02521b2a2b30a3eeeff55664aa36b
+integration_commit: 9e3c5310d5652f5491f3dc11825d86c03dac22ee
 owner_start_commit: 42f67683ec8c4712235105f3400a39e32ae364d4
 delivery_head: 738759cd3cbd2ca47177b95c64402b57c491ba40
 reviewed_head: 738759cd3cbd2ca47177b95c64402b57c491ba40
 review_decision: approved
-integration_target: codex/p02-newtime-ac-integration-20261015
+integration_target: main
 integration_status: integrated
 dispatch_state: PREFLIGHT_PASS
 blocked_by: []
@@ -26,20 +26,26 @@ profile: ANTIGRAVITY_FALLBACK
 revisions: {implementation: 0, test: 3, evidence: 6}
 canonical_evidence_status: complete
 resource_closeout_status: complete
-evidence_dir: G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-X6-AC1-AC7-INTEGRATION/verification/P02-NEW-TIME-X6-AC1-AC7/final-gate-a7
+evidence_dir: verification/P02-NEW-TIME-X6-AC1-AC7/final-gate-a7
 run_id: p02-newtime-ac-20261014-i2
 resolution_task: RES-P02-AC6-CDP-RECOVERY
 
 owner_delivery_head: 4abb8d288e005dc58e3270b12389d33cd7a52ac1
 
-integration_worktree: G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-X6-AC1-AC7-INTEGRATION
+integration_worktree: G:/CODEX/New Manga
 
 implementation_repairs_used: 2
 
 max_implementation_repairs: 2
+
+mainline_closeout_task: P02-MAINLINE-INTEGRATION
 ---
 
 # P02-NEW-TIME-X6-AC1-AC7：P02 新时点 AC1–AC7 当前版本验收
+## 当前主线位置（2026-10-15）
+
+已审成果已原生快进 main @ 9e3c5310d5652f5491f3dc11825d86c03dac22ee；主线核验 source 102/102、Gate capsule 19/19 PASS，详情见 [P02-MAINLINE-INTEGRATION](P02-MAINLINE-INTEGRATION.md)。以下隔离分支/未合 main 叙述保留其历史语义，当前位置以本节及 front matter 为准。原始 Review、I1/I2 与资源保留记录不变。
+
 
 ## 当前结论（2026-10-15 / DONE）
 
@@ -140,26 +146,27 @@ DSH 内容 bounded Review @ 4abb8d288e005dc58e3270b12389d33cd7a52ac1=APPROVED；
 
 | evidence_id | AC/Gate | path | commit | sha256 | class |
 |---|---|---|---|---|---|
-| FINAL-01 | AC6/AC7 + Review/Integration | G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-X6-AC1-AC7-INTEGRATION/verification/P02-NEW-TIME-X6-AC1-AC7/final-gate-a7/codex-verification.json | - | c246e299752768fb4675822ccc2204807df9da8884823255d185c4d7ed939e1d | CANONICAL |
-| FINAL-02 | AC6/AC7 + Review/Integration | G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-X6-AC1-AC7-INTEGRATION/verification/P02-NEW-TIME-X6-AC1-AC7/final-gate-a7/completion-adjudication.md | - | 799b56e19120a81ef5d95643eb90633f4ccbb6d9b2461a736c1b487628b3c0e9 | CANONICAL |
-| FINAL-03 | AC6/AC7 + Review/Integration | G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-X6-AC1-AC7-INTEGRATION/verification/P02-NEW-TIME-X6-AC1-AC7/final-gate-a7/convergence-dry.json | - | 86954bfb7ef5aeaeaf41c81658afd2a4a2a0d2709a153d3e328b726f41d01cd9 | CANONICAL |
-| FINAL-04 | AC6/AC7 + Review/Integration | G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-X6-AC1-AC7-INTEGRATION/verification/P02-NEW-TIME-X6-AC1-AC7/final-gate-a7/convergence-input.json | - | 5a86224c72d4132d8ad4e3d908aca1a4ea0a6eb10b43c77cedf5850541e9cd3d | CANONICAL |
-| FINAL-05 | AC6/AC7 + Review/Integration | G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-X6-AC1-AC7-INTEGRATION/verification/P02-NEW-TIME-X6-AC1-AC7/final-gate-a7/convergence-output.json | - | 71206ce8ad187e5c8070c89a6f96c9c57ad2ab80450fa02cd5fa4d04e2114340 | CANONICAL |
-| FINAL-06 | AC6/AC7 + Review/Integration | G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-X6-AC1-AC7-INTEGRATION/verification/P02-NEW-TIME-X6-AC1-AC7/final-gate-a7/current-summary.json | - | 46b47088e76fb783ab5a8e6a29cb15a654ac7310d78afa4977e098b3212472e1 | CANONICAL |
-| FINAL-07 | AC6/AC7 + Review/Integration | G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-X6-AC1-AC7-INTEGRATION/verification/P02-NEW-TIME-X6-AC1-AC7/final-gate-a7/dsh-bounded-review.md | - | f885ea2a3d49affa76a7df77f775e8d9dd35c140d9b45b1acbfcd972625fa610 | CANONICAL |
-| FINAL-08 | AC6/AC7 + Review/Integration | G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-X6-AC1-AC7-INTEGRATION/verification/P02-NEW-TIME-X6-AC1-AC7/final-gate-a7/dsh-e-erratum-review.md | - | be9995acc29d4282d5a631041383cb404ca8df22f6787cbd886605536db9cc32 | CANONICAL |
-| FINAL-09 | AC6/AC7 + Review/Integration | G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-X6-AC1-AC7-INTEGRATION/verification/P02-NEW-TIME-X6-AC1-AC7/final-gate-a7/gate-evidence-manifest.json | - | d334037061ab01ba4aed3da12e78392633817047e027157c11cf0fbf14967c8c | CANONICAL |
-| FINAL-10 | AC6/AC7 + Review/Integration | G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-X6-AC1-AC7-INTEGRATION/verification/P02-NEW-TIME-X6-AC1-AC7/final-gate-a7/integration-adjudication.md | - | 96cc982aa93d4d8ae984961d4e446ebf3a273bad5bc5a5360e30364082154f19 | CANONICAL |
-| FINAL-11 | AC6/AC7 + Review/Integration | G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-X6-AC1-AC7-INTEGRATION/verification/P02-NEW-TIME-X6-AC1-AC7/final-gate-a7/resolution-convergence-input.json | - | 0c9cdd1d1d6053959a3e2421df5dd86236ba9b8dba4452488cb7929cc42133f3 | CANONICAL |
-| FINAL-12 | AC6/AC7 + Review/Integration | G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-X6-AC1-AC7-INTEGRATION/verification/P02-NEW-TIME-X6-AC1-AC7/final-gate-a7/resolution-convergence-output.json | - | 7bed0870d5fcf1323278bcaca9e9e6181b3f16b96915d61cc5b5c8fc5b8d6215 | CANONICAL |
-| FINAL-13 | AC6/AC7 + Review/Integration | G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-X6-AC1-AC7-INTEGRATION/verification/P02-NEW-TIME-X6-AC1-AC7/final-gate-a7/resource-inventory.json | - | 02aba7355e084820be913781d1c746703bfff0691e9b32848a90f5846ee07dd6 | CANONICAL |
-| FINAL-14 | AC6/AC7 + Review/Integration | G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-X6-AC1-AC7-INTEGRATION/verification/P02-NEW-TIME-X6-AC1-AC7/final-gate-a7/result-input.json | - | d6fd98e3afdcb21a0a14acae0675aeb6da51a8a0494ffb72451aaf4170060fc3 | CANONICAL |
-| FINAL-15 | AC6/AC7 + Review/Integration | G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-X6-AC1-AC7-INTEGRATION/verification/P02-NEW-TIME-X6-AC1-AC7/final-gate-a7/result-output.json | - | c2c7473f861644e569092465fc799e25fb9c7365a85e57851823de589f4e50df | CANONICAL |
-| FINAL-16 | AC6/AC7 + Review/Integration | G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-X6-AC1-AC7-INTEGRATION/verification/P02-NEW-TIME-X6-AC1-AC7/final-gate-a7/review-dispatch.json | - | 2e26857fbed1a82e25732e8a300c2869aabc199ba94c465c1a6e71270e73be70 | CANONICAL |
-| FINAL-17 | AC6/AC7 + Review/Integration | G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-X6-AC1-AC7-INTEGRATION/verification/P02-NEW-TIME-X6-AC1-AC7/final-gate-a7/revision-input.json | - | 725c1b17e5341762f54a7ca54ad4f09778f8f71eb585782f4315c1306a60dd4c | CANONICAL |
-| FINAL-18 | AC6/AC7 + Review/Integration | G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-X6-AC1-AC7-INTEGRATION/verification/P02-NEW-TIME-X6-AC1-AC7/final-gate-a7/revision-output.json | - | 5d964f23b3de0c48c5b89c63400824d128bd5f50f391b8fbbc63c8a8601da1fe | CANONICAL |
-| FINAL-19 | AC6/AC7 + Review/Integration | G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-X6-AC1-AC7-INTEGRATION/verification/P02-NEW-TIME-X6-AC1-AC7/final-gate-a7/source-evidence-manifest.json | - | 06a1cedfc53fc79607a9fcb99299ae0f9e3b0ba4df50d7dedc5a32c530698ac1 | CANONICAL |
-| FINAL-20 | AC6/AC7 + Review/Integration | G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-X6-AC1-AC7-INTEGRATION/verification/P02-NEW-TIME-X6-AC1-AC7/final-gate-a7/source-manifest-verify.json | - | b59f3556f91be12be61dbeb9f44fc0bfec59d8348ba60b2610d6a1c384782e99 | CANONICAL |
+| FINAL-01 | AC6/AC7 + Review/Integration | verification/P02-NEW-TIME-X6-AC1-AC7/final-gate-a7/codex-verification.json | 9e3c5310d5652f5491f3dc11825d86c03dac22ee | c246e299752768fb4675822ccc2204807df9da8884823255d185c4d7ed939e1d | CANONICAL |
+| FINAL-02 | AC6/AC7 + Review/Integration | verification/P02-NEW-TIME-X6-AC1-AC7/final-gate-a7/completion-adjudication.md | 9e3c5310d5652f5491f3dc11825d86c03dac22ee | 799b56e19120a81ef5d95643eb90633f4ccbb6d9b2461a736c1b487628b3c0e9 | CANONICAL |
+| FINAL-03 | AC6/AC7 + Review/Integration | verification/P02-NEW-TIME-X6-AC1-AC7/final-gate-a7/convergence-dry.json | 9e3c5310d5652f5491f3dc11825d86c03dac22ee | 86954bfb7ef5aeaeaf41c81658afd2a4a2a0d2709a153d3e328b726f41d01cd9 | CANONICAL |
+| FINAL-04 | AC6/AC7 + Review/Integration | verification/P02-NEW-TIME-X6-AC1-AC7/final-gate-a7/convergence-input.json | 9e3c5310d5652f5491f3dc11825d86c03dac22ee | 5a86224c72d4132d8ad4e3d908aca1a4ea0a6eb10b43c77cedf5850541e9cd3d | CANONICAL |
+| FINAL-05 | AC6/AC7 + Review/Integration | verification/P02-NEW-TIME-X6-AC1-AC7/final-gate-a7/convergence-output.json | 9e3c5310d5652f5491f3dc11825d86c03dac22ee | 71206ce8ad187e5c8070c89a6f96c9c57ad2ab80450fa02cd5fa4d04e2114340 | CANONICAL |
+| FINAL-06 | AC6/AC7 + Review/Integration | verification/P02-NEW-TIME-X6-AC1-AC7/final-gate-a7/current-summary.json | 9e3c5310d5652f5491f3dc11825d86c03dac22ee | 46b47088e76fb783ab5a8e6a29cb15a654ac7310d78afa4977e098b3212472e1 | CANONICAL |
+| FINAL-07 | AC6/AC7 + Review/Integration | verification/P02-NEW-TIME-X6-AC1-AC7/final-gate-a7/dsh-bounded-review.md | 9e3c5310d5652f5491f3dc11825d86c03dac22ee | f885ea2a3d49affa76a7df77f775e8d9dd35c140d9b45b1acbfcd972625fa610 | CANONICAL |
+| FINAL-08 | AC6/AC7 + Review/Integration | verification/P02-NEW-TIME-X6-AC1-AC7/final-gate-a7/dsh-e-erratum-review.md | 9e3c5310d5652f5491f3dc11825d86c03dac22ee | be9995acc29d4282d5a631041383cb404ca8df22f6787cbd886605536db9cc32 | CANONICAL |
+| FINAL-09 | AC6/AC7 + Review/Integration | verification/P02-NEW-TIME-X6-AC1-AC7/final-gate-a7/gate-evidence-manifest.json | 9e3c5310d5652f5491f3dc11825d86c03dac22ee | d334037061ab01ba4aed3da12e78392633817047e027157c11cf0fbf14967c8c | CANONICAL |
+| FINAL-10 | AC6/AC7 + Review/Integration | verification/P02-NEW-TIME-X6-AC1-AC7/final-gate-a7/integration-adjudication.md | 9e3c5310d5652f5491f3dc11825d86c03dac22ee | 96cc982aa93d4d8ae984961d4e446ebf3a273bad5bc5a5360e30364082154f19 | CANONICAL |
+| FINAL-11 | AC6/AC7 + Review/Integration | verification/P02-NEW-TIME-X6-AC1-AC7/final-gate-a7/resolution-convergence-input.json | 9e3c5310d5652f5491f3dc11825d86c03dac22ee | 0c9cdd1d1d6053959a3e2421df5dd86236ba9b8dba4452488cb7929cc42133f3 | CANONICAL |
+| FINAL-12 | AC6/AC7 + Review/Integration | verification/P02-NEW-TIME-X6-AC1-AC7/final-gate-a7/resolution-convergence-output.json | 9e3c5310d5652f5491f3dc11825d86c03dac22ee | 7bed0870d5fcf1323278bcaca9e9e6181b3f16b96915d61cc5b5c8fc5b8d6215 | CANONICAL |
+| FINAL-13 | AC6/AC7 + Review/Integration | verification/P02-NEW-TIME-X6-AC1-AC7/final-gate-a7/resource-inventory.json | 9e3c5310d5652f5491f3dc11825d86c03dac22ee | 02aba7355e084820be913781d1c746703bfff0691e9b32848a90f5846ee07dd6 | CANONICAL |
+| FINAL-14 | AC6/AC7 + Review/Integration | verification/P02-NEW-TIME-X6-AC1-AC7/final-gate-a7/result-input.json | 9e3c5310d5652f5491f3dc11825d86c03dac22ee | d6fd98e3afdcb21a0a14acae0675aeb6da51a8a0494ffb72451aaf4170060fc3 | CANONICAL |
+| FINAL-15 | AC6/AC7 + Review/Integration | verification/P02-NEW-TIME-X6-AC1-AC7/final-gate-a7/result-output.json | 9e3c5310d5652f5491f3dc11825d86c03dac22ee | c2c7473f861644e569092465fc799e25fb9c7365a85e57851823de589f4e50df | CANONICAL |
+| FINAL-16 | AC6/AC7 + Review/Integration | verification/P02-NEW-TIME-X6-AC1-AC7/final-gate-a7/review-dispatch.json | 9e3c5310d5652f5491f3dc11825d86c03dac22ee | 2e26857fbed1a82e25732e8a300c2869aabc199ba94c465c1a6e71270e73be70 | CANONICAL |
+| FINAL-17 | AC6/AC7 + Review/Integration | verification/P02-NEW-TIME-X6-AC1-AC7/final-gate-a7/revision-input.json | 9e3c5310d5652f5491f3dc11825d86c03dac22ee | 725c1b17e5341762f54a7ca54ad4f09778f8f71eb585782f4315c1306a60dd4c | CANONICAL |
+| FINAL-18 | AC6/AC7 + Review/Integration | verification/P02-NEW-TIME-X6-AC1-AC7/final-gate-a7/revision-output.json | 9e3c5310d5652f5491f3dc11825d86c03dac22ee | 5d964f23b3de0c48c5b89c63400824d128bd5f50f391b8fbbc63c8a8601da1fe | CANONICAL |
+| FINAL-19 | AC6/AC7 + Review/Integration | verification/P02-NEW-TIME-X6-AC1-AC7/final-gate-a7/source-evidence-manifest.json | 9e3c5310d5652f5491f3dc11825d86c03dac22ee | 06a1cedfc53fc79607a9fcb99299ae0f9e3b0ba4df50d7dedc5a32c530698ac1 | CANONICAL |
+| FINAL-20 | AC6/AC7 + Review/Integration | verification/P02-NEW-TIME-X6-AC1-AC7/final-gate-a7/source-manifest-verify.json | 9e3c5310d5652f5491f3dc11825d86c03dac22ee | b59f3556f91be12be61dbeb9f44fc0bfec59d8348ba60b2610d6a1c384782e99 | CANONICAL |
+
 
 ## Resource Manifest
 

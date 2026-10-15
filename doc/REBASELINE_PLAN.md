@@ -18,6 +18,8 @@
 |P02-NEW-TIME-X6-AC1-AC7|DONE；I1/I2=2/2；DSH 内容/E Review APPROVED、Codex convergence APPROVED。|仅完成新时点 harness/证据验收；产品 P3/P4 backlog 保留。|
 |RES-P02-AC6-CDP-RECOVERY|DONE；R3-01 CLOSED；a7 10/10，input ratio=13.87；两层 manifest VERIFY PASS。|仅证据恢复，未新增 I3；资源全保留。|
 
+|P02-MAINLINE-INTEGRATION|DONE；9e3c5310 已快进 main，102/19 pins PASS；P02 总入口 closed_with_limitations。|保护用户改动；仅新时点成果主线化，旧 finding/产品 backlog 保留。|
+
 READY 节点：无。新时点验收链收口；旧 H1/P2-1 与未释放产品改进不自动激活。
 
 ## 历史快照

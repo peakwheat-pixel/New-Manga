@@ -1,0 +1,44 @@
+{
+  "resources": [
+    {
+      "type": "primary_worktree",
+      "path": "G:/CODEX/New Manga",
+      "disposition": "PRESERVE_USER_DATA",
+      "reason": "既有 dirty/untracked 未提交到 main；FF 保护 38 文件字节，index empty"
+    },
+    {
+      "type": "reviewed_integration_and_closeout_worktree",
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-X6-AC1-AC7-INTEGRATION",
+      "disposition": "PRESERVE_REFERENCED",
+      "reason": "已审内容和 mainline closeout 候选；原 reviewed branch ref 保留 9e3c5310，当前工作分支 codex/p02-mainline-closeout-20261015"
+    },
+    {
+      "type": "backup_and_raw_output",
+      "path": "G:/CODEX/New Manga.workspace/agent-output/codex/P02-MAINLINE-INTEGRATION",
+      "disposition": "PRESERVE_REFERENCED",
+      "reason": "index-before.bin、38 文件备份、UTF-8 dry-run、原生 merge 日志与换行前态原位保留"
+    },
+    {
+      "type": "git_fixture_selfchecks",
+      "path": "G:/CODEX/New Manga.workspace/temp/P02-MAINLINE-INTEGRATION",
+      "disposition": "PRESERVE_REFERENCED",
+      "reason": "两组 assert selfcheck PASS，未删除 fixture"
+    },
+    {
+      "type": "prior_task_envs_and_artifacts",
+      "path": "G:/CODEX/New Manga.workspace/task-envs/P02-NEW-TIME-X6-AC1-AC7",
+      "disposition": "PRESERVE_REFERENCED",
+      "reason": "此前 7 类保留资源 manifest 继续有效；本轮无 GUI/模型/Build 使用或清理"
+    },
+    {
+      "type": "legacy_P02_worktree",
+      "path": "G:/CODEX/New Manga.worktrees/P02-real-webview-harness-antigravity",
+      "disposition": "PRESERVE_UNKNOWN",
+      "reason": "历史 P02 载体；未递归核实所有权/独有内容，因此原位保留，不删除或复用"
+    }
+  ],
+  "deleted": 0,
+  "moved": 0,
+  "archived": 0,
+  "notes": "路径与引用核对；不递归扫描或清理既有缓存/模型；旧 refs/codex checkpoint 坏引用保持原样"
+}
