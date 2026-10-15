@@ -3,14 +3,14 @@ id: ARCH-DOC-REBASELINE
 title: 新架构需求、验收及输出格式映射Gate
 kind: design
 governance_version: 2
-status: proposed
-approval: user_authorized_roadmap_registration_only_20261015
+status: ready
+approval: user_authorized_arch_doc_rebaseline_release_20261015
 owner: Codex
 reviewer: DeepSeek Harness
 depends_on: [P08]
-base_commit: null
-branch: null
-worktree: null
+base_commit: 4ef92f3daa527adac752b8fc52d492176697a292
+branch: codex/arch-doc-rebaseline
+worktree: G:/CODEX/New Manga.workspace/worktrees/ARCH-DOC-REBASELINE
 integration_commit: null
 canonical_evidence_status: pending
 resource_closeout_status: pending
@@ -33,9 +33,12 @@ evidence_dir: verification/ARCH-DOC-REBASELINE
 - [ ] AC6：P08-FMT PNG/ZIP/CBZ/PDF/文本转录长期验收追踪；P16/P17在消费对应格式契约前须此项完成。
 - [ ] AC7：固定head非作者Review、Codex集成与逐消费者Gate裁决；某项未完成不标整Task done，可按消费者拆独立已审交付但须另冻结。
 
-## 允许修改范围（正式释放前需逐文件冻结）
+## 允许修改范围（2026-10-15 冻结）
 
-候选仅doc/02_TECHNICAL_ARCHITECTURE_.md、doc/05_UI_MAPPING.md、doc/07_NON_FUNCTIONAL_REQUIREMENTS.md、doc/08_ACCEPTANCE_CRITERIA.md、doc/13_ACCEPTANCE_TRACEABILITY.md及本Task自有证据。01/03/04/06或AD-001若确需调整先由Codex单列允许路径。现有dirty文档先pin来源并在新worktree适配，禁止原位覆盖。
+- `doc/02_TECHNICAL_ARCHITECTURE_.md`、`doc/05_UI_MAPPING.md`、`doc/07_NON_FUNCTIONAL_REQUIREMENTS.md`、`doc/08_ACCEPTANCE_CRITERIA.md`、`doc/13_ACCEPTANCE_TRACEABILITY.md`：仅做 AD-001 新栈映射与一致性对齐，不新增产品范围、不降低任何阈值。
+- 本 Task（`doc/tasks/ARCH-DOC-REBASELINE.md`）、`doc/handoffs/ARCH-DOC-REBASELINE-*.md`、`verification/ARCH-DOC-REBASELINE/**`。
+- 写入仅限本 Task 的 worktree（`G:/CODEX/New Manga.workspace/worktrees/ARCH-DOC-REBASELINE`）；**禁止原位覆盖主仓现有 dirty 文档**。
+- `doc/01_FUNCTIONAL_ARCHITECTURE.md`、`doc/03_DATA_MODEL.md`、`doc/04_USER_FLOW.md`、`doc/06_TRANSLATION_PIPELINE.md`、`doc/AD-001_TARGET_DESKTOP_ARCHITECTURE.md` 仍**不在** allowlist；确需调整须先由 Codex 单列允许路径并重新冻结。
 
 ## 禁止范围
 
@@ -52,6 +55,15 @@ P08已完成；本Task未冻结执行坐标、未分配worktree，保持proposed
 ## 交付与运行记录
 
 仅登记，无实现、无Review、无运行。
+
+### 2026-10-15 冻结与释放（Coordinator dsh, epoch=5，guarded-write）
+
+- 来源：用户 2026-10-15 在 P04 关闭后选定"冻结并释放 ARCH-DOC-REBASELINE"。
+- 冻结执行坐标：base=`4ef92f3daa527adac752b8fc52d492176697a292`（main HEAD）；branch=`codex/arch-doc-rebaseline`；worktree=`G:/CODEX/New Manga.workspace/worktrees/ARCH-DOC-REBASELINE`（由 Owner 在认领时创建）。
+- 逐文件 allowlist 见"允许修改范围（2026-10-15 冻结）"；主仓现有 dirty 架构文档须**先 pin 来源指纹（`verification/ARCH-DOC-REBASELINE/source-pins.json`）再在新 worktree 适配**，禁止原位覆盖。
+- 角色：Owner=Codex、Reviewer=DeepSeek Harness（非 Owner、非 contributors/repair participants）、Integrator=Codex；权威参与状态见 `.orchestrator/tasks/ARCH-DOC-REBASELINE-role.json`。
+- Gate 消费者：P09（AC1–3）、P18（AC4）、P20（AC5）、P16/P17（AC6）。AC7 要求固定 head 非作者 Review 与逐消费者裁决；可按消费者拆为独立已审交付，但须另行冻结。
+- 仍未授权：产品代码、Schema、依赖、模型、OS 操作、旧 QML 实现；不改阈值、不作用户产品取舍；不 push。
 
 ## Canonical Evidence
 
