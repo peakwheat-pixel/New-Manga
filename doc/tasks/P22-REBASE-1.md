@@ -20,7 +20,9 @@ integration_target: main
 integration_status: not_started
 dispatch_state: NOT_DISPATCHED
 profile: ANTIGRAVITY_FOCUSED
-revisions: {implementation: 0, test: 0, evidence: 0}
+revisions: {implementation: 1, test: 0, evidence: 0}
+implementation_repairs_used: 1
+max_implementation_repairs: 2
 canonical_evidence_status: pending
 resource_closeout_status: pending
 evidence_dir: verification/P22-REBASE-1
@@ -30,7 +32,7 @@ evidence_dir: verification/P22-REBASE-1
 
 ## 来源与目标
 
-由本轮用户授权和PROJECT-ROADMAP-RELEASE冻结。P22代码来源92093792与R10交付链4a707db8、P04交付faea1a2c均非当前main祖先；原代码/测试没有运行闭环。目标只修复现存StdioLibraryChannel::round_trip在并发时stdin/stdout分段锁导致的响应归属风险，基于当前main重做最小移植与运行验收，不整枝合并旧分支，不重做旧R3–R10文案返修。不得以新ID重置既有返修预算：原P22冻结交付属首次移植输入；本切片仅首次当前基线适配I0，返修最多I1/I2，触发旧finding时引用原lineage交Codex收敛。
+由本轮用户授权和PROJECT-ROADMAP-RELEASE冻结。P22代码来源92093792与R10交付链4a707db8、P04交付faea1a2c均非当前main祖先；原代码/测试没有运行闭环。目标只修复现存StdioLibraryChannel::round_trip在并发时stdin/stdout分段锁导致的响应归属风险，基于当前main重做最小移植与运行验收，不整枝合并旧分支，不重做旧R3–R10文案返修。不得以新ID重置既有返修预算：继承P22的R1→R2一次源码返修，implementation_repairs_used=1/2；本切片移植既有修复不重置预算，后续同finding最多一次I2。触发旧finding时引用原lineage交Codex收敛，不另建任务刷新计数。
 
 ## Acceptance Criteria
 
