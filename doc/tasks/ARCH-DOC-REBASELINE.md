@@ -11,7 +11,7 @@ depends_on: [P08]
 base_commit: 4ef92f3daa527adac752b8fc52d492176697a292
 branch: codex/arch-doc-rebaseline
 worktree: G:/CODEX/New Manga.workspace/worktrees/ARCH-DOC-REBASELINE
-integration_commit: null
+integration_commit: 4227e8b509e3a42736229b93df4bd9eec548153d
 canonical_evidence_status: pending
 resource_closeout_status: pending
 evidence_dir: verification/ARCH-DOC-REBASELINE
