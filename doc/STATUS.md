@@ -1,16 +1,17 @@
 # Current Development Status
 
-状态刷新：2026-10-15（R1–R6 恢复轮 + P11 释放）；主控 dsh（epoch 5）。
+状态刷新：2026-10-15（R1–R6 恢复 + P11 全循环完成）；主控 dsh（epoch 5）。
 
 ## 当前 Task
 
-- **进行中**：[P11](tasks/P11.md) 长任务生命周期契约，**ready**（2026-10-15 释放）；Owner=codex、Reviewer=dsh（非 Owner、未参与实现）；base=3691ccba、branch=codex/P11-long-task-lifecycle-contract、worktree=G:/CODEX/New Manga.workspace/worktrees/P11-LONG-TASK-LIFECYCLE-CONTRACT。交付=可冻结的 durable accepted/快照/控制/恢复契约（不写 runtime、不造第二调度器），作 P13/P14 唯一契约输入。
-- **挂起 READY**：[ARCH-DOC-REBASELINE](tasks/ARCH-DOC-REBASELINE.md) **ready / integrated**（未 done）：AC1–AC3=PARTIAL、AC4–AC6=NOT_RUN、AC7 逐消费者裁决待做；剩余项依赖 P09/P18/P20/P16/P17 冻结。已落库：交付 `70208144`、R1 Review `79ed01fd`、dirty 基线 `836a12c6`、集成 merge `4227e8b5`；AC7/C3 pin 已登记（8/8 blob 层 sha256 一致）。
-- 已关闭：[P04](tasks/P04.md) done（merge=7bfcf16a）；[P22-REBASE-1](tasks/P22-REBASE-1.md) done（merge=4e5c71d9）；[PROJECT-ROADMAP-RELEASE](tasks/PROJECT-ROADMAP-RELEASE.md) done。
-- 架构文档 Gate=PARTIAL/NOT_CLOSED，P09/P18/P20 映射仍 NOT_RUN。
+- **本轮完成**：[P11](tasks/P11.md) 长任务生命周期契约 **done**：交付 head=`c7922ae1`、独立 Review=`09797eab`（approved_with_conditions）、集成 merge=`ceca5721`。产出 [P11 契约](contracts/P11_LONG_TASK_LIFECYCLE_CONTRACT.md)：§1 逐条来源映射、§4 状态机与非法转换拒绝清单、§7.1 单一 scheduler 所有权、§8 现状对照（实证 4 项实现缺口）、§9 P13/P14 消费边界、§10 静态 PASS + runtime/UI `NOT_RUN`。
+- **下一 READY（待释放）**：P10 凭据通道契约；依赖 P08（done），**不受 AC-DOC Gate 约束**；范围见 P08 SCOPE_DRAFT 第 37 行与工作包第 76 行。
+- **挂起 READY**：[ARCH-DOC-REBASELINE](tasks/ARCH-DOC-REBASELINE.md) ready / integrated（未 done）：AC1–AC3=PARTIAL、AC4–AC6=NOT_RUN、AC7 逐消费者裁决待做；消费者 P09/P18/P20/P16/P17 均 `proposed`。
+- 已关闭：[P04](tasks/P04.md)（merge=7bfcf16a）、[P22-REBASE-1](tasks/P22-REBASE-1.md)（merge=4e5c71d9）、[PROJECT-ROADMAP-RELEASE](tasks/PROJECT-ROADMAP-RELEASE.md)。
+- **P09 释放前置（BL-2）**：需用户选定首发输入格式与最小目标（SCOPE_DRAFT 第 75 行）。
 - Coordinator=dsh，epoch=5，lease=264c2000541748298000f93fb25a52de（LEASE_VALID）。
-- 冻结基线=4ef92f3d；用户 dirty/untracked 与既有 worktree 保留（10/10 pin 未被覆盖，无 EXTERNAL_CHANGE）。
-- 恢复点：verification/ARCH-DOC-REBASELINE/recovery-r1-r6-20261015.md；运行日志 `.orchestrator/INFLIGHT.json`、`OPLOG.ndjson`。
+- 用户 dirty/untracked 与既有 worktree 全程保留（19 项 tracked dirty 未变，无 EXTERNAL_CHANGE）。
+- 恢复点：verification/ARCH-DOC-REBASELINE/recovery-r1-r6-20261015.md；运行日志 `.orchestrator/INFLIGHT.json`、`OPLOG.ndjson`；队列 `.orchestrator/BACKLOG.md`。
 
 ## Gate 与保留项
 
@@ -18,5 +19,5 @@ P02新时点验收/AC6恢复/主线集成完成，父P02限定关闭。Technical
 
 ## 当前权威指针
 
-- DAG：[REBASELINE_PLAN](REBASELINE_PLAN.md)；READY=P11（进行中）+ ARCH-DOC-REBASELINE（挂起待消费者）。
-- 本轮证据：P11 契约 [tasks/P11](tasks/P11.md)；ARCH-DOC R1 Review [dsh-review-r1](../verification/ARCH-DOC-REBASELINE/dsh-review-r1.md)；恢复核验 [recovery-r1-r6](../verification/ARCH-DOC-REBASELINE/recovery-r1-r6-20261015.md)；P04 R5 [dsh-p04-owner-review-r5](../verification/P04/dsh-p04-owner-review-r5.stdout.md)。
+- DAG：[REBASELINE_PLAN](REBASELINE_PLAN.md)；READY=P10（待释放）；ARCH-DOC-REBASELINE 挂起。
+- 本轮证据：P11 [Review](../verification/P11/dsh-review-r1.md)、[契约](contracts/P11_LONG_TASK_LIFECYCLE_CONTRACT.md)、[Handoff](../doc/handoffs/P11-codex-b7fb6773.md)；ARCH-DOC [R1 Review](../verification/ARCH-DOC-REBASELINE/dsh-review-r1.md)、[恢复核验](../verification/ARCH-DOC-REBASELINE/recovery-r1-r6-20261015.md)。
