@@ -1,0 +1,12 @@
+{
+  "transport_status": "SUCCESS",
+  "agent_status": "SUCCESS",
+  "artifact_status": "COMPLETE",
+  "verification_status": "PASS",
+  "decision": "ACCEPT",
+  "rerun_owner": false,
+  "discard": false,
+  "rationale": "verified artifacts stand even if transport died (fact priority: git/artifact > transport > chat)",
+  "mode": "evaluate-result",
+  "dry_run": false
+}

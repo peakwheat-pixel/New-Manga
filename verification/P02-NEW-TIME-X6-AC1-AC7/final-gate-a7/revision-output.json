@@ -1,0 +1,9 @@
+{
+  "revision_type": "E",
+  "counts_toward_repair_budget": false,
+  "reviewer_needed": true,
+  "verification": "lint + deterministic_verification",
+  "rationale": "evidence revision alters what the reviewer actually sees (review input semantics / technical evidence / runtime result / acceptance conclusion)",
+  "mode": "classify-revision",
+  "dry_run": false
+}

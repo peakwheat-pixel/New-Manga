@@ -1,0 +1,8 @@
+{
+  "verify": "PASS",
+  "problems": [],
+  "manifest": "verification/P02-NEW-TIME-X6-AC1-AC7/final-gate-a7/source-evidence-manifest.json",
+  "source_commit": "4abb8d288e005dc58e3270b12389d33cd7a52ac1",
+  "review_head": "4abb8d288e005dc58e3270b12389d33cd7a52ac1",
+  "files_checked": 102
+}
