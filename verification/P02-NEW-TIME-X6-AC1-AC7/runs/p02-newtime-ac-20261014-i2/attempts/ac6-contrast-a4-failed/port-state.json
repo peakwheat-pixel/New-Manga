@@ -1,0 +1,7 @@
+{
+  "observed_at": "2026-10-15T09:34:52.4310806+08:00",
+  "port": 9333,
+  "before_run": "FREE (netstat had no matching listener)",
+  "after_run": "FREE (netstat had no matching listener)",
+  "matching_app_processes": []
+}

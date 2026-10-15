@@ -174,8 +174,18 @@
       "verdict": "ERROR",
       "evidence_dir": "verification/P02-NEW-TIME-X6-AC1-AC7/runs/p02-newtime-ac-20261014-i2/attempts/ac6-contrast-a3-failed",
       "attempt": "a3"
+    },
+    {
+      "scenario": "ac6-contrast",
+      "status": "FAIL",
+      "node_exit_code": 1,
+      "cdp_port": 9333,
+      "verdict": "ERROR",
+      "reason": "CDP endpoint never appeared: TypeError: fetch failed; port 9333 was free before and after this attempt",
+      "evidence_dir": "verification/P02-NEW-TIME-X6-AC1-AC7/runs/p02-newtime-ac-20261014-i2/attempts/ac6-contrast-a4-failed",
+      "attempt": "a4-recovery"
     }
   ],
-  "blocker": "R3-01 remains open: the collector change passed syntax checking, but the fixed packaged app exposed no CDP endpoint on available alternate ports; the original 9333 port was occupied by two unrelated headless Chrome processes and was not disturbed.",
+  "blocker": "R3-01 remains open: after Coordinator cleared the previous 9333 listeners, one recovery attempt on the correct port 9333 still produced no CDP endpoint. The cause is unresolved; no page-id-input sample row or AC6 contrast table exists.",
   "note": "AC1–AC5 and earlier valid AC6 observations are carried forward from I1 evidence only; they were not rerun in I2. AC6 is BLOCKED and must not be treated as PASS."
 }

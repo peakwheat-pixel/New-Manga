@@ -11,15 +11,16 @@
 
 I2 只针对 DSH r3 的 R3-01、R3-04、R3-02、R3-06。AC1–AC5 未重跑，引用 I1 证据；I1 的有效场景退出码为 0。此限定仅描述 I1 的有效场景，不覆盖下表保留的失败尝试，也不覆盖 I2 AC6 失败尝试。
 
-AC6 采集器已改为对表单控件读取 `value` / `placeholder`，且逐行记录是否实际执行 alpha 合成。但固定 EXE 的 WebView2 未暴露 CDP 端点，三个 AC6 启动尝试均以 `node_exit_code=1` / `status=FAIL` / `verdict=ERROR` 结束，未产生新的 `ac6-contrast.json` 对比表。因此 AC6=`BLOCKED`；不得沿用 I1 的数字冒充本轮测量。
+AC6 采集器已改为对表单控件读取 `value` / `placeholder`，且逐行记录是否实际执行 alpha 合成。I2 共有四次 AC6 启动尝试，均以 `node_exit_code=1` / `status=FAIL` / `verdict=ERROR` 结束，未产生新的 `ac6-contrast.json` 对比表。因此 AC6=`BLOCKED`；不得沿用 I1 的数字冒充本轮测量。
 
 | I2 尝试 | 场景 / 端口 | 结果 | 证据 |
 |---|---|---|---|
 | a1 | `ac6-contrast` / 9334 | `FAIL / ERROR / node_exit_code=1`；等待 45 秒后 `CDP endpoint never appeared: TypeError: fetch failed` | `attempts/ac6-contrast-a1-failed/` |
 | a2 | `ac6-contrast-a2` / 9335 | `FAIL / ERROR / node_exit_code=1`；同样未建立 CDP | `attempts/ac6-contrast-a2-failed/` |
 | a3 | `ac6-contrast-a3` / 9336 | `FAIL / ERROR / node_exit_code=1`；进程快照确认对应 WebView2 命令行没有 `--remote-debugging-port`，端口无 listener | `attempts/ac6-contrast-a3-failed/` |
+| a4 recovery | `ac6-contrast` / 9333 | `FAIL / ERROR / node_exit_code=1`；启动前 9333 空闲，仍在 45 秒后报 `CDP endpoint never appeared: TypeError: fetch failed`；失败后 9333 仍无 listener | `attempts/ac6-contrast-a4-failed/` |
 
-原端口 9333 当时由两个现有 headless Chrome 进程占用（临时 profile 为 `dsh_cdp_verify`、`dsh_cdp_prof`）。未关闭或改变这些进程；alternate port 仍未在 WebView2 命令行中生效。因而 `[data-testid="page-id-input"]` 在 I2 没有新采样行：`contrast_result=NOT_RUN`、`contrast_ratio=null`、`reason=CDP endpoint unavailable; DOM collector never attached`。**Alpha 合成分支本轮未触发**（采样器未连接，不能据此证明合成算法行为）。
+Coordinator 已清除占用 9333 的两个 DSH 探测进程；本次按正确端口 9333 重跑前后该端口均空闲，但 CDP 端点仍未出现。当前证据不能把本次失败归因于端口占用，也不足以断言固定 EXE 不支持 CDP。因采集器未连接，`[data-testid="page-id-input"]` 在 I2 **没有样本行**，故无实际 `contrast_result`、`contrast_ratio` 或采样器 `reason` 可报告；运行器错误为 `CDP endpoint never appeared: TypeError: fetch failed`。**Alpha 合成分支本轮未触发**（采样器未连接，不能据此证明合成算法行为）。
 
 ## AC6 与 P-04
 
@@ -32,7 +33,7 @@ I1 的 `[data-testid="page-id-input"]` 因采样器只查 `textContent` 而被�
 | AC | 本轮状态 | 证据 / 说明 |
 |---|---|---|
 | AC1–AC5 | I1 有效证据沿用；I2 未重跑 | `runs/p02-newtime-ac-20261014-i1/` |
-| AC6 | **BLOCKED** | 三次 CDP 启动失败；见 I2 `attempts/` |
+| AC6 | **BLOCKED** | 四次 CDP 启动失败；a4 在已空闲的 9333 端口仍未连通；见 I2 `attempts/` |
 | AC7 | **Owner scope 完成；DSH Review 与 Codex Gate 仍 pending** | 本报告、汇总及 Handoff 已写；不代表 Review 或 Gate 通过 |
 
 I1 文档中“所有有效场景退出码为 0”的表述现限定为“**I1 有效场景**退出码为 0”。以下四个已保留失败尝试仍为 `status=FAIL / verdict=ERROR / node_exit_code=null`，未计入有效场景：
@@ -44,7 +45,7 @@ I1 文档中“所有有效场景退出码为 0”的表述现限定为“**I1 �
 | `ac4-write-refresh-a2` | 未找到 `[data-testid="region-frame-syn-region-ac4-001"]` |
 | `ac5-keyboard` | 未找到 `[data-testid="inspector-revision-history"]` |
 
-I2 三个 AC6 启动失败另外保存在上表目录，实际 `node_exit_code=1`。复现核验读取 `runner-execution.json` 的字段是 `node_exit_code`。
+I2 四个 AC6 启动失败保存在上表目录，实际 `node_exit_code=1`。a4 的 `node.stderr.log`、runner、metadata 与端口快照见 `attempts/ac6-contrast-a4-failed/`。复现核验读取 `runner-execution.json` 的字段是 `node_exit_code`。
 
 ## Safety-check 与静态检查
 

@@ -13,11 +13,11 @@ run_id: p02-newtime-ac-20261014-i2
 
 ## 交付结论
 
-本轮按冻结 I2 契约完成脚本修正、静态检查、自检和文档修正。**Task 保持 `blocked`**：R3-01 的表单控件采样代码已修正，但固定 EXE 的 WebView2 未提供可用 CDP 端点，AC6 没有形成新的真实 DOM 对比度 JSON。不得把 I1 的输入框行或数字当作 I2 结果；不标记 `approved` / `done`，不自审。
+本轮按冻结 I2 契约完成脚本修正、静态检查、自检和文档修正。后续 evidence recovery 在 Coordinator 清除 9333 占用后，使用正确且空闲的 9333 端口再执行一次，仍未建立 CDP。**Task 保持 `blocked`**：R3-01 的表单控件采样代码已修正，但 AC6 没有形成新的真实 DOM 对比度 JSON；本次失败根因仍未确定。不得把 I1 的输入框行或数字当作 I2 结果；不标记 `approved` / `done`，不自审。
 
 ## 修改与固定交付
 
-- I2 内容与证据提交：`7981794cde784b01f28fe589c25dbffe7e9dc08c`；后续 Handoff commit 会把本文件加入最终被审 head。
+- I2 初次内容与证据提交：`7981794cde784b01f28fe589c25dbffe7e9dc08c`；本次 evidence recovery 与文档增量将另行提交，并在新最终 head 上重建 manifest。
 - 分支：`agent/antigravity/P02-NEW-TIME-X6-AC1-AC7`；worktree：`G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-X6-AC1-AC7-ANTIGRAVITY`。
 - 基线：`251ea54169584505543207b22757d0eb96242499`；产品源码基线保持 `49d2a2f9c56462f5602b00ad4b824c5381abb1ab`。
 - 固定 EXE 只读：`G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-X6-BUILD-CARGO/apps/desktop/src-tauri/target/release/m2rc1-desktop.exe`，9,367,040 bytes，SHA-256=`92AC7B8EFB646FE77DF8245B13C9AF9314BEF415B2F0E007B1CDCEA729BC13FD`。
@@ -53,9 +53,9 @@ run_id: p02-newtime-ac-20261014-i2
 - cwd：`G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-X6-AC1-AC7-ANTIGRAVITY`
 - 隔离根：`G:/CODEX/New Manga.workspace/task-envs/P02-NEW-TIME-X6-AC1-AC7/run-i2/`；创建时为空。
 - RunId：`p02-newtime-ac-20261014-i2`。
-- 本轮启动尝试：9333 起初被两个既有 headless Chrome 进程占用；没有关闭或修改它们。a1/a2/a3 分别尝试 9334/9335/9336；三个端口启动前均空闲。
-- 三次均未建立 CDP，Node 退出码均为 1；每次的 `runner-execution.json`、`execution-metadata.json`、Node stdout/stderr 与应用 stdout/stderr 保存在 I2 `attempts/ac6-contrast-a*-failed/`。a3 活进程快照显示固定 EXE 对应 WebView2 子进程命令行没有 `--remote-debugging-port`，9336 无 listener。
-- 因采集器从未连接，I2 没有 `ac6-contrast.json` 对比表，也没有 `[data-testid="page-id-input"]` 样本。该行本轮记录状态为 `contrast_result=NOT_RUN`、`contrast_ratio=null`；原因是 `CDP endpoint unavailable; DOM collector never attached`。这不是 `NOT_VERIFIABLE` 的颜色判定。
+- 初次 a1/a2/a3 分别尝试 9334/9335/9336，均失败；原 9333 当时被两个 DSH 探测进程占用。Coordinator 后续清除了这两个进程。
+- Evidence recovery a4 在启动前确认 9333 空闲，并使用清洁的场景目录执行同一命令；仍以 `node_exit_code=1` 结束。`node.stderr.log` 关键行：`Error: CDP endpoint never appeared: TypeError: fetch failed`（`lib/cdp.mjs:52`）。运行后 `netstat -ano | Select-String ':9333'` 无匹配行，固定 EXE 进程快照为空。完整 Node/App stdout/stderr、`runner-execution.json`、`execution-metadata.json` 和 `port-state.json` 保存在 `attempts/ac6-contrast-a4-failed/`。本次在端口空闲时仍失败，根因未确定；不据此归咎于固定 EXE。
+- 因采集器从未连接，I2 没有 `ac6-contrast.json` 对比表，也没有 `[data-testid="page-id-input"]` 样本行。因此该行没有实际 `contrast_result`、数值 `contrast_ratio` 或采样器 `reason`；runner 的实际失败原因为 `CDP endpoint never appeared: TypeError: fetch failed`。这不是 `NOT_VERIFIABLE` 的颜色判定。
 - **Alpha 合成分支本轮未触发**：采样器未连接，不能声称已验证合成分支，也不能声称实际输入框对比度 PASS。
 
 ## Findings 与 AC 状态
@@ -82,4 +82,8 @@ I1 的退出码表述限定为“**I1 有效场景**退出码为 0”。以下�
 
 ## 下一接收者
 
-请 DeepSeek Harness 对固定最终 head 做最后一次 bounded read-only review，分别核验代码改动、失败证据和上述四项 disposition。R3-01/AC6 缺失真实 DOM 证据的事实必须保留；本 I2 不再追加实现轮次。随后由 Codex/Coordinator 判定是否可收敛；不得由 Owner 自审或把 Task 改成 `approved` / `done`。
+请 DeepSeek Harness 对本次 recovery 更新后的固定最终 head 做最后一次 bounded read-only review，核验失败证据和 R3 disposition。R3-01/AC6 缺失真实 DOM 证据的事实必须保留；本 I2 不再追加实现轮次。随后由 Codex/Coordinator 判定是否可收敛；不得由 Owner 自审或把 Task 改成 `approved` / `done`。
+
+## Previous DSH review provenance
+
+上一轮 `NOT_APPROVED` 报告由 Codex Owner 发起的独立 DSH CLI 会话生成，并非 Codex 自己撰写的 review：session=`session-b1b461f2-420c-43d9-a33e-6fd408c25311`；CLI invocation=`dsh --profile headless --json`（read-only bounded-review prompt 作为 positional argument）；结果文件位于 `G:/CODEX/New Manga.workspace/task-envs/P02-NEW-TIME-X6-AC1-AC7/run-i2/dsh-review/dsh-r4-final.md`。它是独立 Reviewer 的意见，但不是 Coordinator 的正式 adjudication；正式 `dsh-r3`=`CHANGES_REQUESTED` 仍按 Coordinator 证据处理。该 `NOT_APPROVED` 不授予或替代 Codex Gate 结论。
