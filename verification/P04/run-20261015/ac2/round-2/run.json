@@ -1,0 +1,46 @@
+{
+  "started_at_local": "2026-10-15T20:46:49.0209646+08:00",
+  "started_at_utc": "2026-10-15T12:46:49.0205759Z",
+  "ended_at_utc": "2026-10-15T12:46:57.5759712Z",
+  "wall_ms": 8525,
+  "wall_timeout_ms": 1800000,
+  "timed_out": false,
+  "working_directory": "G:\\CODEX\\New Manga.worktrees\\P04-prod-command-concurrency-antigravity\\apps\\desktop\\src-tauri",
+  "executable": "C:\\Users\\49745\\.cargo\\bin\\cargo.exe",
+  "argv": [
+    "test",
+    "--locked",
+    "library_bridge::tests::same_channel_concurrent_round_trips_keep_response_ownership",
+    "--",
+    "--test-threads=1"
+  ],
+  "command_line": "cargo test --locked library_bridge::tests::same_channel_concurrent_round_trips_keep_response_ownership -- --test-threads=1",
+  "environment": {
+    "CARGO_TARGET_DIR": "G:\\CODEX\\New Manga.workspace\\builds\\P04\\cargo-target",
+    "CARGO_HOME": "G:\\CODEX\\New Manga.workspace\\task-envs\\P04\\cargo_home",
+    "TEMP": "G:\\CODEX\\New Manga.workspace\\task-envs\\P04\\tmp",
+    "TMP": "G:\\CODEX\\New Manga.workspace\\task-envs\\P04\\tmp",
+    "PYTHONPYCACHEPREFIX": "G:\\CODEX\\New Manga.workspace\\task-envs\\P04\\pycache",
+    "M2RC1_PYTHON": "G:/CODEX/New Manga.workspace/task-envs/P22-REBASE-1/venv/Scripts/python.exe"
+  },
+  "exit": 0,
+  "status": "PASS",
+  "passed": 1.0,
+  "failed": 0.0,
+  "ignored": 0.0,
+  "filtered": 64.0,
+  "measured": 0.0,
+  "test_result_lines": [
+    {
+      "passed": 1,
+      "failed": 0,
+      "ignored": 0,
+      "measured": 0,
+      "filtered": 64,
+      "summary": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 64 filtered out; finished in 0.46s"
+    }
+  ],
+  "stdout_file": "stdout.log",
+  "stderr_file": "stderr.log",
+  "exit_file": "exit.txt"
+}

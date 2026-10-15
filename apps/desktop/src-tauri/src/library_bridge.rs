@@ -1169,13 +1169,12 @@ mod tests {
         );
         let log_path = repo_root
             .join("verification")
-            .join("P22-REBASE-1")
+            .join("P04")
             .join(run_id);
 
         let mut cmd = Command::new(&python);
         cmd.arg(&script_path);
-        cmd.env("P22_DIAGNOSTIC_LOG", &log_path)
-            .env("P04_DIAGNOSTIC_LOG", &log_path)
+        cmd.env("P04_DIAGNOSTIC_LOG", &log_path)
             .stdin(Stdio::piped())
             .stdout(Stdio::piped())
             .stderr(Stdio::inherit());

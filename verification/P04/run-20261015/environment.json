@@ -1,0 +1,28 @@
+{
+  "timestamp_utc": "2026-10-15T12:33:23.7719144Z",
+  "worktree": "G:\\CODEX\\New Manga.worktrees\\P04-prod-command-concurrency-antigravity",
+  "branch": "agent/antigravity/P04-prod-command-concurrency",
+  "premerge_head": "e3fbd62b3b7fa8029c963290d22c679239a8dbb4",
+  "main": "fe533fe6288adada94131363b1eeafca8cff568d",
+  "cargo_executable": "C:\\Users\\49745\\.cargo\\bin\\cargo.exe",
+  "cargo_version": "cargo 1.98.1 (797e8a9bc 2026-08-05)",
+  "rustc_version": "rustc 1.98.1 (48a229cea 2026-09-01)",
+  "cargo_lock": "G:\\CODEX\\New Manga.worktrees\\P04-prod-command-concurrency-antigravity\\apps\\desktop\\src-tauri\\Cargo.lock",
+  "python_executable": "G:/CODEX/New Manga.workspace/task-envs/P22-REBASE-1/venv/Scripts/python.exe",
+  "python_sha256": "864530d708039551a2c672ddd65e5900fbc08b0981479679723a5b468f8082bc",
+  "python_provenance": {
+    "executable": "G:\\CODEX\\New Manga.workspace\\task-envs\\P22-REBASE-1\\venv\\Scripts\\python.exe",
+    "version": "3.12.3 (tags/v3.12.3:f6650f9, Apr  9 2024, 14:05:25) [MSC v.1938 64 bit (AMD64)]"
+  },
+  "python_exit": 0,
+  "environment": {
+    "CARGO_TARGET_DIR": "G:\\CODEX\\New Manga.workspace\\builds\\P04\\cargo-target",
+    "CARGO_HOME": "G:\\CODEX\\New Manga.workspace\\task-envs\\P04\\cargo_home",
+    "TEMP": "G:\\CODEX\\New Manga.workspace\\task-envs\\P04\\tmp",
+    "TMP": "G:\\CODEX\\New Manga.workspace\\task-envs\\P04\\tmp",
+    "PYTHONPYCACHEPREFIX": "G:\\CODEX\\New Manga.workspace\\task-envs\\P04\\pycache",
+    "M2RC1_PYTHON": "G:/CODEX/New Manga.workspace/task-envs/P22-REBASE-1/venv/Scripts/python.exe"
+  },
+  "real_core_executed": false,
+  "windows_sandbox_queried": false
+}

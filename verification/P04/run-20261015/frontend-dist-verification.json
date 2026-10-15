@@ -1,0 +1,25 @@
+{
+  "recorded_at_utc": "2026-10-15T12:45:03.5546727Z",
+  "source": "G:\\CODEX\\New Manga\\apps\\desktop\\frontend\\dist",
+  "destination": "G:\\CODEX\\New Manga.worktrees\\P04-prod-command-concurrency-antigravity\\apps\\desktop\\frontend\\dist",
+  "copy_method": "Copy-Item -Recurse; no npm/vite build",
+  "source_file_count": 2,
+  "destination_file_count": 2,
+  "source_total_bytes": 196591.0,
+  "destination_total_bytes": 196591.0,
+  "all_relative_paths_sizes_sha256_match": true,
+  "mismatch_count": 0,
+  "files": [
+    {
+      "relative_path": "assets/index-CUM67Q41.js",
+      "bytes": 196315,
+      "sha256": "b3a098d493051d337633bf888462dd1025668639d4b17243e1370d23f8dd3858"
+    },
+    {
+      "relative_path": "index.html",
+      "bytes": 276,
+      "sha256": "6cedfa28a384443d33109a2956e078c32e2095b4337b89fd54c0e914840f186f"
+    }
+  ],
+  "result": "PASS"
+}
