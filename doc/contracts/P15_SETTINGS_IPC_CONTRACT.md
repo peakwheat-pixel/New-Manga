@@ -13,7 +13,7 @@
 
 ## 2. Envelope 与兼容性
 
-沿 M2-C1 §3.2：新增 Core 命令使用 `protocol = "new-manga.core"`, `version = { major: 2, minor: 6 }`。相对当前 rev 2.5，minor `5 → 6`，major 保持 `2`。本次只新增命令、类型和独立 Host 投影；既有冻结命令/字段/状态/错误语义零变化。旧客户端继续调用其已知命令，但不能调用新命令；Host/Core 必须配对到 2.6 才能使用新增面。没有版本协商或自动迁移。
+沿 M2-C1 §3.2：P15 Core 命令使用 `protocol = "new-manga.core"`, `version = { major: 2, minor: 7 }`。本 FU1 将 P15 目标 minor 从 `6` 增至 `7`，major 保持 `2`。`TestNetworkProfile.provider_profile_id` 的必填性变化按本 Task 与 2026-10-17 A1 裁决，作为该命令尚未实现、未发布前的窄范围修订；这不是 M2-C1 §3.2 对已发布 wire 的一般兼容规则。既有 rev 2.5 客户端不受影响，因为其中没有 `settings_network_profiles_test`；旧的 rev 2.6 设计草案请求若省略 `provider_profile_id`，在 rev 2.7 必须以 `INVALID_REQUEST` 拒绝，故这项草案请求形状不向后兼容。当前 runtime 尚未实现该命令，不存在已发布的 rev 2.6 客户端影响。使用 P15 面的 Host/Core 必须配对到 rev 2.7；没有版本协商或自动迁移。除本次 G23 `TestNetworkProfile` 修订外，既有冻结命令/字段/状态/错误语义零变化。
 
 所有新增 Tauri 命令均为 **production-only**。probe、AC1 与既有测试命令面保持原样；不将本契约命令加入 probe/AC1 allowlist。
 
@@ -188,7 +188,7 @@ Provider 请求的网络来源顺序保持 P10 §6：Provider 专用 Network Pro
 ```text
 TestNetworkProfile {
   network_profile_id: NetworkProfileId,
-  provider_profile_id?: ProfileId
+  provider_profile_id: ProfileId
 } -> NetworkTestResult
 
 NetworkTestResult = {
@@ -199,7 +199,9 @@ NetworkTestResult = {
 }
 Stage = Proxy | DNS | TCP | TLS | HTTP | ProviderAuth
 StageStatus = passed | failed | not_run | not_applicable
-NotRunReason = upstream_stage_failed | provider_profile_not_selected | direct_mode
+NotRunReason = upstream_stage_failed | provider_profile_not_selected | direct_mode |
+               system_route_is_direct | provider_endpoint_is_ip_literal |
+               provider_endpoint_uses_http | provider_auth_not_required
 StageResult = { stage, status: passed, duration_ms?: integer }
             | { stage, status: failed,
                 failure: { category, action, message_key: SafeSettingsMessageKey },
@@ -207,12 +209,39 @@ StageResult = { stage, status: passed, duration_ms?: integer }
             | { stage, status: not_run | not_applicable, reason: NotRunReason }
 ```
 
-阶段顺序固定为 Proxy → DNS → TCP → TLS → HTTP → ProviderAuth。每个未执行阶段必须标 `not_run` 且有 `reason`；不适用阶段标 `not_applicable` 且有 `reason`。若阶段失败，保留已完成阶段与失败阶段，后续阶段均为带 `upstream_stage_failed` 原因的 `not_run`。ProviderAuth 只有提供 `provider_profile_id` 时执行；否则明确 `not_run/provider_profile_not_selected`。Direct 模式下 Proxy 阶段标 `not_applicable`，System 模式执行系统代理解析/连通阶段。结果不得包含原始 HTTP 响应、响应体、请求头、认证头、代理凭据、路径或 endpoint 中可能敏感的部分。
+### 请求校验与唯一目标
 
-`status=passed` 时 `failed_stage=null`；`status=failed` 时 `failed_stage` 必须指向唯一 `failed` 的 StageResult，其后的 stage 保持 `not_run`。
+`network_profile_id` 与 `provider_profile_id` 均为必需、非 null 的实体 ID。`provider_profile_id` 缺省、null、类型/格式非法，或不能解析为 Provider Profile 时，Core 返回 `INVALID_REQUEST`，不返回 `NetworkTestResult`；不得将该错误转换成阶段 `not_run` 或 `status=passed`。解析出的 Provider Profile `endpoint` 是唯一 Provider 目标。测试只使用请求中的 Network Profile 作为路由选择；不得改用 Provider Profile 上绑定的其他 Network Profile、全局/系统/Direct 解析链或代理失败后的 Direct fallback。
 
-代理失败后测试不得静默直连，即使 Profile 的显式运行 fallback 开关为 `true`；`direct_fallback_used` 恒为 `false`。连接失败的 WebView 错误投影只含稳定类别、失败阶段、动作与固定脱敏文案。
+目标恒为所选 Provider 的 `endpoint`，沿请求中所选 Network Profile 的路径访问。Provider adapter 可以使用该 Provider 协议定义、相对该 endpoint 的探测操作；其 authority 必须仍属于该 endpoint，不能换成任意目标。禁止自选公网 URL、loopback 或假目标；禁止把 Proxy 主机冒充 TLS/HTTP 的 Provider 目标；禁止伪造阶段结果满足测试语义。Proxy 阶段可检查实际选中的代理自身，但它只代表 Proxy 阶段，不改变后续阶段的 Provider endpoint 目标。
 
+`network_profile_id` 是本次诊断的唯一路由选择：HTTP/HTTPS/SOCKS5 使用该 Profile 的 `proxy_endpoint`；System 使用 Windows 系统对该 Provider endpoint 选出的代理路径；Direct 使用直连。代理失败后不解析其他 Profile、不回退 Direct，`direct_fallback_used` 恒为 `false`。System 对该 Provider endpoint 选择直连属于系统路由本身，不是 fallback，仍令 `direct_fallback_used=false`。
+
+### 六阶段目标与判定
+
+阶段顺序固定为 Proxy → DNS → TCP → TLS → HTTP → ProviderAuth。下表给出每个模式中各阶段的目标、状态和适用条件；先前阶段失败时，后续阶段统一覆盖为 `not_run/upstream_stage_failed`。
+
+| Stage | Direct | System | HTTP | HTTPS | SOCKS5 |
+|---|---|---|---|---|---|
+| Proxy | `not_applicable/direct_mode`：无代理 | 解析该 Provider endpoint 的 Windows 系统代理路由；代理被选中则检查该代理连通/协议，成功 `passed`、失败 `failed`；系统路由选直连则 `not_applicable/system_route_is_direct` | 以 Network Profile `proxy_endpoint` 为目标，检查 HTTP 代理连通及代理协议协商；成功 `passed`、失败 `failed` | 以 `proxy_endpoint` 为目标，检查 HTTPS 代理连通及其代理侧 TLS/协议协商；成功 `passed`、失败 `failed` | 以 `proxy_endpoint` 为目标，检查 SOCKS5 连通及协议协商；成功 `passed`、失败 `failed` |
+| DNS | Provider endpoint 的主机名经本机解析；解析成功 `passed`，失败 `failed` | Provider endpoint 主机名沿系统选择的 Provider 路由解析；本机或代理侧解析均可，成功 `passed`，失败 `failed` | Provider endpoint 主机名沿 HTTP 代理路径解析；本机或代理侧解析均可，成功 `passed`，失败 `failed` | Provider endpoint 主机名沿 HTTPS 代理路径解析；本机或代理侧解析均可，成功 `passed`，失败 `failed` | Provider endpoint 主机名沿 SOCKS5 路径解析（含代理侧解析）；成功 `passed`，失败 `failed` |
+| TCP | 连接 Provider endpoint 的主机与端口 | 经系统选定路径连接 Provider endpoint 的主机与端口 | 经 HTTP 代理隧道连接 Provider endpoint 的主机与端口 | 经 HTTPS 代理隧道连接 Provider endpoint 的主机与端口 | 经 SOCKS5 连接 Provider endpoint 的主机与端口 |
+| TLS | Provider endpoint 为 HTTPS 时对该 endpoint 建立 TLS；为 HTTP 时 `not_applicable/provider_endpoint_uses_http` | 同左，经系统选定路径；代理自身 TLS 属 Proxy 阶段 | 同左，经 HTTP 代理路径 | 同左，经 HTTPS 代理路径；Provider TLS 仍只验证 Provider endpoint | 同左，经 SOCKS5 路径 |
+| HTTP | 对 Provider endpoint 执行 Provider adapter 定义的探测请求 | 同左，经系统选定路径 | 同左，经 HTTP 代理路径 | 同左，经 HTTPS 代理路径 | 同左，经 SOCKS5 路径 |
+| ProviderAuth | 按 Provider adapter 对该 Provider endpoint 执行认证检查；若该 Provider 不要求认证则 `not_applicable/provider_auth_not_required` | 同左，经系统选定路径 | 同左，经 HTTP 代理路径 | 同左，经 HTTPS 代理路径 | 同左，经 SOCKS5 路径 |
+
+状态判定统一如下：
+
+- **DNS** 的目标始终是 Provider endpoint 的主机名，不是代理主机。endpoint 主机是 IP literal 时该阶段 `not_applicable/provider_endpoint_is_ip_literal`；否则沿所选路由完成解析，解析成功为 `passed`，无法解析为 `failed`。解析代理 endpoint 的工作属于 Proxy 阶段。
+- **TCP** 目标始终是 Provider endpoint 的主机与端口。只有通过所选路由建立到该目标的可用连接/隧道才为 `passed`；连接拒绝、超时或路由建立失败为 `failed`。对 HTTP/HTTPS/SOCKS5，代理 socket 与代理协议检查留在 Proxy 阶段；本阶段只报告到 Provider endpoint 的逻辑连接。
+- **TLS** 只指向 HTTPS Provider endpoint，按 Network Profile 的 `verify_tls` 策略完成该 Provider 的 TLS 握手和验证；满足该策略为 `passed`，握手或启用的证书校验失败为 `failed`。Provider endpoint 为 HTTP 时为 `not_applicable/provider_endpoint_uses_http`。HTTPS proxy 自身需要的 TLS 只在 Proxy 阶段，不得作为此阶段结果或目标。
+- **HTTP** 使用 Provider adapter 为该 endpoint 定义的最小探测操作，不得另选 authority。收到格式有效且符合该 Provider adapter 探测语义的 HTTP 响应即为 `passed`；adapter 识别为认证挑战的响应在此阶段为 `passed`，交由 ProviderAuth 判定。未收到有效响应、响应不符合探测语义、协议解析失败或 Provider endpoint 不可达为 `failed`。不得自动跟随到不同 authority 的 redirect。响应状态/内容不复制进结果。
+- **ProviderAuth** 按该 `provider_id` 的 adapter 认证语义对同一 Provider endpoint 检查。Provider 要求认证且缺少/被拒绝凭据，或认证未获确认时为 `failed`；认证获 Provider 确认时为 `passed`；Provider 明确不要求认证时为 `not_applicable/provider_auth_not_required`。认证失败不自动重试或切换 Provider。
+- 对 Direct、System、HTTP、HTTPS、SOCKS5，适用阶段均按上述目标与条件判定；凡实际尝试成功为 `passed`，失败为 `failed`。除表中明确条件外不得标记 `not_applicable`。`not_run` 只可用于某个失败阶段之后的阶段，并必须带 `upstream_stage_failed`。现保留 `provider_profile_not_selected` 作为旧草案 reason 值，但 rev 2.7 对缺省 Provider ID 必须在请求校验时返回 `INVALID_REQUEST`，不得发出该 reason。
+
+`status=passed` 当且仅当没有 `failed` 阶段、每个适用阶段均 `passed`、其余阶段均按上述条件带 reason 的 `not_applicable`；至少 Provider endpoint 的 HTTP 阶段已执行，故不得由全 `not_run` 或伪造结果得到 `passed`。`status=failed` 时 `failed_stage` 必须指向唯一 `failed` 的 StageResult，且其后所有阶段均为 `not_run/upstream_stage_failed`；失败阶段之前只可为 `passed` 或有定义依据的 `not_applicable`。`status=passed` 时 `failed_stage=null`。
+
+每个阶段只能返回阶段、状态、耗时和失败时的安全 `failure` 投影。结果不得含原始响应/响应体、请求头/认证头、代理凭据、文件系统路径，或 Provider/Proxy endpoint 的敏感部分；System 代理细节也不得投影。失败只使用 §9 的封闭投影，不能透传 `ErrorEnvelope.details`、异常或协议响应。代理失败不静默直连，即使 Profile 显式配置运行时 fallback；测试结果 `direct_fallback_used` 恒为 `false`。
 ## 6. G24：设置覆盖解析查询（只读）
 
 ```text
@@ -295,13 +324,14 @@ SafeSettingsMessageKey = SETTINGS_INVALID_INPUT | SETTINGS_ITEM_NOT_FOUND |
 
 | 契约条文 | 本次新增/冻结内容 | 状态 |
 |---|---|---|
-| §1–2 | 新面共同边界；Core 2.5→2.6 minor 兼容声明；production-only Host 面 | 新增，runtime 未实现 |
+| §1–2 | 新面共同边界；初始 rev 2.5→2.6 与 FU1 rev 2.6→2.7 版本声明；production-only Host 面 | 新增/修订，runtime 未实现 |
 | §3（G21） | 多 Profile、Capability CRUD/绑定解析、不可变 Run Snapshot 安全投影 | 新增 wire，不改 P10 语义 |
 | §4（G22） | Host 外置安全输入、一次性增替清、CredentialRef 仅 Host↔Core exchange | 新增 wire，P10 生命周期不变 |
-| §5（G23） | Network Profile CRUD、TLS 确认、显式 fallback、六阶段测试投影 | 新增 wire，不改 P10 连接语义 |
+| §5（G23） | Network Profile CRUD、TLS 确认、显式 fallback、六阶段测试投影；§5.2 由 P15-C1-FU1 收紧 Provider 目标、必填 ID 和逐模式阶段语义 | 新增 wire / FU1 修订，不改 P10 连接语义 |
 | §6（G24） | 覆盖解析只读查询、有效值与来源投影 | 新增 wire，不增加写入 |
 | §7–8（G25/G2） | 精确开放键域；其余分区与回收站明确禁用 | 新增白名单，不改既有透传实现 |
 | §9 | 新增错误脱敏投影与 WebView 四处边界 | 新增安全约束 |
+| FU1：§2 / §5.2 / §10–11 | 按 A1 要求 Provider ID、Provider endpoint 唯一目标；固化禁止项、五种模式六阶段语义、安全投影及 rev 2.6→2.7 的兼容影响 | 修订；runtime 未实现 |
 
 ## 11. 依据映射
 
@@ -310,10 +340,14 @@ SafeSettingsMessageKey = SETTINGS_INVALID_INPUT | SETTINGS_ITEM_NOT_FOUND |
 | G21：Profile CRUD、多 Profile 同 Provider、Capability 绑定优先级、冻结 Snapshot | §3.1–3.3 | Coordinator ruling-G21-G25 §II G21；D04 §39–40；P10 §5、§9；M2-C1 §3.2、§5.3 |
 | G22：专用一次性新增/替换/清除；CredentialRef exchange；不回显；普通 settings DTO 不承 Secret | §4、§9 | Coordinator ruling §II G22；P10 §3–4、§7、§9；M2-C1 §5.3、§8 |
 | G23：Direct/System/HTTP/HTTPS/SOCKS5；六阶段；未执行/失败保留；不静默直连；TLS 关闭确认 | §5、§9 | Coordinator ruling §II G23；AD001 §5 NetworkProfilePanel；D04 §41.1–41.4；P10 §6；M2-C1 §8 |
+| P15-C1-FU1 A1：`provider_profile_id` 必需，目标是所选 Provider endpoint 经请求指定 Network Profile 路径；缺省/非法返回 `INVALID_REQUEST` | §2、§5.2 | `ruling-P15-CORE-1-network-test.md` §1–2(A1)；FU1 Task AC1；M2-C1 §3.2 |
+| P15-C1-FU1 禁止项：禁止自选 URL/loopback/假目标、冒充 Proxy 为 Provider TLS/HTTP 目标、伪造阶段 | §5.2 | `ruling-P15-CORE-1-network-test.md` §2(B)；FU1 Task AC2 |
+| P15-C1-FU1 六阶段闭合：各阶段目标、Direct/System/HTTP/HTTPS/SOCKS5 判定与 not-run reason | §5.2 | D04 §41.1–41.4；P10 §6；P15 §5.1；`ruling-P15-CORE-1-network-test.md` §1–2；FU1 Task AC3 |
+| P15-C1-FU1 安全/兼容：失败只走 §9 脱敏投影；rev 2.6→2.7 与请求兼容影响 | §2、§5.2、§9 | P10 §6、§8–9；M2-C1 §3.2、§8；FU1 Task AC4–AC5；用户 A1 裁决 |
 | G24：只读最终值与 Global→Book→Chapter→Run 来源 | §6 | Coordinator ruling §II G24；D04 §42；P10 §5；M2-C1 §3.2、§5.3 |
 | G25：只开放已有 Core 写校验或 P10/既有契约已确立语义的节；其余逐节禁用 | §7 | Coordinator ruling §II G25 与 §III；AD001 §5、§7 G25；M2-C1 §5.3；P10 §5、§6、§9 |
 | G2：本轮不授权回收站 | §8 | Coordinator ruling §II G2；D04 §43；AD001 §5、§7 |
-| AC3：minor 递增、同 major 兼容、probe/AC1 面不变 | §2 | M2-C1 §3.2、§5.3、§5.7、§10；rev 2.5 兼容规则 |
+| P15-C1 AC3 / FU1 AC5：初始 minor 2.5→2.6；FU1 按授权在未实现前修订为 2.7，并明确对 rev 2.5 与 2.6 草案请求的兼容影响；probe/AC1 面不变 | §2 | M2-C1 §3.2、§5.3、§5.7、§10；P15-C1-FU1 AC5 与 A1 ruling |
 | AC4：Secret/路径/不透明写引用不得到 WebView request/response/event/error | §1、§4、§5、§6、§9 | P10 §3–4、§8–9；M2-C1 §5.3、§5.7、§8、§10；Coordinator ruling §II G22–G24 |
 
 ## 12. 验证状态
