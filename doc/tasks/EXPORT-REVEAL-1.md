@@ -3,18 +3,18 @@ id: EXPORT-REVEAL-1
 title: 导出后"打开所在文件夹"host 命令（解 G20；P17 前置）
 kind: feature
 governance_version: 2
-status: ready
+status: in_review
 approval: coordinator_release_20261016_confirmed_gap_g20
 suggested_owner: Codex
-owner: null
-reviewer: null
+owner: Codex
+reviewer: DeepSeek Harness (pending independent review)
 depends_on: [P16-C1, HOST-ISSUER-1-C1, HOST-ISSUER-1, UI-DESIGN-1]
-base_commit: null
-branch: null
-worktree: null
+base_commit: 958fa8a5b137f2b99ec74ba5902760e1d8aaebdc
+branch: codex/EXPORT-REVEAL-1
+worktree: G:/CODEX/New Manga.workspace/worktrees/EXPORT-REVEAL-1
 integration_commit: null
-delivery_head: null
-canonical_evidence_status: pending
+delivery_head: 5f95aac0f3f1557b8193689d429496babc46398e
+canonical_evidence_status: complete
 resource_closeout_status: pending
 evidence_dir: verification/EXPORT-REVEAL-1
 ---
@@ -82,11 +82,12 @@ evidence_dir: verification/EXPORT-REVEAL-1
 
 | 场景/AC | 计划命令或手工步骤 | 前提/环境 | 实际结果 | 证据 |
 |---|---|---|---|---|
-| AC1 | 契约 revision 评审（不透明 id、拒绝面、production-only） | 只读 | NOT_RUN | 无 |
-| AC4-① | allowlist 断言：生产面存在 / probe+AC1 面不存在 | 构建产物 | NOT_RUN | 无 |
-| AC4-② | 拒绝面测试（未知/外来 export_id；断言未发生打开动作） | 构建产物 | NOT_RUN | 无 |
-| AC4-③ | 2.3 frozen bundle 上导出后 reveal 真实往返（或 BLOCKED） | 重建后的 bundle | NOT_RUN | 无 |
-| AC6 | `tests/core/**` + Rust 测试全绿 | 构建产物 | NOT_RUN | 无 |
+| AC1 | 冻结 M2-C1 rev 2.4 §5.8；独立契约 Review | 只读 | 实现完成；独立 Review `NOT_RUN`，等待 DeepSeek Harness | `doc/contracts/M2-C1_TYPED_IPC_CONTRACT.md` |
+| AC4-① | `cargo test --bin m2rc1-desktop -- --skip packaged_sidecar_tests --test-threads=1`；`export_reveal_command_is_production_only` 断言 production 有命令、probe/AC1 无命令 | `M2RC1_PYTHON=C:\Python314\python.exe` | PASS：82 passed，1 ignored，8 filtered，exit 0 | `verification/EXPORT-REVEAL-1/rust-source.log` |
+| AC4-② | Rust source suite；覆盖未知/外来 ID、未完成输出、路径不可用、路径形状 ID，并断言拒绝不调用 opener；重复解析不消费 ID | 同上 | PASS；原始 suite exit 0 | `verification/EXPORT-REVEAL-1/rust-source.log` |
+| AC4-③ | 在既有 2.3 bundle 上运行 packaged suite 与 `host_export_grant_round_trip_reaches_frozen_start_export` 专项；GUI 实际 Reveal | `M2RC1_PACKAGED=1`；现有 `target/core-sidecar` Junction；无头 Windows | BLOCKED：packaged suite 8 passed；专项测试 bundle 接受 grant，但 fixture 为 `missing-book`，Core 返回 `TARGET_NOT_FOUND` 且无目标文件。WebView2 窗口句柄错误 `0x80070578` 阻止真实 GUI 往返；未声称已打开 | `verification/EXPORT-REVEAL-1/rust-packaged.log`、`frozen-export-attempt.log`、`reveal-roundtrip-status.md`、`verification/PROJECT-ORCHESTRATION-20261016/checkpoint-r9.md` |
+| AC6 | `C:\Python314\python.exe -m pytest tests/core -q -p no:cacheprovider`；Rust source 与 packaged suite 分开运行 | Python 3.14.6；source `M2RC1_PYTHON=C:\Python314\python.exe`；packaged `M2RC1_PACKAGED=1` | PASS：Core 405 passed；Rust 合计 90 passed、1 ignored、0 failed；所有命令 exit 0 | `pytest-core.log`、`rust-source.log`、`rust-packaged.log` |
+| AC7 | 固定实现 commit、证据 SHA256、Handoff；不 push/merge | 本 worktree | 实现 delivery head `5f95aac0f3f1557b8193689d429496babc46398e`；Handoff 已写；独立 Review/集成待执行 | Handoff 与下方 Canonical Evidence |
 
 ## 依赖、风险与阻塞
 
@@ -103,24 +104,36 @@ evidence_dir: verification/EXPORT-REVEAL-1
 - 2026-10-16 Coordinator 释放（dsh, epoch 6）：依据设计基线 §7 G20 + Coordinator 只读复核
   （仅 dialog 插件、无 opener/shell、源码 0 命中、命令表无该命令）。释放前**先核实缺口真实**。
   本 Task 完成后 **P17 的最后一块前置即具备**。
-- Handoff：尚无。Review：尚无。实际测试：尚无（全部 `NOT_RUN`）。
+- 2026-10-16 Codex Owner：contract rev 2.4 与 production-only host command 实现先于测试完成；实现固定 commit `5f95aac0f3f1557b8193689d429496babc46398e`。官方 `tauri-plugin-opener = "2"` 是唯一新增依赖；Rust 侧直接 opener API，无 shell 字符串及 WebView opener capability。
+- 2026-10-16 Codex Owner：Core `tests/core/**` 405 passed；Rust source 82 passed / 1 ignored，packaged sidecar 8 passed，exit 0；日志与真实 SHA256 见下表。Cargo 产生的既有 permission TOML CRLF 纯行尾噪音逐项经 `git diff --ignore-space-at-eol` 核对并恢复。
+- 2026-10-16 Codex Owner：AC4-③ 真实导出并由 GUI 打开未完成。frozen bundle 专项测试使用 `missing-book`，真实输出未生成；无头 Windows 的 WebView2 `0x80070578` 阻止 GUI e2e。已记录为 `BLOCKED`，没有声称打开成功。
+- Handoff：[`doc/handoffs/EXPORT-REVEAL-1-codex-5f95aac.md`](../handoffs/EXPORT-REVEAL-1-codex-5f95aac.md)。Review：等待 DeepSeek Harness 独立执行；Task 保持 `in_review`，未声称接受。
 
 ## Canonical Evidence
 
 | evidence_id | AC/Gate | path（仓库相对路径或绝对路径） | commit | sha256 | class (`CANONICAL` / `SOURCE_PIN`) |
 |---|---|---|---|---|---|
+| EXPORT-REVEAL-CONTRACT | AC1 | `doc/contracts/M2-C1_TYPED_IPC_CONTRACT.md` | `5f95aac0f3f1557b8193689d429496babc46398e` | `FA15329BC5E96914C58227F1F2B8D48DE6E8CE563A6D168E4C5C23FFB895AF0C` | CANONICAL |
+| EXPORT-REVEAL-ALLOWLIST-REFUSALS | AC4-①/② | `verification/EXPORT-REVEAL-1/rust-source.log` | `5f95aac0f3f1557b8193689d429496babc46398e` | `0D9E5489451A044929B8CB24E61DD11D0B1375B07F13DB4C8E90C41812843A38` | CANONICAL |
+| EXPORT-REVEAL-CORE-TESTS | AC6 | `verification/EXPORT-REVEAL-1/pytest-core.log` | `5f95aac0f3f1557b8193689d429496babc46398e` | `B6BDE45C516F16B1ED5AA130BD42FD288B06E5E62C09AD28BDEFDE88E80A37AD` | CANONICAL |
+| EXPORT-REVEAL-RUST-PACKAGED | AC4-③/AC6 | `verification/EXPORT-REVEAL-1/rust-packaged.log` | `5f95aac0f3f1557b8193689d429496babc46398e` | `285007F5A393DCA2185F24284DACD87A9A8D9DB917D4FD8248ADF9C60DD1CFC2` | CANONICAL |
+| EXPORT-REVEAL-FROZEN-ATTEMPT | AC4-③ | `verification/EXPORT-REVEAL-1/frozen-export-attempt.log` | `5f95aac0f3f1557b8193689d429496babc46398e` | `66BA5A9F6B7274E6CD884241BF671E545B1C29B072CA7318477E5D3D0535CF18` | CANONICAL |
+| EXPORT-REVEAL-GUI-BLOCK | AC4-③ | `verification/EXPORT-REVEAL-1/reveal-roundtrip-status.md` | `5f95aac0f3f1557b8193689d429496babc46398e` | `5BFD579772CD3C4991493EBBE507303AF40D2FB022D6C7A2CCAEED42D09308CA` | CANONICAL |
+| EXPORT-REVEAL-HEADLESS-SOURCE | AC4-③ source environment | `verification/PROJECT-ORCHESTRATION-20261016/checkpoint-r9.md` | `958fa8a5b137f2b99ec74ba5902760e1d8aaebdc` | `515786CD75F85BEF46A5E81F9B783D59EF42395221B780F7B322E6B954361FB2` | SOURCE_PIN |
+| EXPORT-REVEAL-HANDOFF | AC7 | `doc/handoffs/EXPORT-REVEAL-1-codex-5f95aac.md` | `fc5702e650b022608be79694d1c706a4eff51ca9` | `A106209921985E2BB5E81DA154FD320C4859920DE0E01BB2EB2AE1047155D5E3` | CANONICAL |
+| EXPORT-REVEAL-RESOURCES | Resource | `verification/EXPORT-REVEAL-1/resource-manifest.json` | `fc5702e650b022608be79694d1c706a4eff51ca9` | `2B7774178B10E9C9C2A49CBAB2C45CCDC8BC5E4E1BA803843B2CF34C1DBAB944` | CANONICAL |
 
 ## Resource Manifest
 
 | resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
 |---|---|---|---|---|---|
-| worktree | G:/CODEX/New Manga.workspace/worktrees/EXPORT-REVEAL-1 | PRESERVE_REFERENCED | G:/CODEX/New Manga.workspace/worktrees/EXPORT-REVEAL-1 | verification/EXPORT-REVEAL-1/resource-manifest.json | 本 Task 独立 worktree；closeout 时按 Worktree Safety Inventory 复核后填写 |
+| worktree | G:/CODEX/New Manga.workspace/worktrees/EXPORT-REVEAL-1 | PRESERVE_REFERENCED | G:/CODEX/New Manga.workspace/worktrees/EXPORT-REVEAL-1 | `verification/EXPORT-REVEAL-1/resource-manifest.json` / `2B7774178B10E9C9C2A49CBAB2C45CCDC8BC5E4E1BA803843B2CF34C1DBAB944` | 保留给独立 Review；未删除、移动或归档。现有 frozen bundle Junction 原位保留。 |
 
 ## Closeout Record
 
-- Closeout date / Codex：待关闭时填写。
-- canonical_evidence_status：`pending`。
-- resource_closeout_status：`pending`。
-- 删除、迁移、归档数量/字节数：待关闭时填写；无操作填写 0。
-- 未关闭项及保留原因：本 Task 全部 AC 尚未执行（`NOT_RUN`）。
+- Closeout date / Codex：2026-10-16，Codex Owner delivery；Task 仍 `in_review`，不是最终 Gate closeout。
+- canonical_evidence_status：`complete`（AC4-③ 的 `BLOCKED` 及限制证据也已登记；独立 Review 仍待执行）。
+- resource_closeout_status：`pending`（worktree 与测试构建资源 `PRESERVE_REFERENCED`，待独立 Review 后复核）。
+- 删除、迁移、归档数量/字节数：0 / 0 / 0。
+- 未关闭项及保留原因：DeepSeek Harness 独立 Review 与 Codex 集成验证待执行；真实 GUI 导出后 Reveal 因无头环境 `BLOCKED`，需在有 GUI 环境补测。
 - 当前指针清理：`STATUS` / `REBASELINE_PLAN` 在释放时同步。
