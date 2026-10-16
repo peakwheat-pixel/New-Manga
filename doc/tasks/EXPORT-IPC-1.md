@@ -3,19 +3,19 @@ id: EXPORT-IPC-1
 title: Tauri host 接线导出控制/查询面（CancelExport/GetExportSnapshot/GetExportHistory）+ 去除路径的 WebView 投影——P14 工作台第二处前置
 kind: feature
 governance_version: 2
-status: in_review
+status: done
 approval: coordinator_release_20261016_confirmed_second_missing_host_surface
 suggested_owner: Codex
 owner: Antigravity
-reviewer: DeepSeek Harness
+reviewer: dsh
 depends_on: [P16, P16-C1, EXPORT-REVEAL-1, UI-DESIGN-1]
 base_commit: cb07e9981
 branch: agent/antigravity/EXPORT-IPC-1
 worktree: G:/CODEX/New Manga.workspace/worktrees/EXPORT-IPC-1
-integration_commit: null
-delivery_head: a4c8f9ac0cfae60e51532f8ebf9ef1d02c892b15
+integration_commit: aaca5d1eafcf009f2420e3e846957f417f6328ec
+delivery_head: fee223e36bfc28fe8c75cdc7f260933f8c49d6f6
 canonical_evidence_status: complete
-resource_closeout_status: pending
+resource_closeout_status: complete
 evidence_dir: verification/EXPORT-IPC-1
 ---
 
@@ -105,10 +105,12 @@ evidence_dir: verification/EXPORT-IPC-1
 
 | evidence_id | AC/Gate | path（仓库相对路径或绝对路径） | commit | sha256 | class (`CANONICAL` / `SOURCE_PIN`) |
 |---|---|---|---|---|---|
-| EVID-EXPIPC-SRC | AC4①②/AC5 | `verification/EXPORT-IPC-1/rust-source-tests.log` | `a4c8f9ac0cfae60e51532f8ebf9ef1d02c892b15` | `674878f070e469434d16a8414cdf97592beaa6d8f640974025a4c0122727e5db` | `CANONICAL` |
-| EVID-EXPIPC-PKG | AC4③/AC5 | `verification/EXPORT-IPC-1/rust-packaged-tests.log` | `a4c8f9ac0cfae60e51532f8ebf9ef1d02c892b15` | `f116fea0f4a7400861eff996457d61dd07fc21d532c7444d7209fcd2db64a805` | `CANONICAL` |
-| EVID-EXPIPC-PY | AC5 | `verification/EXPORT-IPC-1/python-tests.log` | `a4c8f9ac0cfae60e51532f8ebf9ef1d02c892b15` | `43f62ba9814cab5fc31ac19eadd3a4584718787c0a86747bef3d2454c43ab987` | `CANONICAL` |
-| EVID-EXPIPC-LAYER | AC3/AC4 | `verification/EXPORT-IPC-1/evidence-layering.md` | `a4c8f9ac0cfae60e51532f8ebf9ef1d02c892b15` | `620166d3ad093656a7fc6f5a6eb33bfe73b46a66da850c7bbe5b052b6f72cfd2` | `CANONICAL` |
+| EVID-EXPIPC-SRC | AC4①②/AC5 | `verification/EXPORT-IPC-1/rust-source-tests.log` | `a4c8f9ac05fd20bd1a97a0b22a290d515fe5c475` | `6e136607bd3fce24db0035de292099ce1d5c5b006c09976af5f371e9c1d028e4` | `CANONICAL` |
+| EVID-EXPIPC-PKG | AC4③/AC5 | `verification/EXPORT-IPC-1/rust-packaged-tests.log` | `a4c8f9ac05fd20bd1a97a0b22a290d515fe5c475` | `7da8aa3040573fc131a02024394c42de3fbceb3baa27c53f4aec1516b8aae898` | `CANONICAL` |
+| EVID-EXPIPC-PY | AC5 | `verification/EXPORT-IPC-1/python-tests.log` | `a4c8f9ac05fd20bd1a97a0b22a290d515fe5c475` | `ca75b9dc2092271b0f86afaf35ffb26bb0352f9db437aae9fe5113f54e028625` | `CANONICAL` |
+| EVID-EXPIPC-LAYER | AC3/AC4 | `verification/EXPORT-IPC-1/evidence-layering.md` | `a4c8f9ac05fd20bd1a97a0b22a290d515fe5c475` | `cddf5ade407097b527a72eb5eaa7f1624e640bf67e14a98b14c82c9c6ed54994` | `CANONICAL` |
+
+| EVID-EXPIPC-REVIEW-R1 | AC1-AC6 | `verification/EXPORT-IPC-1/dsh-review-r1.md` | `9835608c7` | `e5830d3769b923339c253aefad75e96af1b01d48c81792f988d601315ac3b891` | REVIEW |
 
 ## Resource Manifest
 
@@ -118,9 +120,12 @@ evidence_dir: verification/EXPORT-IPC-1
 
 ## Closeout Record
 
-- Closeout date / Codex：待关闭时填写。
-- canonical_evidence_status：`pending`。
-- resource_closeout_status：`pending`。
-- 删除、迁移、归档数量/字节数：待关闭时填写；无操作填写 0。
-- 未关闭项及保留原因：本 Task 全部 AC 尚未执行（`NOT_RUN`）。
-- 当前指针清理：`STATUS` / `REBASELINE_PLAN` 在释放时同步。
+- Closeout date / Coordinator：2026-10-16（dsh, epoch 6）。Reviewer=**dsh**（独立于 Owner=antigravity）。
+- canonical_evidence_status：`complete`。4 条原始 pin 已按**磁盘字节**复算（治理检查器校验磁盘文件）；**并修正了一处阻断级记录缺陷**（见下）。
+- **证据记录缺陷与更正（阻断级，已在 §3 of Review 记录）**：Owner 在 Task 与 Handoff 中记录的完整提交 SHA `a4c8f9ac0cfae60e51532f8ebf9ef1d02c892b15` **不存在**（`git cat-file -t` → `could not get object info`）；真实提交为 `a4c8f9ac05fd20bd1a97a0b22a290d515fe5c475`。closeout 已将 Task 的 4 条证据行 commit 列与 Handoff 内 **12+ 处**引用一并更正为真实 SHA。**底层产物与 pin 均真实、代码与测试健全**，故按既有先例（closeout 冻结实际值）作机械更正而非实现返修。**建议登记 BL-17**：owner 必须原样使用 `git rev-parse HEAD`，不得手工补全短 SHA；closeout 校验必须包含 `git cat-file -e <sha>:<path>`。
+- resource_closeout_status：`complete`（worktree `PRESERVE_REFERENCED`）。删除、迁移、归档数量/字节数：0。
+- 交付：`done`。集成 `aaca5d1ea`（**四方三方合并**：EVENTS + RUN-IPC-1 + EXPORT-REVEAL-1 + 本 Task）；delivery_head（分支实际 HEAD）`fee223e36`。
+- **集成期的语义裁决（Coordinator 作为 Integrator）**：本 Task 与 EXPORT-REVEAL-1 **都新增了编号 §5.8 的节** → 保留 reveal 为 **§5.8**、将本 Task 的"导出控制与查询"节**重编号为 §5.9** 并更新其内部引用（含 §11 状态表行与 §12 授权段）；同时把**重复的 `2.4` 历史条目**与**两套"当前修订范围"块**合并为**单一 rev 2.5 声明 + 单一历史表**（契约现为 h1=1、单一当前修订声明）。两分支各自的计数注释与 `PRODUCTION_COMMANDS.len()` 断言也按**合并后的真实值**更新为 **35 条命令 / 28 条生产命令**（任一侧原值均已过时）。
+- **合并后验证（Coordinator 亲跑）**：source **94 passed / 0 failed / 1 ignored**、frozen packaged **11 passed / 0 failed**，exit 0；**四族测试在同一二进制内全绿**（EVENTS 4 个 `test_events_fwd_*` + 并发归属、RUN-IPC-1 传输、EXPORT-REVEAL-1、以及本 Task 的两个 `whitelist_zero_path` 与 `export_query_commands_are_exact_and_production_only`）；生成的权限清单为 **37 条**并含四族。
+- **未关闭项及保留原因**：**未在 frozen bundle 上执行一次成功导出**（需真实 book/chapter 夹具）→ 成功导出的 DTO 形状与工作流未验证；**GUI e2e 未运行**（无头 Windows 无 WebView2 窗口句柄）。二者均由 Owner 如实声明，closeout **原样保留**。
+- 当前指针清理：`STATUS` / `REBASELINE_PLAN` 已同步（EXPORT-IPC-1 移出 READY；**P14 的全部前置至此齐备**）。

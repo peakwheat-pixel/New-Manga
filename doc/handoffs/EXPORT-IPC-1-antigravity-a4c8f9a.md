@@ -3,8 +3,8 @@ task_id: EXPORT-IPC-1
 author: Antigravity
 recipient: Codex / Coordinator
 base_commit: cb07e9981
-implementation_commit: a4c8f9ac0cfae60e51532f8ebf9ef1d02c892b15
-delivery_head: a4c8f9ac0cfae60e51532f8ebf9ef1d02c892b15
+implementation_commit: a4c8f9ac05fd20bd1a97a0b22a290d515fe5c475
+delivery_head: a4c8f9ac05fd20bd1a97a0b22a290d515fe5c475
 status: in_review
 ---
 
@@ -103,7 +103,7 @@ status: in_review
 
 ## 交付坐标与 `delivery_head` 语义（BL-15 处置）
 
-- **实现提交**：`a4c8f9ac0cfae60e51532f8ebf9ef1d02c892b15`（代码 + 测试 + verification 日志同提交）。
+- **实现提交**：`a4c8f9ac05fd20bd1a97a0b22a290d515fe5c475`（代码 + 测试 + verification 日志同提交）。
 - `delivery_head` 指向实现提交，符合 BL-15 规约（避免自引用缺陷；最终分支 HEAD 由 Coordinator 在 closeout 时以 `git rev-parse HEAD` 冻结）。
 - **接收方式**：分支 `agent/antigravity/EXPORT-IPC-1`；工作树 `G:/CODEX/New Manga.workspace/worktrees/EXPORT-IPC-1`；`target/core-sidecar` 与 `frontend/dist` 保持既有 junction。
 - 复现命令见上表；测试产生的诊断文件已清理不入库；治理检查器 `tools/governance/check.ps1` 因未入库在本工作树无法运行（如实说明）。
@@ -119,9 +119,9 @@ status: in_review
 - **Task ID / 标题**：`REVIEW-EXPORT-IPC-1`（独立 Review）
 - **推荐 Reviewer**：`DeepSeek Harness`（dsh；机器排除 Owner Antigravity 以满足独立 Review 约束）
 - **推荐原因与前置依赖**：EXPORT-IPC-1 交付后，P14 工作台的全部导出控制/查询前置正式补齐，可进入独立 Review。
-- **Recovery point**：仓库 `G:/CODEX/New Manga`，分支 `agent/antigravity/EXPORT-IPC-1`，提交 `a4c8f9ac0cfae60e51532f8ebf9ef1d02c892b15`。
+- **Recovery point**：仓库 `G:/CODEX/New Manga`，分支 `agent/antigravity/EXPORT-IPC-1`，提交 `a4c8f9ac05fd20bd1a97a0b22a290d515fe5c475`。
 - **可直接转发给 Reviewer 的指令**：
-  > 请作为独立 Reviewer 审查 EXPORT-IPC-1（commit `a4c8f9ac0cfae60e51532f8ebf9ef1d02c892b15`）：
+  > 请作为独立 Reviewer 审查 EXPORT-IPC-1（commit `a4c8f9ac05fd20bd1a97a0b22a290d515fe5c475`）：
   > 1. 核对 `doc/contracts/M2-C1_TYPED_IPC_CONTRACT.md` rev 2.5 §5.8 冻结条目与去路径安全投影定义；
   > 2. 核对四处同步纪律（`PRODUCTION_COMMANDS`、`generate_handler!`、`build.rs` app-manifest、`capabilities`）及命令计数（24→27 / 31→34）；
   > 3. 重点审查 AC3 路径零泄露不变量（返回投影显式白名单构造、`output_path` 严格剔除、错误净化只返回 code）；
