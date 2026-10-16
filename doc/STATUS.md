@@ -7,7 +7,8 @@
 - 当前 Task：[ARCH-DOC-REBASELINE](tasks/ARCH-DOC-REBASELINE.md) **ready / integrated**（唯一非终态 DAG READY；AC1–AC3=PARTIAL、AC4–AC6=NOT_RUN、AC7 逐消费者裁决待做）。
 - 本轮完成：P13/P13-C1/P16/P16-C1/P12-C1/P09-FU2/[HOST-CORE-1](tasks/HOST-CORE-1.md)/[HOST-ISSUER-1](tasks/HOST-ISSUER-1.md) 均 **done**；[P18](tasks/P18.md) **closed_with_limitations**（AC2 待用户门槛）。
 - **待用户裁决**：P18 的产品发布门槛（JA/KO 达到何种程度才声明支持）。
-- **下一批候选**：P12/P17（需 ZCode 设计）、BL-11b（打包 E2E）、P18 像素上限与 KO 权重、BL-12。
+- 已释放待认领：[ENV-BUNDLE-1](tasks/ENV-BUNDLE-1.md) 重建 sidecar bundle 与 frontend dist **ready**（解 **BL-11b**：bundle 与协议 2.3 不匹配使一切打包 E2E `NOT_RUN`；Owner 按 DIR-2=codex；含"先探测后执行"防 Thrash 要求）。
+- **下一批候选**：P12/P17（需 ZCode 设计）、P18 像素上限与 KO 权重、BL-12（需用户/Codex 定夺是否入库）。
 - 用户指令 DIR-2：后续 Task Owner=codex（至额度耗尽）。
 - Coordinator=dsh，epoch=5，lease=264c2000541748298000f93fb25a52de（LEASE_VALID）。
 - 用户 dirty/untracked 与既有 worktree 全程保留（19 项 tracked dirty 未变，无 EXTERNAL_CHANGE）。
