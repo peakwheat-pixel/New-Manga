@@ -1,0 +1,22 @@
+{
+  "schema_version": 1,
+  "task_id": "P16-C1",
+  "generated_at": "2026-10-16T03:38:50Z",
+  "generated_by": "Codex (Task Owner)",
+  "note": "Resource manifest for doc/tasks/P16-C1.md; the worktree is a directory, so a file-level SHA-256 does not apply.",
+  "resources": [
+    {
+      "resource_type": "worktree",
+      "source_path": "G:/CODEX/New Manga.workspace/worktrees/P16-C1-READER-EXPORT-IPC",
+      "disposition": "PRESERVE_REFERENCED",
+      "destination_path": "G:/CODEX/New Manga.workspace/worktrees/P16-C1-READER-EXPORT-IPC",
+      "branch": "codex/P16-C1-reader-export-ipc-contract",
+      "base_commit": "ff9633b5b09d8a898f92722a728edd3ff14da2d5",
+      "delivery_head": "196f50d45bc55eedfae87603b8887fd98ddcbf62",
+      "integration_commit": null,
+      "deleted": false,
+      "pruned": false,
+      "process_check": "2026-10-16 owner delivery: worktree retained for independent review and Coordinator integration; no delete, move, archive, merge, or push performed."
+    }
+  ]
+}
