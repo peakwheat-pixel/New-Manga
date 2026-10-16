@@ -13,7 +13,7 @@ base_commit: c6fda8a09c1a8248ec6617369f9fdf9e1cef79ec
 branch: codex/ENV-BUNDLE-1-sidecar-rebuild
 worktree: G:/CODEX/New Manga.workspace/worktrees/ENV-BUNDLE-1
 integration_commit: null
-delivery_head: ae23664a0b6448be084b94d4d08d7ce63a2f438f
+delivery_head: 14c52c152b9ae058aba4ee29d55d6ed6f7ef6e0f
 canonical_evidence_status: complete
 resource_closeout_status: registered
 evidence_dir: verification/ENV-BUNDLE-1
@@ -82,7 +82,7 @@ evidence_dir: verification/ENV-BUNDLE-1
 | AC1 venv | `python -m venv`；`python.exe -X utf8 -m pip install -r packaging/m2ac5/requirements-build.txt` | build venv Python 3.12.3 | PASS；pip 退出码 0，278.794 s；记录 61 个解析包。首次默认编码运行因 cp936 解码 UTF-8 requirements 失败（exit 2），保留原始日志后用 UTF-8 模式成功 | `ac1-venv-create.log`; `ac1-pip-install.log`; `ac1-pip-install-utf8.log`; `ac1-resolved-versions.txt`; `ac1-python-environment.txt` |
 | AC2 bundle | `powershell -NoProfile -ExecutionPolicy Bypass -File packaging/m2ac5/build_sidecar.ps1 -Force` | worktree 根；Python 3.12.3 build venv；未跳过权重 | PASS；exit 0，395.8 s；5,563 files / 1,287,287,472 bytes；manifest 与权重 hash 校验通过 | `ac2-build-sidecar.log`; `ac2-bundle-manifest.txt`; `resource-manifest.json` |
 | AC3 frontend | `npm ci`; `npm ls --depth=0`; `npm run build` | Node 24.15.0 / npm 12.0.1 | PASS；生产构建 exit 0，2.789 s；50 modules，dist 2 files / 201,081 bytes。首次 npm ci 包装器在 Push-Location 后日志相对路径出错，依赖安装实际完成；后续 npm ls 正常且 build 成功。lockfile SHA 前后不变 | `ac3-frontend.log`; `ac3-frontend-dist-manifest.txt` |
-| AC4 验收 | `cargo test --locked --manifest-path apps/desktop/src-tauri/Cargo.toml`；另直接调用 frozen core smoke | worktree HEAD = main HEAD `c6fda8a...`；无 `M2RC1_SRC_ROOT`/`M2RC1_PACKAGED` override；显式 Python 3.12.3 | PARTIAL：cargo 76 passed / 0 failed / 1 ignored，exit 0，六个名字均 PASS；经源码检查它们启动 Python 源码模块，不是 frozen EXE。frozen `core_service.exe` 的协议 2.3 ping/ListBooks/shutdown 独立 smoke exit 0；六项打包后端验收仍 NOT_RUN | `ac4-cargo-test.log`; `ac4-six-test-results.md`; `ac4-packaged-core-smoke.log`; SOURCE_PIN `src/main.rs` / `library_bridge.rs` |
+| AC4 验收 | `cargo test --locked --manifest-path apps/desktop/src-tauri/Cargo.toml`；另直接调用 frozen core smoke | 运行时 worktree HEAD = main HEAD `c6fda8a...`；无 `M2RC1_SRC_ROOT`/`M2RC1_PACKAGED` override；显式 Python 3.12.3 | PARTIAL：cargo 76 passed / 0 failed / 1 ignored，exit 0，六个名字均 PASS；经源码检查它们启动 Python 源码模块，不是 frozen EXE。frozen `core_service.exe` 的协议 2.3 ping/ListBooks/shutdown 独立 smoke exit 0；六项打包后端验收仍 NOT_RUN。测试后 main 前进到 `c6f975d...`，需在最新 main 集成后复验 | `ac4-cargo-test.log`; `ac4-six-test-results.md`; `ac4-packaged-core-smoke.log`; SOURCE_PIN `src/main.rs` / `library_bridge.rs`; `final-main-status-observation.txt` |
 
 ## 依赖、风险与阻塞
 
@@ -98,14 +98,14 @@ evidence_dir: verification/ENV-BUNDLE-1
   依据 R1–R6 恢复后的 R6 判定（BL-11b 是取得真实端到端结论的唯一路径）+ `packaging/m2ac5/README.md` 的既定指引；
   Owner 按 DIR-2 路由为 **codex**。
 - 执行坐标：worktree `G:/CODEX/New Manga.workspace/worktrees/ENV-BUNDLE-1`，分支 `codex/ENV-BUNDLE-1-sidecar-rebuild`；授权坐标所列 main base/head 均为 `c6fda8a09c1a8248ec6617369f9fdf9e1cef79ec`。Task release 文档中的旧 base `ea23da4d...` 与实际 branch/main 不一致，按本 Task 明确坐标使用 c6，并保存 main HEAD 前后证据。
-- 构建源码 head：`c6fda8a09c1a8248ec6617369f9fdf9e1cef79ec`；交付证据 head：`ae23664a0b6448be084b94d4d08d7ce63a2f438f`。证据分批提交：`bda0c4a1476d2fc257012aa04d5e3352408228fe`（主证据）、`ac9e303436c572976c35ea66758b04b687015df8`（probe 行尾规范化）、`ae23664a0b6448be084b94d4d08d7ce63a2f438f`（最终主仓状态观察）。
+- 构建源码 head：`c6fda8a09c1a8248ec6617369f9fdf9e1cef79ec`；交付证据 head：`14c52c152b9ae058aba4ee29d55d6ed6f7ef6e0f`。证据分批提交：`bda0c4a1476d2fc257012aa04d5e3352408228fe`（主证据）、`ac9e303436c572976c35ea66758b04b687015df8`（probe 行尾规范化）、`ae23664a0b6448be084b94d4d08d7ce63a2f438f`（首次最终主仓状态观察）、`14c52c152b9ae058aba4ee29d55d6ed6f7ef6e0f`（main 前进后的状态复核）。
 - AC1–AC3 总耗时：pip 安装 278.794 s、sidecar 全量构建 395.8 s、frontend `npm run build` 2.789 s；合计 677.383 s（不含未精确计时的 `npm ci`）。未使用 `-SkipWeights`。
 - AC4 核心结果：cargo 命令 76 passed / 0 failed / 1 ignored，exit 0；唯一忽略项为既有 `perf_chunk_request_digest_cost`。六个目标用例在本次 cargo suite 中全部 PASS。基线日志中五项是协议错误；`same_channel_concurrent_round_trips_keep_response_ownership` 原失败实际因未设置 `M2RC1_PYTHON`，非协议错误。本次显式提供 Python 3.12.3，未设置 source-root/package override。代码检查确认六个测试分别直接启动 Python 源码模块或测试 helper，故它们的 PASS 不证明由新 bundle 驱动。
 - Frozen bundle 单独直接运行 `core_service.exe`，协议 2.3 `core.ping`、`ListBooks`、`core.shutdown` 成功，exit 0。六项 cargo 用例使用 frozen EXE 的测试路径没有在当前产品代码/允许修改范围中提供；因此 AC4 的打包驱动核心条件未满足，必须在 Task 状态保持未完成。
 - 限制：完整 NSIS 安装器 / packaged HostControl GUI E2E 未运行，对应结论为 `NOT_RUN`。
 - 工作区副作用：Cargo 生成的 27 个 Tauri generated 文件仅行尾变化，已逐项从 HEAD 恢复；测试诊断 JSONL 已复制入允许的 verification 路径，原生成文件已移除。产品路径 diff 为空，见 `ac5-product-code-diff.txt`。
-- 主仓保护：主仓 HEAD 始终为 c6。构建/测试期间的 before/after 状态快照是相同 19 项，见 `main-status-comparison.md`。最终复核于 2026-10-16 16:48 观察到 22 项：原 19 项仍全部存在，另有 `doc/REBASELINE_PLAN.md`、`doc/STATUS.md` 两项 staged 修改及 `doc/tasks/UI-DESIGN-1.md` staged 新增；本 Task 未写入主仓，完整快照见 `final-main-status-observation.txt`。
-- Handoff：`doc/handoffs/ENV-BUNDLE-1-codex-ae23664a.md`。
+- 主仓保护：Task 全程只读主仓。构建/测试期间 HEAD 为 c6；before/after porcelain 快照均为相同 19 项，见 `main-status-comparison.md`。后续曾短暂观察到 22 项，随后 2026-10-16 16:52 状态回到与原快照相同的 19 项；main HEAD 已前进到 `c6f975d38842487c16491eea67a01cf134c337f8`（最新提交 `docs(UI-DESIGN-1): release AD-001 four-page UI/UX design baseline`）。这是本 Task 测试之后的外部 main 更新，须由 Coordinator 在集成后复验。时间点与状态原文见 `final-main-status-observation.txt`。
+- Handoff：`doc/handoffs/ENV-BUNDLE-1-codex-14c52c15.md`。
 - Review：待独立 review；Coordinator integration 与 integration_commit 待后续 Gate。当前 AC4 打包驱动核心条件未满足，当前状态 `in_review`，不能标为 done。
 
 ## Canonical Evidence
@@ -128,7 +128,7 @@ evidence_dir: verification/ENV-BUNDLE-1
 | E14 | AC5 | `verification/ENV-BUNDLE-1/ac5-generated-side-effects-and-restoration.txt` | `bda0c4a1476d2fc257012aa04d5e3352408228fe` | 695cc472a469250d4cff8ab1f5ce9f24c2a111d7e90cc28775e7e58afd9bf98c | CANONICAL |
 | E15 | AC7 | `verification/ENV-BUNDLE-1/main-status-comparison.md` | `bda0c4a1476d2fc257012aa04d5e3352408228fe` | f1fe4cb146081fd8fb34586886b5badf90ef4112bbade46c740abdf6bf4ee49a | CANONICAL |
 | E16 | AC7 | `verification/ENV-BUNDLE-1/resource-manifest.json` | `bda0c4a1476d2fc257012aa04d5e3352408228fe` | 8724b89255f40ff0a0081853a5a16e7115eb5db060005b69045e409ef1874793 | CANONICAL |
-| E17 | AC7 | `verification/ENV-BUNDLE-1/final-main-status-observation.txt` | `ae23664a0b6448be084b94d4d08d7ce63a2f438f` | 567c955c02e169131eff8ce97f437ca707494322ed6525ef08a33316bdf07661 | CANONICAL |
+| E17 | AC7 | `verification/ENV-BUNDLE-1/final-main-status-observation.txt` | `14c52c152b9ae058aba4ee29d55d6ed6f7ef6e0f` | 3d7860118a63d6ecc60cf65e06c4682e6cadd08204ce6bff4e0794c525f18856 | CANONICAL |
 | S01 | AC1–AC3 | `packaging/m2ac5/README.md` | `c6fda8a09c1a8248ec6617369f9fdf9e1cef79ec` | 4c40c011e26846d6cee73ace46653222304e7549d1737bb54760bd74d6612706 | SOURCE_PIN |
 | S02 | AC1 | `packaging/m2ac5/requirements-build.txt` | `c6fda8a09c1a8248ec6617369f9fdf9e1cef79ec` | c50edd6c3058197003d66049bc28662e9dc7e4175b499ffe9989ae8bca0e7a07 | SOURCE_PIN |
 | S03 | AC2 | `packaging/m2ac5/build_sidecar.ps1` | `c6fda8a09c1a8248ec6617369f9fdf9e1cef79ec` | 07e12e80ceb2a35bab96150f4530b7a788b914a2467a32056098adbb775dd30e | SOURCE_PIN |
