@@ -22,4 +22,3 @@ disk assessment: G has ample free space compared with the documented ~1.2 GB bun
 preflight estimate before full run: 1-3 hours conservatively; measured AC1 pip install 278.794 s + AC2 bundle build 395.8 s + AC3 production build 2.789 s = 677.383 s (11m17s), excluding npm ci timing which was not captured by the first logging attempt.
 
 actual observations: pip downloads completed; large-wheel progress reached about 1.1-3.9 MB/s; bundle 1.199 GiB; no disk or network blocker.
-
