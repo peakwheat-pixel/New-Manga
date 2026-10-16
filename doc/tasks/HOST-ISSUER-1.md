@@ -185,6 +185,24 @@ evidence_dir: verification/HOST-ISSUER-1
   范围严格等于 §12：`src/bootstrap/core_service.py` + `tests/core/**`），
   **其集成后**方可恢复本 Task（Coordinator 负责 merge 基线）。
 - 本 Task 分支保留不合并；未实现任何 Rust 侧改动。
+### 2026-10-16 再次恢复（Coordinator, dsh）
+
+- **第二次阻塞的根因已修复**：契约 `M2-C1` §12 只**授权**了最小 Core handler/session 改动却从未实现；
+  前置 Task **`HOST-CORE-1` 已实现并集成**（`67ee4a58`），Core 侧的 `HostControl` 接收面（独立命令集、
+  session 生命周期、三拒绝码、路由到既有私有 seam）**现已存在于本分支**（已核验：`core_service.py` 的 HostControl 实现命中 20 处；
+  `main` 已是本分支祖先）。
+- **本次 merge 的语义解析**：3 处冲突按"**保留双方全部记录**"原则处理 ——
+  `depends_on` 取 main 侧（现含 `HOST-CORE-1`）；BL-11a/BL-11b 构建前置记录取分支侧；
+  第二次阻塞与 Coordinator 失误备案取 main 侧；**残留冲突标记 0**。分支 HEAD `d5ab1e8a`。
+- **AC8 口径（不变）**：`cargo build` 通过 + **本 Task 新增 Rust 单元测试**通过；
+  6 项真实 sidecar 集成失败归因 **BL-11b**（主仓同现），**不得**计入本 Task 缺陷。
+  ⚠️ 注意：由于 **HOST-CORE-1 已把协议抬到 2.3**，bundle 与源码的协议差距**更大**，
+  故 BL-11b 的 6 项失败**预期仍在**，仍按上述口径处理。
+- **职责边界（本次修正后的正确表述）**：
+  - **Core 侧**（`src/bootstrap/core_service.py`、`tests/core/**`）= `HOST-CORE-1` 的交付，**本 Task 只读消费**；
+  - **Rust/Tauri 侧**（`apps/desktop/src-tauri/**`）= **本 Task 的实现面**（HostControl 客户端通道 +
+    四处宿主同步 + ACL/capability + key/session + Rust 单测）。
+  - 恢复 prompt 曾误写为"`src/**` 只读"从而与本 Task 的实际边界不符；**本次已更正**。
 ## Canonical Evidence
 
 | evidence_id | AC/Gate | path | commit | sha256 | class |
