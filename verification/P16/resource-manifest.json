@@ -1,0 +1,37 @@
+{
+  "schema_version": 1,
+  "task_id": "P16",
+  "generated_at": "2026-10-16T04:19:13Z",
+  "generated_by": "Codex (Task Owner)",
+  "note": "工作目录为 Git linked worktree，保留引用；本 manifest 记录资源处置，不表示 Coordinator 集成或非作者 Review 已完成。",
+  "resources": [
+    {
+      "resource_type": "worktree",
+      "source_path": "G:/CODEX/New Manga.workspace/worktrees/P16-READER-EXPORT-CORE",
+      "disposition": "PRESERVE_REFERENCED",
+      "destination_path": "G:/CODEX/New Manga.workspace/worktrees/P16-READER-EXPORT-CORE",
+      "branch": "codex/P16-reader-export-core",
+      "base_commit": "093430c75a46d28ed759ec646039bf2f55e3d429",
+      "delivery_head": "e2c07fa9b172c7a585653e376f309e3e39abd026",
+      "integration_commit": null,
+      "deleted": false,
+      "pruned": false,
+      "process_check": "保留 worktree 与 branch 供独立 Review/Coordinator 集成；主仓未写入；未删除、迁移或归档文件/目录。"
+    },
+    {
+      "resource_type": "test-env",
+      "source_path": "G:/CODEX/New Manga.task-envs/T1.1.1-impl-py312",
+      "disposition": "PRESERVE_REFERENCED",
+      "destination_path": "G:/CODEX/New Manga.task-envs/T1.1.1-impl-py312",
+      "note": "既有 Python 3.12 项目环境，仅用于 compileall/pytest；没有安装或更新依赖。",
+      "deleted": false,
+      "process_check": "只读调用既有解释器；未运行 pip。"
+    }
+  ],
+  "closeout": {
+    "deleted_count": 0,
+    "migrated_count": 0,
+    "archived_count": 0,
+    "reason_open": "Task 处于 in_review；worktree 保留供 Reviewer 和 Coordinator 使用。"
+  }
+}
