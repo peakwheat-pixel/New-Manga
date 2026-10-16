@@ -1,0 +1,18 @@
+shell=PowerShell
+python=G:/CODEX/New Manga.task-envs/T1.1.1-impl-py312/Scripts/python.exe
+command=& 'G:/CODEX/New Manga.task-envs/T1.1.1-impl-py312/Scripts/python.exe' -m pytest tests/core/test_p09_fu2_import_pages.py::test_user_source_is_core_only_and_read_only tests/core/test_p09_fu2_import_pages.py::test_directory_grant_rejects_an_outside_child_before_import tests/core/test_p09_fu2_import_pages.py::test_request_path_fallback_is_rejected_as_malformed_reference -vv -s
+--- pytest output ---
+============================= test session starts =============================
+platform win32 -- Python 3.12.3, pytest-9.1.1, pluggy-1.6.0 -- G:\CODEX\New Manga.task-envs\T1.1.1-impl-py312\Scripts\python.exe
+cachedir: .pytest_cache
+rootdir: G:\CODEX\New Manga.workspace\worktrees\P09-FU2-IMPORT-IPC-RUNTIME
+configfile: pytest.ini
+plugins: anyio-4.15.1
+collecting ... collected 3 items
+
+tests/core/test_p09_fu2_import_pages.py::test_user_source_is_core_only_and_read_only PASSED
+tests/core/test_p09_fu2_import_pages.py::test_directory_grant_rejects_an_outside_child_before_import PASSED
+tests/core/test_p09_fu2_import_pages.py::test_request_path_fallback_is_rejected_as_malformed_reference PASSED
+
+============================== 3 passed in 0.38s ==============================
+pytest_exit_code=0

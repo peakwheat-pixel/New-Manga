@@ -1,0 +1,36 @@
+{
+  "schema_version": 1,
+  "task_id": "P09-FU2",
+  "generated_at": "2026-10-16",
+  "generated_by": "Codex (Task Owner)",
+  "note": "保留当前实现 worktree 供独立 Review 与后续集成；此清单不代表 Review 或集成已完成。",
+  "resources": [
+    {
+      "resource_type": "worktree",
+      "source_path": "G:/CODEX/New Manga.workspace/worktrees/P09-FU2-IMPORT-IPC-RUNTIME",
+      "disposition": "PRESERVE_REFERENCED",
+      "destination_path": "G:/CODEX/New Manga.workspace/worktrees/P09-FU2-IMPORT-IPC-RUNTIME",
+      "branch": "codex/P09-FU2-import-ipc-runtime",
+      "base_commit": "9fe6ac5cd116474de1006b4ab4b1e5341b71cf41",
+      "integration_commit": null,
+      "deleted": false,
+      "pruned": false,
+      "process_check": "未删除、迁移、归档或 prune worktree；未写入主仓；未触碰用户数据。固定实现 head 与 Review/integration 状态见 Task 和 Handoff。"
+    },
+    {
+      "resource_type": "test-env",
+      "source_path": "G:/CODEX/New Manga.task-envs/T1.1.1-impl-py312",
+      "disposition": "PRESERVE_REFERENCED",
+      "destination_path": "G:/CODEX/New Manga.task-envs/T1.1.1-impl-py312",
+      "note": "仅调用既有 Python 3.12.3 环境运行 pytest；未安装或更新依赖。",
+      "deleted": false,
+      "process_check": "只读调用现有解释器；未运行 pip。"
+    }
+  ],
+  "closeout": {
+    "deleted_count": 0,
+    "migrated_count": 0,
+    "archived_count": 0,
+    "reason_open": "Task 等待独立 Review 与 Coordinator 集成；保留 worktree 供接收者使用。"
+  }
+}

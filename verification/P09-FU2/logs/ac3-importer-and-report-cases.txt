@@ -1,0 +1,29 @@
+shell=PowerShell
+python=G:/CODEX/New Manga.task-envs/T1.1.1-impl-py312/Scripts/python.exe
+command=& 'G:/CODEX/New Manga.task-envs/T1.1.1-impl-py312/Scripts/python.exe' -m pytest tests/core/test_p09_fu2_import_pages.py::test_stdio_import_pages_runtime_response_and_import_report tests/core/test_p09_fu2_import_pages.py::test_unicode_folder_direct_children_natural_order_and_hashes tests/core/test_p09_fu2_import_pages.py::test_duplicate_skip_and_import_as_new_report_dimensions_and_side_effects tests/core/test_p09_fu2_import_pages.py::test_pdf_import_report_has_source_hash_page_hashes_and_real_page_order tests/core/test_p09_fu2_import_pages.py::test_pdf_duplicate_report_and_import_as_new tests/core/test_p09_fu2_import_pages.py::test_pdf_interruption_reports_committed_page_and_pending_remainder tests/core/test_p09_fu2_import_pages.py::test_corrupt_sources_are_rejected_without_managed_or_library_writes tests/core/test_p09_fu2_import_pages.py::test_encrypted_pdf_is_rejected_before_any_managed_copy_or_page -vv -s
+--- pytest output ---
+============================= test session starts =============================
+platform win32 -- Python 3.12.3, pytest-9.1.1, pluggy-1.6.0 -- G:\CODEX\New Manga.task-envs\T1.1.1-impl-py312\Scripts\python.exe
+cachedir: .pytest_cache
+rootdir: G:\CODEX\New Manga.workspace\worktrees\P09-FU2-IMPORT-IPC-RUNTIME
+configfile: pytest.ini
+plugins: anyio-4.15.1
+collecting ... collected 9 items
+
+tests/core/test_p09_fu2_import_pages.py::test_stdio_import_pages_runtime_response_and_import_report protocol=2.2
+command=ImportPages
+request_payload={"chapter_id": "chapter", "sources": [{"grant_id": "f3e731c4ef62476c8a51c99199154674", "host_signature": "<test-signature-redacted>"}]}
+core_stdout={"protocol":"new-manga.core","version":{"major":2,"minor":2},"request_id":"stdio-importpages-proof","result":{"chapter_id":"chapter","duplicate_policy":"skip","cancelled":false,"sources":[{"source_index":0,"source_name":"\ud55c\uad6d\uc5b4 (\u7b2c \uff11 \u9801).png","files":[{"filename":"\ud55c\uad6d\uc5b4 (\u7b2c \uff11 \u9801).png","outcome":"imported","source_sha256":"027010dfd04f27c748ee8eecf8bc1ddd457aa6a2bdd342f251f210d55f32b90d","pages":[{"page_index":1,"outcome":"imported","page_id":"0272fbf87129459e9cdd1e20ab7c6f28","source_order":1,"sort_order":1,"sha256":"027010dfd04f27c748ee8eecf8bc1ddd457aa6a2bdd342f251f210d55f32b90d","width":31,"height":19,"duplicate":false,"error":null,"side_effects":"page_committed"}],"error":null,"side_effects":"listed_pages_committed"}]}]},"error":null}
+serve_exit_code=0
+PASSED
+tests/core/test_p09_fu2_import_pages.py::test_unicode_folder_direct_children_natural_order_and_hashes PASSED
+tests/core/test_p09_fu2_import_pages.py::test_duplicate_skip_and_import_as_new_report_dimensions_and_side_effects PASSED
+tests/core/test_p09_fu2_import_pages.py::test_pdf_import_report_has_source_hash_page_hashes_and_real_page_order PASSED
+tests/core/test_p09_fu2_import_pages.py::test_pdf_duplicate_report_and_import_as_new PASSED
+tests/core/test_p09_fu2_import_pages.py::test_pdf_interruption_reports_committed_page_and_pending_remainder PASSED
+tests/core/test_p09_fu2_import_pages.py::test_corrupt_sources_are_rejected_without_managed_or_library_writes[not an image-INVALID_IMAGE] PASSED
+tests/core/test_p09_fu2_import_pages.py::test_corrupt_sources_are_rejected_without_managed_or_library_writes[%PDF-1.4 damaged-INVALID_DOCUMENT] PASSED
+tests/core/test_p09_fu2_import_pages.py::test_encrypted_pdf_is_rejected_before_any_managed_copy_or_page PASSED
+
+============================== 9 passed in 1.72s ==============================
+pytest_exit_code=0

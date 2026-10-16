@@ -101,6 +101,7 @@ from infrastructure.sqlite.reading_export import (
 from infrastructure.export.jobs import JsonExportJobStore
 from infrastructure.export.qt_free import QtFreePdfComposer
 from infrastructure.export.target_refs import ExportTargetGrantRegistry
+from infrastructure.resource_channel.import_source_refs import ImportSourceGrantRegistry
 from infrastructure.sqlite.regions import SqliteRegionRepository
 from infrastructure.sqlite.schema import default_migrations
 from infrastructure.transport.stdlib import StdlibTransport
@@ -630,6 +631,9 @@ class CoreServices:
     export_history_store: object = None
     export_job_store: object = None
     export_target_refs: object = None
+    image_decoder: object = None
+    document_raster: object = None
+    import_source_refs: object = None
 
 
 def _resolve_detector_weights_path(
@@ -855,8 +859,9 @@ def assemble_core_services(
         # PDFium; picture MOBI (user-approved dependency mobi==0.4.1) goes
         # through its own adapter behind the same port. Text-only and
         # DRM-protected MOBI fail typed at the adapter.
+        document_raster = PdfiumDocumentRaster()
         document_importer = ImportDocumentsUseCase(
-            PdfiumDocumentRaster(),
+            document_raster,
             copy_store,
             repository,
         )
@@ -1250,6 +1255,9 @@ def assemble_core_services(
             export_history_store=export_history_store,
             export_job_store=export_job_store,
             export_target_refs=export_target_refs,
+            image_decoder=image_decoder,
+            document_raster=document_raster,
+            import_source_refs=ImportSourceGrantRegistry(),
         )
     except Exception:
         conn.close()

@@ -96,6 +96,7 @@ import io
 import json
 import os
 from pathlib import Path
+import re
 import sqlite3
 import sys
 import threading
@@ -110,7 +111,10 @@ from application.editing.errors import (
     RegionRevisionChanged,
     RegionRevisionNotFound,
 )
-from application.importing.images.ports import DecodedImage
+from application.importing.documents.ports import DocumentDecodeError
+from application.importing.images.ports import DecodedImage, ImportSource
+from application.importing.images.service import DuplicatePolicy
+from application.resource_channel.dto import TypedResourceChannelError
 from application.settings.errors import BindingValidationError
 from application.export import ExportFormat, ExportPage, ExportRequest, P16ExportRuntime, StalePolicy
 from application.export.service import OverwritePolicy
@@ -174,8 +178,8 @@ PROTOCOL_MAJOR = 2
 # list_chapter_pages commands added; same backwards-compatible widening
 # precedent -- pre-existing command semantics unchanged. Contract: M2-C1
 # rev 1.8 §5).
-# P16-C1 rev 2.1 added the Reader/Export commands and events.
-PROTOCOL_MINOR = 1
+# P16-C1 rev 2.1 added Reader/Export; P12-C1 rev 2.2 adds ImportPages.
+PROTOCOL_MINOR = 2
 _RUN_COMMANDS = frozenset({
     "StartRun", "ControlRun", "ResumeBlockedRun", "GetRunSnapshot",
     "GetTaskProjection", "RetryFailedTargets",
@@ -440,6 +444,98 @@ def _export_ref_error_envelope(code: str) -> dict[str, Any]:
     )
 
 
+_IMPORT_ERROR_CATEGORIES = {
+    "SOURCE_READ_FAILED": "unavailable",
+    "INVALID_IMAGE": "validation",
+    "INVALID_DOCUMENT": "validation",
+    "ENCRYPTED": "validation",
+    "UNSUPPORTED_FORMAT": "validation",
+    "MISSING_DEPENDENCY": "unavailable",
+    "COPY_FAILED": "internal",
+    "INVALID_REQUEST": "validation",
+    "TARGET_NOT_FOUND": "not_found",
+    "REF_MALFORMED": "validation",
+    "REF_SIGNATURE_INVALID": "validation",
+    "REF_SCOPE_DENIED": "validation",
+    "REF_OUT_OF_SCOPE": "validation",
+    "REF_REPARSE_POINT": "validation",
+    "REF_EXPIRED": "conflict",
+    "REF_REVOKED": "conflict",
+    "REF_ALREADY_CONSUMED": "conflict",
+    "REF_UNKNOWN_ID": "not_found",
+    "REF_NOT_FOUND": "not_found",
+    "FILE_IDENTITY_CHANGED": "conflict",
+    "FILE_SIZE_CHANGED": "conflict",
+    "CONTENT_DIGEST_MISMATCH": "conflict",
+    "UNKNOWN": "unknown",
+}
+
+
+def _import_item_error(code: str) -> dict[str, Any]:
+    category = _IMPORT_ERROR_CATEGORIES.get(code, "unknown")
+    retryable: bool | str = True if code in {
+        "SOURCE_READ_FAILED", "MISSING_DEPENDENCY", "COPY_FAILED"
+    } else False if category != "unknown" else "unknown"
+    return {
+        "code": code,
+        "category": category,
+        "message": "Import item could not be processed",
+        "retryable": retryable,
+    }
+
+
+def _import_ref_error_envelope(code: str) -> dict[str, Any]:
+    category = _IMPORT_ERROR_CATEGORIES.get(code, "unknown")
+    return make_error_envelope(
+        code, category, "Import source reference was rejected", retryable=False
+    )
+
+
+def _import_page_result(
+    page_index: int,
+    outcome: str,
+    *,
+    page=None,
+    sha256: str | None = None,
+    width: int | None = None,
+    height: int | None = None,
+    duplicate: bool = False,
+    error: dict[str, Any] | None = None,
+    side_effects: str = "none",
+) -> dict[str, Any]:
+    return {
+        "page_index": page_index,
+        "outcome": outcome,
+        "page_id": page.page_id if page is not None else None,
+        "source_order": page.source_order if page is not None else None,
+        "sort_order": page.sort_order if page is not None else None,
+        "sha256": page.source_hash if page is not None else sha256,
+        "width": page.width if page is not None else width,
+        "height": page.height if page is not None else height,
+        "duplicate": bool(duplicate),
+        "error": error,
+        "side_effects": side_effects,
+    }
+
+
+def _document_import_page_index(filename: str, source_filename: str) -> int | None:
+    prefix = f"{Path(source_filename).stem}-page-"
+    name = Path(filename).name
+    if not name.startswith(prefix) or not name.lower().endswith(".png"):
+        return None
+    suffix = name[len(prefix):-4]
+    return int(suffix) if suffix.isdigit() else None
+
+
+def _pending_document_pages(pending: list[str]) -> set[int]:
+    result: set[int] = set()
+    for label in pending:
+        match = re.search(r"\(page (\d+)\+\)$", label)
+        if match:
+            result.add(int(match.group(1)))
+    return result
+
+
 _scheduler_paths_lock = threading.Lock()
 _scheduler_paths_owned: set[str] = set()
 
@@ -526,6 +622,7 @@ class CoreServiceServer:
         stdout: TextIO | None = None,
         render_previews: RenderPreviewPublisher | None = None,
         producer_root: Path | None = None,
+        import_cancelled: Callable[[], bool] | None = None,
     ) -> None:
         self._core = core
         self._stdin = stdin or sys.stdin
@@ -535,6 +632,7 @@ class CoreServiceServer:
         # legacy behaviour -- previews publish catalog-only, never reclaimable.
         self._producer_root = str(producer_root.resolve()) if producer_root else None
         self._render_previews = render_previews
+        self._import_cancelled = import_cancelled or (lambda: False)
         self._write_lock = threading.Lock()
         self._projection_lock = threading.Lock()
         self._projection_cache: dict[str, tuple[float, dict[str, Any]]] = {}
@@ -1414,6 +1512,314 @@ class CoreServiceServer:
         self._core.export_target_refs.revoke(payload["grant_id"])
         return {"revoked": True}
 
+    def _register_import_source(self, payload: dict[str, Any]) -> dict[str, Any]:
+        fields = {
+            "grant_id", "session_id", "scope_class", "operation", "access",
+            "source_path", "source_kind", "scope_identity", "entries",
+            "expires_at", "signing_key", "signature",
+        }
+        if set(payload) != fields:
+            raise TypedResourceChannelError("REF_MALFORMED")
+        registry = getattr(self._core, "import_source_refs", None)
+        if registry is None:
+            raise TypedResourceChannelError("REF_SIGNATURE_INVALID")
+        try:
+            key_text = payload["signing_key"]
+            if not isinstance(key_text, str):
+                raise ValueError("invalid host key")
+            signing_key = base64.urlsafe_b64decode(key_text + "=" * (-len(key_text) % 4))
+            registry.register(
+                grant_id=payload["grant_id"],
+                session_id=payload["session_id"],
+                scope_class=payload["scope_class"],
+                operation=payload["operation"],
+                access=payload["access"],
+                source_path=payload["source_path"],
+                source_kind=payload["source_kind"],
+                scope_identity=payload["scope_identity"],
+                entries=payload["entries"],
+                expires_at=payload["expires_at"],
+                signing_key=signing_key,
+                signature=payload["signature"],
+            )
+        except TypedResourceChannelError:
+            raise
+        except Exception as error:
+            raise TypedResourceChannelError("REF_MALFORMED") from error
+        return {"registered": True}
+
+    def _revoke_import_source(self, payload: dict[str, Any]) -> dict[str, Any]:
+        if set(payload) != {"grant_id"} or not isinstance(payload.get("grant_id"), str):
+            raise TypedResourceChannelError("REF_MALFORMED")
+        registry = getattr(self._core, "import_source_refs", None)
+        if registry is None:
+            raise TypedResourceChannelError("REF_UNKNOWN_ID")
+        registry.revoke(payload["grant_id"])
+        return {"revoked": True}
+
+    def handle_import_pages(self, payload: dict[str, Any]) -> dict[str, Any]:
+        required = {"chapter_id", "sources"}
+        if (
+            not required.issubset(payload)
+            or set(payload) - required - {"duplicate_policy"}
+        ):
+            raise P16WireError("INVALID_REQUEST", "validation", "Import request is invalid")
+        chapter_id = payload["chapter_id"]
+        sources = payload["sources"]
+        duplicate_policy = payload.get("duplicate_policy", DuplicatePolicy.SKIP)
+        if (
+            not isinstance(chapter_id, str) or not chapter_id
+            or not isinstance(sources, list) or not sources
+            or duplicate_policy not in (
+                DuplicatePolicy.SKIP, DuplicatePolicy.IMPORT_AS_NEW
+            )
+        ):
+            raise P16WireError("INVALID_REQUEST", "validation", "Import request is invalid")
+        if self._core.repository.get_chapter(chapter_id) is None:
+            raise P16WireError("TARGET_NOT_FOUND", "not_found", "Import chapter was not found")
+        registry = getattr(self._core, "import_source_refs", None)
+        if registry is None:
+            raise TypedResourceChannelError("REF_SIGNATURE_INVALID")
+
+        selections = registry.resolve_many(sources)
+        source_results: list[dict[str, Any]] = []
+        cancelled = False
+        try:
+            for selection in selections:
+                file_results = []
+                for source_file in selection.files:
+                    try:
+                        should_cancel = bool(self._import_cancelled())
+                    except Exception:
+                        should_cancel = True
+                    if should_cancel:
+                        cancelled = True
+                        file_results.append({
+                            "filename": source_file.filename,
+                            "outcome": "pending",
+                            "source_sha256": None,
+                            "pages": [],
+                            "error": None,
+                            "side_effects": "none",
+                        })
+                        continue
+                    result = self._import_one_file(
+                        chapter_id, source_file, duplicate_policy
+                    )
+                    cancelled = cancelled or result.pop("_cancelled")
+                    file_results.append(result)
+                    source_file.release_data()
+                source_results.append({
+                    "source_index": selection.source_index,
+                    "source_name": selection.source_name,
+                    "files": file_results,
+                })
+        finally:
+            for selection in selections:
+                selection.close()
+        return {
+            "chapter_id": chapter_id,
+            "duplicate_policy": duplicate_policy,
+            "cancelled": cancelled,
+            "sources": source_results,
+        }
+
+    def _import_one_file(
+        self, chapter_id: str, source_file, duplicate_policy: str
+    ) -> dict[str, Any]:
+        filename = source_file.filename
+        is_pdf = Path(filename).suffix.lower() == ".pdf"
+        page_ids_before = {
+            page.page_id for page in self._core.repository.list_pages(chapter_id)
+        }
+        existing_hashes = self._core.repository.existing_source_hashes(chapter_id)
+        source = ImportSource(filename, source_file.read)
+        try:
+            if is_pdf:
+                report = self._core.document_importer.import_documents(
+                    chapter_id, [source], duplicate_policy=duplicate_policy,
+                    cancelled=self._import_cancelled,
+                )
+                return self._pdf_import_result(
+                    source_file, report, existing_hashes, duplicate_policy
+                )
+            report = self._core.importer.import_files(
+                chapter_id, [source], duplicate_policy=duplicate_policy,
+                cancelled=self._import_cancelled,
+            )
+            return self._image_import_result(
+                source_file, report, existing_hashes
+            )
+        except Exception:
+            committed = [
+                page for page in self._core.repository.list_pages(chapter_id)
+                if page.page_id not in page_ids_before
+                and page.source_filename == filename
+            ]
+            pages = [
+                _import_page_result(
+                    index, "imported", page=page,
+                    duplicate=page.source_hash in existing_hashes,
+                    side_effects="page_committed",
+                )
+                for index, page in enumerate(
+                    sorted(committed, key=lambda item: item.source_order), 1
+                )
+            ]
+            return {
+                "filename": filename,
+                "outcome": "partial" if pages else "rejected",
+                "source_sha256": source_file.facts.sha256 if source_file.data is not None else None,
+                "pages": pages,
+                "error": _import_item_error("UNKNOWN"),
+                "side_effects": "managed_orphan_possible",
+                "_cancelled": False,
+            }
+
+    def _image_import_result(self, source_file, report, existing_hashes: set[str]) -> dict[str, Any]:
+        data = source_file.data
+        source_sha = source_file.facts.sha256 if data is not None else None
+        imported = list(report.imported)
+        failed = list(report.failed)
+        skipped = list(report.skipped_duplicates)
+        pending = list(report.pending)
+        pages = []
+        seen_hashes = set(existing_hashes)
+        for item in imported:
+            page = item.page
+            duplicate = page.source_hash in seen_hashes
+            seen_hashes.add(page.source_hash)
+            pages.append(_import_page_result(
+                1, "imported", page=page, duplicate=duplicate,
+                side_effects="page_committed",
+            ))
+        if skipped:
+            try:
+                decoded = self._core.image_decoder.decode(data) if data is not None else None
+            except Exception:
+                decoded = None
+            pages.append(_import_page_result(
+                1, "skipped_duplicate", sha256=source_sha,
+                width=decoded.width if decoded else None,
+                height=decoded.height if decoded else None,
+                duplicate=True,
+            ))
+        error = _import_item_error(failed[0].reason) if failed else None
+        if pending:
+            pages.append(_import_page_result(1, "pending"))
+        outcome = (
+            "imported" if imported and not (failed or pending or skipped)
+            else "partial" if imported
+            else "skipped" if skipped
+            else "pending" if pending
+            else "rejected"
+        )
+        return {
+            "filename": source_file.filename,
+            "outcome": outcome,
+            "source_sha256": source_sha,
+            "pages": pages,
+            "error": error,
+            "side_effects": "listed_pages_committed" if imported else "none",
+            "_cancelled": bool(report.cancelled),
+        }
+
+    def _pdf_import_result(
+        self, source_file, report, existing_hashes: set[str], duplicate_policy: str
+    ) -> dict[str, Any]:
+        filename = source_file.filename
+        data = source_file.data
+        source_sha = source_file.facts.sha256 if data is not None else None
+        failed = list(report.failed)
+        imported = {
+            _document_import_page_index(item.filename, filename): item.page
+            for item in report.imported
+        }
+        imported.pop(None, None)
+        pending_indexes = _pending_document_pages(list(report.pending))
+        pages = []
+        rendered_handle = None
+        total = 0
+        try:
+            if data is not None:
+                rendered_handle = self._core.document_raster.open(data)
+                total = rendered_handle.page_count
+            seen_hashes = set(existing_hashes)
+            error_index_assigned = False
+            for page_index in range(1, total + 1):
+                page = imported.get(page_index)
+                if page is not None:
+                    duplicate = page.source_hash in seen_hashes
+                    seen_hashes.add(page.source_hash)
+                    pages.append(_import_page_result(
+                        page_index, "imported", page=page, duplicate=duplicate,
+                        side_effects="page_committed",
+                    ))
+                    continue
+                try:
+                    rendered = rendered_handle.render_page(page_index - 1)
+                    page_hash = hashlib.sha256(rendered.png).hexdigest()
+                    duplicate = page_hash in seen_hashes
+                    seen_hashes.add(page_hash)
+                except DocumentDecodeError as error:
+                    pages.append(_import_page_result(
+                        page_index, "rejected", error=_import_item_error(error.reason)
+                    ))
+                    continue
+                if page_index in pending_indexes:
+                    pages.append(_import_page_result(page_index, "pending"))
+                elif duplicate and duplicate_policy == DuplicatePolicy.SKIP:
+                    pages.append(_import_page_result(
+                        page_index, "skipped_duplicate", sha256=page_hash,
+                        width=rendered.width, height=rendered.height, duplicate=True,
+                    ))
+                elif failed and not error_index_assigned:
+                    pages.append(_import_page_result(
+                        page_index, "rejected", sha256=page_hash,
+                        width=rendered.width, height=rendered.height,
+                        duplicate=duplicate, error=_import_item_error(failed[0].reason),
+                    ))
+                    error_index_assigned = True
+                else:
+                    pages.append(_import_page_result(
+                        page_index, "rejected", sha256=page_hash,
+                        width=rendered.width, height=rendered.height,
+                        duplicate=duplicate, error=_import_item_error("UNKNOWN"),
+                    ))
+        except DocumentDecodeError:
+            pages = []
+        finally:
+            if rendered_handle is not None:
+                rendered_handle.close()
+
+        error = _import_item_error(failed[0].reason) if failed else None
+        imported_count = sum(page["outcome"] == "imported" for page in pages)
+        if pages and all(page["outcome"] == "imported" for page in pages):
+            outcome = "imported"
+        elif pages and all(page["outcome"] == "skipped_duplicate" for page in pages):
+            outcome = "skipped"
+        elif pages and all(page["outcome"] == "pending" for page in pages):
+            outcome = "pending"
+        elif imported_count:
+            outcome = "partial"
+        elif any(page["outcome"] == "rejected" for page in pages) or error:
+            outcome = "rejected"
+        elif pages:
+            outcome = "partial"
+        else:
+            outcome = "pending" if report.cancelled else "rejected"
+        return {
+            "filename": filename,
+            "outcome": outcome,
+            "source_sha256": source_sha,
+            "pages": pages,
+            "error": error,
+            "side_effects": (
+                "listed_pages_committed" if imported_count else "none"
+            ),
+            "_cancelled": bool(report.cancelled),
+        }
+
     def handle_start_export(self, payload: dict[str, Any]) -> dict[str, Any]:
         required = {"book_id", "chapter_ids", "ordered_page_ids", "format", "format_options", "stale_policy", "target_ref"}
         if set(payload) != required:
@@ -1957,6 +2363,35 @@ class CoreServiceServer:
                 },
                 False,
             )
+
+        if command == "ImportPages":
+            try:
+                if not isinstance(raw_payload, dict):
+                    raise P16WireError(
+                        "INVALID_REQUEST", "validation", "Request payload must be an object"
+                    )
+                result = self.handle_import_pages(payload)
+                error = None
+            except P16WireError as caught:
+                result = None
+                error = make_error_envelope(
+                    caught.code, caught.category, str(caught), retryable=False
+                )
+            except TypedResourceChannelError as caught:
+                result = None
+                error = _import_ref_error_envelope(caught.code)
+            except Exception:
+                result = None
+                error = make_error_envelope(
+                    "UNKNOWN", "internal", "Import operation failed", retryable=False
+                )
+            return ({
+                "protocol": PROTOCOL_NAME,
+                "version": {"major": PROTOCOL_MAJOR, "minor": PROTOCOL_MINOR},
+                "request_id": request_id,
+                "result": result,
+                "error": error,
+            }, False)
 
         if command in ("GetReaderProjection", "SaveReadingProgress", "StartExport",
                        "GetExportSnapshot", "GetExportHistory", "CancelExport"):
