@@ -1,0 +1,33 @@
+================================================================================
+P17 Boundary & Discipline Audit (AD-001 §4 / AC2, AC3, AC4)
+Date: 2026-10-16
+Worktree: G:\CODEX\New Manga.workspace\worktrees\P17
+Branch: agent/antigravity/P17
+Target: apps/desktop/frontend/src/reader/**
+================================================================================
+
+1. Export Panel Boundary (W21-W25, G20):
+- Result: 0 matches for ExportDialog, StartExport, cancel_export, get_export_*, open_folder, reveal.
+- Verdict: PASS. Export panel and reveal commands are strictly preserved for P14 Workbench; NOT implemented or duplicated in P17 Reader.
+
+2. Filesystem Path Safety (Contract M2-C1 §6.3, §10.2):
+- Result: 0 instances of OS filesystem paths in DTOs, components, error envelopes, or props.
+- All page images resolved strictly via `resolve_page_resource` and §10 ResourceChannelClient (`issue_resource_url` -> `m2res` chunks -> Blob).
+- Verdict: PASS.
+
+3. Direct Database / Python Model Boundary (AD-001 §0):
+- Result: 0 direct SQLite, IPC bypass, or raw model weight calls from WebView.
+- All communications travel via typed Tauri IPC commands `library_get_reader_projection` and `library_save_reading_progress`.
+- Verdict: PASS.
+
+4. Translation Fallback & Null Representation (M2-C1 §6.3):
+- Missing translation represented as `null`, falling back to original image with explicit `badge-missing-translation` ("未翻译 (回退原文)").
+- No fabricated references or path fallbacks.
+- Verdict: PASS.
+
+5. ReadingProgressChanged Event Discipline (AC3):
+- Listener registered for `core:ReadingProgressChanged`.
+- On event receipt, triggers `getReaderProjection` re-query snapshot; NEVER drives reader position directly from payload.
+- Verdict: PASS.
+
+AUDIT STATUS: ALL CHECKS PASSED (0 VIOLATIONS)
