@@ -3,19 +3,19 @@ id: EVENTS-FWD-1
 title: 冻结并实现 host→WebView 事件转发面（解 UI-DESIGN-1 的 G17；P14 前置）
 kind: feature
 governance_version: 2
-status: ready
+status: done
 approval: coordinator_release_20261016_confirmed_gap_g17
 suggested_owner: Codex
 owner: Antigravity
-reviewer: null
+reviewer: dsh
 depends_on: [P13-C1, HOST-ISSUER-1-C1, UI-DESIGN-1]
 base_commit: 6c28a02e9
 branch: agent/antigravity/EVENTS-FWD-1
 worktree: G:/CODEX/New Manga.workspace/worktrees/EVENTS-FWD-1
-integration_commit: null
-delivery_head: 6229e230fefe209f35bda0e79d12229a8b18f256
-canonical_evidence_status: pending
-resource_closeout_status: pending
+integration_commit: 22920f8dbbfc076e0cbeaadbf1cc8852c5790d0b
+delivery_head: 5f1d9870ea87361255589719cd66fa392238504f
+canonical_evidence_status: complete
+resource_closeout_status: complete
 evidence_dir: verification/EVENTS-FWD-1
 ---
 
@@ -114,14 +114,16 @@ evidence_dir: verification/EVENTS-FWD-1
 
 | evidence_id | AC/Gate | path（仓库相对路径或绝对路径） | commit | sha256 | class (`CANONICAL` / `SOURCE_PIN`) |
 |---|---|---|---|---|---|
-| EVID-FWD-COMPAT | AC1 | `verification/EVENTS-FWD-1/compatibility-impact.md` | `6229e230f` | `57f5adba839fdc4d3c9fded5724b16cbf9bec3d3b54b6b7c300c8998ec6fae5b` | `CANONICAL` |
+| EVID-FWD-COMPAT | AC1 | `verification/EVENTS-FWD-1/compatibility-impact.md` | `6229e230f` | `7c8597150e339f42c6dbbe9933f739fb4e8f6b672ab9abeed6678a3dc2c32aad` | `CANONICAL` |
 | EVID-FWD-PYTHON | AC6 | `verification/EVENTS-FWD-1/python-tests.log` | `6229e230f` | `2a004dee4d7b565c1e5e57e4efa377f87e3503972cd423ca5e5fc8d640d344fd` | `CANONICAL` |
 | EVID-FWD-RUST-UNIT | AC2/AC6 | `verification/EVENTS-FWD-1/cargo-tests.log` | `6229e230f` | `3e93cf4a01be9f1872cde0091b5d5cfa925c376c8ee4237c788bc79fe82e2aa8` | `CANONICAL` |
 | EVID-FWD-CONCURRENT | AC2/AC6 | `verification/EVENTS-FWD-1/concurrent-roundtrips.log` | `6229e230f` | `64906757c7b74900fb49b4750d74b4ad9373bfb23fdde0a08040d5aa32161c1d` | `CANONICAL` |
 | EVID-FWD-PACKAGED | AC4/AC6 | `verification/EVENTS-FWD-1/packaged-sidecar-tests.log` | `6229e230f` | `4c91aeeaa2fddc2fdcc684c28e4e7f35a94e882b6a2ef042228b28e6bb2b1942` | `CANONICAL` |
-| EVID-FWD-LAYERING | AC4 | `verification/EVENTS-FWD-1/evidence-layering.md` | `6229e230f` | `8bcf9d24b9c054592f35af88aae0e335e879ad068695550df56abc0e0dce71f5` | `CANONICAL` |
+| EVID-FWD-LAYERING | AC4 | `verification/EVENTS-FWD-1/evidence-layering.md` | `6229e230f` | `ffb5c140c655d6d51b9b8fefa4660f9cb14937782a454388e2c348a8ad020134` | `CANONICAL` |
 | EVID-FWD-FE-TEST | AC3/AC6 | `verification/EVENTS-FWD-1/frontend-tests.log` | `6229e230f` | `899450ef31c8899727ca0eb02446e5dbabf1f6c7379f61545889cc381aff98ae` | `CANONICAL` |
 | EVID-FWD-FE-BUILD | AC3/AC6 | `verification/EVENTS-FWD-1/frontend-build.log` | `6229e230f` | `9d3ea38314dc7aa2d517f54bfd31ef89a01bd1e2539ce939fa17e8979700f22e` | `CANONICAL` |
+
+| EVID-FWD-REVIEW | AC1-AC7 | `verification/EVENTS-FWD-1/dsh-review-r1.md` | `b0432a89f` | - | REVIEW |
 
 ## Resource Manifest
 
@@ -131,9 +133,12 @@ evidence_dir: verification/EVENTS-FWD-1
 
 ## Closeout Record
 
-- Closeout date / Codex：待独立 Review 后由 Integrator / Codex 裁决关闭。
-- canonical_evidence_status：`verified`（所有 8 项证据已落盘并计算 sha256）。
-- resource_closeout_status：`pending`（工作树保留供 Review）。
-- 删除、迁移、归档数量/字节数：0。
-- 未关闭项及保留原因：等待独立 Review。
-- 当前指针清理：`STATUS` / `REBASELINE_PLAN` 在集成时同步。
+- Closeout date / Coordinator：2026-10-16（dsh, epoch 6）。Reviewer=dsh（独立于 Owner=Antigravity）。
+- canonical_evidence_status：`complete`。8 个原始证据 pin 已**逐个复算**：**6 个一致**；`compatibility-impact.md` 与 `evidence-layering.md` 的 owner pin **与磁盘文件不符**（owner 计算 pin 后文件又有落盘变化），closeout 按实际文件复算并**更正 pin**（这是"证据 pin 以实测为准"的处置，非返修项；治理检查器对 `done` 会同时校验 commit 含路径与 sha256 匹配）。
+- resource_closeout_status：`complete`（worktree `PRESERVE_REFERENCED`）。删除、迁移、归档数量/字节数：0。
+- 交付：`done`。集成 `22920f8dbbfc076e0cbeaadbf1cc8852c5790d0b`；delivery_head（分支实际 HEAD）`5f1d9870ea87361255589719cd66fa392238504f`（owner 记录的 `6229e230f` 为 amend 前的陈旧值，按 BL-7 以实测为准）。
+- Review：R1 初判 `changes_requested`（唯一 I1 = 共享契约重复 h1 与冲突的当前修订声明）→ 返修 `6229e230f` → 复核 **I1 CONVERGED** → 判定 **approved**。
+- 集成冲突与解析：与 HOST-TTL-BOUNDARY-1 在 `packaged_sidecar_tests.rs` 末尾同时追加测试 → 合并时**语义级**解析，**两侧测试全部保留**；合并后重跑 frozen 2.3 打包套件 **9 passed / 0 failed**（TTL 两个往返测试 + 本 Task 的 event sink 测试均通过），证明解析未丢失任一侧功能。
+- **未关闭项及保留原因**：AC4 的端到端触发如实为 `BLOCKED_ON_TRIGGER_COMMAND` —— 当时生产命令面**没有任何命令可启动 Pipeline Run**（该缺口已由 [RUN-IPC-1](RUN-IPC-1.md) 释放修复）。因此本 Task **不声称**已验证真实事件从 Core 经 host 到达 WebView；已提供四层分层证据（安全投影过滤 / stdio 多路复用旁路无干扰 / 真实 bundle 运行时 / 前端类型解包）。**P14 接入 `StartRun` 后须补做该端到端段。**
+- 同类教训：owner 三次出现"记录自身 commit SHA 后再 amend"导致 `delivery_head` 陈旧 → 已登记 **BL-15**（Handoff 不应自引用将产生的 SHA，或由 Coordinator 在 closeout 冻结）。
+- 当前指针清理：`STATUS` / `REBASELINE_PLAN` 已同步（EVENTS-FWD-1 移出 READY；**P14 前置仅剩 RUN-IPC-1**）。
