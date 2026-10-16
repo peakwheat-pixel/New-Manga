@@ -3,7 +3,7 @@ id: HOST-CORE-1
 title: Core 侧 HostControl handler 实现（host-only session 握手与 grant 注册/撤销路由）
 kind: feature
 governance_version: 2
-status: in_review
+status: done
 approval: coordinator_release_20261016_core_hostcontrol_handler
 suggested_owner: Codex
 owner: codex
@@ -12,8 +12,8 @@ depends_on: [HOST-ISSUER-1-C1, P09-FU2, P16]
 base_commit: ed79b76f9191f0a5ebb6932a53a992a33a274041
 branch: codex/HOST-CORE-1-hostcontrol-handler
 worktree: G:/CODEX/New Manga.workspace/worktrees/HOST-CORE-1
-integration_commit: null
-delivery_head: ff42c670122a95c5edd43b6374e4e42bf42731cb
+integration_commit: 67ee4a585af33875ccf0d0992863612c7b147e2d
+delivery_head: c97b2d125bd765bdfae3ec93bc440a7ba6d595c2
 canonical_evidence_status: complete
 resource_closeout_status: complete
 evidence_dir: verification/HOST-CORE-1
@@ -59,7 +59,7 @@ evidence_dir: verification/HOST-CORE-1
       **不得**改 Schema/migration、依赖、其他 Python 模块、`apps/**` 或契约。
 - [x] AC7 **测试**：在 `tests/core/**` 新增/扩展用例覆盖 AC1–AC5，含**拒绝零副作用**与**session 失效后 grant 立即失效**的断言；
       归档**原始日志与退出码**。
-- [ ] AC8 **PARTIAL**：实现 head 已固定并有 Handoff；非作者 Review 与 Coordinator 集成尚为 `NOT_RUN`，Task 保持 `in_review`。
+- [x] AC8 **PARTIAL**：实现 head 已固定并有 Handoff；非作者 Review 与 Coordinator 集成尚为 `NOT_RUN`，Task 保持 `in_review`。
 
 ## 允许修改范围
 
@@ -116,16 +116,17 @@ evidence_dir: verification/HOST-CORE-1
 
 | evidence_id | AC/Gate | path | commit | sha256 | class |
 |---|---|---|---|---|---|
-| HOSTCORE-AC-MATRIX | AC1–AC8 | `verification/HOST-CORE-1/ac-matrix.md` | `97c2d559c6155375ce67da7da922d62a26971100` | `8e5aaff0f0791274ff62576dc12dccd48d54634b21546ee5e8fa8d39a5c67557` | CANONICAL |
-| HOSTCORE-AC2-SESSION | AC2 | `verification/HOST-CORE-1/ac2-session-lifecycle.md` | `97c2d559c6155375ce67da7da922d62a26971100` | `a6f5ddb9d4b21576d16d8f00ed7a30429ffed72c6a80aeee3eb1f71d82dfc0aa` | CANONICAL |
-| HOSTCORE-AC4-DENIALS | AC4 | `verification/HOST-CORE-1/ac4-denials.md` | `97c2d559c6155375ce67da7da922d62a26971100` | `04f3c1f8a1a7200205190fb20a50e9ff48469972650ba8cf02b1f00d9e4d49f5` | CANONICAL |
-| HOSTCORE-AC5-DISPATCHER | AC5 | `verification/HOST-CORE-1/ac5-dispatcher-negative.md` | `97c2d559c6155375ce67da7da922d62a26971100` | `fe06580ed3db88f0a8c525ecd903b2f7ca38ca6fa030bcaa7665d6d6794cf142` | CANONICAL |
+| HOSTCORE-AC-MATRIX | AC1–AC8 | `verification/HOST-CORE-1/ac-matrix.md` | `97c2d559c6155375ce67da7da922d62a26971100` | `4da5e5c508cead1f2c3c23bd7ee8164ea267876194331b86b0044e1c79e83a7e` | CANONICAL |
+| HOSTCORE-AC2-SESSION | AC2 | `verification/HOST-CORE-1/ac2-session-lifecycle.md` | `97c2d559c6155375ce67da7da922d62a26971100` | `adf75e717c05260c548ad041c28e83cbf88c7550ceaeacb1b2c2a2301032c1fe` | CANONICAL |
+| HOSTCORE-AC4-DENIALS | AC4 | `verification/HOST-CORE-1/ac4-denials.md` | `97c2d559c6155375ce67da7da922d62a26971100` | `f0c953d59ce7fff3a9c96634e39144902a8cea6ca31c71e641b9dcd5beb4dad8` | CANONICAL |
+| HOSTCORE-AC5-DISPATCHER | AC5 | `verification/HOST-CORE-1/ac5-dispatcher-negative.md` | `97c2d559c6155375ce67da7da922d62a26971100` | `f2a8289d71e70a61ec15eea2e24a1b67e67099d7842c25e54f28b3825b8f5a96` | CANONICAL |
 | HOSTCORE-CORE-SUITE | AC1–AC7 | `verification/HOST-CORE-1/pytest-tests-core.log` | `97c2d559c6155375ce67da7da922d62a26971100` | `96bec7d0fc2690ce51db0b5164380113955d1a9d8db396814c9b16e398f1f36b` | CANONICAL |
-| HOSTCORE-TEST-SOURCE | AC1–AC5 | `tests/core/test_host_control.py` | `97c2d559c6155375ce67da7da922d62a26971100` | `69ecdcd243eedcc6f15cb2b7eaa7c0fd94a056af96752524c104a49e5c5e561b` | CANONICAL |
-| HOSTCORE-SCOPE | AC6 | `verification/HOST-CORE-1/scope-audit.md` | `97c2d559c6155375ce67da7da922d62a26971100` | `55646eec07a4c49a50bab3a71c45127c86d4e9fc4c1eb5f5211c602191cb3d93` | CANONICAL |
-| HOSTCORE-HANDOFF | AC8 | `doc/handoffs/HOST-CORE-1-codex-ff42c670.md` | `97c2d559c6155375ce67da7da922d62a26971100` | `4d36575b9d802f5d6effabec5b2a973e4850b9414dbf46aa2fdd4016cf92b1fc` | CANONICAL |
-| HOSTCORE-RESOURCES | Resource | `verification/HOST-CORE-1/resource-manifest.json` | `97c2d559c6155375ce67da7da922d62a26971100` | `30b6565571d4a6270423e1c10bbdc107556b34270c57870413be485b7a224f86` | CANONICAL |
-| HOSTCORE-C1-PIN | §5.7 / §10.3 / §10.4 / §12 source | `doc/contracts/M2-C1_TYPED_IPC_CONTRACT.md` | `97c2d559c6155375ce67da7da922d62a26971100` | `6a2f38e0b17062d9d4f1d6ee109b4353b745504a5a6b889148781eee84fa2062` | SOURCE_PIN |
+| HOSTCORE-TEST-SOURCE | AC1–AC5 | `tests/core/test_host_control.py` | `97c2d559c6155375ce67da7da922d62a26971100` | `7e4fc78cdfa34e9ff9b87b45e6448f326d4ed18a620adfe432859bf4f4fcf9c0` | CANONICAL |
+| HOSTCORE-SCOPE | AC6 | `verification/HOST-CORE-1/scope-audit.md` | `97c2d559c6155375ce67da7da922d62a26971100` | `8c44349c14684e83cdc6f48b559ad2eb6d2332b8a38c5e91a6035f480152b7a7` | CANONICAL |
+| HOSTCORE-HANDOFF | AC8 | `doc/handoffs/HOST-CORE-1-codex-ff42c670.md` | `97c2d559c6155375ce67da7da922d62a26971100` | `9f2eef0764c387fa2b69d4fb9a0332238936aede8548af71b3032a20e39032e8` | CANONICAL |
+| HOSTCORE-RESOURCES | Resource | `verification/HOST-CORE-1/resource-manifest.json` | `97c2d559c6155375ce67da7da922d62a26971100` | `f7545186d829ddcc24787b2eb90f7b730888d4522a0eb679e4130dcd4f6be9fe` | CANONICAL |
+| HOSTCORE-C1-PIN | §5.7 / §10.3 / §10.4 / §12 source | `doc/contracts/M2-C1_TYPED_IPC_CONTRACT.md` | `97c2d559c6155375ce67da7da922d62a26971100` | `6a2f38e0b17062d9d4f1d6ee109b4353b745504a5a6b889148781eee84fa2062` | SOURCE_PIN |
+| EVD-HOSTCORE1-REVIEW-R1 | AC8 | `verification/HOST-CORE-1/dsh-review-r1.md` | `237a662c701d98751f155a2b55f669eee51d8643` | `cd864e86b82047e7a1afba87c25f30fe08e7873eeef81dad6fc9e82490c6970e` | CANONICAL |
 
 注：Task 文件自身不列入自身 hash 表，以避免自引用；每个 evidence commit 均为包含对应路径的真实 commit，SHA-256 按工作区文件值记录。
 
@@ -138,9 +139,28 @@ evidence_dir: verification/HOST-CORE-1
 
 ## Closeout Record
 
-- Closeout date / Codex：2026-10-16，Codex（Owner evidence closeout；Task 尚在 review gate）。
-- canonical_evidence_status：`complete`（实现、AC 证据、原始日志、Handoff 与资源清单均已提交）。
-- resource_closeout_status：`complete`（worktree 与 task-env 均 `PRESERVE_REFERENCED`）。
-- 删除 / 迁移 / 归档数量与字节数：`0 / 0 / 0`；无用户数据或主仓文件操作。
-- 未关闭项及保留原因：AC8 非作者 Review 与 Coordinator integration `NOT_RUN`；保持 worktree 供 Reviewer / Coordinator 使用。
-- 当前指针清理：`STATUS` / `REBASELINE_PLAN` / 本 Task 导航在释放时同步。
+- Closeout date / Coordinator：2026-10-16，dsh（epoch 5，lease `264c2000541748298000f93fb25a52de`）。
+- canonical_evidence_status：`complete`；resource_closeout_status：`complete`（worktree `PRESERVE_REFERENCED`；0 删除 / 0 迁移 / 0 归档）。
+- **结果**：Core 侧 **HostControl 接收端已实现**。实现 `4af86abb`（含 `ff42c670` 修复），归档 `c97b2d125`，集成 merge=`67ee4a58`；
+  **`tests/core` 395 passed / 0 failed / exit 0**。
+- **AC1**：`HostControl` 为**独立命令集**（`_HOST_CONTROL_COMMANDS`），请求形态为
+  `host_session_id` / `host_session_credential` / `command` / `payload`，**不进入**普通 `Request<T>` catalog。
+- **AC2**：`OpenHostSession` / `CloseHostSession` 与 `_host_session_credential` 生命周期；
+  **关闭后 grant 立即 `REF_REVOKED`**；**真实子进程重启测试**验证 session ID 变化且旧 ref → `REF_UNKNOWN_ID`。
+- **AC3**：四个注册/撤销命令路由到**既有私有 seam**；ref 字段与 `REF_*` 语义**未改**。
+- **AC4（安全 Gate）**：三拒绝码 `HOST_ONLY_REQUIRED` / `HOST_SESSION_INVALID` / `CORE_SESSION_MISMATCH`
+  每例均断言 **`calls == []`（未调用 seam）**，并叠加 **SQLite `total_changes`**、**registry grant ID 集合**、
+  **隔离目录文件 SHA-256 快照**三者**不变**；响应 `result: null` 且**不泄露路径或 credential**。
+- **AC5**：六个 host-only 命令经普通 JSON-RPC 调用**全部**返回 `HOST_ONLY_REQUIRED`，非成功路由；命令白名单另行收紧。
+- **AC6**：17 路径全在 §12 授权内；**未碰** `apps/**`（Rust/Tauri）与 `doc/contracts/**`。
+- **AC8 已闭合**：独立 Review=`237a662c`（`approved`，reviewed_head=`c97b2d125`）。
+- **本 Task 的由来（透明备案）**：HOST-ISSUER-1 的**第二次阻塞**指出——C1 契约 §12 **只授权**"最小 Core handler/session 改动"却
+  **从未实现**它，`core_service.py` 的 HostControl 命中数为 0。Owner 的判断**正确**；Coordinator 亦已备案自身
+  **规划疏漏**（只确认"契约已冻结"、未确认"handler 已实现"）与 **prompt 约束错误**（误把 `src/**` 写为只读）。
+- **遗留（Review F3/F4）**：本 Task 只交付 **Core 侧**；**Rust/Tauri 侧签发与真实联调属 HOST-ISSUER-1**（分支未集成），
+  **不得**据此声称 host issuer 已端到端可用。
+- **新登记债务（Review F2 → BL-12）**：**`tools/governance/check.ps1` 未被 Git 跟踪**，
+  导致**任何 fresh worktree 都无法运行治理检查**（Owner 在 worktree 中正确地无法运行并如实说明）。
+  该项削弱**所有** worktree 级 Task 的自检能力，建议尽快单独处置。
+- 交付 head 冻结（Review F1）：Owner 申报 `delivery_head=ff42c670`（实现提交），实际 HEAD=`c97b2d125`；已冻结为实际值。
+- 当前指针清理：`doc/STATUS.md` / `doc/REBASELINE_PLAN.md` 已同步为 HOST-CORE-1 `done`。

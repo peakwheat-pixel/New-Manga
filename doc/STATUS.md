@@ -6,7 +6,9 @@
 
 - 当前 Task：[ARCH-DOC-REBASELINE](tasks/ARCH-DOC-REBASELINE.md) **ready / integrated**（唯一非终态 DAG READY）：AC1–AC3=PARTIAL、AC4–AC6=NOT_RUN、AC7 逐消费者裁决待做。
 - 本轮完成：P13/P13-C1/P16/P16-C1/P12-C1/P09-FU2 均 **done**；P18 **closed_with_limitations**（AC2 待用户门槛）—— 详见各 Task 与 [REBASELINE_PLAN](REBASELINE_PLAN.md)。
-- 已释放待认领：[HOST-CORE-1](tasks/HOST-CORE-1.md) **ready**（Core 侧 HostControl handler 实现；契约 §12 授权范围内；解 HOST-ISSUER-1 的第二次阻塞；Owner 按 DIR-2=codex）。
+- 本轮完成：[HOST-CORE-1](tasks/HOST-CORE-1.md) **done**（评审 `237a662c`、集成 `67ee4a58`）：Core 侧 HostControl 接收端（独立命令集 + session 失效 + 三拒绝码"未调用 seam" + dispatcher 负向证据）；`tests/core` 395 passed。
+- **下一优先**：恢复 [HOST-ISSUER-1](tasks/HOST-ISSUER-1.md)（Core 接收端已就绪；Rust 侧签发与其 AC1–AC9 待跑）。
+- 新债务 **BL-12**：`tools/governance/check.ps1` 未纳入版本控制 → fresh worktree 无法运行治理检查。
 - [HOST-ISSUER-1](tasks/HOST-ISSUER-1.md) **blocked**：契约 rev 2.3 已冻结但 **Core handler 未实现**（`core_service.py` HostControl 命中数 0）；Coordinator 已备案自身规划疏漏与 prompt 约束错误。
 - 仍待解阻：BL-11b（bundle 与协议 2.3 不匹配，主仓同现）、P18 检测像素上限与 KO 权重。
 - [HOST-ISSUER-1](tasks/HOST-ISSUER-1.md) **blocked**：Owner 实证可信 host **无通道**把 grant 注册进运行中的 Core（`_register_*` 无 dispatcher 路由、registry 为内存态、`host_bridge` 不持有）；且 `cargo build/test` exit 101（构建前置缺失，登记 BL-11）。
