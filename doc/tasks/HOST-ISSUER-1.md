@@ -113,6 +113,7 @@ evidence_dir: verification/HOST-ISSUER-1
 - cargo 验证（2026-10-16）：`cargo build` 与 `cargo test` 均 exit `101`，在 `build.rs` 因缺失 ignored `target/core-sidecar/core-sidecar` 产物提前失败；Rust tests 未启动。专用打包 Python 环境、`frontend/node_modules`、`frontend/dist` 在本 worktree 不存在；未安装依赖或生成 sidecar。
 - 证据提交：`bacf151b7f4fd61f5b34666b96a444ee95030874`（阻塞分析、Cargo 原始日志、WebView 静态扫描）。
 - Task 状态：`blocked` / `BLOCKED_WAITING_EXTERNAL_DECISION`；实现、Review 和集成都未完成。无新增 Rust 命令、权限或依赖；未引入官方 Tauri dialog/fs plugin。
+- 指针同步：`doc/STATUS.md` 仍显示本 Task 为 `ready`；该文件不在本次明确的 allowed_paths 内，未修改。Coordinator 需在获得范围授权后同步状态指针。
 - Handoff：`doc/handoffs/HOST-ISSUER-1-codex-bacf151.md`（阻塞交接；无实现 head）。
 - Review：`NOT_RUN`（没有实现 head；Owner 不自审）。
 - Coordinator 集成：`NOT_RUN`。

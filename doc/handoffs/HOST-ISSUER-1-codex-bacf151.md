@@ -64,6 +64,7 @@ status: blocked
 ## 风险与遗留
 
 - HOST-ISSUER-1 未完成，不能供 P12/P17/P19 使用；状态为 `blocked`，不是 `done`。
+- `doc/STATUS.md` 仍显示本 Task 为 `ready`。该文件不在本次明确的 allowed_paths 内，未修改；Coordinator 需在获得范围授权后同步状态指针。
 - WebView 静态扫描只覆盖现有前端代码，不是对未来 Rust 命令输出或运行时行为的负向验证。
 - Cargo 退出 101 的根因是缺失打包环境产物，不是 Rust 编译器错误；但当前仍没有成功的 cargo build/test 结果。
 - 无新第三方依赖。无用户数据写入、无主仓文件写入、无 push/merge。
