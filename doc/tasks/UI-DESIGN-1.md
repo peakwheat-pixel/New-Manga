@@ -151,6 +151,25 @@ evidence_dir: verification/UI-DESIGN-1
 - Handoff：[UI-DESIGN-1-zcode](../handoffs/UI-DESIGN-1-zcode.md)（`delivery_head=aaf00e59e`，status=`in_review`）。
 - Review：`verification/UI-DESIGN-1/dsh-review-r1.md`（Reviewer=dsh，独立于 Owner=zcode）。
 - 实际测试：见上表——Owner 等价运行 PASS；canonical 复跑由 Reviewer 独立执行 **PASS（exit 0）**。
+- 2026-10-16 **I1 有界返修（zcode，仅文档）**：针对 dsh-review-r1 唯一返修项 I1
+  （§7 曾把 G6 导入来源选择 / G19 导出目标选择误判为缺口，实际已由 HOST-ISSUER-1 实现为
+  production-only picker 命令）。Owner 逐条只读核实 E-a…E-e（`main.rs:409-436/438-458/460-493/
+  144-148+1421/78-83` 与 `1405-1422` HostControl 排他单测）后修改设计文档：
+  ① §7 删除 G6/G19 两行（编号保留空洞），新增「I1 返修注记」块（证据 + 与 §5.7 关系：
+  HostControl 仍不得由 WebView 调用，WebView 全程不接触路径）；
+  ② §6 新增 W30/W31（`library_import_file`/`library_import_folder`/`library_start_export`
+  既有实现绑定行，与 `issue_resource_url` 同性质标注「既有实现事实、非契约文本引用对象」）
+  与 W32（HostControl 排他单测行）；表注同步；绑定表 29→**32 行**；
+  ③ G20 保留为真缺口并写明缺失物：无「打开所在文件夹」host command（全库检索
+  `open_folder|reveal|show_in_folder|open_path` 不存在，E-f）；历史状态展示不经此缺口（W24 可承载）；
+  ④ 同步正文（§2.3 ImportDialog、§2.5-4、§3.3 ExportDialog、§9.2）与附表 AC4 行、文档头部状态；
+  ⑤ **同类错误复核（I1 要求第 4 项）**：逐一核对 §7 其余 24 条——G15（命令清单无 list_runs 类，
+  `main.rs:56-84`）、G17（main.rs 全文无 `app.emit`，仅 stderr announce `:939-945`）、G18（无缩略图命令）
+  均无实现支撑，维持真缺口；G16 已正确标注 `core_ping` 为探针事实；其余条目均为 §5 表 PROPOSAL
+  契约命令（真契约缺口）或契约明示未冻结（G26）——**未发现其他同类错误**。
+  §7 真缺口 **26→24 条**；selfcheck.ps1 阈值（W≥25、G≥20）仍满足（W=32、G=24），canonical 复跑由
+  Reviewer 执行。**注**：Handoff「风险与遗留」中「P12 被 G6 阻塞 / G19 阻塞 P17」的表述自本返修起
+  **被取代**，以设计文档 §7 I1 注记为准（Handoff 本次不在允许修改范围，故未回改）。
 
 ## Canonical Evidence
 

@@ -1,7 +1,7 @@
 # AD-001 四页 UI/UX 设计基线（Bookshelf / Workbench / Reader / Settings）
 
-状态：**UI-DESIGN-1 设计交付物（待独立 Review 与 Coordinator 集成）**。
-Owner：ZCode。基线 commit：`c6f975d38842487c16491eea67a01cf134c337f8`（分支 `agent/zcode/UI-DESIGN-1` 起点）。
+状态：**UI-DESIGN-1 设计交付物（R1 changes_requested → I1 有界返修已完成，待 Reviewer 复核）**。
+Owner：ZCode。基线 commit：`c6f975d38842487c16491eea67a01cf134c337f8`（分支 `agent/zcode/UI-DESIGN-1` 起点）。R1 结论与 I1 返修范围见 `verification/UI-DESIGN-1/dsh-review-r1.md`。
 
 本文为新架构（React + TypeScript + Tauri/Rust + Python Core + SQLite，见 [AD-001](../AD-001_TARGET_DESKTOP_ARCHITECTURE.md)）的**四页 UI/UX 设计基线**，是 P12 / P14 / P15 / P17 实现 Task 的唯一 UI 前置。目标是：实现者在各自（另行冻结的）范围内**不需要再做设计决策**。
 
@@ -97,7 +97,7 @@ Owner：ZCode。基线 commit：`c6f975d38842487c16491eea67a01cf134c337f8`（分
 | BookDetailPanel | 作品详情：中文名、原名、作者、出版社、系列、源/目标语言、标签、收藏/归档状态、章节列表、阅读摘要 | 选中 book_id；`ListChapters` 结果 | 进入翻译/进入阅读跳转；新建章节输入行 |
 | ChapterList | 章节列表：编号、标题、类型（paged/webtoon）、方向、页数摘要；行操作「进入翻译 / 进入阅读」 | `ListChapters`（chapter_id, title, chapter_number, sort_order）+ `ListChapterPages`（页数统计可由 pages 长度得出） | 选中 chapter_id；跳转动作 |
 | NewBookDialog | 新建作品表单（标题、原名、默认类型 paged/webtoon、默认方向 RTL/LTR/Vertical、源/目标语言、标签）【依据：04 §5】 | 表单输入 | 提交创建（wire 见 G1）；成功后刷新列表并选中新作品 |
-| ImportDialog | 选择本地图片/文件夹/PDF → 确认重复策略（skip / import_as_new）→ 展示逐源/逐页 ImportReport 结果 | chapter_id（从 ChapterList 或新建章节流程进入） | 提交 `ImportPages`（sources 由 host 签发，见 G6）；展示报告 |
+| ImportDialog | 选择本地图片/文件夹/PDF → 确认重复策略（skip / import_as_new）→ 展示逐源/逐页 ImportReport 结果 | chapter_id（从 ChapterList 或新建章节流程进入） | 提交 `ImportPages`（来源选择与引用签发经 host 原生选择器，既有实现 W30）；展示报告 |
 | EmptyStateBookshelf | 空库引导（「还没有作品」+ 新建作品可用 + 导入作品入口） | — | — |
 
 搜索、收藏/归档过滤、排序、视图切换全部为 **UI-local** 操作【契约：M2-C1 §5.2「Bookshelf search/filter/sort/view mode」明确列为前端本地状态，不成为 Core command】。
@@ -117,7 +117,7 @@ Owner：ZCode。基线 commit：`c6f975d38842487c16491eea67a01cf134c337f8`（分
 1. 点击 BookCard → BookDetailPanel 加载该作品详情 + 章节列表（`ListChapters`）。
 2. 搜索/过滤/排序/视图切换 → UI-local 即时生效【契约：M2-C1 §5.2】。
 3. 新建作品 → NewBookDialog → 【GAP-G1：CreateBook wire 未冻结】。
-4. 导入页面 → ImportDialog：选来源（host 文件选择【GAP-G6】）→ 选重复策略（默认 skip【依据：P09 §「重复项策略」默认 SKIP；契约：M2-C1 §5.6 `duplicate_policy` 缺省 "skip"】）→ 提交 `ImportPages` → 逐源/逐页结果表（imported / skipped_duplicate / rejected / pending；仅显示 basename，不显示路径【契约：M2-C1 §5.6 source_name/filename 仅 basename】）。
+4. 导入页面 → ImportDialog：选来源（host 原生文件/文件夹选择器，**既有实现**（W30，HOST-ISSUER-1）：取消返回 cancelled，路径不出 Rust）→ 选重复策略（默认 skip【依据：P09 §「重复项策略」默认 SKIP；契约：M2-C1 §5.6 `duplicate_policy` 缺省 "skip"】）→ 提交 `ImportPages` → 逐源/逐页结果表（imported / skipped_duplicate / rejected / pending；仅显示 basename，不显示路径【契约：M2-C1 §5.6 source_name/filename 仅 basename】）。
 5. ChapterList 行操作「进入翻译」→ 关闭书架内详情浮层（若有）→ 切换工作台并携带 book_id + chapter_id【依据：04 §15.1】。
 6. ChapterList 行操作「进入阅读」→ 切换阅读器并携带 book_id + chapter_id【依据：04 §33.1】。
 7. 收藏/归档切换【GAP-G3】、编辑作品信息【GAP-G1 并入】、删除作品/章节【GAP-G2】、标签管理【GAP-G7】、术语表/不译表维护【GAP-G8】、页序拖拽（在书架章节页管理语境）【GAP-G14】。
@@ -171,7 +171,7 @@ Owner：ZCode。基线 commit：`c6f975d38842487c16491eea67a01cf134c337f8`（分
 | RelabelContextMenu / RelabelConfirmDialog | 改标的右键菜单 + 确认；改标后 10 秒撤销窗口（撤销 = 恢复源 revision，不做「反向改标」）【契约：M2-RC4 §应用与 UI 约束 4】 | `SetRegionType` 结果（revision_no） | `RestoreRegionRevision`（undo 路径） |
 | TaskProgressPanel | 固定进度面板（详见 3.5） | `GetTaskProjection` + 事件 | Run 控制动作（pause/stop/continue 等） |
 | TaskDetailPopover | 任务详情（悬浮窗，非独立页面）：命令类型、Book/Chapter、页面范围、当前进度、当前 Step、Provider、Model、Device、错误、重试次数、运行时间【依据：04 §31】 | `GetTaskProjection` 的 tasks/steps 明细 | — |
-| ExportDialog | 导出：选范围（章节/页）、格式 png/zip/cbz/pdf/text、格式选项、stale 策略、目标位置（host 签发 ExportTargetRef【GAP-G19】）、进度与历史 | `StartExport`/`CancelExport`/`GetExportSnapshot`/`GetExportHistory` | 导出任务提交/取消；历史列表 |
+| ExportDialog | 导出：选范围（章节/页）、格式 png/zip/cbz/pdf/text、格式选项、stale 策略、目标位置（host 原生保存对话框 + host 内部持有 ExportTargetRef，**既有实现**（W31，HOST-ISSUER-1）：取消返回 null，WebView 不接触路径/引用）、进度与历史 | `StartExport`/`CancelExport`/`GetExportSnapshot`/`GetExportHistory` | 导出任务提交/取消；历史列表 |
 | EmptyStateWorkbench | 未选择作品/章节时的空状态 + 选择入口【依据：04 §15.2】 | — | — |
 
 页选择、步进、范围选择、过滤、定位、模式切换、Inspector 文本编辑态、Region 选择等全部为 UI-local【契约：M2-C1 §5.2 明确列举】。
@@ -371,7 +371,7 @@ Owner：ZCode。基线 commit：`c6f975d38842487c16491eea67a01cf134c337f8`（分
 
 下表把**每个需要数据的 UI 元素**绑定到**已冻结**的命令/事件。引用格式：`文件 §章节 / 行号`（行号为基线 commit `c6f975d38` 时的实际行，仅供人读辅助；机器核验以名字逐字检索为准，见 `verification/UI-DESIGN-1/selfcheck.ps1`）。**命令名给 transport-neutral 契约名（PascalCase）或已冻结 wire 名（snake_case），与契约文本逐字一致**；各命令的产品 Tauri command 名（如既有 `library_list_books`、`settings_get`）以契约已裁决者为限，其余由实现 Task 按 §11 既有纪律冻结。
 
-「资源通道」行说明：页图/预览字节不经 JSON IPC，经 host 签发的 opaque URL + 分块拉取（既有实现 `apps/desktop/frontend/src/resourceChannel/client.ts`，Tauri 命令 `issue_resource_url` / `revoke_ref` 为既有实现事实，非契约文本引用对象），契约依据为 §10.1/§10.2 的 RULED 条款与 RC-4 §3 的 preview 先例。
+「资源通道」行说明：页图/预览字节不经 JSON IPC，经 host 签发的 opaque URL + 分块拉取（既有实现 `apps/desktop/frontend/src/resourceChannel/client.ts`，Tauri 命令 `issue_resource_url` / `revoke_ref` 为既有实现事实，非契约文本引用对象），契约依据为 §10.1/§10.2 的 RULED 条款与 RC-4 §3 的 preview 先例。**W30–W32 同性质**：`library_import_file` / `library_import_folder` / `library_start_export` 及 HostControl 排除断言是 HOST-ISSUER-1 交付的**既有实现事实**（I1 返修补登记，证据见 §7 I1 注记 E-a…E-e）；其契约语义边界（引用安全、路径不出受信层）仍以 §10.3/§10.4 为准。
 
 | # | 页面 | UI 元素 / 交互 | 绑定命令 / 事件（已冻结） | 契约引用（文件 + 章节/行） |
 |---|---|---|---|---|
@@ -404,6 +404,9 @@ Owner：ZCode。基线 commit：`c6f975d38842487c16491eea67a01cf134c337f8`（分
 | W27 | 设置 | 设置保存（整节 upsert；sfx.policy 三值 fail-closed 校验） | `settings_update_section` | M2-C1 §5.3（行 241–247） |
 | W28 | 全部页 | 错误呈现（code/category/retryable 分支，不按 message 文本分支） | §8 `ErrorEnvelope` 语义 | M2-C1 §8（行 721–745） |
 | W29 | 全部页 | UI-local 交互边界（选择/过滤/排序/翻页/模式等不成为 Core command） | §5.2 UI-local actions 清单 | M2-C1 §5.2（行 234） |
+| W30 | 书架/工作台 | 导入来源选择（原生文件/文件夹选择器 → host 签发 `ImportSourceRef` → 完成 §5.6 `ImportPages` 链路；取消返回 `cancelled`） | `library_import_file` / `library_import_folder`（**既有实现事实，HOST-ISSUER-1 交付**；与 `issue_resource_url` 同性质：非契约文本引用对象） | 实现：`apps/desktop/src-tauri/src/main.rs:409-436`（file）、`:438-458`（folder）、`:144-148`（production-only 组）+ `:1421`（len=3 断言）；契约语义边界：M2-C1 §5.6/§10.4 |
+| W31 | 工作台 | 导出目标选择 + 启动导出（原生保存对话框 → host 内部持有 `ExportTargetRef` → `StartExport` 链路；取消返回 `null`） | `library_start_export`（**既有实现事实，HOST-ISSUER-1 交付**） | 实现：`apps/desktop/src-tauri/src/main.rs:460-493`；契约语义边界：M2-C1 §6.3/§10.3 |
+| W32 | 全部页（host-only 边界证据） | `HostControl` 六操作永不为 WebView 命令（§5.7 约束的实现钉死） | 单测 `host_control_operations_are_never_webview_commands`（三面拒绝断言） | 实现：`apps/desktop/src-tauri/src/main.rs:1405-1422` |
 
 **未列入本表且未列入 §7 缺口表的交互不存在**——实现 Task 不得为本表之外的交互发明数据来源，也不得以 §7 缺口交互为由扩围实现。
 
@@ -413,6 +416,16 @@ Owner：ZCode。基线 commit：`c6f975d38842487c16491eea67a01cf134c337f8`（分
 
 第 6 节无法映射到已冻结 wire 的交互**全部**登记如下。处置纪律：缺口只能由 Coordinator 规划契约/host Task 消解；设计与其实现 Task **不得**以 mock、私有路径、绕过 Tauri IPC 或「假装可用」的方式消解（对应控件一律按 §2.4/§3.4/§5.4 disabled 态呈现）。
 
+> **I1 返修注记（2026-10-16，dsh-review-r1）**：原 G6（导入来源选择）与 G19（导出目标选择）经独立 Review 撤销——两者的用户可触发面**已由 HOST-ISSUER-1 实现并注册为 production-only Tauri command**，本表原先「以契约文本未冻结代替实现存在性」属误判。证据（当前 main，只读核验）：
+> - **E-a** `apps/desktop/src-tauri/src/main.rs:409-436`：`library_import_file`——原生文件选择器（png/jpg/jpeg/webp/gif/bmp/pdf）→ `into_path` → `import_from_path` → 返回 `ImportSummary`；取消返回 `cancelled`。
+> - **E-b** `apps/desktop/src-tauri/src/main.rs:438-458`：`library_import_folder`——原生目录选择器 → 同上链路。
+> - **E-c** `apps/desktop/src-tauri/src/main.rs:460-493`：`library_start_export`——`validate_export_request` → 原生保存对话框 → **`ExportTargetRef` 由 host 内部持有**（`start_export_to_path`）→ 返回 `ExportSummary`；取消返回 `None`。
+> - **E-d** `apps/desktop/src-tauri/src/main.rs:144-148`：`HOST_ISSUER_PRODUCTION_ONLY_COMMANDS` 恰含上述三命令；`:1421` `assert_eq!(len, 3)`。
+> - **E-e** `apps/desktop/src-tauri/src/main.rs:78-83`：三命令在 `PRODUCTION_COMMANDS` 内，注释原文 "HOST-ISSUER-1: user actions use native pickers; refs and paths stay in Rust."
+>
+> 与 §5.7 的关系（约束不变）：`HostControl` 六操作**仍不得由 WebView 调用**——该约束由单测 `host_control_operations_are_never_webview_commands`（`main.rs:1405-1422`，断言生产/probe/AC1 三面全部拒绝）钉死；产品级 picker 命令（W30/W31）提供的是「用户动作经 host 原生选择器」形态：**WebView 全程不接触原始路径、引用或签名材料**，路径只存在于 host/Core 受信边界内，与 §10.2/§10.3/§10.4 一致。
+> 编号 **G6/G19 保留空洞**以维持正文交叉引用稳定；真缺口总数因此为 **24 条**。
+
 | # | 页面 | 交互 | 期望语义 | 当前缺口 | 建议后续动作 |
 |---|---|---|---|---|---|
 | G1 | 书架 | 新建作品 / 编辑作品信息 | 表单创建 Book（title、original_title?、默认类型/方向/语言）；编辑回写 | `CreateBook` 在 M2-C1 §5 表为 PROPOSAL，未冻结 wire；编辑无任何命令行 | 契约 Task：冻结 CreateBook（及编辑面），含校验与 BookSummary 返回 |
@@ -420,7 +433,6 @@ Owner：ZCode。基线 commit：`c6f975d38842487c16491eea67a01cf134c337f8`（分
 | G3 | 书架 | 收藏 / 归档切换 | 切换 BookSummary 收藏/归档状态并即时反映 | `SetBookFavorite`/`SetBookArchived` 为 PROPOSAL | 契约 Task：冻结两写命令 |
 | G4 | 书架 | 新建 / 删除章节 | 章节标题/编号/类型/方向创建；删除走回收站 | `CreateChapter`/`DeleteChapter` 为 PROPOSAL | 契约 Task：冻结（与 G2 回收站联动） |
 | G5 | 书架 | 作品详情阅读摘要（最近阅读章节/当前进度/最后阅读时间/累计时长）【依据：04 §4.2、§36】 | Book 级聚合阅读摘要 | `ListBooks` 的 BookSummary 无这些字段；`ReadingProgressSnapshot` 是单章 wire，无 book 级聚合查询 | 契约 Task：评估 BookSummary 扩容或新增 book 阅读摘要查询；此前 UI 显示「—」占位 |
-| G6 | 书架/工作台 | 导入来源选择（文件/文件夹/PDF 选择器 → ImportSourceRef） | 用户显式选择来源 → host 签发只读引用 → `ImportPages` | `ImportSourceRef`/HostControl 已冻结，但 **HostControl 明确不得由 React/WebView 调用**（M2-C1 §5.7）；「选择来源并返回 ref」的产品 Tauri command 面未冻结 | host 侧 Task：冻结文件选择 + RegisterImportSource 的 WebView 可触发 Tauri command（P12 前置） |
 | G7 | 书架 | 标签管理（新增/重命名/删除/挂接）【依据：04 §6；AC-LIB-002】 | 自由标签 CRUD 与 Book 关联 | 无任何 tag wire | 契约 Task：冻结标签面 |
 | G8 | 书架 | 翻译约束维护（术语表/不译表）【依据：01 §1 B4】 | 作品级约束表人工维护 | 无任何约束表 wire | 契约 Task：冻结约束表面 |
 | G9 | 工作台 | 保存人工译文（Inspector 文本区） | 保存 text，含 expected_revision 乐观守卫 | `SaveManualTranslation` 为 PROPOSAL（精确并发策略 UNKNOWN；§5.4 已给同型语义模式） | 契约 Task：冻结（按 §5.4 交叉指针语义） |
@@ -432,9 +444,8 @@ Owner：ZCode。基线 commit：`c6f975d38842487c16491eea67a01cf134c337f8`（分
 | G15 | 工作台 | Run 发现 / 任务队列列表 / 中断恢复提示【依据：04 §30.2、§15.2】 | 启动后发现 Interrupted Run 并呈现继续/重启/放弃；恢复最近工作上下文 | `GetRunSnapshot` 需已知 run_id；无 ListRuns/活动 Run 查询 wire；NavBadge（§1.1）同源依赖 | 契约 Task：冻结 Run 列表/活动 Run 查询（含 interrupted 处置所需数据） |
 | G16 | 全局 | Core 可用性指示（启动握手、Core 崩溃/重启提示）【依据：04 §3；07 §54 语境】 | UI 呈现 Core starting/ready/unavailable | `CoreAvailabilityChanged` 为 UNKNOWN/PROPOSAL（M2-C1 §6.2）；`core_ping` 为 M2 探针实现事实、非契约冻结面 | 契约 Task：冻结可用性事件或产品级可用性查询 |
 | G17 | 全局 | Run/Export/Reading 事件到 WebView 的转发面 | 事件（Core JSONL stream 上的 §3 `Event<T>`）经 host 转发到 React | 事件 wire 已冻结，但 host→WebView 转发（Tauri event emit 等）未在任何契约冻结 | host 侧 Task：冻结事件转发面（P14 前置） |
-| G18 | 工作台 | PageList 缩略图 / 当前页小缩略图【依据：04 §30.3「建议附小缩略图」】 | 列表行/进度面板低清缩略图 | 仅有 `resolve_page_resource` 原图通道（§10 大媒体约束：直接拉原图当缩略图不可接受） | 大媒体/缩略图契约 Task：低清预览或按需解码通道 |
-| G19 | 工作台 | 导出目标位置选择（保存对话框 → ExportTargetRef） | 用户选目标 → host 签发一次性写引用 → `StartExport` | `ExportTargetRef`/HostControl 已冻结，但「选目标并返回 ref」的产品 Tauri command 面未冻结（同 G6 型） | host 侧 Task：冻结目标选择 command（P17 前置） |
-| G20 | 工作台 | 导出后「打开所在文件夹」/历史状态展示【依据：04 §37；§10.3 明示需独立 host command】 | 按 export_id 触发 host 打开目录；状态/历史展示不含路径 | §10.3 要求的独立 host command 未冻结；`GetExportHistory` 路径仅 host 可见 | host 侧 Task：冻结 open-folder command（按不透明 export_id） |
+| G18 | 工作台 | PageList 缩略图 / 当前页小缩略图【依据：04 §30.3「建议附小缩略图」】 | 列表行/进度面板低清缩略图 | 仅有 `resolve_page_resource` 原图通道（§10 大媒体约束：直接拉原图当缩略图不可接受）；host 命令清单（`main.rs:56-84`）无缩略图命令 | 大媒体/缩略图契约 Task：低清预览或按需解码通道 |
+| G20 | 工作台 | 导出后「打开所在文件夹」【依据：04 §37；§10.3 明示需独立 host command】 | 按**不透明 export_id** 触发 host 打开导出输出所在目录（WebView 不取得路径） | **缺的是「打开所在文件夹」host command 本身**：全库检索 `open_folder|reveal|show_in_folder|open_path` 类命令不存在（dsh-review-r1 E-f）；§10.3 明文要求「必须经独立 host command 按不透明 export_id 操作」，该 command 既未冻结也未实现。注意：导出**历史状态展示**不经此缺口——经 W24 `GetExportHistory` 可行（路径仅 host 可见，WebView 展示不含路径的状态） | host 侧 Task：冻结并实现 open-folder command（按不透明 export_id；P17 完整体验的最后一块） |
 | G21 | 设置 | Provider Profile CRUD / Capability 默认绑定 / Run Snapshot 查看【依据：04 §39–§40；P10 §5/§9】 | 多 Profile、能力绑定、绑定优先级解析展示、快照冻结查看 | P10 仅逻辑边界（§5/§9 消费分工），无 IPC wire | 契约 Task：冻结 Provider Profile 面（P15 前置） |
 | G22 | 设置 | 凭据新增/替换/清除（CredentialRef exchange）【依据：P10 §3】 | 专用一次性凭据操作；只显示已配置/缺失；永不回显 | CredentialRef exchange 协议无 wire（普通 settings DTO 禁止承载） | 契约 Task：冻结凭据操作面（P10 §3 落地） |
 | G23 | 设置 | Network Profile CRUD / 分阶段连接测试【依据：04 §41；P10 §6】 | 多 Profile、模式选择、Proxy→DNS→TCP→TLS→HTTP→Auth 分阶段测试 | P10 仅逻辑边界，无 wire | 契约 Task：冻结 Network Profile/测试面（P15 前置） |
@@ -508,7 +519,7 @@ Owner：ZCode。基线 commit：`c6f975d38842487c16491eea67a01cf134c337f8`（分
 本设计及据其实现的 React 代码遵守以下边界（全部继承 [AD-001](../AD-001_TARGET_DESKTOP_ARCHITECTURE.md)「TARGET_INTENT and decision」表与「Migration constraints」第 4/6 项；契约 M2-C1 §2/§10）：
 
 1. **不直接访问 SQLite**：React/WebView 无任何数据库句柄、SQL 或 ORM 依赖；一切数据经 §6 绑定表的冻结命令取得；SQLite 仅由 Python Core 权威写入【依据：AD-001 边界表；契约 M2-C1 §2】。本设计所有数据元素均映射到 W1–W29，无直连通道。
-2. **不接触任意 OS 路径**：WebView 不接收用户源文件路径、Managed Copy 路径或导出路径——导入/导出路径仅存在于 host/Core 受信边界（`ImportSourceRef`/`ExportTargetRef`）；`GetExportHistory` 的 output_path 仅回到可信 host，host 不向 WebView 转发【契约：M2-C1 §10.2 绝对路径下发禁止、§10.3、§10.4】；文件选择一律经 host（G6/G19）。资源字节仅经 opaque URL（§10.2 不透明映射 ID）。
+2. **不接触任意 OS 路径**：WebView 不接收用户源文件路径、Managed Copy 路径或导出路径——导入/导出路径仅存在于 host/Core 受信边界（`ImportSourceRef`/`ExportTargetRef`）；`GetExportHistory` 的 output_path 仅回到可信 host，host 不向 WebView 转发【契约：M2-C1 §10.2 绝对路径下发禁止、§10.3、§10.4】；文件选择一律经 host 原生选择器（既有实现 W30/W31，HOST-ISSUER-1：路径与引用留在 Rust）。资源字节仅经 opaque URL（§10.2 不透明映射 ID）。
 3. **不接触模型**：模型权重不经前端引用机制，加载是 Core 侧受控读取【契约：M2-C1 §10.1 T7】；UI 无任何模型文件概念。
 4. **大图、tile、模型权重不走普通 JSON/Base64 IPC**：页图/预览全部经资源通道（opaque URL + 分块拉取，单资源上限 256MiB、T1–T7 阈值约束）【契约：M2-C1 §10 总则 + §10.1；RC-4 §3】；本设计无任何「图片字节进 JSON 命令」的元素。
 5. **UI 不写持久化状态**：React 只呈现投影与发送意图；一切持久化（settings、进度、revision、lock、Run 状态）由 Python Core 经对应命令权威执行【契约：M2-C1 §1/§2；P11 §7.1】。面板宽度/窗口布局等纯 UI 偏好允许存 host 侧本地布局状态，不进 SQLite【自有取值，§1.3】。
@@ -543,7 +554,7 @@ Owner：ZCode。基线 commit：`c6f975d38842487c16491eea67a01cf134c337f8`（分
 | AC1 四页覆盖 | §2–§5（每页含职责/布局/组件/状态矩阵/交互/键盘焦点） | `verification/UI-DESIGN-1/selfcheck-output.txt` (d) 逐项打勾 |
 | AC2 导航 Shell | §1（切换不销毁/不停止任务，依据 08 AC-NAV-003 + P11 §7.1/7.2） | 同上 |
 | AC3 契约绑定表 | §6（W1–W29，逐字可检索） | selfcheck (a) Select-String 日志 |
-| AC4 wire 缺口表 | §7（G1–G26） | selfcheck (a) 反向核对 + 文档审查 |
+| AC4 wire 缺口表 | §7（24 条真缺口：G1–G5、G7–G18、G20–G26；G6/G19 经 I1 返修撤销——已由 HOST-ISSUER-1 实现，见 §7 I1 注记与 §6 W30–W32） | selfcheck (a) 反向核对 + 文档审查 + dsh-review-r1（I1） |
 | AC5 边界合规 | §9 九条自证 | selfcheck (c) + 文档审查 |
 | AC6 设计令牌 | §8（自有取值声明 + LEGACY 关系） | 文档审查 |
 | AC7 非目标 | §10 十条 | 文档审查 |
