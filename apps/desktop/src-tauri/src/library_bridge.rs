@@ -204,6 +204,56 @@ pub trait LibraryChannel: Send + Sync {
         Err(LibraryError::unavailable("Host issuer is unavailable"))
     }
 
+    /// P13-C1 (contract rev 2.0 section 5.5): the frozen Run command surface.
+    /// The host is pure transport here -- every domain rule (the
+    /// PipelineCommand closed set, PipelineScope resolution, idempotency
+    /// semantics, the control-action state matrix and every DTO/projection
+    /// shape) lives Core-side BEFORE persistence, and typed rejections
+    /// (INVALID_REQUEST / IDEMPOTENCY_KEY_REUSED / TARGET_NOT_FOUND / ...)
+    /// propagate as `LibraryError.code`. The wire command names below are the
+    /// PascalCase names frozen in section 5.5 (`StartRun`, ...), NOT the
+    /// snake_case names used by the older command families.
+    ///
+    /// The defaults are fail-closed so that test doubles and wrappers keep
+    /// compiling; the production channel overrides all six.
+    fn start_run(
+        &self,
+        _command: &str,
+        _scope: &serde_json::Value,
+        _overrides: Option<&serde_json::Value>,
+        _idempotency_key: &str,
+    ) -> Result<serde_json::Value, LibraryError> {
+        Err(LibraryError::unavailable("Run channel is unavailable"))
+    }
+
+    fn control_run(
+        &self,
+        _run_id: &str,
+        _action: &str,
+        _idempotency_key: Option<&str>,
+    ) -> Result<serde_json::Value, LibraryError> {
+        Err(LibraryError::unavailable("Run channel is unavailable"))
+    }
+
+    fn resume_blocked_run(&self, _run_id: &str) -> Result<serde_json::Value, LibraryError> {
+        Err(LibraryError::unavailable("Run channel is unavailable"))
+    }
+
+    fn get_run_snapshot(&self, _run_id: &str) -> Result<serde_json::Value, LibraryError> {
+        Err(LibraryError::unavailable("Run channel is unavailable"))
+    }
+
+    fn get_task_projection(&self, _run_id: &str) -> Result<serde_json::Value, LibraryError> {
+        Err(LibraryError::unavailable("Run channel is unavailable"))
+    }
+
+    fn retry_failed_targets(
+        &self,
+        _run_id: &str,
+        _idempotency_key: &str,
+    ) -> Result<serde_json::Value, LibraryError> {
+        Err(LibraryError::unavailable("Run channel is unavailable"))
+    }
     /// EVENTS-FWD-1 (rev 2.4 §6.4): Register an event sink for background
     /// core events forwarded to WebView. Default is a no-op.
     fn set_event_sink(&self, _sink: EventSink) {}
@@ -1112,6 +1162,68 @@ impl LibraryChannel for StdioLibraryChannel {
         )
     }
 
+    /// P13-C1 (contract rev 2.0 §5.5): the Run command family. The wire names
+    /// are the PascalCase names frozen in §5.5; every shape and domain rule is
+    /// validated Core-side, so the host forwards the payload as given and
+    /// propagates the typed rejection code verbatim.
+    fn start_run(
+        &self,
+        command: &str,
+        scope: &serde_json::Value,
+        overrides: Option<&serde_json::Value>,
+        idempotency_key: &str,
+    ) -> Result<serde_json::Value, LibraryError> {
+        let mut payload = serde_json::json!({
+            "command": command,
+            "scope": scope,
+            "idempotency_key": idempotency_key,
+        });
+        if let Some(overrides) = overrides {
+            payload["overrides"] = overrides.clone();
+        }
+        self.round_trip("StartRun", payload)
+    }
+
+    fn control_run(
+        &self,
+        run_id: &str,
+        action: &str,
+        idempotency_key: Option<&str>,
+    ) -> Result<serde_json::Value, LibraryError> {
+        // §5.5: `restart` MUST carry an idempotency key while the other
+        // actions MUST NOT -- the Core enforces both, so the host forwards
+        // exactly what the caller supplied and lets the typed rejection
+        // (INVALID_REQUEST / IDEMPOTENCY_KEY_REUSED) propagate.
+        let mut payload = serde_json::json!({ "run_id": run_id, "action": action });
+        if let Some(key) = idempotency_key {
+            payload["idempotency_key"] = serde_json::json!(key);
+        }
+        self.round_trip("ControlRun", payload)
+    }
+
+    fn resume_blocked_run(&self, run_id: &str) -> Result<serde_json::Value, LibraryError> {
+        self.round_trip("ResumeBlockedRun", serde_json::json!({ "run_id": run_id }))
+    }
+
+    fn get_run_snapshot(&self, run_id: &str) -> Result<serde_json::Value, LibraryError> {
+        self.round_trip("GetRunSnapshot", serde_json::json!({ "run_id": run_id }))
+    }
+
+    fn get_task_projection(&self, run_id: &str) -> Result<serde_json::Value, LibraryError> {
+        self.round_trip("GetTaskProjection", serde_json::json!({ "run_id": run_id }))
+    }
+
+    fn retry_failed_targets(
+        &self,
+        run_id: &str,
+        idempotency_key: &str,
+    ) -> Result<serde_json::Value, LibraryError> {
+        self.round_trip(
+            "RetryFailedTargets",
+            serde_json::json!({ "run_id": run_id, "idempotency_key": idempotency_key }),
+        )
+    }
+
     fn import_from_path(
         &self,
         path: &Path,
@@ -1297,6 +1409,47 @@ impl LibraryChannel for MockLibraryChannel {
         self.domain_result.lock().unwrap().clone()
     }
 
+    // RUN-IPC-1: the Run family is canned like every other mock method so
+    // tests can drive both the success and the typed-rejection paths
+    // deterministically.
+    fn start_run(
+        &self,
+        _command: &str,
+        _scope: &serde_json::Value,
+        _overrides: Option<&serde_json::Value>,
+        _idempotency_key: &str,
+    ) -> Result<serde_json::Value, LibraryError> {
+        self.domain_result.lock().unwrap().clone()
+    }
+
+    fn control_run(
+        &self,
+        _run_id: &str,
+        _action: &str,
+        _idempotency_key: Option<&str>,
+    ) -> Result<serde_json::Value, LibraryError> {
+        self.domain_result.lock().unwrap().clone()
+    }
+
+    fn resume_blocked_run(&self, _run_id: &str) -> Result<serde_json::Value, LibraryError> {
+        self.domain_result.lock().unwrap().clone()
+    }
+
+    fn get_run_snapshot(&self, _run_id: &str) -> Result<serde_json::Value, LibraryError> {
+        self.domain_result.lock().unwrap().clone()
+    }
+
+    fn get_task_projection(&self, _run_id: &str) -> Result<serde_json::Value, LibraryError> {
+        self.domain_result.lock().unwrap().clone()
+    }
+
+    fn retry_failed_targets(
+        &self,
+        _run_id: &str,
+        _idempotency_key: &str,
+    ) -> Result<serde_json::Value, LibraryError> {
+        self.domain_result.lock().unwrap().clone()
+    }
     fn set_event_sink(&self, sink: EventSink) {
         *self.event_sink.lock().unwrap() = Some(sink);
     }

@@ -292,6 +292,79 @@ fn host_export_grant_round_trip_reaches_frozen_start_export() {
     assert!(!target.exists());
     println!("PACKAGED_RESULT host_export_grant_round_trip_reaches_frozen_start_export=PASS register=accepted export_error=TARGET_NOT_FOUND target_written=false");
 }
+
+#[test]
+fn run_command_wire_reaches_the_frozen_core_run_family() {
+    // RUN-IPC-1: fixture-free evidence that the host transport really reaches the
+    // Core's frozen Run family (P13-C1 section 5.5). A wrong wire name, a wrong
+    // payload shape or a missing channel override would surface as a transport /
+    // protocol failure (or as the trait's fail-closed CORE_UNAVAILABLE default);
+    // a live Core answers at the DOMAIN level instead -- which is exactly what
+    // these assertions pin. No book/chapter fixture is needed, so the read-only
+    // and rejection paths can be proven on the frozen 2.3 bundle today.
+    let lab = PackagedLab::new();
+    let channel = lab.start_library();
+    assert_eq!(channel.ping().expect("post-startup ping").status, "ready");
+
+    fn assert_domain_rejection(label: &str, error: crate::library_bridge::LibraryError) {
+        println!(
+            "RUN_IPC_RESULT {label} code={} category={}",
+            error.code, error.category
+        );
+        assert_ne!(
+            error.code, "CORE_UNAVAILABLE",
+            "{label} must not fall through to the fail-closed default"
+        );
+        assert_ne!(
+            error.code, "PROTOCOL_MALFORMED",
+            "{label} must be a Core domain rejection, not a wire-level failure"
+        );
+    }
+
+    assert_domain_rejection(
+        "get_run_snapshot",
+        channel
+            .get_run_snapshot("no-such-run")
+            .expect_err("an unknown run id must be rejected"),
+    );
+    assert_domain_rejection(
+        "get_task_projection",
+        channel
+            .get_task_projection("no-such-run")
+            .expect_err("an unknown run id must be rejected"),
+    );
+    assert_domain_rejection(
+        "control_run",
+        channel
+            .control_run("no-such-run", "pause", None)
+            .expect_err("an unknown run id must be rejected"),
+    );
+    assert_domain_rejection(
+        "resume_blocked_run",
+        channel
+            .resume_blocked_run("no-such-run")
+            .expect_err("an unknown run id must be rejected"),
+    );
+    assert_domain_rejection(
+        "retry_failed_targets",
+        channel
+            .retry_failed_targets("no-such-run", "idem-key-run-ipc-1")
+            .expect_err("an unknown run id must be rejected"),
+    );
+    assert_domain_rejection(
+        "start_run",
+        channel
+            .start_run(
+                "detect",
+                &serde_json::json!({ "book_id": "missing-book" }),
+                None,
+                "idem-key-run-ipc-1",
+            )
+            .expect_err("an unresolvable scope must be rejected"),
+    );
+    println!("PACKAGED_RESULT run_command_wire_reaches_the_frozen_core_run_family=PASS six_commands=domain_rejections");
+}
+
 #[test]
 fn real_library_sidecar_event_sink_registration_and_lifecycle() {
     let lab = PackagedLab::new();

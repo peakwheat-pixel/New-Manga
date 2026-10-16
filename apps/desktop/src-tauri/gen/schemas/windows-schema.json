@@ -207,6 +207,24 @@
           "markdownDescription": "Enables the issue_resource_url command without any pre-configured scope."
         },
         {
+          "description": "Enables the library_control_run command without any pre-configured scope.",
+          "type": "string",
+          "const": "allow-library-control-run",
+          "markdownDescription": "Enables the library_control_run command without any pre-configured scope."
+        },
+        {
+          "description": "Enables the library_get_run_snapshot command without any pre-configured scope.",
+          "type": "string",
+          "const": "allow-library-get-run-snapshot",
+          "markdownDescription": "Enables the library_get_run_snapshot command without any pre-configured scope."
+        },
+        {
+          "description": "Enables the library_get_task_projection command without any pre-configured scope.",
+          "type": "string",
+          "const": "allow-library-get-task-projection",
+          "markdownDescription": "Enables the library_get_task_projection command without any pre-configured scope."
+        },
+        {
           "description": "Enables the library_import_file command without any pre-configured scope.",
           "type": "string",
           "const": "allow-library-import-file",
@@ -225,10 +243,28 @@
           "markdownDescription": "Enables the library_list_books command without any pre-configured scope."
         },
         {
+          "description": "Enables the library_resume_blocked_run command without any pre-configured scope.",
+          "type": "string",
+          "const": "allow-library-resume-blocked-run",
+          "markdownDescription": "Enables the library_resume_blocked_run command without any pre-configured scope."
+        },
+        {
+          "description": "Enables the library_retry_failed_targets command without any pre-configured scope.",
+          "type": "string",
+          "const": "allow-library-retry-failed-targets",
+          "markdownDescription": "Enables the library_retry_failed_targets command without any pre-configured scope."
+        },
+        {
           "description": "Enables the library_start_export command without any pre-configured scope.",
           "type": "string",
           "const": "allow-library-start-export",
           "markdownDescription": "Enables the library_start_export command without any pre-configured scope."
+        },
+        {
+          "description": "Enables the library_start_run command without any pre-configured scope.",
+          "type": "string",
+          "const": "allow-library-start-run",
+          "markdownDescription": "Enables the library_start_run command without any pre-configured scope."
         },
         {
           "description": "Enables the list_chapter_pages command without any pre-configured scope.",
@@ -357,6 +393,24 @@
           "markdownDescription": "Denies the issue_resource_url command without any pre-configured scope."
         },
         {
+          "description": "Denies the library_control_run command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-library-control-run",
+          "markdownDescription": "Denies the library_control_run command without any pre-configured scope."
+        },
+        {
+          "description": "Denies the library_get_run_snapshot command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-library-get-run-snapshot",
+          "markdownDescription": "Denies the library_get_run_snapshot command without any pre-configured scope."
+        },
+        {
+          "description": "Denies the library_get_task_projection command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-library-get-task-projection",
+          "markdownDescription": "Denies the library_get_task_projection command without any pre-configured scope."
+        },
+        {
           "description": "Denies the library_import_file command without any pre-configured scope.",
           "type": "string",
           "const": "deny-library-import-file",
@@ -375,10 +429,28 @@
           "markdownDescription": "Denies the library_list_books command without any pre-configured scope."
         },
         {
+          "description": "Denies the library_resume_blocked_run command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-library-resume-blocked-run",
+          "markdownDescription": "Denies the library_resume_blocked_run command without any pre-configured scope."
+        },
+        {
+          "description": "Denies the library_retry_failed_targets command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-library-retry-failed-targets",
+          "markdownDescription": "Denies the library_retry_failed_targets command without any pre-configured scope."
+        },
+        {
           "description": "Denies the library_start_export command without any pre-configured scope.",
           "type": "string",
           "const": "deny-library-start-export",
           "markdownDescription": "Denies the library_start_export command without any pre-configured scope."
+        },
+        {
+          "description": "Denies the library_start_run command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-library-start-run",
+          "markdownDescription": "Denies the library_start_run command without any pre-configured scope."
         },
         {
           "description": "Denies the list_chapter_pages command without any pre-configured scope.",
