@@ -1,0 +1,31 @@
+{
+  "schema_version": 1,
+  "task_id": "P12-C1",
+  "generated_at": "2026-10-16T05:35:00Z",
+  "generated_by": "dsh (Active Coordinator, epoch 5)",
+  "note": "Resource manifest referenced by doc/tasks/P12-C1.md Resource Manifest integrity column; worktree is a directory so a file-level SHA-256 cannot apply.",
+  "resources": [
+    {
+      "resource_type": "worktree",
+      "source_path": "G:/CODEX/New Manga.workspace/worktrees/P12-C1-IMPORT-IPC",
+      "disposition": "PRESERVE_REFERENCED",
+      "destination_path": "G:/CODEX/New Manga.workspace/worktrees/P12-C1-IMPORT-IPC",
+      "branch": "codex/P12-C1-import-ipc-contract",
+      "base_commit": "5837e079a4ea0c08da93c0d64c8eed8770c961a0",
+      "delivery_head": "e325e007231beb866d3bd2656bc081e9424acc15",
+      "integration_commit": "ed8e44e749d5e124a8e1b75f4667d6ccd852c15d",
+      "deleted": false,
+      "pruned": false,
+      "process_check": "2026-10-16 closeout: worktree clean at e325e007; main repo 19 tracked dirty entries unchanged; 5 changed paths all within the authorized contract-only scope; P11 contract and product code untouched; P13 Run wire and P16 Reader/Export wire semantically unchanged; no delete/migrate/archive performed (0/0/0)."
+    },
+    {
+      "resource_type": "contract",
+      "source_path": "G:/CODEX/New Manga/doc/contracts/M2-C1_TYPED_IPC_CONTRACT.md",
+      "disposition": "PRESERVE_REFERENCED",
+      "destination_path": "G:/CODEX/New Manga/doc/contracts/M2-C1_TYPED_IPC_CONTRACT.md",
+      "note": "Revised to rev 2.2 (envelope major 2 / minor 2): freezes ImportPages, section 10.4 ImportSourceRef (read reference), section 5.6 ImportReport, and section 12 import-side Python runtime authorisation. Additive only; no existing frozen wire semantics changed.",
+      "deleted": false,
+      "process_check": "Coordinator review confirmed P13 Run wire and P16 Reader/Export wire are semantically unchanged and that no second authorisation scheme was invented (ImportSourceRef is explicitly same-family as ExportTargetRef, opposite capability direction)."
+    }
+  ]
+}
