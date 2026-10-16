@@ -277,8 +277,9 @@ fn host_export_grant_round_trip_reaches_frozen_start_export() {
         .start_export_to_path(
             &target,
             serde_json::json!({
-                "chapter_id": "missing-chapter",
-                "page_ids": ["missing-page"],
+                "book_id": "missing-book",
+                "chapter_ids": ["missing-chapter"],
+                "ordered_page_ids": ["missing-page"],
                 "format": "png",
                 "format_options": {},
                 "stale_policy": "abort"
