@@ -3,7 +3,7 @@ id: HOST-TTL-BOUNDARY-1
 title: 修复 import/export grant 的 TTL 精确边界缺陷（host 取满 Core 300 秒验证窗口 → REF_EXPIRED）
 kind: fix
 governance_version: 2
-status: in_review
+status: done
 approval: coordinator_release_20261016_confirmed_cross_boundary_defect
 suggested_owner: Codex
 owner: Codex
@@ -12,10 +12,10 @@ depends_on: [HOST-ISSUER-1, HOST-ISSUER-1-C1, HOST-CORE-1, P12-C1]
 base_commit: 45b3c3a4ba497955daa41b90dc4fe5bb38eb9308
 branch: codex/HOST-TTL-BOUNDARY-1-grant-ttl
 worktree: G:/CODEX/New Manga.workspace/worktrees/HOST-TTL-BOUNDARY-1
-integration_commit: null
-delivery_head: 7fbce30180da18450b07e9951e6cef32cab68b5a
+integration_commit: 23587397e1f22516e3736a6e0928b2d5b55987b2
+delivery_head: fdf974645f4d3fdcabacbda5a8bf1b1678572398
 canonical_evidence_status: complete
-resource_closeout_status: pending
+resource_closeout_status: complete
 evidence_dir: verification/HOST-TTL-BOUNDARY-1
 ---
 
@@ -156,6 +156,8 @@ Export 由 `library_start_export` → `start_export_to_path` → `build_export_g
 | EVD-HOSTTTL-C1-COVERAGE | AC1 source pin | `verification/HOST-ISSUER-1-C1/coverage-matrix.md` | `af6fa705de54489ce32811cdc8dd3be51a1fd999` | `f2a522000c50d43247d9ba55a8a456394bcf2e549e80bb26c2b1ccab13e7d22d` | SOURCE_PIN |
 | EVD-HOSTTTL-M2C1-CONTRACT | AC1 source pin | `doc/contracts/M2-C1_TYPED_IPC_CONTRACT.md` | `af6fa705de54489ce32811cdc8dd3be51a1fd999` | `6a2f38e0b17062d9d4f1d6ee109b4353b745504a5a6b889148781eee84fa2062` | SOURCE_PIN |
 
+| HOST-TTL-BOUNDARY-1-REVIEW-R1 | AC1-AC7 (independent review; I1 converged) | `verification/HOST-TTL-BOUNDARY-1/dsh-review-r1.md` | `775bf0ea9a82032631d29450eac0a8e67d3b59f7` | - | CANONICAL |
+
 ## Resource Manifest
 
 | resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
@@ -164,9 +166,15 @@ Export 由 `library_start_export` → `start_export_to_path` → `build_export_g
 
 ## Closeout Record
 
-- Closeout date / Codex：待关闭时填写。
-- canonical_evidence_status：`complete`。
-- resource_closeout_status：`pending`。
-- 删除、迁移、归档数量/字节数：待关闭时填写；无操作填写 0。
-- 未关闭项及保留原因：DSH I1 修复后的独立 Review、Coordinator adjudication 与 integration 尚未执行；Task 保持 `in_review`，未声明 accepted/done。
-- 当前指针清理：`STATUS` / `REBASELINE_PLAN` 在释放时同步。
+- Closeout date / Coordinator：2026-10-16（dsh, epoch 6）。Reviewer=dsh（独立于 Owner=codex）。
+- canonical_evidence_status：`complete`（Owner 证据 + 独立 Review 行；Reviewer 复算证据 pin 与逐项复核）。
+- resource_closeout_status：`complete`（worktree `PRESERVE_REFERENCED`）。
+- 删除、迁移、归档数量/字节数：0。
+- 未关闭项及保留原因：**无未关闭 AC**。如实保留的主导限定：AC4 证明的是"注册被接受 + 下游命令可达并返回 Core 权威 typed 响应"；
+  因**无真实 fixture 章节/导出目标**，`ImportPages`/`StartExport` 返回预期 `TARGET_NOT_FOUND`，**未实际写入页面或导出产物**。
+- 交付状态：`done`。集成 `23587397e`；delivery_head（分支 head）见 front matter；实现 `4662239b4`（export TTL）+`7fbce3018`（测试对齐）+`fdf974645`（记录）。
+  Review R1 **approved**（I1 收敛）：import 侧 `6284f6f32` 与 export 侧 `4662239b4` 均改为 `+299.0`，Core 守卫未动（对称修复在 issuer 侧）。
+- 根因归档（供未来同类问题复用）：host 把 TTL 取在 Core 验证窗口的**精确上限** → 零裕量；任何负向时钟偏差即必然 `REF_EXPIRED`。
+  Reviewer 差分探针（workspace `tmp/guarded/{ttl,export-ttl}-boundary-probe.{py,log}`）证明 **1 ms 负偏差**即触发。
+  **同类风险提示**：新增任何 grant 类型时，issuer 侧必须留裕量，不得取满验证窗口上限。
+- 当前指针清理：`STATUS` / `REBASELINE_PLAN` 已同步（HOST-TTL-BOUNDARY-1 移出 READY）。
