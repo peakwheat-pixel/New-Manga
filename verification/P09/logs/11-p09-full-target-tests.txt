@@ -1,0 +1,201 @@
+FFF.F..FFF......................................................         [100%]
+================================== FAILURES ===================================
+_______ test_pdf_import_materialises_one_managed_page_per_document_page _______
+
+workspace = {'use_case': <application.importing.documents.service.ImportDocumentsUseCase object at 0x0000025C9F88F770>, 'sink': <t...wsPath('G:/CODEX/New Manga.workspace/worktrees/P09-IMPORT-CORE/verification/P09/test-runs/run-13284/52e0be5485747f15')}
+
+    def test_pdf_import_materialises_one_managed_page_per_document_page(workspace) -> None:
+        use_case, sink, storage = workspace["use_case"], workspace["sink"], workspace["storage"]
+    
+>       report = use_case.import_documents(
+            "chapter-7", [_source("chapter.pdf", minimal_pdf(3))]
+        )
+
+tests\import_formats\test_document_import.py:238: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+src\application\importing\documents\service.py:127: in import_documents
+    rendered = handle.render_page(page_no - 1)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <infrastructure.importing._PdfiumDocumentHandle object at 0x0000025C9FC66F90>
+index = 0
+
+    def render_page(self, index: int):
+        from application.importing.documents.ports import (
+            DocumentDecodeError,
+            RenderedDocumentPage,
+        )
+    
+>       from PySide6.QtCore import QBuffer, QIODevice
+E       ModuleNotFoundError: No module named 'PySide6'
+
+src\infrastructure\importing.py:232: ModuleNotFoundError
+____________ test_duplicate_pdf_skips_and_import_as_new_reimports _____________
+
+workspace = {'use_case': <application.importing.documents.service.ImportDocumentsUseCase object at 0x0000025C9FBC7C50>, 'sink': <t...wsPath('G:/CODEX/New Manga.workspace/worktrees/P09-IMPORT-CORE/verification/P09/test-runs/run-13284/0337224ad80e1f1a')}
+
+    def test_duplicate_pdf_skips_and_import_as_new_reimports(workspace) -> None:
+        use_case = workspace["use_case"]
+        data = minimal_pdf(2)
+    
+>       first = use_case.import_documents("chapter-7", [_source("a.pdf", data)])
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\import_formats\test_document_import.py:260: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+src\application\importing\documents\service.py:127: in import_documents
+    rendered = handle.render_page(page_no - 1)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <infrastructure.importing._PdfiumDocumentHandle object at 0x0000025C9FA08050>
+index = 0
+
+    def render_page(self, index: int):
+        from application.importing.documents.ports import (
+            DocumentDecodeError,
+            RenderedDocumentPage,
+        )
+    
+>       from PySide6.QtCore import QBuffer, QIODevice
+E       ModuleNotFoundError: No module named 'PySide6'
+
+src\infrastructure\importing.py:232: ModuleNotFoundError
+_________ test_corrupt_pdf_fails_diagnosably_and_keeps_imported_data __________
+
+workspace = {'use_case': <application.importing.documents.service.ImportDocumentsUseCase object at 0x0000025C9FA087D0>, 'sink': <t...wsPath('G:/CODEX/New Manga.workspace/worktrees/P09-IMPORT-CORE/verification/P09/test-runs/run-13284/fb92103a40ebfd8b')}
+
+    def test_corrupt_pdf_fails_diagnosably_and_keeps_imported_data(workspace) -> None:
+        use_case, sink = workspace["use_case"], workspace["sink"]
+>       good = use_case.import_documents("chapter-7", [_source("good.pdf", minimal_pdf(2))])
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\import_formats\test_document_import.py:280: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+src\application\importing\documents\service.py:127: in import_documents
+    rendered = handle.render_page(page_no - 1)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <infrastructure.importing._PdfiumDocumentHandle object at 0x0000025C9FA08B90>
+index = 0
+
+    def render_page(self, index: int):
+        from application.importing.documents.ports import (
+            DocumentDecodeError,
+            RenderedDocumentPage,
+        )
+    
+>       from PySide6.QtCore import QBuffer, QIODevice
+E       ModuleNotFoundError: No module named 'PySide6'
+
+src\infrastructure\importing.py:232: ModuleNotFoundError
+_________ test_cancel_stops_before_the_next_page_and_keeps_committed __________
+
+workspace = {'use_case': <application.importing.documents.service.ImportDocumentsUseCase object at 0x0000025C9FB31F30>, 'sink': <t...wsPath('G:/CODEX/New Manga.workspace/worktrees/P09-IMPORT-CORE/verification/P09/test-runs/run-13284/60d1a039f58258d6')}
+
+    def test_cancel_stops_before_the_next_page_and_keeps_committed(workspace) -> None:
+        use_case, sink = workspace["use_case"], workspace["sink"]
+    
+        def cancelled() -> bool:
+            # deterministic on committed state: cancel once two pages are in
+            return len(sink.pages) >= 2
+    
+>       report = use_case.import_documents(
+            "chapter-7", [_source("long.pdf", minimal_pdf(4))], cancelled=cancelled
+        )
+
+tests\import_formats\test_document_import.py:320: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+src\application\importing\documents\service.py:127: in import_documents
+    rendered = handle.render_page(page_no - 1)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <infrastructure.importing._PdfiumDocumentHandle object at 0x0000025C9FB32650>
+index = 0
+
+    def render_page(self, index: int):
+        from application.importing.documents.ports import (
+            DocumentDecodeError,
+            RenderedDocumentPage,
+        )
+    
+>       from PySide6.QtCore import QBuffer, QIODevice
+E       ModuleNotFoundError: No module named 'PySide6'
+
+src\infrastructure\importing.py:232: ModuleNotFoundError
+_____________ test_imported_pdf_page_keeps_the_source_colour[red] _____________
+
+workspace = {'use_case': <application.importing.documents.service.ImportDocumentsUseCase object at 0x0000025C9FB2D480>, 'sink': <t...wsPath('G:/CODEX/New Manga.workspace/worktrees/P09-IMPORT-CORE/verification/P09/test-runs/run-13284/ff63490059ef9352')}
+fill = (255, 0, 0)
+
+    @pytest.mark.parametrize(
+        "fill", [(255, 0, 0), (0, 255, 0), (0, 0, 255)], ids=["red", "green", "blue"]
+    )
+    def test_imported_pdf_page_keeps_the_source_colour(workspace, fill) -> None:
+        """F-1 (TASK-043): the rasteriser must keep PDFium's BGR byte order.
+    
+        Pre-fix, the ``BGR`` buffer went into ``QImage.Format_RGB888``, so a pure
+        red page was decoded blue (and blue red). The old suite asserted only
+        ``(width, height)``, which is blind to a channel swap �� so this test
+        samples the pixels of the PNG that the *production* Managed Copy
+        persisted, through the real PDFium binding.
+        """
+>       from PySide6.QtGui import QImage
+E       ModuleNotFoundError: No module named 'PySide6'
+
+tests\import_formats\test_document_import.py:402: ModuleNotFoundError
+____________ test_imported_pdf_page_keeps_the_source_colour[green] ____________
+
+workspace = {'use_case': <application.importing.documents.service.ImportDocumentsUseCase object at 0x0000025C9FB1AE50>, 'sink': <t...wsPath('G:/CODEX/New Manga.workspace/worktrees/P09-IMPORT-CORE/verification/P09/test-runs/run-13284/6c19732ef50c8641')}
+fill = (0, 255, 0)
+
+    @pytest.mark.parametrize(
+        "fill", [(255, 0, 0), (0, 255, 0), (0, 0, 255)], ids=["red", "green", "blue"]
+    )
+    def test_imported_pdf_page_keeps_the_source_colour(workspace, fill) -> None:
+        """F-1 (TASK-043): the rasteriser must keep PDFium's BGR byte order.
+    
+        Pre-fix, the ``BGR`` buffer went into ``QImage.Format_RGB888``, so a pure
+        red page was decoded blue (and blue red). The old suite asserted only
+        ``(width, height)``, which is blind to a channel swap �� so this test
+        samples the pixels of the PNG that the *production* Managed Copy
+        persisted, through the real PDFium binding.
+        """
+>       from PySide6.QtGui import QImage
+E       ModuleNotFoundError: No module named 'PySide6'
+
+tests\import_formats\test_document_import.py:402: ModuleNotFoundError
+____________ test_imported_pdf_page_keeps_the_source_colour[blue] _____________
+
+workspace = {'use_case': <application.importing.documents.service.ImportDocumentsUseCase object at 0x0000025C9FB1BC50>, 'sink': <t...wsPath('G:/CODEX/New Manga.workspace/worktrees/P09-IMPORT-CORE/verification/P09/test-runs/run-13284/69fe46139d56e66d')}
+fill = (0, 0, 255)
+
+    @pytest.mark.parametrize(
+        "fill", [(255, 0, 0), (0, 255, 0), (0, 0, 255)], ids=["red", "green", "blue"]
+    )
+    def test_imported_pdf_page_keeps_the_source_colour(workspace, fill) -> None:
+        """F-1 (TASK-043): the rasteriser must keep PDFium's BGR byte order.
+    
+        Pre-fix, the ``BGR`` buffer went into ``QImage.Format_RGB888``, so a pure
+        red page was decoded blue (and blue red). The old suite asserted only
+        ``(width, height)``, which is blind to a channel swap �� so this test
+        samples the pixels of the PNG that the *production* Managed Copy
+        persisted, through the real PDFium binding.
+        """
+>       from PySide6.QtGui import QImage
+E       ModuleNotFoundError: No module named 'PySide6'
+
+tests\import_formats\test_document_import.py:402: ModuleNotFoundError
+=========================== short test summary info ===========================
+FAILED tests/import_formats/test_document_import.py::test_pdf_import_materialises_one_managed_page_per_document_page
+FAILED tests/import_formats/test_document_import.py::test_duplicate_pdf_skips_and_import_as_new_reimports
+FAILED tests/import_formats/test_document_import.py::test_corrupt_pdf_fails_diagnosably_and_keeps_imported_data
+FAILED tests/import_formats/test_document_import.py::test_cancel_stops_before_the_next_page_and_keeps_committed
+FAILED tests/import_formats/test_document_import.py::test_imported_pdf_page_keeps_the_source_colour[red]
+FAILED tests/import_formats/test_document_import.py::test_imported_pdf_page_keeps_the_source_colour[green]
+FAILED tests/import_formats/test_document_import.py::test_imported_pdf_page_keeps_the_source_colour[blue]
+7 failed, 57 passed, 3 skipped in 1.18s
+exit_code=1

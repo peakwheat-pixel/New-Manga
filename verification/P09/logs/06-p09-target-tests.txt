@@ -1,0 +1,349 @@
+FFF.F..FFF.......................FF..FFFF.................               [100%]
+================================== FAILURES ===================================
+_______ test_pdf_import_materialises_one_managed_page_per_document_page _______
+
+workspace = {'use_case': <application.importing.documents.service.ImportDocumentsUseCase object at 0x000002BE7D74F770>, 'sink': <t...th': WindowsPath('G:/CODEX/New Manga.workspace/worktrees/P09-IMPORT-CORE/verification/P09/test-runs/52e0be5485747f15')}
+
+    def test_pdf_import_materialises_one_managed_page_per_document_page(workspace) -> None:
+        use_case, sink, storage = workspace["use_case"], workspace["sink"], workspace["storage"]
+    
+>       report = use_case.import_documents(
+            "chapter-7", [_source("chapter.pdf", minimal_pdf(3))]
+        )
+
+tests\import_formats\test_document_import.py:238: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+src\application\importing\documents\service.py:126: in import_documents
+    rendered = handle.render_page(page_no - 1)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <infrastructure.importing._PdfiumDocumentHandle object at 0x000002BE7DA6F0E0>
+index = 0
+
+    def render_page(self, index: int):
+        from application.importing.documents.ports import (
+            DocumentDecodeError,
+            RenderedDocumentPage,
+        )
+    
+>       from PySide6.QtCore import QBuffer, QIODevice
+E       ModuleNotFoundError: No module named 'PySide6'
+
+src\infrastructure\importing.py:232: ModuleNotFoundError
+____________ test_duplicate_pdf_skips_and_import_as_new_reimports _____________
+
+workspace = {'use_case': <application.importing.documents.service.ImportDocumentsUseCase object at 0x000002BE7DA7FB10>, 'sink': <t...th': WindowsPath('G:/CODEX/New Manga.workspace/worktrees/P09-IMPORT-CORE/verification/P09/test-runs/0337224ad80e1f1a')}
+
+    def test_duplicate_pdf_skips_and_import_as_new_reimports(workspace) -> None:
+        use_case = workspace["use_case"]
+        data = minimal_pdf(2)
+    
+>       first = use_case.import_documents("chapter-7", [_source("a.pdf", data)])
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\import_formats\test_document_import.py:260: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+src\application\importing\documents\service.py:126: in import_documents
+    rendered = handle.render_page(page_no - 1)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <infrastructure.importing._PdfiumDocumentHandle object at 0x000002BE7DA7FED0>
+index = 0
+
+    def render_page(self, index: int):
+        from application.importing.documents.ports import (
+            DocumentDecodeError,
+            RenderedDocumentPage,
+        )
+    
+>       from PySide6.QtCore import QBuffer, QIODevice
+E       ModuleNotFoundError: No module named 'PySide6'
+
+src\infrastructure\importing.py:232: ModuleNotFoundError
+_________ test_corrupt_pdf_fails_diagnosably_and_keeps_imported_data __________
+
+workspace = {'use_case': <application.importing.documents.service.ImportDocumentsUseCase object at 0x000002BE7D954690>, 'sink': <t...th': WindowsPath('G:/CODEX/New Manga.workspace/worktrees/P09-IMPORT-CORE/verification/P09/test-runs/fb92103a40ebfd8b')}
+
+    def test_corrupt_pdf_fails_diagnosably_and_keeps_imported_data(workspace) -> None:
+        use_case, sink = workspace["use_case"], workspace["sink"]
+>       good = use_case.import_documents("chapter-7", [_source("good.pdf", minimal_pdf(2))])
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\import_formats\test_document_import.py:280: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+src\application\importing\documents\service.py:126: in import_documents
+    rendered = handle.render_page(page_no - 1)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <infrastructure.importing._PdfiumDocumentHandle object at 0x000002BE7D954A50>
+index = 0
+
+    def render_page(self, index: int):
+        from application.importing.documents.ports import (
+            DocumentDecodeError,
+            RenderedDocumentPage,
+        )
+    
+>       from PySide6.QtCore import QBuffer, QIODevice
+E       ModuleNotFoundError: No module named 'PySide6'
+
+src\infrastructure\importing.py:232: ModuleNotFoundError
+_________ test_cancel_stops_before_the_next_page_and_keeps_committed __________
+
+workspace = {'use_case': <application.importing.documents.service.ImportDocumentsUseCase object at 0x000002BE7D99D6E0>, 'sink': <t...th': WindowsPath('G:/CODEX/New Manga.workspace/worktrees/P09-IMPORT-CORE/verification/P09/test-runs/60d1a039f58258d6')}
+
+    def test_cancel_stops_before_the_next_page_and_keeps_committed(workspace) -> None:
+        use_case, sink = workspace["use_case"], workspace["sink"]
+    
+        def cancelled() -> bool:
+            # deterministic on committed state: cancel once two pages are in
+            return len(sink.pages) >= 2
+    
+>       report = use_case.import_documents(
+            "chapter-7", [_source("long.pdf", minimal_pdf(4))], cancelled=cancelled
+        )
+
+tests\import_formats\test_document_import.py:320: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+src\application\importing\documents\service.py:126: in import_documents
+    rendered = handle.render_page(page_no - 1)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <infrastructure.importing._PdfiumDocumentHandle object at 0x000002BE7D99DE00>
+index = 0
+
+    def render_page(self, index: int):
+        from application.importing.documents.ports import (
+            DocumentDecodeError,
+            RenderedDocumentPage,
+        )
+    
+>       from PySide6.QtCore import QBuffer, QIODevice
+E       ModuleNotFoundError: No module named 'PySide6'
+
+src\infrastructure\importing.py:232: ModuleNotFoundError
+_____________ test_imported_pdf_page_keeps_the_source_colour[red] _____________
+
+workspace = {'use_case': <application.importing.documents.service.ImportDocumentsUseCase object at 0x000002BE7D9B8F30>, 'sink': <t...th': WindowsPath('G:/CODEX/New Manga.workspace/worktrees/P09-IMPORT-CORE/verification/P09/test-runs/ff63490059ef9352')}
+fill = (255, 0, 0)
+
+    @pytest.mark.parametrize(
+        "fill", [(255, 0, 0), (0, 255, 0), (0, 0, 255)], ids=["red", "green", "blue"]
+    )
+    def test_imported_pdf_page_keeps_the_source_colour(workspace, fill) -> None:
+        """F-1 (TASK-043): the rasteriser must keep PDFium's BGR byte order.
+    
+        Pre-fix, the ``BGR`` buffer went into ``QImage.Format_RGB888``, so a pure
+        red page was decoded blue (and blue red). The old suite asserted only
+        ``(width, height)``, which is blind to a channel swap �� so this test
+        samples the pixels of the PNG that the *production* Managed Copy
+        persisted, through the real PDFium binding.
+        """
+>       from PySide6.QtGui import QImage
+E       ModuleNotFoundError: No module named 'PySide6'
+
+tests\import_formats\test_document_import.py:402: ModuleNotFoundError
+____________ test_imported_pdf_page_keeps_the_source_colour[green] ____________
+
+workspace = {'use_case': <application.importing.documents.service.ImportDocumentsUseCase object at 0x000002BE7D990450>, 'sink': <t...th': WindowsPath('G:/CODEX/New Manga.workspace/worktrees/P09-IMPORT-CORE/verification/P09/test-runs/6c19732ef50c8641')}
+fill = (0, 255, 0)
+
+    @pytest.mark.parametrize(
+        "fill", [(255, 0, 0), (0, 255, 0), (0, 0, 255)], ids=["red", "green", "blue"]
+    )
+    def test_imported_pdf_page_keeps_the_source_colour(workspace, fill) -> None:
+        """F-1 (TASK-043): the rasteriser must keep PDFium's BGR byte order.
+    
+        Pre-fix, the ``BGR`` buffer went into ``QImage.Format_RGB888``, so a pure
+        red page was decoded blue (and blue red). The old suite asserted only
+        ``(width, height)``, which is blind to a channel swap �� so this test
+        samples the pixels of the PNG that the *production* Managed Copy
+        persisted, through the real PDFium binding.
+        """
+>       from PySide6.QtGui import QImage
+E       ModuleNotFoundError: No module named 'PySide6'
+
+tests\import_formats\test_document_import.py:402: ModuleNotFoundError
+____________ test_imported_pdf_page_keeps_the_source_colour[blue] _____________
+
+workspace = {'use_case': <application.importing.documents.service.ImportDocumentsUseCase object at 0x000002BE7D992350>, 'sink': <t...th': WindowsPath('G:/CODEX/New Manga.workspace/worktrees/P09-IMPORT-CORE/verification/P09/test-runs/69fe46139d56e66d')}
+fill = (0, 0, 255)
+
+    @pytest.mark.parametrize(
+        "fill", [(255, 0, 0), (0, 255, 0), (0, 0, 255)], ids=["red", "green", "blue"]
+    )
+    def test_imported_pdf_page_keeps_the_source_colour(workspace, fill) -> None:
+        """F-1 (TASK-043): the rasteriser must keep PDFium's BGR byte order.
+    
+        Pre-fix, the ``BGR`` buffer went into ``QImage.Format_RGB888``, so a pure
+        red page was decoded blue (and blue red). The old suite asserted only
+        ``(width, height)``, which is blind to a channel swap �� so this test
+        samples the pixels of the PNG that the *production* Managed Copy
+        persisted, through the real PDFium binding.
+        """
+>       from PySide6.QtGui import QImage
+E       ModuleNotFoundError: No module named 'PySide6'
+
+tests\import_formats\test_document_import.py:402: ModuleNotFoundError
+____ test_folder_selection_reads_only_direct_image_files_in_natural_order _____
+
+tmp_path = WindowsPath('G:/CODEX/New Manga.workspace/worktrees/P09-IMPORT-CORE/verification/P09/test-runs/6ae9b888a7a9de31')
+
+    def test_folder_selection_reads_only_direct_image_files_in_natural_order(tmp_path):
+        root = tmp_path / "���� (��һԒ)"
+>       root.mkdir()
+
+tests\library\test_import_sources.py:16: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = WindowsPath('G:/CODEX/New Manga.workspace/worktrees/P09-IMPORT-CORE/verification/P09/test-runs/6ae9b888a7a9de31/���� (��һԒ)')
+mode = 511, parents = False, exist_ok = False
+
+    def mkdir(self, mode=0o777, parents=False, exist_ok=False):
+        """
+        Create a new directory at this given path.
+        """
+        try:
+>           os.mkdir(self, mode)
+E           FileExistsError: [WinError 183] ���ļ��Ѵ���ʱ���޷��������ļ���: 'G:\\CODEX\\New Manga.workspace\\worktrees\\P09-IMPORT-CORE\\verification\\P09\\test-runs\\6ae9b888a7a9de31\\���� (��һԒ)'
+
+C:\Python314\Lib\pathlib\__init__.py:1011: FileExistsError
+_______ test_explicit_file_selection_is_contained_and_preserves_unicode _______
+
+tmp_path = WindowsPath('G:/CODEX/New Manga.workspace/worktrees/P09-IMPORT-CORE/verification/P09/test-runs/7c4f960f49f8f894')
+
+    def test_explicit_file_selection_is_contained_and_preserves_unicode(tmp_path):
+        root = tmp_path / "\u5df2\u9009\u62e9 \U0001f1ef\U0001f1f5"
+>       root.mkdir()
+
+tests\library\test_import_sources.py:32: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = WindowsPath('G:/CODEX/New Manga.workspace/worktrees/P09-IMPORT-CORE/verification/P09/test-runs/7c4f960f49f8f894/\u5df2\u9009\u62e9 \U0001f1ef\U0001f1f5')
+mode = 511, parents = False, exist_ok = False
+
+    def mkdir(self, mode=0o777, parents=False, exist_ok=False):
+        """
+        Create a new directory at this given path.
+        """
+        try:
+>           os.mkdir(self, mode)
+E           FileExistsError: [WinError 183] \u5f53\u6587\u4ef6\u5df2\u5b58\u5728\u65f6\uff0c\u65e0\u6cd5\u521b\u5efa\u8be5\u6587\u4ef6\u3002: 'G:\\\\CODEX\\\\New Manga.workspace\\\\worktrees\\\\P09-IMPORT-CORE\\\\verification\\\\P09\\\\test-runs\\\\7c4f960f49f8f894\\\\\u5df2\u9009\u62e9 \U0001f1ef\U0001f1f5'
+
+C:\Python314\Lib\pathlib\__init__.py:1011: FileExistsError
+_______ test_dotdot_traversal_and_other_drive_are_rejected_before_read ________
+
+tmp_path = WindowsPath('G:/CODEX/New Manga.workspace/worktrees/P09-IMPORT-CORE/verification/P09/test-runs/bc45dd3a182b1317')
+
+    def test_dotdot_traversal_and_other_drive_are_rejected_before_read(tmp_path):
+        root = tmp_path / "selected"
+>       root.mkdir()
+
+tests\library\test_import_sources.py:62: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = WindowsPath('G:/CODEX/New Manga.workspace/worktrees/P09-IMPORT-CORE/verification/P09/test-runs/bc45dd3a182b1317/selected')
+mode = 511, parents = False, exist_ok = False
+
+    def mkdir(self, mode=0o777, parents=False, exist_ok=False):
+        """
+        Create a new directory at this given path.
+        """
+        try:
+>           os.mkdir(self, mode)
+E           FileExistsError: [WinError 183] ���ļ��Ѵ���ʱ���޷��������ļ���: 'G:\\CODEX\\New Manga.workspace\\worktrees\\P09-IMPORT-CORE\\verification\\P09\\test-runs\\bc45dd3a182b1317\\selected'
+
+C:\Python314\Lib\pathlib\__init__.py:1011: FileExistsError
+__________ test_selected_symlink_is_rejected_without_reading_target ___________
+
+tmp_path = WindowsPath('G:/CODEX/New Manga.workspace/worktrees/P09-IMPORT-CORE/verification/P09/test-runs/8ddf4516ac4843a9')
+
+    def test_selected_symlink_is_rejected_without_reading_target(tmp_path):
+        root = tmp_path / "selected"
+        target = tmp_path / "outside.png"
+>       root.mkdir()
+
+tests\library\test_import_sources.py:77: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = WindowsPath('G:/CODEX/New Manga.workspace/worktrees/P09-IMPORT-CORE/verification/P09/test-runs/8ddf4516ac4843a9/selected')
+mode = 511, parents = False, exist_ok = False
+
+    def mkdir(self, mode=0o777, parents=False, exist_ok=False):
+        """
+        Create a new directory at this given path.
+        """
+        try:
+>           os.mkdir(self, mode)
+E           FileExistsError: [WinError 183] ���ļ��Ѵ���ʱ���޷��������ļ���: 'G:\\CODEX\\New Manga.workspace\\worktrees\\P09-IMPORT-CORE\\verification\\P09\\test-runs\\8ddf4516ac4843a9\\selected'
+
+C:\Python314\Lib\pathlib\__init__.py:1011: FileExistsError
+_____________________ test_selected_junction_is_rejected ______________________
+
+tmp_path = WindowsPath('G:/CODEX/New Manga.workspace/worktrees/P09-IMPORT-CORE/verification/P09/test-runs/e832d653eb6fb233')
+
+    def test_selected_junction_is_rejected(tmp_path):
+        root = tmp_path / "selected"
+        outside = tmp_path / "outside"
+>       root.mkdir()
+
+tests\library\test_import_sources.py:93: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = WindowsPath('G:/CODEX/New Manga.workspace/worktrees/P09-IMPORT-CORE/verification/P09/test-runs/e832d653eb6fb233/selected')
+mode = 511, parents = False, exist_ok = False
+
+    def mkdir(self, mode=0o777, parents=False, exist_ok=False):
+        """
+        Create a new directory at this given path.
+        """
+        try:
+>           os.mkdir(self, mode)
+E           FileExistsError: [WinError 183] ���ļ��Ѵ���ʱ���޷��������ļ���: 'G:\\CODEX\\New Manga.workspace\\worktrees\\P09-IMPORT-CORE\\verification\\P09\\test-runs\\e832d653eb6fb233\\selected'
+
+C:\Python314\Lib\pathlib\__init__.py:1011: FileExistsError
+________________ test_invalid_scope_has_no_import_side_effects ________________
+
+import_use_case = <function import_use_case.<locals>._factory at 0x000002BE7DA2B950>
+chapter = Chapter(chapter_id='e0200c000dac4b84912fd6ec60729129', book_id='f4a919f53de64ad09c93489e5da84f22', title='��1��', chapte...l'>, notes='', created_at='2026-10-16T01:02:16.711+00:00', updated_at='2026-10-16T01:02:16.711+00:00', deleted_at=None)
+tmp_path = WindowsPath('G:/CODEX/New Manga.workspace/worktrees/P09-IMPORT-CORE/verification/P09/test-runs/c5b90c2e1ca814b7')
+
+    def test_invalid_scope_has_no_import_side_effects(import_use_case, chapter, tmp_path):
+        root = tmp_path / "selected"
+>       root.mkdir()
+
+tests\library\test_import_sources.py:111: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = WindowsPath('G:/CODEX/New Manga.workspace/worktrees/P09-IMPORT-CORE/verification/P09/test-runs/c5b90c2e1ca814b7/selected')
+mode = 511, parents = False, exist_ok = False
+
+    def mkdir(self, mode=0o777, parents=False, exist_ok=False):
+        """
+        Create a new directory at this given path.
+        """
+        try:
+>           os.mkdir(self, mode)
+E           FileExistsError: [WinError 183] ���ļ��Ѵ���ʱ���޷��������ļ���: 'G:\\CODEX\\New Manga.workspace\\worktrees\\P09-IMPORT-CORE\\verification\\P09\\test-runs\\c5b90c2e1ca814b7\\selected'
+
+C:\Python314\Lib\pathlib\__init__.py:1011: FileExistsError
+=========================== short test summary info ===========================
+FAILED tests/import_formats/test_document_import.py::test_pdf_import_materialises_one_managed_page_per_document_page
+FAILED tests/import_formats/test_document_import.py::test_duplicate_pdf_skips_and_import_as_new_reimports
+FAILED tests/import_formats/test_document_import.py::test_corrupt_pdf_fails_diagnosably_and_keeps_imported_data
+FAILED tests/import_formats/test_document_import.py::test_cancel_stops_before_the_next_page_and_keeps_committed
+FAILED tests/import_formats/test_document_import.py::test_imported_pdf_page_keeps_the_source_colour[red]
+FAILED tests/import_formats/test_document_import.py::test_imported_pdf_page_keeps_the_source_colour[green]
+FAILED tests/import_formats/test_document_import.py::test_imported_pdf_page_keeps_the_source_colour[blue]
+FAILED tests/library/test_import_sources.py::test_folder_selection_reads_only_direct_image_files_in_natural_order
+FAILED tests/library/test_import_sources.py::test_explicit_file_selection_is_contained_and_preserves_unicode
+FAILED tests/library/test_import_sources.py::test_dotdot_traversal_and_other_drive_are_rejected_before_read
+FAILED tests/library/test_import_sources.py::test_selected_symlink_is_rejected_without_reading_target
+FAILED tests/library/test_import_sources.py::test_selected_junction_is_rejected
+FAILED tests/library/test_import_sources.py::test_invalid_scope_has_no_import_side_effects
+13 failed, 45 passed, 3 skipped in 0.73s
+exit_code=1

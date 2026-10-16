@@ -117,6 +117,92 @@ def zero_page_pdf() -> bytes:
     )
 
 
+def encrypted_pdf() -> bytes:
+    """Build a one-page PDF 1.4 protected by Standard Security Handler R2.
+
+    The fixture uses only standard-library MD5/RC4 operations and has a real
+    non-empty user password; it exercises PDFium's production password gate.
+    """
+    import struct
+
+    padding = bytes.fromhex(
+        "28bf4e5e4e758a4164004e56fffa01082e2e00b6d0683e802f0ca9fe6453697a"
+    )
+    user_password, owner_password = b"secret", b"owner"
+    file_id = b"\x11" * 16
+    permissions = -4
+
+    def rc4(data: bytes, key: bytes) -> bytes:
+        state = list(range(256))
+        j = 0
+        for i in range(256):
+            j = (j + state[i] + key[i % len(key)]) & 255
+            state[i], state[j] = state[j], state[i]
+        output = bytearray()
+        i = j = 0
+        for value in data:
+            i = (i + 1) & 255
+            j = (j + state[i]) & 255
+            state[i], state[j] = state[j], state[i]
+            output.append(value ^ state[(state[i] + state[j]) & 255])
+        return bytes(output)
+
+    def md5(data: bytes) -> bytes:
+        return hashlib.md5(data, usedforsecurity=False).digest()
+
+    padded_user = (user_password + padding)[:32]
+    padded_owner = (owner_password + padding)[:32]
+    owner_key = md5(padded_owner)[:5]
+    owner_entry = rc4(padded_user, owner_key)
+    file_key = md5(
+        padded_user + owner_entry + struct.pack("<i", permissions) + file_id
+    )[:5]
+    user_entry = rc4(padding, file_key)
+    content = b"BT /F1 12 Tf 0 0 Td (protected) Tj ET"
+    object_key = md5(file_key + struct.pack("<I", 4)[:3] + b"\x00\x00")[:10]
+    encrypted_content = rc4(content, object_key)
+    objects = {
+        1: b"<< /Type /Catalog /Pages 2 0 R >>",
+        2: b"<< /Type /Pages /Kids [3 0 R] /Count 1 >>",
+        3: b"<< /Type /Page /Parent 2 0 R /MediaBox [0 0 100 100] /Contents 4 0 R >>",
+        4: (
+            b"<< /Length "
+            + str(len(encrypted_content)).encode()
+            + b" >>\nstream\n"
+            + encrypted_content
+            + b"\nendstream"
+        ),
+        5: (
+            b"<< /Filter /Standard /V 1 /R 2 /O <"
+            + owner_entry.hex().encode()
+            + b"> /U <"
+            + user_entry.hex().encode()
+            + b"> /P "
+            + str(permissions).encode()
+            + b" >>"
+        ),
+    }
+    output = bytearray(b"%PDF-1.4\n")
+    offsets = {}
+    for object_id, value in objects.items():
+        offsets[object_id] = len(output)
+        output += f"{object_id} 0 obj\n".encode() + value + b"\nendobj\n"
+    xref_position = len(output)
+    output += b"xref\n0 6\n0000000000 65535 f \n"
+    for object_id in range(1, 6):
+        output += f"{offsets[object_id]:010d} 00000 n \n".encode()
+    output += (
+        b"trailer\n<< /Size 6 /Root 1 0 R /Encrypt 5 0 R /ID [<"
+        + file_id.hex().encode()
+        + b"><"
+        + file_id.hex().encode()
+        + b">] >>\nstartxref\n"
+        + str(xref_position).encode()
+        + b"\n%%EOF\n"
+    )
+    return bytes(output)
+
+
 class InMemoryPageSink:
     """Minimal ImportPageSink double with duplicate/ordering bookkeeping."""
 
@@ -221,7 +307,7 @@ def test_non_pdf_and_mobi_reported_unsupported(workspace) -> None:
     assert all(
         failure.reason == "UNSUPPORTED_FORMAT" for failure in report.failed
     )
-    assert "MOBI" in report.failed[0].detail
+    assert all("MOBI" not in failure.detail.upper() for failure in report.failed)
 
 
 def test_cancel_stops_before_the_next_page_and_keeps_committed(workspace) -> None:
@@ -266,6 +352,33 @@ def test_encrypted_pdf_is_reported_not_guessed(tmp_path) -> None:
         and report.failed[0].reason == "ENCRYPTED"
     )
     assert report.imported == ()
+
+
+def test_real_encrypted_pdf_is_rejected_without_managed_or_database_rows(tmp_path):
+    from application.importing.images.sorting import sources_from_selection
+
+    source_root = tmp_path / "受控來源"
+    source_root.mkdir()
+    source = source_root / "password protected (1).pdf"
+    data = encrypted_pdf()
+    source.write_bytes(data)
+    source_hash = hashlib.sha256(source.read_bytes()).hexdigest()
+    storage = ManagedFileStorage(tmp_path / "managed")
+    sink = InMemoryPageSink()
+    use_case = ImportDocumentsUseCase(
+        PdfiumDocumentRaster(),
+        ManagedCopyStoreAdapter(storage, lambda chapter_id: "book-42"),
+        sink,
+    )
+
+    report = use_case.import_documents(
+        "chapter-7", sources_from_selection(source_root, [source])
+    )
+
+    assert report.imported == () and sink.pages == []
+    assert [failed.reason for failed in report.failed] == ["ENCRYPTED"]
+    assert not list((tmp_path / "managed" / "books").rglob("*.png"))
+    assert hashlib.sha256(source.read_bytes()).hexdigest() == source_hash
 
 
 # ---------------------------------------------------------------------------
@@ -361,23 +474,22 @@ def _stub_use_case(tmp_path: Path, page_count: int, fail_on: int | None = None):
 
 
 def test_failed_page_reports_the_rest_as_pending(tmp_path) -> None:
-    """F-3 (TASK-043): a mid-document failure must account for the remainder.
-
-    Pre-fix the loop simply ``break``-ed, so pages after the failure were
-    neither failed nor pending and the caller could not tell that they were
-    never attempted.
-    """
+    """A damaged page invalidates the PDF before any page is committed."""
     use_case, sink, raster = _stub_use_case(tmp_path, page_count=4, fail_on=1)
 
     report = use_case.import_documents("chapter-7", [_source("long.pdf", b"%PDF-1.4 stub")])
 
-    assert len(report.imported) == 1 and len(sink.pages) == 1
+    assert report.imported == () and sink.pages == []
     assert [failure.reason for failure in report.failed] == ["INVALID_DOCUMENT"]
-    assert report.pending == ("long.pdf (page 3+)", "long.pdf (page 4+)")
+    assert report.pending == (
+        "long.pdf (page 1+)",
+        "long.pdf (page 3+)",
+        "long.pdf (page 4+)",
+    )
     assert report.skipped_duplicates == ()
-    # a failed page is not a cancellation: the flag must stay honest
     assert report.cancelled is False
     assert raster.handle is not None and raster.handle.closed is True
+    assert not list((tmp_path / "managed" / "books").rglob("*.png"))
 
 
 def test_copy_failure_reports_the_rest_as_pending(tmp_path) -> None:

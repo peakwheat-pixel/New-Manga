@@ -1,0 +1,4 @@
+src/application/maintenance/trash.py:103:class TrashService:
+src/application/maintenance/trash.py:196:    def purge_batch(self, batch_id: str) -> None:
+src/application/library/service.py:26:class LibraryService:
+src/application/library/service.py:85:    def delete_book(self, book_id: str) -> None:

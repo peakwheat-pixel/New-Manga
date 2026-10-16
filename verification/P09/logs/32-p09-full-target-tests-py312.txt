@@ -1,0 +1,71 @@
+..........................................F............................. [ 80%]
+..................                                                       [100%]
+================================== FAILURES ===================================
+__________________ test_folder_collection_uses_natural_order __________________
+
+path = WindowsPath('G:/CODEX/New Manga.workspace/worktrees/P09-IMPORT-CORE/verification/P09/test-runs/run-32052/d95bdc0b5c183d29/missing')
+
+    def _reject_reparse_path(path: Path) -> None:
+        current = Path(path.anchor)
+        for part in path.parts[1:]:
+            current /= part
+            try:
+>               info = current.lstat()
+                       ^^^^^^^^^^^^^^^
+
+src\application\importing\images\sorting.py:95: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+C:\Users\49745\AppData\Local\Programs\Python\Python312\Lib\pathlib.py:847: in lstat
+    return self.stat(follow_symlinks=False)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = WindowsPath('G:/CODEX/New Manga.workspace/worktrees/P09-IMPORT-CORE/verification/P09/test-runs/run-32052/d95bdc0b5c183d29/missing')
+follow_symlinks = False
+
+    def stat(self, *, follow_symlinks=True):
+        """
+        Return the result of the stat() system call on this path, like
+        os.stat() does.
+        """
+>       return os.stat(self, follow_symlinks=follow_symlinks)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [WinError 2] ϵͳ�Ҳ���ָ�����ļ���: 'G:\\CODEX\\New Manga.workspace\\worktrees\\P09-IMPORT-CORE\\verification\\P09\\test-runs\\run-32052\\d95bdc0b5c183d29\\missing'
+
+C:\Users\49745\AppData\Local\Programs\Python\Python312\Lib\pathlib.py:840: FileNotFoundError
+
+The above exception was the direct cause of the following exception:
+
+tmp_path = WindowsPath('G:/CODEX/New Manga.workspace/worktrees/P09-IMPORT-CORE/verification/P09/test-runs/run-32052/d95bdc0b5c183d29')
+
+    def test_folder_collection_uses_natural_order(tmp_path):
+        (tmp_path / "page10.png").write_bytes(b"stub-not-decoded-here")
+        (tmp_path / "page2.jpg").write_bytes(b"stub")
+        (tmp_path / "notes.txt").write_bytes(b"ignore me")
+        collected = collect_image_files(tmp_path)
+        assert [p.name for p in collected] == ["page2.jpg", "page10.png"]
+        assert natural_sort_key("��2ҳ.png") < natural_sort_key("��10ҳ.png")
+        with pytest.raises(NotADirectoryError):
+>           collect_image_files(tmp_path / "missing")
+
+tests\library\test_import_images.py:207: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+src\application\importing\images\sorting.py:30: in collect_image_files
+    _reject_reparse_path(root)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+path = WindowsPath('G:/CODEX/New Manga.workspace/worktrees/P09-IMPORT-CORE/verification/P09/test-runs/run-32052/d95bdc0b5c183d29/missing')
+
+    def _reject_reparse_path(path: Path) -> None:
+        current = Path(path.anchor)
+        for part in path.parts[1:]:
+            current /= part
+            try:
+                info = current.lstat()
+            except OSError as error:
+>               raise ValueError("selected import path cannot be inspected") from error
+E               ValueError: selected import path cannot be inspected
+
+src\application\importing\images\sorting.py:97: ValueError
+1 failed, 89 passed in 3.67s
+EXIT_CODE=1

@@ -1,0 +1,40 @@
+COMMAND: git status --porcelain (P09 worktree)
+warning: could not open directory 'pytest-cache-files-0s2m2r88/': Permission denied
+warning: could not open directory 'pytest-cache-files-pkvyeizv/': Permission denied
+ M doc/tasks/P09.md
+ M src/application/importing/documents/service.py
+ M src/application/importing/images/__init__.py
+ M src/application/importing/images/sorting.py
+ M src/bootstrap/core_assembly.py
+ M src/bootstrap/core_service.py
+ M tests/import_formats/test_document_import.py
+ M tests/import_formats/test_mobi_import.py
+ M tests/library/test_import_images.py
+ M tests/library/test_production_adapters.py
+?? doc/contracts/P09_IMPORT_CONTRACT.md
+?? tests/library/test_import_sources.py
+?? tests/library/test_p09_managed_copy_safety.py
+?? verification/P09/
+worktree_exit_code=0
+COMMAND: git -C "G:/CODEX/New Manga" status --porcelain --untracked-files=no (main repo, read-only)
+ M .qoder-credits/report.json
+ M AGENTS.md
+ M doc/00_INDEX.md
+ M doc/01_FUNCTIONAL_ARCHITECTURE.md
+ M doc/03_DATA_MODEL.md
+ M doc/04_USER_FLOW.md
+ M doc/06_TRANSLATION_PIPELINE.md
+ M doc/09_COLLABORATION.md
+ M doc/11_ARCHITECTURE_MAPS.md
+ M doc/12_ROADMAP.md
+ M doc/AD-001_TARGET_DESKTOP_ARCHITECTURE.md
+ M doc/WORKTREE_SAFETY_INVENTORY.md
+ M doc/tasks/P02-NEW-TIME-X6-BUILD-CARGO.md
+ M doc/tasks/P02-NEW-TIME-X6.md
+ M doc/tasks/P02.md
+ M doc/templates/HANDOFF.md
+ M doc/templates/REVIEW.md
+ M doc/templates/TASK.md
+ M verification/PROJECT-ROADMAP-20261008/ROADMAP.md
+main_exit_code=0
+last_command_exit_code=0

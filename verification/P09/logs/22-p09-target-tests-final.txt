@@ -1,0 +1,7 @@
+.........................................................                [100%]
+=========================== short test summary info ===========================
+SKIPPED [1] tests\library\test_import_images.py:8: real PNG decode via Qt
+SKIPPED [1] tests\library\test_page_order.py:5: real PNG decode via Qt
+SKIPPED [1] tests\library\test_production_adapters.py:10: could not import 'PySide6': No module named 'PySide6'
+57 passed, 3 skipped, 7 deselected in 1.07s
+exit_code=0
