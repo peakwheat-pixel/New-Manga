@@ -246,3 +246,49 @@ fn real_core_sidecar_answers_startup_ping_on_fresh_catalog() {
     assert!(lab.catalog.is_file(), "frozen Core bound the fresh catalog");
     println!("PACKAGED_RESULT real_core_sidecar_answers_startup_ping_on_fresh_catalog=PASS protocol=2.3 catalog=created");
 }
+
+#[test]
+fn host_import_grant_round_trip_reaches_frozen_import_pages() {
+    let lab = PackagedLab::new();
+    let source = lab._dir.path().join("selected.png");
+    fs::write(&source, b"selected import source").unwrap();
+    let channel = lab.start_library();
+    channel.open_host_session().expect("OpenHostSession");
+
+    // The typed ImportPages error proves registration succeeded without an unrelated library fixture.
+    let error = channel
+        .import_from_path(&source, "file", "missing-chapter", None)
+        .err()
+        .expect("ImportPages should return the missing chapter error");
+    assert_eq!(error.code, "TARGET_NOT_FOUND");
+    assert_eq!(error.category, "not_found");
+    println!("PACKAGED_RESULT host_import_grant_round_trip_reaches_frozen_import_pages=PASS register=accepted import_error=TARGET_NOT_FOUND");
+}
+
+#[test]
+fn host_export_grant_round_trip_reaches_frozen_start_export() {
+    let lab = PackagedLab::new();
+    let target = lab._dir.path().join("export.png");
+    let channel = lab.start_library();
+    channel.open_host_session().expect("OpenHostSession");
+
+    // The typed StartExport error proves RegisterExportTarget accepted the grant.
+    let error = channel
+        .start_export_to_path(
+            &target,
+            serde_json::json!({
+                "book_id": "missing-book",
+                "chapter_ids": ["missing-chapter"],
+                "ordered_page_ids": ["missing-page"],
+                "format": "png",
+                "format_options": {},
+                "stale_policy": "abort"
+            }),
+        )
+        .err()
+        .expect("StartExport should return the missing chapter error");
+    assert_eq!(error.code, "TARGET_NOT_FOUND");
+    assert_eq!(error.category, "not_found");
+    assert!(!target.exists());
+    println!("PACKAGED_RESULT host_export_grant_round_trip_reaches_frozen_start_export=PASS register=accepted export_error=TARGET_NOT_FOUND target_written=false");
+}

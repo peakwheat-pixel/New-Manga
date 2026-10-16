@@ -1,0 +1,113 @@
+tested_commit=7fbce3018
+cargo_version=cargo 1.98.1
+M2RC1_PYTHON=C:\Python314\python.exe
+M2RC1_PACKAGED=<unset>
+M2RC1_SRC_ROOT=<unset>
+command=cargo test --manifest-path apps/desktop/src-tauri/Cargo.toml --bin m2rc1-desktop -- --skip packaged_sidecar_tests --test-threads=1
+warning: unused import: `CHUNK_SIZE`
+    --> src\main.rs:1014:54
+     |
+1014 |         build_url, handle_m2res_request, ScopeRoots, CHUNK_SIZE, ID_LENGTH,
+     |                                                      ^^^^^^^^^^
+     |
+     = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: unused variable: `out`
+    --> src\main.rs:2490:13
+     |
+2490 |         let out = rotate_render_preview(&core, "page", result, &mut current).unwrap();
+     |             ^^^ help: if this is intentional, prefix it with an underscore: `_out`
+     |
+     = note: `#[warn(unused_variables)]` (part of `#[warn(unused)]`) on by default
+
+warning: `m2rc1-desktop` (bin "m2rc1-desktop" test) generated 2 warnings (run `cargo fix --bin "m2rc1-desktop" -p m2rc1-desktop --tests` to apply 2 suggestions)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.55s
+     Running unittests src\main.rs (apps\desktop\src-tauri\target\debug\deps\m2rc1_desktop-e03b229fc621c524.exe)
+
+running 77 tests
+test ac1_bridge::tests::decode_response_maps_typed_errors ... ok
+test ac1_bridge::tests::spawn_args_target_the_acceptance_module ... ok
+test ac1_bridge::tests::spawn_fails_typed_on_missing_python ... ok
+test host_issuer::tests::base64url_encodes_32_byte_credentials_without_padding ... ok
+test host_issuer::tests::export_ref_is_one_target_token_with_frozen_prefix ... ok
+test host_issuer::tests::export_signature_matches_core_nul_join_vector ... ok
+test host_issuer::tests::hmac_sha256_matches_rfc4231_vector ... ok
+test host_issuer::tests::import_grant_ref_has_only_frozen_fields_and_directory_is_direct_only ... ok
+test host_issuer::tests::import_signature_matches_core_canonical_json_vector ... ok
+test host_issuer::tests::natural_sort_matches_p09_page_order ... ok
+test host_issuer::tests::unsupported_import_source_and_mismatched_export_extension_fail_closed ... ok
+test host_issuer::tests::webview_summaries_exclude_paths_and_refs ... ok
+test library_bridge::tests::book_summary_page_count_known_zero_and_null_are_distinguishable ... ok
+test library_bridge::tests::decode_response_parses_success_and_error ... ok
+test library_bridge::tests::host_control_denial_codes_are_preserved_for_host_handling ... ok
+test library_bridge::tests::host_control_envelope_is_separate_and_bound_to_both_sessions ... ok
+test library_bridge::tests::mock_channel_round_trip ... ok
+test library_bridge::tests::page_nav_mock_channel_round_trip_and_typed_pass_through ... ok
+test library_bridge::tests::page_resolve_mock_channel_round_trip_and_typed_rejection ... ok
+[core.derived_gc] orphan_files_removed=0 dead_rows_removed=0
+test library_bridge::tests::real_core_sidecar_answers_startup_ping_on_fresh_catalog ... ok
+test library_bridge::tests::retype_mock_channel_round_trip_and_typed_rejection ... ok
+test library_bridge::tests::same_channel_concurrent_round_trips_keep_response_ownership ... ok
+test library_bridge::tests::settings_mock_channel_round_trip_and_typed_rejection ... ok
+test library_bridge::tests::spawn_args_target_core_service_module ... ok
+test library_bridge::tests::startup_ping_deadline_kills_own_child_and_joins_worker ... ok
+test library_bridge::tests::wait_timeout_or_kill_terminates_hanging_process ... ok
+test resource_protocol::tests::large_offset_high_bits_reach_the_64_bit_seek ... ok
+test resource_protocol::tests::read_through_at_limit_offset_yields_empty_tail ... ok
+test resource_protocol::tests::read_through_invalid_handle_fails_closed_with_open_failed ... ok
+test resource_protocol::tests::read_through_rejects_offset_above_resource_limit ... ok
+test resource_protocol::tests::read_through_rejects_offset_beyond_i32_seek_range ... ok
+test resource_protocol::tests::read_through_serves_requested_window_within_limit ... ok
+test tests::ac1_commands_never_reappear_on_the_removed_surface ... ok
+test tests::ac1_surface_adds_exactly_the_three_acceptance_commands ... ok
+test tests::app_acl_manifest_is_generated_and_enforced ... ok
+test tests::chunk_offset_beyond_size_rejected ... ok
+test tests::f01_fetch_then_revoke_then_fetch_must_be_typed ... ok
+test tests::f01_ttl_expiry_invalidates_cached_grant ... ok
+test tests::f02_equal_size_rewrite_after_first_verify_rejected ... ok
+test tests::f02_equal_size_rewrite_stability_loop ... ok
+test tests::failed_rotation_marks_nothing ... ok
+test tests::full_chunk_serving_matches_bytes_and_digest_check ... ok
+test tests::host_control_operations_are_never_webview_commands ... ok
+test tests::identity_change_rejected_by_per_request_verification ... ok
+test tests::issue_wire_never_carries_path_or_ttl ... ok
+test tests::malformed_ids_rejected_before_lookup ... ok
+test tests::mock_issue_without_catalog_entry_fails_closed ... ok
+test tests::mock_library_channel_integration ... ok
+test tests::no_surface_command_carries_a_ttl_parameter_shape ... ok
+test tests::none_preview_rotation_still_retires_previous_key ... ok
+test tests::packaged_resolution_bare_launch_requires_sidecar_exe ... ok
+test tests::packaged_resolution_dev_env_stays_dev ... ok
+test tests::packaged_resolution_explicit_flag_wins ... ok
+test tests::packaged_spawn_missing_sidecar_fails_closed ... ok
+test tests::page_nav_production_only_commands_are_exact ... ok
+test tests::perf_chunk_request_digest_cost ... ignored
+test tests::plain_webview_revoke_does_not_touch_the_retire_path ... ok
+test tests::preview_rotation_short_circuits_equal_catalog_key ... ok
+test tests::probe_surface_adds_exactly_the_four_probe_commands ... ok
+test tests::production_and_probe_surfaces_never_gain_ac1_commands ... ok
+test tests::production_only_commands_stay_off_both_frozen_test_surfaces ... ok
+test tests::production_surface_is_exactly_eighteen_commands ... ok
+test tests::real_core_sidecar_denies_uncataloged_and_extended_ttl ... ok
+[core.derived_gc] orphan_files_removed=0 dead_rows_removed=0
+test tests::real_core_sidecar_rc4_commands_round_trip_typed_errors ... ok
+[core.derived_gc] orphan_files_removed=0 dead_rows_removed=0
+test tests::real_core_sidecar_retype_pair_empty_page_and_typed_rejection ... ok
+test tests::real_core_sidecar_round_trip ... ok
+[core.derived_gc] orphan_files_removed=0 dead_rows_removed=0
+test tests::real_core_sidecar_settings_round_trip_and_typed_rejection ... ok
+[core.derived_gc] orphan_files_removed=0 dead_rows_removed=0
+test tests::real_library_sidecar_round_trip_and_eof ... ok
+test tests::register_catalog_exists_on_no_surface ... ok
+test tests::rerender_fails_closed_when_previous_revoke_fails ... ok
+test tests::rerenders_hold_one_global_lock_through_core_and_preview_swap ... ok
+test tests::responses_carry_no_store ... ok
+test tests::revoked_id_propagates_typed_410 ... ok
+test tests::same_key_rotation_carries_no_retire_bit ... ok
+test tests::successful_rotation_retires_previous_key_only ... ok
+test tests::unknown_well_formed_id_typed_404 ... ok
+test tests::url_builder_is_opaque_only ... ok
+
+test result: ok. 76 passed; 0 failed; 1 ignored; 0 measured; 8 filtered out; finished in 5.03s
+
+EXIT_CODE=0

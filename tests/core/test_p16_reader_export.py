@@ -74,6 +74,44 @@ def _make_grant(
     return f"etref1.{grant_id}.{signature}", grant_id
 
 
+@pytest.mark.parametrize(
+    "core_now,expires_at,expected_error",
+    [
+        pytest.param(1001.0, 1299.0, None, id="inside-window"),
+        pytest.param(1000.0, 1299.0, None, id="clock-equals-host-build"),
+        pytest.param(999.999, 1299.0, None, id="clock-slightly-before-host-build"),
+        pytest.param(1299.0, 1299.0, "REF_EXPIRED", id="actually-expired"),
+        pytest.param(1000.0, 1300.001, "REF_EXPIRED", id="actually-over-300-second-window"),
+    ],
+)
+def test_export_grant_registration_ttl_boundary(
+    tmp_path: Path, core_now: float, expires_at: float, expected_error: str | None,
+) -> None:
+    target = (tmp_path / "export.png").absolute()
+    grant_id = uuid.uuid4().hex
+    signing_key = bytes(range(32))
+    signature = _sign_grant(
+        signing_key, grant_id, SESSION_ID, target, "png", False, expires_at,
+    )
+    registry = ExportTargetGrantRegistry(clock=lambda: core_now)
+
+    if expected_error is None:
+        registry.register(
+            grant_id=grant_id, session_id=SESSION_ID, target_path=str(target),
+            format="png", replace_existing=False, expires_at=expires_at,
+            signing_key=signing_key, signature=signature,
+        )
+        assert grant_id in registry._grants
+    else:
+        with pytest.raises(ExportTargetRefError) as error:
+            registry.register(
+                grant_id=grant_id, session_id=SESSION_ID, target_path=str(target),
+                format="png", replace_existing=False, expires_at=expires_at,
+                signing_key=signing_key, signature=signature,
+            )
+        assert error.value.code == expected_error
+
+
 def _rpc(server: CoreServiceServer, command: str, payload: dict) -> dict:
     raw = json.dumps({
         "protocol": "new-manga.core",

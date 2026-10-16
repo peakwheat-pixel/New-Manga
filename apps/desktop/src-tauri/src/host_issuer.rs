@@ -149,7 +149,7 @@ pub(crate) fn build_import_grant(
         (None, vec![import_entry(selected_path)?])
     };
 
-    let expires_at = unix_seconds() + 300.0;
+    let expires_at = unix_seconds() + 299.0;
     let expires_signed = format!("{expires_at:.6}");
     let mut signed_fields = Map::new();
     signed_fields.insert("access".into(), json!("read-only"));
@@ -298,7 +298,7 @@ pub(crate) fn build_export_grant(
         Err(error) if error.kind() == std::io::ErrorKind::NotFound => false,
         Err(_) => return Err(HostIssuerError("REF_SCOPE_DENIED")),
     };
-    let expires_at = unix_seconds() + 300.0;
+    let expires_at = unix_seconds() + 299.0;
     let signature_input = format!(
         "{grant_id}\0{session_id}\0{target_path}\0{format}\0{}\0{expires_at:.6}",
         if replace_existing { "1" } else { "0" }
@@ -668,6 +668,7 @@ mod tests {
         fs::create_dir(root.join("nested")).unwrap();
         fs::write(root.join("nested").join("page1.png"), b"nested").unwrap();
 
+        let before = unix_seconds();
         let grant = build_import_grant(
             &root,
             "directory",
@@ -676,6 +677,9 @@ mod tests {
             &[7; 32],
         )
         .unwrap();
+        let after = unix_seconds();
+        let expires_at = grant.payload["expires_at"].as_f64().unwrap();
+        assert!(expires_at >= before + 299.0 && expires_at <= after + 299.0);
         assert_eq!(
             grant
                 .reference
@@ -704,6 +708,7 @@ mod tests {
     fn export_ref_is_one_target_token_with_frozen_prefix() {
         let temp = tempdir().unwrap();
         let target = temp.path().join("out.pdf");
+        let before = unix_seconds();
         let grant = build_export_grant(
             &target,
             "pdf",
@@ -713,13 +718,12 @@ mod tests {
             &[9; 32],
         )
         .unwrap();
+        let after = unix_seconds();
         assert!(grant.reference.starts_with("etref1.grant_0123456789."));
         assert_eq!(grant.reference.split('.').count(), 3);
         assert!(grant.payload["signature"].as_str().unwrap().len() == 43);
-        assert_eq!(
-            grant.payload["expires_at"].as_f64().unwrap().floor(),
-            unix_seconds().floor() + 300.0
-        );
+        let expires_at = grant.payload["expires_at"].as_f64().unwrap();
+        assert!(expires_at >= before + 299.0 && expires_at <= after + 299.0);
     }
 
     #[test]

@@ -1,0 +1,20 @@
+shell=PowerShell 7.6.6
+python=C:\Python314\python.exe
+python_version=Python 3.14.6
+cwd=G:\CODEX\New Manga.workspace\worktrees\HOST-TTL-BOUNDARY-1
+tested_commit=6284f6f322fa4e990037d56a7cd480d219c0febb
+command=python -m pytest tests/core -q
+........................................................................ [ 18%]
+........................................................................ [ 36%]
+........................................................................ [ 54%]
+........................................................................ [ 72%]
+........................................................................ [ 90%]
+........................................                                 [100%]
+============================== warnings summary ===============================
+tests/core/test_rc4_stdio_render_preview.py::test_production_stdio_decodes_nmfr_renders_text_and_publishes_readable_preview
+  G:\CODEX\New Manga.workspace\worktrees\HOST-TTL-BOUNDARY-1\tests\core\test_rc4_stdio_render_preview.py:245: DeprecationWarning: Image.Image.getdata is deprecated and will be removed in Pillow 14 (2027-10-15). Use get_flattened_data instead.
+    for px in rendered.crop((20, 20, 150, 120)).convert("RGB").getdata()
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+400 passed, 1 warning in 31.43s
+EXIT_CODE=0
