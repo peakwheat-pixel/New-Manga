@@ -103,13 +103,23 @@ impl PackagedLab {
         let exe = self.exe("core_service.exe");
         let exe_arg = exe.to_string_lossy().into_owned();
         self.report_start(&exe, ["-m", "bootstrap.core_service"]);
+        // Reviewer reproduced two false 30s timeouts in a 111.59s loaded six-test run; the isolated retry passed in 13.58s. The 68,717,156-byte frozen PyInstaller executable needs headroom, while its real startup ping remains mandatory.
+        let startup_timeout_secs = match std::env::var("M2RC1_PACKAGED_STARTUP_TIMEOUT_SECS") {
+            Ok(value) => value
+                .parse::<u64>()
+                .expect("M2RC1_PACKAGED_STARTUP_TIMEOUT_SECS must be an integer"),
+            Err(std::env::VarError::NotPresent) => 120,
+            Err(error) => panic!("cannot read M2RC1_PACKAGED_STARTUP_TIMEOUT_SECS: {error}"),
+        };
+        assert!(startup_timeout_secs > 0, "startup timeout must be positive");
+        println!("PACKAGED_STARTUP_TIMEOUT_SECS={startup_timeout_secs}");
         StdioLibraryChannel::spawn_with_startup_ping(
             &exe_arg,
             &self.bundle,
             Some(&self.data),
             Some(&self.derived),
             Some(&self.catalog),
-            Duration::from_secs(30),
+            Duration::from_secs(startup_timeout_secs),
         )
         .expect("production startup ping over the frozen core_service.exe")
     }

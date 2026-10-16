@@ -1,0 +1,69 @@
+   Compiling m2rc1-desktop v0.1.0 (G:\CODEX\New Manga.workspace\worktrees\ENV-BUNDLE-1-FU1\apps\desktop\src-tauri)
+warning: unused import: `CHUNK_SIZE`
+    --> src\main.rs:1014:54
+     |
+1014 |         build_url, handle_m2res_request, ScopeRoots, CHUNK_SIZE, ID_LENGTH,
+     |                                                      ^^^^^^^^^^
+     |
+     = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: unused variable: `out`
+    --> src\main.rs:2490:13
+     |
+2490 |         let out = rotate_render_preview(&core, "page", result, &mut current).unwrap();
+     |             ^^^ help: if this is intentional, prefix it with an underscore: `_out`
+     |
+     = note: `#[warn(unused_variables)]` (part of `#[warn(unused)]`) on by default
+
+warning: `m2rc1-desktop` (bin "m2rc1-desktop" test) generated 2 warnings (run `cargo fix --bin "m2rc1-desktop" -p m2rc1-desktop --tests` to apply 2 suggestions)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 42.52s
+     Running unittests src\main.rs (apps\desktop\src-tauri\target\debug\deps\m2rc1_desktop-e03b229fc621c524.exe)
+
+running 6 tests
+test packaged_sidecar_tests::real_core_sidecar_answers_startup_ping_on_fresh_catalog ... PACKAGED_ENV M2RC1_PACKAGED=1 M2RC1_SRC_ROOT=<unset> M2RC1_PYTHON=<unset>
+PACKAGED_START exe=\\?\G:\CODEX\New Manga.workspace\worktrees\ENV-BUNDLE-1-FU1\apps\desktop\src-tauri\target\core-sidecar\core-sidecar\core_service.exe bytes=68717156 sha256=896bd56286b25bc8539028d52f3ef991cfbcbda24f93ae6c6d75758a7dbfd842 args=["-m", "bootstrap.core_service"]
+[core.derived_gc] orphan_files_removed=0 dead_rows_removed=0
+PACKAGED_RESULT real_core_sidecar_answers_startup_ping_on_fresh_catalog=PASS protocol=2.3 catalog=created
+ok
+test packaged_sidecar_tests::real_core_sidecar_rc4_commands_round_trip_typed_errors ... PACKAGED_ENV M2RC1_PACKAGED=1 M2RC1_SRC_ROOT=<unset> M2RC1_PYTHON=<unset>
+PACKAGED_START exe=\\?\G:\CODEX\New Manga.workspace\worktrees\ENV-BUNDLE-1-FU1\apps\desktop\src-tauri\target\core-sidecar\core-sidecar\core_service.exe bytes=68717156 sha256=896bd56286b25bc8539028d52f3ef991cfbcbda24f93ae6c6d75758a7dbfd842 args=["-m", "bootstrap.core_service"]
+[core.derived_gc] orphan_files_removed=0 dead_rows_removed=0
+
+thread 'packaged_sidecar_tests::real_core_sidecar_rc4_commands_round_trip_typed_errors' (38712) panicked at src\packaged_sidecar_tests.rs:207:5:
+assertion `left == right` failed
+  left: "CORE_UNAVAILABLE"
+ right: "TARGET_NOT_FOUND"
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+FAILED
+test packaged_sidecar_tests::real_core_sidecar_retype_pair_empty_page_and_typed_rejection ... PACKAGED_ENV M2RC1_PACKAGED=1 M2RC1_SRC_ROOT=<unset> M2RC1_PYTHON=<unset>
+PACKAGED_START exe=\\?\G:\CODEX\New Manga.workspace\worktrees\ENV-BUNDLE-1-FU1\apps\desktop\src-tauri\target\core-sidecar\core-sidecar\core_service.exe bytes=68717156 sha256=896bd56286b25bc8539028d52f3ef991cfbcbda24f93ae6c6d75758a7dbfd842 args=["-m", "bootstrap.core_service"]
+
+thread 'packaged_sidecar_tests::real_core_sidecar_retype_pair_empty_page_and_typed_rejection' (42028) panicked at src\packaged_sidecar_tests.rs:114:10:
+production startup ping over the frozen core_service.exe: LibraryError { code: "CORE_UNAVAILABLE", category: "unavailable", retryable: true, message: Some("production core startup ping timed out or failed") }
+FAILED
+test packaged_sidecar_tests::real_core_sidecar_round_trip ... PACKAGED_ENV M2RC1_PACKAGED=1 M2RC1_SRC_ROOT=<unset> M2RC1_PYTHON=<unset>
+PACKAGED_START exe=\\?\G:\CODEX\New Manga.workspace\worktrees\ENV-BUNDLE-1-FU1\apps\desktop\src-tauri\target\core-sidecar\core-sidecar\catalog_loader.exe bytes=1826114 sha256=44786ca1a6338743099c14d3dd7ae395a1f4d8354ba03a14e1c31ee3e05f130d args=["--db", "C:\\Users\\49745\\AppData\\Local\\Temp\\.tmpCDaPOr\\catalog.sqlite", "--initialize-preview-namespace", "C:\\Users\\49745\\AppData\\Local\\Temp\\.tmpCDaPOr\\derived", "--set", "res-sidecar=asset.png"]
+PACKAGED_EXIT exe=\\?\G:\CODEX\New Manga.workspace\worktrees\ENV-BUNDLE-1-FU1\apps\desktop\src-tauri\target\core-sidecar\core-sidecar\catalog_loader.exe code=0 stdout= stderr=
+PACKAGED_START exe=\\?\G:\CODEX\New Manga.workspace\worktrees\ENV-BUNDLE-1-FU1\apps\desktop\src-tauri\target\core-sidecar\core-sidecar\host_bridge.exe bytes=1828219 sha256=ca2defdf3ac99f6adf4f90ed2457a7cd81cc799ca10350296a50d0082b01477d args=[]
+PACKAGED_RESULT real_core_sidecar_round_trip=PASS typed_error=REF_REVOKED shutdown=sent
+ok
+test packaged_sidecar_tests::real_core_sidecar_settings_round_trip_and_typed_rejection ... PACKAGED_ENV M2RC1_PACKAGED=1 M2RC1_SRC_ROOT=<unset> M2RC1_PYTHON=<unset>
+PACKAGED_START exe=\\?\G:\CODEX\New Manga.workspace\worktrees\ENV-BUNDLE-1-FU1\apps\desktop\src-tauri\target\core-sidecar\core-sidecar\core_service.exe bytes=68717156 sha256=896bd56286b25bc8539028d52f3ef991cfbcbda24f93ae6c6d75758a7dbfd842 args=["-m", "bootstrap.core_service"]
+[core.derived_gc] orphan_files_removed=0 dead_rows_removed=0
+PACKAGED_RESULT real_core_sidecar_settings_round_trip_and_typed_rejection=PASS typed_error=INVALID_REQUEST
+ok
+test packaged_sidecar_tests::real_library_sidecar_round_trip_and_eof ... PACKAGED_ENV M2RC1_PACKAGED=1 M2RC1_SRC_ROOT=<unset> M2RC1_PYTHON=<unset>
+PACKAGED_START exe=\\?\G:\CODEX\New Manga.workspace\worktrees\ENV-BUNDLE-1-FU1\apps\desktop\src-tauri\target\core-sidecar\core-sidecar\core_service.exe bytes=68717156 sha256=896bd56286b25bc8539028d52f3ef991cfbcbda24f93ae6c6d75758a7dbfd842 args=["-m", "bootstrap.core_service"]
+[core.derived_gc] orphan_files_removed=0 dead_rows_removed=0
+PACKAGED_RESULT real_library_sidecar_round_trip_and_eof=PASS protocol=2.3 eof=CORE_UNAVAILABLE
+ok
+
+failures:
+
+failures:
+    packaged_sidecar_tests::real_core_sidecar_rc4_commands_round_trip_typed_errors
+    packaged_sidecar_tests::real_core_sidecar_retype_pair_empty_page_and_typed_rejection
+
+test result: FAILED. 4 passed; 2 failed; 0 ignored; 0 measured; 77 filtered out; finished in 111.59s
+
+error: test failed, to rerun pass `--bin m2rc1-desktop`
