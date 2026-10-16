@@ -13,7 +13,7 @@ base_commit: 3bf2604dc9e8ef6be47bd80897e4df05cae077b3
 branch: codex/ENV-BUNDLE-1-FU1-packaged-acceptance
 worktree: G:/CODEX/New Manga.workspace/worktrees/ENV-BUNDLE-1-FU1
 integration_commit: null
-delivery_head: 998200d48e10899e2916a73143578c69bceb30cf
+delivery_head: cffa9666fbbe5f2adfe213de37a8beb20a994a38
 canonical_evidence_status: registered_blob_level
 resource_closeout_status: accounted_with_preserved_residuals
 evidence_dir: verification/ENV-BUNDLE-1-FU1
@@ -106,12 +106,12 @@ evidence_dir: verification/ENV-BUNDLE-1-FU1
 | 场景/AC | 计划命令或手工步骤 | 前提/环境 | 实际结果 | 证据 |
 |---|---|---|---|---|
 | AC1 | 固定 bundle 来源并计算 SHA-256/协议版本 | 既有 build venv；完整构建，无 `-SkipWeights` | PASS | [构建与产物清单](../../verification/ENV-BUNDLE-1-FU1/ac1-bundle-and-frontend-manifest.md)、[sidecar build log](../../verification/ENV-BUNDLE-1-FU1/ac1-build-sidecar.log)、[frozen smoke](../../verification/ENV-BUNDLE-1-FU1/ac1-core-service-smoke.log) |
-| AC2 | frozen bundle 驱动的六场景协议往返；路径、SHA、环境、日志及逐项结果 | 2.3 frozen bundle；`M2RC1_PACKAGED=1`，source env unset | PASS：6/6 | [逐项结果](../../verification/ENV-BUNDLE-1-FU1/ac2-packaged-six-test-results.md)、[原始 Cargo log](../../verification/ENV-BUNDLE-1-FU1/ac2-packaged-six-tests.log)，exit `0` |
+| AC2 | frozen bundle 驱动的六场景协议往返；路径、SHA、环境、日志及逐项结果 | 2.3 frozen bundle；`M2RC1_PACKAGED=1`，source env unset | PASS：I1返修后 `6/6`；测试 `139.55 s`、命令总耗时 `174.24 s`，exit `0` | [I1返修与逐项结果、Reviewer复现记录](../../verification/ENV-BUNDLE-1-FU1/ac2-i1-startup-timeout-repair.md)、[返修后原始 Cargo log](../../verification/ENV-BUNDLE-1-FU1/ac2-packaged-six-tests-i1-repair.log) |
 | AC3 | frozen Core 上由 host 侧 issuer 发起的 HostControl 往返 | 2.3 frozen bundle + `StdioLibraryChannel` | BLOCKED：`RegisterImportSource` 返回 `REF_EXPIRED`；未触及产品代码 | [阻塞分析](../../verification/ENV-BUNDLE-1-FU1/ac3-host-control-blocked.md)、[原始探测 log](../../verification/ENV-BUNDLE-1-FU1/ac2-ac3-combined-attempt.log)，combined exit `101` |
 | AC4 | 刷新 main 仓 gitignored sidecar 与 frontend/dist 并比较 | 本 worktree 经既定 sidecar/frontend 构建入口生成，再镜像到已确认 ignored 的主仓目标 | PASS：Core 2.3 | [前后对比](../../verification/ENV-BUNDLE-1-FU1/main-artifacts-after.md)、[复制记录](../../verification/ENV-BUNDLE-1-FU1/ac4-copy-sidecar-to-main.log)、[主仓 smoke](../../verification/ENV-BUNDLE-1-FU1/ac4-main-core-smoke-after.log) |
 | AC5 | 确认仅新增 AC2 测试路径；生成物噪音恢复；无产品/契约/依赖变更 | Task worktree | PASS | [生成物副作用记录](../../verification/ENV-BUNDLE-1-FU1/ac5-generated-side-effects.md)、Handoff 逐文件说明 |
 | AC6 | 主仓 HEAD + `git status --porcelain --untracked-files=no` 前后对比，复核原 19 项 diff | 主仓 `G:/CODEX/New Manga` | PASS：19 项原始 dirty 指纹未变 | [主仓状态对比](../../verification/ENV-BUNDLE-1-FU1/main-status-comparison.md)及 before/after snapshots |
-| AC7 | 固定 commit、Handoff、Canonical Evidence、未跑项标记；不 push/merge | Task branch | PASS：实现 commit 与 Handoff 文档 commit 分开固定；未 push/merge | 本 Task 的 Canonical Evidence 表；[Handoff](../handoffs/ENV-BUNDLE-1-FU1-998200d48.md) |
+| AC7 | 固定 commit、Handoff、Canonical Evidence、未跑项标记；不 push/merge | Task branch | PASS：实现返修 commit 与本次 Handoff 分开固定；待独立 Review，未 push/merge | 本 Task 的 Canonical Evidence 表；[I1返修 Handoff](../handoffs/ENV-BUNDLE-1-FU1-cffa9666f.md) |
 
 ## 依赖、风险与阻塞
 
@@ -133,8 +133,9 @@ evidence_dir: verification/ENV-BUNDLE-1-FU1
 - 2026-10-16 AC3：用真实 frozen Core 进行一次 HostControl 探测；`OpenHostSession` 成功，`RegisterImportSource` 返回 `REF_EXPIRED`，因此标记 `BLOCKED`。过期边界分析及证据见 `verification/ENV-BUNDLE-1-FU1/ac3-host-control-blocked.md`；未修改产品实现，需另立授权修复任务后再测。
 - 2026-10-16 AC4：将当前 worktree 已构建的 sidecar bundle 与 frontend dist 镜像到主仓对应 gitignored 路径；对主仓新 Core 做了隔离协议 smoke，ping 2.3 ready、shutdown stopped、exit `0`。主仓 Core 从 68,604,146 bytes / SHA-256 `61f128d6878baad1c72fa24f7cda75675b31354ea47b43828861e7d8b2ca91f0` / protocol `1.6` 更新为 68,717,156 bytes / SHA-256 `896bd56286b25bc8539028d52f3ef991cfbcbda24f93ae6c6d75758a7dbfd842` / protocol `2.3`。具体目录统计见 `main-artifacts-after.md`。
 - 2026-10-16 AC6：主仓原 19 项 dirty 的 status SHA-256=`a72d1076a20534021c50709972e760a66b7b65d220248284e518eb8f891d460a`、`git diff --binary` 250,300 bytes / SHA-256=`fde78be03b5e5be8a01d10050703c2b2e587756b8d77a39be6bce05d1e7bfe35` 前后相同。主仓 HEAD 在运行期间被并发 UI-DESIGN-1 文档提交推进；该变化不在本 Task 写入路径中。最终快照在提交前重取并归档。
+- 2026-10-16 I1 有界返修：独立 Reviewer=dsh 指出 AC2 六项测试的 `PackagedLab::start_library()` 将真实 frozen Core startup ping deadline 固定为 30 秒，负载下发生假阴性。仅在 `packaged_sidecar_tests.rs` 将 deadline 改为正整数环境变量 `M2RC1_PACKAGED_STARTUP_TIMEOUT_SECS`，默认 `120` 秒；启动 ping 仍必须成功，六项场景断言不变。新默认值全量复跑 `6 passed; 0 failed; 0 ignored; 77 filtered out`，Cargo 测试耗时 `139.55 s`、命令总耗时 `174.24 s`、exit `0`。原始日志和三份 Reviewer 原始复现日志（含外部来源路径、逐字节副本及 SHA-256）、复现条件和逐项结果见 [I1返修记录](../../verification/ENV-BUNDLE-1-FU1/ac2-i1-startup-timeout-repair.md)。生产 Host 启动同样传入 30 秒，详见返修记录的 `main.rs:840,848` 调查；只报告，未改产品代码，待 Coordinator 另立 Task。AC3 `REF_EXPIRED` 继续为 `BLOCKED`。本 Task 等待 Reviewer 对返修提交独立复跑，不表示已接受。
 - 代码范围：唯一 tracked 代码改动是 `main.rs` 中 `#[cfg(test)]` 测试模块声明；新增 `packaged_sidecar_tests.rs` 包含 AC2 独立 packaged 路径的六项用例。没有改动产品语义实现、契约、Schema 或依赖。Cargo 产生的 27 个行尾噪音文件已逐项恢复，`git diff` 内容为空；详见副作用记录。
-- Handoff：[ENV-BUNDLE-1-FU1-998200d48.md](../handoffs/ENV-BUNDLE-1-FU1-998200d48.md)，引用实现 head `998200d48e10899e2916a73143578c69bceb30cf`；本 Task 尚未被接受。
+- Handoff：[ENV-BUNDLE-1-FU1-cffa9666f.md](../handoffs/ENV-BUNDLE-1-FU1-cffa9666f.md)，引用 I1 实现 head `cffa9666fbbe5f2adfe213de37a8beb20a994a38`；前次交付记录保留于 [ENV-BUNDLE-1-FU1-998200d48.md](../handoffs/ENV-BUNDLE-1-FU1-998200d48.md)。本 Task 尚未被接受，等待独立 Review 复跑。
 - Review：待 Coordinator 释放独立 Review，推荐 DeepSeek Harness；Owner 不自审。
 - 未运行：既有 source-backed 全套 77 tests 未运行（本次只过滤执行新增六项）；NSIS installer / GUI 安装验收未运行；AC3 处于 `BLOCKED`。
 
@@ -152,6 +153,12 @@ evidence_dir: verification/ENV-BUNDLE-1-FU1
 | ENV-BUNDLE-1-FU1-AC2-COMPILE-ATTEMPT | AC2 | `verification/ENV-BUNDLE-1-FU1/ac2-packaged-tests-attempt-1-compile-failure.log` | `998200d48e10899e2916a73143578c69bceb30cf` | `6210d9cbb17f5bd62e4b49fb93772fc61c9b530978cc24671c8116eac15f67d8` | CANONICAL |
 | ENV-BUNDLE-1-FU1-AC2-RAW | AC2 | `verification/ENV-BUNDLE-1-FU1/ac2-packaged-six-tests.log` | `998200d48e10899e2916a73143578c69bceb30cf` | `5eb49f5f0d3613d642f39313392570621181c315a06807137cc7bc535e647a86` | CANONICAL |
 | ENV-BUNDLE-1-FU1-AC2-RESULTS | AC2 | `verification/ENV-BUNDLE-1-FU1/ac2-packaged-six-test-results.md` | `998200d48e10899e2916a73143578c69bceb30cf` | `9fecee263ca3560eaab4174a554c5acadefb74359b94bc53f5e3b76356501c23` | CANONICAL |
+| ENV-BUNDLE-1-FU1-I1-AC2-RAW | AC2 | `verification/ENV-BUNDLE-1-FU1/ac2-packaged-six-tests-i1-repair.log` | `cffa9666fbbe5f2adfe213de37a8beb20a994a38` | `500c6ff537c793d112943251671d89d14761578aec25f7315c90bd34fe5ca821` | CANONICAL |
+| ENV-BUNDLE-1-FU1-I1-REVIEWER-FULL | AC2 | `verification/ENV-BUNDLE-1-FU1/reviewer-rerun-packaged.log` | `cffa9666fbbe5f2adfe213de37a8beb20a994a38` | `0ae5ab593cc859dd2203b1c8773f0bd899161aa3f4a24844cba74d7037d0a004` | CANONICAL |
+| ENV-BUNDLE-1-FU1-I1-REVIEWER-ISOLATED-1 | AC2 | `verification/ENV-BUNDLE-1-FU1/reviewer-rerun-isolated.log` | `cffa9666fbbe5f2adfe213de37a8beb20a994a38` | `4c1b9e469efd445863bd6be1888ec9bdc2688f5830cee708ceab6ec0539c347f` | CANONICAL |
+| ENV-BUNDLE-1-FU1-I1-REVIEWER-ISOLATED-2 | AC2 | `verification/ENV-BUNDLE-1-FU1/reviewer-rerun-isolated-2.log` | `cffa9666fbbe5f2adfe213de37a8beb20a994a38` | `188097a7583267cab7061be719a90c10fc71bbc882e43d2e5a8aadefdc0b1141` | CANONICAL |
+| ENV-BUNDLE-1-FU1-I1-RECORD | AC2 | `verification/ENV-BUNDLE-1-FU1/ac2-i1-startup-timeout-repair.md` | `dca85f71ffa92f4f2dbd3cb212d7000ad87bc0b0` | `31147f840e2a55e2342c0d0e2b6ff0dbaa36862a7316acd181ef795e4f5c379a` | CANONICAL |
+| ENV-BUNDLE-1-FU1-I1-HANDOFF | AC2/AC7 | `doc/handoffs/ENV-BUNDLE-1-FU1-cffa9666f.md` | `dca85f71ffa92f4f2dbd3cb212d7000ad87bc0b0` | `8f65745ffc7c297d3dfb65145fe886359ee97096269f080b587788f7c79e72db` | CANONICAL |
 | ENV-BUNDLE-1-FU1-AC3 | AC3 | `verification/ENV-BUNDLE-1-FU1/ac3-host-control-blocked.md` | `998200d48e10899e2916a73143578c69bceb30cf` | `89a10430acbaab7f0d82d42307c1b988978d8c4c66b9cf1e4c0fa4c62138a158` | CANONICAL |
 | ENV-BUNDLE-1-FU1-AC4-COPY-SIDECAR | AC4 | `verification/ENV-BUNDLE-1-FU1/ac4-copy-sidecar-to-main.log` | `998200d48e10899e2916a73143578c69bceb30cf` | `2759eb47c6b8438f50421bc13e81cacd20f57e2a7fa0ad7f4e1e302e608f3dce` | CANONICAL |
 | ENV-BUNDLE-1-FU1-AC4-COPY-FRONTEND | AC4 | `verification/ENV-BUNDLE-1-FU1/ac4-copy-frontend-to-main.log` | `998200d48e10899e2916a73143578c69bceb30cf` | `ec8bdd321e2600f31cf3e5b652b59553d3af6acdd8e3d9bf04e7d55d2ac65f57` | CANONICAL |
