@@ -1,0 +1,4 @@
+{"protocol":"new-manga.core","version":{"major":2,"minor":1},"request_id":"p18-ja-ping","result":{"status":"ready","protocol_version":{"major":2,"minor":1},"capabilities":["library.list_books"]},"error":null}
+{"protocol":"new-manga.core","version":{"major":2,"minor":1},"request_id":"p18-ja-import","result":null,"error":{"code":"UNKNOWN_COMMAND","category":"validation","message":"Unknown command: 'ImportPages'","retryable":false}}
+{"protocol":"new-manga.core","version":{"major":2,"minor":1},"request_id":"p18-ja-detect","result":null,"error":{"code":"INVALID_REQUEST","category":"validation","message":"core.detect page exceeds the pixel limit (2946x4167 = 12275982 px > 11184810 px)","retryable":false}}
+{"protocol":"new-manga.core","version":{"major":2,"minor":1},"request_id":"p18-ja-shutdown","result":{"status":"stopped"},"error":null}

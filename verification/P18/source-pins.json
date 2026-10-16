@@ -1,0 +1,24 @@
+{
+  "task": "P18",
+  "baseline_commit": "5a18b865ec34534c64bc719db37549f4f4ead27f",
+  "hash_algorithm": "SHA-256",
+  "scope": "Read-only sources and production code inspected for the P18 plan and Core probe",
+  "sources": [
+    {"path": "verification/P08/SCOPE_DRAFT.md", "sha256": "2562222a80caf0f2f803d89c7b21fa0a4c5af74c3b4a67e58de839a8cdfa75bc"},
+    {"path": "verification/ARCH-DOC-REBASELINE/ac4-p18-quality-and-responsibility.md", "sha256": "28b356628d8a086bf44a0f1a6fb0316ad52084d432e233436d827484b6dbf962"},
+    {"path": "doc/08_ACCEPTANCE_CRITERIA.md", "sha256": "c05ca718762b172844136bf4093bf1d63773c9f0fc7edfb69f7ab15a70bf8057"},
+    {"path": "verification/M2-DOCTR-QUAL/qualification/qualification-report.md", "sha256": "fd25327319623553865ec9b41888f5c56594c89af3f447db578342d56242ba3e"},
+    {"path": "verification/M2-DOCTR-QUAL/qualification/license-evidence.md", "sha256": "caa6c0e90e45b927bb217ab73dea2f4c6d096de43ba6c01e24b680d8c1f939df"},
+    {"path": "verification/M2-KO-TILE-CALIB/calib-report.md", "sha256": "a8b0896cec7782280e9d64b19c638f00232c1d628a5cc6581f8b3328352fe768"},
+    {"path": "verification/M2-DETECT-WEBTOON-TILING/qualification-report.md", "sha256": "0fcfb514dfa904d50a75a21037c40fff645c0120eee4abbf2188030f3cd7b6be"},
+    {"path": "verification/M2-TA3-B/quality-thresholds.md", "sha256": "e01b27d1a4bb7bf5195f04aabf4e1c4c0d196c8ba49afcbc491d3a26e109f2af"},
+    {"path": "verification/M2-TA3-B/quality-report.md", "sha256": "1c7855b27e74097ac3c7826fff0550b36273b968c91dac4ed737f642a0564f4d"},
+    {"path": "verification/M2-TA3-B/phase2/inpaint/inpaint-spot-check-note.json", "sha256": "098b0f515e72ce6914958a9c1631031dfbc8529aaacff69d1746d22b898cc15d"},
+    {"path": "verification/M2-QUAL-DETERM-CALIB/calibration.md", "sha256": "c2988a9e33fd7b79bfc2560af86bf2ae37a421e632b81590e47e45275a447b67"},
+    {"path": "verification/PROJECT-ROADMAP-RELEASE/inputs/doc/WORKSPACE_GOVERNANCE.md", "sha256": "873c7b3a012e705f5a454bf5863a1fac1ab4c9dea52ac2109f91d7d373671e0d", "note": "Snapshot used because doc/WORKSPACE_GOVERNANCE.md is absent from this worktree."},
+    {"path": "src/domain/tasks/models.py", "sha256": "52bf4f9f26df49baeabe1934b48082f2015e93197f44339859d910be3d62ad51"},
+    {"path": "src/application/tasks/service.py", "sha256": "3e127cd9de3922b5adec6fa5fd7ca22b41a6c5ff8020cff0a7c748d99e7f7d28"},
+    {"path": "src/bootstrap/core_service.py", "sha256": "221114373a48062afbcb939d2440d251b6efd811b47f861d73269d45a34333ab"},
+    {"path": "src/infrastructure/providers/detection_manga.py", "sha256": "a58b9abeece08d5dd0cb8870fb576606993f31965043278ce0e16fa301774829"}
+  ]
+}

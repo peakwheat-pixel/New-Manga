@@ -1,0 +1,100 @@
+{
+  "language": "ja",
+  "input": {
+    "path": "G:\\CODEX\\New Manga.workspace\\test-materials\\objects\\sha256\\9b\\9bbd38763fde3a45e0dc3af61647ee8097f1345653dce99c32759a58c6c499e1.png",
+    "sha256": "9bbd38763fde3a45e0dc3af61647ee8097f1345653dce99c32759a58c6c499e1",
+    "bytes": 8736076,
+    "format": "PNG",
+    "width": 2946,
+    "height": 4167
+  },
+  "runtime": {
+    "python": "3.12.3 (tags/v3.12.3:f6650f9, Apr  9 2024, 14:05:25) [MSC v.1938 64 bit (AMD64)]",
+    "executable": "G:\\CODEX\\New Manga.task-envs\\T1.1.1-impl-py312\\Scripts\\python.exe",
+    "platform": "Windows-11-10.0.26300-SP0",
+    "git_head": "5a18b865ec34534c64bc719db37549f4f4ead27f",
+    "package_versions": {
+      "PIL": "12.3.0",
+      "PySide6": "6.11.2",
+      "onnxruntime": "1.24.4",
+      "torch": "2.14.0+cpu",
+      "doctr": "v1.1.0",
+      "manga_ocr": null,
+      "paddleocr": null
+    },
+    "module_available": {
+      "PIL": true,
+      "PySide6": true,
+      "onnxruntime": true,
+      "torch": true,
+      "manga_ocr": false,
+      "paddleocr": false
+    },
+    "detector_backend": "manga",
+    "detector_device": "cpu",
+    "model": {
+      "id": "ogkalu/comic-text-and-bubble-detector",
+      "revision": "16e8a622f91fabc6b5b65c96d32d1183f8843546",
+      "weights_sha256": null,
+      "state": "not loaded; pinned weights absent from isolated P18 data root"
+    },
+    "endpoint": "local stdio Core sidecar; no remote request configured or sent"
+  },
+  "device": {
+    "inference_device": "cpu",
+    "processor": "AMD64 Family 25 Model 97 Stepping 2, AuthenticAMD",
+    "gpu_inference": false
+  },
+  "isolation": {
+    "data_root": "G:\\CODEX\\New Manga.workspace\\worktrees\\P18-JA-KO-QUALITY\\verification\\P18\\raw\\ja-r3\\data",
+    "credential_environment_variables_removed": true
+  },
+  "requests": [
+    {
+      "request_id": "p18-ja-ping",
+      "result": {
+        "status": "ready",
+        "protocol_version": {
+          "major": 2,
+          "minor": 1
+        },
+        "capabilities": [
+          "library.list_books"
+        ]
+      }
+    },
+    {
+      "request_id": "p18-ja-import",
+      "error": {
+        "code": "UNKNOWN_COMMAND",
+        "category": "validation",
+        "message": "Unknown command: 'ImportPages'"
+      }
+    },
+    {
+      "request_id": "p18-ja-detect",
+      "error": {
+        "code": "INVALID_REQUEST",
+        "category": "validation",
+        "message": "core.detect page exceeds the pixel limit (2946x4167 = 12275982 px > 11184810 px)"
+      }
+    },
+    {
+      "request_id": "p18-ja-shutdown",
+      "result": {
+        "status": "stopped"
+      }
+    }
+  ],
+  "sidecar_exit_code": 0,
+  "timed_out": false,
+  "elapsed_seconds": 29.239,
+  "capture_status": "RESPONSES_CAPTURED",
+  "raw_stdout_sha256": "68a2d42290b87f2d0b418ae12483e1a914fe6b6b3476767a2d94b29ac0d47058",
+  "raw_stderr_sha256": "7650dcefb8c0e81d8420fe4b1babbf508c730fa680345270e8c955a3965a9e4c",
+  "raw_stdout_bytes": "sidecar-stdout.bin",
+  "raw_stderr_bytes": "sidecar-stderr.bin",
+  "raw_stdout": "sidecar-stdout.jsonl",
+  "raw_stderr": "sidecar-stderr.log",
+  "raw_exit_code": "sidecar-exit-code.txt"
+}

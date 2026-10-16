@@ -1,0 +1,41 @@
+{
+  "task": "P18",
+  "policy": "No material was fetched or copied. These existing derived PNGs are for local operational probes only, not quality scoring or ground truth.",
+  "workspace_registry": {
+    "path": "G:/CODEX/New Manga.workspace/data-registry/registry.json",
+    "sha256": "a9611032e4a1c0db5161c335d631443c396f0ea78098df8de0a4487cb43c18a4"
+  },
+  "materials": [
+    {
+      "language": "ja",
+      "object_id": "sha256:9bbd38763fde3a45e0dc3af61647ee8097f1345653dce99c32759a58c6c499e1",
+      "canonical_path": "G:/CODEX/New Manga.workspace/test-materials/objects/sha256/9b/9bbd38763fde3a45e0dc3af61647ee8097f1345653dce99c32759a58c6c499e1.png",
+      "source_task": "M2-TA3-A",
+      "source_relative_path": "verification/M2-TA3-A/artifacts/BJ02-translated.png",
+      "size_bytes": 8736076,
+      "sha256": "9bbd38763fde3a45e0dc3af61647ee8097f1345653dce99c32759a58c6c499e1",
+      "license_status": "derived-test-material; source-rights-inherited",
+      "license_evidence": "workspace data-registry registry record; source manga usage terms remain applicable",
+      "allowed_use": "private local verification only",
+      "redistribution": "not allowed by this record"
+    },
+    {
+      "language": "ko",
+      "object_id": "sha256:c451815727ec24b64bfd7656fd7fe574879de4d9dc1d79013456f89cee22b7a2",
+      "canonical_path": "G:/CODEX/New Manga.workspace/test-materials/objects/sha256/c4/c451815727ec24b64bfd7656fd7fe574879de4d9dc1d79013456f89cee22b7a2.png",
+      "source_task": "M2-TA3-A",
+      "source_relative_path": "verification/M2-TA3-A/artifacts/K11-translated.png",
+      "size_bytes": 3036455,
+      "sha256": "c451815727ec24b64bfd7656fd7fe574879de4d9dc1d79013456f89cee22b7a2",
+      "license_status": "derived-test-material; source-rights-inherited",
+      "license_evidence": "workspace data-registry registry record; source manga usage terms remain applicable",
+      "allowed_use": "private local verification only",
+      "redistribution": "not allowed by this record"
+    }
+  ],
+  "limits": [
+    "BJ02/K11 are already translated derivatives, not source-page quality fixtures; no accuracy or product-quality score may be computed from them.",
+    "Underlying source rights are inherited and remain applicable; this manifest does not claim broader licensing rights.",
+    "No Manga109 acquisition or external request was performed."
+  ]
+}

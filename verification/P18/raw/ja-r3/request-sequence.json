@@ -1,0 +1,18 @@
+[
+  {
+    "request_id": "p18-ja-ping",
+    "command": "core.ping"
+  },
+  {
+    "request_id": "p18-ja-import",
+    "command": "ImportPages"
+  },
+  {
+    "request_id": "p18-ja-detect",
+    "command": "core.detect"
+  },
+  {
+    "request_id": "p18-ja-shutdown",
+    "command": "core.shutdown"
+  }
+]

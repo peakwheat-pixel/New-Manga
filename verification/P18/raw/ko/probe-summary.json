@@ -1,0 +1,76 @@
+{
+  "language": "ko",
+  "input": {
+    "path": "G:\\CODEX\\New Manga.workspace\\test-materials\\objects\\sha256\\c4\\c451815727ec24b64bfd7656fd7fe574879de4d9dc1d79013456f89cee22b7a2.png",
+    "sha256": "c451815727ec24b64bfd7656fd7fe574879de4d9dc1d79013456f89cee22b7a2",
+    "bytes": 3036455,
+    "format": "PNG",
+    "width": 1200,
+    "height": 1660
+  },
+  "runtime": {
+    "python": "3.12.3 (tags/v3.12.3:f6650f9, Apr  9 2024, 14:05:25) [MSC v.1938 64 bit (AMD64)]",
+    "executable": "G:\\CODEX\\New Manga.task-envs\\T1.1.1-impl-py312\\Scripts\\python.exe",
+    "platform": "Windows-11-10.0.26300-SP0",
+    "module_available": {
+      "PIL": true,
+      "PySide6": true,
+      "onnxruntime": true,
+      "torch": true,
+      "manga_ocr": false,
+      "paddleocr": false
+    },
+    "detector_backend": "manga",
+    "detector_device": "cpu",
+    "weights_override": "unset; isolated P18 data root has no preloaded model",
+    "endpoint": "local stdio Core sidecar; no remote request configured or sent"
+  },
+  "isolation": {
+    "data_root": "G:\\CODEX\\New Manga.workspace\\worktrees\\P18-JA-KO-QUALITY\\verification\\P18\\raw\\ko\\data",
+    "credential_environment_variables_removed": true
+  },
+  "requests": [
+    {
+      "request_id": "p18-ko-ping",
+      "result": {
+        "status": "ready",
+        "protocol_version": {
+          "major": 2,
+          "minor": 1
+        },
+        "capabilities": [
+          "library.list_books"
+        ]
+      }
+    },
+    {
+      "request_id": "p18-ko-import",
+      "error": {
+        "code": "UNKNOWN_COMMAND",
+        "category": "validation",
+        "message": "Unknown command: 'ImportPages'"
+      }
+    },
+    {
+      "request_id": "p18-ko-detect",
+      "error": {
+        "code": "PROVIDER_NOT_CONFIGURED",
+        "category": "internal",
+        "message": "detector is not configured; install weights or set NEWMANGA_DETECTOR_WEIGHTS (see stderr for details)"
+      }
+    },
+    {
+      "request_id": "p18-ko-shutdown",
+      "result": {
+        "status": "stopped"
+      }
+    }
+  ],
+  "sidecar_exit_code": 0,
+  "timed_out": false,
+  "elapsed_seconds": 0.611,
+  "capture_status": "RESPONSES_CAPTURED",
+  "raw_stdout": "sidecar-stdout.jsonl",
+  "raw_stderr": "sidecar-stderr.log",
+  "raw_exit_code": "sidecar-exit-code.txt"
+}
