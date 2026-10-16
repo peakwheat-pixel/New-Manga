@@ -38,6 +38,9 @@ pytest 通过 `verification/P09/run_pytest_in_workspace.py` 启动：pytest cach
 | `36-scope-diff.txt` | 最终 `git diff --name-only <base>..HEAD` 范围输出 | 在固定 delivery head、Handoff 与 Review 后捕获。 |
 | `38-p09-full-target-tests-py312-final.txt` | Task/Handoff 修改及 workflow 完成态断言后的三目录全量最终复跑 | 90 passed、0 skipped、0 failed，exit 0。 |
 | `39-final-diff-check.txt` | 最终 `git diff --check` | exit 0；仅有既有 LF/CRLF 自动转换提示。 |
+| `40-path-replacement-race.txt` | `tests/library/test_import_sources.py`；选中来源创建后被换为 symlink | 9 passed、0 skipped，exit 0；读取失败被归类，不读取链接目标、不写入 Store/DB。 |
+| `41-p09-full-target-tests-py312-review-fix.txt` | 最新完整目标集 `tests/import_formats tests/library tests/storage/test_managed_storage.py`，不排除 Qt 用例 | 91 passed、0 skipped、0 failed，exit 0。 |
+| `42-out-of-scope-legacy-stub-test.txt` | `tests/core/test_stub_decoder.py::test_production_stub_decoder_returns_valid_decoded_image` | 1 failed、exit 1：旧用例要求真实生产 decoder 将非法 `b"fake"` 解为 1×1。该路径不在 P09 授权范围，未修改。 |
 
 ## 首轮临时目录诊断
 
