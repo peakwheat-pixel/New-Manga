@@ -175,8 +175,8 @@ evidence_dir: verification/UI-DESIGN-1
 
 | evidence_id | AC/Gate | path（仓库相对路径或绝对路径） | commit | sha256 | class (`CANONICAL` / `SOURCE_PIN`) |
 |---|---|---|---|---|---|
-| UI-DESIGN-1-E1 | AC1–AC7 | doc/design/AD001_FOUR_PAGE_UI_BASELINE.md | aaf00e59e | 8cdcf4de7b805b8400c70175690de07755f6dc3876748d4bb471a10222d61f85 | CANONICAL |
-| UI-DESIGN-1-E2 | AC8(a)–(d)（canonical 复跑） | verification/UI-DESIGN-1/selfcheck-output.txt | aaf00e59e | b1bb12dc9a3695555cc78bf1ce67808b6cbf8c9063f4ebeb4114b2b6a75dd9a5 | CANONICAL |
+| UI-DESIGN-1-E1 | AC1–AC7（含 AC4 I1 返修后：真缺口 24 条） | doc/design/AD001_FOUR_PAGE_UI_BASELINE.md | a996f821c | 374570b64b33c9004241cfa90e5ef4387b36571cbadb0faaff357aa86f845444 | CANONICAL |
+| UI-DESIGN-1-E2 | AC8(a)–(d)（I1 后 canonical 复跑，W=32/G=24） | verification/UI-DESIGN-1/selfcheck-output.txt | a996f821c | 496b3c1223b34a8d62b2651cb845aab83620708229adb3311a879e6afc061259 | CANONICAL |
 | UI-DESIGN-1-E3 | AC8 自检脚本 | verification/UI-DESIGN-1/selfcheck.ps1 | aaf00e59e | f36782d0a8c9fa72c539ac50490faaa1367016fc0b96e70e01816cb1d63629f8 | CANONICAL |
 | UI-DESIGN-1-E4 | AC8 Owner 阻塞登记 | verification/UI-DESIGN-1/selfcheck-BLOCKED.md | aaf00e59e | 5acab6837ad218c936716b17aa00b13acfee9916bb8b2c46413da087c107439d | CANONICAL |
 | UI-DESIGN-1-E5 | AC9 Owner 提交阻塞登记 | verification/UI-DESIGN-1/commit-BLOCKED.md | aaf00e59e | 6dad99ffa8e47cf7c5a7f430b1b127b1c445f5fc8861b4a5c75ee679bd930f33 | CANONICAL |
