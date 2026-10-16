@@ -1,0 +1,21 @@
+# shell: PowerShell
+# interpreter: G:\CODEX\New Manga.task-envs\T1.1.1-impl-py312\Scripts\python.exe
+# command: python -m pytest tests/core -q -p no:cacheprovider
+# worktree: G:\CODEX\New Manga.workspace\worktrees\P15-CORE-1A
+# tested_commit: 9232802c08b983225898cb784504fee49c4c43f4
+# base_commit: b1f4d08c79ad8f7c11bbc945cdbeddd3ef5f6523
+........................................................................ [ 17%]
+........................................................................ [ 34%]
+........................................................................ [ 51%]
+........................................................................ [ 68%]
+........................................................................ [ 85%]
+............................................................             [100%]
+============================== warnings summary ===============================
+tests/core/test_rc4_stdio_render_preview.py::test_production_stdio_decodes_nmfr_renders_text_and_publishes_readable_preview
+  G:\CODEX\New Manga.workspace\worktrees\P15-CORE-1A\tests\core\test_rc4_stdio_render_preview.py:245: DeprecationWarning: Image.Image.getdata is deprecated and will be removed in Pillow 14 (2027-10-15). Use get_flattened_data instead.
+    for px in rendered.crop((20, 20, 150, 120)).convert("RGB").getdata()
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+420 passed, 1 warning in 32.96s
+
+EXIT_CODE=0

@@ -1,0 +1,7 @@
+# shell: PowerShell
+# interpreter: G:\CODEX\New Manga.task-envs\T1.1.1-impl-py312\Scripts\python.exe
+# command: python -m pytest tests/core -q -p no:cacheprovider
+# worktree: G:\CODEX\New Manga.workspace\worktrees\P15-CORE-1A
+# base_commit: b1f4d08c79ad8f7c11bbc945cdbeddd3ef5f6523
+# result: 414 passed, 5 failed; exit_code=1
+# status: diagnostic first attempt; protocol minor was subsequently split into legacy 2.3 and P15 2.6

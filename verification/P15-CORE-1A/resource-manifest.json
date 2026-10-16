@@ -1,0 +1,36 @@
+{
+  "schema_version": 1,
+  "task_id": "P15-CORE-1A",
+  "generated_at": "2026-10-17",
+  "generated_by": "Codex (Task Owner)",
+  "note": "实现与测试证据已固定；保留 worktree 供独立 Review 与 Coordinator 集成，不表示 Gate 已批准。",
+  "resources": [
+    {
+      "resource_type": "worktree",
+      "source_path": "G:/CODEX/New Manga.workspace/worktrees/P15-CORE-1A",
+      "disposition": "PRESERVE_REFERENCED",
+      "destination_path": "G:/CODEX/New Manga.workspace/worktrees/P15-CORE-1A",
+      "branch": "codex/P15-CORE-1A",
+      "base_commit": "b1f4d08c79ad8f7c11bbc945cdbeddd3ef5f6523",
+      "delivery_head": "9232802c08b983225898cb784504fee49c4c43f4",
+      "integration_commit": null,
+      "deleted": false,
+      "pruned": false,
+      "process_check": "worktree 保留供 Reviewer/Codex；未 push、merge、reset 或 prune；本 Task 未写入主仓工作树。"
+    },
+    {
+      "resource_type": "test-env",
+      "source_path": "G:/CODEX/New Manga.task-envs/T1.1.1-impl-py312",
+      "disposition": "PRESERVE_REFERENCED",
+      "destination_path": "G:/CODEX/New Manga.task-envs/T1.1.1-impl-py312",
+      "deleted": false,
+      "process_check": "只读调用既有 Python 3.12 环境；未安装或更新依赖。"
+    }
+  ],
+  "closeout": {
+    "deleted_count": 0,
+    "migrated_count": 0,
+    "archived_count": 0,
+    "reason_open": "Task 等待独立 Review 与 Coordinator integration；保留 worktree 和测试环境供接收者复核。"
+  }
+}
