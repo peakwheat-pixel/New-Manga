@@ -10,7 +10,7 @@
 - **待用户裁决**：P18 产品发布门槛。**下一批候选**：G21–G25（P15 前置）、P18 像素上限/KO 权重、BL-12、BL-13。
 - DIR-2：Task Owner=codex（至额度耗尽）；DIR-3：只保留一个 Active Coordinator。
 - Coordinator=dsh，epoch=6，lease=9ce79020a36e4fab8970e8ae6de5fb10（LEASE_VALID）；用户 19 项 dirty 未变，无 EXTERNAL_CHANGE。
-- 恢复点：`verification/PROJECT-ORCHESTRATION-20261016/` → checkpoint-r10.md（rolling）、pause-checkpoint-20261016.md（**2026-10-16 用户重启的暂停点与恢复处置；已恢复**）、ui-chain-prerequisite-matrix.md（**UI 链前置完整性 + P14/P17 页面边界裁决**）；日志 `.orchestrator/{INFLIGHT,OPLOG,BACKLOG,RUNTIME_DIRECTIVES}`。
+- 恢复点：`verification/PROJECT-ORCHESTRATION-20261016/` → checkpoint-r11.md（rolling；**P14/P17 在飞**）、pause-checkpoint-20261016.md（**2026-10-16 用户重启的暂停点与恢复处置；已恢复**）、ui-chain-prerequisite-matrix.md（**UI 链前置完整性 + P14/P17 页面边界裁决**）；日志 `.orchestrator/{INFLIGHT,OPLOG,BACKLOG,RUNTIME_DIRECTIVES}`。
 
 ## Gate 与保留项
 
