@@ -43,3 +43,19 @@
 - **N-a（delivery_head 记录滞后）**：Handoff 记 `5f95aac0f`，而分支 HEAD 实为 `5e698742a`（其后的 `fc5702e65`/`5e698742a` 为文档提交）。按 BL-7 既有处置，closeout 一律以 `git rev-parse HEAD` 冻结实际值。
 - **N-b（Task 状态）**：当前 `status: in_review`。该值不在 READY 行允许集合内，故 closeout 前**不得**合并到 main（治理检查会 FAIL）；closeout 时置 `done` 并移出 READY 行（P12 先例）。
 - **N-c（集成冲突预告）**：本分支与 EVENTS-FWD-1 同时修改 `main.rs`、`library_bridge.rs`、`capabilities/m2rc1-commands.json`，且本分支另改 `build.rs`/`Cargo.*`/`gen/schemas/**`。按会话集成计划：**先合 EVENTS-FWD-1**，再让本 Task 的 Owner 把更新后的 main 并入本分支、**语义级**解决冲突（两个功能都保留）、重跑全套并重新交付，最后才集成；**每次合并后重跑完整验证**。
+
+## 5. 重新交付复核（Owner=codex 已按 N-c 执行；Reviewer 复核，结论：CONVERGED）
+
+Owner 已在自身分支把新 main（含 EVENTS-FWD-1）并入并**语义级**解冲突，交付 `b1e4d87d4`（merge）→ `4e4d73a0b`（合并后证据）→ `13a748b03`/`6c4b83460`/`13ac5b30f`（记录与 pin）。Reviewer 复核：
+
+| # | 复核项 | 结果 |
+|---|---|---|
+| 1 | **两侧功能都保留**（N-c 的核心风险） | **PASS**。`library_bridge.rs` 同时保有 EVENTS 的后台读线程/按 `request_id` 解复用/六类事件投影**与** reveal 的 `session_export_ids` 会话校验 + 只读 `GetExportHistory`；`main.rs` 同时保有 `.manage(state)` 前移 + 事件 sink 与 reveal 命令；`capabilities` 与生成的 `gen/schemas/capabilities.json` 为并集 |
+| 2 | **合并后独立重跑** | **PASS**。source **86 passed / 0 failed / 1 ignored**、frozen packaged **9 passed / 0 failed**、`tests/core` **405 passed**，三条 exit 0。日志中**同时**出现 `test_events_fwd_*`（4 个）、`same_channel_concurrent_round_trips_keep_response_ownership` 与全部 `export_reveal_*` 用例 → 证明解析未丢任一侧 |
+| 3 | **§5.8 拒绝面未被放宽** | **PASS**。`export_output_directory` 仍**不调用 `StartExport`**、**不触碰 `ExportTargetRef`**；`require_current_session_export` 仍在；typed 错误（`EXPORT_NOT_FOUND`/`EXPORT_OUTPUT_NOT_READY`/`EXPORT_PATH_UNAVAILABLE`/`EXPORT_REVEAL_FAILED`/`CORE_UNAVAILABLE`）齐备 |
+| 4 | **路径零泄露仍成立** | **PASS**。`map_err(\|_\| "EXPORT_REVEAL_FAILED".to_string())` 仍在（**丢弃宿主错误文本**，防路径夹带）；`open_path` 仍只接收 `resolve_export_output_directory` 规范化后的**父目录**；返回仍为 `()` |
+| 5 | 契约结构（合并后） | **PASS**。**h1 = 1**；**唯一**当前修订/状态块，声明 rev 2.4（`当前修订范围：EVENTS-FWD-1 + EXPORT-REVEAL-1 rev 2.4`；`状态：文档 rev 2.4；Core protocol 为 major 2 / minor 4`）；§5.8 与 §6.4 均在 |
+| 6 | 工作树卫生 | **PASS**。worktree clean；测试产生的 `verification/P04` 诊断**未入库**；提交范围仅限交付与证据 |
+| 7 | 如实限定未被改写 | **PASS**。**AC4-③ 仍为 `BLOCKED`**（未跑真实 GUI reveal），Owner 明确未声称已验证 |
+
+**重新交付 CONVERGED。** 记录性事项（closeout 处理）：`delivery_head` 记 `13a748b…` 而实际 HEAD 为 `13ac5b30f`（**BL-15 第 4 次**，由 Coordinator 在 closeout 以 `git rev-parse HEAD` 冻结）；`rustfmt --check` 报告既有格式差异未被本次修正（**NIT，非阻塞**）。
