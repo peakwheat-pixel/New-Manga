@@ -13,9 +13,9 @@ base_commit: 3bf2604dc9e8ef6be47bd80897e4df05cae077b3
 branch: codex/ENV-BUNDLE-1-FU1-packaged-acceptance
 worktree: G:/CODEX/New Manga.workspace/worktrees/ENV-BUNDLE-1-FU1
 integration_commit: null
-delivery_head: pending implementation commit
-canonical_evidence_status: pending_final_hash_and_head
-resource_closeout_status: recorded
+delivery_head: 998200d48e10899e2916a73143578c69bceb30cf
+canonical_evidence_status: registered_blob_level
+resource_closeout_status: accounted_with_preserved_residuals
 evidence_dir: verification/ENV-BUNDLE-1-FU1
 ---
 
@@ -111,7 +111,7 @@ evidence_dir: verification/ENV-BUNDLE-1-FU1
 | AC4 | 刷新 main 仓 gitignored sidecar 与 frontend/dist 并比较 | 本 worktree 经既定 sidecar/frontend 构建入口生成，再镜像到已确认 ignored 的主仓目标 | PASS：Core 2.3 | [前后对比](../../verification/ENV-BUNDLE-1-FU1/main-artifacts-after.md)、[复制记录](../../verification/ENV-BUNDLE-1-FU1/ac4-copy-sidecar-to-main.log)、[主仓 smoke](../../verification/ENV-BUNDLE-1-FU1/ac4-main-core-smoke-after.log) |
 | AC5 | 确认仅新增 AC2 测试路径；生成物噪音恢复；无产品/契约/依赖变更 | Task worktree | PASS | [生成物副作用记录](../../verification/ENV-BUNDLE-1-FU1/ac5-generated-side-effects.md)、Handoff 逐文件说明 |
 | AC6 | 主仓 HEAD + `git status --porcelain --untracked-files=no` 前后对比，复核原 19 项 diff | 主仓 `G:/CODEX/New Manga` | PASS：19 项原始 dirty 指纹未变 | [主仓状态对比](../../verification/ENV-BUNDLE-1-FU1/main-status-comparison.md)及 before/after snapshots |
-| AC7 | 固定 commit、Handoff、Canonical Evidence、未跑项标记；不 push/merge | Task branch | PASS：Handoff 与 evidence 在交付 commit 中 | 本 Task 的 Canonical Evidence 表；Handoff 路径待最终固定 |
+| AC7 | 固定 commit、Handoff、Canonical Evidence、未跑项标记；不 push/merge | Task branch | PASS：实现 commit 与 Handoff 文档 commit 分开固定；未 push/merge | 本 Task 的 Canonical Evidence 表；[Handoff](../handoffs/ENV-BUNDLE-1-FU1-998200d48.md) |
 
 ## 依赖、风险与阻塞
 
@@ -134,24 +134,40 @@ evidence_dir: verification/ENV-BUNDLE-1-FU1
 - 2026-10-16 AC4：将当前 worktree 已构建的 sidecar bundle 与 frontend dist 镜像到主仓对应 gitignored 路径；对主仓新 Core 做了隔离协议 smoke，ping 2.3 ready、shutdown stopped、exit `0`。主仓 Core 从 68,604,146 bytes / SHA-256 `61f128d6878baad1c72fa24f7cda75675b31354ea47b43828861e7d8b2ca91f0` / protocol `1.6` 更新为 68,717,156 bytes / SHA-256 `896bd56286b25bc8539028d52f3ef991cfbcbda24f93ae6c6d75758a7dbfd842` / protocol `2.3`。具体目录统计见 `main-artifacts-after.md`。
 - 2026-10-16 AC6：主仓原 19 项 dirty 的 status SHA-256=`a72d1076a20534021c50709972e760a66b7b65d220248284e518eb8f891d460a`、`git diff --binary` 250,300 bytes / SHA-256=`fde78be03b5e5be8a01d10050703c2b2e587756b8d77a39be6bce05d1e7bfe35` 前后相同。主仓 HEAD 在运行期间被并发 UI-DESIGN-1 文档提交推进；该变化不在本 Task 写入路径中。最终快照在提交前重取并归档。
 - 代码范围：唯一 tracked 代码改动是 `main.rs` 中 `#[cfg(test)]` 测试模块声明；新增 `packaged_sidecar_tests.rs` 包含 AC2 独立 packaged 路径的六项用例。没有改动产品语义实现、契约、Schema 或依赖。Cargo 产生的 27 个行尾噪音文件已逐项恢复，`git diff` 内容为空；详见副作用记录。
-- Handoff：待写入固定实现 commit 后续文档提交，交独立 Review；本 Task 尚未被接受。
-- Review：待独立 Reviewer（推荐 DeepSeek Harness）；Owner 不自审。
+- Handoff：[ENV-BUNDLE-1-FU1-998200d48.md](../handoffs/ENV-BUNDLE-1-FU1-998200d48.md)，引用实现 head `998200d48e10899e2916a73143578c69bceb30cf`；本 Task 尚未被接受。
+- Review：待 Coordinator 释放独立 Review，推荐 DeepSeek Harness；Owner 不自审。
 - 未运行：既有 source-backed 全套 77 tests 未运行（本次只过滤执行新增六项）；NSIS installer / GUI 安装验收未运行；AC3 处于 `BLOCKED`。
 
 ## Canonical Evidence
 
 | evidence_id | AC/Gate | path（仓库相对路径或绝对路径） | commit | sha256 | class (`CANONICAL` / `SOURCE_PIN`) |
 |---|---|---|---|---|---|
-| ENV-BUNDLE-1-FU1-AC1-BUILD | AC1 | `verification/ENV-BUNDLE-1-FU1/ac1-build-sidecar.log` | 待固定 | 待计算 | CANONICAL |
-| ENV-BUNDLE-1-FU1-AC1-ARTIFACTS | AC1 | `verification/ENV-BUNDLE-1-FU1/ac1-bundle-and-frontend-manifest.md` | 待固定 | 待计算 | CANONICAL |
-| ENV-BUNDLE-1-FU1-AC1-SMOKE | AC1 | `verification/ENV-BUNDLE-1-FU1/ac1-core-service-smoke.log` | 待固定 | 待计算 | CANONICAL |
-| ENV-BUNDLE-1-FU1-AC2-RAW | AC2 | `verification/ENV-BUNDLE-1-FU1/ac2-packaged-six-tests.log` | 待固定 | 待计算 | CANONICAL |
-| ENV-BUNDLE-1-FU1-AC2-RESULTS | AC2 | `verification/ENV-BUNDLE-1-FU1/ac2-packaged-six-test-results.md` | 待固定 | 待计算 | CANONICAL |
-| ENV-BUNDLE-1-FU1-AC3 | AC3 | `verification/ENV-BUNDLE-1-FU1/ac3-host-control-blocked.md` | 待固定 | 待计算 | CANONICAL |
-| ENV-BUNDLE-1-FU1-AC4 | AC4 | `verification/ENV-BUNDLE-1-FU1/main-artifacts-after.md` | 待固定 | 待计算 | CANONICAL |
-| ENV-BUNDLE-1-FU1-AC4-SMOKE | AC4 | `verification/ENV-BUNDLE-1-FU1/ac4-main-core-smoke-after.log` | 待固定 | 待计算 | CANONICAL |
-| ENV-BUNDLE-1-FU1-AC6 | AC6 | `verification/ENV-BUNDLE-1-FU1/main-status-comparison.md` | 待固定 | 待计算 | CANONICAL |
-| ENV-BUNDLE-1-FU1-RESOURCE | AC7 | `verification/ENV-BUNDLE-1-FU1/resource-manifest.json` | 待固定 | 待计算 | CANONICAL |
+| ENV-BUNDLE-1-FU1-PREFLIGHT | AC1 | `verification/ENV-BUNDLE-1-FU1/preflight.md` | `998200d48e10899e2916a73143578c69bceb30cf` | `6e02a7f50aaf31046cf188a54ae89aeceb0c915a3d1973d9e9c6becc304282fd` | CANONICAL |
+| ENV-BUNDLE-1-FU1-AC1-BUILD | AC1 | `verification/ENV-BUNDLE-1-FU1/ac1-build-sidecar.log` | `998200d48e10899e2916a73143578c69bceb30cf` | `f2468474be2a3a47cf7a6bd262d51e2956ed1c63e807cda41c1001f28aeedd96` | CANONICAL |
+| ENV-BUNDLE-1-FU1-AC1-NPM-CI | AC1 | `verification/ENV-BUNDLE-1-FU1/ac1-npm-ci.log` | `998200d48e10899e2916a73143578c69bceb30cf` | `52a079e5a738cf4780769c8d77089c791c00bf7940979ed12a0c0422681ce0ac` | CANONICAL |
+| ENV-BUNDLE-1-FU1-AC1-FRONTEND | AC1 | `verification/ENV-BUNDLE-1-FU1/ac1-frontend-build.log` | `998200d48e10899e2916a73143578c69bceb30cf` | `c5cc5211dfbb9d73bf333aa3daa93ba1b0a3326c847fd9d79ac46096e387c2df` | CANONICAL |
+| ENV-BUNDLE-1-FU1-AC1-ARTIFACTS | AC1 | `verification/ENV-BUNDLE-1-FU1/ac1-bundle-and-frontend-manifest.md` | `998200d48e10899e2916a73143578c69bceb30cf` | `e0c9ac95e361ef1cc06f495461bc37e1de05b15feea308bda9ebea3761fb24dc` | CANONICAL |
+| ENV-BUNDLE-1-FU1-AC1-SMOKE | AC1 | `verification/ENV-BUNDLE-1-FU1/ac1-core-service-smoke.log` | `998200d48e10899e2916a73143578c69bceb30cf` | `3c97b0c0e116bc4e235b3daf87ddfc10faa5f140a4db565ba455f1c8093fdb05` | CANONICAL |
+| ENV-BUNDLE-1-FU1-AC2-COMBINED | AC2/AC3 | `verification/ENV-BUNDLE-1-FU1/ac2-ac3-combined-attempt.log` | `998200d48e10899e2916a73143578c69bceb30cf` | `5dc4072a7da656ee48b66dc88011b734f7c72ccdbee51fc70c4ae4fdc25e39c8` | CANONICAL |
+| ENV-BUNDLE-1-FU1-AC2-COMPILE-ATTEMPT | AC2 | `verification/ENV-BUNDLE-1-FU1/ac2-packaged-tests-attempt-1-compile-failure.log` | `998200d48e10899e2916a73143578c69bceb30cf` | `6210d9cbb17f5bd62e4b49fb93772fc61c9b530978cc24671c8116eac15f67d8` | CANONICAL |
+| ENV-BUNDLE-1-FU1-AC2-RAW | AC2 | `verification/ENV-BUNDLE-1-FU1/ac2-packaged-six-tests.log` | `998200d48e10899e2916a73143578c69bceb30cf` | `5eb49f5f0d3613d642f39313392570621181c315a06807137cc7bc535e647a86` | CANONICAL |
+| ENV-BUNDLE-1-FU1-AC2-RESULTS | AC2 | `verification/ENV-BUNDLE-1-FU1/ac2-packaged-six-test-results.md` | `998200d48e10899e2916a73143578c69bceb30cf` | `9fecee263ca3560eaab4174a554c5acadefb74359b94bc53f5e3b76356501c23` | CANONICAL |
+| ENV-BUNDLE-1-FU1-AC3 | AC3 | `verification/ENV-BUNDLE-1-FU1/ac3-host-control-blocked.md` | `998200d48e10899e2916a73143578c69bceb30cf` | `89a10430acbaab7f0d82d42307c1b988978d8c4c66b9cf1e4c0fa4c62138a158` | CANONICAL |
+| ENV-BUNDLE-1-FU1-AC4-COPY-SIDECAR | AC4 | `verification/ENV-BUNDLE-1-FU1/ac4-copy-sidecar-to-main.log` | `998200d48e10899e2916a73143578c69bceb30cf` | `2759eb47c6b8438f50421bc13e81cacd20f57e2a7fa0ad7f4e1e302e608f3dce` | CANONICAL |
+| ENV-BUNDLE-1-FU1-AC4-COPY-FRONTEND | AC4 | `verification/ENV-BUNDLE-1-FU1/ac4-copy-frontend-to-main.log` | `998200d48e10899e2916a73143578c69bceb30cf` | `ec8bdd321e2600f31cf3e5b652b59553d3af6acdd8e3d9bf04e7d55d2ac65f57` | CANONICAL |
+| ENV-BUNDLE-1-FU1-AC4-SMOKE | AC4 | `verification/ENV-BUNDLE-1-FU1/ac4-main-core-smoke-after.log` | `998200d48e10899e2916a73143578c69bceb30cf` | `1ec00efebcc249235135bdceb9ebdde8a7bdd2b82a617038b7aba0fa079240cc` | CANONICAL |
+| ENV-BUNDLE-1-FU1-AC4-AFTER | AC4 | `verification/ENV-BUNDLE-1-FU1/main-artifacts-after.md` | `998200d48e10899e2916a73143578c69bceb30cf` | `b3f45be2f9fc7af05f3579cb68cf8cf365e9cbc1ab687bfcbf1b92b8967c8420` | CANONICAL |
+| ENV-BUNDLE-1-FU1-AC4-BEFORE | AC4 | `verification/ENV-BUNDLE-1-FU1/main-artifacts-before.md` | `998200d48e10899e2916a73143578c69bceb30cf` | `04c8f25e2aa54761d181ef17dca08f0415c0104b84c998ef3f6aa2850823130e` | CANONICAL |
+| ENV-BUNDLE-1-FU1-AC5 | AC5 | `verification/ENV-BUNDLE-1-FU1/ac5-generated-side-effects.md` | `998200d48e10899e2916a73143578c69bceb30cf` | `fee724c5e2aace61625c9541a9adddd9b569e0743324d2560e4cc6f6a82a8bbb` | CANONICAL |
+| ENV-BUNDLE-1-FU1-AC6-BEFORE-HEAD | AC6 | `verification/ENV-BUNDLE-1-FU1/main-head-before.txt` | `998200d48e10899e2916a73143578c69bceb30cf` | `e54ddf4b34a7ab9ac63ae498a34c1d26af00e3fceed536806876aba61951b641` | CANONICAL |
+| ENV-BUNDLE-1-FU1-AC6-AFTER-HEAD | AC6 | `verification/ENV-BUNDLE-1-FU1/main-head-after.txt` | `998200d48e10899e2916a73143578c69bceb30cf` | `de0b5bf57e8e6c84cdde9350fe87c25bcd3a87af106c5dafb0caab0862970850` | CANONICAL |
+| ENV-BUNDLE-1-FU1-AC6-BEFORE-STATUS | AC6 | `verification/ENV-BUNDLE-1-FU1/main-status-before.txt` | `998200d48e10899e2916a73143578c69bceb30cf` | `a72d1076a20534021c50709972e760a66b7b65d220248284e518eb8f891d460a` | CANONICAL |
+| ENV-BUNDLE-1-FU1-AC6-AFTER-STATUS | AC6 | `verification/ENV-BUNDLE-1-FU1/main-status-after.txt` | `998200d48e10899e2916a73143578c69bceb30cf` | `a72d1076a20534021c50709972e760a66b7b65d220248284e518eb8f891d460a` | CANONICAL |
+| ENV-BUNDLE-1-FU1-AC6-BEFORE-DIFF | AC6 | `verification/ENV-BUNDLE-1-FU1/main-diff-fingerprint-before.txt` | `998200d48e10899e2916a73143578c69bceb30cf` | `702c9eef86cd90e0c9cfd1f81a9389abc97adaf294193bfc736f9f30a0675ba5` | CANONICAL |
+| ENV-BUNDLE-1-FU1-AC6-AFTER-DIFF | AC6 | `verification/ENV-BUNDLE-1-FU1/main-diff-fingerprint-after.txt` | `998200d48e10899e2916a73143578c69bceb30cf` | `1a2a4b9b7e2d31cee65e24f38da7a4c95067baa6ec484f1cd8df6fbf2d5f572b` | CANONICAL |
+| ENV-BUNDLE-1-FU1-AC6-COMPARISON | AC6 | `verification/ENV-BUNDLE-1-FU1/main-status-comparison.md` | `998200d48e10899e2916a73143578c69bceb30cf` | `a8330fd416ca8fc3ad89e86915da9aa3f08a90d3d38e3aca1d9ff088e5ece640` | CANONICAL |
+| ENV-BUNDLE-1-FU1-AC6-OLD-CORE | AC6 | `verification/ENV-BUNDLE-1-FU1/main-old-core-ping-before.log` | `998200d48e10899e2916a73143578c69bceb30cf` | `23bb9dde73e3c8600295c0bd9e05f4c037f36451b524660a9c2a3a58ad3082f5` | CANONICAL |
+| ENV-BUNDLE-1-FU1-RESOURCE | AC7 | `verification/ENV-BUNDLE-1-FU1/resource-manifest.json` | `998200d48e10899e2916a73143578c69bceb30cf` | `60729b5bc76ba32691b0f89cadfcd736f4e3b103e536f68d75f767a86cba3fc3` | CANONICAL |
 
 ## Resource Manifest
 
@@ -167,8 +183,8 @@ evidence_dir: verification/ENV-BUNDLE-1-FU1
 ## Closeout Record
 
 - Handoff date / Codex：2026-10-16；Task 已提交并交独立 Review，本次不代替 Coordinator 关闭 Task。
-- canonical_evidence_status：`recorded`；表内哈希及实现 commit 在交付文档提交后固定。
-- resource_closeout_status：`recorded_preserve_referenced`；manifest 列明保留的 worktree、ignored bundle/dist 与既有 venv。
+- canonical_evidence_status：`registered_blob_level`；表内 SHA-256 对应固定实现 commit 中的 blob bytes。
+- resource_closeout_status：`accounted_with_preserved_residuals`；manifest 列明保留的 worktree、ignored bundle/dist 与既有 venv。
 - 删除、迁移、归档数量/字节数：删除 `0`；大型产物仅在 ignored 目标间刷新，不入库。
 - 未关闭项及保留原因：AC3 `BLOCKED`（HostControl grant 返回 `REF_EXPIRED`）；独立 Review 尚未完成；source-backed 全套和 GUI/installer 未运行。
 - 当前指针清理：`STATUS` / `REBASELINE_PLAN` 由 Coordinator 在 Review 后同步；本 Task 未触碰。
