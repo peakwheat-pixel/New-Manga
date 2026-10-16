@@ -1,0 +1,10 @@
+shell=PowerShell 7.6.6
+python=G:\CODEX\New Manga.task-envs\T1.1.1-impl-py312\Scripts\python.exe
+python_version=Python 3.12.3
+platform=Microsoft Windows 10.0.26300
+working_directory=G:\CODEX\New Manga.workspace\worktrees\P15-CORE-1C
+PYTHONDONTWRITEBYTECODE=1
+TEMP=G:\CODEX\New Manga.workspace\worktrees\P15-CORE-1C\verification\P15-CORE-1C\pytest-tmp
+TMP=G:\CODEX\New Manga.workspace\worktrees\P15-CORE-1C\verification\P15-CORE-1C\pytest-tmp
+TMPDIR=G:\CODEX\New Manga.workspace\worktrees\P15-CORE-1C\verification\P15-CORE-1C\pytest-tmp
+pytest_cache=disabled via -p no:cacheprovider

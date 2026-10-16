@@ -1,0 +1,1 @@
+$env:PYTHONDONTWRITEBYTECODE='1'; $env:TEMP='<worktree>\verification\P15-CORE-1C\pytest-tmp'; $env:TMP='<worktree>\verification\P15-CORE-1C\pytest-tmp'; $env:TMPDIR='<worktree>\verification\P15-CORE-1C\pytest-tmp'; & 'G:\CODEX\New Manga.task-envs\T1.1.1-impl-py312\Scripts\python.exe' -m pytest tests/core -q -p no:cacheprovider
