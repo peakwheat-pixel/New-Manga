@@ -7,7 +7,7 @@
 | Reviewer | dsh（epoch 6；独立于 Owner） |
 | 交付 commit | 实现 `a8a63020f`；记录 `a2dcbb9f6` |
 | 基线 | `1b41caee4b38ba9aa1c9a6579219b32dd1f24499` |
-| 结论 | **changes_requested（I1，1 项）** —— 实现质量高、范围干净、测试与构建可复现；但**模式分流在初始渲染即挂载生产四页**，构成对 probe/AC1 冻结证据面的实质回归风险 |
+| 结论 | **approved**（`changes_requested` 的 1 项 I1 已于 `083610fb2` 收敛并复核通过，见 §5） |
 
 ## 1. 已独立验证且成立的部分
 
@@ -70,3 +70,20 @@ return <AppShell invoke={safeInvoke} />;     // appMode === "production" 时
 ## 4. 收敛计划
 
 `I1 返修（Owner=antigravity，bounded，仅前端 + 测试） → Reviewer 复跑 vitest/build 并复核初始渲染断言 → 必要时 I2（上限 1 次） → 集成 → closeout`。
+
+## 5. I1 收敛记录（Reviewer 有界复核，结论：CONVERGED）
+
+返修 commit `083610fb2`（Owner=antigravity，经 `--resume` 同一会话）。Reviewer 逐项复核：
+
+| # | I1 返修要求 | 复核结果 |
+|---|---|---|
+| 1 | 检测前保持中性，不得挂载 `AppShell` | **PASS**。`appMode` 初值改为 `"detecting"`，检测期间渲染的是**冻结的 console 形状**（`M2-RC2 resource channel runtime` + status + log），与既有行为最接近；`?view=console` 语义未变 |
+| 2 | 补初始渲染与"未产生生产命令调用"断言 | **PASS，且覆盖面强于原状**。新增两条：(a) 缺失 `__TAURI__` → 无 `app-shell` + 冻结 chrome + `TAURI_BRIDGE_MISSING`；(b) **`probe_config` 尚未 resolve 的首帧** → 无 `app-shell` 且 `invokedCommands` **不含** `library_list_books` / `settings_get` / `library_import_file` / `library_import_folder`。同时保留并**加强**了正向对照："`probe_config` 被拒 → 生产模式 → `app-shell` 挂载**且确实调用** `library_list_books`"（防止把生产路径一并改坏） |
+| 3 | 重跑测试/构建并更新证据 pin | **PASS**。Reviewer 独立复跑：`vitest` **16 files / 173 tests passed（exit 0，较 I1 前 +2 条）**；`npm run build` **exit 0**（64 modules，`index-CwqrIsUX.js` 249.58 kB）。三项证据 sha256 由 Reviewer 复算并与 Task 的 pin **逐一吻合** |
+| 4 | 不得改 probe/AC1 既有形状、`navChrome` 语义、生产调用逻辑 | **PASS**。I1 范围仅 `App.tsx`、`App.test.tsx`、Handoff/Task、两份证据日志；`probe`/`ac1` 分支的 JSX 未变；`library/client.ts` 未改 |
+
+**I1 CONVERGED，无需 I2。** 最终判定 **approved**。
+
+**残余与限制（如实继承）**：
+- **AC6 的"零回归"仍由单测支撑**：真实 GUI e2e runner 因无头环境（WebView2 无法取得窗口句柄 `0x80070578`）**未运行**。本 Review 不据此声明 e2e 已验证；I1 收敛后该限制依然成立。
+- 24 条真缺口交互按设计 disabled；G15 未解前 NavBadge 保持隐藏。
