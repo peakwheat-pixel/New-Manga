@@ -99,12 +99,14 @@ evidence_dir: verification/UI-DESIGN-1
 
 | 场景/AC | 计划命令或手工步骤 | 前提/环境 | 实际结果 | 证据 |
 |---|---|---|---|---|
-| AC1/AC2/AC6/AC7 | 人工结构审查：四页各自成节 + 状态矩阵 + 令牌表 + 不做清单（逐项打勾） | 文档成稿 | NOT_RUN | 无 |
-| AC3 | 对每条契约引用执行 `Select-String` 逐字命中；保存原始输出 | 契约文件在当前 HEAD 存在 | NOT_RUN | 无 |
-| AC4 | 缺口表逐条与 AC3 反向核对：AC3 未覆盖的交互必须出现在缺口表 | 文档成稿 | NOT_RUN | 无 |
-| AC5 | 边界自证：全库检索设计文档与前端代码中的直连迹象，逐条声明 | 只读 | NOT_RUN | 无 |
-| AC8(b) | 本地链接解析：对设计文档运行链接存在性检查，输出原始日志 | 文档成稿 | NOT_RUN | 无 |
-| AC8(c) | `git diff --name-only` + `git status --porcelain` 范围自证；主仓 19 项 dirty 前后对比 | worktree 与主仓 | NOT_RUN | 无 |
+| AC1/AC2/AC6/AC7 | 人工结构审查：四页各自成节 + 状态矩阵 + 令牌表 + 不做清单（逐项打勾） | 文档成稿 | PASS（Owner 自检，等价 bash 结构打勾 10 节 + 四页×六要素 + W29/G26；独立 Review 待做） | `verification/UI-DESIGN-1/selfcheck-output.txt` (d) 段 |
+| AC3 | 对每条契约引用执行 `Select-String` 逐字命中；保存原始输出 | 契约文件在当前 HEAD 存在 | PASS（等价 bash `grep -nEo` 35/35 名双侧命中：M2-C1 32 + M2-RC4 3；canonical `Select-String` 复跑交 Reviewer） | 同上 (a) 段 + `selfcheck.ps1` |
+| AC4 | 缺口表逐条与 AC3 反向核对：AC3 未覆盖的交互必须出现在缺口表 | 文档成稿 | PASS（Owner 反向核对：§6 之外的交互全部落入 G1–G26，含 PROPOSAL 命令 12 项、host command 4 项、事件/缩略图/Run 发现等；设计内无 mock 消解） | 设计文档 §6 末段 + §7 表 |
+| AC5 | 边界自证：全库检索设计文档与前端代码中的直连迹象，逐条声明 | 只读 | PASS（§9 九条逐项声明；设计全部数据元素映射 W1–W29，无 SQLite/路径/模型/JSON 大媒体通道） | 设计文档 §9 |
+| AC8(b) | 本地链接解析：对设计文档运行链接存在性检查，输出原始日志 | 文档成稿 | PASS（等价 bash：14/14 目标 `ls` 存在；0 外链/0 纯锚点） | `selfcheck-output.txt` (b) 段 |
+| AC8(c) | `git diff --name-only` + `git status --porcelain` 范围自证；主仓 19 项 dirty 前后对比 | worktree 与主仓 | worktree 侧 PASS（diff 空；3 项 untracked 全在允许范围；19 禁触路径零命中）。主仓侧 BLOCKED（`git -C <主仓>` 被权限层拦截无法取证；本 Task 全部写入仅发生在本 worktree，物理上不可能改主仓工作树，但直接对比证据缺失，交 Coordinator 复核） | 同上 (c) 段 + `selfcheck-BLOCKED.md` + `commit-BLOCKED.md` |
+| AC8 canonical 复跑 | `powershell … selfcheck.ps1` | 权限客户端可用环境 | BLOCKED（Owner 会话 6 次（含子代理）全部被拒："No permission client configured for Bash"；复跑命令与预期见 BLOCKED 记录） | `selfcheck-BLOCKED.md` |
+| AC9 提交 | git add/commit | 权限客户端可用环境 | BLOCKED（`git add` Owner 1 次 + 子代理 1 次被拒；交付物已全部就绪于工作树，待重放命令见 `commit-BLOCKED.md`） | `commit-BLOCKED.md` |
 
 ## 依赖、风险与阻塞
 
@@ -125,14 +127,30 @@ evidence_dir: verification/UI-DESIGN-1
   "需先释放 ZCode 工作台/书架设计 Task"；ZCode 可用性已实测（headless plan 探测 exit 0，
   sessionId=`sess_2ea3c6ff-9f4c-42e2-855b-12d4a3532592`），故 Owner 按项目分工由 **ZCode** 主责
   （`AGENTS.md` 新架构 UI/UX 主责；DIR-2 的 codex 兜底仅适用于 ZCode 不可用时）。
-- Handoff：尚无。
+- 2026-10-16 ZCode 交付（本 worktree）：产出唯一设计交付物 `doc/design/AD001_FOUR_PAGE_UI_BASELINE.md`
+  （10 节：导航 Shell / 四页各含职责·布局·组件·五态矩阵·交互·键盘焦点 / 契约绑定表 W1–W29 /
+  Wire Gap List G1–G26 / 设计令牌 / 边界自证 / 非目标 + AC 对照附表）；
+  自检证据 `verification/UI-DESIGN-1/`（selfcheck.ps1 + 等价 bash 原始日志 + BLOCKED 记录 + resource-manifest）。
+  **环境异常（如实登记）**：Owner 会话权限层拒绝全部 PowerShell、`git add`、`certutil`、
+  `git -C <主仓>` 及复合命令（错误原文 "No permission client configured for Bash"，
+  含子代理复测）；四项自检由等价白名单 bash 命令完成并全 PASS（原始输出转录入库并标注生成方式）。
+  **交付 commit 未能产生**：交付物全部就绪于工作树（零 tracked 修改），待重放命令见
+  `verification/UI-DESIGN-1/commit-BLOCKED.md`；canonical selfcheck 复跑命令见 `selfcheck-BLOCKED.md`。
+- Handoff：[UI-DESIGN-1-zcode](../handoffs/UI-DESIGN-1-zcode.md)（delivery_head 占位
+  `PENDING_COMMIT_A`，待提交回填）。
 - Review：尚无（Reviewer 必须独立于 Owner，且不得参与本设计）。
-- 实际测试：尚无（全部 `NOT_RUN`）。
+- 实际测试：见上表——等价运行 PASS；canonical ps1 复跑与 git 提交 BLOCKED（权限层）。
 
 ## Canonical Evidence
 
 | evidence_id | AC/Gate | path（仓库相对路径或绝对路径） | commit | sha256 | class (`CANONICAL` / `SOURCE_PIN`) |
 |---|---|---|---|---|---|
+| UI-DESIGN-1-E1 | AC1–AC7 | doc/design/AD001_FOUR_PAGE_UI_BASELINE.md | WORKTREE_ONLY（提交被权限层拦截，回填见 commit-BLOCKED.md） | NOT_RUN（certutil/PowerShell 均被拦，交 Reviewer 补算） | CANONICAL |
+| UI-DESIGN-1-E2 | AC8(a)–(d) | verification/UI-DESIGN-1/selfcheck-output.txt | WORKTREE_ONLY（同上） | NOT_RUN（同上） | CANONICAL |
+| UI-DESIGN-1-E3 | AC8 canonical 复跑 | verification/UI-DESIGN-1/selfcheck.ps1 | WORKTREE_ONLY（同上） | NOT_RUN（同上） | CANONICAL |
+| UI-DESIGN-1-E4 | AC8 阻塞登记 | verification/UI-DESIGN-1/selfcheck-BLOCKED.md | WORKTREE_ONLY（同上） | NOT_RUN（同上） | CANONICAL |
+| UI-DESIGN-1-E5 | AC9 阻塞登记 | verification/UI-DESIGN-1/commit-BLOCKED.md | WORKTREE_ONLY（同上） | NOT_RUN（同上） | CANONICAL |
+| UI-DESIGN-1-E6 | AC9 | doc/handoffs/UI-DESIGN-1-zcode.md | WORKTREE_ONLY（同上） | NOT_RUN（同上） | CANONICAL |
 
 ## Resource Manifest
 
@@ -144,9 +162,9 @@ evidence_dir: verification/UI-DESIGN-1
 ## Closeout Record
 
 - Closeout date / Codex：待关闭时填写。
-- canonical_evidence_status：`pending`。
+- canonical_evidence_status：`pending`（证据已产生并就绪于工作树；commit/sha256 因权限层阻塞待 Coordinator 补齐）。
 - resource_closeout_status：`pending`。
 - 删除、迁移、归档数量/字节数：待关闭时填写；无操作填写 0。
-- 未关闭项及保留原因：本 Task 全部 AC 尚未执行（`NOT_RUN`）。
+- 未关闭项及保留原因：①交付 commit 因权限层拦截未产生（重放命令见 `verification/UI-DESIGN-1/commit-BLOCKED.md`）；②canonical selfcheck.ps1 复跑待 Reviewer；③独立 Review 未开始；④主仓 19 项 dirty 前后对比的直接证据未取得（`git -C <主仓>` 被拦，交 Coordinator 复核）。
 - 当前指针清理：`STATUS` / `REBASELINE_PLAN` 在本 Task 释放时同步；Truth Map 登记由 Coordinator 在集成阶段按
   `doc/00_INDEX.md` 的 dirty 约束单独处理。
