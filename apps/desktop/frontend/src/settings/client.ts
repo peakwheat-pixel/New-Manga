@@ -22,6 +22,19 @@
 import {
   DEFAULT_SFX_POLICY,
   isSfxPolicy,
+  type Capability,
+  type CapabilityBinding,
+  type BindingScope,
+  type CredentialIntent,
+  type CredentialTarget,
+  type NetworkProfile,
+  type NetworkProfileInput,
+  type NetworkProfileUpdateInput,
+  type NetworkTestResult,
+  type ProviderProfile,
+  type ProviderProfileInput,
+  type ProviderProfileUpdateInput,
+  type ResolvedNetworkProfile,
   type SfxPolicy,
 } from "./types";
 
@@ -47,6 +60,29 @@ export const SETTINGS_UPDATE_SECTION_COMMAND = "settings_update_section";
 /** The settings section this Task touches (Python: settings["sfx"]). */
 export const SFX_SECTION = "sfx";
 
+/* P15-C1 §2 — the frozen production-only Tauri command names for the new
+ * settings surface. Pinned as constants exactly like the settings_get pair
+ * above: renaming any of them is a wire drift. The runtime host registers
+ * them when it pairs with Core protocol 2.6; until then invoking them fails
+ * and the UI shows the closed §9 projection. */
+export const SETTINGS_PROVIDER_PROFILES_LIST_COMMAND = "settings_provider_profiles_list";
+export const SETTINGS_PROVIDER_PROFILES_CREATE_COMMAND = "settings_provider_profiles_create";
+export const SETTINGS_PROVIDER_PROFILES_UPDATE_COMMAND = "settings_provider_profiles_update";
+export const SETTINGS_PROVIDER_PROFILES_DELETE_COMMAND = "settings_provider_profiles_delete";
+export const SETTINGS_PROVIDER_BINDINGS_SET_COMMAND = "settings_provider_bindings_set";
+export const SETTINGS_PROVIDER_BINDINGS_CLEAR_COMMAND = "settings_provider_bindings_clear";
+export const SETTINGS_PROVIDER_BINDINGS_RESOLVE_COMMAND = "settings_provider_bindings_resolve";
+export const CREDENTIAL_PUT_COMMAND = "credential_put";
+export const CREDENTIAL_CLEAR_COMMAND = "credential_clear";
+export const SETTINGS_NETWORK_PROFILES_LIST_COMMAND = "settings_network_profiles_list";
+export const SETTINGS_NETWORK_PROFILES_CREATE_COMMAND = "settings_network_profiles_create";
+export const SETTINGS_NETWORK_PROFILES_UPDATE_COMMAND = "settings_network_profiles_update";
+export const SETTINGS_NETWORK_PROFILES_DELETE_COMMAND = "settings_network_profiles_delete";
+export const SETTINGS_NETWORK_PROFILES_TEST_COMMAND = "settings_network_profiles_test";
+export const SETTINGS_NETWORK_PROFILE_DEFAULT_SET_COMMAND = "settings_network_profile_default_set";
+export const SETTINGS_NETWORK_PROFILE_DEFAULT_CLEAR_COMMAND = "settings_network_profile_default_clear";
+export const SETTINGS_NETWORK_PROFILE_RESOLVE_COMMAND = "settings_network_profile_resolve";
+
 export class SettingsClientError extends Error {
   code: string;
 
@@ -55,6 +91,22 @@ export class SettingsClientError extends Error {
     this.name = "SettingsClientError";
     this.code = code;
   }
+}
+
+/**
+ * Extract a stable error code from a rejected invoke: the channel may throw
+ * a plain string, an {code} envelope (M2-C1 §8), or an Error. The message
+ * text is only a fallback code source — callers render the closed §9
+ * projection, never this raw value.
+ */
+function extractErrorCode(error: unknown, fallback: string): string {
+  if (typeof error === "string") return error;
+  if (error && typeof error === "object") {
+    const obj = error as { code?: unknown; message?: unknown };
+    if (typeof obj.code === "string" && obj.code !== "") return obj.code;
+    if (typeof obj.message === "string" && obj.message !== "") return obj.message;
+  }
+  return fallback;
 }
 
 /**
@@ -99,7 +151,7 @@ export class SettingsClient {
       const res = (await this.invoke(SETTINGS_GET_COMMAND)) as SettingsProjection;
       return sfxPolicyFromProjection(res);
     } catch (error) {
-      const code = typeof error === "string" ? error : (error as Error)?.message || "SETTINGS_UNAVAILABLE";
+      const code = extractErrorCode(error, "SETTINGS_UNAVAILABLE");
       throw new SettingsClientError(code, `settings_get failed: ${code}`);
     }
   }
@@ -109,8 +161,266 @@ export class SettingsClient {
     try {
       await this.invoke(SETTINGS_UPDATE_SECTION_COMMAND, buildSfxPolicySection(policy));
     } catch (error) {
-      const code = typeof error === "string" ? error : (error as Error)?.message || "SETTINGS_SAVE_FAILED";
+      const code = extractErrorCode(error, "SETTINGS_SAVE_FAILED");
       throw new SettingsClientError(code, `settings_update_section failed: ${code}`);
     }
   }
+
+  /**
+   * P15 AC3 — null vs empty-object must stay distinguishable. Reads the
+   * single `sfx` section; a JSON null result means "section not set", an
+   * object means "set" (its policy may still fall back to the Core default
+   * when absent/illegal).
+   */
+  async getSfxSection(): Promise<SfxPolicy | null> {
+    try {
+      const res = (await this.invoke(SETTINGS_GET_COMMAND, { section: SFX_SECTION })) as {
+        settings?: { sfx?: unknown };
+      };
+      const section = res?.settings?.sfx;
+      if (section === null || section === undefined) {
+        // frozen-None: JSON null = section unset; a missing key is treated
+        // the same way (still "not set", never an empty-object stand-in).
+        return null;
+      }
+      const policy = (section as { policy?: unknown }).policy;
+      return isSfxPolicy(policy) ? policy : null;
+    } catch (error) {
+      const code = extractErrorCode(error, "SETTINGS_UNAVAILABLE");
+      throw new SettingsClientError(code, `settings_get(section) failed: ${code}`);
+    }
+  }
+
+  /* ---------------- G21: Provider Profiles + Capability bindings ---------------- */
+
+  async listProviderProfiles(): Promise<ProviderProfile[]> {
+    try {
+      const res = (await this.invoke(SETTINGS_PROVIDER_PROFILES_LIST_COMMAND)) as { profiles?: unknown };
+      return Array.isArray(res?.profiles) ? (res.profiles as ProviderProfile[]) : [];
+    } catch (error) {
+      throw toClientError(error, SETTINGS_PROVIDER_PROFILES_LIST_COMMAND);
+    }
+  }
+
+  async createProviderProfile(input: ProviderProfileInput): Promise<ProviderProfile> {
+    try {
+      const res = (await this.invoke(SETTINGS_PROVIDER_PROFILES_CREATE_COMMAND, {
+        provider_id: input.provider_id,
+        display_name: input.display_name,
+        capabilities: input.capabilities,
+        endpoint: input.endpoint,
+        model: input.model,
+        network_profile_id: input.network_profile_id,
+        enabled: input.enabled,
+      })) as { profile: ProviderProfile };
+      return res.profile;
+    } catch (error) {
+      throw toClientError(error, SETTINGS_PROVIDER_PROFILES_CREATE_COMMAND);
+    }
+  }
+
+  async updateProviderProfile(input: ProviderProfileUpdateInput): Promise<ProviderProfile> {
+    try {
+      const res = (await this.invoke(SETTINGS_PROVIDER_PROFILES_UPDATE_COMMAND, {
+        profile_id: input.profile_id,
+        display_name: input.display_name,
+        capabilities: input.capabilities,
+        endpoint: input.endpoint,
+        model: input.model,
+        network_profile_id: input.network_profile_id,
+        enabled: input.enabled,
+      })) as { profile: ProviderProfile };
+      return res.profile;
+    } catch (error) {
+      throw toClientError(error, SETTINGS_PROVIDER_PROFILES_UPDATE_COMMAND);
+    }
+  }
+
+  async deleteProviderProfile(profileId: string): Promise<void> {
+    try {
+      await this.invoke(SETTINGS_PROVIDER_PROFILES_DELETE_COMMAND, { profile_id: profileId });
+    } catch (error) {
+      throw toClientError(error, SETTINGS_PROVIDER_PROFILES_DELETE_COMMAND);
+    }
+  }
+
+  async setCapabilityBinding(
+    scope: BindingScope,
+    capability: Capability,
+    profileId: string,
+  ): Promise<CapabilityBinding> {
+    try {
+      const res = (await this.invoke(SETTINGS_PROVIDER_BINDINGS_SET_COMMAND, {
+        scope,
+        capability,
+        profile_id: profileId,
+      })) as { binding: CapabilityBinding };
+      return res.binding;
+    } catch (error) {
+      throw toClientError(error, SETTINGS_PROVIDER_BINDINGS_SET_COMMAND);
+    }
+  }
+
+  async clearCapabilityBinding(scope: BindingScope, capability: Capability): Promise<void> {
+    try {
+      await this.invoke(SETTINGS_PROVIDER_BINDINGS_CLEAR_COMMAND, { scope, capability });
+    } catch (error) {
+      throw toClientError(error, SETTINGS_PROVIDER_BINDINGS_CLEAR_COMMAND);
+    }
+  }
+
+  /**
+   * Read the current binding for one capability. Request shape is exactly
+   * `ResolveCapabilityBinding { capability }` (contract §3.2): omitting
+   * book/chapter/run context resolves against the current persistent
+   * settings; unknown fields would be rejected, so none are added.
+   */
+  async resolveCapabilityBinding(
+    capability: Capability,
+  ): Promise<{ profile_id: string | null; source: unknown }> {
+    try {
+      const res = (await this.invoke(SETTINGS_PROVIDER_BINDINGS_RESOLVE_COMMAND, {
+        capability,
+      })) as { profile_id: string | null; source: unknown };
+      return { profile_id: res?.profile_id ?? null, source: res?.source ?? null };
+    } catch (error) {
+      throw toClientError(error, SETTINGS_PROVIDER_BINDINGS_RESOLVE_COMMAND);
+    }
+  }
+
+  /* ---------------- G22: one-shot credential operations ---------------- */
+
+  /**
+   * Ask the Host to open its secure input for the given target. The WebView
+   * payload carries ONLY (target, intent) — never a Secret, password, or
+   * CredentialRef (contract §4.1).
+   */
+  async putCredential(
+    target: CredentialTarget,
+    intent: CredentialIntent,
+  ): Promise<{ state: "configured"; masked_hint?: string }> {
+    try {
+      return (await this.invoke(CREDENTIAL_PUT_COMMAND, { target, intent })) as {
+        state: "configured";
+        masked_hint?: string;
+      };
+    } catch (error) {
+      throw toClientError(error, CREDENTIAL_PUT_COMMAND);
+    }
+  }
+
+  async clearCredential(target: CredentialTarget): Promise<{ state: "missing" }> {
+    try {
+      return (await this.invoke(CREDENTIAL_CLEAR_COMMAND, { target })) as { state: "missing" };
+    } catch (error) {
+      throw toClientError(error, CREDENTIAL_CLEAR_COMMAND);
+    }
+  }
+
+  /* ---------------- G23: Network Profiles ---------------- */
+
+  async listNetworkProfiles(): Promise<NetworkProfile[]> {
+    try {
+      const res = (await this.invoke(SETTINGS_NETWORK_PROFILES_LIST_COMMAND)) as { profiles?: unknown };
+      return Array.isArray(res?.profiles) ? (res.profiles as NetworkProfile[]) : [];
+    } catch (error) {
+      throw toClientError(error, SETTINGS_NETWORK_PROFILES_LIST_COMMAND);
+    }
+  }
+
+  async createNetworkProfile(input: NetworkProfileInput): Promise<NetworkProfile> {
+    try {
+      const res = (await this.invoke(SETTINGS_NETWORK_PROFILES_CREATE_COMMAND, {
+        display_name: input.display_name,
+        mode: input.mode,
+        proxy_endpoint: input.proxy_endpoint,
+        ...(input.verify_tls !== undefined ? { verify_tls: input.verify_tls } : {}),
+        ...(input.confirm_disable_tls_verification !== undefined
+          ? { confirm_disable_tls_verification: input.confirm_disable_tls_verification }
+          : {}),
+        ...(input.allow_proxy_failure_direct_fallback !== undefined
+          ? { allow_proxy_failure_direct_fallback: input.allow_proxy_failure_direct_fallback }
+          : {}),
+      })) as { profile: NetworkProfile };
+      return res.profile;
+    } catch (error) {
+      throw toClientError(error, SETTINGS_NETWORK_PROFILES_CREATE_COMMAND);
+    }
+  }
+
+  async updateNetworkProfile(input: NetworkProfileUpdateInput): Promise<NetworkProfile> {
+    try {
+      const res = (await this.invoke(SETTINGS_NETWORK_PROFILES_UPDATE_COMMAND, {
+        network_profile_id: input.network_profile_id,
+        display_name: input.display_name,
+        mode: input.mode,
+        proxy_endpoint: input.proxy_endpoint,
+        verify_tls: input.verify_tls,
+        ...(input.confirm_disable_tls_verification !== undefined
+          ? { confirm_disable_tls_verification: input.confirm_disable_tls_verification }
+          : {}),
+        allow_proxy_failure_direct_fallback: input.allow_proxy_failure_direct_fallback,
+      })) as { profile: NetworkProfile };
+      return res.profile;
+    } catch (error) {
+      throw toClientError(error, SETTINGS_NETWORK_PROFILES_UPDATE_COMMAND);
+    }
+  }
+
+  async deleteNetworkProfile(networkProfileId: string): Promise<void> {
+    try {
+      await this.invoke(SETTINGS_NETWORK_PROFILES_DELETE_COMMAND, {
+        network_profile_id: networkProfileId,
+      });
+    } catch (error) {
+      throw toClientError(error, SETTINGS_NETWORK_PROFILES_DELETE_COMMAND);
+    }
+  }
+
+  async testNetworkProfile(
+    networkProfileId: string,
+    providerProfileId?: string,
+  ): Promise<NetworkTestResult> {
+    try {
+      const res = (await this.invoke(SETTINGS_NETWORK_PROFILES_TEST_COMMAND, {
+        network_profile_id: networkProfileId,
+        ...(providerProfileId !== undefined ? { provider_profile_id: providerProfileId } : {}),
+      })) as NetworkTestResult;
+      return res;
+    } catch (error) {
+      throw toClientError(error, SETTINGS_NETWORK_PROFILES_TEST_COMMAND);
+    }
+  }
+
+  async setGlobalNetworkProfile(networkProfileId: string): Promise<string> {
+    try {
+      const res = (await this.invoke(SETTINGS_NETWORK_PROFILE_DEFAULT_SET_COMMAND, {
+        network_profile_id: networkProfileId,
+      })) as { network_profile_id: string };
+      return res.network_profile_id;
+    } catch (error) {
+      throw toClientError(error, SETTINGS_NETWORK_PROFILE_DEFAULT_SET_COMMAND);
+    }
+  }
+
+  async clearGlobalNetworkProfile(): Promise<void> {
+    try {
+      await this.invoke(SETTINGS_NETWORK_PROFILE_DEFAULT_CLEAR_COMMAND);
+    } catch (error) {
+      throw toClientError(error, SETTINGS_NETWORK_PROFILE_DEFAULT_CLEAR_COMMAND);
+    }
+  }
+
+  async resolveNetworkProfile(): Promise<ResolvedNetworkProfile> {
+    try {
+      return (await this.invoke(SETTINGS_NETWORK_PROFILE_RESOLVE_COMMAND)) as ResolvedNetworkProfile;
+    } catch (error) {
+      throw toClientError(error, SETTINGS_NETWORK_PROFILE_RESOLVE_COMMAND);
+    }
+  }
+}
+
+function toClientError(error: unknown, command: string): SettingsClientError {
+  const code = extractErrorCode(error, "SETTINGS_UNAVAILABLE");
+  return new SettingsClientError(code, `${command} failed: ${code}`);
 }
