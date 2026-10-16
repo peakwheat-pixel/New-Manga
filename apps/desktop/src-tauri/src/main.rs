@@ -43,7 +43,10 @@ mod packaged_sidecar_tests;
 
 use ac1_bridge::Ac1Channel;
 use core_bridge::{CoreChannel, CoreError, StdioCoreChannel};
-use library_bridge::{BookSummary, LibraryChannel, PingResult, StdioLibraryChannel};
+use library_bridge::{
+    BookSummary, ExportHistoryResponseView, ExportProgressSnapshotView, LibraryChannel, PingResult,
+    StdioLibraryChannel,
+};
 use resource_protocol::ScopeRoots;
 use serde::Serialize;
 use std::collections::HashMap;
@@ -90,6 +93,10 @@ pub const PRODUCTION_COMMANDS: &[&str] = &[
     "library_get_run_snapshot",
     "library_get_task_projection",
     "library_retry_failed_targets",
+    // EXPORT-IPC-1: host transport for the export control/query surface.
+    "library_cancel_export",
+    "library_get_export_snapshot",
+    "library_get_export_history",
 ];
 
 /// Commands that exist ONLY in probe mode (`M2RC1_PROBE_OUT` set by the
@@ -170,6 +177,14 @@ pub const RUN_PRODUCTION_ONLY_COMMANDS: &[&str] = &[
     "library_retry_failed_targets",
 ];
 
+/// EXPORT-IPC-1 (contract rev 2.5 §5.8): Export control/query commands.
+/// Production-only transport for the frozen Core export control and query surface.
+pub const EXPORT_PRODUCTION_ONLY_COMMANDS: &[&str] = &[
+    "library_cancel_export",
+    "library_get_export_snapshot",
+    "library_get_export_history",
+];
+
 pub fn command_allowlist(probe_mode: bool, ac1_mode: bool) -> Vec<&'static str> {
     let mut commands: Vec<&'static str> = if probe_mode || ac1_mode {
         PRODUCTION_COMMANDS
@@ -184,6 +199,7 @@ pub fn command_allowlist(probe_mode: bool, ac1_mode: bool) -> Vec<&'static str> 
                     && !PAGE_NAV_PRODUCTION_ONLY_COMMANDS.contains(command)
                     && !HOST_ISSUER_PRODUCTION_ONLY_COMMANDS.contains(command)
                     && !RUN_PRODUCTION_ONLY_COMMANDS.contains(command)
+                    && !EXPORT_PRODUCTION_ONLY_COMMANDS.contains(command)
             })
             .collect()
     } else {
@@ -518,6 +534,44 @@ fn library_retry_failed_targets(
         .as_ref()
         .ok_or_else(|| "CORE_UNAVAILABLE".to_string())?
         .retry_failed_targets(&run_id, &idempotency_key)
+        .map_err(|error| error.code)
+}
+
+#[tauri::command]
+fn library_cancel_export(
+    state: tauri::State<'_, AppState>,
+    export_id: String,
+) -> Result<ExportProgressSnapshotView, String> {
+    state
+        .library
+        .as_ref()
+        .ok_or_else(|| "CORE_UNAVAILABLE".to_string())?
+        .cancel_export(&export_id)
+        .map_err(|error| error.code)
+}
+
+#[tauri::command]
+fn library_get_export_snapshot(
+    state: tauri::State<'_, AppState>,
+    export_id: String,
+) -> Result<ExportProgressSnapshotView, String> {
+    state
+        .library
+        .as_ref()
+        .ok_or_else(|| "CORE_UNAVAILABLE".to_string())?
+        .get_export_snapshot(&export_id)
+        .map_err(|error| error.code)
+}
+
+#[tauri::command]
+fn library_get_export_history(
+    state: tauri::State<'_, AppState>,
+) -> Result<ExportHistoryResponseView, String> {
+    state
+        .library
+        .as_ref()
+        .ok_or_else(|| "CORE_UNAVAILABLE".to_string())?
+        .get_export_history()
         .map_err(|error| error.code)
 }
 
@@ -1131,7 +1185,10 @@ fn main() {
             library_resume_blocked_run,
             library_get_run_snapshot,
             library_get_task_projection,
-            library_retry_failed_targets
+            library_retry_failed_targets,
+            library_cancel_export,
+            library_get_export_snapshot,
+            library_get_export_history
         ])
     };
 
@@ -1311,6 +1368,9 @@ mod tests {
                 "library_get_run_snapshot",
                 "library_get_task_projection",
                 "library_retry_failed_targets",
+                "library_cancel_export",
+                "library_get_export_snapshot",
+                "library_get_export_history",
             ]
         );
     }
@@ -1377,6 +1437,12 @@ mod tests {
                 "{command} must stay production-only"
             );
         }
+        for command in EXPORT_PRODUCTION_ONLY_COMMANDS {
+            assert!(
+                !probe.contains(command),
+                "{command} must stay production-only"
+            );
+        }
         assert_eq!(
             probe.len(),
             PRODUCTION_COMMANDS.len()
@@ -1388,6 +1454,7 @@ mod tests {
                 - PAGE_NAV_PRODUCTION_ONLY_COMMANDS.len()
                 - HOST_ISSUER_PRODUCTION_ONLY_COMMANDS.len()
                 - RUN_PRODUCTION_ONLY_COMMANDS.len()
+                - EXPORT_PRODUCTION_ONLY_COMMANDS.len()
                 + PROBE_ONLY_COMMANDS.len()
         );
     }
@@ -1453,6 +1520,12 @@ mod tests {
                 "{command} must stay production-only"
             );
         }
+        for command in EXPORT_PRODUCTION_ONLY_COMMANDS {
+            assert!(
+                !ac1.contains(command),
+                "{command} must stay production-only"
+            );
+        }
         assert_eq!(
             ac1.len(),
             PRODUCTION_COMMANDS.len()
@@ -1464,6 +1537,7 @@ mod tests {
                 - PAGE_NAV_PRODUCTION_ONLY_COMMANDS.len()
                 - HOST_ISSUER_PRODUCTION_ONLY_COMMANDS.len()
                 - RUN_PRODUCTION_ONLY_COMMANDS.len()
+                - EXPORT_PRODUCTION_ONLY_COMMANDS.len()
                 + AC1_TEST_COMMANDS.len()
         );
     }
@@ -1474,9 +1548,9 @@ mod tests {
         // production-only families (IPC1 + settings + retype + RC4 + the
         // M2-PAGE-RESOURCE-RESOLVE-1 page-resource resolve + the
         // M2-PAGE-NAV-PROJECTION-1 navigation projections + the RUN-IPC-1 Run
-        // transport) — the frozen probe and ac1 test-mode surfaces must never
-        // gain any of them, and their historical 7/6-command shapes stay
-        // pinned.
+        // transport + the EXPORT-IPC-1 export control/query) — the frozen
+        // probe and ac1 test-mode surfaces must never gain any of them, and
+        // their historical 7/6-command shapes stay pinned.
         for command in IPC1_PRODUCTION_ONLY_COMMANDS
             .iter()
             .chain(SETTINGS_PRODUCTION_ONLY_COMMANDS)
@@ -1486,6 +1560,7 @@ mod tests {
             .chain(PAGE_NAV_PRODUCTION_ONLY_COMMANDS)
             .chain(HOST_ISSUER_PRODUCTION_ONLY_COMMANDS)
             .chain(RUN_PRODUCTION_ONLY_COMMANDS)
+            .chain(EXPORT_PRODUCTION_ONLY_COMMANDS)
         {
             assert!(
                 !command_allowlist(true, false).contains(command),
@@ -1518,13 +1593,46 @@ mod tests {
                 "library_retry_failed_targets",
             ]
         );
-        assert_eq!(PRODUCTION_COMMANDS.len(), 24);
+        assert_eq!(PRODUCTION_COMMANDS.len(), 27);
 
         let production = command_allowlist(false, false);
         let probe = command_allowlist(true, false);
         let ac1 = command_allowlist(false, true);
 
         for command in RUN_PRODUCTION_ONLY_COMMANDS {
+            assert!(
+                production.contains(command),
+                "{command} must be on the production surface"
+            );
+            assert!(
+                !probe.contains(command),
+                "{command} must not appear in probe surface"
+            );
+            assert!(
+                !ac1.contains(command),
+                "{command} must not appear in ac1 surface"
+            );
+        }
+    }
+
+    /// EXPORT-IPC-1: literal exact assertions for the export control/query family.
+    #[test]
+    fn export_query_commands_are_exact_and_production_only() {
+        assert_eq!(
+            EXPORT_PRODUCTION_ONLY_COMMANDS,
+            &[
+                "library_cancel_export",
+                "library_get_export_snapshot",
+                "library_get_export_history",
+            ]
+        );
+        assert_eq!(PRODUCTION_COMMANDS.len(), 27);
+
+        let production = command_allowlist(false, false);
+        let probe = command_allowlist(true, false);
+        let ac1 = command_allowlist(false, true);
+
+        for command in EXPORT_PRODUCTION_ONLY_COMMANDS {
             assert!(
                 production.contains(command),
                 "{command} must be on the production surface"
@@ -1633,6 +1741,86 @@ mod tests {
         );
         assert_eq!(
             bare.retry_failed_targets("run-1", "key-2").unwrap_err().code,
+            "CORE_UNAVAILABLE"
+        );
+    }
+
+    #[test]
+    fn export_channel_defaults_are_fail_closed() {
+        struct BareChannel;
+        impl LibraryChannel for BareChannel {
+            fn ping(&self) -> Result<PingResult, LibraryError> {
+                unimplemented!("not exercised by this test")
+            }
+            fn list_books(&self) -> Result<Vec<BookSummary>, LibraryError> {
+                unimplemented!("not exercised by this test")
+            }
+            fn get_settings(&self, _section: Option<&str>) -> Result<serde_json::Value, LibraryError> {
+                unimplemented!("not exercised by this test")
+            }
+            fn update_settings_section(
+                &self,
+                _section: &str,
+                _values: &serde_json::Value,
+            ) -> Result<serde_json::Value, LibraryError> {
+                unimplemented!("not exercised by this test")
+            }
+            fn set_region_type(
+                &self,
+                _region_id: &str,
+                _new_region_type: &str,
+                _expected_revision: Option<i64>,
+            ) -> Result<serde_json::Value, LibraryError> {
+                unimplemented!("not exercised by this test")
+            }
+            fn list_regions(&self, _page_id: &str) -> Result<serde_json::Value, LibraryError> {
+                unimplemented!("not exercised by this test")
+            }
+            fn list_region_revisions(
+                &self,
+                _region_id: &str,
+            ) -> Result<serde_json::Value, LibraryError> {
+                unimplemented!("not exercised by this test")
+            }
+            fn restore_region_revision(
+                &self,
+                _region_id: &str,
+                _revision_no: i64,
+                _expected_revision: i64,
+            ) -> Result<serde_json::Value, LibraryError> {
+                unimplemented!("not exercised by this test")
+            }
+            fn rerender_page(&self, _page_id: &str) -> Result<serde_json::Value, LibraryError> {
+                unimplemented!("not exercised by this test")
+            }
+            fn resolve_page_resource(
+                &self,
+                _page_id: &str,
+            ) -> Result<serde_json::Value, LibraryError> {
+                unimplemented!("not exercised by this test")
+            }
+            fn list_chapters(&self, _book_id: &str) -> Result<serde_json::Value, LibraryError> {
+                unimplemented!("not exercised by this test")
+            }
+            fn list_chapter_pages(
+                &self,
+                _chapter_id: &str,
+            ) -> Result<serde_json::Value, LibraryError> {
+                unimplemented!("not exercised by this test")
+            }
+        }
+
+        let bare = BareChannel;
+        assert_eq!(
+            bare.cancel_export("exp-1").unwrap_err().code,
+            "CORE_UNAVAILABLE"
+        );
+        assert_eq!(
+            bare.get_export_snapshot("exp-1").unwrap_err().code,
+            "CORE_UNAVAILABLE"
+        );
+        assert_eq!(
+            bare.get_export_history().unwrap_err().code,
             "CORE_UNAVAILABLE"
         );
     }
@@ -2503,6 +2691,24 @@ mod tests {
         ) -> Result<serde_json::Value, LibraryError> {
             self.inner.retry_failed_targets(run_id, idempotency_key)
         }
+
+        fn cancel_export(
+            &self,
+            export_id: &str,
+        ) -> Result<ExportProgressSnapshotView, LibraryError> {
+            self.inner.cancel_export(export_id)
+        }
+
+        fn get_export_snapshot(
+            &self,
+            export_id: &str,
+        ) -> Result<ExportProgressSnapshotView, LibraryError> {
+            self.inner.get_export_snapshot(export_id)
+        }
+
+        fn get_export_history(&self) -> Result<ExportHistoryResponseView, LibraryError> {
+            self.inner.get_export_history()
+        }
     }
 
     /// The shared Arc handle forwards to the library so the test can keep
@@ -2601,6 +2807,24 @@ mod tests {
             idempotency_key: &str,
         ) -> Result<serde_json::Value, LibraryError> {
             (**self).retry_failed_targets(run_id, idempotency_key)
+        }
+
+        fn cancel_export(
+            &self,
+            export_id: &str,
+        ) -> Result<ExportProgressSnapshotView, LibraryError> {
+            (**self).cancel_export(export_id)
+        }
+
+        fn get_export_snapshot(
+            &self,
+            export_id: &str,
+        ) -> Result<ExportProgressSnapshotView, LibraryError> {
+            (**self).get_export_snapshot(export_id)
+        }
+
+        fn get_export_history(&self) -> Result<ExportHistoryResponseView, LibraryError> {
+            (**self).get_export_history()
         }
     }
 

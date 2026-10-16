@@ -42,6 +42,74 @@ pub struct BookSummary {
     pub updated_at: String,
 }
 
+/// EXPORT-IPC-1 (contract rev 2.5 §5.8): Safe WebView projection of export output.
+/// Whitelisted reconstruction: output_path is strictly excluded.
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct ExportProgressOutputView {
+    pub format: String,
+    pub sha256: Option<String>,
+}
+
+/// EXPORT-IPC-1 (contract rev 2.5 §5.8): Safe WebView projection of export lineage.
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct ExportPageLineageView {
+    pub page_id: String,
+    pub order: i64,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub source_artifact_id: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub source_artifact_revision_id: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub source_sha256: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub rendered_from_revision_id: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub current_source_revision_id: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub source_run_id: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub stale: Option<bool>,
+}
+
+/// EXPORT-IPC-1 (contract rev 2.5 §5.8): Safe WebView projection of export progress snapshot.
+/// Strictly excludes output_path and any OS path representation.
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct ExportProgressSnapshotView {
+    pub export_id: String,
+    pub status: String,
+    pub completed_pages: u64,
+    pub total_pages: u64,
+    pub current_page_id: Option<String>,
+    pub accepted_at: String,
+    pub completed_at: Option<String>,
+    pub output: Option<ExportProgressOutputView>,
+    pub lineage: Vec<ExportPageLineageView>,
+    pub error_code: Option<String>,
+}
+
+/// EXPORT-IPC-1 (contract rev 2.5 §5.8): Safe WebView projection of export history entry.
+/// Whitelisted reconstruction: output_path is strictly excluded.
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct ExportHistoryEntryView {
+    pub export_id: String,
+    pub book_id: String,
+    pub chapter_ids: Vec<String>,
+    pub ordered_page_ids: Vec<String>,
+    pub format: String,
+    pub format_options: serde_json::Value,
+    pub created_at: String,
+    pub completed_at: Option<String>,
+    pub status: String,
+    pub sha256: Option<String>,
+    pub lineage: Vec<ExportPageLineageView>,
+}
+
+/// EXPORT-IPC-1 (contract rev 2.5 §5.8): History query response view.
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct ExportHistoryResponseView {
+    pub exports: Vec<ExportHistoryEntryView>,
+}
+
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 pub struct LibraryError {
     pub code: String,
@@ -119,6 +187,220 @@ pub fn decode_response(line: &str) -> Result<serde_json::Value, LibraryError> {
         .get("result")
         .cloned()
         .unwrap_or(serde_json::Value::Null))
+}
+
+pub fn project_export_lineage(val: &Value) -> Result<ExportPageLineageView, LibraryError> {
+    let page_id = val
+        .get("page_id")
+        .and_then(Value::as_str)
+        .ok_or_else(|| LibraryError::malformed("missing page_id in lineage"))?
+        .to_string();
+    let order = val
+        .get("order")
+        .and_then(Value::as_i64)
+        .ok_or_else(|| LibraryError::malformed("missing order in lineage"))?;
+    let source_artifact_id = val
+        .get("source_artifact_id")
+        .and_then(Value::as_str)
+        .map(ToString::to_string);
+    let source_artifact_revision_id = val
+        .get("source_artifact_revision_id")
+        .and_then(Value::as_str)
+        .map(ToString::to_string);
+    let source_sha256 = val
+        .get("source_sha256")
+        .and_then(Value::as_str)
+        .map(ToString::to_string);
+    let rendered_from_revision_id = val
+        .get("rendered_from_revision_id")
+        .and_then(Value::as_str)
+        .map(ToString::to_string);
+    let current_source_revision_id = val
+        .get("current_source_revision_id")
+        .and_then(Value::as_str)
+        .map(ToString::to_string);
+    let source_run_id = val
+        .get("source_run_id")
+        .and_then(Value::as_str)
+        .map(ToString::to_string);
+    let stale = val.get("stale").and_then(Value::as_bool);
+
+    Ok(ExportPageLineageView {
+        page_id,
+        order,
+        source_artifact_id,
+        source_artifact_revision_id,
+        source_sha256,
+        rendered_from_revision_id,
+        current_source_revision_id,
+        source_run_id,
+        stale,
+    })
+}
+
+pub fn project_export_snapshot(val: Value) -> Result<ExportProgressSnapshotView, LibraryError> {
+    let export_id = val
+        .get("export_id")
+        .and_then(Value::as_str)
+        .ok_or_else(|| LibraryError::malformed("missing export_id in snapshot"))?
+        .to_string();
+    let status = val
+        .get("status")
+        .and_then(Value::as_str)
+        .ok_or_else(|| LibraryError::malformed("missing status in snapshot"))?
+        .to_string();
+    let completed_pages = val
+        .get("completed_pages")
+        .and_then(Value::as_u64)
+        .unwrap_or(0);
+    let total_pages = val
+        .get("total_pages")
+        .and_then(Value::as_u64)
+        .unwrap_or(0);
+    let current_page_id = val
+        .get("current_page_id")
+        .and_then(Value::as_str)
+        .map(ToString::to_string);
+    let accepted_at = val
+        .get("accepted_at")
+        .and_then(Value::as_str)
+        .unwrap_or("")
+        .to_string();
+    let completed_at = val
+        .get("completed_at")
+        .and_then(Value::as_str)
+        .map(ToString::to_string);
+    let output = match val.get("output") {
+        Some(Value::Object(o)) => {
+            let format = o
+                .get("format")
+                .and_then(Value::as_str)
+                .unwrap_or("")
+                .to_string();
+            let sha256 = o.get("sha256").and_then(Value::as_str).map(ToString::to_string);
+            Some(ExportProgressOutputView { format, sha256 })
+        }
+        _ => None,
+    };
+    let lineage = match val.get("lineage") {
+        Some(Value::Array(arr)) => {
+            let mut items = Vec::with_capacity(arr.len());
+            for l in arr {
+                items.push(project_export_lineage(l)?);
+            }
+            items
+        }
+        _ => Vec::new(),
+    };
+    let error_code = val
+        .get("error_code")
+        .and_then(Value::as_str)
+        .map(ToString::to_string);
+
+    Ok(ExportProgressSnapshotView {
+        export_id,
+        status,
+        completed_pages,
+        total_pages,
+        current_page_id,
+        accepted_at,
+        completed_at,
+        output,
+        lineage,
+        error_code,
+    })
+}
+
+pub fn project_export_history(val: Value) -> Result<ExportHistoryResponseView, LibraryError> {
+    let exports_array = match val.get("exports") {
+        Some(Value::Array(arr)) => arr,
+        Some(Value::Null) | None => return Ok(ExportHistoryResponseView { exports: Vec::new() }),
+        _ => return Err(LibraryError::malformed("exports field must be an array")),
+    };
+    let mut exports = Vec::with_capacity(exports_array.len());
+    for item in exports_array {
+        let export_id = item
+            .get("export_id")
+            .and_then(Value::as_str)
+            .ok_or_else(|| LibraryError::malformed("missing export_id in history entry"))?
+            .to_string();
+        let book_id = item
+            .get("book_id")
+            .and_then(Value::as_str)
+            .ok_or_else(|| LibraryError::malformed("missing book_id in history entry"))?
+            .to_string();
+        let chapter_ids = item
+            .get("chapter_ids")
+            .and_then(Value::as_array)
+            .map(|arr| {
+                arr.iter()
+                    .filter_map(Value::as_str)
+                    .map(ToString::to_string)
+                    .collect()
+            })
+            .unwrap_or_default();
+        let ordered_page_ids = item
+            .get("ordered_page_ids")
+            .and_then(Value::as_array)
+            .map(|arr| {
+                arr.iter()
+                    .filter_map(Value::as_str)
+                    .map(ToString::to_string)
+                    .collect()
+            })
+            .unwrap_or_default();
+        let format = item
+            .get("format")
+            .and_then(Value::as_str)
+            .unwrap_or("")
+            .to_string();
+        let format_options = item
+            .get("format_options")
+            .cloned()
+            .unwrap_or_else(|| Value::Object(Default::default()));
+        let created_at = item
+            .get("created_at")
+            .and_then(Value::as_str)
+            .unwrap_or("")
+            .to_string();
+        let completed_at = item
+            .get("completed_at")
+            .and_then(Value::as_str)
+            .map(ToString::to_string);
+        let status = item
+            .get("status")
+            .and_then(Value::as_str)
+            .unwrap_or("")
+            .to_string();
+        let sha256 = item
+            .get("sha256")
+            .and_then(Value::as_str)
+            .map(ToString::to_string);
+        let lineage = match item.get("lineage") {
+            Some(Value::Array(arr)) => {
+                let mut items = Vec::with_capacity(arr.len());
+                for l in arr {
+                    items.push(project_export_lineage(l)?);
+                }
+                items
+            }
+            _ => Vec::new(),
+        };
+        exports.push(ExportHistoryEntryView {
+            export_id,
+            book_id,
+            chapter_ids,
+            ordered_page_ids,
+            format,
+            format_options,
+            created_at,
+            completed_at,
+            status,
+            sha256,
+            lineage,
+        });
+    }
+    Ok(ExportHistoryResponseView { exports })
 }
 
 pub trait LibraryChannel: Send + Sync {
@@ -257,6 +539,26 @@ pub trait LibraryChannel: Send + Sync {
     /// EVENTS-FWD-1 (rev 2.4 §6.4): Register an event sink for background
     /// core events forwarded to WebView. Default is a no-op.
     fn set_event_sink(&self, _sink: EventSink) {}
+
+    /// EXPORT-IPC-1 (contract rev 2.5 §5.8): Export control and query surface.
+    /// Returns whitelisted safe views without output_path or file references.
+    fn cancel_export(
+        &self,
+        _export_id: &str,
+    ) -> Result<ExportProgressSnapshotView, LibraryError> {
+        Err(LibraryError::unavailable("Export channel is unavailable"))
+    }
+
+    fn get_export_snapshot(
+        &self,
+        _export_id: &str,
+    ) -> Result<ExportProgressSnapshotView, LibraryError> {
+        Err(LibraryError::unavailable("Export channel is unavailable"))
+    }
+
+    fn get_export_history(&self) -> Result<ExportHistoryResponseView, LibraryError> {
+        Err(LibraryError::unavailable("Export channel is unavailable"))
+    }
 }
 
 pub type EventSink = Arc<dyn Fn(&str, Value) + Send + Sync>;
@@ -1259,6 +1561,33 @@ impl LibraryChannel for StdioLibraryChannel {
     fn set_event_sink(&self, sink: EventSink) {
         *self.event_sink.lock().unwrap() = Some(sink);
     }
+
+    fn cancel_export(
+        &self,
+        export_id: &str,
+    ) -> Result<ExportProgressSnapshotView, LibraryError> {
+        let val = self.round_trip(
+            "CancelExport",
+            serde_json::json!({ "export_id": export_id }),
+        )?;
+        project_export_snapshot(val)
+    }
+
+    fn get_export_snapshot(
+        &self,
+        export_id: &str,
+    ) -> Result<ExportProgressSnapshotView, LibraryError> {
+        let val = self.round_trip(
+            "GetExportSnapshot",
+            serde_json::json!({ "export_id": export_id }),
+        )?;
+        project_export_snapshot(val)
+    }
+
+    fn get_export_history(&self) -> Result<ExportHistoryResponseView, LibraryError> {
+        let val = self.round_trip("GetExportHistory", serde_json::json!({}))?;
+        project_export_history(val)
+    }
 }
 
 fn host_issuer_error(error: crate::host_issuer::HostIssuerError) -> LibraryError {
@@ -1278,6 +1607,8 @@ pub struct MockLibraryChannel {
     retype_result: Mutex<Result<serde_json::Value, LibraryError>>,
     regions_result: Mutex<Result<serde_json::Value, LibraryError>>,
     domain_result: Mutex<Result<serde_json::Value, LibraryError>>,
+    export_snapshot_result: Mutex<Result<ExportProgressSnapshotView, LibraryError>>,
+    export_history_result: Mutex<Result<ExportHistoryResponseView, LibraryError>>,
     pub event_sink: Mutex<Option<EventSink>>,
 }
 
@@ -1299,8 +1630,40 @@ impl MockLibraryChannel {
             }))),
             regions_result: Mutex::new(Ok(serde_json::json!({ "regions": [] }))),
             domain_result: Mutex::new(Ok(serde_json::json!({}))),
+            export_snapshot_result: Mutex::new(Ok(ExportProgressSnapshotView {
+                export_id: "exp-mock-1".to_string(),
+                status: "completed".to_string(),
+                completed_pages: 1,
+                total_pages: 1,
+                current_page_id: None,
+                accepted_at: "2026-10-16T12:00:00Z".to_string(),
+                completed_at: Some("2026-10-16T12:01:00Z".to_string()),
+                output: Some(ExportProgressOutputView {
+                    format: "pdf".to_string(),
+                    sha256: Some("abcd1234abcd1234abcd1234abcd1234abcd1234abcd1234abcd1234abcd1234".to_string()),
+                }),
+                lineage: Vec::new(),
+                error_code: None,
+            })),
+            export_history_result: Mutex::new(Ok(ExportHistoryResponseView {
+                exports: Vec::new(),
+            })),
             event_sink: Mutex::new(None),
         }
+    }
+
+    pub fn set_export_snapshot_result(
+        &self,
+        result: Result<ExportProgressSnapshotView, LibraryError>,
+    ) {
+        *self.export_snapshot_result.lock().unwrap() = result;
+    }
+
+    pub fn set_export_history_result(
+        &self,
+        result: Result<ExportHistoryResponseView, LibraryError>,
+    ) {
+        *self.export_history_result.lock().unwrap() = result;
     }
 
     pub fn set_books(&self, books: Vec<BookSummary>) {
@@ -1452,6 +1815,24 @@ impl LibraryChannel for MockLibraryChannel {
     }
     fn set_event_sink(&self, sink: EventSink) {
         *self.event_sink.lock().unwrap() = Some(sink);
+    }
+
+    fn cancel_export(
+        &self,
+        _export_id: &str,
+    ) -> Result<ExportProgressSnapshotView, LibraryError> {
+        self.export_snapshot_result.lock().unwrap().clone()
+    }
+
+    fn get_export_snapshot(
+        &self,
+        _export_id: &str,
+    ) -> Result<ExportProgressSnapshotView, LibraryError> {
+        self.export_snapshot_result.lock().unwrap().clone()
+    }
+
+    fn get_export_history(&self) -> Result<ExportHistoryResponseView, LibraryError> {
+        self.export_history_result.lock().unwrap().clone()
     }
 }
 
@@ -2318,5 +2699,159 @@ mod tests {
         assert_eq!(events[1].0, "core:RunCompleted");
         assert_eq!(events[1].1["run_id"], "run-B");
         assert_eq!(events[1].1["status"], "completed");
+    }
+
+    #[test]
+    fn test_project_export_snapshot_whitelist_zero_path() {
+        let raw_core_snapshot = serde_json::json!({
+            "export_id": "exp-test-001",
+            "status": "completed",
+            "completed_pages": 5,
+            "total_pages": 5,
+            "current_page_id": serde_json::Value::Null,
+            "accepted_at": "2026-10-16T12:00:00Z",
+            "completed_at": "2026-10-16T12:01:00Z",
+            "output_path": "C:\\Users\\User\\AppData\\Local\\secret\\exported.zip",
+            "target_path_internal": "C:\\Users\\User\\AppData\\Local\\secret\\exported.zip",
+            "grant_id": "grant_secret_999",
+            "output": {
+                "format": "zip",
+                "output_path": "C:\\Users\\User\\AppData\\Local\\secret\\exported.zip",
+                "sha256": "abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890"
+            },
+            "lineage": [
+                {
+                    "page_id": "p-1",
+                    "order": 1,
+                    "source_artifact_id": "art-1",
+                    "source_artifact_revision_id": "rev-1",
+                    "source_sha256": "hash-1",
+                    "rendered_from_revision_id": "rend-1",
+                    "current_source_revision_id": "cur-1",
+                    "source_run_id": "run-1",
+                    "stale": false,
+                    "internal_file_path": "C:\\Users\\User\\AppData\\Local\\page1.png"
+                }
+            ],
+            "error_code": serde_json::Value::Null
+        });
+
+        let view = project_export_snapshot(raw_core_snapshot).expect("project snapshot must succeed");
+        assert_eq!(view.export_id, "exp-test-001");
+        assert_eq!(view.status, "completed");
+        assert_eq!(view.completed_pages, 5);
+        assert_eq!(view.total_pages, 5);
+        assert_eq!(view.output.as_ref().unwrap().format, "zip");
+        assert_eq!(
+            view.output.as_ref().unwrap().sha256.as_deref(),
+            Some("abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890")
+        );
+        assert_eq!(view.lineage.len(), 1);
+        assert_eq!(view.lineage[0].page_id, "p-1");
+
+        // Serialize to JSON and assert zero path / zero secret leakage
+        let serialized = serde_json::to_string(&view).expect("must serialize");
+        assert!(!serialized.contains("output_path"), "must not contain output_path");
+        assert!(!serialized.contains("target_path"), "must not contain target_path");
+        assert!(!serialized.contains("internal_file_path"), "must not contain internal_file_path");
+        assert!(!serialized.contains("grant_secret"), "must not contain grant_id");
+        assert!(!serialized.contains("C:\\"), "must not contain Windows drive path");
+        assert!(!serialized.contains("secret"), "must not contain private path components");
+    }
+
+    #[test]
+    fn test_project_export_history_whitelist_zero_path() {
+        let raw_core_history = serde_json::json!({
+            "exports": [
+                {
+                    "export_id": "exp-hist-001",
+                    "book_id": "book-1",
+                    "chapter_ids": ["ch-1"],
+                    "ordered_page_ids": ["p-1", "p-2"],
+                    "format": "pdf",
+                    "format_options": { "dpi": 300 },
+                    "created_at": "2026-10-16T12:00:00Z",
+                    "completed_at": "2026-10-16T12:01:00Z",
+                    "status": "completed",
+                    "sha256": "11223344556677889900aabbccddeeff11223344556677889900aabbccddeeff",
+                    "output_path": "D:\\Private\\Manga\\Exports\\book.pdf",
+                    "stale_policy": "abort",
+                    "target_ref": { "grant_id": "grant-sec-888" },
+                    "lineage": [
+                        {
+                            "page_id": "p-1",
+                            "order": 0,
+                            "source_sha256": "hash-0"
+                        }
+                    ]
+                }
+            ]
+        });
+
+        let view = project_export_history(raw_core_history).expect("project history must succeed");
+        assert_eq!(view.exports.len(), 1);
+        assert_eq!(view.exports[0].export_id, "exp-hist-001");
+        assert_eq!(view.exports[0].format, "pdf");
+
+        // Serialize to JSON and assert zero path / zero target_ref leakage
+        let serialized = serde_json::to_string(&view).expect("must serialize");
+        assert!(!serialized.contains("output_path"), "must not contain output_path");
+        assert!(!serialized.contains("stale_policy"), "must not contain stale_policy");
+        assert!(!serialized.contains("target_ref"), "must not contain target_ref");
+        assert!(!serialized.contains("grant-sec"), "must not contain grant credentials");
+        assert!(!serialized.contains("D:\\"), "must not contain Windows drive path");
+        assert!(!serialized.contains("Private"), "must not contain private path components");
+    }
+
+    #[test]
+    fn test_project_export_history_empty_cases() {
+        let empty_exports = serde_json::json!({ "exports": [] });
+        let view1 = project_export_history(empty_exports).expect("empty exports array succeeds");
+        assert!(view1.exports.is_empty());
+
+        let empty_obj = serde_json::json!({});
+        let view2 = project_export_history(empty_obj).expect("empty object succeeds without error");
+        assert!(view2.exports.is_empty());
+    }
+
+    #[test]
+    fn test_mock_channel_export_methods() {
+        let mock = MockLibraryChannel::new();
+        let snap = mock.get_export_snapshot("exp-1").unwrap();
+        assert_eq!(snap.export_id, "exp-mock-1");
+        let cancel = mock.cancel_export("exp-1").unwrap();
+        assert_eq!(cancel.export_id, "exp-mock-1");
+        let hist = mock.get_export_history().unwrap();
+        assert!(hist.exports.is_empty());
+
+        // Error injection
+        mock.set_export_snapshot_result(Err(LibraryError::new(
+            "EXPORT_NOT_FOUND",
+            "not_found",
+            false,
+            Some("export not found at C:\\secret\\path"),
+        )));
+        let err = mock.get_export_snapshot("exp-unknown").unwrap_err();
+        assert_eq!(err.code, "EXPORT_NOT_FOUND");
+
+        // History mock injection
+        mock.set_export_history_result(Ok(ExportHistoryResponseView {
+            exports: vec![ExportHistoryEntryView {
+                export_id: "exp-hist-mock".to_string(),
+                book_id: "b-1".to_string(),
+                chapter_ids: vec![],
+                ordered_page_ids: vec![],
+                format: "cbz".to_string(),
+                format_options: serde_json::json!({}),
+                created_at: "2026-10-16T12:00:00Z".to_string(),
+                completed_at: None,
+                status: "running".to_string(),
+                sha256: None,
+                lineage: vec![],
+            }],
+        }));
+        let hist2 = mock.get_export_history().unwrap();
+        assert_eq!(hist2.exports.len(), 1);
+        assert_eq!(hist2.exports[0].export_id, "exp-hist-mock");
     }
 }
