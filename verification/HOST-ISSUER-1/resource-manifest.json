@@ -12,7 +12,7 @@
       "destination_path": "G:/CODEX/New Manga.workspace/worktrees/HOST-ISSUER-1",
       "branch": "codex/HOST-ISSUER-1-tauri-ref-issuer",
       "base_commit": "8a990a345c91b4e36cc0bfc6549104b454b24556",
-      "delivery_head": "pending implementation commit",
+      "delivery_head": "2ad590a31ac2271db7de45f349d94eeaa494775c",
       "integration_commit": null,
       "deleted": false,
       "pruned": false,
