@@ -13,8 +13,8 @@ base_commit: 6a5051dcafa549f200730a4f9824d83d187f07a2
 branch: codex/HOST-ISSUER-1-C1-grant-registration-contract
 worktree: G:/CODEX/New Manga.workspace/worktrees/HOST-ISSUER-1-C1
 integration_commit: null
-delivery_head: null
-canonical_evidence_status: pending
+delivery_head: af6fa705de54489ce32811cdc8dd3be51a1fd999
+canonical_evidence_status: complete
 resource_closeout_status: pending
 evidence_dir: verification/HOST-ISSUER-1-C1
 ---
@@ -92,16 +92,27 @@ evidence_dir: verification/HOST-ISSUER-1-C1
 
 ## 交付与运行记录
 
-- 2026-10-16 Owner 认领：worktree `G:/CODEX/New Manga.workspace/worktrees/HOST-ISSUER-1-C1`，分支 `codex/HOST-ISSUER-1-C1-grant-registration-contract`，base/初始 HEAD=`6a5051dcafa549f200730a4f9824d83d187f07a2`；初始 worktree clean，Git common directory=`G:/CODEX/New Manga/.git`。Task front matter 原 `base_commit=2eaa324...` 与用户明确坐标/实测 HEAD 不符，已按实测改正；未改主仓。
-- 源事实复核：HOST-ISSUER-1 blocker assessment 不在本 worktree 或主仓；按 Task 只读引用范围，在来源 worktree `G:/CODEX/New Manga.workspace/worktrees/HOST-ISSUER-1` 的 commit `fa270d85d09a6d6781ea76d4d620e70679781f4b` 读取，文件由 commit `bacf151b7f4fd61f5b34666b96a444ee95030874` 引入。未修改该 worktree。
-- 文档交付：契约 rev 2.3；逐条 coverage 与 compatibility 记录见下方 Canonical Evidence；固定交付 head/Handoff/commit 在实际写入后回填。
-- Review：尚无非作者 Review；Coordinator integration 未执行，`integration_commit=null`。
-- Runtime/Core/Tauri/WebView 测试与构建：`NOT_RUN`（本 Task 只修订契约，未改实现；未运行测试）。文档范围、Git diff、工作区与 SHA-256 记录在交付提交后补齐。
+- 2026-10-16 Owner 认领：worktree G:/CODEX/New Manga.workspace/worktrees/HOST-ISSUER-1-C1，分支 codex/HOST-ISSUER-1-C1-grant-registration-contract，base/初始 HEAD=6a5051dcafa549f200730a4f9824d83d187f07a2；初始 worktree clean，Git common directory=G:/CODEX/New Manga/.git。Task front matter 原 base_commit=2eaa324... 与用户明确坐标/实测 HEAD 不符，已按实测改正；未改主仓。
+- 源事实复核：HOST-ISSUER-1 blocker assessment 在本 Task worktree 与主仓均不存在；从只读来源 worktree G:/CODEX/New Manga.workspace/worktrees/HOST-ISSUER-1 的 commit fa270d85d09a6d6781ea76d4d620e70679781f4b 读取，文件由 bacf151b7f4fd61f5b34666b96a444ee95030874 引入。原文件 SHA-256 与本 Task 的 source-pin 一致：b24551e2a27e5d3ca85b94976c3f3aa7aa01625aa39d2b60e0b63c7898225bd6；未修改来源 worktree。
+- 固定交付：契约/覆盖对照/兼容性说明提交 af6fa705de54489ce32811cdc8dd3be51a1fd999（delivery head）；Handoff 提交 0603263b1e8e0785c80687e1de0ed891917c1372；blocker source-pin 提交 40afd0b67afa0ab702033bd73489228e064d08e1。Handoff：doc/handoffs/HOST-ISSUER-1-C1-codex-af6fa705d.md。
+- 文档静态核验：各 Canonical Evidence 行的 SHA-256 均由当前 worktree 的 Get-FileHash -Algorithm SHA256 计算；各 commit 均包含所列文件。source-pin 与来源 SHA-256 相同。提交前 git diff --cached --check PASS。
+- Review：尚无非作者 Review；Coordinator integration 未执行，integration_commit=null。按协作 Gate 保持 Task in_progress，AC8 为 PARTIAL。
+- Runtime/Core/Tauri/WebView 测试与构建：NOT_RUN（本 Task 只修订契约，未改实现；未运行测试）。主仓未写入，未 push。
 
 ## Canonical Evidence
 
 | evidence_id | AC/Gate | path | commit | sha256 | class |
 |---|---|---|---|---|---|
+| C1-contract | AC1–AC5 | doc/contracts/M2-C1_TYPED_IPC_CONTRACT.md | af6fa705de54489ce32811cdc8dd3be51a1fd999 | 6a2f38e0b17062d9d4f1d6ee109b4353b745504a5a6b889148781eee84fa2062 | CANONICAL |
+| C1-coverage | AC6 | verification/HOST-ISSUER-1-C1/coverage-matrix.md | af6fa705de54489ce32811cdc8dd3be51a1fd999 | 1f477826d3408dfa5147a3ecd5a6404d789c79281be168862fefb5a3295efec9 | CANONICAL |
+| C1-compatibility | AC1–AC4, AC7 | verification/HOST-ISSUER-1-C1/compatibility-impact.md | af6fa705de54489ce32811cdc8dd3be51a1fd999 | c9d8ed662d67e738e0fd9e31380227df096661e0948295c92d27d5e0eb2501ba | CANONICAL |
+| C1-handoff | AC8 | doc/handoffs/HOST-ISSUER-1-C1-codex-af6fa705d.md | 0603263b1e8e0785c80687e1de0ed891917c1372 | a4c5da3351c5f08c4abfb4ff86fd80ca0fe8d5de88b6b833131896542f760b57 | CANONICAL |
+| H1-blocker | AC6 source fact | verification/HOST-ISSUER-1-C1/source-pins/host-issuer-blocker-assessment.md | 40afd0b67afa0ab702033bd73489228e064d08e1 | b24551e2a27e5d3ca85b94976c3f3aa7aa01625aa39d2b60e0b63c7898225bd6 | SOURCE_PIN |
+| H1-task | AC6 source contract | doc/tasks/HOST-ISSUER-1.md | 6a5051dcafa549f200730a4f9824d83d187f07a2 | 996934baa05807244225a0ba3530825d68dba4de8911601abdddc43b73e85eae | SOURCE_PIN |
+| P09-task | AC3/AC6 source contract | doc/tasks/P09-FU2.md | 6a5051dcafa549f200730a4f9824d83d187f07a2 | adc5f72e40761bca5f5408670c830d3467fceb03d6a105a1df67b74f37c7b33a | SOURCE_PIN |
+| P09-seam | AC3/AC6 source evidence | verification/P09-FU2/host-issuer-and-test-seam.md | 6a5051dcafa549f200730a4f9824d83d187f07a2 | 05156daee56bd9f4a38a3dc3014e6b3ed9361698261f910250572fcc3e0f9132 | SOURCE_PIN |
+| P16-task | AC3/AC6 source contract | doc/tasks/P16.md | 6a5051dcafa549f200730a4f9824d83d187f07a2 | 7fe5e5b18a18419f25d5372c8713a5b5c084d81f7764db9acac7099dd43831bd | SOURCE_PIN |
+| P16-target-ref | AC3/AC6 source evidence | verification/P16/ac3-target-ref-matrix.md | 6a5051dcafa549f200730a4f9824d83d187f07a2 | a0ef395406ce42d30e422254b862e68900c00f591710eacb7859131eb48e39af | SOURCE_PIN |
 
 ## Resource Manifest
 
@@ -115,5 +126,5 @@ evidence_dir: verification/HOST-ISSUER-1-C1
 - canonical_evidence_status：`pending`。
 - resource_closeout_status：`pending`。
 - 删除、迁移、归档数量/字节数：待关闭时填写；无操作填写 0。
-- 未关闭项及保留原因：本 Task 全部 AC 尚未执行（`NOT_RUN`）。
+- 未关闭项及保留原因：AC1–AC7 契约静态验收已完成；AC8 尚待非作者 Review 与 Coordinator integration，runtime/build 未运行。
 - 当前指针清理：`STATUS` / `REBASELINE_PLAN` / 本 Task 导航在释放时同步。
