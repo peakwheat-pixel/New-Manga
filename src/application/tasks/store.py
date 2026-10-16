@@ -364,7 +364,7 @@ class InMemorySnapshotProvider:
             settings_overrides = {
                 key: value
                 for key, value in overrides.items()
-                if key not in {"provider_bindings", "context_policy"}
+                if key not in {"provider_bindings", "context_policy", "provider_profiles"}
             }
         settings = _merge(self.settings, settings_overrides if isinstance(settings_overrides, Mapping) else {})
         provider_bindings = _merge(

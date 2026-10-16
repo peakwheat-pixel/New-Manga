@@ -87,6 +87,11 @@ from infrastructure.providers.handlers import (
 from infrastructure.providers.runtime import build_provider_runtime
 from infrastructure.providers.step_writes import ArtifactStepWriter, RegionStepWriter
 from infrastructure.rendering.locator import SqlitePageArtifactLocator
+from infrastructure.settings.json_profile_stores import (
+    JsonNetworkProfileStore,
+    JsonProviderCapabilityBindingStore,
+    JsonProviderProfileStore,
+)
 from ports.rendering.ports import FontCatalog, ImageCompositor, TextLayoutEngine
 from infrastructure.sqlite.artifacts import SqliteArtifactRepository
 from infrastructure.sqlite.connection import ThreadRoutedConnection, open_database
@@ -634,6 +639,9 @@ class CoreServices:
     image_decoder: object = None
     document_raster: object = None
     import_source_refs: object = None
+    provider_profile_store: object = None
+    network_profile_store: object = None
+    provider_binding_store: object = None
 
 
 def _resolve_detector_weights_path(
@@ -1258,6 +1266,9 @@ def assemble_core_services(
             image_decoder=image_decoder,
             document_raster=document_raster,
             import_source_refs=ImportSourceGrantRegistry(),
+            provider_profile_store=JsonProviderProfileStore(data_root / "settings"),
+            network_profile_store=JsonNetworkProfileStore(data_root / "settings"),
+            provider_binding_store=JsonProviderCapabilityBindingStore(data_root / "settings"),
         )
     except Exception:
         conn.close()
