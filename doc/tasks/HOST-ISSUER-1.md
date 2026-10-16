@@ -3,13 +3,13 @@ id: HOST-ISSUER-1
 title: Tauri host 引用签发能力（ImportSourceRef / ExportTargetRef 的 issuer 与受信注入）
 kind: feature
 governance_version: 2
-status: blocked
+status: ready
 approval: coordinator_release_20261016_tauri_host_issuer
 suggested_owner: Codex
 owner: null
 reviewer: null
 depends_on: [P09-FU2, P16, HOST-ISSUER-1-C1]
-base_commit: 03412b6558aa1ba9bf0ed109ae41c0e3874f5068
+base_commit: 2eaa3241295e1f483eabf640289a4bea4126370c
 branch: codex/HOST-ISSUER-1-tauri-ref-issuer
 worktree: G:/CODEX/New Manga.workspace/worktrees/HOST-ISSUER-1
 integration_commit: null
@@ -129,6 +129,22 @@ evidence_dir: verification/HOST-ISSUER-1
 - **未集成**：本 Task 的分支 `codex/HOST-ISSUER-1-tauri-ref-issuer`（HEAD `fa270d85`）**保留不合并**，
   待 C1 完成后由 Coordinator 把新版 main 并入该分支再恢复。
 - 诚实性确认：Owner **未**伪造任何实现，明确记载"没有变更不能算通过"，且静态扫描仅作基线证据、**不满足** AC4 实现级负向测试。
+### 2026-10-16 恢复（Coordinator, dsh）
+
+- **前置已满足**：契约 **rev 2.3 §5.7 `HostControl`** 已冻结并集成（`b9cb0623`）；本分支已并入 main（HEAD `d307503b`），
+  唯一冲突按**语义级解析**完成（`depends_on` 取 main 侧含前置契约；`base_commit` 取分支侧实际起点 `2eaa3241`）。
+- **`base_commit` 修正**：主仓原值 `03412b65` 是**起草时的当时 HEAD**；本 worktree 的**实际起点**是释放提交 `2eaa3241`，已更正。
+- **构建前置（BL-11a，已解决）**：worktree 已通过 junction 获得 gitignored 前置（`target/core-sidecar`、`frontend/dist`），
+  **`cargo build --locked` exit 0**（16s）。证据：`.orchestrator/BL11-ENV-EVIDENCE.md`。
+- **`cargo test` 口径（重要，AC8 判定依据）**：
+  实测 **58 passed / 6 failed**，6 项失败**全部是需要真实 sidecar 的集成测试**，错因 `PROTOCOL_VERSION_UNSUPPORTED` / `CORE_UNAVAILABLE`。
+  **主仓对照实验确认同样 58 passed / 6 failed**（失败列表完全相同）→ 属**既有 bundle 与协议 2.3 源码不匹配**的债务（**BL-11b**），**非本 Task 引入**。
+  因此 **AC8 判定为**：`cargo build` 通过 **+ 本 Task 新增的 Rust 单元测试**通过；
+  这 6 项既有集成失败**不得**计入本 Task 的缺陷，也**不得**用于声称 host issuer 已端到端可用。
+- **恢复范围提示**：按 `M2-C1` §5.7 实现 host 侧 `OpenHostSession` / `RegisterImportSource` / `RevokeImportSource` /
+  `RegisterExportTarget` / `RevokeExportTarget` / `CloseHostSession`（经 direct-child stdio 的独立 HostControl envelope）；
+  **不得**把注册暴露为 WebView 可调用命令；host session credential 与 `core_session_id` 绑定；
+  `HOST_ONLY_REQUIRED` / `HOST_SESSION_INVALID` / `CORE_SESSION_MISMATCH` 三拒绝码须有负向证据。
 ## Canonical Evidence
 
 | evidence_id | AC/Gate | path | commit | sha256 | class |
