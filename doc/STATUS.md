@@ -5,12 +5,10 @@
 ## 当前 Task
 
 - 当前 Task：[ARCH-DOC-REBASELINE](tasks/ARCH-DOC-REBASELINE.md) **ready / integrated**（唯一非终态 DAG READY）：AC1–AC3=PARTIAL、AC4–AC6=NOT_RUN、AC7 逐消费者裁决待做。
-- 本轮完成：[P12-C1](tasks/P12-C1.md) 导入侧 IPC 契约 **done**（集成 `ed8e44e7`，rev 2.2）。
-- 本轮完成：[P09-FU2](tasks/P09-FU2.md) 导入侧 IPC 接线 **done**（评审 `85b8e2f2`、集成 `897bc7ec`）：`ImportPages` 实测返回结果（**不再是 `UNKNOWN_COMMAND`**）；12 项 `REF_*`/`FILE_*` 拒绝均零副作用；`tests/core` 377 passed。
-- 已释放待认领：[HOST-ISSUER-1-C1](tasks/HOST-ISSUER-1-C1.md) host→Core grant 注册通道契约 **ready**（冻结 host-only 注册/撤销 wire 与 session 绑定；解 HOST-ISSUER-1 的架构阻塞；Owner 按 DIR-2=codex）。
+- 本轮完成：P13/P13-C1/P16/P16-C1/P12-C1/P09-FU2 均 **done**；P18 **closed_with_limitations**（AC2 待用户门槛）—— 详见各 Task 与 [REBASELINE_PLAN](REBASELINE_PLAN.md)。
+- **下一优先**：解 **BL-11**（Tauri 构建前置：`core-sidecar` bundle 等）后可恢复 [HOST-ISSUER-1](tasks/HOST-ISSUER-1.md)；P18 检测像素上限与 KO 权重仍待解阻。
 - [HOST-ISSUER-1](tasks/HOST-ISSUER-1.md) **blocked**：Owner 实证可信 host **无通道**把 grant 注册进运行中的 Core（`_register_*` 无 dispatcher 路由、registry 为内存态、`host_bridge` 不持有）；且 `cargo build/test` exit 101（构建前置缺失，登记 BL-11）。
 - 仍待解阻：P18 检测像素上限、KO detector 权重；P14/P15/P17 需 ZCode 设计 Task。
-- 本轮完成：[P13](tasks/P13.md)（集成 `8d7cad13`）、[P13-C1](tasks/P13-C1.md)（`c61d8f8c`）、[P16](tasks/P16.md)（`e1be3082`）、[P16-C1](tasks/P16-C1.md)（`27622aa3`）均 **done**；[P18](tasks/P18.md) **closed_with_limitations**（`44958159`，AC2 待用户门槛、AC5 待解阻）。
 - **待用户裁决**：P18 的产品发布门槛（JA/KO 达到何种程度才声明支持）。
 - **未解技术缺口**：检测像素上限 `11184810`、KO detector 权重缺失（导入侧 wire 由 P12-C1 处理）。
 - 用户指令 DIR-2：后续 Task Owner=codex（至额度耗尽）。

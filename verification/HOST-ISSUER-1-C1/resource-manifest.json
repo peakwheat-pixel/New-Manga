@@ -1,0 +1,40 @@
+{
+  "schema_version": 1,
+  "task_id": "HOST-ISSUER-1-C1",
+  "generated_at": "2026-10-16T06:35:00Z",
+  "generated_by": "dsh (Active Coordinator, epoch 5)",
+  "note": "Resource manifest referenced by doc/tasks/HOST-ISSUER-1-C1.md Resource Manifest integrity column; worktree is a directory so a file-level SHA-256 cannot apply.",
+  "resources": [
+    {
+      "resource_type": "worktree",
+      "source_path": "G:/CODEX/New Manga.workspace/worktrees/HOST-ISSUER-1-C1",
+      "disposition": "PRESERVE_REFERENCED",
+      "destination_path": "G:/CODEX/New Manga.workspace/worktrees/HOST-ISSUER-1-C1",
+      "branch": "codex/HOST-ISSUER-1-C1-grant-registration-contract",
+      "base_commit": "6a5051dcafa549f200730a4f9824d83d187f07a2",
+      "delivery_head": "13cc2bb5440b9d4bfb9e01266b9045079de84e65",
+      "integration_commit": "b9cb0623a06d919f52cc9c22460825b47ba54947",
+      "deleted": false,
+      "pruned": false,
+      "process_check": "2026-10-16 closeout: worktree clean at 13cc2bb5; main repo 19 tracked dirty entries unchanged; 6 changed paths all within the authorized contract-only scope; product code, tests and P11 untouched; all four revision entries and every prior wire verb verified present; no delete/migrate/archive performed (0/0/0)."
+    },
+    {
+      "resource_type": "contract",
+      "source_path": "G:/CODEX/New Manga/doc/contracts/M2-C1_TYPED_IPC_CONTRACT.md",
+      "disposition": "PRESERVE_REFERENCED",
+      "destination_path": "G:/CODEX/New Manga/doc/contracts/M2-C1_TYPED_IPC_CONTRACT.md",
+      "note": "Revised to rev 2.3 (protocol 2.3): adds section 5.7 HostControl as an INDEPENDENT host-only envelope for grant registration/revocation over a direct-child stdio channel, with session binding and the HOST_ONLY_REQUIRED / HOST_SESSION_INVALID / CORE_SESSION_MISMATCH rejection codes. Additive: existing application command catalog, ref fields and REF_* semantics unchanged.",
+      "deleted": false,
+      "process_check": "Coordinator review confirmed the control plane is deliberately NOT part of the ordinary Request catalog and NOT a Tauri command, so the trusted-host boundary is enforced at the routing layer; section 12 authorises only the minimal Core handler change plus tests/core."
+    },
+    {
+      "resource_type": "blocked-branch",
+      "source_path": "G:/CODEX/New Manga.workspace/worktrees/HOST-ISSUER-1",
+      "disposition": "PRESERVE_REFERENCED",
+      "destination_path": "G:/CODEX/New Manga.workspace/worktrees/HOST-ISSUER-1",
+      "note": "HOST-ISSUER-1 is blocked and its branch fa270d85 is intentionally NOT merged; it must be resumed only after BL-11 (cargo build prerequisites) is resolved.",
+      "deleted": false,
+      "process_check": "Kept for resume; do not delete or prune. See BL-11 in .orchestrator/BACKLOG.md."
+    }
+  ]
+}

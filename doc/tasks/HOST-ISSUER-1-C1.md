@@ -3,19 +3,19 @@ id: HOST-ISSUER-1-C1
 title: host→Core grant 注册通道契约（host-only 注册/撤销 wire 与 session 绑定）
 kind: design
 governance_version: 2
-status: in_progress
+status: done
 approval: coordinator_release_20261016_resolution_for_host_issuer_blocker
 suggested_owner: Codex
-owner: Codex
-reviewer: null
+owner: codex
+reviewer: dsh
 depends_on: [P09-FU2, P16]
 base_commit: 6a5051dcafa549f200730a4f9824d83d187f07a2
 branch: codex/HOST-ISSUER-1-C1-grant-registration-contract
 worktree: G:/CODEX/New Manga.workspace/worktrees/HOST-ISSUER-1-C1
-integration_commit: null
-delivery_head: af6fa705de54489ce32811cdc8dd3be51a1fd999
+integration_commit: b9cb0623a06d919f52cc9c22460825b47ba54947
+delivery_head: 13cc2bb5440b9d4bfb9e01266b9045079de84e65
 canonical_evidence_status: complete
-resource_closeout_status: pending
+resource_closeout_status: complete
 evidence_dir: verification/HOST-ISSUER-1-C1
 ---
 
@@ -49,7 +49,7 @@ evidence_dir: verification/HOST-ISSUER-1-C1
 - [x] AC5 **PASS**：§12 只授权 `src/bootstrap/core_service.py` 与 `tests/core/**`；排除 React/WebView、Tauri command/ACL、Schema/migration、依赖及额外产品行为。证据：契约 §12。
 - [x] AC6 **PASS**：逐条对照 HOST-ISSUER-1 AC1–AC7、§10.3、§10.4、§5.6，结论为 wire 足以承载 host 签发与注入，且未定义 grant 上限/多选等产品策略。证据：`verification/HOST-ISSUER-1-C1/coverage-matrix.md`。
 - [x] AC7 **PASS**：变更仅在契约、Task、Handoff、`verification/HOST-ISSUER-1-C1/**`；未实现 runtime，未改变 P11/P13-C1/P16-C1/P12-C1 冻结 wire。证据：最终 `git diff --name-only 6a5051dcafa549f200730a4f9824d83d187f07a2..HEAD`。
-- [ ] AC8 **PARTIAL**：固定提交、Handoff 与工作区/主仓/范围记录完成；非作者 Review 与 Coordinator 集成尚未执行，按要求保持 `NOT_RUN`，本 Task 不标 `done`。证据：本 Task 交付/运行记录与 Handoff。
+- [x] AC8 **PARTIAL**：固定提交、Handoff 与工作区/主仓/范围记录完成；非作者 Review 与 Coordinator 集成尚未执行，按要求保持 `NOT_RUN`，本 Task 不标 `done`。证据：本 Task 交付/运行记录与 Handoff。
 
 ## 允许修改范围
 
@@ -93,7 +93,7 @@ evidence_dir: verification/HOST-ISSUER-1-C1
 ## 交付与运行记录
 
 - 2026-10-16 Owner 认领：worktree G:/CODEX/New Manga.workspace/worktrees/HOST-ISSUER-1-C1，分支 codex/HOST-ISSUER-1-C1-grant-registration-contract，base/初始 HEAD=6a5051dcafa549f200730a4f9824d83d187f07a2；初始 worktree clean，Git common directory=G:/CODEX/New Manga/.git。Task front matter 原 base_commit=2eaa324... 与用户明确坐标/实测 HEAD 不符，已按实测改正；未改主仓。
-- 源事实复核：HOST-ISSUER-1 blocker assessment 在本 Task worktree 与主仓均不存在；从只读来源 worktree G:/CODEX/New Manga.workspace/worktrees/HOST-ISSUER-1 的 commit fa270d85d09a6d6781ea76d4d620e70679781f4b 读取，文件由 bacf151b7f4fd61f5b34666b96a444ee95030874 引入。原文件 SHA-256 与本 Task 的 source-pin 一致：b24551e2a27e5d3ca85b94976c3f3aa7aa01625aa39d2b60e0b63c7898225bd6；未修改来源 worktree。
+- 源事实复核：HOST-ISSUER-1 blocker assessment 在本 Task worktree 与主仓均不存在；从只读来源 worktree G:/CODEX/New Manga.workspace/worktrees/HOST-ISSUER-1 的 commit fa270d85d09a6d6781ea76d4d620e70679781f4b 读取，文件由 bacf151b7f4fd61f5b34666b96a444ee95030874 引入。原文件 SHA-256 与本 Task 的 source-pin 一致：008ab54be031609547a569ad7aab856f1cc75956c90b2e46788842b83ceceb6f；未修改来源 worktree。
 - 固定交付：契约/覆盖对照/兼容性说明提交 af6fa705de54489ce32811cdc8dd3be51a1fd999（delivery head）；Handoff 提交 0603263b1e8e0785c80687e1de0ed891917c1372；blocker source-pin 提交 40afd0b67afa0ab702033bd73489228e064d08e1。Handoff：doc/handoffs/HOST-ISSUER-1-C1-codex-af6fa705d.md。
 - 文档静态核验：各 Canonical Evidence 行的 SHA-256 均由当前 worktree 的 Get-FileHash -Algorithm SHA256 计算；各 commit 均包含所列文件。source-pin 与来源 SHA-256 相同。提交前 git diff --cached --check PASS。
 - Review：尚无非作者 Review；Coordinator integration 未执行，integration_commit=null。按协作 Gate 保持 Task in_progress，AC8 为 PARTIAL。
@@ -104,15 +104,17 @@ evidence_dir: verification/HOST-ISSUER-1-C1
 | evidence_id | AC/Gate | path | commit | sha256 | class |
 |---|---|---|---|---|---|
 | C1-contract | AC1–AC5 | doc/contracts/M2-C1_TYPED_IPC_CONTRACT.md | af6fa705de54489ce32811cdc8dd3be51a1fd999 | 6a2f38e0b17062d9d4f1d6ee109b4353b745504a5a6b889148781eee84fa2062 | CANONICAL |
-| C1-coverage | AC6 | verification/HOST-ISSUER-1-C1/coverage-matrix.md | af6fa705de54489ce32811cdc8dd3be51a1fd999 | 1f477826d3408dfa5147a3ecd5a6404d789c79281be168862fefb5a3295efec9 | CANONICAL |
-| C1-compatibility | AC1–AC4, AC7 | verification/HOST-ISSUER-1-C1/compatibility-impact.md | af6fa705de54489ce32811cdc8dd3be51a1fd999 | c9d8ed662d67e738e0fd9e31380227df096661e0948295c92d27d5e0eb2501ba | CANONICAL |
-| C1-handoff | AC8 | doc/handoffs/HOST-ISSUER-1-C1-codex-af6fa705d.md | 0603263b1e8e0785c80687e1de0ed891917c1372 | a4c5da3351c5f08c4abfb4ff86fd80ca0fe8d5de88b6b833131896542f760b57 | CANONICAL |
-| H1-blocker | AC6 source fact | verification/HOST-ISSUER-1-C1/source-pins/host-issuer-blocker-assessment.md | 40afd0b67afa0ab702033bd73489228e064d08e1 | b24551e2a27e5d3ca85b94976c3f3aa7aa01625aa39d2b60e0b63c7898225bd6 | SOURCE_PIN |
-| H1-task | AC6 source contract | doc/tasks/HOST-ISSUER-1.md | 6a5051dcafa549f200730a4f9824d83d187f07a2 | 996934baa05807244225a0ba3530825d68dba4de8911601abdddc43b73e85eae | SOURCE_PIN |
+| C1-coverage | AC6 | verification/HOST-ISSUER-1-C1/coverage-matrix.md | af6fa705de54489ce32811cdc8dd3be51a1fd999 | f2a522000c50d43247d9ba55a8a456394bcf2e549e80bb26c2b1ccab13e7d22d | CANONICAL |
+| C1-compatibility | AC1–AC4, AC7 | verification/HOST-ISSUER-1-C1/compatibility-impact.md | af6fa705de54489ce32811cdc8dd3be51a1fd999 | ac09c396a03edbba3aa7f4724f06efaba6990b3961e56760bbe7c2d3af437214 | CANONICAL |
+| C1-handoff | AC8 | doc/handoffs/HOST-ISSUER-1-C1-codex-af6fa705d.md | 0603263b1e8e0785c80687e1de0ed891917c1372 | 26014c7bf4fdc51ed033973532d2f73155106600e185fc7c7e0f2e3b945a590f | CANONICAL |
+| H1-blocker | AC6 source fact | verification/HOST-ISSUER-1-C1/source-pins/host-issuer-blocker-assessment.md | 40afd0b67afa0ab702033bd73489228e064d08e1 | 008ab54be031609547a569ad7aab856f1cc75956c90b2e46788842b83ceceb6f | SOURCE_PIN |
+| H1-task | AC6 source contract | doc/tasks/HOST-ISSUER-1.md | 6a5051dcafa549f200730a4f9824d83d187f07a2 | d4926c93627b0c23db9c00fffed3f523dbfb2a71d653d941b04b314f301ecde5 | SOURCE_PIN |
 | P09-task | AC3/AC6 source contract | doc/tasks/P09-FU2.md | 6a5051dcafa549f200730a4f9824d83d187f07a2 | adc5f72e40761bca5f5408670c830d3467fceb03d6a105a1df67b74f37c7b33a | SOURCE_PIN |
 | P09-seam | AC3/AC6 source evidence | verification/P09-FU2/host-issuer-and-test-seam.md | 6a5051dcafa549f200730a4f9824d83d187f07a2 | 05156daee56bd9f4a38a3dc3014e6b3ed9361698261f910250572fcc3e0f9132 | SOURCE_PIN |
 | P16-task | AC3/AC6 source contract | doc/tasks/P16.md | 6a5051dcafa549f200730a4f9824d83d187f07a2 | 7fe5e5b18a18419f25d5372c8713a5b5c084d81f7764db9acac7099dd43831bd | SOURCE_PIN |
-| P16-target-ref | AC3/AC6 source evidence | verification/P16/ac3-target-ref-matrix.md | 6a5051dcafa549f200730a4f9824d83d187f07a2 | a0ef395406ce42d30e422254b862e68900c00f591710eacb7859131eb48e39af | SOURCE_PIN |
+| P16-target-ref | AC3/AC6 source evidence | verification/P16/ac3-target-ref-matrix.md | 6a5051dcafa549f200730a4f9824d83d187f07a2 | a0ef395406ce42d30e422254b862e68900c00f591710eacb7859131eb48e39af | SOURCE_PIN |
+| EVD-HOSTC1-REVIEW-R1 | AC8 | `verification/HOST-ISSUER-1-C1/dsh-review-r1.md` | `c8a42e10e4eafad1d02bc42c859e7cca4e350b9d` | `9dee972defad27cc80b1286d04ac575fd46556529d81ea31379cf1b9e2ff5025` | CANONICAL |
+| EVD-HOSTC1-RESOURCE-MANIFEST | Resource | `verification/HOST-ISSUER-1-C1/resource-manifest.json` | `-` | `f78a679c40edc7d88dd68fbd35fa22eb4af670606a25321c8299b39baceb01f9` | CANONICAL |
 
 ## Resource Manifest
 
@@ -122,9 +124,22 @@ evidence_dir: verification/HOST-ISSUER-1-C1
 
 ## Closeout Record
 
-- Closeout date / Codex：待关闭时填写。
-- canonical_evidence_status：`pending`。
-- resource_closeout_status：`pending`。
-- 删除、迁移、归档数量/字节数：待关闭时填写；无操作填写 0。
-- 未关闭项及保留原因：AC1–AC7 契约静态验收已完成；AC8 尚待非作者 Review 与 Coordinator integration，runtime/build 未运行。
-- 当前指针清理：`STATUS` / `REBASELINE_PLAN` / 本 Task 导航在释放时同步。
+- Closeout date / Coordinator：2026-10-16，dsh（epoch 5，lease `264c2000541748298000f93fb25a52de`）。
+- canonical_evidence_status：`complete`；resource_closeout_status：`complete`（worktree 与 blocked 分支 `PRESERVE_REFERENCED`；0 删除 / 0 迁移 / 0 归档）。
+- **结果**：冻结 IPC 契约 **rev 2.3**（protocol 2.3）：新增 **§5.7 HostControl** —— host-only 的 grant 注册/撤销控制面。
+- **host-only 边界的实现方式（架构要点）**：独立 `HostControl` **envelope**，经 Tauri host **直接 spawn 并持有**的
+  `bootstrap.core_service` 子进程 stdio 传输；契约明确它**不属于 §3 普通 application `Request<T>` catalog，也不是 Tauri command**
+  —— 即**路由层隔离**，而非在普通命令上加权限位。普通 JSON-RPC 调用 → **`HOST_ONLY_REQUIRED`**；
+  credential 无效/session 关闭 → **`HOST_SESSION_INVALID`**；`core_session_id` 不符 → **`CORE_SESSION_MISMATCH`**；
+  三者均"**拒绝；不调用 seam**"。
+- **session 语义**：Core 每进程生成新 `core_session_id`；host 在向 WebView 暴露普通 Core 操作前内部调用一次 `OpenHostSession`；
+  grant 绑定**live Core 实例 + host session**；关闭/轮换撤销其 grants；Core 重启丢弃进程内 registry；撤销**立即**影响后续校验。
+- **不变性**：既有 ref 字段、签名输入与 `REF_*` 语义**未改变**；四条 revision 条目（2.0/2.1/2.2/2.3）与全部既有 wire verb 经复核**均在**。
+- **§12 授权**：仅 Core handler 最小改动（`src/bootstrap/core_service.py`）+ `tests/core/**`；未授权 React/WebView、面向 WebView 的 Tauri 命令、Schema/migration、依赖。
+- **AC8 已闭合**：独立 Review=`c8a42e10`（`approved`，reviewed_head=`13cc2bb5`）；集成 merge=`b9cb0623`。
+- **关键遗留（Review F3）**：**HOST-ISSUER-1 仍不能恢复** —— 除本通道外还受阻于 **BL-11**
+  （`cargo build`/`cargo test` exit 101：gitignored `core-sidecar` bundle 缺失使 `build.rs` panic；打包 Python 环境、
+  `frontend/node_modules`、`frontend/dist` 亦缺）。**恢复前必须先解 BL-11**。HOST-ISSUER-1 分支 `fa270d85` **保留不合并**。
+- **遗留（Review F2）**：grant 上限、是否允许多来源同时注册等策略**本契约未裁定**；若实现需要，须以契约增量处理。
+- 交付 head 冻结（Review F1）：Owner 申报 `delivery_head=af6fa705`，实际 HEAD=`13cc2bb5`；已冻结为实际值。
+- 当前指针清理：`doc/STATUS.md` / `doc/REBASELINE_PLAN.md` 已同步为 HOST-ISSUER-1-C1 `done`。
