@@ -210,11 +210,37 @@ class JsonNetworkProfileStore:
         profiles.pop(network_profile_id, None)
         self._write(profiles)
 
-    def _write(self, profiles: dict[str, dict]) -> None:
-        _atomic_write_json(
-            self._path,
-            {"version": _FORMAT_VERSION, "profiles": list(profiles.values())},
+    def get_global_default_profile_id(self) -> str | None:
+        if not self._path.exists():
+            return None
+        _read_json(self._path)
+        payload = json.loads(self._path.read_text(encoding="utf-8"))
+        value = payload.get("global_network_profile_id")
+        if value is not None and not isinstance(value, str):
+            raise ProfileFileFormatError("network profile default is invalid")
+        return value
+
+    def set_global_default_profile_id(self, network_profile_id: str | None) -> None:
+        profiles = {p["network_profile_id"]: p for p in _read_json(self._path)}
+        self._write(
+            profiles,
+            global_default_profile_id=network_profile_id,
+            preserve_global_default=False,
         )
+
+    def _write(
+        self,
+        profiles: dict[str, dict],
+        *,
+        global_default_profile_id: str | None = None,
+        preserve_global_default: bool = True,
+    ) -> None:
+        if preserve_global_default:
+            global_default_profile_id = self.get_global_default_profile_id()
+        payload = {"version": _FORMAT_VERSION, "profiles": list(profiles.values())}
+        if global_default_profile_id is not None:
+            payload["global_network_profile_id"] = global_default_profile_id
+        _atomic_write_json(self._path, payload)
 
 
 class JsonProviderCapabilityBindingStore:

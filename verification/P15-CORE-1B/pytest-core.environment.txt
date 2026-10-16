@@ -1,0 +1,4 @@
+python=G:\CODEX\New Manga.task-envs\T1.1.1-impl-py312\Scripts\python.exe
+python_version=Python 3.12.3
+platform=Windows-11-10.0.26300-SP0
+working_directory=G:/CODEX/New Manga.workspace/worktrees/P15-CORE-1B

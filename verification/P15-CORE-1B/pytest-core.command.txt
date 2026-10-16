@@ -1,0 +1,1 @@
+& 'G:\CODEX\New Manga.task-envs\T1.1.1-impl-py312\Scripts\python.exe' -m pytest tests/core -q -p no:cacheprovider

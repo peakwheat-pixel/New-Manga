@@ -1,0 +1,3 @@
+Command: rg -n 'BindProfileCredential|ClearProfileCredential|settings_network_profiles_test' apps/desktop/src-tauri/src
+Exit code: 1
+Result: no Tauri source registrations or allowlist references found.
