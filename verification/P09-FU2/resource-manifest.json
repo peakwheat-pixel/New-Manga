@@ -12,7 +12,7 @@
       "destination_path": "G:/CODEX/New Manga.workspace/worktrees/P09-FU2-IMPORT-IPC-RUNTIME",
       "branch": "codex/P09-FU2-import-ipc-runtime",
       "base_commit": "9fe6ac5cd116474de1006b4ab4b1e5341b71cf41",
-      "delivery_head": "cac219fe7d5df272d51e105d0905b272db2bf7e2",
+      "delivery_head": "cac219fe79e0d741259d92dae12d896e9d357c6c",
       "integration_commit": null,
       "deleted": false,
       "pruned": false,

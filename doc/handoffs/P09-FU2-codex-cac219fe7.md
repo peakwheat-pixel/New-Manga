@@ -3,7 +3,7 @@ task_id: P09-FU2
 author: Codex
 recipient: DeepSeek Harness
 base_commit: 9fe6ac5cd116474de1006b4ab4b1e5341b71cf41
-delivery_head: cac219fe7d5df272d51e105d0905b272db2bf7e2
+delivery_head: cac219fe79e0d741259d92dae12d896e9d357c6c
 status: in_review
 ---
 
@@ -11,7 +11,7 @@ status: in_review
 
 ## 交付结果
 
-实现提交 `cac219fe7d5df272d51e105d0905b272db2bf7e2` 已固定在分支 `codex/P09-FU2-import-ipc-runtime`。Core 现在注册并装配 `ImportPages`，用 Core 内部的 host grant seam 校验 opaque 来源引用，以既有 P09 图片/PDF importer 导入；importer、library 和 SQLite 实现均未修改。
+实现提交 `cac219fe79e0d741259d92dae12d896e9d357c6c` 已固定在分支 `codex/P09-FU2-import-ipc-runtime`。Core 现在注册并装配 `ImportPages`，用 Core 内部的 host grant seam 校验 opaque 来源引用，以既有 P09 图片/PDF importer 导入；importer、library 和 SQLite 实现均未修改。
 
 变更集中在：
 
@@ -27,7 +27,7 @@ AC1–AC8 的 Owner 验证通过；AC9 固定实现 head、测试和 Handoff 已
 
 | AC/场景 | 实际命令/步骤 | 环境与被测 commit | 结果 | 日志/产物 |
 |---|---|---|---|---|
-| AC1 | 通过真实 `serve_forever` stdio 发送 `ImportPages` | task-env Python 3.12.3；`cac219fe7d5df272d51e105d0905b272db2bf7e2` | PASS；Core exit 0，response `error: null`，命令结果含 imported Page | `verification/P09-FU2/logs/ac1-importpages-stdio.txt` |
+| AC1 | 通过真实 `serve_forever` stdio 发送 `ImportPages` | task-env Python 3.12.3；`cac219fe79e0d741259d92dae12d896e9d357c6c` | PASS；Core exit 0，response `error: null`，命令结果含 imported Page | `verification/P09-FU2/logs/ac1-importpages-stdio.txt` |
 | AC2 | 六类核心 REF 拒绝及 session、文件、reparse、identity、size、digest 拒绝；逐项比较 Page/库与 Managed Storage 快照 | 同上 | PASS；12 cases passed，错误引用零库写/零 Managed Storage 文件写，来源哈希保持不变 | `verification/P09-FU2/logs/ac2-ref-rejections-zero-side-effects.txt` |
 | AC3 / AC5 / AC6 | 既有图片/PDF importer 接线、页 hash/尺寸/序、重复、Unicode、损坏/加密、中断 | 同上 | PASS；9 cases passed；P09 importer 只读复用 | `verification/P09-FU2/logs/ac3-importer-and-report-cases.txt`、`verification/P09-FU2/import-report-sample.json` |
 | AC4 | `user-source` Core-only scope、目录直接子项与路径回退拒绝 | 同上 | PASS；3 cases passed | `verification/P09-FU2/logs/ac4-user-source-scope.txt` |
@@ -43,7 +43,7 @@ AC1–AC8 的 Owner 验证通过；AC9 固定实现 head、测试和 Handoff 已
 - 仓库/worktree：`G:/CODEX/New Manga.workspace/worktrees/P09-FU2-IMPORT-IPC-RUNTIME`
 - Branch：`codex/P09-FU2-import-ipc-runtime`
 - Base：`9fe6ac5cd116474de1006b4ab4b1e5341b71cf41`
-- 固定 review head：`cac219fe7d5df272d51e105d0905b272db2bf7e2`
+- 固定 review head：`cac219fe79e0d741259d92dae12d896e9d357c6c`
 - 复现命令：`& 'G:/CODEX/New Manga.task-envs/T1.1.1-impl-py312/Scripts/python.exe' -m pytest tests/core -q`
 - 测试没有外部数据；fixture 自建在 pytest `tmp_path`。未安装依赖。
 - Reviewer 请独立检查完整 diff、引用安全边界、报表与 importer 语义，并将 Review 记录提交到 `verification/P09-FU2/`；之后由 Coordinator 决定集成。
@@ -53,12 +53,12 @@ AC1–AC8 的 Owner 验证通过；AC9 固定实现 head、测试和 Handoff 已
 - Task ID / 标题：P09-FU2 AC9 — 独立 Review 与 Coordinator 集成验证。
 - 推荐 Agent / Reviewer：DeepSeek Harness 独立 Review；Codex Coordinator 后续集成。Owner 与 Reviewer 不同。
 - 推荐原因与前置依赖：P09-FU2 AC1–AC8 Owner 证据已齐，Review 固定在实现 head；集成前必须先独立审查通过。
-- Recovery point：`G:/CODEX/New Manga.workspace/worktrees/P09-FU2-IMPORT-IPC-RUNTIME`，branch `codex/P09-FU2-import-ipc-runtime`，base `9fe6ac5cd116474de1006b4ab4b1e5341b71cf41`，head `cac219fe7d5df272d51e105d0905b272db2bf7e2`。如需隔离 Review worktree，待 Codex 创建。
+- Recovery point：`G:/CODEX/New Manga.workspace/worktrees/P09-FU2-IMPORT-IPC-RUNTIME`，branch `codex/P09-FU2-import-ipc-runtime`，base `9fe6ac5cd116474de1006b4ab4b1e5341b71cf41`，head `cac219fe79e0d741259d92dae12d896e9d357c6c`。如需隔离 Review worktree，待 Codex 创建。
 - 允许修改路径：Reviewer 只读实现 worktree；Review 文档限 `verification/P09-FU2/**`。Coordinator 集成须在独立授权的集成工作区进行。
 - 禁止范围与新增授权条件：不得修改冻结契约、importing/library/sqlite、Schema、host issuer；不得 push。集成须服从当前 Coordinator 授权与允许路径。
 - 交付物：固定 head 的 Review 文档、Coordinator 集成结果与集成后 `pytest tests/core -q` 日志；未跑项标 `NOT_RUN`/`BLOCKED`。
 - 验证命令、环境与完成 Gate：task-env Python 3.12.3 下运行 `& 'G:/CODEX/New Manga.task-envs/T1.1.1-impl-py312/Scripts/python.exe' -m pytest tests/core -q`；Review 通过且集成后回归通过后，AC9 才可 PASS。
-- 可直接转发给 Agent 的指令：请在 `G:/CODEX/New Manga.workspace/worktrees/P09-FU2-IMPORT-IPC-RUNTIME` 独立审查 P09-FU2 固定 head `cac219fe7d5df272d51e105d0905b272db2bf7e2`（base `9fe6ac5cd116474de1006b4ab4b1e5341b71cf41`，branch `codex/P09-FU2-import-ipc-runtime`）。完整检查 diff、任务 AC、契约 rev 2.2、P09 importer 接入和错误引用零副作用证据；只将 Review 文档写入 `verification/P09-FU2/**`，不得改实现、冻结契约、importing/library/sqlite、Schema 或 host issuer。Coordinator 后续负责集成及集成后回归。若运行测试，请用 `& 'G:/CODEX/New Manga.task-envs/T1.1.1-impl-py312/Scripts/python.exe' -m pytest tests/core -q` 并保存原始日志、退出码；逐项记录 PASS/FAIL/BLOCKED/NOT_RUN。
+- 可直接转发给 Agent 的指令：请在 `G:/CODEX/New Manga.workspace/worktrees/P09-FU2-IMPORT-IPC-RUNTIME` 独立审查 P09-FU2 固定 head `cac219fe79e0d741259d92dae12d896e9d357c6c`（base `9fe6ac5cd116474de1006b4ab4b1e5341b71cf41`，branch `codex/P09-FU2-import-ipc-runtime`）。完整检查 diff、任务 AC、契约 rev 2.2、P09 importer 接入和错误引用零副作用证据；只将 Review 文档写入 `verification/P09-FU2/**`，不得改实现、冻结契约、importing/library/sqlite、Schema 或 host issuer。Coordinator 后续负责集成及集成后回归。若运行测试，请用 `& 'G:/CODEX/New Manga.task-envs/T1.1.1-impl-py312/Scripts/python.exe' -m pytest tests/core -q` 并保存原始日志、退出码；逐项记录 PASS/FAIL/BLOCKED/NOT_RUN。
 
 ## 风险与遗留
 
