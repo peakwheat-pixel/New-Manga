@@ -3,7 +3,7 @@ id: RUN-IPC-1
 title: Tauri host 接线 Run 命令面（StartRun/ControlRun/ResumeBlockedRun/GetRunSnapshot/GetTaskProjection/RetryFailedTargets）——P14 工作台真正的前置
 kind: feature
 governance_version: 2
-status: ready
+status: in_review
 approval: coordinator_release_20261016_confirmed_missing_host_command_surface
 suggested_owner: Codex
 owner: dsh
@@ -13,8 +13,8 @@ base_commit: null
 branch: null
 worktree: null
 integration_commit: null
-delivery_head: null
-canonical_evidence_status: pending
+delivery_head: 5642b2a7235fb9e5092cf106c8701cb67eb0e4da
+canonical_evidence_status: registered_blob_level
 resource_closeout_status: pending
 evidence_dir: verification/RUN-IPC-1
 ---
@@ -95,11 +95,11 @@ evidence_dir: verification/RUN-IPC-1
 
 | 场景/AC | 计划命令或手工步骤 | 前提/环境 | 实际结果 | 证据 |
 |---|---|---|---|---|
-| AC1 | 冻结命令名与注册策略（引用 §5.5/P13-C1 §12） | 只读 | NOT_RUN | 无 |
-| AC4-① | allowlist 断言：生产面 6 条存在 / probe+AC1 面不存在 | 构建产物 | NOT_RUN | 无 |
-| AC4-② | 6 条命令的成功与 typed 拒绝路径测试 | 构建产物 | NOT_RUN | 无 |
-| AC4-③ | frozen 2.3 上 `StartRun→GetRunSnapshot→ControlRun` 真实往返（或分层 + BLOCKED） | 重建后的 bundle | NOT_RUN | 无 |
-| AC5 | `tests/core/**` + Rust 测试全绿 | 构建产物 | NOT_RUN | 无 |
+| AC1 | 在 Task 内冻结六条产品命令名与 production-only 注册策略（引用 §5.5 与 P13-C1 §12） | 只读 | **PASS**（见「AC1 冻结结果」） | 本 Task |
+| AC4-① | `cargo test --locked … -- --skip packaged_sidecar_tests`：`run_transport_commands_are_exact_and_production_only`（字面量六名 + `PRODUCTION_COMMANDS.len()==24` + 生产面存在 / probe+AC1 面不存在）与 `production_only_commands_stay_off_both_frozen_test_surfaces`（负向扫七族后 probe=7 / AC1=6 仍钉住） | Rust；worktree | **PASS**（78 passed / 0 failed / 1 ignored，exit 0） | `verification/RUN-IPC-1/rust-source-tests.log` |
+| AC4-② | 同上：`run_channel_defaults_are_fail_closed`（未覆写者一律 `CORE_UNAVAILABLE`，证明漏写覆写会显式失败） | Rust；worktree | **PASS** | `verification/RUN-IPC-1/rust-source-tests.log` |
+| AC4-③ | `M2RC1_PACKAGED=1 cargo test --locked … packaged_sidecar_tests -- --test-threads=1 --nocapture`：`run_command_wire_reaches_the_frozen_core_run_family` | frozen 2.3 bundle（junction） | **PASS（含如实限定）**：六条命令在真实 Core 上均返回**域级**响应 —— `GetRunSnapshot`/`GetTaskProjection`/`ControlRun`/`ResumeBlockedRun`/`RetryFailedTargets` → `TARGET_NOT_FOUND`，`StartRun` → `INVALID_REQUEST`；据此证明 wire 名、payload 形状、通道覆写与端到端可达。**未构造一次成功的 Run**（无 book/chapter/page 与 Provider 夹具），故未验证成功 DTO 与合法状态迁移表 | `verification/RUN-IPC-1/rust-packaged-tests.log`、`evidence-layering.md` |
+| AC5 | `cargo test --locked … -- --skip packaged_sidecar_tests`；`M2RC1_PACKAGED=1 … packaged_sidecar_tests`；`C:\Python314\python.exe -m pytest tests/core -q -p no:cacheprovider` | Rust + Python 3.14.6 | **PASS**：78/0/1 + **9/0** + **405 passed**，三条 exit 0 | 三个日志（见 Canonical Evidence） |
 
 ## 依赖、风险与阻塞
 
@@ -117,13 +117,19 @@ evidence_dir: verification/RUN-IPC-1
 - **同类教训登记**：设计基线的 §6 只核对"契约是否冻结"，**未核对 host 侧是否已有出口**；
   这与 G6/G19（误把已实现当缺口）是**同一根因的两个方向**。已登记 BACKLOG **BL-14**，要求后续设计/实现评审增加"实现可达性"核对。
 - **2026-10-16 Coordinator-as-Owner 自任（dsh, epoch 6）**：依据 `owner_policy=AUTO_SELECT` 与**当时可用性**——codex 正在 EXPORT-REVEAL-1、antigravity 正在 EVENTS-FWD-1、ZCode 因无法执行命令而不适用；本 Task 是 P14 关键路径，故由 Coordinator 兼任 Owner，并在上述「AC1 冻结结果」中完成命令名与注册策略冻结。**Reviewer 必须独立于 Owner**（已路由 codex/antigravity，不得为 dsh）。**自任不改变任何 Gate**：仍须自检、独立 Review、集成与关闭。
-- Handoff：尚无。Review：尚无。实际测试：尚无（全部 `NOT_RUN`）。
+- **2026-10-16 Owner 交付（dsh，Coordinator-as-Owner）**：实现提交 `5642b2a7235fb9e5092cf106c8701cb67eb0e4da`（代码 + 证据同提交）；Handoff `doc/handoffs/RUN-IPC-1-dsh-5642b2a.md`。**`delivery_head` 指向实现提交，不声称等于分支 HEAD**（BL-15 处置：最终 HEAD 由 Coordinator 在 closeout 以 `git rev-parse HEAD` 冻结）。
+- 实际测试：AC4-①②③ 与 AC5 全部执行，结果见「测试要求」表与 Canonical Evidence；**AC4-③ 的成功路径未验证**（无夹具），如实记录。
+- Review：**尚无**（已由 `route-agent.py` 路由至 **antigravity**，机器排除 dsh 以保证独立）。
 
 ## Canonical Evidence
 
 | evidence_id | AC/Gate | path（仓库相对路径或绝对路径） | commit | sha256 | class (`CANONICAL` / `SOURCE_PIN`) |
 |---|---|---|---|---|---|
 
+| EVID-RUNIPC-SRC | AC4①②/AC5 | `verification/RUN-IPC-1/rust-source-tests.log` | `5642b2a7235fb9e5092cf106c8701cb67eb0e4da` | `f7488ea3217c9283c54f3ebfcdc3fa782581c1d16382a0715a88f411f03d4a58` | `CANONICAL` |
+| EVID-RUNIPC-PKG | AC4③/AC5 | `verification/RUN-IPC-1/rust-packaged-tests.log` | `5642b2a7235fb9e5092cf106c8701cb67eb0e4da` | `429042c7f3f5486138a9b67b349927832385b84e0d51256f80b3434af0100a1c` | `CANONICAL` |
+| EVID-RUNIPC-PY | AC5 | `verification/RUN-IPC-1/python-tests.log` | `5642b2a7235fb9e5092cf106c8701cb67eb0e4da` | `e0250da32cd2f546dee73aeacbae0b7e6dde65ad16bafb497177d3c5a4cca485` | `CANONICAL` |
+| EVID-RUNIPC-LAYER | AC4 | `verification/RUN-IPC-1/evidence-layering.md` | `5642b2a7235fb9e5092cf106c8701cb67eb0e4da` | `edc8c24f946b009067166fd445053432c9745a593eba3da2df44c619a3c49f41` | `CANONICAL` |
 ## Resource Manifest
 
 | resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
