@@ -93,3 +93,13 @@ ENV-BUNDLE-1 `7b9cbbe6`、ENV-BUNDLE-1-FU1 `b474c09b`、UI-DESIGN-1 `9e1221e1b`�
 - **S1 主题**：**UI 完成 ≠ 端到端可用**——设置页 4 个开放面已由契约冻结但 host/Core 未实现，当前落入 §9 `SETTINGS_UNAVAILABLE`；`P15-CORE-1`+`P15-HOST-1` 即是补链。
 - **待用户裁决（完整清单见 [decision-request-20261016.md](decision-request-20261016.md)）**：G25 扩大、P18 门槛、**P19 验收方式**（无头无 WebView2）、BL-12/13，以及 **P15 三项确认**（阅读方向挂载 / G25 扩大 / Network 测试面保留——建议均按默认）。
 - **轮次提示**：目标 `active`/`armed`，上限 100；本会话在轮次上限附近，**若在 P15-CORE-1 交付前耗尽轮次**，恢复步骤见本文件 §8，`INFLIGHT.json` 与 `OPLOG.ndjson` 记录了该 job（`pwsh-117`）与 worktree 位置。
+
+## 12. r12 补登（2026-10-17 06:55，P15-CORE-1A 在飞时）
+
+- **用户裁决 A1**（2026-10-17）：`TestNetworkProfile` 的 `provider_profile_id` **改为必需**（目标恒为 Provider endpoint；缺省/非法 → `INVALID_REQUEST`）；A2 未采纳（留档）。
+- **P15-CORE-1 因真实契约缺口失败关闭并被拆分**：Owner（Codex）在实现前发现"无目标却只能报 `passed`"的假阳性路径，**拒绝**自选公网/loopback/假目标与伪造阶段结果，引契约 §5.2/L194/L212 上报 → **裁决成立**。拆为 **1A**（G21+G24）、**1B**（G22+G23 不含 test）、**1C**（六阶段 test）。
+- **P15-C1-FU1 已 done**（`94197afc9` / closeout `648361486`）：契约 rev **2.7**，删除假阳性路径、固化四项禁止、补全 **5 模式 × 6 阶段**判定表、兼容性如实论证（minor 6→7 为未发布前窄范围修订）。**pin 可移植性**：未改动文件主仓库一致；被改契约按 **RV-P15-04** 在主仓库复算 ✓。合并后 pytest **407**（确认契约改动未触及代码）。
+- **当前 READY = ARCH-DOC-REBASELINE、P15-CORE-1A、P15-CORE-1B、P15-CORE-1C**；**在飞 1A**（job `pwsh-161`，worktree `worktrees/P15-CORE-1A`，分支 `codex/P15-CORE-1A`，基点 `b1f4d08c7`，Reviewer=dsh）。
+- **写范围互斥纪律**：1A/1B/1C 三者**都改** `core_service.py` + `core_assembly.py` → **必须串行派发**（1A → 1B → 1C），**不得并行**（否则必然冲突且两处独立语义互相污染）。FU1（仅契约）与 1A（仅 Core）互斥 → 曾并行 ✓。
+- **目标**：用户已将上限设为 **1000**（`active`/`armed`，revision 12），且 objective 文本已刷新为真实焦点。
+- **BL-21（新）**：派发前置核对必须做**契约语义完备性**核对（不只命令存在性），并要求 Owner 以**契约行号**支撑"缺语义"主张。
