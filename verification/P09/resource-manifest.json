@@ -1,0 +1,31 @@
+{
+  "schema_version": 1,
+  "task_id": "P09",
+  "generated_at": "2026-10-16T02:00:00Z",
+  "generated_by": "dsh (Active Coordinator, epoch 5)",
+  "note": "Resource manifest referenced by doc/tasks/P09.md Resource Manifest integrity column; worktree is a directory so a file-level SHA-256 cannot apply.",
+  "resources": [
+    {
+      "resource_type": "worktree",
+      "source_path": "G:/CODEX/New Manga.workspace/worktrees/P09-IMPORT-CORE",
+      "disposition": "PRESERVE_REFERENCED",
+      "destination_path": "G:/CODEX/New Manga.workspace/worktrees/P09-IMPORT-CORE",
+      "branch": "codex/P09-import-core",
+      "base_commit": "d7fe920272d48eb4761347a5e18789dcbbdd05d6",
+      "delivery_head": "54d40e6686ba2006f8506b519d00672ee75adfeb",
+      "integration_commit": "c6a7339f45c6ac4483d5bba21ec03f5839035729",
+      "deleted": false,
+      "pruned": false,
+      "process_check": "2026-10-16 closeout: worktree clean at 54d40e66; main repo 19 tracked dirty entries unchanged by this worktree; 69 changed paths all within authorized scope; frozen M2-C1 IPC contract untouched; no delete/migrate/archive performed (0/0/0)."
+    },
+    {
+      "resource_type": "test-env",
+      "source_path": "G:/CODEX/New Manga.task-envs/T1.1.1-impl-py312",
+      "disposition": "PRESERVE_REFERENCED",
+      "destination_path": "G:/CODEX/New Manga.task-envs/T1.1.1-impl-py312",
+      "note": "Existing project env (Python 3.12.3 + PySide6 6.11.2) used to run AC1/AC7 Qt-rendering tests; not created by this task, not modified.",
+      "deleted": false,
+      "process_check": "Read-only use for pytest; no dependency install performed in this env."
+    }
+  ]
+}

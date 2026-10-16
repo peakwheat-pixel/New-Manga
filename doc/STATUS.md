@@ -6,7 +6,8 @@
 
 - 当前 Task：[ARCH-DOC-REBASELINE](tasks/ARCH-DOC-REBASELINE.md) **ready / integrated**（唯一非终态 READY）：AC1–AC3=PARTIAL、AC4–AC6=NOT_RUN、AC7 逐消费者裁决待做；消费者 P09/P18/P20/P16/P17 均 `proposed` 未冻结。
 - 本轮完成：[P11](tasks/P11.md) done（交付 `c7922ae1`/Review `09797eab`/集成 `ceca5721`）；[P10](tasks/P10.md) done（交付 `fa20602d`/Review `d4907acc`/集成 `c46c0df0`）；[P06](tasks/P06.md) done（交付 `4ed493a3`/Review `ecfef603`/集成 `d3342895`；旧 runtime `ad75fadc` 真实构建、全退出迁移验收、旧 catalog fail-closed 零静默迁移）。
-- 已释放待认领：[P09](tasks/P09.md) 导入 Core **ready**（base=`4af44ca3`；首发=图片/文件夹 + PDF，MOBI 排除〔用户 2026-10-16 裁决〕）；Owner 按 DIR-2 路由为 codex。
+- 本轮完成：[P09](tasks/P09.md) 导入 Core **closed_with_limitations**（交付 `54d40e66`、Review `9e01ca77`、集成 `c6a7339f`；AC1/2/4/5/6/7/8 完成、91 passed/0 failed；**AC3 受限**=产品无「项目级永久删除」操作）。
+- **必须 follow-up**：`tests/core/test_stub_decoder.py` 旧断言（要求真实 decoder 把非法输入解成 1×1）与新 decoder 拒绝语义冲突，否则全仓 pytest 基线为红（Review F2）。
 - 用户指令 DIR-2：后续 Task Owner=codex（至额度耗尽）；BL-1（codex 空 ref）与 BL-3（沙箱 `-c windows.sandbox=unelevated` workaround）均已解决。
 - 已关闭：[P04](tasks/P04.md)（merge=7bfcf16a）、[P22-REBASE-1](tasks/P22-REBASE-1.md)（merge=4e5c71d9）、[PROJECT-ROADMAP-RELEASE](tasks/PROJECT-ROADMAP-RELEASE.md)。
 - **P09 释放前置（BL-2）**：需用户选定首发输入格式与最小目标（SCOPE_DRAFT 第 75 行）。
