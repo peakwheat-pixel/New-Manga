@@ -10,7 +10,7 @@
 - **待用户裁决**：P18 产品发布门槛；**G25 未列入清单的分区**（逐节契约 Task）；BL-12、BL-13。
 - DIR-2：Task Owner=codex（至额度耗尽）；DIR-3：只保留一个 Active Coordinator。
 - Coordinator=dsh，epoch=6，lease=9ce79020a36e4fab8970e8ae6de5fb10（LEASE_VALID）；用户 19 项 dirty 未变，无 EXTERNAL_CHANGE。
-- 恢复点：`verification/PROJECT-ORCHESTRATION-20261016/` → checkpoint-r11.md（rolling）、pause-checkpoint-20261016.md（已恢复）、ui-chain-prerequisite-matrix.md、ruling-G21-G25.md；日志 `.orchestrator/{INFLIGHT,OPLOG,BACKLOG,RUNTIME_DIRECTIVES}`。
+- 恢复点：`verification/PROJECT-ORCHESTRATION-20261016/` → checkpoint-r12.md（rolling）、pause-checkpoint-20261016.md（已恢复）、ui-chain-prerequisite-matrix.md、ruling-G21-G25.md；日志 `.orchestrator/{INFLIGHT,OPLOG,BACKLOG,RUNTIME_DIRECTIVES}`。
 
 ## Gate 与保留项
 
