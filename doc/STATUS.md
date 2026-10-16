@@ -5,8 +5,8 @@
 ## 当前 Task
 
 - 当前 Task：[ARCH-DOC-REBASELINE](tasks/ARCH-DOC-REBASELINE.md) **ready / integrated**（AC1–AC3=PARTIAL、AC4–AC6=NOT_RUN、AC7 逐消费者裁决待做）。
-- **本轮完成（13）**：[UI-DESIGN-1](tasks/UI-DESIGN-1.md) `9e1221e1b`（设计基线 W1–W32/24 缺口）；[ENV-BUNDLE-1-FU1](tasks/ENV-BUNDLE-1-FU1.md) `b474c09b`（frozen bundle 6/6，closed_with_limitations）；[P12](tasks/P12.md) `465e3001e`（书架+导入 UI）；[HOST-TTL-BOUNDARY-1](tasks/HOST-TTL-BOUNDARY-1.md) `23587397e`（双向 TTL 留 1 s）；[EVENTS-FWD-1](tasks/EVENTS-FWD-1.md) `22920f8db`（§6.4 六类事件）；[RUN-IPC-1](tasks/RUN-IPC-1.md) `c3929bcc3`；[EXPORT-REVEAL-1](tasks/EXPORT-REVEAL-1.md) `c9b113f96`（G20）；[EXPORT-IPC-1](tasks/EXPORT-IPC-1.md) `aaca5d1ea`（去路径白名单投影；**修正过一处不存在的 commit SHA**）；[READER-IPC-1](tasks/READER-IPC-1.md) `ab47ef2b0`；[P17](tasks/P17.md) `f18b7fe8f`（§4）；[P14](tasks/P14.md) `2dc14cdd1`（§3；10 个 §7 缺口全禁用、G15 未发明；导出面板+去路径投影有测试；冒名 review 已按 BL-18 改名）；[P15-C1](tasks/P15-C1.md) `f07221313`（设置面契约：G21–G24 + 受限 G25；**Secret 四处零暴露**）。
-- **在飞/待派发**：[P15 设置页](tasks/P15.md)（**新释放 `ready`**——契约已由 P15-C1 冻结，**AC2 已内嵌「可编辑分区清单」**；Owner 建议 ZCode）。**四页 UI 收尾只差设置页**。
+- **本轮完成（14）**：[UI-DESIGN-1](tasks/UI-DESIGN-1.md) `9e1221e1b`（设计基线 W1–W32/24 缺口）；[ENV-BUNDLE-1-FU1](tasks/ENV-BUNDLE-1-FU1.md) `b474c09b`（frozen bundle 6/6，closed_with_limitations）；[P12](tasks/P12.md) `465e3001e`（书架+导入 UI）；[HOST-TTL-BOUNDARY-1](tasks/HOST-TTL-BOUNDARY-1.md) `23587397e`（双向 TTL 留 1 s）；[EVENTS-FWD-1](tasks/EVENTS-FWD-1.md) `22920f8db`（§6.4 六类事件）；[RUN-IPC-1](tasks/RUN-IPC-1.md) `c3929bcc3`；[EXPORT-REVEAL-1](tasks/EXPORT-REVEAL-1.md) `c9b113f96`（G20）；[EXPORT-IPC-1](tasks/EXPORT-IPC-1.md) `aaca5d1ea`（去路径白名单投影；**修正过一处不存在的 commit SHA**）；[READER-IPC-1](tasks/READER-IPC-1.md) `ab47ef2b0`；[P17](tasks/P17.md) `f18b7fe8f`（§4）；[P14](tasks/P14.md) `2dc14cdd1`（§3；10 个 §7 缺口全禁用、G15 未发明；导出面板+去路径投影有测试；冒名 review 已按 BL-18 改名）；[P15-C1](tasks/P15-C1.md) `f07221313`（设置面契约：G21–G24 + 受限 G25；**Secret 四处零暴露**）；[P15](tasks/P15.md) `c78ded304`（§5；**仅契约清单内 4 面开放、11 分区禁用**、Secret 四处零暴露；UI 完成、host 侧待配对）。
+- **在飞/待派发**：[P15-HOST-1](tasks/P15-HOST-1.md)（**新释放 `ready`**——G21/G22/G23 命令的 **host 侧注册 + Core 2.6 配对**；P15 UI 已 done，需它才端到端可用）。**四页 UI 已全部实现**。
 - **待用户裁决**：P18 产品发布门槛；**G25 未列入清单的分区**（逐节契约 Task）；BL-12、BL-13。
 - DIR-2：Task Owner=codex（至额度耗尽）；DIR-3：只保留一个 Active Coordinator。
 - Coordinator=dsh，epoch=6，lease=9ce79020a36e4fab8970e8ae6de5fb10（LEASE_VALID）；用户 19 项 dirty 未变，无 EXTERNAL_CHANGE。
@@ -18,5 +18,5 @@ P02新时点验收/AC6恢复/主线集成完成，父P02限定关闭。Technical
 
 ## 当前权威指针
 
-- DAG：[REBASELINE_PLAN](REBASELINE_PLAN.md)；READY=ARCH-DOC-REBASELINE、P15。
+- DAG：[REBASELINE_PLAN](REBASELINE_PLAN.md)；READY=ARCH-DOC-REBASELINE、P15-HOST-1。
 - 本轮证据：P12 [Review](../verification/P12/dsh-review-r1.md)；UI-DESIGN-1 [Review](../verification/UI-DESIGN-1/dsh-review-r1.md)；ENV-BUNDLE-1-FU1 [Review](../verification/ENV-BUNDLE-1-FU1/dsh-review-r1.md)；P14/P17 [Review](../verification/P14/dsh-review-r1.md)。
