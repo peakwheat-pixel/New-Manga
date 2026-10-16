@@ -1,0 +1,84 @@
+
+-------------------------------------------------------------------------------
+   ROBOCOPY     ::     Robust File Copy for Windows                              
+-------------------------------------------------------------------------------
+
+  Started : 2026年10月16日 17:30:02
+   Source : G:\CODEX\New Manga.workspace\worktrees\ENV-BUNDLE-1-FU1\apps\desktop\src-tauri\target\core-sidecar\
+     Dest : G:\CODEX\New Manga\apps\desktop\src-tauri\target\core-sidecar\
+
+    Files : *.*
+	    
+  Options : *.* /NDL /NFL /S /E /DCOPY:DAT /COPY:DAT /PURGE /MIR /NP /R:1 /W:1 
+
+------------------------------------------------------------------------------
+
+	*EXTRA Dir        -1	G:\CODEX\New Manga\apps\desktop\src-tauri\target\core-sidecar\core-sidecar\_internal\filelock-4.1.1.dist-info\
+	  *EXTRA File 		       4	G:\CODEX\New Manga\apps\desktop\src-tauri\target\core-sidecar\core-sidecar\_internal\filelock-4.1.1.dist-info\INSTALLER
+	  *EXTRA File 		    1976	G:\CODEX\New Manga\apps\desktop\src-tauri\target\core-sidecar\core-sidecar\_internal\filelock-4.1.1.dist-info\METADATA
+	  *EXTRA File 		    3483	G:\CODEX\New Manga\apps\desktop\src-tauri\target\core-sidecar\core-sidecar\_internal\filelock-4.1.1.dist-info\RECORD
+	  *EXTRA File 		      87	G:\CODEX\New Manga\apps\desktop\src-tauri\target\core-sidecar\core-sidecar\_internal\filelock-4.1.1.dist-info\WHEEL
+	*EXTRA Dir        -1	G:\CODEX\New Manga\apps\desktop\src-tauri\target\core-sidecar\core-sidecar\_internal\filelock-4.1.1.dist-info\licenses\
+	  *EXTRA File 		    1088	G:\CODEX\New Manga\apps\desktop\src-tauri\target\core-sidecar\core-sidecar\_internal\filelock-4.1.1.dist-info\licenses\LICENSE
+	  *EXTRA File 		   22872	G:\CODEX\New Manga\apps\desktop\src-tauri\target\core-sidecar\core-sidecar\_internal\api-ms-win-core-console-l1-1-0.dll
+	  *EXTRA File 		   22896	G:\CODEX\New Manga\apps\desktop\src-tauri\target\core-sidecar\core-sidecar\_internal\api-ms-win-core-datetime-l1-1-0.dll
+	  *EXTRA File 		   22872	G:\CODEX\New Manga\apps\desktop\src-tauri\target\core-sidecar\core-sidecar\_internal\api-ms-win-core-debug-l1-1-0.dll
+	  *EXTRA File 		   22872	G:\CODEX\New Manga\apps\desktop\src-tauri\target\core-sidecar\core-sidecar\_internal\api-ms-win-core-errorhandling-l1-1-0.dll
+	  *EXTRA File 		   22872	G:\CODEX\New Manga\apps\desktop\src-tauri\target\core-sidecar\core-sidecar\_internal\api-ms-win-core-fibers-l1-1-0.dll
+	  *EXTRA File 		   22872	G:\CODEX\New Manga\apps\desktop\src-tauri\target\core-sidecar\core-sidecar\_internal\api-ms-win-core-fibers-l1-1-1.dll
+	  *EXTRA File 		   27008	G:\CODEX\New Manga\apps\desktop\src-tauri\target\core-sidecar\core-sidecar\_internal\api-ms-win-core-file-l1-1-0.dll
+	  *EXTRA File 		   22888	G:\CODEX\New Manga\apps\desktop\src-tauri\target\core-sidecar\core-sidecar\_internal\api-ms-win-core-file-l1-2-0.dll
+	  *EXTRA File 		   22912	G:\CODEX\New Manga\apps\desktop\src-tauri\target\core-sidecar\core-sidecar\_internal\api-ms-win-core-file-l2-1-0.dll
+	  *EXTRA File 		   22896	G:\CODEX\New Manga\apps\desktop\src-tauri\target\core-sidecar\core-sidecar\_internal\api-ms-win-core-handle-l1-1-0.dll
+	  *EXTRA File 		   22872	G:\CODEX\New Manga\apps\desktop\src-tauri\target\core-sidecar\core-sidecar\_internal\api-ms-win-core-heap-l1-1-0.dll
+	  *EXTRA File 		   22888	G:\CODEX\New Manga\apps\desktop\src-tauri\target\core-sidecar\core-sidecar\_internal\api-ms-win-core-interlocked-l1-1-0.dll
+	  *EXTRA File 		   22888	G:\CODEX\New Manga\apps\desktop\src-tauri\target\core-sidecar\core-sidecar\_internal\api-ms-win-core-kernel32-legacy-l1-1-1.dll
+	  *EXTRA File 		   22872	G:\CODEX\New Manga\apps\desktop\src-tauri\target\core-sidecar\core-sidecar\_internal\api-ms-win-core-libraryloader-l1-1-0.dll
+	  *EXTRA File 		   22872	G:\CODEX\New Manga\apps\desktop\src-tauri\target\core-sidecar\core-sidecar\_internal\api-ms-win-core-localization-l1-2-0.dll
+	  *EXTRA File 		   22896	G:\CODEX\New Manga\apps\desktop\src-tauri\target\core-sidecar\core-sidecar\_internal\api-ms-win-core-memory-l1-1-0.dll
+	  *EXTRA File 		   22888	G:\CODEX\New Manga\apps\desktop\src-tauri\target\core-sidecar\core-sidecar\_internal\api-ms-win-core-namedpipe-l1-1-0.dll
+	  *EXTRA File 		   22872	G:\CODEX\New Manga\apps\desktop\src-tauri\target\core-sidecar\core-sidecar\_internal\api-ms-win-core-processenvironment-l1-1-0.dll
+	  *EXTRA File 		   22912	G:\CODEX\New Manga\apps\desktop\src-tauri\target\core-sidecar\core-sidecar\_internal\api-ms-win-core-processthreads-l1-1-0.dll
+	  *EXTRA File 		   22872	G:\CODEX\New Manga\apps\desktop\src-tauri\target\core-sidecar\core-sidecar\_internal\api-ms-win-core-processthreads-l1-1-1.dll
+	  *EXTRA File 		   22872	G:\CODEX\New Manga\apps\desktop\src-tauri\target\core-sidecar\core-sidecar\_internal\api-ms-win-core-profile-l1-1-0.dll
+	  *EXTRA File 		   22888	G:\CODEX\New Manga\apps\desktop\src-tauri\target\core-sidecar\core-sidecar\_internal\api-ms-win-core-rtlsupport-l1-1-0.dll
+	  *EXTRA File 		   22896	G:\CODEX\New Manga\apps\desktop\src-tauri\target\core-sidecar\core-sidecar\_internal\api-ms-win-core-string-l1-1-0.dll
+	  *EXTRA File 		   22896	G:\CODEX\New Manga\apps\desktop\src-tauri\target\core-sidecar\core-sidecar\_internal\api-ms-win-core-synch-l1-1-0.dll
+	  *EXTRA File 		   22888	G:\CODEX\New Manga\apps\desktop\src-tauri\target\core-sidecar\core-sidecar\_internal\api-ms-win-core-synch-l1-2-0.dll
+	  *EXTRA File 		   22896	G:\CODEX\New Manga\apps\desktop\src-tauri\target\core-sidecar\core-sidecar\_internal\api-ms-win-core-sysinfo-l1-1-0.dll
+	  *EXTRA File 		   22912	G:\CODEX\New Manga\apps\desktop\src-tauri\target\core-sidecar\core-sidecar\_internal\api-ms-win-core-sysinfo-l1-2-0.dll
+	  *EXTRA File 		   22896	G:\CODEX\New Manga\apps\desktop\src-tauri\target\core-sidecar\core-sidecar\_internal\api-ms-win-core-timezone-l1-1-0.dll
+	  *EXTRA File 		   22896	G:\CODEX\New Manga\apps\desktop\src-tauri\target\core-sidecar\core-sidecar\_internal\api-ms-win-core-util-l1-1-0.dll
+	  *EXTRA File 		   22872	G:\CODEX\New Manga\apps\desktop\src-tauri\target\core-sidecar\core-sidecar\_internal\api-ms-win-crt-conio-l1-1-0.dll
+	  *EXTRA File 		   26992	G:\CODEX\New Manga\apps\desktop\src-tauri\target\core-sidecar\core-sidecar\_internal\api-ms-win-crt-convert-l1-1-0.dll
+	  *EXTRA File 		   22912	G:\CODEX\New Manga\apps\desktop\src-tauri\target\core-sidecar\core-sidecar\_internal\api-ms-win-crt-environment-l1-1-0.dll
+	  *EXTRA File 		   22872	G:\CODEX\New Manga\apps\desktop\src-tauri\target\core-sidecar\core-sidecar\_internal\api-ms-win-crt-filesystem-l1-1-0.dll
+	  *EXTRA File 		   22872	G:\CODEX\New Manga\apps\desktop\src-tauri\target\core-sidecar\core-sidecar\_internal\api-ms-win-crt-heap-l1-1-0.dll
+	  *EXTRA File 		   22896	G:\CODEX\New Manga\apps\desktop\src-tauri\target\core-sidecar\core-sidecar\_internal\api-ms-win-crt-locale-l1-1-0.dll
+	  *EXTRA File 		   31064	G:\CODEX\New Manga\apps\desktop\src-tauri\target\core-sidecar\core-sidecar\_internal\api-ms-win-crt-math-l1-1-0.dll
+	  *EXTRA File 		   76120	G:\CODEX\New Manga\apps\desktop\src-tauri\target\core-sidecar\core-sidecar\_internal\api-ms-win-crt-private-l1-1-0.dll
+	  *EXTRA File 		   22896	G:\CODEX\New Manga\apps\desktop\src-tauri\target\core-sidecar\core-sidecar\_internal\api-ms-win-crt-process-l1-1-0.dll
+	  *EXTRA File 		   26968	G:\CODEX\New Manga\apps\desktop\src-tauri\target\core-sidecar\core-sidecar\_internal\api-ms-win-crt-runtime-l1-1-0.dll
+	  *EXTRA File 		   26968	G:\CODEX\New Manga\apps\desktop\src-tauri\target\core-sidecar\core-sidecar\_internal\api-ms-win-crt-stdio-l1-1-0.dll
+	  *EXTRA File 		   26968	G:\CODEX\New Manga\apps\desktop\src-tauri\target\core-sidecar\core-sidecar\_internal\api-ms-win-crt-string-l1-1-0.dll
+	  *EXTRA File 		   22912	G:\CODEX\New Manga\apps\desktop\src-tauri\target\core-sidecar\core-sidecar\_internal\api-ms-win-crt-time-l1-1-0.dll
+	  *EXTRA File 		   22912	G:\CODEX\New Manga\apps\desktop\src-tauri\target\core-sidecar\core-sidecar\_internal\api-ms-win-crt-utility-l1-1-0.dll
+	  *EXTRA File 		   5.5 m	G:\CODEX\New Manga\apps\desktop\src-tauri\target\core-sidecar\core-sidecar\_internal\libcrypto-3-x64.dll
+	  *EXTRA File 		 1025692	G:\CODEX\New Manga\apps\desktop\src-tauri\target\core-sidecar\core-sidecar\_internal\libssl-3-x64.dll
+	  *EXTRA File 		   1.2 m	G:\CODEX\New Manga\apps\desktop\src-tauri\target\core-sidecar\core-sidecar\_internal\ucrtbase.dll
+	  *EXTRA File 		   38840	G:\CODEX\New Manga\apps\desktop\src-tauri\target\core-sidecar\core-sidecar\_internal\VCRUNTIME140_THREADS.dll
+
+------------------------------------------------------------------------------
+
+               Total    Copied   Skipped  Mismatch    FAILED    Extras
+    Dirs :      1182         2      1180         0         0         2
+   Files :      5563      5559         4         0         0        52
+   Bytes :   1.198 g   1.001 g  202.53 m         0         0    8.86 m
+   Times :   0:00:02   0:00:02                       0:00:00   0:00:00
+
+
+   Speed :           468,781,738 Bytes/sec.
+   Speed :            26,823.906 MegaBytes/min.
+   Ended : 2026年10月16日 17:30:05
+
+ROBOCOPY_EXIT_CODE=3

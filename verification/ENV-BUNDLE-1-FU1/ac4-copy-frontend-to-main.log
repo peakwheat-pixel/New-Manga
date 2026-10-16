@@ -1,0 +1,27 @@
+
+-------------------------------------------------------------------------------
+   ROBOCOPY     ::     Robust File Copy for Windows                              
+-------------------------------------------------------------------------------
+
+  Started : 2026年10月16日 17:30:13
+   Source : G:\CODEX\New Manga.workspace\worktrees\ENV-BUNDLE-1-FU1\apps\desktop\frontend\dist\
+     Dest : G:\CODEX\New Manga\apps\desktop\frontend\dist\
+
+    Files : *.*
+	    
+  Options : *.* /NDL /NFL /S /E /DCOPY:DAT /COPY:DAT /PURGE /MIR /NP /R:1 /W:1 
+
+------------------------------------------------------------------------------
+
+	  *EXTRA File 		  196315	G:\CODEX\New Manga\apps\desktop\frontend\dist\assets\index-CUM67Q41.js
+
+------------------------------------------------------------------------------
+
+               Total    Copied   Skipped  Mismatch    FAILED    Extras
+    Dirs :         2         0         2         0         0         0
+   Files :         2         2         0         0         0         1
+   Bytes :   196.3 k   196.3 k         0         0         0   191.7 k
+   Times :   0:00:00   0:00:00                       0:00:00   0:00:00
+   Ended : 2026年10月16日 17:30:13
+
+ROBOCOPY_EXIT_CODE=3

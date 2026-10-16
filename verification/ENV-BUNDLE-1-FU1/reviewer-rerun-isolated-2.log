@@ -1,0 +1,29 @@
+warning: unused import: `CHUNK_SIZE`
+    --> src\main.rs:1014:54
+     |
+1014 |         build_url, handle_m2res_request, ScopeRoots, CHUNK_SIZE, ID_LENGTH,
+     |                                                      ^^^^^^^^^^
+     |
+     = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: unused variable: `out`
+    --> src\main.rs:2490:13
+     |
+2490 |         let out = rotate_render_preview(&core, "page", result, &mut current).unwrap();
+     |             ^^^ help: if this is intentional, prefix it with an underscore: `_out`
+     |
+     = note: `#[warn(unused_variables)]` (part of `#[warn(unused)]`) on by default
+
+warning: `m2rc1-desktop` (bin "m2rc1-desktop" test) generated 2 warnings (run `cargo fix --bin "m2rc1-desktop" -p m2rc1-desktop --tests` to apply 2 suggestions)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.52s
+     Running unittests src\main.rs (apps\desktop\src-tauri\target\debug\deps\m2rc1_desktop-e03b229fc621c524.exe)
+
+running 1 test
+test packaged_sidecar_tests::real_core_sidecar_retype_pair_empty_page_and_typed_rejection ... PACKAGED_ENV M2RC1_PACKAGED=1 M2RC1_SRC_ROOT=<unset> M2RC1_PYTHON=<unset>
+PACKAGED_START exe=\\?\G:\CODEX\New Manga.workspace\worktrees\ENV-BUNDLE-1-FU1\apps\desktop\src-tauri\target\core-sidecar\core-sidecar\core_service.exe bytes=68717156 sha256=896bd56286b25bc8539028d52f3ef991cfbcbda24f93ae6c6d75758a7dbfd842 args=["-m", "bootstrap.core_service"]
+[core.derived_gc] orphan_files_removed=0 dead_rows_removed=0
+PACKAGED_RESULT real_core_sidecar_retype_pair_empty_page_and_typed_rejection=PASS typed_error=TARGET_NOT_FOUND
+ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 82 filtered out; finished in 13.58s
+

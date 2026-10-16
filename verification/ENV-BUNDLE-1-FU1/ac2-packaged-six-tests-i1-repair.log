@@ -1,0 +1,83 @@
+ENV-BUNDLE-1-FU1 AC2 I1 packaged six-test rerun
+timestamp_start_local=2026-10-16 17:57:26 +08:00
+worktree=G:/CODEX/New Manga.workspace/worktrees/ENV-BUNDLE-1-FU1
+head=151d14b95679852b736b5270f027639ccfbd3054
+shell=PowerShell 7.6.6
+cargo=cargo 1.98.1 (797e8a9bc 2026-08-05)
+rustc=rustc 1.98.1 (48a229cea 2026-09-01)
+M2RC1_PACKAGED=1
+M2RC1_SRC_ROOT=<unset>
+M2RC1_PYTHON=<unset>
+M2RC1_PACKAGED_STARTUP_TIMEOUT_SECS=<unset; code default 120 seconds>
+runtime=embedded PyInstaller bundle; external Python venv not used
+command=cargo test --locked --manifest-path apps/desktop/src-tauri/Cargo.toml packaged_sidecar_tests::real_ -- --nocapture --test-threads=1
+--- cargo output ---
+   Compiling m2rc1-desktop v0.1.0 (G:\CODEX\New Manga.workspace\worktrees\ENV-BUNDLE-1-FU1\apps\desktop\src-tauri)
+warning: unused import: `CHUNK_SIZE`
+    --> src\main.rs:1014:54
+     |
+1014 |         build_url, handle_m2res_request, ScopeRoots, CHUNK_SIZE, ID_LENGTH,
+     |                                                      ^^^^^^^^^^
+     |
+     = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: unused variable: `out`
+    --> src\main.rs:2490:13
+     |
+2490 |         let out = rotate_render_preview(&core, "page", result, &mut current).unwrap();
+     |             ^^^ help: if this is intentional, prefix it with an underscore: `_out`
+     |
+     = note: `#[warn(unused_variables)]` (part of `#[warn(unused)]`) on by default
+
+warning: `m2rc1-desktop` (bin "m2rc1-desktop" test) generated 2 warnings (run `cargo fix --bin "m2rc1-desktop" -p m2rc1-desktop --tests` to apply 2 suggestions)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 34.50s
+     Running unittests src\main.rs (apps\desktop\src-tauri\target\debug\deps\m2rc1_desktop-e03b229fc621c524.exe)
+
+running 6 tests
+test packaged_sidecar_tests::real_core_sidecar_answers_startup_ping_on_fresh_catalog ... PACKAGED_ENV M2RC1_PACKAGED=1 M2RC1_SRC_ROOT=<unset> M2RC1_PYTHON=<unset>
+PACKAGED_START exe=\\?\G:\CODEX\New Manga.workspace\worktrees\ENV-BUNDLE-1-FU1\apps\desktop\src-tauri\target\core-sidecar\core-sidecar\core_service.exe bytes=68717156 sha256=896bd56286b25bc8539028d52f3ef991cfbcbda24f93ae6c6d75758a7dbfd842 args=["-m", "bootstrap.core_service"]
+PACKAGED_STARTUP_TIMEOUT_SECS=120
+[core.derived_gc] orphan_files_removed=0 dead_rows_removed=0
+PACKAGED_RESULT real_core_sidecar_answers_startup_ping_on_fresh_catalog=PASS protocol=2.3 catalog=created
+ok
+test packaged_sidecar_tests::real_core_sidecar_rc4_commands_round_trip_typed_errors ... PACKAGED_ENV M2RC1_PACKAGED=1 M2RC1_SRC_ROOT=<unset> M2RC1_PYTHON=<unset>
+PACKAGED_START exe=\\?\G:\CODEX\New Manga.workspace\worktrees\ENV-BUNDLE-1-FU1\apps\desktop\src-tauri\target\core-sidecar\core-sidecar\core_service.exe bytes=68717156 sha256=896bd56286b25bc8539028d52f3ef991cfbcbda24f93ae6c6d75758a7dbfd842 args=["-m", "bootstrap.core_service"]
+PACKAGED_STARTUP_TIMEOUT_SECS=120
+[core.derived_gc] orphan_files_removed=0 dead_rows_removed=0
+PACKAGED_RESULT real_core_sidecar_rc4_commands_round_trip_typed_errors=PASS typed_error=TARGET_NOT_FOUND
+ok
+test packaged_sidecar_tests::real_core_sidecar_retype_pair_empty_page_and_typed_rejection ... PACKAGED_ENV M2RC1_PACKAGED=1 M2RC1_SRC_ROOT=<unset> M2RC1_PYTHON=<unset>
+PACKAGED_START exe=\\?\G:\CODEX\New Manga.workspace\worktrees\ENV-BUNDLE-1-FU1\apps\desktop\src-tauri\target\core-sidecar\core-sidecar\core_service.exe bytes=68717156 sha256=896bd56286b25bc8539028d52f3ef991cfbcbda24f93ae6c6d75758a7dbfd842 args=["-m", "bootstrap.core_service"]
+PACKAGED_STARTUP_TIMEOUT_SECS=120
+[core.derived_gc] orphan_files_removed=0 dead_rows_removed=0
+PACKAGED_RESULT real_core_sidecar_retype_pair_empty_page_and_typed_rejection=PASS typed_error=TARGET_NOT_FOUND
+ok
+test packaged_sidecar_tests::real_core_sidecar_round_trip ... PACKAGED_ENV M2RC1_PACKAGED=1 M2RC1_SRC_ROOT=<unset> M2RC1_PYTHON=<unset>
+PACKAGED_START exe=\\?\G:\CODEX\New Manga.workspace\worktrees\ENV-BUNDLE-1-FU1\apps\desktop\src-tauri\target\core-sidecar\core-sidecar\catalog_loader.exe bytes=1826114 sha256=44786ca1a6338743099c14d3dd7ae395a1f4d8354ba03a14e1c31ee3e05f130d args=["--db", "C:\\Users\\49745\\AppData\\Local\\Temp\\.tmpGHO9MU\\catalog.sqlite", "--initialize-preview-namespace", "C:\\Users\\49745\\AppData\\Local\\Temp\\.tmpGHO9MU\\derived", "--set", "res-sidecar=asset.png"]
+PACKAGED_EXIT exe=\\?\G:\CODEX\New Manga.workspace\worktrees\ENV-BUNDLE-1-FU1\apps\desktop\src-tauri\target\core-sidecar\core-sidecar\catalog_loader.exe code=0 stdout= stderr=
+PACKAGED_START exe=\\?\G:\CODEX\New Manga.workspace\worktrees\ENV-BUNDLE-1-FU1\apps\desktop\src-tauri\target\core-sidecar\core-sidecar\host_bridge.exe bytes=1828219 sha256=ca2defdf3ac99f6adf4f90ed2457a7cd81cc799ca10350296a50d0082b01477d args=[]
+PACKAGED_RESULT real_core_sidecar_round_trip=PASS typed_error=REF_REVOKED shutdown=sent
+ok
+test packaged_sidecar_tests::real_core_sidecar_settings_round_trip_and_typed_rejection ... PACKAGED_ENV M2RC1_PACKAGED=1 M2RC1_SRC_ROOT=<unset> M2RC1_PYTHON=<unset>
+PACKAGED_START exe=\\?\G:\CODEX\New Manga.workspace\worktrees\ENV-BUNDLE-1-FU1\apps\desktop\src-tauri\target\core-sidecar\core-sidecar\core_service.exe bytes=68717156 sha256=896bd56286b25bc8539028d52f3ef991cfbcbda24f93ae6c6d75758a7dbfd842 args=["-m", "bootstrap.core_service"]
+PACKAGED_STARTUP_TIMEOUT_SECS=120
+[core.derived_gc] orphan_files_removed=0 dead_rows_removed=0
+PACKAGED_RESULT real_core_sidecar_settings_round_trip_and_typed_rejection=PASS typed_error=INVALID_REQUEST
+ok
+test packaged_sidecar_tests::real_library_sidecar_round_trip_and_eof ... PACKAGED_ENV M2RC1_PACKAGED=1 M2RC1_SRC_ROOT=<unset> M2RC1_PYTHON=<unset>
+PACKAGED_START exe=\\?\G:\CODEX\New Manga.workspace\worktrees\ENV-BUNDLE-1-FU1\apps\desktop\src-tauri\target\core-sidecar\core-sidecar\core_service.exe bytes=68717156 sha256=896bd56286b25bc8539028d52f3ef991cfbcbda24f93ae6c6d75758a7dbfd842 args=["-m", "bootstrap.core_service"]
+PACKAGED_STARTUP_TIMEOUT_SECS=120
+[core.derived_gc] orphan_files_removed=0 dead_rows_removed=0
+PACKAGED_RESULT real_library_sidecar_round_trip_and_eof=PASS protocol=2.3 eof=CORE_UNAVAILABLE
+ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 77 filtered out; finished in 139.55s
+
+--- run summary ---
+elapsed_seconds=174.24
+exit_code=0
+timestamp_end_local=2026-10-16 18:00:24 +08:00
+--- tested source provenance (working tree at execution) ---
+source_path=apps/desktop/src-tauri/src/packaged_sidecar_tests.rs
+source_sha256=2420f614e47cde03645f69fdba1ea9267d823d0ab1c48dc16590f305c41ffffa
+source_state=modified worktree content based on head 151d14b95679852b736b5270f027639ccfbd3054

@@ -1,0 +1,14 @@
+{
+  "exe": "G:\\CODEX\\New Manga\\apps\\desktop\\src-tauri\\target\\core-sidecar\\core-sidecar\\core_service.exe",
+  "bytes": 68717156,
+  "sha256": "896bd56286b25bc8539028d52f3ef991cfbcbda24f93ae6c6d75758a7dbfd842",
+  "pid": 35200,
+  "M2RC1_PACKAGED": "1",
+  "M2RC1_SRC_ROOT": "<unset>",
+  "M2RC1_PYTHON": "<unset>",
+  "ping": "{\"protocol\":\"new-manga.core\",\"version\":{\"major\":2,\"minor\":3},\"request_id\":\"fu1-main-after-ping\",\"result\":{\"status\":\"ready\",\"protocol_version\":{\"major\":2,\"minor\":3},\"capabilities\":[\"library.list_books\"]},\"error\":null}",
+  "shutdown": "{\"protocol\":\"new-manga.core\",\"version\":{\"major\":2,\"minor\":3},\"request_id\":\"fu1-main-after-shutdown\",\"result\":{\"status\":\"stopped\"},\"error\":null}",
+  "exit_code": 0,
+  "stderr": "[core.derived_gc] orphan_files_removed=0 dead_rows_removed=0\r\n",
+  "lab": "C:\\Users\\49745\\AppData\\Local\\Temp\\ENV-BUNDLE-1-FU1-main-after-1bcd3ce771cd4ce7a702914c3cf6fd98"
+}
