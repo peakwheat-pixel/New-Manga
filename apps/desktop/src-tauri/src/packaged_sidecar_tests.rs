@@ -246,3 +246,24 @@ fn real_core_sidecar_answers_startup_ping_on_fresh_catalog() {
     assert!(lab.catalog.is_file(), "frozen Core bound the fresh catalog");
     println!("PACKAGED_RESULT real_core_sidecar_answers_startup_ping_on_fresh_catalog=PASS protocol=2.3 catalog=created");
 }
+
+#[test]
+fn real_library_sidecar_event_sink_registration_and_lifecycle() {
+    let lab = PackagedLab::new();
+    let channel = lab.start_library();
+    let received_events = std::sync::Arc::new(std::sync::Mutex::new(Vec::<(String, serde_json::Value)>::new()));
+    let sink_events = std::sync::Arc::clone(&received_events);
+    channel.set_event_sink(std::sync::Arc::new(move |name, payload| {
+        sink_events.lock().unwrap().push((name.to_string(), payload));
+    }));
+
+    let ping = channel.ping().expect("ping");
+    assert_eq!(ping.status, "ready");
+    let books = channel.list_books().expect("list_books");
+    assert!(books.is_empty());
+
+    // In steady-state idle operations, 0 spontaneous events emitted
+    assert!(received_events.lock().unwrap().is_empty());
+    println!("PACKAGED_RESULT real_library_sidecar_event_sink_registration_and_lifecycle=PASS event_sink=registered");
+}
+
