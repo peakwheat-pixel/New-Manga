@@ -91,6 +91,7 @@ from __future__ import annotations
 
 import base64
 import hashlib
+import hmac
 from dataclasses import asdict, dataclass
 import io
 import json
@@ -179,7 +180,12 @@ PROTOCOL_MAJOR = 2
 # precedent -- pre-existing command semantics unchanged. Contract: M2-C1
 # rev 1.8 §5).
 # P16-C1 rev 2.1 added Reader/Export; P12-C1 rev 2.2 adds ImportPages.
-PROTOCOL_MINOR = 2
+PROTOCOL_MINOR = 3
+# HOST-ISSUER-1-C1 rev 2.3 adds an independent host-owned stdio control envelope.
+_HOST_CONTROL_COMMANDS = frozenset({
+    "OpenHostSession", "RegisterImportSource", "RevokeImportSource",
+    "RegisterExportTarget", "RevokeExportTarget", "CloseHostSession",
+})
 _RUN_COMMANDS = frozenset({
     "StartRun", "ControlRun", "ResumeBlockedRun", "GetRunSnapshot",
     "GetTaskProjection", "RetryFailedTargets",
@@ -638,6 +644,11 @@ class CoreServiceServer:
         self._projection_cache: dict[str, tuple[float, dict[str, Any]]] = {}
         self._owner_lock = threading.Lock()
         self._serving = False
+        self._core_session_id = uuid.uuid4().hex
+        self._host_session_id: str | None = None
+        self._host_session_credential: str | None = None
+        self._host_session_opened = False
+        self._host_grants: dict[str, str] = {}
         self._run_owner = False
         self._run_scheduler_stop = threading.Event()
         self._run_scheduler_thread: threading.Thread | None = None
@@ -716,8 +727,164 @@ class CoreServiceServer:
             self._release_scheduler_lease()
 
     def close(self) -> None:
-        """Release the scheduler lease after its worker has drained."""
-        self._stop_run_scheduler()
+        """Invalidate host grants and release the scheduler lease."""
+        try:
+            self._invalidate_host_session()
+        finally:
+            self._stop_run_scheduler()
+
+    def _host_control_response(
+        self, request_id: Any, result: dict[str, Any] | None,
+        error: dict[str, Any] | None,
+    ) -> dict[str, Any]:
+        return {
+            "protocol": PROTOCOL_NAME,
+            "version": {"major": PROTOCOL_MAJOR, "minor": PROTOCOL_MINOR},
+            "request_id": request_id if isinstance(request_id, str) else None,
+            "result": result,
+            "error": error,
+        }
+
+    def _reject_host_control(
+        self, request_id: Any, code: str, category: str, message: str,
+    ) -> dict[str, Any]:
+        return self._host_control_response(
+            request_id, None, make_error_envelope(code, category, message)
+        )
+
+    @staticmethod
+    def _valid_host_credential(value: object) -> bool:
+        if not isinstance(value, str) or len(value) not in {43, 44} or not value.isascii():
+            return False
+        try:
+            decoded = base64.urlsafe_b64decode(value + "=" * (-len(value) % 4))
+        except (ValueError, UnicodeError):
+            return False
+        encoded = base64.urlsafe_b64encode(decoded).decode("ascii")
+        return (
+            len(decoded) == 32
+            and value in {encoded, encoded.rstrip("=")}
+        )
+
+    def _invalidate_host_session(self) -> None:
+        if self._host_session_credential is None:
+            return
+        for grant_id, kind in tuple(self._host_grants.items()):
+            if kind == "import":
+                self._revoke_import_source({"grant_id": grant_id})
+            else:
+                self._revoke_export_target({"grant_id": grant_id})
+        self._host_session_credential = None
+
+    def _dispatch_host_control(self, request: dict[str, Any]) -> dict[str, Any]:
+        request_id = request.get("request_id")
+        command = request.get("command")
+        open_fields = {"protocol", "version", "request_id", "channel", "command", "payload"}
+        session_fields = {
+            "protocol", "version", "request_id", "channel", "core_session_id",
+            "host_session_id", "host_session_credential", "command", "payload",
+        }
+        if command == "OpenHostSession":
+            if set(request) != open_fields:
+                return self._reject_host_control(request_id, "INVALID_REQUEST", "validation", "Host control request is invalid")
+        elif set(request) - session_fields:
+            return self._reject_host_control(request_id, "INVALID_REQUEST", "validation", "Host control request is invalid")
+
+        version = request.get("version")
+        if (
+            request.get("protocol") != PROTOCOL_NAME
+            or not isinstance(version, dict)
+            or set(version) != {"major", "minor"}
+            or type(version.get("major")) is not int
+            or type(version.get("minor")) is not int
+            or version != {"major": PROTOCOL_MAJOR, "minor": PROTOCOL_MINOR}
+            or not isinstance(request_id, str)
+            or not request_id
+            or request.get("channel") != "host-control"
+            or not isinstance(command, str)
+            or command not in _HOST_CONTROL_COMMANDS
+            or "payload" not in request
+        ):
+            return self._reject_host_control(request_id, "INVALID_REQUEST", "validation", "Host control request is invalid")
+
+        payload = request.get("payload")
+        if command == "OpenHostSession":
+            if self._host_session_opened:
+                return self._reject_host_control(request_id, "HOST_SESSION_ALREADY_OPENED", "conflict", "Host session was already opened")
+            if (
+                not isinstance(payload, dict)
+                or set(payload) != {"host_session_id", "host_session_credential"}
+                or not isinstance(payload.get("host_session_id"), str)
+                or not payload["host_session_id"]
+                or not self._valid_host_credential(payload.get("host_session_credential"))
+            ):
+                return self._reject_host_control(request_id, "INVALID_REQUEST", "validation", "Host session request is invalid")
+            self._host_session_id = payload["host_session_id"]
+            self._host_session_credential = payload["host_session_credential"]
+            self._host_session_opened = True
+            return self._host_control_response(
+                request_id, {"core_session_id": self._core_session_id}, None
+            )
+
+        if "core_session_id" not in request or request.get("core_session_id") != self._core_session_id:
+            return self._reject_host_control(request_id, "CORE_SESSION_MISMATCH", "conflict", "Core session does not match")
+        if "host_session_id" not in request or self._host_session_credential is None:
+            return self._reject_host_control(request_id, "HOST_SESSION_INVALID", "conflict", "Host session is invalid")
+        credential = request.get("host_session_credential")
+        if (
+            not isinstance(credential, str)
+            or not hmac.compare_digest(
+                credential.encode("utf-8"), self._host_session_credential.encode("utf-8")
+            )
+            or request.get("host_session_id") != self._host_session_id
+        ):
+            return self._reject_host_control(request_id, "HOST_SESSION_INVALID", "conflict", "Host session is invalid")
+
+        if command == "CloseHostSession":
+            if not isinstance(payload, dict) or payload:
+                return self._reject_host_control(request_id, "INVALID_REQUEST", "validation", "Host session request is invalid")
+            try:
+                self._invalidate_host_session()
+            except Exception:
+                return self._reject_host_control(request_id, "UNKNOWN", "internal", "Host session could not be closed")
+            return self._host_control_response(request_id, {"closed": True}, None)
+
+        if command not in _HOST_CONTROL_COMMANDS - {"OpenHostSession", "CloseHostSession"}:
+            return self._reject_host_control(request_id, "INVALID_REQUEST", "validation", "Host control request is invalid")
+        is_import = command.endswith("ImportSource")
+        is_register = command.startswith("Register")
+        if not isinstance(payload, dict):
+            envelope = _import_ref_error_envelope("REF_MALFORMED") if is_import else _export_ref_error_envelope("REF_MALFORMED")
+            return self._host_control_response(request_id, None, envelope)
+        if is_register and "session_id" in payload and payload["session_id"] != self._host_session_id:
+            envelope = _import_ref_error_envelope("REF_SCOPE_DENIED") if is_import else _export_ref_error_envelope("REF_SCOPE_DENIED")
+            return self._host_control_response(request_id, None, envelope)
+        grant_id = payload.get("grant_id")
+        if is_register and isinstance(grant_id, str) and grant_id in self._host_grants:
+            return self._reject_host_control(request_id, "GRANT_ALREADY_REGISTERED", "conflict", "Grant is already registered")
+        if not is_register and set(payload) == {"grant_id"} and isinstance(grant_id, str) and grant_id not in self._host_grants:
+            envelope = _import_ref_error_envelope("REF_UNKNOWN_ID") if is_import else _export_ref_error_envelope("REF_UNKNOWN_ID")
+            return self._host_control_response(request_id, None, envelope)
+
+        try:
+            if command == "RegisterImportSource":
+                result = self._register_import_source(payload)
+            elif command == "RevokeImportSource":
+                result = self._revoke_import_source(payload)
+            elif command == "RegisterExportTarget":
+                result = self._register_export_target(payload)
+            else:
+                result = self._revoke_export_target(payload)
+        except TypedResourceChannelError as error:
+            return self._host_control_response(request_id, None, _import_ref_error_envelope(error.code))
+        except ExportTargetRefError as error:
+            return self._host_control_response(request_id, None, _export_ref_error_envelope(error.code))
+        except Exception:
+            return self._reject_host_control(request_id, "UNKNOWN", "internal", "Host control operation failed")
+
+        if is_register and isinstance(grant_id, str):
+            self._host_grants[grant_id] = "import" if is_import else "export"
+        return self._host_control_response(request_id, result, None)
 
     def _emit_run_event(self, event_type: str, payload: Any) -> None:
         with self._projection_lock:
@@ -2327,6 +2494,14 @@ class CoreServiceServer:
         raw_payload = req.get("payload")
         payload = raw_payload if isinstance(raw_payload, dict) else {}
 
+        if req.get("channel") == "host-control":
+            return self._dispatch_host_control(req), False
+        if isinstance(command, str) and command in _HOST_CONTROL_COMMANDS:
+            return self._reject_host_control(
+                request_id, "HOST_ONLY_REQUIRED", "validation",
+                "Host control channel is required",
+            ), False
+
         # Validate protocol name and version (must be dict with integer major == PROTOCOL_MAJOR)
         is_valid_version = (
             isinstance(version, dict)
@@ -3001,8 +3176,11 @@ class CoreServiceServer:
                     return 0
             return 0
         finally:
-            self._stop_run_scheduler()
-            self._serving = False
+            try:
+                self._invalidate_host_session()
+            finally:
+                self._stop_run_scheduler()
+                self._serving = False
 
     def _emit(self, payload: dict[str, Any]) -> None:
         with self._write_lock:

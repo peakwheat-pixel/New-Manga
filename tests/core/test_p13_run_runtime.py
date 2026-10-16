@@ -615,7 +615,7 @@ def test_retry_after_is_not_capped_and_runtime_version_is_major_two():
     policy = _retry_policy({"providers": {"retry": {"max_attempts": 8}}})
     assert policy.max_attempts == 3
     assert policy.backoff_seconds == 1.0
-    assert (PROTOCOL_MAJOR, PROTOCOL_MINOR) == (2, 2)
+    assert (PROTOCOL_MAJOR, PROTOCOL_MINOR) == (2, 3)
 
     class Transport:
         calls = 0

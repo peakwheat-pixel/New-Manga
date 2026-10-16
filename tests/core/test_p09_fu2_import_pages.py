@@ -205,7 +205,7 @@ def test_stdio_import_pages_runtime_response_and_import_report(tmp_path, capsys)
         exit_code = server.serve_forever()
         response_line = server._stdout.getvalue().strip()
         response = json.loads(response_line)
-        print("protocol=2.2")
+        print("protocol=2.3")
         print("command=ImportPages")
         print("request_payload=" + json.dumps({
             "chapter_id": "chapter",
@@ -215,7 +215,7 @@ def test_stdio_import_pages_runtime_response_and_import_report(tmp_path, capsys)
         print(f"serve_exit_code={exit_code}")
         assert exit_code == 0
         assert response["error"] is None
-        assert response["version"] == {"major": 2, "minor": 2}
+        assert response["version"] == {"major": 2, "minor": 3}
         report = response["result"]
         assert report["duplicate_policy"] == "skip"
         assert report["cancelled"] is False

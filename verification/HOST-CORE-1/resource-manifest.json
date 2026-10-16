@@ -1,0 +1,36 @@
+{
+  "schema_version": 1,
+  "task_id": "HOST-CORE-1",
+  "generated_at": "2026-10-16",
+  "generated_by": "Codex (Task Owner)",
+  "note": "保留实现 worktree 供独立 Review 与 Coordinator integration；不表示相应 Gate 已完成。",
+  "resources": [
+    {
+      "resource_type": "worktree",
+      "source_path": "G:/CODEX/New Manga.workspace/worktrees/HOST-CORE-1",
+      "disposition": "PRESERVE_REFERENCED",
+      "destination_path": "G:/CODEX/New Manga.workspace/worktrees/HOST-CORE-1",
+      "branch": "codex/HOST-CORE-1-hostcontrol-handler",
+      "base_commit": "ed79b76f9191f0a5ebb6932a53a992a33a274041",
+      "delivery_head": "ff42c670122a95c5edd43b6374e4e42bf42731cb",
+      "integration_commit": null,
+      "deleted": false,
+      "pruned": false,
+      "process_check": "worktree 与 branch 保留；未删除、迁移、归档或 prune；主仓未写入。"
+    },
+    {
+      "resource_type": "test-env",
+      "source_path": "G:/CODEX/New Manga.task-envs/T1.1.1-impl-py312",
+      "disposition": "PRESERVE_REFERENCED",
+      "destination_path": "G:/CODEX/New Manga.task-envs/T1.1.1-impl-py312",
+      "deleted": false,
+      "process_check": "只读调用既有 Python 3.12.3 环境；未安装或更新依赖。"
+    }
+  ],
+  "closeout": {
+    "deleted_count": 0,
+    "migrated_count": 0,
+    "archived_count": 0,
+    "reason_open": "Task 等待非作者 Review 与 Coordinator integration；保留 worktree 供接收者使用。"
+  }
+}
