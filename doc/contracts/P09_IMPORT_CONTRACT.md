@@ -34,7 +34,7 @@
 
 遵守 [`verification/P09/commit-order-and-rollback.md`](../../verification/P09/commit-order-and-rollback.md)：来源/解码校验 → hash 去重 → 临时 Managed Copy 写入和 hash/大小复核 → 原子发布 Managed Original → SQLite Page 事务。Page 只有在已发布 Managed Original 存在且与 `source_hash` 一致后才提交。PDF 在复制前完整渲染校验所有页；加密、损坏、零页或任一页无法渲染时拒绝整份 PDF，零 Page、Managed Original 和临时产物。
 
-Copy/DB 失败返回逐文件/逐页失败，不留下引用缺失原件的 Page。发布成功但 Page 提交前崩溃可留完整、不可见的孤儿 Managed Original；孤儿清理由受控 GC 负责，不能通过回写源文件补偿。取消发生在提交过程中时，已成功提交的 Page 保持完整，其余页列为 `pending`。
+Copy 失败返回逐文件/逐页失败，不留下引用缺失原件的 Page。SQLite Page 写入异常向调用方传播并回滚该 Page 事务；由于 Managed Original 已先原子发布，异常时可留完整、不可见的孤儿副本，由受控 GC 清理。不得通过回写源文件补偿。取消发生在提交过程中时，已成功提交的 Page 保持完整，其余页列为 `pending`。
 
 ## 冻结边界
 

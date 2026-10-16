@@ -127,3 +127,29 @@ def test_invalid_scope_has_no_import_side_effects(import_use_case, chapter, tmp_
 
     assert store.stored == {}
     assert sink.pages == []
+
+
+def test_replaced_selected_path_is_reported_without_import_side_effects(
+    import_use_case, chapter, tmp_path
+):
+    root = tmp_path / "selected"
+    root.mkdir()
+    selected = root / "page.png"
+    selected.write_bytes(b"original selection")
+    outside = tmp_path / "outside.png"
+    outside.write_bytes(b"protected outside")
+    sources = sources_from_selection(root, [selected])
+    selected.unlink()
+    try:
+        selected.symlink_to(outside)
+    except OSError as error:
+        pytest.skip(f"file symlink creation is unavailable: {error}")
+
+    use_case, store, sink = import_use_case()
+    report = use_case.import_files(chapter.chapter_id, sources)
+
+    assert report.imported == ()
+    assert report.failed[0].reason == "SOURCE_READ_FAILED"
+    assert store.stored == {}
+    assert sink.pages == []
+    assert outside.read_bytes() == b"protected outside"

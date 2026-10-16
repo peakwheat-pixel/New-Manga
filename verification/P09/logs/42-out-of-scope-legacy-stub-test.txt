@@ -1,0 +1,46 @@
+F
+================================== FAILURES ===================================
+__________ test_production_stub_decoder_returns_valid_decoded_image ___________
+
+tmp_path = WindowsPath('G:/CODEX/New Manga.workspace/worktrees/P09-IMPORT-CORE/verification/P09/test-runs/run-1940/850d56d4f51fe3e5')
+
+    def test_production_stub_decoder_returns_valid_decoded_image(tmp_path: Path) -> None:
+        """AC2: the decoder injected by the production assembly must decode to a
+        valid ``DecodedImage`` (real contract fields only)."""
+        core = assemble_production_core(tmp_path / "data")
+        try:
+            # CoreServices exposes the injected decoder inside the ImportImagesUseCase
+            # slot (``core.importer``); that is the production-assembled instance.
+            decoder = core.importer._decoder
+>           img = decoder.decode(b"fake")
+                  ^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\core\test_stub_decoder.py:38: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <infrastructure.importing.QtImageDecoder object at 0x000002586DC4D7F0>
+data = b'fake'
+
+    def decode(self, data: bytes) -> DecodedImage:
+        from PySide6.QtCore import QByteArray, QBuffer, QIODevice
+        from PySide6.QtGui import QImageReader
+    
+        QImageReader.setAllocationLimit(_ALLOCATION_LIMIT_MIB)
+    
+        buffer = QBuffer()
+        buffer.setData(QByteArray(data))
+        if not buffer.open(QIODevice.OpenModeFlag.ReadOnly):
+            raise ImageDecodeError("image buffer could not be opened")
+    
+        reader = QImageReader(buffer)
+        format_name = bytes(reader.format()).decode("ascii", errors="ignore").lower()
+        image = reader.read()
+        if image.isNull():
+>           raise ImageDecodeError(_reader_error_detail(reader))
+E           application.importing.images.ports.ImageDecodeError: Unsupported image format
+
+src\infrastructure\importing.py:111: ImageDecodeError
+=========================== short test summary info ===========================
+FAILED tests/core/test_stub_decoder.py::test_production_stub_decoder_returns_valid_decoded_image
+1 failed in 0.48s
+EXIT_CODE=1

@@ -117,8 +117,11 @@ def _assert_within(path: Path, root: Path) -> None:
 
 
 def _read_selected(path: Path, root: Path) -> bytes:
-    _assert_within(path, root)
-    _reject_reparse_path(path)
+    try:
+        _assert_within(path, root)
+        _reject_reparse_path(path)
+    except ValueError as error:
+        raise OSError("selected import source changed after validation") from error
     if not path.is_file():
         raise OSError("selected import source is no longer a file")
     # shortcut: path validation leaves a TOCTOU window; use handle-relative opens if concurrent swaps need defending.
