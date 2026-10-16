@@ -81,3 +81,15 @@ ENV-BUNDLE-1 `7b9cbbe6`、ENV-BUNDLE-1-FU1 `b474c09b`、UI-DESIGN-1 `9e1221e1b`�
 ## 10. 待用户裁决（不阻塞其余推进）
 
 **G25 未列分区**是否在 v1 开放；**P18 产品发布门槛**；**P19 的 GUI e2e 验收方式**（能力层阻塞）；**BL-12**（检查器是否入库）、**BL-13**（生产 30 s 死线）；以及是否在 DSH 内安装 `@deepseek-ai/dsh-subagent-codex` 以恢复受管派发。
+
+## 11. r12 补登（2026-10-17 00:29，P15-CORE-1 在飞时）
+
+- **里程碑：四页 UI 全部完成**。P15 设置页 done（集成 `c78ded304`，closeout `ca070e0ba`）→ **书架 P12 / 工作台 P14 / 阅读器 P17 / 设置 P15 全部交付**；累计 **14 个 Task done**。
+- **P15-C1 设置面契约**（`f07221313`）与 **P15 UI** 均已关闭；P15 的证据诚实性为**范例级**（保留未过滤首跑失败日志并如实命名说明其为 `M2RC1_PACKAGED=1` 环境门卫，非回归）。
+- **RV-P15-04（BL-16 类第 7 次）**：证据 pin 若以 **LF 工作树字节**计算而提交为 **CRLF**，则**不可从 fresh checkout/主仓库验证** → **closeout 必须在主仓库按规范字节复算**。P15 的 7 条 pin 已在主仓库复算通过。
+- **BL-20**：Task 允许范围必须**显式覆盖测试支持目录**（P17 `tests/core/**`、P15 `frontend/src/testSupport/**` 两次先例）。
+- **新 DAG 节点**：`P15-HOST-1`（host 侧注册）与 **`P15-CORE-1`（Core 侧实现）**——**派发前置核对**实测发现 **Core 完全缺失** P15-C1 冻结的 17 条命令（9 条抽查 0 命中），故按 "Core Task → host 配对" 拆分。**READY = ARCH-DOC-REBASELINE、P15-CORE-1**；`P15-HOST-1` = `proposed`，依赖 P15-CORE-1。
+- **在飞**：`P15-CORE-1`（Owner=Codex，经 **`/codex-dispatch` 技能经 CLI** 派发，`danger-full-access`；reviewer=dsh 独立；基线 pytest **407 passed** 已由双方独立确认）。
+- **S1 主题**：**UI 完成 ≠ 端到端可用**——设置页 4 个开放面已由契约冻结但 host/Core 未实现，当前落入 §9 `SETTINGS_UNAVAILABLE`；`P15-CORE-1`+`P15-HOST-1` 即是补链。
+- **待用户裁决（完整清单见 [decision-request-20261016.md](decision-request-20261016.md)）**：G25 扩大、P18 门槛、**P19 验收方式**（无头无 WebView2）、BL-12/13，以及 **P15 三项确认**（阅读方向挂载 / G25 扩大 / Network 测试面保留——建议均按默认）。
+- **轮次提示**：目标 `active`/`armed`，上限 100；本会话在轮次上限附近，**若在 P15-CORE-1 交付前耗尽轮次**，恢复步骤见本文件 §8，`INFLIGHT.json` 与 `OPLOG.ndjson` 记录了该 job（`pwsh-117`）与 worktree 位置。
