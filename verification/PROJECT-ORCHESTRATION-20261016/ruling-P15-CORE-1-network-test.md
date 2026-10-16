@@ -16,12 +16,12 @@
 
 ## 2. 裁决
 
-**(A) 需要一次契约修订（新 Task `P15-C1-FU1`）**，二选一（我建议 **A1**）：
+**(A) 需要一次契约修订（新 Task `P15-C1-FU1`）**。**用户 2026-10-17 裁决：A1**（不再二选一）。
 
 | 选项 | 内容 | 评价 |
 |---|---|---|
-| **A1（建议）** | **要求 `provider_profile_id` 必需**：`TestNetworkProfile { network_profile_id, provider_profile_id }`。目标恒为**该 Provider 的 endpoint**（经所选 Network Profile 的代理路径）→ 六阶段全部有确定语义（末阶段 ProviderAuth 本就需要 Provider） | 语义最干净、最安全（**无任意 URL**）、与设计"最后一阶段是 ProviderAuth"一致；缺省时按 §5 既有规则返回 `INVALID_REQUEST` |
-| **A2** | 保留可选，但**新增第三终态** `status: passed \| failed \| not_testable`，并要求全 `not_run` 时降级为 `not_testable`（可配 `NotRunReason`） | 保留"仅测代理连通"的能力；但引入新终态需同步 UI 状态矩阵与 §9 投影 |
+| **A1（用户裁决采纳 ✓）** | **要求 `provider_profile_id` 必需**：`TestNetworkProfile { network_profile_id, provider_profile_id }`。目标恒为**该 Provider 的 endpoint**（经所选 Network Profile 的代理路径）→ 六阶段全部有确定语义（末阶段 ProviderAuth 本就需要 Provider） | 语义最干净、最安全（**无任意 URL**）、与设计"最后一阶段是 ProviderAuth"一致；缺省时按 §5 既有规则返回 `INVALID_REQUEST` |
+| A2（未采纳，留档） | 保留可选，但**新增第三终态** `status: passed \| failed \| not_testable`，并要求全 `not_run` 时降级为 `not_testable`（可配 `NotRunReason`） | 保留"仅测代理连通"的能力；但引入新终态需同步 UI 状态矩阵与 §9 投影 |
 
 **(B) 明确禁止**：不得自选公网 URL、loopback 或假目标；不得把 Proxy 主机冒充 TLS/HTTP 目标；不得用伪造阶段结果满足 AC2。**这三条由本裁决固化为规则**。
 
