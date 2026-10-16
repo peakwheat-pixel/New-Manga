@@ -1,8 +1,8 @@
 
-===== UI-DESIGN-1 selfcheck @ 2026-10-16T17:15:33.5443841+08:00 =====
+===== UI-DESIGN-1 selfcheck @ 2026-10-16T17:29:02.3795673+08:00 =====
 repo root   : G:\CODEX\New Manga.workspace\worktrees\UI-DESIGN-1
 design doc  : G:\CODEX\New Manga.workspace\worktrees\UI-DESIGN-1\doc\design\AD001_FOUR_PAGE_UI_BASELINE.md
-HEAD        : c6f975d38842487c16491eea67a01cf134c337f8
+HEAD        : 0725c4bfeca6ef35c8dde8cd68df5e3efb802e1f
 [PASS] design doc readable
 
 ===== (a) contract command/event names: verbatim Select-String hit =====
@@ -73,13 +73,12 @@ summary: local=20 external(skipped)=0 pure-anchor(skipped)=0
 
 ===== (c) git write scope =====
 git diff --name-only HEAD:
+  doc/design/AD001_FOUR_PAGE_UI_BASELINE.md
   doc/tasks/UI-DESIGN-1.md
 git status --porcelain:
+   M doc/design/AD001_FOUR_PAGE_UI_BASELINE.md
    M doc/tasks/UI-DESIGN-1.md
-  ?? doc/design/AD001_FOUR_PAGE_UI_BASELINE.md
-  ?? doc/handoffs/UI-DESIGN-1-zcode.md
-  ?? verification/UI-DESIGN-1/
-[PASS] all 4 changed paths inside allowed scope; none of the 19 dirty paths touched
+[PASS] all 2 changed paths inside allowed scope; none of the 19 dirty paths touched
 
 ===== (d) AC1/AC2 structure checklist =====
 [PASS] section present: ## 1. 导航 Shell
@@ -92,31 +91,31 @@ git status --porcelain:
 [PASS] section present: ## 8. 设计令牌
 [PASS] section present: ## 9. 边界合规自证
 [PASS] section present: ## 10. 非目标
-[PASS] ## 2. 书架 contains element: 区域职责
-[PASS] ## 2. 书架 contains element: 布局结构
-[PASS] ## 2. 书架 contains element: 组件分解
-[PASS] ## 2. 书架 contains element: 状态矩阵
-[PASS] ## 2. 书架 contains element: 交互清单
-[PASS] ## 2. 书架 contains element: 键盘与焦点
 [PASS] ## 5. 设置 contains element: 区域职责
 [PASS] ## 5. 设置 contains element: 布局结构
 [PASS] ## 5. 设置 contains element: 组件分解
 [PASS] ## 5. 设置 contains element: 状态矩阵
 [PASS] ## 5. 设置 contains element: 交互清单
 [PASS] ## 5. 设置 contains element: 键盘与焦点
-[PASS] ## 4. 阅读器 contains element: 区域职责
-[PASS] ## 4. 阅读器 contains element: 布局结构
-[PASS] ## 4. 阅读器 contains element: 组件分解
-[PASS] ## 4. 阅读器 contains element: 状态矩阵
-[PASS] ## 4. 阅读器 contains element: 交互清单
-[PASS] ## 4. 阅读器 contains element: 键盘与焦点
+[PASS] ## 2. 书架 contains element: 区域职责
+[PASS] ## 2. 书架 contains element: 布局结构
+[PASS] ## 2. 书架 contains element: 组件分解
+[PASS] ## 2. 书架 contains element: 状态矩阵
+[PASS] ## 2. 书架 contains element: 交互清单
+[PASS] ## 2. 书架 contains element: 键盘与焦点
 [PASS] ## 3. 工作台 contains element: 区域职责
 [PASS] ## 3. 工作台 contains element: 布局结构
 [PASS] ## 3. 工作台 contains element: 组件分解
 [PASS] ## 3. 工作台 contains element: 状态矩阵
 [PASS] ## 3. 工作台 contains element: 交互清单
 [PASS] ## 3. 工作台 contains element: 键盘与焦点
-binding table rows (W#): 29 ; gap rows (G#): 26
+[PASS] ## 4. 阅读器 contains element: 区域职责
+[PASS] ## 4. 阅读器 contains element: 布局结构
+[PASS] ## 4. 阅读器 contains element: 组件分解
+[PASS] ## 4. 阅读器 contains element: 状态矩阵
+[PASS] ## 4. 阅读器 contains element: 交互清单
+[PASS] ## 4. 阅读器 contains element: 键盘与焦点
+binding table rows (W#): 32 ; gap rows (G#): 24
 [PASS] binding >=25 rows and gap >=20 rows
 
 ===== SUMMARY =====

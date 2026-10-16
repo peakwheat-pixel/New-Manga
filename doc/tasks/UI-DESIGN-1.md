@@ -151,13 +151,32 @@ evidence_dir: verification/UI-DESIGN-1
 - Handoff：[UI-DESIGN-1-zcode](../handoffs/UI-DESIGN-1-zcode.md)（`delivery_head=aaf00e59e`，status=`in_review`）。
 - Review：`verification/UI-DESIGN-1/dsh-review-r1.md`（Reviewer=dsh，独立于 Owner=zcode）。
 - 实际测试：见上表——Owner 等价运行 PASS；canonical 复跑由 Reviewer 独立执行 **PASS（exit 0）**。
+- 2026-10-16 **I1 有界返修（zcode，仅文档）**：针对 dsh-review-r1 唯一返修项 I1
+  （§7 曾把 G6 导入来源选择 / G19 导出目标选择误判为缺口，实际已由 HOST-ISSUER-1 实现为
+  production-only picker 命令）。Owner 逐条只读核实 E-a…E-e（`main.rs:409-436/438-458/460-493/
+  144-148+1421/78-83` 与 `1405-1422` HostControl 排他单测）后修改设计文档：
+  ① §7 删除 G6/G19 两行（编号保留空洞），新增「I1 返修注记」块（证据 + 与 §5.7 关系：
+  HostControl 仍不得由 WebView 调用，WebView 全程不接触路径）；
+  ② §6 新增 W30/W31（`library_import_file`/`library_import_folder`/`library_start_export`
+  既有实现绑定行，与 `issue_resource_url` 同性质标注「既有实现事实、非契约文本引用对象」）
+  与 W32（HostControl 排他单测行）；表注同步；绑定表 29→**32 行**；
+  ③ G20 保留为真缺口并写明缺失物：无「打开所在文件夹」host command（全库检索
+  `open_folder|reveal|show_in_folder|open_path` 不存在，E-f）；历史状态展示不经此缺口（W24 可承载）；
+  ④ 同步正文（§2.3 ImportDialog、§2.5-4、§3.3 ExportDialog、§9.2）与附表 AC4 行、文档头部状态；
+  ⑤ **同类错误复核（I1 要求第 4 项）**：逐一核对 §7 其余 24 条——G15（命令清单无 list_runs 类，
+  `main.rs:56-84`）、G17（main.rs 全文无 `app.emit`，仅 stderr announce `:939-945`）、G18（无缩略图命令）
+  均无实现支撑，维持真缺口；G16 已正确标注 `core_ping` 为探针事实；其余条目均为 §5 表 PROPOSAL
+  契约命令（真契约缺口）或契约明示未冻结（G26）——**未发现其他同类错误**。
+  §7 真缺口 **26→24 条**；selfcheck.ps1 阈值（W≥25、G≥20）仍满足（W=32、G=24），canonical 复跑由
+  Reviewer 执行。**注**：Handoff「风险与遗留」中「P12 被 G6 阻塞 / G19 阻塞 P17」的表述自本返修起
+  **被取代**，以设计文档 §7 I1 注记为准（Handoff 本次不在允许修改范围，故未回改）。
 
 ## Canonical Evidence
 
 | evidence_id | AC/Gate | path（仓库相对路径或绝对路径） | commit | sha256 | class (`CANONICAL` / `SOURCE_PIN`) |
 |---|---|---|---|---|---|
-| UI-DESIGN-1-E1 | AC1–AC7 | doc/design/AD001_FOUR_PAGE_UI_BASELINE.md | aaf00e59e | 8cdcf4de7b805b8400c70175690de07755f6dc3876748d4bb471a10222d61f85 | CANONICAL |
-| UI-DESIGN-1-E2 | AC8(a)–(d)（canonical 复跑） | verification/UI-DESIGN-1/selfcheck-output.txt | aaf00e59e | b1bb12dc9a3695555cc78bf1ce67808b6cbf8c9063f4ebeb4114b2b6a75dd9a5 | CANONICAL |
+| UI-DESIGN-1-E1 | AC1–AC7（含 AC4 I1 返修后：真缺口 24 条） | doc/design/AD001_FOUR_PAGE_UI_BASELINE.md | a996f821c | 374570b64b33c9004241cfa90e5ef4387b36571cbadb0faaff357aa86f845444 | CANONICAL |
+| UI-DESIGN-1-E2 | AC8(a)–(d)（I1 后 canonical 复跑，W=32/G=24） | verification/UI-DESIGN-1/selfcheck-output.txt | a996f821c | 496b3c1223b34a8d62b2651cb845aab83620708229adb3311a879e6afc061259 | CANONICAL |
 | UI-DESIGN-1-E3 | AC8 自检脚本 | verification/UI-DESIGN-1/selfcheck.ps1 | aaf00e59e | f36782d0a8c9fa72c539ac50490faaa1367016fc0b96e70e01816cb1d63629f8 | CANONICAL |
 | UI-DESIGN-1-E4 | AC8 Owner 阻塞登记 | verification/UI-DESIGN-1/selfcheck-BLOCKED.md | aaf00e59e | 5acab6837ad218c936716b17aa00b13acfee9916bb8b2c46413da087c107439d | CANONICAL |
 | UI-DESIGN-1-E5 | AC9 Owner 提交阻塞登记 | verification/UI-DESIGN-1/commit-BLOCKED.md | aaf00e59e | 6dad99ffa8e47cf7c5a7f430b1b127b1c445f5fc8861b4a5c75ee679bd930f33 | CANONICAL |
