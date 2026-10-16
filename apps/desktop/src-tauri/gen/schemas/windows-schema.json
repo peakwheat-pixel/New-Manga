@@ -399,6 +399,12 @@
           "markdownDescription": "Enables the library_get_export_snapshot command without any pre-configured scope."
         },
         {
+          "description": "Enables the library_get_reader_projection command without any pre-configured scope.",
+          "type": "string",
+          "const": "allow-library-get-reader-projection",
+          "markdownDescription": "Enables the library_get_reader_projection command without any pre-configured scope."
+        },
+        {
           "description": "Enables the library_get_run_snapshot command without any pre-configured scope.",
           "type": "string",
           "const": "allow-library-get-run-snapshot",
@@ -445,6 +451,12 @@
           "type": "string",
           "const": "allow-library-reveal-export-folder",
           "markdownDescription": "Enables the library_reveal_export_folder command without any pre-configured scope."
+        },
+        {
+          "description": "Enables the library_save_reading_progress command without any pre-configured scope.",
+          "type": "string",
+          "const": "allow-library-save-reading-progress",
+          "markdownDescription": "Enables the library_save_reading_progress command without any pre-configured scope."
         },
         {
           "description": "Enables the library_start_export command without any pre-configured scope.",
@@ -609,6 +621,12 @@
           "markdownDescription": "Denies the library_get_export_snapshot command without any pre-configured scope."
         },
         {
+          "description": "Denies the library_get_reader_projection command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-library-get-reader-projection",
+          "markdownDescription": "Denies the library_get_reader_projection command without any pre-configured scope."
+        },
+        {
           "description": "Denies the library_get_run_snapshot command without any pre-configured scope.",
           "type": "string",
           "const": "deny-library-get-run-snapshot",
@@ -655,6 +673,12 @@
           "type": "string",
           "const": "deny-library-reveal-export-folder",
           "markdownDescription": "Denies the library_reveal_export_folder command without any pre-configured scope."
+        },
+        {
+          "description": "Denies the library_save_reading_progress command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-library-save-reading-progress",
+          "markdownDescription": "Denies the library_save_reading_progress command without any pre-configured scope."
         },
         {
           "description": "Denies the library_start_export command without any pre-configured scope.",

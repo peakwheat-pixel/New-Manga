@@ -466,6 +466,30 @@ pub trait LibraryChannel: Send + Sync {
 
     fn list_chapter_pages(&self, chapter_id: &str) -> Result<serde_json::Value, LibraryError>;
 
+    /// P16-C1 (contract rev 2.1 §5/§6.3): pass the reader projection through
+    /// unchanged; the page resource refs remain opaque to the host.
+    fn get_reader_projection(
+        &self,
+        _chapter_id: &str,
+        _mode: &str,
+        _start_position: &str,
+    ) -> Result<serde_json::Value, LibraryError> {
+        Err(LibraryError::unavailable("Reader channel is unavailable"))
+    }
+
+    /// P16-C1: save only the caller's progress values. Optional values are
+    /// omitted when absent so an elapsed-time interval is never replayed.
+    fn save_reading_progress(
+        &self,
+        _chapter_id: &str,
+        _mode: &str,
+        _page_id: &str,
+        _scroll_offset_y: Option<f64>,
+        _elapsed_seconds_delta: Option<f64>,
+    ) -> Result<serde_json::Value, LibraryError> {
+        Err(LibraryError::unavailable("Reader channel is unavailable"))
+    }
+
     fn import_from_path(
         &self,
         path: &Path,
@@ -570,6 +594,27 @@ pub trait LibraryChannel: Send + Sync {
     fn get_export_history(&self) -> Result<ExportHistoryResponseView, LibraryError> {
         Err(LibraryError::unavailable("Export channel is unavailable"))
     }
+}
+
+fn reader_progress_payload(
+    chapter_id: &str,
+    mode: &str,
+    page_id: &str,
+    scroll_offset_y: Option<f64>,
+    elapsed_seconds_delta: Option<f64>,
+) -> Value {
+    let mut payload = serde_json::json!({
+        "chapter_id": chapter_id,
+        "mode": mode,
+        "page_id": page_id,
+    });
+    if let Some(offset) = scroll_offset_y {
+        payload["scroll_offset_y"] = serde_json::json!(offset);
+    }
+    if let Some(elapsed) = elapsed_seconds_delta {
+        payload["elapsed_seconds_delta"] = serde_json::json!(elapsed);
+    }
+    payload
 }
 
 pub type EventSink = Arc<dyn Fn(&str, Value) + Send + Sync>;
@@ -1477,6 +1522,42 @@ impl LibraryChannel for StdioLibraryChannel {
         )
     }
 
+    fn get_reader_projection(
+        &self,
+        chapter_id: &str,
+        mode: &str,
+        start_position: &str,
+    ) -> Result<serde_json::Value, LibraryError> {
+        self.round_trip(
+            "GetReaderProjection",
+            serde_json::json!({
+                "chapter_id": chapter_id,
+                "mode": mode,
+                "start_position": start_position,
+            }),
+        )
+    }
+
+    fn save_reading_progress(
+        &self,
+        chapter_id: &str,
+        mode: &str,
+        page_id: &str,
+        scroll_offset_y: Option<f64>,
+        elapsed_seconds_delta: Option<f64>,
+    ) -> Result<serde_json::Value, LibraryError> {
+        self.round_trip(
+            "SaveReadingProgress",
+            reader_progress_payload(
+                chapter_id,
+                mode,
+                page_id,
+                scroll_offset_y,
+                elapsed_seconds_delta,
+            ),
+        )
+    }
+
     /// P13-C1 (contract rev 2.0 §5.5): the Run command family. The wire names
     /// are the PascalCase names frozen in §5.5; every shape and domain rule is
     /// validated Core-side, so the host forwards the payload as given and
@@ -1856,6 +1937,26 @@ impl LibraryChannel for MockLibraryChannel {
         self.domain_result.lock().unwrap().clone()
     }
 
+    fn get_reader_projection(
+        &self,
+        _chapter_id: &str,
+        _mode: &str,
+        _start_position: &str,
+    ) -> Result<serde_json::Value, LibraryError> {
+        self.domain_result.lock().unwrap().clone()
+    }
+
+    fn save_reading_progress(
+        &self,
+        _chapter_id: &str,
+        _mode: &str,
+        _page_id: &str,
+        _scroll_offset_y: Option<f64>,
+        _elapsed_seconds_delta: Option<f64>,
+    ) -> Result<serde_json::Value, LibraryError> {
+        self.domain_result.lock().unwrap().clone()
+    }
+
     // RUN-IPC-1: the Run family is canned like every other mock method so
     // tests can drive both the success and the typed-rejection paths
     // deterministically.
@@ -1924,6 +2025,34 @@ impl LibraryChannel for MockLibraryChannel {
 mod tests {
     use super::*;
     use std::path::PathBuf;
+
+    #[test]
+    fn reader_progress_payload_omits_missing_optional_values() {
+        assert_eq!(
+            reader_progress_payload("chapter", "original", "page", None, None),
+            serde_json::json!({
+                "chapter_id": "chapter",
+                "mode": "original",
+                "page_id": "page",
+            })
+        );
+        assert_eq!(
+            reader_progress_payload(
+                "chapter",
+                "original",
+                "page",
+                Some(12.0),
+                Some(3.0),
+            ),
+            serde_json::json!({
+                "chapter_id": "chapter",
+                "mode": "original",
+                "page_id": "page",
+                "scroll_offset_y": 12.0,
+                "elapsed_seconds_delta": 3.0,
+            })
+        );
+    }
 
     #[test]
     fn spawn_args_target_core_service_module() {

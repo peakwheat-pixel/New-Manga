@@ -83,6 +83,10 @@ pub const PRODUCTION_COMMANDS: &[&str] = &[
     // page navigation projections, production-only like the resolve above.
     "list_chapters",
     "list_chapter_pages",
+    // READER-IPC-1 (contract rev 2.1 §5): opaque Reader projection and
+    // progress transport, production-only like the navigation projections.
+    "library_get_reader_projection",
+    "library_save_reading_progress",
     // HOST-ISSUER-1: user actions use native pickers; refs and paths stay in Rust.
     "library_import_file",
     "library_import_folder",
@@ -160,6 +164,13 @@ pub const PAGE_RESOLVE_PRODUCTION_ONLY_COMMANDS: &[&str] = &["resolve_page_resou
 /// retain their historical shape.
 pub const PAGE_NAV_PRODUCTION_ONLY_COMMANDS: &[&str] = &["list_chapters", "list_chapter_pages"];
 
+/// READER-IPC-1 (contract rev 2.1 §5): reader commands stay production-only;
+/// probe and AC1 surfaces retain their historical shape.
+pub const READER_PRODUCTION_ONLY_COMMANDS: &[&str] = &[
+    "library_get_reader_projection",
+    "library_save_reading_progress",
+];
+
 pub const HOST_ISSUER_PRODUCTION_ONLY_COMMANDS: &[&str] = &[
     "library_import_file",
     "library_import_folder",
@@ -203,6 +214,7 @@ pub fn command_allowlist(probe_mode: bool, ac1_mode: bool) -> Vec<&'static str> 
                     && !RC4_PRODUCTION_ONLY_COMMANDS.contains(command)
                     && !PAGE_RESOLVE_PRODUCTION_ONLY_COMMANDS.contains(command)
                     && !PAGE_NAV_PRODUCTION_ONLY_COMMANDS.contains(command)
+                    && !READER_PRODUCTION_ONLY_COMMANDS.contains(command)
                     && !HOST_ISSUER_PRODUCTION_ONLY_COMMANDS.contains(command)
                     && !RUN_PRODUCTION_ONLY_COMMANDS.contains(command)
                     && !EXPORT_REVEAL_PRODUCTION_ONLY_COMMANDS.contains(command)
@@ -450,6 +462,48 @@ fn list_chapter_pages(
         .as_ref()
         .ok_or_else(|| "CORE_UNAVAILABLE".to_string())?
         .list_chapter_pages(&chapter_id)
+        .map_err(|error| error.code)
+}
+
+/// READER-IPC-1: return the Core's ReaderProjection unchanged. Resource refs
+/// remain opaque and continue through the existing resolve_page_resource path.
+#[tauri::command]
+fn library_get_reader_projection(
+    state: tauri::State<'_, AppState>,
+    chapter_id: String,
+    mode: String,
+    start_position: String,
+) -> Result<serde_json::Value, String> {
+    state
+        .library
+        .as_ref()
+        .ok_or_else(|| "CORE_UNAVAILABLE".to_string())?
+        .get_reader_projection(&chapter_id, &mode, &start_position)
+        .map_err(|error| error.code)
+}
+
+/// READER-IPC-1: the host forwards only progress coordinates and optional
+/// elapsed time; Core owns validation and persistence.
+#[tauri::command]
+fn library_save_reading_progress(
+    state: tauri::State<'_, AppState>,
+    chapter_id: String,
+    mode: String,
+    page_id: String,
+    scroll_offset_y: Option<f64>,
+    elapsed_seconds_delta: Option<f64>,
+) -> Result<serde_json::Value, String> {
+    state
+        .library
+        .as_ref()
+        .ok_or_else(|| "CORE_UNAVAILABLE".to_string())?
+        .save_reading_progress(
+            &chapter_id,
+            &mode,
+            &page_id,
+            scroll_offset_y,
+            elapsed_seconds_delta,
+        )
         .map_err(|error| error.code)
 }
 
@@ -1225,6 +1279,8 @@ fn main() {
             resolve_page_resource,
             list_chapters,
             list_chapter_pages,
+            library_get_reader_projection,
+            library_save_reading_progress,
             library_import_file,
             library_import_folder,
             library_start_export,
@@ -1335,9 +1391,9 @@ mod tests {
     /// keyed `plugin:<name>|<cmd>` and never matches bare invocations -- the
     /// ACL layer silently skipped them, DSH R2-01). This pins the build
     /// artifact: the app manifest declares exactly the live commands
-    /// (nineteen production -- resource-channel, IPC1, settings, retype,
-    /// RC-4, page resolve/navigation and HOST-ISSUER-1 actions -- plus
-    /// the EXPORT-REVEAL-1 action -- plus
+    /// (twenty-seven production -- resource-channel, IPC1, settings, retype,
+    /// RC-4, page resolve/navigation, HOST-ISSUER-1, Run, export reveal and
+    /// Reader actions -- plus
     /// four probe-only and three M2-AC1 acceptance commands; R2-06),
     /// and no plugin-shaped surface remains.
     #[test]
@@ -1356,8 +1412,8 @@ mod tests {
         // commands too — a capability/manifest typo for an ac1 command must
         // fail here, not only surface as an E2E ACL denial.
         // M2-REGION-RETYPE-CORE r1 P3-2: the production surface joins the
-        // sweep, so the existence check covers all 25 commands across the
-        // three surfaces (18 production + 4 probe-only + 3 ac1) — a missing
+        // sweep, so the existence check covers all 34 commands across the
+        // three surfaces (27 production + 4 probe-only + 3 ac1) — a missing
         // capability/manifest entry for a production-only command (e.g. the
         // retype pair) fails this test, not just a live invoke.
         for command in command_allowlist(true, false)
@@ -1382,17 +1438,10 @@ mod tests {
 
     #[test]
     fn production_surface_includes_export_reveal() {
-        // M2-SETTINGS-IPC-CHANNEL: five -> seven (settings_get +
-        // settings_update_section, contract rev 1.3 §5.3; pinned wire names)
-        // M2-REGION-RETYPE-CORE: seven -> nine; RC-4 adds three frozen
-        // history/restore/render commands on production only;
-        // M2-PAGE-RESOURCE-RESOLVE-1: nine -> thirteen (contract rev 1.7);
-        // M2-PAGE-NAV-PROJECTION-1: thirteen -> fifteen (contract rev 1.8);
-        // HOST-ISSUER-1 adds three safe native-picker actions.
-        // RUN-IPC-1: fifteen -> twenty-one; the six P13-C1 §5.5 Run transport
-        // commands are the host outlet for the frozen Run surface.
-        // EXPORT-REVEAL-1: twenty-one -> twenty-two; one production-only
-        // directory reveal command.
+        // Production surface counts: 5 base/IPC1 + 2 settings = 7; +2 retype
+        // = 9; +3 RC-4 = 12; +1 page resolve = 13; +2 navigation = 15;
+        // +3 HOST-ISSUER-1 = 18; +6 Run = 24; +1 reveal = 25;
+        // +3 EXPORT-IPC-1 = 28; +2 READER-IPC-1 = 30.
         assert_eq!(
             command_allowlist(false, false),
             vec![
@@ -1411,6 +1460,8 @@ mod tests {
                 "resolve_page_resource",
                 "list_chapters",
                 "list_chapter_pages",
+                "library_get_reader_projection",
+                "library_save_reading_progress",
                 "library_import_file",
                 "library_import_folder",
                 "library_start_export",
@@ -1528,6 +1579,12 @@ mod tests {
                 "{command} must stay production-only"
             );
         }
+        for command in READER_PRODUCTION_ONLY_COMMANDS {
+            assert!(
+                !probe.contains(command),
+                "{command} must stay production-only"
+            );
+        }
         for command in HOST_ISSUER_PRODUCTION_ONLY_COMMANDS {
             assert!(
                 !probe.contains(command),
@@ -1556,6 +1613,7 @@ mod tests {
                 - RC4_PRODUCTION_ONLY_COMMANDS.len()
                 - PAGE_RESOLVE_PRODUCTION_ONLY_COMMANDS.len()
                 - PAGE_NAV_PRODUCTION_ONLY_COMMANDS.len()
+                - READER_PRODUCTION_ONLY_COMMANDS.len()
                 - HOST_ISSUER_PRODUCTION_ONLY_COMMANDS.len()
                 - RUN_PRODUCTION_ONLY_COMMANDS.len()
                 - EXPORT_REVEAL_PRODUCTION_ONLY_COMMANDS.len()
@@ -1612,6 +1670,12 @@ mod tests {
                 "{command} must stay production-only"
             );
         }
+        for command in READER_PRODUCTION_ONLY_COMMANDS {
+            assert!(
+                !ac1.contains(command),
+                "{command} must stay production-only"
+            );
+        }
         for command in HOST_ISSUER_PRODUCTION_ONLY_COMMANDS {
             assert!(
                 !ac1.contains(command),
@@ -1640,6 +1704,7 @@ mod tests {
                 - RC4_PRODUCTION_ONLY_COMMANDS.len()
                 - PAGE_RESOLVE_PRODUCTION_ONLY_COMMANDS.len()
                 - PAGE_NAV_PRODUCTION_ONLY_COMMANDS.len()
+                - READER_PRODUCTION_ONLY_COMMANDS.len()
                 - HOST_ISSUER_PRODUCTION_ONLY_COMMANDS.len()
                 - RUN_PRODUCTION_ONLY_COMMANDS.len()
                 - EXPORT_REVEAL_PRODUCTION_ONLY_COMMANDS.len()
@@ -1650,11 +1715,11 @@ mod tests {
 
     #[test]
     fn production_only_commands_stay_off_both_frozen_test_surfaces() {
-        // M2-REGION-RETYPE-CORE r1 P3-2: one negative sweep across the EIGHT
+        // One negative sweep across the TEN
         // production-only families (IPC1 + settings + retype + RC4 + the
         // M2-PAGE-RESOURCE-RESOLVE-1 page-resource resolve + the
         // M2-PAGE-NAV-PROJECTION-1 navigation projections + HOST-ISSUER-1 +
-        // the RUN-IPC-1 Run transport + EXPORT-REVEAL-1) — the frozen probe
+        // the RUN-IPC-1 Run transport + EXPORT-REVEAL-1 + READER-IPC-1) — the frozen probe
         // and ac1 test-mode surfaces must never gain any of them, and their
         // historical 7/6-command shapes stay pinned.
         // M2-PAGE-NAV-PROJECTION-1 navigation projections + the RUN-IPC-1 Run
@@ -1668,6 +1733,7 @@ mod tests {
             .chain(RC4_PRODUCTION_ONLY_COMMANDS)
             .chain(PAGE_RESOLVE_PRODUCTION_ONLY_COMMANDS)
             .chain(PAGE_NAV_PRODUCTION_ONLY_COMMANDS)
+            .chain(READER_PRODUCTION_ONLY_COMMANDS)
             .chain(HOST_ISSUER_PRODUCTION_ONLY_COMMANDS)
             .chain(RUN_PRODUCTION_ONLY_COMMANDS)
             .chain(EXPORT_REVEAL_PRODUCTION_ONLY_COMMANDS)
@@ -1690,7 +1756,7 @@ mod tests {
     /// six names are pinned with a fixed literal expectation (never derived
     /// from the constant itself), the group must sit on the production surface
     /// and on NEITHER frozen test surface, and the production surface must
-    /// still hold exactly twenty-four commands.
+    /// still hold exactly twenty-seven commands.
     #[test]
     fn run_transport_commands_are_exact_and_production_only() {
         assert_eq!(
@@ -1706,8 +1772,9 @@ mod tests {
         );
         // 18 pre-existing production commands + the six RUN-IPC-1 Run transport
         // commands + the single EXPORT-REVEAL-1 reveal command + the three
-        // EXPORT-IPC-1 export control/query commands = 28.
-        assert_eq!(PRODUCTION_COMMANDS.len(), 28);
+        // EXPORT-IPC-1 export control/query commands + the two READER-IPC-1
+        // reader commands = 30.
+        assert_eq!(PRODUCTION_COMMANDS.len(), 30);
 
         let production = command_allowlist(false, false);
         let probe = command_allowlist(true, false);
@@ -1740,7 +1807,7 @@ mod tests {
                 "library_get_export_history",
             ]
         );
-        assert_eq!(PRODUCTION_COMMANDS.len(), 28);
+        assert_eq!(PRODUCTION_COMMANDS.len(), 30);
 
         let production = command_allowlist(false, false);
         let probe = command_allowlist(true, false);
