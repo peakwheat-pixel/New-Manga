@@ -1,5 +1,7 @@
 > **内部生命周期窄注记（2026-10-07，M2-DERIVED-GC-2 实现；零 wire 修订，协议 major/minor 不变）**：M2-DERIVED-GC-2 在专用 resource catalog 内引入 `preview_lifecycle` 来源行与 `preview_namespace` 绑定行，并给宿主→channel 的**内部** `revoke_resource` 控制请求加了受信 `retire_preview` 布尔位（CoreChannel 轮换专用方法；channel 仅在其自身 revoke 成功后据此把已登记自有 preview 行的 `retired` 置 1）。这些都是 host↔sidecar 控制面/SQLite 元数据内部实现：**不新增任何 Tauri IPC 命令、不改 WebView payload/ACL/十五条生产命令表、不发 `source_artifact_revision_id`/`producer_root` 等来源字段到 WebView、不改 issue/resolve/touch/revoke/TTL 的既有语义**（失败撤销新 key 与 WebView `revoke_resource_refs` 均不携带该位）。preview 回收（retired 副本删除）只发生在受 namespace 租约保护的独占启动窗口，见 [M2_DERIVED_PREVIEW_GC_DESIGN.md](M2_DERIVED_PREVIEW_GC_DESIGN.md)。
 
+> **rev 2.3（2026-10-16，HOST-ISSUER-1-C1 host→Core grant control）**：冻结独立 `HostControl` 会话握手、导入来源/导出目标 grant 注册与撤销，以及关闭时的 session 失效。控制请求仅走 Tauri host 持有的 live-Core 私有进程通道，带 `host_session_id`、`host_session_credential` 与 `core_session_id`；普通 JSON-RPC/WebView 面拒绝 host-only 操作。注册 payload 复用现有 Core 私有 seam 所需数据；`ImportSourceRef` / `ExportTargetRef` 字段与 `REF_*` 语义不变。协议 minor 从 2 增至 3；§12 仅授权最小 Core handler/session 改动与 `tests/core/**`，本次不实现 runtime。修订范围：§3、§5、§10.3、§10.4、§11、§12。兼容性见 [HOST-ISSUER-1-C1 compatibility impact](../../verification/HOST-ISSUER-1-C1/compatibility-impact.md)。
+>
 > **rev 2.2（2026-10-16，P12-C1 导入 IPC 契约）**：冻结 `ImportPages`、host 签发的只读 `ImportSourceRef` 与逐源/逐页 `ImportReport`；`ImportProgressChanged` 明确保持 `UNKNOWN / PROPOSAL`，原因见 §6.2。按 §3.2 将协议 minor 从 1 提升到 2，只新增冻结命令，不改变既有冻结 wire。修订范围：§3、§5、§6.2、§10.4、§12。明确授权导入侧 Python IPC Runtime，精确 allowlist 见 §12；本修订不代表 Runtime 或 Tauri host issuer 已实现。兼容影响见 [P12-C1 compatibility note](../../verification/P12-C1/compatibility-impact.md)。
 
 > **rev 2.0（2026-10-16，P13-C1 Runtime IPC 授权修订）**：冻结 Run 命令、幂等键、快照/投影查询与 Run 状态事件 wire 面；`StartRun.idempotency_key` 为必填，且 stdio 输出流增加异步事件，因此按 §3.2 将协议 major 从 1 提升到 2。修订范围：§3、§4、§5 Run catalog、§5.5、§6.1、§6.2、§11、§12。Restart 重放响应可表达 child Run 当前状态；TaskProjection 冻结错误/重试与可得 Provider/Model/Device 字段。既有命令的 payload/result/error 语义不变；旧 major 客户端不能调用 major 2 endpoint，兼容影响见 [P13-C1 compatibility note](../../verification/P13-C1/compatibility-impact.md)。明确授权已释放的 P13 Task 实现 Python IPC Runtime，边界见 §12；本修订自身不代表 runtime 已实现。
@@ -12,12 +14,13 @@
 
 # M2-C1 — Typed IPC Contract
 
-**当前修订范围：P12-C1 rev 2.2**（§3、§5 `ImportPages`、§6.2、§10.4 `ImportSourceRef`、§12）。P13 Run wire、P16 Reader/Export wire 与 §10.3 `ExportTargetRef` 本文零语义变化。
+**当前修订范围：HOST-ISSUER-1-C1 rev 2.3**（§3 版本、§5.7 host-only grant control、§10.3/§10.4 注册通道交叉引用、§11 状态表、§12 最小 Core 授权）。P13 Run、P16 Reader/Export 与 P12 `ImportPages` 的现有 payload/result/error、`ExportTargetRef` / `ImportSourceRef` 字段和 `REF_*` 语义均零变化。
 
-状态：rev `2.2`（P12-C1）冻结导入 wire，并授权限路径的导入侧 Python IPC Runtime；协议 envelope 为 major `2` / minor `2`。rev 2.1 的 Reader/Export wire、rev 2.0 的 P13 Run wire 与更早既有冻结命令语义不变；本修订不声称 ImportPages runtime 或 Tauri host issuer 已实现。下方历史 revision 条目保留当时状态，不覆盖本行与当前 rev 2.2。
+状态：rev `2.3`（HOST-ISSUER-1-C1）冻结 host→live-Core grant control wire；协议为 major `2` / minor `3`。rev 2.2 的 P12 导入 wire、rev 2.1 的 Reader/Export wire、rev 2.0 的 P13 Run wire 与更早既有冻结命令语义不变。Host issuer 与新 control runtime 尚未实现；§12 仅明确后续最小 Core 实现授权。下方历史 revision 条目保留当时状态，不覆盖本行与当前 rev 2.3。
 
 ## Revision history
 
+- `2.3`（HOST-ISSUER-1-C1，2026-10-16）：**授权契约修订（host-only grant control）**——冻结 `OpenHostSession`、`RegisterImportSource` / `RevokeImportSource`、`RegisterExportTarget` / `RevokeExportTarget`、`CloseHostSession`；注册请求沿用 P09-FU2/P16 已有 seam 的字段；host session credential 与 Core session id 只存在 HostControl envelope/私有会话状态，不进入两种 ref。只新增独立 host-control wire，普通 JSON-RPC 对这些操作返回 `HOST_ONLY_REQUIRED`；协议 minor `2→3`，major 不变。既有 P12/P16/P13 wire、ref 字段及 `REF_*` 语义不变；§12 的最小 Core allowlist 仅含 `src/bootstrap/core_service.py` 与 `tests/core/**`。不授权 React/WebView、Tauri 命令、Schema/migration、依赖或其他产品行为；实现状态 `NOT_IMPLEMENTED`。
 - `2.2`（P12-C1，2026-10-16）：冻结 `ImportPages` request/result、`ImportSourceRef` 只读来源授权与 `ImportReport` 逐源/逐页 DTO；来源限制为 P09 已批准的图片、显式选定文件集合/文件夹直接子项和 PDF，重复策略沿用 P09 的 `skip` / `import_as_new`。`ImportProgressChanged` 保持 `UNKNOWN / PROPOSAL`，因为 P09 没有持久 operation/snapshot wire；孤立事件不能成为导入真值。协议 minor `1→2`：只增加新冻结命令，没有改写既有冻结字段或事件；proposal 阶段的裸路径/URL 调用不获兼容承诺。更新 §12，授权导入侧 Python IPC Runtime 的冻结 allowlist；不授权 Tauri/Rust issuer 或产品代码。本修订未实现 Runtime。
 - `2.1`（P16-C1，2026-10-16）：冻结 Reader/Export wire，新增 `GetReaderProjection` / `SaveReadingProgress`、`StartExport` / `CancelExport`、`GetExportSnapshot` / `GetExportHistory` 和 `ReadingProgressChanged` / `ExportProgressChanged`。`StartExport.target_ref` 为 Tauri host 签发、单一目标、300 秒过期且一次消费的 `ExportTargetRef`；Core 经与 `ImportSourceRef` 同源的受信 grant resolver 验证、解析、消费。协议 minor `0→1`，只新增命令/事件；旧命令语义和 P13 Run wire 不变，runtime 未实现。细节见 §5、§6.3、§10.3、§12。
 - `2.0`（P13-C1，2026-10-16）：**授权契约修订**——① `StartRun` 增加必填 `idempotency_key`，并冻结 `ControlRun`、`ResumeBlockedRun`、`GetRunSnapshot`、`GetTaskProjection`、`RetryFailedTargets` 的 request/result；同键同 fingerprint 返回原 Run，同键不同 fingerprint 返回 `IDEMPOTENCY_KEY_REUSED`；restart 重放还返回 child 当前状态；`request_id` 保持纯请求关联用途；②按 P11 §4.2/§4.5 冻结控制动作与完整非法转换拒绝表；③冻结 `TaskProjection` 的任务错误/重试、可得 Provider/Model/Device 字段，以及 Task failure / Run pause / Run completion / current Page·Step changed 事件；事件在持久状态提交后经现有 JSONL stdio stream 推送，快照仍为真值；④协议 major `1→2`，因为新必填字段和响应/事件混合输出不能按 §3.2 minor widening；既有命令字段、结果、错误语义不变，但 1.x 客户端必须升级至 2.0 后才可连接该 endpoint；⑤**明确授权** P13 Task 实现 Python IPC Runtime，范围与 allowlist 由 P13 Task 冻结；不授权 React/Tauri/Rust 改动、其他产品功能或依赖。实现状态仍为 `NOT_IMPLEMENTED`。
@@ -75,7 +78,7 @@ SQLite (persistent authority; written only under Python Core)
 ```text
 Request<T> = {
   protocol: "new-manga.core",
-  version: { major: 2, minor: 2 },
+  version: { major: 2, minor: 3 },
   request_id: OpaqueId,
   command: CommandName,
   payload: T
@@ -83,7 +86,7 @@ Request<T> = {
 
 Response<T> = {
   protocol: "new-manga.core",
-  version: { major: 2, minor: 2 },
+  version: { major: 2, minor: 3 },
   request_id: OpaqueId,
   result: T | null,
   error: ErrorEnvelope | null
@@ -91,7 +94,7 @@ Response<T> = {
 
 Event<T> = {
   protocol: "new-manga.core",
-  version: { major: 2, minor: 2 },
+  version: { major: 2, minor: 3 },
   event_id: OpaqueId,
   event_type: EventName,
   emitted_at: Timestamp,
@@ -116,6 +119,7 @@ Event<T> = {
 - P13-C1 将冻结的 Run 命令面从 proposal major 1.0 升至 major 2.0：`StartRun.idempotency_key` 的新增必填性及单一 JSONL 输出流中新增异步事件均不能由 major 1 接收端安全忽略。既有命令 payload/result/error 语义不变；major 1 客户端收到 `PROTOCOL_VERSION_UNSUPPORTED`，必须升级后使用 major 2。当前生产 Core stdio 命令实现仍为 major 1 / minor 6；本修订只冻结目标 wire，不声称当前服务已支持 major 2。
 - P16-C1 在 major 2 / minor 1 冻结新增 Reader/Export 命令与事件；既有冻结命令、结果、错误和 P13 Run 事件语义不变。rev 2.0 客户端不能调用这些新增命令；要使用 Reader/Export 面，客户端与 Core 必须配置到 rev 2.1。协议没有版本协商，本文不承诺不同 minor 的同进程双版本服务。
 - P12-C1 在 major 2 / minor 2 冻结新增 `ImportPages`，其余既有冻结命令、结果、错误、状态和事件语义不变。协议 minor 从 1 增至 2，符合“只新增命令”的兼容规则；rev 2.1 客户端与 Core 必须升级并配对到 rev 2.2 才能调用导入面。minor 不代表旧的 proposal 裸路径/URL 形态受支持：旧形态从未冻结，P18 实际运行也报告 `UNKNOWN_COMMAND`。协议没有版本协商或自动迁移。
+- HOST-ISSUER-1-C1 在 major 2 / minor 3 新增独立 `HostControl` envelope 与 host-only 会话/注册/撤销操作；minor 从 2 增至 3。现有 §3 `Request<T>` / `Response<T>` 及其 command payload 均不增加字段；旧客户端不支持 HostControl，也不能调用其操作。使用 HostControl 的 host 与 Core 必须配对支持 rev 2.3；普通 application JSON-RPC 对这些保留操作 fail-closed。无版本协商或自动迁移，现有 rev 2.2 及更早冻结 wire 不变。
 - 版本握手/协商与自动迁移仍 `NOT_IMPLEMENTED`；客户端须以已知配置发送版本。`PROTOCOL_VERSION_UNSUPPORTED` 是稳定错误码。
 
 ## 4. Request/response 语义
@@ -137,6 +141,7 @@ Event<T> = {
 | `SetBookFavorite` / `SetBookArchived` | `{book_id, value: boolean}` → `BookSummary` | 对应 Library service 调用。 |
 | `ListChapters` / `CreateChapter` / `DeleteChapter` | `{book_id}` / `{book_id,title,chapter_number?}` / `{chapter_id}` → `ChapterSummary[]` / `ChapterSummary` / `Unit` | ViewModel 使用 `list/get/create/delete_chapter`。**`1.8` 注记**：`ListChapters` 已转冻结为 wire `list_chapters`（见下方 `ListChapters` 行，最小导航摘要面）；`CreateChapter`/`DeleteChapter` 仍为 PROPOSAL。 |
 | `ImportPages` | `{chapter_id, sources: ImportSourceRef[], duplicate_policy?: "skip"\|"import_as_new"}` → `ImportReport` | **2.2 FROZEN**：payload、逐源/逐页结果与拒绝面见 §5.6；只接受 host 授权的只读来源引用，详情见 §10.4。协议冻结不表示 runtime 已实现。 |
+| `HostControl`（仅 host↔Core） | `OpenHostSession`、单条 `RegisterImportSource` / `RevokeImportSource`、`RegisterExportTarget` / `RevokeExportTarget`、`CloseHostSession`；DTO 见 §5.7 | **2.3 FROZEN**：独立 host-control envelope + session credential；只在 host 持有的 live-Core 私有进程通道，不是 application/Tauri command，不得由 React/WebView 调用。runtime 未实现。 |
 | `StartRun` | `{command: PipelineCommand, scope: PipelineScope, overrides?: JsonObject, idempotency_key: IdempotencyKey}` → `RunAccepted` | 当前 Workbench 有 `PipelineService.create_run`/`plan_run`，但无此 IPC handler；冻结 wire 与 acceptance 见 §5.5。 |
 | `GetRunSnapshot` | `{run_id}` → `RunSnapshot` | 读取 Core 持久 Run 状态；wire DTO 与拒绝语义见 §5.5。 |
 | `GetTaskProjection` | `{run_id}` → `TaskProjection` | `build_projection` 是应用层唯一投影；读取面见 §5.5 和 §6.1。 |
@@ -373,6 +378,107 @@ Sha256 = string                                 # exactly 64 lowercase hexadecim
 - `COPY_FAILED` 不创建 Page；pending 页没有 Page 或 Managed Original。若 Page SQLite 事务在 Managed Original 原子发布后失败，依 P09 允许保留完整、不可见的 Managed Original 孤儿；对应错误不得伪报零副作用，`side_effects="managed_orphan_possible"`。Page 永远不得先于其完整 Managed Original 提交。
 - 若操作在中途被取消，`cancelled=true`，已成功提交的 Page 保留，未处理页为 `pending` 且其 `side_effects="none"`；已处理项的副作用逐项报告。事件、重连、重放或取消控制命令不由本节新增。
 - 同步响应错误使用 §8；未映射异常保留源 code 或 `UNKNOWN`，不得把未知错误伪装为零副作用拒绝。拒绝错误及 `ImportItemError.message`/`details` 不得包含本地路径、grant 内容、签名材料、stack 或 Secret。
+
+### 5.7 HostControl：host-only grant registration / revoke（HOST-ISSUER-1-C1，冻结）
+
+本节冻结 host 到**同一 live Core 实例**的授权控制面。它不属于 §3 普通 application `Request<T>` command catalog，也不是 Tauri command。唯一通道是 Tauri host 直接 spawn 并持有 `bootstrap.core_service` 子进程的既有 stdio JSON-lines channel（`StdioLibraryChannel`）；HostControl 用独立 envelope 在这条 host-owned 进程通道中传输，不新增监听端口或第二个 sidecar。它不是 `core_bridge.rs` 的 resource-channel sidecar。Tauri 内部 bridge 负责传输，React/WebView 无此进程句柄、原始 stdio 或 credential，也没有接收任意 HostControl envelope 的 Tauri command；**HostControl commands MUST NOT 由 React/WebView 调用**。注册的绝对路径、grant 事实、HMAC signing key 与签名只允许在该可信通道中出现；不得回显到 WebView、普通事件、日志或错误。
+
+```text
+HostSessionCredential = string                 # URL-safe Base64 of 32 CSPRNG bytes
+
+OpenHostSession = {
+  protocol: "new-manga.core",
+  version: { major: 2, minor: 3 },
+  request_id: OpaqueId,
+  channel: "host-control",
+  command: "OpenHostSession",
+  payload: {
+    host_session_id: OpaqueId,
+    host_session_credential: HostSessionCredential
+  }
+} -> { core_session_id: OpaqueId }
+
+HostControlRequest<T> = {
+  protocol: "new-manga.core",
+  version: { major: 2, minor: 3 },
+  request_id: OpaqueId,
+  channel: "host-control",
+  core_session_id: OpaqueId,
+  host_session_id: OpaqueId,
+  host_session_credential: HostSessionCredential,
+  command: HostControlCommand,
+  payload: T
+}
+
+HostControlResponse<R> = Response<R>                   # §3 envelope
+HostControlCommand = RegisterImportSource | RevokeImportSource
+                  | RegisterExportTarget | RevokeExportTarget | CloseHostSession
+
+RegisterImportSource = {
+  grant_id: OpaqueId,
+  session_id: OpaqueId,                       # must equal authenticated host_session_id
+  scope_class: "user-source",
+  operation: "ImportPages",
+  access: "read-only",
+  source_path: AbsolutePath,                   # host/Core only
+  source_kind: "file" | "directory",
+  scope_identity: [volume_serial: uint, file_index: uint] | null,
+  entries: [{
+    path: AbsolutePath,
+    facts: { volume_serial: uint, file_index: uint, size: uint, sha256: Sha256 }
+  }],
+  expires_at: UnixTimeSeconds,
+  signing_key: HostSigningKey,                 # base64url; decoded length >= 32 bytes
+  signature: string
+} -> { registered: true }
+
+RevokeImportSource = { grant_id: OpaqueId } -> { revoked: true }
+
+RegisterExportTarget = {
+  grant_id: OpaqueId,
+  session_id: OpaqueId,                       # must equal authenticated host_session_id
+  target_path: AbsolutePath,                   # host/Core only
+  format: ExportFormat,                       # §5 StartExport enum
+  replace_existing: boolean,
+  expires_at: UnixTimeSeconds,
+  signing_key: HostSigningKey,                 # base64url; decoded length >= 32 bytes
+  signature: string
+} -> { registered: true }
+
+RevokeExportTarget = { grant_id: OpaqueId } -> { revoked: true }
+CloseHostSession = {} -> { closed: true }
+
+HostSigningKey = string                       # base64url encoding of host HMAC key
+AbsolutePath = string                         # absolute OS path; host/Core private boundary only
+UnixTimeSeconds = number                      # finite seconds since Unix epoch
+```
+
+注册 payload 与 P09-FU2 `CoreServiceServer._register_import_source`、P16 `_register_export_target` 的既有私有 seam 输入一一对应；撤销 payload 与对应 `_revoke_*` seam 一一对应。导入 `scope_identity` 对目录必填、对单文件为 `null`；`entries` 的直接子项、自然序、格式、来源身份与 hash 约束严格沿用 §10.4/P09。Grant scope、签名输入、有效期上限及 `ExportFormat` 严格沿用 §10.3/§10.4 和 §5，不在本节另行定义。
+
+**Wire reference 不变**：成功注册只回 `{registered: true}`；导入 host 用该请求中同一 `grant_id` 与 `signature` 形成既有 `{grant_id, host_signature: signature}` `ImportSourceRef`，导出 host 按 §10.3 原样构造 `ExportTargetRef`。Host session credential、`core_session_id`、路径、scope facts 与 signing key 均不得加进两种 ref，也不得改其签名字段或既有消费者 payload。每条注册请求只处理一个 grant；本节不设用户选择数量、grant 上限或多来源选择策略。
+
+**Host-only 拒绝**：Core 为每个进程生成新的 `core_session_id`。Tauri host 在向 WebView 暴露普通 Core 操作前，只能经其 direct-child stdio channel 内部调用一次 `OpenHostSession`；host 生成并保管 credential，Core 将其与 `host_session_id` 及当前 `core_session_id` 绑定。之后每个 `HostControlRequest` 必须带这三项，Core 对 credential 做常数时间比较并校验当前进程/活动 session。React 侧只有现存、显式登记的 Tauri command wrapper，不得有通用 raw-Core passthrough；HostControl 方法只留在 Rust 内部 bridge。普通 §3 `Request<T>` dispatcher 不注册上述命令；收到没有 `channel: "host-control"` 的同名 command 时返回 `HOST_ONLY_REQUIRED`，不得尝试解析路径或调用注册 seam。HostControl envelope 中缺失/错误/关闭的 host session 返回 `HOST_SESSION_INVALID`；指向另一 Core 进程的 request 返回 `CORE_SESSION_MISMATCH`。HostControl credential 与 grant 的 HMAC key 是不同 secret。
+
+**Session 生命周期**：一个 Core 进程最多接受一个 host session。每个 grant 同时绑定该 host session 与当前 Core 进程 session；前者使用现有注册表的 `session_id`，后者仅保存在 Core 内存 registry/control state，不进入 ref 或签名对象。`CloseHostSession` 在返回成功前撤销该 session 登记的所有未完成 grant，并清除活动 credential；host control channel 断开执行同一失效动作。该 Core 进程不接受第二个 session；host session 轮换时关闭并重启 Core，再用新 `core_session_id` 建立新 session。Core 关闭/崩溃/重启时内存 registry 消失；新 Core 的 `core_session_id` 不同且旧 refs 不可用（旧 grant 在新 registry 中按现有 `REF_UNKNOWN_ID` 语义拒绝）。同一实例在显式 session close 后、停机前仍保留 revoked tombstone，使旧 ref 按既有 §10.3/§10.4 返回 `REF_REVOKED`。
+
+**错误与副作用**：HostControl 错误使用 §3 `Response` / §8 `ErrorEnvelope`，`result=null`。HostControl 外层 envelope 畸形或包含未知字段时使用 `INVALID_REQUEST`；注册/撤销 grant payload 的形状错误继续使用既有 `REF_MALFORMED`，不重解释 `REF_*`。message 不含路径、credential、grant、签名或 stack。
+
+| 条件 | `code` / `category` | 结果与副作用 |
+|---|---|---|
+| 同一 Core process 第二次打开 host session（包括先前已关闭后） | `HOST_SESSION_ALREADY_OPENED` / `conflict` | 拒绝；不替换或重建 session；host 轮换必须重启 Core。 |
+| 注册 ID 已存在 | `GRANT_ALREADY_REGISTERED` / `conflict` | 拒绝；不覆盖、不续期、不改变原 grant。 |
+| 撤销未知 grant | `REF_UNKNOWN_ID` / `not_found` | 拒绝；registry、库与文件均不变。 |
+| 普通 JSON-RPC 尝试调用 host-only 操作，或 HostControl 缺少 `channel` | `HOST_ONLY_REQUIRED` / `validation` | 拒绝；不调用 seam。 |
+| HostControl credential 缺失/错误，或 host session 已关闭/无效 | `HOST_SESSION_INVALID` / `conflict` | 拒绝；不调用 seam。 |
+| `core_session_id` 与当前 Core 不符 | `CORE_SESSION_MISMATCH` / `conflict` | 拒绝；不调用 seam。 |
+| payload `session_id` 不等于已认证 host session，或 scope 越权/逃逸 | `REF_SCOPE_DENIED` / `validation`、`REF_OUT_OF_SCOPE` / `validation` | 沿用既有 `REF_*`；不登记 grant。 |
+| DTO 畸形或签名无效 | `REF_MALFORMED` / `validation`、`REF_SIGNATURE_INVALID` / `validation` | 沿用既有 `REF_*`；不登记 grant。 |
+| 注册时 grant 已过期/超过既有有效期约束 | `REF_EXPIRED` / `conflict` | 沿用 §10.3/§10.4；不登记 grant。 |
+| 引用消费时 grant 已过期/已撤销 | `REF_EXPIRED` / `conflict`、`REF_REVOKED` / `conflict` | 沿用 §10.3/§10.4；拒绝消费。 |
+
+注册只有在所有 session、DTO、scope、expiry、签名与重复 ID 检查通过后才可原子写入对应的进程内 registry。任一拒绝不改变 registry，不读入来源内容、不写临时文件/目标文件、不写 SQLite。成功撤销在 registry 标记已生效后才响应；其后开始的解析/消费立即看到 `REF_REVOKED`。与 registry 锁竞争的已完成原子消费，及已打开的 Import 验证 handle/已接受的 Export operation，按 §10.3/§10.4 现有生命周期继续；撤销不删除已发布结果，也不新增取消语义。重复撤销沿用现有 seam 的幂等成功 `{revoked: true}`。
+
+运行状态：本节只冻结 wire，不声称任何 HostControl handler、credential 生命周期或 host issuer 已实现；见 §12 授权边界。
 
 ## 6. Typed projections 与 events
 
@@ -706,7 +812,7 @@ AS-IS `normalized_to_page_geometry(points, page_w, page_h)` owns conversion in a
 
 - `ExportTargetRef` 是不透明、受限的写授权引用；它不是路径字符串，也不得编码/暴露路径。唯一 issuer 是受信 **Tauri host**。Host 在用户选择目标后签发，并将引用只注入可信 host→Python Core 的 `StartExport` 请求；React/WebView 不得接收、保存、构造、转发或使用该引用，也不得接触其映射到的路径。
 - 引用 scope 是**一个精确的最终输出文件目标**和**一次 `StartExport` 调用**，并仅授权该文件所需的临时 sibling staging 与发布。签名/授权绑定当前 host session、单一 grant ID、目标 scope、允许的 `format`、是否允许替换既有目标及绝对过期时间；不允许目录递归、其他文件、任意路径访问或扩权。默认有效期为签发后 **300 秒，不滑动续期**；一次有效调用后即消费。临时文件名只能由 Core 在同一授权目标目录内生成并须清理。
-- Host 通过受信 host→Core 授权通道登记受限目标 grant；引用仅含不透明 grant ID 与 host 签名。Core 在任何目标写入前必须验证当前 host session 的签名/issuer、scope、format、目标替换授权、未过期、未撤销且未消费，并以原子方式消费 grant；随后只能通过 Core 侧 grant resolver 将该 grant 解析为受限目标能力。具体 token 编码/签名算法可由 Runtime Task 在不改变上述语义的前提下选择。
+- Host 通过 §5.7 受信 host→live-Core `HostControl` 通道登记受限目标 grant；引用仅含不透明 grant ID 与 host 签名。Core 在任何目标写入前必须验证当前 host session 的签名/issuer、scope、format、目标替换授权、未过期、未撤销且未消费，并以原子方式消费 grant；随后只能通过 Core 侧 grant resolver 将该 grant 解析为受限目标能力。注册还绑定当前 Core process session，但该绑定只在 Core 内存控制状态，不新增 ref 字段或签名输入。具体 token 编码/签名算法可由 Runtime Task 在不改变上述语义的前提下选择。
 - Core 必须拒绝缺失/畸形引用（`REF_MALFORMED`）、非 host 签发或签名无效（`REF_SIGNATURE_INVALID`）、过期（`REF_EXPIRED`）、未知/撤销 grant（`REF_UNKNOWN_ID` / `REF_REVOKED`）、重放（`REF_ALREADY_CONSUMED`）、scope/format/host session 不匹配或未获 host 替换授权的既有目标（`REF_SCOPE_DENIED`）。拒绝错误不得暴露 grant 内容、签名材料或任何本地路径。不得以请求中的任何其他字段回退为 path-based write。
 - Core 解析后只能写授权目标及其临时 staging；解析/打开阶段须验证句柄最终位置仍在该 grant scope 内，并拒绝 reparse/路径逃逸。所有原始 source、Managed Copy、现有译图 artifact 与 current/pinned Revision 均为零写对象。目标校验或发布失败时清理临时文件，绝不回写 source；已发布的输出不因后续取消而删除。
 - Host 可在其可信边界内持有所选路径；`ExportProgressSnapshot` / `ExportHistoryEntry` 的 `output_path` 只回到可信 Tauri host 以满足 D08 AC-EXPORT-002 和 D04 §37。Host 不得把绝对路径或 `ExportTargetRef` 转发给 React/WebView；前端若需展示状态/触发打开文件夹，必须经独立 host command 按不透明 `export_id` 操作，不能借此取得路径。
@@ -718,7 +824,7 @@ AS-IS `normalized_to_page_geometry(points, page_w, page_h)` owns conversion in a
 
 - `ImportSourceRef = {grant_id: OpaqueId, host_signature: string}`。它是不透明、受限、可过期的**读授权引用**，不是路径或 URI；不得携带原始文件 bytes、Base64、绝对/相对路径或可解码出路径的字段。来源引用只在可信 Tauri host→Python Core 边界上出现；React/WebView 不得接收、保存、构造或转发引用，也不得接触其映射路径。Host 是唯一 issuer，并只可为用户显式选择的源文件或文件夹签发。
 - Grant 绑定当前 host session、唯一 grant ID、`ImportPages` 读操作、精确选中的文件或文件夹 scope、签发时来源身份与绝对过期时间；不授权其它文件、目录递归、任意 OS 路径、写入/移动/删除或其它命令。文件夹只涵盖 P09 已冻结的直接子项集合；Core 不得由请求字段扩大或替换该 scope。Host 可撤销 grant；撤销对下一次解析立即生效。引用默认 TTL 为 **300 秒并在活动消费期间滑动续期**（沿 §10.1 T6）；过期后返回 `REF_EXPIRED`，不能静默续期过期引用或退回 path-based 访问。Host session 结束、显式取消选择或 grant 撤销后返回 `REF_REVOKED`。已经由 Core 打开的只读 handle 不因撤销被强制中断，沿用 §10.1 T6；该 handle 仍只允许完成当前已验证的导入读取。
-- Host 经受信 grant resolver 登记受限来源 grant；引用只含 opaque `grant_id` 与 host 签名。Core 在任何来源读取、Managed Copy/temp 写入或 SQLite 写入前验证 issuer/session/signature、grant 存在、scope、未过期、未撤销，以及来源对象身份与选择范围。解析必须 open-then-verify-from-handle：从同一 handle 校验最终 containment、file identity、size 与 §10.2 要求的内容 digest，再且仅从该 handle 读取；读取后复核 identity。拒绝 symlink、junction、reparse point、相对路径、`.`/`..` 穿越、盘符/UNC 逃逸、链接替换、来源缺失及身份/尺寸/hash 漂移。路径与文件句柄只存在于受信 host/Core 内部，绝不出现在请求、结果、事件或错误 message/details。
+- Host 经 §5.7 受信 `HostControl` 通道登记受限来源 grant；引用只含 opaque `grant_id` 与 host 签名。Core 在任何来源读取、Managed Copy/temp 写入或 SQLite 写入前验证 issuer/session/signature、grant 存在、scope、未过期、未撤销，以及来源对象身份与选择范围。注册还绑定当前 Core process session，但该绑定只在 Core 内存控制状态，不新增 ref 字段或签名输入。解析必须 open-then-verify-from-handle：从同一 handle 校验最终 containment、file identity、size 与 §10.2 要求的内容 digest，再且仅从该 handle 读取；读取后复核 identity。拒绝 symlink、junction、reparse point、相对路径、`.`/`..` 穿越、盘符/UNC 逃逸、链接替换、来源缺失及身份/尺寸/hash 漂移。路径与文件句柄只存在于受信 host/Core 内部，绝不出现在请求、结果、事件或错误 message/details。
 - Core 拒绝缺失/畸形引用（`REF_MALFORMED`）、非 host 签发或签名无效（`REF_SIGNATURE_INVALID`）、过期（`REF_EXPIRED`）、未知/撤销（`REF_UNKNOWN_ID` / `REF_REVOKED`）、scope/host session 不匹配（`REF_SCOPE_DENIED`）、范围逃逸（`REF_OUT_OF_SCOPE`）、reparse point（`REF_REPARSE_POINT`）、文件不存在（`REF_NOT_FOUND`）、身份/尺寸/digest 不一致（复用 §10.2 `FILE_IDENTITY_CHANGED` / `FILE_SIZE_CHANGED` / `CONTENT_DIGEST_MISMATCH`）时，在副作用前拒绝。ErrorEnvelope 使用 §8；不得暴露 grant、签名材料、路径或堆栈，也不得从请求的其它字段回退为路径访问。
 - 对有效来源仅以只读方式读取。图片 Managed Original 逐字节复制；PDF 来源只读，Managed Original 是按原始页序渲染的 PNG。来源文件始终零写、零移动、零删除。该引用授权不变更 §5.6 的类型范围、P09 的预检/重复/提交顺序，也不引入新的来源格式或大媒体阈值。
 
@@ -729,7 +835,8 @@ AS-IS `normalized_to_page_geometry(points, page_w, page_h)` owns conversion in a
 | Page-level `blocked` UI meaning, glyph, copy and behavior | `DEFERRED / USER_DECISION_REQUIRED` | Page projection may carry typed status `blocked`; do not reuse Run `blocked` UI mapping (`⊘`, `⏸`, or any other glyph). No user-visible behavior is selected here. |
 | React UI Owner | `DEFERRED / USER_DECISION_REQUIRED` | This Task does not select an owner. |
 | Large-media transport and import path capability | `PARTIALLY RULED` (M2-C2) | Thresholds (T1–T7, §10.1) and security semantics (§10.2) were ruled at M2-C2 from the M2-S1 §7 ruling and the M2-S1/M2-S2 spikes. The runtime form remains `DEFERRED` to a future runtime Task: transport selection stays conditional (M2-S1 §8.1), the Tauri asset protocol is `NOT_RUN` (S1-B1), and S1-B11 product-level protection is `UNVERIFIED` (S1-B3/S1-B8 outstanding). |
-| Runtime serialization library, Tauri command names, process supervision, auth/permission handshake | `UNKNOWN / NOT_IN_SCOPE`（`1.3` 注记：仅 `settings_get`/`settings_update_section` 两命令的 Tauri command name 与 wire shape 已由 §5.3 裁决落地；`1.4` 草案冻结；`1.5` 时回填（集成收口 C2 事实同步）：两命令 runtime 已由 M2-REGION-RETYPE-CORE 落地（`PROTOCOL_MINOR=3`），产品 Tauri command name 与 Core stdio command name **均取 snake_case** `set_region_type`/`list_regions`（最终裁决=M2-WORKBENCH-REACT-1，`0f88cbcd` P4-2 deferral 闭合，§5 表保留 transport-neutral 逻辑名）；本行其余决定仍 UNKNOWN/NOT_IN_SCOPE） | No implementation claimed beyond §5.3/§5.4; separate runtime Tasks must decide the rest against this transport-neutral contract. |
+| Runtime serialization library, product Tauri command names, process supervision | `UNKNOWN / NOT_IN_SCOPE`（仅 `settings_get`/`settings_update_section` 的 product Tauri command name/wire 由 §5.3 裁决；`set_region_type`/`list_regions` 的产品与 Core stdio 名称另有既有决策。上述其余 runtime 选择仍未知） | No implementation claimed beyond the sections explicitly frozen here; separate runtime Tasks must decide the rest against this transport-neutral contract. |
+| Host grant registration/revoke authentication and session binding | `FROZEN`（HOST-ISSUER-1-C1 rev 2.3，§5.7） | Only the direct host-owned live-Core HostControl process channel, explicit host-session credential and Core-session binding are frozen. This does not select a serialization library, product Tauri command name, or process-supervision implementation beyond the stated lifecycle semantics. |
 | Event ordering/replay/retention | `UNKNOWN / NOT_FROZEN` | rev 2.0 P13 Run events and rev 2.1 P16 Reader/Export invalidation events are emitted after their corresponding persisted state; none promises delivery, order, sequence IDs, replay or retention. Snapshot resync remains authoritative. Run-creation idempotency is frozen in §5.5. |
 | Lock/revision conflict response details and concurrent edit policy | `PARTIALLY FROZEN`（`1.4` 草案：region 写命令面已冻结于 §5.4——人工优先、AI 侧 fail-closed、Revision/Lock 守卫交互、错误码映射；runtime 已由 M2-REGION-RETYPE-CORE 落地，`1.5` 时回填） | Core remains authority; §5.4 freezes the region-retype slice only; the rest of the command surface and finer conflict details stay open without weakening protection. |
 
@@ -744,5 +851,7 @@ The UI mapping decision does not block freezing a transport-level Page status di
 P16-C1 rev 2.1 **另行明确授权未来已释放的 P16 Python IPC Runtime**，仅限实现本契约 §5 Reader/Export handlers、§6.3 progress snapshots/events、§10.3 `ExportTargetRef` Core-side validation/resolution 与 ExportHistory，并只在以下冻结 allowlist 内改动：`src/application/reading/**`；`src/application/export/{__init__.py,ports.py,service.py}`；为复用 host grant 解析而确有必要的 `src/application/resource_channel/**`、`src/infrastructure/resource_channel/**`（不得弱化既有 §10.1/§10.2 读语义）；`src/infrastructure/sqlite/reading_export.py`；无 Qt/PySide6 的 `src/infrastructure/export/**`；`src/bootstrap/core_service.py`、`src/bootstrap/core_assembly.py`；以及 `tests/core/**`。该 allowlist 不含 `src/application/export/pdf_qt.py`、`tests/reading_export/**`、PySide6/QML/Legacy 路径、`apps/**`、Tauri/Rust、React/WebView、Schema/migration、依赖、其他产品行为或授权外的 Python 模块。Tauri host 的 issuer 实现不在本 P16 Python Runtime 授权内，须由其自身 Task 授权。
 
 P12-C1 rev 2.2 **另行明确授权未来已释放的导入侧 Python IPC Runtime**，只限实现 §5.6 `ImportPages` handler、将 §10.4 `ImportSourceRef` 接入既有 P09 importer，以及 `ErrorEnvelope`/最终 `ImportReport` 序列化；冻结 allowlist 为：`src/bootstrap/core_service.py`、`src/bootstrap/core_assembly.py`；仅为复用/验证受信 grant 而确需改动的 `src/application/resource_channel/**`、`src/infrastructure/resource_channel/**`（必须维持 §10.1/§10.2 安全要求并增加 `user-source` 只读 scope）；`tests/core/**`。既有 `src/application/importing/**`、`src/application/library/**`、`src/infrastructure/sqlite/**` 为本 Runtime 的只读复用面，不在写 allowlist 内；不得修改导入产品语义、SQLite Schema/migration 或其它 Python 模块。此授权不包括 `apps/**`、React/WebView、Tauri command/host issuer、Rust、QML/PySide6/Legacy、打包、第三方依赖、额外产品行为或任何 allowlist 外路径。Host issuer 必须由独立 Task 授权；本契约修订自身不授权或实现 Runtime。
+
+HOST-ISSUER-1-C1 rev 2.3 **另行明确授权实现 §5.7 HostControl 的 Core 侧最小控制面**，冻结 allowlist 仅为：`src/bootstrap/core_service.py`（接收/校验独立 HostControl envelope、建立/关闭单一 live-Core host session、跟踪本 session 成功注册的 grant ID、将四个注册/撤销命令接至既有 `_register_*` / `_revoke_*` seam；普通 JSON-RPC 对保留命令 fail-closed；撤销 session 时调用现有 revoke seam）；以及 `tests/core/**`（覆盖 host-only/错误 credential/跨 Core session/重复和未知 grant/scope 与过期拒绝/撤销即时性/拒绝零副作用）。只有此 allowlist 足以实现时不得修改其他 Core 模块。此授权**不包括** `src/bootstrap/core_assembly.py`、`src/infrastructure/**`、`apps/**`、React/WebView、Tauri command/ACL/capabilities、Rust、Schema/migration、依赖或其他产品行为；不改变 P12-C1/P16-C1 的 handler、ref 字段、`REF_*` 消费语义；本契约本身不实现或验证 Runtime。Host issuer 的 Rust 实现仍由 HOST-ISSUER-1 独立 Task 授权。
 
 本次把 Reader/Export **proposal 提升为新增冻结命令/事件**，协议 minor 从 rev 2.0 的 `0` 增至 `1`；未改动任何既有冻结命令、字段、状态或 P13 Run 事件，不升 major。rev 2.0 客户端不能调用新命令/事件；rev 2.1 客户端和 Core 必须配对，且没有协商或自动迁移。实现状态仍为 `NOT_IMPLEMENTED`；本 P16-C1 仅修订文档，不授权自身执行 Runtime。

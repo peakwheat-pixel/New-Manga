@@ -8,7 +8,7 @@ approval: coordinator_release_20261016_tauri_host_issuer
 suggested_owner: Codex
 owner: Codex
 reviewer: null
-depends_on: [P09-FU2, P16]
+depends_on: [P09-FU2, P16, HOST-ISSUER-1-C1]
 base_commit: 2eaa3241295e1f483eabf640289a4bea4126370c
 branch: codex/HOST-ISSUER-1-tauri-ref-issuer
 worktree: G:/CODEX/New Manga.workspace/worktrees/HOST-ISSUER-1
@@ -119,6 +119,37 @@ evidence_dir: verification/HOST-ISSUER-1
 - Coordinator 集成：`NOT_RUN`。
 - 实际测试：`cargo build`、`cargo test` 均 exit `101`（前置 sidecar 缺失）；WebView 源码静态扫描无匹配、ripgrep exit `1`（预期）。
 
+### 2026-10-16 阻塞上报与 resolution（Owner=codex；Coordinator=dsh）
+
+- **Owner 实测结论**：可信 host **没有任何通道**把 grant 注册进**运行中的** Core，因此 Rust-only 实现无法完成 AC1–AC8。
+  关键事实（见 `verification/HOST-ISSUER-1/blocker-assessment.md`）：
+  ① `_register_export_target`/`_revoke_export_target`/`_register_import_source`/`_revoke_import_source` 是
+  live `CoreServiceServer` 的**私有方法**，**未在 dispatcher 路由**；
+  ② Core JSON-RPC 已路由 `ImportPages`/`StartExport`，但**无**注册/撤销命令；
+  ③ grant registry 是**该 Core 实例内存态**，第二进程或既有 `host_bridge` sidecar **无法填充**；
+  ④ 把注册暴露为 WebView 可调用命令会**破坏** §10.3/§10.4 的受信 host 边界。
+- **环境事实**：`cargo build` 与 `cargo test` 均 **exit 101** —— `build.rs` 因 `target/core-sidecar/core-sidecar`
+  bundle 缺失而 panic；且专用打包 Python 环境、`frontend/node_modules`、`frontend/dist` 亦缺
+  （修复入口：`packaging/m2ac5/build_sidecar.ps1`）。已登记为技术债务 **BL-11**。
+- **Resolution（Coordinator）**：建立前置契约 Task **HOST-ISSUER-1-C1**（host→Core grant 注册通道契约），
+  冻结 host-only 注册/撤销 wire 与 session 绑定语义（正是 `M2-C1` §11 遗留的 `auth/permission handshake` 项）；
+  **本 Task 的 wire 契约冻结并集成后**方可恢复。
+- **未集成**：本 Task 的分支 `codex/HOST-ISSUER-1-tauri-ref-issuer`（HEAD `fa270d85`）**保留不合并**，
+  待 C1 完成后由 Coordinator 把新版 main 并入该分支再恢复。
+- 诚实性确认：Owner **未**伪造任何实现，明确记载"没有变更不能算通过"，且静态扫描仅作基线证据、**不满足** AC4 实现级负向测试。
+- **2026-10-16 merge resolution（Coordinator, dsh；Merge Conflict 规则：语义级解析，非 ours/theirs）**：
+  把 `main`（含前置契约 HOST-ISSUER-1-C1 的 rev 2.3 与治理更新）并入本分支以恢复 HOST-ISSUER-1 时，
+  唯一冲突为 `doc/tasks/HOST-ISSUER-1.md` 的 frontmatter。取舍：
+  - `depends_on`：分支侧 `[P09-FU2, P16]` vs main 侧 `[P09-FU2, P16, HOST-ISSUER-1-C1]` —— **取 main 侧**（前置契约已集成，保留该边使追溯完整）；
+  - `base_commit`：分支侧 `2eaa3241` vs main 侧 `03412b65` —— **取分支侧 `2eaa3241`**，
+    因为该 worktree 的**实际起点**是 HOST-ISSUER-1 的释放提交；main 侧的 `03412b65` 是起草时的当时 HEAD（与 P13 Review F2 同类填写误差）。
+  其余内容双方均保留。
+- **2026-10-16 环境与构建前置（BL-11a/BL-11b）**：本 worktree 已通过 junction 补齐 gitignored 前置
+  （`target/core-sidecar`、`frontend/dist`），`cargo build --locked` **exit 0**；
+  但 `cargo test --locked` 有 **6 项真实 sidecar 集成测试失败**（`PROTOCOL_VERSION_UNSUPPORTED`/`CORE_UNAVAILABLE`），
+  经**主仓对照实验确认同样失败**（58 passed / 6 failed），属**既有 bundle 与协议 2.3 源码不匹配**的债务（BL-11b），
+  **非本 Task 引入**。完整证据：`.orchestrator/BL11-ENV-EVIDENCE.md`。
+  因此本 Task 的 AC8 判定口径为：`cargo build` 通过 + **新增 Rust 单元测试**通过；6 项真实 sidecar 集成失败归因 BL-11b。
 ## Canonical Evidence
 
 | evidence_id | AC/Gate | path | commit | sha256 | class |
