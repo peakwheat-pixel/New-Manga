@@ -1,0 +1,37 @@
+shell=Windows PowerShell
+powershell=7.6.6
+cargo=C:\Users\49745\.cargo\bin\cargo.exe
+working_directory=G:\CODEX\New Manga.workspace\worktrees\HOST-ISSUER-1\apps\desktop\src-tauri
+command=cargo test
+   Compiling getrandom v0.4.3
+   Compiling webview2-com-sys v0.39.1
+   Compiling fastrand v2.5.0
+   Compiling tao v0.37.1
+   Compiling uuid v1.26.1
+   Compiling tempfile v3.27.0
+   Compiling cfb v0.14.0
+   Compiling schemars v0.8.22
+   Compiling infer v0.22.0
+   Compiling tauri-utils v2.10.0
+   Compiling webview2-com v0.39.1
+   Compiling tauri-runtime v2.12.0
+   Compiling wry v0.57.0
+   Compiling tauri-runtime-wry v2.12.0
+   Compiling tauri-build v2.7.0
+   Compiling tauri-codegen v2.7.0
+   Compiling tauri v2.12.0
+   Compiling m2rc1-desktop v0.1.0 (G:\CODEX\New Manga.workspace\worktrees\HOST-ISSUER-1\apps\desktop\src-tauri)
+   Compiling tauri-macros v2.7.0
+error: failed to run custom build command for `m2rc1-desktop v0.1.0 (G:\CODEX\New Manga.workspace\worktrees\HOST-ISSUER-1\apps\desktop\src-tauri)`
+
+Caused by:
+  process didn't exit successfully: `G:\CODEX\New Manga.workspace\worktrees\HOST-ISSUER-1\apps\desktop\src-tauri\target\debug\build\m2rc1-desktop-656415d6b1900e7d\build-script-build` (exit code: 101)
+  --- stderr
+
+  thread 'main' (19424) panicked at build.rs:23:9:
+  missing sidecar bundle: G:\CODEX\New Manga.workspace\worktrees\HOST-ISSUER-1\apps\desktop\src-tauri\target\core-sidecar\core-sidecar does not exist (gitignored build artifact, absent on a fresh checkout).
+  Fix: run `powershell -NoProfile -ExecutionPolicy Bypass -File packaging/m2ac5/build_sidecar.ps1` from the repository root (add -Force to rebuild an existing bundle).
+  See packaging/m2ac5/README.md (fresh checkout section) for the full setup.
+  note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+warning: build failed, waiting for other jobs to finish...
+EXIT_CODE=101

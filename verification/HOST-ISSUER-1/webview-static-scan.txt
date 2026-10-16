@@ -1,0 +1,6 @@
+shell=Windows PowerShell
+working_directory=G:\CODEX\New Manga.workspace\worktrees\HOST-ISSUER-1
+command=rg -n -e ImportSourceRef -e ExportTargetRef -e host_signature -e source_path -e target_path apps/desktop/frontend/src
+repository_frontend_path=apps/desktop/frontend/src
+RESULT=NO_MATCHES
+EXIT_CODE=1
