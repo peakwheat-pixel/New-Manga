@@ -134,23 +134,36 @@ evidence_dir: verification/UI-DESIGN-1
   **环境异常（如实登记）**：Owner 会话权限层拒绝全部 PowerShell、`git add`、`certutil`、
   `git -C <主仓>` 及复合命令（错误原文 "No permission client configured for Bash"，
   含子代理复测）；四项自检由等价白名单 bash 命令完成并全 PASS（原始输出转录入库并标注生成方式）。
-  **交付 commit 未能产生**：交付物全部就绪于工作树（零 tracked 修改），待重放命令见
-  `verification/UI-DESIGN-1/commit-BLOCKED.md`；canonical selfcheck 复跑命令见 `selfcheck-BLOCKED.md`。
-- Handoff：[UI-DESIGN-1-zcode](../handoffs/UI-DESIGN-1-zcode.md)（delivery_head 占位
-  `PENDING_COMMIT_A`，待提交回填）。
-- Review：尚无（Reviewer 必须独立于 Owner，且不得参与本设计）。
-- 实际测试：见上表——等价运行 PASS；canonical ps1 复跑与 git 提交 BLOCKED（权限层）。
+  **交付 commit 未能在 Owner 会话产生**：交付物全部就绪于工作树（零 tracked 修改），
+  重放命令见 `verification/UI-DESIGN-1/commit-BLOCKED.md`。
+- 2026-10-16 **Coordinator 补足被拦步骤（dsh, epoch 6）**：
+  ① 按 `commit-BLOCKED.md` 的 Owner 预制命令**逐字重放**提交（`aaf00e59e7eb4fcba83ae6dcbd6a845e2b46fa06`；
+  **未改动任何文件内容**，交付物仍为 Owner 原始产物）；
+  ② 作为被 Owner 明确委托的 Reviewer，在权限可用的环境中**执行 canonical 自检**：
+  `pwsh -NoProfile -ExecutionPolicy Bypass -File verification/UI-DESIGN-1/selfcheck.ps1`
+  → **exit 0，RESULT: ALL CHECKS PASS**（W=29 / G=26）；Owner 的等价运行日志另存为
+  `selfcheck-output-owner-equivalent.txt` 以保留原始证据；
+  ③ 完成**语义级引用核验**（抽查 W1/W2/W3/W4/W17/W26/W27/W28 所引契约行是否真的对应，
+  M2-C1 §5.7 HostControl 不得为 Tauri command、`ImportProgressChanged` 保持 UNKNOWN/PROPOSAL）
+  → 全部与文档一致；
+  ④ 补齐主仓 19 项 dirty 前后对比（`4dcd5a949` / 19 项与用户清单逐项一致，无 EXTERNAL_CHANGE）；
+  ⑤ 回填 Handoff `delivery_head` 与本表 commit/sha256 两列。
+- Handoff：[UI-DESIGN-1-zcode](../handoffs/UI-DESIGN-1-zcode.md)（`delivery_head=aaf00e59e`，status=`in_review`）。
+- Review：`verification/UI-DESIGN-1/dsh-review-r1.md`（Reviewer=dsh，独立于 Owner=zcode）。
+- 实际测试：见上表——Owner 等价运行 PASS；canonical 复跑由 Reviewer 独立执行 **PASS（exit 0）**。
 
 ## Canonical Evidence
 
 | evidence_id | AC/Gate | path（仓库相对路径或绝对路径） | commit | sha256 | class (`CANONICAL` / `SOURCE_PIN`) |
 |---|---|---|---|---|---|
-| UI-DESIGN-1-E1 | AC1–AC7 | doc/design/AD001_FOUR_PAGE_UI_BASELINE.md | WORKTREE_ONLY（提交被权限层拦截，回填见 commit-BLOCKED.md） | NOT_RUN（certutil/PowerShell 均被拦，交 Reviewer 补算） | CANONICAL |
-| UI-DESIGN-1-E2 | AC8(a)–(d) | verification/UI-DESIGN-1/selfcheck-output.txt | WORKTREE_ONLY（同上） | NOT_RUN（同上） | CANONICAL |
-| UI-DESIGN-1-E3 | AC8 canonical 复跑 | verification/UI-DESIGN-1/selfcheck.ps1 | WORKTREE_ONLY（同上） | NOT_RUN（同上） | CANONICAL |
-| UI-DESIGN-1-E4 | AC8 阻塞登记 | verification/UI-DESIGN-1/selfcheck-BLOCKED.md | WORKTREE_ONLY（同上） | NOT_RUN（同上） | CANONICAL |
-| UI-DESIGN-1-E5 | AC9 阻塞登记 | verification/UI-DESIGN-1/commit-BLOCKED.md | WORKTREE_ONLY（同上） | NOT_RUN（同上） | CANONICAL |
-| UI-DESIGN-1-E6 | AC9 | doc/handoffs/UI-DESIGN-1-zcode.md | WORKTREE_ONLY（同上） | NOT_RUN（同上） | CANONICAL |
+| UI-DESIGN-1-E1 | AC1–AC7 | doc/design/AD001_FOUR_PAGE_UI_BASELINE.md | aaf00e59e | 8cdcf4de7b805b8400c70175690de07755f6dc3876748d4bb471a10222d61f85 | CANONICAL |
+| UI-DESIGN-1-E2 | AC8(a)–(d)（canonical 复跑） | verification/UI-DESIGN-1/selfcheck-output.txt | aaf00e59e | b1bb12dc9a3695555cc78bf1ce67808b6cbf8c9063f4ebeb4114b2b6a75dd9a5 | CANONICAL |
+| UI-DESIGN-1-E3 | AC8 自检脚本 | verification/UI-DESIGN-1/selfcheck.ps1 | aaf00e59e | f36782d0a8c9fa72c539ac50490faaa1367016fc0b96e70e01816cb1d63629f8 | CANONICAL |
+| UI-DESIGN-1-E4 | AC8 Owner 阻塞登记 | verification/UI-DESIGN-1/selfcheck-BLOCKED.md | aaf00e59e | 5acab6837ad218c936716b17aa00b13acfee9916bb8b2c46413da087c107439d | CANONICAL |
+| UI-DESIGN-1-E5 | AC9 Owner 提交阻塞登记 | verification/UI-DESIGN-1/commit-BLOCKED.md | aaf00e59e | 6dad99ffa8e47cf7c5a7f430b1b127b1c445f5fc8861b4a5c75ee679bd930f33 | CANONICAL |
+| UI-DESIGN-1-E6 | AC8 Owner 等价运行原始日志 | verification/UI-DESIGN-1/selfcheck-output-owner-equivalent.txt | aaf00e59e | 01fc76c66e00809565aa82c36789ba434fd316b22f0952a78e3964998e8d9567 | SOURCE_PIN |
+| UI-DESIGN-1-E7 | AC9 resource closeout | verification/UI-DESIGN-1/resource-manifest.json | aaf00e59e | 17074d92abb2c055416765cd9b90fe453fb4d9f774ef9450bb7e96b808820874 | CANONICAL |
+| UI-DESIGN-1-E8 | AC9 Handoff | doc/handoffs/UI-DESIGN-1-zcode.md | aaf00e59e | - | CANONICAL |
 
 ## Resource Manifest
 

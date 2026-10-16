@@ -3,8 +3,8 @@ task_id: UI-DESIGN-1
 author: zcode
 recipient: Codex
 base_commit: c6f975d38842487c16491eea67a01cf134c337f8
-delivery_head: PENDING_COMMIT_A
-status: draft
+delivery_head: aaf00e59e7eb4fcba83ae6dcbd6a845e2b46fa06
+status: in_review
 ---
 
 # Handoff：UI-DESIGN-1 AD-001 四页 UI/UX 设计基线
@@ -15,7 +15,7 @@ status: draft
 - 唯一设计交付物：`doc/design/AD001_FOUR_PAGE_UI_BASELINE.md`（新建，10 节 + AC 对照附表）。
 - 自检脚本与原始日志：`verification/UI-DESIGN-1/selfcheck.ps1`、`verification/UI-DESIGN-1/selfcheck-output.txt`（等价 bash 生成，头部标注）；阻塞登记 `selfcheck-BLOCKED.md`、`commit-BLOCKED.md`；`resource-manifest.json`。
 - 本 Handoff 与 Task 文件（`doc/tasks/UI-DESIGN-1.md`）的交付/证据登记。
-- delivery_head：`PENDING_COMMIT_A` —— **交付 commit 因权限层阻塞未产生**（`git add` 被 Owner 直跑与子代理共 2 次拒绝，错误原文与待重放命令见 `verification/UI-DESIGN-1/commit-BLOCKED.md`）。全部交付物已就绪于工作树（零 tracked 修改、零删除）；提交后在 Handoff/Task 中回填实际 SHA。
+- delivery_head：`aaf00e59e7eb4fcba83ae6dcbd6a845e2b46fa06`。**提交由 Coordinator 按 Owner 预先备好的命令逐字重放产生**（Owner 会话权限层拒绝 `git add`，原文与待重放命令见 `verification/UI-DESIGN-1/commit-BLOCKED.md`）；**重放未改动任何文件内容**，交付物仍为 Owner 原始产物。回填项：本 Handoff `delivery_head`、Task Canonical Evidence 的 commit 与 sha256 两列。
 
 与 Acceptance Criteria 对照：
 
