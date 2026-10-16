@@ -7,7 +7,7 @@
 | Reviewer | dsh（epoch 6；独立于 Owner） |
 | 交付 commit | 分支 HEAD 实测 `5c02eecfcf9e109eb152185521f75180a238745e`（实现 `18462441c`，经两次 amend） |
 | 基线 | `6c28a02e9` |
-| 结论 | **changes_requested（I1，1 项：共享契约文档完整性）** —— 实现质量高、安全投影 fail-closed、无新增命令面；仅契约文档结构需修 |
+| 结论 | **approved**（`changes_requested` 的 1 项 I1 已于 `6229e230f` 收敛并复核通过，见 §5） |
 
 ## 1. 已独立验证且成立的部分
 
@@ -59,3 +59,19 @@ owner 把新头部**插在原头部之前**而非替换，导致：重复 h1、*
 ## 4. 收敛计划
 
 `I1 返修（Owner=antigravity，仅契约文档结构） → Reviewer 复核 h1=1 / 单一 rev 2.4 声明 / 历史完整 + 确认 §6.4 与全部证据未变 → 集成（注意与 EXPORT-REVEAL-1 在 main.rs/library_bridge.rs 的冲突，按会话集成计划处理） → closeout（Coordinator 冻结实际 HEAD、修正 delivery_head）`。
+
+## 5. I1 收敛记录（Reviewer 有界复核，结论：CONVERGED）
+
+返修 commit `6229e230f`（契约结构修复）+ `5f1d9870e`（Handoff/Task 记录更新）。Reviewer 逐项复核：
+
+| # | I1 返修要求 | 复核结果 |
+|---|---|---|
+| 1 | 恰好一个 h1 | **PASS**：`^# M2-C1` 计数 = **1** |
+| 2 | 恰好一个当前修订/状态块，声明 rev 2.4 | **PASS**：`当前修订范围` = 1（L11，`EVENTS-FWD-1 rev 2.4`）；`^状态：rev` = 1（L13，`rev 2.4` / major 2、minor 4） |
+| 3 | 一套连贯历史、无丢失 | **PASS**：`2.4 2.3 2.2 2.1 2.0 1.8 1.7 1.6` **各恰好出现一次**（此前第一套 history 缺 2.2/2.1 的问题已消除） |
+| 4 | 不得改 §6.4 规范内容、既有冻结字段、其他章节、代码或证据 | **PASS**：契约 diff 为 **0 insertions / 18 deletions**（纯删重复头部块）；对 §6.4/事件名/权限行的 grep **零命中**；`verification/**` 与 `apps/desktop/**` 在 I1 中**零改动** |
+| 5 | delivery_head 指向最终 HEAD | **部分达标**：由 `5c1695757` 更新为 `6229e230f`，但**真实 HEAD 已推进到 `5f1d9870e`**（记录后又追加了文档提交）→ 同一自引用模式第三次出现。按 BL-7 既有处置，**由 Coordinator 在 closeout 以 `git rev-parse HEAD` 冻结实际值**，不计为 Owner 返修项（已登记 BL-15） |
+| 6 | （建议项）精确化 Rust 测试计数 | **PASS**：Handoff 已改为 `79 passed + 1 ignored (8 filtered) + 1 concurrent passed + 7 packaged passed`，与 `cargo-tests.log` 一致 |
+
+**I1 CONVERGED，无需 I2。** 全 Task 最终判定 **approved**（可 `done`）。
+
