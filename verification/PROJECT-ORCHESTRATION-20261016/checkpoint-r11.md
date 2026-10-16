@@ -63,7 +63,7 @@
 
 ## 6. 环境与工具限制（不得夸大结论）
 
-- **ZCode headless CLI 拒绝所有 shell 命令** → 不能跑测试/提交；**派发前必须确认 Owner 能执行命令**（P14/P17 因此改派 codex/antigravity）。
+- **ZCode：能否执行命令取决于派发通道**（2026-10-16 更正）。经 **DSH 原生 `subagent_zcode`** 派发时**可执行 shell**（实测逐字读回 READY 行并自报 `SHELL=是`）；只有"原始 CLI headless + `--mode edit`"这条路会因缺 permission client 而拒绝全部 Bash（`No permission client for Bash`）。**故 ZCode 是有效 Owner（含需跑测试/提交的 Task）**。**派发纪律**：优先用 `subagent_codex`/`subagent_agy`/`subagent_zcode`，不要用原始 CLI 子进程自造派发。
 - **无头 Windows 无法取得 WebView2 窗口句柄（`0x80070578`）** → **真实 GUI e2e 不可运行**；"零回归"只能基于单测/构建，**不得**表述为已 e2e 验证。
 - `core.autocrlf=true` → `git status` 会出现**幽灵 ` M`**，而 `git diff --numstat` 对其零行输出；**判定真实改动必须用 `git diff`**，恢复只针对**非用户**文件。
 - fresh worktree 需 `target/core-sidecar` 与 `frontend/dist` 的**零拷贝 junction**（BL-11a），**不要删除或重建**。
