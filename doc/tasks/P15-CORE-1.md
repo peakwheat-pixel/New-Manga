@@ -3,8 +3,8 @@ id: P15-CORE-1
 title: 设置面 G21/G22/G23 专用命令的 Core 侧实现（Python Core 2.6；配对 P15-C1 契约）
 kind: feature
 governance_version: 2
-status: ready
-approval: coordinator_release_20261017_after_predispatch_chain_check
+status: blocked
+approval: coordinator_ruling_20261017_scope_split_after_owner_escalation
 suggested_owner: Codex
 owner: null
 reviewer: null
@@ -99,3 +99,17 @@ evidence_dir: verification/P15-CORE-1
 - 删除、迁移、归档数量/字节数：待关闭时填写；无操作填写 0。
 - 未关闭项及保留原因：本 Task 尚未派发与执行。
 - 当前指针清理：`STATUS` / `REBASELINE_PLAN` 在释放与关闭时同步。
+
+## 阻塞与拆分（2026-10-17，Coordinator 裁决）
+
+**Owner（Codex）在实现前失败关闭并上报**：契约 §5.2 的 `TestNetworkProfile` 在 `provider_profile_id` 缺省且 Direct/System 模式下**无探测目标**，而 `status` 仅 `passed | failed`（L194）且 `failed` 需唯一失败阶段（L212）→ **全阶段 `not_run` 时被迫报 `passed`（假阳性）**。**裁决：阻塞成立，Owner 处置正确**（拒绝自选公网/loopback/假目标、拒绝伪造阶段结果）。
+
+**本 Task 被拆分取代**（见 [ruling-P15-CORE-1-network-test.md](../../verification/PROJECT-ORCHESTRATION-20261016/ruling-P15-CORE-1-network-test.md)）：
+
+| 子 Task | 范围 | 释放条件 |
+|---|---|---|
+| **P15-CORE-1A** | G21 Provider 面 + G24 覆盖解析 | 可立即释放 |
+| **P15-CORE-1B** | G22 凭据 + G23 Network CRUD/默认/解析（**不含** test 命令） | 可立即释放 |
+| **P15-CORE-1C** | `settings_network_profiles_test`（六阶段） | **必须等 [P15-C1-FU1](P15-C1-FU1.md) 关闭** |
+
+Owner 成果：基线 `407 passed`（与我独立实测一致）已归档于其 worktree；**无实现提交**（HEAD 未移动），未改契约/apps/Schema/依赖。
