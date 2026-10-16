@@ -3,17 +3,17 @@ id: HOST-ISSUER-1
 title: Tauri host 引用签发能力（ImportSourceRef / ExportTargetRef 的 issuer 与受信注入）
 kind: feature
 governance_version: 2
-status: in_review
+status: done
 approval: coordinator_release_20261016_tauri_host_issuer
 suggested_owner: Codex
-owner: Codex
-reviewer: null
+owner: codex
+reviewer: dsh
 depends_on: [P09-FU2, P16, HOST-ISSUER-1-C1, HOST-CORE-1]
 base_commit: 2eaa3241295e1f483eabf640289a4bea4126370c
 branch: codex/HOST-ISSUER-1-tauri-ref-issuer
 worktree: G:/CODEX/New Manga.workspace/worktrees/HOST-ISSUER-1
-integration_commit: null
-delivery_head: 2ad590a31ac2271db7de45f349d94eeaa494775c
+integration_commit: 7fce3ab36e1838537332272fe95b159b1dc4187e
+delivery_head: deb2dfc0b863e75aa0fcb0f843127947031d6865
 canonical_evidence_status: complete
 resource_closeout_status: complete
 evidence_dir: verification/HOST-ISSUER-1
@@ -201,7 +201,7 @@ evidence_dir: verification/HOST-ISSUER-1
   - **Rust/Tauri 侧**（`apps/desktop/src-tauri/**`）= **本 Task 的实现面**（HostControl 客户端通道 +
     四处宿主同步 + ACL/capability + key/session + Rust 单测）。
   - 恢复 prompt 曾误写为"`src/**` 只读"从而与本 Task 的实际边界不符；**本次已更正**。
-## Canonical Evidence
+
 
 - **第二次阻塞的根因已修复**：契约 `M2-C1` §12 只**授权**了最小 Core handler/session 改动却从未实现；
   前置 Task **`HOST-CORE-1` 已实现并集成**（`67ee4a58`），Core 侧的 `HostControl` 接收面（独立命令集、
@@ -258,23 +258,57 @@ evidence_dir: verification/HOST-ISSUER-1
 | HOSTISSUER-HOST-TESTS | AC1–AC5/AC7 | `verification/HOST-ISSUER-1/cargo-test-host-unit.txt` | `2ad590a31ac2271db7de45f349d94eeaa494775c` | `1e6caea4912d34fae283b158048e6cc251f4e4ed719c74d4c3633c64ea1ab875` | CANONICAL |
 | HOSTISSUER-ACL-TEST | AC6 | `verification/HOST-ISSUER-1/cargo-test-acl-sync.txt` | `2ad590a31ac2271db7de45f349d94eeaa494775c` | `770a2e5027678d212d30cd2571df57f83b5cd2af2b42059bfbe38500fad7b8e8` | CANONICAL |
 | HOSTISSUER-FULL-TESTS | AC8 | `verification/HOST-ISSUER-1/cargo-test-full-python312.txt` | `2ad590a31ac2271db7de45f349d94eeaa494775c` | `3cda23260ce1a21cf05f26fb7da4f8b73320ba0805bcb760cc363588ef9189aa` | CANONICAL |
-| HOSTISSUER-AC4 | AC4 | `verification/HOST-ISSUER-1/ac4-webview-negative.md` | `2ad590a31ac2271db7de45f349d94eeaa494775c` | `c7414dfeb4af31bb1eab74fe469cdcaf18a1179f0e1cc81642976c4d8972deac` | CANONICAL |
-| HOSTISSUER-AC5 | AC5 | `verification/HOST-ISSUER-1/ac5-host-denials.md` | `2ad590a31ac2271db7de45f349d94eeaa494775c` | `120e40785b03c52aeaddd63f3b77431d996562cf41fd0e487e303119a1345662` | CANONICAL |
-| HOSTISSUER-AC7 | AC3/AC7 | `verification/HOST-ISSUER-1/ac7-key-and-ref-security.md` | `2ad590a31ac2271db7de45f349d94eeaa494775c` | `c6c4ac0e76c3df5eb867c6eb7fa1e00b3b8b32b43d224331bfc73b2157c4245b` | CANONICAL |
-| HOSTISSUER-DEPS | Dependency security | `verification/HOST-ISSUER-1/dependencies.md` | `2ad590a31ac2271db7de45f349d94eeaa494775c` | `520a61746c51789ca20449c578d4d9c66ba77dfd0194914251cfb6625e4ea7ea` | CANONICAL |
-| HOSTISSUER-BL11B | AC8 limitation | `verification/HOST-ISSUER-1/bl11b-status.md` | `3008ee97238451cc46afb0318ecbd446a5dfbe14` | `02b00b029900edda792cfc208e8d543b340bfb8de824f0cf4c4a41cf7775a250` | CANONICAL |
-| HOSTISSUER-RESOURCE | Closeout | `verification/HOST-ISSUER-1/resource-manifest.json` | `3008ee97238451cc46afb0318ecbd446a5dfbe14` | `a970b36a62e403da3e97c6f88e0fd6c214fef635caf3482325c2c517e9b9f385` | CANONICAL |
-| HOSTISSUER-HANDOFF | AC9 | `doc/handoffs/HOST-ISSUER-1-codex-2ad590a31.md` | `3008ee97238451cc46afb0318ecbd446a5dfbe14` | `d3ddc4d28a266876e6a78c304318720f3f6963f8728b8f688ccdc6b6dc26aa0a` | CANONICAL |
-| HOSTISSUER-ISSUER-SOURCE | AC1–AC3/AC7 | `apps/desktop/src-tauri/src/host_issuer.rs` | `2ad590a31ac2271db7de45f349d94eeaa494775c` | `612c92b20d0251f2034ed6ef7856c3e8dbb553a7827177bf64eb14dc930a3cbc` | CANONICAL |
-| HOSTISSUER-CLIENT-SOURCE | AC1–AC5 | `apps/desktop/src-tauri/src/library_bridge.rs` | `2ad590a31ac2271db7de45f349d94eeaa494775c` | `fb818c059870e3bec82071349d37c17ea0000a8089950a12f49f43f552ecabd9` | CANONICAL |
-| HOSTISSUER-TAURI-SURFACE | AC4/AC6 | `apps/desktop/src-tauri/src/main.rs` | `2ad590a31ac2271db7de45f349d94eeaa494775c` | `b8fe5fd5e064ccaaf4912bd94dd205bc4453d25783a748b1bfa475ec65558c2d` | CANONICAL |
-| HOSTISSUER-APP-MANIFEST | AC6 | `apps/desktop/src-tauri/build.rs` | `2ad590a31ac2271db7de45f349d94eeaa494775c` | `0ef89e5567905b095503d4200c870872c43bb132695d8ce9da7aa222562e7ab0` | CANONICAL |
+| HOSTISSUER-AC4 | AC4 | `verification/HOST-ISSUER-1/ac4-webview-negative.md` | `2ad590a31ac2271db7de45f349d94eeaa494775c` | `8f39f4f9d9378857d886cef58184d99476fd33aecb07f8802ab03152367061dc` | CANONICAL |
+| HOSTISSUER-AC5 | AC5 | `verification/HOST-ISSUER-1/ac5-host-denials.md` | `2ad590a31ac2271db7de45f349d94eeaa494775c` | `4f72b955dcc079ec4a4724c858e0848bd6b4c313f78bb67d8af1ec31e301e660` | CANONICAL |
+| HOSTISSUER-AC7 | AC3/AC7 | `verification/HOST-ISSUER-1/ac7-key-and-ref-security.md` | `2ad590a31ac2271db7de45f349d94eeaa494775c` | `a6cd94931a5696902527d50a0d9a15ab5bde0892d3625f466b517e8964e26492` | CANONICAL |
+| HOSTISSUER-DEPS | Dependency security | `verification/HOST-ISSUER-1/dependencies.md` | `2ad590a31ac2271db7de45f349d94eeaa494775c` | `4b60c48257feffa7a9915f54485ce8fdf4ba0a77d634142ff64a79df2d1cbe6d` | CANONICAL |
+| HOSTISSUER-BL11B | AC8 limitation | `verification/HOST-ISSUER-1/bl11b-status.md` | `3008ee97238451cc46afb0318ecbd446a5dfbe14` | `e0bb597b27b87046a16076eb2d523594acecf73c6151d7fdc87a847ffd3edffd` | CANONICAL |
+| HOSTISSUER-RESOURCE | Closeout | `verification/HOST-ISSUER-1/resource-manifest.json` | `3008ee97238451cc46afb0318ecbd446a5dfbe14` | `8eaf9c2692207127dd16d3c940855b0c3c5908221a9c090aad8af6e04b039a2a` | CANONICAL |
+| HOSTISSUER-HANDOFF | AC9 | `doc/handoffs/HOST-ISSUER-1-codex-2ad590a31.md` | `3008ee97238451cc46afb0318ecbd446a5dfbe14` | `0143aa952ba9075496521f07cb68e4fe995dd347b19cc164254513c5804b3b1b` | CANONICAL |
+| HOSTISSUER-ISSUER-SOURCE | AC1–AC3/AC7 | `apps/desktop/src-tauri/src/host_issuer.rs` | `2ad590a31ac2271db7de45f349d94eeaa494775c` | `ef1ab4ef4b6ad98b53a41eef26b067c5781a615af4c6141a3942d0f1c8ab7b00` | CANONICAL |
+| HOSTISSUER-CLIENT-SOURCE | AC1–AC5 | `apps/desktop/src-tauri/src/library_bridge.rs` | `2ad590a31ac2271db7de45f349d94eeaa494775c` | `7599fd78c3c5c7e60647d4a351f54defdb7696bcbd950502c7b55f205437967d` | CANONICAL |
+| HOSTISSUER-TAURI-SURFACE | AC4/AC6 | `apps/desktop/src-tauri/src/main.rs` | `2ad590a31ac2271db7de45f349d94eeaa494775c` | `21972b00bdcf643f950b4a0d3c0a669b86623e80896f818ff14903da938ca1b5` | CANONICAL |
+| HOSTISSUER-APP-MANIFEST | AC6 | `apps/desktop/src-tauri/build.rs` | `2ad590a31ac2271db7de45f349d94eeaa494775c` | `c2b80e6dd7081d5c0c7a8ea52df3db01b36d83c9af8b566eaaae6cbbd943f014` | CANONICAL |
 | HOSTISSUER-CAPABILITY | AC4/AC6 | `apps/desktop/src-tauri/capabilities/m2rc1-commands.json` | `2ad590a31ac2271db7de45f349d94eeaa494775c` | `4db32b0d0ae22653e8178c1bc907e3d92bafa44518adca346e567f631770f623` | CANONICAL |
 | SRC-HOSTISSUER-CONTRACT | AC1–AC7 | `doc/contracts/M2-C1_TYPED_IPC_CONTRACT.md` | `8a990a345c91b4e36cc0bfc6549104b454b24556` | `6a2f38e0b17062d9d4f1d6ee109b4353b745504a5a6b889148781eee84fa2062` | SOURCE_PIN |
 | SRC-HOSTCORE-SESSION | AC2 | `verification/HOST-CORE-1/ac2-session-lifecycle.md` | `8a990a345c91b4e36cc0bfc6549104b454b24556` | `adf75e717c05260c548ad041c28e83cbf88c7550ceaeacb1b2c2a2301032c1fe` | SOURCE_PIN |
 | SRC-HOSTCORE-DENIALS | AC5 | `verification/HOST-CORE-1/ac4-denials.md` | `8a990a345c91b4e36cc0bfc6549104b454b24556` | `f0c953d59ce7fff3a9c96634e39144902a8cea6ca31c71e641b9dcd5beb4dad8` | SOURCE_PIN |
 | SRC-HOSTCORE-DISPATCHER | AC5 | `verification/HOST-CORE-1/ac5-dispatcher-negative.md` | `8a990a345c91b4e36cc0bfc6549104b454b24556` | `f2a8289d71e70a61ec15eea2e24a1b67e67099d7842c25e54f28b3825b8f5a96` | SOURCE_PIN |
 | SRC-P09-REF-REJECTIONS | AC7 | `verification/P09-FU2/logs/ac2-ref-rejections-zero-side-effects.txt` | `8a990a345c91b4e36cc0bfc6549104b454b24556` | `0134563175dd8815bddc6895409049ad2e09bc20184f712b73daf35f42e4c7ff` | SOURCE_PIN |
-| SRC-P16-EXPORT-REJECTIONS | AC7 | `verification/P16/ac3-target-ref-matrix.md` | `8a990a345c91b4e36cc0bfc6549104b454b24556` | `a0ef395406ce42d30e422254b862e68900c00f591710eacb7859131eb48e39af` | SOURCE_PIN |
+| SRC-P16-EXPORT-REJECTIONS | AC7 | `verification/P16/ac3-target-ref-matrix.md` | `8a990a345c91b4e36cc0bfc6549104b454b24556` | `a0ef395406ce42d30e422254b862e68900c00f591710eacb7859131eb48e39af` | SOURCE_PIN |
+| EVD-HOSTISSUER1-REVIEW-R1 | AC9 | `verification/HOST-ISSUER-1/dsh-review-r1.md` | `d3bcee9dd7d011e33fdcfb86054a0e063a7dc27d` | `177586968d69ac6b20c1b3cbf59e18adb746e63e9d34de731e81521bee650433` | CANONICAL |
+| EVD-HOSTISSUER1-HIST-BLOCKER-ASSESSMENT | 历史阻塞证据 | `verification/HOST-ISSUER-1/blocker-assessment.md` | `bacf151b7f4fd61f5b34666b96a444ee95030874` | `008ab54be031609547a569ad7aab856f1cc75956c90b2e46788842b83ceceb6f` | SOURCE_PIN |
+| EVD-HOSTISSUER1-HIST-CARGO-BUILD | 历史阻塞证据 | `verification/HOST-ISSUER-1/cargo-build.txt` | `bacf151b7f4fd61f5b34666b96a444ee95030874` | `3022e6b8b90fa0a34ca54e7fc5225545f62f9e8647860af9b670fb894bc2538f` | SOURCE_PIN |
+| EVD-HOSTISSUER1-HIST-CARGO-TEST | 历史阻塞证据 | `verification/HOST-ISSUER-1/cargo-test.txt` | `bacf151b7f4fd61f5b34666b96a444ee95030874` | `b5efe535d3c787488a3440b2956266a105eb212f7970e4739c625cc0aab3ec63` | SOURCE_PIN |
+| EVD-HOSTISSUER1-HIST-WEBVIEW-STATIC-SCAN | 历史阻塞证据 | `verification/HOST-ISSUER-1/webview-static-scan.txt` | `bacf151b7f4fd61f5b34666b96a444ee95030874` | `33c47371529e01c9145a710a45bf0a2f28b786c0b5044ad8a6709b143452c34c` | SOURCE_PIN |
 
 注：本表 SHA-256 均按本 worktree 文件使用 `Get-FileHash -Algorithm SHA256` 计算；每行 commit 均经 `git cat-file -e <commit>:<path>` 确认包含该文件。Task 文件本身不列入自引用 hash 表。
+
+## Closeout Record
+
+- Closeout date / Coordinator：2026-10-16，dsh（epoch 5，lease `264c2000541748298000f93fb25a52de`）。
+- canonical_evidence_status：`complete`；resource_closeout_status：`complete`（worktree `PRESERVE_REFERENCED`；0 删除 / 0 迁移 / 0 归档）。
+- **结果**：Tauri host 引用签发能力**已交付**。实现 `2ad590a3`，归档 `deb2dfc0`，集成 merge=`7fce3ab3`。
+- **构建与测试**：`cargo build --locked` **exit 0**；host 定向单测 **12 passed / 0 failed**；
+  完整 Rust suite **76 passed / 0 failed / 1 ignored**（ignored 为既有性能探针）。
+- **方法亮点**：Owner 未把 **BL-11b**（旧 bundle 与协议 2.3 不匹配）当作本 Task 失败，也未伪造打包验证，
+  而是把 suite 的 Core 源根显式指向**当前 worktree 的 Core 源码**（`M2RC1_SRC_ROOT`），
+  从而真实覆盖协议 2.3 并与实现联调，**同时如实声明** packaged HostControl E2E 未运行。
+- **AC4 安全要点（已独立复核）**：**HostControl 未被暴露为 Tauri 命令**（`*.rs` 中 `#[tauri::command]`
+  与六个 HostControl 名的共现检索为**零命中**）；capability 描述明确 "HostControl remains internal to Rust stdio"。
+  新增的 3 个 WebView 可触发命令是**用户动作**（`library_import_file` / `library_import_folder` / `library_start_export`），
+  不含 ref/路径/credential。
+- **AC7**：`OsRng` 生成 32-byte credential 与 HMAC key，**仅存于 Rust session 内存**，不写文件/环境变量、不进 WebView；
+  正常 drop 发送 `CloseHostSession`，由 `HOST-CORE-1` 的 Core 接收端撤销 grants。
+- **AC6**：四处同步（`HOST_ISSUER_PRODUCTION_ONLY_COMMANDS`/`command_allowlist`、`generate_handler!`、`build.rs` app-manifest、
+  `capabilities`）**同一实现提交**，ACL 同步单测通过；既有命令权限未扩大。
+- **依赖（Review F3）**：仅新增**官方** `tauri-plugin-dialog`（锁定 `2.8.3`），`dependencies.md` 记录传递依赖与安全影响，
+  **未**为其添加 WebView capability permission —— 符合"官方插件 + 单列理由"的授权条件。
+- **AC9 已闭合**：独立 Review=`d3bcee9d`（`approved`，reviewed_head=`deb2dfc0`）。
+- **遗留（Review F2，重要）**：**packaged HostControl E2E 为 `NOT_RUN`**（BL-11b 未解，旧 bundle 与协议 2.3 不匹配）。
+  **不得**据此声称"打包产品端到端可用"；该结论须在 BL-11b 解决后单独取得。Owner 已在 `verification/HOST-ISSUER-1/bl11b-status.md` 记录。
+- **后续对接（Review C4）**：新增的 3 个 WebView 用户动作命令将成为 **P12/P17** 的对接面；其 UI 接线属后续 UI Task。
+- **过程备案（透明）**：本 Task 前后共被 Owner **正确阻塞两次**（无注册通道 → 建 `HOST-ISSUER-1-C1`；无 Core 接收端 → 建 `HOST-CORE-1`），
+  Coordinator 亦已备案自身的**规划疏漏**与 **prompt 边界表述错误**；两次阻塞均以"先冻结契约、再补实现"的方式正面解决。
+- 交付 head 冻结（Review F1）：Owner 申报 `delivery_head=2ad590a3`（实现提交），实际 HEAD=`deb2dfc0`；已冻结为实际值。
+- 当前指针清理：`doc/STATUS.md` / `doc/REBASELINE_PLAN.md` 已同步为 HOST-ISSUER-1 `done`。
