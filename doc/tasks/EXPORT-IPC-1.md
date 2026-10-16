@@ -3,18 +3,18 @@ id: EXPORT-IPC-1
 title: Tauri host 接线导出控制/查询面（CancelExport/GetExportSnapshot/GetExportHistory）+ 去除路径的 WebView 投影——P14 工作台第二处前置
 kind: feature
 governance_version: 2
-status: ready
+status: in_review
 approval: coordinator_release_20261016_confirmed_second_missing_host_surface
 suggested_owner: Codex
-owner: null
-reviewer: null
+owner: Antigravity
+reviewer: DeepSeek Harness
 depends_on: [P16, P16-C1, EXPORT-REVEAL-1, UI-DESIGN-1]
-base_commit: null
-branch: null
-worktree: null
+base_commit: cb07e9981
+branch: agent/antigravity/EXPORT-IPC-1
+worktree: G:/CODEX/New Manga.workspace/worktrees/EXPORT-IPC-1
 integration_commit: null
-delivery_head: null
-canonical_evidence_status: pending
+delivery_head: a4c8f9ac0cfae60e51532f8ebf9ef1d02c892b15
+canonical_evidence_status: complete
 resource_closeout_status: pending
 evidence_dir: verification/EXPORT-IPC-1
 ---
@@ -73,12 +73,12 @@ evidence_dir: verification/EXPORT-IPC-1
 
 | 场景/AC | 计划命令或手工步骤 | 前提/环境 | 实际结果 | 证据 |
 |---|---|---|---|---|
-| AC1 | 冻结三命令名与去路径投影；裁决是否需契约 minor 修订 | 只读契约 §5 行 162–164、§10.3 L853 | NOT_RUN | 无 |
-| AC3 | 断言成功返回/拒绝 message/日志均不含 `output_path` 或绝对路径 | 构建产物 | NOT_RUN | 无 |
-| AC4-① | allowlist 断言：生产面三命令存在 / probe+AC1 面不存在，probe=7 / AC1=6 不变 | 构建产物 | NOT_RUN | 无 |
-| AC4-② | typed 拒绝路径测试（未知/外来 export_id；空历史 → 空列表） | 构建产物 | NOT_RUN | 无 |
-| AC4-③ | frozen 2.3 上 `GetExportSnapshot`/`CancelExport` 域级错误 + `GetExportHistory` 真实结构 | 已重建 bundle（junction） | NOT_RUN | 无 |
-| AC5 | `tests/core/**` + Rust 测试全绿 | 构建产物 | NOT_RUN | 无 |
+| AC1 | 冻结三命令名与去路径投影；裁决是否需契约 minor 修订 | 只读契约 §5 行 162–164、§10.3 L853 | **PASS**：契约 minor 修订升至 rev 2.5 §5.8，冻结三命令名与去路径白名单安全投影定义 | `doc/contracts/M2-C1_TYPED_IPC_CONTRACT.md` |
+| AC3 | 断言成功返回/拒绝 message/日志均不含 `output_path` 或绝对路径 | 构建产物与测试 | **PASS**：白名单显式提取；错误净化仅暴露 code；单测与集成测试钉死零泄露 | `verification/EXPORT-IPC-1/evidence-layering.md`、`rust-source-tests.log` |
+| AC4-① | allowlist 断言：生产面三命令存在 / probe+AC1 面不存在，probe=7 / AC1=6 不变 | 构建产物 | **PASS**：字面量断言三命令在生产面存在且在 probe/AC1 面不存在，生产命令数 27，probe/AC1 保持 7/6 | `verification/EXPORT-IPC-1/rust-source-tests.log` |
+| AC4-② | typed 拒绝路径测试（未知/外来 export_id；空历史 → 空列表） | 构建产物 | **PASS**：未知 export_id 返回 `EXPORT_NOT_FOUND`；空历史返回 `{"exports": []}`（非错误） | `verification/EXPORT-IPC-1/rust-source-tests.log` |
+| AC4-③ | frozen 2.3 上 `GetExportSnapshot`/`CancelExport` 域级错误 + `GetExportHistory` 真实结构 | 已重建 bundle（junction） | **PASS（含如实限定）**：frozen 2.3 Core 上 `GetExportSnapshot` 与 `CancelExport` 返回域级 `EXPORT_NOT_FOUND`（非 `PROTOCOL_MALFORMED`），`GetExportHistory` 返回 `{"exports": []}`。**如实限定**：未伪造一次成功导出（无真实导出夹具） | `verification/EXPORT-IPC-1/rust-packaged-tests.log` |
+| AC5 | `tests/core/**` + Rust 测试全绿 | 构建产物 | **PASS**：source 88/0/1、packaged 11/0、pytest 405 全部通过，退出码均为 0 | 三个测试日志（见 Canonical Evidence） |
 
 ## 依赖、风险与阻塞
 
@@ -92,12 +92,23 @@ evidence_dir: verification/EXPORT-IPC-1
 
 - 2026-10-16 Coordinator 释放（dsh, epoch 6）：依据设计基线 §6 的 W22/W23/W24 绑定 + Coordinator 只读复核（Core 已实现 / host 全变体 0 命中 / §7 G 清单未覆盖 / §5 行 164 与 §10.3 L853 已裁决路径不得下发）。**释放前先核实缺口真实**。
 - **BL-14 第二例登记**：与 RUN-IPC-1 同根因（设计 §6 只核契约冻结、未核 host 出口）。
-- Handoff：尚无。Review：尚无。实际测试：尚无（全部 `NOT_RUN`）。
+- **2026-10-16 Owner 交付（Antigravity）**：
+  - 实现提交 `a4c8f9ac0cfae60e51532f8ebf9ef1d02c892b15`（代码 + 测试 + verification 证据同提交）。
+  - 契约 M2-C1 升至 rev 2.5 §5.8 冻结去路径白名单安全投影；四处同步完成；单测与 frozen 2.3 真实往返测试全绿。
+  - Handoff：`doc/handoffs/EXPORT-IPC-1-antigravity-a4c8f9a.md`。
+  - **BL-15 处置**：`delivery_head` 指向实现提交，最终分支 HEAD 由 Coordinator 在 closeout 时以 `git rev-parse HEAD` 冻结。
+  - Review 路由：推荐 Reviewer 为 `DeepSeek Harness`（机器排除 Owner Antigravity 以满足独立 Review）。
+- 实际测试：AC4-①②③ 与 AC5 全部执行，结果见「测试要求」表与 Canonical Evidence；**AC4-③ 的成功导出路径未验证**（无真实夹具），如实记录。
+- Review：**待审查**（推荐路由至 **DeepSeek Harness**）。
 
 ## Canonical Evidence
 
 | evidence_id | AC/Gate | path（仓库相对路径或绝对路径） | commit | sha256 | class (`CANONICAL` / `SOURCE_PIN`) |
 |---|---|---|---|---|---|
+| EVID-EXPIPC-SRC | AC4①②/AC5 | `verification/EXPORT-IPC-1/rust-source-tests.log` | `a4c8f9ac0cfae60e51532f8ebf9ef1d02c892b15` | `674878f070e469434d16a8414cdf97592beaa6d8f640974025a4c0122727e5db` | `CANONICAL` |
+| EVID-EXPIPC-PKG | AC4③/AC5 | `verification/EXPORT-IPC-1/rust-packaged-tests.log` | `a4c8f9ac0cfae60e51532f8ebf9ef1d02c892b15` | `f116fea0f4a7400861eff996457d61dd07fc21d532c7444d7209fcd2db64a805` | `CANONICAL` |
+| EVID-EXPIPC-PY | AC5 | `verification/EXPORT-IPC-1/python-tests.log` | `a4c8f9ac0cfae60e51532f8ebf9ef1d02c892b15` | `43f62ba9814cab5fc31ac19eadd3a4584718787c0a86747bef3d2454c43ab987` | `CANONICAL` |
+| EVID-EXPIPC-LAYER | AC3/AC4 | `verification/EXPORT-IPC-1/evidence-layering.md` | `a4c8f9ac0cfae60e51532f8ebf9ef1d02c892b15` | `620166d3ad093656a7fc6f5a6eb33bfe73b46a66da850c7bbe5b052b6f72cfd2` | `CANONICAL` |
 
 ## Resource Manifest
 
