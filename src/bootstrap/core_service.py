@@ -184,7 +184,7 @@ PROTOCOL_MAJOR = 2
 # P15-C1 adds settings commands at 2.6. Keep the existing command surface at
 # 2.3; the dispatcher projects 2.6 only for the new P15 wire.
 PROTOCOL_MINOR = 3
-_P15_PROTOCOL_MINOR = 6
+_P15_PROTOCOL_MINOR = 7
 # HOST-ISSUER-1-C1 rev 2.3 adds an independent host-owned stdio control envelope.
 _HOST_CONTROL_COMMANDS = frozenset({
     "OpenHostSession", "RegisterImportSource", "RevokeImportSource",

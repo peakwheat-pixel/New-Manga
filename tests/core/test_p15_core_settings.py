@@ -346,7 +346,7 @@ def test_new_settings_wire_requires_26_and_old_surface_keeps_23(env):
     assert old_ping["version"] == {"major": 2, "minor": 3}
     assert old_ping["result"]["protocol_version"] == {"major": 2, "minor": 3}
     new_settings = request(server, "settings_provider_profiles_list", {}, minor=3)
-    assert new_settings["version"] == {"major": 2, "minor": 6}
+    assert new_settings["version"] == {"major": 2, "minor": 7}
     assert_safe_error(new_settings, "SETTINGS_INVALID_INPUT")
     assert PROTOCOL_MINOR == 3
-    assert _P15_PROTOCOL_MINOR == 6
+    assert _P15_PROTOCOL_MINOR == 7
