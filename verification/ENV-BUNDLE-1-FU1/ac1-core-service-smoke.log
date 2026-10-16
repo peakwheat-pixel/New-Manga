@@ -1,0 +1,12 @@
+Command: direct stdio launch of the freshly built frozen executable; isolated `NEWMANGA_DATA_ROOT`, `APPDATA`, `LOCALAPPDATA`, and temp directories.
+Executable: G:\CODEX\New Manga.workspace\worktrees\ENV-BUNDLE-1-FU1\apps\desktop\src-tauri\target\core-sidecar\core-sidecar\core_service.exe
+Bytes: 68717156
+SHA-256: 896bd56286b25bc8539028d52f3ef991cfbcbda24f93ae6c6d75758a7dbfd842
+PID: 7236
+Environment: M2RC1_PACKAGED=1; M2RC1_SRC_ROOT=<unset>; M2RC1_PYTHON=<unset>
+Ping response:
+{"protocol":"new-manga.core","version":{"major":2,"minor":3},"request_id":"fu1-core-ping","result":{"status":"ready","protocol_version":{"major":2,"minor":3},"capabilities":["library.list_books"]},"error":null}
+Shutdown response:
+{"protocol":"new-manga.core","version":{"major":2,"minor":3},"request_id":"fu1-core-shutdown","result":{"status":"stopped"},"error":null}
+Exit code: 0
+STDERR: [core.derived_gc] orphan_files_removed=0 dead_rows_removed=0

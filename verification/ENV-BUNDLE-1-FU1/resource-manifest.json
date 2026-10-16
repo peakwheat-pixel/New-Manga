@@ -1,0 +1,82 @@
+{
+  "task_id": "ENV-BUNDLE-1-FU1",
+  "captured_at": "2026-10-16",
+  "resources": [
+    {
+      "resource_type": "worktree",
+      "source_path": "G:/CODEX/New Manga.workspace/worktrees/ENV-BUNDLE-1-FU1",
+      "disposition": "PRESERVE_REFERENCED",
+      "destination_path": "G:/CODEX/New Manga.workspace/worktrees/ENV-BUNDLE-1-FU1",
+      "reference_check": "Task branch codex/ENV-BUNDLE-1-FU1-packaged-acceptance; retain for independent review."
+    },
+    {
+      "resource_type": "frozen_bundle",
+      "source_path": "G:/CODEX/New Manga.workspace/worktrees/ENV-BUNDLE-1-FU1/apps/desktop/src-tauri/target/core-sidecar/core-sidecar",
+      "disposition": "PRESERVE_REFERENCED",
+      "destination_path": "Same ignored bundle in task worktree",
+      "size_bytes": 1287287472,
+      "file_count": 5563,
+      "core_service_exe": {
+        "size_bytes": 68717156,
+        "sha256": "896bd56286b25bc8539028d52f3ef991cfbcbda24f93ae6c6d75758a7dbfd842",
+        "protocol": "2.3"
+      },
+      "reference_check": "Gitignored; used by AC1/AC2; not staged or committed."
+    },
+    {
+      "resource_type": "main_frozen_bundle",
+      "source_path": "G:/CODEX/New Manga/apps/desktop/src-tauri/target/core-sidecar/core-sidecar",
+      "disposition": "PRESERVE_REFERENCED",
+      "destination_path": "Same ignored bundle in main worktree",
+      "size_bytes": 1287287472,
+      "file_count": 5563,
+      "core_service_exe": {
+        "size_bytes": 68717156,
+        "sha256": "896bd56286b25bc8539028d52f3ef991cfbcbda24f93ae6c6d75758a7dbfd842",
+        "protocol": "2.3"
+      },
+      "reference_check": "AC4 refreshed from the task build; gitignored; smoke ping and shutdown passed; retained for P19/P20."
+    },
+    {
+      "resource_type": "frontend_dist",
+      "source_path": "G:/CODEX/New Manga.workspace/worktrees/ENV-BUNDLE-1-FU1/apps/desktop/frontend/dist",
+      "disposition": "PRESERVE_REFERENCED",
+      "destination_path": "Same ignored dist in task worktree",
+      "size_bytes": 201081,
+      "file_count": 2,
+      "manifest_sha256": "d56249d8a1afc8edd88309a7fb4ad9b4add39ec9c68151dca7850c9012898ea7",
+      "reference_check": "Production build output; gitignored; not staged."
+    },
+    {
+      "resource_type": "main_frontend_dist",
+      "source_path": "G:/CODEX/New Manga/apps/desktop/frontend/dist",
+      "disposition": "PRESERVE_REFERENCED",
+      "destination_path": "Same ignored dist in main worktree",
+      "size_bytes": 201081,
+      "file_count": 2,
+      "manifest_sha256": "d56249d8a1afc8edd88309a7fb4ad9b4add39ec9c68151dca7850c9012898ea7",
+      "reference_check": "AC4 refreshed from the task build; gitignored and retained."
+    },
+    {
+      "resource_type": "build_venv",
+      "source_path": "G:/CODEX/New Manga.task-envs/m2ac5-build",
+      "disposition": "PRESERVE_REFERENCED",
+      "destination_path": "Same existing isolated build venv",
+      "reference_check": "Python 3.12.3 / PyInstaller 6.22.3; reused without rebuild."
+    },
+    {
+      "resource_type": "frontend_node_modules",
+      "source_path": "G:/CODEX/New Manga.workspace/worktrees/ENV-BUNDLE-1-FU1/apps/desktop/frontend/node_modules",
+      "disposition": "PRESERVE_REFERENCED",
+      "destination_path": "Same ignored node_modules in task worktree",
+      "reference_check": "Installed by npm ci for the production build; ignored and retained."
+    },
+    {
+      "resource_type": "test_temp_data",
+      "source_path": "%TEMP%/.tmp* created by Rust tempfile tests",
+      "disposition": "CLEANED_BY_OWNER",
+      "destination_path": null,
+      "reference_check": "Rust TempDir values dropped at test completion; isolated smoke-test directories and child processes were cleaned up."
+    }
+  ]
+}

@@ -1,0 +1,8 @@
+Command: launch main's ignored `core_service.exe` directly with `NEWMANGA_DATA_ROOT` set to a new isolated temp directory; send one JSON-lines `core.ping` request using version 2.3.
+Executable: `G:/CODEX/New Manga/apps/desktop/src-tauri/target/core-sidecar/core-sidecar/core_service.exe`
+PID: 33432
+Response:
+{"protocol":"new-manga.core","version":{"major":1,"minor":6},"request_id":"fu1-main-before-ping","result":null,"error":{"code":"PROTOCOL_VERSION_UNSUPPORTED","category":"validation","message":"Unsupported protocol or version","retryable":false}}
+Observed executable protocol version: 1.6.
+STDERR: [core.derived_gc] orphan_files_removed=0 dead_rows_removed=0
+Process cleanup: the probe killed its isolated child after the 2.3 request was rejected; `WaitForExit(10000)` returned `True`.

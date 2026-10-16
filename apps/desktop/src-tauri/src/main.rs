@@ -37,6 +37,9 @@ mod core_bridge;
 mod host_issuer;
 mod library_bridge;
 mod resource_protocol;
+#[cfg(test)]
+#[path = "packaged_sidecar_tests.rs"]
+mod packaged_sidecar_tests;
 
 use ac1_bridge::Ac1Channel;
 use core_bridge::{CoreChannel, CoreError, StdioCoreChannel};
