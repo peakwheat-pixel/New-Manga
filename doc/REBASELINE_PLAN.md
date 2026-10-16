@@ -31,4 +31,4 @@
 本轮完成：PROJECT-ROADMAP-RELEASE、P22-REBASE-1、P04、P06、P10、P11、P09、P09-FU1、P13、P13-C1、P16、P16-C1 均已 done；P18 closed_with_limitations（AC2 待用户门槛、AC5 待解阻）；详见 [STATUS](STATUS.md) 与各 Task。ARCH-DOC-REBASELINE `ready / integrated`，待 AC7 消费者裁决。
 DOC=[架构映射Task](tasks/ARCH-DOC-REBASELINE.md)已集成但未关闭；UI=四页分别经ZCode设计审查；P13*仅备份停写。详细范围/Gate见[本轮裁决](../verification/PROJECT-ROADMAP-RELEASE/REPORT.md)，为本Plan持续冻结的Gate输入，Task关闭不撤销引用；状态仍只在本Plan。
 P02新时点链与P22-REBASE-1已集成；P04前置满足但不自动放行，仍待独立释放授权；旧H1/P2-1/13项缺失、BC-AC5 PARTIAL及产品backlog保留。
-READY 节点：ARCH-DOC-REBASELINE。host 通道已冻结（rev 2.3）；须先解 BL-11（Tauri 构建前置）再恢复 HOST-ISSUER-1。
+READY 节点：ARCH-DOC-REBASELINE。Core handler 已实现（HOST-CORE-1）；下一步恢复 HOST-ISSUER-1。

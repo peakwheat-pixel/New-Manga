@@ -74,10 +74,10 @@ def test_protocol_minor_tracks_the_current_command_surface(server) -> None:
     # same widening precedent, contract rev 1.4 §5.4 -- this file pins the
     # settings pair's own semantics against the CURRENT envelope).
     # M2-PAGE-RESOURCE-RESOLVE-1: 4 -> 5 (resolve_page_resource added).
-    assert (PROTOCOL_MAJOR, PROTOCOL_MINOR) == (2, 2)
+    assert (PROTOCOL_MAJOR, PROTOCOL_MINOR) == (2, 3)
     response = _request(server, "core.ping", {})
     assert response["error"] is None
-    assert response["result"]["protocol_version"] == {"major": 2, "minor": 2}
+    assert response["result"]["protocol_version"] == {"major": 2, "minor": 3}
 
 
 # ---------------------------------------------------------------------------

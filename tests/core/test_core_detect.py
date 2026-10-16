@@ -613,7 +613,7 @@ def test_ping_carries_protocol_minor_6(tmp_path: Path) -> None:
         res, should_exit = _dispatch(server, "p-1", {}, command="core.ping")
         assert should_exit is False
         assert res["error"] is None
-        assert res["result"]["protocol_version"] == {"major": 2, "minor": 2}
+        assert res["result"]["protocol_version"] == {"major": 2, "minor": 3}
     finally:
         core.conn.close()
 
