@@ -5,8 +5,9 @@
 
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
+use std::collections::HashSet;
 use std::io::{BufRead, BufReader, Write};
-use std::path::Path;
+use std::path::{Path, PathBuf};
 use std::process::{Child, ChildStdin, ChildStdout, Command, Stdio};
 use std::sync::atomic::{AtomicU64, Ordering};
 use std::sync::Mutex;
@@ -201,6 +202,17 @@ pub trait LibraryChannel: Send + Sync {
         let _ = (path, request);
         Err(LibraryError::unavailable("Host issuer is unavailable"))
     }
+
+    /// Returns a current-session export's output directory using trusted Core history.
+    fn export_output_directory(&self, export_id: &str) -> Result<PathBuf, LibraryError> {
+        let _ = export_id;
+        Err(LibraryError::new(
+            "EXPORT_NOT_FOUND",
+            "not_found",
+            false,
+            None,
+        ))
+    }
 }
 
 /// The command argv pinned for spawning the production Core service.
@@ -215,6 +227,7 @@ pub struct StdioLibraryChannel {
     transaction_lock: Mutex<()>,
     request_id_gen: AtomicU64,
     host_session: Mutex<Option<HostSession>>,
+    session_export_ids: Mutex<HashSet<String>>,
 }
 
 struct HostSession {
@@ -329,6 +342,7 @@ impl StdioLibraryChannel {
             transaction_lock: Mutex::new(()),
             request_id_gen: AtomicU64::new(1),
             host_session: Mutex::new(None),
+            session_export_ids: Mutex::new(HashSet::new()),
         })
     }
 
@@ -690,6 +704,7 @@ impl StdioLibraryChannel {
             transaction_lock: Mutex::new(()),
             request_id_gen: AtomicU64::new(1),
             host_session: Mutex::new(None),
+            session_export_ids: Mutex::new(HashSet::new()),
         })
     }
 }
@@ -914,8 +929,80 @@ impl LibraryChannel for StdioLibraryChannel {
         let session = session
             .as_ref()
             .ok_or_else(|| LibraryError::new("HOST_SESSION_INVALID", "conflict", false, None))?;
-        self.export_with_session(session, path, request)
+        let summary = self.export_with_session(session, path, request)?;
+        self.session_export_ids
+            .lock()
+            .map_err(|_| LibraryError::unavailable("Export session state is unavailable"))?
+            .insert(summary.export_id.clone());
+        Ok(summary)
     }
+
+    fn export_output_directory(&self, export_id: &str) -> Result<PathBuf, LibraryError> {
+        let session_export_ids = self
+            .session_export_ids
+            .lock()
+            .map_err(|_| LibraryError::unavailable("Export session state is unavailable"))?;
+        require_current_session_export(export_id, &session_export_ids)?;
+        drop(session_export_ids);
+        let history = self.round_trip("GetExportHistory", serde_json::json!({}))?;
+        resolve_export_output_directory(export_id, history)
+    }
+}
+
+fn export_not_found() -> LibraryError {
+    LibraryError::new("EXPORT_NOT_FOUND", "not_found", false, None)
+}
+
+fn export_output_not_ready() -> LibraryError {
+    LibraryError::new("EXPORT_OUTPUT_NOT_READY", "conflict", false, None)
+}
+
+fn export_path_unavailable() -> LibraryError {
+    LibraryError::new("EXPORT_PATH_UNAVAILABLE", "unavailable", false, None)
+}
+
+fn require_current_session_export(
+    export_id: &str,
+    session_export_ids: &HashSet<String>,
+) -> Result<(), LibraryError> {
+    if !session_export_ids.contains(export_id) {
+        return Err(export_not_found());
+    }
+    Ok(())
+}
+
+fn resolve_export_output_directory(
+    export_id: &str,
+    history: Value,
+) -> Result<PathBuf, LibraryError> {
+    let exports = history
+        .get("exports")
+        .and_then(Value::as_array)
+        .ok_or_else(|| LibraryError::malformed("Core export history is malformed"))?;
+    let Some(export) = exports
+        .iter()
+        .find(|row| row.get("export_id").and_then(Value::as_str) == Some(export_id))
+    else {
+        return Err(export_not_found());
+    };
+    if export.get("status").and_then(Value::as_str) != Some("completed") {
+        return Err(export_output_not_ready());
+    }
+    let output_path = export
+        .get("output_path")
+        .and_then(Value::as_str)
+        .map(PathBuf::from)
+        .filter(|path| path.is_absolute())
+        .ok_or_else(export_path_unavailable)?;
+    if !output_path.is_file() {
+        return Err(export_path_unavailable());
+    }
+    let directory = output_path
+        .parent()
+        .and_then(|path| path.canonicalize().ok())
+        .filter(|path| path.is_dir() && path.to_str().is_some())
+        .ok_or_else(export_path_unavailable)?;
+    Ok(directory)
 }
 
 fn host_issuer_error(error: crate::host_issuer::HostIssuerError) -> LibraryError {
@@ -1077,6 +1164,58 @@ mod tests {
             vec!["-m", "bootstrap.core_service"],
             "StdioLibraryChannel must spawn bootstrap.core_service"
         );
+    }
+
+    #[test]
+    fn export_reveal_rejects_unknown_and_foreign_session_ids() {
+        let current_session_ids = HashSet::from(["current-export".to_string()]);
+        for id in ["unknown-export", "older-core-export"] {
+            let error = require_current_session_export(id, &current_session_ids).unwrap_err();
+            assert_eq!(error.code, "EXPORT_NOT_FOUND");
+            assert_eq!(error.category, "not_found");
+        }
+    }
+
+    #[test]
+    fn export_reveal_waits_for_completed_output_and_rejects_unavailable_paths() {
+        let current = HashSet::from(["export-1".to_string()]);
+        let running = serde_json::json!({
+            "exports": [{ "export_id": "export-1", "status": "running", "output_path": "C:/out/export.pdf" }]
+        });
+        let error = resolve_export_output_directory("export-1", running).unwrap_err();
+        assert_eq!(error.code, "EXPORT_OUTPUT_NOT_READY");
+        assert_eq!(error.category, "conflict");
+
+        let unavailable = serde_json::json!({
+            "exports": [{ "export_id": "export-1", "status": "completed", "output_path": "C:/missing/export.pdf" }]
+        });
+        let error = resolve_export_output_directory("export-1", unavailable).unwrap_err();
+        assert_eq!(error.code, "EXPORT_PATH_UNAVAILABLE");
+        assert_eq!(error.category, "unavailable");
+        assert!(require_current_session_export("export-1", &current).is_ok());
+    }
+
+    #[test]
+    fn export_reveal_resolves_only_the_existing_completed_output_directory() {
+        let temp = tempfile::tempdir().unwrap();
+        let directory = temp.path().join("exports");
+        std::fs::create_dir(&directory).unwrap();
+        let output = directory.join("book.cbz");
+        std::fs::write(&output, b"export").unwrap();
+        let history = serde_json::json!({
+            "exports": [{
+                "export_id": "export-1",
+                "status": "completed",
+                "output_path": output.to_str().unwrap()
+            }]
+        });
+        let expected = directory.canonicalize().unwrap();
+        for _ in 0..2 {
+            assert_eq!(
+                resolve_export_output_directory("export-1", history.clone()).unwrap(),
+                expected
+            );
+        }
     }
 
     #[test]

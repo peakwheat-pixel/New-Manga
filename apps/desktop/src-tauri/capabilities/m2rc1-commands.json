@@ -1,7 +1,7 @@
 {
  "$schema": "https://schema.tauri.app/capability/2",
  "identifier": "m2rc1-command-surface",
- "description": "The main window may invoke only commands declared in the application ACL manifest: production library and resource commands, the four probe commands, and the three M2-AC1 acceptance commands. RC-4 history, restore, and rerender commands, the M2-PAGE-RESOURCE-RESOLVE-1 page resolve, the M2-PAGE-NAV-PROJECTION-1 page navigation projections, and HOST-ISSUER-1 user actions are production-only. HostControl remains internal to Rust stdio.",
+ "description": "The main window may invoke only commands declared in the application ACL manifest: production library and resource commands, the four probe commands, and the three M2-AC1 acceptance commands. RC-4 history, restore, and rerender commands, the M2-PAGE-RESOURCE-RESOLVE-1 page resolve, the M2-PAGE-NAV-PROJECTION-1 page navigation projections, HOST-ISSUER-1 user actions, and EXPORT-REVEAL-1 export-folder reveal are production-only. HostControl and opener plugin access remain internal to Rust.",
  "windows": [
   "main"
  ],
@@ -24,6 +24,7 @@
   "allow-library-import-file",
   "allow-library-import-folder",
   "allow-library-start-export",
+  "allow-library-reveal-export-folder",
   "allow-probe-config",
   "allow-probe-write-results",
   "allow-probe-exit",

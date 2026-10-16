@@ -53,6 +53,7 @@ use std::sync::Arc;
 use std::sync::Mutex;
 use tauri::Manager;
 use tauri_plugin_dialog::DialogExt;
+use tauri_plugin_opener::OpenerExt;
 
 /// Commands every mode exposes: the product WebView surface. No path-shaped
 /// parameter, no TTL parameter, no probe capability.
@@ -84,6 +85,8 @@ pub const PRODUCTION_COMMANDS: &[&str] = &[
     "library_import_file",
     "library_import_folder",
     "library_start_export",
+    // EXPORT-REVEAL-1: never accepts a path; Rust resolves this in current Core history.
+    "library_reveal_export_folder",
 ];
 
 /// Commands that exist ONLY in probe mode (`M2RC1_PROBE_OUT` set by the
@@ -150,6 +153,10 @@ pub const HOST_ISSUER_PRODUCTION_ONLY_COMMANDS: &[&str] = &[
     "library_start_export",
 ];
 
+/// EXPORT-REVEAL-1 adds this Tauri action to production only; probe and AC1
+/// keep their frozen command surfaces.
+pub const EXPORT_REVEAL_PRODUCTION_ONLY_COMMANDS: &[&str] = &["library_reveal_export_folder"];
+
 pub fn command_allowlist(probe_mode: bool, ac1_mode: bool) -> Vec<&'static str> {
     let mut commands: Vec<&'static str> = if probe_mode || ac1_mode {
         PRODUCTION_COMMANDS
@@ -163,6 +170,7 @@ pub fn command_allowlist(probe_mode: bool, ac1_mode: bool) -> Vec<&'static str> 
                     && !PAGE_RESOLVE_PRODUCTION_ONLY_COMMANDS.contains(command)
                     && !PAGE_NAV_PRODUCTION_ONLY_COMMANDS.contains(command)
                     && !HOST_ISSUER_PRODUCTION_ONLY_COMMANDS.contains(command)
+                    && !EXPORT_REVEAL_PRODUCTION_ONLY_COMMANDS.contains(command)
             })
             .collect()
     } else {
@@ -493,6 +501,45 @@ async fn library_start_export(
         .start_export_to_path(&path, request)
         .map_err(|error| error.code)?;
     Ok(Some(result))
+}
+
+fn reveal_export_folder_with(
+    export_id: &str,
+    resolve_directory: impl FnOnce(&str) -> Result<PathBuf, String>,
+    open_directory: impl FnOnce(&std::path::Path) -> Result<(), String>,
+) -> Result<(), String> {
+    let directory = resolve_directory(export_id)?;
+    open_directory(&directory)
+}
+
+#[tauri::command]
+async fn library_reveal_export_folder(
+    app: tauri::AppHandle,
+    state: tauri::State<'_, AppState>,
+    export_id: String,
+) -> Result<(), String> {
+    let library = state
+        .library
+        .as_ref()
+        .ok_or_else(|| "CORE_UNAVAILABLE".to_string())?;
+    reveal_export_folder_with(
+        &export_id,
+        |id| {
+            library
+                .export_output_directory(id)
+                .map_err(|error| error.code)
+        },
+        |directory| {
+            app.opener()
+                .open_path(
+                    directory
+                        .to_str()
+                        .ok_or_else(|| "EXPORT_PATH_UNAVAILABLE".to_string())?,
+                    None::<&str>,
+                )
+                .map_err(|_| "EXPORT_REVEAL_FAILED".to_string())
+        },
+    )
 }
 
 fn rotate_render_preview(
@@ -899,7 +946,9 @@ fn main() {
 
     let builder = tauri::Builder::default();
     let builder = if is_production {
-        builder.plugin(tauri_plugin_dialog::init())
+        builder
+            .plugin(tauri_plugin_dialog::init())
+            .plugin(tauri_plugin_opener::init())
     } else {
         builder
     };
@@ -996,7 +1045,8 @@ fn main() {
             list_chapter_pages,
             library_import_file,
             library_import_folder,
-            library_start_export
+            library_start_export,
+            library_reveal_export_folder
         ])
     };
 
@@ -1094,8 +1144,9 @@ mod tests {
     /// keyed `plugin:<name>|<cmd>` and never matches bare invocations -- the
     /// ACL layer silently skipped them, DSH R2-01). This pins the build
     /// artifact: the app manifest declares exactly the live commands
-    /// (eighteen production -- resource-channel, IPC1, settings, retype,
+    /// (nineteen production -- resource-channel, IPC1, settings, retype,
     /// RC-4, page resolve/navigation and HOST-ISSUER-1 actions -- plus
+    /// the EXPORT-REVEAL-1 action -- plus
     /// four probe-only and three M2-AC1 acceptance commands; R2-06),
     /// and no plugin-shaped surface remains.
     #[test]
@@ -1139,14 +1190,15 @@ mod tests {
     }
 
     #[test]
-    fn production_surface_is_exactly_eighteen_commands() {
+    fn production_surface_includes_export_reveal() {
         // M2-SETTINGS-IPC-CHANNEL: five -> seven (settings_get +
         // settings_update_section, contract rev 1.3 §5.3; pinned wire names)
         // M2-REGION-RETYPE-CORE: seven -> nine; RC-4 adds three frozen
         // history/restore/render commands on production only;
         // M2-PAGE-RESOURCE-RESOLVE-1: nine -> thirteen (contract rev 1.7);
         // M2-PAGE-NAV-PROJECTION-1: thirteen -> fifteen (contract rev 1.8);
-        // HOST-ISSUER-1 adds three safe native-picker actions.
+        // HOST-ISSUER-1 adds three safe native-picker actions; EXPORT-REVEAL-1
+        // adds one production-only directory reveal command.
         assert_eq!(
             command_allowlist(false, false),
             vec![
@@ -1168,8 +1220,60 @@ mod tests {
                 "library_import_file",
                 "library_import_folder",
                 "library_start_export",
+                "library_reveal_export_folder",
             ]
         );
+    }
+
+    #[test]
+    fn export_reveal_command_is_production_only() {
+        assert_eq!(
+            EXPORT_REVEAL_PRODUCTION_ONLY_COMMANDS,
+            &["library_reveal_export_folder"]
+        );
+        assert!(command_allowlist(false, false).contains(&"library_reveal_export_folder"));
+        assert!(!command_allowlist(true, false).contains(&"library_reveal_export_folder"));
+        assert!(!command_allowlist(false, true).contains(&"library_reveal_export_folder"));
+    }
+
+    #[test]
+    fn reveal_rejections_do_not_call_the_opener() {
+        for (export_id, code) in [
+            ("C:/private/export.pdf", "EXPORT_NOT_FOUND"),
+            ("unknown-export", "EXPORT_NOT_FOUND"),
+            ("older-core-export", "EXPORT_NOT_FOUND"),
+            ("current-pending-export", "EXPORT_OUTPUT_NOT_READY"),
+            ("current-missing-path", "EXPORT_PATH_UNAVAILABLE"),
+        ] {
+            let mut opened = false;
+            let result = reveal_export_folder_with(
+                export_id,
+                |_| Err(code.to_string()),
+                |_| {
+                    opened = true;
+                    Ok(())
+                },
+            );
+            assert_eq!(result.unwrap_err(), code);
+            assert!(!opened, "{code} must not reach the opener");
+        }
+    }
+
+    #[test]
+    fn reveal_opens_only_the_resolved_directory() {
+        let expected = std::env::temp_dir().canonicalize().unwrap();
+        let mut opened = false;
+        let result = reveal_export_folder_with(
+            "opaque-export-id",
+            |_| Ok(expected.clone()),
+            |directory| {
+                assert_eq!(directory, expected);
+                opened = true;
+                Ok(())
+            },
+        );
+        assert!(result.is_ok());
+        assert!(opened);
     }
 
     #[test]
@@ -1237,6 +1341,7 @@ mod tests {
                 - PAGE_RESOLVE_PRODUCTION_ONLY_COMMANDS.len()
                 - PAGE_NAV_PRODUCTION_ONLY_COMMANDS.len()
                 - HOST_ISSUER_PRODUCTION_ONLY_COMMANDS.len()
+                - EXPORT_REVEAL_PRODUCTION_ONLY_COMMANDS.len()
                 + PROBE_ONLY_COMMANDS.len()
         );
     }
@@ -1305,6 +1410,7 @@ mod tests {
                 - PAGE_RESOLVE_PRODUCTION_ONLY_COMMANDS.len()
                 - PAGE_NAV_PRODUCTION_ONLY_COMMANDS.len()
                 - HOST_ISSUER_PRODUCTION_ONLY_COMMANDS.len()
+                - EXPORT_REVEAL_PRODUCTION_ONLY_COMMANDS.len()
                 + AC1_TEST_COMMANDS.len()
         );
     }
@@ -1314,7 +1420,8 @@ mod tests {
         // M2-REGION-RETYPE-CORE r1 P3-2: one negative sweep across the SIX
         // production-only families (IPC1 + settings + retype + RC4 + the
         // M2-PAGE-RESOURCE-RESOLVE-1 page-resource resolve + the
-        // M2-PAGE-NAV-PROJECTION-1 navigation projections) — the frozen
+        // M2-PAGE-NAV-PROJECTION-1 navigation projections + HOST-ISSUER-1 +
+        // EXPORT-REVEAL-1) — the frozen
         // probe and ac1 test-mode surfaces must never gain any of them, and
         // their historical 7/6-command shapes stay pinned.
         for command in IPC1_PRODUCTION_ONLY_COMMANDS
@@ -1325,6 +1432,7 @@ mod tests {
             .chain(PAGE_RESOLVE_PRODUCTION_ONLY_COMMANDS)
             .chain(PAGE_NAV_PRODUCTION_ONLY_COMMANDS)
             .chain(HOST_ISSUER_PRODUCTION_ONLY_COMMANDS)
+            .chain(EXPORT_REVEAL_PRODUCTION_ONLY_COMMANDS)
         {
             assert!(
                 !command_allowlist(true, false).contains(command),
