@@ -1,0 +1,5 @@
+dist=G:\CODEX\New Manga.workspace\worktrees\ENV-BUNDLE-1\apps\desktop\frontend\dist
+files=2
+bytes=201081
+assets\index-B18Ljq2O.js bytes=200805 sha256=8a4e4252291e98e3408bd06da06a52ee31d799feee8d79043bc0026a94575995
+index.html bytes=276 sha256=a05b375c3e34ece03e72196b2177e17903aee01edc10d043f89b0d242051e4f3

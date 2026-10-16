@@ -1,0 +1,9 @@
+Base commit: c6fda8a09c1a8248ec6617369f9fdf9e1cef79ec
+Command: git diff --name-only c6fda8a09c1a8248ec6617369f9fdf9e1cef79ec..HEAD -- src apps requirements.txt Cargo.toml doc/contracts
+Raw output: <empty>
+Exit code: 0
+Command: git status --porcelain -- src apps requirements.txt doc/contracts
+Raw output: <empty>
+Command: git diff -- apps/desktop/frontend/package-lock.json
+Raw output: <empty>; package-lock SHA256 before/after 520be4900b855e235b8347f8a179b3cffe4a520069a51464151fc880b05f0295
+Conclusion: product source, contracts, schemas, package/product dependencies, and frontend lockfile have no tracked diff. Only gitignored build outputs and task evidence are present.

@@ -1,0 +1,49 @@
+{
+  "task_id": "ENV-BUNDLE-1",
+  "created_local": "2026-10-16T16:37:42.5095259+08:00",
+  "base_commit": "c6fda8a09c1a8248ec6617369f9fdf9e1cef79ec",
+  "branch": "codex/ENV-BUNDLE-1-sidecar-rebuild",
+  "resources": [
+    {
+      "resource_type": "build-venv",
+      "path": "G:\\CODEX\\New Manga.task-envs\\m2ac5-build",
+      "disposition": "PRESERVE_REFERENCED",
+      "files": 42709,
+      "bytes": 1493841058,
+      "python": "3.12.3",
+      "resolved_versions": "ac1-resolved-versions.txt"
+    },
+    {
+      "resource_type": "sidecar-bundle",
+      "path": "G:\\CODEX\\New Manga.workspace\\worktrees\\ENV-BUNDLE-1\\apps\\desktop\\src-tauri\\target\\core-sidecar\\core-sidecar",
+      "disposition": "PRESERVE_REFERENCED",
+      "files": 5563,
+      "bytes": 1287287472,
+      "build_head": "c6fda8a09c1a8248ec6617369f9fdf9e1cef79ec",
+      "weights_skipped": false,
+      "smoke": "ac4-packaged-core-smoke.log"
+    },
+    {
+      "resource_type": "pyinstaller-work",
+      "path": "G:\\CODEX\\New Manga.workspace\\worktrees\\ENV-BUNDLE-1\\apps\\desktop\\src-tauri\\target\\pyinstaller-work",
+      "disposition": "PRESERVE_REFERENCED",
+      "files": 49,
+      "bytes": 656512909
+    },
+    {
+      "resource_type": "frontend-dist",
+      "path": "G:\\CODEX\\New Manga.workspace\\worktrees\\ENV-BUNDLE-1\\apps\\desktop\\frontend\\dist",
+      "disposition": "PRESERVE_REFERENCED",
+      "files": 2,
+      "bytes": 201081,
+      "manifest": "ac3-frontend-dist-manifest.txt"
+    },
+    {
+      "resource_type": "frontend-node-modules",
+      "path": "G:\\CODEX\\New Manga.workspace\\worktrees\\ENV-BUNDLE-1\\apps\\desktop\\frontend\\node_modules",
+      "disposition": "PRESERVE_REFERENCED",
+      "files": 4370,
+      "bytes": 84189621
+    }
+  ]
+}

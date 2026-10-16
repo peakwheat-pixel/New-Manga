@@ -1,0 +1,40 @@
+command: G:\CODEX\New Manga.task-envs\m2ac5-build\Scripts\python.exe -m pip install -r packaging/m2ac5/requirements-build.txt
+python: Python 3.12.3
+started_local: 2026-10-16T16:01:20.7925341+08:00
+output (credentials redacted if present):
+ERROR: Exception:
+Traceback (most recent call last):
+  File "G:\CODEX\New Manga.task-envs\m2ac5-build\Lib\site-packages\pip\_internal\cli\base_command.py", line 180, in exc_logging_wrapper
+    status = run_func(*args)
+             ^^^^^^^^^^^^^^^
+  File "G:\CODEX\New Manga.task-envs\m2ac5-build\Lib\site-packages\pip\_internal\cli\req_command.py", line 245, in wrapper
+    return func(self, options, args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "G:\CODEX\New Manga.task-envs\m2ac5-build\Lib\site-packages\pip\_internal\commands\install.py", line 342, in run
+    reqs = self.get_requirements(args, options, finder, session)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "G:\CODEX\New Manga.task-envs\m2ac5-build\Lib\site-packages\pip\_internal\cli\req_command.py", line 433, in get_requirements
+    for parsed_req in parse_requirements(
+  File "G:\CODEX\New Manga.task-envs\m2ac5-build\Lib\site-packages\pip\_internal\req\req_file.py", line 156, in parse_requirements
+    for parsed_line in parser.parse(filename, constraint):
+  File "G:\CODEX\New Manga.task-envs\m2ac5-build\Lib\site-packages\pip\_internal\req\req_file.py", line 337, in parse
+    yield from self._parse_and_recurse(filename, constraint)
+  File "G:\CODEX\New Manga.task-envs\m2ac5-build\Lib\site-packages\pip\_internal\req\req_file.py", line 342, in _parse_and_recurse
+    for line in self._parse_file(filename, constraint):
+  File "G:\CODEX\New Manga.task-envs\m2ac5-build\Lib\site-packages\pip\_internal\req\req_file.py", line 373, in _parse_file
+    _, content = get_file_content(filename, self._session)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "G:\CODEX\New Manga.task-envs\m2ac5-build\Lib\site-packages\pip\_internal\req\req_file.py", line 551, in get_file_content
+    content = auto_decode(f.read())
+              ^^^^^^^^^^^^^^^^^^^^^
+  File "G:\CODEX\New Manga.task-envs\m2ac5-build\Lib\site-packages\pip\_internal\utils\encoding.py", line 34, in auto_decode
+    return data.decode(
+           ^^^^^^^^^^^^
+UnicodeDecodeError: 'gbk' codec can't decode byte 0x94 in position 888: illegal multibyte sequence
+decoding with 'cp936' codec failed
+
+[notice] A new release of pip is available: 24.0 -> 26.2.1
+[notice] To update, run: G:\CODEX\New Manga.task-envs\m2ac5-build\Scripts\python.exe -m pip install --upgrade pip
+finished_local: 2026-10-16T16:01:21.7814663+08:00
+elapsed_seconds: 0.985
+exit_code: 2
