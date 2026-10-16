@@ -3,6 +3,7 @@ from __future__ import annotations
 import json
 from pathlib import Path
 import sys
+from dataclasses import replace
 
 import pytest
 
@@ -13,9 +14,10 @@ if str(SRC_ROOT) not in sys.path:
 from bootstrap.core_service import CoreServiceServer, PROTOCOL_MAJOR, PROTOCOL_MINOR, _P15_PROTOCOL_MINOR, assemble_production_core
 from domain.books.entities import ReadingDirection
 from domain.pages.entities import Page
-from infrastructure.transport.stdlib import StdlibTransport
+from infrastructure.transport.stdlib import ResolvedRoute, StdlibTransport
+from infrastructure.network.profile_test import NetworkProfileTestProbe
 from ports.network.profiles import MODE_HTTP, NetworkProfile
-from ports.network.transport import TcpConnectionError, TransportRequest
+from ports.network.transport import TcpConnectionError, TransportError, TransportRequest, TransportResponse
 from ports.providers.profiles import ProviderProfile
 
 
@@ -728,9 +730,588 @@ def test_proxy_credential_binding_is_profile_scoped_and_secret_free(env):
     assert not core.credential_store.has_credential(credential_ref)
 
 
-def test_private_credential_commands_require_p15_minor_seven_and_test_command_stays_absent(env):
+def test_private_credential_commands_require_p15_minor_seven_and_test_requires_ids(env):
     _core, server = env
     invalid_version = request(server, "BindProfileCredential", {}, minor=3)
     assert invalid_version["version"] == {"major": 2, "minor": 7}
     assert_safe_error(invalid_version, "SETTINGS_INVALID_INPUT")
-    assert request(server, "settings_network_profiles_test", {}, minor=7)["error"]["code"] == "UNKNOWN_COMMAND"
+    invalid_test = request(server, "settings_network_profiles_test", {}, minor=7)
+    assert invalid_test["error"]["code"] == "INVALID_REQUEST"
+    assert invalid_test["result"] is None
+
+
+def _network_test_profiles(core, server, *, endpoint, provider_type="openai-compatible"):
+    bound = create_network_profile(server)["result"]["profile"]
+    provider_wire = create_profile(server, provider_id=provider_type)
+    provider = core.provider_profile_store.get_profile(provider_wire["profile_id"])
+    core.provider_profile_store.update_profile(replace(
+        provider,
+        base_url=endpoint,
+        network_profile_id=bound["network_profile_id"],
+    ))
+    return provider_wire, bound
+
+
+def _network_test_request(server, network_id, provider_id):
+    return request(server, "settings_network_profiles_test", {
+        "network_profile_id": network_id,
+        "provider_profile_id": provider_id,
+    })
+
+
+class _StageProbe:
+    def __init__(self, *, fail_at=None, system_direct=False, auth_not_required=True):
+        self.fail_at = fail_at
+        self.system_direct = system_direct
+        self.auth_not_required = auth_not_required
+        self.calls = []
+
+    def run(self, stage, endpoint, provider, network, context):
+        self.calls.append((stage, endpoint, provider.provider_profile_id, network.network_profile_id))
+        if stage == self.fail_at:
+            raise RuntimeError("secret-marker C:\\private\\network.json raw-response-marker")
+        if stage == "Proxy" and network.mode == "system" and self.system_direct:
+            return "system_route_is_direct"
+        if stage == "ProviderAuth" and self.auth_not_required:
+            return "provider_auth_not_required"
+        return None
+
+
+@pytest.mark.parametrize("mode,proxy_endpoint", [
+    ("Direct", None),
+    ("System", None),
+    ("HTTP", "http://proxy.example.test:8080"),
+    ("HTTPS", "https://proxy.example.test:8443"),
+    ("SOCKS5", "socks5://proxy.example.test:1080"),
+])
+@pytest.mark.parametrize("endpoint,dns_reason,tls_reason", [
+    ("http://tenant-secret.example.test/private/v1", None, "provider_endpoint_uses_http"),
+    ("https://tenant-secret.example.test/private/v1", None, None),
+    ("https://192.0.2.10/private/v1", "provider_endpoint_is_ip_literal", None),
+])
+def test_network_profile_test_mode_and_not_applicable_matrix(
+    env, mode, proxy_endpoint, endpoint, dns_reason, tls_reason
+):
+    core, server = env
+    selected = create_network_profile(server, mode=mode, endpoint=proxy_endpoint)["result"]["profile"]
+    provider, bound = _network_test_profiles(core, server, endpoint=endpoint, provider_type="local-sakura")
+    probe = _StageProbe(system_direct=(mode == "System"))
+    core.network_profile_test_probe = probe
+
+    response = _network_test_request(server, selected["network_profile_id"], provider["profile_id"])
+
+    assert response["error"] is None
+    result = response["result"]
+    assert result["status"] == "passed"
+    assert result["failed_stage"] is None
+    assert result["direct_fallback_used"] is False
+    assert [item["stage"] for item in result["stages"]] == [
+        "Proxy", "DNS", "TCP", "TLS", "HTTP", "ProviderAuth"
+    ]
+    if mode == "Direct":
+        assert result["stages"][0] == {
+            "stage": "Proxy", "status": "not_applicable", "reason": "direct_mode"
+        }
+    elif mode == "System":
+        assert result["stages"][0] == {
+            "stage": "Proxy", "status": "not_applicable", "reason": "system_route_is_direct"
+        }
+    else:
+        assert result["stages"][0]["status"] == "passed"
+    if dns_reason:
+        assert result["stages"][1] == {
+            "stage": "DNS", "status": "not_applicable", "reason": dns_reason
+        }
+    else:
+        assert result["stages"][1]["status"] == "passed"
+    if tls_reason:
+        assert result["stages"][3] == {
+            "stage": "TLS", "status": "not_applicable", "reason": tls_reason
+        }
+    else:
+        assert result["stages"][3]["status"] == "passed"
+    assert result["stages"][2]["status"] == "passed"
+    assert result["stages"][4]["status"] == "passed"
+    assert result["stages"][5] == {
+        "stage": "ProviderAuth", "status": "not_applicable",
+        "reason": "provider_auth_not_required",
+    }
+    assert all(call[1] == endpoint and call[3] == selected["network_profile_id"] for call in probe.calls)
+    assert bound["network_profile_id"] != selected["network_profile_id"]
+    assert endpoint not in json.dumps(result)
+
+
+def test_network_profile_test_system_proxy_route_runs_proxy_stage(env):
+    core, server = env
+    selected = create_network_profile(server, mode="System")["result"]["profile"]
+    provider, _bound = _network_test_profiles(
+        core, server, endpoint="https://tenant-secret.example.test/private/v1", provider_type="local-sakura"
+    )
+    probe = _StageProbe(system_direct=False)
+    core.network_profile_test_probe = probe
+
+    result = _network_test_request(server, selected["network_profile_id"], provider["profile_id"])["result"]
+
+    assert result["stages"][0]["status"] == "passed"
+    assert any(call[0] == "Proxy" for call in probe.calls)
+
+
+@pytest.mark.parametrize("mode,proxy_endpoint", [
+    ("Direct", None),
+    ("System", None),
+    ("HTTP", "http://proxy.example.test:8080"),
+    ("HTTPS", "https://proxy.example.test:8443"),
+    ("SOCKS5", "socks5://proxy.example.test:1080"),
+])
+@pytest.mark.parametrize("failed_stage", ["DNS", "TCP", "TLS", "HTTP", "ProviderAuth"])
+def test_network_profile_test_failure_stops_later_stages_and_sanitizes_result(
+    env, mode, proxy_endpoint, failed_stage
+):
+    core, server = env
+    selected = create_network_profile(
+        server, mode=mode, endpoint=proxy_endpoint,
+        allow_proxy_failure_direct_fallback=True,
+    )["result"]["profile"]
+    provider, _bound = _network_test_profiles(
+        core, server, endpoint="https://tenant-secret.example.test/private/v1"
+    )
+    probe = _StageProbe(fail_at=failed_stage, auth_not_required=False)
+    core.network_profile_test_probe = probe
+
+    response = _network_test_request(server, selected["network_profile_id"], provider["profile_id"])
+
+    assert response["error"] is None
+    result = response["result"]
+    assert result["status"] == "failed"
+    assert result["failed_stage"] == failed_stage
+    assert result["direct_fallback_used"] is False
+    failed_index = next(i for i, item in enumerate(result["stages"]) if item["stage"] == failed_stage)
+    assert result["stages"][failed_index]["status"] == "failed"
+    assert result["stages"][failed_index]["failure"] == {
+        "category": "unavailable", "action": "retry", "message_key": "NETWORK_STAGE_FAILED"
+    }
+    assert all(
+        item == {"stage": item["stage"], "status": "not_run", "reason": "upstream_stage_failed"}
+        for item in result["stages"][failed_index + 1:]
+    )
+    serialized = json.dumps(response)
+    for sensitive in ("tenant-secret", "/private/v1", "secret-marker", "raw-response-marker", "C:\\\\private"):
+        assert sensitive not in serialized
+
+
+@pytest.mark.parametrize("mode,proxy_endpoint", [
+    ("System", None),
+    ("HTTP", "http://proxy.example.test:8080"),
+    ("HTTPS", "https://proxy.example.test:8443"),
+    ("SOCKS5", "socks5://proxy.example.test:1080"),
+])
+def test_network_profile_test_proxy_failure_stops_every_mode(env, mode, proxy_endpoint):
+    core, server = env
+    selected = create_network_profile(server, mode=mode, endpoint=proxy_endpoint)["result"]["profile"]
+    provider, _bound = _network_test_profiles(
+        core, server, endpoint="https://tenant-secret.example.test/private/v1"
+    )
+    core.network_profile_test_probe = _StageProbe(fail_at="Proxy", system_direct=False)
+
+    response = _network_test_request(server, selected["network_profile_id"], provider["profile_id"])
+
+    assert response["result"]["status"] == "failed"
+    assert response["result"]["failed_stage"] == "Proxy"
+    assert response["result"]["stages"][1:] == [
+        {"stage": stage, "status": "not_run", "reason": "upstream_stage_failed"}
+        for stage in ("DNS", "TCP", "TLS", "HTTP", "ProviderAuth")
+    ]
+
+
+@pytest.mark.parametrize("field,value", [
+    ("provider_profile_id", None),
+    ("provider_profile_id", 7),
+    ("provider_profile_id", ""),
+    ("provider_profile_id", "missing-provider"),
+    ("network_profile_id", None),
+    ("network_profile_id", 7),
+    ("network_profile_id", ""),
+    ("network_profile_id", "missing-network"),
+])
+def test_network_profile_test_invalid_or_unresolved_target_is_invalid_request(env, field, value):
+    core, server = env
+    network = create_network_profile(server)["result"]["profile"]
+    provider = create_profile(server)
+    payload = {
+        "network_profile_id": network["network_profile_id"],
+        "provider_profile_id": provider["profile_id"],
+    }
+    payload[field] = value
+    core.network_profile_test_probe = _StageProbe(fail_at="HTTP")
+
+    response = request(server, "settings_network_profiles_test", payload)
+
+    assert response["error"]["code"] == "INVALID_REQUEST"
+    assert response["result"] is None
+    assert_safe_error(response, "SETTINGS_INVALID_INPUT")
+
+
+@pytest.mark.parametrize("payload", [{}, {"network_profile_id": "network-only"}, {"provider_profile_id": "provider-only"}])
+def test_network_profile_test_missing_target_never_returns_passed(env, payload):
+    core, server = env
+    core.network_profile_test_probe = _StageProbe()
+
+    response = request(server, "settings_network_profiles_test", payload)
+
+    assert response["error"]["code"] == "INVALID_REQUEST"
+    assert response["result"] is None
+    assert_safe_error(response, "SETTINGS_INVALID_INPUT")
+
+
+class _ProxyConnectionFailureTransport:
+    def __init__(self):
+        self.profiles = []
+        self.attempts = []
+
+    def resolve_route(self, endpoint, profile):
+        self.profiles.append(profile)
+        return ResolvedRoute(
+            target_scheme="https", target_host="tenant-secret.example.test", target_port=443,
+            via_proxy=True, proxy_kind="http", proxy_host="proxy.example.test",
+            proxy_port=8080, proxy_source="profile", reason="profile:http",
+        )
+
+    def _tcp_connect(self, host, port, timeout):
+        self.attempts.append((host, port))
+        raise TcpConnectionError("proxy failed; secret-marker must never escape")
+
+
+class _NegotiationSocket:
+    def __init__(self, replies=()):
+        self.replies = list(replies)
+        self.sent = []
+
+    def sendall(self, data):
+        self.sent.append(data)
+
+    def recv(self, count):
+        return self.replies.pop(0)
+
+    def close(self):
+        pass
+
+
+class _ProxyRouteTransport(StdlibTransport):
+    def __init__(self, system_route=None, replies=()):
+        super().__init__()
+        self.system_route = system_route
+        self.socket = _NegotiationSocket(replies)
+        self.profiles = []
+        self.connects = []
+        self.tls = []
+        self.tunnels = []
+
+    def resolve_route(self, endpoint, profile):
+        self.profiles.append(profile)
+        if profile.mode == "system":
+            return self.system_route
+        return super().resolve_route(endpoint, profile)
+
+    def _tcp_connect(self, host, port, timeout):
+        self.connects.append((host, port))
+        return self.socket
+
+    def _tls_wrap(self, sock, host, profile, *, stage):
+        self.tls.append((host, stage))
+        return sock
+
+    def _http_connect_tunnel(self, sock, route, profile):
+        self.tunnels.append((route.target_host, route.target_port))
+
+
+def test_network_profile_test_proxy_failure_never_attempts_direct(env):
+    core, server = env
+    selected = create_network_profile(
+        server, mode="HTTP", endpoint="http://proxy.example.test:8080",
+        allow_proxy_failure_direct_fallback=True,
+    )["result"]["profile"]
+    provider, _bound = _network_test_profiles(
+        core, server, endpoint="https://tenant-secret.example.test/private/v1"
+    )
+    transport = _ProxyConnectionFailureTransport()
+    core.network_profile_test_probe = NetworkProfileTestProbe(transport)
+
+    result = _network_test_request(server, selected["network_profile_id"], provider["profile_id"])["result"]
+
+    assert result["status"] == "failed"
+    assert result["failed_stage"] == "Proxy"
+    assert result["stages"][1:] == [
+        {"stage": stage, "status": "not_run", "reason": "upstream_stage_failed"}
+        for stage in ("DNS", "TCP", "TLS", "HTTP", "ProviderAuth")
+    ]
+    assert transport.attempts == [("proxy.example.test", 8080)]
+    assert len(transport.profiles) == 1
+    assert transport.profiles[0].allow_proxy_failure_direct_fallback is False
+    assert transport.profiles[0].bypass_hosts == frozenset()
+    assert transport.profiles[0].inherit_system is False
+    assert result["direct_fallback_used"] is False
+
+
+@pytest.mark.parametrize("mode,proxy_kind", [
+    ("http", "http"),
+    ("https", "https"),
+    ("socks5", "socks5"),
+    ("system", "http"),
+])
+def test_network_probe_uses_the_selected_proxy_and_classifies_its_own_handshake(mode, proxy_kind):
+    endpoint = "https://tenant-secret.example.test/private/v1"
+    network = NetworkProfile(
+        network_profile_id="selected-network",
+        name="selected",
+        mode=mode,
+        http_proxy="http://proxy.example.test:8080" if mode in {"http", "system"} else "",
+        https_proxy="https://proxy.example.test:8443" if mode == "https" else "",
+        socks5_proxy="socks5://proxy.example.test:1080" if mode == "socks5" else "",
+        inherit_system=(mode == "system"),
+        allow_proxy_failure_direct_fallback=True,
+        bypass_hosts=frozenset({"tenant-secret.example.test"}),
+    )
+    system_route = ResolvedRoute(
+        target_scheme="https", target_host="tenant-secret.example.test", target_port=443,
+        via_proxy=True, proxy_kind="http", proxy_host="proxy.example.test",
+        proxy_port=8080, proxy_source="system",
+    )
+    transport = _ProxyRouteTransport(system_route, replies=(b"\x05\x00",))
+    probe = NetworkProfileTestProbe(transport)
+
+    assert probe.run("Proxy", endpoint, object(), network, {}) is None
+
+    expected_port = {"http": 8080, "https": 8443, "socks5": 1080}[proxy_kind]
+    assert transport.connects == [("proxy.example.test", expected_port)]
+    assert transport.profiles[0].allow_proxy_failure_direct_fallback is False
+    assert transport.profiles[0].bypass_hosts == frozenset()
+    assert transport.profiles[0].inherit_system == (mode == "system")
+    if proxy_kind == "https":
+        assert transport.tls == [("proxy.example.test", "proxy-tls")]
+    if proxy_kind in {"http", "https"}:
+        assert transport.tunnels == [("tenant-secret.example.test", 443)]
+    if proxy_kind == "socks5":
+        assert transport.socket.sent == [b"\x05\x01\x00"]
+
+
+def test_network_probe_system_direct_is_not_applicable_without_connecting():
+    endpoint = "https://tenant-secret.example.test/private/v1"
+    network = NetworkProfile(
+        network_profile_id="selected-network", name="selected", mode="system",
+        inherit_system=True, allow_proxy_failure_direct_fallback=True,
+        bypass_hosts=frozenset({"tenant-secret.example.test"}),
+    )
+    transport = _ProxyRouteTransport(ResolvedRoute(
+        target_scheme="https", target_host="tenant-secret.example.test", target_port=443,
+        reason="system-none",
+    ))
+
+    reason = NetworkProfileTestProbe(transport).run("Proxy", endpoint, object(), network, {})
+
+    assert reason == "system_route_is_direct"
+    assert transport.connects == []
+    assert transport.profiles[0].allow_proxy_failure_direct_fallback is False
+    assert transport.profiles[0].bypass_hosts == frozenset()
+    assert transport.profiles[0].inherit_system is True
+
+
+def test_network_probe_rejects_unoffered_socks5_authentication():
+    endpoint = "https://tenant-secret.example.test/private/v1"
+    network = NetworkProfile(
+        network_profile_id="selected-network", name="selected", mode="socks5",
+        socks5_proxy="socks5://proxy.example.test:1080", inherit_system=False,
+    )
+    route = ResolvedRoute(
+        target_scheme="https", target_host="tenant-secret.example.test", target_port=443,
+        via_proxy=True, proxy_kind="socks5", proxy_host="proxy.example.test", proxy_port=1080,
+    )
+    transport = _ProxyRouteTransport(route, replies=(b"\x05\x02",))
+
+    with pytest.raises(TransportError):
+        NetworkProfileTestProbe(transport).run("Proxy", endpoint, object(), network, {})
+
+    assert transport.socket.sent == [b"\x05\x01\x00"]
+
+
+class _HttpProbeTransport:
+    def __init__(self, responses, credentials=None):
+        self.responses = list(responses)
+        self._credentials = credentials
+        self.requests = []
+        self.resolved = []
+
+    def resolve_route(self, endpoint, profile):
+        self.resolved.append((endpoint, profile))
+        return ResolvedRoute(
+            target_scheme="https", target_host="tenant-secret.example.test", target_port=443
+        )
+
+    def _send_once(self, request, profile, route):
+        self.requests.append(request)
+        return self.responses.pop(0)
+
+
+class _StubSocket:
+    def close(self):
+        pass
+
+
+class _DeterministicNetworkTransport:
+    def __init__(self, responses, credentials=None):
+        self.responses = list(responses)
+        self._credentials = credentials
+        self.requests = []
+        self.connects = []
+        self.tls_hosts = []
+
+    def resolve_route(self, endpoint, profile):
+        return ResolvedRoute(
+            target_scheme="https", target_host="tenant-secret.example.test", target_port=443
+        )
+
+    def _tcp_connect(self, host, port, timeout):
+        self.connects.append((host, port))
+        return _StubSocket()
+
+    def _tls_wrap(self, sock, host, profile, *, stage):
+        self.tls_hosts.append((host, stage, profile.verify_tls))
+        return sock
+
+    def _send_once(self, request, profile, route):
+        self.requests.append(request)
+        return self.responses.pop(0)
+
+
+def test_network_profile_test_http_probe_uses_same_authority_and_provider_auth_without_leaking_secret(env):
+    core, server = env
+    selected = create_network_profile(server)["result"]["profile"]
+    provider_wire, _bound = _network_test_profiles(
+        core, server, endpoint="https://tenant-secret.example.test/private/v1"
+    )
+    provider = core.provider_profile_store.get_profile(provider_wire["profile_id"])
+    core.provider_profile_store.update_profile(replace(
+        provider, credential_ref="private-credential-ref"
+    ))
+    provider = core.provider_profile_store.get_profile(provider_wire["profile_id"])
+
+    class Credentials:
+        def resolve_credential(self, _ref):
+            return type("Secret", (), {"reveal": lambda self: "api-secret-marker"})()
+
+    transport = _HttpProbeTransport([
+        TransportResponse(status=401),
+        TransportResponse(status=200, body=b'{"data":[{"id":"model-a"}]}'),
+    ], credentials=Credentials())
+    probe = NetworkProfileTestProbe(transport)
+    context = {}
+    network = core.network_profile_store.get_profile(selected["network_profile_id"])
+
+    assert probe.run("HTTP", provider.base_url, provider, network, context) is None
+    assert context["provider_auth_required"] is True
+    assert probe.run("ProviderAuth", provider.base_url, provider, network, context) is None
+
+    assert len(transport.requests) == 2
+    assert transport.requests[0].url == "https://tenant-secret.example.test/private/v1/models"
+    assert transport.requests[1].headers == {"Authorization": "Bearer api-secret-marker"}
+    assert all("tenant-secret.example.test" in item.url for item in transport.requests)
+
+
+def test_network_profile_test_real_probe_pipeline_is_stubbed_and_secret_free(env, monkeypatch):
+    core, server = env
+    selected = create_network_profile(server)["result"]["profile"]
+    provider_wire, _bound = _network_test_profiles(
+        core, server, endpoint="https://tenant-secret.example.test/private/v1"
+    )
+    provider = core.provider_profile_store.get_profile(provider_wire["profile_id"])
+    core.provider_profile_store.update_profile(replace(
+        provider, credential_ref="private-credential-ref"
+    ))
+
+    class Credentials:
+        def resolve_credential(self, _ref):
+            return type("Secret", (), {"reveal": lambda self: "api-secret-marker"})()
+
+    monkeypatch.setattr("infrastructure.network.profile_test.socket.getaddrinfo", lambda *args, **kwargs: [(None, None, None, None, ("192.0.2.2", 443))])
+    transport = _DeterministicNetworkTransport([
+        TransportResponse(status=401, body=b"raw-response-marker"),
+        TransportResponse(status=200, body=b'{"data":[{"id":"model-a"}] }'),
+    ], credentials=Credentials())
+    core.network_profile_test_probe = NetworkProfileTestProbe(transport)
+
+    response = _network_test_request(server, selected["network_profile_id"], provider_wire["profile_id"])
+
+    assert response["error"] is None
+    assert response["result"]["status"] == "passed"
+    assert response["result"]["failed_stage"] is None
+    assert response["result"]["stages"][0] == {
+        "stage": "Proxy", "status": "not_applicable", "reason": "direct_mode"
+    }
+    serialized = json.dumps(response)
+    for sensitive in (
+        "tenant-secret.example.test", "/private/v1", "private-credential-ref",
+        "api-secret-marker", "raw-response-marker",
+    ):
+        assert sensitive not in serialized
+    assert transport.requests[0].headers == {}
+    assert transport.requests[1].headers == {"Authorization": "Bearer api-secret-marker"}
+    assert transport.tls_hosts == [("tenant-secret.example.test", "provider-tls", True)]
+
+
+@pytest.mark.parametrize("credential_ref,auth_response,expected_requests", [
+    (None, None, 1),
+    ("private-credential-ref", 403, 2),
+])
+def test_network_profile_test_provider_auth_missing_or_rejected_fails_without_retry(
+    env, monkeypatch, credential_ref, auth_response, expected_requests
+):
+    core, server = env
+    selected = create_network_profile(server)["result"]["profile"]
+    provider_wire, _bound = _network_test_profiles(
+        core, server, endpoint="https://tenant-secret.example.test/private/v1"
+    )
+    provider = core.provider_profile_store.get_profile(provider_wire["profile_id"])
+    if credential_ref:
+        core.provider_profile_store.update_profile(replace(provider, credential_ref=credential_ref))
+
+    class Credentials:
+        def resolve_credential(self, _ref):
+            return type("Secret", (), {"reveal": lambda self: "api-secret-marker"})()
+
+    responses = [TransportResponse(status=401)]
+    if auth_response is not None:
+        responses.append(TransportResponse(status=auth_response, body=b"raw-response-marker"))
+    monkeypatch.setattr("infrastructure.network.profile_test.socket.getaddrinfo", lambda *args, **kwargs: [(None, None, None, None, ("192.0.2.2", 443))])
+    transport = _DeterministicNetworkTransport(responses, credentials=Credentials())
+    core.network_profile_test_probe = NetworkProfileTestProbe(transport)
+
+    response = _network_test_request(server, selected["network_profile_id"], provider_wire["profile_id"])
+
+    assert response["result"]["status"] == "failed"
+    assert response["result"]["failed_stage"] == "ProviderAuth"
+    assert response["result"]["stages"][-1]["failure"]["message_key"] == "NETWORK_STAGE_FAILED"
+    assert len(transport.requests) == expected_requests
+    assert "api-secret-marker" not in json.dumps(response)
+    assert "raw-response-marker" not in json.dumps(response)
+
+
+def test_network_profile_test_does_not_follow_cross_authority_redirect(env, monkeypatch):
+    core, server = env
+    selected = create_network_profile(server)["result"]["profile"]
+    provider, _bound = _network_test_profiles(
+        core, server, endpoint="https://tenant-secret.example.test/private/v1"
+    )
+    monkeypatch.setattr("infrastructure.network.profile_test.socket.getaddrinfo", lambda *args, **kwargs: [(None, None, None, None, ("192.0.2.2", 443))])
+    transport = _DeterministicNetworkTransport([
+        TransportResponse(status=302, headers={"location": "https://outside.example.test/"})
+    ])
+    core.network_profile_test_probe = NetworkProfileTestProbe(transport)
+
+    response = _network_test_request(server, selected["network_profile_id"], provider["profile_id"])
+
+    assert response["result"]["status"] == "failed"
+    assert response["result"]["failed_stage"] == "HTTP"
+    assert response["result"]["stages"][-1] == {
+        "stage": "ProviderAuth", "status": "not_run", "reason": "upstream_stage_failed"
+    }
+    assert len(transport.requests) == 1
+    assert "outside.example.test" not in json.dumps(response)
