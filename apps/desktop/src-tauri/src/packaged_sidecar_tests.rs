@@ -384,3 +384,61 @@ fn real_library_sidecar_event_sink_registration_and_lifecycle() {
     assert!(received_events.lock().unwrap().is_empty());
     println!("PACKAGED_RESULT real_library_sidecar_event_sink_registration_and_lifecycle=PASS event_sink=registered");
 }
+
+fn reader_store_hashes(data_root: &Path) -> [Option<String>; 2] {
+    ["library.db", "library.db-wal"].map(|name| match fs::read(data_root.join(name)) {
+        Ok(bytes) => Some(format!("{:x}", Sha256::digest(bytes))),
+        Err(error) if error.kind() == std::io::ErrorKind::NotFound => None,
+        Err(error) => panic!("cannot read isolated progress store: {error}"),
+    })
+}
+
+#[test]
+fn reader_commands_reach_frozen_core_with_typed_rejections() {
+    // The isolated data directory keeps the persistent save command away
+    // from the main repository and any user library. These deliberately
+    // reject so no successful progress write or projection is fabricated.
+    let lab = PackagedLab::new();
+    let channel = lab.start_library();
+    let ping = channel.ping().expect("frozen Core startup ping");
+    assert_eq!(
+        (ping.protocol_version.major, ping.protocol_version.minor),
+        (2, 3)
+    );
+
+    let missing_chapter = channel
+        .get_reader_projection("missing-chapter", "original", "resume")
+        .unwrap_err();
+    assert_eq!(missing_chapter.code, "TARGET_NOT_FOUND");
+    assert_eq!(missing_chapter.category, "not_found");
+
+    let invalid_mode = channel
+        .get_reader_projection("missing-chapter", "invalid", "resume")
+        .unwrap_err();
+    assert_eq!(invalid_mode.code, "INVALID_REQUEST");
+    assert_eq!(invalid_mode.category, "validation");
+
+    let database = lab.data.join("library.db");
+    assert!(database.is_file(), "isolated library database must exist");
+    let before = reader_store_hashes(&lab.data);
+    let missing_page = channel
+        .save_reading_progress("missing-chapter", "original", "missing-page", None, None)
+        .unwrap_err();
+    assert_eq!(missing_page.code, "TARGET_NOT_FOUND");
+    assert_eq!(missing_page.category, "not_found");
+    assert_eq!(
+        reader_store_hashes(&lab.data),
+        before,
+        "rejected progress save must not change SQLite data"
+    );
+
+    let data_path = lab.data.to_string_lossy();
+    for error in [&missing_chapter, &invalid_mode, &missing_page] {
+        assert!(!error
+            .message
+            .as_deref()
+            .unwrap_or("")
+            .contains(data_path.as_ref()));
+    }
+    println!("READER_IPC_RESULT get_reader_projection=TARGET_NOT_FOUND invalid_mode=INVALID_REQUEST save_reading_progress=TARGET_NOT_FOUND sqlite_unchanged=true protocol=2.3");
+}

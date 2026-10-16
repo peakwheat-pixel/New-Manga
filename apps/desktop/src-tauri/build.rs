@@ -34,14 +34,15 @@ fn main() {
     // match bare command invocations, so the ACL layer silently skipped
     // them). With `__app-acl__` present, Tauri enforces the capability for
     // every bare command: `capabilities/m2rc1-commands.json` grants exactly
-    // the thirty-two commands below to the main window (twenty-five production
+    // the thirty-four commands below to the main window (twenty-seven production
     // commands — three resource-channel + two IPC1 + the two
     // M2-SETTINGS-IPC-CHANNEL settings commands + the two M2-REGION-RETYPE-
     // CORE region-retype commands + three RC-4 production commands + the
     // M2-PAGE-RESOURCE-RESOLVE-1 page-resource resolve command + the two
     // M2-PAGE-NAV-PROJECTION-1 page navigation projections + three
     // HOST-ISSUER-1 safe picker actions + the six RUN-IPC-1 Run transport
-    // commands + the EXPORT-REVEAL-1 action — plus
+    // commands + the EXPORT-REVEAL-1 action + the two READER-IPC-1 Reader
+    // commands — plus
     // the four probe commands and the three M2-AC1 acceptance commands), and any other command name
     // (e.g. the deleted `register_catalog`) is refused by the ACL before the invoke
     // handler is consulted. The settings_* pair (M2-SETTINGS-IPC-CHANNEL,
@@ -86,6 +87,10 @@ fn main() {
             // projections; declared here so the Tauri ACL can name them.
             "list_chapters",
             "list_chapter_pages",
+            // READER-IPC-1: production-only Reader projection and progress
+            // commands; omitted from frozen probe/AC1 runtime surfaces.
+            "library_get_reader_projection",
+            "library_save_reading_progress",
             // HOST-ISSUER-1 safe user actions. HostControl methods themselves
             // are internal stdio operations and are not Tauri commands.
             "library_import_file",

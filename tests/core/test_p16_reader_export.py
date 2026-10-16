@@ -153,7 +153,7 @@ def _commit_artifact(core, page, artifact_type: ArtifactType, payload: bytes, *,
     return result.revision
 
 
-def _seed_core(tmp_path: Path, *, include_modes: bool = False):
+def _seed_core(tmp_path: Path, *, include_modes: bool = False, include_translations: bool = True):
     core = assemble_production_core(tmp_path / "data")
     chapters = [("chapter", "paged", "rtl")]
     if include_modes:
@@ -192,12 +192,14 @@ def _seed_core(tmp_path: Path, *, include_modes: bool = False):
             page = core.repository.get_page(report.imported[0].page.page_id)
             assert page is not None
             original_revision = _commit_artifact(core, page, ArtifactType.ORIGINAL, original_bytes)
-            translated_color = (240, 30, 30, 255) if Path(filename).stem.endswith("a") else (30, 30, 240, 255)
-            translated_bytes = _png(width, height, translated_color)
-            translated_revision = _commit_artifact(
-                core, page, ArtifactType.TRANSLATED, translated_bytes,
-                source_revision_id=original_revision.artifact_revision_id,
-            )
+            translated_revision = translated_bytes = None
+            if include_translations:
+                translated_color = (240, 30, 30, 255) if Path(filename).stem.endswith("a") else (30, 30, 240, 255)
+                translated_bytes = _png(width, height, translated_color)
+                translated_revision = _commit_artifact(
+                    core, page, ArtifactType.TRANSLATED, translated_bytes,
+                    source_revision_id=original_revision.artifact_revision_id,
+                )
             imported.append({
                 "page": page, "original_revision": original_revision,
                 "translated_revision": translated_revision,
@@ -355,6 +357,55 @@ def test_reader_projection_progress_modes_layouts_and_restart(tmp_path: Path) ->
             core.conn.close()
         except Exception:
             pass
+
+
+def test_reader_projection_reports_missing_translation_as_null(tmp_path: Path) -> None:
+    core, server, catalog, pages = _seed_core(tmp_path, include_translations=False)
+    try:
+        page = pages["chapter"][0]["page"]
+        response = _rpc(server, "GetReaderProjection", {
+            "chapter_id": "chapter", "mode": "translated", "start_position": "beginning",
+        })
+        assert response["error"] is None, response["error"]
+        projection = response["result"]["pages"][0]
+        assert projection["page_id"] == page.page_id
+        assert projection["original"]["resource_ref"] is not None
+        assert projection["translated"] == {
+            "resource_ref": None,
+            "artifact_revision_id": None,
+            "rendered_from_revision_id": None,
+            "current_source_revision_id": None,
+            "sha256": None,
+        }
+        assert "path" not in json.dumps(projection).lower()
+    finally:
+        server.close()
+        catalog.close()
+        core.conn.close()
+
+
+def test_unknown_reader_page_rejects_without_writing_progress(tmp_path: Path) -> None:
+    core, server, catalog, _ = _seed_core(tmp_path)
+    try:
+        before_changes = core.conn.total_changes
+        before_progress = core.reading.progress_snapshot("book", "chapter", "original")
+        assert before_progress is None
+
+        response = _rpc(server, "SaveReadingProgress", {
+            "chapter_id": "chapter", "mode": "original",
+            "page_id": "missing-page", "elapsed_seconds_delta": 5.0,
+        })
+
+        assert response["error"]["code"] == "TARGET_NOT_FOUND"
+        assert response["error"]["category"] == "not_found"
+        assert core.conn.total_changes == before_changes
+        assert core.reading.progress_snapshot("book", "chapter", "original") == before_progress
+        events = [json.loads(line) for line in server._stdout.getvalue().splitlines() if line]
+        assert not any(event.get("event_type") == "ReadingProgressChanged" for event in events)
+    finally:
+        server.close()
+        catalog.close()
+        core.conn.close()
 
 
 @pytest.mark.parametrize(
