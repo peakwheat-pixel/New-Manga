@@ -3,19 +3,19 @@ id: EXPORT-REVEAL-1
 title: 导出后"打开所在文件夹"host 命令（解 G20；P17 前置）
 kind: feature
 governance_version: 2
-status: in_review
+status: done
 approval: coordinator_release_20261016_confirmed_gap_g20
 suggested_owner: Codex
 owner: Codex
-reviewer: DeepSeek Harness (post-merge re-review required; prior approval is bound to the pre-merge head)
+reviewer: dsh
 depends_on: [P16-C1, HOST-ISSUER-1-C1, HOST-ISSUER-1, UI-DESIGN-1]
 base_commit: 958fa8a5b137f2b99ec74ba5902760e1d8aaebdc
 branch: codex/EXPORT-REVEAL-1
 worktree: G:/CODEX/New Manga.workspace/worktrees/EXPORT-REVEAL-1
-integration_commit: null
-delivery_head: 13a748b03b1fcf97518ece18abc2b704fc53599f
+integration_commit: c9b113f96e0b2d536827a3b12386dcfa9fd94b26
+delivery_head: 13ac5b30f61a82194d21f7def4472398067c3d26
 canonical_evidence_status: complete
-resource_closeout_status: pending
+resource_closeout_status: complete
 evidence_dir: verification/EXPORT-REVEAL-1
 ---
 
@@ -115,17 +115,19 @@ evidence_dir: verification/EXPORT-REVEAL-1
 
 | evidence_id | AC/Gate | path（仓库相对路径或绝对路径） | commit | sha256 | class (`CANONICAL` / `SOURCE_PIN`) |
 |---|---|---|---|---|---|
-| EXPORT-REVEAL-POST-MERGE-RESOLUTION | Integration | `verification/EXPORT-REVEAL-1/merge-resolution.md` | `4e4d73a0be67407d92487cf240d695c4041c158d` | `436364940483BDCC9DFFADD3120DA53D1BE5BEBEDEC2FD3D4520E0B2C130C8A8` | CANONICAL |
+| EXPORT-REVEAL-POST-MERGE-RESOLUTION | Integration | `verification/EXPORT-REVEAL-1/merge-resolution.md` | `4e4d73a0be67407d92487cf240d695c4041c158d` | `a11a035330aa513a94306c04fae3e361cb1d307ff859b6b71fe3e80d3dbd9ffc` | CANONICAL |
 | EXPORT-REVEAL-CONTRACT | AC1 | `doc/contracts/M2-C1_TYPED_IPC_CONTRACT.md` | `b1e4d87d49295b1a76453b6960060be2a648f8f8` | `7D95A873A7E232E2542E3E052B6C7E67508AD9E9115AC95C0A087AB2DDAA45D9` | CANONICAL |
 | EXPORT-REVEAL-ALLOWLIST-REFUSALS | AC4-①/② | `verification/EXPORT-REVEAL-1/post-merge-source.log` | `4e4d73a0be67407d92487cf240d695c4041c158d` | `AC09C12FFD5DCBB4F189EB736F7B107571367405F6900749FE8FB50D7FC1134E` | CANONICAL |
 | EXPORT-REVEAL-CORE-TESTS | AC6 | `verification/EXPORT-REVEAL-1/post-merge-python.log` | `4e4d73a0be67407d92487cf240d695c4041c158d` | `99974EA3A4F2E6901A3266183FDF100704104CBA12DE249937EF403593E4FF21` | CANONICAL |
 | EXPORT-REVEAL-RUST-PACKAGED | AC4-③/AC6 | `verification/EXPORT-REVEAL-1/post-merge-packaged.log` | `4e4d73a0be67407d92487cf240d695c4041c158d` | `DF38C07D4F4A51C7C4E47A771E26229C2C4BD66D0586AA82CA934BFAA6835B89` | CANONICAL |
 | EXPORT-REVEAL-FROZEN-ATTEMPT | AC4-③ | `verification/EXPORT-REVEAL-1/frozen-export-attempt.log` | `5f95aac0f3f1557b8193689d429496babc46398e` | `66BA5A9F6B7274E6CD884241BF671E545B1C29B072CA7318477E5D3D0535CF18` | CANONICAL |
-| EXPORT-REVEAL-GUI-BLOCK | AC4-③ | `verification/EXPORT-REVEAL-1/reveal-roundtrip-status.md` | `5f95aac0f3f1557b8193689d429496babc46398e` | `5BFD579772CD3C4991493EBBE507303AF40D2FB022D6C7A2CCAEED42D09308CA` | CANONICAL |
-| EXPORT-REVEAL-HEADLESS-SOURCE | AC4-③ source environment | `verification/PROJECT-ORCHESTRATION-20261016/checkpoint-r9.md` | `958fa8a5b137f2b99ec74ba5902760e1d8aaebdc` | `515786CD75F85BEF46A5E81F9B783D59EF42395221B780F7B322E6B954361FB2` | SOURCE_PIN |
-| EXPORT-REVEAL-POST-MERGE-HANDOFF | AC7 | `doc/handoffs/EXPORT-REVEAL-1-codex-post-merge.md` | `6c4b8346013e577f0a2b9e7e8baeaeecebc3a4f0` | `B563BA6846B754AD7D28053D7691B3C9CCEF26E54342B0D2748500371BE4BFFB` | CANONICAL |
-| EXPORT-REVEAL-PRE-MERGE-HANDOFF | Historical delivery | `doc/handoffs/EXPORT-REVEAL-1-codex-5f95aac.md` | `fc5702e650b022608be79694d1c706a4eff51ca9` | `A106209921985E2BB5E81DA154FD320C4859920DE0E01BB2EB2AE1047155D5E3` | SOURCE_PIN |
-| EXPORT-REVEAL-RESOURCES | Resource | `verification/EXPORT-REVEAL-1/resource-manifest.json` | `fc5702e650b022608be79694d1c706a4eff51ca9` | `2B7774178B10E9C9C2A49CBAB2C45CCDC8BC5E4E1BA803843B2CF34C1DBAB944` | CANONICAL |
+| EXPORT-REVEAL-GUI-BLOCK | AC4-③ | `verification/EXPORT-REVEAL-1/reveal-roundtrip-status.md` | `5f95aac0f3f1557b8193689d429496babc46398e` | `8c2d941c580ce266672d428f315bac28a895e45a777f5cadf81e64b1021af109` | CANONICAL |
+| EXPORT-REVEAL-HEADLESS-SOURCE | AC4-③ source environment | `verification/PROJECT-ORCHESTRATION-20261016/checkpoint-r9.md` | `958fa8a5b137f2b99ec74ba5902760e1d8aaebdc` | `ab617309242e00b8cd90c4e33baa215db02664242ec95814fa3c2ec58658f49a` | SOURCE_PIN |
+| EXPORT-REVEAL-POST-MERGE-HANDOFF | AC7 | `doc/handoffs/EXPORT-REVEAL-1-codex-post-merge.md` | `6c4b8346013e577f0a2b9e7e8baeaeecebc3a4f0` | `8dc32734698436efcd89b8b745c07c009f0fba46ac9accd7892a9903f0fee0fc` | CANONICAL |
+| EXPORT-REVEAL-PRE-MERGE-HANDOFF | Historical delivery | `doc/handoffs/EXPORT-REVEAL-1-codex-5f95aac.md` | `fc5702e650b022608be79694d1c706a4eff51ca9` | `de7a0b815a614601bb05ca601260ad1177565f4d42f971cb6049b33150c50805` | SOURCE_PIN |
+| EXPORT-REVEAL-RESOURCES | Resource | `verification/EXPORT-REVEAL-1/resource-manifest.json` | `fc5702e650b022608be79694d1c706a4eff51ca9` | `3456769436024a69ef0f40db47d1c319deaf71a3671b31fcdcacc9e6f0a440f7` | CANONICAL |
+
+| EXPORT-REVEAL-REVIEW-R1 | AC1-AC7 | `verification/EXPORT-REVEAL-1/dsh-review-r1.md` | `5cc5508b8` | `8ed36e1873d6766dd651a316d4ae50612e232fa5542648179d748f9a0b299f09` | REVIEW |
 
 ## Resource Manifest
 
@@ -135,9 +137,12 @@ evidence_dir: verification/EXPORT-REVEAL-1
 
 ## Closeout Record
 
-- Closeout date / Codex：2026-10-16，Codex Owner delivery；Task 仍 `in_review`，不是最终 Gate closeout。
-- canonical_evidence_status：`complete`（三条合并后重跑日志、冲突解决记录与新 Handoff 均有 commit/SHA256 pin；AC4-③ 的 GUI 状态仍为 `BLOCKED`）。
-- resource_closeout_status：`pending`（worktree 与测试构建资源 `PRESERVE_REFERENCED`，待独立 Review 后复核）。
-- 删除、迁移、归档数量/字节数：0 / 0 / 0。
-- 未关闭项及保留原因：合并后 head 的 Coordinator 复核与主线集成待执行；真实 GUI 导出后 Reveal 因无头环境 `BLOCKED`，需在有 GUI 环境补测。
-- 当前指针清理：`STATUS` / `REBASELINE_PLAN` 在释放时同步。
+- Closeout date / Coordinator：2026-10-16（dsh, epoch 6）。Reviewer=**dsh**（独立于 Owner=codex），本轮做了 **R1 初判 + 合并后重新交付复核**两段。
+- canonical_evidence_status：`complete`。**按检查器语义（校验磁盘字节）逐个复算 11 条 pin**：合入时全部匹配，closeout 时 **5 条因 Git 签出改写行尾（LF↔CRLF）而与磁盘不符** → 全部按**当前磁盘值**重钉（含 `merge-resolution.md`、`reveal-roundtrip-status.md`、`checkpoint-r9.md`、两份 Handoff、`resource-manifest.json`）；commit 包含性 11/11 通过。该行尾脆弱性已登记 **BL-16**。
+- resource_closeout_status：`complete`（worktree `PRESERVE_REFERENCED`）。删除、迁移、归档数量/字节数：0。
+- 交付：`done`。集成 `c9b113f96`（`--no-ff`，**三方合并**）；delivery_head（分支实际 HEAD）`13ac5b30f`（owner 记录 `13a748b0…` 为填表时值，按 **BL-15** 由 closeout 冻结实际值——本轮为 BL-15 第 4 次出现）。
+- **集成解析（本 Task 的关键风险点）**：合并时 REVEAL 与已合入的 EVENTS-FWD-1、RUN-IPC-1 在**同一批文件**冲突（`library_bridge.rs`、`main.rs`、`build.rs`、`capabilities`、4 个生成的 `gen/schemas/*`）。逐处做**三方并集**：三方功能全部保留；`gen/schemas/*` 由 **tauri-build 重新生成**后核对（34 条权限含 6 条 Run + reveal + 2 条事件）；RUN-IPC-1 的 `PRODUCTION_COMMANDS.len()` 断言由 24 更新为 **25**（REVEAL 合法新增一条命令——该断言正是为捕捉此类变化而存在）。
+- **合并后重跑（Coordinator 亲自执行）**：source **88 passed / 0 failed / 1 ignored**、frozen 打包 **10 passed / 0 failed**、`tests/core` **405 passed**，三条 exit 0。**三族测试在同一二进制内全绿**：EVENTS 的 4 个 `test_events_fwd_*` + `same_channel_concurrent_round_trips_keep_response_ownership`、RUN-IPC-1 的 2 个、以及全部 `export_reveal_*`。
+- **未关闭项及保留原因**：**AC4-③ = BLOCKED（原样保留）**——真实"成功导出 → reveal → 文件管理器打开"未跑通：测试 fixture 无有效 book，且无头 Windows 无法取得 WebView2 窗口句柄（`0x80070578`）。**P17 消费该命令时须在可启动 GUI 的环境补做该段**，本 Task **不声称** GUI 已被验证。
+- **NIT（非阻塞）**：`rustfmt --check` 报告既有格式差异未被本次修正。
+- 当前指针清理：`STATUS` / `REBASELINE_PLAN` 已同步（EXPORT-REVEAL-1 移出 READY；**P17 的前置只剩 READER-IPC-1**）。
