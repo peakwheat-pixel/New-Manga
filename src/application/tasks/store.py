@@ -10,7 +10,8 @@ from __future__ import annotations
 
 from copy import deepcopy
 from dataclasses import dataclass, replace
-from typing import Any, Mapping, Protocol, Sequence
+import threading
+from typing import Any, Callable, Mapping, Protocol, Sequence
 
 from domain.tasks.models import (
     LockSnapshot,
@@ -39,6 +40,14 @@ class FrozenRunSnapshots:
     context_policy: Mapping[str, Any]
 
 
+@dataclass(frozen=True)
+class IdempotencyRecord:
+    idempotency_key: str
+    request_fingerprint: str
+    run_id: str
+    operation_type: str
+
+
 class TargetCatalog(Protocol):
     def expand(self, scope: PipelineScope) -> tuple[TargetSnapshot, ...]: ...
 
@@ -52,6 +61,7 @@ class TargetCatalog(Protocol):
         expected_lock: LockSnapshot,
         stage_updates: Mapping[str, StageState],
         revision_updates: Mapping[str, str],
+        persist: Callable[[], None] | None = None,
     ) -> CatalogCommit: ...
 
 
@@ -67,9 +77,25 @@ class SnapshotProvider(Protocol):
 class PipelineStore(Protocol):
     def put(self, run_id: str, run: PipelineRun) -> None: ...
 
+    def write_in_current_transaction(self, run: PipelineRun) -> None: ...
+
     def get(self, run_id: str) -> PipelineRun | None: ...
 
+    def refresh(self, run_id: str) -> PipelineRun | None: ...
+
     def list_ids(self) -> tuple[str, ...]: ...
+
+    def get_idempotency(self, idempotency_key: str) -> IdempotencyRecord | None: ...
+
+    def accept(
+        self, run: PipelineRun, *, idempotency_key: str,
+        request_fingerprint: str, operation_type: str,
+    ) -> tuple[PipelineRun, bool]: ...
+
+    def accept_restart(
+        self, parent: PipelineRun, child: PipelineRun, *,
+        idempotency_key: str | None, request_fingerprint: str | None,
+    ) -> tuple[PipelineRun, bool]: ...
 
 
 def _merge(base: Mapping[str, Any], overrides: Mapping[str, Any]) -> dict[str, Any]:
@@ -172,6 +198,7 @@ class InMemoryTargetCatalog:
         expected_lock: LockSnapshot,
         stage_updates: Mapping[str, StageState],
         revision_updates: Mapping[str, str],
+        persist: Callable[[], None] | None = None,
     ) -> CatalogCommit:
         try:
             current = self.current(target_id)
@@ -189,6 +216,12 @@ class InMemoryTargetCatalog:
                 stage_states={**current.stage_states, **stage_updates},
             )
             self._pages[current.page_id] = updated
+            try:
+                if persist is not None:
+                    persist()
+            except Exception:
+                self._pages[current.page_id] = current
+                raise
             return CatalogCommit("applied")
 
         page = self._pages[current.page_id]
@@ -205,6 +238,12 @@ class InMemoryTargetCatalog:
                 )
             )
         self._pages[current.page_id] = replace(page, regions=tuple(updated_regions))
+        try:
+            if persist is not None:
+                persist()
+        except Exception:
+            self._pages[current.page_id] = page
+            raise
         return CatalogCommit("applied")
 
     def update_page(self, page_id: str, **changes: Any) -> None:
@@ -347,12 +386,76 @@ class InMemorySnapshotProvider:
 class InMemoryPipelineStore:
     def __init__(self) -> None:
         self._runs: dict[str, PipelineRun] = {}
+        self._idempotency: dict[str, IdempotencyRecord] = {}
+        self._lock = threading.RLock()
 
     def put(self, run_id: str, run: PipelineRun) -> None:
-        self._runs[run_id] = run
+        with self._lock:
+            self._runs[run_id] = run
+
+    def write_in_current_transaction(self, run: PipelineRun) -> None:
+        self.put(run.run_id, run)
 
     def get(self, run_id: str) -> PipelineRun | None:
-        return self._runs.get(run_id)
+        with self._lock:
+            return self._runs.get(run_id)
+
+    def refresh(self, run_id: str) -> PipelineRun | None:
+        return self.get(run_id)
 
     def list_ids(self) -> tuple[str, ...]:
-        return tuple(self._runs)
+        with self._lock:
+            return tuple(self._runs)
+
+    def get_idempotency(self, idempotency_key: str) -> IdempotencyRecord | None:
+        with self._lock:
+            return self._idempotency.get(idempotency_key)
+
+    def accept(
+        self, run: PipelineRun, *, idempotency_key: str,
+        request_fingerprint: str, operation_type: str,
+    ) -> tuple[PipelineRun, bool]:
+        with self._lock:
+            record = self._idempotency.get(idempotency_key)
+            if record is not None:
+                if record.request_fingerprint != request_fingerprint:
+                    raise PipelineError(
+                        "IDEMPOTENCY_KEY_REUSED", "idempotency key fingerprint differs"
+                    )
+                existing = self._runs.get(record.run_id)
+                if existing is None:
+                    raise PipelineError("TARGET_NOT_FOUND", "idempotent Run no longer exists")
+                return existing, False
+            self._runs[run.run_id] = run
+            self._idempotency[idempotency_key] = IdempotencyRecord(
+                idempotency_key, request_fingerprint, run.run_id, operation_type
+            )
+            return run, True
+
+    def put_many(self, runs: Sequence[PipelineRun]) -> None:
+        with self._lock:
+            self._runs.update((run.run_id, run) for run in runs)
+
+    def accept_restart(
+        self, parent: PipelineRun, child: PipelineRun, *,
+        idempotency_key: str | None, request_fingerprint: str | None,
+    ) -> tuple[PipelineRun, bool]:
+        with self._lock:
+            if idempotency_key is not None:
+                record = self._idempotency.get(idempotency_key)
+                if record is not None:
+                    if record.request_fingerprint != request_fingerprint:
+                        raise PipelineError(
+                            "IDEMPOTENCY_KEY_REUSED", "idempotency key fingerprint differs"
+                        )
+                    existing = self._runs.get(record.run_id)
+                    if existing is None:
+                        raise PipelineError("TARGET_NOT_FOUND", "idempotent Run no longer exists")
+                    return existing, False
+            self.put_many((parent, child))
+            if idempotency_key is not None:
+                assert request_fingerprint is not None
+                self._idempotency[idempotency_key] = IdempotencyRecord(
+                    idempotency_key, request_fingerprint, child.run_id, "restart"
+                )
+            return child, True

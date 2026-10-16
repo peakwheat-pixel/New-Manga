@@ -3,19 +3,19 @@
 The host spawns this module -- ``python -m bootstrap.core_service`` -- as the
 production Core sidecar process. It assembles the production Core services
 (migrations, repositories, managed storage, startup recover_running_runs),
-then enters a stdio request loop serving typed commands over JSON-lines.
+then acquires the persistent Run scheduler lease and enters a stdio request
+loop serving typed commands and best-effort lifecycle events over JSON-lines.
 
-Transport & Envelope (Contract 1.1 §3, §8, §12; Seam 冻结七条):
+Transport & Envelope (M2-C1 rev 2.0 §3, §5.5, §8, §12):
   Request:
-    {"protocol": "new-manga.core", "version": {"major": 1, "minor": 3+},
+    {"protocol": "new-manga.core", "version": {"major": 2, "minor": 0},
      "request_id": "<id>", "command": "<cmd>", "payload": {...}}
   Response:
-    {"protocol": "new-manga.core", "version": {"major": 1, "minor": 3+},
+    {"protocol": "new-manga.core", "version": {"major": 2, "minor": 0},
      "request_id": "<id>", "result": {...} | null, "error": ErrorEnvelope | null}
 
-Allowed production commands (M2-IPC1 + M2-PROD-DETECT-3 + M2-SETTINGS-IPC-CHANNEL
-  + M2-REGION-RETYPE-CORE):
-  - core.ping: {} -> {"status": "ready", "protocol_version": {"major": 1, "minor": 3+}, "capabilities": ["library.list_books"]}
+Allowed production commands (M2-IPC1 + existing command slices + P13-C1):
+  - core.ping: {} -> {"status": "ready", "protocol_version": {"major": 2, "minor": 0}, "capabilities": ["library.list_books"]}
   - ListBooks: {} -> BookSummary[]
   - core.shutdown: {} -> {"status": "stopped"} (then exit 0)
   - core.detect: {"page": "<base64 PNG/JPEG>", "width": <int>, "height": <int>}
@@ -97,7 +97,10 @@ import os
 from pathlib import Path
 import sqlite3
 import sys
+import threading
 import time
+import uuid
+from datetime import datetime, timezone
 from typing import Any, Callable, TextIO
 
 from application.editing.errors import (
@@ -115,6 +118,7 @@ from bootstrap.core_assembly import (
     default_data_root,
 )
 from domain.regions.entities import RegionType, SfxPolicy
+from domain.tasks.models import COMMAND_CATALOG, CommandType, PipelineError, PipelineScope, ScopeType
 from infrastructure.importing import QtImageDecoder, SUPPORTED_IMAGE_SUFFIXES
 from infrastructure.rendering.pillow_rendering import (
     PillowFontCatalog,
@@ -140,7 +144,7 @@ from ports.detection.ports import DetectionRequest
 from ports.providers.errors import ProviderError, ProviderNotConfigured
 
 PROTOCOL_NAME = "new-manga.core"
-PROTOCOL_MAJOR = 1
+PROTOCOL_MAJOR = 2
 # M2-PROD-DETECT-3: 0 -> 1 (minor bump, core.detect command added; backwards
 # compatible widening, see the module docstring).
 # M2-SETTINGS-IPC-CHANNEL: 1 -> 2 (minor bump, settings.get /
@@ -165,7 +169,11 @@ PROTOCOL_MAJOR = 1
 # list_chapter_pages commands added; same backwards-compatible widening
 # precedent -- pre-existing command semantics unchanged. Contract: M2-C1
 # rev 1.8 §5).
-PROTOCOL_MINOR = 6
+PROTOCOL_MINOR = 0
+_RUN_COMMANDS = frozenset({
+    "StartRun", "ControlRun", "ResumeBlockedRun", "GetRunSnapshot",
+    "GetTaskProjection", "RetryFailedTargets",
+})
 
 # Typed error codes per Contract 1.1 §3, §8
 E_PROTOCOL_VERSION_UNSUPPORTED = "PROTOCOL_VERSION_UNSUPPORTED"
@@ -330,8 +338,9 @@ def assemble_production_core(data_root: Path | None = None) -> CoreServices:
     """Assemble production Core services on the given or default data root.
 
     Runs database migrations, initializes repositories and managed copy layout,
-    and runs startup ``recover_running_runs()``. Image decoding is lazy, so
-    assembly remains headless while imports use the declared Qt image runtime.
+    and leaves startup recovery to the Core scheduler after it owns the
+    database-wide lease. Image decoding is lazy, so assembly remains headless
+    while imports use the declared Qt image runtime.
     """
     if data_root is None:
         data_root = default_data_root()
@@ -374,6 +383,7 @@ def assemble_production_core(data_root: Path | None = None) -> CoreServices:
         source_styles=SourceStyleService(_StubStyleAnalyzer()),
         content_decoder=decode_nmfr_frame,
         original_page_reader=read_original_page,
+        recover_runs_on_assembly=False,
     )
     assembled["core"] = core
     return core
@@ -395,6 +405,65 @@ def make_error_envelope(
     if details is not None:
         envelope["details"] = details
     return envelope
+
+
+_scheduler_paths_lock = threading.Lock()
+_scheduler_paths_owned: set[str] = set()
+
+
+class _RunSchedulerLease:
+    """Kernel-released advisory lease shared by Core instances on one DB."""
+
+    def __init__(self, path: Path) -> None:
+        self._path = path
+        self._file = None
+        self._key = str(path.resolve()).casefold()
+
+    def acquire(self) -> bool:
+        self._path.parent.mkdir(parents=True, exist_ok=True)
+        with _scheduler_paths_lock:
+            if self._key in _scheduler_paths_owned:
+                return False
+            handle = self._path.open("a+b")
+            try:
+                handle.seek(0, os.SEEK_END)
+                if handle.tell() == 0:
+                    handle.write(b"\0")
+                    handle.flush()
+                handle.seek(0)
+                if os.name == "nt":
+                    import msvcrt
+
+                    msvcrt.locking(handle.fileno(), msvcrt.LK_NBLCK, 1)
+                else:
+                    import fcntl
+
+                    fcntl.flock(handle.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
+            except OSError:
+                handle.close()
+                return False
+            self._file = handle
+            _scheduler_paths_owned.add(self._key)
+            return True
+
+    def release(self) -> None:
+        handle, self._file = self._file, None
+        if handle is None:
+            return
+        try:
+            handle.seek(0)
+            if os.name == "nt":
+                import msvcrt
+
+                msvcrt.locking(handle.fileno(), msvcrt.LK_UNLCK, 1)
+            else:
+                import fcntl
+
+                fcntl.flock(handle.fileno(), fcntl.LOCK_UN)
+        finally:
+            handle.close()
+            with _scheduler_paths_lock:
+                _scheduler_paths_owned.discard(self._key)
 
 
 @dataclass(frozen=True)
@@ -433,6 +502,95 @@ class CoreServiceServer:
         # legacy behaviour -- previews publish catalog-only, never reclaimable.
         self._producer_root = str(producer_root.resolve()) if producer_root else None
         self._render_previews = render_previews
+        self._write_lock = threading.Lock()
+        self._projection_lock = threading.Lock()
+        self._projection_cache: dict[str, tuple[float, dict[str, Any]]] = {}
+        self._owner_lock = threading.Lock()
+        self._serving = False
+        self._run_owner = False
+        self._run_scheduler_stop = threading.Event()
+        self._run_scheduler_thread: threading.Thread | None = None
+        self._scheduler_lease: _RunSchedulerLease | None = None
+        pipeline = getattr(self._core, "pipeline", None)
+        if pipeline is not None:
+            pipeline.require_scheduler_owner()
+
+    def _start_run_scheduler(self) -> None:
+        if self._scheduler_lease is not None:
+            return
+        path = self._core.database_path.with_name(
+            self._core.database_path.name + ".run-owner.lock"
+        )
+        lease = _RunSchedulerLease(path)
+        if not lease.acquire():
+            self._run_owner = False
+            return
+        try:
+            self._core.pipeline.set_scheduler_owner(True)
+            self._core.pipeline.recover_running_runs()
+            self._core.pipeline.set_event_sink(self._emit_run_event)
+            self._scheduler_lease = lease
+            self._run_owner = True
+            self._run_scheduler_thread = threading.Thread(
+                target=self._run_scheduler_loop,
+                name="core-run-scheduler",
+                daemon=True,
+            )
+            self._run_scheduler_thread.start()
+        except BaseException:
+            self._core.pipeline.set_scheduler_owner(False)
+            lease.release()
+            raise
+
+    def _run_scheduler_loop(self) -> None:
+        try:
+            while not self._run_scheduler_stop.is_set():
+                try:
+                    if self._core.pipeline.run_pending_once():
+                        continue
+                except Exception as error:
+                    print(
+                        f"[core.run_scheduler] {type(error).__name__}",
+                        file=sys.stderr,
+                        flush=True,
+                    )
+                self._run_scheduler_stop.wait(0.25)
+        finally:
+            if self._run_scheduler_stop.is_set():
+                self._release_scheduler_lease()
+
+    def _release_scheduler_lease(self) -> None:
+        with self._owner_lock:
+            lease, self._scheduler_lease = self._scheduler_lease, None
+            self._core.pipeline.set_scheduler_owner(False)
+            if lease is not None:
+                lease.release()
+            self._run_owner = False
+
+    def _stop_run_scheduler(self) -> None:
+        self._run_scheduler_stop.set()
+        worker = self._run_scheduler_thread
+        if worker is not None:
+            worker.join()
+        if worker is None or not worker.is_alive():
+            self._core.pipeline.set_event_sink(None)
+            self._release_scheduler_lease()
+
+    def close(self) -> None:
+        """Release the scheduler lease after its worker has drained."""
+        self._stop_run_scheduler()
+
+    def _emit_run_event(self, event_type: str, payload: Any) -> None:
+        with self._projection_lock:
+            self._projection_cache.pop(str(payload.get("run_id", "")), None)
+        self._emit({
+            "protocol": PROTOCOL_NAME,
+            "version": {"major": PROTOCOL_MAJOR, "minor": PROTOCOL_MINOR},
+            "event_id": uuid.uuid4().hex,
+            "event_type": event_type,
+            "emitted_at": datetime.now(timezone.utc).isoformat(timespec="milliseconds"),
+            "payload": dict(payload),
+        })
 
     def handle_ping(self, payload: dict[str, Any]) -> dict[str, Any]:
         del payload
@@ -1102,6 +1260,283 @@ class CoreServiceServer:
     def _is_positive_integer(value: Any) -> bool:
         return isinstance(value, int) and not isinstance(value, bool) and value > 0
 
+    @staticmethod
+    def _required_run_id(payload: dict[str, Any]) -> str:
+        value = payload.get("run_id")
+        if not isinstance(value, str) or not value:
+            raise PipelineError("INVALID_REQUEST", "run_id must be a non-empty string")
+        return value
+
+    @staticmethod
+    def _parse_run_scope(value: Any) -> PipelineScope:
+        if not isinstance(value, dict) or not isinstance(value.get("kind"), str):
+            raise PipelineError("INVALID_REQUEST", "scope must be a PipelineScope object")
+        kind = value["kind"]
+        if kind == "book" and set(value) == {"kind", "book_id"}:
+            book_id = value.get("book_id")
+            if isinstance(book_id, str) and book_id:
+                return PipelineScope(ScopeType.BOOK, book_id=book_id)
+        elif kind == "chapter" and set(value) == {"kind", "chapter_id"}:
+            chapter_id = value.get("chapter_id")
+            if isinstance(chapter_id, str) and chapter_id:
+                return PipelineScope(ScopeType.CHAPTER, chapter_id=chapter_id)
+        elif kind == "page_selection" and set(value) == {"kind", "page_ids"}:
+            page_ids = value.get("page_ids")
+            if (
+                isinstance(page_ids, list)
+                and page_ids
+                and all(isinstance(item, str) and item for item in page_ids)
+                and len(set(page_ids)) == len(page_ids)
+            ):
+                return PipelineScope(ScopeType.PAGE_SELECTION, selected_ids=tuple(page_ids))
+        elif kind == "page" and set(value) == {"kind", "page_id"}:
+            page_id = value.get("page_id")
+            if isinstance(page_id, str) and page_id:
+                return PipelineScope(ScopeType.PAGE, selected_ids=(page_id,))
+        elif kind == "region" and set(value) == {"kind", "region_id"}:
+            region_id = value.get("region_id")
+            if isinstance(region_id, str) and region_id:
+                return PipelineScope(ScopeType.REGION, selected_ids=(region_id,))
+        raise PipelineError("INVALID_REQUEST", "scope does not match a frozen PipelineScope variant")
+
+    @staticmethod
+    def _scope_to_wire(scope: PipelineScope) -> dict[str, Any]:
+        if scope.scope_type is ScopeType.BOOK:
+            return {"kind": "book", "book_id": scope.book_id}
+        if scope.scope_type is ScopeType.CHAPTER:
+            return {"kind": "chapter", "chapter_id": scope.chapter_id}
+        if scope.scope_type is ScopeType.PAGE_SELECTION:
+            return {"kind": "page_selection", "page_ids": list(scope.selected_ids)}
+        if scope.scope_type is ScopeType.PAGE:
+            return {"kind": "page", "page_id": scope.selected_ids[0]}
+        return {"kind": "region", "region_id": scope.selected_ids[0]}
+
+    @staticmethod
+    def _task_projection_to_wire(projection) -> dict[str, Any]:
+        return {
+            "run_id": projection.run_id,
+            "run_status": projection.run_status,
+            "run_title": projection.run_title,
+            "overall_progress": projection.overall_progress,
+            "current_page_id": projection.current_page_id,
+            "current_step_type": projection.current_step_type,
+            "step_flow": [
+                {"type": step_type, "label": label, "state": state}
+                for step_type, label, state in projection.step_flow
+            ],
+            "rows": [
+                {
+                    "page_id": row.page_id,
+                    "page_order": row.page_order,
+                    "filename": row.filename,
+                    "status": row.status,
+                    "is_locked": row.is_locked,
+                    "is_pipeline_current": row.is_pipeline_current,
+                    "error_code": row.error_code,
+                }
+                for row in projection.rows
+            ],
+            "tasks": [
+                {
+                    "task_id": task.task_id,
+                    "page_id": task.page_id,
+                    "status": task.status,
+                    "error_code": task.error_code,
+                    "error_message": task.error_message,
+                    "steps": [
+                        {
+                            "step_run_id": step.step_run_id,
+                            "step_type": step.step_type,
+                            "status": step.status,
+                            "retry_no": step.retry_no,
+                            "error_code": step.error_code,
+                            "error_message": step.error_message,
+                            "provider": step.provider,
+                            "model": step.model,
+                            "device": step.device,
+                        }
+                        for step in task.steps
+                    ],
+                }
+                for task in projection.tasks
+            ],
+            "counts": {
+                "total": projection.total_page_count,
+                "completed": projection.completed_page_count,
+                "failed": projection.failed_page_count,
+                "skipped": projection.skipped_page_count,
+                "blocked": projection.blocked_page_count,
+                "waiting": projection.waiting_page_count,
+                "processing": projection.processing_page_count,
+            },
+            "blocked_reasons": list(projection.blocked_reasons),
+            "controls": {
+                "can_pause": projection.can_pause,
+                "can_stop": projection.can_stop,
+                "can_continue": projection.can_continue,
+                "can_restart": projection.can_restart,
+                "can_abandon": projection.can_abandon,
+                "can_retry_failed": projection.can_retry_failed,
+            },
+            "extra": dict(projection.extra),
+        }
+
+    def _cached_task_projection(self, run_id: str) -> dict[str, Any]:
+        now = time.monotonic()
+        with self._projection_lock:
+            cached = self._projection_cache.get(run_id)
+            if cached is not None and now - cached[0] < 0.25:
+                return cached[1]
+        wire = self._task_projection_to_wire(
+            self._core.pipeline.get_task_projection(run_id, fresh=True)
+        )
+        with self._projection_lock:
+            self._projection_cache[run_id] = (now, wire)
+        return wire
+
+    def _dispatch_run_command(
+        self,
+        command: str,
+        payload: dict[str, Any],
+        request_id: Any,
+        *,
+        payload_is_object: bool,
+    ) -> tuple[dict[str, Any], bool]:
+        try:
+            if not payload_is_object:
+                raise PipelineError("INVALID_REQUEST", "payload must be a JSON object")
+            if command in {"StartRun", "ControlRun", "ResumeBlockedRun", "RetryFailedTargets"}:
+                if not self._run_owner and not self._serving:
+                    self._start_run_scheduler()
+                if not self._run_owner:
+                    raise PipelineError("INVALID_RUN_TRANSITION", "Run scheduler owner is unavailable")
+            if command == "StartRun":
+                raw_command = payload.get("command")
+                key = payload.get("idempotency_key")
+                if not isinstance(raw_command, str) or raw_command not in COMMAND_CATALOG:
+                    raise PipelineError("INVALID_REQUEST", "command is not a frozen PipelineCommand")
+                if not isinstance(key, str) or not key:
+                    raise PipelineError("INVALID_REQUEST", "idempotency_key is required")
+                overrides = payload.get("overrides", {})
+                if not isinstance(overrides, dict):
+                    raise PipelineError("INVALID_REQUEST", "overrides must be a JSON object")
+                scope = self._parse_run_scope(payload.get("scope"))
+                run, created = self._core.pipeline.accept_start_run(
+                    CommandType(raw_command), scope,
+                    overrides=overrides,
+                    idempotency_key=key,
+                )
+                result = {
+                    "run_id": run.run_id,
+                    "status": "pending" if created else run.status.value,
+                }
+            elif command == "ControlRun":
+                run_id = self._required_run_id(payload)
+                action = payload.get("action")
+                actions = {"pause", "continue", "stop", "restart", "abandon"}
+                if not isinstance(action, str) or action not in actions:
+                    raise PipelineError("INVALID_REQUEST", "action is not a frozen ControlRun action")
+                key = payload.get("idempotency_key")
+                if action == "restart":
+                    if not isinstance(key, str) or not key:
+                        raise PipelineError("INVALID_REQUEST", "restart requires idempotency_key")
+                elif "idempotency_key" in payload:
+                    raise PipelineError("INVALID_REQUEST", "idempotency_key is only valid for restart")
+                controlled = self._core.pipeline.control_run(
+                    run_id, action,
+                    idempotency_key=key if action == "restart" else None,
+                )
+                result = {"run_id": controlled.run_id, "status": controlled.status.value}
+                if controlled.new_run_id is not None:
+                    child = self._core.pipeline.get_run_snapshot(controlled.new_run_id)
+                    result["new_run_id"] = child.run_id
+                    result["new_run_status"] = child.status.value
+            elif command == "ResumeBlockedRun":
+                if "idempotency_key" in payload:
+                    raise PipelineError("INVALID_REQUEST", "ResumeBlockedRun does not accept idempotency_key")
+                run = self._core.pipeline.resume_blocked_run(self._required_run_id(payload))
+                result = {"run_id": run.run_id, "status": run.status.value}
+            elif command == "GetRunSnapshot":
+                run = self._core.pipeline.get_run_snapshot(
+                    self._required_run_id(payload),
+                    fresh=self._serving and not self._run_owner,
+                )
+                targets = [
+                    {
+                        "target_id": target.target_id,
+                        "target_type": target.target_type.value,
+                        "order": target.target_order,
+                    }
+                    for target in run.targets
+                ]
+                result = {
+                    "run_id": run.run_id,
+                    "command": run.command_type.value,
+                    "scope": self._scope_to_wire(run.scope),
+                    "status": run.status.value,
+                    "targets": targets,
+                }
+                if run.source_run_id is not None:
+                    result["source_run_id"] = run.source_run_id
+                if run.retry_reason is not None:
+                    result["retry_reason"] = run.retry_reason
+            elif command == "GetTaskProjection":
+                result = self._cached_task_projection(
+                    self._required_run_id(payload)
+                )
+            else:
+                run_id = self._required_run_id(payload)
+                key = payload.get("idempotency_key")
+                if not isinstance(key, str) or not key:
+                    raise PipelineError("INVALID_REQUEST", "idempotency_key is required")
+                child, created = self._core.pipeline.accept_retry_failed_targets(run_id, key)
+                result = {
+                    "run_id": child.run_id,
+                    "status": "pending" if created else child.status.value,
+                }
+            response = {
+                "protocol": PROTOCOL_NAME,
+                "version": {"major": PROTOCOL_MAJOR, "minor": PROTOCOL_MINOR},
+                "request_id": request_id,
+                "result": result,
+                "error": None,
+            }
+        except PipelineError as error:
+            code = error.code
+            if code in {"EMPTY_TARGET_SELECTION", "TARGET_DELETED"}:
+                code = "INVALID_REQUEST" if code == "EMPTY_TARGET_SELECTION" else "TARGET_NOT_FOUND"
+            category = {
+                "INVALID_REQUEST": "validation",
+                "TARGET_NOT_FOUND": "not_found",
+                "IDEMPOTENCY_KEY_REUSED": "conflict",
+                "INVALID_RUN_TRANSITION": "conflict",
+            }.get(code, "validation")
+            message = {
+                "INVALID_REQUEST": "Run request is invalid",
+                "TARGET_NOT_FOUND": "Requested Run or target was not found",
+                "IDEMPOTENCY_KEY_REUSED": "Idempotency key was used for a different request",
+                "INVALID_RUN_TRANSITION": "Run operation is not valid in the current state",
+            }.get(code, "Run request could not be accepted")
+            response = {
+                "protocol": PROTOCOL_NAME,
+                "version": {"major": PROTOCOL_MAJOR, "minor": PROTOCOL_MINOR},
+                "request_id": request_id,
+                "result": None,
+                "error": make_error_envelope(code, category, message, retryable=False),
+            }
+        except Exception as error:
+            code = getattr(error, "code", "UNKNOWN")
+            response = {
+                "protocol": PROTOCOL_NAME,
+                "version": {"major": PROTOCOL_MAJOR, "minor": PROTOCOL_MINOR},
+                "request_id": request_id,
+                "result": None,
+                "error": make_error_envelope(
+                    str(code), "internal", "Run operation failed", retryable=False
+                ),
+            }
+        return response, False
+
     def dispatch_request(self, raw_line: str) -> tuple[dict[str, Any], bool]:
         """Dispatch a single raw json request line.
 
@@ -1147,7 +1582,8 @@ class CoreServiceServer:
         protocol = req.get("protocol")
         version = req.get("version")
         command = req.get("command")
-        payload = req.get("payload") if isinstance(req.get("payload"), dict) else {}
+        raw_payload = req.get("payload")
+        payload = raw_payload if isinstance(raw_payload, dict) else {}
 
         # Validate protocol name and version (must be dict with integer major == PROTOCOL_MAJOR)
         is_valid_version = (
@@ -1184,6 +1620,14 @@ class CoreServiceServer:
                     "error": None,
                 },
                 False,
+            )
+
+        if isinstance(command, str) and command in _RUN_COMMANDS:
+            return self._dispatch_run_command(
+                command,
+                payload,
+                request_id,
+                payload_is_object=isinstance(raw_payload, dict),
             )
 
         if command == "ListBooks":
@@ -1724,19 +2168,26 @@ class CoreServiceServer:
 
     def serve_forever(self) -> int:
         """Main stdio loop reading requests line by line."""
-        for line in self._stdin:
-            line = line.strip()
-            if not line:
-                continue
-            response, should_exit = self.dispatch_request(line)
-            self._emit(response)
-            if should_exit:
-                return 0
-        return 0
+        self._serving = True
+        self._start_run_scheduler()
+        try:
+            for line in self._stdin:
+                line = line.strip()
+                if not line:
+                    continue
+                response, should_exit = self.dispatch_request(line)
+                self._emit(response)
+                if should_exit:
+                    return 0
+            return 0
+        finally:
+            self._stop_run_scheduler()
+            self._serving = False
 
     def _emit(self, payload: dict[str, Any]) -> None:
-        self._stdout.write(json.dumps(payload, separators=(",", ":")) + "\n")
-        self._stdout.flush()
+        with self._write_lock:
+            self._stdout.write(json.dumps(payload, separators=(",", ":")) + "\n")
+            self._stdout.flush()
 
 
 def main() -> int:

@@ -15,6 +15,8 @@ from __future__ import annotations
 import time
 from collections.abc import Callable
 from dataclasses import dataclass, field
+from datetime import datetime, timezone
+from email.utils import parsedate_to_datetime
 from typing import Any
 
 from ports.providers.errors import ProviderError, ProviderInputError, is_retryable
@@ -25,8 +27,11 @@ class RetryPolicy:
     """Finite retry policy; ``max_attempts`` counts the first try."""
 
     max_attempts: int = 3
-    backoff_seconds: float = 0.5
+    backoff_seconds: float = 1.0
     retry_codes: frozenset[str] | None = None
+    retry_after_provider: Callable[[], str | None] | None = field(
+        default=None, repr=False, compare=False
+    )
 
     def __post_init__(self) -> None:
         if self.max_attempts < 1:
@@ -40,7 +45,7 @@ class RetryPolicy:
         return is_retryable(error_code)
 
     def delay_for(self, attempt: int) -> float:
-        """Linear backoff; no jitter so tests stay deterministic."""
+        """1s/2s backoff by default; no jitter so attempts stay auditable."""
         return self.backoff_seconds * attempt
 
     def as_dict(self) -> dict:
@@ -132,7 +137,13 @@ def run_with_retry(
             )
             if attempt >= policy.max_attempts or not policy.allows(error.error_code):
                 raise
-            waiter(policy.delay_for(attempt))
+            retry_after = (
+                policy.retry_after_provider()
+                if policy.retry_after_provider is not None
+                else None
+            )
+            delay = _retry_after_seconds(retry_after)
+            waiter(policy.delay_for(attempt) if delay is None else delay)
         else:
             attempts.append(
                 AttemptRecord(
@@ -146,6 +157,22 @@ def run_with_retry(
             return RetryOutcome(result, tuple(attempts), provider_id)
 
     raise AssertionError("retry loop exited without a result")  # pragma: no cover
+
+
+def _retry_after_seconds(value: str | None) -> float | None:
+    if not isinstance(value, str) or not value.strip():
+        return None
+    raw = value.strip()
+    try:
+        return max(0.0, float(raw))
+    except ValueError:
+        try:
+            target = parsedate_to_datetime(raw)
+        except (TypeError, ValueError, OverflowError):
+            return None
+        if target.tzinfo is None:
+            target = target.replace(tzinfo=timezone.utc)
+        return max(0.0, (target - datetime.now(timezone.utc)).total_seconds())
 
 
 @dataclass

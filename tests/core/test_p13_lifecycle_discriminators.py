@@ -21,6 +21,7 @@ from application.tasks.store import (
 from application.translation.pipeline.executor import DeterministicStepExecutor
 from domain.tasks.models import (
     CommandType,
+    LockSnapshot,
     PipelineError,
     PipelineRun,
     PipelineRunStatus,
@@ -126,6 +127,81 @@ def test_retry_failed_targets_requires_completed_with_failures():
 
 
 @pytest.mark.parametrize(
+    "status",
+    [
+        PipelineRunStatus.PENDING,
+        PipelineRunStatus.RUNNING,
+        PipelineRunStatus.PAUSED,
+        PipelineRunStatus.BLOCKED,
+        PipelineRunStatus.INTERRUPTED,
+        PipelineRunStatus.COMPLETED,
+        PipelineRunStatus.FAILED,
+        PipelineRunStatus.CANCELLED,
+    ],
+)
+def test_retry_failed_targets_rejects_every_status_except_completed_with_failures(status):
+    pipeline, store = _pipeline()
+    run = _new_run(pipeline)
+    run.status = status
+    run.tasks = []
+    store.put(run.run_id, run)
+
+    with pytest.raises(PipelineError) as error:
+        pipeline.retry_failed_targets(run.run_id)
+
+    assert error.value.code == "INVALID_RUN_TRANSITION"
+    assert store.list_ids() == (run.run_id,)
+    assert store.get(run.run_id).status is status
+
+
+def test_scheduler_start_rejects_every_non_pending_status():
+    for status in (
+        PipelineRunStatus.RUNNING,
+        PipelineRunStatus.PAUSED,
+        PipelineRunStatus.BLOCKED,
+        PipelineRunStatus.INTERRUPTED,
+        PipelineRunStatus.COMPLETED,
+        PipelineRunStatus.COMPLETED_WITH_FAILURES,
+        PipelineRunStatus.FAILED,
+        PipelineRunStatus.CANCELLED,
+    ):
+        pipeline, store = _pipeline()
+        run = _new_run(pipeline)
+        run.status = status
+        store.put(run.run_id, run)
+
+        with pytest.raises(PipelineError) as error:
+            pipeline.execute_run(run.run_id)
+
+        assert error.value.code == "INVALID_RUN_TRANSITION"
+        assert store.get(run.run_id).status is status
+
+
+def test_scheduler_start_on_preplanned_all_skipped_run_is_a_terminal_noop():
+    catalog = InMemoryTargetCatalog()
+    catalog.add_page(
+        "page-1",
+        book_id="book-1",
+        chapter_id="chapter-1",
+        lock=LockSnapshot(page_locked=True),
+        regions=(RegionSnapshot("region-1", "page-1"),),
+    )
+    pipeline = PipelineService(catalog)
+    run = pipeline.create_run(
+        CommandType.OCR_REGION,
+        PipelineScope(ScopeType.REGION, selected_ids=("region-1",)),
+    )
+    run = pipeline.plan_run(run.run_id)
+    assert run.status is PipelineRunStatus.COMPLETED
+    assert run.tasks[0].status is PipelineTaskStatus.SKIPPED
+
+    finished = pipeline.execute_run(run.run_id)
+
+    assert finished is run
+    assert run.status is PipelineRunStatus.COMPLETED
+
+
+@pytest.mark.parametrize(
     ("status", "disposition", "action"),
     [
         (PipelineRunStatus.PENDING, None, "continue"),
@@ -211,6 +287,21 @@ def test_blocked_run_replans_only_after_resume_blocked_operation():
     pipeline.resume_blocked_run(run.run_id)
 
     assert store.get(run.run_id).status is PipelineRunStatus.BLOCKED
+
+
+def test_abandon_interruptions_cancels_only_the_original_run():
+    pipeline, store = _pipeline()
+    run = _new_run(pipeline)
+    run.status = PipelineRunStatus.INTERRUPTED
+    store.put(run.run_id, run)
+
+    result = pipeline.control_run(run.run_id, "abandon")
+
+    assert result.run_id == run.run_id
+    assert result.new_run_id is None
+    assert result.status is PipelineRunStatus.CANCELLED
+    assert store.list_ids() == (run.run_id,)
+    assert store.get(run.run_id).termination_reason == "abandoned_after_interruption"
 
 
 def test_pipeline_service_rejects_a_second_scheduler_owner():

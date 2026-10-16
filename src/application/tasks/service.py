@@ -1,12 +1,9 @@
-"""Command planner and serial scheduler for TASK-011.
-
-The service is intentionally synchronous.  It supplies the contract's safe
-Step boundary and deterministic lifecycle without inventing threads,
-database tables, or bootstrap wiring outside this Task's whitelist.
-"""
+"""Command planner and serial scheduler for the pipeline's durable Runs."""
 
 from __future__ import annotations
 
+import hashlib
+import json
 import threading
 import uuid
 from collections.abc import Callable
@@ -203,6 +200,11 @@ class PipelineService:
         self._executor = executor or DeterministicStepExecutor()
         self._limits = limits or ResourceLimits()
         self._scheduler_lock = threading.Lock()
+        self._scheduler_owner_required = False
+        self._scheduler_owner = False
+        self._accept_lock = threading.RLock()
+        self._event_sink: Callable[[str, Mapping[str, Any]], None] | None = None
+        self._event_states: dict[str, tuple[str, tuple[tuple[str, str], ...], str | None, str]] = {}
         # TASK-039: optional artifact probe (page_id -> current Clean exists?).
         # ``None`` (every pre-existing construction) keeps the inherited
         # stage-based judgement byte-for-byte.
@@ -223,7 +225,9 @@ class PipelineService:
         overrides: Mapping[str, Any] | None = None,
         source_run_id: str | None = None,
         retry_reason: str | None = None,
+        _persist: bool = True,
     ) -> PipelineRun:
+        self._ensure_scheduler_owner()
         command = CommandType(command_type)
         if isinstance(scope, PipelineScope):
             actual_scope = scope
@@ -268,10 +272,87 @@ class PipelineService:
             source_run_id=source_run_id,
             retry_reason=retry_reason,
         )
-        self._persist(run)
+        if _persist:
+            self._persist(run)
         return run
 
+    def set_event_sink(
+        self, sink: Callable[[str, Mapping[str, Any]], None] | None
+    ) -> None:
+        self._event_sink = sink
+
+    def require_scheduler_owner(self) -> None:
+        self._scheduler_owner_required = True
+        self._scheduler_owner = False
+
+    def set_scheduler_owner(self, owned: bool) -> None:
+        self._scheduler_owner = owned
+
+    def _ensure_scheduler_owner(self) -> None:
+        if self._scheduler_owner_required and not self._scheduler_owner:
+            raise PipelineError(
+                "INVALID_RUN_TRANSITION", "Run scheduler owner is unavailable"
+            )
+
+    @staticmethod
+    def _request_fingerprint(value: Mapping[str, Any]) -> str:
+        canonical = json.dumps(
+            value, ensure_ascii=False, sort_keys=True, separators=(",", ":"),
+            allow_nan=False,
+        )
+        return hashlib.sha256(canonical.encode("utf-8")).hexdigest()
+
+    @staticmethod
+    def _require_idempotency_key(value: str | None) -> str:
+        if not isinstance(value, str) or not value:
+            raise PipelineError("INVALID_REQUEST", "idempotency_key is required")
+        return value
+
+    @staticmethod
+    def _scope_fingerprint(scope: PipelineScope) -> dict[str, Any]:
+        return {
+            "scope_type": scope.scope_type.value,
+            "selected_ids": list(scope.selected_ids),
+            "book_id": scope.book_id,
+            "chapter_id": scope.chapter_id,
+        }
+
+    def accept_start_run(
+        self,
+        command_type: CommandType | str,
+        scope: PipelineScope,
+        *,
+        overrides: Mapping[str, Any] | None,
+        idempotency_key: str,
+    ) -> tuple[PipelineRun, bool]:
+        self._ensure_scheduler_owner()
+        key = self._require_idempotency_key(idempotency_key)
+        command = CommandType(command_type)
+        fingerprint = self._request_fingerprint({
+            "operation": "StartRun",
+            "command": command.value,
+            "scope": self._scope_fingerprint(scope),
+            "overrides": dict(overrides or {}),
+        })
+        with self._accept_lock:
+            record = self._store.get_idempotency(key)
+            if record is not None:
+                if record.request_fingerprint != fingerprint:
+                    raise PipelineError("IDEMPOTENCY_KEY_REUSED", "idempotency key fingerprint differs")
+                return self._require_run(record.run_id), False
+            run = self.create_run(command, scope, overrides=overrides, _persist=False)
+            accepted, created = self._store.accept(
+                run,
+                idempotency_key=key,
+                request_fingerprint=fingerprint,
+                operation_type="StartRun",
+            )
+            if created:
+                self._remember_event_state(accepted)
+            return accepted, created
+
     def plan_run(self, run_id: str, *, mode: str = "initial") -> PipelineRun:
+        self._ensure_scheduler_owner()
         run = self._require_run(run_id)
         if mode not in {"initial", "resume_blocked", "continue"}:
             raise PipelineError("INVALID_RUN_TRANSITION", f"unknown plan mode {mode}")
@@ -298,6 +379,12 @@ class PipelineService:
                 page_id=run_target.page_id,
                 region_id=run_target.region_id,
             )
+            if mode != "initial":
+                task.step_run_ids = [
+                    step.step_run_id
+                    for step in run.step_runs
+                    if step.task_id == task.task_id
+                ]
             units = self._plan_target(run, task, view)
             task.units = tuple(units)
             task.status = self._planned_task_status(units)
@@ -310,6 +397,8 @@ class PipelineService:
         run.terminal_step_units = len(terminal_ids)
         run.step_runs = [] if mode == "initial" else run.step_runs
         self._set_planned_run_status(run)
+        if mode == "continue" and run.status is PipelineRunStatus.PENDING:
+            run.status = PipelineRunStatus.RUNNING
         self._persist(run)
         return run
 
@@ -584,6 +673,7 @@ class PipelineService:
         *,
         retry_no: int = 0,
     ) -> StepRun:
+        self._ensure_scheduler_owner()
         run, task = self._find_task(task_id)
         unit = next(
             (unit for unit in task.units if unit.step_type == step_type and unit.decision is PlanDecision.RUN),
@@ -628,6 +718,7 @@ class PipelineService:
         step_run_id: str,
         result: StepResult,
     ) -> CommitStepOutcome:
+        self._ensure_scheduler_owner()
         run, step_run, task, unit = self._find_step(step_run_id)
         if step_run.status is not StepRunStatus.RUNNING:
             raise PipelineError("INVALID_RUN_TRANSITION", "StepRun is no longer running")
@@ -636,27 +727,24 @@ class PipelineService:
         if result.target_id != unit.target_id or result.step_type != unit.step_type or output_targets != expected_targets:
             return self._fail_mapping(run, task, step_run, unit)
 
+        def persist_committed_step() -> None:
+            step_run.status = StepRunStatus.COMPLETED
+            step_run.output = result.outputs
+            if unit.step_type == "detect":
+                self._backfill_detected_regions(run, task, unit, result)
+            self._mark_terminal(run, unit.unit_id)
+            self._store.write_in_current_transaction(run)
+
         outcome = self._catalog.commit_step(
             target_id=unit.target_id,
             expected_revisions=step_run.input_refs,
             expected_lock=step_run.lock_snapshot,
             stage_updates=result.next_stage_states or {unit.step_type: StageState.COMPLETED},
             revision_updates=result.revision_updates,
+            persist=persist_committed_step,
         )
         if outcome.status == "applied":
-            step_run.status = StepRunStatus.COMPLETED
-            step_run.output = result.outputs
-            if unit.step_type == "detect":
-                # TASK-049 AC ③: the detection step created the page's
-                # Regions; the task's still-regionless units (planned before
-                # any Region existed) are REPLANNED against those live
-                # Regions — primary ``region_ids[0]`` included, so every
-                # region chain (SFX gate, locks, stages) is decided by the
-                # same procedure, wherever the region sits in the reading
-                # order (M2-TASKS-PRIMARY-SFX-GATE).
-                self._backfill_detected_regions(run, task, unit, result)
-            self._mark_terminal(run, unit.unit_id)
-            self._persist(run)
+            self._emit_lifecycle_events(run)
             return CommitStepOutcome("committed", step_run.step_run_id)
 
         if outcome.status in {"input_revision_changed", "lock_changed"}:
@@ -733,6 +821,7 @@ class PipelineService:
     # ------------------------------------------------------------------
 
     def execute_run(self, run_id: str) -> PipelineRun:
+        self._ensure_scheduler_owner()
         if not self._scheduler_lock.acquire(blocking=False):
             raise PipelineError("INVALID_RUN_TRANSITION", "scheduler already has an owner")
         try:
@@ -741,20 +830,33 @@ class PipelineService:
             self._scheduler_lock.release()
 
     def _execute_run_owned(self, run_id: str) -> PipelineRun:
+        return self._execute_run_under_owner(run_id, resumed=False)
+
+    def _execute_run_under_owner(
+        self, run_id: str, *, resumed: bool
+    ) -> PipelineRun:
         run = self._require_run(run_id)
-        # A planner may already terminalize a run containing only skipped units.
+        # Legacy callers may plan a run before execution; all-skipped plans are
+        # already terminal and must remain a no-op instead of a second start.
         if run.status is PipelineRunStatus.COMPLETED and run.tasks and all(
             task.status is PipelineTaskStatus.SKIPPED for task in run.tasks
         ):
             return run
-        if run.status is not PipelineRunStatus.PENDING:
-            raise PipelineError("INVALID_RUN_TRANSITION", "scheduler start requires pending")
-        if not run.tasks:
-            self.plan_run(run_id)
-        if run.status is not PipelineRunStatus.PENDING:
-            return run
-        run.status = PipelineRunStatus.RUNNING
-        self._persist(run)
+        if run.status is PipelineRunStatus.PENDING:
+            if not run.tasks:
+                self.plan_run(run_id)
+            if run.status is not PipelineRunStatus.PENDING:
+                return run
+            run.status = PipelineRunStatus.RUNNING
+            self._persist(run)
+        elif (
+            not resumed
+            or run.status is not PipelineRunStatus.RUNNING
+            or any(
+                step.status is StepRunStatus.RUNNING for step in run.step_runs
+            )
+        ):
+            raise PipelineError("INVALID_RUN_TRANSITION", "scheduler start requires pending or resumed running")
         for task in run.tasks:
             if task.status in TERMINAL_TASK_STATUSES:
                 continue
@@ -793,7 +895,15 @@ class PipelineService:
                     self._persist(run)
                     return run
 
-                step_run = self._record_step_attempt(run, task, unit)
+                retry_no = max(
+                    (
+                        step.retry_no
+                        for step in run.step_runs
+                        if step.task_id == task.task_id and step.unit_id == unit.unit_id
+                    ),
+                    default=-1,
+                ) + 1
+                step_run = self._record_step_attempt(run, task, unit, retry_no=retry_no)
                 try:
                     result = self._executor.execute(step_run, unit, run)
                 except StepExecutionError as error:
@@ -841,7 +951,10 @@ class PipelineService:
                 return run
             if task_failed or task.status is PipelineTaskStatus.FAILED:
                 task.status = PipelineTaskStatus.FAILED
-            elif task.status is PipelineTaskStatus.RUNNING:
+            elif task.status in {
+                PipelineTaskStatus.PENDING,
+                PipelineTaskStatus.RUNNING,
+            }:
                 task.status = PipelineTaskStatus.COMPLETED
 
         self._aggregate_run(run)
@@ -854,7 +967,26 @@ class PipelineService:
             raise PipelineError("INVALID_RUN_TRANSITION", "run is not blocked")
         return self.plan_run(run_id, mode="resume_blocked")
 
-    def control_run(self, run_id: str, action: str) -> ControlResult:
+    def control_run(
+        self, run_id: str, action: str, *, idempotency_key: str | None = None
+    ) -> ControlResult:
+        self._ensure_scheduler_owner()
+        restart_fingerprint = None
+        if action == "restart" and idempotency_key is not None:
+            key = self._require_idempotency_key(idempotency_key)
+            restart_fingerprint = self._request_fingerprint({
+                "operation": "restart",
+                "source_run_id": run_id,
+            })
+            record = self._store.get_idempotency(key)
+            if record is not None:
+                if record.request_fingerprint != restart_fingerprint:
+                    raise PipelineError(
+                        "IDEMPOTENCY_KEY_REUSED", "idempotency key fingerprint differs"
+                    )
+                parent = self._require_run(run_id)
+                child = self._require_run(record.run_id)
+                return ControlResult(parent.run_id, parent.status, child.run_id)
         run = self._require_run(run_id)
         if action == "pause":
             if run.status is not PipelineRunStatus.RUNNING:
@@ -881,7 +1013,7 @@ class PipelineService:
         if action == "continue":
             if run.status is PipelineRunStatus.PAUSED:
                 run.pause_requested = False
-                run.status = PipelineRunStatus.PENDING
+                run.status = PipelineRunStatus.RUNNING
                 self._persist(run)
                 return ControlResult(run.run_id, run.status)
             if (
@@ -895,6 +1027,8 @@ class PipelineService:
             raise PipelineError("INVALID_RUN_TRANSITION", "continue requires paused or interrupted")
 
         if action == "restart":
+            if idempotency_key is not None and restart_fingerprint is None:
+                raise PipelineError("INVALID_REQUEST", "restart requires idempotency_key")
             if (
                 run.status is not PipelineRunStatus.INTERRUPTED
                 or run.interruption_disposition is not None
@@ -905,10 +1039,26 @@ class PipelineService:
                 run.scope,
                 source_run_id=run.run_id,
                 retry_reason="restart_after_interruption",
+                _persist=False,
             )
+            old_disposition = run.interruption_disposition
             run.interruption_disposition = "restarted"
-            self._persist(run)
-            return ControlResult(run.run_id, run.status, fresh.run_id)
+            try:
+                child, created = self._store.accept_restart(
+                    run,
+                    fresh,
+                    idempotency_key=idempotency_key,
+                    request_fingerprint=(
+                        restart_fingerprint if idempotency_key is not None else None
+                    ),
+                )
+            except BaseException:
+                run.interruption_disposition = old_disposition
+                raise
+            if created:
+                self._remember_event_state(run)
+                self._remember_event_state(child)
+            return ControlResult(run.run_id, run.status, child.run_id)
 
         if action == "abandon":
             if (
@@ -924,6 +1074,7 @@ class PipelineService:
         raise PipelineError("INVALID_RUN_TRANSITION", f"unknown control action {action}")
 
     def recover_running_runs(self) -> tuple[str, ...]:
+        self._ensure_scheduler_owner()
         recovered: list[str] = []
         for run_id in self._store.list_ids():
             run = self._store.get(run_id)
@@ -940,7 +1091,12 @@ class PipelineService:
             recovered.append(run_id)
         return tuple(recovered)
 
-    def retry_failed_targets(self, run_id: str) -> PipelineRun:
+    def retry_failed_targets(
+        self, run_id: str, *, idempotency_key: str | None = None
+    ) -> PipelineRun:
+        self._ensure_scheduler_owner()
+        if idempotency_key is not None:
+            return self.accept_retry_failed_targets(run_id, idempotency_key)[0]
         run = self._require_run(run_id)
         if run.status is not PipelineRunStatus.COMPLETED_WITH_FAILURES:
             raise PipelineError(
@@ -962,6 +1118,54 @@ class PipelineService:
             source_run_id=run.run_id,
             retry_reason="retry_failed_targets",
         )
+
+    def accept_retry_failed_targets(
+        self, run_id: str, idempotency_key: str
+    ) -> tuple[PipelineRun, bool]:
+        self._ensure_scheduler_owner()
+        run = self._require_run(run_id)
+        key = self._require_idempotency_key(idempotency_key)
+        failed_pages = tuple(dict.fromkeys(
+            task.page_id
+            for task in run.tasks
+            if task.status is PipelineTaskStatus.FAILED and task.target_type is TargetType.PAGE
+        ))
+        fingerprint = self._request_fingerprint({
+            "operation": "RetryFailedTargets",
+            "source_run_id": run.run_id,
+            "failed_page_ids": list(failed_pages),
+        })
+        with self._accept_lock:
+            record = self._store.get_idempotency(key)
+            if record is not None:
+                if record.request_fingerprint != fingerprint:
+                    raise PipelineError(
+                        "IDEMPOTENCY_KEY_REUSED", "idempotency key fingerprint differs"
+                    )
+                return self._require_run(record.run_id), False
+            if run.status is not PipelineRunStatus.COMPLETED_WITH_FAILURES:
+                raise PipelineError(
+                    "INVALID_RUN_TRANSITION",
+                    "failed targets can only be retried after completed_with_failures",
+                )
+            if not failed_pages:
+                raise PipelineError("TARGET_NOT_FOUND", "run has no failed page targets")
+            child = self.create_run(
+                run.command_type,
+                PipelineScope(ScopeType.PAGE_SELECTION, selected_ids=failed_pages),
+                source_run_id=run.run_id,
+                retry_reason="retry_failed_targets",
+                _persist=False,
+            )
+            accepted, created = self._store.accept(
+                child,
+                idempotency_key=key,
+                request_fingerprint=fingerprint,
+                operation_type="RetryFailedTargets",
+            )
+            if created:
+                self._remember_event_state(accepted)
+            return accepted, created
 
     def _backfill_detected_regions(
         self, run: PipelineRun, task: PipelineTask, unit: PlanUnit, result: StepResult
@@ -1159,6 +1363,61 @@ class PipelineService:
             skipped_reasons=reasons,
         )
 
+    def get_run_snapshot(self, run_id: str, *, fresh: bool = False) -> PipelineRun:
+        run = self._store.refresh(run_id) if fresh else self._store.get(run_id)
+        if run is None:
+            raise PipelineError("TARGET_NOT_FOUND", f"run {run_id} not found")
+        return run
+
+    def get_task_projection(self, run_id: str, *, fresh: bool = False):
+        from application.tasks.projection import build_projection
+
+        run = self.get_run_snapshot(run_id, fresh=fresh)
+        page_meta = {
+            target.page_id: (
+                target.snapshot.page_order,
+                self._safe_projection_filename(target.snapshot.metadata, target.page_id),
+                target.snapshot.lock.page_locked,
+            )
+            for target in run.targets
+        }
+        return build_projection(run, page_meta)
+
+    @staticmethod
+    def _safe_projection_filename(metadata: Mapping[str, Any], page_id: str) -> str:
+        value = metadata.get("filename", metadata.get("source_filename"))
+        if (
+            isinstance(value, str)
+            and value
+            and "/" not in value
+            and "\\" not in value
+            and "://" not in value
+        ):
+            return value
+        return page_id
+
+    def run_pending_once(self) -> bool:
+        """Execute the first durable Pending Run; the store is the only queue."""
+        self._ensure_scheduler_owner()
+        for run_id in self._store.list_ids():
+            run = self._store.get(run_id)
+            if run is not None and run.status is PipelineRunStatus.PENDING:
+                self.execute_run(run_id)
+                return True
+            if (
+                run is not None
+                and run.status is PipelineRunStatus.RUNNING
+                and not any(step.status is StepRunStatus.RUNNING for step in run.step_runs)
+            ):
+                if not self._scheduler_lock.acquire(blocking=False):
+                    raise PipelineError("INVALID_RUN_TRANSITION", "scheduler already has an owner")
+                try:
+                    self._execute_run_under_owner(run_id, resumed=True)
+                finally:
+                    self._scheduler_lock.release()
+                return True
+        return False
+
     def _require_run(self, run_id: str) -> PipelineRun:
         run = self._store.get(run_id)
         if run is None:
@@ -1168,6 +1427,68 @@ class PipelineService:
     def _persist(self, run: PipelineRun) -> None:
         """Persist every lifecycle boundary for durable stores."""
         self._store.put(run.run_id, run)
+        self._emit_lifecycle_events(run)
+
+    def _remember_event_state(self, run: PipelineRun) -> None:
+        from application.tasks.projection import build_projection
+
+        projection = build_projection(run)
+        self._event_states[run.run_id] = (
+            run.status.value,
+            tuple((task.task_id, task.status.value) for task in run.tasks),
+            projection.current_page_id,
+            projection.current_step_type,
+        )
+
+    def _emit_lifecycle_events(self, run: PipelineRun) -> None:
+        from application.tasks.projection import build_projection
+
+        projection = build_projection(run)
+        current = (
+            run.status.value,
+            tuple((task.task_id, task.status.value) for task in run.tasks),
+            projection.current_page_id,
+            projection.current_step_type,
+        )
+        previous = self._event_states.get(run.run_id)
+        self._event_states[run.run_id] = current
+        sink = self._event_sink
+        if sink is None or previous is None:
+            return
+
+        def send(event_type: str, payload: Mapping[str, Any]) -> None:
+            try:
+                sink(event_type, payload)
+            except Exception:
+                # Lifecycle events are hints; delivery failure cannot undo a committed Run.
+                return
+
+        previous_status, previous_tasks, previous_page, previous_step = previous
+        before = dict(previous_tasks)
+        for task in run.tasks:
+            if task.status is PipelineTaskStatus.FAILED and before.get(task.task_id) != "failed":
+                payload: dict[str, Any] = {"run_id": run.run_id, "task_id": task.task_id}
+                if task.page_id:
+                    payload["page_id"] = task.page_id
+                if task.error_code:
+                    payload["error_code"] = task.error_code
+                send("TaskFailed", payload)
+        if run.status is PipelineRunStatus.PAUSED and previous_status != "paused":
+            send("RunPaused", {"run_id": run.run_id, "status": "paused"})
+        if (
+            run.status in {
+                PipelineRunStatus.COMPLETED,
+                PipelineRunStatus.COMPLETED_WITH_FAILURES,
+            }
+            and previous_status != run.status.value
+        ):
+            send("RunCompleted", {"run_id": run.run_id, "status": run.status.value})
+        if (previous_page, previous_step) != (projection.current_page_id, projection.current_step_type):
+            send("CurrentPageStepChanged", {
+                "run_id": run.run_id,
+                "current_page_id": projection.current_page_id,
+                "current_step_type": projection.current_step_type,
+            })
 
     def _find_task(self, task_id: str) -> tuple[PipelineRun, PipelineTask]:
         for run_id in self._store.list_ids():

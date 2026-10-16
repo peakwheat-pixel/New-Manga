@@ -75,7 +75,7 @@ def test_dispatch_pure_functions(tmp_path: Path) -> None:
         # 2. Unsupported protocol name
         bad_proto_req = json.dumps({
             "protocol": "other.protocol",
-            "version": {"major": 1, "minor": 0},
+            "version": {"major": 2, "minor": 0},
             "request_id": "req-1",
             "command": "core.ping",
             "payload": {},
@@ -86,10 +86,10 @@ def test_dispatch_pure_functions(tmp_path: Path) -> None:
         assert res["result"] is None
         assert res["error"]["code"] == E_PROTOCOL_VERSION_UNSUPPORTED
 
-        # 3. Unsupported protocol version (major != 1, non-dict, string, missing)
+        # 3. Major 1 clients are rejected after the Run runtime version bump.
         bad_ver_req = json.dumps({
             "protocol": PROTOCOL_NAME,
-            "version": {"major": 2, "minor": 0},
+            "version": {"major": 1, "minor": 6},
             "request_id": "req-2",
             "command": "core.ping",
             "payload": {},
@@ -122,7 +122,7 @@ def test_dispatch_pure_functions(tmp_path: Path) -> None:
         # 4. Unknown command
         unknown_cmd_req = json.dumps({
             "protocol": PROTOCOL_NAME,
-            "version": {"major": 1, "minor": 0},
+            "version": {"major": 2, "minor": 0},
             "request_id": "req-3",
             "command": "CreateBook",
             "payload": {},
@@ -136,7 +136,7 @@ def test_dispatch_pure_functions(tmp_path: Path) -> None:
         # 5. core.ping
         ping_req = json.dumps({
             "protocol": PROTOCOL_NAME,
-            "version": {"major": 1, "minor": 0},
+            "version": {"major": 2, "minor": 0},
             "request_id": "req-4",
             "command": "core.ping",
             "payload": {},
@@ -151,13 +151,13 @@ def test_dispatch_pure_functions(tmp_path: Path) -> None:
         # M2-REGION-RETYPE-CORE: 2 -> 3 (set_region_type/list_regions added)
         # M2-RC4-DOMAIN-COMMANDS: 3 -> 4 (three domain commands)
         # M2-PAGE-RESOURCE-RESOLVE-1: 4 -> 5 (resolve_page_resource added)
-        assert res["result"]["protocol_version"] == {"major": 1, "minor": 6}
+        assert res["result"]["protocol_version"] == {"major": 2, "minor": 0}
         assert res["result"]["capabilities"] == ["library.list_books"]
 
         # 6. ListBooks on empty repository
         list_req = json.dumps({
             "protocol": PROTOCOL_NAME,
-            "version": {"major": 1, "minor": 0},
+            "version": {"major": 2, "minor": 0},
             "request_id": "req-5",
             "command": "ListBooks",
             "payload": {},
@@ -171,7 +171,7 @@ def test_dispatch_pure_functions(tmp_path: Path) -> None:
         # 7. core.shutdown
         shutdown_req = json.dumps({
             "protocol": PROTOCOL_NAME,
-            "version": {"major": 1, "minor": 0},
+            "version": {"major": 2, "minor": 0},
             "request_id": "req-6",
             "command": "core.shutdown",
             "payload": {},
@@ -225,7 +225,7 @@ def test_real_subprocess_e2e_round_trip(tmp_path: Path) -> None:
         # 1. ping
         ping_resp = send_and_recv({
             "protocol": PROTOCOL_NAME,
-            "version": {"major": 1, "minor": 0},
+            "version": {"major": 2, "minor": 0},
             "request_id": "p-1",
             "command": "core.ping",
             "payload": {},
@@ -237,7 +237,7 @@ def test_real_subprocess_e2e_round_trip(tmp_path: Path) -> None:
         # M2-SETTINGS-IPC-CHANNEL: 1.1 -> 2 (settings.get/update_section added)
         # M2-REGION-RETYPE-CORE: 2 -> 3 (set_region_type/list_regions added)
         # M2-PAGE-RESOURCE-RESOLVE-1: 4 -> 5 (resolve_page_resource added)
-        assert ping_resp["result"]["protocol_version"] == {"major": 1, "minor": 6}
+        assert ping_resp["result"]["protocol_version"] == {"major": 2, "minor": 0}
         assert ping_resp["result"]["capabilities"] == ["library.list_books"]
 
         # 1b. core.detect in the REAL production assembly (M2-PROD-DETECT-3):
@@ -254,7 +254,7 @@ def test_real_subprocess_e2e_round_trip(tmp_path: Path) -> None:
         Image.new("RGB", (16, 16), "white").save(buffer, "PNG")
         detect_resp = send_and_recv({
             "protocol": PROTOCOL_NAME,
-            "version": {"major": 1, "minor": 1},
+            "version": {"major": 2, "minor": 1},
             "request_id": "d-1",
             "command": "core.detect",
             "payload": {
@@ -277,7 +277,7 @@ def test_real_subprocess_e2e_round_trip(tmp_path: Path) -> None:
         # 1c. core.detect payload validation stays fail-closed over the wire
         detect_bad_resp = send_and_recv({
             "protocol": PROTOCOL_NAME,
-            "version": {"major": 1, "minor": 1},
+            "version": {"major": 2, "minor": 1},
             "request_id": "d-2",
             "command": "core.detect",
             "payload": {"page": "!!!not base64!!!", "width": 16, "height": 16},
@@ -289,7 +289,7 @@ def test_real_subprocess_e2e_round_trip(tmp_path: Path) -> None:
         # The process is still alive and responsive after detect errors
         alive2_resp = send_and_recv({
             "protocol": PROTOCOL_NAME,
-            "version": {"major": 1, "minor": 1},
+            "version": {"major": 2, "minor": 1},
             "request_id": "d-alive",
             "command": "core.ping",
             "payload": {},
@@ -301,7 +301,7 @@ def test_real_subprocess_e2e_round_trip(tmp_path: Path) -> None:
         # 2. ListBooks when empty
         empty_resp = send_and_recv({
             "protocol": PROTOCOL_NAME,
-            "version": {"major": 1, "minor": 0},
+            "version": {"major": 2, "minor": 0},
             "request_id": "l-1",
             "command": "ListBooks",
             "payload": {},
@@ -356,7 +356,7 @@ def test_real_subprocess_e2e_round_trip(tmp_path: Path) -> None:
         # 4. ListBooks after seeding
         seeded_resp = send_and_recv({
             "protocol": PROTOCOL_NAME,
-            "version": {"major": 1, "minor": 0},
+            "version": {"major": 2, "minor": 0},
             "request_id": "l-2",
             "command": "ListBooks",
             "payload": {},
@@ -412,7 +412,7 @@ def test_real_subprocess_e2e_round_trip(tmp_path: Path) -> None:
         # Verify process is still alive and responsive after malformed version
         alive_resp = send_and_recv({
             "protocol": PROTOCOL_NAME,
-            "version": {"major": 1, "minor": 0},
+            "version": {"major": 2, "minor": 0},
             "request_id": "v-alive",
             "command": "core.ping",
             "payload": {},
@@ -424,7 +424,7 @@ def test_real_subprocess_e2e_round_trip(tmp_path: Path) -> None:
         # 6. Unknown command rejection
         unknown_resp = send_and_recv({
             "protocol": PROTOCOL_NAME,
-            "version": {"major": 1, "minor": 0},
+            "version": {"major": 2, "minor": 0},
             "request_id": "u-bad",
             "command": "UnknownOperation",
             "payload": {},
@@ -436,7 +436,7 @@ def test_real_subprocess_e2e_round_trip(tmp_path: Path) -> None:
         # 7. Shutdown and clean exit
         shutdown_resp = send_and_recv({
             "protocol": PROTOCOL_NAME,
-            "version": {"major": 1, "minor": 0},
+            "version": {"major": 2, "minor": 0},
             "request_id": "s-1",
             "command": "core.shutdown",
             "payload": {},
@@ -470,7 +470,7 @@ def test_list_books_sqlite_error_typed_response(
 
         list_req = json.dumps({
             "protocol": PROTOCOL_NAME,
-            "version": {"major": 1, "minor": 0},
+            "version": {"major": 2, "minor": 0},
             "request_id": "req-err-1",
             "command": "ListBooks",
             "payload": {},
@@ -583,7 +583,7 @@ def test_page_count_filtering_discriminating_cases(tmp_path: Path) -> None:
         # Query via server ListBooks
         list_req = json.dumps({
             "protocol": PROTOCOL_NAME,
-            "version": {"major": 1, "minor": 0},
+            "version": {"major": 2, "minor": 0},
             "request_id": "filter-test",
             "command": "ListBooks",
             "payload": {},
