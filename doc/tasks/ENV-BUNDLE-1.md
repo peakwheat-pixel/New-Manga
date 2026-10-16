@@ -3,19 +3,19 @@ id: ENV-BUNDLE-1
 title: 重建与协议 2.3 匹配的 sidecar bundle 与 frontend dist（解 BL-11b）
 kind: infra
 governance_version: 2
-status: in_review
+status: closed_with_limitations
 approval: coordinator_release_20261016_after_dsh_restart
 suggested_owner: Codex
-owner: Codex
-reviewer: null
+owner: codex
+reviewer: dsh
 depends_on: [HOST-ISSUER-1, HOST-CORE-1]
 base_commit: c6fda8a09c1a8248ec6617369f9fdf9e1cef79ec
 branch: codex/ENV-BUNDLE-1-sidecar-rebuild
 worktree: G:/CODEX/New Manga.workspace/worktrees/ENV-BUNDLE-1
-integration_commit: null
-delivery_head: 14c52c152b9ae058aba4ee29d55d6ed6f7ef6e0f
+integration_commit: 7b9cbbe6ac657ec0bef4d84fa0bee45844398e2b
+delivery_head: 5a23c503789ffecc4215a5ec96fc250faacbad06
 canonical_evidence_status: complete
-resource_closeout_status: registered
+resource_closeout_status: complete
 evidence_dir: verification/ENV-BUNDLE-1
 ---
 
@@ -112,7 +112,7 @@ evidence_dir: verification/ENV-BUNDLE-1
 
 | evidence_id | AC/Gate | path | commit | sha256 | class |
 |---|---|---|---|---|---|
-| E01 | AC6 | `verification/ENV-BUNDLE-1/ac6-probe.md` | `ac9e303436c572976c35ea66758b04b687015df8` | 191027ed26421f60f57a475bb3577b99291c5a23b9b263e8f305414d157034e9 | CANONICAL |
+| E01 | AC6 | `verification/ENV-BUNDLE-1/ac6-probe.md` | `ac9e303436c572976c35ea66758b04b687015df8` | b01d91cdffeef07c98df3d4bacfa039f614bc25015f6d48c88a830561fc2fabc | CANONICAL |
 | E02 | AC6 | `verification/ENV-BUNDLE-1/ac6-pip-connectivity.log` | `bda0c4a1476d2fc257012aa04d5e3352408228fe` | 9bbe1315e40b3a4f0da2eff50e86a150282f70a20decaa6f75ce05f28cc82eaa | CANONICAL |
 | E03 | AC1 | `verification/ENV-BUNDLE-1/ac1-venv-create.log` | `bda0c4a1476d2fc257012aa04d5e3352408228fe` | acebdd0c1d538b40915ddfbde7c8d5b3e6a23e233249f11f3ed9e23f209826f7 | CANONICAL |
 | E04 | AC1 | `verification/ENV-BUNDLE-1/ac1-pip-install-utf8.log` | `bda0c4a1476d2fc257012aa04d5e3352408228fe` | 7e0b51e2ee231b95098d8b6ea73468749e7817728e7d90b4c8d949e3a2b29232 | CANONICAL |
@@ -122,7 +122,7 @@ evidence_dir: verification/ENV-BUNDLE-1
 | E08 | AC3 | `verification/ENV-BUNDLE-1/ac3-frontend.log` | `bda0c4a1476d2fc257012aa04d5e3352408228fe` | 280909e1d4c62d45604a583647a1b704ed9bf23d714694f2c4c81d61c7df77b7 | CANONICAL |
 | E09 | AC3 | `verification/ENV-BUNDLE-1/ac3-frontend-dist-manifest.txt` | `bda0c4a1476d2fc257012aa04d5e3352408228fe` | 1a4728255254ac12311ab77f814a23abd96ed3ed75ee137308953397550db062 | CANONICAL |
 | E10 | AC4 | `verification/ENV-BUNDLE-1/ac4-cargo-test.log` | `bda0c4a1476d2fc257012aa04d5e3352408228fe` | 96842c63b26f20b61732740ad9f7acea011292a9d33dd7049a14459c9a6bcd97 | CANONICAL |
-| E11 | AC4 | `verification/ENV-BUNDLE-1/ac4-six-test-results.md` | `bda0c4a1476d2fc257012aa04d5e3352408228fe` | ae4d9722b36a69cc3456c6203387ca85bbe9ebd0e128a48d3ff84b0984625015 | CANONICAL |
+| E11 | AC4 | `verification/ENV-BUNDLE-1/ac4-six-test-results.md` | `bda0c4a1476d2fc257012aa04d5e3352408228fe` | c3c66c0056d1c87b0b276763207c5bb9f1bf94162a1d85c0c41520132509f8c9 | CANONICAL |
 | E12 | AC4 | `verification/ENV-BUNDLE-1/ac4-packaged-core-smoke.log` | `bda0c4a1476d2fc257012aa04d5e3352408228fe` | 7d89da0a284760ec1f107a9bd57dd434e8fe73e581483d58ee0c66fd59dd03c4 | CANONICAL |
 | E13 | AC5 | `verification/ENV-BUNDLE-1/ac5-product-code-diff.txt` | `bda0c4a1476d2fc257012aa04d5e3352408228fe` | dfd80195f4cb01fe304b86a570d72c160aa6de429478ca90a81c045cf106a0d2 | CANONICAL |
 | E14 | AC5 | `verification/ENV-BUNDLE-1/ac5-generated-side-effects-and-restoration.txt` | `bda0c4a1476d2fc257012aa04d5e3352408228fe` | 695cc472a469250d4cff8ab1f5ce9f24c2a111d7e90cc28775e7e58afd9bf98c | CANONICAL |
@@ -134,23 +134,38 @@ evidence_dir: verification/ENV-BUNDLE-1
 | S03 | AC2 | `packaging/m2ac5/build_sidecar.ps1` | `c6fda8a09c1a8248ec6617369f9fdf9e1cef79ec` | 07e12e80ceb2a35bab96150f4530b7a788b914a2467a32056098adbb775dd30e | SOURCE_PIN |
 | S04 | AC4 | `apps/desktop/src-tauri/src/main.rs` | `c6fda8a09c1a8248ec6617369f9fdf9e1cef79ec` | 21972b00bdcf643f950b4a0d3c0a669b86623e80896f818ff14903da938ca1b5 | SOURCE_PIN |
 | S05 | AC4 | `apps/desktop/src-tauri/src/library_bridge.rs` | `c6fda8a09c1a8248ec6617369f9fdf9e1cef79ec` | 7599fd78c3c5c7e60647d4a351f54defdb7696bcbd950502c7b55f205437967d | SOURCE_PIN |
-| S06 | AC3 | `apps/desktop/frontend/package-lock.json` | `c6fda8a09c1a8248ec6617369f9fdf9e1cef79ec` | 520be4900b855e235b8347f8a179b3cffe4a520069a51464151fc880b05f0295 | SOURCE_PIN |
+| S06 | AC3 | `apps/desktop/frontend/package-lock.json` | `c6fda8a09c1a8248ec6617369f9fdf9e1cef79ec` | 520be4900b855e235b8347f8a179b3cffe4a520069a51464151fc880b05f0295 | SOURCE_PIN |
+| EVD-ENVBUNDLE1-REVIEW-R1 | AC7 | `verification/ENV-BUNDLE-1/dsh-review-r1.md` | `8250b4205375c2347f607fb8aa47b4dff22b813f` | `24f847a551a3e866cd487a65ffda473cf8263a8caf8fcda13d5fbf3c375fadd5` | CANONICAL |
 
 ## Resource Manifest
 
 | resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
 |---|---|---|---|---|---|
-| build-venv | `G:/CODEX/New Manga.task-envs/m2ac5-build` | PRESERVE_REFERENCED | same | `verification/ENV-BUNDLE-1/resource-manifest.json` | Python 3.12.3；42,709 files / 1,493,841,058 bytes；新建专用环境并保留 |
-| sidecar-bundle | `G:/CODEX/New Manga.workspace/worktrees/ENV-BUNDLE-1/apps/desktop/src-tauri/target/core-sidecar/core-sidecar` | PRESERVE_REFERENCED | same | `verification/ENV-BUNDLE-1/resource-manifest.json`; `ac2-bundle-manifest.txt` | 5,563 files / 1,287,287,472 bytes；未跳过权重；协议 2.3 frozen EXE smoke 通过 |
-| pyinstaller-work | `G:/CODEX/New Manga.workspace/worktrees/ENV-BUNDLE-1/apps/desktop/src-tauri/target/pyinstaller-work` | PRESERVE_REFERENCED | same | `verification/ENV-BUNDLE-1/resource-manifest.json` | 49 files / 656,512,909 bytes；保留以便检查/复用 |
-| frontend-dist | `G:/CODEX/New Manga.workspace/worktrees/ENV-BUNDLE-1/apps/desktop/frontend/dist` | PRESERVE_REFERENCED | same | `verification/ENV-BUNDLE-1/resource-manifest.json`; `ac3-frontend-dist-manifest.txt` | 2 files / 201,081 bytes；当前源码生产构建 |
-| frontend-node-modules | `G:/CODEX/New Manga.workspace/worktrees/ENV-BUNDLE-1/apps/desktop/frontend/node_modules` | PRESERVE_REFERENCED | same | `verification/ENV-BUNDLE-1/resource-manifest.json` | 4,370 files / 84,189,621 bytes；保留已安装依赖 |
-
+| build-venv | G:/CODEX/New Manga.task-envs/m2ac5-build | PRESERVE_REFERENCED | G:/CODEX/New Manga.task-envs/m2ac5-build | verification/ENV-BUNDLE-1/resource-manifest.json | 隔离构建环境（Python 3.12.3 + build 闭包，实测约 1.42 GB）；未提交入库；保留以便后续重建 |
+| bundle | G:/CODEX/New Manga.workspace/worktrees/ENV-BUNDLE-1/apps/desktop/src-tauri/target/core-sidecar | PRESERVE_REFERENCED | G:/CODEX/New Manga.workspace/worktrees/ENV-BUNDLE-1/apps/desktop/src-tauri/target/core-sidecar | verification/ENV-BUNDLE-1/resource-manifest.json | gitignored 构建产物；全量重建 exit 0（5,563 文件 / 1.199 GiB / 5 exe）；权重 sha256 校验后打包；保留 |
+| frontend-dist | G:/CODEX/New Manga.workspace/worktrees/ENV-BUNDLE-1/apps/desktop/frontend/dist | PRESERVE_REFERENCED | G:/CODEX/New Manga.workspace/worktrees/ENV-BUNDLE-1/apps/desktop/frontend/dist | verification/ENV-BUNDLE-1/resource-manifest.json | gitignored 前端构建产物；`npm ci` + `npm run build` exit 0；`package-lock` 哈希未变；保留 |
 ## Closeout Record
 
-- Closeout date / Codex：Task 尚在 `in_review`，关闭时再填写。
-- canonical_evidence_status：`complete`（证据表各 hash 为工作区 SHA-256；commit 列经核对包含文件）。
-- resource_closeout_status：`registered`；所有构建资源按 manifest 保留，待集成后 closeout。
-- 删除、迁移、归档数量/字节数：0 / 0 / 0；未删除或迁移用户数据/资源。
-- 未关闭项及保留原因：AC4 的六项测试仍由源码 Python 模块驱动，完整 packaged GUI E2E 未运行；独立 Review、Coordinator integration 与集成后验证待后续 Gate。当前 Task 不允许修改产品测试/启动代码，不能在本范围内变更驱动路径。
-- 当前指针清理：`STATUS` / `REBASELINE_PLAN` / 本 Task 导航在释放时同步。
+- Closeout date / Coordinator：2026-10-16，dsh（epoch 5，lease `264c2000541748298000f93fb25a52de`）。
+- canonical_evidence_status：`complete`；resource_closeout_status：`complete`（build venv 与 bundle 均 `PRESERVE_REFERENCED`；0 删除 / 0 迁移 / 0 归档）。
+- **状态：`closed_with_limitations`（不是 `done`）**。
+- **已完成**：AC1（venv + 依赖，pip exit 0）、AC2（**全量重建 bundle，exit 0，395.8s，5563 文件 / 1.199 GiB，权重 sha256 校验后打包，ICU fail-closed guard 满足**）、
+  AC3（frontend 生产构建 exit 0，`package-lock` 未变）、AC5（**产品代码 diff 为空**；cargo 产生的 27 个行尾副作用已还原）、AC6（先探测后下载）。
+- **AC4 = PARTIAL（Owner 主动判定，Reviewer 维持）**：`cargo test` 虽 **76 passed / 0 failed / 1 ignored（exit 0）**，
+  但本次运行**只设 `M2RC1_PYTHON`**、**未设 `M2RC1_SRC_ROOT`/`M2RC1_PACKAGED`**，
+  测试经 `spawn_with_resource_roots(python_exe, src_root, …)` 走**源码模块**路径 → **不构成"由 frozen bundle 驱动"的验收**。
+- **BL-11b 的实质已解决（有直接证据）**：`ac4-packaged-core-smoke.log` 显示**真实 frozen `core_service.exe`** 在隔离数据目录、
+  精简 PATH、**无 Python/source-root override** 条件下完成 `core.ping`（`{"version":{"major":2,"minor":3},"status":"ready"}`）、
+  `ListBooks`、`core.shutdown` 往返，**`overall: PASS`**。
+- **归因修正（Review F2，采纳 Owner 的诚实纠正）**：baseline 六项失败实为 **5 项协议错误 + 1 项 `M2RC1_PYTHON` 缺失**
+  （`same_channel_concurrent_round_trips_keep_response_ownership`），**并非**六项全为协议不匹配；BACKLOG 的 BL-11b 措辞已同步修正。
+- **并行工作归因（Review F3）**：审查期间主仓 HEAD 由 `c6fda8a0` 前进到 `c6f975d3`
+  （`docs(UI-DESIGN-1): release AD-001 four-page UI/UX design baseline`，作者 `peakwheat-pixel`），
+  为**合法治理提交**（checker PASS、dirty 仍 19）且**保留**了本 Task 的 READY 节点；
+  Coordinator **不回退**，集成以最新 main 为基并**保留 `UI-DESIGN-1`**。
+- **后续项（Review C2，未闭合）**：需另立**经授权**的 Task，使那六项 Rust 集成测试支持 **`M2RC1_PACKAGED`** 驱动
+  （真正调用 frozen bundle）；**在该 Task 完成前不得声称 packaged 六项测试已验收**。
+- **其他遗留**：完整 NSIS 安装器与 packaged HostControl GUI E2E 仍 `NOT_RUN`（Review F5）；
+  PyInstaller 6.22.3 提示未来 7.0 将阻止管理员身份运行，后续重建应用非管理员终端（Review F4）。
+- 交付 head 冻结（Review F6）：Owner 申报 `delivery_head=14c52c15`（证据提交），实际 HEAD=`5a23c503`；已冻结为实际值。
+- 当前指针清理：`doc/STATUS.md` / `doc/REBASELINE_PLAN.md` 已同步（**保留 `UI-DESIGN-1`**）。

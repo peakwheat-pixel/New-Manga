@@ -31,4 +31,4 @@
 本轮完成：PROJECT-ROADMAP-RELEASE、P22-REBASE-1、P04、P06、P10、P11、P09、P09-FU1、P13、P13-C1、P16、P16-C1 均已 done；P18 closed_with_limitations（AC2 待用户门槛、AC5 待解阻）；详见 [STATUS](STATUS.md) 与各 Task。ARCH-DOC-REBASELINE `ready / integrated`，待 AC7 消费者裁决。
 DOC=[架构映射Task](tasks/ARCH-DOC-REBASELINE.md)已集成但未关闭；UI=四页分别经ZCode设计审查；P13*仅备份停写。详细范围/Gate见[本轮裁决](../verification/PROJECT-ROADMAP-RELEASE/REPORT.md)，为本Plan持续冻结的Gate输入，Task关闭不撤销引用；状态仍只在本Plan。
 P02新时点链与P22-REBASE-1已集成；P04前置满足但不自动放行，仍待独立释放授权；旧H1/P2-1/13项缺失、BC-AC5 PARTIAL及产品backlog保留。
-READY 节点：ARCH-DOC-REBASELINE、ENV-BUNDLE-1、UI-DESIGN-1。UI-DESIGN-1 冻结四页 UI/UX 设计基线（解 P12/P14/P15/P17 的 UI 前置）。
+READY 节点：ARCH-DOC-REBASELINE、UI-DESIGN-1。ENV-BUNDLE-1 已 closed_with_limitations（bundle 已对齐 2.3；six-test packaged 驱动转后续项）。
