@@ -1,5 +1,7 @@
 > **内部生命周期窄注记（2026-10-07，M2-DERIVED-GC-2 实现；零 wire 修订，协议 major/minor 不变）**：M2-DERIVED-GC-2 在专用 resource catalog 内引入 `preview_lifecycle` 来源行与 `preview_namespace` 绑定行，并给宿主→channel 的**内部** `revoke_resource` 控制请求加了受信 `retire_preview` 布尔位（CoreChannel 轮换专用方法；channel 仅在其自身 revoke 成功后据此把已登记自有 preview 行的 `retired` 置 1）。这些都是 host↔sidecar 控制面/SQLite 元数据内部实现：**不新增任何 Tauri IPC 命令、不改 WebView payload/ACL/十五条生产命令表、不发 `source_artifact_revision_id`/`producer_root` 等来源字段到 WebView、不改 issue/resolve/touch/revoke/TTL 的既有语义**（失败撤销新 key 与 WebView `revoke_resource_refs` 均不携带该位）。preview 回收（retired 副本删除）只发生在受 namespace 租约保护的独占启动窗口，见 [M2_DERIVED_PREVIEW_GC_DESIGN.md](M2_DERIVED_PREVIEW_GC_DESIGN.md)。
 
+> **rev 2.2（2026-10-16，P12-C1 导入 IPC 契约）**：冻结 `ImportPages`、host 签发的只读 `ImportSourceRef` 与逐源/逐页 `ImportReport`；`ImportProgressChanged` 明确保持 `UNKNOWN / PROPOSAL`，原因见 §6.2。按 §3.2 将协议 minor 从 1 提升到 2，只新增冻结命令，不改变既有冻结 wire。修订范围：§3、§5、§6.2、§10.4、§12。明确授权导入侧 Python IPC Runtime，精确 allowlist 见 §12；本修订不代表 Runtime 或 Tauri host issuer 已实现。兼容影响见 [P12-C1 compatibility note](../../verification/P12-C1/compatibility-impact.md)。
+
 > **rev 2.0（2026-10-16，P13-C1 Runtime IPC 授权修订）**：冻结 Run 命令、幂等键、快照/投影查询与 Run 状态事件 wire 面；`StartRun.idempotency_key` 为必填，且 stdio 输出流增加异步事件，因此按 §3.2 将协议 major 从 1 提升到 2。修订范围：§3、§4、§5 Run catalog、§5.5、§6.1、§6.2、§11、§12。Restart 重放响应可表达 child Run 当前状态；TaskProjection 冻结错误/重试与可得 Provider/Model/Device 字段。既有命令的 payload/result/error 语义不变；旧 major 客户端不能调用 major 2 endpoint，兼容影响见 [P13-C1 compatibility note](../../verification/P13-C1/compatibility-impact.md)。明确授权已释放的 P13 Task 实现 Python IPC Runtime，边界见 §12；本修订自身不代表 runtime 已实现。
 
 > **rev 1.8（2026-10-07，M2-PAGE-NAV-PROJECTION-1 授权增量）**：新增 `list_chapters` / `list_chapter_pages`（页导航读取面第一刀），协议 minor 5→6（commands added 惯例）；`{book_id}` → `{"chapters": [{chapter_id, title, chapter_number, sort_order}]}`、`{chapter_id}` → `{"pages": [{page_id, source_filename, sort_order}]}`，均按 `sort_order` 升序；**零新错误码**——未知 book_id/chapter_id 返回空数组（fail-soft，1.4 r1 P3-4 先例），payload 校验 → `INVALID_REQUEST` 复用。本增量优先于下方目录中同能力的 PROPOSAL 状态（`ListChapters` 行转冻结）；既有 rev 1.7 及更早命令语义不变。
@@ -10,12 +12,13 @@
 
 # M2-C1 — Typed IPC Contract
 
-**当前修订范围：P16-C1 rev 2.1**（§3、§5 Reader/Export catalog、§6 Reader/Export projections/events、§10.3 ExportTargetRef、§11、§12）。P13 Run wire 本文零语义变化。
+**当前修订范围：P12-C1 rev 2.2**（§3、§5 `ImportPages`、§6.2、§10.4 `ImportSourceRef`、§12）。P13 Run wire、P16 Reader/Export wire 与 §10.3 `ExportTargetRef` 本文零语义变化。
 
-状态：rev `2.1`（P16-C1）冻结 Reader/Export wire 与 P16 Python Runtime 授权；协议 envelope 为 major `2` / minor `1`。rev 2.0 的 P13 Run wire 与更早既有命令语义不变；本修订不声称 P16 runtime 已实现。下方历史 revision 条目保留当时状态，不覆盖本行与 rev 2.1。
+状态：rev `2.2`（P12-C1）冻结导入 wire，并授权限路径的导入侧 Python IPC Runtime；协议 envelope 为 major `2` / minor `2`。rev 2.1 的 Reader/Export wire、rev 2.0 的 P13 Run wire 与更早既有冻结命令语义不变；本修订不声称 ImportPages runtime 或 Tauri host issuer 已实现。下方历史 revision 条目保留当时状态，不覆盖本行与当前 rev 2.2。
 
 ## Revision history
 
+- `2.2`（P12-C1，2026-10-16）：冻结 `ImportPages` request/result、`ImportSourceRef` 只读来源授权与 `ImportReport` 逐源/逐页 DTO；来源限制为 P09 已批准的图片、显式选定文件集合/文件夹直接子项和 PDF，重复策略沿用 P09 的 `skip` / `import_as_new`。`ImportProgressChanged` 保持 `UNKNOWN / PROPOSAL`，因为 P09 没有持久 operation/snapshot wire；孤立事件不能成为导入真值。协议 minor `1→2`：只增加新冻结命令，没有改写既有冻结字段或事件；proposal 阶段的裸路径/URL 调用不获兼容承诺。更新 §12，授权导入侧 Python IPC Runtime 的冻结 allowlist；不授权 Tauri/Rust issuer 或产品代码。本修订未实现 Runtime。
 - `2.1`（P16-C1，2026-10-16）：冻结 Reader/Export wire，新增 `GetReaderProjection` / `SaveReadingProgress`、`StartExport` / `CancelExport`、`GetExportSnapshot` / `GetExportHistory` 和 `ReadingProgressChanged` / `ExportProgressChanged`。`StartExport.target_ref` 为 Tauri host 签发、单一目标、300 秒过期且一次消费的 `ExportTargetRef`；Core 经与 `ImportSourceRef` 同源的受信 grant resolver 验证、解析、消费。协议 minor `0→1`，只新增命令/事件；旧命令语义和 P13 Run wire 不变，runtime 未实现。细节见 §5、§6.3、§10.3、§12。
 - `2.0`（P13-C1，2026-10-16）：**授权契约修订**——① `StartRun` 增加必填 `idempotency_key`，并冻结 `ControlRun`、`ResumeBlockedRun`、`GetRunSnapshot`、`GetTaskProjection`、`RetryFailedTargets` 的 request/result；同键同 fingerprint 返回原 Run，同键不同 fingerprint 返回 `IDEMPOTENCY_KEY_REUSED`；restart 重放还返回 child 当前状态；`request_id` 保持纯请求关联用途；②按 P11 §4.2/§4.5 冻结控制动作与完整非法转换拒绝表；③冻结 `TaskProjection` 的任务错误/重试、可得 Provider/Model/Device 字段，以及 Task failure / Run pause / Run completion / current Page·Step changed 事件；事件在持久状态提交后经现有 JSONL stdio stream 推送，快照仍为真值；④协议 major `1→2`，因为新必填字段和响应/事件混合输出不能按 §3.2 minor widening；既有命令字段、结果、错误语义不变，但 1.x 客户端必须升级至 2.0 后才可连接该 endpoint；⑤**明确授权** P13 Task 实现 Python IPC Runtime，范围与 allowlist 由 P13 Task 冻结；不授权 React/Tauri/Rust 改动、其他产品功能或依赖。实现状态仍为 `NOT_IMPLEMENTED`。
 - `1.8`（M2-PAGE-NAV-PROJECTION-1，2026-10-07）：**授权契约修订（新命令，协议 minor 5→6）**（[Task](../tasks/M2-PAGE-NAV-PROJECTION-1.md)，用户 2026-10-07 持续自治授权 STATUS 主路径候选①第二刀）——§5 新增 `ListChapters` / `ListChapterPages` 两行（原 §5 PROPOSAL 组合行的 `ListChapters` 转冻结；`ListChapterPages` 为新名，避开 `GetReaderProjection` 的 ReaderProjection 大对象）：①wire `list_chapters`：`{book_id}` → `{"chapters": [{chapter_id, title, chapter_number, sort_order}]}`（result 包装对象沿 ListRegions 1.4 r1 P1-1 先例）；②wire `list_chapter_pages`：`{chapter_id}` → `{"pages": [{page_id, source_filename, sort_order}]}`（导航摘要行——managed_original_ref/宽高/锁态不在本刀，几何与页尺寸由 `list_regions` 面承载，页图经 `resolve_page_resource` 通道获取）；③排序语义冻结：两命令均按 `sort_order` 升序（D03 AC-PAGE-001 用户当前排序；repository 既有 `list_chapters`/`list_pages` 已 ORDER BY sort_order，Core 透传不加新查询方法）；④**零新错误码**：未知 book_id/chapter_id 返回空数组（沿 1.4 r1 P3-4「不存在的父 id 归类空列表」先例——缺失父是空数据不是错误），payload 校验 → `INVALID_REQUEST`（validation）复用；⑤协议 minor 5→6（commands added 惯例，RC-4/1.7 先例）；⑥Rust 命令面 13→15 生产命令（新生产-only 组 `PAGE_NAV_PRODUCTION_ONLY_COMMANDS`，probe/AC1 冻结面零变化——option-B 先例）；⑦`GetReaderProjection` 冻结不变（Reader 页 display mode/进度面不在本刀）；不改变 §5.2 纯 UI 动作边界（book/chapter 下钻选择是 React 本地状态，Core 无写路径）；§10 通道语义零变化。
@@ -67,12 +70,12 @@ SQLite (persistent authority; written only under Python Core)
 
 ## 3. Message envelope 与版本
 
-以下 envelope 是 **PROPOSAL**，用语言无关的 JSON-compatible primitive 表示，尚未选择具体序列化库。Reader/Export 命令与事件 DTO 在 rev 2.1 中冻结；其他仍未冻结的类型继续按各节状态处理：
+以下 envelope 是 **PROPOSAL**，用语言无关的 JSON-compatible primitive 表示，尚未选择具体序列化库。Reader/Export 命令与事件 DTO 在 rev 2.1 中冻结，导入命令在 rev 2.2 中冻结；其他仍未冻结的类型继续按各节状态处理：
 
 ```text
 Request<T> = {
   protocol: "new-manga.core",
-  version: { major: 2, minor: 1 },
+  version: { major: 2, minor: 2 },
   request_id: OpaqueId,
   command: CommandName,
   payload: T
@@ -80,7 +83,7 @@ Request<T> = {
 
 Response<T> = {
   protocol: "new-manga.core",
-  version: { major: 2, minor: 1 },
+  version: { major: 2, minor: 2 },
   request_id: OpaqueId,
   result: T | null,
   error: ErrorEnvelope | null
@@ -88,7 +91,7 @@ Response<T> = {
 
 Event<T> = {
   protocol: "new-manga.core",
-  version: { major: 2, minor: 1 },
+  version: { major: 2, minor: 2 },
   event_id: OpaqueId,
   event_type: EventName,
   emitted_at: Timestamp,
@@ -112,6 +115,7 @@ Event<T> = {
 - 字段删除、改名、类型变化、枚举旧值语义变化或必填性变化属于 major 变更。**例外**：经授权 Task 在 Revision history 登记的 nullability widening（`T → T | null`）不升 major，现仅有 §5 `ListBooks` 的 `BookSummary.page_count`（`1.2` 修订，[M2-FIX-LISTBOOKS-PAGECOUNT-UNKNOWN](../tasks/M2-FIX-LISTBOOKS-PAGECOUNT-UNKNOWN.md)）；1.1 版消费者遇 `null` 属该登记修订的授权破坏面。
 - P13-C1 将冻结的 Run 命令面从 proposal major 1.0 升至 major 2.0：`StartRun.idempotency_key` 的新增必填性及单一 JSONL 输出流中新增异步事件均不能由 major 1 接收端安全忽略。既有命令 payload/result/error 语义不变；major 1 客户端收到 `PROTOCOL_VERSION_UNSUPPORTED`，必须升级后使用 major 2。当前生产 Core stdio 命令实现仍为 major 1 / minor 6；本修订只冻结目标 wire，不声称当前服务已支持 major 2。
 - P16-C1 在 major 2 / minor 1 冻结新增 Reader/Export 命令与事件；既有冻结命令、结果、错误和 P13 Run 事件语义不变。rev 2.0 客户端不能调用这些新增命令；要使用 Reader/Export 面，客户端与 Core 必须配置到 rev 2.1。协议没有版本协商，本文不承诺不同 minor 的同进程双版本服务。
+- P12-C1 在 major 2 / minor 2 冻结新增 `ImportPages`，其余既有冻结命令、结果、错误、状态和事件语义不变。协议 minor 从 1 增至 2，符合“只新增命令”的兼容规则；rev 2.1 客户端与 Core 必须升级并配对到 rev 2.2 才能调用导入面。minor 不代表旧的 proposal 裸路径/URL 形态受支持：旧形态从未冻结，P18 实际运行也报告 `UNKNOWN_COMMAND`。协议没有版本协商或自动迁移。
 - 版本握手/协商与自动迁移仍 `NOT_IMPLEMENTED`；客户端须以已知配置发送版本。`PROTOCOL_VERSION_UNSUPPORTED` 是稳定错误码。
 
 ## 4. Request/response 语义
@@ -132,7 +136,7 @@ Event<T> = {
 | `CreateBook` / `DeleteBook` | `{title, original_title?}` / `{book_id}` → `BookSummary` / `Unit` | `BookshelfViewModel.createBook/deleteBook` 调用 Library service。删除需 Core 检查关联和保留规则。 |
 | `SetBookFavorite` / `SetBookArchived` | `{book_id, value: boolean}` → `BookSummary` | 对应 Library service 调用。 |
 | `ListChapters` / `CreateChapter` / `DeleteChapter` | `{book_id}` / `{book_id,title,chapter_number?}` / `{chapter_id}` → `ChapterSummary[]` / `ChapterSummary` / `Unit` | ViewModel 使用 `list/get/create/delete_chapter`。**`1.8` 注记**：`ListChapters` 已转冻结为 wire `list_chapters`（见下方 `ListChapters` 行，最小导航摘要面）；`CreateChapter`/`DeleteChapter` 仍为 PROPOSAL。 |
-| `ImportPages` | `{chapter_id, sources: ImportSourceRef[]}` → `ImportReport` | 当前导入接受路径/URL 类来源；未来 IPC 必须由 Tauri host 授权并传递不透明、受限、可过期的 `ImportSourceRef`，不得把大型图片 bytes/Base64 放进 JSON。URI/token 具体形态 **DEFERRED to the runtime Task**；security/lifecycle semantics 现已 ruled in §10.1/§10.2（M2-C2）。 |
+| `ImportPages` | `{chapter_id, sources: ImportSourceRef[], duplicate_policy?: "skip"\|"import_as_new"}` → `ImportReport` | **2.2 FROZEN**：payload、逐源/逐页结果与拒绝面见 §5.6；只接受 host 授权的只读来源引用，详情见 §10.4。协议冻结不表示 runtime 已实现。 |
 | `StartRun` | `{command: PipelineCommand, scope: PipelineScope, overrides?: JsonObject, idempotency_key: IdempotencyKey}` → `RunAccepted` | 当前 Workbench 有 `PipelineService.create_run`/`plan_run`，但无此 IPC handler；冻结 wire 与 acceptance 见 §5.5。 |
 | `GetRunSnapshot` | `{run_id}` → `RunSnapshot` | 读取 Core 持久 Run 状态；wire DTO 与拒绝语义见 §5.5。 |
 | `GetTaskProjection` | `{run_id}` → `TaskProjection` | `build_projection` 是应用层唯一投影；读取面见 §5.5 和 §6.1。 |
@@ -302,6 +306,74 @@ Core 必须验证 command/scope 配对；Task contract 不授权新增命令类�
 - **宿主同步纪律（沿 §5.3）**：两命令 runtime 落地时，Tauri 面 `command_allowlist` / `generate_handler!` / app-manifest 三处同步视图 + capabilities 声明 + 前端 commandSurface pin + Rust unit test 必须同一 commit 内同步（既有纪律，§5.3 末条原样适用）。
 - **修订纪律声明**：本节由 **rev 1.4 草案**（M2-REGION-RETYPE-CONTRACT）起步，其两命令 runtime 已由 M2-REGION-RETYPE-CORE（done @merge `d8019810`）落地——`core_service.py` 协议 minor 自该交付起为 `3`；**rev 1.5**（M2-WORKBENCH-REACT-1）在本节内对 `ListRegions` 读取面做 additive widening（可选 `geometry`/`page_size`），minor 维持 `3` 不 bump（理由见 Revision history `1.5`）。本修订不放松 §1–§4 与 §6–§10 既有保护语义：§2 Core 权威与边界重校验、§3 版本规则、§4 请求/响应互斥不变量、§10 数据保护（源文件/人工修改/Lock/Revision 保护）全部原样适用于两命令。
 
+### 5.6 ImportPages（P12-C1，冻结）
+
+本小节只冻结 Python Core command wire。`ImportPages` 是同步 request/response：成功返回最终 `ImportReport`；错误使用 §8 `ErrorEnvelope`。此定义既不声称 command 已实现，也不增加 Tauri command name、文件选择器行为或导入 UI。
+
+```text
+ImportPages = {
+  chapter_id: ChapterId,
+  sources: ImportSourceRef[],                 # 必填且非空
+  duplicate_policy?: "skip" | "import_as_new" # 缺省 "skip"，沿用 P09
+}
+
+ImportReport = {
+  chapter_id: ChapterId,
+  duplicate_policy: "skip" | "import_as_new",
+  cancelled: boolean,
+  sources: ImportSourceResult[]
+}
+
+ImportSourceResult = {
+  source_index: integer,                       # 与 request.sources 对应，0-based
+  source_name: string,                         # 仅选中项 basename，不含路径
+  files: ImportFileResult[]
+}
+
+ImportFileResult = {
+  filename: string,                            # basename；保留 Unicode，不含路径
+  outcome: imported | skipped | rejected | pending | partial,
+  source_sha256: Sha256 | null,                # 本次读取源文件字节的 SHA-256
+  pages: ImportPageResult[],
+  error: ImportItemError | null,
+  side_effects: none | listed_pages_committed | temporary_artifact_possible | managed_orphan_possible
+}
+
+ImportPageResult = {
+  page_index: integer,                          # 1-based；图片为 1，PDF 使用原始页序
+  outcome: imported | skipped_duplicate | rejected | pending,
+  page_id: PageId | null,
+  source_order: integer | null,
+  sort_order: integer | null,
+  sha256: Sha256 | null,                        # 成功或已读到可哈希字节时为小写 64 位 hex
+  width: integer | null,                        # 成功时为真实正整数像素尺寸
+  height: integer | null,
+  duplicate: boolean,                           # 按 Chapter 活动 Page 和本批已导入 Page 判定
+  error: ImportItemError | null,
+  side_effects: none | page_committed | managed_orphan_possible
+}
+
+ImportItemError = {
+  code: string,                                 # 稳定源 code；不得用 message 分支
+  category: validation | not_found | conflict | unavailable | cancelled | internal | unknown,
+  message?: string,                             # 安全短消息，不得包含路径或 stack
+  retryable: true | false | unknown
+}
+
+Sha256 = string                                 # exactly 64 lowercase hexadecimal characters
+```
+
+- `sources` 必须非空，所有 `ImportSourceRef` 与目标 Chapter、payload 和授权均在首次读取之前验证。畸形请求/策略返回 `INVALID_REQUEST`；Chapter 不存在返回 `TARGET_NOT_FOUND`；引用拒绝使用 §10.4 的稳定 `REF_*` code。此类命令级拒绝 `result=null`，且不读来源、不创建 temp/Managed Original、不写 SQLite；错误不得暴露路径、引用内容或签名。
+- `sources` 中每个引用对应一个用户显式选择的图片/PDF 文件、显式选择的图片文件集合中的单文件，或文件夹。文件夹只允许 P09 冻结的**直接子项**，不递归；文件夹任一路径段/子项出现 symlink、junction 或 reparse point 时拒绝该文件夹整体。图片仅接受 P09 已列扩展名 `.png`、`.jpg`、`.jpeg`、`.webp`、`.gif`、`.bmp`；文档仅接受 PDF。MOBI、CBZ、网页、缩略图和其他格式不在此 wire。
+- `ImportSourceResult.source_index` 定位请求中的选择项；文件夹展开后的每个子文件单独出现在 `files`，单文件引用只含对应文件结果。只返回 basename，不返回用户源绝对路径、相对路径、URI、引用或可还原路径的内容。文件名按 Unicode 原样保留。
+- `ImportFileResult.source_sha256` 是 Core 从该文件本次只读取得的源字节 SHA-256，用于 AC-IMPORT-002 的后续源保护对照；未知或在拒绝前未读取时为 `null`。`ImportPageResult` 是每个待导入页的结果。图片对应一页；PDF 按原始页序输出。成功页的 `sha256` 是 Page/Managed Original 字节的 SHA-256：图片为源图逐字节副本，PDF 为该页渲染 PNG；因此 PDF 源 hash 与页 hash 不同。成功的 `width`/`height` 是 decoder/raster 的真实尺寸。成功页同时返回其 `page_id`、不可变 `source_order` 与提交时的 `sort_order`。失败/跳过/待处理且未建 Page 的字段为 `null`；已解码的重复页仍报告 hash、实际尺寸与 `duplicate=true`。
+- `duplicate_policy` 沿用 P09 既有策略：缺省 `skip`，按页面内容 SHA-256 在目标 Chapter 的活动 Page 与本批前序成功页中检测；重复页为 `skipped_duplicate`，不得写 Page 或创建/覆盖 Managed Original。仅显式 `import_as_new` 才为重复页新建 Page ID 与不可变 Managed Original；不得覆盖既有项。软删除 Page 不阻止重导入，但 `source_order` 不复用。
+- 文件级来源校验、解码、重复判定、Managed Copy 原子发布与 SQLite Page 提交遵循 P09 顺序。图片解码失败和 PDF 格式/加密/损坏/零页/任一页渲染失败以具体 code/category 拒绝；PDF 完整预检失败时整份文件在首次 Copy 前拒绝，零 Page、Managed Original 与 temp。对这些 preflight 拒绝，`side_effects="none"` 可判定；其它来源可独立成功，因此报告不承诺整批原子回滚。
+- P09 导入错误的 wire `category` 固定为：`SOURCE_READ_FAILED`=`unavailable`，`INVALID_IMAGE` / `INVALID_DOCUMENT` / `ENCRYPTED` / `UNSUPPORTED_FORMAT`=`validation`，`MISSING_DEPENDENCY`=`unavailable`，`COPY_FAILED`=`internal`。`INVALID_REQUEST`=`validation`、`TARGET_NOT_FOUND`=`not_found`；引用类 `REF_MALFORMED` / `REF_SIGNATURE_INVALID` / `REF_SCOPE_DENIED` / `REF_OUT_OF_SCOPE` / `REF_REPARSE_POINT`=`validation`，`REF_EXPIRED` / `REF_REVOKED`=`conflict`，`REF_UNKNOWN_ID` / `REF_NOT_FOUND`=`not_found`，`FILE_IDENTITY_CHANGED` / `FILE_SIZE_CHANGED` / `CONTENT_DIGEST_MISMATCH`=`conflict`。其它未映射异常保留原 code，并按 §8 使用 `unknown`，不得靠 message 推导。
+- `COPY_FAILED` 不创建 Page；pending 页没有 Page 或 Managed Original。若 Page SQLite 事务在 Managed Original 原子发布后失败，依 P09 允许保留完整、不可见的 Managed Original 孤儿；对应错误不得伪报零副作用，`side_effects="managed_orphan_possible"`。Page 永远不得先于其完整 Managed Original 提交。
+- 若操作在中途被取消，`cancelled=true`，已成功提交的 Page 保留，未处理页为 `pending` 且其 `side_effects="none"`；已处理项的副作用逐项报告。事件、重连、重放或取消控制命令不由本节新增。
+- 同步响应错误使用 §8；未映射异常保留源 code 或 `UNKNOWN`，不得把未知错误伪装为零副作用拒绝。拒绝错误及 `ImportItemError.message`/`details` 不得包含本地路径、grant 内容、签名材料、stack 或 Secret。
+
 ## 6. Typed projections 与 events
 
 ### 6.1 Task projection
@@ -380,7 +452,7 @@ TaskProjectionStep = {
 | `RunCompleted` | `{run_id, status: "completed"\|"completed_with_failures"}` | **P13-C1 frozen minimum**；在终态完成聚合持久化后立即推送；失败页仍保留其成功成果。 |
 | `CurrentPageStepChanged` | `{run_id, current_page_id: PageId\|null, current_step_type: string}` | **P13-C1 frozen minimum**；current Page/Step 投影值改变后立即推送。 |
 | `CoreAvailabilityChanged` | `{state: starting\|ready\|stopping\|unavailable, reason?: ErrorEnvelope}` | **UNKNOWN / PROPOSAL**；当前 Core process/session event 不存在。 |
-| `ImportProgressChanged` | `{operation_id, completed?, total?, status}` | **UNKNOWN / PROPOSAL**；现有 UI 有 import summary，但跨进程传输没有验证。 |
+| `ImportProgressChanged` | `{operation_id, completed?, total?, status}` | **UNKNOWN / PROPOSAL（P12-C1 明确保留未冻结）**：P09 只有同步 `ImportReport` 与可取消的应用层 use case，没有持久 `operation_id`、导入 snapshot/query 或恢复 wire。单独冻结事件会隐含未定义的 operation 生命周期且无法给出真值；未来需先由独立授权冻结可查询的 Core snapshot，再决定是否加事件。 |
 | `ExportProgressChanged` | `{export_id, status, completed_pages, total_pages}` | **2.1 FROZEN**；仅为失效提示，不携带目标路径；调用方读取 `GetExportSnapshot`。 |
 | `ReadingProgressChanged` | `{book_id, chapter_id, mode}` | **2.1 FROZEN**；仅为失效提示；调用方重新读取 `GetReaderProjection`。 |
 
@@ -640,6 +712,16 @@ AS-IS `normalized_to_page_geometry(points, page_w, page_h)` owns conversion in a
 - Host 可在其可信边界内持有所选路径；`ExportProgressSnapshot` / `ExportHistoryEntry` 的 `output_path` 只回到可信 Tauri host 以满足 D08 AC-EXPORT-002 和 D04 §37。Host 不得把绝对路径或 `ExportTargetRef` 转发给 React/WebView；前端若需展示状态/触发打开文件夹，必须经独立 host command 按不透明 `export_id` 操作，不能借此取得路径。
 - 与 §5 `ImportPages` 的 `ImportSourceRef`、§10.1/§10.2 显式同源：两者均由 Tauri host 授权、opaque、受限、过期、由 Core 解析并拒绝伪造/越 scope 引用；**差异只有能力方向和生命周期**：`ImportSourceRef` 是 Core 控制的只读输入，可按 §10.1 T6 滑动续期并按来源撤销；`ExportTargetRef` 是单个目标的一次性写授权，无续期、单次消费，只能写授权输出与 staging。Export ref 不复用、也不放宽 import 的读引用。
 
+### 10.4 Import source read reference（P12-C1 rev 2.2）
+
+本小节冻结导入来源的只读授权边界；签名算法、具体 host grant resolver 实现与 Tauri issuer 仍由后续获授权的 runtime/host Task 落地，本节不声称已实现。
+
+- `ImportSourceRef = {grant_id: OpaqueId, host_signature: string}`。它是不透明、受限、可过期的**读授权引用**，不是路径或 URI；不得携带原始文件 bytes、Base64、绝对/相对路径或可解码出路径的字段。来源引用只在可信 Tauri host→Python Core 边界上出现；React/WebView 不得接收、保存、构造或转发引用，也不得接触其映射路径。Host 是唯一 issuer，并只可为用户显式选择的源文件或文件夹签发。
+- Grant 绑定当前 host session、唯一 grant ID、`ImportPages` 读操作、精确选中的文件或文件夹 scope、签发时来源身份与绝对过期时间；不授权其它文件、目录递归、任意 OS 路径、写入/移动/删除或其它命令。文件夹只涵盖 P09 已冻结的直接子项集合；Core 不得由请求字段扩大或替换该 scope。Host 可撤销 grant；撤销对下一次解析立即生效。引用默认 TTL 为 **300 秒并在活动消费期间滑动续期**（沿 §10.1 T6）；过期后返回 `REF_EXPIRED`，不能静默续期过期引用或退回 path-based 访问。Host session 结束、显式取消选择或 grant 撤销后返回 `REF_REVOKED`。已经由 Core 打开的只读 handle 不因撤销被强制中断，沿用 §10.1 T6；该 handle 仍只允许完成当前已验证的导入读取。
+- Host 经受信 grant resolver 登记受限来源 grant；引用只含 opaque `grant_id` 与 host 签名。Core 在任何来源读取、Managed Copy/temp 写入或 SQLite 写入前验证 issuer/session/signature、grant 存在、scope、未过期、未撤销，以及来源对象身份与选择范围。解析必须 open-then-verify-from-handle：从同一 handle 校验最终 containment、file identity、size 与 §10.2 要求的内容 digest，再且仅从该 handle 读取；读取后复核 identity。拒绝 symlink、junction、reparse point、相对路径、`.`/`..` 穿越、盘符/UNC 逃逸、链接替换、来源缺失及身份/尺寸/hash 漂移。路径与文件句柄只存在于受信 host/Core 内部，绝不出现在请求、结果、事件或错误 message/details。
+- Core 拒绝缺失/畸形引用（`REF_MALFORMED`）、非 host 签发或签名无效（`REF_SIGNATURE_INVALID`）、过期（`REF_EXPIRED`）、未知/撤销（`REF_UNKNOWN_ID` / `REF_REVOKED`）、scope/host session 不匹配（`REF_SCOPE_DENIED`）、范围逃逸（`REF_OUT_OF_SCOPE`）、reparse point（`REF_REPARSE_POINT`）、文件不存在（`REF_NOT_FOUND`）、身份/尺寸/digest 不一致（复用 §10.2 `FILE_IDENTITY_CHANGED` / `FILE_SIZE_CHANGED` / `CONTENT_DIGEST_MISMATCH`）时，在副作用前拒绝。ErrorEnvelope 使用 §8；不得暴露 grant、签名材料、路径或堆栈，也不得从请求的其它字段回退为路径访问。
+- 对有效来源仅以只读方式读取。图片 Managed Original 逐字节复制；PDF 来源只读，Managed Original 是按原始页序渲染的 PNG。来源文件始终零写、零移动、零删除。该引用授权不变更 §5.6 的类型范围、P09 的预检/重复/提交顺序，也不引入新的来源格式或大媒体阈值。
+
 ## 11. Explicitly deferred / undecided
 
 | Decision | Status | Contract treatment |
@@ -660,5 +742,7 @@ The UI mapping decision does not block freezing a transport-level Page status di
 本授权不包括 React/WebView、Tauri/Rust、QML、额外产品行为、其他 Schema/迁移路径或第三方依赖；也不代表任何 runtime 已实现或已验证。集成须遵守 P13 独立 Review、测试与 Coordinator Gate。既有非 Run 命令的 payload/result/error 语义保持原样。大媒体传输选择、M2-S1、其他 release boundary 与 integration 仍未授权。
 
 P16-C1 rev 2.1 **另行明确授权未来已释放的 P16 Python IPC Runtime**，仅限实现本契约 §5 Reader/Export handlers、§6.3 progress snapshots/events、§10.3 `ExportTargetRef` Core-side validation/resolution 与 ExportHistory，并只在以下冻结 allowlist 内改动：`src/application/reading/**`；`src/application/export/{__init__.py,ports.py,service.py}`；为复用 host grant 解析而确有必要的 `src/application/resource_channel/**`、`src/infrastructure/resource_channel/**`（不得弱化既有 §10.1/§10.2 读语义）；`src/infrastructure/sqlite/reading_export.py`；无 Qt/PySide6 的 `src/infrastructure/export/**`；`src/bootstrap/core_service.py`、`src/bootstrap/core_assembly.py`；以及 `tests/core/**`。该 allowlist 不含 `src/application/export/pdf_qt.py`、`tests/reading_export/**`、PySide6/QML/Legacy 路径、`apps/**`、Tauri/Rust、React/WebView、Schema/migration、依赖、其他产品行为或授权外的 Python 模块。Tauri host 的 issuer 实现不在本 P16 Python Runtime 授权内，须由其自身 Task 授权。
+
+P12-C1 rev 2.2 **另行明确授权未来已释放的导入侧 Python IPC Runtime**，只限实现 §5.6 `ImportPages` handler、将 §10.4 `ImportSourceRef` 接入既有 P09 importer，以及 `ErrorEnvelope`/最终 `ImportReport` 序列化；冻结 allowlist 为：`src/bootstrap/core_service.py`、`src/bootstrap/core_assembly.py`；仅为复用/验证受信 grant 而确需改动的 `src/application/resource_channel/**`、`src/infrastructure/resource_channel/**`（必须维持 §10.1/§10.2 安全要求并增加 `user-source` 只读 scope）；`tests/core/**`。既有 `src/application/importing/**`、`src/application/library/**`、`src/infrastructure/sqlite/**` 为本 Runtime 的只读复用面，不在写 allowlist 内；不得修改导入产品语义、SQLite Schema/migration 或其它 Python 模块。此授权不包括 `apps/**`、React/WebView、Tauri command/host issuer、Rust、QML/PySide6/Legacy、打包、第三方依赖、额外产品行为或任何 allowlist 外路径。Host issuer 必须由独立 Task 授权；本契约修订自身不授权或实现 Runtime。
 
 本次把 Reader/Export **proposal 提升为新增冻结命令/事件**，协议 minor 从 rev 2.0 的 `0` 增至 `1`；未改动任何既有冻结命令、字段、状态或 P13 Run 事件，不升 major。rev 2.0 客户端不能调用新命令/事件；rev 2.1 客户端和 Core 必须配对，且没有协商或自动迁移。实现状态仍为 `NOT_IMPLEMENTED`；本 P16-C1 仅修订文档，不授权自身执行 Runtime。
