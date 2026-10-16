@@ -3,12 +3,12 @@ id: HOST-ISSUER-1
 title: Tauri host 引用签发能力（ImportSourceRef / ExportTargetRef 的 issuer 与受信注入）
 kind: feature
 governance_version: 2
-status: ready
+status: blocked
 approval: coordinator_release_20261016_tauri_host_issuer
 suggested_owner: Codex
 owner: null
 reviewer: null
-depends_on: [P09-FU2, P16, HOST-ISSUER-1-C1]
+depends_on: [P09-FU2, P16, HOST-ISSUER-1-C1, HOST-CORE-1]
 base_commit: 2eaa3241295e1f483eabf640289a4bea4126370c
 branch: codex/HOST-ISSUER-1-tauri-ref-issuer
 worktree: G:/CODEX/New Manga.workspace/worktrees/HOST-ISSUER-1
@@ -145,6 +145,25 @@ evidence_dir: verification/HOST-ISSUER-1
   `RegisterExportTarget` / `RevokeExportTarget` / `CloseHostSession`（经 direct-child stdio 的独立 HostControl envelope）；
   **不得**把注册暴露为 WebView 可调用命令；host session credential 与 `core_session_id` 绑定；
   `HOST_ONLY_REQUIRED` / `HOST_SESSION_INVALID` / `CORE_SESSION_MISMATCH` 三拒绝码须有负向证据。
+### 2026-10-16 第二次阻塞与 resolution（Owner=codex；Coordinator=dsh）
+
+- **Owner 实证（Coordinator 已逐条核验，全部成立）**：
+  1. `HOST-ISSUER-1-C1` 冻结了 §5.7 契约，**但没有交付 Core handler**；契约 §12 原文为
+     "**仅授权最小 Core handler/session 改动与 `tests/core/**`，本次不实现 runtime**"；
+  2. `src/bootstrap/core_service.py` 对 `HostControl` / `OpenHostSession` / `HOST_ONLY_REQUIRED` 的命中数为 **0**
+     —— 当前 HostControl 请求会被当作未知命令拒绝；
+  3. 私有 seam 已存在（`_register_export_target` L1491 / `_revoke_export_target` L1509 /
+     `_register_import_source` L1515 / `_revoke_import_source` L1551），但**无接收路由**；
+  4. Rust `library_bridge.rs` 仍发送 protocol `1.4` 的普通请求。
+  → 结论：**Rust-only 改动无法把 grant 注册进 live Core**，Owner 拒绝"写一个接不进去的 issuer 并报告完成"，
+  **该判断正确**。
+- **Coordinator 自述（规划疏漏与 prompt 错误）**：恢复 HOST-ISSUER-1 时，Coordinator 只确认了"契约已冻结"，
+  **未确认"handler 是否已实现"**；且在恢复 prompt 中把 `src/**` 误写为**只读**，
+  与 §12 **明确授权** Core handler 改动相矛盾。**本记录为该失误的透明备案。**
+- **Resolution（Coordinator）**：建立 **`HOST-CORE-1`**（Core 侧 HostControl handler 实现，
+  范围严格等于 §12：`src/bootstrap/core_service.py` + `tests/core/**`），
+  **其集成后**方可恢复本 Task（Coordinator 负责 merge 基线）。
+- 本 Task 分支保留不合并；未实现任何 Rust 侧改动。
 ## Canonical Evidence
 
 | evidence_id | AC/Gate | path | commit | sha256 | class |
