@@ -3,7 +3,7 @@ id: READER-IPC-1
 title: Tauri host 接线阅读器投影面（GetReaderProjection / SaveReadingProgress）——P17 阅读器页前置
 kind: feature
 governance_version: 2
-status: in_review
+status: done
 approval: coordinator_release_20261016_confirmed_third_missing_host_surface
 suggested_owner: Codex
 owner: Codex
@@ -12,10 +12,10 @@ depends_on: [P16, P16-C1, UI-DESIGN-1, EVENTS-FWD-1]
 base_commit: f7d9da6b3102dc4fcde2a1d6823b14d54feaa0a8
 branch: codex/READER-IPC-1
 worktree: G:/CODEX/New Manga.workspace/worktrees/READER-IPC-1
-integration_commit: null
-delivery_head: 96c7b057672589892458a3d1e78c91031f8f03e6
+integration_commit: ab47ef2b006e63118280dd064e7b6806ccbd83aa
+delivery_head: 6aadc70de76b5464e1069a857385714b1184825c
 canonical_evidence_status: complete
-resource_closeout_status: pending
+resource_closeout_status: complete
 evidence_dir: verification/READER-IPC-1
 ---
 
@@ -115,6 +115,8 @@ Rust command 参数使用上述 snake_case 名称；Tauri invoke 按既有默认
 | READER-PACKAGED-FULL | AC4-③/AC5 | `verification/READER-IPC-1/rust-packaged-sidecar-tests.log` | `96c7b057672589892458a3d1e78c91031f8f03e6` | `a5170cf83e8dbbb2b1a03d275e1d6f0e3967145a3aab66978ff246552b10d108` | CANONICAL |
 | READER-CORE | AC3/AC4-②/AC5 | `verification/READER-IPC-1/core-pytest.log` | `96c7b057672589892458a3d1e78c91031f8f03e6` | `1cb15e787efc9bf37df4ef7ac267a8f6855be058a52edfe30be5d25902fa27fa` | CANONICAL |
 
+| EVID-READER-REVIEW-R1 | AC1-AC6 | `verification/READER-IPC-1/dsh-review-r1.md` | `ab47ef2b0` | `91c834dd56b5490984cacb5582777432758261a312ddcdcc728e57be06276103` | REVIEW |
+
 ## Resource Manifest
 
 | resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
@@ -123,9 +125,12 @@ Rust command 参数使用上述 snake_case 名称；Tauri invoke 按既有默认
 
 ## Closeout Record
 
-- Closeout date / Codex：待关闭时填写。
-- canonical_evidence_status：`complete`（四份原始日志已按磁盘字节 pin）。
-- resource_closeout_status：`pending`。
-- 删除、迁移、归档数量/字节数：待关闭时填写；无操作填写 0。
-- 未关闭项及保留原因：DSH 独立 Review、集成验证及 worktree/resource closeout pending；成功的 Tauri/frozen 投影和进度保存未验证。
-- 当前指针清理：`STATUS` / `REBASELINE_PLAN` 在释放时同步。
+- Closeout date / Coordinator：2026-10-16（dsh, epoch 6）。Reviewer=**dsh**（独立于 Owner=codex）。
+- canonical_evidence_status：`complete`。4 条证据 pin 按**磁盘字节**复算（全部匹配）；**BL-17 强校验通过**——记录的提交 `96c7b057672589892458a3d1e78c91031f8f03e6` **真实存在**且 `git cat-file -e <sha>:<path>` 对 4 条路径**全部成立**。
+- resource_closeout_status：`complete`（worktree `PRESERVE_REFERENCED`）。删除、迁移、归档数量/字节数：0。
+- 交付：`done`。集成 `ab47ef2b0`（**五方合并**：EVENTS + RUN-IPC-1 + EXPORT-REVEAL-1 + EXPORT-IPC-1 + 本 Task）；delivery_head（分支实际 HEAD）`6aadc70de`。
+- **集成期的语义裁决（Coordinator 作为 Integrator）**：生成的 4 个 schema 由 tauri-build 重新生成并核验为 **39 条权限**（30 生产 + 4 probe + 3 AC1 + 2 事件），两条新读取器权限均在位；两分支**过时的计数注释与断言**统一为**合并后真实值**（**37 条命令 / 30 条生产命令**）；`packaged_sidecar_tests.rs` 的**手工标记删除导致花括号失衡**，故改为**确定性重建**（取 main 已验证版本 + 本 Task 的 58 行纯新增），再由编译器与套件确认。
+- **合并后验证（Coordinator 亲跑）**：source **95 passed / 0 failed / 1 ignored**、frozen packaged **12 passed / 0 failed**，exit 0；**五族测试在同一二进制内全绿**。
+- **非阻断范围观察（我自己的 Task 缺陷）**：Owner 额外修改了 `tests/core/test_p16_reader_export.py`（+58/−7），新增 Core 测试 `test_reader_projection_reports_missing_translation_as_null`，**正是 AC3 的"缺失译图必须为 null"红线**，且 `_seed_core` 的新参数默认 `True`（**不弱化既有断言**）。该文件**既未在我的允许范围、也未在禁止范围**——是**我写 Task 时的范围定义缺口**。**裁定非阻断、不要求返修**；已把"后续 Task 的允许/禁止范围必须显式覆盖 `tests/core/**`，且 Core 侧语义红线可由**新增** Core 测试证成、禁止改既有断言"作为教训继承。
+- **未关闭项及保留原因**：**成功投影与成功进度保存未验证**（需真实 book/chapter/page 夹具）→ 仅域级拒绝路径与 `sqlite_unchanged=true` 有证据；**GUI e2e 未运行**（无头 Windows 无 WebView2 窗口句柄）。两者由 Owner 如实声明，closeout **原样保留**。
+- 当前指针清理：`STATUS` / `REBASELINE_PLAN` 已同步（READER-IPC-1 移出 READY；**P17 的全部前置至今齐备**）。
