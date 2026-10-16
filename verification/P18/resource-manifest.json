@@ -1,0 +1,70 @@
+{
+  "schema_version": 1,
+  "task_id": "P18",
+  "generated_at": "2026-10-16",
+  "generated_by": "Codex (Owner)",
+  "note": "P18-only resource inventory. No source material was copied into the repository and no existing resource was deleted, moved, or modified.",
+  "workspace_registry": {
+    "path": "G:/CODEX/New Manga.workspace/data-registry/registry.json",
+    "sha256": "a9611032e4a1c0db5161c335d631443c396f0ea78098df8de0a4487cb43c18a4"
+  },
+  "resources": [
+    {
+      "resource_type": "worktree",
+      "source_path": "G:/CODEX/New Manga.workspace/worktrees/P18-JA-KO-QUALITY",
+      "disposition": "PRESERVE_REFERENCED",
+      "destination_path": "G:/CODEX/New Manga.workspace/worktrees/P18-JA-KO-QUALITY",
+      "branch": "codex/P18-ja-ko-quality-qualification",
+      "base_commit": "5a18b865ec34534c64bc719db37549f4f4ead27f",
+      "deleted": false,
+      "moved": false,
+      "process_check": "Dedicated task worktree; initial HEAD matched the user-pinned base. No other worktree was accessed for writing."
+    },
+    {
+      "resource_type": "material-object",
+      "source_path": "G:/CODEX/New Manga.workspace/test-materials/objects/sha256/9b/9bbd38763fde3a45e0dc3af61647ee8097f1345653dce99c32759a58c6c499e1.png",
+      "disposition": "PRESERVE_REFERENCED",
+      "destination_path": "G:/CODEX/New Manga.workspace/test-materials/objects/sha256/9b/9bbd38763fde3a45e0dc3af61647ee8097f1345653dce99c32759a58c6c499e1.png",
+      "sha256": "9bbd38763fde3a45e0dc3af61647ee8097f1345653dce99c32759a58c6c499e1",
+      "allowed_use": "private local verification only",
+      "deleted": false,
+      "moved": false,
+      "process_check": "Existing M2-TA3-A translated derivative BJ02; used only as an operational smoke input, not as quality ground truth."
+    },
+    {
+      "resource_type": "material-object",
+      "source_path": "G:/CODEX/New Manga.workspace/test-materials/objects/sha256/c4/c451815727ec24b64bfd7656fd7fe574879de4d9dc1d79013456f89cee22b7a2.png",
+      "disposition": "PRESERVE_REFERENCED",
+      "destination_path": "G:/CODEX/New Manga.workspace/test-materials/objects/sha256/c4/c451815727ec24b64bfd7656fd7fe574879de4d9dc1d79013456f89cee22b7a2.png",
+      "sha256": "c451815727ec24b64bfd7656fd7fe574879de4d9dc1d79013456f89cee22b7a2",
+      "allowed_use": "private local verification only",
+      "deleted": false,
+      "moved": false,
+      "process_check": "Existing M2-TA3-A translated derivative K11; used only as an operational smoke input, not as quality ground truth."
+    },
+    {
+      "resource_type": "test-environment",
+      "source_path": "G:/CODEX/New Manga.task-envs/T1.1.1-impl-py312",
+      "disposition": "PRESERVE_REFERENCED",
+      "destination_path": "G:/CODEX/New Manga.task-envs/T1.1.1-impl-py312",
+      "deleted": false,
+      "modified": false,
+      "process_check": "Read-only invocation with Python -B; no package install or bytecode write."
+    },
+    {
+      "resource_type": "isolated-pipeline-data",
+      "source_path": "verification/P18/raw/**/data/",
+      "disposition": "PRESERVE_REFERENCED",
+      "destination_path": "verification/P18/raw/**/data/",
+      "deleted": false,
+      "modified": false,
+      "process_check": "Per-attempt isolated roots created only by this P18 probe; no user library, main repo data, or other worktree touched. All attempts preserved; zero cleanup/migration/archive actions."
+    }
+  ],
+  "closeout_counts": {
+    "deleted": 0,
+    "moved": 0,
+    "migrated": 0,
+    "archived": 0
+  }
+}

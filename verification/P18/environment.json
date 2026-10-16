@@ -1,0 +1,52 @@
+{
+  "task": "P18",
+  "worktree_head_at_run": "5a18b865ec34534c64bc719db37549f4f4ead27f",
+  "shell": "PowerShell 7.6.6",
+  "operating_system": "Microsoft Windows 11 Pro, 10.0.26300, build 26300",
+  "hardware": {
+    "cpu": "AMD Ryzen 9 7950X3D 16-Core Processor",
+    "ram_bytes": 33981165568,
+    "gpu_present": "NVIDIA GeForce RTX 5070 Ti",
+    "gpu_driver": "32.0.16.1692",
+    "gpu_used": false,
+    "inference_device": "cpu"
+  },
+  "python": {
+    "version": "3.12.3",
+    "executable": "G:/CODEX/New Manga.task-envs/T1.1.1-impl-py312/Scripts/python.exe",
+    "provenance": "P13 verification/resource-manifest.json marks this pre-existing project environment PRESERVE_REFERENCED; invoked read-only with -B; no dependency installation"
+  },
+  "packages": {
+    "Pillow": "12.3.0",
+    "PySide6": "6.11.2",
+    "onnxruntime": "1.24.4",
+    "torch": "2.14.0+cpu",
+    "python-doctr": "1.1.0",
+    "manga_ocr": null,
+    "paddleocr": null
+  },
+  "core": {
+    "protocol": "new-manga.core 2.1",
+    "endpoint": "local stdio Core sidecar",
+    "provider_configuration": "NEWMANGA_DETECTOR_BACKEND=manga; NEWMANGA_DETECTOR_DEVICE=cpu; no weights override; no translation endpoint configured",
+    "remote_calls": 0
+  },
+  "model": {
+    "expected_id": "ogkalu/comic-text-and-bubble-detector",
+    "expected_revision": "16e8a622f91fabc6b5b65c96d32d1183f8843546",
+    "license": "Apache-2.0 (existing M2-DOCTR-QUAL-C4 license evidence)",
+    "expected_files": {
+      "model.safetensors": "037930a861e67870eb345be01b28cc70d7e2b7956528e48ee0ebdb0c093df80d",
+      "config.json": "b6d707933e12e9593a7025604be1c95add70a6db371fdd1532e8854e2256e072",
+      "preprocessor_config.json": "7e9e2245806aa3ef068a5321f5eebee3116fa4cec560173231954ffaca930eca"
+    },
+    "loaded": false,
+    "reason": "the isolated P18 data root has no pinned detector snapshot; runtime explicitly refuses to download weights"
+  },
+  "isolation": {
+    "ja_data_root": "verification/P18/raw/ja-r3/data",
+    "ko_data_root": "verification/P18/raw/ko-r3/data",
+    "credential_environment_variables_removed": true,
+    "remote_translation_or_vision_request": false
+  }
+}

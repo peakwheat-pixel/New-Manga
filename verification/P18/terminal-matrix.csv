@@ -1,0 +1,16 @@
+language,stage,request_id,request_command,request_status,pipeline_run_id,artifact_or_terminal_check,classification,evidence
+ja,import,p18-ja-import,ImportPages,UNKNOWN_COMMAND,,No page was imported and no PipelineRun was created,BLOCKED,verification/P18/raw/ja-r3/sidecar-stdout.jsonl
+ja,detect,p18-ja-detect,core.detect,INVALID_REQUEST pixel_limit,,Page 2946x4167 exceeds 11184810 px limit; detector not invoked,BLOCKED,verification/P18/raw/ja-r3/sidecar-stdout.jsonl
+ja,ocr,,,NOT_RUN,,No imported page or detection output,BLOCKED,verification/P18/raw/ja-r3/probe-summary.json
+ja,translate,,,NOT_RUN,,No OCR output and no remote/local translation endpoint configured,BLOCKED,verification/P18/environment.json
+ja,inpaint,,,NOT_RUN,,No translation/output revision,BLOCKED,experiments/P18/qualification-plan.md
+ja,render,,,NOT_RUN,,No Clean/translated revision,BLOCKED,experiments/P18/qualification-plan.md
+ja,pipeline_terminal,,,NOT_RUN,,No StartRun request; no run_id/task/step terminal evidence exists,BLOCKED,verification/P18/raw/ja-r3/probe-summary.json
+ko,import,p18-ko-import,ImportPages,UNKNOWN_COMMAND,,No page was imported and no PipelineRun was created,BLOCKED,verification/P18/raw/ko-r3/sidecar-stdout.jsonl
+ko,detect,p18-ko-detect,core.detect,PROVIDER_NOT_CONFIGURED,,Pinned manga detector weights absent; runtime refused download,BLOCKED,verification/P18/raw/ko-r3/sidecar-stderr.log
+ko,ocr,,,NOT_RUN,,No detection output; manga_ocr and paddleocr are unavailable,BLOCKED,verification/P18/raw/ko-r3/probe-summary.json
+ko,translate,,,NOT_RUN,,No OCR output and no remote/local translation endpoint configured,BLOCKED,verification/P18/environment.json
+ko,inpaint,,,NOT_RUN,,No translation/output revision,BLOCKED,experiments/P18/qualification-plan.md
+ko,render,,,NOT_RUN,,No Clean/translated revision,BLOCKED,experiments/P18/qualification-plan.md
+ko,pipeline_terminal,,,NOT_RUN,,No StartRun request; no run_id/task/step terminal evidence exists,BLOCKED,verification/P18/raw/ko-r3/probe-summary.json
+both,sidecar,p18-*-ping/core.shutdown,core.ping/core.shutdown,ready then stopped,,Sidecar process exit 0 does not imply a successful pipeline or terminal consistency,OBSERVED,verification/P18/raw/ja-r3/sidecar-exit-code.txt; verification/P18/raw/ko-r3/sidecar-exit-code.txt

@@ -1,0 +1,76 @@
+{
+  "language": "ja",
+  "input": {
+    "path": "G:\\CODEX\\New Manga.workspace\\test-materials\\objects\\sha256\\9b\\9bbd38763fde3a45e0dc3af61647ee8097f1345653dce99c32759a58c6c499e1.png",
+    "sha256": "9bbd38763fde3a45e0dc3af61647ee8097f1345653dce99c32759a58c6c499e1",
+    "bytes": 8736076,
+    "format": "PNG",
+    "width": 2946,
+    "height": 4167
+  },
+  "runtime": {
+    "python": "3.12.3 (tags/v3.12.3:f6650f9, Apr  9 2024, 14:05:25) [MSC v.1938 64 bit (AMD64)]",
+    "executable": "G:\\CODEX\\New Manga.task-envs\\T1.1.1-impl-py312\\Scripts\\python.exe",
+    "platform": "Windows-11-10.0.26300-SP0",
+    "module_available": {
+      "PIL": true,
+      "PySide6": true,
+      "onnxruntime": true,
+      "torch": true,
+      "manga_ocr": false,
+      "paddleocr": false
+    },
+    "detector_backend": "manga",
+    "detector_device": "cpu",
+    "weights_override": "unset; isolated P18 data root has no preloaded model",
+    "endpoint": "local stdio Core sidecar; no remote request configured or sent"
+  },
+  "isolation": {
+    "data_root": "G:\\CODEX\\New Manga.workspace\\worktrees\\P18-JA-KO-QUALITY\\verification\\P18\\raw\\ja\\data",
+    "credential_environment_variables_removed": true
+  },
+  "requests": [
+    {
+      "request_id": "p18-ja-ping",
+      "result": {
+        "status": "ready",
+        "protocol_version": {
+          "major": 2,
+          "minor": 1
+        },
+        "capabilities": [
+          "library.list_books"
+        ]
+      }
+    },
+    {
+      "request_id": "p18-ja-import",
+      "error": {
+        "code": "UNKNOWN_COMMAND",
+        "category": "validation",
+        "message": "Unknown command: 'ImportPages'"
+      }
+    },
+    {
+      "request_id": "p18-ja-detect",
+      "error": {
+        "code": "INVALID_REQUEST",
+        "category": "validation",
+        "message": "core.detect page exceeds the pixel limit (2946x4167 = 12275982 px > 11184810 px)"
+      }
+    },
+    {
+      "request_id": "p18-ja-shutdown",
+      "result": {
+        "status": "stopped"
+      }
+    }
+  ],
+  "sidecar_exit_code": 0,
+  "timed_out": false,
+  "elapsed_seconds": 1.049,
+  "capture_status": "RESPONSES_CAPTURED",
+  "raw_stdout": "sidecar-stdout.jsonl",
+  "raw_stderr": "sidecar-stderr.log",
+  "raw_exit_code": "sidecar-exit-code.txt"
+}

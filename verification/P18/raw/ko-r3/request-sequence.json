@@ -1,0 +1,18 @@
+[
+  {
+    "request_id": "p18-ko-ping",
+    "command": "core.ping"
+  },
+  {
+    "request_id": "p18-ko-import",
+    "command": "ImportPages"
+  },
+  {
+    "request_id": "p18-ko-detect",
+    "command": "core.detect"
+  },
+  {
+    "request_id": "p18-ko-shutdown",
+    "command": "core.shutdown"
+  }
+]
