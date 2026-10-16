@@ -172,6 +172,37 @@ def _request(server: CoreServiceServer, payload: dict) -> dict:
     return server.dispatch_request(raw)[0]
 
 
+@pytest.mark.parametrize(
+    "core_now,expiry_seconds,expected_error",
+    [
+        pytest.param(NOW + 0.1, 299.0, None, id="inside-window"),
+        pytest.param(NOW, 299.0, None, id="clock-equals-host-build"),
+        pytest.param(NOW - 0.25, 299.0, None, id="clock-slightly-before-host-build"),
+        pytest.param(NOW + 299.0, 299.0, "REF_EXPIRED", id="actually-expired"),
+        pytest.param(NOW, 300.001, "REF_EXPIRED", id="actually-over-300-second-window"),
+    ],
+)
+def test_import_grant_registration_ttl_boundary(
+    tmp_path, core_now: float, expiry_seconds: float, expected_error: str | None,
+):
+    core, server = _core(tmp_path)
+    source = tmp_path / "source.png"
+    source.write_bytes(_png())
+    core.import_source_refs._clock = lambda: core_now
+    try:
+        if expected_error is None:
+            ref = _register_source(server, source, expires_at=NOW + expiry_seconds)
+            assert ref["grant_id"]
+            assert ref["host_signature"]
+        else:
+            with pytest.raises(TypedResourceChannelError) as error:
+                _register_source(server, source, expires_at=NOW + expiry_seconds)
+            assert error.value.code == expected_error
+    finally:
+        server.close()
+        core.conn.close()
+
+
 def _file_snapshot(core) -> dict[str, str]:
     root = core.storage.root
     return {

@@ -149,7 +149,7 @@ pub(crate) fn build_import_grant(
         (None, vec![import_entry(selected_path)?])
     };
 
-    let expires_at = unix_seconds() + 300.0;
+    let expires_at = unix_seconds() + 299.0;
     let expires_signed = format!("{expires_at:.6}");
     let mut signed_fields = Map::new();
     signed_fields.insert("access".into(), json!("read-only"));
@@ -668,6 +668,7 @@ mod tests {
         fs::create_dir(root.join("nested")).unwrap();
         fs::write(root.join("nested").join("page1.png"), b"nested").unwrap();
 
+        let before = unix_seconds();
         let grant = build_import_grant(
             &root,
             "directory",
@@ -676,6 +677,9 @@ mod tests {
             &[7; 32],
         )
         .unwrap();
+        let after = unix_seconds();
+        let expires_at = grant.payload["expires_at"].as_f64().unwrap();
+        assert!(expires_at >= before + 299.0 && expires_at <= after + 299.0);
         assert_eq!(
             grant
                 .reference
