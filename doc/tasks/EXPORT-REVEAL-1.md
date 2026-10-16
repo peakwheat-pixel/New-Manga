@@ -13,8 +13,8 @@ base_commit: 958fa8a5b137f2b99ec74ba5902760e1d8aaebdc
 branch: codex/EXPORT-REVEAL-1
 worktree: G:/CODEX/New Manga.workspace/worktrees/EXPORT-REVEAL-1
 integration_commit: null
-delivery_head: 4e4d73a0be67407d92487cf240d695c4041c158d
-canonical_evidence_status: pending
+delivery_head: 13a748b03b1fcf97518ece18abc2b704fc53599f
+canonical_evidence_status: complete
 resource_closeout_status: pending
 evidence_dir: verification/EXPORT-REVEAL-1
 ---
@@ -87,7 +87,7 @@ evidence_dir: verification/EXPORT-REVEAL-1
 | AC4-② | 同一 source suite；覆盖未知/外来 ID、未完成输出、路径不可用，并断言拒绝不调用 opener；重复解析不消费 ID | 同上 | PASS；reveal 拒绝与解析用例均通过，exit 0 | `verification/EXPORT-REVEAL-1/post-merge-source.log` |
 | AC4-③ | packaged sidecar suite；另完成成功导出后的真实 GUI Reveal | `M2RC1_PACKAGED=1`；现有 `target/core-sidecar` Junction；无头 Windows | packaged suite PASS：9 passed，exit 0；真实 GUI 往返仍沿既有证据 `BLOCKED`（fixture `missing-book` 返回 `TARGET_NOT_FOUND`；WebView2 `0x80070578`），本次未重跑 GUI 且未声称已打开 | `verification/EXPORT-REVEAL-1/post-merge-packaged.log`、`frozen-export-attempt.log`、`reveal-roundtrip-status.md`、`verification/PROJECT-ORCHESTRATION-20261016/checkpoint-r9.md` |
 | AC6 | packaged Rust、source Rust 与 `C:\Python314\python.exe -m pytest tests/core -q -p no:cacheprovider` | packaged：`M2RC1_PACKAGED=1` 且 source env unset；source：`M2RC1_PYTHON=C:\Python314\python.exe`；Core：Python 3.14.6 | PASS：packaged 9 passed；source 86 passed / 1 ignored / 0 failed；Core 405 passed；三条命令 exit 0 | `post-merge-packaged.log`、`post-merge-source.log`、`post-merge-python.log` |
-| AC7 | 固定合并提交、证据 SHA256、更新 Handoff；不 push、不 merge 到 main | 本 worktree | main 已合入功能分支，冲突解决提交 `b1e4d87d49295b1a76453b6960060be2a648f8f8`；证据提交 `4e4d73a0be67407d92487cf240d695c4041c158d`；新 Handoff 待最终写入；Coordinator re-review pending | Handoff 与下方 Canonical Evidence |
+| AC7 | 固定合并提交、证据 SHA256、更新 Handoff；不 push、不 merge 到 main | 本 worktree | merge commit `b1e4d87d49295b1a76453b6960060be2a648f8f8`；Handoff 提交 `6c4b8346013e577f0a2b9e7e8baeaeecebc3a4f0`；Task `delivery_head` 指向 Handoff 填表时 HEAD `13a748b03b1fcf97518ece18abc2b704fc53599f`，最终 branch HEAD 以 `git rev-parse HEAD` 为准；Coordinator re-review pending | Handoff 与下方 Canonical Evidence |
 
 ## 依赖、风险与阻塞
 
@@ -123,6 +123,7 @@ evidence_dir: verification/EXPORT-REVEAL-1
 | EXPORT-REVEAL-FROZEN-ATTEMPT | AC4-③ | `verification/EXPORT-REVEAL-1/frozen-export-attempt.log` | `5f95aac0f3f1557b8193689d429496babc46398e` | `66BA5A9F6B7274E6CD884241BF671E545B1C29B072CA7318477E5D3D0535CF18` | CANONICAL |
 | EXPORT-REVEAL-GUI-BLOCK | AC4-③ | `verification/EXPORT-REVEAL-1/reveal-roundtrip-status.md` | `5f95aac0f3f1557b8193689d429496babc46398e` | `5BFD579772CD3C4991493EBBE507303AF40D2FB022D6C7A2CCAEED42D09308CA` | CANONICAL |
 | EXPORT-REVEAL-HEADLESS-SOURCE | AC4-③ source environment | `verification/PROJECT-ORCHESTRATION-20261016/checkpoint-r9.md` | `958fa8a5b137f2b99ec74ba5902760e1d8aaebdc` | `515786CD75F85BEF46A5E81F9B783D59EF42395221B780F7B322E6B954361FB2` | SOURCE_PIN |
+| EXPORT-REVEAL-POST-MERGE-HANDOFF | AC7 | `doc/handoffs/EXPORT-REVEAL-1-codex-post-merge.md` | `6c4b8346013e577f0a2b9e7e8baeaeecebc3a4f0` | `B563BA6846B754AD7D28053D7691B3C9CCEF26E54342B0D2748500371BE4BFFB` | CANONICAL |
 | EXPORT-REVEAL-PRE-MERGE-HANDOFF | Historical delivery | `doc/handoffs/EXPORT-REVEAL-1-codex-5f95aac.md` | `fc5702e650b022608be79694d1c706a4eff51ca9` | `A106209921985E2BB5E81DA154FD320C4859920DE0E01BB2EB2AE1047155D5E3` | SOURCE_PIN |
 | EXPORT-REVEAL-RESOURCES | Resource | `verification/EXPORT-REVEAL-1/resource-manifest.json` | `fc5702e650b022608be79694d1c706a4eff51ca9` | `2B7774178B10E9C9C2A49CBAB2C45CCDC8BC5E4E1BA803843B2CF34C1DBAB944` | CANONICAL |
 
@@ -135,7 +136,7 @@ evidence_dir: verification/EXPORT-REVEAL-1
 ## Closeout Record
 
 - Closeout date / Codex：2026-10-16，Codex Owner delivery；Task 仍 `in_review`，不是最终 Gate closeout。
-- canonical_evidence_status：`pending`（新 Handoff 尚待最终提交和 pin；三条合并后重跑日志与冲突解决记录已入库）。
+- canonical_evidence_status：`complete`（三条合并后重跑日志、冲突解决记录与新 Handoff 均有 commit/SHA256 pin；AC4-③ 的 GUI 状态仍为 `BLOCKED`）。
 - resource_closeout_status：`pending`（worktree 与测试构建资源 `PRESERVE_REFERENCED`，待独立 Review 后复核）。
 - 删除、迁移、归档数量/字节数：0 / 0 / 0。
 - 未关闭项及保留原因：合并后 head 的 Coordinator 复核与主线集成待执行；真实 GUI 导出后 Reveal 因无头环境 `BLOCKED`，需在有 GUI 环境补测。
