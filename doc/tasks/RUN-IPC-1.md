@@ -3,19 +3,19 @@ id: RUN-IPC-1
 title: Tauri host 接线 Run 命令面（StartRun/ControlRun/ResumeBlockedRun/GetRunSnapshot/GetTaskProjection/RetryFailedTargets）——P14 工作台真正的前置
 kind: feature
 governance_version: 2
-status: in_review
+status: done
 approval: coordinator_release_20261016_confirmed_missing_host_command_surface
 suggested_owner: Codex
 owner: dsh
-reviewer: null
+reviewer: antigravity
 depends_on: [P13, P13-C1, UI-DESIGN-1]
 base_commit: null
 branch: null
 worktree: null
-integration_commit: null
-delivery_head: 5642b2a7235fb9e5092cf106c8701cb67eb0e4da
-canonical_evidence_status: registered_blob_level
-resource_closeout_status: pending
+integration_commit: c3929bcc3858358db0afdb2073726000d518fffb
+delivery_head: de3caf93adf44fdda226a5f9ad013cbe7739e0f4
+canonical_evidence_status: complete
+resource_closeout_status: complete
 evidence_dir: verification/RUN-IPC-1
 ---
 
@@ -129,7 +129,10 @@ evidence_dir: verification/RUN-IPC-1
 | EVID-RUNIPC-SRC | AC4①②/AC5 | `verification/RUN-IPC-1/rust-source-tests.log` | `5642b2a7235fb9e5092cf106c8701cb67eb0e4da` | `f7488ea3217c9283c54f3ebfcdc3fa782581c1d16382a0715a88f411f03d4a58` | `CANONICAL` |
 | EVID-RUNIPC-PKG | AC4③/AC5 | `verification/RUN-IPC-1/rust-packaged-tests.log` | `5642b2a7235fb9e5092cf106c8701cb67eb0e4da` | `429042c7f3f5486138a9b67b349927832385b84e0d51256f80b3434af0100a1c` | `CANONICAL` |
 | EVID-RUNIPC-PY | AC5 | `verification/RUN-IPC-1/python-tests.log` | `5642b2a7235fb9e5092cf106c8701cb67eb0e4da` | `e0250da32cd2f546dee73aeacbae0b7e6dde65ad16bafb497177d3c5a4cca485` | `CANONICAL` |
-| EVID-RUNIPC-LAYER | AC4 | `verification/RUN-IPC-1/evidence-layering.md` | `5642b2a7235fb9e5092cf106c8701cb67eb0e4da` | `edc8c24f946b009067166fd445053432c9745a593eba3da2df44c619a3c49f41` | `CANONICAL` |
+| EVID-RUNIPC-LAYER | AC4 | `verification/RUN-IPC-1/evidence-layering.md` | `5642b2a7235fb9e5092cf106c8701cb67eb0e4da` | `a28ca284bf12b3a338d1fbbffdbc08c335ddf3ccf44639a3a670ccb608d02493` | `CANONICAL` |
+| EVID-RUNIPC-REVIEW | AC1-AC6 | `verification/RUN-IPC-1/antigravity-review-r1.md` | `40450fde07d72890bfae15e9ae738634ffbf530c` | `76bf66faec2179ab45ec6043a0dc75719bc94c6dc61cd9f78b5c62a904b4052e` | `REVIEW` |
+| EVID-RUNIPC-POSTMERGE-SRC | AC5（合并后） | `verification/RUN-IPC-1/post-merge-source.log` | `de3caf93adf44fdda226a5f9ad013cbe7739e0f4` | `433f8199b44636612a4bade2dea32f02214895caadfa2c30e716bb38426aeb6d` | `CANONICAL` |
+| EVID-RUNIPC-POSTMERGE-PKG | AC4③/AC5（合并后） | `verification/RUN-IPC-1/post-merge-packaged.log` | `de3caf93adf44fdda226a5f9ad013cbe7739e0f4` | `1d97c5819b931263d7c48f1b74d875ee9e3a345e7b7de8d1783cc53a5f72cbd7` | `CANONICAL` |
 ## Resource Manifest
 
 | resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
@@ -138,9 +141,13 @@ evidence_dir: verification/RUN-IPC-1
 
 ## Closeout Record
 
-- Closeout date / Codex：待关闭时填写。
-- canonical_evidence_status：`pending`。
-- resource_closeout_status：`pending`。
-- 删除、迁移、归档数量/字节数：待关闭时填写；无操作填写 0。
-- 未关闭项及保留原因：本 Task 全部 AC 尚未执行（`NOT_RUN`）。
-- 当前指针清理：`STATUS` / `REBASELINE_PLAN` 在释放时同步。
+- Closeout date / Coordinator：2026-10-16（dsh, epoch 6）。Reviewer=**antigravity**（独立于 Owner=dsh；已由 `route-agent.py` 机器排除 Owner，并在**独立 Reviewer 工作树** `worktrees/RUN-IPC-1-review` 内审查，未触碰 Owner 工作树）。
+- canonical_evidence_status：`complete`。7 条证据 pin 已按**磁盘字节**逐个复算（治理检查器校验的是磁盘文件）。**更正 1 条**：`evidence-layering.md` 的 owner pin 为 Git **blob（LF）** 哈希 `edc8c24f…`，而 Windows 签出后磁盘为 **CRLF**，实测 `a28ca284…` → 按磁盘值更正（Reviewer 亦独立发现并在 NIT-1 中记录该跨平台差异）。
+- resource_closeout_status：`complete`（worktree `PRESERVE_REFERENCED`）。删除、迁移、归档数量/字节数：0。
+- 交付：`done`。集成 `c3929bcc3`（`--no-ff`，**无冲突**——Owner 已先在自身分支 `git merge main` 并完成语义级解析）；delivery_head（分支实际 HEAD）`de3caf93adf44fdda226a5f9ad013cbe7739e0f4`。
+- Review：R1 判定 **approved**，**无 blocking / 无 non-blocking**，仅 2 条 NIT（跨平台行尾哈希、build.rs 计数注释的更准确表述）；Reviewer **独立复跑**三套件并复算 pin。
+- **合并与解析（本 Task 的关键风险点）**：`library_bridge.rs`、`packaged_sidecar_tests.rs`、生成的 `gen/schemas/capabilities.json` 三方冲突已**语义级**解析并**保留两侧全部功能**——EVENTS-FWD-1 的后台读线程解复用/事件投影/`set_event_sink`（含 Mock 实现）与 RUN-IPC-1 的六个 Run 通道方法、fail-closed 默认与各实现**并存**；两个 frozen-bundle 测试都保留；生成 schema 取并集（18+6 Run+4 probe+3 AC1+2 event = 33 项）。**合并后重跑**：source **82 passed / 0 failed / 1 ignored**、frozen 打包 **10 passed / 0 failed**（含 EVENTS 的 4 个 `test_events_fwd_*`、`same_channel_concurrent_round_trips`、TTL 两个往返、本 Task 的 Run wire 测试与事件 sink 测试）。
+- **过程教训（已登记 BL-16）**：首次解析后**漏删一行 `<<<<<<< HEAD`** 就提交，导致 `cargo` 报 `encountered diff marker`。**规则**：解析冲突后必须在**全树**搜索**全部三种标记**（`<<<<<<<` / `=======` / `>>>>>>>`）**再提交**，不得只检查发生冲突的单个文件。
+- **未关闭项及保留原因**：AC4-③ 的**成功路径**未验证（无真实 book/chapter/page 与 Provider 夹具）→ 未验证成功 `RunAccepted`/`RunSnapshot`/`TaskProjection` 的 DTO 形状与 `ControlRun` 合法状态迁移表；**P14 实现时须补齐**。GUI e2e 因无头环境未运行，本 Task 不声称 GUI 已验证。
+- 同类教训（关联）：owner 未犯 BL-15（按其要求把 `delivery_head` 指向实现提交并声明语义）；本 closeout 以分支实际 HEAD 冻结。
+- 当前指针清理：`STATUS` / `REBASELINE_PLAN` 已同步（RUN-IPC-1 移出 READY；**P14 的前置只剩 EXPORT-IPC-1**）。
