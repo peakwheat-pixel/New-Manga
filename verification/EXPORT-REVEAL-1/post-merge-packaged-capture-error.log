@@ -1,0 +1,6 @@
+   Compiling m2rc1-desktop v0.1.0 (G:\CODEX\New Manga.workspace\worktrees\EXPORT-REVEAL-1\apps\desktop\src-tauri)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 8.74s
+     Running unittests src\main.rs (apps\desktop\src-tauri\target\debug\deps\m2rc1_desktop-24448612fc7535f6.exe)
+error: Unrecognized option: 'A'
+error: test failed, to rerun pass `--bin m2rc1-desktop`
+EXIT_CODE=101

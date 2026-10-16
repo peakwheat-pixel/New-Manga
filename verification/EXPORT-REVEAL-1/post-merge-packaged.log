@@ -1,0 +1,28 @@
+Shell: PowerShell 7.6.6 Shell executable: C:\Program Files\PowerShell\7\pwsh.exe Working directory: G:\CODEX\New Manga.workspace\worktrees\EXPORT-REVEAL-1 Command: cargo test --locked --manifest-path apps/desktop/src-tauri/Cargo.toml packaged_sidecar_tests -- --test-threads=1 Environment: M2RC1_PACKAGED=1; M2RC1_SRC_ROOT=UNSET; M2RC1_PYTHON=UNSET Started: 2026-10-16T19:42:57.5493196+08:00 
+   Compiling m2rc1-desktop v0.1.0 (G:\CODEX\New Manga.workspace\worktrees\EXPORT-REVEAL-1\apps\desktop\src-tauri)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 7.21s
+     Running unittests src\main.rs (apps\desktop\src-tauri\target\debug\deps\m2rc1_desktop-24448612fc7535f6.exe)
+
+running 9 tests
+[core.derived_gc] orphan_files_removed=0 dead_rows_removed=0
+test packaged_sidecar_tests::host_export_grant_round_trip_reaches_frozen_start_export ... ok
+[core.derived_gc] orphan_files_removed=0 dead_rows_removed=0
+test packaged_sidecar_tests::host_import_grant_round_trip_reaches_frozen_import_pages ... ok
+[core.derived_gc] orphan_files_removed=0 dead_rows_removed=0
+test packaged_sidecar_tests::real_core_sidecar_answers_startup_ping_on_fresh_catalog ... ok
+[core.derived_gc] orphan_files_removed=0 dead_rows_removed=0
+test packaged_sidecar_tests::real_core_sidecar_rc4_commands_round_trip_typed_errors ... ok
+[core.derived_gc] orphan_files_removed=0 dead_rows_removed=0
+test packaged_sidecar_tests::real_core_sidecar_retype_pair_empty_page_and_typed_rejection ... ok
+test packaged_sidecar_tests::real_core_sidecar_round_trip ... ok
+[core.derived_gc] orphan_files_removed=0 dead_rows_removed=0
+test packaged_sidecar_tests::real_core_sidecar_settings_round_trip_and_typed_rejection ... ok
+[core.derived_gc] orphan_files_removed=0 dead_rows_removed=0
+test packaged_sidecar_tests::real_library_sidecar_event_sink_registration_and_lifecycle ... ok
+[core.derived_gc] orphan_files_removed=0 dead_rows_removed=0
+test packaged_sidecar_tests::real_library_sidecar_round_trip_and_eof ... ok
+
+test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 87 filtered out; finished in 13.36s
+
+
+EXIT_CODE=0
