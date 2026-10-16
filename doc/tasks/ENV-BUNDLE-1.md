@@ -13,7 +13,7 @@ base_commit: c6fda8a09c1a8248ec6617369f9fdf9e1cef79ec
 branch: codex/ENV-BUNDLE-1-sidecar-rebuild
 worktree: G:/CODEX/New Manga.workspace/worktrees/ENV-BUNDLE-1
 integration_commit: null
-delivery_head: ac9e303436c572976c35ea66758b04b687015df8
+delivery_head: ae23664a0b6448be084b94d4d08d7ce63a2f438f
 canonical_evidence_status: complete
 resource_closeout_status: registered
 evidence_dir: verification/ENV-BUNDLE-1
@@ -98,14 +98,14 @@ evidence_dir: verification/ENV-BUNDLE-1
   依据 R1–R6 恢复后的 R6 判定（BL-11b 是取得真实端到端结论的唯一路径）+ `packaging/m2ac5/README.md` 的既定指引；
   Owner 按 DIR-2 路由为 **codex**。
 - 执行坐标：worktree `G:/CODEX/New Manga.workspace/worktrees/ENV-BUNDLE-1`，分支 `codex/ENV-BUNDLE-1-sidecar-rebuild`；授权坐标所列 main base/head 均为 `c6fda8a09c1a8248ec6617369f9fdf9e1cef79ec`。Task release 文档中的旧 base `ea23da4d...` 与实际 branch/main 不一致，按本 Task 明确坐标使用 c6，并保存 main HEAD 前后证据。
-- 构建 head / 交付 head：`ac9e303436c572976c35ea66758b04b687015df8`（probe 证据固定后）。前一证据提交：`bda0c4a1476d2fc257012aa04d5e3352408228fe`。
+- 构建源码 head：`c6fda8a09c1a8248ec6617369f9fdf9e1cef79ec`；交付证据 head：`ae23664a0b6448be084b94d4d08d7ce63a2f438f`。证据分批提交：`bda0c4a1476d2fc257012aa04d5e3352408228fe`（主证据）、`ac9e303436c572976c35ea66758b04b687015df8`（probe 行尾规范化）、`ae23664a0b6448be084b94d4d08d7ce63a2f438f`（最终主仓状态观察）。
 - AC1–AC3 总耗时：pip 安装 278.794 s、sidecar 全量构建 395.8 s、frontend `npm run build` 2.789 s；合计 677.383 s（不含未精确计时的 `npm ci`）。未使用 `-SkipWeights`。
 - AC4 核心结果：cargo 命令 76 passed / 0 failed / 1 ignored，exit 0；唯一忽略项为既有 `perf_chunk_request_digest_cost`。六个目标用例在本次 cargo suite 中全部 PASS。基线日志中五项是协议错误；`same_channel_concurrent_round_trips_keep_response_ownership` 原失败实际因未设置 `M2RC1_PYTHON`，非协议错误。本次显式提供 Python 3.12.3，未设置 source-root/package override。代码检查确认六个测试分别直接启动 Python 源码模块或测试 helper，故它们的 PASS 不证明由新 bundle 驱动。
 - Frozen bundle 单独直接运行 `core_service.exe`，协议 2.3 `core.ping`、`ListBooks`、`core.shutdown` 成功，exit 0。六项 cargo 用例使用 frozen EXE 的测试路径没有在当前产品代码/允许修改范围中提供；因此 AC4 的打包驱动核心条件未满足，必须在 Task 状态保持未完成。
 - 限制：完整 NSIS 安装器 / packaged HostControl GUI E2E 未运行，对应结论为 `NOT_RUN`。
 - 工作区副作用：Cargo 生成的 27 个 Tauri generated 文件仅行尾变化，已逐项从 HEAD 恢复；测试诊断 JSONL 已复制入允许的 verification 路径，原生成文件已移除。产品路径 diff 为空，见 `ac5-product-code-diff.txt`。
-- 主仓保护：主仓 HEAD 始终为 c6；前后 `git status --porcelain --untracked-files=no` 均为原有相同 19 项，比较证据见 `main-status-comparison.md`。
-- Handoff：`doc/handoffs/ENV-BUNDLE-1-codex-ac9e3034.md`。
+- 主仓保护：主仓 HEAD 始终为 c6。构建/测试期间的 before/after 状态快照是相同 19 项，见 `main-status-comparison.md`。最终复核于 2026-10-16 16:48 观察到 22 项：原 19 项仍全部存在，另有 `doc/REBASELINE_PLAN.md`、`doc/STATUS.md` 两项 staged 修改及 `doc/tasks/UI-DESIGN-1.md` staged 新增；本 Task 未写入主仓，完整快照见 `final-main-status-observation.txt`。
+- Handoff：`doc/handoffs/ENV-BUNDLE-1-codex-ae23664a.md`。
 - Review：待独立 review；Coordinator integration 与 integration_commit 待后续 Gate。当前 AC4 打包驱动核心条件未满足，当前状态 `in_review`，不能标为 done。
 
 ## Canonical Evidence
@@ -128,6 +128,7 @@ evidence_dir: verification/ENV-BUNDLE-1
 | E14 | AC5 | `verification/ENV-BUNDLE-1/ac5-generated-side-effects-and-restoration.txt` | `bda0c4a1476d2fc257012aa04d5e3352408228fe` | 695cc472a469250d4cff8ab1f5ce9f24c2a111d7e90cc28775e7e58afd9bf98c | CANONICAL |
 | E15 | AC7 | `verification/ENV-BUNDLE-1/main-status-comparison.md` | `bda0c4a1476d2fc257012aa04d5e3352408228fe` | f1fe4cb146081fd8fb34586886b5badf90ef4112bbade46c740abdf6bf4ee49a | CANONICAL |
 | E16 | AC7 | `verification/ENV-BUNDLE-1/resource-manifest.json` | `bda0c4a1476d2fc257012aa04d5e3352408228fe` | 8724b89255f40ff0a0081853a5a16e7115eb5db060005b69045e409ef1874793 | CANONICAL |
+| E17 | AC7 | `verification/ENV-BUNDLE-1/final-main-status-observation.txt` | `ae23664a0b6448be084b94d4d08d7ce63a2f438f` | 567c955c02e169131eff8ce97f437ca707494322ed6525ef08a33316bdf07661 | CANONICAL |
 | S01 | AC1–AC3 | `packaging/m2ac5/README.md` | `c6fda8a09c1a8248ec6617369f9fdf9e1cef79ec` | 4c40c011e26846d6cee73ace46653222304e7549d1737bb54760bd74d6612706 | SOURCE_PIN |
 | S02 | AC1 | `packaging/m2ac5/requirements-build.txt` | `c6fda8a09c1a8248ec6617369f9fdf9e1cef79ec` | c50edd6c3058197003d66049bc28662e9dc7e4175b499ffe9989ae8bca0e7a07 | SOURCE_PIN |
 | S03 | AC2 | `packaging/m2ac5/build_sidecar.ps1` | `c6fda8a09c1a8248ec6617369f9fdf9e1cef79ec` | 07e12e80ceb2a35bab96150f4530b7a788b914a2467a32056098adbb775dd30e | SOURCE_PIN |
