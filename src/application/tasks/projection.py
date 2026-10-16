@@ -93,6 +93,29 @@ class PageProjectionRow:
 
 
 @dataclass(frozen=True)
+class TaskProjectionStep:
+    step_run_id: str
+    step_type: str
+    status: str
+    retry_no: int
+    error_code: str | None = None
+    error_message: str | None = None
+    provider: str | None = None
+    model: str | None = None
+    device: str | None = None
+
+
+@dataclass(frozen=True)
+class TaskProjectionTask:
+    task_id: str
+    page_id: str
+    status: str
+    error_code: str | None
+    error_message: str | None
+    steps: tuple[TaskProjectionStep, ...] = ()
+
+
+@dataclass(frozen=True)
 class TaskProjection:
     run_id: str
     run_status: str
@@ -117,6 +140,7 @@ class TaskProjection:
     can_abandon: bool = False
     can_retry_failed: bool = False
     extra: Mapping[str, str] = field(default_factory=dict)
+    tasks: tuple[TaskProjectionTask, ...] = ()
 
     @property
     def progress_percent(self) -> int:
@@ -235,8 +259,69 @@ def build_projection(
         waiting_page_count=counts[STATUS_WAITING],
         processing_page_count=counts[STATUS_PROCESSING],
         blocked_reasons=tuple(reasons),
-        **_button_enablement(run.status, counts[STATUS_FAILED] > 0),
+        **_button_enablement(
+            run.status,
+            counts[STATUS_FAILED] > 0,
+            run.interruption_disposition,
+        ),
+        tasks=_task_details(run),
     )
+
+
+def _task_details(run: PipelineRun) -> tuple[TaskProjectionTask, ...]:
+    step_by_id = {step.step_run_id: step for step in run.step_runs}
+    result = []
+    for task in run.tasks:
+        steps = []
+        for step_id in task.step_run_ids:
+            step = step_by_id.get(step_id)
+            if step is None:
+                continue
+            binding = run.provider_binding_snapshot.get(step.step_type)
+            provider = model = device = None
+            if isinstance(binding, str):
+                provider = _safe_label(binding)
+            elif isinstance(binding, Mapping):
+                provider = _safe_label(
+                    binding.get("provider_id")
+                    or binding.get("provider_profile_id")
+                    or binding.get("id")
+                )
+                model = _safe_label(binding.get("model_id") or binding.get("model"))
+                device = _safe_label(binding.get("device_id") or binding.get("device"))
+            steps.append(TaskProjectionStep(
+                step_run_id=step.step_run_id,
+                step_type=step.step_type,
+                status=step.status.value,
+                retry_no=step.retry_no,
+                error_code=step.error_code,
+                # Provider details may contain paths, endpoint URLs, credentials,
+                # or exception text; the frozen projection permits null.
+                error_message=None,
+                provider=provider,
+                model=model,
+                device=device,
+            ))
+        result.append(TaskProjectionTask(
+            task_id=task.task_id,
+            page_id=task.page_id,
+            status=task.status.value,
+            error_code=task.error_code,
+            error_message=None,
+            steps=tuple(steps),
+        ))
+    return tuple(result)
+
+
+def _safe_label(value: object) -> str | None:
+    if not isinstance(value, str) or not value or len(value) > 120:
+        return None
+    lowered = value.lower()
+    if any(token in lowered for token in ("://", "password", "credential", "secret", "token")):
+        return None
+    if "\\" in value or "/" in value:
+        return None
+    return value
 
 
 def _classify_page(tasks: Sequence) -> tuple[str, str | None]:
@@ -320,17 +405,24 @@ def _flow_state(units: Sequence, step_runs: Sequence) -> str:
     return "pending"
 
 
-def _button_enablement(status: PipelineRunStatus, has_failures: bool) -> dict:
+def _button_enablement(
+    status: PipelineRunStatus,
+    has_failures: bool,
+    interruption_disposition: str | None = None,
+) -> dict:
     """D06 §103 / D05 §32 button matrix, including stop-from-blocked."""
 
-    running = {PipelineRunStatus.PENDING, PipelineRunStatus.RUNNING}
-    if status in running:
+    if status is PipelineRunStatus.RUNNING:
         return dict(can_pause=True, can_stop=True)
+    if status is PipelineRunStatus.PENDING:
+        return dict(can_stop=True)
     if status is PipelineRunStatus.PAUSED:
         return dict(can_stop=True, can_continue=True)
     if status is PipelineRunStatus.BLOCKED:
         return dict(can_stop=True)
     if status is PipelineRunStatus.INTERRUPTED:
+        if interruption_disposition is not None:
+            return {}
         return dict(can_continue=True, can_restart=True, can_abandon=True)
     enabled: dict = {}
     if status is PipelineRunStatus.COMPLETED_WITH_FAILURES and has_failures:

@@ -572,6 +572,7 @@ class CoreServices:
     credential_store: "WindowsCredentialStore | None"
     transport: StdlibTransport | None
     data_root: Path
+    database_path: Path
     #: Reader tile factory (Qt-free: stdlib streaming PNG, TASK-020/042);
     #: the cache lives under the managed root.
     tile_factory: Callable[[str], TiledPageRasterizer]
@@ -754,6 +755,7 @@ def assemble_core_services(
     content_decoder: Callable[[str, bytes], bytes] | None = None,
     original_page_reader: Callable[[str], bytes | None] | None = None,
     mock_local_providers: bool = False,
+    recover_runs_on_assembly: bool = True,
 ) -> CoreServices:
     """Open + migrate the SQLite library and build the Qt-free services.
 
@@ -1092,10 +1094,11 @@ def assemble_core_services(
             constraint_snapshot_ref=defaults["constraint_snapshot_ref"],
             context_policy=defaults["context_policy"] or None,
         )
-        # TASK-048 AC ③: a run left RUNNING by a previous process (crash,
-        # kill) must never look active forever — startup reaps those rows to
-        # INTERRUPTED before any ViewModel can observe them.
-        pipeline.recover_running_runs()
+        # Legacy callers keep the released eager-recovery behavior. The
+        # production Core defers recovery until its process-wide scheduler
+        # lease is held (P11 §6.1).
+        if recover_runs_on_assembly:
+            pipeline.recover_running_runs()
         # TASK-050 AC ②: the application-layer defaults channel over the
         # same storage row. The save bridge reuses the infrastructure
         # snapshot provider's own persistence (no second writer); the
@@ -1190,6 +1193,7 @@ def assemble_core_services(
             credential_store=credential_store,
             transport=transport,
             data_root=data_root,
+            database_path=Path(db_path).resolve(),
             tile_factory=tile_factory,
             # M2-PROD-DETECT-3: expose the pipeline's own detector so
             # core_service's core.detect resolves the same instance.

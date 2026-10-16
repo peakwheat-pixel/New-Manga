@@ -6,11 +6,12 @@ import json
 import sqlite3
 from datetime import datetime, timezone
 from enum import Enum
-from typing import Any, Mapping
+from typing import Any, Callable, Mapping
 
 from application.tasks.store import (
     CatalogCommit,
     FrozenRunSnapshots,
+    IdempotencyRecord,
     PipelineStore,
     SnapshotProvider,
     TargetCatalog,
@@ -389,15 +390,42 @@ class SqlitePipelineStore(PipelineStore):
     def __init__(self, conn: sqlite3.Connection) -> None:
         self._conn = conn
         self._cache: dict[str, PipelineRun] = {}
+        with self._conn:
+            self._conn.execute(
+                "CREATE TABLE IF NOT EXISTS pipeline_run_idempotency ("
+                "idempotency_key TEXT PRIMARY KEY, request_fingerprint TEXT NOT NULL, "
+                "operation_type TEXT NOT NULL, run_id TEXT NOT NULL, created_at TEXT NOT NULL)"
+            )
 
     def put(self, run_id: str, run: PipelineRun) -> None:
         if run_id != run.run_id:
             raise ValueError("run_id must match PipelineRun.run_id")
+        self.put_many((run,))
+
+    def write_in_current_transaction(self, run: PipelineRun) -> None:
+        if not self._conn.in_transaction:
+            raise RuntimeError("PipelineStore write requires the catalog transaction")
+        self._write_run(run)
+        self._cache[run.run_id] = run
+
+    def put_many(self, runs) -> None:
+        if not runs:
+            return
+        self._conn.execute("BEGIN IMMEDIATE")
+        try:
+            for run in runs:
+                self._write_run(run)
+            self._conn.commit()
+        except BaseException:
+            self._conn.rollback()
+            raise
+        self._cache.update((run.run_id, run) for run in runs)
+
+    def _write_run(self, run: PipelineRun) -> None:
         value = _run_dict(run)
         now = _now()
-        with self._conn:
-            self._conn.execute("DELETE FROM pipeline_runs WHERE run_id = ?", (run_id,))
-            self._conn.execute(
+        self._conn.execute("DELETE FROM pipeline_runs WHERE run_id = ?", (run.run_id,))
+        self._conn.execute(
                 "INSERT INTO pipeline_runs (run_id, command_type, scope_type,"
                 " requested_targets_json, settings_snapshot_json,"
                 " provider_binding_snapshot_json, constraint_snapshot_ref,"
@@ -428,9 +456,9 @@ class SqlitePipelineStore(PipelineStore):
                     _dump(value),
                     now,
                 ),
-            )
-            for target in run.targets:
-                self._conn.execute(
+        )
+        for target in run.targets:
+            self._conn.execute(
                     "INSERT INTO pipeline_run_targets (run_target_id, pipeline_run_id,"
                     " target_id, target_type, page_id, region_id, target_order, snapshot_json)"
                     " VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
@@ -439,9 +467,9 @@ class SqlitePipelineStore(PipelineStore):
                         target.target_type.value, target.page_id, target.region_id,
                         target.target_order, _dump(_target_dict(target.snapshot)),
                     ),
-                )
-            for task in run.tasks:
-                self._conn.execute(
+            )
+        for task in run.tasks:
+            self._conn.execute(
                     "INSERT INTO pipeline_tasks (task_id, pipeline_run_id, run_target_id,"
                     " target_id, target_type, page_id, region_id, status, units_json,"
                     " step_run_ids_json, error_code, error_detail)"
@@ -452,9 +480,9 @@ class SqlitePipelineStore(PipelineStore):
                         task.status.value, _dump([_unit_dict(item) for item in task.units]),
                         _dump(task.step_run_ids), task.error_code, task.error_detail,
                     ),
-                )
-            for step in run.step_runs:
-                self._conn.execute(
+            )
+        for step in run.step_runs:
+            self._conn.execute(
                     "INSERT INTO step_runs (step_run_id, pipeline_run_id, task_id,"
                     " target_id, page_id, region_id, step_type, unit_id, status,"
                     " input_refs_json, lock_snapshot_json, retry_no, error_code,"
@@ -466,21 +494,21 @@ class SqlitePipelineStore(PipelineStore):
                         _dump(_lock_dict(step.lock_snapshot)), step.retry_no,
                         step.error_code, step.error_detail, _dump(step.output),
                     ),
-                )
-                for order, (key, revision_id) in enumerate(step.input_refs.items()):
-                    self._conn.execute(
+            )
+            for order, (key, revision_id) in enumerate(step.input_refs.items()):
+                self._conn.execute(
                         "INSERT INTO step_run_input_refs (step_run_id, input_order, ref_key, revision_id)"
                         " VALUES (?, ?, ?, ?)",
                         (step.step_run_id, order, key, revision_id),
-                    )
-                for order, (key, value) in enumerate(step.output.items()):
-                    self._conn.execute(
+                )
+            for order, (key, value) in enumerate(step.output.items()):
+                self._conn.execute(
                         "INSERT INTO step_run_output_refs (step_run_id, output_order, ref_key, value_json)"
                         " VALUES (?, ?, ?, ?)",
                         (step.step_run_id, order, key, _dump(value)),
-                    )
-            for candidate in run.candidates:
-                self._conn.execute(
+                )
+        for candidate in run.candidates:
+            self._conn.execute(
                     "INSERT INTO step_result_candidates (candidate_id, pipeline_run_id,"
                     " step_run_id, target_id, page_id, region_id, result_kind,"
                     " base_revision_id, payload_json, reason, status, created_at)"
@@ -491,19 +519,123 @@ class SqlitePipelineStore(PipelineStore):
                         candidate.result_kind, candidate.base_revision_id,
                         _dump(candidate.payload), candidate.reason, candidate.status, now,
                     ),
+            )
+
+    def get_idempotency(self, idempotency_key: str) -> IdempotencyRecord | None:
+        row = self._conn.execute(
+            "SELECT request_fingerprint, operation_type, run_id "
+            "FROM pipeline_run_idempotency WHERE idempotency_key = ?",
+            (idempotency_key,),
+        ).fetchone()
+        if row is None:
+            return None
+        return IdempotencyRecord(
+            idempotency_key=idempotency_key,
+            request_fingerprint=row["request_fingerprint"],
+            operation_type=row["operation_type"],
+            run_id=row["run_id"],
+        )
+
+    def accept(
+        self, run: PipelineRun, *, idempotency_key: str,
+        request_fingerprint: str, operation_type: str,
+    ) -> tuple[PipelineRun, bool]:
+        self._conn.execute("BEGIN IMMEDIATE")
+        try:
+            row = self._conn.execute(
+                "SELECT request_fingerprint, run_id FROM pipeline_run_idempotency "
+                "WHERE idempotency_key = ?", (idempotency_key,),
+            ).fetchone()
+            if row is not None:
+                if row["request_fingerprint"] != request_fingerprint:
+                    raise PipelineError(
+                        "IDEMPOTENCY_KEY_REUSED", "idempotency key fingerprint differs"
+                    )
+                existing = self._read_run(row["run_id"])
+                if existing is None:
+                    raise PipelineError("TARGET_NOT_FOUND", "idempotent Run no longer exists")
+                self._conn.commit()
+                return existing, False
+            self._write_run(run)
+            self._conn.execute(
+                "INSERT INTO pipeline_run_idempotency "
+                "(idempotency_key, request_fingerprint, operation_type, run_id, created_at) "
+                "VALUES (?, ?, ?, ?, ?)",
+                (idempotency_key, request_fingerprint, operation_type, run.run_id, _now()),
+            )
+            self._conn.commit()
+        except BaseException:
+            self._conn.rollback()
+            raise
+        self._cache[run.run_id] = run
+        return run, True
+
+    def accept_restart(
+        self, parent: PipelineRun, child: PipelineRun, *,
+        idempotency_key: str | None, request_fingerprint: str | None,
+    ) -> tuple[PipelineRun, bool]:
+        self._conn.execute("BEGIN IMMEDIATE")
+        try:
+            if idempotency_key is not None:
+                row = self._conn.execute(
+                    "SELECT request_fingerprint, run_id FROM pipeline_run_idempotency "
+                    "WHERE idempotency_key = ?", (idempotency_key,),
+                ).fetchone()
+                if row is not None:
+                    if row["request_fingerprint"] != request_fingerprint:
+                        raise PipelineError(
+                            "IDEMPOTENCY_KEY_REUSED", "idempotency key fingerprint differs"
+                        )
+                    existing = self._read_run(row["run_id"])
+                    if existing is None:
+                        raise PipelineError("TARGET_NOT_FOUND", "idempotent Run no longer exists")
+                    self._conn.commit()
+                    return existing, False
+            row = self._conn.execute(
+                "SELECT status, interruption_disposition FROM pipeline_runs WHERE run_id = ?",
+                (parent.run_id,),
+            ).fetchone()
+            if row is None:
+                raise PipelineError("TARGET_NOT_FOUND", "restart source Run no longer exists")
+            if row["status"] != PipelineRunStatus.INTERRUPTED.value or row["interruption_disposition"] is not None:
+                raise PipelineError("INVALID_RUN_TRANSITION", "restart requires an undisposed interrupted run")
+            self._write_run(parent)
+            self._write_run(child)
+            if idempotency_key is not None:
+                self._conn.execute(
+                    "INSERT INTO pipeline_run_idempotency "
+                    "(idempotency_key, request_fingerprint, operation_type, run_id, created_at) "
+                    "VALUES (?, ?, 'restart', ?, ?)",
+                    (idempotency_key, request_fingerprint, child.run_id, _now()),
                 )
-        self._cache[run_id] = run
+            self._conn.commit()
+        except BaseException:
+            self._conn.rollback()
+            raise
+        self._cache[parent.run_id] = parent
+        self._cache[child.run_id] = child
+        return child, True
+
+    def _read_run(self, run_id: str) -> PipelineRun | None:
+        row = self._conn.execute(
+            "SELECT run_json FROM pipeline_runs WHERE run_id = ?", (run_id,)
+        ).fetchone()
+        return _run(_load(row["run_json"])) if row is not None else None
 
     def get(self, run_id: str) -> PipelineRun | None:
         if run_id in self._cache:
             return self._cache[run_id]
-        row = self._conn.execute(
-            "SELECT run_json FROM pipeline_runs WHERE run_id = ?", (run_id,)
-        ).fetchone()
-        if row is None:
-            return None
-        run = _run(_load(row["run_json"]))
-        self._cache[run_id] = run
+        run = self._read_run(run_id)
+        if run is not None:
+            self._cache[run_id] = run
+        return run
+
+    def refresh(self, run_id: str) -> PipelineRun | None:
+        run = self._read_run(run_id)
+        if run is None:
+            self._cache.pop(run_id, None)
+        else:
+            self._cache[run_id] = run
         return run
 
     def list_ids(self) -> tuple[str, ...]:
@@ -573,6 +705,7 @@ class SqliteTargetCatalog(TargetCatalog):
         expected_lock: LockSnapshot,
         stage_updates: Mapping[str, StageState],
         revision_updates: Mapping[str, str],
+        persist: Callable[[], None] | None = None,
     ) -> CatalogCommit:
         try:
             self._conn.execute("BEGIN IMMEDIATE")
@@ -616,6 +749,8 @@ class SqliteTargetCatalog(TargetCatalog):
                     " status = excluded.status, updated_at = excluded.updated_at",
                     (target_type, target_id, stage, StageState(state).value, _now()),
                 )
+            if persist is not None:
+                persist()
             self._conn.commit()
             return CatalogCommit("applied")
         except Exception as error:

@@ -1,0 +1,39 @@
+SHELL=PowerShell
+PYTHON=G:/CODEX/New Manga.task-envs/T1.1.1-impl-py312/Scripts/python.exe
+COMMAND=G:/CODEX/New Manga.task-envs/T1.1.1-impl-py312/Scripts/python.exe -m pytest tests/core -q
+COMMIT_BASE=6cf045b853a892880fc06ab8c42632311a99a941
+........................................................................ [ 23%]
+........................................................................ [ 46%]
+.......................F................................................ [ 69%]
+........................................................................ [ 92%]
+.........................                                                [100%]
+================================== FAILURES ===================================
+____ test_restart_failure_does_not_leave_child_without_parent_disposition _____
+
+    def test_restart_failure_does_not_leave_child_without_parent_disposition():
+        store = _FailParentAfterChildStore()
+        pipeline, _ = _pipeline(store=store)
+        parent = _new_run(pipeline)
+        parent.status = PipelineRunStatus.INTERRUPTED
+        store.put(parent.run_id, parent)
+    
+        with pytest.raises(OSError):
+            pipeline.control_run(parent.run_id, "restart")
+    
+>       assert store.list_ids() == (parent.run_id,)
+E       AssertionError: assert ('run-66a291f...18b49aa1264b') == ('run-66a291f...b7de81d070f',)
+E         
+E         Left contains one more item: 'run-c23afcc30863436fb03818b49aa1264b'
+E         Use -v to get more diff
+
+tests\core\test_p13_lifecycle_discriminators.py:107: AssertionError
+============================== warnings summary ===============================
+tests/core/test_rc4_stdio_render_preview.py::test_production_stdio_decodes_nmfr_renders_text_and_publishes_readable_preview
+  G:\CODEX\New Manga.workspace\worktrees\P13-RUN-RUNTIME\tests\core\test_rc4_stdio_render_preview.py:245: DeprecationWarning: Image.Image.getdata is deprecated and will be removed in Pillow 14 (2027-10-15). Use get_flattened_data instead.
+    for px in rendered.crop((20, 20, 150, 120)).convert("RGB").getdata()
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED tests/core/test_p13_lifecycle_discriminators.py::test_restart_failure_does_not_leave_child_without_parent_disposition
+1 failed, 312 passed, 1 warning in 23.21s
+EXIT_CODE=1

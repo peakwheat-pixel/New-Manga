@@ -24,6 +24,7 @@ from __future__ import annotations
 
 from collections.abc import Callable, Mapping
 from dataclasses import dataclass, field
+import threading
 from typing import Any
 
 from infrastructure.devices.manager import DeviceManager
@@ -89,7 +90,30 @@ DEFAULT_ROUTE_POLICY = RoutePolicy(
     requirements={},
 )
 
-DEFAULT_RETRY_POLICY = RetryPolicy(max_attempts=2, backoff_seconds=1.0)
+DEFAULT_RETRY_POLICY = RetryPolicy(max_attempts=3, backoff_seconds=1.0)
+
+
+class _RetryAfterTransport:
+    """Capture Retry-After from the same thread that performs a retry."""
+
+    def __init__(self, transport: Transport) -> None:
+        self._transport = transport
+        self._local = threading.local()
+
+    def send(self, request, profile):
+        self._local.value = None
+        outcome = self._transport.send(request, profile)
+        headers = getattr(getattr(outcome, "response", None), "headers", {})
+        self._local.value = next(
+            (value for key, value in headers.items() if str(key).lower() == "retry-after"),
+            None,
+        )
+        return outcome
+
+    def consume(self) -> str | None:
+        value = getattr(self._local, "value", None)
+        self._local.value = None
+        return value if isinstance(value, str) else None
 
 
 @dataclass
@@ -178,16 +202,19 @@ def _model_specs(settings: Mapping[str, Any]) -> tuple[ModelSpec, ...]:
     return tuple(specs)
 
 
-def _retry_policy(settings: Mapping[str, Any]) -> RetryPolicy:
+def _retry_policy(
+    settings: Mapping[str, Any],
+    retry_after_provider: Callable[[], str | None] | None = None,
+) -> RetryPolicy:
     providers = settings.get("providers")
     raw = providers.get("retry") if isinstance(providers, Mapping) else None
-    if not isinstance(raw, Mapping):
-        return DEFAULT_RETRY_POLICY
+    attempts = DEFAULT_RETRY_POLICY.max_attempts
+    if isinstance(raw, Mapping):
+        attempts = min(3, max(1, int(raw.get("max_attempts", attempts))))
     return RetryPolicy(
-        max_attempts=int(raw.get("max_attempts", DEFAULT_RETRY_POLICY.max_attempts)),
-        backoff_seconds=float(
-            raw.get("backoff_seconds", DEFAULT_RETRY_POLICY.backoff_seconds)
-        ),
+        max_attempts=attempts,
+        backoff_seconds=1.0,
+        retry_after_provider=retry_after_provider,
     )
 
 
@@ -646,10 +673,12 @@ def build_provider_runtime(
 ) -> ProviderRuntime:
     settings = settings or {}
     settings, _ = _apply_profile_bindings(settings, provider_bindings)
+    retry_transport = _RetryAfterTransport(transport) if transport is not None else None
+    active_transport = retry_transport or transport
     registry, models = build_provider_registry(
         settings=settings,
         provider_bindings=provider_bindings,
-        transport=transport,
+        transport=active_transport,
         credential_resolver=credential_resolver,
     )
     # The projection is idempotent: the second pass inside
@@ -658,8 +687,8 @@ def build_provider_runtime(
     sakura_profile = _provider_settings(settings, PROVIDER_SAKURA)
     sakura_base_url = str(sakura_profile.get("base_url", "http://127.0.0.1:8080/v1"))
     probe = (
-        SakuraProbe(transport=transport, provider_id=PROVIDER_SAKURA)
-        if transport is not None
+        SakuraProbe(transport=active_transport, provider_id=PROVIDER_SAKURA)
+        if active_transport is not None
         else None
     )
     runtime = ProviderRuntime(
@@ -668,7 +697,10 @@ def build_provider_runtime(
         models=models,
         transport=transport,
         credential_resolver=credential_resolver,
-        retry_policy=_retry_policy(settings),
+        retry_policy=_retry_policy(
+            settings,
+            retry_after_provider=retry_transport.consume if retry_transport else None,
+        ),
         route_policy=RoutePolicy.from_settings(
             settings, default=DEFAULT_ROUTE_POLICY
         ),

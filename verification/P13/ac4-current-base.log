@@ -1,0 +1,28 @@
+SHELL=PowerShell
+PYTHON=G:/CODEX/New Manga.task-envs/T1.1.1-impl-py312/Scripts/python.exe
+COMMAND=G:/CODEX/New Manga.task-envs/T1.1.1-impl-py312/Scripts/python.exe -m pytest tests/core/test_p13_lifecycle_discriminators.py -q
+..F.................................................                     [100%]
+================================== FAILURES ===================================
+____ test_restart_failure_does_not_leave_child_without_parent_disposition _____
+
+    def test_restart_failure_does_not_leave_child_without_parent_disposition():
+        store = _FailParentAfterChildStore()
+        pipeline, _ = _pipeline(store=store)
+        parent = _new_run(pipeline)
+        parent.status = PipelineRunStatus.INTERRUPTED
+        store.put(parent.run_id, parent)
+
+        with pytest.raises(OSError):
+            pipeline.control_run(parent.run_id, "restart")
+
+>       assert store.list_ids() == (parent.run_id,)
+E       AssertionError: assert ('run-19e4c6f...02baa004d9e2') == ('run-19e4c6f...c208dd50fac',)
+E
+E         Left contains one more item: 'run-70d8773eba75465c8efb02baa004d9e2'
+E         Use -v to get more diff
+
+tests\core\test_p13_lifecycle_discriminators.py:107: AssertionError
+=========================== short test summary info ===========================
+FAILED tests/core/test_p13_lifecycle_discriminators.py::test_restart_failure_does_not_leave_child_without_parent_disposition
+1 failed, 51 passed in 0.17s
+EXIT_CODE=1
