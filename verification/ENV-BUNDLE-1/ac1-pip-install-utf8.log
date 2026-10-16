@@ -1,0 +1,165 @@
+command: G:\CODEX\New Manga.task-envs\m2ac5-build\Scripts\python.exe -X utf8 -m pip install -r packaging/m2ac5/requirements-build.txt
+python_mode: UTF-8 (required because requirements-build.txt is UTF-8 and Windows default is cp936)
+started_local: 2026-10-16T16:01:45.4587691+08:00
+output (credentials redacted if present):
+Looking in indexes: https://pypi.tuna.tsinghua.edu.cn/simple
+Collecting pyinstaller==6.22.3 (from -r packaging/m2ac5/requirements-build.txt (line 42))
+  Using cached https://pypi.tuna.tsinghua.edu.cn/packages/24/83/c5422204772a27aef643280fdc887b7ef55679989096b21dceb1b9625fc4/pyinstaller-6.22.3-py3-none-win_amd64.whl (1.5 MB)
+Collecting PySide6_Essentials==6.11.2 (from -r packaging/m2ac5/requirements-build.txt (line 43))
+  Downloading https://pypi.tuna.tsinghua.edu.cn/packages/dc/09/d2662684aee4d3f027ff9b1e965f22301bc28ffc5b7f167658508e4475dc/pyside6_essentials-6.11.2-cp310-abi3-win_amd64.whl (76.9 MB)
+     ---------------------------------------- 76.9/76.9 MB 3.6 MB/s eta 0:00:00
+Collecting shiboken6==6.11.2 (from -r packaging/m2ac5/requirements-build.txt (line 44))
+  Downloading https://pypi.tuna.tsinghua.edu.cn/packages/ce/6b/fee1b4814317e4664e318644c9c007676c65a71e5b2b9d3ac4121a94dc0a/shiboken6-6.11.2-cp310-abi3-win_amd64.whl (1.2 MB)
+     ---------------------------------------- 1.2/1.2 MB 3.1 MB/s eta 0:00:00
+Collecting python-doctr==1.1.0 (from -r packaging/m2ac5/requirements-build.txt (line 45))
+  Downloading https://pypi.tuna.tsinghua.edu.cn/packages/09/18/97cac95e4c8e60d08e3046ec775aaa19c13ef688de052e1e5b45ae6a1e6f/python_doctr-1.1.0-py3-none-any.whl (402 kB)
+     -------------------------------------- 402.3/402.3 kB 1.1 MB/s eta 0:00:00
+Collecting torch==2.14.0 (from -r packaging/m2ac5/requirements-build.txt (line 46))
+  Downloading https://pypi.tuna.tsinghua.edu.cn/packages/be/16/9489b137112040f9911d7527e452854f21cc4e499ce0da79864e6a7451a7/torch-2.14.0-cp312-cp312-win_amd64.whl (124.1 MB)
+     -------------------------------------- 124.1/124.1 MB 2.2 MB/s eta 0:00:00
+Collecting torchvision==0.29.0 (from -r packaging/m2ac5/requirements-build.txt (line 47))
+  Downloading https://pypi.tuna.tsinghua.edu.cn/packages/ef/a8/59152b945c09840f582c40e38aa4128777625af7f2883ce2d77133f96a46/torchvision-0.29.0-cp312-cp312-win_amd64.whl (1.4 MB)
+     ---------------------------------------- 1.4/1.4 MB 1.6 MB/s eta 0:00:00
+Collecting transformers==5.17.0 (from -r packaging/m2ac5/requirements-build.txt (line 48))
+  Downloading https://pypi.tuna.tsinghua.edu.cn/packages/e8/d0/c502b60d684adbd98a8dc7d5bb866842772b816ac4354e4608be240041ae/transformers-5.17.0-py3-none-any.whl (12.3 MB)
+     ---------------------------------------- 12.3/12.3 MB 2.4 MB/s eta 0:00:00
+Collecting safetensors==0.8.0 (from -r packaging/m2ac5/requirements-build.txt (line 49))
+  Downloading https://pypi.tuna.tsinghua.edu.cn/packages/1b/6d/3fba214c1e5e0f69991677ec3bc17023f0421776975e1de0c682dca475e2/safetensors-0.8.0-cp310-abi3-win_amd64.whl (355 kB)
+     -------------------------------------- 355.5/355.5 kB 2.4 MB/s eta 0:00:00
+Collecting onnxruntime-directml==1.24.4 (from -r packaging/m2ac5/requirements-build.txt (line 59))
+  Using cached https://pypi.tuna.tsinghua.edu.cn/packages/88/ea/33814eb0ec96775eda4c1d30b0d86e91d7d2cd0d84c66d3915aef0e06fa3/onnxruntime_directml-1.24.4-cp312-cp312-win_amd64.whl (25.1 MB)
+Collecting altgraph (from pyinstaller==6.22.3->-r packaging/m2ac5/requirements-build.txt (line 42))
+  Using cached https://pypi.tuna.tsinghua.edu.cn/packages/a9/ba/000a1996d4308bc65120167c21241a3b205464a2e0b58deda26ae8ac21d1/altgraph-0.17.5-py2.py3-none-any.whl (21 kB)
+Collecting packaging>=22.0 (from pyinstaller==6.22.3->-r packaging/m2ac5/requirements-build.txt (line 42))
+  Using cached https://pypi.tuna.tsinghua.edu.cn/packages/63/34/ba1c580383c9eada3711951fef0795c80b829a078d72188184bcab9dd527/packaging-26.3-py3-none-any.whl (129 kB)
+Collecting pefile>=2022.5.30 (from pyinstaller==6.22.3->-r packaging/m2ac5/requirements-build.txt (line 42))
+  Using cached https://pypi.tuna.tsinghua.edu.cn/packages/54/16/12b82f791c7f50ddec566873d5bdd245baa1491bac11d15ffb98aecc8f8b/pefile-2024.8.26-py3-none-any.whl (74 kB)
+Collecting pyinstaller-hooks-contrib>=2026.7 (from pyinstaller==6.22.3->-r packaging/m2ac5/requirements-build.txt (line 42))
+  Using cached https://pypi.tuna.tsinghua.edu.cn/packages/8f/f1/3eee0263b487e571aed9204257b45bc2a0b6fec34d0a1adade4d8d8a968c/pyinstaller_hooks_contrib-2026.8-py3-none-any.whl (462 kB)
+Collecting pywin32-ctypes>=0.2.1 (from pyinstaller==6.22.3->-r packaging/m2ac5/requirements-build.txt (line 42))
+  Using cached https://pypi.tuna.tsinghua.edu.cn/packages/de/3d/8161f7711c017e01ac9f008dfddd9410dff3674334c233bde66e7ba65bbf/pywin32_ctypes-0.2.3-py3-none-any.whl (30 kB)
+Collecting setuptools>=42.0.0 (from pyinstaller==6.22.3->-r packaging/m2ac5/requirements-build.txt (line 42))
+  Using cached https://pypi.tuna.tsinghua.edu.cn/packages/95/9c/c510029fc6ef33a6275cd2c5d3cecd6613dfd6aa401d57c54f1c18852ccf/setuptools-84.0.0-py3-none-any.whl (818 kB)
+Collecting onnx<3.0.0,>=1.12.0 (from python-doctr==1.1.0->-r packaging/m2ac5/requirements-build.txt (line 45))
+  Downloading https://pypi.tuna.tsinghua.edu.cn/packages/38/ce/102fd4a0b2a6d111a9c86745e084c4c68c0ee020eaa359a03a8d43e4646f/onnx-1.23.2-cp312-abi3-win_amd64.whl (7.9 MB)
+     ---------------------------------------- 7.9/7.9 MB 3.0 MB/s eta 0:00:00
+Collecting numpy<3.0.0,>=1.16.0 (from python-doctr==1.1.0->-r packaging/m2ac5/requirements-build.txt (line 45))
+  Downloading https://pypi.tuna.tsinghua.edu.cn/packages/12/33/fefe62073dc8acfd0f2b9ed7c003af2f50aa61555e113e6db02b8f79f145/numpy-2.5.4-cp312-cp312-win_amd64.whl (12.6 MB)
+     ---------------------------------------- 12.6/12.6 MB 3.4 MB/s eta 0:00:00
+Collecting scipy<2.0.0,>=1.4.0 (from python-doctr==1.1.0->-r packaging/m2ac5/requirements-build.txt (line 45))
+  Downloading https://pypi.tuna.tsinghua.edu.cn/packages/39/e7/979fd14e75008623df31ba70d6bb144700f68feadcea042021c06a05bf82/scipy-1.18.1-cp312-cp312-win_amd64.whl (36.7 MB)
+     ---------------------------------------- 36.7/36.7 MB 3.2 MB/s eta 0:00:00
+Collecting h5py<4.0.0,>=3.1.0 (from python-doctr==1.1.0->-r packaging/m2ac5/requirements-build.txt (line 45))
+  Using cached https://pypi.tuna.tsinghua.edu.cn/packages/03/c1/0976b235cf29ead553e22f2fb6385a8252b533715e00d0ae52ed7b900582/h5py-3.16.0-cp312-cp312-win_amd64.whl (3.2 MB)
+Collecting opencv-python<6.0.0,>=4.5.0 (from python-doctr==1.1.0->-r packaging/m2ac5/requirements-build.txt (line 45))
+  Using cached https://pypi.tuna.tsinghua.edu.cn/packages/21/f0/9fa6e85cb10c8eb36a0222d27e50fe381b86ce49a55446bf39f491727564/opencv_python-5.0.0.93-cp37-abi3-win_amd64.whl (44.0 MB)
+Collecting pypdfium2<6.0.0,>=4.11.0 (from python-doctr==1.1.0->-r packaging/m2ac5/requirements-build.txt (line 45))
+  Downloading https://pypi.tuna.tsinghua.edu.cn/packages/00/dc/ca7874924c9cfd701ad53f89529968523790e70473e0b71e834668316148/pypdfium2-5.14.0-py3-none-win_amd64.whl (3.9 MB)
+     ---------------------------------------- 3.9/3.9 MB 3.9 MB/s eta 0:00:00
+Collecting pyclipper<2.0.0,>=1.2.0 (from python-doctr==1.1.0->-r packaging/m2ac5/requirements-build.txt (line 45))
+  Downloading https://pypi.tuna.tsinghua.edu.cn/packages/97/77/dfea08e3b230b82ee22543c30c35d33d42f846a77f96caf7c504dd54fab1/pyclipper-1.4.0-cp312-cp312-win_amd64.whl (104 kB)
+     -------------------------------------- 104.6/104.6 kB 3.0 MB/s eta 0:00:00
+Collecting shapely<3.0.0,>=1.6.0 (from python-doctr==1.1.0->-r packaging/m2ac5/requirements-build.txt (line 45))
+  Downloading https://pypi.tuna.tsinghua.edu.cn/packages/f6/26/ba9192f0a72c830aa8cc1c61e207ada57cc54b7de81668b1836f575ee717/shapely-2.2.0-cp312-cp312-win_amd64.whl (1.8 MB)
+     ---------------------------------------- 1.8/1.8 MB 3.8 MB/s eta 0:00:00
+Collecting langdetect<2.0.0,>=1.0.9 (from python-doctr==1.1.0->-r packaging/m2ac5/requirements-build.txt (line 45))
+  Using cached langdetect-1.0.9-py3-none-any.whl
+Collecting rapidfuzz<4.0.0,>=3.0.0 (from python-doctr==1.1.0->-r packaging/m2ac5/requirements-build.txt (line 45))
+  Downloading https://pypi.tuna.tsinghua.edu.cn/packages/84/c4/12f01df5778227c8655fcd9b429fc001d43270f5d8d154edc9066bab1de3/rapidfuzz-3.14.6-cp312-cp312-win_amd64.whl (1.7 MB)
+     ---------------------------------------- 1.7/1.7 MB 2.1 MB/s eta 0:00:00
+Collecting huggingface-hub<2.0.0,>=0.20.0 (from python-doctr==1.1.0->-r packaging/m2ac5/requirements-build.txt (line 45))
+  Downloading https://pypi.tuna.tsinghua.edu.cn/packages/fc/16/963096d224b80909432dc16561a615fd33d2d13beef3ce4c63fa25e40867/huggingface_hub-1.33.0-py3-none-any.whl (846 kB)
+     -------------------------------------- 846.4/846.4 kB 2.7 MB/s eta 0:00:00
+Collecting Pillow>=10.1.0 (from python-doctr==1.1.0->-r packaging/m2ac5/requirements-build.txt (line 45))
+  Using cached https://pypi.tuna.tsinghua.edu.cn/packages/45/89/da2f7971a317f83d807fdd4065c0af40208e59e692cc43d315a71a0e96d1/pillow-12.3.0-cp312-cp312-win_amd64.whl (7.2 MB)
+Collecting anyascii>=0.3.2 (from python-doctr==1.1.0->-r packaging/m2ac5/requirements-build.txt (line 45))
+  Downloading https://pypi.tuna.tsinghua.edu.cn/packages/c2/76/783b75a21ce3563b8709050de030ae253853b147bd52e141edc1025aa268/anyascii-0.3.3-py3-none-any.whl (345 kB)
+     -------------------------------------- 345.1/345.1 kB 3.6 MB/s eta 0:00:00
+Collecting validators>=0.18.0 (from python-doctr==1.1.0->-r packaging/m2ac5/requirements-build.txt (line 45))
+  Downloading https://pypi.tuna.tsinghua.edu.cn/packages/d5/ce/fc5090ea3789bdfd22e90f2515b237194c5dacfc8f26d2082a0b50b2ca86/validators-0.36.0-py3-none-any.whl (46 kB)
+     ---------------------------------------- 46.0/46.0 kB 1.2 MB/s eta 0:00:00
+Collecting tqdm>=4.30.0 (from python-doctr==1.1.0->-r packaging/m2ac5/requirements-build.txt (line 45))
+  Downloading https://pypi.tuna.tsinghua.edu.cn/packages/a7/03/921a3d3c75785aca9ebfbfcabfbc3a1be12e2ab5265deb026d55a5a3f83e/tqdm-4.70.1-py3-none-any.whl (80 kB)
+     ---------------------------------------- 80.2/80.2 kB 1.1 MB/s eta 0:00:00
+Collecting filelock (from torch==2.14.0->-r packaging/m2ac5/requirements-build.txt (line 46))
+  Downloading https://pypi.tuna.tsinghua.edu.cn/packages/8e/a3/9bc26acff301fe1aaea1cc3d82a1d57e0a34df3e1cadbfa91ac2dbcdde5c/filelock-4.2.0-py3-none-any.whl (135 kB)
+     -------------------------------------- 135.0/135.0 kB 1.6 MB/s eta 0:00:00
+Collecting typing-extensions>=4.10.0 (from torch==2.14.0->-r packaging/m2ac5/requirements-build.txt (line 46))
+  Using cached https://pypi.tuna.tsinghua.edu.cn/packages/49/d3/b8441a820a491ddfc024b0b0cf0393375b75ea13866d9c66727e54c2fc80/typing_extensions-4.16.0-py3-none-any.whl (45 kB)
+Collecting sympy>=1.13.3 (from torch==2.14.0->-r packaging/m2ac5/requirements-build.txt (line 46))
+  Using cached https://pypi.tuna.tsinghua.edu.cn/packages/a2/09/77d55d46fd61b4a135c444fc97158ef34a095e5681d0a6c10b75bf356191/sympy-1.14.0-py3-none-any.whl (6.3 MB)
+Collecting networkx>=2.5.1 (from torch==2.14.0->-r packaging/m2ac5/requirements-build.txt (line 46))
+  Downloading https://pypi.tuna.tsinghua.edu.cn/packages/7e/cd/fe58041e9011f307c490e3e17dd48cc516448f7c698a3f2d9d9d65d7e6a8/networkx-3.7-py3-none-any.whl (2.1 MB)
+     ---------------------------------------- 2.1/2.1 MB 2.3 MB/s eta 0:00:00
+Collecting jinja2 (from torch==2.14.0->-r packaging/m2ac5/requirements-build.txt (line 46))
+  Downloading https://pypi.tuna.tsinghua.edu.cn/packages/62/a1/3d680cbfd5f4b8f15abc1d571870c5fc3e594bb582bc3b64ea099db13e56/jinja2-3.1.6-py3-none-any.whl (134 kB)
+     -------------------------------------- 134.9/134.9 kB 2.0 MB/s eta 0:00:00
+Collecting fsspec>=0.8.5 (from torch==2.14.0->-r packaging/m2ac5/requirements-build.txt (line 46))
+  Downloading https://pypi.tuna.tsinghua.edu.cn/packages/6c/c0/a98505f18594f1bce828bb159cec0fcf9860562f1a2c85913409fc8f3d9e/fsspec-2026.9.0-py3-none-any.whl (221 kB)
+     ------------------------------------ 221.7/221.7 kB 675.7 kB/s eta 0:00:00
+Collecting pyyaml>=5.1 (from transformers==5.17.0->-r packaging/m2ac5/requirements-build.txt (line 48))
+  Using cached https://pypi.tuna.tsinghua.edu.cn/packages/86/bf/899e81e4cce32febab4fb42bb97dcdf66bc135272882d1987881a4b519e9/pyyaml-6.0.3-cp312-cp312-win_amd64.whl (154 kB)
+Collecting regex>=2025.10.22 (from transformers==5.17.0->-r packaging/m2ac5/requirements-build.txt (line 48))
+  Downloading https://pypi.tuna.tsinghua.edu.cn/packages/93/19/489bc8db91196381c935752df01ba3f607140daece33b78d88573f028e64/regex-2026.9.29-cp312-cp312-win_amd64.whl (280 kB)
+     ------------------------------------- 280.3/280.3 kB 18.0 MB/s eta 0:00:00
+Collecting tokenizers<0.24.0,>=0.23.1 (from transformers==5.17.0->-r packaging/m2ac5/requirements-build.txt (line 48))
+  Downloading https://pypi.tuna.tsinghua.edu.cn/packages/d1/6c/24f074c9a0efb98e61b20aafe6b2641922d5db24e447d5d6daffd9e17555/tokenizers-0.23.3-cp310-abi3-win_amd64.whl (2.9 MB)
+     ---------------------------------------- 2.9/2.9 MB 2.1 MB/s eta 0:00:00
+Collecting typer (from transformers==5.17.0->-r packaging/m2ac5/requirements-build.txt (line 48))
+  Downloading https://pypi.tuna.tsinghua.edu.cn/packages/07/ea/2e31b67051e91a133189e9c000c222502ddc6969856416de0d095de4c0b0/typer-0.27.3-py3-none-any.whl (123 kB)
+     ------------------------------------ 123.3/123.3 kB 249.6 kB/s eta 0:00:00
+Collecting flatbuffers (from onnxruntime-directml==1.24.4->-r packaging/m2ac5/requirements-build.txt (line 59))
+  Using cached https://pypi.tuna.tsinghua.edu.cn/packages/e8/2d/d2a548598be01649e2d46231d151a6c56d10b964d94043a335ae56ea2d92/flatbuffers-25.12.19-py2.py3-none-any.whl (26 kB)
+Collecting protobuf (from onnxruntime-directml==1.24.4->-r packaging/m2ac5/requirements-build.txt (line 59))
+  Using cached https://pypi.tuna.tsinghua.edu.cn/packages/8a/55/b77bda4e5e5f5971fb51b07663694690e9afdb9402136c16a522bd621cad/protobuf-7.36.2-cp310-abi3-win_amd64.whl (456 kB)
+Collecting click<9.0.0,>=8.4.2 (from huggingface-hub<2.0.0,>=0.20.0->python-doctr==1.1.0->-r packaging/m2ac5/requirements-build.txt (line 45))
+  Downloading https://pypi.tuna.tsinghua.edu.cn/packages/58/50/6c0d534c5f134586a8e1ba4e330569e32f057e33372ae556463212fb4cd3/click-8.5.0-py3-none-any.whl (125 kB)
+     -------------------------------------- 125.3/125.3 kB 1.2 MB/s eta 0:00:00
+Collecting hf-xet<2.0.0,>=1.6.0 (from huggingface-hub<2.0.0,>=0.20.0->python-doctr==1.1.0->-r packaging/m2ac5/requirements-build.txt (line 45))
+  Downloading https://pypi.tuna.tsinghua.edu.cn/packages/4d/59/b35106dfa71b6eef605dc88bd038fe99c7f86fb132a15b60d0bf2f235b2c/hf_xet-1.7.0-cp38-abi3-win_amd64.whl (3.8 MB)
+     ---------------------------------------- 3.8/3.8 MB 1.5 MB/s eta 0:00:00
+Collecting httpx<1,>=0.23.0 (from huggingface-hub<2.0.0,>=0.20.0->python-doctr==1.1.0->-r packaging/m2ac5/requirements-build.txt (line 45))
+  Using cached https://pypi.tuna.tsinghua.edu.cn/packages/2a/39/e50c7c3a983047577ee07d2a9e53faf5a69493943ec3f6a384bdc792deb2/httpx-0.28.1-py3-none-any.whl (73 kB)
+Collecting six (from langdetect<2.0.0,>=1.0.9->python-doctr==1.1.0->-r packaging/m2ac5/requirements-build.txt (line 45))
+  Using cached https://pypi.tuna.tsinghua.edu.cn/packages/b7/ce/149a00dd41f10bc29e5921b496af8b574d8413afcd5e30dfa0ed46c2cc5e/six-1.17.0-py2.py3-none-any.whl (11 kB)
+Collecting ml_dtypes>=0.5.4 (from onnx<3.0.0,>=1.12.0->python-doctr==1.1.0->-r packaging/m2ac5/requirements-build.txt (line 45))
+  Using cached https://pypi.tuna.tsinghua.edu.cn/packages/ba/db/9c61ec2760b5cbfb1c6558d5c991a6d8fd3271053c32db20506a9a90272b/ml_dtypes-0.6.0-cp312-cp312-win_amd64.whl (439 kB)
+Collecting mpmath<1.4,>=1.1.0 (from sympy>=1.13.3->torch==2.14.0->-r packaging/m2ac5/requirements-build.txt (line 46))
+  Using cached https://pypi.tuna.tsinghua.edu.cn/packages/43/e3/7d92a15f894aa0c9c4b49b8ee9ac9850d6e63b03c9c32c0367a13ae62209/mpmath-1.3.0-py3-none-any.whl (536 kB)
+Collecting colorama (from tqdm>=4.30.0->python-doctr==1.1.0->-r packaging/m2ac5/requirements-build.txt (line 45))
+  Using cached https://pypi.tuna.tsinghua.edu.cn/packages/d1/d6/3965ed04c63042e047cb6a3e6ed1a63a35087b6a609aa3a15ed8ac56c221/colorama-0.4.6-py2.py3-none-any.whl (25 kB)
+Collecting MarkupSafe>=2.0 (from jinja2->torch==2.14.0->-r packaging/m2ac5/requirements-build.txt (line 46))
+  Downloading https://pypi.tuna.tsinghua.edu.cn/packages/3f/bf/62495e180b7000aaf30000fff849e933f74264638057176cf46852500adc/markupsafe-3.0.4-cp312-cp312-win_amd64.whl (14 kB)
+Collecting shellingham>=1.3.0 (from typer->transformers==5.17.0->-r packaging/m2ac5/requirements-build.txt (line 48))
+  Using cached https://pypi.tuna.tsinghua.edu.cn/packages/e0/f9/0595336914c5619e5f28a1fb793285925a8cd4b432c9da0a987836c7f822/shellingham-1.5.4-py2.py3-none-any.whl (9.8 kB)
+Collecting rich>=13.8.0 (from typer->transformers==5.17.0->-r packaging/m2ac5/requirements-build.txt (line 48))
+  Downloading https://pypi.tuna.tsinghua.edu.cn/packages/82/3b/64d4899d73f91ba49a8c18a8ff3f0ea8f1c1d75481760df8c68ef5235bf5/rich-15.0.0-py3-none-any.whl (310 kB)
+     ------------------------------------ 310.7/310.7 kB 226.2 kB/s eta 0:00:00
+Collecting annotated-doc>=0.0.2 (from typer->transformers==5.17.0->-r packaging/m2ac5/requirements-build.txt (line 48))
+  Downloading https://pypi.tuna.tsinghua.edu.cn/packages/3e/30/e900b21425a860e195f32e37657aa1f7c7f2b1bfb26f03ca209b90933c06/annotated_doc-0.0.5-py3-none-any.whl (5.3 kB)
+Collecting anyio (from httpx<1,>=0.23.0->huggingface-hub<2.0.0,>=0.20.0->python-doctr==1.1.0->-r packaging/m2ac5/requirements-build.txt (line 45))
+  Using cached https://pypi.tuna.tsinghua.edu.cn/packages/12/b8/4bd346e22b28902df4d651910f5242c28d84e4a5c2435ca5c3f797ed7e2e/anyio-4.15.1-py3-none-any.whl (132 kB)
+Collecting certifi (from httpx<1,>=0.23.0->huggingface-hub<2.0.0,>=0.20.0->python-doctr==1.1.0->-r packaging/m2ac5/requirements-build.txt (line 45))
+  Using cached https://pypi.tuna.tsinghua.edu.cn/packages/0b/a7/71ac2cff56fec219ed242bb11b8efb69fcc4bec75db06fb7bfe35de520e6/certifi-2026.7.22-py3-none-any.whl (136 kB)
+Collecting httpcore==1.* (from httpx<1,>=0.23.0->huggingface-hub<2.0.0,>=0.20.0->python-doctr==1.1.0->-r packaging/m2ac5/requirements-build.txt (line 45))
+  Using cached https://pypi.tuna.tsinghua.edu.cn/packages/7e/f5/f66802a942d491edb555dd61e3a9961140fd64c90bce1eafd741609d334d/httpcore-1.0.9-py3-none-any.whl (78 kB)
+Collecting idna (from httpx<1,>=0.23.0->huggingface-hub<2.0.0,>=0.20.0->python-doctr==1.1.0->-r packaging/m2ac5/requirements-build.txt (line 45))
+  Using cached https://pypi.tuna.tsinghua.edu.cn/packages/58/a2/bb081bab032533a855d44de1d56f8e8426114ff1ba5d1f07a438a0a654f8/idna-3.20-py3-none-any.whl (69 kB)
+Collecting h11>=0.16 (from httpcore==1.*->httpx<1,>=0.23.0->huggingface-hub<2.0.0,>=0.20.0->python-doctr==1.1.0->-r packaging/m2ac5/requirements-build.txt (line 45))
+  Using cached https://pypi.tuna.tsinghua.edu.cn/packages/04/4b/29cac41a4d98d144bf5f6d33995617b185d14b22401f75ca86f384e87ff1/h11-0.16.0-py3-none-any.whl (37 kB)
+Collecting markdown-it-py>=2.2.0 (from rich>=13.8.0->typer->transformers==5.17.0->-r packaging/m2ac5/requirements-build.txt (line 48))
+  Downloading https://pypi.tuna.tsinghua.edu.cn/packages/b3/81/4da04ced5a082363ecfa159c010d200ecbd959ae410c10c0264a38cac0f5/markdown_it_py-4.2.0-py3-none-any.whl (91 kB)
+     -------------------------------------- 91.7/91.7 kB 274.2 kB/s eta 0:00:00
+Collecting pygments<3.0.0,>=2.13.0 (from rich>=13.8.0->typer->transformers==5.17.0->-r packaging/m2ac5/requirements-build.txt (line 48))
+  Downloading https://pypi.tuna.tsinghua.edu.cn/packages/71/46/17f022dd3e953bf20a04a028a21ec746d942f8d2af30fa0f124fa0e6a684/pygments-2.21.0-py3-none-any.whl (1.3 MB)
+     ---------------------------------------- 1.3/1.3 MB 359.0 kB/s eta 0:00:00
+Collecting mdurl~=0.1 (from markdown-it-py>=2.2.0->rich>=13.8.0->typer->transformers==5.17.0->-r packaging/m2ac5/requirements-build.txt (line 48))
+  Using cached https://pypi.tuna.tsinghua.edu.cn/packages/b3/38/89ba8ad64ae25be8de66a6d463314cf1eb366222074cfda9ee839c56a4b4/mdurl-0.1.2-py3-none-any.whl (10.0 kB)
+Installing collected packages: mpmath, flatbuffers, altgraph, validators, typing-extensions, sympy, six, shiboken6, shellingham, setuptools, safetensors, regex, rapidfuzz, pyyaml, pywin32-ctypes, pypdfium2, pygments, pyclipper, protobuf, Pillow, pefile, packaging, numpy, networkx, mdurl, MarkupSafe, idna, hf-xet, h11, fsspec, filelock, colorama, click, certifi, anyascii, annotated-doc, tqdm, shapely, scipy, PySide6_Essentials, pyinstaller-hooks-contrib, opencv-python, onnxruntime-directml, ml_dtypes, markdown-it-py, langdetect, jinja2, httpcore, h5py, anyio, torch, rich, pyinstaller, onnx, httpx, typer, torchvision, huggingface-hub, tokenizers, python-doctr, transformers
+Successfully installed MarkupSafe-3.0.4 Pillow-12.3.0 PySide6_Essentials-6.11.2 altgraph-0.17.5 annotated-doc-0.0.5 anyascii-0.3.3 anyio-4.15.1 certifi-2026.7.22 click-8.5.0 colorama-0.4.6 filelock-4.2.0 flatbuffers-25.12.19 fsspec-2026.9.0 h11-0.16.0 h5py-3.16.0 hf-xet-1.7.0 httpcore-1.0.9 httpx-0.28.1 huggingface-hub-1.33.0 idna-3.20 jinja2-3.1.6 langdetect-1.0.9 markdown-it-py-4.2.0 mdurl-0.1.2 ml_dtypes-0.6.0 mpmath-1.3.0 networkx-3.7 numpy-2.5.4 onnx-1.23.2 onnxruntime-directml-1.24.4 opencv-python-5.0.0.93 packaging-26.3 pefile-2024.8.26 protobuf-7.36.2 pyclipper-1.4.0 pygments-2.21.0 pyinstaller-6.22.3 pyinstaller-hooks-contrib-2026.8 pypdfium2-5.14.0 python-doctr-1.1.0 pywin32-ctypes-0.2.3 pyyaml-6.0.3 rapidfuzz-3.14.6 regex-2026.9.29 rich-15.0.0 safetensors-0.8.0 scipy-1.18.1 setuptools-84.0.0 shapely-2.2.0 shellingham-1.5.4 shiboken6-6.11.2 six-1.17.0 sympy-1.14.0 tokenizers-0.23.3 torch-2.14.0 torchvision-0.29.0 tqdm-4.70.1 transformers-5.17.0 typer-0.27.3 typing-extensions-4.16.0 validators-0.36.0
+
+[notice] A new release of pip is available: 24.0 -> 26.2.1
+[notice] To update, run: G:\CODEX\New Manga.task-envs\m2ac5-build\Scripts\python.exe -m pip install --upgrade pip
+finished_local: 2026-10-16T16:06:24.2566329+08:00
+elapsed_seconds: 278.794
+exit_code: 0

@@ -1,0 +1,23 @@
+mode: direct execution of rebuilt frozen sidecar binary; no Python interpreter or source-root override
+exe: G:\CODEX\New Manga.workspace\worktrees\ENV-BUNDLE-1\apps\desktop\src-tauri\target\core-sidecar\core-sidecar\core_service.exe
+exe_sha256: fda1787bec6fde7a3bab2f5d4d266333bccb70fa759f17c17fe46a7a95475f9e
+runtime_isolation_root: C:\Users\49745\AppData\Local\Temp\env-bundle-1-packaged-core-1afccd1242934ea49e7db947e0919039
+PATH: System32 and Windows root only
+NEWMANGA_DATA_ROOT: C:\Users\49745\AppData\Local\Temp\env-bundle-1-packaged-core-1afccd1242934ea49e7db947e0919039\data
+APPDATA/LOCALAPPDATA/TEMP: isolated under runtime root
+requests: current Core protocol 2.3 core.ping, ListBooks, core.shutdown
+completed: True
+elapsed_seconds: 1.027
+exit_code: 0
+checks:
+process_exit_zero=True detail=completed=True exit=0
+ping_protocol_2_3_ready=True detail={"protocol":"new-manga.core","version":{"major":2,"minor":3},"request_id":"env-bundle-1-ping","result":{"status":"ready","protocol_version":{"major":2,"minor":3},"capabilities":["library.list_books"]},"error":null}
+list_books_response=True detail={"protocol":"new-manga.core","version":{"major":2,"minor":3},"request_id":"env-bundle-1-list","result":[],"error":null}
+shutdown_response=True detail={"protocol":"new-manga.core","version":{"major":2,"minor":3},"request_id":"env-bundle-1-shutdown","result":{"status":"stopped"},"error":null}
+stdout:
+{"protocol":"new-manga.core","version":{"major":2,"minor":3},"request_id":"env-bundle-1-ping","result":{"status":"ready","protocol_version":{"major":2,"minor":3},"capabilities":["library.list_books"]},"error":null}
+{"protocol":"new-manga.core","version":{"major":2,"minor":3},"request_id":"env-bundle-1-list","result":[],"error":null}
+{"protocol":"new-manga.core","version":{"major":2,"minor":3},"request_id":"env-bundle-1-shutdown","result":{"status":"stopped"},"error":null}
+stderr:
+[core.derived_gc] orphan_files_removed=0 dead_rows_removed=0
+overall: PASS

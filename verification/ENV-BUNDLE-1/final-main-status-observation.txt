@@ -1,0 +1,62 @@
+observed_local: 2026-10-16T16:48:03.5340399+08:00
+main_head: c6fda8a09c1a8248ec6617369f9fdf9e1cef79ec
+prior_snapshot_file: verification/ENV-BUNDLE-1/main-status-after.txt
+prior_snapshot_count: 19
+current_status_count: 22
+prior_items_missing: 0
+new_items_vs_prior_snapshot: 3
+new_items:
+M  doc/REBASELINE_PLAN.md
+M  doc/STATUS.md
+A  doc/tasks/UI-DESIGN-1.md
+missing_prior_items:
+current_git_status_porcelain_untracked_files_no:
+ M .qoder-credits/report.json
+ M AGENTS.md
+ M doc/00_INDEX.md
+ M doc/01_FUNCTIONAL_ARCHITECTURE.md
+ M doc/03_DATA_MODEL.md
+ M doc/04_USER_FLOW.md
+ M doc/06_TRANSLATION_PIPELINE.md
+ M doc/09_COLLABORATION.md
+ M doc/11_ARCHITECTURE_MAPS.md
+ M doc/12_ROADMAP.md
+ M doc/AD-001_TARGET_DESKTOP_ARCHITECTURE.md
+M  doc/REBASELINE_PLAN.md
+M  doc/STATUS.md
+ M doc/WORKTREE_SAFETY_INVENTORY.md
+ M doc/tasks/P02-NEW-TIME-X6-BUILD-CARGO.md
+ M doc/tasks/P02-NEW-TIME-X6.md
+ M doc/tasks/P02.md
+A  doc/tasks/UI-DESIGN-1.md
+ M doc/templates/HANDOFF.md
+ M doc/templates/REVIEW.md
+ M doc/templates/TASK.md
+ M verification/PROJECT-ROADMAP-20261008/ROADMAP.md
+
+current_recheck_local: 2026-10-16T16:52:30.5276995+08:00
+current_main_head: c6f975d38842487c16491eea67a01cf134c337f8
+current_main_latest_commit:
+c6f975d38842487c16491eea67a01cf134c337f8 | 2026-10-16T16:49:18+08:00 | docs(UI-DESIGN-1): release AD-001 four-page UI/UX design baseline
+current_status_count: 19
+same_as_original_status_snapshot: True
+current_git_status_porcelain_untracked_files_no:
+ M .qoder-credits/report.json
+ M AGENTS.md
+ M doc/00_INDEX.md
+ M doc/01_FUNCTIONAL_ARCHITECTURE.md
+ M doc/03_DATA_MODEL.md
+ M doc/04_USER_FLOW.md
+ M doc/06_TRANSLATION_PIPELINE.md
+ M doc/09_COLLABORATION.md
+ M doc/11_ARCHITECTURE_MAPS.md
+ M doc/12_ROADMAP.md
+ M doc/AD-001_TARGET_DESKTOP_ARCHITECTURE.md
+ M doc/WORKTREE_SAFETY_INVENTORY.md
+ M doc/tasks/P02-NEW-TIME-X6-BUILD-CARGO.md
+ M doc/tasks/P02-NEW-TIME-X6.md
+ M doc/tasks/P02.md
+ M doc/templates/HANDOFF.md
+ M doc/templates/REVIEW.md
+ M doc/templates/TASK.md
+ M verification/PROJECT-ROADMAP-20261008/ROADMAP.md

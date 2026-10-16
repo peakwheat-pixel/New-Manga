@@ -1,0 +1,15 @@
+bundle=G:\CODEX\New Manga.workspace\worktrees\ENV-BUNDLE-1\apps\desktop\src-tauri\target\core-sidecar\core-sidecar
+files=5563
+bytes=1287287472
+bytes_GiB=1.199
+top_level_executables:
+acceptance_bridge.exe bytes=68669491
+catalog_loader.exe bytes=1826114
+core_service.exe bytes=68717156
+host_bridge.exe bytes=1828219
+sfx_detect_probe.exe bytes=67967803
+weight_hashes:
+config.json bytes=2320 sha256=b6d707933e12e9593a7025604be1c95add70a6db371fdd1532e8854e2256e072
+model.safetensors bytes=171543900 sha256=037930a861e67870eb345be01b28cc70d7e2b7956528e48ee0ebdb0c093df80d
+preprocessor_config.json bytes=470 sha256=7e9e2245806aa3ef068a5321f5eebee3116fa4cec560173231954ffaca930eca
+yolo11s-seg.onnx bytes=40824255 sha256=944e811410933ad6ff8d32446fcc9eef90fb463794e1874ce83035e83acd418d

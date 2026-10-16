@@ -1,0 +1,11 @@
+command: Python 3.12.3 -m pip download --no-deps --disable-pip-version-check --dest <unique-temp> packaging==25.0
+started_local: 2026-10-16T15:59:01.2560764+08:00
+elapsed_seconds: 1.638
+exit_code: 0
+output (credentials redacted if present):
+Looking in indexes: https://pypi.tuna.tsinghua.edu.cn/simple
+Collecting packaging==25.0
+  Downloading https://pypi.tuna.tsinghua.edu.cn/packages/20/12/38679034af332785aac8774540895e234f4d07f7545804097de4b666afd8/packaging-25.0-py3-none-any.whl (66 kB)
+     -------------------------------------- 66.5/66.5 kB 449.8 kB/s eta 0:00:00
+Saved c:\users\49745\appdata\local\temp\env-bundle-1-pip-probe-0680463d34324c9f91e778160521a295\packaging-25.0-py3-none-any.whl
+Successfully downloaded packaging

@@ -1,0 +1,41 @@
+commands: npm ci --no-audit --no-fund; npm run build
+node: v24.15.0
+npm: 12.0.1
+package_lock_sha256_before: 520be4900b855e235b8347f8a179b3cffe4a520069a51464151fc880b05f0295
+started_local: 2026-10-16T16:14:19.9462441+08:00
+attempt 1 note: npm output logger used a path relative to the repository after changing directory; PowerShell exited 1 before capturing npm_ci exit code.
+attempt 1 observed state: node_modules exists (4370 files, 84189621 bytes); dist absent; package-lock SHA256 unchanged.
+attempt 1 npm process: none active under process name npm; pre-existing node PID 3156 started before this task was left untouched.
+m2rc1-frontend@0.1.0 G:\CODEX\New Manga.workspace\worktrees\ENV-BUNDLE-1\apps\desktop\frontend
+├── @tauri-apps/api@2.12.0
+├── @types/jsdom@21.1.7
+├── @types/react-dom@18.3.7
+├── @types/react@18.3.31
+├── @vitejs/plugin-react@4.7.0
+├── jsdom@26.1.0
+├── react-dom@18.3.1
+├── react@18.3.1
+├── typescript@5.9.3
+├── vite@5.4.21
+└── vitest@2.1.9
+
+npm_ls_exit_code: 0
+command: npm run build
+started_local: 2026-10-16T16:23:51.5585197+08:00
+package_lock_sha256_before_build: 520be4900b855e235b8347f8a179b3cffe4a520069a51464151fc880b05f0295
+npm notice run m2rc1-frontend@0.1.0 build
+npm notice run tsc && vite build
+vite v5.4.21 building for production...
+transforming...
+✓ 50 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                  0.28 kB │ gzip:  0.21 kB
+dist/assets/index-B18Ljq2O.js  198.72 kB │ gzip: 63.05 kB
+✓ built in 402ms
+npm_build_exit_code: 0
+package_lock_sha256_after_build: 520be4900b855e235b8347f8a179b3cffe4a520069a51464151fc880b05f0295
+package_lock_unchanged: True
+elapsed_seconds: 2.789
+npm ci exit_code: NOT_CAPTURED by attempt 1 because the relative log path failed after entering frontend; dependency graph verified by npm ls --depth=0 exit 0.
+npm run build exit_code: 0; package-lock hash unchanged.
