@@ -81,7 +81,7 @@ export default function App() {
   // production window (interactive deny matrix path) gets the view toggle.
   const [navChrome, setNavChrome] = useState(false);
   const [view, setView] = useState<"console" | "workbench">("console");
-  const [appMode, setAppMode] = useState<"probe" | "ac1" | "production">("production");
+  const [appMode, setAppMode] = useState<"detecting" | "probe" | "ac1" | "production">("detecting");
   const [activeInvoke, setActiveInvoke] = useState<InvokeFn | undefined>(undefined);
 
   const append = useCallback((line: string) => {
@@ -475,6 +475,28 @@ export default function App() {
   const isConsoleRequested =
     typeof window !== "undefined" &&
     new URLSearchParams(window.location.search).get("view") === "console";
+
+  if (appMode === "detecting") {
+    return (
+      <div
+        style={{
+          fontFamily: "Consolas, monospace",
+          fontSize: 12,
+          margin: 12,
+          color: "#d8e0e8",
+          background: "#101418",
+        }}
+      >
+        <h1 style={{ fontSize: 15 }}>M2-RC2 resource channel runtime</h1>
+        <div>{status}</div>
+        <div>
+          {log.map((line, index) => (
+            <div key={index}>{line}</div>
+          ))}
+        </div>
+      </div>
+    );
+  }
 
   if (appMode === "probe" || appMode === "ac1" || isConsoleRequested) {
     return (
