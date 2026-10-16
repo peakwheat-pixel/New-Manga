@@ -1,0 +1,21 @@
+shell=PowerShell
+python=G:/CODEX/New Manga.task-envs/T1.1.1-impl-py312/Scripts/python.exe
+command=& 'G:/CODEX/New Manga.task-envs/T1.1.1-impl-py312/Scripts/python.exe' -m pytest tests/core/test_p09_fu2_import_pages.py::test_stdio_import_pages_runtime_response_and_import_report -vv -s
+--- pytest output ---
+============================= test session starts =============================
+platform win32 -- Python 3.12.3, pytest-9.1.1, pluggy-1.6.0 -- G:\CODEX\New Manga.task-envs\T1.1.1-impl-py312\Scripts\python.exe
+cachedir: .pytest_cache
+rootdir: G:\CODEX\New Manga.workspace\worktrees\P09-FU2-IMPORT-IPC-RUNTIME
+configfile: pytest.ini
+plugins: anyio-4.15.1
+collecting ... collected 1 item
+
+tests/core/test_p09_fu2_import_pages.py::test_stdio_import_pages_runtime_response_and_import_report protocol=2.2
+command=ImportPages
+request_payload={"chapter_id": "chapter", "sources": [{"grant_id": "36ed3560b69d4a30b7d3b24533ff6ca2", "host_signature": "<test-signature-redacted>"}]}
+core_stdout={"protocol":"new-manga.core","version":{"major":2,"minor":2},"request_id":"stdio-importpages-proof","result":{"chapter_id":"chapter","duplicate_policy":"skip","cancelled":false,"sources":[{"source_index":0,"source_name":"\ud55c\uad6d\uc5b4 (\u7b2c \uff11 \u9801).png","files":[{"filename":"\ud55c\uad6d\uc5b4 (\u7b2c \uff11 \u9801).png","outcome":"imported","source_sha256":"027010dfd04f27c748ee8eecf8bc1ddd457aa6a2bdd342f251f210d55f32b90d","pages":[{"page_index":1,"outcome":"imported","page_id":"d947112c33f34e04b076117e69365a7f","source_order":1,"sort_order":1,"sha256":"027010dfd04f27c748ee8eecf8bc1ddd457aa6a2bdd342f251f210d55f32b90d","width":31,"height":19,"duplicate":false,"error":null,"side_effects":"page_committed"}],"error":null,"side_effects":"listed_pages_committed"}]}]},"error":null}
+serve_exit_code=0
+PASSED
+
+============================== 1 passed in 0.45s ==============================
+pytest_exit_code=0

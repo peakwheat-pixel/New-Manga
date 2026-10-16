@@ -1,0 +1,27 @@
+shell=PowerShell
+python=G:/CODEX/New Manga.task-envs/T1.1.1-impl-py312/Scripts/python.exe
+command=& 'G:/CODEX/New Manga.task-envs/T1.1.1-impl-py312/Scripts/python.exe' -m pytest tests/core/test_p09_fu2_import_pages.py::test_import_source_reference_rejections_have_zero_side_effects -vv -s
+--- pytest output ---
+============================= test session starts =============================
+platform win32 -- Python 3.12.3, pytest-9.1.1, pluggy-1.6.0 -- G:\CODEX\New Manga.task-envs\T1.1.1-impl-py312\Scripts\python.exe
+cachedir: .pytest_cache
+rootdir: G:\CODEX\New Manga.workspace\worktrees\P09-FU2-IMPORT-IPC-RUNTIME
+configfile: pytest.ini
+plugins: anyio-4.15.1
+collecting ... collected 12 items
+
+tests/core/test_p09_fu2_import_pages.py::test_import_source_reference_rejections_have_zero_side_effects[malformed-REF_MALFORMED] PASSED
+tests/core/test_p09_fu2_import_pages.py::test_import_source_reference_rejections_have_zero_side_effects[signature_invalid-REF_SIGNATURE_INVALID] PASSED
+tests/core/test_p09_fu2_import_pages.py::test_import_source_reference_rejections_have_zero_side_effects[expired-REF_EXPIRED] PASSED
+tests/core/test_p09_fu2_import_pages.py::test_import_source_reference_rejections_have_zero_side_effects[unknown_id-REF_UNKNOWN_ID] PASSED
+tests/core/test_p09_fu2_import_pages.py::test_import_source_reference_rejections_have_zero_side_effects[revoked-REF_REVOKED] PASSED
+tests/core/test_p09_fu2_import_pages.py::test_import_source_reference_rejections_have_zero_side_effects[already_consumed-REF_ALREADY_CONSUMED] PASSED
+tests/core/test_p09_fu2_import_pages.py::test_import_source_reference_rejections_have_zero_side_effects[host_session-REF_SCOPE_DENIED] PASSED
+tests/core/test_p09_fu2_import_pages.py::test_import_source_reference_rejections_have_zero_side_effects[not_found-REF_NOT_FOUND] PASSED
+tests/core/test_p09_fu2_import_pages.py::test_import_source_reference_rejections_have_zero_side_effects[reparse-REF_REPARSE_POINT] PASSED
+tests/core/test_p09_fu2_import_pages.py::test_import_source_reference_rejections_have_zero_side_effects[identity_changed-FILE_IDENTITY_CHANGED] PASSED
+tests/core/test_p09_fu2_import_pages.py::test_import_source_reference_rejections_have_zero_side_effects[size_changed-FILE_SIZE_CHANGED] PASSED
+tests/core/test_p09_fu2_import_pages.py::test_import_source_reference_rejections_have_zero_side_effects[digest_changed-CONTENT_DIGEST_MISMATCH] PASSED
+
+============================= 12 passed in 1.11s ==============================
+pytest_exit_code=0

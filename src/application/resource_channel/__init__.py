@@ -2,6 +2,7 @@
 
 from application.resource_channel.dto import (
     ALLOWED_SCOPE_CLASSES,
+    USER_SOURCE_SCOPE,
     DEFAULT_TTL_SECONDS,
     MAX_ACTIVE_REFERENCES,
     MAX_RESOURCE_BYTES,
@@ -14,6 +15,7 @@ from application.resource_channel.service import ResourceChannelService
 
 __all__ = [
     "ALLOWED_SCOPE_CLASSES",
+    "USER_SOURCE_SCOPE",
     "DEFAULT_TTL_SECONDS",
     "MAX_ACTIVE_REFERENCES",
     "MAX_RESOURCE_BYTES",

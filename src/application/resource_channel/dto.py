@@ -68,6 +68,11 @@ class ReferenceGrant:
 #: to issue it).
 ALLOWED_SCOPE_CLASSES = ("derived-read-only", "managed-read-only")
 
+# ImportPages consumes this trusted Core-only scope. It deliberately remains
+# outside ALLOWED_SCOPE_CLASSES: user sources must never be published through
+# the frontend-visible resource channel.
+USER_SOURCE_SCOPE = "user-source"
+
 #: Stable typed error codes (Contract 1.1 §10.2 minimum set + throttle).
 E_MALFORMED = "REF_MALFORMED"
 E_UNKNOWN_ID = "REF_UNKNOWN_ID"

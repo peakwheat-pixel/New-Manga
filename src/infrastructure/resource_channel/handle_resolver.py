@@ -102,6 +102,11 @@ _k32.GetFileInformationByHandle.argtypes = [
     wintypes.HANDLE, ctypes.POINTER(_BY_HANDLE_FILE_INFORMATION),
 ]
 
+_k32.SetFilePointerEx.restype = wintypes.BOOL
+_k32.SetFilePointerEx.argtypes = [
+    wintypes.HANDLE, ctypes.c_longlong, ctypes.POINTER(ctypes.c_longlong), wintypes.DWORD,
+]
+
 _k32.GetFinalPathNameByHandleW.restype = wintypes.DWORD
 _k32.GetFinalPathNameByHandleW.argtypes = [
     wintypes.HANDLE, wintypes.LPWSTR, wintypes.DWORD, wintypes.DWORD,
@@ -241,6 +246,11 @@ def _digest_through(handle: int) -> tuple[str, int]:
     return digest.hexdigest(), total
 
 
+def _seek_start(handle: int) -> None:
+    if not _k32.SetFilePointerEx(wintypes.HANDLE(handle), 0, None, 0):
+        raise TypedResourceChannelError(E_OPEN_FAILED, f"win32 error {ctypes.get_last_error()}")
+
+
 def _digest_of(data: bytes) -> str:
     return hashlib.sha256(data).hexdigest()
 
@@ -253,6 +263,14 @@ class HandleVerifiedFileReader:
         self._scope_root = Path(scope_root).resolve()
         self._scope_norm = _normalized(str(self._scope_root))
         self._limit = limit
+
+    def open_pinned(self, grant, *, share_write: bool = False):
+        """Open a file and verify its handle-derived scope, identity and size.
+
+        The caller verifies the digest after opening every requested handle,
+        then consumes each source through the same OS handle.
+        """
+        return _VerifiedFileHandle(self, grant, share_write=share_write)
 
     # ------------------------------------------------------------- issuing
 
@@ -337,6 +355,7 @@ class HandleVerifiedFileReader:
         finally:
             _k32.CloseHandle(wintypes.HANDLE(handle))
 
+
     def read_chunks(self, grant, chunk_size: int = 16 * 1024 * 1024, *, share_write: bool = False):
         """Stream a granted resource in bounded chunks through one verified
         handle (no full-resource materialisation; resident buffer == one
@@ -395,6 +414,82 @@ class HandleVerifiedFileReader:
                 raise TypedResourceChannelError(E_IDENTITY_CHANGED)
         finally:
             _k32.CloseHandle(wintypes.HANDLE(handle))
+
+
+class _VerifiedFileHandle:
+    def __init__(self, reader: HandleVerifiedFileReader, grant, *, share_write: bool) -> None:
+        self._grant = grant
+        self._handle: int | None = None
+        self._verified = False
+        target = reader._scope_root.joinpath(
+            *grant.rel_path.replace("\\", "/").split("/")
+        )
+        _preopen_reparse_walk(reader._scope_root, grant.rel_path)
+        try:
+            handle = _open_read_handle(target, share_write=share_write)
+        except TypedResourceChannelError as error:
+            if error.code == E_OPEN_FAILED:
+                raise TypedResourceChannelError(E_NOT_FOUND) from error
+            raise
+        self._handle = handle
+        try:
+            final_norm = _normalized(_final_path_of(handle))
+            if final_norm != reader._scope_norm and not final_norm.startswith(reader._scope_norm + "\\"):
+                raise TypedResourceChannelError(E_OUT_OF_SCOPE)
+            if _attributes_of(handle) & FILE_ATTRIBUTE_REPARSE_POINT:
+                raise TypedResourceChannelError(E_REPARSE)
+            if _identity_of(handle) != (grant.facts.volume_serial, grant.facts.file_index):
+                raise TypedResourceChannelError(E_IDENTITY_CHANGED)
+            size = _size_of(handle)
+            if size != grant.facts.size:
+                raise TypedResourceChannelError(E_SIZE_CHANGED)
+            if size > reader._limit:
+                raise TypedResourceChannelError(E_TOO_LARGE)
+        except BaseException:
+            self.close()
+            raise
+
+    def verify(self) -> None:
+        if self._handle is None:
+            raise OSError("verified source handle is closed")
+        handle = self._handle
+        digest, streamed = _digest_through(handle)
+        if streamed != self._grant.facts.size:
+            raise TypedResourceChannelError(E_SIZE_CHANGED)
+        if digest != self._grant.facts.sha256:
+            raise TypedResourceChannelError(E_DIGEST_MISMATCH)
+        if _identity_of(handle) != (
+            self._grant.facts.volume_serial, self._grant.facts.file_index
+        ):
+            raise TypedResourceChannelError(E_IDENTITY_CHANGED)
+        _seek_start(handle)
+        self._verified = True
+
+    def read(self) -> bytes:
+        if self._handle is None:
+            raise OSError("verified source handle is closed")
+        handle = self._handle
+        try:
+            if not self._verified:
+                self.verify()
+            _seek_start(handle)
+            data = _read_all_through(handle)
+            if len(data) != self._grant.facts.size:
+                raise TypedResourceChannelError(E_SIZE_CHANGED)
+            if _digest_of(data) != self._grant.facts.sha256:
+                raise TypedResourceChannelError(E_DIGEST_MISMATCH)
+            if _identity_of(handle) != (
+                self._grant.facts.volume_serial, self._grant.facts.file_index
+            ):
+                raise TypedResourceChannelError(E_IDENTITY_CHANGED)
+            return data
+        finally:
+            self.close()
+
+    def close(self) -> None:
+        if self._handle is not None:
+            _k32.CloseHandle(wintypes.HANDLE(self._handle))
+            self._handle = None
 
 
 # ---------------------------------------------------------------------------
