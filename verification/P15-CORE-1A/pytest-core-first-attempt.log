@@ -1,0 +1,170 @@
+........................................................................ [ 17%]
+.....................F........................F......................... [ 34%]
+.......................F....................F........................... [ 51%]
+........................................................................ [ 68%]
+F....................................................................... [ 85%]
+...........................................................              [100%]
+================================== FAILURES ===================================
+___________ test_protocol_minor_bumped_to_six_with_page_nav_surface ___________
+
+server = CoreServices(conn=<infrastructure.sqlite.connection.ThreadRoutedConnection object at 0x000001AC5728D700>, repository=<...ng_store=<infrastructure.settings.json_profile_stores.JsonProviderCapabilityBindingStore object at 0x000001AC57263D40>)
+rpc = <function rpc.<locals>._request at 0x000001AC572F2520>
+
+    def test_protocol_minor_bumped_to_six_with_page_nav_surface(server, rpc) -> None:
+        # M2-REGION-RETYPE-CORE: 2 -> 3 (same backwards-compatible widening
+        # precedent as core.detect 0->1 and settings 1->2; every pre-existing
+        # command keeps its payload/result/error codes).
+        # M2-RC4-DOMAIN-COMMANDS: 3 -> 4 (the three domain commands).
+        # M2-PAGE-RESOURCE-RESOLVE-1: 4 -> 5 (resolve_page_resource).
+>       assert (PROTOCOL_MAJOR, PROTOCOL_MINOR) == (2, 3)
+E       assert (2, 6) == (2, 3)
+E         
+E         At index 1 diff: 6 != 3
+E         Use -v to get more diff
+
+tests\core\test_core_service_retype.py:138: AssertionError
+___________ test_protocol_minor_tracks_the_current_command_surface ____________
+
+server = <bootstrap.core_service.CoreServiceServer object at 0x000001AC5726B050>
+
+    def test_protocol_minor_tracks_the_current_command_surface(server) -> None:
+        # M2-SETTINGS-IPC-CHANNEL: 1 -> 2 (same backwards-compatible widening
+        # precedent as M2-PROD-DETECT-3's core.detect bump; the pre-existing
+        # command semantics are pinned unchanged by the existing suite).
+        # M2-REGION-RETYPE-CORE: 2 -> 3 (set_region_type/list_regions added;
+        # same widening precedent, contract rev 1.4 ��5.4 -- this file pins the
+        # settings pair's own semantics against the CURRENT envelope).
+        # M2-PAGE-RESOURCE-RESOLVE-1: 4 -> 5 (resolve_page_resource added).
+>       assert (PROTOCOL_MAJOR, PROTOCOL_MINOR) == (2, 3)
+E       assert (2, 6) == (2, 3)
+E         
+E         At index 1 diff: 6 != 3
+E         Use -v to get more diff
+
+tests\core\test_core_service_settings.py:77: AssertionError
+______________ test_host_control_stdio_handshake_and_eof_revoke _______________
+
+tmp_path = WindowsPath('C:/Users/49745/AppData/Local/Temp/pytest-of-49745/pytest-1368/test_host_control_stdio_handsh0')
+
+    def test_host_control_stdio_handshake_and_eof_revoke(tmp_path: Path) -> None:
+        core, server = _server(tmp_path)
+        export_payload, export_ref = _export_payload(tmp_path, HOST_SESSION_ID)
+        lines = [
+            json.dumps({
+                "protocol": "new-manga.core",
+                "version": {"major": 2, "minor": 3},
+                "request_id": "open",
+                "channel": "host-control",
+                "command": "OpenHostSession",
+                "payload": {
+                    "host_session_id": HOST_SESSION_ID,
+                    "host_session_credential": HOST_CREDENTIAL,
+                },
+            }),
+            json.dumps({
+                **_wire("RegisterExportTarget", export_payload),
+                "core_session_id": server._core_session_id,
+                "host_session_id": HOST_SESSION_ID,
+                "host_session_credential": HOST_CREDENTIAL,
+            }),
+        ]
+        server._stdin = io.StringIO("\n".join(lines) + "\n")
+        server._stdout = io.StringIO()
+        try:
+            assert server.serve_forever() == 0
+            responses = [json.loads(line) for line in server._stdout.getvalue().splitlines()]
+            assert len(responses) == 2
+            assert responses[0]["result"]["core_session_id"] == server._core_session_id
+            assert responses[1]["result"] == {"registered": True}
+>           assert all(response["version"] == {"major": 2, "minor": 3} for response in responses)
+E           assert False
+E            +  where False = all(<generator object test_host_control_stdio_handshake_and_eof_revoke.<locals>.<genexpr> at 0x000001AC5729A960>)
+
+tests\core\test_host_control.py:210: AssertionError
+_________ test_stdio_import_pages_runtime_response_and_import_report __________
+
+tmp_path = WindowsPath('C:/Users/49745/AppData/Local/Temp/pytest-of-49745/pytest-1368/test_stdio_import_pages_runtim0')
+capsys = <_pytest.capture.CaptureFixture object at 0x000001AC5728F6E0>
+
+    def test_stdio_import_pages_runtime_response_and_import_report(tmp_path, capsys):
+        core, server = _core(tmp_path)
+        source = tmp_path / "\u9078\u629e\u3057\u305f \U0001f1ef\U0001f1f5" / "\ud55c\uad6d\uc5b4 (\u7b2c \uff11 \u9801).png"
+        source.parent.mkdir()
+        source_bytes = _png(31, 19)
+        source.write_bytes(source_bytes)
+        source_hash = hashlib.sha256(source_bytes).hexdigest()
+        ref = _register_source(server, source)
+        request = {
+            "chapter_id": "chapter",
+            "sources": [ref],
+        }
+        raw = json.dumps({
+            "protocol": "new-manga.core",
+            "version": {"major": PROTOCOL_MAJOR, "minor": PROTOCOL_MINOR},
+            "request_id": "stdio-importpages-proof",
+            "command": "ImportPages",
+            "payload": request,
+        }, ensure_ascii=False)
+        server._stdin = io.StringIO(raw + "\n")
+        server._stdout = io.StringIO()
+        try:
+            exit_code = server.serve_forever()
+            response_line = server._stdout.getvalue().strip()
+            response = json.loads(response_line)
+            print("protocol=2.3")
+            print("command=ImportPages")
+            print("request_payload=" + json.dumps({
+                "chapter_id": "chapter",
+                "sources": [{"grant_id": ref["grant_id"], "host_signature": "<test-signature-redacted>"}],
+            }, ensure_ascii=False))
+            print("core_stdout=" + response_line)
+            print(f"serve_exit_code={exit_code}")
+            assert exit_code == 0
+            assert response["error"] is None
+>           assert response["version"] == {"major": 2, "minor": 3}
+E           AssertionError: assert {'major': 2, 'minor': 6} == {'major': 2, 'minor': 3}
+E             
+E             Omitting 1 identical items, use -vv to show
+E             Differing items:
+E             {'minor': 6} != {'minor': 3}
+E             Use -v to get more diff
+
+tests\core\test_p09_fu2_import_pages.py:249: AssertionError
+---------------------------- Captured stdout call -----------------------------
+protocol=2.3
+command=ImportPages
+request_payload={"chapter_id": "chapter", "sources": [{"grant_id": "1fed92a0fdb240a0a43406551133bbcd", "host_signature": "<test-signature-redacted>"}]}
+core_stdout={"protocol":"new-manga.core","version":{"major":2,"minor":6},"request_id":"stdio-importpages-proof","result":{"chapter_id":"chapter","duplicate_policy":"skip","cancelled":false,"sources":[{"source_index":0,"source_name":"\ud55c\uad6d\uc5b4 (\u7b2c \uff11 \u9801).png","files":[{"filename":"\ud55c\uad6d\uc5b4 (\u7b2c \uff11 \u9801).png","outcome":"imported","source_sha256":"027010dfd04f27c748ee8eecf8bc1ddd457aa6a2bdd342f251f210d55f32b90d","pages":[{"page_index":1,"outcome":"imported","page_id":"ce5a9fba239e4d76a436efb4c2a7f31b","source_order":1,"sort_order":1,"sha256":"027010dfd04f27c748ee8eecf8bc1ddd457aa6a2bdd342f251f210d55f32b90d","width":31,"height":19,"duplicate":false,"error":null,"side_effects":"page_committed"}],"error":null,"side_effects":"listed_pages_committed"}]}]},"error":null}
+serve_exit_code=0
+_______ test_retry_after_is_not_capped_and_runtime_version_is_major_two _______
+
+    def test_retry_after_is_not_capped_and_runtime_version_is_major_two():
+        from infrastructure.providers.retry import _retry_after_seconds
+        from infrastructure.providers.runtime import _RetryAfterTransport, _retry_policy
+    
+        assert _retry_after_seconds("7") == 7.0
+        assert _retry_after_seconds("7200") == 7200.0
+        assert _retry_after_seconds("nonsense") is None
+        policy = _retry_policy({"providers": {"retry": {"max_attempts": 8}}})
+        assert policy.max_attempts == 3
+        assert policy.backoff_seconds == 1.0
+>       assert (PROTOCOL_MAJOR, PROTOCOL_MINOR) == (2, 3)
+E       assert (2, 6) == (2, 3)
+E         
+E         At index 1 diff: 6 != 3
+E         Use -v to get more diff
+
+tests\core\test_p13_run_runtime.py:618: AssertionError
+============================== warnings summary ===============================
+tests/core/test_rc4_stdio_render_preview.py::test_production_stdio_decodes_nmfr_renders_text_and_publishes_readable_preview
+  G:\CODEX\New Manga.workspace\worktrees\P15-CORE-1A\tests\core\test_rc4_stdio_render_preview.py:245: DeprecationWarning: Image.Image.getdata is deprecated and will be removed in Pillow 14 (2027-10-15). Use get_flattened_data instead.
+    for px in rendered.crop((20, 20, 150, 120)).convert("RGB").getdata()
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED tests/core/test_core_service_retype.py::test_protocol_minor_bumped_to_six_with_page_nav_surface
+FAILED tests/core/test_core_service_settings.py::test_protocol_minor_tracks_the_current_command_surface
+FAILED tests/core/test_host_control.py::test_host_control_stdio_handshake_and_eof_revoke
+FAILED tests/core/test_p09_fu2_import_pages.py::test_stdio_import_pages_runtime_response_and_import_report
+FAILED tests/core/test_p13_run_runtime.py::test_retry_after_is_not_capped_and_runtime_version_is_major_two
+5 failed, 414 passed, 1 warning in 33.89s

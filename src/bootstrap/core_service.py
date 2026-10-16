@@ -152,6 +152,7 @@ from infrastructure.export.qt_free import encode_png
 from infrastructure.export.target_refs import ExportTargetRefError
 from ports.detection.ports import DetectionRequest
 from ports.providers.errors import ProviderError, ProviderNotConfigured
+from bootstrap.settings_commands import P15_SNAPSHOT_KEY, P15SettingsCommands, SettingsSurfaceError
 
 PROTOCOL_NAME = "new-manga.core"
 PROTOCOL_MAJOR = 2
@@ -180,7 +181,10 @@ PROTOCOL_MAJOR = 2
 # precedent -- pre-existing command semantics unchanged. Contract: M2-C1
 # rev 1.8 §5).
 # P16-C1 rev 2.1 added Reader/Export; P12-C1 rev 2.2 adds ImportPages.
+# P15-C1 adds settings commands at 2.6. Keep the existing command surface at
+# 2.3; the dispatcher projects 2.6 only for the new P15 wire.
 PROTOCOL_MINOR = 3
+_P15_PROTOCOL_MINOR = 6
 # HOST-ISSUER-1-C1 rev 2.3 adds an independent host-owned stdio control envelope.
 _HOST_CONTROL_COMMANDS = frozenset({
     "OpenHostSession", "RegisterImportSource", "RevokeImportSource",
@@ -189,6 +193,17 @@ _HOST_CONTROL_COMMANDS = frozenset({
 _RUN_COMMANDS = frozenset({
     "StartRun", "ControlRun", "ResumeBlockedRun", "GetRunSnapshot",
     "GetTaskProjection", "RetryFailedTargets",
+})
+_P15_SETTINGS_COMMANDS = frozenset({
+    "settings_provider_profiles_list",
+    "settings_provider_profiles_create",
+    "settings_provider_profiles_update",
+    "settings_provider_profiles_delete",
+    "settings_provider_bindings_set",
+    "settings_provider_bindings_clear",
+    "settings_provider_bindings_resolve",
+    "settings_provider_run_snapshot_get",
+    "settings_resolve_overrides",
 })
 
 # Typed error codes per Contract 1.1 §3, §8
@@ -631,6 +646,7 @@ class CoreServiceServer:
         import_cancelled: Callable[[], bool] | None = None,
     ) -> None:
         self._core = core
+        self._p15_settings = P15SettingsCommands(core)
         self._stdin = stdin or sys.stdin
         self._stdout = stdout or sys.stdout
         # M2-DERIVED-GC-2: the canonical data root this Core owns (its
@@ -797,7 +813,7 @@ class CoreServiceServer:
             or set(version) != {"major", "minor"}
             or type(version.get("major")) is not int
             or type(version.get("minor")) is not int
-            or version != {"major": PROTOCOL_MAJOR, "minor": PROTOCOL_MINOR}
+            or version.get("minor") not in {PROTOCOL_MINOR, _P15_PROTOCOL_MINOR}
             or not isinstance(request_id, str)
             or not request_id
             or request.get("channel") != "host-control"
@@ -2310,6 +2326,7 @@ class CoreServiceServer:
         request_id: Any,
         *,
         payload_is_object: bool,
+        protocol_minor: int,
     ) -> tuple[dict[str, Any], bool]:
         try:
             if not payload_is_object:
@@ -2329,11 +2346,19 @@ class CoreServiceServer:
                 overrides = payload.get("overrides", {})
                 if not isinstance(overrides, dict):
                     raise PipelineError("INVALID_REQUEST", "overrides must be a JSON object")
+                if "provider_profiles" in overrides and protocol_minor != _P15_PROTOCOL_MINOR:
+                    raise PipelineError("INVALID_REQUEST", "provider profile overrides require Core 2.6")
                 scope = self._parse_run_scope(payload.get("scope"))
+                snapshot_provider_bindings = None
+                if protocol_minor == _P15_PROTOCOL_MINOR:
+                    snapshot_provider_bindings = {
+                        P15_SNAPSHOT_KEY: self._p15_settings.prepare_run_snapshot(scope, overrides)
+                    }
                 run, created = self._core.pipeline.accept_start_run(
                     CommandType(raw_command), scope,
                     overrides=overrides,
                     idempotency_key=key,
+                    snapshot_provider_bindings=snapshot_provider_bindings,
                 )
                 result = {
                     "run_id": run.run_id,
@@ -2410,6 +2435,23 @@ class CoreServiceServer:
                 "result": result,
                 "error": None,
             }
+        except SettingsSurfaceError as error:
+            code = {
+                "validation": E_INVALID_REQUEST,
+                "not_found": E_TARGET_NOT_FOUND,
+                "conflict": "SETTINGS_CONFLICT",
+                "unavailable": "SETTINGS_UNAVAILABLE",
+            }[error.category]
+            response = {
+                "protocol": PROTOCOL_NAME,
+                "version": {"major": PROTOCOL_MAJOR, "minor": PROTOCOL_MINOR},
+                "request_id": request_id,
+                "result": None,
+                "error": make_error_envelope(
+                    code, error.category, error.message_key,
+                    retryable=False, details=error.details,
+                ),
+            }
         except PipelineError as error:
             code = error.code
             if code in {"EMPTY_TARGET_SELECTION", "TARGET_DELETED"}:
@@ -2446,7 +2488,7 @@ class CoreServiceServer:
             }
         return response, False
 
-    def dispatch_request(self, raw_line: str) -> tuple[dict[str, Any], bool]:
+    def _dispatch_request(self, raw_line: str) -> tuple[dict[str, Any], bool]:
         """Dispatch a single raw json request line.
 
         Returns (response_dict, should_exit).
@@ -2623,7 +2665,35 @@ class CoreServiceServer:
                 payload,
                 request_id,
                 payload_is_object=isinstance(raw_payload, dict),
+                protocol_minor=(version.get("minor") if isinstance(version, dict) and type(version.get("minor")) is int else _LEGACY_PROTOCOL_MINOR),
             )
+
+        if isinstance(command, str) and command in _P15_SETTINGS_COMMANDS:
+            if version.get("minor") != _P15_PROTOCOL_MINOR:
+                error = SettingsSurfaceError(
+                    "validation", "settings_resolution", "none", "SETTINGS_INVALID_INPUT"
+                )
+                return self._p15_settings_error_response(request_id, error), False
+            try:
+                if not isinstance(raw_payload, dict):
+                    raise SettingsSurfaceError(
+                        "validation", "settings_resolution", "none", "SETTINGS_INVALID_INPUT"
+                    )
+                result = self._p15_settings.handle(command, payload)
+            except SettingsSurfaceError as error:
+                return self._p15_settings_error_response(request_id, error), False
+            except Exception:
+                error = SettingsSurfaceError(
+                    "unavailable", "settings_resolution", "contact_support", "SETTINGS_UNAVAILABLE"
+                )
+                return self._p15_settings_error_response(request_id, error), False
+            return ({
+                "protocol": PROTOCOL_NAME,
+                "version": {"major": PROTOCOL_MAJOR, "minor": PROTOCOL_MINOR},
+                "request_id": request_id,
+                "result": result,
+                "error": None,
+            }, False)
 
         if command == "ListBooks":
             try:
@@ -3160,6 +3230,55 @@ class CoreServiceServer:
             },
             False,
         )
+
+    def dispatch_request(self, raw_line: str) -> tuple[dict[str, Any], bool]:
+        """Keep legacy 2.3 envelopes stable while serving the 2.6 settings face."""
+        try:
+            request = json.loads(raw_line)
+        except (json.JSONDecodeError, TypeError):
+            request = {}
+        request = request if isinstance(request, dict) else {}
+        version = request.get("version")
+        requested_minor = version.get("minor") if isinstance(version, dict) else None
+        command = request.get("command")
+        response, should_exit = self._dispatch_request(raw_line)
+        response_minor = (
+            _P15_PROTOCOL_MINOR
+            if command in _P15_SETTINGS_COMMANDS or requested_minor == _P15_PROTOCOL_MINOR
+            else PROTOCOL_MINOR
+        )
+        response["version"] = {"major": PROTOCOL_MAJOR, "minor": response_minor}
+        result = response.get("result")
+        if isinstance(result, dict) and isinstance(result.get("protocol_version"), dict):
+            result["protocol_version"] = {
+                "major": PROTOCOL_MAJOR,
+                "minor": response_minor,
+            }
+        return response, should_exit
+
+    @staticmethod
+    def _p15_settings_error_response(
+        request_id: Any, error: SettingsSurfaceError
+    ) -> dict[str, Any]:
+        code = {
+            "validation": E_INVALID_REQUEST,
+            "not_found": E_TARGET_NOT_FOUND,
+            "conflict": "SETTINGS_CONFLICT",
+            "unavailable": "SETTINGS_UNAVAILABLE",
+        }[error.category]
+        return {
+            "protocol": PROTOCOL_NAME,
+            "version": {"major": PROTOCOL_MAJOR, "minor": PROTOCOL_MINOR},
+            "request_id": request_id if isinstance(request_id, str) else None,
+            "result": None,
+            "error": make_error_envelope(
+                code,
+                error.category,
+                error.message_key,
+                retryable=False,
+                details=error.details,
+            ),
+        }
 
     def serve_forever(self) -> int:
         """Main stdio loop reading requests line by line."""

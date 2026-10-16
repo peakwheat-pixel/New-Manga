@@ -324,6 +324,7 @@ class PipelineService:
         *,
         overrides: Mapping[str, Any] | None,
         idempotency_key: str,
+        snapshot_provider_bindings: Mapping[str, Any] | None = None,
     ) -> tuple[PipelineRun, bool]:
         self._ensure_scheduler_owner()
         key = self._require_idempotency_key(idempotency_key)
@@ -340,7 +341,18 @@ class PipelineService:
                 if record.request_fingerprint != fingerprint:
                     raise PipelineError("IDEMPOTENCY_KEY_REUSED", "idempotency key fingerprint differs")
                 return self._require_run(record.run_id), False
-            run = self.create_run(command, scope, overrides=overrides, _persist=False)
+            snapshot_overrides = dict(overrides or {})
+            if snapshot_provider_bindings:
+                provider_bindings = snapshot_overrides.get("provider_bindings", {})
+                if not isinstance(provider_bindings, Mapping):
+                    raise PipelineError("INVALID_REQUEST", "provider bindings must be an object")
+                snapshot_overrides["provider_bindings"] = {
+                    **provider_bindings,
+                    **snapshot_provider_bindings,
+                }
+            run = self.create_run(
+                command, scope, overrides=snapshot_overrides, _persist=False
+            )
             accepted, created = self._store.accept(
                 run,
                 idempotency_key=key,

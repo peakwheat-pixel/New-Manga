@@ -962,7 +962,7 @@ class SqliteSnapshotProvider(SnapshotProvider):
             settings_overrides = {
                 key: value
                 for key, value in overrides.items()
-                if key not in {"provider_bindings", "context_policy"}
+                if key not in {"provider_bindings", "context_policy", "provider_profiles"}
             }
         settings = _merge(_load(row["settings_json"]), settings_overrides if isinstance(settings_overrides, Mapping) else {})
         providers = _merge(_load(row["provider_bindings_json"]), overrides.get("provider_bindings", {}))

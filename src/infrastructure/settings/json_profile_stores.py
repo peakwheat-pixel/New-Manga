@@ -215,3 +215,31 @@ class JsonNetworkProfileStore:
             self._path,
             {"version": _FORMAT_VERSION, "profiles": list(profiles.values())},
         )
+
+
+class JsonProviderCapabilityBindingStore:
+    """JSON-backed settings bindings, separate from pipeline step bindings."""
+
+    def __init__(self, directory: Path) -> None:
+        self._path = Path(directory) / "provider_capability_bindings.json"
+
+    def list_bindings(self) -> list[dict]:
+        if not self._path.exists():
+            return []
+        try:
+            payload = json.loads(self._path.read_text(encoding="utf-8"))
+        except json.JSONDecodeError as error:
+            raise ProfileFileFormatError("provider binding file is not valid JSON") from error
+        if (
+            not isinstance(payload, dict)
+            or payload.get("version") != _FORMAT_VERSION
+            or not isinstance(payload.get("bindings"), list)
+        ):
+            raise ProfileFileFormatError("provider binding file has an unsupported format")
+        return payload["bindings"]
+
+    def save_bindings(self, bindings: list[dict]) -> None:
+        _atomic_write_json(
+            self._path,
+            {"version": _FORMAT_VERSION, "bindings": bindings},
+        )
