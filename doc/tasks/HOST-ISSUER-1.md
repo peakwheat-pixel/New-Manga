@@ -3,12 +3,12 @@ id: HOST-ISSUER-1
 title: Tauri host 引用签发能力（ImportSourceRef / ExportTargetRef 的 issuer 与受信注入）
 kind: feature
 governance_version: 2
-status: ready
+status: blocked
 approval: coordinator_release_20261016_tauri_host_issuer
 suggested_owner: Codex
 owner: null
 reviewer: null
-depends_on: [P09-FU2, P16]
+depends_on: [P09-FU2, P16, HOST-ISSUER-1-C1]
 base_commit: 03412b6558aa1ba9bf0ed109ae41c0e3874f5068
 branch: codex/HOST-ISSUER-1-tauri-ref-issuer
 worktree: G:/CODEX/New Manga.workspace/worktrees/HOST-ISSUER-1
@@ -111,6 +111,24 @@ evidence_dir: verification/HOST-ISSUER-1
 - Review：尚无。
 - 实际测试：尚无（全部 `NOT_RUN`）。
 
+### 2026-10-16 阻塞上报与 resolution（Owner=codex；Coordinator=dsh）
+
+- **Owner 实测结论**：可信 host **没有任何通道**把 grant 注册进**运行中的** Core，因此 Rust-only 实现无法完成 AC1–AC8。
+  关键事实（见 `verification/HOST-ISSUER-1/blocker-assessment.md`）：
+  ① `_register_export_target`/`_revoke_export_target`/`_register_import_source`/`_revoke_import_source` 是
+  live `CoreServiceServer` 的**私有方法**，**未在 dispatcher 路由**；
+  ② Core JSON-RPC 已路由 `ImportPages`/`StartExport`，但**无**注册/撤销命令；
+  ③ grant registry 是**该 Core 实例内存态**，第二进程或既有 `host_bridge` sidecar **无法填充**；
+  ④ 把注册暴露为 WebView 可调用命令会**破坏** §10.3/§10.4 的受信 host 边界。
+- **环境事实**：`cargo build` 与 `cargo test` 均 **exit 101** —— `build.rs` 因 `target/core-sidecar/core-sidecar`
+  bundle 缺失而 panic；且专用打包 Python 环境、`frontend/node_modules`、`frontend/dist` 亦缺
+  （修复入口：`packaging/m2ac5/build_sidecar.ps1`）。已登记为技术债务 **BL-11**。
+- **Resolution（Coordinator）**：建立前置契约 Task **HOST-ISSUER-1-C1**（host→Core grant 注册通道契约），
+  冻结 host-only 注册/撤销 wire 与 session 绑定语义（正是 `M2-C1` §11 遗留的 `auth/permission handshake` 项）；
+  **本 Task 的 wire 契约冻结并集成后**方可恢复。
+- **未集成**：本 Task 的分支 `codex/HOST-ISSUER-1-tauri-ref-issuer`（HEAD `fa270d85`）**保留不合并**，
+  待 C1 完成后由 Coordinator 把新版 main 并入该分支再恢复。
+- 诚实性确认：Owner **未**伪造任何实现，明确记载"没有变更不能算通过"，且静态扫描仅作基线证据、**不满足** AC4 实现级负向测试。
 ## Canonical Evidence
 
 | evidence_id | AC/Gate | path | commit | sha256 | class |
