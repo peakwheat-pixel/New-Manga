@@ -1,0 +1,39 @@
+SHELL=Windows PowerShell
+COMMAND=C:\Users\49745\.cargo\bin\cargo.exe test --locked --manifest-path apps/desktop/src-tauri/Cargo.toml host_
+warning: unused import: `CHUNK_SIZE`
+    --> src\main.rs:1011:54
+     |
+1011 |         build_url, handle_m2res_request, ScopeRoots, CHUNK_SIZE, ID_LENGTH,
+     |                                                      ^^^^^^^^^^
+     |
+     = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: unused variable: `out`
+    --> src\main.rs:2487:13
+     |
+2487 |         let out = rotate_render_preview(&core, "page", result, &mut current).unwrap();
+     |             ^^^ help: if this is intentional, prefix it with an underscore: `_out`
+     |
+     = note: `#[warn(unused_variables)]` (part of `#[warn(unused)]`) on by default
+
+warning: `m2rc1-desktop` (bin "m2rc1-desktop" test) generated 2 warnings (run `cargo fix --bin "m2rc1-desktop" -p m2rc1-desktop --tests` to apply 2 suggestions)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.53s
+     Running unittests src\main.rs (apps\desktop\src-tauri\target\debug\deps\m2rc1_desktop-e03b229fc621c524.exe)
+
+running 12 tests
+test host_issuer::tests::base64url_encodes_32_byte_credentials_without_padding ... ok
+test host_issuer::tests::export_signature_matches_core_nul_join_vector ... ok
+test host_issuer::tests::hmac_sha256_matches_rfc4231_vector ... ok
+test host_issuer::tests::natural_sort_matches_p09_page_order ... ok
+test host_issuer::tests::import_signature_matches_core_canonical_json_vector ... ok
+test host_issuer::tests::webview_summaries_exclude_paths_and_refs ... ok
+test library_bridge::tests::host_control_envelope_is_separate_and_bound_to_both_sessions ... ok
+test library_bridge::tests::host_control_denial_codes_are_preserved_for_host_handling ... ok
+test tests::host_control_operations_are_never_webview_commands ... ok
+test host_issuer::tests::export_ref_is_one_target_token_with_frozen_prefix ... ok
+test host_issuer::tests::unsupported_import_source_and_mismatched_export_extension_fail_closed ... ok
+test host_issuer::tests::import_grant_ref_has_only_frozen_fields_and_directory_is_direct_only ... ok
+
+test result: ok. 12 passed; 0 failed; 0 ignored; 0 measured; 65 filtered out; finished in 0.00s
+
+EXIT_CODE=0

@@ -1,0 +1,44 @@
+{
+  "schema_version": 1,
+  "task_id": "HOST-ISSUER-1",
+  "generated_at": "2026-10-16",
+  "generated_by": "Codex (Task Owner)",
+  "note": "保留实现 worktree 供独立 Review 与 Coordinator integration；不表示相应 Gate 已完成。",
+  "resources": [
+    {
+      "resource_type": "worktree",
+      "source_path": "G:/CODEX/New Manga.workspace/worktrees/HOST-ISSUER-1",
+      "disposition": "PRESERVE_REFERENCED",
+      "destination_path": "G:/CODEX/New Manga.workspace/worktrees/HOST-ISSUER-1",
+      "branch": "codex/HOST-ISSUER-1-tauri-ref-issuer",
+      "base_commit": "8a990a345c91b4e36cc0bfc6549104b454b24556",
+      "delivery_head": "2ad590a31ac2271db7de45f349d94eeaa494775c",
+      "integration_commit": null,
+      "deleted": false,
+      "pruned": false,
+      "process_check": "worktree 与 branch 保留；未删除、迁移、归档或 prune；主仓只读。"
+    },
+    {
+      "resource_type": "test-env",
+      "source_path": "G:/CODEX/New Manga.task-envs/T1.1.1-impl-py312",
+      "disposition": "PRESERVE_REFERENCED",
+      "destination_path": "G:/CODEX/New Manga.task-envs/T1.1.1-impl-py312",
+      "deleted": false,
+      "process_check": "只读调用既有 Python 3.12.3 环境；未安装或更新依赖。"
+    },
+    {
+      "resource_type": "gitignored-build-prerequisites",
+      "source_path": "G:/CODEX/New Manga.workspace/worktrees/HOST-ISSUER-1/apps/desktop/src-tauri/target/core-sidecar and apps/desktop/frontend/dist",
+      "disposition": "PRESERVE_REFERENCED",
+      "destination_path": "junctions to the coordinator-provided main-repo build artifacts",
+      "deleted": false,
+      "process_check": "Pre-existing junction prerequisites were used read-only; this Task did not create, remove, or modify their targets."
+    }
+  ],
+  "closeout": {
+    "deleted_count": 0,
+    "migrated_count": 0,
+    "archived_count": 0,
+    "reason_open": "Task is in_review; preserve the implementation worktree for independent review and Coordinator integration."
+  }
+}

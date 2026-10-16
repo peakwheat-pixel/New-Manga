@@ -34,12 +34,13 @@ fn main() {
     // match bare command invocations, so the ACL layer silently skipped
     // them). With `__app-acl__` present, Tauri enforces the capability for
     // every bare command: `capabilities/m2rc1-commands.json` grants exactly
-    // the twenty-two commands below to the main window (fifteen production
+    // the twenty-five commands below to the main window (eighteen production
     // commands — three resource-channel + two IPC1 + the two
     // M2-SETTINGS-IPC-CHANNEL settings commands + the two M2-REGION-RETYPE-
     // CORE region-retype commands + three RC-4 production commands + the
     // M2-PAGE-RESOURCE-RESOLVE-1 page-resource resolve command + the two
-    // M2-PAGE-NAV-PROJECTION-1 page navigation projections — plus
+    // M2-PAGE-NAV-PROJECTION-1 page navigation projections + three
+    // HOST-ISSUER-1 safe picker actions — plus
     // the four probe commands and the three M2-AC1 acceptance commands), and any other command name
     // (e.g. the deleted `register_catalog`) is refused by the ACL before the invoke
     // handler is consulted. The settings_* pair (M2-SETTINGS-IPC-CHANNEL,
@@ -53,8 +54,8 @@ fn main() {
     // array are three hand-maintained views of the same surface; the Rust
     // unit tests pin the constants and the E2E runner pins the announced
     // allowlist per mode. Keep all three in sync in the same commit.
-    tauri_build::try_build(
-        tauri_build::Attributes::new().app_manifest(tauri_build::AppManifest::new().commands(&[
+    tauri_build::try_build(tauri_build::Attributes::new().app_manifest(
+        tauri_build::AppManifest::new().commands(&[
             "issue_resource_url",
             "revoke_ref",
             "revoke_resource_refs",
@@ -84,6 +85,11 @@ fn main() {
             // projections; declared here so the Tauri ACL can name them.
             "list_chapters",
             "list_chapter_pages",
+            // HOST-ISSUER-1 safe user actions. HostControl methods themselves
+            // are internal stdio operations and are not Tauri commands.
+            "library_import_file",
+            "library_import_folder",
+            "library_start_export",
             "probe_config",
             "probe_write_results",
             "probe_exit",
@@ -95,7 +101,7 @@ fn main() {
             "ac1_request",
             "ac1_write_results",
             "ac1_exit",
-        ])),
-    )
+        ]),
+    ))
     .expect("failed to run tauri-build");
 }
