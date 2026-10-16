@@ -181,8 +181,8 @@ PROTOCOL_MAJOR = 2
 # precedent -- pre-existing command semantics unchanged. Contract: M2-C1
 # rev 1.8 §5).
 # P16-C1 rev 2.1 added Reader/Export; P12-C1 rev 2.2 adds ImportPages.
-# P15-C1 adds settings commands at 2.6. Keep the existing command surface at
-# 2.3; the dispatcher projects 2.6 only for the new P15 wire.
+# P15-C1 rev 2.7 adds settings commands at minor 7. Keep the existing command
+# surface at 2.3; the dispatcher projects minor 7 only for the new P15 wire.
 PROTOCOL_MINOR = 3
 _P15_PROTOCOL_MINOR = 7
 # HOST-ISSUER-1-C1 rev 2.3 adds an independent host-owned stdio control envelope.
@@ -204,6 +204,15 @@ _P15_SETTINGS_COMMANDS = frozenset({
     "settings_provider_bindings_resolve",
     "settings_provider_run_snapshot_get",
     "settings_resolve_overrides",
+    "settings_network_profiles_list",
+    "settings_network_profiles_create",
+    "settings_network_profiles_update",
+    "settings_network_profiles_delete",
+    "settings_network_profile_default_set",
+    "settings_network_profile_default_clear",
+    "settings_network_profile_resolve",
+    "BindProfileCredential",
+    "ClearProfileCredential",
 })
 
 # Typed error codes per Contract 1.1 §3, §8

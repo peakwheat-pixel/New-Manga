@@ -3,13 +3,27 @@
 from __future__ import annotations
 
 from collections.abc import Mapping
+from dataclasses import replace
 from datetime import datetime, timezone
 import json
+import urllib.request
 import uuid
 from urllib.parse import urlsplit
 
 from domain.books.entities import ReadingDirection
-from ports.network.profiles import MODE_DIRECT, MODE_SYSTEM
+from ports.network.profiles import (
+    MODE_DIRECT,
+    MODE_HTTP,
+    MODE_HTTPS,
+    MODE_SOCKS5,
+    MODE_SYSTEM,
+    NetworkProfile,
+)
+from ports.providers.credentials import (
+    CREDENTIAL_KIND_PROVIDER,
+    CREDENTIAL_KIND_PROXY,
+    make_credential_ref,
+)
 from ports.providers.profiles import ProviderProfile
 
 P15_SNAPSHOT_KEY = "_p15_settings_snapshot"
@@ -87,11 +101,356 @@ class P15SettingsCommands:
             "settings_provider_bindings_resolve": self._bindings_resolve,
             "settings_provider_run_snapshot_get": self._run_snapshot_get,
             "settings_resolve_overrides": self._resolve_overrides,
+            "settings_network_profiles_list": self._network_profiles_list,
+            "settings_network_profiles_create": self._network_profiles_create,
+            "settings_network_profiles_update": self._network_profiles_update,
+            "settings_network_profiles_delete": self._network_profiles_delete,
+            "settings_network_profile_default_set": self._network_profile_default_set,
+            "settings_network_profile_default_clear": self._network_profile_default_clear,
+            "settings_network_profile_resolve": self._network_profile_resolve,
+            "BindProfileCredential": self._bind_profile_credential,
+            "ClearProfileCredential": self._clear_profile_credential,
         }
         handler = handlers.get(command)
         if handler is None:
             raise _fail("validation", "settings_resolution", "none", "SETTINGS_INVALID_INPUT")
         return handler(payload)
+
+    def _network_profiles_list(self, payload: dict) -> dict:
+        self._fields(payload, set(), phase="profile")
+        profiles = sorted(
+            self._network_store().list_profiles(),
+            key=lambda item: item.network_profile_id,
+        )
+        return {"profiles": [self._network_profile_to_wire(item) for item in profiles]}
+
+    def _network_profiles_create(self, payload: dict) -> dict:
+        self._fields(
+            payload,
+            {"display_name", "mode", "proxy_endpoint"},
+            {"verify_tls", "confirm_disable_tls_verification", "allow_proxy_failure_direct_fallback"},
+            phase="profile",
+        )
+        values = self._network_profile_values(payload, creating=True)
+        now = self._now()
+        profile = NetworkProfile(
+            network_profile_id=uuid.uuid4().hex,
+            name=values["display_name"],
+            mode=values["mode"],
+            http_proxy=values["proxy_endpoint"] if values["mode"] == MODE_HTTP else "",
+            https_proxy=values["proxy_endpoint"] if values["mode"] == MODE_HTTPS else "",
+            socks5_proxy=values["proxy_endpoint"] if values["mode"] == MODE_SOCKS5 else "",
+            verify_tls=values["verify_tls"],
+            allow_proxy_failure_direct_fallback=values["allow_proxy_failure_direct_fallback"],
+            created_at=now,
+            updated_at=now,
+        )
+        self._network_store().add_profile(profile)
+        return {"profile": self._network_profile_to_wire(profile)}
+
+    def _network_profiles_update(self, payload: dict) -> dict:
+        self._fields(
+            payload,
+            {
+                "network_profile_id", "display_name", "mode", "proxy_endpoint",
+                "verify_tls", "allow_proxy_failure_direct_fallback",
+            },
+            {"confirm_disable_tls_verification"},
+            phase="profile",
+        )
+        profile_id = self._text(payload, "network_profile_id", "profile")
+        store = self._network_store()
+        existing = store.get_profile(profile_id)
+        if existing is None:
+            raise _fail("not_found", "profile", "edit_profile", "SETTINGS_ITEM_NOT_FOUND")
+        values = self._network_profile_values(payload, creating=False, existing=existing)
+        profile = replace(
+            existing,
+            name=values["display_name"],
+            mode=values["mode"],
+            http_proxy=values["proxy_endpoint"] if values["mode"] == MODE_HTTP else "",
+            https_proxy=values["proxy_endpoint"] if values["mode"] == MODE_HTTPS else "",
+            socks5_proxy=values["proxy_endpoint"] if values["mode"] == MODE_SOCKS5 else "",
+            verify_tls=values["verify_tls"],
+            allow_proxy_failure_direct_fallback=values["allow_proxy_failure_direct_fallback"],
+            updated_at=self._now(),
+        )
+        store.update_profile(profile)
+        return {"profile": self._network_profile_to_wire(profile)}
+
+    def _network_profiles_delete(self, payload: dict) -> dict:
+        self._fields(payload, {"network_profile_id"}, phase="profile")
+        profile_id = self._text(payload, "network_profile_id", "profile")
+        store = self._network_store()
+        if store.get_profile(profile_id) is None:
+            raise _fail("not_found", "profile", "edit_profile", "SETTINGS_ITEM_NOT_FOUND")
+        if (
+            self._global_network_profile_id() == profile_id
+            or any(item.network_profile_id == profile_id for item in self._profile_store().list_profiles())
+            or self._network_profile_used_by_protected_run(profile_id)
+        ):
+            raise _fail("conflict", "profile", "clear_binding", "SETTINGS_CONFLICT")
+        store.delete_profile(profile_id)
+        return {"deleted": True}
+
+    def _network_profile_default_set(self, payload: dict) -> dict:
+        self._fields(payload, {"network_profile_id"}, phase="profile")
+        profile_id = self._text(payload, "network_profile_id", "profile")
+        if self._network_store().get_profile(profile_id) is None:
+            raise _fail("not_found", "profile", "select_profile", "SETTINGS_ITEM_NOT_FOUND")
+        self._network_store().set_global_default_profile_id(profile_id)
+        return {"network_profile_id": profile_id}
+
+    def _network_profile_default_clear(self, payload: dict) -> dict:
+        self._fields(payload, set(), phase="profile")
+        self._network_store().set_global_default_profile_id(None)
+        return {"network_profile_id": None}
+
+    def _network_profile_resolve(self, payload: dict) -> dict:
+        self._fields(payload, set(), {"provider_profile_id"}, phase="profile")
+        provider_id = payload.get("provider_profile_id")
+        if "provider_profile_id" in payload:
+            provider_id = self._nonempty(provider_id, "profile")
+            provider = self._profile_store().get_profile(provider_id)
+            if provider is None:
+                raise _fail("not_found", "profile", "select_profile", "SETTINGS_ITEM_NOT_FOUND")
+            if provider.network_profile_id is not None:
+                return self._resolved_network_profile(provider.network_profile_id, "provider")
+        default_id = self._global_network_profile_id()
+        if default_id is not None:
+            return self._resolved_network_profile(default_id, "global")
+        try:
+            system_proxy = any(
+                key != "no" and bool(value)
+                for key, value in urllib.request.getproxies().items()
+            )
+        except Exception as error:
+            raise _fail(
+                "unavailable", "network_proxy", "contact_support", "SETTINGS_UNAVAILABLE"
+            ) from error
+        return {
+            "network_profile_id": None,
+            "mode": "System" if system_proxy else "Direct",
+            "source": "system" if system_proxy else "direct",
+        }
+
+    def _bind_profile_credential(self, payload: dict) -> dict:
+        self._fields(payload, {"target", "credential_ref"}, phase="credential_binding")
+        store, kind, owner_id, profile = self._credential_target(payload["target"])
+        credential_ref = payload["credential_ref"]
+        if not self._credential_ref_owned(credential_ref, kind, owner_id):
+            raise _fail(
+                "validation", "credential_binding", "configure_credential", "SETTINGS_INVALID_INPUT"
+            )
+        credentials = self._credential_store()
+        try:
+            if not credentials.has_credential(credential_ref):
+                raise _fail(
+                    "validation", "credential_binding", "configure_credential", "SETTINGS_INVALID_INPUT"
+                )
+        except SettingsSurfaceError:
+            raise
+        except Exception as error:
+            raise _fail(
+                "unavailable", "credential_store", "configure_credential", "CREDENTIAL_STORE_UNAVAILABLE"
+            ) from error
+        if profile.credential_ref == credential_ref:
+            return {"state": "configured"}
+        try:
+            store.update_profile(replace(profile, credential_ref=credential_ref, updated_at=self._now()))
+        except Exception as error:
+            try:
+                credentials.delete_credential(credential_ref)
+            except Exception:
+                pass
+            raise _fail(
+                "unavailable", "credential_binding", "contact_support", "SETTINGS_UNAVAILABLE"
+            ) from error
+        return {"state": "configured"}
+
+    def _clear_profile_credential(self, payload: dict) -> dict:
+        self._fields(payload, {"target"}, phase="credential_binding")
+        store, kind, owner_id, profile = self._credential_target(payload["target"])
+        credential_ref = profile.credential_ref
+        if credential_ref is None:
+            return {"state": "missing"}
+        if not self._credential_ref_owned(credential_ref, kind, owner_id):
+            raise _fail(
+                "unavailable", "credential_binding", "contact_support", "SETTINGS_UNAVAILABLE"
+            )
+        credentials = self._credential_store()
+        try:
+            if credentials.has_credential(credential_ref):
+                credentials.delete_credential(credential_ref)
+        except Exception as error:
+            raise _fail(
+                "unavailable", "credential_store", "configure_credential", "CREDENTIAL_STORE_UNAVAILABLE"
+            ) from error
+        try:
+            store.update_profile(replace(profile, credential_ref=None, updated_at=self._now()))
+        except Exception as error:
+            raise _fail(
+                "unavailable", "credential_binding", "contact_support", "SETTINGS_UNAVAILABLE"
+            ) from error
+        return {"state": "missing"}
+
+    def _credential_target(self, target: object):
+        if not isinstance(target, dict) or not isinstance(target.get("kind"), str):
+            raise _fail("validation", "credential_binding", "configure_credential", "SETTINGS_INVALID_INPUT")
+        kind = target["kind"]
+        if kind == "provider_api":
+            self._fields(target, {"kind", "profile_id"}, phase="credential_binding")
+            owner_id = self._nonempty(target["profile_id"], "credential_binding")
+            store = self._profile_store()
+            profile = store.get_profile(owner_id)
+            credential_kind = CREDENTIAL_KIND_PROVIDER
+        elif kind == "proxy_auth":
+            self._fields(target, {"kind", "network_profile_id"}, phase="credential_binding")
+            owner_id = self._nonempty(target["network_profile_id"], "credential_binding")
+            store = self._network_store()
+            profile = store.get_profile(owner_id)
+            credential_kind = CREDENTIAL_KIND_PROXY
+        else:
+            raise _fail("validation", "credential_binding", "configure_credential", "SETTINGS_INVALID_INPUT")
+        if profile is None:
+            raise _fail("not_found", "credential_binding", "configure_credential", "SETTINGS_ITEM_NOT_FOUND")
+        return store, credential_kind, owner_id, profile
+
+    def _credential_store(self):
+        store = getattr(self._core, "credential_store", None)
+        if store is None:
+            raise _fail(
+                "unavailable", "credential_store", "configure_credential", "CREDENTIAL_STORE_UNAVAILABLE"
+            )
+        return store
+
+    @staticmethod
+    def _credential_ref_owned(value: object, kind: str, owner_id: str) -> bool:
+        if not isinstance(value, str) or not value or value != value.strip():
+            return False
+        prefix = make_credential_ref(kind, owner_id)
+        if value == prefix:
+            return True
+        suffix = value[len(prefix) + 1:] if value.startswith(prefix + "/") else ""
+        return bool(suffix) and "/" not in suffix and not any(char.isspace() or ord(char) < 32 for char in suffix)
+
+    def _global_network_profile_id(self) -> str | None:
+        try:
+            return self._network_store().get_global_default_profile_id()
+        except Exception as error:
+            raise _fail(
+                "unavailable", "settings_resolution", "contact_support", "SETTINGS_UNAVAILABLE"
+            ) from error
+
+    def _resolved_network_profile(self, profile_id: str, source: str) -> dict:
+        profile = self._network_store().get_profile(profile_id)
+        if profile is None:
+            raise _fail("not_found", "profile", "select_profile", "SETTINGS_ITEM_NOT_FOUND")
+        return {
+            "network_profile_id": profile.network_profile_id,
+            "mode": self._network_mode_to_wire(profile.mode),
+            "source": source,
+        }
+
+    def _network_profile_values(
+        self, payload: dict, *, creating: bool, existing: NetworkProfile | None = None
+    ) -> dict:
+        self._text(payload, "display_name", "profile")
+        mode = payload["mode"]
+        mode_map = {"Direct": MODE_DIRECT, "System": MODE_SYSTEM, "HTTP": MODE_HTTP, "HTTPS": MODE_HTTPS, "SOCKS5": MODE_SOCKS5}
+        if not isinstance(mode, str) or mode not in mode_map:
+            raise _fail("validation", "profile", "edit_profile", "SETTINGS_INVALID_INPUT")
+        proxy_endpoint = payload["proxy_endpoint"]
+        if mode in {"Direct", "System"}:
+            if proxy_endpoint is not None:
+                raise _fail("validation", "network_proxy", "edit_profile", "SETTINGS_INVALID_INPUT")
+        else:
+            scheme = {"HTTP": "http", "HTTPS": "https", "SOCKS5": "socks5"}[mode]
+            self._proxy_endpoint(proxy_endpoint, scheme)
+        verify_tls = payload.get("verify_tls", True) if creating else payload["verify_tls"]
+        allow_fallback = payload.get("allow_proxy_failure_direct_fallback", False) if creating else payload["allow_proxy_failure_direct_fallback"]
+        if type(verify_tls) is not bool or type(allow_fallback) is not bool:
+            raise _fail("validation", "profile", "edit_profile", "SETTINGS_INVALID_INPUT")
+        confirm = payload.get("confirm_disable_tls_verification", False)
+        if type(confirm) is not bool:
+            raise _fail("validation", "tls", "review_tls_setting", "SETTINGS_INVALID_INPUT")
+        if not verify_tls and (creating or (existing is not None and existing.verify_tls)) and confirm is not True:
+            raise _fail("validation", "tls", "review_tls_setting", "TLS_CONFIRMATION_REQUIRED")
+        return {
+            "display_name": payload["display_name"],
+            "mode": mode_map[mode],
+            "proxy_endpoint": proxy_endpoint,
+            "verify_tls": verify_tls,
+            "allow_proxy_failure_direct_fallback": allow_fallback,
+        }
+
+    @staticmethod
+    def _proxy_endpoint(value: object, scheme: str) -> str:
+        if not isinstance(value, str) or not value or value != value.strip() or any(char.isspace() or ord(char) < 32 for char in value):
+            raise _fail("validation", "network_proxy", "edit_profile", "SETTINGS_INVALID_INPUT")
+        try:
+            parts = urlsplit(value)
+            _ = parts.port
+        except ValueError as error:
+            raise _fail("validation", "network_proxy", "edit_profile", "SETTINGS_INVALID_INPUT") from error
+        if (
+            parts.scheme != scheme
+            or not parts.hostname
+            or parts.username is not None
+            or parts.password is not None
+            or "?" in value
+            or "#" in value
+        ):
+            raise _fail("validation", "network_proxy", "edit_profile", "SETTINGS_INVALID_INPUT")
+        return value
+
+    def _network_profile_to_wire(self, profile: NetworkProfile) -> dict:
+        endpoint = {
+            MODE_HTTP: profile.http_proxy,
+            MODE_HTTPS: profile.https_proxy,
+            MODE_SOCKS5: profile.socks5_proxy,
+        }.get(profile.mode)
+        if endpoint is not None:
+            endpoint = self._proxy_endpoint(endpoint, profile.mode)
+        return {
+            "network_profile_id": profile.network_profile_id,
+            "display_name": profile.name,
+            "mode": self._network_mode_to_wire(profile.mode),
+            "proxy_endpoint": endpoint,
+            "verify_tls": profile.verify_tls,
+            "tls_verification_state": "enabled" if profile.verify_tls else "disabled_confirmed",
+            "allow_proxy_failure_direct_fallback": profile.allow_proxy_failure_direct_fallback,
+            "credential_state": "configured" if profile.credential_ref else "missing",
+        }
+
+    @staticmethod
+    def _network_mode_to_wire(mode: str) -> str:
+        return {
+            MODE_DIRECT: "Direct",
+            MODE_SYSTEM: "System",
+            MODE_HTTP: "HTTP",
+            MODE_HTTPS: "HTTPS",
+            MODE_SOCKS5: "SOCKS5",
+        }[mode]
+
+    def _network_profile_used_by_protected_run(self, profile_id: str) -> bool:
+        rows = self._core.conn.execute(
+            "SELECT status, provider_binding_snapshot_json FROM pipeline_runs"
+        ).fetchall()
+        for row in rows:
+            if row["status"] not in _RUN_PROTECTED_STATUSES:
+                continue
+            try:
+                profiles = json.loads(row["provider_binding_snapshot_json"]).get(P15_SNAPSHOT_KEY, {}).get("provider_profiles", {})
+            except (json.JSONDecodeError, AttributeError):
+                raise _fail("unavailable", "profile", "contact_support", "SETTINGS_UNAVAILABLE")
+            if any(
+                item.get("network", {}).get("network_profile_id") == profile_id
+                for item in profiles.values()
+                if isinstance(item, dict)
+            ):
+                return True
+        return False
 
     def prepare_run_snapshot(
         self, scope, overrides: Mapping[str, object]

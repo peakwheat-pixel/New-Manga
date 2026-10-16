@@ -1,0 +1,28 @@
+{
+  "task_id": "P15-CORE-1B",
+  "resources": [
+    {
+      "resource_type": "worktree",
+      "source_path": "G:/CODEX/New Manga.workspace/worktrees/P15-CORE-1B",
+      "disposition": "PRESERVE_REFERENCED",
+      "destination_path": "G:/CODEX/New Manga.workspace/worktrees/P15-CORE-1B",
+      "branch": "codex/P15-CORE-1B",
+      "base_commit": "c279659117db56b93d5676e5bb39fd8453b0d385",
+      "observed_head_before_changes": "c279659117db56b93d5676e5bb39fd8453b0d385",
+      "result": "Preserved; no delete, move, or archive operation."
+    },
+    {
+      "resource_type": "test-env",
+      "source_path": "G:/CODEX/New Manga.task-envs/T1.1.1-impl-py312",
+      "disposition": "PRESERVE_REFERENCED",
+      "destination_path": "G:/CODEX/New Manga.task-envs/T1.1.1-impl-py312",
+      "runtime": "Python 3.12.3",
+      "result": "Used read-only; no install or dependency changes."
+    }
+  ],
+  "cleanup": {
+    "deleted_items": 0,
+    "moved_items": 0,
+    "archived_items": 0
+  }
+}

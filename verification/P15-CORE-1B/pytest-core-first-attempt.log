@@ -1,0 +1,50 @@
+........................................................................ [ 16%]
+........................................................................ [ 32%]
+........................................................................ [ 49%]
+........................................................................ [ 65%]
+.............................F.......................................... [ 82%]
+........................................................................ [ 98%]
+.....                                                                    [100%]
+================================== FAILURES ===================================
+_____ test_credential_binding_validates_owner_and_never_returns_reference _____
+
+env = (CoreServices(conn=<infrastructure.sqlite.connection.ThreadRoutedConnection object at 0x00000185C7A189B0>, repository=...tyBindingStore object at 0x00000185C79734A0>), <bootstrap.core_service.CoreServiceServer object at 0x00000185C7A2E690>)
+
+    def test_credential_binding_validates_owner_and_never_returns_reference(env):
+        core, server = env
+        core.credential_store = _MemoryCredentials()
+        first = create_profile(server, name="First")
+        second = create_profile(server, name="Second")
+        wrong_ref = f"NewManga/provider/{second['profile_id']}/host-ref"
+        core.credential_store.refs.add(wrong_ref)
+        unauthorized = request(server, "BindProfileCredential", {
+            "target": {"kind": "provider_api", "profile_id": first["profile_id"]},
+            "credential_ref": wrong_ref,
+        })
+        assert_safe_error(unauthorized, "SETTINGS_INVALID_INPUT")
+        assert wrong_ref not in json.dumps(unauthorized)
+    
+        credential_ref = f"NewManga/provider/{first['profile_id']}/host-ref"
+        core.credential_store.refs.add(credential_ref)
+        bound = request(server, "BindProfileCredential", {
+            "target": {"kind": "provider_api", "profile_id": first["profile_id"]},
+            "credential_ref": credential_ref,
+        })
+        assert bound["result"] == {"state": "configured"}
+        listed = request(server, "settings_provider_profiles_list", {})["result"]["profiles"]
+>       assert listed[0]["credential_state"] == "configured"
+E       AssertionError: assert 'missing' == 'configured'
+E         
+E         - configured
+E         + missing
+
+tests\core\test_p15_core_settings.py:568: AssertionError
+============================== warnings summary ===============================
+tests/core/test_rc4_stdio_render_preview.py::test_production_stdio_decodes_nmfr_renders_text_and_publishes_readable_preview
+  G:\CODEX\New Manga.workspace\worktrees\P15-CORE-1B\tests\core\test_rc4_stdio_render_preview.py:245: DeprecationWarning: Image.Image.getdata is deprecated and will be removed in Pillow 14 (2027-10-15). Use get_flattened_data instead.
+    for px in rendered.crop((20, 20, 150, 120)).convert("RGB").getdata()
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED tests/core/test_p15_core_settings.py::test_credential_binding_validates_owner_and_never_returns_reference
+1 failed, 436 passed, 1 warning in 34.51s
