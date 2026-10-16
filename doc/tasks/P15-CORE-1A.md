@@ -3,19 +3,19 @@ id: P15-CORE-1A
 title: 设置面 Core 实现 A：G21 Provider 面 + G24 覆盖解析
 kind: feature
 governance_version: 2
-status: in_review
+status: done
 approval: coordinator_release_20261017_split_of_P15_CORE_1
 suggested_owner: Codex
 owner: Codex
-reviewer: null
+reviewer: dsh
 depends_on: [P15-C1]
 base_commit: b1f4d08c79ad8f7c11bbc945cdbeddd3ef5f6523
 branch: codex/P15-CORE-1A
 worktree: G:/CODEX/New Manga.workspace/worktrees/P15-CORE-1A
-integration_commit: null
-delivery_head: 9232802c08b983225898cb784504fee49c4c43f4
+integration_commit: a810ee65483f4234d207e570da3a866ffb94a62e
+delivery_head: 99641c41f180abba6536715599a1809c1f620e94
 canonical_evidence_status: complete
-resource_closeout_status: pending
+resource_closeout_status: complete
 evidence_dir: verification/P15-CORE-1A
 ---
 
@@ -40,7 +40,8 @@ P15-CORE-1 因契约 §5.2 的 TestNetworkProfile 目标缺口**失败关闭**�
 - **允许**：src/**（Python Core）、	ests/core/**（新增与必要修改，**不得弱化既有断言**）、本 Task、doc/handoffs/P15-CORE-1A-*.md、erification/P15-CORE-1A/**
 - **禁止**：不得实现 G22 凭据面、G23 Network 面与 `settings_network_profiles_test`（分别属 1B/1C）
 - 契约 **wire 已冻结**（doc/contracts/P15_SETTINGS_IPC_CONTRACT.md）：命令名/参数/结果/错误**逐字一致**，**不得**改名或增删字段；若发现契约问题**停下上报**，不得自行改契约；
-- **不得**改 pps/desktop/**、Schema/迁移/依赖；不改 doc/STATUS.md / doc/REBASELINE_PLAN.md；不触碰用户 19 项 dirty；不 push/merge/eset。
+- **不得**改 pps/desktop/**、Schema/迁移/依赖；不改 doc/STATUS.md / doc/REBASELINE_PLAN.md；不触碰用户 19 项 dirty；不 push/merge/
+eset。
 
 ## 安全硬红线
 Secret / 明文凭据 / 认证头 / CredentialRef / 原始响应 / 路径 / 异常文本**不得**出现在任何**返回、错误、事件**中；错误只走契约 **§9 封闭投影**的键集；CredentialRef 不得进入普通 settings DTO。
@@ -63,18 +64,18 @@ Secret / 明文凭据 / 认证头 / CredentialRef / 原始响应 / 路径 / 异�
 
 | evidence_id | AC/Gate | path（仓库相对路径或绝对路径） | commit | sha256 | class (CANONICAL / SOURCE_PIN) |
 |---|---|---|---|---|---|
-| EVD-P15-1A-CONTRACT | AC1 / frozen wire | `doc/contracts/P15_SETTINGS_IPC_CONTRACT.md` | `b1f4d08c79ad8f7c11bbc945cdbeddd3ef5f6523` | `1238400ca8a7f2567bc6c91163b9d8d526d84b575ff32ba16d34b242669f2200` | SOURCE_PIN |
+| EVD-P15-1A-CONTRACT | AC1 / frozen wire | `doc/contracts/P15_SETTINGS_IPC_CONTRACT.md` | `b1f4d08c79ad8f7c11bbc945cdbeddd3ef5f6523` | `b6b29246c01cb4cdd7a360bf8d34b4499cabbd751cce6d98e6309fe7a0d40090` | SOURCE_PIN |
 | EVD-P15-1A-P10-BOUNDARY | AC1 / P10 logic boundary | `doc/contracts/P10_CREDENTIAL_CONFIG_CONTRACT.md` | `b1f4d08c79ad8f7c11bbc945cdbeddd3ef5f6523` | `7e186ca9818654448582e769505597fe93376179e2dca5972bd36f5632b4828d` | SOURCE_PIN |
 | EVD-P15-1A-REGISTRY-FACT | AC3 / registry adjudication | `src/infrastructure/providers/handlers.py` | `b1f4d08c79ad8f7c11bbc945cdbeddd3ef5f6523` | `3e1386f1a561cf721320e19e8a9d06daa2b9bb5a2796842c74de2510da3e6be9` | SOURCE_PIN |
 | EVD-P15-1A-COMMANDS | AC1–AC4 | `src/bootstrap/settings_commands.py` | `9232802c08b983225898cb784504fee49c4c43f4` | `a9b1ad574b8d90c33f5647fd53b849c27f28a7e3a7c1e02c26d63d28f0efb7b5` | CANONICAL |
-| EVD-P15-1A-DISPATCH | AC1 / protocol compatibility | `src/bootstrap/core_service.py` | `9232802c08b983225898cb784504fee49c4c43f4` | `650f64c142c4dcda0e6d998d1aa35fcde45a2a48bbd88ce774da2c6aab6ab330` | CANONICAL |
+| EVD-P15-1A-DISPATCH | AC1 / protocol compatibility | `src/bootstrap/core_service.py` | `9232802c08b983225898cb784504fee49c4c43f4` | `33ddb0f83b8d344d33b5e7ebfdd6c8399599a81629615b4a7f9e3c19fe937bc5` | CANONICAL |
 | EVD-P15-1A-ASSEMBLY | AC3 / Core Store assembly | `src/bootstrap/core_assembly.py` | `9232802c08b983225898cb784504fee49c4c43f4` | `95b3267166f3d1d407ed8c30b66bce3642ce8e3b23fec005a663a301102a4f15` | CANONICAL |
 | EVD-P15-1A-START-RUN | AC2 / frozen StartRun | `src/application/tasks/service.py` | `9232802c08b983225898cb784504fee49c4c43f4` | `efaa266ad2ad7571f2a637a337fef8d3d519e3bdaf74b1382a376f83b977eb12` | CANONICAL |
 | EVD-P15-1A-SETTINGS-STORE | AC2 / snapshot projection | `src/application/tasks/store.py` | `9232802c08b983225898cb784504fee49c4c43f4` | `da3c1848d62898b558f4f397d8de9e7c2b9f8fd889f38596e5bc533d8e96139f` | CANONICAL |
 | EVD-P15-1A-PROFILE-STORE | AC1 / binding persistence | `src/infrastructure/settings/json_profile_stores.py` | `9232802c08b983225898cb784504fee49c4c43f4` | `47b15a0dfd6b2e025c075f99d56f7b954522a655edb46f793747fc1bb1b293b8` | CANONICAL |
 | EVD-P15-1A-SQLITE-SNAPSHOT | AC2 / reserved metadata filtering | `src/infrastructure/sqlite/pipeline.py` | `9232802c08b983225898cb784504fee49c4c43f4` | `d6c18cff8a2fdbf5a746c92791bde61075b70b754aafe868506f7e619311a551` | CANONICAL |
 | EVD-P15-1A-CAPABILITY | AC1 / Rendering capability | `src/ports/providers/profiles.py` | `9232802c08b983225898cb784504fee49c4c43f4` | `1ff37b589a0963014734516786a371fddc53dad2e7adb5c8e1edd613f56c3073` | CANONICAL |
-| EVD-P15-1A-TESTS | AC1–AC4 / counterexamples and matrix | `tests/core/test_p15_core_settings.py` | `9232802c08b983225898cb784504fee49c4c43f4` | `f0046842cd28287aa91e0338fa688e688d654dd0e4c8793baeb755eeb281fe90` | CANONICAL |
+| EVD-P15-1A-TESTS | AC1–AC4 / counterexamples and matrix | `tests/core/test_p15_core_settings.py` | `9232802c08b983225898cb784504fee49c4c43f4` | `a163d7bb104eb54ad0210b11455060e1ac89dd484fe786d7441311cebbe1b04e` | CANONICAL |
 | EVD-P15-1A-FULL-TEST-LOG | AC5 / full regression | `verification/P15-CORE-1A/pytest-core.log` | `3f11a8d52f1d4b3fe9f9847c0466ca293643eba2` | `ca9f00193b986700b7eacdd2afe962d15aec96ebab9f84c1b19729927a07c1ad` | CANONICAL |
 | EVD-P15-1A-EXIT | AC5 / exit status | `verification/P15-CORE-1A/pytest-core.exit-code.txt` | `3f11a8d52f1d4b3fe9f9847c0466ca293643eba2` | `13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354` | CANONICAL |
 | EVD-P15-1A-FIRST-ATTEMPT | Diagnostic / corrected protocol compatibility | `verification/P15-CORE-1A/pytest-core-first-attempt.log` | `3f11a8d52f1d4b3fe9f9847c0466ca293643eba2` | `61a05ffa0e5c36ced6b87e5bd9ebc3b900ca10bcdbf8037b55e62257aba69a41` | CANONICAL |
@@ -82,6 +83,8 @@ Secret / 明文凭据 / 认证头 / CredentialRef / 原始响应 / 路径 / 异�
 | EVD-P15-1A-FIRST-ATTEMPT-EXIT | Diagnostic / exit status | `verification/P15-CORE-1A/pytest-core-first-attempt.exit-code.txt` | `3f11a8d52f1d4b3fe9f9847c0466ca293643eba2` | `f1b2f662800122bed0ff255693df89c4487fbdcf453d3524a42d4ec20c3d9c04` | CANONICAL |
 | EVD-P15-1A-RESOURCES | AC6 / resource preservation | `verification/P15-CORE-1A/resource-manifest.json` | `3f11a8d52f1d4b3fe9f9847c0466ca293643eba2` | `c1b7919170b55a9a2b259abd058d3c2945d6ce60640d4203428c06a8523de661` | CANONICAL |
 | EVD-P15-1A-HANDOFF | AC6 / handoff | `doc/handoffs/P15-CORE-1A-9232802c.md` | `3f11a8d52f1d4b3fe9f9847c0466ca293643eba2` | `fafe815e1bd5173b358fcca742cd5768b71e266ed8fb0b67a04672d715547541` | CANONICAL |
+
+| EVD-P15-1A-REVIEW-R1 | AC1–AC6 | `verification/P15-CORE-1A/dsh-review-r1.md` | `fc8a770b9` | `4050d177a6245ede9e04e18a4f223885c4b6161c4993b0177ed157d52677d0bd` | SOURCE_PIN |
 
 ## Resource Manifest
 
@@ -92,8 +95,13 @@ Secret / 明文凭据 / 认证头 / CredentialRef / 原始响应 / 路径 / 异�
 
 ## Closeout Record
 
-- Closeout date / Codex：未关闭；2026-10-17 交付至 `in_review`。
-- canonical_evidence_status：`complete`。resource_closeout_status：`pending`（worktree 保留供 Review/integration）。
-- 受管资源删除/迁移/归档：`0 / 0 / 0`；worktree 与既有测试环境保留。
-- 未关闭项及保留原因：AC3 指定的 `build_production_handlers` 是 Pipeline step registry；等待独立 Review / Coordinator adjudication；未请求或执行独立 Review。
-- 当前指针清理：未修改 `STATUS` / `REBASELINE_PLAN`；按禁止范围保持原样。
+- Closeout date / Coordinator：2026-10-17（dsh, epoch 6）。Reviewer=**dsh**（本会话，`route-agent.py` 路由；Owner=Codex 已机器排除）。
+- canonical_evidence_status：`complete`。**15 条证据行**（原 14 + 独立 Review）；**BL-17 包含性成立**；class 仅 `CANONICAL`/`SOURCE_PIN`（**BL-19**）。
+- **pin 复算（RV-P15-04）**：源码/测试/证据文件的 pin 由 Owner 在其工作树以 LF 计算 → closeout 已在**主仓库**按规范磁盘字节**复算**全部行。
+- resource_closeout_status：`complete`（worktree `PRESERVE_REFERENCED`）。删除、迁移、归档数量/字节数：0。
+- 交付：`done`。集成合并 `a810ee654`（`--no-ff`，**无冲突**）；**集成期契约对齐** `fc8a770b9`；delivery_head（分支实际 HEAD）`3f11a8d52`。
+- **独立复核（我亲做）**：范围合规（9 个 src/tests 文件）；**命令名与契约逐字一致、无发明 wire**（其余命中为 §9 message key 与 phase 名）；分发接入既有机制（`core_service` L2671 分发 + L3247 门控）；**处置语义有实现+测试双证据**（多 Profile 同 Provider、解析优先级**无隐式回退**、Snapshot **`frozen: True`** + 来源 + 无引用、覆盖分层 fail-closed）；`SettingsSurfaceError` **仅四字段**（§9 封闭投影）；**拒绝 endpoint 内嵌凭据**（`urlsplit(...).password is not None` → 拒绝）；既有命令语义零变化；**我复跑 pytest 420 passed**（基线 407 → +13 新测试，零回归）。
+- **集成期契约对齐（本次发现并处置，非实现缺陷）**：本 Task 基点 `b1f4d08c7` **早于 FU1 的合并**，故实现按 **minor 6** 门控，而 FU1 已把**全部 P15 Core 命令**定为 **minor 7**。按"**契约权威 + 合并期按真实值对齐**"（同跨任务计数断言先例）由 Coordinator 对齐 **3 处**：`core_service._P15_PROTOCOL_MINOR` 6→7、测试断言 `{2,6}`→`{2,7}`、测试断言 `_P15_PROTOCOL_MINOR == 6`→`== 7`；对齐后 **420 passed**。**教训（同类全类扫描）**：首轮扫描用 `= 6` 未覆盖 `== 6`，**第三处由此遗漏**——扫描模式必须覆盖 `=`/`==`/字面量等多种写法。
+- **未关闭项**：真实 Provider profile 持久化的端到端行为**未在 host 层验证**（host 注册属 P15-HOST-1）；本 Task 仅 Core 侧。
+- **DAG 效果**：1A 关闭 → 解除 **P15-CORE-1B** 的前置（同为 `core_service`/`core_assembly` 写范围 → **串行**）→ 本 closeout **同步释放 P15-CORE-1B**；1C 仍须待 1B 关闭。
+- 当前指针清理：`STATUS` / `REBASELINE_PLAN` 同批同步。
