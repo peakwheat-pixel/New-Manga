@@ -127,7 +127,7 @@ evidence_dir: verification/EXPORT-REVEAL-1
 | EXPORT-REVEAL-PRE-MERGE-HANDOFF | Historical delivery | `doc/handoffs/EXPORT-REVEAL-1-codex-5f95aac.md` | `fc5702e650b022608be79694d1c706a4eff51ca9` | `de7a0b815a614601bb05ca601260ad1177565f4d42f971cb6049b33150c50805` | SOURCE_PIN |
 | EXPORT-REVEAL-RESOURCES | Resource | `verification/EXPORT-REVEAL-1/resource-manifest.json` | `fc5702e650b022608be79694d1c706a4eff51ca9` | `3456769436024a69ef0f40db47d1c319deaf71a3671b31fcdcacc9e6f0a440f7` | CANONICAL |
 
-| EXPORT-REVEAL-REVIEW-R1 | AC1-AC7 | `verification/EXPORT-REVEAL-1/dsh-review-r1.md` | `5cc5508b8` | `8ed36e1873d6766dd651a316d4ae50612e232fa5542648179d748f9a0b299f09` | REVIEW |
+| EXPORT-REVEAL-REVIEW-R1 | AC1-AC7 | `verification/EXPORT-REVEAL-1/dsh-review-r1.md` | `5cc5508b8` | `8ed36e1873d6766dd651a316d4ae50612e232fa5542648179d748f9a0b299f09` | SOURCE_PIN |
 
 ## Resource Manifest
 
