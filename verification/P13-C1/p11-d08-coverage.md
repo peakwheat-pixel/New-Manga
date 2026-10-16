@@ -10,7 +10,7 @@
 | P11 来源 / 逻辑接口 | 新 wire 元素 | 覆盖关系与边界 |
 |---|---|---|
 | §2.1–§2.2 durable acceptance / `StartRun` | `StartRun {command, scope, overrides?, idempotency_key}` → `RunAccepted` | 必填 caller key；fingerprint 与同键重放/冲突语义冻结；事务提交后才返回 accepted，覆盖 Run、目标快照与执行快照。 |
-| §3.1 `ControlPipelineRun` | `ControlRun {run_id, action, idempotency_key?}` → `ControlResult` | pause/continue/stop/restart/abandon 逐项映射；只给 restart 要求 key；响应包含原 Run 权威状态，restart 另回 child ID/status。 |
+| §3.1 `ControlPipelineRun` | `ControlRun {run_id, action, idempotency_key?}` → `ControlResult` | pause/continue/stop/restart/abandon 逐项映射；只给 restart 要求 key；响应包含原 Run 权威状态，restart 另回 child ID 与 child 当前状态（首次 `pending`，同键重放 current）。 |
 | §3.1 `ResumeBlockedRun` | `ResumeBlockedRun {run_id}` → `ControlResult` | 条件解除且成功重新规划才回到 pending；条件未满足拒绝且无副作用。保持为单独逻辑操作，不塞进五个 `ControlRun` action。 |
 | §3.1 `RetryFailedTargets` | `RetryFailedTargets {run_id, idempotency_key}` → `RunAccepted` | key 必填；仅 CompletedWithFailures 且有失败 Page 时新建 Run；只含原 Run 冻结失败 Page，源 Run 不变。 |
 | §3.1 `GetRun` / progress query | `GetRunSnapshot {run_id}` → `RunSnapshot`；`GetTaskProjection {run_id}` → `TaskProjection` | 明确拆成权威 Run 快照与只读投影；前者列出接受时有序 targets，后者保持 §6.1 字段。 |
@@ -20,8 +20,8 @@
 | §5.3 用户重试失败 Page | `RetryFailedTargets` + idempotency key | 新 Run 只含失败 Page，带 source/retry metadata；原 Run、StepRun、错误与成功成果不改写。 |
 | §6 崩溃恢复 / Continue / Restart / Abandon | Core startup recovery；`GetRunSnapshot`；`ControlRun` | 恢复扫描不是外部命令；仅在旧 scheduler owner 已退出后将 Running 标 Interrupted。快照查询与三种处置 wire 分开；Continue 沿原快照，Restart 创建新 Run，Abandon 不创建 Run。 |
 | §7.1 唯一 scheduler | 上述 Run commands 进入 Core `PipelineService` / 单一 `PipelineStore` seam | wire 不暴露 executor、并行 worker 或影子队列；§12 授权受 P13 allowlist 与单一 owner 约束。 |
-| §7.2 TaskProgress / PageList 同源 | `GetTaskProjection` + §6.1 `TaskProjection` | counts、rows、current Page/Step、errors 与 controls 从同一权威 Run/Task 数据生成；投影只读，UI 不自行重算。 |
-| §7.3 刷新与重要事件 | `RunProgressChanged`；`TaskFailed`、`RunPaused`、`RunCompleted`、`CurrentPageStepChanged` | 普通进度仍约 4 Hz；四类重要状态在对应持久变化提交后立即推送。事件仅作提示，快照仍是真值；不增加 replay/order 保证。 |
+| §7.2 TaskProgress / PageList 同源与任务详情 | `GetTaskProjection` + §6.1 `TaskProjection` | counts、rows、current Page/Step、Task/Step error code 与安全短消息、每次 StepRun 的 `retry_no`、可得 Provider/Model/Device 与 controls 从同一权威 Run/Task/StepRun 生成；不可核验的执行详情为 `null`，UI 不自行重算或从当前设置推断。 |
+| §7.3 刷新与重要事件 | `GetTaskProjection`；`TaskFailed`、`RunPaused`、`RunCompleted`、`CurrentPageStepChanged` | 普通百分比可重新查询投影，刷新目标仍最多约 4 Hz；四类重要状态在对应持久变化提交后立即推送。普通 `RunProgressChanged` event 未冻结。事件仅作提示，快照仍是真值；不增加 replay/order 保证。 |
 
 ## D08 五组 AC
 
@@ -36,10 +36,10 @@
 | `AC-CRASH-001` | Core startup recovery + `GetRunSnapshot` | owner 退出确认后 Running → Interrupted；重连/重启后可读权威状态，不从 UI timeout 猜测崩溃。 |
 | `AC-CRASH-002` | `ControlRun(continue)` + snapshot | 沿原快照继续，已完成 Step 不重复，未安全提交 Step 可重跑。 |
 | `AC-CRASH-003` | `GetRunSnapshot` / projection；P11 §6.3 write boundary | IPC 不提供临时产物晋升入口；current ArtifactRevision 只由 Core 安全提交边界决定。临时文件清理/DB 原子性仍是 P13 runtime 验收。 |
-| `AC-RETRY-001` | `GetTaskProjection` / snapshot | 同 Run 的失败状态与上游有效 Step 可投影；P11 §5.1–§5.2 限制网络重试并复用有效上游，不增加 wire 重跑命令。 |
+| `AC-RETRY-001` | `TaskProjection.tasks[].steps[]` / snapshot | 同 Run 的失败 Step、稳定错误码/安全消息与各 attempt 的 `retry_no` 可查询；P11 §5.1–§5.2 限制网络重试并复用有效上游，不增加 wire 重跑命令。 |
 | `AC-RETRY-002` | `RetryFailedTargets` + key；新 Run snapshot | 新建只含失败 Page 的 Run，原 Run 历史保留；同键重放返回既有 child，异 fingerprint 拒绝。 |
 | `AC-PROGRESS-001` | 不依赖新增 wire | 固定底部 `TaskProgressPanel` 是 P14 UI 要求；新 wire 不改变 UI 布局或以弹窗替代。 |
-| `AC-PROGRESS-002` | `GetTaskProjection` | 投影字段承载任务名、百分比、Step、Page、完成/失败/阻塞/跳过/等待统计与 controls。 |
+| `AC-PROGRESS-002` | `GetTaskProjection` | 投影字段承载任务名、百分比、Step、Page、完成/失败/阻塞/跳过/等待统计与 controls；P11 要求的错误/重试与可得执行详情也在同一只读 projection。 |
 | `AC-PROGRESS-003` | `current_page_id` + `CurrentPageStepChanged` | 提供 PageList 定位所需当前 Page ID；滚动动作仍由 P14。 |
 | `AC-PROGRESS-004` | `rows[].status/error_code`、failed count | 提供失败 Page 集合供 UI 筛选；筛选交互仍由 P14。 |
 | `AC-PROGRESS-005` | `rows[].status`、completed/skipped counts | 提供已完成/跳过 Page 集合；展示与筛选交互仍由 P14。 |
@@ -48,4 +48,4 @@
 
 ## 覆盖结论
 
-D08 五组共 18 条 AC 均有 wire carrier 或明确的 P14 UI/Core 持久化责任边界；其中 UI-only 的 `AC-PAUSE-001` 时限和 `AC-PROGRESS-001` 固定布局不被谎称为 IPC 能保证。契约没有新增用户可见操作或降低阈值。以上是静态契约对照，不是运行验证；P13 的 runtime 与全部产品验收仍待实现和测试。
+D08 五组共 18 条 AC 均有 wire carrier 或明确的 P14 UI/Core 持久化责任边界；其中 UI-only 的 `AC-PAUSE-001` 时限和 `AC-PROGRESS-001` 固定布局不被谎称为 IPC 能保证。P11 §7.2 的 error/retry 与可得执行详情由冻结的 `TaskProjection.tasks[].steps[]` 承载；未知执行事实为 `null`，不得猜测。契约没有新增用户可见操作或降低阈值。以上是静态契约对照，不是运行验证；P13 的 runtime 与全部产品验收仍待实现和测试。

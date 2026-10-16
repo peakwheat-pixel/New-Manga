@@ -1,6 +1,6 @@
 > **内部生命周期窄注记（2026-10-07，M2-DERIVED-GC-2 实现；零 wire 修订，协议 major/minor 不变）**：M2-DERIVED-GC-2 在专用 resource catalog 内引入 `preview_lifecycle` 来源行与 `preview_namespace` 绑定行，并给宿主→channel 的**内部** `revoke_resource` 控制请求加了受信 `retire_preview` 布尔位（CoreChannel 轮换专用方法；channel 仅在其自身 revoke 成功后据此把已登记自有 preview 行的 `retired` 置 1）。这些都是 host↔sidecar 控制面/SQLite 元数据内部实现：**不新增任何 Tauri IPC 命令、不改 WebView payload/ACL/十五条生产命令表、不发 `source_artifact_revision_id`/`producer_root` 等来源字段到 WebView、不改 issue/resolve/touch/revoke/TTL 的既有语义**（失败撤销新 key 与 WebView `revoke_resource_refs` 均不携带该位）。preview 回收（retired 副本删除）只发生在受 namespace 租约保护的独占启动窗口，见 [M2_DERIVED_PREVIEW_GC_DESIGN.md](M2_DERIVED_PREVIEW_GC_DESIGN.md)。
 
-> **rev 2.0（2026-10-16，P13-C1 Runtime IPC 授权修订）**：冻结 Run 命令、幂等键、快照/投影查询与 Run 状态事件 wire 面；`StartRun.idempotency_key` 为必填，且 stdio 输出流增加异步事件，因此按 §3.2 将协议 major 从 1 提升到 2。修订范围：§3、§4、§5 Run catalog、§5.5、§6.2、§11、§12。既有命令的 payload/result/error 语义不变；旧 major 客户端不能调用 major 2 endpoint，兼容影响见 [P13-C1 compatibility note](../../verification/P13-C1/compatibility-impact.md)。明确授权已释放的 P13 Task 实现 Python IPC Runtime，边界见 §12；本修订自身不代表 runtime 已实现。
+> **rev 2.0（2026-10-16，P13-C1 Runtime IPC 授权修订）**：冻结 Run 命令、幂等键、快照/投影查询与 Run 状态事件 wire 面；`StartRun.idempotency_key` 为必填，且 stdio 输出流增加异步事件，因此按 §3.2 将协议 major 从 1 提升到 2。修订范围：§3、§4、§5 Run catalog、§5.5、§6.1、§6.2、§11、§12。Restart 重放响应可表达 child Run 当前状态；TaskProjection 冻结错误/重试与可得 Provider/Model/Device 字段。既有命令的 payload/result/error 语义不变；旧 major 客户端不能调用 major 2 endpoint，兼容影响见 [P13-C1 compatibility note](../../verification/P13-C1/compatibility-impact.md)。明确授权已释放的 P13 Task 实现 Python IPC Runtime，边界见 §12；本修订自身不代表 runtime 已实现。
 
 > **rev 1.8（2026-10-07，M2-PAGE-NAV-PROJECTION-1 授权增量）**：新增 `list_chapters` / `list_chapter_pages`（页导航读取面第一刀），协议 minor 5→6（commands added 惯例）；`{book_id}` → `{"chapters": [{chapter_id, title, chapter_number, sort_order}]}`、`{chapter_id}` → `{"pages": [{page_id, source_filename, sort_order}]}`，均按 `sort_order` 升序；**零新错误码**——未知 book_id/chapter_id 返回空数组（fail-soft，1.4 r1 P3-4 先例），payload 校验 → `INVALID_REQUEST` 复用。本增量优先于下方目录中同能力的 PROPOSAL 状态（`ListChapters` 行转冻结）；既有 rev 1.7 及更早命令语义不变。
 
@@ -14,7 +14,7 @@
 
 ## Revision history
 
-- `2.0`（P13-C1，2026-10-16）：**授权契约修订**——① `StartRun` 增加必填 `idempotency_key`，并冻结 `ControlRun`、`ResumeBlockedRun`、`GetRunSnapshot`、`GetTaskProjection`、`RetryFailedTargets` 的 request/result；同键同 fingerprint 返回原 Run，同键不同 fingerprint 返回 `IDEMPOTENCY_KEY_REUSED`；`request_id` 保持纯请求关联用途；②按 P11 §4.2/§4.5 冻结控制动作与完整非法转换拒绝表；③冻结 Task failure / Run pause / Run completion / current Page·Step changed 事件，事件在持久状态提交后经现有 JSONL stdio stream 推送，快照仍为真值；④协议 major `1→2`，因为新必填字段和响应/事件混合输出不能按 §3.2 minor widening；既有命令字段、结果、错误语义不变，但 1.x 客户端必须升级至 2.0 后才可连接该 endpoint；⑤**明确授权** P13 Task 实现 Python IPC Runtime，范围与 allowlist 由 P13 Task 冻结；不授权 React/Tauri/Rust 改动、其他产品功能或依赖。实现状态仍为 `NOT_IMPLEMENTED`。
+- `2.0`（P13-C1，2026-10-16）：**授权契约修订**——① `StartRun` 增加必填 `idempotency_key`，并冻结 `ControlRun`、`ResumeBlockedRun`、`GetRunSnapshot`、`GetTaskProjection`、`RetryFailedTargets` 的 request/result；同键同 fingerprint 返回原 Run，同键不同 fingerprint 返回 `IDEMPOTENCY_KEY_REUSED`；restart 重放还返回 child 当前状态；`request_id` 保持纯请求关联用途；②按 P11 §4.2/§4.5 冻结控制动作与完整非法转换拒绝表；③冻结 `TaskProjection` 的任务错误/重试、可得 Provider/Model/Device 字段，以及 Task failure / Run pause / Run completion / current Page·Step changed 事件；事件在持久状态提交后经现有 JSONL stdio stream 推送，快照仍为真值；④协议 major `1→2`，因为新必填字段和响应/事件混合输出不能按 §3.2 minor widening；既有命令字段、结果、错误语义不变，但 1.x 客户端必须升级至 2.0 后才可连接该 endpoint；⑤**明确授权** P13 Task 实现 Python IPC Runtime，范围与 allowlist 由 P13 Task 冻结；不授权 React/Tauri/Rust 改动、其他产品功能或依赖。实现状态仍为 `NOT_IMPLEMENTED`。
 - `1.8`（M2-PAGE-NAV-PROJECTION-1，2026-10-07）：**授权契约修订（新命令，协议 minor 5→6）**（[Task](../tasks/M2-PAGE-NAV-PROJECTION-1.md)，用户 2026-10-07 持续自治授权 STATUS 主路径候选①第二刀）——§5 新增 `ListChapters` / `ListChapterPages` 两行（原 §5 PROPOSAL 组合行的 `ListChapters` 转冻结；`ListChapterPages` 为新名，避开 `GetReaderProjection` 的 ReaderProjection 大对象）：①wire `list_chapters`：`{book_id}` → `{"chapters": [{chapter_id, title, chapter_number, sort_order}]}`（result 包装对象沿 ListRegions 1.4 r1 P1-1 先例）；②wire `list_chapter_pages`：`{chapter_id}` → `{"pages": [{page_id, source_filename, sort_order}]}`（导航摘要行——managed_original_ref/宽高/锁态不在本刀，几何与页尺寸由 `list_regions` 面承载，页图经 `resolve_page_resource` 通道获取）；③排序语义冻结：两命令均按 `sort_order` 升序（D03 AC-PAGE-001 用户当前排序；repository 既有 `list_chapters`/`list_pages` 已 ORDER BY sort_order，Core 透传不加新查询方法）；④**零新错误码**：未知 book_id/chapter_id 返回空数组（沿 1.4 r1 P3-4「不存在的父 id 归类空列表」先例——缺失父是空数据不是错误），payload 校验 → `INVALID_REQUEST`（validation）复用；⑤协议 minor 5→6（commands added 惯例，RC-4/1.7 先例）；⑥Rust 命令面 13→15 生产命令（新生产-only 组 `PAGE_NAV_PRODUCTION_ONLY_COMMANDS`，probe/AC1 冻结面零变化——option-B 先例）；⑦`GetReaderProjection` 冻结不变（Reader 页 display mode/进度面不在本刀）；不改变 §5.2 纯 UI 动作边界（book/chapter 下钻选择是 React 本地状态，Core 无写路径）；§10 通道语义零变化。
 - `1.7`（M2-PAGE-RESOURCE-RESOLVE-1，2026-10-07）：**授权契约修订（新命令，协议 minor 4→5）**（[Task](../tasks/M2-PAGE-RESOURCE-RESOLVE-1.md)，用户 2026-10-07 持续自治授权 STATUS 主路径候选①第一刀）——§5 新增 `ResolvePageResource` 行（wire `resolve_page_resource`）：①请求 `{page_id}` → result `{resource_id, revision}`；②Core 侧经装配期 `read_original_page` 同款 storage 缝解析 `Page.managed_original_ref`（Managed Copy 根逃逸检查；wire 不携带路径与新业务身份，只返回不透明目录键）；③发布语义复用 RC-4 preview 先例（derived 只读根 + `ResourceCatalogStore` 登记，scope `derived-read-only`，temp+fsync+replace+逃逸门同款）；④**确定性资源键 `page-original-{page_id}`**：managed 原图不可变 → 首次解析发布、后续解析为目录查找返回同键（幂等，零重复产物；`revision` 恒为不透明字面量 `"original"`，Python 侧两分支共用 `ORIGINAL_REVISION` 常量；目录命中以产物存活为条件——derived 缓存被清后同键重发布自愈，byte-for-byte 确定性使幂等语义不变）——与 preview 的每次随机键轮换语义 deliberate 不同；⑤新错误码 `PAGE_NOT_FOUND`（not_found；页面不存在或无 managed 原图——与 region 面的 `TARGET_NOT_FOUND` 族区分，不靠 message 文本区分码）；`INVALID_REQUEST`（payload 校验）复用既有码；`ARTIFACT_WRITE_FAILED`（internal，retryable，发布 OSError）沿 RC4-08 拆分先例；⑥协议 minor 4→5（commands added 惯例，RC-4 先例）；⑦Rust 命令面 12→13 生产命令（生产-only 组 `PAGE_RESOLVE_PRODUCTION_ONLY_COMMANDS`，probe/AC1 冻结面零变化——option-B 先例）；host 侧**不**走 preview 轮换（稳定目录键不得被 per-page revoke 删除）；⑧不改变 §5.2 纯 UI 动作边界（页选择仍是 React 本地状态）；§10 通道语义零变化。
 - `1.6`（RC-4，2026-10-07）：三条新域命令、DTO 与保护语义见 [冻结增量](M2-RC4_DOMAIN_COMMANDS.md)，minor 3→4；其余已实现命令语义不变。
@@ -168,25 +168,25 @@ DTO 与幂等语义：
 - `RunAccepted = {run_id: RunId, status: PipelineRunStatus}`。新 Run 的首次成功响应 `status="pending"`；同键重放返回该 Run 当前状态。响应只能在 §2.2 所列 Run、幂等记录、固定顺序的目标及执行快照作为同一持久化事务提交后发送。事务提交前失败必须返回错误；提交后响应丢失时，同键重放须找回原 Run。
 - `idempotency_key` 是调用方生成的 opaque string，在同一 Core 数据库中跨创建 Run 操作唯一并随 Run History 保留。`StartRun` 与 `RetryFailedTargets` 必填；`ControlRun(action="restart")` 必填；其他 `ControlRun` 动作及 `ResumeBlockedRun` 不得传入该字段。新键尝试一次 durable acceptance；同键同 fingerprint 返回同一 `run_id` 和当前状态，不重新展开目标或重取快照；同键异 fingerprint 返回 `IDEMPOTENCY_KEY_REUSED`，不改写原 Run；同内容不同键创建独立 Run。`request_id` 不参与 fingerprint 或去重。
 - fingerprint 输入依 P11 §2.1：操作类型（含 `PipelineCommand`）、规范化 scope（含显式目标及顺序）、适用时的来源 Run、用户执行选项（`overrides`）。它不含首次接受时才读取并冻结的当前 Revision、Lock、settings、Provider、constraint、context 或展开后的目标结果。`RetryFailedTargets` 的 fingerprint 包含来源 Run 与其冻结的失败 Page 集合；`restart` 的 fingerprint 包含被处置的 Interrupted Run。
-- `ControlResult = {run_id: RunId, status: PipelineRunStatus, new_run_id?: RunId}`。`run_id/status` 指被请求的原 Run；仅 `restart` 返回 child `new_run_id`，其初始状态按 P11 为 `pending`，原 Run 保持 `interrupted`。同键 restart 重放返回同一 child Run，旧 Run disposition 与 child Run 必须原子持久化。成功控制响应中的 `status` 是响应时 Core 权威状态；pause/stop 请求已持久化但尚未到安全边界时仍可为 `running`。
+- `ControlResult = {run_id: RunId, status: PipelineRunStatus, new_run_id?: RunId, new_run_status?: PipelineRunStatus}`。`run_id/status` 始终指被请求的原 Run；仅 `restart` 返回 `new_run_id` 与 `new_run_status`。首次接受时 child 状态为 `pending`；同键重放返回同一 child 的当前状态。原 Run 保持 `interrupted`，旧 Run disposition 与 child Run 必须原子持久化。其他动作不得返回两个 `new_run_*` 字段。成功控制响应中的状态是响应时 Core 权威状态；pause/stop 请求已持久化但尚未到安全边界时原 Run 仍可为 `running`。
 - `RunSnapshot` 是只读的 Core 持久 Run 视图，至少含 `{run_id, command, scope, status, targets: [{target_id, target_type, order}], source_run_id?, retry_reason?}`。`targets` 是接受时冻结且有序的成员，不随当前 UI selection 变化；不得在该 DTO 中暴露凭据、secret 或本地绝对路径。它不是恢复真值的替代品；Core 仍以完整持久 Run/Task/StepRun 与执行快照恢复。
-- `GetTaskProjection` 返回 §6.1 的只读 `TaskProjection`。统计、Page rows、current Page / Step 与 controls 必须由同一权威 Run/Task 数据源生成，PageList 不得另行查询或重算另一份状态。
+- `GetTaskProjection` 返回 §6.1 冻结的只读 `TaskProjection`。统计、Page rows、Task/Step 详情、current Page / Step 与 controls 必须由同一权威 Run/Task/StepRun 数据源生成，PageList 不得另行查询或重算另一份状态。
 - `RetryFailedTargets` 只接受 `completed_with_failures` 且至少含一个失败 Page 的 Run；新 Run 只冻结该来源 Run 的失败 Page，写入 `source_run_id` / `retry_reason="retry_failed_targets"`，源 Run 与其历史不变。没有失败 Page 复用 `TARGET_NOT_FOUND`；状态不合法使用 `INVALID_RUN_TRANSITION`。
 
 Control 与恢复状态矩阵（完整枚举来自 P11 §4.2/§4.5；未列为合法的动作均拒绝且不得有副作用）：
 
-| 请求时的 Run 状态 | 合法 Core/IPC 操作 | 状态结果与边界 |
-|---|---|---|
-| `Pending` | scheduler start；`ControlRun(stop)` | scheduler start → `running`；stop → `cancelled`，未开始 Task 转 `cancelled`。`pause`、`continue`、`restart`、`abandon`、`ResumeBlockedRun`、`RetryFailedTargets` 均拒绝。 |
-| `Running` | `ControlRun(pause)`、`ControlRun(stop)`；仅启动恢复可标记 `interrupted` | pause 先持久化请求，当前不可安全中断的 Step 可完成，到安全边界后不再开始下一 Step 并转 `paused`；stop 先持久化请求，停止剩余工作并转 `cancelled`，已提交成果保留。 |
-| `Paused` | `ControlRun(continue)`、`ControlRun(stop)` | continue → `running`，使用原接受快照从首个未完成/stale Step 继续；stop → `cancelled`。 |
-| `Blocked` | `ResumeBlockedRun`、`ControlRun(stop)` | 条件解除且重新规划成功后 Resume → `pending`；否则拒绝且无副作用。stop → `cancelled`。 |
-| `Interrupted` 且无处置 disposition | `ControlRun(continue)`、`ControlRun(restart)`、`ControlRun(abandon)` | continue 校验后同 Run → `running`；restart 原 Run 保持 `interrupted` 且标记 restarted，原子创建 `pending` child；abandon 原 Run → `cancelled` 并记录 abandonment，不建 child、不回滚成果。 |
-| `Interrupted` 且 disposition=`restarted` | 仅用原 restart key/fingerprint 重放并取回既有 child Run | 新的 continue/restart/abandon 均拒绝；不得重复创建 child。 |
-| `Completed` | 无 | 全部控制、恢复、启动及失败目标重试均拒绝。 |
-| `CompletedWithFailures` | `RetryFailedTargets` | 原 Run 不变；新 `pending` Run 只含失败 Page。全部控制、恢复、原 Run 重启或再次执行均拒绝。 |
-| `Failed` | 无 | 全部控制、恢复、启动及失败目标重试均拒绝；新尝试须显式 `StartRun`。 |
-| `Cancelled` | 无 | 全部控制、恢复、启动及失败目标重试均拒绝；不得复活已取消 Run。 |
+| 请求时的 Run 状态 | 合法 Core/IPC 操作 | 必须拒绝的操作 | 状态结果与边界 |
+|---|---|---|---|
+| `Pending` | scheduler start；`ControlRun(stop)` | `pause`、`continue`、`restart`、`abandon`、`ResumeBlockedRun`、`RetryFailedTargets`、恢复扫描改写 | scheduler start → `running`；stop → `cancelled`，未开始 Task 转 `cancelled`。 |
+| `Running` | `ControlRun(pause)`、`ControlRun(stop)`；仅启动恢复可标记 `interrupted` | `continue`、`restart`、`abandon`、`ResumeBlockedRun`、`RetryFailedTargets`、第二次 scheduler start | pause 先持久化请求，当前不可安全中断的 Step 可完成，到安全边界后不再开始下一 Step 并转 `paused`；stop 先持久化请求，停止剩余工作并转 `cancelled`，已提交成果保留。 |
+| `Paused` | `ControlRun(continue)`、`ControlRun(stop)` | 再次 `pause`、`restart`、`abandon`、`ResumeBlockedRun`、`RetryFailedTargets`、崩溃恢复改写 | continue → `running`，使用原接受快照从首个未完成/stale Step 继续；stop → `cancelled`。 |
+| `Blocked` | 条件解除且重新规划成功后的 `ResumeBlockedRun`；`ControlRun(stop)` | `pause`、`continue`、`restart`、`abandon`、`RetryFailedTargets`、直接执行未重新规划的旧计划 | Resume 成功 → `pending`；条件未解除或重新规划失败时拒绝且无副作用。stop → `cancelled`。 |
+| `Interrupted` 且无处置 disposition | `ControlRun(continue)`、`ControlRun(restart)`、`ControlRun(abandon)` | `pause`、`stop`、普通 scheduler start、`ResumeBlockedRun`、`RetryFailedTargets` | continue 校验后同 Run → `running`；restart 原 Run 保持 `interrupted` 且标记 restarted，原子创建 `pending` child；abandon 原 Run → `cancelled` 并记录 abandonment，不建 child、不回滚成果。 |
+| `Interrupted` 且 disposition=`restarted` | 仅用原 restart key/fingerprint 重放并取回既有 child Run | 新的 `continue`、`restart`、`abandon`、`pause`、`stop`、普通 scheduler start、`ResumeBlockedRun`、`RetryFailedTargets` | 不得重复创建 child；原 Run 保持 `interrupted`。 |
+| `Completed` | 无 | 对该 Run 的所有控制、恢复、再次启动/执行与 `RetryFailedTargets` | 终态不变；独立的新 `StartRun` 仍可创建另一个 Run。 |
+| `CompletedWithFailures` | `RetryFailedTargets` | 对该 Run 的所有控制、恢复、restart 或再次执行 | 原 Run 不变；新 `pending` Run 只含失败 Page。 |
+| `Failed` | 无 | 对该 Run 的所有控制、恢复、再次启动/执行与 `RetryFailedTargets` | 终态不变；新尝试必须显式 `StartRun` 创建另一 Run。 |
+| `Cancelled` | 无 | 对该 Run 的所有控制、恢复、再次启动/执行与 `RetryFailedTargets` | 终态不变；不得复活已取消 Run；新 Run 必须通过新的 `StartRun` 创建。 |
 
 - 对任一状态：未知 `ControlRun.action` 或 payload 不合法返回 `INVALID_REQUEST`（`validation`）；已知操作在当前状态非法、blocked 条件未满足、restart disposition 不符或 retry 状态门不符，返回 `INVALID_RUN_TRANSITION`（`conflict`，`retryable=false`）；Run 不存在返回既有 `TARGET_NOT_FOUND`（`not_found`）；幂等键复用冲突返回 `IDEMPOTENCY_KEY_REUSED`（`conflict`）。错误响应 `result=null`；拒绝不得改写 Run、Task、StepRun、current Revision 或历史。
 - scheduler start 与 startup recovery 是 Core 内部生命周期，不是客户端可伪造的 `ControlRun` action。startup recovery 只可在 P11 §6.1 的旧 scheduler owner 已确认退出后处理原 `running` Run。
@@ -298,7 +298,7 @@ Core 必须验证 command/scope 配对；Task contract 不授权新增命令类�
 
 ### 6.1 Task projection
 
-**PROPOSAL — wire DTO。** 下列 `TaskProjection` 是候选传输形状，不是现有 DTO 的逐字段序列化，也不代表 IPC 已实现。AS-IS 来源是 `application.tasks.projection.TaskProjection` 的扁平 dataclass 字段（包括 `extra: Mapping[str, str]`）；本 Proposal 将 page counts 归组到 `counts`、`can_*` 能力归组到 `controls`，把 tuple 序列化为数组，并把 `step_flow` 三元组表达为具名对象。除显式列出的结构重组外，源字段不得遗漏：
+**P13-C1 FROZEN — wire DTO。** 下列形状冻结 P13 的 Run 查询投影，但不表示 IPC 已实现。基础字段来自 `application.tasks.projection.TaskProjection`；page counts 归组到 `counts`、`can_*` 能力归组到 `controls`，tuple 编码为 JSON array，`step_flow` 三元组编码为具名对象。新增的 `tasks` / `steps` 暴露 P11 §7.2 所需的错误、retry 与可得执行详情；它们仍是同一权威 Run/Task/StepRun 投影，不是新的状态存储。
 
 ```text
 run_id: RunId
@@ -306,28 +306,56 @@ run_status: PipelineRunStatus
 run_title: string
 overall_progress: number             # 0..1，terminal/planned step units
 current_page_id: PageId | null
-current_step_type: string
+current_step_type: string             # 无当前 Step 时为空字符串
 step_flow: StepFlowItem[]             # {type,label,state}
 rows: PageProjectionRow[]
-counts: {total,completed,failed,skipped,blocked,waiting,processing}
+tasks: TaskProjectionTask[]
+counts: {total: integer, completed: integer, failed: integer, skipped: integer,
+         blocked: integer, waiting: integer, processing: integer}
 blocked_reasons: string[]
-controls: {can_pause,can_stop,can_continue,can_restart,can_abandon,can_retry_failed}
+controls: {can_pause: boolean, can_stop: boolean, can_continue: boolean,
+           can_restart: boolean, can_abandon: boolean, can_retry_failed: boolean}
 extra: Record<string, string>
+
+PageProjectionRow = {
+  page_id: PageId, page_order: integer, filename: string,
+  status: PageProjectionStatus, is_locked: boolean,
+  is_pipeline_current: boolean, error_code: string | null
+}
+PageProjectionStatus = waiting | processing | completed | failed | blocked | skipped
+StepFlowItem = {type: string, label: string,
+                state: pending | running | completed | failed | skipped}
+TaskProjectionTask = {
+  task_id: string, page_id: PageId, status: PipelineTaskStatus,
+  error_code: string | null, error_message: string | null,
+  steps: TaskProjectionStep[]
+}
+TaskProjectionStep = {
+  step_run_id: string, step_type: string, status: StepRunStatus,
+  retry_no: integer, error_code: string | null, error_message: string | null,
+  provider: string | null, model: string | null, device: string | null
+}
 ```
 
-字段映射（左侧为 AS-IS dataclass，右侧为本节 PROPOSAL wire DTO）：
+`PipelineRunStatus`、`PipelineTaskStatus`、`StepRunStatus` 分别复用领域枚举的现有 wire 值。其值域为：Run `pending | running | paused | blocked | completed | completed_with_failures | failed | cancelled | interrupted`；Task `pending | running | completed | failed | blocked | skipped | cancelled | interrupted`；StepRun `pending | running | completed | failed | cancelled | interrupted`。这些 status 域互不替代。`overall_progress` 在无 planned step units 时为 `0`，否则是 terminal/planned step units 比值；counts 为非负整数。`rows` 按 `page_order` 升序、`page_id` 次序稳定打破并列；`tasks` 保持其 Run 内顺序，每个 Task 的 `steps` 保持 StepRun 创建顺序。`blocked_reasons` 只列权威投影中可得的阻塞原因，没有已知原因时为空数组。`controls` 只提示 P11 状态矩阵下动作是否可用，Core 仍须在命令边界重新验证。`extra` 保留既有 string map，不赋予新的业务语义。
 
-| AS-IS flat field(s) | PROPOSAL wire field | Mapping |
+字段映射（左侧为 AS-IS dataclass，右侧为冻结 wire DTO）：
+
+| AS-IS flat field(s) | Frozen wire field | Mapping |
 |---|---|---|
-| `run_id`, `run_status`, `run_title`, `overall_progress`, `current_page_id`, `current_step_type` | 同名字段 | 原样保留字段语义；wire scalar encoding 仍需由 runtime contract 定义。 |
-| `step_flow: tuple[tuple[str, str, str], ...]` | `step_flow: StepFlowItem[]` | 每个 `(type, label, state)` tuple 改写为 `{type, label, state}` 对象。 |
-| `rows: tuple[PageProjectionRow, ...]` | `rows: PageProjectionRow[]` | tuple 序列化为数组；行字段为 `page_id`, `page_order`, `filename`, `status`, `is_locked`, `is_pipeline_current`, `error_code?`。 |
+| `run_id`, `run_status`, `run_title`, `overall_progress`, `current_page_id`, `current_step_type` | 同名字段 | 字符串/数值/nullable scalar 原样编码；无当前 Step 时为空字符串。 |
+| `step_flow: tuple[tuple[str, str, str], ...]` | `step_flow: StepFlowItem[]` | 每个 `(type, label, state)` tuple 改写为 `{type, label, state}` 对象；`state` 使用上方闭集。 |
+| `rows: tuple[PageProjectionRow, ...]` | `rows: PageProjectionRow[]` | tuple 序列化为数组；完整行字段和 Page status 闭集见上方 DTO。无 error code 编码为 `null`。 |
+| `PipelineRun.tasks` 与各 `PipelineTask` | `tasks: TaskProjectionTask[]` | 每个 Task 投影其 task/page ID、Task status、错误码/安全短消息及其 StepRun 明细；不得从另一查询源拼接。 |
+| `PipelineTask.step_run_ids` / `PipelineRun.step_runs` | `TaskProjectionTask.steps: TaskProjectionStep[]` | 按所属 Task 取回已持久 StepRun；透传 `retry_no` 与状态；错误消息须符合 §8 安全短消息要求。 |
+| 冻结 Provider binding / 可得 StepRun 执行 provenance | `provider`, `model`, `device` | 各为可空字符串；只返回本 Run 的权威冻结绑定或已记录的实际执行值。没有可核实值为 `null`，不得从当前全局设置推断或伪造。 |
+| `PipelineTask.error_code/error_detail`, `StepRun.error_code/error_detail` | 各自 `error_code/error_message` | `error_code` 保留稳定码；`error_message` 只允许 §8 的安全短消息，不得直出原始 `error_detail`、异常栈、路径或 secret；无安全消息时 `null`。 |
 | `total_page_count`, `completed_page_count`, `failed_page_count`, `skipped_page_count`, `blocked_page_count`, `waiting_page_count`, `processing_page_count` | `counts: {total, completed, failed, skipped, blocked, waiting, processing}` | 仅分组与缩短 wire key；逐项分别对应上述 count 字段。 |
 | `blocked_reasons: tuple[str, ...]` | `blocked_reasons: string[]` | tuple 序列化为数组。 |
-| `can_pause`, `can_stop`, `can_continue`, `can_restart`, `can_abandon`, `can_retry_failed` | `controls: {can_pause, can_stop, can_continue, can_restart, can_abandon, can_retry_failed}` | 嵌套分组；逐项同名映射。 |
+| `can_pause`, `can_stop`, `can_continue`, `can_restart`, `can_abandon`, `can_retry_failed` | `controls: {can_pause, can_stop, can_continue, can_restart, can_abandon, can_retry_failed}` | 嵌套分组；逐项同名映射；值须与 §5.5 合法动作矩阵一致。 |
 | `extra: Mapping[str, str]` | `extra: Record<string, string>` | 保留额外字符串键值；序列化为 JSON object。 |
 
-Progress 分母/分子使用 step units；不得换成已处理页数/总页数。页面优先级为 `failed > processing > blocked > completed > skipped > waiting`；此优先级是 Page row 归并，不改变 Run `status`。
+`retry_no` 是所属 Step 的零起始 retry ordinal（`0` 为首次 attempt）；每次真实重试有独立 StepRun，先前失败 StepRun 保留。Progress 分母/分子使用 step units；不得换成已处理页数/总页数。页面优先级为 `failed > processing > blocked > completed > skipped > waiting`；此优先级是 Page row 归并，不改变 Run `status`。Provider / Model / Device 缺值只表示当前持久记录没有可验证真值，不代表产品选择或执行 fallback。执行详情不得包含 Provider endpoint URL、credential、secret、异常栈或本地绝对路径。
 
 ### 6.2 Event catalog
 
@@ -336,7 +364,7 @@ Progress 分母/分子使用 step units；不得换成已处理页数/总页数�
 | Event | Payload | Evidence level |
 |---|---|---|
 | `RunStatusChanged` | `{run_id, status: PipelineRunStatus, changed_at}` | 状态失效通知；Run runtime event 未实现。 |
-| `RunProgressChanged` | `{run_id, projection: TaskProjection}` | 当前 Qt VM 用 timer refresh projection 并 emit `taskProgressChanged`；IPC event 未实现。可在实现中改为 revision/cursor 失效通知，但须保留可重取快照。 |
+| `RunProgressChanged` | `{run_id, projection: TaskProjection}` | **UNKNOWN / PROPOSAL**；本修订不冻结此普通进度推送事件。调用方可重新查询 `GetTaskProjection`；普通百分比刷新目标和四类立即事件见本节末尾及 P11 §7.3。 |
 | `RunFinished` | `{run_id, final_status}` | 当前 RunController/VM 有 finished 信号；IPC event 未实现。 |
 | `RunCrashed` | `{run_id, error: ErrorEnvelope}` | 当前 UI crash signal 只有 text；将结构化错误带入 IPC 是 Proposal，现存 crash 未映射到稳定业务 code。 |
 | `TaskFailed` | `{run_id, task_id, page_id?, error_code?}` | **P13-C1 frozen minimum**；在失败 Task 状态持久化后立即推送。 |
@@ -348,7 +376,7 @@ Progress 分母/分子使用 step units；不得换成已处理页数/总页数�
 
 P13-C1 的四类事件为 §3 `Event<T>` envelope 内的 unrequested messages；它们与 `Response<T>` 共用现有 Python Core stdio JSONL stream：每条 stdout line 是一个完整 Request、Response 或 Event JSON object，Response 以 `request_id` 配对，Event 以 `event_id` 识别；事件可与请求响应交错，Core 必须串行化写出完整行。stdout 只承载协议行，诊断继续写 stderr。没有单独的事件 subscribe 命令。
 
-普通进度更新目标为最多约 4 Hz；上述四类重要事件在对应持久状态/投影变更提交后立即推送，不因普通进度节流而延迟。Event 是提示与失效通知，不是状态真值；不承诺至少一次/至多一次、顺序号、重放或重连送达。连接恢复后，客户端必须重新调用 `GetRunSnapshot` / `GetTaskProjection`；不得从事件自行重建持久状态。当前 Qt signal 名称不是 wire contract，未来不得以 QVariant/QObject 对象作为消息类型。
+普通百分比投影刷新目标为最多约 4 Hz；调用方使用 `GetTaskProjection` 读取当前投影。上述四类重要事件在对应持久状态/投影变更提交后立即推送，不因普通进度节流而延迟。Event 是提示与失效通知，不是状态真值；不承诺至少一次/至多一次、顺序号、重放或重连送达。连接恢复后，客户端必须重新调用 `GetRunSnapshot` / `GetTaskProjection`；不得从事件自行重建持久状态。当前 Qt signal 名称不是 wire contract，未来不得以 QVariant/QObject 对象作为消息类型。
 
 ## 7. Lifecycle、断线与恢复
 
@@ -478,6 +506,6 @@ The UI mapping decision does not block freezing a transport-level Page status di
 
 ## 12. Release boundary
 
-本节由 P13-C1 修订，**明确授权 Python IPC Runtime 实现**：已释放的 P13 Task 可按本契约实现 §5.5 Run handlers、durable idempotency/control/query、§6.2 JSONL event 输出，并在其已冻结 allowlist 内接入 `src/application/tasks/**`、`src/bootstrap/core_service.py`、`src/bootstrap/core_assembly.py`、`src/infrastructure/sqlite/pipeline.py`（含确需 migration）、provider retry/runtime seams 与 `tests/core/**`。该授权只给 P13 Task 所列的 Python Core 路径与验收范围；P13-C1 本身仍是文档 Task，不授权本次实现代码。
+本节由 P13-C1 修订，**明确授权 Python IPC Runtime 实现**：已释放的 P13 Task 可按本契约实现 §5.5 Run handlers、durable idempotency/control/query、§6.1 TaskProjection 查询、§6.2 JSONL event 输出，并在其已冻结 allowlist 内接入 `src/application/tasks/**`、`src/bootstrap/core_service.py`、`src/bootstrap/core_assembly.py`、`src/infrastructure/sqlite/pipeline.py`（含确需 migration）、provider retry/runtime seams 与 `tests/core/**`。该授权只给 P13 Task 所列的 Python Core 路径与验收范围；P13-C1 本身仍是文档 Task，不授权本次实现代码。
 
 本授权不包括 React/WebView、Tauri/Rust、QML、额外产品行为、其他 Schema/迁移路径或第三方依赖；也不代表任何 runtime 已实现或已验证。集成须遵守 P13 独立 Review、测试与 Coordinator Gate。既有非 Run 命令的 payload/result/error 语义保持原样。大媒体传输选择、M2-S1、其他 release boundary 与 integration 仍未授权。
