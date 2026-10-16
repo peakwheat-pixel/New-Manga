@@ -107,8 +107,8 @@ describe("<PageListPanel> three-level drill-down (M2-PAGE-NAV-PROJECTION-1)", ()
     // the selected-page highlight lands on exactly the current page's tile
     const tileMarkup = (testId: string) =>
       html.match(new RegExp(`<button[^>]*data-testid="${testId}"[^>]*>`))?.[0] ?? "";
-    expect(tileMarkup("page-tile-p-1")).toContain("background:#1c2430");
-    expect(tileMarkup("page-tile-p-2")).not.toContain("background:#1c2430");
+    expect(tileMarkup("page-tile-p-1")).toContain("background:#e8edff");
+    expect(tileMarkup("page-tile-p-2")).not.toContain("background:#e8edff");
     expect(html).not.toContain('data-testid="pages-busy"');
     expect(html).not.toContain('data-testid="pages-error"');
     expect(html).not.toContain('data-testid="page-nav-list-empty"');

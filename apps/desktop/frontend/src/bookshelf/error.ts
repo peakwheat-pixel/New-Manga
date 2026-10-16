@@ -107,6 +107,8 @@ const KNOWN_CODE_MAP: Record<
   },
 };
 
+const SAFE_ERROR_CODE = /^[A-Z][A-Z0-9_]{0,63}$/;
+
 export function parseSemanticError(
   rawError: unknown,
   defaultCode = "UNKNOWN_ERROR",
@@ -122,6 +124,10 @@ export function parseSemanticError(
       // If code is not present, use defaultCode, do NOT parse message text!
       code = defaultCode;
     }
+  }
+
+  if (!SAFE_ERROR_CODE.test(code)) {
+    code = SAFE_ERROR_CODE.test(defaultCode) ? defaultCode : "UNKNOWN_ERROR";
   }
 
   const mapped = KNOWN_CODE_MAP[code];

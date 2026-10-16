@@ -5,12 +5,14 @@
  * projections (`library_list_books` + `list_chapters` +
  * `list_chapter_pages`, contract M2-C1 rev 1.8 §5); a page click feeds
  * `onPageIdChange`, which drives the existing resolve -> image chain. The
- * page-id entry stays as the debug fallback. Drill-down data/loading state
+ * page-id entry stays as the known-page locator. Drill-down data/loading state
  * is owned by <WorkbenchPage>; expand/collapse is local UI state there too
  * (clicking the open book/chapter again collapses it).
  */
 
 import type { BookSummary, ChapterNavSummary, PageNavSummary } from "../library/types";
+import type { TaskProjection } from "./client";
+import { DisabledFeature } from "./DisabledFeature";
 
 export interface PageListPanelProps {
   books: BookSummary[];
@@ -23,9 +25,16 @@ export interface PageListPanelProps {
   pagesBusy: boolean;
   pagesError: string | null;
   pageId: string;
-  onPageIdChange: (pageId: string) => void;
+  onPageIdChange: (pageId: string, modifiers?: { ctrlKey: boolean; shiftKey: boolean }) => void;
+  onPageSelect?: (pageId: string, modifiers?: { ctrlKey: boolean; shiftKey: boolean }) => void;
   onSelectBook: (bookId: string) => void;
   onSelectChapter: (chapterId: string) => void;
+  selectedPageIds?: string[];
+  taskProjection?: TaskProjection | null;
+  pageFilter?: string | null;
+  booksBusy?: boolean;
+  booksError?: string | null;
+  onClearPageFilter?: () => void;
 }
 
 const listStyle = {
@@ -41,16 +50,16 @@ const tileStyle = (selected: boolean) =>
   ({
     width: "100%",
     textAlign: "left",
-    background: selected ? "#1c2430" : "transparent",
-    color: "#d8e0e8",
-    border: "1px solid #2a3038",
+    background: selected ? "#e8edff" : "transparent",
+    color: "#1f2328",
+    border: "1px solid #d9d9d6",
     borderRadius: 4,
     padding: "4px 6px",
     cursor: "pointer",
     fontSize: 12,
   }) as const;
 
-const noteStyle = { color: "#8a94a2", fontSize: 11 } as const;
+const noteStyle = { color: "#6b7280", fontSize: 11 } as const;
 
 export function PageListPanel({
   books,
@@ -64,38 +73,53 @@ export function PageListPanel({
   pagesError,
   pageId,
   onPageIdChange,
+  onPageSelect,
   onSelectBook,
   onSelectChapter,
+  selectedPageIds = [],
+  taskProjection = null,
+  pageFilter = null,
+  booksBusy = false,
+  booksError = null,
+  onClearPageFilter,
 }: PageListPanelProps) {
+  const projectedRows = taskProjection?.rows ?? [];
+  const visiblePages = pages.filter((page) => {
+    if (!pageFilter) return true;
+    const row = projectedRows.find((item) => item.page_id === page.page_id);
+    if (!row) return false;
+    return pageFilter === "waiting" ? row.status === "waiting" || row.status === "processing" : row.status === pageFilter;
+  });
   return (
     <section
       data-testid="page-list-panel"
       style={{
-        border: "1px solid #2a3038",
+        border: "1px solid #d9d9d6",
+        background: "#fff",
         borderRadius: 6,
         padding: 8,
+        width: 240,
         minWidth: 200,
+        maxWidth: 320,
+        flex: "0 0 240px",
+        overflow: "auto",
         display: "flex",
         flexDirection: "column",
         gap: 6,
       }}
     >
-      <h2 style={{ fontSize: 12, margin: 0, color: "#d8e0e8" }}>Pages</h2>
-      <label style={{ fontSize: 11, color: "#8a94a2", display: "flex", flexDirection: "column", gap: 2 }}>
-        page_id (region read channel)
+      <h2 style={{ fontSize: 13, margin: 0, color: "#1f2328" }}>{selectedChapterId ? "页面列表" : "选择作品与章节"}</h2>
+      <DisabledFeature id="gap-g14-page-order" label="拖动调整页序" reason="页序写入 wire 尚未冻结，页面顺序保持 Core 投影结果。" />
+      <DisabledFeature id="gap-g18-page-thumbnails" label="页面缩略图" reason="当前只有原图资源通道，低清缩略图能力尚未接入。" />
+      <label style={{ fontSize: 11, color: "#6b7280", display: "flex", flexDirection: "column", gap: 2 }}>
+        按页面 ID 定位
         <input
           data-testid="page-id-input"
+          aria-label="按页面 ID 定位"
           value={pageId}
           onChange={(event) => onPageIdChange(event.target.value)}
-          placeholder="page id…"
-          style={{
-            background: "#101418",
-            color: "#d8e0e8",
-            border: "1px solid #2a3038",
-            borderRadius: 4,
-            padding: "3px 6px",
-            fontFamily: "Consolas, monospace",
-          }}
+          placeholder="输入已知页面 ID"
+          style={{ background: "#fff", color: "#1f2328", border: "1px solid #d9d9d6", borderRadius: 4, padding: "4px 6px", fontFamily: "ui-monospace, Consolas, monospace" }}
         />
       </label>
       <ul data-testid="book-list" style={listStyle}>
@@ -108,7 +132,7 @@ export function PageListPanel({
               style={tileStyle(book.book_id === selectedBookId)}
             >
               {book.title}
-              <span style={{ color: "#8a94a2", marginLeft: 6 }}>
+              <span style={{ color: "#6b7280", marginLeft: 6 }}>
                 ({book.page_count ?? "—"})
               </span>
             </button>
@@ -119,6 +143,8 @@ export function PageListPanel({
             no books
           </li>
         )}
+        {booksBusy && <li data-testid="books-busy" style={noteStyle}>正在读取作品…</li>}
+        {booksError && <li data-testid="books-error" role="alert" style={{ ...noteStyle, color: "#cf222e" }}>{booksError}</li>}
       </ul>
       {selectedBookId && (
         <ul data-testid="chapter-list" style={listStyle}>
@@ -141,7 +167,7 @@ export function PageListPanel({
             </li>
           )}
           {!chaptersBusy && chaptersError && (
-            <li data-testid="chapters-error" style={{ ...noteStyle, color: "#e8a0a0" }}>
+            <li data-testid="chapters-error" style={{ ...noteStyle, color: "#cf222e" }}>
               {chaptersError}
             </li>
           )}
@@ -153,34 +179,58 @@ export function PageListPanel({
         </ul>
       )}
       {selectedChapterId && (
-        <ul data-testid="page-nav-list" style={listStyle}>
-          {pages.map((page) => (
+        <ul
+          data-testid="page-nav-list"
+          style={listStyle}
+          onKeyDown={(event) => {
+            if (event.key !== "ArrowDown" && event.key !== "ArrowUp") return;
+            const buttons = Array.from(event.currentTarget.querySelectorAll<HTMLButtonElement>('button[data-testid^="page-tile-"]'));
+            const currentIndex = buttons.indexOf(event.currentTarget.ownerDocument.activeElement as HTMLButtonElement);
+            if (currentIndex < 0) return;
+            const nextIndex = Math.max(0, Math.min(visiblePages.length - 1, currentIndex + (event.key === "ArrowDown" ? 1 : -1)));
+            if (nextIndex === currentIndex) return;
+            event.preventDefault();
+            buttons[nextIndex].focus();
+            (onPageSelect ?? onPageIdChange)(visiblePages[nextIndex].page_id, { ctrlKey: false, shiftKey: false });
+          }}
+        >
+          {visiblePages.map((page) => {
+            const row = projectedRows.find((item) => item.page_id === page.page_id);
+            const selected = page.page_id === pageId.trim();
+            const included = selectedPageIds.includes(page.page_id);
+            return (
             <li key={page.page_id}>
               <button
                 data-testid={`page-tile-${page.page_id}`}
                 type="button"
-                onClick={() => onPageIdChange(page.page_id)}
-                style={tileStyle(page.page_id === pageId.trim())}
+                aria-pressed={included}
+                onClick={(event) => (onPageSelect ?? onPageIdChange)(page.page_id, { ctrlKey: event.ctrlKey || event.metaKey, shiftKey: event.shiftKey })}
+                style={{ ...tileStyle(selected), outline: included ? "2px solid #4f6bed" : undefined }}
               >
-                {page.source_filename}
+                <span style={{ display: "flex", justifyContent: "space-between", gap: 4 }}>
+                  <span>{page.source_filename}</span>
+                  <span style={{ color: "#6b7280", fontSize: 10 }}>{row?.status ?? "未处理"}{row?.is_locked ? " · 已锁定" : ""}</span>
+                </span>
               </button>
             </li>
-          ))}
+            );
+          })}
           {pagesBusy && (
             <li data-testid="pages-busy" style={noteStyle}>
               loading pages…
             </li>
           )}
           {!pagesBusy && pagesError && (
-            <li data-testid="pages-error" style={{ ...noteStyle, color: "#e8a0a0" }}>
+            <li data-testid="pages-error" style={{ ...noteStyle, color: "#cf222e" }}>
               {pagesError}
             </li>
           )}
-          {!pagesBusy && !pagesError && pages.length === 0 && (
+          {!pagesBusy && !pagesError && visiblePages.length === 0 && (
             <li data-testid="page-nav-list-empty" style={noteStyle}>
-              no pages
+              {pageFilter ? "此状态下没有页面" : "本章节暂无页面；可使用工具栏导入入口。"}
             </li>
           )}
+          {pageFilter && <li><button type="button" onClick={onClearPageFilter}>清除状态筛选</button></li>}
         </ul>
       )}
     </section>

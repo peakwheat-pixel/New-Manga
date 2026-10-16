@@ -7,8 +7,7 @@
  * The historical production gap is closed (M2-PAGE-RESOURCE-RESOLVE-1):
  * `resolve_page_resource` maps a page_id to its managed-original catalog
  * key on the production face, so the Workbench feeds this loader the
- * resolved id + revision automatically; the manual resource inputs stay
- * as the debug fallback (previews still load by hand).
+ * resolved id + revision without rendering either value in the UI.
  */
 
 import { ResourceChannelClient, TypedChannelError } from "../resourceChannel/client";

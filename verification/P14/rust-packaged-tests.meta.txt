@@ -1,0 +1,10 @@
+shell=C:\Program Files\PowerShell\7\pwsh.exe
+shell_version=7.6.6
+working_directory=G:\CODEX\New Manga.workspace\worktrees\P14
+cargo=cargo 1.98.1 (797e8a9bc 2026-08-05)
+rustc=rustc 1.98.1 (48a229cea 2026-09-01)
+M2RC1_PACKAGED=1
+M2RC1_SRC_ROOT=<unset>
+M2RC1_PYTHON=<unset>
+command=cargo test --locked --manifest-path apps/desktop/src-tauri/Cargo.toml packaged_sidecar_tests -- --test-threads=1 --nocapture
+EXIT_CODE=0

@@ -55,7 +55,7 @@ export function RelabelConfirmDialog({
         role="dialog"
         aria-modal="true"
         style={{
-          background: "var(--wb-bg-raised, #161b22)",
+          background: "#fff",
           border: `1px solid ${BORDER_FAIL}`,
           borderRadius: 8,
           padding: 12,
@@ -63,18 +63,19 @@ export function RelabelConfirmDialog({
           display: "flex",
           flexDirection: "column",
           gap: 8,
-          boxShadow: "0 4px 12px rgba(0,0,0,0.4)",
+          color: "#1f2328",
+          boxShadow: "0 4px 12px rgba(0,0,0,0.2)",
         }}
         onClick={(event) => event.stopPropagation()}
       >
         <strong style={{ fontSize: 12, color: BORDER_FAIL }}>
           ♪ 改回对白（speech）？
         </strong>
-        <p data-testid="relabel-confirm-text" style={{ margin: 0, fontSize: 11, color: "#d8e0e8" }}>
+        <p data-testid="relabel-confirm-text" style={{ margin: 0, fontSize: 11, color: "#1f2328" }}>
           <span style={{ fontFamily: "Consolas, monospace" }}>{target.region_id}</span>
           ：{RELABEL_X2S_CONFIRM_TEXT}
         </p>
-        <p style={{ margin: 0, fontSize: 10, color: "#8a94a2" }}>
+        <p style={{ margin: 0, fontSize: 10, color: "#6b7280" }}>
           {RELABEL_SOURCE_SAFETY_NOTE}
         </p>
         {errorText && (
@@ -92,9 +93,9 @@ export function RelabelConfirmDialog({
             onClick={onCancel}
             disabled={busy}
             style={{
-              background: "#101418",
-              color: "#d8e0e8",
-              border: "1px solid #2a3038",
+              background: "#fff",
+              color: "#1f2328",
+              border: "1px solid #d9d9d6",
               borderRadius: 4,
               padding: "4px 10px",
               fontSize: 11,
@@ -109,7 +110,7 @@ export function RelabelConfirmDialog({
             onClick={onConfirm}
             disabled={busy}
             style={{
-              background: "#2a1518",
+              background: "#fff5f5",
               color: BORDER_FAIL,
               border: `1px solid ${BORDER_FAIL}`,
               borderRadius: 4,

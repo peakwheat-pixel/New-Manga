@@ -4,7 +4,10 @@ import { JSDOM } from "jsdom";
 import { describe, expect, it, vi } from "vitest";
 import { RegionOverlay } from "../region/RegionOverlay";
 import type { RegionSummary } from "../region/types";
+import type { ListenFn } from "../events";
 import { ViewerPanel } from "./ViewerPanel";
+import { TaskProgressPanel } from "./TaskProgressPanel";
+import type { TaskProjection } from "./client";
 import { WorkbenchPage } from "./WorkbenchPage";
 
 /**
@@ -59,7 +62,7 @@ async function nextTurn() {
 
 async function mountInteractiveWorkbench(
   invoke: (command: string, args?: Record<string, unknown>) => Promise<unknown>,
-  options: { resourceFetch?: typeof fetch; resolveDebounceMs?: number; regionDebounceMs?: number } = {},
+  options: { resourceFetch?: typeof fetch; resolveDebounceMs?: number; regionDebounceMs?: number; listen?: ListenFn } = {},
 ) {
   const dom = new JSDOM("<!doctype html><html><body></body></html>", { url: "http://localhost" });
   Object.defineProperty(dom.window.HTMLElement.prototype, "clientWidth", {
@@ -110,6 +113,7 @@ async function mountInteractiveWorkbench(
     root.render(
       <WorkbenchPage
         invoke={invoke}
+        listen={options.listen}
         resolveDebounceMs={options.resolveDebounceMs ?? 0}
         regionDebounceMs={options.regionDebounceMs ?? 0}
       />,
@@ -139,13 +143,29 @@ async function mountInteractiveWorkbench(
       await nextTurn();
     });
   };
+  const keyDown = async (testId: string, key: string, modifiers: KeyboardEventInit = {}) => {
+    const target = container.querySelector(`[data-testid="${testId}"]`) as HTMLElement | null;
+    if (!target) throw new Error(`missing key target: ${testId}`);
+    await act(async () => {
+      target.dispatchEvent(new dom.window.KeyboardEvent("keydown", { key, bubbles: true, cancelable: true, ...modifiers }));
+      await nextTurn();
+    });
+  };
+  const keyUp = async (testId: string, key: string) => {
+    const target = container.querySelector(`[data-testid="${testId}"]`) as HTMLElement | null;
+    if (!target) throw new Error(`missing key target: ${testId}`);
+    await act(async () => {
+      target.dispatchEvent(new dom.window.KeyboardEvent("keyup", { key, bubbles: true, cancelable: true }));
+      await nextTurn();
+    });
+  };
   const unmount = async () => {
     await act(async () => root.unmount());
     dom.window.close();
     vi.useRealTimers();
     vi.unstubAllGlobals();
   };
-  return { dom, container, click, input, createdBlobs, revokedUrls, resourceReads, unmount };
+  return { dom, container, click, input, keyDown, keyUp, createdBlobs, revokedUrls, resourceReads, unmount };
 }
 
 // M2-PAGE-NAV-PROJECTION-1 drill-down fixtures: TWO books so the
@@ -163,6 +183,21 @@ const BOOK_A_ROW = {
 };
 const BOOK_B_ROW = { ...BOOK_A_ROW, book_id: "book-b", title: "Manga B" };
 
+const TASK_PROJECTION: TaskProjection = {
+  run_id: "run-1",
+  run_status: "completed",
+  run_title: "测试任务",
+  overall_progress: 1,
+  current_page_id: "page-1",
+  current_step_type: "render",
+  step_flow: [{ type: "render", label: "渲染", state: "completed" }],
+  rows: [],
+  tasks: [],
+  counts: { total: 1, completed: 1, failed: 0, skipped: 0, blocked: 0, waiting: 0, processing: 0 },
+  blocked_reasons: [],
+  controls: { can_pause: false, can_stop: false, can_continue: false, can_restart: false, can_abandon: false, can_retry_failed: false },
+};
+
 function makeInteractiveInvoke(options: {
   onBooks?: () => unknown;
   onListChapters?: (args: Record<string, unknown>) => Promise<unknown>;
@@ -170,6 +205,7 @@ function makeInteractiveInvoke(options: {
   onRetype?: (args: Record<string, unknown>) => Promise<unknown>;
   onIssue?: (args: Record<string, unknown>) => Promise<unknown>;
   onResolvePage?: (args: Record<string, unknown>) => Promise<unknown>;
+  onWorkbenchCommand?: (command: string, args: Record<string, unknown>) => Promise<unknown> | unknown;
   rerender?: () => unknown;
 } = {}) {
   const rows = new Map<string, RegionSummary[]>([
@@ -190,9 +226,8 @@ function makeInteractiveInvoke(options: {
       return { pages: [] };
     }
     if (command === "resolve_page_resource") {
-      // M2-PAGE-RESOURCE-RESOLVE-1: default OFF (typed PAGE_NOT_FOUND) so
-      // the manual/preview flows below keep their historical timing; the
-      // auto-load cases pass onResolvePage explicitly. The rejection is a
+      // M2-PAGE-RESOURCE-RESOLVE-1: reject unless a fixture supplies a
+      // resolved page key. The rejection is a
       // BARE string, the shape the real Tauri invoke rejects with (DSH r1
       // PR-09: registered as an intentional fixture deviation -- the
       // default is the opposite of the product default path).
@@ -265,6 +300,10 @@ function makeInteractiveInvoke(options: {
         opaque_id: String(args.resourceId),
       }),
     };
+    if (options.onWorkbenchCommand) {
+      const result = await options.onWorkbenchCommand(command, args);
+      if (result !== undefined) return result;
+    }
     return null;
   });
   return { invoke, rows };
@@ -286,7 +325,7 @@ describe("<WorkbenchPage> five-zone skeleton (mapping-contract names)", () => {
     expect(html).toContain('data-testid="page-list-empty"');
     expect(html).toContain('data-testid="viewer-empty"');
     expect(html).toContain('data-testid="inspector-empty"');
-    expect(html).toContain('data-testid="task-progress-placeholder"');
+    expect(html).toContain('data-testid="gap-g15-run-discovery"');
     expect(html).not.toContain('data-testid="workbench-error"');
   });
 
@@ -303,11 +342,242 @@ describe("<WorkbenchPage> five-zone skeleton (mapping-contract names)", () => {
     expect(html).toContain('data-testid="region-inspector"');
   });
 
-  it("keeps the task progress placeholder free of any new command face", () => {
-    // the placeholder text documents WHY there is no data wire: standing up
-    // a command face for a placeholder is explicitly forbidden (Task AC2)
+  it("keeps G15 Run discovery visible and disabled without a ListRuns command", () => {
     const html = renderToString(<WorkbenchPage invoke={async () => null} />);
-    expect(html).toContain("占位不扩命令面");
+    expect(html).toContain("Core 尚无 ListRuns 查询");
+    expect(html).toContain('data-testid="gap-g15-run-discovery"');
+  });
+
+  it("renders every §7 disabled entrance with an unavailable button and visible reason", async () => {
+    const { invoke } = makeInteractiveInvoke();
+    const ui = await mountInteractiveWorkbench(invoke);
+    try {
+      const ids = [
+        "gap-g9-save-manual-translation", "gap-g10-create-region", "gap-g10-delete-region",
+        "gap-g11-region-geometry", "gap-g12-region-lock", "gap-g13-revision-pin",
+        "gap-g14-page-order", "gap-g15-run-discovery", "gap-g16-core-availability",
+        "gap-g18-page-thumbnails", "gap-g26-import-progress",
+      ];
+      for (const id of ids) {
+        const feature = ui.container.querySelector(`[data-testid="${id}"]`);
+        const button = feature?.querySelector("button");
+        const reason = feature?.querySelector("small");
+        expect(button?.disabled, id).toBe(true);
+        expect(reason?.textContent?.trim().length, id).toBeGreaterThan(0);
+        expect(button?.getAttribute("aria-describedby"), id).toBe(reason?.id);
+      }
+      expect(invoke.mock.calls.some(([command]) => /list.?runs/i.test(command))).toBe(false);
+    } finally {
+      await ui.unmount();
+    }
+  });
+
+  it("keeps the current-page thumbnail gap disabled when a Run projection exists", () => {
+    const html = renderToString(
+      <TaskProgressPanel
+        projection={TASK_PROJECTION}
+        collapsed={false}
+        onToggleCollapsed={() => {}}
+        onControl={() => {}}
+        onResumeBlocked={() => {}}
+        onRetryFailed={() => {}}
+        onFilterStatus={() => {}}
+        onLocatePage={() => {}}
+      />,
+    );
+    const document = new JSDOM(html).window.document;
+    const feature = document.querySelector('[data-testid="gap-g18-current-page-thumbnail"]');
+    expect((feature?.querySelector("button") as HTMLButtonElement | null)?.disabled).toBe(true);
+    expect(feature?.querySelector("small")?.textContent).toContain("缩略图通道尚未接入");
+  });
+
+  it("retains title, percent, current page, step, and controls in the 44px collapsed panel", () => {
+    const html = renderToString(
+      <TaskProgressPanel
+        projection={TASK_PROJECTION}
+        collapsed
+        onToggleCollapsed={() => {}}
+        onControl={() => {}}
+        onResumeBlocked={() => {}}
+        onRetryFailed={() => {}}
+        onFilterStatus={() => {}}
+        onLocatePage={() => {}}
+      />,
+    );
+    const panel = new JSDOM(html).window.document.querySelector('[data-testid="task-progress-panel"]');
+    expect(html).toContain("height:44px");
+    expect(panel?.textContent).toContain("测试任务");
+    expect(panel?.textContent).toContain("当前页：page-1");
+    expect(panel?.textContent).toContain("当前步骤：render");
+    expect(html).toContain('data-testid="run-control-pause"');
+    expect(html).toContain('data-testid="run-control-retry-failed"');
+  });
+
+  it("shows disabled Run controls when no Run is known", () => {
+    const html = renderToString(
+      <TaskProgressPanel
+        projection={null}
+        collapsed={false}
+        onToggleCollapsed={() => {}}
+        onControl={() => {}}
+        onResumeBlocked={() => {}}
+        onRetryFailed={() => {}}
+        onFilterStatus={() => {}}
+        onLocatePage={() => {}}
+      />,
+    );
+    const buttons = [...new JSDOM(html).window.document.querySelectorAll('[data-testid="run-controls"] button')];
+    expect(buttons).toHaveLength(7);
+    expect(buttons.every((button) => (button as HTMLButtonElement).disabled)).toBe(true);
+  });
+
+  it("treats Run events as invalidation hints and reloads snapshot plus projection", async () => {
+    const handlers = new Map<string, (event: { payload: unknown }) => void>();
+    const listen: ListenFn = async (event, handler) => {
+      handlers.set(event, handler as (event: { payload: unknown }) => void);
+      return () => handlers.delete(event);
+    };
+    let snapshotReads = 0;
+    let projectionReads = 0;
+    const { invoke } = makeInteractiveInvoke({
+      onBooks: () => [BOOK_A_ROW],
+      onListChapters: () => Promise.resolve({ chapters: [{ chapter_id: "chapter-1", title: "Chapter 1", chapter_number: "1", sort_order: 1 }] }),
+      onWorkbenchCommand: (command) => {
+        if (command === "library_start_run") return { run_id: "run-1", status: "completed" };
+        if (command === "library_get_run_snapshot") {
+          snapshotReads += 1;
+          return { run_id: "run-1", command: "translate_all", scope: { kind: "chapter", chapter_id: "chapter-1" }, status: "completed" };
+        }
+        if (command === "library_get_task_projection") {
+          projectionReads += 1;
+          return { ...TASK_PROJECTION, run_title: `快照 ${projectionReads}` };
+        }
+        return undefined;
+      },
+    });
+    const ui = await mountInteractiveWorkbench(invoke, { listen });
+    try {
+      await ui.click("book-tile-book-a");
+      await ui.click("chapter-tile-chapter-1");
+      await ui.click("start-run");
+      expect(snapshotReads).toBe(1);
+      expect(projectionReads).toBe(1);
+
+      await act(async () => {
+        handlers.get("core:RunCompleted")?.({ payload: { run_id: "run-1", status: "running" } });
+        await nextTurn();
+      });
+      expect(snapshotReads).toBe(2);
+      expect(projectionReads).toBe(2);
+      expect(ui.container.textContent).toContain("快照 2");
+      expect(ui.container.textContent).toContain("状态：completed");
+      expect(ui.container.textContent).not.toContain("状态：running");
+    } finally {
+      await ui.unmount();
+    }
+  });
+
+  it("moves the focused page selection with ArrowUp and ArrowDown", async () => {
+    const { invoke } = makeInteractiveInvoke({
+      onBooks: () => [BOOK_A_ROW],
+      onListChapters: () => Promise.resolve({ chapters: [{ chapter_id: "chapter-1", title: "Chapter 1", chapter_number: "1", sort_order: 1 }] }),
+      onListChapterPages: () => Promise.resolve({ pages: [
+        { page_id: "page-1", source_filename: "001.png", sort_order: 1 },
+        { page_id: "page-2", source_filename: "002.png", sort_order: 2 },
+      ] }),
+      onResolvePage: (args) => Promise.resolve({ resource_id: `page-original-${String(args.pageId)}`, revision: "original" }),
+    });
+    const ui = await mountInteractiveWorkbench(invoke);
+    try {
+      await ui.click("book-tile-book-a");
+      await ui.click("chapter-tile-chapter-1");
+      const firstPage = ui.container.querySelector('[data-testid="page-tile-page-1"]') as HTMLButtonElement;
+      firstPage.focus();
+      await ui.keyDown("page-nav-list", "ArrowDown");
+      expect((ui.container.querySelector('[data-testid="page-id-input"]') as HTMLInputElement).value).toBe("page-2");
+      expect(ui.dom.window.document.activeElement?.getAttribute("data-testid")).toBe("page-tile-page-2");
+      await ui.keyDown("page-nav-list", "ArrowUp");
+      expect((ui.container.querySelector('[data-testid="page-id-input"]') as HTMLInputElement).value).toBe("page-1");
+    } finally {
+      await ui.unmount();
+    }
+  });
+
+  it("supports V/R mode shortcuts and temporary Space panning", async () => {
+    const ui = await mountInteractiveWorkbench(async () => null);
+    try {
+      const stage = ui.container.querySelector('[data-testid="viewer-stage"]') as HTMLElement;
+      await ui.keyDown("viewer-stage", "r");
+      expect((ui.container.querySelector('[data-testid="viewer-mode"]') as HTMLSelectElement).value).toBe("region");
+      expect(stage.style.cursor).toBe("default");
+      await ui.keyDown("viewer-stage", " ");
+      expect(stage.style.cursor).toBe("grab");
+      await ui.keyUp("viewer-stage", " ");
+      expect(stage.style.cursor).toBe("default");
+      await ui.keyDown("viewer-stage", "v");
+      expect((ui.container.querySelector('[data-testid="viewer-mode"]') as HTMLSelectElement).value).toBe("pan");
+      expect(stage.style.cursor).toBe("grab");
+    } finally {
+      await ui.unmount();
+    }
+  });
+
+  it("selects Region frames with Enter from the keyboard", async () => {
+    const { invoke } = makeInteractiveInvoke();
+    const ui = await mountInteractiveWorkbench(invoke);
+    try {
+      await ui.input("page-id-input", "page-1");
+      const frame = ui.container.querySelector('[data-testid="region-frame-region-1"]') as SVGRectElement | null;
+      expect(frame?.getAttribute("role")).toBe("button");
+      expect(frame?.getAttribute("tabindex")).toBe("0");
+      frame?.focus();
+      await ui.keyDown("region-frame-region-1", "Enter");
+      expect(ui.container.querySelector('[data-testid="inspector-row-region-1"]')).not.toBeNull();
+    } finally {
+      await ui.unmount();
+    }
+  });
+
+  it("maps Ctrl+P to pause/continue and Ctrl+. to stop when enabled", async () => {
+    const actions: string[] = [];
+    let runStatus = "running";
+    const { invoke } = makeInteractiveInvoke({
+      onBooks: () => [BOOK_A_ROW],
+      onListChapters: () => Promise.resolve({ chapters: [{ chapter_id: "chapter-1", title: "Chapter 1", chapter_number: "1", sort_order: 1 }] }),
+      onWorkbenchCommand: (command, args) => {
+        if (command === "library_start_run") return { run_id: "run-keys", status: runStatus };
+        if (command === "library_control_run") {
+          actions.push(String(args.action));
+          runStatus = args.action === "pause" ? "paused" : args.action === "continue" ? "running" : "cancelled";
+          return { run_id: "run-keys", status: runStatus };
+        }
+        if (command === "library_get_run_snapshot") return { run_id: "run-keys", command: "translate_all", scope: { kind: "chapter", chapter_id: "chapter-1" }, status: runStatus };
+        if (command === "library_get_task_projection") return {
+          ...TASK_PROJECTION,
+          run_id: "run-keys",
+          run_status: runStatus,
+          controls: {
+            can_pause: runStatus === "running", can_stop: ["running", "paused"].includes(runStatus),
+            can_continue: runStatus === "paused", can_restart: false, can_abandon: false, can_retry_failed: false,
+          },
+        };
+        return undefined;
+      },
+    });
+    const ui = await mountInteractiveWorkbench(invoke);
+    try {
+      await ui.click("book-tile-book-a");
+      await ui.click("chapter-tile-chapter-1");
+      await ui.click("start-run");
+      await ui.keyDown("task-progress-panel", "p", { ctrlKey: true });
+      expect(actions).toEqual(["pause"]);
+      await ui.keyDown("task-progress-panel", "p", { ctrlKey: true });
+      expect(actions).toEqual(["pause", "continue"]);
+      await ui.keyDown("task-progress-panel", ".", { ctrlKey: true });
+      expect(actions).toEqual(["pause", "continue", "stop"]);
+    } finally {
+      await ui.unmount();
+    }
   });
 });
 
@@ -630,7 +900,7 @@ describe("RC-4 Workbench actual DOM actions", () => {
       await ui.click("inspector-mark-sfx");
       await ui.input("page-id-input", "page-2");
       expect(ui.container.querySelector('[data-testid="feedback-undo"]')).toBeNull();
-      expect(ui.container.textContent).toContain("page page-2");
+      expect((ui.container.querySelector('[data-testid="page-id-input"]') as HTMLInputElement).value).toBe("page-2");
       resolveRetype({ region_id: "region-1", revision_no: 2, region_type: "sfx", sfx_policy: "skip" });
       await act(async () => { await nextTurn(); });
       expect(ui.container.querySelector('[data-testid="relabel-feedback"]')).toBeNull();
@@ -641,83 +911,28 @@ describe("RC-4 Workbench actual DOM actions", () => {
     }
   });
 
-  it("drops a manual resource read that completes after switching pages", async () => {
-    let resolveManualIssue!: (value: unknown) => void;
-    const manualIssue = new Promise<unknown>((resolve) => { resolveManualIssue = resolve; });
-    const { invoke } = makeInteractiveInvoke({
-      onIssue: (args) => String(args.resourceId) === "manual-A"
-        ? manualIssue
-        : Promise.resolve({
-            url: `http://m2res.localhost/m2id/${String(args.resourceId)}`,
-            size: PREVIEW_PNG_BYTES.byteLength,
-            opaque_id: String(args.resourceId),
-          }),
-    });
-    const ui = await mountInteractiveWorkbench(invoke);
-    try {
-      await ui.input("page-id-input", "page-1");
-      await ui.input("resource-id-input", "manual-A");
-      expect(invoke).toHaveBeenCalledWith("issue_resource_url", {
-        resourceId: "manual-A",
-        revision: "current",
-      });
-
-      await ui.input("page-id-input", "page-2");
-      expect(ui.container.querySelector('[data-testid="viewer-image"]')).toBeNull();
-
-      resolveManualIssue({
-        url: "http://m2res.localhost/m2id/manual-A",
-        size: PREVIEW_PNG_BYTES.byteLength,
-        opaque_id: "manual-A",
-      });
-      await act(async () => { await nextTurn(); });
-      expect(ui.resourceReads).toContain("http://m2res.localhost/m2id/manual-A?chunk=0");
-      expect(ui.container.querySelector('[data-testid="viewer-image"]')).toBeNull();
-      expect(ui.revokedUrls).toContain("blob:rc4-preview-1");
-      expect(ui.container.textContent).toContain("page page-2");
-    } finally {
-      resolveManualIssue(null);
-      await ui.unmount();
-    }
-  });
-
-  it("keeps the rerender preview when an earlier manual resource read finishes late", async () => {
-    let resolveManualIssue!: (value: unknown) => void;
-    const manualIssue = new Promise<unknown>((resolve) => { resolveManualIssue = resolve; });
-    const { invoke } = makeInteractiveInvoke({
-      onIssue: (args) => String(args.resourceId) === "manual-before-render"
-        ? manualIssue
-        : Promise.resolve({
-            url: `http://m2res.localhost/m2id/${String(args.resourceId)}`,
-            size: PREVIEW_PNG_BYTES.byteLength,
-            opaque_id: String(args.resourceId),
-          }),
-    });
+  it("keeps the rerender preview when an earlier page-resource resolve finishes late", async () => {
+    let resolvePage!: (value: unknown) => void;
+    const pendingPage = new Promise<unknown>((resolve) => { resolvePage = resolve; });
+    const { invoke } = makeInteractiveInvoke({ onResolvePage: () => pendingPage });
     const ui = await mountInteractiveWorkbench(invoke);
     try {
       await ui.input("page-id-input", "page-1");
       await ui.click("region-frame-region-1");
       await ui.click("inspector-mark-sfx");
-      await ui.input("resource-id-input", "manual-before-render");
-
       await ui.click("feedback-rerender");
       const previewUrl = ui.container.querySelector('[data-testid="viewer-image"]')?.getAttribute("src");
       expect(previewUrl).toBe("blob:rc4-preview-1");
       expect(ui.resourceReads).toContain("http://m2res.localhost/m2id/preview-1?chunk=0");
 
-      resolveManualIssue({
-        url: "http://m2res.localhost/m2id/manual-before-render",
-        size: PREVIEW_PNG_BYTES.byteLength,
-        opaque_id: "manual-before-render",
-      });
+      resolvePage({ resource_id: "page-original-page-1", revision: "original" });
       await act(async () => { await nextTurn(); });
-      expect(ui.resourceReads).toContain("http://m2res.localhost/m2id/manual-before-render?chunk=0");
       expect(ui.container.querySelector('[data-testid="viewer-image"]')?.getAttribute("src"))
         .toBe(previewUrl);
-      expect(ui.revokedUrls).toContain("blob:rc4-preview-2");
+      expect(ui.resourceReads).not.toContain("http://m2res.localhost/m2id/page-original-page-1?chunk=0");
       expect(ui.container.textContent).toContain("已重渲染并加载预览");
     } finally {
-      resolveManualIssue(null);
+      resolvePage(null);
       await ui.unmount();
     }
   });
@@ -779,8 +994,8 @@ describe("RC-4 Workbench actual DOM actions", () => {
     try {
       await ui.input("page-id-input", "page-1");
       expect(invoke).toHaveBeenCalledWith("resolve_page_resource", { pageId: "page-1" });
-      const idInput = ui.container.querySelector('[data-testid="resource-id-input"]') as HTMLInputElement | null;
-      expect(idInput?.value).toBe("page-original-page-1");
+      expect(ui.container.querySelector('[data-testid="resource-id-input"]')).toBeNull();
+      expect(ui.container.textContent).not.toContain("page-original-page-1");
       expect(ui.container.querySelector('[data-testid="resource-resolve-error"]')).toBeNull();
       expect(ui.container.querySelector('[data-testid="resource-resolve-busy"]')).toBeNull();
       expect(ui.container.querySelector('[data-testid="viewer-image"]')?.getAttribute("src"))
@@ -791,22 +1006,16 @@ describe("RC-4 Workbench actual DOM actions", () => {
     }
   });
 
-  it("surfaces a typed resolve failure and keeps the manual resource fallback (M2-PAGE-RESOURCE-RESOLVE-1)", async () => {
+  it("surfaces a typed resolve failure without exposing a resource fallback (M2-PAGE-RESOURCE-RESOLVE-1)", async () => {
     const { invoke } = makeInteractiveInvoke();
     const ui = await mountInteractiveWorkbench(invoke);
     try {
       await ui.input("page-id-input", "page-1");
-      expect(ui.container.querySelector('[data-testid="resource-resolve-error"]')?.textContent)
-        .toBe("resource: PAGE_NOT_FOUND");
-      const idInput = ui.container.querySelector('[data-testid="resource-id-input"]') as HTMLInputElement | null;
-      expect(idInput?.value).toBe("");
+      expect(ui.container.querySelector('[data-testid="viewer-empty"]')?.textContent)
+        .toBe("PAGE_NOT_FOUND");
+      expect(ui.container.querySelector('[data-testid="resource-id-input"]')).toBeNull();
       expect(ui.resourceReads).toHaveLength(0);
-      // the manual fallback still drives the existing image loader
-      await ui.input("resource-id-input", "manual-fallback");
-      expect(invoke).toHaveBeenCalledWith("issue_resource_url", {
-        resourceId: "manual-fallback",
-        revision: "current",
-      });
+      expect(invoke).not.toHaveBeenCalledWith("issue_resource_url", expect.anything());
     } finally {
       await ui.unmount();
     }
@@ -828,17 +1037,15 @@ describe("RC-4 Workbench actual DOM actions", () => {
           }),
     });
     const ui = await mountInteractiveWorkbench(invoke);
-    const resourceIdInput = () =>
-      ui.container.querySelector('[data-testid="resource-id-input"]') as HTMLInputElement | null;
     try {
       await ui.input("page-id-input", "page-1"); // resolve hangs
       await ui.input("page-id-input", "page-2"); // its own resolve settles
-      expect(resourceIdInput()?.value).toBe("page-original-page-2");
+      expect(ui.container.querySelector('[data-testid="resource-id-input"]')).toBeNull();
+      expect(ui.container.textContent).not.toContain("page-original-page-2");
 
       // the stale page-1 reply lands after the page-2 commit
       resolvePage1({ resource_id: "page-original-page-1", revision: "original" });
       await act(async () => { await nextTurn(); });
-      expect(resourceIdInput()?.value).toBe("page-original-page-2");
       expect(ui.resourceReads).toContain("http://m2res.localhost/m2id/page-original-page-2?chunk=0");
       expect(ui.resourceReads).not.toContain("http://m2res.localhost/m2id/page-original-page-1?chunk=0");
     } finally {
@@ -882,8 +1089,9 @@ describe("RC-4 Workbench actual DOM actions", () => {
       expect(invoke).toHaveBeenCalledWith("resolve_page_resource", { pageId: "p-nav-1" });
       const idInput = ui.container.querySelector('[data-testid="page-id-input"]') as HTMLInputElement | null;
       expect(idInput?.value).toBe("p-nav-1");
-      const resourceInput = ui.container.querySelector('[data-testid="resource-id-input"]') as HTMLInputElement | null;
-      expect(resourceInput?.value).toBe("page-original-p-nav-1");
+      expect(ui.container.querySelector('[data-testid="resource-id-input"]')).toBeNull();
+      expect(ui.container.textContent).not.toContain("page-original-p-nav-1");
+      expect(ui.container.querySelector('[data-testid="viewer-image"]')).not.toBeNull();
       expect(ui.resourceReads).toContain("http://m2res.localhost/m2id/page-original-p-nav-1?chunk=0");
     } finally {
       await ui.unmount();
@@ -1032,8 +1240,8 @@ describe("RC-4 Workbench actual DOM actions", () => {
         const firedResolves = invoke.mock.calls.filter(([command]) => command === "resolve_page_resource");
         expect(firedResolves).toHaveLength(1);
         expect(firedResolves[0]).toEqual(["resolve_page_resource", { pageId: "page-1" }]);
-        const resourceInput = ui.container.querySelector('[data-testid="resource-id-input"]') as HTMLInputElement | null;
-        expect(resourceInput?.value).toBe("page-original-page-1");
+        expect(ui.container.querySelector('[data-testid="resource-id-input"]')).toBeNull();
+        expect(ui.container.textContent).not.toContain("page-original-page-1");
       } finally {
         await ui.unmount();
       }

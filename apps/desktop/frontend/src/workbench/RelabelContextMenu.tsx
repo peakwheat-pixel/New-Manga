@@ -54,7 +54,7 @@ export function RelabelContextMenu({
     width: "100%",
     textAlign: "left" as const,
     background: "transparent",
-    color: enabled ? "#d8e0e8" : "#5a6470",
+    color: enabled ? "#1f2328" : "#6b7280",
     border: "none",
     padding: "5px 8px",
     fontSize: 11,
@@ -69,8 +69,8 @@ export function RelabelContextMenu({
         left: x,
         top: y,
         zIndex: 20,
-        background: "#101418",
-        border: "1px solid #2a3038",
+        background: "#fff",
+        border: "1px solid #d9d9d6",
         borderRadius: 6,
         padding: 4,
         minWidth: 200,
@@ -96,7 +96,7 @@ export function RelabelContextMenu({
         <button
           type="button"
           data-testid="menu-retype-speech"
-          style={{ ...itemStyle(true), color: "#e0b070" }}
+          style={{ ...itemStyle(true), color: "#7a4b00" }}
           disabled={busy}
           onClick={() => {
             onClose();
@@ -109,7 +109,7 @@ export function RelabelContextMenu({
       {!toSfx.enabled && !toSpeech.enabled && (
         <p
           data-testid="menu-retype-disabled-reason"
-          style={{ margin: 0, padding: "5px 8px", fontSize: 10, color: "#5a6470" }}
+          style={{ margin: 0, padding: "5px 8px", fontSize: 10, color: "#6b7280" }}
         >
           {toSfx.reason}
         </p>
