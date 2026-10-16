@@ -62,3 +62,17 @@ export interface PageNavSummary {
   source_filename: string;
   sort_order: number;
 }
+
+/**
+ * HOST-ISSUER-1 / W30: result of library_import_file or library_import_folder.
+ * Handled inside host Rust layer; WebView receives the summary report.
+ * When user cancels the native dialog, cancelled is true.
+ */
+export interface ImportSummary {
+  chapter_id: string;
+  cancelled: boolean;
+  imported_files: number;
+  skipped_files: number;
+  rejected_files: number;
+  pending_files: number;
+}

@@ -1,0 +1,1 @@
+P12_BOUNDARY_VERIFIED: All P12 code strictly adheres to AD-001 boundaries. No SQLite, no raw OS paths, no direct model connections, image access through Tauri resource channel only.

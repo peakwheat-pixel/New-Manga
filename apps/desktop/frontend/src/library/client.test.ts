@@ -177,4 +177,76 @@ describe("LibraryClient", () => {
     });
     await expect(client.listChapterPages("ch-1")).rejects.toBeInstanceOf(LibraryClientError);
   });
+
+  it("calls library_import_file and returns ImportSummary", async () => {
+    const mockSummary = {
+      chapter_id: "ch-1",
+      cancelled: false,
+      imported_files: 5,
+      skipped_files: 1,
+      rejected_files: 0,
+      pending_files: 0,
+    };
+    const invoke = vi.fn().mockResolvedValue(mockSummary);
+    const client = new LibraryClient(invoke);
+
+    const summary = await client.importFile("ch-1", "skip");
+    expect(invoke).toHaveBeenCalledWith("library_import_file", {
+      chapterId: "ch-1",
+      duplicatePolicy: "skip",
+    });
+    expect(summary).toEqual(mockSummary);
+    expect(summary.cancelled).toBe(false);
+    expect(summary.imported_files).toBe(5);
+  });
+
+  it("handles cancelled library_import_file", async () => {
+    const cancelledSummary = {
+      chapter_id: "ch-1",
+      cancelled: true,
+      imported_files: 0,
+      skipped_files: 0,
+      rejected_files: 0,
+      pending_files: 0,
+    };
+    const invoke = vi.fn().mockResolvedValue(cancelledSummary);
+    const client = new LibraryClient(invoke);
+
+    const summary = await client.importFile("ch-1");
+    expect(invoke).toHaveBeenCalledWith("library_import_file", {
+      chapterId: "ch-1",
+      duplicatePolicy: "skip",
+    });
+    expect(summary.cancelled).toBe(true);
+  });
+
+  it("calls library_import_folder and returns ImportSummary", async () => {
+    const mockSummary = {
+      chapter_id: "ch-1",
+      cancelled: false,
+      imported_files: 12,
+      skipped_files: 2,
+      rejected_files: 1,
+      pending_files: 0,
+    };
+    const invoke = vi.fn().mockResolvedValue(mockSummary);
+    const client = new LibraryClient(invoke);
+
+    const summary = await client.importFolder("ch-1", "import_as_new");
+    expect(invoke).toHaveBeenCalledWith("library_import_folder", {
+      chapterId: "ch-1",
+      duplicatePolicy: "import_as_new",
+    });
+    expect(summary).toEqual(mockSummary);
+  });
+
+  it("rejects malformed import report payload", async () => {
+    const badClient = new LibraryClient(vi.fn().mockResolvedValue(null));
+    await expect(badClient.importFile("ch-1")).rejects.toMatchObject({
+      code: "IMPORT_REPORT_MALFORMED",
+    });
+    await expect(badClient.importFolder("ch-1")).rejects.toMatchObject({
+      code: "IMPORT_REPORT_MALFORMED",
+    });
+  });
 });

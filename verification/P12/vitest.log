@@ -1,0 +1,25 @@
+
+ RUN  v2.1.9 G:/CODEX/New Manga.workspace/worktrees/P12
+
+ ✓ apps/desktop/frontend/src/region/geometry.test.ts (8 tests) 3ms
+ ✓ apps/desktop/frontend/src/bookshelf/error.test.ts (6 tests) 3ms
+ ✓ apps/desktop/frontend/src/ac1/driver.test.ts (3 tests) 2ms
+ ✓ apps/desktop/frontend/src/library/client.test.ts (14 tests) 7ms
+ ✓ apps/desktop/frontend/src/resourceChannel/client.test.ts (8 tests) 8ms
+ ✓ apps/desktop/frontend/src/workbench/relabelMachine.test.ts (21 tests) 5ms
+ ✓ apps/desktop/frontend/src/resourceChannel/commandSurface.test.ts (10 tests) 9ms
+ ✓ apps/desktop/frontend/src/settings/client.test.ts (7 tests) 6ms
+ ✓ apps/desktop/frontend/src/region/client.test.ts (15 tests) 7ms
+ ✓ apps/desktop/frontend/src/workbench/PageListPanel.test.tsx (5 tests) 8ms
+ ✓ apps/desktop/frontend/src/library/LibraryPanel.test.tsx (8 tests) 95ms
+ ✓ apps/desktop/frontend/src/settings/SettingsPanel.test.tsx (10 tests) 161ms
+ ✓ apps/desktop/frontend/src/App.test.tsx (3 tests) 148ms
+ ✓ apps/desktop/frontend/src/shell/AppShell.test.tsx (3 tests) 183ms
+ ✓ apps/desktop/frontend/src/bookshelf/BookshelfPage.test.tsx (15 tests) 248ms
+ ✓ apps/desktop/frontend/src/workbench/WorkbenchPage.test.tsx (35 tests) 403ms
+
+ Test Files  16 passed (16)
+      Tests  171 passed (171)
+   Start at  18:13:46
+   Duration  1.71s (transform 1.73s, setup 0ms, collect 5.38s, tests 1.30s, environment 3ms, prepare 2.77s)
+

@@ -1,6 +1,7 @@
 import type {
   BookSummary,
   ChapterNavSummary,
+  ImportSummary,
   PageNavSummary,
   PageResourceResolve,
   PingResult,
@@ -39,11 +40,26 @@ export const RESOLVE_PAGE_RESOURCE_COMMAND = "resolve_page_resource";
 export const LIST_CHAPTERS_COMMAND = "list_chapters";
 export const LIST_CHAPTER_PAGES_COMMAND = "list_chapter_pages";
 
+/**
+ * HOST-ISSUER-1 wire names (AD-001 §6 W30):
+ * User actions via native pickers. Paths and raw references stay in Rust.
+ */
+export const LIBRARY_IMPORT_FILE_COMMAND = "library_import_file";
+export const LIBRARY_IMPORT_FOLDER_COMMAND = "library_import_folder";
+
 export class LibraryClient {
   private invoke: InvokeFn;
 
   constructor(invoke?: InvokeFn) {
-    this.invoke = invoke || getTauriInvoke();
+    if (invoke) {
+      this.invoke = invoke;
+    } else {
+      try {
+        this.invoke = getTauriInvoke();
+      } catch {
+        this.invoke = () => Promise.reject(new LibraryClientError("TAURI_BRIDGE_MISSING", "Tauri bridge is missing"));
+      }
+    }
   }
 
   async corePing(): Promise<PingResult> {
@@ -59,7 +75,7 @@ export class LibraryClient {
   async listBooks(): Promise<BookSummary[]> {
     try {
       const res = await this.invoke("library_list_books");
-      return res as BookSummary[];
+      return Array.isArray(res) ? (res as BookSummary[]) : [];
     } catch (error) {
       const code = typeof error === "string" ? error : (error as Error)?.message || "CORE_UNAVAILABLE";
       throw new LibraryClientError(code, `library_list_books failed: ${code}`);
@@ -144,6 +160,66 @@ export class LibraryClient {
       }
       const code = typeof error === "string" ? error : (error as Error)?.message || "CORE_UNAVAILABLE";
       throw new LibraryClientError(code, `list_chapter_pages failed: ${code}`);
+    }
+  }
+
+  /**
+   * HOST-ISSUER-1 (AD-001 §6 W30): import a single file (image or PDF) into a chapter.
+   * Host Rust launches the native file picker; WebView never touches OS paths.
+   * If user cancels the picker, returns an ImportSummary with `cancelled: true`.
+   */
+  async importFile(
+    chapterId: string,
+    duplicatePolicy: "skip" | "import_as_new" = "skip",
+  ): Promise<ImportSummary> {
+    try {
+      const res = (await this.invoke(LIBRARY_IMPORT_FILE_COMMAND, {
+        chapterId,
+        duplicatePolicy,
+      })) as ImportSummary;
+      if (!res || typeof res.cancelled !== "boolean") {
+        throw new LibraryClientError(
+          "IMPORT_REPORT_MALFORMED",
+          "library_import_file returned malformed summary",
+        );
+      }
+      return res;
+    } catch (error) {
+      if (error instanceof LibraryClientError) {
+        throw error;
+      }
+      const code = typeof error === "string" ? error : (error as Error)?.message || "CORE_UNAVAILABLE";
+      throw new LibraryClientError(code, `library_import_file failed: ${code}`);
+    }
+  }
+
+  /**
+   * HOST-ISSUER-1 (AD-001 §6 W30): import a folder of images into a chapter.
+   * Host Rust launches the native folder picker; WebView never touches OS paths.
+   * If user cancels the picker, returns an ImportSummary with `cancelled: true`.
+   */
+  async importFolder(
+    chapterId: string,
+    duplicatePolicy: "skip" | "import_as_new" = "skip",
+  ): Promise<ImportSummary> {
+    try {
+      const res = (await this.invoke(LIBRARY_IMPORT_FOLDER_COMMAND, {
+        chapterId,
+        duplicatePolicy,
+      })) as ImportSummary;
+      if (!res || typeof res.cancelled !== "boolean") {
+        throw new LibraryClientError(
+          "IMPORT_REPORT_MALFORMED",
+          "library_import_folder returned malformed summary",
+        );
+      }
+      return res;
+    } catch (error) {
+      if (error instanceof LibraryClientError) {
+        throw error;
+      }
+      const code = typeof error === "string" ? error : (error as Error)?.message || "CORE_UNAVAILABLE";
+      throw new LibraryClientError(code, `library_import_folder failed: ${code}`);
     }
   }
 }
