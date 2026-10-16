@@ -1,0 +1,50 @@
+SHELL=PowerShell
+PYTHON=G:/CODEX/New Manga.task-envs/T1.1.1-impl-py312/Scripts/python.exe
+COMMAND=G:/CODEX/New Manga.task-envs/T1.1.1-impl-py312/Scripts/python.exe -m pytest tests/core/test_p13_lifecycle_discriminators.py::test_restart_failure_does_not_leave_child_without_parent_disposition -vv
+============================= test session starts =============================
+platform win32 -- Python 3.12.3, pytest-9.1.1, pluggy-1.6.0 -- G:\CODEX\New Manga.task-envs\T1.1.1-impl-py312\Scripts\python.exe
+cachedir: .pytest_cache
+rootdir: G:\CODEX\New Manga.workspace\worktrees\P13-RUN-RUNTIME
+configfile: pytest.ini
+plugins: anyio-4.15.1
+collecting ... collected 1 item
+
+tests/core/test_p13_lifecycle_discriminators.py::test_restart_failure_does_not_leave_child_without_parent_disposition FAILED [100%]
+
+================================== FAILURES ===================================
+____ test_restart_failure_does_not_leave_child_without_parent_disposition _____
+
+    def test_restart_failure_does_not_leave_child_without_parent_disposition():
+        store = _FailParentAfterChildStore()
+        pipeline, _ = _pipeline(store=store)
+        parent = _new_run(pipeline)
+        parent.status = PipelineRunStatus.INTERRUPTED
+        store.put(parent.run_id, parent)
+    
+        with pytest.raises(OSError):
+            pipeline.control_run(parent.run_id, "restart")
+    
+>       assert store.list_ids() == (parent.run_id,)
+E       AssertionError: assert ('run-3ed1ce120c8741c493db3a27e4ab7a80', 'run-ff2a5f9960c34f28ba7144334e8e75b5') == ('run-3ed1ce120c8741c493db3a27e4ab7a80',)
+E         
+E         Left contains one more item: 'run-ff2a5f9960c34f28ba7144334e8e75b5'
+E         
+E         Full diff:
+E           (
+E               'run-3ed1ce120c8741c493db3a27e4ab7a80',
+E         +     'run-ff2a5f9960c34f28ba7144334e8e75b5',
+E           )
+
+tests\core\test_p13_lifecycle_discriminators.py:107: AssertionError
+=========================== short test summary info ===========================
+FAILED tests/core/test_p13_lifecycle_discriminators.py::test_restart_failure_does_not_leave_child_without_parent_disposition - AssertionError: assert ('run-3ed1ce120c8741c493db3a27e4ab7a80', 'run-ff2a5f9960c34f28ba7144334e8e75b5') == ('run-3ed1ce120c8741c493db3a27e4ab7a80',)
+  
+  Left contains one more item: 'run-ff2a5f9960c34f28ba7144334e8e75b5'
+  
+  Full diff:
+    (
+        'run-3ed1ce120c8741c493db3a27e4ab7a80',
+  +     'run-ff2a5f9960c34f28ba7144334e8e75b5',
+    )
+============================== 1 failed in 0.13s ==============================
+EXIT_CODE=1
