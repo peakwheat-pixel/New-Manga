@@ -7,7 +7,7 @@
 | Reviewer | dsh（epoch 6；独立于 Owner） |
 | 交付 commit | 实现+测试 `6284f6f32`；记录 `a4bc60dca` |
 | 基线 | `45b3c3a4ba497955daa41b90dc4fe5bb38eb9308` |
-| 结论 | **changes_requested（I1，1 项）** —— import 侧修复正确且有强证据；但**同类缺陷的第二处实例（导出 grant）未被覆盖** |
+| 结论 | **approved**（`changes_requested` 的 1 项 I1 已于 `4662239b4`/`7fbce3018` 收敛并复核通过，见 §5） |
 
 ## 1. 已独立验证且成立的部分
 
@@ -69,3 +69,23 @@ D now_core = t_host - 0.020 -> REF_EXPIRED          (被过期边界拒绝)
 ## 4. 收敛计划
 
 `I1 返修（Owner=codex，bounded：导出侧同裕量 + 对称测试） → Reviewer 复核其边界测试与真实链路证据 → 必要时 I2（上限 1 次） → 集成 → closeout`。
+
+## 5. I1 收敛记录（Reviewer 有界复核，结论：CONVERGED）
+
+返修 commit `4662239b4`（export TTL 修复）+ `7fbce3018`（测试对齐既有 StartExport DTO）+ `fdf974645`（记录）。Reviewer 逐项复核：
+
+| # | I1 返修要求 | 复核结果 |
+|---|---|---|
+| 1 | 导出侧同裕量；Core 守卫不变 | **PASS**。`host_issuer.rs` 两处签发均为 `unix_seconds() + 299.0`（`build_import_grant` L152、`build_export_grant` L301）；两处 Core 守卫仍为 `expires_at <= now or expires_at > now + 300`，**未改**（对称修复在 issuer 侧，语义面未放松） |
+| 2 | 导出侧边界测试含四项拒绝面 | **PASS**。`tests/core/test_p16_reader_export.py` 新增 5 个注入时钟用例并 **5/5 PASS（EXIT_CODE=0）**：`inside-window`、`clock-equals-host-build`、**`clock-slightly-before-host-build`（负偏差必须仍成功）**、`actually-expired`（拒绝）、`actually-over-300-second-window`（拒绝）。Rust 侧另有导出 issuer TTL 断言 |
+| 3 | 导出侧真实链路证据 | **PASS（最强）**。frozen 2.3 Core（`core_service.exe` 68,717,156 / sha `896bd562…`，`M2RC1_PACKAGED=1`、`SRC_ROOT`/`PYTHON` unset）上 `RegisterExportTarget` **被接受**，下游 `StartExport` 返回预期 `TARGET_NOT_FOUND` 且 `target_written=false`；与 import 侧同型证据并存 |
+| 4 | 签名精度不变 | **PASS**。Rust `{expires_at:.6}` ↔ Python `{expires_at:.6f}` 未改；frozen Core 接受注册即证明校验通过 |
+| 5 | AC1 对导出侧也有条文依据 | **PASS**。`ac1-contract-ruling.md` 补录 export 裁决：§5.7 L456/L476 将 export 有效期/拒绝语义交回 §10.3；§10.3 L814 规定默认 300 s、不滑动续期、单次消费，但**未要求 host 恰好签发 300 s** → 沿用同一 AC1(b) 裁决 |
+| 6 | 不弱化既有测试 | **PASS**。两份测试文件 `git diff` **删除行 0**（Python +38 / Rust +28 纯新增）；AC6：Core **405 passed**、Rust 非 packaged 76 passed/1 ignored、frozen packaged **8 passed** |
+| 7 | 范围与工作树 | **PASS**。I1 范围仅 `host_issuer.rs` + 两个测试文件 + Task/Handoff/verification；**未改契约**（无需改）；worktree clean；主仓 19 项 dirty 未变 |
+
+**I1 CONVERGED，无需 I2。** 全 Task 最终判定 **approved**（可 `done`）。
+
+**如实保留的限定（不得夸大）**：
+- AC4 证明的是**注册被接受 + 下游命令可达并返回 Core 的权威 typed 响应**；因**无真实 fixture 章节/导出目标**，`ImportPages`/`StartExport` 返回的是预期 `TARGET_NOT_FOUND`，**未实际写入页面或导出产物**。
+- 两处 Core 守卫本身未改（这是**设计意图**：在 issuer 侧留裕量、不动校验面），因此"零裕量"这一**类**问题若在新 grant 类型上复发，仍需按同样方式在 issuer 侧留裕量。
