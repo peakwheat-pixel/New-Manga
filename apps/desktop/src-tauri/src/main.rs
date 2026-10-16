@@ -48,7 +48,6 @@ use resource_protocol::ScopeRoots;
 use serde::Serialize;
 use std::collections::HashMap;
 use std::path::PathBuf;
-#[cfg(test)]
 use std::sync::Arc;
 use std::sync::Mutex;
 use tauri::Manager;
@@ -1017,22 +1016,39 @@ fn main() {
         builder
     };
     let builder = builder
+        .manage(state)
         .setup(|app| {
             // progress channel: mirror the page's window title to stderr so
             // the runner can observe probe progress without the invoke bridge
             let handle = app.handle().clone();
+            let title_handle = handle.clone();
             std::thread::spawn(move || {
                 for _ in 0..90 {
                     std::thread::sleep(std::time::Duration::from_secs(2));
-                    for window in handle.webview_windows().values() {
+                    for window in title_handle.webview_windows().values() {
                         let title = window.title().unwrap_or_default();
                         eprintln!("[m2rc1-title] {title}");
                     }
                 }
             });
+
+            // EVENTS-FWD-1 (rev 2.4 §6.4): Register the event sink to forward
+            // projected Core events into the Tauri WebView event bus.
+            let app_state = app.state::<AppState>();
+            if let Some(library) = &app_state.library {
+                let emit_handle = handle.clone();
+                library.set_event_sink(Arc::new(
+                    move |event_name: &str, payload: serde_json::Value| {
+                        use tauri::Emitter;
+                        if let Err(err) = emit_handle.emit(event_name, &payload) {
+                            eprintln!("[events-fwd] failed to emit {event_name}: {err}");
+                        }
+                    },
+                ));
+            }
+
             Ok(())
         })
-        .manage(state)
         .register_uri_scheme_protocol("m2res", |ctx, request| {
             let state = ctx.app_handle().state::<AppState>();
             let uri = request.uri().to_string();
@@ -1130,7 +1146,7 @@ mod tests {
     use crate::core_bridge::{build_issue_params, MockCoreChannel};
     use crate::library_bridge::{LibraryError, MockLibraryChannel};
     use crate::resource_protocol::{
-        build_url, handle_m2res_request, ScopeRoots, CHUNK_SIZE, ID_LENGTH,
+        build_url, handle_m2res_request, ScopeRoots, ID_LENGTH,
     };
     use std::io::Write;
 
@@ -2851,7 +2867,7 @@ mod tests {
             "preview_error": serde_json::json!("PREVIEW_UNAVAILABLE"),
         });
 
-        let out = rotate_render_preview(&core, "page", result, &mut current).unwrap();
+        let _out = rotate_render_preview(&core, "page", result, &mut current).unwrap();
         assert_eq!(current.get("page"), None);
         assert_eq!(
             core.retire_calls.lock().unwrap().clone(),
