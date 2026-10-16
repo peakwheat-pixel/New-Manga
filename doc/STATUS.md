@@ -4,15 +4,12 @@
 
 ## 当前 Task
 
-- 当前 Task：[ARCH-DOC-REBASELINE](tasks/ARCH-DOC-REBASELINE.md) **ready / integrated**（唯一非终态 DAG READY）：AC1–AC3=PARTIAL、AC4–AC6=NOT_RUN、AC7 逐消费者裁决待做；消费者 P09/P18/P20/P16/P17 均未冻结。
-- 本轮完成：[P13-C1](tasks/P13-C1.md) IPC 契约修订 **done**（`c61d8f8c`）；[P13](tasks/P13.md) 后台恢复 **done**（实现 `78b0d439`、评审 `58c0c462`、集成 `8d7cad13`）：durable 幂等、快照冻结、跨进程 scheduler owner、AC4 四项破坏性修正、重试边界、启动恢复、投影与四类事件；协议 major 2.0；`tests/core` 340 passed。
-- 本轮完成：P06（`d3342895`）、P10（`c46c0df0`）、P11（`ceca5721`）、P09 导入 Core（`c6a7339f`，`closed_with_limitations`：AC3 受限=产品无项目级永久删除操作）、P09-FU1 测试基线（`860f6cda`）。
-- 本轮完成：[P16-C1](tasks/P16-C1.md) 契约 rev 2.1 **done**（`27622aa3`）；[P16](tasks/P16.md) 阅读与输出授权 Core **done**（实现 `e2c07fa9`、评审 `338a7c5c`、集成 `e1be3082`）：Reader 投影/进度、五格式导出、`ExportTargetRef` 六类拒绝 + 原子消费 + 源零写；`tests/core` 352 passed。
-- 本轮完成：[P18](tasks/P18.md) JA/KO 质量资格 **closed_with_limitations**（Review `bd5f0ce0`、集成 `44958159`）：AC1/AC3/AC4/AC6 完成（五类缺口清单 + terminal 矩阵 + 素材许可）；**AC2 待用户裁决产品门槛**；**AC5 BLOCKED** 于三项真实缺口 —— `ImportPages=UNKNOWN_COMMAND`（导入侧 wire 从未冻结，阻塞 P12/P19）、检测像素上限 11184810、KO detector 权重缺失。
-- **待用户裁决**：P18 的产品发布门槛（JA/KO 质量达到何种程度才声明支持）。
-- 遗留：**Tauri host 的 `ExportTargetRef` issuer** 须由其自身 Task 实现（P17 前）。
+- 当前 Task：[ARCH-DOC-REBASELINE](tasks/ARCH-DOC-REBASELINE.md) **ready / integrated**（唯一非终态 DAG READY）：AC1–AC3=PARTIAL、AC4–AC6=NOT_RUN、AC7 逐消费者裁决待做。
+- 已释放待认领：[P12-C1](tasks/P12-C1.md) 导入侧 IPC 契约修订 **ready**（冻结 `ImportPages`/`ImportSourceRef`，解除 **P12 与 P19** 的 wire 阻塞；Owner 按 DIR-2=codex）。
+- 本轮完成：[P13](tasks/P13.md)（集成 `8d7cad13`）、[P13-C1](tasks/P13-C1.md)（`c61d8f8c`）、[P16](tasks/P16.md)（`e1be3082`）、[P16-C1](tasks/P16-C1.md)（`27622aa3`）均 **done**；[P18](tasks/P18.md) **closed_with_limitations**（`44958159`，AC2 待用户门槛、AC5 待解阻）。
+- **待用户裁决**：P18 的产品发布门槛（JA/KO 达到何种程度才声明支持）。
+- **未解技术缺口**：检测像素上限 `11184810`、KO detector 权重缺失（导入侧 wire 由 P12-C1 处理）。
 - 用户指令 DIR-2：后续 Task Owner=codex（至额度耗尽）。
-- 已解决：BL-1（codex 空 ref）、BL-3（沙箱 `-c windows.sandbox=unelevated`）、BL-8（测试基线）。
 - Coordinator=dsh，epoch=5，lease=264c2000541748298000f93fb25a52de（LEASE_VALID）。
 - 用户 dirty/untracked 与既有 worktree 全程保留（19 项 tracked dirty 未变，无 EXTERNAL_CHANGE）。
 - 恢复点：verification/PROJECT-ORCHESTRATION-20261016/checkpoint.md；日志 `.orchestrator/{INFLIGHT.json,OPLOG.ndjson,BACKLOG.md,RUNTIME_DIRECTIVES.md}`。
@@ -23,5 +20,5 @@ P02新时点验收/AC6恢复/主线集成完成，父P02限定关闭。Technical
 
 ## 当前权威指针
 
-- DAG：[REBASELINE_PLAN](REBASELINE_PLAN.md)；READY=ARCH-DOC-REBASELINE、P13。
-- 本轮证据：P13 契约 [tasks/P13](tasks/P13.md)；P11 [Review](../verification/P11/dsh-review-r1.md)；P09 [Review](../verification/P09/dsh-review-r1.md)；ARCH-DOC [R1](../verification/ARCH-DOC-REBASELINE/dsh-review-r1.md)。
+- DAG：[REBASELINE_PLAN](REBASELINE_PLAN.md)；READY=ARCH-DOC-REBASELINE、P12-C1。
+- 本轮证据：P18 [Review](../verification/P18/dsh-review-r1.md)；P16 [Review](../verification/P16/dsh-review-r1.md)；P13 [Review](../verification/P13/dsh-review-r1.md)；ARCH-DOC [R1](../verification/ARCH-DOC-REBASELINE/dsh-review-r1.md)。
