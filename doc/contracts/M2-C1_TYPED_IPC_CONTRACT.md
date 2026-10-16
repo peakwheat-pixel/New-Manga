@@ -10,10 +10,13 @@
 
 # M2-C1 — Typed IPC Contract
 
-状态：rev `2.0`（P13-C1）已冻结 Run Runtime wire 面与 Python Runtime 授权；rev 1.8/1.7/1.6/1.5 的既有命令修订继续有效。Python Run handlers、幂等持久化及事件输出仍未实现。下方历史 revision 条目保留当时状态，不覆盖本行与 rev 2.0。
+**当前修订范围：P16-C1 rev 2.1**（§3、§5 Reader/Export catalog、§6 Reader/Export projections/events、§10.3 ExportTargetRef、§11、§12）。P13 Run wire 本文零语义变化。
+
+状态：rev `2.1`（P16-C1）冻结 Reader/Export wire 与 P16 Python Runtime 授权；协议 envelope 为 major `2` / minor `1`。rev 2.0 的 P13 Run wire 与更早既有命令语义不变；本修订不声称 P16 runtime 已实现。下方历史 revision 条目保留当时状态，不覆盖本行与 rev 2.1。
 
 ## Revision history
 
+- `2.1`（P16-C1，2026-10-16）：冻结 Reader/Export wire，新增 `GetReaderProjection` / `SaveReadingProgress`、`StartExport` / `CancelExport`、`GetExportSnapshot` / `GetExportHistory` 和 `ReadingProgressChanged` / `ExportProgressChanged`。`StartExport.target_ref` 为 Tauri host 签发、单一目标、300 秒过期且一次消费的 `ExportTargetRef`；Core 经与 `ImportSourceRef` 同源的受信 grant resolver 验证、解析、消费。协议 minor `0→1`，只新增命令/事件；旧命令语义和 P13 Run wire 不变，runtime 未实现。细节见 §5、§6.3、§10.3、§12。
 - `2.0`（P13-C1，2026-10-16）：**授权契约修订**——① `StartRun` 增加必填 `idempotency_key`，并冻结 `ControlRun`、`ResumeBlockedRun`、`GetRunSnapshot`、`GetTaskProjection`、`RetryFailedTargets` 的 request/result；同键同 fingerprint 返回原 Run，同键不同 fingerprint 返回 `IDEMPOTENCY_KEY_REUSED`；restart 重放还返回 child 当前状态；`request_id` 保持纯请求关联用途；②按 P11 §4.2/§4.5 冻结控制动作与完整非法转换拒绝表；③冻结 `TaskProjection` 的任务错误/重试、可得 Provider/Model/Device 字段，以及 Task failure / Run pause / Run completion / current Page·Step changed 事件；事件在持久状态提交后经现有 JSONL stdio stream 推送，快照仍为真值；④协议 major `1→2`，因为新必填字段和响应/事件混合输出不能按 §3.2 minor widening；既有命令字段、结果、错误语义不变，但 1.x 客户端必须升级至 2.0 后才可连接该 endpoint；⑤**明确授权** P13 Task 实现 Python IPC Runtime，范围与 allowlist 由 P13 Task 冻结；不授权 React/Tauri/Rust 改动、其他产品功能或依赖。实现状态仍为 `NOT_IMPLEMENTED`。
 - `1.8`（M2-PAGE-NAV-PROJECTION-1，2026-10-07）：**授权契约修订（新命令，协议 minor 5→6）**（[Task](../tasks/M2-PAGE-NAV-PROJECTION-1.md)，用户 2026-10-07 持续自治授权 STATUS 主路径候选①第二刀）——§5 新增 `ListChapters` / `ListChapterPages` 两行（原 §5 PROPOSAL 组合行的 `ListChapters` 转冻结；`ListChapterPages` 为新名，避开 `GetReaderProjection` 的 ReaderProjection 大对象）：①wire `list_chapters`：`{book_id}` → `{"chapters": [{chapter_id, title, chapter_number, sort_order}]}`（result 包装对象沿 ListRegions 1.4 r1 P1-1 先例）；②wire `list_chapter_pages`：`{chapter_id}` → `{"pages": [{page_id, source_filename, sort_order}]}`（导航摘要行——managed_original_ref/宽高/锁态不在本刀，几何与页尺寸由 `list_regions` 面承载，页图经 `resolve_page_resource` 通道获取）；③排序语义冻结：两命令均按 `sort_order` 升序（D03 AC-PAGE-001 用户当前排序；repository 既有 `list_chapters`/`list_pages` 已 ORDER BY sort_order，Core 透传不加新查询方法）；④**零新错误码**：未知 book_id/chapter_id 返回空数组（沿 1.4 r1 P3-4「不存在的父 id 归类空列表」先例——缺失父是空数据不是错误），payload 校验 → `INVALID_REQUEST`（validation）复用；⑤协议 minor 5→6（commands added 惯例，RC-4/1.7 先例）；⑥Rust 命令面 13→15 生产命令（新生产-only 组 `PAGE_NAV_PRODUCTION_ONLY_COMMANDS`，probe/AC1 冻结面零变化——option-B 先例）；⑦`GetReaderProjection` 冻结不变（Reader 页 display mode/进度面不在本刀）；不改变 §5.2 纯 UI 动作边界（book/chapter 下钻选择是 React 本地状态，Core 无写路径）；§10 通道语义零变化。
 - `1.7`（M2-PAGE-RESOURCE-RESOLVE-1，2026-10-07）：**授权契约修订（新命令，协议 minor 4→5）**（[Task](../tasks/M2-PAGE-RESOURCE-RESOLVE-1.md)，用户 2026-10-07 持续自治授权 STATUS 主路径候选①第一刀）——§5 新增 `ResolvePageResource` 行（wire `resolve_page_resource`）：①请求 `{page_id}` → result `{resource_id, revision}`；②Core 侧经装配期 `read_original_page` 同款 storage 缝解析 `Page.managed_original_ref`（Managed Copy 根逃逸检查；wire 不携带路径与新业务身份，只返回不透明目录键）；③发布语义复用 RC-4 preview 先例（derived 只读根 + `ResourceCatalogStore` 登记，scope `derived-read-only`，temp+fsync+replace+逃逸门同款）；④**确定性资源键 `page-original-{page_id}`**：managed 原图不可变 → 首次解析发布、后续解析为目录查找返回同键（幂等，零重复产物；`revision` 恒为不透明字面量 `"original"`，Python 侧两分支共用 `ORIGINAL_REVISION` 常量；目录命中以产物存活为条件——derived 缓存被清后同键重发布自愈，byte-for-byte 确定性使幂等语义不变）——与 preview 的每次随机键轮换语义 deliberate 不同；⑤新错误码 `PAGE_NOT_FOUND`（not_found；页面不存在或无 managed 原图——与 region 面的 `TARGET_NOT_FOUND` 族区分，不靠 message 文本区分码）；`INVALID_REQUEST`（payload 校验）复用既有码；`ARTIFACT_WRITE_FAILED`（internal，retryable，发布 OSError）沿 RC4-08 拆分先例；⑥协议 minor 4→5（commands added 惯例，RC-4 先例）；⑦Rust 命令面 12→13 生产命令（生产-only 组 `PAGE_RESOLVE_PRODUCTION_ONLY_COMMANDS`，probe/AC1 冻结面零变化——option-B 先例）；host 侧**不**走 preview 轮换（稳定目录键不得被 per-page revoke 删除）；⑧不改变 §5.2 纯 UI 动作边界（页选择仍是 React 本地状态）；§10 通道语义零变化。
@@ -64,12 +67,12 @@ SQLite (persistent authority; written only under Python Core)
 
 ## 3. Message envelope 与版本
 
-以下类型是 **PROPOSAL**，用语言无关的 JSON-compatible primitive 表示，尚未选择具体序列化库：
+以下 envelope 是 **PROPOSAL**，用语言无关的 JSON-compatible primitive 表示，尚未选择具体序列化库。Reader/Export 命令与事件 DTO 在 rev 2.1 中冻结；其他仍未冻结的类型继续按各节状态处理：
 
 ```text
 Request<T> = {
   protocol: "new-manga.core",
-  version: { major: 2, minor: 0 },
+  version: { major: 2, minor: 1 },
   request_id: OpaqueId,
   command: CommandName,
   payload: T
@@ -77,7 +80,7 @@ Request<T> = {
 
 Response<T> = {
   protocol: "new-manga.core",
-  version: { major: 2, minor: 0 },
+  version: { major: 2, minor: 1 },
   request_id: OpaqueId,
   result: T | null,
   error: ErrorEnvelope | null
@@ -85,7 +88,7 @@ Response<T> = {
 
 Event<T> = {
   protocol: "new-manga.core",
-  version: { major: 2, minor: 0 },
+  version: { major: 2, minor: 1 },
   event_id: OpaqueId,
   event_type: EventName,
   emitted_at: Timestamp,
@@ -108,6 +111,7 @@ Event<T> = {
 - 同 major 下 minor 可向前增加可选字段和新 command/event；接收端忽略未知可选字段，但未知 command/event/status 必须显式返回/保留 `UNKNOWN`，不能重解释成其他状态。
 - 字段删除、改名、类型变化、枚举旧值语义变化或必填性变化属于 major 变更。**例外**：经授权 Task 在 Revision history 登记的 nullability widening（`T → T | null`）不升 major，现仅有 §5 `ListBooks` 的 `BookSummary.page_count`（`1.2` 修订，[M2-FIX-LISTBOOKS-PAGECOUNT-UNKNOWN](../tasks/M2-FIX-LISTBOOKS-PAGECOUNT-UNKNOWN.md)）；1.1 版消费者遇 `null` 属该登记修订的授权破坏面。
 - P13-C1 将冻结的 Run 命令面从 proposal major 1.0 升至 major 2.0：`StartRun.idempotency_key` 的新增必填性及单一 JSONL 输出流中新增异步事件均不能由 major 1 接收端安全忽略。既有命令 payload/result/error 语义不变；major 1 客户端收到 `PROTOCOL_VERSION_UNSUPPORTED`，必须升级后使用 major 2。当前生产 Core stdio 命令实现仍为 major 1 / minor 6；本修订只冻结目标 wire，不声称当前服务已支持 major 2。
+- P16-C1 在 major 2 / minor 1 冻结新增 Reader/Export 命令与事件；既有冻结命令、结果、错误和 P13 Run 事件语义不变。rev 2.0 客户端不能调用这些新增命令；要使用 Reader/Export 面，客户端与 Core 必须配置到 rev 2.1。协议没有版本协商，本文不承诺不同 minor 的同进程双版本服务。
 - 版本握手/协商与自动迁移仍 `NOT_IMPLEMENTED`；客户端须以已知配置发送版本。`PROTOCOL_VERSION_UNSUPPORTED` 是稳定错误码。
 
 ## 4. Request/response 语义
@@ -120,7 +124,7 @@ Event<T> = {
 
 ## 5. Typed command / query catalog
 
-当前 Qt ViewModel 的方法不是一对一 IPC API。下表的 command name、payload/result DTO 均为 **PROPOSAL**；现有代码只证明“现有 ViewModel/Core service 有对应操作”，不证明 wire shape 或 IPC 已实现。页面选择、排序、过滤、查看器模式和未保存输入等纯前端交互留在 React 本地状态中。每行“现状”说明的是代码调用或领域服务存在性，不表示已经有 IPC。
+当前 Qt ViewModel 的方法不是一对一 IPC API。除明确标为 FROZEN 的行外，下表仍为 **PROPOSAL**；现有代码只证明“现有 ViewModel/Core service 有对应操作”，不证明 wire shape 或 IPC 已实现。页面选择、排序、过滤和未保存输入等纯前端交互留在 React 本地状态中。每行“现状”说明的是代码调用或领域服务存在性，不表示已经有 IPC。
 
 | Name | Typed payload → result | As-Is evidence / To-Be boundary |
 |---|---|---|
@@ -146,9 +150,13 @@ Event<T> = {
 | `ListChapters` | `{book_id}` → `{"chapters": [{chapter_id, title, chapter_number, sort_order}]}` | **`1.8` 冻结（M2-PAGE-NAV-PROJECTION-1）**：wire `list_chapters`，book→chapter 导航读取面第一刀；`sort_order` 升序，未知 book_id 返回空数组（零新错误码），协议 minor 6；上方原 PROPOSAL 组合行中的 `ListChapters` 转本行冻结，`CreateChapter`/`DeleteChapter` 仍为 PROPOSAL。 |
 | `ListChapterPages` | `{chapter_id}` → `{"pages": [{page_id, source_filename, sort_order}]}` | **`1.8` 冻结（M2-PAGE-NAV-PROJECTION-1）**：wire `list_chapter_pages`，chapter→page 导航读取面第一刀（新名避开 `GetReaderProjection` 的 ReaderProjection 大对象）；导航摘要行不含 managed_original_ref/宽高/锁态，`sort_order` 升序，未知 chapter_id 返回空数组，协议 minor 6。 |
 | <a id="rerender-page-command"></a>`RerenderPage` | `{page_id}` → artifact/reports/preview | **1.6 RC-4 冻结**：wire `rerender_page`，同步复用既有 RenderService，无 AI/PipelineRun；错误、skip 原图回填与资源撤销以 [RC-4 契约](M2-RC4_DOMAIN_COMMANDS.md) 为准，协议 minor 4。**category 澄清（M2-CATEGORY-CLARIFY-1，2026-10-07；RC-4 r1 RC4-10）**：失败 envelope 的 `MISSING_REQUIRED_INPUT` → `category="unavailable"`（required input missing 属 §8 值域中的可用性失败，非 not_found 的「目标不存在」；category 值此前从未被任何 revision 冻结，taxonomy 表仍为 Proposal，本注记为实现口径登记，非修订）；`TARGET_NOT_FOUND`→`not_found`、`INPUT_REVISION_CHANGED`→`conflict`、`ARTIFACT_WRITE_FAILED`/其余→`internal` 不变；category/retryable 观察见[RC-4 命令行](M2-RC4_DOMAIN_COMMANDS.md#rc4-rerender-page-command)与[§8 注记](#rerender-page-error-envelope-observation)。 |
-| `GetReaderProjection` / `SaveReadingProgress` | `{chapter_id}` / `{chapter_id, page_id?, scroll_offset?}` → `ReaderProjection` / `Unit` | Reader VM 读取章节页并保存滚动偏移；page navigation、display mode 为 presentation state。 |
+| `GetReaderProjection` | `{chapter_id, mode: original\|translated, start_position: resume\|beginning}` → `ReaderProjection` | **2.1 FROZEN**：Core 投影规范阅读布局、逻辑 Page 的尺寸/只读资源引用与该 mode 独立的进度；Webtoon 长图仍是一张 Page，缓存 tile 不成为 Page。DTO 与坐标语义见 §6.3。 |
+| `SaveReadingProgress` | `{chapter_id, mode: original\|translated, page_id, scroll_offset_y?, elapsed_seconds_delta?}` → `ReadingProgressSnapshot` | **2.1 FROZEN**：Core 按 `(book_id, chapter_id, mode)` 独立保存位置与阅读时长；Webtoon y 偏移使用逻辑 Page 原图像素坐标。读取面为 `GetReaderProjection`；成功后发 `ReadingProgressChanged`。 |
 | `GetSettings` / `SaveSettings` | `{section?}` / `{section, values}` → `SettingsProjection` / `SettingsProjection` | AS-IS 仅证明 Settings VM 在进程内调用 profiles/defaults/credentials services；没有已定义的 `CredentialRef` 类型或 IPC exchange。Credential DTO/exchange 为 UNKNOWN / DEFERRED；secret 不得进入普通事件或日志。**`1.3` 修订（M2-SETTINGS-IPC-CHANNEL）**：本行 transport-neutral 命令名与其 PROPOSAL 等级不变；产品 Tauri 面落地为 §5.3 的 `settings_get` / `settings_update_section`（请求/响应/错误码与写入端校验以 §5.3 为准）。 |
-| `StartExport` / `CancelExport` | `{export_request: ExportRequestDto}` / `{export_id}` → `ExportAccepted` / `Unit` | ViewModel 调 Export service 与本地 worker；实际输出文件选择/宿主能力需后续 host contract，当前导出 IPC 未实现。 |
+| `StartExport` | `{book_id, chapter_ids, ordered_page_ids, format, format_options, stale_policy, target_ref: ExportTargetRef}` → `ExportAccepted` | **2.1 FROZEN**：format=`png\|zip\|cbz\|pdf\|text`；输出当前可用的翻译成果，`png` 要求恰一页。页序是请求指定的冻结顺序。`target_ref` 是 Tauri host 签发的单次写授权；Core 验证、解析并消费，见 §10.3。 |
+| `CancelExport` | `{export_id}` → `ExportProgressSnapshot` | **2.1 FROZEN**：请求取消活动导出；响应与后续查询都返回 Core 快照。已原子发布的成功结果不回滚；终态和清理见 §6.3。 |
+| `GetExportSnapshot` | `{export_id}` → `ExportProgressSnapshot` | **2.1 FROZEN**：读取接受中的进度或终态结果；事件仅作提示，见 §6.3。 |
+| `GetExportHistory` | `{}` → `{"exports": ExportHistoryEntry[]}` | **2.1 FROZEN**：读取 Core 持久的 ExportHistory，含选择的输出路径；此命令只供可信 Tauri host 使用，host 不得将路径或写引用转发给 WebView。 |
 
 ### 5.5 Run Runtime wire surface（P13-C1，冻结）
 
@@ -359,7 +367,7 @@ TaskProjectionStep = {
 
 ### 6.2 Event catalog
 
-以下为 **PROPOSAL** 的 typed invalidation/progress event；事件是状态变化通知，不代替快照：
+以下 event 中明确标为 **FROZEN** 的 payload 仅冻结 wire；其他仍为 **PROPOSAL**。事件是状态变化通知，不代替快照：
 
 | Event | Payload | Evidence level |
 |---|---|---|
@@ -372,11 +380,139 @@ TaskProjectionStep = {
 | `RunCompleted` | `{run_id, status: "completed"\|"completed_with_failures"}` | **P13-C1 frozen minimum**；在终态完成聚合持久化后立即推送；失败页仍保留其成功成果。 |
 | `CurrentPageStepChanged` | `{run_id, current_page_id: PageId\|null, current_step_type: string}` | **P13-C1 frozen minimum**；current Page/Step 投影值改变后立即推送。 |
 | `CoreAvailabilityChanged` | `{state: starting\|ready\|stopping\|unavailable, reason?: ErrorEnvelope}` | **UNKNOWN / PROPOSAL**；当前 Core process/session event 不存在。 |
-| `ImportProgressChanged`, `ExportProgressChanged` | `{operation_id, completed?, total?, status}` | **UNKNOWN / PROPOSAL**；现有 UI 有 import summary/export worker signals，但跨进程传输没有验证。 |
+| `ImportProgressChanged` | `{operation_id, completed?, total?, status}` | **UNKNOWN / PROPOSAL**；现有 UI 有 import summary，但跨进程传输没有验证。 |
+| `ExportProgressChanged` | `{export_id, status, completed_pages, total_pages}` | **2.1 FROZEN**；仅为失效提示，不携带目标路径；调用方读取 `GetExportSnapshot`。 |
+| `ReadingProgressChanged` | `{book_id, chapter_id, mode}` | **2.1 FROZEN**；仅为失效提示；调用方重新读取 `GetReaderProjection`。 |
 
 P13-C1 的四类事件为 §3 `Event<T>` envelope 内的 unrequested messages；它们与 `Response<T>` 共用现有 Python Core stdio JSONL stream：每条 stdout line 是一个完整 Request、Response 或 Event JSON object，Response 以 `request_id` 配对，Event 以 `event_id` 识别；事件可与请求响应交错，Core 必须串行化写出完整行。stdout 只承载协议行，诊断继续写 stderr。没有单独的事件 subscribe 命令。
 
 普通百分比投影刷新目标为最多约 4 Hz；调用方使用 `GetTaskProjection` 读取当前投影。上述四类重要事件在对应持久状态/投影变更提交后立即推送，不因普通进度节流而延迟。Event 是提示与失效通知，不是状态真值；不承诺至少一次/至多一次、顺序号、重放或重连送达。连接恢复后，客户端必须重新调用 `GetRunSnapshot` / `GetTaskProjection`；不得从事件自行重建持久状态。当前 Qt signal 名称不是 wire contract，未来不得以 QVariant/QObject 对象作为消息类型。
+
+P16-C1 的 `ExportProgressChanged` 与 `ReadingProgressChanged` 同样封装为 §3 `Event<T>`，与请求/响应共用 JSONL stream；仅在相应进度快照持久化后发出。两事件只提示调用方重新查询，不保证送达/重放/排序，也不携带文件路径、`ExportTargetRef` 或可重建业务状态的内容。Reader 以 `GetReaderProjection`、Export 以 `GetExportSnapshot` / `GetExportHistory` 的 Core 快照为真值。上述规则不改变 P13 四类 Run 事件。
+
+### 6.3 Reader / Export projections 与任务快照（P16-C1，冻结）
+
+以下 DTO 在 rev 2.1 冻结；资源引用沿用 §10.2 的只读 `ResourceRef` 安全语义。路径、文件 bytes 与 OS 对象不进入 Reader DTO。
+
+```text
+ReadingMode = original | translated
+ReaderLayout = rtl | ltr | webtoon_vertical
+Sha256 = lowercase hex string, exactly 64 characters
+
+ReaderPageProjection = {
+  page_id: PageId,
+  order: integer,                         # 0-based canonical chapter reading order
+  width_px: positive integer,
+  height_px: positive integer,
+  original: {resource_ref: ResourceRef, artifact_revision_id: OpaqueId, sha256: Sha256},
+  translated: {
+    resource_ref: ResourceRef | null,
+    artifact_revision_id: OpaqueId | null,
+    rendered_from_revision_id: OpaqueId | null,
+    current_source_revision_id: OpaqueId | null,
+    sha256: Sha256 | null
+  }
+}
+
+ReadingProgressSnapshot = {
+  book_id: BookId,
+  chapter_id: ChapterId,
+  mode: ReadingMode,
+  last_page_id: PageId | null,
+  scroll_offset_y: number,
+  progress_percent: number,
+  last_read_at: Timestamp | null,
+  total_read_seconds: number
+}
+
+ReaderProjection = {
+  book_id: BookId,
+  chapter_id: ChapterId,
+  mode: ReadingMode,
+  layout: ReaderLayout,
+  pages: ReaderPageProjection[],
+  saved_progress: ReadingProgressSnapshot | null,
+  initial_position: {page_id: PageId, scroll_offset_y: number}
+}
+```
+
+- `GetReaderProjection.start_position="resume"` uses the saved `(book_id, chapter_id, mode)` position when present; otherwise it starts at the first logical Page. `"beginning"` returns the first Page and offset `0` without mutating `saved_progress`; a later `SaveReadingProgress` persists the displayed position. `Original` and `Translated` are separate progress keys.
+- `pages` is in canonical chapter reading order. `layout=rtl` means next/previous navigation is presented right-to-left; `ltr` means left-to-right. A Webtoon chapter projects `webtoon_vertical` and its long source image as exactly one logical Page; transient cache tiles never appear as pages. The layout does not reorder the canonical array.
+- `original` and `translated` references identify the corresponding immutable input/render artifact; a missing translated artifact is represented by null fields, never by a path or fabricated reference. If present, `rendered_from_revision_id` and `current_source_revision_id` expose the revisions needed to identify a stale translation; they do not prescribe a Reader fallback UI.
+- For `webtoon_vertical`, `scroll_offset_y` is a non-negative source-image pixel coordinate within the one logical Page. The view maps its width-fitted display coordinate back to this source coordinate before saving and maps the same coordinate into display space on resume. Paged chapters save the selected `page_id` with `scroll_offset_y=0`.
+- `SaveReadingProgress` rejects a page outside the requested chapter, an invalid mode/layout combination, a negative/non-finite offset or elapsed time, and a Webtoon offset outside the Page height. `elapsed_seconds_delta` is the non-negative time accumulated by the caller since its previous successful save; Core adds the value once per accepted command. The caller must not resend an already accepted interval; this command does not promise request replay deduplication. The result is the committed `ReadingProgressSnapshot`. Reopening the chapter with `resume` reads that persisted page/coordinate.
+
+Export wire types:
+
+```text
+ExportFormat = png | zip | cbz | pdf | text
+ExportFormatOptions =
+    {compression: standard | fast | store}                 # zip
+  | {}                                                     # png, cbz
+  | {pdf_content: image_only | searchable_dual_layer}      # pdf
+  | {text_representation: txt | json | markdown}           # text
+
+StalePolicy = abort | continue_existing
+ExportStaleDetail = {page_id: PageId, reason: stale | missing}
+ExportPageLineage = {
+  page_id: PageId,
+  order: integer,
+  source_artifact_id: OpaqueId,
+  source_artifact_revision_id: OpaqueId,
+  source_sha256: Sha256,
+  rendered_from_revision_id: OpaqueId | null,
+  current_source_revision_id: OpaqueId | null,
+  source_run_id: RunId | null,
+  stale: boolean
+}
+ExportAccepted = {
+  export_id: OpaqueId,
+  status: pending,
+  accepted_at: Timestamp,
+  book_id: BookId,
+  chapter_ids: ChapterId[],
+  ordered_page_ids: PageId[],
+  format: ExportFormat,
+  format_options: ExportFormatOptions,
+  lineage: ExportPageLineage[]
+}
+ExportProgressSnapshot = {
+  export_id: OpaqueId,
+  status: pending | running | publishing | completed | cancelled | failed,
+  completed_pages: non-negative integer,
+  total_pages: positive integer,
+  current_page_id: PageId | null,
+  accepted_at: Timestamp,
+  completed_at: Timestamp | null,
+  output: {format: ExportFormat, output_path: string, sha256: Sha256} | null,
+  lineage: ExportPageLineage[],
+  error_code: string | null
+}
+ExportHistoryEntry = {
+  export_id: OpaqueId,
+  book_id: BookId,
+  chapter_ids: ChapterId[],
+  ordered_page_ids: PageId[],
+  format: ExportFormat,
+  format_options: ExportFormatOptions,
+  created_at: Timestamp,
+  completed_at: Timestamp | null,
+  output_path: string,
+  status: pending | running | publishing | completed | cancelled | failed,
+  sha256: Sha256 | null,
+  lineage: ExportPageLineage[]
+}
+```
+
+- `StartExport` freezes the exact, non-empty `ordered_page_ids` and their lineage before work begins. IDs must be distinct and belong to the supplied book/chapters. Export consumes current translated artifacts and does not add an original-image export choice. `png` requires exactly one Page. ZIP entries, CBZ entries, PDF pages and text sections follow the frozen order. Each request creates one output file. The output SHA-256 is computed over the completed file bytes and is recorded with the exact per-page source artifact/revision hashes and any available source Run ID; clients cannot supply or rewrite lineage.
+- `format_options` is a tagged-by-`format` closed shape: ZIP requires a compression choice and contains an ordered, clear structure plus a read-only manifest; CBZ writes a standard Comic Book ZIP and `ComicInfo.xml` from available Core metadata; PDF requires image-only or searchable dual-layer content, preserves page integrity and embeds fonts; text requires TXT, JSON or Markdown representation and is UTF-8. JSON contains the selected pages' coordinates and original/translated text from authoritative Core records. PNG is lossless and high-fidelity at the source image resolution/color space. Format-specific output requirements remain those in FMT-01..05; this DTO does not relax them or define new metadata values.
+- If translated inputs are stale and `stale_policy="abort"`, `StartExport` returns `EXPORT_STALE` with typed details naming stale Page IDs and creates no job/history record. The target reference is consumed on a valid invocation; after explicit user choice to continue, the host issues a new one-time reference and the retry uses `continue_existing`. The accepted lineage then freezes the exact older artifact revision/hash. Missing translated input is rejected as `EXPORT_INPUT_UNAVAILABLE`; the contract does not invent an original-image fallback for export.
+- Command errors use existing `INVALID_REQUEST` for malformed fields/enums, `TARGET_NOT_FOUND` for an unknown book/chapter/page, `EXPORT_STALE` (`conflict`, `retryable=false`, `details: ExportStaleDetail[]`) when stale confirmation is required, and `EXPORT_INPUT_UNAVAILABLE` when a selected translated input is absent. Unknown `export_id` uses `EXPORT_NOT_FOUND`. A write or verification failure before publication uses `EXPORT_WRITE_FAILED`; error messages/details never contain local paths. Stale/missing rejection creates no accepted job/history row.
+- `GetExportSnapshot` and `GetExportHistory` return persisted Core state. An accepted job has a durable history row; history entries record D08 AC-EXPORT-002's type, exact scope and order, creation/completion time, target output path and status. Output paths are available only to the trusted Tauri host; no WebView-facing projection may contain a path or write reference.
+- Core writes only within the resolved target grant and its temporary sibling, verifies the complete temporary output SHA-256, then atomically publishes the single output file. Cancellation before publication removes the temporary file and ends `cancelled`; failure also removes it. After atomic publication the job enters `publishing`; `completed` is reported only after the matching hash/path/status is durably recorded in ExportHistory. If history persistence fails, keep the job `publishing`, preserve the published output and reconcile its path/hash before reporting a terminal state. Cancellation during/after publication cannot roll the file back. Export never modifies original source files, translated inputs, their hashes, current artifact pointers or lineage; only the chosen output and ExportHistory are written. Terminal state is recorded before its event is emitted.
+- `CancelExport` on a pending/running job requests cooperative cancellation and returns the latest snapshot; it does not promise immediate interruption. Once status is `publishing`, or any terminal state is reached, cancellation returns the current snapshot without changing it. Repeated cancellation is safe. `ExportProgressChanged` contains no path; `GetExportSnapshot` remains the source of truth.
+
+`ReadingProgressChanged` and `ExportProgressChanged` payloads above are frozen but are only §3 `Event<T>` JSONL invalidation hints. A reconnect or suspected missed event always re-queries the relevant snapshot; no Reader or Export status is reconstructed from the event stream.
 
 ## 7. Lifecycle、断线与恢复
 
@@ -460,6 +596,7 @@ AS-IS `normalized_to_page_geometry(points, page_w, page_h)` owns conversion in a
 - Do not encode large images, Webtoon page/tile resources, or model weights in ordinary JSON/Base64 IPC. No IPC command/event in this contract accepts those byte arrays.
 - This contract does not pick file URI/token, OS handle, shared-memory, streaming, tile or chunk transport. Capacity, permission, lifecycle, cleanup, threat model and recovery must be independently spiked and verified before any large-media command is released.
 - Import sources may use only Core/host mediated, scoped references; their security and lifecycle semantics are now ruled in §10.1 (T5/T6) and §10.2, while the exact wire value-object form remains **DEFERRED** to a future runtime Task.
+- Export destinations may use only the one-shot Tauri-host-issued write reference defined in §10.3. An arbitrary path string is never a write authorization.
 - Credentials/secrets are excluded from ordinary DTOs, event payloads, errors and logs. Credential storage remains host/Core secure flow; exact typed secret exchange is **UNKNOWN** pending credential contract.
 
 ### 10.1 Ruled resource-channel thresholds (M2-S1 §7 product threshold ruling, T1–T7)
@@ -491,6 +628,18 @@ AS-IS `normalized_to_page_geometry(points, page_w, page_h)` owns conversion in a
 - **TO-BE（M2-S2 §3/§4/§5 实测提取）— 类型化错误码最小集**：Resource-reference resolution must surface a stable typed error-code minimum set, riding the §8 `ErrorEnvelope.code` field (no change to §8's definition): `REF_MALFORMED`, `REF_SIGNATURE_INVALID`, `REF_EXPIRED`, `REF_REVOKED`, `REF_UNKNOWN_ID` (mapping-ID miss), `REF_SCOPE_DENIED`, `REF_READ_ONLY`, `REF_OUT_OF_SCOPE` (lexical, absolute-path and handle-derived containment escapes), `REF_REPARSE_POINT`, `REF_NOT_FOUND`, `RESOURCE_TOO_LARGE` (T1 channel-level limit, suggested code), `MEDIA_TOO_LARGE_BY_HANDLE`, `FILE_IDENTITY_CHANGED`, `FILE_SIZE_CHANGED`, `CONTENT_DIGEST_MISMATCH`, `OPEN_FAILED_SHARING_VIOLATION`. Error responses must never leak mapping-table entries or paths (§8 `message` constraint; M2-S2 M-05). Runtime Tasks may add codes but must preserve these semantics; wire naming may be refined in a later contract revision without weakening the semantics.
 - **RULED（T7，条款正文见 §10.1）**：模型权重独立通道——不与页/tile 共用引用通道，不适用 T1–T4 与 T6 语义。
 
+### 10.3 Export destination write reference (P16-C1 rev 2.1)
+
+本小节冻结的是 P16 的授权边界与 wire 语义，不代表签名实现或 Python Runtime 已落地。
+
+- `ExportTargetRef` 是不透明、受限的写授权引用；它不是路径字符串，也不得编码/暴露路径。唯一 issuer 是受信 **Tauri host**。Host 在用户选择目标后签发，并将引用只注入可信 host→Python Core 的 `StartExport` 请求；React/WebView 不得接收、保存、构造、转发或使用该引用，也不得接触其映射到的路径。
+- 引用 scope 是**一个精确的最终输出文件目标**和**一次 `StartExport` 调用**，并仅授权该文件所需的临时 sibling staging 与发布。签名/授权绑定当前 host session、单一 grant ID、目标 scope、允许的 `format`、是否允许替换既有目标及绝对过期时间；不允许目录递归、其他文件、任意路径访问或扩权。默认有效期为签发后 **300 秒，不滑动续期**；一次有效调用后即消费。临时文件名只能由 Core 在同一授权目标目录内生成并须清理。
+- Host 通过受信 host→Core 授权通道登记受限目标 grant；引用仅含不透明 grant ID 与 host 签名。Core 在任何目标写入前必须验证当前 host session 的签名/issuer、scope、format、目标替换授权、未过期、未撤销且未消费，并以原子方式消费 grant；随后只能通过 Core 侧 grant resolver 将该 grant 解析为受限目标能力。具体 token 编码/签名算法可由 Runtime Task 在不改变上述语义的前提下选择。
+- Core 必须拒绝缺失/畸形引用（`REF_MALFORMED`）、非 host 签发或签名无效（`REF_SIGNATURE_INVALID`）、过期（`REF_EXPIRED`）、未知/撤销 grant（`REF_UNKNOWN_ID` / `REF_REVOKED`）、重放（`REF_ALREADY_CONSUMED`）、scope/format/host session 不匹配或未获 host 替换授权的既有目标（`REF_SCOPE_DENIED`）。拒绝错误不得暴露 grant 内容、签名材料或任何本地路径。不得以请求中的任何其他字段回退为 path-based write。
+- Core 解析后只能写授权目标及其临时 staging；解析/打开阶段须验证句柄最终位置仍在该 grant scope 内，并拒绝 reparse/路径逃逸。所有原始 source、Managed Copy、现有译图 artifact 与 current/pinned Revision 均为零写对象。目标校验或发布失败时清理临时文件，绝不回写 source；已发布的输出不因后续取消而删除。
+- Host 可在其可信边界内持有所选路径；`ExportProgressSnapshot` / `ExportHistoryEntry` 的 `output_path` 只回到可信 Tauri host 以满足 D08 AC-EXPORT-002 和 D04 §37。Host 不得把绝对路径或 `ExportTargetRef` 转发给 React/WebView；前端若需展示状态/触发打开文件夹，必须经独立 host command 按不透明 `export_id` 操作，不能借此取得路径。
+- 与 §5 `ImportPages` 的 `ImportSourceRef`、§10.1/§10.2 显式同源：两者均由 Tauri host 授权、opaque、受限、过期、由 Core 解析并拒绝伪造/越 scope 引用；**差异只有能力方向和生命周期**：`ImportSourceRef` 是 Core 控制的只读输入，可按 §10.1 T6 滑动续期并按来源撤销；`ExportTargetRef` 是单个目标的一次性写授权，无续期、单次消费，只能写授权输出与 staging。Export ref 不复用、也不放宽 import 的读引用。
+
 ## 11. Explicitly deferred / undecided
 
 | Decision | Status | Contract treatment |
@@ -499,7 +648,7 @@ AS-IS `normalized_to_page_geometry(points, page_w, page_h)` owns conversion in a
 | React UI Owner | `DEFERRED / USER_DECISION_REQUIRED` | This Task does not select an owner. |
 | Large-media transport and import path capability | `PARTIALLY RULED` (M2-C2) | Thresholds (T1–T7, §10.1) and security semantics (§10.2) were ruled at M2-C2 from the M2-S1 §7 ruling and the M2-S1/M2-S2 spikes. The runtime form remains `DEFERRED` to a future runtime Task: transport selection stays conditional (M2-S1 §8.1), the Tauri asset protocol is `NOT_RUN` (S1-B1), and S1-B11 product-level protection is `UNVERIFIED` (S1-B3/S1-B8 outstanding). |
 | Runtime serialization library, Tauri command names, process supervision, auth/permission handshake | `UNKNOWN / NOT_IN_SCOPE`（`1.3` 注记：仅 `settings_get`/`settings_update_section` 两命令的 Tauri command name 与 wire shape 已由 §5.3 裁决落地；`1.4` 草案冻结；`1.5` 时回填（集成收口 C2 事实同步）：两命令 runtime 已由 M2-REGION-RETYPE-CORE 落地（`PROTOCOL_MINOR=3`），产品 Tauri command name 与 Core stdio command name **均取 snake_case** `set_region_type`/`list_regions`（最终裁决=M2-WORKBENCH-REACT-1，`0f88cbcd` P4-2 deferral 闭合，§5 表保留 transport-neutral 逻辑名）；本行其余决定仍 UNKNOWN/NOT_IN_SCOPE） | No implementation claimed beyond §5.3/§5.4; separate runtime Tasks must decide the rest against this transport-neutral contract. |
-| Event ordering/replay/retention | `UNKNOWN / NOT_FROZEN` | rev 2.0 freezes only immediate in-session event emission for §6.2 important changes; it does not promise delivery, order, sequence IDs, replay or retention. Snapshot resync remains authoritative. Run-creation idempotency is frozen in §5.5. |
+| Event ordering/replay/retention | `UNKNOWN / NOT_FROZEN` | rev 2.0 P13 Run events and rev 2.1 P16 Reader/Export invalidation events are emitted after their corresponding persisted state; none promises delivery, order, sequence IDs, replay or retention. Snapshot resync remains authoritative. Run-creation idempotency is frozen in §5.5. |
 | Lock/revision conflict response details and concurrent edit policy | `PARTIALLY FROZEN`（`1.4` 草案：region 写命令面已冻结于 §5.4——人工优先、AI 侧 fail-closed、Revision/Lock 守卫交互、错误码映射；runtime 已由 M2-REGION-RETYPE-CORE 落地，`1.5` 时回填） | Core remains authority; §5.4 freezes the region-retype slice only; the rest of the command surface and finer conflict details stay open without weakening protection. |
 
 The UI mapping decision does not block freezing a transport-level Page status distinct from Run status. Any proposal to alter the status value or user-visible mapping returns to the user; M2-C1 does not resolve it.
@@ -509,3 +658,7 @@ The UI mapping decision does not block freezing a transport-level Page status di
 本节由 P13-C1 修订，**明确授权 Python IPC Runtime 实现**：已释放的 P13 Task 可按本契约实现 §5.5 Run handlers、durable idempotency/control/query、§6.1 TaskProjection 查询、§6.2 JSONL event 输出，并在其已冻结 allowlist 内接入 `src/application/tasks/**`、`src/bootstrap/core_service.py`、`src/bootstrap/core_assembly.py`、`src/infrastructure/sqlite/pipeline.py`（含确需 migration）、provider retry/runtime seams 与 `tests/core/**`。该授权只给 P13 Task 所列的 Python Core 路径与验收范围；P13-C1 本身仍是文档 Task，不授权本次实现代码。
 
 本授权不包括 React/WebView、Tauri/Rust、QML、额外产品行为、其他 Schema/迁移路径或第三方依赖；也不代表任何 runtime 已实现或已验证。集成须遵守 P13 独立 Review、测试与 Coordinator Gate。既有非 Run 命令的 payload/result/error 语义保持原样。大媒体传输选择、M2-S1、其他 release boundary 与 integration 仍未授权。
+
+P16-C1 rev 2.1 **另行明确授权未来已释放的 P16 Python IPC Runtime**，仅限实现本契约 §5 Reader/Export handlers、§6.3 progress snapshots/events、§10.3 `ExportTargetRef` Core-side validation/resolution 与 ExportHistory，并只在以下冻结 allowlist 内改动：`src/application/reading/**`；`src/application/export/{__init__.py,ports.py,service.py}`；为复用 host grant 解析而确有必要的 `src/application/resource_channel/**`、`src/infrastructure/resource_channel/**`（不得弱化既有 §10.1/§10.2 读语义）；`src/infrastructure/sqlite/reading_export.py`；无 Qt/PySide6 的 `src/infrastructure/export/**`；`src/bootstrap/core_service.py`、`src/bootstrap/core_assembly.py`；以及 `tests/core/**`。该 allowlist 不含 `src/application/export/pdf_qt.py`、`tests/reading_export/**`、PySide6/QML/Legacy 路径、`apps/**`、Tauri/Rust、React/WebView、Schema/migration、依赖、其他产品行为或授权外的 Python 模块。Tauri host 的 issuer 实现不在本 P16 Python Runtime 授权内，须由其自身 Task 授权。
+
+本次把 Reader/Export **proposal 提升为新增冻结命令/事件**，协议 minor 从 rev 2.0 的 `0` 增至 `1`；未改动任何既有冻结命令、字段、状态或 P13 Run 事件，不升 major。rev 2.0 客户端不能调用新命令/事件；rev 2.1 客户端和 Core 必须配对，且没有协商或自动迁移。实现状态仍为 `NOT_IMPLEMENTED`；本 P16-C1 仅修订文档，不授权自身执行 Runtime。
