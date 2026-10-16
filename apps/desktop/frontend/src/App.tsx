@@ -3,6 +3,7 @@ import { runAc1OrFailClosed } from "./ac1/driver";
 import { LibraryPanel } from "./library/LibraryPanel";
 import { ResourceChannelClient, TypedChannelError } from "./resourceChannel/client";
 import { SettingsPanel } from "./settings/SettingsPanel";
+import { AppShell } from "./shell/AppShell";
 import { WorkbenchPage } from "./workbench/WorkbenchPage";
 
 type InvokeFn = (command: string, args?: Record<string, unknown>) => Promise<unknown>;
@@ -28,6 +29,14 @@ function tauriInvoke(): InvokeFn {
     throw new Error("TAURI_BRIDGE_MISSING");
   }
   return invoke;
+}
+
+function tauriInvokeSafe(): InvokeFn {
+  try {
+    return tauriInvoke();
+  } catch {
+    return () => Promise.resolve(null);
+  }
 }
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
@@ -72,6 +81,8 @@ export default function App() {
   // production window (interactive deny matrix path) gets the view toggle.
   const [navChrome, setNavChrome] = useState(false);
   const [view, setView] = useState<"console" | "workbench">("console");
+  const [appMode, setAppMode] = useState<"detecting" | "probe" | "ac1" | "production">("detecting");
+  const [activeInvoke, setActiveInvoke] = useState<InvokeFn | undefined>(undefined);
 
   const append = useCallback((line: string) => {
     setLog((previous) => [...previous, line]);
@@ -89,14 +100,6 @@ export default function App() {
     };
     observed("starting");
 
-    const tauriInvokeSafe = (): InvokeFn => {
-      try {
-        return tauriInvoke();
-      } catch {
-        return () => Promise.resolve(null);
-      }
-    };
-
     // ---- production/interactive mode: the hardened-surface deny matrix ----
     // RC2-AC1 evidence protocol: in production mode the probe commands and
     // register_catalog do NOT exist on the invoke surface, so the page has NO
@@ -113,6 +116,8 @@ export default function App() {
       // mode); every probe/ac1 path returns before this point and keeps
       // navChrome=false, so runner windows see the frozen chrome.
       setNavChrome(true);
+      setAppMode("production");
+      setActiveInvoke(() => invoke);
       const record = (id: string, result: ScenarioResult) => {
         results.push({ id, ...result });
         append(`${id}  ${result.status}${result.note ? ` — ${result.note}` : ""}`);
@@ -207,6 +212,7 @@ export default function App() {
         }
       })();
       if (ac1Detected) {
+        setAppMode("ac1");
         await runAc1OrFailClosed(
           invoke,
           { log: append, status: observed },
@@ -229,6 +235,7 @@ export default function App() {
         observed("interactive mode");
         return;
       }
+      setAppMode("probe");
 
       // failsafe: an unusable invoke bridge must not hang the PROBE runner
       // (interactive mode stays open; it is the user-facing mode)
@@ -465,69 +472,100 @@ export default function App() {
     };
   }, [append]);
 
-  return (
-    <div
-      style={{
-        fontFamily: "Consolas, monospace",
-        fontSize: 12,
-        margin: 12,
-        color: "#d8e0e8",
-        background: "#101418",
-      }}
-    >
-      {navChrome && (
-        <nav data-testid="app-nav" style={{ display: "flex", gap: 6, marginBottom: 8 }}>
-          <button
-            type="button"
-            data-testid="nav-console"
-            onClick={() => setView("console")}
-            disabled={view === "console"}
-            style={{
-              background: view === "console" ? "#1c2430" : "#161b22",
-              color: "#d8e0e8",
-              border: "1px solid #2a3038",
-              borderRadius: 4,
-              padding: "3px 10px",
-              fontSize: 12,
-              cursor: "pointer",
-            }}
-          >
-            Console
-          </button>
-          <button
-            type="button"
-            data-testid="nav-workbench"
-            onClick={() => setView("workbench")}
-            disabled={view === "workbench"}
-            style={{
-              background: view === "workbench" ? "#1c2430" : "#161b22",
-              color: "#d8e0e8",
-              border: "1px solid #2a3038",
-              borderRadius: 4,
-              padding: "3px 10px",
-              fontSize: 12,
-              cursor: "pointer",
-            }}
-          >
-            Workbench
-          </button>
-        </nav>
-      )}
-      {view === "workbench" ? (
-        <WorkbenchPage />
-      ) : (
-        <>
-          <h1 style={{ fontSize: 15 }}>M2-RC2 resource channel runtime</h1>
-          <div>{status}</div>
-          <div>
-            {log.map((line, index) => (
-              <div key={index}>{line}</div>
-            ))}
-          </div>
-          <LibraryPanel />
-          <SettingsPanel />
-        </>
-      )}
-    </div>
-  );
+  const isConsoleRequested =
+    typeof window !== "undefined" &&
+    new URLSearchParams(window.location.search).get("view") === "console";
+
+  if (appMode === "detecting") {
+    return (
+      <div
+        style={{
+          fontFamily: "Consolas, monospace",
+          fontSize: 12,
+          margin: 12,
+          color: "#d8e0e8",
+          background: "#101418",
+        }}
+      >
+        <h1 style={{ fontSize: 15 }}>M2-RC2 resource channel runtime</h1>
+        <div>{status}</div>
+        <div>
+          {log.map((line, index) => (
+            <div key={index}>{line}</div>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  if (appMode === "probe" || appMode === "ac1" || isConsoleRequested) {
+    return (
+      <div
+        style={{
+          fontFamily: "Consolas, monospace",
+          fontSize: 12,
+          margin: 12,
+          color: "#d8e0e8",
+          background: "#101418",
+        }}
+      >
+        {navChrome && (
+          <nav data-testid="app-nav" style={{ display: "flex", gap: 6, marginBottom: 8 }}>
+            <button
+              type="button"
+              data-testid="nav-console"
+              onClick={() => setView("console")}
+              disabled={view === "console"}
+              style={{
+                background: view === "console" ? "#1c2430" : "#161b22",
+                color: "#d8e0e8",
+                border: "1px solid #2a3038",
+                borderRadius: 4,
+                padding: "3px 10px",
+                fontSize: 12,
+                cursor: "pointer",
+              }}
+            >
+              Console
+            </button>
+            <button
+              type="button"
+              data-testid="nav-workbench"
+              onClick={() => setView("workbench")}
+              disabled={view === "workbench"}
+              style={{
+                background: view === "workbench" ? "#1c2430" : "#161b22",
+                color: "#d8e0e8",
+                border: "1px solid #2a3038",
+                borderRadius: 4,
+                padding: "3px 10px",
+                fontSize: 12,
+                cursor: "pointer",
+              }}
+            >
+              Workbench
+            </button>
+          </nav>
+        )}
+        {view === "workbench" ? (
+          <WorkbenchPage />
+        ) : (
+          <>
+            <h1 style={{ fontSize: 15 }}>M2-RC2 resource channel runtime</h1>
+            <div>{status}</div>
+            <div>
+              {log.map((line, index) => (
+                <div key={index}>{line}</div>
+              ))}
+            </div>
+            <LibraryPanel />
+            <SettingsPanel />
+          </>
+        )}
+      </div>
+    );
+  }
+
+  const safeInvoke = activeInvoke || tauriInvokeSafe();
+  return <AppShell invoke={safeInvoke} />;
 }
