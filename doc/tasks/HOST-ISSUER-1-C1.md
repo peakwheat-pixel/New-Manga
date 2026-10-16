@@ -3,13 +3,13 @@ id: HOST-ISSUER-1-C1
 title: host→Core grant 注册通道契约（host-only 注册/撤销 wire 与 session 绑定）
 kind: design
 governance_version: 2
-status: ready
+status: in_progress
 approval: coordinator_release_20261016_resolution_for_host_issuer_blocker
 suggested_owner: Codex
-owner: null
+owner: Codex
 reviewer: null
 depends_on: [P09-FU2, P16]
-base_commit: 2eaa3241295e1f483eabf640289a4bea4126370c
+base_commit: 6a5051dcafa549f200730a4f9824d83d187f07a2
 branch: codex/HOST-ISSUER-1-C1-grant-registration-contract
 worktree: G:/CODEX/New Manga.workspace/worktrees/HOST-ISSUER-1-C1
 integration_commit: null
@@ -24,7 +24,7 @@ evidence_dir: verification/HOST-ISSUER-1-C1
 ## 来源与目标
 
 - 来源：**HOST-ISSUER-1 的 `BLOCKED_WAITING_EXTERNAL_DECISION`**
-  （`verification/HOST-ISSUER-1/blocker-assessment.md`，Owner 实现 head：无；分支 `codex/HOST-ISSUER-1-tauri-ref-issuer`）。
+  （来源 worktree `G:/CODEX/New Manga.workspace/worktrees/HOST-ISSUER-1`，文件 `verification/HOST-ISSUER-1/blocker-assessment.md`，固定于 source commit `bacf151b7f4fd61f5b34666b96a444ee95030874`；Owner 实现 head：无；分支 `codex/HOST-ISSUER-1-tauri-ref-issuer`）。
   Owner 以**代码事实**证明：可信 host **没有任何通道**把 grant 注册进**运行中的** Core。
 - **缺口事实（Owner 实证，Coordinator 已复核）**：
   1. `src/bootstrap/core_service.py` 的 `_register_export_target` / `_revoke_export_target` / `_register_import_source` /
@@ -35,29 +35,21 @@ evidence_dir: verification/HOST-ISSUER-1-C1
   4. `apps/desktop/src-tauri/src/core_bridge.rs` 只与 resource-channel sidecar 通信（`ping/issue/resolve/touch/revoke/...`），
      **不持有** Import/Export grant registry；
   5. 把注册暴露为 **WebView 可调用**命令会**破坏** §10.3/§10.4 的受信 host 边界。
-- **契约状态**：`M2-C1` §11 明确把 `Runtime serialization library, Tauri command names, process supervision,
-  **auth/permission handshake**` 标为 **`UNKNOWN / NOT_IN_SCOPE`** —— 本 Task 正是要**冻结这项遗留**。
+- **基线契约状态**：本 Task base 的 rev 2.2 §11 把 `auth/permission handshake` 标为 **`UNKNOWN / NOT_IN_SCOPE`**；本次 rev 2.3 只冻结 §5.7 host grant registration/revoke handshake，其他序列化、Tauri command name 与 process supervision 决定仍保留未知。
 - 目标：冻结一个**窄范围、host-only** 的 grant 注册/撤销 wire 与 session 绑定语义，
   使 HOST-ISSUER-1 能实现"用户选择 → host 签发 → 注册受信 grant → 注入 Core → Core 校验并消费"。
   本 Task **只做契约设计**，不实现 runtime、不改产品代码。
 
 ## Acceptance Criteria
 
-- [ ] AC1 **host-only 注册/撤销命令的 wire**：定义注册（导入来源 / 导出目标）与撤销命令的
-  request/result 与错误面；命令**仅存在于 host↔Core 通道**，**MUST NOT** 由 WebView/React 调用；
-  在 wire 层显式表达"host-only"（例如 host session 凭证/通道限定），并说明 Core 如何**拒绝**非 host 调用。
-- [ ] AC2 **session 绑定与失效语义**：定义 grant 与 Core session 的绑定；Core 重启/关闭、host session 失效或轮换时
-  grant 的**失效**语义；以及撤销（revoke）的即时性要求。
-- [ ] AC3 **与 §10.3/§10.4 的 ref 语义一致**：注册产生的 grant 与既有 `ImportSourceRef`（§10.4）/
-  `ExportTargetRef`（§10.3）**严格对应**；**不得**新增或改变 ref 字段；不得改变既有 `REF_*` 拒绝码语义。
-- [ ] AC4 **错误面完整且可判定**：重复注册、未知 grant、session 不符、scope 越界、过期/已撤销等均有稳定错误；
-  拒绝时**零副作用**（不得写入库、不得写目标文件）。
-- [ ] AC5 **§12 授权边界**：明确授权**实现该通道所必需的 Core 侧最小改动**（窄 allowlist），
-  并排除 React/WebView、Tauri command 面向 WebView 的暴露、Schema/migration、依赖与其他产品行为。
-- [ ] AC6 **覆盖对照**：产出与 HOST-ISSUER-1 的 AC1–AC7、以及 §10.3/§10.4、§5.6 的逐条对照，
-  证明新 wire **足以**让 host 完成签发与注入，且**不发明产品行为**。
-- [ ] AC7 **不越界**：除本契约文件外不改任何文件；不实现 runtime；不改 P11 / P13-C1 / P16-C1 / P12-C1 已冻结的 wire 语义。
-- [ ] AC8 固定 head 非作者 Review、Coordinator 集成；未完成项标 `NOT_RUN`。
+- [x] AC1 **PASS**：§5.7 冻结 HostControl session handshake、导入/导出注册与撤销 request/result/error；明确 React/WebView 不可调用与 Core 拒绝规则。证据：契约 §5.7、`verification/HOST-ISSUER-1-C1/compatibility-impact.md`。
+- [x] AC2 **PASS**：grant 绑定 host/Core session；关闭、断线、轮换与 Core restart 的失效语义及 revoke 立即生效边界已定义。证据：契约 §5.7。
+- [x] AC3 **PASS**：注册与 §10.3 `ExportTargetRef` / §10.4 `ImportSourceRef` 严格对应；无 ref 字段或签名输入变化；`REF_*` 原样保留。证据：契约 §5.7、§10.3、§10.4 与兼容说明。
+- [x] AC4 **PASS**：重复/未知 grant、host/Core session 不符、scope、过期/撤销均有稳定 code/category 和拒绝零副作用要求。证据：契约 §5.7 错误表。
+- [x] AC5 **PASS**：§12 只授权 `src/bootstrap/core_service.py` 与 `tests/core/**`；排除 React/WebView、Tauri command/ACL、Schema/migration、依赖及额外产品行为。证据：契约 §12。
+- [x] AC6 **PASS**：逐条对照 HOST-ISSUER-1 AC1–AC7、§10.3、§10.4、§5.6，结论为 wire 足以承载 host 签发与注入，且未定义 grant 上限/多选等产品策略。证据：`verification/HOST-ISSUER-1-C1/coverage-matrix.md`。
+- [x] AC7 **PASS**：变更仅在契约、Task、Handoff、`verification/HOST-ISSUER-1-C1/**`；未实现 runtime，未改变 P11/P13-C1/P16-C1/P12-C1 冻结 wire。证据：最终 `git diff --name-only 6a5051dcafa549f200730a4f9824d83d187f07a2..HEAD`。
+- [ ] AC8 **PARTIAL**：固定提交、Handoff 与工作区/主仓/范围记录完成；非作者 Review 与 Coordinator 集成尚未执行，按要求保持 `NOT_RUN`，本 Task 不标 `done`。证据：本 Task 交付/运行记录与 Handoff。
 
 ## 允许修改范围
 
@@ -81,12 +73,12 @@ evidence_dir: verification/HOST-ISSUER-1-C1
 
 | 场景/AC | 计划命令或手工步骤 | 前提/环境 | 实际结果 | 证据 |
 |---|---|---|---|---|
-| AC1 host-only 边界 | 对照 §10.3/§10.4 与现状，核对"WebView 不可调用"如何被表达与拒绝 | 只读 | NOT_RUN | 无 |
-| AC2 session 绑定 | 定义失效/轮换/关闭语义 | 只读 | NOT_RUN | 无 |
-| AC3 ref 一致性 | 逐字段核对不新增/不改变 | 只读 | NOT_RUN | 无 |
-| AC4 错误面 | 逐类错误与零副作用 | 只读 | NOT_RUN | 无 |
-| AC5 授权边界 | 检查 §12 窄 allowlist | 只读 | NOT_RUN | 无 |
-| AC6 覆盖充分性 | HOST-ISSUER-1 AC1–AC7 逐条映射 | 只读 | NOT_RUN | 无 |
+| AC1 host-only 边界 | 静态核对 §5.7 envelope、私有 Core 通道与 public dispatcher 拒绝规则 | 只读契约/代码 | PASS（契约定义）；runtime NOT_RUN | §5.7、`verification/HOST-ISSUER-1-C1/compatibility-impact.md` |
+| AC2 session 绑定 | 核对 Core/host session 生命周期及关闭/轮换/restart 语义 | 只读契约/代码 | PASS（契约定义）；runtime NOT_RUN | §5.7 |
+| AC3 ref 一致性 | 比对 §10.3/§10.4 字段、签名输入与 `REF_*` | 只读契约/代码 | PASS（静态对照）；runtime NOT_RUN | §5.7、§10.3、§10.4、`verification/HOST-ISSUER-1-C1/compatibility-impact.md` |
+| AC4 错误面 | 逐类核对拒绝 code/category 及无 mutation/无 IO 要求 | 只读契约/代码 | PASS（契约定义）；runtime NOT_RUN | §5.7 错误表、`verification/HOST-ISSUER-1-C1/compatibility-impact.md` |
+| AC5 授权边界 | 检查 §12 窄 allowlist 与排除项 | 只读契约 | PASS（路径授权已界定） | §12 |
+| AC6 覆盖充分性 | HOST-ISSUER-1 AC1–AC7、§10.3/§10.4/§5.6 逐条映射 | 只读文档/代码 | PASS（静态覆盖）；implementation NOT_RUN | `verification/HOST-ISSUER-1-C1/coverage-matrix.md` |
 
 ## 依赖、风险与阻塞
 
@@ -95,15 +87,16 @@ evidence_dir: verification/HOST-ISSUER-1-C1
 - 风险二（范围）：Core 侧改动必须**最小**（只补路由与 session 绑定），不得借机重构或扩大命令面。
 - 风险三（并发写）：本 Task 与 **HOST-ISSUER-1** 都涉及 `core_service.py` 的**不同**改动面；
   HOST-ISSUER-1 当前 `blocked` 且未集成，**本 Task 完成并集成后**才恢复它（Coordinator 负责 merge 基线）。
-- 阻塞：无预期。
+- 产品级取舍阻塞：无。本契约未裁定 grant 数量上限或用户多选策略。
+- Gate 遗留：固定提交与 Handoff 可完成；非作者 Review、Coordinator 集成及 HOST-ISSUER-1 恢复仍待后续执行。
 
 ## 交付与运行记录
 
-- 2026-10-16 Coordinator 释放（dsh, epoch 5）：作为 **HOST-ISSUER-1 阻塞的 resolution**（同 P13-C1/P16-C1/P12-C1 模式）；
-  base=`2eaa3241295e1f483eabf640289a4bea4126370c`；Owner 按 DIR-2 路由为 **codex**（契约/架构主责）。
-- Handoff：尚无。
-- Review：尚无。
-- 实际测试：尚无（全部 `NOT_RUN`）。
+- 2026-10-16 Owner 认领：worktree `G:/CODEX/New Manga.workspace/worktrees/HOST-ISSUER-1-C1`，分支 `codex/HOST-ISSUER-1-C1-grant-registration-contract`，base/初始 HEAD=`6a5051dcafa549f200730a4f9824d83d187f07a2`；初始 worktree clean，Git common directory=`G:/CODEX/New Manga/.git`。Task front matter 原 `base_commit=2eaa324...` 与用户明确坐标/实测 HEAD 不符，已按实测改正；未改主仓。
+- 源事实复核：HOST-ISSUER-1 blocker assessment 不在本 worktree 或主仓；按 Task 只读引用范围，在来源 worktree `G:/CODEX/New Manga.workspace/worktrees/HOST-ISSUER-1` 的 commit `fa270d85d09a6d6781ea76d4d620e70679781f4b` 读取，文件由 commit `bacf151b7f4fd61f5b34666b96a444ee95030874` 引入。未修改该 worktree。
+- 文档交付：契约 rev 2.3；逐条 coverage 与 compatibility 记录见下方 Canonical Evidence；固定交付 head/Handoff/commit 在实际写入后回填。
+- Review：尚无非作者 Review；Coordinator integration 未执行，`integration_commit=null`。
+- Runtime/Core/Tauri/WebView 测试与构建：`NOT_RUN`（本 Task 只修订契约，未改实现；未运行测试）。文档范围、Git diff、工作区与 SHA-256 记录在交付提交后补齐。
 
 ## Canonical Evidence
 
