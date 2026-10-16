@@ -8,7 +8,8 @@
 - 本轮完成：[P13-C1](tasks/P13-C1.md) IPC 契约修订 **done**（`c61d8f8c`）；[P13](tasks/P13.md) 后台恢复 **done**（实现 `78b0d439`、评审 `58c0c462`、集成 `8d7cad13`）：durable 幂等、快照冻结、跨进程 scheduler owner、AC4 四项破坏性修正、重试边界、启动恢复、投影与四类事件；协议 major 2.0；`tests/core` 340 passed。
 - 本轮完成：P06（`d3342895`）、P10（`c46c0df0`）、P11（`ceca5721`）、P09 导入 Core（`c6a7339f`，`closed_with_limitations`：AC3 受限=产品无项目级永久删除操作）、P09-FU1 测试基线（`860f6cda`）。
 - 本轮完成：[P16-C1](tasks/P16-C1.md) 契约 rev 2.1 **done**（`27622aa3`）；[P16](tasks/P16.md) 阅读与输出授权 Core **done**（实现 `e2c07fa9`、评审 `338a7c5c`、集成 `e1be3082`）：Reader 投影/进度、五格式导出、`ExportTargetRef` 六类拒绝 + 原子消费 + 源零写；`tests/core` 352 passed。
-- 已释放待认领：[P18](tasks/P18.md) 真实 JA/KO 质量资格方案 **ready**（Owner 按 DIR-2=codex；路径 `experiments/P18/**` + `verification/P18/**`；不得编造统一通过率、不改产品代码）。
+- 本轮完成：[P18](tasks/P18.md) JA/KO 质量资格 **closed_with_limitations**（Review `bd5f0ce0`、集成 `44958159`）：AC1/AC3/AC4/AC6 完成（五类缺口清单 + terminal 矩阵 + 素材许可）；**AC2 待用户裁决产品门槛**；**AC5 BLOCKED** 于三项真实缺口 —— `ImportPages=UNKNOWN_COMMAND`（导入侧 wire 从未冻结，阻塞 P12/P19）、检测像素上限 11184810、KO detector 权重缺失。
+- **待用户裁决**：P18 的产品发布门槛（JA/KO 质量达到何种程度才声明支持）。
 - 遗留：**Tauri host 的 `ExportTargetRef` issuer** 须由其自身 Task 实现（P17 前）。
 - 用户指令 DIR-2：后续 Task Owner=codex（至额度耗尽）。
 - 已解决：BL-1（codex 空 ref）、BL-3（沙箱 `-c windows.sandbox=unelevated`）、BL-8（测试基线）。
