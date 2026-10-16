@@ -1,6 +1,6 @@
 # Current Development Status
 
-状态刷新：2026-10-16；主控 dsh（epoch 5）。**注意：曾有第二个共享同一 lease(epoch 5) 的 dsh 会话（进程已退出/空闲）；同一时刻只应有一个 Active Coordinator。**
+状态刷新：2026-10-16；主控 dsh（epoch 6，**唯一 Active Coordinator**，用户 17:10 裁决）。**注意：曾有第二个共享同一 lease(epoch 5) 的 dsh 会话（进程已退出/空闲）；同一时刻只应有一个 Active Coordinator。**
 
 ## 当前 Task
 
@@ -12,7 +12,7 @@
   - [ENV-BUNDLE-1-FU1](tasks/ENV-BUNDLE-1-FU1.md) — owner=**codex**：packaged 驱动验收，闭环 ENV-BUNDLE-1 AC4 严格口径（2.3 bundle 仅存在于 ENV-BUNDLE-1 worktree，主仓仍为 10-14 旧版）。
 - **下一批候选**：P18 像素上限与 KO 权重、BL-12（是否入库需用户/Codex 定夺）、P12/P14/P15/P17 实现（待 UI-DESIGN-1 设计冻结）。
 - 用户指令 DIR-2：后续 Task Owner=codex（至额度耗尽）；UI/UX 主责按 AGENTS.md 归 ZCode。
-- Coordinator=dsh，epoch=5，lease=264c2000541748298000f93fb25a52de（LEASE_VALID）。
+- Coordinator=dsh，epoch=6，lease=9ce79020a36e4fab8970e8ae6de5fb10（LEASE_VALID）；epoch 5 旧 lease 已 `STALE_COORDINATOR`。
 - 用户 dirty/untracked 与既有 worktree 全程保留（19 项 tracked dirty 未变，无 EXTERNAL_CHANGE）。
 - 恢复点：verification/PROJECT-ORCHESTRATION-20261016/checkpoint.md；日志 `.orchestrator/{INFLIGHT.json,OPLOG.ndjson,BACKLOG.md,RUNTIME_DIRECTIVES.md}`。
 
