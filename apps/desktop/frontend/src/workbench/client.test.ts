@@ -13,6 +13,14 @@ describe("WorkbenchClient IPC boundary", () => {
     expect(invoke).not.toHaveBeenCalled();
   });
 
+  it("rejects drive-prefixed identifiers in host responses", async () => {
+    const invoke = vi.fn(async () => ({
+      run_id: "C:private", command: "translate_all", scope: { kind: "page", page_id: "page-1" }, status: "running",
+    }));
+    await expect(new WorkbenchClient(invoke).getRunSnapshot("run-1"))
+      .rejects.toMatchObject({ code: "WORKBENCH_RESPONSE_MALFORMED" });
+  });
+
   it("projects only safe task fields and removes path, credential, and raw error details", async () => {
     const invoke = vi.fn(async () => ({
       run_id: "run-1",

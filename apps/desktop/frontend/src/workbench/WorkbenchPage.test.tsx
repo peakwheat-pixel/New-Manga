@@ -202,6 +202,7 @@ function makeInteractiveInvoke(options: {
   onBooks?: () => unknown;
   onListChapters?: (args: Record<string, unknown>) => Promise<unknown>;
   onListChapterPages?: (args: Record<string, unknown>) => Promise<unknown>;
+  onRegions?: (args: Record<string, unknown>) => unknown;
   onRetype?: (args: Record<string, unknown>) => Promise<unknown>;
   onIssue?: (args: Record<string, unknown>) => Promise<unknown>;
   onResolvePage?: (args: Record<string, unknown>) => Promise<unknown>;
@@ -234,6 +235,7 @@ function makeInteractiveInvoke(options: {
       if (options.onResolvePage) return options.onResolvePage(args);
       throw "PAGE_NOT_FOUND";
     }
+    if (command === "list_regions" && options.onRegions) return options.onRegions(args);
     if (command === "list_regions") return {
       regions: rows.get(String(args.pageId)) ?? [],
       page_size: { width: 100, height: 50 },
@@ -310,6 +312,11 @@ function makeInteractiveInvoke(options: {
 }
 
 describe("<WorkbenchPage> five-zone skeleton (mapping-contract names)", () => {
+  it("places the toolbar beneath the three-column work area and above fixed progress", () => {
+    const html = renderToString(<WorkbenchPage invoke={async () => null} />);
+    expect(html.indexOf('data-testid="workbench-main-layout"')).toBeLessThan(html.indexOf('data-testid="workbench-toolbar"'));
+    expect(html.indexOf('data-testid="workbench-toolbar"')).toBeLessThan(html.indexOf('data-testid="task-progress-panel"'));
+  });
   it("renders the five zones with their data-testid pins", () => {
     const html = renderToString(<WorkbenchPage invoke={async () => null} />);
     expect(html).toContain('data-testid="workbench-page"');
@@ -358,12 +365,26 @@ describe("<WorkbenchPage> five-zone skeleton (mapping-contract names)", () => {
         "gap-g14-page-order", "gap-g15-run-discovery", "gap-g16-core-availability",
         "gap-g18-page-thumbnails", "gap-g26-import-progress",
       ];
+      const reasons: Record<string, string> = {
+        "gap-g9-save-manual-translation": "接口尚未冻结",
+        "gap-g10-create-region": "CreateRegion",
+        "gap-g10-delete-region": "DeleteRegion",
+        "gap-g11-region-geometry": "wire 尚未冻结",
+        "gap-g12-region-lock": "Lock 写入接口",
+        "gap-g13-revision-pin": "Revision pin 写入接口",
+        "gap-g14-page-order": "Core 投影结果",
+        "gap-g15-run-discovery": "ListRuns 查询",
+        "gap-g16-core-availability": "可用性查询",
+        "gap-g18-page-thumbnails": "缩略图能力",
+        "gap-g26-import-progress": "细分进度 snapshot",
+      };
       for (const id of ids) {
         const feature = ui.container.querySelector(`[data-testid="${id}"]`);
         const button = feature?.querySelector("button");
         const reason = feature?.querySelector("small");
         expect(button?.disabled, id).toBe(true);
         expect(reason?.textContent?.trim().length, id).toBeGreaterThan(0);
+        expect(reason?.textContent, id).toContain(reasons[id]);
         expect(button?.getAttribute("aria-describedby"), id).toBe(reason?.id);
       }
       expect(invoke.mock.calls.some(([command]) => /list.?runs/i.test(command))).toBe(false);
@@ -383,12 +404,16 @@ describe("<WorkbenchPage> five-zone skeleton (mapping-contract names)", () => {
         onRetryFailed={() => {}}
         onFilterStatus={() => {}}
         onLocatePage={() => {}}
+          onRetry={() => {}}
       />,
     );
     const document = new JSDOM(html).window.document;
     const feature = document.querySelector('[data-testid="gap-g18-current-page-thumbnail"]');
-    expect((feature?.querySelector("button") as HTMLButtonElement | null)?.disabled).toBe(true);
-    expect(feature?.querySelector("small")?.textContent).toContain("缩略图通道尚未接入");
+    const button = feature?.querySelector("button") as HTMLButtonElement | null;
+    const reason = feature?.querySelector("small");
+    expect(button?.disabled).toBe(true);
+    expect(reason?.textContent).toContain("缩略图通道尚未接入");
+    expect(button?.getAttribute("aria-describedby")).toBe(reason?.id);
   });
 
   it("retains title, percent, current page, step, and controls in the 44px collapsed panel", () => {
@@ -402,6 +427,7 @@ describe("<WorkbenchPage> five-zone skeleton (mapping-contract names)", () => {
         onRetryFailed={() => {}}
         onFilterStatus={() => {}}
         onLocatePage={() => {}}
+          onRetry={() => {}}
       />,
     );
     const panel = new JSDOM(html).window.document.querySelector('[data-testid="task-progress-panel"]');
@@ -411,6 +437,24 @@ describe("<WorkbenchPage> five-zone skeleton (mapping-contract names)", () => {
     expect(panel?.textContent).toContain("当前步骤：render");
     expect(html).toContain('data-testid="run-control-pause"');
     expect(html).toContain('data-testid="run-control-retry-failed"');
+  });
+
+  it("renders task details in a floating popover above the progress panel", () => {
+    const html = renderToString(
+      <TaskProgressPanel
+        projection={TASK_PROJECTION}
+        collapsed={false}
+        onToggleCollapsed={() => {}}
+        onControl={() => {}}
+        onResumeBlocked={() => {}}
+        onRetryFailed={() => {}}
+        onFilterStatus={() => {}}
+        onLocatePage={() => {}}
+        onRetry={() => {}}
+      />,
+    );
+    const details = new JSDOM(html).window.document.querySelector('[data-testid="task-detail-popover"]');
+    expect((details?.querySelector("div") as HTMLDivElement | null)?.style.position).toBe("absolute");
   });
 
   it("shows disabled Run controls when no Run is known", () => {
@@ -424,6 +468,7 @@ describe("<WorkbenchPage> five-zone skeleton (mapping-contract names)", () => {
         onRetryFailed={() => {}}
         onFilterStatus={() => {}}
         onLocatePage={() => {}}
+        onRetry={() => {}}
       />,
     );
     const buttons = [...new JSDOM(html).window.document.querySelectorAll('[data-testid="run-controls"] button')];
@@ -579,9 +624,60 @@ describe("<WorkbenchPage> five-zone skeleton (mapping-contract names)", () => {
       await ui.unmount();
     }
   });
+
+  it("shows pause pending immediately and only replaces it after the authoritative snapshot", async () => {
+    let runStatus = "running";
+    let resolveControl!: (value: unknown) => void;
+    const controlPending = new Promise<unknown>((resolve) => { resolveControl = resolve; });
+    const { invoke } = makeInteractiveInvoke({
+      onBooks: () => [BOOK_A_ROW],
+      onListChapters: () => Promise.resolve({ chapters: [{ chapter_id: "chapter-1", title: "Chapter 1", chapter_number: "1", sort_order: 1 }] }),
+      onWorkbenchCommand: (command) => {
+        if (command === "library_start_run") return { run_id: "run-pending", status: runStatus };
+        if (command === "library_control_run") { runStatus = "paused"; return controlPending; }
+        if (command === "library_get_run_snapshot") return { run_id: "run-pending", command: "translate_all", scope: { kind: "chapter", chapter_id: "chapter-1" }, status: runStatus };
+        if (command === "library_get_task_projection") return {
+          ...TASK_PROJECTION, run_id: "run-pending", run_status: runStatus,
+          controls: { ...TASK_PROJECTION.controls, can_pause: runStatus === "running", can_continue: runStatus === "paused" },
+        };
+        return undefined;
+      },
+    });
+    const ui = await mountInteractiveWorkbench(invoke);
+    try {
+      await ui.click("book-tile-book-a");
+      await ui.click("chapter-tile-chapter-1");
+      await ui.click("start-run");
+      await ui.click("run-control-pause");
+      expect(ui.container.querySelector('[data-testid="run-control-pending"]')?.textContent).toBe("正在暂停…");
+      resolveControl({ run_id: "run-pending", status: "paused" });
+      await act(async () => { await nextTurn(); });
+      expect(ui.container.querySelector('[data-testid="run-control-pending"]')).toBeNull();
+      expect(ui.container.textContent).toContain("状态：paused");
+    } finally {
+      resolveControl({ run_id: "run-pending", status: "paused" });
+      await ui.unmount();
+    }
+  });
 });
 
 describe("E4 feedback bar (ViewerPanel, r1 P1-1 error branch)", () => {
+  it("shows loaded versus total resource chunks in the Viewer", () => {
+    const html = renderToString(
+      <ViewerPanel
+        imageUrl={null}
+        imageError={null}
+        isLoading
+        imageProgress={{ loadedChunks: 2, totalChunks: 5 }}
+        regions={[]}
+        pageSize={null}
+        selectedRegionId={null}
+        onSelectRegion={() => {}}
+      />,
+    );
+    expect(html).toContain("正在读取页图（2 / 5 块）");
+  });
+
   it("renders the error variant with the fail border and NO action buttons (failure must be visible)", () => {
     const html = renderToString(
       <ViewerPanel
@@ -724,6 +820,37 @@ describe("<RegionOverlay> mitigation layers (M2-SFX-MISROUTE-UI-IMPL-1, design �
 });
 
 describe("<RegionOverlay> read-only SVG frames (M2-UI1 hard rules)", () => {
+  it("cycles Tab focus through regions in the Core-projected reading order", async () => {
+    const second = { ...INTERACTIVE_REGION, region_id: "region-2" };
+    const { invoke } = makeInteractiveInvoke({
+      onRegions: () => ({ regions: [INTERACTIVE_REGION, second], page_size: { width: 100, height: 50 } }),
+    });
+    const ui = await mountInteractiveWorkbench(invoke);
+    try {
+      await ui.input("page-id-input", "page-1");
+      const first = ui.container.querySelector('[data-testid="region-frame-region-1"]') as SVGRectElement;
+      const next = ui.container.querySelector('[data-testid="region-frame-region-2"]') as SVGRectElement;
+      first.focus();
+      await ui.keyDown("region-frame-region-1", "Tab");
+      expect(ui.dom.window.document.activeElement).toBe(next);
+      await ui.keyDown("region-frame-region-2", "Tab", { shiftKey: true });
+      expect(ui.dom.window.document.activeElement).toBe(first);
+    } finally {
+      await ui.unmount();
+    }
+  });
+
+  it("shows the empty-region overlay after an empty ListRegions projection", async () => {
+    const { invoke } = makeInteractiveInvoke({ onRegions: () => ({ regions: [], page_size: null }) });
+    const ui = await mountInteractiveWorkbench(invoke);
+    try {
+      await ui.input("page-id-input", "page-1");
+      expect(ui.container.querySelector('[data-testid="viewer-no-regions"]')?.textContent).toBe("本页暂无 Region");
+    } finally {
+      await ui.unmount();
+    }
+  });
+
   it("draws the frame from normalized geometry through the single math", () => {
     const html = renderToString(
       <RegionOverlay
@@ -1012,7 +1139,7 @@ describe("RC-4 Workbench actual DOM actions", () => {
     try {
       await ui.input("page-id-input", "page-1");
       expect(ui.container.querySelector('[data-testid="viewer-empty"]')?.textContent)
-        .toBe("PAGE_NOT_FOUND");
+        .toContain("PAGE_NOT_FOUND");
       expect(ui.container.querySelector('[data-testid="resource-id-input"]')).toBeNull();
       expect(ui.resourceReads).toHaveLength(0);
       expect(invoke).not.toHaveBeenCalledWith("issue_resource_url", expect.anything());

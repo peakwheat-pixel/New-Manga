@@ -176,6 +176,7 @@ describe("App Mode Dispatching - Detecting Neutrality, Production AppShell vs Pr
 
     // In production mode, library_list_books is now legitimately called by BookshelfPage
     expect(invokedCommands).toContain("library_list_books");
+    expect(invokedCommands).not.toContain("issue_resource_url");
   });
 
   // View Escape Hatch: ?view=console always renders frozen console chrome

@@ -136,6 +136,16 @@ export function RegionOverlay({
                   onRegionClick?.(region.region_id);
                 },
                 onKeyDown: (event: React.KeyboardEvent) => {
+                  if (event.key === "Tab") {
+                    const frame = event.currentTarget as SVGRectElement;
+                    const frames = Array.from(frame.ownerSVGElement?.querySelectorAll<SVGRectElement>('[data-testid^="region-frame-"]') ?? []);
+                    const currentIndex = frames.indexOf(frame);
+                    if (frames.length > 1 && currentIndex >= 0) {
+                      event.preventDefault();
+                      frames[(currentIndex + (event.shiftKey ? frames.length - 1 : 1)) % frames.length].focus();
+                    }
+                    return;
+                  }
                   if (event.key === "Enter" || event.key === " ") {
                     event.preventDefault();
                     event.stopPropagation();

@@ -23,6 +23,7 @@ import { useCallback, useRef, useState } from "react";
 import { RegionOverlay } from "../region/RegionOverlay";
 import type { PageSizeProjection, RegionSummary, RegionType } from "../region/types";
 import { RelabelContextMenu, type ContextMenuState } from "./RelabelContextMenu";
+import { WorkbenchError } from "./WorkbenchError";
 
 /** E4 feedback-bar payload (design §3.2 / §4.3 R4). */
 export interface RelabelFeedbackState {
@@ -36,6 +37,10 @@ export interface ViewerPanelProps {
   imageUrl: string | null;
   imageError: string | null;
   isLoading?: boolean;
+  imageProgress?: { loadedChunks: number; totalChunks: number } | null;
+  regionsLoading?: boolean;
+  noRegions?: boolean;
+  onRetryImage?: () => void;
   regions: RegionSummary[];
   pageSize: PageSizeProjection | null;
   selectedRegionId: string | null;
@@ -60,6 +65,10 @@ export function ViewerPanel({
   imageUrl,
   imageError,
   isLoading = false,
+  imageProgress = null,
+  regionsLoading = false,
+  noRegions = false,
+  onRetryImage,
   regions,
   pageSize,
   selectedRegionId,
@@ -220,7 +229,16 @@ export function ViewerPanel({
               height: "100%",
             }}
           >
-            {isLoading ? "正在解析页面资源…" : imageError ?? "选择页面以查看图像"}
+            {imageError
+              ? <WorkbenchError code={imageError} onRetry={onRetryImage} />
+              : imageProgress && imageProgress.totalChunks > 0
+                ? `正在读取页图（${imageProgress.loadedChunks} / ${imageProgress.totalChunks} 块）`
+                : isLoading ? "正在解析页面资源…" : "选择页面以查看图像"}
+          </div>
+        )}
+        {!regionsLoading && noRegions && (
+          <div data-testid="viewer-no-regions" role="status" style={{ position: "absolute", inset: 0, display: "grid", placeItems: "center", color: "#6b7280", fontSize: 12, pointerEvents: "none" }}>
+            本页暂无 Region
           </div>
         )}
         <RegionOverlay

@@ -137,45 +137,6 @@ export default function App() {
         invoke("probe_issue_url", { resourceId: "res-x", revision: "rev-1", ttlSeconds: 0.001 }),
       );
 
-      // a smuggled TTL override on the production shape must be inert: the
-      // command has no such parameter, the Core keeps the ruled default, and
-      // the reference stays servable (0.001 s would have expired instantly)
-      try {
-        const issued = (await invoke("issue_resource_url", {
-          resourceId: "res-cataloged",
-          revision: "rev-1",
-          ttlOverride: 0.001,
-        })) as { url: string; size: number };
-        const response = await fetch(`${issued.url}?chunk=0`);
-        record("IP-6-ttl-override-inert", {
-          status: response.ok ? "PASS" : "FAIL",
-          observed: { fetch_status: response.status },
-          note: "ttlOverride is not a parameter of the production issue shape",
-        });
-      } catch (error) {
-        record("IP-6-ttl-override-inert", {
-          status: "FAIL",
-          observed: error instanceof Error ? error.message : String(error),
-        });
-      }
-
-      // allow-side control: the production surface still serves its product
-      try {
-        const issued = (await invoke("issue_resource_url", {
-          resourceId: "res-cataloged",
-          revision: "rev-1",
-        })) as { url: string; size: number; opaque_id: string };
-        record("IA-1-production-issue-allowed", {
-          status: issued.url.startsWith("http://m2res.localhost/m2id/") ? "PASS" : "FAIL",
-          observed: { opaque_tail: issued.opaque_id.slice(-6) },
-        });
-      } catch (error) {
-        record("IA-1-production-issue-allowed", {
-          status: "FAIL",
-          observed: error instanceof Error ? error.message : String(error),
-        });
-      }
-
       const deny = results.filter((r) => String(r.id).startsWith("IP-"));
       const allow = results.filter((r) => String(r.id).startsWith("IA-"));
       const denyPassed = deny.filter((r) => r.status === "PASS").length;
@@ -339,10 +300,7 @@ export default function App() {
         const remountB = await client.issue("res-probe", "rev-1");
         record("E-06-remount-fresh-references", {
           status: remountA.opaqueId !== remountB.opaqueId ? "PASS" : "FAIL",
-          observed: {
-            first: remountA.opaqueId.slice(-10),
-            second: remountB.opaqueId.slice(-10),
-          },
+          observed: { fresh_reference: remountA.opaqueId !== remountB.opaqueId },
         });
 
         // E-07 per-reference first-byte P95 on an 11,525,983 B fixture

@@ -13,6 +13,8 @@
 import type { BookSummary, ChapterNavSummary, PageNavSummary } from "../library/types";
 import type { TaskProjection } from "./client";
 import { DisabledFeature } from "./DisabledFeature";
+import { parseSemanticError } from "../bookshelf/error";
+import { useEffect, useRef } from "react";
 
 export interface PageListPanelProps {
   books: BookSummary[];
@@ -35,6 +37,9 @@ export interface PageListPanelProps {
   booksBusy?: boolean;
   booksError?: string | null;
   onClearPageFilter?: () => void;
+  onRetryBooks?: () => void;
+  onRetryChapters?: () => void;
+  onRetryPages?: () => void;
 }
 
 const listStyle = {
@@ -82,7 +87,16 @@ export function PageListPanel({
   booksBusy = false,
   booksError = null,
   onClearPageFilter,
+  onRetryBooks,
+  onRetryChapters,
+  onRetryPages,
 }: PageListPanelProps) {
+  const panelRef = useRef<HTMLElement | null>(null);
+  useEffect(() => {
+    const target = Array.from(panelRef.current?.querySelectorAll<HTMLButtonElement>('button[data-testid^="page-tile-"]') ?? [])
+      .find((button) => button.getAttribute("data-testid") === `page-tile-${pageId.trim()}`);
+    target?.scrollIntoView?.({ block: "nearest" });
+  }, [pageId, pageFilter, pages]);
   const projectedRows = taskProjection?.rows ?? [];
   const visiblePages = pages.filter((page) => {
     if (!pageFilter) return true;
@@ -92,6 +106,7 @@ export function PageListPanel({
   });
   return (
     <section
+      ref={panelRef}
       data-testid="page-list-panel"
       style={{
         border: "1px solid #d9d9d6",
@@ -144,7 +159,7 @@ export function PageListPanel({
           </li>
         )}
         {booksBusy && <li data-testid="books-busy" style={noteStyle}>正在读取作品…</li>}
-        {booksError && <li data-testid="books-error" role="alert" style={{ ...noteStyle, color: "#cf222e" }}>{booksError}</li>}
+        {booksError && <li data-testid="books-error" role="alert" style={{ ...noteStyle, color: "#cf222e" }}>{parseSemanticError(booksError).message} <small>错误代码：{parseSemanticError(booksError).code}</small>{parseSemanticError(booksError).retryable && onRetryBooks && <> <button type="button" onClick={onRetryBooks}>重试</button></>}</li>}
       </ul>
       {selectedBookId && (
         <ul data-testid="chapter-list" style={listStyle}>
@@ -167,8 +182,8 @@ export function PageListPanel({
             </li>
           )}
           {!chaptersBusy && chaptersError && (
-            <li data-testid="chapters-error" style={{ ...noteStyle, color: "#cf222e" }}>
-              {chaptersError}
+            <li data-testid="chapters-error" role="alert" style={{ ...noteStyle, color: "#cf222e" }}>
+              {parseSemanticError(chaptersError).message} <small>错误代码：{parseSemanticError(chaptersError).code}</small>{parseSemanticError(chaptersError).retryable && onRetryChapters && <> <button type="button" onClick={onRetryChapters}>重试</button></>}
             </li>
           )}
           {!chaptersBusy && !chaptersError && chapters.length === 0 && (
@@ -221,8 +236,8 @@ export function PageListPanel({
             </li>
           )}
           {!pagesBusy && pagesError && (
-            <li data-testid="pages-error" style={{ ...noteStyle, color: "#cf222e" }}>
-              {pagesError}
+            <li data-testid="pages-error" role="alert" style={{ ...noteStyle, color: "#cf222e" }}>
+              {parseSemanticError(pagesError).message} <small>错误代码：{parseSemanticError(pagesError).code}</small>{parseSemanticError(pagesError).retryable && onRetryPages && <> <button type="button" onClick={onRetryPages}>重试</button></>}
             </li>
           )}
           {!pagesBusy && !pagesError && visiblePages.length === 0 && (

@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import type { ExportFormat, ExportFormatOptions, ExportHistoryEntry, ExportSnapshot, StartExportRequest } from "./client";
+import { WorkbenchError } from "./WorkbenchError";
 
 export interface ExportDialogProps {
   isOpen: boolean;
@@ -16,13 +17,14 @@ export interface ExportDialogProps {
   onCancel: () => void;
   onReveal: (exportId: string) => void;
   onRefreshHistory: () => void;
+  onRetry?: () => void;
 }
 
 const buttonStyle = { border: "1px solid #d9d9d6", borderRadius: 4, padding: "5px 9px", background: "#fff", color: "#1f2328", cursor: "pointer" } as const;
 
 export function ExportDialog({
   isOpen, bookId, chapterId, pageIds, snapshot, history, busy = false, historyLoading = false, error,
-  onClose, onStart, onCancel, onReveal, onRefreshHistory,
+  onClose, onStart, onCancel, onReveal, onRefreshHistory, onRetry,
 }: ExportDialogProps) {
   const [format, setFormat] = useState<ExportFormat>("zip");
   const [compression, setCompression] = useState("standard");
@@ -82,7 +84,7 @@ export function ExportDialog({
         <label style={{ display: "grid", gridTemplateColumns: "140px 1fr", gap: 8 }}>过期译文<select value={stalePolicy} disabled={busy} onChange={(event) => setStalePolicy(event.target.value as "abort" | "continue_existing")}><option value="abort">发现过期时停止</option><option value="continue_existing">继续使用现有译文</option></select></label>
         {format === "png" && pageIds.length !== 1 && <p role="status" style={{ margin: 0, color: "#9a6700" }}>PNG 只能导出单页，请把选择集调整为 1 页。</p>}
         {message && <p role="status" data-testid="export-message" style={{ margin: 0 }}>{message}</p>}
-        {error && <p role="alert" data-testid="export-error" style={{ margin: 0, color: "#cf222e" }}>导出操作失败：{error}{error === "EXPORT_STALE" && "。请确认后选择“继续使用现有译文”并重新提交。"}</p>}
+        {error && <div data-testid="export-error"><WorkbenchError code={error} onRetry={onRetry} /></div>}
         {snapshot && <section data-testid="export-current-snapshot" style={{ borderTop: "1px solid #e8e8e4", paddingTop: 8, fontSize: 12 }}>
           <strong>当前导出：{snapshot.status}</strong>
           <progress aria-label="导出进度" max={snapshot.total_pages || 1} value={snapshot.completed_pages} />

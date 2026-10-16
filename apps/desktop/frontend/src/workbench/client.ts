@@ -102,7 +102,7 @@ function object(value: unknown, code = "WORKBENCH_RESPONSE_MALFORMED"): Record<s
 }
 
 function text(value: unknown, code = "WORKBENCH_RESPONSE_MALFORMED"): string {
-  if (typeof value !== "string" || !SAFE_ID.test(value)) throw new WorkbenchClientError(code);
+  if (!isSafeUiId(value)) throw new WorkbenchClientError(code);
   return value;
 }
 

@@ -1,5 +1,8 @@
 import { renderToString } from "react-dom/server";
-import { describe, expect, it } from "vitest";
+import { act } from "react";
+import { createRoot } from "react-dom/client";
+import { JSDOM } from "jsdom";
+import { describe, expect, it, vi } from "vitest";
 import type { BookSummary } from "../library/types";
 import { PageListPanel } from "./PageListPanel";
 
@@ -48,6 +51,38 @@ function renderPanel(overrides: Partial<Parameters<typeof PageListPanel>[0]> = {
 }
 
 describe("<PageListPanel> three-level drill-down (M2-PAGE-NAV-PROJECTION-1)", () => {
+  it("scrolls the located current page into view", async () => {
+    const dom = new JSDOM("<!doctype html><html><body></body></html>", { url: "http://localhost" });
+    const seen: string[] = [];
+    Object.defineProperty(dom.window.HTMLButtonElement.prototype, "scrollIntoView", {
+      configurable: true,
+      value: vi.fn(function (this: HTMLButtonElement) { seen.push(this.getAttribute("data-testid") ?? ""); }),
+    });
+    vi.stubGlobal("window", dom.window);
+    vi.stubGlobal("document", dom.window.document);
+    vi.stubGlobal("HTMLElement", dom.window.HTMLElement);
+    vi.stubGlobal("HTMLButtonElement", dom.window.HTMLButtonElement);
+    vi.stubGlobal("IS_REACT_ACT_ENVIRONMENT", true);
+    const host = dom.window.document.createElement("div");
+    dom.window.document.body.append(host);
+    const root = createRoot(host);
+    const props = {
+      books: [BOOK], selectedBookId: "book-1", chapters: [CHAPTER], chaptersBusy: false,
+      chaptersError: null, selectedChapterId: "ch-1", pages: [PAGE, { ...PAGE, page_id: "p-2" }],
+      pagesBusy: false, pagesError: null, onPageIdChange: () => {}, onSelectBook: () => {}, onSelectChapter: () => {},
+    };
+    try {
+      await act(async () => root.render(<PageListPanel {...props} pageId="p-1" />));
+      seen.length = 0;
+      await act(async () => root.render(<PageListPanel {...props} pageId="p-2" />));
+      expect(seen).toEqual(["page-tile-p-2"]);
+    } finally {
+      act(() => root.unmount());
+      dom.window.close();
+      vi.unstubAllGlobals();
+    }
+  });
+
   it("keeps the debug page-id entry and renders no chapter level before a book is selected", () => {
     const html = renderPanel();
     expect(html).toContain('data-testid="page-id-input"');

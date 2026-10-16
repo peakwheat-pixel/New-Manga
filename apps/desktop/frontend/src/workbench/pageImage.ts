@@ -16,11 +16,12 @@ export async function loadPageImageUrl(
   client: ResourceChannelClient,
   resourceId: string,
   revision: string,
+  onProgress?: (loadedChunks: number, totalChunks: number) => void,
 ): Promise<string> {
   if (!resourceId || !revision) {
     throw new TypedChannelError("REF_MALFORMED");
   }
   const issued = await client.issue(resourceId, revision);
-  const blob = await client.fetchAll(issued.url, issued.size);
+  const blob = await client.fetchAll(issued.url, issued.size, undefined, onProgress);
   return URL.createObjectURL(blob);
 }

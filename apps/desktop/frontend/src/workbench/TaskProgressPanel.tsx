@@ -1,6 +1,7 @@
 import type { CSSProperties } from "react";
 import type { TaskProjection } from "./client";
 import { DisabledFeature } from "./DisabledFeature";
+import { WorkbenchError } from "./WorkbenchError";
 
 export interface TaskProgressPanelProps {
   projection: TaskProjection | null;
@@ -14,6 +15,8 @@ export interface TaskProgressPanelProps {
   onRetryFailed: () => void;
   onFilterStatus: (status: string) => void;
   onLocatePage: (pageId: string) => void;
+  onRetry: () => void;
+  pendingControl?: "pause" | "stop" | null;
 }
 
 const controlStyle = (enabled: boolean): CSSProperties => ({
@@ -24,7 +27,7 @@ const controlStyle = (enabled: boolean): CSSProperties => ({
 
 export function TaskProgressPanel({
   projection, loading = false, busy = false, error, collapsed, onToggleCollapsed,
-  onControl, onResumeBlocked, onRetryFailed, onFilterStatus, onLocatePage,
+  onControl, onResumeBlocked, onRetryFailed, onFilterStatus, onLocatePage, onRetry, pendingControl = null,
 }: TaskProgressPanelProps) {
   const progress = Math.max(0, Math.min(1, projection?.overall_progress ?? 0));
   const controls = projection?.controls;
@@ -88,7 +91,7 @@ export function TaskProgressPanel({
       </header>
       {collapsed ? (
         <div style={{ display: "flex", flex: 1, minWidth: 0, gap: 8, alignItems: "center", minHeight: 24, fontSize: 11, overflowX: "auto", whiteSpace: "nowrap" }}>
-          <span style={{ flex: 1 }}>{projection?.run_title ?? (loading ? "正在读取任务…" : "当前没有已知任务")}</span>
+          <span style={{ flex: 1 }}>{pendingControl ? (pendingControl === "pause" ? "正在暂停…" : "正在停止…") : projection?.run_title ?? (loading ? "正在读取任务…" : "当前没有已知任务")}</span>
           {projection?.current_page_id && <button type="button" onClick={() => onLocatePage(projection.current_page_id!)}>当前页：{projection.current_page_id}</button>}
           {projection && <span>当前步骤：{projection.current_step_type || "—"}</span>}
           <progress aria-label="整体进度" max={1} value={progress} style={{ width: 120 }} />
@@ -96,8 +99,9 @@ export function TaskProgressPanel({
         </div>
       ) : (
         <>
+          {pendingControl && <div data-testid="run-control-pending" role="status">{pendingControl === "pause" ? "正在暂停…" : "正在停止…"}</div>}
           {loading && <div data-testid="task-progress-loading" role="status">正在读取任务快照…</div>}
-          {error && <div data-testid="task-progress-error" role="alert">读取任务失败：{error}</div>}
+          {error && <div data-testid="task-progress-error"><WorkbenchError code={error} onRetry={onRetry} /></div>}
           {!projection && !loading && !error && <div data-testid="task-progress-empty">没有本次会话中已知的 Run。</div>}
           <DisabledFeature
             id="gap-g15-run-discovery"
@@ -132,9 +136,9 @@ export function TaskProgressPanel({
                   </span>
                 ))}
               </div>
-              <details data-testid="task-detail-popover">
+              <details data-testid="task-detail-popover" style={{ position: "relative", alignSelf: "flex-start" }}>
                 <summary>任务详情（{projection.tasks.length}）</summary>
-                <div style={{ maxHeight: 160, overflow: "auto", fontSize: 11 }}>
+                <div style={{ position: "absolute", zIndex: 20, right: 0, bottom: "calc(100% + 4px)", width: 420, maxHeight: 160, overflow: "auto", fontSize: 11, background: "#fff", border: "1px solid #d9d9d6", borderRadius: 4, padding: 8, boxShadow: "0 2px 8px rgba(0,0,0,.15)" }}>
                   {projection.tasks.map((task) => (
                     <details key={task.task_id}>
                       <summary>{task.page_id} · {task.status}{task.error_code ? ` · ${task.error_code}` : ""}</summary>

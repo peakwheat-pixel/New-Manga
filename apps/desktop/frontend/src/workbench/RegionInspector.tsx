@@ -132,7 +132,7 @@ export function RegionInspector({
         人工译文
         <textarea data-testid="manual-translation-input" disabled placeholder="等待译文保存能力接入" rows={3} />
       </label>
-      <DisabledFeature id="gap-g9-save-manual-translation" label="保存人工译文" reason="SaveManualTranslation 写入接口尚未冻结。" />
+      <DisabledFeature id="gap-g9-save-manual-translation" label="保存人工译文" reason="SaveManualTranslation 写入接口尚未冻结，因此人工译文与 Ctrl+Enter 提交保持禁用。" />
       <DisabledFeature id="gap-g12-region-lock" label="设置/解除锁定" reason="Lock 写入接口尚未冻结；当前锁态只读显示。" />
       <DisabledFeature id="gap-g13-revision-pin" label="固定此修订" reason="Revision pin 写入接口尚未冻结；历史固定状态只读显示。" />
       {region && toSfx && toSpeech && onRetypeRequest && (

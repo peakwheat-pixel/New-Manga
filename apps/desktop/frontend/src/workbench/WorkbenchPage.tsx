@@ -35,6 +35,7 @@ import { ViewerPanel, type RelabelFeedbackState } from "./ViewerPanel";
 import { RegionInspector } from "./RegionInspector";
 import { TaskProgressPanel } from "./TaskProgressPanel";
 import { WorkbenchToolbar } from "./WorkbenchToolbar";
+import { WorkbenchError } from "./WorkbenchError";
 import { RelabelConfirmDialog } from "./RelabelConfirmDialog";
 import { planRetypeAction, retypeFeedback } from "./relabelMachine";
 import { WorkbenchClient, isSafeUiId, newIdempotencyKey, safeWorkbenchErrorCode, type ExportHistoryEntry, type ExportSnapshot, type PipelineCommand, type PipelineScope, type TaskProjection } from "./client";
@@ -89,6 +90,7 @@ function isSafeFilename(value: unknown): value is string {
 
 export function WorkbenchPage({ invoke, resolveDebounceMs = 300, regionDebounceMs = 300, bookId, chapterId, listen }: WorkbenchPageProps) {
   const [books, setBooks] = useState<BookSummary[]>([]);
+  const [booksRetry, setBooksRetry] = useState(0);
   const [booksBusy, setBooksBusy] = useState(true);
   const [booksError, setBooksError] = useState<string | null>(null);
   const [selectedBookId, setSelectedBookId] = useState<string | null>(null);
@@ -96,23 +98,30 @@ export function WorkbenchPage({ invoke, resolveDebounceMs = 300, regionDebounceM
   // -> page over the read-only navigation projections). Expand/collapse is
   // pure local UI state; Core is never written through this face.
   const [chapters, setChapters] = useState<ChapterNavSummary[]>([]);
+  const [chaptersRetry, setChaptersRetry] = useState(0);
   const [chaptersBusy, setChaptersBusy] = useState(false);
   const [chaptersError, setChaptersError] = useState<string | null>(null);
   const [selectedChapterId, setSelectedChapterId] = useState<string | null>(null);
   const [pages, setPages] = useState<PageNavSummary[]>([]);
   const [pagesRefresh, setPagesRefresh] = useState(0);
+  const [pagesRetry, setPagesRetry] = useState(0);
   const [pagesBusy, setPagesBusy] = useState(false);
   const [pagesError, setPagesError] = useState<string | null>(null);
   const [pageId, setPageId] = useState("");
   const [regions, setRegions] = useState<RegionSummary[]>([]);
+  const [regionsRetry, setRegionsRetry] = useState(0);
   const [pageSize, setPageSize] = useState<{ width: number; height: number } | null>(null);
   const [regionError, setRegionError] = useState<string | null>(null);
+  const [regionsLoading, setRegionsLoading] = useState(false);
   const [selectedRegionId, setSelectedRegionId] = useState<string | null>(null);
   const [resourceId, setResourceId] = useState("");
   const [resourceRevision, setResourceRevision] = useState("current");
   const [resourceResolveBusy, setResourceResolveBusy] = useState(false);
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const [imageError, setImageError] = useState<string | null>(null);
+  const [imageBusy, setImageBusy] = useState(false);
+  const [imageProgress, setImageProgress] = useState<{ loadedChunks: number; totalChunks: number } | null>(null);
+  const [imageRetry, setImageRetry] = useState(0);
   // M2-PAGE-RESOURCE-RESOLVE-1: the resolved resource key remains internal
   // and is never rendered as page content or an editable field.
   // ---- IMPL-1 retype/mitigation state ----
@@ -140,6 +149,7 @@ export function WorkbenchPage({ invoke, resolveDebounceMs = 300, regionDebounceM
   const [runBusy, setRunBusy] = useState(false);
   const [runLoading, setRunLoading] = useState(false);
   const [runError, setRunError] = useState<string | null>(null);
+  const [pendingControl, setPendingControl] = useState<"pause" | "stop" | null>(null);
   const [progressCollapsed, setProgressCollapsed] = useState(false);
   const [importOpen, setImportOpen] = useState(false);
   const [exportOpen, setExportOpen] = useState(false);
@@ -150,6 +160,7 @@ export function WorkbenchPage({ invoke, resolveDebounceMs = 300, regionDebounceM
   const [currentExportId, setCurrentExportId] = useState<string | null>(null);
   const [exportHistoryLoading, setExportHistoryLoading] = useState(false);
   const runIdRef = useRef<string | null>(null);
+  const pendingControlRef = useRef<"pause" | "stop" | null>(null);
   const taskProjectionRef = useRef<TaskProjection | null>(null);
   const currentExportIdRef = useRef<string | null>(null);
   const pendingRunKeyRef = useRef<{ fingerprint: string; key: string } | null>(null);
@@ -262,6 +273,11 @@ export function WorkbenchPage({ invoke, resolveDebounceMs = 300, regionDebounceM
         setRunSnapshot(snapshot);
         setTaskProjection(projection);
         setRunError(null);
+        if ((pendingControlRef.current === "pause" && snapshot.status === "paused") ||
+            (pendingControlRef.current === "stop" && ["cancelled", "completed", "failed"].includes(snapshot.status))) {
+          pendingControlRef.current = null;
+          setPendingControl(null);
+        }
       }
     } catch (error) {
       if (runIdRef.current === id) setRunError(errorCode(error, "CORE_UNAVAILABLE"));
@@ -323,7 +339,8 @@ export function WorkbenchPage({ invoke, resolveDebounceMs = 300, regionDebounceM
       pendingRunKeyRef.current = null;
       runIdRef.current = accepted.run_id;
       setRunId(accepted.run_id);
-      setRunSnapshot({ run_id: accepted.run_id, command, scope, status: accepted.status });
+      setRunSnapshot(null);
+      taskProjectionRef.current = null;
       setTaskProjection(null);
       setRunLoading(true);
       await refreshRun(accepted.run_id);
@@ -341,25 +358,34 @@ export function WorkbenchPage({ invoke, resolveDebounceMs = 300, regionDebounceM
     const key = action === "restart" ? (actionKeysRef.current.get(keyName) ?? newIdempotencyKey()) : undefined;
     if (key) actionKeysRef.current.set(keyName, key);
     setRunBusy(true);
+    if (action === "pause" || action === "stop") {
+      pendingControlRef.current = action;
+      setPendingControl(action);
+    }
     setRunError(null);
     try {
       const result = await clients.workbench.controlRun(id, action, key);
       actionKeysRef.current.delete(keyName);
       if (result.new_run_id) {
+        pendingControlRef.current = null;
+        setPendingControl(null);
         runIdRef.current = result.new_run_id;
         setRunId(result.new_run_id);
+        taskProjectionRef.current = null;
         setTaskProjection(null);
-        setRunSnapshot({ run_id: result.new_run_id, command: runSnapshot?.command ?? "translate_all", scope: runSnapshot?.scope ?? { kind: "chapter", chapter_id: selectedChapterId ?? "" }, status: result.new_run_status ?? "pending" });
+        setRunSnapshot(null);
         await refreshRun(result.new_run_id);
       } else {
         await refreshRun(id);
       }
     } catch (error) {
+      pendingControlRef.current = null;
+      setPendingControl(null);
       setRunError(errorCode(error, "CORE_UNAVAILABLE"));
     } finally {
       setRunBusy(false);
     }
-  }, [clients, refreshRun, runBusy, runSnapshot, selectedChapterId]);
+  }, [clients, refreshRun, runBusy]);
 
   const handleResumeBlocked = useCallback(async () => {
     const id = runIdRef.current;
@@ -381,12 +407,12 @@ export function WorkbenchPage({ invoke, resolveDebounceMs = 300, regionDebounceM
       const accepted = await clients.workbench.retryFailedTargets(id, key);
       actionKeysRef.current.delete(keyName);
       runIdRef.current = accepted.run_id;
-      setRunId(accepted.run_id); setTaskProjection(null);
-      setRunSnapshot({ run_id: accepted.run_id, command: runSnapshot?.command ?? "translate_all", scope: runSnapshot?.scope ?? { kind: "chapter", chapter_id: selectedChapterId ?? "" }, status: accepted.status });
+      setRunId(accepted.run_id); taskProjectionRef.current = null; setTaskProjection(null);
+      setRunSnapshot(null);
       await refreshRun(accepted.run_id);
     } catch (error) { setRunError(errorCode(error, "CORE_UNAVAILABLE")); }
     finally { setRunBusy(false); }
-  }, [clients, refreshRun, runBusy, runSnapshot, selectedChapterId]);
+  }, [clients, refreshRun, runBusy]);
 
   const handleStartExport = useCallback(async (request: Parameters<WorkbenchClient["startExport"]>[0]) => {
     setExportBusy(true); setExportError(null);
@@ -503,7 +529,7 @@ export function WorkbenchPage({ invoke, resolveDebounceMs = 300, regionDebounceM
     return () => {
       cancelled = true;
     };
-  }, [clients]);
+  }, [booksRetry, clients]);
 
   // M2-PAGE-NAV-PROJECTION-1: chapters of the selected book through the
   // frozen read-only projection. A null selection collapses the drill-down;
@@ -543,7 +569,7 @@ export function WorkbenchPage({ invoke, resolveDebounceMs = 300, regionDebounceM
     return () => {
       signal.cancelled = true;
     };
-  }, [clients, selectedBookId]);
+  }, [chaptersRetry, clients, selectedBookId]);
 
   // M2-PAGE-NAV-PROJECTION-1: pages of the selected chapter (second
   // drill-down level). Clicking a page is handled by the panel through
@@ -581,7 +607,7 @@ export function WorkbenchPage({ invoke, resolveDebounceMs = 300, regionDebounceM
     return () => {
       signal.cancelled = true;
     };
-  }, [clients, selectedChapterId, pagesRefresh]);
+  }, [clients, pagesRefresh, pagesRetry, selectedChapterId]);
 
   // Resolve only IDs selected from the projected page list; keep the resource
   // key inside this component and feed it to the existing chunked loader.
@@ -640,21 +666,25 @@ export function WorkbenchPage({ invoke, resolveDebounceMs = 300, regionDebounceM
           setRegions([]);
           setPageSize(null);
           setRegionError(null);
+          setRegionsLoading(false);
         }
         return isCurrent();
       }
+      if (isCurrent()) setRegionsLoading(true);
       try {
         const result = await clients.region.listRegions(trimmed);
         if (!isCurrent()) return false;
         setRegions(result.regions.filter((region) => isSafeUiId(region.region_id)));
         setPageSize(result.page_size ?? null);
         setRegionError(null);
+        setRegionsLoading(false);
         return true;
       } catch (error: unknown) {
         if (!isCurrent()) return false;
         setRegions([]);
         setPageSize(null);
         setRegionError(errorCode(error, "REGION_CHANNEL_UNAVAILABLE"));
+        setRegionsLoading(false);
         return false;
       }
     },
@@ -681,7 +711,7 @@ export function WorkbenchPage({ invoke, resolveDebounceMs = 300, regionDebounceM
     return () => {
       signal.cancelled = true;
     };
-  }, [clients, pageId, refreshRegions, regionDebounceMs]);
+  }, [clients, pageId, refreshRegions, regionDebounceMs, regionsRetry]);
 
   // Page image through the EXISTING resource channel, one fresh issue per
   // addressable request.
@@ -697,13 +727,19 @@ export function WorkbenchPage({ invoke, resolveDebounceMs = 300, regionDebounceM
     if (!trimmedId) {
       replaceImageUrl(null);
       setImageError(null);
+      setImageBusy(false);
+      setImageProgress(null);
       return;
     }
     let cancelled = false;
     let createdUrl: string | null = null;
     replaceImageUrl(null);
     setImageError(null);
-    loadPageImageUrl(clients.resource, trimmedId, resourceRevision.trim() || "current")
+    setImageBusy(true);
+    setImageProgress(null);
+    loadPageImageUrl(clients.resource, trimmedId, resourceRevision.trim() || "current", (loadedChunks, totalChunks) => {
+      if (isCurrent()) setImageProgress({ loadedChunks, totalChunks });
+    })
       .then((url) => {
         if (cancelled || !isCurrent()) {
           URL.revokeObjectURL(url);
@@ -712,6 +748,8 @@ export function WorkbenchPage({ invoke, resolveDebounceMs = 300, regionDebounceM
         createdUrl = url;
         replaceImageUrl(url);
         setImageError(null);
+        setImageBusy(false);
+        setImageProgress(null);
       })
       .catch((error: unknown) => {
         if (cancelled || !isCurrent()) {
@@ -724,6 +762,8 @@ export function WorkbenchPage({ invoke, resolveDebounceMs = 300, regionDebounceM
             ? error.code
             : (error as { code?: string })?.code;
         setImageError(safeWorkbenchErrorCode({ code }, "RESOURCE_UNAVAILABLE"));
+        setImageBusy(false);
+        setImageProgress(null);
       });
     return () => {
       cancelled = true;
@@ -733,7 +773,7 @@ export function WorkbenchPage({ invoke, resolveDebounceMs = 300, regionDebounceM
         imageUrlRef.current = null;
       }
     };
-  }, [clients, replaceImageUrl, resourceId, resourceRevision]);
+  }, [clients, imageRetry, replaceImageUrl, resourceId, resourceRevision]);
 
   useEffect(() => () => {
     if (undoTimerRef.current !== null) clearTimeout(undoTimerRef.current);
@@ -808,6 +848,7 @@ export function WorkbenchPage({ invoke, resolveDebounceMs = 300, regionDebounceM
     setRegions([]);
     setPageSize(null);
     setRegionError(null);
+    setRegionsLoading(Boolean(nextPageId.trim()));
     setHistoryRegionId(null);
     setHistory(null);
     setHistoryBusy(false);
@@ -817,6 +858,8 @@ export function WorkbenchPage({ invoke, resolveDebounceMs = 300, regionDebounceM
     imageRequestRef.current += 1;
     replaceImageUrl(null);
     setImageError(null);
+    setImageBusy(false);
+    setImageProgress(null);
     // Discard the previous page's resource key before the new resolve runs.
     setResourceId("");
     setResourceRevision("current");
@@ -1149,25 +1192,17 @@ export function WorkbenchPage({ invoke, resolveDebounceMs = 300, regionDebounceM
         fontFamily: 'system-ui, "Segoe UI", "Microsoft YaHei UI", sans-serif',
       }}
     >
-      <WorkbenchToolbar
-        contextInfo={workbenchContext}
-        regionCount={regions.length}
-        hasChapter={Boolean(selectedChapterId)}
-        selectedPageCount={selectedPageIds.length}
-        hasPage={Boolean(pageId.trim())}
-        hasRegion={Boolean(selectedRegionId)}
-        runBusy={runBusy}
-        viewerMode={viewerMode}
-        onStartRun={(command) => { void handleStartRun(command); }}
-        onOpenImport={() => setImportOpen(true)}
-        onOpenExport={() => { setExportError(null); setExportOpen(true); }}
-        onSetViewerMode={setViewerMode}
-      />
-      {(booksError || regionError) && (
-        <div data-testid="workbench-error" role="alert" style={{ color: "#cf222e", fontSize: 11, padding: "4px 12px" }}>
-          {booksError ? `作品列表读取失败：${booksError}` : `Region 读取失败：${regionError}`}
-        </div>
-      )}
+      {(booksError === "CORE_UNAVAILABLE" || regionError === "CORE_UNAVAILABLE") ? (
+        <WorkbenchError
+          code={booksError === "CORE_UNAVAILABLE" ? booksError : regionError!}
+          fullArea
+          onRetry={() => { setBooksRetry((value) => value + 1); setRegionsRetry((value) => value + 1); }}
+        />
+      ) : <>
+      {regionError && <WorkbenchError
+        code={regionError}
+        onRetry={() => setRegionsRetry((value) => value + 1)}
+      />}
       <div data-testid="workbench-main-layout" style={{ display: "flex", gap: 8, alignItems: "stretch", flex: 1, minHeight: 0, padding: 8 }}>
         <PageListPanel
           books={books}
@@ -1190,11 +1225,18 @@ export function WorkbenchPage({ invoke, resolveDebounceMs = 300, regionDebounceM
           taskProjection={taskProjection}
           pageFilter={pageFilter}
           onClearPageFilter={() => setPageFilter(null)}
+          onRetryBooks={() => setBooksRetry((value) => value + 1)}
+          onRetryChapters={() => setChaptersRetry((value) => value + 1)}
+          onRetryPages={() => setPagesRetry((value) => value + 1)}
         />
         <ViewerPanel
           imageUrl={imageUrl}
           imageError={imageError}
-          isLoading={resourceResolveBusy}
+          isLoading={resourceResolveBusy || imageBusy}
+          imageProgress={imageProgress}
+          regionsLoading={regionsLoading}
+          noRegions={Boolean(pageId.trim()) && regions.length === 0 && !regionError}
+          onRetryImage={() => setImageRetry((value) => value + 1)}
           regions={regions}
           pageSize={pageSize}
           selectedRegionId={selectedRegionId}
@@ -1232,11 +1274,27 @@ export function WorkbenchPage({ invoke, resolveDebounceMs = 300, regionDebounceM
           />
         </div>
       </div>
+      <WorkbenchToolbar
+        contextInfo={workbenchContext}
+        regionCount={regions.length}
+        hasChapter={Boolean(selectedChapterId)}
+        selectedPageCount={selectedPageIds.length}
+        hasPage={Boolean(pageId.trim())}
+        hasRegion={Boolean(selectedRegionId)}
+        runBusy={runBusy || pendingControl !== null}
+        viewerMode={viewerMode}
+        onStartRun={(command) => { void handleStartRun(command); }}
+        onOpenImport={() => setImportOpen(true)}
+        onOpenExport={() => { setExportError(null); setExportOpen(true); }}
+        onSetViewerMode={setViewerMode}
+      />
+      </>}
       <TaskProgressPanel
         projection={taskProjection}
         loading={runLoading}
-        busy={runBusy}
+        busy={runBusy || pendingControl !== null}
         error={runError}
+        pendingControl={pendingControl}
         collapsed={progressCollapsed}
         onToggleCollapsed={() => setProgressCollapsed((value) => !value)}
         onControl={(action) => { void handleRunControl(action); }}
@@ -1244,6 +1302,7 @@ export function WorkbenchPage({ invoke, resolveDebounceMs = 300, regionDebounceM
         onRetryFailed={() => { void handleRetryFailed(); }}
         onFilterStatus={setPageFilter}
         onLocatePage={locatePage}
+        onRetry={() => { if (runIdRef.current) void refreshRun(runIdRef.current); }}
       />
       <ImportDialog
         isOpen={importOpen}
@@ -1270,6 +1329,10 @@ export function WorkbenchPage({ invoke, resolveDebounceMs = 300, regionDebounceM
         onCancel={() => { void handleCancelExport(); }}
         onReveal={(id) => { void handleRevealExport(id); }}
         onRefreshHistory={refreshExportHistory}
+        onRetry={() => {
+          if (currentExportIdRef.current) void refreshExportSnapshot(currentExportIdRef.current);
+          else void refreshExportHistory();
+        }}
       />
       {confirmTarget && (
         <RelabelConfirmDialog
