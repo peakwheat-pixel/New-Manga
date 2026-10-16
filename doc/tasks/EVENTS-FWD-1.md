@@ -13,7 +13,7 @@ base_commit: 6c28a02e9
 branch: agent/antigravity/EVENTS-FWD-1
 worktree: G:/CODEX/New Manga.workspace/worktrees/EVENTS-FWD-1
 integration_commit: null
-delivery_head: 5c1695757342eb66f1cc5f7ef24bdb2ce39ccd36
+delivery_head: 6229e230fefe209f35bda0e79d12229a8b18f256
 canonical_evidence_status: pending
 resource_closeout_status: pending
 evidence_dir: verification/EVENTS-FWD-1
@@ -58,7 +58,7 @@ evidence_dir: verification/EVENTS-FWD-1
       并提供完整的四层分层证据（安全投影过滤、Stdio 多路复用与旁路无干扰、真实 bundle 运行时、前端类型解包与分发），原始日志与退出码已落盘。
 - [x] **AC5 不越界**：未改 Core 侧 §6.2 的既有事件字段/语义；未实现 `CoreAvailabilityChanged` 或其他未冻结事件；
       未改契约无关章节；未新增产品依赖。
-- [x] **AC6 不回归**：`tests/core/**`（395 passed）与既有 Rust 测试（80 passed + 1 concurrent passed + 7 packaged passed）全绿；
+- [x] **AC6 不回归**：`tests/core/**`（395 passed）与既有 Rust 测试（79 passed + 1 ignored (8 filtered) + 1 concurrent passed + 7 packaged passed）全绿；
       前端 177 个测试全绿且 build 成功；Cargo 生成的 27 个 CRLF 噪音已使用 `git diff` 判定并全部恢复。
 - [x] **AC7 固定交付**：提交固定 commit、Handoff（`doc/handoffs/EVENTS-FWD-1-fwd1.md`）、Canonical Evidence 真实 sha256 登记完毕；不 `push`、不 `merge`。
 
@@ -86,7 +86,7 @@ evidence_dir: verification/EVENTS-FWD-1
 | AC1 | 契约 revision 评审：事件名/投影/排除项/兼容性 | 只读/文档审查 | PASS：rev 2.4 冻结六类事件安全投影，排除未冻结事件，保证向后兼容与 P14 轮询降级 | `doc/contracts/M2-C1_TYPED_IPC_CONTRACT.md`<br>`verification/EVENTS-FWD-1/compatibility-impact.md` |
 | AC2/AC3 | host 转发的单元/集成测试 + 前端 typed listener 单测 | 本地 Rust + Node 环境 | PASS：`cargo test` 4 个 event_fwd 单测全绿；前端 vitest 177 个测试全绿，`npm run build` 成功 | `verification/EVENTS-FWD-1/cargo-tests.log`<br>`verification/EVENTS-FWD-1/frontend-tests.log`<br>`verification/EVENTS-FWD-1/frontend-build.log` |
 | AC4 | 2.3 frozen bundle 上的真实事件链路（或分层证据） | 重建后的 2.3 bundle + 本地环境 | 端到端因生产命令面冻结处于 `BLOCKED_ON_TRIGGER_COMMAND`；分层证据 Layer 1-4 全绿 | `verification/EVENTS-FWD-1/packaged-sidecar-tests.log`<br>`verification/EVENTS-FWD-1/evidence-layering.md` |
-| AC6 | `tests/core/**` + Rust 测试全绿 + 并发无干扰 | Python 3.12 + Rust dev/packaged | PASS：pytest 395 passed；Rust 80 passed；concurrent 1 passed；packaged 7 passed | `verification/EVENTS-FWD-1/python-tests.log`<br>`verification/EVENTS-FWD-1/concurrent-roundtrips.log` |
+| AC6 | `tests/core/**` + Rust 测试全绿 + 并发无干扰 | Python 3.12 + Rust dev/packaged | PASS：pytest 395 passed；Rust 79 passed, 1 ignored (8 filtered)；concurrent 1 passed；packaged 7 passed | `verification/EVENTS-FWD-1/python-tests.log`<br>`verification/EVENTS-FWD-1/concurrent-roundtrips.log` |
 
 ## 依赖、风险与阻塞
 
@@ -114,14 +114,14 @@ evidence_dir: verification/EVENTS-FWD-1
 
 | evidence_id | AC/Gate | path（仓库相对路径或绝对路径） | commit | sha256 | class (`CANONICAL` / `SOURCE_PIN`) |
 |---|---|---|---|---|---|
-| EVID-FWD-COMPAT | AC1 | `verification/EVENTS-FWD-1/compatibility-impact.md` | `5c1695757` | `57f5adba839fdc4d3c9fded5724b16cbf9bec3d3b54b6b7c300c8998ec6fae5b` | `CANONICAL` |
-| EVID-FWD-PYTHON | AC6 | `verification/EVENTS-FWD-1/python-tests.log` | `5c1695757` | `2a004dee4d7b565c1e5e57e4efa377f87e3503972cd423ca5e5fc8d640d344fd` | `CANONICAL` |
-| EVID-FWD-RUST-UNIT | AC2/AC6 | `verification/EVENTS-FWD-1/cargo-tests.log` | `5c1695757` | `3e93cf4a01be9f1872cde0091b5d5cfa925c376c8ee4237c788bc79fe82e2aa8` | `CANONICAL` |
-| EVID-FWD-CONCURRENT | AC2/AC6 | `verification/EVENTS-FWD-1/concurrent-roundtrips.log` | `5c1695757` | `64906757c7b74900fb49b4750d74b4ad9373bfb23fdde0a08040d5aa32161c1d` | `CANONICAL` |
-| EVID-FWD-PACKAGED | AC4/AC6 | `verification/EVENTS-FWD-1/packaged-sidecar-tests.log` | `5c1695757` | `4c91aeeaa2fddc2fdcc684c28e4e7f35a94e882b6a2ef042228b28e6bb2b1942` | `CANONICAL` |
-| EVID-FWD-LAYERING | AC4 | `verification/EVENTS-FWD-1/evidence-layering.md` | `5c1695757` | `8bcf9d24b9c054592f35af88aae0e335e879ad068695550df56abc0e0dce71f5` | `CANONICAL` |
-| EVID-FWD-FE-TEST | AC3/AC6 | `verification/EVENTS-FWD-1/frontend-tests.log` | `5c1695757` | `899450ef31c8899727ca0eb02446e5dbabf1f6c7379f61545889cc381aff98ae` | `CANONICAL` |
-| EVID-FWD-FE-BUILD | AC3/AC6 | `verification/EVENTS-FWD-1/frontend-build.log` | `5c1695757` | `9d3ea38314dc7aa2d517f54bfd31ef89a01bd1e2539ce939fa17e8979700f22e` | `CANONICAL` |
+| EVID-FWD-COMPAT | AC1 | `verification/EVENTS-FWD-1/compatibility-impact.md` | `6229e230f` | `57f5adba839fdc4d3c9fded5724b16cbf9bec3d3b54b6b7c300c8998ec6fae5b` | `CANONICAL` |
+| EVID-FWD-PYTHON | AC6 | `verification/EVENTS-FWD-1/python-tests.log` | `6229e230f` | `2a004dee4d7b565c1e5e57e4efa377f87e3503972cd423ca5e5fc8d640d344fd` | `CANONICAL` |
+| EVID-FWD-RUST-UNIT | AC2/AC6 | `verification/EVENTS-FWD-1/cargo-tests.log` | `6229e230f` | `3e93cf4a01be9f1872cde0091b5d5cfa925c376c8ee4237c788bc79fe82e2aa8` | `CANONICAL` |
+| EVID-FWD-CONCURRENT | AC2/AC6 | `verification/EVENTS-FWD-1/concurrent-roundtrips.log` | `6229e230f` | `64906757c7b74900fb49b4750d74b4ad9373bfb23fdde0a08040d5aa32161c1d` | `CANONICAL` |
+| EVID-FWD-PACKAGED | AC4/AC6 | `verification/EVENTS-FWD-1/packaged-sidecar-tests.log` | `6229e230f` | `4c91aeeaa2fddc2fdcc684c28e4e7f35a94e882b6a2ef042228b28e6bb2b1942` | `CANONICAL` |
+| EVID-FWD-LAYERING | AC4 | `verification/EVENTS-FWD-1/evidence-layering.md` | `6229e230f` | `8bcf9d24b9c054592f35af88aae0e335e879ad068695550df56abc0e0dce71f5` | `CANONICAL` |
+| EVID-FWD-FE-TEST | AC3/AC6 | `verification/EVENTS-FWD-1/frontend-tests.log` | `6229e230f` | `899450ef31c8899727ca0eb02446e5dbabf1f6c7379f61545889cc381aff98ae` | `CANONICAL` |
+| EVID-FWD-FE-BUILD | AC3/AC6 | `verification/EVENTS-FWD-1/frontend-build.log` | `6229e230f` | `9d3ea38314dc7aa2d517f54bfd31ef89a01bd1e2539ce939fa17e8979700f22e` | `CANONICAL` |
 
 ## Resource Manifest
 

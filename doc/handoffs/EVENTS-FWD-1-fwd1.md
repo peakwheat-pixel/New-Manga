@@ -3,7 +3,7 @@ task_id: EVENTS-FWD-1
 author: Antigravity
 recipient: Codex
 base_commit: 6c28a02e9
-delivery_head: 5c1695757342eb66f1cc5f7ef24bdb2ce39ccd36
+delivery_head: 6229e230fefe209f35bda0e79d12229a8b18f256
 status: ready_for_review
 ---
 
@@ -20,7 +20,7 @@ status: ready_for_review
 - **AC3 最小消费侧接线**：创建了 `apps/desktop/frontend/src/events.ts`，导出 6 类 typed listener helper 函数（`onTaskFailed`、`onRunPaused`、`onRunCompleted`、`onCurrentPageStepChanged`、`onExportProgressChanged`、`onReadingProgressChanged`），配套单测 `events.test.ts` 全部 PASS；前端全套 177 个测试 PASS，`npm run build` 成功。未触碰页面 UI。
 - **AC4 真实链路证据与分层证据**：在已重建的 2.3 frozen bundle 上运行 `packaged_sidecar_tests` 全部 7 个测试 PASS；因生产命令集保持冻结且无端到端触发 PipelineRun 的命令，端到端触发状态如实记录为 `BLOCKED_ON_TRIGGER_COMMAND`；并提供完整的四层分层证据（安全投影过滤、Stdio 多路复用与旁路无干扰、真实 bundle 运行时、前端类型解包与分发），原始日志与退出码已落盘在 `verification/EVENTS-FWD-1/`。
 - **AC5 不越界**：未改 Core 侧 §6.2 的既有事件字段/语义；未实现 `CoreAvailabilityChanged` 或其他未冻结事件；未改契约无关章节；未新增产品依赖。
-- **AC6 不回归**：`tests/core/**`（395 passed）与既有 Rust 测试（80 passed + 1 concurrent passed + 7 packaged passed）全绿；前端 177 个测试全绿且 build 成功；Cargo 生成的 27 个 CRLF 噪音已使用 `git diff` 判定并全部恢复。
+- **AC6 不回归**：`tests/core/**`（395 passed）与既有 Rust 测试（79 passed + 1 ignored (8 filtered) + 1 concurrent passed + 7 packaged passed）全绿；前端 177 个测试全绿且 build 成功；Cargo 生成的 27 个 CRLF 噪音已使用 `git diff` 判定并全部恢复。
 - **AC7 固定交付**：提交固定 commit、Handoff、Canonical Evidence 真实 sha256 登记完毕；不 `push`、不 `merge`。
 
 ---
@@ -30,7 +30,7 @@ status: ready_for_review
 | AC/场景 | 实际命令/步骤 | 环境与被测 commit | 结果 | 日志/产物 |
 |---|---|---|---|---|
 | AC1 | 契约 revision 2.4 审查与兼容性分析 | 本地 worktree 只读审查 | PASS | `doc/contracts/M2-C1_TYPED_IPC_CONTRACT.md`<br>`verification/EVENTS-FWD-1/compatibility-impact.md` |
-| AC2/AC6 | `cargo test --manifest-path apps/desktop/src-tauri/Cargo.toml --bin m2rc1-desktop -- --skip packaged_sidecar_tests --skip same_channel_concurrent_round_trips` | Rust 1.8x dev | PASS (80 passed, 0 warnings) | `verification/EVENTS-FWD-1/cargo-tests.log` |
+| AC2/AC6 | `cargo test --manifest-path apps/desktop/src-tauri/Cargo.toml --bin m2rc1-desktop -- --skip packaged_sidecar_tests --skip same_channel_concurrent_round_trips` | Rust 1.8x dev | PASS (79 passed, 1 ignored (8 filtered), 0 warnings) | `verification/EVENTS-FWD-1/cargo-tests.log` |
 | AC2/AC6 | `$env:M2RC1_PYTHON="python"; cargo test --manifest-path apps/desktop/src-tauri/Cargo.toml --bin m2rc1-desktop same_channel_concurrent_round_trips` | Python 3.12 + Rust | PASS (1 passed, 0.11s) | `verification/EVENTS-FWD-1/concurrent-roundtrips.log` |
 | AC4/AC6 | `$env:M2RC1_PACKAGED="1"; cargo test --manifest-path apps/desktop/src-tauri/Cargo.toml --bin m2rc1-desktop packaged_sidecar_tests` | 2.3 frozen bundle (`target/core-sidecar`) | PASS (7 passed, 1.91s) | `verification/EVENTS-FWD-1/packaged-sidecar-tests.log` |
 | AC3/AC6 | `npm --prefix apps/desktop/frontend test` | Node.js v20 + vitest | PASS (17 files, 177 passed) | `verification/EVENTS-FWD-1/frontend-tests.log` |
