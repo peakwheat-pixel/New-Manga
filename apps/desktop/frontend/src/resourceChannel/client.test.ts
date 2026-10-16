@@ -71,9 +71,11 @@ describe("ResourceChannelClient", () => {
       expect(url.startsWith(issued.url)).toBe(true);
       return new Response(new Uint8Array(1024), { status: 200 });
     });
-    const blob = await client.fetchAll(issued.url, issued.size, fetchMock as unknown as typeof fetch);
+    const progress: [number, number][] = [];
+    const blob = await client.fetchAll(issued.url, issued.size, fetchMock as unknown as typeof fetch, (loaded, total) => progress.push([loaded, total]));
     expect(blob.size).toBe(1024);
     expect(fetchMock).toHaveBeenCalledTimes(1);
+    expect(progress).toEqual([[0, 1], [1, 1]]);
   });
 
   it("surfaces typed rejection codes from the protocol", async () => {

@@ -16,6 +16,7 @@ import { useState } from "react";
  */
 
 import type { RegionSummary, RegionType, RevisionSummary } from "../region/types";
+import { DisabledFeature } from "./DisabledFeature";
 import {
   RELABEL_SOURCE_SAFETY_NOTE,
   canRetype,
@@ -23,8 +24,8 @@ import {
   type SuspectSet,
 } from "./relabelMachine";
 
-const WARN_TEXT = "var(--st-warn-t, #fbbf24)";
-const SKIP_TEXT = "var(--st-skip, #7eb287)";
+const WARN_TEXT = "#9a6700";
+const SKIP_TEXT = "#1a7f37";
 
 const POLICY_SNAPSHOT_LABELS: Record<string, string> = {
   skip: "跳过翻译 (skip)",
@@ -74,7 +75,8 @@ export function RegionInspector({
     <section
       data-testid="region-inspector"
       style={{
-        border: "1px solid #2a3038",
+        border: "1px solid #d9d9d6",
+        background: "#fff",
         borderRadius: 6,
         padding: 8,
         minWidth: 220,
@@ -83,9 +85,9 @@ export function RegionInspector({
         gap: 6,
       }}
     >
-      <h2 style={{ fontSize: 12, margin: 0, color: "#d8e0e8" }}>Inspector</h2>
+      <h2 style={{ fontSize: 12, margin: 0, color: "#1f2328" }}>Inspector</h2>
       {!region && (
-        <p data-testid="inspector-empty" style={{ color: "#8a94a2", fontSize: 11, margin: 0 }}>
+        <p data-testid="inspector-empty" style={{ color: "#6b7280", fontSize: 11, margin: 0 }}>
           no region selected
         </p>
       )}
@@ -94,10 +96,10 @@ export function RegionInspector({
           data-testid={`inspector-row-${region.region_id}`}
           style={{ margin: 0, display: "grid", gridTemplateColumns: "auto 1fr", gap: "2px 8px", fontSize: 11 }}
         >
-          <dt style={{ color: "#8a94a2" }}>region_id</dt>
-          <dd style={{ margin: 0, color: "#d8e0e8", fontFamily: "Consolas, monospace" }}>{region.region_id}</dd>
-          <dt style={{ color: "#8a94a2" }}>region_type</dt>
-          <dd data-testid="inspector-region-type" style={{ margin: 0, color: "#d8e0e8" }}>
+          <dt style={{ color: "#6b7280" }}>region_id</dt>
+          <dd style={{ margin: 0, color: "#1f2328", fontFamily: "Consolas, monospace" }}>{region.region_id}</dd>
+          <dt style={{ color: "#6b7280" }}>region_type</dt>
+          <dd data-testid="inspector-region-type" style={{ margin: 0, color: "#1f2328" }}>
             {region.region_type}
             {suspect && (
               <span
@@ -109,23 +111,30 @@ export function RegionInspector({
               </span>
             )}
           </dd>
-          <dt style={{ color: "#8a94a2" }}>sfx_policy</dt>
-          <dd data-testid="inspector-sfx-policy" style={{ margin: 0, color: "#d8e0e8" }}>{region.sfx_policy}</dd>
-          <dt style={{ color: "#8a94a2" }}>origin</dt>
-          <dd data-testid="inspector-origin" style={{ margin: 0, color: "#d8e0e8" }}>{region.origin}</dd>
-          <dt style={{ color: "#8a94a2" }}>revision_no</dt>
-          <dd data-testid="inspector-revision-no" style={{ margin: 0, color: "#d8e0e8" }}>{region.revision_no}</dd>
+          <dt style={{ color: "#6b7280" }}>sfx_policy</dt>
+          <dd data-testid="inspector-sfx-policy" style={{ margin: 0, color: "#1f2328" }}>{region.sfx_policy}</dd>
+          <dt style={{ color: "#6b7280" }}>origin</dt>
+          <dd data-testid="inspector-origin" style={{ margin: 0, color: "#1f2328" }}>{region.origin}</dd>
+          <dt style={{ color: "#6b7280" }}>revision_no</dt>
+          <dd data-testid="inspector-revision-no" style={{ margin: 0, color: "#1f2328" }}>{region.revision_no}</dd>
         </dl>
       )}
       {region && (
         <p
           data-testid="inspector-policy-note"
-          style={{ margin: 0, fontSize: 10, color: "#8a94a2" }}
+          style={{ margin: 0, fontSize: 10, color: "#6b7280" }}
         >
           当前该 region 策略快照：{POLICY_SNAPSHOT_LABELS[region.sfx_policy] ?? region.sfx_policy}
           。{RELABEL_SOURCE_SAFETY_NOTE}。撤销仅在改标后 10 秒内、当前页且没有新操作时可用；修订历史可读取，恢复旧修订前需要确认。
         </p>
       )}
+      <label style={{ display: "flex", flexDirection: "column", gap: 4, fontSize: 11, color: "#6b7280" }}>
+        人工译文
+        <textarea data-testid="manual-translation-input" disabled placeholder="等待译文保存能力接入" rows={3} />
+      </label>
+      <DisabledFeature id="gap-g9-save-manual-translation" label="保存人工译文" reason="SaveManualTranslation 写入接口尚未冻结，因此人工译文与 Ctrl+Enter 提交保持禁用。" />
+      <DisabledFeature id="gap-g12-region-lock" label="设置/解除锁定" reason="Lock 写入接口尚未冻结；当前锁态只读显示。" />
+      <DisabledFeature id="gap-g13-revision-pin" label="固定此修订" reason="Revision pin 写入接口尚未冻结；历史固定状态只读显示。" />
       {region && toSfx && toSpeech && onRetypeRequest && (
         <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
           {toSfx.enabled && (
@@ -135,9 +144,9 @@ export function RegionInspector({
               disabled={busy}
               onClick={() => onRetypeRequest(region, "sfx")}
               style={{
-                background: "#12201a",
+                background: "#f1f8f3",
                 color: SKIP_TEXT,
-                border: "1px solid #2a4436",
+                border: "1px solid #b7dfc4",
                 borderRadius: 4,
                 padding: "4px 8px",
                 fontSize: 11,
@@ -155,9 +164,9 @@ export function RegionInspector({
               disabled={busy}
               onClick={() => onRetypeRequest(region, "speech")}
               style={{
-                background: "#221a10",
-                color: "#e0b070",
-                border: "1px solid #4a3a20",
+                background: "#fff8e8",
+                color: "#7a4b00",
+                border: "1px solid #e7c17a",
                 borderRadius: 4,
                 padding: "4px 8px",
                 fontSize: 11,
@@ -171,7 +180,7 @@ export function RegionInspector({
           {!toSfx.enabled && !toSpeech.enabled && (
             <p
               data-testid="inspector-retype-disabled-reason"
-              style={{ margin: 0, fontSize: 10, color: "#5a6470" }}
+              style={{ margin: 0, fontSize: 10, color: "#6b7280" }}
             >
               改标不可用：{toSfx.reason}
             </p>
@@ -183,9 +192,9 @@ export function RegionInspector({
               disabled={busy}
               onClick={() => onToggleSuspect(region.region_id)}
               style={{
-                background: "#101418",
-                color: suspect ? WARN_TEXT : "#d8e0e8",
-                border: `1px solid ${suspect ? "#4a3a20" : "#2a3038"}`,
+                background: "#fff",
+                color: suspect ? WARN_TEXT : "#1f2328",
+                border: `1px solid ${suspect ? "#e7c17a" : "#d9d9d6"}`,
                 borderRadius: 4,
                 padding: "4px 8px",
                 fontSize: 11,
@@ -203,9 +212,9 @@ export function RegionInspector({
             aria-expanded={revisions !== null}
             onClick={() => onLoadHistory?.(region.region_id)}
             style={{
-              background: "#101418",
-              color: busy || historyBusy ? "#5a6470" : "#d8e0e8",
-              border: "1px solid #2a3038",
+              background: "#fff",
+              color: busy || historyBusy ? "#6b7280" : "#1f2328",
+              border: "1px solid #d9d9d6",
               borderRadius: 4,
               padding: "4px 8px",
               fontSize: 11,
@@ -222,20 +231,20 @@ export function RegionInspector({
           )}
           {revisions && (
             <ol data-testid="inspector-revision-list" style={{ margin: 0, paddingLeft: 20, display: "flex", flexDirection: "column", gap: 4, fontSize: 10 }}>
-              {revisions.length === 0 && <li style={{ color: "#8a94a2" }}>暂无修订记录</li>}
+              {revisions.length === 0 && <li style={{ color: "#6b7280" }}>暂无修订记录</li>}
               {revisions.map((revision) => {
                 const source = revision.restored_from_revision_id
                   ? revisions.find((item) => item.region_revision_id === revision.restored_from_revision_id)
                   : undefined;
                 return (
                   <li key={revision.region_revision_id} data-testid={`inspector-revision-${revision.revision_no}`}>
-                    <div style={{ color: "#d8e0e8" }}>
+                    <div style={{ color: "#1f2328" }}>
                       revision {revision.revision_no} · {revision.origin} · {revision.review_state} · {revision.region_type} · {revision.sfx_policy} · {revision.created_at}
                       {revision.is_current && " · 当前"}
                       {revision.is_pinned && " · 已固定"}
                     </div>
                     {revision.restored_from_revision_id && (
-                      <div style={{ color: "#8a94a2" }}>
+                      <div style={{ color: "#6b7280" }}>
                         来源：revision {source?.revision_no ?? revision.restored_from_revision_id}
                       </div>
                     )}
@@ -246,9 +255,9 @@ export function RegionInspector({
                       onClick={() => setRestoreTarget(revision)}
                       style={{
                         marginTop: 2,
-                        background: "#101418",
-                        color: revision.is_current || busy || restoreBusy ? "#5a6470" : "#d8e0e8",
-                        border: "1px solid #2a3038",
+                        background: "#fff",
+                        color: revision.is_current || busy || restoreBusy ? "#6b7280" : "#1f2328",
+                        border: "1px solid #d9d9d6",
                         borderRadius: 4,
                         padding: "2px 6px",
                         fontSize: 10,
@@ -274,16 +283,16 @@ export function RegionInspector({
             data-testid="revision-restore-dialog"
             role="dialog"
             aria-modal="true"
-            style={{ background: "var(--wb-bg-raised, #161b22)", border: "1px solid #4a3a20", borderRadius: 8, padding: 12, width: 320, display: "flex", flexDirection: "column", gap: 8 }}
+            style={{ background: "#fff", color: "#1f2328", border: "1px solid #e7c17a", borderRadius: 8, padding: 12, width: 320, display: "flex", flexDirection: "column", gap: 8 }}
             onClick={(event) => event.stopPropagation()}
           >
-            <strong style={{ fontSize: 12, color: "#e0b070" }}>恢复 revision {restoreTarget.revision_no}？</strong>
-            <p data-testid="revision-restore-target" style={{ margin: 0, fontSize: 11, color: "#d8e0e8" }}>
+            <strong style={{ fontSize: 12, color: "#7a4b00" }}>恢复 revision {restoreTarget.revision_no}？</strong>
+            <p data-testid="revision-restore-target" style={{ margin: 0, fontSize: 11, color: "#1f2328" }}>
               目标：revision {restoreTarget.revision_no} · {restoreTarget.origin} · {restoreTarget.region_type} · {restoreTarget.sfx_policy}
               {restoreTarget.is_pinned ? " · 已固定" : ""}
               {restoreTarget.restored_from_revision_id ? ` · 来源 ${restoreTarget.restored_from_revision_id}` : ""}
             </p>
-            <p style={{ margin: 0, fontSize: 10, color: "#8a94a2" }}>
+            <p style={{ margin: 0, fontSize: 10, color: "#6b7280" }}>
               将恢复该修订的文字、类型、策略与锁状态（可能回退当前锁）；当前 revision {currentRevisionNo ?? region?.revision_no ?? "未知"} 与历史都会保留，Core 会新增 restored revision，不改动原图。
             </p>
             {restoreError && (

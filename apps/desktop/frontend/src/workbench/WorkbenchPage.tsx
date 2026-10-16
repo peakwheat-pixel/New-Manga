@@ -3,26 +3,25 @@
  * QML `WorkbenchView.qml` -> five-zone grid; M2-WORKBENCH-REACT-1 read-face
  * loop).
  *
- * Zone map (mapping-contract names):
+ * Zone map (design §3.3):
  *   Toolbar | PageListPanel | ViewerPanel(+RegionOverlay) | RegionInspector
- *   | TaskProgressPanel (static placeholder)
+ *   | TaskProgressPanel (fixed run projection and controls)
  *
  * Read-face loop closed on EXISTING command faces only:
  * - books via `library_list_books` (LibraryClient);
  * - regions via `list_regions` (RegionClient; rev 1.5 optional
  *   `geometry`/`page_size` consumed when the Core returns them);
- * - page image via the existing resource channel (`loadPageImageUrl`) when
- *   a resource id + revision is supplied (production page->resource
- *   catalogization is a registered gap).
+ * - page image via `ResolvePageResource` and the existing resource channel
+ *   (`loadPageImageUrl`); resource keys stay internal to the component.
  *
  * Retype, revision restore/history and page rerender consume the frozen
  * RC-4 command face; page images continue through the resource channel.
  */
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { LibraryClient, LibraryClientError } from "../library/client";
+import { LibraryClient } from "../library/client";
 import type { BookSummary, ChapterNavSummary, PageNavSummary } from "../library/types";
-import { RegionClient, RegionClientError } from "../region/client";
+import { RegionClient } from "../region/client";
 import type {
   ListRegionRevisionsResult,
   RegionSummary,
@@ -36,8 +35,13 @@ import { ViewerPanel, type RelabelFeedbackState } from "./ViewerPanel";
 import { RegionInspector } from "./RegionInspector";
 import { TaskProgressPanel } from "./TaskProgressPanel";
 import { WorkbenchToolbar } from "./WorkbenchToolbar";
+import { WorkbenchError } from "./WorkbenchError";
 import { RelabelConfirmDialog } from "./RelabelConfirmDialog";
 import { planRetypeAction, retypeFeedback } from "./relabelMachine";
+import { WorkbenchClient, isSafeUiId, newIdempotencyKey, safeWorkbenchErrorCode, type ExportHistoryEntry, type ExportSnapshot, type PipelineCommand, type PipelineScope, type TaskProjection } from "./client";
+import { ExportDialog } from "./ExportDialog";
+import { ImportDialog } from "../bookshelf/ImportDialog";
+import { onCurrentPageStepChanged, onExportProgressChanged, onRunCompleted, onRunPaused, onTaskFailed, type ListenFn, type UnlistenFn } from "../events";
 
 export type InvokeFn = (command: string, args?: Record<string, unknown>) => Promise<unknown>;
 
@@ -56,6 +60,9 @@ export interface WorkbenchPageProps {
    * the effect-driven region read. Write-refresh paths stay immediate.
    */
   regionDebounceMs?: number;
+  bookId?: string | null;
+  chapterId?: string | null;
+  listen?: ListenFn;
 }
 
 interface UndoOffer {
@@ -74,41 +81,49 @@ interface OperationContext {
 }
 
 function errorCode(error: unknown, fallback: string): string {
-  if (error instanceof RegionClientError) return error.code;
-  if (typeof error === "string") return error;
-  const value = error as { code?: unknown; message?: unknown } | null;
-  if (typeof value?.code === "string") return value.code;
-  if (typeof value?.message === "string") return value.message;
-  return fallback;
+  return safeWorkbenchErrorCode(error, fallback);
 }
 
-export function WorkbenchPage({ invoke, resolveDebounceMs = 300, regionDebounceMs = 300 }: WorkbenchPageProps) {
+function isSafeFilename(value: unknown): value is string {
+  return typeof value === "string" && value.length > 0 && value.length <= 512 && value !== "." && value !== ".." && !/[\\/\0]/.test(value) && !/^[A-Za-z]:/.test(value);
+}
+
+export function WorkbenchPage({ invoke, resolveDebounceMs = 300, regionDebounceMs = 300, bookId, chapterId, listen }: WorkbenchPageProps) {
   const [books, setBooks] = useState<BookSummary[]>([]);
+  const [booksRetry, setBooksRetry] = useState(0);
+  const [booksBusy, setBooksBusy] = useState(true);
   const [booksError, setBooksError] = useState<string | null>(null);
   const [selectedBookId, setSelectedBookId] = useState<string | null>(null);
   // M2-PAGE-NAV-PROJECTION-1: three-level drill-down state (book -> chapter
   // -> page over the read-only navigation projections). Expand/collapse is
   // pure local UI state; Core is never written through this face.
   const [chapters, setChapters] = useState<ChapterNavSummary[]>([]);
+  const [chaptersRetry, setChaptersRetry] = useState(0);
   const [chaptersBusy, setChaptersBusy] = useState(false);
   const [chaptersError, setChaptersError] = useState<string | null>(null);
   const [selectedChapterId, setSelectedChapterId] = useState<string | null>(null);
   const [pages, setPages] = useState<PageNavSummary[]>([]);
+  const [pagesRefresh, setPagesRefresh] = useState(0);
+  const [pagesRetry, setPagesRetry] = useState(0);
   const [pagesBusy, setPagesBusy] = useState(false);
   const [pagesError, setPagesError] = useState<string | null>(null);
   const [pageId, setPageId] = useState("");
   const [regions, setRegions] = useState<RegionSummary[]>([]);
+  const [regionsRetry, setRegionsRetry] = useState(0);
   const [pageSize, setPageSize] = useState<{ width: number; height: number } | null>(null);
   const [regionError, setRegionError] = useState<string | null>(null);
+  const [regionsLoading, setRegionsLoading] = useState(false);
   const [selectedRegionId, setSelectedRegionId] = useState<string | null>(null);
   const [resourceId, setResourceId] = useState("");
   const [resourceRevision, setResourceRevision] = useState("current");
+  const [resourceResolveBusy, setResourceResolveBusy] = useState(false);
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const [imageError, setImageError] = useState<string | null>(null);
-  // M2-PAGE-RESOURCE-RESOLVE-1: automatic page -> resource resolution; the
-  // manual resource inputs stay as the debug fallback (e.g. previews).
-  const [resourceResolveBusy, setResourceResolveBusy] = useState(false);
-  const [resourceResolveError, setResourceResolveError] = useState<string | null>(null);
+  const [imageBusy, setImageBusy] = useState(false);
+  const [imageProgress, setImageProgress] = useState<{ loadedChunks: number; totalChunks: number } | null>(null);
+  const [imageRetry, setImageRetry] = useState(0);
+  // M2-PAGE-RESOURCE-RESOLVE-1: the resolved resource key remains internal
+  // and is never rendered as page content or an editable field.
   // ---- IMPL-1 retype/mitigation state ----
   // Pure-UI suspect flags (design R1): never persisted, never sent to Core.
   const [suspects, setSuspects] = useState<Set<string>>(new Set());
@@ -124,6 +139,34 @@ export function WorkbenchPage({ invoke, resolveDebounceMs = 300, regionDebounceM
   const [historyBusy, setHistoryBusy] = useState(false);
   const [historyError, setHistoryError] = useState<string | null>(null);
   const [restoreError, setRestoreError] = useState<string | null>(null);
+  const [selectedPageIds, setSelectedPageIds] = useState<string[]>([]);
+  const [selectionAnchor, setSelectionAnchor] = useState<string | null>(null);
+  const [pageFilter, setPageFilter] = useState<string | null>(null);
+  const [viewerMode, setViewerMode] = useState<"view" | "pan" | "region">("view");
+  const [taskProjection, setTaskProjection] = useState<TaskProjection | null>(null);
+  const [runSnapshot, setRunSnapshot] = useState<{ run_id: string; command: string; scope: PipelineScope; status: string } | null>(null);
+  const [runId, setRunId] = useState<string | null>(null);
+  const [runBusy, setRunBusy] = useState(false);
+  const [runLoading, setRunLoading] = useState(false);
+  const [runError, setRunError] = useState<string | null>(null);
+  const [pendingControl, setPendingControl] = useState<"pause" | "stop" | null>(null);
+  const [progressCollapsed, setProgressCollapsed] = useState(false);
+  const [importOpen, setImportOpen] = useState(false);
+  const [exportOpen, setExportOpen] = useState(false);
+  const [exportBusy, setExportBusy] = useState(false);
+  const [exportError, setExportError] = useState<string | null>(null);
+  const [exportSnapshot, setExportSnapshot] = useState<ExportSnapshot | null>(null);
+  const [exportHistory, setExportHistory] = useState<ExportHistoryEntry[]>([]);
+  const [currentExportId, setCurrentExportId] = useState<string | null>(null);
+  const [exportHistoryLoading, setExportHistoryLoading] = useState(false);
+  const runIdRef = useRef<string | null>(null);
+  const pendingControlRef = useRef<"pause" | "stop" | null>(null);
+  const taskProjectionRef = useRef<TaskProjection | null>(null);
+  const currentExportIdRef = useRef<string | null>(null);
+  const pendingRunKeyRef = useRef<{ fingerprint: string; key: string } | null>(null);
+  const actionKeysRef = useRef(new Map<string, string>());
+  const selectionAnchorRef = useRef<string | null>(null);
+  const selectedPageIdsRef = useRef<string[]>([]);
 
   const pageIdRef = useRef(pageId);
   pageIdRef.current = pageId;
@@ -140,6 +183,7 @@ export function WorkbenchPage({ invoke, resolveDebounceMs = 300, regionDebounceM
   const undoTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const imageUrlRef = useRef<string | null>(null);
   const imageRequestRef = useRef(0);
+  const resourceResolveVersionRef = useRef(0);
 
   const invalidateUndo = useCallback(() => {
     if (undoTimerRef.current !== null) clearTimeout(undoTimerRef.current);
@@ -211,40 +255,287 @@ export function WorkbenchPage({ invoke, resolveDebounceMs = 300, regionDebounceM
       library: new LibraryClient(invoke),
       region: new RegionClient(invoke),
       resource: new ResourceChannelClient(tauriInvoke),
+      workbench: new WorkbenchClient(tauriInvoke),
     };
   }, [invoke]);
+  const pendingRunReadsRef = useRef(new Set<string>());
+  const refreshRun = useCallback(async (id: string) => {
+    if (pendingRunReadsRef.current.has(id)) return;
+    pendingRunReadsRef.current.add(id);
+    if (!taskProjectionRef.current) setRunLoading(true);
+    try {
+      const [snapshot, projection] = await Promise.all([
+        clients.workbench.getRunSnapshot(id),
+        clients.workbench.getTaskProjection(id),
+      ]);
+      if (snapshot.run_id !== id || projection.run_id !== id) throw new Error("WORKBENCH_RESPONSE_MALFORMED");
+      if (runIdRef.current === id) {
+        setRunSnapshot(snapshot);
+        setTaskProjection(projection);
+        setRunError(null);
+        if ((pendingControlRef.current === "pause" && snapshot.status === "paused") ||
+            (pendingControlRef.current === "stop" && ["cancelled", "completed", "failed"].includes(snapshot.status))) {
+          pendingControlRef.current = null;
+          setPendingControl(null);
+        }
+      }
+    } catch (error) {
+      if (runIdRef.current === id) setRunError(errorCode(error, "CORE_UNAVAILABLE"));
+    } finally {
+      pendingRunReadsRef.current.delete(id);
+      if (runIdRef.current === id) setRunLoading(false);
+    }
+  }, [clients]);
+
+  const refreshExportHistory = useCallback(async () => {
+    setExportHistoryLoading(true);
+    try {
+      setExportHistory(await clients.workbench.getExportHistory());
+      setExportError(null);
+    } catch (error) {
+      setExportError(errorCode(error, "CORE_UNAVAILABLE"));
+    } finally {
+      setExportHistoryLoading(false);
+    }
+  }, [clients]);
+
+  const refreshExportSnapshot = useCallback(async (id: string) => {
+    try {
+      const snapshot = await clients.workbench.getExportSnapshot(id);
+      if (currentExportIdRef.current === id) {
+        setExportSnapshot(snapshot);
+        setExportError(null);
+      }
+      if (["completed", "cancelled", "failed"].includes(snapshot.status)) void refreshExportHistory();
+    } catch (error) {
+      if (currentExportIdRef.current === id) setExportError(errorCode(error, "CORE_UNAVAILABLE"));
+    }
+  }, [clients, refreshExportHistory]);
+
+  const handleStartRun = useCallback(async (command: PipelineCommand) => {
+    if (!selectedChapterId || runBusy) return;
+    let scope: PipelineScope;
+    if (command.endsWith("_selected")) {
+      if (!selectedPageIds.length) return;
+      scope = { kind: "page_selection", page_ids: [...selectedPageIds] };
+    } else if (command.endsWith("_single")) {
+      if (!pageId.trim()) return;
+      scope = { kind: "page", page_id: pageId.trim() };
+    } else if (command === "ocr_region" || command.startsWith("retranslate_region") || command === "reinpaint_region" || command === "rerender_region") {
+      if (!selectedRegionId) return;
+      scope = { kind: "region", region_id: selectedRegionId };
+    } else {
+      scope = { kind: "chapter", chapter_id: selectedChapterId };
+    }
+    const fingerprint = JSON.stringify([command, scope]);
+    const key = pendingRunKeyRef.current?.fingerprint === fingerprint
+      ? pendingRunKeyRef.current.key
+      : newIdempotencyKey();
+    pendingRunKeyRef.current = { fingerprint, key };
+    setRunBusy(true);
+    setRunError(null);
+    try {
+      const accepted = await clients.workbench.startRun(command, scope, key);
+      pendingRunKeyRef.current = null;
+      runIdRef.current = accepted.run_id;
+      setRunId(accepted.run_id);
+      setRunSnapshot(null);
+      taskProjectionRef.current = null;
+      setTaskProjection(null);
+      setRunLoading(true);
+      await refreshRun(accepted.run_id);
+    } catch (error) {
+      setRunError(errorCode(error, "CORE_UNAVAILABLE"));
+    } finally {
+      setRunBusy(false);
+    }
+  }, [clients, pageId, refreshRun, runBusy, selectedChapterId, selectedPageIds, selectedRegionId]);
+
+  const handleRunControl = useCallback(async (action: "pause" | "stop" | "continue" | "restart" | "abandon") => {
+    const id = runIdRef.current;
+    if (!id || runBusy) return;
+    const keyName = `${id}:${action}`;
+    const key = action === "restart" ? (actionKeysRef.current.get(keyName) ?? newIdempotencyKey()) : undefined;
+    if (key) actionKeysRef.current.set(keyName, key);
+    setRunBusy(true);
+    if (action === "pause" || action === "stop") {
+      pendingControlRef.current = action;
+      setPendingControl(action);
+    }
+    setRunError(null);
+    try {
+      const result = await clients.workbench.controlRun(id, action, key);
+      actionKeysRef.current.delete(keyName);
+      if (result.new_run_id) {
+        pendingControlRef.current = null;
+        setPendingControl(null);
+        runIdRef.current = result.new_run_id;
+        setRunId(result.new_run_id);
+        taskProjectionRef.current = null;
+        setTaskProjection(null);
+        setRunSnapshot(null);
+        await refreshRun(result.new_run_id);
+      } else {
+        await refreshRun(id);
+      }
+    } catch (error) {
+      pendingControlRef.current = null;
+      setPendingControl(null);
+      setRunError(errorCode(error, "CORE_UNAVAILABLE"));
+    } finally {
+      setRunBusy(false);
+    }
+  }, [clients, refreshRun, runBusy]);
+
+  const handleResumeBlocked = useCallback(async () => {
+    const id = runIdRef.current;
+    if (!id || runBusy) return;
+    setRunBusy(true); setRunError(null);
+    try { await clients.workbench.resumeBlockedRun(id); await refreshRun(id); }
+    catch (error) { setRunError(errorCode(error, "CORE_UNAVAILABLE")); }
+    finally { setRunBusy(false); }
+  }, [clients, refreshRun, runBusy]);
+
+  const handleRetryFailed = useCallback(async () => {
+    const id = runIdRef.current;
+    if (!id || runBusy) return;
+    const keyName = `${id}:retry-failed`;
+    const key = actionKeysRef.current.get(keyName) ?? newIdempotencyKey();
+    actionKeysRef.current.set(keyName, key);
+    setRunBusy(true); setRunError(null);
+    try {
+      const accepted = await clients.workbench.retryFailedTargets(id, key);
+      actionKeysRef.current.delete(keyName);
+      runIdRef.current = accepted.run_id;
+      setRunId(accepted.run_id); taskProjectionRef.current = null; setTaskProjection(null);
+      setRunSnapshot(null);
+      await refreshRun(accepted.run_id);
+    } catch (error) { setRunError(errorCode(error, "CORE_UNAVAILABLE")); }
+    finally { setRunBusy(false); }
+  }, [clients, refreshRun, runBusy]);
+
+  const handleStartExport = useCallback(async (request: Parameters<WorkbenchClient["startExport"]>[0]) => {
+    setExportBusy(true); setExportError(null);
+    try {
+      const accepted = await clients.workbench.startExport(request);
+      if (!accepted) return false;
+      currentExportIdRef.current = accepted.export_id;
+      setCurrentExportId(accepted.export_id); setExportSnapshot(null);
+      await Promise.all([refreshExportSnapshot(accepted.export_id), refreshExportHistory()]);
+      return true;
+    } catch (error) {
+      setExportError(errorCode(error, "CORE_UNAVAILABLE"));
+      return false;
+    } finally { setExportBusy(false); }
+  }, [clients, refreshExportHistory, refreshExportSnapshot]);
+
+  const handleCancelExport = useCallback(async () => {
+    const id = currentExportIdRef.current;
+    if (!id || exportBusy) return;
+    setExportBusy(true); setExportError(null);
+    try { setExportSnapshot(await clients.workbench.cancelExport(id)); await refreshExportHistory(); }
+    catch (error) { setExportError(errorCode(error, "CORE_UNAVAILABLE")); }
+    finally { setExportBusy(false); }
+  }, [clients, exportBusy, refreshExportHistory]);
+
+  const handleRevealExport = useCallback(async (id: string) => {
+    setExportBusy(true); setExportError(null);
+    try { await clients.workbench.revealExportFolder(id); }
+    catch (error) { setExportError(errorCode(error, "CORE_UNAVAILABLE")); }
+    finally { setExportBusy(false); }
+  }, [clients]);
+
+  useEffect(() => {
+    let active = true;
+    const unlisteners: UnlistenFn[] = [];
+    const onRunChanged = (payload: { run_id: string }) => {
+      const id = payload?.run_id;
+      if (active && typeof id === "string" && id === runIdRef.current) void refreshRun(id);
+    };
+    const subscribe = async () => {
+      const subscriptions = await Promise.allSettled([
+        onTaskFailed(onRunChanged, listen),
+        onRunPaused(onRunChanged, listen),
+        onRunCompleted(onRunChanged, listen),
+        onCurrentPageStepChanged(onRunChanged, listen),
+        onExportProgressChanged((payload) => {
+          if (active && typeof payload?.export_id === "string") void refreshExportSnapshot(payload.export_id);
+        }, listen),
+      ]);
+      for (const subscription of subscriptions) {
+        if (subscription.status !== "fulfilled") continue;
+        if (active) unlisteners.push(subscription.value);
+        else subscription.value();
+      }
+    };
+    void subscribe();
+    return () => {
+      active = false;
+      for (const unlisten of unlisteners) unlisten();
+    };
+  }, [listen, refreshExportSnapshot, refreshRun]);
+
+  useEffect(() => {
+    if (!runId || !["pending", "running"].includes(taskProjection?.run_status ?? runSnapshot?.status ?? "")) return;
+    const timer = window.setInterval(() => { void refreshRun(runId); }, 250);
+    return () => window.clearInterval(timer);
+  }, [runId, runSnapshot?.status, taskProjection?.run_status, refreshRun]);
+
+  useEffect(() => {
+    if (!exportSnapshot || !["pending", "running", "publishing"].includes(exportSnapshot.status)) return;
+    const timer = window.setInterval(() => { void refreshExportSnapshot(exportSnapshot.export_id); }, 250);
+    return () => window.clearInterval(timer);
+  }, [exportSnapshot, refreshExportSnapshot]);
+
+
+  useEffect(() => {
+    runIdRef.current = runId;
+  }, [runId]);
+  useEffect(() => { taskProjectionRef.current = taskProjection; }, [taskProjection]);
+  useEffect(() => {
+    currentExportIdRef.current = currentExportId;
+  }, [currentExportId]);
+  useEffect(() => { selectedPageIdsRef.current = selectedPageIds; }, [selectedPageIds]);
+  useEffect(() => { selectionAnchorRef.current = selectionAnchor; }, [selectionAnchor]);
+
+  useEffect(() => {
+    if (isSafeUiId(bookId)) {
+      setSelectedBookId(bookId);
+      if (isSafeUiId(chapterId)) setSelectedChapterId(chapterId);
+    }
+  }, [bookId, chapterId]);
 
   // Book list via the EXISTING library_list_books projection.
   useEffect(() => {
     let cancelled = false;
+    setBooksBusy(true);
     clients.library
       .listBooks()
       .then((rows) => {
         if (!cancelled) {
-          setBooks(rows);
-          setBooksError(null);
+          const safeRows = rows.filter((row) => isSafeUiId(row.book_id));
+          setBooks(safeRows);
+          setBooksError(safeRows.length === rows.length ? null : "PAGE_NAV_MALFORMED");
         }
       })
       .catch((error: unknown) => {
         if (!cancelled) {
-          setBooksError(
-            error instanceof LibraryClientError
-              ? error.code
-              : "LIBRARY_UNAVAILABLE",
-          );
+          setBooksError(errorCode(error, "LIBRARY_UNAVAILABLE"));
         }
+      })
+      .finally(() => {
+        if (!cancelled) setBooksBusy(false);
       });
     return () => {
       cancelled = true;
     };
-  }, [clients]);
+  }, [booksRetry, clients]);
 
   // M2-PAGE-NAV-PROJECTION-1: chapters of the selected book through the
   // frozen read-only projection. A null selection collapses the drill-down;
   // switching books resets the chapter selection with the list.
   useEffect(() => {
     const signal = { cancelled: false };
-    setSelectedChapterId(null);
     if (!selectedBookId) {
       setChapters([]);
       setChaptersBusy(false);
@@ -264,22 +555,21 @@ export function WorkbenchPage({ invoke, resolveDebounceMs = 300, regionDebounceM
       .listChapters(selectedBookId)
       .then((rows) => {
         if (!isCurrent()) return;
-        setChapters(rows);
+        const safeRows = rows.filter((row) => isSafeUiId(row.chapter_id));
+        setChapters(safeRows);
         setChaptersBusy(false);
-        setChaptersError(null);
+        setChaptersError(safeRows.length === rows.length ? null : "PAGE_NAV_MALFORMED");
       })
       .catch((error: unknown) => {
         if (!isCurrent()) return;
         setChapters([]);
         setChaptersBusy(false);
-        setChaptersError(
-          error instanceof LibraryClientError ? error.code : "PAGE_NAV_UNAVAILABLE",
-        );
+        setChaptersError(errorCode(error, "PAGE_NAV_UNAVAILABLE"));
       });
     return () => {
       signal.cancelled = true;
     };
-  }, [clients, selectedBookId]);
+  }, [chaptersRetry, clients, selectedBookId]);
 
   // M2-PAGE-NAV-PROJECTION-1: pages of the selected chapter (second
   // drill-down level). Clicking a page is handled by the panel through
@@ -303,62 +593,49 @@ export function WorkbenchPage({ invoke, resolveDebounceMs = 300, regionDebounceM
       .listChapterPages(selectedChapterId)
       .then((rows) => {
         if (!isCurrent()) return;
-        setPages(rows);
+        const safeRows = rows.filter((row) => isSafeUiId(row.page_id) && isSafeFilename(row.source_filename));
+        setPages(safeRows);
         setPagesBusy(false);
-        setPagesError(null);
+        setPagesError(safeRows.length === rows.length ? null : "PAGE_NAV_MALFORMED");
       })
       .catch((error: unknown) => {
         if (!isCurrent()) return;
         setPages([]);
         setPagesBusy(false);
-        setPagesError(
-          error instanceof LibraryClientError ? error.code : "PAGE_NAV_UNAVAILABLE",
-        );
+        setPagesError(errorCode(error, "PAGE_NAV_UNAVAILABLE"));
       });
     return () => {
       signal.cancelled = true;
     };
-  }, [clients, selectedChapterId]);
+  }, [clients, pagesRefresh, pagesRetry, selectedChapterId]);
 
-  // M2-PAGE-RESOURCE-RESOLVE-1: resolve the page's managed original to its
-  // catalog key and feed the existing image loader automatically; the manual
-  // resource inputs stay as the debug fallback (a resolve failure leaves
-  // them authoritative, so previews still load by hand).
-  // M2-RESOLVE-DEBOUNCE-1: the invoke waits for a `resolveDebounceMs` quiet
-  // period (typing a page id costs one invoke, not one per keypress); the
-  // effect cleanup cancels the pending timer, and the late-reply guard
-  // below still re-checks the current page after the timer fires.
+  // Resolve only IDs selected from the projected page list; keep the resource
+  // key inside this component and feed it to the existing chunked loader.
   useEffect(() => {
     const trimmed = pageId.trim();
-    if (!trimmed) {
-      setResourceResolveBusy(false);
-      setResourceResolveError(null);
-      return;
-    }
+    if (!trimmed) { setResourceResolveBusy(false); return; }
     let cancelled = false;
+    const resolveVersion = ++resourceResolveVersionRef.current;
     // Same guard discipline as the region/history/image loops below: the
     // passive-effect cleanup is a later macrotask, so a late resolve reply
     // for a PREVIOUS page can land after the new page's commit and would
     // otherwise feed page-1's key into page-2's viewer.
-    const stillCurrent = () => !cancelled && trimmed === pageIdRef.current.trim();
+    const stillCurrent = () => !cancelled && resolveVersion === resourceResolveVersionRef.current && trimmed === pageIdRef.current.trim();
     setResourceResolveBusy(true);
-    setResourceResolveError(null);
     const fireResolve = () => {
       clients.library
         .resolvePageResource(trimmed)
         .then((resolved) => {
           if (!stillCurrent()) return;
+          if (!isSafeUiId(resolved.resource_id) || !isSafeUiId(resolved.revision)) throw new Error("PAGE_RESOURCE_MALFORMED");
           setResourceId(resolved.resource_id);
           setResourceRevision(resolved.revision);
           setResourceResolveBusy(false);
-          setResourceResolveError(null);
         })
         .catch((error: unknown) => {
           if (!stillCurrent()) return;
           setResourceResolveBusy(false);
-          setResourceResolveError(
-            error instanceof LibraryClientError ? error.code : "PAGE_RESOURCE_UNAVAILABLE",
-          );
+          setImageError(errorCode(error, "PAGE_RESOURCE_UNAVAILABLE"));
         });
     };
     let timer: ReturnType<typeof setTimeout> | undefined;
@@ -389,23 +666,25 @@ export function WorkbenchPage({ invoke, resolveDebounceMs = 300, regionDebounceM
           setRegions([]);
           setPageSize(null);
           setRegionError(null);
+          setRegionsLoading(false);
         }
         return isCurrent();
       }
+      if (isCurrent()) setRegionsLoading(true);
       try {
         const result = await clients.region.listRegions(trimmed);
         if (!isCurrent()) return false;
-        setRegions(result.regions);
+        setRegions(result.regions.filter((region) => isSafeUiId(region.region_id)));
         setPageSize(result.page_size ?? null);
         setRegionError(null);
+        setRegionsLoading(false);
         return true;
       } catch (error: unknown) {
         if (!isCurrent()) return false;
         setRegions([]);
         setPageSize(null);
-        setRegionError(
-          error instanceof RegionClientError ? error.code : "REGION_CHANNEL_UNAVAILABLE",
-        );
+        setRegionError(errorCode(error, "REGION_CHANNEL_UNAVAILABLE"));
+        setRegionsLoading(false);
         return false;
       }
     },
@@ -432,7 +711,7 @@ export function WorkbenchPage({ invoke, resolveDebounceMs = 300, regionDebounceM
     return () => {
       signal.cancelled = true;
     };
-  }, [clients, pageId, refreshRegions, regionDebounceMs]);
+  }, [clients, pageId, refreshRegions, regionDebounceMs, regionsRetry]);
 
   // Page image through the EXISTING resource channel, one fresh issue per
   // addressable request.
@@ -448,13 +727,19 @@ export function WorkbenchPage({ invoke, resolveDebounceMs = 300, regionDebounceM
     if (!trimmedId) {
       replaceImageUrl(null);
       setImageError(null);
+      setImageBusy(false);
+      setImageProgress(null);
       return;
     }
     let cancelled = false;
     let createdUrl: string | null = null;
     replaceImageUrl(null);
     setImageError(null);
-    loadPageImageUrl(clients.resource, trimmedId, resourceRevision.trim() || "current")
+    setImageBusy(true);
+    setImageProgress(null);
+    loadPageImageUrl(clients.resource, trimmedId, resourceRevision.trim() || "current", (loadedChunks, totalChunks) => {
+      if (isCurrent()) setImageProgress({ loadedChunks, totalChunks });
+    })
       .then((url) => {
         if (cancelled || !isCurrent()) {
           URL.revokeObjectURL(url);
@@ -463,20 +748,22 @@ export function WorkbenchPage({ invoke, resolveDebounceMs = 300, regionDebounceM
         createdUrl = url;
         replaceImageUrl(url);
         setImageError(null);
+        setImageBusy(false);
+        setImageProgress(null);
       })
       .catch((error: unknown) => {
         if (cancelled || !isCurrent()) {
           return;
         }
         replaceImageUrl(null);
-        // r1 P4-1: the resource channel speaks TypedChannelError (its own
-        // typed surface) or a generic code-shaped failure -- never a
-        // RegionClientError, which belongs to the region client.
+        // Resource transport has its own typed error surface; show only a stable code.
         const code =
           error instanceof TypedChannelError
             ? error.code
             : (error as { code?: string })?.code;
-        setImageError(typeof code === "string" ? code : "RESOURCE_UNAVAILABLE");
+        setImageError(safeWorkbenchErrorCode({ code }, "RESOURCE_UNAVAILABLE"));
+        setImageBusy(false);
+        setImageProgress(null);
       });
     return () => {
       cancelled = true;
@@ -486,7 +773,7 @@ export function WorkbenchPage({ invoke, resolveDebounceMs = 300, regionDebounceM
         imageUrlRef.current = null;
       }
     };
-  }, [clients, replaceImageUrl, resourceId, resourceRevision]);
+  }, [clients, imageRetry, replaceImageUrl, resourceId, resourceRevision]);
 
   useEffect(() => () => {
     if (undoTimerRef.current !== null) clearTimeout(undoTimerRef.current);
@@ -503,6 +790,11 @@ export function WorkbenchPage({ invoke, resolveDebounceMs = 300, regionDebounceM
     () => regions.find((region) => region.region_id === selectedRegionId) ?? null,
     [regions, selectedRegionId],
   );
+  const selectedBook = books.find((book) => book.book_id === selectedBookId) ?? null;
+  const selectedChapter = chapters.find((chapter) => chapter.chapter_id === selectedChapterId) ?? null;
+  const workbenchContext = selectedChapter
+    ? `${selectedBook?.title ?? "作品"} · ${selectedChapter.chapter_number ? `#${selectedChapter.chapter_number} · ` : ""}${selectedChapter.title}`
+    : selectedBook ? `${selectedBook.title} · 选择章节` : "选择作品与章节";
 
   const onSelectRegion = useCallback((regionId: string | null) => {
     if (selectedRegionIdRef.current !== regionId) {
@@ -521,13 +813,23 @@ export function WorkbenchPage({ invoke, resolveDebounceMs = 300, regionDebounceM
   // effects above own the reads and resets).
   const onSelectBook = useCallback((bookId: string) => {
     setSelectedBookId((current) => (current === bookId ? null : bookId));
+    setSelectedChapterId(null);
+    setSelectedPageIds([]);
+    setPageId("");
   }, []);
 
   const onSelectChapter = useCallback((chapterId: string) => {
     setSelectedChapterId((current) => (current === chapterId ? null : chapterId));
+    setSelectedPageIds([]);
+    setPageId("");
+    setPageFilter(null);
   }, []);
 
   const onPageIdChange = useCallback((nextPageId: string) => {
+    if (nextPageId.trim() && !isSafeUiId(nextPageId.trim())) {
+      setImageError("INVALID_REQUEST");
+      return;
+    }
     pageIdRef.current = nextPageId;
     pageEpochRef.current += 1;
     regionReadRef.current += 1;
@@ -546,6 +848,7 @@ export function WorkbenchPage({ invoke, resolveDebounceMs = 300, regionDebounceM
     setRegions([]);
     setPageSize(null);
     setRegionError(null);
+    setRegionsLoading(Boolean(nextPageId.trim()));
     setHistoryRegionId(null);
     setHistory(null);
     setHistoryBusy(false);
@@ -555,15 +858,44 @@ export function WorkbenchPage({ invoke, resolveDebounceMs = 300, regionDebounceM
     imageRequestRef.current += 1;
     replaceImageUrl(null);
     setImageError(null);
-    // M2-PAGE-RESOURCE-RESOLVE-1: the resolve loop re-runs for the new page
-    // and repopulates the resource address; stale manual values must not
-    // leak across pages.
+    setImageBusy(false);
+    setImageProgress(null);
+    // Discard the previous page's resource key before the new resolve runs.
     setResourceId("");
     setResourceRevision("current");
     setResourceResolveBusy(false);
-    setResourceResolveError(null);
     setPageId(nextPageId);
   }, [invalidateUndo, replaceImageUrl]);
+
+  const handlePageSelect = useCallback((nextPageId: string, modifiers?: { ctrlKey: boolean; shiftKey: boolean }) => {
+    const pageIndex = pages.findIndex((page) => page.page_id === nextPageId);
+    const anchor = selectionAnchorRef.current;
+    if (modifiers?.shiftKey && anchor && pageIndex >= 0) {
+      const anchorIndex = pages.findIndex((page) => page.page_id === anchor);
+      if (anchorIndex >= 0) {
+        const [start, end] = [anchorIndex, pageIndex].sort((a, b) => a - b);
+        setSelectedPageIds(pages.slice(start, end + 1).map((page) => page.page_id));
+      }
+    } else if (modifiers?.ctrlKey) {
+      const current = selectedPageIdsRef.current;
+      setSelectedPageIds(current.includes(nextPageId) ? current.filter((id) => id !== nextPageId) : [...current, nextPageId]);
+      setSelectionAnchor(nextPageId);
+    } else {
+      setSelectedPageIds([nextPageId]);
+      setSelectionAnchor(nextPageId);
+    }
+    onPageIdChange(nextPageId);
+  }, [onPageIdChange, pages]);
+
+  const locatePage = useCallback((id: string) => {
+    setPageFilter(null);
+    setSelectedPageIds([id]); setSelectionAnchor(id);
+    onPageIdChange(id);
+  }, [onPageIdChange]);
+
+  const handleImportSuccess = useCallback(() => {
+    setPagesRefresh((value) => value + 1);
+  }, []);
 
   // ---- IMPL-1 retype flow (design §4.1; A9/A12 enforced via lookups) ----
 
@@ -759,6 +1091,7 @@ export function WorkbenchPage({ invoke, resolveDebounceMs = 300, regionDebounceM
   const rerenderPage = useCallback(async () => {
     const page = pageIdRef.current.trim();
     if (!page) return;
+    resourceResolveVersionRef.current += 1;
     const operation = beginOperation("rerender");
     if (!operation) return;
     const imageRequestId = ++imageRequestRef.current;
@@ -849,31 +1182,37 @@ export function WorkbenchPage({ invoke, resolveDebounceMs = 300, regionDebounceM
       style={{
         display: "flex",
         flexDirection: "column",
-        gap: 8,
-        marginTop: 12,
-        padding: 8,
-        border: "1px solid #2a3038",
-        borderRadius: 8,
+        width: "100%",
+        height: "100%",
+        minWidth: 0,
+        minHeight: 0,
+        overflow: "hidden",
+        background: "#f5f5f4",
+        color: "#1f2328",
+        fontFamily: 'system-ui, "Segoe UI", "Microsoft YaHei UI", sans-serif',
       }}
     >
-      <WorkbenchToolbar
-        contextInfo={
-          pageId.trim()
-            ? `page ${pageId.trim()}`
-            : selectedBookId
-              ? `book ${selectedBookId}`
-              : "no context"
-        }
-        regionCount={regions.length}
-      />
-      {(booksError || regionError) && (
-        <div data-testid="workbench-error" style={{ color: "#e07a7a", fontSize: 11 }}>
-          {booksError ? `books: ${booksError}` : `regions: ${regionError}`}
-        </div>
-      )}
-      <div style={{ display: "flex", gap: 8, alignItems: "stretch" }}>
+      {[booksError, chaptersError, pagesError, regionError].includes("CORE_UNAVAILABLE") ? (
+        <WorkbenchError
+          code="CORE_UNAVAILABLE"
+          fullArea
+          onRetry={() => {
+            if (booksError === "CORE_UNAVAILABLE") setBooksRetry((value) => value + 1);
+            if (chaptersError === "CORE_UNAVAILABLE") setChaptersRetry((value) => value + 1);
+            if (pagesError === "CORE_UNAVAILABLE") setPagesRetry((value) => value + 1);
+            if (regionError === "CORE_UNAVAILABLE") setRegionsRetry((value) => value + 1);
+          }}
+        />
+      ) : <>
+      {regionError && <WorkbenchError
+        code={regionError}
+        onRetry={() => setRegionsRetry((value) => value + 1)}
+      />}
+      <div data-testid="workbench-main-layout" style={{ display: "flex", gap: 8, alignItems: "stretch", flex: 1, minHeight: 0, padding: 8 }}>
         <PageListPanel
           books={books}
+          booksBusy={booksBusy}
+          booksError={booksError}
           selectedBookId={selectedBookId}
           chapters={chapters}
           chaptersBusy={chaptersBusy}
@@ -884,12 +1223,25 @@ export function WorkbenchPage({ invoke, resolveDebounceMs = 300, regionDebounceM
           pagesError={pagesError}
           pageId={pageId}
           onPageIdChange={onPageIdChange}
+          onPageSelect={handlePageSelect}
           onSelectBook={onSelectBook}
           onSelectChapter={onSelectChapter}
+          selectedPageIds={selectedPageIds}
+          taskProjection={taskProjection}
+          pageFilter={pageFilter}
+          onClearPageFilter={() => setPageFilter(null)}
+          onRetryBooks={() => setBooksRetry((value) => value + 1)}
+          onRetryChapters={() => setChaptersRetry((value) => value + 1)}
+          onRetryPages={() => setPagesRetry((value) => value + 1)}
         />
         <ViewerPanel
           imageUrl={imageUrl}
           imageError={imageError}
+          isLoading={resourceResolveBusy || imageBusy}
+          imageProgress={imageProgress}
+          regionsLoading={regionsLoading}
+          noRegions={Boolean(pageId.trim()) && regions.length === 0 && !regionError}
+          onRetryImage={() => setImageRetry((value) => value + 1)}
           regions={regions}
           pageSize={pageSize}
           selectedRegionId={selectedRegionId}
@@ -905,8 +1257,10 @@ export function WorkbenchPage({ invoke, resolveDebounceMs = 300, regionDebounceM
           onRerender={() => { void rerenderPage(); }}
           onRetypeRequest={onRetypeRequest}
           onToggleSuspect={onToggleSuspect}
+          viewerMode={viewerMode}
+          onSetViewerMode={setViewerMode}
         />
-        <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+        <div style={{ display: "flex", flexDirection: "column", gap: 8, width: 320, minWidth: 240, maxWidth: 420, flex: "0 0 320px", minHeight: 0, overflow: "auto" }}>
           <RegionInspector
             key={`${pageId}:${selectedRegionId ?? "none"}`}
             region={selectedRegion}
@@ -923,69 +1277,68 @@ export function WorkbenchPage({ invoke, resolveDebounceMs = 300, regionDebounceM
             onLoadHistory={(regionId) => { void loadHistory(regionId); }}
             onRestoreRevision={restoreHistoryRevision}
           />
-          <TaskProgressPanel />
-          <section
-            data-testid="resource-address-input"
-            style={{
-              border: "1px solid #2a3038",
-              borderRadius: 6,
-              padding: 8,
-              display: "flex",
-              flexDirection: "column",
-              gap: 4,
-            }}
-          >
-            <h2 style={{ fontSize: 12, margin: 0, color: "#d8e0e8" }}>Resource</h2>
-            <label style={{ fontSize: 11, color: "#8a94a2" }}>
-              resource id
-              <input
-                data-testid="resource-id-input"
-                value={resourceId}
-                onChange={(event) => setResourceId(event.target.value)}
-                placeholder="resource id…"
-                style={{
-                  display: "block",
-                  width: "100%",
-                  background: "#101418",
-                  color: "#d8e0e8",
-                  border: "1px solid #2a3038",
-                  borderRadius: 4,
-                  padding: "3px 6px",
-                  fontFamily: "Consolas, monospace",
-                }}
-              />
-            </label>
-            <label style={{ fontSize: 11, color: "#8a94a2" }}>
-              revision
-              <input
-                data-testid="resource-revision-input"
-                value={resourceRevision}
-                onChange={(event) => setResourceRevision(event.target.value)}
-                style={{
-                  display: "block",
-                  width: "100%",
-                  background: "#101418",
-                  color: "#d8e0e8",
-                  border: "1px solid #2a3038",
-                  borderRadius: 4,
-                  padding: "3px 6px",
-                  fontFamily: "Consolas, monospace",
-                }}
-              />
-            </label>
-            {resourceResolveBusy && (
-              <p data-testid="resource-resolve-busy" style={{ margin: 0, fontSize: 11, color: "#8a94a2" }}>
-                resolving page resource…
-              </p>
-            )}
-            {resourceResolveError && (
-              <p data-testid="resource-resolve-error" style={{ margin: 0, fontSize: 11, color: "#e8a0a0" }}>
-                {`resource: ${resourceResolveError}`}
-              </p>
-            )}
-          </section>
         </div>
       </div>
+      <WorkbenchToolbar
+        contextInfo={workbenchContext}
+        regionCount={regions.length}
+        hasChapter={Boolean(selectedChapterId)}
+        selectedPageCount={selectedPageIds.length}
+        hasPage={Boolean(pageId.trim())}
+        hasRegion={Boolean(selectedRegionId)}
+        runBusy={runBusy || pendingControl !== null}
+        viewerMode={viewerMode}
+        onStartRun={(command) => { void handleStartRun(command); }}
+        onOpenImport={() => setImportOpen(true)}
+        onOpenExport={() => { setExportError(null); setExportOpen(true); }}
+        onSetViewerMode={setViewerMode}
+      />
+      </>}
+      <TaskProgressPanel
+        projection={taskProjection}
+        loading={runLoading}
+        busy={runBusy || pendingControl !== null}
+        error={runError}
+        pendingControl={pendingControl}
+        collapsed={progressCollapsed}
+        onToggleCollapsed={() => setProgressCollapsed((value) => !value)}
+        onControl={(action) => { void handleRunControl(action); }}
+        onResumeBlocked={() => { void handleResumeBlocked(); }}
+        onRetryFailed={() => { void handleRetryFailed(); }}
+        onFilterStatus={setPageFilter}
+        onLocatePage={locatePage}
+        onRetry={() => { if (runIdRef.current) void refreshRun(runIdRef.current); }}
+      />
+      <ImportDialog
+        isOpen={importOpen}
+        books={books}
+        chapters={chapters}
+        initialBookId={selectedBookId}
+        initialChapterId={selectedChapterId}
+        client={clients.library}
+        onClose={() => setImportOpen(false)}
+        onImportSuccess={handleImportSuccess}
+      />
+      <ExportDialog
+        isOpen={exportOpen}
+        bookId={selectedBookId ?? ""}
+        chapterId={selectedChapterId ?? ""}
+        pageIds={selectedPageIds}
+        snapshot={exportSnapshot}
+        history={exportHistory}
+        busy={exportBusy}
+        historyLoading={exportHistoryLoading}
+        error={exportError}
+        onClose={() => setExportOpen(false)}
+        onStart={handleStartExport}
+        onCancel={() => { void handleCancelExport(); }}
+        onReveal={(id) => { void handleRevealExport(id); }}
+        onRefreshHistory={refreshExportHistory}
+        onRetry={() => {
+          if (currentExportIdRef.current) void refreshExportSnapshot(currentExportIdRef.current);
+          else void refreshExportHistory();
+        }}
+      />
       {confirmTarget && (
         <RelabelConfirmDialog
           target={confirmTarget}

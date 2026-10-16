@@ -268,7 +268,11 @@ export function AppShell({ invoke, initialPage = "bookshelf" }: AppShellProps) {
             display: activePage === "workbench" ? "flex" : "none",
           }}
         >
-          <WorkbenchPage invoke={invoke} />
+          <WorkbenchPage
+            invoke={invoke}
+            bookId={workbenchContext.bookId}
+            chapterId={workbenchContext.chapterId}
+          />
         </div>
 
         {/* Reader Page */}

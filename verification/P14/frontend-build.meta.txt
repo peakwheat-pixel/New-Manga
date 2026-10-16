@@ -1,0 +1,7 @@
+shell=C:\Program Files\PowerShell\7\pwsh.exe
+shell_version=7.6.6
+working_directory=G:\CODEX\New Manga.workspace\worktrees\P14
+node=v24.15.0
+npm=12.0.1
+command=npm --prefix apps/desktop/frontend run build
+EXIT_CODE=0

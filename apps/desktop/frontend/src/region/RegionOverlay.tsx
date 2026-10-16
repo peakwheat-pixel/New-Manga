@@ -19,8 +19,8 @@
  * - E2 warning pill / E3 sfx type pill: top-left anchored, mutually
  *   exclusive per region (state machine guarantee); glyph+color+text
  *   together (A8 triple coding);
- * - interaction: frames are clickable (select) and right-clickable (retype
- *   menu anchor). The SVG ROOT stays pointer-events:none so empty-canvas
+ * - interaction: frames are clickable/focusable (select) and right-clickable
+ *   (retype menu anchor). The SVG ROOT stays pointer-events:none so empty-canvas
  *   clicks keep clearing the selection; individual frames re-enable
  *   pointer-events and stopPropagation.
  *
@@ -135,6 +135,23 @@ export function RegionOverlay({
                   event.stopPropagation();
                   onRegionClick?.(region.region_id);
                 },
+                onKeyDown: (event: React.KeyboardEvent) => {
+                  if (event.key === "Tab") {
+                    const frame = event.currentTarget as SVGRectElement;
+                    const frames = Array.from(frame.ownerSVGElement?.querySelectorAll<SVGRectElement>('[data-testid^="region-frame-"]') ?? []);
+                    const currentIndex = frames.indexOf(frame);
+                    if (frames.length > 1 && currentIndex >= 0) {
+                      event.preventDefault();
+                      frames[(currentIndex + (event.shiftKey ? frames.length - 1 : 1)) % frames.length].focus();
+                    }
+                    return;
+                  }
+                  if (event.key === "Enter" || event.key === " ") {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    onRegionClick?.(region.region_id);
+                  }
+                },
                 onContextMenu: (event: React.MouseEvent) => {
                   event.preventDefault();
                   event.stopPropagation();
@@ -171,6 +188,10 @@ export function RegionOverlay({
                 fill="none"
                 stroke={selected ? STROKE_SELECTED : STROKE_REGION}
                 strokeWidth={selected ? 2.5 : 1.5}
+                role="button"
+                tabIndex={0}
+                aria-label={`选择 Region ${region.region_id}`}
+                aria-pressed={selected}
                 {...interaction}
               />
               {ring.length >= 3 && (

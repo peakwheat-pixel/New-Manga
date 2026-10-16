@@ -27,6 +27,42 @@ const KNOWN_CODE_MAP: Record<
     message: "Python Core 核心服务当前不可用，请检查服务状态并重试。",
     retryable: true,
   },
+  LIBRARY_UNAVAILABLE: {
+    category: "unavailable",
+    title: "书架数据不可用",
+    message: "无法读取作品导航数据，请检查 Core 服务后重试。",
+    retryable: true,
+  },
+  PAGE_NAV_UNAVAILABLE: {
+    category: "unavailable",
+    title: "页面导航不可用",
+    message: "无法读取章节或页面列表，请检查 Core 服务后重试。",
+    retryable: true,
+  },
+  REGION_CHANNEL_UNAVAILABLE: {
+    category: "unavailable",
+    title: "Region 数据不可用",
+    message: "无法读取页面 Region，请检查 Core 服务后重试。",
+    retryable: true,
+  },
+  PAGE_RESOURCE_UNAVAILABLE: {
+    category: "unavailable",
+    title: "页面资源不可用",
+    message: "无法解析页面资源，请确认页面仍存在后重试。",
+    retryable: true,
+  },
+  RESOURCE_UNAVAILABLE: {
+    category: "unavailable",
+    title: "页面资源读取失败",
+    message: "无法读取页面图像，请检查资源状态后重试。",
+    retryable: true,
+  },
+  EXPORT_STALE: {
+    category: "conflict",
+    title: "译文已过期",
+    message: "导出内容包含过期译文，请调整过期译文策略后重新提交。",
+    retryable: false,
+  },
   INVALID_REQUEST: {
     category: "validation",
     title: "请求参数无效",
@@ -107,6 +143,8 @@ const KNOWN_CODE_MAP: Record<
   },
 };
 
+const SAFE_ERROR_CODE = /^[A-Z][A-Z0-9_]{0,63}$/;
+
 export function parseSemanticError(
   rawError: unknown,
   defaultCode = "UNKNOWN_ERROR",
@@ -122,6 +160,10 @@ export function parseSemanticError(
       // If code is not present, use defaultCode, do NOT parse message text!
       code = defaultCode;
     }
+  }
+
+  if (!SAFE_ERROR_CODE.test(code)) {
+    code = SAFE_ERROR_CODE.test(defaultCode) ? defaultCode : "UNKNOWN_ERROR";
   }
 
   const mapped = KNOWN_CODE_MAP[code];

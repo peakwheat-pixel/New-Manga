@@ -1,12 +1,9 @@
 /**
  * <ViewerPanel> — first-slice viewer (M2-UI1 §2.2 mapping: QML
- * `ViewerPanel.qml`). Shows the page image fetched through the EXISTING
- * resource channel (issue + chunked fetch, `loadPageImageUrl`) when a
- * resource is addressable, with the read-only <RegionOverlay> absolutely
- * positioned above. Production catalogization of the initial page view
- * does not exist yet (RC-4 rerender previews are catalogized by Core, but a
- * plain page id still has no resource entry), so the honest empty states
- * below are first-slice behaviour (registered as a deviation in the Task).
+ * `ViewerPanel.qml`). Shows page images fetched through the existing
+ * resource channel, with the read-only <RegionOverlay> absolutely positioned
+ * above. Initial page images resolve through the frozen page-resource command;
+ * rerender previews use the same channel.
  *
  * The page size the overlay consumes comes ONLY from the region read
  * projection — never from the <img> element (single math + "size only from
@@ -26,6 +23,7 @@ import { useCallback, useRef, useState } from "react";
 import { RegionOverlay } from "../region/RegionOverlay";
 import type { PageSizeProjection, RegionSummary, RegionType } from "../region/types";
 import { RelabelContextMenu, type ContextMenuState } from "./RelabelContextMenu";
+import { WorkbenchError } from "./WorkbenchError";
 
 /** E4 feedback-bar payload (design §3.2 / §4.3 R4). */
 export interface RelabelFeedbackState {
@@ -38,6 +36,11 @@ export interface RelabelFeedbackState {
 export interface ViewerPanelProps {
   imageUrl: string | null;
   imageError: string | null;
+  isLoading?: boolean;
+  imageProgress?: { loadedChunks: number; totalChunks: number } | null;
+  regionsLoading?: boolean;
+  noRegions?: boolean;
+  onRetryImage?: () => void;
   regions: RegionSummary[];
   pageSize: PageSizeProjection | null;
   selectedRegionId: string | null;
@@ -54,11 +57,18 @@ export interface ViewerPanelProps {
   onRerender?: () => void;
   onRetypeRequest?: (region: RegionSummary, to: RegionType) => void;
   onToggleSuspect?: (regionId: string) => void;
+  viewerMode?: "view" | "pan" | "region";
+  onSetViewerMode?: (mode: "view" | "pan" | "region") => void;
 }
 
 export function ViewerPanel({
   imageUrl,
   imageError,
+  isLoading = false,
+  imageProgress = null,
+  regionsLoading = false,
+  noRegions = false,
+  onRetryImage,
   regions,
   pageSize,
   selectedRegionId,
@@ -74,10 +84,17 @@ export function ViewerPanel({
   onRerender,
   onRetypeRequest,
   onToggleSuspect,
+  viewerMode = "view",
+  onSetViewerMode,
 }: ViewerPanelProps) {
   const hostRef = useRef<HTMLDivElement | null>(null);
+  const dragRef = useRef<{ x: number; y: number; panX: number; panY: number } | null>(null);
   const [size, setSize] = useState({ width: 0, height: 0 });
+  const [zoom, setZoom] = useState(1);
+  const [pan, setPan] = useState({ x: 0, y: 0 });
+  const [spacePan, setSpacePan] = useState(false);
   const [menu, setMenu] = useState<ContextMenuState | null>(null);
+  const effectiveMode = spacePan ? "pan" : viewerMode;
 
   const openMenu = useCallback(
     (regionId: string, x: number, y: number) => {
@@ -116,7 +133,8 @@ export function ViewerPanel({
     <section
       data-testid="viewer-panel"
       style={{
-        border: "1px solid #2a3038",
+        border: "1px solid #d9d9d6",
+        background: "#fff",
         borderRadius: 6,
         padding: 8,
         position: "relative",
@@ -128,18 +146,51 @@ export function ViewerPanel({
       }}
       onClick={() => onSelectRegion(null)}
     >
-      <h2 style={{ fontSize: 12, margin: 0, color: "#d8e0e8" }}>Viewer</h2>
+      <header style={{ display: "flex", alignItems: "center", gap: 6 }}>
+        <h2 style={{ fontSize: 13, margin: 0, flex: 1, color: "#1f2328" }}>页面查看器</h2>
+        <button type="button" aria-label="缩小页面" onClick={() => setZoom((value) => Math.max(0.25, value / 1.2))}>−</button>
+        <output aria-label="缩放比例">{Math.round(zoom * 100)}%</output>
+        <button type="button" aria-label="放大页面" onClick={() => setZoom((value) => Math.min(4, value * 1.2))}>＋</button>
+        <button type="button" aria-label="重置缩放和平移" onClick={() => { setZoom(1); setPan({ x: 0, y: 0 }); }}>适配</button>
+      </header>
       <div
         ref={measure}
         data-testid="viewer-stage"
-        tabIndex={-1}
+        tabIndex={0}
+        aria-label="页面画布；加减键缩放，0 重置，平移模式下拖动"
         onKeyDown={(event) => {
           // r1 P3-5: Escape dismisses the context menu (no focus trap — the
           // stage is a passive host; keydown reaches it once clicked).
           if (event.key === "Escape") {
             closeMenu();
+          } else if (event.key.toLowerCase() === "v") {
+            onSetViewerMode?.("pan");
+          } else if (event.key.toLowerCase() === "r") {
+            onSetViewerMode?.("region");
+          } else if (event.key === " ") {
+            event.preventDefault();
+            setSpacePan(true);
+          } else if (event.key === "+" || event.key === "=") {
+            setZoom((value) => Math.min(4, value * 1.2));
+          } else if (event.key === "-") {
+            setZoom((value) => Math.max(0.25, value / 1.2));
+          } else if (event.key === "0") {
+            setZoom(1); setPan({ x: 0, y: 0 });
           }
         }}
+        onKeyUp={(event) => { if (event.key === " ") setSpacePan(false); }}
+        onBlur={() => setSpacePan(false)}
+        onPointerDown={(event) => {
+          if (effectiveMode !== "pan") return;
+          dragRef.current = { x: event.clientX, y: event.clientY, panX: pan.x, panY: pan.y };
+          event.currentTarget.setPointerCapture(event.pointerId);
+        }}
+        onPointerMove={(event) => {
+          const drag = dragRef.current;
+          if (effectiveMode === "pan" && drag) setPan({ x: drag.panX + event.clientX - drag.x, y: drag.panY + event.clientY - drag.y });
+        }}
+        onPointerUp={() => { dragRef.current = null; }}
+        onPointerCancel={() => { dragRef.current = null; }}
         onContextMenu={(event) => {
           // Right click on EMPTY canvas dismisses the menu (region frames
           // stopPropagation and reopen it at the new anchor instead).
@@ -149,25 +200,28 @@ export function ViewerPanel({
         style={{
           position: "relative",
           flex: 1,
-          background: "var(--bg-canvas, #0b0e12)",
+          background: "#ececea",
           borderRadius: 4,
           overflow: "hidden",
           minHeight: 200,
+          cursor: effectiveMode === "pan" ? "grab" : "default",
         }}
       >
+        <div data-testid="viewer-content" style={{ position: "absolute", inset: 0, transform: `translate(${pan.x}px, ${pan.y}px) scale(${zoom})`, transformOrigin: "center center" }}>
         {imageUrl && (
           <img
             data-testid="viewer-image"
             src={imageUrl}
             alt="page"
-            style={{ display: "block", maxWidth: "none" }}
+            style={{ display: "block", position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "contain" }}
           />
         )}
         {!imageUrl && (
           <div
-            data-testid="viewer-empty"
+            data-testid={isLoading ? "resource-resolve-busy" : "viewer-empty"}
+            role={isLoading ? "status" : undefined}
             style={{
-              color: "#8a94a2",
+              color: "#6b7280",
               fontSize: 11,
               display: "flex",
               alignItems: "center",
@@ -175,7 +229,16 @@ export function ViewerPanel({
               height: "100%",
             }}
           >
-            {imageError ?? "no page resource addressed"}
+            {imageError
+              ? <WorkbenchError code={imageError} onRetry={onRetryImage} />
+              : imageProgress && imageProgress.totalChunks > 0
+                ? `正在读取页图（${imageProgress.loadedChunks} / ${imageProgress.totalChunks} 块）`
+                : isLoading ? "正在解析页面资源…" : "选择页面以查看图像"}
+          </div>
+        )}
+        {!regionsLoading && noRegions && (
+          <div data-testid="viewer-no-regions" role="status" style={{ position: "absolute", inset: 0, display: "grid", placeItems: "center", color: "#6b7280", fontSize: 12, pointerEvents: "none" }}>
+            本页暂无 Region
           </div>
         )}
         <RegionOverlay
@@ -191,6 +254,7 @@ export function ViewerPanel({
           }}
           onRegionContextMenu={openMenu}
         />
+        </div>
         {menu && menuRegion && onRetypeRequest && onToggleSuspect && (
           <RelabelContextMenu
             region={menuRegion}
@@ -217,15 +281,13 @@ export function ViewerPanel({
               alignItems: "center",
               gap: 8,
               maxWidth: "92%",
-              background: "var(--wb-bg-raised, #161b22)",
-              border: `1px solid ${relabelFeedback.isError ? "var(--wb-fail, #e07a7a)" : "var(--border-strong, #2a3038)"}`,
+              background: "#fff",
+              border: `1px solid ${relabelFeedback.isError ? "#cf222e" : "#d9d9d6"}`,
               borderRadius: 6,
               padding: "6px 10px",
               fontSize: 11,
-              color: relabelFeedback.isError
-                ? "var(--wb-fail, #e07a7a)"
-                : "#d8e0e8",
-              boxShadow: "0 2px 8px rgba(0,0,0,0.35)",
+              color: relabelFeedback.isError ? "#cf222e" : "#1f2328",
+              boxShadow: "0 2px 8px rgba(0,0,0,0.15)",
               height: 36,
               whiteSpace: "nowrap",
               overflow: "hidden",
@@ -249,9 +311,9 @@ export function ViewerPanel({
                   title="10 秒内恢复到改标前 revision"
                   onClick={onUndo}
                   style={{
-                    background: "#101418",
-                    color: "#d8e0e8",
-                    border: "1px solid #3a4858",
+                    background: "#fff",
+                    color: "#1f2328",
+                    border: "1px solid #d9d9d6",
                     borderRadius: 4,
                     padding: "2px 8px",
                     fontSize: 11,
@@ -269,9 +331,9 @@ export function ViewerPanel({
                   title={canRerender ? "使用当前 clean 与区域 revision 重渲染本页" : "请先输入 page_id"}
                   onClick={onRerender}
                   style={{
-                    background: "#101418",
-                    color: canRerender && !rerenderBusy ? "#d8e0e8" : "#5a6470",
-                    border: "1px solid #2a3038",
+                    background: "#fff",
+                    color: canRerender && !rerenderBusy ? "#1f2328" : "#6b7280",
+                    border: "1px solid #d9d9d6",
                     borderRadius: 4,
                     padding: "2px 8px",
                     fontSize: 11,

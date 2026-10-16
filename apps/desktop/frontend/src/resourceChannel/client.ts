@@ -78,16 +78,24 @@ export class ResourceChannelClient {
     return new Uint8Array(await response.arrayBuffer());
   }
 
-  async fetchAll(url: string, size: number, fetchFn?: FetchFn): Promise<Blob> {
+  async fetchAll(
+    url: string,
+    size: number,
+    fetchFn?: FetchFn,
+    onProgress?: (loadedChunks: number, totalChunks: number) => void,
+  ): Promise<Blob> {
     const doFetch = fetchFn ?? this.fetchFn;
     const parts: BlobPart[] = [];
-    for (let chunk = 0; chunk < chunkCount(size); chunk += 1) {
+    const total = chunkCount(size);
+    onProgress?.(0, total);
+    for (let chunk = 0; chunk < total; chunk += 1) {
       const response = await doFetch(`${url}?chunk=${chunk}`);
       if (!response.ok) {
         const text = await response.text();
         throw new TypedChannelError(parseTypedCode(response.status, text) ?? "REF_MALFORMED");
       }
       parts.push(await response.arrayBuffer());
+      onProgress?.(chunk + 1, total);
     }
     return new Blob(parts, { type: "application/octet-stream" });
   }

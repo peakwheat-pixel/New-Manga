@@ -1,0 +1,7 @@
+command: npm --prefix apps/desktop/frontend test
+shell: PowerShell
+working_directory: G:\CODEX\New Manga.workspace\worktrees\P14
+node: v24.15.0
+npm: 12.0.1
+exit_code: 0
+captured_at: 2026-10-16T22:19:09.8047121+08:00

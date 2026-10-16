@@ -50,4 +50,9 @@ describe("W28 ErrorEnvelope Semantic Mapping", () => {
     expect(err.retryable).toBe(true);
     expect(err.message).toBe("系统报告代码：CUSTOM_ERROR_CODE");
   });
+
+  it("replaces path-shaped and credential-shaped codes with a stable fallback", () => {
+    expect(parseSemanticError("C:\\Users\\private\\failure").code).toBe("UNKNOWN_ERROR");
+    expect(parseSemanticError({ code: "token=secret", message: "C:\\Users\\private\\failure" }).code).toBe("UNKNOWN_ERROR");
+  });
 });

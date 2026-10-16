@@ -1,0 +1,11 @@
+shell=PowerShell 7.6.6
+shell_executable=C:\Program Files\PowerShell\7\pwsh.exe
+working_directory=G:\CODEX\New Manga.workspace\worktrees\P14
+python=C:\Python314\python.exe
+cargo_version=cargo 1.98.1 (797e8a9bc 2026-08-05)
+rustc_version=rustc 1.98.1 (48a229cea 2026-09-01)
+M2RC1_PYTHON=C:\Python314\python.exe
+M2RC1_PACKAGED=<unset>
+M2RC1_SRC_ROOT=<unset>
+command=cargo test --locked --manifest-path apps/desktop/src-tauri/Cargo.toml -- --skip packaged_sidecar_tests
+EXIT_CODE=0
