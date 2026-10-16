@@ -7,8 +7,8 @@
 - 当前 Task：[ARCH-DOC-REBASELINE](tasks/ARCH-DOC-REBASELINE.md) **ready / integrated**（唯一非终态 DAG READY）：AC1–AC3=PARTIAL、AC4–AC6=NOT_RUN、AC7 逐消费者裁决待做；消费者 P09/P18/P20/P16/P17 均未冻结。
 - 本轮完成：[P13-C1](tasks/P13-C1.md) IPC 契约修订 **done**（`c61d8f8c`）；[P13](tasks/P13.md) 后台恢复 **done**（实现 `78b0d439`、评审 `58c0c462`、集成 `8d7cad13`）：durable 幂等、快照冻结、跨进程 scheduler owner、AC4 四项破坏性修正、重试边界、启动恢复、投影与四类事件；协议 major 2.0；`tests/core` 340 passed。
 - 本轮完成：P06（`d3342895`）、P10（`c46c0df0`）、P11（`ceca5721`）、P09 导入 Core（`c6a7339f`，`closed_with_limitations`：AC3 受限=产品无项目级永久删除操作）、P09-FU1 测试基线（`860f6cda`）。
-- 本轮完成：[P16-C1](tasks/P16-C1.md) Reader/Export IPC 契约修订 **done**（评审 `2fc715fc`、集成 `27622aa3`）：冻结 **rev 2.1** —— Reader 投影/进度、五格式导出、`ExportTargetRef`（host 签发的不透明写引用，300s 过期 + 一次消费 + 6 类拒绝码），§12 授权 P16 runtime。
-- 已释放待认领：[P16](tasks/P16.md) 阅读与输出授权 Core **ready**（Owner 按 DIR-2=codex；范围严格等于契约 §12 allowlist：不含 `pdf_qt.py`、`tests/reading_export/**`、Tauri issuer）。
+- 本轮完成：[P16-C1](tasks/P16-C1.md) 契约 rev 2.1 **done**（`27622aa3`）；[P16](tasks/P16.md) 阅读与输出授权 Core **done**（实现 `e2c07fa9`、评审 `338a7c5c`、集成 `e1be3082`）：Reader 投影/进度、五格式导出、`ExportTargetRef` 六类拒绝 + 原子消费 + 源零写；`tests/core` 352 passed。
+- 遗留：**Tauri host 的 `ExportTargetRef` issuer** 须由其自身 Task 实现（P17 前）。
 - 用户指令 DIR-2：后续 Task Owner=codex（至额度耗尽）。
 - 已解决：BL-1（codex 空 ref）、BL-3（沙箱 `-c windows.sandbox=unelevated`）、BL-8（测试基线）。
 - Coordinator=dsh，epoch=5，lease=264c2000541748298000f93fb25a52de（LEASE_VALID）。
