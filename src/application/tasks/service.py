@@ -7,6 +7,7 @@ database tables, or bootstrap wiring outside this Task's whitelist.
 
 from __future__ import annotations
 
+import threading
 import uuid
 from collections.abc import Callable
 from dataclasses import dataclass
@@ -201,6 +202,7 @@ class PipelineService:
         self._snapshots = snapshots or InMemorySnapshotProvider()
         self._executor = executor or DeterministicStepExecutor()
         self._limits = limits or ResourceLimits()
+        self._scheduler_lock = threading.Lock()
         # TASK-039: optional artifact probe (page_id -> current Clean exists?).
         # ``None`` (every pre-existing construction) keeps the inherited
         # stage-based judgement byte-for-byte.
@@ -273,10 +275,7 @@ class PipelineService:
         run = self._require_run(run_id)
         if mode not in {"initial", "resume_blocked", "continue"}:
             raise PipelineError("INVALID_RUN_TRANSITION", f"unknown plan mode {mode}")
-        if mode == "initial" and run.status not in {
-            PipelineRunStatus.PENDING,
-            PipelineRunStatus.PAUSED,
-        }:
+        if mode == "initial" and run.status is not PipelineRunStatus.PENDING:
             raise PipelineError("INVALID_RUN_TRANSITION", "run is not pending")
         if mode == "resume_blocked" and run.status is not PipelineRunStatus.BLOCKED:
             raise PipelineError("INVALID_RUN_TRANSITION", "run is not blocked")
@@ -734,18 +733,25 @@ class PipelineService:
     # ------------------------------------------------------------------
 
     def execute_run(self, run_id: str) -> PipelineRun:
+        if not self._scheduler_lock.acquire(blocking=False):
+            raise PipelineError("INVALID_RUN_TRANSITION", "scheduler already has an owner")
+        try:
+            return self._execute_run_owned(run_id)
+        finally:
+            self._scheduler_lock.release()
+
+    def _execute_run_owned(self, run_id: str) -> PipelineRun:
         run = self._require_run(run_id)
+        # A planner may already terminalize a run containing only skipped units.
+        if run.status is PipelineRunStatus.COMPLETED and run.tasks and all(
+            task.status is PipelineTaskStatus.SKIPPED for task in run.tasks
+        ):
+            return run
+        if run.status is not PipelineRunStatus.PENDING:
+            raise PipelineError("INVALID_RUN_TRANSITION", "scheduler start requires pending")
         if not run.tasks:
             self.plan_run(run_id)
-        if run.status in {
-            PipelineRunStatus.BLOCKED,
-            PipelineRunStatus.PAUSED,
-            PipelineRunStatus.CANCELLED,
-            PipelineRunStatus.FAILED,
-            PipelineRunStatus.COMPLETED,
-            PipelineRunStatus.COMPLETED_WITH_FAILURES,
-            PipelineRunStatus.INTERRUPTED,
-        }:
+        if run.status is not PipelineRunStatus.PENDING:
             return run
         run.status = PipelineRunStatus.RUNNING
         self._persist(run)
@@ -842,22 +848,31 @@ class PipelineService:
         self._persist(run)
         return run
 
+    def resume_blocked_run(self, run_id: str) -> PipelineRun:
+        run = self._require_run(run_id)
+        if run.status is not PipelineRunStatus.BLOCKED:
+            raise PipelineError("INVALID_RUN_TRANSITION", "run is not blocked")
+        return self.plan_run(run_id, mode="resume_blocked")
+
     def control_run(self, run_id: str, action: str) -> ControlResult:
         run = self._require_run(run_id)
         if action == "pause":
-            if run.status not in {PipelineRunStatus.PENDING, PipelineRunStatus.RUNNING}:
-                raise PipelineError("INVALID_RUN_TRANSITION", "pause requires pending or running")
+            if run.status is not PipelineRunStatus.RUNNING:
+                raise PipelineError("INVALID_RUN_TRANSITION", "pause requires running")
             run.pause_requested = True
-            if run.status is PipelineRunStatus.PENDING:
-                run.status = PipelineRunStatus.PAUSED
             self._persist(run)
             return ControlResult(run.run_id, run.status)
 
         if action == "stop":
-            if run.status in {PipelineRunStatus.COMPLETED, PipelineRunStatus.COMPLETED_WITH_FAILURES, PipelineRunStatus.FAILED, PipelineRunStatus.CANCELLED}:
-                raise PipelineError("INVALID_RUN_TRANSITION", "run is already terminal")
+            if run.status not in {
+                PipelineRunStatus.PENDING,
+                PipelineRunStatus.RUNNING,
+                PipelineRunStatus.PAUSED,
+                PipelineRunStatus.BLOCKED,
+            }:
+                raise PipelineError("INVALID_RUN_TRANSITION", "stop is not valid for this run")
             run.cancel_requested = True
-            if run.status in {PipelineRunStatus.PENDING, PipelineRunStatus.PAUSED}:
+            if run.status is not PipelineRunStatus.RUNNING:
                 self._cancel_pending_tasks(run)
                 run.status = PipelineRunStatus.CANCELLED
             self._persist(run)
@@ -869,7 +884,10 @@ class PipelineService:
                 run.status = PipelineRunStatus.PENDING
                 self._persist(run)
                 return ControlResult(run.run_id, run.status)
-            if run.status is PipelineRunStatus.INTERRUPTED:
+            if (
+                run.status is PipelineRunStatus.INTERRUPTED
+                and run.interruption_disposition is None
+            ):
                 run.cancel_requested = False
                 run.pause_requested = False
                 self.plan_run(run_id, mode="continue")
@@ -877,8 +895,11 @@ class PipelineService:
             raise PipelineError("INVALID_RUN_TRANSITION", "continue requires paused or interrupted")
 
         if action == "restart":
-            if run.status is not PipelineRunStatus.INTERRUPTED:
-                raise PipelineError("RUN_NOT_INTERRUPTED", run.run_id)
+            if (
+                run.status is not PipelineRunStatus.INTERRUPTED
+                or run.interruption_disposition is not None
+            ):
+                raise PipelineError("INVALID_RUN_TRANSITION", "restart requires an undisposed interrupted run")
             fresh = self.create_run(
                 run.command_type,
                 run.scope,
@@ -890,8 +911,11 @@ class PipelineService:
             return ControlResult(run.run_id, run.status, fresh.run_id)
 
         if action == "abandon":
-            if run.status is not PipelineRunStatus.INTERRUPTED:
-                raise PipelineError("RUN_NOT_INTERRUPTED", run.run_id)
+            if (
+                run.status is not PipelineRunStatus.INTERRUPTED
+                or run.interruption_disposition is not None
+            ):
+                raise PipelineError("INVALID_RUN_TRANSITION", "abandon requires an undisposed interrupted run")
             run.status = PipelineRunStatus.CANCELLED
             run.termination_reason = "abandoned_after_interruption"
             self._persist(run)
@@ -918,6 +942,11 @@ class PipelineService:
 
     def retry_failed_targets(self, run_id: str) -> PipelineRun:
         run = self._require_run(run_id)
+        if run.status is not PipelineRunStatus.COMPLETED_WITH_FAILURES:
+            raise PipelineError(
+                "INVALID_RUN_TRANSITION",
+                "failed targets can only be retried after completed_with_failures",
+            )
         failed_pages = tuple(
             dict.fromkeys(
                 task.page_id

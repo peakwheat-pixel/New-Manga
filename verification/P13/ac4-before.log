@@ -1,0 +1,70 @@
+SHELL=PowerShell
+PYTHON=G:/CODEX/New Manga.task-envs/T1.1.1-impl-py312/Scripts/python.exe
+COMMAND=G:/CODEX/New Manga.task-envs/T1.1.1-impl-py312/Scripts/python.exe -m pytest tests/core/test_p13_lifecycle_discriminators.py -q
+FFFF                                                                     [100%]
+================================== FAILURES ===================================
+_______________ test_pending_pause_is_rejected_without_mutation _______________
+
+    def test_pending_pause_is_rejected_without_mutation():
+        pipeline, store = _pipeline()
+        run = _new_run(pipeline)
+    
+>       with pytest.raises(PipelineError) as error:
+E       Failed: DID NOT RAISE PipelineError
+
+tests\core\test_p13_lifecycle_discriminators.py:64: Failed
+_____________ test_blocked_stop_reaches_cancelled_terminal_state ______________
+
+    def test_blocked_stop_reaches_cancelled_terminal_state():
+        pipeline, store = _pipeline(provider_bindings={"ocr": {"available": False}})
+        run = pipeline.plan_run(_new_run(pipeline).run_id)
+        assert run.status is PipelineRunStatus.BLOCKED
+    
+        result = pipeline.control_run(run.run_id, "stop")
+    
+>       assert result.status is PipelineRunStatus.CANCELLED
+E       AssertionError: assert <PipelineRunStatus.BLOCKED: 'blocked'> is <PipelineRunStatus.CANCELLED: 'cancelled'>
+E        +  where <PipelineRunStatus.BLOCKED: 'blocked'> = ControlResult(run_id='run-db937d470fc04e45ad8a850c57c6b8bf', status=<PipelineRunStatus.BLOCKED: 'blocked'>, new_run_id=None).status
+E        +  and   <PipelineRunStatus.CANCELLED: 'cancelled'> = PipelineRunStatus.CANCELLED
+
+tests\core\test_p13_lifecycle_discriminators.py:80: AssertionError
+____ test_restart_failure_does_not_leave_child_without_parent_disposition _____
+
+    def test_restart_failure_does_not_leave_child_without_parent_disposition():
+        store = _FailParentAfterChildStore()
+        pipeline, _ = _pipeline(store=store)
+        parent = _new_run(pipeline)
+        parent.status = PipelineRunStatus.INTERRUPTED
+        store.put(parent.run_id, parent)
+    
+        with pytest.raises(OSError):
+            pipeline.control_run(parent.run_id, "restart")
+    
+>       assert store.list_ids() == (parent.run_id,)
+E       AssertionError: assert ('run-d1a1dcf...0d620f3f1936') == ('run-d1a1dcf...628458393fa',)
+E         
+E         Left contains one more item: 'run-c1406b4be9b64a028d9a0d620f3f1936'
+E         Use -v to get more diff
+
+tests\core\test_p13_lifecycle_discriminators.py:106: AssertionError
+_________ test_retry_failed_targets_requires_completed_with_failures __________
+
+    def test_retry_failed_targets_requires_completed_with_failures():
+        pipeline, store = _pipeline()
+        run = pipeline.plan_run(_new_run(pipeline).run_id)
+        run.tasks[0].status = PipelineTaskStatus.FAILED
+        run.status = PipelineRunStatus.FAILED
+        store.put(run.run_id, run)
+        original_ids = store.list_ids()
+    
+>       with pytest.raises(PipelineError) as error:
+E       Failed: DID NOT RAISE PipelineError
+
+tests\core\test_p13_lifecycle_discriminators.py:120: Failed
+=========================== short test summary info ===========================
+FAILED tests/core/test_p13_lifecycle_discriminators.py::test_pending_pause_is_rejected_without_mutation
+FAILED tests/core/test_p13_lifecycle_discriminators.py::test_blocked_stop_reaches_cancelled_terminal_state
+FAILED tests/core/test_p13_lifecycle_discriminators.py::test_restart_failure_does_not_leave_child_without_parent_disposition
+FAILED tests/core/test_p13_lifecycle_discriminators.py::test_retry_failed_targets_requires_completed_with_failures
+4 failed in 0.18s
+EXIT_CODE=1
