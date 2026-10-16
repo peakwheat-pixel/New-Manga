@@ -5,10 +5,10 @@
 | Task | UI-DESIGN-1（AD-001 四页 UI/UX 设计基线） |
 | Owner | zcode |
 | Reviewer | dsh（epoch 6；独立于 Owner，未参与设计写作） |
-| 交付 commit | `aaf00e59e`（内容）→ `c59d20554`（证据 pin 回填） |
-| 集成 commit | `a24001f9f`（**先于本 Review 完成**；见 §6 流程偏差披露） |
+| 交付 commit | `aaf00e59e`（内容）→ `c59d20554`（证据 pin）→ `a996f821c`（I1 返修）→ `920151a9c`（I1 后证据重 pin） |
+| 集成 commit | `a24001f9f`（首次，早于 Review；见 §5 流程偏差披露）→ `9e1221e1b`（I1 返修二次集成） |
 | 基线 | `c6f975d38842487c16491eea67a01cf134c337f8` |
-| 结论 | **changes_requested（I1，1 项）** —— 交付质量高，但 §7 缺口分类存在**载重性事实错误**，会误导 DAG 释放决策 |
+| 结论 | **approved**（`changes_requested` 的 1 项 I1 已于 `a996f821c` 收敛并复核通过，见 §7） |
 
 ## 1. I1（必须返修，bounded）
 
@@ -76,3 +76,25 @@
 ## 6. 收敛计划
 
 `I1 返修（Owner=zcode，bounded，仅文档） → Reviewer 复跑 canonical selfcheck + 复核 I1 五项 → I2（仅当返修未收敛时，上限 1 次） → 集成 → closeout`。
+
+## 7. I1 收敛记录（Reviewer 有界复核，结论：CONVERGED）
+
+返修 commit `a996f821c`（Owner=zcode，经 `--resume` 同一会话），Reviewer 逐项复核结果：
+
+| # | I1 返修要求 | 复核方法与结果 |
+|---|---|---|
+| 1 | §7 把 G6/G19 从缺口改为"已由 HOST-ISSUER-1 实现"并附 E-a…E-e 证据 | **PASS**。两条缺口行已删除，新增「I1 返修注记」块含 E-a/E-b/E-c/E-e 的 `文件:行` 证据；§5.7 约束**明确保留**（HostControl 六操作仍不得由 WebView 调用，由单测 `host_control_operations_are_never_webview_commands` 三面拒绝断言钉死，`main.rs:1405-1422`） |
+| 2 | §6 补既有实现绑定行并保持自洽 | **PASS**。新增 W30（`library_import_file`/`library_import_folder`）、W31（`library_start_export`）、W32（HostControl 排除断言）；表注明确其与 `issue_resource_url` **同性质**（既有实现事实，非契约文本引用对象）；所引 `main.rs:78-83 / 409-436 / 438-458 / 460-493 / 144-148 / 1421` 经逐行只读核验**全部存在且对应** |
+| 3 | 保留 G20 为真缺口并写清缺什么 | **PASS**，且有实质改进：明确"缺的是 open-folder host command 本身"（E-f 全库检索不存在），并**区分出"历史状态展示"可由 W24 `GetExportHistory` 承载、不经此缺口** |
+| 4 | 复核 §7 其余条目是否存在同类"以契约文本代替实现存在性"的错误 | **PASS（未发现同类错误）**。Owner 逐条核对并对三个候选给出实现层证据：**G17**（`main.rs` 全文无 `app.emit` → 维持真缺口）、**G15**（`PRODUCTION_COMMANDS` 全清单 `main.rs:56-84` 共 17 个 WebView 命令中无 list_runs 类 → 维持）、**G18**（清单无缩略图命令 → 维持）；G16 已正确标注 `core_ping` 为探针事实 |
+| 5 | 同步 §附 AC 对照表与自检证据 | **PASS**。AC4 行改为"24 条真缺口（G1–G5、G7–G18、G20–G26；G6/G19 经 I1 撤销）"并指向本 Review |
+
+**Reviewer 独立复跑（权威）**：`pwsh -NoProfile -ExecutionPolicy Bypass -File verification/UI-DESIGN-1/selfcheck.ps1`
+→ **exit 0，`RESULT: ALL CHECKS PASS`**，`binding table rows (W#): 32 ; gap rows (G#): 24`。
+**残留 `GAP-G6`/`GAP-G19` 引用：0**（逐字检索确认）。**范围**：仅 `doc/design/AD001_FOUR_PAGE_UI_BASELINE.md`、`doc/tasks/UI-DESIGN-1.md`、`verification/UI-DESIGN-1/selfcheck-output.txt`（Reviewer 复跑重生成）——**未触碰产品代码与用户 19 项 dirty**。
+
+**结论**：I1 **CONVERGED**，无需 I2。本 Review 最终判定 **approved**；二次集成 commit `9e1221e1b`。
+
+**对后续 Task 的约束（源自本 Review，必须被下游引用）**：
+- 设计基线以 `doc/design/AD001_FOUR_PAGE_UI_BASELINE.md`（I1 后版本）为唯一 UI 权威；**旧表述"G6/G19 阻塞 P12/P17"自 `a996f821c` 起失效**。
+- 下游实现 Task 只能绑定 W1–W32 与已冻结契约；§7 的 **24 条真缺口**交互一律按 disabled 态呈现，不得 mock、不得绕过 Tauri IPC、不得据缺口扩产品范围。
