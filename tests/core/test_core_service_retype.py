@@ -135,10 +135,10 @@ def test_protocol_minor_bumped_to_six_with_page_nav_surface(server, rpc) -> None
     # command keeps its payload/result/error codes).
     # M2-RC4-DOMAIN-COMMANDS: 3 -> 4 (the three domain commands).
     # M2-PAGE-RESOURCE-RESOLVE-1: 4 -> 5 (resolve_page_resource).
-    assert (PROTOCOL_MAJOR, PROTOCOL_MINOR) == (2, 0)
+    assert (PROTOCOL_MAJOR, PROTOCOL_MINOR) == (2, 1)
     response = rpc("core.ping", {})
     assert response["error"] is None
-    assert response["result"]["protocol_version"] == {"major": 2, "minor": 0}
+    assert response["result"]["protocol_version"] == {"major": 2, "minor": 1}
 
 
 # ---------------------------------------------------------------------------

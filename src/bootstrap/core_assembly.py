@@ -98,6 +98,9 @@ from infrastructure.sqlite.reading_export import (
     import_legacy_export_history,
     import_legacy_reading_progress,
 )
+from infrastructure.export.jobs import JsonExportJobStore
+from infrastructure.export.qt_free import QtFreePdfComposer
+from infrastructure.export.target_refs import ExportTargetGrantRegistry
 from infrastructure.sqlite.regions import SqliteRegionRepository
 from infrastructure.sqlite.schema import default_migrations
 from infrastructure.transport.stdlib import StdlibTransport
@@ -346,10 +349,12 @@ class _ManagedReaderCatalog:
         repository: SqliteLibraryRepository,
         storage: ManagedFileStorage,
         locator: SqlitePageArtifactLocator,
+        conn: sqlite3.Connection,
     ) -> None:
         self._repository = repository
         self._storage = storage
         self._locator = locator
+        self._conn = conn
 
     def list_pages(self, chapter_id: str) -> list:
         from application.reading.ports import ReaderPage
@@ -365,14 +370,41 @@ class _ManagedReaderCatalog:
             translated = ""
             translated_revision = None
             current_revision = None
+            translated_artifact_id = None
+            translated_sha256 = None
+            rendered_from_revision_id = None
+            current_source_revision_id = None
+            source_run_id = None
             located = self._locator.locate_current(
                 page.page_id, ArtifactType.TRANSLATED
             )
             if located is not None:
-                _record, revision = located
+                record, revision = located
                 translated = self._storage.absolute_path(revision.managed_path)
                 translated_revision = revision.artifact_revision_id
                 current_revision = revision.artifact_revision_id
+                translated_artifact_id = record.artifact_id
+                translated_sha256 = revision.file_hash
+                provenance = self._conn.execute(
+                    "SELECT source_artifact_revision_id, pipeline_run_id"
+                    " FROM artifact_revisions WHERE artifact_revision_id = ?",
+                    (revision.artifact_revision_id,),
+                ).fetchone()
+                if provenance is not None:
+                    rendered_from_revision_id = provenance["source_artifact_revision_id"]
+                    source_run_id = provenance["pipeline_run_id"]
+                    if rendered_from_revision_id:
+                        current = self._conn.execute(
+                            "SELECT current_revision_id FROM media_artifacts"
+                            " WHERE artifact_id = (SELECT artifact_id FROM artifact_revisions"
+                            " WHERE artifact_revision_id = ?)",
+                            (rendered_from_revision_id,),
+                        ).fetchone()
+                        current_source_revision_id = (
+                            current["current_revision_id"] if current else None
+                        )
+                    else:
+                        current_source_revision_id = page.source_hash
             rows.append(
                 ReaderPage(
                     page_id=page.page_id,
@@ -381,6 +413,15 @@ class _ManagedReaderCatalog:
                     translated_path=translated or None,
                     translated_revision_id=translated_revision,
                     current_translated_revision_id=current_revision,
+                    width_px=page.width or 0,
+                    height_px=page.height or 0,
+                    original_revision_id=f"page-original-{page.page_id}",
+                    original_sha256=page.source_hash or "",
+                    translated_artifact_id=translated_artifact_id,
+                    translated_sha256=translated_sha256,
+                    rendered_from_revision_id=rendered_from_revision_id,
+                    current_source_revision_id=current_source_revision_id,
+                    source_run_id=source_run_id,
                 )
             )
         return rows
@@ -586,6 +627,9 @@ class CoreServices:
     #: pipeline step). Provenance object only -- core_service never writes
     #: Regions through it.
     detector: object = None
+    export_history_store: object = None
+    export_job_store: object = None
+    export_target_refs: object = None
 
 
 def _resolve_detector_weights_path(
@@ -1147,7 +1191,12 @@ def assemble_core_services(
         import_legacy_export_history(conn, data_root / "export_history.json")
 
         reading = ReadingService(SqliteReadingProgressStore(conn))
-        export_service = ExportService(SqliteExportHistoryStore(conn))
+        export_history_store = SqliteExportHistoryStore(conn)
+        export_service = ExportService(
+            export_history_store, pdf_composer=QtFreePdfComposer()
+        )
+        export_job_store = JsonExportJobStore(Path(data_root) / "export_jobs.json")
+        export_target_refs = ExportTargetGrantRegistry()
 
         def tile_factory(path: str) -> TiledPageRasterizer:
             return TiledPageRasterizer(
@@ -1169,7 +1218,7 @@ def assemble_core_services(
             repository, storage, SqlitePageArtifactLocator(conn)
         )
         reader_catalog = _ManagedReaderCatalog(
-            repository, storage, SqlitePageArtifactLocator(conn)
+            repository, storage, SqlitePageArtifactLocator(conn), conn
         )
 
         return CoreServices(
@@ -1198,6 +1247,9 @@ def assemble_core_services(
             # M2-PROD-DETECT-3: expose the pipeline's own detector so
             # core_service's core.detect resolves the same instance.
             detector=detector,
+            export_history_store=export_history_store,
+            export_job_store=export_job_store,
+            export_target_refs=export_target_refs,
         )
     except Exception:
         conn.close()

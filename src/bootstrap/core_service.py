@@ -6,16 +6,16 @@ production Core sidecar process. It assembles the production Core services
 then acquires the persistent Run scheduler lease and enters a stdio request
 loop serving typed commands and best-effort lifecycle events over JSON-lines.
 
-Transport & Envelope (M2-C1 rev 2.0 §3, §5.5, §8, §12):
+Transport & Envelope (M2-C1 rev 2.1 §3, §5, §6.3, §8, §10.3, §12):
   Request:
-    {"protocol": "new-manga.core", "version": {"major": 2, "minor": 0},
+    {"protocol": "new-manga.core", "version": {"major": 2, "minor": 1},
      "request_id": "<id>", "command": "<cmd>", "payload": {...}}
   Response:
-    {"protocol": "new-manga.core", "version": {"major": 2, "minor": 0},
+    {"protocol": "new-manga.core", "version": {"major": 2, "minor": 1},
      "request_id": "<id>", "result": {...} | null, "error": ErrorEnvelope | null}
 
 Allowed production commands (M2-IPC1 + existing command slices + P13-C1):
-  - core.ping: {} -> {"status": "ready", "protocol_version": {"major": 2, "minor": 0}, "capabilities": ["library.list_books"]}
+  - core.ping: {} -> {"status": "ready", "protocol_version": {"major": 2, "minor": 1}, "capabilities": ["library.list_books"]}
   - ListBooks: {} -> BookSummary[]
   - core.shutdown: {} -> {"status": "stopped"} (then exit 0)
   - core.detect: {"page": "<base64 PNG/JPEG>", "width": <int>, "height": <int>}
@@ -90,6 +90,7 @@ Allowed production commands (M2-IPC1 + existing command slices + P13-C1):
 from __future__ import annotations
 
 import base64
+import hashlib
 from dataclasses import asdict, dataclass
 import io
 import json
@@ -111,6 +112,8 @@ from application.editing.errors import (
 )
 from application.importing.images.ports import DecodedImage
 from application.settings.errors import BindingValidationError
+from application.export import ExportFormat, ExportPage, ExportRequest, P16ExportRuntime, StalePolicy
+from application.export.service import OverwritePolicy
 from application.translation.color.service import SourceStyleService
 from bootstrap.core_assembly import (
     CoreServices,
@@ -140,6 +143,8 @@ from infrastructure.resource_channel.render_preview import (
     ORIGINAL_REVISION,
     RenderPreviewPublisher,
 )
+from infrastructure.export.qt_free import encode_png
+from infrastructure.export.target_refs import ExportTargetRefError
 from ports.detection.ports import DetectionRequest
 from ports.providers.errors import ProviderError, ProviderNotConfigured
 
@@ -169,7 +174,8 @@ PROTOCOL_MAJOR = 2
 # list_chapter_pages commands added; same backwards-compatible widening
 # precedent -- pre-existing command semantics unchanged. Contract: M2-C1
 # rev 1.8 §5).
-PROTOCOL_MINOR = 0
+# P16-C1 rev 2.1 added the Reader/Export commands and events.
+PROTOCOL_MINOR = 1
 _RUN_COMMANDS = frozenset({
     "StartRun", "ControlRun", "ResumeBlockedRun", "GetRunSnapshot",
     "GetTaskProjection", "RetryFailedTargets",
@@ -317,6 +323,12 @@ class RenderCommandError(ValueError):
         self.category = category
 
 
+class P16WireError(Exception):
+    def __init__(self, code: str, category: str, message: str, *, details=None) -> None:
+        super().__init__(message)
+        self.code, self.category, self.details = code, category, details
+
+
 
 class _PassthroughImageDecoder:
     """Legacy test double; production assembly uses ``QtImageDecoder``."""
@@ -405,6 +417,27 @@ def make_error_envelope(
     if details is not None:
         envelope["details"] = details
     return envelope
+
+
+def _sha256_file_path(path: Path) -> str:
+    digest = hashlib.sha256()
+    with path.open("rb") as handle:
+        for chunk in iter(lambda: handle.read(1024 * 1024), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
+
+
+def _export_ref_error_envelope(code: str) -> dict[str, Any]:
+    categories = {
+        "REF_MALFORMED": "validation", "REF_SIGNATURE_INVALID": "validation",
+        "REF_SCOPE_DENIED": "validation", "REF_UNKNOWN_ID": "not_found",
+        "REF_EXPIRED": "conflict", "REF_REVOKED": "conflict",
+        "REF_ALREADY_CONSUMED": "conflict",
+    }
+    return make_error_envelope(
+        code, categories.get(code, "validation"),
+        "Export target reference was rejected", retryable=False,
+    )
 
 
 _scheduler_paths_lock = threading.Lock()
@@ -511,6 +544,14 @@ class CoreServiceServer:
         self._run_scheduler_stop = threading.Event()
         self._run_scheduler_thread: threading.Thread | None = None
         self._scheduler_lease: _RunSchedulerLease | None = None
+        self._exports = None
+        if all(getattr(core, name, None) is not None for name in (
+            "export_history_store", "export_job_store", "export_target_refs"
+        )):
+            self._exports = P16ExportRuntime(
+                core.export_service, core.export_history_store, core.export_job_store,
+                self._emit_export_progress_event,
+            )
         pipeline = getattr(self._core, "pipeline", None)
         if pipeline is not None:
             pipeline.require_scheduler_owner()
@@ -590,6 +631,19 @@ class CoreServiceServer:
             "event_type": event_type,
             "emitted_at": datetime.now(timezone.utc).isoformat(timespec="milliseconds"),
             "payload": dict(payload),
+        })
+
+    def _emit_export_progress_event(self, payload: dict[str, Any]) -> None:
+        self._emit_p16_event("ExportProgressChanged", payload)
+
+    def _emit_p16_event(self, event_type: str, payload: dict[str, Any]) -> None:
+        self._emit({
+            "protocol": PROTOCOL_NAME,
+            "version": {"major": PROTOCOL_MAJOR, "minor": PROTOCOL_MINOR},
+            "event_id": uuid.uuid4().hex,
+            "event_type": event_type,
+            "emitted_at": datetime.now(timezone.utc).isoformat(timespec="milliseconds"),
+            "payload": payload,
         })
 
     def handle_ping(self, payload: dict[str, Any]) -> dict[str, Any]:
@@ -1256,6 +1310,288 @@ class CoreServiceServer:
             return {"resource_id": resource_id, "revision": ORIGINAL_REVISION}
         return self._render_previews.publish_original(source, resource_id, suffix)
 
+    def handle_get_reader_projection(self, payload: dict[str, Any]) -> dict[str, Any]:
+        if set(payload) != {"chapter_id", "mode", "start_position"}:
+            raise P16WireError("INVALID_REQUEST", "validation", "Reader request is invalid")
+        chapter_id, mode, start = payload.get("chapter_id"), payload.get("mode"), payload.get("start_position")
+        if not isinstance(chapter_id, str) or not chapter_id or mode not in ("original", "translated") or start not in ("resume", "beginning"):
+            raise P16WireError("INVALID_REQUEST", "validation", "Reader request is invalid")
+        chapter = self._core.repository.get_chapter(chapter_id)
+        if chapter is None:
+            raise P16WireError("TARGET_NOT_FOUND", "not_found", "Reader chapter was not found")
+        pages = self._core.reader_catalog.list_pages(chapter_id)
+        if not pages or any(page.width_px <= 0 or page.height_px <= 0 for page in pages):
+            raise P16WireError("TARGET_NOT_FOUND", "not_found", "Reader pages are unavailable")
+        webtoon = chapter.chapter_type.value == "webtoon"
+        layout = "webtoon_vertical" if webtoon else chapter.reading_direction.value
+        projection_pages = []
+        for order, page in enumerate(pages):
+            original = self.handle_resolve_page_resource({"page_id": page.page_id})
+            translated = None
+            if page.translated_path and page.translated_revision_id:
+                translated_path = self._checked_managed_path(page.translated_path)
+                if self._render_previews is None or not translated_path.is_file():
+                    raise P16WireError("EXPORT_INPUT_UNAVAILABLE", "unavailable", "Reader artifact is unavailable")
+                translated = self._render_previews.publish(translated_path, page.translated_revision_id)
+            projection_pages.append({
+                "page_id": page.page_id, "order": order,
+                "width_px": page.width_px, "height_px": page.height_px,
+                "original": {
+                    "resource_ref": original,
+                    "artifact_revision_id": page.original_revision_id or page.page_id,
+                    "sha256": self._reader_sha256(page.original_path, page.original_sha256),
+                },
+                "translated": {
+                    "resource_ref": translated,
+                    "artifact_revision_id": page.translated_revision_id if translated else None,
+                    "rendered_from_revision_id": page.rendered_from_revision_id if translated else None,
+                    "current_source_revision_id": page.current_source_revision_id if translated else None,
+                    "sha256": self._reader_sha256(page.translated_path, page.translated_sha256) if translated else None,
+                },
+            })
+        book_id = chapter.book_id
+        saved = self._core.reading.progress_snapshot(book_id, chapter_id, mode)
+        first = pages[0].page_id
+        initial = {"page_id": first, "scroll_offset_y": 0.0}
+        if start == "resume" and saved and saved.get("last_page_id") in {p.page_id for p in pages}:
+            initial = {
+                "page_id": saved["last_page_id"],
+                "scroll_offset_y": saved["scroll_offset_y"] if webtoon else 0.0,
+            }
+        return {
+            "book_id": book_id, "chapter_id": chapter_id, "mode": mode,
+            "layout": layout, "pages": projection_pages,
+            "saved_progress": saved, "initial_position": initial,
+        }
+
+    def handle_save_reading_progress(self, payload: dict[str, Any]) -> dict[str, Any]:
+        required = {"chapter_id", "mode", "page_id"}
+        if not required.issubset(payload) or set(payload) - required - {"scroll_offset_y", "elapsed_seconds_delta"}:
+            raise P16WireError("INVALID_REQUEST", "validation", "Reading progress request is invalid")
+        chapter_id, mode, page_id = payload.get("chapter_id"), payload.get("mode"), payload.get("page_id")
+        if not all(isinstance(value, str) and value for value in (chapter_id, page_id)) or mode not in ("original", "translated"):
+            raise P16WireError("INVALID_REQUEST", "validation", "Reading progress request is invalid")
+        chapter = self._core.repository.get_chapter(chapter_id)
+        if chapter is None:
+            raise P16WireError("TARGET_NOT_FOUND", "not_found", "Reader chapter was not found")
+        pages = self._core.reader_catalog.list_pages(chapter_id)
+        if not any(page.page_id == page_id for page in pages):
+            raise P16WireError("TARGET_NOT_FOUND", "not_found", "Reader page was not found")
+        try:
+            result = self._core.reading.save_progress_snapshot(
+                chapter.book_id, chapter_id, mode, page_id,
+                payload.get("scroll_offset_y", 0), payload.get("elapsed_seconds_delta", 0),
+                pages, webtoon=chapter.chapter_type.value == "webtoon",
+            )
+        except (TypeError, ValueError, OverflowError) as error:
+            raise P16WireError("INVALID_REQUEST", "validation", "Reading progress values are invalid") from error
+        self._emit_p16_event("ReadingProgressChanged", {
+            "book_id": chapter.book_id, "chapter_id": chapter_id, "mode": mode,
+        })
+        return result
+
+    def _register_export_target(self, payload: dict[str, Any]) -> dict[str, Any]:
+        fields = {"grant_id", "session_id", "target_path", "format", "replace_existing", "expires_at", "signing_key", "signature"}
+        if set(payload) != fields:
+            raise ExportTargetRefError("REF_MALFORMED")
+        try:
+            signing_key = base64.urlsafe_b64decode(payload["signing_key"] + "=" * (-len(payload["signing_key"]) % 4))
+            self._core.export_target_refs.register(
+                grant_id=payload["grant_id"], session_id=payload["session_id"],
+                target_path=payload["target_path"], format=payload["format"],
+                replace_existing=payload["replace_existing"], expires_at=payload["expires_at"],
+                signing_key=signing_key, signature=payload["signature"],
+            )
+        except ExportTargetRefError:
+            raise
+        except Exception as error:
+            raise ExportTargetRefError("REF_MALFORMED") from error
+        return {"registered": True}
+
+    def _revoke_export_target(self, payload: dict[str, Any]) -> dict[str, Any]:
+        if set(payload) != {"grant_id"} or not isinstance(payload.get("grant_id"), str):
+            raise ExportTargetRefError("REF_MALFORMED")
+        self._core.export_target_refs.revoke(payload["grant_id"])
+        return {"revoked": True}
+
+    def handle_start_export(self, payload: dict[str, Any]) -> dict[str, Any]:
+        required = {"book_id", "chapter_ids", "ordered_page_ids", "format", "format_options", "stale_policy", "target_ref"}
+        if set(payload) != required:
+            raise P16WireError("INVALID_REQUEST", "validation", "Export request is invalid")
+        book_id, chapter_ids, ordered_ids = payload["book_id"], payload["chapter_ids"], payload["ordered_page_ids"]
+        fmt, options, stale = payload["format"], payload["format_options"], payload["stale_policy"]
+        if (not isinstance(book_id, str) or not book_id or not isinstance(chapter_ids, list) or not chapter_ids
+                or not all(isinstance(item, str) and item for item in chapter_ids) or len(set(chapter_ids)) != len(chapter_ids)
+                or not isinstance(ordered_ids, list) or not ordered_ids or not all(isinstance(item, str) and item for item in ordered_ids)
+                or len(set(ordered_ids)) != len(ordered_ids) or fmt not in ("png", "zip", "cbz", "pdf", "text")
+                or stale not in ("abort", "continue_existing")):
+            raise P16WireError("INVALID_REQUEST", "validation", "Export request is invalid")
+        self._validate_export_options(fmt, options)
+        book = self._core.repository.get_book(book_id)
+        if book is None:
+            raise P16WireError("TARGET_NOT_FOUND", "not_found", "Export target was not found")
+        chapters = {}
+        pages_by_id = {}
+        page_chapter = {}
+        for chapter_id in chapter_ids:
+            chapter = self._core.repository.get_chapter(chapter_id)
+            if chapter is None or chapter.book_id != book_id:
+                raise P16WireError("TARGET_NOT_FOUND", "not_found", "Export target was not found")
+            chapters[chapter_id] = chapter
+            for page in self._core.reader_catalog.list_pages(chapter_id):
+                pages_by_id[page.page_id] = page
+                page_chapter[page.page_id] = chapter_id
+        if any(page_id not in pages_by_id for page_id in ordered_ids):
+            raise P16WireError("TARGET_NOT_FOUND", "not_found", "Export page was not found")
+        if fmt == "png" and len(ordered_ids) != 1:
+            raise P16WireError("INVALID_REQUEST", "validation", "PNG export requires one page")
+        selected = [pages_by_id[page_id] for page_id in ordered_ids]
+        if any(not page.translated_path or not page.translated_revision_id or not page.translated_artifact_id for page in selected):
+            raise P16WireError("EXPORT_INPUT_UNAVAILABLE", "unavailable", "A translated input is unavailable")
+        lineage = []
+        export_pages = []
+        stale_details = []
+        text_pages = []
+        for order, page in enumerate(selected):
+            translated_path = self._checked_managed_path(page.translated_path)
+            if not translated_path.is_file():
+                raise P16WireError("EXPORT_INPUT_UNAVAILABLE", "unavailable", "A translated input is unavailable")
+            actual_hash = _sha256_file_path(translated_path)
+            if page.translated_sha256 and actual_hash != page.translated_sha256:
+                raise P16WireError("EXPORT_INPUT_UNAVAILABLE", "unavailable", "A translated input failed integrity verification")
+            stale_page = bool(page.rendered_from_revision_id and page.current_source_revision_id and page.rendered_from_revision_id != page.current_source_revision_id)
+            if stale_page:
+                stale_details.append({"page_id": page.page_id, "reason": "stale"})
+            regions = self._export_regions(page.page_id)
+            item = {
+                "page_id": page.page_id, "order": order,
+                "source_artifact_id": page.translated_artifact_id,
+                "source_artifact_revision_id": page.translated_revision_id,
+                "source_sha256": actual_hash,
+                "rendered_from_revision_id": page.rendered_from_revision_id,
+                "current_source_revision_id": page.current_source_revision_id,
+                "source_run_id": page.source_run_id, "stale": stale_page,
+            }
+            lineage.append(item)
+            export_pages.append(ExportPage(
+                page_id=page.page_id, filename=page.filename,
+                source_provider=lambda p=page: Path(self._checked_managed_path(p.original_path)).read_bytes(),
+                translated_provider=lambda p=translated_path: p.read_bytes(),
+                translated_revision_id=page.translated_revision_id,
+                current_translated_revision_id=page.current_translated_revision_id,
+                rendered_from_revision_id=page.rendered_from_revision_id,
+                current_source_revision_id=page.current_source_revision_id,
+                regions=tuple(regions), sha256=actual_hash,
+                artifact_id=page.translated_artifact_id,
+                artifact_revision_id=page.translated_revision_id,
+                source_run_id=page.source_run_id,
+            ))
+            text_pages.append({
+                "page_id": page.page_id, "order": order, "filename": page.filename,
+                "width_px": page.width_px, "height_px": page.height_px,
+                "regions": regions,
+            })
+        target_ref = payload["target_ref"]
+        registry = getattr(self._core, "export_target_refs", None)
+        if registry is None:
+            raise ExportTargetRefError("REF_SIGNATURE_INVALID")
+        target = registry.resolve_and_consume(target_ref, fmt)
+        if self._is_protected_export_target(target.path):
+            raise ExportTargetRefError("REF_SCOPE_DENIED")
+        if stale == "abort" and stale_details:
+            raise P16WireError("EXPORT_STALE", "conflict", "Translated inputs are stale", details=stale_details)
+
+        first_chapter = chapters[chapter_ids[0]]
+        format_value = ExportFormat.SINGLE_IMAGE if fmt == "png" else ExportFormat(fmt)
+        text_content = self._text_export_bytes(fmt, options, text_pages) if fmt == "text" else None
+        request = ExportRequest(
+            book_id=book_id, chapter_id=page_chapter[ordered_ids[0]],
+            format=format_value, output_path=target.path, pages=tuple(export_pages),
+            mode="translated", overwrite_policy=OverwritePolicy.OVERWRITE,
+            stale_policy=StalePolicy.ABORT if stale == "abort" else StalePolicy.CONTINUE,
+            format_options=options, text_content=text_content,
+            book_metadata={"title": book.title, "author": book.author, "description": book.description},
+            chapter_metadata={"title": first_chapter.title, "chapter_number": first_chapter.chapter_number, "chapter_ids": chapter_ids},
+            lineage=tuple(lineage), image_encoder=encode_png,
+        )
+        if self._exports is None:
+            raise P16WireError("EXPORT_WRITE_FAILED", "internal", "Export runtime is unavailable")
+        try:
+            return self._exports.start(request, target)
+        except OSError as error:
+            raise P16WireError("EXPORT_WRITE_FAILED", "internal", "Export could not be accepted") from error
+
+    @staticmethod
+    def _validate_export_options(fmt: str, options: Any) -> None:
+        if not isinstance(options, dict):
+            raise P16WireError("INVALID_REQUEST", "validation", "Export options are invalid")
+        valid = ((fmt in ("png", "cbz") and options == {})
+                 or (fmt == "zip" and set(options) == {"compression"} and options.get("compression") in ("standard", "fast", "store"))
+                 or (fmt == "pdf" and set(options) == {"pdf_content"} and options.get("pdf_content") in ("image_only", "searchable_dual_layer"))
+                 or (fmt == "text" and set(options) == {"text_representation"} and options.get("text_representation") in ("txt", "json", "markdown")))
+        if not valid:
+            raise P16WireError("INVALID_REQUEST", "validation", "Export options are invalid")
+
+    def _checked_managed_path(self, path: str) -> Path:
+        root = self._core.storage.root.resolve()
+        resolved = Path(path).resolve()
+        try:
+            resolved.relative_to(root)
+        except ValueError as error:
+            raise P16WireError("EXPORT_INPUT_UNAVAILABLE", "unavailable", "Managed export input is unavailable") from error
+        return resolved
+
+    def _reader_sha256(self, path: str, expected: str | None) -> str:
+        resolved = self._checked_managed_path(path)
+        digest = _sha256_file_path(resolved)
+        if expected and expected != digest:
+            raise P16WireError("EXPORT_INPUT_UNAVAILABLE", "unavailable", "Reader input failed integrity verification")
+        return digest
+
+    def _export_regions(self, page_id: str) -> list[dict]:
+        rows = self._core.conn.execute(
+            "SELECT region_id, reading_order, geometry_json, text_json FROM regions"
+            " WHERE page_id = ? AND deleted_at IS NULL ORDER BY reading_order, region_id",
+            (page_id,),
+        ).fetchall()
+        result = []
+        for row in rows:
+            geometry, text = json.loads(row["geometry_json"]), json.loads(row["text_json"])
+            result.append({
+                "region_id": row["region_id"], "reading_order": row["reading_order"],
+                "geometry": geometry, "ocr_text": text.get("ocr_text", ""),
+                "translated_text": text.get("final_translation") or text.get("machine_translation", ""),
+            })
+        return result
+
+    def _text_export_bytes(self, fmt: str, options: dict, pages: list[dict]) -> bytes:
+        rep = options["text_representation"]
+        if rep == "json":
+            return json.dumps({"pages": pages}, ensure_ascii=False, indent=2).encode("utf-8")
+        blocks = []
+        for page in pages:
+            lines = [f"{region['ocr_text']}\n{region['translated_text']}".strip() for region in page["regions"]]
+            body = "\n\n".join(line for line in lines if line)
+            blocks.append((f"# {page['filename']}\n\n" + body) if rep == "markdown" else (f"[{page['filename']}]\n" + body))
+        return ("\n\n".join(blocks) + "\n").encode("utf-8")
+
+    def _is_protected_export_target(self, target: Path) -> bool:
+        root = self._core.storage.root.resolve()
+        target = target.parent.resolve() / target.name
+        rows = self._core.conn.execute(
+            "SELECT managed_original_ref AS path FROM pages WHERE managed_original_ref IS NOT NULL"
+            " UNION ALL SELECT managed_path AS path FROM artifact_revisions"
+        ).fetchall()
+        for row in rows:
+            path = Path(self._core.storage.absolute_path(row["path"])).resolve()
+            try:
+                path.relative_to(root)
+            except ValueError:
+                continue
+            if os.path.normcase(str(path)) == os.path.normcase(str(target)):
+                return True
+        return False
+
     @staticmethod
     def _is_positive_integer(value: Any) -> bool:
         return isinstance(value, int) and not isinstance(value, bool) and value > 0
@@ -1621,6 +1957,55 @@ class CoreServiceServer:
                 },
                 False,
             )
+
+        if command in ("GetReaderProjection", "SaveReadingProgress", "StartExport",
+                       "GetExportSnapshot", "GetExportHistory", "CancelExport"):
+            try:
+                if not isinstance(raw_payload, dict):
+                    raise P16WireError("INVALID_REQUEST", "validation", "Request payload must be an object")
+                if command == "GetReaderProjection":
+                    result = self.handle_get_reader_projection(payload)
+                elif command == "SaveReadingProgress":
+                    result = self.handle_save_reading_progress(payload)
+                elif command == "StartExport":
+                    result = self.handle_start_export(payload)
+                elif command == "GetExportSnapshot":
+                    if set(payload) != {"export_id"} or not isinstance(payload.get("export_id"), str) or not payload["export_id"]:
+                        raise P16WireError("INVALID_REQUEST", "validation", "Export snapshot request is invalid")
+                    if self._exports is None:
+                        raise P16WireError("EXPORT_NOT_FOUND", "not_found", "Export was not found")
+                    try:
+                        result = self._exports.snapshot(payload["export_id"])
+                    except KeyError as error:
+                        raise P16WireError("EXPORT_NOT_FOUND", "not_found", "Export was not found") from error
+                elif command == "CancelExport":
+                    if set(payload) != {"export_id"} or not isinstance(payload.get("export_id"), str) or not payload["export_id"]:
+                        raise P16WireError("INVALID_REQUEST", "validation", "Export cancel request is invalid")
+                    if self._exports is None:
+                        raise P16WireError("EXPORT_NOT_FOUND", "not_found", "Export was not found")
+                    try:
+                        result = self._exports.cancel(payload["export_id"])
+                    except KeyError as error:
+                        raise P16WireError("EXPORT_NOT_FOUND", "not_found", "Export was not found") from error
+                else:
+                    if payload:
+                        raise P16WireError("INVALID_REQUEST", "validation", "Export history request is invalid")
+                    result = {"exports": self._exports.history() if self._exports else []}
+                error = None
+            except P16WireError as caught:
+                result = None
+                error = make_error_envelope(caught.code, caught.category, str(caught), retryable=False, details=caught.details)
+            except ExportTargetRefError as caught:
+                result = None
+                error = _export_ref_error_envelope(caught.code)
+            except Exception:
+                result = None
+                error = make_error_envelope("UNKNOWN", "internal", "Reader or export operation failed", retryable=False)
+            return ({
+                "protocol": PROTOCOL_NAME,
+                "version": {"major": PROTOCOL_MAJOR, "minor": PROTOCOL_MINOR},
+                "request_id": request_id, "result": result, "error": error,
+            }, False)
 
         if isinstance(command, str) and command in _RUN_COMMANDS:
             return self._dispatch_run_command(
