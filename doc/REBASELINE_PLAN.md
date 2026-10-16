@@ -17,7 +17,7 @@
 |P10 凭据通道|P08|**done**（集成 c46c0df0）|
 |P11 长任务契约|P08|**done**（集成 ceca5721）|
 |P12 书架导入|P09/UI|proposed|
-|P13 后台恢复|P09/P11|proposed（下一释放候选）|
+|P13 后台恢复|P09/P11|**ready**（2026-10-16 释放待认领）|
 |P14 工作台|P13/UI|proposed|
 |P15 设置维护|P10/P13*/UI|proposed|
 |P16 阅读导出Core|P08/P13/DOC|proposed|
@@ -31,4 +31,4 @@
 本轮：[PROJECT-ROADMAP-RELEASE](tasks/PROJECT-ROADMAP-RELEASE.md) done；[P22-REBASE-1](tasks/P22-REBASE-1.md) done（集成4e5c71d9）；[P04](tasks/P04.md) done（集成 7bfcf16a）。[ARCH-DOC-REBASELINE](tasks/ARCH-DOC-REBASELINE.md) `ready / integrated`（交付 `70208144`、R1 Review `79ed01fd`、集成 merge `4227e8b5`），待 AC7 消费者裁决。[P11](tasks/P11.md) **done**（交付 `c7922ae1`、Review `09797eab`、集成 `ceca5721`）；[P10](tasks/P10.md) **done**（交付 `fa20602d`、Review `d4907acc`、集成 `c46c0df0`）；[P06](tasks/P06.md) **done**（交付 `4ed493a3`、Review `ecfef603`、集成 `d3342895`）。
 DOC=[架构映射Task](tasks/ARCH-DOC-REBASELINE.md)已集成但未关闭；UI=四页分别经ZCode设计审查；P13*仅备份停写。详细范围/Gate见[本轮裁决](../verification/PROJECT-ROADMAP-RELEASE/REPORT.md)，为本Plan持续冻结的Gate输入，Task关闭不撤销引用；状态仍只在本Plan。
 P02新时点链与P22-REBASE-1已集成；P04前置满足但不自动放行，仍待独立释放授权；旧H1/P2-1/13项缺失、BC-AC5 PARTIAL及产品backlog保留。
-READY 节点：ARCH-DOC-REBASELINE。P13 为下一释放候选（P09/P11 依赖均已满足）；P12 需先释放 ZCode 书架设计 Task。
+READY 节点：ARCH-DOC-REBASELINE、P13。P12 需先释放 ZCode 书架设计 Task；P14/P16/P18 依赖 P13。
