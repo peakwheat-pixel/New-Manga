@@ -1,0 +1,40 @@
+{
+  "task": "P17",
+  "generated": "2026-10-16",
+  "base_commit": "536962909963eaeeff7e94ff511f76f927652cd6",
+  "branch": "agent/antigravity/P17",
+  "worktree": "G:/CODEX/New Manga.workspace/worktrees/P17",
+  "resources": [
+    {
+      "resource_type": "worktree",
+      "source_path": "G:/CODEX/New Manga.workspace/worktrees/P17",
+      "disposition": "PRESERVE_REFERENCED",
+      "destination_path": "G:/CODEX/New Manga.workspace/worktrees/P17",
+      "note": "P17 专属 worktree；closeout 时按 Worktree Safety Inventory 复核"
+    },
+    {
+      "resource_type": "source",
+      "source_path": "apps/desktop/frontend/src/reader/",
+      "disposition": "PRESERVE_REFERENCED",
+      "destination_path": "apps/desktop/frontend/src/reader/",
+      "note": "P17 阅读器组件与 client 实现"
+    },
+    {
+      "resource_type": "verification",
+      "source_path": "verification/P17/",
+      "disposition": "PRESERVE_REFERENCED",
+      "destination_path": "verification/P17/",
+      "note": "P17 自动化验证套件日志与行为证据"
+    },
+    {
+      "resource_type": "handoff",
+      "source_path": "doc/handoffs/P17-antigravity-reader-ui.md",
+      "disposition": "PRESERVE_REFERENCED",
+      "destination_path": "doc/handoffs/P17-antigravity-reader-ui.md",
+      "note": "Owner handoff，含逐 AC 状态与复跑指引"
+    }
+  ],
+  "deleted": 0,
+  "migrated": 0,
+  "archived": 0
+}

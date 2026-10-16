@@ -284,6 +284,7 @@ export function AppShell({ invoke, initialPage = "bookshelf" }: AppShellProps) {
             bookId={readerContext.bookId}
             chapterId={readerContext.chapterId}
             onReturnToBookshelf={handleReturnToBookshelf}
+            invoke={invoke}
           />
         </div>
 
