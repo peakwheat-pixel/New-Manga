@@ -3,19 +3,19 @@ id: UI-DESIGN-1
 title: AD-001 四页 UI/UX 设计基线（React + Tauri；解 P12/P14/P15/P17 的 UI 前置）
 kind: design
 governance_version: 2
-status: ready
+status: done
 approval: coordinator_release_20261016_zcode_availability_verified
 suggested_owner: ZCode
 owner: zcode
-reviewer: null
+reviewer: dsh
 depends_on: [HOST-ISSUER-1, HOST-CORE-1, P12-C1, P16-C1, P13-C1, P09-FU2, P10, P11]
 base_commit: c6fda8a09c1a8248ec6617369f9fdf9e1cef79ec
 branch: agent/zcode/UI-DESIGN-1
 worktree: G:/CODEX/New Manga.workspace/worktrees/UI-DESIGN-1
-integration_commit: null
-delivery_head: null
-canonical_evidence_status: pending
-resource_closeout_status: pending
+integration_commit: 9e1221e1bb017922c8188612440a10ec119d92a1
+delivery_head: 920151a9c
+canonical_evidence_status: complete
+resource_closeout_status: complete
 evidence_dir: verification/UI-DESIGN-1
 ---
 
@@ -183,6 +183,7 @@ evidence_dir: verification/UI-DESIGN-1
 | UI-DESIGN-1-E6 | AC8 Owner 等价运行原始日志 | verification/UI-DESIGN-1/selfcheck-output-owner-equivalent.txt | aaf00e59e | 01fc76c66e00809565aa82c36789ba434fd316b22f0952a78e3964998e8d9567 | SOURCE_PIN |
 | UI-DESIGN-1-E7 | AC9 resource closeout | verification/UI-DESIGN-1/resource-manifest.json | aaf00e59e | 17074d92abb2c055416765cd9b90fe453fb4d9f774ef9450bb7e96b808820874 | CANONICAL |
 | UI-DESIGN-1-E8 | AC9 Handoff | doc/handoffs/UI-DESIGN-1-zcode.md | aaf00e59e | - | CANONICAL |
+| UI-DESIGN-1-E9 | 独立 Review R1（I1 收敛后 approved） | verification/UI-DESIGN-1/dsh-review-r1.md | 3f312c5dc | - | CANONICAL |
 
 ## Resource Manifest
 
@@ -193,10 +194,11 @@ evidence_dir: verification/UI-DESIGN-1
 
 ## Closeout Record
 
-- Closeout date / Codex：待关闭时填写。
-- canonical_evidence_status：`pending`（证据已产生并就绪于工作树；commit/sha256 因权限层阻塞待 Coordinator 补齐）。
-- resource_closeout_status：`pending`。
-- 删除、迁移、归档数量/字节数：待关闭时填写；无操作填写 0。
-- 未关闭项及保留原因：①交付 commit 因权限层拦截未产生（重放命令见 `verification/UI-DESIGN-1/commit-BLOCKED.md`）；②canonical selfcheck.ps1 复跑待 Reviewer；③独立 Review 未开始；④主仓 19 项 dirty 前后对比的直接证据未取得（`git -C <主仓>` 被拦，交 Coordinator 复核）。
-- 当前指针清理：`STATUS` / `REBASELINE_PLAN` 在本 Task 释放时同步；Truth Map 登记由 Coordinator 在集成阶段按
-  `doc/00_INDEX.md` 的 dirty 约束单独处理。
+- Closeout date / Coordinator：2026-10-16（dsh, epoch 6）。Reviewer=dsh（独立于 Owner=zcode）。
+- canonical_evidence_status：`complete`（E1–E9 已 pin commit/sha256；canonical selfcheck 由 Reviewer 复跑 exit 0）。
+- resource_closeout_status：`complete`。
+- 删除、迁移、归档数量/字节数：0（未删除/迁移/归档任何资源）。
+- 未关闭项及保留原因：**无**。原四项未决全部关闭：①交付 commit 由 Coordinator 按 Owner 预制命令逐字重放（`aaf00e59e`）；②canonical selfcheck 由 Reviewer 复跑 PASS（I1 后 W=32/G=24）；③独立 Review 完成并记录（R1 + I1 收敛，`3f312c5dc`）；④主仓 19 项 dirty 前后对比已由 Coordinator 独立取证（`4dcd5a949` / 19 项逐项一致）。
+- 交付状态：`done`。集成 commit `9e1221e1b`（I1 返修二次集成）；delivery_head `920151a9c`。I1（G6/G19 误判为缺口）已收敛，无需 I2。
+- 保留限制：Owner 会话 harness 拒绝全部 shell 命令（详见 Review §3 N1 与 `.orchestrator/RUNTIME_DIRECTIVES.md` 的 ZCode 派发约定）——**后续需要执行命令/构建/测试的 ZCode Task 必须在 Task 内安排 Owner 之外的自检与提交执行者**。
+- 当前指针清理：`STATUS` / `REBASELINE_PLAN` 已同步（UI-DESIGN-1 移出 READY，释放 P12）。Truth Map（`doc/00_INDEX.md`）登记仍待处理：该文件带用户未提交改动，改动会导致主仓 merge 被拒，故**不在本 Task 范围**，留待其干净时由 Coordinator 单独登记 `doc/design/AD001_FOUR_PAGE_UI_BASELINE.md` 为 CURRENT。
