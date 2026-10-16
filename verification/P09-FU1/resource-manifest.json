@@ -1,0 +1,31 @@
+{
+  "schema_version": 1,
+  "task_id": "P09-FU1",
+  "generated_at": "2026-10-16T01:41:08Z",
+  "generated_by": "codex",
+  "note": "Owner delivery resource record. Preserve the existing linked worktree and project test environment; no cleanup or migration was performed.",
+  "resources": [
+    {
+      "resource_type": "worktree",
+      "source_path": "G:/CODEX/New Manga.workspace/worktrees/P09-FU1-DECODER-TEST",
+      "disposition": "PRESERVE_REFERENCED",
+      "destination_path": "G:/CODEX/New Manga.workspace/worktrees/P09-FU1-DECODER-TEST",
+      "branch": "codex/P09-FU1-decoder-test-baseline",
+      "base_commit": "693019756e5a1731d1d4f9e02a52ee178f141354",
+      "delivery_head": "e5741448ab706a1337efbe81792d0e0af644e702",
+      "integration_commit": null,
+      "deleted": false,
+      "pruned": false,
+      "process_check": "2026-10-16 owner delivery: worktree retained; no delete, migrate, or archive action; main repository's 19 pre-existing tracked dirty entries were rechecked unchanged."
+    },
+    {
+      "resource_type": "test-env",
+      "source_path": "G:/CODEX/New Manga.task-envs/T1.1.1-impl-py312",
+      "disposition": "PRESERVE_REFERENCED",
+      "destination_path": "G:/CODEX/New Manga.task-envs/T1.1.1-impl-py312",
+      "note": "Existing Python 3.12.3 environment with PySide6 6.11.2; used read-only for AC3/AC4. No dependency installation performed.",
+      "deleted": false,
+      "process_check": "Only invoked the existing Scripts/python.exe to run pytest and report runtime versions."
+    }
+  ]
+}
