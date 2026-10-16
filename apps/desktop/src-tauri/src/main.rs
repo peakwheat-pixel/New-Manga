@@ -34,19 +34,22 @@
 
 mod ac1_bridge;
 mod core_bridge;
+mod host_issuer;
 mod library_bridge;
 mod resource_protocol;
 
 use ac1_bridge::Ac1Channel;
 use core_bridge::{CoreChannel, CoreError, StdioCoreChannel};
 use library_bridge::{BookSummary, LibraryChannel, PingResult, StdioLibraryChannel};
-use resource_protocol::{ScopeRoots};
+use resource_protocol::ScopeRoots;
 use serde::Serialize;
 use std::collections::HashMap;
 use std::path::PathBuf;
+#[cfg(test)]
 use std::sync::Arc;
 use std::sync::Mutex;
 use tauri::Manager;
+use tauri_plugin_dialog::DialogExt;
 
 /// Commands every mode exposes: the product WebView surface. No path-shaped
 /// parameter, no TTL parameter, no probe capability.
@@ -74,13 +77,21 @@ pub const PRODUCTION_COMMANDS: &[&str] = &[
     // page navigation projections, production-only like the resolve above.
     "list_chapters",
     "list_chapter_pages",
+    // HOST-ISSUER-1: user actions use native pickers; refs and paths stay in Rust.
+    "library_import_file",
+    "library_import_folder",
+    "library_start_export",
 ];
 
 /// Commands that exist ONLY in probe mode (`M2RC1_PROBE_OUT` set by the
 /// evidence runner). In production mode they are not registered, so a
 /// WebView invoke fails with "command not found" before any logic runs.
-pub const PROBE_ONLY_COMMANDS: &[&str] =
-    &["probe_config", "probe_write_results", "probe_exit", "probe_issue_url"];
+pub const PROBE_ONLY_COMMANDS: &[&str] = &[
+    "probe_config",
+    "probe_write_results",
+    "probe_exit",
+    "probe_issue_url",
+];
 
 /// Commands removed outright by RC2 (F-03). They must never reappear on any
 /// surface: catalog state is Core/SQLite authority (F-03) and cannot be
@@ -106,14 +117,12 @@ pub const IPC1_PRODUCTION_ONLY_COMMANDS: &[&str] = &["core_ping", "library_list_
 /// M2-SETTINGS-IPC-CHANNEL (contract rev 1.3 §5.3): the settings commands
 /// are production-only too — the frozen RC2 probe / AC1 test-mode surfaces
 /// never gain them (option-B precedent of M2-IPC1).
-pub const SETTINGS_PRODUCTION_ONLY_COMMANDS: &[&str] =
-    &["settings_get", "settings_update_section"];
+pub const SETTINGS_PRODUCTION_ONLY_COMMANDS: &[&str] = &["settings_get", "settings_update_section"];
 
 /// M2-REGION-RETYPE-CORE (contract rev 1.4 §5.4): the region retype pair is
 /// production-only as well (same option-B precedent — the frozen test-mode
 /// surfaces keep their historical shape).
-pub const RETYPE_PRODUCTION_ONLY_COMMANDS: &[&str] =
-    &["set_region_type", "list_regions"];
+pub const RETYPE_PRODUCTION_ONLY_COMMANDS: &[&str] = &["set_region_type", "list_regions"];
 
 /// RC-4 commands stay production-only; probe and AC1 surfaces retain their
 /// historical shape.
@@ -130,8 +139,13 @@ pub const PAGE_RESOLVE_PRODUCTION_ONLY_COMMANDS: &[&str] = &["resolve_page_resou
 /// M2-PAGE-NAV-PROJECTION-1 (contract rev 1.8 §5): the read-only page
 /// navigation projections stay production-only; probe and AC1 surfaces
 /// retain their historical shape.
-pub const PAGE_NAV_PRODUCTION_ONLY_COMMANDS: &[&str] =
-    &["list_chapters", "list_chapter_pages"];
+pub const PAGE_NAV_PRODUCTION_ONLY_COMMANDS: &[&str] = &["list_chapters", "list_chapter_pages"];
+
+pub const HOST_ISSUER_PRODUCTION_ONLY_COMMANDS: &[&str] = &[
+    "library_import_file",
+    "library_import_folder",
+    "library_start_export",
+];
 
 pub fn command_allowlist(probe_mode: bool, ac1_mode: bool) -> Vec<&'static str> {
     let mut commands: Vec<&'static str> = if probe_mode || ac1_mode {
@@ -145,6 +159,7 @@ pub fn command_allowlist(probe_mode: bool, ac1_mode: bool) -> Vec<&'static str> 
                     && !RC4_PRODUCTION_ONLY_COMMANDS.contains(command)
                     && !PAGE_RESOLVE_PRODUCTION_ONLY_COMMANDS.contains(command)
                     && !PAGE_NAV_PRODUCTION_ONLY_COMMANDS.contains(command)
+                    && !HOST_ISSUER_PRODUCTION_ONLY_COMMANDS.contains(command)
             })
             .collect()
     } else {
@@ -329,10 +344,7 @@ fn rerender_page(
     rerender_page_from_core(&state, &page_id)
 }
 
-fn rerender_page_from_core(
-    state: &AppState,
-    page_id: &str,
-) -> Result<serde_json::Value, String> {
+fn rerender_page_from_core(state: &AppState, page_id: &str) -> Result<serde_json::Value, String> {
     // Acquire before Core commits and hold through revocation/swap. Otherwise
     // concurrent calls could commit in order but publish their preview map in
     // reverse response order, leaving the stale resource live.
@@ -394,6 +406,92 @@ fn list_chapter_pages(
         .map_err(|error| error.code)
 }
 
+#[tauri::command]
+async fn library_import_file(
+    app: tauri::AppHandle,
+    state: tauri::State<'_, AppState>,
+    chapter_id: String,
+    duplicate_policy: Option<String>,
+) -> Result<host_issuer::ImportSummary, String> {
+    let selected = app
+        .dialog()
+        .file()
+        .add_filter(
+            "Images and PDF",
+            &["png", "jpg", "jpeg", "webp", "gif", "bmp", "pdf"],
+        )
+        .blocking_pick_file();
+    let Some(selected) = selected else {
+        return Ok(host_issuer::ImportSummary::cancelled(chapter_id));
+    };
+    let path = selected
+        .into_path()
+        .map_err(|_| "INVALID_REQUEST".to_string())?;
+    state
+        .library
+        .as_ref()
+        .ok_or_else(|| "CORE_UNAVAILABLE".to_string())?
+        .import_from_path(&path, "file", &chapter_id, duplicate_policy.as_deref())
+        .map_err(|error| error.code)
+}
+
+#[tauri::command]
+async fn library_import_folder(
+    app: tauri::AppHandle,
+    state: tauri::State<'_, AppState>,
+    chapter_id: String,
+    duplicate_policy: Option<String>,
+) -> Result<host_issuer::ImportSummary, String> {
+    let selected = app.dialog().file().blocking_pick_folder();
+    let Some(selected) = selected else {
+        return Ok(host_issuer::ImportSummary::cancelled(chapter_id));
+    };
+    let path = selected
+        .into_path()
+        .map_err(|_| "INVALID_REQUEST".to_string())?;
+    state
+        .library
+        .as_ref()
+        .ok_or_else(|| "CORE_UNAVAILABLE".to_string())?
+        .import_from_path(&path, "directory", &chapter_id, duplicate_policy.as_deref())
+        .map_err(|error| error.code)
+}
+
+#[tauri::command]
+async fn library_start_export(
+    app: tauri::AppHandle,
+    state: tauri::State<'_, AppState>,
+    request: serde_json::Value,
+) -> Result<Option<host_issuer::ExportSummary>, String> {
+    let (_, extension) =
+        host_issuer::validate_export_request(&request).map_err(|error| error.0.to_string())?;
+    let selected = app
+        .dialog()
+        .file()
+        .add_filter("Export target", &[extension])
+        .blocking_save_file();
+    let Some(selected) = selected else {
+        return Ok(None);
+    };
+    let mut path = selected
+        .into_path()
+        .map_err(|_| "INVALID_REQUEST".to_string())?;
+    match path.extension().and_then(|ext| ext.to_str()) {
+        None => {
+            path.set_extension(extension);
+        }
+        Some(actual) if actual.eq_ignore_ascii_case(extension) => {}
+        Some(_) => return Err("INVALID_REQUEST".to_string()),
+    }
+    let result = state
+        .library
+        .as_ref()
+        .ok_or_else(|| "CORE_UNAVAILABLE".to_string())?
+        .start_export_to_path(&path, request)
+        .map_err(|error| error.code)?;
+    Ok(Some(result))
+}
+
 fn rotate_render_preview(
     channel: &dyn CoreChannel,
     page_id: &str,
@@ -420,7 +518,11 @@ fn rotate_render_preview(
         // the fail-closed new-key revoke below stay PLAIN revokes (no
         // retire bit): same-key rotation must not retire the live key, and
         // a failed rotation must not mark anything reclaimable.
-        if !same_key && channel.revoke_resource_retiring_preview(previous_id).is_err() {
+        if !same_key
+            && channel
+                .revoke_resource_retiring_preview(previous_id)
+                .is_err()
+        {
             if let Some(next_id) = next.as_deref() {
                 let _ = channel.revoke_resource(next_id);
             }
@@ -466,8 +568,14 @@ fn revoke_ref(state: tauri::State<'_, AppState>, opaque_id: String) -> Result<()
 }
 
 #[tauri::command]
-fn revoke_resource_refs(state: tauri::State<'_, AppState>, resource_id: String) -> Result<u32, String> {
-    state.channel.revoke_resource(&resource_id).map_err(|error| error.code)
+fn revoke_resource_refs(
+    state: tauri::State<'_, AppState>,
+    resource_id: String,
+) -> Result<u32, String> {
+    state
+        .channel
+        .revoke_resource(&resource_id)
+        .map_err(|error| error.code)
 }
 
 // ---- probe-mode-only command surface (evidence runner) --------------------
@@ -668,36 +776,30 @@ fn main() {
         let _ = std::fs::create_dir_all(path);
     };
     let derived_root = match &user_root {
-        Some(root) => {
-            env_path("M2RC1_DERIVED_ROOT").unwrap_or_else(|| {
-                let path = root.join("derived");
-                ensure_dir(&path);
-                path
-            })
-        }
+        Some(root) => env_path("M2RC1_DERIVED_ROOT").unwrap_or_else(|| {
+            let path = root.join("derived");
+            ensure_dir(&path);
+            path
+        }),
         None => env_path("M2RC1_DERIVED_ROOT").expect("M2RC1_DERIVED_ROOT required"),
     };
     let managed_root = match &user_root {
-        Some(root) => {
-            env_path("M2RC1_MANAGED_ROOT").unwrap_or_else(|| {
-                let path = root.join("managed");
-                ensure_dir(&path);
-                path
-            })
-        }
+        Some(root) => env_path("M2RC1_MANAGED_ROOT").unwrap_or_else(|| {
+            let path = root.join("managed");
+            ensure_dir(&path);
+            path
+        }),
         None => env_path("M2RC1_MANAGED_ROOT").expect("M2RC1_MANAGED_ROOT required"),
     };
     // RC2 (F-03): the app refuses to run without its catalog authority. The
     // launcher seeds the Core/SQLite store (catalog_loader in packaged form)
     // and passes the path; without it every issue would fail closed anyway.
     let catalog_db = match &user_root {
-        Some(root) => {
-            env_path("M2RC2_CATALOG_DB").unwrap_or_else(|| {
-                let path = root.join("catalog").join("catalog.sqlite");
-                ensure_dir(path.parent().unwrap_or(root));
-                path
-            })
-        }
+        Some(root) => env_path("M2RC2_CATALOG_DB").unwrap_or_else(|| {
+            let path = root.join("catalog").join("catalog.sqlite");
+            ensure_dir(path.parent().unwrap_or(root));
+            path
+        }),
         None => env_path("M2RC2_CATALOG_DB")
             .expect("M2RC2_CATALOG_DB required (Core/SQLite catalog authority)"),
     };
@@ -744,6 +846,8 @@ fn main() {
             ),
         }
         .expect("production core library sidecar failed to start (startup ping)");
+        chan.open_host_session()
+            .expect("production core HostControl session failed to open");
         Some(Box::new(chan))
     } else {
         None
@@ -756,17 +860,20 @@ fn main() {
             &catalog_db,
         ),
         None => StdioCoreChannel::spawn(
-            &python_exe, &src_root, &derived_root, &managed_root, &catalog_db,
+            &python_exe,
+            &src_root,
+            &derived_root,
+            &managed_root,
+            &catalog_db,
         ),
     }
     .expect("python core sidecar failed to start");
     let ac1 = if ac1_mode {
         Some(
             match &packaged_dir {
-                Some(dir) => Ac1Channel::spawn(
-                    &dir.join("acceptance_bridge.exe").to_string_lossy(),
-                    dir,
-                ),
+                Some(dir) => {
+                    Ac1Channel::spawn(&dir.join("acceptance_bridge.exe").to_string_lossy(), dir)
+                }
                 None => Ac1Channel::spawn(&python_exe, &src_root),
             }
             .expect("acceptance core sidecar failed to start"),
@@ -777,14 +884,23 @@ fn main() {
 
     let state = AppState {
         channel: Box::new(channel),
-        roots: ScopeRoots { derived: derived_root, managed: managed_root },
+        roots: ScopeRoots {
+            derived: derived_root,
+            managed: managed_root,
+        },
         fixture_shas: fixture_shas(),
         ac1,
         library,
         render_preview_resources: Mutex::new(HashMap::new()),
     };
 
-    let builder = tauri::Builder::default()
+    let builder = tauri::Builder::default();
+    let builder = if is_production {
+        builder.plugin(tauri_plugin_dialog::init())
+    } else {
+        builder
+    };
+    let builder = builder
         .setup(|app| {
             // progress channel: mirror the page's window title to stderr so
             // the runner can observe probe progress without the invoke bridge
@@ -874,7 +990,10 @@ fn main() {
             rerender_page,
             resolve_page_resource,
             list_chapters,
-            list_chapter_pages
+            list_chapter_pages,
+            library_import_file,
+            library_import_folder,
+            library_start_export
         ])
     };
 
@@ -972,16 +1091,15 @@ mod tests {
     /// keyed `plugin:<name>|<cmd>` and never matches bare invocations -- the
     /// ACL layer silently skipped them, DSH R2-01). This pins the build
     /// artifact: the app manifest declares exactly the live commands
-    /// (fifteen production -- resource-channel, IPC1, settings, retype,
-    /// RC-4, the page resolve and the page navigation projections -- plus
+    /// (eighteen production -- resource-channel, IPC1, settings, retype,
+    /// RC-4, page resolve/navigation and HOST-ISSUER-1 actions -- plus
     /// four probe-only and three M2-AC1 acceptance commands; R2-06),
     /// and no plugin-shaped surface remains.
     #[test]
     fn app_acl_manifest_is_generated_and_enforced() {
-        let manifest: serde_json::Value = serde_json::from_str(
-            include_str!("../gen/schemas/acl-manifests.json"),
-        )
-        .expect("acl-manifests.json must be present and valid");
+        let manifest: serde_json::Value =
+            serde_json::from_str(include_str!("../gen/schemas/acl-manifests.json"))
+                .expect("acl-manifests.json must be present and valid");
         let app = manifest
             .get("__app-acl__")
             .expect("acl-manifests.json must carry __app-acl__ (R2-01a)");
@@ -993,8 +1111,8 @@ mod tests {
         // commands too — a capability/manifest typo for an ac1 command must
         // fail here, not only surface as an E2E ACL denial.
         // M2-REGION-RETYPE-CORE r1 P3-2: the production surface joins the
-        // sweep, so the existence check covers all 22 commands across the
-        // three surfaces (15 production + 4 probe-only + 3 ac1) — a missing
+        // sweep, so the existence check covers all 25 commands across the
+        // three surfaces (18 production + 4 probe-only + 3 ac1) — a missing
         // capability/manifest entry for a production-only command (e.g. the
         // retype pair) fails this test, not just a live invoke.
         for command in command_allowlist(true, false)
@@ -1018,13 +1136,14 @@ mod tests {
     }
 
     #[test]
-    fn production_surface_is_exactly_fifteen_commands() {
+    fn production_surface_is_exactly_eighteen_commands() {
         // M2-SETTINGS-IPC-CHANNEL: five -> seven (settings_get +
         // settings_update_section, contract rev 1.3 §5.3; pinned wire names)
         // M2-REGION-RETYPE-CORE: seven -> nine; RC-4 adds three frozen
         // history/restore/render commands on production only;
         // M2-PAGE-RESOURCE-RESOLVE-1: nine -> thirteen (contract rev 1.7);
-        // M2-PAGE-NAV-PROJECTION-1: thirteen -> fifteen (contract rev 1.8).
+        // M2-PAGE-NAV-PROJECTION-1: thirteen -> fifteen (contract rev 1.8);
+        // HOST-ISSUER-1 adds three safe native-picker actions.
         assert_eq!(
             command_allowlist(false, false),
             vec![
@@ -1043,6 +1162,9 @@ mod tests {
                 "resolve_page_resource",
                 "list_chapters",
                 "list_chapter_pages",
+                "library_import_file",
+                "library_import_folder",
+                "library_start_export",
             ]
         );
     }
@@ -1051,29 +1173,56 @@ mod tests {
     fn probe_surface_adds_exactly_the_four_probe_commands() {
         let probe = command_allowlist(true, false);
         for command in PROBE_ONLY_COMMANDS {
-            assert!(probe.contains(command), "{command} missing from probe surface");
+            assert!(
+                probe.contains(command),
+                "{command} missing from probe surface"
+            );
         }
         // M2-IPC1 ruling (DSH r2 P2-1 option B): test modes keep the frozen
         // RC2 surface — the production-only IPC1 commands are absent.
         for command in IPC1_PRODUCTION_ONLY_COMMANDS {
-            assert!(!probe.contains(command), "{command} must stay production-only");
+            assert!(
+                !probe.contains(command),
+                "{command} must stay production-only"
+            );
         }
         // M2-SETTINGS-IPC-CHANNEL: the settings pair is production-only too
         for command in SETTINGS_PRODUCTION_ONLY_COMMANDS {
-            assert!(!probe.contains(command), "{command} must stay production-only");
+            assert!(
+                !probe.contains(command),
+                "{command} must stay production-only"
+            );
         }
         // M2-REGION-RETYPE-CORE: the retype pair is production-only too
         for command in RETYPE_PRODUCTION_ONLY_COMMANDS {
-            assert!(!probe.contains(command), "{command} must stay production-only");
+            assert!(
+                !probe.contains(command),
+                "{command} must stay production-only"
+            );
         }
         for command in RC4_PRODUCTION_ONLY_COMMANDS {
-            assert!(!probe.contains(command), "{command} must stay production-only");
+            assert!(
+                !probe.contains(command),
+                "{command} must stay production-only"
+            );
         }
         for command in PAGE_RESOLVE_PRODUCTION_ONLY_COMMANDS {
-            assert!(!probe.contains(command), "{command} must stay production-only");
+            assert!(
+                !probe.contains(command),
+                "{command} must stay production-only"
+            );
         }
         for command in PAGE_NAV_PRODUCTION_ONLY_COMMANDS {
-            assert!(!probe.contains(command), "{command} must stay production-only");
+            assert!(
+                !probe.contains(command),
+                "{command} must stay production-only"
+            );
+        }
+        for command in HOST_ISSUER_PRODUCTION_ONLY_COMMANDS {
+            assert!(
+                !probe.contains(command),
+                "{command} must stay production-only"
+            );
         }
         assert_eq!(
             probe.len(),
@@ -1084,6 +1233,7 @@ mod tests {
                 - RC4_PRODUCTION_ONLY_COMMANDS.len()
                 - PAGE_RESOLVE_PRODUCTION_ONLY_COMMANDS.len()
                 - PAGE_NAV_PRODUCTION_ONLY_COMMANDS.len()
+                - HOST_ISSUER_PRODUCTION_ONLY_COMMANDS.len()
                 + PROBE_ONLY_COMMANDS.len()
         );
     }
@@ -1099,24 +1249,48 @@ mod tests {
         // M2-IPC1 ruling (DSH r2 P2-1 option B): test modes keep the frozen
         // AC1 surface — the production-only IPC1 commands are absent.
         for command in IPC1_PRODUCTION_ONLY_COMMANDS {
-            assert!(!ac1.contains(command), "{command} must stay production-only");
+            assert!(
+                !ac1.contains(command),
+                "{command} must stay production-only"
+            );
         }
         // M2-SETTINGS-IPC-CHANNEL: the settings pair is production-only too
         for command in SETTINGS_PRODUCTION_ONLY_COMMANDS {
-            assert!(!ac1.contains(command), "{command} must stay production-only");
+            assert!(
+                !ac1.contains(command),
+                "{command} must stay production-only"
+            );
         }
         // M2-REGION-RETYPE-CORE: the retype pair is production-only too
         for command in RETYPE_PRODUCTION_ONLY_COMMANDS {
-            assert!(!ac1.contains(command), "{command} must stay production-only");
+            assert!(
+                !ac1.contains(command),
+                "{command} must stay production-only"
+            );
         }
         for command in RC4_PRODUCTION_ONLY_COMMANDS {
-            assert!(!ac1.contains(command), "{command} must stay production-only");
+            assert!(
+                !ac1.contains(command),
+                "{command} must stay production-only"
+            );
         }
         for command in PAGE_RESOLVE_PRODUCTION_ONLY_COMMANDS {
-            assert!(!ac1.contains(command), "{command} must stay production-only");
+            assert!(
+                !ac1.contains(command),
+                "{command} must stay production-only"
+            );
         }
         for command in PAGE_NAV_PRODUCTION_ONLY_COMMANDS {
-            assert!(!ac1.contains(command), "{command} must stay production-only");
+            assert!(
+                !ac1.contains(command),
+                "{command} must stay production-only"
+            );
+        }
+        for command in HOST_ISSUER_PRODUCTION_ONLY_COMMANDS {
+            assert!(
+                !ac1.contains(command),
+                "{command} must stay production-only"
+            );
         }
         assert_eq!(
             ac1.len(),
@@ -1127,6 +1301,7 @@ mod tests {
                 - RC4_PRODUCTION_ONLY_COMMANDS.len()
                 - PAGE_RESOLVE_PRODUCTION_ONLY_COMMANDS.len()
                 - PAGE_NAV_PRODUCTION_ONLY_COMMANDS.len()
+                - HOST_ISSUER_PRODUCTION_ONLY_COMMANDS.len()
                 + AC1_TEST_COMMANDS.len()
         );
     }
@@ -1146,6 +1321,7 @@ mod tests {
             .chain(RC4_PRODUCTION_ONLY_COMMANDS)
             .chain(PAGE_RESOLVE_PRODUCTION_ONLY_COMMANDS)
             .chain(PAGE_NAV_PRODUCTION_ONLY_COMMANDS)
+            .chain(HOST_ISSUER_PRODUCTION_ONLY_COMMANDS)
         {
             assert!(
                 !command_allowlist(true, false).contains(command),
@@ -1227,6 +1403,25 @@ mod tests {
     }
 
     #[test]
+    fn host_control_operations_are_never_webview_commands() {
+        const HOST_CONTROL: &[&str] = &[
+            "OpenHostSession",
+            "RegisterImportSource",
+            "RevokeImportSource",
+            "RegisterExportTarget",
+            "RevokeExportTarget",
+            "CloseHostSession",
+        ];
+        for command in HOST_CONTROL {
+            assert!(!PRODUCTION_COMMANDS.contains(command));
+            assert!(!command_allowlist(false, false).contains(command));
+            assert!(!command_allowlist(true, false).contains(command));
+            assert!(!command_allowlist(false, true).contains(command));
+        }
+        assert_eq!(HOST_ISSUER_PRODUCTION_ONLY_COMMANDS.len(), 3);
+    }
+
+    #[test]
     fn issue_wire_never_carries_path_or_ttl() {
         let params = build_issue_params("res-001", "rev-1", None);
         let text = serde_json::to_string(&params).unwrap();
@@ -1246,7 +1441,13 @@ mod tests {
         let channel = MockCoreChannel::new();
         let error = channel.issue("res-never", "rev-1").unwrap_err();
         assert_eq!(error.code, "RESOURCE_NOT_CATALOGED");
-        assert!(channel.issue_probe("res-never", "rev-1", 5.0).unwrap_err().code == "RESOURCE_NOT_CATALOGED");
+        assert!(
+            channel
+                .issue_probe("res-never", "rev-1", 5.0)
+                .unwrap_err()
+                .code
+                == "RESOURCE_NOT_CATALOGED"
+        );
     }
 
     #[test]
@@ -1263,7 +1464,10 @@ mod tests {
         for bad in ["not-an-id", "", &"x".repeat(ID_LENGTH + 1), "../escape"] {
             let response = handle_m2res_request(&url_for(bad, Some(0)), &env.channel, &env.roots);
             assert_eq!(response.status, 400, "id {bad:?}");
-            assert_eq!(std::str::from_utf8(&response.body).unwrap(), "{\"code\":\"REF_MALFORMED\"}");
+            assert_eq!(
+                std::str::from_utf8(&response.body).unwrap(),
+                "{\"code\":\"REF_MALFORMED\"}"
+            );
         }
     }
 
@@ -1271,9 +1475,13 @@ mod tests {
     fn unknown_well_formed_id_typed_404() {
         let (env, _sha) = env_with_fixture(b"payload");
         let well_formed = "A".repeat(ID_LENGTH).replace('A', "a");
-        let response = handle_m2res_request(&url_for(&well_formed, Some(0)), &env.channel, &env.roots);
+        let response =
+            handle_m2res_request(&url_for(&well_formed, Some(0)), &env.channel, &env.roots);
         assert_eq!(response.status, 404);
-        assert_eq!(std::str::from_utf8(&response.body).unwrap(), "{\"code\":\"REF_UNKNOWN_ID\"}");
+        assert_eq!(
+            std::str::from_utf8(&response.body).unwrap(),
+            "{\"code\":\"REF_UNKNOWN_ID\"}"
+        );
     }
 
     #[test]
@@ -1283,14 +1491,18 @@ mod tests {
         let response = handle_m2res_request(&url_for(&opaque, Some(1)), &env.channel, &env.roots);
         assert_eq!(response.status, 400);
         let body = std::str::from_utf8(&response.body).unwrap();
-        assert!(body.contains("REF_MALFORMED") || body.contains("REF_UNKNOWN_ID"), "{body}");
+        assert!(
+            body.contains("REF_MALFORMED") || body.contains("REF_UNKNOWN_ID"),
+            "{body}"
+        );
     }
 
     #[test]
     fn responses_carry_no_store() {
         let (env, _sha) = env_with_fixture(b"payload");
         let well_formed = "b".repeat(ID_LENGTH).replace('b', "c");
-        let response = handle_m2res_request(&url_for(&well_formed, Some(0)), &env.channel, &env.roots);
+        let response =
+            handle_m2res_request(&url_for(&well_formed, Some(0)), &env.channel, &env.roots);
         assert_eq!(response.cache_control, "no-store");
     }
 
@@ -1301,7 +1513,10 @@ mod tests {
         env.channel.revoke(&opaque).unwrap();
         let response = handle_m2res_request(&url_for(&opaque, Some(0)), &env.channel, &env.roots);
         assert_eq!(response.status, 410);
-        assert_eq!(std::str::from_utf8(&response.body).unwrap(), "{\"code\":\"REF_REVOKED\"}");
+        assert_eq!(
+            std::str::from_utf8(&response.body).unwrap(),
+            "{\"code\":\"REF_REVOKED\"}"
+        );
     }
 
     #[test]
@@ -1339,7 +1554,10 @@ mod tests {
         std::fs::write(&target, replaced).unwrap();
         let second = handle_m2res_request(&url_for(&opaque, Some(0)), &env.channel, &env.roots);
         assert_eq!(second.status, 400);
-        assert_eq!(std::str::from_utf8(&second.body).unwrap(), "{\"code\":\"FILE_IDENTITY_CHANGED\"}");
+        assert_eq!(
+            std::str::from_utf8(&second.body).unwrap(),
+            "{\"code\":\"FILE_IDENTITY_CHANGED\"}"
+        );
     }
 
     // ---- M2-RC1-FIX regression tests (DSH F-01/F-02) ----------------------
@@ -1362,7 +1580,10 @@ mod tests {
 
         // the next request must consult the Core and reject
         let second = handle_m2res_request(&url, &env.channel, &env.roots);
-        assert_eq!(second.status, 410, "revoked URL must not be served from cache");
+        assert_eq!(
+            second.status, 410,
+            "revoked URL must not be served from cache"
+        );
         assert_eq!(
             std::str::from_utf8(&second.body).unwrap(),
             "{\"code\":\"REF_REVOKED\"}"
@@ -1383,8 +1604,9 @@ mod tests {
             entry.grant.size = payload.len() as u64;
             entry.grant.sha256 = sha_hex(payload);
         }
-        let facts = resource_protocol::capture_facts_for_tests(&env.roots.derived.join("asset.png"))
-            .expect("fixture facts");
+        let facts =
+            resource_protocol::capture_facts_for_tests(&env.roots.derived.join("asset.png"))
+                .expect("fixture facts");
         {
             let mut table = env.channel.table.lock().unwrap();
             let entry = table.get_mut(&issued.opaque_id).unwrap();
@@ -1399,7 +1621,10 @@ mod tests {
         std::thread::sleep(std::time::Duration::from_millis(500));
 
         let second = handle_m2res_request(&url, &env.channel, &env.roots);
-        assert_eq!(second.status, 410, "expired URL must not be served from cache");
+        assert_eq!(
+            second.status, 410,
+            "expired URL must not be served from cache"
+        );
         assert_eq!(
             std::str::from_utf8(&second.body).unwrap(),
             "{\"code\":\"REF_EXPIRED\"}"
@@ -1420,7 +1645,10 @@ mod tests {
         // (NTFS keeps the index on overwrite), different bytes + new mtime
         let flipped: Vec<u8> = payload.iter().map(|b| b ^ 0x5A).collect();
         let target = env.roots.derived.join("asset.png");
-        let existing = std::fs::OpenOptions::new().write(true).open(&target).unwrap();
+        let existing = std::fs::OpenOptions::new()
+            .write(true)
+            .open(&target)
+            .unwrap();
         {
             use std::io::{Seek, SeekFrom, Write};
             let mut existing = existing;
@@ -1456,7 +1684,10 @@ mod tests {
 
             let flipped: Vec<u8> = payload.iter().map(|b| b ^ 0x5A).collect();
             let target = env.roots.derived.join("asset.png");
-            let existing = std::fs::OpenOptions::new().write(true).open(&target).unwrap();
+            let existing = std::fs::OpenOptions::new()
+                .write(true)
+                .open(&target)
+                .unwrap();
             {
                 use std::io::{Seek, SeekFrom};
                 let mut existing = existing;
@@ -1465,7 +1696,10 @@ mod tests {
             }
 
             let second = handle_m2res_request(&url, &env.channel, &env.roots);
-            assert_eq!(second.status, 400, "round {round}: rewritten content must not be served");
+            assert_eq!(
+                second.status, 400,
+                "round {round}: rewritten content must not be served"
+            );
             assert_eq!(
                 std::str::from_utf8(&second.body).unwrap(),
                 "{\"code\":\"CONTENT_DIGEST_MISMATCH\"}",
@@ -1653,7 +1887,9 @@ mod tests {
         assert_eq!(ping.status, "ready");
         assert_eq!(ping.protocol_version.major, 1);
         assert_eq!(ping.protocol_version.minor, 0);
-        assert!(ping.capabilities.contains(&"library.list_books".to_string()));
+        assert!(ping
+            .capabilities
+            .contains(&"library.list_books".to_string()));
 
         let books = channel.list_books().unwrap();
         assert!(books.is_empty());
@@ -1675,31 +1911,17 @@ mod tests {
         let data_root = dir.path().join("data_root");
         std::fs::create_dir_all(&data_root).unwrap();
 
-        let channel = StdioLibraryChannel::spawn(
-            &python,
-            &src_root,
-            Some(&data_root),
-        )
-        .expect("library sidecar spawn");
+        let channel = StdioLibraryChannel::spawn(&python, &src_root, Some(&data_root))
+            .expect("library sidecar spawn");
 
         // 1. Ping round-trip succeeds
         let ping = channel.ping().expect("ping");
         assert_eq!(ping.status, "ready");
-        assert_eq!(ping.protocol_version.major, 1);
-        // M2-PROD-DETECT-3 integration (DSH r1 R4): protocol minor bump
-        // 1.0 -> 1.1 (core.detect added); M2-SETTINGS-IPC-CHANNEL: 1.1 -> 2
-        // (settings_get/settings_update_section added);
-        // M2-REGION-RETYPE-CORE: 2 -> 3 (set_region_type/list_regions
-        // added); M2-RC4-DOMAIN-COMMANDS: 3 -> 4 (list_region_revisions /
-        // restore_region_revision / rerender_page added, DSH r1 PR-07
-        // retro-note); M2-PAGE-RESOURCE-RESOLVE-1: 4 -> 5
-        // (resolve_page_resource added); M2-PAGE-NAV-PROJECTION-1: 5 -> 6
-        // (list_chapters / list_chapter_pages added). This real-sidecar
-        // assertion is the consequence sync for the widenings. The
-        // MockChannel self-consistency stub above (:1194) keeps its own
-        // minor 0 by design.
-        assert_eq!(ping.protocol_version.minor, 6);
-        assert!(ping.capabilities.contains(&"library.list_books".to_string()));
+        assert_eq!(ping.protocol_version.major, 2);
+        assert_eq!(ping.protocol_version.minor, 3);
+        assert!(ping
+            .capabilities
+            .contains(&"library.list_books".to_string()));
 
         // 2. List books succeeds on empty store
         let books = channel.list_books().expect("list_books");
@@ -1736,16 +1958,15 @@ mod tests {
         let data_root = dir.path().join("data_root");
         std::fs::create_dir_all(&data_root).unwrap();
 
-        let channel = StdioLibraryChannel::spawn(
-            &python,
-            &src_root,
-            Some(&data_root),
-        )
-        .expect("library sidecar spawn");
+        let channel = StdioLibraryChannel::spawn(&python, &src_root, Some(&data_root))
+            .expect("library sidecar spawn");
 
         // 1. full projection read on a fresh install
         let full = channel.get_settings(None).expect("full settings read");
-        assert!(full.get("settings").is_some(), "projection envelope: {full}");
+        assert!(
+            full.get("settings").is_some(),
+            "projection envelope: {full}"
+        );
 
         // 2. unset sfx section reads as JSON null (frozen None channel)
         let unset = channel.get_settings(Some("sfx")).expect("section read");
@@ -1766,7 +1987,9 @@ mod tests {
             .unwrap_err();
         assert_eq!(error.code, "INVALID_REQUEST");
         assert_eq!(error.category, "validation");
-        let still = channel.get_settings(Some("sfx")).expect("read after reject");
+        let still = channel
+            .get_settings(Some("sfx"))
+            .expect("read after reject");
         assert_eq!(still["settings"]["sfx"]["policy"], "translate");
     }
 
@@ -1792,12 +2015,8 @@ mod tests {
         let data_root = dir.path().join("data_root");
         std::fs::create_dir_all(&data_root).unwrap();
 
-        let channel = StdioLibraryChannel::spawn(
-            &python,
-            &src_root,
-            Some(&data_root),
-        )
-        .expect("library sidecar spawn");
+        let channel = StdioLibraryChannel::spawn(&python, &src_root, Some(&data_root))
+            .expect("library sidecar spawn");
 
         // 1. footnote a: unknown page -> {"regions": []}, a successful read
         let empty = channel
@@ -1832,7 +2051,10 @@ mod tests {
             .expect("library sidecar spawn");
 
         assert_eq!(
-            channel.list_region_revisions("no-such-region").unwrap_err().code,
+            channel
+                .list_region_revisions("no-such-region")
+                .unwrap_err()
+                .code,
             "TARGET_NOT_FOUND"
         );
         assert_eq!(
@@ -1859,32 +2081,55 @@ mod tests {
     }
 
     impl LibraryChannel for SequencedRerenderLibrary {
-        fn ping(&self) -> Result<PingResult, LibraryError> { self.inner.ping() }
-        fn list_books(&self) -> Result<Vec<BookSummary>, LibraryError> { self.inner.list_books() }
+        fn ping(&self) -> Result<PingResult, LibraryError> {
+            self.inner.ping()
+        }
+        fn list_books(&self) -> Result<Vec<BookSummary>, LibraryError> {
+            self.inner.list_books()
+        }
         fn get_settings(&self, section: Option<&str>) -> Result<serde_json::Value, LibraryError> {
             self.inner.get_settings(section)
         }
-        fn update_settings_section(&self, section: &str, values: &serde_json::Value)
-            -> Result<serde_json::Value, LibraryError> {
+        fn update_settings_section(
+            &self,
+            section: &str,
+            values: &serde_json::Value,
+        ) -> Result<serde_json::Value, LibraryError> {
             self.inner.update_settings_section(section, values)
         }
-        fn set_region_type(&self, region_id: &str, new_region_type: &str, expected_revision: Option<i64>)
-            -> Result<serde_json::Value, LibraryError> {
-            self.inner.set_region_type(region_id, new_region_type, expected_revision)
+        fn set_region_type(
+            &self,
+            region_id: &str,
+            new_region_type: &str,
+            expected_revision: Option<i64>,
+        ) -> Result<serde_json::Value, LibraryError> {
+            self.inner
+                .set_region_type(region_id, new_region_type, expected_revision)
         }
         fn list_regions(&self, page_id: &str) -> Result<serde_json::Value, LibraryError> {
             self.inner.list_regions(page_id)
         }
-        fn list_region_revisions(&self, region_id: &str) -> Result<serde_json::Value, LibraryError> {
+        fn list_region_revisions(
+            &self,
+            region_id: &str,
+        ) -> Result<serde_json::Value, LibraryError> {
             self.inner.list_region_revisions(region_id)
         }
-        fn restore_region_revision(&self, region_id: &str, revision_no: i64, expected_revision: i64)
-            -> Result<serde_json::Value, LibraryError> {
-            self.inner.restore_region_revision(region_id, revision_no, expected_revision)
+        fn restore_region_revision(
+            &self,
+            region_id: &str,
+            revision_no: i64,
+            expected_revision: i64,
+        ) -> Result<serde_json::Value, LibraryError> {
+            self.inner
+                .restore_region_revision(region_id, revision_no, expected_revision)
         }
         fn rerender_page(&self, page_id: &str) -> Result<serde_json::Value, LibraryError> {
             let ordinal = self.calls.fetch_add(1, std::sync::atomic::Ordering::SeqCst);
-            let active = self.active.fetch_add(1, std::sync::atomic::Ordering::SeqCst) + 1;
+            let active = self
+                .active
+                .fetch_add(1, std::sync::atomic::Ordering::SeqCst)
+                + 1;
             {
                 let mut max_active = self.max_active.lock().unwrap();
                 *max_active = (*max_active).max(active);
@@ -1895,7 +2140,8 @@ mod tests {
             } else {
                 self.second_entered.lock().unwrap().send(()).unwrap();
             }
-            self.active.fetch_sub(1, std::sync::atomic::Ordering::SeqCst);
+            self.active
+                .fetch_sub(1, std::sync::atomic::Ordering::SeqCst);
             Ok(serde_json::json!({
                 "page_id": page_id,
                 "artifact_id": "artifact",
@@ -1920,27 +2166,45 @@ mod tests {
     /// atomic/counter handles for assertions while AppState owns a boxed
     /// channel.
     impl LibraryChannel for Arc<SequencedRerenderLibrary> {
-        fn ping(&self) -> Result<PingResult, LibraryError> { (**self).ping() }
-        fn list_books(&self) -> Result<Vec<BookSummary>, LibraryError> { (**self).list_books() }
+        fn ping(&self) -> Result<PingResult, LibraryError> {
+            (**self).ping()
+        }
+        fn list_books(&self) -> Result<Vec<BookSummary>, LibraryError> {
+            (**self).list_books()
+        }
         fn get_settings(&self, section: Option<&str>) -> Result<serde_json::Value, LibraryError> {
             (**self).get_settings(section)
         }
-        fn update_settings_section(&self, section: &str, values: &serde_json::Value)
-            -> Result<serde_json::Value, LibraryError> {
+        fn update_settings_section(
+            &self,
+            section: &str,
+            values: &serde_json::Value,
+        ) -> Result<serde_json::Value, LibraryError> {
             (**self).update_settings_section(section, values)
         }
-        fn set_region_type(&self, region_id: &str, new_region_type: &str, expected_revision: Option<i64>)
-            -> Result<serde_json::Value, LibraryError> {
+        fn set_region_type(
+            &self,
+            region_id: &str,
+            new_region_type: &str,
+            expected_revision: Option<i64>,
+        ) -> Result<serde_json::Value, LibraryError> {
             (**self).set_region_type(region_id, new_region_type, expected_revision)
         }
         fn list_regions(&self, page_id: &str) -> Result<serde_json::Value, LibraryError> {
             (**self).list_regions(page_id)
         }
-        fn list_region_revisions(&self, region_id: &str) -> Result<serde_json::Value, LibraryError> {
+        fn list_region_revisions(
+            &self,
+            region_id: &str,
+        ) -> Result<serde_json::Value, LibraryError> {
             (**self).list_region_revisions(region_id)
         }
-        fn restore_region_revision(&self, region_id: &str, revision_no: i64, expected_revision: i64)
-            -> Result<serde_json::Value, LibraryError> {
+        fn restore_region_revision(
+            &self,
+            region_id: &str,
+            revision_no: i64,
+            expected_revision: i64,
+        ) -> Result<serde_json::Value, LibraryError> {
             (**self).restore_region_revision(region_id, revision_no, expected_revision)
         }
         fn rerender_page(&self, page_id: &str) -> Result<serde_json::Value, LibraryError> {
@@ -2000,7 +2264,9 @@ mod tests {
 
         let first_state = state.clone();
         let first = std::thread::spawn(move || rerender_page_from_core(&first_state, "page"));
-        first_entered_rx.recv_timeout(Duration::from_secs(2)).unwrap();
+        first_entered_rx
+            .recv_timeout(Duration::from_secs(2))
+            .unwrap();
 
         let second_state = state.clone();
         let (second_started_tx, second_started_rx) = mpsc::channel();
@@ -2008,8 +2274,12 @@ mod tests {
             second_started_tx.send(()).unwrap();
             rerender_page_from_core(&second_state, "page")
         });
-        second_started_rx.recv_timeout(Duration::from_secs(2)).unwrap();
-        assert!(second_entered_rx.recv_timeout(Duration::from_millis(100)).is_err());
+        second_started_rx
+            .recv_timeout(Duration::from_secs(2))
+            .unwrap();
+        assert!(second_entered_rx
+            .recv_timeout(Duration::from_millis(100))
+            .is_err());
         assert_eq!(library.calls.load(std::sync::atomic::Ordering::SeqCst), 1);
 
         release_first_tx.send(()).unwrap();
@@ -2020,8 +2290,18 @@ mod tests {
             state.render_preview_resources.lock().unwrap().get("page"),
             Some(&"render-2".to_string())
         );
-        assert_eq!(state.channel.resolve(&old_ref.opaque_id).unwrap_err().code, "REF_REVOKED");
-        assert_eq!(state.channel.resolve(&first_ref.opaque_id).unwrap_err().code, "REF_REVOKED");
+        assert_eq!(
+            state.channel.resolve(&old_ref.opaque_id).unwrap_err().code,
+            "REF_REVOKED"
+        );
+        assert_eq!(
+            state
+                .channel
+                .resolve(&first_ref.opaque_id)
+                .unwrap_err()
+                .code,
+            "REF_REVOKED"
+        );
     }
 
     #[test]
@@ -2052,9 +2332,15 @@ mod tests {
         // fail-closes the new preview, keeps the old key retryable, and
         // rolls back the just-issued new grant.
         assert_eq!(out["preview"], serde_json::Value::Null);
-        assert_eq!(out["preview_error"], serde_json::json!("PREVIEW_UNAVAILABLE"));
+        assert_eq!(
+            out["preview_error"],
+            serde_json::json!("PREVIEW_UNAVAILABLE")
+        );
         assert_eq!(current.get("page"), Some(&"render-0".to_string()));
-        assert_eq!(core.resolve(&old_ref.opaque_id).unwrap().resource_id, "render-0");
+        assert_eq!(
+            core.resolve(&old_ref.opaque_id).unwrap().resource_id,
+            "render-0"
+        );
         assert_eq!(
             core.resolve(&next_ref.opaque_id).unwrap_err().code,
             "REF_REVOKED"
@@ -2170,7 +2456,10 @@ mod tests {
         });
 
         let out = rotate_render_preview(&core, "page", result, &mut current).unwrap();
-        assert_eq!(out["preview_error"], serde_json::json!("PREVIEW_UNAVAILABLE"));
+        assert_eq!(
+            out["preview_error"],
+            serde_json::json!("PREVIEW_UNAVAILABLE")
+        );
         assert!(
             core.retire_calls.lock().unwrap().is_empty(),
             "a failed rotation must not mark anything reclaimable"
@@ -2225,11 +2514,17 @@ mod tests {
     fn packaged_resolution_explicit_flag_wins() {
         let dir = tempfile::tempdir().unwrap();
         let resolved = resolve_packaged_sidecar_dir(Some("1"), None, Some(dir.path()));
-        assert_eq!(resolved, Some(dir.path().join("resources").join("core-sidecar")));
+        assert_eq!(
+            resolved,
+            Some(dir.path().join("resources").join("core-sidecar"))
+        );
         // explicit flag wins over a dev src_root too
         let resolved =
             resolve_packaged_sidecar_dir(Some("1"), Some("G:/repo/src"), Some(dir.path()));
-        assert_eq!(resolved, Some(dir.path().join("resources").join("core-sidecar")));
+        assert_eq!(
+            resolved,
+            Some(dir.path().join("resources").join("core-sidecar"))
+        );
     }
 
     /// A bare launch (no M2RC1_SRC_ROOT) is packaged ONLY when the
@@ -2257,8 +2552,7 @@ mod tests {
         let sidecar = dir.path().join("resources").join("core-sidecar");
         std::fs::create_dir_all(&sidecar).unwrap();
         std::fs::write(sidecar.join("host_bridge.exe"), b"fake").unwrap();
-        let resolved =
-            resolve_packaged_sidecar_dir(None, Some("G:/repo/src"), Some(dir.path()));
+        let resolved = resolve_packaged_sidecar_dir(None, Some("G:/repo/src"), Some(dir.path()));
         assert_eq!(resolved, None);
         // no current exe at all -> never packaged
         let resolved = resolve_packaged_sidecar_dir(None, None, None);

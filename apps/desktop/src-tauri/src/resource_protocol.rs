@@ -101,7 +101,10 @@ fn status_for(code: &str) -> u16 {
     match code {
         "REF_MALFORMED" => 400,
         "REF_UNKNOWN_ID" | "REF_NOT_FOUND" => 404,
-        "REF_OUT_OF_SCOPE" | "REF_REPARSE_POINT" | "REF_SCOPE_DENIED" | "RESOURCE_TOO_LARGE"
+        "REF_OUT_OF_SCOPE"
+        | "REF_REPARSE_POINT"
+        | "REF_SCOPE_DENIED"
+        | "RESOURCE_TOO_LARGE"
         | "RESOURCE_LIMIT_EXCEEDED" => 403,
         "REF_REVOKED" | "REF_EXPIRED" => 410,
         _ => 400,
@@ -109,7 +112,12 @@ fn status_for(code: &str) -> u16 {
 }
 
 fn typed_error(error: &CoreError) -> HttpResponse {
-    let code = error.code.split(':').next().unwrap_or("REF_MALFORMED").to_string();
+    let code = error
+        .code
+        .split(':')
+        .next()
+        .unwrap_or("REF_MALFORMED")
+        .to_string();
     let status = match code.as_str() {
         "CORE_SPAWN_FAILED" | "CORE_BRIDGE_DOWN" => 503,
         other => status_for(other),
@@ -264,9 +272,7 @@ impl Drop for OpenedFile {
     }
 }
 
-fn identity_size_mtime(
-    handle: *mut std::ffi::c_void,
-) -> Result<(u32, u64, u64, u64), CoreError> {
+fn identity_size_mtime(handle: *mut std::ffi::c_void) -> Result<(u32, u64, u64, u64), CoreError> {
     let mut raw = win32::RawInfo::default();
     let ok = unsafe { win32::GetFileInformationByHandle(handle, &mut raw) };
     if ok == 0 {
@@ -276,6 +282,32 @@ fn identity_size_mtime(
     let index = ((raw.index_high as u64) << 32) | raw.index_low as u64;
     let mtime = ((raw.write_hi as u64) << 32) | raw.write_lo as u64;
     Ok((raw.volume_serial, index, size, mtime))
+}
+
+#[cfg(windows)]
+pub(crate) fn file_identity(file: &std::fs::File) -> Option<(u64, u64)> {
+    use std::os::windows::io::AsRawHandle;
+    let mut raw = win32::RawInfo::default();
+    // SAFETY: the handle is owned by `file`; RawInfo matches BY_HANDLE_FILE_INFORMATION.
+    if unsafe { win32::GetFileInformationByHandle(file.as_raw_handle(), &mut raw) } == 0 {
+        return None;
+    }
+    Some((
+        u64::from(raw.volume_serial),
+        (u64::from(raw.index_high) << 32) | u64::from(raw.index_low),
+    ))
+}
+
+#[cfg(unix)]
+pub(crate) fn file_identity(file: &std::fs::File) -> Option<(u64, u64)> {
+    use std::os::unix::fs::MetadataExt;
+    let metadata = file.metadata().ok()?;
+    Some((metadata.dev(), metadata.ino()))
+}
+
+#[cfg(not(any(windows, unix)))]
+pub(crate) fn file_identity(_: &std::fs::File) -> Option<(u64, u64)> {
+    None
 }
 
 fn final_path(handle: *mut std::ffi::c_void) -> Result<String, CoreError> {
@@ -489,8 +521,7 @@ fn verify_and_serve(
     // unchanged — any byte-level rewrite anywhere in the file still fails
     // the whole request with CONTENT_DIGEST_MISMATCH).
     let want = ((size - chunk_offset).min(CHUNK_SIZE)) as usize;
-    let (digest, captured) =
-        stream_digest_and_capture(opened.handle, size, chunk_offset, want)?;
+    let (digest, captured) = stream_digest_and_capture(opened.handle, size, chunk_offset, want)?;
     if digest != grant.sha256 {
         return Err(CoreError::new("CONTENT_DIGEST_MISMATCH"));
     }

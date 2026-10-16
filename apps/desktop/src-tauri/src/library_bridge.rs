@@ -1,10 +1,12 @@
 //! Production Library & Core Lifecycle Bridge (M2-IPC1).
 //!
 //! Connects the Tauri host to the Python Core service sidecar (`bootstrap.core_service`)
-//! over stdio JSON-lines with Contract 1.1 typed envelopes.
+//! over stdio JSON-lines with Core protocol 2.3 envelopes.
 
 use serde::{Deserialize, Serialize};
+use serde_json::Value;
 use std::io::{BufRead, BufReader, Write};
+use std::path::Path;
 use std::process::{Child, ChildStdin, ChildStdout, Command, Stdio};
 use std::sync::atomic::{AtomicU64, Ordering};
 use std::sync::Mutex;
@@ -111,7 +113,10 @@ pub fn decode_response(line: &str) -> Result<serde_json::Value, LibraryError> {
         });
     }
 
-    Ok(value.get("result").cloned().unwrap_or(serde_json::Value::Null))
+    Ok(value
+        .get("result")
+        .cloned()
+        .unwrap_or(serde_json::Value::Null))
 }
 
 pub trait LibraryChannel: Send + Sync {
@@ -150,10 +155,7 @@ pub trait LibraryChannel: Send + Sync {
     /// passes through; a page with no rows is an empty list, not an error.
     fn list_regions(&self, page_id: &str) -> Result<serde_json::Value, LibraryError>;
     /// RC-4 read-only revision history projection.
-    fn list_region_revisions(
-        &self,
-        region_id: &str,
-    ) -> Result<serde_json::Value, LibraryError>;
+    fn list_region_revisions(&self, region_id: &str) -> Result<serde_json::Value, LibraryError>;
     /// RC-4 explicit restore creates a new revision under the Core's
     /// transaction-time current-revision guard.
     fn restore_region_revision(
@@ -179,6 +181,26 @@ pub trait LibraryChannel: Send + Sync {
     fn list_chapters(&self, book_id: &str) -> Result<serde_json::Value, LibraryError>;
 
     fn list_chapter_pages(&self, chapter_id: &str) -> Result<serde_json::Value, LibraryError>;
+
+    fn import_from_path(
+        &self,
+        path: &Path,
+        source_kind: &str,
+        chapter_id: &str,
+        duplicate_policy: Option<&str>,
+    ) -> Result<crate::host_issuer::ImportSummary, LibraryError> {
+        let _ = (path, source_kind, chapter_id, duplicate_policy);
+        Err(LibraryError::unavailable("Host issuer is unavailable"))
+    }
+
+    fn start_export_to_path(
+        &self,
+        path: &Path,
+        request: Value,
+    ) -> Result<crate::host_issuer::ExportSummary, LibraryError> {
+        let _ = (path, request);
+        Err(LibraryError::unavailable("Host issuer is unavailable"))
+    }
 }
 
 /// The command argv pinned for spawning the production Core service.
@@ -192,6 +214,53 @@ pub struct StdioLibraryChannel {
     stdout: Mutex<BufReader<ChildStdout>>,
     transaction_lock: Mutex<()>,
     request_id_gen: AtomicU64,
+    host_session: Mutex<Option<HostSession>>,
+}
+
+struct HostSession {
+    host_session_id: String,
+    credential: String,
+    core_session_id: String,
+    signing_key: [u8; 32],
+}
+
+impl Drop for HostSession {
+    fn drop(&mut self) {
+        self.credential.clear();
+        self.signing_key.fill(0);
+    }
+}
+
+fn build_host_control_envelope(
+    request_id: &str,
+    command: &str,
+    payload: Value,
+    session: Option<&HostSession>,
+) -> Value {
+    let mut request = serde_json::json!({
+        "protocol": "new-manga.core",
+        "version": { "major": 2, "minor": 3 },
+        "request_id": request_id,
+        "channel": "host-control",
+        "command": command,
+        "payload": payload,
+    });
+    if let Some(session) = session {
+        request["core_session_id"] = serde_json::json!(session.core_session_id);
+        request["host_session_id"] = serde_json::json!(session.host_session_id);
+        request["host_session_credential"] = serde_json::json!(session.credential);
+    }
+    request
+}
+
+fn build_application_envelope(request_id: &str, command: &str, payload: Value) -> Value {
+    serde_json::json!({
+        "protocol": "new-manga.core",
+        "version": { "major": 2, "minor": 3 },
+        "request_id": request_id,
+        "command": command,
+        "payload": payload,
+    })
 }
 
 impl StdioLibraryChannel {
@@ -259,6 +328,7 @@ impl StdioLibraryChannel {
             stdout: Mutex::new(BufReader::new(stdout)),
             transaction_lock: Mutex::new(()),
             request_id_gen: AtomicU64::new(1),
+            host_session: Mutex::new(None),
         })
     }
 
@@ -271,32 +341,38 @@ impl StdioLibraryChannel {
             "req-{}",
             self.request_id_gen.fetch_add(1, Ordering::Relaxed)
         );
-        let request = serde_json::json!({
-            "protocol": "new-manga.core",
-            "version": { "major": 1, "minor": 4 },
-            "request_id": req_id,
-            "command": command,
-            "payload": payload,
-        });
+        let request = build_application_envelope(&req_id, command, payload);
+
+        self.exchange(request)
+    }
+
+    fn exchange(&self, request: Value) -> Result<Value, LibraryError> {
+        let _req_id = request
+            .get("request_id")
+            .and_then(Value::as_str)
+            .unwrap_or("host-control-request")
+            .to_string();
 
         let mut line = request.to_string();
         line.push('\n');
 
-        let _tx_guard = self.transaction_lock.lock().map_err(|_| {
-            LibraryError::unavailable("Internal mutex poisoned (transaction)")
-        })?;
+        let _tx_guard = self
+            .transaction_lock
+            .lock()
+            .map_err(|_| LibraryError::unavailable("Internal mutex poisoned (transaction)"))?;
 
         #[cfg(test)]
         TEST_AFTER_TRANSACTION_LOCK_HOOK.with(|cell| {
             if let Some(hook) = cell.borrow_mut().as_mut() {
-                hook(&req_id);
+                hook(&_req_id);
             }
         });
 
         {
-            let mut stdin = self.stdin.lock().map_err(|_| {
-                LibraryError::unavailable("Internal mutex poisoned (stdin)")
-            })?;
+            let mut stdin = self
+                .stdin
+                .lock()
+                .map_err(|_| LibraryError::unavailable("Internal mutex poisoned (stdin)"))?;
             stdin
                 .write_all(line.as_bytes())
                 .map_err(|e| LibraryError::unavailable(&format!("stdin write failed: {e}")))?;
@@ -307,9 +383,10 @@ impl StdioLibraryChannel {
 
         let mut response_line = String::new();
         {
-            let mut stdout = self.stdout.lock().map_err(|_| {
-                LibraryError::unavailable("Internal mutex poisoned (stdout)")
-            })?;
+            let mut stdout = self
+                .stdout
+                .lock()
+                .map_err(|_| LibraryError::unavailable("Internal mutex poisoned (stdout)"))?;
             stdout
                 .read_line(&mut response_line)
                 .map_err(|e| LibraryError::unavailable(&format!("stdout read failed: {e}")))?;
@@ -318,14 +395,14 @@ impl StdioLibraryChannel {
         #[cfg(test)]
         TEST_RESPONSE_OBSERVER.with(|cell| {
             if let Some(observer) = cell.borrow_mut().as_mut() {
-                observer(&req_id, response_line.trim_end());
+                observer(&_req_id, response_line.trim_end());
             }
         });
 
         #[cfg(test)]
         TEST_BEFORE_TRANSACTION_UNLOCK_HOOK.with(|cell| {
             if let Some(hook) = cell.borrow_mut().as_mut() {
-                hook(&req_id);
+                hook(&_req_id);
             }
         });
 
@@ -336,6 +413,187 @@ impl StdioLibraryChannel {
         }
 
         decode_response(response_line.trim_end())
+    }
+
+    fn host_control_round_trip(
+        &self,
+        command: &str,
+        payload: Value,
+        session: Option<&HostSession>,
+    ) -> Result<Value, LibraryError> {
+        let request_id = format!(
+            "hostctl-{}",
+            self.request_id_gen.fetch_add(1, Ordering::Relaxed)
+        );
+        let request = build_host_control_envelope(&request_id, command, payload, session);
+        self.exchange(request)
+    }
+
+    pub fn open_host_session(&self) -> Result<(), LibraryError> {
+        let mut current = self
+            .host_session
+            .lock()
+            .map_err(|_| LibraryError::unavailable("Host session state is unavailable"))?;
+        if current.is_some() {
+            return Err(LibraryError::new(
+                "HOST_SESSION_ALREADY_OPENED",
+                "conflict",
+                false,
+                None,
+            ));
+        }
+        let mut credential_bytes = [0; 32];
+        let credential =
+            crate::host_issuer::random_token(&mut credential_bytes).map_err(host_issuer_error)?;
+        credential_bytes.fill(0);
+        let mut session_bytes = [0; 32];
+        let host_session_id = format!(
+            "host_{}",
+            crate::host_issuer::random_token(&mut session_bytes).map_err(host_issuer_error)?
+        );
+        session_bytes.fill(0);
+        let mut signing_key = [0; 32];
+        crate::host_issuer::random_bytes(&mut signing_key).map_err(host_issuer_error)?;
+        let result = self.host_control_round_trip(
+            "OpenHostSession",
+            serde_json::json!({
+                "host_session_id": host_session_id.clone(),
+                "host_session_credential": credential.clone(),
+            }),
+            None,
+        )?;
+        let core_session_id = result
+            .get("core_session_id")
+            .and_then(Value::as_str)
+            .filter(|id| !id.is_empty())
+            .ok_or_else(|| LibraryError::malformed("Host session response is invalid"))?
+            .to_string();
+        *current = Some(HostSession {
+            host_session_id,
+            credential,
+            core_session_id,
+            signing_key,
+        });
+        Ok(())
+    }
+
+    fn revoke_host_grant(&self, session: &HostSession, kind: &str, grant_id: &str) {
+        let command = match kind {
+            "import" => "RevokeImportSource",
+            _ => "RevokeExportTarget",
+        };
+        let _ = self.host_control_round_trip(
+            command,
+            serde_json::json!({ "grant_id": grant_id }),
+            Some(session),
+        );
+    }
+
+    fn import_with_session(
+        &self,
+        session: &HostSession,
+        path: &Path,
+        source_kind: &str,
+        chapter_id: &str,
+        duplicate_policy: Option<&str>,
+    ) -> Result<crate::host_issuer::ImportSummary, LibraryError> {
+        if chapter_id.is_empty()
+            || duplicate_policy.is_some_and(|p| !matches!(p, "skip" | "import_as_new"))
+        {
+            return Err(LibraryError::new(
+                "INVALID_REQUEST",
+                "validation",
+                false,
+                None,
+            ));
+        }
+        let mut grant_id_bytes = [0; 32];
+        let grant = crate::host_issuer::build_import_grant(
+            path,
+            source_kind,
+            &session.host_session_id,
+            format!(
+                "grant_{}",
+                crate::host_issuer::random_token(&mut grant_id_bytes).map_err(host_issuer_error)?
+            ),
+            &session.signing_key,
+        )
+        .map_err(host_issuer_error)?;
+        let registration =
+            self.host_control_round_trip("RegisterImportSource", grant.payload, Some(session))?;
+        if registration.get("registered") != Some(&Value::Bool(true)) {
+            self.revoke_host_grant(session, "import", &grant.grant_id);
+            return Err(LibraryError::malformed(
+                "Core did not register import grant",
+            ));
+        }
+        let mut payload = serde_json::json!({
+            "chapter_id": chapter_id,
+            "sources": [grant.reference],
+        });
+        if let Some(policy) = duplicate_policy {
+            payload["duplicate_policy"] = serde_json::json!(policy);
+        }
+        let result = match self.round_trip("ImportPages", payload) {
+            Ok(result) => result,
+            Err(error) => {
+                self.revoke_host_grant(session, "import", &grant.grant_id);
+                return Err(error);
+            }
+        };
+        match crate::host_issuer::import_summary(result) {
+            Ok(summary) => Ok(summary),
+            Err(error) => {
+                self.revoke_host_grant(session, "import", &grant.grant_id);
+                Err(host_issuer_error(error))
+            }
+        }
+    }
+
+    fn export_with_session(
+        &self,
+        session: &HostSession,
+        path: &Path,
+        mut request: Value,
+    ) -> Result<crate::host_issuer::ExportSummary, LibraryError> {
+        let (format, extension) =
+            crate::host_issuer::validate_export_request(&request).map_err(host_issuer_error)?;
+        let mut grant_id_bytes = [0; 32];
+        let grant = crate::host_issuer::build_export_grant(
+            path,
+            format,
+            extension,
+            &session.host_session_id,
+            format!(
+                "grant_{}",
+                crate::host_issuer::random_token(&mut grant_id_bytes).map_err(host_issuer_error)?
+            ),
+            &session.signing_key,
+        )
+        .map_err(host_issuer_error)?;
+        let registration =
+            self.host_control_round_trip("RegisterExportTarget", grant.payload, Some(session))?;
+        if registration.get("registered") != Some(&Value::Bool(true)) {
+            self.revoke_host_grant(session, "export", &grant.grant_id);
+            return Err(LibraryError::malformed(
+                "Core did not register export grant",
+            ));
+        }
+        request["target_ref"] = serde_json::json!(grant.reference);
+        let result = match self.round_trip("StartExport", request) {
+            Ok(result) => result,
+            Err(error) => {
+                self.revoke_host_grant(session, "export", &grant.grant_id);
+                return Err(error);
+            }
+        };
+        match crate::host_issuer::export_summary(result) {
+            Ok(summary) => Ok(summary),
+            Err(error) => {
+                self.revoke_host_grant(session, "export", &grant.grant_id);
+                Err(host_issuer_error(error))
+            }
+        }
     }
 
     /// M2-DERIVED-GC-2 (design §2.3): the production spawn waits for the
@@ -431,6 +689,7 @@ impl StdioLibraryChannel {
             stdout: Mutex::new(BufReader::new(stdout)),
             transaction_lock: Mutex::new(()),
             request_id_gen: AtomicU64::new(1),
+            host_session: Mutex::new(None),
         })
     }
 }
@@ -453,9 +712,18 @@ pub fn wait_timeout_or_kill(
 
 impl Drop for StdioLibraryChannel {
     fn drop(&mut self) {
+        if let Ok(mut session) = self.host_session.lock() {
+            if let Some(session) = session.take() {
+                let _ = self.host_control_round_trip(
+                    "CloseHostSession",
+                    serde_json::json!({}),
+                    Some(&session),
+                );
+            }
+        }
         let req = serde_json::json!({
             "protocol": "new-manga.core",
-            "version": { "major": 1, "minor": 4 },
+            "version": { "major": 2, "minor": 3 },
             "request_id": "shutdown-drop",
             "command": "core.shutdown",
             "payload": {},
@@ -572,10 +840,7 @@ impl LibraryChannel for StdioLibraryChannel {
         self.round_trip("list_regions", serde_json::json!({ "page_id": page_id }))
     }
 
-    fn list_region_revisions(
-        &self,
-        region_id: &str,
-    ) -> Result<serde_json::Value, LibraryError> {
+    fn list_region_revisions(&self, region_id: &str) -> Result<serde_json::Value, LibraryError> {
         self.round_trip(
             "list_region_revisions",
             serde_json::json!({ "region_id": region_id }),
@@ -619,6 +884,47 @@ impl LibraryChannel for StdioLibraryChannel {
             serde_json::json!({ "chapter_id": chapter_id }),
         )
     }
+
+    fn import_from_path(
+        &self,
+        path: &Path,
+        source_kind: &str,
+        chapter_id: &str,
+        duplicate_policy: Option<&str>,
+    ) -> Result<crate::host_issuer::ImportSummary, LibraryError> {
+        let session = self
+            .host_session
+            .lock()
+            .map_err(|_| LibraryError::unavailable("Host session state is unavailable"))?;
+        let session = session
+            .as_ref()
+            .ok_or_else(|| LibraryError::new("HOST_SESSION_INVALID", "conflict", false, None))?;
+        self.import_with_session(session, path, source_kind, chapter_id, duplicate_policy)
+    }
+
+    fn start_export_to_path(
+        &self,
+        path: &Path,
+        request: Value,
+    ) -> Result<crate::host_issuer::ExportSummary, LibraryError> {
+        let session = self
+            .host_session
+            .lock()
+            .map_err(|_| LibraryError::unavailable("Host session state is unavailable"))?;
+        let session = session
+            .as_ref()
+            .ok_or_else(|| LibraryError::new("HOST_SESSION_INVALID", "conflict", false, None))?;
+        self.export_with_session(session, path, request)
+    }
+}
+
+fn host_issuer_error(error: crate::host_issuer::HostIssuerError) -> LibraryError {
+    let category = match error.0 {
+        "SOURCE_READ_FAILED" => "unavailable",
+        "HOST_CREDENTIAL_UNAVAILABLE" => "internal",
+        _ => "validation",
+    };
+    LibraryError::new(error.0, category, false, None)
 }
 
 /// In-memory mock channel for testing without spawning Python.
@@ -729,10 +1035,7 @@ impl LibraryChannel for MockLibraryChannel {
         self.regions_result.lock().unwrap().clone()
     }
 
-    fn list_region_revisions(
-        &self,
-        _region_id: &str,
-    ) -> Result<serde_json::Value, LibraryError> {
+    fn list_region_revisions(&self, _region_id: &str) -> Result<serde_json::Value, LibraryError> {
         self.domain_result.lock().unwrap().clone()
     }
 
@@ -778,7 +1081,7 @@ mod tests {
 
     #[test]
     fn decode_response_parses_success_and_error() {
-        let success = r#"{"protocol":"new-manga.core","version":{"major":1,"minor":0},"request_id":"1","result":{"status":"ready"},"error":null}"#;
+        let success = r#"{"protocol":"new-manga.core","version":{"major":2,"minor":3},"request_id":"1","result":{"status":"ready"},"error":null}"#;
         let res = decode_response(success).unwrap();
         assert_eq!(res.get("status").and_then(|s| s.as_str()), Some("ready"));
 
@@ -788,6 +1091,70 @@ mod tests {
         assert_eq!(err.category, "validation");
         assert_eq!(err.retryable, false);
         assert_eq!(err.message.as_deref(), Some("Unsupported"));
+    }
+
+    #[test]
+    fn host_control_envelope_is_separate_and_bound_to_both_sessions() {
+        let open = build_host_control_envelope(
+            "hostctl-open",
+            "OpenHostSession",
+            serde_json::json!({"host_session_id":"host-id","host_session_credential":"credential"}),
+            None,
+        );
+        assert_eq!(open["version"], serde_json::json!({"major":2,"minor":3}));
+        assert_eq!(open["channel"], "host-control");
+        assert!(open.get("core_session_id").is_none());
+
+        let session = HostSession {
+            host_session_id: "host-id".into(),
+            credential: "credential".into(),
+            core_session_id: "core-id".into(),
+            signing_key: [7; 32],
+        };
+        let register = build_host_control_envelope(
+            "hostctl-register",
+            "RegisterImportSource",
+            serde_json::json!({"grant_id":"grant-id"}),
+            Some(&session),
+        );
+        assert_eq!(register["channel"], "host-control");
+        assert_eq!(register["core_session_id"], "core-id");
+        assert_eq!(register["host_session_id"], "host-id");
+        assert_eq!(register["host_session_credential"], "credential");
+        assert!(register.get("signing_key").is_none());
+
+        let ordinary =
+            build_application_envelope("req-ordinary", "OpenHostSession", serde_json::json!({}));
+        assert_eq!(
+            ordinary["version"],
+            serde_json::json!({"major":2,"minor":3})
+        );
+        assert!(ordinary.get("channel").is_none());
+    }
+
+    #[test]
+    fn host_control_denial_codes_are_preserved_for_host_handling() {
+        for code in [
+            "HOST_ONLY_REQUIRED",
+            "HOST_SESSION_INVALID",
+            "CORE_SESSION_MISMATCH",
+        ] {
+            let category = if code == "HOST_ONLY_REQUIRED" {
+                "validation"
+            } else {
+                "conflict"
+            };
+            let response = serde_json::json!({
+                "protocol":"new-manga.core",
+                "version":{"major":2,"minor":3},
+                "request_id":"hostctl-test",
+                "result":null,
+                "error":{"code":code,"category":category,"retryable":false,"message":"rejected"}
+            });
+            let error = decode_response(&response.to_string()).unwrap_err();
+            assert_eq!(error.code, code);
+            assert_eq!(error.category, category);
+        }
     }
 
     #[test]
@@ -984,7 +1351,9 @@ mod tests {
                 { "chapter_id": "c2", "title": "second", "chapter_number": "2", "sort_order": 2 }
             ],
         })));
-        let chapters = channel.list_chapters("book-1").expect("list_chapters succeeds");
+        let chapters = channel
+            .list_chapters("book-1")
+            .expect("list_chapters succeeds");
         assert_eq!(chapters["chapters"][0]["chapter_id"], "c1");
         assert_eq!(chapters["chapters"][1]["sort_order"], 2);
 
@@ -1047,8 +1416,7 @@ mod tests {
             .stderr(Stdio::null())
             .spawn()
             .expect("spawn silent child");
-        let channel =
-            StdioLibraryChannel::adopt_child_for_test(child).expect("adopt child");
+        let channel = StdioLibraryChannel::adopt_child_for_test(child).expect("adopt child");
 
         let start = std::time::Instant::now();
         let answered = channel.wait_first_ping(std::time::Duration::from_millis(400));
@@ -1116,11 +1484,7 @@ mod tests {
         use std::sync::mpsc;
         use std::sync::Arc;
 
-        fn recv_bounded<T>(
-            rx: &mpsc::Receiver<T>,
-            timeout: std::time::Duration,
-            phase: &str,
-        ) -> T {
+        fn recv_bounded<T>(rx: &mpsc::Receiver<T>, timeout: std::time::Duration, phase: &str) -> T {
             rx.recv_timeout(timeout).unwrap_or_else(|err| match err {
                 mpsc::RecvTimeoutError::Timeout => {
                     panic!("bounded wait timed out after {timeout:?} waiting for {phase}");
@@ -1167,10 +1531,7 @@ mod tests {
                 .map(|d| d.as_millis())
                 .unwrap_or(0)
         );
-        let log_path = repo_root
-            .join("verification")
-            .join("P04")
-            .join(run_id);
+        let log_path = repo_root.join("verification").join("P04").join(run_id);
 
         let mut cmd = Command::new(&python);
         cmd.arg(&script_path);
@@ -1312,19 +1673,19 @@ mod tests {
             (res, captured_raw, captured_id)
         });
 
-        let (res_alpha, raw_alpha, id_alpha) = handle_alpha
-            .join()
-            .expect("caller alpha thread panicked");
-        let (res_beta, raw_beta, id_beta) = handle_beta
-            .join()
-            .expect("caller beta thread panicked");
+        let (res_alpha, raw_alpha, id_alpha) =
+            handle_alpha.join().expect("caller alpha thread panicked");
+        let (res_beta, raw_beta, id_beta) =
+            handle_beta.join().expect("caller beta thread panicked");
 
         let val_alpha = res_alpha.expect("round_trip alpha failed");
         let val_beta = res_beta.expect("round_trip beta failed");
 
-        let alpha_owned = val_alpha.get("echo_caller").and_then(|v| v.as_str()) == Some("caller_alpha")
+        let alpha_owned = val_alpha.get("echo_caller").and_then(|v| v.as_str())
+            == Some("caller_alpha")
             && val_alpha.get("echo_token").and_then(|v| v.as_str()) == Some("token-AAA-111");
-        let beta_owned = val_beta.get("echo_caller").and_then(|v| v.as_str()) == Some("caller_beta")
+        let beta_owned = val_beta.get("echo_caller").and_then(|v| v.as_str())
+            == Some("caller_beta")
             && val_beta.get("echo_token").and_then(|v| v.as_str()) == Some("token-BBB-222");
 
         let behavior = if alpha_owned && beta_owned {
@@ -1378,6 +1739,9 @@ mod tests {
             beta_owned,
             "Caller beta must receive its own echo (expected caller_beta/token-BBB-222), got val_beta={val_beta:?}"
         );
-        assert_eq!(behavior, "PASS", "concurrency behavior verdict must be PASS");
+        assert_eq!(
+            behavior, "PASS",
+            "concurrency behavior verdict must be PASS"
+        );
     }
 }
