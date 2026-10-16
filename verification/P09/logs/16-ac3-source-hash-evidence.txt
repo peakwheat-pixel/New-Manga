@@ -1,0 +1,10 @@
+{
+  "source": "verification/P09/evidence/AC3-source.png",
+  "sha256_by_stage": {
+    "before_import": "36452bb8d135ac96f1c453e11c23689d5917a2f0db42d154aca02722507153d7",
+    "after_import": "36452bb8d135ac96f1c453e11c23689d5917a2f0db42d154aca02722507153d7",
+    "after_project_hide": "36452bb8d135ac96f1c453e11c23689d5917a2f0db42d154aca02722507153d7",
+    "after_page_delete": "36452bb8d135ac96f1c453e11c23689d5917a2f0db42d154aca02722507153d7",
+    "after_permanent_managed_page_purge": "36452bb8d135ac96f1c453e11c23689d5917a2f0db42d154aca02722507153d7"
+  }
+}

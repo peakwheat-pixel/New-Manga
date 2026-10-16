@@ -115,7 +115,7 @@ from bootstrap.core_assembly import (
     default_data_root,
 )
 from domain.regions.entities import RegionType, SfxPolicy
-from infrastructure.importing import SUPPORTED_IMAGE_SUFFIXES
+from infrastructure.importing import QtImageDecoder, SUPPORTED_IMAGE_SUFFIXES
 from infrastructure.rendering.pillow_rendering import (
     PillowFontCatalog,
     PillowImageCompositor,
@@ -311,6 +311,8 @@ class RenderCommandError(ValueError):
 
 
 class _PassthroughImageDecoder:
+    """Legacy test double; production assembly uses ``QtImageDecoder``."""
+
     def decode(self, payload: bytes) -> DecodedImage:
         del payload
         # mime_type keeps the stub's original "rgb" semantics under the image
@@ -328,9 +330,8 @@ def assemble_production_core(data_root: Path | None = None) -> CoreServices:
     """Assemble production Core services on the given or default data root.
 
     Runs database migrations, initializes repositories and managed copy layout,
-    and runs startup ``recover_running_runs()``. Uses lightweight headless adapters
-    so the service starts reliably in headless sidecar environments without
-    requiring a display server.
+    and runs startup ``recover_running_runs()``. Image decoding is lazy, so
+    assembly remains headless while imports use the declared Qt image runtime.
     """
     if data_root is None:
         data_root = default_data_root()
@@ -338,7 +339,7 @@ def assemble_production_core(data_root: Path | None = None) -> CoreServices:
     db_path = data_root / "library.db"
     managed_root = data_root / "managed"
 
-    # Assemble Qt-free Core services with real headless rendering adapters.
+    # The decoder loads Qt lazily on image decode, after the headless sidecar assembles.
     catalog = PillowFontCatalog()
     assembled: dict[str, CoreServices] = {}
 
@@ -366,7 +367,7 @@ def assemble_production_core(data_root: Path | None = None) -> CoreServices:
     core = assemble_core_services(
         db_path,
         managed_root,
-        image_decoder=_PassthroughImageDecoder(),
+        image_decoder=QtImageDecoder(),
         font_catalog=catalog,
         layout_engine=PillowTextLayoutEngine(catalog),
         compositor=PillowImageCompositor(catalog),

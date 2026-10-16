@@ -1,0 +1,75 @@
+COMMAND: git rev-parse HEAD
+d7fe920272d48eb4761347a5e18789dcbbdd05d6
+COMMAND: git branch --show-current
+codex/P09-import-core
+COMMAND: git rev-parse --git-common-dir
+G:/CODEX/New Manga/.git
+COMMAND: git diff --name-only d7fe920272d48eb4761347a5e18789dcbbdd05d6..HEAD
+COMMAND: git diff --name-only d7fe920272d48eb4761347a5e18789dcbbdd05d6 (tracked worktree edits vs base)
+warning: in the working copy of 'src/application/importing/documents/service.py', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'tests/import_formats/test_mobi_import.py', LF will be replaced by CRLF the next time Git touches it
+doc/tasks/P09.md
+src/application/importing/documents/service.py
+src/application/importing/images/__init__.py
+src/application/importing/images/sorting.py
+src/bootstrap/core_assembly.py
+src/bootstrap/core_service.py
+tests/import_formats/test_document_import.py
+tests/import_formats/test_mobi_import.py
+tests/library/test_import_images.py
+tests/library/test_production_adapters.py
+COMMAND: git status --porcelain --untracked-files=all (scope enumeration)
+warning: could not open directory 'pytest-cache-files-0s2m2r88/': Permission denied
+warning: could not open directory 'pytest-cache-files-pkvyeizv/': Permission denied
+warning: could not open directory 'verification/P09/pytest-tmp/': Permission denied
+warning: could not open directory 'verification/P09/scratch/pytest-of-49745/': Permission denied
+warning: could not open directory 'verification/P09/scratch/test-data/': Permission denied
+ M doc/tasks/P09.md
+ M src/application/importing/documents/service.py
+ M src/application/importing/images/__init__.py
+ M src/application/importing/images/sorting.py
+ M src/bootstrap/core_assembly.py
+ M src/bootstrap/core_service.py
+ M tests/import_formats/test_document_import.py
+ M tests/import_formats/test_mobi_import.py
+ M tests/library/test_import_images.py
+ M tests/library/test_production_adapters.py
+?? doc/contracts/P09_IMPORT_CONTRACT.md
+?? tests/library/test_import_sources.py
+?? tests/library/test_p09_managed_copy_safety.py
+?? verification/P09/AC-STATUS.md
+?? verification/P09/commit-order-and-rollback.md
+?? verification/P09/evidence/AC3-source-hashes-partial.json
+?? verification/P09/evidence/AC3-source.png
+?? verification/P09/logs/00-path-tests-before-implementation.txt
+?? verification/P09/logs/01-path-source-tests.txt
+?? verification/P09/logs/02-path-source-tests-isolated.txt
+?? verification/P09/logs/03-path-source-tests-workspace-isolation.txt
+?? verification/P09/logs/04-path-source-tests-env-temp.txt
+?? verification/P09/logs/05-path-source-tests-workspace-runner.txt
+?? verification/P09/logs/06-p09-target-tests.txt
+?? verification/P09/logs/07-path-source-tests-fixed.txt
+?? verification/P09/logs/08-p09-target-tests-fixed.txt
+?? verification/P09/logs/09-managed-copy-safety-tests.txt
+?? verification/P09/logs/10-managed-copy-safety-extended.txt
+?? verification/P09/logs/11-p09-full-target-tests.txt
+?? verification/P09/logs/12-p09-target-tests-without-qt-cases.txt
+?? verification/P09/logs/13-ac1-production-decoder-availability.txt
+?? verification/P09/logs/14-runtime-dependencies.txt
+?? verification/P09/logs/15-production-adapters-module-skip.txt
+?? verification/P09/logs/16-ac3-source-hash-evidence.txt
+?? verification/P09/logs/17-test-artifact-cleanup.txt
+?? verification/P09/logs/18-ac7-pdf-negative-gates.txt
+?? verification/P09/logs/19-ac8-mobi-scope-guard.txt
+?? verification/P09/logs/20-python-ast-parse.txt
+?? verification/P09/logs/21-diff-check.txt
+?? verification/P09/logs/22-p09-target-tests-final.txt
+?? verification/P09/logs/23-path-source-tests-final.txt
+?? verification/P09/logs/24-managed-copy-safety-final.txt
+?? verification/P09/logs/25-final-test-artifact-cleanup.txt
+?? verification/P09/logs/26-scope-and-head.txt
+?? verification/P09/logs/README.md
+?? verification/P09/run_pytest_in_workspace.py
+?? verification/P09/scratch/powershell-probe.txt
+?? verification/P09/scratch/python-probe.txt
+last_command_exit_code=0

@@ -15,7 +15,11 @@ from application.importing.images.service import (
     ImportImagesUseCase,
     sha256_bytes,
 )
-from application.importing.images.sorting import collect_image_files, natural_sort_key
+from application.importing.images.sorting import (
+    collect_image_files,
+    natural_sort_key,
+    sources_from_selection,
+)
 
 __all__ = [
     "DecodedImage",
@@ -30,5 +34,6 @@ __all__ = [
     "ManagedCopyStore",
     "collect_image_files",
     "natural_sort_key",
+    "sources_from_selection",
     "sha256_bytes",
 ]

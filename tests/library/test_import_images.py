@@ -8,7 +8,11 @@ import pytest
 pytest.importorskip("PySide6", reason="real PNG decode via Qt")
 
 from application.importing.images.service import DuplicatePolicy
-from application.importing.images.sorting import collect_image_files, natural_sort_key
+from application.importing.images.sorting import (
+    collect_image_files,
+    natural_sort_key,
+    sources_from_selection,
+)
 
 import helpers
 from helpers import make_corrupt_png, make_png, make_source
@@ -121,6 +125,33 @@ def test_unicode_paths_and_filenames(import_use_case, chapter, tmp_path):
     assert len(report.imported) == 4
     for imported in report.imported:
         assert imported.page.managed_original_ref in store.stored
+
+
+def test_unicode_selected_paths_import_successfully(import_use_case, chapter, tmp_path):
+    root = tmp_path / "中文 日本語 한국어 🎨 (第一話)"
+    root.mkdir()
+    names = [
+        "中文.png",
+        "日本語 (1).png",
+        "한국어 2.png",
+        "Emoji 🈶.png",
+        "space name.png",
+        "parentheses (2).png",
+    ]
+    for index, name in enumerate(names):
+        (root / name).write_bytes(make_png(index + 2, 3))
+
+    use_case, store, sink = import_use_case()
+    report = use_case.import_files(chapter.chapter_id, sources_from_selection(root))
+
+    assert len(report.imported) == len(names)
+    assert {item.filename for item in report.imported} == set(names)
+    expected_widths = {name: index + 2 for index, name in enumerate(names)}
+    assert all(
+        (item.page.width, item.page.height) == (expected_widths[item.filename], 3)
+        for item in report.imported
+    )
+    assert all(item.page.managed_original_ref in store.stored for item in report.imported)
 
 
 def test_duplicate_detection_by_hash(import_use_case, chapter):

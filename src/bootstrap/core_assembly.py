@@ -62,7 +62,6 @@ from infrastructure.filesystem.managed_storage import ManagedFileStorage
 from infrastructure.imaging.webtoon_tiles import TileCache, TiledPageRasterizer
 from infrastructure.importing import (
     ManagedCopyStoreAdapter,
-    MobiDocumentRaster,
     PdfiumDocumentRaster,
 )
 from infrastructure.pipeline.assembly import build_production_pipeline
@@ -814,7 +813,6 @@ def assemble_core_services(
             PdfiumDocumentRaster(),
             copy_store,
             repository,
-            mobi_raster=MobiDocumentRaster(),
         )
         # TASK-021 trash subset: page-level soft delete / batch restore /
         # controlled-only purge. The manifest lives next to the managed data.

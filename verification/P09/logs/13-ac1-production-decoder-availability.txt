@@ -1,0 +1,7 @@
+
+=========================== short test summary info ===========================
+SKIPPED [1] tests\library\test_production_adapters.py:10: could not import 'PySide6': No module named 'PySide6'
+1 skipped in 0.03s
+ERROR: found no collectors for G:\CODEX\New Manga.workspace\worktrees\P09-IMPORT-CORE\tests\library\test_production_adapters.py::test_production_core_assembly_imports_real_dimensions_and_keeps_source
+
+exit_code=4

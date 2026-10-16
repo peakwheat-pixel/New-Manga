@@ -16,6 +16,7 @@ from infrastructure.importing import (  # noqa: E402
 )
 from application.importing.images.ports import ImageDecodeError  # noqa: E402
 from application.importing.images.service import ImportImagesUseCase  # noqa: E402
+from application.importing.images.sorting import sources_from_selection  # noqa: E402
 
 from helpers import InMemoryPageSink, make_png, make_source, make_thin_png  # noqa: E402
 
@@ -207,6 +208,37 @@ def test_production_adapters_drive_import_use_case(tmp_path):
     page = report.imported[0].page
     assert (page.width, page.height) == (9, 6)
     assert Path(storage.absolute_path(page.managed_original_ref)).read_bytes() == data
+
+
+def test_production_core_assembly_imports_real_dimensions_and_keeps_source(tmp_path):
+    from bootstrap.core_service import assemble_production_core
+
+    data_root = tmp_path / "core"
+    source_root = tmp_path / "选定 📚 (原图)"
+    source_root.mkdir()
+    source = source_root / "漫画 １.png"
+    data = make_png(17, 23)
+    source.write_bytes(data)
+    source_hash = hashlib.sha256(source.read_bytes()).hexdigest()
+    core = assemble_production_core(data_root)
+    try:
+        book = core.library.create_book("P09 production image")
+        chapter = core.library.create_chapter(book.book_id, "第 1 話")
+        report = core.importer.import_files(
+            chapter.chapter_id,
+            sources_from_selection(source_root, [source]),
+        )
+
+        assert report.failed == () and len(report.imported) == 1
+        page = report.imported[0].page
+        assert page.source_filename == source.name
+        assert (page.source_order, page.sort_order) == (1, 1)
+        assert page.source_hash == source_hash
+        assert (page.width, page.height) == (17, 23)
+        assert Path(core.storage.absolute_path(page.managed_original_ref)).read_bytes() == data
+        assert hashlib.sha256(source.read_bytes()).hexdigest() == source_hash
+    finally:
+        core.conn.close()
 
 
 def test_production_copy_failure_creates_no_page(tmp_path, monkeypatch):

@@ -1,0 +1,6 @@
+python= 3.14.6
+PySide6= None
+pypdfium2= ModuleSpec(name='pypdfium2', loader=<_frozen_importlib_external.SourceFileLoader object at 0x0000019E7BBFD7C0>, origin='C:\\Users\\49745\\AppData\\Roaming\\Python\\Python314\\site-packages\\pypdfium2\\__init__.py', submodule_search_locations=['C:\\Users\\49745\\AppData\\Roaming\\Python\\Python314\\site-packages\\pypdfium2'])
+exit_code=0
+1:PySide6_Essentials==6.11.2
+3:pypdfium2==5.13.0
