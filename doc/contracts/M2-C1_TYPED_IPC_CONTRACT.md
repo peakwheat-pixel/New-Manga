@@ -1,20 +1,20 @@
 > **内部生命周期窄注记（2026-10-07，M2-DERIVED-GC-2 实现；零 wire 修订，协议 major/minor 不变）**：M2-DERIVED-GC-2 在专用 resource catalog 内引入 `preview_lifecycle` 来源行与 `preview_namespace` 绑定行，并给宿主→channel 的**内部** `revoke_resource` 控制请求加了受信 `retire_preview` 布尔位（CoreChannel 轮换专用方法；channel 仅在其自身 revoke 成功后据此把已登记自有 preview 行的 `retired` 置 1）。这些都是 host↔sidecar 控制面/SQLite 元数据内部实现：**不新增任何 Tauri IPC 命令、不改 WebView payload/ACL/十五条生产命令表、不发 `source_artifact_revision_id`/`producer_root` 等来源字段到 WebView、不改 issue/resolve/touch/revoke/TTL 的既有语义**（失败撤销新 key 与 WebView `revoke_resource_refs` 均不携带该位）。preview 回收（retired 副本删除）只发生在受 namespace 租约保护的独占启动窗口，见 [M2_DERIVED_PREVIEW_GC_DESIGN.md](M2_DERIVED_PREVIEW_GC_DESIGN.md)。
 >
-> **rev 2.4（2026-10-16，EVENTS-FWD-1 host→WebView 事件转发面）**：在不改变 Core 事件 wire 的前提下，冻结 host→WebView 的事件名与 payload 安全投影（覆盖 §6.2 已冻结的六类事件：`TaskFailed`、`RunPaused`、`RunCompleted`、`CurrentPageStepChanged`、`ExportProgressChanged`、`ReadingProgressChanged`）。事件通道仅作为失效提示，不代替快照真值，消费方收到后须重查快照（对齐 §6.2 与 P11 §7.1/§7.3）；payload 严格禁止包含路径、不透明引用、密钥或文件字节（对齐 §10.2/§10.3/§10.4）。明确排除未冻结的 `CoreAvailabilityChanged`（属 G16）与 `ImportProgressChanged`（属 G26）。协议 major 保持 2，minor 从 3 增至 4；向后兼容，不改变既有冻结字段或语义。修订范围：§3.2、§6.2、§6.4（新增）、§11、§12。兼容性见 [EVENTS-FWD-1 compatibility impact](../../verification/EVENTS-FWD-1/compatibility-impact.md)。
-> 
+> **rev 2.4（2026-10-16，EVENTS-FWD-1 + EXPORT-REVEAL-1）**：在不改变 Core 事件 wire 的前提下，冻结 host→WebView 六类事件的名称与安全 payload 投影，事件只作失效提示并要求消费方重查快照；排除未冻结的 `CoreAvailabilityChanged` 与 `ImportProgressChanged`。新增 production-only Tauri host command `library_reveal_export_folder`，只接受不透明 `exportId`，以当前 Core 会话接受的导出 ID 和 Core `GetExportHistory` 解析目录；路径不进入 WebView 请求、结果、事件或错误。Reveal 不调用 `StartExport`、不触碰 `ExportTargetRef`，不改变单次消费语义。Core protocol minor 从 3 增至 4 由事件转发契约变更引入；reveal 命令不新增 Core wire。兼容性分别见 §5.8 与 [EVENTS-FWD-1 compatibility impact](../../verification/EVENTS-FWD-1/compatibility-impact.md)。
+>
 > **rev 2.3（2026-10-16，HOST-ISSUER-1-C1 host→Core grant control）**：冻结独立 `HostControl` 会话握手、导入来源/导出目标 grant 注册与撤销，以及关闭时的 session 失效。控制请求仅走 Tauri host 持有的 live-Core 私有进程通道，带 `host_session_id`、`host_session_credential` 与 `core_session_id`；普通 JSON-RPC/WebView 面拒绝 host-only 操作。注册 payload 复用现有 Core 私有 seam 所需数据；`ImportSourceRef` / `ExportTargetRef` 字段与 `REF_*` 语义不变。协议 minor 从 2 增至 3；§12 仅授权最小 Core handler/session 改动与 `tests/core/**`，本次不实现 runtime。修订范围：§3、§5、§10.3、§10.4、§11、§12。兼容性见 [HOST-ISSUER-1-C1 compatibility impact](../../verification/HOST-ISSUER-1-C1/compatibility-impact.md)。
 >
 > **rev 2.2（2026-10-16，P12-C1 导入 IPC 契约）**：冻结 `ImportPages`、host 签发的只读 `ImportSourceRef` 与逐源/逐页 `ImportReport`；`ImportProgressChanged` 明确保持 `UNKNOWN / PROPOSAL`，原因见 §6.2。按 §3.2 将协议 minor 从 1 提升到 2，只新增冻结命令，不改变既有冻结 wire。修订范围：§3、§5、§6.2、§10.4、§12。明确授权导入侧 Python IPC Runtime，精确 allowlist 见 §12；本修订不代表 Runtime 或 Tauri host issuer 已实现。兼容影响见 [P12-C1 compatibility note](../../verification/P12-C1/compatibility-impact.md)。
 
 # M2-C1 — Typed IPC Contract
 
-**当前修订范围：EVENTS-FWD-1 rev 2.4**（§3.2 版本与兼容、§6.4 host→WebView 事件转发面与安全投影、§11 状态表、§12 授权边界）。Core stdio JSONL wire、P13 Run、P16 Reader/Export、P12 `ImportPages` 与 HOST-ISSUER-1-C1 `HostControl` 的现有 payload/result/error 均零变化。
+**当前修订范围：EVENTS-FWD-1 + EXPORT-REVEAL-1 rev 2.4**（§3.2 版本与兼容、§5.8 production-only Tauri host command、§6.4 host→WebView 事件转发面与安全投影、§11 状态表、§12 授权边界）。Core protocol 为 major `2` / minor `4`；事件转发冻结现有事件的 host 投影，reveal 只新增 Tauri host command，不新增 Core JSONL wire。§5.7 HostControl、P13 Run、P16 Reader/Export、P12 `ImportPages` 的既有字段与语义均未修改。
 
-状态：rev `2.4`（EVENTS-FWD-1）冻结 host→WebView 事件转发面；协议为 major `2` / minor `4`。rev 2.3 的 HostControl wire、rev 2.2 的 P12 导入 wire、rev 2.1 的 Reader/Export wire、rev 2.0 的 P13 Run wire 与更早既有冻结命令语义不变。下方历史 revision 条目保留当时状态，不覆盖本行与当前 rev 2.4。
+状态：文档 rev `2.4`；Core protocol 为 major `2` / minor `4`。本修订冻结 host→WebView 六类事件投影并新增 production-only `library_reveal_export_folder`；旧 HostControl、P12、Reader/Export、P13 wire 与更早既有冻结语义不变。各 Runtime 的实现状态以对应 Task、Handoff 与证据为准。
 
 ## Revision history
 
-- `2.4`（EVENTS-FWD-1，2026-10-16）：**授权契约修订（host→WebView 事件转发面，解 G17）**——在不改动 Core stdio 事件 wire 的前提下，冻结 Tauri host 到 WebView 的六类事件转发面与安全 payload 投影：`core:TaskFailed`、`core:RunPaused`、`core:RunCompleted`、`core:CurrentPageStepChanged`、`core:ExportProgressChanged`、`core:ReadingProgressChanged`；明确事件只是失效通知不是状态真值（消费方收到后必须重查快照）；严禁下发路径、引用、密钥或字节；未冻结的 `CoreAvailabilityChanged`（G16）与 `ImportProgressChanged`（G26）明确排除并 fail-closed。协议 minor 从 3 增至 4，major 保持 2；向后兼容。不新增任何命令面（不暴露 host-only 能力）。
+- `2.4`（EVENTS-FWD-1 + EXPORT-REVEAL-1，2026-10-16）：冻结六类 host→WebView 事件安全投影，并新增 production-only Tauri host command `library_reveal_export_folder`（请求 `{exportId: OpaqueId}`、成功返回 `null`）。协议 minor 从 3 增至 4 由事件转发变更引入；reveal 不新增 Core wire，拒绝面、当前 Core session 绑定、路径保密及 `ExportTargetRef` 单次消费语义见 §5.8。probe / AC1 命令面仍保持既有形状；兼容 widening，既有 Core 命令与导出 DTO 语义不变。
 - `2.3`（HOST-ISSUER-1-C1，2026-10-16）：**授权契约修订（host-only grant control）**——冻结 `OpenHostSession`、`RegisterImportSource` / `RevokeImportSource`、`RegisterExportTarget` / `RevokeExportTarget`、`CloseHostSession`；注册请求沿用 P09-FU2/P16 已有 seam 的字段；host session credential 与 Core session id 只存在 HostControl envelope/私有会话状态，不进入两种 ref。只新增独立 host-control wire，普通 JSON-RPC 对这些操作返回 `HOST_ONLY_REQUIRED`；协议 minor `2→3`，major 不变。既有 P12/P16/P13 wire、ref 字段及 `REF_*` 语义不变；§12 的最小 Core allowlist 仅含 `src/bootstrap/core_service.py` 与 `tests/core/**`。不授权 React/WebView、Tauri 命令、Schema/migration、依赖或其他产品行为；实现状态 `NOT_IMPLEMENTED`。
 - `2.2`（P12-C1，2026-10-16）：冻结 `ImportPages` request/result、`ImportSourceRef` 只读来源授权与 `ImportReport` 逐源/逐页 DTO；来源限制为 P09 已批准的图片、显式选定文件集合/文件夹直接子项和 PDF，重复策略沿用 P09 的 `skip` / `import_as_new`。`ImportProgressChanged` 保持 `UNKNOWN / PROPOSAL`，因为 P09 没有持久 operation/snapshot wire；孤立事件不能成为导入真值。协议 minor `1→2`：只增加新冻结命令，没有改写既有冻结字段或事件；proposal 阶段的裸路径/URL 调用不获兼容承诺。更新 §12，授权导入侧 Python IPC Runtime 的冻结 allowlist；不授权 Tauri/Rust issuer 或产品代码。本修订未实现 Runtime。
 - `2.1`（P16-C1，2026-10-16）：冻结 Reader/Export wire，新增 `GetReaderProjection` / `SaveReadingProgress`、`StartExport` / `CancelExport`、`GetExportSnapshot` / `GetExportHistory` 和 `ReadingProgressChanged` / `ExportProgressChanged`。`StartExport.target_ref` 为 Tauri host 签发、单一目标、300 秒过期且一次消费的 `ExportTargetRef`；Core 经与 `ImportSourceRef` 同源的受信 grant resolver 验证、解析、消费。协议 minor `0→1`，只新增命令/事件；旧命令语义和 P13 Run wire 不变，runtime 未实现。细节见 §5、§6.3、§10.3、§12。
@@ -475,6 +475,16 @@ UnixTimeSeconds = number                      # finite seconds since Unix epoch
 注册只有在所有 session、DTO、scope、expiry、签名与重复 ID 检查通过后才可原子写入对应的进程内 registry。任一拒绝不改变 registry，不读入来源内容、不写临时文件/目标文件、不写 SQLite。成功撤销在 registry 标记已生效后才响应；其后开始的解析/消费立即看到 `REF_REVOKED`。与 registry 锁竞争的已完成原子消费，及已打开的 Import 验证 handle/已接受的 Export operation，按 §10.3/§10.4 现有生命周期继续；撤销不删除已发布结果，也不新增取消语义。重复撤销沿用现有 seam 的幂等成功 `{revoked: true}`。
 
 运行状态：本节只冻结 wire，不声称任何 HostControl handler、credential 生命周期或 host issuer 已实现；见 §12 授权边界。
+
+### 5.8 Production-only Tauri host export reveal (EXPORT-REVEAL-1，冻结)
+
+`library_reveal_export_folder` 是可由当前 WebView 调用的独立 Tauri host command；它不是 Core JSON-RPC command，也不接受 Core 路径参数。Tauri invoke 请求为 `{exportId: OpaqueId}`，成功结果为 `null`（Unit）；任何响应、事件或拒绝 message/details 均不得含绝对路径。
+
+Host 只接受由当前 live `StdioLibraryChannel` / Core session 通过 `StartExport` 返回并由该 channel 暂存的 `export_id`；未在当前 session 接受的 ID（包括未知、旧 session 或其他 Core 实例的 ID）统一拒绝为 `EXPORT_NOT_FOUND` / `not_found`。通过该会话校验后，host 只读查询 Core `GetExportHistory`：非 `completed` 或尚无实际输出时为 `EXPORT_OUTPUT_NOT_READY` / `conflict`；完成记录的路径缺失、非绝对路径、输出文件/父目录不存在或不可用时为 `EXPORT_PATH_UNAVAILABLE` / `unavailable`。Core 通道不可用时保留 `CORE_UNAVAILABLE`；打开动作失败时返回 `EXPORT_REVEAL_FAILED` / `unavailable`。Tauri command 的拒绝以稳定 code 字符串返回，错误文本不得回显 Core 路径或 opener 错误中的路径。
+
+Host 对 Core 给出的输出路径做本地可用性校验，只把规范化后的父目录交给官方 Tauri opener；不会让 WebView 提供路径，也不会把路径传给 WebView。该操作只读导出历史，不调用 `StartExport`、`HostControl` grant 注册/撤销或任何 `ExportTargetRef` 消费；同一 session 内可重复 reveal，不续期、不重放、不改变 §10.3 单次写授权生命周期。
+
+本命令是 production-only：Rust production allowlist / handler 与应用 manifest / capability 声明同步增加；probe 与 AC1 runtime allowlist、announcement 和 handler 保持既有 7/6 项冻结形状。兼容性：Core protocol 版本不变，旧 Core 可通过既有 `GetExportHistory` 支持本命令；旧 host 没有此命令时，P17 必须隐藏/省略 reveal 操作，导出本身仍可用。新 host 配旧 UI 无行为变化。
 
 ## 6. Typed projections 与 events
 

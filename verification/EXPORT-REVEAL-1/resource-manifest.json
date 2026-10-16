@@ -1,0 +1,40 @@
+{
+  "task_id": "EXPORT-REVEAL-1",
+  "recorded_at": "2026-10-16",
+  "resources": [
+    {
+      "resource_type": "worktree",
+      "source_path": "G:/CODEX/New Manga.workspace/worktrees/EXPORT-REVEAL-1",
+      "disposition": "PRESERVE_REFERENCED",
+      "destination_path": "G:/CODEX/New Manga.workspace/worktrees/EXPORT-REVEAL-1",
+      "reason": "Owner delivery and independent review recovery point; no deletion, move, or archive."
+    },
+    {
+      "resource_type": "junction",
+      "source_path": "G:/CODEX/New Manga.workspace/worktrees/EXPORT-REVEAL-1/apps/desktop/src-tauri/target/core-sidecar",
+      "disposition": "PRESERVE_REFERENCED",
+      "destination_path": "G:/CODEX/New Manga/apps/desktop/src-tauri/target/core-sidecar",
+      "reason": "Pre-existing 2.3 frozen bundle junction; verified in place and not deleted or rebuilt."
+    },
+    {
+      "resource_type": "test-build-output",
+      "source_path": "G:/CODEX/New Manga.workspace/worktrees/EXPORT-REVEAL-1/apps/desktop/frontend/dist",
+      "disposition": "PRESERVE_REFERENCED",
+      "destination_path": "G:/CODEX/New Manga.workspace/worktrees/EXPORT-REVEAL-1/apps/desktop/frontend/dist",
+      "reason": "Generated to satisfy Tauri frontendDist during Rust build; ignored by Git and retained for review reproduction."
+    },
+    {
+      "resource_type": "test-dependencies",
+      "source_path": "G:/CODEX/New Manga.workspace/worktrees/EXPORT-REVEAL-1/apps/desktop/frontend/node_modules",
+      "disposition": "PRESERVE_REFERENCED",
+      "destination_path": "G:/CODEX/New Manga.workspace/worktrees/EXPORT-REVEAL-1/apps/desktop/frontend/node_modules",
+      "reason": "Installed without package-lock changes for frontend build; ignored by Git and retained for review reproduction."
+    }
+  ],
+  "closeout_counts": {
+    "deleted": 0,
+    "moved": 0,
+    "archived": 0
+  },
+  "closeout_status": "pending_independent_review"
+}

@@ -34,14 +34,14 @@ fn main() {
     // match bare command invocations, so the ACL layer silently skipped
     // them). With `__app-acl__` present, Tauri enforces the capability for
     // every bare command: `capabilities/m2rc1-commands.json` grants exactly
-    // the thirty-one commands below to the main window (twenty-four production
+    // the thirty-two commands below to the main window (twenty-five production
     // commands — three resource-channel + two IPC1 + the two
     // M2-SETTINGS-IPC-CHANNEL settings commands + the two M2-REGION-RETYPE-
     // CORE region-retype commands + three RC-4 production commands + the
     // M2-PAGE-RESOURCE-RESOLVE-1 page-resource resolve command + the two
     // M2-PAGE-NAV-PROJECTION-1 page navigation projections + three
     // HOST-ISSUER-1 safe picker actions + the six RUN-IPC-1 Run transport
-    // commands — plus
+    // commands + the EXPORT-REVEAL-1 action — plus
     // the four probe commands and the three M2-AC1 acceptance commands), and any other command name
     // (e.g. the deleted `register_catalog`) is refused by the ACL before the invoke
     // handler is consulted. The settings_* pair (M2-SETTINGS-IPC-CHANNEL,
@@ -100,6 +100,9 @@ fn main() {
             "library_get_run_snapshot",
             "library_get_task_projection",
             "library_retry_failed_targets",
+            // EXPORT-REVEAL-1: current-session export reveal, production-only
+            // at runtime; the opener plugin itself remains inaccessible to JS.
+            "library_reveal_export_folder",
             "probe_config",
             "probe_write_results",
             "probe_exit",

@@ -53,7 +53,7 @@ impl ImportSummary {
 
 #[derive(Serialize)]
 pub(crate) struct ExportSummary {
-    export_id: String,
+    pub(crate) export_id: String,
     status: String,
 }
 
