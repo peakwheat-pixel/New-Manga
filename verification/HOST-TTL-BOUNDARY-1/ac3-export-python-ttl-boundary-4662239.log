@@ -1,0 +1,16 @@
+============================= test session starts =============================
+platform win32 -- Python 3.14.6, pytest-9.1.1, pluggy-1.6.0 -- C:\Python314\python.exe
+cachedir: .pytest_cache
+rootdir: G:\CODEX\New Manga.workspace\worktrees\HOST-TTL-BOUNDARY-1
+configfile: pytest.ini
+plugins: anyio-4.14.2
+collecting ... collected 17 items / 12 deselected / 5 selected
+
+tests/core/test_p16_reader_export.py::test_export_grant_registration_ttl_boundary[inside-window] PASSED [ 20%]
+tests/core/test_p16_reader_export.py::test_export_grant_registration_ttl_boundary[clock-equals-host-build] PASSED [ 40%]
+tests/core/test_p16_reader_export.py::test_export_grant_registration_ttl_boundary[clock-slightly-before-host-build] PASSED [ 60%]
+tests/core/test_p16_reader_export.py::test_export_grant_registration_ttl_boundary[actually-expired] PASSED [ 80%]
+tests/core/test_p16_reader_export.py::test_export_grant_registration_ttl_boundary[actually-over-300-second-window] PASSED [100%]
+
+====================== 5 passed, 12 deselected in 0.85s =======================
+EXIT_CODE=0
