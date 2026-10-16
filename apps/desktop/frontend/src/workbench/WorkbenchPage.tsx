@@ -1192,11 +1192,16 @@ export function WorkbenchPage({ invoke, resolveDebounceMs = 300, regionDebounceM
         fontFamily: 'system-ui, "Segoe UI", "Microsoft YaHei UI", sans-serif',
       }}
     >
-      {(booksError === "CORE_UNAVAILABLE" || regionError === "CORE_UNAVAILABLE") ? (
+      {[booksError, chaptersError, pagesError, regionError].includes("CORE_UNAVAILABLE") ? (
         <WorkbenchError
-          code={booksError === "CORE_UNAVAILABLE" ? booksError : regionError!}
+          code="CORE_UNAVAILABLE"
           fullArea
-          onRetry={() => { setBooksRetry((value) => value + 1); setRegionsRetry((value) => value + 1); }}
+          onRetry={() => {
+            if (booksError === "CORE_UNAVAILABLE") setBooksRetry((value) => value + 1);
+            if (chaptersError === "CORE_UNAVAILABLE") setChaptersRetry((value) => value + 1);
+            if (pagesError === "CORE_UNAVAILABLE") setPagesRetry((value) => value + 1);
+            if (regionError === "CORE_UNAVAILABLE") setRegionsRetry((value) => value + 1);
+          }}
         />
       ) : <>
       {regionError && <WorkbenchError

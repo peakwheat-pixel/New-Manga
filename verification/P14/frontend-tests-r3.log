@@ -1,0 +1,923 @@
+npm notice run m2rc1-frontend@0.1.0 test
+npm notice run vitest run
+
+ RUN  v2.1.9 G:/CODEX/New Manga.workspace/worktrees/P14/apps/desktop/frontend
+
+ ✓ src/workbench/relabelMachine.test.ts (21 tests) 5ms
+ ✓ src/events.test.ts (4 tests) 5ms
+ ✓ src/resourceChannel/client.test.ts (8 tests) 6ms
+ ✓ src/workbench/client.test.ts (5 tests) 7ms
+ ✓ src/resourceChannel/commandSurface.test.ts (10 tests) 11ms
+ ✓ src/library/client.test.ts (14 tests) 9ms
+ ✓ src/bookshelf/error.test.ts (7 tests) 3ms
+ ✓ src/region/geometry.test.ts (8 tests) 4ms
+ ✓ src/ac1/driver.test.ts (3 tests) 3ms
+ ✓ src/region/client.test.ts (15 tests) 9ms
+ ✓ src/settings/client.test.ts (7 tests) 8ms
+ ✓ src/library/LibraryPanel.test.tsx (8 tests) 96ms
+ ✓ src/settings/SettingsPanel.test.tsx (10 tests) 163ms
+ ✓ src/workbench/PageListPanel.test.tsx (6 tests) 87ms
+ ✓ src/workbench/ExportDialog.test.tsx (4 tests) 126ms
+stderr | src/bookshelf/BookshelfPage.test.tsx > Bookshelf UI - Data Binding & State Matrix (W1, W2, W3, W28, W30) > W1 BookCard & BookList page_count rules > BookCard renders '—' when page_count is null, never 0
+Warning: The current testing environment is not configured to support act(...)
+
+stderr | src/bookshelf/BookshelfPage.test.tsx > Bookshelf UI - Data Binding & State Matrix (W1, W2, W3, W28, W30) > W1 BookCard & BookList page_count rules > BookCard renders '0 页' when page_count is explicitly 0
+Warning: The current testing environment is not configured to support act(...)
+
+stderr | src/bookshelf/BookshelfPage.test.tsx > Bookshelf UI - Data Binding & State Matrix (W1, W2, W3, W28, W30) > W1 BookCard & BookList page_count rules > BookCard renders positive page count correctly
+Warning: The current testing environment is not configured to support act(...)
+
+stderr | src/bookshelf/BookshelfPage.test.tsx > Bookshelf UI - Data Binding & State Matrix (W1, W2, W3, W28, W30) > W1 BookCard & BookList page_count rules > BookList renders '—' when page_count is null in list view
+Warning: The current testing environment is not configured to support act(...)
+
+stderr | src/bookshelf/BookshelfPage.test.tsx > Bookshelf UI - Data Binding & State Matrix (W1, W2, W3, W28, W30) > State Matrix (§2.4) > renders loading state with skeleton cards when client listBooks is pending
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+    at BookshelfPage (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\bookshelf\BookshelfPage.tsx:24:3)
+Warning: The current testing environment is not configured to support act(...)
+    at BookshelfPage (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\bookshelf\BookshelfPage.tsx:24:3)
+Warning: The current testing environment is not configured to support act(...)
+
+stderr | src/bookshelf/BookshelfPage.test.tsx > Bookshelf UI - Data Binding & State Matrix (W1, W2, W3, W28, W30) > State Matrix (§2.4) > renders empty library guide when listBooks returns an empty array
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+    at BookshelfPage (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\bookshelf\BookshelfPage.tsx:24:3)
+Warning: The current testing environment is not configured to support act(...)
+    at BookshelfPage (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\bookshelf\BookshelfPage.tsx:24:3)
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+
+stderr | src/bookshelf/BookshelfPage.test.tsx > Bookshelf UI - Data Binding & State Matrix (W1, W2, W3, W28, W30) > State Matrix (§2.4) > renders empty library guide when listBooks returns an empty array
+Warning: The current testing environment is not configured to support act(...)
+
+stderr | src/bookshelf/BookshelfPage.test.tsx > Bookshelf UI - Data Binding & State Matrix (W1, W2, W3, W28, W30) > State Matrix (§2.4) > renders error card with localized code and retry button on CORE_UNAVAILABLE (W28)
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+    at BookshelfPage (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\bookshelf\BookshelfPage.tsx:24:3)
+Warning: The current testing environment is not configured to support act(...)
+    at BookshelfPage (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\bookshelf\BookshelfPage.tsx:24:3)
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+
+stderr | src/App.test.tsx > App Mode Dispatching - Detecting Neutrality, Production AppShell vs Probe/AC1 Frozen Chrome (I1) > renders neutral frozen console chrome without app-shell when __TAURI__ is missing
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+    at App (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\App.tsx:56:47)
+Warning: The current testing environment is not configured to support act(...)
+    at App (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\App.tsx:56:47)
+Warning: The current testing environment is not configured to support act(...)
+
+stderr | src/App.test.tsx > App Mode Dispatching - Detecting Neutrality, Production AppShell vs Probe/AC1 Frozen Chrome (I1) > renders neutral frozen console chrome and does NOT call production commands on initial frame before probe_config resolves
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+    at App (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\App.tsx:56:47)
+
+stderr | src/App.test.tsx > App Mode Dispatching - Detecting Neutrality, Production AppShell vs Probe/AC1 Frozen Chrome (I1) > renders neutral frozen console chrome and does NOT call production commands on initial frame before probe_config resolves
+Warning: The current testing environment is not configured to support act(...)
+
+stderr | src/App.test.tsx > App Mode Dispatching - Detecting Neutrality, Production AppShell vs Probe/AC1 Frozen Chrome (I1) > renders frozen probe chrome when probe_config resolves as probe mode
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+    at App (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\App.tsx:56:47)
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+
+stderr | src/App.test.tsx > App Mode Dispatching - Detecting Neutrality, Production AppShell vs Probe/AC1 Frozen Chrome (I1) > renders frozen probe chrome when probe_config resolves as probe mode
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+
+stderr | src/bookshelf/BookshelfPage.test.tsx > Bookshelf UI - Data Binding & State Matrix (W1, W2, W3, W28, W30) > State Matrix (§2.4) > renders error card with localized code and retry button on CORE_UNAVAILABLE (W28)
+Warning: The current testing environment is not configured to support act(...)
+
+stderr | src/bookshelf/BookshelfPage.test.tsx > Bookshelf UI - Data Binding & State Matrix (W1, W2, W3, W28, W30) > State Matrix (§2.4) > renders disabled state for missing wires (GAP-G1..G8)
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+    at BookshelfPage (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\bookshelf\BookshelfPage.tsx:24:3)
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+
+stderr | src/App.test.tsx > App Mode Dispatching - Detecting Neutrality, Production AppShell vs Probe/AC1 Frozen Chrome (I1) > renders frozen probe chrome when probe_config resolves as probe mode
+Warning: The current testing environment is not configured to support act(...)
+
+stderr | src/App.test.tsx > App Mode Dispatching - Detecting Neutrality, Production AppShell vs Probe/AC1 Frozen Chrome (I1) > mounts production AppShell after probe_config is denied (production mode confirmed)
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+    at App (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\App.tsx:56:47)
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+
+stderr | src/bookshelf/BookshelfPage.test.tsx > Bookshelf UI - Data Binding & State Matrix (W1, W2, W3, W28, W30) > State Matrix (§2.4) > renders disabled state for missing wires (GAP-G1..G8)
+Warning: The current testing environment is not configured to support act(...)
+
+stderr | src/bookshelf/BookshelfPage.test.tsx > Bookshelf UI - Data Binding & State Matrix (W1, W2, W3, W28, W30) > W2 / W3 Chapter Navigation > renders chapters and fires onEnterWorkbench and onEnterReader callbacks
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+    at BookshelfPage (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\bookshelf\BookshelfPage.tsx:24:3)
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+
+stderr | src/bookshelf/BookshelfPage.test.tsx > Bookshelf UI - Data Binding & State Matrix (W1, W2, W3, W28, W30) > W2 / W3 Chapter Navigation > renders chapters and fires onEnterWorkbench and onEnterReader callbacks
+Warning: The current testing environment is not configured to support act(...)
+
+stderr | src/bookshelf/BookshelfPage.test.tsx > Bookshelf UI - Data Binding & State Matrix (W1, W2, W3, W28, W30) > AC3 / W30 ImportDialog Flow > renders duplicate policy options with skip as default
+Warning: The current testing environment is not configured to support act(...)
+
+stderr | src/bookshelf/BookshelfPage.test.tsx > Bookshelf UI - Data Binding & State Matrix (W1, W2, W3, W28, W30) > AC3 / W30 ImportDialog Flow > invokes library_import_file and displays ImportReport on completion
+Warning: The current testing environment is not configured to support act(...)
+
+stderr | src/bookshelf/BookshelfPage.test.tsx > Bookshelf UI - Data Binding & State Matrix (W1, W2, W3, W28, W30) > AC3 / W30 ImportDialog Flow > invokes library_import_file and displays ImportReport on completion
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+
+stderr | src/shell/AppShell.test.tsx > AppShell - Four-Page Rail, Keep-Alive, Shortcuts & GAP-G15 Compliance > renders 64px left Rail with fixed 4-page sequence: Bookshelf -> Workbench -> Reader -> Settings
+Warning: The current testing environment is not configured to support act(...)
+
+stderr | src/shell/AppShell.test.tsx > AppShell - Four-Page Rail, Keep-Alive, Shortcuts & GAP-G15 Compliance > keeps all four page containers mounted simultaneously (keep-alive, no unmounting)
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+    at div
+    at section
+    at ViewerPanel (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\workbench\ViewerPanel.tsx:12:3)
+    at div
+    at div
+    at WorkbenchPage (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\workbench\WorkbenchPage.tsx:43:26)
+    at div
+    at div
+    at div
+    at AppShell (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\shell\AppShell.tsx:19:21)
+Warning: The current testing environment is not configured to support act(...)
+    at BookshelfPage (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\bookshelf\BookshelfPage.tsx:24:3)
+    at div
+    at div
+    at div
+    at AppShell (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\shell\AppShell.tsx:19:21)
+Warning: The current testing environment is not configured to support act(...)
+    at BookshelfPage (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\bookshelf\BookshelfPage.tsx:24:3)
+    at div
+    at div
+    at div
+    at AppShell (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\shell\AppShell.tsx:19:21)
+Warning: The current testing environment is not configured to support act(...)
+    at WorkbenchPage (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\workbench\WorkbenchPage.tsx:43:26)
+    at div
+    at div
+    at div
+    at AppShell (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\shell\AppShell.tsx:19:21)
+Warning: The current testing environment is not configured to support act(...)
+    at WorkbenchPage (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\workbench\WorkbenchPage.tsx:43:26)
+    at div
+    at div
+    at div
+    at AppShell (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\shell\AppShell.tsx:19:21)
+Warning: The current testing environment is not configured to support act(...)
+    at WorkbenchPage (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\workbench\WorkbenchPage.tsx:43:26)
+    at div
+    at div
+    at div
+    at AppShell (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\shell\AppShell.tsx:19:21)
+Warning: The current testing environment is not configured to support act(...)
+    at WorkbenchPage (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\workbench\WorkbenchPage.tsx:43:26)
+    at div
+    at div
+    at div
+    at AppShell (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\shell\AppShell.tsx:19:21)
+Warning: The current testing environment is not configured to support act(...)
+    at WorkbenchPage (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\workbench\WorkbenchPage.tsx:43:26)
+    at div
+    at div
+    at div
+    at AppShell (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\shell\AppShell.tsx:19:21)
+Warning: The current testing environment is not configured to support act(...)
+    at WorkbenchPage (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\workbench\WorkbenchPage.tsx:43:26)
+    at div
+    at div
+    at div
+    at AppShell (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\shell\AppShell.tsx:19:21)
+Warning: The current testing environment is not configured to support act(...)
+    at WorkbenchPage (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\workbench\WorkbenchPage.tsx:43:26)
+    at div
+    at div
+    at div
+    at AppShell (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\shell\AppShell.tsx:19:21)
+Warning: The current testing environment is not configured to support act(...)
+    at WorkbenchPage (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\workbench\WorkbenchPage.tsx:43:26)
+    at div
+    at div
+    at div
+    at AppShell (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\shell\AppShell.tsx:19:21)
+Warning: The current testing environment is not configured to support act(...)
+    at WorkbenchPage (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\workbench\WorkbenchPage.tsx:43:26)
+    at div
+    at div
+    at div
+    at AppShell (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\shell\AppShell.tsx:19:21)
+Warning: The current testing environment is not configured to support act(...)
+    at WorkbenchPage (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\workbench\WorkbenchPage.tsx:43:26)
+    at div
+    at div
+    at div
+    at AppShell (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\shell\AppShell.tsx:19:21)
+Warning: The current testing environment is not configured to support act(...)
+    at WorkbenchPage (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\workbench\WorkbenchPage.tsx:43:26)
+    at div
+    at div
+    at div
+    at AppShell (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\shell\AppShell.tsx:19:21)
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+
+stderr | src/bookshelf/BookshelfPage.test.tsx > Bookshelf UI - Data Binding & State Matrix (W1, W2, W3, W28, W30) > AC3 / W30 ImportDialog Flow > invokes library_import_file and displays ImportReport on completion
+Warning: The current testing environment is not configured to support act(...)
+
+stderr | src/bookshelf/BookshelfPage.test.tsx > Bookshelf UI - Data Binding & State Matrix (W1, W2, W3, W28, W30) > AC3 / W30 ImportDialog Flow > handles cancellation gracefully without error state (cancelled path)
+Warning: The current testing environment is not configured to support act(...)
+
+stderr | src/bookshelf/BookshelfPage.test.tsx > Bookshelf UI - Data Binding & State Matrix (W1, W2, W3, W28, W30) > AC3 / W30 ImportDialog Flow > handles cancellation gracefully without error state (cancelled path)
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+
+stderr | src/App.test.tsx > App Mode Dispatching - Detecting Neutrality, Production AppShell vs Probe/AC1 Frozen Chrome (I1) > mounts production AppShell after probe_config is denied (production mode confirmed)
+Warning: The current testing environment is not configured to support act(...)
+    at div
+    at section
+    at ViewerPanel (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\workbench\ViewerPanel.tsx:12:3)
+    at div
+    at div
+    at WorkbenchPage (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\workbench\WorkbenchPage.tsx:43:26)
+    at div
+    at div
+    at div
+    at AppShell (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\shell\AppShell.tsx:19:21)
+    at App (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\App.tsx:56:47)
+Warning: The current testing environment is not configured to support act(...)
+    at BookshelfPage (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\bookshelf\BookshelfPage.tsx:24:3)
+    at div
+    at div
+    at div
+    at AppShell (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\shell\AppShell.tsx:19:21)
+    at App (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\App.tsx:56:47)
+Warning: The current testing environment is not configured to support act(...)
+    at BookshelfPage (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\bookshelf\BookshelfPage.tsx:24:3)
+    at div
+    at div
+    at div
+    at AppShell (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\shell\AppShell.tsx:19:21)
+    at App (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\App.tsx:56:47)
+Warning: The current testing environment is not configured to support act(...)
+    at WorkbenchPage (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\workbench\WorkbenchPage.tsx:43:26)
+    at div
+    at div
+    at div
+    at AppShell (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\shell\AppShell.tsx:19:21)
+    at App (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\App.tsx:56:47)
+Warning: The current testing environment is not configured to support act(...)
+    at WorkbenchPage (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\workbench\WorkbenchPage.tsx:43:26)
+    at div
+    at div
+    at div
+    at AppShell (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\shell\AppShell.tsx:19:21)
+    at App (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\App.tsx:56:47)
+Warning: The current testing environment is not configured to support act(...)
+    at WorkbenchPage (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\workbench\WorkbenchPage.tsx:43:26)
+    at div
+    at div
+    at div
+    at AppShell (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\shell\AppShell.tsx:19:21)
+    at App (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\App.tsx:56:47)
+Warning: The current testing environment is not configured to support act(...)
+    at WorkbenchPage (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\workbench\WorkbenchPage.tsx:43:26)
+    at div
+    at div
+    at div
+    at AppShell (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\shell\AppShell.tsx:19:21)
+    at App (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\App.tsx:56:47)
+Warning: The current testing environment is not configured to support act(...)
+    at WorkbenchPage (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\workbench\WorkbenchPage.tsx:43:26)
+    at div
+    at div
+    at div
+    at AppShell (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\shell\AppShell.tsx:19:21)
+    at App (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\App.tsx:56:47)
+Warning: The current testing environment is not configured to support act(...)
+    at WorkbenchPage (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\workbench\WorkbenchPage.tsx:43:26)
+    at div
+    at div
+    at div
+    at AppShell (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\shell\AppShell.tsx:19:21)
+    at App (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\App.tsx:56:47)
+Warning: The current testing environment is not configured to support act(...)
+    at WorkbenchPage (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\workbench\WorkbenchPage.tsx:43:26)
+    at div
+    at div
+    at div
+    at AppShell (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\shell\AppShell.tsx:19:21)
+    at App (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\App.tsx:56:47)
+Warning: The current testing environment is not configured to support act(...)
+    at WorkbenchPage (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\workbench\WorkbenchPage.tsx:43:26)
+    at div
+    at div
+    at div
+    at AppShell (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\shell\AppShell.tsx:19:21)
+    at App (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\App.tsx:56:47)
+Warning: The current testing environment is not configured to support act(...)
+    at WorkbenchPage (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\workbench\WorkbenchPage.tsx:43:26)
+    at div
+    at div
+    at div
+    at AppShell (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\shell\AppShell.tsx:19:21)
+    at App (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\App.tsx:56:47)
+Warning: The current testing environment is not configured to support act(...)
+    at WorkbenchPage (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\workbench\WorkbenchPage.tsx:43:26)
+    at div
+    at div
+    at div
+    at AppShell (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\shell\AppShell.tsx:19:21)
+    at App (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\App.tsx:56:47)
+Warning: The current testing environment is not configured to support act(...)
+    at WorkbenchPage (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\workbench\WorkbenchPage.tsx:43:26)
+    at div
+    at div
+    at div
+    at AppShell (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\shell\AppShell.tsx:19:21)
+    at App (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\App.tsx:56:47)
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+
+stderr | src/shell/AppShell.test.tsx > AppShell - Four-Page Rail, Keep-Alive, Shortcuts & GAP-G15 Compliance > keeps all four page containers mounted simultaneously (keep-alive, no unmounting)
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+    at BookshelfPage (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\bookshelf\BookshelfPage.tsx:24:3)
+    at div
+    at div
+    at div
+    at AppShell (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\shell\AppShell.tsx:19:21)
+Warning: The current testing environment is not configured to support act(...)
+    at BookshelfPage (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\bookshelf\BookshelfPage.tsx:24:3)
+    at div
+    at div
+    at div
+    at AppShell (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\shell\AppShell.tsx:19:21)
+Warning: The current testing environment is not configured to support act(...)
+    at BookshelfPage (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\bookshelf\BookshelfPage.tsx:24:3)
+    at div
+    at div
+    at div
+    at AppShell (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\shell\AppShell.tsx:19:21)
+Warning: The current testing environment is not configured to support act(...)
+    at BookshelfPage (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\bookshelf\BookshelfPage.tsx:24:3)
+    at div
+    at div
+    at div
+    at AppShell (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\shell\AppShell.tsx:19:21)
+Warning: The current testing environment is not configured to support act(...)
+    at SettingsPanel (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\settings\SettingsPanel.tsx:10:26)
+    at div
+    at main
+    at div
+    at SettingsPage (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\settings\SettingsPage.tsx:24:25)
+    at div
+    at div
+    at div
+    at AppShell (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\shell\AppShell.tsx:19:21)
+Warning: The current testing environment is not configured to support act(...)
+    at SettingsPanel (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\settings\SettingsPanel.tsx:10:26)
+    at div
+    at main
+    at div
+    at SettingsPage (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\settings\SettingsPage.tsx:24:25)
+    at div
+    at div
+    at div
+    at AppShell (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\shell\AppShell.tsx:19:21)
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+
+stderr | src/bookshelf/BookshelfPage.test.tsx > Bookshelf UI - Data Binding & State Matrix (W1, W2, W3, W28, W30) > AC3 / W30 ImportDialog Flow > handles cancellation gracefully without error state (cancelled path)
+Warning: The current testing environment is not configured to support act(...)
+
+stderr | src/bookshelf/BookshelfPage.test.tsx > Bookshelf UI - Data Binding & State Matrix (W1, W2, W3, W28, W30) > UI-local Search & Filters > filters books by search query
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+    at BookshelfPage (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\bookshelf\BookshelfPage.tsx:24:3)
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+
+stderr | src/bookshelf/BookshelfPage.test.tsx > Bookshelf UI - Data Binding & State Matrix (W1, W2, W3, W28, W30) > UI-local Search & Filters > filters books by search query
+Warning: The current testing environment is not configured to support act(...)
+
+stderr | src/shell/AppShell.test.tsx > AppShell - Four-Page Rail, Keep-Alive, Shortcuts & GAP-G15 Compliance > keeps all four page containers mounted simultaneously (keep-alive, no unmounting)
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+    at BookshelfPage (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\bookshelf\BookshelfPage.tsx:24:3)
+    at div
+    at div
+    at div
+    at AppShell (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\shell\AppShell.tsx:19:21)
+Warning: The current testing environment is not configured to support act(...)
+    at BookshelfPage (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\bookshelf\BookshelfPage.tsx:24:3)
+    at div
+    at div
+    at div
+    at AppShell (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\shell\AppShell.tsx:19:21)
+Warning: The current testing environment is not configured to support act(...)
+    at BookshelfPage (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\bookshelf\BookshelfPage.tsx:24:3)
+    at div
+    at div
+    at div
+    at AppShell (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\shell\AppShell.tsx:19:21)
+Warning: The current testing environment is not configured to support act(...)
+    at BookshelfPage (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\bookshelf\BookshelfPage.tsx:24:3)
+    at div
+    at div
+    at div
+    at AppShell (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\shell\AppShell.tsx:19:21)
+Warning: The current testing environment is not configured to support act(...)
+    at SettingsPanel (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\settings\SettingsPanel.tsx:10:26)
+    at div
+    at main
+    at div
+    at SettingsPage (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\settings\SettingsPage.tsx:24:25)
+    at div
+    at div
+    at div
+    at AppShell (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\shell\AppShell.tsx:19:21)
+Warning: The current testing environment is not configured to support act(...)
+    at SettingsPanel (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\settings\SettingsPanel.tsx:10:26)
+    at div
+    at main
+    at div
+    at SettingsPage (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\settings\SettingsPage.tsx:24:25)
+    at div
+    at div
+    at div
+    at AppShell (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\shell\AppShell.tsx:19:21)
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+
+stderr | src/App.test.tsx > App Mode Dispatching - Detecting Neutrality, Production AppShell vs Probe/AC1 Frozen Chrome (I1) > mounts production AppShell after probe_config is denied (production mode confirmed)
+Warning: The current testing environment is not configured to support act(...)
+
+stderr | src/App.test.tsx > App Mode Dispatching - Detecting Neutrality, Production AppShell vs Probe/AC1 Frozen Chrome (I1) > renders frozen probe/console chrome when ?view=console is specified
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+    at App (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\App.tsx:56:47)
+Warning: The current testing environment is not configured to support act(...)
+    at App (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\App.tsx:56:47)
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+
+ ✓ src/App.test.tsx (5 tests) 178ms
+stderr | src/shell/AppShell.test.tsx > AppShell - Four-Page Rail, Keep-Alive, Shortcuts & GAP-G15 Compliance > keeps all four page containers mounted simultaneously (keep-alive, no unmounting)
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+    at BookshelfPage (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\bookshelf\BookshelfPage.tsx:24:3)
+    at div
+    at div
+    at div
+    at AppShell (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\shell\AppShell.tsx:19:21)
+Warning: The current testing environment is not configured to support act(...)
+    at BookshelfPage (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\bookshelf\BookshelfPage.tsx:24:3)
+    at div
+    at div
+    at div
+    at AppShell (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\shell\AppShell.tsx:19:21)
+Warning: The current testing environment is not configured to support act(...)
+    at BookshelfPage (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\bookshelf\BookshelfPage.tsx:24:3)
+    at div
+    at div
+    at div
+    at AppShell (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\shell\AppShell.tsx:19:21)
+Warning: The current testing environment is not configured to support act(...)
+    at BookshelfPage (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\bookshelf\BookshelfPage.tsx:24:3)
+    at div
+    at div
+    at div
+    at AppShell (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\shell\AppShell.tsx:19:21)
+Warning: The current testing environment is not configured to support act(...)
+    at SettingsPanel (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\settings\SettingsPanel.tsx:10:26)
+    at div
+    at main
+    at div
+    at SettingsPage (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\settings\SettingsPage.tsx:24:25)
+    at div
+    at div
+    at div
+    at AppShell (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\shell\AppShell.tsx:19:21)
+Warning: The current testing environment is not configured to support act(...)
+    at SettingsPanel (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\settings\SettingsPanel.tsx:10:26)
+    at div
+    at main
+    at div
+    at SettingsPage (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\settings\SettingsPage.tsx:24:25)
+    at div
+    at div
+    at div
+    at AppShell (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\shell\AppShell.tsx:19:21)
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+
+stderr | src/bookshelf/BookshelfPage.test.tsx > Bookshelf UI - Data Binding & State Matrix (W1, W2, W3, W28, W30) > UI-local Search & Filters > filters books by search query
+Warning: The current testing environment is not configured to support act(...)
+
+stderr | src/bookshelf/BookshelfPage.test.tsx > Bookshelf UI - Data Binding & State Matrix (W1, W2, W3, W28, W30) > UI-local Search & Filters > filters books by favorite status
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+    at BookshelfPage (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\bookshelf\BookshelfPage.tsx:24:3)
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+
+stderr | src/bookshelf/BookshelfPage.test.tsx > Bookshelf UI - Data Binding & State Matrix (W1, W2, W3, W28, W30) > UI-local Search & Filters > filters books by favorite status
+Warning: The current testing environment is not configured to support act(...)
+
+stderr | src/bookshelf/BookshelfPage.test.tsx > Bookshelf UI - Data Binding & State Matrix (W1, W2, W3, W28, W30) > UI-local Search & Filters > filters books by favorite status
+Warning: The current testing environment is not configured to support act(...)
+
+stderr | src/bookshelf/BookshelfPage.test.tsx > Bookshelf UI - Data Binding & State Matrix (W1, W2, W3, W28, W30) > UI-local Search & Filters > toggles between grid and list views
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+    at BookshelfPage (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\bookshelf\BookshelfPage.tsx:24:3)
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+
+stderr | src/bookshelf/BookshelfPage.test.tsx > Bookshelf UI - Data Binding & State Matrix (W1, W2, W3, W28, W30) > UI-local Search & Filters > toggles between grid and list views
+Warning: The current testing environment is not configured to support act(...)
+
+ ✓ src/bookshelf/BookshelfPage.test.tsx (15 tests) 278ms
+stderr | src/bookshelf/BookshelfPage.test.tsx > Bookshelf UI - Data Binding & State Matrix (W1, W2, W3, W28, W30) > UI-local Search & Filters > toggles between grid and list views
+Warning: The current testing environment is not configured to support act(...)
+
+stderr | src/shell/AppShell.test.tsx > AppShell - Four-Page Rail, Keep-Alive, Shortcuts & GAP-G15 Compliance > keeps all four page containers mounted simultaneously (keep-alive, no unmounting)
+Warning: The current testing environment is not configured to support act(...)
+
+stderr | src/shell/AppShell.test.tsx > AppShell - Four-Page Rail, Keep-Alive, Shortcuts & GAP-G15 Compliance > handles Ctrl+1..4 keyboard shortcuts to switch pages
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+    at div
+    at section
+    at ViewerPanel (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\workbench\ViewerPanel.tsx:12:3)
+    at div
+    at div
+    at WorkbenchPage (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\workbench\WorkbenchPage.tsx:43:26)
+    at div
+    at div
+    at div
+    at AppShell (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\shell\AppShell.tsx:19:21)
+Warning: The current testing environment is not configured to support act(...)
+    at BookshelfPage (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\bookshelf\BookshelfPage.tsx:24:3)
+    at div
+    at div
+    at div
+    at AppShell (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\shell\AppShell.tsx:19:21)
+Warning: The current testing environment is not configured to support act(...)
+    at BookshelfPage (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\bookshelf\BookshelfPage.tsx:24:3)
+    at div
+    at div
+    at div
+    at AppShell (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\shell\AppShell.tsx:19:21)
+Warning: The current testing environment is not configured to support act(...)
+    at WorkbenchPage (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\workbench\WorkbenchPage.tsx:43:26)
+    at div
+    at div
+    at div
+    at AppShell (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\shell\AppShell.tsx:19:21)
+Warning: The current testing environment is not configured to support act(...)
+    at WorkbenchPage (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\workbench\WorkbenchPage.tsx:43:26)
+    at div
+    at div
+    at div
+    at AppShell (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\shell\AppShell.tsx:19:21)
+Warning: The current testing environment is not configured to support act(...)
+    at WorkbenchPage (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\workbench\WorkbenchPage.tsx:43:26)
+    at div
+    at div
+    at div
+    at AppShell (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\shell\AppShell.tsx:19:21)
+Warning: The current testing environment is not configured to support act(...)
+    at WorkbenchPage (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\workbench\WorkbenchPage.tsx:43:26)
+    at div
+    at div
+    at div
+    at AppShell (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\shell\AppShell.tsx:19:21)
+Warning: The current testing environment is not configured to support act(...)
+    at WorkbenchPage (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\workbench\WorkbenchPage.tsx:43:26)
+    at div
+    at div
+    at div
+    at AppShell (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\shell\AppShell.tsx:19:21)
+Warning: The current testing environment is not configured to support act(...)
+    at WorkbenchPage (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\workbench\WorkbenchPage.tsx:43:26)
+    at div
+    at div
+    at div
+    at AppShell (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\shell\AppShell.tsx:19:21)
+Warning: The current testing environment is not configured to support act(...)
+    at WorkbenchPage (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\workbench\WorkbenchPage.tsx:43:26)
+    at div
+    at div
+    at div
+    at AppShell (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\shell\AppShell.tsx:19:21)
+Warning: The current testing environment is not configured to support act(...)
+    at WorkbenchPage (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\workbench\WorkbenchPage.tsx:43:26)
+    at div
+    at div
+    at div
+    at AppShell (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\shell\AppShell.tsx:19:21)
+Warning: The current testing environment is not configured to support act(...)
+    at WorkbenchPage (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\workbench\WorkbenchPage.tsx:43:26)
+    at div
+    at div
+    at div
+    at AppShell (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\shell\AppShell.tsx:19:21)
+Warning: The current testing environment is not configured to support act(...)
+    at WorkbenchPage (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\workbench\WorkbenchPage.tsx:43:26)
+    at div
+    at div
+    at div
+    at AppShell (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\shell\AppShell.tsx:19:21)
+Warning: The current testing environment is not configured to support act(...)
+    at WorkbenchPage (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\workbench\WorkbenchPage.tsx:43:26)
+    at div
+    at div
+    at div
+    at AppShell (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\shell\AppShell.tsx:19:21)
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+
+stderr | src/shell/AppShell.test.tsx > AppShell - Four-Page Rail, Keep-Alive, Shortcuts & GAP-G15 Compliance > handles Ctrl+1..4 keyboard shortcuts to switch pages
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+    at BookshelfPage (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\bookshelf\BookshelfPage.tsx:24:3)
+    at div
+    at div
+    at div
+    at AppShell (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\shell\AppShell.tsx:19:21)
+Warning: The current testing environment is not configured to support act(...)
+    at BookshelfPage (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\bookshelf\BookshelfPage.tsx:24:3)
+    at div
+    at div
+    at div
+    at AppShell (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\shell\AppShell.tsx:19:21)
+Warning: The current testing environment is not configured to support act(...)
+    at BookshelfPage (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\bookshelf\BookshelfPage.tsx:24:3)
+    at div
+    at div
+    at div
+    at AppShell (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\shell\AppShell.tsx:19:21)
+Warning: The current testing environment is not configured to support act(...)
+    at BookshelfPage (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\bookshelf\BookshelfPage.tsx:24:3)
+    at div
+    at div
+    at div
+    at AppShell (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\shell\AppShell.tsx:19:21)
+Warning: The current testing environment is not configured to support act(...)
+    at SettingsPanel (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\settings\SettingsPanel.tsx:10:26)
+    at div
+    at main
+    at div
+    at SettingsPage (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\settings\SettingsPage.tsx:24:25)
+    at div
+    at div
+    at div
+    at AppShell (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\shell\AppShell.tsx:19:21)
+Warning: The current testing environment is not configured to support act(...)
+    at SettingsPanel (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\settings\SettingsPanel.tsx:10:26)
+    at div
+    at main
+    at div
+    at SettingsPage (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\settings\SettingsPage.tsx:24:25)
+    at div
+    at div
+    at div
+    at AppShell (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\shell\AppShell.tsx:19:21)
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+
+stderr | src/shell/AppShell.test.tsx > AppShell - Four-Page Rail, Keep-Alive, Shortcuts & GAP-G15 Compliance > handles Ctrl+1..4 keyboard shortcuts to switch pages
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+    at BookshelfPage (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\bookshelf\BookshelfPage.tsx:24:3)
+    at div
+    at div
+    at div
+    at AppShell (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\shell\AppShell.tsx:19:21)
+Warning: The current testing environment is not configured to support act(...)
+    at BookshelfPage (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\bookshelf\BookshelfPage.tsx:24:3)
+    at div
+    at div
+    at div
+    at AppShell (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\shell\AppShell.tsx:19:21)
+Warning: The current testing environment is not configured to support act(...)
+    at BookshelfPage (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\bookshelf\BookshelfPage.tsx:24:3)
+    at div
+    at div
+    at div
+    at AppShell (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\shell\AppShell.tsx:19:21)
+Warning: The current testing environment is not configured to support act(...)
+    at BookshelfPage (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\bookshelf\BookshelfPage.tsx:24:3)
+    at div
+    at div
+    at div
+    at AppShell (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\shell\AppShell.tsx:19:21)
+Warning: The current testing environment is not configured to support act(...)
+    at SettingsPanel (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\settings\SettingsPanel.tsx:10:26)
+    at div
+    at main
+    at div
+    at SettingsPage (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\settings\SettingsPage.tsx:24:25)
+    at div
+    at div
+    at div
+    at AppShell (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\shell\AppShell.tsx:19:21)
+Warning: The current testing environment is not configured to support act(...)
+    at SettingsPanel (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\settings\SettingsPanel.tsx:10:26)
+    at div
+    at main
+    at div
+    at SettingsPage (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\settings\SettingsPage.tsx:24:25)
+    at div
+    at div
+    at div
+    at AppShell (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\shell\AppShell.tsx:19:21)
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+
+stderr | src/shell/AppShell.test.tsx > AppShell - Four-Page Rail, Keep-Alive, Shortcuts & GAP-G15 Compliance > handles Ctrl+1..4 keyboard shortcuts to switch pages
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+    at BookshelfPage (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\bookshelf\BookshelfPage.tsx:24:3)
+    at div
+    at div
+    at div
+    at AppShell (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\shell\AppShell.tsx:19:21)
+Warning: The current testing environment is not configured to support act(...)
+    at BookshelfPage (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\bookshelf\BookshelfPage.tsx:24:3)
+    at div
+    at div
+    at div
+    at AppShell (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\shell\AppShell.tsx:19:21)
+Warning: The current testing environment is not configured to support act(...)
+    at BookshelfPage (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\bookshelf\BookshelfPage.tsx:24:3)
+    at div
+    at div
+    at div
+    at AppShell (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\shell\AppShell.tsx:19:21)
+Warning: The current testing environment is not configured to support act(...)
+    at BookshelfPage (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\bookshelf\BookshelfPage.tsx:24:3)
+    at div
+    at div
+    at div
+    at AppShell (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\shell\AppShell.tsx:19:21)
+Warning: The current testing environment is not configured to support act(...)
+    at SettingsPanel (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\settings\SettingsPanel.tsx:10:26)
+    at div
+    at main
+    at div
+    at SettingsPage (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\settings\SettingsPage.tsx:24:25)
+    at div
+    at div
+    at div
+    at AppShell (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\shell\AppShell.tsx:19:21)
+Warning: The current testing environment is not configured to support act(...)
+    at SettingsPanel (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\settings\SettingsPanel.tsx:10:26)
+    at div
+    at main
+    at div
+    at SettingsPage (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\settings\SettingsPage.tsx:24:25)
+    at div
+    at div
+    at div
+    at AppShell (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\shell\AppShell.tsx:19:21)
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+
+stderr | src/shell/AppShell.test.tsx > AppShell - Four-Page Rail, Keep-Alive, Shortcuts & GAP-G15 Compliance > handles Ctrl+1..4 keyboard shortcuts to switch pages
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+    at BookshelfPage (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\bookshelf\BookshelfPage.tsx:24:3)
+    at div
+    at div
+    at div
+    at AppShell (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\shell\AppShell.tsx:19:21)
+Warning: The current testing environment is not configured to support act(...)
+    at BookshelfPage (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\bookshelf\BookshelfPage.tsx:24:3)
+    at div
+    at div
+    at div
+    at AppShell (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\shell\AppShell.tsx:19:21)
+Warning: The current testing environment is not configured to support act(...)
+    at BookshelfPage (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\bookshelf\BookshelfPage.tsx:24:3)
+    at div
+    at div
+    at div
+    at AppShell (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\shell\AppShell.tsx:19:21)
+Warning: The current testing environment is not configured to support act(...)
+    at BookshelfPage (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\bookshelf\BookshelfPage.tsx:24:3)
+    at div
+    at div
+    at div
+    at AppShell (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\shell\AppShell.tsx:19:21)
+Warning: The current testing environment is not configured to support act(...)
+    at SettingsPanel (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\settings\SettingsPanel.tsx:10:26)
+    at div
+    at main
+    at div
+    at SettingsPage (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\settings\SettingsPage.tsx:24:25)
+    at div
+    at div
+    at div
+    at AppShell (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\shell\AppShell.tsx:19:21)
+Warning: The current testing environment is not configured to support act(...)
+    at SettingsPanel (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\settings\SettingsPanel.tsx:10:26)
+    at div
+    at main
+    at div
+    at SettingsPage (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\settings\SettingsPage.tsx:24:25)
+    at div
+    at div
+    at div
+    at AppShell (G:\CODEX\New Manga.workspace\worktrees\P14\apps\desktop\frontend\src\shell\AppShell.tsx:19:21)
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+
+stderr | src/shell/AppShell.test.tsx > AppShell - Four-Page Rail, Keep-Alive, Shortcuts & GAP-G15 Compliance > handles Ctrl+1..4 keyboard shortcuts to switch pages
+Warning: The current testing environment is not configured to support act(...)
+
+ ✓ src/shell/AppShell.test.tsx (3 tests) 261ms
+ ✓ src/workbench/WorkbenchPage.test.tsx (51 tests) 924ms
+
+ Test Files  19 passed (19)
+      Tests  204 passed (204)
+   Start at  22:32:49
+   Duration  2.41s (transform 1.93s, setup 0ms, collect 7.69s, tests 2.18s, environment 3ms, prepare 3.78s)
+

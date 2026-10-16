@@ -19,6 +19,6 @@
 | R-007 | P3 | 返回 ID 校验未拒绝 `C:` 盘符前缀。 | 响应 ID 复用 `isSafeUiId`；添加 `C:private` 污染响应拒绝测试。 |
 | R-008 | P3 | `App.tsx` production startup deny matrix 在 Viewer 外签发并读取 `m2res`，边界证据描述不准确。 | 移除生产启动矩阵中的资源发行/读取与 opaque ID 片段日志；App 测试断言生产启动不调用 `issue_resource_url`；probe / AC1 验收模式明确标为测试路径。 |
 | R-009 | P3 | restart/retry 通过本地 fallback 构造虚假 Run snapshot。 | 新 Run 只记录权威返回的 `run_id`，清空旧 snapshot/projection 后重新读取 Core。 |
-| R-010 | P3 | Task 与 Handoff 状态不一致。 | Task 与 Handoff 均使用合法状态 `in_review`；Canonical Evidence 保持 `complete`。 |
+| R-010 | P3 | Task 与 Handoff 状态不一致。 | `e99be4d` 实现提交仍未修正 Task 状态；随后 AC6 文档收尾将 Task、Handoff 与 checkpoint 统一为 `in_review`，并保留 `canonical_evidence_status: complete`。 |
 
 二次 Review 应对新固定实现提交重新审查；本摘要不构成接收或集成批准。

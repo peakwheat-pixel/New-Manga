@@ -155,7 +155,7 @@ export function PageListPanel({
         ))}
         {books.length === 0 && (
           <li data-testid="page-list-empty" style={noteStyle}>
-            no books
+            暂无作品
           </li>
         )}
         {booksBusy && <li data-testid="books-busy" style={noteStyle}>正在读取作品…</li>}
@@ -178,7 +178,7 @@ export function PageListPanel({
           ))}
           {chaptersBusy && (
             <li data-testid="chapters-busy" style={noteStyle}>
-              loading chapters…
+              正在读取章节…
             </li>
           )}
           {!chaptersBusy && chaptersError && (
@@ -188,7 +188,7 @@ export function PageListPanel({
           )}
           {!chaptersBusy && !chaptersError && chapters.length === 0 && (
             <li data-testid="chapter-list-empty" style={noteStyle}>
-              no chapters
+              暂无章节
             </li>
           )}
         </ul>
@@ -232,7 +232,7 @@ export function PageListPanel({
           })}
           {pagesBusy && (
             <li data-testid="pages-busy" style={noteStyle}>
-              loading pages…
+              正在读取页面…
             </li>
           )}
           {!pagesBusy && pagesError && (

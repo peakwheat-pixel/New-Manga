@@ -355,6 +355,25 @@ describe("<WorkbenchPage> five-zone skeleton (mapping-contract names)", () => {
     expect(html).toContain('data-testid="gap-g15-run-discovery"');
   });
 
+  it.each(["chapters", "pages"] as const)("shows a full-area Core error card when %s projection is unavailable", async (projection) => {
+    const { invoke } = makeInteractiveInvoke({
+      onBooks: () => [BOOK_A_ROW],
+      onListChapters: () => projection === "chapters"
+        ? Promise.reject(new Error("CORE_UNAVAILABLE"))
+        : Promise.resolve({ chapters: [{ chapter_id: "chapter-1", title: "第一章", chapter_number: "1", sort_order: 1 }] }),
+      onListChapterPages: () => Promise.reject(new Error("CORE_UNAVAILABLE")),
+    });
+    const ui = await mountInteractiveWorkbench(invoke);
+    try {
+      await ui.click("book-tile-book-a");
+      if (projection === "pages") await ui.click("chapter-tile-chapter-1");
+      expect(ui.container.querySelector('[data-testid="workbench-error"]')).not.toBeNull();
+      expect(ui.container.querySelector('[data-testid="page-list-panel"]')).toBeNull();
+    } finally {
+      await ui.unmount();
+    }
+  });
+
   it("renders every §7 disabled entrance with an unavailable button and visible reason", async () => {
     const { invoke } = makeInteractiveInvoke();
     const ui = await mountInteractiveWorkbench(invoke);
