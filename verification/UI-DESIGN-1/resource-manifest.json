@@ -1,0 +1,40 @@
+{
+  "task": "UI-DESIGN-1",
+  "generated": "2026-10-16",
+  "base_commit": "c6f975d38842487c16491eea67a01cf134c337f8",
+  "branch": "agent/zcode/UI-DESIGN-1",
+  "worktree": "G:/CODEX/New Manga.workspace/worktrees/UI-DESIGN-1",
+  "resources": [
+    {
+      "resource_type": "worktree",
+      "source_path": "G:/CODEX/New Manga.workspace/worktrees/UI-DESIGN-1",
+      "disposition": "PRESERVE_REFERENCED",
+      "destination_path": "G:/CODEX/New Manga.workspace/worktrees/UI-DESIGN-1",
+      "note": "UI-DESIGN-1 专属 worktree；closeout 时按 Worktree Safety Inventory 复核"
+    },
+    {
+      "resource_type": "design-doc",
+      "source_path": "doc/design/AD001_FOUR_PAGE_UI_BASELINE.md",
+      "disposition": "PRESERVE_REFERENCED",
+      "destination_path": "doc/design/AD001_FOUR_PAGE_UI_BASELINE.md",
+      "note": "唯一设计交付物；被 P12/P14/P15/P17 实现 Task 引用"
+    },
+    {
+      "resource_type": "verification",
+      "source_path": "verification/UI-DESIGN-1/",
+      "disposition": "PRESERVE_REFERENCED",
+      "destination_path": "verification/UI-DESIGN-1/",
+      "note": "selfcheck.ps1 + selfcheck-output.txt（等价 bash 生成，头部标注）+ selfcheck-BLOCKED.md（canonical 执行被权限层拦截的如实记录）"
+    },
+    {
+      "resource_type": "handoff",
+      "source_path": "doc/handoffs/UI-DESIGN-1-zcode.md",
+      "disposition": "PRESERVE_REFERENCED",
+      "destination_path": "doc/handoffs/UI-DESIGN-1-zcode.md",
+      "note": "Owner handoff，含逐 AC 状态与复跑指引"
+    }
+  ],
+  "deleted": 0,
+  "migrated": 0,
+  "archived": 0
+}

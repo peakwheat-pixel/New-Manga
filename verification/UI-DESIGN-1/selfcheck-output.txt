@@ -1,0 +1,123 @@
+
+===== UI-DESIGN-1 selfcheck @ 2026-10-16T17:15:33.5443841+08:00 =====
+repo root   : G:\CODEX\New Manga.workspace\worktrees\UI-DESIGN-1
+design doc  : G:\CODEX\New Manga.workspace\worktrees\UI-DESIGN-1\doc\design\AD001_FOUR_PAGE_UI_BASELINE.md
+HEAD        : c6f975d38842487c16491eea67a01cf134c337f8
+[PASS] design doc readable
+
+===== (a) contract command/event names: verbatim Select-String hit =====
+[PASS] ListBooks                contract:M2-C1_TYPED_IPC_CONTRACT.md:L33  designdoc:L95
+[PASS] ImportPages              contract:M2-C1_TYPED_IPC_CONTRACT.md:L5  designdoc:L100
+[PASS] StartRun                 contract:M2-C1_TYPED_IPC_CONTRACT.md:L7  designdoc:L166
+[PASS] ControlRun               contract:M2-C1_TYPED_IPC_CONTRACT.md:L26  designdoc:L203
+[PASS] ResumeBlockedRun         contract:M2-C1_TYPED_IPC_CONTRACT.md:L26  designdoc:L209
+[PASS] GetRunSnapshot           contract:M2-C1_TYPED_IPC_CONTRACT.md:L26  designdoc:L391
+[PASS] GetTaskProjection        contract:M2-C1_TYPED_IPC_CONTRACT.md:L26  designdoc:L167
+[PASS] RetryFailedTargets       contract:M2-C1_TYPED_IPC_CONTRACT.md:L26  designdoc:L208
+[PASS] TaskFailed               contract:M2-C1_TYPED_IPC_CONTRACT.md:L556  designdoc:L215
+[PASS] RunPaused                contract:M2-C1_TYPED_IPC_CONTRACT.md:L557  designdoc:L211
+[PASS] RunCompleted             contract:M2-C1_TYPED_IPC_CONTRACT.md:L558  designdoc:L215
+[PASS] CurrentPageStepChanged   contract:M2-C1_TYPED_IPC_CONTRACT.md:L559  designdoc:L215
+[PASS] ResolvePageResource      contract:M2-C1_TYPED_IPC_CONTRACT.md:L28  designdoc:L168
+[PASS] resolve_page_resource    contract:M2-C1_TYPED_IPC_CONTRACT.md:L11  designdoc:L382
+[PASS] ListRegions              contract:M2-C1_TYPED_IPC_CONTRACT.md:L27  designdoc:L169
+[PASS] list_regions             contract:M2-C1_TYPED_IPC_CONTRACT.md:L27  designdoc:L383
+[PASS] SetRegionType            contract:M2-C1_TYPED_IPC_CONTRACT.md:L31  designdoc:L170
+[PASS] set_region_type          contract:M2-C1_TYPED_IPC_CONTRACT.md:L838  designdoc:L384
+[PASS] list_chapters            contract:M2-C1_TYPED_IPC_CONTRACT.md:L9  designdoc:L379
+[PASS] list_chapter_pages       contract:M2-C1_TYPED_IPC_CONTRACT.md:L9  designdoc:L380
+[PASS] GetReaderProjection      contract:M2-C1_TYPED_IPC_CONTRACT.md:L25  designdoc:L273
+[PASS] SaveReadingProgress      contract:M2-C1_TYPED_IPC_CONTRACT.md:L25  designdoc:L277
+[PASS] ReadingProgressChanged   contract:M2-C1_TYPED_IPC_CONTRACT.md:L25  designdoc:L298
+[PASS] StartExport              contract:M2-C1_TYPED_IPC_CONTRACT.md:L25  designdoc:L174
+[PASS] CancelExport             contract:M2-C1_TYPED_IPC_CONTRACT.md:L25  designdoc:L174
+[PASS] GetExportSnapshot        contract:M2-C1_TYPED_IPC_CONTRACT.md:L25  designdoc:L174
+[PASS] GetExportHistory         contract:M2-C1_TYPED_IPC_CONTRACT.md:L25  designdoc:L174
+[PASS] ExportProgressChanged    contract:M2-C1_TYPED_IPC_CONTRACT.md:L25  designdoc:L402
+[PASS] settings_get             contract:M2-C1_TYPED_IPC_CONTRACT.md:L33  designdoc:L333
+[PASS] settings_update_section  contract:M2-C1_TYPED_IPC_CONTRACT.md:L33  designdoc:L333
+[PASS] ErrorEnvelope            contract:M2-C1_TYPED_IPC_CONTRACT.md:L37  designdoc:L111
+[PASS] PipelineCommand          contract:M2-C1_TYPED_IPC_CONTRACT.md:L145  designdoc:L216
+[PASS] list_region_revisions    contract:M2-RC4_DOMAIN_COMMANDS.md:L9  designdoc:L385
+[PASS] restore_region_revision  contract:M2-RC4_DOMAIN_COMMANDS.md:L10  designdoc:L386
+[PASS] rerender_page            contract:M2-RC4_DOMAIN_COMMANDS.md:L11  designdoc:L185
+[PASS] contract exists: M2-C1_TYPED_IPC_CONTRACT.md
+[PASS] contract exists: M2-RC4_DOMAIN_COMMANDS.md
+[PASS] contract exists: P09_IMPORT_CONTRACT.md
+[PASS] contract exists: P10_CREDENTIAL_CONFIG_CONTRACT.md
+[PASS] contract exists: P11_LONG_TASK_LIFECYCLE_CONTRACT.md
+
+===== (b) local markdown links in design doc resolve =====
+[PASS] link -> ../AD-001_TARGET_DESKTOP_ARCHITECTURE.md
+[PASS] link -> ../tasks/UI-DESIGN-1.md
+[PASS] link -> ../AD-001_TARGET_DESKTOP_ARCHITECTURE.md
+[PASS] link -> ../01_FUNCTIONAL_ARCHITECTURE.md
+[PASS] link -> ../04_USER_FLOW.md
+[PASS] link -> ../07_NON_FUNCTIONAL_REQUIREMENTS.md
+[PASS] link -> ../08_ACCEPTANCE_CRITERIA.md
+[PASS] link -> ../contracts/M2-C1_TYPED_IPC_CONTRACT.md
+[PASS] link -> ../contracts/M2-RC4_DOMAIN_COMMANDS.md
+[PASS] link -> ../contracts/P09_IMPORT_CONTRACT.md
+[PASS] link -> ../contracts/P10_CREDENTIAL_CONFIG_CONTRACT.md
+[PASS] link -> ../contracts/P11_LONG_TASK_LIFECYCLE_CONTRACT.md
+[PASS] link -> ../05_UI_MAPPING.md
+[PASS] link -> ../ui-baseline.md
+[PASS] link -> ../contracts/UI_UX_GUI_DESIGN.md
+[PASS] link -> ../ui-baseline.md
+[PASS] link -> ../ui-baseline.md
+[PASS] link -> ../ui-baseline.md
+[PASS] link -> ../05_UI_MAPPING.md
+[PASS] link -> ../AD-001_TARGET_DESKTOP_ARCHITECTURE.md
+summary: local=20 external(skipped)=0 pure-anchor(skipped)=0
+[PASS] all local links resolve
+
+===== (c) git write scope =====
+git diff --name-only HEAD:
+  doc/tasks/UI-DESIGN-1.md
+git status --porcelain:
+   M doc/tasks/UI-DESIGN-1.md
+  ?? doc/design/AD001_FOUR_PAGE_UI_BASELINE.md
+  ?? doc/handoffs/UI-DESIGN-1-zcode.md
+  ?? verification/UI-DESIGN-1/
+[PASS] all 4 changed paths inside allowed scope; none of the 19 dirty paths touched
+
+===== (d) AC1/AC2 structure checklist =====
+[PASS] section present: ## 1. 导航 Shell
+[PASS] section present: ## 2. 书架 Bookshelf
+[PASS] section present: ## 3. 工作台 Workbench
+[PASS] section present: ## 4. 阅读器 Reader
+[PASS] section present: ## 5. 设置 Settings
+[PASS] section present: ## 6. 契约绑定表
+[PASS] section present: ## 7. Wire Gap List
+[PASS] section present: ## 8. 设计令牌
+[PASS] section present: ## 9. 边界合规自证
+[PASS] section present: ## 10. 非目标
+[PASS] ## 2. 书架 contains element: 区域职责
+[PASS] ## 2. 书架 contains element: 布局结构
+[PASS] ## 2. 书架 contains element: 组件分解
+[PASS] ## 2. 书架 contains element: 状态矩阵
+[PASS] ## 2. 书架 contains element: 交互清单
+[PASS] ## 2. 书架 contains element: 键盘与焦点
+[PASS] ## 5. 设置 contains element: 区域职责
+[PASS] ## 5. 设置 contains element: 布局结构
+[PASS] ## 5. 设置 contains element: 组件分解
+[PASS] ## 5. 设置 contains element: 状态矩阵
+[PASS] ## 5. 设置 contains element: 交互清单
+[PASS] ## 5. 设置 contains element: 键盘与焦点
+[PASS] ## 4. 阅读器 contains element: 区域职责
+[PASS] ## 4. 阅读器 contains element: 布局结构
+[PASS] ## 4. 阅读器 contains element: 组件分解
+[PASS] ## 4. 阅读器 contains element: 状态矩阵
+[PASS] ## 4. 阅读器 contains element: 交互清单
+[PASS] ## 4. 阅读器 contains element: 键盘与焦点
+[PASS] ## 3. 工作台 contains element: 区域职责
+[PASS] ## 3. 工作台 contains element: 布局结构
+[PASS] ## 3. 工作台 contains element: 组件分解
+[PASS] ## 3. 工作台 contains element: 状态矩阵
+[PASS] ## 3. 工作台 contains element: 交互清单
+[PASS] ## 3. 工作台 contains element: 键盘与焦点
+binding table rows (W#): 29 ; gap rows (G#): 26
+[PASS] binding >=25 rows and gap >=20 rows
+
+===== SUMMARY =====
+RESULT: ALL CHECKS PASS
