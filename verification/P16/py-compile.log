@@ -1,0 +1,5 @@
+shell=PowerShell
+python=G:\CODEX\New Manga.task-envs\T1.1.1-impl-py312\Scripts\python.exe
+working_directory=G:\CODEX\New Manga.workspace\worktrees\P16-READER-EXPORT-CORE
+command=python -m compileall -q src/application/reading src/application/export src/infrastructure/export src/bootstrap/core_service.py src/bootstrap/core_assembly.py tests/core/test_p16_reader_export.py
+exit_code=0

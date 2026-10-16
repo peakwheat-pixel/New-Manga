@@ -39,15 +39,21 @@ class ReaderPage:
     translated_revision_id: str | None = None
     current_translated_revision_id: str | None = None
     text: str = ""
+    width_px: int = 0
+    height_px: int = 0
+    original_revision_id: str = ""
+    original_sha256: str = ""
+    translated_artifact_id: str | None = None
+    translated_sha256: str | None = None
+    rendered_from_revision_id: str | None = None
+    current_source_revision_id: str | None = None
+    source_run_id: str | None = None
 
     @property
     def translated_stale(self) -> bool:
-        return bool(
-            self.translated_path
-            and self.translated_revision_id
-            and self.current_translated_revision_id
-            and self.translated_revision_id != self.current_translated_revision_id
-        )
+        return bool(self.translated_path and self.rendered_from_revision_id and
+                    self.current_source_revision_id and
+                    self.rendered_from_revision_id != self.current_source_revision_id)
 
 
 class ReaderPageCatalog(Protocol):

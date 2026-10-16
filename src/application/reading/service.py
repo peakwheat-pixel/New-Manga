@@ -20,6 +20,7 @@ without touching this service.
 from __future__ import annotations
 
 import json
+import math
 import os
 import tempfile
 import uuid
@@ -159,6 +160,64 @@ class ReadingService:
         """Persist current progress (duration is settled via ``add_time``)."""
         if self.progress is not None:
             self._touch(now=True)
+
+    def progress_snapshot(self, book_id: str, chapter_id: str, mode: str) -> dict | None:
+        """Return one durable mode-specific progress row without opening or writing it."""
+        row = self._find_row(book_id, chapter_id, _require_mode(mode))
+        if row is None:
+            return None
+        progress = _progress_from_row(row)
+        return _progress_snapshot(progress)
+
+    def save_progress_snapshot(
+        self, book_id: str, chapter_id: str, mode: str, page_id: str,
+        scroll_offset_y: float, elapsed_seconds_delta: float, pages: list[ReaderPage],
+        *, webtoon: bool,
+    ) -> dict:
+        """Validate and atomically persist a single Reader wire progress update."""
+        mode = _require_mode(mode)
+        if not any(page.page_id == page_id for page in pages):
+            raise ValueError("page is outside the requested chapter")
+        if (
+            isinstance(scroll_offset_y, bool)
+            or not isinstance(scroll_offset_y, (int, float))
+            or not math.isfinite(scroll_offset_y)
+            or scroll_offset_y < 0
+            or isinstance(elapsed_seconds_delta, bool)
+            or not isinstance(elapsed_seconds_delta, (int, float))
+            or not math.isfinite(elapsed_seconds_delta)
+            or elapsed_seconds_delta < 0
+        ):
+            raise ValueError("progress values must be finite non-negative numbers")
+        page = next(page for page in pages if page.page_id == page_id)
+        if (webtoon and scroll_offset_y > page.height_px) or (not webtoon and scroll_offset_y != 0):
+            raise ValueError("scroll offset does not match the chapter layout")
+
+        row = self._find_row(book_id, chapter_id, mode)
+        if row is None:
+            row = {
+                "progress_id": f"rp-{uuid.uuid4().hex[:12]}",
+                "book_id": book_id,
+                "chapter_id": chapter_id,
+                "mode": mode,
+            }
+            self._rows.append(row)
+        progress = _progress_from_row(row)
+        progress.last_page_id = page_id
+        progress.scroll_offset_x = 0.0
+        progress.scroll_offset_y = float(scroll_offset_y)
+        progress.progress_percent = round(
+            (float(scroll_offset_y) / page.height_px * 100.0)
+            if webtoon and page.height_px else
+            ((next(i for i, item in enumerate(pages) if item.page_id == page_id) + 1) / len(pages) * 100.0),
+            2,
+        )
+        progress.total_read_seconds += float(elapsed_seconds_delta)
+        progress.last_read_at = utc_now()
+        progress.updated_at = progress.last_read_at
+        row.update(progress.to_row())
+        self._persist()
+        return _progress_snapshot(progress)
 
     # ------------------------------------------------------------------
     # mode switching (AC-READ-001/002)
@@ -389,6 +448,19 @@ def _progress_from_row(row: dict) -> ReadingProgress:
     for name in ("progress_id", "book_id", "chapter_id", "mode", "last_page_id", "last_read_at", "updated_at"):
         known[name] = str(known.get(name, ""))
     return ReadingProgress(**known)
+
+
+def _progress_snapshot(progress: ReadingProgress) -> dict:
+    return {
+        "book_id": progress.book_id,
+        "chapter_id": progress.chapter_id,
+        "mode": progress.mode,
+        "last_page_id": progress.last_page_id or None,
+        "scroll_offset_y": progress.scroll_offset_y,
+        "progress_percent": progress.progress_percent,
+        "last_read_at": progress.last_read_at or None,
+        "total_read_seconds": progress.total_read_seconds,
+    }
 
 
 def _remap(progress: ReadingProgress, pages: list[ReaderPage]) -> ReadingProgress:

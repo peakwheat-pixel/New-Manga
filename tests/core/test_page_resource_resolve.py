@@ -99,7 +99,7 @@ def test_ping_carries_protocol_minor_6(tmp_path) -> None:
     server = CoreServiceServer(core)
     res, _ = server.dispatch_request(_rpc("core.ping", "p-1", {}))
     assert res["error"] is None
-    assert res["result"]["protocol_version"] == {"major": PROTOCOL_MAJOR, "minor": 0}
+    assert res["result"]["protocol_version"] == {"major": PROTOCOL_MAJOR, "minor": PROTOCOL_MINOR}
 
 
 def test_first_resolve_publishes_and_later_resolves_are_idempotent(tmp_path) -> None:

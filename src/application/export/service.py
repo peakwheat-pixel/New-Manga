@@ -24,14 +24,18 @@ Durability contract (失败或取消不得破坏既有目标文件和源文件):
 from __future__ import annotations
 
 import hashlib
+import json
 import os
 import tempfile
+import threading
 import uuid
 import zipfile
 from collections.abc import Callable, Sequence
-from dataclasses import dataclass
+from contextlib import nullcontext
+from dataclasses import dataclass, replace
 from enum import Enum
 from pathlib import Path
+from typing import ContextManager
 
 from domain.books.entities import utc_now
 
@@ -122,15 +126,19 @@ class ExportPage:
     translated_revision_id: str | None = None
     current_translated_revision_id: str | None = None
     text: str = ""
+    rendered_from_revision_id: str | None = None
+    current_source_revision_id: str | None = None
+    regions: tuple[dict, ...] = ()
+    sha256: str | None = None
+    artifact_id: str | None = None
+    artifact_revision_id: str | None = None
+    source_run_id: str | None = None
 
     @property
     def stale(self) -> bool:
-        return bool(
-            self.translated_provider
-            and self.translated_revision_id
-            and self.current_translated_revision_id
-            and self.translated_revision_id != self.current_translated_revision_id
-        )
+        return bool(self.translated_provider and self.rendered_from_revision_id and
+                    self.current_source_revision_id and
+                    self.rendered_from_revision_id != self.current_source_revision_id)
 
     def provider_for(self, mode: str) -> Callable[[], bytes]:
         """Bytes provider for the mode, falling back to the original when
@@ -154,6 +162,17 @@ class ExportRequest:
     render_profile_snapshot: dict | None = None
     #: Polled between stages and between pages; returning True cancels.
     cancel: Callable[[], bool] | None = None
+    export_id: str | None = None
+    format_options: dict | None = None
+    text_content: bytes | None = None
+    book_metadata: dict | None = None
+    chapter_metadata: dict | None = None
+    lineage: tuple[dict, ...] = ()
+    on_page_complete: Callable[[str], None] | None = None
+    before_publish: Callable[[], None] | None = None
+    target_context: Callable[[], ContextManager] | None = None
+    publish_temp: Callable[[Path, Path], None] | None = None
+    image_encoder: Callable[[bytes], bytes] | None = None
 
 
 @dataclass(frozen=True)
@@ -220,7 +239,7 @@ class ExportService:
             raise StaleExportError(stale_ids, missing_ids)
 
         created_at = utc_now()
-        export_id = f"exp-{uuid.uuid4().hex[:12]}"
+        export_id = request.export_id or f"exp-{uuid.uuid4().hex[:12]}"
         self._check_cancel(request)
 
         target = self._resolve_target(request)
@@ -250,11 +269,17 @@ class ExportService:
 
         temp_path: Path | None = None
         try:
-            temp_path = _new_temp(target.path)
-            file_hash = self._write_content(temp_path, request)
-            self._check_cancel(request)
-            os.replace(temp_path, target.path)
-            temp_path = None
+            with request.target_context() if request.target_context else nullcontext():
+                temp_path = _new_temp(target.path)
+                file_hash = self._write_content(temp_path, request)
+                self._check_cancel(request)
+                if request.before_publish is not None:
+                    request.before_publish()
+                if request.publish_temp is None:
+                    os.replace(temp_path, target.path)
+                else:
+                    request.publish_temp(temp_path, target.path)
+                temp_path = None
         except ExportCancelledError:
             if temp_path is not None:
                 temp_path.unlink(missing_ok=True)
@@ -401,21 +426,51 @@ class ExportService:
         return hashlib.sha256(payload).hexdigest()
 
     def _write_archive(self, temp: Path, request: ExportRequest) -> None:
-        compression = (
-            zipfile.ZIP_STORED if request.format is ExportFormat.CBZ else zipfile.ZIP_DEFLATED
-        )
-        with zipfile.ZipFile(temp, "w", compression=compression) as archive:
+        compression_name = (request.format_options or {}).get("compression", "standard")
+        # Preserve the pre-P16 CBZ behavior for callers outside the Core wire.
+        if request.export_id is None and request.format is ExportFormat.CBZ:
+            compression = zipfile.ZIP_STORED
+        else:
+            compression = zipfile.ZIP_STORED if compression_name == "store" else zipfile.ZIP_DEFLATED
+        compresslevel = 1 if compression_name == "fast" else None
+        with zipfile.ZipFile(temp, "w", compression=compression, compresslevel=compresslevel) as archive:
             for order, page in enumerate(request.pages, start=1):
                 self._check_cancel(request)
                 entry = f"{order:04d}_{_safe_entry_name(page.filename)}"
                 # UTF-8 filenames are the zipfile default flag; Unicode
                 # page names round-trip (Unicode 文件名 requirement).
                 archive.writestr(entry, page.provider_for(request.mode)())
+                if request.on_page_complete is not None:
+                    request.on_page_complete(page.page_id)
+            if request.export_id is not None and request.format is ExportFormat.ZIP:
+                manifest = {
+                    "pages": [
+                        {"page_id": page.page_id, "order": i,
+                         "filename": f"{i:04d}_{_safe_entry_name(page.filename)}",
+                         "sha256": page.sha256}
+                        for i, page in enumerate(request.pages, start=1)
+                    ],
+                    "lineage": list(request.lineage),
+                }
+                archive.writestr(
+                    "manifest.json",
+                    json.dumps(manifest, ensure_ascii=False, indent=2).encode("utf-8"),
+                )
+            elif request.export_id is not None and request.format is ExportFormat.CBZ:
+                archive.writestr("ComicInfo.xml", _comic_info_xml(request).encode("utf-8"))
 
     def _build_payload(self, request: ExportRequest) -> bytes:
         if request.format is ExportFormat.SINGLE_IMAGE:
-            return request.pages[0].provider_for(request.mode)()
+            payload = request.pages[0].provider_for(request.mode)()
+            if request.on_page_complete is not None:
+                request.on_page_complete(request.pages[0].page_id)
+            return request.image_encoder(payload) if request.image_encoder else payload
         if request.format is ExportFormat.TEXT:
+            if request.on_page_complete is not None:
+                for page in request.pages:
+                    request.on_page_complete(page.page_id)
+            if request.text_content is not None:
+                return request.text_content
             blocks = [
                 f"【{page.filename}】\n{page.text}".rstrip() for page in request.pages
             ]
@@ -425,7 +480,16 @@ class ExportService:
                 raise PdfUnavailableError(
                     "PDF export requires a PdfComposer (e.g. pdf_qt.QtImagePdfComposer)"
                 )
-            images = [page.provider_for(request.mode)() for page in request.pages]
+            images = []
+            for page in request.pages:
+                images.append(page.provider_for(request.mode)())
+                if request.on_page_complete is not None:
+                    request.on_page_complete(page.page_id)
+            if (request.format_options or {}).get("pdf_content") == "searchable_dual_layer":
+                compose_searchable = getattr(self._pdf_composer, "compose_searchable", None)
+                if compose_searchable is None:
+                    raise PdfUnavailableError("searchable PDF composer is unavailable")
+                return compose_searchable(images, [page.regions for page in request.pages])
             return self._pdf_composer.compose(images)
         raise ExportValidationError(f"unsupported format: {request.format!r}")
 
@@ -484,20 +548,24 @@ def _scope_snapshot(
 ) -> str:
     import json
 
-    return json.dumps(
-        {
-            "page_ids": [page.page_id for page in request.pages],
-            "filenames": [page.filename for page in request.pages],
-            "mode": request.mode,
-            "overwrite_policy": request.overwrite_policy.value,
-            "stale_policy": request.stale_policy.value,
-            # Which stale/missing pages CONTINUE shipped (M2-FIX-EXPORT-LINEAGE
-            # plan A); empty for scopes that never continued past a refusal.
-            "included_stale_page_ids": list(included_stale_page_ids),
-            "included_missing_page_ids": list(included_missing_page_ids),
-        },
-        ensure_ascii=False,
-    )
+    snapshot = {
+        "page_ids": [page.page_id for page in request.pages],
+        "filenames": [page.filename for page in request.pages],
+        "mode": request.mode,
+        "overwrite_policy": request.overwrite_policy.value,
+        "stale_policy": request.stale_policy.value,
+        # Which stale/missing pages CONTINUE shipped (M2-FIX-EXPORT-LINEAGE
+        # plan A); empty for scopes that never continued past a refusal.
+        "included_stale_page_ids": list(included_stale_page_ids),
+        "included_missing_page_ids": list(included_missing_page_ids),
+    }
+    if request.export_id is not None:
+        snapshot.update({
+            "chapter_ids": list(request.chapter_metadata.get("chapter_ids", ())) if request.chapter_metadata else [request.chapter_id],
+            "format_options": request.format_options or {},
+            "lineage": list(request.lineage),
+        })
+    return json.dumps(snapshot, ensure_ascii=False)
 
 
 def _parse_scope(snapshot_json: str) -> dict:
@@ -596,3 +664,414 @@ def _hash_file(path: Path) -> str:
         for chunk in iter(lambda: handle.read(1024 * 1024), b""):
             digest.update(chunk)
     return digest.hexdigest()
+
+
+def _remove_staging_file(target_path: str, staging_path: str) -> None:
+    target = Path(target_path)
+    staging = Path(staging_path)
+    try:
+        if (
+            os.path.normcase(str(staging.parent.resolve(strict=True)))
+            == os.path.normcase(str(target.parent.resolve(strict=True)))
+            and staging.name.startswith(f".{target.name}.")
+            and staging.name.endswith(".tmp")
+            and staging.is_file()
+            and not staging.is_symlink()
+        ):
+            staging.unlink()
+    except OSError:
+        return
+
+
+def _comic_info_xml(request: ExportRequest) -> str:
+    import xml.etree.ElementTree as ET
+
+    book = request.book_metadata or {}
+    chapter = request.chapter_metadata or {}
+    root = ET.Element("ComicInfo")
+    for key, value in (
+        ("Series", book.get("title")), ("Title", chapter.get("title")),
+        ("Number", chapter.get("chapter_number")), ("Writer", book.get("author")),
+        ("Summary", book.get("description")),
+    ):
+        if value:
+            ET.SubElement(root, key).text = str(value)
+    pages = ET.SubElement(root, "Pages")
+    for index, _page in enumerate(request.pages):
+        ET.SubElement(pages, "Page", Image=str(index), Type="Story")
+    return '<?xml version="1.0" encoding="utf-8"?>\n' + ET.tostring(root, encoding="unicode")
+
+
+class P16ExportRuntime:
+    """Durable progress/event wrapper around the existing atomic exporter."""
+
+    def __init__(self, exporter, history_store, job_store, event_sink=None) -> None:
+        self._exporter = exporter
+        self._history_store = history_store
+        self._job_store = job_store
+        self._event_sink = event_sink
+        self._lock = threading.RLock()
+        self._jobs = list(job_store.read())
+        self._cancel: dict[str, threading.Event] = {}
+        self._threads: dict[str, threading.Thread] = {}
+        changed = False
+        for job in self._jobs:
+            snapshot = job.get("snapshot", {})
+            if snapshot.get("status") in ("pending", "running"):
+                intent = job.get("publication_intent")
+                recovered = False
+                if isinstance(intent, dict):
+                    path = Path(str(intent.get("path", "")))
+                    expected_hash = intent.get("sha256")
+                    try:
+                        recovered = bool(path.is_file() and _hash_file(path) == expected_hash)
+                    except OSError:
+                        recovered = False
+                if recovered:
+                    output = {
+                        "format": job.get("history", {}).get("format", "text"),
+                        "output_path": str(path), "sha256": expected_hash,
+                    }
+                    snapshot.update(status="publishing", current_page_id=None, output=output)
+                    job["history"].update(status="publishing", output_path=str(path), sha256=expected_hash)
+                else:
+                    snapshot.update(status="failed", completed_at=utc_now(), error_code="EXPORT_WRITE_FAILED")
+                    job.get("history", {})["status"] = "failed"
+                    job["history"]["completed_at"] = snapshot["completed_at"]
+                    staging = intent.get("staging_path") if isinstance(intent, dict) else None
+                    if staging:
+                        _remove_staging_file(job.get("target_path_internal", ""), staging)
+                changed = True
+        if changed:
+            self._job_store.write(self._jobs)
+
+    def start(self, request: ExportRequest, target) -> dict:
+        export_id = request.export_id or f"exp-{uuid.uuid4().hex[:12]}"
+        cancel = threading.Event()
+        accepted_at = utc_now()
+        lineage = list(request.lineage)
+        snapshot = {
+            "export_id": export_id, "status": "pending", "completed_pages": 0,
+            "total_pages": len(request.pages), "current_page_id": None,
+            "accepted_at": accepted_at, "completed_at": None, "output": None,
+            "lineage": lineage, "error_code": None,
+        }
+        history = {
+            "export_id": export_id, "book_id": request.book_id,
+            "chapter_ids": list((request.chapter_metadata or {}).get("chapter_ids", [request.chapter_id])),
+            "ordered_page_ids": [page.page_id for page in request.pages],
+            "format": "png" if request.format is ExportFormat.SINGLE_IMAGE else request.format.value,
+            "format_options": request.format_options or {},
+            "created_at": accepted_at, "completed_at": None,
+            "output_path": str(target.path), "status": "pending", "sha256": None,
+            "lineage": lineage, "stale_policy": request.stale_policy.value,
+        }
+        with self._lock:
+            job = {"snapshot": snapshot, "history": history, "target_path_internal": str(target.path)}
+            self._jobs.append(job)
+            self._job_store.write(self._jobs)
+            self._cancel[export_id] = cancel
+            request = replace(
+                request, export_id=export_id, cancel=cancel.is_set,
+                on_page_complete=lambda page_id: self._page_completed(export_id, page_id),
+                before_publish=lambda: self._check_before_publish(cancel),
+                target_context=target.hold_parent,
+                publish_temp=lambda temp, _target: self._publish_and_mark(export_id, temp, target, cancel),
+            )
+            thread = threading.Thread(
+                target=self._run, args=(export_id, request, cancel),
+                name=f"core-export-{export_id}", daemon=True,
+            )
+            self._threads[export_id] = thread
+            thread.start()
+        return {
+            "export_id": export_id, "status": "pending", "accepted_at": accepted_at,
+            "book_id": request.book_id, "chapter_ids": history["chapter_ids"],
+            "ordered_page_ids": history["ordered_page_ids"],
+            "format": history["format"], "format_options": history["format_options"],
+            "lineage": lineage,
+        }
+
+    def snapshot(self, export_id: str) -> dict:
+        self._reconcile(export_id)
+        with self._lock:
+            job = self._find(export_id)
+            if job is None:
+                raise KeyError(export_id)
+            return dict(job["snapshot"])
+
+    def cancel(self, export_id: str) -> dict:
+        with self._lock:
+            job = self._find(export_id)
+            if job is None:
+                raise KeyError(export_id)
+            if job["snapshot"]["status"] in ("pending", "running"):
+                event = self._cancel.get(export_id)
+                if event is not None:
+                    event.set()
+            return dict(job["snapshot"])
+
+    def history(self) -> list[dict]:
+        with self._lock:
+            publishing_ids = [
+                job["snapshot"]["export_id"] for job in self._jobs
+                if job.get("snapshot", {}).get("status") == "publishing"
+            ]
+        for export_id in publishing_ids:
+            self._reconcile(export_id)
+        with self._lock:
+            by_id = {job["history"]["export_id"]: dict(job["history"]) for job in self._jobs}
+        for row in self._history_store.read():
+            export_id = str(row.get("export_id", ""))
+            if not export_id or export_id in by_id:
+                continue
+            try:
+                scope = json.loads(row.get("scope_snapshot_json") or "{}")
+            except (TypeError, ValueError):
+                scope = {}
+            by_id[export_id] = {
+                "export_id": export_id, "book_id": str(row.get("book_id", "")),
+                "chapter_ids": scope.get("chapter_ids", [str(row.get("chapter_id", ""))]),
+                "ordered_page_ids": scope.get("page_ids", []),
+                "format": "png" if row.get("export_type") == "single_image" else row.get("export_type", "text"),
+                "format_options": scope.get("format_options", {}),
+                "created_at": row.get("created_at"),
+                "completed_at": row.get("completed_at") or None,
+                "output_path": row.get("output_path", ""), "status": row.get("status", "failed"),
+                "sha256": row.get("file_hash") or None, "lineage": scope.get("lineage", []),
+            }
+        return sorted(by_id.values(), key=lambda entry: str(entry.get("created_at", "")), reverse=True)
+
+    def _run(self, export_id: str, request: ExportRequest, cancel: threading.Event) -> None:
+        try:
+            self._change(export_id, status="running", current_page_id=request.pages[0].page_id)
+            result = self._exporter.export(request)
+            if result.output_path is None or result.file_hash is None or not result.output_path.is_file():
+                self._leave_publishing(export_id, request, result)
+                return
+            if _hash_file(result.output_path) != result.file_hash:
+                self._leave_publishing(export_id, request, result)
+                return
+            record = next((row for row in self._history_store.read() if row.get("export_id") == export_id), None)
+            if not self._history_matches(record, result):
+                self._change(
+                    export_id, status="publishing", current_page_id=None,
+                    output={"format": "png" if request.format is ExportFormat.SINGLE_IMAGE else request.format.value,
+                            "output_path": str(result.output_path), "sha256": result.file_hash},
+                )
+                try:
+                    self._ensure_history(request, result)
+                except Exception:
+                    return
+                record = next((row for row in self._history_store.read() if row.get("export_id") == export_id), None)
+                if not self._history_matches(record, result):
+                    return
+            self._change(
+                export_id, status="completed", completed_pages=len(request.pages),
+                current_page_id=None, completed_at=result.completed_at,
+                output={"format": "png" if request.format is ExportFormat.SINGLE_IMAGE else request.format.value,
+                        "output_path": str(result.output_path), "sha256": result.file_hash},
+                error_code=None,
+            )
+        except ExportCancelledError:
+            self._change(export_id, status="cancelled", current_page_id=None,
+                         completed_at=utc_now(), error_code=None)
+        except Exception:
+            with self._lock:
+                job = self._find(export_id)
+                if job is not None and job["snapshot"].get("status") == "publishing":
+                    return
+            self._change(export_id, status="failed", current_page_id=None,
+                         completed_at=utc_now(), error_code="EXPORT_WRITE_FAILED")
+        finally:
+            with self._lock:
+                self._cancel.pop(export_id, None)
+                self._threads.pop(export_id, None)
+
+    def _page_completed(self, export_id: str, page_id: str) -> None:
+        with self._lock:
+            job = self._find(export_id)
+            if job is None:
+                return
+            count = min(job["snapshot"]["completed_pages"] + 1, job["snapshot"]["total_pages"])
+        current = None
+        self._change(export_id, completed_pages=count, current_page_id=current)
+
+    @staticmethod
+    def _check_before_publish(cancel: threading.Event) -> None:
+        if cancel.is_set():
+            raise ExportCancelledError("export cancelled before publication")
+
+    def _publish_and_mark(self, export_id: str, temp: Path, target, cancel: threading.Event) -> None:
+        # Serialize the last cancellation check, atomic replace and durable
+        # publishing snapshot so CancelExport observes exactly one side of
+        # the publication boundary.
+        with self._lock:
+            if cancel.is_set():
+                raise ExportCancelledError("export cancelled before publication")
+            job = self._find(export_id)
+            if job is None:
+                raise RuntimeError("export job disappeared before publication")
+            expected_hash = _hash_file(temp)
+            job["publication_intent"] = {
+                "path": str(target.path), "sha256": expected_hash,
+                "staging_path": str(temp),
+            }
+            self._job_store.write(self._jobs)
+            target.publish(temp)
+            output = job["history"]
+            fmt = output["format"]
+            snapshot = job["snapshot"]
+            snapshot.update(
+                status="publishing", current_page_id=None,
+                output={"format": fmt, "output_path": str(target.path), "sha256": expected_hash},
+            )
+            output["status"] = "publishing"
+            output["output_path"] = str(target.path)
+            output["sha256"] = snapshot["output"]["sha256"]
+            self._job_store.write(self._jobs)
+            event = {
+                "export_id": export_id, "status": "publishing",
+                "completed_pages": snapshot["completed_pages"],
+                "total_pages": snapshot["total_pages"],
+            }
+        if self._event_sink is not None:
+            try:
+                self._event_sink(event)
+            except Exception:
+                pass
+
+    def _leave_publishing(self, export_id: str, request: ExportRequest, result: ExportResult) -> None:
+        if result.output_path is None or result.file_hash is None:
+            return
+        self._change(
+            export_id, status="publishing", current_page_id=None,
+            output={"format": "png" if request.format is ExportFormat.SINGLE_IMAGE else request.format.value,
+                    "output_path": str(result.output_path), "sha256": result.file_hash},
+        )
+
+    @staticmethod
+    def _history_matches(record: dict | None, result: ExportResult) -> bool:
+        return bool(
+            record is not None and record.get("status") == "completed"
+            and record.get("file_hash") == result.file_hash
+            and os.path.normcase(str(record.get("output_path", "")))
+            == os.path.normcase(str(result.output_path))
+        )
+
+    def _change(self, export_id: str, **changes) -> None:
+        with self._lock:
+            job = self._find(export_id)
+            if job is None:
+                return
+            previous_snapshot = dict(job["snapshot"])
+            if isinstance(previous_snapshot.get("output"), dict):
+                previous_snapshot["output"] = dict(previous_snapshot["output"])
+            previous_history = dict(job["history"])
+            job["snapshot"].update(changes)
+            job["history"]["status"] = job["snapshot"]["status"]
+            job["history"]["completed_at"] = job["snapshot"].get("completed_at")
+            output = job["snapshot"].get("output")
+            if output:
+                job["history"]["output_path"] = output["output_path"]
+                job["history"]["sha256"] = output["sha256"]
+            try:
+                self._job_store.write(self._jobs)
+            except Exception:
+                job["snapshot"].clear()
+                job["snapshot"].update(previous_snapshot)
+                job["history"].clear()
+                job["history"].update(previous_history)
+                raise
+            event = {
+                "export_id": export_id, "status": job["snapshot"]["status"],
+                "completed_pages": job["snapshot"]["completed_pages"],
+                "total_pages": job["snapshot"]["total_pages"],
+            }
+        if self._event_sink is not None:
+            try:
+                self._event_sink(event)
+            except Exception:
+                pass
+
+    def _ensure_history(self, request: ExportRequest, result: ExportResult) -> None:
+        rows = list(self._history_store.read())
+        scope = {
+            "page_ids": [page.page_id for page in request.pages],
+            "filenames": [page.filename for page in request.pages], "mode": "translated",
+            "overwrite_policy": "overwrite", "stale_policy": request.stale_policy.value,
+            "chapter_ids": list((request.chapter_metadata or {}).get("chapter_ids", [request.chapter_id])),
+            "format_options": request.format_options or {}, "lineage": list(request.lineage),
+        }
+        rows.append({
+            "export_id": result.export_id, "book_id": result.book_id,
+            "chapter_id": result.chapter_id, "pipeline_run_id": request.pipeline_run_id,
+            "export_type": result.format.value, "scope_snapshot_json": json.dumps(scope, ensure_ascii=False),
+            "output_path": str(result.output_path), "render_profile_snapshot_json": "",
+            "status": "completed", "file_hash": result.file_hash,
+            "created_at": self._find(result.export_id)["history"]["created_at"],
+            "completed_at": result.completed_at, "detail": "",
+        })
+        self._history_store.write(rows)
+
+    def _reconcile(self, export_id: str) -> None:
+        with self._lock:
+            job = self._find(export_id)
+            if job is None or job["snapshot"]["status"] != "publishing":
+                return
+            output = job["snapshot"].get("output")
+            if not output:
+                return
+            output_path = Path(output.get("output_path", ""))
+            expected_hash = output.get("sha256")
+        try:
+            if not output_path.is_file() or _hash_file(output_path) != expected_hash:
+                return
+        except OSError:
+            return
+        rows = list(self._history_store.read())
+        existing = next((row for row in rows if row.get("export_id") == export_id and row.get("status") == "completed"), None)
+        if not self._history_matches_output(existing, output):
+            try:
+                self._ensure_history_from_job(job, output)
+            except Exception:
+                return
+            rows = list(self._history_store.read())
+            existing = next((row for row in rows if row.get("export_id") == export_id and row.get("status") == "completed"), None)
+            if not self._history_matches_output(existing, output):
+                return
+        self._change(export_id, status="completed", completed_at=existing.get("completed_at"), error_code=None)
+
+    @staticmethod
+    def _history_matches_output(record: dict | None, output: dict) -> bool:
+        return bool(
+            record is not None and record.get("status") == "completed"
+            and record.get("file_hash") == output.get("sha256")
+            and os.path.normcase(str(record.get("output_path", "")))
+            == os.path.normcase(str(output.get("output_path", "")))
+        )
+
+    def _ensure_history_from_job(self, job: dict, output: dict) -> None:
+        history = job["history"]
+        fmt = history["format"]
+        scope = {
+            "page_ids": history["ordered_page_ids"], "mode": "translated",
+            "overwrite_policy": "overwrite", "stale_policy": history.get("stale_policy", "abort"),
+            "chapter_ids": history["chapter_ids"], "format_options": history["format_options"],
+            "lineage": history["lineage"],
+        }
+        rows = list(self._history_store.read())
+        rows = [row for row in rows if row.get("export_id") != history["export_id"]]
+        rows.append({
+            "export_id": history["export_id"], "book_id": history["book_id"],
+            "chapter_id": history["chapter_ids"][0], "pipeline_run_id": None,
+            "export_type": "single_image" if fmt == "png" else fmt,
+            "scope_snapshot_json": json.dumps(scope, ensure_ascii=False),
+            "output_path": output["output_path"], "render_profile_snapshot_json": "",
+            "status": "completed", "file_hash": output["sha256"],
+            "created_at": history["created_at"], "completed_at": utc_now(), "detail": "",
+        })
+        self._history_store.write(rows)
+
+    def _find(self, export_id: str) -> dict | None:
+        return next((job for job in self._jobs if job.get("snapshot", {}).get("export_id") == export_id), None)

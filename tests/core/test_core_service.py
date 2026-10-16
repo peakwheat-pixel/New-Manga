@@ -151,7 +151,7 @@ def test_dispatch_pure_functions(tmp_path: Path) -> None:
         # M2-REGION-RETYPE-CORE: 2 -> 3 (set_region_type/list_regions added)
         # M2-RC4-DOMAIN-COMMANDS: 3 -> 4 (three domain commands)
         # M2-PAGE-RESOURCE-RESOLVE-1: 4 -> 5 (resolve_page_resource added)
-        assert res["result"]["protocol_version"] == {"major": 2, "minor": 0}
+        assert res["result"]["protocol_version"] == {"major": 2, "minor": 1}
         assert res["result"]["capabilities"] == ["library.list_books"]
 
         # 6. ListBooks on empty repository
@@ -237,7 +237,7 @@ def test_real_subprocess_e2e_round_trip(tmp_path: Path) -> None:
         # M2-SETTINGS-IPC-CHANNEL: 1.1 -> 2 (settings.get/update_section added)
         # M2-REGION-RETYPE-CORE: 2 -> 3 (set_region_type/list_regions added)
         # M2-PAGE-RESOURCE-RESOLVE-1: 4 -> 5 (resolve_page_resource added)
-        assert ping_resp["result"]["protocol_version"] == {"major": 2, "minor": 0}
+        assert ping_resp["result"]["protocol_version"] == {"major": 2, "minor": 1}
         assert ping_resp["result"]["capabilities"] == ["library.list_books"]
 
         # 1b. core.detect in the REAL production assembly (M2-PROD-DETECT-3):

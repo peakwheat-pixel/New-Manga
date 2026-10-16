@@ -1,0 +1,7 @@
+shell=PowerShell
+python=G:\CODEX\New Manga.task-envs\T1.1.1-impl-py312\Scripts\python.exe
+working_directory=G:\CODEX\New Manga.workspace\worktrees\P16-READER-EXPORT-CORE
+command=python -m pytest tests/core/test_p16_reader_export.py -q
+............                                                             [100%]
+12 passed in 4.01s
+exit_code=0

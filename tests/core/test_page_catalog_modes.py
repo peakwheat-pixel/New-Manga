@@ -79,6 +79,7 @@ def test_translated_and_compare_resolve_like_the_reader(tmp_path) -> None:
             services.repository,
             services.storage,
             SqlitePageArtifactLocator(services.conn),
+            services.conn,
         )
         reader_page = next(
             row
