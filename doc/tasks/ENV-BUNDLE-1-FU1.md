@@ -3,19 +3,19 @@ id: ENV-BUNDLE-1-FU1
 title: packaged 驱动验收：让真实 frozen sidecar 驱动协议 2.3 端到端证据（闭环 ENV-BUNDLE-1 AC4 严格口径）
 kind: infra
 governance_version: 2
-status: in_review
+status: closed_with_limitations
 approval: coordinator_release_20261016_followup_of_env_bundle_1_closeout
 suggested_owner: Codex
 owner: codex
-reviewer: null
+reviewer: dsh
 depends_on: [ENV-BUNDLE-1]
 base_commit: 3bf2604dc9e8ef6be47bd80897e4df05cae077b3
 branch: codex/ENV-BUNDLE-1-FU1-packaged-acceptance
 worktree: G:/CODEX/New Manga.workspace/worktrees/ENV-BUNDLE-1-FU1
-integration_commit: null
-delivery_head: cffa9666fbbe5f2adfe213de37a8beb20a994a38
-canonical_evidence_status: registered_blob_level
-resource_closeout_status: accounted_with_preserved_residuals
+integration_commit: b474c09b219ffd0d5c72a02f6705012dfa595996
+delivery_head: 77f760e5fae2a913c397cd5503886897b00cf0db
+canonical_evidence_status: complete
+resource_closeout_status: complete
 evidence_dir: verification/ENV-BUNDLE-1-FU1
 ---
 
@@ -175,6 +175,7 @@ evidence_dir: verification/ENV-BUNDLE-1-FU1
 | ENV-BUNDLE-1-FU1-AC6-COMPARISON | AC6 | `verification/ENV-BUNDLE-1-FU1/main-status-comparison.md` | `998200d48e10899e2916a73143578c69bceb30cf` | `a8330fd416ca8fc3ad89e86915da9aa3f08a90d3d38e3aca1d9ff088e5ece640` | CANONICAL |
 | ENV-BUNDLE-1-FU1-AC6-OLD-CORE | AC6 | `verification/ENV-BUNDLE-1-FU1/main-old-core-ping-before.log` | `998200d48e10899e2916a73143578c69bceb30cf` | `23bb9dde73e3c8600295c0bd9e05f4c037f36451b524660a9c2a3a58ad3082f5` | CANONICAL |
 | ENV-BUNDLE-1-FU1-RESOURCE | AC7 | `verification/ENV-BUNDLE-1-FU1/resource-manifest.json` | `998200d48e10899e2916a73143578c69bceb30cf` | `60729b5bc76ba32691b0f89cadfcd736f4e3b103e536f68d75f767a86cba3fc3` | CANONICAL |
+| ENV-BUNDLE-1-FU1-REVIEW-R1 | AC1–AC7（独立 Review；含 AC2 I1 收敛与 AC3 受阻裁决） | `verification/ENV-BUNDLE-1-FU1/dsh-review-r1.md` | `a88242d5f3f69a625cbd7fd4a9e89d5f27e27daa` | - | CANONICAL |
 
 ## Resource Manifest
 
@@ -189,9 +190,16 @@ evidence_dir: verification/ENV-BUNDLE-1-FU1
 
 ## Closeout Record
 
-- Handoff date / Codex：2026-10-16；Task 已提交并交独立 Review，本次不代替 Coordinator 关闭 Task。
-- canonical_evidence_status：`registered_blob_level`；表内 SHA-256 对应固定实现 commit 中的 blob bytes。
-- resource_closeout_status：`accounted_with_preserved_residuals`；manifest 列明保留的 worktree、ignored bundle/dist 与既有 venv。
-- 删除、迁移、归档数量/字节数：删除 `0`；大型产物仅在 ignored 目标间刷新，不入库。
-- 未关闭项及保留原因：AC3 `BLOCKED`（HostControl grant 返回 `REF_EXPIRED`）；独立 Review 尚未完成；source-backed 全套和 GUI/installer 未运行。
-- 当前指针清理：`STATUS` / `REBASELINE_PLAN` 由 Coordinator 在 Review 后同步；本 Task 未触碰。
+- Closeout date / Coordinator：2026-10-16（dsh, epoch 6）。Reviewer=dsh（独立于 Owner=codex）。
+- canonical_evidence_status：`complete`（31 项 Owner 证据 + 独立 Review 行；治理检查接受全部 commit/sha pin）。
+- resource_closeout_status：`complete`（worktree、两侧 frozen bundle、两侧 frontend dist、既有 build venv 均 `PRESERVE_REFERENCED`）。
+- 删除、迁移、归档数量/字节数：删除 `0`；大型产物仅在 gitignored 目标间刷新（worktree → 主仓），不入库。
+- 未关闭项及保留原因：**AC3 packaged HostControl E2E 受阻**（真实 frozen Core 上 `RegisterImportSource` 返回 `REF_EXPIRED`）。
+  根因已由 Coordinator 只读复核确认并**转派为 [HOST-TTL-BOUNDARY-1](HOST-TTL-BOUNDARY-1.md)**（host 把 TTL 取在 Core 验证窗口精确上限，零裕量）。
+  **不得**在任何地方声明 HostControl 端到端已通过，直到该 Task 完成。
+- 其他未运行（如实保留）：既有 source-backed 全套 77 项测试、NSIS installer、GUI 安装验收 = `NOT_RUN`。
+- 新增风险（转 BACKLOG BL-13）：生产 Host 启动同样使用 30 s 启动 ping（`main.rs:840/848`），失败经 `.expect` panic；
+  并发负载下存在冷启动误判风险。**本次只报告未修**，产品期限与失败处理待 Coordinator/用户决定。
+- 交付状态：`closed_with_limitations`。集成 `b474c09b2`；delivery_head `77f760e5f`（实现 `cffa9666f` + I1 返修 `dca85f71f`）。
+  AC2 的 I1 已收敛（Reviewer 在负载下独立复跑 6/6）；AC3 封闭于后继 Task。
+- 当前指针清理：`STATUS` / `REBASELINE_PLAN` 已同步（ENV-BUNDLE-1-FU1 移出 READY）。
