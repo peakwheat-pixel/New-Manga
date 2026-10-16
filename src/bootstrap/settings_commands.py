@@ -5,7 +5,9 @@ from __future__ import annotations
 from collections.abc import Mapping
 from dataclasses import replace
 from datetime import datetime, timezone
+import ipaddress
 import json
+import time
 import urllib.request
 import uuid
 from urllib.parse import urlsplit
@@ -84,6 +86,23 @@ def _fail(
     return SettingsSurfaceError(category, phase, action, message_key)
 
 
+def _is_ip_literal(host: str | None) -> bool:
+    if not host:
+        return False
+    try:
+        ipaddress.ip_address(host)
+        return True
+    except ValueError:
+        return False
+
+
+def _valid_network_stage_reason(stage: str, mode: str, reason: str) -> bool:
+    return (
+        (stage == "Proxy" and mode == MODE_SYSTEM and reason == "system_route_is_direct")
+        or (stage == "ProviderAuth" and reason == "provider_auth_not_required")
+    )
+
+
 class P15SettingsCommands:
     """Validate and execute the Core-owned Provider and override queries."""
 
@@ -108,6 +127,7 @@ class P15SettingsCommands:
             "settings_network_profile_default_set": self._network_profile_default_set,
             "settings_network_profile_default_clear": self._network_profile_default_clear,
             "settings_network_profile_resolve": self._network_profile_resolve,
+            "settings_network_profiles_test": self._network_profiles_test,
             "BindProfileCredential": self._bind_profile_credential,
             "ClearProfileCredential": self._clear_profile_credential,
         }
@@ -232,6 +252,76 @@ class P15SettingsCommands:
             "network_profile_id": None,
             "mode": "System" if system_proxy else "Direct",
             "source": "system" if system_proxy else "direct",
+        }
+
+    def _network_profiles_test(self, payload: dict) -> dict:
+        self._fields(
+            payload,
+            {"network_profile_id", "provider_profile_id"},
+            phase="profile",
+        )
+        network_profile_id = self._nonempty(payload["network_profile_id"], "profile")
+        provider_profile_id = self._nonempty(payload["provider_profile_id"], "profile")
+        try:
+            network = self._network_store().get_profile(network_profile_id)
+            provider = self._profile_store().get_profile(provider_profile_id)
+        except Exception as error:
+            raise _fail(
+                "unavailable", "profile", "contact_support", "SETTINGS_UNAVAILABLE"
+            ) from error
+        if network is None or provider is None:
+            raise _fail("validation", "profile", "select_profile", "SETTINGS_INVALID_INPUT")
+        endpoint = self._endpoint(provider.base_url, "profile")
+
+        stages = []
+        failed_stage = None
+        context = {}
+        probe = getattr(self._core, "network_profile_test_probe", None)
+        for stage in ("Proxy", "DNS", "TCP", "TLS", "HTTP", "ProviderAuth"):
+            if failed_stage is not None:
+                stages.append({"stage": stage, "status": "not_run", "reason": "upstream_stage_failed"})
+                continue
+
+            reason = "direct_mode" if stage == "Proxy" and network.mode == MODE_DIRECT else None
+            if stage == "DNS" and _is_ip_literal(urlsplit(endpoint).hostname):
+                reason = "provider_endpoint_is_ip_literal"
+            if stage == "TLS" and urlsplit(endpoint).scheme.lower() == "http":
+                reason = "provider_endpoint_uses_http"
+            if reason is not None:
+                stages.append({"stage": stage, "status": "not_applicable", "reason": reason})
+                continue
+
+            started = time.perf_counter()
+            try:
+                reason = probe.run(stage, endpoint, provider, network, context)
+                if reason is not None:
+                    if not _valid_network_stage_reason(stage, network.mode, reason):
+                        raise ValueError("invalid network probe outcome")
+                    stages.append({"stage": stage, "status": "not_applicable", "reason": reason})
+                else:
+                    stages.append({
+                        "stage": stage,
+                        "status": "passed",
+                        "duration_ms": max(0, int((time.perf_counter() - started) * 1000)),
+                    })
+            except Exception:
+                failed_stage = stage
+                stages.append({
+                    "stage": stage,
+                    "status": "failed",
+                    "failure": {
+                        "category": "unavailable",
+                        "action": "retry",
+                        "message_key": "NETWORK_STAGE_FAILED",
+                    },
+                    "duration_ms": max(0, int((time.perf_counter() - started) * 1000)),
+                })
+
+        return {
+            "status": "failed" if failed_stage is not None else "passed",
+            "failed_stage": failed_stage,
+            "direct_fallback_used": False,
+            "stages": stages,
         }
 
     def _bind_profile_credential(self, payload: dict) -> dict:

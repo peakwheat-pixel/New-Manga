@@ -211,6 +211,7 @@ _P15_SETTINGS_COMMANDS = frozenset({
     "settings_network_profile_default_set",
     "settings_network_profile_default_clear",
     "settings_network_profile_resolve",
+    "settings_network_profiles_test",
     "BindProfileCredential",
     "ClearProfileCredential",
 })

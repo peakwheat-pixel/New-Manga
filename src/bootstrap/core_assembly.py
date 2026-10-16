@@ -86,6 +86,7 @@ from infrastructure.providers.handlers import (
 )
 from infrastructure.providers.runtime import build_provider_runtime
 from infrastructure.providers.step_writes import ArtifactStepWriter, RegionStepWriter
+from infrastructure.network.profile_test import NetworkProfileTestProbe
 from infrastructure.rendering.locator import SqlitePageArtifactLocator
 from infrastructure.settings.json_profile_stores import (
     JsonNetworkProfileStore,
@@ -642,6 +643,7 @@ class CoreServices:
     provider_profile_store: object = None
     network_profile_store: object = None
     provider_binding_store: object = None
+    network_profile_test_probe: object = None
 
 
 def _resolve_detector_weights_path(
@@ -1269,6 +1271,7 @@ def assemble_core_services(
             provider_profile_store=JsonProviderProfileStore(data_root / "settings"),
             network_profile_store=JsonNetworkProfileStore(data_root / "settings"),
             provider_binding_store=JsonProviderCapabilityBindingStore(data_root / "settings"),
+            network_profile_test_probe=NetworkProfileTestProbe(transport),
         )
     except Exception:
         conn.close()

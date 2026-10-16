@@ -1,0 +1,5 @@
+shell=PowerShell 7.6.6; python=G:\CODEX\New Manga.task-envs\T1.1.1-impl-py312\Scripts\python.exe; worktree=G:\CODEX\New Manga.workspace\worktrees\P15-CORE-1C; temp_root=G:\CODEX\New Manga.workspace\worktrees\P15-CORE-1C\verification\P15-CORE-1C\pytest-tmp
+........................................................................ [ 72%]
+............................                                             [100%]
+100 passed in 4.58s
+EXIT_CODE=0
