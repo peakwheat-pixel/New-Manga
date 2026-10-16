@@ -754,15 +754,16 @@ class CoreServiceServer:
 
     @staticmethod
     def _valid_host_credential(value: object) -> bool:
-        if not isinstance(value, str) or len(value) != 43 or not value.isascii():
+        if not isinstance(value, str) or len(value) not in {43, 44} or not value.isascii():
             return False
         try:
-            decoded = base64.urlsafe_b64decode(value + "=")
+            decoded = base64.urlsafe_b64decode(value + "=" * (-len(value) % 4))
         except (ValueError, UnicodeError):
             return False
+        encoded = base64.urlsafe_b64encode(decoded).decode("ascii")
         return (
             len(decoded) == 32
-            and base64.urlsafe_b64encode(decoded).decode("ascii").rstrip("=") == value
+            and value in {encoded, encoded.rstrip("=")}
         )
 
     def _invalidate_host_session(self) -> None:

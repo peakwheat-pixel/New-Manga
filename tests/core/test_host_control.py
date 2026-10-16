@@ -63,6 +63,20 @@ def _open(server: CoreServiceServer, *, host_id: str = HOST_SESSION_ID, credenti
     return response["result"]["core_session_id"]
 
 
+@pytest.mark.parametrize("padded", [False, True])
+def test_open_host_session_accepts_canonical_base64url_padding(tmp_path: Path, padded: bool) -> None:
+    core, server = _server(tmp_path)
+    credential = base64.urlsafe_b64encode(b"p" * 32).decode()
+    if not padded:
+        credential = credential.rstrip("=")
+    try:
+        core_session_id = _open(server, credential=credential)
+        closed = _request(server, core_session_id, "CloseHostSession", {}, credential=credential)
+        assert closed["result"] == {"closed": True}
+    finally:
+        _close(core, server)
+
+
 def _request(
     server: CoreServiceServer,
     core_session_id: str,
