@@ -5,12 +5,13 @@
 
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
-use std::collections::HashSet;
+use std::collections::{HashMap, HashSet};
 use std::io::{BufRead, BufReader, Write};
 use std::path::{Path, PathBuf};
-use std::process::{Child, ChildStdin, ChildStdout, Command, Stdio};
-use std::sync::atomic::{AtomicU64, Ordering};
-use std::sync::Mutex;
+use std::process::{Child, ChildStdin, Command, Stdio};
+use std::sync::atomic::{AtomicBool, AtomicU64, Ordering};
+use std::sync::mpsc::SyncSender;
+use std::sync::{Arc, Mutex};
 use std::time::{Duration, Instant};
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
@@ -213,6 +214,175 @@ pub trait LibraryChannel: Send + Sync {
             None,
         ))
     }
+
+    /// EVENTS-FWD-1 (rev 2.4 §6.4): Register an event sink for background
+    /// core events forwarded to WebView. Default is a no-op.
+    fn set_event_sink(&self, _sink: EventSink) {}
+}
+
+pub type EventSink = Arc<dyn Fn(&str, Value) + Send + Sync>;
+
+pub const FORWARDED_CORE_EVENTS: &[(&str, &str)] = &[
+    ("TaskFailed", "core:TaskFailed"),
+    ("RunPaused", "core:RunPaused"),
+    ("RunCompleted", "core:RunCompleted"),
+    ("CurrentPageStepChanged", "core:CurrentPageStepChanged"),
+    ("ExportProgressChanged", "core:ExportProgressChanged"),
+    ("ReadingProgressChanged", "core:ReadingProgressChanged"),
+];
+
+/// EVENTS-FWD-1 (contract rev 2.4 §6.4): Project a Core wire event to its
+/// safe WebView representation. Only the six frozen event types are accepted.
+/// Payloads are strictly sanitized to exclude any local filesystem paths,
+/// references, credentials, or binary bytes (M2-C1 §10.2 / §10.3 / §10.4).
+pub fn project_forwarded_event(
+    event_type: &str,
+    raw_payload: &Value,
+) -> Option<(&'static str, Value)> {
+    let (_, tauri_event_name) = FORWARDED_CORE_EVENTS
+        .iter()
+        .find(|(core_name, _)| *core_name == event_type)?;
+
+    let projected_payload = match event_type {
+        "TaskFailed" => {
+            let mut obj = serde_json::Map::new();
+            if let Some(run_id) = raw_payload.get("run_id").and_then(Value::as_str) {
+                obj.insert("run_id".into(), Value::String(run_id.into()));
+            } else {
+                return None;
+            }
+            if let Some(task_id) = raw_payload.get("task_id").and_then(Value::as_str) {
+                obj.insert("task_id".into(), Value::String(task_id.into()));
+            } else {
+                return None;
+            }
+            if let Some(page_id) = raw_payload.get("page_id") {
+                if !page_id.is_null() {
+                    if let Some(pid) = page_id.as_str() {
+                        obj.insert("page_id".into(), Value::String(pid.into()));
+                    }
+                } else {
+                    obj.insert("page_id".into(), Value::Null);
+                }
+            }
+            if let Some(error_code) = raw_payload.get("error_code") {
+                if !error_code.is_null() {
+                    if let Some(ec) = error_code.as_str() {
+                        obj.insert("error_code".into(), Value::String(ec.into()));
+                    }
+                } else {
+                    obj.insert("error_code".into(), Value::Null);
+                }
+            }
+            Value::Object(obj)
+        }
+        "RunPaused" => {
+            let run_id = raw_payload.get("run_id").and_then(Value::as_str)?;
+            let status = raw_payload.get("status").and_then(Value::as_str)?;
+            if status != "paused" {
+                return None;
+            }
+            serde_json::json!({
+                "run_id": run_id,
+                "status": "paused"
+            })
+        }
+        "RunCompleted" => {
+            let run_id = raw_payload.get("run_id").and_then(Value::as_str)?;
+            let status = raw_payload.get("status").and_then(Value::as_str)?;
+            if status != "completed" && status != "completed_with_failures" {
+                return None;
+            }
+            serde_json::json!({
+                "run_id": run_id,
+                "status": status
+            })
+        }
+        "CurrentPageStepChanged" => {
+            let run_id = raw_payload.get("run_id").and_then(Value::as_str)?;
+            let current_step_type = raw_payload.get("current_step_type").and_then(Value::as_str)?;
+            let page_id = raw_payload.get("current_page_id").and_then(Value::as_str);
+            serde_json::json!({
+                "run_id": run_id,
+                "current_page_id": page_id,
+                "current_step_type": current_step_type
+            })
+        }
+        "ExportProgressChanged" => {
+            let export_id = raw_payload.get("export_id").and_then(Value::as_str)?;
+            let status = raw_payload.get("status").and_then(Value::as_str)?;
+            let completed_pages = raw_payload.get("completed_pages").and_then(Value::as_u64)?;
+            let total_pages = raw_payload.get("total_pages").and_then(Value::as_u64)?;
+            serde_json::json!({
+                "export_id": export_id,
+                "status": status,
+                "completed_pages": completed_pages,
+                "total_pages": total_pages
+            })
+        }
+        "ReadingProgressChanged" => {
+            let book_id = raw_payload.get("book_id").and_then(Value::as_str)?;
+            let chapter_id = raw_payload.get("chapter_id").and_then(Value::as_str)?;
+            let mode = raw_payload.get("mode").and_then(Value::as_str)?;
+            if mode != "original" && mode != "translated" {
+                return None;
+            }
+            serde_json::json!({
+                "book_id": book_id,
+                "chapter_id": chapter_id,
+                "mode": mode
+            })
+        }
+        _ => return None,
+    };
+
+    Some((*tauri_event_name, projected_payload))
+}
+
+pub(crate) fn dispatch_stdout_line(
+    line: &str,
+    event_sink: &Mutex<Option<EventSink>>,
+    pending_responses: &Mutex<HashMap<String, SyncSender<Result<String, LibraryError>>>>,
+) {
+    let trimmed = line.trim_end();
+    if trimmed.is_empty() {
+        return;
+    }
+    if let Ok(val) = serde_json::from_str::<Value>(trimmed) {
+        // 1. Check whether this line is a typed event envelope (event_type present)
+        if let Some(event_type) = val.get("event_type").and_then(Value::as_str) {
+            if let Some(raw_payload) = val.get("payload") {
+                if let Some((tauri_name, projected)) =
+                    project_forwarded_event(event_type, raw_payload)
+                {
+                    if let Ok(sink_lock) = event_sink.lock() {
+                        if let Some(sink) = sink_lock.as_ref() {
+                            sink(tauri_name, projected);
+                        }
+                    }
+                }
+            }
+            return;
+        }
+
+        // 2. Check whether this line is an application or host-control response (request_id present)
+        if let Some(req_id) = val.get("request_id").and_then(Value::as_str) {
+            let mut lock = pending_responses.lock().unwrap();
+            if let Some(sender) = lock.remove(req_id) {
+                let _ = sender.send(Ok(line.to_string()));
+                return;
+            }
+        }
+    }
+
+    // Fallback: if not parsed as Event or registered response, route to the single pending caller
+    let mut lock = pending_responses.lock().unwrap();
+    if lock.len() == 1 {
+        let single_key = lock.keys().next().cloned().unwrap();
+        if let Some(sender) = lock.remove(&single_key) {
+            let _ = sender.send(Ok(line.to_string()));
+        }
+    }
 }
 
 /// The command argv pinned for spawning the production Core service.
@@ -223,11 +393,14 @@ pub fn spawn_args() -> Vec<&'static str> {
 pub struct StdioLibraryChannel {
     child: Mutex<Child>,
     stdin: Mutex<ChildStdin>,
-    stdout: Mutex<BufReader<ChildStdout>>,
     transaction_lock: Mutex<()>,
     request_id_gen: AtomicU64,
     host_session: Mutex<Option<HostSession>>,
     session_export_ids: Mutex<HashSet<String>>,
+    event_sink: Arc<Mutex<Option<EventSink>>>,
+    pending_responses: Arc<Mutex<HashMap<String, SyncSender<Result<String, LibraryError>>>>>,
+    is_down: Arc<AtomicBool>,
+    reader_join_handle: Mutex<Option<std::thread::JoinHandle<()>>>,
 }
 
 struct HostSession {
@@ -322,10 +495,14 @@ impl StdioLibraryChannel {
             cmd.creation_flags(CREATE_NO_WINDOW);
         }
 
-        let mut child = cmd
+        let child = cmd
             .spawn()
             .map_err(|e| LibraryError::unavailable(&format!("Failed to spawn Core: {e}")))?;
 
+        Self::adopt_child(child)
+    }
+
+    fn adopt_child(mut child: Child) -> Result<Self, LibraryError> {
         let stdin = child
             .stdin
             .take()
@@ -335,14 +512,61 @@ impl StdioLibraryChannel {
             .take()
             .ok_or_else(|| LibraryError::unavailable("Failed to open child stdout"))?;
 
+        let pending_responses: Arc<Mutex<HashMap<String, SyncSender<Result<String, LibraryError>>>>> =
+            Arc::new(Mutex::new(HashMap::new()));
+        let event_sink: Arc<Mutex<Option<EventSink>>> = Arc::new(Mutex::new(None));
+        let is_down = Arc::new(AtomicBool::new(false));
+
+        let pending_clone = Arc::clone(&pending_responses);
+        let sink_clone = Arc::clone(&event_sink);
+        let is_down_clone = Arc::clone(&is_down);
+
+        let reader_thread = std::thread::Builder::new()
+            .name("stdio-library-reader".to_string())
+            .spawn(move || {
+                let mut reader = BufReader::new(stdout);
+                loop {
+                    let mut line = String::new();
+                    match reader.read_line(&mut line) {
+                        Ok(0) => {
+                            is_down_clone.store(true, Ordering::SeqCst);
+                            let mut lock = pending_clone.lock().unwrap();
+                            for (_req_id, sender) in lock.drain() {
+                                let _ = sender.send(Err(LibraryError::unavailable(
+                                    "Core stdout closed (EOF)",
+                                )));
+                            }
+                            break;
+                        }
+                        Ok(_) => {
+                            dispatch_stdout_line(&line, &sink_clone, &pending_clone);
+                        }
+                        Err(err) => {
+                            is_down_clone.store(true, Ordering::SeqCst);
+                            let mut lock = pending_clone.lock().unwrap();
+                            for (_req_id, sender) in lock.drain() {
+                                let _ = sender.send(Err(LibraryError::unavailable(&format!(
+                                    "stdout read failed: {err}"
+                                ))));
+                            }
+                            break;
+                        }
+                    }
+                }
+            })
+            .map_err(|e| LibraryError::unavailable(&format!("Failed to spawn reader thread: {e}")))?;
+
         Ok(Self {
             child: Mutex::new(child),
             stdin: Mutex::new(stdin),
-            stdout: Mutex::new(BufReader::new(stdout)),
             transaction_lock: Mutex::new(()),
             request_id_gen: AtomicU64::new(1),
             host_session: Mutex::new(None),
             session_export_ids: Mutex::new(HashSet::new()),
+            event_sink,
+            pending_responses,
+            is_down,
+            reader_join_handle: Mutex::new(Some(reader_thread)),
         })
     }
 
@@ -361,7 +585,7 @@ impl StdioLibraryChannel {
     }
 
     fn exchange(&self, request: Value) -> Result<Value, LibraryError> {
-        let _req_id = request
+        let req_id = request
             .get("request_id")
             .and_then(Value::as_str)
             .unwrap_or("host-control-request")
@@ -378,45 +602,57 @@ impl StdioLibraryChannel {
         #[cfg(test)]
         TEST_AFTER_TRANSACTION_LOCK_HOOK.with(|cell| {
             if let Some(hook) = cell.borrow_mut().as_mut() {
-                hook(&_req_id);
+                hook(&req_id);
             }
         });
+
+        if self.is_down.load(Ordering::SeqCst) {
+            return Err(LibraryError::unavailable("Core stdout closed (EOF)"));
+        }
+
+        let (tx, rx) = std::sync::mpsc::sync_channel(1);
+        {
+            let mut pending = self
+                .pending_responses
+                .lock()
+                .map_err(|_| LibraryError::unavailable("Internal mutex poisoned (pending)"))?;
+            pending.insert(req_id.clone(), tx);
+        }
 
         {
             let mut stdin = self
                 .stdin
                 .lock()
                 .map_err(|_| LibraryError::unavailable("Internal mutex poisoned (stdin)"))?;
-            stdin
-                .write_all(line.as_bytes())
-                .map_err(|e| LibraryError::unavailable(&format!("stdin write failed: {e}")))?;
-            stdin
-                .flush()
-                .map_err(|e| LibraryError::unavailable(&format!("stdin flush failed: {e}")))?;
+            if let Err(e) = stdin.write_all(line.as_bytes()) {
+                let mut pending = self.pending_responses.lock().unwrap();
+                pending.remove(&req_id);
+                return Err(LibraryError::unavailable(&format!("stdin write failed: {e}")));
+            }
+            if let Err(e) = stdin.flush() {
+                let mut pending = self.pending_responses.lock().unwrap();
+                pending.remove(&req_id);
+                return Err(LibraryError::unavailable(&format!("stdin flush failed: {e}")));
+            }
         }
 
-        let mut response_line = String::new();
-        {
-            let mut stdout = self
-                .stdout
-                .lock()
-                .map_err(|_| LibraryError::unavailable("Internal mutex poisoned (stdout)"))?;
-            stdout
-                .read_line(&mut response_line)
-                .map_err(|e| LibraryError::unavailable(&format!("stdout read failed: {e}")))?;
-        }
+        let response_line = match rx.recv() {
+            Ok(Ok(resp)) => resp,
+            Ok(Err(err)) => return Err(err),
+            Err(_) => return Err(LibraryError::unavailable("Core stdout closed (EOF)")),
+        };
 
         #[cfg(test)]
         TEST_RESPONSE_OBSERVER.with(|cell| {
             if let Some(observer) = cell.borrow_mut().as_mut() {
-                observer(&_req_id, response_line.trim_end());
+                observer(&req_id, response_line.trim_end());
             }
         });
 
         #[cfg(test)]
         TEST_BEFORE_TRANSACTION_UNLOCK_HOOK.with(|cell| {
             if let Some(hook) = cell.borrow_mut().as_mut() {
-                hook(&_req_id);
+                hook(&req_id);
             }
         });
 
@@ -688,24 +924,8 @@ impl StdioLibraryChannel {
     /// child as a channel so the startup-ping deadline/kill path can be
     /// exercised against a process that never answers.
     #[cfg(test)]
-    fn adopt_child_for_test(mut child: Child) -> Result<Self, LibraryError> {
-        let stdin = child
-            .stdin
-            .take()
-            .ok_or_else(|| LibraryError::unavailable("Failed to open child stdin"))?;
-        let stdout = child
-            .stdout
-            .take()
-            .ok_or_else(|| LibraryError::unavailable("Failed to open child stdout"))?;
-        Ok(Self {
-            child: Mutex::new(child),
-            stdin: Mutex::new(stdin),
-            stdout: Mutex::new(BufReader::new(stdout)),
-            transaction_lock: Mutex::new(()),
-            request_id_gen: AtomicU64::new(1),
-            host_session: Mutex::new(None),
-            session_export_ids: Mutex::new(HashSet::new()),
-        })
+    pub fn adopt_child_for_test(child: Child) -> Result<Self, LibraryError> {
+        Self::adopt_child(child)
     }
 }
 
@@ -749,6 +969,11 @@ impl Drop for StdioLibraryChannel {
         }
         if let Ok(mut child) = self.child.lock() {
             let _ = wait_timeout_or_kill(&mut child, std::time::Duration::from_secs(5));
+        }
+        if let Ok(mut handle_slot) = self.reader_join_handle.lock() {
+            if let Some(handle) = handle_slot.take() {
+                let _ = handle.join();
+            }
         }
     }
 }
@@ -947,6 +1172,9 @@ impl LibraryChannel for StdioLibraryChannel {
         let history = self.round_trip("GetExportHistory", serde_json::json!({}))?;
         resolve_export_output_directory(export_id, history)
     }
+    fn set_event_sink(&self, sink: EventSink) {
+        *self.event_sink.lock().unwrap() = Some(sink);
+    }
 }
 
 fn export_not_found() -> LibraryError {
@@ -1022,6 +1250,7 @@ pub struct MockLibraryChannel {
     retype_result: Mutex<Result<serde_json::Value, LibraryError>>,
     regions_result: Mutex<Result<serde_json::Value, LibraryError>>,
     domain_result: Mutex<Result<serde_json::Value, LibraryError>>,
+    pub event_sink: Mutex<Option<EventSink>>,
 }
 
 impl MockLibraryChannel {
@@ -1042,6 +1271,7 @@ impl MockLibraryChannel {
             }))),
             regions_result: Mutex::new(Ok(serde_json::json!({ "regions": [] }))),
             domain_result: Mutex::new(Ok(serde_json::json!({}))),
+            event_sink: Mutex::new(None),
         }
     }
 
@@ -1149,6 +1379,10 @@ impl LibraryChannel for MockLibraryChannel {
 
     fn list_chapter_pages(&self, _chapter_id: &str) -> Result<serde_json::Value, LibraryError> {
         self.domain_result.lock().unwrap().clone()
+    }
+
+    fn set_event_sink(&self, sink: EventSink) {
+        *self.event_sink.lock().unwrap() = Some(sink);
     }
 }
 
@@ -1882,5 +2116,190 @@ mod tests {
             behavior, "PASS",
             "concurrency behavior verdict must be PASS"
         );
+    }
+
+    // ---- EVENTS-FWD-1 (rev 2.4 §6.4) tests --------------------------------
+
+    #[test]
+    fn test_events_fwd_all_six_frozen_events_projected() {
+        // 1. TaskFailed
+        let raw = serde_json::json!({
+            "run_id": "run-01",
+            "task_id": "task-01",
+            "page_id": "p-01",
+            "error_code": "OCR_FAIL",
+            "internal_secret": "do_not_leak"
+        });
+        let (name, projected) = project_forwarded_event("TaskFailed", &raw).unwrap();
+        assert_eq!(name, "core:TaskFailed");
+        assert_eq!(projected["run_id"], "run-01");
+        assert_eq!(projected["task_id"], "task-01");
+        assert_eq!(projected["page_id"], "p-01");
+        assert_eq!(projected["error_code"], "OCR_FAIL");
+        assert!(projected.get("internal_secret").is_none());
+
+        // 2. RunPaused
+        let raw = serde_json::json!({
+            "run_id": "run-02",
+            "status": "paused"
+        });
+        let (name, projected) = project_forwarded_event("RunPaused", &raw).unwrap();
+        assert_eq!(name, "core:RunPaused");
+        assert_eq!(projected["run_id"], "run-02");
+        assert_eq!(projected["status"], "paused");
+
+        // 3. RunCompleted
+        let raw = serde_json::json!({
+            "run_id": "run-03",
+            "status": "completed"
+        });
+        let (name, projected) = project_forwarded_event("RunCompleted", &raw).unwrap();
+        assert_eq!(name, "core:RunCompleted");
+        assert_eq!(projected["run_id"], "run-03");
+        assert_eq!(projected["status"], "completed");
+
+        // 4. CurrentPageStepChanged
+        let raw = serde_json::json!({
+            "run_id": "run-04",
+            "current_page_id": "p-04",
+            "current_step_type": "inpaint"
+        });
+        let (name, projected) = project_forwarded_event("CurrentPageStepChanged", &raw).unwrap();
+        assert_eq!(name, "core:CurrentPageStepChanged");
+        assert_eq!(projected["run_id"], "run-04");
+        assert_eq!(projected["current_page_id"], "p-04");
+        assert_eq!(projected["current_step_type"], "inpaint");
+
+        // 5. ExportProgressChanged
+        let raw = serde_json::json!({
+            "export_id": "export-05",
+            "status": "in_progress",
+            "completed_pages": 10,
+            "total_pages": 50
+        });
+        let (name, projected) = project_forwarded_event("ExportProgressChanged", &raw).unwrap();
+        assert_eq!(name, "core:ExportProgressChanged");
+        assert_eq!(projected["export_id"], "export-05");
+        assert_eq!(projected["status"], "in_progress");
+        assert_eq!(projected["completed_pages"], 10);
+        assert_eq!(projected["total_pages"], 50);
+
+        // 6. ReadingProgressChanged
+        let raw = serde_json::json!({
+            "book_id": "b-06",
+            "chapter_id": "c-06",
+            "mode": "original"
+        });
+        let (name, projected) = project_forwarded_event("ReadingProgressChanged", &raw).unwrap();
+        assert_eq!(name, "core:ReadingProgressChanged");
+        assert_eq!(projected["book_id"], "b-06");
+        assert_eq!(projected["chapter_id"], "c-06");
+        assert_eq!(projected["mode"], "original");
+    }
+
+    #[test]
+    fn test_events_fwd_strips_forbidden_paths_and_opaque_references() {
+        let raw_with_paths = serde_json::json!({
+            "run_id": "run-leak-test",
+            "status": "completed",
+            "target_path": "C:\\Users\\sensitive\\export.zip",
+            "file_path": "/var/data/books/01/page.png",
+            "abs_path": "D:\\secret\\original.jpg",
+            "target_ref": "m2targetref.v1.abc123456",
+            "opaque_id": "m2id.v1.xyz987654",
+            "signing_key": "supersecretkey",
+            "file_bytes": "AQIDBA=="
+        });
+
+        let (_, projected) = project_forwarded_event("RunCompleted", &raw_with_paths).unwrap();
+        assert_eq!(projected["run_id"], "run-leak-test");
+        assert_eq!(projected["status"], "completed");
+        assert!(projected.get("target_path").is_none());
+        assert!(projected.get("file_path").is_none());
+        assert!(projected.get("abs_path").is_none());
+        assert!(projected.get("target_ref").is_none());
+        assert!(projected.get("opaque_id").is_none());
+        assert!(projected.get("signing_key").is_none());
+        assert!(projected.get("file_bytes").is_none());
+    }
+
+    #[test]
+    fn test_events_fwd_fail_closed_on_unfrozen_events() {
+        // G16 gap: CoreAvailabilityChanged is UNKNOWN/PROPOSAL - strictly excluded
+        let raw = serde_json::json!({
+            "status": "connected",
+            "service": "core"
+        });
+        assert!(project_forwarded_event("CoreAvailabilityChanged", &raw).is_none());
+
+        // G26 gap: ImportProgressChanged is PROPOSAL - strictly excluded
+        let raw_import = serde_json::json!({
+            "task_id": "imp-1",
+            "current": 2,
+            "total": 10
+        });
+        assert!(project_forwarded_event("ImportProgressChanged", &raw_import).is_none());
+
+        // Arbitrary unknown event
+        assert!(project_forwarded_event("SomeUnknownEvent", &raw).is_none());
+    }
+
+    #[test]
+    fn test_events_fwd_dispatch_stdout_line_interleaved_with_responses() {
+        let event_sink: Arc<Mutex<Option<EventSink>>> = Arc::new(Mutex::new(None));
+        let pending: Arc<Mutex<HashMap<String, SyncSender<Result<String, LibraryError>>>>> =
+            Arc::new(Mutex::new(HashMap::new()));
+
+        let captured_events = Arc::new(Mutex::new(Vec::<(String, serde_json::Value)>::new()));
+        let captured_clone = Arc::clone(&captured_events);
+        *event_sink.lock().unwrap() = Some(Arc::new(move |name, payload| {
+            captured_clone
+                .lock()
+                .unwrap()
+                .push((name.to_string(), payload));
+        }));
+
+        // Register two pending callers
+        let (tx1, rx1) = std::sync::mpsc::sync_channel(1);
+        let (tx2, rx2) = std::sync::mpsc::sync_channel(1);
+        pending.lock().unwrap().insert("req-101".to_string(), tx1);
+        pending.lock().unwrap().insert("req-102".to_string(), tx2);
+
+        // 1. Core emits an event (RunPaused)
+        let event_line = r#"{"protocol":"new-manga.core","version":{"major":2,"minor":3},"event_id":"ev-1","event_type":"RunPaused","emitted_at":"2026-10-16T10:00:00Z","payload":{"run_id":"run-A","status":"paused"}}"#;
+        dispatch_stdout_line(event_line, &event_sink, &pending);
+
+        // 2. Core emits response for req-102
+        let resp_102 = r#"{"protocol":"new-manga.core","version":{"major":2,"minor":3},"request_id":"req-102","result":{"ok":true},"error":null}"#;
+        dispatch_stdout_line(resp_102, &event_sink, &pending);
+
+        // 3. Core emits an unfrozen/unsupported event (should be ignored)
+        let ignored_event = r#"{"protocol":"new-manga.core","version":{"major":2,"minor":3},"event_id":"ev-2","event_type":"CoreAvailabilityChanged","emitted_at":"2026-10-16T10:00:01Z","payload":{"status":"degraded"}}"#;
+        dispatch_stdout_line(ignored_event, &event_sink, &pending);
+
+        // 4. Core emits another event (RunCompleted)
+        let event_line_2 = r#"{"protocol":"new-manga.core","version":{"major":2,"minor":3},"event_id":"ev-3","event_type":"RunCompleted","emitted_at":"2026-10-16T10:00:02Z","payload":{"run_id":"run-B","status":"completed"}}"#;
+        dispatch_stdout_line(event_line_2, &event_sink, &pending);
+
+        // 5. Core emits response for req-101
+        let resp_101 = r#"{"protocol":"new-manga.core","version":{"major":2,"minor":3},"request_id":"req-101","result":{"data":123},"error":null}"#;
+        dispatch_stdout_line(resp_101, &event_sink, &pending);
+
+        // Verify that responses arrived to the right recipients without deadlock or mixing
+        let got_102 = rx2.recv_timeout(Duration::from_millis(200)).unwrap().unwrap();
+        assert!(got_102.contains("\"request_id\":\"req-102\""));
+
+        let got_101 = rx1.recv_timeout(Duration::from_millis(200)).unwrap().unwrap();
+        assert!(got_101.contains("\"request_id\":\"req-101\""));
+
+        // Verify that only the 2 frozen events were dispatched
+        let events = captured_events.lock().unwrap();
+        assert_eq!(events.len(), 2);
+        assert_eq!(events[0].0, "core:RunPaused");
+        assert_eq!(events[0].1["run_id"], "run-A");
+        assert_eq!(events[0].1["status"], "paused");
+        assert_eq!(events[1].0, "core:RunCompleted");
+        assert_eq!(events[1].1["run_id"], "run-B");
+        assert_eq!(events[1].1["status"], "completed");
     }
 }

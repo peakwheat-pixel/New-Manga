@@ -1,28 +1,20 @@
 > **内部生命周期窄注记（2026-10-07，M2-DERIVED-GC-2 实现；零 wire 修订，协议 major/minor 不变）**：M2-DERIVED-GC-2 在专用 resource catalog 内引入 `preview_lifecycle` 来源行与 `preview_namespace` 绑定行，并给宿主→channel 的**内部** `revoke_resource` 控制请求加了受信 `retire_preview` 布尔位（CoreChannel 轮换专用方法；channel 仅在其自身 revoke 成功后据此把已登记自有 preview 行的 `retired` 置 1）。这些都是 host↔sidecar 控制面/SQLite 元数据内部实现：**不新增任何 Tauri IPC 命令、不改 WebView payload/ACL/十五条生产命令表、不发 `source_artifact_revision_id`/`producer_root` 等来源字段到 WebView、不改 issue/resolve/touch/revoke/TTL 的既有语义**（失败撤销新 key 与 WebView `revoke_resource_refs` 均不携带该位）。preview 回收（retired 副本删除）只发生在受 namespace 租约保护的独占启动窗口，见 [M2_DERIVED_PREVIEW_GC_DESIGN.md](M2_DERIVED_PREVIEW_GC_DESIGN.md)。
-
-> **rev 2.4（2026-10-16，EXPORT-REVEAL-1）**：新增 §5.8 production-only Tauri host command `library_reveal_export_folder`，只接受不透明 `exportId`，以当前 Core 会话接受的导出 ID 和 Core `GetExportHistory` 解析目录；绝对路径不进入 WebView 请求、结果、事件或错误。该命令不调用 `StartExport`、不触碰 `ExportTargetRef`，不改变单次消费语义。probe / AC1 runtime 面不注册该命令；Core protocol 仍为 2.3，既有 Core wire 与导出字段/语义不变。兼容性见 §5.8。
+>
+> **rev 2.4（2026-10-16，EVENTS-FWD-1 + EXPORT-REVEAL-1）**：在不改变 Core 事件 wire 的前提下，冻结 host→WebView 六类事件的名称与安全 payload 投影，事件只作失效提示并要求消费方重查快照；排除未冻结的 `CoreAvailabilityChanged` 与 `ImportProgressChanged`。新增 production-only Tauri host command `library_reveal_export_folder`，只接受不透明 `exportId`，以当前 Core 会话接受的导出 ID 和 Core `GetExportHistory` 解析目录；路径不进入 WebView 请求、结果、事件或错误。Reveal 不调用 `StartExport`、不触碰 `ExportTargetRef`，不改变单次消费语义。Core protocol minor 从 3 增至 4 由事件转发契约变更引入；reveal 命令不新增 Core wire。兼容性分别见 §5.8 与 [EVENTS-FWD-1 compatibility impact](../../verification/EVENTS-FWD-1/compatibility-impact.md)。
 >
 > **rev 2.3（2026-10-16，HOST-ISSUER-1-C1 host→Core grant control）**：冻结独立 `HostControl` 会话握手、导入来源/导出目标 grant 注册与撤销，以及关闭时的 session 失效。控制请求仅走 Tauri host 持有的 live-Core 私有进程通道，带 `host_session_id`、`host_session_credential` 与 `core_session_id`；普通 JSON-RPC/WebView 面拒绝 host-only 操作。注册 payload 复用现有 Core 私有 seam 所需数据；`ImportSourceRef` / `ExportTargetRef` 字段与 `REF_*` 语义不变。协议 minor 从 2 增至 3；§12 仅授权最小 Core handler/session 改动与 `tests/core/**`，本次不实现 runtime。修订范围：§3、§5、§10.3、§10.4、§11、§12。兼容性见 [HOST-ISSUER-1-C1 compatibility impact](../../verification/HOST-ISSUER-1-C1/compatibility-impact.md)。
 >
 > **rev 2.2（2026-10-16，P12-C1 导入 IPC 契约）**：冻结 `ImportPages`、host 签发的只读 `ImportSourceRef` 与逐源/逐页 `ImportReport`；`ImportProgressChanged` 明确保持 `UNKNOWN / PROPOSAL`，原因见 §6.2。按 §3.2 将协议 minor 从 1 提升到 2，只新增冻结命令，不改变既有冻结 wire。修订范围：§3、§5、§6.2、§10.4、§12。明确授权导入侧 Python IPC Runtime，精确 allowlist 见 §12；本修订不代表 Runtime 或 Tauri host issuer 已实现。兼容影响见 [P12-C1 compatibility note](../../verification/P12-C1/compatibility-impact.md)。
 
-> **rev 2.0（2026-10-16，P13-C1 Runtime IPC 授权修订）**：冻结 Run 命令、幂等键、快照/投影查询与 Run 状态事件 wire 面；`StartRun.idempotency_key` 为必填，且 stdio 输出流增加异步事件，因此按 §3.2 将协议 major 从 1 提升到 2。修订范围：§3、§4、§5 Run catalog、§5.5、§6.1、§6.2、§11、§12。Restart 重放响应可表达 child Run 当前状态；TaskProjection 冻结错误/重试与可得 Provider/Model/Device 字段。既有命令的 payload/result/error 语义不变；旧 major 客户端不能调用 major 2 endpoint，兼容影响见 [P13-C1 compatibility note](../../verification/P13-C1/compatibility-impact.md)。明确授权已释放的 P13 Task 实现 Python IPC Runtime，边界见 §12；本修订自身不代表 runtime 已实现。
-
-> **rev 1.8（2026-10-07，M2-PAGE-NAV-PROJECTION-1 授权增量）**：新增 `list_chapters` / `list_chapter_pages`（页导航读取面第一刀），协议 minor 5→6（commands added 惯例）；`{book_id}` → `{"chapters": [{chapter_id, title, chapter_number, sort_order}]}`、`{chapter_id}` → `{"pages": [{page_id, source_filename, sort_order}]}`，均按 `sort_order` 升序；**零新错误码**——未知 book_id/chapter_id 返回空数组（fail-soft，1.4 r1 P3-4 先例），payload 校验 → `INVALID_REQUEST` 复用。本增量优先于下方目录中同能力的 PROPOSAL 状态（`ListChapters` 行转冻结）；既有 rev 1.7 及更早命令语义不变。
-
-> **rev 1.7（2026-10-07，M2-PAGE-RESOURCE-RESOLVE-1 授权增量）**：新增 `resolve_page_resource`（页→资源目录键解析），协议 minor 4→5；请求 `{page_id}` → result `{resource_id, revision}`，错误面 `PAGE_NOT_FOUND`（not_found，新码）/`INVALID_REQUEST`/`ARTIFACT_WRITE_FAILED`（internal，retryable）/`UNKNOWN`。发布语义复用 RC-4 preview 先例：首次解析把不可变 managed 原图逐字节发布进 derived 只读根并登记 ResourceCatalogStore（确定性键 `page-original-{page_id}`，后续解析为目录查找，幂等返回同键；`revision` 为不透明修订标签，本命令恒 `"original"`；derived 产物被清后同键重发布自愈）；通道语义（opaque URL/chunk/TTL/§10 大媒体保护）零变化。既有 rev 1.6 及更早命令语义不变。
-
-> **rev 1.6（2026-10-07，RC-4 授权增量）**：新增 list_region_revisions / restore_region_revision / rerender_page，协议 minor 3→4；冻结 DTO、并发、保护与 UI 消费语义见 [RC-4](M2-RC4_DOMAIN_COMMANDS.md)。本增量优先于下方目录中同能力的 PROPOSAL 状态；既有 rev 1.5 命令语义不变。
-
 # M2-C1 — Typed IPC Contract
 
-**当前修订范围：EXPORT-REVEAL-1 rev 2.4**（仅新增 §5.8 production-only Tauri host command；Core protocol 保持 major `2` / minor `3`）。§5.7 host-only grant control、P13 Run、P16 Reader/Export、P12 `ImportPages` 的既有字段与语义均未修改。
+**当前修订范围：EVENTS-FWD-1 + EXPORT-REVEAL-1 rev 2.4**（§3.2 版本与兼容、§5.8 production-only Tauri host command、§6.4 host→WebView 事件转发面与安全投影、§11 状态表、§12 授权边界）。Core protocol 为 major `2` / minor `4`；事件转发冻结现有事件的 host 投影，reveal 只新增 Tauri host command，不新增 Core JSONL wire。§5.7 HostControl、P13 Run、P16 Reader/Export、P12 `ImportPages` 的既有字段与语义均未修改。
 
-状态：文档 rev `2.4`；Core protocol 为 major `2` / minor `3`。rev 2.4 只新增 Tauri host 命令，不新增或改变 Core protocol wire；rev 2.3 的 HostControl、rev 2.2 的 P12 导入、rev 2.1 的 Reader/Export、rev 2.0 的 P13 Run 与更早既有冻结语义不变。各 Runtime 的实现状态以对应 Task、Handoff 与证据为准。
+状态：文档 rev `2.4`；Core protocol 为 major `2` / minor `4`。本修订冻结 host→WebView 六类事件投影并新增 production-only `library_reveal_export_folder`；旧 HostControl、P12、Reader/Export、P13 wire 与更早既有冻结语义不变。各 Runtime 的实现状态以对应 Task、Handoff 与证据为准。
 
 ## Revision history
 
-- `2.4`（EXPORT-REVEAL-1，2026-10-16）：新增 production-only Tauri host command `library_reveal_export_folder`，请求 `{exportId: OpaqueId}`、成功返回 `null`；Core protocol 保持 major `2` / minor `3`，probe / AC1 命令面保持原 7/6 项形状。拒绝面、当前 Core session 绑定、路径保密与兼容性见 §5.8；不改既有 Core command、export DTO 或 `ExportTargetRef` 生命周期。
+- `2.4`（EVENTS-FWD-1 + EXPORT-REVEAL-1，2026-10-16）：冻结六类 host→WebView 事件安全投影，并新增 production-only Tauri host command `library_reveal_export_folder`（请求 `{exportId: OpaqueId}`、成功返回 `null`）。协议 minor 从 3 增至 4 由事件转发变更引入；reveal 不新增 Core wire，拒绝面、当前 Core session 绑定、路径保密及 `ExportTargetRef` 单次消费语义见 §5.8。probe / AC1 命令面仍保持既有形状；兼容 widening，既有 Core 命令与导出 DTO 语义不变。
 - `2.3`（HOST-ISSUER-1-C1，2026-10-16）：**授权契约修订（host-only grant control）**——冻结 `OpenHostSession`、`RegisterImportSource` / `RevokeImportSource`、`RegisterExportTarget` / `RevokeExportTarget`、`CloseHostSession`；注册请求沿用 P09-FU2/P16 已有 seam 的字段；host session credential 与 Core session id 只存在 HostControl envelope/私有会话状态，不进入两种 ref。只新增独立 host-control wire，普通 JSON-RPC 对这些操作返回 `HOST_ONLY_REQUIRED`；协议 minor `2→3`，major 不变。既有 P12/P16/P13 wire、ref 字段及 `REF_*` 语义不变；§12 的最小 Core allowlist 仅含 `src/bootstrap/core_service.py` 与 `tests/core/**`。不授权 React/WebView、Tauri 命令、Schema/migration、依赖或其他产品行为；实现状态 `NOT_IMPLEMENTED`。
 - `2.2`（P12-C1，2026-10-16）：冻结 `ImportPages` request/result、`ImportSourceRef` 只读来源授权与 `ImportReport` 逐源/逐页 DTO；来源限制为 P09 已批准的图片、显式选定文件集合/文件夹直接子项和 PDF，重复策略沿用 P09 的 `skip` / `import_as_new`。`ImportProgressChanged` 保持 `UNKNOWN / PROPOSAL`，因为 P09 没有持久 operation/snapshot wire；孤立事件不能成为导入真值。协议 minor `1→2`：只增加新冻结命令，没有改写既有冻结字段或事件；proposal 阶段的裸路径/URL 调用不获兼容承诺。更新 §12，授权导入侧 Python IPC Runtime 的冻结 allowlist；不授权 Tauri/Rust issuer 或产品代码。本修订未实现 Runtime。
 - `2.1`（P16-C1，2026-10-16）：冻结 Reader/Export wire，新增 `GetReaderProjection` / `SaveReadingProgress`、`StartExport` / `CancelExport`、`GetExportSnapshot` / `GetExportHistory` 和 `ReadingProgressChanged` / `ExportProgressChanged`。`StartExport.target_ref` 为 Tauri host 签发、单一目标、300 秒过期且一次消费的 `ExportTargetRef`；Core 经与 `ImportSourceRef` 同源的受信 grant resolver 验证、解析、消费。协议 minor `0→1`，只新增命令/事件；旧命令语义和 P13 Run wire 不变，runtime 未实现。细节见 §5、§6.3、§10.3、§12。
@@ -123,6 +115,7 @@ Event<T> = {
 - P16-C1 在 major 2 / minor 1 冻结新增 Reader/Export 命令与事件；既有冻结命令、结果、错误和 P13 Run 事件语义不变。rev 2.0 客户端不能调用这些新增命令；要使用 Reader/Export 面，客户端与 Core 必须配置到 rev 2.1。协议没有版本协商，本文不承诺不同 minor 的同进程双版本服务。
 - P12-C1 在 major 2 / minor 2 冻结新增 `ImportPages`，其余既有冻结命令、结果、错误、状态和事件语义不变。协议 minor 从 1 增至 2，符合“只新增命令”的兼容规则；rev 2.1 客户端与 Core 必须升级并配对到 rev 2.2 才能调用导入面。minor 不代表旧的 proposal 裸路径/URL 形态受支持：旧形态从未冻结，P18 实际运行也报告 `UNKNOWN_COMMAND`。协议没有版本协商或自动迁移。
 - HOST-ISSUER-1-C1 在 major 2 / minor 3 新增独立 `HostControl` envelope 与 host-only 会话/注册/撤销操作；minor 从 2 增至 3。现有 §3 `Request<T>` / `Response<T>` 及其 command payload 均不增加字段；旧客户端不支持 HostControl，也不能调用其操作。使用 HostControl 的 host 与 Core 必须配对支持 rev 2.3；普通 application JSON-RPC 对这些保留操作 fail-closed。无版本协商或自动迁移，现有 rev 2.2 及更早冻结 wire 不变。
+- EVENTS-FWD-1 在 major 2 / minor 4 冻结 host→WebView 的事件名与安全 payload 投影；minor 从 3 增至 4。Core stdio wire 的既有 Request/Response/Event 及其 command/event payload 均不修改字段或语义；旧客户端若不监听该事件通道，仍可正常以轮询方式（如 `GetRunSnapshot` / `GetTaskProjection`）工作，P14 轮询降级路径不被阻断。事件通道仅为失效提示，消费方收到后须重查快照；payload 严禁暴露路径或引用。同 major 下向后兼容。
 - 版本握手/协商与自动迁移仍 `NOT_IMPLEMENTED`；客户端须以已知配置发送版本。`PROTOCOL_VERSION_UNSUPPORTED` 是稳定错误码。
 
 ## 4. Request/response 语义
@@ -705,6 +698,45 @@ ExportHistoryEntry = {
 
 `ReadingProgressChanged` and `ExportProgressChanged` payloads above are frozen but are only §3 `Event<T>` JSONL invalidation hints. A reconnect or suspected missed event always re-queries the relevant snapshot; no Reader or Export status is reconstructed from the event stream.
 
+### 6.4 Host→WebView event forwarding surface（EVENTS-FWD-1 rev 2.4，冻结）
+
+本小节关闭 [AD-001 四页 UI/UX 设计基线](../design/AD001_FOUR_PAGE_UI_BASELINE.md) §7 的缺口 **G17**，在**不改变 Core stdio 事件 wire** 的前提下，冻结 Tauri host 到 WebView 的事件通道名称、payload 安全投影规则与消费约束：
+
+#### 6.4.1 冻结事件转发目录与 Payload 安全投影
+
+Tauri host 监听 Python Core stdio JSONL 流上的 §3 `Event<T>` unrequested messages，并将 §6.2 中**已冻结的六类事件**安全投影后转发给 WebView（Tauri event emit）。前端经由 typed listener（如 `src/events.ts`）订阅：
+
+| Core Wire Event (§6.2) | 状态来源 | Tauri Event Name | WebView Payload 投影 | 字段说明与约束 |
+|---|---|---|---|---|
+| `TaskFailed` | P13-C1 frozen minimum (§6.2 L556) | `core:TaskFailed` | `{ run_id: RunId, task_id: TaskId, page_id?: PageId \| null, error_code?: string \| null }` | 任务失败失效提示；仅含 opaque ID 与安全错误短码；严禁下发异常栈或路径。 |
+| `RunPaused` | P13-C1 frozen minimum (§6.2 L557) | `core:RunPaused` | `{ run_id: RunId, status: "paused" }` | 运行暂停失效提示；仅在实际持久化为 paused 后推送。 |
+| `RunCompleted` | P13-C1 frozen minimum (§6.2 L558) | `core:RunCompleted` | `{ run_id: RunId, status: "completed" \| "completed_with_failures" }` | 运行结束失效提示；在终态聚合持久化后推送。 |
+| `CurrentPageStepChanged` | P13-C1 frozen minimum (§6.2 L559) | `core:CurrentPageStepChanged` | `{ run_id: RunId, current_page_id: PageId \| null, current_step_type: string }` | 当前页/步骤焦点变更提示；用于平滑更新高亮态。 |
+| `ExportProgressChanged` | 2.1 FROZEN (§6.2 L562) | `core:ExportProgressChanged` | `{ export_id: OpaqueId, status: string, completed_pages: number, total_pages: number }` | 导出进度提示；**绝不下发 `output_path`、`target_ref` 或写授权**。 |
+| `ReadingProgressChanged` | 2.1 FROZEN (§6.2 L563) | `core:ReadingProgressChanged` | `{ book_id: BookId, chapter_id: ChapterId, mode: "original" \| "translated" }` | 阅读进度提示；调用方读取 `GetReaderProjection` 重查快照。 |
+
+#### 6.4.2 路径与凭据下发绝对禁止（对齐 §10.2 / §10.3 / §10.4）
+
+- **禁止下发路径**：所有转发至 WebView 的事件 payload 严禁包含操作系统绝对路径、相对路径、UNC 路径或目录信息（对齐 §10.2 绝对路径下发禁止）。导出输出路径（`output_path`）仅保留在受信任的 Tauri host 内部，不进入 `core:ExportProgressChanged`。
+- **禁止下发引用与密钥**：`ExportTargetRef`（§10.3）、`ImportSourceRef`（§10.4）、只读 `ResourceRef`（§10.2）、会话 ID（`host_session_id`、`core_session_id`）、签名密钥及鉴权材料绝不得随事件透传至 WebView。
+- **禁止下发媒体字节**：图片、二进制或 Base64 编码文件内容不得封装于事件 payload 中；大媒体展示依然严格遵守 §10 资源通道机制（经由 `resolve_page_resource` 与 `m2res` 自定义协议）。
+
+#### 6.4.3 失效提示语义与重查快照纪律（对齐 §6.2 与 P11 §7.1/§7.3）
+
+- **事件不是状态真值**：事件通道仅提供即时失效提示（invalidation notification），不代表持久化状态的完整真值。
+- **强制重查快照**：消费方（React/WebView）在接收到事件后，**必须**调用对应的只读查询命令重新获取最新权威快照：
+  - 收到 `core:TaskFailed` / `core:RunPaused` / `core:RunCompleted` / `core:CurrentPageStepChanged` 后，调用 `GetRunSnapshot` / `GetTaskProjection`；
+  - 收到 `core:ExportProgressChanged` 后，调用 `GetExportSnapshot`；
+  - 收到 `core:ReadingProgressChanged` 后，调用 `GetReaderProjection`。
+- **不保证顺序与重放**：事件通道不承诺至少一次/至多一次交付、序列号、因果重排保证或断线重放。连接恢复或网络抖动后，客户端须以重新获取的快照为准，严禁基于事件日志自行推导或拼接本地业务状态。
+
+#### 6.4.4 明确排除项与 Fail-Closed 约束
+
+- **明确排除 `CoreAvailabilityChanged`**：该事件在 §6.2 仍为 `UNKNOWN / PROPOSAL`，归属另一独立缺口 **G16**，未随本修订冻结，**严禁**转发。
+- **明确排除 `ImportProgressChanged`**：在 §6.2 仍为 `UNKNOWN / PROPOSAL`（P12-C1 明确保留未冻结，归属 G26），**严禁**转发。
+- **未知/提案事件 Fail-Closed**：若 host 在 Core stdio 流中读取到任何未在 6.4.1 目录中冻结的事件（包括 `RunStatusChanged`、`RunProgressChanged`、`RunFinished`、`RunCrashed` 等提案事件，或未知类型事件），host 必须 fail-closed 丢弃或仅记录内部调试日志，不得向 WebView 发射。
+- **非命令面约束**：事件转发不得成为新的命令面；host 不新增用于查询或订阅事件的 WebView command，保持 18 条生产命令面不变。
+
 ## 7. Lifecycle、断线与恢复
 
 ### 7.1 Existing Run state
@@ -850,7 +882,7 @@ AS-IS `normalized_to_page_geometry(points, page_w, page_h)` owns conversion in a
 | Large-media transport and import path capability | `PARTIALLY RULED` (M2-C2) | Thresholds (T1–T7, §10.1) and security semantics (§10.2) were ruled at M2-C2 from the M2-S1 §7 ruling and the M2-S1/M2-S2 spikes. The runtime form remains `DEFERRED` to a future runtime Task: transport selection stays conditional (M2-S1 §8.1), the Tauri asset protocol is `NOT_RUN` (S1-B1), and S1-B11 product-level protection is `UNVERIFIED` (S1-B3/S1-B8 outstanding). |
 | Runtime serialization library, product Tauri command names, process supervision | `UNKNOWN / NOT_IN_SCOPE`（仅 `settings_get`/`settings_update_section` 的 product Tauri command name/wire 由 §5.3 裁决；`set_region_type`/`list_regions` 的产品与 Core stdio 名称另有既有决策。上述其余 runtime 选择仍未知） | No implementation claimed beyond the sections explicitly frozen here; separate runtime Tasks must decide the rest against this transport-neutral contract. |
 | Host grant registration/revoke authentication and session binding | `FROZEN`（HOST-ISSUER-1-C1 rev 2.3，§5.7） | Only the direct host-owned live-Core HostControl process channel, explicit host-session credential and Core-session binding are frozen. This does not select a serialization library, product Tauri command name, or process-supervision implementation beyond the stated lifecycle semantics. |
-| Event ordering/replay/retention | `UNKNOWN / NOT_FROZEN` | rev 2.0 P13 Run events and rev 2.1 P16 Reader/Export invalidation events are emitted after their corresponding persisted state; none promises delivery, order, sequence IDs, replay or retention. Snapshot resync remains authoritative. Run-creation idempotency is frozen in §5.5. |
+| Event ordering/replay/retention | `FROZEN (forwarding) / NOT_REPLAYED`（EVENTS-FWD-1 rev 2.4，§6.4） | host→WebView 事件转发面与安全 payload 投影已冻结于 §6.4。事件仅作为失效通知，不承诺交付、顺序、序列号、重放或保留；客户端收到后重查对应快照。Run 幂等创建冻结于 §5.5。 |
 | Lock/revision conflict response details and concurrent edit policy | `PARTIALLY FROZEN`（`1.4` 草案：region 写命令面已冻结于 §5.4——人工优先、AI 侧 fail-closed、Revision/Lock 守卫交互、错误码映射；runtime 已由 M2-REGION-RETYPE-CORE 落地，`1.5` 时回填） | Core remains authority; §5.4 freezes the region-retype slice only; the rest of the command surface and finer conflict details stay open without weakening protection. |
 
 The UI mapping decision does not block freezing a transport-level Page status distinct from Run status. Any proposal to alter the status value or user-visible mapping returns to the user; M2-C1 does not resolve it.
@@ -867,4 +899,4 @@ P12-C1 rev 2.2 **另行明确授权未来已释放的导入侧 Python IPC Runtim
 
 HOST-ISSUER-1-C1 rev 2.3 **另行明确授权实现 §5.7 HostControl 的 Core 侧最小控制面**，冻结 allowlist 仅为：`src/bootstrap/core_service.py`（接收/校验独立 HostControl envelope、建立/关闭单一 live-Core host session、跟踪本 session 成功注册的 grant ID、将四个注册/撤销命令接至既有 `_register_*` / `_revoke_*` seam；普通 JSON-RPC 对保留命令 fail-closed；撤销 session 时调用现有 revoke seam）；以及 `tests/core/**`（覆盖 host-only/错误 credential/跨 Core session/重复和未知 grant/scope 与过期拒绝/撤销即时性/拒绝零副作用）。只有此 allowlist 足以实现时不得修改其他 Core 模块。此授权**不包括** `src/bootstrap/core_assembly.py`、`src/infrastructure/**`、`apps/**`、React/WebView、Tauri command/ACL/capabilities、Rust、Schema/migration、依赖或其他产品行为；不改变 P12-C1/P16-C1 的 handler、ref 字段、`REF_*` 消费语义；本契约本身不实现或验证 Runtime。Host issuer 的 Rust 实现仍由 HOST-ISSUER-1 独立 Task 授权。
 
-本次把 Reader/Export **proposal 提升为新增冻结命令/事件**，协议 minor 从 rev 2.0 的 `0` 增至 `1`；未改动任何既有冻结命令、字段、状态或 P13 Run 事件，不升 major。rev 2.0 客户端不能调用新命令/事件；rev 2.1 客户端和 Core 必须配对，且没有协商或自动迁移。实现状态仍为 `NOT_IMPLEMENTED`；本 P16-C1 仅修订文档，不授权自身执行 Runtime。
+EVENTS-FWD-1 rev 2.4 **明确授权 host→WebView 事件转发面与消费端接线实现**：授权在 `apps/desktop/src-tauri/src/**` 实现 §6.4 事件转发面（基于 live-Core stdio JSONL 流旁路安全投影至 Tauri event 通道，保持同通道请求响应多路复用语义不被破坏，且不暴露新增 host 命令）；在 `apps/desktop/frontend/src/**` 实现最小 typed listener 入口（如 `events.ts`，供后续 P14 等 Task 复用，不做页面级 UI）；在两侧对应测试路径编写测试并归档证据。此授权**不包括**修改 Python Core 侧事件 wire、字段或语义；不授权修改 SQLite Schema 或迁移；不授权未冻结事件（`CoreAvailabilityChanged`、`ImportProgressChanged`）；不授权页面级 UI 改动。

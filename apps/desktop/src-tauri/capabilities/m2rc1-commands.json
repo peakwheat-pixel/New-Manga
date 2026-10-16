@@ -31,6 +31,8 @@
   "allow-probe-issue-url",
   "allow-ac1-request",
   "allow-ac1-write-results",
-  "allow-ac1-exit"
+  "allow-ac1-exit",
+  "core:event:allow-listen",
+  "core:event:allow-unlisten"
  ]
 }
