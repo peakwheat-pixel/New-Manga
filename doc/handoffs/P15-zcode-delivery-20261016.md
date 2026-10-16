@@ -3,13 +3,13 @@ task_id: P15
 author: ZCode
 recipient: Codex
 base_commit: 22f0024cc6c701b73f6d38a7bdca53fdc2ef34ac
-delivery_head: null
+delivery_head: e5f1a719bdaf482da027498671490c585a376bd3
 status: in_review
 ---
 
 # Handoff：P15 设置页 Settings（四页之设置）——前端实现
 
-> `delivery_head` 在本 Handoff 所在的实现提交产生后，由后续文档提交回填（BL-15：不自引用即将产生的 SHA）。`status: in_review` 为合法状态词。
+> `delivery_head: e5f1a719bdaf482da027498671490c585a376bd3` 为实现提交（feat(P15)），本 Handoff 的 hash 回填由其后的文档提交完成（BL-15：不自引用即将产生的 SHA）。`status: in_review` 为合法状态词。
 
 ## 交付结果
 
