@@ -89,3 +89,13 @@
 ## 9. 待用户裁决（不得由实现者拍板）
 
 P18 产品发布门槛（JA/KO 门槛、无字页、质量 AC）；P18 像素上限 `11184810`；KO detector 权重缺失（`PROVIDER_NOT_CONFIGURED`）；**BL-13** 生产启动期限与失败 UX；**BL-12** 治理检查器是否入库；**G21–G25**（P15 前置）的契约修订授权；以及**是否重新启用目标**以继续自动推进。
+
+## 10. r11 补登（2026-10-16 23:30，P15-C1 在飞时）
+
+- **已完成 12 个 Task**：新增 **P17 阅读器**（集成 `f18b7fe8f`，closeout `67a7665db`）与 **P14 工作台**（集成 `2dc14cdd1`，closeout `590582004`）→ **四页 UI 已全部实现**（书架 P12 / 工作台 P14 / 阅读器 P17 / 设置待 P15）。READY 现为 **ARCH-DOC-REBASELINE + P15-C1**。
+- **BL-18（新增）**：Owner 自请的 DSH 审查被写成"独立 Review"。P14 交付内 `dsh-review-r{1,2}-summary.md` 抬头自称「独立 Review／Reviewer：dsh」，经查 session **真实存在**但 **cwd 为 Owner 自己的工作树**、`origin=subagent`/`parentSession=f5a0166d`（即 Owner 自请），且自述未重跑测试 → **非伪造，但非协议独立 Review**。处置：**git mv** 为 `owner-initiated-dsh-self-review-r{1,2}.md` + **更正抬头**，内容保留为自批判证据；**规则**：`verification/<TASK>/*review*` 只能由 Coordinator 路由的 Reviewer 写入；Owner 自请须命名 `owner-self-review-*` 并声明非独立；集成时必须核验出具者与 session 归属。P14 的**真正独立 Review** 为 `verification/P14/dsh-review-r1.md`（我在 detached `ee1d1e287` 的独立 Reviewer 工作树亲跑五套件）。
+- **G21–G25 裁决**（`verification/PROJECT-ORCHESTRATION-20261016/ruling-G21-G25.md`）：**G21–G24 授权**由新契约 Task **`P15-C1`** 合并冻结（P10 已冻结逻辑边界、缺 IPC wire）；**G25 部分授权**（仅"已有 Core 校验实例或语义已确立"的节，其余**禁用 + 逐节后续契约 Task**）；**G2 回收站本轮不授权、P15 必须禁用**；"v1 开放哪些分区"属**产品取舍**，以**默认提案**处理以免阻塞。
+- **DSH 子智能体通道根因（定案）**：内核声明 `ON_DEMAND_BUNDLES = ["@deepseek-ai/dsh-subagent-claude-code","@deepseek-ai/dsh-subagent-codex"]`，而运行时 `~/.dsh/dsh-local/dsh/node_modules/@deepseek-ai/` **缺 `dsh-subagent-codex`**（agy/claude-code 适配器亦缺）→ `subagent_codex`（turn 阶段）与 `subagent_agy`（spawn/transport）失败。**排除**：`rmcp AuthRequired`（tldraw MCP）与 `models_manager refresh timeout` 在**成功的原始 CLI 运行中同样出现**，均非致命（技能亦明记后者无害）。
+- **codex 调用方式（用户指示）**：一律按 **`codex-dispatch` 技能**经 CLI 派发（`-m gpt-6-luna -c model_reasoning_effort=xhigh -o <result.md>`；session id 取自 stderr；`resume` 用 `-c sandbox_mode` 而非 `-s`、不用 `--last`）。**cwd 取舍**：只读任务用项目根（桌面可见性），**写任务用 worktree**（隔离优先），可见性用 `mount_codex_session.py --fix-cwd` 补救。
+- **目标已恢复自动推进**：goal revision 8、`phase: active`、`activation: armed`、上限由 40 提至 **100**；目标文本刷新为 epoch 6 与当前焦点（P15-C1 → P15 → P19/P20）。
+- **待用户裁决**（不阻塞其余推进）：G25 未列分区、P18 门槛、**P19 的 GUI e2e 验收替代方案**（本机无头无法取得 WebView2 句柄 `0x80070578`）、BL-12/BL-13。
