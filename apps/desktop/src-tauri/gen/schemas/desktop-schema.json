@@ -375,10 +375,28 @@
           "markdownDescription": "Enables the issue_resource_url command without any pre-configured scope."
         },
         {
+          "description": "Enables the library_cancel_export command without any pre-configured scope.",
+          "type": "string",
+          "const": "allow-library-cancel-export",
+          "markdownDescription": "Enables the library_cancel_export command without any pre-configured scope."
+        },
+        {
           "description": "Enables the library_control_run command without any pre-configured scope.",
           "type": "string",
           "const": "allow-library-control-run",
           "markdownDescription": "Enables the library_control_run command without any pre-configured scope."
+        },
+        {
+          "description": "Enables the library_get_export_history command without any pre-configured scope.",
+          "type": "string",
+          "const": "allow-library-get-export-history",
+          "markdownDescription": "Enables the library_get_export_history command without any pre-configured scope."
+        },
+        {
+          "description": "Enables the library_get_export_snapshot command without any pre-configured scope.",
+          "type": "string",
+          "const": "allow-library-get-export-snapshot",
+          "markdownDescription": "Enables the library_get_export_snapshot command without any pre-configured scope."
         },
         {
           "description": "Enables the library_get_run_snapshot command without any pre-configured scope.",
@@ -567,10 +585,28 @@
           "markdownDescription": "Denies the issue_resource_url command without any pre-configured scope."
         },
         {
+          "description": "Denies the library_cancel_export command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-library-cancel-export",
+          "markdownDescription": "Denies the library_cancel_export command without any pre-configured scope."
+        },
+        {
           "description": "Denies the library_control_run command without any pre-configured scope.",
           "type": "string",
           "const": "deny-library-control-run",
           "markdownDescription": "Denies the library_control_run command without any pre-configured scope."
+        },
+        {
+          "description": "Denies the library_get_export_history command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-library-get-export-history",
+          "markdownDescription": "Denies the library_get_export_history command without any pre-configured scope."
+        },
+        {
+          "description": "Denies the library_get_export_snapshot command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-library-get-export-snapshot",
+          "markdownDescription": "Denies the library_get_export_snapshot command without any pre-configured scope."
         },
         {
           "description": "Denies the library_get_run_snapshot command without any pre-configured scope.",

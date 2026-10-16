@@ -384,3 +384,74 @@ fn real_library_sidecar_event_sink_registration_and_lifecycle() {
     assert!(received_events.lock().unwrap().is_empty());
     println!("PACKAGED_RESULT real_library_sidecar_event_sink_registration_and_lifecycle=PASS event_sink=registered");
 }
+
+#[test]
+fn export_command_wire_reaches_the_frozen_core_export_family() {
+    // EXPORT-IPC-1: fixture-free evidence that the host transport really reaches the
+    // Core's frozen Export family (M2-C1 rev 2.5 §5.8). A wrong wire name, a wrong
+    // payload shape or a missing channel override would surface as a transport /
+    // protocol failure (or as the trait's fail-closed CORE_UNAVAILABLE default);
+    // a live Core answers at the DOMAIN level instead -- which is exactly what
+    // these assertions pin. No book/chapter fixture is needed, so the read-only
+    // and rejection paths can be proven on the frozen 2.3 bundle today.
+    let lab = PackagedLab::new();
+    let channel = lab.start_library();
+    assert_eq!(channel.ping().expect("post-startup ping").status, "ready");
+
+    fn assert_domain_rejection(label: &str, error: crate::library_bridge::LibraryError) {
+        println!(
+            "EXPORT_IPC_RESULT {label} code={} category={}",
+            error.code, error.category
+        );
+        assert_ne!(
+            error.code, "CORE_UNAVAILABLE",
+            "{label} must not fall through to the fail-closed default"
+        );
+        assert_ne!(
+            error.code, "PROTOCOL_MALFORMED",
+            "{label} must be a Core domain rejection, not a wire-level failure"
+        );
+    }
+
+    // AC4-② & AC4-③: GetExportSnapshot on unknown export_id returns domain-level EXPORT_NOT_FOUND
+    let snapshot_err = channel
+        .get_export_snapshot("no-such-export-id")
+        .expect_err("unknown export_id must return domain error");
+    assert_domain_rejection("get_export_snapshot", snapshot_err.clone());
+    assert_eq!(snapshot_err.code, "EXPORT_NOT_FOUND");
+    assert_eq!(snapshot_err.category, "not_found");
+
+    // AC4-② & AC4-③: CancelExport on unknown export_id returns domain-level EXPORT_NOT_FOUND
+    let cancel_err = channel
+        .cancel_export("no-such-export-id")
+        .expect_err("unknown export_id must return domain error");
+    assert_domain_rejection("cancel_export", cancel_err.clone());
+    assert_eq!(cancel_err.code, "EXPORT_NOT_FOUND");
+    assert_eq!(cancel_err.category, "not_found");
+
+    // AC4-② & AC4-③: GetExportHistory on fresh catalog returns empty list without error
+    let history = channel
+        .get_export_history()
+        .expect("empty export history must return empty list, not error");
+    assert!(
+        history.exports.is_empty(),
+        "fresh catalog must yield empty export history"
+    );
+
+    // AC3: Path zero leakage assertions - serialized history must not contain any paths or target refs
+    let history_serialized = serde_json::to_string(&history).expect("must serialize history");
+    assert!(
+        !history_serialized.contains("output_path"),
+        "history view must not contain output_path"
+    );
+    assert!(
+        !history_serialized.contains("target_ref"),
+        "history view must not contain target_ref"
+    );
+    assert!(
+        !history_serialized.contains(":\\"),
+        "history view must not contain drive path"
+    );
+
+    println!("PACKAGED_RESULT export_command_wire_reaches_the_frozen_core_export_family=PASS three_commands=domain_verified");
+}
