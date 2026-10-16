@@ -1,0 +1,40 @@
+{
+  "schema_version": 1,
+  "task_id": "P13",
+  "generated_at": "2026-10-16T04:00:00Z",
+  "generated_by": "dsh (Active Coordinator, epoch 5)",
+  "note": "Resource manifest referenced by doc/tasks/P13.md Resource Manifest integrity column; worktree is a directory so a file-level SHA-256 cannot apply.",
+  "resources": [
+    {
+      "resource_type": "worktree",
+      "source_path": "G:/CODEX/New Manga.workspace/worktrees/P13-RUN-RUNTIME",
+      "disposition": "PRESERVE_REFERENCED",
+      "destination_path": "G:/CODEX/New Manga.workspace/worktrees/P13-RUN-RUNTIME",
+      "branch": "codex/P13-run-runtime-control-recovery",
+      "base_commit": "11d14c4d42472e1fd0af4af80d5526f2215325c7",
+      "delivery_head": "8056ee63e0b1b5a25b64ef9e85bb8e8e54282dba",
+      "integration_commit": "8d7cad13dc457b6aaca1313a50cc0179b1ad45a3",
+      "deleted": false,
+      "pruned": false,
+      "process_check": "2026-10-16 closeout: worktree clean at 8056ee63; main repo 19 tracked dirty entries unchanged by this worktree; 25 changed paths all within authorized scope; frozen IPC and P11 contracts untouched; no delete/migrate/archive performed (0/0/0)."
+    },
+    {
+      "resource_type": "test-env",
+      "source_path": "G:/CODEX/New Manga.task-envs/T1.1.1-impl-py312",
+      "disposition": "PRESERVE_REFERENCED",
+      "destination_path": "G:/CODEX/New Manga.task-envs/T1.1.1-impl-py312",
+      "note": "Existing project env (Python 3.12.3 + PySide6 6.11.2) used to run tests/core; not created or modified by this task.",
+      "deleted": false,
+      "process_check": "Read-only use for pytest; no dependency install performed."
+    },
+    {
+      "resource_type": "sqlite-schema-addition",
+      "source_path": "G:/CODEX/New Manga/src/infrastructure/sqlite/pipeline.py",
+      "disposition": "PRESERVE_REFERENCED",
+      "destination_path": "G:/CODEX/New Manga/src/infrastructure/sqlite/pipeline.py",
+      "note": "Additive idempotent CREATE TABLE IF NOT EXISTS pipeline_run_idempotency; does NOT bump SCHEMA_VERSION and does not rewrite existing Run/Target/Task/StepRun/Revision/Lock/Page data. Boundary documented in verification/P13/migration-boundary.md.",
+      "deleted": false,
+      "process_check": "Review F5 verified: no SCHEMA_VERSION change; additive only. NOTE for P20: the idempotency ledger must be preserved across backup/restore and rollback (Review C2)."
+    }
+  ]
+}
