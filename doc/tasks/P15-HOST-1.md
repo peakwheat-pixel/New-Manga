@@ -3,8 +3,8 @@ id: P15-HOST-1
 title: 设置面 G21/G22/G23 专用命令的 Tauri host 侧注册与 Core 2.6 配对（P15 UI 的端到端前置）
 kind: feature
 governance_version: 2
-status: proposed
-approval: null
+status: ready
+approval: coordinator_release_20261017_after_P15_core_chain_complete
 suggested_owner: Codex
 owner: null
 reviewer: null

@@ -3,7 +3,7 @@ id: P15-CORE-1C
 title: 设置面 Core 实现 C：settings_network_profiles_test 六阶段连接测试（rev 2.7 / A1）
 kind: feature
 governance_version: 2
-status: in_review
+status: done
 approval: coordinator_release_20261017_after_P15-C1-FU1_closed
 suggested_owner: Codex
 owner: Codex
@@ -12,10 +12,10 @@ depends_on: [P15-C1, P15-C1-FU1, P15-CORE-1B]
 base_commit: 5f5431b8718b2753e851121909ce3796207b1e72
 branch: codex/P15-CORE-1C
 worktree: G:/CODEX/New Manga.workspace/worktrees/P15-CORE-1C
-integration_commit: null
-delivery_head: 52b0974ade0250c7cec016de9b909ef00b5370cc
+integration_commit: 02131d94b76fc026a5c960dae74c4daa806f2598
+delivery_head: faa37493d8448ec793835bc58baf851cb1a246f1
 canonical_evidence_status: complete
-resource_closeout_status: pending
+resource_closeout_status: complete
 evidence_dir: verification/P15-CORE-1C
 ---
 
@@ -77,6 +77,8 @@ P15-CORE-1 因 `TestNetworkProfile` 目标语义缺口**失败关闭**，经裁�
 
 RV-P15-04 哈希复核：上表 SHA-256 均基于当前 worktree 的磁盘字节。`verification/P15-CORE-1C/canonical-hash-verification.txt` 使用主仓库 `G:/CODEX/New Manga` 可读的固定 Git objects，并按 `core.autocrlf=true` 的 Windows checkout 字节复建；12/12 项与磁盘哈希一致。复核只读，没有改动主仓库工作树。
 
+| CE-REVIEW-R1 | AC1–AC6 | `verification/P15-CORE-1C/dsh-review-r1.md` | `02131d94b` | `c1e4bcdbeb48dd5f4bf3dbb01df9efc709508b556442cc5f9895d39319b4448f` | SOURCE_PIN |
+
 ## Resource Manifest
 
 | resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
@@ -85,8 +87,13 @@ RV-P15-04 哈希复核：上表 SHA-256 均基于当前 worktree 的磁盘字节
 
 ## Closeout Record
 
-- Closeout date / Codex：2026-10-17 / Codex；Task 状态仍为 `in_review`，尚未通过 Review/集成 Gate。
-- canonical_evidence_status：`complete`。resource_closeout_status：`pending`。
-- 删除/迁移数量与字节数：0；归档入库的普通证据文件 10 个。pytest 临时目录保留未提交：2536 个文件、283557767 bytes。
-- 未关闭项及保留原因：两次临时目录清理均被自动审查以 `blocked by policy` 拒绝；目录未删除、未移动、未提交。详见 `verification/P15-CORE-1C/resource-manifest.json`。
-- 当前指针清理：未改 `STATUS` / `REBASELINE_PLAN`；待独立 Review 与 Codex 集成 Gate 后由协调者更新。
+- Closeout date / Coordinator：2026-10-17（dsh, epoch 6）。Reviewer=**dsh**（本会话，`route-agent.py` 路由；Owner=Codex 已机器排除）。
+- canonical_evidence_status：`complete`。证据含独立 Review；**BL-17 包含性成立**；class 仅 `CANONICAL`/`SOURCE_PIN`（**BL-19**）。
+- **pin 复算（RV-P15-04）**：Owner pin 以其工作树 LF 计算 → closeout 已在**主仓库**按规范磁盘字节复算（本次更正 0 条）。
+- resource_closeout_status：`complete`（worktree `PRESERVE_REFERENCED`）。删除、迁移、归档数量/字节数：0。
+- 交付：`done`。集成 `02131d94b76fc026a5c960dae74c4daa806f2598`（`--no-ff`，**无冲突**）；delivery_head（分支实际 HEAD）`faa37493d8448ec793835bc58baf851cb1a246f1`。
+- **独立复核（我亲做）**：**A1 红线有专门测试钉死**——`..._invalid_or_unresolved_target_is_invalid_request`（参数化）与 **`..._missing_target_never_returns_passed`**（参数化 payload）；`provider_profile_id` 列入必需字段集 + `_nonempty` + 必须解析到 Profile；**代理失败绝不尝试直连**（参数化 mode）；5 模式判定矩阵 + system-direct **不连接**即 `not_applicable`；失败阶段保留、后续 `upstream_stage_failed`、**结果脱敏**；HTTP **同 authority** + **不跨 authority 重定向** + 不泄露 Secret；ProviderAuth 失败**不重试/不切换**；SOCKS5 未提供认证被拒；§9 封闭投影沿用四字段；minor=7；1A/1B 语义未改。**我复跑 508 passed**（1B 后基线 440 → +68，增量来自参数化反例，零回归）。
+- **测试替身与外连限制（如实声明，范例级）**：Owner Handoff 明确记载"**测试没有真实 DNS/TCP/TLS/HTTP/ProviderAuth 外连**；生产探测能力只由标准库调用实现，**本次没有真实网络连通性验证**"，并有专门测试 `..._real_probe_pipeline_is_stubbed_and_secret_free` 显式 stub 真实探针流水线；实现限制亦如实登记（仅支持 `openai-compatible*` 等 adapter，unsupported 在 HTTP 阶段安全失败）。
+- **里程碑**：本 closeout 使 **P15 设置面 Core 链全部完成**（P15-C1 契约 → FU1 rev 2.7/A1 修订 → 1A G21+G24 → 1B G22+G23 → **1C 六阶段 test**）。
+- **DAG 效果与交接**：Core 链完成后，下一环为 **P15-HOST-1**（Tauri host 侧注册 17 条设置命令并与 Core **2.7** 配对）→ 本 closeout **同步释放 P15-HOST-1**。**必须传导的验收项**：`BindProfileCredential`/`ClearProfileCredential` 在 Core 侧可被受信 Host 调用（正确），但**契约要求其不注册为 WebView 可调用**——host 侧须提供"**仅 Host 可达**"的测试或扫描证据。
+- 当前指针清理：`STATUS` / `REBASELINE_PLAN` 同批同步。
