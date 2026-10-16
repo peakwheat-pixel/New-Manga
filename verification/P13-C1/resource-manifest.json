@@ -1,0 +1,22 @@
+{
+  "schema_version": 1,
+  "task_id": "P13-C1",
+  "generated_at": "2026-10-16T02:21:26Z",
+  "generated_by": "Codex (Task Owner)",
+  "note": "Resource manifest for doc/tasks/P13-C1.md; the worktree is a directory, so a file-level SHA-256 does not apply.",
+  "resources": [
+    {
+      "resource_type": "worktree",
+      "source_path": "G:/CODEX/New Manga.workspace/worktrees/P13-C1-RUNTIME-IPC",
+      "disposition": "PRESERVE_REFERENCED",
+      "destination_path": "G:/CODEX/New Manga.workspace/worktrees/P13-C1-RUNTIME-IPC",
+      "branch": "codex/P13-C1-runtime-ipc-contract",
+      "base_commit": "c33033dc02c4373d3a3a35333a2c7aeac03c7ce6",
+      "delivery_head": "ed79a2b778e13e8aa892014eb16a38be4e27fdf7",
+      "integration_commit": null,
+      "deleted": false,
+      "pruned": false,
+      "process_check": "2026-10-16 delivery: worktree retained; no delete, move, archive, merge, or push performed. Main repository and the existing P13 runtime worktree were only read/status checked."
+    }
+  ]
+}

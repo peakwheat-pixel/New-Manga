@@ -5,7 +5,8 @@
 ## 当前 Task
 
 - 当前 Task：[ARCH-DOC-REBASELINE](tasks/ARCH-DOC-REBASELINE.md) **ready / integrated**（唯一非终态 DAG READY）：AC1–AC3=PARTIAL、AC4–AC6=NOT_RUN、AC7 逐消费者裁决待做；消费者 P09/P18/P20/P16/P17 均未冻结。
-- 已释放待认领：[P13](tasks/P13.md) 后台恢复 **ready**（Run 接线→控制→恢复；消费 P11 契约；含 4 项破坏性缺口修正；Owner 按 DIR-2=codex）。
+- 本轮完成：[P13-C1](tasks/P13-C1.md) Runtime IPC 契约修订 **done**（评审 `d5c7d716`、集成 `c61d8f8c`）：冻结 IPC **rev 2.0** —— `StartRun.idempotency_key`、`ControlRun`/`ResumeBlockedRun`、Run 查询/投影、四类状态事件，§12 明确授权 Python IPC Runtime。
+- 已释放待认领：[P13](tasks/P13.md) 后台恢复 **ready**（阻塞已解除：wire 已授权 + allowlist 已扩展 SQLite pipeline 与 provider retry；已交付 AC4 a/b/d 判别切片 `2d65f7f8`）。
 - 本轮完成：P06（`d3342895`）、P10（`c46c0df0`）、P11（`ceca5721`）、P09 导入 Core（`c6a7339f`，`closed_with_limitations`：AC3 受限=产品无项目级永久删除操作）、P09-FU1 测试基线（`860f6cda`）。
 - 用户指令 DIR-2：后续 Task Owner=codex（至额度耗尽）。
 - 已解决：BL-1（codex 空 ref）、BL-3（沙箱 `-c windows.sandbox=unelevated`）、BL-8（测试基线）。
