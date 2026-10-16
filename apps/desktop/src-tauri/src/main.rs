@@ -84,6 +84,13 @@ pub const PRODUCTION_COMMANDS: &[&str] = &[
     "library_import_file",
     "library_import_folder",
     "library_start_export",
+    // RUN-IPC-1: host transport for the P13-C1 §5.5 Run command surface.
+    "library_start_run",
+    "library_control_run",
+    "library_resume_blocked_run",
+    "library_get_run_snapshot",
+    "library_get_task_projection",
+    "library_retry_failed_targets",
 ];
 
 /// Commands that exist ONLY in probe mode (`M2RC1_PROBE_OUT` set by the
@@ -150,6 +157,20 @@ pub const HOST_ISSUER_PRODUCTION_ONLY_COMMANDS: &[&str] = &[
     "library_start_export",
 ];
 
+/// RUN-IPC-1: P13-C1 (contract rev 2.0 §5.5) froze the Run command surface in
+/// the Core but no host outlet existed, so the Workbench (P14) could not start
+/// or inspect a Run at all. These six commands are the host transport for that
+/// frozen surface and stay production-only, so the probe/AC1 surfaces keep
+/// their historical shape (option-B precedent).
+pub const RUN_PRODUCTION_ONLY_COMMANDS: &[&str] = &[
+    "library_start_run",
+    "library_control_run",
+    "library_resume_blocked_run",
+    "library_get_run_snapshot",
+    "library_get_task_projection",
+    "library_retry_failed_targets",
+];
+
 pub fn command_allowlist(probe_mode: bool, ac1_mode: bool) -> Vec<&'static str> {
     let mut commands: Vec<&'static str> = if probe_mode || ac1_mode {
         PRODUCTION_COMMANDS
@@ -163,6 +184,7 @@ pub fn command_allowlist(probe_mode: bool, ac1_mode: bool) -> Vec<&'static str> 
                     && !PAGE_RESOLVE_PRODUCTION_ONLY_COMMANDS.contains(command)
                     && !PAGE_NAV_PRODUCTION_ONLY_COMMANDS.contains(command)
                     && !HOST_ISSUER_PRODUCTION_ONLY_COMMANDS.contains(command)
+                    && !RUN_PRODUCTION_ONLY_COMMANDS.contains(command)
             })
             .collect()
     } else {
@@ -406,6 +428,97 @@ fn list_chapter_pages(
         .as_ref()
         .ok_or_else(|| "CORE_UNAVAILABLE".to_string())?
         .list_chapter_pages(&chapter_id)
+        .map_err(|error| error.code)
+}
+
+// RUN-IPC-1: P13-C1 (contract rev 2.0 §5.5) froze the Run command surface in
+// the Core, but no host outlet existed, so the Workbench (P14) had no way to
+// start or inspect a Run. These six commands are pure transport: every domain
+// rule (PipelineCommand closed set, PipelineScope resolution, idempotency
+// semantics, the control-action state matrix, DTO shapes) is decided Core-side
+// before persistence, and the typed code propagates verbatim. They are
+// production-only (probe/AC1 keep their frozen shapes).
+#[tauri::command]
+fn library_start_run(
+    state: tauri::State<'_, AppState>,
+    command: String,
+    scope: serde_json::Value,
+    overrides: Option<serde_json::Value>,
+    idempotency_key: String,
+) -> Result<serde_json::Value, String> {
+    state
+        .library
+        .as_ref()
+        .ok_or_else(|| "CORE_UNAVAILABLE".to_string())?
+        .start_run(&command, &scope, overrides.as_ref(), &idempotency_key)
+        .map_err(|error| error.code)
+}
+
+#[tauri::command]
+fn library_control_run(
+    state: tauri::State<'_, AppState>,
+    run_id: String,
+    action: String,
+    idempotency_key: Option<String>,
+) -> Result<serde_json::Value, String> {
+    state
+        .library
+        .as_ref()
+        .ok_or_else(|| "CORE_UNAVAILABLE".to_string())?
+        .control_run(&run_id, &action, idempotency_key.as_deref())
+        .map_err(|error| error.code)
+}
+
+#[tauri::command]
+fn library_resume_blocked_run(
+    state: tauri::State<'_, AppState>,
+    run_id: String,
+) -> Result<serde_json::Value, String> {
+    state
+        .library
+        .as_ref()
+        .ok_or_else(|| "CORE_UNAVAILABLE".to_string())?
+        .resume_blocked_run(&run_id)
+        .map_err(|error| error.code)
+}
+
+#[tauri::command]
+fn library_get_run_snapshot(
+    state: tauri::State<'_, AppState>,
+    run_id: String,
+) -> Result<serde_json::Value, String> {
+    state
+        .library
+        .as_ref()
+        .ok_or_else(|| "CORE_UNAVAILABLE".to_string())?
+        .get_run_snapshot(&run_id)
+        .map_err(|error| error.code)
+}
+
+#[tauri::command]
+fn library_get_task_projection(
+    state: tauri::State<'_, AppState>,
+    run_id: String,
+) -> Result<serde_json::Value, String> {
+    state
+        .library
+        .as_ref()
+        .ok_or_else(|| "CORE_UNAVAILABLE".to_string())?
+        .get_task_projection(&run_id)
+        .map_err(|error| error.code)
+}
+
+#[tauri::command]
+fn library_retry_failed_targets(
+    state: tauri::State<'_, AppState>,
+    run_id: String,
+    idempotency_key: String,
+) -> Result<serde_json::Value, String> {
+    state
+        .library
+        .as_ref()
+        .ok_or_else(|| "CORE_UNAVAILABLE".to_string())?
+        .retry_failed_targets(&run_id, &idempotency_key)
         .map_err(|error| error.code)
 }
 
@@ -996,7 +1109,13 @@ fn main() {
             list_chapter_pages,
             library_import_file,
             library_import_folder,
-            library_start_export
+            library_start_export,
+            library_start_run,
+            library_control_run,
+            library_resume_blocked_run,
+            library_get_run_snapshot,
+            library_get_task_projection,
+            library_retry_failed_targets
         ])
     };
 
@@ -1147,6 +1266,8 @@ mod tests {
         // M2-PAGE-RESOURCE-RESOLVE-1: nine -> thirteen (contract rev 1.7);
         // M2-PAGE-NAV-PROJECTION-1: thirteen -> fifteen (contract rev 1.8);
         // HOST-ISSUER-1 adds three safe native-picker actions.
+        // RUN-IPC-1: fifteen -> twenty-one; the six P13-C1 §5.5 Run transport
+        // commands are the host outlet for the frozen Run surface.
         assert_eq!(
             command_allowlist(false, false),
             vec![
@@ -1168,6 +1289,12 @@ mod tests {
                 "library_import_file",
                 "library_import_folder",
                 "library_start_export",
+                "library_start_run",
+                "library_control_run",
+                "library_resume_blocked_run",
+                "library_get_run_snapshot",
+                "library_get_task_projection",
+                "library_retry_failed_targets",
             ]
         );
     }
@@ -1227,6 +1354,13 @@ mod tests {
                 "{command} must stay production-only"
             );
         }
+        // RUN-IPC-1: the Run transport commands are production-only as well.
+        for command in RUN_PRODUCTION_ONLY_COMMANDS {
+            assert!(
+                !probe.contains(command),
+                "{command} must stay production-only"
+            );
+        }
         assert_eq!(
             probe.len(),
             PRODUCTION_COMMANDS.len()
@@ -1237,6 +1371,7 @@ mod tests {
                 - PAGE_RESOLVE_PRODUCTION_ONLY_COMMANDS.len()
                 - PAGE_NAV_PRODUCTION_ONLY_COMMANDS.len()
                 - HOST_ISSUER_PRODUCTION_ONLY_COMMANDS.len()
+                - RUN_PRODUCTION_ONLY_COMMANDS.len()
                 + PROBE_ONLY_COMMANDS.len()
         );
     }
@@ -1295,6 +1430,13 @@ mod tests {
                 "{command} must stay production-only"
             );
         }
+        // RUN-IPC-1: the Run transport commands are production-only as well.
+        for command in RUN_PRODUCTION_ONLY_COMMANDS {
+            assert!(
+                !ac1.contains(command),
+                "{command} must stay production-only"
+            );
+        }
         assert_eq!(
             ac1.len(),
             PRODUCTION_COMMANDS.len()
@@ -1305,18 +1447,20 @@ mod tests {
                 - PAGE_RESOLVE_PRODUCTION_ONLY_COMMANDS.len()
                 - PAGE_NAV_PRODUCTION_ONLY_COMMANDS.len()
                 - HOST_ISSUER_PRODUCTION_ONLY_COMMANDS.len()
+                - RUN_PRODUCTION_ONLY_COMMANDS.len()
                 + AC1_TEST_COMMANDS.len()
         );
     }
 
     #[test]
     fn production_only_commands_stay_off_both_frozen_test_surfaces() {
-        // M2-REGION-RETYPE-CORE r1 P3-2: one negative sweep across the SIX
+        // M2-REGION-RETYPE-CORE r1 P3-2: one negative sweep across the SEVEN
         // production-only families (IPC1 + settings + retype + RC4 + the
         // M2-PAGE-RESOURCE-RESOLVE-1 page-resource resolve + the
-        // M2-PAGE-NAV-PROJECTION-1 navigation projections) — the frozen
-        // probe and ac1 test-mode surfaces must never gain any of them, and
-        // their historical 7/6-command shapes stay pinned.
+        // M2-PAGE-NAV-PROJECTION-1 navigation projections + the RUN-IPC-1 Run
+        // transport) — the frozen probe and ac1 test-mode surfaces must never
+        // gain any of them, and their historical 7/6-command shapes stay
+        // pinned.
         for command in IPC1_PRODUCTION_ONLY_COMMANDS
             .iter()
             .chain(SETTINGS_PRODUCTION_ONLY_COMMANDS)
@@ -1325,6 +1469,7 @@ mod tests {
             .chain(PAGE_RESOLVE_PRODUCTION_ONLY_COMMANDS)
             .chain(PAGE_NAV_PRODUCTION_ONLY_COMMANDS)
             .chain(HOST_ISSUER_PRODUCTION_ONLY_COMMANDS)
+            .chain(RUN_PRODUCTION_ONLY_COMMANDS)
         {
             assert!(
                 !command_allowlist(true, false).contains(command),
@@ -1337,6 +1482,143 @@ mod tests {
         }
         assert_eq!(command_allowlist(true, false).len(), 7);
         assert_eq!(command_allowlist(false, true).len(), 6);
+    }
+
+    /// RUN-IPC-1: literal exact assertions for the Run transport family. The
+    /// six names are pinned with a fixed literal expectation (never derived
+    /// from the constant itself), the group must sit on the production surface
+    /// and on NEITHER frozen test surface, and the production surface must
+    /// still hold exactly twenty-four commands.
+    #[test]
+    fn run_transport_commands_are_exact_and_production_only() {
+        assert_eq!(
+            RUN_PRODUCTION_ONLY_COMMANDS,
+            &[
+                "library_start_run",
+                "library_control_run",
+                "library_resume_blocked_run",
+                "library_get_run_snapshot",
+                "library_get_task_projection",
+                "library_retry_failed_targets",
+            ]
+        );
+        assert_eq!(PRODUCTION_COMMANDS.len(), 24);
+
+        let production = command_allowlist(false, false);
+        let probe = command_allowlist(true, false);
+        let ac1 = command_allowlist(false, true);
+
+        for command in RUN_PRODUCTION_ONLY_COMMANDS {
+            assert!(
+                production.contains(command),
+                "{command} must be on the production surface"
+            );
+            assert!(
+                !probe.contains(command),
+                "{command} must not appear in probe surface"
+            );
+            assert!(
+                !ac1.contains(command),
+                "{command} must not appear in ac1 surface"
+            );
+        }
+    }
+
+    /// RUN-IPC-1: a channel that does NOT override the Run methods must fail
+    /// closed rather than pretend to succeed -- so a missing override is loud
+    /// (CORE_UNAVAILABLE) instead of silently making the Workbench unusable.
+    #[test]
+    fn run_channel_defaults_are_fail_closed() {
+        struct BareChannel;
+        impl LibraryChannel for BareChannel {
+            fn ping(&self) -> Result<PingResult, LibraryError> {
+                unimplemented!("not exercised by this test")
+            }
+            fn list_books(&self) -> Result<Vec<BookSummary>, LibraryError> {
+                unimplemented!("not exercised by this test")
+            }
+            fn get_settings(&self, _section: Option<&str>) -> Result<serde_json::Value, LibraryError> {
+                unimplemented!("not exercised by this test")
+            }
+            fn update_settings_section(
+                &self,
+                _section: &str,
+                _values: &serde_json::Value,
+            ) -> Result<serde_json::Value, LibraryError> {
+                unimplemented!("not exercised by this test")
+            }
+            fn set_region_type(
+                &self,
+                _region_id: &str,
+                _new_region_type: &str,
+                _expected_revision: Option<i64>,
+            ) -> Result<serde_json::Value, LibraryError> {
+                unimplemented!("not exercised by this test")
+            }
+            fn list_regions(&self, _page_id: &str) -> Result<serde_json::Value, LibraryError> {
+                unimplemented!("not exercised by this test")
+            }
+            fn list_region_revisions(
+                &self,
+                _region_id: &str,
+            ) -> Result<serde_json::Value, LibraryError> {
+                unimplemented!("not exercised by this test")
+            }
+            fn restore_region_revision(
+                &self,
+                _region_id: &str,
+                _revision_no: i64,
+                _expected_revision: i64,
+            ) -> Result<serde_json::Value, LibraryError> {
+                unimplemented!("not exercised by this test")
+            }
+            fn rerender_page(&self, _page_id: &str) -> Result<serde_json::Value, LibraryError> {
+                unimplemented!("not exercised by this test")
+            }
+            fn resolve_page_resource(
+                &self,
+                _page_id: &str,
+            ) -> Result<serde_json::Value, LibraryError> {
+                unimplemented!("not exercised by this test")
+            }
+            fn list_chapters(&self, _book_id: &str) -> Result<serde_json::Value, LibraryError> {
+                unimplemented!("not exercised by this test")
+            }
+            fn list_chapter_pages(
+                &self,
+                _chapter_id: &str,
+            ) -> Result<serde_json::Value, LibraryError> {
+                unimplemented!("not exercised by this test")
+            }
+        }
+
+        let bare = BareChannel;
+        assert_eq!(
+            bare.start_run("detect", &serde_json::json!({}), None, "key-1")
+                .unwrap_err()
+                .code,
+            "CORE_UNAVAILABLE"
+        );
+        assert_eq!(
+            bare.control_run("run-1", "pause", None).unwrap_err().code,
+            "CORE_UNAVAILABLE"
+        );
+        assert_eq!(
+            bare.resume_blocked_run("run-1").unwrap_err().code,
+            "CORE_UNAVAILABLE"
+        );
+        assert_eq!(
+            bare.get_run_snapshot("run-1").unwrap_err().code,
+            "CORE_UNAVAILABLE"
+        );
+        assert_eq!(
+            bare.get_task_projection("run-1").unwrap_err().code,
+            "CORE_UNAVAILABLE"
+        );
+        assert_eq!(
+            bare.retry_failed_targets("run-1", "key-2").unwrap_err().code,
+            "CORE_UNAVAILABLE"
+        );
     }
 
     /// P04 AC1: Literal exact assertions for PAGE_NAV_PRODUCTION_ONLY_COMMANDS.
@@ -2163,6 +2445,48 @@ mod tests {
         fn list_chapter_pages(&self, chapter_id: &str) -> Result<serde_json::Value, LibraryError> {
             self.inner.list_chapter_pages(chapter_id)
         }
+
+        // RUN-IPC-1: the Run family needs no rerender sequencing -- forward
+        // straight through to the inner channel.
+        fn start_run(
+            &self,
+            command: &str,
+            scope: &serde_json::Value,
+            overrides: Option<&serde_json::Value>,
+            idempotency_key: &str,
+        ) -> Result<serde_json::Value, LibraryError> {
+            self.inner
+                .start_run(command, scope, overrides, idempotency_key)
+        }
+
+        fn control_run(
+            &self,
+            run_id: &str,
+            action: &str,
+            idempotency_key: Option<&str>,
+        ) -> Result<serde_json::Value, LibraryError> {
+            self.inner.control_run(run_id, action, idempotency_key)
+        }
+
+        fn resume_blocked_run(&self, run_id: &str) -> Result<serde_json::Value, LibraryError> {
+            self.inner.resume_blocked_run(run_id)
+        }
+
+        fn get_run_snapshot(&self, run_id: &str) -> Result<serde_json::Value, LibraryError> {
+            self.inner.get_run_snapshot(run_id)
+        }
+
+        fn get_task_projection(&self, run_id: &str) -> Result<serde_json::Value, LibraryError> {
+            self.inner.get_task_projection(run_id)
+        }
+
+        fn retry_failed_targets(
+            &self,
+            run_id: &str,
+            idempotency_key: &str,
+        ) -> Result<serde_json::Value, LibraryError> {
+            self.inner.retry_failed_targets(run_id, idempotency_key)
+        }
     }
 
     /// The shared Arc handle forwards to the library so the test can keep
@@ -2221,6 +2545,46 @@ mod tests {
         }
         fn list_chapter_pages(&self, chapter_id: &str) -> Result<serde_json::Value, LibraryError> {
             (**self).list_chapter_pages(chapter_id)
+        }
+
+        // RUN-IPC-1: forward the Run family through the shared Arc handle.
+        fn start_run(
+            &self,
+            command: &str,
+            scope: &serde_json::Value,
+            overrides: Option<&serde_json::Value>,
+            idempotency_key: &str,
+        ) -> Result<serde_json::Value, LibraryError> {
+            (**self).start_run(command, scope, overrides, idempotency_key)
+        }
+
+        fn control_run(
+            &self,
+            run_id: &str,
+            action: &str,
+            idempotency_key: Option<&str>,
+        ) -> Result<serde_json::Value, LibraryError> {
+            (**self).control_run(run_id, action, idempotency_key)
+        }
+
+        fn resume_blocked_run(&self, run_id: &str) -> Result<serde_json::Value, LibraryError> {
+            (**self).resume_blocked_run(run_id)
+        }
+
+        fn get_run_snapshot(&self, run_id: &str) -> Result<serde_json::Value, LibraryError> {
+            (**self).get_run_snapshot(run_id)
+        }
+
+        fn get_task_projection(&self, run_id: &str) -> Result<serde_json::Value, LibraryError> {
+            (**self).get_task_projection(run_id)
+        }
+
+        fn retry_failed_targets(
+            &self,
+            run_id: &str,
+            idempotency_key: &str,
+        ) -> Result<serde_json::Value, LibraryError> {
+            (**self).retry_failed_targets(run_id, idempotency_key)
         }
     }
 
