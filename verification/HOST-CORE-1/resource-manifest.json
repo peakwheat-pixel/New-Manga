@@ -12,7 +12,7 @@
       "destination_path": "G:/CODEX/New Manga.workspace/worktrees/HOST-CORE-1",
       "branch": "codex/HOST-CORE-1-hostcontrol-handler",
       "base_commit": "ed79b76f9191f0a5ebb6932a53a992a33a274041",
-      "delivery_head": "4af86abb374cfccf92de07d4e5b975dfbaf0dd2b",
+      "delivery_head": "ff42c670122a95c5edd43b6374e4e42bf42731cb",
       "integration_commit": null,
       "deleted": false,
       "pruned": false,

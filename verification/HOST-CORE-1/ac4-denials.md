@@ -8,4 +8,4 @@
 | `HOST_SESSION_INVALID` / `conflict` | `...[credential_missing]`、`...[credential_wrong]`、`...[session_closed]` | 每例 `calls == []` | 每例 SQLite、registry、文件 hash 快照均不变 | 完整 Core suite `exit_code=0` |
 | `CORE_SESSION_MISMATCH` / `conflict` | `...[core_session_mismatch]` | `calls == []` | SQLite 变化 `0`；Import/Export registry 不变；磁盘文件 hash 快照不变 | 完整 Core suite `exit_code=0` |
 
-所有拒绝均返回 `result: null`，error message 不包含目标路径或 host credential。完整原始输出与统一退出码见 `pytest-tests-core.log`：`393 passed / 0 failed / exit 0`。
+所有拒绝均返回 `result: null`，error message 不包含目标路径或 host credential。完整原始输出与统一退出码见 `pytest-tests-core.log`：`395 passed / 0 failed / exit 0`。

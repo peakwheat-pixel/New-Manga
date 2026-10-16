@@ -11,4 +11,4 @@
 | `RevokeExportTarget` | `HOST_ONLY_REQUIRED`, `result: null` |
 | `CloseHostSession` | `HOST_ONLY_REQUIRED`, `result: null` |
 
-`dispatch_request` 先将不带 `channel: "host-control"` 的保留命令拒绝，再进入普通命令 catalog；HostControl 不注册成普通 application command。AC4 用例进一步用 spy 证明普通 JSON-RPC 注册尝试没有调用 `_register_*` seam。该负向断言属于 `pytest tests/core -q` 的最终运行，exit code 为 `0`。
+`dispatch_request` 先将不带 `channel: "host-control"` 的保留命令拒绝，再进入普通命令 catalog；HostControl 不注册成普通 application command。AC4 用例进一步用 spy 证明普通 JSON-RPC 注册尝试没有调用 `_register_*` seam。该负向断言属于 `pytest tests/core -q` 的最终运行：`395 passed / 0 failed / exit code=0`。
