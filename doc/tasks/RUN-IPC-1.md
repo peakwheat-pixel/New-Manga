@@ -6,7 +6,7 @@ governance_version: 2
 status: ready
 approval: coordinator_release_20261016_confirmed_missing_host_command_surface
 suggested_owner: Codex
-owner: null
+owner: dsh
 reviewer: null
 depends_on: [P13, P13-C1, UI-DESIGN-1]
 base_commit: null
@@ -34,6 +34,24 @@ evidence_dir: verification/RUN-IPC-1
 
 **结论**：WebView **没有任何途径**发起/控制/查询 Run。因此 **P14（工作台）除了 G17（事件转发）之外，还被本缺口阻塞**；
 若先释放 P14，实现者会发现控制面**完全不可达**——这正是 UI-DESIGN-1 I1 揭示的同一类风险（"契约冻结 ≠ 实现可达"）的反向实例。
+
+## AC1 冻结结果（Coordinator-as-Owner，2026-10-16）
+
+**命令名与注册策略在此冻结**（依据 [M2-C1](../contracts/M2-C1_TYPED_IPC_CONTRACT.md) §5.5 的 Run 命令面与 P13-C1 §12 的授权边界；**不新增任何 wire**）：
+
+| Core wire 命令（§5.5 冻结） | 冻结的产品 Tauri command 名 | 注册面 |
+|---|---|---|
+| `StartRun` | `library_start_run` | production-only |
+| `ControlRun` | `library_control_run` | production-only |
+| `ResumeBlockedRun` | `library_resume_blocked_run` | production-only |
+| `GetRunSnapshot` | `library_get_run_snapshot` | production-only |
+| `GetTaskProjection` | `library_get_task_projection` | production-only |
+| `RetryFailedTargets` | `library_retry_failed_targets` | production-only |
+
+**命名依据**：与既有的 `library_list_books`（`ListBooks`）同族前缀，保持 WebView 命令面一致性。
+**注册策略**：加入 `PRODUCTION_COMMANDS` 与 `generate_handler!`、`build.rs` app-manifest、`capabilities/m2rc1-commands.json` **四处同步**；
+作为新的 production-only 组（沿 `IPC1_PRODUCTION_ONLY_COMMANDS` 等既有 option-B 先例），**probe / AC1 面命令形状不变**。
+**不新增 wire、不改 Core、不改契约**。
 
 ## Acceptance Criteria
 
@@ -98,6 +116,7 @@ evidence_dir: verification/RUN-IPC-1
   （Core 已实现 / host 侧 0 命中 / 无通用透传 / P13 明文不含 Tauri 侧）。释放前**先核实缺口真实**。
 - **同类教训登记**：设计基线的 §6 只核对"契约是否冻结"，**未核对 host 侧是否已有出口**；
   这与 G6/G19（误把已实现当缺口）是**同一根因的两个方向**。已登记 BACKLOG **BL-14**，要求后续设计/实现评审增加"实现可达性"核对。
+- **2026-10-16 Coordinator-as-Owner 自任（dsh, epoch 6）**：依据 `owner_policy=AUTO_SELECT` 与**当时可用性**——codex 正在 EXPORT-REVEAL-1、antigravity 正在 EVENTS-FWD-1、ZCode 因无法执行命令而不适用；本 Task 是 P14 关键路径，故由 Coordinator 兼任 Owner，并在上述「AC1 冻结结果」中完成命令名与注册策略冻结。**Reviewer 必须独立于 Owner**（已路由 codex/antigravity，不得为 dsh）。**自任不改变任何 Gate**：仍须自检、独立 Review、集成与关闭。
 - Handoff：尚无。Review：尚无。实际测试：尚无（全部 `NOT_RUN`）。
 
 ## Canonical Evidence
