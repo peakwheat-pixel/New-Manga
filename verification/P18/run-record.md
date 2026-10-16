@@ -22,6 +22,6 @@ PowerShell 7.6.6；Python 3.12.3 为 P13 资源清单中已保留的 `T1.1.1-imp
 
 ## 保留的仪器化尝试
 
-首次 r1（`raw/ja/`、`raw/ko/`）用于核验 JSONL 请求形状与运行隔离；r2（`raw/ja-r2/`、`raw/ko-r2/`）改为原始 bytes 捕获；r3 是记录完整 Python/package/model/device 元数据的 canonical 运行。r1/r2/r3 request-level 结果一致，早期目录保留，不覆盖或删除；终态矩阵与结论只引用 r3。
+首次 r1（`raw/ja/`、`raw/ko/`）用于核验 JSONL 请求形状与运行隔离；r2 仅重跑 JA（`raw/ja-r2/`）并改为原始 bytes 捕获，没有生成 `raw/ko-r2/`；r3 对 JA 与 KO 都记录完整 Python/package/model/device 元数据，是 canonical 运行。已归档尝试的 request-level 结果一致，早期目录保留，不覆盖或删除；终态矩阵与结论只引用 r3。
 
 Core 只对本次新建的隔离根运行启动恢复/GC；stderr 记录 `orphan_files_removed=0 dead_rows_removed=0`。没有访问或写入用户漫画库、主仓数据或其他 worktree。
