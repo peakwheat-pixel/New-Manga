@@ -3,7 +3,7 @@ id: FEAT-IMPORT-MULTI-1
 title: 页面导入支持多选与文件夹导入（用户要求：一次多张 / Ctrl+A 全选 / 直接导文件夹）
 kind: feature
 governance_version: 2
-status: in_review
+status: done
 approval: user_requirement_20261017_multi_select_and_folder_import
 suggested_owner: Codex
 owner: Codex
@@ -12,7 +12,7 @@ depends_on: [FEAT-CREATE-4]
 base_commit: f4bbc59c9e5cf9864ab0ab0e97277b826b9a0a5f
 branch: codex/FEAT-IMPORT-MULTI-1
 worktree: G:/CODEX/New Manga.workspace/worktrees/FEAT-IMPORT-MULTI-1
-integration_commit: null
+integration_commit: eac2630920b5780e77e1b6303c530aedbe7fb62d
 delivery_head: 8b1a1da1774d418ed7e28ac6eb983028cf73b74b
 canonical_evidence_status: registered
 resource_closeout_status: complete
@@ -36,7 +36,7 @@ evidence_dir: verification/FEAT-IMPORT-MULTI-1
 - [x] **AC5 安全与契约**：不得让前端直接读文件系统或任意路径；必须经既有 host 命令与 Core；不得回显绝对路径/Secret；**不得**下调既有校验。
 - [x] **AC6 测试**：前端（多选映射、汇总渲染、失败脱敏）+ host 侧（多文件/文件夹解析与逐项调用）；基线：前端 **285 / 28 files**、Rust source **108 / 0 failed / 1 ignored**（旧 107 + 本 Task 新增 1 个 host 聚合测试）、packaged **12 / 0 failed**、Core **536**；均须保持。
 - [x] **AC7 真实 GUI 复验（必做）**：重建产品（`npm run build` → `build_sidecar.ps1 -Force` → `cargo build`，**校验 bundle==resource hash 一致**）+ 隔离 `NEWMANGA_DATA_ROOT`（**不改用户数据**）→ 实测：多选 2 张 → 页数 +2；文件夹导入 → 页数 = 文件夹内图片数。留 UIA/窗口证据与退出码。
-- [x] **AC8**：commit + **Handoff（必须）** + Canonical Evidence（`status: in_review`；BL-15/17/19/16/18）。
+- [x] **AC8**：commit + **Handoff（必须）** + Canonical Evidence（`status: done`；BL-15/17/19/16/18）。
 
 ## 允许 / 禁止
 - 允许：`apps/desktop/src-tauri/**`、`apps/desktop/frontend/**`、本 Task、`doc/handoffs/FEAT-IMPORT-MULTI-1-*.md`、`verification/FEAT-IMPORT-MULTI-1/**`。
