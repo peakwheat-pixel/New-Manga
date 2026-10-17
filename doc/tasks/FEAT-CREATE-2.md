@@ -25,11 +25,11 @@ evidence_dir: verification/FEAT-CREATE-2
 `FEAT-CREATE-1`（done）已把 M2-C1 升至 **rev 2.8**，冻结 `CreateBook {title}` → `BookSummary`、`CreateChapter {book_id,title,chapter_number?}` → `ChapterNavSummary`，含 **§5.10 安全投影**、**未知字段 fail-closed**、Core 为唯一校验/写入方，并判定**无需迁移**。
 
 ## Acceptance Criteria
-- [ ] **AC1**：按 §5.10 **逐字**实现两条 Core 命令（命令名/DTO/响应/错误）；**未知字段 fail-closed**；`title` 非空与长度上限按契约；`CreateChapter` 的 `book_id` 必须存在且未删除。
+- [ ] **AC1**：按 §5.10 **逐字**实现两条 Core 命令（命令名/DTO/响应/错误）；**未知字段 fail-closed**；`title` **非空**（**契约 §5.10.2 L614 明确未引入最大长度 → 不设长度上限、不测超长**）；`CreateChapter` 的 `book_id` 必须存在且未删除。
 - [ ] **AC2**：持久化到既有 `books`/`chapters` 表（**不新增表、不加迁移**，与 FEAT-CREATE-1 结论一致）；写入须在既有事务/约束内，失败不留半成品。
 - [ ] **AC3**：响应**只**含 §5.10 白名单字段（`BookSummary`/`ChapterNavSummary`）；错误只走既有稳定 envelope；**不得**返回路径/Secret/原始异常。
 - [ ] **AC4**：命令在 `core_service` 实现**并**在 `core_assembly`/分发处注册（与既有导航命令同机制）；协议 minor 按 **2.8** 门控；既有命令语义零变化。
-- [ ] **AC5 测试**：覆盖成功路径 + 反例（未知字段、空标题、超长标题、不存在/已删除 `book_id`、重复/冲突），并断言**失败不留部分数据**；`pytest tests/core` **不得回归（基线 515）**。
+- [ ] **AC5 测试**：覆盖成功路径 + 反例（未知字段、**空/仅空白 title**、不存在/已删除 `book_id`），并断言**失败不留部分数据**；**契约 §5.10.2 L616 允许重复标题与章节号 → 重复必须作为正例**（不得断言重名失败）；原子性用**主键冲突或注入写失败**验证（不得与契约冲突）；`pytest tests/core` **不得回归（基线 515）**。
 - [ ] **AC6**：commit + **Handoff（必须）** + Canonical Evidence（`status: in_review`；BL-15/17/19/16/18）。
 
 ## 允许 / 禁止
@@ -42,3 +42,10 @@ evidence_dir: verification/FEAT-CREATE-2
 
 ## 交付与运行记录
 - 2026-10-17 Coordinator 释放（dsh, epoch 6）。
+
+## Coordinator 裁决（2026-10-17）：AC 与冻结契约对齐
+
+Owner 在动手前引 §5.10.2 **L614/L616** 指出我方 AC 与契约冲突，**判定正确**。裁决：
+1. 契约权威：	itle **无最大长度**（L614）→ 不设上限、**删除超长反例**；只验**非空**。
+2. 契约**允许重复**标题/章节号（L616）→ **重复是正例**，**不得**断言重名失败；原子性改以**主键冲突/注入失败**验证。
+3. 其余 AC 不变。
