@@ -3,7 +3,7 @@ id: SEC-FIX-PATH-ECHO-1
 title: 修复设置命令回显绝对路径（settings_get / settings_update_section）
 kind: bugfix
 governance_version: 2
-status: in_review
+status: done
 approval: coordinator_release_20261017_from_P19_AC3_1_finding
 suggested_owner: Codex
 owner: Codex
@@ -12,7 +12,7 @@ depends_on: [P15-HOST-2, P15-CORE-1C]
 base_commit: f4bbc59c9e5cf9864ab0ab0e97277b826b9a0a5f
 branch: codex/SEC-FIX-PATH-ECHO-1
 worktree: G:/CODEX/New Manga.workspace/worktrees/SEC-FIX-PATH-ECHO-1
-integration_commit: null
+integration_commit: 06fb49f838fd1d6c83c64158aeacc0ed2c765d36
 delivery_head: c52ce4695802a06fde8f4e08f2d96a8cecfd855d
 canonical_evidence_status: complete
 resource_closeout_status: accounted_with_preserved_residuals
@@ -101,3 +101,14 @@ REPRO_RESULT=PASS (the forbidden OS-path echo was reproduced; secret key was dro
 - **E19 附带修正**：原记 `ecc0d82d…` 与磁盘在**两种行尾下都不符**（系 `022f4d737` 改写该 Handoff 后的陈旧 pin），属 **pin 记错**，本次一并修正为实测值 `29e447a2…`。
 - **自校验**：重算脚本二次运行报告 `stale=0`（全部与磁盘一致）。
 - **不变式**：`sha256` 仍按**磁盘字节**计算（BL-16），只是在新增 `.gitattributes` 之后，任何 checkout（含 fresh clone）都得到同一 LF 字节。
+
+## Closeout Record（Coordinator dsh, epoch 7）
+
+- Closeout date：2026-10-17（Asia/Shanghai）。
+- **独立 Review**：`verification/SEC-FIX-PATH-ECHO-1/dsh-review-r1.md`（Reviewer=dsh ≠ Owner=Codex），`decision: approved`，`reviewed_head=6f27cf72a`；其 Addendum 1 记录集成后核验与证据行尾规范化（方案 A）。
+- **集成**：分支 `codex/SEC-FIX-PATH-ECHO-1` 以 `--no-ff` 合并入 main，merge commit `06fb49f838fd1d6c83c64158aeacc0ed2c765d36`（写入前已用 `git merge-base --is-ancestor` 证明其已是 main 祖先）。
+- **主仓复验**：`python -m pytest tests/core -q -p no:cacheprovider` = `536 passed, 1 warning` / EXIT 0。
+- **证据可复现性**：新增 `.gitattributes`（LF）后执行"删除 + 重新检出"验证，19/19 pin 与磁盘字节一致。
+- canonical_evidence_status：`complete`（19/19，commit 包含性校验通过）。
+- resource_closeout_status：`accounted_with_preserved_residuals` —— 保留 `verification/SEC-FIX-PATH-ECHO-1/tmp/**`（Python/Node 测试临时目录）与 4 个 `verification/P04/diagnostic_p22_*.jsonl`（Rust source 测试生成），均未纳入提交；删除/迁移/归档数量 = 0。
+- 未关闭项：无。F2（未来 path 类设置分区的占位回填语义）转 P19/P20 验证；F3（非 settings 命令的 request_id 路径回显）超本 Task AC 范围，交 Coordinator 决定是否建 follow-up。
