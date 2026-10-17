@@ -3,15 +3,15 @@ id: SEC-FIX-PATH-ECHO-1
 title: 修复设置命令回显绝对路径（settings_get / settings_update_section）
 kind: bugfix
 governance_version: 2
-status: ready
+status: in_progress
 approval: coordinator_release_20261017_from_P19_AC3_1_finding
 suggested_owner: Codex
-owner: null
-reviewer: null
+owner: Codex
+reviewer: DeepSeek Harness
 depends_on: [P15-HOST-2, P15-CORE-1C]
-base_commit: null
-branch: null
-worktree: null
+base_commit: f4bbc59c9e5cf9864ab0ab0e97277b826b9a0a5f
+branch: codex/SEC-FIX-PATH-ECHO-1
+worktree: G:/CODEX/New Manga.workspace/worktrees/SEC-FIX-PATH-ECHO-1
 integration_commit: null
 delivery_head: null
 canonical_evidence_status: pending
@@ -50,3 +50,6 @@ REPRO_RESULT=PASS (the forbidden OS-path echo was reproduced; secret key was dro
 
 ## 交付与运行记录
 - 2026-10-17 Coordinator 释放（dsh, epoch 6），依据 P19-AC3-1 复现。
+- 2026-10-17 开始实施：本轮用户指定 Owner=Codex、base=`f4bbc59c9e5cf9864ab0ab0e97277b826b9a0a5f`；实际分支为 `codex/SEC-FIX-PATH-ECHO-1`。
+- 基线事实差异：本 worktree 的 `doc/STATUS.md` 当前仍指向 `ARCH-DOC-REBASELINE`，而 Plan 将本 Task 列为 READY；按本 Task 禁令不改 STATUS/PLAN，记录供 Coordinator 核对。用户本轮明确指定本 Task Owner 与 worktree，故按该指令实施。
+- 复现源路径检查：只读主仓 `verification/P19-AC3-1/repro_settings_path_roundtrip.py` 与 `raw/` 在当前主仓 checkout 不存在；Task 的复现记录仍载明 `path_value_returned=true`。AC6 将在本 Task 目录运行等价脚本并留档。

@@ -1,0 +1,49 @@
+F                                                                        [100%]
+================================== FAILURES ===================================
+____________ test_settings_commands_redact_paths_in_every_section _____________
+
+server = <bootstrap.core_service.CoreServiceServer object at 0x00000260CA253A10>
+
+    def test_settings_commands_redact_paths_in_every_section(server) -> None:
+        windows_path = r"C:\Users\sec-fix-path-echo-1\AppData\Local\model\runner.exe"
+        unc_path = r"\\sec-fix-host\share\model\runner.exe"
+        posix_path = "/home/sec-fix-path-echo-1/.local/models/runner.bin"
+        forbidden = (windows_path, r"C:\Users\sec-fix-path-echo-1", unc_path, posix_path)
+
+        def assert_no_paths(response: dict) -> None:
+            serialized = json.dumps(response, ensure_ascii=False)
+            assert all(path not in serialized for path in forbidden)
+
+        # Mirror all twelve visible settings categories, plus the generic SFX section.
+        sections = (
+            "provider", "network", "ocr", "translation", "inpaint", "typeset",
+            "model_gpu", "task_concurrency", "cache_revision", "recycle_bin",
+            "backup_restore", "plugins", "sfx",
+        )
+        values = {
+            "path": windows_path,
+            "custom": [unc_path, {"configured_value": posix_path}],
+            "api_secret": "synthetic-secret-must-stay-omitted",
+        }
+
+        for section in sections:
+            written = _request(server, "settings.update_section", {"section": section, "values": values})
+            assert written["error"] is None
+>           assert_no_paths(written)
+
+tests\core\test_core_service_settings.py:174:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+response = {'protocol': 'new-manga.core', 'version': {'major': 2, 'minor': 3}, 'request_id': 'req-settings-1', 'result': {'settin...cho-1/.local/models/runner.bin'}], 'path': 'C:\\Users\\sec-fix-path-echo-1\\AppData\\Local\\model\\runner.exe'}}}, ...}
+
+    def assert_no_paths(response: dict) -> None:
+        serialized = json.dumps(response, ensure_ascii=False)
+>       assert all(path not in serialized for path in forbidden)
+E       assert False
+E        +  where False = all(<generator object test_settings_commands_redact_paths_in_every_section.<locals>.assert_no_paths.<locals>.<genexpr> at 0x00000260CA41A260>)
+
+tests\core\test_core_service_settings.py:157: AssertionError
+=========================== short test summary info ===========================
+FAILED tests/core/test_core_service_settings.py::test_settings_commands_redact_paths_in_every_section
+1 failed in 0.40s
+EXIT_CODE=1

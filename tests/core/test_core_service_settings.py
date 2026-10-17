@@ -48,11 +48,16 @@ def server(tmp_path: Path):
         core.conn.close()
 
 
-def _request(server: CoreServiceServer, command: str, payload: dict) -> dict:
+def _request(
+    server: CoreServiceServer,
+    command: str,
+    payload: dict,
+    request_id: str = "req-settings-1",
+) -> dict:
     line = json.dumps({
         "protocol": "new-manga.core",
         "version": {"major": PROTOCOL_MAJOR, "minor": PROTOCOL_MINOR},
-        "request_id": "req-settings-1",
+        "request_id": request_id,
         "command": command,
         "payload": payload,
     })
@@ -144,6 +149,86 @@ def test_settings_update_section_other_sections_pass_through(server) -> None:
     )
     assert response["error"] is None
     assert response["result"]["settings"]["ocr"] == {"script": "large"}
+
+
+def test_settings_commands_redact_paths_in_every_section(server) -> None:
+    windows_path = r"C:\Users\sec-fix-path-echo-1\AppData\Local\model\runner.exe"
+    unc_path = r"\\sec-fix-host\share\model\runner.exe"
+    posix_path = "/home/sec-fix-path-echo-1/.local/models/runner.bin"
+    forbidden = (windows_path, r"C:\Users\sec-fix-path-echo-1", unc_path, posix_path)
+
+    def assert_no_paths(response: dict) -> None:
+        serialized = json.dumps(response, ensure_ascii=False)
+        assert all(path not in serialized for path in forbidden)
+
+    # Mirror all twelve visible settings categories, plus the generic SFX section.
+    sections = (
+        "provider", "network", "ocr", "translation", "inpaint", "typeset",
+        "model_gpu", "task_concurrency", "cache_revision", "recycle_bin",
+        "backup_restore", "plugins", "sfx",
+    )
+    values = {
+        "path": windows_path,
+        "relative_path": "models/relative-runner.exe",
+        "custom": [unc_path, {"configured_value": posix_path}],
+        "api_secret": "synthetic-secret-must-stay-omitted",
+    }
+
+    for section in sections:
+        written = _request(
+            server,
+            "settings.update_section",
+            {"section": section, "values": values},
+        )
+        assert written["error"] is None
+        assert_no_paths(written)
+        assert written["result"]["settings"][section]["path"] == "[redacted]"
+        assert written["result"]["settings"][section]["relative_path"] == "[redacted]"
+
+        read = _request(server, "settings.get", {"section": section})
+        assert read["error"] is None
+        assert_no_paths(read)
+
+    full = _request(server, "settings.get", {})
+    assert full["error"] is None
+    assert_no_paths(full)
+
+    # Projection is response-only: the configured path remains stored for Core use.
+    stored = server._core.pipeline_defaults.read().settings
+    assert all(
+        stored[section]["path"] == windows_path
+        and stored[section]["relative_path"] == "models/relative-runner.exe"
+        for section in sections
+    )
+
+    # Section names are also caller-controlled projection keys.
+    path_section = r"C:\Users\sec-fix-path-echo-1\AppData\Local\custom-section"
+    keyed = _request(
+        server,
+        "settings.update_section",
+        {"section": path_section, "values": {"enabled": True}},
+        request_id=windows_path,
+    )
+    assert keyed["error"] is None
+    assert_no_paths(keyed)
+    assert_no_paths(_request(server, "settings.get", {"section": path_section}))
+
+    rejected = _request(
+        server,
+        "settings.update_section",
+        {"section": "sfx", "values": {"policy": windows_path}},
+    )
+    assert rejected["error"]["code"] == "INVALID_REQUEST"
+    assert_no_paths(rejected)
+
+    invalid_section = _request(
+        server,
+        "settings.update_section",
+        {"section": "", "values": {"path": windows_path}},
+        request_id=windows_path,
+    )
+    assert invalid_section["error"]["code"] == "INVALID_REQUEST"
+    assert_no_paths(invalid_section)
 
 
 def test_settings_update_section_sfx_without_policy_key_passes_through(server) -> None:
