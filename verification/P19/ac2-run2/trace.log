@@ -1,0 +1,22 @@
+[21:33:53.991] RUN start iso=C:\Users\49745\AppData\Local\Temp\p19-ac2-r3 file=C:\Users\49745\AppData\Local\Temp\p19fx\A\001.png
+[21:34:09.048] window=True
+[21:34:13.152] click file-picker=True
+[21:34:16.201] dialog='打开'
+[21:34:17.927] sent path+ENTER
+[21:34:30.976] [1] t=5s busy=True
+[21:34:36.003] [2] t=10s busy=True
+[21:34:41.031] [3] t=15s busy=True
+[21:34:46.069] [4] t=20s busy=True
+[21:34:51.102] [5] t=25s busy=True
+[21:34:56.148] [6] t=30s busy=True
+[21:35:01.177] [7] t=35s busy=True
+[21:35:06.207] [8] t=40s busy=True
+[21:35:11.236] [9] t=45s busy=True
+[21:35:16.261] [10] t=50s busy=True
+[21:35:16.267] === final texts ===
+[21:35:16.303]   总页数
+[21:35:16.307]   导入页面到章节
+[21:35:16.312]   ⏳ 正在导入中...
+[21:35:16.335] page_files=0 db=311296
+[21:35:19.385] cleaned_left=1
+[21:35:19.391] RUN end
