@@ -1,0 +1,100 @@
+[01:16:31.909] RUN start iso=C:\Users\49745\AppData\Local\Temp\p19-ac2-main-5ef19a72 outdir=G:\CODEX\New Manga\verification\P19\ac2-main-20261018-0120
+[01:16:31.936] exe sha256=384a486daee48257c9f7421fa68d5b6ef263f2ea03485f7254e84d99479d0600
+[01:16:31.956] FIXTURE count=2 files=001.png,002.png
+[01:16:31.974] pid=36144
+[01:16:32.722] ASSERT PASS app:window
+[01:16:32.753] READY
+[01:16:32.794] DUMP 01-bookshelf n=37
+[01:16:32.847] SHOT 01-bookshelf OK
+[01:16:35.890] CLICK open-create '+ 新建作品' OK
+[01:16:35.896] ASSERT PASS click:open-create
+[01:16:35.932] DUMP 02-create-dialog n=45
+[01:16:35.977] SHOT 02-create-dialog OK
+[01:16:36.403] SET 作品标题='P19Ac2Book' OK
+[01:16:36.408] ASSERT PASS set:作品标题
+[01:16:37.443] CLICK create-book '创建作品' OK
+[01:16:37.449] ASSERT PASS click:create-book
+[01:16:38.703] DUMP 03-book-created n=54
+[01:16:38.749] SHOT 03-book-created OK
+[01:16:39.794] CLICK open-chapter '+ 新建章节' OK
+[01:16:39.800] ASSERT PASS click:open-chapter
+[01:16:40.650] DUMP 04-chapter-dialog n=62
+[01:16:40.707] SHOT 04-chapter-dialog OK
+[01:16:41.137] SET 章节标题='P19Ac2Ch1' OK
+[01:16:41.143] ASSERT PASS set:章节标题
+[01:16:42.184] CLICK create-chapter '创建章节' OK
+[01:16:42.190] ASSERT PASS click:create-chapter
+[01:16:43.438] DUMP 05-chapter-created n=61
+[01:16:43.472] SHOT 05-chapter-created OK
+[01:16:43.504] ASSERT PASS book:visible
+[01:16:44.540] CLICK open-import '导入' OK
+[01:16:44.547] ASSERT PASS click:open-import
+[01:16:45.415] DUMP 06-import-panel n=74
+[01:16:45.472] SHOT 06-import-panel OK
+[01:16:46.509] CLICK open-file-picker '📄 选择图片 / PDF 文件（可多选）' OK
+[01:16:46.514] ASSERT PASS click:open-file-picker
+[01:16:52.040] PICKER_NAVIGATION dir=C:\Users\49745\AppData\Local\Temp\p19fx\A\
+[01:16:52.138] PICKER_SELECTED 001.png
+[01:16:52.147] PICKER_SELECTED 002.png
+[01:16:52.152] ASSERT PASS picker:selected-all (2/2)
+[01:16:52.160] PICKER_VISIBLE_ITEMS=2
+[01:16:52.196] PICKER_CONFIRMED
+[01:16:53.247] IMPORT_REPORT=VISIBLE
+[01:16:53.253] IMPORT_REPORT_HAS 已导入=True
+[01:16:53.258] IMPORT_REPORT_HAS 跳过重复=True
+[01:16:53.262] IMPORT_REPORT_HAS 导入失败=True
+[01:16:53.267] ASSERT PASS import:finished
+[01:16:54.834] DUMP 07-after-import n=82
+[01:16:54.865] SHOT 07-after-import OK
+[01:16:54.914] UI_PAGE_TEXT max=0 raw='☆ P19Ac2Book 页数 — ; 总页数 ; 导入页面 ; 0 页 ; 导入页面到章节 ; 作为新页面导入 (import_as_new)'
+[01:17:40.500] PAGE_COUNT_DB chapter=P19Ac2Ch1 pages=0 (ui_text=0)
+[01:17:40.501] PAGE_COUNT after_import=0 expected=2
+[01:17:40.507] ASSERT FAIL import:page-count (DB, =expected 2)
+[01:17:41.545] CLICK open-reader '阅读' OK
+[01:17:41.550] ASSERT PASS click:open-reader
+[01:17:43.088] DUMP 08-reader n=35
+[01:17:43.136] SHOT 08-reader OK
+[01:17:43.166] READER_PAGE first=1 total=0 (db)
+[01:17:43.172] ASSERT FAIL reader:total>=2
+[01:17:43.184] READER_NEXT_CAND 'Next page' enabled=True
+[01:17:44.204] CLICK reader-next 'Next page' OK
+[01:17:44.210] ASSERT PASS click:reader-next
+[01:17:44.215] ASSERT PASS reader:next-available
+[01:17:45.787] DUMP 09-reader-after-next n=32
+[01:17:45.833] SHOT 09-reader-after-next OK
+[01:17:45.893] READER_PAGE after_next=-1
+[01:17:45.899] ASSERT FAIL reader:advanced
+[01:17:46.973] CLICK reader-back '← 返回书架' OK
+[01:17:46.980] ASSERT PASS click:reader-back
+[01:17:48.286] DUMP 10-bookshelf-for-selection n=82
+[01:17:48.335] SHOT 10-bookshelf-for-selection OK
+[01:17:49.894] BOOK_SELECTED P19Ac2Book
+[01:17:49.900] ASSERT PASS book:selected
+[01:17:49.997] DUMP 10b-book-selected n=82
+[01:17:50.031] SHOT 10b-book-selected OK
+[01:17:51.104] CLICK enter-workbench-via-translate '翻译' OK
+[01:17:51.110] ASSERT PASS click:enter-workbench-via-translate
+[01:17:53.629] ASSERT PASS workbench:translate-entry
+[01:17:53.739] DUMP 11-workbench n=103
+[01:17:53.796] SHOT 11-workbench OK
+[01:17:53.825] WORKBENCH_RUN '启动' enabled=True
+[01:17:53.831] ASSERT PASS workbench:run-enabled
+[01:17:54.876] CLICK run-start '启动' OK
+[01:17:54.881] ASSERT PASS click:run-start
+[01:17:58.057] DUMP 11b-after-run n=160
+[01:17:58.094] SHOT 11b-after-run OK
+[01:17:58.156] PAGE_LIST_ITEMS=2
+[01:17:58.165] PAGE_SELECT InvokePattern unsupported
+[01:17:58.277] MOUSE_CLICK (399,466)
+[01:17:58.283] PAGE_SELECT method=MouseClickAtBounds
+[01:17:59.792] ASSERT PASS workbench:page-selected
+[01:18:00.004] EXPORT control enabled=True
+[01:18:00.013] ASSERT PASS workbench:export-enabled
+[01:18:00.218] DUMP 11c-workbench-final n=162
+[01:18:00.261] SHOT 11c-workbench-final OK
+[01:18:01.308] CLICK nav-back '📚 书架' OK
+[01:18:01.314] ASSERT PASS click:nav-back
+[01:18:01.423] DUMP 12-bookshelf-back n=82
+[01:18:01.489] SHOT 12-bookshelf-back OK
+[01:18:03.507] closed exit=0
+[01:18:03.513] RUN end checks=27 fails=3

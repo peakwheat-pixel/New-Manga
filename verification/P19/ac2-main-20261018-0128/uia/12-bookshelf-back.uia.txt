@@ -1,0 +1,83 @@
+# 12-bookshelf-back n=82 2026-10-18T01:21:13.4374587+08:00
+0|Pane||en=True|off=False
+1|Pane|M2RC1|interactive|deny=5/5|allow=0/0|results=5|en=True|off=False
+2|Pane||en=False|off=False
+3|Pane|M2RC1|interactive|deny=5/5|allow=0/0|results=5 - Web 内容|en=True|off=False
+4|Pane||en=True|off=False
+5|Pane||en=True|off=False
+6|Pane||en=True|off=False
+7|Pane||en=True|off=False
+8|Document|M2RC1|interactive|deny=5/5|allow=0/0|results=5|en=True|off=False
+9|Group||en=True|off=False
+10|Group||en=True|off=False
+11|Group||en=True|off=False
+12|Text|NM|en=True|off=False
+13|Button|📚 书架|en=True|off=False
+14|Button|🛠️ 工作台|en=True|off=False
+15|Button|📖 阅读器|en=True|off=False
+16|Button|⚙️ 设置|en=True|off=False
+17|Group||en=True|off=False
+18|Button|+ 新建作品|en=True|off=False
+19|Button|导入作品|en=True|off=False
+20|Edit|搜索作品标题 / 原名 (Ctrl+F)|en=True|off=False
+21|Button|★ 收藏|en=True|off=False
+22|Button|归档|en=True|off=False
+23|ComboBox||en=True|off=False
+24|Button|⊞|en=True|off=False
+25|Button|☰|en=True|off=False
+26|Group||en=True|off=False
+27|Button|☆ P19Ac2Book 页数 2 页|en=True|off=False
+28|Group||en=True|off=False
+29|Text|P19Ac2Book|en=True|off=False
+30|Group||en=True|off=False
+31|Text|P19Ac2Book|en=True|off=False
+32|Text|总页数|en=True|off=False
+33|Text|2 页|en=True|off=False
+34|Text|章节数|en=True|off=False
+35|Text|1|en=True|off=False
+36|Text| 章|en=True|off=False
+37|Text|更新时间|en=True|off=False
+38|Text|2026/10/18|en=True|off=False
+39|Text|阅读摘要|en=True|off=False
+40|Text|最近阅读|en=True|off=False
+41|Group||en=True|off=False
+42|Text|—|en=True|off=False
+43|Text|累计时长|en=True|off=False
+44|Group||en=True|off=False
+45|Text|—|en=True|off=False
+46|Button|导入页面|en=True|off=False
+47|Button|删除作品|en=False|off=False
+48|Button|标签管理 (GAP-G7)|en=False|off=False
+49|Button|翻译约束 (GAP-G8)|en=False|off=False
+50|Text|章节列表|en=True|off=False
+51|Button|+ 新建章节|en=True|off=False
+52|Text|#1|en=True|off=False
+53|Text|P19Ac2Ch1|en=True|off=False
+54|Text|(|en=True|off=False
+55|Text|2 页|en=True|off=False
+56|Text|)|en=True|off=False
+57|Button|导入|en=True|off=False
+58|Button|翻译|en=True|off=False
+59|Button|阅读|en=True|off=False
+60|Window||en=True|off=False
+61|Text|导入页面到章节|en=True|off=False
+62|Button|✕|en=True|off=False
+63|Text|目标作品|en=True|off=False
+64|ComboBox||en=False|off=False
+65|Text|目标章节|en=True|off=False
+66|ComboBox||en=False|off=False
+67|Text|重复项策略 (Duplicate Policy)|en=True|off=False
+68|RadioButton|跳过重复 (skip - 默认)|en=True|off=False
+69|RadioButton|作为新页面导入 (import_as_new)|en=True|off=False
+70|Text|导入报告 (Import Report)|en=True|off=False
+71|Text|完成|en=True|off=False
+72|Text|已导入 (imported)|en=True|off=False
+73|Text|2|en=True|off=False
+74|Text|跳过重复 (skipped)|en=True|off=False
+75|Text|0|en=True|off=False
+76|Text|导入失败 (rejected)|en=True|off=False
+77|Text|0|en=True|off=False
+78|Text|待处理 (pending)|en=True|off=False
+79|Text|0|en=True|off=False
+80|Button|完成|en=True|off=False
+81|Pane||en=True|off=False

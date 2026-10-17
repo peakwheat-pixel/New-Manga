@@ -1,0 +1,97 @@
+[01:12:17.025] RUN start iso=C:\Users\49745\AppData\Local\Temp\p19-ac2-main-ee78fdf2 outdir=G:\CODEX\New Manga\verification\P19\ac2-main-20261018-0110
+[01:12:17.058] exe sha256=384a486daee48257c9f7421fa68d5b6ef263f2ea03485f7254e84d99479d0600
+[01:12:17.079] FIXTURE count=2 files=001.png,002.png
+[01:12:17.102] pid=16584
+[01:12:17.854] ASSERT PASS app:window
+[01:12:17.885] READY
+[01:12:17.975] DUMP 01-bookshelf MISSING
+[01:12:19.160] CLICK open-create '+ 新建作品' OK
+[01:12:19.166] ASSERT PASS click:open-create
+[01:12:19.214] DUMP 02-create-dialog n=45
+[01:12:19.261] SHOT 02-create-dialog OK
+[01:12:19.692] SET 作品标题='P19Ac2Book' OK
+[01:12:19.698] ASSERT PASS set:作品标题
+[01:12:20.733] CLICK create-book '创建作品' OK
+[01:12:20.739] ASSERT PASS click:create-book
+[01:12:21.987] DUMP 03-book-created n=54
+[01:12:22.012] SHOT 03-book-created OK
+[01:12:23.055] CLICK open-chapter '+ 新建章节' OK
+[01:12:23.061] ASSERT PASS click:open-chapter
+[01:12:23.923] DUMP 04-chapter-dialog n=62
+[01:12:23.963] SHOT 04-chapter-dialog OK
+[01:12:24.392] SET 章节标题='P19Ac2Ch1' OK
+[01:12:24.397] ASSERT PASS set:章节标题
+[01:12:25.435] CLICK create-chapter '创建章节' OK
+[01:12:25.441] ASSERT PASS click:create-chapter
+[01:12:26.688] DUMP 05-chapter-created n=61
+[01:12:26.721] SHOT 05-chapter-created OK
+[01:12:26.754] ASSERT PASS book:visible
+[01:12:27.793] CLICK open-import '导入' OK
+[01:12:27.799] ASSERT PASS click:open-import
+[01:12:28.667] DUMP 06-import-panel n=74
+[01:12:28.694] SHOT 06-import-panel OK
+[01:12:29.739] CLICK open-file-picker '📄 选择图片 / PDF 文件（可多选）' OK
+[01:12:29.745] ASSERT PASS click:open-file-picker
+[01:12:35.272] PICKER_NAVIGATION dir=C:\Users\49745\AppData\Local\Temp\p19fx\A\
+[01:12:35.369] PICKER_SELECTED 001.png
+[01:12:35.377] PICKER_SELECTED 002.png
+[01:12:35.383] ASSERT PASS picker:selected-all (2/2)
+[01:12:35.390] PICKER_VISIBLE_ITEMS=2
+[01:12:35.412] PICKER_CONFIRMED
+[01:12:36.473] IMPORT_REPORT=VISIBLE
+[01:12:36.480] IMPORT_REPORT_HAS 已导入=True
+[01:12:36.486] IMPORT_REPORT_HAS 跳过重复=True
+[01:12:36.490] IMPORT_REPORT_HAS 导入失败=True
+[01:12:36.494] ASSERT PASS import:finished
+[01:12:38.070] DUMP 07-after-import n=82
+[01:12:38.105] SHOT 07-after-import OK
+[01:12:38.151] UI_PAGE_TEXT max=0 raw='☆ P19Ac2Book 页数 — ; 总页数 ; 导入页面 ; 0 页 ; 导入页面到章节 ; 作为新页面导入 (import_as_new)'
+[01:12:38.241] PAGE_COUNT_DB chapter=P19Ac2Ch1 pages=0 (ui_text=0)
+[01:12:38.246] PAGE_COUNT after_import=0 expected=2
+[01:12:38.252] ASSERT FAIL import:page-count (DB, =expected 2)
+[01:12:39.299] CLICK open-reader '阅读' OK
+[01:12:39.304] ASSERT PASS click:open-reader
+[01:12:40.849] DUMP 08-reader n=35
+[01:12:40.879] SHOT 08-reader OK
+[01:12:40.908] READER_PAGE first=1 total=0 (db)
+[01:12:40.914] ASSERT FAIL reader:total>=2
+[01:12:40.926] READER_NEXT_CAND 'Next page' enabled=True
+[01:12:41.945] CLICK reader-next 'Next page' OK
+[01:12:41.951] ASSERT PASS click:reader-next
+[01:12:41.957] ASSERT PASS reader:next-available
+[01:12:43.539] DUMP 09-reader-after-next n=39
+[01:12:43.570] SHOT 09-reader-after-next OK
+[01:12:43.635] READER_PAGE after_next=-1
+[01:12:43.641] ASSERT FAIL reader:advanced
+[01:12:44.724] CLICK reader-back '← 返回书架' OK
+[01:12:44.730] ASSERT PASS click:reader-back
+[01:12:46.029] DUMP 10-bookshelf-for-selection n=82
+[01:12:46.062] SHOT 10-bookshelf-for-selection OK
+[01:12:47.636] BOOK_SELECTED P19Ac2Book
+[01:12:47.641] ASSERT PASS book:selected
+[01:12:47.742] DUMP 10b-book-selected n=82
+[01:12:47.773] SHOT 10b-book-selected OK
+[01:12:48.847] CLICK enter-workbench-via-translate '翻译' OK
+[01:12:48.854] ASSERT PASS click:enter-workbench-via-translate
+[01:12:51.368] ASSERT PASS workbench:translate-entry
+[01:12:51.477] DUMP 11-workbench n=103
+[01:12:51.515] SHOT 11-workbench OK
+[01:12:51.544] WORKBENCH_RUN '启动' enabled=True
+[01:12:51.550] ASSERT PASS workbench:run-enabled
+[01:12:52.585] CLICK run-start '启动' OK
+[01:12:52.591] ASSERT PASS click:run-start
+[01:12:55.768] DUMP 11b-after-run n=160
+[01:12:55.806] SHOT 11b-after-run OK
+[01:12:55.847] PAGE_LIST_ITEMS=4
+[01:12:55.856] PAGE_SELECT_FAILED 调用“GetCurrentPattern”并传入“1”个参数时发生异常：“不支持的模式。”
+[01:12:55.861] ASSERT FAIL workbench:page-selected
+[01:12:55.897] EXPORT control enabled=False
+[01:12:55.903] ASSERT FAIL workbench:export-enabled
+[01:12:56.051] DUMP 11c-workbench-final n=160
+[01:12:56.080] SHOT 11c-workbench-final OK
+[01:12:57.122] CLICK nav-back '📚 书架' OK
+[01:12:57.127] ASSERT PASS click:nav-back
+[01:12:57.225] DUMP 12-bookshelf-back n=82
+[01:12:57.264] SHOT 12-bookshelf-back OK
+[01:12:59.273] closed exit=0
+[01:12:59.278] RUN end checks=27 fails=5

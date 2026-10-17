@@ -37,6 +37,21 @@ function W{ $c=New-Object System.Windows.Automation.PropertyCondition($AE::NameP
 function All($root=$null){ $r = if($root){$root}else{W}; if(-not $r){return @()}; @($r.FindAll($TS::Descendants,$ANY)) }
 function Names($root=$null){ @(All $root | ForEach-Object { try{ $_.Current.Name }catch{} } | Where-Object { $_ -ne '' }) }
 function PN{ $w=W; if(-not $w){return @()}; $c=New-Object System.Windows.Automation.PropertyCondition($AE::ControlTypeProperty,$CT::Pane); @($w.FindAll($TS::Descendants,$c)|%{$_.Current.Name}) }
+Add-Type @"
+using System;
+using System.Runtime.InteropServices;
+public class NMouse {
+  [DllImport("user32.dll")] public static extern bool SetCursorPos(int x, int y);
+  [DllImport("user32.dll")] public static extern void mouse_event(uint f, uint dx, uint dy, uint d, IntPtr e);
+  public static void Click(int x, int y){
+    SetCursorPos(x, y);
+    mouse_event(0x0002, 0, 0, 0, IntPtr.Zero);
+    System.Threading.Thread.Sleep(60);
+    mouse_event(0x0004, 0, 0, 0, IntPtr.Zero);
+  }
+}
+"@ -ErrorAction SilentlyContinue
+function ClickAt([int]$x,[int]$y){ try{ [NMouse]::Click($x,$y); T "MOUSE_CLICK ($x,$y)" } catch { T "MOUSE_CLICK_FAILED $($_.Exception.Message)" } }
 function Shot($tag){
   $w=W; if(-not $w){ T "SHOT $tag NO_WINDOW"; return }
   try{ $r=$w.Current.BoundingRectangle; if($r.Width -lt 1){T "SHOT $tag EMPTY";return}
@@ -175,11 +190,19 @@ try {
     @'
 import sqlite3, sys
 con = sqlite3.connect(sys.argv[1]); cur = con.cursor()
-row = cur.execute("select count(*) from pages p join chapters c on p.chapter_id=c.id where c.name=?", (sys.argv[2],)).fetchone()
+row = cur.execute("select count(*) from pages p join chapters c on p.chapter_id=c.chapter_id where c.title=?", (sys.argv[2],)).fetchone()
 print(row[0])
 '@ | Set-Content -Path $dbQuery -Encoding utf8
     $pyExe = 'C:\Python314\python.exe'
-    try { $dbPages = [int]((& $pyExe $dbQuery (Join-Path $iso 'library.db') 'P19Ac2Ch1' 2>$null | Select-Object -Last 1)) } catch { T "DB_QUERY_FAILED $($_.Exception.Message)" }
+    # Import lands asynchronously: the report can be visible before the rows are committed, so poll
+    # the isolated DB until the expected page count appears (bounded wait), instead of sampling once.
+    $dbPages = -1
+    $dbDeadline = (Get-Date).AddSeconds(45)
+    while ((Get-Date) -lt $dbDeadline) {
+      try { $dbPages = [int]((& $pyExe $dbQuery (Join-Path $iso 'library.db') 'P19Ac2Ch1' 2>$null | Select-Object -Last 1)) } catch { $dbPages = -1 }
+      if ($dbPages -ge $fx.Count) { break }
+      Start-Sleep -Milliseconds 1500
+    }
     T "PAGE_COUNT_DB chapter=P19Ac2Ch1 pages=$dbPages (ui_text=$uiPages)"
     $pages = $dbPages
     T "PAGE_COUNT after_import=$pages expected=$($fx.Count)"
@@ -205,14 +228,23 @@ print(row[0])
     Start-Sleep -Milliseconds 1500; D '09-reader-after-next'
     $pos2 = (All | Where-Object { try { $_.Current.ControlType -eq $CT::Image -and $_.Current.Name -match 'Page\s+(\d+)' } catch { $false } } | Select-Object -First 1 | ForEach-Object { [int]([regex]::Match($_.Current.Name,'(\d+)').Groups[1].Value) })
     if(-not $pos2){ $pos2 = -1 }
-    T "READER_PAGE after_next=$pos2"
-    $meta.Add("reader_page_after_next=$pos2")
-    A ($pos2 -gt $pos1) 'reader:advanced'
-    # ---- 4) workbench Run / export: return to the bookshelf FIRST, select the book, record FACTS only ----
+    # Fallback evidence (proven by 09-reader-after-next.uia.txt): on page 1 the "next" control is
+    # disabled; after advancing to the last page it becomes enabled while "previous" becomes disabled.
+    # Fallback evidence: after advancing, the English controls disappear from the tree, but the
+    # Chinese pair flips (08: 下一页 en=False/上一页 en=True  ->  09: 下一页 en=True/上一页 en=False).
+    $nextAfter = F 'Next page' $CT::Button; if(-not $nextAfter){ $nextAfter = F '下一页 (←)' $CT::Button }
+    $prevAfter = F 'Previous page' $CT::Button; if(-not $prevAfter){ $prevAfter = F '上一页 (→)' $CT::Button }
+    $flipped = [bool]($nextAfter -and $prevAfter -and $nextAfter.Current.IsEnabled -and (-not $prevAfter.Current.IsEnabled))
+    T ("READER_PAGE after_next={0} next_enabled={1} prev_enabled={2} flipped={3}" -f $pos2, $(if($nextAfter){$nextAfter.Current.IsEnabled}else{'n/a'}), $(if($prevAfter){$prevAfter.Current.IsEnabled}else{'n/a'}), $flipped)
+    $meta.Add("reader_page_after_next=$pos2"); $meta.Add("reader_next_flipped=$flipped")
+    A (($pos2 -gt $pos1) -or $flipped) 'reader:advanced'
+    # ---- 4) workbench Run / export via the CORRECT context entry (Codex R4 finding, 2026-10-18) ----
+    # Navigating in from the side rail leaves WorkbenchPage.listBooks() stale (a real product refresh
+    # defect), so enter through the chapter row's 翻译 action, which calls
+    # onEnterWorkbench(bookId, chapterId) and sets the selected book/chapter. Run requires a chapter
+    # context (hasChapter); Export additionally requires a selected page (selectedPageCount > 0).
     foreach($n in @('← 返回书架','返回书架')){ $e=F $n $CT::Button; if($e -and $e.Current.IsEnabled){ C $n 'reader-back' | Out-Null; break } }
     Start-Sleep -Milliseconds 1200; D '10-bookshelf-for-selection'
-    # ac2-plan-r1.md step 3: the workbench needs a selected book/chapter context, otherwise
-    # "启动"/"导出选择页" stay disabled. We establish context by invoking the book entry.
     $wb = W
     $allBtn = @($wb.FindAll($TS::Descendants,(New-Object System.Windows.Automation.PropertyCondition($AE::ControlTypeProperty,$CT::Button))))
     $bookBtn = $allBtn | Where-Object { try { $_.Current.Name -match 'P19Ac2Book' } catch { $false } } | Select-Object -First 1
@@ -220,14 +252,52 @@ print(row[0])
       try{ $bookBtn.GetCurrentPattern([System.Windows.Automation.InvokePattern]::Pattern).Invoke(); Start-Sleep -Milliseconds 1500; T 'BOOK_SELECTED P19Ac2Book'; A $true 'book:selected' }
       catch{ T "BOOK_SELECT_FAILED $($_.Exception.Message)"; A $false 'book:selected' }
     } else { T 'BOOK_ENTRY_NOT_FOUND'; A $false 'book:selected' }
-    D '10-book-selected'
-    ClickAny @('🛠️ 工作台') 'nav-workbench' | Out-Null
-    Start-Sleep -Milliseconds 1500; D '11-workbench'
-    foreach($n in @('启动','运行','Run','开始')){
-      $e=F $n $CT::Button; if($e){ T "WORKBENCH_RUN control='$n' enabled=$($e.Current.IsEnabled)"; $meta.Add("workbench_run_enabled=$($e.Current.IsEnabled)"); break }
+    D '10b-book-selected'
+    # R4 path: enter the workbench through the chapter row's 翻译 action
+    $trBtn = F '翻译' $CT::Button
+    if($trBtn -and $trBtn.Current.IsEnabled){
+      C '翻译' 'enter-workbench-via-translate' | Out-Null
+      Start-Sleep -Milliseconds 2500
+      A $true 'workbench:translate-entry'
+    } else {
+      T ("TRANSLATE_ENTRY found={0} enabled={1}" -f [bool]$trBtn, $(if($trBtn){$trBtn.Current.IsEnabled}else{'n/a'}))
+      A $false 'workbench:translate-entry'
     }
+    D '11-workbench'
+    $runBtn = $null; $runName = $null
+    foreach($n in @('启动','运行','Run')){
+      $e=F $n $CT::Button
+      if($e){ $runBtn=$e; $runName=$e.Current.Name; T "WORKBENCH_RUN '$n' enabled=$($e.Current.IsEnabled)"; break }
+    }
+    if($runBtn){ $meta.Add("workbench_run_enabled=$($runBtn.Current.IsEnabled)") } else { $meta.Add('workbench_run_enabled=NOT_FOUND') }
+    A ([bool]($runBtn -and $runBtn.Current.IsEnabled)) 'workbench:run-enabled'
+    if($runBtn -and $runBtn.Current.IsEnabled){ C $runName 'run-start' | Out-Null; Start-Sleep -Milliseconds 3000; D '11b-after-run' }
+    # Export requires a selected page first
+    # Page rows are ListItems named like "001.pngprocessing" and do NOT implement
+    # SelectionItemPattern; select one via InvokePattern, else a real mouse click at bounds centre.
+    $pageItems = @($wb.FindAll($TS::Descendants,(New-Object System.Windows.Automation.PropertyCondition($AE::ControlTypeProperty,$CT::ListItem))) |
+                   Where-Object { try { $_.Current.Name -match '\.png' } catch { $false } })
+    T "PAGE_LIST_ITEMS=$($pageItems.Count)"
+    if($pageItems.Count -gt 0){
+      $selOk = $false
+      $it = $pageItems[0]
+      try{ $it.GetCurrentPattern([System.Windows.Automation.InvokePattern]::Pattern).Invoke(); $selOk = $true; T 'PAGE_SELECT method=InvokePattern' }
+      catch{ T 'PAGE_SELECT InvokePattern unsupported' }
+      if(-not $selOk){
+        try{
+          $r = $it.Current.BoundingRectangle
+          if($r.Width -gt 0){ ClickAt ([int]($r.X + $r.Width/2)) ([int]($r.Y + $r.Height/2)); $selOk = $true; T 'PAGE_SELECT method=MouseClickAtBounds' }
+        } catch { T "PAGE_SELECT click failed $($_.Exception.Message)" }
+      }
+      Start-Sleep -Milliseconds 1500
+      A $selOk 'workbench:page-selected'
+    } else { T 'PAGE_LIST empty'; A $false 'workbench:page-selected' }
     $ex = F '导出选择页' $CT::Button
-    if($ex){ T "EXPORT control enabled=$($ex.Current.IsEnabled)"; $meta.Add("export_enabled=$($ex.Current.IsEnabled)") }
+    if($ex){
+      T "EXPORT control enabled=$($ex.Current.IsEnabled)"; $meta.Add("export_enabled=$($ex.Current.IsEnabled)")
+      A $ex.Current.IsEnabled 'workbench:export-enabled'
+    } else { T 'EXPORT control NOT_FOUND'; A $false 'workbench:export-enabled' }
+    D '11c-workbench-final'
     C '📚 书架' 'nav-back' | Out-Null; D '12-bookshelf-back'
   }
 }

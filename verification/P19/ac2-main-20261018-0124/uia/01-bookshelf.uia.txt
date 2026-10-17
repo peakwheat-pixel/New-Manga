@@ -1,0 +1,10 @@
+# 01-bookshelf n=9 2026-10-18T01:18:49.7440693+08:00
+0|Pane||en=True|off=False
+1|Pane|M2RC1|interactive|deny=5/5|allow=0/0|results=5|en=True|off=False
+2|Pane||en=False|off=False
+3|Pane|M2RC1|interactive|deny=5/5|allow=0/0|results=5 - Web 内容|en=True|off=False
+4|Pane||en=True|off=False
+5|Pane||en=True|off=False
+6|Pane||en=True|off=False
+7|Pane||en=True|off=False
+8|Pane||en=True|off=False

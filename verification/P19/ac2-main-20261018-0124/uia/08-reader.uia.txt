@@ -1,0 +1,36 @@
+# 08-reader n=35 2026-10-18T01:19:14.4758104+08:00
+0|Pane||en=True|off=False
+1|Pane|M2RC1|interactive|deny=5/5|allow=0/0|results=5|en=True|off=False
+2|Pane||en=False|off=False
+3|Pane|M2RC1|interactive|deny=5/5|allow=0/0|results=5 - Web 内容|en=True|off=False
+4|Pane||en=True|off=False
+5|Pane||en=True|off=False
+6|Pane||en=True|off=False
+7|Pane||en=True|off=False
+8|Document|M2RC1|interactive|deny=5/5|allow=0/0|results=5|en=True|off=False
+9|Group||en=True|off=False
+10|Group||en=True|off=False
+11|Group||en=True|off=False
+12|Text|NM|en=True|off=False
+13|Button|📚 书架|en=True|off=False
+14|Button|🛠️ 工作台|en=True|off=False
+15|Button|📖 阅读器|en=True|off=False
+16|Button|⚙️ 设置|en=True|off=False
+17|Group||en=True|off=False
+18|Button|← 返回书架|en=True|off=False
+19|Group||en=True|off=False
+20|Text|章节: 3628328c2b1f4d41a74b03430ede03b2|en=True|off=False
+21|Button|下一页 (←)|en=False|off=False
+22|Text|1|en=True|off=False
+23|Text| / |en=True|off=False
+24|Text|2|en=True|off=False
+25|Button|上一页 (→)|en=True|off=False
+26|Button|继续|en=True|off=False
+27|Button|从头开始|en=True|off=False
+28|Button|原文 (Original)|en=True|off=False
+29|Button|译文 (Translated)|en=True|off=False
+30|Group||en=True|off=False
+31|Button|Next page|en=True|off=False
+32|Image|Page 1|en=True|off=False
+33|Button|Previous page|en=True|off=False
+34|Pane||en=True|off=False

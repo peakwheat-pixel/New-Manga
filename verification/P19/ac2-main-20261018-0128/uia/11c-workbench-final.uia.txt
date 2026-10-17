@@ -1,0 +1,163 @@
+# 11c-workbench-final n=162 2026-10-18T01:21:12.1507169+08:00
+0|Pane||en=True|off=False
+1|Pane|M2RC1|interactive|deny=5/5|allow=0/0|results=5|en=True|off=False
+2|Pane||en=False|off=False
+3|Pane|M2RC1|interactive|deny=5/5|allow=0/0|results=5 - Web 内容|en=True|off=False
+4|Pane||en=True|off=False
+5|Pane||en=True|off=False
+6|Pane||en=True|off=False
+7|Pane||en=True|off=False
+8|Document|M2RC1|interactive|deny=5/5|allow=0/0|results=5|en=True|off=False
+9|Group||en=True|off=False
+10|Group||en=True|off=False
+11|Group||en=True|off=False
+12|Text|NM|en=True|off=False
+13|Button|📚 书架|en=True|off=False
+14|Button|🛠️ 工作台|en=True|off=False
+15|Button|📖 阅读器|en=True|off=False
+16|Button|⚙️ 设置|en=True|off=False
+17|Text|页面列表|en=True|off=False
+18|Group||en=True|off=False
+19|Button|拖动调整页序|en=False|off=False
+20|Text|页序写入 wire 尚未冻结，页面顺序保持 Core 投影结果。|en=True|off=False
+21|Group||en=True|off=False
+22|Button|页面缩略图|en=False|off=False
+23|Text|当前只有原图资源通道，低清缩略图能力尚未接入。|en=True|off=False
+24|Text|按页面 ID 定位|en=True|off=False
+25|Edit|按页面 ID 定位|en=True|off=False
+26|List||en=True|off=False
+27|ListItem|暂无作品|en=True|off=False
+28|List||en=True|off=False
+29|ListItem|P19Ac2Ch1|en=True|off=False
+30|Button|P19Ac2Ch1|en=True|off=False
+31|List||en=True|off=False
+32|ListItem|001.pngprocessing|en=True|off=False
+33|Button|001.png processing|en=True|off=False
+34|ListItem|002.pngwaiting|en=True|off=False
+35|Button|002.png waiting|en=True|off=False
+36|Group||en=True|off=False
+37|Group||en=True|off=False
+38|Text|页面查看器|en=True|off=False
+39|Button|缩小页面|en=True|off=False
+40|StatusBar|缩放比例|en=True|off=False
+41|Text|100|en=True|off=False
+42|Text|%|en=True|off=False
+43|Button|放大页面|en=True|off=False
+44|Button|重置缩放和平移|en=True|off=False
+45|Group|页面画布；加减键缩放，0 重置，平移模式下拖动|en=True|off=False
+46|Image|page|en=True|off=False
+47|StatusBar||en=True|off=False
+48|Text|本页暂无 Region|en=True|off=False
+49|Image||en=True|off=True
+50|Text|Inspector|en=True|off=False
+51|Text|no region selected|en=True|off=False
+52|Text|人工译文|en=True|off=False
+53|Edit|人工译文|en=False|off=False
+54|Group||en=True|off=False
+55|Button|保存人工译文|en=False|off=False
+56|Text|SaveManualTranslation 写入接口尚未冻结，因此人工译文与 Ctrl+Enter 提交保持禁用。|en=True|off=False
+57|Group||en=True|off=False
+58|Button|设置/解除锁定|en=False|off=False
+59|Text|Lock 写入接口尚未冻结；当前锁态只读显示。|en=True|off=False
+60|Group||en=True|off=False
+61|Button|固定此修订|en=False|off=False
+62|Text|Revision pin 写入接口尚未冻结；历史固定状态只读显示。|en=True|off=False
+63|Group|工作台工具栏|en=True|off=False
+64|Text|作品 · P19Ac2Ch1|en=True|off=False
+65|Text|Region：|en=True|off=False
+66|Text|0|en=True|off=False
+67|Text|批处理|en=True|off=False
+68|ComboBox|批处理|en=True|off=False
+69|Button|启动|en=True|off=False
+70|Button|导入页面|en=True|off=False
+71|Button|导出选择页|en=True|off=False
+72|Text|查看模式|en=True|off=False
+73|ComboBox|查看模式|en=True|off=False
+74|Group||en=True|off=False
+75|Button|新建 Region|en=False|off=False
+76|Text|等待 CreateRegion 能力接入。|en=True|off=False
+77|Group||en=True|off=False
+78|Button|删除 Region|en=False|off=False
+79|Text|等待 DeleteRegion 能力接入。|en=True|off=False
+80|Group||en=True|off=True
+81|Button|编辑 Region 几何|en=False|off=True
+82|Text|移动、缩放、合并、拆分与顺序写入 wire 尚未冻结。|en=True|off=True
+83|Group||en=True|off=True
+84|Button|Core 状态|en=False|off=True
+85|Text|Core 可用性查询/事件 wire 尚未冻结；此处不推断运行状态。|en=True|off=True
+86|Group||en=True|off=True
+87|Button|逐页导入进度|en=False|off=True
+88|Text|当前只返回同步导入结果，细分进度 snapshot 尚未冻结。|en=True|off=True
+89|Group|任务进度|en=True|off=False
+90|Group||en=True|off=False
+91|Text|任务进度|en=True|off=False
+92|Text|0|en=True|off=False
+93|Text|%|en=True|off=False
+94|Button|折叠任务进度|en=True|off=False
+95|Group||en=True|off=False
+96|Button|查看已有任务与中断 Run|en=False|off=False
+97|Text|暂不可用：Core 尚无 ListRuns 查询；仅能查看本次工作台明确启动的 Run。|en=True|off=False
+98|Group||en=True|off=False
+99|Button|当前页缩略图|en=False|off=False
+100|Text|低清预览/缩略图通道尚未接入，当前不会把原图当缩略图加载。|en=True|off=False
+101|Text|全部翻译|en=True|off=False
+102|Text|状态：|en=True|off=False
+103|Text|running|en=True|off=False
+104|Button|当前页：aff6413dbb044ceb9a313563915ba44c|en=True|off=False
+105|Text|当前步骤：|en=True|off=False
+106|Text|detect|en=True|off=False
+107|ProgressBar|整体进度|en=True|off=True
+108|Button|completed 0|en=True|off=False
+109|Button|failed 0|en=True|off=False
+110|Button|skipped 0|en=True|off=False
+111|Button|waiting 2|en=True|off=False
+112|Button|blocked 0|en=True|off=False
+113|Group||en=True|off=False
+114|Text|检测|en=True|off=True
+115|Text| · |en=True|off=True
+116|Text|running|en=True|off=True
+117|Text| →|en=True|off=True
+118|Text|OCR|en=True|off=True
+119|Text| · |en=True|off=True
+120|Text|pending|en=True|off=True
+121|Text| →|en=True|off=True
+122|Text|配色|en=True|off=True
+123|Text| · |en=True|off=True
+124|Text|pending|en=True|off=True
+125|Text| →|en=True|off=True
+126|Text|术语|en=True|off=True
+127|Text| · |en=True|off=True
+128|Text|pending|en=True|off=True
+129|Text| →|en=True|off=True
+130|Text|翻译|en=True|off=True
+131|Text| · |en=True|off=True
+132|Text|pending|en=True|off=True
+133|Text| →|en=True|off=True
+134|Text|分割|en=True|off=True
+135|Text| · |en=True|off=True
+136|Text|pending|en=True|off=True
+137|Text| →|en=True|off=True
+138|Text|掩膜|en=True|off=True
+139|Text| · |en=True|off=True
+140|Text|pending|en=True|off=True
+141|Text| →|en=True|off=True
+142|Text|修复|en=True|off=True
+143|Text| · |en=True|off=True
+144|Text|pending|en=True|off=True
+145|Text| →|en=True|off=True
+146|Text|渲染|en=True|off=True
+147|Text| · |en=True|off=True
+148|Text|pending|en=True|off=True
+149|Group||en=True|off=False
+150|Button|任务详情（2）|en=True|off=False
+151|Text|任务详情（|en=True|off=False
+152|Text|2|en=True|off=False
+153|Text|）|en=True|off=False
+154|Button|暂停|en=True|off=True
+155|Button|停止|en=True|off=True
+156|Button|继续|en=False|off=True
+157|Button|重新启动|en=False|off=True
+158|Button|放弃|en=False|off=True
+159|Button|解除阻塞|en=False|off=True
+160|Button|重试失败页|en=False|off=True
+161|Pane||en=True|off=False
