@@ -1,0 +1,29 @@
+[17:25:07.575] RUN stage=before-confirm exe_sha256=b9bb6ce419229f96d3de9c22ccd11fb889effc52eef03a54c136b5cacabbd63d data_root=isolated
+[17:25:07.595] pid=51220
+[17:25:08.181] WINDOW title=M2-RC1 resource channel runtime bounds=338,338,1196,899 top_level_count=15
+[17:25:12.222] INITIAL_ELEMENT Button|📚 书架|IsEnabled=True|IsOffscreen=False
+[17:25:12.230] INITIAL_ELEMENT Button|🛠️ 工作台|IsEnabled=True|IsOffscreen=False
+[17:25:12.236] INITIAL_ELEMENT Button|📖 阅读器|IsEnabled=True|IsOffscreen=False
+[17:25:12.241] INITIAL_ELEMENT Button|⚙️ 设置|IsEnabled=True|IsOffscreen=False
+[17:25:12.247] INITIAL_ELEMENT Button|+ 新建作品|IsEnabled=False|IsOffscreen=False
+[17:25:12.254] INITIAL_ELEMENT Button|导入作品|IsEnabled=True|IsOffscreen=False
+[17:25:12.261] INITIAL_ELEMENT Edit|搜索作品标题 / 原名 (Ctrl+F)|IsEnabled=True|IsOffscreen=False
+[17:25:12.267] INITIAL_ELEMENT Button|★ 收藏|IsEnabled=True|IsOffscreen=False
+[17:25:12.273] INITIAL_ELEMENT Button|归档|IsEnabled=True|IsOffscreen=False
+[17:25:12.279] INITIAL_ELEMENT Button|⊞|IsEnabled=True|IsOffscreen=False
+[17:25:12.286] INITIAL_ELEMENT Button|☰|IsEnabled=True|IsOffscreen=False
+[17:25:12.292] INITIAL_ELEMENT Text|还没有作品|IsEnabled=True|IsOffscreen=False
+[17:25:12.298] INITIAL_ELEMENT Text|书架当前为空。你可以通过导入已有的本地漫画文件或文件夹开始使用。|IsEnabled=True|IsOffscreen=False
+[17:25:12.304] INITIAL_ELEMENT Button|导入作品|IsEnabled=True|IsOffscreen=False
+[17:25:12.311] INITIAL_ELEMENT Button|新建作品|IsEnabled=False|IsOffscreen=False
+[17:25:12.317] INITIAL_ELEMENT Text|未选择作品|IsEnabled=True|IsOffscreen=False
+[17:25:12.348] TOPBAR_IMPORT IsEnabled=True IsOffscreen=False
+[17:25:15.326] IMPORT_UIA_FEEDBACK=PASS elements=5
+[17:25:15.332] IMPORT_ELEMENT Text|导入页面到章节|IsEnabled=True|IsOffscreen=False
+[17:25:15.338] IMPORT_ELEMENT Text|目标章节|IsEnabled=True|IsOffscreen=False
+[17:25:15.343] IMPORT_ELEMENT Text|未开放：空书架暂不支持创建作品和章节，当前无法导入文件或文件夹。|IsEnabled=True|IsOffscreen=False
+[17:25:15.348] IMPORT_ELEMENT Button|📄 选择图片 / PDF 文件|IsEnabled=False|IsOffscreen=False
+[17:25:15.353] IMPORT_ELEMENT Button|📁 选择图片文件夹|IsEnabled=False|IsOffscreen=False
+[17:25:15.366] UNAVAILABLE_ASSERTION=PASS visible_notice=true file_disabled=true folder_disabled=true
+[17:25:15.423] APP_EXIT has_exited=true exit_code=0
+[17:25:15.430] exit_code=0
