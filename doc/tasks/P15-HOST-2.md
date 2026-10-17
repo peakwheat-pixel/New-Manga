@@ -3,19 +3,19 @@ id: P15-HOST-2
 title: 设置面凭据入口与 Credential Manager 接线（§4.1；解 P15 设置页端到端凭据流程）
 kind: feature
 governance_version: 2
-status: in_review
+status: done
 approval: coordinator_ruling_20261017_AC1_settled_no_contract_change
 suggested_owner: Codex
 owner: Codex
-reviewer: DeepSeek Harness（待独立审查）
+reviewer: dsh
 depends_on: [P15-C1, P15-C1-FU1, P15-HOST-1]
 base_commit: fb232344de986de3cb8d6f25d1988970a596861a
 branch: codex/P15-HOST-2
 worktree: G:/CODEX/New Manga.workspace/worktrees/P15-HOST-2
-integration_commit: null
-delivery_head: b03bf0d87bf8eae31650c36b2cc0d995236eaa8b
+integration_commit: f46b9d988f7051bb3fc7052d34378a418de7e8fa
+delivery_head: 4e88bc4d413c38b467541c03a0886550b498826b
 canonical_evidence_status: complete
-resource_closeout_status: pending
+resource_closeout_status: complete
 evidence_dir: verification/P15-HOST-2
 ---
 
@@ -64,16 +64,18 @@ fn bind_profile_credential(...) -> Result<(), LibraryError> {
 
 | evidence_id | AC/Gate | path（仓库相对路径或绝对路径） | commit | sha256 | class (`CANONICAL` / `SOURCE_PIN`) |
 |---|---|---|---|---|---|
-| P15-HOST-2-HANDOFF | AC1 / AC6 / review handoff | `doc/handoffs/P15-HOST-2-codex.md` | `b03bf0d87bf8eae31650c36b2cc0d995236eaa8b` | `1effa77056f57ee78eda98be193a1f82a57fc6c0984959a13db6bd7094fece11` | SOURCE_PIN |
-| P15-HOST-2-RUST | AC2–AC4 | `verification/P15-HOST-2/rust-source-commit.log` | `b03bf0d87bf8eae31650c36b2cc0d995236eaa8b` | `6b6b7488b8776fd5f54eec4ada1fddb16a3dc45845c0ddd12e4d0ec48266819d` | CANONICAL |
-| P15-HOST-2-PACKAGED | Regression | `verification/P15-HOST-2/rust-packaged-commit.log` | `b03bf0d87bf8eae31650c36b2cc0d995236eaa8b` | `f294f93f508a5360f0e772339d32c11ea9638863175a10bc84ee3e44b27fada4` | CANONICAL |
-| P15-HOST-2-CORE | Regression / AC5 | `verification/P15-HOST-2/core-pytest-commit.log` | `b03bf0d87bf8eae31650c36b2cc0d995236eaa8b` | `8502a3d31bcfdb6eedc8202d7e3949d52da83a3dfed91a07fde59c38a2e378f6` | CANONICAL |
-| P15-HOST-2-FRONTEND | Regression | `verification/P15-HOST-2/frontend-vitest-commit.log` | `b03bf0d87bf8eae31650c36b2cc0d995236eaa8b` | `922e90477861ffb1007a5cdaa108043ba551f5b8473dc8c829fd81373900e2dd` | CANONICAL |
-| P15-HOST-2-SURFACE | AC4 | `verification/P15-HOST-2/surface-sync-check.log` | `b03bf0d87bf8eae31650c36b2cc0d995236eaa8b` | `8a8403d038da0c583d433f05acba676df0436369fb1bba926b026e78f27b5f36` | CANONICAL |
-| P15-HOST-2-HOST-ONLY | AC4 | `verification/P15-HOST-2/host-only-rescan.log` | `b03bf0d87bf8eae31650c36b2cc0d995236eaa8b` | `a37d30744cbeb8db86876665b69457c42c9d3110948a91f2c18e1951520e41df` | CANONICAL |
-| P15-HOST-2-AC5 | AC5 | `verification/P15-HOST-2/ac5-counterexample-review.md` | `b03bf0d87bf8eae31650c36b2cc0d995236eaa8b` | `b52680e1cd3ad9b0f0c9978dc470301bec3c0244c372ce8f8d5c39faf84a2e03` | SOURCE_PIN |
-| P15-HOST-2-RV-P15-04 | BL-16 / changed source and generated files | `verification/P15-HOST-2/modified-files-sha256.txt` | `b03bf0d87bf8eae31650c36b2cc0d995236eaa8b` | `cc4f75dcea487cb73a02274320aec7db074eee48ead2d98dcf39f00b3d07ea35` | CANONICAL |
-| P15-HOST-2-RESOURCES | Resource preservation | `verification/P15-HOST-2/resource-manifest.json` | `b03bf0d87bf8eae31650c36b2cc0d995236eaa8b` | `801a70f4d8d88a9d7179b673e14bef9ae1ae7ca5dc4ffa9fc75abc87d09f5821` | CANONICAL |
+| P15-HOST-2-HANDOFF | AC1 / AC6 / review handoff | `doc/handoffs/P15-HOST-2-codex.md` | `b03bf0d87bf8eae31650c36b2cc0d995236eaa8b` | `cea289d1162fb461a52ed362fbe0ff80e089907a54678b9a221c35783b00eb71` | SOURCE_PIN |
+| P15-HOST-2-RUST | AC2–AC4 | `verification/P15-HOST-2/rust-source-commit.log` | `b03bf0d87bf8eae31650c36b2cc0d995236eaa8b` | `f65fb042977d71bf9d18712fe24528151f32930f4a0561822fd8d8377a8c080a` | CANONICAL |
+| P15-HOST-2-PACKAGED | Regression | `verification/P15-HOST-2/rust-packaged-commit.log` | `b03bf0d87bf8eae31650c36b2cc0d995236eaa8b` | `67610e58b3ec2573b95f57c119529ea8da89d7ac22a80e268663e6bd6212e807` | CANONICAL |
+| P15-HOST-2-CORE | Regression / AC5 | `verification/P15-HOST-2/core-pytest-commit.log` | `b03bf0d87bf8eae31650c36b2cc0d995236eaa8b` | `ef62645dd1b808416a61c81af65e2538356f76b299e443bd261101118a2be83f` | CANONICAL |
+| P15-HOST-2-FRONTEND | Regression | `verification/P15-HOST-2/frontend-vitest-commit.log` | `b03bf0d87bf8eae31650c36b2cc0d995236eaa8b` | `7b2d8b81d30242a69bb959c1322233b8dda591478bdb20e95292bccc477b551e` | CANONICAL |
+| P15-HOST-2-SURFACE | AC4 | `verification/P15-HOST-2/surface-sync-check.log` | `b03bf0d87bf8eae31650c36b2cc0d995236eaa8b` | `61d8c607493e91c57fdbb3601d43ea243f34339c87e1068f26ca079135dae3e4` | CANONICAL |
+| P15-HOST-2-HOST-ONLY | AC4 | `verification/P15-HOST-2/host-only-rescan.log` | `b03bf0d87bf8eae31650c36b2cc0d995236eaa8b` | `1f59aaf30b245e0c8663753dbe6bcd596596a56818827ddcaa4242a517a6db27` | CANONICAL |
+| P15-HOST-2-AC5 | AC5 | `verification/P15-HOST-2/ac5-counterexample-review.md` | `b03bf0d87bf8eae31650c36b2cc0d995236eaa8b` | `8e63defc4ea4c56170a823abde10501b891336bad90866b3109eea8e13c0dbe2` | SOURCE_PIN |
+| P15-HOST-2-RV-P15-04 | BL-16 / changed source and generated files | `verification/P15-HOST-2/modified-files-sha256.txt` | `b03bf0d87bf8eae31650c36b2cc0d995236eaa8b` | `5be13d45a67d15abf34f1c45e8be1e4789f8bbd2daf38f0218a50391f8b6c786` | CANONICAL |
+| P15-HOST-2-RESOURCES | Resource preservation | `verification/P15-HOST-2/resource-manifest.json` | `b03bf0d87bf8eae31650c36b2cc0d995236eaa8b` | `7f7b8024e5c3d102a1a66c26fe3ad24d712f4623c18b040608101f8b573b37f5` | CANONICAL |
+
+| P15-HOST-2-REVIEW-R1 | AC1–AC6 | `verification/P15-HOST-2/dsh-review-r1.md` | `f46b9d988` | `2582c4956830fbebeb61ce9dd8910290d8f45a7bad331479ac7dedc7bbb089e9` | SOURCE_PIN |
 
 ## Resource Manifest
 
@@ -83,11 +85,14 @@ fn bind_profile_credential(...) -> Result<(), LibraryError> {
 
 ## Closeout Record
 
-- Closeout date / Codex：2026-10-17；Task 进入 `in_review`，实现已固定，未自请审查。
-- canonical_evidence_status：`complete`。resource_closeout_status：`pending`（review / integration 完成前保留 worktree）。
-- 删除、迁移、归档数量/字节数：0；未删除/重建 junction。
-- 未关闭项及保留原因：等待 DeepSeek Harness 独立审查及 Codex 集成 gate；AC1 已由 Coordinator 裁决，非阻塞。
-- 当前指针清理：未改 `STATUS` / `REBASELINE_PLAN`；该操作留给 Codex 按协作协议处理。
+- Closeout date / Coordinator：2026-10-17（dsh, epoch 6）。Reviewer=**dsh**（`route-agent.py` 路由；Owner=Codex 已机器排除）。
+- canonical_evidence_status：`complete`。resource_closeout_status：`complete`（worktree `PRESERVE_REFERENCED`）。删除/迁移/归档：0。
+- 交付：`done`。集成 `f46b9d988f7051bb3fc7052d34378a418de7e8fa`（`--no-ff`，**在 `doc/tasks/P15-HOST-2.md` 有一处内容冲突，已按并集解决**：保留 Owner 的 Closeout 记录 + Coordinator 的 AC1 裁决段；front matter 取 `in_review` 与 AC1 裁决 approval）；delivery_head（分支实际 HEAD）`4e88bc4d413c38b467541c03a0886550b498826b`；pin 已在主仓库复算 **10** 条（RV-P15-04，含 `gen/schemas`/`permissions` 等生成文件）。
+- **独立复核（我亲做）**：**AC1 裁决逐条落实**（WebView 命令 `credential_put`/`credential_clear`、形状按 §4.1）；**真实凭据通道**——`credential_manager.rs` 真调 `CredUIPromptForCredentialsW` + `CredReadW`/`CredWriteW`/`CredDeleteW`/`CredFree`，并有 **`write_volatile(unit,0)` 清零临时明文缓冲**，非 Windows **失败关闭**（**不再是 `unavailable(...)` 桩**）；**Secret 零进入 WebView**（`deny_unknown_fields` 拒绝夹带 `secret`/`credential_ref` 且错误不回显；响应**只**序列化 `{"state":"configured"}`/`{"state":"missing"}`；封闭投影只留固定枚举；`intent` 在开输入前与提交前各校验、不匹配 `conflict`、互斥锁串行化；replace 失败保留旧绑定）；**host-only 未破**（`Bind/ClearProfileCredential` 不在 production 面，专门测试保留）；**四处同步真实值 49/19/7/6/56**，**冻结面 7/6 未被污染**。**我亲测**：Rust source **103/0/1**、Core **508**，零回归。
+- **过程记录（含我自身判断修正，如实登记）**：Owner 首轮在 AC1 硬门**正确停止上报**；我在裁决中查明**契约本已确定**（§1/§2 L27 的 `Tauri command` 列已固定 `credential_put`/`credential_clear`，§4.1 的 PascalCase 为消息类型名）→ **无需契约变更**，并以 `codex exec resume` **恢复同一会话**（保留上下文）。**我的两次误判已纠正**：一度以为"无新 Handoff / AC3 未落实"，实为（a）我读到的是**旧阻塞 Handoff**，（b）当时 Owner **仍在运行**、证据与新 Handoff（`P15-HOST-2-codex.md`）随后由 `4e88bc4d4` 归档。**教训**：判定"交付缺失"前须先确认**作业是否仍在运行**与**Handoff 版本**。
+- **里程碑**：本 closeout 后，**设置面 G21–G24 的 Core + host 双链全部完成**（契约 rev 2.7/A1 → 1A/1B/1C → HOST-1/HOST-2）。
+- **未关闭项（如实）**：**未跑交互式 UI 录入**（无头环境；安全输入为 Windows OS 对话框，自动测试只对 **Credential Manager 存储 API 做真实 round-trip**），Owner 已如实声明，未夸大覆盖面。
+- 当前指针清理：`STATUS` / `REBASELINE_PLAN` 同批同步（并修复合并瞬间的 READY/DAG 状态不匹配）。
 
 ## AC1 裁决（2026-10-17，**已定案，无需契约修订**）
 
