@@ -3,7 +3,7 @@ id: P19-BOOT-1
 title: 修复 Core 自举：catalog 存在但命名空间锁/binding 缺失时首次运行崩溃（exit 101）
 kind: bugfix
 governance_version: 2
-status: in_review
+status: done
 approval: coordinator_release_20261017_from_P19_Dplus_first_step
 suggested_owner: Codex
 owner: Codex
@@ -12,10 +12,10 @@ depends_on: [P15-CORE-1C]
 base_commit: 04d7beedc4a390ff67130eab0baa5b5ee78140cc
 branch: codex/P19-BOOT-1
 worktree: G:/CODEX/New Manga.workspace/worktrees/P19-BOOT-1
-integration_commit: null
-delivery_head: c44b47dd9852121e18496502870f4e4cbaf5c737
+integration_commit: 5b5349181449319a982834165b6287f51c72ce6d
+delivery_head: e4aff85bc87fa36f8656710315add6ec52c5ce15
 canonical_evidence_status: complete
-resource_closeout_status: pending
+resource_closeout_status: complete
 evidence_dir: verification/P19-BOOT-1
 ---
 
@@ -76,27 +76,29 @@ L3368: shared_lease = acquire_shared_lease(...)               # 缺锁 → FileN
 
 | evidence_id | AC/Gate | path（仓库相对路径或绝对路径） | commit | sha256 | class (`CANONICAL` / `SOURCE_PIN`) |
 |---|---|---|---|---|---|
-| core-suite | AC2–AC5 / Gate | verification/P19-BOOT-1/core-suite.log | c44b47dd9852121e18496502870f4e4cbaf5c737 | 0f4186fa8408caa8cdbb3bd5a9bde01f0b18a784f18fe5334c8c36e4fa6e77be | CANONICAL |
-| cargo-build | AC1 / Gate | verification/P19-BOOT-1/cargo-build.log | c44b47dd9852121e18496502870f4e4cbaf5c737 | 0473d6b5106ed4b83e33a31a2eb6c78424da36909abf3e7d30e2a4badc1fd3fd | CANONICAL |
-| cargo-build-custom-protocol | AC1 / Gate | verification/P19-BOOT-1/cargo-build-custom-protocol.log | c44b47dd9852121e18496502870f4e4cbaf5c737 | 4346f72f751e7107e18a25b7a88ac4562945a2d39dcddc12630d89d92c8785cc | CANONICAL |
+| core-suite | AC2–AC5 / Gate | verification/P19-BOOT-1/core-suite.log | c44b47dd9852121e18496502870f4e4cbaf5c737 | a4b5adb47d9defff1b7457dc455aaa9f4bb298b2a34a88c5d174a174566b6d50 | CANONICAL |
+| cargo-build | AC1 / Gate | verification/P19-BOOT-1/cargo-build.log | c44b47dd9852121e18496502870f4e4cbaf5c737 | ff59ac35c2f1898b87333a0aeda7b4671a2189bf5860dd669c9ea7d80caeb1cd | CANONICAL |
+| cargo-build-custom-protocol | AC1 / Gate | verification/P19-BOOT-1/cargo-build-custom-protocol.log | c44b47dd9852121e18496502870f4e4cbaf5c737 | a26ca0a54a0eba959b8b3d96c883fcd3a23c4238db75bf380a41a8da071548c9 | CANONICAL |
 | frontend-build | AC1 / Gate | verification/P19-BOOT-1/frontend-build.log | c44b47dd9852121e18496502870f4e4cbaf5c737 | b067992b1a1ea3f0be33c9d17ed3c83c5ccfe8be1b4b4bae8febdcab6738ebbb | CANONICAL |
 | partial-state-fixture | AC1, AC5 | verification/P19-BOOT-1/partial-state-runtime-final6.json | c44b47dd9852121e18496502870f4e4cbaf5c737 | 4e808a696575d832ceab115f9ed55200516842b224eefe586abcea789deaf209 | CANONICAL |
-| partial-state-setup-log | AC1, AC5 | verification/P19-BOOT-1/partial-state-runtime-final6-run.log | c44b47dd9852121e18496502870f4e4cbaf5c737 | 6b08563180d13205b27980a695098e197f1031c80ef48aea7d05725777001941 | CANONICAL |
+| partial-state-setup-log | AC1, AC5 | verification/P19-BOOT-1/partial-state-runtime-final6-run.log | c44b47dd9852121e18496502870f4e4cbaf5c737 | 6d59d0637770bcda6b7ef4a20854de201c566c4aade8a1f9506e98d483c3551b | CANONICAL |
 | real-startup-launch | AC1, AC6 | verification/P19-BOOT-1/real-startup-launch-final.json | c44b47dd9852121e18496502870f4e4cbaf5c737 | fab6551fde639b5e71bd66986548244f11bb8025eec8cf6a59070dbacb8524fe | CANONICAL |
 | real-startup-result | AC1, AC6 | verification/P19-BOOT-1/real-startup-final.json | c44b47dd9852121e18496502870f4e4cbaf5c737 | 2661c53d8d14e2689ae061e4fac5bb1d009c4bc076fc9f7586e3eb653486df43 | CANONICAL |
-| real-startup-log | AC1, AC6 | verification/P19-BOOT-1/real-startup-final-run.log | c44b47dd9852121e18496502870f4e4cbaf5c737 | 30a0873d5c57f4932a57cda06d73afad4a72612c4157a703accc80e6397c14de | CANONICAL |
-| real-startup-stderr | AC1, AC2, AC6 | verification/P19-BOOT-1/final-app.stderr.log | c44b47dd9852121e18496502870f4e4cbaf5c737 | 90a6f1b65e49bb38103b344c95493581fd6221136fffe9d7b77954080b4fad34 | CANONICAL |
+| real-startup-log | AC1, AC6 | verification/P19-BOOT-1/real-startup-final-run.log | c44b47dd9852121e18496502870f4e4cbaf5c737 | 746a93bdc576f1d83ecbfcc961ad246164405a133f55f99241bdb23bd0447d9f | CANONICAL |
+| real-startup-stderr | AC1, AC2, AC6 | verification/P19-BOOT-1/final-app.stderr.log | c44b47dd9852121e18496502870f4e4cbaf5c737 | b2b1b995fe740d66527532f0d28ac1d5b27811e118cc6bc91a1899cd3441572d | CANONICAL |
 | runtime-binding | AC2, AC3 | verification/P19-BOOT-1/runtime-binding-final.json | c44b47dd9852121e18496502870f4e4cbaf5c737 | 8f909b1ada972f3577aaa205b437d556b157f37f98927b0f0d8e0dc677440b4d | CANONICAL |
-| runtime-binding-log | AC2, AC3 | verification/P19-BOOT-1/runtime-binding-final-run.log | c44b47dd9852121e18496502870f4e4cbaf5c737 | d8fe3e2fb834fafac77c73dbc66dc12f49ab508d80153f33a0f76be7ae2b12ed | CANONICAL |
+| runtime-binding-log | AC2, AC3 | verification/P19-BOOT-1/runtime-binding-final-run.log | c44b47dd9852121e18496502870f4e4cbaf5c737 | 300276750cf3c5fcb49f497026f86b82e35a27e35693c8c7812fea3eaa359e31 | CANONICAL |
 | ui-bookshelf | AC1, AC6 | verification/P19-BOOT-1/ui-bookshelf-real-window.png | c44b47dd9852121e18496502870f4e4cbaf5c737 | cb373d919c2e8651b76d23c5afdc6830d74a2b2594b4e0c73dc578d6247a4848 | CANONICAL |
 | ui-workbench | AC1, AC6 | verification/P19-BOOT-1/ui-workbench-real-window.png | c44b47dd9852121e18496502870f4e4cbaf5c737 | 73d63aa14eff087372959e1b5669d93b25e36a8744a6d2dd20bc6799779e9c44 | CANONICAL |
 | ui-reader | AC1, AC6 | verification/P19-BOOT-1/ui-reader-real-window.png | c44b47dd9852121e18496502870f4e4cbaf5c737 | 4de460a24e1a94d31c25dec927dd878b86be074b7ce950c00aeffcd7fd5b6773 | CANONICAL |
 | ui-settings | AC1, AC6 | verification/P19-BOOT-1/ui-settings-real-window.png | c44b47dd9852121e18496502870f4e4cbaf5c737 | 6406b3766df95f0d3ac7d9dee81dd78248f14d402f2462d73588d193e8b0c455 | CANONICAL |
-| startup-evidence-narrative | AC1, AC6 | verification/P19-BOOT-1/real-startup-evidence.md | c44b47dd9852121e18496502870f4e4cbaf5c737 | 236f64c1012f796295e07c362ce3797f46fa8757e2799e6258dc11eaa52f621e | CANONICAL |
-| partial-state-setup-script | AC1, AC5 | verification/P19-BOOT-1/prepare_partial_state.py | c44b47dd9852121e18496502870f4e4cbaf5c737 | b8ae573afcd8de80c8460f2199a4a3faaa4af9148004972158e694aab3ec9129 | CANONICAL |
-| real-window-capture-script | AC1, AC6 | verification/P19-BOOT-1/capture_real_startup.ps1 | c44b47dd9852121e18496502870f4e4cbaf5c737 | 656a6e07f3ac22729f47afa6821e79db9e22d9adb95fd6f601a028a6004b5f7b | CANONICAL |
-| binding-check-script | AC2, AC3 | verification/P19-BOOT-1/verify_runtime_binding.py | c44b47dd9852121e18496502870f4e4cbaf5c737 | 1e02419f59343b8f8cd97e679eaf85f06d9a7b4ba7c7bde8eee1750a80385c0b | CANONICAL |
+| startup-evidence-narrative | AC1, AC6 | verification/P19-BOOT-1/real-startup-evidence.md | c44b47dd9852121e18496502870f4e4cbaf5c737 | 77537eb1b7bf01d4c61f5b85833ded26d75ff9cd7068656827f343ae33876fdd | CANONICAL |
+| partial-state-setup-script | AC1, AC5 | verification/P19-BOOT-1/prepare_partial_state.py | c44b47dd9852121e18496502870f4e4cbaf5c737 | f7fa7fd03e62100624a2fb6070c849815ad221dab44a7a7acdcb4d03b5d66020 | CANONICAL |
+| real-window-capture-script | AC1, AC6 | verification/P19-BOOT-1/capture_real_startup.ps1 | c44b47dd9852121e18496502870f4e4cbaf5c737 | 6a6c6dfb27eb0ecf9de4ff9338f60c34c00213367823671a1618858090d90bed | CANONICAL |
+| binding-check-script | AC2, AC3 | verification/P19-BOOT-1/verify_runtime_binding.py | c44b47dd9852121e18496502870f4e4cbaf5c737 | 680778ee36f006cdacc28ea32baeeba538f9526f2e681bfd268453d129d96460 | CANONICAL |
 | evidence-manifest | AC6 | verification/P19-BOOT-1/evidence-manifest.json | c44b47dd9852121e18496502870f4e4cbaf5c737 | a7c269b7145b098d41aef3923b6b2a9f71adda6520ca55192e9e9cf2605d5619 | CANONICAL |
+| EVD-BOOT1-REVIEW-R1 | AC1–AC6 | `verification/P19-BOOT-1/dsh-review-r1.md` | `5b5349181` | `d0460645f81728bca9447868737d8aca3581ebff4ea265ac441b3585772e4d17` | SOURCE_PIN |
+
 ## Resource Manifest
 
 | resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
@@ -105,8 +107,12 @@ L3368: shared_lease = acquire_shared_lease(...)               # 缺锁 → FileN
 
 ## Closeout Record
 
-- Closeout date / Codex：待关闭时填写。
-- canonical_evidence_status：`complete`。resource_closeout_status：`pending`。
-- 删除、迁移、归档数量/字节数：待关闭时填写；无操作填写 0。
-- 未关闭项及保留原因：独立 Review、Codex 集成与集成后验证尚未完成；当前状态 `in_review`。
-- 当前指针清理：`STATUS` / `REBASELINE_PLAN` 在释放与关闭时同步。
+- Closeout date / Coordinator：2026-10-17（dsh, epoch 6）。Reviewer=**dsh**（路由；Owner=Codex 已机器排除）。
+- canonical_evidence_status：`complete`。resource_closeout_status：`complete`。删除/迁移/归档：0。pin 已在主仓库复算 **11** 条。
+- 交付：`done`。集成 `5b5349181449319a982834165b6287f51c72ce6d`（`--no-ff`，**无冲突**）；delivery_head（分支实际 HEAD）`e4aff85bc87fa36f8656710315add6ec52c5ce15`。
+- **独立复核（我亲做）——A/B 决定性实验**：用**独立 scratch 根**（仅复制 `catalog.sqlite`+`library.db`，**未触碰用户 AppData**）构造精确故障态（catalog 存在 / `derived/` 为空），同一命令跑修复前后：**修复前崩溃**（`namespace busy …` → `core_service.py:3368 acquire_shared_lease` → `FileNotFoundError`）；**修复后 `exit=0`**、GC 正常执行（`orphan_files_removed=0 dead_rows_removed=0`，证明独占租约→共享降级链路生效）并正常应答；**`derived/.preview-lifecycle.lock` 被正确建立（317B，有效 JSON binding，`catalog_identity`/`catalog_root` 与 scratch 根一致）** → 证明走**受控绑定/恢复**且 binding 来自 **catalog 权威身份**（非凭空构造）。**合并后 main 复测同样 `exit=0`**，Core 套件 **515 passed**（基线 508 + 新增）。
+- **AC4 红线核验**：diff 中删除的**仅为误导性输出与旧单条件判据**；租约（独占/共享）、binding 身份校验、reparse point 检查、GC 启动顺序**均未放宽**；并新增专门反例 **`test_damaged_lock_does_not_rebind_catalog_to_a_different_derived_identity`** 锁定"不得重绑到不同 derived 身份"。
+- **AC6 证据**：含 `capture_real_startup.ps1`、`cargo-build*.log`、`cdp-partial-state-prepare.log`、`partial-state-runtime-{cdp,uia}.json`、**真实窗口截图 `ui-settings-real-window.png` / `ui-workbench-real-window.png`**、`core-suite.log`、`verify_runtime_binding.py`。
+- **未探明观察（如实登记，不据此判缺陷）**：我的 scratch 根下 `core.ping` 在 minor 3/7 均返回 `PROTOCOL_VERSION_UNSUPPORTED`（**类型化、无崩溃、无泄露**）；因 scratch 为部分状态、**未追到根因**，留待 P19 的 D+ 验收若复现再定位。
+- **DAG 效果**：本修复关闭 → **P19 解除阻断**（`blocked_by` 满足）→ closeout 同步把 **P19 恢复为 `ready`** 并**重启 D+ 验收**。
+- 当前指针清理：`STATUS` / `REBASELINE_PLAN` 同批同步。
