@@ -3,7 +3,7 @@ id: P19-UI-FIX-3
 title: 修复「新建作品/章节」不可用（用户裁决 A：应允许在空书架创建）
 kind: bugfix
 governance_version: 2
-status: ready
+status: blocked
 approval: user_ruling_20261017_A_allow_create_work_on_empty_shelf
 suggested_owner: Codex
 owner: null
@@ -42,3 +42,7 @@ evidence_dir: verification/P19-UI-FIX-3
 
 ## 交付与运行记录
 - 2026-10-17 Coordinator 释放（dsh, epoch 6），依据用户裁决 A。
+
+## 阻塞（2026-10-17，Coordinator 采信）
+
+硬门核对证明创建能力从未实现（契约仍 proposal、host/Core 无 create）。用户已裁决 **A1：立项 FEAT-CREATE-1..4** 补齐该能力，本 UI Task 由该功能链取代 → locked。证据：erification/P19-UI-FIX-3/hard-gate-conclusion.md。
