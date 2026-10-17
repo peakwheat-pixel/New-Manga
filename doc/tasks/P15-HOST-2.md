@@ -4,7 +4,7 @@ title: 设置面凭据入口与 Credential Manager 接线（§4.1；解 P15 设�
 kind: feature
 governance_version: 2
 status: ready
-approval: coordinator_ruling_20261017_P15_HOST_1_scope_conflict
+approval: coordinator_ruling_20261017_AC1_settled_no_contract_change
 suggested_owner: Codex
 owner: null
 reviewer: null
@@ -74,3 +74,14 @@ fn bind_profile_credential(...) -> Result<(), LibraryError> {
 - 删除、迁移、归档数量/字节数：待关闭时填写；无操作填写 0。
 - 未关闭项及保留原因：本 Task 尚未派发与执行。
 - 当前指针清理：`STATUS` / `REBASELINE_PLAN` 在释放与关闭时同步。
+
+## AC1 裁决（2026-10-17，**已定案，无需契约修订**）
+
+Owner 在 AC1 硬门处**正确停止上报**（其分支提交 `f268588c7` 仅含文档）。裁决见 [ruling-P15-HOST-2-AC1.md](../../verification/PROJECT-ORCHESTRATION-20261016/ruling-P15-HOST-2-AC1.md)。**契约已唯一确定**，按下列实现：
+
+1. **Tauri 命令名 = `credential_put` / `credential_clear`**（§1/§2 命令名映射表 **L27 的 `Tauri command` 列**；snake_case，与其余 17 条同面）。`PutCredential` / `ClearCredential` 为**消息/DTO 类型名**（同 §3.2 `CreateProviderProfile` ↔ `settings_provider_profiles_create` 约定）。
+2. **形状**：`credential_put { target, intent: create|replace } -> { state: configured, masked_hint?: string }`；`credential_clear { target } -> { state: missing }`（§4.1 L112-117）；**payload 均不含 Secret**。
+3. **调用关系**（§4.1 L109 + L119 合并读法）：WebView 仅以**无 Secret** invoke 触发 → **Host 在 WebView 之外**的安全输入面采集一次性 Secret → Credential Manager 写入 → 新 `CredentialRef` → **经受信 Host→Core** 调 `BindProfileCredential`（clear 对应 `ClearProfileCredential`）→ WebView 只得 `configured`（可含 masked hint）或**脱敏** `cancelled`；错误只走 §9。
+4. **`BindProfileCredential` / `ClearProfileCredential` 恒仅 Host→Core**（不得进 `PRODUCTION_COMMANDS` / `command_allowlist` / WebView `generate_handler!`）。
+5. **`intent` 状态匹配**（L121）：`create` 仅当 `missing`、`replace` 仅当 `configured`；不匹配 → `conflict` 且**保留原绑定**；每次调用**仅采集一次**；Host 调用后**清除临时明文缓冲**。
+6. **AC4 计数**：新增 **2 条 WebView 命令** → `PRODUCTION_COMMANDS` **47 → 49**；**probe 7 / AC1 6 不变**；ACL/permissions 按真实值更新；断言**只更新数值、不删除**。
