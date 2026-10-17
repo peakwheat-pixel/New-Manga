@@ -271,6 +271,51 @@ describe("Bookshelf UI - Data Binding & State Matrix (W1, W2, W3, W28, W30)", ()
       expect((container.querySelector('[data-testid="import-folder-btn"]') as HTMLButtonElement).disabled).toBe(true);
     });
 
+    it("keeps no-target feedback consistent across toolbar, empty-state, and book-detail import entries", async () => {
+      const expectUnavailable = (reason: string) => {
+        expect(container.querySelector('[data-testid="import-dialog"]')).not.toBeNull();
+        expect(container.querySelector('[data-testid="import-unavailable-notice"]')?.textContent).toContain(reason);
+        expect((container.querySelector('[data-testid="import-file-btn"]') as HTMLButtonElement).disabled).toBe(true);
+        expect((container.querySelector('[data-testid="import-folder-btn"]') as HTMLButtonElement).disabled).toBe(true);
+      };
+
+      await act(async () => {
+        root.render(<BookshelfPage initialBooks={[]} />);
+      });
+
+      await act(async () => {
+        (container.querySelector('[data-testid="toolbar-import-btn"]') as HTMLButtonElement).click();
+      });
+      expectUnavailable("空书架暂不支持创建作品和章节");
+      await act(async () => {
+        (container.querySelector('[data-testid="import-dialog-close-btn"]') as HTMLButtonElement).click();
+      });
+
+      await act(async () => {
+        (container.querySelector('[data-testid="empty-import-btn"]') as HTMLButtonElement).click();
+      });
+      expectUnavailable("空书架暂不支持创建作品和章节");
+      await act(async () => {
+        (container.querySelector('[data-testid="import-dialog-close-btn"]') as HTMLButtonElement).click();
+      });
+      await act(async () => root.unmount());
+      root = createRoot(container);
+
+      const client = new LibraryClient(vi.fn().mockImplementation((command: string) => {
+        if (command === "list_chapters") return Promise.resolve({ chapters: [] });
+        return Promise.resolve({ pages: [] });
+      }));
+      await act(async () => {
+        root.render(<BookshelfPage client={client} initialBooks={[MOCK_BOOKS[0]]} />);
+        await new Promise((resolve) => setTimeout(resolve, 0));
+      });
+
+      await act(async () => {
+        (container.querySelector('[data-testid="detail-import-btn"]') as HTMLButtonElement).click();
+      });
+      expectUnavailable("当前没有可导入的目标章节");
+    });
+
     it("renders duplicate policy options with skip as default", () => {
       const html = renderToString(
         <ImportDialog

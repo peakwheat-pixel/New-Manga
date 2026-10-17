@@ -3,15 +3,15 @@ id: P19-UI-FIX-2
 title: 修复顶栏「导入作品」静默无反馈（P19-UI-FIX-1 遗漏的入口）
 kind: bugfix
 governance_version: 2
-status: ready
+status: in_progress
 approval: coordinator_release_20261017_from_P19_r6_probe
 suggested_owner: Codex
-owner: null
-reviewer: null
+owner: codex
+reviewer: DeepSeek Harness
 depends_on: [P19-UI-FIX-1]
-base_commit: null
-branch: null
-worktree: null
+base_commit: 3a3eeab02114b0230fe27bb60396e720dada6d26
+branch: codex/P19-UI-FIX-2
+worktree: G:/CODEX/New Manga.workspace/worktrees/P19-UI-FIX-2
 integration_commit: null
 delivery_head: null
 canonical_evidence_status: pending
