@@ -1,0 +1,11 @@
+runner=run-ac3-memory-deep.ps1
+settle_seconds=45
+samples=15
+min_total_mb=1065.7
+max_total_mb=1149.8
+last_total_mb=1149
+last_m2rc1_mb=
+last_core_service_mb=47
+last_msedgewebview2_mb=1069.6
+last_proc_count=21
+threshold_mb=350

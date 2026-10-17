@@ -1,0 +1,12 @@
+runner=run-ac3-memory-owned.ps1
+method=parent-chain ownership filter (excludes Windows Shell WebView2)
+settle_seconds=40
+min_total_mb=414.5
+max_total_mb=443.4
+last_total_mb=443.3
+last_m2rc1_mb=0
+last_core_service_mb=47
+last_webview_owned_mb=344.4
+last_owned_proc_count=11
+last_webview_proc_count=6
+threshold_mb=350
