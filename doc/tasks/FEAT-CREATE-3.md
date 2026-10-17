@@ -14,7 +14,7 @@ branch: codex/FEAT-CREATE-3
 worktree: G:/CODEX/New Manga.workspace/worktrees/FEAT-CREATE-3
 integration_commit: null
 delivery_head: 89ec870274a5a3a13a279e64ac45469f4ed69a1b
-canonical_evidence_status: pending
+canonical_evidence_status: complete
 resource_closeout_status: pending
 evidence_dir: verification/FEAT-CREATE-3
 ---
@@ -30,7 +30,7 @@ evidence_dir: verification/FEAT-CREATE-3
 - [x] **AC3 协议与失败关闭**：与 Core **2.8** 通信；Core 未就绪/未实现时**失败关闭**并走 §5.10 封闭错误投影（不得发明新错误码）。
 - [x] **AC4 安全**：不得把路径/Secret/原始异常透传；不得引入任意写入面；创建仅写 Core 既有表（无迁移）。
 - [x] **AC5 测试**：host 侧测试覆盖注册形状/计数/安全投影；**Rust source 不得回归（基线 103/0/1，须设 `M2RC1_PYTHON`）**；**packaged 12/0 不回归**；Core pytest 535 不回归。
-- [ ] **AC6**：commit + **Handoff（必须）** + Canonical Evidence（`status: in_review`；BL-15/17/19/16/18）。
+- [x] **AC6**：实现 commit + **Handoff** + Canonical Evidence 已固定；状态=`in_review`。pins 按当前 worktree 磁盘字节计算，提交包含性已逐项验证；跨主仓库磁盘 parity 留给 Coordinator closeout（BL-15/17/19/16/18）。
 
 ## 允许 / 禁止
 - 允许：`apps/desktop/src-tauri/**`、本 Task、`doc/handoffs/FEAT-CREATE-3-*.md`、`verification/FEAT-CREATE-3/**`。
@@ -46,3 +46,18 @@ evidence_dir: verification/FEAT-CREATE-3
 - 验证：Rust source `107 passed, 0 failed, 1 ignored`（基线 `103/0/1`；另有 12 个 packaged 用例过滤并在独立命令中 `12 passed, 0 failed`）；新增安全投影断言定向复跑 `1 passed`；Core `pytest tests/core` 为 `535 passed, 0 skipped`，1 条既有 Pillow 弃用 warning。完整日志位于 `verification/FEAT-CREATE-3/`。
 - 构建：初次 Rust 命令因 worktree 未有 `apps/desktop/frontend/dist` 在 Tauri macro 阶段退出 101；使用仅作用于构建进程、指向本 worktree `target/host-test-frontend` 的 `TAURI_CONFIG` 重跑成功，未改前端文件。
 - 测试附带文件：source 测试期间出现未跟踪 `verification/P04/diagnostic_p22_56852_1792239816040.jsonl`；它在本 Task allowlist 外，保持原样且排除于提交。
+
+## Canonical Evidence
+
+`commit` 使用 `git rev-parse HEAD` 的完整提交值；`sha256` 对当前交付 worktree 的磁盘字节计算。每一项均通过 `git cat-file -e <commit>:<path>` 包含性检查；类目只用 `CANONICAL` / `SOURCE_PIN`。受本 Task 读写范围限制，主仓库字节 parity 由 Coordinator closeout 复核（BL-16），不在此声称已验证。
+
+| evidence_id | AC/Gate | path | commit | sha256 | class |
+|---|---|---|---|---|---|
+| EVID-CREATE3-RESULTS | AC1–AC6 | verification/FEAT-CREATE-3/ac-results.md | 0444951060fbb372632c61cc46f12a8080e768cd | 26d18dfb18d1f50f186147bfd7177f3b3b62bd996c435f86f3c08afaad5e37c6 | CANONICAL |
+| EVID-CREATE3-REGISTRATION | AC2 | verification/FEAT-CREATE-3/registration-check.log | 89ec870274a5a3a13a279e64ac45469f4ed69a1b | d29926d84f29a29ab9cf1a9c4d7c8e9c034a2e9bd906d8a33d002cc9ca4a0732 | CANONICAL |
+| EVID-CREATE3-RUST-SOURCE | AC1–AC5 | verification/FEAT-CREATE-3/rust-source-tests.log | 89ec870274a5a3a13a279e64ac45469f4ed69a1b | d1f50378a1d5d33a12c6afbbec9262bc31f77a0e0de15f3022f2503e91cbe466 | CANONICAL |
+| EVID-CREATE3-RUST-SAFETY | AC1/AC4/AC5 | verification/FEAT-CREATE-3/rust-source-safety-test.log | 89ec870274a5a3a13a279e64ac45469f4ed69a1b | 100571f1c31ab0936b5a185f4dc02ab6046d3e693f4889d45c6c9e22e1f91686 | CANONICAL |
+| EVID-CREATE3-PACKAGED | AC5 | verification/FEAT-CREATE-3/rust-packaged-tests.log | 89ec870274a5a3a13a279e64ac45469f4ed69a1b | 2ea83f6fb096c55afb3d4218f00964c71a407af43dff1552b8a59df739b1d0b7 | CANONICAL |
+| EVID-CREATE3-CORE | AC3/AC5 | verification/FEAT-CREATE-3/core-pytest.log | 89ec870274a5a3a13a279e64ac45469f4ed69a1b | 452478cc13ef24964d6f38532eb7acf26afc454f286d16c33292263164828671 | CANONICAL |
+| EVID-CREATE3-BLOCKED-BUILD | Build environment | verification/FEAT-CREATE-3/rust-source-tests-build-blocked.log | 89ec870274a5a3a13a279e64ac45469f4ed69a1b | e8f5bbb0dd02375b00946b21aef374c5e0933c367b1dc4089a2e820d5bc15c7d | CANONICAL |
+| EVID-CREATE3-HANDOFF | AC6 | doc/handoffs/FEAT-CREATE-3-89ec87027.md | 0444951060fbb372632c61cc46f12a8080e768cd | 2facd4b72084f21c5b292b5952766022579065f4fea9b2b42dc6350f5fc8480e | CANONICAL |
