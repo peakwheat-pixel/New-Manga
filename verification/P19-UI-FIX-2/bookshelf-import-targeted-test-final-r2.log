@@ -1,0 +1,220 @@
+shell=PowerShell 7.6.6
+node=E:\Program Files\nodejs\node.exe
+node_version=v24.15.0
+npm_version=12.0.1
+head=3a3eeab02114b0230fe27bb60396e720dada6d26
+command=npm run test -- src/bookshelf/BookshelfPage.test.tsx
+npm notice run m2rc1-frontend@0.1.0 test
+npm notice run vitest run src/bookshelf/BookshelfPage.test.tsx
+
+ RUN  v2.1.9 G:/CODEX/New Manga.workspace/worktrees/P19-UI-FIX-2/apps/desktop/frontend
+
+stderr | src/bookshelf/BookshelfPage.test.tsx > Bookshelf UI - Data Binding & State Matrix (W1, W2, W3, W28, W30) > W1 BookCard & BookList page_count rules > BookCard renders '—' when page_count is null, never 0
+Warning: The current testing environment is not configured to support act(...)
+
+stderr | src/bookshelf/BookshelfPage.test.tsx > Bookshelf UI - Data Binding & State Matrix (W1, W2, W3, W28, W30) > W1 BookCard & BookList page_count rules > BookCard renders '0 页' when page_count is explicitly 0
+Warning: The current testing environment is not configured to support act(...)
+
+stderr | src/bookshelf/BookshelfPage.test.tsx > Bookshelf UI - Data Binding & State Matrix (W1, W2, W3, W28, W30) > W1 BookCard & BookList page_count rules > BookCard renders positive page count correctly
+Warning: The current testing environment is not configured to support act(...)
+
+stderr | src/bookshelf/BookshelfPage.test.tsx > Bookshelf UI - Data Binding & State Matrix (W1, W2, W3, W28, W30) > W1 BookCard & BookList page_count rules > BookList renders '—' when page_count is null in list view
+Warning: The current testing environment is not configured to support act(...)
+
+stderr | src/bookshelf/BookshelfPage.test.tsx > Bookshelf UI - Data Binding & State Matrix (W1, W2, W3, W28, W30) > State Matrix (§2.4) > renders loading state with skeleton cards when client listBooks is pending
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+    at BookshelfPage (G:\CODEX\New Manga.workspace\worktrees\P19-UI-FIX-2\apps\desktop\frontend\src\bookshelf\BookshelfPage.tsx:24:3)
+Warning: The current testing environment is not configured to support act(...)
+    at BookshelfPage (G:\CODEX\New Manga.workspace\worktrees\P19-UI-FIX-2\apps\desktop\frontend\src\bookshelf\BookshelfPage.tsx:24:3)
+Warning: The current testing environment is not configured to support act(...)
+
+stderr | src/bookshelf/BookshelfPage.test.tsx > Bookshelf UI - Data Binding & State Matrix (W1, W2, W3, W28, W30) > State Matrix (§2.4) > renders empty library guide when listBooks returns an empty array
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+    at BookshelfPage (G:\CODEX\New Manga.workspace\worktrees\P19-UI-FIX-2\apps\desktop\frontend\src\bookshelf\BookshelfPage.tsx:24:3)
+Warning: The current testing environment is not configured to support act(...)
+    at BookshelfPage (G:\CODEX\New Manga.workspace\worktrees\P19-UI-FIX-2\apps\desktop\frontend\src\bookshelf\BookshelfPage.tsx:24:3)
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+
+stderr | src/bookshelf/BookshelfPage.test.tsx > Bookshelf UI - Data Binding & State Matrix (W1, W2, W3, W28, W30) > State Matrix (§2.4) > renders empty library guide when listBooks returns an empty array
+Warning: The current testing environment is not configured to support act(...)
+
+stderr | src/bookshelf/BookshelfPage.test.tsx > Bookshelf UI - Data Binding & State Matrix (W1, W2, W3, W28, W30) > State Matrix (§2.4) > renders error card with localized code and retry button on CORE_UNAVAILABLE (W28)
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+    at BookshelfPage (G:\CODEX\New Manga.workspace\worktrees\P19-UI-FIX-2\apps\desktop\frontend\src\bookshelf\BookshelfPage.tsx:24:3)
+Warning: The current testing environment is not configured to support act(...)
+    at BookshelfPage (G:\CODEX\New Manga.workspace\worktrees\P19-UI-FIX-2\apps\desktop\frontend\src\bookshelf\BookshelfPage.tsx:24:3)
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+
+stderr | src/bookshelf/BookshelfPage.test.tsx > Bookshelf UI - Data Binding & State Matrix (W1, W2, W3, W28, W30) > State Matrix (§2.4) > renders error card with localized code and retry button on CORE_UNAVAILABLE (W28)
+Warning: The current testing environment is not configured to support act(...)
+
+stderr | src/bookshelf/BookshelfPage.test.tsx > Bookshelf UI - Data Binding & State Matrix (W1, W2, W3, W28, W30) > State Matrix (§2.4) > renders disabled state for missing wires (GAP-G1..G8)
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+    at BookshelfPage (G:\CODEX\New Manga.workspace\worktrees\P19-UI-FIX-2\apps\desktop\frontend\src\bookshelf\BookshelfPage.tsx:24:3)
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+
+stderr | src/bookshelf/BookshelfPage.test.tsx > Bookshelf UI - Data Binding & State Matrix (W1, W2, W3, W28, W30) > State Matrix (§2.4) > renders disabled state for missing wires (GAP-G1..G8)
+Warning: The current testing environment is not configured to support act(...)
+
+stderr | src/bookshelf/BookshelfPage.test.tsx > Bookshelf UI - Data Binding & State Matrix (W1, W2, W3, W28, W30) > W2 / W3 Chapter Navigation > renders chapters and fires onEnterWorkbench and onEnterReader callbacks
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+    at BookshelfPage (G:\CODEX\New Manga.workspace\worktrees\P19-UI-FIX-2\apps\desktop\frontend\src\bookshelf\BookshelfPage.tsx:24:3)
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+
+stderr | src/bookshelf/BookshelfPage.test.tsx > Bookshelf UI - Data Binding & State Matrix (W1, W2, W3, W28, W30) > W2 / W3 Chapter Navigation > renders chapters and fires onEnterWorkbench and onEnterReader callbacks
+Warning: The current testing environment is not configured to support act(...)
+
+stderr | src/bookshelf/BookshelfPage.test.tsx > Bookshelf UI - Data Binding & State Matrix (W1, W2, W3, W28, W30) > AC3 / W30 ImportDialog Flow > opens visible import feedback from the bookshelf entry
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+    at BookshelfPage (G:\CODEX\New Manga.workspace\worktrees\P19-UI-FIX-2\apps\desktop\frontend\src\bookshelf\BookshelfPage.tsx:24:3)
+Warning: The current testing environment is not configured to support act(...)
+    at BookshelfPage (G:\CODEX\New Manga.workspace\worktrees\P19-UI-FIX-2\apps\desktop\frontend\src\bookshelf\BookshelfPage.tsx:24:3)
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+
+stderr | src/bookshelf/BookshelfPage.test.tsx > Bookshelf UI - Data Binding & State Matrix (W1, W2, W3, W28, W30) > AC3 / W30 ImportDialog Flow > opens visible import feedback from the bookshelf entry
+Warning: The current testing environment is not configured to support act(...)
+
+stderr | src/bookshelf/BookshelfPage.test.tsx > Bookshelf UI - Data Binding & State Matrix (W1, W2, W3, W28, W30) > AC3 / W30 ImportDialog Flow > keeps no-target feedback consistent across toolbar, empty-state, and book-detail import entries
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+    at BookshelfPage (G:\CODEX\New Manga.workspace\worktrees\P19-UI-FIX-2\apps\desktop\frontend\src\bookshelf\BookshelfPage.tsx:24:3)
+Warning: The current testing environment is not configured to support act(...)
+    at BookshelfPage (G:\CODEX\New Manga.workspace\worktrees\P19-UI-FIX-2\apps\desktop\frontend\src\bookshelf\BookshelfPage.tsx:24:3)
+
+stderr | src/bookshelf/BookshelfPage.test.tsx > Bookshelf UI - Data Binding & State Matrix (W1, W2, W3, W28, W30) > AC3 / W30 ImportDialog Flow > keeps no-target feedback consistent across toolbar, empty-state, and book-detail import entries
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+
+stderr | src/bookshelf/BookshelfPage.test.tsx > Bookshelf UI - Data Binding & State Matrix (W1, W2, W3, W28, W30) > AC3 / W30 ImportDialog Flow > keeps no-target feedback consistent across toolbar, empty-state, and book-detail import entries
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+
+stderr | src/bookshelf/BookshelfPage.test.tsx > Bookshelf UI - Data Binding & State Matrix (W1, W2, W3, W28, W30) > AC3 / W30 ImportDialog Flow > keeps no-target feedback consistent across toolbar, empty-state, and book-detail import entries
+Warning: The current testing environment is not configured to support act(...)
+
+stderr | src/bookshelf/BookshelfPage.test.tsx > Bookshelf UI - Data Binding & State Matrix (W1, W2, W3, W28, W30) > AC3 / W30 ImportDialog Flow > keeps no-target feedback consistent across toolbar, empty-state, and book-detail import entries
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+
+stderr | src/bookshelf/BookshelfPage.test.tsx > Bookshelf UI - Data Binding & State Matrix (W1, W2, W3, W28, W30) > AC3 / W30 ImportDialog Flow > keeps no-target feedback consistent across toolbar, empty-state, and book-detail import entries
+Warning: The current testing environment is not configured to support act(...)
+    at BookshelfPage (G:\CODEX\New Manga.workspace\worktrees\P19-UI-FIX-2\apps\desktop\frontend\src\bookshelf\BookshelfPage.tsx:24:3)
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+
+stderr | src/bookshelf/BookshelfPage.test.tsx > Bookshelf UI - Data Binding & State Matrix (W1, W2, W3, W28, W30) > AC3 / W30 ImportDialog Flow > keeps no-target feedback consistent across toolbar, empty-state, and book-detail import entries
+Warning: The current testing environment is not configured to support act(...)
+
+stderr | src/bookshelf/BookshelfPage.test.tsx > Bookshelf UI - Data Binding & State Matrix (W1, W2, W3, W28, W30) > AC3 / W30 ImportDialog Flow > renders duplicate policy options with skip as default
+Warning: The current testing environment is not configured to support act(...)
+
+stderr | src/bookshelf/BookshelfPage.test.tsx > Bookshelf UI - Data Binding & State Matrix (W1, W2, W3, W28, W30) > AC3 / W30 ImportDialog Flow > invokes library_import_file and displays ImportReport on completion
+Warning: The current testing environment is not configured to support act(...)
+
+stderr | src/bookshelf/BookshelfPage.test.tsx > Bookshelf UI - Data Binding & State Matrix (W1, W2, W3, W28, W30) > AC3 / W30 ImportDialog Flow > invokes library_import_file and displays ImportReport on completion
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+
+stderr | src/bookshelf/BookshelfPage.test.tsx > Bookshelf UI - Data Binding & State Matrix (W1, W2, W3, W28, W30) > AC3 / W30 ImportDialog Flow > invokes library_import_file and displays ImportReport on completion
+Warning: The current testing environment is not configured to support act(...)
+
+stderr | src/bookshelf/BookshelfPage.test.tsx > Bookshelf UI - Data Binding & State Matrix (W1, W2, W3, W28, W30) > AC3 / W30 ImportDialog Flow > handles cancellation gracefully without error state (cancelled path)
+Warning: The current testing environment is not configured to support act(...)
+
+stderr | src/bookshelf/BookshelfPage.test.tsx > Bookshelf UI - Data Binding & State Matrix (W1, W2, W3, W28, W30) > AC3 / W30 ImportDialog Flow > handles cancellation gracefully without error state (cancelled path)
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+
+stderr | src/bookshelf/BookshelfPage.test.tsx > Bookshelf UI - Data Binding & State Matrix (W1, W2, W3, W28, W30) > AC3 / W30 ImportDialog Flow > handles cancellation gracefully without error state (cancelled path)
+Warning: The current testing environment is not configured to support act(...)
+
+stderr | src/bookshelf/BookshelfPage.test.tsx > Bookshelf UI - Data Binding & State Matrix (W1, W2, W3, W28, W30) > AC3 / W30 ImportDialog Flow > shows a visible error when the native picker or import fails
+Warning: The current testing environment is not configured to support act(...)
+
+stderr | src/bookshelf/BookshelfPage.test.tsx > Bookshelf UI - Data Binding & State Matrix (W1, W2, W3, W28, W30) > AC3 / W30 ImportDialog Flow > shows a visible error when the native picker or import fails
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+
+stderr | src/bookshelf/BookshelfPage.test.tsx > Bookshelf UI - Data Binding & State Matrix (W1, W2, W3, W28, W30) > AC3 / W30 ImportDialog Flow > shows a visible error when the native picker or import fails
+Warning: The current testing environment is not configured to support act(...)
+
+stderr | src/bookshelf/BookshelfPage.test.tsx > Bookshelf UI - Data Binding & State Matrix (W1, W2, W3, W28, W30) > UI-local Search & Filters > filters books by search query
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+    at BookshelfPage (G:\CODEX\New Manga.workspace\worktrees\P19-UI-FIX-2\apps\desktop\frontend\src\bookshelf\BookshelfPage.tsx:24:3)
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+
+stderr | src/bookshelf/BookshelfPage.test.tsx > Bookshelf UI - Data Binding & State Matrix (W1, W2, W3, W28, W30) > UI-local Search & Filters > filters books by search query
+Warning: The current testing environment is not configured to support act(...)
+
+stderr | src/bookshelf/BookshelfPage.test.tsx > Bookshelf UI - Data Binding & State Matrix (W1, W2, W3, W28, W30) > UI-local Search & Filters > filters books by search query
+Warning: The current testing environment is not configured to support act(...)
+
+stderr | src/bookshelf/BookshelfPage.test.tsx > Bookshelf UI - Data Binding & State Matrix (W1, W2, W3, W28, W30) > UI-local Search & Filters > filters books by favorite status
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+    at BookshelfPage (G:\CODEX\New Manga.workspace\worktrees\P19-UI-FIX-2\apps\desktop\frontend\src\bookshelf\BookshelfPage.tsx:24:3)
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+
+stderr | src/bookshelf/BookshelfPage.test.tsx > Bookshelf UI - Data Binding & State Matrix (W1, W2, W3, W28, W30) > UI-local Search & Filters > filters books by favorite status
+Warning: The current testing environment is not configured to support act(...)
+
+stderr | src/bookshelf/BookshelfPage.test.tsx > Bookshelf UI - Data Binding & State Matrix (W1, W2, W3, W28, W30) > UI-local Search & Filters > filters books by favorite status
+Warning: The current testing environment is not configured to support act(...)
+
+stderr | src/bookshelf/BookshelfPage.test.tsx > Bookshelf UI - Data Binding & State Matrix (W1, W2, W3, W28, W30) > UI-local Search & Filters > toggles between grid and list views
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+    at BookshelfPage (G:\CODEX\New Manga.workspace\worktrees\P19-UI-FIX-2\apps\desktop\frontend\src\bookshelf\BookshelfPage.tsx:24:3)
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+
+stderr | src/bookshelf/BookshelfPage.test.tsx > Bookshelf UI - Data Binding & State Matrix (W1, W2, W3, W28, W30) > UI-local Search & Filters > toggles between grid and list views
+Warning: The current testing environment is not configured to support act(...)
+
+ ✓ src/bookshelf/BookshelfPage.test.tsx (18 tests) 262ms
+
+ Test Files  1 passed (1)
+      Tests  18 passed (18)
+   Start at  17:25:20
+   Duration  1.12s (transform 109ms, setup 0ms, collect 516ms, tests 262ms, environment 0ms, prepare 83ms)
+
+EXIT_CODE=0

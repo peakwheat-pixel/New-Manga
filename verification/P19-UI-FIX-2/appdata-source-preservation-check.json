@@ -1,0 +1,22 @@
+{
+  "source": "%APPDATA%\\com.newmanga.m2rc1.desktop\\{catalog,data}",
+  "before": "verification/P19-UI-FIX-2/appdata-source-before.json",
+  "after": "verification/P19-UI-FIX-2/appdata-source-after.json",
+  "roots": [
+    {
+      "root": "catalog",
+      "files": 1,
+      "bytes": 24576.0,
+      "tree_sha256": "02991bbbbe53f13a534c66df47c349c5c35f39e8e7afd6fe15988caee4b7366e",
+      "unchanged": true
+    },
+    {
+      "root": "data",
+      "files": 2,
+      "bytes": 311297.0,
+      "tree_sha256": "0519f01368e3bdd45700c455d2619bdbb31ab10b552b0b41b33a710360637453",
+      "unchanged": true
+    }
+  ],
+  "source_unchanged": true
+}

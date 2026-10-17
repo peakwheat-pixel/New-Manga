@@ -1,0 +1,27 @@
+{
+  "source": "%APPDATA%\\com.newmanga.m2rc1.desktop\\{catalog,data}",
+  "captured_at": "2026-10-17T17:18:26.5747627+08:00",
+  "roots": [
+    {
+      "root": "catalog",
+      "files": 1,
+      "bytes": 24576.0,
+      "tree_sha256": "02991bbbbe53f13a534c66df47c349c5c35f39e8e7afd6fe15988caee4b7366e"
+    },
+    {
+      "root": "data",
+      "files": 2,
+      "bytes": 311297.0,
+      "tree_sha256": "0519f01368e3bdd45700c455d2619bdbb31ab10b552b0b41b33a710360637453"
+    }
+  ],
+  "copied_to": "apps/desktop/src-tauri/target/p19-ui-fix-2-isolation-20261017",
+  "isolation_dirs": [
+    "derived",
+    "managed",
+    "profile",
+    "local",
+    "tmp",
+    "webview"
+  ]
+}

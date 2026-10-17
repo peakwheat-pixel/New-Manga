@@ -1,0 +1,6 @@
+[17:22:37.695] RUN stage=before exe_sha256=b9bb6ce419229f96d3de9c22ccd11fb889effc52eef03a54c136b5cacabbd63d data_root=isolated
+[17:22:38.029] pid=55360
+[17:22:39.136] WINDOW title=M2-RC1 resource channel runtime bounds=182,182,1196,899 top_level_count=15
+[17:22:43.187] FATAL top-bar 导入作品 button not found
+[17:22:43.230] APP_EXIT has_exited=true exit_code=0
+[17:22:43.236] exit_code=1

@@ -1,0 +1,7 @@
+shell=PowerShell 7.6.6
+python=C:\Python314\python.exe
+python_version=Python 3.14.6
+head=3a3eeab02114b0230fe27bb60396e720dada6d26
+command=python verification/P19-UI-FIX-2/rebind-isolated-namespace.py
+isolated_namespace_rebind=PASS catalog_row=1 lock_match=true source_data=untouched
+EXIT_CODE=0

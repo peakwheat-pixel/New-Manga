@@ -1,0 +1,39 @@
+{
+  "head": "f1fab801717114cb1801158b0b7fa7fa80d961e0",
+  "stage": "final",
+  "bundle": "apps/desktop/src-tauri/target/core-sidecar/core-sidecar",
+  "resources": "apps/desktop/src-tauri/target/debug/resources/core-sidecar",
+  "files": [
+    {
+      "file": "core_service.exe",
+      "bundle_sha256": "7759d3fba4dd0cc7b46836460c47440a77273f3d804fd2d7c0f1b36b7d2954c5",
+      "resource_sha256": "7759d3fba4dd0cc7b46836460c47440a77273f3d804fd2d7c0f1b36b7d2954c5",
+      "equal": true
+    },
+    {
+      "file": "host_bridge.exe",
+      "bundle_sha256": "212a20758654d8af7368b9d2bfc10ffbcbd01a26317204ffb8d859d403cf08d8",
+      "resource_sha256": "212a20758654d8af7368b9d2bfc10ffbcbd01a26317204ffb8d859d403cf08d8",
+      "equal": true
+    },
+    {
+      "file": "acceptance_bridge.exe",
+      "bundle_sha256": "7b936c928e2b0246e1ed3d04e1765ff5a755b4462031dd85f423c2216a38f07b",
+      "resource_sha256": "7b936c928e2b0246e1ed3d04e1765ff5a755b4462031dd85f423c2216a38f07b",
+      "equal": true
+    },
+    {
+      "file": "catalog_loader.exe",
+      "bundle_sha256": "1f14fc3548b83f11cf146c7210af32896a12f2968dda8461cfb1f01ed921ad0c",
+      "resource_sha256": "1f14fc3548b83f11cf146c7210af32896a12f2968dda8461cfb1f01ed921ad0c",
+      "equal": true
+    },
+    {
+      "file": "sfx_detect_probe.exe",
+      "bundle_sha256": "54fe264c1d2820864d6bfd95cf9531c8b2aff2ae493576fd36df285441105e28",
+      "resource_sha256": "54fe264c1d2820864d6bfd95cf9531c8b2aff2ae493576fd36df285441105e28",
+      "equal": true
+    }
+  ],
+  "all_equal": true
+}
