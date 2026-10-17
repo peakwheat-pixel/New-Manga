@@ -80,11 +80,12 @@ export function SettingsPage({ client }: SettingsPageProps) {
   const navRef = useRef<HTMLElement | null>(null);
   const activeClient = client ?? new SettingsClient();
 
-  const activeIndex = SETTINGS_CATEGORY_ORDER.indexOf(activeCategoryId);
+  const openCategories = SETTINGS_CATEGORIES.filter((category) => category.open);
+  const activeIndex = openCategories.findIndex((category) => category.id === activeCategoryId);
 
   const moveSelection = (delta: number) => {
-    const nextIndex = Math.min(SETTINGS_CATEGORY_ORDER.length - 1, Math.max(0, activeIndex + delta));
-    const nextId = SETTINGS_CATEGORY_ORDER[nextIndex];
+    const nextIndex = Math.min(openCategories.length - 1, Math.max(0, activeIndex + delta));
+    const nextId = openCategories[nextIndex].id;
     setActiveCategoryId(nextId);
     const button = navRef.current?.querySelector<HTMLButtonElement>(`[data-testid="settings-category-${nextId}"]`);
     button?.focus();
@@ -154,7 +155,13 @@ export function SettingsPage({ client }: SettingsPageProps) {
               data-testid={`settings-category-${cat.id}`}
               data-active={isActive}
               data-open={cat.open}
-              onClick={() => setActiveCategoryId(cat.id)}
+              disabled={!cat.open}
+              aria-disabled={!cat.open}
+              aria-label={cat.open ? undefined : `${cat.label}，未开放：等待 section schema 冻结`}
+              title={cat.open ? undefined : "等待 section schema 冻结"}
+              onClick={() => {
+                if (cat.open) setActiveCategoryId(cat.id);
+              }}
               style={{
                 display: "flex",
                 alignItems: "center",
@@ -166,7 +173,7 @@ export function SettingsPage({ client }: SettingsPageProps) {
                 border: "none",
                 backgroundColor: isActive ? tokens.color.accent.selected : "transparent",
                 color: isActive ? tokens.color.accent.primary : cat.open ? tokens.color.text.primary : tokens.color.text.muted,
-                cursor: "pointer",
+                cursor: cat.open ? "pointer" : "not-allowed",
                 fontWeight: isActive ? 600 : 400,
                 textAlign: "left",
                 transition: "background-color 0.1s ease",

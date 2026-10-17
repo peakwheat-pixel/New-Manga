@@ -1,0 +1,22 @@
+[
+  {
+    "path": "catalog\\catalog.sqlite",
+    "length": 24576,
+    "sha256": "0f094275808e51bce2d10812fff389670f4f129d93e7ef84802dbe6a04aeb5cd"
+  },
+  {
+    "path": "data\\library.db",
+    "length": 311296,
+    "sha256": "7809968c4ae9f12ca4e5936a875ce027a5c7fb8e6c19aa79e5a786a9692768e4"
+  },
+  {
+    "path": "data\\library.db.run-owner.lock",
+    "length": 1,
+    "sha256": "6e340b9cffb37a989ca544e6bb780a2c78901d3fb33738768511a30617afa01d"
+  },
+  {
+    "path": "derived\\.preview-lifecycle.lock",
+    "length": 325,
+    "sha256": "c459db54b8a41937ec23f8ce86da59202882124151f1f98d442362f99ec3d22a"
+  }
+]

@@ -1,0 +1,5 @@
+Text|导入页面到章节|IsEnabled=True|IsOffscreen=False
+Text|目标章节|IsEnabled=True|IsOffscreen=False
+Text|未开放：当前没有可导入的目标章节。请先创建作品和章节，再选择文件或文件夹导入。|IsEnabled=True|IsOffscreen=False
+Button|📄 选择图片 / PDF 文件|IsEnabled=False|IsOffscreen=False
+Button|📁 选择图片文件夹|IsEnabled=False|IsOffscreen=False

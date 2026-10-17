@@ -1,0 +1,3 @@
+isolated_namespace_rebind=PASS catalog_row=1 lock_match=true source_data=untouched
+
+exit_code=0

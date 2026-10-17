@@ -1,0 +1,12 @@
+Traceback (most recent call last):
+  File "entry_core_service.py", line 10, in <module>
+  File "bootstrap\core_service.py", line 3346, in main
+  File "bootstrap\core_service.py", line 3326, in _ensure_preview_namespace
+  File "infrastructure\resource_channel\catalog_store.py", line 314, in restore_namespace_lock
+  File "infrastructure\resource_channel\catalog_store.py", line 341, in _verify_catalog_binding
+application.resource_channel.dto.TypedResourceChannelError: preview namespace unavailable: namespace binding identity mismatch
+[PYI-51316:ERROR] Failed to execute script 'entry_core_service' due to unhandled exception!
+
+thread 'main' (51360) panicked at src\main.rs:1168:10:
+production core library sidecar failed to start (startup ping): LibraryError { code: "CORE_UNAVAILABLE", category: "unavailable", retryable: true, message: Some("production core startup ping timed out or failed"), details: None }
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace

@@ -1,0 +1,23 @@
+[16:47:33.651] RUN start exe_sha256=6237e3625d6b81f911a9d8a2b056393d50ab60eaaca826027523c57df6cc1e0f data_root=isolated
+[16:47:33.663] pid=37448
+[16:47:34.260] READY
+[16:47:39.269] SETTINGS category=OCR IsEnabled=False IsOffscreen=False Invoke=blocked detail=MethodInvocationException
+[16:47:39.303] SETTINGS category=图片修复 IsEnabled=False IsOffscreen=False Invoke=blocked detail=MethodInvocationException
+[16:47:39.346] SETTINGS category=排版样式 IsEnabled=False IsOffscreen=False Invoke=blocked detail=MethodInvocationException
+[16:47:39.392] SETTINGS category=模型/GPU IsEnabled=False IsOffscreen=False Invoke=blocked detail=MethodInvocationException
+[16:47:39.439] SETTINGS category=任务/并发 IsEnabled=False IsOffscreen=False Invoke=blocked detail=MethodInvocationException
+[16:47:39.495] SETTINGS category=缓存/Revision IsEnabled=False IsOffscreen=False Invoke=blocked detail=MethodInvocationException
+[16:47:39.547] SETTINGS category=回收站 IsEnabled=False IsOffscreen=False Invoke=blocked detail=MethodInvocationException
+[16:47:39.579] SETTINGS category=备份/恢复 IsEnabled=False IsOffscreen=False Invoke=blocked detail=MethodInvocationException
+[16:47:39.622] SETTINGS category=Plugin/Hooks IsEnabled=False IsOffscreen=False Invoke=blocked detail=MethodInvocationException
+[16:47:39.628] SETTINGS_ASSERTIONS=9/9 PASS
+[16:47:41.349] IMPORT_UIA_FEEDBACK=PASS elements=5
+[16:47:41.351] IMPORT_ELEMENT Text|导入页面到章节|IsEnabled=True|IsOffscreen=False
+[16:47:41.351] IMPORT_ELEMENT Text|目标章节|IsEnabled=True|IsOffscreen=False
+[16:47:41.353] IMPORT_ELEMENT Text|未开放：当前没有可导入的目标章节。请先创建作品和章节，再选择文件或文件夹导入。|IsEnabled=True|IsOffscreen=False
+[16:47:41.353] IMPORT_ELEMENT Button|📄 选择图片 / PDF 文件|IsEnabled=False|IsOffscreen=False
+[16:47:41.354] IMPORT_ELEMENT Button|📁 选择图片文件夹|IsEnabled=False|IsOffscreen=False
+[16:47:41.406] APP_EXIT has_exited=true exit_code=
+[16:47:41.408] exit_code=1
+
+script_exit_code=1

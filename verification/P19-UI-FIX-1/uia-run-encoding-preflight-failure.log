@@ -1,0 +1,42 @@
+At G:\CODEX\New Manga.workspace\worktrees\P19-UI-FIX-1\verification\P19-UI-FIX-1\run-uia.ps1:92 char:99
++ ... 瀷/GPU', '浠诲姟/骞跺彂', '缂撳瓨/Revision', '鍥炴敹绔?, '澶囦唤/鎭㈠', 'Plugin/Hooks')
++                                                 ~~~~~~~~~~~~~~~~~~~~~~~~~
+Unexpected token '澶囦唤/鎭㈠', 'Plugin/Hooks')
+  $settingsLines = [System.Collections.Generic.List[string]]::new()
+  $settingsLines.Add("# 04-settings $(Get-Date -Format o) count=$($closedCategories.Count)")
+  foreach ($category in $closedCategories) {
+    $button = Find-Button $window $category
+    if (-not $button) { throw "disabled settings category not found: $category" }
+    $name = $button.Current.Name
+    $enabled = $button.Current.IsEnabled
+    $invokeResult = 'blocked'
+    $invokeDetail = 'InvokePattern' in expression or statement.
+At G:\CODEX\New Manga.workspace\worktrees\P19-UI-FIX-1\verification\P19-UI-FIX-1\run-uia.ps1:53 char:5
++ try {
++     ~
+Missing closing '}' in statement block or type definition.
+At G:\CODEX\New Manga.workspace\worktrees\P19-UI-FIX-1\verification\P19-UI-FIX-1\run-uia.ps1:111 char:92
++ ... okeResult -eq 'UNEXPECTED_SUCCESS' -or -not $name.Contains('鏈紑鏀?)) {
++                                                                       ~
+The Try statement is missing its Catch or Finally block.
+At G:\CODEX\New Manga.workspace\worktrees\P19-UI-FIX-1\verification\P19-UI-FIX-1\run-uia.ps1:111 char:92
++ ... okeResult -eq 'UNEXPECTED_SUCCESS' -or -not $name.Contains('鏈紑鏀?)) {
++                                                                       ~
+Unexpected token ')' in expression or statement.
+At G:\CODEX\New Manga.workspace\worktrees\P19-UI-FIX-1\verification\P19-UI-FIX-1\run-uia.ps1:114 char:3
++   }
++   ~
+Unexpected token '}' in expression or statement.
+At G:\CODEX\New Manga.workspace\worktrees\P19-UI-FIX-1\verification\P19-UI-FIX-1\run-uia.ps1:141 char:1
++ } catch {
++ ~
+Unexpected token '}' in expression or statement.
+At G:\CODEX\New Manga.workspace\worktrees\P19-UI-FIX-1\verification\P19-UI-FIX-1\run-uia.ps1:144 char:3
++ } finally {
++   ~~~~~~~
+Unexpected token 'finally' in expression or statement.
+    + CategoryInfo          : ParserError: (:) [], ParentContainsErrorRecordException
+    + FullyQualifiedErrorId : UnexpectedToken
+ 
+
+script_exit_code=1
