@@ -122,7 +122,7 @@ ClearCredential { target: CredentialTarget } -> { state: missing }
 
 ### 4.2 受信 Host/Core exchange
 
-凭据存储沿用 P10 §3/§4，不在此选择 OS 后端或加密实现。流程固定为：Host 安全输入 → 受保护 Credential Manager 写入 → 获得新 `CredentialRef` → Host 经受信 Host→Core 调用绑定到目标 Profile → Host 向 WebView 仅返回 `configured`/允许的 masked hint。`CredentialRef` 只在受信 Host↔Core exchange 与 Core 持久配置中出现，绝不进入 WebView 请求、返回、事件或错误；WebView 不提供 Secret 或 CredentialRef 参数。此调用使用 Core 2.6 私有 stdio 命令，不扩展 M2-C1 §5.7 `HostControl`，且不经 WebView Tauri allowlist 转发。
+凭据存储沿用 P10 §3/§4，不在此选择 OS 后端或加密实现。流程固定为：Host 安全输入 → 受保护 Credential Manager 写入 → 获得新 `CredentialRef` → Host 经受信 Host→Core 调用绑定到目标 Profile → Host 向 WebView 仅返回 `configured`/允许的 masked hint。`CredentialRef` 只在受信 Host↔Core exchange 与 Core 持久配置中出现，绝不进入 WebView 请求、返回、事件或错误；WebView 不提供 Secret 或 CredentialRef 参数。此调用使用 Core 2.7 私有 stdio 命令，不扩展 M2-C1 §5.7 `HostControl`，且不经 WebView Tauri allowlist 转发。
 
 受信 Host→Core stdio wire 固定为：
 
