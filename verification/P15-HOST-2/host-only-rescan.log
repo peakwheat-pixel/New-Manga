@@ -1,0 +1,9 @@
+TESTED_COMMIT=b03bf0d87bf8eae31650c36b2cc0d995236eaa8b
+Command=pwsh -NoProfile -File verification/P15-HOST-2/host-only-rescan.ps1
+
+WebView surfaces scanned=63 (3 source/config + 4 generated schemas + 56 permission files)
+Host-only route matches in WebView surfaces=0
+Private library_bridge Host→Core route names=2 (BindProfileCredential, ClearProfileCredential)
+Obsolete unavailable credential stub=0
+Result=PASS
+EXIT_CODE=0

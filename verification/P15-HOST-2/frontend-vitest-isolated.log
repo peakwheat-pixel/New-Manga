@@ -1,0 +1,67 @@
+Shell=PowerShell 7.6.6; WorkingDirectory=G:\CODEX\New Manga.workspace\worktrees\P15-HOST-2\apps\desktop\frontend; Node=v24.15.0; npm=12.0.1; Deps=npm ci from copied unchanged lockfile under verification/P15-HOST-2/frontend-test-env; Config=project vite.config.ts settings mirrored, cacheDir redirected to verification; Command=npm test -- --reporter=dot --root G:\CODEX\New Manga.workspace\worktrees\P15-HOST-2\apps\desktop\frontend --config G:\CODEX\New Manga.workspace\worktrees\P15-HOST-2\verification\P15-HOST-2\frontend-test-env/vite.test.config.ts
+npm notice run m2rc1-frontend@0.1.0 test
+npm notice run vitest run --reporter=dot --root G:\CODEX\New Manga.workspace\worktrees\P15-HOST-2\apps\desktop\frontend --config G:\CODEX\New Manga.workspace\worktrees\P15-HOST-2\verification\P15-HOST-2\frontend-test-env\vite.test.config.ts
+
+ RUN  v2.1.9 G:/CODEX/New Manga.workspace/worktrees/P15-HOST-2/apps/desktop/frontend
+
+ ❯ src/settings/NetworkProfilePanel.test.tsx (0 test)
+ ❯ src/settings/SettingsPage.test.tsx (0 test)
+ ❯ src/reader/ReaderPage.test.tsx (0 test)
+ ❯ src/bookshelf/BookshelfPage.test.tsx (0 test)
+ ❯ src/workbench/WorkbenchPage.test.tsx (0 test)
+ ❯ src/settings/SfxPolicyControl.test.tsx (0 test)
+ ❯ src/settings/SettingsPanel.test.tsx (0 test)
+ ❯ src/workbench/ExportDialog.test.tsx (0 test)
+ ❯ src/settings/ProviderProfilePanel.test.tsx (0 test)
+ ❯ src/settings/CapabilityBindingPanel.test.tsx (0 test)
+ ❯ src/App.test.tsx (0 test)
+ ❯ src/library/LibraryPanel.test.tsx (0 test)
+ ❯ src/shell/AppShell.test.tsx (0 test)
+ ❯ src/workbench/PageListPanel.test.tsx (0 test)
+ ✓ src/resourceChannel/commandSurface.test.ts (10 tests) 9ms
+ ✓ src/region/client.test.ts (15 tests) 7ms
+ ✓ src/resourceChannel/client.test.ts (8 tests) 6ms
+ ✓ src/workbench/relabelMachine.test.ts (21 tests) 5ms
+ ✓ src/reader/client.test.ts (6 tests) 5ms
+ ✓ src/events.test.ts (4 tests) 6ms
+ ✓ src/library/client.test.ts (14 tests) 7ms
+ ✓ src/bookshelf/error.test.ts (7 tests) 4ms
+ ✓ src/settings/errors.test.ts (4 tests) 5ms
+ ✓ src/region/geometry.test.ts (8 tests) 4ms
+ ✓ src/ac1/driver.test.ts (3 tests) 3ms
+ ✓ src/workbench/client.test.ts (5 tests) 8ms
+ ✓ src/settings/client.test.ts (7 tests) 7ms
+ ✓ src/settings/client.p15.test.ts (13 tests) 9ms
+
+⎯⎯⎯⎯⎯⎯ Failed Suites 14 ⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/App.test.tsx [ src/App.test.tsx ]
+ FAIL  src/bookshelf/BookshelfPage.test.tsx [ src/bookshelf/BookshelfPage.test.tsx ]
+ FAIL  src/library/LibraryPanel.test.tsx [ src/library/LibraryPanel.test.tsx ]
+ FAIL  src/reader/ReaderPage.test.tsx [ src/reader/ReaderPage.test.tsx ]
+ FAIL  src/shell/AppShell.test.tsx [ src/shell/AppShell.test.tsx ]
+ FAIL  src/settings/CapabilityBindingPanel.test.tsx [ src/settings/CapabilityBindingPanel.test.tsx ]
+ FAIL  src/settings/NetworkProfilePanel.test.tsx [ src/settings/NetworkProfilePanel.test.tsx ]
+ FAIL  src/settings/ProviderProfilePanel.test.tsx [ src/settings/ProviderProfilePanel.test.tsx ]
+ FAIL  src/settings/SettingsPage.test.tsx [ src/settings/SettingsPage.test.tsx ]
+ FAIL  src/settings/SettingsPanel.test.tsx [ src/settings/SettingsPanel.test.tsx ]
+ FAIL  src/settings/SfxPolicyControl.test.tsx [ src/settings/SfxPolicyControl.test.tsx ]
+ FAIL  src/workbench/ExportDialog.test.tsx [ src/workbench/ExportDialog.test.tsx ]
+ FAIL  src/workbench/PageListPanel.test.tsx [ src/workbench/PageListPanel.test.tsx ]
+Error: Failed to load url react/jsx-dev-runtime (resolved id: react/jsx-dev-runtime) in G:/CODEX/New Manga.workspace/worktrees/P15-HOST-2/apps/desktop/frontend/src/settings/NetworkProfilePanel.test.tsx. Does the file exist?
+ ❯ loadAndTransform ../../../../../../New%20Manga.workspace/worktrees/P15-HOST-2/verification/P15-HOST-2/frontend-test-env/node_modules/vite/dist/node/chunks/dep-BK3b2jBa.js:51969:17
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/14]⎯
+
+ FAIL  src/workbench/WorkbenchPage.test.tsx [ src/workbench/WorkbenchPage.test.tsx ]
+Error: Failed to load url react/jsx-dev-runtime (resolved id: react/jsx-dev-runtime) in G:/CODEX/New Manga.workspace/worktrees/P15-HOST-2/apps/desktop/frontend/src/settings/NetworkProfilePanel.test.tsx. Does the file exist?
+ ❯ loadAndTransform ../../../../../../New%20Manga.workspace/worktrees/P15-HOST-2/verification/P15-HOST-2/frontend-test-env/node_modules/vite/dist/node/chunks/dep-BK3b2jBa.js:51969:17
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/14]⎯
+
+ Test Files  14 failed | 14 passed (28)
+      Tests  125 passed (125)
+   Start at  08:59:05
+   Duration  882ms (transform 2.44s, setup 0ms, collect 2.83s, tests 84ms, environment 4ms, prepare 5.68s)
+
+EXIT_CODE=1

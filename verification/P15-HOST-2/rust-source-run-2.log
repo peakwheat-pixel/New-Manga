@@ -1,0 +1,76 @@
+Shell=PowerShell 7.6.6; Interpreter=G:\CODEX\New Manga.task-envs\T1.1.1-impl-py312\Scripts\python.exe; Command=cargo test --locked --manifest-path apps/desktop/src-tauri/Cargo.toml -- --skip packaged_sidecar_tests
+   Compiling m2rc1-desktop v0.1.0 (G:\CODEX\New Manga.workspace\worktrees\P15-HOST-2\apps\desktop\src-tauri)
+warning: type `settings_bridge::CredentialPutResult` is more private than the item `settings_bridge::credential_put`
+   --> src\settings_bridge.rs:288:1
+    |
+288 | / pub fn credential_put(
+289 | |     state: State<'_, super::AppState>,
+290 | |     request: Request<'_>,
+291 | | ) -> Result<CredentialPutResult, SettingsSurfaceError> {
+    | |______________________________________________________^ function `settings_bridge::credential_put` is reachable at visibility `pub(crate)`
+    |
+note: but type `settings_bridge::CredentialPutResult` is only usable at visibility `pub(self)`
+   --> src\settings_bridge.rs:200:1
+    |
+200 | struct CredentialPutResult {
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^
+    = note: `#[warn(private_interfaces)]` on by default
+
+warning: type `settings_bridge::CredentialClearResult` is more private than the item `settings_bridge::credential_clear`
+   --> src\settings_bridge.rs:336:1
+    |
+336 | / pub fn credential_clear(
+337 | |     state: State<'_, super::AppState>,
+338 | |     request: Request<'_>,
+339 | | ) -> Result<CredentialClearResult, SettingsSurfaceError> {
+    | |________________________________________________________^ function `settings_bridge::credential_clear` is reachable at visibility `pub(crate)`
+    |
+note: but type `settings_bridge::CredentialClearResult` is only usable at visibility `pub(self)`
+   --> src\settings_bridge.rs:206:1
+    |
+206 | struct CredentialClearResult {
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+error: type `settings_bridge::CredentialPutResult` is private
+    --> src\settings_bridge.rs:287:1
+     |
+ 287 |   #[tauri::command]
+     |   ^^^^^^^^^^^^^^^^^ private type
+     |
+    ::: src\main.rs:1318:32
+     |
+1318 |           builder.invoke_handler(tauri::generate_handler![
+     |  ________________________________-
+1319 | |             issue_resource_url,
+1320 | |             revoke_ref,
+1321 | |             revoke_resource_refs,
+...    |
+1367 | |             library_get_export_history
+1368 | |         ])
+     | |_________- in this macro invocation
+     |
+     = note: this error originates in the macro `__cmd__credential_put` which comes from the expansion of the macro `tauri::generate_handler` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error: type `settings_bridge::CredentialClearResult` is private
+    --> src\settings_bridge.rs:335:1
+     |
+ 335 |   #[tauri::command]
+     |   ^^^^^^^^^^^^^^^^^ private type
+     |
+    ::: src\main.rs:1318:32
+     |
+1318 |           builder.invoke_handler(tauri::generate_handler![
+     |  ________________________________-
+1319 | |             issue_resource_url,
+1320 | |             revoke_ref,
+1321 | |             revoke_resource_refs,
+...    |
+1367 | |             library_get_export_history
+1368 | |         ])
+     | |_________- in this macro invocation
+     |
+     = note: this error originates in the macro `__cmd__credential_clear` which comes from the expansion of the macro `tauri::generate_handler` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+warning: `m2rc1-desktop` (bin "m2rc1-desktop" test) generated 2 warnings
+error: could not compile `m2rc1-desktop` (bin "m2rc1-desktop" test) due to 2 previous errors; 2 warnings emitted
+EXIT_CODE=101

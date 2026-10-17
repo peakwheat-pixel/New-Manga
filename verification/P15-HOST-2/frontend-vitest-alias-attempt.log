@@ -1,0 +1,225 @@
+Shell=PowerShell 7.6.6; WorkingDirectory=G:\CODEX\New Manga.workspace\worktrees\P15-HOST-2\apps\desktop\frontend; Node=v24.15.0; npm=12.0.1; Dependencies=temporary locked env under verification; Command=npm test -- --reporter=dot --root G:\CODEX\New Manga.workspace\worktrees\P15-HOST-2\apps\desktop\frontend --config G:\CODEX\New Manga.workspace\worktrees\P15-HOST-2\verification\P15-HOST-2\frontend-test-env/vite.test.config.ts
+npm notice run m2rc1-frontend@0.1.0 test
+npm notice run vitest run --reporter=dot --root G:\CODEX\New Manga.workspace\worktrees\P15-HOST-2\apps\desktop\frontend --config G:\CODEX\New Manga.workspace\worktrees\P15-HOST-2\verification\P15-HOST-2\frontend-test-env\vite.test.config.ts
+
+ RUN  v2.1.9 G:/CODEX/New Manga.workspace/worktrees/P15-HOST-2/apps/desktop/frontend
+
+ ❯ src/settings/SettingsPage.test.tsx (0 test)
+ ❯ src/App.test.tsx (0 test)
+ ❯ src/reader/ReaderPage.test.tsx (0 test)
+ ❯ src/settings/NetworkProfilePanel.test.tsx (0 test)
+ ❯ src/bookshelf/BookshelfPage.test.tsx (0 test)
+ ❯ src/workbench/WorkbenchPage.test.tsx (0 test)
+ ❯ src/settings/SfxPolicyControl.test.tsx (0 test)
+ ❯ src/settings/SettingsPanel.test.tsx (0 test)
+ ❯ src/workbench/PageListPanel.test.tsx (0 test)
+ ❯ src/settings/CapabilityBindingPanel.test.tsx (0 test)
+ ❯ src/settings/ProviderProfilePanel.test.tsx (0 test)
+ ❯ src/library/LibraryPanel.test.tsx (0 test)
+ ❯ src/workbench/ExportDialog.test.tsx (0 test)
+ ❯ src/shell/AppShell.test.tsx (0 test)
+ ✓ src/resourceChannel/client.test.ts (8 tests) 7ms
+ ✓ src/region/client.test.ts (15 tests) 6ms
+ ✓ src/library/client.test.ts (14 tests) 7ms
+ ✓ src/resourceChannel/commandSurface.test.ts (10 tests) 11ms
+ ✓ src/events.test.ts (4 tests) 7ms
+ ✓ src/workbench/relabelMachine.test.ts (21 tests) 6ms
+ ✓ src/reader/client.test.ts (6 tests) 7ms
+ ✓ src/workbench/client.test.ts (5 tests) 8ms
+ ✓ src/bookshelf/error.test.ts (7 tests) 4ms
+ ✓ src/settings/client.test.ts (7 tests) 8ms
+ ✓ src/region/geometry.test.ts (8 tests) 4ms
+ ✓ src/settings/client.p15.test.ts (13 tests) 10ms
+ ✓ src/ac1/driver.test.ts (3 tests) 2ms
+ ✓ src/settings/errors.test.ts (4 tests) 5ms
+
+⎯⎯⎯⎯⎯⎯ Failed Suites 14 ⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/App.test.tsx [ src/App.test.tsx ]
+Error: Cannot find module 'react/jsx-dev-runtime' imported from 'G:/CODEX/New Manga.workspace/worktrees/P15-HOST-2/apps/desktop/frontend/src/App.test.tsx'.
+
+- If you rely on tsconfig.json's "paths" to resolve modules, please install "vite-tsconfig-paths" plugin to handle module resolution.
+- Make sure you don't have relative aliases in your Vitest config. Use absolute paths instead. Read more: https://vitest.dev/guide/common-errors
+ ❯ src/App.test.tsx:1:1
+      1| import { JSDOM } from "jsdom";
+       | ^
+      2| import { act } from "react";
+      3| import { createRoot } from "react-dom/client";
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/14]⎯
+
+ FAIL  src/bookshelf/BookshelfPage.test.tsx [ src/bookshelf/BookshelfPage.test.tsx ]
+Error: Cannot find module 'react/jsx-dev-runtime' imported from 'G:/CODEX/New Manga.workspace/worktrees/P15-HOST-2/apps/desktop/frontend/src/bookshelf/BookshelfPage.test.tsx'.
+
+- If you rely on tsconfig.json's "paths" to resolve modules, please install "vite-tsconfig-paths" plugin to handle module resolution.
+- Make sure you don't have relative aliases in your Vitest config. Use absolute paths instead. Read more: https://vitest.dev/guide/common-errors
+ ❯ src/bookshelf/BookshelfPage.test.tsx:1:1
+      1| import { JSDOM } from "jsdom";
+       | ^
+      2| import { act } from "react";
+      3| import { createRoot } from "react-dom/client";
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/14]⎯
+
+ FAIL  src/library/LibraryPanel.test.tsx [ src/library/LibraryPanel.test.tsx ]
+Error: Cannot find module 'react/jsx-dev-runtime' imported from 'G:/CODEX/New Manga.workspace/worktrees/P15-HOST-2/apps/desktop/frontend/src/library/LibraryPanel.test.tsx'.
+
+- If you rely on tsconfig.json's "paths" to resolve modules, please install "vite-tsconfig-paths" plugin to handle module resolution.
+- Make sure you don't have relative aliases in your Vitest config. Use absolute paths instead. Read more: https://vitest.dev/guide/common-errors
+ ❯ src/library/LibraryPanel.test.tsx:1:1
+      1| import { renderToString } from "react-dom/server";
+       | ^
+      2| import { describe, expect, it, vi } from "vitest";
+      3| import { LibraryPanel } from "./LibraryPanel";
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/14]⎯
+
+ FAIL  src/settings/CapabilityBindingPanel.test.tsx [ src/settings/CapabilityBindingPanel.test.tsx ]
+Error: Cannot find module 'react/jsx-dev-runtime' imported from 'G:/CODEX/New Manga.workspace/worktrees/P15-HOST-2/apps/desktop/frontend/src/settings/CapabilityBindingPanel.test.tsx'.
+
+- If you rely on tsconfig.json's "paths" to resolve modules, please install "vite-tsconfig-paths" plugin to handle module resolution.
+- Make sure you don't have relative aliases in your Vitest config. Use absolute paths instead. Read more: https://vitest.dev/guide/common-errors
+ ❯ src/settings/CapabilityBindingPanel.test.tsx:1:1
+      1| import { JSDOM } from "jsdom";
+       | ^
+      2| import { act } from "react";
+      3| import { createRoot, type Root } from "react-dom/client";
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/14]⎯
+
+ FAIL  src/settings/NetworkProfilePanel.test.tsx [ src/settings/NetworkProfilePanel.test.tsx ]
+Error: Cannot find module 'react/jsx-dev-runtime' imported from 'G:/CODEX/New Manga.workspace/worktrees/P15-HOST-2/apps/desktop/frontend/src/settings/NetworkProfilePanel.test.tsx'.
+
+- If you rely on tsconfig.json's "paths" to resolve modules, please install "vite-tsconfig-paths" plugin to handle module resolution.
+- Make sure you don't have relative aliases in your Vitest config. Use absolute paths instead. Read more: https://vitest.dev/guide/common-errors
+ ❯ src/settings/NetworkProfilePanel.test.tsx:1:1
+      1| import { JSDOM } from "jsdom";
+       | ^
+      2| import { act } from "react";
+      3| import { createRoot, type Root } from "react-dom/client";
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/14]⎯
+
+ FAIL  src/settings/ProviderProfilePanel.test.tsx [ src/settings/ProviderProfilePanel.test.tsx ]
+Error: Cannot find module 'react/jsx-dev-runtime' imported from 'G:/CODEX/New Manga.workspace/worktrees/P15-HOST-2/apps/desktop/frontend/src/settings/ProviderProfilePanel.test.tsx'.
+
+- If you rely on tsconfig.json's "paths" to resolve modules, please install "vite-tsconfig-paths" plugin to handle module resolution.
+- Make sure you don't have relative aliases in your Vitest config. Use absolute paths instead. Read more: https://vitest.dev/guide/common-errors
+ ❯ src/settings/ProviderProfilePanel.test.tsx:1:1
+      1| import { JSDOM } from "jsdom";
+       | ^
+      2| import { act } from "react";
+      3| import { createRoot, type Root } from "react-dom/client";
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/14]⎯
+
+ FAIL  src/settings/SettingsPage.test.tsx [ src/settings/SettingsPage.test.tsx ]
+Error: Cannot find module 'react/jsx-dev-runtime' imported from 'G:/CODEX/New Manga.workspace/worktrees/P15-HOST-2/apps/desktop/frontend/src/settings/SettingsPage.test.tsx'.
+
+- If you rely on tsconfig.json's "paths" to resolve modules, please install "vite-tsconfig-paths" plugin to handle module resolution.
+- Make sure you don't have relative aliases in your Vitest config. Use absolute paths instead. Read more: https://vitest.dev/guide/common-errors
+ ❯ src/settings/SettingsPage.test.tsx:1:1
+      1| import { JSDOM } from "jsdom";
+       | ^
+      2| import { act } from "react";
+      3| import { createRoot, type Root } from "react-dom/client";
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/14]⎯
+
+ FAIL  src/settings/SettingsPanel.test.tsx [ src/settings/SettingsPanel.test.tsx ]
+Error: Cannot find module 'react/jsx-dev-runtime' imported from 'G:/CODEX/New Manga.workspace/worktrees/P15-HOST-2/apps/desktop/frontend/src/settings/SettingsPanel.test.tsx'.
+
+- If you rely on tsconfig.json's "paths" to resolve modules, please install "vite-tsconfig-paths" plugin to handle module resolution.
+- Make sure you don't have relative aliases in your Vitest config. Use absolute paths instead. Read more: https://vitest.dev/guide/common-errors
+ ❯ src/settings/SettingsPanel.test.tsx:1:1
+      1| import { renderToString } from "react-dom/server";
+       | ^
+      2| import { describe, expect, it, vi } from "vitest";
+      3| import { SettingsPanel } from "./SettingsPanel";
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[8/14]⎯
+
+ FAIL  src/settings/SfxPolicyControl.test.tsx [ src/settings/SfxPolicyControl.test.tsx ]
+Error: Cannot find module 'react/jsx-dev-runtime' imported from 'G:/CODEX/New Manga.workspace/worktrees/P15-HOST-2/apps/desktop/frontend/src/settings/SfxPolicyControl.test.tsx'.
+
+- If you rely on tsconfig.json's "paths" to resolve modules, please install "vite-tsconfig-paths" plugin to handle module resolution.
+- Make sure you don't have relative aliases in your Vitest config. Use absolute paths instead. Read more: https://vitest.dev/guide/common-errors
+ ❯ src/settings/SfxPolicyControl.test.tsx:1:1
+      1| import { JSDOM } from "jsdom";
+       | ^
+      2| import { act } from "react";
+      3| import { createRoot, type Root } from "react-dom/client";
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[9/14]⎯
+
+ FAIL  src/reader/ReaderPage.test.tsx [ src/reader/ReaderPage.test.tsx ]
+Error: Cannot find module 'react/jsx-dev-runtime' imported from 'G:/CODEX/New Manga.workspace/worktrees/P15-HOST-2/apps/desktop/frontend/src/reader/ReaderPage.test.tsx'.
+
+- If you rely on tsconfig.json's "paths" to resolve modules, please install "vite-tsconfig-paths" plugin to handle module resolution.
+- Make sure you don't have relative aliases in your Vitest config. Use absolute paths instead. Read more: https://vitest.dev/guide/common-errors
+ ❯ src/reader/ReaderPage.test.tsx:1:1
+      1| import { JSDOM } from "jsdom";
+       | ^
+      2| import { act } from "react";
+      3| import { createRoot } from "react-dom/client";
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[10/14]⎯
+
+ FAIL  src/shell/AppShell.test.tsx [ src/shell/AppShell.test.tsx ]
+Error: Cannot find module 'react/jsx-dev-runtime' imported from 'G:/CODEX/New Manga.workspace/worktrees/P15-HOST-2/apps/desktop/frontend/src/shell/AppShell.test.tsx'.
+
+- If you rely on tsconfig.json's "paths" to resolve modules, please install "vite-tsconfig-paths" plugin to handle module resolution.
+- Make sure you don't have relative aliases in your Vitest config. Use absolute paths instead. Read more: https://vitest.dev/guide/common-errors
+ ❯ src/shell/AppShell.test.tsx:1:1
+      1| import { JSDOM } from "jsdom";
+       | ^
+      2| import { act } from "react";
+      3| import { createRoot } from "react-dom/client";
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[11/14]⎯
+
+ FAIL  src/workbench/ExportDialog.test.tsx [ src/workbench/ExportDialog.test.tsx ]
+Error: Cannot find module 'react/jsx-dev-runtime' imported from 'G:/CODEX/New Manga.workspace/worktrees/P15-HOST-2/apps/desktop/frontend/src/workbench/ExportDialog.test.tsx'.
+
+- If you rely on tsconfig.json's "paths" to resolve modules, please install "vite-tsconfig-paths" plugin to handle module resolution.
+- Make sure you don't have relative aliases in your Vitest config. Use absolute paths instead. Read more: https://vitest.dev/guide/common-errors
+ ❯ src/workbench/ExportDialog.test.tsx:1:1
+      1| import { JSDOM } from "jsdom";
+       | ^
+      2| import { act } from "react";
+      3| import { createRoot, type Root } from "react-dom/client";
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[12/14]⎯
+
+ FAIL  src/workbench/PageListPanel.test.tsx [ src/workbench/PageListPanel.test.tsx ]
+Error: Cannot find module 'react/jsx-dev-runtime' imported from 'G:/CODEX/New Manga.workspace/worktrees/P15-HOST-2/apps/desktop/frontend/src/workbench/PageListPanel.test.tsx'.
+
+- If you rely on tsconfig.json's "paths" to resolve modules, please install "vite-tsconfig-paths" plugin to handle module resolution.
+- Make sure you don't have relative aliases in your Vitest config. Use absolute paths instead. Read more: https://vitest.dev/guide/common-errors
+ ❯ src/workbench/PageListPanel.test.tsx:1:1
+      1| import { renderToString } from "react-dom/server";
+       | ^
+      2| import { act } from "react";
+      3| import { createRoot } from "react-dom/client";
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[13/14]⎯
+
+ FAIL  src/workbench/WorkbenchPage.test.tsx [ src/workbench/WorkbenchPage.test.tsx ]
+Error: Cannot find module 'react/jsx-dev-runtime' imported from 'G:/CODEX/New Manga.workspace/worktrees/P15-HOST-2/apps/desktop/frontend/src/workbench/WorkbenchPage.test.tsx'.
+
+- If you rely on tsconfig.json's "paths" to resolve modules, please install "vite-tsconfig-paths" plugin to handle module resolution.
+- Make sure you don't have relative aliases in your Vitest config. Use absolute paths instead. Read more: https://vitest.dev/guide/common-errors
+ ❯ src/workbench/WorkbenchPage.test.tsx:1:1
+      1| import { renderToString } from "react-dom/server";
+       | ^
+      2| import { act } from "react";
+      3| import { JSDOM } from "jsdom";
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[14/14]⎯
+
+ Test Files  14 failed | 14 passed (28)
+      Tests  125 passed (125)
+   Start at  08:59:43
+   Duration  855ms (transform 2.78s, setup 0ms, collect 2.86s, tests 92ms, environment 4ms, prepare 5.60s)
+
+EXIT_CODE=1
