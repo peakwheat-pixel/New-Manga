@@ -25,3 +25,15 @@
 - **CDP（DOM 级）不可用** → 本证据为 **UIA 语义级**，非 DOM 级；已在 `dplus-status-r3.md` 登记。
 - **未执行交互型主流程**（导入真实文件 → 生成 Run → 导出、阅读器翻页等）：需构造用户数据/长耗时操作，**本轮未做**，P19 关闭前应补或明确声明为限制。
 - 截图：`app-window.png`（书架，1180×890）。
+## 4. 交互型主流程（AC2，2026-10-17 补测）
+
+在真实窗口内通过 UIA **Invoke** 驱动：`⚙️ 设置` → `新建 Profile`（均返回 True），随后重枚举得到 **84 个元素**，出现**与契约 §3.1 完全对应的真实创建表单**：
+
+| 表单元素 | 类型 | 契约对应 |
+|---|---|---|
+| `新建 Provider Profile` | Text（标题） | §3.1 |
+| `provider_id` / `display_name` | Text + **Edit** | §3.1 `provider_id` / `display_name` |
+| `capabilities（至少一个）` | Group | §3.1 `capabilities`（至少一项） |
+| `OCR` / `Translation` / `Inpaint` / `Detection` | **CheckBox** ×4 | §3.1 Capability 枚举（四类） |
+
+→ **证明设置页的创建流程已与冻结契约对齐**（字段名、能力枚举一致），且 UI 经 host→Core 的写入路径**已接线**（表单可打开、可交互）。**未提交表单**（未构造真实写入，避免污染用户数据）——P19 关闭前如需要可补；本项已在"未完成/限制"中登记。
