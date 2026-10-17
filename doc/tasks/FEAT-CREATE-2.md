@@ -3,7 +3,7 @@ id: FEAT-CREATE-2
 title: 创建作品/章节能力（2/4）——Core 实现 CreateBook / CreateChapter（Core 2.8）
 kind: feature
 governance_version: 2
-status: ready
+status: done
 approval: coordinator_release_20261017_after_FEAT_CREATE_1
 suggested_owner: Codex
 owner: null
@@ -12,10 +12,10 @@ depends_on: [FEAT-CREATE-1]
 base_commit: null
 branch: null
 worktree: null
-integration_commit: null
+integration_commit: ebe47ff86
 delivery_head: null
 canonical_evidence_status: pending
-resource_closeout_status: pending
+resource_closeout_status: complete
 evidence_dir: verification/FEAT-CREATE-2
 ---
 
