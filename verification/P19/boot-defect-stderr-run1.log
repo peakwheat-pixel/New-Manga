@@ -1,0 +1,12 @@
+[core.derived_gc] skipped: namespace busy (a managed peer holds a shared lease)
+Traceback (most recent call last):
+  File "entry_core_service.py", line 10, in <module>
+  File "bootstrap\core_service.py", line 3239, in main
+  File "infrastructure\resource_channel\handle_resolver.py", line 734, in acquire_shared_lease
+  File "infrastructure\resource_channel\handle_resolver.py", line 647, in _open_lock_handle
+FileNotFoundError: C:\Users\49745\AppData\Roaming\com.newmanga.m2rc1.desktop\derived\.preview-lifecycle.lock
+[PYI-22224:ERROR] Failed to execute script 'entry_core_service' due to unhandled exception!
+
+thread 'main' (19380) panicked at src\main.rs:1168:10:
+production core library sidecar failed to start (startup ping): LibraryError { code: "CORE_UNAVAILABLE", category: "unavailable", retryable: true, message: Some("production core startup ping timed out or failed"), details: None }
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
