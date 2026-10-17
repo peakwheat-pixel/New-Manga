@@ -1,0 +1,4 @@
+runner=run-ac1-package.ps1
+cargo_tauri_build_exit=0
+artifact_count=1
+started=2026-10-18T06:48:01.4369204+08:00

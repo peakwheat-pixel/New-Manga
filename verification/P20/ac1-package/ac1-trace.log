@@ -1,0 +1,6 @@
+[06:40:57.083] AC1 start
+[06:40:57.148] cargo tauri version: tauri-cli 2.12.3
+[06:47:55.357] cargo tauri build exit_code=0
+[06:48:01.288] ARTIFACT apps\desktop\src-tauri\target\release\bundle\nsis\m2rc1-desktop_0.1.0_x64-setup.exe bytes=579851250 sha256=8e8cb65cb938caf46f420e8be17db0064325b65932d411e3975078faef6cbfe9
+[06:48:01.430] RELEASE_EXE bytes=11492864 sha256=ea15f99fa43aad37a21ea4ad092b9a8c85d6f70899e7256ec626775a9702731c
+[06:48:01.440] AC1 END exit_code=0 artifacts=1
