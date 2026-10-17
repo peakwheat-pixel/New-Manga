@@ -275,7 +275,9 @@ export function ImportDialog({
               fontSize: tokens.typography.size.secondary,
             }}
           >
-            未开放：当前没有可导入的目标章节。请先创建作品和章节，再选择文件或文件夹导入。
+            {books.length === 0
+              ? "未开放：空书架暂不支持创建作品和章节，当前无法导入文件或文件夹。"
+              : "未开放：当前没有可导入的目标章节，请准备可用章节后再选择文件或文件夹导入。"}
           </div>
         )}
 

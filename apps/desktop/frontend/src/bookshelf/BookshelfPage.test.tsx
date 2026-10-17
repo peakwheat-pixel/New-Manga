@@ -266,7 +266,7 @@ describe("Bookshelf UI - Data Binding & State Matrix (W1, W2, W3, W28, W30)", ()
       await act(async () => importBtn.click());
 
       expect(container.querySelector('[data-testid="import-dialog"]')).not.toBeNull();
-      expect(container.querySelector('[data-testid="import-unavailable-notice"]')?.textContent).toContain("未开放");
+      expect(container.querySelector('[data-testid="import-unavailable-notice"]')?.textContent).toContain("空书架暂不支持创建作品和章节");
       expect((container.querySelector('[data-testid="import-file-btn"]') as HTMLButtonElement).disabled).toBe(true);
       expect((container.querySelector('[data-testid="import-folder-btn"]') as HTMLButtonElement).disabled).toBe(true);
     });
