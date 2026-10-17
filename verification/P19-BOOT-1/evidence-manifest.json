@@ -1,0 +1,142 @@
+{
+  "task": "P19-BOOT-1",
+  "tested_implementation_commit": "c44b47dd9852121e18496502870f4e4cbaf5c737",
+  "base_commit": "04d7beedc4a390ff67130eab0baa5b5ee78140cc",
+  "core_suite": {
+    "warnings": 1,
+    "baseline": 508,
+    "passed": 515,
+    "command": "python -m pytest tests/core -q -p no:cacheprovider",
+    "skipped": 0,
+    "exit_code": 0
+  },
+  "real_startup": {
+    "app": "apps/desktop/src-tauri/target/debug/m2rc1-desktop.exe",
+    "exit_code": 0,
+    "app_sha256": "ce13c1f8975d2831e67821fb361634911dcaddedc5672b53aa4959026b8b18b9",
+    "stderr_sha256": "90a6f1b65e49bb38103b344c95493581fd6221136fffe9d7b77954080b4fad34",
+    "four_pages_reached": true
+  },
+  "artifacts": [
+    {
+      "sha256": "0f4186fa8408caa8cdbb3bd5a9bde01f0b18a784f18fe5334c8c36e4fa6e77be",
+      "id": "core-suite",
+      "role": "Core tests, full output and exit code",
+      "path": "verification/P19-BOOT-1/core-suite.log"
+    },
+    {
+      "sha256": "0473d6b5106ed4b83e33a31a2eb6c78424da36909abf3e7d30e2a4badc1fd3fd",
+      "id": "cargo-build",
+      "role": "required Cargo build and exit code",
+      "path": "verification/P19-BOOT-1/cargo-build.log"
+    },
+    {
+      "sha256": "4346f72f751e7107e18a25b7a88ac4562945a2d39dcddc12630d89d92c8785cc",
+      "id": "cargo-build-custom-protocol",
+      "role": "debug WebView build and exit code",
+      "path": "verification/P19-BOOT-1/cargo-build-custom-protocol.log"
+    },
+    {
+      "sha256": "b067992b1a1ea3f0be33c9d17ed3c83c5ccfe8be1b4b4bae8febdcab6738ebbb",
+      "id": "frontend-build",
+      "role": "frontend build output",
+      "path": "verification/P19-BOOT-1/frontend-build.log"
+    },
+    {
+      "sha256": "4e808a696575d832ceab115f9ed55200516842b224eefe586abcea789deaf209",
+      "id": "partial-state-fixture",
+      "role": "pre-launch catalog exists and derived empty manifest",
+      "path": "verification/P19-BOOT-1/partial-state-runtime-final6.json"
+    },
+    {
+      "sha256": "6b08563180d13205b27980a695098e197f1031c80ef48aea7d05725777001941",
+      "id": "partial-state-setup-log",
+      "role": "fixture construction command and exit code",
+      "path": "verification/P19-BOOT-1/partial-state-runtime-final6-run.log"
+    },
+    {
+      "sha256": "fab6551fde639b5e71bd66986548244f11bb8025eec8cf6a59070dbacb8524fe",
+      "id": "real-startup-launch",
+      "role": "app path/hash and pre-launch state",
+      "path": "verification/P19-BOOT-1/real-startup-launch-final.json"
+    },
+    {
+      "sha256": "2661c53d8d14e2689ae061e4fac5bb1d009c4bc076fc9f7586e3eb653486df43",
+      "id": "real-startup-result",
+      "role": "app exit code, stderr checks, UIA and four screenshots",
+      "path": "verification/P19-BOOT-1/real-startup-final.json"
+    },
+    {
+      "sha256": "30a0873d5c57f4932a57cda06d73afad4a72612c4157a703accc80e6397c14de",
+      "id": "real-startup-log",
+      "role": "launch command, capture result and exit code",
+      "path": "verification/P19-BOOT-1/real-startup-final-run.log"
+    },
+    {
+      "sha256": "90a6f1b65e49bb38103b344c95493581fd6221136fffe9d7b77954080b4fad34",
+      "id": "real-startup-stderr",
+      "role": "actual application stderr",
+      "path": "verification/P19-BOOT-1/final-app.stderr.log"
+    },
+    {
+      "sha256": "8f909b1ada972f3577aaa205b437d556b157f37f98927b0f0d8e0dc677440b4d",
+      "id": "runtime-binding",
+      "role": "post-startup lock and catalog binding verification",
+      "path": "verification/P19-BOOT-1/runtime-binding-final.json"
+    },
+    {
+      "sha256": "d8fe3e2fb834fafac77c73dbc66dc12f49ab508d80153f33a0f76be7ae2b12ed",
+      "id": "runtime-binding-log",
+      "role": "binding check command and exit code",
+      "path": "verification/P19-BOOT-1/runtime-binding-final-run.log"
+    },
+    {
+      "sha256": "cb373d919c2e8651b76d23c5afdc6830d74a2b2594b4e0c73dc578d6247a4848",
+      "id": "ui-bookshelf",
+      "role": "real app bookshelf window screenshot",
+      "path": "verification/P19-BOOT-1/ui-bookshelf-real-window.png"
+    },
+    {
+      "sha256": "73d63aa14eff087372959e1b5669d93b25e36a8744a6d2dd20bc6799779e9c44",
+      "id": "ui-workbench",
+      "role": "real app workbench window screenshot",
+      "path": "verification/P19-BOOT-1/ui-workbench-real-window.png"
+    },
+    {
+      "sha256": "4de460a24e1a94d31c25dec927dd878b86be074b7ce950c00aeffcd7fd5b6773",
+      "id": "ui-reader",
+      "role": "real app reader window screenshot",
+      "path": "verification/P19-BOOT-1/ui-reader-real-window.png"
+    },
+    {
+      "sha256": "6406b3766df95f0d3ac7d9dee81dd78248f14d402f2462d73588d193e8b0c455",
+      "id": "ui-settings",
+      "role": "real app settings window screenshot",
+      "path": "verification/P19-BOOT-1/ui-settings-real-window.png"
+    },
+    {
+      "sha256": "236f64c1012f796295e07c362ce3797f46fa8757e2799e6258dc11eaa52f621e",
+      "id": "startup-evidence-narrative",
+      "role": "startup evidence summary and limitations",
+      "path": "verification/P19-BOOT-1/real-startup-evidence.md"
+    },
+    {
+      "sha256": "b8ae573afcd8de80c8460f2199a4a3faaa4af9148004972158e694aab3ec9129",
+      "id": "partial-state-setup-script",
+      "role": "reproducible isolated partial-state fixture",
+      "path": "verification/P19-BOOT-1/prepare_partial_state.py"
+    },
+    {
+      "sha256": "656a6e07f3ac22729f47afa6821e79db9e22d9adb95fd6f601a028a6004b5f7b",
+      "id": "real-window-capture-script",
+      "role": "reproducible real-window screenshots and graceful close",
+      "path": "verification/P19-BOOT-1/capture_real_startup.ps1"
+    },
+    {
+      "sha256": "1e02419f59343b8f8cd97e679eaf85f06d9a7b4ba7c7bde8eee1750a80385c0b",
+      "id": "binding-check-script",
+      "role": "read-only post-startup binding self-check",
+      "path": "verification/P19-BOOT-1/verify_runtime_binding.py"
+    }
+  ]
+}

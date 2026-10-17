@@ -1,0 +1,27 @@
+shell=PowerShell
+command=G:\CODEX\New Manga.task-envs\T1.1.1-impl-py312\Scripts\python.exe verification/P19-BOOT-1/verify_runtime_binding.py
+P19_RUN_NAME=runtime-final6
+implementation_head=c44b47dd9852121e18496502870f4e4cbaf5c737
+{
+  "scenario": "runtime binding after real application startup",
+  "catalog": "appdata-roaming\\com.newmanga.m2rc1.desktop\\catalog\\catalog.sqlite",
+  "lock": "appdata-roaming\\com.newmanga.m2rc1.desktop\\derived\\.preview-lifecycle.lock",
+  "lock_bytes": 481,
+  "lock_json": {
+    "catalog_identity": [
+      3401956556,
+      562949955410858
+    ],
+    "catalog_root": "G:\\CODEX\\New Manga.workspace\\worktrees\\P19-BOOT-1\\verification\\P19-BOOT-1\\runtime-final6\\appdata-roaming\\com.newmanga.m2rc1.desktop\\catalog\\catalog.sqlite",
+    "derived_identity": [
+      3401956556,
+      1970324838961109
+    ],
+    "derived_root": "G:\\CODEX\\New Manga.workspace\\worktrees\\P19-BOOT-1\\verification\\P19-BOOT-1\\runtime-final6\\appdata-roaming\\com.newmanga.m2rc1.desktop\\derived",
+    "protocol_version": 1
+  },
+  "catalog_binding_rows": 1,
+  "lock_and_catalog_binding_match": true,
+  "catalog_and_derived_path_identity_match": true
+}
+EXIT_CODE=0

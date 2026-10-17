@@ -1,0 +1,91 @@
+shell=PowerShell
+worktree=G:\CODEX\New Manga.workspace\worktrees\P19-BOOT-1
+head=c44b47dd9852121e18496502870f4e4cbaf5c737
+command=cargo build --locked --manifest-path apps/desktop/src-tauri/Cargo.toml
+preexisting sidecar resource input=apps/desktop/src-tauri/target/core-sidecar (junction; not modified)
+   Compiling m2rc1-desktop v0.1.0 (G:\CODEX\New Manga.workspace\worktrees\P19-BOOT-1\apps\desktop\src-tauri)
+warning: unused imports: `P15CredentialTarget`, `P15SettingsCommand`, and `P15_HOST_ONLY_COMMANDS`
+  --> src\main.rs:50:5
+   |
+50 |     P15CredentialTarget, P15SettingsCommand, PingResult, StdioLibraryChannel,
+   |     ^^^^^^^^^^^^^^^^^^^  ^^^^^^^^^^^^^^^^^^
+51 |     P15_HOST_ONLY_COMMANDS,
+   |     ^^^^^^^^^^^^^^^^^^^^^^
+   |
+   = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: struct `MockCoreChannel` is never constructed
+   --> src\core_bridge.rs:335:12
+    |
+335 | pub struct MockCoreChannel {
+    |            ^^^^^^^^^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: struct `MockEntry` is never constructed
+   --> src\core_bridge.rs:350:12
+    |
+350 | pub struct MockEntry {
+    |            ^^^^^^^^^
+
+warning: associated items `new`, `register`, and `issue_internal` are never used
+   --> src\core_bridge.rs:359:12
+    |
+358 | impl MockCoreChannel {
+    | -------------------- associated items in this implementation
+359 |     pub fn new() -> Self {
+    |            ^^^
+...
+370 |     pub fn register(&self, resource_id: &str, rel_path: &str) -> Result<(), CoreError> {
+    |            ^^^^^^^^
+...
+378 |     fn issue_internal(
+    |        ^^^^^^^^^^^^^^
+
+warning: constant `P15_HOST_ONLY_COMMANDS` is never used
+   --> src\library_bridge.rs:464:11
+    |
+464 | pub const P15_HOST_ONLY_COMMANDS: [&str; 2] =
+    |           ^^^^^^^^^^^^^^^^^^^^^^
+
+warning: associated function `spawn` is never used
+   --> src\library_bridge.rs:976:12
+    |
+975 | impl StdioLibraryChannel {
+    | ------------------------ associated function in this implementation
+976 |     pub fn spawn(
+    |            ^^^^^
+
+warning: multiple methods are never used
+    --> src\library_bridge.rs:1999:12
+     |
+1956 | impl MockLibraryChannel {
+     | ----------------------- methods in this implementation
+...
+1999 |     pub fn set_export_snapshot_result(
+     |            ^^^^^^^^^^^^^^^^^^^^^^^^^^
+...
+2006 |     pub fn set_export_history_result(
+     |            ^^^^^^^^^^^^^^^^^^^^^^^^^
+...
+2013 |     pub fn set_books(&self, books: Vec<BookSummary>) {
+     |            ^^^^^^^^^
+...
+2017 |     pub fn set_books_error(&self, error: LibraryError) {
+     |            ^^^^^^^^^^^^^^^
+...
+2023 |     pub fn set_settings_result(&self, result: Result<serde_json::Value, LibraryError>) {
+     |            ^^^^^^^^^^^^^^^^^^^
+...
+2029 |     pub fn set_retype_result(&self, result: Result<serde_json::Value, LibraryError>) {
+     |            ^^^^^^^^^^^^^^^^^
+...
+2033 |     pub fn set_regions_result(&self, result: Result<serde_json::Value, LibraryError>) {
+     |            ^^^^^^^^^^^^^^^^^^
+...
+2040 |     pub fn set_domain_result(&self, result: Result<serde_json::Value, LibraryError>) {
+     |            ^^^^^^^^^^^^^^^^^
+
+warning: `m2rc1-desktop` (bin "m2rc1-desktop") generated 7 warnings (run `cargo fix --bin "m2rc1-desktop" -p m2rc1-desktop` to apply 1 suggestion)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 7.83s
+EXIT_CODE=0

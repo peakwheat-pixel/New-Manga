@@ -117,6 +117,8 @@ _k32.WriteFile.argtypes = [
     wintypes.HANDLE, ctypes.c_void_p, wintypes.DWORD,
     ctypes.POINTER(wintypes.DWORD), ctypes.c_void_p,
 ]
+_k32.SetEndOfFile.restype = wintypes.BOOL
+_k32.SetEndOfFile.argtypes = [wintypes.HANDLE]
 
 _k32.SetFileInformationByHandle.restype = wintypes.BOOL
 _k32.SetFileInformationByHandle.argtypes = [
@@ -662,6 +664,7 @@ def _open_lock_handle(derived_root: str, *, exclusive: bool, create_new: bool = 
 
 def _write_lock_content(handle: int, binding: NamespaceBinding) -> None:
     payload = (json.dumps(binding.as_dict(), sort_keys=True) + "\n").encode("utf-8")
+    _seek_start(handle)
     written = wintypes.DWORD(0)
     chunk = 1 << 16
     offset = 0
@@ -673,6 +676,10 @@ def _write_lock_content(handle: int, binding: NamespaceBinding) -> None:
         if not ok or written.value != len(block):
             raise namespace_unavailable(f"namespace lock write failed (win32 error {ctypes.get_last_error()})")
         offset += written.value
+    if not _k32.SetEndOfFile(wintypes.HANDLE(handle)):
+        raise namespace_unavailable(
+            f"namespace lock truncate failed (win32 error {ctypes.get_last_error()})"
+        )
 
 
 def _read_lock_binding(handle: int) -> NamespaceBinding:
@@ -731,7 +738,10 @@ def acquire_shared_lease(
     the binding read from the lock is re-verified against the actual derived
     root identity before the lease is handed out)."""
     derived_str, derived_identity = resolve_namespace_identity(Path(derived_root))
-    handle = _open_lock_handle(derived_str, exclusive=False)
+    try:
+        handle = _open_lock_handle(derived_str, exclusive=False)
+    except FileNotFoundError as error:
+        raise namespace_unavailable("namespace lock file is missing") from error
     try:
         binding = _read_lock_binding(handle)
         _verify_binding(binding, derived_str, derived_identity, expected_catalog_identity)
@@ -746,8 +756,9 @@ def try_acquire_exclusive_lease(
 ) -> Optional[PreviewNamespaceLease]:
     """Non-blocking exclusive lease attempt for the startup GC window.
 
-    ``None`` means a managed peer holds a shared lease: skip both sweeps and
-    serve normally under a shared lease -- never wait, never force.
+    ``None`` means no exclusive lease was obtained. The caller may skip both
+    sweeps, but can serve only if it subsequently obtains a verified shared
+    lease -- never wait, never force.
     """
     try:
         derived_str, derived_identity = resolve_namespace_identity(Path(derived_root))
