@@ -3,17 +3,17 @@ id: P15-HOST-1
 title: 设置面 G21/G22/G23 专用命令的 Tauri host 侧注册与 Core 2.7 配对（P15 UI 的端到端前置）
 kind: feature
 governance_version: 2
-status: in_review
+status: done
 approval: coordinator_release_20261017_after_P15_core_chain_complete
 suggested_owner: Codex
 owner: Codex
-reviewer: pending_independent_review
+reviewer: dsh
 depends_on: [P15-C1, P15, P15-CORE-1]
 base_commit: 26983c62a2ebeb22e4d963febcd8ea49eec70108
 branch: codex/P15-HOST-1
 worktree: G:/CODEX/New Manga.workspace/worktrees/P15-HOST-1
-integration_commit: null
-delivery_head: ece3af6056e25dc51094b3d027f72d654a6f4dd1
+integration_commit: 4e0e0055b64342e29c8519a1c840d30de911b610
+delivery_head: f80678bbd2314e6548b63585e658d2de2d6c17b5
 canonical_evidence_status: complete
 resource_closeout_status: complete
 evidence_dir: verification/P15-HOST-1
@@ -92,6 +92,8 @@ P15（设置页 UI）已 `done`，其交付在 Handoff 与本 Task 的 [P15 clos
 | P15-HOST-1-HOST-ONLY-SCAN | AC1 / AC3 | `verification/P15-HOST-1/host-only-route-scan.txt` | `ece3af6056e25dc51094b3d027f72d654a6f4dd1` | `4B9489E8863EB9CE4F0FC25B5B36D4D1F2E95E243B5C9E0EE893814BA54D7CBC` | CANONICAL |
 | P15-HOST-1-SURFACE-SYNC | AC1 / AC2 | `verification/P15-HOST-1/surface-sync-check.txt` | `ece3af6056e25dc51094b3d027f72d654a6f4dd1` | `A365C34581B011C218D645EE849123A44A7EE7E67C51624876CA5CC29F25F2E2` | CANONICAL |
 
+| P15-HOST-1-REVIEW-R1 | AC1–AC6 | `verification/P15-HOST-1/dsh-review-r1.md` | `4e0e0055b` | `424bd58133868792057b8787d2be86b2204c29c9b3a732aa6440990c7cafeeb1` | SOURCE_PIN |
+
 ## Resource Manifest
 
 | resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
@@ -100,8 +102,10 @@ P15（设置页 UI）已 `done`，其交付在 Handoff 与本 Task 的 [P15 clos
 
 ## Closeout Record
 
-- Closeout date / Codex：2026-10-17 / Codex。
-- canonical_evidence_status：`complete`；resource_closeout_status：`complete`（资源按引用保留）。
-- 删除、迁移、归档数量/字节数：0 / 0 / 0。
-- 未关闭项及保留原因：Task AC1 的 `credential_put` / `credential_clear` 范围冲突、独立 Review、AC4 契约 §4.2 minor 文字漂移及额外全量 pytest 失败待接收方处理；Task 保持 `in_review`，未声称 `done`。
-- 当前指针清理：未修改 `STATUS` / `REBASELINE_PLAN`，按任务禁止边界保留，待 Codex 集成时处理。
+- Closeout date / Coordinator：2026-10-17（dsh, epoch 6）。Reviewer=**dsh**（`route-agent.py` 路由；Owner=Codex 已机器排除）。
+- canonical_evidence_status：`complete`。resource_closeout_status：`complete`（worktree `PRESERVE_REFERENCED`）。删除/迁移/归档：0。
+- 交付：`done`。集成 `4e0e0055b64342e29c8519a1c840d30de911b610`（`--no-ff`，**无冲突**）；delivery_head（分支实际 HEAD）`f80678bbd2314e6548b63585e658d2de2d6c17b5`。**pin 已在主仓库复算 0 条**（RV-P15-04）。
+- **独立复核（我亲做）**：**host-only 红线多证据封死**——全仓 `rg` 仅命中 `library_bridge.rs` 两处常量、显式 `pub const P15_HOST_ONLY_COMMANDS: [&str; 2]`、**不在** `PRODUCTION_COMMANDS`、**不在**任何 `generate_handler!`、并有专门测试 `p15_core_credential_commands_are_host_only`；**四处同步**以 `surface-sync-check.txt` 记录且 **Owner 用 `git show` 核实基线**（`26983c62a` 为 30 → `30+17=47`）：`PRODUCTION_COMMANDS=47`、`P15=17`、**probe=7 / AC1=6 冻结面未污染**、`generate_handler` 块 7/6/47、ACL 54/54、总 permissions **56**、**P15 capabilities 17/17**、4 个生成 schema 均含 P15 名、缺失项为空。**我亲测**：Rust source **99/0/1**（设 `M2RC1_PYTHON` 后；与该变量缺失时的**假失败**已辨明——main 上同样 panic，与本次交付无关）、Core **508**；packaged **12/0**、前端 **274** 与 Owner 日志一致。
+- **本 closeout 释放 2 项跟进**：**P15-C1-FU2**（契约 §4.2 的 minor 文字漂移 2.6→2.7，**Owner 上报属实**）与 **P15-HOST-2**（契约 §4.1 的 WebView 可达凭据入口 `PutCredential`/`ClearCredential` + **接线 host Credential Manager 通道**——当前 `bind/clear_profile_credential` 为 `#[allow(dead_code)]` 且返回 `unavailable("P15 credential channel is unavailable")` 的**失败关闭桩**，诚实但**端到端不可用**）。
+- **登记（与本 Task 无关的既有事实）**：全量 pytest（非 `tests/core`）`19 failed / 2187 passed / 9 skipped`，失败集中在**本次未触碰**的 `tests/workbench/**` 等 → **既有**；本项目**正式 Core 基线为 `tests/core`（508）**。Rust source 口径**必须设 `M2RC1_PYTHON`**（Python 3.12.3），否则 `library_bridge` 测试假失败。
+- 当前指针清理：`STATUS` / `REBASELINE_PLAN` 同批同步。
