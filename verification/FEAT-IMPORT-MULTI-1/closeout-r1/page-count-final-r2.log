@@ -1,0 +1,6 @@
+SHELL=pwsh
+COMMAND=python verify-page-count-r2.py %TEMP%/feat-import-multi-r2 NMImportMultiR2Chapter20261018d3f88e %TEMP%
+PYTHON=G:\CODEX\New Manga.task-envs\T1.1.1-impl-py312\Scripts\python.exe
+
+chapter_pages=5 database=fresh-data/library.db
+EXIT=0

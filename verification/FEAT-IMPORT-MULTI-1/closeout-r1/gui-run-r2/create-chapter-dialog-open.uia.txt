@@ -1,0 +1,21 @@
+Button|📚 书架|IsEnabled=True|IsOffscreen=False
+Button|🛠️ 工作台|IsEnabled=True|IsOffscreen=False
+Button|📖 阅读器|IsEnabled=True|IsOffscreen=False
+Button|⚙️ 设置|IsEnabled=True|IsOffscreen=False
+Button|+ 新建作品|IsEnabled=True|IsOffscreen=False
+Button|导入作品|IsEnabled=True|IsOffscreen=False
+Button|★ 收藏|IsEnabled=True|IsOffscreen=False
+Button|归档|IsEnabled=True|IsOffscreen=False
+Button|⊞|IsEnabled=True|IsOffscreen=False
+Button|☰|IsEnabled=True|IsOffscreen=False
+Button|☆ NMImportMultiR2Book20261018d3f88e 页数 —|IsEnabled=True|IsOffscreen=False
+Text|0|IsEnabled=True|IsOffscreen=False
+Button|导入页面|IsEnabled=True|IsOffscreen=False
+Button|删除作品|IsEnabled=False|IsOffscreen=False
+Button|标签管理 (GAP-G7)|IsEnabled=False|IsOffscreen=False
+Button|翻译约束 (GAP-G8)|IsEnabled=False|IsOffscreen=False
+Button|+ 新建章节|IsEnabled=True|IsOffscreen=False
+Text|暂无章节，请点击下方「导入页面」或「新建章节」|IsEnabled=True|IsOffscreen=False
+Button|关闭|IsEnabled=True|IsOffscreen=False
+Button|取消|IsEnabled=True|IsOffscreen=False
+Button|创建章节|IsEnabled=True|IsOffscreen=False

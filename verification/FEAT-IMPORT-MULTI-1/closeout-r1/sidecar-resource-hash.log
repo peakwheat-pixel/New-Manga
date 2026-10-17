@@ -1,0 +1,5 @@
+command=Get-FileHash -Algorithm SHA256 bundle/core_service.exe and target/debug/resources/core-sidecar/core_service.exe
+bundle_sha256=e8f682225b22be879c0722f1d0ef48a987e32ed103a93a389117cd0d68ff26f0
+resource_sha256=e8f682225b22be879c0722f1d0ef48a987e32ed103a93a389117cd0d68ff26f0
+equal=True
+exit_code=0

@@ -870,18 +870,19 @@ async fn library_import_file(
             "Images and PDF",
             &["png", "jpg", "jpeg", "webp", "gif", "bmp", "pdf"],
         )
-        .blocking_pick_file();
-    let Some(selected) = selected else {
+        .blocking_pick_files();
+    let Some(selected) = selected.filter(|paths| !paths.is_empty()) else {
         return Ok(host_issuer::ImportSummary::cancelled(chapter_id));
     };
-    let path = selected
-        .into_path()
-        .map_err(|_| "INVALID_REQUEST".to_string())?;
+    let paths = selected
+        .into_iter()
+        .map(|path| path.into_path().map_err(|_| "INVALID_REQUEST".to_string()))
+        .collect::<Result<Vec<_>, _>>()?;
     state
         .library
         .as_ref()
         .ok_or_else(|| "CORE_UNAVAILABLE".to_string())?
-        .import_from_path(&path, "file", &chapter_id, duplicate_policy.as_deref())
+        .import_from_paths(&paths, "file", &chapter_id, duplicate_policy.as_deref())
         .map_err(|error| error.code)
 }
 

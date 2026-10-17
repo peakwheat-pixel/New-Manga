@@ -1,0 +1,90 @@
+shell=PowerShell
+cwd=
+G:\CODEX\New Manga.workspace\worktrees\FEAT-IMPORT-MULTI-1\apps\desktop\src-tauri
+command=cargo build
+   Compiling m2rc1-desktop v0.1.0 (G:\CODEX\New Manga.workspace\worktrees\FEAT-IMPORT-MULTI-1\apps\desktop\src-tauri)
+warning: unused imports: `P15CredentialTarget`, `P15SettingsCommand`, and `P15_HOST_ONLY_COMMANDS`
+  --> src\main.rs:50:35
+   |
+50 |     LibraryChannel, LibraryError, P15CredentialTarget, P15SettingsCommand, PingResult,
+   |                                   ^^^^^^^^^^^^^^^^^^^  ^^^^^^^^^^^^^^^^^^
+51 |     StdioLibraryChannel, P15_HOST_ONLY_COMMANDS,
+   |                          ^^^^^^^^^^^^^^^^^^^^^^
+   |
+   = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: struct `MockCoreChannel` is never constructed
+   --> src\core_bridge.rs:335:12
+    |
+335 | pub struct MockCoreChannel {
+    |            ^^^^^^^^^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: struct `MockEntry` is never constructed
+   --> src\core_bridge.rs:350:12
+    |
+350 | pub struct MockEntry {
+    |            ^^^^^^^^^
+
+warning: associated items `new`, `register`, and `issue_internal` are never used
+   --> src\core_bridge.rs:359:12
+    |
+358 | impl MockCoreChannel {
+    | -------------------- associated items in this implementation
+359 |     pub fn new() -> Self {
+    |            ^^^
+...
+370 |     pub fn register(&self, resource_id: &str, rel_path: &str) -> Result<(), CoreError> {
+    |            ^^^^^^^^
+...
+378 |     fn issue_internal(
+    |        ^^^^^^^^^^^^^^
+
+warning: constant `P15_HOST_ONLY_COMMANDS` is never used
+   --> src\library_bridge.rs:472:11
+    |
+472 | pub const P15_HOST_ONLY_COMMANDS: [&str; 2] =
+    |           ^^^^^^^^^^^^^^^^^^^^^^
+
+warning: associated function `spawn` is never used
+    --> src\library_bridge.rs:1017:12
+     |
+1016 | impl StdioLibraryChannel {
+     | ------------------------ associated function in this implementation
+1017 |     pub fn spawn(
+     |            ^^^^^
+
+warning: multiple methods are never used
+    --> src\library_bridge.rs:2141:12
+     |
+2098 | impl MockLibraryChannel {
+     | ----------------------- methods in this implementation
+...
+2141 |     pub fn set_export_snapshot_result(
+     |            ^^^^^^^^^^^^^^^^^^^^^^^^^^
+...
+2148 |     pub fn set_export_history_result(
+     |            ^^^^^^^^^^^^^^^^^^^^^^^^^
+...
+2155 |     pub fn set_books(&self, books: Vec<BookSummary>) {
+     |            ^^^^^^^^^
+...
+2159 |     pub fn set_books_error(&self, error: LibraryError) {
+     |            ^^^^^^^^^^^^^^^
+...
+2165 |     pub fn set_settings_result(&self, result: Result<serde_json::Value, LibraryError>) {
+     |            ^^^^^^^^^^^^^^^^^^^
+...
+2171 |     pub fn set_retype_result(&self, result: Result<serde_json::Value, LibraryError>) {
+     |            ^^^^^^^^^^^^^^^^^
+...
+2175 |     pub fn set_regions_result(&self, result: Result<serde_json::Value, LibraryError>) {
+     |            ^^^^^^^^^^^^^^^^^^
+...
+2182 |     pub fn set_domain_result(&self, result: Result<serde_json::Value, LibraryError>) {
+     |            ^^^^^^^^^^^^^^^^^
+
+warning: `m2rc1-desktop` (bin "m2rc1-desktop") generated 7 warnings (run `cargo fix --bin "m2rc1-desktop" -p m2rc1-desktop` to apply 1 suggestion)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 10.36s
+cargo build exit_code=0

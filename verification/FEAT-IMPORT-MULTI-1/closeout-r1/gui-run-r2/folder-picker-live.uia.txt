@@ -1,0 +1,10 @@
+Button|帮助(&H)|value=|IsEnabled=True|IsOffscreen=False
+Button|视图滑块|value=|IsEnabled=True|IsOffscreen=False
+Button|组织​​|value=|IsEnabled=True|IsOffscreen=False
+Button|新建​​文件夹​​|value=|IsEnabled=True|IsOffscreen=False
+Button|筛选器下拉列表|value=|IsEnabled=True|IsOffscreen=False
+Button|筛选器下拉列表|value=|IsEnabled=True|IsOffscreen=False
+Button|筛选器下拉列表|value=|IsEnabled=True|IsOffscreen=False
+Button|筛选器下拉列表|value=|IsEnabled=True|IsOffscreen=False
+Text|没有与搜索条件匹配的项。|value=|IsEnabled=True|IsOffscreen=False
+Button|搜索|value=|IsEnabled=True|IsOffscreen=False

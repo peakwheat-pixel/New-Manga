@@ -329,15 +329,17 @@ describe("Bookshelf UI - Data Binding & State Matrix (W1, W2, W3, W28, W30)", ()
       expect(html).toContain("作为新页面导入 (import_as_new)");
       expect(html).toContain("选择图片 / PDF 文件");
       expect(html).toContain("选择图片文件夹");
+      expect(html).toContain("支持 Ctrl+A 全选");
+      expect(html).toContain("不递归子目录");
     });
 
     it("invokes library_import_file and displays ImportReport on completion", async () => {
       const mockSummary: ImportSummary = {
         chapter_id: "ch-101",
         cancelled: false,
-        imported_files: 8,
-        skipped_files: 2,
-        rejected_files: 0,
+        imported_files: 2,
+        skipped_files: 1,
+        rejected_files: 1,
         pending_files: 0,
       };
 
@@ -376,9 +378,13 @@ describe("Bookshelf UI - Data Binding & State Matrix (W1, W2, W3, W28, W30)", ()
       // Report should be visible
       const reportView = container.querySelector('[data-testid="import-report-view"]');
       expect(reportView).not.toBeNull();
-      expect(container.querySelector('[data-testid="report-imported-files"]')?.textContent).toBe("8");
-      expect(container.querySelector('[data-testid="report-skipped-files"]')?.textContent).toBe("2");
-      expect(container.querySelector('[data-testid="report-rejected-files"]')?.textContent).toBe("0");
+      expect(container.querySelector('[data-testid="report-imported-files"]')?.textContent).toBe("2");
+      expect(container.querySelector('[data-testid="report-skipped-files"]')?.textContent).toBe("1");
+      expect(container.querySelector('[data-testid="report-rejected-files"]')?.textContent).toBe("1");
+      expect(container.querySelector('[data-testid="report-skipped-reason"]')?.textContent).toContain("重复内容");
+      expect(container.querySelector('[data-testid="report-rejected-reason"]')?.textContent).toContain("导入校验");
+      expect(container.textContent).not.toContain("C:\\private");
+      expect(container.textContent).not.toContain("secret");
 
       // Click finish button
       const finishBtn = container.querySelector('[data-testid="import-finish-btn"]') as HTMLButtonElement;
@@ -432,7 +438,10 @@ describe("Bookshelf UI - Data Binding & State Matrix (W1, W2, W3, W28, W30)", ()
     });
 
     it("shows a visible error when the native picker or import fails", async () => {
-      const client = new LibraryClient(vi.fn().mockRejectedValue("CORE_UNAVAILABLE"));
+      const client = new LibraryClient(vi.fn().mockRejectedValue({
+        code: "C:\\private\\page.png token=secret",
+        message: "C:\\private\\page.png token=secret",
+      }));
 
       await act(async () => {
         root.render(
@@ -452,7 +461,10 @@ describe("Bookshelf UI - Data Binding & State Matrix (W1, W2, W3, W28, W30)", ()
         (container.querySelector('[data-testid="import-file-btn"]') as HTMLButtonElement).click();
       });
 
-      expect(container.querySelector('[data-testid="import-error-banner"]')?.textContent).toContain("CORE_UNAVAILABLE");
+      const errorText = container.querySelector('[data-testid="import-error-banner"]')?.textContent ?? "";
+      expect(errorText).toContain("UNKNOWN_ERROR");
+      expect(errorText).not.toContain("C:\\private");
+      expect(errorText).not.toContain("secret");
     });
   });
 

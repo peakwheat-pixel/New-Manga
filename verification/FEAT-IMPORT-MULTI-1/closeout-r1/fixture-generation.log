@@ -1,0 +1,5 @@
+command=python make-fixtures-r1.py %TEMP%\feat-import-multi-r1
+python=G:\CODEX\New Manga.task-envs\T1.1.1-impl-py312\Scripts\python.exe
+files=2 multi-select + 3 folder direct children
+fixtures=PASS files=5 content_hashes_unique=true names_ascii=true
+exit_code=0

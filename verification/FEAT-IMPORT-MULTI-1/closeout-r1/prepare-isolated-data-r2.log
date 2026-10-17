@@ -1,0 +1,6 @@
+SHELL=pwsh
+COMMAND=pwsh -NoProfile -File verification/FEAT-IMPORT-MULTI-1/closeout-r1/prepare-isolated-data-r2.ps1
+TEMP=C:\Users\49745\AppData\Local\Temp
+
+isolation_copy=PASS catalog_data_hash_match=true source_unchanged=true derived_empty=true runtime_data_empty=true
+EXIT=0

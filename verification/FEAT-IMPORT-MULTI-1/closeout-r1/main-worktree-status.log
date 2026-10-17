@@ -1,0 +1,4 @@
+command=git -C "G:\CODEX\New Manga" status --porcelain | Where-Object { $_ -notmatch '^\?\?' } | Measure-Object
+main_tracked_dirty_count=43
+main_head=a0dba45198eb6cf547809778586535fc67b3f3c4
+main_repo_write_performed=false

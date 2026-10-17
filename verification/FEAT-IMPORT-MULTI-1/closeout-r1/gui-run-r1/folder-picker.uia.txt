@@ -1,0 +1,9 @@
+Button|帮助(&H)|IsEnabled=True|IsOffscreen=False
+Button|视图滑块|IsEnabled=True|IsOffscreen=False
+Button|组织​​|IsEnabled=True|IsOffscreen=False
+Button|新建​​文件夹​​|IsEnabled=True|IsOffscreen=False
+Button|筛选器下拉列表|IsEnabled=True|IsOffscreen=False
+Button|筛选器下拉列表|IsEnabled=True|IsOffscreen=False
+Button|筛选器下拉列表|IsEnabled=True|IsOffscreen=False
+Button|筛选器下拉列表|IsEnabled=True|IsOffscreen=False
+Button|搜索|IsEnabled=True|IsOffscreen=False

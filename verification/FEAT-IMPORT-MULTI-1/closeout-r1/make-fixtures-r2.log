@@ -1,0 +1,6 @@
+SHELL=pwsh
+COMMAND=python make-fixtures-r2.py %TEMP%/feat-import-multi-r2
+PYTHON=G:\CODEX\New Manga.task-envs\T1.1.1-impl-py312\Scripts\python.exe
+
+fixtures=PASS files=5 content_hashes_unique=true names_ascii=true
+EXIT=0

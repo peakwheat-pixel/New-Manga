@@ -1,0 +1,6 @@
+{
+  "protocol_version": 1,
+  "isolation_root": "%TEMP%\\feat-import-multi-r1",
+  "source_catalog_modified": false,
+  "rebind": "PASS"
+}

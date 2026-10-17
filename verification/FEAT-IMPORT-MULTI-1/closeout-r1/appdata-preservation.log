@@ -1,0 +1,4 @@
+command=pwsh -NoProfile -File verification/FEAT-IMPORT-MULTI-1/closeout-r1/verify-appdata-unchanged-r1.ps1
+scope=%APPDATA%\com.newmanga.m2rc1.desktop\{catalog,data}
+source_appdata_preservation=PASS catalog_unchanged=true data_unchanged=true
+exit_code=0
