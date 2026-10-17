@@ -1,0 +1,30 @@
+[07:14:34.961] window=True shell_ready=True
+[07:14:40.011] NAV '📚 书架' round=1 latency_ms=5025.5 ok=False
+[07:14:45.298] NAV '📚 书架' round=2 latency_ms=5015.1 ok=False
+[07:14:50.600] NAV '📚 书架' round=3 latency_ms=5027.9 ok=False
+[07:14:55.883] NAV '📚 书架' round=4 latency_ms=5010.7 ok=False
+[07:15:01.172] NAV '📚 书架' round=5 latency_ms=5017.2 ok=False
+[07:15:01.510] NAV '🛠️ 工作台' round=1 latency_ms=62.4 ok=True
+[07:15:01.805] NAV '🛠️ 工作台' round=2 latency_ms=31.6 ok=True
+[07:15:02.102] NAV '🛠️ 工作台' round=3 latency_ms=32.1 ok=True
+[07:15:02.398] NAV '🛠️ 工作台' round=4 latency_ms=31.3 ok=True
+[07:15:02.708] NAV '🛠️ 工作台' round=5 latency_ms=31.9 ok=True
+[07:15:03.008] NAV '📖 阅读器' round=1 latency_ms=36.2 ok=True
+[07:15:03.317] NAV '📖 阅读器' round=2 latency_ms=31.5 ok=True
+[07:15:03.615] NAV '📖 阅读器' round=3 latency_ms=31.8 ok=True
+[07:15:03.911] NAV '📖 阅读器' round=4 latency_ms=32.8 ok=True
+[07:15:04.207] NAV '📖 阅读器' round=5 latency_ms=32.4 ok=True
+[07:15:04.507] NAV '⚙️ 设置' round=1 latency_ms=36.3 ok=True
+[07:15:04.815] NAV '⚙️ 设置' round=2 latency_ms=32.5 ok=True
+[07:15:05.112] NAV '⚙️ 设置' round=3 latency_ms=32.3 ok=True
+[07:15:05.409] NAV '⚙️ 设置' round=4 latency_ms=31.9 ok=True
+[07:15:05.704] NAV '⚙️ 设置' round=5 latency_ms=30.7 ok=True
+[07:15:06.836] CAT '网络/代理' round=1 latency_ms=42.7 ok=True
+[07:15:07.146] CAT '网络/代理' round=2 latency_ms=40.1 ok=True
+[07:15:07.457] CAT '网络/代理' round=3 latency_ms=39.7 ok=True
+[07:15:07.768] CAT '网络/代理' round=4 latency_ms=39.4 ok=True
+[07:15:08.081] CAT '网络/代理' round=5 latency_ms=39.8 ok=True
+[07:15:08.355] SUMMARY samples=20 avg_ms=36 p95_ms=62.4 max_ms=62.4
+[07:15:08.361] ASSERT PASS ac4:interaction-latency-avg<=50ms (avg=36)
+[07:15:08.366] FACT ac4:fps NOT_MEASURED (requires WPR/GPUView or frontend instrumentation)
+[07:15:10.406] AC4 END
