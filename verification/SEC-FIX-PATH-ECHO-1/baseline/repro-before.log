@@ -1,0 +1,6 @@
+REPRO settings.update_section({section:'ocr', values:{path, api_secret}})
+WRITE_RESPONSE={"protocol": "new-manga.core", "version": {"major": 2, "minor": 3}, "request_id": "sec-fix-path-echo-1", "result": {"settings": {"ocr": {"path": "C:\\Users\\sec-fix-path-echo-1\\AppData\\Local\\model\\runner.exe"}}}, "error": null}
+READ_RESPONSE={"protocol": "new-manga.core", "version": {"major": 2, "minor": 3}, "request_id": "sec-fix-path-echo-1", "result": {"settings": {"ocr": {"path": "C:\\Users\\sec-fix-path-echo-1\\AppData\\Local\\model\\runner.exe"}}}, "error": null}
+OBSERVED path_value_returned=true synthetic_secret_returned=false file_io_attempted=false
+REPRO_RESULT=FAIL
+EXIT_CODE=1

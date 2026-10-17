@@ -337,6 +337,46 @@ class SettingsRequestError(ValueError):
     (INVALID_REQUEST; M2-SETTINGS-IPC-CHANNEL, contract rev 1.3 §5.3)."""
 
 
+_SETTINGS_OS_PATH = re.compile(
+    r"(?:[A-Z]:[\\/]|\\\\[^\\/\s]+[\\/]|(?<![/:])//[^/\s]+/|"
+    r"(?<![\w/:])/(?!/)[^\s\"']+|~[/\\]|"
+    r"%(?:USERPROFILE|HOMEDRIVE|HOMEPATH|APPDATA|LOCALAPPDATA|HOME)%|\$HOME|"
+    r"(?:^|[\\/])Users[\\/][^\\/]+[\\/])",
+    re.IGNORECASE,
+)
+_SETTINGS_PATH_REDACTED = "[redacted]"
+
+
+def _settings_path_field(key: str) -> bool:
+    normalized = re.sub(r"[^a-z0-9]", "", key.casefold())
+    return (
+        normalized.endswith(("path", "directory", "folder", "filename"))
+        or normalized in {"dir", "file", "cwd", "root", "executable"}
+    )
+
+
+def _project_settings_value(value: Any, key: str | None = None) -> Any:
+    """Redact path fields and OS paths from IPC output without changing storage."""
+    if (
+        key is not None
+        and _settings_path_field(key)
+        and isinstance(value, (str, dict, list))
+        and value
+    ):
+        return _SETTINGS_PATH_REDACTED
+    if isinstance(value, dict):
+        return {
+            (_SETTINGS_PATH_REDACTED if _SETTINGS_OS_PATH.search(name) else name):
+            _project_settings_value(item, name)
+            for name, item in value.items()
+        }
+    if isinstance(value, list):
+        return [_project_settings_value(item) for item in value]
+    if isinstance(value, str) and _SETTINGS_OS_PATH.search(value):
+        return _SETTINGS_PATH_REDACTED
+    return value
+
+
 class RegionRequestError(ValueError):
     """A set_region_type/list_regions payload violates the request contract
     (INVALID_REQUEST; M2-REGION-RETYPE-CORE, contract rev 1.4 §5.4 -- the
@@ -1219,12 +1259,12 @@ class CoreServiceServer:
         section = payload.get("section")
         settings = dict(self._core.pipeline_defaults.read().settings)
         if section is None:
-            return {"settings": settings}
+            return {"settings": _project_settings_value(settings)}
         if not isinstance(section, str) or not section.strip():
             raise SettingsRequestError(
                 "settings.get 'section' must be a non-empty string when present"
             )
-        return {"settings": {section: settings.get(section)}}
+        return {"settings": _project_settings_value({section: settings.get(section)})}
 
     def handle_settings_update_section(self, payload: dict[str, Any]) -> dict[str, Any]:
         """Upsert one settings section (contract rev 1.3 §5.3).
@@ -1266,7 +1306,7 @@ class CoreServiceServer:
             # the service's own structural guard; same typed surface as the
             # pre-validation above (INVALID_REQUEST, never a raw ValueError)
             raise SettingsRequestError(str(error)) from error
-        return {"settings": dict(defaults.settings)}
+        return {"settings": _project_settings_value(dict(defaults.settings))}
 
     # ------------------------------------------------------------------
     # set_region_type / list_regions (M2-REGION-RETYPE-CORE)
@@ -2601,10 +2641,17 @@ class CoreServiceServer:
         protocol = req.get("protocol")
         version = req.get("version")
         command = req.get("command")
+        safe_request_id = (
+            _project_settings_value(request_id)
+            if command in ("settings.get", "settings.update_section")
+            else request_id
+        )
         raw_payload = req.get("payload")
         payload = raw_payload if isinstance(raw_payload, dict) else {}
 
         if req.get("channel") == "host-control":
+            if command in ("settings.get", "settings.update_section"):
+                req = {**req, "request_id": safe_request_id}
             return self._dispatch_host_control(req), False
         if isinstance(command, str) and command in _HOST_CONTROL_COMMANDS:
             return self._reject_host_control(
@@ -2681,7 +2728,7 @@ class CoreServiceServer:
                 {
                     "protocol": PROTOCOL_NAME,
                     "version": {"major": PROTOCOL_MAJOR, "minor": PROTOCOL_MINOR},
-                    "request_id": request_id,
+                    "request_id": safe_request_id,
                     "result": None,
                     "error": make_error_envelope(
                         code=E_PROTOCOL_VERSION_UNSUPPORTED,
@@ -2975,12 +3022,12 @@ class CoreServiceServer:
                     {
                         "protocol": PROTOCOL_NAME,
                         "version": {"major": PROTOCOL_MAJOR, "minor": PROTOCOL_MINOR},
-                        "request_id": request_id,
+                        "request_id": safe_request_id,
                         "result": None,
                         "error": make_error_envelope(
                             code=E_INVALID_REQUEST,
                             category="validation",
-                            message=str(error),
+                            message=_project_settings_value(str(error)),
                             retryable=False,
                         ),
                     },
@@ -2991,7 +3038,7 @@ class CoreServiceServer:
                     {
                         "protocol": PROTOCOL_NAME,
                         "version": {"major": PROTOCOL_MAJOR, "minor": PROTOCOL_MINOR},
-                        "request_id": request_id,
+                        "request_id": safe_request_id,
                         "result": None,
                         "error": make_error_envelope(
                             code=E_UNKNOWN,
@@ -3006,7 +3053,7 @@ class CoreServiceServer:
                 {
                     "protocol": PROTOCOL_NAME,
                     "version": {"major": PROTOCOL_MAJOR, "minor": PROTOCOL_MINOR},
-                    "request_id": request_id,
+                    "request_id": safe_request_id,
                     "result": result,
                     "error": None,
                 },

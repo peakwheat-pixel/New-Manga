@@ -48,14 +48,24 @@ def server(tmp_path: Path):
         core.conn.close()
 
 
-def _request(server: CoreServiceServer, command: str, payload: dict) -> dict:
-    line = json.dumps({
-        "protocol": "new-manga.core",
+def _request(
+    server: CoreServiceServer,
+    command: str,
+    payload: dict,
+    request_id: str = "req-settings-1",
+    protocol: str = "new-manga.core",
+    channel: str | None = None,
+) -> dict:
+    request = {
+        "protocol": protocol,
         "version": {"major": PROTOCOL_MAJOR, "minor": PROTOCOL_MINOR},
-        "request_id": "req-settings-1",
+        "request_id": request_id,
         "command": command,
         "payload": payload,
-    })
+    }
+    if channel is not None:
+        request["channel"] = channel
+    line = json.dumps(request)
     response, exit_flag = server.dispatch_request(line)
     assert not exit_flag
     return response
@@ -144,6 +154,112 @@ def test_settings_update_section_other_sections_pass_through(server) -> None:
     )
     assert response["error"] is None
     assert response["result"]["settings"]["ocr"] == {"script": "large"}
+
+
+def test_settings_commands_redact_paths_in_every_section(server) -> None:
+    windows_path = r"C:\Users\sec-fix-path-echo-1\AppData\Local\model\runner.exe"
+    unc_path = r"\\sec-fix-host\share\model\runner.exe"
+    posix_path = "/home/sec-fix-path-echo-1/.local/models/runner.bin"
+    forbidden = (windows_path, r"C:\Users\sec-fix-path-echo-1", unc_path, posix_path)
+
+    def assert_no_paths(response: dict) -> None:
+        serialized = json.dumps(response, ensure_ascii=False)
+        assert all(path not in serialized for path in forbidden)
+
+    # Mirror all twelve visible settings categories, plus the generic SFX section.
+    sections = (
+        "provider", "network", "ocr", "translation", "inpaint", "typeset",
+        "model_gpu", "task_concurrency", "cache_revision", "recycle_bin",
+        "backup_restore", "plugins", "sfx",
+    )
+    values = {
+        "path": windows_path,
+        "relative_path": "models/relative-runner.exe",
+        "file": False,
+        "custom": [unc_path, {"configured_value": posix_path}],
+        "api_secret": "synthetic-secret-must-stay-omitted",
+    }
+
+    for section in sections:
+        written = _request(
+            server,
+            "settings.update_section",
+            {"section": section, "values": values},
+        )
+        assert written["error"] is None
+        assert_no_paths(written)
+        assert written["result"]["settings"][section]["path"] == "[redacted]"
+        assert written["result"]["settings"][section]["relative_path"] == "[redacted]"
+        assert written["result"]["settings"][section]["file"] is False
+
+        read = _request(server, "settings.get", {"section": section})
+        assert read["error"] is None
+        assert_no_paths(read)
+
+    full = _request(server, "settings.get", {})
+    assert full["error"] is None
+    assert_no_paths(full)
+
+    # Projection is response-only: the configured path remains stored for Core use.
+    stored = server._core.pipeline_defaults.read().settings
+    assert all(
+        stored[section]["path"] == windows_path
+        and stored[section]["relative_path"] == "models/relative-runner.exe"
+        for section in sections
+    )
+
+    # Section names are also caller-controlled projection keys.
+    path_section = r"C:\Users\sec-fix-path-echo-1\AppData\Local\custom-section"
+    keyed = _request(
+        server,
+        "settings.update_section",
+        {"section": path_section, "values": {"enabled": True}},
+        request_id=windows_path,
+    )
+    assert keyed["error"] is None
+    assert_no_paths(keyed)
+    assert_no_paths(_request(server, "settings.get", {"section": path_section}))
+
+    rejected = _request(
+        server,
+        "settings.update_section",
+        {"section": "sfx", "values": {"policy": windows_path}},
+    )
+    assert rejected["error"]["code"] == "INVALID_REQUEST"
+    assert_no_paths(rejected)
+
+    invalid_section = _request(
+        server,
+        "settings.update_section",
+        {"section": "", "values": {"path": windows_path}},
+        request_id=windows_path,
+    )
+    assert invalid_section["error"]["code"] == "INVALID_REQUEST"
+    assert_no_paths(invalid_section)
+
+    for command, payload in (
+        ("settings.get", {}),
+        ("settings.update_section", {"section": "ocr", "values": {}}),
+    ):
+        protocol_error = _request(
+            server,
+            command,
+            payload,
+            request_id=windows_path,
+            protocol="invalid-protocol",
+        )
+        assert protocol_error["error"]["code"] == "PROTOCOL_VERSION_UNSUPPORTED"
+        assert_no_paths(protocol_error)
+
+        host_channel_error = _request(
+            server,
+            command,
+            payload,
+            request_id=windows_path,
+            channel="host-control",
+        )
+        assert host_channel_error["error"]["code"] == "INVALID_REQUEST"
+        assert_no_paths(host_channel_error)
 
 
 def test_settings_update_section_sfx_without_policy_key_passes_through(server) -> None:

@@ -1,0 +1,7 @@
+REPRO settings.update_section({section:'ocr', values:{path, api_secret}})
+WRITE_RESPONSE={"protocol": "new-manga.core", "version": {"major": 2, "minor": 3}, "request_id": "sec-fix-path-echo-1", "result": {"settings": {"ocr": {"path": "[redacted]"}}}, "error": null}
+READ_RESPONSE={"protocol": "new-manga.core", "version": {"major": 2, "minor": 3}, "request_id": "sec-fix-path-echo-1", "result": {"settings": {"ocr": {"path": "[redacted]"}}}, "error": null}
+OBSERVED path_value_returned=false synthetic_secret_returned=false file_io_attempted=false
+REPRO_RESULT=PASS
+TESTED_DELIVERY_HEAD=c52ce4695802a06fde8f4e08f2d96a8cecfd855d
+EXIT_CODE=0
