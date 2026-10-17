@@ -1,0 +1,8 @@
+shell=PowerShell 7.6.6
+python=Python 3.14.6
+python_executable=C:\Python314\python.exe
+working_directory=G:\CODEX\New Manga.workspace\worktrees\P19-AC3-1
+scan_command=python verification/P19-AC3-1/scan_surface.py
+repro_command=python verification/P19-AC3-1/repro_settings_path_roundtrip.py
+scan_scope=read-only product source; writes limited to verification/P19-AC3-1
+repro_data_root=verification/P19-AC3-1/scratch (temporary database; auto-removed)

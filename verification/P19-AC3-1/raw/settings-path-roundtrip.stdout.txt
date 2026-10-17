@@ -1,0 +1,5 @@
+WRITE_RESPONSE={"error": null, "protocol": "new-manga.core", "request_id": "p19-ac3-settings.update_section", "result": {"settings": {"ocr": {"path": "C:\\private\\synthetic-source.cbz"}}}, "version": {"major": 2, "minor": 3}}
+READ_RESPONSE={"error": null, "protocol": "new-manga.core", "request_id": "p19-ac3-settings.get", "result": {"settings": {"ocr": {"path": "C:\\private\\synthetic-source.cbz"}}}, "version": {"major": 2, "minor": 3}}
+REPRO settings.update_section({section:'ocr', values:{path,api_secret}})
+OBSERVED path_value_returned=true synthetic_secret_returned=false file_io_attempted=false
+REPRO_RESULT=PASS (the forbidden OS-path echo was reproduced; secret key was dropped)

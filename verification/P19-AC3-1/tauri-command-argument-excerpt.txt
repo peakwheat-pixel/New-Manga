@@ -1,0 +1,36 @@
+tauri=2.12.0 source=C:\Users\49745\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\tauri-2.12.0\src\ipc\command.rs lines=95-117
+95:impl<'a, R: Runtime> CommandItem<'a, R> {
+96:  fn deserialize_json(self) -> serde_json::Result<&'a serde_json::Value> {
+97:    if self.key.is_empty() {
+98:      return Err(serde_json::Error::custom(format!(
+99:        "command {} has an argument with no name with a non-optional value",
+100:        self.name
+101:      )));
+102:    }
+103:
+104:    match &self.message.payload {
+105:      InvokeBody::Raw(_body) => Err(serde_json::Error::custom(format!(
+106:        "command {} expected a value for key {} but the IPC call used a bytes payload",
+107:        self.name, self.key
+108:      ))),
+109:      InvokeBody::Json(v) => match v.get(self.key) {
+110:        Some(value) => Ok(value),
+111:        None => Err(serde_json::Error::custom(format!(
+112:          "command {} missing required key {}",
+113:          self.name, self.key
+114:        ))),
+115:      },
+116:    }
+117:  }
+
+tauri-macros=2.7.0 source=C:\Users\49745\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\tauri-macros-2.7.0\src\command\wrapper.rs lines=515-524
+515:  Ok(quote!(#root::ipc::CommandArg::from_command(
+516:    #root::ipc::CommandItem {
+517:      plugin: #plugin_name,
+518:      name: #command_name,
+519:      key: #key,
+520:      message: &#message,
+521:      acl: &#acl,
+522:    }
+523:  )))
+524:}
