@@ -1,0 +1,95 @@
+[21:36:12.237] RUN start file=C:\Users\49745\AppData\Local\Temp\p19fx\A\001.png
+[21:36:27.297] window=True
+[21:36:34.428] dialog='打开' pid=58252
+[21:36:34.486] dialog_edits=73
+[21:36:34.492]   edit[0] name='名称' id=System.ItemNameDisplay
+[21:36:34.499]   edit[1] name='修改日期' id=System.DateModified
+[21:36:34.505]   edit[2] name='类型' id=System.ItemTypeText
+[21:36:34.510]   edit[3] name='大小' id=System.Size
+[21:36:34.514]   edit[4] name='名称' id=System.ItemNameDisplay
+[21:36:34.519]   edit[5] name='修改日期' id=System.DateModified
+[21:36:34.524]   edit[6] name='类型' id=System.ItemTypeText
+[21:36:34.529]   edit[7] name='大小' id=System.Size
+[21:36:34.534]   edit[8] name='名称' id=System.ItemNameDisplay
+[21:36:34.539]   edit[9] name='修改日期' id=System.DateModified
+[21:36:34.544]   edit[10] name='类型' id=System.ItemTypeText
+[21:36:34.549]   edit[11] name='大小' id=System.Size
+[21:36:34.555]   edit[12] name='名称' id=System.ItemNameDisplay
+[21:36:34.560]   edit[13] name='修改日期' id=System.DateModified
+[21:36:34.565]   edit[14] name='类型' id=System.ItemTypeText
+[21:36:34.570]   edit[15] name='大小' id=System.Size
+[21:36:34.576]   edit[16] name='名称' id=System.ItemNameDisplay
+[21:36:34.580]   edit[17] name='修改日期' id=System.DateModified
+[21:36:34.586]   edit[18] name='类型' id=System.ItemTypeText
+[21:36:34.592]   edit[19] name='大小' id=System.Size
+[21:36:34.597]   edit[20] name='名称' id=System.ItemNameDisplay
+[21:36:34.602]   edit[21] name='修改日期' id=System.DateModified
+[21:36:34.607]   edit[22] name='类型' id=System.ItemTypeText
+[21:36:34.612]   edit[23] name='大小' id=System.Size
+[21:36:34.617]   edit[24] name='名称' id=System.ItemNameDisplay
+[21:36:34.623]   edit[25] name='修改日期' id=System.DateModified
+[21:36:34.629]   edit[26] name='类型' id=System.ItemTypeText
+[21:36:34.634]   edit[27] name='大小' id=System.Size
+[21:36:34.639]   edit[28] name='名称' id=System.ItemNameDisplay
+[21:36:34.645]   edit[29] name='修改日期' id=System.DateModified
+[21:36:34.650]   edit[30] name='类型' id=System.ItemTypeText
+[21:36:34.656]   edit[31] name='大小' id=System.Size
+[21:36:34.661]   edit[32] name='名称' id=System.ItemNameDisplay
+[21:36:34.666]   edit[33] name='修改日期' id=System.DateModified
+[21:36:34.672]   edit[34] name='类型' id=System.ItemTypeText
+[21:36:34.677]   edit[35] name='大小' id=System.Size
+[21:36:34.683]   edit[36] name='名称' id=System.ItemNameDisplay
+[21:36:34.688]   edit[37] name='修改日期' id=System.DateModified
+[21:36:34.693]   edit[38] name='类型' id=System.ItemTypeText
+[21:36:34.698]   edit[39] name='大小' id=System.Size
+[21:36:34.704]   edit[40] name='名称' id=System.ItemNameDisplay
+[21:36:34.709]   edit[41] name='修改日期' id=System.DateModified
+[21:36:34.715]   edit[42] name='类型' id=System.ItemTypeText
+[21:36:34.720]   edit[43] name='大小' id=System.Size
+[21:36:34.725]   edit[44] name='名称' id=System.ItemNameDisplay
+[21:36:34.731]   edit[45] name='修改日期' id=System.DateModified
+[21:36:34.737]   edit[46] name='类型' id=System.ItemTypeText
+[21:36:34.742]   edit[47] name='大小' id=System.Size
+[21:36:34.747]   edit[48] name='名称' id=System.ItemNameDisplay
+[21:36:34.752]   edit[49] name='修改日期' id=System.DateModified
+[21:36:34.758]   edit[50] name='类型' id=System.ItemTypeText
+[21:36:34.763]   edit[51] name='大小' id=System.Size
+[21:36:34.769]   edit[52] name='名称' id=System.ItemNameDisplay
+[21:36:34.776]   edit[53] name='修改日期' id=System.DateModified
+[21:36:34.782]   edit[54] name='类型' id=System.ItemTypeText
+[21:36:34.789]   edit[55] name='大小' id=System.Size
+[21:36:34.794]   edit[56] name='名称' id=System.ItemNameDisplay
+[21:36:34.801]   edit[57] name='修改日期' id=System.DateModified
+[21:36:34.807]   edit[58] name='类型' id=System.ItemTypeText
+[21:36:34.813]   edit[59] name='大小' id=System.Size
+[21:36:34.819]   edit[60] name='名称' id=System.ItemNameDisplay
+[21:36:34.825]   edit[61] name='修改日期' id=System.DateModified
+[21:36:34.830]   edit[62] name='类型' id=System.ItemTypeText
+[21:36:34.837]   edit[63] name='大小' id=System.Size
+[21:36:34.845]   edit[64] name='名称' id=System.ItemNameDisplay
+[21:36:34.851]   edit[65] name='修改日期' id=System.DateModified
+[21:36:34.857]   edit[66] name='类型' id=System.ItemTypeText
+[21:36:34.863]   edit[67] name='大小' id=System.Size
+[21:36:34.868]   edit[68] name='名称' id=System.ItemNameDisplay
+[21:36:34.874]   edit[69] name='修改日期' id=System.DateModified
+[21:36:34.879]   edit[70] name='类型' id=System.ItemTypeText
+[21:36:34.885]   edit[71] name='大小' id=System.Size
+[21:36:34.890]   edit[72] name='搜索框' id=SearchEditBox
+[21:36:34.949]   SETVALUE ok on id=SearchEditBox
+[21:36:36.024]   open button not found; fallback clipboard+Ctrl+V
+[21:36:37.287]   sent ^v+ENTER
+[21:36:50.343] [1] t=5s busy=True
+[21:36:55.370] [2] t=10s busy=True
+[21:37:00.396] [3] t=15s busy=True
+[21:37:05.430] [4] t=20s busy=True
+[21:37:10.468] [5] t=25s busy=True
+[21:37:15.507] [6] t=30s busy=True
+[21:37:20.546] [7] t=35s busy=True
+[21:37:25.575] [8] t=40s busy=True
+[21:37:25.580] === final ===
+[21:37:25.609]   总页数
+[21:37:25.614]   导入页面到章节
+[21:37:25.619]   ⏳ 正在导入中...
+[21:37:25.636] page_files=0 db=311296
+[21:37:28.683] cleaned_left=1
+[21:37:28.689] RUN end
