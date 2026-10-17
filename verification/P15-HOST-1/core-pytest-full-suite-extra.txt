@@ -1,0 +1,1016 @@
+Shell=PowerShell 7.6.6
+WorkingDirectory=G:\CODEX\New Manga.workspace\worktrees\P15-HOST-1
+Branch=codex/P15-HOST-1
+Commit=26983c62a2ebeb22e4d963febcd8ea49eec70108
+Python=C:\Python314\python.exe (Python 3.14.6)
+Command=C:\Python314\python.exe -m pytest tests -q
+
+........................................................................ [  3%]
+........................................................................ [  6%]
+........................................................................ [  9%]
+........................................................................ [ 13%]
+........................................................................ [ 16%]
+........................................................................ [ 19%]
+........................................................................ [ 22%]
+........................................................................ [ 26%]
+........................................................................ [ 29%]
+........................................................................ [ 32%]
+........................................................FFF............. [ 35%]
+........................................................................ [ 39%]
+........................................................................ [ 42%]
+....................s................................................... [ 45%]
+............................................sssss....................... [ 48%]
+.....................................................F.F................ [ 52%]
+.................F..............F..................F.................... [ 55%]
+........................................................................ [ 58%]
+...................FF................................................... [ 61%]
+..................................................FF.................... [ 65%]
+........................................................................ [ 68%]
+.............F....s..................................................... [ 71%]
+........................................................................ [ 74%]
+..FF....................................F............................... [ 78%]
+........................................................................ [ 81%]
+........................................................................ [ 84%]
+........................................................................ [ 87%]
+........................................................................ [ 91%]
+........................................................................ [ 94%]
+...........F...F........................................................ [ 97%]
+.................F...................................                    [100%]
+================================== FAILURES ===================================
+_____________ test_ac2_stale_abort_fail_closed_zero_side_effects ______________
+
+core = CoreServices(conn=<infrastructure.sqlite.connection.ThreadRoutedConnection object at 0x000002146260DFD0>, repository=<... network_profile_test_probe=<infrastructure.network.profile_test.NetworkProfileTestProbe object at 0x0000021462533A20>)
+
+    def test_ac2_stale_abort_fail_closed_zero_side_effects(core) -> None:
+        """AC2(a): default ABORT refuses a stale translated render with the
+        typed error carrying the stale page ids; zero output file and zero
+        history rows (no completed record may exist for the refused export)."""
+        seed = _seed_chapter_with_translated_page(
+            core, translated_payloads=[TRANS_R1, TRANS_R2]
+        )
+        # reader snapshot holds R1; a newer render (R2) is now current
+        stale_page_id = seed.page_a.page_id
+        history_before = core.export_service.history()
+        assert history_before == []
+    
+        target = core.data_root / "exports" / "stale-abort.zip"
+        # scope narrowed to the stale page only: a pure stale case (the mixed
+        # stale+missing case is AC2's next scenario)
+        stale_only_pages = _snapshot_export_pages(core, seed.snapshot)[:1]
+        request = ExportRequest(
+            book_id=seed.book.book_id,
+            chapter_id=seed.chapter.chapter_id,
+            format=ExportFormat.ZIP,
+            output_path=target,
+            pages=stale_only_pages,
+            mode="translated",
+        )
+>       with pytest.raises(StaleExportError) as excinfo:
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE StaleExportError
+
+tests\m2_acceptance\test_reader_export_lineage_library_pagecount.py:478: Failed
+_________ test_ac2_continue_passes_stale_and_missing_distinguishable __________
+
+core = CoreServices(conn=<infrastructure.sqlite.connection.ThreadRoutedConnection object at 0x0000021462601B50>, repository=<... network_profile_test_probe=<infrastructure.network.profile_test.NetworkProfileTestProbe object at 0x0000021462435F90>)
+
+    def test_ac2_continue_passes_stale_and_missing_distinguishable(core) -> None:
+        """AC2(b)(c): with one stale and one missing page, the refusal names
+        both lists disjointly; explicit CONTINUE succeeds, ships the stale
+        render's own bytes (never silently current ones) and the missing
+        page's original, and the in-memory result carries both id lists."""
+        seed = _seed_chapter_with_translated_page(
+            core, translated_payloads=[TRANS_R1, TRANS_R2]
+        )
+        stale_page_id = seed.page_a.page_id
+        missing_page_id = seed.page_b.page_id  # never had a TRANSLATED render
+        target = core.data_root / "exports" / "stale-continue.zip"
+    
+        request = ExportRequest(
+            book_id=seed.book.book_id,
+            chapter_id=seed.chapter.chapter_id,
+            format=ExportFormat.ZIP,
+            output_path=target,
+            pages=_snapshot_export_pages(core, seed.snapshot),
+            mode="translated",
+        )
+    
+        # (c) the refusal distinguishes stale from missing
+        with pytest.raises(StaleExportError) as excinfo:
+            core.export_service.export(request)
+>       assert excinfo.value.stale_page_ids == (stale_page_id,)
+E       AssertionError: assert () == ('e568806c68f...865da7a4875',)
+E         
+E         Right contains one more item: 'e568806c68f74ee295286865da7a4875'
+E         Use -v to get more diff
+
+tests\m2_acceptance\test_reader_export_lineage_library_pagecount.py:519: AssertionError
+__________ test_ac2_history_records_which_stale_pages_were_included ___________
+
+core = CoreServices(conn=<infrastructure.sqlite.connection.ThreadRoutedConnection object at 0x00000214626020D0>, repository=<... network_profile_test_probe=<infrastructure.network.profile_test.NetworkProfileTestProbe object at 0x00000214624294A0>)
+
+    def test_ac2_history_records_which_stale_pages_were_included(core) -> None:
+        """AC1(a)/AC2(b) persisted-lineage half: the export history row must
+        make the included stale pages queryable (the in-memory result does;
+        the persisted record must too)."""
+        seed = _seed_chapter_with_translated_page(
+            core, translated_payloads=[TRANS_R1, TRANS_R2]
+        )
+        stale_page_id = seed.page_a.page_id
+        target = core.data_root / "exports" / "stale-lineage.zip"
+        result = core.export_service.export(
+            ExportRequest(
+                book_id=seed.book.book_id,
+                chapter_id=seed.chapter.chapter_id,
+                format=ExportFormat.ZIP,
+                output_path=target,
+                pages=_snapshot_export_pages(core, seed.snapshot),
+                mode="translated",
+                stale_policy=StalePolicy.CONTINUE,
+            )
+        )
+        assert result.status.value == "completed"
+>       assert result.included_stale_page_ids == (stale_page_id,)
+E       AssertionError: assert () == ('567c20ccdd8...ef72d2ab6e0',)
+E         
+E         Right contains one more item: '567c20ccdd814af6b9c1aef72d2ab6e0'
+E         Use -v to get more diff
+
+tests\m2_acceptance\test_reader_export_lineage_library_pagecount.py:580: AssertionError
+_______ test_pause_is_safe_boundary_and_continue_reuses_completed_step ________
+
+    def test_pause_is_safe_boundary_and_continue_reuses_completed_step() -> None:
+        pipeline, _, _ = service()
+        executor = DeterministicStepExecutor()
+        pipeline._executor = executor
+        run = create_and_plan(
+            pipeline,
+            "retranslate_region",
+            scope=PipelineScope(ScopeType.REGION, selected_ids=("r1",)),
+        )
+    
+        paused_once = {"value": False}
+    
+        def pause_after_translate(step_run, unit, running):
+            if unit.step_type == "translate" and not paused_once["value"]:
+                paused_once["value"] = True
+                pipeline.control_run(running.run_id, "pause")
+    
+        executor.on_execute = pause_after_translate
+        assert pipeline.execute_run(run.run_id).status is PipelineRunStatus.PAUSED
+        pipeline.control_run(run.run_id, "continue")
+>       assert pipeline.execute_run(run.run_id).status is PipelineRunStatus.COMPLETED
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\pipeline\test_pipeline.py:441: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+src\application\tasks\service.py:840: in execute_run
+    return self._execute_run_owned(run_id)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src\application\tasks\service.py:845: in _execute_run_owned
+    return self._execute_run_under_owner(run_id, resumed=False)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <application.tasks.service.PipelineService object at 0x000002146254AE60>
+run_id = 'run-36af470cb3b440e5804666ee35e20fb1', resumed = False
+
+    def _execute_run_under_owner(
+        self, run_id: str, *, resumed: bool
+    ) -> PipelineRun:
+        run = self._require_run(run_id)
+        # Legacy callers may plan a run before execution; all-skipped plans are
+        # already terminal and must remain a no-op instead of a second start.
+        if run.status is PipelineRunStatus.COMPLETED and run.tasks and all(
+            task.status is PipelineTaskStatus.SKIPPED for task in run.tasks
+        ):
+            return run
+        if run.status is PipelineRunStatus.PENDING:
+            if not run.tasks:
+                self.plan_run(run_id)
+            if run.status is not PipelineRunStatus.PENDING:
+                return run
+            run.status = PipelineRunStatus.RUNNING
+            self._persist(run)
+        elif (
+            not resumed
+            or run.status is not PipelineRunStatus.RUNNING
+            or any(
+                step.status is StepRunStatus.RUNNING for step in run.step_runs
+            )
+        ):
+>           raise PipelineError("INVALID_RUN_TRANSITION", "scheduler start requires pending or resumed running")
+E           domain.tasks.models.PipelineError: INVALID_RUN_TRANSITION: scheduler start requires pending or resumed running
+
+src\application\tasks\service.py:871: PipelineError
+___ test_recover_continue_restart_and_abandon_have_distinct_crash_semantics ___
+
+    def test_recover_continue_restart_and_abandon_have_distinct_crash_semantics() -> None:
+        pipeline, _, store = service()
+        run = create_and_plan(
+            pipeline,
+            "retranslate_region",
+            scope=PipelineScope(ScopeType.REGION, selected_ids=("r1",)),
+        )
+        run.status = PipelineRunStatus.RUNNING
+        run.tasks[0].status = PipelineTaskStatus.RUNNING
+        store.put(run.run_id, run)
+        assert pipeline.recover_running_runs() == (run.run_id,)
+        assert run.status is PipelineRunStatus.INTERRUPTED
+    
+        continued = pipeline.control_run(run.run_id, "continue")
+>       assert continued.status is PipelineRunStatus.PENDING
+E       AssertionError: assert <PipelineRunStatus.RUNNING: 'running'> is <PipelineRunStatus.PENDING: 'pending'>
+E        +  where <PipelineRunStatus.RUNNING: 'running'> = ControlResult(run_id='run-246b171ab73d4268bcb78400ebb60e54', status=<PipelineRunStatus.RUNNING: 'running'>, new_run_id=None).status
+E        +  and   <PipelineRunStatus.PENDING: 'pending'> = PipelineRunStatus.PENDING
+
+tests\pipeline\test_pipeline.py:481: AssertionError
+___ test_production_service_round_trips_and_recovers_without_fake_executor ____
+
+production_db = <infrastructure.sqlite.connection.ThreadRoutedConnection object at 0x0000021495C23750>
+
+    def test_production_service_round_trips_and_recovers_without_fake_executor(production_db):
+        catalog = SqliteTargetCatalog(production_db)
+        store = SqlitePipelineStore(production_db)
+        service = PipelineService(
+            catalog,
+            store=store,
+            snapshots=SqliteSnapshotProvider(production_db),
+            executor=ProductionStepExecutor(),
+        )
+        run = service.create_run(
+            CommandType.OCR_REGION,
+            PipelineScope(ScopeType.REGION, selected_ids=("region-1",)),
+        )
+        service.plan_run(run.run_id)
+        persisted = store.get(run.run_id)
+        assert persisted is not None
+        assert persisted.targets[0].page_id == "page-1"
+    
+        persisted.status = PipelineRunStatus.RUNNING
+        store.put(run.run_id, persisted)
+        assert service.recover_running_runs() == (run.run_id,)
+        assert store.get(run.run_id).status is PipelineRunStatus.INTERRUPTED
+    
+        result = service.control_run(run.run_id, "continue")
+>       assert result.status is PipelineRunStatus.PENDING
+E       AssertionError: assert <PipelineRunStatus.RUNNING: 'running'> is <PipelineRunStatus.PENDING: 'pending'>
+E        +  where <PipelineRunStatus.RUNNING: 'running'> = ControlResult(run_id='run-97ecb0f345684053b1c044ac4eeaa3ae', status=<PipelineRunStatus.RUNNING: 'running'>, new_run_id=None).status
+E        +  and   <PipelineRunStatus.PENDING: 'pending'> = PipelineRunStatus.PENDING
+
+tests\pipeline\test_pipeline_production_seam.py:154: AssertionError
+________ test_n7_detect_committed_then_interrupted_then_plan_continue _________
+
+workspace = {'conn': <infrastructure.sqlite.connection.ThreadRoutedConnection object at 0x00000214625122D0>, 'storage': <infrastru...t 0x0000021495BFF700>, 'editing': <application.editing.service.RegionEditingService object at 0x000002146243B8F0>, ...}
+
+    def test_n7_detect_committed_then_interrupted_then_plan_continue(workspace):
+        """N7: Detect commits -> interrupt -> plan_run(continue) succeeds without duplicate regions.
+    
+        Asserts:
+        1. Detect step successfully commits before interruption.
+        2. Crash / recovery marks running run as INTERRUPTED.
+        3. plan_run(mode='continue') re-plans based on the created Region, resetting terminal_unit_ids.
+        4. step_runs are accumulated rather than wiped.
+        5. Resumed execute_run completes without LOCK_CHANGED and without duplicate Regions.
+        """
+        service, detector, _ = _build_service(workspace)
+        regions = workspace["regions"]
+    
+        class SimulatedCrash(BaseException):
+            """Simulates an abrupt process crash after detect has committed but before ocr completes."""
+    
+        def _crashing_ocr_wrapper(original_ocr_handler):
+            def _wrapped(step_run, unit, run):
+                raise SimulatedCrash("Process abruptly crashed before OCR wrote")
+            return _wrapped
+    
+        original_ocr = service._executor._handlers[STEP_OCR]
+        service._executor._handlers[STEP_OCR] = _crashing_ocr_wrapper(original_ocr)
+    
+        run = service.create_run(
+            CommandType.REOCR_ALL,
+            PipelineScope(ScopeType.PAGE, selected_ids=(PAGE_ID,)),
+        )
+        service.plan_run(run.run_id)
+    
+        # execute_run runs detect (which commits) and then crashes when entering ocr
+        with pytest.raises(SimulatedCrash):
+            service.execute_run(run.run_id)
+    
+        # Detect step was committed and Regions were created in the database
+        all_regions = sorted(regions.list_regions(PAGE_ID), key=lambda r: r.reading_order)
+        assert len(all_regions) == 2
+        primary_id = all_regions[0].region_id
+    
+        # The service restarts and recovers running runs into INTERRUPTED status
+        recovered = service.recover_running_runs()
+        assert run.run_id in recovered
+    
+        persisted_run = service._store.get(run.run_id)
+        assert persisted_run is not None
+        assert persisted_run.status is PipelineRunStatus.INTERRUPTED
+        # Detect completed and crashed ocr attempt are both recorded
+        assert len(persisted_run.step_runs) == 2
+        assert persisted_run.step_runs[0].step_type == STEP_DETECT
+        assert persisted_run.step_runs[0].status is StepRunStatus.COMPLETED
+        assert persisted_run.step_runs[1].step_type == STEP_OCR
+        assert persisted_run.step_runs[1].status is StepRunStatus.INTERRUPTED
+    
+        # Restore normal OCR handler
+        service._executor._handlers[STEP_OCR] = original_ocr
+    
+        # Re-plan with mode="continue"
+        continued_run = service.plan_run(persisted_run.run_id, mode="continue")
+    
+        # Step runs must be preserved/accumulated across continue
+        assert len(continued_run.step_runs) == 2
+        # Terminal unit ids reset to the newly planned target units
+        assert len(continued_run.terminal_unit_ids) == 0
+    
+        # Resume execution
+>       final_run = service.execute_run(continued_run.run_id)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\pipeline\test_regionless_rebinding.py:770: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+src\application\tasks\service.py:840: in execute_run
+    return self._execute_run_owned(run_id)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src\application\tasks\service.py:845: in _execute_run_owned
+    return self._execute_run_under_owner(run_id, resumed=False)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <application.tasks.service.PipelineService object at 0x00000214624A60A0>
+run_id = 'run-88d2a2340eef4c54af01dbbb399e4194', resumed = False
+
+    def _execute_run_under_owner(
+        self, run_id: str, *, resumed: bool
+    ) -> PipelineRun:
+        run = self._require_run(run_id)
+        # Legacy callers may plan a run before execution; all-skipped plans are
+        # already terminal and must remain a no-op instead of a second start.
+        if run.status is PipelineRunStatus.COMPLETED and run.tasks and all(
+            task.status is PipelineTaskStatus.SKIPPED for task in run.tasks
+        ):
+            return run
+        if run.status is PipelineRunStatus.PENDING:
+            if not run.tasks:
+                self.plan_run(run_id)
+            if run.status is not PipelineRunStatus.PENDING:
+                return run
+            run.status = PipelineRunStatus.RUNNING
+            self._persist(run)
+        elif (
+            not resumed
+            or run.status is not PipelineRunStatus.RUNNING
+            or any(
+                step.status is StepRunStatus.RUNNING for step in run.step_runs
+            )
+        ):
+>           raise PipelineError("INVALID_RUN_TRANSITION", "scheduler start requires pending or resumed running")
+E           domain.tasks.models.PipelineError: INVALID_RUN_TRANSITION: scheduler start requires pending or resumed running
+
+src\application\tasks\service.py:871: PipelineError
+_____________ test_production_stack_starts_without_heavy_runtimes _____________
+
+tmp_path = WindowsPath('C:/Users/49745/AppData/Local/Temp/pytest-of-49745/pytest-1398/test_production_stack_starts_w0')
+
+    def test_production_stack_starts_without_heavy_runtimes(tmp_path: Path) -> None:
+        """AC-OPTIONAL-001/002: missing models must not stop the application."""
+        from bootstrap.app import assemble_services
+    
+        services = assemble_services(tmp_path / "library.db", tmp_path / "managed")
+        try:
+            status = services.providers.status()
+            states = {
+                entry["provider_id"]: entry["state"] for entry in status["providers"]
+            }
+>           assert states["manga-ocr"] == "missing_dependency"
+E           AssertionError: assert 'ready' == 'missing_dependency'
+E             
+E             - missing_dependency
+E             + ready
+
+tests\providers\test_bootstrap_providers.py:53: AssertionError
+________________ test_real_detection_returns_block_candidates _________________
+
+weights_dir = WindowsPath('G:/CODEX/New Manga.task-envs/M2-DOCTR-QUAL-C4/weights/ogkalu-comic-text-and-bubble-detector')
+device = 'cpu'
+
+    def _build_engine(weights_dir: Path, device: str) -> tuple[Any, Any]:
+        """Load the pinned snapshot without touching the network.
+    
+        Check order matters and is part of the contract (mirrors the docTR
+        adapter):
+    
+        1. the snapshot *directory* and each of its three files must exist ��
+           probed first with zero dependencies (no torch, no numpy);
+        2. the heavy runtime must import (torch first, then transformers) �� a
+           machine that fetched weights but never installed the stack gets the
+           typed dependency gap;
+        3. the device must resolve;
+        4. the SHA-256 of each file must match its pin �� a corrupted or
+           substituted artifact is ``PROVIDER_FAILED``, never a warning;
+        5. ``from_pretrained(local dir, local_files_only=True)`` builds the
+           processor and the model �� the hub branch is never entered.
+        """
+        if not weights_dir.is_dir():
+            raise ProviderNotConfigured(
+                f"manga detector weights are not installed: directory {weights_dir} "
+                f"is missing (place the pinned snapshot of {MANGA_HF_REPO} @ "
+                f"{MANGA_HF_REVISION} there �� {MANGA_MODEL_FILENAME} / "
+                f"{MANGA_CONFIG_FILENAME} / {MANGA_PREPROCESSOR_FILENAME}, sha256 "
+                f"pinned in src/infrastructure/providers/detection_manga.py; "
+                f"weights are never downloaded at run time; if "
+                f"NEWMANGA_DETECTOR_WEIGHTS still points at the docTR fast_base "
+                f".pt file instead, set NEWMANGA_DETECTOR_BACKEND=doctr)",
+                stage="detection",
+            )
+        pinned = (
+            (MANGA_MODEL_FILENAME, MANGA_MODEL_SHA256),
+            (MANGA_CONFIG_FILENAME, MANGA_CONFIG_SHA256),
+            (MANGA_PREPROCESSOR_FILENAME, MANGA_PREPROCESSOR_SHA256),
+        )
+        for filename, _pin in pinned:
+            candidate = weights_dir / filename
+            if not candidate.is_file():
+                raise ProviderNotConfigured(
+                    f"manga detector weights are not installed: {candidate} is "
+                    f"missing (the snapshot of {MANGA_HF_REPO} @ "
+                    f"{MANGA_HF_REVISION} needs all three files)",
+                    stage="detection",
+                )
+        torch = _lazy_import("torch", "detection")
+        resolved = _resolve_device(torch, device)
+        for filename, pin in pinned:
+            actual = sha256_file(weights_dir / filename)
+            if actual != pin:
+                raise ProviderError(
+                    f"manga detector weights file {weights_dir / filename} has "
+                    f"sha256 {actual}, expected {pin}; refusing to run "
+                    f"unverified weights",
+                    stage="detection",
+                )
+        transformers = _lazy_import("transformers", "detection")
+        try:
+            processor = transformers.RTDetrImageProcessor.from_pretrained(
+                str(weights_dir), local_files_only=True
+            )
+>           model = transformers.RTDetrV2ForObjectDetection.from_pretrained(
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                str(weights_dir), local_files_only=True
+            )
+
+src\infrastructure\providers\detection_manga.py:525: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <module 'transformers' from 'C:\\Users\\49745\\AppData\\Roaming\\Python\\Python314\\site-packages\\transformers\\__init__.py'>
+name = 'RTDetrV2ForObjectDetection'
+
+    def __getattr__(self, name: str) -> Any:
+        if name in self._objects:
+            return self._objects[name]
+        if name in self._object_missing_backend.keys():
+            missing_backends = self._object_missing_backend[name]
+    
+            class Placeholder(metaclass=DummyObject):
+                _backends = missing_backends
+    
+                def __init__(self, *args, **kwargs):
+                    requires_backends(self, missing_backends)
+    
+            Placeholder.__name__ = name
+            Placeholder.__module__ = self.__spec__
+    
+            value = Placeholder
+        elif name in self._class_to_module.keys():
+            module = self._get_module(self._class_to_module[name])
+            value = getattr(module, name)
+        elif name in self._modules:
+            value = self._get_module(name)
+        else:
+>           raise AttributeError(f"module {self.__name__} has no attribute {name}")
+E           AttributeError: module transformers has no attribute RTDetrV2ForObjectDetection
+
+C:\Users\49745\AppData\Roaming\Python\Python314\site-packages\transformers\utils\import_utils.py:1810: AttributeError
+
+The above exception was the direct cause of the following exception:
+
+    def test_real_detection_returns_block_candidates() -> None:
+        from ports.detection.ports import DetectionRequest
+    
+>       result = _provider().detect(
+            DetectionRequest(
+                page_id="page-1",
+                image_bytes=_comic_page_bytes(),
+                width=900,
+                height=1300,
+            )
+        )
+
+tests\providers\test_detection_manga_real.py:101: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+src\infrastructure\providers\detection_manga.py:346: in detect
+    model, processor = self._engine_or_raise()
+                       ^^^^^^^^^^^^^^^^^^^^^^^
+src\infrastructure\providers\detection_manga.py:417: in _engine_or_raise
+    self._engine = _build_engine(self.weights_dir, self.device)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+weights_dir = WindowsPath('G:/CODEX/New Manga.task-envs/M2-DOCTR-QUAL-C4/weights/ogkalu-comic-text-and-bubble-detector')
+device = 'cpu'
+
+    def _build_engine(weights_dir: Path, device: str) -> tuple[Any, Any]:
+        """Load the pinned snapshot without touching the network.
+    
+        Check order matters and is part of the contract (mirrors the docTR
+        adapter):
+    
+        1. the snapshot *directory* and each of its three files must exist ��
+           probed first with zero dependencies (no torch, no numpy);
+        2. the heavy runtime must import (torch first, then transformers) �� a
+           machine that fetched weights but never installed the stack gets the
+           typed dependency gap;
+        3. the device must resolve;
+        4. the SHA-256 of each file must match its pin �� a corrupted or
+           substituted artifact is ``PROVIDER_FAILED``, never a warning;
+        5. ``from_pretrained(local dir, local_files_only=True)`` builds the
+           processor and the model �� the hub branch is never entered.
+        """
+        if not weights_dir.is_dir():
+            raise ProviderNotConfigured(
+                f"manga detector weights are not installed: directory {weights_dir} "
+                f"is missing (place the pinned snapshot of {MANGA_HF_REPO} @ "
+                f"{MANGA_HF_REVISION} there �� {MANGA_MODEL_FILENAME} / "
+                f"{MANGA_CONFIG_FILENAME} / {MANGA_PREPROCESSOR_FILENAME}, sha256 "
+                f"pinned in src/infrastructure/providers/detection_manga.py; "
+                f"weights are never downloaded at run time; if "
+                f"NEWMANGA_DETECTOR_WEIGHTS still points at the docTR fast_base "
+                f".pt file instead, set NEWMANGA_DETECTOR_BACKEND=doctr)",
+                stage="detection",
+            )
+        pinned = (
+            (MANGA_MODEL_FILENAME, MANGA_MODEL_SHA256),
+            (MANGA_CONFIG_FILENAME, MANGA_CONFIG_SHA256),
+            (MANGA_PREPROCESSOR_FILENAME, MANGA_PREPROCESSOR_SHA256),
+        )
+        for filename, _pin in pinned:
+            candidate = weights_dir / filename
+            if not candidate.is_file():
+                raise ProviderNotConfigured(
+                    f"manga detector weights are not installed: {candidate} is "
+                    f"missing (the snapshot of {MANGA_HF_REPO} @ "
+                    f"{MANGA_HF_REVISION} needs all three files)",
+                    stage="detection",
+                )
+        torch = _lazy_import("torch", "detection")
+        resolved = _resolve_device(torch, device)
+        for filename, pin in pinned:
+            actual = sha256_file(weights_dir / filename)
+            if actual != pin:
+                raise ProviderError(
+                    f"manga detector weights file {weights_dir / filename} has "
+                    f"sha256 {actual}, expected {pin}; refusing to run "
+                    f"unverified weights",
+                    stage="detection",
+                )
+        transformers = _lazy_import("transformers", "detection")
+        try:
+            processor = transformers.RTDetrImageProcessor.from_pretrained(
+                str(weights_dir), local_files_only=True
+            )
+            model = transformers.RTDetrV2ForObjectDetection.from_pretrained(
+                str(weights_dir), local_files_only=True
+            )
+            model.eval()
+            if resolved == "cuda":
+                model = model.cuda()
+            return model, processor
+        except (ProviderNotConfigured, ProviderDependencyMissing, ProviderError):
+            raise
+        except Exception as error:  # noqa: BLE001 - any model-build failure is typed
+>           raise ProviderError(
+                f"manga detector engine failed to load from {weights_dir}: {error!r}",
+                stage="detection",
+            ) from error
+E           ports.providers.errors.ProviderError: PROVIDER_FAILED: manga detector engine failed to load from G:\CODEX\New Manga.task-envs\M2-DOCTR-QUAL-C4\weights\ogkalu-comic-text-and-bubble-detector: AttributeError('module transformers has no attribute RTDetrV2ForObjectDetection')
+
+src\infrastructure\providers\detection_manga.py:535: ProviderError
+_________________ test_real_blank_page_yields_zero_candidates _________________
+
+weights_dir = WindowsPath('G:/CODEX/New Manga.task-envs/M2-DOCTR-QUAL-C4/weights/ogkalu-comic-text-and-bubble-detector')
+device = 'cpu'
+
+    def _build_engine(weights_dir: Path, device: str) -> tuple[Any, Any]:
+        """Load the pinned snapshot without touching the network.
+    
+        Check order matters and is part of the contract (mirrors the docTR
+        adapter):
+    
+        1. the snapshot *directory* and each of its three files must exist ��
+           probed first with zero dependencies (no torch, no numpy);
+        2. the heavy runtime must import (torch first, then transformers) �� a
+           machine that fetched weights but never installed the stack gets the
+           typed dependency gap;
+        3. the device must resolve;
+        4. the SHA-256 of each file must match its pin �� a corrupted or
+           substituted artifact is ``PROVIDER_FAILED``, never a warning;
+        5. ``from_pretrained(local dir, local_files_only=True)`` builds the
+           processor and the model �� the hub branch is never entered.
+        """
+        if not weights_dir.is_dir():
+            raise ProviderNotConfigured(
+                f"manga detector weights are not installed: directory {weights_dir} "
+                f"is missing (place the pinned snapshot of {MANGA_HF_REPO} @ "
+                f"{MANGA_HF_REVISION} there �� {MANGA_MODEL_FILENAME} / "
+                f"{MANGA_CONFIG_FILENAME} / {MANGA_PREPROCESSOR_FILENAME}, sha256 "
+                f"pinned in src/infrastructure/providers/detection_manga.py; "
+                f"weights are never downloaded at run time; if "
+                f"NEWMANGA_DETECTOR_WEIGHTS still points at the docTR fast_base "
+                f".pt file instead, set NEWMANGA_DETECTOR_BACKEND=doctr)",
+                stage="detection",
+            )
+        pinned = (
+            (MANGA_MODEL_FILENAME, MANGA_MODEL_SHA256),
+            (MANGA_CONFIG_FILENAME, MANGA_CONFIG_SHA256),
+            (MANGA_PREPROCESSOR_FILENAME, MANGA_PREPROCESSOR_SHA256),
+        )
+        for filename, _pin in pinned:
+            candidate = weights_dir / filename
+            if not candidate.is_file():
+                raise ProviderNotConfigured(
+                    f"manga detector weights are not installed: {candidate} is "
+                    f"missing (the snapshot of {MANGA_HF_REPO} @ "
+                    f"{MANGA_HF_REVISION} needs all three files)",
+                    stage="detection",
+                )
+        torch = _lazy_import("torch", "detection")
+        resolved = _resolve_device(torch, device)
+        for filename, pin in pinned:
+            actual = sha256_file(weights_dir / filename)
+            if actual != pin:
+                raise ProviderError(
+                    f"manga detector weights file {weights_dir / filename} has "
+                    f"sha256 {actual}, expected {pin}; refusing to run "
+                    f"unverified weights",
+                    stage="detection",
+                )
+        transformers = _lazy_import("transformers", "detection")
+        try:
+            processor = transformers.RTDetrImageProcessor.from_pretrained(
+                str(weights_dir), local_files_only=True
+            )
+>           model = transformers.RTDetrV2ForObjectDetection.from_pretrained(
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                str(weights_dir), local_files_only=True
+            )
+
+src\infrastructure\providers\detection_manga.py:525: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <module 'transformers' from 'C:\\Users\\49745\\AppData\\Roaming\\Python\\Python314\\site-packages\\transformers\\__init__.py'>
+name = 'RTDetrV2ForObjectDetection'
+
+    def __getattr__(self, name: str) -> Any:
+        if name in self._objects:
+            return self._objects[name]
+        if name in self._object_missing_backend.keys():
+            missing_backends = self._object_missing_backend[name]
+    
+            class Placeholder(metaclass=DummyObject):
+                _backends = missing_backends
+    
+                def __init__(self, *args, **kwargs):
+                    requires_backends(self, missing_backends)
+    
+            Placeholder.__name__ = name
+            Placeholder.__module__ = self.__spec__
+    
+            value = Placeholder
+        elif name in self._class_to_module.keys():
+            module = self._get_module(self._class_to_module[name])
+            value = getattr(module, name)
+        elif name in self._modules:
+            value = self._get_module(name)
+        else:
+>           raise AttributeError(f"module {self.__name__} has no attribute {name}")
+E           AttributeError: module transformers has no attribute RTDetrV2ForObjectDetection
+
+C:\Users\49745\AppData\Roaming\Python\Python314\site-packages\transformers\utils\import_utils.py:1810: AttributeError
+
+The above exception was the direct cause of the following exception:
+
+    def test_real_blank_page_yields_zero_candidates() -> None:
+        """The adapter stays honest on a text-free page: zero candidates, no
+        padding boxes. The typed INVALID_INPUT lives in the handler (covered by
+        the seam tests' no-text case)."""
+        from ports.detection.ports import DetectionRequest
+    
+>       result = _provider().detect(
+            DetectionRequest(
+                page_id="page-2",
+                image_bytes=_blank_page_bytes(),
+                width=800,
+                height=1100,
+            )
+        )
+
+tests\providers\test_detection_manga_real.py:133: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+src\infrastructure\providers\detection_manga.py:346: in detect
+    model, processor = self._engine_or_raise()
+                       ^^^^^^^^^^^^^^^^^^^^^^^
+src\infrastructure\providers\detection_manga.py:417: in _engine_or_raise
+    self._engine = _build_engine(self.weights_dir, self.device)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+weights_dir = WindowsPath('G:/CODEX/New Manga.task-envs/M2-DOCTR-QUAL-C4/weights/ogkalu-comic-text-and-bubble-detector')
+device = 'cpu'
+
+    def _build_engine(weights_dir: Path, device: str) -> tuple[Any, Any]:
+        """Load the pinned snapshot without touching the network.
+    
+        Check order matters and is part of the contract (mirrors the docTR
+        adapter):
+    
+        1. the snapshot *directory* and each of its three files must exist ��
+           probed first with zero dependencies (no torch, no numpy);
+        2. the heavy runtime must import (torch first, then transformers) �� a
+           machine that fetched weights but never installed the stack gets the
+           typed dependency gap;
+        3. the device must resolve;
+        4. the SHA-256 of each file must match its pin �� a corrupted or
+           substituted artifact is ``PROVIDER_FAILED``, never a warning;
+        5. ``from_pretrained(local dir, local_files_only=True)`` builds the
+           processor and the model �� the hub branch is never entered.
+        """
+        if not weights_dir.is_dir():
+            raise ProviderNotConfigured(
+                f"manga detector weights are not installed: directory {weights_dir} "
+                f"is missing (place the pinned snapshot of {MANGA_HF_REPO} @ "
+                f"{MANGA_HF_REVISION} there �� {MANGA_MODEL_FILENAME} / "
+                f"{MANGA_CONFIG_FILENAME} / {MANGA_PREPROCESSOR_FILENAME}, sha256 "
+                f"pinned in src/infrastructure/providers/detection_manga.py; "
+                f"weights are never downloaded at run time; if "
+                f"NEWMANGA_DETECTOR_WEIGHTS still points at the docTR fast_base "
+                f".pt file instead, set NEWMANGA_DETECTOR_BACKEND=doctr)",
+                stage="detection",
+            )
+        pinned = (
+            (MANGA_MODEL_FILENAME, MANGA_MODEL_SHA256),
+            (MANGA_CONFIG_FILENAME, MANGA_CONFIG_SHA256),
+            (MANGA_PREPROCESSOR_FILENAME, MANGA_PREPROCESSOR_SHA256),
+        )
+        for filename, _pin in pinned:
+            candidate = weights_dir / filename
+            if not candidate.is_file():
+                raise ProviderNotConfigured(
+                    f"manga detector weights are not installed: {candidate} is "
+                    f"missing (the snapshot of {MANGA_HF_REPO} @ "
+                    f"{MANGA_HF_REVISION} needs all three files)",
+                    stage="detection",
+                )
+        torch = _lazy_import("torch", "detection")
+        resolved = _resolve_device(torch, device)
+        for filename, pin in pinned:
+            actual = sha256_file(weights_dir / filename)
+            if actual != pin:
+                raise ProviderError(
+                    f"manga detector weights file {weights_dir / filename} has "
+                    f"sha256 {actual}, expected {pin}; refusing to run "
+                    f"unverified weights",
+                    stage="detection",
+                )
+        transformers = _lazy_import("transformers", "detection")
+        try:
+            processor = transformers.RTDetrImageProcessor.from_pretrained(
+                str(weights_dir), local_files_only=True
+            )
+            model = transformers.RTDetrV2ForObjectDetection.from_pretrained(
+                str(weights_dir), local_files_only=True
+            )
+            model.eval()
+            if resolved == "cuda":
+                model = model.cuda()
+            return model, processor
+        except (ProviderNotConfigured, ProviderDependencyMissing, ProviderError):
+            raise
+        except Exception as error:  # noqa: BLE001 - any model-build failure is typed
+>           raise ProviderError(
+                f"manga detector engine failed to load from {weights_dir}: {error!r}",
+                stage="detection",
+            ) from error
+E           ports.providers.errors.ProviderError: PROVIDER_FAILED: manga detector engine failed to load from G:\CODEX\New Manga.task-envs\M2-DOCTR-QUAL-C4\weights\ogkalu-comic-text-and-bubble-detector: AttributeError('module transformers has no attribute RTDetrV2ForObjectDetection')
+
+src\infrastructure\providers\detection_manga.py:535: ProviderError
+_____ test_gpu_is_unavailable_without_a_runtime_but_reported_not_invented _____
+
+    def test_gpu_is_unavailable_without_a_runtime_but_reported_not_invented() -> None:
+        manager = DeviceManager()
+        info = manager.gpu_info()
+>       assert info.state == GPU_UNAVAILABLE
+E       AssertionError: assert 'available' == 'unavailable'
+E         
+E         - unavailable
+E         ? --
+E         + available
+
+tests\providers\test_devices.py:24: AssertionError
+____________ test_cpu_fallback_only_when_the_provider_declares_it _____________
+
+    def test_cpu_fallback_only_when_the_provider_declares_it() -> None:
+        manager = DeviceManager()
+        plan = manager.plan(requires_gpu=True, supports_cpu_fallback=True)
+>       assert plan.device == DEVICE_CPU
+E       AssertionError: assert 'gpu' == 'cpu'
+E         
+E         - cpu
+E         + gpu
+
+tests\providers\test_devices.py:35: AssertionError
+________ test_real_environment_reports_optional_providers_as_not_ready ________
+
+    def test_real_environment_reports_optional_providers_as_not_ready() -> None:
+        """AC-OPTIONAL-001/002: absent runtimes must not crash the assembly."""
+        registry, models = build_provider_registry(settings={})
+        statuses = {status.provider_id: status for status in registry.statuses()}
+    
+        for provider_id in ("manga-ocr", "paddleocr-korean"):
+            status = statuses[provider_id]
+>           assert status.ready is False
+E           AssertionError: assert True is False
+E            +  where True = ProviderStatus(provider_id='manga-ocr', provider_type='local-manga-ocr', capabilities=frozenset({'ocr'}), state='ready', error_code='', detail='', missing_requirements=()).ready
+
+tests\providers\test_registry_readiness.py:64: AssertionError
+________ test_translated_export_with_stale_pages_is_refused_by_default ________
+
+tmp_path = WindowsPath('C:/Users/49745/AppData/Local/Temp/pytest-of-49745/pytest-1398/test_translated_export_with_st0')
+service = <application.export.service.ExportService object at 0x0000021488363650>
+pages = [ExportPage(page_id='p0', filename='page_00_��0ҳ.png', source_provider=<function file_bytes_provider.<locals>._read at ...ent_source_revision_id=None, regions=(), sha256=None, artifact_id=None, artifact_revision_id=None, source_run_id=None)]
+
+    def test_translated_export_with_stale_pages_is_refused_by_default(tmp_path, service, pages):
+        with pytest.raises(StaleExportError) as excinfo:
+            service.export(_request(tmp_path, _stale_and_missing(pages), mode="translated"))
+        error = excinfo.value
+>       assert error.stale_page_ids == ("p0",)
+E       AssertionError: assert () == ('p0',)
+E         
+E         Right contains one more item: 'p0'
+E         Use -v to get more diff
+
+tests\reading_export\test_export.py:256: AssertionError
+____ test_translated_export_can_explicitly_continue_with_existing_versions ____
+
+tmp_path = WindowsPath('C:/Users/49745/AppData/Local/Temp/pytest-of-49745/pytest-1398/test_translated_export_can_exp0')
+service = <application.export.service.ExportService object at 0x0000021488665250>
+pages = [ExportPage(page_id='p0', filename='page_00_��0ҳ.png', source_provider=<function file_bytes_provider.<locals>._read at ...ent_source_revision_id=None, regions=(), sha256=None, artifact_id=None, artifact_revision_id=None, source_run_id=None)]
+
+    def test_translated_export_can_explicitly_continue_with_existing_versions(
+        tmp_path, service, pages
+    ):
+        result = service.export(
+            _request(
+                tmp_path,
+                _stale_and_missing(pages),
+                mode="translated",
+                stale_policy=StalePolicy.CONTINUE,
+            )
+        )
+>       assert result.included_stale_page_ids == ("p0",)
+E       AssertionError: assert () == ('p0',)
+E         
+E         Right contains one more item: 'p0'
+E         Use -v to get more diff
+
+tests\reading_export\test_export.py:274: AssertionError
+_________________ test_stale_translated_flagged_with_message __________________
+
+tmp_path = WindowsPath('C:/Users/49745/AppData/Local/Temp/pytest-of-49745/pytest-1398/test_stale_translated_flagged_0')
+
+    def test_stale_translated_flagged_with_message(tmp_path):
+        pages = make_pages(tmp_path, count=1)
+        stale = ReaderPage(
+            page_id=pages[0].page_id,
+            filename=pages[0].filename,
+            original_path=pages[0].original_path,
+            translated_path=str(tmp_path / "t.png"),
+            translated_revision_id="rev-old",
+            current_translated_revision_id="rev-new",
+            text="����",
+        )
+        service = make_reading_service(tmp_path)
+        service.open("book", "chap", [stale], mode="translated")
+        path, message = service.resolve_page(service.current_page)
+        assert path == str(tmp_path / "t.png"), "stale render still shown, flagged"
+>       assert "����������Ⱦ" in message
+E       AssertionError: assert '����������Ⱦ' in ''
+
+tests\reading_export\test_reading.py:162: AssertionError
+_____________ test_pending_run_all_waiting_and_pause_stop_enabled _____________
+
+    def test_pending_run_all_waiting_and_pause_stop_enabled():
+        service, _ = make_pipeline(pages=[("p1", 1), ("p2", 2)])
+        run = run_of(service)
+        projection = build_projection(run)
+    
+        assert projection.run_status == "pending"
+        assert projection.total_page_count == 2
+        assert projection.waiting_page_count == 2
+        assert projection.completed_page_count == 0
+        # D06 ��103 Running/Pending: pause + stop, no continue.
+>       assert projection.can_pause is True
+E       AssertionError: assert False is True
+E        +  where False = TaskProjection(run_id='run-57c8e947886e4a8fadca1be8c8f84779', run_status='pending', run_title='ȫ������', overall_progress...8e947886e4a8fadca1be8c8f84779:task:1', page_id='p2', status='pending', error_code=None, error_message=None, steps=()))).can_pause
+
+tests\workbench\test_projection.py:49: AssertionError
+_______________________ test_button_matrix_all_statuses _______________________
+
+    def test_button_matrix_all_statuses():
+        """D06 ��103 / D05 ��32 across the run lifecycle."""
+    
+        service, _ = make_pipeline(pages=[("p1", 1)])
+    
+        run = run_of(service)
+        projection = build_projection(run)
+>       assert (projection.can_pause, projection.can_stop, projection.can_continue) == (
+            True, True, False,
+        )
+E       assert (False, True, False) == (True, True, False)
+E         
+E         At index 0 diff: False != True
+E         Use -v to get more diff
+
+tests\workbench\test_projection.py:121: AssertionError
+______________ test_pause_shows_optimistic_feedback_immediately _______________
+
+qapp_ = <PySide6.QtGui.QGuiApplication(0x21453d71820) at 0x0000021454BCF080>
+
+    def test_pause_shows_optimistic_feedback_immediately(qapp_):
+        """AC-PAUSE-001: ��200 ms ��������ͣ�� �� the viewmodel flips the flag
+        synchronously on click, long before the executor boundary."""
+    
+        service, _ = make_pipeline(
+            pages=[(f"p{i}", i) for i in range(1, 9)], executor=slow_executor()
+        )
+        vm = make_vm(service)
+        vm.setContext("book-1", "chapter-1", "��", "��")
+        vm.startTranslateAll()
+    
+        started = time.monotonic()
+        vm.pauseRun()
+        elapsed_ms = (time.monotonic() - started) * 1000
+    
+        assert elapsed_ms <= 200
+        assert vm.taskProgress["pausing"] is True
+        assert vm.taskProgress["can_pause"] is False  # ��ͣ�в����ظ���ͣ
+    
+        assert wait_until(
+            qapp_, lambda: vm.taskProgress["run_status"] == "paused", timeout_ms=15000
+        )
+        assert vm.taskProgress["pausing"] is False
+        assert vm.taskProgress["can_continue"] is True
+    
+        vm.continueRun()
+>       assert wait_until(
+            qapp_, lambda: vm.taskProgress["run_status"] == "completed", timeout_ms=15000
+        )
+E       assert False
+E        +  where False = wait_until(<PySide6.QtGui.QGuiApplication(0x21453d71820) at 0x0000021454BCF080>, <function test_pause_shows_optimistic_feedback_immediately.<locals>.<lambda> at 0x000002148C486B90>, timeout_ms=15000)
+
+tests\workbench\test_workbench_viewmodel.py:210: AssertionError
+============================== warnings summary ===============================
+tests/core/test_rc4_stdio_render_preview.py::test_production_stdio_decodes_nmfr_renders_text_and_publishes_readable_preview
+  G:\CODEX\New Manga.workspace\worktrees\P15-HOST-1\tests\core\test_rc4_stdio_render_preview.py:245: DeprecationWarning: Image.Image.getdata is deprecated and will be removed in Pillow 14 (2027-10-15). Use get_flattened_data instead.
+    for px in rendered.crop((20, 20, 150, 120)).convert("RGB").getdata()
+
+tests/rendering/test_pillow_rendering.py::test_pillow_compositor_draws_centered_stroked_text_into_real_png
+  G:\CODEX\New Manga.workspace\worktrees\P15-HOST-1\tests\rendering\test_pillow_rendering.py:94: DeprecationWarning: Image.Image.getdata is deprecated and will be removed in Pillow 14 (2027-10-15). Use get_flattened_data instead.
+    for red, green, blue, _alpha in image.getdata()
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED tests/m2_acceptance/test_reader_export_lineage_library_pagecount.py::test_ac2_stale_abort_fail_closed_zero_side_effects
+FAILED tests/m2_acceptance/test_reader_export_lineage_library_pagecount.py::test_ac2_continue_passes_stale_and_missing_distinguishable
+FAILED tests/m2_acceptance/test_reader_export_lineage_library_pagecount.py::test_ac2_history_records_which_stale_pages_were_included
+FAILED tests/pipeline/test_pipeline.py::test_pause_is_safe_boundary_and_continue_reuses_completed_step
+FAILED tests/pipeline/test_pipeline.py::test_recover_continue_restart_and_abandon_have_distinct_crash_semantics
+FAILED tests/pipeline/test_pipeline_production_seam.py::test_production_service_round_trips_and_recovers_without_fake_executor
+FAILED tests/pipeline/test_regionless_rebinding.py::test_n7_detect_committed_then_interrupted_then_plan_continue
+FAILED tests/providers/test_bootstrap_providers.py::test_production_stack_starts_without_heavy_runtimes
+FAILED tests/providers/test_detection_manga_real.py::test_real_detection_returns_block_candidates
+FAILED tests/providers/test_detection_manga_real.py::test_real_blank_page_yields_zero_candidates
+FAILED tests/providers/test_devices.py::test_gpu_is_unavailable_without_a_runtime_but_reported_not_invented
+FAILED tests/providers/test_devices.py::test_cpu_fallback_only_when_the_provider_declares_it
+FAILED tests/providers/test_registry_readiness.py::test_real_environment_reports_optional_providers_as_not_ready
+FAILED tests/reading_export/test_export.py::test_translated_export_with_stale_pages_is_refused_by_default
+FAILED tests/reading_export/test_export.py::test_translated_export_can_explicitly_continue_with_existing_versions
+FAILED tests/reading_export/test_reading.py::test_stale_translated_flagged_with_message
+FAILED tests/workbench/test_projection.py::test_pending_run_all_waiting_and_pause_stop_enabled
+FAILED tests/workbench/test_projection.py::test_button_matrix_all_statuses - ...
+FAILED tests/workbench/test_workbench_viewmodel.py::test_pause_shows_optimistic_feedback_immediately
+19 failed, 2187 passed, 9 skipped, 2 warnings in 185.57s (0:03:05)
+
+EXIT_CODE=1
