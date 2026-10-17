@@ -4,7 +4,7 @@
 
 ## 当前 Task
 
-- 当前 Task：[P20](tasks/P20.md) **ready**（Windows 发布）。**进展**：AC1 打包 ✅（NSIS 553 MB）、AC7 发布 Gate ✅（bundle==resource + 四页可达）、AC2 冷启动 ✅（0.46s/0.465s）；**AC3 空闲内存 ❌**（443.3 MB vs 350 MB，主因 WebView2×6=344.4 MB）→ 用户裁决另立 [P20-MEM-OPT-1](tasks/P20-MEM-OPT-1.md) **ready** 修复；**AC6 部分通过**（主窗口抗 sidecar 崩溃 ✅ / 无错误提示 ❌ / 不自动重生 ❌）→ 用户裁决另立 [P20-ISOLATION-1](tasks/P20-ISOLATION-1.md) **ready** 修复；AC4/AC5 未执行。
+- 当前 Task：[P20](tasks/P20.md) **ready**（Windows 发布）。**进展**：AC1 打包 ✅、AC7 Gate ✅、AC2 冷启动 ✅（0.46s）；**AC3 ❌**（443.3 MB vs 350 MB，WebView2×6=344.4 MB）→ 另立 [P20-MEM-OPT-1](tasks/P20-MEM-OPT-1.md)；**AC6 部分**（抗崩溃 ✅ / 无提示 ❌ / 不重生 ❌）→ 另立 [P20-ISOLATION-1](tasks/P20-ISOLATION-1.md)；AC4/AC5 未执行。
 - READY：[ARCH-DOC-REBASELINE](tasks/ARCH-DOC-REBASELINE.md) **ready**（AC7 逐消费者裁决**已完成**；AC1–AC3 PARTIAL、AC4–AC6 实测属消费者责任，按 AC7 原文不标 done）。
 - **本轮完成（26）**：UI-DESIGN-1、ENV-BUNDLE-1-FU1、P12、HOST-TTL-BOUNDARY-1、EVENTS-FWD-1、RUN-IPC-1、EXPORT-REVEAL-1、EXPORT-IPC-1、READER-IPC-1、P17、P14、P15-C1、P15、P15-C1-FU1、P15-CORE-1A/1B/1C、P15-HOST-1/2、P19-BOOT-1、**P19-AC3-1**、**SEC-FIX-PATH-ECHO-1**、**FEAT-IMPORT-MULTI-1**（独立 Review approved，main ac263092）、**P19**（closed_with_limitations，集成 4c860d882；AC2 全流程实跑通过）。（集成 commit 见各 Task）
 - **在飞**：无（P19 与 FEAT-IMPORT-MULTI-1 均已收口）。
@@ -15,7 +15,7 @@
 
 ## Gate 与保留项
 
-P02新时点验收/AC6恢复/主线集成完成，父P02限定关闭。Technical Gate=NOT_SATISFIED；private_registry_absence=UNPROVABLE；Owner Risk Acceptance=APPROVED；Disposition=WAIVED_BY_OWNER。旧H1/P2-1/13项缺失、BC-AC5 PARTIAL、缓存与产品backlog保留。用户dirty/untracked/旧worktree保留，不push或删除资源。**P20 发布 Gate 已实测通过**（frontend+sidecar+cargo；`bundle==resource`=`6ab8ada3…`；smoke 窗口可达，四页可达断言已补）。
+P02新时点验收/AC6恢复/主线集成完成，父P02限定关闭。Technical Gate=NOT_SATISFIED；private_registry_absence=UNPROVABLE；Owner Risk Acceptance=APPROVED；Disposition=WAIVED_BY_OWNER。旧H1/P2-1/13项缺失、BC-AC5 PARTIAL、缓存与产品backlog保留。用户dirty/untracked/旧worktree保留，不push或删除资源。**P20 发布 Gate 已实测通过**（`bundle==resource`；四页可达）。
 
 ## 当前权威指针
 
