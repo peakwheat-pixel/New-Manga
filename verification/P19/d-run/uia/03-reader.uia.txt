@@ -1,0 +1,31 @@
+# tag=03-reader elements=30 at=2026-10-17T16:14:04.3123984+08:00
+0|type=Pane|name=|id=|enabled=True|offscreen=False
+1|type=Pane|name=M2RC1|interactive|deny=5/5|allow=0/0|results=5|id=|enabled=True|offscreen=False
+2|type=Pane|name=|id=|enabled=False|offscreen=False
+3|type=Pane|name=M2RC1|interactive|deny=5/5|allow=0/0|results=5 - Web 内容|id=|enabled=True|offscreen=False
+4|type=Pane|name=|id=|enabled=True|offscreen=False
+5|type=Pane|name=|id=|enabled=True|offscreen=False
+6|type=Pane|name=|id=|enabled=True|offscreen=False
+7|type=Pane|name=|id=|enabled=True|offscreen=False
+8|type=Document|name=M2RC1|interactive|deny=5/5|allow=0/0|results=5|id=RootWebArea|enabled=True|offscreen=False
+9|type=Group|name=|id=root|enabled=True|offscreen=False
+10|type=Group|name=|id=|enabled=True|offscreen=False
+11|type=Group|name=|id=|enabled=True|offscreen=False
+12|type=Text|name=NM|id=|enabled=True|offscreen=False
+13|type=Button|name=📚 书架|id=|enabled=True|offscreen=False
+14|type=Button|name=🛠️ 工作台|id=|enabled=True|offscreen=False
+15|type=Button|name=📖 阅读器|id=|enabled=True|offscreen=False
+16|type=Button|name=⚙️ 设置|id=|enabled=True|offscreen=False
+17|type=Group|name=|id=|enabled=True|offscreen=False
+18|type=Button|name=← 返回书架|id=|enabled=True|offscreen=False
+19|type=Text|name=尚未选择章节|id=|enabled=True|offscreen=False
+20|type=Button|name=继续|id=|enabled=True|offscreen=False
+21|type=Button|name=从头开始|id=|enabled=True|offscreen=False
+22|type=Button|name=原文 (Original)|id=|enabled=True|offscreen=False
+23|type=Button|name=译文 (Translated)|id=|enabled=True|offscreen=False
+24|type=Group|name=|id=|enabled=True|offscreen=False
+25|type=Text|name=📖|id=|enabled=True|offscreen=False
+26|type=Text|name=尚未选择阅读章节|id=|enabled=True|offscreen=False
+27|type=Text|name=请先在书架中选择一个作品及章节，然后点击「进入阅读」|id=|enabled=True|offscreen=False
+28|type=Button|name=前往书架|id=|enabled=True|offscreen=False
+29|type=Pane|name=|id=|enabled=True|offscreen=False

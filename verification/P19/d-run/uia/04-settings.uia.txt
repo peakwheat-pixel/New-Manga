@@ -1,0 +1,59 @@
+# tag=04-settings elements=58 at=2026-10-17T16:14:05.2917708+08:00
+0|type=Pane|name=|id=|enabled=True|offscreen=False
+1|type=Pane|name=M2RC1|interactive|deny=5/5|allow=0/0|results=5|id=|enabled=True|offscreen=False
+2|type=Pane|name=|id=|enabled=False|offscreen=False
+3|type=Pane|name=M2RC1|interactive|deny=5/5|allow=0/0|results=5 - Web 内容|id=|enabled=True|offscreen=False
+4|type=Pane|name=|id=|enabled=True|offscreen=False
+5|type=Pane|name=|id=|enabled=True|offscreen=False
+6|type=Pane|name=|id=|enabled=True|offscreen=False
+7|type=Pane|name=|id=|enabled=True|offscreen=False
+8|type=Document|name=M2RC1|interactive|deny=5/5|allow=0/0|results=5|id=RootWebArea|enabled=True|offscreen=False
+9|type=Group|name=|id=root|enabled=True|offscreen=False
+10|type=Group|name=|id=|enabled=True|offscreen=False
+11|type=Group|name=|id=|enabled=True|offscreen=False
+12|type=Text|name=NM|id=|enabled=True|offscreen=False
+13|type=Button|name=📚 书架|id=|enabled=True|offscreen=False
+14|type=Button|name=🛠️ 工作台|id=|enabled=True|offscreen=False
+15|type=Button|name=📖 阅读器|id=|enabled=True|offscreen=False
+16|type=Button|name=⚙️ 设置|id=|enabled=True|offscreen=False
+17|type=Group|name=设置分类|id=|enabled=True|offscreen=False
+18|type=Text|name=系统设置|id=|enabled=True|offscreen=False
+19|type=Button|name=Provider|id=|enabled=True|offscreen=False
+20|type=Button|name=网络/代理|id=|enabled=True|offscreen=False
+21|type=Button|name=OCR 未开放|id=|enabled=True|offscreen=False
+22|type=Group|name=|id=|enabled=True|offscreen=False
+23|type=Button|name=翻译|id=|enabled=True|offscreen=False
+24|type=Button|name=图片修复 未开放|id=|enabled=True|offscreen=False
+25|type=Group|name=|id=|enabled=True|offscreen=False
+26|type=Button|name=排版样式 未开放|id=|enabled=True|offscreen=False
+27|type=Group|name=|id=|enabled=True|offscreen=False
+28|type=Button|name=模型/GPU 未开放|id=|enabled=True|offscreen=False
+29|type=Group|name=|id=|enabled=True|offscreen=False
+30|type=Button|name=任务/并发 未开放|id=|enabled=True|offscreen=False
+31|type=Group|name=|id=|enabled=True|offscreen=False
+32|type=Button|name=缓存/Revision 未开放|id=|enabled=True|offscreen=False
+33|type=Group|name=|id=|enabled=True|offscreen=False
+34|type=Button|name=回收站 未开放|id=|enabled=True|offscreen=False
+35|type=Group|name=|id=|enabled=True|offscreen=False
+36|type=Button|name=备份/恢复 未开放|id=|enabled=True|offscreen=False
+37|type=Group|name=|id=|enabled=True|offscreen=False
+38|type=Button|name=Plugin/Hooks 未开放|id=|enabled=True|offscreen=False
+39|type=Group|name=|id=|enabled=True|offscreen=False
+40|type=Group|name=|id=|enabled=True|offscreen=False
+41|type=Text|name=Provider Profile|id=|enabled=True|offscreen=False
+42|type=Text|name=同一 Provider 类型可配置多个 Profile（以 profile_id 区分）；凭据只经专用一次性通道配置，永不回显明文。|id=|enabled=True|offscreen=False
+43|type=Text|name=暂无 Provider Profile。|id=|enabled=True|offscreen=False
+44|type=Button|name=新建 Profile|id=|enabled=True|offscreen=False
+45|type=Text|name=Capability 默认绑定|id=|enabled=True|offscreen=False
+46|type=Text|name=解析优先级：当前 Run 临时绑定 → Chapter → Book → Global。Run 临时范围只能经工作台 StartRun.overrides.provider_profiles 设置，不在本页操作。|id=|enabled=True|offscreen=False
+47|type=Text|name=scope 范围|id=|enabled=True|offscreen=False
+48|type=ComboBox|name=scope 范围|id=|enabled=True|offscreen=False
+49|type=Text|name=capability|id=|enabled=True|offscreen=False
+50|type=ComboBox|name=capability|id=|enabled=True|offscreen=False
+51|type=Text|name=当前绑定（global 查询）：|id=|enabled=True|offscreen=False
+52|type=Text|name=未绑定|id=|enabled=True|offscreen=False
+53|type=Text|name=要绑定的 profile_id|id=|enabled=True|offscreen=False
+54|type=Edit|name=要绑定的 profile_id|id=|enabled=True|offscreen=False
+55|type=Button|name=设置绑定 (set)|id=|enabled=False|offscreen=False
+56|type=Button|name=清除绑定 (clear)|id=|enabled=True|offscreen=False
+57|type=Pane|name=|id=|enabled=True|offscreen=False

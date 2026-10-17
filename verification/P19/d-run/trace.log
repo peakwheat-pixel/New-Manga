@@ -1,0 +1,33 @@
+[16:13:57.347] RUN start; repo=G:/CODEX/New Manga; isolated_root=C:\Users\49745\AppData\Local\Temp\p19-iso-7fb8c755
+[16:13:57.352] exe=G:\CODEX\New Manga\apps\desktop\src-tauri\target\debug\m2rc1-desktop.exe
+[16:13:57.378] exe sha256=f7ac58cec999c21f033387caffe7453be9b665a0505ab2ac8c26884e4a228d2a
+[16:13:57.442] sidecar sha256=41932ced544254a9f84cf30d71586d176c6483d251584b858362b7e006d101d9
+[16:13:57.463] launched pid=17820
+[16:13:58.204] window acquired: pid=17820 title='M2-RC1 resource channel runtime'
+[16:14:02.290] DUMP 01-bookshelf -> 01-bookshelf.uia.txt elements=36
+[16:14:03.245] ACTION invoke '🛠️ 工作台' -> OK (enabled=True)
+[16:14:03.340] DUMP 02-workbench -> 02-workbench.uia.txt elements=95
+[16:14:04.288] ACTION invoke '📖 阅读器' -> OK (enabled=True)
+[16:14:04.330] DUMP 03-reader -> 03-reader.uia.txt elements=30
+[16:14:05.267] ACTION invoke '⚙️ 设置' -> OK (enabled=True)
+[16:14:05.318] DUMP 04-settings -> 04-settings.uia.txt elements=58
+[16:14:05.885] DISABLED-PROBE 'OCR 未开放' -> enabled=True invoke=invoked descendants=58->49 PAGE_CHANGED
+[16:14:06.460] DISABLED-PROBE '图片修复 未开放' -> enabled=True invoke=invoked descendants=49->49 PAGE_UNCHANGED
+[16:14:07.040] DISABLED-PROBE '排版样式 未开放' -> enabled=True invoke=invoked descendants=49->56 PAGE_CHANGED
+[16:14:07.618] DISABLED-PROBE '模型/GPU 未开放' -> enabled=True invoke=invoked descendants=56->49 PAGE_CHANGED
+[16:14:08.167] DISABLED-PROBE '任务/并发 未开放' -> enabled=True invoke=invoked descendants=49->49 PAGE_UNCHANGED
+[16:14:08.770] DISABLED-PROBE '缓存/Revision 未开放' -> enabled=True invoke=invoked descendants=49->49 PAGE_UNCHANGED
+[16:14:09.383] DISABLED-PROBE '回收站 未开放' -> enabled=True invoke=invoked descendants=49->49 PAGE_UNCHANGED
+[16:14:09.946] DISABLED-PROBE '备份/恢复 未开放' -> enabled=True invoke=invoked descendants=49->49 PAGE_UNCHANGED
+[16:14:10.580] DISABLED-PROBE 'Plugin/Hooks 未开放' -> enabled=True invoke=invoked descendants=49->49 PAGE_UNCHANGED
+[16:14:10.598] ACTION invoke '新建 Profile' -> NOT_FOUND
+[16:14:10.642] DUMP 05-profile-form -> 05-profile-form.uia.txt elements=49
+[16:14:10.660] ACTION set 'provider_id' -> EDIT_NOT_FOUND
+[16:14:10.678] ACTION set 'display_name' -> EDIT_NOT_FOUND
+[16:14:10.698] ACTION toggle 'OCR' -> CHECKBOX_NOT_FOUND
+[16:14:10.728] FORM buttons: 📚 书架 | 🛠️ 工作台 | 📖 阅读器 | ⚙️ 设置 | Provider | 网络/代理 | OCR 未开放 | 翻译 | 图片修复 未开放 | 排版样式 未开放 | 模型/GPU 未开放 | 任务/并发 未开放 | 缓存/Revision 未开放 | 回收站 未开放 | 备份/恢复 未开放 | Plugin/Hooks 未开放 | 编辑该分区
+[16:14:10.735] SUBMIT RESULT: SUBMIT_BUTTON_NOT_FOUND -> INCONCLUSIVE
+[16:14:10.785] DUMP 06-no-submit -> 06-no-submit.uia.txt elements=49
+[16:14:11.710] ACTION invoke '📚 书架' -> OK (enabled=True)
+[16:14:13.777] app closed; exit=0
+[16:14:13.783] RUN end

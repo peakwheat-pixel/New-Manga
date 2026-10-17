@@ -1,0 +1,96 @@
+# tag=02-workbench elements=95 at=2026-10-17T16:14:03.2807410+08:00
+0|type=Pane|name=|id=|enabled=True|offscreen=False
+1|type=Pane|name=M2RC1|interactive|deny=5/5|allow=0/0|results=5|id=|enabled=True|offscreen=False
+2|type=Pane|name=|id=|enabled=False|offscreen=False
+3|type=Pane|name=M2RC1|interactive|deny=5/5|allow=0/0|results=5 - Web 内容|id=|enabled=True|offscreen=False
+4|type=Pane|name=|id=|enabled=True|offscreen=False
+5|type=Pane|name=|id=|enabled=True|offscreen=False
+6|type=Pane|name=|id=|enabled=True|offscreen=False
+7|type=Pane|name=|id=|enabled=True|offscreen=False
+8|type=Document|name=M2RC1|interactive|deny=5/5|allow=0/0|results=5|id=RootWebArea|enabled=True|offscreen=False
+9|type=Group|name=|id=root|enabled=True|offscreen=False
+10|type=Group|name=|id=|enabled=True|offscreen=False
+11|type=Group|name=|id=|enabled=True|offscreen=False
+12|type=Text|name=NM|id=|enabled=True|offscreen=False
+13|type=Button|name=📚 书架|id=|enabled=True|offscreen=False
+14|type=Button|name=🛠️ 工作台|id=|enabled=True|offscreen=False
+15|type=Button|name=📖 阅读器|id=|enabled=True|offscreen=False
+16|type=Button|name=⚙️ 设置|id=|enabled=True|offscreen=False
+17|type=Text|name=选择作品与章节|id=|enabled=True|offscreen=False
+18|type=Group|name=|id=|enabled=True|offscreen=False
+19|type=Button|name=拖动调整页序|id=|enabled=False|offscreen=False
+20|type=Text|name=页序写入 wire 尚未冻结，页面顺序保持 Core 投影结果。|id=|enabled=True|offscreen=False
+21|type=Group|name=|id=|enabled=True|offscreen=False
+22|type=Button|name=页面缩略图|id=|enabled=False|offscreen=False
+23|type=Text|name=当前只有原图资源通道，低清缩略图能力尚未接入。|id=|enabled=True|offscreen=False
+24|type=Text|name=按页面 ID 定位|id=|enabled=True|offscreen=False
+25|type=Edit|name=按页面 ID 定位|id=|enabled=True|offscreen=False
+26|type=List|name=|id=|enabled=True|offscreen=False
+27|type=ListItem|name=暂无作品|id=|enabled=True|offscreen=False
+28|type=Group|name=|id=|enabled=True|offscreen=False
+29|type=Group|name=|id=|enabled=True|offscreen=False
+30|type=Text|name=页面查看器|id=|enabled=True|offscreen=False
+31|type=Button|name=缩小页面|id=|enabled=True|offscreen=False
+32|type=StatusBar|name=缩放比例|id=|enabled=True|offscreen=False
+33|type=Text|name=100|id=|enabled=True|offscreen=False
+34|type=Text|name=%|id=|enabled=True|offscreen=False
+35|type=Button|name=放大页面|id=|enabled=True|offscreen=False
+36|type=Button|name=重置缩放和平移|id=|enabled=True|offscreen=False
+37|type=Group|name=页面画布；加减键缩放，0 重置，平移模式下拖动|id=|enabled=True|offscreen=False
+38|type=Text|name=选择页面以查看图像|id=|enabled=True|offscreen=False
+39|type=Image|name=|id=|enabled=True|offscreen=True
+40|type=Text|name=Inspector|id=|enabled=True|offscreen=False
+41|type=Text|name=no region selected|id=|enabled=True|offscreen=False
+42|type=Text|name=人工译文|id=|enabled=True|offscreen=False
+43|type=Edit|name=人工译文|id=|enabled=False|offscreen=False
+44|type=Group|name=|id=|enabled=True|offscreen=False
+45|type=Button|name=保存人工译文|id=|enabled=False|offscreen=False
+46|type=Text|name=SaveManualTranslation 写入接口尚未冻结，因此人工译文与 Ctrl+Enter 提交保持禁用。|id=|enabled=True|offscreen=False
+47|type=Group|name=|id=|enabled=True|offscreen=False
+48|type=Button|name=设置/解除锁定|id=|enabled=False|offscreen=False
+49|type=Text|name=Lock 写入接口尚未冻结；当前锁态只读显示。|id=|enabled=True|offscreen=False
+50|type=Group|name=|id=|enabled=True|offscreen=False
+51|type=Button|name=固定此修订|id=|enabled=False|offscreen=False
+52|type=Text|name=Revision pin 写入接口尚未冻结；历史固定状态只读显示。|id=|enabled=True|offscreen=False
+53|type=Group|name=工作台工具栏|id=|enabled=True|offscreen=False
+54|type=Text|name=选择作品与章节|id=|enabled=True|offscreen=False
+55|type=Text|name=Region：|id=|enabled=True|offscreen=False
+56|type=Text|name=0|id=|enabled=True|offscreen=False
+57|type=Text|name=批处理|id=|enabled=True|offscreen=False
+58|type=ComboBox|name=批处理|id=|enabled=True|offscreen=False
+59|type=Button|name=启动|id=|enabled=False|offscreen=False
+60|type=Button|name=导入页面|id=|enabled=False|offscreen=False
+61|type=Button|name=导出选择页|id=|enabled=False|offscreen=False
+62|type=Text|name=查看模式|id=|enabled=True|offscreen=False
+63|type=ComboBox|name=查看模式|id=|enabled=True|offscreen=False
+64|type=Group|name=|id=|enabled=True|offscreen=False
+65|type=Button|name=新建 Region|id=|enabled=False|offscreen=False
+66|type=Text|name=等待 CreateRegion 能力接入。|id=|enabled=True|offscreen=False
+67|type=Group|name=|id=|enabled=True|offscreen=False
+68|type=Button|name=删除 Region|id=|enabled=False|offscreen=False
+69|type=Text|name=等待 DeleteRegion 能力接入。|id=|enabled=True|offscreen=False
+70|type=Group|name=|id=|enabled=True|offscreen=False
+71|type=Button|name=编辑 Region 几何|id=|enabled=False|offscreen=False
+72|type=Text|name=移动、缩放、合并、拆分与顺序写入 wire 尚未冻结。|id=|enabled=True|offscreen=False
+73|type=Group|name=|id=|enabled=True|offscreen=True
+74|type=Button|name=Core 状态|id=|enabled=False|offscreen=True
+75|type=Text|name=Core 可用性查询/事件 wire 尚未冻结；此处不推断运行状态。|id=|enabled=True|offscreen=True
+76|type=Group|name=|id=|enabled=True|offscreen=True
+77|type=Button|name=逐页导入进度|id=|enabled=False|offscreen=True
+78|type=Text|name=当前只返回同步导入结果，细分进度 snapshot 尚未冻结。|id=|enabled=True|offscreen=True
+79|type=Group|name=任务进度|id=|enabled=True|offscreen=False
+80|type=Group|name=|id=|enabled=True|offscreen=False
+81|type=Text|name=任务进度|id=|enabled=True|offscreen=False
+82|type=Button|name=折叠任务进度|id=|enabled=True|offscreen=False
+83|type=Text|name=没有本次会话中已知的 Run。|id=|enabled=True|offscreen=False
+84|type=Group|name=|id=|enabled=True|offscreen=False
+85|type=Button|name=查看已有任务与中断 Run|id=|enabled=False|offscreen=False
+86|type=Text|name=暂不可用：Core 尚无 ListRuns 查询；仅能查看本次工作台明确启动的 Run。|id=|enabled=True|offscreen=False
+87|type=Button|name=暂停|id=|enabled=False|offscreen=False
+88|type=Button|name=停止|id=|enabled=False|offscreen=False
+89|type=Button|name=继续|id=|enabled=False|offscreen=False
+90|type=Button|name=重新启动|id=|enabled=False|offscreen=False
+91|type=Button|name=放弃|id=|enabled=False|offscreen=False
+92|type=Button|name=解除阻塞|id=|enabled=False|offscreen=False
+93|type=Button|name=重试失败页|id=|enabled=False|offscreen=False
+94|type=Pane|name=|id=|enabled=True|offscreen=False

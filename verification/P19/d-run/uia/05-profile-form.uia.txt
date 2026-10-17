@@ -1,0 +1,50 @@
+# tag=05-profile-form elements=49 at=2026-10-17T16:14:10.6197614+08:00
+0|type=Pane|name=|id=|enabled=True|offscreen=False
+1|type=Pane|name=M2RC1|interactive|deny=5/5|allow=0/0|results=5|id=|enabled=True|offscreen=False
+2|type=Pane|name=|id=|enabled=False|offscreen=False
+3|type=Pane|name=M2RC1|interactive|deny=5/5|allow=0/0|results=5 - Web 内容|id=|enabled=True|offscreen=False
+4|type=Pane|name=|id=|enabled=True|offscreen=False
+5|type=Pane|name=|id=|enabled=True|offscreen=False
+6|type=Pane|name=|id=|enabled=True|offscreen=False
+7|type=Pane|name=|id=|enabled=True|offscreen=False
+8|type=Document|name=M2RC1|interactive|deny=5/5|allow=0/0|results=5|id=RootWebArea|enabled=True|offscreen=False
+9|type=Group|name=|id=root|enabled=True|offscreen=False
+10|type=Group|name=|id=|enabled=True|offscreen=False
+11|type=Group|name=|id=|enabled=True|offscreen=False
+12|type=Text|name=NM|id=|enabled=True|offscreen=False
+13|type=Button|name=📚 书架|id=|enabled=True|offscreen=False
+14|type=Button|name=🛠️ 工作台|id=|enabled=True|offscreen=False
+15|type=Button|name=📖 阅读器|id=|enabled=True|offscreen=False
+16|type=Button|name=⚙️ 设置|id=|enabled=True|offscreen=False
+17|type=Group|name=设置分类|id=|enabled=True|offscreen=False
+18|type=Text|name=系统设置|id=|enabled=True|offscreen=False
+19|type=Button|name=Provider|id=|enabled=True|offscreen=False
+20|type=Button|name=网络/代理|id=|enabled=True|offscreen=False
+21|type=Button|name=OCR 未开放|id=|enabled=True|offscreen=False
+22|type=Group|name=|id=|enabled=True|offscreen=False
+23|type=Button|name=翻译|id=|enabled=True|offscreen=False
+24|type=Button|name=图片修复 未开放|id=|enabled=True|offscreen=False
+25|type=Group|name=|id=|enabled=True|offscreen=False
+26|type=Button|name=排版样式 未开放|id=|enabled=True|offscreen=False
+27|type=Group|name=|id=|enabled=True|offscreen=False
+28|type=Button|name=模型/GPU 未开放|id=|enabled=True|offscreen=False
+29|type=Group|name=|id=|enabled=True|offscreen=False
+30|type=Button|name=任务/并发 未开放|id=|enabled=True|offscreen=False
+31|type=Group|name=|id=|enabled=True|offscreen=False
+32|type=Button|name=缓存/Revision 未开放|id=|enabled=True|offscreen=False
+33|type=Group|name=|id=|enabled=True|offscreen=False
+34|type=Button|name=回收站 未开放|id=|enabled=True|offscreen=False
+35|type=Group|name=|id=|enabled=True|offscreen=False
+36|type=Button|name=备份/恢复 未开放|id=|enabled=True|offscreen=False
+37|type=Group|name=|id=|enabled=True|offscreen=False
+38|type=Button|name=Plugin/Hooks 未开放|id=|enabled=True|offscreen=False
+39|type=Group|name=|id=|enabled=True|offscreen=False
+40|type=Group|name=|id=|enabled=True|offscreen=False
+41|type=Group|name=|id=|enabled=False|offscreen=False
+42|type=Text|name=🔒|id=|enabled=True|offscreen=False
+43|type=Text|name=Plugin / Hooks|id=|enabled=True|offscreen=False
+44|type=Text|name=该分区暂不可编辑：|id=|enabled=True|offscreen=False
+45|type=Text|name=等待 section schema 冻结|id=|enabled=True|offscreen=False
+46|type=Text|name=。此处不会以占位数据或本地推断填充任何设置值。|id=|enabled=True|offscreen=False
+47|type=Button|name=编辑该分区|id=|enabled=False|offscreen=False
+48|type=Pane|name=|id=|enabled=True|offscreen=False

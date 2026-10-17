@@ -1,0 +1,37 @@
+# tag=01-bookshelf elements=36 at=2026-10-17T16:14:02.2621791+08:00
+0|type=Pane|name=|id=|enabled=True|offscreen=False
+1|type=Pane|name=M2RC1|interactive|deny=5/5|allow=0/0|results=5|id=|enabled=True|offscreen=False
+2|type=Pane|name=|id=|enabled=False|offscreen=False
+3|type=Pane|name=M2RC1|interactive|deny=5/5|allow=0/0|results=5 - Web 内容|id=|enabled=True|offscreen=False
+4|type=Pane|name=|id=|enabled=True|offscreen=False
+5|type=Pane|name=|id=|enabled=True|offscreen=False
+6|type=Pane|name=|id=|enabled=True|offscreen=False
+7|type=Pane|name=|id=|enabled=True|offscreen=False
+8|type=Document|name=M2RC1|interactive|deny=5/5|allow=0/0|results=5|id=RootWebArea|enabled=True|offscreen=False
+9|type=Group|name=|id=|enabled=True|offscreen=False
+10|type=Group|name=|id=|enabled=True|offscreen=False
+11|type=Text|name=NM|id=|enabled=True|offscreen=False
+12|type=Button|name=📚 书架|id=|enabled=True|offscreen=False
+13|type=Button|name=🛠️ 工作台|id=|enabled=True|offscreen=False
+14|type=Button|name=📖 阅读器|id=|enabled=True|offscreen=False
+15|type=Button|name=⚙️ 设置|id=|enabled=True|offscreen=False
+16|type=Group|name=|id=|enabled=True|offscreen=False
+17|type=Button|name=+ 新建作品|id=|enabled=False|offscreen=False
+18|type=Button|name=导入作品|id=|enabled=True|offscreen=False
+19|type=Edit|name=搜索作品标题 / 原名 (Ctrl+F)|id=|enabled=True|offscreen=False
+20|type=Button|name=★ 收藏|id=|enabled=True|offscreen=False
+21|type=Button|name=归档|id=|enabled=True|offscreen=False
+22|type=ComboBox|name=|id=|enabled=True|offscreen=False
+23|type=Button|name=⊞|id=|enabled=True|offscreen=False
+24|type=Button|name=☰|id=|enabled=True|offscreen=False
+25|type=Group|name=|id=|enabled=True|offscreen=False
+26|type=Text|name=📚|id=|enabled=True|offscreen=False
+27|type=Text|name=还没有作品|id=|enabled=True|offscreen=False
+28|type=Text|name=书架当前为空。你可以通过导入已有的本地漫画文件或文件夹开始使用。|id=|enabled=True|offscreen=False
+29|type=Button|name=导入作品|id=|enabled=True|offscreen=False
+30|type=Button|name=新建作品|id=|enabled=False|offscreen=False
+31|type=Group|name=|id=|enabled=True|offscreen=False
+32|type=Text|name=📖|id=|enabled=True|offscreen=False
+33|type=Text|name=未选择作品|id=|enabled=True|offscreen=False
+34|type=Text|name=从左侧列表中点击选择一部漫画以查看章节和详情|id=|enabled=True|offscreen=False
+35|type=Pane|name=|id=|enabled=True|offscreen=False
