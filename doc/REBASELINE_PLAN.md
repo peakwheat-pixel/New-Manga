@@ -29,7 +29,7 @@
 |P21 旧栈归档|P20+另授权|可选proposed|
 |P22 响应归属|P22-REBASE-1|切片已集成|
 
-本轮完成：PROJECT-ROADMAP-RELEASE、P22-REBASE-1、P04、P06、P10、P11、P09、P09-FU1、P13、P13-C1、P16、P16-C1 均已 done；P18 closed_with_limitations；详见 [STATUS](STATUS.md)。ARCH-DOC-REBASELINE `ready / integrated`，待 AC7 裁决。
+本轮完成：PROJECT-ROADMAP-RELEASE、P22-REBASE-1、P04、P06、P10、P11、P09、P09-FU1、P13、P13-C1、P16、P16-C1、FEAT-IMPORT-MULTI-1 均已 done；P18 与 P19 closed_with_limitations；详见 [STATUS](STATUS.md)。ARCH-DOC-REBASELINE `ready / integrated`，待 AC7 裁决。
 DOC=[架构映射Task](tasks/ARCH-DOC-REBASELINE.md)已集成但未关闭；UI=四页分别经ZCode设计审查；P13*仅备份停写。详细范围/Gate见[本轮裁决](../verification/PROJECT-ROADMAP-RELEASE/REPORT.md)，为本Plan持续冻结的Gate输入，Task关闭不撤销引用；状态仍只在本Plan。
 P02新时点链与P22-REBASE-1已集成；P04前置满足但不自动放行，仍待独立释放授权；旧H1/P2-1/13项缺失、BC-AC5 PARTIAL及产品backlog保留。
-READY 节点：ARCH-DOC-REBASELINE。done：**31 项**；P19 **in_review**（待 Codex R4）；FEAT-IMPORT-MULTI-1 **in_review**（独立 Review approved，待集成收口）。
+READY 节点：ARCH-DOC-REBASELINE。done：**33 项**；P19 已 `closed_with_limitations`（AC2 实跑通过）；FEAT-IMPORT-MULTI-1 已 done。
