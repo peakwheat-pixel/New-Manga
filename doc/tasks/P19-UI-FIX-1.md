@@ -3,7 +3,7 @@ id: P19-UI-FIX-1
 title: 修复两处 P1 用户可见缺陷：未开放分区可操作 + 导入作品无反应
 kind: bugfix
 governance_version: 2
-status: in_review
+status: done
 approval: coordinator_release_20261017_from_P19_D_acceptance_findings
 suggested_owner: Codex
 owner: codex
@@ -12,7 +12,7 @@ depends_on: [P15, P12]
 base_commit: fe4e8662f293105615eb82a28c7091b0800fec15
 branch: codex/P19-UI-FIX-1
 worktree: G:/CODEX/New Manga.workspace/worktrees/P19-UI-FIX-1
-integration_commit: null
+integration_commit: 8a0afacea
 delivery_head: f19275aedcf3ae02c11473ca46ad8b65a8c9a1a0
 canonical_evidence_status: complete
 resource_closeout_status: complete
@@ -86,3 +86,10 @@ evidence_dir: verification/P19-UI-FIX-1
 ## Resource Manifest
 
 见 [`resource-manifest.json`](../../verification/P19-UI-FIX-1/resource-manifest.json)。worktree、构建产物、隔离数据和源数据均保留；删除 0 项。6 个旧成功运行日志仅在证据目录内改名以防覆盖；`build_sidecar.ps1 -Force` 清理的外部 PyInstaller 缓存已在资源清单与 Handoff 风险中明确登记。
+
+## Closeout Record
+
+- 关闭：2026-10-17（dsh）。Reviewer=dsh（批准，erification/P19-UI-FIX-1/dsh-review-r1.md）。
+- 交付 done；合并 8a0afacea（--no-ff，无冲突）。
+- 复核要点：未开放分区 IsEnabled=False+Invoke=blocked 且可见性与原因保留；导入改显式可见反馈（非静默）；前端 274 采信 Owner 日志（我本人 -4058 未复现，已登记）。
+- 遗留：P19 主流程验收须记录「空书架无法导入」这一产品约束；前端套件需 R3 独立复跑。
