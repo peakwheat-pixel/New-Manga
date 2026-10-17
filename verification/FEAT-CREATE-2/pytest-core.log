@@ -1,0 +1,23 @@
+shell=PowerShell
+python=C:\Python314\python.exe
+python_version=Python 3.14.6
+command=python -m pytest tests/core -q -p no:cacheprovider
+started_utc=2026-10-17T12:10:33Z
+--- pytest output ---
+........................................................................ [ 13%]
+........................................................................ [ 26%]
+........................................................................ [ 40%]
+........................................................................ [ 53%]
+........................................................................ [ 67%]
+........................................................................ [ 80%]
+........................................................................ [ 94%]
+...............................                                          [100%]
+============================== warnings summary ===============================
+tests/core/test_rc4_stdio_render_preview.py::test_production_stdio_decodes_nmfr_renders_text_and_publishes_readable_preview
+  G:\CODEX\New Manga.workspace\worktrees\FEAT-CREATE-2\tests\core\test_rc4_stdio_render_preview.py:245: DeprecationWarning: Image.Image.getdata is deprecated and will be removed in Pillow 14 (2027-10-15). Use get_flattened_data instead.
+    for px in rendered.crop((20, 20, 150, 120)).convert("RGB").getdata()
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+535 passed, 1 warning in 40.49s
+EXIT_CODE=0
+tested_commit=5cb28a7059b547c9080ad89c0a14fa95cd95bf19
