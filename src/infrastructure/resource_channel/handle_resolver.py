@@ -738,7 +738,10 @@ def acquire_shared_lease(
     the binding read from the lock is re-verified against the actual derived
     root identity before the lease is handed out)."""
     derived_str, derived_identity = resolve_namespace_identity(Path(derived_root))
-    handle = _open_lock_handle(derived_str, exclusive=False)
+    try:
+        handle = _open_lock_handle(derived_str, exclusive=False)
+    except FileNotFoundError as error:
+        raise namespace_unavailable("namespace lock file is missing") from error
     try:
         binding = _read_lock_binding(handle)
         _verify_binding(binding, derived_str, derived_identity, expected_catalog_identity)
@@ -753,8 +756,9 @@ def try_acquire_exclusive_lease(
 ) -> Optional[PreviewNamespaceLease]:
     """Non-blocking exclusive lease attempt for the startup GC window.
 
-    ``None`` means a managed peer holds a shared lease: skip both sweeps and
-    serve normally under a shared lease -- never wait, never force.
+    ``None`` means no exclusive lease was obtained. The caller may skip both
+    sweeps, but can serve only if it subsequently obtains a verified shared
+    lease -- never wait, never force.
     """
     try:
         derived_str, derived_identity = resolve_namespace_identity(Path(derived_root))

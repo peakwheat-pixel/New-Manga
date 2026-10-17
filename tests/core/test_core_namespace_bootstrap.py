@@ -51,6 +51,14 @@ def test_catalog_exists_with_empty_derived_root_gets_controlled_first_binding(tm
     _assert_bound(catalog_db, derived_root)
 
 
+def test_missing_lock_fails_closed_with_typed_resource_error(tmp_path: Path) -> None:
+    derived_root = tmp_path / "derived"
+    derived_root.mkdir()
+
+    with pytest.raises(TypedResourceChannelError, match="namespace lock file is missing"):
+        acquire_shared_lease(derived_root)
+
+
 @pytest.mark.parametrize("damaged_lock", [b"", b"not-json", b'{"protocol_version":1}'])
 def test_damaged_lock_is_restored_from_verified_catalog_binding(
     tmp_path: Path, damaged_lock: bytes

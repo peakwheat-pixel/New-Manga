@@ -3341,10 +3341,8 @@ def main() -> int:
     # M2-DERIVED-GC-2 startup order (design §2.3): namespace protection first
     # -- the fresh-catalog controlled first-bind runs under its own exclusive
     # lock inside initialize_namespace; then the Core tries the exclusive
-    # lease for the sweeps. A peer holding a shared lease means BOTH sweeps
-    # are skipped this boot and the Core serves normally under a shared
-    # lease. serve_forever (and therefore core.ping) is only reached after
-    # the protection is held and the sweeps are done.
+    # lease for the sweeps. Startup GC is opportunistic; serving still
+    # requires a verified shared lease before serve_forever/core.ping.
     _ensure_preview_namespace(catalog_db, derived_root)
     catalog_identity = resolve_namespace_identity(catalog_db)[1]
     exclusive = try_acquire_exclusive_lease(
