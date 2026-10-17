@@ -109,7 +109,7 @@ pub(crate) fn build_import_grant(
             return Err(HostIssuerError("REF_SCOPE_DENIED"));
         }
         let directory = open_path(selected_path, true)?;
-        let identity = file_identity(&directory).ok_or(HostIssuerError("REF_SCOPE_DENIED"))?;
+        let identity = directory_identity(&directory).ok_or(HostIssuerError("REF_SCOPE_DENIED"))?;
         let mut paths = Vec::new();
         for item in
             fs::read_dir(selected_path).map_err(|_| HostIssuerError("SOURCE_READ_FAILED"))?
@@ -504,6 +504,62 @@ fn file_identity(file: &File) -> Option<(u64, u64)> {
 }
 
 #[cfg(windows)]
+fn directory_identity(file: &File) -> Option<(u64, u64)> {
+    use std::ffi::c_void;
+    use std::os::windows::io::AsRawHandle;
+
+    #[repr(C)]
+    struct FileIdInfo {
+        volume_serial_number: u64,
+        file_id: [u8; 16],
+    }
+
+    #[link(name = "kernel32")]
+    extern "system" {
+        fn GetFileInformationByHandleEx(
+            handle: *mut c_void,
+            info_class: u32,
+            info: *mut c_void,
+            size: u32,
+        ) -> i32;
+    }
+
+    let mut info = FileIdInfo {
+        volume_serial_number: 0,
+        file_id: [0; 16],
+    };
+    // FILE_ID_INFO's 64-bit volume ID matches Python Core's Windows os.stat().st_dev.
+    // SAFETY: the handle is owned by `file`; the output buffer matches FILE_ID_INFO.
+    if unsafe {
+        GetFileInformationByHandleEx(
+            file.as_raw_handle(),
+            18,
+            (&mut info as *mut FileIdInfo).cast(),
+            std::mem::size_of::<FileIdInfo>() as u32,
+        )
+    } == 0
+    {
+        return None;
+    }
+    Some((
+        info.volume_serial_number,
+        u64::from_le_bytes(info.file_id[..8].try_into().ok()?),
+    ))
+}
+
+#[cfg(unix)]
+fn directory_identity(file: &File) -> Option<(u64, u64)> {
+    use std::os::unix::fs::MetadataExt;
+    let metadata = file.metadata().ok()?;
+    Some((metadata.dev(), metadata.ino()))
+}
+
+#[cfg(not(any(windows, unix)))]
+fn directory_identity(_: &File) -> Option<(u64, u64)> {
+    None
+}
+
+#[cfg(windows)]
 fn open_path(path: &Path, directory: bool) -> Result<File, HostIssuerError> {
     use std::os::windows::fs::OpenOptionsExt;
     const FILE_FLAG_BACKUP_SEMANTICS: u32 = 0x0200_0000;
@@ -776,6 +832,33 @@ mod tests {
         let text = serde_json::to_string(&exported).unwrap();
         assert!(
             !text.contains("private") && !text.contains("target_ref") && !text.contains("secret")
+        );
+    }
+
+    #[test]
+    fn import_summary_aggregates_multiple_sources_without_exposing_details() {
+        let summary = import_summary(json!({
+            "chapter_id":"chapter-1", "cancelled":true,
+            "sources":[
+                {"source_name":"C:/private/a", "files":[
+                    {"filename":"C:/private/a.png", "outcome":"imported"},
+                    {"filename":"C:/private/b.png", "outcome":"skipped", "error":{"code":"DUPLICATE","message":"secret"}}
+                ]},
+                {"source_name":"C:/private/folder", "files":[
+                    {"filename":"C:/private/c.png", "outcome":"partial", "error":{"code":"SOURCE_READ_FAILED","message":"secret"}},
+                    {"filename":"C:/private/d.png", "outcome":"pending"}
+                ]}
+            ]
+        })).unwrap();
+        assert_eq!(summary.imported_files, 1);
+        assert_eq!(summary.skipped_files, 1);
+        assert_eq!(summary.rejected_files, 1);
+        assert_eq!(summary.pending_files, 1);
+        let text = serde_json::to_string(&summary).unwrap();
+        assert!(
+            !text.contains("private")
+                && !text.contains("secret")
+                && !text.contains("SOURCE_READ_FAILED")
         );
     }
 }

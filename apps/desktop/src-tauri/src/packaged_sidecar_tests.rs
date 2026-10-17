@@ -250,19 +250,64 @@ fn real_core_sidecar_answers_startup_ping_on_fresh_catalog() {
 #[test]
 fn host_import_grant_round_trip_reaches_frozen_import_pages() {
     let lab = PackagedLab::new();
-    let source = lab._dir.path().join("selected.png");
-    fs::write(&source, b"selected import source").unwrap();
+    let sources = [
+        (
+            "selected-a.png",
+            include_bytes!("../../../../experiments/TASK-016/samples/jp_horizontal.png").as_slice(),
+        ),
+        (
+            "selected-b.png",
+            include_bytes!("../../../../experiments/TASK-016/samples/ko_horizontal.png").as_slice(),
+        ),
+        ("selected-invalid.png", b"invalid image".as_slice()),
+    ]
+    .map(|(name, bytes)| {
+        let path = lab._dir.path().join(name);
+        fs::write(&path, bytes).unwrap();
+        path
+    });
     let channel = lab.start_library();
     channel.open_host_session().expect("OpenHostSession");
+    let book = channel.create_book("Multi-import acceptance").unwrap();
+    let chapter = channel
+        .create_chapter(&book.book_id, "Chapter 1", None)
+        .unwrap();
 
-    // The typed ImportPages error proves registration succeeded without an unrelated library fixture.
-    let error = channel
-        .import_from_path(&source, "file", "missing-chapter", None)
-        .err()
-        .expect("ImportPages should return the missing chapter error");
-    assert_eq!(error.code, "TARGET_NOT_FOUND");
-    assert_eq!(error.category, "not_found");
-    println!("PACKAGED_RESULT host_import_grant_round_trip_reaches_frozen_import_pages=PASS register=accepted import_error=TARGET_NOT_FOUND");
+    let summary = channel
+        .import_from_paths(&sources, "file", &chapter.chapter_id, None)
+        .expect("batched ImportPages should process all selected sources");
+    let pages = channel.list_chapter_pages(&chapter.chapter_id).unwrap();
+    let summary = serde_json::to_value(summary).unwrap();
+    assert_eq!(summary["imported_files"], 2);
+    assert_eq!(summary["rejected_files"], 1);
+    assert_eq!(pages["pages"].as_array().unwrap().len(), 2);
+
+    let folder = lab._dir.path().join("selected-folder");
+    fs::create_dir(&folder).unwrap();
+    for (name, bytes) in [
+        (
+            "01-jp-vertical.png",
+            include_bytes!("../../../../experiments/TASK-016/samples/jp_vertical.png").as_slice(),
+        ),
+        (
+            "02-art-text.png",
+            include_bytes!("../../../../experiments/TASK-016/samples/art_text.png").as_slice(),
+        ),
+        (
+            "03-long-tile.png",
+            include_bytes!("../../../../experiments/TASK-016/samples/long_tile.png").as_slice(),
+        ),
+    ] {
+        fs::write(folder.join(name), bytes).unwrap();
+    }
+    let folder_summary = channel
+        .import_from_path(&folder, "directory", &chapter.chapter_id, None)
+        .expect("folder grant should import each direct child in one ImportPages request");
+    let folder_summary = serde_json::to_value(folder_summary).unwrap();
+    assert_eq!(folder_summary["imported_files"], 3);
+    let pages = channel.list_chapter_pages(&chapter.chapter_id).unwrap();
+    assert_eq!(pages["pages"].as_array().unwrap().len(), 5);
+    println!("PACKAGED_RESULT host_multi_and_folder_import_reach_frozen_import_pages=PASS multi_sources=3 requests=1 imported=2 rejected=1 folder_direct_children=3 folder_requests=1 pages=5");
 }
 
 #[test]

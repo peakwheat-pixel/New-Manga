@@ -1,0 +1,43 @@
+[00:22:47.067] APP_START pid=19700 exe_sha256=fc3d32d12ccc58420d31de3af97be4785989987af31d02622cc357b80bc39bd0 data_root=isolated
+[00:22:51.732] CREATE_BUTTON_FOUND name=+ 新建作品 IsEnabled=True IsOffscreen=False
+[00:22:51.739] CREATE_BUTTON_FOUND name=新建作品 IsEnabled=True IsOffscreen=False
+[00:22:51.756] CREATE_BOOK_ENTRY=PASS matching_buttons=2 enabled=true
+[00:22:51.783] CLICK name=新建作品 IsEnabled=true IsOffscreen=false
+[00:22:51.820] EDIT_FOUND name=搜索作品标题 / 原名 (Ctrl+F) IsEnabled=True IsOffscreen=False
+[00:22:51.827] EDIT_FOUND name=作品标题 IsEnabled=True IsOffscreen=False
+[00:22:52.147] TEXT_ENTRY label=作品标题 value=NMImportMultiR2Book20261018d3f88e
+[00:22:52.235] CLICK name=创建作品 IsEnabled=true IsOffscreen=false
+[00:22:52.268] CREATE_BOOK=PASS returned_book_visible=true
+[00:22:52.315] CLICK name=+ 新建章节 IsEnabled=true IsOffscreen=false
+[00:22:52.349] EDIT_FOUND name=搜索作品标题 / 原名 (Ctrl+F) IsEnabled=True IsOffscreen=False
+[00:22:52.356] EDIT_FOUND name=章节标题 IsEnabled=True IsOffscreen=False
+[00:22:52.682] TEXT_ENTRY label=章节标题 value=NMImportMultiR2Chapter20261018d3f88e
+[00:22:52.751] CLICK name=创建章节 IsEnabled=true IsOffscreen=false
+[00:22:53.192] CREATE_CHAPTER=PASS chapter_visible=true reader_action_enabled=true
+[00:22:53.213] CLICK name=阅读 IsEnabled=true IsOffscreen=false
+[00:22:53.249] READER_ENTRY=PASS reader_return_action_visible=true
+[00:22:53.271] CLICK name=← 返回书架 IsEnabled=true IsOffscreen=false
+[00:22:53.324] CLICK name=导入作品 IsEnabled=true IsOffscreen=false
+[00:22:53.402] IMPORT_ENTRY=PASS target_selector_visible=true selector_name= unavailable_notice=false
+[00:22:53.442] CLICK name=✕ IsEnabled=true IsOffscreen=false
+[00:22:54.015] CLICK name=导入 IsEnabled=true IsOffscreen=false
+[00:22:54.114] IMPORT_PICKERS=PASS file_enabled=true folder_enabled=true
+[00:22:54.204] PAGE_COUNT before_multi_select=0
+[00:22:54.243] CLICK name=📄 选择图片 / PDF 文件（可多选） IsEnabled=true IsOffscreen=false
+[00:22:56.969] PICKER_NAVIGATION=PASS kind=file target=multi-select-fixture visible_files=2
+[00:22:57.498] FILE_PICKER_SELECT_ALL=PASS key=Ctrl+A UIA_Select=true visible_expected_items=2 selected_count=2
+[00:22:58.295] IMPORT_REPORT=VISIBLE snapshot=multi-select-result.uia.txt screenshot=multi-select-result.uia.png
+[00:22:58.367] MULTI_SELECT_IMPORT=PASS selected=2 page_delta=2
+[00:22:58.386] CLICK name=完成 IsEnabled=true IsOffscreen=false
+[00:22:58.416] CLICK name=导入作品 IsEnabled=true IsOffscreen=false
+[00:22:58.726] IMPORT_TARGET=PASS selected=true
+[00:22:59.017] CLICK name=📁 选择图片文件夹 IsEnabled=true IsOffscreen=false
+[00:23:01.603] PICKER_NAVIGATION=PASS kind=folder target=direct-folder-fixture current_folder_field_match=False
+[00:23:04.862] FOLDER_CONFIRM_TRY level=1 method=InvokePattern.Invoke dialog_closed=false
+[00:23:05.048] FOLDER_CONFIRM_TRY level=2 method=UIA_BoundsCenter_MouseClick dialog_closed=true
+[00:23:05.168] IMPORT_REPORT=VISIBLE snapshot=folder-result.uia.txt screenshot=folder-result.uia.png
+[00:23:05.244] FOLDER_IMPORT=PASS direct_children=3 page_delta=3 final_chapter_pages=5
+[00:23:05.266] CLICK name=完成 IsEnabled=true IsOffscreen=false
+[00:23:05.338] APP_EXIT exit_code=0
+[00:23:05.453] CLIPBOARD_RESTORE=PASS original_formats_restored=true
+[00:23:05.460] exit_code=0

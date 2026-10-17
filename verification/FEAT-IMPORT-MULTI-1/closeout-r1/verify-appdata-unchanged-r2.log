@@ -1,0 +1,5 @@
+SHELL=pwsh
+COMMAND=pwsh -NoProfile -File verification/FEAT-IMPORT-MULTI-1/closeout-r1/verify-appdata-unchanged-r2.ps1
+
+source_appdata_preservation=PASS catalog_unchanged=true data_unchanged=true
+EXIT=0

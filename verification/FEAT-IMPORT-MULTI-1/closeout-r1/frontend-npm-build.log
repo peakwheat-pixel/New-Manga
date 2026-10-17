@@ -1,0 +1,16 @@
+shell=PowerShell 7.6.6
+cwd=G:\CODEX\New Manga.workspace\worktrees\FEAT-IMPORT-MULTI-1\apps\desktop\frontend
+node=E:\Program Files\nodejs\node.exe
+command=npm run build
+npm notice run m2rc1-frontend@0.1.0 build
+npm notice run tsc && vite build
+vite v5.4.21 building for production...
+transforming...
+✓ 88 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                  0.28 kB │ gzip:   0.21 kB
+dist/assets/event-B0kAzHa-.js    1.49 kB │ gzip:   0.68 kB
+dist/assets/index-DtkEHeQb.js  359.19 kB │ gzip: 103.58 kB
+✓ built in 656ms
+exit_code=0

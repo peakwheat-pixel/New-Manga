@@ -1,0 +1,36 @@
+Pane||id=|class=DUIViewWndClassName
+Button|帮助(&H)|id=HelpButton|class=Button3d
+Button|视图滑块|id=SplitMenuButton|class=Button3d
+Button|组织​​|id={7DDC1264-7E4D-4F74-BBC0-D191987C8D0F}|class=AJOSplitButton
+Button|新建​​文件夹​​|id={E44616AD-6DF1-4B94-85A4-E465AE8A19DB}|class=AJOSplitButton
+Pane|控制项宿主|id=ProperTreeHost|class=ProperTreeHost
+Pane|导航窗格|id=100|class=SysTreeView32
+Pane|Shell 文件夹视图|id=listview|class=DUIListView
+List|项目视图|id=|class=UIItemsView
+Button|筛选器下拉列表|id=DropDown|class=Button
+Button|筛选器下拉列表|id=DropDown|class=Button
+Button|筛选器下拉列表|id=DropDown|class=Button
+Button|筛选器下拉列表|id=DropDown|class=Button
+Pane|文件夹:|id=1090|class=Static
+Pane|folder-direct|id=1152|class=Edit
+Pane|选择文件夹|id=1|class=Button
+Pane|取消|id=2|class=Button
+Pane||id=|class=ScrollBar
+Pane||id=|class=WorkerW
+Pane||id=40965|class=ReBarWindow32
+Pane||id=|class=TravelBand
+Pane|导航按钮|id=|class=ToolbarWindow32
+Pane||id=|class=UpBand
+Pane|上区段|id=|class=ToolbarWindow32
+Pane||id=41477|class=Address Band Root
+Pane||id=|class=msctls_progress32
+Pane||id=|class=Breadcrumb Parent
+Pane|地址: <path>|id=1001|class=ToolbarWindow32
+Pane|地址区段|id=|class=ToolbarWindow32
+Pane||id=|class=SeparatorBand
+Pane||id=|class=UniversalSearchBand
+Pane||id=|class=Search Box
+Pane||id=|class=SearchEditBoxWrapperClass
+Edit|搜索框|id=SearchEditBox|class=SearchEditBox
+Button|搜索|id=SearchBoxSearchButton|class=Button
+Pane||id=|class=SeparatorBand

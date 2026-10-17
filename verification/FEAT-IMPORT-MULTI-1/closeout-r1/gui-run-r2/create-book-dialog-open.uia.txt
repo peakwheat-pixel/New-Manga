@@ -1,0 +1,16 @@
+Button|📚 书架|IsEnabled=True|IsOffscreen=False
+Button|🛠️ 工作台|IsEnabled=True|IsOffscreen=False
+Button|📖 阅读器|IsEnabled=True|IsOffscreen=False
+Button|⚙️ 设置|IsEnabled=True|IsOffscreen=False
+Button|+ 新建作品|IsEnabled=True|IsOffscreen=False
+Button|导入作品|IsEnabled=True|IsOffscreen=False
+Button|★ 收藏|IsEnabled=True|IsOffscreen=False
+Button|归档|IsEnabled=True|IsOffscreen=False
+Button|⊞|IsEnabled=True|IsOffscreen=False
+Button|☰|IsEnabled=True|IsOffscreen=False
+Text|书架当前为空。你可以通过导入已有的本地漫画文件或文件夹开始使用。|IsEnabled=True|IsOffscreen=False
+Button|导入作品|IsEnabled=True|IsOffscreen=False
+Button|新建作品|IsEnabled=True|IsOffscreen=False
+Button|关闭|IsEnabled=True|IsOffscreen=False
+Button|取消|IsEnabled=True|IsOffscreen=False
+Button|创建作品|IsEnabled=True|IsOffscreen=False

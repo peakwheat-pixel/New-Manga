@@ -1,0 +1,6 @@
+SHELL=pwsh
+COMMAND=python rebind-isolated-namespace-r2.py %TEMP%/feat-import-multi-r2
+PYTHON=G:\CODEX\New Manga.task-envs\T1.1.1-impl-py312\Scripts\python.exe
+
+isolated_namespace_rebind=PASS source_catalog_untouched=true
+EXIT=0

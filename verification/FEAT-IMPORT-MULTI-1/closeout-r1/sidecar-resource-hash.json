@@ -1,0 +1,10 @@
+{
+  "algorithm": "SHA256",
+  "bundle_path": "G:\\CODEX\\New Manga.workspace\\worktrees\\FEAT-IMPORT-MULTI-1\\apps\\desktop\\src-tauri\\target\\core-sidecar\\core-sidecar\\core_service.exe",
+  "bundle_sha256": "e8f682225b22be879c0722f1d0ef48a987e32ed103a93a389117cd0d68ff26f0",
+  "bundle_bytes": 68765140,
+  "resource_path": "G:\\CODEX\\New Manga.workspace\\worktrees\\FEAT-IMPORT-MULTI-1\\apps\\desktop\\src-tauri\\target\\debug\\resources\\core-sidecar\\core_service.exe",
+  "resource_sha256": "e8f682225b22be879c0722f1d0ef48a987e32ed103a93a389117cd0d68ff26f0",
+  "resource_bytes": 68765140,
+  "equal": true
+}

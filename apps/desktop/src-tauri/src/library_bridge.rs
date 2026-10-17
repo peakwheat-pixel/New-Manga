@@ -637,6 +637,16 @@ pub trait LibraryChannel: Send + Sync {
         let _ = (path, source_kind, chapter_id, duplicate_policy);
         Err(LibraryError::unavailable("Host issuer is unavailable"))
     }
+    fn import_from_paths(
+        &self,
+        paths: &[PathBuf],
+        source_kind: &str,
+        chapter_id: &str,
+        duplicate_policy: Option<&str>,
+    ) -> Result<crate::host_issuer::ImportSummary, LibraryError> {
+        let _ = (paths, source_kind, chapter_id, duplicate_policy);
+        Err(LibraryError::unavailable("Host issuer is unavailable"))
+    }
 
     fn start_export_to_path(
         &self,
@@ -1359,7 +1369,27 @@ impl StdioLibraryChannel {
         chapter_id: &str,
         duplicate_policy: Option<&str>,
     ) -> Result<crate::host_issuer::ImportSummary, LibraryError> {
+        let path = path.to_path_buf();
+        self.import_paths_with_session(
+            session,
+            std::slice::from_ref(&path),
+            source_kind,
+            chapter_id,
+            duplicate_policy,
+        )
+    }
+
+    fn import_paths_with_session(
+        &self,
+        session: &HostSession,
+        paths: &[PathBuf],
+        source_kind: &str,
+        chapter_id: &str,
+        duplicate_policy: Option<&str>,
+    ) -> Result<crate::host_issuer::ImportSummary, LibraryError> {
         if chapter_id.is_empty()
+            || paths.is_empty()
+            || (source_kind == "directory" && paths.len() != 1)
             || duplicate_policy.is_some_and(|p| !matches!(p, "skip" | "import_as_new"))
         {
             return Err(LibraryError::new(
@@ -1369,29 +1399,57 @@ impl StdioLibraryChannel {
                 None,
             ));
         }
-        let mut grant_id_bytes = [0; 32];
-        let grant = crate::host_issuer::build_import_grant(
-            path,
-            source_kind,
-            &session.host_session_id,
-            format!(
-                "grant_{}",
-                crate::host_issuer::random_token(&mut grant_id_bytes).map_err(host_issuer_error)?
-            ),
-            &session.signing_key,
-        )
-        .map_err(host_issuer_error)?;
-        let registration =
-            self.host_control_round_trip("RegisterImportSource", grant.payload, Some(session))?;
-        if registration.get("registered") != Some(&Value::Bool(true)) {
-            self.revoke_host_grant(session, "import", &grant.grant_id);
-            return Err(LibraryError::malformed(
-                "Core did not register import grant",
-            ));
+        let grants = paths
+            .iter()
+            .map(|path| {
+                let mut grant_id_bytes = [0; 32];
+                let grant_id = format!(
+                    "grant_{}",
+                    crate::host_issuer::random_token(&mut grant_id_bytes)
+                        .map_err(host_issuer_error)?
+                );
+                crate::host_issuer::build_import_grant(
+                    path,
+                    source_kind,
+                    &session.host_session_id,
+                    grant_id,
+                    &session.signing_key,
+                )
+                .map_err(host_issuer_error)
+            })
+            .collect::<Result<Vec<_>, _>>()?;
+        let grant_ids = grants
+            .iter()
+            .map(|grant| grant.grant_id.clone())
+            .collect::<Vec<_>>();
+        let references = grants
+            .iter()
+            .map(|grant| grant.reference.clone())
+            .collect::<Vec<_>>();
+        for grant in grants {
+            let registration =
+                self.host_control_round_trip("RegisterImportSource", grant.payload, Some(session));
+            match registration {
+                Ok(value) if value.get("registered") == Some(&Value::Bool(true)) => {}
+                Ok(_) => {
+                    for id in &grant_ids {
+                        self.revoke_host_grant(session, "import", id);
+                    }
+                    return Err(LibraryError::malformed(
+                        "Core did not register import grant",
+                    ));
+                }
+                Err(error) => {
+                    for id in &grant_ids {
+                        self.revoke_host_grant(session, "import", id);
+                    }
+                    return Err(error);
+                }
+            }
         }
         let mut payload = serde_json::json!({
             "chapter_id": chapter_id,
-            "sources": [grant.reference],
+            "sources": references,
         });
         if let Some(policy) = duplicate_policy {
             payload["duplicate_policy"] = serde_json::json!(policy);
@@ -1399,14 +1457,18 @@ impl StdioLibraryChannel {
         let result = match self.round_trip("ImportPages", payload) {
             Ok(result) => result,
             Err(error) => {
-                self.revoke_host_grant(session, "import", &grant.grant_id);
+                for id in &grant_ids {
+                    self.revoke_host_grant(session, "import", id);
+                }
                 return Err(error);
             }
         };
         match crate::host_issuer::import_summary(result) {
             Ok(summary) => Ok(summary),
             Err(error) => {
-                self.revoke_host_grant(session, "import", &grant.grant_id);
+                for id in &grant_ids {
+                    self.revoke_host_grant(session, "import", id);
+                }
                 Err(host_issuer_error(error))
             }
         }
@@ -1877,6 +1939,23 @@ impl LibraryChannel for StdioLibraryChannel {
             .as_ref()
             .ok_or_else(|| LibraryError::new("HOST_SESSION_INVALID", "conflict", false, None))?;
         self.import_with_session(session, path, source_kind, chapter_id, duplicate_policy)
+    }
+
+    fn import_from_paths(
+        &self,
+        paths: &[PathBuf],
+        source_kind: &str,
+        chapter_id: &str,
+        duplicate_policy: Option<&str>,
+    ) -> Result<crate::host_issuer::ImportSummary, LibraryError> {
+        let session = self
+            .host_session
+            .lock()
+            .map_err(|_| LibraryError::unavailable("Host session state is unavailable"))?;
+        let session = session
+            .as_ref()
+            .ok_or_else(|| LibraryError::new("HOST_SESSION_INVALID", "conflict", false, None))?;
+        self.import_paths_with_session(session, paths, source_kind, chapter_id, duplicate_policy)
     }
 
     fn start_export_to_path(

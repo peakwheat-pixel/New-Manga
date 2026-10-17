@@ -1,0 +1,61 @@
+Text|NM|value=|IsEnabled=True|IsOffscreen=False
+Button|📚 书架|value=|IsEnabled=True|IsOffscreen=False
+Button|🛠️ 工作台|value=|IsEnabled=True|IsOffscreen=False
+Button|📖 阅读器|value=|IsEnabled=True|IsOffscreen=False
+Button|⚙️ 设置|value=|IsEnabled=True|IsOffscreen=False
+Button|+ 新建作品|value=|IsEnabled=True|IsOffscreen=False
+Button|导入作品|value=|IsEnabled=True|IsOffscreen=False
+Button|★ 收藏|value=|IsEnabled=True|IsOffscreen=False
+Button|归档|value=|IsEnabled=True|IsOffscreen=False
+ComboBox||value=按更新时间|IsEnabled=True|IsOffscreen=False
+Button|⊞|value=|IsEnabled=True|IsOffscreen=False
+Button|☰|value=|IsEnabled=True|IsOffscreen=False
+Button|☆ NMImportMultiR2Book20261018d3f88e 页数 2 页|value=|IsEnabled=True|IsOffscreen=False
+Text|NMImportMultiR2Book20261018d3f88e|value=|IsEnabled=True|IsOffscreen=False
+Text|NMImportMultiR2Book20261018d3f88e|value=|IsEnabled=True|IsOffscreen=False
+Text|总页数|value=|IsEnabled=True|IsOffscreen=False
+Text|2 页|value=|IsEnabled=True|IsOffscreen=False
+Text|章节数|value=|IsEnabled=True|IsOffscreen=False
+Text|1|value=|IsEnabled=True|IsOffscreen=False
+Text| 章|value=|IsEnabled=True|IsOffscreen=False
+Text|更新时间|value=|IsEnabled=True|IsOffscreen=False
+Text|2026/10/18|value=|IsEnabled=True|IsOffscreen=False
+Text|阅读摘要|value=|IsEnabled=True|IsOffscreen=False
+Text|最近阅读|value=|IsEnabled=True|IsOffscreen=False
+Text|—|value=|IsEnabled=True|IsOffscreen=False
+Text|累计时长|value=|IsEnabled=True|IsOffscreen=False
+Text|—|value=|IsEnabled=True|IsOffscreen=False
+Button|导入页面|value=|IsEnabled=True|IsOffscreen=False
+Button|删除作品|value=|IsEnabled=False|IsOffscreen=False
+Button|标签管理 (GAP-G7)|value=|IsEnabled=False|IsOffscreen=False
+Button|翻译约束 (GAP-G8)|value=|IsEnabled=False|IsOffscreen=False
+Text|章节列表|value=|IsEnabled=True|IsOffscreen=False
+Button|+ 新建章节|value=|IsEnabled=True|IsOffscreen=False
+Text|#1|value=|IsEnabled=True|IsOffscreen=False
+Text|NMImportMultiR2Chapter20261018d3f88e|value=|IsEnabled=True|IsOffscreen=False
+Text|(|value=|IsEnabled=True|IsOffscreen=False
+Text|2 页|value=|IsEnabled=True|IsOffscreen=False
+Text|)|value=|IsEnabled=True|IsOffscreen=False
+Button|导入|value=|IsEnabled=True|IsOffscreen=False
+Button|翻译|value=|IsEnabled=True|IsOffscreen=False
+Button|阅读|value=|IsEnabled=True|IsOffscreen=False
+Text|导入页面到章节|value=|IsEnabled=True|IsOffscreen=False
+Button|✕|value=|IsEnabled=True|IsOffscreen=False
+Text|目标作品|value=|IsEnabled=True|IsOffscreen=False
+ComboBox||value=NMImportMultiR2Book20261018d3f88e|IsEnabled=False|IsOffscreen=False
+Text|目标章节|value=|IsEnabled=True|IsOffscreen=False
+ComboBox||value=NMImportMultiR2Chapter20261018d3f88e|IsEnabled=True|IsOffscreen=False
+Text|重复项策略 (Duplicate Policy)|value=|IsEnabled=True|IsOffscreen=False
+RadioButton|跳过重复 (skip - 默认)|value=|IsEnabled=True|IsOffscreen=False
+RadioButton|作为新页面导入 (import_as_new)|value=|IsEnabled=True|IsOffscreen=False
+Text|导入报告 (Import Report)|value=|IsEnabled=True|IsOffscreen=False
+Text|完成|value=|IsEnabled=True|IsOffscreen=False
+Text|已导入 (imported)|value=|IsEnabled=True|IsOffscreen=False
+Text|3|value=|IsEnabled=True|IsOffscreen=False
+Text|跳过重复 (skipped)|value=|IsEnabled=True|IsOffscreen=False
+Text|0|value=|IsEnabled=True|IsOffscreen=False
+Text|导入失败 (rejected)|value=|IsEnabled=True|IsOffscreen=False
+Text|0|value=|IsEnabled=True|IsOffscreen=False
+Text|待处理 (pending)|value=|IsEnabled=True|IsOffscreen=False
+Text|0|value=|IsEnabled=True|IsOffscreen=False
+Button|完成|value=|IsEnabled=True|IsOffscreen=False

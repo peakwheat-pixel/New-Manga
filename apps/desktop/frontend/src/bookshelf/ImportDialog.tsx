@@ -322,6 +322,7 @@ export function ImportDialog({
               data-testid="import-file-btn"
               disabled={busy || !selectedChapterId}
               onClick={handleImportFile}
+              title="系统文件对话框支持 Ctrl+A 全选当前目录的图片或 PDF"
               style={{
                 flex: 1,
                 height: 38,
@@ -335,13 +336,14 @@ export function ImportDialog({
                 opacity: busy || !selectedChapterId ? 0.5 : 1,
               }}
             >
-              📄 选择图片 / PDF 文件
+              📄 选择图片 / PDF 文件（可多选）
             </button>
             <button
               type="button"
               data-testid="import-folder-btn"
               disabled={busy || !selectedChapterId}
               onClick={handleImportFolder}
+              title="只导入所选文件夹的直接子项，不递归子目录"
               style={{
                 flex: 1,
                 height: 38,
@@ -357,6 +359,12 @@ export function ImportDialog({
             >
               📁 选择图片文件夹
             </button>
+          </div>
+        )}
+
+        {!report && (
+          <div data-testid="import-selection-hint" style={{ color: tokens.color.text.muted, fontSize: tokens.typography.size.secondary }}>
+            支持 Ctrl+A 全选；文件夹导入仅读取直接子项，不递归子目录。
           </div>
         )}
 
@@ -418,7 +426,7 @@ export function ImportDialog({
           </div>
         )}
 
-        {/* Completed ImportReport (AC3: imported / skipped_duplicate / rejected / pending) */}
+        {/* Completed aggregate report (keeps Core's per-file paths and errors private). */}
         {!busy && report && (
           <div
             data-testid="import-report-view"
@@ -509,7 +517,7 @@ export function ImportDialog({
                 }}
               >
                 <div style={{ color: tokens.color.text.secondary, fontSize: tokens.typography.size.secondary }}>
-                  已拒绝 (rejected)
+                  导入失败 (rejected)
                 </div>
                 <div
                   data-testid="report-rejected-files"
@@ -542,6 +550,22 @@ export function ImportDialog({
                 </div>
               </div>
             </div>
+
+            {report.skipped_files > 0 && (
+              <p data-testid="report-skipped-reason" style={{ margin: `${tokens.spacing.sm} 0 0`, color: tokens.color.text.secondary, fontSize: tokens.typography.size.secondary }}>
+                已按“跳过重复”策略忽略重复内容。
+              </p>
+            )}
+            {report.rejected_files > 0 && (
+              <p data-testid="report-rejected-reason" style={{ margin: `${tokens.spacing.sm} 0 0`, color: tokens.color.state.failed, fontSize: tokens.typography.size.secondary }}>
+                文件未通过导入校验，或处理时读取、保存失败；已隐藏原始错误详情。
+              </p>
+            )}
+            {report.pending_files > 0 && (
+              <p data-testid="report-pending-reason" style={{ margin: `${tokens.spacing.sm} 0 0`, color: tokens.color.text.secondary, fontSize: tokens.typography.size.secondary }}>
+                导入中断，剩余文件尚未处理。
+              </p>
+            )}
 
             <div style={{ marginTop: tokens.spacing.md, display: "flex", justifyContent: "flex-end" }}>
               <button

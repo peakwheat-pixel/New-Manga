@@ -1,0 +1,37 @@
+{
+  "format": "PNG",
+  "image_count": 5,
+  "unique_sha256": true,
+  "images": [
+    {
+      "path": "multi-select/001.png",
+      "seed": 17,
+      "bytes": 246223,
+      "sha256": "af6f570dd9f59d371d289b18475b7b73ae46763ffe51d86067d03a4342f136b6"
+    },
+    {
+      "path": "multi-select/002.png",
+      "seed": 43,
+      "bytes": 246223,
+      "sha256": "b3635ffe1821b1176b815484ac1516d1819147f76d752bad8dbffb0126bd64ab"
+    },
+    {
+      "path": "folder-direct/001.png",
+      "seed": 71,
+      "bytes": 246223,
+      "sha256": "ab7a5601b2e0247155cf10f007c3ebaf1be8c34b8b2ee8f906bf67bcdf4f471f"
+    },
+    {
+      "path": "folder-direct/002.png",
+      "seed": 113,
+      "bytes": 246223,
+      "sha256": "462a81defe312191b9c93a7845c5be12878d3199f05b76c970dbc0b74a71a04b"
+    },
+    {
+      "path": "folder-direct/003.png",
+      "seed": 157,
+      "bytes": 246223,
+      "sha256": "320fb646fefa0a974e9b726beb2a393247cc02ec526db480ffe8384ab811bc2d"
+    }
+  ]
+}
