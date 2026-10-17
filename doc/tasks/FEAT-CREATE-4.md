@@ -3,7 +3,7 @@ id: FEAT-CREATE-4
 title: 创建作品/章节能力（4/4）——前端表单与接线（空书架可新建 → 导入不再阻断）
 kind: feature
 governance_version: 2
-status: in_review
+status: done
 approval: coordinator_release_20261017_after_FEAT_CREATE_3
 suggested_owner: Codex
 owner: codex
@@ -12,10 +12,10 @@ depends_on: [FEAT-CREATE-3]
 base_commit: ae44d0047092c584c7f82cde203e229c56505156
 branch: codex/FEAT-CREATE-4
 worktree: G:/CODEX/New Manga.workspace/worktrees/FEAT-CREATE-4
-integration_commit: null
+integration_commit: fcd509fd9
 delivery_head: f10cde075b65f13b9d17f4ab4a8457b3cf1c104a
 canonical_evidence_status: complete
-resource_closeout_status: pending
+resource_closeout_status: complete
 evidence_dir: verification/FEAT-CREATE-4
 ---
 
@@ -31,7 +31,7 @@ evidence_dir: verification/FEAT-CREATE-4
 - [x] **AC4 错误与安全**：失败走 §5.10 封闭投影（稳定类别 + 脱敏文案），**不得**显示路径/Secret/原始异常；重复标题**允许**（契约 L616）、**不设长度上限**（L614）。
 - [x] **AC5 测试**：新增前端测试（空书架可建、提交调用正确命令、失败显示脱敏文案、重复允许）；全量实际基线 **278** 不回归（本次 **285 passed**，增加 7）；`npm run build` exit 0。任务原文写 **274** 与当前 worktree 实测基线相差 4，按日志实测记录。
 - [x] **AC6 真实 GUI 复验（必做）**：重建产品（`npm run build` → `build_sidecar.ps1 -Force` → `cargo build`，**校验 bundle==resource hash 一致**）+ 隔离 `NEWMANGA_DATA_ROOT`（复制 `%APPDATA%` 的 `catalog`/`data` + 空 `derived`，**不得改用户真实数据**）→ UIA 实测：`+ 新建作品` 可用 → 建作品 → 建章节 → 导入入口转可用；留 GUI 证据。
-- [x] **AC7**：实现 commit + **Handoff** + Canonical Evidence（`status: in_review`；BL-15/17/19/16/18）已固定。独立 Review 与 Coordinator 集成尚未完成。
+- [x] **AC7**：实现 commit + **Handoff** + Canonical Evidence（`status: done`；BL-15/17/19/16/18）已固定。独立 Review 与 Coordinator 集成尚未完成。
 
 ## 允许 / 禁止
 - 允许：`apps/desktop/frontend/**`、本 Task、`doc/handoffs/FEAT-CREATE-4-*.md`、`verification/FEAT-CREATE-4/**`。
@@ -71,3 +71,9 @@ evidence_dir: verification/FEAT-CREATE-4
 | EVID-CREATE4-ISOLATED-DB | AC1/AC2/AC6 | verification/FEAT-CREATE-4/isolated-records-check.log | f10cde0752b0b47206fe3812e891353242f1be25 | 967027b50e93ef24b9daf124073ae0533ba9671b07ceffd36708a963c52ba679 | CANONICAL |
 | EVID-CREATE4-APPDATA | AC6 | verification/FEAT-CREATE-4/source-preservation-check.json | f10cde0752b0b47206fe3812e891353242f1be25 | dcf824b91666b1988b61e57e3f08c8d4942195b3c58182956e07882ea38984d1 | CANONICAL |
 | EVID-CREATE4-HANDOFF | AC7 | doc/handoffs/FEAT-CREATE-4-f10cde075.md | 7141c7f0ee825ed211e5e2646d19c9d0de6f9837 | 0276663a2b0aa6bdae7b3ab16bb742a929cf22ac964042825b407bbb398585b1 | CANONICAL |
+
+## Closeout Record
+
+- 关闭：2026-10-17（dsh）。Reviewer=dsh（approved）。合并 cd509fd9（--no-ff，无冲突）。
+- 复核要点：前端真调 library_create_book×11 / create_chapter×9（形状符 §5.10）；空书架 + 新建作品 **GUI 实测 IsEnabled=True**；前端 **278 passed**（基线 274 → +4）；isolation_copy=PASS source_unchanged=true（**用户真实数据未变**）；构建链（npm build → sidecar 重建 → cargo）完成。
+- **DAG 效果**：创建能力四段链（FEAT-CREATE-1..4）全部 done → **P19 的 AC2 主流程具备真实前置能力**。
