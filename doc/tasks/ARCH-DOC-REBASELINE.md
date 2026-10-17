@@ -69,6 +69,14 @@ P08已完成。Gate 消费者：P09（AC1–3）、P18（AC4）、P20（AC5）�
 - Gate 消费者：P09（AC1–3）、P18（AC4）、P20（AC5）、P16/P17（AC6）。AC7 要求固定 head 非作者 Review 与逐消费者裁决；可按消费者拆为独立已审交付，但须另行冻结。
 - 仍未授权：产品代码、Schema、依赖、模型、OS 操作、旧 QML 实现；不改阈值、不作用户产品取舍；不 push。
 
+### 2026-10-18 AC7 逐消费者 Gate 裁决完成（Coordinator/Reviewer dsh, epoch 7）
+
+- 授权：用户 2026-10-18 裁决"授权 dsh 直接完成 DOC AC7 并激活 P20"。
+- 被审固定 head：`integration_commit 4227e8b509e3a42736229b93df4bd9eec548153d`（本轮实测 `git merge-base --is-ancestor … HEAD` exit 0）。
+- 裁决证据：[`verification/ARCH-DOC-REBASELINE/ac7-per-consumer-gate-ruling.md`](../../verification/ARCH-DOC-REBASELINE/ac7-per-consumer-gate-ruling.md)。
+- 结论：AC7 三项构成全部达成（固定 head 非作者 Review 已于 `dsh-review-r1.md` 完成；Codex 集成为 main 祖先；逐消费者裁决见证据文件）——P09（AC1–3）**接受附条件**、P18（AC4）**接受**、P20（AC5）**接受**（阈值未放宽，P20 须自证 NFR 实测）、P16/P17（AC6）**接受附条件**。
+- **本 Task 不标 `done`**：AC1–AC3 仍 PARTIAL（未决项已逐条列出）、AC4–AC6 实测部分属消费者责任，按 AC7 原文"某项未完成不标整 Task done"。保持 `ready`，其映射交付可被消费者引用。
+
 ## Canonical Evidence
 
 | evidence_id | AC/Gate | path | commit | sha256 | class |
