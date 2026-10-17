@@ -81,22 +81,36 @@ if (-not $SkipSmoke) {
     $p = Start-Process -FilePath $exe -WorkingDirectory (Split-Path $exe) -PassThru `
       -RedirectStandardOutput (Join-Path $OutDir 'smoke-out.log') -RedirectStandardError (Join-Path $OutDir 'smoke-err.log')
     T "SMOKE pid=$($p.Id) iso=$iso"
-    $ok = $false
+    $ok = $false; $win = $null
     $dl = (Get-Date).AddSeconds($SmokeWaitSeconds)
     while ((Get-Date) -lt $dl) {
       Start-Sleep -Milliseconds 700
       if ($p.HasExited) { T "SMOKE early exit=$($p.ExitCode)"; break }
-      $w = [System.Windows.Automation.AutomationElement]::RootElement
       try {
+        $root = [System.Windows.Automation.AutomationElement]::RootElement
         $cond = New-Object System.Windows.Automation.PropertyCondition([System.Windows.Automation.AutomationElement]::NameProperty, 'M2-RC1 resource channel runtime')
-        $hit = $w.FindFirst([System.Windows.Automation.TreeScope]::Children, $cond)
-        if ($hit) { $ok = $true; break }
+        $hit = $root.FindFirst([System.Windows.Automation.TreeScope]::Children, $cond)
+        if ($hit) { $ok = $true; $win = $hit; break }
       } catch {}
+    }
+    T "SMOKE window_found=$ok exit=$($p.ExitCode)"
+    A $ok 'smoke:window-present'
+    # P20 gate: the four primary pages must each be reachable from the shell.
+    if ($win) {
+      foreach ($pg in @('📚 书架','🛠️ 工作台','📖 阅读器','⚙️ 设置')) {
+        $pc = New-Object System.Windows.Automation.PropertyCondition([System.Windows.Automation.AutomationElement]::NameProperty, $pg)
+        $btn = $win.FindFirst([System.Windows.Automation.TreeScope]::Descendants, $pc)
+        if (-not $btn) { T "SMOKE_PAGE '$pg' NOT_FOUND"; A $false "smoke:page:$pg"; continue }
+        try {
+          $btn.GetCurrentPattern([System.Windows.Automation.InvokePattern]::Pattern).Invoke()
+          Start-Sleep -Milliseconds 900
+          T "SMOKE_PAGE '$pg' reached"
+          A $true "smoke:page:$pg"
+        } catch { T "SMOKE_PAGE '$pg' FAILED $($_.Exception.Message)"; A $false "smoke:page:$pg" }
+      }
     }
     if ($p -and -not $p.HasExited) { $p.CloseMainWindow() | Out-Null; Start-Sleep -Seconds 2 }
     if ($p -and -not $p.HasExited) { Stop-Process -Id $p.Id -Force }
-    T "SMOKE window_found=$ok exit=$($p.ExitCode)"
-    A $ok 'smoke:window-present'
     $meta.Add("smoke_window=$ok")
   }
 }

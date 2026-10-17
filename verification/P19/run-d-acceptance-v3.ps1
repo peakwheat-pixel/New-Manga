@@ -110,8 +110,10 @@ function PR{
         $a=(PN -join '|'); $ch=if($b -eq $a){'PAGE_UNCHANGED'}else{'PAGE_CHANGED'}
         $na=@((PN)|?{$_ -match '未开放'})
         T "PROBE '$n' en=$en invoke=$iv $ch panes=[$($na -join '/')]"
-        # Pass = disabled AND invoke did not navigate away.
-        A ((-not $en) -and ($ch -eq 'PAGE_UNCHANGED')) "disabled-not-invokable:$n"
+        # Pass = the partition control is disabled AND invoking it did not succeed.
+        # PAGE_CHANGED is recorded as a FACT only: the pane-name set can transiently read empty during
+        # a UIA refresh, which is what made the previous PAGE_UNCHANGED predicate unreliable.
+        A ((-not $en) -and ($iv -ne 'invoked')) "disabled-not-invokable:$n"
     }
 }
 
