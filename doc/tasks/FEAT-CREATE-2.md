@@ -3,15 +3,15 @@ id: FEAT-CREATE-2
 title: 创建作品/章节能力（2/4）——Core 实现 CreateBook / CreateChapter（Core 2.8）
 kind: feature
 governance_version: 2
-status: ready
+status: blocked
 approval: coordinator_release_20261017_after_FEAT_CREATE_1
 suggested_owner: Codex
-owner: null
+owner: Codex
 reviewer: null
 depends_on: [FEAT-CREATE-1]
-base_commit: null
-branch: null
-worktree: null
+base_commit: a0e8683199a846715f9aa603b294dd11597768c1
+branch: codex/FEAT-CREATE-2
+worktree: G:/CODEX/New Manga.workspace/worktrees/FEAT-CREATE-2
 integration_commit: null
 delivery_head: null
 canonical_evidence_status: pending
@@ -39,6 +39,11 @@ evidence_dir: verification/FEAT-CREATE-2
 ## 依赖、风险与阻塞
 - 前置：FEAT-CREATE-1（done）。**后继**：FEAT-CREATE-3（host）、FEAT-CREATE-4（前端）。
 - 风险：为图方便加字段/加表 → AC2 明确禁止。
+
+### 阻塞记录（2026-10-17）
+- 前状态：`ready`。按冻结契约逐字实现时，AC1/AC5 要求的“超长标题拒绝”无契约依据：§5.10.2 第 614 行明确不新增最大长度规则。不能自行增加上限或改契约，等待 Codex/用户将 Task 验收口径对齐冻结契约后再恢复。
+- AC5 的“重复/冲突”需按契约解释：§5.10.2 第 616 行允许重复标题和章节号，不能把重名当失败；可覆盖允许重名，或用持久化主键冲突验证写失败原子性。
+- Checkpoint：[FEAT-CREATE-2 blocker checkpoint](../../verification/FEAT-CREATE-2/codex-checkpoint-blocked-20261017.md)。
 
 ## 交付与运行记录
 - 2026-10-17 Coordinator 释放（dsh, epoch 6）。
