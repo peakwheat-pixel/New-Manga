@@ -429,6 +429,8 @@ pub enum P15SettingsCommand {
     NetworkProfileDefaultClear,
     NetworkProfileResolve,
     ResolveOverrides,
+    BindProfileCredential,
+    ClearProfileCredential,
 }
 
 impl P15SettingsCommand {
@@ -451,6 +453,8 @@ impl P15SettingsCommand {
             Self::NetworkProfileDefaultClear => "settings_network_profile_default_clear",
             Self::NetworkProfileResolve => "settings_network_profile_resolve",
             Self::ResolveOverrides => "settings_resolve_overrides",
+            Self::BindProfileCredential => P15_BIND_PROFILE_CREDENTIAL,
+            Self::ClearProfileCredential => P15_CLEAR_PROFILE_CREDENTIAL,
         }
     }
 }
@@ -494,21 +498,45 @@ pub trait LibraryChannel: Send + Sync {
             "P15 settings channel is unavailable",
         ))
     }
-    #[allow(dead_code)]
     fn bind_profile_credential(
         &self,
-        _target: P15CredentialTarget,
-        _credential_ref: &str,
+        target: P15CredentialTarget,
+        credential_ref: &str,
     ) -> Result<(), LibraryError> {
-        Err(LibraryError::unavailable(
-            "P15 credential channel is unavailable",
-        ))
+        let target = serde_json::to_value(target)
+            .map_err(|_| LibraryError::unavailable("P15 credential target is invalid"))?;
+        let result = self.p15_settings(
+            P15SettingsCommand::BindProfileCredential,
+            serde_json::json!({ "target": target, "credential_ref": credential_ref }),
+        )?;
+        if result == serde_json::json!({ "state": "configured" }) {
+            Ok(())
+        } else {
+            Err(LibraryError::new(
+                "SETTINGS_UNAVAILABLE",
+                "unavailable",
+                true,
+                None,
+            ))
+        }
     }
-    #[allow(dead_code)]
-    fn clear_profile_credential(&self, _target: P15CredentialTarget) -> Result<(), LibraryError> {
-        Err(LibraryError::unavailable(
-            "P15 credential channel is unavailable",
-        ))
+    fn clear_profile_credential(&self, target: P15CredentialTarget) -> Result<(), LibraryError> {
+        let target = serde_json::to_value(target)
+            .map_err(|_| LibraryError::unavailable("P15 credential target is invalid"))?;
+        let result = self.p15_settings(
+            P15SettingsCommand::ClearProfileCredential,
+            serde_json::json!({ "target": target }),
+        )?;
+        if result == serde_json::json!({ "state": "missing" }) {
+            Ok(())
+        } else {
+            Err(LibraryError::new(
+                "SETTINGS_UNAVAILABLE",
+                "unavailable",
+                true,
+                None,
+            ))
+        }
     }
     /// M2-REGION-RETYPE-CORE (contract rev 1.4 §5.4): retype one region via
     /// the Core's `set_region_type`. All domain authority (the RegionType
@@ -1603,48 +1631,6 @@ impl LibraryChannel for StdioLibraryChannel {
         self.round_trip_p15(command.core_name(), payload)
     }
 
-    fn bind_profile_credential(
-        &self,
-        target: P15CredentialTarget,
-        credential_ref: &str,
-    ) -> Result<(), LibraryError> {
-        let target = serde_json::to_value(target)
-            .map_err(|_| LibraryError::unavailable("P15 credential target is invalid"))?;
-        let result = self.round_trip_p15(
-            P15_BIND_PROFILE_CREDENTIAL,
-            serde_json::json!({ "target": target, "credential_ref": credential_ref }),
-        )?;
-        if result == serde_json::json!({ "state": "configured" }) {
-            Ok(())
-        } else {
-            Err(LibraryError::new(
-                "SETTINGS_UNAVAILABLE",
-                "unavailable",
-                true,
-                None,
-            ))
-        }
-    }
-
-    fn clear_profile_credential(&self, target: P15CredentialTarget) -> Result<(), LibraryError> {
-        let target = serde_json::to_value(target)
-            .map_err(|_| LibraryError::unavailable("P15 credential target is invalid"))?;
-        let result = self.round_trip_p15(
-            P15_CLEAR_PROFILE_CREDENTIAL,
-            serde_json::json!({ "target": target }),
-        )?;
-        if result == serde_json::json!({ "state": "missing" }) {
-            Ok(())
-        } else {
-            Err(LibraryError::new(
-                "SETTINGS_UNAVAILABLE",
-                "unavailable",
-                true,
-                None,
-            ))
-        }
-    }
-
     fn set_region_type(
         &self,
         region_id: &str,
@@ -2086,6 +2072,22 @@ impl LibraryChannel for MockLibraryChannel {
         _values: &serde_json::Value,
     ) -> Result<serde_json::Value, LibraryError> {
         self.settings_result.lock().unwrap().clone()
+    }
+
+    fn bind_profile_credential(
+        &self,
+        _target: P15CredentialTarget,
+        _credential_ref: &str,
+    ) -> Result<(), LibraryError> {
+        Err(LibraryError::unavailable(
+            "mock credential exchange is not configured",
+        ))
+    }
+
+    fn clear_profile_credential(&self, _target: P15CredentialTarget) -> Result<(), LibraryError> {
+        Err(LibraryError::unavailable(
+            "mock credential exchange is not configured",
+        ))
     }
 
     fn set_region_type(

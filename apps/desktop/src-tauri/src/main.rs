@@ -34,6 +34,7 @@
 
 mod ac1_bridge;
 mod core_bridge;
+mod credential_manager;
 mod host_issuer;
 mod library_bridge;
 #[cfg(test)]
@@ -72,7 +73,7 @@ pub const PRODUCTION_COMMANDS: &[&str] = &[
     // write pair, production-only like the IPC1 commands below.
     "settings_get",
     "settings_update_section",
-    // P15-C1 rev 2.7 G21/G23/G24 settings surface (17 commands); production-only.
+    // P15-C1 rev 2.7 G21/G22/G23/G24 settings surface (19 commands); production-only.
     "settings_provider_profiles_list",
     "settings_provider_profiles_create",
     "settings_provider_profiles_update",
@@ -90,6 +91,10 @@ pub const PRODUCTION_COMMANDS: &[&str] = &[
     "settings_network_profile_default_clear",
     "settings_network_profile_resolve",
     "settings_resolve_overrides",
+    // G22 credentials are triggered by the WebView without a Secret; the
+    // Host collects through native Windows CredUI and binds over trusted stdio.
+    "credential_put",
+    "credential_clear",
     // M2-REGION-RETYPE-CORE (contract rev 1.4 §5.4): the region retype
     // write/read pair, production-only like the settings pair above.
     "set_region_type",
@@ -181,6 +186,8 @@ pub const P15_SETTINGS_PRODUCTION_ONLY_COMMANDS: &[&str] = &[
     "settings_network_profile_default_clear",
     "settings_network_profile_resolve",
     "settings_resolve_overrides",
+    "credential_put",
+    "credential_clear",
 ];
 
 /// M2-REGION-RETYPE-CORE (contract rev 1.4 §5.4): the region retype pair is
@@ -283,6 +290,8 @@ struct AppState {
     ac1: Option<Ac1Channel>,
     /// Present only in production mode; probe and ac1 modes do not spawn library sidecar.
     library: Option<Box<dyn LibraryChannel>>,
+    /// Serializes one-shot credential input/store/bind and clear operations.
+    credential_operations: Mutex<()>,
     /// Current preview catalog id by page. Keep one global lock for the
     /// short rerender/revoke/swap sequence so concurrent pages cannot
     /// interleave opaque-resource cleanup; split only if throughput evidence
@@ -1202,6 +1211,7 @@ fn main() {
         fixture_shas: fixture_shas(),
         ac1,
         library,
+        credential_operations: Mutex::new(()),
         render_preview_resources: Mutex::new(HashMap::new()),
     };
 
@@ -1330,6 +1340,8 @@ fn main() {
             settings_network_profile_default_clear,
             settings_network_profile_resolve,
             settings_resolve_overrides,
+            credential_put,
+            credential_clear,
             set_region_type,
             list_regions,
             list_region_revisions,
@@ -1448,7 +1460,7 @@ mod tests {
     /// keyed `plugin:<name>|<cmd>` and never matches bare invocations -- the
     /// ACL layer silently skipped them, DSH R2-01). This pins the build
     /// artifact: the app manifest declares exactly the live commands
-    /// (forty-seven production -- resource-channel, IPC1, settings, retype,
+    /// (forty-nine production -- resource-channel, IPC1, settings, retype,
     /// RC-4, page resolve/navigation, HOST-ISSUER-1, Run, export reveal and
     /// Reader actions -- plus
     /// four probe-only and three M2-AC1 acceptance commands; R2-06),
@@ -1469,8 +1481,8 @@ mod tests {
         // commands too — a capability/manifest typo for an ac1 command must
         // fail here, not only surface as an E2E ACL denial.
         // M2-REGION-RETYPE-CORE r1 P3-2: the production surface joins the
-        // sweep, so the existence check covers all 54 commands across the
-        // three surfaces (47 production + 4 probe-only + 3 ac1) — a missing
+        // sweep, so the existence check covers all 56 commands across the
+        // three surfaces (49 production + 4 probe-only + 3 ac1) — a missing
         // capability/manifest entry for a production-only command (e.g. the
         // retype pair) fails this test, not just a live invoke.
         for command in command_allowlist(true, false)
@@ -1495,7 +1507,7 @@ mod tests {
 
     #[test]
     fn production_surface_includes_export_reveal() {
-        // Existing 30 production commands + the 17 P15 settings commands = 47.
+        // Existing 30 production commands + 19 P15 settings commands = 49.
         assert_eq!(
             command_allowlist(false, false),
             vec![
@@ -1523,6 +1535,8 @@ mod tests {
                 "settings_network_profile_default_clear",
                 "settings_network_profile_resolve",
                 "settings_resolve_overrides",
+                "credential_put",
+                "credential_clear",
                 "set_region_type",
                 "list_regions",
                 "list_region_revisions",
@@ -1552,8 +1566,8 @@ mod tests {
 
     #[test]
     fn p15_settings_commands_are_exact_and_production_only() {
-        assert_eq!(P15_SETTINGS_PRODUCTION_ONLY_COMMANDS.len(), 17);
-        assert_eq!(PRODUCTION_COMMANDS.len(), 47);
+        assert_eq!(P15_SETTINGS_PRODUCTION_ONLY_COMMANDS.len(), 19);
+        assert_eq!(PRODUCTION_COMMANDS.len(), 49);
         assert_eq!(command_allowlist(true, false).len(), 7);
         assert_eq!(command_allowlist(false, true).len(), 6);
         for command in P15_SETTINGS_PRODUCTION_ONLY_COMMANDS {
@@ -1859,8 +1873,8 @@ mod tests {
                 "library_retry_failed_targets",
             ]
         );
-        // 30 pre-existing production commands + 17 P15 settings commands = 47.
-        assert_eq!(PRODUCTION_COMMANDS.len(), 47);
+        // 30 pre-existing production commands + 19 P15 settings commands = 49.
+        assert_eq!(PRODUCTION_COMMANDS.len(), 49);
 
         let production = command_allowlist(false, false);
         let probe = command_allowlist(true, false);
@@ -1893,7 +1907,7 @@ mod tests {
                 "library_get_export_history",
             ]
         );
-        assert_eq!(PRODUCTION_COMMANDS.len(), 47);
+        assert_eq!(PRODUCTION_COMMANDS.len(), 49);
 
         let production = command_allowlist(false, false);
         let probe = command_allowlist(true, false);
@@ -3156,6 +3170,7 @@ mod tests {
             fixture_shas: serde_json::json!({}),
             ac1: None,
             library: Some(Box::new(library.clone())),
+            credential_operations: Mutex::new(()),
             render_preview_resources: Mutex::new(HashMap::from([(
                 "page".to_string(),
                 "render-0".to_string(),

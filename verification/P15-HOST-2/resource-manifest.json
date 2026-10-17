@@ -1,0 +1,34 @@
+{
+  "task_id": "P15-HOST-2",
+  "branch": "codex/P15-HOST-2",
+  "worktree": "G:/CODEX/New Manga.workspace/worktrees/P15-HOST-2",
+  "task_base_commit": "fb232344de986de3cb8d6f25d1988970a596861a",
+  "implementation_commit": "b03bf0d87bf8eae31650c36b2cc0d995236eaa8b",
+  "task_status": "in_review",
+  "disposition": "PRESERVE_REFERENCED",
+  "junctions": [
+    {
+      "path": "apps/desktop/src-tauri/target/core-sidecar",
+      "disposition": "PRESERVE",
+      "reparse_point_verified": true,
+      "deleted_or_recreated": false
+    },
+    {
+      "path": "apps/desktop/frontend/dist",
+      "disposition": "PRESERVE",
+      "reparse_point_verified": true,
+      "deleted_or_recreated": false
+    }
+  ],
+  "temporary_frontend_test_environment": "verification/P15-HOST-2/frontend-test-env (retained for reproducibility; not committed)",
+  "test_side_effects_preserved": [
+    "verification/P04/diagnostic_p22_18004_1792198418765.jsonl",
+    "verification/P04/diagnostic_p22_22488_1792198836820.jsonl",
+    "verification/P04/diagnostic_p22_39668_1792199192746.jsonl",
+    ".vite (untracked Vite cache; not committed)"
+  ],
+  "deletions": 0,
+  "moves": 0,
+  "push_merge_reset": false,
+  "main_checkout_or_user_dirty_files_touched": false
+}

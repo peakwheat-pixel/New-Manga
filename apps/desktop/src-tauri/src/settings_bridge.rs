@@ -1,8 +1,12 @@
-use crate::library_bridge::{LibraryError, P15SettingsCommand};
+use crate::library_bridge::{LibraryError, P15CredentialTarget, P15SettingsCommand};
+use rand::{rngs::OsRng, RngCore};
 use serde::de::DeserializeOwned;
 use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
-use tauri::State;
+use tauri::{
+    ipc::{InvokeBody, Request},
+    State,
+};
 
 #[derive(Debug, Clone, Copy, Deserialize, Serialize)]
 #[serde(rename_all = "snake_case")]
@@ -112,6 +116,237 @@ impl SettingsSurfaceError {
             })
             .unwrap_or_else(Self::unavailable)
     }
+
+    fn credential_validation() -> Self {
+        Self {
+            category: Category::Validation,
+            phase: Phase::CredentialInput,
+            action: Action::ConfigureCredential,
+            message_key: MessageKey::SettingsInvalidInput,
+        }
+    }
+
+    fn credential_not_found() -> Self {
+        Self {
+            category: Category::NotFound,
+            phase: Phase::CredentialBinding,
+            action: Action::ConfigureCredential,
+            message_key: MessageKey::SettingsItemNotFound,
+        }
+    }
+
+    fn credential_conflict() -> Self {
+        Self {
+            category: Category::Conflict,
+            phase: Phase::CredentialBinding,
+            action: Action::ConfigureCredential,
+            message_key: MessageKey::SettingsConflict,
+        }
+    }
+
+    fn credential_cancelled() -> Self {
+        Self {
+            category: Category::Cancelled,
+            phase: Phase::CredentialInput,
+            action: Action::None,
+            message_key: MessageKey::CredentialInputCancelled,
+        }
+    }
+
+    fn credential_store_unavailable() -> Self {
+        Self {
+            category: Category::Unavailable,
+            phase: Phase::CredentialStore,
+            action: Action::ConfigureCredential,
+            message_key: MessageKey::CredentialStoreUnavailable,
+        }
+    }
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(deny_unknown_fields)]
+struct CredentialPutRequest {
+    target: P15CredentialTarget,
+    intent: CredentialIntent,
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "snake_case")]
+enum CredentialIntent {
+    Create,
+    Replace,
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(deny_unknown_fields)]
+struct CredentialClearRequest {
+    target: P15CredentialTarget,
+}
+
+#[derive(Debug, Serialize, PartialEq, Eq)]
+#[serde(rename_all = "snake_case")]
+enum CredentialPutState {
+    Configured,
+}
+
+#[derive(Debug, Serialize, PartialEq, Eq)]
+#[serde(rename_all = "snake_case")]
+enum CredentialClearState {
+    Missing,
+}
+
+#[derive(Debug, Serialize, PartialEq, Eq)]
+#[serde(deny_unknown_fields)]
+pub struct CredentialPutResult {
+    state: CredentialPutState,
+}
+
+#[derive(Debug, Serialize, PartialEq, Eq)]
+#[serde(deny_unknown_fields)]
+pub struct CredentialClearResult {
+    state: CredentialClearState,
+}
+
+fn parse_credential_payload<T: DeserializeOwned>(value: &Value) -> Result<T, SettingsSurfaceError> {
+    serde_json::from_value(value.clone()).map_err(|_| SettingsSurfaceError::credential_validation())
+}
+
+fn parse_credential_request<T: DeserializeOwned>(
+    request: &Request<'_>,
+) -> Result<T, SettingsSurfaceError> {
+    match request.body() {
+        InvokeBody::Json(value) => parse_credential_payload(value),
+        InvokeBody::Raw(_) => Err(SettingsSurfaceError::credential_validation()),
+    }
+}
+
+fn credential_target_owner(target: &P15CredentialTarget) -> (&'static str, &str) {
+    match target {
+        P15CredentialTarget::ProviderApi { profile_id } => ("provider", profile_id),
+        P15CredentialTarget::ProxyAuth { network_profile_id } => ("proxy", network_profile_id),
+    }
+}
+
+fn new_credential_ref(target: &P15CredentialTarget) -> Result<String, SettingsSurfaceError> {
+    let (kind, owner) = credential_target_owner(target);
+    let mut bytes = [0u8; 16];
+    OsRng
+        .try_fill_bytes(&mut bytes)
+        .map_err(|_| SettingsSurfaceError::credential_store_unavailable())?;
+    let suffix = bytes
+        .iter()
+        .map(|byte| format!("{byte:02x}"))
+        .collect::<String>();
+    Ok(format!("NewManga/{kind}/{owner}/{suffix}"))
+}
+
+fn credential_is_configured(
+    state: &State<'_, super::AppState>,
+    target: &P15CredentialTarget,
+) -> Result<bool, SettingsSurfaceError> {
+    match target {
+        P15CredentialTarget::ProviderApi { profile_id } => {
+            let profiles: ProfileList<ProviderProfile> =
+                call(state, P15SettingsCommand::ProviderProfilesList, json!({}))?;
+            profiles
+                .profiles
+                .into_iter()
+                .find(|profile| profile.profile_id == *profile_id)
+                .map(|profile| profile.credential_state == "configured")
+                .ok_or_else(SettingsSurfaceError::credential_not_found)
+        }
+        P15CredentialTarget::ProxyAuth { network_profile_id } => {
+            let profiles: ProfileList<NetworkProfile> =
+                call(state, P15SettingsCommand::NetworkProfilesList, json!({}))?;
+            profiles
+                .profiles
+                .into_iter()
+                .find(|profile| profile.network_profile_id == *network_profile_id)
+                .map(|profile| profile.credential_state == "configured")
+                .ok_or_else(SettingsSurfaceError::credential_not_found)
+        }
+    }
+}
+
+fn credential_intent_matches(intent: &CredentialIntent, configured: bool) -> bool {
+    matches!(
+        (intent, configured),
+        (CredentialIntent::Create, false) | (CredentialIntent::Replace, true)
+    )
+}
+
+fn acquire_credential_operation<'a>(
+    state: &'a State<'_, super::AppState>,
+) -> Result<std::sync::MutexGuard<'a, ()>, SettingsSurfaceError> {
+    state
+        .credential_operations
+        .lock()
+        .map_err(|_| SettingsSurfaceError::credential_store_unavailable())
+}
+
+#[tauri::command]
+pub fn credential_put(
+    state: State<'_, super::AppState>,
+    request: Request<'_>,
+) -> Result<CredentialPutResult, SettingsSurfaceError> {
+    let request: CredentialPutRequest = parse_credential_request(&request)?;
+    let _operation = acquire_credential_operation(&state)?;
+    let configured = credential_is_configured(&state, &request.target)?;
+    if !credential_intent_matches(&request.intent, configured) {
+        return Err(SettingsSurfaceError::credential_conflict());
+    }
+
+    let credential_ref = new_credential_ref(&request.target)?;
+    match super::credential_manager::prompt_and_store(&credential_ref) {
+        Ok(super::credential_manager::PromptResult::Stored) => {}
+        Ok(super::credential_manager::PromptResult::Cancelled) => {
+            return Err(SettingsSurfaceError::credential_cancelled())
+        }
+        Err(()) => return Err(SettingsSurfaceError::credential_store_unavailable()),
+    }
+
+    let configured_after_input = match credential_is_configured(&state, &request.target) {
+        Ok(configured) => configured,
+        Err(error) => {
+            let _ = super::credential_manager::delete(&credential_ref);
+            return Err(error);
+        }
+    };
+    if !credential_intent_matches(&request.intent, configured_after_input) {
+        let _ = super::credential_manager::delete(&credential_ref);
+        return Err(SettingsSurfaceError::credential_conflict());
+    }
+
+    let Some(library) = state.library.as_ref() else {
+        let _ = super::credential_manager::delete(&credential_ref);
+        return Err(SettingsSurfaceError::unavailable());
+    };
+    let bind = library.bind_profile_credential(request.target, &credential_ref);
+    if let Err(error) = bind {
+        return Err(SettingsSurfaceError::from_core(error));
+    }
+
+    Ok(CredentialPutResult {
+        state: CredentialPutState::Configured,
+    })
+}
+
+#[tauri::command]
+pub fn credential_clear(
+    state: State<'_, super::AppState>,
+    request: Request<'_>,
+) -> Result<CredentialClearResult, SettingsSurfaceError> {
+    let request: CredentialClearRequest = parse_credential_request(&request)?;
+    let _operation = acquire_credential_operation(&state)?;
+    state
+        .library
+        .as_ref()
+        .ok_or_else(SettingsSurfaceError::unavailable)?
+        .clear_profile_credential(request.target)
+        .map_err(SettingsSurfaceError::from_core)?;
+    Ok(CredentialClearResult {
+        state: CredentialClearState::Missing,
+    })
 }
 
 trait SafeProjection {
@@ -974,5 +1209,65 @@ mod tests {
         let projected = serde_json::to_value(projected).unwrap();
         assert_eq!(projected.as_object().unwrap().len(), 4);
         assert!(!projected.to_string().contains("private"));
+    }
+
+    #[test]
+    fn credential_requests_reject_secret_and_reference_fields() {
+        let target = json!({ "kind": "provider_api", "profile_id": "profile-1" });
+        let secret_attempt = json!({
+            "target": target,
+            "intent": "create",
+            "secret": "host-only-marker"
+        });
+        let error = parse_credential_payload::<CredentialPutRequest>(&secret_attempt).unwrap_err();
+        let error_wire = serde_json::to_string(&error).unwrap();
+        assert!(error_wire.contains("validation"));
+        assert!(!error_wire.contains("host-only-marker"));
+
+        let reference_attempt = json!({
+            "target": {
+                "kind": "provider_api",
+                "profile_id": "profile-1",
+                "credential_ref": "private-ref-marker"
+            },
+            "intent": "replace"
+        });
+        assert!(parse_credential_payload::<CredentialPutRequest>(&reference_attempt).is_err());
+        assert!(parse_credential_payload::<CredentialClearRequest>(&json!({
+            "target": target,
+            "secret": "host-only-marker"
+        }))
+        .is_err());
+    }
+
+    #[test]
+    fn credential_intent_conflicts_before_any_input_or_binding_step() {
+        assert!(!credential_intent_matches(&CredentialIntent::Create, true));
+        assert!(!credential_intent_matches(
+            &CredentialIntent::Replace,
+            false
+        ));
+        assert!(credential_intent_matches(&CredentialIntent::Create, false));
+        assert!(credential_intent_matches(&CredentialIntent::Replace, true));
+        let error = SettingsSurfaceError::credential_conflict();
+        let projected = serde_json::to_value(error).unwrap();
+        assert_eq!(projected["category"], "conflict");
+        assert_eq!(projected["message_key"], "SETTINGS_CONFLICT");
+    }
+
+    #[test]
+    fn credential_results_expose_only_contract_state() {
+        let put = serde_json::to_value(CredentialPutResult {
+            state: CredentialPutState::Configured,
+        })
+        .unwrap();
+        let clear = serde_json::to_value(CredentialClearResult {
+            state: CredentialClearState::Missing,
+        })
+        .unwrap();
+        assert_eq!(put, json!({ "state": "configured" }));
+        assert_eq!(clear, json!({ "state": "missing" }));
+        assert!(!put.to_string().contains("credential_ref"));
+        assert!(!clear.to_string().contains("secret"));
     }
 }

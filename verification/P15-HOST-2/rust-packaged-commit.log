@@ -1,0 +1,36 @@
+TESTED_COMMIT=b03bf0d87bf8eae31650c36b2cc0d995236eaa8b
+M2RC1_PACKAGED=1
+Command=cargo test --locked --manifest-path apps/desktop/src-tauri/Cargo.toml packaged_sidecar_tests -- --test-threads=1
+
+   Compiling m2rc1-desktop v0.1.0 (G:\CODEX\New Manga.workspace\worktrees\P15-HOST-2\apps\desktop\src-tauri)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 7.19s
+     Running unittests src\main.rs (apps\desktop\src-tauri\target\debug\deps\m2rc1_desktop-24448612fc7535f6.exe)
+
+running 12 tests
+[core.derived_gc] orphan_files_removed=0 dead_rows_removed=0
+test packaged_sidecar_tests::export_command_wire_reaches_the_frozen_core_export_family ... ok
+[core.derived_gc] orphan_files_removed=0 dead_rows_removed=0
+test packaged_sidecar_tests::host_export_grant_round_trip_reaches_frozen_start_export ... ok
+[core.derived_gc] orphan_files_removed=0 dead_rows_removed=0
+test packaged_sidecar_tests::host_import_grant_round_trip_reaches_frozen_import_pages ... ok
+[core.derived_gc] orphan_files_removed=0 dead_rows_removed=0
+test packaged_sidecar_tests::reader_commands_reach_frozen_core_with_typed_rejections ... ok
+[core.derived_gc] orphan_files_removed=0 dead_rows_removed=0
+test packaged_sidecar_tests::real_core_sidecar_answers_startup_ping_on_fresh_catalog ... ok
+[core.derived_gc] orphan_files_removed=0 dead_rows_removed=0
+test packaged_sidecar_tests::real_core_sidecar_rc4_commands_round_trip_typed_errors ... ok
+[core.derived_gc] orphan_files_removed=0 dead_rows_removed=0
+test packaged_sidecar_tests::real_core_sidecar_retype_pair_empty_page_and_typed_rejection ... ok
+test packaged_sidecar_tests::real_core_sidecar_round_trip ... ok
+[core.derived_gc] orphan_files_removed=0 dead_rows_removed=0
+test packaged_sidecar_tests::real_core_sidecar_settings_round_trip_and_typed_rejection ... ok
+[core.derived_gc] orphan_files_removed=0 dead_rows_removed=0
+test packaged_sidecar_tests::real_library_sidecar_event_sink_registration_and_lifecycle ... ok
+[core.derived_gc] orphan_files_removed=0 dead_rows_removed=0
+test packaged_sidecar_tests::real_library_sidecar_round_trip_and_eof ... ok
+[core.derived_gc] orphan_files_removed=0 dead_rows_removed=0
+test packaged_sidecar_tests::run_command_wire_reaches_the_frozen_core_run_family ... ok
+
+test result: ok. 12 passed; 0 failed; 0 ignored; 0 measured; 104 filtered out; finished in 19.43s
+
+EXIT_CODE=0

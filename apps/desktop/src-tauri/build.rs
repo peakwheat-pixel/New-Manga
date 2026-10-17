@@ -34,8 +34,8 @@ fn main() {
     // match bare command invocations, so the ACL layer silently skipped
     // them). With `__app-acl__` present, Tauri enforces the capability for
     // every bare command: `capabilities/m2rc1-commands.json` grants exactly
-    // the fifty-four commands below: 47 production (3 resource + 2 IPC1 +
-    // 2 existing settings + 17 P15 settings + 2 retype + 3 RC-4 + 1 page
+    // the fifty-six commands below: 49 production (3 resource + 2 IPC1 +
+    // 2 existing settings + 19 P15 settings + 2 retype + 3 RC-4 + 1 page
     // resolve + 2 page navigation + 2 Reader + 3 Host Issuer + 6 Run +
     // 1 reveal + 3 export), four probe, and three M2-AC1 acceptance commands;
     // any other command name
@@ -64,7 +64,7 @@ fn main() {
             // mode (main.rs SETTINGS_PRODUCTION_ONLY_COMMANDS).
             "settings_get",
             "settings_update_section",
-            // P15-C1 rev 2.7 G21/G23/G24: 17 production-only settings commands.
+            // P15-C1 rev 2.7 G21/G22/G23/G24: 19 production-only settings commands.
             "settings_provider_profiles_list",
             "settings_provider_profiles_create",
             "settings_provider_profiles_update",
@@ -82,6 +82,8 @@ fn main() {
             "settings_network_profile_default_clear",
             "settings_network_profile_resolve",
             "settings_resolve_overrides",
+            "credential_put",
+            "credential_clear",
             // M2-REGION-RETYPE-CORE (contract rev 1.4 §5.4): production-
             // only region retype write/read pair; ACL-declared so the
             // capability file can name them, registered at runtime ONLY in
