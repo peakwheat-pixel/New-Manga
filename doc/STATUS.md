@@ -18,5 +18,5 @@ P02新时点验收/AC6恢复/主线集成完成，父P02限定关闭。Technical
 
 ## 当前权威指针
 
-- DAG：[REBASELINE_PLAN](REBASELINE_PLAN.md)；READY=ARCH-DOC-REBASELINE（**实质待 P20**：AC5 依赖 P20，P20 依赖 P19 的用户验收裁决）。
+- DAG：[REBASELINE_PLAN](REBASELINE_PLAN.md)；READY=ARCH-DOC-REBASELINE（实质待 P20 ← P19 用户验收裁决）。
 - 本轮证据：P12 [Review](../verification/P12/dsh-review-r1.md)；UI-DESIGN-1 [Review](../verification/UI-DESIGN-1/dsh-review-r1.md)；ENV-BUNDLE-1-FU1 [Review](../verification/ENV-BUNDLE-1-FU1/dsh-review-r1.md)；P14/P17 [Review](../verification/P14/dsh-review-r1.md)。
