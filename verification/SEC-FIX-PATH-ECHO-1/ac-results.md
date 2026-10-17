@@ -11,8 +11,8 @@
 | AC | 结果 | 证据 |
 |---|---|---|
 | AC1 | PASS | Core 全量/单节/写后投影会隐藏 OS 路径、路径字段值和路径型 section key；响应中的路径型 request ID 也封闭处理。写入值仍原样保存在 Core。 |
-| AC2 | PASS | 合成绝对路径作为非法 `sfx.policy` 和非法更新请求输入，错误响应不包含路径片段；错误码保持 `INVALID_REQUEST`。 |
-| AC3 | PASS | `test_settings_commands_redact_paths_in_every_section` 覆盖 12 个设置分类与 `sfx`，包含 Windows 绝对路径、UNC、POSIX 用户目录、相对 `*_path`、section key、request ID、读写命令及错误。 |
+| AC2 | PASS | 合成绝对路径作为非法 `sfx.policy`、非法更新请求和路径型 request ID 输入；settings handler 错误及协议版本提前拒绝响应均不包含路径片段。 |
+| AC3 | PASS | `test_settings_commands_redact_paths_in_every_section` 覆盖 12 个设置分类与 `sfx`，包含 Windows 绝对路径、UNC、POSIX 用户目录、相对 `*_path`、section key、request ID、两条命令读写、非法协议版本和错误。 |
 | AC4 | PASS（按实测基线对比） | 四套件见下表。Task 记载前端基线 278；当前基线 commit 实测 285，前后均为 285 passed，差异 +7 在本修复前已存在。 |
 | AC5 | PASS | 交付状态为 `in_review`；本文件、Handoff 与 Task Canonical Evidence 相互引用，SHA 按 worktree 磁盘字节计算。 |
 | AC6 | PASS | `repro_settings_path_projection.py` 前后复跑：修复前 `path_value_returned=true`，修复后 `false`；原始输出见 `baseline/repro-before.log` 与 `repro-after.log`。 |

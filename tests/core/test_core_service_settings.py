@@ -53,9 +53,10 @@ def _request(
     command: str,
     payload: dict,
     request_id: str = "req-settings-1",
+    protocol: str = "new-manga.core",
 ) -> dict:
     line = json.dumps({
-        "protocol": "new-manga.core",
+        "protocol": protocol,
         "version": {"major": PROTOCOL_MAJOR, "minor": PROTOCOL_MINOR},
         "request_id": request_id,
         "command": command,
@@ -231,6 +232,20 @@ def test_settings_commands_redact_paths_in_every_section(server) -> None:
     )
     assert invalid_section["error"]["code"] == "INVALID_REQUEST"
     assert_no_paths(invalid_section)
+
+    for command, payload in (
+        ("settings.get", {}),
+        ("settings.update_section", {"section": "ocr", "values": {}}),
+    ):
+        protocol_error = _request(
+            server,
+            command,
+            payload,
+            request_id=windows_path,
+            protocol="invalid-protocol",
+        )
+        assert protocol_error["error"]["code"] == "PROTOCOL_VERSION_UNSUPPORTED"
+        assert_no_paths(protocol_error)
 
 
 def test_settings_update_section_sfx_without_policy_key_passes_through(server) -> None:

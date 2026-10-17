@@ -1,5 +1,5 @@
    Compiling m2rc1-desktop v0.1.0 (G:\CODEX\New Manga.workspace\worktrees\SEC-FIX-PATH-ECHO-1\apps\desktop\src-tauri)
-    Finished `test` profile [unoptimized + debuginfo] target(s) in 8.26s
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 8.55s
      Running unittests src\main.rs (apps\desktop\src-tauri\target\debug\deps\m2rc1_desktop-24448612fc7535f6.exe)
 
 running 12 tests
@@ -48,7 +48,7 @@ PACKAGED_STARTUP_TIMEOUT_SECS=120
 PACKAGED_RESULT real_core_sidecar_retype_pair_empty_page_and_typed_rejection=PASS typed_error=TARGET_NOT_FOUND
 ok
 test packaged_sidecar_tests::real_core_sidecar_round_trip ... PACKAGED_ENV M2RC1_PACKAGED=1 M2RC1_SRC_ROOT=<unset> M2RC1_PYTHON=<unset>
-PACKAGED_START exe=\\?\G:\CODEX\New Manga\apps\desktop\src-tauri\target\core-sidecar\core-sidecar\catalog_loader.exe bytes=1827539 sha256=0bd440bbf2f0b46c9f185c200611bfd9e9f4ec9f0d4f7f04fd622970ec363db7 args=["--db", "G:\\CODEX\\New Manga.workspace\\worktrees\\SEC-FIX-PATH-ECHO-1\\verification\\SEC-FIX-PATH-ECHO-1\\tmp\\.tmpuqbRds\\catalog.sqlite", "--initialize-preview-namespace", "G:\\CODEX\\New Manga.workspace\\worktrees\\SEC-FIX-PATH-ECHO-1\\verification\\SEC-FIX-PATH-ECHO-1\\tmp\\.tmpuqbRds\\derived", "--set", "res-sidecar=asset.png"]
+PACKAGED_START exe=\\?\G:\CODEX\New Manga\apps\desktop\src-tauri\target\core-sidecar\core-sidecar\catalog_loader.exe bytes=1827539 sha256=0bd440bbf2f0b46c9f185c200611bfd9e9f4ec9f0d4f7f04fd622970ec363db7 args=["--db", "G:\\CODEX\\New Manga.workspace\\worktrees\\SEC-FIX-PATH-ECHO-1\\verification\\SEC-FIX-PATH-ECHO-1\\tmp\\.tmpJhM7eH\\catalog.sqlite", "--initialize-preview-namespace", "G:\\CODEX\\New Manga.workspace\\worktrees\\SEC-FIX-PATH-ECHO-1\\verification\\SEC-FIX-PATH-ECHO-1\\tmp\\.tmpJhM7eH\\derived", "--set", "res-sidecar=asset.png"]
 PACKAGED_EXIT exe=\\?\G:\CODEX\New Manga\apps\desktop\src-tauri\target\core-sidecar\core-sidecar\catalog_loader.exe code=0 stdout= stderr=
 PACKAGED_START exe=\\?\G:\CODEX\New Manga\apps\desktop\src-tauri\target\core-sidecar\core-sidecar\host_bridge.exe bytes=1829644 sha256=088cf818e60abbdf7f1990aa70f7f9a09ad737d0f06fbe161953264bdc977895 args=[]
 PACKAGED_RESULT real_core_sidecar_round_trip=PASS typed_error=REF_REVOKED shutdown=sent
@@ -84,4 +84,4 @@ RUN_IPC_RESULT start_run code=INVALID_REQUEST category=validation
 PACKAGED_RESULT run_command_wire_reaches_the_frozen_core_run_family=PASS six_commands=domain_rejections
 ok
 
-test result: ok. 12 passed; 0 failed; 0 ignored; 0 measured; 108 filtered out; finished in 21.17s
+test result: ok. 12 passed; 0 failed; 0 ignored; 0 measured; 108 filtered out; finished in 18.77s

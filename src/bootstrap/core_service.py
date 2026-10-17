@@ -2641,10 +2641,17 @@ class CoreServiceServer:
         protocol = req.get("protocol")
         version = req.get("version")
         command = req.get("command")
+        safe_request_id = (
+            _project_settings_value(request_id)
+            if command in ("settings.get", "settings.update_section")
+            else request_id
+        )
         raw_payload = req.get("payload")
         payload = raw_payload if isinstance(raw_payload, dict) else {}
 
         if req.get("channel") == "host-control":
+            if command in ("settings.get", "settings.update_section"):
+                req = {**req, "request_id": safe_request_id}
             return self._dispatch_host_control(req), False
         if isinstance(command, str) and command in _HOST_CONTROL_COMMANDS:
             return self._reject_host_control(
@@ -2721,7 +2728,7 @@ class CoreServiceServer:
                 {
                     "protocol": PROTOCOL_NAME,
                     "version": {"major": PROTOCOL_MAJOR, "minor": PROTOCOL_MINOR},
-                    "request_id": request_id,
+                    "request_id": safe_request_id,
                     "result": None,
                     "error": make_error_envelope(
                         code=E_PROTOCOL_VERSION_UNSUPPORTED,
@@ -3005,7 +3012,6 @@ class CoreServiceServer:
         # validation lives in the handler (typed INVALID_REQUEST BEFORE any
         # persistence); persistence failures surface as UNKNOWN/internal.
         if command in ("settings.get", "settings.update_section"):
-            safe_request_id = _project_settings_value(request_id)
             try:
                 if command == "settings.get":
                     result = self.handle_settings_get(payload)
@@ -3021,7 +3027,7 @@ class CoreServiceServer:
                         "error": make_error_envelope(
                             code=E_INVALID_REQUEST,
                             category="validation",
-                            message=str(error),
+                            message=_project_settings_value(str(error)),
                             retryable=False,
                         ),
                     },
