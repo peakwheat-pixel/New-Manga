@@ -357,7 +357,12 @@ def _settings_path_field(key: str) -> bool:
 
 def _project_settings_value(value: Any, key: str | None = None) -> Any:
     """Redact path fields and OS paths from IPC output without changing storage."""
-    if key is not None and _settings_path_field(key) and value not in (None, ""):
+    if (
+        key is not None
+        and _settings_path_field(key)
+        and isinstance(value, (str, dict, list))
+        and value
+    ):
         return _SETTINGS_PATH_REDACTED
     if isinstance(value, dict):
         return {

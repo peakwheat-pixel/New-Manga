@@ -170,6 +170,7 @@ def test_settings_commands_redact_paths_in_every_section(server) -> None:
     values = {
         "path": windows_path,
         "relative_path": "models/relative-runner.exe",
+        "file": False,
         "custom": [unc_path, {"configured_value": posix_path}],
         "api_secret": "synthetic-secret-must-stay-omitted",
     }
@@ -184,6 +185,7 @@ def test_settings_commands_redact_paths_in_every_section(server) -> None:
         assert_no_paths(written)
         assert written["result"]["settings"][section]["path"] == "[redacted]"
         assert written["result"]["settings"][section]["relative_path"] == "[redacted]"
+        assert written["result"]["settings"][section]["file"] is False
 
         read = _request(server, "settings.get", {"section": section})
         assert read["error"] is None
