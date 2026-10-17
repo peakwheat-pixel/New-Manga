@@ -1,0 +1,23 @@
+{
+  "pid": 43380,
+  "exe": "G:\\CODEX\\New Manga.workspace\\worktrees\\P19-BOOT-1\\apps\\desktop\\src-tauri\\target\\debug\\m2rc1-desktop.exe",
+  "sha256": "ce13c1f8975d2831e67821fb361634911dcaddedc5672b53aa4959026b8b18b9",
+  "run_root": "G:\\CODEX\\New Manga.workspace\\worktrees\\P19-BOOT-1\\verification\\P19-BOOT-1\\runtime-final6",
+  "catalog": "G:\\CODEX\\New Manga.workspace\\worktrees\\P19-BOOT-1\\verification\\P19-BOOT-1\\runtime-final6\\appdata-roaming\\com.newmanga.m2rc1.desktop\\catalog\\catalog.sqlite",
+  "derived": "G:\\CODEX\\New Manga.workspace\\worktrees\\P19-BOOT-1\\verification\\P19-BOOT-1\\runtime-final6\\appdata-roaming\\com.newmanga.m2rc1.desktop\\derived",
+  "catalog_exists": true,
+  "derived_entries_before_launch": 0,
+  "launch_command": "Start-Process -FilePath apps/desktop/src-tauri/target/debug/m2rc1-desktop.exe",
+  "launch_environment": {
+    "APPDATA": "verification/P19-BOOT-1/runtime-final6/appdata-roaming",
+    "LOCALAPPDATA": "verification/P19-BOOT-1/runtime-final6/appdata-local",
+    "NEWMANGA_DATA_ROOT": "verification/P19-BOOT-1/runtime-final6/appdata-roaming/com.newmanga.m2rc1.desktop/data",
+    "M2RC1_DERIVED_ROOT": "verification/P19-BOOT-1/runtime-final6/appdata-roaming/com.newmanga.m2rc1.desktop/derived",
+    "M2RC1_MANAGED_ROOT": "verification/P19-BOOT-1/runtime-final6/appdata-roaming/com.newmanga.m2rc1.desktop/managed",
+    "M2RC2_CATALOG_DB": "verification/P19-BOOT-1/runtime-final6/appdata-roaming/com.newmanga.m2rc1.desktop/catalog/catalog.sqlite",
+    "M2RC1_SRC_ROOT": "src",
+    "M2RC1_PYTHON": "G:\\CODEX\\New Manga.task-envs\\T1.1.1-impl-py312\\Scripts\\python.exe",
+    "WEBVIEW2_USER_DATA_FOLDER": "verification/P19-BOOT-1/runtime-final6/webview2-udd"
+  },
+  "implementation_commit": "c44b47dd9852121e18496502870f4e4cbaf5c737"
+}

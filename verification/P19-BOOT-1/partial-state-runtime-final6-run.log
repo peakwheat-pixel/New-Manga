@@ -1,0 +1,19 @@
+shell=PowerShell
+command=G:\CODEX\New Manga.task-envs\T1.1.1-impl-py312\Scripts\python.exe verification/P19-BOOT-1/prepare_partial_state.py
+P19_RUN_NAME=runtime-final6
+head=c44b47dd9852121e18496502870f4e4cbaf5c737
+{
+  "scenario": "catalog exists with empty derived root before real app launch",
+  "catalog_db": "appdata-roaming\\com.newmanga.m2rc1.desktop\\catalog\\catalog.sqlite",
+  "catalog_bytes": 24576,
+  "catalog_sha256": "3211f3556eddf6fc61b8dee9effcbc162b442ea0588d3bd5c296ea29fb5abf3c",
+  "derived_root": "appdata-roaming\\com.newmanga.m2rc1.desktop\\derived",
+  "derived_entries_before_launch": [],
+  "construction": [
+    "create an empty canonical catalog and binding through initialize_namespace",
+    "delete only the preview_namespace row to model interrupted first bind",
+    "remove the lock file and verify derived/ is empty"
+  ],
+  "root": "G:\\CODEX\\New Manga.workspace\\worktrees\\P19-BOOT-1\\verification\\P19-BOOT-1\\runtime-final6"
+}
+EXIT_CODE=0

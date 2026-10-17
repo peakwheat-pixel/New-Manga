@@ -1,0 +1,23 @@
+shell=PowerShell
+python=G:\CODEX\New Manga.task-envs\T1.1.1-impl-py312\Scripts\python.exe
+TEMP=G:\CODEX\New Manga.workspace\worktrees\P19-BOOT-1\verification\P19-BOOT-1\core-tests-temp-final
+TMP=G:\CODEX\New Manga.workspace\worktrees\P19-BOOT-1\verification\P19-BOOT-1\core-tests-temp-final
+command=G:\CODEX\New Manga.task-envs\T1.1.1-impl-py312\Scripts\python.exe -m pytest tests/core -q -p no:cacheprovider
+base_commit=04d7beedc4a390ff67130eab0baa5b5ee78140cc
+head=c44b47dd9852121e18496502870f4e4cbaf5c737
+........................................................................ [ 13%]
+........................................................................ [ 27%]
+........................................................................ [ 41%]
+........................................................................ [ 55%]
+........................................................................ [ 69%]
+........................................................................ [ 83%]
+........................................................................ [ 97%]
+...........                                                              [100%]
+============================== warnings summary ===============================
+tests/core/test_rc4_stdio_render_preview.py::test_production_stdio_decodes_nmfr_renders_text_and_publishes_readable_preview
+  G:\CODEX\New Manga.workspace\worktrees\P19-BOOT-1\tests\core\test_rc4_stdio_render_preview.py:245: DeprecationWarning: Image.Image.getdata is deprecated and will be removed in Pillow 14 (2027-10-15). Use get_flattened_data instead.
+    for px in rendered.crop((20, 20, 150, 120)).convert("RGB").getdata()
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+515 passed, 1 warning in 34.40s
+EXIT_CODE=0

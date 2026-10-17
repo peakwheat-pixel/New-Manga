@@ -1,0 +1,85 @@
+shell=PowerShell
+head=c44b47dd9852121e18496502870f4e4cbaf5c737
+command=pwsh -NoProfile -ExecutionPolicy Bypass -File verification/P19-BOOT-1/capture_real_startup.ps1 -ProcessId 43380 -RunName runtime-final6
+app=apps/desktop/src-tauri/target/debug/m2rc1-desktop.exe
+launch_mode=compiled Tauri debug host with tauri/custom-protocol and source Python Core sidecar
+partial-state=catalog exists; derived empty
+UI=Win32 visible navigation clicks plus UIA interactive title and screenshots
+launch_command=Start-Process -FilePath apps/desktop/src-tauri/target/debug/m2rc1-desktop.exe
+launch_environment=isolated under verification/P19-BOOT-1/runtime-final6
+M2RC1_SRC_ROOT=src
+M2RC1_PYTHON=G:\CODEX\New Manga.task-envs\T1.1.1-impl-py312\Scripts\python.exe
+{
+  "app": "G:\\CODEX\\New Manga.workspace\\worktrees\\P19-BOOT-1\\apps\\desktop\\src-tauri\\target\\debug\\m2rc1-desktop.exe",
+  "app_sha256": "ce13c1f8975d2831e67821fb361634911dcaddedc5672b53aa4959026b8b18b9",
+  "launch_mode": "compiled Tauri debug host with tauri/custom-protocol and source Python Core sidecar",
+  "startup_state": "catalog exists; derived/ empty before app launch",
+  "run_root": "G:\\CODEX\\New Manga.workspace\\worktrees\\P19-BOOT-1\\verification\\P19-BOOT-1\\runtime-final6",
+  "pid": 43380,
+  "window_title": "M2-RC1 resource channel runtime",
+  "webview_uia_titles": [
+    {
+      "class": "Chrome_WidgetWin_1",
+      "name": "M2RC1|interactive|deny=5/5|allow=0/0|results=5"
+    },
+    {
+      "class": "BrowserRootView",
+      "name": "M2RC1|interactive|deny=5/5|allow=0/0|results=5 - Web 内容"
+    }
+  ],
+  "pages": [
+    {
+      "screenshot": {
+        "width": 1196,
+        "height": 899,
+        "file": "ui-bookshelf-real-window.png",
+        "sha256": "cb373d919c2e8651b76d23c5afdc6830d74a2b2594b4e0c73dc578d6247a4848"
+      },
+      "action": "real mouse click on visible navigation rail",
+      "page": "bookshelf"
+    },
+    {
+      "screenshot": {
+        "width": 1196,
+        "height": 899,
+        "file": "ui-workbench-real-window.png",
+        "sha256": "73d63aa14eff087372959e1b5669d93b25e36a8744a6d2dd20bc6799779e9c44"
+      },
+      "action": "real mouse click on visible navigation rail",
+      "page": "workbench"
+    },
+    {
+      "screenshot": {
+        "width": 1196,
+        "height": 899,
+        "file": "ui-reader-real-window.png",
+        "sha256": "4de460a24e1a94d31c25dec927dd878b86be074b7ce950c00aeffcd7fd5b6773"
+      },
+      "action": "real mouse click on visible navigation rail",
+      "page": "reader"
+    },
+    {
+      "screenshot": {
+        "width": 1196,
+        "height": 899,
+        "file": "ui-settings-real-window.png",
+        "sha256": "6406b3766df95f0d3ac7d9dee81dd78248f14d402f2462d73588d193e8b0c455"
+      },
+      "action": "real mouse click on visible navigation rail",
+      "page": "settings"
+    }
+  ],
+  "window_reached": true,
+  "app_exit_code": null,
+  "stderr_path": "final-app.stderr.log",
+  "stderr_sha256": null,
+  "stderr_checks": {
+    "has_json_decode_error": false,
+    "startup_gc_completed": true,
+    "has_file_not_found": false,
+    "has_misleading_busy": false
+  }
+}
+CAPTURE_SCRIPT_EXIT_CODE=0
+APP_EXIT_CODE=0
+STDERR_SHA256=90a6f1b65e49bb38103b344c95493581fd6221136fffe9d7b77954080b4fad34
