@@ -160,14 +160,29 @@ describe("Disabled partitions: visible, not operable, reasoned (AC2)", () => {
     vi.unstubAllGlobals();
   });
 
-  const mountAndSwitch = async (categoryId: string) => {
+  const mount = () => {
     const invoke = makeInvoke();
     act(() => {
       root.render(<SettingsPage client={new SettingsClient(invoke)} />);
     });
+  };
+
+  const activateOpenCategory = async (categoryId: string) => {
     await act(async () => {
       (container.querySelector(`[data-testid="settings-category-${categoryId}"]`) as HTMLButtonElement).click();
     });
+  };
+
+  const assertDisabledCategory = (categoryId: string, label: string) => {
+    const button = container.querySelector(`[data-testid="settings-category-${categoryId}"]`) as HTMLButtonElement;
+    expect(button).not.toBeNull();
+    expect(button.disabled).toBe(true);
+    expect(button.getAttribute("aria-disabled")).toBe("true");
+    expect(button.getAttribute("aria-label")).toContain("未开放");
+    expect(button.getAttribute("aria-label")).toContain("等待 section schema 冻结");
+    expect(button.title).toContain("等待 section schema 冻结");
+    expect(button.textContent).toContain(label);
+    expect(button.textContent).toContain("未开放");
   };
 
   /** The shared per-partition assertion: visible section + disabled control
@@ -192,56 +207,70 @@ describe("Disabled partitions: visible, not operable, reasoned (AC2)", () => {
     expect((section?.querySelectorAll("input, select, textarea") ?? []).length).toBe(0);
   };
 
-  it("OCR partition is disabled with the frozen reason", async () => {
-    await mountAndSwitch("ocr");
-    assertDisabledSection(DISABLED_SECTION_TEST_IDS.ocr, "OCR");
+  it("OCR category remains visible but cannot be invoked", async () => {
+    mount();
+    const button = container.querySelector('[data-testid="settings-category-ocr"]') as HTMLButtonElement;
+    assertDisabledCategory("ocr", "OCR");
+    await act(async () => button.click());
+    expect(container.querySelector('[data-testid="settings-active-category"]')?.getAttribute("data-category-id")).toBe("provider");
   });
 
   it("translation-context partition is disabled inside the open translation category", async () => {
-    await mountAndSwitch("translation");
+    mount();
+    await activateOpenCategory("translation");
     assertDisabledSection(DISABLED_SECTION_TEST_IDS.translationContext, "翻译参数 / 上下文策略");
     // The same category still hosts the open SFX control (AC2 open table).
     expect(container.querySelector('[data-testid="sfx-policy-control"]')).not.toBeNull();
   });
 
-  it("inpaint partition is disabled", async () => {
-    await mountAndSwitch("inpaint");
-    assertDisabledSection(DISABLED_SECTION_TEST_IDS.inpaint, "图片修复");
+  it("inpaint category remains visible but cannot be invoked", () => {
+    mount();
+    assertDisabledCategory("inpaint", "图片修复");
   });
 
-  it("typeset partition and the reading-direction partition are both disabled", async () => {
-    await mountAndSwitch("typeset");
-    assertDisabledSection(DISABLED_SECTION_TEST_IDS.typeset, "排版 / Text Style");
-    assertDisabledSection(DISABLED_SECTION_TEST_IDS.readingDirection, "阅读方向");
+  it("typeset category remains visible but cannot be invoked", () => {
+    mount();
+    assertDisabledCategory("typeset", "排版样式");
   });
 
-  it("model/GPU partition is disabled", async () => {
-    await mountAndSwitch("model_gpu");
-    assertDisabledSection(DISABLED_SECTION_TEST_IDS.modelGpu, "模型 / GPU");
+  it("model/GPU category remains visible but cannot be invoked", () => {
+    mount();
+    assertDisabledCategory("model_gpu", "模型/GPU");
   });
 
-  it("task/concurrency partition is disabled", async () => {
-    await mountAndSwitch("task_concurrency");
-    assertDisabledSection(DISABLED_SECTION_TEST_IDS.taskConcurrency, "任务 / 并发");
+  it("task/concurrency category remains visible but cannot be invoked", () => {
+    mount();
+    assertDisabledCategory("task_concurrency", "任务/并发");
   });
 
-  it("cache/Revision partition is disabled", async () => {
-    await mountAndSwitch("cache_revision");
-    assertDisabledSection(DISABLED_SECTION_TEST_IDS.cacheRevision, "缓存 / Revision");
+  it("cache/Revision category remains visible but cannot be invoked", () => {
+    mount();
+    assertDisabledCategory("cache_revision", "缓存/Revision");
   });
 
-  it("recycle bin (G2) partition is disabled with the frozen reason", async () => {
-    await mountAndSwitch("recycle_bin");
-    assertDisabledSection(DISABLED_SECTION_TEST_IDS.recycleBin, "回收站");
+  it("recycle bin category remains visible but cannot be invoked", () => {
+    mount();
+    assertDisabledCategory("recycle_bin", "回收站");
   });
 
-  it("backup/restore partition is disabled", async () => {
-    await mountAndSwitch("backup_restore");
-    assertDisabledSection(DISABLED_SECTION_TEST_IDS.backupRestore, "备份 / 恢复");
+  it("backup/restore category remains visible but cannot be invoked", () => {
+    mount();
+    assertDisabledCategory("backup_restore", "备份/恢复");
   });
 
-  it("Plugin/Hooks partition is disabled", async () => {
-    await mountAndSwitch("plugins");
-    assertDisabledSection(DISABLED_SECTION_TEST_IDS.plugins, "Plugin / Hooks");
+  it("Plugin/Hooks category remains visible but cannot be invoked", () => {
+    mount();
+    assertDisabledCategory("plugins", "Plugin/Hooks");
+  });
+
+  it("keyboard navigation skips closed categories", async () => {
+    mount();
+    const nav = container.querySelector('[data-testid="settings-category-nav"]') as HTMLElement;
+    for (let i = 0; i < 3; i += 1) {
+      await act(async () => {
+        nav.dispatchEvent(new dom.window.KeyboardEvent("keydown", { key: "ArrowDown", bubbles: true }));
+      });
+    }
+    expect(container.querySelector('[data-testid="settings-active-category"]')?.getAttribute("data-category-id")).toBe("translation");
   });
 });

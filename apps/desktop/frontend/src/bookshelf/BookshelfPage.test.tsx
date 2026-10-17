@@ -257,6 +257,20 @@ describe("Bookshelf UI - Data Binding & State Matrix (W1, W2, W3, W28, W30)", ()
 
   // ---- AC3 / W30: ImportDialog workflow (the core of P12) ----
   describe("AC3 / W30 ImportDialog Flow", () => {
+    it("opens visible import feedback from the bookshelf entry", async () => {
+      await act(async () => {
+        root.render(<BookshelfPage initialBooks={[]} />);
+      });
+
+      const importBtn = container.querySelector('[data-testid="toolbar-import-btn"]') as HTMLButtonElement;
+      await act(async () => importBtn.click());
+
+      expect(container.querySelector('[data-testid="import-dialog"]')).not.toBeNull();
+      expect(container.querySelector('[data-testid="import-unavailable-notice"]')?.textContent).toContain("未开放");
+      expect((container.querySelector('[data-testid="import-file-btn"]') as HTMLButtonElement).disabled).toBe(true);
+      expect((container.querySelector('[data-testid="import-folder-btn"]') as HTMLButtonElement).disabled).toBe(true);
+    });
+
     it("renders duplicate policy options with skip as default", () => {
       const html = renderToString(
         <ImportDialog
@@ -373,6 +387,30 @@ describe("Bookshelf UI - Data Binding & State Matrix (W1, W2, W3, W28, W30)", ()
       expect(container.textContent).toContain("取消了文件夹选择");
       // Buttons remain available
       expect(folderBtn.disabled).toBe(false);
+    });
+
+    it("shows a visible error when the native picker or import fails", async () => {
+      const client = new LibraryClient(vi.fn().mockRejectedValue("CORE_UNAVAILABLE"));
+
+      await act(async () => {
+        root.render(
+          <ImportDialog
+            isOpen={true}
+            books={MOCK_BOOKS}
+            chapters={MOCK_CHAPTERS}
+            initialBookId="book-1"
+            initialChapterId="ch-101"
+            client={client}
+            onClose={vi.fn()}
+          />,
+        );
+      });
+
+      await act(async () => {
+        (container.querySelector('[data-testid="import-file-btn"]') as HTMLButtonElement).click();
+      });
+
+      expect(container.querySelector('[data-testid="import-error-banner"]')?.textContent).toContain("CORE_UNAVAILABLE");
     });
   });
 

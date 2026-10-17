@@ -262,6 +262,23 @@ export function ImportDialog({
           </div>
         </div>
 
+        {chapters.length === 0 && (
+          <div
+            role="status"
+            aria-live="polite"
+            data-testid="import-unavailable-notice"
+            style={{
+              padding: tokens.spacing.sm,
+              borderRadius: tokens.radius.card,
+              backgroundColor: tokens.color.bg.toolbar,
+              color: tokens.color.text.secondary,
+              fontSize: tokens.typography.size.secondary,
+            }}
+          >
+            未开放：当前没有可导入的目标章节。请先创建作品和章节，再选择文件或文件夹导入。
+          </div>
+        )}
+
         {/* Duplicate policy selection (Default: skip) */}
         <div style={{ backgroundColor: tokens.color.bg.toolbar, padding: tokens.spacing.sm, borderRadius: tokens.radius.card }}>
           <div style={{ fontSize: tokens.typography.size.secondary, fontWeight: 600, color: tokens.color.text.secondary, marginBottom: 6 }}>

@@ -3,15 +3,15 @@ id: P19-UI-FIX-1
 title: 修复两处 P1 用户可见缺陷：未开放分区可操作 + 导入作品无反应
 kind: bugfix
 governance_version: 2
-status: ready
+status: in_progress
 approval: coordinator_release_20261017_from_P19_D_acceptance_findings
 suggested_owner: Codex
-owner: null
-reviewer: null
+owner: codex
+reviewer: DeepSeek Harness
 depends_on: [P15, P12]
-base_commit: null
-branch: null
-worktree: null
+base_commit: fe4e8662f293105615eb82a28c7091b0800fec15
+branch: codex/P19-UI-FIX-1
+worktree: G:/CODEX/New Manga.workspace/worktrees/P19-UI-FIX-1
 integration_commit: null
 delivery_head: null
 canonical_evidence_status: pending
