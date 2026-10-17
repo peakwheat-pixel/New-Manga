@@ -34,21 +34,15 @@ fn main() {
     // match bare command invocations, so the ACL layer silently skipped
     // them). With `__app-acl__` present, Tauri enforces the capability for
     // every bare command: `capabilities/m2rc1-commands.json` grants exactly
-    // the thirty-seven commands below to the main window (thirty production
-    // commands — three resource-channel + two IPC1 + the two
-    // M2-SETTINGS-IPC-CHANNEL settings commands + the two M2-REGION-RETYPE-
-    // CORE region-retype commands + three RC-4 production commands + the
-    // M2-PAGE-RESOURCE-RESOLVE-1 page-resource resolve command + the two
-    // M2-PAGE-NAV-PROJECTION-1 page navigation projections + three
-    // HOST-ISSUER-1 safe picker actions + the six RUN-IPC-1 Run transport
-    // commands + the EXPORT-REVEAL-1 action + three EXPORT-IPC-1 export
-    // control/query commands + the two READER-IPC-1 reader commands — plus
-    // control/query commands — plus
-    // the four probe commands and the three M2-AC1 acceptance commands), and any other command name
+    // the fifty-four commands below: 47 production (3 resource + 2 IPC1 +
+    // 2 existing settings + 17 P15 settings + 2 retype + 3 RC-4 + 1 page
+    // resolve + 2 page navigation + 2 Reader + 3 Host Issuer + 6 Run +
+    // 1 reveal + 3 export), four probe, and three M2-AC1 acceptance commands;
+    // any other command name
     // (e.g. the deleted `register_catalog`) is refused by the ACL before the invoke
     // handler is consulted. The settings_* pair (M2-SETTINGS-IPC-CHANNEL,
     // contract rev 1.3 §5.3) and the region-retype pair (M2-REGION-RETYPE-
-    // CORE, contract rev 1.4 §5.4) are production-only; the probe commands
+    // CORE, contract rev 1.4 §5.4) and P15 rev 2.7 settings are production-only; the probe commands
     // additionally require probe mode, and the three acceptance commands
     // require the M2-AC1 test mode at runtime (main.rs).
     //
@@ -70,6 +64,24 @@ fn main() {
             // mode (main.rs SETTINGS_PRODUCTION_ONLY_COMMANDS).
             "settings_get",
             "settings_update_section",
+            // P15-C1 rev 2.7 G21/G23/G24: 17 production-only settings commands.
+            "settings_provider_profiles_list",
+            "settings_provider_profiles_create",
+            "settings_provider_profiles_update",
+            "settings_provider_profiles_delete",
+            "settings_provider_bindings_set",
+            "settings_provider_bindings_clear",
+            "settings_provider_bindings_resolve",
+            "settings_provider_run_snapshot_get",
+            "settings_network_profiles_list",
+            "settings_network_profiles_create",
+            "settings_network_profiles_update",
+            "settings_network_profiles_delete",
+            "settings_network_profiles_test",
+            "settings_network_profile_default_set",
+            "settings_network_profile_default_clear",
+            "settings_network_profile_resolve",
+            "settings_resolve_overrides",
             // M2-REGION-RETYPE-CORE (contract rev 1.4 §5.4): production-
             // only region retype write/read pair; ACL-declared so the
             // capability file can name them, registered at runtime ONLY in

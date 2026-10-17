@@ -1,0 +1,28 @@
+{
+  "task_id": "P15-HOST-1",
+  "branch": "codex/P15-HOST-1",
+  "worktree": "G:\\CODEX\\New Manga.workspace\\worktrees\\P15-HOST-1",
+  "git_common_dir": "G:/CODEX/New Manga/.git",
+  "implementation_head": "ece3af6056e25dc51094b3d027f72d654a6f4dd1",
+  "resource_disposition": "PRESERVE_REFERENCED",
+  "resources": [
+    {
+      "path": "apps/desktop/src-tauri/target/core-sidecar",
+      "type": "junction",
+      "target": "G:/CODEX/New Manga/apps/desktop/src-tauri/target/core-sidecar",
+      "disposition": "PRESERVE_REFERENCED"
+    },
+    {
+      "path": "apps/desktop/frontend/dist",
+      "type": "junction",
+      "target": "G:/CODEX/New Manga/apps/desktop/frontend/dist",
+      "disposition": "PRESERVE_REFERENCED"
+    }
+  ],
+  "cleanup": {
+    "deleted_count": 0,
+    "moved_count": 0,
+    "bytes": 0
+  },
+  "note": "Both junctions were inspected and preserved. No target/core-sidecar or frontend/dist junction was removed or rebuilt."
+}

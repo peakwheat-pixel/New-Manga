@@ -36,19 +36,22 @@ mod ac1_bridge;
 mod core_bridge;
 mod host_issuer;
 mod library_bridge;
-mod resource_protocol;
 #[cfg(test)]
 #[path = "packaged_sidecar_tests.rs"]
 mod packaged_sidecar_tests;
+mod resource_protocol;
+mod settings_bridge;
 
 use ac1_bridge::Ac1Channel;
 use core_bridge::{CoreChannel, CoreError, StdioCoreChannel};
 use library_bridge::{
-    BookSummary, ExportHistoryResponseView, ExportProgressSnapshotView, LibraryChannel, PingResult,
-    StdioLibraryChannel,
+    BookSummary, ExportHistoryResponseView, ExportProgressSnapshotView, LibraryChannel,
+    P15CredentialTarget, P15SettingsCommand, PingResult, StdioLibraryChannel,
+    P15_HOST_ONLY_COMMANDS,
 };
 use resource_protocol::ScopeRoots;
 use serde::Serialize;
+use settings_bridge::*;
 use std::collections::HashMap;
 use std::path::PathBuf;
 use std::sync::Arc;
@@ -69,6 +72,24 @@ pub const PRODUCTION_COMMANDS: &[&str] = &[
     // write pair, production-only like the IPC1 commands below.
     "settings_get",
     "settings_update_section",
+    // P15-C1 rev 2.7 G21/G23/G24 settings surface (17 commands); production-only.
+    "settings_provider_profiles_list",
+    "settings_provider_profiles_create",
+    "settings_provider_profiles_update",
+    "settings_provider_profiles_delete",
+    "settings_provider_bindings_set",
+    "settings_provider_bindings_clear",
+    "settings_provider_bindings_resolve",
+    "settings_provider_run_snapshot_get",
+    "settings_network_profiles_list",
+    "settings_network_profiles_create",
+    "settings_network_profiles_update",
+    "settings_network_profiles_delete",
+    "settings_network_profiles_test",
+    "settings_network_profile_default_set",
+    "settings_network_profile_default_clear",
+    "settings_network_profile_resolve",
+    "settings_resolve_overrides",
     // M2-REGION-RETYPE-CORE (contract rev 1.4 §5.4): the region retype
     // write/read pair, production-only like the settings pair above.
     "set_region_type",
@@ -142,6 +163,26 @@ pub const IPC1_PRODUCTION_ONLY_COMMANDS: &[&str] = &["core_ping", "library_list_
 /// never gain them (option-B precedent of M2-IPC1).
 pub const SETTINGS_PRODUCTION_ONLY_COMMANDS: &[&str] = &["settings_get", "settings_update_section"];
 
+pub const P15_SETTINGS_PRODUCTION_ONLY_COMMANDS: &[&str] = &[
+    "settings_provider_profiles_list",
+    "settings_provider_profiles_create",
+    "settings_provider_profiles_update",
+    "settings_provider_profiles_delete",
+    "settings_provider_bindings_set",
+    "settings_provider_bindings_clear",
+    "settings_provider_bindings_resolve",
+    "settings_provider_run_snapshot_get",
+    "settings_network_profiles_list",
+    "settings_network_profiles_create",
+    "settings_network_profiles_update",
+    "settings_network_profiles_delete",
+    "settings_network_profiles_test",
+    "settings_network_profile_default_set",
+    "settings_network_profile_default_clear",
+    "settings_network_profile_resolve",
+    "settings_resolve_overrides",
+];
+
 /// M2-REGION-RETYPE-CORE (contract rev 1.4 §5.4): the region retype pair is
 /// production-only as well (same option-B precedent — the frozen test-mode
 /// surfaces keep their historical shape).
@@ -210,6 +251,7 @@ pub fn command_allowlist(probe_mode: bool, ac1_mode: bool) -> Vec<&'static str> 
             .filter(|command| {
                 !IPC1_PRODUCTION_ONLY_COMMANDS.contains(command)
                     && !SETTINGS_PRODUCTION_ONLY_COMMANDS.contains(command)
+                    && !P15_SETTINGS_PRODUCTION_ONLY_COMMANDS.contains(command)
                     && !RETYPE_PRODUCTION_ONLY_COMMANDS.contains(command)
                     && !RC4_PRODUCTION_ONLY_COMMANDS.contains(command)
                     && !PAGE_RESOLVE_PRODUCTION_ONLY_COMMANDS.contains(command)
@@ -1271,6 +1313,23 @@ fn main() {
             library_list_books,
             settings_get,
             settings_update_section,
+            settings_provider_profiles_list,
+            settings_provider_profiles_create,
+            settings_provider_profiles_update,
+            settings_provider_profiles_delete,
+            settings_provider_bindings_set,
+            settings_provider_bindings_clear,
+            settings_provider_bindings_resolve,
+            settings_provider_run_snapshot_get,
+            settings_network_profiles_list,
+            settings_network_profiles_create,
+            settings_network_profiles_update,
+            settings_network_profiles_delete,
+            settings_network_profiles_test,
+            settings_network_profile_default_set,
+            settings_network_profile_default_clear,
+            settings_network_profile_resolve,
+            settings_resolve_overrides,
             set_region_type,
             list_regions,
             list_region_revisions,
@@ -1307,9 +1366,7 @@ mod tests {
     use super::*;
     use crate::core_bridge::{build_issue_params, MockCoreChannel};
     use crate::library_bridge::{LibraryError, MockLibraryChannel};
-    use crate::resource_protocol::{
-        build_url, handle_m2res_request, ScopeRoots, ID_LENGTH,
-    };
+    use crate::resource_protocol::{build_url, handle_m2res_request, ScopeRoots, ID_LENGTH};
     use std::io::Write;
 
     struct TestEnv {
@@ -1391,7 +1448,7 @@ mod tests {
     /// keyed `plugin:<name>|<cmd>` and never matches bare invocations -- the
     /// ACL layer silently skipped them, DSH R2-01). This pins the build
     /// artifact: the app manifest declares exactly the live commands
-    /// (twenty-seven production -- resource-channel, IPC1, settings, retype,
+    /// (forty-seven production -- resource-channel, IPC1, settings, retype,
     /// RC-4, page resolve/navigation, HOST-ISSUER-1, Run, export reveal and
     /// Reader actions -- plus
     /// four probe-only and three M2-AC1 acceptance commands; R2-06),
@@ -1412,8 +1469,8 @@ mod tests {
         // commands too — a capability/manifest typo for an ac1 command must
         // fail here, not only surface as an E2E ACL denial.
         // M2-REGION-RETYPE-CORE r1 P3-2: the production surface joins the
-        // sweep, so the existence check covers all 34 commands across the
-        // three surfaces (27 production + 4 probe-only + 3 ac1) — a missing
+        // sweep, so the existence check covers all 54 commands across the
+        // three surfaces (47 production + 4 probe-only + 3 ac1) — a missing
         // capability/manifest entry for a production-only command (e.g. the
         // retype pair) fails this test, not just a live invoke.
         for command in command_allowlist(true, false)
@@ -1438,10 +1495,7 @@ mod tests {
 
     #[test]
     fn production_surface_includes_export_reveal() {
-        // Production surface counts: 5 base/IPC1 + 2 settings = 7; +2 retype
-        // = 9; +3 RC-4 = 12; +1 page resolve = 13; +2 navigation = 15;
-        // +3 HOST-ISSUER-1 = 18; +6 Run = 24; +1 reveal = 25;
-        // +3 EXPORT-IPC-1 = 28; +2 READER-IPC-1 = 30.
+        // Existing 30 production commands + the 17 P15 settings commands = 47.
         assert_eq!(
             command_allowlist(false, false),
             vec![
@@ -1452,6 +1506,23 @@ mod tests {
                 "library_list_books",
                 "settings_get",
                 "settings_update_section",
+                "settings_provider_profiles_list",
+                "settings_provider_profiles_create",
+                "settings_provider_profiles_update",
+                "settings_provider_profiles_delete",
+                "settings_provider_bindings_set",
+                "settings_provider_bindings_clear",
+                "settings_provider_bindings_resolve",
+                "settings_provider_run_snapshot_get",
+                "settings_network_profiles_list",
+                "settings_network_profiles_create",
+                "settings_network_profiles_update",
+                "settings_network_profiles_delete",
+                "settings_network_profiles_test",
+                "settings_network_profile_default_set",
+                "settings_network_profile_default_clear",
+                "settings_network_profile_resolve",
+                "settings_resolve_overrides",
                 "set_region_type",
                 "list_regions",
                 "list_region_revisions",
@@ -1477,6 +1548,32 @@ mod tests {
                 "library_get_export_history",
             ]
         );
+    }
+
+    #[test]
+    fn p15_settings_commands_are_exact_and_production_only() {
+        assert_eq!(P15_SETTINGS_PRODUCTION_ONLY_COMMANDS.len(), 17);
+        assert_eq!(PRODUCTION_COMMANDS.len(), 47);
+        assert_eq!(command_allowlist(true, false).len(), 7);
+        assert_eq!(command_allowlist(false, true).len(), 6);
+        for command in P15_SETTINGS_PRODUCTION_ONLY_COMMANDS {
+            assert!(command_allowlist(false, false).contains(command));
+            assert!(!command_allowlist(true, false).contains(command));
+            assert!(!command_allowlist(false, true).contains(command));
+        }
+    }
+
+    #[test]
+    fn p15_core_credential_commands_are_host_only() {
+        for command in P15_HOST_ONLY_COMMANDS {
+            assert!(!PRODUCTION_COMMANDS.contains(&command));
+            assert!(!command_allowlist(false, false).contains(&command));
+            assert!(!command_allowlist(true, false).contains(&command));
+            assert!(!command_allowlist(false, true).contains(&command));
+            assert!(!include_str!("main.rs").contains(command));
+            assert!(!include_str!("../build.rs").contains(command));
+            assert!(!include_str!("../capabilities/m2rc1-commands.json").contains(command));
+        }
     }
 
     #[test]
@@ -1609,6 +1706,7 @@ mod tests {
             PRODUCTION_COMMANDS.len()
                 - IPC1_PRODUCTION_ONLY_COMMANDS.len()
                 - SETTINGS_PRODUCTION_ONLY_COMMANDS.len()
+                - P15_SETTINGS_PRODUCTION_ONLY_COMMANDS.len()
                 - RETYPE_PRODUCTION_ONLY_COMMANDS.len()
                 - RC4_PRODUCTION_ONLY_COMMANDS.len()
                 - PAGE_RESOLVE_PRODUCTION_ONLY_COMMANDS.len()
@@ -1700,6 +1798,7 @@ mod tests {
             PRODUCTION_COMMANDS.len()
                 - IPC1_PRODUCTION_ONLY_COMMANDS.len()
                 - SETTINGS_PRODUCTION_ONLY_COMMANDS.len()
+                - P15_SETTINGS_PRODUCTION_ONLY_COMMANDS.len()
                 - RETYPE_PRODUCTION_ONLY_COMMANDS.len()
                 - RC4_PRODUCTION_ONLY_COMMANDS.len()
                 - PAGE_RESOLVE_PRODUCTION_ONLY_COMMANDS.len()
@@ -1715,20 +1814,11 @@ mod tests {
 
     #[test]
     fn production_only_commands_stay_off_both_frozen_test_surfaces() {
-        // One negative sweep across the TEN
-        // production-only families (IPC1 + settings + retype + RC4 + the
-        // M2-PAGE-RESOURCE-RESOLVE-1 page-resource resolve + the
-        // M2-PAGE-NAV-PROJECTION-1 navigation projections + HOST-ISSUER-1 +
-        // the RUN-IPC-1 Run transport + EXPORT-REVEAL-1 + READER-IPC-1) — the frozen probe
-        // and ac1 test-mode surfaces must never gain any of them, and their
-        // historical 7/6-command shapes stay pinned.
-        // M2-PAGE-NAV-PROJECTION-1 navigation projections + the RUN-IPC-1 Run
-        // transport + the EXPORT-IPC-1 export control/query) — the frozen
-        // probe and ac1 test-mode surfaces must never gain any of them, and
-        // their historical 7/6-command shapes stay pinned.
+        // Keep every production-only family off the frozen 7/6-command surfaces.
         for command in IPC1_PRODUCTION_ONLY_COMMANDS
             .iter()
             .chain(SETTINGS_PRODUCTION_ONLY_COMMANDS)
+            .chain(P15_SETTINGS_PRODUCTION_ONLY_COMMANDS)
             .chain(RETYPE_PRODUCTION_ONLY_COMMANDS)
             .chain(RC4_PRODUCTION_ONLY_COMMANDS)
             .chain(PAGE_RESOLVE_PRODUCTION_ONLY_COMMANDS)
@@ -1755,8 +1845,7 @@ mod tests {
     /// RUN-IPC-1: literal exact assertions for the Run transport family. The
     /// six names are pinned with a fixed literal expectation (never derived
     /// from the constant itself), the group must sit on the production surface
-    /// and on NEITHER frozen test surface, and the production surface must
-    /// still hold exactly twenty-seven commands.
+    /// and on NEITHER frozen test surface, and the production count stays pinned.
     #[test]
     fn run_transport_commands_are_exact_and_production_only() {
         assert_eq!(
@@ -1770,11 +1859,8 @@ mod tests {
                 "library_retry_failed_targets",
             ]
         );
-        // 18 pre-existing production commands + the six RUN-IPC-1 Run transport
-        // commands + the single EXPORT-REVEAL-1 reveal command + the three
-        // EXPORT-IPC-1 export control/query commands + the two READER-IPC-1
-        // reader commands = 30.
-        assert_eq!(PRODUCTION_COMMANDS.len(), 30);
+        // 30 pre-existing production commands + 17 P15 settings commands = 47.
+        assert_eq!(PRODUCTION_COMMANDS.len(), 47);
 
         let production = command_allowlist(false, false);
         let probe = command_allowlist(true, false);
@@ -1807,7 +1893,7 @@ mod tests {
                 "library_get_export_history",
             ]
         );
-        assert_eq!(PRODUCTION_COMMANDS.len(), 30);
+        assert_eq!(PRODUCTION_COMMANDS.len(), 47);
 
         let production = command_allowlist(false, false);
         let probe = command_allowlist(true, false);
@@ -1842,7 +1928,10 @@ mod tests {
             fn list_books(&self) -> Result<Vec<BookSummary>, LibraryError> {
                 unimplemented!("not exercised by this test")
             }
-            fn get_settings(&self, _section: Option<&str>) -> Result<serde_json::Value, LibraryError> {
+            fn get_settings(
+                &self,
+                _section: Option<&str>,
+            ) -> Result<serde_json::Value, LibraryError> {
                 unimplemented!("not exercised by this test")
             }
             fn update_settings_section(
@@ -1921,7 +2010,9 @@ mod tests {
             "CORE_UNAVAILABLE"
         );
         assert_eq!(
-            bare.retry_failed_targets("run-1", "key-2").unwrap_err().code,
+            bare.retry_failed_targets("run-1", "key-2")
+                .unwrap_err()
+                .code,
             "CORE_UNAVAILABLE"
         );
     }
@@ -1936,7 +2027,10 @@ mod tests {
             fn list_books(&self) -> Result<Vec<BookSummary>, LibraryError> {
                 unimplemented!("not exercised by this test")
             }
-            fn get_settings(&self, _section: Option<&str>) -> Result<serde_json::Value, LibraryError> {
+            fn get_settings(
+                &self,
+                _section: Option<&str>,
+            ) -> Result<serde_json::Value, LibraryError> {
                 unimplemented!("not exercised by this test")
             }
             fn update_settings_section(
@@ -2661,6 +2755,24 @@ mod tests {
             .get_settings(Some("sfx"))
             .expect("read after reject");
         assert_eq!(still["settings"]["sfx"]["policy"], "translate");
+
+        let profiles = channel
+            .p15_settings(
+                P15SettingsCommand::ProviderProfilesList,
+                serde_json::json!({}),
+            )
+            .expect("Core 2.7 Provider profile list");
+        assert!(profiles["profiles"].is_array());
+
+        let target = P15CredentialTarget::ProviderApi {
+            profile_id: "missing-profile".into(),
+        };
+        let bind_error = channel
+            .bind_profile_credential(target.clone(), "unused-private-reference")
+            .unwrap_err();
+        assert_eq!(bind_error.code, "TARGET_NOT_FOUND");
+        let clear_error = channel.clear_profile_credential(target).unwrap_err();
+        assert_eq!(clear_error.code, "TARGET_NOT_FOUND");
     }
 
     /// M2-REGION-RETYPE-CORE r1 P3-4: the retype read/write pair end to end

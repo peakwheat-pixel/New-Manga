@@ -1,0 +1,11 @@
+# Automatically generated - DO NOT EDIT!
+
+[[permission]]
+identifier = "allow-settings-provider-profiles-list"
+description = "Enables the settings_provider_profiles_list command without any pre-configured scope."
+commands.allow = ["settings_provider_profiles_list"]
+
+[[permission]]
+identifier = "deny-settings-provider-profiles-list"
+description = "Denies the settings_provider_profiles_list command without any pre-configured scope."
+commands.deny = ["settings_provider_profiles_list"]

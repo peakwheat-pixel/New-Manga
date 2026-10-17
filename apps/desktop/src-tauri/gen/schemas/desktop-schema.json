@@ -561,6 +561,108 @@
           "markdownDescription": "Enables the settings_get command without any pre-configured scope."
         },
         {
+          "description": "Enables the settings_network_profile_default_clear command without any pre-configured scope.",
+          "type": "string",
+          "const": "allow-settings-network-profile-default-clear",
+          "markdownDescription": "Enables the settings_network_profile_default_clear command without any pre-configured scope."
+        },
+        {
+          "description": "Enables the settings_network_profile_default_set command without any pre-configured scope.",
+          "type": "string",
+          "const": "allow-settings-network-profile-default-set",
+          "markdownDescription": "Enables the settings_network_profile_default_set command without any pre-configured scope."
+        },
+        {
+          "description": "Enables the settings_network_profile_resolve command without any pre-configured scope.",
+          "type": "string",
+          "const": "allow-settings-network-profile-resolve",
+          "markdownDescription": "Enables the settings_network_profile_resolve command without any pre-configured scope."
+        },
+        {
+          "description": "Enables the settings_network_profiles_create command without any pre-configured scope.",
+          "type": "string",
+          "const": "allow-settings-network-profiles-create",
+          "markdownDescription": "Enables the settings_network_profiles_create command without any pre-configured scope."
+        },
+        {
+          "description": "Enables the settings_network_profiles_delete command without any pre-configured scope.",
+          "type": "string",
+          "const": "allow-settings-network-profiles-delete",
+          "markdownDescription": "Enables the settings_network_profiles_delete command without any pre-configured scope."
+        },
+        {
+          "description": "Enables the settings_network_profiles_list command without any pre-configured scope.",
+          "type": "string",
+          "const": "allow-settings-network-profiles-list",
+          "markdownDescription": "Enables the settings_network_profiles_list command without any pre-configured scope."
+        },
+        {
+          "description": "Enables the settings_network_profiles_test command without any pre-configured scope.",
+          "type": "string",
+          "const": "allow-settings-network-profiles-test",
+          "markdownDescription": "Enables the settings_network_profiles_test command without any pre-configured scope."
+        },
+        {
+          "description": "Enables the settings_network_profiles_update command without any pre-configured scope.",
+          "type": "string",
+          "const": "allow-settings-network-profiles-update",
+          "markdownDescription": "Enables the settings_network_profiles_update command without any pre-configured scope."
+        },
+        {
+          "description": "Enables the settings_provider_bindings_clear command without any pre-configured scope.",
+          "type": "string",
+          "const": "allow-settings-provider-bindings-clear",
+          "markdownDescription": "Enables the settings_provider_bindings_clear command without any pre-configured scope."
+        },
+        {
+          "description": "Enables the settings_provider_bindings_resolve command without any pre-configured scope.",
+          "type": "string",
+          "const": "allow-settings-provider-bindings-resolve",
+          "markdownDescription": "Enables the settings_provider_bindings_resolve command without any pre-configured scope."
+        },
+        {
+          "description": "Enables the settings_provider_bindings_set command without any pre-configured scope.",
+          "type": "string",
+          "const": "allow-settings-provider-bindings-set",
+          "markdownDescription": "Enables the settings_provider_bindings_set command without any pre-configured scope."
+        },
+        {
+          "description": "Enables the settings_provider_profiles_create command without any pre-configured scope.",
+          "type": "string",
+          "const": "allow-settings-provider-profiles-create",
+          "markdownDescription": "Enables the settings_provider_profiles_create command without any pre-configured scope."
+        },
+        {
+          "description": "Enables the settings_provider_profiles_delete command without any pre-configured scope.",
+          "type": "string",
+          "const": "allow-settings-provider-profiles-delete",
+          "markdownDescription": "Enables the settings_provider_profiles_delete command without any pre-configured scope."
+        },
+        {
+          "description": "Enables the settings_provider_profiles_list command without any pre-configured scope.",
+          "type": "string",
+          "const": "allow-settings-provider-profiles-list",
+          "markdownDescription": "Enables the settings_provider_profiles_list command without any pre-configured scope."
+        },
+        {
+          "description": "Enables the settings_provider_profiles_update command without any pre-configured scope.",
+          "type": "string",
+          "const": "allow-settings-provider-profiles-update",
+          "markdownDescription": "Enables the settings_provider_profiles_update command without any pre-configured scope."
+        },
+        {
+          "description": "Enables the settings_provider_run_snapshot_get command without any pre-configured scope.",
+          "type": "string",
+          "const": "allow-settings-provider-run-snapshot-get",
+          "markdownDescription": "Enables the settings_provider_run_snapshot_get command without any pre-configured scope."
+        },
+        {
+          "description": "Enables the settings_resolve_overrides command without any pre-configured scope.",
+          "type": "string",
+          "const": "allow-settings-resolve-overrides",
+          "markdownDescription": "Enables the settings_resolve_overrides command without any pre-configured scope."
+        },
+        {
           "description": "Enables the settings_update_section command without any pre-configured scope.",
           "type": "string",
           "const": "allow-settings-update-section",
@@ -781,6 +883,108 @@
           "type": "string",
           "const": "deny-settings-get",
           "markdownDescription": "Denies the settings_get command without any pre-configured scope."
+        },
+        {
+          "description": "Denies the settings_network_profile_default_clear command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-settings-network-profile-default-clear",
+          "markdownDescription": "Denies the settings_network_profile_default_clear command without any pre-configured scope."
+        },
+        {
+          "description": "Denies the settings_network_profile_default_set command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-settings-network-profile-default-set",
+          "markdownDescription": "Denies the settings_network_profile_default_set command without any pre-configured scope."
+        },
+        {
+          "description": "Denies the settings_network_profile_resolve command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-settings-network-profile-resolve",
+          "markdownDescription": "Denies the settings_network_profile_resolve command without any pre-configured scope."
+        },
+        {
+          "description": "Denies the settings_network_profiles_create command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-settings-network-profiles-create",
+          "markdownDescription": "Denies the settings_network_profiles_create command without any pre-configured scope."
+        },
+        {
+          "description": "Denies the settings_network_profiles_delete command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-settings-network-profiles-delete",
+          "markdownDescription": "Denies the settings_network_profiles_delete command without any pre-configured scope."
+        },
+        {
+          "description": "Denies the settings_network_profiles_list command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-settings-network-profiles-list",
+          "markdownDescription": "Denies the settings_network_profiles_list command without any pre-configured scope."
+        },
+        {
+          "description": "Denies the settings_network_profiles_test command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-settings-network-profiles-test",
+          "markdownDescription": "Denies the settings_network_profiles_test command without any pre-configured scope."
+        },
+        {
+          "description": "Denies the settings_network_profiles_update command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-settings-network-profiles-update",
+          "markdownDescription": "Denies the settings_network_profiles_update command without any pre-configured scope."
+        },
+        {
+          "description": "Denies the settings_provider_bindings_clear command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-settings-provider-bindings-clear",
+          "markdownDescription": "Denies the settings_provider_bindings_clear command without any pre-configured scope."
+        },
+        {
+          "description": "Denies the settings_provider_bindings_resolve command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-settings-provider-bindings-resolve",
+          "markdownDescription": "Denies the settings_provider_bindings_resolve command without any pre-configured scope."
+        },
+        {
+          "description": "Denies the settings_provider_bindings_set command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-settings-provider-bindings-set",
+          "markdownDescription": "Denies the settings_provider_bindings_set command without any pre-configured scope."
+        },
+        {
+          "description": "Denies the settings_provider_profiles_create command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-settings-provider-profiles-create",
+          "markdownDescription": "Denies the settings_provider_profiles_create command without any pre-configured scope."
+        },
+        {
+          "description": "Denies the settings_provider_profiles_delete command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-settings-provider-profiles-delete",
+          "markdownDescription": "Denies the settings_provider_profiles_delete command without any pre-configured scope."
+        },
+        {
+          "description": "Denies the settings_provider_profiles_list command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-settings-provider-profiles-list",
+          "markdownDescription": "Denies the settings_provider_profiles_list command without any pre-configured scope."
+        },
+        {
+          "description": "Denies the settings_provider_profiles_update command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-settings-provider-profiles-update",
+          "markdownDescription": "Denies the settings_provider_profiles_update command without any pre-configured scope."
+        },
+        {
+          "description": "Denies the settings_provider_run_snapshot_get command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-settings-provider-run-snapshot-get",
+          "markdownDescription": "Denies the settings_provider_run_snapshot_get command without any pre-configured scope."
+        },
+        {
+          "description": "Denies the settings_resolve_overrides command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-settings-resolve-overrides",
+          "markdownDescription": "Denies the settings_resolve_overrides command without any pre-configured scope."
         },
         {
           "description": "Denies the settings_update_section command without any pre-configured scope.",

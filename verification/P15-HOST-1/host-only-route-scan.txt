@@ -1,0 +1,68 @@
+Shell=PowerShell 7.6.6
+WorkingDirectory=G:\CODEX\New Manga.workspace\worktrees\P15-HOST-1
+Commit=ece3af6056e25dc51094b3d027f72d654a6f4dd1
+Scan 1: rg -n "BindProfileCredential|ClearProfileCredential" apps/desktop/src-tauri/src
+
+apps/desktop/src-tauri/src\library_bridge.rs:458:const P15_BIND_PROFILE_CREDENTIAL: &str = "BindProfileCredential";
+apps/desktop/src-tauri/src\library_bridge.rs:459:const P15_CLEAR_PROFILE_CREDENTIAL: &str = "ClearProfileCredential";
+EXIT_CODE_SCAN_1=0
+
+Host route constants and their references:
+456-}
+457-
+458:const P15_BIND_PROFILE_CREDENTIAL: &str = "BindProfileCredential";
+459:const P15_CLEAR_PROFILE_CREDENTIAL: &str = "ClearProfileCredential";
+460:pub const P15_HOST_ONLY_COMMANDS: [&str; 2] =
+461:    [P15_BIND_PROFILE_CREDENTIAL, P15_CLEAR_PROFILE_CREDENTIAL];
+462-
+463-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+--
+496-    }
+497-    #[allow(dead_code)]
+498:    fn bind_profile_credential(
+499-        &self,
+500-        _target: P15CredentialTarget,
+--
+506-    }
+507-    #[allow(dead_code)]
+508:    fn clear_profile_credential(&self, _target: P15CredentialTarget) -> Result<(), LibraryError> {
+509-        Err(LibraryError::unavailable(
+510-            "P15 credential channel is unavailable",
+--
+1604-    }
+1605-
+1606:    fn bind_profile_credential(
+1607-        &self,
+1608-        target: P15CredentialTarget,
+--
+1612-            .map_err(|_| LibraryError::unavailable("P15 credential target is invalid"))?;
+1613-        let result = self.round_trip_p15(
+1614:            P15_BIND_PROFILE_CREDENTIAL,
+1615-            serde_json::json!({ "target": target, "credential_ref": credential_ref }),
+1616-        )?;
+--
+1627-    }
+1628-
+1629:    fn clear_profile_credential(&self, target: P15CredentialTarget) -> Result<(), LibraryError> {
+1630-        let target = serde_json::to_value(target)
+1631-            .map_err(|_| LibraryError::unavailable("P15 credential target is invalid"))?;
+1632-        let result = self.round_trip_p15(
+1633:            P15_CLEAR_PROFILE_CREDENTIAL,
+1634-            serde_json::json!({ "target": target }),
+1635-        )?;
+--
+2265-        let envelope = build_application_envelope_at_minor(
+2266-            "p15-test",
+2267:            P15_BIND_PROFILE_CREDENTIAL,
+2268-            serde_json::json!({
+2269-                "target": {"kind": "provider_api", "profile_id": "p-1"},
+--
+2279-        assert!(!mapped
+2280-            .iter()
+2281:            .any(|command| P15_HOST_ONLY_COMMANDS.contains(command)));
+2282-    }
+2283-
+EXIT_CODE_SCAN_2=0
+
+Rust host-only negative-surface test:
+test tests::p15_core_credential_commands_are_host_only ... ok

@@ -116,6 +116,7 @@ pub struct LibraryError {
     pub category: String,
     pub retryable: bool,
     pub message: Option<String>,
+    pub details: Option<Value>,
 }
 
 impl LibraryError {
@@ -125,6 +126,7 @@ impl LibraryError {
             category: category.to_string(),
             retryable,
             message: message.map(ToString::to_string),
+            details: None,
         }
     }
 
@@ -180,6 +182,7 @@ pub fn decode_response(line: &str) -> Result<serde_json::Value, LibraryError> {
             category,
             retryable,
             message,
+            details: err.get("details").cloned(),
         });
     }
 
@@ -253,10 +256,7 @@ pub fn project_export_snapshot(val: Value) -> Result<ExportProgressSnapshotView,
         .get("completed_pages")
         .and_then(Value::as_u64)
         .unwrap_or(0);
-    let total_pages = val
-        .get("total_pages")
-        .and_then(Value::as_u64)
-        .unwrap_or(0);
+    let total_pages = val.get("total_pages").and_then(Value::as_u64).unwrap_or(0);
     let current_page_id = val
         .get("current_page_id")
         .and_then(Value::as_str)
@@ -277,7 +277,10 @@ pub fn project_export_snapshot(val: Value) -> Result<ExportProgressSnapshotView,
                 .and_then(Value::as_str)
                 .unwrap_or("")
                 .to_string();
-            let sha256 = o.get("sha256").and_then(Value::as_str).map(ToString::to_string);
+            let sha256 = o
+                .get("sha256")
+                .and_then(Value::as_str)
+                .map(ToString::to_string);
             Some(ExportProgressOutputView { format, sha256 })
         }
         _ => None,
@@ -314,7 +317,11 @@ pub fn project_export_snapshot(val: Value) -> Result<ExportProgressSnapshotView,
 pub fn project_export_history(val: Value) -> Result<ExportHistoryResponseView, LibraryError> {
     let exports_array = match val.get("exports") {
         Some(Value::Array(arr)) => arr,
-        Some(Value::Null) | None => return Ok(ExportHistoryResponseView { exports: Vec::new() }),
+        Some(Value::Null) | None => {
+            return Ok(ExportHistoryResponseView {
+                exports: Vec::new(),
+            })
+        }
         _ => return Err(LibraryError::malformed("exports field must be an array")),
     };
     let mut exports = Vec::with_capacity(exports_array.len());
@@ -403,6 +410,64 @@ pub fn project_export_history(val: Value) -> Result<ExportHistoryResponseView, L
     Ok(ExportHistoryResponseView { exports })
 }
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum P15SettingsCommand {
+    ProviderProfilesList,
+    ProviderProfilesCreate,
+    ProviderProfilesUpdate,
+    ProviderProfilesDelete,
+    ProviderBindingsSet,
+    ProviderBindingsClear,
+    ProviderBindingsResolve,
+    ProviderRunSnapshotGet,
+    NetworkProfilesList,
+    NetworkProfilesCreate,
+    NetworkProfilesUpdate,
+    NetworkProfilesDelete,
+    NetworkProfilesTest,
+    NetworkProfileDefaultSet,
+    NetworkProfileDefaultClear,
+    NetworkProfileResolve,
+    ResolveOverrides,
+}
+
+impl P15SettingsCommand {
+    fn core_name(self) -> &'static str {
+        match self {
+            Self::ProviderProfilesList => "settings_provider_profiles_list",
+            Self::ProviderProfilesCreate => "settings_provider_profiles_create",
+            Self::ProviderProfilesUpdate => "settings_provider_profiles_update",
+            Self::ProviderProfilesDelete => "settings_provider_profiles_delete",
+            Self::ProviderBindingsSet => "settings_provider_bindings_set",
+            Self::ProviderBindingsClear => "settings_provider_bindings_clear",
+            Self::ProviderBindingsResolve => "settings_provider_bindings_resolve",
+            Self::ProviderRunSnapshotGet => "settings_provider_run_snapshot_get",
+            Self::NetworkProfilesList => "settings_network_profiles_list",
+            Self::NetworkProfilesCreate => "settings_network_profiles_create",
+            Self::NetworkProfilesUpdate => "settings_network_profiles_update",
+            Self::NetworkProfilesDelete => "settings_network_profiles_delete",
+            Self::NetworkProfilesTest => "settings_network_profiles_test",
+            Self::NetworkProfileDefaultSet => "settings_network_profile_default_set",
+            Self::NetworkProfileDefaultClear => "settings_network_profile_default_clear",
+            Self::NetworkProfileResolve => "settings_network_profile_resolve",
+            Self::ResolveOverrides => "settings_resolve_overrides",
+        }
+    }
+}
+
+const P15_BIND_PROFILE_CREDENTIAL: &str = "BindProfileCredential";
+const P15_CLEAR_PROFILE_CREDENTIAL: &str = "ClearProfileCredential";
+pub const P15_HOST_ONLY_COMMANDS: [&str; 2] =
+    [P15_BIND_PROFILE_CREDENTIAL, P15_CLEAR_PROFILE_CREDENTIAL];
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(tag = "kind", rename_all = "snake_case", deny_unknown_fields)]
+#[allow(dead_code)]
+pub enum P15CredentialTarget {
+    ProviderApi { profile_id: String },
+    ProxyAuth { network_profile_id: String },
+}
+
 pub trait LibraryChannel: Send + Sync {
     fn ping(&self) -> Result<PingResult, LibraryError>;
     fn list_books(&self) -> Result<Vec<BookSummary>, LibraryError>;
@@ -420,6 +485,31 @@ pub trait LibraryChannel: Send + Sync {
         section: &str,
         values: &serde_json::Value,
     ) -> Result<serde_json::Value, LibraryError>;
+    fn p15_settings(
+        &self,
+        _command: P15SettingsCommand,
+        _payload: serde_json::Value,
+    ) -> Result<serde_json::Value, LibraryError> {
+        Err(LibraryError::unavailable(
+            "P15 settings channel is unavailable",
+        ))
+    }
+    #[allow(dead_code)]
+    fn bind_profile_credential(
+        &self,
+        _target: P15CredentialTarget,
+        _credential_ref: &str,
+    ) -> Result<(), LibraryError> {
+        Err(LibraryError::unavailable(
+            "P15 credential channel is unavailable",
+        ))
+    }
+    #[allow(dead_code)]
+    fn clear_profile_credential(&self, _target: P15CredentialTarget) -> Result<(), LibraryError> {
+        Err(LibraryError::unavailable(
+            "P15 credential channel is unavailable",
+        ))
+    }
     /// M2-REGION-RETYPE-CORE (contract rev 1.4 §5.4): retype one region via
     /// the Core's `set_region_type`. All domain authority (the RegionType
     /// six-value closed set, the EV-8 policy re-snapshot, the optimistic
@@ -577,10 +667,7 @@ pub trait LibraryChannel: Send + Sync {
 
     /// EXPORT-IPC-1 (contract rev 2.5 §5.8): Export control and query surface.
     /// Returns whitelisted safe views without output_path or file references.
-    fn cancel_export(
-        &self,
-        _export_id: &str,
-    ) -> Result<ExportProgressSnapshotView, LibraryError> {
+    fn cancel_export(&self, _export_id: &str) -> Result<ExportProgressSnapshotView, LibraryError> {
         Err(LibraryError::unavailable("Export channel is unavailable"))
     }
 
@@ -697,7 +784,9 @@ pub fn project_forwarded_event(
         }
         "CurrentPageStepChanged" => {
             let run_id = raw_payload.get("run_id").and_then(Value::as_str)?;
-            let current_step_type = raw_payload.get("current_step_type").and_then(Value::as_str)?;
+            let current_step_type = raw_payload
+                .get("current_step_type")
+                .and_then(Value::as_str)?;
             let page_id = raw_payload.get("current_page_id").and_then(Value::as_str);
             serde_json::json!({
                 "run_id": run_id,
@@ -837,9 +926,18 @@ fn build_host_control_envelope(
 }
 
 fn build_application_envelope(request_id: &str, command: &str, payload: Value) -> Value {
+    build_application_envelope_at_minor(request_id, command, payload, 3)
+}
+
+fn build_application_envelope_at_minor(
+    request_id: &str,
+    command: &str,
+    payload: Value,
+    minor: u32,
+) -> Value {
     serde_json::json!({
         "protocol": "new-manga.core",
-        "version": { "major": 2, "minor": 3 },
+        "version": { "major": 2, "minor": minor },
         "request_id": request_id,
         "command": command,
         "payload": payload,
@@ -909,8 +1007,9 @@ impl StdioLibraryChannel {
             .take()
             .ok_or_else(|| LibraryError::unavailable("Failed to open child stdout"))?;
 
-        let pending_responses: Arc<Mutex<HashMap<String, SyncSender<Result<String, LibraryError>>>>> =
-            Arc::new(Mutex::new(HashMap::new()));
+        let pending_responses: Arc<
+            Mutex<HashMap<String, SyncSender<Result<String, LibraryError>>>>,
+        > = Arc::new(Mutex::new(HashMap::new()));
         let event_sink: Arc<Mutex<Option<EventSink>>> = Arc::new(Mutex::new(None));
         let is_down = Arc::new(AtomicBool::new(false));
 
@@ -951,7 +1050,9 @@ impl StdioLibraryChannel {
                     }
                 }
             })
-            .map_err(|e| LibraryError::unavailable(&format!("Failed to spawn reader thread: {e}")))?;
+            .map_err(|e| {
+                LibraryError::unavailable(&format!("Failed to spawn reader thread: {e}"))
+            })?;
 
         Ok(Self {
             child: Mutex::new(child),
@@ -981,7 +1082,28 @@ impl StdioLibraryChannel {
         self.exchange(request)
     }
 
+    fn round_trip_p15(
+        &self,
+        command: &str,
+        payload: serde_json::Value,
+    ) -> Result<serde_json::Value, LibraryError> {
+        let req_id = format!(
+            "p15-req-{}",
+            self.request_id_gen.fetch_add(1, Ordering::Relaxed)
+        );
+        let request = build_application_envelope_at_minor(&req_id, command, payload, 7);
+        self.exchange_expected_minor(request, Some(7))
+    }
+
     fn exchange(&self, request: Value) -> Result<Value, LibraryError> {
+        self.exchange_expected_minor(request, None)
+    }
+
+    fn exchange_expected_minor(
+        &self,
+        request: Value,
+        expected_minor: Option<u32>,
+    ) -> Result<Value, LibraryError> {
         let req_id = request
             .get("request_id")
             .and_then(Value::as_str)
@@ -1024,12 +1146,16 @@ impl StdioLibraryChannel {
             if let Err(e) = stdin.write_all(line.as_bytes()) {
                 let mut pending = self.pending_responses.lock().unwrap();
                 pending.remove(&req_id);
-                return Err(LibraryError::unavailable(&format!("stdin write failed: {e}")));
+                return Err(LibraryError::unavailable(&format!(
+                    "stdin write failed: {e}"
+                )));
             }
             if let Err(e) = stdin.flush() {
                 let mut pending = self.pending_responses.lock().unwrap();
                 pending.remove(&req_id);
-                return Err(LibraryError::unavailable(&format!("stdin flush failed: {e}")));
+                return Err(LibraryError::unavailable(&format!(
+                    "stdin flush failed: {e}"
+                )));
             }
         }
 
@@ -1057,6 +1183,23 @@ impl StdioLibraryChannel {
 
         if response_line.is_empty() {
             return Err(LibraryError::unavailable("Core stdout closed (EOF)"));
+        }
+
+        if let Some(minor) = expected_minor {
+            let envelope: Value = serde_json::from_str(response_line.trim_end())
+                .map_err(|_| LibraryError::unavailable("Core settings response is invalid"))?;
+            if envelope.get("protocol").and_then(Value::as_str) != Some("new-manga.core")
+                || envelope.pointer("/version/major").and_then(Value::as_u64) != Some(2)
+                || envelope.pointer("/version/minor").and_then(Value::as_u64)
+                    != Some(u64::from(minor))
+            {
+                return Err(LibraryError::new(
+                    "SETTINGS_UNAVAILABLE",
+                    "unavailable",
+                    true,
+                    None,
+                ));
+            }
         }
 
         decode_response(response_line.trim_end())
@@ -1452,6 +1595,56 @@ impl LibraryChannel for StdioLibraryChannel {
         )
     }
 
+    fn p15_settings(
+        &self,
+        command: P15SettingsCommand,
+        payload: serde_json::Value,
+    ) -> Result<serde_json::Value, LibraryError> {
+        self.round_trip_p15(command.core_name(), payload)
+    }
+
+    fn bind_profile_credential(
+        &self,
+        target: P15CredentialTarget,
+        credential_ref: &str,
+    ) -> Result<(), LibraryError> {
+        let target = serde_json::to_value(target)
+            .map_err(|_| LibraryError::unavailable("P15 credential target is invalid"))?;
+        let result = self.round_trip_p15(
+            P15_BIND_PROFILE_CREDENTIAL,
+            serde_json::json!({ "target": target, "credential_ref": credential_ref }),
+        )?;
+        if result == serde_json::json!({ "state": "configured" }) {
+            Ok(())
+        } else {
+            Err(LibraryError::new(
+                "SETTINGS_UNAVAILABLE",
+                "unavailable",
+                true,
+                None,
+            ))
+        }
+    }
+
+    fn clear_profile_credential(&self, target: P15CredentialTarget) -> Result<(), LibraryError> {
+        let target = serde_json::to_value(target)
+            .map_err(|_| LibraryError::unavailable("P15 credential target is invalid"))?;
+        let result = self.round_trip_p15(
+            P15_CLEAR_PROFILE_CREDENTIAL,
+            serde_json::json!({ "target": target }),
+        )?;
+        if result == serde_json::json!({ "state": "missing" }) {
+            Ok(())
+        } else {
+            Err(LibraryError::new(
+                "SETTINGS_UNAVAILABLE",
+                "unavailable",
+                true,
+                None,
+            ))
+        }
+    }
+
     fn set_region_type(
         &self,
         region_id: &str,
@@ -1671,10 +1864,7 @@ impl LibraryChannel for StdioLibraryChannel {
         *self.event_sink.lock().unwrap() = Some(sink);
     }
 
-    fn cancel_export(
-        &self,
-        export_id: &str,
-    ) -> Result<ExportProgressSnapshotView, LibraryError> {
+    fn cancel_export(&self, export_id: &str) -> Result<ExportProgressSnapshotView, LibraryError> {
         let val = self.round_trip(
             "CancelExport",
             serde_json::json!({ "export_id": export_id }),
@@ -1805,7 +1995,10 @@ impl MockLibraryChannel {
                 completed_at: Some("2026-10-16T12:01:00Z".to_string()),
                 output: Some(ExportProgressOutputView {
                     format: "pdf".to_string(),
-                    sha256: Some("abcd1234abcd1234abcd1234abcd1234abcd1234abcd1234abcd1234abcd1234".to_string()),
+                    sha256: Some(
+                        "abcd1234abcd1234abcd1234abcd1234abcd1234abcd1234abcd1234abcd1234"
+                            .to_string(),
+                    ),
                 }),
                 lineage: Vec::new(),
                 error_code: None,
@@ -2002,10 +2195,7 @@ impl LibraryChannel for MockLibraryChannel {
         *self.event_sink.lock().unwrap() = Some(sink);
     }
 
-    fn cancel_export(
-        &self,
-        _export_id: &str,
-    ) -> Result<ExportProgressSnapshotView, LibraryError> {
+    fn cancel_export(&self, _export_id: &str) -> Result<ExportProgressSnapshotView, LibraryError> {
         self.export_snapshot_result.lock().unwrap().clone()
     }
 
@@ -2027,6 +2217,71 @@ mod tests {
     use std::path::PathBuf;
 
     #[test]
+    fn p15_commands_map_to_the_frozen_core_surface_at_minor_seven() {
+        let commands = [
+            P15SettingsCommand::ProviderProfilesList,
+            P15SettingsCommand::ProviderProfilesCreate,
+            P15SettingsCommand::ProviderProfilesUpdate,
+            P15SettingsCommand::ProviderProfilesDelete,
+            P15SettingsCommand::ProviderBindingsSet,
+            P15SettingsCommand::ProviderBindingsClear,
+            P15SettingsCommand::ProviderBindingsResolve,
+            P15SettingsCommand::ProviderRunSnapshotGet,
+            P15SettingsCommand::NetworkProfilesList,
+            P15SettingsCommand::NetworkProfilesCreate,
+            P15SettingsCommand::NetworkProfilesUpdate,
+            P15SettingsCommand::NetworkProfilesDelete,
+            P15SettingsCommand::NetworkProfilesTest,
+            P15SettingsCommand::NetworkProfileDefaultSet,
+            P15SettingsCommand::NetworkProfileDefaultClear,
+            P15SettingsCommand::NetworkProfileResolve,
+            P15SettingsCommand::ResolveOverrides,
+        ];
+        let expected = [
+            "settings_provider_profiles_list",
+            "settings_provider_profiles_create",
+            "settings_provider_profiles_update",
+            "settings_provider_profiles_delete",
+            "settings_provider_bindings_set",
+            "settings_provider_bindings_clear",
+            "settings_provider_bindings_resolve",
+            "settings_provider_run_snapshot_get",
+            "settings_network_profiles_list",
+            "settings_network_profiles_create",
+            "settings_network_profiles_update",
+            "settings_network_profiles_delete",
+            "settings_network_profiles_test",
+            "settings_network_profile_default_set",
+            "settings_network_profile_default_clear",
+            "settings_network_profile_resolve",
+            "settings_resolve_overrides",
+        ];
+        let mapped: Vec<_> = commands
+            .into_iter()
+            .map(P15SettingsCommand::core_name)
+            .collect();
+        assert_eq!(mapped, expected);
+
+        let envelope = build_application_envelope_at_minor(
+            "p15-test",
+            P15_BIND_PROFILE_CREDENTIAL,
+            serde_json::json!({
+                "target": {"kind": "provider_api", "profile_id": "p-1"},
+                "credential_ref": "private-ref"
+            }),
+            7,
+        );
+        assert_eq!(
+            envelope["version"],
+            serde_json::json!({"major": 2, "minor": 7})
+        );
+        assert!(envelope.get("channel").is_none());
+        assert!(!mapped
+            .iter()
+            .any(|command| P15_HOST_ONLY_COMMANDS.contains(command)));
+    }
+
+    #[test]
     fn reader_progress_payload_omits_missing_optional_values() {
         assert_eq!(
             reader_progress_payload("chapter", "original", "page", None, None),
@@ -2037,13 +2292,7 @@ mod tests {
             })
         );
         assert_eq!(
-            reader_progress_payload(
-                "chapter",
-                "original",
-                "page",
-                Some(12.0),
-                Some(3.0),
-            ),
+            reader_progress_payload("chapter", "original", "page", Some(12.0), Some(3.0),),
             serde_json::json!({
                 "chapter_id": "chapter",
                 "mode": "original",
@@ -2949,10 +3198,16 @@ mod tests {
         dispatch_stdout_line(resp_101, &event_sink, &pending);
 
         // Verify that responses arrived to the right recipients without deadlock or mixing
-        let got_102 = rx2.recv_timeout(Duration::from_millis(200)).unwrap().unwrap();
+        let got_102 = rx2
+            .recv_timeout(Duration::from_millis(200))
+            .unwrap()
+            .unwrap();
         assert!(got_102.contains("\"request_id\":\"req-102\""));
 
-        let got_101 = rx1.recv_timeout(Duration::from_millis(200)).unwrap().unwrap();
+        let got_101 = rx1
+            .recv_timeout(Duration::from_millis(200))
+            .unwrap()
+            .unwrap();
         assert!(got_101.contains("\"request_id\":\"req-101\""));
 
         // Verify that only the 2 frozen events were dispatched
@@ -3001,7 +3256,8 @@ mod tests {
             "error_code": serde_json::Value::Null
         });
 
-        let view = project_export_snapshot(raw_core_snapshot).expect("project snapshot must succeed");
+        let view =
+            project_export_snapshot(raw_core_snapshot).expect("project snapshot must succeed");
         assert_eq!(view.export_id, "exp-test-001");
         assert_eq!(view.status, "completed");
         assert_eq!(view.completed_pages, 5);
@@ -3016,12 +3272,30 @@ mod tests {
 
         // Serialize to JSON and assert zero path / zero secret leakage
         let serialized = serde_json::to_string(&view).expect("must serialize");
-        assert!(!serialized.contains("output_path"), "must not contain output_path");
-        assert!(!serialized.contains("target_path"), "must not contain target_path");
-        assert!(!serialized.contains("internal_file_path"), "must not contain internal_file_path");
-        assert!(!serialized.contains("grant_secret"), "must not contain grant_id");
-        assert!(!serialized.contains("C:\\"), "must not contain Windows drive path");
-        assert!(!serialized.contains("secret"), "must not contain private path components");
+        assert!(
+            !serialized.contains("output_path"),
+            "must not contain output_path"
+        );
+        assert!(
+            !serialized.contains("target_path"),
+            "must not contain target_path"
+        );
+        assert!(
+            !serialized.contains("internal_file_path"),
+            "must not contain internal_file_path"
+        );
+        assert!(
+            !serialized.contains("grant_secret"),
+            "must not contain grant_id"
+        );
+        assert!(
+            !serialized.contains("C:\\"),
+            "must not contain Windows drive path"
+        );
+        assert!(
+            !serialized.contains("secret"),
+            "must not contain private path components"
+        );
     }
 
     #[test]
@@ -3060,12 +3334,30 @@ mod tests {
 
         // Serialize to JSON and assert zero path / zero target_ref leakage
         let serialized = serde_json::to_string(&view).expect("must serialize");
-        assert!(!serialized.contains("output_path"), "must not contain output_path");
-        assert!(!serialized.contains("stale_policy"), "must not contain stale_policy");
-        assert!(!serialized.contains("target_ref"), "must not contain target_ref");
-        assert!(!serialized.contains("grant-sec"), "must not contain grant credentials");
-        assert!(!serialized.contains("D:\\"), "must not contain Windows drive path");
-        assert!(!serialized.contains("Private"), "must not contain private path components");
+        assert!(
+            !serialized.contains("output_path"),
+            "must not contain output_path"
+        );
+        assert!(
+            !serialized.contains("stale_policy"),
+            "must not contain stale_policy"
+        );
+        assert!(
+            !serialized.contains("target_ref"),
+            "must not contain target_ref"
+        );
+        assert!(
+            !serialized.contains("grant-sec"),
+            "must not contain grant credentials"
+        );
+        assert!(
+            !serialized.contains("D:\\"),
+            "must not contain Windows drive path"
+        );
+        assert!(
+            !serialized.contains("Private"),
+            "must not contain private path components"
+        );
     }
 
     #[test]
