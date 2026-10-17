@@ -1,5 +1,7 @@
 > **内部生命周期窄注记（2026-10-07，M2-DERIVED-GC-2 实现；零 wire 修订，协议 major/minor 不变）**：M2-DERIVED-GC-2 在专用 resource catalog 内引入 `preview_lifecycle` 来源行与 `preview_namespace` 绑定行，并给宿主→channel 的**内部** `revoke_resource` 控制请求加了受信 `retire_preview` 布尔位（CoreChannel 轮换专用方法；channel 仅在其自身 revoke 成功后据此把已登记自有 preview 行的 `retired` 置 1）。这些都是 host↔sidecar 控制面/SQLite 元数据内部实现：**不新增任何 Tauri IPC 命令、不改 WebView payload/ACL/十五条生产命令表、不发 `source_artifact_revision_id`/`producer_root` 等来源字段到 WebView、不改 issue/resolve/touch/revoke/TTL 的既有语义**（失败撤销新 key 与 WebView `revoke_resource_refs` 均不携带该位）。preview 回收（retired 副本删除）只发生在受 namespace 租约保护的独占启动窗口，见 [M2_DERIVED_PREVIEW_GC_DESIGN.md](M2_DERIVED_PREVIEW_GC_DESIGN.md)。
 >
+> **rev 2.8（2026-10-17，FEAT-CREATE-1）**：冻结 `CreateBook` / `CreateChapter` Core commands 与 production-only Tauri commands `library_create_book` / `create_chapter`。作品归属当前活动的单一书架/Library DB；章节只创建元数据，页面来源继续走既有 `ImportPages` / `ImportSourceRef`。协议 major 保持 2，minor 从 P15 当前目标 7 增至 8；命令为 additive，既有查询、投影、错误与资源阈值不变。本修订仅冻结契约，不授权 runtime、Schema/migration 或 UI 实现。详见 §3.2、§5、§11、§12。
+>
 > **rev 2.5（2026-10-16，EXPORT-IPC-1 host→WebView 导出控制与查询安全投影）**：在不改变 Core 导出 wire 的前提下，冻结 Tauri host 到 WebView 的三条 production-only 导出控制与查询命令及去除路径的安全投影：`library_cancel_export`、`library_get_export_snapshot`、`library_get_export_history`。返回结构经白名单显式重建：`ExportProgressSnapshotView` 与 `ExportHistoryEntryView`。`output_path`（任何绝对/相对/UNC 路径）、`ExportTargetRef`、grant/session 凭据与文件字节严禁下发到 WebView（对齐 §5 行 164 与 §10.3 L853）。命令仅在生产面存在，probe/AC1 面保持冻结形状不变。协议 major 保持 2，minor 从 4 增至 5；向后兼容，不改变既有 Core stdio wire、字段或语义。修订范围：§3.2、§5.8（新增）、§11、§12。
 >
 > **rev 2.4（2026-10-16，EVENTS-FWD-1 + EXPORT-REVEAL-1）**：在不改变 Core 事件 wire 的前提下，冻结 host→WebView 六类事件的名称与安全 payload 投影，事件只作失效提示并要求消费方重查快照；排除未冻结的 `CoreAvailabilityChanged` 与 `ImportProgressChanged`。新增 production-only Tauri host command `library_reveal_export_folder`，只接受不透明 `exportId`，以当前 Core 会话接受的导出 ID 和 Core `GetExportHistory` 解析目录；路径不进入 WebView 请求、结果、事件或错误。Reveal 不调用 `StartExport`、不触碰 `ExportTargetRef`，不改变单次消费语义。Core protocol minor 从 3 增至 4 由事件转发契约变更引入；reveal 命令不新增 Core wire。兼容性分别见 §5.8 与 [EVENTS-FWD-1 compatibility impact](../../verification/EVENTS-FWD-1/compatibility-impact.md)。
@@ -9,12 +11,13 @@
 
 # M2-C1 — Typed IPC Contract
 
-**当前修订范围：EXPORT-IPC-1 rev 2.5 + EVENTS-FWD-1 / EXPORT-REVEAL-1 rev 2.4**（§3.2 版本与兼容、§5.8 production-only Tauri host export reveal、**§5.9 host→WebView 导出控制与查询安全投影**、§6.4 host→WebView 事件转发面与安全投影、§11 状态表、§12 授权边界）。Core stdio JSONL wire、P13 Run、P16 Reader/Export、P12 `ImportPages` 与 HOST-ISSUER-1-C1 `HostControl` 的既有 payload/result/error 均零变化。
+**当前修订范围：FEAT-CREATE-1 rev 2.8**（§3.2 版本与兼容、§5 `CreateBook`/`CreateChapter` wire 与 Tauri 安全投影、§11 状态表、§12 release boundary）。本次同步修正文档顶部此前停留于 rev 2.5 / minor 5 的状态标注：P15 §2 已冻结共享 Core protocol 2.7，M2-C1 §5 的 `ListChapters` 已注明 minor 6；本次以 minor 7 为前序目标升至 8。既有 P13 Run、P16 Reader/Export、P12 `ImportPages`、HOST-ISSUER-1-C1 `HostControl`、P15 Settings 与读取 wire 均零语义变化。
 
-状态：文档 rev `2.5`；Core protocol 为 major `2` / minor `5`。rev 2.5 新增 host→WebView 导出控制与查询安全投影（§5.9）；rev 2.4 冻结 host→WebView 六类事件投影与 production-only `library_reveal_export_folder`（§5.8）；rev 2.3 的 HostControl wire、rev 2.2 的 P12 导入 wire、rev 2.1 的 Reader/Export wire、rev 2.0 的 P13 Run wire 与更早既有冻结语义不变。
+状态：文档 rev `2.8`；Core protocol 为 major `2` / minor `8`。rev 2.8 只新增创建 commands 与其 host 安全投影；原 rev 2.5 的导出投影、rev 2.4 的事件/Reveal、P15 2.7 Settings 以及更早冻结语义均不变。
 
 ## Revision history
 
+- `2.8`（FEAT-CREATE-1，2026-10-17）：冻结 `CreateBook` / `CreateChapter`、Tauri `library_create_book` / `create_chapter`、字段校验、错误投影、书架归属与 `ImportPages` 页面来源边界；major 保持 2，minor 按 P15 当前共享协议目标 `7→8`。只新增命令；`library_list_books`、`list_chapters`、P15 2.7 Settings 与其余既有 wire 不变。仅契约冻结，不授权 runtime 或 Schema/migration。
 - `2.5`（EXPORT-IPC-1，2026-10-16）：**授权契约修订（host→WebView 导出控制与查询安全投影）**——在不改动 Core stdio 导出 wire 的前提下，冻结 Tauri host 到 WebView 的三条 production-only 导出控制与查询命令及去除路径的安全投影：`library_cancel_export`、`library_get_export_snapshot`、`library_get_export_history`。WebView 返回结构由白名单显式重建：`ExportProgressSnapshotView`（`export_id`、`status`、`completed_pages`、`total_pages`、`current_page_id`、`accepted_at`、`completed_at`、`output: {format, sha256}`、`lineage`、`error_code`）与 `ExportHistoryEntryView`（`export_id`、`book_id`、`chapter_ids`、`ordered_page_ids`、`format`、`format_options`、`created_at`、`completed_at`、`status`、`sha256`、`lineage`）。`output_path`（任何绝对/相对/UNC 路径）、`ExportTargetRef`、grant/session 凭据与文件字节严禁下发到 WebView（对齐 §5 行 164 与 §10.3 L853）。空历史返回空列表 `{"exports": []}` 而非错误；未知/外来 `export_id` 返回 typed 错误 `EXPORT_NOT_FOUND`；typed 拒绝与错误信息绝不暴露宿主路径。命令仅在生产面存在，probe/AC1 面保持冻结形状不变。协议 minor 从 4 增至 5，major 保持 2；向后兼容。
 - `2.4`（EVENTS-FWD-1 + EXPORT-REVEAL-1，2026-10-16）：冻结六类 host→WebView 事件安全投影，并新增 production-only Tauri host command `library_reveal_export_folder`（请求 `{exportId: OpaqueId}`、成功返回 `null`）。协议 minor 从 3 增至 4 由事件转发变更引入；reveal 不新增 Core wire，拒绝面、当前 Core session 绑定、路径保密及 `ExportTargetRef` 单次消费语义见 §5.8。probe / AC1 命令面仍保持既有形状；兼容 widening，既有 Core 命令与导出 DTO 语义不变。
 - `2.3`（HOST-ISSUER-1-C1，2026-10-16）：**授权契约修订（host-only grant control）**——冻结 `OpenHostSession`、`RegisterImportSource` / `RevokeImportSource`、`RegisterExportTarget` / `RevokeExportTarget`、`CloseHostSession`；注册请求沿用 P09-FU2/P16 已有 seam 的字段；host session credential 与 Core session id 只存在 HostControl envelope/私有会话状态，不进入两种 ref。只新增独立 host-control wire，普通 JSON-RPC 对这些操作返回 `HOST_ONLY_REQUIRED`；协议 minor `2→3`，major 不变。既有 P12/P16/P13 wire、ref 字段及 `REF_*` 语义不变；§12 的最小 Core allowlist 仅含 `src/bootstrap/core_service.py` 与 `tests/core/**`。不授权 React/WebView、Tauri 命令、Schema/migration、依赖或其他产品行为；实现状态 `NOT_IMPLEMENTED`。
@@ -119,6 +122,7 @@ Event<T> = {
 - HOST-ISSUER-1-C1 在 major 2 / minor 3 新增独立 `HostControl` envelope 与 host-only 会话/注册/撤销操作；minor 从 2 增至 3。现有 §3 `Request<T>` / `Response<T>` 及其 command payload 均不增加字段；旧客户端不支持 HostControl，也不能调用其操作。使用 HostControl 的 host 与 Core 必须配对支持 rev 2.3；普通 application JSON-RPC 对这些保留操作 fail-closed。无版本协商或自动迁移，现有 rev 2.2 及更早冻结 wire 不变。
 - EVENTS-FWD-1 在 major 2 / minor 4 冻结 host→WebView 的事件名与安全 payload 投影；minor 从 3 增至 4。Core stdio wire 的既有 Request/Response/Event 及其 command/event payload 均不修改字段或语义；旧客户端若不监听该事件通道，仍可正常以轮询方式（如 `GetRunSnapshot` / `GetTaskProjection`）工作，P14 轮询降级路径不被阻断。事件通道仅为失效提示，消费方收到后须重查快照；payload 严禁暴露路径或引用。同 major 下向后兼容。
 - EXPORT-IPC-1 在 major 2 / minor 5 冻结 host→WebView 的导出控制与查询命令及安全投影；minor 从 4 增至 5。Core stdio wire 既有的 `CancelExport`、`GetExportSnapshot`、`GetExportHistory` 命令 wire、请求 payload、响应结果与错误码均零变化。WebView 面三条命令（`library_cancel_export`、`library_get_export_snapshot`、`library_get_export_history`）经白名单重建去除所有 `output_path` 与宿主私有凭据，严格遵守 §5 行 164 与 §10.3 L853。同 major 下向后兼容。
+- FEAT-CREATE-1 在 major 2 / minor 8 冻结两个 additive Core commands；共享前序目标为 P15 §2 的 major 2 / minor 7，故此修订为 `7→8`。新命令只在同一 Core major 支持且 paired host/Core 已包含本命令时可调用；旧 host 没有新 Tauri commands，旧 Core 对未知命令按既有 fail-closed 规则拒绝。既有 `library_list_books`、`list_chapters` 形状和 `BookSummary.page_count: null` 语义不变；成功创建后，两读取命令分别可见新作品/章节。无版本协商或自动迁移。
 - 版本握手/协商与自动迁移仍 `NOT_IMPLEMENTED`；客户端须以已知配置发送版本。`PROTOCOL_VERSION_UNSUPPORTED` 是稳定错误码。
 
 ## 4. Request/response 语义
@@ -136,9 +140,11 @@ Event<T> = {
 | Name | Typed payload → result | As-Is evidence / To-Be boundary |
 |---|---|---|
 | `ListBooks` | `{}` → `BookSummary[]` | ViewModel 调 Library service 取书目；当前搜索、归档/收藏过滤、排序由 ViewModel 本地完成。AS-IS service call，IPC 未实现。**`1.2` 修订（M2-FIX-LISTBOOKS-PAGECOUNT-UNKNOWN）**：`BookSummary.page_count: int \| null`——COUNT 谓词无行的书 → `null`（unknown），有合格页的书 → 真实计数；known `0` 与 `null` 可区分（详见 Revision history `1.2`）。 |
-| `CreateBook` / `DeleteBook` | `{title, original_title?}` / `{book_id}` → `BookSummary` / `Unit` | `BookshelfViewModel.createBook/deleteBook` 调用 Library service。删除需 Core 检查关联和保留规则。 |
+| `CreateBook` | `{title: string}` → `BookSummary` | **2.8 FROZEN**：Core wire、校验、错误、当前书架归属与安全投影见 §5.10；Tauri `library_create_book` production-only。原 proposal 的 `original_title?` 不属于冻结请求。 |
+| `DeleteBook` | `{book_id}` → `Unit` | 仍为 PROPOSAL；删除需 Core 检查关联和保留规则。 |
 | `SetBookFavorite` / `SetBookArchived` | `{book_id, value: boolean}` → `BookSummary` | 对应 Library service 调用。 |
-| `ListChapters` / `CreateChapter` / `DeleteChapter` | `{book_id}` / `{book_id,title,chapter_number?}` / `{chapter_id}` → `ChapterSummary[]` / `ChapterSummary` / `Unit` | ViewModel 使用 `list/get/create/delete_chapter`。**`1.8` 注记**：`ListChapters` 已转冻结为 wire `list_chapters`（见下方 `ListChapters` 行，最小导航摘要面）；`CreateChapter`/`DeleteChapter` 仍为 PROPOSAL。 |
+| `CreateChapter` | `{book_id: BookId, title: string, chapter_number?: string}` → `ChapterNavSummary` | **2.8 FROZEN**：Core wire、校验、错误、父作品归属及页面来源限制见 §5.10；Tauri `create_chapter` production-only。 |
+| `DeleteChapter` | `{chapter_id}` → `Unit` | 仍为 PROPOSAL；不由本修订冻结。 |
 | `ImportPages` | `{chapter_id, sources: ImportSourceRef[], duplicate_policy?: "skip"\|"import_as_new"}` → `ImportReport` | **2.2 FROZEN**：payload、逐源/逐页结果与拒绝面见 §5.6；只接受 host 授权的只读来源引用，详情见 §10.4。协议冻结不表示 runtime 已实现。 |
 | `HostControl`（仅 host↔Core） | `OpenHostSession`、单条 `RegisterImportSource` / `RevokeImportSource`、`RegisterExportTarget` / `RevokeExportTarget`、`CloseHostSession`；DTO 见 §5.7 | **2.3 FROZEN**：独立 host-control envelope + session credential；只在 host 持有的 live-Core 私有进程通道，不是 application/Tauri command，不得由 React/WebView 调用。runtime 未实现。 |
 | `StartRun` | `{command: PipelineCommand, scope: PipelineScope, overrides?: JsonObject, idempotency_key: IdempotencyKey}` → `RunAccepted` | 当前 Workbench 有 `PipelineService.create_run`/`plan_run`，但无此 IPC handler；冻结 wire 与 acceptance 见 §5.5。 |
@@ -547,6 +553,115 @@ Host 对 Core 给出的输出路径做本地可用性校验，只把规范化后
 
 本命令是 production-only：Rust production allowlist / handler 与应用 manifest / capability 声明同步增加；probe 与 AC1 runtime allowlist、announcement 和 handler 保持既有 7/6 项冻结形状。兼容性：Core protocol 版本不变，旧 Core 可通过既有 `GetExportHistory` 支持本命令；旧 host 没有此命令时，P17 必须隐藏/省略 reveal 操作，导出本身仍可用。新 host 配旧 UI 无行为变化。
 
+### 5.10 Book and chapter creation (FEAT-CREATE-1，冻结；Core protocol 2.8)
+
+本节冻结 wire 与安全/持久化语义，不表示 Core、Tauri host 或 React runtime 已实现。Core 是唯一业务校验与 SQLite 写入方。请求只接受下列字段；未知字段 fail-closed。所有 Core 请求/响应使用 §3 的 JSONL `Request<T>` / `Response<T>`，版本固定为 `{major: 2, minor: 8}`。同步响应满足成功时 `result != null`、`error = null`；失败时 `result = null`、`error != null`；本组命令不发事件。
+
+#### 5.10.1 DTO 与 Core wire
+
+```text
+BookSummary = {
+  book_id: BookId,
+  title: string,
+  original_title: string,
+  is_favorite: boolean,
+  is_archived: boolean,
+  page_count: integer | null,
+  created_at: Timestamp,
+  updated_at: Timestamp
+}
+
+ChapterNavSummary = {
+  chapter_id: ChapterId,
+  title: string,
+  chapter_number: string,
+  sort_order: integer
+}
+
+CreateBookPayload = { title: string }
+CreateBook Request = {
+  protocol: "new-manga.core", version: { major: 2, minor: 8 },
+  request_id: OpaqueId, command: "CreateBook",
+  payload: { title: string }
+}
+CreateBook Response = {
+  protocol: "new-manga.core", version: { major: 2, minor: 8 },
+  request_id: OpaqueId, result: BookSummary, error: null
+}
+
+CreateChapter Request = {
+  protocol: "new-manga.core", version: { major: 2, minor: 8 },
+  request_id: OpaqueId, command: "CreateChapter",
+  payload: { book_id: BookId, title: string, chapter_number?: string }
+}
+CreateChapter Response = {
+  protocol: "new-manga.core", version: { major: 2, minor: 8 },
+  request_id: OpaqueId, result: ChapterNavSummary, error: null
+}
+CreateCommandFailure = {
+  protocol: "new-manga.core", version: { major: 2, minor: 8 },
+  request_id: OpaqueId, result: null, error: ErrorEnvelope
+}
+```
+
+`BookSummary` matches the existing `ListBooks` projection, including its frozen `page_count: integer | null` distinction (§5 / revision 1.2). A newly created empty book returns `page_count: null`; no query semantics are changed. `ChapterNavSummary` is exactly one item of the existing `ListChapters.chapters[]` projection; Core assigns `sort_order`, and listing remains ascending.
+
+For a new book, `original_title = ""`, `is_favorite = false`, `is_archived = false`, and `page_count = null`; Core generates `book_id` and timestamps. An omitted chapter number is returned as `""`. The success DTO may return the submitted title as display text; Core and host never interpret it as a filesystem path.
+
+#### 5.10.2 Field validation and entity rules
+
+- Core validates again at the trust boundary. Payloads are closed objects: `CreateBook` accepts only `title`; `CreateChapter` accepts only `book_id`, `title`, and optional `chapter_number`. Unknown keys, including `shelf_id`, `path`, `sources`, `page_ids`, `ImportSourceRef`, or arbitrary properties, are rejected before side effects.
+- `title` is required JSON string and must be non-empty after Unicode whitespace trim; the accepted string is stored/returned unchanged, matching the existing `Book` / `Chapter` title invariant. No new maximum length or normalization rule is introduced. `chapter_number`, when present, must be a string; omission means the existing empty-string default, and an empty string is valid. Explicit `null` is invalid.
+- `book_id` is a non-empty opaque `BookId`; it is looked up by Core and must refer to a non-deleted book in the current active library. Missing, malformed, deleted, or foreign-to-current-library IDs never fall back to a path or another library.
+- Duplicate titles and chapter numbers are allowed; these fields are not uniqueness keys. Core issues IDs. Chapter type and reading direction use existing book defaults and Core rules; callers cannot set them in this minimal creation wire.
+- **Shelf ownership:** this application currently has one active managed library/shelf context, and its books table has no shelf entity/key. `CreateBook` always inserts into that current Core database; there is no caller-selected `shelf_id`. Creating an explicit multi-shelf model is outside this contract and requires a user-approved product/schema Task.
+- `CreateChapter` creates chapter metadata only. Page bytes, source names, paths, grants and references are not accepted here. Pages may be added afterward only by frozen `ImportPages {chapter_id, sources: ImportSourceRef[], duplicate_policy?}` (§5.6 / §10.4); the host issues read-only source refs for the user-selected import set. No new filesystem path, arbitrary write, or resource reference surface is introduced.
+
+#### 5.10.3 Errors, atomicity, retry and safe projection
+
+§8 remains a global proposal. For these two commands only, the following command-specific ErrorEnvelope values, optional-field omission rules, and error mappings are frozen; this does not freeze or widen the global taxonomy. `CreateFieldIssue = {field: title | book_id | chapter_number | $, issue: required | wrong_type | blank | unknown_field}` and `CreateCommandErrorEnvelope = {code: INVALID_REQUEST | TARGET_NOT_FOUND | LIBRARY_WRITE_FAILED | PROTOCOL_VERSION_UNSUPPORTED | UNKNOWN, category: validation | not_found | internal | unknown, retryable: true | false | unknown, details?: CreateFieldIssue[]}`. `message` is omitted for every error. `$` is used for an unknown field so its untrusted key is never echoed. A Core error response always has `result = null`; `details` is present only for field validation issues and is a non-empty array of the closed `CreateFieldIssue` shape. Issues are ordered by request field order, with `unknown_field` entries in received object order; no error echoes field values or arbitrary keys.
+
+| Condition | Core `ErrorEnvelope` | Retry / side effect |
+|---|---|---|
+| Missing, unknown, wrong-type, or blank required field; explicit `null`; malformed payload | `INVALID_REQUEST` / `validation`; omit `message`; optional closed field issue; `retryable=false` | Reject before persistence; no side effect. |
+| Create command carries a same-major protocol minor other than 8 | `INVALID_REQUEST` / `validation`; omit `message`; `retryable=false` | Reject before dispatch; this does not change existing minor 7 P15 command behavior. |
+| Valid non-empty `CreateChapter.book_id` does not identify a live book in the active library | `TARGET_NOT_FOUND` / `not_found`; omit `message`; no ID in details; `retryable=false` | No side effect. Malformed/blank IDs use `INVALID_REQUEST`. `CreateBook` has no entity lookup failure. |
+| SQLite/repository write fails | `LIBRARY_WRITE_FAILED` / `internal`; omit `message` and details; `retryable=unknown` | The entity insert is atomic and leaves no partial row. On an unknown transport outcome, caller re-queries before retrying. |
+| Unsupported protocol major | `PROTOCOL_VERSION_UNSUPPORTED` / `validation`; omit `message` and details; `retryable=false` | Reject before command dispatch. |
+| Unknown command / unclassified failure | `UNKNOWN` / `unknown`; omit `message` and details; `retryable=unknown` | Fail closed; no raw exception or traceback. |
+
+`request_id` remains correlation only, not an idempotency key. Each accepted request creates one entity; the Core does not deduplicate retries. The frontend must disable duplicate submission while pending and re-read the existing list after an ambiguous transport failure before offering retry. Existing failure semantics for unrelated commands are unchanged.
+
+The production-only Tauri mappings are:
+
+| Tauri command | Invoke argument | Success | Core operation |
+|---|---|---|---|
+| `library_create_book` | `{payload: {title}}` | `BookSummary` | `CreateBook` |
+| `create_chapter` | `{payload: {book_id, title, chapter_number?}}` | `ChapterNavSummary` | `CreateChapter` |
+
+Each host argument is a closed DTO. Host argument/deserialization failures map to validation; Core-channel transport failure maps to unavailable; Core errors map to this closed projection (the tuple after each key is category/phase/action):
+
+```text
+LibrarySurfaceError = {
+  category: validation | not_found | unavailable | internal,
+  phase: request_validation | book_lookup | persistence | core_channel | unknown,
+  action: edit_input | select_book | retry_after_refresh | contact_support,
+  message_key: LIBRARY_INVALID_INPUT | LIBRARY_BOOK_NOT_FOUND |
+               LIBRARY_WRITE_FAILED | LIBRARY_UNAVAILABLE |
+               LIBRARY_OPERATION_FAILED
+}
+```
+
+Mappings are `LIBRARY_INVALID_INPUT` = validation/request_validation/edit_input; `LIBRARY_BOOK_NOT_FOUND` = not_found/book_lookup/select_book; `LIBRARY_WRITE_FAILED` = internal/persistence/retry_after_refresh; `LIBRARY_UNAVAILABLE` = unavailable/core_channel/retry_after_refresh; and `LIBRARY_OPERATION_FAILED` = internal/unknown/contact_support. The Tauri rejection contains only this fixed projection: no raw `ErrorEnvelope.details`, input value, path, Secret, host/session credential, resource ref, Core response body, or exception text. The host reconstructs success values by allowlist; it does not serialize domain/database objects.
+
+These commands are production-only. Phase 3 must add the new commands to the production command set, handler, application manifest and capability in sync; probe and AC1 command surfaces remain unchanged. This section creates no WebView event.
+
+#### 5.10.4 Compatibility with existing reads
+
+- `library_list_books` keeps its existing no-argument result `BookSummary[]`; it now naturally includes the created book with `page_count: null`. No shelf filter, count rule, field, or error behavior changes.
+- `list_chapters({bookId})` keeps its existing result `{chapters: ChapterNavSummary[]}`, ascending `sort_order`, and existing unknown-parent empty-list behavior. After successful creation, the new chapter appears in that list. `CreateChapter` itself rejects an unknown/deleted parent with typed `TARGET_NOT_FOUND`; it does not change the read command's empty-list semantics.
+- New Core commands require the paired major 2 / minor 8 endpoint. The 2.8 Core must retain the existing minor 7 P15 command behavior; only these create commands require 2.8. Existing readers continue using the same projections; old hosts cannot invoke the new commands, and older Core rejects an unknown create command fail-closed. There is no version negotiation or automatic migration.
+
 ## 6. Typed projections 与 events
 
 ### 6.1 Task projection
@@ -941,10 +1056,11 @@ AS-IS `normalized_to_page_geometry(points, page_w, page_h)` owns conversion in a
 | Page-level `blocked` UI meaning, glyph, copy and behavior | `DEFERRED / USER_DECISION_REQUIRED` | Page projection may carry typed status `blocked`; do not reuse Run `blocked` UI mapping (`⊘`, `⏸`, or any other glyph). No user-visible behavior is selected here. |
 | React UI Owner | `DEFERRED / USER_DECISION_REQUIRED` | This Task does not select an owner. |
 | Large-media transport and import path capability | `PARTIALLY RULED` (M2-C2) | Thresholds (T1–T7, §10.1) and security semantics (§10.2) were ruled at M2-C2 from the M2-S1 §7 ruling and the M2-S1/M2-S2 spikes. The runtime form remains `DEFERRED` to a future runtime Task: transport selection stays conditional (M2-S1 §8.1), the Tauri asset protocol is `NOT_RUN` (S1-B1), and S1-B11 product-level protection is `UNVERIFIED` (S1-B3/S1-B8 outstanding). |
-| Runtime serialization library, product Tauri command names, process supervision | `UNKNOWN / NOT_IN_SCOPE`（仅 `settings_get`/`settings_update_section` 的 product Tauri command name/wire 由 §5.3 裁决；`set_region_type`/`list_regions` 的产品与 Core stdio 名称另有既有决策。上述其余 runtime 选择仍未知） | No implementation claimed beyond the sections explicitly frozen here; separate runtime Tasks must decide the rest against this transport-neutral contract. |
+| Runtime serialization library and process supervision | `UNKNOWN / NOT_IN_SCOPE` | These runtime choices remain open. Product Tauri command names already frozen in this contract include `settings_get`/`settings_update_section` (§5.3), `set_region_type`/`list_regions` (§5.4), and `library_create_book`/`create_chapter` (§5.10); freezing names does not claim registration or runtime support. |
 | Host grant registration/revoke authentication and session binding | `FROZEN`（HOST-ISSUER-1-C1 rev 2.3，§5.7） | Only the direct host-owned live-Core HostControl process channel, explicit host-session credential and Core-session binding are frozen. This does not select a serialization library, product Tauri command name, or process-supervision implementation beyond the stated lifecycle semantics. |
 | Event ordering/replay/retention | `FROZEN (forwarding) / NOT_REPLAYED`（EVENTS-FWD-1 rev 2.4，§6.4） | host→WebView 事件转发面与安全 payload 投影已冻结于 §6.4。事件仅作为失效通知，不承诺交付、顺序、序列号、重放或保留；客户端收到后重查对应快照。Run 幂等创建冻结于 §5.5。 |
 | Export host commands and safe WebView projection | `FROZEN`（EXPORT-IPC-1 rev 2.5，§5.9） | `library_cancel_export`、`library_get_export_snapshot`、`library_get_export_history` 冻结去路径安全投影（`ExportProgressSnapshotView` 与 `ExportHistoryEntryView`），`output_path` 严格排除。 |
+| Book/chapter creation Core and Tauri command names | `FROZEN`（FEAT-CREATE-1 rev 2.8，§5.10） | Core `CreateBook` / `CreateChapter` 与 Tauri `library_create_book` / `create_chapter` 的 wire、字段校验、typed error 和 `LibrarySurfaceError` 封闭投影已冻结；runtime 未实现。 |
 | Lock/revision conflict response details and concurrent edit policy | `PARTIALLY FROZEN`（`1.4` 草案：region 写命令面已冻结于 §5.4——人工优先、AI 侧 fail-closed、Revision/Lock 守卫交互、错误码映射；runtime 已由 M2-REGION-RETYPE-CORE 落地，`1.5` 时回填） | Core remains authority; §5.4 freezes the region-retype slice only; the rest of the command surface and finer conflict details stay open without weakening protection. |
 
 The UI mapping decision does not block freezing a transport-level Page status distinct from Run status. Any proposal to alter the status value or user-visible mapping returns to the user; M2-C1 does not resolve it.
@@ -964,3 +1080,5 @@ HOST-ISSUER-1-C1 rev 2.3 **另行明确授权实现 §5.7 HostControl 的 Core �
 EVENTS-FWD-1 rev 2.4 **明确授权 host→WebView 事件转发面与消费端接线实现**：授权在 `apps/desktop/src-tauri/src/**` 实现 §6.4 事件转发面（基于 live-Core stdio JSONL 流旁路安全投影至 Tauri event 通道，保持同通道请求响应多路复用语义不被破坏，且不暴露新增 host 命令）；在 `apps/desktop/frontend/src/**` 实现最小 typed listener 入口（如 `events.ts`，供后续 P14 等 Task 复用，不做页面级 UI）；在两侧对应测试路径编写测试并归档证据。此授权**不包括**修改 Python Core 侧事件 wire、字段或语义；不授权修改 SQLite Schema 或迁移；不授权未冻结事件（`CoreAvailabilityChanged`、`ImportProgressChanged`）；不授权页面级 UI 改动。
 
 EXPORT-IPC-1 rev 2.5 **明确授权 host 侧导出控制与查询命令及安全投影实现**：授权在 `apps/desktop/src-tauri/src/**` 实现 §5.9 所述三条 production-only 命令（`library_cancel_export`、`library_get_export_snapshot`、`library_get_export_history`）与去路径白名单安全投影；四处同步纪律（`PRODUCTION_COMMANDS` / `generate_handler!` / `build.rs` app-manifest / `capabilities`）在同一 commit 完成；在对应测试路径编写测试并归档证据。此授权**不包括**修改 Python Core 侧 wire、字段或语义；不包含任何路径下发。
+
+FEAT-CREATE-1 rev 2.8 **仅冻结契约，不授权任何 runtime 实现**。Core、Tauri host 与前端分别由后续独立释放的 FEAT-CREATE-2/-3/-4 Task 承接；各 Task 必须在自己的 Task 中冻结 allowlist、验证与 Reviewer。当前不批准 Schema/migration 或依赖变更；若实现证明需要显式多书架模型或新持久化结构，先停止该变更并另行取得用户批准。书架归属与页面来源边界见 §5.10。
