@@ -1,0 +1,18 @@
+shell=PowerShell
+cwd=G:\CODEX\New Manga.workspace\worktrees\FEAT-CREATE-3
+M2RC1_PYTHON=C:\Python314\python.exe
+python_version=Python 3.14.6
+TAURI_CONFIG={"build":{"frontendDist":"target/host-test-frontend"}} (worktree-local build-only directory; frontend tree unchanged)
+command=cargo test --locked --manifest-path apps/desktop/src-tauri/Cargo.toml create_payloads_and_errors_are_closed_projections
+started_utc=2026-10-17T12:27:07.7242584Z
+--- output ---
+   Compiling m2rc1-desktop v0.1.0 (G:\CODEX\New Manga.workspace\worktrees\FEAT-CREATE-3\apps\desktop\src-tauri)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 7.59s
+     Running unittests src\main.rs (apps\desktop\src-tauri\target\debug\deps\m2rc1_desktop-24448612fc7535f6.exe)
+
+running 1 test
+test tests::create_payloads_and_errors_are_closed_projections ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 119 filtered out; finished in 0.00s
+
+exit_code=0
