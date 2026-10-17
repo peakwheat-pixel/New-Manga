@@ -3,7 +3,7 @@ id: FEAT-CREATE-3
 title: 创建作品/章节能力（3/4）——host 注册 library_create_book / create_chapter
 kind: feature
 governance_version: 2
-status: in_review
+status: done
 approval: coordinator_release_20261017_after_FEAT_CREATE_2
 suggested_owner: Codex
 owner: codex
@@ -12,10 +12,10 @@ depends_on: [FEAT-CREATE-2]
 base_commit: 08f1b1b76251e08f8fbd89a5b8ef1ab3a85aae56
 branch: codex/FEAT-CREATE-3
 worktree: G:/CODEX/New Manga.workspace/worktrees/FEAT-CREATE-3
-integration_commit: null
+integration_commit: 771501231
 delivery_head: 89ec870274a5a3a13a279e64ac45469f4ed69a1b
 canonical_evidence_status: complete
-resource_closeout_status: pending
+resource_closeout_status: complete
 evidence_dir: verification/FEAT-CREATE-3
 ---
 
@@ -61,3 +61,9 @@ evidence_dir: verification/FEAT-CREATE-3
 | EVID-CREATE3-CORE | AC3/AC5 | verification/FEAT-CREATE-3/core-pytest.log | 89ec870274a5a3a13a279e64ac45469f4ed69a1b | 452478cc13ef24964d6f38532eb7acf26afc454f286d16c33292263164828671 | CANONICAL |
 | EVID-CREATE3-BLOCKED-BUILD | Build environment | verification/FEAT-CREATE-3/rust-source-tests-build-blocked.log | 89ec870274a5a3a13a279e64ac45469f4ed69a1b | e8f5bbb0dd02375b00946b21aef374c5e0933c367b1dc4089a2e820d5bc15c7d | CANONICAL |
 | EVID-CREATE3-HANDOFF | AC6 | doc/handoffs/FEAT-CREATE-3-89ec87027.md | 0444951060fbb372632c61cc46f12a8080e768cd | 2facd4b72084f21c5b292b5952766022579065f4fea9b2b42dc6350f5fc8480e | CANONICAL |
+
+## Closeout Record
+
+- 关闭：2026-10-17（dsh）。Reviewer=dsh（approved，erification/FEAT-CREATE-3/dsh-review-r1.md）。合并 771501231（--no-ff；首次因幻影行尾项被拒，清除后重试成功）。
+- 复核：PRODUCTION_COMMANDS.len()==51 **4 处一致**；probe **7** / AC1 **6** 冻结面 3 组断言未变；BindProfileCredential 不在 production 面；两命令 + CREATE_PRODUCTION_ONLY_COMMANDS + handler 齐备；build.rs/capabilities/gen-schemas/permissions 四处同步；packaged **12/0** 无回归。
+- **如实登记**：Owner 的证据含 ust-source-tests-build-blocked.log —— 其 **Rust source 套件在 worktree 内构建受阻**（无增量 target，全量重建超时/失败），故本 Task 的 source 套件结果**未取得完整通过证据**；integration 后需在主仓复跑确认。
