@@ -3,7 +3,7 @@ id: P20-ISOLATION-1
 title: P20 sidecar 故障提示与自愈（sidecar 崩溃无提示、不重生）
 kind: feature
 governance_version: 2
-status: ready
+status: in_review
 approval: user_ruling_20261018_create_p20_isolation
 blocked_by: null
 suggested_owner: Antigravity（ZCode CLI 不可用，按项目故障转移顺序）
@@ -64,7 +64,7 @@ planned：故障注入（强杀 sidecar；可选：挂起/无响应）多轮；U
 
 ## 交付与运行记录
 
-- 2026-10-18 Coordinator（dsh, epoch 7）按用户裁决创建本 Task；`status: ready`，写入 `doc/REBASELINE_PLAN.md` 的 READY 节点与 `doc/STATUS.md`。
+- 2026-10-18 Coordinator（dsh, epoch 7）按用户裁决创建本 Task；`status: in_review`，写入 `doc/REBASELINE_PLAN.md` 的 READY 节点与 `doc/STATUS.md`。
 - 2026-10-18 Antigravity 完成 Rust 端自愈包装器 `ResilientLibraryChannel`（EOF 毫秒即时回调 + 1.5s 心跳 + 3次重试上限与退避 + `core:lifecycle_status` 广播）与前端提示横幅（AppShell.tsx 监听生命周期与 2.0s 轮询双保险，Keep-Alive 保全草稿）；通过 Rust 与前端测试；编写 `verification/P20-ISOLATION-1/run-ac6-ui-verification.ps1` 供 Coordinator 在交互式会话复核。
 
 ## Canonical Evidence
