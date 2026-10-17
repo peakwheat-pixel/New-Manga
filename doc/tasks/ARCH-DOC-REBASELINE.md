@@ -129,3 +129,11 @@ P08已完成。Gate 消费者：P09（AC1–3）、P18（AC4）、P20（AC5）�
 - 本 Task 维持 `ready`：AC1–AC3=PARTIAL、AC4–AC6=NOT_RUN；**不因 closeout 登记而标 done**。
 - 本轮提交：`8db66b2489796f0e48ebcc01e327d9c3248c4187`（R1–R6 恢复证据 + AC7/C3 closeout pin + `STATUS`/`REBASELINE_PLAN` 指针刷新 + `.orchestrator` 运行日志设施）。
 - **F-4（环境问题，非本 Task scope）**：`refs/codex/turn-diffs/checkpoints/2a21a8a6…/ba2cc422-…` 是 Codex CLI 遗留的 **broken ref**（指向不存在对象），使 `git gc --auto` 报 `fatal: bad object` 并失败；commit 本身不受影响。该 ref 归属 Codex 工具，按 External Change Protection **不擅自删除**，登记为 BACKLOG 交 Codex 处置。
+
+### 2026-10-17 AC7 逐消费者裁决补记（Coordinator dsh, epoch 6）
+
+- **触发**：唯一 READY 节点复查（设置面 Core+host 双链已于本日全部完成，`3cee3e29a`）。
+- **消费者现状**（以 `doc/tasks/**` 权威状态为准）：**P09 = `closed_with_limitations`**（AC1–AC3）、**P16 = `done`**、**P17 = `done`**（AC6）、**P18 = `closed_with_limitations`**（AC4）、**P20 = 无任务文件**（AC5）。
+- **裁决**：AC5 的消费者 **P20 尚不存在**，故**按 AC7"某项未完成不标整 Task done"**，本 Task **保持 `status: ready`**，**不**标 done；AC1–AC3（P09）、AC4（P18）、AC6（P16/P17）对应的消费者**均已关闭**，其证据形态与范围已由 R1 非作者 Review（`verification/ARCH-DOC-REBASELINE/dsh-review-r1.md`：architecture_axis **PASS** / verification_axis **PASS**，`approved_with_conditions`）覆盖，**无需重做**。
+- **不做的**：不重跑已 PASS 的核验、不迁移历史 PASS、不新增产品范围、不改阈值；**未**为 AC5 预写结论（P20 未释放，预写即越权）。
+- **解除条件**：**P20 释放并关闭**后，本 Task 方可做 AC5 裁决并整体 closeout（或按 AC7 另行冻结 consumer-scoped 交付）。**P20 又依赖 P19 的验收方式（用户裁决硬门）** → 本节点实质由该裁决解锁。
