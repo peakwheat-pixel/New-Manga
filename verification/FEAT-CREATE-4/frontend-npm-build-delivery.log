@@ -1,0 +1,16 @@
+cwd=G:\CODEX\New Manga.workspace\worktrees\FEAT-CREATE-4\apps\desktop\frontend
+head=ae44d0047092c584c7f82cde203e229c56505156
+command=npm run build
+started=2026-10-17T20:52:23.0630952+08:00
+npm notice run m2rc1-frontend@0.1.0 build
+npm notice run tsc && vite build
+vite v5.4.21 building for production...
+transforming...
+✓ 88 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                  0.28 kB │ gzip:   0.21 kB
+dist/assets/event-B0kAzHa-.js    1.49 kB │ gzip:   0.68 kB
+dist/assets/index-DQyYFCNo.js  358.33 kB │ gzip: 103.25 kB
+✓ built in 570ms
+exit_code=0

@@ -10,6 +10,7 @@ export interface BookDetailPanelProps {
   onEnterWorkbench?: (bookId: string, chapterId: string) => void;
   onEnterReader?: (bookId: string, chapterId: string) => void;
   onOpenImport?: (chapterId?: string | null) => void;
+  onCreateChapter?: () => void;
 }
 
 export function BookDetailPanel({
@@ -20,6 +21,7 @@ export function BookDetailPanel({
   onEnterWorkbench,
   onEnterReader,
   onOpenImport,
+  onCreateChapter,
 }: BookDetailPanelProps) {
   if (!book) {
     return (
@@ -262,12 +264,12 @@ export function BookDetailPanel({
             章节列表
           </span>
 
-          {/* GAP-G4: Create Chapter disabled */}
           <button
             type="button"
             data-testid="new-chapter-btn"
-            disabled
-            title="新建章节（等待能力接入 GAP-G4）"
+            onClick={onCreateChapter}
+            disabled={!onCreateChapter}
+            title={!onCreateChapter ? "请选择作品后新建章节" : undefined}
             style={{
               padding: "2px 8px",
               fontSize: tokens.typography.size.secondary,
@@ -275,8 +277,8 @@ export function BookDetailPanel({
               color: tokens.color.text.muted,
               border: `1px solid ${tokens.color.border.default}`,
               borderRadius: tokens.radius.button,
-              cursor: "not-allowed",
-              opacity: 0.6,
+              cursor: onCreateChapter ? "pointer" : "not-allowed",
+              opacity: onCreateChapter ? 1 : 0.6,
             }}
           >
             + 新建章节

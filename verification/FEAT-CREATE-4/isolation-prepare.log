@@ -1,0 +1,7 @@
+shell=PowerShell 7.6.6
+pwsh=C:\Program Files\PowerShell\7\pwsh.exe
+cwd=G:\CODEX\New Manga.workspace\worktrees\FEAT-CREATE-4
+commit=ae44d0047092c584c7f82cde203e229c56505156
+command=pwsh -NoProfile -File verification/FEAT-CREATE-4/prepare-isolated-data.ps1
+isolation_copy=PASS catalog_data_hash_match=true source_unchanged=true derived_empty=true
+exit_code=0

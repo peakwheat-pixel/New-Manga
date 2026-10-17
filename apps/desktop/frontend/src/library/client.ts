@@ -39,6 +39,8 @@ export const RESOLVE_PAGE_RESOURCE_COMMAND = "resolve_page_resource";
  */
 export const LIST_CHAPTERS_COMMAND = "list_chapters";
 export const LIST_CHAPTER_PAGES_COMMAND = "list_chapter_pages";
+export const LIBRARY_CREATE_BOOK_COMMAND = "library_create_book";
+export const CREATE_CHAPTER_COMMAND = "create_chapter";
 
 /**
  * HOST-ISSUER-1 wire names (AD-001 §6 W30):
@@ -46,6 +48,28 @@ export const LIST_CHAPTER_PAGES_COMMAND = "list_chapter_pages";
  */
 export const LIBRARY_IMPORT_FILE_COMMAND = "library_import_file";
 export const LIBRARY_IMPORT_FOLDER_COMMAND = "library_import_folder";
+
+const CREATE_ERROR_KEYS = [
+  "LIBRARY_INVALID_INPUT",
+  "LIBRARY_BOOK_NOT_FOUND",
+  "LIBRARY_WRITE_FAILED",
+  "LIBRARY_UNAVAILABLE",
+  "LIBRARY_OPERATION_FAILED",
+] as const;
+
+function createErrorCode(error: unknown): string {
+  const value = error && typeof error === "object"
+    ? (error as { message_key?: unknown; code?: unknown }).message_key ?? (error as { code?: unknown }).code
+    : error;
+  if (typeof value === "string" && CREATE_ERROR_KEYS.includes(value as (typeof CREATE_ERROR_KEYS)[number])) {
+    return value;
+  }
+  if (value === "INVALID_REQUEST") return "LIBRARY_INVALID_INPUT";
+  if (value === "TARGET_NOT_FOUND") return "LIBRARY_BOOK_NOT_FOUND";
+  if (value === "CORE_UNAVAILABLE" || value === "TAURI_BRIDGE_MISSING") return "LIBRARY_UNAVAILABLE";
+  if (value === "LIBRARY_WRITE_FAILED") return value;
+  return "LIBRARY_OPERATION_FAILED";
+}
 
 export class LibraryClient {
   private invoke: InvokeFn;
@@ -79,6 +103,32 @@ export class LibraryClient {
     } catch (error) {
       const code = typeof error === "string" ? error : (error as Error)?.message || "CORE_UNAVAILABLE";
       throw new LibraryClientError(code, `library_list_books failed: ${code}`);
+    }
+  }
+
+  async createBook(title: string): Promise<BookSummary> {
+    try {
+      const result = await this.invoke(LIBRARY_CREATE_BOOK_COMMAND, { payload: { title } });
+      if (!result || typeof result !== "object" || typeof (result as BookSummary).book_id !== "string") {
+        throw new LibraryClientError("LIBRARY_OPERATION_FAILED");
+      }
+      return result as BookSummary;
+    } catch (error) {
+      throw new LibraryClientError(createErrorCode(error));
+    }
+  }
+
+  async createChapter(bookId: string, title: string): Promise<ChapterNavSummary> {
+    try {
+      const result = await this.invoke(CREATE_CHAPTER_COMMAND, {
+        payload: { book_id: bookId, title },
+      });
+      if (!result || typeof result !== "object" || typeof (result as ChapterNavSummary).chapter_id !== "string") {
+        throw new LibraryClientError("LIBRARY_OPERATION_FAILED");
+      }
+      return result as ChapterNavSummary;
+    } catch (error) {
+      throw new LibraryClientError(createErrorCode(error));
     }
   }
 

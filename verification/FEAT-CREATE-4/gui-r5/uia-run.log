@@ -1,0 +1,27 @@
+[20:49:05.185] APP_START pid=7440 exe_sha256=5f4e1d7a05ba105115467a1f2f5cd91c5c3801efefa6bc7ae88a82b688f7fa48 data_root=isolated
+[20:49:09.864] CREATE_BUTTON_FOUND name=+ 新建作品 IsEnabled=True IsOffscreen=False
+[20:49:09.871] CREATE_BUTTON_FOUND name=新建作品 IsEnabled=True IsOffscreen=False
+[20:49:09.883] EMPTY_SHELF_CREATE_BOOK=PASS matching_buttons=2 enabled=true
+[20:49:11.913] CLICK name=新建作品 IsEnabled=true IsOffscreen=false
+[20:49:11.968] EDIT_FOUND name=搜索作品标题 / 原名 (Ctrl+F) IsEnabled=True IsOffscreen=False
+[20:49:11.973] EDIT_FOUND name=作品标题 IsEnabled=True IsOffscreen=False
+[20:49:12.293] TEXT_ENTRY label=作品标题 value=MangaCreate4UIA20261017
+[20:49:12.387] CLICK name=创建作品 IsEnabled=true IsOffscreen=false
+[20:49:12.431] CREATE_BOOK=PASS returned_book_visible=true
+[20:49:12.481] CLICK name=+ 新建章节 IsEnabled=true IsOffscreen=false
+[20:49:12.519] EDIT_FOUND name=搜索作品标题 / 原名 (Ctrl+F) IsEnabled=True IsOffscreen=False
+[20:49:12.525] EDIT_FOUND name=章节标题 IsEnabled=True IsOffscreen=False
+[20:49:12.850] TEXT_ENTRY label=章节标题 value=MangaChapter4UIA20261017
+[20:49:12.945] CLICK name=创建章节 IsEnabled=true IsOffscreen=false
+[20:49:13.042] CREATE_CHAPTER=PASS chapter_visible=true reader_action_enabled=true
+[20:49:13.065] CLICK name=阅读 IsEnabled=true IsOffscreen=false
+[20:49:13.108] READER_ENTRY=PASS reader_return_action_visible=true
+[20:49:13.130] CLICK name=← 返回书架 IsEnabled=true IsOffscreen=false
+[20:49:13.189] CLICK name=导入作品 IsEnabled=true IsOffscreen=false
+[20:49:13.287] IMPORT_ENTRY=PASS target_selector_visible=true selector_name= unavailable_notice=false
+[20:49:13.326] CLICK name=✕ IsEnabled=true IsOffscreen=false
+[20:49:13.899] CLICK name=导入 IsEnabled=true IsOffscreen=false
+[20:49:14.005] IMPORT_PICKERS=PASS file_enabled=true folder_enabled=true
+[20:49:14.041] CLICK name=✕ IsEnabled=true IsOffscreen=false
+[20:49:14.113] APP_EXIT exit_code=0
+[20:49:14.120] exit_code=0

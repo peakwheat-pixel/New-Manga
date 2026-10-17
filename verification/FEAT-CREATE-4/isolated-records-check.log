@@ -1,0 +1,7 @@
+shell=PowerShell 7.6.6
+python=G:/CODEX/New Manga.task-envs/m2ac5-build/Scripts/python.exe
+cwd=G:\CODEX\New Manga.workspace\worktrees\FEAT-CREATE-4
+commit=ae44d0047092c584c7f82cde203e229c56505156
+command=python verification/FEAT-CREATE-4/verify-isolated-records.py apps/desktop/src-tauri/target/feat-create-4-isolation-20261017 MangaCreate4UIA20261017 MangaChapter4UIA20261017
+isolated_records=PASS book_count=1 chapter_count=1 created_book=true created_chapter=true
+exit_code=0
