@@ -117,6 +117,8 @@ _k32.WriteFile.argtypes = [
     wintypes.HANDLE, ctypes.c_void_p, wintypes.DWORD,
     ctypes.POINTER(wintypes.DWORD), ctypes.c_void_p,
 ]
+_k32.SetEndOfFile.restype = wintypes.BOOL
+_k32.SetEndOfFile.argtypes = [wintypes.HANDLE]
 
 _k32.SetFileInformationByHandle.restype = wintypes.BOOL
 _k32.SetFileInformationByHandle.argtypes = [
@@ -662,6 +664,7 @@ def _open_lock_handle(derived_root: str, *, exclusive: bool, create_new: bool = 
 
 def _write_lock_content(handle: int, binding: NamespaceBinding) -> None:
     payload = (json.dumps(binding.as_dict(), sort_keys=True) + "\n").encode("utf-8")
+    _seek_start(handle)
     written = wintypes.DWORD(0)
     chunk = 1 << 16
     offset = 0
@@ -673,6 +676,10 @@ def _write_lock_content(handle: int, binding: NamespaceBinding) -> None:
         if not ok or written.value != len(block):
             raise namespace_unavailable(f"namespace lock write failed (win32 error {ctypes.get_last_error()})")
         offset += written.value
+    if not _k32.SetEndOfFile(wintypes.HANDLE(handle)):
+        raise namespace_unavailable(
+            f"namespace lock truncate failed (win32 error {ctypes.get_last_error()})"
+        )
 
 
 def _read_lock_binding(handle: int) -> NamespaceBinding:

@@ -138,9 +138,11 @@ from infrastructure.resource_channel.catalog_store import (
     PreviewOrigin,
     ResourceCatalogStore,
     initialize_namespace,
+    restore_namespace_lock,
 )
 from infrastructure.resource_channel.handle_resolver import (
     acquire_shared_lease,
+    read_lock_binding_if_any,
     resolve_namespace_identity,
     try_acquire_exclusive_lease,
 )
@@ -3317,6 +3319,15 @@ class CoreServiceServer:
             self._stdout.flush()
 
 
+def _ensure_preview_namespace(catalog_db: Path, derived_root: Path) -> None:
+    if catalog_db.exists():
+        if read_lock_binding_if_any(str(derived_root)) is not None:
+            return
+        if restore_namespace_lock(catalog_db, derived_root):
+            return
+    initialize_namespace(catalog_db, derived_root)
+
+
 def main() -> int:
     env_root = os.environ.get("NEWMANGA_DATA_ROOT")
     data_root = Path(env_root) if env_root else default_data_root()
@@ -3334,8 +3345,7 @@ def main() -> int:
     # are skipped this boot and the Core serves normally under a shared
     # lease. serve_forever (and therefore core.ping) is only reached after
     # the protection is held and the sweeps are done.
-    if not catalog_db.exists():
-        initialize_namespace(catalog_db, derived_root)
+    _ensure_preview_namespace(catalog_db, derived_root)
     catalog_identity = resolve_namespace_identity(catalog_db)[1]
     exclusive = try_acquire_exclusive_lease(
         derived_root, expected_catalog_identity=catalog_identity
@@ -3361,8 +3371,8 @@ def main() -> int:
             exclusive.release()
         else:
             print(
-                "[core.derived_gc] skipped: namespace busy"
-                " (a managed peer holds a shared lease)",
+                "[core.derived_gc] skipped: exclusive namespace lease unavailable;"
+                " startup sweeps were skipped",
                 file=sys.stderr,
             )
         shared_lease = acquire_shared_lease(

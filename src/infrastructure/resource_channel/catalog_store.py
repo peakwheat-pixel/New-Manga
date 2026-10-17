@@ -269,6 +269,78 @@ def initialize_namespace(catalog_db: Path | str, derived_root: Path | str) -> Na
         close_lock_handle(lock_handle)
 
 
+def restore_namespace_lock(catalog_db: Path | str, derived_root: Path | str) -> bool:
+    """Restore a missing or unreadable lock only from its existing catalog binding.
+
+    An unbound catalog returns ``False`` for the existing narrow initializer;
+    a bound catalog is copied back only after the exclusive lock and both
+    filesystem identities are verified.
+    """
+    db_path = Path(catalog_db)
+    lock_handle, derived_str, derived_identity = open_exclusive_lock_for_initialize(derived_root)
+    try:
+        existing = read_lock_content_if_any(lock_handle)
+        catalog_str, catalog_identity = resolve_namespace_identity(db_path)
+        try:
+            connection = sqlite3.connect(_ro_uri(db_path), uri=True)
+        except sqlite3.Error as error:
+            raise namespace_unavailable(f"catalog probe failed: {error}") from error
+        try:
+            binding = _read_namespace_row(connection)
+            if binding is None:
+                if existing is not None:
+                    raise namespace_unavailable(
+                        "namespace lock is bound but catalog binding is missing"
+                    )
+                return False
+            (row_count,) = connection.execute(
+                "SELECT COUNT(*) FROM preview_namespace"
+            ).fetchone()
+            (table_sql,) = connection.execute(
+                "SELECT sql FROM sqlite_master WHERE type='table' AND name='preview_namespace'"
+            ).fetchone()
+        except (sqlite3.Error, ValueError, TypeError, IndexError) as error:
+            raise namespace_unavailable(f"catalog namespace binding unusable: {error}") from error
+        finally:
+            connection.close()
+        if (
+            row_count != 1
+            or table_sql is None
+            or not table_sql.isascii()
+            or _SQLITE_DDL_WS.sub(" ", table_sql).strip().lower()
+            != _NORMALIZED_NAMESPACE_SCHEMA
+        ):
+            raise namespace_unavailable("catalog namespace binding is not canonical")
+        _verify_catalog_binding(
+            binding, derived_str, derived_identity, catalog_str, catalog_identity
+        )
+        if existing is not None:
+            if existing != binding:
+                raise namespace_unavailable("namespace lock and catalog bindings differ")
+            return True
+        write_lock_content(lock_handle, binding)
+        return True
+    finally:
+        close_lock_handle(lock_handle)
+
+
+def _verify_catalog_binding(
+    binding: NamespaceBinding,
+    derived_root: str,
+    derived_identity: tuple[int, int],
+    catalog_root: str,
+    catalog_identity: tuple[int, int],
+) -> None:
+    if (
+        binding.protocol_version != 1
+        or binding.derived_root != derived_root
+        or binding.derived_identity != derived_identity
+        or binding.catalog_root != catalog_root
+        or binding.catalog_identity != catalog_identity
+    ):
+        raise namespace_unavailable("namespace binding identity mismatch")
+
+
 _KNOWN_CATALOG_TABLES = {"resource_catalog", "preview_lifecycle", "preview_namespace"}
 
 #: The exact column shapes the initializer is allowed to adopt. Anything
@@ -800,4 +872,5 @@ __all__ = [
     "RetiredPreviewCandidate",
     "ResourceCatalogStore",
     "initialize_namespace",
+    "restore_namespace_lock",
 ]
