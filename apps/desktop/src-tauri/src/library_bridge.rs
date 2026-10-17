@@ -42,6 +42,14 @@ pub struct BookSummary {
     pub updated_at: String,
 }
 
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct ChapterNavSummary {
+    pub chapter_id: String,
+    pub title: String,
+    pub chapter_number: String,
+    pub sort_order: i64,
+}
+
 /// EXPORT-IPC-1 (contract rev 2.5 §5.8): Safe WebView projection of export output.
 /// Whitelisted reconstruction: output_path is strictly excluded.
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
@@ -475,6 +483,17 @@ pub enum P15CredentialTarget {
 pub trait LibraryChannel: Send + Sync {
     fn ping(&self) -> Result<PingResult, LibraryError>;
     fn list_books(&self) -> Result<Vec<BookSummary>, LibraryError>;
+    fn create_book(&self, _title: &str) -> Result<BookSummary, LibraryError> {
+        Err(LibraryError::unavailable("Create channel is unavailable"))
+    }
+    fn create_chapter(
+        &self,
+        _book_id: &str,
+        _title: &str,
+        _chapter_number: Option<&str>,
+    ) -> Result<ChapterNavSummary, LibraryError> {
+        Err(LibraryError::unavailable("Create channel is unavailable"))
+    }
     /// M2-SETTINGS-IPC-CHANNEL (contract rev 1.3 §5.3): read the pipeline
     /// settings projection — `{}` (full) or `{"section": name}` (one
     /// section, JSON `null` when unset). Returns the raw result JSON (the
@@ -972,6 +991,18 @@ fn build_application_envelope_at_minor(
     })
 }
 
+fn parse_created_book(value: Value) -> Result<BookSummary, LibraryError> {
+    serde_json::from_value(value).map_err(|error| {
+        LibraryError::malformed(&format!("Failed to parse CreateBook result: {error}"))
+    })
+}
+
+fn parse_created_chapter(value: Value) -> Result<ChapterNavSummary, LibraryError> {
+    serde_json::from_value(value).map_err(|error| {
+        LibraryError::malformed(&format!("Failed to parse CreateChapter result: {error}"))
+    })
+}
+
 impl StdioLibraryChannel {
     pub fn spawn(
         python_exe: &str,
@@ -1108,6 +1139,19 @@ impl StdioLibraryChannel {
         let request = build_application_envelope(&req_id, command, payload);
 
         self.exchange(request)
+    }
+
+    fn round_trip_create(
+        &self,
+        command: &str,
+        payload: serde_json::Value,
+    ) -> Result<serde_json::Value, LibraryError> {
+        let req_id = format!(
+            "create-req-{}",
+            self.request_id_gen.fetch_add(1, Ordering::Relaxed)
+        );
+        let request = build_application_envelope_at_minor(&req_id, command, payload, 8);
+        self.exchange_expected_minor(request, Some(8))
     }
 
     fn round_trip_p15(
@@ -1599,6 +1643,25 @@ impl LibraryChannel for StdioLibraryChannel {
             .map_err(|e| LibraryError::malformed(&format!("Failed to parse BookSummary list: {e}")))
     }
 
+    fn create_book(&self, title: &str) -> Result<BookSummary, LibraryError> {
+        let value = self.round_trip_create("CreateBook", serde_json::json!({ "title": title }))?;
+        parse_created_book(value)
+    }
+
+    fn create_chapter(
+        &self,
+        book_id: &str,
+        title: &str,
+        chapter_number: Option<&str>,
+    ) -> Result<ChapterNavSummary, LibraryError> {
+        let mut payload = serde_json::json!({ "book_id": book_id, "title": title });
+        if let Some(chapter_number) = chapter_number {
+            payload["chapter_number"] = serde_json::json!(chapter_number);
+        }
+        let value = self.round_trip_create("CreateChapter", payload)?;
+        parse_created_chapter(value)
+    }
+
     fn get_settings(&self, section: Option<&str>) -> Result<serde_json::Value, LibraryError> {
         // contract rev 1.3 §5.3: the full projection ({} payload) or one
         // section ({"section": name}); the result passes through as raw JSON
@@ -2062,6 +2125,27 @@ impl LibraryChannel for MockLibraryChannel {
         self.books_result.lock().unwrap().clone()
     }
 
+    fn create_book(&self, _title: &str) -> Result<BookSummary, LibraryError> {
+        self.domain_result
+            .lock()
+            .unwrap()
+            .clone()
+            .and_then(parse_created_book)
+    }
+
+    fn create_chapter(
+        &self,
+        _book_id: &str,
+        _title: &str,
+        _chapter_number: Option<&str>,
+    ) -> Result<ChapterNavSummary, LibraryError> {
+        self.domain_result
+            .lock()
+            .unwrap()
+            .clone()
+            .and_then(parse_created_chapter)
+    }
+
     fn get_settings(&self, _section: Option<&str>) -> Result<serde_json::Value, LibraryError> {
         self.settings_result.lock().unwrap().clone()
     }
@@ -2217,6 +2301,44 @@ impl LibraryChannel for MockLibraryChannel {
 mod tests {
     use super::*;
     use std::path::PathBuf;
+
+    #[test]
+    fn create_results_are_rebuilt_from_the_contract_whitelist() {
+        let book = parse_created_book(serde_json::json!({
+            "book_id": "book-1",
+            "title": "Book",
+            "original_title": "",
+            "is_favorite": false,
+            "is_archived": false,
+            "page_count": null,
+            "created_at": "2026-10-17T00:00:00Z",
+            "updated_at": "2026-10-17T00:00:00Z",
+            "path": "C:/private/library.db",
+            "secret": "secret-marker",
+            "traceback": "private exception"
+        }))
+        .unwrap();
+        let book = serde_json::to_value(book).unwrap();
+        assert_eq!(book.as_object().unwrap().len(), 8);
+        assert_eq!(book["book_id"], "book-1");
+        assert!(!book.to_string().contains("private"));
+        assert!(!book.to_string().contains("secret-marker"));
+
+        let chapter = parse_created_chapter(serde_json::json!({
+            "chapter_id": "chapter-1",
+            "title": "Chapter",
+            "chapter_number": "",
+            "sort_order": 0,
+            "path": "C:/private/library.db",
+            "secret": "secret-marker"
+        }))
+        .unwrap();
+        let chapter = serde_json::to_value(chapter).unwrap();
+        assert_eq!(chapter.as_object().unwrap().len(), 4);
+        assert_eq!(chapter["chapter_id"], "chapter-1");
+        assert!(!chapter.to_string().contains("private"));
+        assert!(!chapter.to_string().contains("secret-marker"));
+    }
 
     #[test]
     fn p15_commands_map_to_the_frozen_core_surface_at_minor_seven() {

@@ -369,6 +369,12 @@
           "markdownDescription": "Enables the core_ping command without any pre-configured scope."
         },
         {
+          "description": "Enables the create_chapter command without any pre-configured scope.",
+          "type": "string",
+          "const": "allow-create-chapter",
+          "markdownDescription": "Enables the create_chapter command without any pre-configured scope."
+        },
+        {
           "description": "Enables the credential_clear command without any pre-configured scope.",
           "type": "string",
           "const": "allow-credential-clear",
@@ -397,6 +403,12 @@
           "type": "string",
           "const": "allow-library-control-run",
           "markdownDescription": "Enables the library_control_run command without any pre-configured scope."
+        },
+        {
+          "description": "Enables the library_create_book command without any pre-configured scope.",
+          "type": "string",
+          "const": "allow-library-create-book",
+          "markdownDescription": "Enables the library_create_book command without any pre-configured scope."
         },
         {
           "description": "Enables the library_get_export_history command without any pre-configured scope.",
@@ -705,6 +717,12 @@
           "markdownDescription": "Denies the core_ping command without any pre-configured scope."
         },
         {
+          "description": "Denies the create_chapter command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-create-chapter",
+          "markdownDescription": "Denies the create_chapter command without any pre-configured scope."
+        },
+        {
           "description": "Denies the credential_clear command without any pre-configured scope.",
           "type": "string",
           "const": "deny-credential-clear",
@@ -733,6 +751,12 @@
           "type": "string",
           "const": "deny-library-control-run",
           "markdownDescription": "Denies the library_control_run command without any pre-configured scope."
+        },
+        {
+          "description": "Denies the library_create_book command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-library-create-book",
+          "markdownDescription": "Denies the library_create_book command without any pre-configured scope."
         },
         {
           "description": "Denies the library_get_export_history command without any pre-configured scope.",

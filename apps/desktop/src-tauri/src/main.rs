@@ -46,12 +46,12 @@ mod settings_bridge;
 use ac1_bridge::Ac1Channel;
 use core_bridge::{CoreChannel, CoreError, StdioCoreChannel};
 use library_bridge::{
-    BookSummary, ExportHistoryResponseView, ExportProgressSnapshotView, LibraryChannel,
-    P15CredentialTarget, P15SettingsCommand, PingResult, StdioLibraryChannel,
-    P15_HOST_ONLY_COMMANDS,
+    BookSummary, ChapterNavSummary, ExportHistoryResponseView, ExportProgressSnapshotView,
+    LibraryChannel, LibraryError, P15CredentialTarget, P15SettingsCommand, PingResult,
+    StdioLibraryChannel, P15_HOST_ONLY_COMMANDS,
 };
 use resource_protocol::ScopeRoots;
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 use settings_bridge::*;
 use std::collections::HashMap;
 use std::path::PathBuf;
@@ -69,6 +69,8 @@ pub const PRODUCTION_COMMANDS: &[&str] = &[
     "revoke_resource_refs",
     "core_ping",
     "library_list_books",
+    "library_create_book",
+    "create_chapter",
     // M2-SETTINGS-IPC-CHANNEL (contract rev 1.3 §5.3): the settings read/
     // write pair, production-only like the IPC1 commands below.
     "settings_get",
@@ -250,6 +252,8 @@ pub const EXPORT_PRODUCTION_ONLY_COMMANDS: &[&str] = &[
     "library_get_export_history",
 ];
 
+pub const CREATE_PRODUCTION_ONLY_COMMANDS: &[&str] = &["library_create_book", "create_chapter"];
+
 pub fn command_allowlist(probe_mode: bool, ac1_mode: bool) -> Vec<&'static str> {
     let mut commands: Vec<&'static str> = if probe_mode || ac1_mode {
         PRODUCTION_COMMANDS
@@ -268,6 +272,7 @@ pub fn command_allowlist(probe_mode: bool, ac1_mode: bool) -> Vec<&'static str> 
                     && !RUN_PRODUCTION_ONLY_COMMANDS.contains(command)
                     && !EXPORT_REVEAL_PRODUCTION_ONLY_COMMANDS.contains(command)
                     && !EXPORT_PRODUCTION_ONLY_COMMANDS.contains(command)
+                    && !CREATE_PRODUCTION_ONLY_COMMANDS.contains(command)
             })
             .collect()
     } else {
@@ -338,6 +343,170 @@ fn library_list_books(state: tauri::State<'_, AppState>) -> Result<Vec<BookSumma
         .ok_or_else(|| "CORE_UNAVAILABLE".to_string())?
         .list_books()
         .map_err(|error| error.code)
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(deny_unknown_fields)]
+struct CreateBookPayload {
+    title: String,
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(deny_unknown_fields)]
+struct CreateChapterPayload {
+    book_id: String,
+    title: String,
+    #[serde(default, deserialize_with = "deserialize_non_null_string")]
+    chapter_number: Option<String>,
+}
+
+fn deserialize_non_null_string<'de, D>(deserializer: D) -> Result<Option<String>, D::Error>
+where
+    D: serde::Deserializer<'de>,
+{
+    String::deserialize(deserializer).map(Some)
+}
+
+#[derive(Debug, Serialize, PartialEq, Eq)]
+#[serde(rename_all = "snake_case")]
+enum LibrarySurfaceCategory {
+    Validation,
+    NotFound,
+    Unavailable,
+    Internal,
+}
+
+#[derive(Debug, Serialize, PartialEq, Eq)]
+#[serde(rename_all = "snake_case")]
+enum LibrarySurfacePhase {
+    RequestValidation,
+    BookLookup,
+    Persistence,
+    CoreChannel,
+    Unknown,
+}
+
+#[derive(Debug, Serialize, PartialEq, Eq)]
+#[serde(rename_all = "snake_case")]
+enum LibrarySurfaceAction {
+    EditInput,
+    SelectBook,
+    RetryAfterRefresh,
+    ContactSupport,
+}
+
+#[derive(Debug, Serialize, PartialEq, Eq)]
+enum LibrarySurfaceMessageKey {
+    #[serde(rename = "LIBRARY_INVALID_INPUT")]
+    InvalidInput,
+    #[serde(rename = "LIBRARY_BOOK_NOT_FOUND")]
+    BookNotFound,
+    #[serde(rename = "LIBRARY_WRITE_FAILED")]
+    WriteFailed,
+    #[serde(rename = "LIBRARY_UNAVAILABLE")]
+    Unavailable,
+    #[serde(rename = "LIBRARY_OPERATION_FAILED")]
+    OperationFailed,
+}
+
+#[derive(Debug, Serialize, PartialEq, Eq)]
+#[serde(deny_unknown_fields)]
+struct LibrarySurfaceError {
+    category: LibrarySurfaceCategory,
+    phase: LibrarySurfacePhase,
+    action: LibrarySurfaceAction,
+    message_key: LibrarySurfaceMessageKey,
+}
+
+impl LibrarySurfaceError {
+    fn invalid_input() -> Self {
+        Self {
+            category: LibrarySurfaceCategory::Validation,
+            phase: LibrarySurfacePhase::RequestValidation,
+            action: LibrarySurfaceAction::EditInput,
+            message_key: LibrarySurfaceMessageKey::InvalidInput,
+        }
+    }
+
+    fn unavailable() -> Self {
+        Self {
+            category: LibrarySurfaceCategory::Unavailable,
+            phase: LibrarySurfacePhase::CoreChannel,
+            action: LibrarySurfaceAction::RetryAfterRefresh,
+            message_key: LibrarySurfaceMessageKey::Unavailable,
+        }
+    }
+
+    fn from_core(error: LibraryError) -> Self {
+        match error.code.as_str() {
+            "INVALID_REQUEST" | "PROTOCOL_VERSION_UNSUPPORTED" => Self::invalid_input(),
+            "TARGET_NOT_FOUND" => Self {
+                category: LibrarySurfaceCategory::NotFound,
+                phase: LibrarySurfacePhase::BookLookup,
+                action: LibrarySurfaceAction::SelectBook,
+                message_key: LibrarySurfaceMessageKey::BookNotFound,
+            },
+            "LIBRARY_WRITE_FAILED" => Self {
+                category: LibrarySurfaceCategory::Internal,
+                phase: LibrarySurfacePhase::Persistence,
+                action: LibrarySurfaceAction::RetryAfterRefresh,
+                message_key: LibrarySurfaceMessageKey::WriteFailed,
+            },
+            _ if error.category == "unavailable" => Self::unavailable(),
+            _ => Self {
+                category: LibrarySurfaceCategory::Internal,
+                phase: LibrarySurfacePhase::Unknown,
+                action: LibrarySurfaceAction::ContactSupport,
+                message_key: LibrarySurfaceMessageKey::OperationFailed,
+            },
+        }
+    }
+}
+
+fn parse_create_book_payload(
+    value: Option<serde_json::Value>,
+) -> Result<CreateBookPayload, LibrarySurfaceError> {
+    serde_json::from_value(value.ok_or_else(LibrarySurfaceError::invalid_input)?)
+        .map_err(|_| LibrarySurfaceError::invalid_input())
+}
+
+fn parse_create_chapter_payload(
+    value: Option<serde_json::Value>,
+) -> Result<CreateChapterPayload, LibrarySurfaceError> {
+    serde_json::from_value(value.ok_or_else(LibrarySurfaceError::invalid_input)?)
+        .map_err(|_| LibrarySurfaceError::invalid_input())
+}
+
+#[tauri::command]
+fn library_create_book(
+    state: tauri::State<'_, AppState>,
+    payload: Option<serde_json::Value>,
+) -> Result<BookSummary, LibrarySurfaceError> {
+    let payload = parse_create_book_payload(payload)?;
+    state
+        .library
+        .as_ref()
+        .ok_or_else(LibrarySurfaceError::unavailable)?
+        .create_book(&payload.title)
+        .map_err(LibrarySurfaceError::from_core)
+}
+
+#[tauri::command]
+fn create_chapter(
+    state: tauri::State<'_, AppState>,
+    payload: Option<serde_json::Value>,
+) -> Result<ChapterNavSummary, LibrarySurfaceError> {
+    let payload = parse_create_chapter_payload(payload)?;
+    state
+        .library
+        .as_ref()
+        .ok_or_else(LibrarySurfaceError::unavailable)?
+        .create_chapter(
+            &payload.book_id,
+            &payload.title,
+            payload.chapter_number.as_deref(),
+        )
+        .map_err(LibrarySurfaceError::from_core)
 }
 
 /// M2-SETTINGS-IPC-CHANNEL (contract rev 1.3 §5.3): read the pipeline
@@ -1321,6 +1490,8 @@ fn main() {
             revoke_resource_refs,
             core_ping,
             library_list_books,
+            library_create_book,
+            create_chapter,
             settings_get,
             settings_update_section,
             settings_provider_profiles_list,
@@ -1481,8 +1652,8 @@ mod tests {
         // commands too — a capability/manifest typo for an ac1 command must
         // fail here, not only surface as an E2E ACL denial.
         // M2-REGION-RETYPE-CORE r1 P3-2: the production surface joins the
-        // sweep, so the existence check covers all 56 commands across the
-        // three surfaces (49 production + 4 probe-only + 3 ac1) — a missing
+        // sweep, so the existence check covers all 58 commands across the
+        // three surfaces (51 production + 4 probe-only + 3 ac1) — a missing
         // capability/manifest entry for a production-only command (e.g. the
         // retype pair) fails this test, not just a live invoke.
         for command in command_allowlist(true, false)
@@ -1507,7 +1678,7 @@ mod tests {
 
     #[test]
     fn production_surface_includes_export_reveal() {
-        // Existing 30 production commands + 19 P15 settings commands = 49.
+        // Existing 32 production commands + 19 P15 settings commands = 51.
         assert_eq!(
             command_allowlist(false, false),
             vec![
@@ -1516,6 +1687,8 @@ mod tests {
                 "revoke_resource_refs",
                 "core_ping",
                 "library_list_books",
+                "library_create_book",
+                "create_chapter",
                 "settings_get",
                 "settings_update_section",
                 "settings_provider_profiles_list",
@@ -1567,7 +1740,7 @@ mod tests {
     #[test]
     fn p15_settings_commands_are_exact_and_production_only() {
         assert_eq!(P15_SETTINGS_PRODUCTION_ONLY_COMMANDS.len(), 19);
-        assert_eq!(PRODUCTION_COMMANDS.len(), 49);
+        assert_eq!(PRODUCTION_COMMANDS.len(), 51);
         assert_eq!(command_allowlist(true, false).len(), 7);
         assert_eq!(command_allowlist(false, true).len(), 6);
         for command in P15_SETTINGS_PRODUCTION_ONLY_COMMANDS {
@@ -1575,6 +1748,152 @@ mod tests {
             assert!(!command_allowlist(true, false).contains(command));
             assert!(!command_allowlist(false, true).contains(command));
         }
+    }
+
+    #[test]
+    fn create_commands_are_exact_and_production_only() {
+        assert_eq!(
+            CREATE_PRODUCTION_ONLY_COMMANDS,
+            &["library_create_book", "create_chapter"]
+        );
+        assert_eq!(PRODUCTION_COMMANDS.len(), 51);
+        assert_eq!(command_allowlist(true, false).len(), 7);
+        assert_eq!(command_allowlist(false, true).len(), 6);
+        for command in CREATE_PRODUCTION_ONLY_COMMANDS {
+            assert!(command_allowlist(false, false).contains(command));
+            assert!(!command_allowlist(true, false).contains(command));
+            assert!(!command_allowlist(false, true).contains(command));
+            assert!(include_str!("../build.rs").contains(command));
+            assert!(include_str!("../capabilities/m2rc1-commands.json")
+                .contains(&format!("allow-{}", command.replace('_', "-"))));
+        }
+        let production_handler = include_str!("main.rs")
+            .split("builder.invoke_handler(tauri::generate_handler![")
+            .nth(3)
+            .unwrap()
+            .split("])")
+            .next()
+            .unwrap();
+        for command in CREATE_PRODUCTION_ONLY_COMMANDS {
+            assert!(production_handler.contains(command));
+        }
+    }
+
+    #[test]
+    fn create_payloads_and_errors_are_closed_projections() {
+        let private = serde_json::json!("C:/private/shelf.db secret-marker");
+        assert!(parse_create_book_payload(Some(serde_json::json!({
+            "title": "Book",
+            "path": private.clone(),
+            "secret": "secret-marker"
+        })))
+        .is_err());
+        assert!(parse_create_chapter_payload(Some(serde_json::json!({
+            "book_id": "book-1",
+            "title": "Chapter",
+            "chapter_number": null
+        })))
+        .is_err());
+        assert!(parse_create_chapter_payload(Some(serde_json::json!({
+            "book_id": "book-1",
+            "title": "Chapter",
+            "chapter_number": "1",
+            "path": private.clone()
+        })))
+        .is_err());
+        let omitted_number = parse_create_chapter_payload(Some(serde_json::json!({
+            "book_id": "book-1",
+            "title": "Chapter"
+        })))
+        .unwrap();
+        assert_eq!(omitted_number.chapter_number, None);
+        assert!(parse_create_book_payload(None).is_err());
+
+        let cases = [
+            (
+                LibraryError::new(
+                    "INVALID_REQUEST",
+                    "validation",
+                    false,
+                    Some("secret-marker"),
+                ),
+                serde_json::json!({
+                    "category":"validation", "phase":"request_validation",
+                    "action":"edit_input", "message_key":"LIBRARY_INVALID_INPUT"
+                }),
+            ),
+            (
+                LibraryError::new(
+                    "PROTOCOL_VERSION_UNSUPPORTED",
+                    "validation",
+                    false,
+                    Some("version details"),
+                ),
+                serde_json::json!({
+                    "category":"validation", "phase":"request_validation",
+                    "action":"edit_input", "message_key":"LIBRARY_INVALID_INPUT"
+                }),
+            ),
+            (
+                LibraryError::new("TARGET_NOT_FOUND", "not_found", false, Some("C:/private")),
+                serde_json::json!({
+                    "category":"not_found", "phase":"book_lookup",
+                    "action":"select_book", "message_key":"LIBRARY_BOOK_NOT_FOUND"
+                }),
+            ),
+            (
+                LibraryError::new(
+                    "LIBRARY_WRITE_FAILED",
+                    "internal",
+                    false,
+                    Some("secret-marker"),
+                ),
+                serde_json::json!({
+                    "category":"internal", "phase":"persistence",
+                    "action":"retry_after_refresh", "message_key":"LIBRARY_WRITE_FAILED"
+                }),
+            ),
+            (
+                LibraryError::unavailable("C:/private secret-marker"),
+                serde_json::json!({
+                    "category":"unavailable", "phase":"core_channel",
+                    "action":"retry_after_refresh", "message_key":"LIBRARY_UNAVAILABLE"
+                }),
+            ),
+            (
+                LibraryError::new(
+                    "UNKNOWN",
+                    "unknown",
+                    false,
+                    Some("raw traceback secret-marker"),
+                ),
+                serde_json::json!({
+                    "category":"internal", "phase":"unknown",
+                    "action":"contact_support", "message_key":"LIBRARY_OPERATION_FAILED"
+                }),
+            ),
+        ];
+        for (error, expected) in cases {
+            let projected = serde_json::to_value(LibrarySurfaceError::from_core(error)).unwrap();
+            assert_eq!(projected, expected);
+            assert!(!projected.to_string().contains("secret-marker"));
+            assert!(!projected.to_string().contains("C:/private"));
+        }
+        let mut detailed_error = LibraryError::new("INVALID_REQUEST", "validation", false, None);
+        detailed_error.details = Some(serde_json::json!({
+            "path": "C:/private/shelf.db",
+            "secret": "secret-marker",
+            "traceback": "raw exception"
+        }));
+        let projected =
+            serde_json::to_value(LibrarySurfaceError::from_core(detailed_error)).unwrap();
+        assert_eq!(projected["message_key"], "LIBRARY_INVALID_INPUT");
+        assert!(!projected.to_string().contains("private"));
+        assert!(!projected.to_string().contains("secret-marker"));
+        assert!(!projected.to_string().contains("traceback"));
+        let invalid = serde_json::to_value(LibrarySurfaceError::invalid_input()).unwrap();
+        assert_eq!(invalid.as_object().unwrap().len(), 4);
+        assert!(!invalid.to_string().contains("path"));
     }
 
     #[test]
@@ -1730,6 +2049,7 @@ mod tests {
                 - RUN_PRODUCTION_ONLY_COMMANDS.len()
                 - EXPORT_REVEAL_PRODUCTION_ONLY_COMMANDS.len()
                 - EXPORT_PRODUCTION_ONLY_COMMANDS.len()
+                - CREATE_PRODUCTION_ONLY_COMMANDS.len()
                 + PROBE_ONLY_COMMANDS.len()
         );
     }
@@ -1822,6 +2142,7 @@ mod tests {
                 - RUN_PRODUCTION_ONLY_COMMANDS.len()
                 - EXPORT_REVEAL_PRODUCTION_ONLY_COMMANDS.len()
                 - EXPORT_PRODUCTION_ONLY_COMMANDS.len()
+                - CREATE_PRODUCTION_ONLY_COMMANDS.len()
                 + AC1_TEST_COMMANDS.len()
         );
     }
@@ -1842,6 +2163,7 @@ mod tests {
             .chain(RUN_PRODUCTION_ONLY_COMMANDS)
             .chain(EXPORT_REVEAL_PRODUCTION_ONLY_COMMANDS)
             .chain(EXPORT_PRODUCTION_ONLY_COMMANDS)
+            .chain(CREATE_PRODUCTION_ONLY_COMMANDS)
         {
             assert!(
                 !command_allowlist(true, false).contains(command),
@@ -1873,8 +2195,8 @@ mod tests {
                 "library_retry_failed_targets",
             ]
         );
-        // 30 pre-existing production commands + 19 P15 settings commands = 49.
-        assert_eq!(PRODUCTION_COMMANDS.len(), 49);
+        // 32 pre-existing production commands + 19 P15 settings commands = 51.
+        assert_eq!(PRODUCTION_COMMANDS.len(), 51);
 
         let production = command_allowlist(false, false);
         let probe = command_allowlist(true, false);
@@ -1907,7 +2229,7 @@ mod tests {
                 "library_get_export_history",
             ]
         );
-        assert_eq!(PRODUCTION_COMMANDS.len(), 49);
+        assert_eq!(PRODUCTION_COMMANDS.len(), 51);
 
         let production = command_allowlist(false, false);
         let probe = command_allowlist(true, false);
@@ -2712,6 +3034,39 @@ mod tests {
         let err = channel.ping().unwrap_err();
         assert_eq!(err.code, "CORE_UNAVAILABLE");
         assert!(err.retryable);
+    }
+
+    #[test]
+    fn real_core_sidecar_create_commands_use_minor_8_and_existing_reads() {
+        let python = std::env::var("M2RC1_PYTHON").unwrap_or_else(|_| "python".into());
+        let src_root = std::env::var("M2RC1_SRC_ROOT")
+            .map(PathBuf::from)
+            .unwrap_or_else(|_| {
+                let mut path = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
+                for _ in 0..3 {
+                    path.pop();
+                }
+                path.join("src")
+            });
+        let dir = tempfile::tempdir().unwrap();
+        let data_root = dir.path().join("data_root");
+        std::fs::create_dir_all(&data_root).unwrap();
+        let channel = StdioLibraryChannel::spawn(&python, &src_root, Some(&data_root))
+            .expect("Core 2.8 sidecar spawn");
+
+        let book = channel.create_book("FEAT-CREATE-3 book").unwrap();
+        assert_eq!(book.title, "FEAT-CREATE-3 book");
+        assert!(book.page_count.is_none());
+        let chapter = channel
+            .create_chapter(&book.book_id, "First chapter", None)
+            .unwrap();
+        assert_eq!(chapter.title, "First chapter");
+        assert_eq!(chapter.chapter_number, "");
+
+        assert_eq!(channel.list_books().unwrap().len(), 1);
+        let chapters = channel.list_chapters(&book.book_id).unwrap();
+        assert_eq!(chapters["chapters"].as_array().unwrap().len(), 1);
+        assert_eq!(chapters["chapters"][0]["chapter_id"], chapter.chapter_id);
     }
 
     /// M2-SETTINGS-IPC-CHANNEL (contract rev 1.3 §5.3): the settings pair

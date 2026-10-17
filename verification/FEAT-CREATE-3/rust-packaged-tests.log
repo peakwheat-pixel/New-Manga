@@ -1,0 +1,97 @@
+shell=PowerShell
+cwd=G:\CODEX\New Manga.workspace\worktrees\FEAT-CREATE-3
+M2RC1_PACKAGED=1
+M2RC1_PYTHON=<unset; packaged executable only>
+M2RC1_SRC_ROOT=<unset; packaged executable only>
+TAURI_CONFIG={"build":{"frontendDist":"target/host-test-frontend"}} (empty worktree-local build-only directory; frontend tree unchanged)
+command=cargo test --locked --manifest-path apps/desktop/src-tauri/Cargo.toml packaged_sidecar_tests -- --test-threads=1 --nocapture
+started_utc=2026-10-17T12:23:49.1869633Z
+--- output ---
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.56s
+     Running unittests src\main.rs (apps\desktop\src-tauri\target\debug\deps\m2rc1_desktop-24448612fc7535f6.exe)
+
+running 12 tests
+test packaged_sidecar_tests::export_command_wire_reaches_the_frozen_core_export_family ... PACKAGED_ENV M2RC1_PACKAGED=1 M2RC1_SRC_ROOT=<unset> M2RC1_PYTHON=<unset>
+PACKAGED_START exe=\\?\G:\CODEX\New Manga\apps\desktop\src-tauri\target\core-sidecar\core-sidecar\core_service.exe bytes=68762243 sha256=7759d3fba4dd0cc7b46836460c47440a77273f3d804fd2d7c0f1b36b7d2954c5 args=["-m", "bootstrap.core_service"]
+PACKAGED_STARTUP_TIMEOUT_SECS=120
+[core.derived_gc] orphan_files_removed=0 dead_rows_removed=0
+EXPORT_IPC_RESULT get_export_snapshot code=EXPORT_NOT_FOUND category=not_found
+EXPORT_IPC_RESULT cancel_export code=EXPORT_NOT_FOUND category=not_found
+PACKAGED_RESULT export_command_wire_reaches_the_frozen_core_export_family=PASS three_commands=domain_verified
+ok
+test packaged_sidecar_tests::host_export_grant_round_trip_reaches_frozen_start_export ... PACKAGED_ENV M2RC1_PACKAGED=1 M2RC1_SRC_ROOT=<unset> M2RC1_PYTHON=<unset>
+PACKAGED_START exe=\\?\G:\CODEX\New Manga\apps\desktop\src-tauri\target\core-sidecar\core-sidecar\core_service.exe bytes=68762243 sha256=7759d3fba4dd0cc7b46836460c47440a77273f3d804fd2d7c0f1b36b7d2954c5 args=["-m", "bootstrap.core_service"]
+PACKAGED_STARTUP_TIMEOUT_SECS=120
+[core.derived_gc] orphan_files_removed=0 dead_rows_removed=0
+PACKAGED_RESULT host_export_grant_round_trip_reaches_frozen_start_export=PASS register=accepted export_error=TARGET_NOT_FOUND target_written=false
+ok
+test packaged_sidecar_tests::host_import_grant_round_trip_reaches_frozen_import_pages ... PACKAGED_ENV M2RC1_PACKAGED=1 M2RC1_SRC_ROOT=<unset> M2RC1_PYTHON=<unset>
+PACKAGED_START exe=\\?\G:\CODEX\New Manga\apps\desktop\src-tauri\target\core-sidecar\core-sidecar\core_service.exe bytes=68762243 sha256=7759d3fba4dd0cc7b46836460c47440a77273f3d804fd2d7c0f1b36b7d2954c5 args=["-m", "bootstrap.core_service"]
+PACKAGED_STARTUP_TIMEOUT_SECS=120
+[core.derived_gc] orphan_files_removed=0 dead_rows_removed=0
+PACKAGED_RESULT host_import_grant_round_trip_reaches_frozen_import_pages=PASS register=accepted import_error=TARGET_NOT_FOUND
+ok
+test packaged_sidecar_tests::reader_commands_reach_frozen_core_with_typed_rejections ... PACKAGED_ENV M2RC1_PACKAGED=1 M2RC1_SRC_ROOT=<unset> M2RC1_PYTHON=<unset>
+PACKAGED_START exe=\\?\G:\CODEX\New Manga\apps\desktop\src-tauri\target\core-sidecar\core-sidecar\core_service.exe bytes=68762243 sha256=7759d3fba4dd0cc7b46836460c47440a77273f3d804fd2d7c0f1b36b7d2954c5 args=["-m", "bootstrap.core_service"]
+PACKAGED_STARTUP_TIMEOUT_SECS=120
+[core.derived_gc] orphan_files_removed=0 dead_rows_removed=0
+READER_IPC_RESULT get_reader_projection=TARGET_NOT_FOUND invalid_mode=INVALID_REQUEST save_reading_progress=TARGET_NOT_FOUND sqlite_unchanged=true protocol=2.3
+ok
+test packaged_sidecar_tests::real_core_sidecar_answers_startup_ping_on_fresh_catalog ... PACKAGED_ENV M2RC1_PACKAGED=1 M2RC1_SRC_ROOT=<unset> M2RC1_PYTHON=<unset>
+PACKAGED_START exe=\\?\G:\CODEX\New Manga\apps\desktop\src-tauri\target\core-sidecar\core-sidecar\core_service.exe bytes=68762243 sha256=7759d3fba4dd0cc7b46836460c47440a77273f3d804fd2d7c0f1b36b7d2954c5 args=["-m", "bootstrap.core_service"]
+PACKAGED_STARTUP_TIMEOUT_SECS=120
+[core.derived_gc] orphan_files_removed=0 dead_rows_removed=0
+PACKAGED_RESULT real_core_sidecar_answers_startup_ping_on_fresh_catalog=PASS protocol=2.3 catalog=created
+ok
+test packaged_sidecar_tests::real_core_sidecar_rc4_commands_round_trip_typed_errors ... PACKAGED_ENV M2RC1_PACKAGED=1 M2RC1_SRC_ROOT=<unset> M2RC1_PYTHON=<unset>
+PACKAGED_START exe=\\?\G:\CODEX\New Manga\apps\desktop\src-tauri\target\core-sidecar\core-sidecar\core_service.exe bytes=68762243 sha256=7759d3fba4dd0cc7b46836460c47440a77273f3d804fd2d7c0f1b36b7d2954c5 args=["-m", "bootstrap.core_service"]
+PACKAGED_STARTUP_TIMEOUT_SECS=120
+[core.derived_gc] orphan_files_removed=0 dead_rows_removed=0
+PACKAGED_RESULT real_core_sidecar_rc4_commands_round_trip_typed_errors=PASS typed_error=TARGET_NOT_FOUND
+ok
+test packaged_sidecar_tests::real_core_sidecar_retype_pair_empty_page_and_typed_rejection ... PACKAGED_ENV M2RC1_PACKAGED=1 M2RC1_SRC_ROOT=<unset> M2RC1_PYTHON=<unset>
+PACKAGED_START exe=\\?\G:\CODEX\New Manga\apps\desktop\src-tauri\target\core-sidecar\core-sidecar\core_service.exe bytes=68762243 sha256=7759d3fba4dd0cc7b46836460c47440a77273f3d804fd2d7c0f1b36b7d2954c5 args=["-m", "bootstrap.core_service"]
+PACKAGED_STARTUP_TIMEOUT_SECS=120
+[core.derived_gc] orphan_files_removed=0 dead_rows_removed=0
+PACKAGED_RESULT real_core_sidecar_retype_pair_empty_page_and_typed_rejection=PASS typed_error=TARGET_NOT_FOUND
+ok
+test packaged_sidecar_tests::real_core_sidecar_round_trip ... PACKAGED_ENV M2RC1_PACKAGED=1 M2RC1_SRC_ROOT=<unset> M2RC1_PYTHON=<unset>
+PACKAGED_START exe=\\?\G:\CODEX\New Manga\apps\desktop\src-tauri\target\core-sidecar\core-sidecar\catalog_loader.exe bytes=1827539 sha256=1f14fc3548b83f11cf146c7210af32896a12f2968dda8461cfb1f01ed921ad0c args=["--db", "C:\\Users\\49745\\AppData\\Local\\Temp\\.tmpzctOD4\\catalog.sqlite", "--initialize-preview-namespace", "C:\\Users\\49745\\AppData\\Local\\Temp\\.tmpzctOD4\\derived", "--set", "res-sidecar=asset.png"]
+PACKAGED_EXIT exe=\\?\G:\CODEX\New Manga\apps\desktop\src-tauri\target\core-sidecar\core-sidecar\catalog_loader.exe code=0 stdout= stderr=
+PACKAGED_START exe=\\?\G:\CODEX\New Manga\apps\desktop\src-tauri\target\core-sidecar\core-sidecar\host_bridge.exe bytes=1829644 sha256=212a20758654d8af7368b9d2bfc10ffbcbd01a26317204ffb8d859d403cf08d8 args=[]
+PACKAGED_RESULT real_core_sidecar_round_trip=PASS typed_error=REF_REVOKED shutdown=sent
+ok
+test packaged_sidecar_tests::real_core_sidecar_settings_round_trip_and_typed_rejection ... PACKAGED_ENV M2RC1_PACKAGED=1 M2RC1_SRC_ROOT=<unset> M2RC1_PYTHON=<unset>
+PACKAGED_START exe=\\?\G:\CODEX\New Manga\apps\desktop\src-tauri\target\core-sidecar\core-sidecar\core_service.exe bytes=68762243 sha256=7759d3fba4dd0cc7b46836460c47440a77273f3d804fd2d7c0f1b36b7d2954c5 args=["-m", "bootstrap.core_service"]
+PACKAGED_STARTUP_TIMEOUT_SECS=120
+[core.derived_gc] orphan_files_removed=0 dead_rows_removed=0
+PACKAGED_RESULT real_core_sidecar_settings_round_trip_and_typed_rejection=PASS typed_error=INVALID_REQUEST
+ok
+test packaged_sidecar_tests::real_library_sidecar_event_sink_registration_and_lifecycle ... PACKAGED_ENV M2RC1_PACKAGED=1 M2RC1_SRC_ROOT=<unset> M2RC1_PYTHON=<unset>
+PACKAGED_START exe=\\?\G:\CODEX\New Manga\apps\desktop\src-tauri\target\core-sidecar\core-sidecar\core_service.exe bytes=68762243 sha256=7759d3fba4dd0cc7b46836460c47440a77273f3d804fd2d7c0f1b36b7d2954c5 args=["-m", "bootstrap.core_service"]
+PACKAGED_STARTUP_TIMEOUT_SECS=120
+[core.derived_gc] orphan_files_removed=0 dead_rows_removed=0
+PACKAGED_RESULT real_library_sidecar_event_sink_registration_and_lifecycle=PASS event_sink=registered
+ok
+test packaged_sidecar_tests::real_library_sidecar_round_trip_and_eof ... PACKAGED_ENV M2RC1_PACKAGED=1 M2RC1_SRC_ROOT=<unset> M2RC1_PYTHON=<unset>
+PACKAGED_START exe=\\?\G:\CODEX\New Manga\apps\desktop\src-tauri\target\core-sidecar\core-sidecar\core_service.exe bytes=68762243 sha256=7759d3fba4dd0cc7b46836460c47440a77273f3d804fd2d7c0f1b36b7d2954c5 args=["-m", "bootstrap.core_service"]
+PACKAGED_STARTUP_TIMEOUT_SECS=120
+[core.derived_gc] orphan_files_removed=0 dead_rows_removed=0
+PACKAGED_RESULT real_library_sidecar_round_trip_and_eof=PASS protocol=2.3 eof=CORE_UNAVAILABLE
+ok
+test packaged_sidecar_tests::run_command_wire_reaches_the_frozen_core_run_family ... PACKAGED_ENV M2RC1_PACKAGED=1 M2RC1_SRC_ROOT=<unset> M2RC1_PYTHON=<unset>
+PACKAGED_START exe=\\?\G:\CODEX\New Manga\apps\desktop\src-tauri\target\core-sidecar\core-sidecar\core_service.exe bytes=68762243 sha256=7759d3fba4dd0cc7b46836460c47440a77273f3d804fd2d7c0f1b36b7d2954c5 args=["-m", "bootstrap.core_service"]
+PACKAGED_STARTUP_TIMEOUT_SECS=120
+[core.derived_gc] orphan_files_removed=0 dead_rows_removed=0
+RUN_IPC_RESULT get_run_snapshot code=TARGET_NOT_FOUND category=not_found
+RUN_IPC_RESULT get_task_projection code=TARGET_NOT_FOUND category=not_found
+RUN_IPC_RESULT control_run code=TARGET_NOT_FOUND category=not_found
+RUN_IPC_RESULT resume_blocked_run code=TARGET_NOT_FOUND category=not_found
+RUN_IPC_RESULT retry_failed_targets code=TARGET_NOT_FOUND category=not_found
+RUN_IPC_RESULT start_run code=INVALID_REQUEST category=validation
+PACKAGED_RESULT run_command_wire_reaches_the_frozen_core_run_family=PASS six_commands=domain_rejections
+ok
+
+test result: ok. 12 passed; 0 failed; 0 ignored; 0 measured; 108 filtered out; finished in 19.68s
+
+exit_code=0
