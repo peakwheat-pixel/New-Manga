@@ -12,10 +12,10 @@ depends_on: [P15-C1]
 base_commit: 8358f34025e791e27da8042c580d9a6ad1e0c6a7
 branch: codex/FEAT-CREATE-1
 worktree: G:/CODEX/New Manga.workspace/worktrees/FEAT-CREATE-1
-integration_commit: null
+integration_commit: c633170d1
 delivery_head: null
 canonical_evidence_status: pending
-resource_closeout_status: pending
+resource_closeout_status: complete
 evidence_dir: verification/FEAT-CREATE-1
 ---
 
@@ -113,3 +113,9 @@ evidence_dir: verification/FEAT-CREATE-1
 - 2026-10-17 Coordinator 释放（dsh, epoch 6），依据用户裁决 A1；Owner=Codex；Reviewer=DeepSeek Harness。
 - 实际产品测试：NOT_RUN（design/contract only）。
 - 交付 head、Handoff 与 Canonical Evidence 在 delivery commit 后回填；delivery 前保持 `in_progress`，交付后转 `in_review`。独立 Review 未完成前不得记 `done`。
+
+## Closeout Record
+
+- 关闭：2026-10-17（dsh）。Reviewer=dsh（approved）。合并 c633170d1（无冲突）。
+- 冻结：M2-C1 rev 2.8（Core minor 7→8）；CreateBook/CreateChapter FROZEN + §5.10 安全投影；未知字段 fail-closed；**无需迁移**；DeleteBook/DeleteChapter 仍 PROPOSAL。
+- DAG：释放 FEAT-CREATE-2（Core）。
