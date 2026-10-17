@@ -1,0 +1,5 @@
+runner=run-ac5-no-gpu.ps1
+simulated=CUDA_VISIBLE_DEVICES=-1;NVIDIA_VISIBLE_DEVICES=none;WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS=--disable-gpu
+checks=7
+fails=4
+exit_code=1

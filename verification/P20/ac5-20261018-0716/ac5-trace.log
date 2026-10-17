@@ -1,0 +1,21 @@
+[07:10:24.303] AC5 start simulated_no_gpu=1 iso=C:\Users\49745\AppData\Local\Temp\p20ac5-9df5c80e
+[07:10:24.311] ENV CUDA_VISIBLE_DEVICES=-1 NVIDIA_VISIBLE_DEVICES=none WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS='--disable-gpu --disable-gpu-compositing'
+[07:10:24.880] window_found=True exited=False exit=
+[07:10:24.891] ASSERT PASS ac5:starts-without-gpu
+[07:10:25.448] nav_ready=True (waited up to 25s for frontend render)
+[07:10:25.454] ASSERT PASS ac5:frontend-shell-rendered
+[07:10:25.553] SHOT 01-started-no-gpu OK
+[07:10:28.587] PAGE '📚 书架' reached
+[07:10:28.593] ASSERT PASS ac5:page:📚 书架
+[07:10:29.616] PAGE '🛠️ 工作台' reached
+[07:10:29.622] ASSERT PASS ac5:page:🛠️ 工作台
+[07:10:30.657] PAGE '📖 阅读器' reached
+[07:10:30.663] ASSERT PASS ac5:page:📖 阅读器
+[07:10:31.686] PAGE '⚙️ 设置' reached
+[07:10:31.692] ASSERT PASS ac5:page:⚙️ 设置
+[07:10:34.188] create_dialog_markers=搜索作品标题 / 原名 (Ctrl+F) ; 作品标题 ; 创建作品
+[07:10:34.195] ASSERT PASS ac5:basic-function-create-dialog
+[07:10:35.111] SHOT 02-create-dialog OK
+[07:10:38.128] ASSERT PASS ac5:no-crash-after-interaction
+[07:10:40.148] app_err_tail=[m2rc1-title] M2-RC1 resource channel runtime / [m2rc1-title] M2-RC1 resource channel runtime / [m2rc1-title] M2-RC1 resource channel runtime / [m2rc1-title] M2-RC1 resource channel runtime
+[07:10:40.157] AC5 END checks=8 fails=0

@@ -1,0 +1,18 @@
+[07:07:41.293] AC5 start simulated_no_gpu=1 iso=C:\Users\49745\AppData\Local\Temp\p20ac5-759db3bf
+[07:07:41.300] ENV CUDA_VISIBLE_DEVICES=-1 NVIDIA_VISIBLE_DEVICES=none WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS='--disable-gpu --disable-gpu-compositing'
+[07:07:41.867] window_found=True exited=False exit=
+[07:07:41.876] ASSERT PASS ac5:starts-without-gpu
+[07:07:41.983] SHOT 01-started-no-gpu OK
+[07:07:42.028] PAGE '📚 书架' NOT_FOUND
+[07:07:42.034] ASSERT FAIL ac5:page:📚 书架
+[07:07:42.052] PAGE '🛠️ 工作台' NOT_FOUND
+[07:07:42.057] ASSERT FAIL ac5:page:🛠️ 工作台
+[07:07:42.081] PAGE '📖 阅读器' NOT_FOUND
+[07:07:42.087] ASSERT FAIL ac5:page:📖 阅读器
+[07:07:43.136] PAGE '⚙️ 设置' reached
+[07:07:43.142] ASSERT PASS ac5:page:⚙️ 设置
+[07:07:43.173] CREATE_BUTTON unavailable
+[07:07:43.179] ASSERT FAIL ac5:basic-function-create-dialog
+[07:07:46.184] ASSERT PASS ac5:no-crash-after-interaction
+[07:07:48.212] app_err_tail=[core.derived_gc] orphan_files_removed=0 dead_rows_removed=0 / [m2rc2-allowlist] production:issue_resource_url,revoke_ref,revoke_resource_refs,core_ping,library_list_books,library_create_book,create_chapter,settings_get,settings_update_section,settings_provider_profiles_list,settings_provider_profiles_create,settings_provider_profiles_update,settings_provider_profiles_delete,settings_provider_bindings_set,settings_provider_bindings_clear,settings_provider_bindings_resolve,settings_provider_run_snapshot_get,settings_network_profiles_list,settings_network_profiles_create,settings_network_profiles_update,settings_network_profiles_delete,settings_network_profiles_test,settings_network_profile_default_set,settings_network_profile_default_clear,settings_network_profile_resolve,settings_resolve_overrides,credential_put,credential_clear,set_region_type,list_regions,list_region_revisions,restore_region_revision,rerender_page,resolve_page_resource,list_chapters,list_chapter_pages,library_get_reader_projection,library_save_reading_progress,library_import_file,library_import_folder,library_start_export,library_start_run,library_control_run,library_resume_blocked_run,library_get_run_snapshot,library_get_task_projection,library_retry_failed_targets,library_reveal_export_folder,library_cancel_export,library_get_export_snapshot,library_get_export_history / [m2rc1-title] M2-RC1 resource channel runtime / [m2rc1-title] M2-RC1 resource channel runtime
+[07:07:48.221] AC5 END checks=7 fails=4
