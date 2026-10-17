@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 import sqlite3
 import sys
 from pathlib import Path
@@ -59,7 +60,10 @@ def test_missing_lock_fails_closed_with_typed_resource_error(tmp_path: Path) -> 
         acquire_shared_lease(derived_root)
 
 
-@pytest.mark.parametrize("damaged_lock", [b"", b"not-json", b'{"protocol_version":1}'])
+@pytest.mark.parametrize(
+    "damaged_lock",
+    [b"", b"not-json", b'{"protocol_version":1}', b"not-json" * 1024],
+)
 def test_damaged_lock_is_restored_from_verified_catalog_binding(
     tmp_path: Path, damaged_lock: bytes
 ) -> None:
@@ -73,7 +77,8 @@ def test_damaged_lock_is_restored_from_verified_catalog_binding(
 
     lock_bytes = (derived_root / PREVIEW_NAMESPACE_LOCK_NAME).read_bytes()
     assert lock_bytes.endswith(b"\n")
-    assert len(lock_bytes) > len(damaged_lock)
+    lock_value = json.loads(lock_bytes.decode("utf-8"))
+    assert lock_bytes == (json.dumps(lock_value, sort_keys=True) + "\n").encode("utf-8")
     _assert_bound(catalog_db, derived_root)
 
 
