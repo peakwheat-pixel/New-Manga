@@ -1,0 +1,33 @@
+# 01-bookshelf n=32 2026-10-17T16:15:34.9355355+08:00
+0|Pane||en=True|off=False
+1|Pane|M2RC1|starting|results=0|en=True|off=False
+2|Pane||en=False|off=False
+3|Pane|M2RC1|starting|results=0 - Web 内容|en=True|off=False
+4|Pane||en=True|off=False
+5|Pane||en=True|off=False
+6|Pane||en=True|off=False
+7|Pane||en=True|off=False
+8|Document|M2RC1|interactive|deny=5/5|allow=0/0|results=5|en=True|off=False
+9|Group||en=True|off=False
+10|Group||en=True|off=False
+11|Group||en=True|off=False
+12|Text|NM|en=True|off=False
+13|Button|📚 书架|en=True|off=False
+14|Button|🛠️ 工作台|en=True|off=False
+15|Button|📖 阅读器|en=True|off=False
+16|Button|⚙️ 设置|en=True|off=False
+17|Group||en=True|off=False
+18|Button|+ 新建作品|en=False|off=False
+19|Button|导入作品|en=True|off=False
+20|Edit|搜索作品标题 / 原名 (Ctrl+F)|en=True|off=False
+21|Button|★ 收藏|en=True|off=False
+22|Button|归档|en=True|off=False
+23|ComboBox||en=True|off=False
+24|Button|⊞|en=True|off=False
+25|Button|☰|en=True|off=False
+26|Group||en=True|off=False
+27|Group||en=True|off=False
+28|Text|📖|en=True|off=False
+29|Text|未选择作品|en=True|off=False
+30|Text|从左侧列表中点击选择一部漫画以查看章节和详情|en=True|off=False
+31|Pane||en=True|off=False

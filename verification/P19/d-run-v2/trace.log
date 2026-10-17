@@ -1,0 +1,38 @@
+[16:15:34.049] RUN start iso=C:\Users\49745\AppData\Local\Temp\p19v2-23a479ed
+[16:15:34.078] exe sha256=f7ac58cec999c21f033387caffe7453be9b665a0505ab2ac8c26884e4a228d2a
+[16:15:34.097] pid=45896
+[16:15:34.874] READY
+[16:15:34.961] DUMP 01-bookshelf n=32
+[16:15:35.912] CLICK nav-workbench '🛠️ 工作台' OK en=True
+[16:15:35.997] DUMP 02-workbench n=95
+[16:15:36.936] CLICK nav-reader '📖 阅读器' OK en=True
+[16:15:36.974] DUMP 03-reader n=30
+[16:15:37.905] CLICK nav-settings '⚙️ 设置' OK en=True
+[16:15:37.960] DUMP 04-settings n=58
+[16:15:38.910] CLICK cat-provider 'Provider' OK en=True
+[16:15:38.965] DUMP 05-provider n=58
+[16:15:39.899] CLICK open-form '新建 Profile' OK en=True
+[16:15:39.965] DUMP 06-form n=78
+[16:15:40.313] SET provider_id='e2e-provider-a' OK
+[16:15:40.658] SET display_name='E2E Provider A' OK
+[16:15:40.998] SET endpoint（绝对 HTTP(S)，无 userinfo/query/fragment）='https://api.example.test/v1' OK
+[16:15:41.341] SET model='e2e-model' OK
+[16:15:41.685] TOGGLE OCR OK state=On
+[16:15:41.714] FORM buttons: 📚 书架 | 🛠️ 工作台 | 📖 阅读器 | ⚙️ 设置 | Provider | 网络/代理 | OCR 未开放 | 翻译 | 图片修复 未开放 | 排版样式 未开放 | 模型/GPU 未开放 | 任务/并发 未开放 | 缓存/Revision 未开放 | 回收站 未开放 | 备份/恢复 未开放 | Plugin/Hooks 未开放 | 保存 | 取消 | 设置绑定 (set) | 清除绑定 (clear)
+[16:15:42.660] CLICK submit '保存' OK en=True
+[16:15:44.241] DUMP 07-after-submit n=74
+[16:15:44.309] SUBMIT PROFILE_VISIBLE -> PASS
+[16:15:45.269] CLICK re-enter-settings '⚙️ 设置' OK en=True
+[16:15:45.940] PROBE 'OCR 未开放' en=True invoke=invoked PAGE_CHANGED panes=[]
+[16:15:46.608] PROBE '图片修复 未开放' en=True invoke=invoked PAGE_CHANGED panes=[]
+[16:15:47.294] PROBE '排版样式 未开放' en=True invoke=invoked PAGE_CHANGED panes=[]
+[16:15:47.980] PROBE '模型/GPU 未开放' en=True invoke=invoked PAGE_CHANGED panes=[]
+[16:15:48.663] PROBE '任务/并发 未开放' en=True invoke=invoked PAGE_CHANGED panes=[]
+[16:15:49.347] PROBE '缓存/Revision 未开放' en=True invoke=invoked PAGE_CHANGED panes=[]
+[16:15:50.039] PROBE '回收站 未开放' en=True invoke=invoked PAGE_CHANGED panes=[]
+[16:15:50.717] PROBE '备份/恢复 未开放' en=True invoke=invoked PAGE_CHANGED panes=[]
+[16:15:51.394] PROBE 'Plugin/Hooks 未开放' en=True invoke=invoked PAGE_CHANGED panes=[]
+[16:15:52.335] CLICK nav-back '📚 书架' OK en=True
+[16:15:52.367] DUMP 08-bookshelf-back n=37
+[16:15:54.376] closed exit=0
+[16:15:54.382] RUN end
