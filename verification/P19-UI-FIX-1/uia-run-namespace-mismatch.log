@@ -1,0 +1,5 @@
+﻿[16:44:55.926] RUN start exe_sha256=6237e3625d6b81f911a9d8a2b056393d50ab60eaaca826027523c57df6cc1e0f data_root=isolated
+[16:44:56.251] pid=47544
+[16:44:57.357] FATAL application exited before UIA ready: exit=
+[16:44:57.358] APP_EXIT=
+[16:44:57.360] exit_code=1

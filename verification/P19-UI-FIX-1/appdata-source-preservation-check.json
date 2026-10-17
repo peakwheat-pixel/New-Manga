@@ -1,0 +1,26 @@
+[
+  {
+    "path": "catalog\\catalog.sqlite",
+    "before_sha256": "0f094275808e51bce2d10812fff389670f4f129d93e7ef84802dbe6a04aeb5cd",
+    "after_sha256": "0f094275808e51bce2d10812fff389670f4f129d93e7ef84802dbe6a04aeb5cd",
+    "unchanged": true
+  },
+  {
+    "path": "data\\library.db",
+    "before_sha256": "7809968c4ae9f12ca4e5936a875ce027a5c7fb8e6c19aa79e5a786a9692768e4",
+    "after_sha256": "7809968c4ae9f12ca4e5936a875ce027a5c7fb8e6c19aa79e5a786a9692768e4",
+    "unchanged": true
+  },
+  {
+    "path": "data\\library.db.run-owner.lock",
+    "before_sha256": "6e340b9cffb37a989ca544e6bb780a2c78901d3fb33738768511a30617afa01d",
+    "after_sha256": "6e340b9cffb37a989ca544e6bb780a2c78901d3fb33738768511a30617afa01d",
+    "unchanged": true
+  },
+  {
+    "path": "derived\\.preview-lifecycle.lock",
+    "before_sha256": "c459db54b8a41937ec23f8ce86da59202882124151f1f98d442362f99ec3d22a",
+    "after_sha256": "c459db54b8a41937ec23f8ce86da59202882124151f1f98d442362f99ec3d22a",
+    "unchanged": true
+  }
+]

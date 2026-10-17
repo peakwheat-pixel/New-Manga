@@ -1,0 +1,32 @@
+[
+  {
+    "file": "core_service.exe",
+    "source_sha256": "284f682453eb7b82d520805493e1a0d5da3bf71e2351252fbddb1b079604d708",
+    "resource_sha256": "284f682453eb7b82d520805493e1a0d5da3bf71e2351252fbddb1b079604d708",
+    "equal": true
+  },
+  {
+    "file": "host_bridge.exe",
+    "source_sha256": "038f16ea7baf366e44964171ec815baa65501e19d885f9b0d311076b55f53987",
+    "resource_sha256": "038f16ea7baf366e44964171ec815baa65501e19d885f9b0d311076b55f53987",
+    "equal": true
+  },
+  {
+    "file": "acceptance_bridge.exe",
+    "source_sha256": "b461337e1cbea0309589b79f30c179ffd6466fbb9905b21f364bc79ba6a4a449",
+    "resource_sha256": "b461337e1cbea0309589b79f30c179ffd6466fbb9905b21f364bc79ba6a4a449",
+    "equal": true
+  },
+  {
+    "file": "catalog_loader.exe",
+    "source_sha256": "13e9051f7a21dff39ebcc83964f00f031c33a0ccf5956992f9fbfd34c4144ef4",
+    "resource_sha256": "13e9051f7a21dff39ebcc83964f00f031c33a0ccf5956992f9fbfd34c4144ef4",
+    "equal": true
+  },
+  {
+    "file": "sfx_detect_probe.exe",
+    "source_sha256": "363f5aa411d9a1d3698e1f4a45f44844e5a40bda90dd2b1f02cdb22eae92bf2a",
+    "resource_sha256": "363f5aa411d9a1d3698e1f4a45f44844e5a40bda90dd2b1f02cdb22eae92bf2a",
+    "equal": true
+  }
+]

@@ -1,0 +1,8 @@
+[16:46:26.392] RUN start exe_sha256=6237e3625d6b81f911a9d8a2b056393d50ab60eaaca826027523c57df6cc1e0f data_root=isolated
+[16:46:26.412] pid=54396
+[16:46:27.009] READY
+[16:46:27.030] FATAL settings navigation button not found
+[16:46:27.199] APP_EXIT=
+[16:46:27.200] exit_code=1
+
+script_exit_code=1

@@ -1,0 +1,5 @@
+Text|导入页面到章节|IsEnabled=True|IsOffscreen=False
+Text|目标章节|IsEnabled=True|IsOffscreen=False
+Text|未开放：空书架暂不支持创建作品和章节，当前无法导入文件或文件夹。|IsEnabled=True|IsOffscreen=False
+Button|📄 选择图片 / PDF 文件|IsEnabled=False|IsOffscreen=False
+Button|📁 选择图片文件夹|IsEnabled=False|IsOffscreen=False

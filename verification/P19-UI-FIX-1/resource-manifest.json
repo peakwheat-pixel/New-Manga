@@ -1,0 +1,79 @@
+{
+  "schema_version": 1,
+  "task_id": "P19-UI-FIX-1",
+  "generated_at": "2026-10-17",
+  "generated_by": "Codex (Task Owner)",
+  "note": "Worktree and generated artifacts are retained for independent review. User data was copied to an ignored isolation directory and remained unchanged at source. The forced sidecar script also cleared/recreated the PyInstaller cache recorded below.",
+  "resources": [
+    {
+      "resource_type": "worktree",
+      "source_path": "G:/CODEX/New Manga.workspace/worktrees/P19-UI-FIX-1",
+      "disposition": "PRESERVE_REFERENCED",
+      "destination_path": "G:/CODEX/New Manga.workspace/worktrees/P19-UI-FIX-1",
+      "branch": "codex/P19-UI-FIX-1",
+      "base_commit": "fe4e8662f293105615eb82a28c7091b0800fec15",
+      "delivery_head": "f19275aedcf3ae02c11473ca46ad8b65a8c9a1a0",
+      "deleted": false,
+      "moved": false,
+      "process_check": "Kept for independent review; no reset, merge, push, delete, or prune."
+    },
+    {
+      "resource_type": "generated-build-artifacts",
+      "source_path": "apps/desktop/src-tauri/target/{core-sidecar,debug/resources,debug/m2rc1-desktop.exe}; apps/desktop/frontend/dist",
+      "disposition": "PRESERVE_REFERENCED",
+      "destination_path": "Same ignored target/dist locations in this worktree",
+      "deleted": false,
+      "moved": false,
+      "process_check": "Retained for GUI reproduction and binary/resource hash verification; not added to Git."
+    },
+    {
+      "resource_type": "isolated-user-data-copy",
+      "source_path": "%APPDATA%/com.newmanga.m2rc1.desktop/{catalog,data,derived}",
+      "disposition": "PRESERVE_REFERENCED",
+      "destination_path": "apps/desktop/src-tauri/target/p19-ui-fix-1-isolation-20261017",
+      "deleted": false,
+      "moved": false,
+      "process_check": "Only the target copy was rebound/launched. Source catalog, data database, lock file, and derived namespace lock SHA256 values match before/after; see appdata-source-preservation-check.json."
+    },
+    {
+      "resource_type": "user-data-source",
+      "source_path": "%APPDATA%/com.newmanga.m2rc1.desktop/{catalog,data,derived}",
+      "disposition": "PRESERVE_REFERENCED",
+      "destination_path": "Same source location",
+      "deleted": false,
+      "moved": false,
+      "modified": false,
+      "process_check": "Four-file length/SHA256 comparison passed."
+    },
+    {
+      "resource_type": "sidecar-build-environment",
+      "source_path": "G:/CODEX/New Manga.task-envs/m2ac5-build",
+      "disposition": "PRESERVE_REFERENCED",
+      "destination_path": "Same shared build environment",
+      "process_check": "Used by the required build_sidecar.ps1 -Force command; no package install/update command was run. Environment side effects were not separately inventoried."
+    },
+    {
+      "resource_type": "pyinstaller-cache",
+      "source_path": "C:/Users/49745/AppData/Local/pyinstaller",
+      "disposition": "PRESERVE_REFERENCED",
+      "destination_path": "Same local cache location",
+      "modified": true,
+      "process_check": "build_sidecar.ps1 -Force log states it removed temporary files and cleaned this cache before rebuilding; this was outside the worktree and is disclosed for review."
+    },
+    {
+      "resource_type": "read-only-baseline-evidence",
+      "source_path": "G:/CODEX/New Manga/verification/P19/{d-run-v2,import-no-response-r4.md}",
+      "disposition": "PRESERVE_REFERENCED",
+      "destination_path": "Same main-repository paths",
+      "modified": false,
+      "process_check": "Read only. Main repo was observed with pre-existing dirty files including codex-review-r2.md; none were changed by this task."
+    }
+  ],
+  "closeout_counts": {
+    "deleted": 0,
+    "moved": 6,
+    "migrated": 0,
+    "archived": 0
+  },
+  "closeout_note": "Six earlier successful UIA/app logs were renamed within verification/P19-UI-FIX-1 to preserve the pre-refinement run before the final-build rerun; no evidence was deleted."
+}
