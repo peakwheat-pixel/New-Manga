@@ -3,7 +3,7 @@ id: FEAT-CREATE-3
 title: 创建作品/章节能力（3/4）——host 注册 library_create_book / create_chapter
 kind: feature
 governance_version: 2
-status: in_progress
+status: in_review
 approval: coordinator_release_20261017_after_FEAT_CREATE_2
 suggested_owner: Codex
 owner: codex
@@ -13,7 +13,7 @@ base_commit: 08f1b1b76251e08f8fbd89a5b8ef1ab3a85aae56
 branch: codex/FEAT-CREATE-3
 worktree: G:/CODEX/New Manga.workspace/worktrees/FEAT-CREATE-3
 integration_commit: null
-delivery_head: null
+delivery_head: 89ec870274a5a3a13a279e64ac45469f4ed69a1b
 canonical_evidence_status: pending
 resource_closeout_status: pending
 evidence_dir: verification/FEAT-CREATE-3
