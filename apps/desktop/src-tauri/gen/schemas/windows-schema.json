@@ -369,6 +369,18 @@
           "markdownDescription": "Enables the core_ping command without any pre-configured scope."
         },
         {
+          "description": "Enables the credential_clear command without any pre-configured scope.",
+          "type": "string",
+          "const": "allow-credential-clear",
+          "markdownDescription": "Enables the credential_clear command without any pre-configured scope."
+        },
+        {
+          "description": "Enables the credential_put command without any pre-configured scope.",
+          "type": "string",
+          "const": "allow-credential-put",
+          "markdownDescription": "Enables the credential_put command without any pre-configured scope."
+        },
+        {
           "description": "Enables the issue_resource_url command without any pre-configured scope.",
           "type": "string",
           "const": "allow-issue-resource-url",
@@ -691,6 +703,18 @@
           "type": "string",
           "const": "deny-core-ping",
           "markdownDescription": "Denies the core_ping command without any pre-configured scope."
+        },
+        {
+          "description": "Denies the credential_clear command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-credential-clear",
+          "markdownDescription": "Denies the credential_clear command without any pre-configured scope."
+        },
+        {
+          "description": "Denies the credential_put command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-credential-put",
+          "markdownDescription": "Denies the credential_put command without any pre-configured scope."
         },
         {
           "description": "Denies the issue_resource_url command without any pre-configured scope.",
