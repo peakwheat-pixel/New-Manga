@@ -4,7 +4,7 @@
 
 ## 当前 Task
 
-- 当前 Task：[P20](tasks/P20.md) **ready**（Windows 发布）。**进展**：AC1 打包 ✅、AC7 Gate ✅、AC2 冷启动 ✅（0.46s）；**AC3 ✅**（443.3 MB ≤ **480 MB** 新阈值；用户裁决由 350 调高，AC1 证明 WebView2×6=343.8 MB 属架构固有；执行方的 `EmptyWorkingSet` 定时 trim 被判定为指标操纵并已拦截回退，见 [P20-MEM-OPT-1](tasks/P20-MEM-OPT-1.md) closed_with_limitations）；**AC6 部分**（抗崩溃 ✅ / 无提示 ❌ / 不重生 ❌）→ 另立 [P20-ISOLATION-1](tasks/P20-ISOLATION-1.md)；AC4/AC5 未执行。
+- 当前 Task：[P20](tasks/P20.md) **ready**（Windows 发布）。**进展**：AC1 打包 ✅、AC7 Gate ✅、AC2 冷启动 ✅（0.46s）；**AC3 ✅**（443.3 MB ≤ **480 MB** 新阈值；用户裁决由 350 调高，AC1 证明 WebView2×6=343.8 MB 属架构固有；执行方的 `EmptyWorkingSet` 定时 trim 被判定为指标操纵并已拦截回退，见 [P20-MEM-OPT-1](tasks/P20-MEM-OPT-1.md) closed_with_limitations）；**AC6 ✅**（[P20-ISOLATION-1](tasks/P20-ISOLATION-1.md) 已实现：毫秒级 EOF 感知 + MAX_RETRIES=3 退避 + 三态横幅；交互式桌面复验：主窗口存活、UI 横幅出现、**+1 s 自动重生**）；AC4/AC5 未执行。
 - READY：[ARCH-DOC-REBASELINE](tasks/ARCH-DOC-REBASELINE.md) **ready**（AC7 逐消费者裁决**已完成**；AC1–AC3 PARTIAL、AC4–AC6 实测属消费者责任，按 AC7 原文不标 done）。
 - **本轮完成（26）**：UI-DESIGN-1、ENV-BUNDLE-1-FU1、P12、HOST-TTL-BOUNDARY-1、EVENTS-FWD-1、RUN-IPC-1、EXPORT-REVEAL-1、EXPORT-IPC-1、READER-IPC-1、P17、P14、P15-C1、P15、P15-C1-FU1、P15-CORE-1A/1B/1C、P15-HOST-1/2、P19-BOOT-1、**P19-AC3-1**、**SEC-FIX-PATH-ECHO-1**、**FEAT-IMPORT-MULTI-1**（独立 Review approved，main ac263092）、**P19**（closed_with_limitations，集成 4c860d882；AC2 全流程实跑通过）。（集成 commit 见各 Task）
 - **在飞**：无（P19 与 FEAT-IMPORT-MULTI-1 均已收口）。
@@ -19,5 +19,5 @@ P02新时点验收/AC6恢复/主线集成完成，父P02限定关闭。Technical
 
 ## 当前权威指针
 
-- DAG：[REBASELINE_PLAN](REBASELINE_PLAN.md)；READY=ARCH-DOC-REBASELINE、P20、P20-ISOLATION-1。
+- DAG：[REBASELINE_PLAN](REBASELINE_PLAN.md)；READY=ARCH-DOC-REBASELINE、P20。
 - 本轮证据：P19 [R4 Review](../verification/P19/codex-review-r4.md) + [AC2 结果](../verification/P19/ac2-mainflow-result-r1.md)；SEC-FIX [Review](../verification/SEC-FIX-PATH-ECHO-1/dsh-review-r1.md)；P19-AC3-1 [矩阵](../verification/P19-AC3-1/command-matrix.md)。

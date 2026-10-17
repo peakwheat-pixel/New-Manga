@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { BookshelfPage } from "../bookshelf/BookshelfPage";
+import { onLifecycleStatusChanged } from "../events";
 import { LibraryClient } from "../library/client";
 import { ReaderPage } from "../reader/ReaderPage";
 import { SettingsClient } from "../settings/client";
@@ -17,6 +18,10 @@ export interface AppShellProps {
 export function AppShell({ invoke, initialPage = "bookshelf" }: AppShellProps) {
   const [activePage, setActivePage] = useState<PageId>(initialPage);
 
+  // P20-ISOLATION-1: Core sidecar lifecycle & health status
+  const [coreStatus, setCoreStatus] = useState<"healthy" | "restarting" | "recovered" | "fatal">("healthy");
+  const [statusMessage, setStatusMessage] = useState<string>("");
+
   // Cross-page navigation context (bookId / chapterId passed from Bookshelf to Workbench / Reader)
   const [workbenchContext, setWorkbenchContext] = useState<{
     bookId: string | null;
@@ -31,6 +36,89 @@ export function AppShell({ invoke, initialPage = "bookshelf" }: AppShellProps) {
   // Clients
   const libraryClient = new LibraryClient(invoke);
   const settingsClient = new SettingsClient(invoke);
+
+  // P20-ISOLATION-1: Lifecycle event listening & proactive heartbeat probe
+  useEffect(() => {
+    let unlisten: (() => void) | undefined;
+    let active = true;
+
+    void onLifecycleStatusChanged((payload) => {
+      if (!active) return;
+      const s = payload.status;
+      if (s === "restarting" || s === "recovered" || s === "fatal") {
+        setCoreStatus(s);
+        setStatusMessage(
+          payload.message ||
+            (s === "restarting"
+              ? "后端服务异常，正在尝试热重启..."
+              : s === "recovered"
+              ? "后端服务已恢复正常"
+              : "后端服务异常，自动重启失败")
+        );
+      } else {
+        setCoreStatus("healthy");
+        setStatusMessage("");
+      }
+    }).then((fn) => {
+      unlisten = fn;
+    }).catch(() => {
+      // Event bridge not available
+    });
+
+    const interval = setInterval(async () => {
+      if (!invoke) return;
+      try {
+        await invoke("core_ping");
+        if (!active) return;
+        setCoreStatus((prev) => {
+          if (prev === "restarting") {
+            setStatusMessage("后端服务已恢复正常");
+            return "recovered";
+          }
+          return prev;
+        });
+      } catch {
+        if (!active) return;
+        setCoreStatus((prev) => {
+          if (prev === "healthy") {
+            setStatusMessage("后端服务异常，正在尝试热重启...");
+            return "restarting";
+          }
+          return prev;
+        });
+      }
+    }, 2000);
+
+    return () => {
+      active = false;
+      if (unlisten) unlisten();
+      clearInterval(interval);
+    };
+  }, [invoke]);
+
+  useEffect(() => {
+    if (coreStatus === "recovered") {
+      const timer = setTimeout(() => {
+        setCoreStatus("healthy");
+        setStatusMessage("");
+      }, 2500);
+      return () => clearTimeout(timer);
+    }
+  }, [coreStatus]);
+
+  const handleManualRetry = async () => {
+    if (!invoke) return;
+    setCoreStatus("restarting");
+    setStatusMessage("后端服务异常，正在尝试热重启...");
+    try {
+      await invoke("core_ping");
+      setCoreStatus("recovered");
+      setStatusMessage("后端服务已恢复正常");
+    } catch {
+      setCoreStatus("fatal");
+      setStatusMessage("后端服务异常，自动重启失败，请检查服务日志");
+    }
+  };
 
   // Global Keyboard Shortcuts (Ctrl+1..4) (§1.4)
   useEffect(() => {
@@ -240,22 +328,96 @@ export function AppShell({ invoke, initialPage = "bookshelf" }: AppShellProps) {
       </nav>
 
       {/* 2. Four Pages Keep-Alive Container (§1.2) */}
-      <div style={{ flex: 1, height: "100%", overflow: "hidden", position: "relative" }}>
-        {/* Bookshelf Page */}
-        <div
-          data-testid="page-container-bookshelf"
-          style={{
-            width: "100%",
-            height: "100%",
-            display: activePage === "bookshelf" ? "flex" : "none",
-          }}
-        >
-          <BookshelfPage
-            client={libraryClient}
-            onEnterWorkbench={handleEnterWorkbench}
-            onEnterReader={handleEnterReader}
-          />
-        </div>
+      <div
+        style={{
+          flex: 1,
+          height: "100%",
+          overflow: "hidden",
+          position: "relative",
+          display: "flex",
+          flexDirection: "column",
+        }}
+      >
+        {/* P20-ISOLATION-1: Global sidecar health banner (AC1 / AC2) */}
+        {coreStatus !== "healthy" && (
+          <div
+            data-testid="core-status-banner"
+            role="alert"
+            aria-live="assertive"
+            style={{
+              width: "100%",
+              padding: "8px 16px",
+              boxSizing: "border-box",
+              backgroundColor:
+                coreStatus === "fatal"
+                  ? "#3b1111"
+                  : coreStatus === "recovered"
+                  ? "#11331a"
+                  : "#3a2a0d",
+              color:
+                coreStatus === "fatal"
+                  ? "#ff8080"
+                  : coreStatus === "recovered"
+                  ? "#66e080"
+                  : "#ffd566",
+              borderBottom: `1px solid ${
+                coreStatus === "fatal"
+                  ? "#5c1d1d"
+                  : coreStatus === "recovered"
+                  ? "#1b4d27"
+                  : "#5e4517"
+              }`,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              fontSize: 13,
+              fontWeight: 600,
+              flexShrink: 0,
+              zIndex: 1000,
+            }}
+          >
+            <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+              <span>
+                {coreStatus === "fatal" ? "❌" : coreStatus === "recovered" ? "✅" : "⚠️"}
+              </span>
+              <span>{statusMessage}</span>
+            </div>
+            {coreStatus === "fatal" && (
+              <button
+                type="button"
+                onClick={handleManualRetry}
+                style={{
+                  padding: "4px 10px",
+                  fontSize: 12,
+                  backgroundColor: "#8a2020",
+                  color: "#fff",
+                  border: "none",
+                  borderRadius: 4,
+                  cursor: "pointer",
+                }}
+              >
+                重试连接
+              </button>
+            )}
+          </div>
+        )}
+
+        <div style={{ flex: 1, width: "100%", height: "100%", overflow: "hidden", position: "relative" }}>
+          {/* Bookshelf Page */}
+          <div
+            data-testid="page-container-bookshelf"
+            style={{
+              width: "100%",
+              height: "100%",
+              display: activePage === "bookshelf" ? "flex" : "none",
+            }}
+          >
+            <BookshelfPage
+              client={libraryClient}
+              onEnterWorkbench={handleEnterWorkbench}
+              onEnterReader={handleEnterReader}
+            />
+          </div>
 
         {/* Workbench Page */}
         <div
@@ -292,16 +454,17 @@ export function AppShell({ invoke, initialPage = "bookshelf" }: AppShellProps) {
           />
         </div>
 
-        {/* Settings Page */}
-        <div
-          data-testid="page-container-settings"
-          style={{
-            width: "100%",
-            height: "100%",
-            display: activePage === "settings" ? "flex" : "none",
-          }}
-        >
-          <SettingsPage client={settingsClient} />
+          {/* Settings Page */}
+          <div
+            data-testid="page-container-settings"
+            style={{
+              width: "100%",
+              height: "100%",
+              display: activePage === "settings" ? "flex" : "none",
+            }}
+          >
+            <SettingsPage client={settingsClient} />
+          </div>
         </div>
       </div>
     </div>

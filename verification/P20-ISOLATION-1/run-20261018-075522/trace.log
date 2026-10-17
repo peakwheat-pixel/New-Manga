@@ -1,0 +1,21 @@
+[07:55:22.265] Starting desktop app with isolated root=C:\Users\49745\AppData\Local\Temp\p20ac6-iso-fdd904e5
+[07:55:22.594] App started with rootPid=37148
+[07:55:28.651] ASSERT PASS ac6:window-before-kill
+[07:55:28.788] Initial core_service pid=42876 owned_count=11
+[07:55:28.793] ASSERT PASS ac6:sidecar-running
+[07:55:28.845] UI elements count before kill: 8
+[07:55:28.850] KILL core_service pid=42876 (injecting abnormal termination)
+[07:55:30.866] After kill: window_alive=True main_process_alive=True
+[07:55:30.872] ASSERT PASS ac6:main-window-survives-sidecar-death
+[07:55:30.906] UI elements count after kill: 31
+[07:55:30.915] UI error markers detected: 后端服务已恢复正常
+[07:55:30.919] ASSERT PASS ac6:user-visible-error-indicated
+[07:55:30.924] Observing self-heal respawn (up to 10s)...
+[07:55:32.007] Respawn detected at +1s! New core_service pid=44812
+[07:55:32.012] ASSERT PASS ac6:sidecar-auto-respawned
+[07:55:34.056] UI elements count after respawn: 29
+[07:55:34.067] UI recovery markers: 
+[07:55:34.073] ASSERT PASS ac6:window-still-alive-after-test
+[07:55:34.084] app_err_tail: [m2rc1-title] M2-RC1 resource channel runtime / [core.derived_gc] skipped: exclusive namespace lease unavailable; startup sweeps were skipped / [supervisor] core_service successfully recovered! / [m2rc1-title] M2-RC1 resource channel runtime / [m2rc1-title] M2-RC1 resource channel runtime
+[07:55:34.088] Cleaning up processes...
+[07:55:37.199] Verification finished. Artifacts saved in G:\CODEX\New Manga\verification\P20-ISOLATION-1\run-20261018-075522

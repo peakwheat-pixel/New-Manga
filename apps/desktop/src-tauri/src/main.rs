@@ -47,8 +47,8 @@ use ac1_bridge::Ac1Channel;
 use core_bridge::{CoreChannel, CoreError, StdioCoreChannel};
 use library_bridge::{
     BookSummary, ChapterNavSummary, ExportHistoryResponseView, ExportProgressSnapshotView,
-    LibraryChannel, LibraryError, P15CredentialTarget, P15SettingsCommand, PingResult,
-    StdioLibraryChannel, P15_HOST_ONLY_COMMANDS,
+    LibraryChannel, LibraryError, LibrarySpawnConfig, P15CredentialTarget, P15SettingsCommand,
+    PingResult, ResilientLibraryChannel, StdioLibraryChannel, P15_HOST_ONLY_COMMANDS,
 };
 use resource_protocol::ScopeRoots;
 use serde::{Deserialize, Serialize};
@@ -1317,28 +1317,31 @@ fn main() {
         None => env_path("NEWMANGA_DATA_ROOT"),
     };
     let library: Option<Box<dyn LibraryChannel>> = if is_production {
-        let chan = match &packaged_dir {
-            Some(dir) => StdioLibraryChannel::spawn_with_startup_ping(
-                &dir.join("core_service.exe").to_string_lossy(),
-                dir,
-                data_root.as_deref(),
-                Some(&derived_root),
-                Some(&catalog_db),
-                std::time::Duration::from_secs(30),
-            ),
-            None => StdioLibraryChannel::spawn_with_startup_ping(
-                &python_exe,
-                &src_root,
-                data_root.as_deref(),
-                Some(&derived_root),
-                Some(&catalog_db),
-                std::time::Duration::from_secs(30),
-            ),
-        }
+        let (sidecar_path, working_dir) = match &packaged_dir {
+            Some(dir) => (dir.join("core_service.exe").to_string_lossy().to_string(), dir.clone()),
+            None => (python_exe.clone(), src_root.clone()),
+        };
+        let chan = StdioLibraryChannel::spawn_with_startup_ping(
+            &sidecar_path,
+            &working_dir,
+            data_root.as_deref(),
+            Some(&derived_root),
+            Some(&catalog_db),
+            std::time::Duration::from_secs(30),
+        )
         .expect("production core library sidecar failed to start (startup ping)");
         chan.open_host_session()
             .expect("production core HostControl session failed to open");
-        Some(Box::new(chan))
+        let config = LibrarySpawnConfig {
+            sidecar_path,
+            working_dir,
+            data_root: data_root.clone(),
+            derived_root: Some(derived_root.clone()),
+            catalog_db: Some(catalog_db.clone()),
+        };
+        let resilient = ResilientLibraryChannel::new(config, chan);
+        resilient.start_heartbeat();
+        Some(Box::new(resilient))
     } else {
         None
     };
@@ -1420,6 +1423,19 @@ fn main() {
                         use tauri::Emitter;
                         if let Err(err) = emit_handle.emit(event_name, &payload) {
                             eprintln!("[events-fwd] failed to emit {event_name}: {err}");
+                        }
+                    },
+                ));
+                let status_handle = handle.clone();
+                library.set_status_emitter(Arc::new(
+                    move |status: &str, message: &str| {
+                        use tauri::Emitter;
+                        let payload = serde_json::json!({
+                            "status": status,
+                            "message": message,
+                        });
+                        if let Err(err) = status_handle.emit("core:lifecycle_status", &payload) {
+                            eprintln!("[status-fwd] failed to emit core:lifecycle_status: {err}");
                         }
                     },
                 ));

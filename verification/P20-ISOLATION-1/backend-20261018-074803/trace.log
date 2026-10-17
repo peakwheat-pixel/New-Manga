@@ -1,0 +1,6 @@
+[07:48:03.779] START m2rc1-desktop.exe with iso data root: C:\Users\49745\AppData\Local\Temp\p20iso1-49ebbda3
+[07:48:03.797] Root PID=44284
+[07:48:09.912] Initial core_service pid=-1
+[07:48:09.919] ASSERT FAIL sidecar-running-initially
+[07:48:09.925] Shutting down test processes...
+[07:48:10.529] Finished. Logs stored in G:\CODEX\New Manga\verification\P20-ISOLATION-1\backend-20261018-074803

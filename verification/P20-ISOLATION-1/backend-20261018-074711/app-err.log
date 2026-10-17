@@ -1,0 +1,4 @@
+
+thread 'main' (6884) panicked at src\main.rs:1332:10:
+production core library sidecar failed to start (startup ping): LibraryError { code: "CORE_UNAVAILABLE", category: "unavailable", retryable: true, message: Some("production core startup ping timed out or failed"), details: None }
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace

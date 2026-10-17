@@ -9,7 +9,7 @@ use std::collections::{HashMap, HashSet};
 use std::io::{BufRead, BufReader, Write};
 use std::path::{Path, PathBuf};
 use std::process::{Child, ChildStdin, Command, Stdio};
-use std::sync::atomic::{AtomicBool, AtomicU64, Ordering};
+use std::sync::atomic::{AtomicBool, AtomicU32, AtomicU64, Ordering};
 use std::sync::mpsc::SyncSender;
 use std::sync::{Arc, Mutex};
 use std::time::{Duration, Instant};
@@ -480,6 +480,8 @@ pub enum P15CredentialTarget {
     ProxyAuth { network_profile_id: String },
 }
 
+pub type StatusEmitter = Arc<dyn Fn(&str, &str) + Send + Sync>;
+
 pub trait LibraryChannel: Send + Sync {
     fn ping(&self) -> Result<PingResult, LibraryError>;
     fn list_books(&self) -> Result<Vec<BookSummary>, LibraryError>;
@@ -738,6 +740,9 @@ pub trait LibraryChannel: Send + Sync {
     fn get_export_history(&self) -> Result<ExportHistoryResponseView, LibraryError> {
         Err(LibraryError::unavailable("Export channel is unavailable"))
     }
+
+    /// P20-ISOLATION-1: Register a lifecycle status emitter for sidecar health events.
+    fn set_status_emitter(&self, _emitter: StatusEmitter) {}
 }
 
 fn reader_progress_payload(
@@ -943,6 +948,7 @@ pub struct StdioLibraryChannel {
     event_sink: Arc<Mutex<Option<EventSink>>>,
     pending_responses: Arc<Mutex<HashMap<String, SyncSender<Result<String, LibraryError>>>>>,
     is_down: Arc<AtomicBool>,
+    on_down: Arc<Mutex<Option<Arc<dyn Fn() + Send + Sync>>>>,
     reader_join_handle: Mutex<Option<std::thread::JoinHandle<()>>>,
 }
 
@@ -1081,10 +1087,12 @@ impl StdioLibraryChannel {
         > = Arc::new(Mutex::new(HashMap::new()));
         let event_sink: Arc<Mutex<Option<EventSink>>> = Arc::new(Mutex::new(None));
         let is_down = Arc::new(AtomicBool::new(false));
+        let on_down: Arc<Mutex<Option<Arc<dyn Fn() + Send + Sync>>>> = Arc::new(Mutex::new(None));
 
         let pending_clone = Arc::clone(&pending_responses);
         let sink_clone = Arc::clone(&event_sink);
         let is_down_clone = Arc::clone(&is_down);
+        let on_down_clone = Arc::clone(&on_down);
 
         let reader_thread = std::thread::Builder::new()
             .name("stdio-library-reader".to_string())
@@ -1101,6 +1109,11 @@ impl StdioLibraryChannel {
                                     "Core stdout closed (EOF)",
                                 )));
                             }
+                            if let Ok(guard) = on_down_clone.lock() {
+                                if let Some(ref cb) = *guard {
+                                    cb();
+                                }
+                            }
                             break;
                         }
                         Ok(_) => {
@@ -1113,6 +1126,11 @@ impl StdioLibraryChannel {
                                 let _ = sender.send(Err(LibraryError::unavailable(&format!(
                                     "stdout read failed: {err}"
                                 ))));
+                            }
+                            if let Ok(guard) = on_down_clone.lock() {
+                                if let Some(ref cb) = *guard {
+                                    cb();
+                                }
                             }
                             break;
                         }
@@ -1133,8 +1151,15 @@ impl StdioLibraryChannel {
             event_sink,
             pending_responses,
             is_down,
+            on_down,
             reader_join_handle: Mutex::new(Some(reader_thread)),
         })
+    }
+
+    pub fn set_on_down(&self, cb: Arc<dyn Fn() + Send + Sync>) {
+        if let Ok(mut guard) = self.on_down.lock() {
+            *guard = Some(cb);
+        }
     }
 
     pub fn round_trip(
@@ -2376,6 +2401,479 @@ impl LibraryChannel for MockLibraryChannel {
     }
 }
 
+/// Configuration required to spawn or respawn the Core library sidecar.
+#[derive(Clone)]
+pub struct LibrarySpawnConfig {
+    pub sidecar_path: String,
+    pub working_dir: PathBuf,
+    pub data_root: Option<PathBuf>,
+    pub derived_root: Option<PathBuf>,
+    pub catalog_db: Option<PathBuf>,
+}
+
+struct ResilientCoreContext {
+    inner: Mutex<Option<StdioLibraryChannel>>,
+    config: LibrarySpawnConfig,
+    is_restarting: AtomicBool,
+    consecutive_failures: AtomicU32,
+    event_sink: Mutex<Option<EventSink>>,
+    status_emitter: Mutex<Option<StatusEmitter>>,
+    heartbeat_stop: AtomicBool,
+}
+
+impl ResilientCoreContext {
+    pub fn trigger_restart(self: &Arc<Self>) {
+        if self
+            .is_restarting
+            .compare_exchange(false, true, Ordering::SeqCst, Ordering::SeqCst)
+            .is_err()
+        {
+            return;
+        }
+
+        const MAX_RETRIES: u32 = 3;
+        if self.consecutive_failures.load(Ordering::SeqCst) >= MAX_RETRIES {
+            self.is_restarting.store(false, Ordering::SeqCst);
+            if let Ok(guard) = self.status_emitter.lock() {
+                if let Some(ref emitter) = *guard {
+                    emitter("fatal", "后端服务异常，自动重启失败，请检查服务日志");
+                }
+            }
+            return;
+        }
+
+        // 立即向 UI 发送异常与热重启通知（AC1 有界时间 ≤ 5s，立即发射）
+        if let Ok(guard) = self.status_emitter.lock() {
+            if let Some(ref emitter) = *guard {
+                emitter("restarting", "后端服务异常，正在尝试热重启...");
+            }
+        }
+
+        let ctx = Arc::clone(self);
+        std::thread::Builder::new()
+            .name("core-self-healing".to_string())
+            .spawn(move || {
+                // 1. 清理并回收旧进程
+                {
+                    if let Ok(mut guard) = ctx.inner.lock() {
+                        if let Some(old) = guard.take() {
+                            drop(old);
+                        }
+                    }
+                }
+
+                let mut backoff = Duration::from_millis(500);
+                let mut success = false;
+
+                while ctx.consecutive_failures.load(Ordering::SeqCst) < MAX_RETRIES {
+                    let attempt = ctx.consecutive_failures.fetch_add(1, Ordering::SeqCst) + 1;
+                    eprintln!("[supervisor] Restarting core_service (attempt {attempt}/{MAX_RETRIES})...");
+                    std::thread::sleep(backoff);
+
+                    let spawn_res = StdioLibraryChannel::spawn_with_startup_ping(
+                        &ctx.config.sidecar_path,
+                        &ctx.config.working_dir,
+                        ctx.config.data_root.as_deref(),
+                        ctx.config.derived_root.as_deref(),
+                        ctx.config.catalog_db.as_deref(),
+                        Duration::from_secs(15),
+                    );
+
+                    match spawn_res {
+                        Ok(new_chan) => {
+                            if let Err(e) = new_chan.open_host_session() {
+                                eprintln!("[supervisor] open_host_session failed: {e}");
+                                backoff = backoff.saturating_mul(2);
+                                continue;
+                            }
+
+                            // 重新注入之前注册的 event_sink
+                            if let Ok(guard) = ctx.event_sink.lock() {
+                                if let Some(ref sink) = *guard {
+                                    new_chan.set_event_sink(Arc::clone(sink));
+                                }
+                            }
+
+                            // 绑定下次异常退出的瞬时感知回调
+                            let ctx_down = Arc::clone(&ctx);
+                            new_chan.set_on_down(Arc::new(move || {
+                                ctx_down.trigger_restart();
+                            }));
+
+                            // 原子安装新 channel
+                            if let Ok(mut guard) = ctx.inner.lock() {
+                                *guard = Some(new_chan);
+                            }
+
+                            ctx.consecutive_failures.store(0, Ordering::SeqCst);
+                            success = true;
+                            eprintln!("[supervisor] core_service successfully recovered!");
+                            break;
+                        }
+                        Err(err) => {
+                            eprintln!("[supervisor] restart attempt {attempt} failed: {err}");
+                            backoff = backoff.saturating_mul(2);
+                        }
+                    }
+                }
+
+                ctx.is_restarting.store(false, Ordering::SeqCst);
+
+                if let Ok(guard) = ctx.status_emitter.lock() {
+                    if let Some(ref emitter) = *guard {
+                        if success {
+                            emitter("recovered", "后端服务已恢复正常");
+                        } else {
+                            emitter("fatal", "后端服务异常，自动重启失败，请检查服务日志");
+                        }
+                    }
+                }
+            })
+            .expect("failed to spawn self-healing thread");
+    }
+}
+
+pub struct ResilientLibraryChannel {
+    ctx: Arc<ResilientCoreContext>,
+}
+
+impl ResilientLibraryChannel {
+    pub fn new(config: LibrarySpawnConfig, initial_channel: StdioLibraryChannel) -> Self {
+        let ctx = Arc::new(ResilientCoreContext {
+            inner: Mutex::new(Some(initial_channel)),
+            config,
+            is_restarting: AtomicBool::new(false),
+            consecutive_failures: AtomicU32::new(0),
+            event_sink: Mutex::new(None),
+            status_emitter: Mutex::new(None),
+            heartbeat_stop: AtomicBool::new(false),
+        });
+
+        let ctx_clone = Arc::clone(&ctx);
+        if let Ok(guard) = ctx.inner.lock() {
+            if let Some(ref chan) = *guard {
+                chan.set_on_down(Arc::new(move || {
+                    ctx_clone.trigger_restart();
+                }));
+            }
+        }
+
+        Self { ctx }
+    }
+
+    /// AC2: Periodic heartbeat and dead sidecar recovery.
+    pub fn start_heartbeat(&self) {
+        let ctx = Arc::clone(&self.ctx);
+        std::thread::Builder::new()
+            .name("core-heartbeat".to_string())
+            .spawn(move || {
+                while !ctx.heartbeat_stop.load(Ordering::Relaxed) {
+                    std::thread::sleep(Duration::from_millis(1500));
+                    if ctx.heartbeat_stop.load(Ordering::Relaxed) {
+                        break;
+                    }
+                    if ctx.is_restarting.load(Ordering::SeqCst) {
+                        continue;
+                    }
+                    if ctx.consecutive_failures.load(Ordering::SeqCst) >= 3 {
+                        continue;
+                    }
+
+                    let needs_restart = {
+                        if let Ok(guard) = ctx.inner.lock() {
+                            match guard.as_ref() {
+                                Some(chan) => {
+                                    if chan.is_down.load(Ordering::SeqCst) {
+                                        true
+                                    } else if let Ok(mut child) = chan.child.lock() {
+                                        match child.try_wait() {
+                                            Ok(Some(_status)) => true,
+                                            Ok(None) => false,
+                                            Err(_) => true,
+                                        }
+                                    } else {
+                                        false
+                                    }
+                                }
+                                None => true,
+                            }
+                        } else {
+                            false
+                        }
+                    };
+
+                    if needs_restart {
+                        eprintln!("[heartbeat] Detected dead core_service, triggering restart");
+                        ctx.trigger_restart();
+                    }
+                }
+            })
+            .expect("failed to spawn heartbeat thread");
+    }
+
+    fn with_channel<R, F>(&self, f: F) -> Result<R, LibraryError>
+    where
+        F: FnOnce(&StdioLibraryChannel) -> Result<R, LibraryError>,
+    {
+        let guard = self
+            .ctx
+            .inner
+            .lock()
+            .map_err(|_| LibraryError::unavailable("Lock poisoned"))?;
+        match guard.as_ref() {
+            Some(chan) => {
+                let res = f(chan);
+                if let Err(ref err) = res {
+                    if err.code == "CORE_UNAVAILABLE" || chan.is_down.load(Ordering::SeqCst) {
+                        self.ctx.trigger_restart();
+                    }
+                }
+                res
+            }
+            None => {
+                self.ctx.trigger_restart();
+                Err(LibraryError::unavailable(
+                    "Core service is restarting or unavailable",
+                ))
+            }
+        }
+    }
+}
+
+impl Drop for ResilientLibraryChannel {
+    fn drop(&mut self) {
+        self.ctx.heartbeat_stop.store(true, Ordering::Relaxed);
+    }
+}
+
+impl LibraryChannel for ResilientLibraryChannel {
+    fn ping(&self) -> Result<PingResult, LibraryError> {
+        self.with_channel(|c| c.ping())
+    }
+
+    fn list_books(&self) -> Result<Vec<BookSummary>, LibraryError> {
+        self.with_channel(|c| c.list_books())
+    }
+
+    fn create_book(&self, title: &str) -> Result<BookSummary, LibraryError> {
+        self.with_channel(|c| c.create_book(title))
+    }
+
+    fn create_chapter(
+        &self,
+        book_id: &str,
+        title: &str,
+        chapter_number: Option<&str>,
+    ) -> Result<ChapterNavSummary, LibraryError> {
+        self.with_channel(|c| c.create_chapter(book_id, title, chapter_number))
+    }
+
+    fn get_settings(&self, section: Option<&str>) -> Result<serde_json::Value, LibraryError> {
+        self.with_channel(|c| c.get_settings(section))
+    }
+
+    fn update_settings_section(
+        &self,
+        section: &str,
+        values: &serde_json::Value,
+    ) -> Result<serde_json::Value, LibraryError> {
+        self.with_channel(|c| c.update_settings_section(section, values))
+    }
+
+    fn p15_settings(
+        &self,
+        command: P15SettingsCommand,
+        payload: serde_json::Value,
+    ) -> Result<serde_json::Value, LibraryError> {
+        self.with_channel(|c| c.p15_settings(command, payload))
+    }
+
+    fn bind_profile_credential(
+        &self,
+        target: P15CredentialTarget,
+        secret: &str,
+    ) -> Result<(), LibraryError> {
+        self.with_channel(|c| c.bind_profile_credential(target, secret))
+    }
+
+    fn clear_profile_credential(&self, target: P15CredentialTarget) -> Result<(), LibraryError> {
+        self.with_channel(|c| c.clear_profile_credential(target))
+    }
+
+    fn set_region_type(
+        &self,
+        region_id: &str,
+        new_region_type: &str,
+        expected_revision: Option<i64>,
+    ) -> Result<serde_json::Value, LibraryError> {
+        self.with_channel(|c| c.set_region_type(region_id, new_region_type, expected_revision))
+    }
+
+    fn list_regions(&self, page_id: &str) -> Result<serde_json::Value, LibraryError> {
+        self.with_channel(|c| c.list_regions(page_id))
+    }
+
+    fn list_region_revisions(&self, region_id: &str) -> Result<serde_json::Value, LibraryError> {
+        self.with_channel(|c| c.list_region_revisions(region_id))
+    }
+
+    fn restore_region_revision(
+        &self,
+        region_id: &str,
+        revision_no: i64,
+        expected_revision: i64,
+    ) -> Result<serde_json::Value, LibraryError> {
+        self.with_channel(|c| c.restore_region_revision(region_id, revision_no, expected_revision))
+    }
+
+    fn rerender_page(&self, page_id: &str) -> Result<serde_json::Value, LibraryError> {
+        self.with_channel(|c| c.rerender_page(page_id))
+    }
+
+    fn resolve_page_resource(&self, page_id: &str) -> Result<serde_json::Value, LibraryError> {
+        self.with_channel(|c| c.resolve_page_resource(page_id))
+    }
+
+    fn list_chapters(&self, book_id: &str) -> Result<serde_json::Value, LibraryError> {
+        self.with_channel(|c| c.list_chapters(book_id))
+    }
+
+    fn list_chapter_pages(&self, chapter_id: &str) -> Result<serde_json::Value, LibraryError> {
+        self.with_channel(|c| c.list_chapter_pages(chapter_id))
+    }
+
+    fn get_reader_projection(
+        &self,
+        chapter_id: &str,
+        mode: &str,
+        start_position: &str,
+    ) -> Result<serde_json::Value, LibraryError> {
+        self.with_channel(|c| c.get_reader_projection(chapter_id, mode, start_position))
+    }
+
+    fn save_reading_progress(
+        &self,
+        chapter_id: &str,
+        mode: &str,
+        page_id: &str,
+        scroll_offset_y: Option<f64>,
+        elapsed_seconds_delta: Option<f64>,
+    ) -> Result<serde_json::Value, LibraryError> {
+        self.with_channel(|c| {
+            c.save_reading_progress(
+                chapter_id,
+                mode,
+                page_id,
+                scroll_offset_y,
+                elapsed_seconds_delta,
+            )
+        })
+    }
+
+    fn start_run(
+        &self,
+        command: &str,
+        scope: &serde_json::Value,
+        overrides: Option<&serde_json::Value>,
+        idempotency_key: &str,
+    ) -> Result<serde_json::Value, LibraryError> {
+        self.with_channel(|c| c.start_run(command, scope, overrides, idempotency_key))
+    }
+
+    fn control_run(
+        &self,
+        run_id: &str,
+        action: &str,
+        idempotency_key: Option<&str>,
+    ) -> Result<serde_json::Value, LibraryError> {
+        self.with_channel(|c| c.control_run(run_id, action, idempotency_key))
+    }
+
+    fn resume_blocked_run(&self, run_id: &str) -> Result<serde_json::Value, LibraryError> {
+        self.with_channel(|c| c.resume_blocked_run(run_id))
+    }
+
+    fn get_run_snapshot(&self, run_id: &str) -> Result<serde_json::Value, LibraryError> {
+        self.with_channel(|c| c.get_run_snapshot(run_id))
+    }
+
+    fn get_task_projection(&self, run_id: &str) -> Result<serde_json::Value, LibraryError> {
+        self.with_channel(|c| c.get_task_projection(run_id))
+    }
+
+    fn retry_failed_targets(
+        &self,
+        run_id: &str,
+        idempotency_key: &str,
+    ) -> Result<serde_json::Value, LibraryError> {
+        self.with_channel(|c| c.retry_failed_targets(run_id, idempotency_key))
+    }
+
+    fn import_from_path(
+        &self,
+        path: &Path,
+        source_kind: &str,
+        chapter_id: &str,
+        duplicate_policy: Option<&str>,
+    ) -> Result<crate::host_issuer::ImportSummary, LibraryError> {
+        self.with_channel(|c| c.import_from_path(path, source_kind, chapter_id, duplicate_policy))
+    }
+
+    fn import_from_paths(
+        &self,
+        paths: &[PathBuf],
+        source_kind: &str,
+        chapter_id: &str,
+        duplicate_policy: Option<&str>,
+    ) -> Result<crate::host_issuer::ImportSummary, LibraryError> {
+        self.with_channel(|c| c.import_from_paths(paths, source_kind, chapter_id, duplicate_policy))
+    }
+
+    fn start_export_to_path(
+        &self,
+        path: &Path,
+        request: Value,
+    ) -> Result<crate::host_issuer::ExportSummary, LibraryError> {
+        self.with_channel(|c| c.start_export_to_path(path, request))
+    }
+
+    fn export_output_directory(&self, export_id: &str) -> Result<PathBuf, LibraryError> {
+        self.with_channel(|c| c.export_output_directory(export_id))
+    }
+
+    fn set_event_sink(&self, sink: EventSink) {
+        if let Ok(mut guard) = self.ctx.event_sink.lock() {
+            *guard = Some(Arc::clone(&sink));
+        }
+        if let Ok(guard) = self.ctx.inner.lock() {
+            if let Some(ref chan) = *guard {
+                chan.set_event_sink(sink);
+            }
+        }
+    }
+
+    fn set_status_emitter(&self, emitter: StatusEmitter) {
+        if let Ok(mut guard) = self.ctx.status_emitter.lock() {
+            *guard = Some(emitter);
+        }
+    }
+
+    fn cancel_export(&self, export_id: &str) -> Result<ExportProgressSnapshotView, LibraryError> {
+        self.with_channel(|c| c.cancel_export(export_id))
+    }
+
+    fn get_export_snapshot(
+        &self,
+        export_id: &str,
+    ) -> Result<ExportProgressSnapshotView, LibraryError> {
+        self.with_channel(|c| c.get_export_snapshot(export_id))
+    }
+
+    fn get_export_history(&self) -> Result<ExportHistoryResponseView, LibraryError> {
+        self.with_channel(|c| c.get_export_history())
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -3613,5 +4111,74 @@ mod tests {
         let hist2 = mock.get_export_history().unwrap();
         assert_eq!(hist2.exports.len(), 1);
         assert_eq!(hist2.exports[0].export_id, "exp-hist-mock");
+    }
+
+    #[test]
+    fn resilient_channel_triggers_restart_and_emits_restarting_status() {
+        let events = Arc::new(Mutex::new(Vec::<(String, String)>::new()));
+        let events_clone = Arc::clone(&events);
+
+        let config = LibrarySpawnConfig {
+            sidecar_path: "non_existent_executable".to_string(),
+            working_dir: PathBuf::from("."),
+            data_root: None,
+            derived_root: None,
+            catalog_db: None,
+        };
+
+        let ctx = Arc::new(ResilientCoreContext {
+            inner: Mutex::new(None),
+            config,
+            is_restarting: AtomicBool::new(false),
+            consecutive_failures: AtomicU32::new(0),
+            event_sink: Mutex::new(None),
+            status_emitter: Mutex::new(Some(Arc::new(move |status, msg| {
+                events_clone.lock().unwrap().push((status.to_string(), msg.to_string()));
+            }))),
+            heartbeat_stop: AtomicBool::new(false),
+        });
+
+        // Trigger restart
+        ctx.trigger_restart();
+
+        // Immediately verify "restarting" status was emitted
+        let emitted = events.lock().unwrap();
+        assert!(!emitted.is_empty(), "Status must be emitted immediately upon restart trigger");
+        assert_eq!(emitted[0].0, "restarting");
+        assert!(emitted[0].1.contains("后端服务异常"));
+    }
+
+    #[test]
+    fn resilient_channel_caps_retries_and_emits_fatal_after_three_failures() {
+        let events = Arc::new(Mutex::new(Vec::<(String, String)>::new()));
+        let events_clone = Arc::clone(&events);
+
+        let config = LibrarySpawnConfig {
+            sidecar_path: "non_existent_executable".to_string(),
+            working_dir: PathBuf::from("."),
+            data_root: None,
+            derived_root: None,
+            catalog_db: None,
+        };
+
+        let ctx = Arc::new(ResilientCoreContext {
+            inner: Mutex::new(None),
+            config,
+            is_restarting: AtomicBool::new(false),
+            consecutive_failures: AtomicU32::new(3), // Already reached MAX_RETRIES
+            event_sink: Mutex::new(None),
+            status_emitter: Mutex::new(Some(Arc::new(move |status, msg| {
+                events_clone.lock().unwrap().push((status.to_string(), msg.to_string()));
+            }))),
+            heartbeat_stop: AtomicBool::new(false),
+        });
+
+        // Trigger restart when consecutive_failures >= 3
+        ctx.trigger_restart();
+
+        let emitted = events.lock().unwrap();
+        assert_eq!(emitted.len(), 1);
+        assert_eq!(emitted[0].0, "fatal");
+        assert!(emitted[0].1.contains("自动重启失败"));
     }
 }

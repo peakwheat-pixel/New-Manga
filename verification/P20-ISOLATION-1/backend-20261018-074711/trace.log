@@ -1,0 +1,10 @@
+[07:47:11.758] START m2rc1-desktop.exe with iso data root: C:\Users\49745\AppData\Local\Temp\p20iso1-24849b53
+[07:47:12.086] Root PID=30484
+[07:47:12.734] Initial core_service pid=42988
+[07:47:12.742] ASSERT PASS sidecar-running-initially
+[07:47:12.746] Simulating abnormal exit: KILLING core_service pid=42988
+[07:47:14.758] After kill (2s): main_process_alive=False
+[07:47:14.764] ASSERT FAIL main-process-survives-sidecar-kill
+[07:47:23.880] ASSERT FAIL ac2:sidecar-respawned-after-crash
+[07:47:26.894] Shutting down test processes...
+[07:47:27.474] Finished. Logs stored in G:\CODEX\New Manga\verification\P20-ISOLATION-1\backend-20261018-074711

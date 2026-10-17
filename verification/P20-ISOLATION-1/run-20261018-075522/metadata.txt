@@ -1,0 +1,6 @@
+runner=run-ac6-ui-verification.ps1
+root_pid=37148
+initial_core_pid=42876
+respawned=True
+new_core_pid=44812
+window_alive_before_kill=True

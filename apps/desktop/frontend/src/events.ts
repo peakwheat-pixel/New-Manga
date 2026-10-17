@@ -45,6 +45,11 @@ export interface ReadingProgressChangedPayload {
   mode: "original" | "translated" | string;
 }
 
+export interface LifecycleStatusPayload {
+  status: "restarting" | "recovered" | "fatal" | "healthy" | string;
+  message: string;
+}
+
 export const CORE_EVENT_NAMES = {
   TaskFailed: "core:TaskFailed",
   RunPaused: "core:RunPaused",
@@ -53,6 +58,8 @@ export const CORE_EVENT_NAMES = {
   ExportProgressChanged: "core:ExportProgressChanged",
   ReadingProgressChanged: "core:ReadingProgressChanged",
 } as const;
+
+export const LIFECYCLE_STATUS_EVENT = "core:lifecycle_status" as const;
 
 export type CoreEventName = (typeof CORE_EVENT_NAMES)[keyof typeof CORE_EVENT_NAMES];
 
@@ -63,6 +70,7 @@ export interface CoreEventMap {
   "core:CurrentPageStepChanged": CurrentPageStepChangedPayload;
   "core:ExportProgressChanged": ExportProgressChangedPayload;
   "core:ReadingProgressChanged": ReadingProgressChangedPayload;
+  "core:lifecycle_status": LifecycleStatusPayload;
 }
 
 export type EventCallback<T> = (payload: T) => void;
@@ -145,4 +153,11 @@ export function onReadingProgressChanged(
   customListen?: ListenFn
 ): Promise<UnlistenFn> {
   return listenCoreEvent(CORE_EVENT_NAMES.ReadingProgressChanged, handler, customListen);
+}
+
+export function onLifecycleStatusChanged(
+  handler: EventCallback<LifecycleStatusPayload>,
+  customListen?: ListenFn
+): Promise<UnlistenFn> {
+  return listenCoreEvent(LIFECYCLE_STATUS_EVENT, handler, customListen);
 }
