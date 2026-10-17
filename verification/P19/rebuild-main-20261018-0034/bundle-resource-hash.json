@@ -1,0 +1,8 @@
+{
+  "algorithm": "SHA256",
+  "bundle_path": "G:\\CODEX\\New Manga\\apps\\desktop\\src-tauri\\target\\core-sidecar\\core-sidecar\\core_service.exe",
+  "bundle_sha256": "6ab8ada366cbac79720818c4b42eb66888a44138366c50f73e55a55d83b0be5d",
+  "resource_path": "G:\\CODEX\\New Manga\\apps\\desktop\\src-tauri\\target\\debug\\resources\\core-sidecar\\core_service.exe",
+  "resource_sha256": "6ab8ada366cbac79720818c4b42eb66888a44138366c50f73e55a55d83b0be5d",
+  "equal": true
+}

@@ -1,0 +1,12 @@
+runner=run-ac2-mainflow-v1.ps1
+started_local=2026-10-18T00:44:13.8774993+08:00
+outdir=G:\CODEX\New Manga\verification\P19\ac2-main-20261018-0044
+iso_root=C:\Users\49745\AppData\Local\Temp\p19-ac2-main-78e887a7
+fixture_dir=C:\Users\49745\AppData\Local\Temp\p19fx\A
+exe_sha256=384a486daee48257c9f7421fa68d5b6ef263f2ea03485f7254e84d99479d0600
+fixture_count=0
+ended_local=2026-10-18T00:44:30.2786690+08:00
+duration_s=16.4
+checks=10
+fails=0
+exit_code=0

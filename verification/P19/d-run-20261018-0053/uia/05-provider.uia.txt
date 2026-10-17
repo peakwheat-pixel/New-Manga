@@ -1,0 +1,59 @@
+# 05-provider n=58 2026-10-18T00:50:42.8951695+08:00
+0|Pane||en=True|off=False
+1|Pane|M2RC1|interactive|deny=5/5|allow=0/0|results=5|en=True|off=False
+2|Pane||en=False|off=False
+3|Pane|M2RC1|interactive|deny=5/5|allow=0/0|results=5 - Web 内容|en=True|off=False
+4|Pane||en=True|off=False
+5|Pane||en=True|off=False
+6|Pane||en=True|off=False
+7|Pane||en=True|off=False
+8|Document|M2RC1|interactive|deny=5/5|allow=0/0|results=5|en=True|off=False
+9|Group||en=True|off=False
+10|Group||en=True|off=False
+11|Group||en=True|off=False
+12|Text|NM|en=True|off=False
+13|Button|📚 书架|en=True|off=False
+14|Button|🛠️ 工作台|en=True|off=False
+15|Button|📖 阅读器|en=True|off=False
+16|Button|⚙️ 设置|en=True|off=False
+17|Group|设置分类|en=True|off=False
+18|Text|系统设置|en=True|off=False
+19|Button|Provider|en=True|off=False
+20|Button|网络/代理|en=True|off=False
+21|Button|OCR，未开放：等待 section schema 冻结|en=False|off=False
+22|Group||en=True|off=False
+23|Button|翻译|en=True|off=False
+24|Button|图片修复，未开放：等待 section schema 冻结|en=False|off=False
+25|Group||en=True|off=False
+26|Button|排版样式，未开放：等待 section schema 冻结|en=False|off=False
+27|Group||en=True|off=False
+28|Button|模型/GPU，未开放：等待 section schema 冻结|en=False|off=False
+29|Group||en=True|off=False
+30|Button|任务/并发，未开放：等待 section schema 冻结|en=False|off=False
+31|Group||en=True|off=False
+32|Button|缓存/Revision，未开放：等待 section schema 冻结|en=False|off=False
+33|Group||en=True|off=False
+34|Button|回收站，未开放：等待 section schema 冻结|en=False|off=False
+35|Group||en=True|off=False
+36|Button|备份/恢复，未开放：等待 section schema 冻结|en=False|off=False
+37|Group||en=True|off=False
+38|Button|Plugin/Hooks，未开放：等待 section schema 冻结|en=False|off=False
+39|Group||en=True|off=False
+40|Group||en=True|off=False
+41|Text|Provider Profile|en=True|off=False
+42|Text|同一 Provider 类型可配置多个 Profile（以 profile_id 区分）；凭据只经专用一次性通道配置，永不回显明文。|en=True|off=False
+43|Text|暂无 Provider Profile。|en=True|off=False
+44|Button|新建 Profile|en=True|off=False
+45|Text|Capability 默认绑定|en=True|off=False
+46|Text|解析优先级：当前 Run 临时绑定 → Chapter → Book → Global。Run 临时范围只能经工作台 StartRun.overrides.provider_profiles 设置，不在本页操作。|en=True|off=False
+47|Text|scope 范围|en=True|off=False
+48|ComboBox|scope 范围|en=True|off=False
+49|Text|capability|en=True|off=False
+50|ComboBox|capability|en=True|off=False
+51|Text|当前绑定（global 查询）：|en=True|off=False
+52|Text|未绑定|en=True|off=False
+53|Text|要绑定的 profile_id|en=True|off=False
+54|Edit|要绑定的 profile_id|en=True|off=False
+55|Button|设置绑定 (set)|en=False|off=False
+56|Button|清除绑定 (clear)|en=True|off=False
+57|Pane||en=True|off=False

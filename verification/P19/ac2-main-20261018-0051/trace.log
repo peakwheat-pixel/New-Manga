@@ -1,0 +1,86 @@
+[00:48:44.848] RUN start iso=C:\Users\49745\AppData\Local\Temp\p19-ac2-main-d5ad2168 outdir=G:\CODEX\New Manga\verification\P19\ac2-main-20261018-0051
+[00:48:44.879] exe sha256=384a486daee48257c9f7421fa68d5b6ef263f2ea03485f7254e84d99479d0600
+[00:48:44.899] FIXTURE count=2 files=001.png,002.png
+[00:48:44.919] pid=43204
+[00:48:45.672] ASSERT PASS app:window
+[00:48:45.707] READY
+[00:48:45.747] DUMP 01-bookshelf n=8
+[00:48:45.809] SHOT 01-bookshelf OK
+[00:48:46.871] CLICK open-create '+ 新建作品' OK
+[00:48:46.877] ASSERT PASS click:open-create
+[00:48:46.924] DUMP 02-create-dialog n=45
+[00:48:46.951] SHOT 02-create-dialog OK
+[00:48:47.395] SET 作品标题='P19Ac2Book' OK
+[00:48:47.401] ASSERT PASS set:作品标题
+[00:48:48.485] CLICK create-book '创建作品' OK
+[00:48:48.491] ASSERT PASS click:create-book
+[00:48:49.750] DUMP 03-book-created n=54
+[00:48:49.778] SHOT 03-book-created OK
+[00:48:50.820] CLICK open-chapter '+ 新建章节' OK
+[00:48:50.827] ASSERT PASS click:open-chapter
+[00:48:51.690] DUMP 04-chapter-dialog n=62
+[00:48:51.717] SHOT 04-chapter-dialog OK
+[00:48:52.158] SET 章节标题='P19Ac2Ch1' OK
+[00:48:52.165] ASSERT PASS set:章节标题
+[00:48:53.215] CLICK create-chapter '创建章节' OK
+[00:48:53.221] ASSERT PASS click:create-chapter
+[00:48:54.471] DUMP 05-chapter-created n=61
+[00:48:54.507] SHOT 05-chapter-created OK
+[00:48:54.541] ASSERT PASS book:visible
+[00:48:55.593] CLICK open-import '导入' OK
+[00:48:55.599] ASSERT PASS click:open-import
+[00:48:56.455] DUMP 06-import-panel n=74
+[00:48:56.489] SHOT 06-import-panel OK
+[00:48:57.544] CLICK open-file-picker '📄 选择图片 / PDF 文件（可多选）' OK
+[00:48:57.551] ASSERT PASS click:open-file-picker
+[00:49:03.082] PICKER_NAVIGATION dir=C:\Users\49745\AppData\Local\Temp\p19fx\A\
+[00:49:03.112] PICKER_MISSING 001.png
+[00:49:03.119] PICKER_MISSING 002.png
+[00:49:03.124] ASSERT FAIL picker:selected-all (0/2)
+[00:49:03.129] PICKER_VISIBLE_ITEMS=0
+[00:49:03.158] PICKER_CONFIRMED
+[00:49:06.995] IMPORT_REPORT=VISIBLE
+[00:49:06.997] IMPORT_REPORT_HAS 已导入=True
+[00:49:07.003] IMPORT_REPORT_HAS 跳过重复=True
+[00:49:07.009] IMPORT_REPORT_HAS 导入失败=True
+[00:49:07.015] ASSERT PASS import:finished
+[00:49:08.563] DUMP 07-after-import n=61
+[00:49:08.592] SHOT 07-after-import OK
+[00:49:08.649] UI_PAGE_TEXT max=3 raw='☆ P19Ac2Book 页数 3 页 ; 总页数 ; 3 页 ; 导入页面 ; 3 页'
+[00:49:08.779] PAGE_COUNT_DB chapter=P19Ac2Ch1 pages=0 (ui_text=3)
+[00:49:08.785] PAGE_COUNT after_import=0 expected=2
+[00:49:08.790] ASSERT FAIL import:page-count (DB, =expected 2)
+[00:49:09.827] CLICK open-reader '阅读' OK
+[00:49:09.834] ASSERT PASS click:open-reader
+[00:49:11.382] DUMP 08-reader n=35
+[00:49:11.418] SHOT 08-reader OK
+[00:49:11.460] READER_PAGE first=1 total=0 (db)
+[00:49:11.466] ASSERT FAIL reader:total>=2
+[00:49:11.480] READER_NEXT_CAND 'Next page' enabled=True
+[00:49:12.520] CLICK reader-next 'Next page' OK
+[00:49:12.527] ASSERT PASS click:reader-next
+[00:49:12.532] ASSERT PASS reader:next-available
+[00:49:14.123] DUMP 09-reader-after-next n=32
+[00:49:14.158] SHOT 09-reader-after-next OK
+[00:49:14.228] READER_PAGE after_next=-1
+[00:49:14.235] ASSERT FAIL reader:advanced
+[00:49:15.342] CLICK reader-back '← 返回书架' OK
+[00:49:15.348] ASSERT PASS click:reader-back
+[00:49:16.660] DUMP 10-bookshelf-for-selection n=61
+[00:49:16.694] SHOT 10-bookshelf-for-selection OK
+[00:49:18.289] BOOK_SELECTED P19Ac2Book
+[00:49:18.297] ASSERT PASS book:selected
+[00:49:18.392] DUMP 10-book-selected n=61
+[00:49:18.426] SHOT 10-book-selected OK
+[00:49:19.551] CLICK nav-workbench '🛠️ 工作台' OK
+[00:49:19.557] ASSERT PASS click:nav-workbench
+[00:49:21.181] DUMP 11-workbench n=95
+[00:49:21.216] SHOT 11-workbench OK
+[00:49:21.255] WORKBENCH_RUN control='启动' enabled=False
+[00:49:21.299] EXPORT control enabled=False
+[00:49:22.360] CLICK nav-back '📚 书架' OK
+[00:49:22.367] ASSERT PASS click:nav-back
+[00:49:22.459] DUMP 12-bookshelf-back n=61
+[00:49:22.489] SHOT 12-bookshelf-back OK
+[00:49:24.510] closed exit=0
+[00:49:24.516] RUN end checks=22 fails=4

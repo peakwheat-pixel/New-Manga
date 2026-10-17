@@ -1,0 +1,69 @@
+[00:55:41.396] RUN start iso=C:\Users\49745\AppData\Local\Temp\p19v3-c28a5235 outdir=G:\CODEX\New Manga\verification\P19\d-run-20261018-0056
+[00:55:41.427] exe sha256=384a486daee48257c9f7421fa68d5b6ef263f2ea03485f7254e84d99479d0600
+[00:55:41.454] pid=39420
+[00:55:42.193] ASSERT PASS app:window
+[00:55:42.990] READY
+[00:55:43.039] DUMP 01-bookshelf n=37
+[00:55:43.085] SHOT 01-bookshelf OK
+[00:55:44.031] CLICK nav-workbench '🛠️ 工作台' OK en=True
+[00:55:44.037] ASSERT PASS click:nav-workbench
+[00:55:44.101] DUMP 02-workbench n=95
+[00:55:44.136] SHOT 02-workbench OK
+[00:55:45.075] CLICK nav-reader '📖 阅读器' OK en=True
+[00:55:45.081] ASSERT PASS click:nav-reader
+[00:55:45.112] DUMP 03-reader n=30
+[00:55:45.137] SHOT 03-reader OK
+[00:55:46.069] CLICK nav-settings '⚙️ 设置' OK en=True
+[00:55:46.074] ASSERT PASS click:nav-settings
+[00:55:46.120] DUMP 04-settings n=58
+[00:55:46.152] SHOT 04-settings OK
+[00:55:47.079] CLICK cat-provider 'Provider' OK en=True
+[00:55:47.086] ASSERT PASS click:cat-provider
+[00:55:47.133] DUMP 05-provider n=58
+[00:55:47.159] SHOT 05-provider OK
+[00:55:48.095] CLICK open-form '新建 Profile' OK en=True
+[00:55:48.101] ASSERT PASS click:open-form
+[00:55:48.160] DUMP 06-form n=78
+[00:55:48.187] SHOT 06-form OK
+[00:55:48.528] SET provider_id='e2e-provider-a' OK
+[00:55:48.534] ASSERT PASS set:provider_id
+[00:55:48.872] SET display_name='E2E Provider A' OK
+[00:55:48.879] ASSERT PASS set:display_name
+[00:55:49.229] SET endpoint（绝对 HTTP(S)，无 userinfo/query/fragment）='https://api.example.test/v1' OK
+[00:55:49.235] ASSERT PASS set:endpoint（绝对 HTTP(S)，无 userinfo/query/fragment）
+[00:55:49.584] SET model='e2e-model' OK
+[00:55:49.590] ASSERT PASS set:model
+[00:55:49.938] TOGGLE OCR OK state=On
+[00:55:49.944] ASSERT PASS toggle:OCR
+[00:55:49.969] FORM buttons: 📚 书架 | 🛠️ 工作台 | 📖 阅读器 | ⚙️ 设置 | Provider | 网络/代理 | OCR，未开放：等待 section schema 冻结 | 翻译 | 图片修复，未开放：等待 section schema 冻结 | 排版样式，未开放：等待 section schema 冻结 | 模型/GPU，未开放：等待 section schema 冻结 | 任务/并发，未开放：等待 section schema 冻结 | 缓存/Revision，未开放：等待 section schema 冻结 | 回收站，未开放：等待 section schema 冻结 | 备份/恢复，未开放：等待 section schema 冻结 | Plugin/Hooks，未开放：等待 section schema 冻结 | 保存 | 取消 | 设置绑定 (set) | 清除绑定 (clear)
+[00:55:50.902] CLICK submit '保存' OK en=True
+[00:55:50.908] ASSERT PASS click:submit
+[00:55:52.472] DUMP 07-after-submit n=74
+[00:55:52.507] SHOT 07-after-submit OK
+[00:55:52.542] ASSERT PASS submit:profile-visible
+[00:55:53.473] CLICK re-enter-settings '⚙️ 设置' OK en=True
+[00:55:53.480] ASSERT PASS click:re-enter-settings
+[00:55:53.608] PROBE 'OCR' en=False invoke=failed PAGE_CHANGED panes=[]
+[00:55:53.615] ASSERT FAIL disabled-not-invokable:OCR
+[00:55:53.718] PROBE '图片修复' en=False invoke=failed PAGE_CHANGED panes=[]
+[00:55:53.724] ASSERT FAIL disabled-not-invokable:图片修复
+[00:55:53.829] PROBE '排版样式' en=False invoke=failed PAGE_CHANGED panes=[]
+[00:55:53.835] ASSERT FAIL disabled-not-invokable:排版样式
+[00:55:53.942] PROBE '模型/GPU' en=False invoke=failed PAGE_CHANGED panes=[]
+[00:55:53.949] ASSERT FAIL disabled-not-invokable:模型/GPU
+[00:55:54.057] PROBE '任务/并发' en=False invoke=failed PAGE_CHANGED panes=[]
+[00:55:54.063] ASSERT FAIL disabled-not-invokable:任务/并发
+[00:55:54.168] PROBE '缓存/Revision' en=False invoke=failed PAGE_CHANGED panes=[]
+[00:55:54.174] ASSERT FAIL disabled-not-invokable:缓存/Revision
+[00:55:54.276] PROBE '回收站' en=False invoke=failed PAGE_CHANGED panes=[]
+[00:55:54.282] ASSERT FAIL disabled-not-invokable:回收站
+[00:55:54.386] PROBE '备份/恢复' en=False invoke=failed PAGE_CHANGED panes=[]
+[00:55:54.392] ASSERT FAIL disabled-not-invokable:备份/恢复
+[00:55:54.497] PROBE 'Plugin/Hooks' en=False invoke=failed PAGE_CHANGED panes=[]
+[00:55:54.503] ASSERT FAIL disabled-not-invokable:Plugin/Hooks
+[00:55:55.439] CLICK nav-back '📚 书架' OK en=True
+[00:55:55.446] ASSERT PASS click:nav-back
+[00:55:55.482] DUMP 08-bookshelf-back n=37
+[00:55:55.512] SHOT 08-bookshelf-back OK
+[00:55:57.527] closed exit=0
+[00:55:57.534] RUN end checks=24 fails=9

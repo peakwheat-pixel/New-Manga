@@ -1,0 +1,37 @@
+[00:44:13.879] RUN start iso=C:\Users\49745\AppData\Local\Temp\p19-ac2-main-78e887a7 outdir=G:\CODEX\New Manga\verification\P19\ac2-main-20261018-0044
+[00:44:13.915] exe sha256=384a486daee48257c9f7421fa68d5b6ef263f2ea03485f7254e84d99479d0600
+[00:44:13.936] FIXTURE count=0 files=
+[00:44:13.959] pid=3888
+[00:44:14.714] ASSERT PASS app:window
+[00:44:14.767] READY
+[00:44:14.822] DUMP 01-bookshelf n=8
+[00:44:14.881] SHOT 01-bookshelf OK
+[00:44:15.953] CLICK open-create '+ 新建作品' OK
+[00:44:15.960] ASSERT PASS click:open-create
+[00:44:16.003] DUMP 02-create-dialog n=45
+[00:44:16.034] SHOT 02-create-dialog OK
+[00:44:16.471] SET 作品标题='P19Ac2Book' OK
+[00:44:16.478] ASSERT PASS set:作品标题
+[00:44:17.532] CLICK create-book '创建作品' OK
+[00:44:17.539] ASSERT PASS click:create-book
+[00:44:18.797] DUMP 03-book-created n=54
+[00:44:18.825] SHOT 03-book-created OK
+[00:44:19.866] CLICK open-chapter '+ 新建章节' OK
+[00:44:19.874] ASSERT PASS click:open-chapter
+[00:44:20.739] DUMP 04-chapter-dialog n=62
+[00:44:20.767] SHOT 04-chapter-dialog OK
+[00:44:21.213] SET 章节标题='P19Ac2Ch1' OK
+[00:44:21.221] ASSERT PASS set:章节标题
+[00:44:22.270] CLICK create-chapter '创建章节' OK
+[00:44:22.276] ASSERT PASS click:create-chapter
+[00:44:23.541] DUMP 05-chapter-created n=61
+[00:44:23.574] SHOT 05-chapter-created OK
+[00:44:23.640] ASSERT PASS book:visible
+[00:44:24.701] CLICK open-import '导入' OK
+[00:44:24.708] ASSERT PASS click:open-import
+[00:44:25.585] DUMP 06-import-panel n=74
+[00:44:25.627] SHOT 06-import-panel OK
+[00:44:26.662] CLICK open-file-picker '📄 选择图片 / PDF 文件（可多选）' OK
+[00:44:26.671] ASSERT PASS click:open-file-picker
+[00:44:30.279] closed exit=-1
+[00:44:30.285] RUN end checks=10 fails=0
