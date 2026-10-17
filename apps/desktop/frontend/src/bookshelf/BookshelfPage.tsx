@@ -7,6 +7,7 @@ import { BookList } from "./BookList";
 import { BookshelfToolbar } from "./BookshelfToolbar";
 import { EmptyStateBookshelf } from "./EmptyStateBookshelf";
 import { ImportDialog } from "./ImportDialog";
+import { CreateTitleDialog } from "./CreateTitleDialog";
 import { parseSemanticError, type SemanticErrorInfo } from "./error";
 import type { BookshelfFilterState } from "./types";
 import { tokens } from "../theme/tokens";
@@ -50,6 +51,7 @@ export function BookshelfPage({
   // Import dialog state
   const [importDialogOpen, setImportDialogOpen] = useState(false);
   const [importTargetChapterId, setImportTargetChapterId] = useState<string | null>(null);
+  const [createEntity, setCreateEntity] = useState<"book" | "chapter" | null>(null);
 
   const fetchBooks = useCallback(async () => {
     setLoading(true);
@@ -134,6 +136,32 @@ export function BookshelfPage({
     }
   };
 
+  const handleCreateTitle = async (title: string) => {
+    if (createEntity === "book") {
+      try {
+        const created = await activeClient.createBook(title);
+        setBooks((current) => [...current, created]);
+        setSelectedBookId(created.book_id);
+      } catch (error) {
+        await fetchBooks();
+        throw error;
+      }
+      return;
+    }
+
+    if (createEntity === "chapter" && selectedBookId) {
+      const bookId = selectedBookId;
+      try {
+        const created = await activeClient.createChapter(bookId, title);
+        setChapters((current) => [...current, created].sort((a, b) => a.sort_order - b.sort_order));
+        setChapterPageCounts((current) => ({ ...current, [created.chapter_id]: 0 }));
+      } catch (error) {
+        await fetchChaptersForBook(bookId);
+        throw error;
+      }
+    }
+  };
+
   // Filter and sort books in-memory (UI-local)
   const filteredBooks = useMemo(() => {
     let result = [...books];
@@ -187,6 +215,7 @@ export function BookshelfPage({
       <BookshelfToolbar
         filter={filter}
         onFilterChange={handleFilterChange}
+        onCreateBook={() => setCreateEntity("book")}
         onOpenImport={() => handleOpenImport(null)}
       />
 
@@ -296,6 +325,7 @@ export function BookshelfPage({
           {!loading && !errorInfo && books.length === 0 && (
             <EmptyStateBookshelf
               isFiltered={false}
+              onCreateBook={() => setCreateEntity("book")}
               onOpenImport={() => handleOpenImport(null)}
             />
           )}
@@ -343,8 +373,18 @@ export function BookshelfPage({
           onEnterWorkbench={onEnterWorkbench}
           onEnterReader={onEnterReader}
           onOpenImport={handleOpenImport}
+          onCreateChapter={selectedBook ? () => setCreateEntity("chapter") : undefined}
         />
       </div>
+
+      {createEntity && (
+        <CreateTitleDialog
+          key={createEntity}
+          entity={createEntity === "book" ? "作品" : "章节"}
+          onClose={() => setCreateEntity(null)}
+          onSubmit={handleCreateTitle}
+        />
+      )}
 
       {/* 4. Import Dialog Modal (W30 / W4) */}
       <ImportDialog

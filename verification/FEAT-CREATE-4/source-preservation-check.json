@@ -1,0 +1,30 @@
+{
+  "source": "%APPDATA%\\com.newmanga.m2rc1.desktop\\{catalog,data}",
+  "checked_at": "2026-10-17T20:49:23.6413974+08:00",
+  "before": {
+    "catalog": {
+      "files": 1,
+      "bytes": 24576,
+      "tree_sha256": "02991bbbbe53f13a534c66df47c349c5c35f39e8e7afd6fe15988caee4b7366e"
+    },
+    "data": {
+      "files": 2,
+      "bytes": 311297,
+      "tree_sha256": "0519f01368e3bdd45700c455d2619bdbb31ab10b552b0b41b33a710360637453"
+    }
+  },
+  "after": {
+    "catalog": {
+      "files": 1,
+      "bytes": 24576,
+      "tree_sha256": "02991bbbbe53f13a534c66df47c349c5c35f39e8e7afd6fe15988caee4b7366e"
+    },
+    "data": {
+      "files": 2,
+      "bytes": 311297,
+      "tree_sha256": "0519f01368e3bdd45700c455d2619bdbb31ab10b552b0b41b33a710360637453"
+    }
+  },
+  "source_unchanged": true,
+  "user_data_modified": false
+}

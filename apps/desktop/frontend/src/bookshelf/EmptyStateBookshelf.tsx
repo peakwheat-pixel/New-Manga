@@ -2,12 +2,14 @@ import { tokens } from "../theme/tokens";
 
 export interface EmptyStateBookshelfProps {
   isFiltered?: boolean;
+  onCreateBook?: () => void;
   onOpenImport?: () => void;
   onClearFilter?: () => void;
 }
 
 export function EmptyStateBookshelf({
   isFiltered = false,
+  onCreateBook,
   onOpenImport,
   onClearFilter,
 }: EmptyStateBookshelfProps) {
@@ -107,12 +109,11 @@ export function EmptyStateBookshelf({
           导入作品
         </button>
 
-        {/* GAP-G1: Create Book is disabled */}
         <button
           type="button"
           data-testid="empty-new-book-btn"
-          disabled
-          title="新建作品（等待能力接入 GAP-G1）"
+          onClick={onCreateBook}
+          disabled={!onCreateBook}
           style={{
             padding: "8px 18px",
             fontSize: tokens.typography.size.base,
@@ -120,8 +121,7 @@ export function EmptyStateBookshelf({
             color: tokens.color.text.muted,
             border: `1px solid ${tokens.color.border.default}`,
             borderRadius: tokens.radius.button,
-            cursor: "not-allowed",
-            opacity: 0.6,
+            cursor: "pointer",
           }}
         >
           新建作品

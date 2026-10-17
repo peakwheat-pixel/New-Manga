@@ -5,6 +5,8 @@ import {
   LIST_CHAPTERS_COMMAND,
   LIST_CHAPTER_PAGES_COMMAND,
   RESOLVE_PAGE_RESOURCE_COMMAND,
+  LIBRARY_CREATE_BOOK_COMMAND,
+  CREATE_CHAPTER_COMMAND,
 } from "./client";
 import type { BookSummary, PingResult } from "./types";
 
@@ -47,6 +49,52 @@ describe("LibraryClient", () => {
     expect(books[0].book_id).toBe("book-1");
     expect(books[0].title).toBe("Test Manga");
     expect(books[0].page_count).toBe(10);
+  });
+
+  it("uses the frozen book and chapter create commands with closed payloads", async () => {
+    expect(LIBRARY_CREATE_BOOK_COMMAND).toBe("library_create_book");
+    expect(CREATE_CHAPTER_COMMAND).toBe("create_chapter");
+    const createdBook = {
+      book_id: "book-new",
+      title: "新作",
+      original_title: "",
+      is_favorite: false,
+      is_archived: false,
+      page_count: null,
+      created_at: "2026-10-17T00:00:00Z",
+      updated_at: "2026-10-17T00:00:00Z",
+    };
+    const createdChapter = {
+      chapter_id: "chapter-new",
+      title: "第一话",
+      chapter_number: "",
+      sort_order: 1,
+    };
+    const invoke = vi.fn().mockResolvedValueOnce(createdBook).mockResolvedValueOnce(createdChapter);
+    const client = new LibraryClient(invoke);
+
+    await expect(client.createBook("新作")).resolves.toEqual(createdBook);
+    expect(invoke).toHaveBeenNthCalledWith(1, "library_create_book", { payload: { title: "新作" } });
+    await expect(client.createChapter("book-new", "第一话")).resolves.toEqual(createdChapter);
+    expect(invoke).toHaveBeenNthCalledWith(2, "create_chapter", {
+      payload: { book_id: "book-new", title: "第一话" },
+    });
+  });
+
+  it("keeps creation failures on the closed message-key projection", async () => {
+    const invoke = vi.fn().mockRejectedValue({
+      category: "internal",
+      phase: "persistence",
+      action: "retry_after_refresh",
+      message_key: "LIBRARY_WRITE_FAILED",
+      details: { path: "C:\\private\\catalog.sqlite", secret: "token-value" },
+    });
+    const client = new LibraryClient(invoke);
+
+    const failure = await client.createBook("标题").catch((error) => error);
+    expect(failure).toMatchObject({ code: "LIBRARY_WRITE_FAILED", message: "LIBRARY_WRITE_FAILED" });
+    expect(failure.message).not.toContain("private");
+    expect(failure.message).not.toContain("token-value");
   });
 
   it("propagates CORE_UNAVAILABLE as LibraryClientError", async () => {

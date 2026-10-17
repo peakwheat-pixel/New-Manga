@@ -144,14 +144,13 @@ describe("Bookshelf UI - Data Binding & State Matrix (W1, W2, W3, W28, W30)", ()
       expect(emptyState).not.toBeNull();
       expect(container.textContent).toContain("还没有作品");
 
-      // In empty state, import is enabled while new book is disabled (GAP-G1)
+      // Empty-shelf import remains visible while create book is available.
       const importBtn = container.querySelector('[data-testid="empty-import-btn"]') as HTMLButtonElement;
       expect(importBtn).not.toBeNull();
       expect(importBtn.disabled).toBe(false);
 
       const newBookBtn = container.querySelector('[data-testid="empty-new-book-btn"]') as HTMLButtonElement;
-      expect(newBookBtn.disabled).toBe(true);
-      expect(newBookBtn.getAttribute("title")).toContain("GAP-G1");
+      expect(newBookBtn.disabled).toBe(false);
     });
 
     it("renders error card with localized code and retry button on CORE_UNAVAILABLE (W28)", async () => {
@@ -182,20 +181,18 @@ describe("Bookshelf UI - Data Binding & State Matrix (W1, W2, W3, W28, W30)", ()
         root.render(<BookshelfPage client={client} initialBooks={MOCK_BOOKS} />);
       });
 
-      // GAP-G1: Toolbar New Book disabled
+      // Create Book is available from the toolbar.
       const newBookToolbar = container.querySelector('[data-testid="toolbar-new-book-btn"]') as HTMLButtonElement;
-      expect(newBookToolbar.disabled).toBe(true);
-      expect(newBookToolbar.getAttribute("title")).toContain("GAP-G1");
+      expect(newBookToolbar.disabled).toBe(false);
 
       // GAP-G2: Delete book disabled
       const deleteBookBtn = container.querySelector('[data-testid="detail-delete-btn"]') as HTMLButtonElement;
       expect(deleteBookBtn.disabled).toBe(true);
       expect(deleteBookBtn.getAttribute("title")).toContain("GAP-G2");
 
-      // GAP-G4: New chapter disabled
+      // New chapter is available for the selected book.
       const newChapterBtn = container.querySelector('[data-testid="new-chapter-btn"]') as HTMLButtonElement;
-      expect(newChapterBtn.disabled).toBe(true);
-      expect(newChapterBtn.getAttribute("title")).toContain("GAP-G4");
+      expect(newChapterBtn.disabled).toBe(false);
 
       // GAP-G7: Tag management disabled
       const tagsBtn = container.querySelector('[data-testid="detail-tags-btn"]') as HTMLButtonElement;
@@ -456,6 +453,197 @@ describe("Bookshelf UI - Data Binding & State Matrix (W1, W2, W3, W28, W30)", ()
       });
 
       expect(container.querySelector('[data-testid="import-error-banner"]')?.textContent).toContain("CORE_UNAVAILABLE");
+    });
+  });
+
+  describe("AC1–AC4 create workflow", () => {
+    async function submitTitle(title: string) {
+      const input = container.querySelector('[data-testid="create-title-input"]') as HTMLInputElement;
+      await act(async () => {
+        const setter = Object.getOwnPropertyDescriptor(dom.window.HTMLInputElement.prototype, "value")?.set;
+        setter?.call(input, title);
+        input.dispatchEvent(new dom.window.Event("input", { bubbles: true }));
+      });
+      await act(async () => {
+        (container.querySelector('[data-testid="create-title-submit-btn"]') as HTMLButtonElement).click();
+        await new Promise((resolve) => setTimeout(resolve, 0));
+      });
+    }
+
+    it("creates a book from the empty shelf through library_create_book", async () => {
+      const createdBook: BookSummary = {
+        book_id: "book-created",
+        title: "新建作品",
+        original_title: "",
+        is_favorite: false,
+        is_archived: false,
+        page_count: null,
+        created_at: "2026-10-17T00:00:00Z",
+        updated_at: "2026-10-17T00:00:00Z",
+      };
+      const invoke = vi.fn().mockImplementation((command: string) => {
+        if (command === "library_list_books") return Promise.resolve([]);
+        if (command === "library_create_book") return Promise.resolve(createdBook);
+        if (command === "list_chapters") return Promise.resolve({ chapters: [] });
+        if (command === "list_chapter_pages") return Promise.resolve({ pages: [] });
+        return Promise.resolve(null);
+      });
+
+      await act(async () => {
+        root.render(<BookshelfPage client={new LibraryClient(invoke)} />);
+        await new Promise((resolve) => setTimeout(resolve, 0));
+      });
+      const emptyCreate = container.querySelector('[data-testid="empty-new-book-btn"]') as HTMLButtonElement;
+      expect(emptyCreate.disabled).toBe(false);
+      await act(async () => emptyCreate.click());
+      expect(container.querySelector('[data-testid="create-title-dialog"]')).not.toBeNull();
+      expect((container.querySelector('[data-testid="create-title-input"]') as HTMLInputElement).maxLength).toBe(-1);
+
+      await submitTitle("新建作品");
+
+      expect(invoke).toHaveBeenCalledWith("library_create_book", { payload: { title: "新建作品" } });
+      expect(container.querySelector('[data-testid="book-card-book-created"]')?.textContent).toContain("新建作品");
+      expect(container.querySelector('[data-testid="create-title-dialog"]')).toBeNull();
+    });
+
+    it("creates a chapter, exposes reader navigation, and enables import for the target chapter", async () => {
+      const createdChapter: ChapterNavSummary = {
+        chapter_id: "chapter-created",
+        title: "第一话",
+        chapter_number: "",
+        sort_order: 1,
+      };
+      const invoke = vi.fn().mockImplementation((command: string) => {
+        if (command === "list_chapters") return Promise.resolve({ chapters: [] });
+        if (command === "list_chapter_pages") return Promise.resolve({ pages: [] });
+        if (command === "create_chapter") return Promise.resolve(createdChapter);
+        return Promise.resolve(null);
+      });
+      const onEnterReader = vi.fn();
+
+      await act(async () => {
+        root.render(
+          <BookshelfPage
+            client={new LibraryClient(invoke)}
+            initialBooks={[MOCK_BOOKS[0]]}
+            onEnterReader={onEnterReader}
+          />,
+        );
+        await new Promise((resolve) => setTimeout(resolve, 0));
+      });
+      await act(async () => {
+        (container.querySelector('[data-testid="new-chapter-btn"]') as HTMLButtonElement).click();
+      });
+      await submitTitle("第一话");
+
+      expect(invoke).toHaveBeenCalledWith("create_chapter", {
+        payload: { book_id: "book-1", title: "第一话" },
+      });
+      expect(container.querySelector('[data-testid="chapter-item-chapter-created"]')?.textContent).toContain("第一话");
+      await act(async () => {
+        (container.querySelector('[data-testid="chapter-enter-reader-btn-chapter-created"]') as HTMLButtonElement).click();
+      });
+      expect(onEnterReader).toHaveBeenCalledWith("book-1", "chapter-created");
+
+      await act(async () => {
+        (container.querySelector('[data-testid="toolbar-import-btn"]') as HTMLButtonElement).click();
+      });
+      expect(container.querySelector('[data-testid="import-unavailable-notice"]')).toBeNull();
+      const chapterSelect = container.querySelector('[data-testid="import-target-chapter-select"]') as HTMLSelectElement;
+      await act(async () => {
+        const setter = Object.getOwnPropertyDescriptor(dom.window.HTMLSelectElement.prototype, "value")?.set;
+        setter?.call(chapterSelect, "chapter-created");
+        chapterSelect.dispatchEvent(new dom.window.Event("change", { bubbles: true }));
+      });
+      expect((container.querySelector('[data-testid="import-file-btn"]') as HTMLButtonElement).disabled).toBe(false);
+      expect((container.querySelector('[data-testid="import-folder-btn"]') as HTMLButtonElement).disabled).toBe(false);
+    });
+
+    it("renders only the fixed creation error copy when the host rejects with private details", async () => {
+      const invoke = vi.fn().mockImplementation((command: string) => {
+        if (command === "library_create_book") {
+          return Promise.reject({
+            category: "internal",
+            phase: "persistence",
+            action: "retry_after_refresh",
+            message_key: "LIBRARY_WRITE_FAILED",
+            message: "C:\\private\\catalog.sqlite token=secret-value",
+            details: { path: "C:\\private\\catalog.sqlite", secret: "secret-value" },
+          });
+        }
+        if (command === "library_list_books") return Promise.resolve([]);
+        return Promise.resolve(null);
+      });
+
+      await act(async () => root.render(<BookshelfPage client={new LibraryClient(invoke)} initialBooks={[]} />));
+      await act(async () => {
+        (container.querySelector('[data-testid="empty-new-book-btn"]') as HTMLButtonElement).click();
+      });
+      await submitTitle("标题");
+
+      const failure = container.querySelector('[data-testid="create-title-error"]');
+      expect(failure?.textContent).toContain("保存失败");
+      expect(container.textContent).not.toContain("C:\\private");
+      expect(container.textContent).not.toContain("secret-value");
+      expect(container.textContent).not.toContain("catalog.sqlite");
+    });
+
+    it("allows a repeated book title and displays both returned book records", async () => {
+      const repeated: BookSummary = { ...MOCK_BOOKS[0], book_id: "book-duplicate" };
+      const invoke = vi.fn().mockImplementation((command: string) => {
+        if (command === "library_create_book") return Promise.resolve(repeated);
+        if (command === "list_chapters") return Promise.resolve({ chapters: [] });
+        if (command === "list_chapter_pages") return Promise.resolve({ pages: [] });
+        return Promise.resolve(null);
+      });
+
+      await act(async () => root.render(<BookshelfPage client={new LibraryClient(invoke)} initialBooks={[MOCK_BOOKS[0]]} />));
+      await act(async () => {
+        (container.querySelector('[data-testid="toolbar-new-book-btn"]') as HTMLButtonElement).click();
+      });
+      await submitTitle(MOCK_BOOKS[0].title);
+
+      expect(invoke).toHaveBeenCalledWith("library_create_book", {
+        payload: { title: MOCK_BOOKS[0].title },
+      });
+      expect(container.querySelector('[data-testid="book-card-book-1"]')).not.toBeNull();
+      expect(container.querySelector('[data-testid="book-card-book-duplicate"]')).not.toBeNull();
+      expect(container.querySelector('[data-testid="create-title-error"]')).toBeNull();
+    });
+
+    it("allows a repeated chapter title within the selected book", async () => {
+      const duplicateChapter: ChapterNavSummary = {
+        chapter_id: "chapter-duplicate",
+        title: "重复章节",
+        chapter_number: "",
+        sort_order: 2,
+      };
+      const invoke = vi.fn().mockImplementation((command: string) => {
+        if (command === "list_chapters") {
+          return Promise.resolve({
+            chapters: [{ chapter_id: "chapter-existing", title: "重复章节", chapter_number: "", sort_order: 1 }],
+          });
+        }
+        if (command === "list_chapter_pages") return Promise.resolve({ pages: [] });
+        if (command === "create_chapter") return Promise.resolve(duplicateChapter);
+        return Promise.resolve(null);
+      });
+
+      await act(async () => {
+        root.render(<BookshelfPage client={new LibraryClient(invoke)} initialBooks={[MOCK_BOOKS[0]]} />);
+        await new Promise((resolve) => setTimeout(resolve, 0));
+      });
+      await act(async () => {
+        (container.querySelector('[data-testid="new-chapter-btn"]') as HTMLButtonElement).click();
+      });
+      await submitTitle("重复章节");
+
+      expect(invoke).toHaveBeenCalledWith("create_chapter", {
+        payload: { book_id: "book-1", title: "重复章节" },
+      });
+      expect(container.querySelector('[data-testid="chapter-item-chapter-existing"]')?.textContent).toContain("重复章节");
+      expect(container.querySelector('[data-testid="chapter-item-chapter-duplicate"]')?.textContent).toContain("重复章节");
+      expect(container.querySelector('[data-testid="create-title-error"]')).toBeNull();
     });
   });
 

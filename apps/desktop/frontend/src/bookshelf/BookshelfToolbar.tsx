@@ -5,10 +5,11 @@ import { tokens } from "../theme/tokens";
 export interface BookshelfToolbarProps {
   filter: BookshelfFilterState;
   onFilterChange: (update: Partial<BookshelfFilterState>) => void;
+  onCreateBook: () => void;
   onOpenImport: () => void;
 }
 
-export function BookshelfToolbar({ filter, onFilterChange, onOpenImport }: BookshelfToolbarProps) {
+export function BookshelfToolbar({ filter, onFilterChange, onCreateBook, onOpenImport }: BookshelfToolbarProps) {
   const searchInputRef = useRef<HTMLInputElement>(null);
 
   // Keyboard shortcut Ctrl+F to focus search input, Esc to clear
@@ -40,12 +41,10 @@ export function BookshelfToolbar({ filter, onFilterChange, onOpenImport }: Books
     >
       {/* Left operations: New book & Import book */}
       <div style={{ display: "flex", alignItems: "center", gap: tokens.spacing.sm }}>
-        {/* GAP-G1: New Book is disabled */}
         <button
           type="button"
           data-testid="toolbar-new-book-btn"
-          disabled
-          title="新建作品（等待能力接入 GAP-G1）"
+          onClick={onCreateBook}
           style={{
             height: 30,
             padding: "0 10px",
@@ -54,8 +53,7 @@ export function BookshelfToolbar({ filter, onFilterChange, onOpenImport }: Books
             color: tokens.color.text.muted,
             border: `1px solid ${tokens.color.border.default}`,
             borderRadius: tokens.radius.button,
-            cursor: "not-allowed",
-            opacity: 0.6,
+            cursor: "pointer",
           }}
         >
           + 新建作品
