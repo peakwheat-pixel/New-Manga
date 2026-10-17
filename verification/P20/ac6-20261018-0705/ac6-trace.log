@@ -1,0 +1,15 @@
+[07:03:48.900] AC6 start pid=17212 iso=C:\Users\49745\AppData\Local\Temp\p20ac6-fad77230
+[07:03:54.956] ASSERT PASS ac6:window-before-kill
+[07:03:55.083] core_service pid=13208 owned=11
+[07:03:55.088] ASSERT PASS ac6:sidecar-running
+[07:03:55.092] KILL core_service pid=13208 (simulated abnormal exit)
+[07:03:57.112] after_kill window_alive=True main_process_alive=True
+[07:03:57.118] ASSERT PASS ac6:main-window-survives-sidecar-death
+[07:03:57.184] ui_after_kill_elements=29
+[07:03:57.196] ui_error_markers=
+[07:03:57.201] ASSERT FAIL ac6:user-visible-error-indicated
+[07:04:05.289] after_8s core_service_count=0 pids=
+[07:04:05.296] FACT respawned=False
+[07:04:05.304] ASSERT PASS ac6:window-still-alive-after-8s
+[07:04:05.315] app_err_tail=[m2rc1-title] M2-RC1 resource channel runtime / [m2rc1-title] M2-RC1 resource channel runtime / [m2rc1-title] M2-RC1 resource channel runtime
+[07:04:09.405] AC6 END

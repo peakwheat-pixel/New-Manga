@@ -1,0 +1,3 @@
+runner=run-ac6-fault-isolation.ps1
+core_pid=13208
+window_alive_before_kill=True
