@@ -69,22 +69,35 @@ REPRO_RESULT=PASS (the forbidden OS-path echo was reproduced; secret key was dro
 | SEC-FIX-PATH-ECHO-1-E1 | AC1/AC2 Core 投影实现 | `src/bootstrap/core_service.py` | `022f4d73773a2d9bdafa04f16d4cca96af5c37ad` | `d51b60db4cc38ed795502b907789f821bd18d834b8640accbff81ab2680ca80d` | CANONICAL |
 | SEC-FIX-PATH-ECHO-1-E2 | AC3 反例测试 | `tests/core/test_core_service_settings.py` | `022f4d73773a2d9bdafa04f16d4cca96af5c37ad` | `9c39bb81b1317298bafd424e0b62808864848c08c9e1becdf151ee580e8721ee` | CANONICAL |
 | SEC-FIX-PATH-ECHO-1-E3 | AC6 等价复现脚本 | `verification/SEC-FIX-PATH-ECHO-1/repro_settings_path_projection.py` | `022f4d73773a2d9bdafa04f16d4cca96af5c37ad` | `03f20d4cbc42371d3a05533103a965a72c2a9a76a95a76ef4114a46a0592e879` | CANONICAL |
-| SEC-FIX-PATH-ECHO-1-E4 | AC6 基线复现输出 | `verification/SEC-FIX-PATH-ECHO-1/baseline/repro-before.log` | `022f4d73773a2d9bdafa04f16d4cca96af5c37ad` | `f729bd703e6be159fb4fb3cd5dcdf6360199d906929dc1816270d4f5595cabc2` | CANONICAL |
-| SEC-FIX-PATH-ECHO-1-E5 | AC6 修复后复现输出 | `verification/SEC-FIX-PATH-ECHO-1/repro-after.log` | `022f4d73773a2d9bdafa04f16d4cca96af5c37ad` | `017929a35ca5be64fa60a883740199ab9a74d65bb6db3aac9e5522cbbdffe162` | CANONICAL |
-| SEC-FIX-PATH-ECHO-1-E6 | AC4 Core 基线 | `verification/SEC-FIX-PATH-ECHO-1/baseline/core-pytest.log` | `022f4d73773a2d9bdafa04f16d4cca96af5c37ad` | `fddbf18177ba52512bec53ede16c68d8f98e0c567665da0c77641d9d3337a4b6` | CANONICAL |
-| SEC-FIX-PATH-ECHO-1-E7 | AC4 Core 交付 | `verification/SEC-FIX-PATH-ECHO-1/core-pytest.log` | `022f4d73773a2d9bdafa04f16d4cca96af5c37ad` | `3ce8312e896f6846cc6a42b356956e376c195140b8e753ce3ced462ec5034d57` | CANONICAL |
-| SEC-FIX-PATH-ECHO-1-E8 | AC3 修复前反例输出 | `verification/SEC-FIX-PATH-ECHO-1/baseline/counterexample-before.log` | `022f4d73773a2d9bdafa04f16d4cca96af5c37ad` | `80f2cde14ab15db4a7d8934fc1e8241ba9dcc04253a9f1827b63075976dc3421` | CANONICAL |
-| SEC-FIX-PATH-ECHO-1-E9 | AC3 修复后反例输出 | `verification/SEC-FIX-PATH-ECHO-1/counterexample.log` | `022f4d73773a2d9bdafa04f16d4cca96af5c37ad` | `f60baa48e0bf1c0ddf3e4dc789293195d1de2c9d004cbbfa1ba7faaba0fe940d` | CANONICAL |
-| SEC-FIX-PATH-ECHO-1-E10 | AC4 Rust source 基线 | `verification/SEC-FIX-PATH-ECHO-1/baseline/rust-source.log` | `022f4d73773a2d9bdafa04f16d4cca96af5c37ad` | `5554938dfc92fd3d2e156be2f8c1f37bb951f40411d92a1e0400d6bdfb4d835e` | CANONICAL |
-| SEC-FIX-PATH-ECHO-1-E11 | AC4 Rust source 交付 | `verification/SEC-FIX-PATH-ECHO-1/rust-source-tests.log` | `022f4d73773a2d9bdafa04f16d4cca96af5c37ad` | `db5631b8b2b1b6e624b078d9201129baae474b94fb632aa821086afe88b7393f` | CANONICAL |
-| SEC-FIX-PATH-ECHO-1-E12 | AC4 packaged 基线 | `verification/SEC-FIX-PATH-ECHO-1/baseline/rust-packaged.log` | `022f4d73773a2d9bdafa04f16d4cca96af5c37ad` | `b2cf7aefa2f6ab0725450e9b9384e1fb553dee27c0fee3ab4ae29153c078a5bd` | CANONICAL |
-| SEC-FIX-PATH-ECHO-1-E13 | AC4 packaged 交付 | `verification/SEC-FIX-PATH-ECHO-1/rust-packaged-tests.log` | `022f4d73773a2d9bdafa04f16d4cca96af5c37ad` | `8f052ada2948abcd3e58e2510b7c3be4ad72ccfd2f302d9f3b018e7ae7f74aa4` | CANONICAL |
-| SEC-FIX-PATH-ECHO-1-E14 | AC4 前端基线 | `verification/SEC-FIX-PATH-ECHO-1/baseline/frontend-vitest.log` | `022f4d73773a2d9bdafa04f16d4cca96af5c37ad` | `a71a4e888292c9018b2c5ba3c29e38c7fbeb42db7d3cee5f06fa731c39fe2eb0` | CANONICAL |
-| SEC-FIX-PATH-ECHO-1-E15 | AC4 前端交付 | `verification/SEC-FIX-PATH-ECHO-1/frontend-vitest.log` | `022f4d73773a2d9bdafa04f16d4cca96af5c37ad` | `00a9bdeeb3d62d9d5dbc732d93e5e88edeaba92adb6631710e79e6ef54f220f5` | CANONICAL |
+| SEC-FIX-PATH-ECHO-1-E4 | AC6 基线复现输出 | `verification/SEC-FIX-PATH-ECHO-1/baseline/repro-before.log` | `022f4d73773a2d9bdafa04f16d4cca96af5c37ad` | `55422c216533c9b745c03d7a506c684b9d4ba8a41ef368f12c10e9d4c7bca163` | CANONICAL |
+| SEC-FIX-PATH-ECHO-1-E5 | AC6 修复后复现输出 | `verification/SEC-FIX-PATH-ECHO-1/repro-after.log` | `022f4d73773a2d9bdafa04f16d4cca96af5c37ad` | `5088955da6dde1ce63b75383f44c7d46d3d81ee2eb02fb5e10a3787d554cfbac` | CANONICAL |
+| SEC-FIX-PATH-ECHO-1-E6 | AC4 Core 基线 | `verification/SEC-FIX-PATH-ECHO-1/baseline/core-pytest.log` | `022f4d73773a2d9bdafa04f16d4cca96af5c37ad` | `af8a62695fe8ec86c38dd0adb6e17744875be22c63180be619b29948516d81c2` | CANONICAL |
+| SEC-FIX-PATH-ECHO-1-E7 | AC4 Core 交付 | `verification/SEC-FIX-PATH-ECHO-1/core-pytest.log` | `022f4d73773a2d9bdafa04f16d4cca96af5c37ad` | `4d5818eca7d3545b55d511377c2b27db237587750413f172af90b22663a55744` | CANONICAL |
+| SEC-FIX-PATH-ECHO-1-E8 | AC3 修复前反例输出 | `verification/SEC-FIX-PATH-ECHO-1/baseline/counterexample-before.log` | `022f4d73773a2d9bdafa04f16d4cca96af5c37ad` | `0c2328de431b2329f80cc9de5670465dd99ee0f6bbdc4be34471c225e327f3c3` | CANONICAL |
+| SEC-FIX-PATH-ECHO-1-E9 | AC3 修复后反例输出 | `verification/SEC-FIX-PATH-ECHO-1/counterexample.log` | `022f4d73773a2d9bdafa04f16d4cca96af5c37ad` | `5e005d2dd8c2ec3e27767ff704cbe9065a8c05420baa8f3a9ba8b4409f16a3e1` | CANONICAL |
+| SEC-FIX-PATH-ECHO-1-E10 | AC4 Rust source 基线 | `verification/SEC-FIX-PATH-ECHO-1/baseline/rust-source.log` | `022f4d73773a2d9bdafa04f16d4cca96af5c37ad` | `dd0dcaccc678eb2f3872af435013e25942311b0f1457572412d3cf826620f164` | CANONICAL |
+| SEC-FIX-PATH-ECHO-1-E11 | AC4 Rust source 交付 | `verification/SEC-FIX-PATH-ECHO-1/rust-source-tests.log` | `022f4d73773a2d9bdafa04f16d4cca96af5c37ad` | `a1df0678a66abaa03ce336169061b7d33c90a53dcd7d4babfaa8fcad50e54a59` | CANONICAL |
+| SEC-FIX-PATH-ECHO-1-E12 | AC4 packaged 基线 | `verification/SEC-FIX-PATH-ECHO-1/baseline/rust-packaged.log` | `022f4d73773a2d9bdafa04f16d4cca96af5c37ad` | `4cf8e7fb15b8f9b219e7c69077f4fdfe955405eb036fd9ec9ca64b83e9c40042` | CANONICAL |
+| SEC-FIX-PATH-ECHO-1-E13 | AC4 packaged 交付 | `verification/SEC-FIX-PATH-ECHO-1/rust-packaged-tests.log` | `022f4d73773a2d9bdafa04f16d4cca96af5c37ad` | `bb903c9f3e96d7c8b56796c04e33ffde6e11171334780e23886c5e8114bd7e27` | CANONICAL |
+| SEC-FIX-PATH-ECHO-1-E14 | AC4 前端基线 | `verification/SEC-FIX-PATH-ECHO-1/baseline/frontend-vitest.log` | `022f4d73773a2d9bdafa04f16d4cca96af5c37ad` | `eda5f2aa7225156a354588df75b62a4c8ae44d0c1836366e168b650debfaf288` | CANONICAL |
+| SEC-FIX-PATH-ECHO-1-E15 | AC4 前端交付 | `verification/SEC-FIX-PATH-ECHO-1/frontend-vitest.log` | `022f4d73773a2d9bdafa04f16d4cca96af5c37ad` | `3eea9556bcc6e954931c7266c18709e0e6f9806fe374d9d8d93a71d68c2ed24f` | CANONICAL |
 | SEC-FIX-PATH-ECHO-1-E16 | AC1–AC6 汇总 | `verification/SEC-FIX-PATH-ECHO-1/ac-results.md` | `022f4d73773a2d9bdafa04f16d4cca96af5c37ad` | `cb8cf929e5a2c647fde6f864481f9f451636ad3550060a2666bd40b95e6e0083` | CANONICAL |
-| SEC-FIX-PATH-ECHO-1-E17 | AC4 frontend 安装日志 | `verification/SEC-FIX-PATH-ECHO-1/baseline/npm-ci.log` | `022f4d73773a2d9bdafa04f16d4cca96af5c37ad` | `90c81132c43d0d67ca152e30c3b5014093dd2d9641cc22b44ec95b9aefc3f281` | CANONICAL |
-| SEC-FIX-PATH-ECHO-1-E18 | AC4 Rust source 初次阻塞记录 | `verification/SEC-FIX-PATH-ECHO-1/baseline/rust-source-build-blocked.log` | `022f4d73773a2d9bdafa04f16d4cca96af5c37ad` | `93eca7fc7a735acb6adfa8177eec72e2dd31474c3dbc952e57824e2f6825c857` | CANONICAL |
-| SEC-FIX-PATH-ECHO-1-E19 | AC5 Handoff | `doc/handoffs/SEC-FIX-PATH-ECHO-1-c52ce46.md` | `022f4d73773a2d9bdafa04f16d4cca96af5c37ad` | `ecc0d82dfbcae2e0bc2551883b3fb9d6e3c24ba069844f8c345da4b2e51a33ba` | CANONICAL |
+| SEC-FIX-PATH-ECHO-1-E17 | AC4 frontend 安装日志 | `verification/SEC-FIX-PATH-ECHO-1/baseline/npm-ci.log` | `022f4d73773a2d9bdafa04f16d4cca96af5c37ad` | `eef6288e00f4a2b3c8a649994b3333bdf47c96f758dd1632de9eb46c7c71cfe0` | CANONICAL |
+| SEC-FIX-PATH-ECHO-1-E18 | AC4 Rust source 初次阻塞记录 | `verification/SEC-FIX-PATH-ECHO-1/baseline/rust-source-build-blocked.log` | `022f4d73773a2d9bdafa04f16d4cca96af5c37ad` | `fc6cc0413af41e5e14b336873ea718476282d2ecf1dc9066a516989f40cd2962` | CANONICAL |
+| SEC-FIX-PATH-ECHO-1-E19 | AC5 Handoff | `doc/handoffs/SEC-FIX-PATH-ECHO-1-c52ce46.md` | `022f4d73773a2d9bdafa04f16d4cca96af5c37ad` | `29e447a2503c0acb2c2d2a0c0c4615e2b2ce2093c274bf50e518427950b0864a` | CANONICAL |
 
-- Canonical Evidence 状态：`complete`。19/19 条 commit 包含性校验通过；`sha256` 基于本 Task worktree 的磁盘字节。
-- BL-18：Codex 仅完成 Owner 自检；独立 Reviewer 为 DeepSeek Harness，尚未产生或冒名记录 Review。
+- Canonical Evidence 状态：`complete`。19/19 条 commit 包含性校验通过。
+- BL-18：Codex 仅完成 Owner 自检；独立 Reviewer 为 DeepSeek Harness（非作者；`.orchestrator/tasks/SEC-FIX-PATH-ECHO-1-role.json` 证明其非 owner/contributor），Review 见 `verification/SEC-FIX-PATH-ECHO-1/dsh-review-r1.md`（`decision: approved`，`reviewed_head=6f27cf72a`）。
+
+## 证据行尾规范化与 re-pin 记录（Coordinator dsh, epoch 7；用户 2026-10-17 裁决方案 A）
+
+- **背景**：集成后核验发现本 Task 有 4 条 `sha256` 在**主仓 checkout 下不可复现**。根因是证据目录**缺少行尾约定**：`core.autocrlf=true` 使 `git checkout` 把仓库内 LF blob 检出为 CRLF，而 Owner 计算 pin 时用的是 worktree 的 LF 字节。
+- **处置（方案 A：统一 LF）**：
+  1. 新增 `verification/SEC-FIX-PATH-ECHO-1/.gitattributes`（`* text eol=lf`），与同批 Task `P19-AC3-1` 的既有约定一致；
+  2. 对证据目录执行**字节级 CRLF→LF 规范化**（保留 BOM 与其他字节，不改内容语义）；
+  3. Handoff 位于 `doc/handoffs/`（不在证据目录内），故在**根 `.gitattributes`** 追加精确规则 `doc/handoffs/SEC-FIX-PATH-ECHO-1-c52ce46.md text eol=lf`；
+  4. 用脚本从**磁盘实测字节**重算 pin 并回写本表（**未人工转录**）。
+- **受影响 pin（15 条）**：E4–E15、E17、E18、E19。E1/E2 在 `src/`、`tests/`（未规范化），pin 不变；E3/E16 原本即 LF，pin 不变。
+- **E19 附带修正**：原记 `ecc0d82d…` 与磁盘在**两种行尾下都不符**（系 `022f4d737` 改写该 Handoff 后的陈旧 pin），属 **pin 记错**，本次一并修正为实测值 `29e447a2…`。
+- **自校验**：重算脚本二次运行报告 `stale=0`（全部与磁盘一致）。
+- **不变式**：`sha256` 仍按**磁盘字节**计算（BL-16），只是在新增 `.gitattributes` 之后，任何 checkout（含 fresh clone）都得到同一 LF 字节。

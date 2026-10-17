@@ -6,3 +6,8 @@ verification/M2-RC2/review-dsh-import-sha256.txt -text
 
 # M2-SFX-FINETUNE-PREFLIGHT r2: HF upstream README snapshot keeps its native hard-break trailing space (DSH r2 confirmed substantive-free); exempt from whitespace check
 verification/M2-SFX-FINETUNE-PREFLIGHT/raw/** -whitespace
+
+# SEC-FIX-PATH-ECHO-1 (P19 AC2 finding): the Handoff outside the evidence dir is a pinned
+# Canonical Evidence file; pin its line endings so the recorded sha256 is reproducible on
+# any checkout (core.autocrlf=true would otherwise emit CRLF and break the pin).
+doc/handoffs/SEC-FIX-PATH-ECHO-1-c52ce46.md text eol=lf

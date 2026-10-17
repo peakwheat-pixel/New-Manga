@@ -60,3 +60,15 @@ decision: approved
 - 集成要求：`integration_commit` 取分支 tip `6f27cf72a`；合并后**在主仓复跑 Core pytest 必须得 536**（若得 535 说明测试未随合并进入，须停下核查）。
 - 剩余风险：F2（未来 path 类设置分区的回填语义）、F3（非 settings 命令的 request_id 路径回显）。
 - 复审规则：head 变更或出现新 Review 后本文件自动转为历史记录，不得覆盖或继续当作当前批准。
+
+## Addendum 1（2026-10-17，集成后核验；Reviewer=dsh）
+
+- **集成结果**：本分支已合并入 main（merge commit `06fb49f83…`）。**主仓**复跑 `python -m pytest tests/core -q -p no:cacheprovider` = **`536 passed, 1 warning` / EXIT 0**，与本 Review 的验收口径（536，非 535）一致 ✓。
+- **证据可复现性修正（用户 2026-10-17 裁决"方案 A：统一 LF"）**：集成后核验发现本 Task 有 **4 条 `sha256` 在主仓 checkout 下不可复现**（根因：证据目录缺少行尾约定，`core.autocrlf=true` 使 checkout 产出 CRLF 而 Owner 的 pin 是 LF 字节）。处置：
+  1. 新增 `verification/SEC-FIX-PATH-ECHO-1/.gitattributes`（`* text eol=lf`）；
+  2. 证据目录**字节级 CRLF→LF 规范化**（不改内容语义）；
+  3. 根 `.gitattributes` 追加 `doc/handoffs/SEC-FIX-PATH-ECHO-1-c52ce46.md text eol=lf`；
+  4. 脚本从磁盘实测重算 pin 并回写 Task 表（未人工转录），二次自校验 `stale=0`。
+- **受影响的 pin**：E4–E15、E17、E18、E19（共 15 条）。**AC1–AC6 的结论与证据内容均未改变**，变化仅为行尾字节；E1/E2/E3/E16 的 pin 不变。
+- **附带修正（F1 的延伸）**：E19 原 pin `ecc0d82d…` 与磁盘在两种行尾下都不符（属 stale/记错 pin），已修正为 `29e447a2…`。
+- **本 Addendum 不改变 `decision: approved` 与 `reviewed_head`**；它记录的是集成后核验与证据字节规范化，不构成新的实现审查。
