@@ -3,7 +3,7 @@ id: FEAT-CREATE-1
 title: 创建作品/章节能力（1/4）——契约冻结 CreateBook / CreateChapter
 kind: design
 governance_version: 2
-status: in_progress
+status: done
 approval: user_ruling_20261017_A1_project_create_book_feature
 suggested_owner: Codex
 owner: codex
