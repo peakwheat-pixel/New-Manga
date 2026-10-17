@@ -115,6 +115,7 @@ from application.editing.errors import (
 from application.importing.documents.ports import DocumentDecodeError
 from application.importing.images.ports import DecodedImage, ImportSource
 from application.importing.images.service import DuplicatePolicy
+from application.library.errors import BookNotFound
 from application.resource_channel.dto import TypedResourceChannelError
 from application.settings.errors import BindingValidationError
 from application.export import ExportFormat, ExportPage, ExportRequest, P16ExportRuntime, StalePolicy
@@ -187,6 +188,12 @@ PROTOCOL_MAJOR = 2
 # surface at 2.3; the dispatcher projects minor 7 only for the new P15 wire.
 PROTOCOL_MINOR = 3
 _P15_PROTOCOL_MINOR = 7
+_CREATE_PROTOCOL_MINOR = 8
+_CREATE_COMMANDS = frozenset({"CreateBook", "CreateChapter"})
+_CREATE_FIELDS = {
+    "CreateBook": (("title", True),),
+    "CreateChapter": (("book_id", True), ("title", True), ("chapter_number", False)),
+}
 # HOST-ISSUER-1-C1 rev 2.3 adds an independent host-owned stdio control envelope.
 _HOST_CONTROL_COMMANDS = frozenset({
     "OpenHostSession", "RegisterImportSource", "RevokeImportSource",
@@ -644,6 +651,29 @@ class BookSummaryDto:
     updated_at: str
 
 
+def _create_validation_details(command: str, payload: Any) -> list[dict[str, str]]:
+    if not isinstance(payload, dict):
+        return [{"field": "$", "issue": "wrong_type"}]
+    fields = dict(_CREATE_FIELDS[command])
+    issues: list[dict[str, str]] = []
+    for field, value in payload.items():
+        if field not in fields:
+            issues.append({"field": "$", "issue": "unknown_field"})
+        elif field in {"title", "book_id"}:
+            if not isinstance(value, str):
+                issues.append({"field": field, "issue": "wrong_type"})
+            elif not value.strip():
+                issues.append({"field": field, "issue": "blank"})
+        elif not isinstance(value, str):
+            issues.append({"field": field, "issue": "wrong_type"})
+    issues.extend(
+        {"field": field, "issue": "required"}
+        for field, required in _CREATE_FIELDS[command]
+        if required and field not in payload
+    )
+    return issues
+
+
 class CoreServiceServer:
     """Stdio JSON-lines RPC server for the production Core."""
 
@@ -974,6 +1004,32 @@ class CoreServiceServer:
             )
             summaries.append(asdict(dto))
         return summaries
+
+    def handle_create_book(self, payload: dict[str, Any]) -> dict[str, Any]:
+        book = self._core.library.create_book(payload["title"])
+        return asdict(BookSummaryDto(
+            book_id=book.book_id,
+            title=book.title,
+            original_title=book.original_title,
+            is_favorite=book.is_favorite,
+            is_archived=book.is_archived,
+            page_count=None,
+            created_at=book.created_at,
+            updated_at=book.updated_at,
+        ))
+
+    def handle_create_chapter(self, payload: dict[str, Any]) -> dict[str, Any]:
+        chapter = self._core.library.create_chapter(
+            payload["book_id"],
+            payload["title"],
+            chapter_number=payload.get("chapter_number", ""),
+        )
+        return {
+            "chapter_id": chapter.chapter_id,
+            "title": chapter.title,
+            "chapter_number": chapter.chapter_number,
+            "sort_order": chapter.sort_order,
+        }
 
     def _fetch_page_counts(self) -> dict[str, int]:
         """Read-only query calculating valid non-deleted page counts per book."""
@@ -2563,6 +2619,63 @@ class CoreServiceServer:
             and not isinstance(version.get("major"), bool)
             and version.get("major") == PROTOCOL_MAJOR
         )
+        if command in _CREATE_COMMANDS:
+            result = None
+            error = None
+            if protocol != PROTOCOL_NAME or not is_valid_version:
+                error = {
+                    "code": "PROTOCOL_VERSION_UNSUPPORTED",
+                    "category": "validation",
+                    "retryable": False,
+                }
+            elif type(version.get("minor")) is not int or version["minor"] != _CREATE_PROTOCOL_MINOR:
+                error = {
+                    "code": "INVALID_REQUEST",
+                    "category": "validation",
+                    "retryable": False,
+                }
+            else:
+                details = _create_validation_details(command, raw_payload)
+                if details:
+                    error = {
+                        "code": "INVALID_REQUEST",
+                        "category": "validation",
+                        "retryable": False,
+                        "details": details,
+                    }
+                else:
+                    try:
+                        result = (
+                            self.handle_create_book(raw_payload)
+                            if command == "CreateBook"
+                            else self.handle_create_chapter(raw_payload)
+                        )
+                    except BookNotFound:
+                        error = {
+                            "code": "TARGET_NOT_FOUND",
+                            "category": "not_found",
+                            "retryable": False,
+                        }
+                    except sqlite3.Error:
+                        error = {
+                            "code": "LIBRARY_WRITE_FAILED",
+                            "category": "internal",
+                            "retryable": "unknown",
+                        }
+                    except Exception:
+                        error = {
+                            "code": "UNKNOWN",
+                            "category": "unknown",
+                            "retryable": "unknown",
+                        }
+            return ({
+                "protocol": PROTOCOL_NAME,
+                "version": {"major": PROTOCOL_MAJOR, "minor": _CREATE_PROTOCOL_MINOR},
+                "request_id": request_id if isinstance(request_id, str) else None,
+                "result": result,
+                "error": error,
+            }, False)
+
         if protocol != PROTOCOL_NAME or not is_valid_version:
             return (
                 {
@@ -3254,11 +3367,12 @@ class CoreServiceServer:
         requested_minor = version.get("minor") if isinstance(version, dict) else None
         command = request.get("command")
         response, should_exit = self._dispatch_request(raw_line)
-        response_minor = (
-            _P15_PROTOCOL_MINOR
-            if command in _P15_SETTINGS_COMMANDS or requested_minor == _P15_PROTOCOL_MINOR
-            else PROTOCOL_MINOR
-        )
+        if command in _CREATE_COMMANDS:
+            response_minor = _CREATE_PROTOCOL_MINOR
+        elif command in _P15_SETTINGS_COMMANDS or requested_minor == _P15_PROTOCOL_MINOR:
+            response_minor = _P15_PROTOCOL_MINOR
+        else:
+            response_minor = PROTOCOL_MINOR
         response["version"] = {"major": PROTOCOL_MAJOR, "minor": response_minor}
         result = response.get("result")
         if isinstance(result, dict) and isinstance(result.get("protocol_version"), dict):
