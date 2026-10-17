@@ -12,5 +12,5 @@ tests/core/test_rc4_stdio_render_preview.py::test_production_stdio_decodes_nmfr_
     for px in rendered.crop((20, 20, 150, 120)).convert("RGB").getdata()
 
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
-536 passed, 1 warning in 40.24s
+536 passed, 1 warning in 39.15s
 EXIT_CODE=0

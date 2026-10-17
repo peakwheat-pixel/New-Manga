@@ -34,10 +34,10 @@ REPRO_RESULT=PASS (the forbidden OS-path echo was reproduced; secret key was dro
 
 ## Acceptance Criteria
 - [x] **AC1**：Core 响应投影对路径型值脱敏，不回显绝对路径、盘符、UNC 或用户目录片段。
-- [x] **AC2**：请求校验、写入验证和协议版本提前拒绝的错误响应均不回显路径片段；路径型 `request_id` 与验证消息封闭投影。
-- [x] **AC3 反例测试**：合成绝对路径覆盖 `settings_get` 与 `settings_update_section`、13 个 section、OS 路径形式、路径字段、section key、request ID、非法协议版本和错误。
+- [x] **AC2**：请求校验、写入验证、协议版本提前拒绝和错误 channel 拒绝的响应均不回显路径片段；路径型 `request_id` 与验证消息封闭投影。
+- [x] **AC3 反例测试**：合成绝对路径覆盖 `settings_get` 与 `settings_update_section`、13 个 section、OS 路径形式、路径字段、section key、request ID、非法协议版本、错误 channel 和错误。
 - [x] **AC4 不回归**：Core、Rust source、packaged、前端均与本 worktree 基线不回归；前端 Task 记录 278，但基线实测为 285，修复前后均 285。
-- [ ] **AC5 交付**：实现 commit 与 Handoff 已固定；Canonical Evidence pins 将针对最终 delivery head 更新，完成前不交 Reviewer。
+- [ ] **AC5 交付**：实现 commit 与 Handoff 已固定；最终测试和 Handoff 更新提交后重新 pin Canonical Evidence，再置为 `complete`。
 - [x] **AC6**：等价复现脚本修复前后运行，修复后 `path_value_returned=false`。
 
 ## 允许 / 禁止
@@ -62,4 +62,4 @@ REPRO_RESULT=PASS (the forbidden OS-path echo was reproduced; secret key was dro
 
 ## Canonical Evidence
 
-Evidence pins are being regenerated against the final delivery commit and Handoff commit. Keep this Task in in_review and do not route it to the Reviewer until the final pin table is complete.
+最终反例日志与 Handoff 已更新；Canonical Evidence pins 将在本轮提交后按最终磁盘字节重新计算。完成前不交 Reviewer。

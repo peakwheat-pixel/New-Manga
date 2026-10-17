@@ -54,14 +54,18 @@ def _request(
     payload: dict,
     request_id: str = "req-settings-1",
     protocol: str = "new-manga.core",
+    channel: str | None = None,
 ) -> dict:
-    line = json.dumps({
+    request = {
         "protocol": protocol,
         "version": {"major": PROTOCOL_MAJOR, "minor": PROTOCOL_MINOR},
         "request_id": request_id,
         "command": command,
         "payload": payload,
-    })
+    }
+    if channel is not None:
+        request["channel"] = channel
+    line = json.dumps(request)
     response, exit_flag = server.dispatch_request(line)
     assert not exit_flag
     return response
@@ -246,6 +250,16 @@ def test_settings_commands_redact_paths_in_every_section(server) -> None:
         )
         assert protocol_error["error"]["code"] == "PROTOCOL_VERSION_UNSUPPORTED"
         assert_no_paths(protocol_error)
+
+        host_channel_error = _request(
+            server,
+            command,
+            payload,
+            request_id=windows_path,
+            channel="host-control",
+        )
+        assert host_channel_error["error"]["code"] == "INVALID_REQUEST"
+        assert_no_paths(host_channel_error)
 
 
 def test_settings_update_section_sfx_without_policy_key_passes_through(server) -> None:

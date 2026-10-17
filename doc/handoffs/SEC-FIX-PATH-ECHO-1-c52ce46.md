@@ -18,8 +18,8 @@ status: in_review
 | AC | 结果 | 证据 |
 |---|---|---|
 | AC1 | PASS | 响应中的 Windows、UNC、POSIX 路径、用户目录片段、路径类字段值、路径型 section key 与路径型 request ID 已遮蔽。 |
-| AC2 | PASS | 非法 `sfx.policy`、非法 section 与非法 protocol 的错误响应均不包含合成路径；两命令的 protocol 错误也遮蔽路径型 `request_id`。 |
-| AC3 | PASS | `tests/core/test_core_service_settings.py::test_settings_commands_redact_paths_in_every_section` 覆盖 13 个 section 的读写、全量读取、路径形式、相对 `*_path`、动态键、request ID、非法协议版本、错误及存储值保留。 |
+| AC2 | PASS | 非法 `sfx.policy`、非法 section、非法 protocol 与错误 channel 的错误响应均不包含合成路径；两命令也遮蔽各错误路径中的路径型 `request_id`。 |
+| AC3 | PASS | `tests/core/test_core_service_settings.py::test_settings_commands_redact_paths_in_every_section` 覆盖 13 个 section 的读写、全量读取、路径形式、相对 `*_path`、动态键、request ID、非法协议版本、错误 channel、错误及存储值保留。 |
 | AC4 | PASS（按实际基线对比） | Core 535→536 passed；Rust source 107/0/1→107/0/1；packaged 12/0→12/0；Frontend 285/0→285/0。Task 记载前端 278，但同一基线实测 285，修复前后没有回归。 |
 | AC5 | PASS | 本 Handoff 与验证日志已固定；Task Canonical Evidence pin 在后续纯文档提交收尾并在交 Reviewer 前完成；Task 状态为 `in_review`。 |
 | AC6 | PASS | 等价复现脚本修复前 `path_value_returned=true`，修复后 `false`；两个输出均归档。 |
@@ -28,7 +28,7 @@ status: in_review
 
 | AC/场景 | 实际命令/步骤 | 环境与被测 commit | 结果 | 日志/产物 |
 |---|---|---|---|---|
-| AC3 反例 | `python -m pytest tests/core/test_core_service_settings.py::test_settings_commands_redact_paths_in_every_section -q -p no:cacheprovider` | Python 3.14.6；修复提交 | 1 passed | `verification/SEC-FIX-PATH-ECHO-1/counterexample.log` |
+| AC3 反例 | `python -m pytest tests/core/test_core_service_settings.py::test_settings_commands_redact_paths_in_every_section -q -p no:cacheprovider` | Python 3.14.6；最终 Core delivery head | 1 passed | `verification/SEC-FIX-PATH-ECHO-1/counterexample.log` |
 | AC6 修复前复现 | `python verification/SEC-FIX-PATH-ECHO-1/repro_settings_path_projection.py` | 基线 `f4bbc59c9e5cf9864ab0ab0e97277b826b9a0a5f`；测试退出码 1 为预期缺陷证据 | `path_value_returned=true` | `verification/SEC-FIX-PATH-ECHO-1/baseline/repro-before.log` |
 | AC6 修复后复现 | 同上 | `c52ce4695802a06fde8f4e08f2d96a8cecfd855d` | `path_value_returned=false`，退出码 0 | `verification/SEC-FIX-PATH-ECHO-1/repro-after.log` |
 | AC4 Core | `python -m pytest tests/core -q -p no:cacheprovider` | Python 3.14.6；基线 / 修复提交 | 535 / 536 passed，0 skipped | `baseline/core-pytest.log`、`core-pytest.log` |
@@ -77,7 +77,7 @@ Task 指定的主仓只读源文件 `verification/P19-AC3-1/repro_settings_path_
 - 验证命令、环境与完成 Gate：复跑 targeted pytest 与等价 repro；检查 Task Canonical Evidence 所列 `git cat-file -e <commit>:<path>` 和 `Get-FileHash -Algorithm SHA256`；仅在无未解决 finding 且所有 pin/复现输出匹配时标记 approved。
 - 可直接转发给 Agent 的指令：
 
-  > 请对 Task `SEC-FIX-PATH-ECHO-1` 做独立只读 Review。仓库 `G:/CODEX/New Manga`，分支 `codex/SEC-FIX-PATH-ECHO-1`，worktree `G:/CODEX/New Manga.workspace/worktrees/SEC-FIX-PATH-ECHO-1`；固定 base `f4bbc59c9e5cf9864ab0ab0e97277b826b9a0a5f`、实现 head `c52ce4695802a06fde8f4e08f2d96a8cecfd855d`。核对 `src/bootstrap/core_service.py` 的 Core 投影覆盖成功和错误响应、协议校验前 request ID 投影、读写全量/分节，核对 host 透传路径，审阅 `tests/core/test_core_service_settings.py` 反例及 `verification/SEC-FIX-PATH-ECHO-1/` 中复现和四套件日志、Task Canonical Evidence 的磁盘 SHA 与树对象。按 `doc/templates/REVIEW.md` 写报告，只能写 `verification/SEC-FIX-PATH-ECHO-1/`；不要改实现、契约、Schema、依赖、STATUS 或 PLAN。复跑 targeted pytest 和等价复现，记录固定 reviewed_head、命令、结果及 findings；无未解决问题且 pin 一致时才建议 `approved`。
+  > 请对 Task `SEC-FIX-PATH-ECHO-1` 做独立只读 Review。仓库 `G:/CODEX/New Manga`，分支 `codex/SEC-FIX-PATH-ECHO-1`，worktree `G:/CODEX/New Manga.workspace/worktrees/SEC-FIX-PATH-ECHO-1`；固定 base `f4bbc59c9e5cf9864ab0ab0e97277b826b9a0a5f`、实现 head `c52ce4695802a06fde8f4e08f2d96a8cecfd855d`。核对 `src/bootstrap/core_service.py` 的 Core 投影覆盖成功和错误响应、协议校验前 request ID 投影、读写全量/分节，核对 host 透传路径，审阅 `tests/core/test_core_service_settings.py` 对非法协议与错误 channel 的反例及 `verification/SEC-FIX-PATH-ECHO-1/` 中复现和四套件日志、Task Canonical Evidence 的磁盘 SHA 与树对象。按 `doc/templates/REVIEW.md` 写报告，只能写 `verification/SEC-FIX-PATH-ECHO-1/`；不要改实现、契约、Schema、依赖、STATUS 或 PLAN。复跑 targeted pytest 和等价复现，记录固定 reviewed_head、命令、结果及 findings；无未解决问题且 pin 一致时才建议 `approved`。
 
 ## 风险与遗留
 
