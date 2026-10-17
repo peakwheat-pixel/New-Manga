@@ -124,7 +124,7 @@ def test_dispatch_pure_functions(tmp_path: Path) -> None:
             "protocol": PROTOCOL_NAME,
             "version": {"major": 2, "minor": 0},
             "request_id": "req-3",
-            "command": "CreateBook",
+            "command": "UnknownOperation",
             "payload": {},
         })
         res, exit_flag = server.dispatch_request(unknown_cmd_req)
