@@ -1,0 +1,14 @@
+=== AC1 Probe: cargo tauri build ===
+Started at: 2026-10-18T06:24:34.1463246+08:00
+Working directory: G:\CODEX\New Manga\apps\desktop\src-tauri
+Command: cargo tauri build
+----------------------------------------
+error: no such command: `tauri`
+
+help: a command with a similar name exists: `miri`
+
+help: view all installed commands with `cargo --list`
+help: find a package to install `tauri` with `cargo search cargo-tauri`
+----------------------------------------
+Exited at: 2026-10-18T06:24:34.2668368+08:00
+Exit code: 101

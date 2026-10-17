@@ -1,0 +1,15 @@
+[06:36:40.966] SMOKE start exe=G:\CODEX\New Manga\apps\desktop\src-tauri\target\debug\m2rc1-desktop.exe iso=C:\Users\49745\AppData\Local\Temp\p19-smoke-501f5801
+[06:36:40.990] EXE_SHA256=0fe71566f40a7ebf051b7f35b57eea73af3d697a393c9645bd05e816f5724df5
+[06:36:41.758] SMOKE window_found=True pid=13244 exited=False
+[06:36:41.768] ASSERT PASS smoke:window-present
+[06:36:41.879] SHOT 00-launched OK
+[06:36:43.032] SMOKE_PAGE '📚 书架' reached
+[06:36:43.038] ASSERT PASS smoke:page:📚 书架
+[06:36:44.175] SMOKE_PAGE '🛠️ 工作台' reached
+[06:36:44.181] ASSERT PASS smoke:page:🛠️ 工作台
+[06:36:45.309] SMOKE_PAGE '📖 阅读器' reached
+[06:36:45.316] ASSERT PASS smoke:page:📖 阅读器
+[06:36:46.463] SMOKE_PAGE '⚙️ 设置' reached
+[06:36:46.469] ASSERT PASS smoke:page:⚙️ 设置
+[06:36:46.560] SHOT 01-four-pages OK
+[06:36:48.582] END checks=5 fails=0

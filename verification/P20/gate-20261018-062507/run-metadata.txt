@@ -1,0 +1,13 @@
+runner=rebuild-and-verify.ps1
+started_local=2026-10-18T06:25:07.9834314+08:00
+outdir=G:\CODEX\New Manga\verification\P20\gate-20261018-062507
+frontend_build_exit=0
+sidecar_build_exit=0
+cargo_build_exit=0
+bundle_sha256=cd8dcc5e6de568690694125d68162784c6a8427e6758c228080396b9599c98f1
+resource_sha256=cd8dcc5e6de568690694125d68162784c6a8427e6758c228080396b9599c98f1
+bundle_equals_resource=True
+smoke_window=False
+checks=5
+fails=1
+exit_code=1

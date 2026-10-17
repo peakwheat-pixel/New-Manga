@@ -1,0 +1,15 @@
+[06:25:07.972] START outdir=G:\CODEX\New Manga\verification\P20\gate-20261018-062507 pyinstaller_cache=C:\Users\49745\AppData\Local\Temp\newmanga-pyinstaller-cache
+[06:25:11.295] frontend-npm-build exit_code=0  log=G:\CODEX\New Manga\verification\P20\gate-20261018-062507\frontend-npm-build.log
+[06:25:11.305] ASSERT PASS frontend:npm-run-build
+[06:31:35.018] sidecar-build exit_code=0  log=G:\CODEX\New Manga\verification\P20\gate-20261018-062507\sidecar-build.log
+[06:31:35.018] ASSERT PASS sidecar:build
+[06:31:42.471] cargo-build exit_code=0  log=G:\CODEX\New Manga\verification\P20\gate-20261018-062507\cargo-build.log
+[06:31:42.476] ASSERT PASS cargo:build
+[06:31:42.733] bundle_sha256=cd8dcc5e6de568690694125d68162784c6a8427e6758c228080396b9599c98f1
+[06:31:42.738] resource_sha256=cd8dcc5e6de568690694125d68162784c6a8427e6758c228080396b9599c98f1
+[06:31:42.744] ASSERT PASS gate:bundle-equals-resource-sha256
+[06:31:43.089] SMOKE pid=31852 iso=C:\Users\49745\AppData\Local\Temp\p19-smoke-15280b11
+[06:31:44.536] SMOKE early exit=101
+[06:31:44.541] SMOKE window_found=False exit=101
+[06:31:44.546] ASSERT FAIL smoke:window-present
+[06:31:44.553] END checks=5 fails=1 exit=1
