@@ -2,90 +2,88 @@
 task_id: P20-CLOSE-BOUND-HARDEN-1
 author: Antigravity
 recipient: Codex
-base_commit: 01129315100928751546c9608456868f5085fa8c
-delivery_head: 3e8f85a1221e2e0ce98c25be8d150a932cf27580
+base_commit: a04e4ea78d5b33a0f91efcdc06b396391c4b165e
+delivery_head: ed737b5d262d6f7d7b07d8b70900d6af71c11b3c
 status: ready_for_review
 ---
 
-# Handoff：P20-CLOSE-BOUND-HARDEN-1
+# Handoff：P20-CLOSE-BOUND-HARDEN-1（第一轮返修）
 
 ## 交付结果
 
-本任务针对 Codex Review R6 §7 提出的 5 项未闭合点（CBH-01 ~ CBH-05）和 AC1 ~ AC8 验收标准实施了彻底加固：
+本轮返修针对 Codex Review R1（`verification/P20-CLOSE-BOUND-HARDEN-1/codex-review-r1.md`）提出的 4 项 Finding（CBH-R1-01 ~ CBH-R1-04）及元数据要求实施了彻底加固与闭环：
 
-1. **CBH-01（P1）→ AC3 + AC4**：
-   - 彻底禁止 deadline 到期后的任何清理动作：`child-reap-fallback` 与 `pending-drain-fallback` 启动前与循环中严格检查 deadline，到期后严禁调用 `child.kill()` 或 `child.try_wait()`。
-   - `StdioLibraryChannel` 保存原始 OS 管道句柄并实现 `cancel_active_pipes()`，在等待 reader/writer 线程前调用 Windows `CancelIoEx` 取消挂起 I/O，确保阻塞在读写的 worker 接收到管道破裂并正常退出。
-   - 引入 `ThreadFinishedGuard`，仅在 worker 局部变量和流完全析构后置位 `finished = true`；**仅对确认已结束的线程调用 `join()`**，未确认 finished 严禁 `join()`。
-   - `run_taskkill_bounded` 捕获 `child.kill()` 返回值，并在 taskkill reaper、reader reaper、writer reaper 轮询中将 sleep 与错误锁等待时间全部纳入 200 ms 剩余预算截断，绝不跨越 200 ms。
-   - 新增 4 个针对永久阻塞 reader/writer、taskkill 失败、post-deadline 清理禁止的故障注入单元测试。
+1. **CBH-R1-01（P1 / 闭环）—— Windows 同步 Pipe 取消与生命周期**：
+   - **双重可验证取消与返回值检查**：实现统一封装 `cancel_worker_io(pipe_handle, thread_handle) -> PipeCancellationReport`，同时调用 `CancelIoEx`（解除阻塞在 pipe 的 I/O）与 `CancelSynchronousIo`（解除 worker 线程阻塞的同步系统调用），严密检查返回值与错误码并记录于报告。
+   - **Worker 真实线程句柄持有**：`StdioLibraryChannel::adopt_child` 在 reader 和 writer 线程启动时通过 Windows API `DuplicateHandle` 获得对应 worker 线程真实有效句柄，存储于原子变量，在 Drop 时安全 `CloseHandle`。
+   - **未收割线程追踪防丢弃**：reader reaper 与 writer reaper 在 200 ms 超时未结束时，将 JoinHandle 存入静态追踪列表 `UNREAPED_WORKER_HANDLES`，彻底消除静默丢弃 `JoinHandle`。
+   - **真实系统调用阻塞测试**：彻底删除 `TEST_MOCK_READER_BLOCKED`、`TEST_MOCK_WRITER_BLOCKED` 及手动 sleep 钩子。新增真实阻塞在系统调用的单元测试：`ac4_cancel_pipe_io_returns_canceled_on_blocked_pipe_read`、`ac4_cancel_pipe_io_returns_canceled_on_blocked_pipe_write`、`ac4_fault_injection_blocked_reader_worker_bounds_and_cancels`、`ac4_fault_injection_blocked_writer_worker_bounds_and_cleans_up`，证明 worker 在有界时间内安全退出。
+   - **句柄生命周期防串扰**：reader/writer 退出时采用 RAII 清理 guard 自动清零 handle，在取消前严格检查 worker finished 状态，杜绝由于 OS 句柄重用而导致并发测试受到串扰。
 
-2. **CBH-02（P1）→ AC1 + AC2 + AC5**：
-   - 为 deadline CAS 建立硬重试上限 `MAX_DEADLINE_CAS_RETRIES = 32`，防止高并发无界自旋。
-   - 建立单调性与零/过期预算保护：`encode_deadline` / `tighter_encoded_deadline` / `decode_deadline` 将 0 与已过期预算绝对编码为 1（0 ms 剩余），绝不映射为未来预算；新 deadline 只能收窄已有 deadline。
-   - 逐调用点审计与 240 ms 会话包络纠正：更正原 R6 审计表第 4 项误记为 80 ms 的表述（实际传参为 `session_timeout` ≤ 240 ms）。
-   - **禁止继续引用 2370 ms 作为全路径 WCET**：重构 WCET 为双层闭式模型（软件受控超时包络 $\le 2400\,\text{ms}$ + 操作系统内核系统调用边界），并将系统调用（`Command::spawn`、`child.kill`、6 次 `thread::Builder::spawn`、条件 `join`）显式列为物理 Limitation，提供 600 ms 的安全裕度。
+2. **CBH-R1-02（P2 / 闭环）—— Deadline CAS Monotonicity & Interim Expiration**：
+   - `library_bridge.rs` 中 `register_atomic_deadline` 在 CAS 成功（或选定 tighter 值）后，立即比较 candidate deadline 与 `Instant::now()` 及 `created_at`。若线程在编码后被挂起导致 deadline 已过期，则通过单调原子操作以 sentinel 1 写入，并返回零预算（0 ms）。
+   - 增加可控暂停测试钩子 `TEST_BEFORE_DEADLINE_CAS_HOOK`，并编写单元测试 `ac1_deadline_cas_expired_during_pause_writes_sentinel_1_and_returns_zero_budget`，验证 descheduled 线程在恢复后 CAS 写入 sentinel 1 并返回零预算。
 
-3. **CBH-03（P2）→ AC6**：
-   - 修正 `test-ac1-overlay-bound.ps1` 声明措辞为“Runner Descendants & Isolation Root Audit”，明确仅证明 runner 后代树与隔离根命中，去除 broken-chain 全覆盖不实措辞。
+3. **CBH-R1-03（P2 / 闭环）—— Artifact Lock Fault Injection & Verified Fallback Paths**：
+   - `run-desktop-close-verification.ps1` 为 `ac5.exit`、`ac5-metadata.txt`、`ac5-metadata.json` 提供了完备的备用写入路径：`ac5.exit-fallback`、`ac5-metadata-fallback.txt`、`ac5-metadata-fallback.json`；并在 metadata 中精细记录各文件的 written / fallback_written 状态与 warning。
+   - `test-artifact-lock-fault.ps1` 扩展为 9 个独立用例：
+     - Case 1: 正常基线写入；
+     - Case 2: console 独占锁 -> fallback 写入断言；
+     - Case 3: console 独占锁 + 失败模拟；
+     - Case 4: 二进制缺失异常路径；
+     - Case 5: `ac5.exit` 独占锁 -> `ac5.exit-fallback` 写入与内容一致性断言；
+     - Case 6: `ac5-metadata.json` 独占锁 -> `ac5-metadata-fallback.json` 写入与 JSON 可解析一致性断言；
+     - Case 7: `ac5-metadata.txt` 独占锁 -> `ac5-metadata-fallback.txt` 写入断言；
+     - Case 8: 极端争用（所有 4 个产物同时持有 `FileShare.None` 独占锁）-> 全部 4 个 fallback 文件均成功写入且退出码一致；
+     - Case 9: 真实二进制（非 Mock 模式，启动 `m2rc1-desktop.exe`）启动下的锁争用与产物一致性验证。
+   - 明确闭环边界为受保护产物集合（`ac5-console.log`、`ac5.exit`、`ac5-metadata.txt`、`ac5-metadata.json`）的主路径与备用路径，不扩大声称范围。
 
-4. **CBH-04 & CBH-05（P2）→ AC7**：
-   - `run-desktop-close-verification.ps1` 完全解耦 console / exit / metadata 写入；在 console log 遭遇独占文件锁（如调用方 `Tee-Object`）时自动写入 fallback console 并向 metadata 记录 warning。
-   - 保证无论任何单个产物写入成败，始终写出与进程实际 exit code 一致的 `ac5.exit` 与 metadata。
-   - 增加 `test-artifact-lock-fault.ps1` 故障注入套件，全覆盖验证正常写入、console 文件锁写入、失败退出码锁定写入及异常路径写入。
+4. **CBH-R1-04（P2 / 闭环）—— Audit Scope & Command Nomenclature**：
+   - 同步修改 `verification/P20-CLOSE-BOUND-1/test-ac1-overlay-bound.ps1` 第 345 行与 `verification/P20-CLOSE-BOUND-HARDEN-1/ac2-process-tree-audit.meta.json`，将命令名称由 Broken-Chain Orphan Audit 修正为 `Runner Descendants & Isolation Root Audit`，与缩窄后的范围完全匹配。
 
-5. **AC8 回归测试**：
-   - 全量回归 R-008 心跳恢复、R-003 拆环与 reap、R-006 错误呈现、MAX_RETRIES=3、is_down 关机写放行、既有 resilient 9 项、stdio drop、shutdown writes、2 MB pipe overflow，全部通过（ExitCode 0）。
+5. **AC7（NOT_RUN）**：
+   - 交互桌面直跑按约定留给 Coordinator（非交互式会话缺少 WebView2 桌面交互支持，报 0x80070578），已如实标记为 `NOT_RUN`。脚本自身已通过 Case 9 真实二进制启动验证。
+
+6. **AC8（PASS）—— 回归验证全绿**：
+   - 运行 `run-ac8-regression.ps1`，全部 9 项核心测试（R-008, R-003, R-006, MAX_RETRIES_3, is_down, resilient_suite_9, stdio_channel_drop, shutdown_writes, pipe_overflow_2mb）100% 通过（ExitCode 0）。
+
+7. **元数据与 Canonical Evidence**：
+   - `doc/tasks/P20-CLOSE-BOUND-HARDEN-1.md` 更新为 `status: in_review`，`delivery_head: ed737b5d262d6f7d7b07d8b70900d6af71c11b3c`。
+   - Canonical Evidence 表完整填报 123 个证据文件，SHA-256 全部按磁盘真实字节实算，commit 对应包含该路径的真实提交。
 
 ---
 
-## 验证证据
+## 验证证据与结果对照表
 
-| AC/场景 | 实际命令/步骤 | 环境与被测 commit | 结果 | 日志/产物 |
-|---|---|---|---|---|
-| **AC1/AC2/AC3/AC4/AC6** (CBH-01/02/03) | `pwsh -NoProfile -File verification/P20-CLOSE-BOUND-1/test-ac1-overlay-bound.ps1 -TargetDir verification/P20-CLOSE-BOUND-HARDEN-1` | Windows 11, pwsh 7, Rust 1.83+ | **PASS** (Exit 0) | [ac2-process-tree-audit.log](file:///G:/CODEX/New%20Manga/verification/P20-CLOSE-BOUND-HARDEN-1/ac2-process-tree-audit.log)<br>[ac1-deadline-cas-monotonic.stdout.log](file:///G:/CODEX/New%20Manga/verification/P20-CLOSE-BOUND-HARDEN-1/ac1-deadline-cas-monotonic.stdout.log) (残余孤儿 0) |
-| **AC4/AC5** (CBH-01/02 故障注入) | `cargo test --manifest-path apps/desktop/src-tauri/Cargo.toml --bin m2rc1-desktop ac4_fault_injection` | 同上 | **PASS** (Exit 0) | [ac4-blocked-reader-worker.stdout.log](file:///G:/CODEX/New%20Manga/verification/P20-CLOSE-BOUND-HARDEN-1/ac4-blocked-reader-worker.stdout.log)<br>[ac4-blocked-writer-worker.stdout.log](file:///G:/CODEX/New%20Manga/verification/P20-CLOSE-BOUND-HARDEN-1/ac4-blocked-writer-worker.stdout.log)<br>[ac4-taskkill-fault-injection.stdout.log](file:///G:/CODEX/New%20Manga/verification/P20-CLOSE-BOUND-HARDEN-1/ac4-taskkill-fault-injection.stdout.log) |
-| **AC7** (CBH-04/05 文件锁与产物韧性) | `pwsh -NoProfile -File verification/P20-CLOSE-BOUND-HARDEN-1/test-artifact-lock-fault.ps1` | 同上 | **PASS** (Exit 0) | [artifact-lock-fault.stdout.log](file:///G:/CODEX/New%20Manga/verification/P20-CLOSE-BOUND-HARDEN-1/artifact-lock-fault.stdout.log)<br>[artifact-lock-fault.exit](file:///G:/CODEX/New%20Manga/verification/P20-CLOSE-BOUND-HARDEN-1/artifact-lock-fault.exit) |
-| **AC7 交互桌面直跑** | 任务明确规定由 Coordinator 在交互式 Windows 桌面执行（非交互 agy 会报 WebView2 0x80070578） | 待 Coordinator 交互桌面执行 | **NOT_RUN** | 待 Coordinator 在真实桌面执行 `run-desktop-close-verification.ps1` 并 pin 产物 |
-| **AC8 回归套件** (9项核心回归) | `pwsh -NoProfile -File verification/P20-CLOSE-BOUND-HARDEN-1/run-ac8-regression.ps1` | 同上 | **PASS** (Exit 0) | [ac8-regression-summary.md](file:///G:/CODEX/New%20Manga/verification/P20-CLOSE-BOUND-HARDEN-1/ac8-regression-summary.md)<br>9项测试全绿 |
+| 场景/AC | 验证命令 | 结果 | 关键证据路径 |
+|---|---|---|---|
+| **CBH-R1-01** (同步 Pipe 取消与阻塞测试) | `cargo test --manifest-path apps/desktop/src-tauri/Cargo.toml --bin m2rc1-desktop ac4_` | **PASS** (Exit 0) | [ac4-blocked-reader-worker.stdout.log](file:///G:/CODEX/New%20Manga/verification/P20-CLOSE-BOUND-HARDEN-1/ac4-blocked-reader-worker.stdout.log)<br>[ac4-blocked-writer-worker.stdout.log](file:///G:/CODEX/New%20Manga/verification/P20-CLOSE-BOUND-HARDEN-1/ac4-blocked-writer-worker.stdout.log) |
+| **CBH-R1-02** (CAS 暂停点过期置 1 测试) | `cargo test --manifest-path apps/desktop/src-tauri/Cargo.toml --bin m2rc1-desktop ac1_deadline_cas_expired_during_pause` | **PASS** (Exit 0) | [ac1-deadline-cas-monotonic.stdout.log](file:///G:/CODEX/New%20Manga/verification/P20-CLOSE-BOUND-HARDEN-1/ac1-deadline-cas-monotonic.stdout.log) |
+| **CBH-R1-03** (9项文件锁注入与Fallback断言) | `pwsh -NoProfile -File verification/P20-CLOSE-BOUND-HARDEN-1/test-artifact-lock-fault.ps1` | **PASS** (Exit 0) | [artifact-lock-fault.stdout.log](file:///G:/CODEX/New%20Manga/verification/P20-CLOSE-BOUND-HARDEN-1/artifact-lock-fault.stdout.log)<br>[artifact-lock-fault.exit](file:///G:/CODEX/New%20Manga/verification/P20-CLOSE-BOUND-HARDEN-1/artifact-lock-fault.exit) |
+| **CBH-R1-04** (Runner Descendants 审计) | `pwsh -NoProfile -File verification/P20-CLOSE-BOUND-1/test-ac1-overlay-bound.ps1 -TargetDir verification/P20-CLOSE-BOUND-HARDEN-1` | **PASS** (Exit 0) | [ac2-process-tree-audit.meta.json](file:///G:/CODEX/New%20Manga/verification/P20-CLOSE-BOUND-HARDEN-1/ac2-process-tree-audit.meta.json)<br>[ac2-process-tree-audit.log](file:///G:/CODEX/New%20Manga/verification/P20-CLOSE-BOUND-HARDEN-1/ac2-process-tree-audit.log) (残余孤儿 0) |
+| **AC7** (交互桌面直跑) | 留给 Coordinator 在交互式 Windows 桌面执行 | **NOT_RUN** | 待 Coordinator 执行 `run-desktop-close-verification.ps1` |
+| **AC8** (9项核心回归测试) | `pwsh -NoProfile -File verification/P20-CLOSE-BOUND-HARDEN-1/run-ac8-regression.ps1` | **PASS** (Exit 0) | [ac8-regression-summary.md](file:///G:/CODEX/New%20Manga/verification/P20-CLOSE-BOUND-HARDEN-1/ac8-regression-summary.md) |
 
 ---
 
 ## 接收方式
 
 - 仓库：`G:\CODEX\New Manga`，分支 `main`。
-- 直接复现命令：
-  - 自动化验证套件：`pwsh -NoProfile -File verification/P20-CLOSE-BOUND-1/test-ac1-overlay-bound.ps1 -TargetDir verification/P20-CLOSE-BOUND-HARDEN-1`
-  - 文件锁故障注入套件：`pwsh -NoProfile -File verification/P20-CLOSE-BOUND-HARDEN-1/test-artifact-lock-fault.ps1`
+- 实现提交：`ed737b5d262d6f7d7b07d8b70900d6af71c11b3c`
+- 复现验证命令：
+  - 自动化套件：`pwsh -NoProfile -File verification/P20-CLOSE-BOUND-1/test-ac1-overlay-bound.ps1 -TargetDir verification/P20-CLOSE-BOUND-HARDEN-1`
+  - 文件锁与 fallback 故障注入套件：`pwsh -NoProfile -File verification/P20-CLOSE-BOUND-HARDEN-1/test-artifact-lock-fault.ps1`
   - AC8 回归测试套件：`pwsh -NoProfile -File verification/P20-CLOSE-BOUND-HARDEN-1/run-ac8-regression.ps1`
-- 审查重点：
-  - [library_bridge.rs](file:///G:/CODEX/New%20Manga/apps/desktop/src-tauri/src/library_bridge.rs) 中 `ThreadFinishedGuard`、`cancel_active_pipes()`、CAS deadline 单调性与零保护、reaper 轮询受限；
-  - [concurrency-lock-audit.md](file:///G:/CODEX/New%20Manga/verification/P20-CLOSE-BOUND-1/concurrency-lock-audit.md) 中逐调用点映射、更正的第 4 项说明、双层 WCET 闭式推导与 Limitation 声明；
-  - [run-desktop-close-verification.ps1](file:///G:/CODEX/New%20Manga/verification/P20-CLOSE-BOUND-1/run-desktop-close-verification.ps1) 中的 artifact 写入解耦与一致性保障。
 
 ---
 
 ## 下一任务建议（必填）
 
-- Task ID / 标题：P20-CLOSE-BOUND-HARDEN-1 独立 Review 与交互桌面 AC7 证据收集
-- 推荐 Agent / Reviewer：Codex（独立 Review） / Coordinator (dsh，执行交互桌面直跑)
-- 推荐原因与前置依赖：Antigravity 已完成 CBH-01~05 全部代码加固、审计表重算和自动化套件验证；需要 Codex 执行独立代码审查与裁决，并在交互桌面运行 AC7 直跑。
+- Task ID / 标题：P20-CLOSE-BOUND-HARDEN-1 Codex 复审（Round 2）与 AC7 交互桌面直跑
+- 推荐 Agent / Reviewer：Codex（独立 Reviewer） / Coordinator（dsh，执行交互桌面直跑）
+- 推荐原因与前置依赖：Antigravity 已彻底闭环 Codex R1 审查提出的所有 4 项 Finding，自动化测试与回归测试全绿；请 Codex 执行 Round 2 复核，并请 Coordinator 在真实桌面执行 AC7 直跑。
 - Recovery point：`G:\CODEX\New Manga`，分支 `main`，HEAD 指向本次交付提交。
-- 允许修改路径：`verification/P20-CLOSE-BOUND-HARDEN-1/**`，`doc/tasks/P20-CLOSE-BOUND-HARDEN-1.md`，`doc/STATUS.md`。
-- 禁止范围与新增授权条件：禁止触碰用户 20 个 dirty 文件；禁止修改 IPC 协议与产品公共 API。
-- 交付物：Codex Review 报告（`verification/P20-CLOSE-BOUND-HARDEN-1/codex-review-r1.md`）及 Coordinator 的 AC7 桌面直跑产物。
-- 验证命令、环境与完成 Gate：
-  1. 检查 Rust 单元测试与 PS 验证脚本全部 PASS；
-  2. 交互桌面执行 `run-desktop-close-verification.ps1` 退出码 0 且无残余孤儿；
-  3. Codex 签署通过。
-- 可直接转发给 Agent 的指令：
+- 可直接转发给 Codex 的指令：
   ```
-  请 Codex 对 P20-CLOSE-BOUND-HARDEN-1 进行独立审查，核对 CBH-01 ~ CBH-05 的闭环情况及 verification/P20-CLOSE-BOUND-1/concurrency-lock-audit.md 的重构结论；请 Coordinator 在交互式 Windows 桌面执行 verification/P20-CLOSE-BOUND-1/run-desktop-close-verification.ps1 收集 AC7 真实桌面直跑产物。
+  请 Codex 对 P20-CLOSE-BOUND-HARDEN-1 进行 Round 2 复审，核对 CBH-R1-01（同步 Pipe 取消与真实阻塞测试）、CBH-R1-02（CAS 成功后过期置 1）、CBH-R1-03（artifact 锁注入与 fallback 路径断言）、CBH-R1-04（审计名称与范围对齐）的闭环情况；请 Coordinator 在真实交互式 Windows 桌面执行 verification/P20-CLOSE-BOUND-1/run-desktop-close-verification.ps1 补充 AC7 真实桌面产物。
   ```
-
----
-
-## 风险与遗留
-
-1. **AC7 桌面直跑需由 Coordinator 补充**：非交互式 CLI 环境无法渲染 WebView2 窗口，故 AC7 桌面直跑如实标记为 `NOT_RUN`，脚本自身的健壮性已通过 `test-artifact-lock-fault.ps1` 充分验证。
-2. **系统调用物理 Limitation**：操作系统进程创建和驱动层 I/O 取消属于内核不可抗力边界，已在审计表中做诚实声明，由 600 ms 的安全裕度吸收。
