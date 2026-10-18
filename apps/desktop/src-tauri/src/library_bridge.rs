@@ -1614,11 +1614,21 @@ fn spawn_persistent_holder(
         .name(name.to_string())
         .spawn(move || {
             let mut ho = slot_for_thread.lock().ok().and_then(|mut guard| guard.take());
+            // AC2 (R4-01): saturation has one documented answer per path.
+            //
+            // The direct call (track_unreaped_worker) REFUSES after its ten
+            // attempts and hands the handle back to the caller. The holder must
+            // not do that - giving up here would drop the handle, which is the
+            // single thing this function exists to prevent. So the holder never
+            // stops retrying, but it backs off instead of spinning at a flat
+            // 50ms, so a saturated registry cannot be hammered indefinitely.
+            let mut backoff = Duration::from_millis(50);
             while ho.is_some() {
-                std::thread::sleep(Duration::from_millis(50));
+                std::thread::sleep(backoff);
                 if track_unreaped_worker(name, &mut ho, Arc::clone(&thread_handle), Arc::clone(&pipe_handle)) {
                     break;
                 }
+                backoff = (backoff * 2).min(Duration::from_millis(500));
                 if ho.as_ref().map(|x| x.is_finished()).unwrap_or(false) {
                     let _ = ho.take().unwrap().join();
                     break;
@@ -8939,6 +8949,66 @@ mod tests {
 
         std::thread::sleep(Duration::from_millis(2600));
         reap_unreaped_workers(Duration::from_millis(500));
+    }
+
+    /// AC2 (R4-01): saturation has a defined, bounded answer.
+    ///
+    /// Before this, the two paths disagreed: the direct call gave up after ten
+    /// attempts while the holder retried forever, and neither outcome was
+    /// asserted anywhere. The defined behaviour now is - the direct call may
+    /// ACCEPT (capacity was reclaimed by pruning) or REFUSE, but it must always
+    /// terminate boundedly, and a refused handle must stay with the caller
+    /// rather than being dropped.
+    #[test]
+    fn ac2_saturated_registry_answers_boundedly_and_never_loses_the_handle() {
+        reap_unreaped_workers(Duration::from_millis(50));
+
+        // Fill to capacity with workers that outlive this test's window.
+        let mut fillers = Vec::new();
+        for _ in 0..MAX_UNREAPED_WORKERS {
+            fillers.push(std::thread::spawn(|| {
+                std::thread::sleep(Duration::from_millis(4000));
+            }));
+        }
+        for h in fillers {
+            let mut opt = Some(h);
+            let _ = track_unreaped_worker(
+                "ac2-filler",
+                &mut opt,
+                Arc::new(std::sync::atomic::AtomicIsize::new(0)),
+                Arc::new(std::sync::atomic::AtomicIsize::new(0)),
+            );
+        }
+
+        let extra = std::thread::spawn(|| {
+            std::thread::sleep(Duration::from_millis(4000));
+        });
+        let mut slot = Some(extra);
+        let start = Instant::now();
+        let tracked = track_unreaped_worker(
+            "ac2-saturated",
+            &mut slot,
+            Arc::new(std::sync::atomic::AtomicIsize::new(0)),
+            Arc::new(std::sync::atomic::AtomicIsize::new(0)),
+        );
+        let elapsed = start.elapsed();
+
+        assert!(
+            elapsed < Duration::from_secs(10),
+            "AC2: the saturated path must terminate boundedly, took {elapsed:?}"
+        );
+        if !tracked {
+            assert!(
+                slot.is_some(),
+                "AC2: a refused handle must stay with the caller, never be dropped"
+            );
+        }
+
+        if let Some(h) = slot.take() {
+            let _ = h.join();
+        }
+        std::thread::sleep(Duration::from_millis(4100));
+        reap_unreaped_workers(Duration::from_millis(1000));
     }
 
     /// AC1 (CBH-R3-02): Deterministic test for initial CAS retry limit exhaustion (32 retries).
