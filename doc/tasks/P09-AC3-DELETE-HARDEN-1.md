@@ -14,7 +14,7 @@ base_commit: a04e4ea78d5b33a0f91efcdc06b396391c4b165e
 branch: null
 worktree: G:/CODEX/New Manga
 integration_commit: null
-delivery_head: 4824ed5d4872a6dc519ca6e671bfa6485bd47d9a
+delivery_head: 10202dc4e178eb58a7e08ee0c59e1453ecc6f522
 canonical_evidence_status: complete
 resource_closeout_status: complete
 evidence_dir: verification/P09-AC3-DELETE-HARDEN-1
@@ -113,7 +113,7 @@ evidence_dir: verification/P09-AC3-DELETE-HARDEN-1
 
 | ID | 优先级 | 状态 | 处置提交 |
 |---|---|---|---|
-| F-001 | P1 | **待用户裁决** | — |
+| F-001 | P1 | **已关闭（用户裁决方向 A，2026-10-19）** | `10202dc4e` |
 | F-002 | P1 | 已修 | `51bd814d1` |
 | F-003 | P1 | 已修 | `992bdff36` |
 | F-004 | P1 | 已修 | `8af40864b` |
@@ -182,3 +182,27 @@ evidence_dir: verification/P09-AC3-DELETE-HARDEN-1
 - 未关闭项及保留原因：**无未关闭 AC**。AC12 的全量失败数高于 T2 基线 4 项，已逐项定性为环境差异而非回归（3 项基线既有 + 6 项环境反转，本 Task 引入 **0** 项），理由与证据见 `ac12-no-regression.md`；**该定性不改变"引入 0 项回归"的结论**。
 - 当前指针清理：`delivery_head` 固定为 `4824ed5d4872a6dc519ca6e671bfa6485bd47d9a`；STATUS/Plan 的同步与 Task 关闭由 Codex 复审后执行。
 - **硬约束保持**：`P09` 的 **AC3 delete 子条件仍为 `BLOCKED`**，本 Task 未将其翻为 PASS；本 Task 只做加固与指针自洽，不改变原判定。
+
+### F-001 关闭记录（用户裁决方向 A，2026-10-19）
+
+**裁决**：用户 2026-10-19 选择**方向 A** —— 认定 AC1 原文「注册到 Tauri production command 与 `generate_handler!`」**构成对该命令的授权**，据此补齐契约冻结并关闭 F-001。
+
+**契约冻结**：M2-C1 契约 **rev 2.11**（`minor 10→11`），提交 **`10202dc4e178eb58a7e08ee0c59e1453ecc6f522`**。冻结内容：
+
+| 项 | 值 |
+|---|---|
+| Core command | `ListRecycleBinBooks`：`{}` → `BookSummary[]` |
+| Tauri command | `library_list_recycle_bin_books`（production-only）|
+| 查询范围 | 软删除集合 `deleted_at IS NOT NULL`，**不是**可见书架列表 |
+| 投影 | 与 `ListBooks` 完全相同的 8 字段；`page_count` 沿用**冻结 None 通道**，不得以 `0` 代替 |
+| 错误面 | `E_LIST_BOOKS_FAILED`（`category=internal`、`retryable=true`）/ `E_UNKNOWN`（`retryable=false`）|
+| 消费端 | **必须区分「空回收站」与「查询失败」**，不得静默显示为空 |
+| 授权范围 | 仅该读取调用链：Core handler + dispatcher 分支 + stdio channel round-trip + Tauri 三处注册；**不**扩展到其他 IPC 命令、Schema/migration、依赖、生成 permission/capabilities、React/WebView 实现或页面 UI |
+
+**Implementation Scope Release / Allowlist**：本 Task 在 AC1 下实现并注册的 `library_list_recycle_bin_books` / `ListRecycleBinBooks` **已由上述 rev 2.11 正式冻结**，因此**不再构成「新增未冻结的 IPC 命令」**，与禁止范围的冲突消除。
+
+**定稿方**：**Codex**（共享契约范围权按 AGENTS.md 属 Codex）。契约定稿原文见 `codex-rev211-result.md`（工作区 `agent-output\coordinator\`），Codex session `01a15164-daae-75d3-8bd2-b90ba55f1165`。**Codex 在定稿中纠正草稿三处**：命令 catalog 在 §5 非 §3；§12 须纳入 stdio channel round-trip；草稿中「无 TTL」「前端接线亦已完成」两项因无权威事实支持而不予写入。
+
+**`delivery_head` 固定**：F-001 关闭后，`delivery_head` 由 R1 审查的 `4824ed5d4` 移至 **`10202dc4e`**（含 rev 2.11 契约冻结）。R1 的 18 个提交与本 Task 的 6 个返修提交均在链上。
+
+**下一步**：送 Codex 做 **R2 完整复审**（覆盖 R1 的 7 个 finding 闭合情况 + rev 2.11 契约冻结）。
