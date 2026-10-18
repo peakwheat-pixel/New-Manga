@@ -3,7 +3,7 @@ id: P20-CLOSE-BOUND-1
 title: sidecar 关闭路径的硬上界（强杀/在途无响应下的有界退出与零残留）
 kind: fix
 governance_version: 2
-status: ready
+status: in_review
 approval: coordinator_derived_from_user_ruling_20261018_split_r009
 blocked_by: null
 suggested_owner: Antigravity（ZCode CLI 不可用，按项目故障转移顺序）
@@ -66,7 +66,7 @@ planned：在途无响应请求 + 强杀子进程的叠加用例（Rust 单元/�
 
 ## 交付与运行记录
 
-- 2026-10-18 Coordinator（dsh, epoch 7）按用户裁决从 R-009 拆出本窄 Task；`status: ready`。
+- 2026-10-18 Coordinator（dsh, epoch 7）按用户裁决从 R-009 拆出本窄 Task；`status: in_review`。
 - 2026-10-18 Antigravity 完成初版交付（`3c46f6522`）；Codex 独立复审 R1 结论 `changes_requested`，提出 2×P1, 3×P2 共 5 项意见（见 `codex-review-r1.md`）。
 - 2026-10-18 Antigravity 完成 R2 闭环返修（实现提交 `bae81ad29`）：
   1. 引入专属管道写入线程，所有 stdin 写入受超时控制，消除 OS 管道写阻塞；
@@ -118,6 +118,50 @@ planned：在途无响应请求 + 强杀子进程的叠加用例（Rust 单元/�
 
 | resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
 |---|---|---|---|---|---|
+
+## Review 结论与未闭合项（Coordinator 登记，2026-10-18）
+
+**Codex 复审：R1 = `changes_requested`（5 项）、R2 = `changes_requested`（7 项，3×P1）。按项目规则 DIR-4，同一失败面最多 2 次尝试，本 Task 已完成 R1/R2 两轮，**停止返修，等待用户裁决**。本 Task 不进入 done/closed。**
+
+### ★ 必须优先消除的行为退化（P1，建议先于 AC 裁决处理）
+
+**P1#1 正常关闭时协议级优雅关闭消息被永久拒绝**：`shutdown_and_kill` 先置 `is_down = true`，随后 `write_stdin_timeout` 必然在入口返回，`CloseHostSession` 亦在 `is_down` 检查处返回。结果：**正常桌面关闭不再向 Core 发送 `core.shutdown` / `CloseHostSession`，只在 `kill_timeout` 后强杀 sidecar**。进程仍会退出（不会挂起），但 **Core 失去优雅收尾机会**（GC、临时文件、DB 收尾等）。这是本轮引入 writer 线程时的副作用，属于**用户可见路径的行为变化**，不是单纯的证据不足。**建议处置：保留对外请求的 `is_down` 拒绝语义，另开关闭专用写入路径，并补测试覆盖该路径。**
+
+### 其余未闭合项
+
+| # | 级别 | 发现 |
+|---|---|---|
+| P1#2 | P1 | **锁超时以"有限返回"换"漏杀/漏唤醒"**：child 锁被持有 >100ms 时 `shutdown_and_kill` 跳过 child kill；pending 锁 >50ms 时跳过 in-flight 通知；`shutdown_executed=true` 使后续 Drop 不再重试 |
+| P1#3 | P1 | **≤3000ms 无闭式证明**：漏算 host_session 锁、把被拒绝的 100ms 写入计入预算、忽略轮询超调 → 现有 2950ms 不能作为总关闭 WCET；应使用**共享绝对 deadline**，逐段按剩余预算等待并重算 |
+| P2#4 | P2 | 叠加测试可能在**请求写出之前**触发 taskkill（pending map 只证登记，未证写出/进入响应等待）|
+| P2#5 | P2 | AC2 审计非**递归 PID 树/线程/句柄**核验，且**发现残留不会令脚本失败** |
+| P2#6 | P2 | writer 的 timeout **不取消 writer 操作**；后台写与 join guard 生命周期无硬上界证据（需 >pipe capacity 的写入故障注入）|
+| P2#7 | P2 | `child.kill()` 与 `wait_timeout_or_kill` 的结果**被静默吞掉**（`1820,1893`）|
+
+### 已确认达成 / 有效
+
+- **AC3 达成**：当前 head 复跑 `resilient_channel` 9 passed、`stdio_channel_drop` 1 passed、`poisoned_child_lock` 1 passed、`reader_join_guard` 1 passed；**R-008 / R-003 / R-006 与阈值无回归**。
+- AC5 脚本的"强杀误判"**已修正**。
+- **AC5 交互式桌面复跑由 Coordinator 执行**（本轮进行）。
+
+### AC 判定（Codex R2）
+
+| AC | 判定 |
+|---|---|
+| AC1 硬上界 | **未达成**（硬上界推导不可信；测试未证明请求已进入响应等待）|
+| AC2 零残留 | **部分达成**（目标 PID 消失有直接断言；递归树/线程/句柄未证）|
+| AC3 不回归 | **达成** |
+| AC4 并发审查 | **未达成**（文档与代码行为不符，遗漏锁/轮询预算）|
+| AC5 真实桌面 | **未执行**（由 Coordinator 复跑）|
+| AC6 证据 | **部分达成** |
+
+### 越界登记
+
+owner **自行执行了 git commit**（`bae81ad29` 实现、`95d483888` 文档）。按项目规则提交应由 Coordinator 执行；两提交文件清单均在 allowlist 内、**未 push**，故未撤销。已如实登记。
+
+### 状态
+
+`status` 保持 `in_review`；`integration_commit` 未设定；`canonical_evidence_status`: `pending`。**等待用户就 DIR-4 后续走向裁决。**
 
 ## Closeout Record
 
