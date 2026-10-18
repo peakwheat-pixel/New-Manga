@@ -13,6 +13,12 @@ import {
 // recorder on a timer — periodic re-renders during capture would perturb the
 // very frame times being measured. Visible counters refresh on demand
 // (Refresh) and on state transitions (Stop / Reset & Start).
+//
+// Export writes ONLY through the browser's explicit Save As picker
+// (window.showSaveFilePicker, FPS-R1-04): the user picks the destination,
+// cancelling writes nothing, and there is no default-download-location
+// fallback. This code never learns an absolute path (the handle is opaque),
+// preserving the no-direct-path-write frontend boundary.
 
 function timestampFileStamp(): string {
   const now = new Date();
@@ -23,23 +29,74 @@ function timestampFileStamp(): string {
   );
 }
 
-/** Blob download via the WebView2 save dialog. The destination directory is
- * chosen BY THE CALLER in that dialog; this code writes no path itself and
- * nothing is written unless the user clicks one of the export buttons. */
-function downloadTextFile(filename: string, text: string, mime: string): boolean {
+interface FileWritableLike {
+  write(data: string): Promise<void>;
+  close(): Promise<void>;
+}
+
+interface FileSystemFileHandleLike {
+  createWritable(): Promise<FileWritableLike>;
+}
+
+interface SavePickerWindow {
+  showSaveFilePicker?: (options: {
+    suggestedName: string;
+    types: ReadonlyArray<{
+      description: string;
+      accept: Record<string, ReadonlyArray<string>>;
+    }>;
+  }) => Promise<FileSystemFileHandleLike>;
+}
+
+export type SaveFileOutcome = "saved" | "cancelled" | "unsupported" | "failed";
+
+/** Explicit Save As via the File System Access API (Chromium/WebView2).
+ * - "cancelled": the user dismissed the picker — nothing is written anywhere.
+ * - "unsupported": no picker in this environment — nothing is written; the
+ *   caller directs the user to the Show/Copy channels instead. There is
+ *   deliberately NO silent blob/anchor.download fallback, because that path
+ *   writes to the WebView2 default download folder without an explicit
+ *   destination choice (FPS-R1-04). */
+async function saveTextViaPicker(
+  filename: string,
+  text: string,
+  mime: string,
+  extensions: ReadonlyArray<string>,
+): Promise<SaveFileOutcome> {
+  const pickerWindow = window as unknown as SavePickerWindow;
+  if (typeof pickerWindow.showSaveFilePicker !== "function") return "unsupported";
+  let handle: FileSystemFileHandleLike;
   try {
-    const blob = new Blob([text], { type: mime });
-    const url = URL.createObjectURL(blob);
-    const anchor = document.createElement("a");
-    anchor.href = url;
-    anchor.download = filename;
-    document.body.appendChild(anchor);
-    anchor.click();
-    anchor.remove();
-    window.setTimeout(() => URL.revokeObjectURL(url), 30_000);
-    return true;
+    handle = await pickerWindow.showSaveFilePicker({
+      suggestedName: filename,
+      types: [{ description: "FPS sampler export", accept: { [mime]: [...extensions] } }],
+    });
+  } catch (error) {
+    const name = (error as DOMException | null)?.name;
+    if (name === "AbortError") return "cancelled";
+    return "failed";
+  }
+  try {
+    const writable = await handle.createWritable();
+    await writable.write(text);
+    await writable.close();
+    return "saved";
   } catch {
-    return false;
+    return "failed";
+  }
+}
+
+function exportNote(outcome: SaveFileOutcome, kind: "csv" | "json"): string {
+  const upper = kind.toUpperCase();
+  switch (outcome) {
+    case "saved":
+      return `${kind} saved to the chosen location (explicit Save As; nothing written elsewhere)`;
+    case "cancelled":
+      return `${kind} export cancelled — nothing written (no default-location fallback)`;
+    case "unsupported":
+      return `explicit save dialog unavailable in this environment — use Show ${upper} + copy; nothing written`;
+    case "failed":
+      return `${kind} save failed — use Show ${upper} + copy`;
   }
 }
 
@@ -104,14 +161,24 @@ export function FpsRecorderPanel({ recorder }: FpsRecorderPanelProps) {
     setNote("json shown below");
   };
 
-  const exportCsv = () => {
-    const ok = downloadTextFile(`m2-fps-${timestampFileStamp()}.csv`, recorder.toCsv(), "text/csv");
-    setNote(ok ? "csv download requested (choose OutDir in the save dialog)" : "download failed; use Show CSV + copy");
+  const exportCsv = async () => {
+    const outcome = await saveTextViaPicker(
+      `m2-fps-${timestampFileStamp()}.csv`,
+      recorder.toCsv(),
+      "text/csv",
+      [".csv"],
+    );
+    setNote(exportNote(outcome, "csv"));
   };
 
-  const exportJson = () => {
-    const ok = downloadTextFile(`m2-fps-${timestampFileStamp()}.json`, recorder.toJson(), "application/json");
-    setNote(ok ? "json download requested (choose OutDir in the save dialog)" : "download failed; use Show JSON + copy");
+  const exportJson = async () => {
+    const outcome = await saveTextViaPicker(
+      `m2-fps-${timestampFileStamp()}.json`,
+      recorder.toJson(),
+      "application/json",
+      [".json"],
+    );
+    setNote(exportNote(outcome, "json"));
   };
 
   const copyCsv = async () => {
@@ -158,6 +225,9 @@ export function FpsRecorderPanel({ recorder }: FpsRecorderPanelProps) {
         {summary.excludedCount > 0
           ? ` · excluded reasons: ${JSON.stringify(summary.excludedReasons)}`
           : ""}
+        {summary.allMaxMs !== null && summary.allMaxMs !== kept?.maxMs
+          ? ` · all-sample max: ${summary.allMaxMs} ms (a stall larger than the kept max was observed)`
+          : ""}
       </div>
       <div>
         <button type="button" style={panelButtonStyle} onClick={refresh}>FPS: Refresh</button>
@@ -167,8 +237,8 @@ export function FpsRecorderPanel({ recorder }: FpsRecorderPanelProps) {
       <div>
         <button type="button" style={panelButtonStyle} onClick={showCsv}>FPS: Show CSV</button>
         <button type="button" style={panelButtonStyle} onClick={showJson}>FPS: Show JSON</button>
-        <button type="button" style={panelButtonStyle} onClick={exportCsv}>FPS: Export CSV</button>
-        <button type="button" style={panelButtonStyle} onClick={exportJson}>FPS: Export JSON</button>
+        <button type="button" style={panelButtonStyle} onClick={() => void exportCsv()}>FPS: Export CSV</button>
+        <button type="button" style={panelButtonStyle} onClick={() => void exportJson()}>FPS: Export JSON</button>
         <button type="button" style={panelButtonStyle} onClick={() => void copyCsv()}>FPS: Copy CSV</button>
       </div>
       <div style={{ minHeight: 14, color: "#8aa0b4" }}>{note}</div>

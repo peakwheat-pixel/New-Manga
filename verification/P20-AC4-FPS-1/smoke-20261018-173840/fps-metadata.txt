@@ -1,0 +1,12 @@
+runner=run-ac4-fps.ps1
+owner_delivery=ZCode (hook + tests + script); executor=Coordinator (dsh, epoch 8)
+mode=both scroll_seconds=20 scroll_mode=wheel smoke=True
+avg_threshold_ms=50 (user ruling 2026-10-18)
+p95_method=nearest-rank (sorted[ceil(0.95*n)-1]); p95 and max reported as measured
+all_max_ms/excluded_max_ms reported alongside kept stats (FPS-R1-05, no spike masking)
+tearing=NOT_VERIFIED_BY_RULING (limitation only, user ruling 2026-10-18)
+iso_root=C:\Users\49745\AppData\Local\Temp\p20fps-3cd8221f
+appdata_root=C:\Users\49745\AppData\Roaming\com.newmanga.m2rc1.desktop (snapshotted before/after, per-path sha256)
+our_pids=32688,29000,22500,49276,29284,10872,41412,48220,48352,6524,35924 app_pid=46020
+preexisting_same_name=none
+exe_sha256=4d75998307558fa529200d0376250c9f9206caf5cf3c0d85dc24f10fb48fab54

@@ -1,0 +1,16 @@
+[17:38:40.092] iso_root=C:\Users\49745\AppData\Local\Temp\p20fps-3cd8221f
+[17:38:40.116] ISOLATION pinned: NEWMANGA_DATA_ROOT=C:\Users\49745\AppData\Local\Temp\p20fps-3cd8221f M2RC1_DERIVED_ROOT=C:\Users\49745\AppData\Local\Temp\p20fps-3cd8221f\derived M2RC1_MANAGED_ROOT=C:\Users\49745\AppData\Local\Temp\p20fps-3cd8221f\managed M2RC2_CATALOG_DB=C:\Users\49745\AppData\Local\Temp\p20fps-3cd8221f\catalog\catalog.sqlite (packaged sidecar mode)
+[17:38:40.155] APPDATA baseline recorded root=C:\Users\49745\AppData\Roaming\com.newmanga.m2rc1.desktop present=True files=24
+[17:38:40.169] NOT_OURS no pre-existing same-name processes
+[17:38:40.188] LAUNCH app pid=46020
+[17:38:40.672] SMOKE window_seen=True app_exited=False
+[17:38:40.679] SMOKE settling 12s (let core_service / catalog writes happen into the iso root)...
+[17:38:52.837] OUR_PIDS now: 32688,29000,22500,49276,29284,10872,41412,48220,48352,6524,35924
+[17:38:52.844] SMOKE settle done our_pids=32688,29000,22500,49276,29284,10872,41412,48220,48352,6524,35924
+[17:38:52.961] OUR_PIDS now: 32688,29000,22500,49276,29284,10872,41412,48220,48352,6524,35924
+[17:38:59.089] TEARDOWN all our processes exited
+[17:38:59.115] APPDATA[final] UNCHANGED (files=24, per-path sha256 compared)
+[17:38:59.125] ISO inventory: files=4 dirs=4 root=C:\Users\49745\AppData\Local\Temp\p20fps-3cd8221f
+[17:38:59.149] METADATA written; failures=0; restore default dist afterwards: cd apps\desktop\frontend; npm run build (without VITE_M2_FPS_SAMPLING)
+[17:38:59.153] FPS MEASUREMENT END
+[17:38:59.158] RESULT PASS (all requested phases complete, every avg<=50ms, AppData untouched, own processes gone)

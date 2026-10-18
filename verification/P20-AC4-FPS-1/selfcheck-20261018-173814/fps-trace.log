@@ -1,0 +1,12 @@
+[17:38:14.779] SELFCHECK begin (no exe launch, no GUI)
+[17:38:14.791] iso_root=C:\Users\49745\AppData\Local\Temp\p20fps-selfcheck-c7eb8c2d
+[17:38:14.814] FAIL SELFCHECK isolation-accept FAILED: ISOLATION_REFUSE_ENV_OUTSIDE_ISO NEWMANGA_DATA_ROOT=C:\Users\49745\AppData\Local\Temp\p20fps-selfcheck-c7eb8c2d
+[17:38:14.821] FAIL SELFCHECK refuse-missing FAILED: expected ISOLATION_REFUSE_ENV_EMPTY, got 'ISOLATION_REFUSE_ENV_OUTSIDE_ISO NEWMANGA_DATA_ROOT=C:\Users\49745\AppData\Local\Temp\p20fps-selfcheck-c7eb8c2d'
+[17:38:14.826] SELFCHECK refuse-outside PASS (ISOLATION_REFUSE_ENV_OUTSIDE_ISO NEWMANGA_DATA_ROOT=C:\Users\49745\AppData\Local\Temp\p20fps-selfcheck-c7eb8c2d)
+[17:38:14.877] APPDATA[selfcheck-neg] UNCHANGED (files=1, per-path sha256 compared)
+[17:38:14.882] SELFCHECK snapshot-negative PASS (identical trees compare UNCHANGED)
+[17:38:14.894] APPDATA[selfcheck-pos] MUTATED: MODIFIED a.txt; ADDED b.txt
+[17:38:14.899] SELFCHECK snapshot-positive PASS (modified+added files detected as MUTATED)
+[17:38:14.924] APPDATA[selfcheck-real] UNCHANGED (files=24, per-path sha256 compared)
+[17:38:14.929] SELFCHECK real-appdata baseline PASS (recorded; read-only)
+[17:38:14.937] SELFCHECK FAIL (2 failures)

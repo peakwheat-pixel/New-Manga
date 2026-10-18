@@ -1,0 +1,12 @@
+[17:38:28.117] SELFCHECK begin (no exe launch, no GUI)
+[17:38:28.129] iso_root=C:\Users\49745\AppData\Local\Temp\p20fps-selfcheck-2c4c06e5
+[17:38:28.151] SELFCHECK isolation-accept PASS (all paths set and inside iso root)
+[17:38:28.158] SELFCHECK refuse-missing PASS (ISOLATION_REFUSE_ENV_EMPTY M2RC1_DERIVED_ROOT)
+[17:38:28.163] SELFCHECK refuse-outside PASS (ISOLATION_REFUSE_ENV_OUTSIDE_ISO M2RC2_CATALOG_DB=C:\Users\49745\AppData\Roaming\com.newmanga.m2rc1.desktop\catalog\catalog.sqlite)
+[17:38:28.203] APPDATA[selfcheck-neg] UNCHANGED (files=1, per-path sha256 compared)
+[17:38:28.208] SELFCHECK snapshot-negative PASS (identical trees compare UNCHANGED)
+[17:38:28.219] APPDATA[selfcheck-pos] MUTATED: MODIFIED a.txt; ADDED b.txt
+[17:38:28.224] SELFCHECK snapshot-positive PASS (modified+added files detected as MUTATED)
+[17:38:28.248] APPDATA[selfcheck-real] UNCHANGED (files=24, per-path sha256 compared)
+[17:38:28.254] SELFCHECK real-appdata baseline PASS (recorded; read-only)
+[17:38:28.263] SELFCHECK PASS
