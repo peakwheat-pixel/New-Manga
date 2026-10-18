@@ -1263,6 +1263,14 @@ def unlink_preview_without_following(raw_rel: str, root_res: Path) -> bool:
         return False
     if any(segment in ("..", ".") for segment in segments):
         return False
+    # F-003 (Codex R1): reject any embedded colon.  Two distinct Windows
+    # hazards hide behind it.  "C:evil.png" is drive-RELATIVE, so
+    # Path.is_absolute() is False and the absolute guard below passes it
+    # straight through.  And a colon inside a path opens an alternate data
+    # stream, so "file.png:hidden" names a different file than the catalog row
+    # claims.  A preview filename this code ever writes contains neither.
+    if any(":" in segment for segment in segments):
+        return False
     if Path(normalised).is_absolute():
         return False
     probe = root_res

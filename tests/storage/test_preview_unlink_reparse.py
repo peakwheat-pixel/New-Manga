@@ -87,3 +87,26 @@ def test_refuses_absolute_and_traversing_paths(derived: Path) -> None:
     assert outside.is_file()
     assert unlink_preview_without_following("previews/./outside.png", derived) is False
     assert outside.is_file()
+
+
+def test_refuses_drive_relative_and_alternate_data_stream_paths(derived: Path) -> None:
+    """F-003 (Codex R1): two Windows bypasses of the absolute-path guard.
+
+    "C:evil.png" is drive-RELATIVE, so Path.is_absolute() is False and it slipped
+    past the guard entirely.  A colon also opens an alternate data stream, so
+    "preview.png:stream" addresses a different file than the catalog row claims.
+    """
+    # Drive-relative: refused although is_absolute() is False on Windows.
+    assert unlink_preview_without_following("C:evil.png", derived) is False
+
+    # Alternate data stream on a real file: refuse, and leave the file alone.
+    real = derived / "page-original-p1.png"
+    real.write_bytes(b"preview")
+    assert (
+        unlink_preview_without_following("page-original-p1.png:ads", derived) is False
+    )
+    assert real.is_file(), "the real preview must survive an ADS-shaped request"
+
+    # The happy path still works, so the new guard did not break deletion.
+    assert unlink_preview_without_following("page-original-p1.png", derived) is True
+    assert not real.exists()
