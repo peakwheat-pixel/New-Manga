@@ -145,15 +145,32 @@ try {
             Remove-Item -Path $isolatedRoot -Recurse -Force -ErrorAction SilentlyContinue
             $scriptExitCode = 1
         } else {
-            # 5. Process Tree & Zero Residual Orphan Check
+            # 5. Process Tree & Zero Residual Orphan Check (scoped to PID tree and isolated root)
             Start-Sleep -Milliseconds 500
-            $residualProcs = Get-CimInstance Win32_Process | Where-Object {
-                $_.ProcessId -eq $appPid -or
-                $sidecarPids -contains $_.ProcessId -or
-                $_.ParentProcessId -eq $appPid -or
-                $_.Name -like "*core_service*" -or
-                $_.Name -like "*m2rc1_desktop*" -or
-                $_.Name -like "*m2rc1-desktop*"
+            $allProcs = Get-CimInstance Win32_Process
+            $treePids = [System.Collections.Generic.HashSet[int]]::new()
+            [void]$treePids.Add($appPid)
+            foreach ($spid in $sidecarPids) { [void]$treePids.Add($spid) }
+            $q = [System.Collections.Generic.Queue[int]]::new()
+            foreach ($tp in $treePids) { $q.Enqueue($tp) }
+            while ($q.Count -gt 0) {
+                $curPid = $q.Dequeue()
+                foreach ($procItem in $allProcs) {
+                    if ($procItem.ParentProcessId -eq $curPid) {
+                        if ($treePids.Add($procItem.ProcessId)) {
+                            $q.Enqueue($procItem.ProcessId)
+                        }
+                    }
+                }
+            }
+            $residualProcs = @()
+            foreach ($procItem in $allProcs) {
+                $cmd = if ($procItem.CommandLine) { $procItem.CommandLine } else { "" }
+                $isTree = $treePids.Contains($procItem.ProcessId)
+                $isIsolated = ($cmd.Contains($isolatedRoot))
+                if ($isTree -or $isIsolated) {
+                    $residualProcs += $procItem
+                }
             }
 
             Write-Log "=== Process Tree Verification Summary ==="
@@ -193,6 +210,13 @@ try {
     # Write ac5.exit
     $exitFile = Join-Path $resolvedOutDir "ac5.exit"
     [System.IO.File]::WriteAllText($exitFile, $scriptExitCode.ToString(), [System.Text.Encoding]::UTF8)
+
+    # Read back to assert disk content matches exit code
+    $readBackExit = [System.IO.File]::ReadAllText($exitFile).Trim()
+    if ($readBackExit -ne $scriptExitCode.ToString()) {
+        Write-Log "CRITICAL ERROR: ac5.exit content ($readBackExit) does not match script exit code ($scriptExitCode)" -ForegroundColor Red
+        $scriptExitCode = 1
+    }
 
     # Write ac5-metadata.txt
     $metaTxtFile = Join-Path $resolvedOutDir "ac5-metadata.txt"

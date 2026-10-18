@@ -34,6 +34,8 @@ foreach ($bp in $baselineProcs) {
 }
 Write-Host "Baseline process snapshot recorded: $($baselinePidSet.Count) processes at $($suiteStartTime.ToString('yyyy-MM-ddTHH:mm:sszzz'))"
 
+$launchedPids = [System.Collections.Generic.HashSet[int]]::new()
+
 function Run-LoggedCommand {
     param(
         [string]$CommandName,
@@ -61,6 +63,7 @@ function Run-LoggedCommand {
     $proc = New-Object System.Diagnostics.Process
     $proc.StartInfo = $pinfo
     $proc.Start() | Out-Null
+    [void]$launchedPids.Add($proc.Id)
 
     $stdoutTask = $proc.StandardOutput.ReadToEndAsync()
     $stderrTask = $proc.StandardError.ReadToEndAsync()
@@ -179,25 +182,51 @@ $p2_6_Res = Run-LoggedCommand `
     -CommandLine "cargo test --manifest-path apps/desktop/src-tauri/Cargo.toml --bin m2rc1-desktop writer_overflow_pipe_capacity_unblocks_and_cleans_up_on_kill -- --nocapture" `
     -LogBase "ac4-writer-pipe-overflow"
 
-# 5e. N1: Inner lock contention fallback
+# 5e. N1: Inner lock contention fallback (success branch)
 $n1_Res = Run-LoggedCommand `
     -CommandName "rust_inner_lock_contention_test" `
     -CommandLine "cargo test --manifest-path apps/desktop/src-tauri/Cargo.toml --bin m2rc1-desktop resilient_inner_lock_contention_timeout_triggers_fallback_shutdown -- --nocapture" `
     -LogBase "ac4-inner-lock-contention"
 
+# 5f. N1: Inner lock contention fallback timeout observed
+$n1_timeout_Res = Run-LoggedCommand `
+    -CommandName "rust_inner_lock_fallback_timeout_test" `
+    -CommandLine "cargo test --manifest-path apps/desktop/src-tauri/Cargo.toml --bin m2rc1-desktop resilient_inner_lock_contention_fallback_timeout_observed -- --nocapture" `
+    -LogBase "ac4-inner-lock-fallback-timeout"
+
+# 5g. N1: Inner lock contention fallback spawn failure reported
+$n1_spawn_Res = Run-LoggedCommand `
+    -CommandName "rust_inner_lock_fallback_spawn_test" `
+    -CommandLine "cargo test --manifest-path apps/desktop/src-tauri/Cargo.toml --bin m2rc1-desktop resilient_inner_lock_contention_fallback_spawn_failure_reported -- --nocapture" `
+    -LogBase "ac4-inner-lock-fallback-spawn-failure"
+
+# 5h. AC4: Reentrant shutdown retry without try_wait confirmation
+$reentrant_Res = Run-LoggedCommand `
+    -CommandName "rust_reentrant_child_reap_test" `
+    -CommandLine "cargo test --manifest-path apps/desktop/src-tauri/Cargo.toml --bin m2rc1-desktop reentrant_shutdown_without_try_wait_success_does_not_set_child_reaped -- --nocapture" `
+    -LogBase "ac4-reentrant-child-reap-check"
+
 # 6. AC2: Direct Recursive Process Tree and Zero Residual Orphan Check (with Broken-Chain Detection per P2#5)
 Write-Host "Performing comprehensive Recursive Process Tree and Zero Residual Orphan Check..."
 $allProcs = Get-CimInstance Win32_Process
 
-# 1) Build recursive descendant PID list from current runner PID ($PID)
-$descendantPids = New-Object System.Collections.Generic.HashSet[int]
-$queue = New-Object System.Collections.Generic.Queue[int]
-$queue.Enqueue($PID)
+# 1) Build recursive descendant PID list from current runner PID ($PID) and all launched command PIDs ($launchedPids)
+$seedPids = [System.Collections.Generic.HashSet[int]]::new()
+[void]$seedPids.Add($PID)
+foreach ($lp in $launchedPids) {
+    [void]$seedPids.Add($lp)
+}
+
+$descendantPids = [System.Collections.Generic.HashSet[int]]::new()
+$queue = [System.Collections.Generic.Queue[int]]::new()
+foreach ($sp in $seedPids) {
+    $queue.Enqueue($sp)
+}
 
 while ($queue.Count -gt 0) {
     $parentPid = $queue.Dequeue()
     foreach ($proc in $allProcs) {
-        if ($proc.ParentProcessId -eq $parentPid -and $proc.ProcessId -ne $PID) {
+        if ($proc.ParentProcessId -eq $parentPid -and $proc.ProcessId -ne $PID -and (-not $seedPids.Contains($proc.ProcessId))) {
             if ($descendantPids.Add($proc.ProcessId)) {
                 $queue.Enqueue($proc.ProcessId)
             }
@@ -214,12 +243,8 @@ foreach ($proc in $allProcs) {
 }
 
 # 3) Filter candidate residual processes:
-# - Any direct or indirect descendant PID of runner still alive
-# - Any global names: core_service, m2rc1_desktop, m2rc1-desktop, host_bridge
-# - Any python processes associated with the workspace ($RepoRoot), isolation root, bootstrap.core_service, or test scripts
-# - Any delta processes associated with test directories, m2rc1 binaries, or isolated data roots (broken chain)
-$repoRootRaw = (Get-Location).Path
-$repoPathEscaped = $repoRootRaw.Replace('\', '\\')
+# - Any direct or indirect descendant PID of runner or launched commands still alive
+# - Any process explicitly referencing the unique isolated temp root ($isolatedRoot, which includes unique GUID)
 $isolatedRootRaw = $isolatedRoot
 $isolatedRootEscaped = $isolatedRoot.Replace('\', '\\')
 
@@ -227,26 +252,11 @@ $residualProcs = @()
 foreach ($p in $allProcs) {
     if ($p.ProcessId -eq $PID) { continue }
     $cmd = if ($p.CommandLine) { $p.CommandLine } else { "" }
-    $name = $p.Name
 
     $isDescendant = $descendantPids.Contains($p.ProcessId)
-    $isAppOrSidecar = ($name -like "*core_service*") -or ($name -like "*m2rc1_desktop*") -or ($name -like "*m2rc1-desktop*") -or ($name -like "*host_bridge*")
-    $isPythonTarget = ($name -like "*python*") -and (
-        ($cmd.Contains($isolatedRootRaw)) -or
-        ($cmd.Contains($isolatedRootEscaped)) -or
-        ($cmd -like "*bootstrap.core_service*") -or
-        ($cmd -like "*time.sleep(60)*") -or
-        ($cmd.Contains($repoRootRaw)) -or
-        ($cmd.Contains($repoPathEscaped))
-    )
-    $isBrokenChainDelta = (-not $baselinePidSet.Contains($p.ProcessId)) -and (
-        ($cmd.Contains($isolatedRootRaw)) -or
-        ($cmd.Contains($isolatedRootEscaped)) -or
-        ($cmd.Contains("p20-close-bound")) -or
-        ($cmd.Contains("apps\desktop\src-tauri"))
-    )
+    $isIsolatedRootMatch = ($cmd.Contains($isolatedRootRaw)) -or ($cmd.Contains($isolatedRootEscaped))
 
-    if ($isDescendant -or $isAppOrSidecar -or $isPythonTarget -or $isBrokenChainDelta) {
+    if ($isDescendant -or $isIsolatedRootMatch) {
         $residualProcs += $p
     }
 }
@@ -329,6 +339,9 @@ $anyFailed = ($overlayRes.ExitCode -ne 0) -or `
     ($p1_2_PendingRes.ExitCode -ne 0) -or `
     ($p2_6_Res.ExitCode -ne 0) -or `
     ($n1_Res.ExitCode -ne 0) -or `
+    ($n1_timeout_Res.ExitCode -ne 0) -or `
+    ($n1_spawn_Res.ExitCode -ne 0) -or `
+    ($reentrant_Res.ExitCode -ne 0) -or `
     ($residualCount -gt 0)
 
 if ($anyFailed) {

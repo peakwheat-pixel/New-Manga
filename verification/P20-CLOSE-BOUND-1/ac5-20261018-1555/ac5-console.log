@@ -1,0 +1,16 @@
+﻿[2026-10-18T15:53:19+08:00] === P20-CLOSE-BOUND-1 AC5 Interactive Desktop Verification ===
+[2026-10-18T15:53:19+08:00] Output Directory: G:\CODEX\New Manga\verification\P20-CLOSE-BOUND-1\ac5-20261018-1555
+[2026-10-18T15:53:19+08:00] Isolated root prepared at: C:\Users\49745\AppData\Local\Temp\p20close-e8035f04
+[2026-10-18T15:53:19+08:00] Launching desktop application: G:\CODEX\New Manga\apps\desktop\src-tauri\target\release\m2rc1-desktop.exe
+[2026-10-18T15:53:19+08:00] App launched with PID: 41500. Waiting for window initialization and sidecar spawn (up to 15s)...
+[2026-10-18T15:53:19+08:00] Main window detected! Handle: 1118508
+[2026-10-18T15:53:19+08:00] Process tree state: Main PID=41500, Child PIDs=30468,50724,47872
+[2026-10-18T15:53:19+08:00] Sending CloseMainWindow request...
+[2026-10-18T15:53:19+08:00] CloseMainWindow returned: True
+[2026-10-18T15:53:19+08:00] App process exited: True (Took 129.3082 ms, bound was 5000 ms)
+[2026-10-18T15:53:20+08:00] === Process Tree Verification Summary ===
+[2026-10-18T15:53:20+08:00] Exit within bound: True
+[2026-10-18T15:53:20+08:00] Exit duration: 129.3082 ms
+[2026-10-18T15:53:20+08:00] Residual process count: 0
+[2026-10-18T15:53:20+08:00] SUCCESS: Application exited within bound (129.3082 ms) and zero orphan processes remaining. Clean exit verified.
+[2026-10-18T15:53:20+08:00] Isolated root cleaned.

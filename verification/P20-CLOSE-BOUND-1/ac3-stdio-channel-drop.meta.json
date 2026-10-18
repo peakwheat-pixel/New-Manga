@@ -1,9 +1,9 @@
 ﻿{
   "command": "cargo test --manifest-path apps/desktop/src-tauri/Cargo.toml --bin m2rc1-desktop stdio_channel_drop",
   "command_name": "rust_stdio_channel_drop_test",
-  "start_time": "2026-10-18T14:58:11+08:00",
-  "end_time": "2026-10-18T14:58:12+08:00",
-  "duration_ms": 1013.18,
+  "start_time": "2026-10-18T15:52:07+08:00",
+  "end_time": "2026-10-18T15:52:08+08:00",
+  "duration_ms": 924.07,
   "exit_code": 0,
   "cwd": "G:\\CODEX\\New Manga",
   "shell": "pwsh (PowerShell 7.6.6)",

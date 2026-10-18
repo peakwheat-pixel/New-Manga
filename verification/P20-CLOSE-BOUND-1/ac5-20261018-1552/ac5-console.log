@@ -1,0 +1,23 @@
+[2026-10-18T15:53:04+08:00] === P20-CLOSE-BOUND-1 AC5 Interactive Desktop Verification ===
+[2026-10-18T15:53:04+08:00] Output Directory: G:\CODEX\New Manga\verification\P20-CLOSE-BOUND-1\ac5-20261018-1552
+[2026-10-18T15:53:04+08:00] Isolated root prepared at: C:\Users\49745\AppData\Local\Temp\p20close-b1d8c844
+[2026-10-18T15:53:04+08:00] Launching desktop application: G:\CODEX\New Manga\apps\desktop\src-tauri\target\release\m2rc1-desktop.exe
+[2026-10-18T15:53:04+08:00] App launched with PID: 47680. Waiting for window initialization and sidecar spawn (up to 15s)...
+[2026-10-18T15:53:05+08:00] Main window detected! Handle: 2822980
+[2026-10-18T15:53:05+08:00] Process tree state: Main PID=47680, Child PIDs=11200,47832,21296
+[2026-10-18T15:53:05+08:00] Sending CloseMainWindow request...
+[2026-10-18T15:53:05+08:00] CloseMainWindow returned: True
+[2026-10-18T15:53:06+08:00] App process exited: True (Took 294.2243 ms, bound was 5000 ms)
+[2026-10-18T15:53:06+08:00] === Process Tree Verification Summary ===
+[2026-10-18T15:53:06+08:00] Exit within bound: True
+[2026-10-18T15:53:06+08:00] Exit duration: 294.2243 ms
+[2026-10-18T15:53:06+08:00] Residual process count: 0
+[2026-10-18T15:53:06+08:00] SUCCESS: Application exited within bound (294.2243 ms) and zero orphan processes remaining. Clean exit verified.
+[2026-10-18T15:53:06+08:00] Isolated root cleaned.
+ParentContainsErrorRecordException: G:\CODEX\New Manga\verification\P20-CLOSE-BOUND-1\run-desktop-close-verification.ps1:208
+Line |
+ 208 |      [System.IO.File]::WriteAllLines($consoleLogFile, $logLines, [Syst …
+     |      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     | 调用“WriteAllLines”并传入“3”个参数时发生异常：“The process cannot access the file 'G:\CODEX\New
+     | Manga\verification\P20-CLOSE-BOUND-1\ac5-20261018-1552\ac5-console.log' because it is being used by another
+     | process.”

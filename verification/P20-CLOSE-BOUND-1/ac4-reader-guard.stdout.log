@@ -9,6 +9,6 @@
 running 1 test
 test library_bridge::tests::reader_join_guard_enforces_hard_timeout_if_reader_hung ... ok
 
-test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 145 filtered out; finished in 0.51s
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 146 filtered out; finished in 0.51s
 
 

@@ -1,0 +1,4 @@
+﻿    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.50s
+     Running unittests src\main.rs (apps\desktop\src-tauri\target\debug\deps\m2rc1_desktop-24448612fc7535f6.exe)
+[shutdown] Warning: ctx.inner lock acquisition timed out in ResilientLibraryChannel::shutdown; spawning fallback shutdown worker
+[shutdown] Error: failed to spawn resilient-inner-shutdown-fallback worker: simulated spawn failure
