@@ -203,8 +203,42 @@ def run_verification():
         # Verify DB content rows for Book 1 are completely gone
         conn: sqlite3.Connection = core.conn
         cursor = conn.cursor()
-        for tbl in ["books", "chapters", "pages", "regions", "region_revisions", "media_artifacts", "artifact_revisions", "reading_progress", "book_tags"]:
-            rows = cursor.execute(f"SELECT COUNT(*) FROM {tbl} WHERE book_id = ?", (book1.book_id,)).fetchone()[0] if tbl in ["books", "chapters", "reading_progress", "book_tags"] else 0
+        # AC7 (R-008): every table is asserted through its own real association
+        # path.  The previous form hardcoded ``rows = 0`` for any table left out
+        # of a four-entry whitelist, so those five assertions were tautologies
+        # that could never fail - they reported "0 rows" without ever querying.
+        # pages/regions/region_revisions/artifact_revisions have no book_id
+        # column, so they are reached through their actual parents.
+        db_scope_queries: dict[str, str] = {
+            "books": "SELECT COUNT(*) FROM books WHERE book_id = ?",
+            "chapters": "SELECT COUNT(*) FROM chapters WHERE book_id = ?",
+            "reading_progress": "SELECT COUNT(*) FROM reading_progress WHERE book_id = ?",
+            "book_tags": "SELECT COUNT(*) FROM book_tags WHERE book_id = ?",
+            "media_artifacts": "SELECT COUNT(*) FROM media_artifacts WHERE book_id = ?",
+            "pages": (
+                "SELECT COUNT(*) FROM pages WHERE chapter_id IN "
+                "(SELECT chapter_id FROM chapters WHERE book_id = ?)"
+            ),
+            "regions": (
+                "SELECT COUNT(*) FROM regions WHERE page_id IN ("
+                " SELECT p.page_id FROM pages p"
+                " JOIN chapters c ON c.chapter_id = p.chapter_id"
+                " WHERE c.book_id = ?)"
+            ),
+            "region_revisions": (
+                "SELECT COUNT(*) FROM region_revisions WHERE region_id IN ("
+                " SELECT r.region_id FROM regions r"
+                " JOIN pages p ON p.page_id = r.page_id"
+                " JOIN chapters c ON c.chapter_id = p.chapter_id"
+                " WHERE c.book_id = ?)"
+            ),
+            "artifact_revisions": (
+                "SELECT COUNT(*) FROM artifact_revisions WHERE artifact_id IN ("
+                " SELECT artifact_id FROM media_artifacts WHERE book_id = ?)"
+            ),
+        }
+        for tbl, query in db_scope_queries.items():
+            rows = cursor.execute(query, (book1.book_id,)).fetchone()[0]
             assert rows == 0, f"Expected 0 rows in {tbl} for {book1.book_id}, got {rows}"
         print("  [PASS] Book 1 permanently deleted: DB content rows = 0")
         print(f"  [PASS] Source sample 1 hash strictly intact: {hash_audit_table['sample1.png']['7_after_permanently_delete_book'][0]}")
@@ -324,8 +358,10 @@ def run_verification():
         record_stage("preserved_export.pdf", "7_after_permanently_delete_books", dummy_export_file)
 
         # Verify DB content rows for Book 2 are ZERO
-        for tbl in ["books", "chapters", "pages", "regions", "region_revisions", "media_artifacts", "artifact_revisions", "reading_progress", "book_tags"]:
-            rows = conn.execute(f"SELECT COUNT(*) FROM {tbl} WHERE book_id = ?", (book2.book_id,)).fetchone()[0] if tbl in ["books", "chapters", "reading_progress", "book_tags"] else 0
+        # AC7 (R-008): the same real association paths, reusing the query map
+        # built above so the two books cannot drift apart.
+        for tbl, query in db_scope_queries.items():
+            rows = conn.execute(query, (book2.book_id,)).fetchone()[0]
             assert rows == 0, f"Expected 0 rows in {tbl} for {book2.book_id}, got {rows}"
         print("  [PASS] Book 2 permanently deleted: DB content rows = 0")
 
