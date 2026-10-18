@@ -14,7 +14,7 @@ base_commit: a04e4ea78d5b33a0f91efcdc06b396391c4b165e
 branch: null
 worktree: G:/CODEX/New Manga
 integration_commit: null
-delivery_head: de5c06a4d
+delivery_head: 16b995247
 canonical_evidence_status: pending
 resource_closeout_status: pending
 evidence_dir: verification/P20-AC4-FPS-1
@@ -77,8 +77,8 @@ evidence_dir: verification/P20-AC4-FPS-1
 
 ## 交付与运行记录
 
-- Handoff：`doc/handoffs/P20-AC4-FPS-1-zcode.md`（r2 返修 delivery_head = `de5c06a4d`）。
-- Review：r1 `codex-review-r1.md` 结论 `changes_requested`（五项 finding 全处置）；r2 `codex-review-r2.md` 结论 `changes_requested`（四项处置见下），待 Codex 第三轮独立复审（Owner 不审自己的变更）。
+- Handoff：`doc/handoffs/P20-AC4-FPS-1-zcode.md`（r3 返修 delivery_head = `16b995247`）。
+- Review：r1 `codex-review-r1.md` 结论 `changes_requested`（五项 finding 全处置）；r2 `codex-review-r2.md` 结论 `changes_requested`（四项处置）；r3 `codex-review-r3.md` 结论 `changes_requested`（两项处置见下，含用户 DIR-4 豁免授权），待 Codex 第四轮独立复审（Owner 不审自己的变更）。
 - 实际测试：见上表（AC1/AC6 PASS；AC3 NOT_RUN 属 Coordinator；AC5 NOT_VERIFIED_BY_RULING）。
 - 2026-10-18 Coordinator（dsh, epoch 8）按用户 T4 裁决建立本 Task 并冻结范围。
 - **2026-10-18 Owner（ZCode）交付**：
@@ -100,10 +100,16 @@ evidence_dir: verification/P20-AC4-FPS-1
   - **FPS-R1-03（PARTIAL）**：① JSON artifact——`Show CSV`/`Show JSON` 按钮失败即 FAIL 且**不把 textarea 残留写成 artifact**；CSV 抓取校验表头+行结构；JSON 抓取后**解析并校验确为本轮数据**（`meta.task='P20-AC4-FPS-1'`、`summary.totalSamples`/`excludedCount`、`samples[]` 长度 vs CSV 行数、首/末样本 `frameTsMs` vs CSV 首末行 `frame_ts_ms`）——上一轮残留 payload 无法通过。② SmokeTest false-pass 三处闭合——窗口缺失（`SMOKE_NO_WINDOW`）、启动早退（`SMOKE_APP_EXITED_EARLY`/`..._DURING_SETTLE`）、隔离根无写入（`ISO_EMPTY`）全部进 failure list（exit 6），不再是仅记录。
   - **smell（非阻断）**：`T` → `Write-Trace`（日志职责）、`F` → `Find-UiaByName`（UIA 查找职责），全调用点同步。
   - 验证：语法 PSParser 0 错；`-SafetySelfCheck` **12 项断言** PASS exit 0（`selfcheck-20261018-180541/`）；decoy 组合 `-SmokeTest` PASS exit 0（`smoke-20261018-180626/`）；`npm test` 未重跑（前端零改动，基线 324 tests 仍有效——r2 Review 复核同口径）。AC3 真实桌面测量仍归 Coordinator（NOT_RUN）。
+- **2026-10-18 Owner（ZCode）r3 返修交付**（Review r3 `changes_requested`，用户 DIR-4 豁免授权本轮；两项 finding 全处置；实现 commit `16b99524794a7ff2132a19753ce6a7fcd53fc244`；前端零改动——r3 两项 finding 全在 runner）：
+  - **FPS-R1-02（P1 阻断：注入未绑定前台焦点）**：Windows 把 `WM_MOUSEWHEEL`/`SendKeys` 发给**前台（焦点）窗口**而非光标下窗口（操作者从终端按 Enter 后终端即前台）。新增 `Assert-ForegroundIsPid` 守卫：**每轮注入 tick 前**经 `GetForegroundWindow`+`GetWindowThreadProcessId` 校验前台窗口 PID == 本轮 app PID；不符时先做一次激活（`TryActivate`＝SW_RESTORE + `SetForegroundWindow` + BringWindowToTop，前台锁被拒时以合成 Alt 键解锁重试），激活后重验；仍不符即 **fail-closed**（`FOCUS_NOT_OURS`/`FOCUS_ACTIVATE_FAILED`/`FOCUS_NO_HWND` 进 failures → exit 6 非零），**绝不在焦点不明时注入任何输入**。keys 路径同时检查 `AppActivate` 返回值（false 即 `KEYS_ACTIVATE_FAILED`，不发按键）。M2Wheel/M2Focus 原语上移至脚本顶部统一加载（测量与自检共用）。
+  - **FPS-R1-02-AUDIT（P2：窗口查找提前 return 漏登记）**：`Find-WindowByTitleForPid` 改为**全扫描后返回**——即使自有窗口先被枚举到，同一次调用也会把其后出现的异 PID 同标题窗口登记 `NOT_OURS_WINDOW`（不再提前返回）。
+  - **补测（Review 修法 3，`-SafetySelfCheck` 新增焦点注入组，共 16 项断言）**：三窗口实弹场景——stub（本轮 app 替身，同标题）、decoy（异 PID **同标题**干扰窗）、outsider（异标题外部窗，**真实持有前台**，`fg_pid` 实证）。① 同一次查找同时返回 stub 并登记 decoy `NOT_OURS_WINDOW`（全扫描判别断言，不论 UIA 枚举顺序）；② 外部窗占前台时 guard 拒绝——**三窗口滚轮计数零新增**（WM_MOUSEWHEEL 逐窗 WndProc 计数实证外部窗口未收到任何输入），拒绝经 `Fail()` 进入 exit-6 机制（与测量路径共用同一函数）；③ `TryActivate` 把 stub 带到前台后前台 PID 校验通过；④ 注入 1 个滚轮事件**只落在 stub**（decoy 与 outsider 零接收）。
+  - 验证：语法 PSParser 0 错；`-SafetySelfCheck` **16 项断言 PASS exit 0**（`selfcheck-20261018-194056/`；四轮中间 FAIL `…193652/…193804/…193857/…193957` 留档——自检先后抓出 `Start-Process -ArgumentList` 不自动加引号、Windows PowerShell 5.1 `Add-Type -TypeDefinition` 需显式 `-ReferencedAssemblies System.Windows.Forms`、C# 裸 `CenterScreen` 不存在、含空格标题参数被拆断四个真实缺陷，注入开发有效性实证）；`-SmokeTest` 回归 PASS exit 0（`smoke-20261018-194111/`）；decoy 组合 `-SmokeTest` PASS exit 0（decoy 登记后存活未触碰，`smoke-20261018-194147/`）。AC3 真实桌面测量仍归 Coordinator（NOT_RUN）。
+  - **证据表勘误（本轮登记时发现）**：对全表 19 行按磁盘真实字节逐行复核，发现 4 处 r1/r0 期登记的 pin 为抄写失真（`EVID-FPS-TESTS-RECORDER`/`EVID-FPS-TESTS-PANEL`/`EVID-FPS-WIRING` 各 1-2 个字符错、`EVID-FPS-SMOKE` 长 65 字符）——**r3 Review「15/15 MATCH」结论与磁盘事实不符**。已全部按磁盘实算值修正（本轮新增 6 行复核全过）；勘误属登记修复，对应文件内容与 commit 归属未变。
 
 ## Canonical Evidence
 
-r2 返修交付 head 已固定（`de5c06a4d`；r1 返修 `4c54f3dd1`、r0 原始交付 `011293151` 留史）；下表为 Owner 侧登记，`CANONICAL` 定级与最终裁决由 Codex Review 后确认。真实桌面测量产物（`run-*/`）在 Coordinator 执行后由 Review 阶段补登。全部 sha256 按磁盘真实字节实算（本 Task 交付文件为 LF 行尾检出）。
+r3 返修交付 head 已固定（`16b995247`；r2 返修 `de5c06a4d`、r1 返修 `4c54f3dd1`、r0 原始交付 `011293151` 留史）；下表为 Owner 侧登记，`CANONICAL` 定级与最终裁决由 Codex Review 后确认。真实桌面测量产物（`run-*/`）在 Coordinator 执行后由 Review 阶段补登。全部 sha256 按磁盘真实字节实算（本 Task 交付文件为 LF 行尾检出）。
 
 | evidence_id | AC/Gate | path | commit | sha256 | class (`CANONICAL` / `SOURCE_PIN`) |
 |---|---|---|---|---|---|
@@ -114,14 +120,18 @@ r2 返修交付 head 已固定（`de5c06a4d`；r1 返修 `4c54f3dd1`、r0 原始
 | EVID-FPS-WIRING | AC1, AC6 | apps/desktop/frontend/src/main.tsx | 01129315100928751546c9608456868f5085fa8c | b8f79fdc6746a250515af97970e6c3067f4bab10218c582b677490b57e6be050 | SOURCE_PIN |
 | EVID-FPS-NPMTEST | AC1, AC6 | verification/P20-AC4-FPS-1/npm-test-20261018.log | 01129315100928751546c9608456868f5085fa8c | f14e86b5491f0e8012a89c717a931f1b84c5283931cbf2fd26093ab13188e355 | SOURCE_PIN |
 | EVID-FPS-NPMTEST-R2 | AC1, AC6 | verification/P20-AC4-FPS-1/npm-test-20261018-r2.log | 4c54f3dd10e5e7168500e96687b67097ccae2c00 | 110a8eaffe6010f4c1e9a48d081d1d25bc7161e6cb5da933693a49eb21f56ae4 | SOURCE_PIN |
-| EVID-FPS-RUNNER | AC3 | verification/P20-AC4-FPS-1/run-ac4-fps.ps1 | de5c06a4d572c849de7d7fed8e5027f92e0de156 | 3df73414f56f62b3c4e094a4a871fbc62ec2cd8b9173894d5fa884bf807e578d | SOURCE_PIN |
-| EVID-FPS-GUIDE | AC3, AC5 | verification/P20-AC4-FPS-1/MEASUREMENT-GUIDE.md | de5c06a4d572c849de7d7fed8e5027f92e0de156 | cdf7cf42cdbfaffb5769f030cefb78940397154464c2b5c24161f8deae86aa8c | SOURCE_PIN |
+| EVID-FPS-RUNNER | AC3 | verification/P20-AC4-FPS-1/run-ac4-fps.ps1 | 16b99524794a7ff2132a19753ce6a7fcd53fc244 | f3a34cfe7a7a656d776194b1d49fe7f7e6d224e204eaf8dd78c3a6600742b35a | SOURCE_PIN |
+| EVID-FPS-GUIDE | AC3, AC5 | verification/P20-AC4-FPS-1/MEASUREMENT-GUIDE.md | 16b99524794a7ff2132a19753ce6a7fcd53fc244 | 2a882f461c82c9aff22150d206b6c148d4e0d537e3c345e5d75d5fa5ebeaff3a | SOURCE_PIN |
 | EVID-FPS-REVIEW-R1 | Review | verification/P20-AC4-FPS-1/codex-review-r1.md | 4c54f3dd10e5e7168500e96687b67097ccae2c00 | 5ef026d9f300ea0a501c001b878e31f1c46337f68952c2a64c56607a28bd037f | SOURCE_PIN |
 | EVID-FPS-REVIEW-R2 | Review (r2 finding 依据) | verification/P20-AC4-FPS-1/codex-review-r2.md | de5c06a4d572c849de7d7fed8e5027f92e0de156 | c84cb4cb2f9dc69995bceb0dc659663b5531538d0a0b7c63ab52da2e1221c6bb | SOURCE_PIN |
+| EVID-FPS-REVIEW-R3 | Review (r3 finding 依据) | verification/P20-AC4-FPS-1/codex-review-r3.md | 16b99524794a7ff2132a19753ce6a7fcd53fc244 | 5924bece66e831d8788c85bf0aa8aee83a0fc58b32646922317c32bb1c8b5f47 | SOURCE_PIN |
 | EVID-FPS-SELFCHECK | AC3 (runner 隔离自检, r1) | verification/P20-AC4-FPS-1/selfcheck-20261018-173828/fps-trace.log | 4c54f3dd10e5e7168500e96687b67097ccae2c00 | f4a88496237617069a5dd41fb6850eeec84556cd96ab25e7cddb6741d0501491 | SOURCE_PIN |
 | EVID-FPS-SELFCHECK-R2 | AC3 (runner 自检 r2, 12 断言含故障注入+干扰窗口) | verification/P20-AC4-FPS-1/selfcheck-20261018-180541/fps-trace.log | de5c06a4d572c849de7d7fed8e5027f92e0de156 | 2adca517d384cfc6c920340c8ba6f5cfafe6c002f48bd40a60e11f0b4cf95292 | SOURCE_PIN |
+| EVID-FPS-SELFCHECK-R3 | AC3 (runner 自检 r3, 16 断言含焦点注入组：外部占前台零输入+Fail→exit6+滚轮只落 stub) | verification/P20-AC4-FPS-1/selfcheck-20261018-194056/fps-trace.log | 16b99524794a7ff2132a19753ce6a7fcd53fc244 | 075a66a7702f429720a2b3208753276c768ab9e64a16db905cc1cb3f8ca23746 | SOURCE_PIN |
 | EVID-FPS-SMOKE | AC3 (runner 隔离冒烟, r1) | verification/P20-AC4-FPS-1/smoke-20261018-173917/fps-trace.log | 4c54f3dd10e5e7168500e96687b67097ccae2c00 | a7dd5a9378e57ab6d612592f128f6bcf8a7b9324a27304504aea52a3d64ea4c9 | SOURCE_PIN |
 | EVID-FPS-SMOKE-R2 | AC3 (P1 实证：同标题 decoy 在场绑定本轮 PID) | verification/P20-AC4-FPS-1/smoke-20261018-180626/fps-trace.log | de5c06a4d572c849de7d7fed8e5027f92e0de156 | 34450559cec0d2eba74347de1cbf52f5185a6805a7f1f109d7fc1521ada407c1 | SOURCE_PIN |
+| EVID-FPS-SMOKE-R3 | AC3 (r3 回归：decoy 在场 SmokeTest，登记 NOT_OURS 后存活未触碰) | verification/P20-AC4-FPS-1/smoke-20261018-194147/fps-trace.log | 16b99524794a7ff2132a19753ce6a7fcd53fc244 | fb7df1f2176d59fb51887c643a0e3fdce25a3f363907178410f21cfabd51bda3 | SOURCE_PIN |
+| EVID-FPS-SMOKE-REG-R3 | AC3 (r3 回归：普通 SmokeTest，窗口绑定/AppData/全退) | verification/P20-AC4-FPS-1/smoke-20261018-194111/fps-trace.log | 16b99524794a7ff2132a19753ce6a7fcd53fc244 | 8b56cf627b8ea62ac733d5623c1145758eaf391639392e13f28f4020ea321950 | SOURCE_PIN |
 
 ## Resource Manifest
 
