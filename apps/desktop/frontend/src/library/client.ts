@@ -4,6 +4,10 @@ import type {
   ImportSummary,
   PageNavSummary,
   PageResourceResolve,
+  PermanentlyDeleteBookPayload,
+  PermanentlyDeleteBookResult,
+  PermanentlyDeleteBooksPayload,
+  PermanentlyDeleteBooksResult,
   PingResult,
 } from "./types";
 
@@ -48,6 +52,12 @@ export const CREATE_CHAPTER_COMMAND = "create_chapter";
  */
 export const LIBRARY_IMPORT_FILE_COMMAND = "library_import_file";
 export const LIBRARY_IMPORT_FOLDER_COMMAND = "library_import_folder";
+
+/**
+ * P09-AC3-DELETE-1 wire names (contract M2-C1 rev 2.10 §5.11).
+ */
+export const LIBRARY_DELETE_BOOK_PERMANENTLY_COMMAND = "library_delete_book_permanently";
+export const LIBRARY_DELETE_BOOKS_PERMANENTLY_COMMAND = "library_delete_books_permanently";
 
 const CREATE_ERROR_KEYS = [
   "LIBRARY_INVALID_INPUT",
@@ -272,4 +282,72 @@ export class LibraryClient {
       throw new LibraryClientError(code, `library_import_folder failed: ${code}`);
     }
   }
+
+  /**
+   * P09-AC3-DELETE-1 (contract M2-C1 rev 2.10 §5.11): permanently delete a single book.
+   */
+  async deleteBookPermanently(
+    payload: PermanentlyDeleteBookPayload,
+  ): Promise<PermanentlyDeleteBookResult> {
+    try {
+      const res = (await this.invoke(LIBRARY_DELETE_BOOK_PERMANENTLY_COMMAND, {
+        payload,
+      })) as PermanentlyDeleteBookResult;
+      if (!res || typeof res.deleted !== "boolean" || typeof res.book_id !== "string") {
+        throw new LibraryClientError(
+          "LIBRARY_OPERATION_FAILED",
+          "library_delete_book_permanently returned malformed result",
+        );
+      }
+      return res;
+    } catch (error) {
+      if (error instanceof LibraryClientError) {
+        throw error;
+      }
+      const code =
+        typeof error === "string"
+          ? error
+          : (error as { code?: string })?.code ||
+            (error as Error)?.message ||
+            "CORE_UNAVAILABLE";
+      throw new LibraryClientError(code, `library_delete_book_permanently failed: ${code}`);
+    }
+  }
+
+  /**
+   * P09-AC3-DELETE-1 (contract M2-C1 rev 2.10 §5.11): permanently delete multiple books (1..20).
+   */
+  async deleteBooksPermanently(
+    payload: PermanentlyDeleteBooksPayload,
+  ): Promise<PermanentlyDeleteBooksResult> {
+    try {
+      const res = (await this.invoke(LIBRARY_DELETE_BOOKS_PERMANENTLY_COMMAND, {
+        payload,
+      })) as PermanentlyDeleteBooksResult;
+      if (
+        !res ||
+        typeof res.requested_count !== "number" ||
+        typeof res.completed_count !== "number" ||
+        !Array.isArray(res.items)
+      ) {
+        throw new LibraryClientError(
+          "LIBRARY_OPERATION_FAILED",
+          "library_delete_books_permanently returned malformed result",
+        );
+      }
+      return res;
+    } catch (error) {
+      if (error instanceof LibraryClientError) {
+        throw error;
+      }
+      const code =
+        typeof error === "string"
+          ? error
+          : (error as { code?: string })?.code ||
+            (error as Error)?.message ||
+            "CORE_UNAVAILABLE";
+      throw new LibraryClientError(code, `library_delete_books_permanently failed: ${code}`);
+    }
+  }
 }
+

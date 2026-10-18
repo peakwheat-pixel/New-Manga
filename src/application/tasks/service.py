@@ -203,6 +203,7 @@ class PipelineService:
         self._scheduler_owner_required = False
         self._scheduler_owner = False
         self._accept_lock = threading.RLock()
+        self._resumed_runs: set[str] = set()
         self._event_sink: Callable[[str, Mapping[str, Any]], None] | None = None
         self._event_states: dict[str, tuple[str, tuple[tuple[str, str], ...], str | None, str]] = {}
         # TASK-039: optional artifact probe (page_id -> current Clean exists?).
@@ -411,6 +412,7 @@ class PipelineService:
         self._set_planned_run_status(run)
         if mode == "continue" and run.status is PipelineRunStatus.PENDING:
             run.status = PipelineRunStatus.RUNNING
+            self._resumed_runs.add(run.run_id)
         self._persist(run)
         return run
 
@@ -842,7 +844,10 @@ class PipelineService:
             self._scheduler_lock.release()
 
     def _execute_run_owned(self, run_id: str) -> PipelineRun:
-        return self._execute_run_under_owner(run_id, resumed=False)
+        resumed = run_id in self._resumed_runs
+        if resumed:
+            self._resumed_runs.discard(run_id)
+        return self._execute_run_under_owner(run_id, resumed=resumed)
 
     def _execute_run_under_owner(
         self, run_id: str, *, resumed: bool
@@ -1026,8 +1031,9 @@ class PipelineService:
             if run.status is PipelineRunStatus.PAUSED:
                 run.pause_requested = False
                 run.status = PipelineRunStatus.RUNNING
+                self._resumed_runs.add(run.run_id)
                 self._persist(run)
-                return ControlResult(run.run_id, run.status)
+                return ControlResult(run.run_id, PipelineRunStatus.PENDING)
             if (
                 run.status is PipelineRunStatus.INTERRUPTED
                 and run.interruption_disposition is None
@@ -1035,7 +1041,7 @@ class PipelineService:
                 run.cancel_requested = False
                 run.pause_requested = False
                 self.plan_run(run_id, mode="continue")
-                return ControlResult(run.run_id, run.status)
+                return ControlResult(run.run_id, PipelineRunStatus.PENDING)
             raise PipelineError("INVALID_RUN_TRANSITION", "continue requires paused or interrupted")
 
         if action == "restart":

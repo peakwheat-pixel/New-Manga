@@ -1089,22 +1089,32 @@ class CoreServiceServer:
         repo = self._core.repository
         storage = self._core.storage
 
-        all_ok, items = repo.preflight_permanent_delete([book_id], storage)
-        if not all_ok:
-            code = items[0]["error_code"] or "BOOK_DELETE_CONFLICT"
-            cat = "not_found" if code == "BOOK_NOT_FOUND" else "conflict"
-            return None, {"code": code, "category": cat, "retryable": False}
+        with self._write_lock:
+            all_ok, items = repo.preflight_permanent_delete(
+                [book_id], storage=storage, export_runtime=self._exports
+            )
+            if not all_ok:
+                code = items[0]["error_code"] or "BOOK_DELETE_CONFLICT"
+                cat = "not_found" if code == "BOOK_NOT_FOUND" else "conflict"
+                return None, {"code": code, "category": cat, "retryable": False}
 
-        targets = repo.list_book_cleanup_targets(book_id)
-        try:
-            repo.execute_permanent_delete_db({book_id: targets})
-        except Exception:
-            return None, {"code": "BOOK_DELETE_FAILED", "category": "internal", "retryable": "unknown"}
+            page_ids = repo.list_book_page_ids(book_id)
+            targets = repo.list_book_cleanup_targets(book_id)
+            try:
+                repo.execute_permanent_delete_db({book_id: targets})
+            except Exception:
+                return None, {"code": "BOOK_DELETE_FAILED", "category": "internal", "retryable": "unknown"}
 
-        cleaned = repo.cleanup_book_files(book_id, targets, storage)
-        if cleaned:
-            return {"book_id": book_id, "deleted": True}, None
-        return None, {"code": "BOOK_DELETE_CLEANUP_PENDING", "category": "internal", "retryable": True}
+            cleaned = repo.cleanup_book_files(
+                book_id,
+                targets,
+                storage,
+                render_previews=self._render_previews,
+                page_ids=page_ids,
+            )
+            if cleaned:
+                return {"book_id": book_id, "deleted": True}, None
+            return None, {"code": "BOOK_DELETE_CLEANUP_PENDING", "category": "internal", "retryable": True}
 
     def handle_permanently_delete_books(
         self, raw_payload: Any
@@ -1141,60 +1151,71 @@ class CoreServiceServer:
         repo = self._core.repository
         storage = self._core.storage
 
-        if repo.is_whole_library(book_ids):
-            return None, {"code": "BOOK_DELETE_BATCH_WHOLE_LIBRARY", "category": "conflict", "retryable": False}
+        with self._write_lock:
+            if repo.is_whole_library(book_ids):
+                return None, {"code": "BOOK_DELETE_BATCH_WHOLE_LIBRARY", "category": "conflict", "retryable": False}
 
-        all_ok, items = repo.preflight_permanent_delete(book_ids, storage)
-        if not all_ok:
-            return None, {
-                "code": "BOOK_DELETE_BATCH_PREFLIGHT_FAILED",
-                "category": "conflict",
-                "retryable": False,
-                "details": {
-                    "phase": "preflight",
+            all_ok, items = repo.preflight_permanent_delete(
+                book_ids, storage=storage, export_runtime=self._exports
+            )
+            if not all_ok:
+                return None, {
+                    "code": "BOOK_DELETE_BATCH_PREFLIGHT_FAILED",
+                    "category": "conflict",
+                    "retryable": False,
+                    "details": {
+                        "phase": "preflight",
+                        "requested_count": len(book_ids),
+                        "completed_count": 0,
+                        "items": items,
+                    },
+                }
+
+            book_page_ids_map = {bid: repo.list_book_page_ids(bid) for bid in book_ids}
+            book_targets_map = {bid: repo.list_book_cleanup_targets(bid) for bid in book_ids}
+            try:
+                repo.execute_permanent_delete_db(book_targets_map)
+            except Exception:
+                return None, {"code": "BOOK_DELETE_FAILED", "category": "internal", "retryable": "unknown"}
+
+            result_items: list[dict[str, Any]] = []
+            completed_count = 0
+            has_pending = False
+            for bid in book_ids:
+                targets = book_targets_map[bid]
+                pids = book_page_ids_map.get(bid, [])
+                cleaned = repo.cleanup_book_files(
+                    bid,
+                    targets,
+                    storage,
+                    render_previews=self._render_previews,
+                    page_ids=pids,
+                )
+                if cleaned:
+                    completed_count += 1
+                    result_items.append({"book_id": bid, "status": "deleted", "error_code": None})
+                else:
+                    has_pending = True
+                    result_items.append({"book_id": bid, "status": "cleanup_pending", "error_code": None})
+
+            if not has_pending:
+                return {
                     "requested_count": len(book_ids),
-                    "completed_count": 0,
-                    "items": items,
+                    "completed_count": completed_count,
+                    "items": result_items,
+                }, None
+
+            return None, {
+                "code": "BOOK_DELETE_BATCH_CLEANUP_PENDING",
+                "category": "internal",
+                "retryable": True,
+                "details": {
+                    "phase": "cleanup",
+                    "requested_count": len(book_ids),
+                    "completed_count": completed_count,
+                    "items": result_items,
                 },
             }
-
-        book_targets_map = {bid: repo.list_book_cleanup_targets(bid) for bid in book_ids}
-        try:
-            repo.execute_permanent_delete_db(book_targets_map)
-        except Exception:
-            return None, {"code": "BOOK_DELETE_FAILED", "category": "internal", "retryable": "unknown"}
-
-        result_items: list[dict[str, Any]] = []
-        completed_count = 0
-        has_pending = False
-        for bid in book_ids:
-            targets = book_targets_map[bid]
-            cleaned = repo.cleanup_book_files(bid, targets, storage)
-            if cleaned:
-                completed_count += 1
-                result_items.append({"book_id": bid, "status": "deleted", "error_code": None})
-            else:
-                has_pending = True
-                result_items.append({"book_id": bid, "status": "cleanup_pending", "error_code": None})
-
-        if not has_pending:
-            return {
-                "requested_count": len(book_ids),
-                "completed_count": completed_count,
-                "items": result_items,
-            }, None
-
-        return None, {
-            "code": "BOOK_DELETE_BATCH_CLEANUP_PENDING",
-            "category": "internal",
-            "retryable": True,
-            "details": {
-                "phase": "cleanup",
-                "requested_count": len(book_ids),
-                "completed_count": completed_count,
-                "items": result_items,
-            },
-        }
 
     def _fetch_page_counts(self) -> dict[str, int]:
         """Read-only query calculating valid non-deleted page counts per book."""

@@ -51,9 +51,15 @@ class ReaderPage:
 
     @property
     def translated_stale(self) -> bool:
-        return bool(self.translated_path and self.rendered_from_revision_id and
-                    self.current_source_revision_id and
-                    self.rendered_from_revision_id != self.current_source_revision_id)
+        if not self.translated_path:
+            return False
+        if self.rendered_from_revision_id and self.current_source_revision_id:
+            if self.rendered_from_revision_id != self.current_source_revision_id:
+                return True
+        if self.translated_revision_id and self.current_translated_revision_id:
+            if self.translated_revision_id != self.current_translated_revision_id:
+                return True
+        return False
 
 
 class ReaderPageCatalog(Protocol):

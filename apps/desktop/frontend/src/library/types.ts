@@ -76,3 +76,36 @@ export interface ImportSummary {
   rejected_files: number;
   pending_files: number;
 }
+
+/**
+ * P09-AC3-DELETE-1 permanent delete payloads and results (contract M2-C1 rev 2.10 §5.11).
+ */
+export interface PermanentlyDeleteBookPayload {
+  book_id: string;
+  confirm_permanent_delete: true;
+}
+
+export interface PermanentlyDeleteBooksPayload {
+  book_ids: string[];
+  confirmed_book_ids: string[];
+  confirm_count: number;
+  confirm_permanent_delete: true;
+}
+
+export interface PermanentlyDeleteBookResult {
+  book_id: string;
+  deleted: boolean;
+}
+
+export interface BookDeleteBatchItem {
+  book_id: string;
+  status: "deleted" | "cleanup_pending" | "not_started";
+  error_code: string | null;
+}
+
+export interface PermanentlyDeleteBooksResult {
+  requested_count: number;
+  completed_count: number;
+  items: BookDeleteBatchItem[];
+}
+

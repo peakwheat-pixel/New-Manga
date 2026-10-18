@@ -140,31 +140,42 @@ class MigrationRunner:
 
     def _apply_one(self, migration: Migration) -> None:
         conn = self._conn
-        conn.execute("PRAGMA foreign_keys = OFF")
-        conn.execute("BEGIN IMMEDIATE")
+        needs_fk_off = migration.schema_version == 5
         try:
-            for statement in self._split_statements(migration.sql):
-                conn.execute(statement)
-            conn.execute(
-                "INSERT INTO schema_migrations (schema_version, migration_name, applied_at, checksum)"
-                " VALUES (?, ?, ?, ?)",
-                (
-                    migration.schema_version,
-                    migration.migration_name,
-                    _utc_now(),
-                    migration.checksum,
-                ),
-            )
-            conn.execute(
-                "INSERT INTO application_metadata (metadata_key, value_json, updated_at)"
-                " VALUES ('schema_version', ?, ?)"
-                " ON CONFLICT(metadata_key) DO UPDATE SET value_json = excluded.value_json,"
-                " updated_at = excluded.updated_at",
-                (str(migration.schema_version), _utc_now()),
-            )
-            conn.commit()
-        except sqlite3.Error:
-            conn.rollback()
-            raise
+            if needs_fk_off:
+                conn.execute("PRAGMA foreign_keys = OFF")
+            try:
+                conn.execute("BEGIN IMMEDIATE")
+                for statement in self._split_statements(migration.sql):
+                    conn.execute(statement)
+                if needs_fk_off:
+                    fk_errors = conn.execute("PRAGMA foreign_key_check").fetchall()
+                    if fk_errors:
+                        raise sqlite3.IntegrityError(
+                            f"foreign key check failed on migration {migration.schema_version}: {fk_errors}"
+                        )
+                conn.execute(
+                    "INSERT INTO schema_migrations (schema_version, migration_name, applied_at, checksum)"
+                    " VALUES (?, ?, ?, ?)",
+                    (
+                        migration.schema_version,
+                        migration.migration_name,
+                        _utc_now(),
+                        migration.checksum,
+                    ),
+                )
+                conn.execute(
+                    "INSERT INTO application_metadata (metadata_key, value_json, updated_at)"
+                    " VALUES ('schema_version', ?, ?)"
+                    " ON CONFLICT(metadata_key) DO UPDATE SET value_json = excluded.value_json,"
+                    " updated_at = excluded.updated_at",
+                    (str(migration.schema_version), _utc_now()),
+                )
+                conn.commit()
+            except sqlite3.Error:
+                conn.rollback()
+                raise
         finally:
-            conn.execute("PRAGMA foreign_keys = ON")
+            if needs_fk_off:
+                conn.execute("PRAGMA foreign_keys = ON")
+

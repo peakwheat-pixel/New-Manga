@@ -8,6 +8,7 @@ import { BookshelfToolbar } from "./BookshelfToolbar";
 import { EmptyStateBookshelf } from "./EmptyStateBookshelf";
 import { ImportDialog } from "./ImportDialog";
 import { CreateTitleDialog } from "./CreateTitleDialog";
+import { RecycleBinPage } from "../recycleBin/RecycleBinPage";
 import { parseSemanticError, type SemanticErrorInfo } from "./error";
 import type { BookshelfFilterState } from "./types";
 import { tokens } from "../theme/tokens";
@@ -52,6 +53,7 @@ export function BookshelfPage({
   const [importDialogOpen, setImportDialogOpen] = useState(false);
   const [importTargetChapterId, setImportTargetChapterId] = useState<string | null>(null);
   const [createEntity, setCreateEntity] = useState<"book" | "chapter" | null>(null);
+  const [recycleBinOpen, setRecycleBinOpen] = useState(false);
 
   const fetchBooks = useCallback(async () => {
     setLoading(true);
@@ -217,6 +219,7 @@ export function BookshelfPage({
         onFilterChange={handleFilterChange}
         onCreateBook={() => setCreateEntity("book")}
         onOpenImport={() => handleOpenImport(null)}
+        onOpenRecycleBin={() => setRecycleBinOpen(true)}
       />
 
       {/* 2. Main content area: Book content on the left, BookDetailPanel on the right */}
@@ -397,6 +400,50 @@ export function BookshelfPage({
         onClose={() => setImportDialogOpen(false)}
         onImportSuccess={handleImportSuccess}
       />
+
+      {/* 5. Recycle Bin Modal (AC5: Permanent Delete entry point ONLY in Recycle Bin) */}
+      {recycleBinOpen && (
+        <div
+          data-testid="recycle-bin-modal-overlay"
+          style={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: "rgba(0, 0, 0, 0.7)",
+            zIndex: 1500,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            padding: 40,
+            boxSizing: "border-box",
+          }}
+        >
+          <div
+            style={{
+              width: "100%",
+              maxWidth: 900,
+              height: "100%",
+              maxHeight: 650,
+              borderRadius: tokens.radius.card,
+              overflow: "hidden",
+              boxShadow: "0 12px 32px rgba(0, 0, 0, 0.5)",
+              border: `1px solid ${tokens.color.border.default}`,
+            }}
+          >
+            <RecycleBinPage
+              client={activeClient}
+              totalBooksCount={books.length}
+              onClose={() => setRecycleBinOpen(false)}
+              onDeleteSuccess={() => {
+                void fetchBooks();
+              }}
+            />
+          </div>
+        </div>
+      )}
     </div>
   );
 }
+

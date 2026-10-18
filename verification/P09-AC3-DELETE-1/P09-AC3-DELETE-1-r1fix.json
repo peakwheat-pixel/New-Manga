@@ -1,0 +1,157 @@
+{
+  "task_id": "P09-AC3-DELETE-1",
+  "round": "R-007-fix",
+  "author": "Antigravity",
+  "timestamp": "2026-10-18T15:18:30+08:00",
+  "environment": {
+    "os": "Windows 11",
+    "shell": "pwsh 7.6.6",
+    "python": "3.12.3",
+    "venv": "G:\\CODEX\\New Manga.task-envs\\T1.1.1-impl-py312",
+    "node": "v24.15.0",
+    "npm": "12.0.1"
+  },
+  "previous_round_incident": {
+    "reason": "上一轮（R-007）在完成前端组件（RecycleBinPage/PermanentDeleteConfirmDialog）、前端测试及 Core 修复落盘后，在执行全量验证与生成交付报告过程中遭遇系统超时/上下文中断中断，导致交付报告文件未能成功写盘（呈现 0 字节或未落地）。"
+  },
+  "changes": {
+    "frontend": [
+      {
+        "file": "apps/desktop/frontend/src/library/types.ts",
+        "summary": "新增 PermanentlyDeleteBookRequest, PermanentlyDeleteBooksRequest, BatchBookDeleteResult, BatchDeleteFailedItem 等类型契约定义"
+      },
+      {
+        "file": "apps/desktop/frontend/src/library/client.ts",
+        "summary": "在 LibraryClient 接口及 Stdio/Mock 实现中新增 deleteBookPermanently 与 deleteBooksPermanently IPC 封装"
+      },
+      {
+        "file": "apps/desktop/frontend/src/recycleBin/PermanentDeleteConfirmDialog.tsx",
+        "summary": "实现二次确认对话框组件：作品列表与数量展示、三条不可恢复/导出保留/备份不处理警示文案、显式勾选框、禁用态保护"
+      },
+      {
+        "file": "apps/desktop/frontend/src/recycleBin/RecycleBinPage.tsx",
+        "summary": "实现回收站独立页面：永久删除入口唯一限定、批量上限 20 拦截、整库清空拦截、同源冻结快照装配三项确认字段、IPC 调用与列表刷新"
+      },
+      {
+        "file": "apps/desktop/frontend/src/recycleBin/RecycleBinPage.test.tsx",
+        "summary": "新增 12 项回收站交互与安全规则 Vitest 单元测试"
+      },
+      {
+        "file": "apps/desktop/frontend/src/bookshelf/BookshelfToolbar.tsx",
+        "summary": "在书架顶部工具栏新增进入回收站的导航按钮，主列表保持无永久删除按钮"
+      },
+      {
+        "file": "apps/desktop/frontend/src/bookshelf/BookshelfPage.tsx",
+        "summary": "接入回收站视图模式与切换逻辑"
+      }
+    ],
+    "core_previous_and_this_round": [
+      {
+        "file": "src/infrastructure/sqlite/library.py",
+        "summary": "R-001~R-005, R-009 修复：活动任务/导出预检互斥、跨作品共享 Managed 引用与跨项目 Revision 冲突检测、Pipeline/Export 历史深度脱离、Derived 预览联动清理、整库精确匹配"
+      },
+      {
+        "file": "src/infrastructure/sqlite/migrator.py",
+        "summary": "R-006 修复：将 foreign_keys=OFF 范围收窄至 v5 迁移阶段，完善 try/finally 异常恢复并在提交前执行 PRAGMA foreign_key_check"
+      },
+      {
+        "file": "src/bootstrap/core_service.py",
+        "summary": "接入 export_runtime.has_active_exports_for_book 与 Derived 资源清理联动"
+      },
+      {
+        "file": "src/application/reading/ports.py",
+        "summary": "在 ReaderPage.translated_stale 属性中补回 translated_revision_id != current_translated_revision_id 判定，解决既有阅读器陈旧标记断言失败"
+      },
+      {
+        "file": "src/application/export/service.py",
+        "summary": "在 ExportPage.stale 属性中补回 translated_revision_id != current_translated_revision_id 判定，解决既有导出断言失败；在 P16ExportRuntime 中补回 book_title 快照读取并新增 has_active_exports_for_book"
+      },
+      {
+        "file": "src/application/tasks/service.py",
+        "summary": "引入 _resumed_runs 集合，区分合法 continue 恢复运行与非法外部直接调度，保持 control_run 返回 PENDING 契约并修复 4 项流水线暂停/恢复断言失败"
+      },
+      {
+        "file": "tests/core/test_core_delete_commands.py",
+        "summary": "修复新增测试中手写 SQL 违反 NOT NULL / CHECK 约束与列名错误问题，补齐批量同批次引用允许用例与整库清空精确匹配用例"
+      }
+    ]
+  },
+  "ac5_interaction_implementation": {
+    "recycle_bin_only": "书架卡片与批量操作均无永久删除按钮，仅在 BookshelfToolbar 提供回收站跳转入口，永久删除只能在 RecycleBinPage 发起",
+    "itemized_targets_and_count": "PermanentDeleteConfirmDialog 显式渲染 '即将永久删除 N 部作品：' 并使用 <ul> 列表罗列每本作品的 title 与 original_title",
+    "explicit_checkbox": "包含 checked 状态控制的 '我理解不可恢复' 复选框，未勾选时确认按钮 disabled",
+    "single_source_confirmation_fields": "从弹窗打开时冻结的同一 confirmTargets 数组生成 book_ids、confirmed_book_ids (全同序拷贝) 与 confirm_count，保证三者同源",
+    "batch_limit_20": "RecycleBinPage 中 selectedIds.length > 20 拦截并阻断弹窗，显示明确错误文案",
+    "whole_library_blocked": "selectedIds.length === effectiveTotal 拦截并阻断弹窗，提示不能单次批量清空整库",
+    "mandatory_notices": [
+      "App 回收站无法恢复：此操作将永久删除所选作品的数据库记录、章节、页面及受控 Managed Copy，不可撤销。",
+      "用户导出目录内的文件会保留：已导出的作品文件不会被删除或修改。",
+      "全库历史备份不处理且可能含旧快照：此操作不会清理或改写全库历史备份，旧备份中可能仍保留删除前的数据快照。"
+    ]
+  },
+  "failures_remediation": [
+    {
+      "test": "tests/core/test_core_delete_commands.py::test_delete_book_busy_with_active_tasks_and_exports",
+      "nature": "test_defect",
+      "reason": "手写 SQL 插入 pipeline_run_targets 遗漏 NOT NULL target_type 列；向 export_history 插入 status='running' 违反 CHECK 约束（该表仅存终态，活动导出存在于内存态 export_runtime）",
+      "fix": "SQL 补充 target_type='page'；改用 mock DummyExports.has_active_exports_for_book 注入 server._exports 验证 BOOK_BUSY"
+    },
+    {
+      "test": "tests/core/test_core_delete_commands.py::test_delete_book_conflict_with_shared_managed_or_cross_project",
+      "nature": "test_defect",
+      "reason": "向 artifact_revisions 插入数据时使用了不存在的列名 revision_index（实际为 revision_no），且遗漏 NOT NULL 字段",
+      "fix": "修正列名并补全必填字段，真实验证跨作品共享 Managed 副本、共享 artifact 路径和跨项目 Revision 引用时的 BOOK_DELETE_CONFLICT 拦截与零副作用"
+    },
+    {
+      "test": "tests/reading_export/test_export.py (2 tests)",
+      "nature": "implementation_defect",
+      "reason": "P16 引入 rendered_from_revision_id 时覆盖了 ExportPage.stale 条件，丢失了 D06 既有的 translated_revision_id != current_translated_revision_id 版本错位判定",
+      "fix": "同时支持源修订变化与译图修订版本不一致判定，恢复既有语义，不放宽既有断言"
+    },
+    {
+      "test": "tests/reading_export/test_reading.py::test_stale_translated_flagged_with_message",
+      "nature": "implementation_defect",
+      "reason": "ReaderPage.translated_stale 同样被窄化为仅检查源修订变化，丢失译图版本指针错位判定",
+      "fix": "同时支持两种 stale 判定，恢复既有契约语义"
+    },
+    {
+      "test": "tests/pipeline/test_pipeline.py & test_pipeline_production_seam.py (4 tests)",
+      "nature": "implementation_defect",
+      "reason": "P13 将 continue 状态置为 RUNNING，导致 control_run 返回非 PENDING 破坏断言，且 _execute_run_owned 硬编码 resumed=False 导致再次调度时触发 INVALID_RUN_TRANSITION",
+      "fix": "在 PipelineService 中增加 _resumed_runs 集合跟踪通过 continue / mode='continue' 恢复的任务，对外保持 ControlResult 返回 PENDING，内部调度按需消费 resumed=True，且保留非法调度直接抛出 INVALID_RUN_TRANSITION 的能力"
+    }
+  ],
+  "test_results": {
+    "frontend": {
+      "command": "npm test",
+      "cwd": "apps/desktop/frontend",
+      "exit_code": 0,
+      "summary": "30 test files passed (30), 294 tests passed (294), duration 2.97s"
+    },
+    "core_python": {
+      "command": "python -m pytest tests/core tests/storage tests/reading_export tests/pipeline -q -p no:cacheprovider",
+      "exit_code": 0,
+      "summary": "865 passed, 1 warning in 73.68s"
+    },
+    "p09_source_hashes": {
+      "file": "verification/P09/evidence/AC3-source-hashes.json",
+      "result": "PASS (1 distinct hash per sample across 6 stages)"
+    }
+  },
+  "can_prove_vs_cannot_prove": {
+    "can_prove": [
+      "AC5 完整产品交互与安全防护（仅回收站入口、书名与数量展示、二次勾选确认、三项确认字段同源、批量 20 拦截、整库阻止、三条提示文案）已在 React 前端实现并通过 Vitest 验证",
+      "Core 侧 9 个失败全部清零，865 个全量核心、存储、阅读导出、流水线测试全部通过（exit 0），零断言被删除或放宽",
+      "AC3 源文件零修改保持 PASS，用户 AppData 目录完整保护未被触碰",
+      "活动导出互斥、跨作品共享 Managed 引用拦截、整库清空精确匹配均通过测试验证"
+    ],
+    "cannot_prove": [
+      "Rust 侧 library_bridge.rs details.phase 白名单收窄（本轮硬约束禁止修改 library_bridge.rs / main.rs 且禁止执行 cargo，保留为后续待办）",
+      "Tauri 生产级打包端到端二进制运行（受同 crate 约束禁止 cargo build）"
+    ]
+  },
+  "uncompleted_items": [
+    "library_bridge.rs 的 details.phase 投影白名单收窄（等待 Rust 锁释放）",
+    "Task 文档元数据更新（等待 Coordinator 最终集成批准）"
+  ]
+}

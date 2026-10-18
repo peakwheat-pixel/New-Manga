@@ -19,6 +19,7 @@ from datetime import datetime, timezone
 
 from domain.books.entities import Book, Chapter, ChapterType, ReadingDirection, Tag
 from domain.pages.entities import Page
+from infrastructure.filesystem.managed_storage import _is_reparse_point, _sanitize_component
 
 
 class SqliteLibraryRepository:
@@ -659,18 +660,28 @@ class SqliteLibraryRepository:
                 ordered.append(t)
         return ordered
 
+    def list_book_page_ids(self, book_id: str) -> list[str]:
+        rows = self._conn.execute(
+            "SELECT p.page_id FROM pages p"
+            " JOIN chapters c ON c.chapter_id = p.chapter_id"
+            " WHERE c.book_id = ?",
+            (book_id,),
+        ).fetchall()
+        return [r["page_id"] for r in rows]
+
     def is_whole_library(self, book_ids: Sequence[str]) -> bool:
         rows = self._conn.execute("SELECT book_id FROM books").fetchall()
         all_book_ids = {r["book_id"] for r in rows}
         if not all_book_ids:
             return False
-        return all_book_ids.issubset(set(book_ids))
+        return set(book_ids) == all_book_ids
 
     def preflight_permanent_delete(
-        self, book_ids: Sequence[str], storage: Any = None
+        self, book_ids: Sequence[str], storage: Any = None, export_runtime: Any = None
     ) -> tuple[bool, list[dict[str, Any]]]:
         all_ok = True
         items: list[dict[str, Any]] = []
+        target_ids_set = set(book_ids)
         for book_id in book_ids:
             item_error: str | None = None
             book_row = self._conn.execute(
@@ -682,6 +693,7 @@ class SqliteLibraryRepository:
             if book_row is None and manifest_row is None:
                 item_error = "BOOK_NOT_FOUND"
             elif book_row is not None:
+                # 1. R-001: Active pipeline runs
                 busy_runs = self._conn.execute(
                     "SELECT 1 FROM pipeline_runs pr"
                     " WHERE pr.status NOT IN ('completed', 'completed_with_failures', 'failed', 'cancelled')"
@@ -698,7 +710,21 @@ class SqliteLibraryRepository:
                 ).fetchone()
                 if busy_runs is not None:
                     item_error = "BOOK_BUSY"
-                else:
+
+                if item_error is None:
+                    # 2. R-001: Active pipeline tasks
+                    busy_tasks = self._conn.execute(
+                        "SELECT 1 FROM pipeline_tasks pt"
+                        " JOIN pages p ON p.page_id = pt.page_id"
+                        " JOIN chapters c ON c.chapter_id = p.chapter_id"
+                        " WHERE c.book_id = ? AND pt.status NOT IN ('completed', 'failed', 'cancelled')",
+                        (book_id,),
+                    ).fetchone()
+                    if busy_tasks is not None:
+                        item_error = "BOOK_BUSY"
+
+                if item_error is None:
+                    # 3. R-001: Active export history & export runtime
                     busy_exports = self._conn.execute(
                         "SELECT 1 FROM export_history"
                         " WHERE book_id = ? AND status NOT IN ('completed', 'skipped', 'cancelled', 'failed')",
@@ -706,26 +732,82 @@ class SqliteLibraryRepository:
                     ).fetchone()
                     if busy_exports is not None:
                         item_error = "BOOK_BUSY"
-                    else:
-                        targets = self.list_book_cleanup_targets(book_id)
-                        for t in targets:
-                            segments = t.replace("\\", "/").split("/")
-                            if (
-                                ".." in segments
-                                or "." in segments
-                                or Path(t).is_absolute()
-                                or any(s == "" for s in segments[1:])
-                            ):
+                    elif export_runtime is not None:
+                        try:
+                            if export_runtime.has_active_exports_for_book(book_id):
+                                item_error = "BOOK_BUSY"
+                        except Exception:
+                            pass
+
+                if item_error is None:
+                    # 4. R-002: Shared Managed Copy (external to the requested batch)
+                    placeholders = ",".join("?" * len(target_ids_set))
+                    shared_page = self._conn.execute(
+                        f"SELECT 1 FROM pages p2"
+                        f" JOIN chapters c2 ON c2.chapter_id = p2.chapter_id"
+                        f" WHERE c2.book_id NOT IN ({placeholders})"
+                        f" AND p2.managed_original_ref IN ("
+                        f"   SELECT p.managed_original_ref FROM pages p"
+                        f"   JOIN chapters c ON c.chapter_id = p.chapter_id"
+                        f"   WHERE c.book_id = ? AND p.managed_original_ref IS NOT NULL AND p.managed_original_ref != ''"
+                        f" )",
+                        (*target_ids_set, book_id),
+                    ).fetchone()
+                    if shared_page is not None:
+                        item_error = "BOOK_DELETE_CONFLICT"
+
+                    if item_error is None:
+                        shared_artifact = self._conn.execute(
+                            f"SELECT 1 FROM artifact_revisions ar2"
+                            f" JOIN media_artifacts ma2 ON ma2.artifact_id = ar2.artifact_id"
+                            f" WHERE ma2.book_id NOT IN ({placeholders})"
+                            f" AND ar2.managed_path IN ("
+                            f"   SELECT ar.managed_path FROM artifact_revisions ar"
+                            f"   JOIN media_artifacts ma ON ma.artifact_id = ar.artifact_id"
+                            f"   WHERE ma.book_id = ? AND ar.managed_path IS NOT NULL AND ar.managed_path != ''"
+                            f" )",
+                            (*target_ids_set, book_id),
+                        ).fetchone()
+                        if shared_artifact is not None:
+                            item_error = "BOOK_DELETE_CONFLICT"
+
+                if item_error is None:
+                    # 5. R-002: Cross-project Revision references
+                    cross_ref = self._conn.execute(
+                        f"SELECT 1 FROM artifact_revisions ar2"
+                        f" JOIN media_artifacts ma2 ON ma2.artifact_id = ar2.artifact_id"
+                        f" WHERE ma2.book_id NOT IN ({placeholders})"
+                        f" AND ar2.source_artifact_revision_id IN ("
+                        f"   SELECT ar.artifact_revision_id FROM artifact_revisions ar"
+                        f"   JOIN media_artifacts ma ON ma.artifact_id = ar.artifact_id"
+                        f"   WHERE ma.book_id = ?"
+                        f" )",
+                        (*target_ids_set, book_id),
+                    ).fetchone()
+                    if cross_ref is not None:
+                        item_error = "BOOK_DELETE_CONFLICT"
+
+                if item_error is None:
+                    # 6. Lexical and containment preflight of cleanup targets
+                    targets = self.list_book_cleanup_targets(book_id)
+                    for t in targets:
+                        segments = t.replace("\\", "/").split("/")
+                        if (
+                            ".." in segments
+                            or "." in segments
+                            or Path(t).is_absolute()
+                            or any(s == "" for s in segments[1:])
+                        ):
+                            item_error = "BOOK_DELETE_CONFLICT"
+                            break
+                        if storage is not None:
+                            try:
+                                abs_p = Path(storage.absolute_path(t)).resolve()
+                                root = storage.root.resolve()
+                                abs_p.relative_to(root)
+                            except Exception:
                                 item_error = "BOOK_DELETE_CONFLICT"
                                 break
-                            if storage is not None:
-                                try:
-                                    abs_p = Path(storage.absolute_path(t)).resolve()
-                                    root = storage.root.resolve()
-                                    abs_p.relative_to(root)
-                                except Exception:
-                                    item_error = "BOOK_DELETE_CONFLICT"
-                                    break
             if item_error is not None:
                 all_ok = False
             items.append({
@@ -772,15 +854,21 @@ class SqliteLibraryRepository:
                         rj = {}
                     if book_title:
                         rj["book_title"] = book_title
-                        if isinstance(rj.get("scope"), dict):
+                    if isinstance(rj.get("scope"), dict):
+                        if book_title:
                             rj["scope"]["book_title"] = book_title
+                        rj["scope"].pop("book_id", None)
+                        rj["scope"].pop("chapter_id", None)
+                        rj["scope"].pop("page_id", None)
+                        rj["scope"].pop("page_ids", None)
+                        rj["scope"].pop("ordered_page_ids", None)
                     self._conn.execute(
-                        "UPDATE pipeline_runs SET run_json = ? WHERE run_id = ?",
+                        "UPDATE pipeline_runs SET run_json = ?, requested_targets_json = '[]' WHERE run_id = ?",
                         (json.dumps(rj, ensure_ascii=False), run_id),
                     )
 
                 self._conn.execute(
-                    "UPDATE pipeline_run_targets SET snapshot_json = '{}'"
+                    "UPDATE pipeline_run_targets SET page_id = '', target_id = '', region_id = NULL, snapshot_json = '{}'"
                     " WHERE page_id IN ("
                     "   SELECT p.page_id FROM pages p"
                     "   JOIN chapters c ON c.chapter_id = p.chapter_id"
@@ -790,7 +878,17 @@ class SqliteLibraryRepository:
                 )
 
                 self._conn.execute(
-                    "UPDATE step_runs SET input_refs_json = '[]', lock_snapshot_json = '{}', output_json = '{}'"
+                    "UPDATE pipeline_tasks SET page_id = '', target_id = '', region_id = NULL, units_json = '[]', step_run_ids_json = '[]'"
+                    " WHERE page_id IN ("
+                    "   SELECT p.page_id FROM pages p"
+                    "   JOIN chapters c ON c.chapter_id = p.chapter_id"
+                    "   WHERE c.book_id = ?"
+                    " )",
+                    (book_id,),
+                )
+
+                self._conn.execute(
+                    "UPDATE step_runs SET page_id = '', target_id = '', region_id = NULL, input_refs_json = '[]', lock_snapshot_json = '{}', output_json = '{}'"
                     " WHERE page_id IN ("
                     "   SELECT p.page_id FROM pages p"
                     "   JOIN chapters c ON c.chapter_id = p.chapter_id"
@@ -811,9 +909,41 @@ class SqliteLibraryRepository:
                 )
 
                 self._conn.execute(
-                    "UPDATE step_result_candidates SET payload_json = '{}'"
+                    "UPDATE step_run_input_refs SET revision_id = NULL"
+                    " WHERE revision_id IN ("
+                    "   SELECT ar.artifact_revision_id FROM artifact_revisions ar"
+                    "   JOIN media_artifacts ma ON ma.artifact_id = ar.artifact_id"
+                    "   WHERE ma.book_id = ?"
+                    " )",
+                    (book_id,),
+                )
+
+                self._conn.execute(
+                    "UPDATE step_result_candidates SET page_id = '', target_id = '', region_id = NULL, base_revision_id = NULL, payload_json = '{}'"
                     " WHERE page_id IN ("
                     "   SELECT p.page_id FROM pages p"
+                    "   JOIN chapters c ON c.chapter_id = p.chapter_id"
+                    "   WHERE c.book_id = ?"
+                    " ) OR base_revision_id IN ("
+                    "   SELECT ar.artifact_revision_id FROM artifact_revisions ar"
+                    "   JOIN media_artifacts ma ON ma.artifact_id = ar.artifact_id"
+                    "   WHERE ma.book_id = ?"
+                    " )",
+                    (book_id, book_id),
+                )
+
+                self._conn.execute(
+                    "DELETE FROM pipeline_stage_states WHERE target_type = 'page' AND target_id IN ("
+                    "   SELECT p.page_id FROM pages p"
+                    "   JOIN chapters c ON c.chapter_id = p.chapter_id"
+                    "   WHERE c.book_id = ?"
+                    " )",
+                    (book_id,),
+                )
+                self._conn.execute(
+                    "DELETE FROM pipeline_stage_states WHERE target_type = 'region' AND target_id IN ("
+                    "   SELECT r.region_id FROM regions r"
+                    "   JOIN pages p ON p.page_id = r.page_id"
                     "   JOIN chapters c ON c.chapter_id = p.chapter_id"
                     "   WHERE c.book_id = ?"
                     " )",
@@ -829,11 +959,14 @@ class SqliteLibraryRepository:
                         sc = json.loads(exp["scope_snapshot_json"] or "{}")
                     except Exception:
                         sc = {}
+                    sanitized_scope = {}
                     if book_title:
-                        sc["book_title"] = book_title
+                        sanitized_scope["book_title"] = book_title
+                    elif sc.get("book_title"):
+                        sanitized_scope["book_title"] = sc["book_title"]
                     self._conn.execute(
-                        "UPDATE export_history SET scope_snapshot_json = ? WHERE export_id = ?",
-                        (json.dumps(sc, ensure_ascii=False), exp["export_id"]),
+                        "UPDATE export_history SET book_id = '', chapter_id = '', scope_snapshot_json = ? WHERE export_id = ?",
+                        (json.dumps(sanitized_scope, ensure_ascii=False), exp["export_id"]),
                     )
 
                 self._conn.execute(
@@ -842,8 +975,10 @@ class SqliteLibraryRepository:
                     "   SELECT ar.artifact_revision_id FROM artifact_revisions ar"
                     "   JOIN media_artifacts ma ON ma.artifact_id = ar.artifact_id"
                     "   WHERE ma.book_id = ?"
+                    " ) AND artifact_id IN ("
+                    "   SELECT artifact_id FROM media_artifacts WHERE book_id = ?"
                     " )",
-                    (book_id,),
+                    (book_id, book_id),
                 )
                 self._conn.execute(
                     "DELETE FROM artifact_revisions WHERE artifact_id IN ("
@@ -880,7 +1015,14 @@ class SqliteLibraryRepository:
                 self._conn.execute("DELETE FROM book_tags WHERE book_id = ?", (book_id,))
                 self._conn.execute("DELETE FROM books WHERE book_id = ?", (book_id,))
 
-    def cleanup_book_files(self, book_id: str, targets: Sequence[str], storage: Any) -> bool:
+    def cleanup_book_files(
+        self,
+        book_id: str,
+        targets: Sequence[str],
+        storage: Any,
+        render_previews: Any = None,
+        page_ids: Sequence[str] | None = None,
+    ) -> bool:
         all_deleted = True
         for t in targets:
             try:
@@ -888,26 +1030,59 @@ class SqliteLibraryRepository:
             except Exception:
                 all_deleted = False
 
+        if render_previews is not None and page_ids:
+            try:
+                derived_root = getattr(render_previews, "_root", None)
+                catalog = getattr(render_previews, "_catalog", None)
+                if derived_root is not None and catalog is not None:
+                    root_res = Path(derived_root).resolve()
+                    for pid in page_ids:
+                        res_id = f"page-original-{pid}"
+                        try:
+                            entry = catalog.lookup(res_id)
+                            if entry is not None and entry.rel_path:
+                                target_f = (root_res / entry.rel_path).resolve()
+                                if (
+                                    target_f.is_relative_to(root_res)
+                                    and target_f.is_file()
+                                    and not _is_reparse_point(target_f.lstat())
+                                ):
+                                    target_f.unlink(missing_ok=True)
+                            catalog.remove(res_id)
+                        except Exception:
+                            all_deleted = False
+            except Exception:
+                all_deleted = False
+
         if storage is not None:
             try:
+                _sanitize_component(book_id)
                 root = storage.root.resolve()
-                book_dir = (root / "books" / book_id).resolve()
-                if book_dir.exists() and book_dir.is_dir():
-                    for dirpath, dirnames, filenames in os.walk(str(book_dir), topdown=False):
-                        if not filenames and not dirnames:
+                books_base = (root / "books").resolve()
+                book_dir = root / "books" / book_id
+                resolved_dir = book_dir.resolve()
+                if (
+                    resolved_dir.is_relative_to(books_base)
+                    and resolved_dir != books_base
+                    and resolved_dir.exists()
+                ):
+                    if not _is_reparse_point(book_dir.lstat()):
+                        for dirpath, dirnames, filenames in os.walk(str(resolved_dir), topdown=False):
+                            dp = Path(dirpath)
                             try:
-                                os.rmdir(dirpath)
+                                if _is_reparse_point(dp.lstat()):
+                                    continue
+                                if not filenames and not dirnames:
+                                    os.rmdir(dirpath)
+                                elif not filenames:
+                                    os.rmdir(dirpath)
                             except OSError:
                                 pass
-                        elif not filenames:
-                            try:
-                                os.rmdir(dirpath)
-                            except OSError:
-                                pass
-                    try:
-                        os.rmdir(str(book_dir))
-                    except OSError:
-                        pass
+                        try:
+                            if not _is_reparse_point(book_dir.lstat()):
+                                os.rmdir(str(resolved_dir))
+                        except OSError:
+                            pass
             except Exception:
                 pass
 
@@ -919,6 +1094,7 @@ class SqliteLibraryRepository:
                 )
             return True
         return False
+
 
 
 def _soft_delete_timestamp() -> str:

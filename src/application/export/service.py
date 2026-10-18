@@ -136,9 +136,15 @@ class ExportPage:
 
     @property
     def stale(self) -> bool:
-        return bool(self.translated_provider and self.rendered_from_revision_id and
-                    self.current_source_revision_id and
-                    self.rendered_from_revision_id != self.current_source_revision_id)
+        if self.translated_provider is None:
+            return False
+        if self.rendered_from_revision_id and self.current_source_revision_id:
+            if self.rendered_from_revision_id != self.current_source_revision_id:
+                return True
+        if self.translated_revision_id and self.current_translated_revision_id:
+            if self.translated_revision_id != self.current_translated_revision_id:
+                return True
+        return False
 
     def provider_for(self, mode: str) -> Callable[[], bytes]:
         """Bytes provider for the mode, falling back to the original when
@@ -831,6 +837,7 @@ class P16ExportRuntime:
                 scope = {}
             by_id[export_id] = {
                 "export_id": export_id, "book_id": str(row.get("book_id", "")),
+                "book_title": str(scope.get("book_title", "")),
                 "chapter_ids": scope.get("chapter_ids", [str(row.get("chapter_id", ""))]),
                 "ordered_page_ids": scope.get("page_ids", []),
                 "format": "png" if row.get("export_type") == "single_image" else row.get("export_type", "text"),
@@ -841,6 +848,17 @@ class P16ExportRuntime:
                 "sha256": row.get("file_hash") or None, "lineage": scope.get("lineage", []),
             }
         return sorted(by_id.values(), key=lambda entry: str(entry.get("created_at", "")), reverse=True)
+
+    def has_active_exports_for_book(self, book_id: str) -> bool:
+        with self._lock:
+            for job in self._jobs:
+                history = job.get("history", {})
+                if history.get("book_id") == book_id:
+                    status = job.get("snapshot", {}).get("status")
+                    if status in ("pending", "running", "publishing"):
+                        return True
+        return False
+
 
     def _run(self, export_id: str, request: ExportRequest, cancel: threading.Event) -> None:
         try:

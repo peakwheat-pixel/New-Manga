@@ -7,9 +7,16 @@ export interface BookshelfToolbarProps {
   onFilterChange: (update: Partial<BookshelfFilterState>) => void;
   onCreateBook: () => void;
   onOpenImport: () => void;
+  onOpenRecycleBin?: () => void;
 }
 
-export function BookshelfToolbar({ filter, onFilterChange, onCreateBook, onOpenImport }: BookshelfToolbarProps) {
+export function BookshelfToolbar({
+  filter,
+  onFilterChange,
+  onCreateBook,
+  onOpenImport,
+  onOpenRecycleBin,
+}: BookshelfToolbarProps) {
   const searchInputRef = useRef<HTMLInputElement>(null);
 
   // Keyboard shortcut Ctrl+F to focus search input, Esc to clear
@@ -77,7 +84,29 @@ export function BookshelfToolbar({ filter, onFilterChange, onCreateBook, onOpenI
         >
           导入作品
         </button>
+
+        {onOpenRecycleBin && (
+          <button
+            type="button"
+            data-testid="toolbar-recycle-bin-btn"
+            onClick={onOpenRecycleBin}
+            title="打开回收站"
+            style={{
+              height: 30,
+              padding: "0 10px",
+              fontSize: tokens.typography.size.base,
+              backgroundColor: tokens.color.surface.card,
+              color: tokens.color.text.secondary,
+              border: `1px solid ${tokens.color.border.default}`,
+              borderRadius: tokens.radius.button,
+              cursor: "pointer",
+            }}
+          >
+            🗑️ 回收站
+          </button>
+        )}
       </div>
+
 
       {/* Center: Search input */}
       <div style={{ flex: 1, maxWidth: 360, position: "relative" }}>
