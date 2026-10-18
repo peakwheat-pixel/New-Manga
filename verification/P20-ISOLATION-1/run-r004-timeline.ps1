@@ -22,7 +22,7 @@ New-Item -ItemType Directory -Force -Path $OutDir | Out-Null
 $trace = Join-Path $OutDir 'trace.log'
 $tl = Join-Path $OutDir 'ui-timeline.csv'
 function T([string]$m) { $l = "[{0}] {1}" -f (Get-Date -Format 'HH:mm:ss.fff'), $m; $l | Add-Content $trace -Encoding utf8; Write-Host $l }
-function A([bool]$c, [string]$name) { T ("ASSERT {0} {1}" -f $(if ($c) { 'PASS' } else { 'FAIL' }), $name) }
+function A([bool]$c, [string]$name) { if (-not $c) { $script:scriptFails++ }; T ("ASSERT {0} {1}" -f $(if ($c) { 'PASS' } else { 'FAIL' }), $name) }
 
 function Get-Owned([int]$rootPid) {
     $all = @(Get-CimInstance Win32_Process | Select-Object ProcessId, ParentProcessId, Name)
@@ -45,6 +45,7 @@ function Shot($tag) { $b = Join-Path $OutDir "$tag.png"; $sc = [System.Windows.F
 
 # EXPLICIT failure wording only (from AppShell.tsx) - a healthy/recovered banner must NOT satisfy this
 $FAIL_REGEX = '后端服务异常|正在尝试热重启|自动重启失败'
+$script:scriptFails = 0
 $RECOVER_REGEX = '后端服务已恢复正常'
 
 $exe = Join-Path $RepoRoot 'apps\desktop\src-tauri\target\debug\m2rc1-desktop.exe'
@@ -76,10 +77,12 @@ if ($corePid -gt 0) {
     $lastText = ''
     $deadline = $killAt.AddSeconds(15)
     while ((Get-Date) -lt $deadline) {
-        $el = [int]((Get-Date) - $killAt).TotalMilliseconds
+        # R-012: sample $el AFTER the (slow) UIA/process queries so the reported ms reflect the
+        # moment the condition was actually observed, not the moment before the query started.
         $names = AllNames $win
         $joined = ($names | Where-Object { $_ -match '后端服务' }) -join ' | '
         if ($joined -and $joined -ne $lastText) {
+            $el = [int]((Get-Date) - $killAt).TotalMilliseconds
             $lastText = $joined
             "$el,ui_text,$joined" | Add-Content $tl -Encoding utf8
             T "UI_TEXT (+${el}ms) $joined"
@@ -88,9 +91,9 @@ if ($corePid -gt 0) {
         }
         if ($respawnAt -eq $null) {
             $c2 = @(Get-Owned $rootPid | Where-Object { $_.Name -eq 'core_service.exe' })
-            if ($c2.Count -gt 0) { $respawnAt = Get-Date; $newPid = [int]$c2[0].ProcessId; "$el,sidecar_respawned,pid=$newPid" | Add-Content $tl -Encoding utf8; T "RESPAWN (+${el}ms) pid=$newPid" }
+            if ($c2.Count -gt 0) { $respawnAt = Get-Date; $newPid = [int]$c2[0].ProcessId; $el = [int]((Get-Date) - $killAt).TotalMilliseconds; "$el,sidecar_respawned,pid=$newPid" | Add-Content $tl -Encoding utf8; T "RESPAWN (+${el}ms) pid=$newPid" }
         }
-        if ($p.HasExited) { "$el,main_process_exited," | Add-Content $tl -Encoding utf8; T "MAIN_EXITED (+${el}ms)"; break }
+        if ($p.HasExited) { $el = [int]((Get-Date) - $killAt).TotalMilliseconds; "$el,main_process_exited," | Add-Content $tl -Encoding utf8; T "MAIN_EXITED (+${el}ms)"; break }
         Start-Sleep -Milliseconds 50
     }
     $killMs = [int]($killAt - $killAt).TotalMilliseconds
@@ -105,4 +108,5 @@ if ($corePid -gt 0) {
 if ($p -and -not $p.HasExited) { $p.CloseMainWindow() | Out-Null; Start-Sleep -Seconds 2 }
 if ($p -and -not $p.HasExited) { Stop-Process -Id $p.Id -Force }
 Get-Owned $rootPid | ForEach-Object { Get-Process -Id ([int]$_.ProcessId) -ErrorAction SilentlyContinue | Stop-Process -Force -ErrorAction SilentlyContinue }
-T "R-004 END"
+T ("R-004 END script_fails=" + $script:scriptFails)
+exit ([int]($script:scriptFails -gt 0))

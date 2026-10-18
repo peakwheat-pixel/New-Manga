@@ -15,7 +15,7 @@ branch: main
 worktree: G:/CODEX/New Manga（故障注入须在真实桌面执行；执行方写 verification/P20-ISOLATION-1/**、本 Task、doc/handoffs/P20-ISOLATION-1-*.md）
 integration_commit: null
 delivery_head: eb62dbc7f
-canonical_evidence_status: pending
+canonical_evidence_status: pending`nreview_status: changes_requested（Codex R1 7×P1 + R2 6×P1，最新 head c16e00c76；见 verification/P20-ISOLATION-1/codex-review-r2.md）
 review_status: changes_requested（Codex R1，7 项 P1；见 verification/P20-ISOLATION-1/codex-review-r1.md）
 resource_closeout_status: pending
 evidence_dir: verification/P20-ISOLATION-1
@@ -38,7 +38,7 @@ evidence_dir: verification/P20-ISOLATION-1
 - [x] AC1：**用户可见的故障提示**——sidecar 异常退出后，UI 必须在有界时间内（建议 ≤ 5 s）呈现明确的后端异常状态（文案/横幅/状态区），不得继续表现为"一切正常"。（前端组件测试 PASS；真实桌面复核脚本准备就绪）
 - [x] AC2：**心跳探测与自动回收重启**——Tauri 侧定期心跳探测；sidecar 无响应或退出后**自动重启**，且重启结果对 UI 可见（成功 → 恢复正常交互；连续失败 → 明确降级提示）。（Rust 自愈包装器与测试 PASS）
 - [x] AC3：**状态保全**——故障与重启期间，未提交草稿与操作状态不丢失（须有可复现的注入验证：导入/编辑进行中注入崩溃，重启后状态可恢复或明确标注）。（前端崩溃注入与草稿保全测试 PASS）
-- [x] AC4：**不回归**——`P20` 已通过的项不得退化：冷启动（≤2.0 s / Core ≤3.5 s）、四页可达、`bundle` 与 `resources` 的 `core_service.exe` SHA-256 相等；`P20-MEM-OPT-1` 的内存目标亦不得因此恶化（同样按父子进程链口径测量）。（构建与 SHA-256 PASS，四页与冷启动端到端待交互式桌面复核）
+- [ ] AC4：**不回归**——`P20` 已通过的项不得退化：冷启动（≤2.0 s / Core ≤3.5 s）、四页可达、`bundle` 与 `resources` 的 `core_service.exe` SHA-256 相等；`P20-MEM-OPT-1` 的内存目标亦不得因此恶化（同样按父子进程链口径测量）。（构建与 SHA-256 PASS，四页与冷启动端到端待交互式桌面复核）
 
 ## 允许修改范围
 
@@ -72,10 +72,14 @@ planned：故障注入（强杀 sidecar；可选：挂起/无响应）多轮；U
 
 | evidence_id | AC/Gate | path | commit | sha256 | class |
 |---|---|---|---|---|---|
-| EVID-P20-ISOL-RUST-TEST | AC2 | apps/desktop/src-tauri/src/library_bridge.rs | eb62dbc7f | - | unit_test |
-| EVID-P20-ISOL-FE-TEST | AC1, AC2, AC3 | apps/desktop/frontend/src/shell/AppShell.lifecycle.test.tsx | eb62dbc7f | - | component_test |
-| EVID-P20-ISOL-SHA256 | AC4 | apps/desktop/src-tauri/target/debug/resources/core-sidecar/core_service.exe | eb62dbc7f | CD8DCC5E6DE568690694125D68162784C6A8427E6758C228080396B9599C98F1 | build_artifact |
-| EVID-P20-ISOL-VERIFY-SCRIPT | AC1, AC2 | verification/P20-ISOLATION-1/run-ac6-ui-verification.ps1 | eb62dbc7f | - | test_script |
+| EVID-P20-ISOL-SRC | AC1, AC2 | apps/desktop/src-tauri/src/library_bridge.rs | f02721df106d7553a57056320dcdc6f81c1b9dfa | f101dbafcc9ab2ab030f00c0d882f8eacde8f323d5868ec53ff9d71bdd63c1ce | SOURCE_PIN |
+| EVID-P20-ISOL-FETEST | AC1, AC2, AC3 | apps/desktop/frontend/src/shell/AppShell.lifecycle.test.tsx | f02721df106d7553a57056320dcdc6f81c1b9dfa | cf3d6b488936bbb5459085be7a95abe44e36ae43bf08a9a6993d68cd399a917e | SOURCE_PIN |
+| EVID-P20-ISOL-RUSTLOG | AC1, AC2, AC3 | verification/P20-ISOLATION-1/r1-fix/rust-resilient-channel-tests.log | f02721df106d7553a57056320dcdc6f81c1b9dfa | ea2af60fa17a67c64381fbaf45f112ab5840f51c26fa56c4d7ca7fc0fed8cb18 | CANONICAL |
+| EVID-P20-ISOL-FELOG | AC1, AC2, AC3 | verification/P20-ISOLATION-1/r1-fix/frontend-lifecycle-test.log | f02721df106d7553a57056320dcdc6f81c1b9dfa | d980f64f272471712857307f73682b66632c45479d277013539f1306ec462bdc | CANONICAL |
+| EVID-P20-ISOL-UISCRIPT | AC1, AC2 | verification/P20-ISOLATION-1/run-r004-timeline.ps1 | f02721df106d7553a57056320dcdc6f81c1b9dfa | f9a00d5865fef762dafae37b4422d6c994ae6cfb5e9cc1af614843c58eb510a4 | CANONICAL |
+| EVID-P20-ISOL-UITRACE | AC1, AC2 | verification/P20-ISOLATION-1/r004-20261018-082539/trace.log | f02721df106d7553a57056320dcdc6f81c1b9dfa | 771c4053107b61b779731d50140756bc2f6541073366831ff60c0f1b4bfd3536 | CANONICAL |
+| EVID-P20-ISOL-REVIEW-R1 | review | verification/P20-ISOLATION-1/codex-review-r1.md | f02721df106d7553a57056320dcdc6f81c1b9dfa | f8826ab6ec5a315d8ef757a448aa2e3f7683a673a8b7c4c20677539b2fc62f00 | CANONICAL |
+| EVID-P20-ISOL-REVIEW-R2 | review | verification/P20-ISOLATION-1/codex-review-r2.md | f02721df106d7553a57056320dcdc6f81c1b9dfa | cab31d88f53c2c25a1e32fb3d51f0b097f7fa54c078046bf56e822f501b33d4e | CANONICAL |
 
 ## Resource Manifest
 
