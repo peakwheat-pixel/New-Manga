@@ -1087,36 +1087,11 @@ class SqliteLibraryRepository:
                         try:
                             entry = catalog.lookup(res_id)
                             if entry is not None and entry.rel_path:
-                                # AC5 / N-004: never resolve() before lstat().
-                                # resolve() follows the link, so the reparse
-                                # check would inspect the *destination* and the
-                                # unlink would then delete the destination file
-                                # instead of refusing the tampered entry.
-                                # Walk the raw, unresolved path segment by
-                                # segment and refuse the whole removal on the
-                                # first link; only then touch the file.
-                                raw_rel = str(entry.rel_path).replace("\\", "/")
-                                raw_segs = [seg for seg in raw_rel.split("/") if seg]
-                                if (
-                                    raw_segs
-                                    and not any(seg in ("..", ".") for seg in raw_segs)
-                                    and not Path(raw_rel).is_absolute()
-                                ):
-                                    probe = root_res
-                                    crossed_link = False
-                                    for seg in raw_segs:
-                                        probe = probe / seg
-                                        try:
-                                            probe_st = probe.lstat()
-                                        except OSError:
-                                            break  # nothing there to traverse
-                                        if _is_reparse_point(probe_st):
-                                            crossed_link = True
-                                            break
-                                    if not crossed_link:
-                                        target_f = root_res / raw_rel
-                                        if target_f.is_file():
-                                            target_f.unlink(missing_ok=True)
+                                # AC5 / N-004: shared with its own unit test so
+                                # this refusal cannot silently regress.
+                                unlink_preview_without_following(
+                                    str(entry.rel_path), root_res
+                                )
                             catalog.remove(res_id)
                         except Exception:
                             all_deleted = False
@@ -1187,6 +1162,42 @@ class SqliteLibraryRepository:
             return True
         return False
 
+
+
+def unlink_preview_without_following(raw_rel: str, root_res: Path) -> bool:
+    """AC5 (N-004): delete one derived preview file without following a link.
+
+    Returns True when a plain file was actually removed.
+
+    The raw, *unresolved* path is walked one segment at a time and the removal
+    is refused as soon as any component is a reparse point.  Resolving first
+    would follow a junction/symlink, let the reparse check inspect the
+    *destination* - an ordinary file that passes every check - and then unlink
+    that destination, deleting a file the tampered catalog entry never
+    legitimately referred to.  Lexical component checks and an absolute-path
+    guard run before the walk.
+    """
+    normalised = raw_rel.replace("\\", "/")
+    segments = [segment for segment in normalised.split("/") if segment]
+    if not segments:
+        return False
+    if any(segment in ("..", ".") for segment in segments):
+        return False
+    if Path(normalised).is_absolute():
+        return False
+    probe = root_res
+    for segment in segments:
+        probe = probe / segment
+        try:
+            probe_stat = probe.lstat()
+        except OSError:
+            break  # nothing there to traverse through
+        if _is_reparse_point(probe_stat):
+            return False
+    if probe.is_file():
+        probe.unlink(missing_ok=True)
+        return True
+    return False
 
 
 def _soft_delete_timestamp() -> str:
