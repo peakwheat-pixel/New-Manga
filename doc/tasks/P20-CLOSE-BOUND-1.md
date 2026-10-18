@@ -142,7 +142,8 @@ planned：在途无响应请求 + 强杀子进程的叠加用例（Rust 单元/�
 
 - **AC3 达成**：当前 head 复跑 `resilient_channel` 9 passed、`stdio_channel_drop` 1 passed、`poisoned_child_lock` 1 passed、`reader_join_guard` 1 passed；**R-008 / R-003 / R-006 与阈值无回归**。
 - AC5 脚本的"强杀误判"**已修正**。
-- **AC5 交互式桌面复跑由 Coordinator 执行**（本轮进行）。
+- **AC5 交互式桌面复跑已由 Coordinator 完成（2026-10-18 10:57）**：使用修正后的 `run-desktop-close-verification.ps1`，在真实桌面启动 release 版应用（隔离根 `%TEMP%\p20close-3dea79da`），检测到主窗口（HWND 1118098）与子进程（39516/31980/608），发送 `CloseMainWindow` → **应用在 145.47 ms 内退出（上界 5000 ms）**，**残留进程数 0**，脚本 exit 0。
+  - **重要限定**：AC5 只证明"正常关闭有界且无残留"这一**结果**；它**不能**证明 Core 收到了 `core.shutdown`／`CloseHostSession`。Codex R2 的 P1#1 指出正常关闭路径因 `is_down` 提前置位而**永久拒绝**这些协议级消息、只能强杀 —— 与 AC5 通过**并不矛盾**，两者的结论需并列保留。
 
 ### AC 判定（Codex R2）
 
