@@ -4,6 +4,35 @@ import type { BookSummary } from "../library/types";
 import { tokens } from "../theme/tokens";
 import { PermanentDeleteConfirmDialog } from "./PermanentDeleteConfirmDialog";
 
+interface BatchDeleteItem {
+  book_id: string;
+  status: string;
+}
+
+/**
+ * AC3 (N-002): pull the per-item outcome out of a failed batch delete.
+ *
+ * The Rust bridge surfaces the Core error's ``details.items`` either at the top
+ * level of the error object or nested under ``details`` depending on the
+ * transport, so both shapes are accepted.  Returning the items - rather than
+ * only the message - is what lets the caller drop the books that really were
+ * deleted and retry just the ones still pending.
+ */
+function extractBatchDeleteItems(error: unknown): BatchDeleteItem[] | null {
+  if (!error || typeof error !== "object") return null;
+  const carrier = error as { items?: unknown; details?: { items?: unknown } };
+  const raw = carrier.items ?? carrier.details?.items;
+  if (!Array.isArray(raw)) return null;
+  const parsed = raw.filter(
+    (item): item is BatchDeleteItem =>
+      !!item &&
+      typeof item === "object" &&
+      typeof (item as BatchDeleteItem).book_id === "string" &&
+      typeof (item as BatchDeleteItem).status === "string",
+  );
+  return parsed.length > 0 ? parsed : null;
+}
+
 export interface RecycleBinPageProps {
   client?: LibraryClient;
   totalBooksCount?: number;
@@ -106,18 +135,50 @@ export function RecycleBinPage({
     const confirmed_book_ids = [...book_ids]; // Same order guaranteed
     const confirm_count = book_ids.length;
 
-    if (book_ids.length === 1) {
-      await activeClient.deleteBookPermanently({
-        book_id: book_ids[0],
-        confirm_permanent_delete: true,
-      });
-    } else {
-      await activeClient.deleteBooksPermanently({
-        book_ids,
-        confirmed_book_ids,
-        confirm_count,
-        confirm_permanent_delete: true,
-      });
+    try {
+      if (book_ids.length === 1) {
+        await activeClient.deleteBookPermanently({
+          book_id: book_ids[0],
+          confirm_permanent_delete: true,
+        });
+      } else {
+        await activeClient.deleteBooksPermanently({
+          book_ids,
+          confirmed_book_ids,
+          confirm_count,
+          confirm_permanent_delete: true,
+        });
+      }
+    } catch (error) {
+      // AC3 (N-002): keep the per-item outcome instead of collapsing it into a
+      // message.  A batch that partially succeeded must never be retried
+      // wholesale - the books that really were deleted are dropped from both
+      // the list and the selection, and only the cleanup_pending subset stays
+      // selected so that re-submitting targets just those (an already-deleted
+      // book would answer BOOK_NOT_FOUND).
+      const items = extractBatchDeleteItems(error);
+      if (items && items.length > 0) {
+        const deletedIds = items
+          .filter((item) => item.status === "deleted")
+          .map((item) => item.book_id);
+        const pendingIds = items
+          .filter((item) => item.status === "cleanup_pending")
+          .map((item) => item.book_id);
+        if (deletedIds.length > 0) {
+          setBooks((prev) => prev.filter((b) => !deletedIds.includes(b.book_id)));
+        }
+        setSelectedIds(pendingIds);
+        setConfirmTargets(null);
+        onDeleteSuccess?.(deletedIds);
+        setBatchError(
+          `已永久删除 ${deletedIds.length} 本；仍有 ${pendingIds.length} 本清理未完成` +
+            `（cleanup_pending）。已保留这 ${pendingIds.length} 本的选择，` +
+            `再次提交只会重试它们，已删除的作品不会重复提交。`,
+        );
+        return;
+      }
+      setBatchError("永久删除失败，请稍后重试。");
+      return;
     }
 
     // On success: remove deleted books and clear selection
