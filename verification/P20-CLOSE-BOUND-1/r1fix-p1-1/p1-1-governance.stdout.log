@@ -1,0 +1,13 @@
+﻿# --- Environment Header (doc/09_COLLABORATION.md §6.12) ---
+# Shell: pwsh (PowerShell 7.6.6)
+# Python: C:\Python314\python.exe
+# Venv: none
+# Exit: 0
+# Command: pwsh -NoProfile -File tools/governance/check.ps1
+# ---------------------------------------------------------
+Governance scope: 12 current documents; no historical directory scan.
+Task: doc\tasks\P20.md
+WARN: doc/STATUS.md �ѴﵽԤ��� 80%��3190 bytes / 23 lines
+WARN: doc/REBASELINE_PLAN.md �ѴﵽԤ��� 80%��2438 bytes / 35 lines
+Governance check: PASS (2 warnings)
+

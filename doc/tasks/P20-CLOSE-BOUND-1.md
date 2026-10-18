@@ -164,6 +164,20 @@ owner **自行执行了 git commit**（`bae81ad29` 实现、`95d483888` 文档�
 
 `status` 保持 `in_review`；`integration_commit` 未设定；`canonical_evidence_status`: `pending`。**等待用户就 DIR-4 后续走向裁决。**
 
+## P1#1 回归已修复（Coordinator 复核，2026-10-18）
+
+**范围**：仅修 Codex R2 的 P1#1（本 Task 上一轮引入的**行为回归**），不涉及 P1#2/P1#3 与 P2 项，也不解决 AC1 的硬上界证明问题。
+
+**修复**：保留对外请求在 `is_down` 时的拒绝语义，**另开关闭专用写入路径** `write_stdin_shutdown`（与 `write_stdin_timeout` 并存），使 `shutdown_and_kill` 能**真正把 `core.shutdown` 写入 stdin**，`CloseHostSession` 亦不再被 `is_down` 短路。
+
+**独立核验**（Coordinator 于 head `3804ee900` 后重跑）：
+- 新增 `shutdown_writes_core_shutdown_to_sidecar_stdin_without_session`、`shutdown_writes_protocol_shutdown_messages_with_session_to_sidecar_stdin` → **2 passed / 0 failed**（断言的是"字节真的写出"，非"没卡住"）。
+- `resilient_channel` **9 passed / 0 failed**（无回归）；`poisoned_child_lock_is_recovered_and_killed`、`reader_join_guard_enforces_hard_timeout_if_reader_hung`、`stdio_channel_drop` 均通过。
+- 执行方**未自行提交**（上轮越界已纠正遵守）；超时预算与心跳、重试预算、reader-guard、阈值**均未改动**。
+- 证据：`verification/P20-CLOSE-BOUND-1/r1fix-p1-1/**`（含 shell/venv/python 运行字段）。
+
+**结论**：P1#1 解除。**P1#2/P1#3 与 4 项 P2 仍未闭合**，AC1/AC4 仍未达成；本 Task 是否继续、以及是否以"P1#1 已修 + AC3/AC5 达成"如实收口，**待用户裁决**（DIR-4 2/2 已用满，Coordinator 不再自行派发 AC 返修）。
+
 ## Closeout Record
 
 - Closeout date / Codex：待关闭时填写。

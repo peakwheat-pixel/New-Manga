@@ -1215,16 +1215,12 @@ impl StdioLibraryChannel {
         })
     }
 
-    /// Asynchronous pipe write governed by explicit timeout.
-    /// Eliminates OS pipe write blocking by executing writes on a dedicated writer thread.
-    fn write_stdin_timeout(
+    /// Dedicated internal raw write helper that dispatches to the writer thread and waits for reply.
+    fn write_stdin_raw_timeout(
         &self,
         bytes: Vec<u8>,
         timeout: Option<Duration>,
     ) -> Result<(), LibraryError> {
-        if self.is_down.load(Ordering::SeqCst) {
-            return Err(LibraryError::unavailable("Channel is shutting down"));
-        }
         let (reply_tx, reply_rx) = std::sync::mpsc::sync_channel(1);
         self.writer_tx
             .send(WriterCommand::Write(bytes, reply_tx))
@@ -1247,6 +1243,30 @@ impl StdioLibraryChannel {
                 Err(_) => Err(LibraryError::unavailable("Stdin writer thread disconnected")),
             },
         }
+    }
+
+    /// Asynchronous pipe write governed by explicit timeout.
+    /// Eliminates OS pipe write blocking by executing writes on a dedicated writer thread.
+    /// Rejects external writes when channel is shutting down or down.
+    fn write_stdin_timeout(
+        &self,
+        bytes: Vec<u8>,
+        timeout: Option<Duration>,
+    ) -> Result<(), LibraryError> {
+        if self.is_down.load(Ordering::SeqCst) {
+            return Err(LibraryError::unavailable("Channel is shutting down"));
+        }
+        self.write_stdin_raw_timeout(bytes, timeout)
+    }
+
+    /// Dedicated shutdown write path: bypasses `is_down` check so protocol shutdown
+    /// messages can be delivered to sidecar core stdin during graceful shutdown.
+    pub(crate) fn write_stdin_shutdown(
+        &self,
+        bytes: Vec<u8>,
+        timeout: Option<Duration>,
+    ) -> Result<(), LibraryError> {
+        self.write_stdin_raw_timeout(bytes, timeout)
     }
 
     pub fn set_on_down(&self, cb: Arc<dyn Fn() + Send + Sync>) {
@@ -1347,6 +1367,26 @@ impl StdioLibraryChannel {
         expected_minor: Option<u32>,
         timeout: Option<Duration>,
     ) -> Result<Value, LibraryError> {
+        self.exchange_expected_minor_timeout_internal(request, expected_minor, timeout, false)
+    }
+
+    /// Dedicated shutdown exchange path: allows protocol shutdown messages (e.g. CloseHostSession)
+    /// to bypass the is_down check and write to stdin via write_stdin_shutdown.
+    fn exchange_shutdown_timeout(
+        &self,
+        request: Value,
+        timeout: Option<Duration>,
+    ) -> Result<Value, LibraryError> {
+        self.exchange_expected_minor_timeout_internal(request, None, timeout, true)
+    }
+
+    fn exchange_expected_minor_timeout_internal(
+        &self,
+        request: Value,
+        expected_minor: Option<u32>,
+        timeout: Option<Duration>,
+        allow_during_shutdown: bool,
+    ) -> Result<Value, LibraryError> {
         let start = Instant::now();
         let req_id = request
             .get("request_id")
@@ -1366,7 +1406,7 @@ impl StdioLibraryChannel {
             }
         });
 
-        if self.is_down.load(Ordering::SeqCst) {
+        if !allow_during_shutdown && self.is_down.load(Ordering::SeqCst) {
             return Err(LibraryError::unavailable("Core stdout closed (EOF)"));
         }
 
@@ -1391,7 +1431,13 @@ impl StdioLibraryChannel {
             None => None,
         };
 
-        if let Err(e) = self.write_stdin_timeout(line.into_bytes(), remaining_for_write) {
+        let write_res = if allow_during_shutdown {
+            self.write_stdin_shutdown(line.into_bytes(), remaining_for_write)
+        } else {
+            self.write_stdin_timeout(line.into_bytes(), remaining_for_write)
+        };
+
+        if let Err(e) = write_res {
             if let Some(mut pending) = lock_timeout_recover(&self.pending_responses, Duration::from_millis(50)) {
                 pending.remove(&req_id);
             }
@@ -1868,15 +1914,15 @@ impl StdioLibraryChannel {
                     serde_json::json!({}),
                     Some(&session),
                 );
-                let _ = self.exchange_expected_minor_timeout(
+                let _ = self.exchange_shutdown_timeout(
                     request,
-                    None,
                     Some(Duration::from_millis(250)),
                 );
             }
         }
 
         // 3. Send core.shutdown to stdin if possible (strictly bounded to 100ms via writer thread)
+        // Uses dedicated shutdown write path so core.shutdown is not rejected by is_down.
         let req = serde_json::json!({
             "protocol": "new-manga.core",
             "version": { "major": 2, "minor": 3 },
@@ -1886,7 +1932,7 @@ impl StdioLibraryChannel {
         });
         let mut req_str = req.to_string();
         req_str.push('\n');
-        let _ = self.write_stdin_timeout(req_str.into_bytes(), Some(Duration::from_millis(100)));
+        let _ = self.write_stdin_shutdown(req_str.into_bytes(), Some(Duration::from_millis(100)));
 
         // 4. Wait for child with timeout or kill (strictly bounded, recovering poisoned lock)
         if let Some(mut child) = lock_timeout_recover(&self.child, Duration::from_millis(100)) {
@@ -5337,6 +5383,194 @@ mod tests {
             elapsed >= Duration::from_millis(450) && elapsed < Duration::from_millis(1200),
             "Guard must time out around 500ms, elapsed: {:?}",
             elapsed
+        );
+    }
+
+    /// P1#1 Regression Verification:
+    /// Assert that shutdown_and_kill DOES NOT drop or reject protocol shutdown messages
+    /// via `is_down` check, but successfully transmits `CloseHostSession` and `core.shutdown`
+    /// bytes to sidecar stdin over the dedicated shutdown write path.
+    #[test]
+    fn shutdown_writes_protocol_shutdown_messages_with_session_to_sidecar_stdin() {
+        let temp_dir = std::env::temp_dir();
+        let test_id = format!("{}_{}", std::process::id(), Instant::now().elapsed().as_nanos());
+        let log_path = temp_dir.join(format!("test_shutdown_msgs_session_{}.txt", test_id));
+        let _ = std::fs::remove_file(&log_path);
+        let log_path_str = log_path.to_string_lossy().replace('\\', "/");
+
+        let py_script = format!(
+            "import sys, json\nlog_file = \"{}\"\nwith open(log_file, \"w\", encoding=\"utf-8\") as f:\n    while True:\n        line = sys.stdin.readline()\n        if not line:\n            break\n        f.write(line)\n        f.flush()\n        try:\n            req = json.loads(line)\n            cmd = req.get(\"command\")\n            req_id = req.get(\"request_id\")\n            if cmd == \"CloseHostSession\":\n                resp = {{\n                    \"protocol\": \"new-manga.core\",\n                    \"version\": {{\"major\": 2, \"minor\": 3}},\n                    \"request_id\": req_id,\n                    \"result\": {{\"status\": \"ok\"}},\n                    \"error\": None\n                }}\n                sys.stdout.write(json.dumps(resp) + \"\\n\")\n                sys.stdout.flush()\n            elif cmd == \"core.shutdown\":\n                break\n        except Exception as e:\n            f.write(\"ERR: \" + str(e) + \"\\n\")\n            f.flush()\n",
+            log_path_str
+        );
+
+        let python_exe = std::env::var("M2RC1_PYTHON").unwrap_or_else(|_| "python".to_string());
+        let child = Command::new(&python_exe)
+            .args(["-u", "-c", &py_script])
+            .stdin(Stdio::piped())
+            .stdout(Stdio::piped())
+            .stderr(Stdio::inherit())
+            .spawn()
+            .expect("spawn mock sidecar child");
+        let pid = child.id();
+
+        let chan = StdioLibraryChannel::adopt_child_for_test(child).expect("adopt child");
+
+        // Set active host session
+        *chan.host_session.lock().unwrap() = Some(HostSession {
+            host_session_id: "test-shutdown-hs-1".to_string(),
+            credential: "test-cred-1".to_string(),
+            core_session_id: "test-cs-1".to_string(),
+            signing_key: [1u8; 32],
+        });
+
+        // Trigger shutdown (kill_timeout = 1500ms)
+        chan.shutdown_and_kill(Duration::from_millis(1500));
+
+        // Allow child to exit and OS to flush file
+        std::thread::sleep(Duration::from_millis(200));
+
+        // Read recorded messages from file
+        let content = std::fs::read_to_string(&log_path).expect("read recorded shutdown log file");
+        let _ = std::fs::remove_file(&log_path);
+
+        let lines: Vec<&str> = content.lines().filter(|l| !l.trim().is_empty()).collect();
+        assert!(
+            lines.len() >= 2,
+            "Expected at least 2 protocol messages (CloseHostSession and core.shutdown), got {}: {:?}",
+            lines.len(),
+            lines
+        );
+
+        // 1. Verify CloseHostSession was received by child process
+        let close_req: Value = serde_json::from_str(lines[0]).expect("valid CloseHostSession JSON");
+        assert_eq!(
+            close_req.get("command").and_then(Value::as_str),
+            Some("CloseHostSession"),
+            "First message must be CloseHostSession"
+        );
+        assert_eq!(
+            close_req.get("protocol").and_then(Value::as_str),
+            Some("new-manga.core")
+        );
+        assert_eq!(
+            close_req.get("host_session_id").and_then(Value::as_str),
+            Some("test-shutdown-hs-1")
+        );
+
+        // 2. Verify core.shutdown was received by child process
+        let shutdown_req: Value = serde_json::from_str(lines[1]).expect("valid core.shutdown JSON");
+        assert_eq!(
+            shutdown_req.get("command").and_then(Value::as_str),
+            Some("core.shutdown"),
+            "Second message must be core.shutdown"
+        );
+        assert_eq!(
+            shutdown_req.get("protocol").and_then(Value::as_str),
+            Some("new-manga.core")
+        );
+        assert_eq!(
+            shutdown_req.get("request_id").and_then(Value::as_str),
+            Some("shutdown-drop")
+        );
+
+        // 3. Verify external writes are rejected when is_down is set
+        let write_res = chan.write_stdin_timeout(b"{\"test\":true}\n".to_vec(), Some(Duration::from_millis(50)));
+        assert!(write_res.is_err(), "write_stdin_timeout must reject during shutdown");
+        assert!(
+            write_res.unwrap_err().message.unwrap_or_default().contains("Channel is shutting down"),
+            "Expected 'Channel is shutting down' error"
+        );
+
+        let round_trip_res = chan.round_trip("core.ping", serde_json::json!({}));
+        assert!(round_trip_res.is_err(), "round_trip must reject during shutdown");
+
+        // 4. Verify child PID is cleanly terminated
+        let output = Command::new("tasklist")
+            .args(["/FI", &format!("PID eq {pid}"), "/FO", "CSV", "/NH"])
+            .output()
+            .expect("tasklist query");
+        let tasklist_str = String::from_utf8_lossy(&output.stdout);
+        assert!(
+            !tasklist_str.contains(&format!("\"{pid}\"")),
+            "Child process {pid} must be terminated"
+        );
+    }
+
+    /// P1#1 Regression Verification:
+    /// Assert that core.shutdown is successfully delivered to sidecar stdin when no host session is active.
+    #[test]
+    fn shutdown_writes_core_shutdown_to_sidecar_stdin_without_session() {
+        let temp_dir = std::env::temp_dir();
+        let test_id = format!("{}_{}", std::process::id(), Instant::now().elapsed().as_nanos());
+        let log_path = temp_dir.join(format!("test_shutdown_msgs_nosession_{}.txt", test_id));
+        let _ = std::fs::remove_file(&log_path);
+        let log_path_str = log_path.to_string_lossy().replace('\\', "/");
+
+        let py_script = format!(
+            "import sys, json\nlog_file = \"{}\"\nwith open(log_file, \"w\", encoding=\"utf-8\") as f:\n    while True:\n        line = sys.stdin.readline()\n        if not line:\n            break\n        f.write(line)\n        f.flush()\n        try:\n            req = json.loads(line)\n            cmd = req.get(\"command\")\n            if cmd == \"core.shutdown\":\n                break\n        except Exception as e:\n            f.write(\"ERR: \" + str(e) + \"\\n\")\n            f.flush()\n",
+            log_path_str
+        );
+
+        let python_exe = std::env::var("M2RC1_PYTHON").unwrap_or_else(|_| "python".to_string());
+        let child = Command::new(&python_exe)
+            .args(["-u", "-c", &py_script])
+            .stdin(Stdio::piped())
+            .stdout(Stdio::piped())
+            .stderr(Stdio::inherit())
+            .spawn()
+            .expect("spawn mock sidecar child");
+        let pid = child.id();
+
+        let chan = StdioLibraryChannel::adopt_child_for_test(child).expect("adopt child");
+
+        // No host session set (None)
+
+        // Trigger shutdown
+        chan.shutdown_and_kill(Duration::from_millis(1500));
+
+        // Allow child to exit and OS to flush file
+        std::thread::sleep(Duration::from_millis(200));
+
+        // Read recorded messages from file
+        let content = std::fs::read_to_string(&log_path).expect("read recorded shutdown log file");
+        let _ = std::fs::remove_file(&log_path);
+
+        let lines: Vec<&str> = content.lines().filter(|l| !l.trim().is_empty()).collect();
+        assert_eq!(
+            lines.len(),
+            1,
+            "Expected exactly 1 protocol message (core.shutdown), got {}: {:?}",
+            lines.len(),
+            lines
+        );
+
+        let shutdown_req: Value = serde_json::from_str(lines[0]).expect("valid core.shutdown JSON");
+        assert_eq!(
+            shutdown_req.get("command").and_then(Value::as_str),
+            Some("core.shutdown")
+        );
+        assert_eq!(
+            shutdown_req.get("protocol").and_then(Value::as_str),
+            Some("new-manga.core")
+        );
+        assert_eq!(
+            shutdown_req.get("request_id").and_then(Value::as_str),
+            Some("shutdown-drop")
+        );
+
+        // Verify normal external writes are rejected when is_down is set
+        let write_res = chan.write_stdin_timeout(b"{\"test\":true}\n".to_vec(), Some(Duration::from_millis(50)));
+        assert!(write_res.is_err(), "write_stdin_timeout must reject during shutdown");
+
+        // Verify child PID is terminated
+        let output = Command::new("tasklist")
+            .args(["/FI", &format!("PID eq {pid}"), "/FO", "CSV", "/NH"])
+            .output()
+            .expect("tasklist query");
+        let tasklist_str = String::from_utf8_lossy(&output.stdout);
+        assert!(
+            !tasklist_str.contains(&format!("\"{pid}\"")),
+            "Child process {pid} must be terminated"
         );
     }
 }
