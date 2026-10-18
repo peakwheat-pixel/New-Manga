@@ -1,5 +1,4 @@
 # Project Rebaseline Plan
-
 唯一DAG；运行见[STATUS](STATUS.md)。2026-10-15恢复完整产品路线；P22-REBASE-1已集成。
 |节点/目标|依赖|状态|
 |---|---|---|
@@ -28,8 +27,9 @@
 |P20 Windows发布|P19/P03/P06/DOC|ready|
 |P20-MEM-OPT-1|P20|closed（AC1 完成；AC2 经调阈值消解）|
 |P20-ISOLATION-1|P20|in_review|
+|P20-CLOSE-BOUND-1|P20-ISOLATION-1|ready|
 |P21 旧栈归档|P20+另授权|可选proposed|
-|P22 响应归属|P22-REBASE-1|切片已集成（P02/P22-REBASE-1 已集成；P04 不自动放行；H1/P2-1/13 缺失与 BC-AC5 PARTIAL 保留）|
-本轮完成：ROADMAP-RELEASE、P22-REBASE-1、P04、P06、P10、P11、P09、P09-FU1、P13、P13-C1、P16、P16-C1、FEAT-IMPORT-MULTI-1 均已 done；P18/P19 closed_with_limitations；详见 [STATUS](STATUS.md)。DOC AC7 已完成。
+|P22 响应归属|P22-REBASE-1|切片已集成（P04 不自动放行；H1/P2-1/13 缺失与 BC-AC5 PARTIAL 保留）|
+已完成：ROADMAP-RELEASE、P22-REBASE-1、P04/06/10/11/09/P09-FU1/13/13-C1/16/16-C1、FEAT-IMPORT-MULTI-1；P18/P19 closed_with_limitations。
 DOC=[架构映射Task](tasks/ARCH-DOC-REBASELINE.md)已集成未关闭（AC7 已完成）；UI=四页经ZCode设计审查；P13*仅停写；P02/P22-REBASE-1 已集成，P04 不自动放行；H1/P2-1/13 项缺失与 BC-AC5 PARTIAL 保留。范围/Gate 见[本轮裁决](../verification/PROJECT-ROADMAP-RELEASE/REPORT.md)
-READY 节点：ARCH-DOC-REBASELINE、P20、P09-AC3-DELETE-1。done：**33 项**；P19 `closed_with_limitations`；FEAT-IMPORT-MULTI-1 done。DOC 的 AC7 已完成；P20 经授权激活。
+READY 节点：ARCH-DOC-REBASELINE、P20、P09-AC3-DELETE-1、P20-CLOSE-BOUND-1。done：**33 项**；P19 `closed_with_limitations`；DOC AC7 已完成；P20 经授权激活。
