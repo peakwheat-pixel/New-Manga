@@ -8,7 +8,7 @@
 - READY：[ARCH-DOC-REBASELINE](tasks/ARCH-DOC-REBASELINE.md)（AC7 已完成；AC1–AC3 PARTIAL、AC4–AC6 属消费者责任，不标 done）。
 - P20：[FPS-1](tasks/P20-AC4-FPS-1.md) 集成 `approved`；AC3 `NOT_RUN`（Coordinator），AC5 `NOT_VERIFIED_BY_RULING`；HARDEN-1 R4 `changes_requested`，AC7 `NOT_RUN`。
 - **新增**：[RUST-ENV-BASELINE-1](tasks/RUST-ENV-BASELINE-1.md) `proposed`（12 项 Rust 环境依赖失败）；**REBALANCE**：ZCode 遇 429 限流。
-- **READY 待派**：[P09-AC3-DELETE-HARDEN-1](tasks/P09-AC3-DELETE-HARDEN-1.md)（Owner=Antigravity）；[GOV-DEBT-CLEANUP-1](tasks/GOV-DEBT-CLEANUP-1.md) `blocked`（待用户裁决）。
+- **READY 待派**：[GOV-DEBT-CLEANUP-1](tasks/GOV-DEBT-CLEANUP-1.md) `blocked`（待用户裁决）。P09-HARDEN-1 `in_review`（AC1–AC12 实施完成，待 Codex 独立复审）。
 - **P09 已收口**：[P09-AC3-DELETE-1](tasks/P09-AC3-DELETE-1.md) `closed_with_limitations`（R3 `changes_requested`，DIR-4 上限）。**P09 AC3 保持 `BLOCKED`。**
 - **T2**：4 failed 中 3 项在 `HEAD~` 已失败；1 项由 `d9f7a628c` 引入（v5 断言）。
 - **P02**：16 份入库、3 份恢复 HEAD、`report.json` 待裁决；见 [逐份评估](../verification/P02-DOC-PROVENANCE-1/per-file-verdict.md)。
