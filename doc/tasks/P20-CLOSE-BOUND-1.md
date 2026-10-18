@@ -82,7 +82,7 @@ planned：在途无响应请求 + 强杀子进程的叠加用例（Rust 单元/�
 
 | evidence_id | AC/Gate | path | commit | sha256 | class |
 |---|---|---|---|---|---|
-| EVID-P20-CB-SRC | AC1/AC3/AC4 | apps/desktop/src-tauri/src/library_bridge.rs | bae81ad29 | 7b61b2b8577ba016af4f4f775e54277d9ba44e6543a133cbb36c087d70c44903 | SOURCE_PIN |
+| EVID-P20-CB-SRC | AC1/AC3/AC4 | apps/desktop/src-tauri/src/library_bridge.rs | 6dca4a030725af939bcc8140003aa98f903344cc | f2bae7687bbcce9c0bf8527a10488856dcddac0fc5818584a9ca5536e59f5adc | SOURCE_PIN |
 | EVID-P20-CB-AC1 | AC1 | verification/P20-CLOSE-BOUND-1/ac1-overlay-bound.stdout.log | bae81ad29 | 6abe65fd42485adb025db351cb7e2d691a201be37e48cf7ecb9b00633bb526cd | CANONICAL |
 | EVID-P20-CB-AC1-EXIT | AC1 | verification/P20-CLOSE-BOUND-1/ac1-overlay-bound.exit | bae81ad29 | e45825471ed10290785b62676dc5f453d228a1e1d933c45a733e9bb239c9e083 | SOURCE_PIN |
 | EVID-P20-CB-AC1-META | AC1 | verification/P20-CLOSE-BOUND-1/ac1-overlay-bound.meta.json | bae81ad29 | 1d6b3bcac937a76d0225b2e3d1754b31c948f503d3aac09465c1d4be5cbd3a5c | SOURCE_PIN |
