@@ -405,6 +405,63 @@ def run_verification():
         print(f"  Managed storage after: {managed_files_after} files ({managed_bytes_after} bytes) [cleaned {managed_files_before_del2 - managed_files_after} files]")
         print(f"  Derived storage after: {derived_files_after} files ({derived_bytes_after} bytes) [cleaned {derived_files_before_del2 - derived_files_after} files]")
 
+        # F-005 (Codex R1, R3 R-008): the counts above say nothing about
+        # orphans.  A directory can hold the same file count before and after
+        # while every surviving file is unreferenced, and this script's summary
+        # claimed "zero orphan files" on the strength of a count alone.  Scan
+        # for real orphans instead: a managed file that no revision row and no
+        # page row points at, and a derived file this verification's own
+        # workflow never registered.
+        referenced = {
+            str(row[0]).replace("\\", "/")
+            for row in conn.execute(
+                "SELECT managed_path FROM artifact_revisions"
+                " WHERE managed_path IS NOT NULL"
+            ).fetchall()
+            if row[0]
+        }
+        referenced |= {
+            str(row[0]).replace("\\", "/")
+            for row in conn.execute(
+                "SELECT managed_original_ref FROM pages"
+                " WHERE managed_original_ref IS NOT NULL"
+            ).fetchall()
+            if row[0]
+        }
+        # The storage root's own bookkeeping is not a managed artifact: the
+        # trash manifest records recycle-bin state and is deliberately not
+        # referenced by any revision row.  Named explicitly rather than
+        # pattern-matched, so a real orphan cannot hide behind a wildcard.
+        _NON_ARTIFACT_MANAGED_FILES = {"trash-manifest.json"}
+        managed_orphans = sorted(
+            path.relative_to(managed_dir).as_posix()
+            for path in managed_dir.rglob("*")
+            if path.is_file()
+            and path.relative_to(managed_dir).as_posix() not in referenced
+            and path.relative_to(managed_dir).as_posix()
+            not in _NON_ARTIFACT_MANAGED_FILES
+        )
+        derived_orphans = sorted(
+            path.relative_to(derived_dir).as_posix()
+            for path in derived_dir.rglob("*")
+            if path.is_file()
+        )
+        print(
+            f"  Orphan scan: managed={len(managed_orphans)}"
+            f" derived={len(derived_orphans)}"
+        )
+        if managed_orphans:
+            print(f"    managed orphans: {managed_orphans[:5]}")
+        if derived_orphans:
+            print(f"    derived orphans: {derived_orphans[:5]}")
+        assert managed_orphans == [], (
+            f"orphan managed files survive permanent delete: {managed_orphans[:5]}"
+        )
+        assert derived_orphans == [], (
+            f"orphan derived files survive permanent delete: {derived_orphans[:5]}"
+        )
+        print("  [PASS] Orphan scan: zero unreferenced managed and derived files")
+
         # =========================================================================
         # PHASE C: Misdelete Protections (AC5)
         # =========================================================================
