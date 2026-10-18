@@ -26,11 +26,12 @@ Owner（ZCode）只交付钩子、单元测试与本脚本；**真实桌面的�
 - 汇总恒报双口径：kept 的 `avg/min/max/p95`（nearest-rank p95）**加** `allMaxMs`（全样本最大间隔，含被排除行）与 `excludedMaxMs`（被排除样本最大间隔）；窗口标题摘要含 `allmax=`。任何被观测到的停顿都无法隐身于 PASS 之后。
 - 达标判定（用户 2026-10-18 裁决，不可改）：`avg ≤ 50 ms`；p95/max 如实记录，超限不阻断也不得消解。
 
-## 导出行为（FPS-R1-04 修订）
+## 导出行为（FPS-R1-04 修订；抓取校验 r2 修订）
 
 - `FPS: Export CSV / Export JSON` 走 **`window.showSaveFilePicker()` 显式 Save As**：目标位置由调用方在对话框中选择；**取消即不写任何位置**（无默认下载目录回退；旧的 Blob+anchor.download 静默下载路径已删除）。
 - 无 save-picker API 的环境按提示改用 `Show CSV/JSON`（textarea + UIA/复制通道）；代码全程不接触绝对路径。
 - UIA `ValuePattern` 抓取失败时该轮即失败（runner 非零退出），人工经面板显式保存对话框补齐后重跑。
+- **r2 抓取加固**：`Show CSV` / `Show JSON` 按钮失败即 FAIL 且**不把 textarea 残留内容写成 artifact**；CSV 抓取后校验表头与行结构；JSON 抓取后**解析并校验确为本轮数据**（`meta.task`、`summary.totalSamples`/`excludedCount`、`samples[]` 长度与 CSV 行数一致、首/末样本 `frameTsMs` 与 CSV 首末行 `frame_ts_ms` 一致）——残留的上一轮 payload 无法通过。
 
 ## 测量流程（run-ac4-fps.ps1）
 
@@ -52,20 +53,24 @@ Owner（ZCode）只交付钩子、单元测试与本脚本；**真实桌面的�
    - 撕裂：`NOT_VERIFIED_BY_RULING`（只记 limitation，不做客观验证，不得写 PASS）。
 6. **收尾**：测完恢复默认前端（在 `apps/desktop/frontend` 下不带 `VITE_M2_FPS_SAMPLING` 重新 `npm run build`，或按集成方惯例处理 dist）。
 
-## 隔离与进程安全（FPS-R1-01/02 修订）
+## 隔离与进程安全（FPS-R1-01/02 修订；r2 再加固）
 
 - **数据根 fail-closed**：启动 exe 前把 `NEWMANGA_DATA_ROOT`、`M2RC1_DERIVED_ROOT`、`M2RC1_MANAGED_ROOT`、`M2RC2_CATALOG_DB` 全部钉到新建 `%TEMP%` 隔离根并读回校验；**任一缺失或指向隔离根之外即拒绝启动（exit 7）**，绝不落入 `%APPDATA%\com.newmanga.m2rc1.desktop` 回退（见 main.rs packaged_user_root 链）。
 - **dev 模式**：传 `-DevSrcRoot <repo src dir>` 显式设置并核对 `M2RC1_SRC_ROOT`；不传时要求 exe 旁存在 packaged sidecar（`resources\core-sidecar\host_bridge.exe`），否则拒绝启动（app 自身会 panic）。
-- **AppData 实证**：启动前对真实 `%APPDATA%\com.newmanga.m2rc1.desktop` 做逐文件 sha256 清单（`appdata-baseline.txt`），收尾后再拍 `appdata-after.txt` 比对；**任何新增/修改/删除都判 FAIL（exit 6）**。
+- **AppData 实证（r2 fail-closed）**：启动前对真实 `%APPDATA%\com.newmanga.m2rc1.desktop` 做逐文件 sha256 清单（`appdata-baseline.txt`），收尾后再拍 `appdata-after.txt` 比对；**任何新增/修改/删除都判 FAIL（exit 6）**。r2 起**快照不完整即 fail closed**：目录枚举错误或单文件哈希错误都会记录为 manifest 错误——基线不完整直接拒绝启动（exit 7），终末快照不完整判 FAIL；同一路径前后均不可读时不再比较为 UNCHANGED（UNREADABLE 守卫）。该行为由 `-SafetySelfCheck` 的故障注入用例验证（见下表）。
+- **窗口绑定本轮 PID（r2，P1）**：窗口查找枚举全部同标题顶层窗口，**只返回 `ProcessId` 等于本轮 app PID 的那个**；不存在「取首个同标题窗口」的回退。异进程同标题窗口登记为 `NOT_OURS_WINDOW`，永不点击、永不滚动、永不杀灭；本轮窗口缺失时测量模式 exit 2、`-SmokeTest` 判 FAIL。滚动注入期间 app 退出即中止并 FAIL。
 - **进程所有权**：只记录并清理**本轮启动的** app PID 及其后代（Win32_Process PPID 链，启动后与每轮 capture 前刷新），结束前再按进程名家族白名单复核（防 PID 复用）；已存在的同名进程登记为 `NOT_OURS` 且绝不触碰。清理在 `try/finally` 中统一执行，覆盖正常、失败、人工中止路径；收尾复查全退，残留即 FAIL。
-- **退出码**：`0`＝所有请求 phase 完整（CSV+JSON 齐）且全部 `avg ≤ 50 ms` 且 AppData 无变化且本轮进程全退；`2`＝无 exe/无窗口；`3`＝SAMPLING_NOT_ENABLED；`4`＝OutDir 已存在拒绝覆盖；`5`＝构建失败；`6`＝测量/断言/artifact/隔离/进程清理任一失败；`7`＝隔离环境 fail-closed 拒绝。
+- **`-SmokeTest` 失败条件（r2）**：窗口未见、启动进程早退（含 settle 期间退出）、隔离根无预期写入，均判 FAIL（非仅记录）。
+- **退出码**：`0`＝所有请求 phase 完整（CSV+JSON 齐）且全部 `avg ≤ 50 ms` 且 AppData 无变化且本轮进程全退；`2`＝无 exe/无本轮窗口；`3`＝SAMPLING_NOT_ENABLED；`4`＝OutDir 已存在拒绝覆盖；`5`＝构建失败；`6`＝测量/断言/artifact/隔离/进程清理任一失败；`7`＝隔离环境或 AppData 基线 fail-closed 拒绝。
 
 ### Owner 侧已执行的实测（非测量，不替代 AC3）
 
 | 命令 | 结果 | 证据 |
 |---|---|---|
-| `pwsh -NoProfile -File run-ac4-fps.ps1 -SafetySelfCheck` | PASS（6 项：四路径接受/缺一拒绝/越界拒绝/快照阴性对照/阳性对照/真实 AppData 只读基线），exit 0 | `selfcheck-20261018-173828/`（首次运行 `…173814` 曾 FAIL 并抓出前缀判定缺陷，修复后复测通过——自检机制有效性实证，保留为证据） |
-| `pwsh -NoProfile -File run-ac4-fps.ps1 -SmokeTest` | PASS：启动 exe 12 s（窗口正常、11 个后代 PID）→ 只清本轮进程全退 → 真实 AppData 24 文件 sha256 前后 **UNCHANGED** → 写入全部落在隔离根（`catalog/catalog.sqlite`、`library.db`、`derived/.preview-lifecycle.lock`、`managed/temp`），exit 0 | `smoke-20261018-173917/`（`…173840` 为同代码首次冒烟，亦 PASS） |
+| `pwsh -NoProfile -File run-ac4-fps.ps1 -SafetySelfCheck`（r1 版，6 项） | PASS，exit 0 | `selfcheck-20261018-173828/`（首次运行 `…173814` 曾 FAIL 并抓出前缀判定缺陷——自检机制有效性实证，保留为证据） |
+| `pwsh -NoProfile -File run-ac4-fps.ps1 -SmokeTest`（r1 版） | PASS：启动 exe 12 s（窗口正常、11 个后代 PID）→ 只清本轮进程全退 → 真实 AppData 24 文件 sha256 前后 **UNCHANGED** → 写入全部落在隔离根（`catalog/catalog.sqlite`、`library.db`、`derived/.preview-lifecycle.lock`、`managed/temp`），exit 0 | `smoke-20261018-173917/`（`…173840` 为同代码首次冒烟，亦 PASS） |
+| `pwsh -NoProfile -File run-ac4-fps.ps1 -SafetySelfCheck`（r2 版，12 项） | **PASS，exit 0**。r2 新增六项全过：哈希故障注入（独占锁定文件 → `HASH_FAIL` 入 manifest 错误表）、**双侧 UNREADABLE 拒绝**（同路径前后均不可读 → 比较为 NOT-unchanged，r1 漏报路径闭合）、枚举故障注入（本令牌持 ENABLED `SeBackupPrivilege`，DACL deny 按设计被 bypass → 诚实降级为 PASS-by-channel：以 missing-directory 探针证明喂 `ENUM_FAIL` 的 `-ErrorVariable` 通道存活；无特权令牌下走完整 deny-ACL 注入）、干扰窗口三连（decoy 自身 PID 可查得＝阳性对照／异 PID 查得 null＝无首匹回退／登记 `NOT_OURS_WINDOW`） | `selfcheck-20261018-180541/`（中间两次 FAIL `…180101`/`…180200` 保留：注入用例先抓出 `Get-FileHash` 非终止错误被吞的缺陷，再抓出 icacls `(OI)(CI)` inherit-only 不作用于目录本对象的问题——注入有效性实证） |
+| `pwsh -NoProfile -File run-ac4-fps.ps1 -SmokeTest`（r2 版，**同标题干扰窗口在场**） | **PASS，exit 0**。预先启动异进程同标题 decoy 窗口（pwsh WinForms，PID 48468）→ runner 登记 `NOT_OURS_WINDOW same-title window pid=48468` → 绑定本轮窗口（`SMOKE window_seen=True window_pid=29896 app_pid=29896`，两者一致）→ 11 个后代 PID 全退 → AppData 24 文件 UNCHANGED → 隔离根 4 文件/4 目录 → **decoy 全程存活未被触碰**（验证后由本测试自行清理） | `smoke-20261018-180626/` |
 
 `-SmokeTest` 不做任何采样/滚动/UIA 交互；真实桌面测量（AC3）仍由 Coordinator 执行。
 
@@ -85,5 +90,5 @@ Owner（ZCode）只交付钩子、单元测试与本脚本；**真实桌面的�
 
 - 排除规则两类且逐样本留痕（见上节）；kept/excluded/all-sample 三口径并列报告，尖峰不可隐身。
 - 面板在采样运行中不做定时自动刷新（避免周期性 re-render 污染帧时间）；计数靠 `FPS: Refresh` 手动刷新。
-- UIA `ValuePattern` 抓取大段 CSV 文本失败时，该轮直接判 FAIL（非零退出）；人工经显式保存对话框补齐后重跑，trace 如实记录。
+- UIA `ValuePattern` 抓取大段 CSV 文本失败时，该轮直接判 FAIL（非零退出）；人工经显式保存对话框补齐后重跑，trace 如实记录。r2 起按钮失败/结构不符/JSON 内容与本轮 CSV 不一致同样判 FAIL（见「导出行为」节）。
 - `showSaveFilePicker` 依赖 WebView2 的 File System Access API（secure context）；不可用时面板明示并引导 Show/Copy 通道，不落任何默认位置。

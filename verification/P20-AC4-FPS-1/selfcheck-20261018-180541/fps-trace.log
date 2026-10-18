@@ -1,0 +1,23 @@
+[18:05:41.312] SELFCHECK begin (no app-exe launch; decoy-window + fault injection only)
+[18:05:41.324] iso_root=C:\Users\49745\AppData\Local\Temp\p20fps-selfcheck-7f3f7cbf
+[18:05:41.348] SELFCHECK isolation-accept PASS (all paths set and inside iso root)
+[18:05:41.356] SELFCHECK refuse-missing PASS (ISOLATION_REFUSE_ENV_EMPTY M2RC1_DERIVED_ROOT)
+[18:05:41.362] SELFCHECK refuse-outside PASS (ISOLATION_REFUSE_ENV_OUTSIDE_ISO M2RC2_CATALOG_DB=C:\Users\49745\AppData\Roaming\com.newmanga.m2rc1.desktop\catalog\catalog.sqlite)
+[18:05:41.409] APPDATA[selfcheck-neg] UNCHANGED (files=1, per-path sha256 compared)
+[18:05:41.416] SELFCHECK snapshot-negative PASS (identical trees compare UNCHANGED)
+[18:05:41.429] APPDATA[selfcheck-pos] MUTATED: MODIFIED a.txt; ADDED b.txt
+[18:05:41.433] SELFCHECK snapshot-positive PASS (modified+added files detected as MUTATED)
+[18:05:41.461] APPDATA[selfcheck-real] UNCHANGED (files=24, per-path sha256 compared)
+[18:05:41.467] SELFCHECK real-appdata baseline PASS (recorded; read-only)
+[18:05:41.489] SELFCHECK snapshot-hashfail PASS (locked file surfaced as a manifest error: HASH_FAIL locked.txt :: The process cannot access the file 'C:\Users\49745\AppData\Local\Temp\p20fps-selfcheck-fault-1c1ac2d7\locked.txt' because it is being used by another process.)
+[18:05:41.500] APPDATA[selfcheck-unreadable] MUTATED: UNREADABLE locked.txt (hash unavailable on at least one side - cannot prove unchanged)
+[18:05:41.507] SELFCHECK snapshot-unreadable-refuse PASS (double-UNREADABLE path compared as NOT unchanged)
+[18:05:41.566] SELFCHECK note: token holds ENABLED SeBackupPrivilege (sid=S-1-5-21-2196946971-914346751-4210154634-1001) - read-type DACL denies are bypassed by design on this token
+[18:05:41.573] SELFCHECK snapshot-enumfail PASS-by-channel (missing-directory probe produced an enumeration error record; the -ErrorVariable channel feeding ENUM_FAIL is live)
+[18:05:41.637] SELFCHECK decoy same-title window launched pid=41704 (foreign process, this check's own launch)
+[18:05:42.223] SELFCHECK window-pid find-own PASS (decoy found when its OWN pid is requested - the finder works)
+[18:05:42.258] NOT_OURS_WINDOW same-title window pid=41704 (not this run's process; never clicked, never scrolled, never killed)
+[18:05:42.265] SELFCHECK window-pid refuse-foreign PASS (same-title decoy NOT returned for non-owner pid=49624; no first-match fallback)
+[18:05:42.271] SELFCHECK window-pid not-ours-trail PASS (foreign same-title window logged as NOT_OURS_WINDOW)
+[18:05:42.279] SELFCHECK decoy stopped pid=41704 (this check's own launch)
+[18:05:42.287] SELFCHECK PASS
