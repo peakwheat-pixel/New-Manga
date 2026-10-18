@@ -1,5 +1,7 @@
 > **内部生命周期窄注记（2026-10-07，M2-DERIVED-GC-2 实现；零 wire 修订，协议 major/minor 不变）**：M2-DERIVED-GC-2 在专用 resource catalog 内引入 `preview_lifecycle` 来源行与 `preview_namespace` 绑定行，并给宿主→channel 的**内部** `revoke_resource` 控制请求加了受信 `retire_preview` 布尔位（CoreChannel 轮换专用方法；channel 仅在其自身 revoke 成功后据此把已登记自有 preview 行的 `retired` 置 1）。这些都是 host↔sidecar 控制面/SQLite 元数据内部实现：**不新增任何 Tauri IPC 命令、不改 WebView payload/ACL/十五条生产命令表、不发 `source_artifact_revision_id`/`producer_root` 等来源字段到 WebView、不改 issue/resolve/touch/revoke/TTL 的既有语义**（失败撤销新 key 与 WebView `revoke_resource_refs` 均不携带该位）。preview 回收（retired 副本删除）只发生在受 namespace 租约保护的独占启动窗口，见 [M2_DERIVED_PREVIEW_GC_DESIGN.md](M2_DERIVED_PREVIEW_GC_DESIGN.md)。
 >
+> **rev 2.11（2026-10-19，P09-AC3-DELETE-HARDEN-1 AC1 回收站读取面冻结）**：冻结 Core command `ListRecycleBinBooks`（`{}` → `BookSummary[]`）及 production-only Tauri command `library_list_recycle_bin_books`，用于读取回收站软删除作品；查询范围为 `deleted_at IS NOT NULL`，不等同于可见书架列表。结果沿用 `ListBooks` 的完整 `BookSummary` 投影（`book_id`、`title`、`original_title`、`is_favorite`、`is_archived`、`page_count`、`created_at`、`updated_at`），`page_count` 继续使用冻结的 `None` 通道，未命中为 `null`，不得以 `0` 代替。冻结 SQLite 类错误 `E_LIST_BOOKS_FAILED`（`category=internal`、`retryable=true`）与未知错误 `E_UNKNOWN`（`retryable=false`）；成功空数组表示没有软删除作品，查询失败必须保持可区分。production 注册仅新增此命令，既有命令 wire、错误投影及删除侧契约不变。Core protocol major 保持 `2`，minor `10→11`。修订范围：§3.2、§5 command catalog、§5.12、§11、§12。
+
 > **rev 2.10（2026-10-18，P09-AC3-DELETE-1 AC1 第二次冻结）**：保留 rev 2.9 的 `PermanentlyDeleteBook` / `library_delete_book_permanently` 单条请求形状，新增独立批量 Core command `PermanentlyDeleteBooks` 与 production-only Tauri command `library_delete_books_permanently`。批量采用完整预检、DB 全有/全无事务、提交后逐本文件清理；最多 20 本，显式绑定二次确认的目标 ID 和数量。按用户裁决，仅在回收站提供 UI 入口并保留 Pipeline Run/Task 历史；不删除用户导出目录文件，不改写或清理全库历史备份。协议 major 保持 2，minor `9→10`；既有命令及单条删除的参数、结果和行为不变。仅冻结契约，不授权本轮实现。详见 §3.2、§5.11、§11、§12。
 >
 > **rev 2.8（2026-10-17，FEAT-CREATE-1）**：冻结 `CreateBook` / `CreateChapter` Core commands 与 production-only Tauri commands `library_create_book` / `create_chapter`。作品归属当前活动的单一书架/Library DB；章节只创建元数据，页面来源继续走既有 `ImportPages` / `ImportSourceRef`。协议 major 保持 2，minor 从 P15 当前目标 7 增至 8；命令为 additive，既有查询、投影、错误与资源阈值不变。本修订仅冻结契约，不授权 runtime、Schema/migration 或 UI 实现。详见 §3.2、§5、§11、§12。
@@ -13,9 +15,9 @@
 
 # M2-C1 — Typed IPC Contract
 
-**当前修订范围：P09-AC3-DELETE-1 AC1 第二次冻结 rev 2.10**（§3.2 版本与兼容、§3 command catalog、§5.11 永久删除命令与安全投影、§11 状态表、§12 release boundary）。在 rev 2.9 单条删除契约上保留既有请求形状并新增独立批量删除 command；Core protocol minor `9→10`。既有命令 wire 与语义零变化。rev 2.9 的单条命令仍为单个 `book_id`，不改为数组；批量另用 `PermanentlyDeleteBooks`。本修订只冻结契约，不授权 runtime、Schema/migration、ACL 生成文件或 UI 实现。
+**当前修订范围：P09-AC3-DELETE-HARDEN-1 AC1 回收站读取面 rev 2.11**（§3.2 版本与兼容、§5 command catalog、§5.12、§11、§12）。本修订在 rev 2.10 已冻结的永久删除契约之外，新增只读回收站查询命令；不修改 rev 2.9/2.10 的命令参数、结果或行为。
 
-状态：文档 rev `2.10`；Core protocol 为 major `2` / minor `10`。rev 2.10 只增加一个独立批量永久删除 command 与其封闭错误投影，并冻结本 Task 的数据保留后果；单条 `PermanentlyDeleteBook` 参数、结果与既有命令语义不变。
+状态：文档 rev `2.11`；Core protocol 为 major `2` / minor `11`。rev 2.11 只新增一个只读回收站查询 command 与其封闭错误投影；rev 2.9/2.10 的删除命令参数、结果与语义不变。
 
 ## Revision history
 
@@ -145,6 +147,7 @@ Event<T> = {
 | Name | Typed payload → result | As-Is evidence / To-Be boundary |
 |---|---|---|
 | `ListBooks` | `{}` → `BookSummary[]` | ViewModel 调 Library service 取书目；当前搜索、归档/收藏过滤、排序由 ViewModel 本地完成。AS-IS service call，IPC 未实现。**`1.2` 修订（M2-FIX-LISTBOOKS-PAGECOUNT-UNKNOWN）**：`BookSummary.page_count: int \| null`——COUNT 谓词无行的书 → `null`（unknown），有合格页的书 → 真实计数；known `0` 与 `null` 可区分（详见 Revision history `1.2`）。 |
+| `ListRecycleBinBooks` | `{}` → `BookSummary[]` | **2.11 FROZEN**：只返回 `deleted_at IS NOT NULL` 的软删除作品；结果与 `ListBooks` 使用相同的冻结 `BookSummary` 投影。production-only Tauri command 为 `library_list_recycle_bin_books`；查询语义、错误及消费端约束见 §5.12。 |
 | `CreateBook` | `{title: string}` → `BookSummary` | **2.8 FROZEN**：Core wire、校验、错误、当前书架归属与安全投影见 §5.10；Tauri `library_create_book` production-only。原 proposal 的 `original_title?` 不属于冻结请求。 |
 | `DeleteBook` | `{book_id}` → `Unit` | 仍为 PROPOSAL；删除需 Core 检查关联和保留规则。 |
 | `PermanentlyDeleteBook` | `{book_id: BookId, confirm_permanent_delete: true}` → `{book_id: BookId, deleted: true}` | **2.10 FROZEN（rev 2.9 单条请求原样保留）**：项目级不可逆删除；请求、活动任务冲突、源文件隔离、managed cleanup 与安全错误投影见 §5.11。不得解释为 `DeleteBook` / `delete_book` 的软删除，也不得通过既有命令模拟。 |
@@ -798,6 +801,18 @@ PermanentlyDeleteBooksErrorView = {
 
 两条命令均仅响应回收站显式确认的产品流程；不得由软删除、导入失败、退出/启动、GC、Pipeline 或其他普通命令隐式触发。当前只冻结契约，不授权 runtime、Schema/migration、ACL 生成文件、UI 或测试实现。若实现需要持久化迁移以脱离并保留历史，必须先将迁移范围写入 Task 并由 Codex明确授权；不得以级联删除替代历史保留。
 
+
+### 5.12 `ListRecycleBinBooks` — 回收站作品列表
+
+- **Core command：** `ListRecycleBinBooks`，request `{}`，result `BookSummary[]`。该命令无参数。
+- **Tauri command：** `library_list_recycle_bin_books`，仅注册于 production command 面。
+- **查询范围：** 返回软删除集合，即 `deleted_at IS NOT NULL` 的作品；不是可见书架列表。
+- **投影：** 与 `ListBooks` 完全相同的冻结 `BookSummary` 形状，包含 `book_id`、`title`、`original_title`、`is_favorite`、`is_archived`、`page_count`、`created_at`、`updated_at`。`page_count` 沿用既有冻结语义：无合格页面记录为 `null`（Core 内部为 `None`），不得以 `0` 代替。
+- **错误：** SQLite 类查询失败为 `E_LIST_BOOKS_FAILED`，`category=internal`、`retryable=true`；未知失败为 `E_UNKNOWN`，`retryable=false`。
+- **生产注册：** `library_list_recycle_bin_books` 必须同步出现在 `PRODUCTION_COMMANDS`、`generate_handler!` 与命令名白名单中。
+- **消费端语义：** 成功返回 `[]` 表示没有软删除作品；查询失败仍是失败。消费方必须区分这两种状态，不得把失败静默显示为空回收站。
+- **边界：** 此命令只读，不改变软删除写入语义；request/result 不包含文件路径。
+
 ## 6. Typed projections 与 events
 
 ### 6.1 Task projection
@@ -1203,6 +1218,8 @@ AS-IS `normalized_to_page_geometry(points, page_w, page_h)` owns conversion in a
 
 The UI mapping decision does not block freezing a transport-level Page status distinct from Run status. Any proposal to alter the status value or user-visible mapping returns to the user; M2-C1 does not resolve it.
 
+| Recycle-bin book listing command | `FROZEN`（P09-AC3-DELETE-HARDEN-1 AC1 rev 2.11，§5.12） | 冻结 Core `ListRecycleBinBooks` 与 production-only Tauri `library_list_recycle_bin_books`；查询范围、`BookSummary` 投影、错误及空结果与失败的区分见 §5.12。本条不改变永久删除策略中仍待裁决的事项。 |
+
 ## 12. Release boundary
 
 本节由 P13-C1 修订，**明确授权 Python IPC Runtime 实现**：已释放的 P13 Task 可按本契约实现 §5.5 Run handlers、durable idempotency/control/query、§6.1 TaskProjection 查询、§6.2 JSONL event 输出，并在其已冻结 allowlist 内接入 `src/application/tasks/**`、`src/bootstrap/core_service.py`、`src/bootstrap/core_assembly.py`、`src/infrastructure/sqlite/pipeline.py`（含确需 migration）、provider retry/runtime seams 与 `tests/core/**`。该授权只给 P13 Task 所列的 Python Core 路径与验收范围；P13-C1 本身仍是文档 Task，不授权本次实现代码。
@@ -1222,3 +1239,5 @@ EXPORT-IPC-1 rev 2.5 **明确授权 host 侧导出控制与查询命令及安全
 FEAT-CREATE-1 rev 2.8 **仅冻结契约，不授权任何 runtime 实现**。Core、Tauri host 与前端分别由后续独立释放的 FEAT-CREATE-2/-3/-4 Task 承接；各 Task 必须在自己的 Task 中冻结 allowlist、验证与 Reviewer。当前不批准 Schema/migration 或依赖变更；若实现证明需要显式多书架模型或新持久化结构，先停止该变更并另行取得用户批准。书架归属与页面来源边界见 §5.10。
 
 P09-AC3-DELETE-1 AC1 rev 2.10 **仅冻结项目级单条与批量永久删除 IPC 契约，不授权本轮 runtime 实现**。Core/Tauri/React、Schema/migration、依赖、capability、生成权限/schema 与测试实现仍须等 Task 剩余产品裁决和 Codex 的实施范围释放。rev 2.10 保持单条 `PermanentlyDeleteBook` payload 不变，并新增独立 `PermanentlyDeleteBooks`；不得改动前序 58 条命令的 wire 或 ACL。`export_history` 行处置与 Pipeline 历史名称快照仍待用户裁决。释放后才可按 §5.11 同步生产 handler、app manifest、capability 和生成物。
+
+> P09-AC3-DELETE-HARDEN-1 AC1 **rev 2.11 记录用户裁决：采纳 AC1 明文措辞即授权回收站读取面实现**。授权仅限该读取调用链：Core `ListRecycleBinBooks` handler 与 dispatcher 分支、既有 stdio library channel 中对应的 round-trip，以及 Tauri production command `library_list_recycle_bin_books` 和其在 `PRODUCTION_COMMANDS`、`generate_handler!`、命令名白名单中的注册。此授权不扩展到其他 IPC 命令，不授权 Schema/migration、依赖、生成 permission/schema 或 capabilities 改动、React/WebView 实现或页面 UI 改动，也不改变 rev 2.10 永久删除命令与待裁决的数据保留政策。消费端仍须遵守 §5.12 对空数组和查询失败的区分要求。
