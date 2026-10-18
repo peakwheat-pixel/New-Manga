@@ -5632,6 +5632,17 @@ mod tests {
     }
 
     #[test]
+    fn recycle_bin_command_is_registered_on_the_production_surface() {
+        // AC1 (R-007): the frontend calls "library_list_recycle_bin_books".
+        // If that name is not on the production surface, the UI is calling a
+        // name nothing answers - which is exactly the state this task fixes.
+        assert!(
+            crate::PRODUCTION_COMMANDS.contains(&"library_list_recycle_bin_books"),
+            "library_list_recycle_bin_books is missing from PRODUCTION_COMMANDS"
+        );
+    }
+
+    #[test]
     fn p15_commands_map_to_the_frozen_core_surface_at_minor_seven() {
         let commands = [
             P15SettingsCommand::ProviderProfilesList,
