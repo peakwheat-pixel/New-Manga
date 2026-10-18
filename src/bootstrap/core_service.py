@@ -1047,6 +1047,37 @@ class CoreServiceServer:
             summaries.append(asdict(dto))
         return summaries
 
+    def handle_list_recycle_bin_books(
+        self, payload: dict[str, Any]
+    ) -> list[dict[str, Any]]:
+        """AC1 (R-007): the recycle bin face - every soft-deleted book.
+
+        The set comes from the service's soft-delete query, never from the
+        visible list.  The bin is defined by ``deleted`` being true, so an empty
+        result means "nothing is soft-deleted" - it never means "nothing is
+        visible" and never "the query failed".
+        """
+        del payload
+        books = self._core.library.list_recycle_bin_books()
+        page_counts = self._fetch_page_counts()
+
+        summaries: list[dict[str, Any]] = []
+        for book in books:
+            dto = BookSummaryDto(
+                book_id=book.book_id,
+                title=book.title,
+                original_title=book.original_title,
+                is_favorite=bool(book.is_favorite),
+                is_archived=bool(book.is_archived),
+                # Same frozen None channel as ListBooks: a SQL miss is unknown
+                # data, never a plausible-looking 0.
+                page_count=page_counts.get(book.book_id),
+                created_at=book.created_at,
+                updated_at=book.updated_at,
+            )
+            summaries.append(asdict(dto))
+        return summaries
+
     def handle_create_book(self, payload: dict[str, Any]) -> dict[str, Any]:
         book = self._core.library.create_book(payload["title"])
         return asdict(BookSummaryDto(
@@ -3109,6 +3140,56 @@ class CoreServiceServer:
                 "result": result,
                 "error": None,
             }, False)
+
+        if command == "ListRecycleBinBooks":
+            # AC1 (R-007): the recycle bin gets its own read face on the
+            # production dispatcher, so the command -> Core -> service route is
+            # actually complete rather than the frontend calling a name that
+            # nothing answers.
+            try:
+                recycle_books = self.handle_list_recycle_bin_books(payload)
+                return (
+                    {
+                        "protocol": PROTOCOL_NAME,
+                        "version": {"major": PROTOCOL_MAJOR, "minor": PROTOCOL_MINOR},
+                        "request_id": request_id,
+                        "result": recycle_books,
+                        "error": None,
+                    },
+                    False,
+                )
+            except sqlite3.Error:
+                return (
+                    {
+                        "protocol": PROTOCOL_NAME,
+                        "version": {"major": PROTOCOL_MAJOR, "minor": PROTOCOL_MINOR},
+                        "request_id": request_id,
+                        "result": None,
+                        "error": make_error_envelope(
+                            code=E_LIST_BOOKS_FAILED,
+                            category="internal",
+                            message="Failed to query recycle bin books",
+                            retryable=True,
+                        ),
+                    },
+                    False,
+                )
+            except Exception:
+                return (
+                    {
+                        "protocol": PROTOCOL_NAME,
+                        "version": {"major": PROTOCOL_MAJOR, "minor": PROTOCOL_MINOR},
+                        "request_id": request_id,
+                        "result": None,
+                        "error": make_error_envelope(
+                            code=E_UNKNOWN,
+                            category="internal",
+                            message="Failed to list recycle bin books",
+                            retryable=False,
+                        ),
+                    },
+                    False,
+                )
 
         if command == "ListBooks":
             try:
