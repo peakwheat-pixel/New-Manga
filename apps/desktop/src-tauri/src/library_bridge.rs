@@ -262,9 +262,19 @@ impl PermanentlyDeleteBooksErrorView {
             if code == "BOOK_DELETE_BATCH_PREFLIGHT_FAILED"
                 || code == "BOOK_DELETE_BATCH_CLEANUP_PENDING"
             {
+                // AC9 (R-009): project only the two frozen phases.  The value
+                // arrives from Core as free text, so anything else - a future
+                // phase this build does not know, or a tampered payload - is
+                // downgraded to "unknown" rather than passed through and read
+                // as if the frontend understood it.
                 phase = details
                     .get("phase")
                     .and_then(|v| v.as_str())
+                    .map(|raw| match raw {
+                        "preflight" => "preflight",
+                        "cleanup" => "cleanup",
+                        _ => "unknown",
+                    })
                     .map(|s| s.to_string());
                 requested_count = details
                     .get("requested_count")
@@ -5563,6 +5573,42 @@ mod tests {
         assert_eq!(chapter["chapter_id"], "chapter-1");
         assert!(!chapter.to_string().contains("private"));
         assert!(!chapter.to_string().contains("secret-marker"));
+    }
+
+    #[test]
+    fn permanently_delete_error_phase_is_projected_from_a_closed_whitelist() {
+        // AC9 (R-009): Core sends `phase` as free text. Only the two frozen
+        // phases may reach the frontend; anything else is downgraded to
+        // "unknown" instead of being projected as if it were understood.
+        fn view_with_phase(phase: serde_json::Value) -> PermanentlyDeleteBooksErrorView {
+            let error: LibraryError = serde_json::from_value(serde_json::json!({
+                "code": "BOOK_DELETE_BATCH_CLEANUP_PENDING",
+                "category": "internal",
+                "retryable": true,
+                "details": { "phase": phase },
+            }))
+            .expect("LibraryError must deserialize from the wire shape");
+            PermanentlyDeleteBooksErrorView::from_core(error)
+        }
+
+        assert_eq!(
+            view_with_phase(serde_json::json!("preflight")).phase.as_deref(),
+            Some("preflight")
+        );
+        assert_eq!(
+            view_with_phase(serde_json::json!("cleanup")).phase.as_deref(),
+            Some("cleanup")
+        );
+        assert_eq!(
+            view_with_phase(serde_json::json!("rollback")).phase.as_deref(),
+            Some("unknown"),
+            "an unknown phase was projected through unchanged"
+        );
+        assert_eq!(
+            view_with_phase(serde_json::json!("")).phase.as_deref(),
+            Some("unknown")
+        );
+        assert_eq!(view_with_phase(serde_json::json!(42)).phase, None);
     }
 
     #[test]
