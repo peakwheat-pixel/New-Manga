@@ -15,8 +15,8 @@ branch: null
 worktree: G:/CODEX/New Manga（性能实测须在真实桌面执行；执行方写 verification/P20-MEM-OPT-1/**、本 Task、doc/handoffs/P20-MEM-OPT-1-*.md）
 integration_commit: 6bf9d9e31
 delivery_head: 6bf9d9e31
-canonical_evidence_status: closed
-resource_closeout_status: closed
+canonical_evidence_status: complete
+resource_closeout_status: complete
 evidence_dir: verification/P20-MEM-OPT-1
 ---
 
@@ -117,11 +117,18 @@ planned：多轮（≥3）空闲稳态采样（CSV 时序 + 逐进程分解 + �
 
 | evidence_id | AC/Gate | path | commit | sha256 | class |
 |---|---|---|---|---|---|
+| EVID-P20MEM-TREE | AC1 | verification/P20-MEM-OPT-1/ac1-probe-20261018-072149/process-tree.json | a09530e1ef23bb126f23456950429451a0cc1f1c | 117cb2b6ee31e3dab8dc57758335b5bd9a6bbc89b365db2ac477b6f66ccdf6b6 | CANONICAL |
+| EVID-P20MEM-TRACE | AC1 | verification/P20-MEM-OPT-1/ac1-probe-20261018-072149/probe-trace.log | a09530e1ef23bb126f23456950429451a0cc1f1c | cb9f8d081f50011503c353cedec5faaf52bae0888eb7d417b4d98a10b0448500 | CANONICAL |
+| EVID-P20MEM-SCRIPT | AC1 | verification/P20-MEM-OPT-1/probe-process-tree.ps1 | a09530e1ef23bb126f23456950429451a0cc1f1c | b82448b816ae6af9e15072b7e57af8636e2c1ff208f5ba01c39162f1939d073a | CANONICAL |
+| EVID-P20MEM-STEADY | AC1 | verification/P20-MEM-OPT-1/experiment-steady-after-trim.ps1 | a09530e1ef23bb126f23456950429451a0cc1f1c | a0a323f2dffec84c6b621d4836a101f8121052299e0b959e5a6e70287c8ac537 | CANONICAL |
+| EVID-P20MEM-INTERACT | AC1 | verification/P20-MEM-OPT-1/test-interaction-and-pages.ps1 | a09530e1ef23bb126f23456950429451a0cc1f1c | d168d5a22f42e70db6c6653a60cff22a913c66ab1314f6e312b5286d3c8cdbb2 | CANONICAL |
 
 ## Resource Manifest
 
 | resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
 |---|---|---|---|---|---|
+| artifact | verification/P20-MEM-OPT-1 | PRESERVE_REFERENCED | verification/P20-MEM-OPT-1 | verification/P20-MEM-OPT-1/ac1-probe-20261018-072149/process-tree.json | 内存口径探测脚本与 3 组进程树探测证据；进程/引用核查通过 |
+| external_artifact | G:/CODEX/New Manga.workspace/agent-output/antigravity/P20-MEM-OPT-1-intercepted | PRESERVE_REFERENCED | G:/CODEX/New Manga.workspace/agent-output/antigravity/P20-MEM-OPT-1-intercepted | verification/P20-MEM-OPT-1/README.md | 被拦截回退的 memory_opt.rs.rejected 与 main.rs.rejected.diff；未进入产品代码，保留为判定依据 |
 
 ## Closeout Record
 
