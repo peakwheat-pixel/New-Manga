@@ -1,0 +1,3 @@
+﻿    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.49s
+     Running unittests src\main.rs (apps\desktop\src-tauri\target\debug\deps\m2rc1_desktop-24448612fc7535f6.exe)
+[shutdown] Warning: taskkill child.kill() for PID 27272 returned error: simulated kill failure

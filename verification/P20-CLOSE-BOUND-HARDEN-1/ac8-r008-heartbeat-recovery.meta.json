@@ -1,0 +1,9 @@
+﻿{
+  "name": "R-008_heartbeat_recovery",
+  "command": "cargo test --manifest-path apps/desktop/src-tauri/Cargo.toml --bin m2rc1-desktop resilient_channel_heartbeat_detects_unresponsive_child_and_recovers -- --nocapture",
+  "exit_code": 0,
+  "duration_ms": 888.96,
+  "start": "2026-10-18T16:54:51+08:00",
+  "end": "2026-10-18T16:54:52+08:00",
+  "summary": "R-008: Heartbeat detects unresponsive child and recovers"
+}

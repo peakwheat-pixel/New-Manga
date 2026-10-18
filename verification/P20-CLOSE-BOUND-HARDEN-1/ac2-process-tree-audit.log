@@ -1,0 +1,20 @@
+﻿# --- Environment Header (doc/09_COLLABORATION.md §6.12) ---
+# Shell: pwsh (PowerShell 7.6.6)
+# Python: C:\Python314\python.exe
+# Venv: none
+# Exit: 0
+# Command: test-ac1-overlay-bound.ps1 (Process Tree: Runner Descendants & Isolation Root Audit)
+# ---------------------------------------------------------
+=== Process Tree Zero Orphan Audit (AC2 / AC6) ===
+Timestamp: 2026-10-18T16:53:49+08:00
+Test Runner PID: 37636
+Baseline Process Count: 384
+Delta Processes Evaluated: 6
+Recursive Descendant PIDs Scanned: 0
+Isolation Root: C:\Users\49745\AppData\Local\Temp\p20-close-bound-90d7d344
+Python Interpreter: C:\Python314\python.exe
+Scope Note: Scans all recursive descendant PIDs of runner/commands plus isolation root matches. Global broken-chain audit without isolation root is excluded to avoid false positives on unrelated Python processes.
+Residual Process Audit: 0 matching residual processes found. Count = 0 (CLEAN).
+Parent-Child Process Tree: No orphaned python / core_service / m2rc1_desktop child processes.
+Scope Audit: All tracked descendant processes and isolation root matches have cleanly terminated.
+Isolation Root Handle Check: Successfully removed C:\Users\49745\AppData\Local\Temp\p20-close-bound-90d7d344 (No active handles or locks held).

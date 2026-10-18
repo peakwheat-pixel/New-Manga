@@ -206,8 +206,38 @@ $reentrant_Res = Run-LoggedCommand `
     -CommandLine "cargo test --manifest-path apps/desktop/src-tauri/Cargo.toml --bin m2rc1-desktop reentrant_shutdown_without_try_wait_success_does_not_set_child_reaped -- --nocapture" `
     -LogBase "ac4-reentrant-child-reap-check"
 
-# 6. AC2: Direct Recursive Process Tree and Zero Residual Orphan Check (with Broken-Chain Detection per P2#5)
-Write-Host "Performing comprehensive Recursive Process Tree and Zero Residual Orphan Check..."
+# 5i. AC1 (CBH-02): Deadline CAS monotonicity, zero/expired budget protection, and concurrent bounds
+$ac1_cas_Res = Run-LoggedCommand `
+    -CommandName "rust_deadline_cas_concurrent_monotonic_test" `
+    -CommandLine "cargo test --manifest-path apps/desktop/src-tauri/Cargo.toml --bin m2rc1-desktop ac1_deadline_cas_concurrent_monotonic_and_zero_expired -- --nocapture" `
+    -LogBase "ac1-deadline-cas-monotonic"
+
+# 5j. AC3 (CBH-01): Child fallback post-deadline action prohibition
+$ac3_fallback_Res = Run-LoggedCommand `
+    -CommandName "rust_child_fallback_post_deadline_test" `
+    -CommandLine "cargo test --manifest-path apps/desktop/src-tauri/Cargo.toml --bin m2rc1-desktop ac3_child_fallback_forbids_post_deadline_actions -- --nocapture" `
+    -LogBase "ac3-child-fallback-post-deadline"
+
+# 5k. AC4 (CBH-01): Fault injection for blocked reader worker thread and pipe cancellation
+$ac4_reader_Res = Run-LoggedCommand `
+    -CommandName "rust_blocked_reader_worker_test" `
+    -CommandLine "cargo test --manifest-path apps/desktop/src-tauri/Cargo.toml --bin m2rc1-desktop ac4_fault_injection_blocked_reader_worker_bounds_and_cancels -- --nocapture" `
+    -LogBase "ac4-blocked-reader-worker"
+
+# 5l. AC4 (CBH-01): Fault injection for blocked writer worker thread and reaper bounds
+$ac4_writer_Res = Run-LoggedCommand `
+    -CommandName "rust_blocked_writer_worker_test" `
+    -CommandLine "cargo test --manifest-path apps/desktop/src-tauri/Cargo.toml --bin m2rc1-desktop ac4_fault_injection_blocked_writer_worker_bounds_and_cleans_up -- --nocapture" `
+    -LogBase "ac4-blocked-writer-worker"
+
+# 5m. AC4 (CBH-01): Fault injection for taskkill spawn/kill/try_wait failure
+$ac4_taskkill_Res = Run-LoggedCommand `
+    -CommandName "rust_taskkill_fault_injection_test" `
+    -CommandLine "cargo test --manifest-path apps/desktop/src-tauri/Cargo.toml --bin m2rc1-desktop ac4_fault_injection_taskkill_spawn_and_kill_failure -- --nocapture" `
+    -LogBase "ac4-taskkill-fault-injection"
+
+# 6. AC2 / AC6: Runner Descendants & Isolation Root Process Tree and Zero Residual Orphan Check (CBH-03 scoped)
+Write-Host "Performing Recursive Process Tree and Zero Residual Orphan Check (Runner Descendants & Isolation Root)..."
 $allProcs = Get-CimInstance Win32_Process
 
 # 1) Build recursive descendant PID list from current runner PID ($PID) and all launched command PIDs ($launchedPids)
@@ -234,7 +264,7 @@ while ($queue.Count -gt 0) {
     }
 }
 
-# 2) P2#5: Compute Delta PIDs (processes created after suite started, even if parent already exited)
+# 2) Compute Delta PIDs for diagnostic tracking
 $deltaProcs = @()
 foreach ($proc in $allProcs) {
     if (-not $baselinePidSet.Contains($proc.ProcessId) -and $proc.ProcessId -ne $PID) {
@@ -270,9 +300,9 @@ $treeReport.AppendLine("# Shell: $shellType") | Out-Null
 $treeReport.AppendLine("# Python: $pythonExe") | Out-Null
 $treeReport.AppendLine("# Venv: $venvPath") | Out-Null
 $treeReport.AppendLine("# Exit: $(if ($residualCount -eq 0) { 0 } else { 1 })") | Out-Null
-$treeReport.AppendLine("# Command: test-ac1-overlay-bound.ps1 (Process Tree & Broken-Chain Orphan Audit)") | Out-Null
+$treeReport.AppendLine("# Command: test-ac1-overlay-bound.ps1 (Process Tree: Runner Descendants & Isolation Root Audit)") | Out-Null
 $treeReport.AppendLine("# ---------------------------------------------------------") | Out-Null
-$treeReport.AppendLine("=== Process Tree Zero Orphan Audit (AC2) ===") | Out-Null
+$treeReport.AppendLine("=== Process Tree Zero Orphan Audit (AC2 / AC6) ===") | Out-Null
 $treeReport.AppendLine("Timestamp: $(Get-Date -Format 'yyyy-MM-ddTHH:mm:sszzz')") | Out-Null
 $treeReport.AppendLine("Test Runner PID: $PID") | Out-Null
 $treeReport.AppendLine("Baseline Process Count: $($baselinePidSet.Count)") | Out-Null
@@ -280,6 +310,7 @@ $treeReport.AppendLine("Delta Processes Evaluated: $($deltaProcs.Count)") | Out-
 $treeReport.AppendLine("Recursive Descendant PIDs Scanned: $($descendantPids.Count)") | Out-Null
 $treeReport.AppendLine("Isolation Root: $isolatedRoot") | Out-Null
 $treeReport.AppendLine("Python Interpreter: $pythonExe") | Out-Null
+$treeReport.AppendLine("Scope Note: Scans all recursive descendant PIDs of runner/commands plus isolation root matches. Global broken-chain audit without isolation root is excluded to avoid false positives on unrelated Python processes.") | Out-Null
 
 if ($residualProcs.Count -gt 0) {
     foreach ($p in $residualProcs) {
@@ -288,7 +319,7 @@ if ($residualProcs.Count -gt 0) {
 } else {
     $treeReport.AppendLine("Residual Process Audit: 0 matching residual processes found. Count = 0 (CLEAN).") | Out-Null
     $treeReport.AppendLine("Parent-Child Process Tree: No orphaned python / core_service / m2rc1_desktop child processes.") | Out-Null
-    $treeReport.AppendLine("Broken-Chain Process Audit: No unlinked descendant or helper processes lingering.") | Out-Null
+    $treeReport.AppendLine("Scope Audit: All tracked descendant processes and isolation root matches have cleanly terminated.") | Out-Null
 }
 
 # Real Handle / File-lock Verification:
@@ -342,6 +373,11 @@ $anyFailed = ($overlayRes.ExitCode -ne 0) -or `
     ($n1_timeout_Res.ExitCode -ne 0) -or `
     ($n1_spawn_Res.ExitCode -ne 0) -or `
     ($reentrant_Res.ExitCode -ne 0) -or `
+    ($ac1_cas_Res.ExitCode -ne 0) -or `
+    ($ac3_fallback_Res.ExitCode -ne 0) -or `
+    ($ac4_reader_Res.ExitCode -ne 0) -or `
+    ($ac4_writer_Res.ExitCode -ne 0) -or `
+    ($ac4_taskkill_Res.ExitCode -ne 0) -or `
     ($residualCount -gt 0)
 
 if ($anyFailed) {

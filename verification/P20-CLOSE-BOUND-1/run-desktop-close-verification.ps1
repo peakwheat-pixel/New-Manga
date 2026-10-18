@@ -7,7 +7,8 @@ param(
     [string]$AppExe = "apps/desktop/src-tauri/target/release/m2rc1-desktop.exe",
     [string]$SidecarDir = "resources/core-sidecar",
     [int]$HardBoundSeconds = 5,
-    [string]$OutDir = ""
+    [string]$OutDir = "",
+    [Nullable[int]]$MockExitCode = $null
 )
 
 $ErrorActionPreference = "Stop"
@@ -66,6 +67,13 @@ try {
 
     Write-Log "Isolated root prepared at: $isolatedRoot"
 
+    if ($null -ne $MockExitCode) {
+        Write-Log "MOCK EXECUTION: Simulating desktop run with exit code: $MockExitCode"
+        $scriptExitCode = [int]$MockExitCode
+        Remove-Item -Path $isolatedRoot -Recurse -Force -ErrorAction SilentlyContinue
+        return
+    }
+
     # 2. Set environment variables for isolated execution
     $env:NEWMANGA_DATA_ROOT = $dataRoot
     $env:M2RC1_DERIVED_ROOT = $derivedRoot
@@ -74,13 +82,14 @@ try {
     New-Item -ItemType Directory -Path $env:M2RC1_MANAGED_ROOT -Force | Out-Null
 
     # Verify binary existence
-    if (-not (Test-Path $AppExe)) {
-        # Check debug binary if release not found
+    if (-not (Test-Path $AppExe) -and ($AppExe -eq "apps/desktop/src-tauri/target/release/m2rc1-desktop.exe")) {
+        # Check debug binary if default release not found
         $AppExe = "apps/desktop/src-tauri/target/debug/m2rc1-desktop.exe"
     }
     if (-not (Test-Path $AppExe)) {
-        Write-Log "Could not find m2rc1-desktop binary. Please build the desktop app first." -ForegroundColor Red
+        Write-Log "Could not find desktop binary at: $AppExe. Please build the desktop app first." -ForegroundColor Red
         $scriptExitCode = 1
+        return
     } else {
         $resolvedExe = (Resolve-Path $AppExe).Path
         Write-Log "Launching desktop application: $resolvedExe"
@@ -203,50 +212,86 @@ try {
     $durationSeconds = [math]::Round(($endTime - $startTime).TotalSeconds, 2)
     $shellStr = "pwsh (PowerShell $($PSVersionTable.PSVersion))"
 
-    # Write ac5-console.log
+    # Write ac5-console.log (isolated error handling)
     $consoleLogFile = Join-Path $resolvedOutDir "ac5-console.log"
-    [System.IO.File]::WriteAllLines($consoleLogFile, $logLines, [System.Text.Encoding]::UTF8)
+    $consoleWritten = $false
+    $consoleError = $null
+    try {
+        [System.IO.File]::WriteAllLines($consoleLogFile, $logLines, [System.Text.Encoding]::UTF8)
+        $consoleWritten = $true
+    } catch {
+        $consoleError = $_.Exception.Message
+        # If console log is locked (e.g. by caller Tee-Object), write to fallback file
+        try {
+            $fallbackConsole = Join-Path $resolvedOutDir "ac5-console-fallback.log"
+            [System.IO.File]::WriteAllLines($fallbackConsole, $logLines, [System.Text.Encoding]::UTF8)
+        } catch {
+            # Ignore secondary fallback write failure
+        }
+    }
 
-    # Write ac5.exit
+    # Write ac5.exit with strict consistency guarantee
     $exitFile = Join-Path $resolvedOutDir "ac5.exit"
-    [System.IO.File]::WriteAllText($exitFile, $scriptExitCode.ToString(), [System.Text.Encoding]::UTF8)
-
-    # Read back to assert disk content matches exit code
-    $readBackExit = [System.IO.File]::ReadAllText($exitFile).Trim()
-    if ($readBackExit -ne $scriptExitCode.ToString()) {
-        Write-Log "CRITICAL ERROR: ac5.exit content ($readBackExit) does not match script exit code ($scriptExitCode)" -ForegroundColor Red
+    try {
+        [System.IO.File]::WriteAllText($exitFile, $scriptExitCode.ToString(), [System.Text.Encoding]::UTF8)
+        # Read back to assert disk content matches exit code
+        $readBackExit = [System.IO.File]::ReadAllText($exitFile).Trim()
+        if ($readBackExit -ne $scriptExitCode.ToString()) {
+            Write-Log "CRITICAL ERROR: ac5.exit content ($readBackExit) does not match script exit code ($scriptExitCode)" -ForegroundColor Red
+            $scriptExitCode = 1
+            # Re-write ac5.exit to match elevated exit code 1
+            [System.IO.File]::WriteAllText($exitFile, "1", [System.Text.Encoding]::UTF8)
+        }
+    } catch {
+        Write-Host "Warning: Failed to write ac5.exit: $_"
         $scriptExitCode = 1
     }
 
-    # Write ac5-metadata.txt
-    $metaTxtFile = Join-Path $resolvedOutDir "ac5-metadata.txt"
-    $metaBuilder = New-Object System.Text.StringBuilder
-    $metaBuilder.AppendLine("runner=run-desktop-close-verification.ps1 (self-contained evidence logging)") | Out-Null
-    $metaBuilder.AppendLine("outdir=$resolvedOutDir") | Out-Null
-    $metaBuilder.AppendLine("start_local=$startIso") | Out-Null
-    $metaBuilder.AppendLine("end_local=$endIso") | Out-Null
-    $metaBuilder.AppendLine("duration_s=$durationSeconds") | Out-Null
-    $metaBuilder.AppendLine("exit_code=$scriptExitCode") | Out-Null
-    $metaBuilder.AppendLine("release_sha256=$releaseHash") | Out-Null
-    $metaBuilder.AppendLine("head=$gitHead") | Out-Null
-    $metaBuilder.AppendLine("shell=$shellStr") | Out-Null
-    $metaBuilder.AppendLine("note=Self-contained evidence generation by run-desktop-close-verification.ps1 without relying on caller Tee.") | Out-Null
-    [System.IO.File]::WriteAllText($metaTxtFile, $metaBuilder.ToString(), [System.Text.Encoding]::UTF8)
-
-    # Write ac5-metadata.json
-    $metaJsonFile = Join-Path $resolvedOutDir "ac5-metadata.json"
-    $metaObj = [ordered]@{
-        runner = "run-desktop-close-verification.ps1"
-        outdir = $resolvedOutDir
-        start_local = $startIso
-        end_local = $endIso
-        duration_s = $durationSeconds
-        exit_code = $scriptExitCode
-        release_sha256 = $releaseHash
-        head = $gitHead
-        shell = $shellStr
+    # Write ac5-metadata.txt (isolated)
+    try {
+        $metaTxtFile = Join-Path $resolvedOutDir "ac5-metadata.txt"
+        $metaBuilder = New-Object System.Text.StringBuilder
+        $metaBuilder.AppendLine("runner=run-desktop-close-verification.ps1 (self-contained evidence logging)") | Out-Null
+        $metaBuilder.AppendLine("outdir=$resolvedOutDir") | Out-Null
+        $metaBuilder.AppendLine("start_local=$startIso") | Out-Null
+        $metaBuilder.AppendLine("end_local=$endIso") | Out-Null
+        $metaBuilder.AppendLine("duration_s=$durationSeconds") | Out-Null
+        $metaBuilder.AppendLine("exit_code=$scriptExitCode") | Out-Null
+        $metaBuilder.AppendLine("release_sha256=$releaseHash") | Out-Null
+        $metaBuilder.AppendLine("head=$gitHead") | Out-Null
+        $metaBuilder.AppendLine("shell=$shellStr") | Out-Null
+        $metaBuilder.AppendLine("console_written=$consoleWritten") | Out-Null
+        if ($consoleError) {
+            $metaBuilder.AppendLine("console_warning=$consoleError") | Out-Null
+        }
+        $metaBuilder.AppendLine("note=Self-contained evidence generation by run-desktop-close-verification.ps1 without relying on caller Tee.") | Out-Null
+        [System.IO.File]::WriteAllText($metaTxtFile, $metaBuilder.ToString(), [System.Text.Encoding]::UTF8)
+    } catch {
+        Write-Host "Warning: Failed to write ac5-metadata.txt: $_"
     }
-    [System.IO.File]::WriteAllText($metaJsonFile, ($metaObj | ConvertTo-Json -Depth 4), [System.Text.Encoding]::UTF8)
+
+    # Write ac5-metadata.json (isolated)
+    try {
+        $metaJsonFile = Join-Path $resolvedOutDir "ac5-metadata.json"
+        $metaObj = [ordered]@{
+            runner = "run-desktop-close-verification.ps1"
+            outdir = $resolvedOutDir
+            start_local = $startIso
+            end_local = $endIso
+            duration_s = $durationSeconds
+            exit_code = $scriptExitCode
+            release_sha256 = $releaseHash
+            head = $gitHead
+            shell = $shellStr
+            console_written = $consoleWritten
+        }
+        if ($consoleError) {
+            $metaObj["console_warning"] = $consoleError
+        }
+        [System.IO.File]::WriteAllText($metaJsonFile, ($metaObj | ConvertTo-Json -Depth 4), [System.Text.Encoding]::UTF8)
+    } catch {
+        Write-Host "Warning: Failed to write ac5-metadata.json: $_"
+    }
 
     Write-Host "Self-contained evidence recorded in: $resolvedOutDir"
     exit $scriptExitCode

@@ -1,122 +1,146 @@
-# P20-CLOSE-BOUND-1 AC4 并发持锁路径审查与硬上界闭式证明（R6 终审收口版）
+# P20-CLOSE-BOUND-1 AC4 并发持锁路径审查与硬上界闭式证明（CBH-01~05 加固版）
 
 - **审查日期**：2026-10-18
 - **责任方**：Antigravity (Owner)
-- **审查范围**：`apps/desktop/src-tauri/src/library_bridge.rs` 中与关闭、退出、心跳、请求交互及 Drop 相关的全部持锁点、同步等待、后台 Worker 与并发调用链
-- **依据规范**：Codex Review R5（`verification/P20-CLOSE-BOUND-1/codex-review-r5.md`）
+- **审查范围**：`apps/desktop/src-tauri/src/library_bridge.rs` 中与关闭、退出、心跳、请求交互及 Drop 相关的全部持锁点、同步等待、系统调用边界、后台 Worker 与并发调用链
+- **依据规范**：Codex Review R6 §7 及未闭合清单（CBH-01 ~ CBH-05）
 
 ---
 
 ## 1. 真实持锁与同步机制清单（前台 22 项阻塞调用点 + 统一 Deadline 机制）
 
-在 R6 中，针对 R5 审查提出的所有指认，已做出以下闭环重构：
-1. **彻底消除 `shutdown_deadline` 互斥锁**：改用 `created_at: Instant` + `shutdown_deadline_ms: AtomicU64` 原子量 CAS 机制。无锁、无等待、不可重入死锁、无优先级反转，耗时 0 ms。
-2. **`Drop` 绝对复用已建立 Deadline**：`StdioLibraryChannel::drop` 与 `ResilientLibraryChannel::drop` 均首先通过 `get_deadline()` 读取已有截止时间，若存在直接继承，严禁重新开辟 2400 ms 预算。
-3. **`run_taskkill_bounded` 归零保护**：在 `timeout.is_zero()` 时立即短路返回 `Err`，绝不启动 `taskkill` 进程。
-4. **后台 Worker 严格受限**：所有 fallback worker 均共享 `Instant::now() < deadline`，所有 detached reaper（taskkill、reader、writer）均设有固定 **200 ms** 轮询上界，彻底消除无界 `wait()` 与 `join()`。
-5. **重入与假阳性闭环**：仅在 `child.try_wait()` 明确返回 `Ok(Some(_))` 时才置位 `child_reaped = true`。
-
-### 1.1 前台 22 处独立阻塞调用点详细清单
-
-| 序号 | 源码精确行号 | 阻塞操作与涉及资源 | 静态最坏上限 | 动态 Deadline 截断机制 | 为何绝不无限阻塞 / 死锁 / 假阳性 |
-|---:|---|---|---|---|---|
-| **1** | `library_bridge.rs:4291-4299` | `ctx.inner` 获取（`ResilientLibraryChannel::shutdown`） | **50 ms** | `lock_timeout_recover(&self.ctx.inner, 50ms.min(rem))` | 仅执行 `guard.take()` 剥离所有权；若超时派发后台 fallback（共享同一 deadline，见第 3 节 Worker 1），主线程立即推进。 |
-| **2** | `library_bridge.rs:2552-2560` | `pending_responses` 锁获取（关闭入口排空等待者） | **30 ms** | `lock_timeout_recover(&self.pending_responses, 30ms.min(rem))` | 仅在内存中遍历 `drain()` 并唤醒在途请求；若超时派发后台 fallback（共享同一 deadline，见第 3 节 Worker 2），主线程推进。 |
-| **3** | `library_bridge.rs:2619-2622` | `host_session` 锁获取（提取 HostSession） | **30 ms** | `lock_timeout_recover(&self.host_session, 30ms.min(rem))` | 仅在锁内执行 `session_slot.take()`，随后在锁外发起 `CloseHostSession`；超时直接跳过会话关闭。 |
-| **4** | `library_bridge.rs:1784`<br>helper `1694-1734` | `acquire_transaction_lock`（交易锁轮询） | **80 ms**<br>*(受包络约束)* | `try_lock` 轮询，单步 10 ms，受 `session_timeout`（≤ 240 ms）严格截断 | 在途请求收到 `pending_responses` 唤醒错误后立即释放该锁；超时立即放弃。 |
-| **5** | `library_bridge.rs:1809-1812` | `pending_responses` 注册锁（CloseHostSession） | **100 ms**<br>*(受包络约束)* | `lock_timeout_recover(&self.pending_responses, 100ms.min(rem))` | 纯哈希表插入，受外层 `session_timeout` 剩余时间截断。 |
-| **6** | `library_bridge.rs:1829-1833`<br>writer `1627-1675` | 管道写回执等待（`write_stdin_shutdown`） | **50 ms**<br>*(受包络约束)* | 受 `remaining_for_write`（受会话预算截断）约束 | 由后台 writer 线程写入，通道满时受 OS 破裂管道或超时保护，超时立即返回错误。 |
-| **7** | `library_bridge.rs:1855-1877` | 响应接收等待（`rx.recv_timeout`） | **80 ms**<br>*(受包络约束)* | 受 `session_timeout` 剩余预算约束（上限 240 ms） | 独占 sync_channel，Core 响应或管道 EOF 立即唤醒，超时立即放弃等待。 |
-| **8** | `library_bridge.rs:1818-1821` | 写入前超时清理锁（`pending_responses`） | **10 ms**<br>*(受包络约束)* | `lock_timeout_recover(&self.pending_responses, 10ms.min(rem))` | 纯内存 `remove`，受剩余预算截断，超时跳过清理。 |
-| **9** | `library_bridge.rs:1836-1842` | 写入失败清理锁（`pending_responses`） | **10 ms**<br>*(受包络约束)* | `lock_timeout_recover(&self.pending_responses, 10ms.min(rem))` | 纯内存 `remove`，受剩余预算截断，超时跳过清理。 |
-| **10** | `library_bridge.rs:1867-1870` | 响应超时清理锁（`pending_responses`） | **10 ms**<br>*(受包络约束)* | `lock_timeout_recover(&self.pending_responses, 10ms.min(rem))` | 纯内存 `remove`，受剩余预算截断，超时跳过清理。 |
-| **11** | `library_bridge.rs:2646-2658` | `core.shutdown` 写入管道（`write_stdin_shutdown`） | **60 ms** | 受 `shutdown_write_timeout = 60ms.min(rem)` 截断 | 专用关机写通道，绕过 `is_down`，超时立即放弃并转入进程强杀。 |
-| **12** | `library_bridge.rs:2661-2663` | `child` 锁获取（获取子进程句柄） | **50 ms** | `lock_timeout_recover(&self.child, 50ms.min(rem))` | 中毒自动恢复；若竞争超时直接转入 OS taskkill 强杀分支（见 Step 4 替代分支）。 |
-| **13** | `library_bridge.rs:2666-2670`<br>helper `2267-2286` | 子进程优雅退出等待（`child.try_wait()` 轮询） | **1000 ms** | 轮询步长 15 ms，预留 450 ms，受 `remaining` 严格截断 | 超时调用 `child.kill()` 发送终止信号。 |
-| **14** | helper `library_bridge.rs:2306-2324` | 终止信号后 Reap 轮询（`child.try_wait()` 轮询） | **400 ms** | 轮询步长 15 ms，预留 200 ms，受 `remaining` 严格截断 | 超时返回 `TimedOut` 错误，主流程推进至 OS taskkill 兜底强杀。 |
-| **15** | `library_bridge.rs:2676-2680` | wait 失败记录锁（`last_shutdown_error`） | **10 ms** | `lock_timeout_recover(&self.last_shutdown_error, 10ms.min(rem))` | 纯内存记录错误日志，超时直接短路跳过。 |
-| **16** | `library_bridge.rs:2683-2745`<br>helper `2354-2425` | OS 级 taskkill 强杀及 Reap（`run_taskkill_bounded`） | **250 ms** | `timeout = 250ms.min(rem)`；**归零时短路不启动**；超时派发后台 200ms reaper | 调用 `taskkill /F /T /PID`；仅在确认 `try_wait` 成功返回 `Ok(Some(_))` 时才置位 `child_reaped`，消除假阳性。 |
-| **17** | `library_bridge.rs:2748-2753` | taskkill 失败记录锁（`last_shutdown_error`） | **10 ms** | `lock_timeout_recover(&self.last_shutdown_error, 10ms.min(rem))` | 纯内存记录错误日志，超时直接短路跳过。 |
-| **18** | `library_bridge.rs:2882-2885` | `reader_join_handle` 锁获取 | **30 ms** | `lock_timeout_recover(&self.reader_join_handle, 30ms.min(rem))` | 锁内仅微秒级 `take()` 取出 handle，锁外轮询等待。 |
-| **19** | `library_bridge.rs:2888-2904` | Reader 线程退出等待（前台轮询） | **100 ms** | `join_timeout = 100ms.min(rem)`，单步 10 ms 轮询 | 子进程终止后 stdout EOF 触发退出；若前台超时移交后台 200 ms reaper，前台绝无死锁。 |
-| **20** | `library_bridge.rs:2948-2951` | `writer_join_handle` 锁获取 | **30 ms** | `lock_timeout_recover(&self.writer_join_handle, 30ms.min(rem))` | 锁内仅微秒级 `take()` 取出 handle，锁外发送 Shutdown。 |
-| **21** | `library_bridge.rs:2954-2971` | Writer 线程退出等待（前台轮询） | **80 ms** | `join_timeout = 80ms.min(rem)`，单步 10 ms 轮询 | 发送 Shutdown 并在管道破裂后退出；若前台超时移交后台 200 ms reaper，前台绝无死锁。 |
-| **22** | `library_bridge.rs:2440-2548`<br>`:3016-3024, 4363-4371` | 重入路径、Stdio Drop 与 Resilient Drop | **0 ms**<br>*(正常无重入)* | `Drop` 自动继承已有 deadline；重入重试全部受剩余 deadline 截断 | 原子 swap 短路；仅在未 killed 时尝试重试；reap 判定严格检查 `try_wait` 成功，绝无假阳性。 |
+在本次加固中，针对 Codex R6 终审提出的全部未闭合点（CBH-01 ~ CBH-05），做出了如下严格闭环重构：
+1. **CAS 截止时间单调性与重试硬上界（CBH-02）**：
+   - 引入常量 `MAX_DEADLINE_CAS_RETRIES = 32`。若并发 CAS 失败超过 32 次则直接放弃，杜绝无界自旋。
+   - 实现 `encode_deadline` / `tighter_encoded_deadline` / `decode_deadline`：零预算与已过期预算绝对编码为保留值 `1`（代表 0 ms 剩余），**绝不映射为未来预算**。
+   - `tighter_encoded_deadline` 保证单调性：新 deadline 只允许收窄已有 deadline，绝对禁止向后延展。
+2. **禁止 Deadline 到期后的一切清理动作（CBH-01）**：
+   - `child-reap-fallback` 与 `pending-drain-fallback` 启动前及循环内均校验 `Instant::now() < deadline`；一旦过期直接终止退出。
+   - 明确规定：**在 deadline 耗尽后，严禁继续调用 `child.kill()` 或 `child.try_wait()`**，杜绝违规越界动作。
+3. **取消挂起 Pipe I/O 与安全 Join（CBH-01）**：
+   - `StdioLibraryChannel` 保存原始 OS 管道句柄 `raw_stdout_handle` 与 `raw_stdin_handle`。
+   - 在等待 Reader / Writer 线程前调用 `cancel_active_pipes()`（Windows 下触发 `CancelIoEx` 取消挂起 I/O），确保阻塞在 read/write 的 worker 收到管道 EOF / 破裂并退出。
+   - 引入 `ThreadFinishedGuard`：仅当 worker 线程的局部变量与所有流析构完成离开作用域时才置位 `finished = true`。
+   - **仅在已确认 `finished == true` 时才允许调用 `join()`**；若未确认 finished 严禁 `join()`，彻底消除主线程挂死隐患。
+4. **Taskkill 与 Reaper 轮询截止时间纳入与错误处理（CBH-01）**：
+   - `run_taskkill_bounded` 捕获 `child.kill()` 返回值；当 `child.kill()` 失败时记录日志。
+   - taskkill reaper、reader reaper、writer reaper 轮询的 `sleep` 与错误锁等待时间严格受 **200 ms** 剩余预算截断，严禁越过 200 ms。
+5. **逐调用点审计与 240 ms 会话包络纠正（CBH-02）**：
+   - 纠正原审计表第 4 项写为 80 ms 的错误表述：`acquire_transaction_lock` 在会话关闭时传递的参数是 `session_timeout`（即 `Duration::from_millis(240).min(rem_session)`）。
+   - **禁止继续引用 2370 ms 作为全路径 WCET**（详见第 2 节），将应用层软件超时包络与操作系统内核调用开销（Limitation）严格分离。
 
 ---
 
-## 2. 全链路最坏情况关闭时间（WCET）闭式推导
+### 1.1 前台 22 处独立阻塞调用点详细清单（与当前源码精确行号一一对应）
 
-### 2.1 静态最坏情况（WCET）主路径闭式推导
+| 序号 | 源码精确行号 | 阻塞操作与涉及资源 | 静态最坏超时上限 | 动态 Deadline 截断机制 | 为何绝不无限阻塞 / 死锁 / 假阳性 |
+|---:|---|---|---|---|---|
+| **1** | `library_bridge.rs:4341-4349` | `ctx.inner` 获取（`ResilientLibraryChannel::shutdown`） | **50 ms** | `lock_timeout_recover(&self.ctx.inner, 50ms.min(rem))` | 仅执行 `guard.take()` 剥离所有权；若超时派发后台 fallback（共享同一 deadline，见 Worker 1），主线程立即推进。 |
+| **2** | `library_bridge.rs:2582-2590` | `pending_responses` 锁获取（关闭入口排空等待者） | **30 ms** | `lock_timeout_recover(&self.pending_responses, 30ms.min(rem))` | 纯内存遍历 `drain()` 并唤醒在途请求；若超时派发后台 fallback（共享同一 deadline，见 Worker 2），主线程推进。 |
+| **3** | `library_bridge.rs:2651-2654` | `host_session` 锁获取（提取 HostSession） | **30 ms** | `lock_timeout_recover(&self.host_session, 30ms.min(rem))` | 仅在锁内执行 `session_slot.take()`，随后在锁外发起 `CloseHostSession`；超时直接跳过会话关闭。 |
+| **4** | `library_bridge.rs:1807`<br>helper `1717-1757` | `acquire_transaction_lock`（交易锁轮询） | **240 ms**<br>*(受外部会话包络约束)* | `try_lock` 轮询，单步 10 ms，受 `session_timeout`（≤ 240 ms）严格截断 | **更正声明**：原 R6 审计表误记为 80 ms，实际传参为 `session_timeout`（≤ 240 ms）。在途请求被唤醒后立即释放；超时放弃。 |
+| **5** | `library_bridge.rs:1832-1835` | `pending_responses` 注册锁（CloseHostSession） | **100 ms**<br>*(受外部会话包络约束)* | `lock_timeout_recover(&self.pending_responses, 100ms.min(rem))` | 纯哈希表插入，受外层 `session_timeout` 剩余时间截断。 |
+| **6** | `library_bridge.rs:1852-1856`<br>writer `1650-1698` | 管道写回执等待（`write_stdin_shutdown`） | **50 ms**<br>*(受外部会话包络约束)* | 受 `remaining_for_write`（受会话预算截断）约束 | 由后台 writer 线程写入，通道满时受 OS 破裂管道或超时保护，超时立即返回错误。 |
+| **7** | `library_bridge.rs:1878-1900` | 响应接收等待（`rx.recv_timeout`） | **80 ms**<br>*(受外部会话包络约束)* | 受 `session_timeout` 剩余预算约束（上限 240 ms） | 独占 sync_channel，Core 响应或管道 EOF 立即唤醒，超时立即放弃等待。 |
+| **8** | `library_bridge.rs:1841-1844` | 写入前超时清理锁（`pending_responses`） | **10 ms**<br>*(受外部会话包络约束)* | `lock_timeout_recover(&self.pending_responses, 10ms.min(rem))` | 纯内存 `remove`，受剩余预算截断，超时跳过清理。 |
+| **9** | `library_bridge.rs:1859-1865` | 写入失败清理锁（`pending_responses`） | **10 ms**<br>*(受外部会话包络约束)* | `lock_timeout_recover(&self.pending_responses, 10ms.min(rem))` | 纯内存 `remove`，受剩余预算截断，超时跳过清理。 |
+| **10** | `library_bridge.rs:1890-1893` | 响应超时清理锁（`pending_responses`） | **10 ms**<br>*(受外部会话包络约束)* | `lock_timeout_recover(&self.pending_responses, 10ms.min(rem))` | 纯内存 `remove`，受剩余预算截断，超时跳过清理。 |
+| **11** | `library_bridge.rs:2678-2690` | `core.shutdown` 写入管道（`write_stdin_shutdown`） | **60 ms** | 受 `shutdown_write_timeout = 60ms.min(rem)` 截断 | 专用关机写通道，绕过 `is_down`，超时立即放弃并转入进程强杀。 |
+| **12** | `library_bridge.rs:2693-2695` | `child` 锁获取（获取子进程句柄） | **50 ms** | `lock_timeout_recover(&self.child, 50ms.min(rem))` | 中毒自动恢复；若竞争超时直接转入 OS taskkill 强杀分支（替代分支）。 |
+| **13** | `library_bridge.rs:2698-2702`<br>helper `2289-2308` | 子进程优雅退出等待（`child.try_wait()` 轮询） | **1000 ms** | 轮询步长 15 ms，预留 450 ms，受 `remaining` 严格截断 | 超时调用 `child.kill()` 发送终止信号。 |
+| **14** | helper `library_bridge.rs:2328-2346` | 终止信号后 Reap 轮询（`child.try_wait()` 轮询） | **400 ms** | 轮询步长 15 ms，预留 200 ms，受 `remaining` 严格截断 | 超时返回 `TimedOut` 错误，主流程推进至 OS taskkill 兜底强杀。 |
+| **15** | `library_bridge.rs:2708-2712` | wait 失败记录锁（`last_shutdown_error`） | **10 ms** | `lock_timeout_recover(&self.last_shutdown_error, 10ms.min(rem))` | 纯内存记录错误日志，超时直接短路跳过。 |
+| **16** | `library_bridge.rs:2715-2777`<br>helper `2376-2448` | OS 级 taskkill 强杀及 Reap（`run_taskkill_bounded`） | **250 ms** | `timeout = 250ms.min(rem)`；**归零时短路不启动**；超时派发后台 200ms reaper | 调用 `taskkill /F /T /PID`；仅在确认 `try_wait` 成功返回 `Ok(Some(_))` 时才置位 `child_reaped`，消除假阳性。 |
+| **17** | `library_bridge.rs:2780-2785` | taskkill 失败记录锁（`last_shutdown_error`） | **10 ms** | `lock_timeout_recover(&self.last_shutdown_error, 10ms.min(rem))` | 纯内存记录错误日志，超时直接短路跳过。 |
+| **18** | `library_bridge.rs:2914-2917` | `reader_join_handle` 锁获取 | **30 ms** | `lock_timeout_recover(&self.reader_join_handle, 30ms.min(rem))` | 锁内仅微秒级 `take()` 取出 handle，锁外轮询等待。 |
+| **19** | `library_bridge.rs:2920-2936` | Reader 线程退出等待（前台轮询） | **100 ms** | `join_timeout = 100ms.min(rem)`，单步 10 ms 轮询 | 等待前先 `cancel_active_pipes()`；确认 finished 后才 `join`；超时派发后台 200 ms reaper，前台绝无死锁。 |
+| **20** | `library_bridge.rs:2980-2983` | `writer_join_handle` 锁获取 | **30 ms** | `lock_timeout_recover(&self.writer_join_handle, 30ms.min(rem))` | 锁内仅微秒级 `take()` 取出 handle，锁外发送 Shutdown。 |
+| **21** | `library_bridge.rs:2986-3003` | Writer 线程退出等待（前台轮询） | **80 ms** | `join_timeout = 80ms.min(rem)`，单步 10 ms 轮询 | 等待前先 `cancel_active_pipes()`；确认 finished 后才 `join`；超时派发后台 200 ms reaper，前台绝无死锁。 |
+| **22** | `library_bridge.rs:2472-2580`<br>`:3048-3056, 4413-4421` | 重入路径、Stdio Drop 与 Resilient Drop | **0 ms**<br>*(正常无重入)* | `Drop` 自动继承已有 deadline；重入重试全部受剩余 deadline 截断 | 原子 swap 短路；仅在未 killed 时尝试重试；reap 判定严格检查 `try_wait` 成功，绝无假阳性。 |
 
-在最坏极端异常叠加情形下（Step 4 获取到 `child` 锁，但子进程处于僵死状态：优雅退出等待 1000 ms 超时、终止信号 Reap 400 ms 超时、进而触发 OS taskkill 强杀兜底 250 ms）：
+---
 
-会话交互在 `library_bridge.rs:2623-2625` 中被外部逻辑严格限制为 `session_timeout = Duration::from_millis(240).min(rem_session)`，故 Step 2b–2f 处于该 240 ms 统一包络之内。而 Step 2a（`host_session` 互斥锁获取）发生在会话预算建立之前（行 2620-2621），其自身上限为 30 ms。
+## 2. 全链路最坏情况时间（WCET）诚实重算与限制声明（CBH-02 闭环）
 
-因此，真实主路径各段静态最坏上限精确加和为：
+### 2.1 为何禁止继续引用 2370 ms 作为全路径 WCET
 
-$$\begin{aligned}
-T_{\text{WCET\_static}} &= T_{\text{inner}} + T_{\text{pending}} + T_{\text{host\_session\_lock}} + T_{\text{session\_envelope}} + T_{\text{shutdown\_write}} \\
-&\quad + (T_{\text{child\_lock}} + T_{\text{graceful}} + T_{\text{reap}} + T_{\text{err1}} + T_{\text{taskkill}} + T_{\text{err2}}) \\
-&\quad + (T_{\text{reader\_lock}} + T_{\text{reader\_wait}}) + (T_{\text{writer\_lock}} + T_{\text{writer\_wait}}) + T_{\text{reentrancy}} \\
-&= 50 + 30 + 30 + 240 + 60 + (50 + 1000 + 400 + 10 + 250 + 10) \\
-&\quad + (30 + 100) + (30 + 80) + 0 \\
-&= 50 + 30 + 30 + 240 + 60 + 1720 + 130 + 110 + 0 \\
-&= \mathbf{2370\,\text{ms}} \le \mathbf{2400\,\text{ms}} < \mathbf{3000\,\text{ms}}\,(3.0\,\text{s})
-\end{aligned}$$
+Codex R6 §7 指出：
+1. 原审计表将第 4 项 `acquire_transaction_lock` 记为 80 ms，但实际代码向该辅助函数传递的是外部传参 `session_timeout`（上限 240 ms）。原表低估了单步静态预算。
+2. 原审计表把全路径 WCET 计算为简单的静态常数累加 $2370\,\text{ms}$，**未将操作系统系统调用（`Command::spawn`、管道读取、`child.kill()`、线程创建 `Builder::spawn`、条件 `join()`）纳入模型**。
+3. 任何依赖操作系统的系统调用耗时都受 Windows 内核资源、上下文切换与调度延迟制约，无法在数学上保证绝对为 0 ms。
 
-- **理论安全硬裕度**：$3000\,\text{ms} - 2370\,\text{ms} = \mathbf{630\,\text{ms}}$。
-- **即使完全不考虑 Step 2 的 240 ms 包络限制**（将 Step 2b 80ms + 2c 100ms + 2d 50ms + 2e 80ms + 2f 10ms = 320ms 直接相加），单项直接相加总和为：
-  $$2370 + (320 - 240) = 2450\,\text{ms} \le 3000\,\text{ms}$$
-  仍具备 **550 ms** 确定性硬安全裕度。
+因此，**本次加固严禁将 2370 ms 声明为全路径物理 WCET**，而是将其澄清为**应用层显式超时参数包络（Application Software Timeout Envelope）**，并建立双层 WCET 闭式模型。
 
-### 2.2 替代分支（Step 4 child 锁竞争超时分支）
+---
 
-若 Step 4 因锁竞争超时（50 ms），直接转入锁争用 fallback 分支（行 2756-2860）：
-- 记录争锁 Warning（10 ms）；
-- 立即发起 `run_taskkill_bounded` 整树强杀（250 ms）；
-- 记录 taskkill 结果（10 ms）；
-- 保存 fallback handle 锁（20 ms）；
-- 派发后台 `child-reap-fallback` 线程回收句柄（主线程推进）。
+### 2.2 双层 WCET 闭式模型
 
-此时 Step 4 总耗时为 $50 + 10 + 250 + 10 + 20 = 340\,\text{ms}$。
-总静态 WCET 为：
-$$T_{\text{contention}} = 50 + 30 + 30 + 240 + 60 + 340 + 130 + 110 + 0 = \mathbf{990\,\text{ms}} \ll 2400\,\text{ms}$$
+全路径实际关机时间 $T_{\text{total}}$ 由两部分构成：
+$$T_{\text{total}} = T_{\text{software\_envelope}} + \sum T_{\text{syscall}}$$
 
-### 2.3 动态运行时物理硬上限保证
-
-在生产关闭入口 `ResilientLibraryChannel::shutdown` 建立的绝对截止时间：
+#### 第一层：应用层显式超时包络（$T_{\text{software\_envelope}}$）
+在生产关闭入口 `ResilientLibraryChannel::shutdown` 中，建立了硬性动态截止时间：
 $$\text{deadline} = \text{Instant::now()} + \min(\text{timeout}, 2400\,\text{ms})$$
-后续每一个步骤均通过 `deadline.saturating_duration_since(Instant::now())` 动态收窄。若系统调度抖动使得某一阶段消耗过多时间，后续所有操作的等待时间自动被挤压归零并短路跳过。
+后续所有 22 个调用点在执行前均通过：
+$$\text{rem} = \text{deadline.saturating\_duration\_since(Instant::now())}$$
+将各自的超时参数收窄为 $\min(T_{\text{static\_step}}, \text{rem})$。
+
+- **若考虑 Step 2 会话预算整体包络（240 ms）**：
+  $$\begin{aligned}
+  T_{\text{software\_envelope}} &= T_{\text{inner}} (50) + T_{\text{pending}} (30) + T_{\text{host\_session\_lock}} (30) + T_{\text{session\_envelope}} (240) + T_{\text{shutdown\_write}} (60) \\
+  &\quad + T_{\text{child\_lock}} (50) + T_{\text{graceful}} (1000) + T_{\text{reap}} (400) + T_{\text{err1}} (10) + T_{\text{taskkill}} (250) + T_{\text{err2}} (10) \\
+  &\quad + T_{\text{reader\_lock}} (30) + T_{\text{reader\_wait}} (100) + T_{\text{writer\_lock}} (30) + T_{\text{writer\_wait}} (80) + T_{\text{reentrancy}} (0) \\
+  &= 2370\,\text{ms} \le 2400\,\text{ms}
+  \end{aligned}$$
+- **若极端假设会话包络内单步线性累加（无外部统一包络截断）**：
+  内部单步加和为 $T_{\text{tx\_lock}} (240) + T_{\text{reg\_lock}} (100) + T_{\text{write}} (50) + T_{\text{recv}} (80) + T_{\text{clean}} (10) = 480\,\text{ms}$。
+  此时静态单步加和为 $2370 - 240 + 480 = 2610\,\text{ms}$。
+  **但由于动态 deadline 的强制收窄机制**，当耗时达到 2400 ms 时，剩余所有软件超时自动被截断为 0 ms 并短路跳过，因此软件可控时间被**数学证明严格约束在 $\le 2400\,\text{ms}$ 之内**。
+
+#### 第二层：系统调用与内核延迟边界（$\sum T_{\text{syscall}}$，物理 Limitation）
+在 22 项受控等待之外，前台路径包含以下无法由用户态单一 deadline 截断的操作系统系统调用：
+1. `Command::new("taskkill").spawn()`：创建外部 taskkill 进程（`library_bridge.rs:2398`）；
+2. taskkill 标准输出/错误流读取；
+3. `child.kill()`：向子进程句柄发送终止信号（`library_bridge.rs:2327`, `2424`）；
+4. `std::thread::Builder::spawn()`：在超时发生时创建后台收尾线程（最多 6 处，见第 3 节）；
+5. `join()`：仅在 `ThreadFinishedGuard` 置位 `finished = true` 后调用，此时线程已结束，耗时仅为内核清理句柄的微秒级时间。
+
+**安全裕度推导**：
+整个硬上界规范要求为 $T_{\text{total}} < 3000\,\text{ms}$（3.0 秒）。
+应用层软件超时包络上限为 $2400\,\text{ms}$。
+留给所有系统调用和内核调度的总裕度为：
+$$\text{Margin}_{\text{syscall}} = 3000\,\text{ms} - 2400\,\text{ms} = \mathbf{600\,\text{ms}}$$
+在正常及中度负载的 Windows 操作系统中，一次 `process::spawn` 典型耗时为 5~15 ms，一次 `thread::spawn` 典型耗时 < 1 ms，`child.kill` 耗时 < 1 ms。全路径全部系统调用总和通常 $< 50\,\text{ms} \ll 600\,\text{ms}$。
 
 ---
 
 ## 3. 后台 Worker 与独立 Reaper 的有界性与最坏存活界
 
-对于结构上不阻塞前台主流程推进的后台 Worker 和 Reaper，逐项证明其生命周期有界性：
+针对前台超时后派发的后台 Worker 与 Reaper，生命周期控制与最坏存活界逐项审计如下：
 
-| 线程名称 | 源码生成位置 | 触发条件 | 退出控制机制与最坏存活上界 | 是否阻塞前台关闭 |
-|---|---|---|---|:---:|
-| **Worker 1**<br>`resilient-inner-shutdown-fallback` | `library_bridge.rs:4322-4352` | 前台获取 `ctx.inner` 超过 50 ms 超时 | 循环条件严格为 `while Instant::now() < deadline`，单步 sleep 受剩余 deadline 截断。<br>**最坏存活时间**：不超过主关闭 deadline。获锁后立即释放 guard，无级联阻塞。 | **否** |
-| **Worker 2**<br>`pending-drain-fallback` | `library_bridge.rs:2567-2605` | 前台获取 `pending_responses` 超过 30 ms 超时 | 循环条件严格为 `while Instant::now() < deadline`，单步 sleep 受剩余 deadline 截断。<br>**最坏存活时间**：不超过主关闭 deadline。获锁后遍历 drain 并退出。 | **否** |
-| **Worker 3**<br>`child-reap-fallback` | `library_bridge.rs:2791-2860` | 前台获取 `child` 超过 50 ms 超时 | 循环条件严格为 `while Instant::now() < deadline`，获锁后轮询 `child.try_wait()` 同样受 deadline 截断。<br>**最坏存活时间**：不超过主关闭 deadline。 | **否** |
-| **Worker 4**<br>`taskkill-reaper-{pid}` | `library_bridge.rs:2404-2420` | 前台 `run_taskkill_bounded` 超过 250 ms 超时 | 内部设固定 `reap_timeout = 200 ms`，每 15 ms 调用 `child.try_wait()`，到期自动退出。<br>**最坏存活时间**：**严格 ≤ 200 ms**。彻底消除无界 `child.wait()`。 | **否** |
-| **Worker 5**<br>`reader-join-bounded-reaper` | `library_bridge.rs:2913-2930` | 前台等待 reader 退出超过 100 ms 超时 | 内部设固定 `deadline = Instant::now() + 200 ms`，每 10 ms 检查 `reader_finished`，到期自动退出。<br>**最坏存活时间**：**严格 ≤ 200 ms**。彻底消除无界 `handle.join()`。 | **否** |
-| **Worker 6**<br>`writer-join-bounded-reaper` | `library_bridge.rs:2980-2997` | 前台等待 writer 退出超过 80 ms 超时 | 内部设固定 `deadline = Instant::now() + 200 ms`，每 10 ms 检查 `writer_finished`，到期自动退出。<br>**最坏存活时间**：**严格 ≤ 200 ms**。彻底消除无界 `handle.join()`。 | **否** |
+| 线程名称 | 源码生成位置 | 触发条件 | 退出控制机制与最坏存活上界 | 挂起 I/O 取消保证与 Join 安全性 | 是否阻塞前台 |
+|---|---|---|---|---|:---:|
+| **Worker 1**<br>`resilient-inner-shutdown-fallback` | `library_bridge.rs:4372` | 前台获取 `ctx.inner` 超过 50 ms 超时 | 循环条件严格为 `while Instant::now() < deadline`，单步 sleep 受剩余 deadline 截断。<br>**最坏存活**：不超过主关闭 deadline。获锁后立即释放 guard。 | 纯内存互斥锁争用，无 I/O。前台不 join。 | **否** |
+| **Worker 2**<br>`pending-drain-fallback` | `library_bridge.rs:2597` | 前台获取 `pending_responses` 超过 30 ms 超时 | **加固约束**：启动前及循环中检查 deadline，过期直接退出。<br>**最坏存活**：不超过主关闭 deadline。获锁后遍历 drain 并退出。 | 纯内存哈希表操作，无 I/O。前台不 join。 | **否** |
+| **Worker 3**<br>`child-reap-fallback` | `library_bridge.rs:2823` | 前台获取 `child` 超过 50 ms 超时 | **加固约束**：循环检查 deadline；**一旦 deadline 到期严禁调用 `child.kill()` 或 `child.try_wait()`**。<br>**最坏存活**：不超过主关闭 deadline。 | 仅在 deadline 预算内尝试获取锁并回收。前台不 join。 | **否** |
+| **Worker 4**<br>`taskkill-reaper-{pid}` | `library_bridge.rs:2428` | 前台 `run_taskkill_bounded` 超过 250 ms 超时 | **加固约束**：内部设固定 `reap_timeout = 200 ms`，轮询 sleep 与错误锁等待均受剩余时间截断，到期自动退出。<br>**最坏存活**：**严格 ≤ 200 ms**。 | 仅执行非阻塞 `child.try_wait()`，无管道 I/O。前台不 join。 | **否** |
+| **Worker 5**<br>`reader-join-bounded-reaper` | `library_bridge.rs:2945` | 前台等待 reader 退出超过 100 ms 超时 | **加固约束**：设固定 `200 ms` deadline。轮询 sleep 受剩余时间截断。**仅在 `reader_finished == true` 时才允许 join**。<br>**最坏存活**：**严格 ≤ 200 ms**。 | 前台已调用 `cancel_active_pipes()`，原 worker 不会永久阻塞在 ReadFile。未 finished 绝不 join。 | **否** |
+| **Worker 6**<br>`writer-join-bounded-reaper` | `library_bridge.rs:3012` | 前台等待 writer 退出超过 80 ms 超时 | **加固约束**：设固定 `200 ms` deadline。轮询 sleep 受剩余时间截断。**仅在 `writer_finished == true` 时才允许 join**。<br>**最坏存活**：**严格 ≤ 200 ms**。 | 前台已调用 `cancel_active_pipes()`，原 worker 不会永久阻塞在 WriteFile。未 finished 绝不 join。 | **否** |
 
 ---
 
-## 4. 能证明 vs 不能证明（物理边界诚实声明）
+## 4. 证明能力诚实声明（Can Prove vs Cannot Prove）
 
 ### 4.1 能确定性证明的事实
-1. **前台主路径无无界等待**：前台关闭路径上全部 22 处可能发生阻塞的调用点，均设有显式超时上限，且均由单一共享 deadline（≤ 2400 ms）严格收窄。
-2. **前台静态总预算闭式收敛**：静态最坏情况总和严格为 **2370 ms**，满足 $\le 2400\,\text{ms} < 3000\,\text{ms}$，具备 630 ms 确定性硬裕度。
-3. **消除所有无界后台等待**：消除了所有后台 `wait()` / `join()`，所有后台 Worker 均受单一 deadline 或固定 200 ms 上限约束。
-4. **无锁化 Deadline 消除自锁与重入**：`AtomicU64` CAS 机制消除了 Mutex 竞争、毒化与优先级反转。
-5. **Reap 状态无假阳性**：只有在 `child.try_wait()` 明确返回 `Ok(Some(_))` 时才记录为已回收。
-6. **缩窄后的残留检测无误报**：基于当前执行的 PID 树与唯一隔离根路径，完全不受工作区其他并行进程干扰。
+1. **CAS 截止时间单调性与有界重试**：CAS 更新受 `MAX_DEADLINE_CAS_RETRIES = 32` 硬约束；零与过期 deadline 绝对编码为 1（0 ms 预算），绝不映射为未来时间；新 deadline 只能收窄已有 deadline。
+2. **前台应用层超时包络严格收敛**：全部 22 处可能发生阻塞的调用点均受单一 deadline 截断，受控软件时间闭式收敛在 $\le 2400\,\text{ms}$ 之内。
+3. **禁止 Deadline 到期后的一切清理动作**：Child fallback 与 Pending fallback 在 deadline 到期后立即终止，严禁执行 `kill`/`try_wait`。
+4. **消除无界 Join 与后台悬挂死锁**：前台与后台 Reaper 均只对经由 `ThreadFinishedGuard` 确认 `finished = true` 的线程执行 `join()`；未确认 finished 的线程严禁 join；通过 `cancel_active_pipes()` 取消挂起 I/O。
+5. **Reaper 轮询与错误记录严格受限**：Taskkill reaper 及 reader/writer reaper 的轮询 sleep 和互斥锁等待严格受 200 ms 剩余时间截断，绝不跨越 200 ms。
+6. **Reap 状态无假阳性**：只有在 `child.try_wait()` 明确返回 `Ok(Some(_))` 时才记录为已回收。
+7. **隔离根与进程树无孤儿**：在隔离环境下的验证套件实测证明残余孤儿进程数为 0。
 
-### 4.2 结构上不能证明的事实（系统物理极限说明）
-1. **OS 进程创建的物理延迟**：`run_taskkill_bounded` 中执行 `Command::new("taskkill").spawn()` 是操作系统内核级同步调用。代码通过在 `timeout.is_zero()` 时短路拦截消除了零预算时的启动，但无法在物理上保证 Windows 内核在极限资源耗尽下创建进程的墙钟耗时（尽管实测通常 < 20 ms）。
-2. **操作系统线程调度的物理精度**：`std::thread::sleep` 依赖 Windows 操作系统定时器与调度器。在高负载或系统挂起唤醒场景下，实际睡眠时长可能存在微小的调度延迟抖动。可证明的是传给受控等待的超时参数严格收窄，而不能证明物理硬件始终不发生系统级挂起。
-3. **后台 Reaper 的独立边界**：Worker 4–6 是在前台超时脱钩后在后台异步运行的资源回收线程，其最坏 200 ms 存活时间属于后台异步回收边界，不计入前台直接返回用户的 2370 ms 关闭时间。
+### 4.2 结构上不能证明的事实（系统物理极限与 Limitation 声明）
+1. **Windows 内核进程与线程生成的不可中断性**：`Command::new("taskkill").spawn()` 与 `std::thread::Builder::spawn()` 依赖 Windows 内核对象分配与页表初始化。在极端物理故障（如操作系统严重换页抖动、内核对象句柄耗尽、防病毒驱动全局拦截）下，内核系统调用的返回耗时无法在用户态通过单一 deadline 强制中断。这是所有运行在操作系统上的用户态程序固有的物理 Limitation。
+2. **Windows 句柄 I/O 取消的驱动层响应性**：`CancelIoEx` 向驱动层发送 I/O 取消请求。绝大多数标准管道驱动会立即完成并返回 `ERROR_OPERATION_ABORTED`，但在恶意过滤驱动挂钩或硬件故障时，驱动层未响应属于内核不可控边界。
+3. **高负载下定时器时钟漂移**：`std::thread::sleep` 依赖系统计时器分辨率。高负载下可能存在数毫秒级的时钟片抖动，由 600 ms 的安全裕度予以吸收。

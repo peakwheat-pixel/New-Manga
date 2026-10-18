@@ -1,0 +1,5 @@
+﻿    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.48s
+     Running unittests src\main.rs (apps\desktop\src-tauri\target\debug\deps\m2rc1_desktop-24448612fc7535f6.exe)
+[shutdown] Warning: child lock acquisition timed out for PID 48652; triggering fallback OS termination
+[shutdown] taskkill /F /T for PID 48652 skipped: deadline expired (timeout is zero)
+[shutdown] child lock timed out for PID 48652 and deadline expired; skipping fallback reaper spawn

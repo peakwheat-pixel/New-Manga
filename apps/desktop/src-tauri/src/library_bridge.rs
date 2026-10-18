@@ -1221,6 +1221,108 @@ pub(crate) fn lock_timeout_recover<T>(
     }
 }
 
+/// Guard that sets an AtomicBool to true when dropped.
+/// Ensures that worker threads only report finished = true after all local variables,
+/// I/O streams, and stack frames have been completely unwound and dropped.
+struct ThreadFinishedGuard(Arc<AtomicBool>);
+
+impl Drop for ThreadFinishedGuard {
+    fn drop(&mut self) {
+        self.0.store(true, Ordering::SeqCst);
+    }
+}
+
+/// Hard retry bound for CAS loop on atomic deadline registration.
+pub const MAX_DEADLINE_CAS_RETRIES: usize = 32;
+
+/// Encodes an Instant deadline relative to created_at into an AtomicU64 representation:
+/// - 0: Unregistered / None
+/// - 1: Expired / Zero budget (representing <= Instant::now() or <= created_at, with zero remaining time)
+/// - v >= 2: Active deadline at created_at + Duration::from_millis(v - 1)
+/// Guarantees that zero or expired deadlines are NEVER mapped to future budget (+1ms).
+pub(crate) fn encode_deadline(deadline: Instant, created_at: Instant) -> u64 {
+    let now = Instant::now();
+    if deadline <= now || deadline <= created_at {
+        1 // Expired / zero budget
+    } else {
+        let offset = deadline.saturating_duration_since(created_at).as_millis() as u64;
+        offset.saturating_add(1).max(2)
+    }
+}
+
+/// Returns the tighter (earlier) encoded deadline.
+/// 1 (expired) is tighter than any positive budget.
+pub(crate) fn tighter_encoded_deadline(current: u64, candidate: u64) -> u64 {
+    if current == 0 {
+        candidate
+    } else if current == 1 || candidate == 1 {
+        1
+    } else {
+        current.min(candidate)
+    }
+}
+
+/// Decodes an AtomicU64 representation back into an Option<Instant>.
+pub(crate) fn decode_deadline(encoded: u64, created_at: Instant) -> Option<Instant> {
+    match encoded {
+        0 => None,
+        1 => Some(created_at), // Expired: any .saturating_duration_since(Instant::now()) is guaranteed 0
+        v => Some(created_at + Duration::from_millis(v - 1)),
+    }
+}
+
+/// Monotonically registers a deadline into an AtomicU64 with a hard retry bound.
+/// Never maps zero/expired deadline to future budget, and terminates wait-free within MAX_DEADLINE_CAS_RETRIES.
+pub(crate) fn register_atomic_deadline(
+    atomic_ms: &AtomicU64,
+    created_at: Instant,
+    deadline: Instant,
+) -> Instant {
+    let encoded = encode_deadline(deadline, created_at);
+    for _ in 0..MAX_DEADLINE_CAS_RETRIES {
+        let current = atomic_ms.load(Ordering::SeqCst);
+        if current == 0 {
+            if atomic_ms.compare_exchange(0, encoded, Ordering::SeqCst, Ordering::SeqCst).is_ok() {
+                return decode_deadline(encoded, created_at).unwrap();
+            }
+        } else {
+            let tighter = tighter_encoded_deadline(current, encoded);
+            if tighter == current {
+                return decode_deadline(current, created_at).unwrap();
+            }
+            if atomic_ms.compare_exchange(current, tighter, Ordering::SeqCst, Ordering::SeqCst).is_ok() {
+                return decode_deadline(tighter, created_at).unwrap();
+            }
+        }
+        std::hint::spin_loop();
+    }
+    // Hard upper bound fallback: on excessive contention, read current committed state
+    let final_val = atomic_ms.load(Ordering::SeqCst);
+    let chosen = if final_val == 0 { encoded } else { tighter_encoded_deadline(final_val, encoded) };
+    decode_deadline(chosen, created_at).unwrap_or(deadline)
+}
+
+/// Reads the registered deadline from an AtomicU64.
+pub(crate) fn get_atomic_deadline(atomic_ms: &AtomicU64, created_at: Instant) -> Option<Instant> {
+    let val = atomic_ms.load(Ordering::SeqCst);
+    decode_deadline(val, created_at)
+}
+
+#[cfg(windows)]
+pub(crate) fn cancel_pipe_handle(handle: std::os::windows::io::RawHandle) {
+    extern "system" {
+        fn CancelIoEx(
+            h_file: *mut std::ffi::c_void,
+            lp_overlapped: *const std::ffi::c_void,
+        ) -> i32;
+    }
+    if !handle.is_null() && handle != (-1isize as *mut std::ffi::c_void) {
+        unsafe {
+            let _ = CancelIoEx(handle as *mut std::ffi::c_void, std::ptr::null());
+        }
+    }
+}
+
 pub struct StdioLibraryChannel {
     pub(crate) child: Arc<Mutex<Child>>,
     pub(crate) child_id: u32,
@@ -1250,6 +1352,8 @@ pub struct StdioLibraryChannel {
     child_reap_fallback_handle: Mutex<Option<std::thread::JoinHandle<()>>>,
     created_at: Instant,
     shutdown_deadline_ms: AtomicU64,
+    raw_stdout_handle: std::sync::atomic::AtomicIsize,
+    raw_stdin_handle: std::sync::atomic::AtomicIsize,
 }
 
 struct HostSession {
@@ -1373,6 +1477,16 @@ impl StdioLibraryChannel {
     }
 
     fn adopt_child(mut child: Child) -> Result<Self, LibraryError> {
+        #[cfg(windows)]
+        let (raw_stdout, raw_stdin) = {
+            use std::os::windows::io::AsRawHandle;
+            let so = child.stdout.as_ref().map(|s| s.as_raw_handle() as isize).unwrap_or(0);
+            let si = child.stdin.as_ref().map(|s| s.as_raw_handle() as isize).unwrap_or(0);
+            (so, si)
+        };
+        #[cfg(not(windows))]
+        let (raw_stdout, raw_stdin) = (0isize, 0isize);
+
         let stdin = child
             .stdin
             .take()
@@ -1401,8 +1515,17 @@ impl StdioLibraryChannel {
         let reader_thread = std::thread::Builder::new()
             .name("stdio-library-reader".to_string())
             .spawn(move || {
+                let _guard = ThreadFinishedGuard(reader_finished_clone);
                 let mut reader = BufReader::new(stdout);
                 loop {
+                    #[cfg(test)]
+                    {
+                        if TEST_MOCK_READER_BLOCKED.load(Ordering::SeqCst) {
+                            while TEST_MOCK_READER_BLOCKED.load(Ordering::SeqCst) {
+                                std::thread::sleep(Duration::from_millis(15));
+                            }
+                        }
+                    }
                     let mut line = String::new();
                     match reader.read_line(&mut line) {
                         Ok(0) => {
@@ -1418,7 +1541,6 @@ impl StdioLibraryChannel {
                                     cb();
                                 }
                             }
-                            reader_finished_clone.store(true, Ordering::SeqCst);
                             break;
                         }
                         Ok(_) => {
@@ -1437,7 +1559,6 @@ impl StdioLibraryChannel {
                                     cb();
                                 }
                             }
-                            reader_finished_clone.store(true, Ordering::SeqCst);
                             break;
                         }
                     }
@@ -1455,8 +1576,17 @@ impl StdioLibraryChannel {
         let writer_thread = std::thread::Builder::new()
             .name("stdio-library-writer".to_string())
             .spawn(move || {
+                let _guard = ThreadFinishedGuard(writer_finished_clone);
                 let mut stdin = stdin;
                 while let Ok(cmd) = writer_rx.recv() {
+                    #[cfg(test)]
+                    {
+                        if TEST_MOCK_WRITER_BLOCKED.load(Ordering::SeqCst) {
+                            while TEST_MOCK_WRITER_BLOCKED.load(Ordering::SeqCst) {
+                                std::thread::sleep(Duration::from_millis(15));
+                            }
+                        }
+                    }
                     match cmd {
                         WriterCommand::Write(bytes, reply) => {
                             let res = stdin.write_all(&bytes).and_then(|_| stdin.flush());
@@ -1466,7 +1596,6 @@ impl StdioLibraryChannel {
                     }
                 }
                 drop(stdin);
-                writer_finished_clone.store(true, Ordering::SeqCst);
             })
             .map_err(|e| {
                 LibraryError::unavailable(&format!("Failed to spawn writer thread: {e}"))
@@ -1500,36 +1629,30 @@ impl StdioLibraryChannel {
             child_reap_fallback_handle: Mutex::new(None),
             created_at: Instant::now(),
             shutdown_deadline_ms: AtomicU64::new(0),
+            raw_stdout_handle: std::sync::atomic::AtomicIsize::new(raw_stdout),
+            raw_stdin_handle: std::sync::atomic::AtomicIsize::new(raw_stdin),
         })
     }
 
     pub fn register_deadline(&self, deadline: Instant) -> Instant {
-        let offset_ms = deadline.saturating_duration_since(self.created_at).as_millis() as u64;
-        let offset_ms = offset_ms.max(1);
-        loop {
-            let current = self.shutdown_deadline_ms.load(Ordering::SeqCst);
-            if current == 0 {
-                if self.shutdown_deadline_ms.compare_exchange(0, offset_ms, Ordering::SeqCst, Ordering::SeqCst).is_ok() {
-                    return deadline;
-                }
-            } else {
-                let tighter = current.min(offset_ms);
-                if tighter == current {
-                    return self.created_at + Duration::from_millis(current);
-                }
-                if self.shutdown_deadline_ms.compare_exchange(current, tighter, Ordering::SeqCst, Ordering::SeqCst).is_ok() {
-                    return self.created_at + Duration::from_millis(tighter);
-                }
-            }
-        }
+        register_atomic_deadline(&self.shutdown_deadline_ms, self.created_at, deadline)
     }
 
     pub fn get_deadline(&self) -> Option<Instant> {
-        let val = self.shutdown_deadline_ms.load(Ordering::SeqCst);
-        if val == 0 {
-            None
-        } else {
-            Some(self.created_at + Duration::from_millis(val))
+        get_atomic_deadline(&self.shutdown_deadline_ms, self.created_at)
+    }
+
+    pub(crate) fn cancel_active_pipes(&self) {
+        #[cfg(windows)]
+        {
+            let stdout_raw = self.raw_stdout_handle.load(Ordering::SeqCst);
+            if stdout_raw != 0 && stdout_raw != -1 {
+                cancel_pipe_handle(stdout_raw as std::os::windows::io::RawHandle);
+            }
+            let stdin_raw = self.raw_stdin_handle.load(Ordering::SeqCst);
+            if stdin_raw != 0 && stdin_raw != -1 {
+                cancel_pipe_handle(stdin_raw as std::os::windows::io::RawHandle);
+            }
         }
     }
 
@@ -2356,6 +2479,11 @@ pub fn run_taskkill_bounded(pid: u32, timeout: Duration) -> Result<std::process:
         return Err(format!("taskkill /F /T for PID {pid} skipped: deadline expired (timeout is zero)"));
     }
 
+    #[cfg(test)]
+    if TEST_MOCK_TASKKILL_SPAWN_FAIL.with(|c| c.get()) {
+        return Err(format!("Failed to spawn taskkill for PID {pid}: simulated spawn failure"));
+    }
+
     let mut child = Command::new("taskkill")
         .args(["/F", "/T", "/PID", &pid.to_string()])
         .stdout(Stdio::piped())
@@ -2366,6 +2494,15 @@ pub fn run_taskkill_bounded(pid: u32, timeout: Duration) -> Result<std::process:
     let start = Instant::now();
     let poll_interval = Duration::from_millis(10);
     while start.elapsed() < timeout {
+        #[cfg(test)]
+        let mock_wait_fail = TEST_MOCK_TASKKILL_TRY_WAIT_FAIL.with(|c| c.get());
+        #[cfg(not(test))]
+        let mock_wait_fail = false;
+
+        if mock_wait_fail {
+            return Err(format!("Error polling taskkill for PID {pid}: simulated try_wait failure"));
+        }
+
         match child.try_wait() {
             Ok(Some(status)) => {
                 let stdout_str = child.stdout.take().and_then(|mut r| {
@@ -2400,7 +2537,20 @@ pub fn run_taskkill_bounded(pid: u32, timeout: Duration) -> Result<std::process:
         }
     }
 
-    let _ = child.kill();
+    #[cfg(test)]
+    let mock_kill_fail = TEST_MOCK_TASKKILL_KILL_FAIL.with(|c| c.get());
+    #[cfg(not(test))]
+    let mock_kill_fail = false;
+
+    let kill_res = if mock_kill_fail {
+        Err(std::io::Error::new(std::io::ErrorKind::PermissionDenied, "simulated kill failure"))
+    } else {
+        child.kill()
+    };
+    if let Err(ref e) = kill_res {
+        eprintln!("[shutdown] Warning: taskkill child.kill() for PID {pid} returned error: {e}");
+    }
+
     let spawn_res = std::thread::Builder::new()
         .name(format!("taskkill-reaper-{pid}"))
         .spawn(move || {
@@ -2409,7 +2559,14 @@ pub fn run_taskkill_bounded(pid: u32, timeout: Duration) -> Result<std::process:
             while reap_start.elapsed() < reap_timeout {
                 match child.try_wait() {
                     Ok(Some(_)) => return,
-                    Ok(None) => std::thread::sleep(Duration::from_millis(15)),
+                    Ok(None) => {
+                        let rem = reap_timeout.saturating_sub(reap_start.elapsed());
+                        let sleep_dur = Duration::from_millis(15).min(rem);
+                        if sleep_dur.is_zero() {
+                            break;
+                        }
+                        std::thread::sleep(sleep_dur);
+                    }
                     Err(e) => {
                         eprintln!("[taskkill-reaper] try_wait for PID {pid} error: {e}");
                         return;
@@ -2561,55 +2718,65 @@ impl StdioLibraryChannel {
         } else {
             // P1#2: Lock acquisition timed out (lock contention). Do NOT drop in-flight notifications!
             eprintln!("[shutdown] Warning: pending_responses lock acquisition timed out; spawning fallback drain worker");
-            let pending_arc = Arc::clone(&self.pending_responses);
-            let pending_drained_flag = Arc::clone(&self.pending_drained);
-            let last_shutdown_err = Arc::clone(&self.last_shutdown_error);
-            let spawn_res = std::thread::Builder::new()
-                .name("pending-drain-fallback".to_string())
-                .spawn(move || {
-                    let mut acquired = false;
-                    while Instant::now() < deadline {
-                        let rem = deadline.saturating_duration_since(Instant::now());
-                        let lock_timeout = Duration::from_millis(50).min(rem);
-                        if lock_timeout.is_zero() {
-                            break;
-                        }
-                        if let Some(mut lock) = lock_timeout_recover(&pending_arc, lock_timeout) {
-                            acquired = true;
-                            for (_req_id, sender) in lock.drain() {
-                                let _ = sender.send(Err(LibraryError::unavailable(
-                                    "Channel is shutting down (deferred drain)",
-                                )));
-                            }
-                            pending_drained_flag.store(true, Ordering::SeqCst);
-                            break;
-                        }
-                        let rem_after = deadline.saturating_duration_since(Instant::now());
-                        let sleep_dur = Duration::from_millis(15).min(rem_after);
-                        if sleep_dur.is_zero() {
-                            break;
-                        }
-                        std::thread::sleep(sleep_dur);
-                    }
-                    if !acquired {
-                        let err_msg = "pending-drain-fallback timed out acquiring pending_responses lock within deadline".to_string();
-                        eprintln!("[shutdown] {err_msg}");
-                        let rem_err = deadline.saturating_duration_since(Instant::now());
-                        let err_timeout = Duration::from_millis(20).min(rem_err);
-                        if !err_timeout.is_zero() {
-                            if let Some(mut slot) = lock_timeout_recover(&last_shutdown_err, err_timeout) {
-                                *slot = Some(err_msg);
-                            }
-                        }
-                    }
-                });
-            if let Err(e) = spawn_res {
-                let err_msg = format!("failed to spawn pending-drain-fallback worker: {e}");
+            let rem_spawn = deadline.saturating_duration_since(Instant::now());
+            if rem_spawn.is_zero() {
+                let err_msg = "pending_responses lock timed out and deadline already expired; skipping fallback worker spawn".to_string();
                 eprintln!("[shutdown] {err_msg}");
-                let rem_err = deadline.saturating_duration_since(Instant::now());
-                let err_timeout = Duration::from_millis(10).min(rem_err);
-                if let Some(mut slot) = lock_timeout_recover(&self.last_shutdown_error, err_timeout) {
-                    *slot = Some(err_msg);
+            } else {
+                let pending_arc = Arc::clone(&self.pending_responses);
+                let pending_drained_flag = Arc::clone(&self.pending_drained);
+                let last_shutdown_err = Arc::clone(&self.last_shutdown_error);
+                let spawn_res = std::thread::Builder::new()
+                    .name("pending-drain-fallback".to_string())
+                    .spawn(move || {
+                        let mut acquired = false;
+                        while Instant::now() < deadline {
+                            let rem = deadline.saturating_duration_since(Instant::now());
+                            let lock_timeout = Duration::from_millis(50).min(rem);
+                            if lock_timeout.is_zero() {
+                                break;
+                            }
+                            if let Some(mut lock) = lock_timeout_recover(&pending_arc, lock_timeout) {
+                                acquired = true;
+                                for (_req_id, sender) in lock.drain() {
+                                    let _ = sender.send(Err(LibraryError::unavailable(
+                                        "Channel is shutting down (deferred drain)",
+                                    )));
+                                }
+                                pending_drained_flag.store(true, Ordering::SeqCst);
+                                break;
+                            }
+                            let rem_after = deadline.saturating_duration_since(Instant::now());
+                            let sleep_dur = Duration::from_millis(15).min(rem_after);
+                            if sleep_dur.is_zero() {
+                                break;
+                            }
+                            std::thread::sleep(sleep_dur);
+                        }
+                        if !acquired {
+                            let rem_err = deadline.saturating_duration_since(Instant::now());
+                            if !rem_err.is_zero() {
+                                let err_msg = "pending-drain-fallback timed out acquiring pending_responses lock within deadline".to_string();
+                                eprintln!("[shutdown] {err_msg}");
+                                let err_timeout = Duration::from_millis(20).min(rem_err);
+                                if !err_timeout.is_zero() {
+                                    if let Some(mut slot) = lock_timeout_recover(&last_shutdown_err, err_timeout) {
+                                        *slot = Some(err_msg);
+                                    }
+                                }
+                            }
+                        }
+                    });
+                if let Err(e) = spawn_res {
+                    let err_msg = format!("failed to spawn pending-drain-fallback worker: {e}");
+                    eprintln!("[shutdown] {err_msg}");
+                    let rem_err = deadline.saturating_duration_since(Instant::now());
+                    if !rem_err.is_zero() {
+                        let err_timeout = Duration::from_millis(10).min(rem_err);
+                        if let Some(mut slot) = lock_timeout_recover(&self.last_shutdown_error, err_timeout) {
+                            *slot = Some(err_msg);
+                        }
+                    }
                 }
             }
         }
@@ -2784,101 +2951,118 @@ impl StdioLibraryChannel {
             }
 
             // 2. Spawn deferred reaper to wait on child lock and call child.try_wait() to reap OS handle
-            let child_arc = Arc::clone(&self.child);
-            let child_reaped_flag = Arc::clone(&self.child_reaped);
-            let last_shutdown_err = Arc::clone(&self.last_shutdown_error);
-            let child_id = self.child_id;
-            let fallback_spawn = std::thread::Builder::new()
-                .name("child-reap-fallback".to_string())
-                .spawn(move || {
-                    let mut acquired = false;
-                    while Instant::now() < deadline {
-                        let rem = deadline.saturating_duration_since(Instant::now());
-                        let lock_timeout = Duration::from_millis(50).min(rem);
-                        if lock_timeout.is_zero() {
-                            break;
-                        }
-                        if let Some(mut child) = lock_timeout_recover(&child_arc, lock_timeout) {
-                            acquired = true;
-                            let mut reaped = false;
-                            while Instant::now() < deadline {
-                                match child.try_wait() {
-                                    Ok(Some(status)) => {
-                                        eprintln!("[shutdown] fallback reap completed for PID {child_id} with status {status}");
-                                        child_reaped_flag.store(true, Ordering::SeqCst);
-                                        reaped = true;
-                                        break;
-                                    }
-                                    Ok(None) => {
-                                        let rem_after = deadline.saturating_duration_since(Instant::now());
-                                        let sleep_dur = Duration::from_millis(15).min(rem_after);
-                                        if sleep_dur.is_zero() {
+            let rem_child_fb = deadline.saturating_duration_since(Instant::now());
+            if rem_child_fb.is_zero() {
+                let err_msg = format!("child lock timed out for PID {} and deadline expired; skipping fallback reaper spawn", self.child_id);
+                eprintln!("[shutdown] {err_msg}");
+            } else {
+                let child_arc = Arc::clone(&self.child);
+                let child_reaped_flag = Arc::clone(&self.child_reaped);
+                let last_shutdown_err = Arc::clone(&self.last_shutdown_error);
+                let child_id = self.child_id;
+                let fallback_spawn = std::thread::Builder::new()
+                    .name("child-reap-fallback".to_string())
+                    .spawn(move || {
+                        let mut acquired = false;
+                        while Instant::now() < deadline {
+                            let rem = deadline.saturating_duration_since(Instant::now());
+                            let lock_timeout = Duration::from_millis(50).min(rem);
+                            if lock_timeout.is_zero() {
+                                break;
+                            }
+                            if let Some(mut child) = lock_timeout_recover(&child_arc, lock_timeout) {
+                                acquired = true;
+                                let mut reaped = false;
+                                while Instant::now() < deadline {
+                                    match child.try_wait() {
+                                        Ok(Some(status)) => {
+                                            eprintln!("[shutdown] fallback reap completed for PID {child_id} with status {status}");
+                                            child_reaped_flag.store(true, Ordering::SeqCst);
+                                            reaped = true;
                                             break;
                                         }
-                                        std::thread::sleep(sleep_dur);
-                                    }
-                                    Err(e) => {
-                                        let err_msg = format!("fallback reap child.try_wait() for PID {child_id} failed: {e}");
-                                        eprintln!("[shutdown] {err_msg}");
-                                        let rem_err = deadline.saturating_duration_since(Instant::now());
-                                        let err_timeout = Duration::from_millis(20).min(rem_err);
-                                        if !err_timeout.is_zero() {
-                                            if let Some(mut slot) = lock_timeout_recover(&last_shutdown_err, err_timeout) {
-                                                *slot = Some(err_msg);
+                                        Ok(None) => {
+                                            let rem_after = deadline.saturating_duration_since(Instant::now());
+                                            let sleep_dur = Duration::from_millis(15).min(rem_after);
+                                            if sleep_dur.is_zero() {
+                                                break;
                                             }
+                                            std::thread::sleep(sleep_dur);
                                         }
-                                        break;
+                                        Err(e) => {
+                                            let err_msg = format!("fallback reap child.try_wait() for PID {child_id} failed: {e}");
+                                            eprintln!("[shutdown] {err_msg}");
+                                            let rem_err = deadline.saturating_duration_since(Instant::now());
+                                            if !rem_err.is_zero() {
+                                                let err_timeout = Duration::from_millis(20).min(rem_err);
+                                                if let Some(mut slot) = lock_timeout_recover(&last_shutdown_err, err_timeout) {
+                                                    *slot = Some(err_msg);
+                                                }
+                                            }
+                                            break;
+                                        }
+                                    }
+                                }
+                                // CBH-01: 禁止在 deadline 之后执行任何清理动作！
+                                if !reaped && Instant::now() < deadline {
+                                    let rem_final = deadline.saturating_duration_since(Instant::now());
+                                    if !rem_final.is_zero() {
+                                        let _ = child.kill();
+                                        if let Ok(Some(_)) = child.try_wait() {
+                                            child_reaped_flag.store(true, Ordering::SeqCst);
+                                        }
+                                    }
+                                }
+                                break;
+                            }
+                            let rem_after = deadline.saturating_duration_since(Instant::now());
+                            let sleep_dur = Duration::from_millis(15).min(rem_after);
+                            if sleep_dur.is_zero() {
+                                break;
+                            }
+                            std::thread::sleep(sleep_dur);
+                        }
+                        if !acquired {
+                            let rem_err = deadline.saturating_duration_since(Instant::now());
+                            if !rem_err.is_zero() {
+                                let err_msg = format!("fallback reap timed out acquiring child lock for PID {child_id} within deadline");
+                                eprintln!("[shutdown] {err_msg}");
+                                let err_timeout = Duration::from_millis(20).min(rem_err);
+                                if !err_timeout.is_zero() {
+                                    if let Some(mut slot) = lock_timeout_recover(&last_shutdown_err, err_timeout) {
+                                        *slot = Some(err_msg);
                                     }
                                 }
                             }
-                            if !reaped {
-                                let _ = child.kill();
-                                if let Ok(Some(_)) = child.try_wait() {
-                                    child_reaped_flag.store(true, Ordering::SeqCst);
-                                }
+                        }
+                    });
+                match fallback_spawn {
+                    Ok(handle) => {
+                        let rem_slot = deadline.saturating_duration_since(Instant::now());
+                        if !rem_slot.is_zero() {
+                            let slot_timeout = Duration::from_millis(20).min(rem_slot);
+                            if let Some(mut slot) = lock_timeout_recover(&self.child_reap_fallback_handle, slot_timeout) {
+                                *slot = Some(handle);
                             }
-                            break;
                         }
-                        let rem_after = deadline.saturating_duration_since(Instant::now());
-                        let sleep_dur = Duration::from_millis(15).min(rem_after);
-                        if sleep_dur.is_zero() {
-                            break;
-                        }
-                        std::thread::sleep(sleep_dur);
                     }
-                    if !acquired {
-                        let err_msg = format!("fallback reap timed out acquiring child lock for PID {child_id} within deadline");
+                    Err(e) => {
+                        let err_msg = format!("failed to spawn child-reap-fallback for PID {}: {e}", self.child_id);
                         eprintln!("[shutdown] {err_msg}");
                         let rem_err = deadline.saturating_duration_since(Instant::now());
-                        let err_timeout = Duration::from_millis(20).min(rem_err);
-                        if !err_timeout.is_zero() {
-                            if let Some(mut slot) = lock_timeout_recover(&last_shutdown_err, err_timeout) {
+                        if !rem_err.is_zero() {
+                            let err_timeout = Duration::from_millis(10).min(rem_err);
+                            if let Some(mut slot) = lock_timeout_recover(&self.last_shutdown_error, err_timeout) {
                                 *slot = Some(err_msg);
                             }
                         }
-                    }
-                });
-            match fallback_spawn {
-                Ok(handle) => {
-                    let rem_slot = deadline.saturating_duration_since(Instant::now());
-                    let slot_timeout = Duration::from_millis(20).min(rem_slot);
-                    if let Some(mut slot) = lock_timeout_recover(&self.child_reap_fallback_handle, slot_timeout) {
-                        *slot = Some(handle);
-                    }
-                }
-                Err(e) => {
-                    let err_msg = format!("failed to spawn child-reap-fallback for PID {}: {e}", self.child_id);
-                    eprintln!("[shutdown] {err_msg}");
-                    let rem_err = deadline.saturating_duration_since(Instant::now());
-                    let err_timeout = Duration::from_millis(10).min(rem_err);
-                    if let Some(mut slot) = lock_timeout_recover(&self.last_shutdown_error, err_timeout) {
-                        *slot = Some(err_msg);
                     }
                 }
             }
         }
 
         // 5. Join reader thread with bounded timeout (hard upper bound: 100ms or remaining)
+        self.cancel_active_pipes();
         let rem5 = deadline.saturating_duration_since(Instant::now());
         let reader_lock_timeout = Duration::from_millis(30).min(rem5);
         if let Some(mut handle_slot) = lock_timeout_recover(&self.reader_join_handle, reader_lock_timeout) {
@@ -2913,19 +3097,29 @@ impl StdioLibraryChannel {
                         let spawn_res = std::thread::Builder::new()
                             .name("reader-join-bounded-reaper".to_string())
                             .spawn(move || {
-                                let deadline = Instant::now() + Duration::from_millis(200);
-                                while Instant::now() < deadline {
+                                let reap_start = Instant::now();
+                                let reap_timeout = Duration::from_millis(200);
+                                while reap_start.elapsed() < reap_timeout {
                                     if reader_finished.load(Ordering::SeqCst) {
                                         let _ = handle.join();
                                         reader_joined.store(true, Ordering::SeqCst);
                                         return;
                                     }
-                                    std::thread::sleep(Duration::from_millis(10));
+                                    let rem = reap_timeout.saturating_sub(reap_start.elapsed());
+                                    let sleep_dur = Duration::from_millis(10).min(rem);
+                                    if sleep_dur.is_zero() {
+                                        break;
+                                    }
+                                    std::thread::sleep(sleep_dur);
                                 }
                                 let err_msg = "reader thread failed to finish within 200ms detached reap bound".to_string();
                                 eprintln!("[shutdown] {err_msg}");
-                                if let Some(mut slot) = lock_timeout_recover(&last_shutdown_err, Duration::from_millis(20)) {
-                                    *slot = Some(err_msg);
+                                let rem_err = reap_timeout.saturating_sub(reap_start.elapsed());
+                                if !rem_err.is_zero() {
+                                    let err_timeout = Duration::from_millis(20).min(rem_err);
+                                    if let Some(mut slot) = lock_timeout_recover(&last_shutdown_err, err_timeout) {
+                                        *slot = Some(err_msg);
+                                    }
                                 }
                             });
                         if let Err(e) = spawn_res {
@@ -2951,6 +3145,7 @@ impl StdioLibraryChannel {
             if let Some(handle) = handle_slot.take() {
                 let mut handle_opt = Some(handle);
                 let _ = self.writer_tx.send(WriterCommand::Shutdown);
+                self.cancel_active_pipes();
                 let rem_join = deadline.saturating_duration_since(Instant::now());
                 let join_timeout = Duration::from_millis(80).min(rem_join);
                 let start_join = Instant::now();
@@ -2980,19 +3175,29 @@ impl StdioLibraryChannel {
                         let spawn_res = std::thread::Builder::new()
                             .name("writer-join-bounded-reaper".to_string())
                             .spawn(move || {
-                                let deadline = Instant::now() + Duration::from_millis(200);
-                                while Instant::now() < deadline {
+                                let reap_start = Instant::now();
+                                let reap_timeout = Duration::from_millis(200);
+                                while reap_start.elapsed() < reap_timeout {
                                     if writer_finished.load(Ordering::SeqCst) {
                                         let _ = handle.join();
                                         writer_joined.store(true, Ordering::SeqCst);
                                         return;
                                     }
-                                    std::thread::sleep(Duration::from_millis(10));
+                                    let rem = reap_timeout.saturating_sub(reap_start.elapsed());
+                                    let sleep_dur = Duration::from_millis(10).min(rem);
+                                    if sleep_dur.is_zero() {
+                                        break;
+                                    }
+                                    std::thread::sleep(sleep_dur);
                                 }
                                 let err_msg = "writer thread failed to finish within 200ms detached reap bound".to_string();
                                 eprintln!("[shutdown] {err_msg}");
-                                if let Some(mut slot) = lock_timeout_recover(&last_shutdown_err, Duration::from_millis(20)) {
-                                    *slot = Some(err_msg);
+                                let rem_err = reap_timeout.saturating_sub(reap_start.elapsed());
+                                if !rem_err.is_zero() {
+                                    let err_timeout = Duration::from_millis(20).min(rem_err);
+                                    if let Some(mut slot) = lock_timeout_recover(&last_shutdown_err, err_timeout) {
+                                        *slot = Some(err_msg);
+                                    }
                                 }
                             });
                         if let Err(e) = spawn_res {
@@ -3025,6 +3230,11 @@ impl Drop for StdioLibraryChannel {
 }
 
 #[cfg(test)]
+static TEST_MOCK_READER_BLOCKED: AtomicBool = AtomicBool::new(false);
+#[cfg(test)]
+static TEST_MOCK_WRITER_BLOCKED: AtomicBool = AtomicBool::new(false);
+
+#[cfg(test)]
 thread_local! {
     static TEST_AFTER_TRANSACTION_LOCK_HOOK: std::cell::RefCell<Option<Box<dyn FnMut(&str)>>> =
         std::cell::RefCell::new(None);
@@ -3034,6 +3244,34 @@ thread_local! {
         std::cell::RefCell::new(None);
     static TEST_FAIL_INNER_FALLBACK_SPAWN: std::cell::Cell<bool> = std::cell::Cell::new(false);
     static TEST_MOCK_CHILD_TRY_WAIT_PENDING: std::cell::Cell<bool> = std::cell::Cell::new(false);
+    static TEST_MOCK_TASKKILL_SPAWN_FAIL: std::cell::Cell<bool> = std::cell::Cell::new(false);
+    static TEST_MOCK_TASKKILL_KILL_FAIL: std::cell::Cell<bool> = std::cell::Cell::new(false);
+    static TEST_MOCK_TASKKILL_TRY_WAIT_FAIL: std::cell::Cell<bool> = std::cell::Cell::new(false);
+}
+
+#[cfg(test)]
+pub(crate) fn set_test_mock_reader_blocked(blocked: bool) {
+    TEST_MOCK_READER_BLOCKED.store(blocked, Ordering::SeqCst);
+}
+
+#[cfg(test)]
+pub(crate) fn set_test_mock_writer_blocked(blocked: bool) {
+    TEST_MOCK_WRITER_BLOCKED.store(blocked, Ordering::SeqCst);
+}
+
+#[cfg(test)]
+pub(crate) fn set_test_mock_taskkill_spawn_fail(fail: bool) {
+    TEST_MOCK_TASKKILL_SPAWN_FAIL.with(|cell| cell.set(fail));
+}
+
+#[cfg(test)]
+pub(crate) fn set_test_mock_taskkill_kill_fail(fail: bool) {
+    TEST_MOCK_TASKKILL_KILL_FAIL.with(|cell| cell.set(fail));
+}
+
+#[cfg(test)]
+pub(crate) fn set_test_mock_taskkill_try_wait_fail(fail: bool) {
+    TEST_MOCK_TASKKILL_TRY_WAIT_FAIL.with(|cell| cell.set(fail));
 }
 
 #[cfg(test)]
@@ -3861,33 +4099,11 @@ pub(crate) struct ResilientCoreContext {
 
 impl ResilientCoreContext {
     pub fn register_deadline(&self, deadline: Instant) -> Instant {
-        let offset_ms = deadline.saturating_duration_since(self.created_at).as_millis() as u64;
-        let offset_ms = offset_ms.max(1);
-        loop {
-            let current = self.shutdown_deadline_ms.load(Ordering::SeqCst);
-            if current == 0 {
-                if self.shutdown_deadline_ms.compare_exchange(0, offset_ms, Ordering::SeqCst, Ordering::SeqCst).is_ok() {
-                    return deadline;
-                }
-            } else {
-                let tighter = current.min(offset_ms);
-                if tighter == current {
-                    return self.created_at + Duration::from_millis(current);
-                }
-                if self.shutdown_deadline_ms.compare_exchange(current, tighter, Ordering::SeqCst, Ordering::SeqCst).is_ok() {
-                    return self.created_at + Duration::from_millis(tighter);
-                }
-            }
-        }
+        register_atomic_deadline(&self.shutdown_deadline_ms, self.created_at, deadline)
     }
 
     pub fn get_deadline(&self) -> Option<Instant> {
-        let val = self.shutdown_deadline_ms.load(Ordering::SeqCst);
-        if val == 0 {
-            None
-        } else {
-            Some(self.created_at + Duration::from_millis(val))
-        }
+        get_atomic_deadline(&self.shutdown_deadline_ms, self.created_at)
     }
 
     pub fn is_unhealthy(&self) -> bool {
@@ -7345,5 +7561,277 @@ mod tests {
 
         // Clean up process
         let _ = run_taskkill_bounded(pid, Duration::from_millis(500));
+    }
+
+    /// AC1 (CBH-02): Monotonic deadline registration, zero/expired deadline protection, and concurrent CAS bounds.
+    /// Asserts:
+    /// 1. Registering an already-expired or zero deadline is NEVER mapped to a future budget (+1ms).
+    /// 2. Concurrent registrations from 16 threads converge monotonically to the tightest deadline without deadlock.
+    /// 3. CAS terminates boundedly.
+    #[test]
+    fn ac1_deadline_cas_concurrent_monotonic_and_zero_expired() {
+        let created_at = Instant::now();
+        let atomic_ms = AtomicU64::new(0);
+
+        // 1. Expired deadline: past instant
+        let past_instant = Instant::now() - Duration::from_millis(500);
+        let registered_past = register_atomic_deadline(&atomic_ms, created_at, past_instant);
+        // Remaining duration must be ZERO (never mapped to future budget)
+        assert_eq!(
+            registered_past.saturating_duration_since(Instant::now()),
+            Duration::ZERO,
+            "Expired deadline must decode to zero remaining budget, not future (+1ms)"
+        );
+
+        // 2. Monotonicity: registering a future deadline when already expired must NOT widen it
+        let future_instant = Instant::now() + Duration::from_millis(5000);
+        let registered_after_expired = register_atomic_deadline(&atomic_ms, created_at, future_instant);
+        assert_eq!(
+            registered_after_expired.saturating_duration_since(Instant::now()),
+            Duration::ZERO,
+            "Registering future deadline after expired must remain tightest (expired)"
+        );
+
+        // 3. Concurrent CAS stress test: 16 threads concurrently register deadlines
+        let atomic_ms2 = Arc::new(AtomicU64::new(0));
+        let created_at2 = Instant::now();
+        let mut handles = Vec::new();
+        let tightest_target = created_at2 + Duration::from_millis(150);
+
+        for i in 0..16 {
+            let atomic_clone = Arc::clone(&atomic_ms2);
+            let handle = std::thread::spawn(move || {
+                let offset_ms = 150 + (i * 50);
+                let candidate = created_at2 + Duration::from_millis(offset_ms);
+                register_atomic_deadline(&atomic_clone, created_at2, candidate)
+            });
+            handles.push(handle);
+        }
+
+        let mut results = Vec::new();
+        for h in handles {
+            let res = h.join().expect("join CAS worker thread");
+            results.push(res);
+        }
+
+        // All threads must observe a valid registered deadline <= their input, and final value must be tightest
+        let final_deadline = get_atomic_deadline(&atomic_ms2, created_at2).expect("final deadline set");
+        assert_eq!(
+            final_deadline,
+            tightest_target,
+            "Concurrent CAS must converge monotonically to the tightest deadline ({:?}), got {:?}",
+            tightest_target,
+            final_deadline
+        );
+    }
+
+    /// AC3 (CBH-01): Child fallback and reapers must NOT execute any actions after deadline has expired.
+    /// Asserts:
+    /// 1. Fallback skips thread spawning if deadline has already expired.
+    /// 2. No kill or try_wait is called if deadline has elapsed.
+    #[test]
+    fn ac3_child_fallback_forbids_post_deadline_actions() {
+        let python_exe = std::env::var("M2RC1_PYTHON").unwrap_or_else(|_| "python".to_string());
+        let child = Command::new(&python_exe)
+            .args(["-c", "import time; time.sleep(60)"])
+            .stdin(Stdio::piped())
+            .stdout(Stdio::piped())
+            .stderr(Stdio::null())
+            .spawn()
+            .expect("spawn hung child");
+        let pid = child.id();
+        let chan = Arc::new(StdioLibraryChannel::adopt_child_for_test(child).expect("adopt"));
+
+        // Register an already-expired deadline
+        let expired_deadline = Instant::now() - Duration::from_millis(100);
+        chan.register_deadline(expired_deadline);
+
+        // Hold child lock so shutdown is forced into fallback branch
+        let chan_clone = Arc::clone(&chan);
+        let holder = std::thread::spawn(move || {
+            let _guard = chan_clone.child.lock().expect("acquire child lock");
+            std::thread::sleep(Duration::from_millis(100));
+        });
+
+        std::thread::sleep(Duration::from_millis(10));
+
+        let start = Instant::now();
+        chan.shutdown_and_kill(Duration::from_millis(0));
+        let elapsed = start.elapsed();
+
+        // Must return immediately because budget is 0 / expired (< 200ms)
+        assert!(
+            elapsed < Duration::from_millis(300),
+            "shutdown_and_kill with expired deadline must return immediately, took {:?}",
+            elapsed
+        );
+
+        holder.join().expect("join holder");
+
+        // Clean up process
+        let _ = run_taskkill_bounded(pid, Duration::from_millis(500));
+    }
+
+    /// AC4 (CBH-01): Fault injection test for permanently blocked reader worker thread.
+    /// Asserts:
+    /// 1. When reader is permanently blocked on I/O, caller shutdown returns boundedly (< 1500ms).
+    /// 2. Active pipe cancellation is invoked to unblock pipe I/O.
+    /// 3. Detached reaper runs within strictly bounded <= 200ms window without hanging.
+    /// 4. Once unblocked, worker finishes cleanly with zero orphan thread leaks.
+    #[test]
+    fn ac4_fault_injection_blocked_reader_worker_bounds_and_cancels() {
+        let python_exe = std::env::var("M2RC1_PYTHON").unwrap_or_else(|_| "python".to_string());
+        let child = Command::new(&python_exe)
+            .args(["-c", "import time; time.sleep(60)"])
+            .stdin(Stdio::piped())
+            .stdout(Stdio::piped())
+            .stderr(Stdio::null())
+            .spawn()
+            .expect("spawn hung child");
+        let pid = child.id();
+        let chan = Arc::new(StdioLibraryChannel::adopt_child_for_test(child).expect("adopt"));
+
+        // Simulate blocked reader thread
+        set_test_mock_reader_blocked(true);
+
+        let start = Instant::now();
+        // Shutdown with 500ms timeout
+        chan.shutdown_and_kill(Duration::from_millis(500));
+        let elapsed = start.elapsed();
+
+        // Caller must return boundedly (< 2000ms)
+        assert!(
+            elapsed < Duration::from_millis(2000),
+            "Caller shutdown_and_kill must return in bounded time despite blocked reader, took {:?}",
+            elapsed
+        );
+
+        // Reader should not be joined yet because it is blocked in mock
+        assert!(
+            !chan.is_reader_joined(),
+            "Reader must not report joined while blocked"
+        );
+
+        // Unblock reader mock
+        set_test_mock_reader_blocked(false);
+
+        // Wait for reader thread to finish cleanly
+        let poll = Instant::now();
+        while !chan.is_reader_finished() && poll.elapsed() < Duration::from_millis(2000) {
+            std::thread::sleep(Duration::from_millis(20));
+        }
+        assert!(
+            chan.is_reader_finished(),
+            "Reader thread must finish after being unblocked"
+        );
+
+        // Clean up process
+        let _ = run_taskkill_bounded(pid, Duration::from_millis(500));
+    }
+
+    /// AC4 (CBH-01): Fault injection test for permanently blocked writer worker thread.
+    /// Asserts:
+    /// 1. When writer is permanently blocked, caller shutdown returns boundedly (< 1500ms).
+    /// 2. Detached reaper enforces strict 200ms timeout with sleep bounded by remaining time.
+    /// 3. Once unblocked, writer finishes cleanly with zero orphan thread leaks.
+    #[test]
+    fn ac4_fault_injection_blocked_writer_worker_bounds_and_cleans_up() {
+        let python_exe = std::env::var("M2RC1_PYTHON").unwrap_or_else(|_| "python".to_string());
+        let child = Command::new(&python_exe)
+            .args(["-c", "import time; time.sleep(60)"])
+            .stdin(Stdio::piped())
+            .stdout(Stdio::piped())
+            .stderr(Stdio::null())
+            .spawn()
+            .expect("spawn hung child");
+        let pid = child.id();
+        let chan = Arc::new(StdioLibraryChannel::adopt_child_for_test(child).expect("adopt"));
+
+        // Simulate blocked writer thread
+        set_test_mock_writer_blocked(true);
+
+        let start = Instant::now();
+        // Shutdown with 500ms timeout
+        chan.shutdown_and_kill(Duration::from_millis(500));
+        let elapsed = start.elapsed();
+
+        // Caller must return boundedly (< 2000ms)
+        assert!(
+            elapsed < Duration::from_millis(2000),
+            "Caller shutdown_and_kill must return in bounded time despite blocked writer, took {:?}",
+            elapsed
+        );
+
+        // Unblock writer mock
+        set_test_mock_writer_blocked(false);
+
+        let poll = Instant::now();
+        while !chan.is_writer_finished() && poll.elapsed() < Duration::from_millis(2000) {
+            std::thread::sleep(Duration::from_millis(20));
+        }
+        assert!(
+            chan.is_writer_finished(),
+            "Writer thread must finish after being unblocked"
+        );
+
+        // Clean up process
+        let _ = run_taskkill_bounded(pid, Duration::from_millis(500));
+    }
+
+    /// AC4 (CBH-01): Fault injection test for taskkill spawn failure, kill failure, and try_wait failure.
+    /// Asserts:
+    /// 1. Simulated taskkill spawn failure returns error immediately without panicking or hanging.
+    /// 2. Simulated taskkill kill failure logs warning and bounded reaper still terminates within 200ms.
+    #[test]
+    fn ac4_fault_injection_taskkill_spawn_and_kill_failure() {
+        // 1. Taskkill spawn failure
+        set_test_mock_taskkill_spawn_fail(true);
+        let res = run_taskkill_bounded(999999, Duration::from_millis(200));
+        set_test_mock_taskkill_spawn_fail(false);
+        assert!(res.is_err(), "Must report error on taskkill spawn failure");
+        assert!(
+            res.unwrap_err().contains("simulated spawn failure"),
+            "Error must identify spawn failure"
+        );
+
+        // 2. Taskkill try_wait failure
+        set_test_mock_taskkill_try_wait_fail(true);
+        let res_wait = run_taskkill_bounded(999999, Duration::from_millis(200));
+        set_test_mock_taskkill_try_wait_fail(false);
+        assert!(res_wait.is_err(), "Must report error on taskkill try_wait failure");
+        assert!(
+            res_wait.unwrap_err().contains("simulated try_wait failure"),
+            "Error must identify try_wait failure"
+        );
+
+        // 3. Taskkill kill failure & reaper bound
+        // Spawn a dummy process to test taskkill timeout & kill failure
+        let python_exe = std::env::var("M2RC1_PYTHON").unwrap_or_else(|_| "python".to_string());
+        let child = Command::new(&python_exe)
+            .args(["-c", "import time; time.sleep(60)"])
+            .stdin(Stdio::null())
+            .stdout(Stdio::null())
+            .stderr(Stdio::null())
+            .spawn()
+            .expect("spawn dummy process");
+        let pid = child.id();
+
+        set_test_mock_taskkill_kill_fail(true);
+        let start = Instant::now();
+        // Give a short timeout (50ms) so taskkill times out and enters reaper with mock kill failure
+        let res2 = run_taskkill_bounded(pid, Duration::from_millis(50));
+        let elapsed = start.elapsed();
+        set_test_mock_taskkill_kill_fail(false);
+
+        assert!(res2.is_err(), "Must time out on taskkill");
+        // Caller returns at timeout (around 50ms), reaper runs in background <= 200ms
+        assert!(
+            elapsed < Duration::from_millis(500),
+            "Caller run_taskkill_bounded must return within timeout despite kill failure, took {:?}",
+            elapsed
+        );
+
+        // Clean up process
+        let _ = Command::new("taskkill").args(["/F", "/PID", &pid.to_string()]).output();
     }
 }

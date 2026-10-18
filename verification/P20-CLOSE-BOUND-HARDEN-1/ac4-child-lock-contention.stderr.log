@@ -1,0 +1,4 @@
+﻿    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.49s
+     Running unittests src\main.rs (apps\desktop\src-tauri\target\debug\deps\m2rc1_desktop-24448612fc7535f6.exe)
+[shutdown] Warning: child lock acquisition timed out for PID 12896; triggering fallback OS termination
+[shutdown] fallback reap completed for PID 12896 with status exit code: 1

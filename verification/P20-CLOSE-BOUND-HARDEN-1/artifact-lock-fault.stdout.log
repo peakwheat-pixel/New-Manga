@@ -1,0 +1,44 @@
+=== CBH-04 / CBH-05 Artifact Lock Fault Injection Suite ===
+Target script: G:\CODEX\New Manga\verification\P20-CLOSE-BOUND-1\run-desktop-close-verification.ps1
+Test scratch directory: C:\Users\49745\AppData\Local\Temp\cbh04_test_5d90b79a
+
+--- Case 1: Baseline artifact write without lock contention ---
+[PASS] Process exited with code 0
+[PASS] ac5.exit exists
+[PASS] ac5.exit content (0) matches process exit code 0
+[PASS] ac5-console.log exists
+[PASS] ac5-metadata.json exists
+[PASS] Metadata exit_code equals 0
+[PASS] Metadata console_written is true
+
+--- Case 2: Console log locked with FileShare.None (Success simulation) ---
+Exclusive lock held on: C:\Users\49745\AppData\Local\Temp\cbh04_test_5d90b79a\case2_console_lock\ac5-console.log
+Exclusive lock released.
+[PASS] Process exited with code 0 despite console log lock
+[PASS] ac5.exit exists
+[PASS] ac5.exit content matches process exit code 0
+[PASS] ac5-metadata.json was written independently
+[PASS] Metadata exit_code equals 0
+[PASS] Metadata console_written correctly reports false
+[PASS] Metadata records console lock warning
+[PASS] ac5-console-fallback.log was written
+
+--- Case 3: Console log locked with Failure simulation (MockExitCode = 1) ---
+Exclusive lock held on: C:\Users\49745\AppData\Local\Temp\cbh04_test_5d90b79a\case3_fail_console_lock\ac5-console.log
+Exclusive lock released.
+[PASS] Process exited with code 1
+[PASS] ac5.exit exists
+[PASS] ac5.exit content matches process exit code 1
+[PASS] ac5-metadata.json exists
+[PASS] Metadata exit_code equals 1
+
+--- Case 4: Missing binary failure path with full artifact generation ---
+[PASS] Process exited with code 1 on missing binary
+[PASS] ac5.exit exists
+[PASS] ac5.exit content matches process exit code 1
+[PASS] ac5-metadata.json exists
+[PASS] Metadata exit_code equals 1
+
+Test scratch directory cleaned.
+
+=== ALL CBH-04/CBH-05 FAULT INJECTION TESTS PASSED ===
