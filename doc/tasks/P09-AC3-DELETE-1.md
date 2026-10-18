@@ -13,8 +13,8 @@ depends_on: [P09]
 base_commit: baf4ec90c
 branch: null
 worktree: G:/CODEX/New Manga（真实工作流验证须在隔离环境执行；执行方写 verification/P09-AC3-DELETE-1/**、本 Task、doc/handoffs/P09-AC3-DELETE-1-*.md）
-integration_commit: null
-delivery_head: null
+integration_commit: null（未集成：R3 changes_requested 达 DIR-4 上限，按用户裁决以 closed_with_limitations 收口，未进入主线合并）
+delivery_head: a04e4ea78d5b33a0f91efcdc06b396391c4b165e
 canonical_evidence_status: complete
 resource_closeout_status: complete
 evidence_dir: verification/P09-AC3-DELETE-1
