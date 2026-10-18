@@ -1589,6 +1589,51 @@ pub(crate) fn track_unreaped_worker(
 }
 
 #[allow(dead_code)]
+
+/// AC3 (R4-01): spawn the last-resort holder without ever losing the handle.
+///
+/// The four holder sites used to be `let _ = Builder::new()...spawn(move || {..})`,
+/// which discards the Result. That is worse than a missing log line: the
+/// JoinHandle had already been moved into the closure, so a failed spawn drops
+/// it - and a dropped JoinHandle detaches its thread instead of joining it,
+/// leaking the thread and its pipe handle with no trace. The last-resort
+/// fallback was the only place in this file relying on spawn success.
+///
+/// The handle is parked in a shared slot rather than captured, so a failed
+/// spawn finds it still there and joins it synchronously. The success path is
+/// unchanged: the holder takes the handle out of the slot as its first act.
+fn spawn_persistent_holder(
+    name: &'static str,
+    handle: std::thread::JoinHandle<()>,
+    thread_handle: Arc<std::sync::atomic::AtomicIsize>,
+    pipe_handle: Arc<std::sync::atomic::AtomicIsize>,
+) {
+    let slot = Arc::new(Mutex::new(Some(handle)));
+    let slot_for_thread = Arc::clone(&slot);
+    let spawn_result = std::thread::Builder::new()
+        .name(name.to_string())
+        .spawn(move || {
+            let mut ho = slot_for_thread.lock().ok().and_then(|mut guard| guard.take());
+            while ho.is_some() {
+                std::thread::sleep(Duration::from_millis(50));
+                if track_unreaped_worker(name, &mut ho, Arc::clone(&thread_handle), Arc::clone(&pipe_handle)) {
+                    break;
+                }
+                if ho.as_ref().map(|x| x.is_finished()).unwrap_or(false) {
+                    let _ = ho.take().unwrap().join();
+                    break;
+                }
+            }
+        });
+    if let Err(e) = spawn_result {
+        // The handle never left the slot, so it is still ours to join.
+        if let Some(h) = slot.lock().ok().and_then(|mut guard| guard.take()) {
+            let _ = h.join();
+        }
+        eprintln!("[shutdown] {name} spawn failed: {e}; handle joined synchronously");
+    }
+}
+
 pub(crate) fn track_unreaped_worker_handle(handle: std::thread::JoinHandle<()>) -> bool {
     let mut opt = Some(handle);
     track_unreaped_worker(
@@ -3647,23 +3692,12 @@ impl StdioLibraryChannel {
                                 let tracked = track_unreaped_worker("reader", &mut handle_opt, Arc::clone(&reader_th_reaper), Arc::clone(&reader_pipe_reaper));
                                 if !tracked {
                                     if let Some(h) = handle_opt.take() {
-                                        let th = Arc::clone(&reader_th_reaper);
-                                        let ph = Arc::clone(&reader_pipe_reaper);
-                                        let _ = std::thread::Builder::new()
-                                            .name("persistent-reader-holder".to_string())
-                                            .spawn(move || {
-                                                let mut ho = Some(h);
-                                                while ho.is_some() {
-                                                    std::thread::sleep(Duration::from_millis(50));
-                                                    if track_unreaped_worker("reader", &mut ho, Arc::clone(&th), Arc::clone(&ph)) {
-                                                        break;
-                                                    }
-                                                    if ho.as_ref().map(|x| x.is_finished()).unwrap_or(false) {
-                                                        let _ = ho.take().unwrap().join();
-                                                        break;
-                                                    }
-                                                }
-                                            });
+                                        spawn_persistent_holder(
+                                            "persistent-reader-holder",
+                                            h,
+                                            Arc::clone(&reader_th_reaper),
+                                            Arc::clone(&reader_pipe_reaper),
+                                        );
                                     }
                                 }
                                 let rem_err = reap_timeout.saturating_sub(reap_start.elapsed());
@@ -3682,23 +3716,12 @@ impl StdioLibraryChannel {
                                 let tracked = track_unreaped_worker("reader", &mut h_opt, Arc::clone(&self.reader_thread_handle), Arc::clone(&self.raw_stdout_handle));
                                 if !tracked {
                                     if let Some(h) = h_opt.take() {
-                                        let th = Arc::clone(&self.reader_thread_handle);
-                                        let ph = Arc::clone(&self.raw_stdout_handle);
-                                        let _ = std::thread::Builder::new()
-                                            .name("persistent-reader-holder".to_string())
-                                            .spawn(move || {
-                                                let mut ho = Some(h);
-                                                while ho.is_some() {
-                                                    std::thread::sleep(Duration::from_millis(50));
-                                                    if track_unreaped_worker("reader", &mut ho, Arc::clone(&th), Arc::clone(&ph)) {
-                                                        break;
-                                                    }
-                                                    if ho.as_ref().map(|x| x.is_finished()).unwrap_or(false) {
-                                                        let _ = ho.take().unwrap().join();
-                                                        break;
-                                                    }
-                                                }
-                                            });
+                                        spawn_persistent_holder(
+                                            "persistent-reader-holder",
+                                            h,
+                                            Arc::clone(&self.reader_thread_handle),
+                                            Arc::clone(&self.raw_stdout_handle),
+                                        );
                                     }
                                 }
                             }
@@ -3804,23 +3827,12 @@ impl StdioLibraryChannel {
                                 let tracked = track_unreaped_worker("writer", &mut handle_opt, Arc::clone(&writer_th_reaper), Arc::clone(&writer_pipe_reaper));
                                 if !tracked {
                                     if let Some(h) = handle_opt.take() {
-                                        let th = Arc::clone(&writer_th_reaper);
-                                        let ph = Arc::clone(&writer_pipe_reaper);
-                                        let _ = std::thread::Builder::new()
-                                            .name("persistent-writer-holder".to_string())
-                                            .spawn(move || {
-                                                let mut ho = Some(h);
-                                                while ho.is_some() {
-                                                    std::thread::sleep(Duration::from_millis(50));
-                                                    if track_unreaped_worker("writer", &mut ho, Arc::clone(&th), Arc::clone(&ph)) {
-                                                        break;
-                                                    }
-                                                    if ho.as_ref().map(|x| x.is_finished()).unwrap_or(false) {
-                                                        let _ = ho.take().unwrap().join();
-                                                        break;
-                                                    }
-                                                }
-                                            });
+                                        spawn_persistent_holder(
+                                            "persistent-writer-holder",
+                                            h,
+                                            Arc::clone(&writer_th_reaper),
+                                            Arc::clone(&writer_pipe_reaper),
+                                        );
                                     }
                                 }
                                 let rem_err = reap_timeout.saturating_sub(reap_start.elapsed());
@@ -3839,23 +3851,12 @@ impl StdioLibraryChannel {
                                 let tracked = track_unreaped_worker("writer", &mut h_opt, Arc::clone(&self.writer_thread_handle), Arc::clone(&self.raw_stdin_handle));
                                 if !tracked {
                                     if let Some(h) = h_opt.take() {
-                                        let th = Arc::clone(&self.writer_thread_handle);
-                                        let ph = Arc::clone(&self.raw_stdin_handle);
-                                        let _ = std::thread::Builder::new()
-                                            .name("persistent-writer-holder".to_string())
-                                            .spawn(move || {
-                                                let mut ho = Some(h);
-                                                while ho.is_some() {
-                                                    std::thread::sleep(Duration::from_millis(50));
-                                                    if track_unreaped_worker("writer", &mut ho, Arc::clone(&th), Arc::clone(&ph)) {
-                                                        break;
-                                                    }
-                                                    if ho.as_ref().map(|x| x.is_finished()).unwrap_or(false) {
-                                                        let _ = ho.take().unwrap().join();
-                                                        break;
-                                                    }
-                                                }
-                                            });
+                                        spawn_persistent_holder(
+                                            "persistent-writer-holder",
+                                            h,
+                                            Arc::clone(&self.writer_thread_handle),
+                                            Arc::clone(&self.raw_stdin_handle),
+                                        );
                                     }
                                 }
                             }
