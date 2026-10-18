@@ -1,0 +1,15 @@
+[2026-10-18T12:55:11+08:00] === P20-CLOSE-BOUND-1 AC5 Interactive Desktop Verification ===
+Isolated root prepared at: C:\Users\49745\AppData\Local\Temp\p20close-5d4f4d20
+Launching desktop application: G:\CODEX\New Manga\apps\desktop\src-tauri\target\release\m2rc1-desktop.exe
+App launched with PID: 29444. Waiting for window initialization and sidecar spawn (up to 10s)...
+Main window detected! Handle: 2821520
+Process tree state: Main PID=29444, Child PIDs=43020,11164,26732
+Sending CloseMainWindow request...
+CloseMainWindow returned: True
+App process exited: True (Took 78.6138 ms, bound was 5000 ms)
+=== Process Tree Verification Summary ===
+Exit within bound: True
+Exit duration: 78.6138 ms
+Residual process count: 0
+SUCCESS: Application exited within bound (78.6138 ms) and zero orphan processes remaining. Clean exit verified.
+Isolated root cleaned.

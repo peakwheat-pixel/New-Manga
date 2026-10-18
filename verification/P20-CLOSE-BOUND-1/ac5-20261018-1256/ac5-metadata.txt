@@ -1,0 +1,10 @@
+runner=run-desktop-close-verification.ps1 (called by Coordinator dsh; the script itself persists nothing)
+outdir=G:\CODEX\New Manga\verification\P20-CLOSE-BOUND-1\ac5-20261018-1256
+start_local=2026-10-18T12:55:11.0892211+08:00
+end_local=2026-10-18T12:55:12.7778073+08:00
+duration_s=2
+exit_code=0
+release_sha256=81e3e3fcfa5467672d78a84d733715296b4608a16fc6947d273f267202055209
+head=b6f6da892ada3b0dbd09835194fd219ab7e63691
+shell=pwsh (PowerShell 7.6.6)
+note=The script prints its result to stdout only and writes no files, so the Coordinator captures stdout here. Earlier references to ac5-20261018-1156 / ac5-20261018-1245 were wrong: those directories were never created, hence that evidence did not exist. This run supersedes them.
