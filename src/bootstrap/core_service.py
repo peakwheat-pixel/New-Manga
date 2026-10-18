@@ -1811,8 +1811,16 @@ class CoreServiceServer:
             # stores the managed path relative to the data root, so comparing
             # the two strings never matches and the origin silently stayed
             # None.  This test caught exactly that.
+            #
+            # F-002 (Codex R1): select managed_path as well.  PreviewOrigin's
+            # managed_rel_path must be RELATIVE to producer_root - the GC
+            # resolves the source as producer_root / managed_rel_path, so
+            # storing the projection's absolute path made every verification
+            # miss and the preview still could not be reclaimed even though it
+            # now had a lifecycle row.  The revision row is the authority for
+            # that relative path; the projection's absolute form is not.
             matching = self._core.conn.execute(
-                "SELECT ar.artifact_revision_id, ar.artifact_id"
+                "SELECT ar.artifact_revision_id, ar.artifact_id, ar.managed_path"
                 " FROM artifact_revisions ar"
                 " JOIN media_artifacts ma ON ma.artifact_id = ar.artifact_id"
                 " WHERE ma.page_id = ? AND ma.artifact_type = 'translated'"
@@ -1827,11 +1835,14 @@ class CoreServiceServer:
             raise RuntimeError(f"preview origin: source lookup failed: {error!r}") from error
         if len(matching) != 1:
             return None
+        stored_rel = matching[0]["managed_path"]
+        if not isinstance(stored_rel, str) or not stored_rel:
+            return None
         return PreviewOrigin(
             producer_root=self._producer_root,
             artifact_id=matching[0]["artifact_id"],
             artifact_revision_id=matching[0]["artifact_revision_id"],
-            managed_rel_path=page.translated_path,
+            managed_rel_path=stored_rel,
         )
 
     def handle_list_chapters(self, payload: dict[str, Any]) -> dict[str, Any]:
@@ -3847,7 +3858,13 @@ def main() -> int:
                 _run_startup_gc(gc_previews)
                 _run_retired_preview_gc(
                     gc_previews, gc_store, core.conn,
-                    producer_root=str(data_root.resolve()),
+                    # F-002 (Codex R1): the managed root, NOT the data root.
+                    # artifact_revisions.managed_path is relative to the
+                    # storage root (data/managed), so joining it against
+                    # data_root produced a path that never existed and every
+                    # retired-preview verification refused - the previews could
+                    # not be reclaimed even once they had a lifecycle row.
+                    producer_root=str(core.storage.root),
                 )
             finally:
                 gc_store.close()
@@ -3869,7 +3886,9 @@ def main() -> int:
             server = CoreServiceServer(
                 core,
                 render_previews=previews,
-                producer_root=data_root.resolve(),
+                # F-002 (Codex R1): same correction as the retired-preview GC
+                # above - managed paths are relative to the storage root.
+                producer_root=core.storage.root,
             )
             return server.serve_forever()
         finally:

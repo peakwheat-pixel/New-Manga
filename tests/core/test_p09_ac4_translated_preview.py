@@ -83,7 +83,7 @@ def test_translated_reader_preview_registers_a_reclaimable_origin(tmp_path: Path
         server = CoreServiceServer(
             core,
             render_previews=previews,
-            producer_root=data_root.resolve(),
+            producer_root=core.storage.root,
         )
 
         rel_original, rel_translated = _seed_translated_page(core, core.storage)
@@ -148,8 +148,23 @@ def test_translated_reader_preview_registers_a_reclaimable_origin(tmp_path: Path
             " carries no lifecycle row and can never be reclaimed by reference"
         )
         assert row["artifact_id"] == "a1"
-        assert row["artifact_revision_id"] == "ar1", (
-            "the origin must bind the page's exact source revision"
+        assert row["artifact_revision_id"] == "ar1"
+
+        # F-002 (Codex R1): the origin's managed_rel_path must be RELATIVE to
+        # producer_root - the GC resolves the producer as
+        # producer_root / managed_rel_path.  Storing the reader projection's
+        # absolute path made that join wrong, so every verification missed and
+        # the preview stayed unreclaimable even after it gained a lifecycle row.
+        stored_rel = row["managed_rel_path"]
+        assert stored_rel is not None and stored_rel != ""
+        assert not Path(stored_rel).is_absolute(), (
+            "F-002: managed_rel_path stored an absolute path, so the GC cannot"
+            f" resolve the producer and the preview stays unreclaimable: {stored_rel!r}"
+        )
+        resolved_producer = (core.storage.root / stored_rel).resolve()
+        assert resolved_producer.is_file(), (
+            "F-002: producer_root / managed_rel_path must point at the real"
+            f" source file, but {resolved_producer} does not exist"
         )
     finally:
         catalog.close()
