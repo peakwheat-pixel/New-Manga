@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { LibraryClient } from "../library/client";
+import { LibraryClient, LibraryClientError } from "../library/client";
 import type { BookSummary } from "../library/types";
 import { tokens } from "../theme/tokens";
 import { PermanentDeleteConfirmDialog } from "./PermanentDeleteConfirmDialog";
@@ -55,6 +55,11 @@ export function RecycleBinPage({
   const [loading, setLoading] = useState<boolean>(!initialBooks);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [batchError, setBatchError] = useState<string | null>(null);
+  // AC1 (R-007): "the query failed" and "the bin is empty" are different
+  // states.  Reporting a load failure as an empty list tells the user their
+  // soft-deleted books are gone when the real problem is that nothing could be
+  // asked.
+  const [loadError, setLoadError] = useState<string | null>(null);
 
   // Frozen snapshot passed to the confirmation dialog
   const [confirmTargets, setConfirmTargets] = useState<BookSummary[] | null>(null);
@@ -65,9 +70,15 @@ export function RecycleBinPage({
       // R-007: Query specifically for soft-deleted recycle bin books
       const recycleBooks = await activeClient.listRecycleBinBooks();
       setBooks(recycleBooks);
-    } catch {
-      // Fail-soft
+      setLoadError(null);
+    } catch (error) {
+      // AC1: never fail soft into a silent empty bin.
       setBooks([]);
+      const code =
+        error instanceof LibraryClientError ? error.code : "RECYCLE_BIN_UNAVAILABLE";
+      setLoadError(
+        `回收站读取失败（${code}）：无法确认软删除作品列表，请勿据此判断作品已被清空，稍后重试。`,
+      );
     } finally {
       setLoading(false);
     }
@@ -285,6 +296,40 @@ export function RecycleBinPage({
       </header>
 
       {/* Batch or Whole-library validation errors */}
+      {loadError && (
+        <div
+          data-testid="recycle-bin-load-error"
+          style={{
+            padding: "8px 16px",
+            backgroundColor: "rgba(255, 179, 0, 0.18)",
+            borderBottom: "1px solid rgba(255, 179, 0, 0.35)",
+            color: "#ffb300",
+            fontSize: 13,
+            fontWeight: 500,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+          }}
+        >
+          <span>⚠️ {loadError}</span>
+          <button
+            type="button"
+            data-testid="retry-recycle-bin-load-btn"
+            onClick={() => void fetchRecycleBooks()}
+            style={{
+              background: "none",
+              border: "none",
+              color: "#ffb300",
+              cursor: "pointer",
+              fontSize: 13,
+              fontWeight: 600,
+            }}
+          >
+            重试
+          </button>
+        </div>
+      )}
+
       {batchError && (
         <div
           data-testid={

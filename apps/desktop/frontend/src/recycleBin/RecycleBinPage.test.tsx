@@ -473,4 +473,44 @@ describe("AC5: Recycle Bin Permanent Delete & Confirmation Workflow", () => {
     expect(document.body.textContent).toContain("cleanup_pending");
     expect(document.body.textContent).toContain("已永久删除 1 本");
   });
+
+  // AC1 (R-007): a failed query must not be reported as an empty recycle bin
+  it("AC1: a failed recycle bin query is reported instead of showing an empty bin", async () => {
+    const mockInvoke = vi.fn(async (cmd: string) => {
+      if (cmd === LIBRARY_LIST_RECYCLE_BIN_BOOKS_COMMAND) {
+        throw { code: "CORE_UNAVAILABLE" };
+      }
+      return {};
+    });
+    const client = new LibraryClient(mockInvoke);
+
+    await act(async () => {
+      root.render(<RecycleBinPage client={client} totalBooksCount={5} />);
+    });
+
+    // The failure is surfaced, with a retry affordance ...
+    const notice = q('[data-testid="recycle-bin-load-error"]');
+    expect(notice).not.toBeNull();
+    expect(notice?.textContent).toContain("回收站读取失败");
+    // ... and it explicitly warns against reading the empty list as fact.
+    expect(notice?.textContent).toContain("请勿据此判断作品已被清空");
+    expect(q('[data-testid="retry-recycle-bin-load-btn"]')).not.toBeNull();
+  });
+
+  // AC1: a successful query clears the notice
+  it("AC1: a successful recycle bin query shows no load error", async () => {
+    const mockInvoke = vi.fn(async (cmd: string) => {
+      if (cmd === LIBRARY_LIST_RECYCLE_BIN_BOOKS_COMMAND) {
+        return [];
+      }
+      return {};
+    });
+    const client = new LibraryClient(mockInvoke);
+
+    await act(async () => {
+      root.render(<RecycleBinPage client={client} totalBooksCount={5} />);
+    });
+
+    expect(q('[data-testid="recycle-bin-load-error"]')).toBeNull();
+  });
 });
