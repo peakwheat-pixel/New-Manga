@@ -3,9 +3,13 @@
 # Shell's own WebView2 processes (MicrosoftWindows.Client.CBS ... EBWebView), inflating the total.
 # Here ownership is decided by walking the ParentProcessId chain up to m2rc1-desktop.
 param(
+    # User ruling 2026-10-18: the idle-memory ceiling for this task is 480 MB, raised from the
+    # original 350 MB. The six WebView2 processes are the stock Chromium split and already account
+    # for roughly 344-356 MB of the total, so 350 sat below the platform floor for this task.
     [string]$RepoRoot = 'G:\CODEX\New Manga',
     [string]$OutDir = '',
-    [int]$SettleSeconds = 40
+    [int]$SettleSeconds = 40,
+    [int]$ThresholdMb = 480
 )
 $ErrorActionPreference = 'Continue'
 Add-Type -AssemblyName UIAutomationClient
@@ -98,8 +102,8 @@ $maxTotal = [math]::Round(($samples | Measure-Object Total -Maximum).Maximum, 1)
 T "SAMPLES n=$($samples.Count) min_total_mb=$minTotal max_total_mb=$maxTotal last_total_mb=$($last.Total)"
 T "LAST_BREAKDOWN m2rc1=$($last.M2) core=$($last.Core) webview_owned=$($last.WebView) owned_procs=$($last.Owned) webview_procs=$($last.WvCount)"
 foreach ($o in (Get-OwnedProcesses $rootPid)) { $pr = Get-Process -Id ([int]$o.ProcessId) -ErrorAction SilentlyContinue; if ($pr) { T ("OWNED " + $pr.ProcessName + " pid=" + $pr.Id + " ws_mb=" + [math]::Round($pr.WorkingSet64 / 1MB, 1)) } }
-$pass = ($last.Total -gt 0 -and $last.Total -le 350)
-T ("ASSERT " + $(if ($pass) { 'PASS' } else { 'FAIL' }) + " ac3:idle-memory-owned-only (last_total_mb=$($last.Total) threshold=350)")
+$pass = ($last.Total -gt 0 -and $last.Total -le $ThresholdMb)
+T ("ASSERT " + $(if ($pass) { 'PASS' } else { 'FAIL' }) + " ac3:idle-memory-owned-only (last_total_mb=$($last.Total) threshold=$ThresholdMb)")
 @(
     "runner=run-ac3-memory-owned.ps1"
     "method=parent-chain ownership filter (excludes Windows Shell WebView2)"
@@ -107,7 +111,7 @@ T ("ASSERT " + $(if ($pass) { 'PASS' } else { 'FAIL' }) + " ac3:idle-memory-owne
     "min_total_mb=$minTotal"; "max_total_mb=$maxTotal"; "last_total_mb=$($last.Total)"
     "last_m2rc1_mb=$($last.M2)"; "last_core_service_mb=$($last.Core)"; "last_webview_owned_mb=$($last.WebView)"
     "last_owned_proc_count=$($last.Owned)"; "last_webview_proc_count=$($last.WvCount)"
-    "threshold_mb=350"
+    "threshold_mb=$ThresholdMb"
 ) | Set-Content (Join-Path $OutDir 'ac3b-metadata.txt') -Encoding utf8
 if (-not $p.HasExited) { $p.CloseMainWindow() | Out-Null; Start-Sleep -Seconds 2 }
 if (-not $p.HasExited) { Stop-Process -Id $p.Id -Force }

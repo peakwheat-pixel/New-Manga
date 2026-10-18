@@ -1,0 +1,4 @@
+round,cold_start_s,core_ready_s,idle_ws_mb,total_ws_mb,proc_count
+1,0.459,0.469,47,782.5,15
+2,0.456,0.458,47,786.8,15
+3,0.484,0.485,46.8,783.6,15

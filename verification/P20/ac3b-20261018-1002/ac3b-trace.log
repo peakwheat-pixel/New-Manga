@@ -1,0 +1,16 @@
+[09:54:34.601] AC3b start pid=5852 iso=C:\Users\49745\AppData\Local\Temp\p20ac3b-9b378b87 settle=40s
+[09:54:35.295] window_found=True
+[09:55:16.069] SAMPLES n=13 min_total_mb=422.4 max_total_mb=455.1 last_total_mb=455.1
+[09:55:16.074] LAST_BREAKDOWN m2rc1=0 core=46.9 webview_owned=356 owned_procs=11 webview_procs=6
+[09:55:16.164] OWNED conhost pid=44176 ws_mb=15.6
+[09:55:16.174] OWNED core_service pid=6308 ws_mb=46.9
+[09:55:16.185] OWNED host_bridge pid=42236 ws_mb=22.3
+[09:55:16.193] OWNED msedgewebview2 pid=10156 ws_mb=126.9
+[09:55:16.202] OWNED conhost pid=3292 ws_mb=7.1
+[09:55:16.210] OWNED conhost pid=8900 ws_mb=7.1
+[09:55:16.219] OWNED msedgewebview2 pid=4216 ws_mb=18.4
+[09:55:16.228] OWNED msedgewebview2 pid=8172 ws_mb=70.8
+[09:55:16.236] OWNED msedgewebview2 pid=8180 ws_mb=36.9
+[09:55:16.245] OWNED msedgewebview2 pid=13864 ws_mb=19.1
+[09:55:16.254] OWNED msedgewebview2 pid=41920 ws_mb=83.9
+[09:55:16.259] ASSERT PASS ac3:idle-memory-owned-only (last_total_mb=455.1 threshold=480)

@@ -51,6 +51,18 @@ while ((Get-Date) -lt $dl) {
 T "SMOKE window_found=$([bool]$win) pid=$($p.Id) exited=$($p.HasExited)"
 A ([bool]$win) 'smoke:window-present'
 if ($win) {
+  # The native window exists well before React mounts, so an immediate probe of the
+  # bookshelf nav button was flaky (it reported NOT_FOUND on the 2026-10-18 09:52 run
+  # while the other three pages were fine). Wait, bounded, for the shell to render.
+  $shelfCond = New-Object System.Windows.Automation.PropertyCondition([System.Windows.Automation.AutomationElement]::NameProperty, '📚 书架')
+  $navDl = (Get-Date).AddSeconds(25)
+  $navWaited = 0
+  while ((Get-Date) -lt $navDl) {
+    if ($win.FindFirst($TS::Descendants, $shelfCond)) { break }
+    Start-Sleep -Milliseconds 300
+    $navWaited += 300
+  }
+  T "SMOKE shell_wait_ms=$navWaited"
   Shot '00-launched'
   foreach ($pg in @('📚 书架','🛠️ 工作台','📖 阅读器','⚙️ 设置')) {
     $pc = New-Object System.Windows.Automation.PropertyCondition([System.Windows.Automation.AutomationElement]::NameProperty, $pg)
