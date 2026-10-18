@@ -19,7 +19,7 @@ LATEST_KNOWN = default_migrations()[-1].schema_version
 
 def test_all_migrations_apply_with_checksum_and_metadata(db_conn):
     version = read_schema_version(db_conn)
-    assert version == LATEST_KNOWN == 4
+    assert version == LATEST_KNOWN == 5
 
     for migration in default_migrations():
         row = db_conn.execute(
@@ -58,7 +58,7 @@ def test_reopening_is_idempotent(tmp_path):
     assert opened.state.value == "empty"
     runner = MigrationRunner(conn, default_migrations())
     applied = runner.apply_pending()
-    assert [record.schema_version for record in applied] == [1, 2, 3, 4]
+    assert [record.schema_version for record in applied] == [1, 2, 3, 4, 5]
     assert runner.pending_migrations() == []
     assert runner.apply_pending() == []
 
@@ -78,10 +78,10 @@ def test_newer_schema_is_rejected_and_readonly(tmp_path):
     with conn:
         conn.execute(
             "INSERT INTO schema_migrations (schema_version, migration_name, applied_at, checksum)"
-            " VALUES (5, 'future', '2026-01-01T00:00:00Z', 'nope')"
+            " VALUES (6, 'future', '2026-01-01T00:00:00Z', 'nope')"
         )
         conn.execute(
-            "UPDATE application_metadata SET value_json = '5'"
+            "UPDATE application_metadata SET value_json = '6'"
             " WHERE metadata_key = 'schema_version'"
         )
     conn.close()
@@ -120,30 +120,33 @@ def test_pre_migration_backup_created_before_first_ddl(tmp_path):
 
     # Full pending batch: one pre-migration backup fires per pending
     # migration. The v0→v1 guard predates backup_records, so the v1→v2,
-    # v2→v3, and v3→v4 snapshots are the three recorded rows.
+    # v2→v3, v3→v4, and v4→v5 snapshots are the four recorded rows.
     records = conn.execute(
         "SELECT backup_type, managed_path, schema_version FROM backup_records"
     ).fetchall()
-    assert len(records) == 3
+    assert len(records) == 4
     assert records[0]["backup_type"] == "pre_migration"
     assert records[0]["schema_version"] == 1  # snapshot taken at v1 state
     assert records[1]["schema_version"] == 2  # snapshot taken at v2 state
     assert records[2]["schema_version"] == 3  # snapshot taken at v3 state
+    assert records[3]["schema_version"] == 4  # snapshot taken at v4 state
     assert records[0]["managed_path"].startswith("backups/")
     assert (backups / records[0]["managed_path"].split("/", 1)[1]).is_file()
 
     backup_files = list(backups.glob("*.db"))
-    assert len(backup_files) == 4  # v0→v1 guard + v1→v2 + v2→v3 + v3→v4
+    assert len(backup_files) == 5  # v0→v1 guard + v1→v2 + v2→v3 + v3→v4 + v4→v5
     # The unrecorded file is the v0→v1 snapshot: it predates the schema.
     recorded_file = backups / records[0]["managed_path"].split("/", 1)[1]
     recorded_v2_file = backups / records[1]["managed_path"].split("/", 1)[1]
     recorded_v3_file = backups / records[2]["managed_path"].split("/", 1)[1]
+    recorded_v4_file = backups / records[3]["managed_path"].split("/", 1)[1]
     unrecorded_files = [
         f for f in backup_files
         if f.resolve() not in {
             recorded_file.resolve(),
             recorded_v2_file.resolve(),
             recorded_v3_file.resolve(),
+            recorded_v4_file.resolve(),
         }
     ]
     assert len(unrecorded_files) == 1

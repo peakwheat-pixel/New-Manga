@@ -34,10 +34,10 @@ fn main() {
     // match bare command invocations, so the ACL layer silently skipped
     // them). With `__app-acl__` present, Tauri enforces the capability for
     // every bare command: `capabilities/m2rc1-commands.json` grants exactly
-    // the fifty-eight commands below: 51 production (3 resource + 2 IPC1 +
+    // the sixty commands below: 53 production (3 resource + 2 IPC1 +
     // 2 create + 2 existing settings + 19 P15 settings + 2 retype + 3 RC-4 + 1 page
     // resolve + 2 page navigation + 2 Reader + 3 Host Issuer + 6 Run +
-    // 1 reveal + 3 export), four probe, and three M2-AC1 acceptance commands;
+    // 1 reveal + 3 export + 2 delete), four probe, and three M2-AC1 acceptance commands;
     // any other command name
     // (e.g. the deleted `register_catalog`) is refused by the ACL before the invoke
     // handler is consulted. The settings_* pair (M2-SETTINGS-IPC-CHANNEL,
@@ -130,6 +130,9 @@ fn main() {
             "library_cancel_export",
             "library_get_export_snapshot",
             "library_get_export_history",
+            // P09-AC3-DELETE-1: production-only project-level permanent deletion commands
+            "library_delete_book_permanently",
+            "library_delete_books_permanently",
             "probe_config",
             "probe_write_results",
             "probe_exit",

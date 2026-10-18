@@ -189,7 +189,9 @@ PROTOCOL_MAJOR = 2
 PROTOCOL_MINOR = 3
 _P15_PROTOCOL_MINOR = 7
 _CREATE_PROTOCOL_MINOR = 8
+_DELETE_PROTOCOL_MINOR = 10
 _CREATE_COMMANDS = frozenset({"CreateBook", "CreateChapter"})
+_DELETE_COMMANDS = frozenset({"PermanentlyDeleteBook", "PermanentlyDeleteBooks"})
 _CREATE_FIELDS = {
     "CreateBook": (("title", True),),
     "CreateChapter": (("book_id", True), ("title", True), ("chapter_number", False)),
@@ -1069,6 +1071,129 @@ class CoreServiceServer:
             "title": chapter.title,
             "chapter_number": chapter.chapter_number,
             "sort_order": chapter.sort_order,
+        }
+
+    def handle_permanently_delete_book(
+        self, raw_payload: Any
+    ) -> tuple[dict[str, Any] | None, dict[str, Any] | None]:
+        if not isinstance(raw_payload, dict):
+            return None, {"code": "INVALID_REQUEST", "category": "validation", "retryable": False}
+        if set(raw_payload.keys()) != {"book_id", "confirm_permanent_delete"}:
+            return None, {"code": "INVALID_REQUEST", "category": "validation", "retryable": False}
+        book_id = raw_payload.get("book_id")
+        if not isinstance(book_id, str) or not book_id.strip():
+            return None, {"code": "INVALID_REQUEST", "category": "validation", "retryable": False}
+        if raw_payload.get("confirm_permanent_delete") is not True:
+            return None, {"code": "INVALID_REQUEST", "category": "validation", "retryable": False}
+
+        repo = self._core.repository
+        storage = self._core.storage
+
+        all_ok, items = repo.preflight_permanent_delete([book_id], storage)
+        if not all_ok:
+            code = items[0]["error_code"] or "BOOK_DELETE_CONFLICT"
+            cat = "not_found" if code == "BOOK_NOT_FOUND" else "conflict"
+            return None, {"code": code, "category": cat, "retryable": False}
+
+        targets = repo.list_book_cleanup_targets(book_id)
+        try:
+            repo.execute_permanent_delete_db({book_id: targets})
+        except Exception:
+            return None, {"code": "BOOK_DELETE_FAILED", "category": "internal", "retryable": "unknown"}
+
+        cleaned = repo.cleanup_book_files(book_id, targets, storage)
+        if cleaned:
+            return {"book_id": book_id, "deleted": True}, None
+        return None, {"code": "BOOK_DELETE_CLEANUP_PENDING", "category": "internal", "retryable": True}
+
+    def handle_permanently_delete_books(
+        self, raw_payload: Any
+    ) -> tuple[dict[str, Any] | None, dict[str, Any] | None]:
+        if not isinstance(raw_payload, dict):
+            return None, {"code": "INVALID_REQUEST", "category": "validation", "retryable": False}
+        expected_keys = {"book_ids", "confirmed_book_ids", "confirm_count", "confirm_permanent_delete"}
+        if set(raw_payload.keys()) != expected_keys:
+            return None, {"code": "INVALID_REQUEST", "category": "validation", "retryable": False}
+
+        book_ids = raw_payload.get("book_ids")
+        confirmed_book_ids = raw_payload.get("confirmed_book_ids")
+        confirm_count = raw_payload.get("confirm_count")
+        confirm_permanent = raw_payload.get("confirm_permanent_delete")
+
+        if not isinstance(book_ids, list) or not isinstance(confirmed_book_ids, list):
+            return None, {"code": "INVALID_REQUEST", "category": "validation", "retryable": False}
+        if not all(isinstance(bid, str) and bid.strip() for bid in book_ids):
+            return None, {"code": "INVALID_REQUEST", "category": "validation", "retryable": False}
+        if len(book_ids) == 0:
+            return None, {"code": "INVALID_REQUEST", "category": "validation", "retryable": False}
+        if len(book_ids) > 20:
+            return None, {"code": "BOOK_DELETE_BATCH_LIMIT_EXCEEDED", "category": "validation", "retryable": False}
+        if len(book_ids) != len(set(book_ids)):
+            return None, {"code": "DUPLICATE_BOOK_ID", "category": "validation", "retryable": False}
+
+        if type(confirm_count) is not int or confirm_count != len(book_ids):
+            return None, {"code": "INVALID_REQUEST", "category": "validation", "retryable": False}
+        if confirmed_book_ids != book_ids:
+            return None, {"code": "INVALID_REQUEST", "category": "validation", "retryable": False}
+        if confirm_permanent is not True:
+            return None, {"code": "INVALID_REQUEST", "category": "validation", "retryable": False}
+
+        repo = self._core.repository
+        storage = self._core.storage
+
+        if repo.is_whole_library(book_ids):
+            return None, {"code": "BOOK_DELETE_BATCH_WHOLE_LIBRARY", "category": "conflict", "retryable": False}
+
+        all_ok, items = repo.preflight_permanent_delete(book_ids, storage)
+        if not all_ok:
+            return None, {
+                "code": "BOOK_DELETE_BATCH_PREFLIGHT_FAILED",
+                "category": "conflict",
+                "retryable": False,
+                "details": {
+                    "phase": "preflight",
+                    "requested_count": len(book_ids),
+                    "completed_count": 0,
+                    "items": items,
+                },
+            }
+
+        book_targets_map = {bid: repo.list_book_cleanup_targets(bid) for bid in book_ids}
+        try:
+            repo.execute_permanent_delete_db(book_targets_map)
+        except Exception:
+            return None, {"code": "BOOK_DELETE_FAILED", "category": "internal", "retryable": "unknown"}
+
+        result_items: list[dict[str, Any]] = []
+        completed_count = 0
+        has_pending = False
+        for bid in book_ids:
+            targets = book_targets_map[bid]
+            cleaned = repo.cleanup_book_files(bid, targets, storage)
+            if cleaned:
+                completed_count += 1
+                result_items.append({"book_id": bid, "status": "deleted", "error_code": None})
+            else:
+                has_pending = True
+                result_items.append({"book_id": bid, "status": "cleanup_pending", "error_code": None})
+
+        if not has_pending:
+            return {
+                "requested_count": len(book_ids),
+                "completed_count": completed_count,
+                "items": result_items,
+            }, None
+
+        return None, {
+            "code": "BOOK_DELETE_BATCH_CLEANUP_PENDING",
+            "category": "internal",
+            "retryable": True,
+            "details": {
+                "phase": "cleanup",
+                "requested_count": len(book_ids),
+                "completed_count": completed_count,
+                "items": result_items,
+            },
         }
 
     def _fetch_page_counts(self) -> dict[str, int]:
@@ -2723,6 +2848,34 @@ class CoreServiceServer:
                 "error": error,
             }, False)
 
+        elif command in _DELETE_COMMANDS:
+            result = None
+            error = None
+            if protocol != PROTOCOL_NAME or not is_valid_version:
+                error = {
+                    "code": "PROTOCOL_VERSION_UNSUPPORTED",
+                    "category": "validation",
+                    "retryable": False,
+                }
+            elif type(version.get("minor")) is not int or version["minor"] != _DELETE_PROTOCOL_MINOR:
+                error = {
+                    "code": "INVALID_REQUEST",
+                    "category": "validation",
+                    "retryable": False,
+                }
+            else:
+                if command == "PermanentlyDeleteBook":
+                    result, error = self.handle_permanently_delete_book(raw_payload)
+                else:
+                    result, error = self.handle_permanently_delete_books(raw_payload)
+            return ({
+                "protocol": PROTOCOL_NAME,
+                "version": {"major": PROTOCOL_MAJOR, "minor": _DELETE_PROTOCOL_MINOR},
+                "request_id": request_id if isinstance(request_id, str) else None,
+                "result": result,
+                "error": error,
+            }, False)
+
         if protocol != PROTOCOL_NAME or not is_valid_version:
             return (
                 {
@@ -3416,6 +3569,8 @@ class CoreServiceServer:
         response, should_exit = self._dispatch_request(raw_line)
         if command in _CREATE_COMMANDS:
             response_minor = _CREATE_PROTOCOL_MINOR
+        elif command in _DELETE_COMMANDS:
+            response_minor = _DELETE_PROTOCOL_MINOR
         elif command in _P15_SETTINGS_COMMANDS or requested_minor == _P15_PROTOCOL_MINOR:
             response_minor = _P15_PROTOCOL_MINOR
         else:

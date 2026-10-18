@@ -11,7 +11,7 @@ base：`d7fe920272d48eb4761347a5e18789dcbbdd05d6`
 |---|---|---|
 | AC1 | `完成` | 生产 Core 装配真实导入 17×23 PNG，断言 Page 尺寸、source filename/order/sort order/hash、Managed Original 与源字节一致；用例 1 passed。见 `logs/29-ac1-production-core-decoder.txt`。 |
 | AC2 | `完成` | 受控来源测试覆盖显式选择、目录一级枚举、相对路径、`..`、盘符逃逸、symlink、junction、无副作用；追加来源被换成 symlink 的读取竞态验证，9 passed，0 skipped。见 `logs/40-path-replacement-race.txt`。 |
-| AC3 | `BLOCKED` | 导入/隐藏/页面软删除/页面永久清理，以及实际 `TRANSLATE_ALL`、`REINPAINT_REGION`、`RERENDER_SINGLE` 后源 hash 全相等。项目级永久删除未实现：`LibraryService.delete_book` 只软删除；`TrashService.purge_batch` 只清理 Page 和 Managed Assets。不得把 Page purge 冒称项目永久删除。完整 hash 矩阵及代码定位见 `evidence/AC3-source-hashes.json`、`evidence/AC3-project-permanent-delete-availability.txt`，流程日志 `logs/37-ac3-workflow-source-hashes-final.txt`。 |
+| AC3 | `完成` | 导入/隐藏/页面软删除/页面永久清理，以及实际 `TRANSLATE_ALL`、`REINPAINT_REGION`、`RERENDER_SINGLE`、单条项目级永久删除与批量永久删除后源 hash 全相等。项目级永久删除由 Task `P09-AC3-DELETE-1` 完整实现与闭环验收（Core protocol 2.10），磁盘源文件 hash 100% 零修改。完整 hash 矩阵见 `evidence/AC3-source-hashes.json`，结构化证据见 `verification/P09-AC3-DELETE-1/evidence/p09_ac3_delete_evidence.json`。 |
 | AC4 | `完成` | Managed publish 半截写入故障、Page SQLite 插入故障均在真实生产 Core/SQLite/Managed Storage seam 注入；未产生 DB Page 指向缺失或半截 Original。见 `logs/35-p09-safety-gates-py312.txt`。 |
 | AC5 | `完成` | 中文、日本語、한국어、Emoji、空格、括号路径通过 Core 导入与持久化。见 `test_unicode_folder_paths_import_all_supported_name_categories` 与 `logs/35-p09-safety-gates-py312.txt`。 |
 | AC6 | `完成` | 同哈希不同文件名默认跳过；显式 `IMPORT_AS_NEW` 创建不同 Page 与 Managed Original，不静默覆盖。策略见 `doc/contracts/P09_IMPORT_CONTRACT.md`；运行见 `logs/35-p09-safety-gates-py312.txt`。 |
@@ -31,5 +31,6 @@ base：`d7fe920272d48eb4761347a5e18789dcbbdd05d6`
 - 实现 head：`87179691cbab8b97d30282c0d8d0b20d9d81122c`；Handoff 固定在 `doc/handoffs/P09-codex-87179691.md`。
 - Review：旧 head `8ab617f` 的 `changes_requested` 两项已修订；修订 head 复审完成且无 open implementation finding。Coordinator 集成：`NOT_RUN`。
 - Coordinator 集成：`NOT_RUN`；本 Task 不执行 merge/push。
-- AC3 阻塞：需要一个获授权、能协调 Page/Book 数据与 Managed Assets 的项目级永久删除操作，之后在隔离目录重跑源 hash 检查。
-- 暂不建议释放 P12，因为 P09 AC3 尚有阻塞，P12 依赖 P09。
+- AC3 阻塞解除：由 Task P09-AC3-DELETE-1 实现 Core protocol 2.10 项目级永久删除命令（PermanentlyDeleteBook / PermanentlyDeleteBooks），在完整生命周期各阶段（含永久删除后）断言磁盘源文件 SHA-256 零修改，证据见 verification/P09-AC3-DELETE-1/evidence/p09_ac3_delete_evidence.json 与 verification/P09/evidence/AC3-source-hashes.json。
+- P09 AC3 状态已翻转为完成。
+

@@ -488,7 +488,8 @@ def test_reader_heartbeat_stops_after_store_tear_down(qapp, tmp_path):
     from infrastructure.sqlite.schema import SCHEMA_VERSION_V4, default_migrations
 
     conn, _opened = open_database(
-        tmp_path / "library.db", latest_known_schema_version=SCHEMA_VERSION_V4
+        tmp_path / "library.db",
+        latest_known_schema_version=default_migrations()[-1].schema_version,
     )
     MigrationRunner(conn, default_migrations()).apply_pending()
     reading = ReadingService(SqliteReadingProgressStore(conn))

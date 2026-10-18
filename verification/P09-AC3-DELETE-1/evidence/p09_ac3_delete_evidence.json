@@ -1,0 +1,91 @@
+{
+  "task": "P09-AC3-DELETE-1",
+  "protocol_version": {
+    "major": 2,
+    "minor": 10
+  },
+  "status": "PASS",
+  "verified_at": "2026-10-18T06:03:50Z",
+  "ac_results": {
+    "AC1": {
+      "status": "PASS",
+      "summary": "Core protocol 2.10 and M2-C1 §5.11 frozen contract"
+    },
+    "AC2": {
+      "status": "PASS",
+      "summary": "Single & batch permanent delete removes SQLite content rows & recycles managed/derived assets"
+    },
+    "AC3": {
+      "status": "PASS",
+      "summary": "Source files on disk preserved with 100% byte & SHA-256 equality across all lifecycle stages",
+      "sample1": {
+        "source": "verification/P09/evidence/AC3-source.png",
+        "bytes": 69,
+        "sha256": "36452bb8d135ac96f1c453e11c23689d5917a2f0db42d154aca02722507153d7",
+        "stages_verified": [
+          "1_initial_on_disk",
+          "2_after_import",
+          "3_after_book_soft_delete",
+          "4_after_page_soft_delete",
+          "5_after_page_purge",
+          "6_before_permanent_delete",
+          "7_after_permanently_delete_book"
+        ]
+      },
+      "sample2": {
+        "source": "verification/P09/evidence/AC3-workflow-source.png",
+        "bytes": 96,
+        "sha256": "ee5f4ae0aae66a3d9ad8166933132bf2fad25da6220d8f02127f69546b5a4795",
+        "stages_verified": [
+          "1_initial_on_disk",
+          "2_after_import",
+          "3_after_TRANSLATE_ALL",
+          "4_after_REINPAINT_REGION",
+          "5_after_RERENDER_SINGLE",
+          "6_before_permanent_delete",
+          "7_after_permanently_delete_books"
+        ]
+      }
+    },
+    "AC4": {
+      "status": "PASS",
+      "summary": "Zero residual content rows, pipeline & export history detached with book title snapshots, zero orphan files",
+      "pipeline_runs_retained": 3,
+      "pipeline_tasks_retained": 3,
+      "step_runs_retained": 10,
+      "export_history_retained": 1,
+      "foreign_key_violations": 0
+    },
+    "AC5": {
+      "status": "PASS",
+      "summary": "All 10 misdelete protection scenarios rejected fail-closed with zero side-effects",
+      "scenarios": [
+        "missing_confirm_permanent_delete",
+        "confirm_permanent_delete_false",
+        "confirmed_book_ids_mismatch",
+        "confirm_count_mismatch",
+        "batch_limit_exceeded_21",
+        "duplicate_book_id",
+        "batch_whole_library",
+        "book_not_found_preflight",
+        "busy_book_preflight",
+        "busy_book_single"
+      ]
+    },
+    "AC6": {
+      "status": "PASS",
+      "summary": "P09 evidence backfilled and AC3 flipped to PASS"
+    },
+    "AC7": {
+      "status": "PASS",
+      "summary": "P09 workflow non-regression (import, soft delete, purge, translate, repair, rerender)"
+    }
+  },
+  "appdata_protection": {
+    "path": "C:\\Users\\49745\\AppData\\Roaming\\com.newmanga.m2rc1.desktop",
+    "files": 24,
+    "bytes": 1768641,
+    "tree_sha256": "7136daeb82e32c3e08b3411fa3c9ebc1cba57448d33570bec21ce8d0e64307af",
+    "unchanged": true
+  }
+}

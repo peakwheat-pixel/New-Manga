@@ -140,6 +140,7 @@ class MigrationRunner:
 
     def _apply_one(self, migration: Migration) -> None:
         conn = self._conn
+        conn.execute("PRAGMA foreign_keys = OFF")
         conn.execute("BEGIN IMMEDIATE")
         try:
             for statement in self._split_statements(migration.sql):
@@ -165,3 +166,5 @@ class MigrationRunner:
         except sqlite3.Error:
             conn.rollback()
             raise
+        finally:
+            conn.execute("PRAGMA foreign_keys = ON")

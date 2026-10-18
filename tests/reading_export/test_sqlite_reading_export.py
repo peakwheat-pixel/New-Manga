@@ -73,9 +73,11 @@ from reading_export_helpers import make_pages, to_export_pages
 
 @pytest.fixture
 def fresh_db(tmp_path: Path) -> sqlite3.Connection:
-    """A fresh SQLite database migrated to schema v4."""
+    """A fresh SQLite database migrated to latest schema."""
     db_path = tmp_path / "test.db"
-    conn, opened = open_database(db_path, latest_known_schema_version=SCHEMA_VERSION_V4)
+    conn, opened = open_database(
+        db_path, latest_known_schema_version=default_migrations()[-1].schema_version
+    )
     runner = MigrationRunner(conn, default_migrations())
     runner.apply_pending()
     yield conn
@@ -102,7 +104,8 @@ def v3_db(tmp_path: Path) -> sqlite3.Connection:
 class TestAC1SchemaMigration:
     def test_empty_database_migrates_to_v4(self, fresh_db: sqlite3.Connection) -> None:
         version = read_schema_version(fresh_db)
-        assert version == SCHEMA_VERSION_V4 == 4
+        assert version == default_migrations()[-1].schema_version
+        assert version >= SCHEMA_VERSION_V4
 
         # Verify reading_progress table schema
         cursor = fresh_db.execute("PRAGMA table_info(reading_progress)")
@@ -136,7 +139,8 @@ class TestAC1SchemaMigration:
         assert len(v3_rows) == 3
 
         # Apply v4 migration
-        runner = MigrationRunner(v3_db, default_migrations())
+        v4_migrations = [m for m in default_migrations() if m.schema_version <= SCHEMA_VERSION_V4]
+        runner = MigrationRunner(v3_db, v4_migrations)
         pending = runner.pending_migrations()
         assert len(pending) == 1
         assert pending[0].schema_version == SCHEMA_VERSION_V4
@@ -680,7 +684,9 @@ class TestAC5BootstrapWiring:
         services.reading.close()
 
         # Check SQLite updated
-        conn, _ = open_database(db_path, latest_known_schema_version=SCHEMA_VERSION_V4)
+        conn, _ = open_database(
+            db_path, latest_known_schema_version=default_migrations()[-1].schema_version
+        )
         row = conn.execute(
             "SELECT last_page_id FROM reading_progress WHERE book_id = 'b-init'"
         ).fetchone()

@@ -271,16 +271,20 @@ def test_fixture_populates_every_table_that_references_pages(purge_world) -> Non
     referenced = _tables_referencing(conn, "pages")
     assert {table for table, _ in referenced} == {
         "media_artifacts",
+        "regions",
+    }
+    all_dependent_tables = [
+        "media_artifacts",
+        "regions",
         "pipeline_run_targets",
         "pipeline_tasks",
-        "regions",
-        "step_result_candidates",
         "step_runs",
-    }
+        "step_result_candidates",
+    ]
     populated = {}
-    for table, column in referenced:
+    for table in all_dependent_tables:
         populated[table] = conn.execute(
-            f'SELECT COUNT(*) FROM "{table}" WHERE "{column}" = ?', (page["page_id"],)
+            f'SELECT COUNT(*) FROM "{table}" WHERE page_id = ?', (page["page_id"],)
         ).fetchone()[0]
     assert all(count > 0 for count in populated.values()), populated
     assert conn.execute("SELECT COUNT(*) FROM artifact_revisions").fetchone()[0] == 2

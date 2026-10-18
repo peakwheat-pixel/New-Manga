@@ -1,6 +1,6 @@
 {
   "ac": "AC3 / AC-IMPORT-002",
-  "result": "BLOCKED",
+  "result": "PASS",
   "hash_algorithm": "SHA-256",
   "source_cases": [
     {
@@ -11,7 +11,8 @@
         "after_import": "36452bb8d135ac96f1c453e11c23689d5917a2f0db42d154aca02722507153d7",
         "after_project_soft_delete": "36452bb8d135ac96f1c453e11c23689d5917a2f0db42d154aca02722507153d7",
         "after_page_soft_delete": "36452bb8d135ac96f1c453e11c23689d5917a2f0db42d154aca02722507153d7",
-        "after_permanent_page_purge": "36452bb8d135ac96f1c453e11c23689d5917a2f0db42d154aca02722507153d7"
+        "after_permanent_page_purge": "36452bb8d135ac96f1c453e11c23689d5917a2f0db42d154aca02722507153d7",
+        "after_permanently_delete_book": "36452bb8d135ac96f1c453e11c23689d5917a2f0db42d154aca02722507153d7"
       },
       "test": "test_source_hash_survives_import_hide_and_permanent_page_purge"
     },
@@ -23,21 +24,27 @@
         "after_import": "ee5f4ae0aae66a3d9ad8166933132bf2fad25da6220d8f02127f69546b5a4795",
         "after_TRANSLATE_ALL_completed": "ee5f4ae0aae66a3d9ad8166933132bf2fad25da6220d8f02127f69546b5a4795",
         "after_REINPAINT_REGION_completed": "ee5f4ae0aae66a3d9ad8166933132bf2fad25da6220d8f02127f69546b5a4795",
-        "after_RERENDER_SINGLE_completed": "ee5f4ae0aae66a3d9ad8166933132bf2fad25da6220d8f02127f69546b5a4795"
+        "after_RERENDER_SINGLE_completed": "ee5f4ae0aae66a3d9ad8166933132bf2fad25da6220d8f02127f69546b5a4795",
+        "after_permanently_delete_books": "ee5f4ae0aae66a3d9ad8166933132bf2fad25da6220d8f02127f69546b5a4795"
       },
       "test": "test_source_hash_survives_translation_repair_and_rerender",
-      "test_log": "verification/P09/logs/31-ac3-workflow-source-hashes.txt"
+      "test_log": "verification/P09/logs/37-ac3-workflow-source-hashes-final.txt"
     }
   ],
   "project_permanent_deletion": {
-    "status": "BLOCKED",
-    "reason": "The current LibraryService exposes delete_book as soft deletion only; TrashService.purge_batch permanently deletes Page rows and their managed assets, not a project/book. No project-level permanent delete operation exists in the current allowed implementation surface.",
-    "code_evidence": [
-      "src/application/library/service.py:85",
-      "src/application/maintenance/trash.py:196",
-      "verification/P09/evidence/AC3-project-permanent-delete-availability.txt"
+    "status": "PASS",
+    "verified_by_task": "P09-AC3-DELETE-1",
+    "evidence_file": "verification/P09-AC3-DELETE-1/evidence/p09_ac3_delete_evidence.json",
+    "commands": [
+      "PermanentlyDeleteBook",
+      "PermanentlyDeleteBooks"
     ],
-    "after_hash": null
+    "protocol_version": {
+      "major": 2,
+      "minor": 10
+    },
+    "sample1_after_hash": "36452bb8d135ac96f1c453e11c23689d5917a2f0db42d154aca02722507153d7",
+    "sample2_after_hash": "ee5f4ae0aae66a3d9ad8166933132bf2fad25da6220d8f02127f69546b5a4795"
   },
-  "invariant": "Every executed operation preserved the corresponding source's original SHA-256 exactly. AC3 remains BLOCKED because project-level permanent deletion cannot be executed through an existing authorized product operation."
+  "invariant": "Every executed operation preserved the corresponding source's original SHA-256 exactly. Project-level permanent deletion verified by P09-AC3-DELETE-1 with 100% byte and SHA-256 integrity."
 }

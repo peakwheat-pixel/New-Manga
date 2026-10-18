@@ -143,7 +143,9 @@ def test_assemble_services_injects_and_exports_diagnostics(
             "recent_errors",
             "settings_summary",
         }
-        assert payload["database"]["schema_version"] == "4"
+        assert payload["database"]["schema_version"] == str(
+            default_migrations()[-1].schema_version
+        )
         assert payload["environment_paths"]["data_root"] == str(tmp_path)
         assert payload["environment_paths"]["managed_root"] == str(
             tmp_path / "managed"

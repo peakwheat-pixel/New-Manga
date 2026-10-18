@@ -25,6 +25,7 @@ SCHEMA_VERSION_V1 = 1
 SCHEMA_VERSION_V2 = 2
 SCHEMA_VERSION_V3 = 3
 SCHEMA_VERSION_V4 = 4
+SCHEMA_VERSION_V5 = 5
 
 MIGRATION_V1_NAME = "v1__storage_base"
 
@@ -452,6 +453,96 @@ CREATE INDEX idx_export_history_created_at ON export_history(created_at DESC);
 CREATE INDEX idx_export_history_book ON export_history(book_id, chapter_id);
 """
 
+MIGRATION_V5_NAME = "v5__detach_pipeline_history"
+
+MIGRATION_V5_SQL = """
+-- P09-AC3-DELETE-1: Detach pipeline history foreign keys from pages so that
+-- deleting books/pages retains all pipeline run, task, and step history without FK failure.
+CREATE TABLE pipeline_run_targets_v5 (
+    run_target_id TEXT PRIMARY KEY CHECK (length(run_target_id) > 0),
+    pipeline_run_id TEXT NOT NULL REFERENCES pipeline_runs(run_id) ON DELETE CASCADE,
+    target_id TEXT NOT NULL,
+    target_type TEXT NOT NULL CHECK (target_type IN ('page', 'region')),
+    page_id TEXT NOT NULL,
+    region_id TEXT,
+    target_order INTEGER NOT NULL CHECK (target_order >= 0),
+    snapshot_json TEXT NOT NULL CHECK (length(snapshot_json) > 0),
+    UNIQUE (pipeline_run_id, target_order),
+    UNIQUE (pipeline_run_id, target_id)
+);
+INSERT INTO pipeline_run_targets_v5 SELECT * FROM pipeline_run_targets;
+DROP TABLE pipeline_run_targets;
+ALTER TABLE pipeline_run_targets_v5 RENAME TO pipeline_run_targets;
+CREATE INDEX idx_pipeline_run_targets_page ON pipeline_run_targets(page_id);
+
+CREATE TABLE pipeline_tasks_v5 (
+    task_id TEXT PRIMARY KEY CHECK (length(task_id) > 0),
+    pipeline_run_id TEXT NOT NULL REFERENCES pipeline_runs(run_id) ON DELETE CASCADE,
+    run_target_id TEXT NOT NULL REFERENCES pipeline_run_targets(run_target_id) ON DELETE CASCADE,
+    target_id TEXT NOT NULL,
+    target_type TEXT NOT NULL CHECK (target_type IN ('page', 'region')),
+    page_id TEXT NOT NULL,
+    region_id TEXT,
+    status TEXT NOT NULL,
+    units_json TEXT NOT NULL,
+    step_run_ids_json TEXT NOT NULL,
+    error_code TEXT,
+    error_detail TEXT
+);
+INSERT INTO pipeline_tasks_v5 SELECT * FROM pipeline_tasks;
+DROP TABLE pipeline_tasks;
+ALTER TABLE pipeline_tasks_v5 RENAME TO pipeline_tasks;
+CREATE INDEX idx_pipeline_tasks_run ON pipeline_tasks(pipeline_run_id);
+
+CREATE TABLE step_runs_v5 (
+    step_run_id TEXT PRIMARY KEY CHECK (length(step_run_id) > 0),
+    pipeline_run_id TEXT NOT NULL REFERENCES pipeline_runs(run_id) ON DELETE CASCADE,
+    task_id TEXT NOT NULL REFERENCES pipeline_tasks(task_id) ON DELETE CASCADE,
+    target_id TEXT NOT NULL,
+    page_id TEXT NOT NULL,
+    region_id TEXT,
+    step_type TEXT NOT NULL,
+    unit_id TEXT NOT NULL,
+    status TEXT NOT NULL,
+    input_refs_json TEXT NOT NULL,
+    lock_snapshot_json TEXT NOT NULL,
+    retry_no INTEGER NOT NULL DEFAULT 0 CHECK (retry_no >= 0),
+    error_code TEXT,
+    error_detail TEXT,
+    output_json TEXT NOT NULL
+);
+INSERT INTO step_runs_v5 SELECT * FROM step_runs;
+DROP TABLE step_runs;
+ALTER TABLE step_runs_v5 RENAME TO step_runs;
+CREATE INDEX idx_step_runs_run ON step_runs(pipeline_run_id);
+
+CREATE TABLE step_result_candidates_v5 (
+    candidate_id TEXT PRIMARY KEY CHECK (length(candidate_id) > 0),
+    pipeline_run_id TEXT NOT NULL REFERENCES pipeline_runs(run_id) ON DELETE CASCADE,
+    step_run_id TEXT NOT NULL REFERENCES step_runs(step_run_id) ON DELETE CASCADE,
+    target_id TEXT NOT NULL,
+    page_id TEXT NOT NULL,
+    region_id TEXT,
+    result_kind TEXT NOT NULL,
+    base_revision_id TEXT,
+    payload_json TEXT NOT NULL,
+    reason TEXT NOT NULL,
+    status TEXT NOT NULL,
+    created_at TEXT NOT NULL,
+    resolved_at TEXT
+);
+INSERT INTO step_result_candidates_v5 SELECT * FROM step_result_candidates;
+DROP TABLE step_result_candidates;
+ALTER TABLE step_result_candidates_v5 RENAME TO step_result_candidates;
+CREATE INDEX idx_step_result_candidates_run ON step_result_candidates(pipeline_run_id);
+
+CREATE TABLE book_cleanup_manifests (
+    book_id TEXT PRIMARY KEY CHECK (length(book_id) > 0),
+    targets_json TEXT NOT NULL,
+    created_at TEXT NOT NULL
+);
+"""
+
 
 @dataclass(frozen=True)
 class Migration:
@@ -470,4 +561,5 @@ def default_migrations() -> tuple[Migration, ...]:
         Migration(SCHEMA_VERSION_V2, MIGRATION_V2_NAME, MIGRATION_V2_SQL),
         Migration(SCHEMA_VERSION_V3, MIGRATION_V3_NAME, MIGRATION_V3_SQL),
         Migration(SCHEMA_VERSION_V4, MIGRATION_V4_NAME, MIGRATION_V4_SQL),
+        Migration(SCHEMA_VERSION_V5, MIGRATION_V5_NAME, MIGRATION_V5_SQL),
     )

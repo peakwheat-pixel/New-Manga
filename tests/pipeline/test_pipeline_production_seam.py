@@ -38,7 +38,10 @@ NOW = "2026-09-16T00:00:00+00:00"
 
 @pytest.fixture()
 def production_db(tmp_path: Path):
-    conn, _ = open_database(tmp_path / "app.db", latest_known_schema_version=3)
+    conn, _ = open_database(
+        tmp_path / "app.db",
+        latest_known_schema_version=default_migrations()[-1].schema_version,
+    )
     MigrationRunner(conn, default_migrations()).apply_pending()
     now = "2026-09-16T00:00:00+00:00"
     with conn:

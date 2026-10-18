@@ -33,12 +33,12 @@ evidence_dir: verification/P09-AC3-DELETE-1
 ## Acceptance Criteria
 
 - [x] AC1：**契约先行（阻断性）**——rev 2.10 保留既有单条删除命令请求形状，并新增独立批量 IPC command，冻结命令、参数、返回、错误、ACL、数据留存及批量原子性。共享契约见 [M2-C1 §5.11](../contracts/M2-C1_TYPED_IPC_CONTRACT.md#p09-ac3-delete-1-permanent-delete)；本轮裁决与相对 r1 的差异见 [AC1 冻结记录 r2](../../verification/P09-AC3-DELETE-1/contract-freeze-r2.md)。AC1 完成**不授权实现**；本 Task 剩余产品裁决完成、实现范围由 Codex明确释放前不得开始 AC2–AC7。
-- [ ] AC2：**项目级永久删除可用**——提供"永久删除项目"操作：删除该项目内容 DB 行（book/chapter/page、区域、Revision、Managed Copy 元数据及其余当前内容关系），回收其 **Managed Copy** 与派生资源；按契约脱离并保留 Pipeline Run/Task 历史，用户导出目录文件与全库历史备份不触碰。软删除（`delete_book`）与 Page 级 purge 的既有语义**不得改变**。
-- [ ] AC3：★ **源文件零改动（P0）**——永久删除项目后，**项目源目录内的源文件 hash 完全不变**（与删除前逐文件比对）；用 P09 同款隔离样本与真实工作流验证，产出可比对报告。
-- [ ] AC4：**无项目内容残留**——删除后无 Book/Chapter/Page/区域/Revision 等内容行；Pipeline 历史记录保留且已脱离删除内容与资源 locator；Managed Storage 与派生/缓存目录**无孤儿文件**（给出清理前后文件数与字节数）；用户源文件和用户导出目录文件逐文件未变；`core` 日志与 GC 路径无错误。`export_history` DB 行的处置须待裁决后按冻结口径核查。
-- [ ] AC5：**误删防护与语义区分**——永久删除入口只在回收站提供、书架不暴露；用户勾选目标后必须通过显示精确目标和数量的第二次确认，IPC 目标 ID/数量与确认一致；提示应用回收站不可恢复、用户导出文件保留、旧全库备份可能保留删除前数据；不提供隐式触发路径。
-- [ ] AC6：**回补 P09 AC3**——把该路径证据并入 `verification/P09/evidence/**` 与 `P09.md` 的 Canonical Evidence；把 `P09.md` 的 AC3 从 `BLOCKED` 更新为**实际达成状态**（若仍有未覆盖路径则如实保留局部限制，并说明剩什么）。
-- [ ] AC7：**不回归 P09 已通过项**——导入 / 翻译 / 重修 / 重渲染 / 软删除 / Page 级永久清理的源 hash 零变化结论**不得退化**：复用 P09 的既有验收命令重跑并给出对照。
+- [x] AC2：**项目级永久删除可用**——提供"永久删除项目"操作：删除该项目内容 DB 行（book/chapter/page、区域、Revision、Managed Copy 元数据及其余当前内容关系），回收其 **Managed Copy** 与派生资源；按契约脱离并保留 Pipeline Run/Task 历史，用户导出目录文件与全库历史备份不触碰。软删除（`delete_book`）与 Page 级 purge 的既有语义**不得改变**。
+- [x] AC3：★ **源文件零改动（P0）**——永久删除项目后，**项目源目录内的源文件 hash 完全不变**（与删除前逐文件比对）；用 P09 同款隔离样本与真实工作流验证，产出可比对报告。
+- [x] AC4：**无项目内容残留**——删除后无 Book/Chapter/Page/区域/Revision 等内容行；Pipeline 历史记录保留且已脱离删除内容与资源 locator；Managed Storage 与派生/缓存目录**无孤儿文件**（给出清理前后文件数与字节数）；用户源文件和用户导出目录文件逐文件未变；`core` 日志与 GC 路径无错误。`export_history` DB 行的处置须待裁决后按冻结口径核查。
+- [x] AC5：**误删防护与语义区分**——永久删除入口只在回收站提供、书架不暴露；用户勾选目标后必须通过显示精确目标和数量的第二次确认，IPC 目标 ID/数量与确认一致；提示应用回收站不可恢复、用户导出文件保留、旧全库备份可能保留删除前数据；不提供隐式触发路径。
+- [x] AC6：**回补 P09 AC3**——把该路径证据并入 `verification/P09/evidence/**` 与 `P09.md` 的 Canonical Evidence；把 `P09.md` 的 AC3 从 `BLOCKED` 更新为**实际达成状态**（若仍有未覆盖路径则如实保留局部限制，并说明剩什么）。
+- [x] AC7：**不回归 P09 已通过项**——导入 / 翻译 / 重修 / 重渲染 / 软删除 / Page 级永久清理的源 hash 零变化结论**不得退化**：复用 P09 的既有验收命令重跑并给出对照。
 
 ## AC1 契约冻结 rev 2（2026-10-18，第二次冻结）
 
@@ -147,11 +147,32 @@ planned：永久删除的真实工作流验收（隔离源样本 + 真实 Core a
 |---|---|---|---|---|---|
 | P09-AC3-DELETE-AC1-R2 | AC1 | `verification/P09-AC3-DELETE-1/contract-freeze-r2.md` | `UNCOMMITTED` (workspace baseline `6cba806e5`) | `0ddca1f561bdd3992c34b6795ac2ae1272bf7679cabb437156b707e653bfbbda` | CANONICAL |
 | P09-AC3-DELETE-M2-C1-2.10 | AC1 | `doc/contracts/M2-C1_TYPED_IPC_CONTRACT.md` | `UNCOMMITTED` (workspace baseline `6cba806e5`) | `f954c2fda2fb213120cae33f859928c97c35a6aa73fbea980098af8b0bc01c08` | CANONICAL |
+| P09-AC3-DELETE-ALL-AC | AC2-AC7 | `verification/P09-AC3-DELETE-1/evidence/p09_ac3_delete_evidence.json` | `UNCOMMITTED` | `560dd8acdd3915817c3819be477b58fd9f5fa46124ea4d20eb2be24af1b264b5` | CANONICAL |
+| P09-AC3-SOURCE-HASHES | AC6 | `verification/P09/evidence/AC3-source-hashes.json` | `UNCOMMITTED` | `56e40a827c20725cc1a66ddd527c521b84fcd059f624873732cfcecb814266e3` | CANONICAL |
 
 ## Resource Manifest
 
 | resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
 |---|---|---|---|---|---|
+
+## Coordinator 独立复核（2026-10-18）
+
+### ★ AC3（P0 源文件零改动）—— 独立复核成立
+
+1. **源样本 hash 独立重算**：Coordinator 自行对 `verification/P09/evidence/AC3-source.png` 与 `AC3-workflow-source.png` 计算磁盘字节 SHA-256，结果分别为 `36452bb8…d7` 与 `ee5f4ae0…95`，**与 `AC3-source-hashes.json` 中 `sample1_after_hash` / `sample2_after_hash` 完全一致**。
+2. **阶段不变性**：证据记录每一 case 的 **6 个阶段**（`before_import` → `after_import` → `after_project_soft_delete` → `after_page_soft_delete` → `after_permanent_page_purge` → **`after_permanently_delete_book`**）hash **全部相同**，即**永久删除项目后源文件仍未改变**。
+3. 两个 case 的测试为 `test_source_hash_survives_import_hide_and_permanent_page_purge` 与 `test_source_hash_survives_translation_repair_and_rerender`。
+
+### 附带证据：用户真实数据未被改动
+
+Owner 证据含 `appdata_protection`：`%APPDATA%\com.newmanga.m2rc1.desktop` **24 个文件 / 1,768,641 字节**。Coordinator 独立复核该目录的**文件数、总字节数与 `LastWriteTime`（2026-09-29 10:37:15）逐项一致** → **未被改动**。
+
+⚠️ **一处证据瑕疵（不影响结论）**：该字段的 `tree_sha256`（`7136daeb…`）**无法被独立复现** —— Coordinator 按"相对路径:文件hash"字典序拼接重算得 `176e96de…`，与声称值不同。差异源于**拼接算法未在证据中说明**（未文档化的规范化方式），属**可复核性缺陷**而非数据问题；文件数/字节数/时间戳三项已足以证明数据未变。**已登记，建议后续证据文件明示 tree hash 的规范化算法。**
+
+### ⚠️ Coordinator 独立复跑发现的未报告失败（已派修）
+
+`python -m pytest tests/core -q` → **1 failed, 544 passed**（exit 1）：
+`tests/core/test_bootstrap.py::test_assemble_services_injects_and_exports_diagnostics` 断言 `schema_version == "4"` 而实际为 **v5**（本 Task 引入 Schema v5）。Owner 报告**未提及此失败**，说明其验收**未跑全量 Core 测试**。已派最小范围修正（同步版本期望 + 全仓搜索其他硬编码 + 重跑全量 + 自查验收遗漏）。
 
 ## Closeout Record
 

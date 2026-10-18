@@ -48,6 +48,8 @@ use core_bridge::{CoreChannel, CoreError, StdioCoreChannel};
 use library_bridge::{
     BookSummary, ChapterNavSummary, ExportHistoryResponseView, ExportProgressSnapshotView,
     LibraryChannel, LibraryError, LibrarySpawnConfig, P15CredentialTarget, P15SettingsCommand,
+    PermanentlyDeleteBookErrorView, PermanentlyDeleteBookPayload, PermanentlyDeleteBookResult,
+    PermanentlyDeleteBooksErrorView, PermanentlyDeleteBooksPayload, PermanentlyDeleteBooksResult,
     PingResult, ResilientLibraryChannel, StdioLibraryChannel, P15_HOST_ONLY_COMMANDS,
 };
 use resource_protocol::ScopeRoots;
@@ -132,6 +134,9 @@ pub const PRODUCTION_COMMANDS: &[&str] = &[
     "library_cancel_export",
     "library_get_export_snapshot",
     "library_get_export_history",
+    // P09-AC3-DELETE-1: production-only project-level permanent deletion commands
+    "library_delete_book_permanently",
+    "library_delete_books_permanently",
 ];
 
 /// Commands that exist ONLY in probe mode (`M2RC1_PROBE_OUT` set by the
@@ -254,6 +259,11 @@ pub const EXPORT_PRODUCTION_ONLY_COMMANDS: &[&str] = &[
 
 pub const CREATE_PRODUCTION_ONLY_COMMANDS: &[&str] = &["library_create_book", "create_chapter"];
 
+pub const DELETE_PRODUCTION_ONLY_COMMANDS: &[&str] = &[
+    "library_delete_book_permanently",
+    "library_delete_books_permanently",
+];
+
 pub fn command_allowlist(probe_mode: bool, ac1_mode: bool) -> Vec<&'static str> {
     let mut commands: Vec<&'static str> = if probe_mode || ac1_mode {
         PRODUCTION_COMMANDS
@@ -273,6 +283,7 @@ pub fn command_allowlist(probe_mode: bool, ac1_mode: bool) -> Vec<&'static str> 
                     && !EXPORT_REVEAL_PRODUCTION_ONLY_COMMANDS.contains(command)
                     && !EXPORT_PRODUCTION_ONLY_COMMANDS.contains(command)
                     && !CREATE_PRODUCTION_ONLY_COMMANDS.contains(command)
+                    && !DELETE_PRODUCTION_ONLY_COMMANDS.contains(command)
             })
             .collect()
     } else {
@@ -854,6 +865,48 @@ fn library_get_export_history(
         .ok_or_else(|| "CORE_UNAVAILABLE".to_string())?
         .get_export_history()
         .map_err(|error| error.code)
+}
+
+fn parse_delete_book_payload(
+    value: Option<serde_json::Value>,
+) -> Result<PermanentlyDeleteBookPayload, PermanentlyDeleteBookErrorView> {
+    serde_json::from_value(value.ok_or_else(PermanentlyDeleteBookErrorView::invalid_request)?)
+        .map_err(|_| PermanentlyDeleteBookErrorView::invalid_request())
+}
+
+fn parse_delete_books_payload(
+    value: Option<serde_json::Value>,
+) -> Result<PermanentlyDeleteBooksPayload, PermanentlyDeleteBooksErrorView> {
+    serde_json::from_value(value.ok_or_else(PermanentlyDeleteBooksErrorView::invalid_request)?)
+        .map_err(|_| PermanentlyDeleteBooksErrorView::invalid_request())
+}
+
+#[tauri::command]
+fn library_delete_book_permanently(
+    state: tauri::State<'_, AppState>,
+    payload: Option<serde_json::Value>,
+) -> Result<PermanentlyDeleteBookResult, PermanentlyDeleteBookErrorView> {
+    let payload = parse_delete_book_payload(payload)?;
+    state
+        .library
+        .as_ref()
+        .ok_or_else(PermanentlyDeleteBookErrorView::unavailable)?
+        .permanently_delete_book(payload)
+        .map_err(PermanentlyDeleteBookErrorView::from_core)
+}
+
+#[tauri::command]
+fn library_delete_books_permanently(
+    state: tauri::State<'_, AppState>,
+    payload: Option<serde_json::Value>,
+) -> Result<PermanentlyDeleteBooksResult, PermanentlyDeleteBooksErrorView> {
+    let payload = parse_delete_books_payload(payload)?;
+    state
+        .library
+        .as_ref()
+        .ok_or_else(PermanentlyDeleteBooksErrorView::unavailable)?
+        .permanently_delete_books(payload)
+        .map_err(PermanentlyDeleteBooksErrorView::from_core)
 }
 
 #[tauri::command]
@@ -1571,7 +1624,9 @@ fn main() {
             library_reveal_export_folder,
             library_cancel_export,
             library_get_export_snapshot,
-            library_get_export_history
+            library_get_export_history,
+            library_delete_book_permanently,
+            library_delete_books_permanently
         ])
     };
 
@@ -1769,6 +1824,8 @@ mod tests {
                 "library_cancel_export",
                 "library_get_export_snapshot",
                 "library_get_export_history",
+                "library_delete_book_permanently",
+                "library_delete_books_permanently",
             ]
         );
     }
@@ -1776,7 +1833,7 @@ mod tests {
     #[test]
     fn p15_settings_commands_are_exact_and_production_only() {
         assert_eq!(P15_SETTINGS_PRODUCTION_ONLY_COMMANDS.len(), 19);
-        assert_eq!(PRODUCTION_COMMANDS.len(), 51);
+        assert_eq!(PRODUCTION_COMMANDS.len(), 53);
         assert_eq!(command_allowlist(true, false).len(), 7);
         assert_eq!(command_allowlist(false, true).len(), 6);
         for command in P15_SETTINGS_PRODUCTION_ONLY_COMMANDS {
@@ -1792,7 +1849,7 @@ mod tests {
             CREATE_PRODUCTION_ONLY_COMMANDS,
             &["library_create_book", "create_chapter"]
         );
-        assert_eq!(PRODUCTION_COMMANDS.len(), 51);
+        assert_eq!(PRODUCTION_COMMANDS.len(), 53);
         assert_eq!(command_allowlist(true, false).len(), 7);
         assert_eq!(command_allowlist(false, true).len(), 6);
         for command in CREATE_PRODUCTION_ONLY_COMMANDS {
@@ -2070,6 +2127,12 @@ mod tests {
                 "{command} must stay production-only"
             );
         }
+        for command in DELETE_PRODUCTION_ONLY_COMMANDS {
+            assert!(
+                !probe.contains(command),
+                "{command} must stay production-only"
+            );
+        }
         assert_eq!(
             probe.len(),
             PRODUCTION_COMMANDS.len()
@@ -2086,6 +2149,7 @@ mod tests {
                 - EXPORT_REVEAL_PRODUCTION_ONLY_COMMANDS.len()
                 - EXPORT_PRODUCTION_ONLY_COMMANDS.len()
                 - CREATE_PRODUCTION_ONLY_COMMANDS.len()
+                - DELETE_PRODUCTION_ONLY_COMMANDS.len()
                 + PROBE_ONLY_COMMANDS.len()
         );
     }
@@ -2163,6 +2227,12 @@ mod tests {
                 "{command} must stay production-only"
             );
         }
+        for command in DELETE_PRODUCTION_ONLY_COMMANDS {
+            assert!(
+                !ac1.contains(command),
+                "{command} must stay production-only"
+            );
+        }
         assert_eq!(
             ac1.len(),
             PRODUCTION_COMMANDS.len()
@@ -2179,6 +2249,7 @@ mod tests {
                 - EXPORT_REVEAL_PRODUCTION_ONLY_COMMANDS.len()
                 - EXPORT_PRODUCTION_ONLY_COMMANDS.len()
                 - CREATE_PRODUCTION_ONLY_COMMANDS.len()
+                - DELETE_PRODUCTION_ONLY_COMMANDS.len()
                 + AC1_TEST_COMMANDS.len()
         );
     }
@@ -2200,6 +2271,7 @@ mod tests {
             .chain(EXPORT_REVEAL_PRODUCTION_ONLY_COMMANDS)
             .chain(EXPORT_PRODUCTION_ONLY_COMMANDS)
             .chain(CREATE_PRODUCTION_ONLY_COMMANDS)
+            .chain(DELETE_PRODUCTION_ONLY_COMMANDS)
         {
             assert!(
                 !command_allowlist(true, false).contains(command),
@@ -2231,8 +2303,8 @@ mod tests {
                 "library_retry_failed_targets",
             ]
         );
-        // 32 pre-existing production commands + 19 P15 settings commands = 51.
-        assert_eq!(PRODUCTION_COMMANDS.len(), 51);
+        // 32 pre-existing production commands + 19 P15 settings commands + 2 delete commands = 53.
+        assert_eq!(PRODUCTION_COMMANDS.len(), 53);
 
         let production = command_allowlist(false, false);
         let probe = command_allowlist(true, false);
@@ -2265,13 +2337,45 @@ mod tests {
                 "library_get_export_history",
             ]
         );
-        assert_eq!(PRODUCTION_COMMANDS.len(), 51);
+        assert_eq!(PRODUCTION_COMMANDS.len(), 53);
 
         let production = command_allowlist(false, false);
         let probe = command_allowlist(true, false);
         let ac1 = command_allowlist(false, true);
 
         for command in EXPORT_PRODUCTION_ONLY_COMMANDS {
+            assert!(
+                production.contains(command),
+                "{command} must be on the production surface"
+            );
+            assert!(
+                !probe.contains(command),
+                "{command} must not appear in probe surface"
+            );
+            assert!(
+                !ac1.contains(command),
+                "{command} must not appear in ac1 surface"
+            );
+        }
+    }
+
+    /// P09-AC3-DELETE-1: literal exact assertions for the permanent delete family.
+    #[test]
+    fn delete_commands_are_exact_and_production_only() {
+        assert_eq!(
+            DELETE_PRODUCTION_ONLY_COMMANDS,
+            &[
+                "library_delete_book_permanently",
+                "library_delete_books_permanently",
+            ]
+        );
+        assert_eq!(PRODUCTION_COMMANDS.len(), 53);
+
+        let production = command_allowlist(false, false);
+        let probe = command_allowlist(true, false);
+        let ac1 = command_allowlist(false, true);
+
+        for command in DELETE_PRODUCTION_ONLY_COMMANDS {
             assert!(
                 production.contains(command),
                 "{command} must be on the production surface"
@@ -2468,6 +2572,97 @@ mod tests {
         );
         assert_eq!(
             bare.get_export_history().unwrap_err().code,
+            "CORE_UNAVAILABLE"
+        );
+    }
+
+    #[test]
+    fn delete_channel_defaults_are_fail_closed() {
+        struct BareChannel;
+        impl LibraryChannel for BareChannel {
+            fn ping(&self) -> Result<PingResult, LibraryError> {
+                unimplemented!("not exercised by this test")
+            }
+            fn list_books(&self) -> Result<Vec<BookSummary>, LibraryError> {
+                unimplemented!("not exercised by this test")
+            }
+            fn get_settings(
+                &self,
+                _section: Option<&str>,
+            ) -> Result<serde_json::Value, LibraryError> {
+                unimplemented!("not exercised by this test")
+            }
+            fn update_settings_section(
+                &self,
+                _section: &str,
+                _values: &serde_json::Value,
+            ) -> Result<serde_json::Value, LibraryError> {
+                unimplemented!("not exercised by this test")
+            }
+            fn set_region_type(
+                &self,
+                _region_id: &str,
+                _new_region_type: &str,
+                _expected_revision: Option<i64>,
+            ) -> Result<serde_json::Value, LibraryError> {
+                unimplemented!("not exercised by this test")
+            }
+            fn list_regions(&self, _page_id: &str) -> Result<serde_json::Value, LibraryError> {
+                unimplemented!("not exercised by this test")
+            }
+            fn list_region_revisions(
+                &self,
+                _region_id: &str,
+            ) -> Result<serde_json::Value, LibraryError> {
+                unimplemented!("not exercised by this test")
+            }
+            fn restore_region_revision(
+                &self,
+                _region_id: &str,
+                _revision_no: i64,
+                _expected_revision: i64,
+            ) -> Result<serde_json::Value, LibraryError> {
+                unimplemented!("not exercised by this test")
+            }
+            fn rerender_page(&self, _page_id: &str) -> Result<serde_json::Value, LibraryError> {
+                unimplemented!("not exercised by this test")
+            }
+            fn resolve_page_resource(
+                &self,
+                _page_id: &str,
+            ) -> Result<serde_json::Value, LibraryError> {
+                unimplemented!("not exercised by this test")
+            }
+            fn list_chapters(&self, _book_id: &str) -> Result<serde_json::Value, LibraryError> {
+                unimplemented!("not exercised by this test")
+            }
+            fn list_chapter_pages(
+                &self,
+                _chapter_id: &str,
+            ) -> Result<serde_json::Value, LibraryError> {
+                unimplemented!("not exercised by this test")
+            }
+        }
+
+        let bare = BareChannel;
+        assert_eq!(
+            bare.permanently_delete_book(PermanentlyDeleteBookPayload {
+                book_id: "book-1".to_string(),
+                confirm_permanent_delete: true,
+            })
+            .unwrap_err()
+            .code,
+            "CORE_UNAVAILABLE"
+        );
+        assert_eq!(
+            bare.permanently_delete_books(PermanentlyDeleteBooksPayload {
+                book_ids: vec!["book-1".to_string()],
+                confirmed_book_ids: vec!["book-1".to_string()],
+                confirm_count: 1,
+                confirm_permanent_delete: true,
+            })
+            .unwrap_err()
+            .code,
             "CORE_UNAVAILABLE"
         );
     }

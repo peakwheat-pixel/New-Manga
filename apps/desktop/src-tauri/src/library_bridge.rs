@@ -118,6 +118,231 @@ pub struct ExportHistoryResponseView {
     pub exports: Vec<ExportHistoryEntryView>,
 }
 
+/// P09-AC3-DELETE-1 (contract rev 2.10 §5.11): Permanent deletion payloads & views.
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(deny_unknown_fields)]
+pub struct PermanentlyDeleteBookPayload {
+    pub book_id: String,
+    pub confirm_permanent_delete: bool,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(deny_unknown_fields)]
+pub struct PermanentlyDeleteBooksPayload {
+    pub book_ids: Vec<String>,
+    pub confirmed_book_ids: Vec<String>,
+    pub confirm_count: usize,
+    pub confirm_permanent_delete: bool,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct PermanentlyDeleteBookResult {
+    pub book_id: String,
+    pub deleted: bool,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct BookDeleteBatchItem {
+    pub book_id: String,
+    pub status: String,
+    #[serde(default)]
+    pub error_code: Option<String>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct PermanentlyDeleteBooksResult {
+    pub requested_count: usize,
+    pub completed_count: usize,
+    pub items: Vec<BookDeleteBatchItem>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct PermanentlyDeleteBookErrorView {
+    pub code: String,
+    pub category: String,
+    pub retryable: bool,
+}
+
+impl PermanentlyDeleteBookErrorView {
+    pub fn from_core(error: LibraryError) -> Self {
+        let code = match error.code.as_str() {
+            "INVALID_REQUEST" => "INVALID_REQUEST",
+            "BOOK_NOT_FOUND" => "BOOK_NOT_FOUND",
+            "BOOK_BUSY" => "BOOK_BUSY",
+            "BOOK_DELETE_CONFLICT" => "BOOK_DELETE_CONFLICT",
+            "BOOK_DELETE_FAILED" => "BOOK_DELETE_FAILED",
+            "BOOK_DELETE_CLEANUP_PENDING" => "BOOK_DELETE_CLEANUP_PENDING",
+            "PROTOCOL_VERSION_UNSUPPORTED" => "PROTOCOL_VERSION_UNSUPPORTED",
+            "CORE_UNAVAILABLE" => "CORE_UNAVAILABLE",
+            _ => "UNKNOWN",
+        }
+        .to_string();
+
+        let category = match error.category.as_str() {
+            "validation" => "validation",
+            "not_found" => "not_found",
+            "conflict" => "conflict",
+            "unavailable" => "unavailable",
+            "internal" => "internal",
+            _ => "internal",
+        }
+        .to_string();
+
+        Self {
+            code,
+            category,
+            retryable: error.retryable,
+        }
+    }
+
+    pub fn unavailable() -> Self {
+        Self {
+            code: "CORE_UNAVAILABLE".to_string(),
+            category: "unavailable".to_string(),
+            retryable: true,
+        }
+    }
+
+    pub fn invalid_request() -> Self {
+        Self {
+            code: "INVALID_REQUEST".to_string(),
+            category: "validation".to_string(),
+            retryable: false,
+        }
+    }
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct PermanentlyDeleteBooksErrorView {
+    pub code: String,
+    pub category: String,
+    pub retryable: bool,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub phase: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub requested_count: Option<usize>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub completed_count: Option<usize>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub items: Option<Vec<BookDeleteBatchItem>>,
+}
+
+impl PermanentlyDeleteBooksErrorView {
+    pub fn from_core(error: LibraryError) -> Self {
+        let code = match error.code.as_str() {
+            "INVALID_REQUEST" => "INVALID_REQUEST",
+            "DUPLICATE_BOOK_ID" => "DUPLICATE_BOOK_ID",
+            "BOOK_DELETE_BATCH_LIMIT_EXCEEDED" => "BOOK_DELETE_BATCH_LIMIT_EXCEEDED",
+            "BOOK_DELETE_BATCH_WHOLE_LIBRARY" => "BOOK_DELETE_BATCH_WHOLE_LIBRARY",
+            "BOOK_DELETE_BATCH_PREFLIGHT_FAILED" => "BOOK_DELETE_BATCH_PREFLIGHT_FAILED",
+            "BOOK_DELETE_BATCH_CLEANUP_PENDING" => "BOOK_DELETE_BATCH_CLEANUP_PENDING",
+            "BOOK_DELETE_FAILED" => "BOOK_DELETE_FAILED",
+            "PROTOCOL_VERSION_UNSUPPORTED" => "PROTOCOL_VERSION_UNSUPPORTED",
+            "CORE_UNAVAILABLE" => "CORE_UNAVAILABLE",
+            _ => "UNKNOWN",
+        }
+        .to_string();
+
+        let category = match error.category.as_str() {
+            "validation" => "validation",
+            "conflict" => "conflict",
+            "unavailable" => "unavailable",
+            "internal" => "internal",
+            "unknown" => "unknown",
+            _ => "unknown",
+        }
+        .to_string();
+
+        let mut phase = None;
+        let mut requested_count = None;
+        let mut completed_count = None;
+        let mut items = None;
+
+        if let Some(details) = &error.details {
+            if code == "BOOK_DELETE_BATCH_PREFLIGHT_FAILED"
+                || code == "BOOK_DELETE_BATCH_CLEANUP_PENDING"
+            {
+                phase = details
+                    .get("phase")
+                    .and_then(|v| v.as_str())
+                    .map(|s| s.to_string());
+                requested_count = details
+                    .get("requested_count")
+                    .and_then(|v| v.as_u64())
+                    .map(|n| n as usize);
+                completed_count = details
+                    .get("completed_count")
+                    .and_then(|v| v.as_u64())
+                    .map(|n| n as usize);
+                if let Some(raw_items) = details.get("items").and_then(|v| v.as_array()) {
+                    let parsed_items: Vec<BookDeleteBatchItem> = raw_items
+                        .iter()
+                        .filter_map(|item| {
+                            let book_id = item.get("book_id")?.as_str()?.to_string();
+                            let status = match item.get("status").and_then(|v| v.as_str()) {
+                                Some("deleted") => "deleted",
+                                Some("cleanup_pending") => "cleanup_pending",
+                                _ => "not_started",
+                            }
+                            .to_string();
+                            let error_code = item
+                                .get("error_code")
+                                .and_then(|v| v.as_str())
+                                .map(|ec| match ec {
+                                    "BOOK_NOT_FOUND" => "BOOK_NOT_FOUND",
+                                    "BOOK_BUSY" => "BOOK_BUSY",
+                                    "BOOK_DELETE_CONFLICT" => "BOOK_DELETE_CONFLICT",
+                                    _ => "UNKNOWN",
+                                })
+                                .map(|s| s.to_string());
+                            Some(BookDeleteBatchItem {
+                                book_id,
+                                status,
+                                error_code,
+                            })
+                        })
+                        .collect();
+                    items = Some(parsed_items);
+                }
+            }
+        }
+
+        Self {
+            code,
+            category,
+            retryable: error.retryable,
+            phase,
+            requested_count,
+            completed_count,
+            items,
+        }
+    }
+
+    pub fn unavailable() -> Self {
+        Self {
+            code: "CORE_UNAVAILABLE".to_string(),
+            category: "unavailable".to_string(),
+            retryable: true,
+            phase: None,
+            requested_count: None,
+            completed_count: None,
+            items: None,
+        }
+    }
+
+    pub fn invalid_request() -> Self {
+        Self {
+            code: "INVALID_REQUEST".to_string(),
+            category: "validation".to_string(),
+            retryable: false,
+            phase: None,
+            requested_count: None,
+            completed_count: None,
+            items: None,
+        }
+    }
+}
+
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 pub struct LibraryError {
     pub code: String,
@@ -751,6 +976,21 @@ pub trait LibraryChannel: Send + Sync {
     fn is_unhealthy(&self) -> bool {
         false
     }
+
+    /// P09-AC3-DELETE-1 (contract rev 2.10 §5.11): Permanent deletion commands.
+    fn permanently_delete_book(
+        &self,
+        _payload: PermanentlyDeleteBookPayload,
+    ) -> Result<PermanentlyDeleteBookResult, LibraryError> {
+        Err(LibraryError::unavailable("Delete channel is unavailable"))
+    }
+
+    fn permanently_delete_books(
+        &self,
+        _payload: PermanentlyDeleteBooksPayload,
+    ) -> Result<PermanentlyDeleteBooksResult, LibraryError> {
+        Err(LibraryError::unavailable("Delete channel is unavailable"))
+    }
 }
 
 fn reader_progress_payload(
@@ -982,10 +1222,17 @@ pub(crate) fn lock_timeout_recover<T>(
 }
 
 pub struct StdioLibraryChannel {
-    pub(crate) child: Mutex<Child>,
+    pub(crate) child: Arc<Mutex<Child>>,
     pub(crate) child_id: u32,
     writer_tx: std::sync::mpsc::Sender<WriterCommand>,
     writer_join_handle: Mutex<Option<std::thread::JoinHandle<()>>>,
+    #[allow(dead_code)]
+    writer_finished: Arc<AtomicBool>,
+    writer_joined: Arc<AtomicBool>,
+    reader_join_handle: Mutex<Option<std::thread::JoinHandle<()>>>,
+    #[allow(dead_code)]
+    reader_finished: Arc<AtomicBool>,
+    reader_joined: Arc<AtomicBool>,
     transaction_lock: Mutex<()>,
     request_id_gen: AtomicU64,
     host_session: Mutex<Option<HostSession>>,
@@ -994,12 +1241,13 @@ pub struct StdioLibraryChannel {
     pending_responses: Arc<Mutex<HashMap<String, SyncSender<Result<String, LibraryError>>>>>,
     is_down: Arc<AtomicBool>,
     on_down: Arc<Mutex<Option<Arc<dyn Fn() + Send + Sync>>>>,
-    reader_join_handle: Mutex<Option<std::thread::JoinHandle<()>>>,
     shutdown_executed: AtomicBool,
     pub(crate) in_flight_awaiting_response: AtomicUsize,
     child_killed: AtomicBool,
-    pending_drained: AtomicBool,
-    last_shutdown_error: Mutex<Option<String>>,
+    child_reaped: Arc<AtomicBool>,
+    pending_drained: Arc<AtomicBool>,
+    last_shutdown_error: Arc<Mutex<Option<String>>>,
+    child_reap_fallback_handle: Mutex<Option<std::thread::JoinHandle<()>>>,
 }
 
 struct HostSession {
@@ -1144,6 +1392,10 @@ impl StdioLibraryChannel {
         let is_down_clone = Arc::clone(&is_down);
         let on_down_clone = Arc::clone(&on_down);
 
+        let reader_finished = Arc::new(AtomicBool::new(false));
+        let reader_finished_clone = Arc::clone(&reader_finished);
+        let reader_joined = Arc::new(AtomicBool::new(false));
+
         let reader_thread = std::thread::Builder::new()
             .name("stdio-library-reader".to_string())
             .spawn(move || {
@@ -1164,6 +1416,7 @@ impl StdioLibraryChannel {
                                     cb();
                                 }
                             }
+                            reader_finished_clone.store(true, Ordering::SeqCst);
                             break;
                         }
                         Ok(_) => {
@@ -1182,6 +1435,7 @@ impl StdioLibraryChannel {
                                     cb();
                                 }
                             }
+                            reader_finished_clone.store(true, Ordering::SeqCst);
                             break;
                         }
                     }
@@ -1192,6 +1446,10 @@ impl StdioLibraryChannel {
             })?;
 
         let (writer_tx, writer_rx) = std::sync::mpsc::channel::<WriterCommand>();
+        let writer_finished = Arc::new(AtomicBool::new(false));
+        let writer_finished_clone = Arc::clone(&writer_finished);
+        let writer_joined = Arc::new(AtomicBool::new(false));
+
         let writer_thread = std::thread::Builder::new()
             .name("stdio-library-writer".to_string())
             .spawn(move || {
@@ -1205,6 +1463,8 @@ impl StdioLibraryChannel {
                         WriterCommand::Shutdown => break,
                     }
                 }
+                drop(stdin);
+                writer_finished_clone.store(true, Ordering::SeqCst);
             })
             .map_err(|e| {
                 LibraryError::unavailable(&format!("Failed to spawn writer thread: {e}"))
@@ -1212,10 +1472,15 @@ impl StdioLibraryChannel {
 
         let child_id = child.id();
         Ok(Self {
-            child: Mutex::new(child),
+            child: Arc::new(Mutex::new(child)),
             child_id,
             writer_tx,
             writer_join_handle: Mutex::new(Some(writer_thread)),
+            writer_finished,
+            writer_joined,
+            reader_join_handle: Mutex::new(Some(reader_thread)),
+            reader_finished,
+            reader_joined,
             transaction_lock: Mutex::new(()),
             request_id_gen: AtomicU64::new(1),
             host_session: Mutex::new(None),
@@ -1224,12 +1489,13 @@ impl StdioLibraryChannel {
             pending_responses,
             is_down,
             on_down,
-            reader_join_handle: Mutex::new(Some(reader_thread)),
             shutdown_executed: AtomicBool::new(false),
             in_flight_awaiting_response: AtomicUsize::new(0),
             child_killed: AtomicBool::new(false),
-            pending_drained: AtomicBool::new(false),
-            last_shutdown_error: Mutex::new(None),
+            child_reaped: Arc::new(AtomicBool::new(false)),
+            pending_drained: Arc::new(AtomicBool::new(false)),
+            last_shutdown_error: Arc::new(Mutex::new(None)),
+            child_reap_fallback_handle: Mutex::new(None),
         })
     }
 
@@ -1238,13 +1504,44 @@ impl StdioLibraryChannel {
         self.child_id
     }
 
+    #[allow(dead_code)]
     pub fn in_flight_awaiting_response(&self) -> usize {
         self.in_flight_awaiting_response.load(Ordering::SeqCst)
     }
 
     #[allow(dead_code)]
+    pub fn is_child_reaped(&self) -> bool {
+        self.child_reaped.load(Ordering::SeqCst)
+    }
+
+    #[allow(dead_code)]
+    pub fn is_pending_drained(&self) -> bool {
+        self.pending_drained.load(Ordering::SeqCst)
+    }
+
+    #[allow(dead_code)]
+    pub fn is_writer_finished(&self) -> bool {
+        self.writer_finished.load(Ordering::SeqCst)
+    }
+
+    #[allow(dead_code)]
+    pub fn is_writer_joined(&self) -> bool {
+        self.writer_joined.load(Ordering::SeqCst)
+    }
+
+    #[allow(dead_code)]
+    pub fn is_reader_finished(&self) -> bool {
+        self.reader_finished.load(Ordering::SeqCst)
+    }
+
+    #[allow(dead_code)]
+    pub fn is_reader_joined(&self) -> bool {
+        self.reader_joined.load(Ordering::SeqCst)
+    }
+
+    #[allow(dead_code)]
     pub fn last_shutdown_error(&self) -> Option<String> {
-        self.last_shutdown_error.lock().ok().and_then(|g| g.clone())
+        lock_timeout_recover(&self.last_shutdown_error, Duration::from_millis(20)).and_then(|g| g.clone())
     }
 
     /// Dedicated internal raw write helper that dispatches to the writer thread and waits for reply.
@@ -1345,6 +1642,19 @@ impl StdioLibraryChannel {
         );
         let request = build_application_envelope_at_minor(&req_id, command, payload, 7);
         self.exchange_expected_minor(request, Some(7))
+    }
+
+    fn round_trip_delete(
+        &self,
+        command: &str,
+        payload: serde_json::Value,
+    ) -> Result<serde_json::Value, LibraryError> {
+        let req_id = format!(
+            "delete-req-{}",
+            self.request_id_gen.fetch_add(1, Ordering::Relaxed)
+        );
+        let request = build_application_envelope_at_minor(&req_id, command, payload, 10);
+        self.exchange_expected_minor(request, Some(10))
     }
 
     fn acquire_transaction_lock(
@@ -1461,7 +1771,7 @@ impl StdioLibraryChannel {
             Some(limit) => {
                 let elapsed = start.elapsed();
                 if elapsed >= limit {
-                    if let Some(mut pending) = lock_timeout_recover(&self.pending_responses, Duration::from_millis(50)) {
+                    if let Some(mut pending) = lock_timeout_recover(&self.pending_responses, Duration::from_millis(10)) {
                         pending.remove(&req_id);
                     }
                     return Err(LibraryError::unavailable("Core request timed out before write"));
@@ -1478,7 +1788,7 @@ impl StdioLibraryChannel {
         };
 
         if let Err(e) = write_res {
-            if let Some(mut pending) = lock_timeout_recover(&self.pending_responses, Duration::from_millis(50)) {
+            if let Some(mut pending) = lock_timeout_recover(&self.pending_responses, Duration::from_millis(10)) {
                 pending.remove(&req_id);
             }
             return Err(e);
@@ -1505,7 +1815,7 @@ impl StdioLibraryChannel {
                     Ok(Ok(resp)) => resp,
                     Ok(Err(err)) => return Err(err),
                     Err(std::sync::mpsc::RecvTimeoutError::Timeout) => {
-                        if let Some(mut pending) = lock_timeout_recover(&self.pending_responses, Duration::from_millis(50)) {
+                        if let Some(mut pending) = lock_timeout_recover(&self.pending_responses, Duration::from_millis(10)) {
                             pending.remove(&req_id);
                         }
                         return Err(LibraryError::unavailable("Core request timed out"));
@@ -1899,9 +2209,10 @@ impl StdioLibraryChannel {
     }
 }
 
-pub fn wait_timeout_or_kill(
+pub fn wait_timeout_or_kill_with_reap(
     child: &mut Child,
     timeout: std::time::Duration,
+    reap_timeout: std::time::Duration,
 ) -> Result<std::process::ExitStatus, std::io::Error> {
     let start = std::time::Instant::now();
     let poll_interval = std::time::Duration::from_millis(15);
@@ -1926,15 +2237,14 @@ pub fn wait_timeout_or_kill(
         eprintln!("[shutdown] child.kill() for PID {pid} returned error: {e}");
     }
 
-    // Hard upper bound: wait for killed child with bounded timeout (max 400ms),
+    // Hard upper bound: wait for killed child with bounded timeout (reap_timeout),
     // eliminating unbounded child.wait() blocking
-    let kill_wait_timeout = std::time::Duration::from_millis(400);
     let kill_start = std::time::Instant::now();
-    while kill_start.elapsed() < kill_wait_timeout {
+    while kill_start.elapsed() < reap_timeout {
         if let Some(status) = child.try_wait()? {
             return Ok(status);
         }
-        let remaining = kill_wait_timeout.saturating_sub(kill_start.elapsed());
+        let remaining = reap_timeout.saturating_sub(kill_start.elapsed());
         let sleep_dur = poll_interval.min(remaining);
         if sleep_dur.is_zero() {
             break;
@@ -1947,36 +2257,111 @@ pub fn wait_timeout_or_kill(
 
     let err_msg = format!(
         "Child process {pid} failed to exit after kill within {:?}",
-        kill_wait_timeout
+        reap_timeout
     );
     eprintln!("[shutdown] {err_msg}");
     Err(std::io::Error::new(std::io::ErrorKind::TimedOut, err_msg))
 }
 
+pub fn wait_timeout_or_kill(
+    child: &mut Child,
+    timeout: std::time::Duration,
+) -> Result<std::process::ExitStatus, std::io::Error> {
+    wait_timeout_or_kill_with_reap(child, timeout, std::time::Duration::from_millis(400))
+}
+
+/// Bounded OS-level process termination using taskkill /F /T /PID.
+/// Strictly obeys the provided timeout to prevent unbounded Command blocking.
+/// Inspects exit status and output, reporting failures instead of silently swallowing them.
+pub fn run_taskkill_bounded(pid: u32, timeout: Duration) -> Result<std::process::ExitStatus, String> {
+    let mut child = Command::new("taskkill")
+        .args(["/F", "/T", "/PID", &pid.to_string()])
+        .stdout(Stdio::piped())
+        .stderr(Stdio::piped())
+        .spawn()
+        .map_err(|e| format!("Failed to spawn taskkill for PID {pid}: {e}"))?;
+
+    let start = Instant::now();
+    let poll_interval = Duration::from_millis(10);
+    while start.elapsed() < timeout {
+        match child.try_wait() {
+            Ok(Some(status)) => {
+                let stdout_str = child.stdout.take().and_then(|mut r| {
+                    let mut s = String::new();
+                    std::io::Read::read_to_string(&mut r, &mut s).ok().map(|_| s)
+                }).unwrap_or_default();
+                let stderr_str = child.stderr.take().and_then(|mut r| {
+                    let mut s = String::new();
+                    std::io::Read::read_to_string(&mut r, &mut s).ok().map(|_| s)
+                }).unwrap_or_default();
+                let output_str = format!("stdout: {stdout_str}, stderr: {stderr_str}");
+
+                if status.success() {
+                    return Ok(status);
+                }
+                let lower = output_str.to_lowercase();
+                if lower.contains("not found") || output_str.contains("没有找到") || lower.contains("not running") {
+                    // Process was already terminated (no longer exists)
+                    return Ok(status);
+                }
+                return Err(format!("taskkill /F /T for PID {pid} exited with status {status}: {output_str}"));
+            }
+            Ok(None) => {
+                let remaining = timeout.saturating_sub(start.elapsed());
+                let sleep_dur = poll_interval.min(remaining);
+                if sleep_dur.is_zero() {
+                    break;
+                }
+                std::thread::sleep(sleep_dur);
+            }
+            Err(e) => return Err(format!("Error polling taskkill for PID {pid}: {e}")),
+        }
+    }
+
+    let _ = child.kill();
+    let _ = child.wait();
+    Err(format!("taskkill /F /T for PID {pid} timed out after {timeout:?}"))
+}
+
 impl StdioLibraryChannel {
     pub fn shutdown_and_kill(&self, kill_timeout: Duration) {
+        let total_budget = kill_timeout.min(Duration::from_millis(2400));
+        let deadline = Instant::now() + total_budget;
+        self.shutdown_and_kill_with_deadline(deadline);
+    }
+
+    pub fn shutdown_and_kill_with_deadline(&self, deadline: Instant) {
         if self.shutdown_executed.swap(true, Ordering::SeqCst) {
             // R-009: Idempotent guard prevents duplicate cleanup and preserves single cumulative bound (< 3000ms)
-            // But if child wasn't killed yet due to previous timeout, retry killing child:
+            // But if child wasn't killed yet due to previous timeout, retry killing child boundedly:
             if !self.child_killed.load(Ordering::SeqCst) {
-                if let Some(mut child) = lock_timeout_recover(&self.child, Duration::from_millis(50)) {
-                    let _ = wait_timeout_or_kill(&mut child, Duration::from_millis(200));
-                    self.child_killed.store(true, Ordering::SeqCst);
+                let rem = deadline.saturating_duration_since(Instant::now());
+                let reentrant_timeout = Duration::from_millis(150).min(rem);
+                if let Some(mut child) = lock_timeout_recover(&self.child, reentrant_timeout) {
+                    let rem_child = deadline.saturating_duration_since(Instant::now());
+                    let reap_timeout = Duration::from_millis(100).min(rem_child);
+                    let wait_res = wait_timeout_or_kill_with_reap(&mut child, reentrant_timeout, reap_timeout);
+                    if wait_res.is_ok() {
+                        self.child_reaped.store(true, Ordering::SeqCst);
+                        self.child_killed.store(true, Ordering::SeqCst);
+                    } else {
+                        let rem_tk = deadline.saturating_duration_since(Instant::now());
+                        let tk_timeout = Duration::from_millis(100).min(rem_tk);
+                        if let Ok(_) = run_taskkill_bounded(self.child_id, tk_timeout) {
+                            self.child_killed.store(true, Ordering::SeqCst);
+                        }
+                    }
                 } else {
-                    let _ = Command::new("taskkill")
-                        .args(["/F", "/PID", &self.child_id.to_string()])
-                        .output();
-                    self.child_killed.store(true, Ordering::SeqCst);
+                    let rem_tk = deadline.saturating_duration_since(Instant::now());
+                    let tk_timeout = Duration::from_millis(100).min(rem_tk);
+                    if let Ok(_) = run_taskkill_bounded(self.child_id, tk_timeout) {
+                        self.child_killed.store(true, Ordering::SeqCst);
+                    }
                 }
             }
             return;
         }
         self.is_down.store(true, Ordering::SeqCst);
-
-        // Single shared absolute deadline.
-        // Overall shutdown budget capped at 2400ms to guarantee cumulative WCET <= 3000ms with >= 600ms headroom.
-        let total_budget = kill_timeout.min(Duration::from_millis(2400));
-        let deadline = Instant::now() + total_budget;
 
         // 1. Unblock any threads waiting for responses immediately (max 30ms lock or remaining)
         let rem1 = deadline.saturating_duration_since(Instant::now());
@@ -1992,14 +2377,31 @@ impl StdioLibraryChannel {
             // P1#2: Lock acquisition timed out (lock contention). Do NOT drop in-flight notifications!
             eprintln!("[shutdown] Warning: pending_responses lock acquisition timed out; spawning fallback drain worker");
             let pending_arc = Arc::clone(&self.pending_responses);
+            let pending_drained_flag = Arc::clone(&self.pending_drained);
+            let last_shutdown_err = Arc::clone(&self.last_shutdown_error);
             let _ = std::thread::Builder::new()
                 .name("pending-drain-fallback".to_string())
                 .spawn(move || {
-                    if let Some(mut lock) = lock_timeout_recover(&pending_arc, Duration::from_millis(500)) {
-                        for (_req_id, sender) in lock.drain() {
-                            let _ = sender.send(Err(LibraryError::unavailable(
-                                "Channel is shutting down (deferred drain)",
-                            )));
+                    let start = Instant::now();
+                    let mut acquired = false;
+                    while start.elapsed() < Duration::from_millis(2000) {
+                        if let Some(mut lock) = lock_timeout_recover(&pending_arc, Duration::from_millis(50)) {
+                            acquired = true;
+                            for (_req_id, sender) in lock.drain() {
+                                let _ = sender.send(Err(LibraryError::unavailable(
+                                    "Channel is shutting down (deferred drain)",
+                                )));
+                            }
+                            pending_drained_flag.store(true, Ordering::SeqCst);
+                            break;
+                        }
+                        std::thread::sleep(Duration::from_millis(15));
+                    }
+                    if !acquired {
+                        let err_msg = "pending-drain-fallback timed out acquiring pending_responses lock within 2.0s".to_string();
+                        eprintln!("[shutdown] {err_msg}");
+                        if let Some(mut slot) = lock_timeout_recover(&last_shutdown_err, Duration::from_millis(20)) {
+                            *slot = Some(err_msg);
                         }
                     }
                 });
@@ -2055,19 +2457,34 @@ impl StdioLibraryChannel {
             // Allocate graceful wait budget from remaining time, leaving at least 450ms for reap/joins
             let rem_child = deadline.saturating_duration_since(Instant::now());
             let graceful_wait = Duration::from_millis(1000).min(rem_child.saturating_sub(Duration::from_millis(450)));
-            let wait_res = wait_timeout_or_kill(&mut child, graceful_wait);
-            if let Err(ref e) = wait_res {
+            let reap_rem = deadline.saturating_duration_since(Instant::now());
+            let reap_wait = Duration::from_millis(400).min(reap_rem.saturating_sub(Duration::from_millis(200)));
+            let wait_res = wait_timeout_or_kill_with_reap(&mut child, graceful_wait, reap_wait);
+            if let Ok(_) = wait_res {
+                self.child_reaped.store(true, Ordering::SeqCst);
+                self.child_killed.store(true, Ordering::SeqCst);
+            } else if let Err(ref e) = wait_res {
                 let err_str = format!("wait_timeout_or_kill failed: {e}");
                 eprintln!("[shutdown] {err_str}");
-                if let Ok(mut slot) = self.last_shutdown_error.lock() {
+                if let Some(mut slot) = lock_timeout_recover(&self.last_shutdown_error, Duration::from_millis(10)) {
                     *slot = Some(err_str);
                 }
-                // Fallback force kill via OS taskkill to guarantee no orphan
-                let _ = Command::new("taskkill")
-                    .args(["/F", "/PID", &self.child_id.to_string()])
-                    .output();
+                // Fallback force kill via OS taskkill (/F /T) to guarantee no orphan
+                let rem_tk = deadline.saturating_duration_since(Instant::now());
+                let tk_timeout = Duration::from_millis(250).min(rem_tk);
+                match run_taskkill_bounded(self.child_id, tk_timeout) {
+                    Ok(_) => {
+                        self.child_killed.store(true, Ordering::SeqCst);
+                        self.child_reaped.store(true, Ordering::SeqCst);
+                    }
+                    Err(err) => {
+                        eprintln!("[shutdown] {err}");
+                        if let Some(mut slot) = lock_timeout_recover(&self.last_shutdown_error, Duration::from_millis(10)) {
+                            *slot = Some(err);
+                        }
+                    }
+                }
             }
-            self.child_killed.store(true, Ordering::SeqCst);
         } else {
             // P1#2: child lock acquisition timed out (ordinary lock contention / lock held elsewhere).
             // Do NOT abandon child termination!
@@ -2076,26 +2493,65 @@ impl StdioLibraryChannel {
                 self.child_id
             );
             eprintln!("[shutdown] Warning: {err_str}");
-            if let Ok(mut slot) = self.last_shutdown_error.lock() {
+            if let Some(mut slot) = lock_timeout_recover(&self.last_shutdown_error, Duration::from_millis(10)) {
                 *slot = Some(err_str);
             }
-            // 1. Immediately force-terminate process by PID so it cannot orphan or keep pipes open
-            let _ = Command::new("taskkill")
-                .args(["/F", "/PID", &self.child_id.to_string()])
-                .output();
-            self.child_killed.store(true, Ordering::SeqCst);
+            // 1. Immediately force-terminate process tree by PID so it cannot orphan or keep pipes open
+            let rem_tk = deadline.saturating_duration_since(Instant::now());
+            let tk_timeout = Duration::from_millis(250).min(rem_tk);
+            match run_taskkill_bounded(self.child_id, tk_timeout) {
+                Ok(_) => {
+                    self.child_killed.store(true, Ordering::SeqCst);
+                }
+                Err(err) => {
+                    eprintln!("[shutdown] {err}");
+                    if let Some(mut slot) = lock_timeout_recover(&self.last_shutdown_error, Duration::from_millis(10)) {
+                        *slot = Some(err);
+                    }
+                }
+            }
 
             // 2. Spawn deferred reaper to wait on child lock and call child.wait() to reap OS handle
+            let child_arc = Arc::clone(&self.child);
+            let child_reaped_flag = Arc::clone(&self.child_reaped);
+            let last_shutdown_err = Arc::clone(&self.last_shutdown_error);
             let child_id = self.child_id;
-            let _ = std::thread::Builder::new()
+            let fallback_handle = std::thread::Builder::new()
                 .name("child-reap-fallback".to_string())
                 .spawn(move || {
                     let start = Instant::now();
-                    while start.elapsed() < Duration::from_secs(2) {
-                        std::thread::sleep(Duration::from_millis(20));
+                    let mut acquired = false;
+                    while start.elapsed() < Duration::from_millis(2500) {
+                        if let Some(mut child) = lock_timeout_recover(&child_arc, Duration::from_millis(50)) {
+                            acquired = true;
+                            match child.wait() {
+                                Ok(status) => {
+                                    eprintln!("[shutdown] fallback reap completed for PID {child_id} with status {status}");
+                                    child_reaped_flag.store(true, Ordering::SeqCst);
+                                }
+                                Err(e) => {
+                                    let err_msg = format!("fallback reap child.wait() for PID {child_id} failed: {e}");
+                                    eprintln!("[shutdown] {err_msg}");
+                                    if let Some(mut slot) = lock_timeout_recover(&last_shutdown_err, Duration::from_millis(20)) {
+                                        *slot = Some(err_msg);
+                                    }
+                                }
+                            }
+                            break;
+                        }
+                        std::thread::sleep(Duration::from_millis(15));
                     }
-                    eprintln!("[shutdown] fallback reap completed for PID {child_id}");
+                    if !acquired {
+                        let err_msg = format!("fallback reap timed out acquiring child lock for PID {child_id}");
+                        eprintln!("[shutdown] {err_msg}");
+                        if let Some(mut slot) = lock_timeout_recover(&last_shutdown_err, Duration::from_millis(20)) {
+                            *slot = Some(err_msg);
+                        }
+                    }
                 });
+            if let Some(mut slot) = lock_timeout_recover(&self.child_reap_fallback_handle, Duration::from_millis(20)) {
+                *slot = fallback_handle.ok();
+            }
         }
 
         // 5. Join reader thread with bounded timeout (hard upper bound: 100ms or remaining)
@@ -2113,7 +2569,9 @@ impl StdioLibraryChannel {
                 if joiner.is_ok() {
                     let rem_join = deadline.saturating_duration_since(Instant::now());
                     let join_timeout = Duration::from_millis(100).min(rem_join);
-                    let _ = done_rx.recv_timeout(join_timeout);
+                    if let Ok(()) = done_rx.recv_timeout(join_timeout) {
+                        self.reader_joined.store(true, Ordering::SeqCst);
+                    }
                 }
             }
         }
@@ -2134,7 +2592,9 @@ impl StdioLibraryChannel {
                 if joiner.is_ok() {
                     let rem_join = deadline.saturating_duration_since(Instant::now());
                     let join_timeout = Duration::from_millis(80).min(rem_join);
-                    let _ = done_rx.recv_timeout(join_timeout);
+                    if let Ok(()) = done_rx.recv_timeout(join_timeout) {
+                        self.writer_joined.store(true, Ordering::SeqCst);
+                    }
                 }
             }
         }
@@ -2508,6 +2968,28 @@ impl LibraryChannel for StdioLibraryChannel {
         let val = self.round_trip("GetExportHistory", serde_json::json!({}))?;
         project_export_history(val)
     }
+
+    fn permanently_delete_book(
+        &self,
+        payload: PermanentlyDeleteBookPayload,
+    ) -> Result<PermanentlyDeleteBookResult, LibraryError> {
+        let req_payload = serde_json::to_value(payload)
+            .map_err(|e| LibraryError::malformed(&format!("Failed to serialize delete payload: {e}")))?;
+        let val = self.round_trip_delete("PermanentlyDeleteBook", req_payload)?;
+        serde_json::from_value(val)
+            .map_err(|e| LibraryError::malformed(&format!("Failed to parse delete result: {e}")))
+    }
+
+    fn permanently_delete_books(
+        &self,
+        payload: PermanentlyDeleteBooksPayload,
+    ) -> Result<PermanentlyDeleteBooksResult, LibraryError> {
+        let req_payload = serde_json::to_value(payload)
+            .map_err(|e| LibraryError::malformed(&format!("Failed to serialize delete payload: {e}")))?;
+        let val = self.round_trip_delete("PermanentlyDeleteBooks", req_payload)?;
+        serde_json::from_value(val)
+            .map_err(|e| LibraryError::malformed(&format!("Failed to parse batch delete result: {e}")))
+    }
 }
 
 fn export_not_found() -> LibraryError {
@@ -2867,6 +3349,26 @@ impl LibraryChannel for MockLibraryChannel {
     fn get_export_history(&self) -> Result<ExportHistoryResponseView, LibraryError> {
         self.export_history_result.lock().unwrap().clone()
     }
+
+    fn permanently_delete_book(
+        &self,
+        _payload: PermanentlyDeleteBookPayload,
+    ) -> Result<PermanentlyDeleteBookResult, LibraryError> {
+        self.domain_result.lock().unwrap().clone().and_then(|v| {
+            serde_json::from_value(v)
+                .map_err(|e| LibraryError::malformed(&e.to_string()))
+        })
+    }
+
+    fn permanently_delete_books(
+        &self,
+        _payload: PermanentlyDeleteBooksPayload,
+    ) -> Result<PermanentlyDeleteBooksResult, LibraryError> {
+        self.domain_result.lock().unwrap().clone().and_then(|v| {
+            serde_json::from_value(v)
+                .map_err(|e| LibraryError::malformed(&e.to_string()))
+        })
+    }
 }
 
 pub type LibraryChannelSpawner = Arc<
@@ -2921,6 +3423,7 @@ pub(crate) struct ResilientCoreContext {
     pub(crate) event_sink: Mutex<Option<EventSink>>,
     pub(crate) status_emitter: Mutex<Option<StatusEmitter>>,
     pub(crate) heartbeat_stop: AtomicBool,
+    pub(crate) inner_fallback_shutdown_completed: AtomicBool,
 }
 
 impl ResilientCoreContext {
@@ -3137,6 +3640,7 @@ impl ResilientLibraryChannel {
             event_sink: Mutex::new(None),
             status_emitter: Mutex::new(None),
             heartbeat_stop: AtomicBool::new(false),
+            inner_fallback_shutdown_completed: AtomicBool::new(false),
         });
 
         // R-003: on_down captures Weak<ResilientCoreContext> to break strong reference cycle
@@ -3276,6 +3780,7 @@ impl ResilientLibraryChannel {
         }
     }
 
+    #[allow(dead_code)]
     pub fn in_flight_awaiting_response(&self) -> usize {
         if let Some(guard) = lock_timeout_recover(&self.ctx.inner, Duration::from_millis(50)) {
             if let Some(ref chan) = *guard {
@@ -3285,17 +3790,51 @@ impl ResilientLibraryChannel {
         0
     }
 
+    #[allow(dead_code)]
+    pub fn is_inner_fallback_shutdown_completed(&self) -> bool {
+        self.ctx.inner_fallback_shutdown_completed.load(Ordering::SeqCst)
+    }
+
     pub fn shutdown(&self, timeout: Duration) {
         self.ctx.heartbeat_stop.store(true, Ordering::SeqCst);
+        let total_budget = timeout.min(Duration::from_millis(2400));
+        let deadline = Instant::now() + total_budget;
+
+        let rem = deadline.saturating_duration_since(Instant::now());
+        let inner_lock_timeout = Duration::from_millis(50).min(rem);
         let chan = {
-            if let Some(mut guard) = lock_timeout_recover(&self.ctx.inner, Duration::from_millis(50)) {
+            if let Some(mut guard) = lock_timeout_recover(&self.ctx.inner, inner_lock_timeout) {
                 guard.take()
             } else {
                 None
             }
         };
         if let Some(chan) = chan {
-            chan.shutdown_and_kill(timeout);
+            chan.shutdown_and_kill_with_deadline(deadline);
+        } else {
+            // N1 (P1): ctx.inner lock timeout must NOT silently skip shutdown!
+            let err_str = "ctx.inner lock acquisition timed out in ResilientLibraryChannel::shutdown; spawning fallback shutdown worker".to_string();
+            eprintln!("[shutdown] Warning: {err_str}");
+            let ctx = Arc::clone(&self.ctx);
+            let rem_fallback = deadline.saturating_duration_since(Instant::now());
+            let fallback_timeout = Duration::from_millis(2000).max(rem_fallback);
+            let _ = std::thread::Builder::new()
+                .name("resilient-inner-shutdown-fallback".to_string())
+                .spawn(move || {
+                    let start = Instant::now();
+                    while start.elapsed() < fallback_timeout {
+                        if let Some(mut guard) = lock_timeout_recover(&ctx.inner, Duration::from_millis(50)) {
+                            if let Some(chan) = guard.take() {
+                                eprintln!("[shutdown] fallback resilient inner shutdown executing for channel");
+                                chan.shutdown_and_kill(Duration::from_millis(1500));
+                            }
+                            ctx.inner_fallback_shutdown_completed.store(true, Ordering::SeqCst);
+                            return;
+                        }
+                        std::thread::sleep(Duration::from_millis(15));
+                    }
+                    eprintln!("[shutdown] Error: resilient-inner-shutdown-fallback timed out waiting for ctx.inner lock");
+                });
         }
     }
 }
@@ -3545,6 +4084,20 @@ impl LibraryChannel for ResilientLibraryChannel {
 
     fn get_export_history(&self) -> Result<ExportHistoryResponseView, LibraryError> {
         self.with_channel(|c| c.get_export_history())
+    }
+
+    fn permanently_delete_book(
+        &self,
+        payload: PermanentlyDeleteBookPayload,
+    ) -> Result<PermanentlyDeleteBookResult, LibraryError> {
+        self.with_channel(|c| c.permanently_delete_book(payload.clone()))
+    }
+
+    fn permanently_delete_books(
+        &self,
+        payload: PermanentlyDeleteBooksPayload,
+    ) -> Result<PermanentlyDeleteBooksResult, LibraryError> {
+        self.with_channel(|c| c.permanently_delete_books(payload.clone()))
     }
 }
 
@@ -4812,6 +5365,7 @@ mod tests {
                 events_clone.lock().unwrap().push((status.to_string(), msg.to_string()));
             }))),
             heartbeat_stop: AtomicBool::new(false),
+            inner_fallback_shutdown_completed: AtomicBool::new(false),
         });
 
         // Trigger restart
@@ -4849,6 +5403,7 @@ mod tests {
                 events_clone.lock().unwrap().push((status.to_string(), msg.to_string()));
             }))),
             heartbeat_stop: AtomicBool::new(false),
+            inner_fallback_shutdown_completed: AtomicBool::new(false),
         });
 
         // Trigger restart when consecutive_failures >= 3
@@ -5737,19 +6292,44 @@ mod tests {
         );
     }
 
-    /// P1#2: Ordinary lock contention timeout on child mutex triggers fallback termination and prevents orphan.
+    /// P1#2: Ordinary lock contention timeout on child mutex triggers fallback termination (/F /T) and reaps process tree.
     #[test]
     fn child_lock_contention_timeout_fallback_kills_child_and_prevents_orphan() {
         let python_exe = std::env::var("M2RC1_PYTHON").unwrap_or_else(|_| "python".to_string());
+        let temp_dir = std::env::temp_dir();
+        let pid_file = temp_dir.join(format!("test_gc_pid_{}_{}.txt", std::process::id(), Instant::now().elapsed().as_nanos()));
+        let pid_file_str = pid_file.to_string_lossy().replace('\\', "/");
+        let _ = std::fs::remove_file(&pid_file);
+
+        let py_script = format!(
+            "import subprocess, time, sys\np = subprocess.Popen([sys.executable, '-c', 'import time; time.sleep(60)'])\nwith open('{}', 'w') as f:\n    f.write(str(p.pid))\ntime.sleep(60)\n",
+            pid_file_str
+        );
+
         let child = Command::new(&python_exe)
-            .args(["-c", "import time; time.sleep(60)"])
+            .args(["-u", "-c", &py_script])
             .stdin(Stdio::piped())
             .stdout(Stdio::piped())
             .stderr(Stdio::null())
             .spawn()
-            .expect("spawn hung child");
+            .expect("spawn hung child with grandchild");
         let pid = child.id();
         let chan = Arc::new(StdioLibraryChannel::adopt_child_for_test(child).expect("adopt"));
+
+        // Wait for grandchild to spawn and write its PID
+        let gc_poll = Instant::now();
+        let mut grandchild_pid: Option<u32> = None;
+        while gc_poll.elapsed() < Duration::from_millis(3000) {
+            if let Ok(content) = std::fs::read_to_string(&pid_file) {
+                if let Ok(parsed) = content.trim().parse::<u32>() {
+                    grandchild_pid = Some(parsed);
+                    break;
+                }
+            }
+            std::thread::sleep(Duration::from_millis(20));
+        }
+        let _ = std::fs::remove_file(&pid_file);
+        let grandchild_pid = grandchild_pid.expect("grandchild pid must be available");
 
         // Simulate ordinary lock contention: another thread acquires chan.child and holds it for 300ms
         let chan_clone = Arc::clone(&chan);
@@ -5776,15 +6356,36 @@ mod tests {
         // Wait for lock holder to release
         lock_holder.join().expect("join lock holder");
 
-        // 2. Process must be killed (no orphan, zero residual) despite child lock contention
+        // 2. Poll and assert that fallback reap actually completed
+        let reap_poll = Instant::now();
+        while !chan.is_child_reaped() && reap_poll.elapsed() < Duration::from_millis(2500) {
+            std::thread::sleep(Duration::from_millis(20));
+        }
+        assert!(
+            chan.is_child_reaped(),
+            "Fallback reaper worker must have acquired child lock and successfully called child.wait()"
+        );
+
+        // 3. Process tree must be killed (/F /T) - neither child nor grandchild may orphan
+        std::thread::sleep(Duration::from_millis(100));
         let output = Command::new("tasklist")
             .args(["/FI", &format!("PID eq {pid}"), "/FO", "CSV", "/NH"])
             .output()
-            .expect("tasklist check");
+            .expect("tasklist check child");
         let s = String::from_utf8_lossy(&output.stdout);
         assert!(
             !s.contains(&format!("\"{pid}\"")),
             "Child process {pid} must be terminated despite lock contention"
+        );
+
+        let output_gc = Command::new("tasklist")
+            .args(["/FI", &format!("PID eq {grandchild_pid}"), "/FO", "CSV", "/NH"])
+            .output()
+            .expect("tasklist check grandchild");
+        let s_gc = String::from_utf8_lossy(&output_gc.stdout);
+        assert!(
+            !s_gc.contains(&format!("\"{grandchild_pid}\"")),
+            "Grandchild process {grandchild_pid} must be terminated via taskkill /T"
         );
     }
 
@@ -5825,6 +6426,13 @@ mod tests {
         assert_eq!(err.code, "CORE_UNAVAILABLE");
 
         holder.join().expect("join holder");
+
+        // Verify pending_drained flag was set by fallback worker
+        let drain_poll = Instant::now();
+        while !chan.is_pending_drained() && drain_poll.elapsed() < Duration::from_millis(2000) {
+            std::thread::sleep(Duration::from_millis(20));
+        }
+        assert!(chan.is_pending_drained(), "Fallback drain worker must have set pending_drained = true");
 
         // Verify child terminated
         let output = Command::new("tasklist")
@@ -5901,11 +6509,144 @@ mod tests {
             );
         }
 
+        // Direct assertions of observable thread completion and join guard success
+        assert!(chan.is_writer_finished(), "Writer thread must have finished and dropped ChildStdin");
+        assert!(chan.is_reader_finished(), "Reader thread must have finished on EOF/pipe break");
+        assert!(chan.is_writer_joined(), "Writer join guard must have successfully joined writer thread");
+        assert!(chan.is_reader_joined(), "Reader join guard must have successfully joined reader thread");
+
         // 4. Verify child PID is completely gone
         let output = Command::new("tasklist")
             .args(["/FI", &format!("PID eq {pid}"), "/FO", "CSV", "/NH"])
             .output()
             .expect("tasklist check");
         assert!(!String::from_utf8_lossy(&output.stdout).contains(&format!("\"{pid}\"")));
+    }
+
+    /// N1 (P1): Lock contention timeout on ResilientCoreContext.inner must NOT silently skip shutdown.
+    /// Asserts:
+    /// 1. ResilientLibraryChannel::shutdown returns in bounded time (< 500ms) even when inner lock is held.
+    /// 2. Fallback thread acquires inner lock once released, completes channel shutdown, and sets inner_fallback_shutdown_completed = true.
+    /// 3. Child process is terminated with zero residual.
+    #[test]
+    fn resilient_inner_lock_contention_timeout_triggers_fallback_shutdown() {
+        let python_exe = std::env::var("M2RC1_PYTHON").unwrap_or_else(|_| "python".to_string());
+        let child = Command::new(&python_exe)
+            .args(["-c", "import time; time.sleep(60)"])
+            .stdin(Stdio::piped())
+            .stdout(Stdio::piped())
+            .stderr(Stdio::null())
+            .spawn()
+            .expect("spawn hung child");
+        let pid = child.id();
+        let chan = StdioLibraryChannel::adopt_child_for_test(child).expect("adopt");
+        let config = LibrarySpawnConfig::new(
+            python_exe.clone(),
+            PathBuf::from("."),
+            None,
+            None,
+            None,
+        );
+        let resilient = ResilientLibraryChannel::new(config, Some(chan));
+
+        // Background thread acquires ctx.inner lock and holds it for 200ms
+        let ctx_clone = Arc::clone(&resilient.ctx);
+        let holder = std::thread::spawn(move || {
+            let _guard = ctx_clone.inner.lock().expect("acquire inner lock");
+            std::thread::sleep(Duration::from_millis(200));
+        });
+
+        std::thread::sleep(Duration::from_millis(30));
+
+        // Call resilient.shutdown (inner lock timeout is 50ms)
+        let start = Instant::now();
+        resilient.shutdown(Duration::from_millis(1500));
+        let elapsed = start.elapsed();
+
+        // Must return in bounded time (<= 500ms)
+        assert!(
+            elapsed < Duration::from_millis(500),
+            "resilient.shutdown under inner lock contention must return boundedly, took {:?}",
+            elapsed
+        );
+
+        holder.join().expect("join holder");
+
+        // Wait for fallback shutdown to complete (up to 2500ms)
+        let poll_start = Instant::now();
+        while !resilient.is_inner_fallback_shutdown_completed() && poll_start.elapsed() < Duration::from_millis(2500) {
+            std::thread::sleep(Duration::from_millis(20));
+        }
+
+        assert!(
+            resilient.is_inner_fallback_shutdown_completed(),
+            "Fallback shutdown worker must have completed channel shutdown after inner lock released"
+        );
+
+        // Child process must be dead
+        std::thread::sleep(Duration::from_millis(100));
+        let output = Command::new("tasklist")
+            .args(["/FI", &format!("PID eq {pid}"), "/FO", "CSV", "/NH"])
+            .output()
+            .expect("tasklist check");
+        assert!(!String::from_utf8_lossy(&output.stdout).contains(&format!("\"{pid}\"")));
+    }
+
+    #[test]
+    fn test_delete_error_view_projection() {
+        let err = LibraryError {
+            code: "BOOK_DELETE_BATCH_PREFLIGHT_FAILED".to_string(),
+            category: "conflict".to_string(),
+            retryable: false,
+            message: Some("Preflight failed with leaked path /foo/bar".to_string()),
+            details: Some(serde_json::json!({
+                "phase": "preflight",
+                "requested_count": 2,
+                "completed_count": 0,
+                "items": [
+                    { "book_id": "b1", "status": "not_started", "error_code": "BOOK_NOT_FOUND" },
+                    { "book_id": "b2", "status": "not_started", "error_code": null }
+                ],
+                "leaked_path": "G:\\sensitive\\path"
+            })),
+        };
+        let view = PermanentlyDeleteBooksErrorView::from_core(err);
+        assert_eq!(view.code, "BOOK_DELETE_BATCH_PREFLIGHT_FAILED");
+        assert_eq!(view.category, "conflict");
+        assert_eq!(view.retryable, false);
+        assert_eq!(view.phase.as_deref(), Some("preflight"));
+        assert_eq!(view.requested_count, Some(2));
+        assert_eq!(view.completed_count, Some(0));
+        let items = view.items.expect("items present");
+        assert_eq!(items.len(), 2);
+        assert_eq!(items[0].book_id, "b1");
+        assert_eq!(items[0].status, "not_started");
+        assert_eq!(items[0].error_code.as_deref(), Some("BOOK_NOT_FOUND"));
+        assert_eq!(items[1].book_id, "b2");
+        assert_eq!(items[1].status, "not_started");
+        assert_eq!(items[1].error_code, None);
+
+        // Verify that unknown error codes map to UNKNOWN
+        let single_err = LibraryError {
+            code: "SOME_RANDOM_CRASH".to_string(),
+            category: "unexpected".to_string(),
+            retryable: false,
+            message: Some("crash".to_string()),
+            details: None,
+        };
+        let single_view = PermanentlyDeleteBookErrorView::from_core(single_err);
+        assert_eq!(single_view.code, "UNKNOWN");
+        assert_eq!(single_view.category, "internal");
+    }
+
+    #[test]
+    fn test_delete_payload_deny_unknown_fields() {
+        let json_extra = serde_json::json!({
+            "book_id": "b1",
+            "confirm_permanent_delete": true,
+            "extra_field": "bad"
+        });
+        let res: Result<PermanentlyDeleteBookPayload, _> = serde_json::from_value(json_extra);
+        assert!(res.is_err(), "must reject unknown fields");
     }
 }

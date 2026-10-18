@@ -10,8 +10,12 @@ import reads (dedup/next order) only consider fully imported rows.
 
 from __future__ import annotations
 
+import json
+import os
+from pathlib import Path
 import sqlite3
 from collections.abc import Sequence
+from datetime import datetime, timezone
 
 from domain.books.entities import Book, Chapter, ChapterType, ReadingDirection, Tag
 from domain.pages.entities import Page
@@ -604,6 +608,317 @@ class SqliteLibraryRepository:
             self._conn.execute(
                 f"DELETE FROM pages WHERE page_id IN ({placeholders})", params
             )
+
+    # ------------------------------------------------------------------
+    # P09-AC3-DELETE-1: Project-level permanent deletion
+    # ------------------------------------------------------------------
+
+    def get_cleanup_manifest(self, book_id: str) -> list[str] | None:
+        row = self._conn.execute(
+            "SELECT targets_json FROM book_cleanup_manifests WHERE book_id = ?",
+            (book_id,),
+        ).fetchone()
+        if row is None:
+            return None
+        try:
+            val = json.loads(row["targets_json"])
+            return val if isinstance(val, list) else []
+        except (json.JSONDecodeError, TypeError):
+            return []
+
+    def list_book_cleanup_targets(self, book_id: str) -> list[str]:
+        targets: list[str] = []
+        rows_pages = self._conn.execute(
+            "SELECT p.managed_original_ref FROM pages p"
+            " JOIN chapters c ON c.chapter_id = p.chapter_id"
+            " WHERE c.book_id = ? AND p.managed_original_ref IS NOT NULL AND p.managed_original_ref != ''",
+            (book_id,),
+        ).fetchall()
+        for r in rows_pages:
+            ref = r["managed_original_ref"]
+            if ref:
+                targets.append(ref)
+        rows_artifacts = self._conn.execute(
+            "SELECT ar.managed_path FROM artifact_revisions ar"
+            " JOIN media_artifacts ma ON ma.artifact_id = ar.artifact_id"
+            " WHERE ma.book_id = ?",
+            (book_id,),
+        ).fetchall()
+        for r in rows_artifacts:
+            path = r["managed_path"]
+            if path:
+                targets.append(path)
+        manifest_targets = self.get_cleanup_manifest(book_id)
+        if manifest_targets:
+            targets.extend(manifest_targets)
+        seen: set[str] = set()
+        ordered: list[str] = []
+        for t in targets:
+            if t not in seen:
+                seen.add(t)
+                ordered.append(t)
+        return ordered
+
+    def is_whole_library(self, book_ids: Sequence[str]) -> bool:
+        rows = self._conn.execute("SELECT book_id FROM books").fetchall()
+        all_book_ids = {r["book_id"] for r in rows}
+        if not all_book_ids:
+            return False
+        return all_book_ids.issubset(set(book_ids))
+
+    def preflight_permanent_delete(
+        self, book_ids: Sequence[str], storage: Any = None
+    ) -> tuple[bool, list[dict[str, Any]]]:
+        all_ok = True
+        items: list[dict[str, Any]] = []
+        for book_id in book_ids:
+            item_error: str | None = None
+            book_row = self._conn.execute(
+                "SELECT book_id FROM books WHERE book_id = ?", (book_id,)
+            ).fetchone()
+            manifest_row = self._conn.execute(
+                "SELECT 1 FROM book_cleanup_manifests WHERE book_id = ?", (book_id,)
+            ).fetchone()
+            if book_row is None and manifest_row is None:
+                item_error = "BOOK_NOT_FOUND"
+            elif book_row is not None:
+                busy_runs = self._conn.execute(
+                    "SELECT 1 FROM pipeline_runs pr"
+                    " WHERE pr.status NOT IN ('completed', 'completed_with_failures', 'failed', 'cancelled')"
+                    " AND ("
+                    "   json_extract(pr.run_json, '$.scope.book_id') = ?"
+                    "   OR EXISTS ("
+                    "     SELECT 1 FROM pipeline_run_targets prt"
+                    "     JOIN pages p ON p.page_id = prt.page_id"
+                    "     JOIN chapters c ON c.chapter_id = p.chapter_id"
+                    "     WHERE prt.pipeline_run_id = pr.run_id AND c.book_id = ?"
+                    "   )"
+                    " )",
+                    (book_id, book_id),
+                ).fetchone()
+                if busy_runs is not None:
+                    item_error = "BOOK_BUSY"
+                else:
+                    busy_exports = self._conn.execute(
+                        "SELECT 1 FROM export_history"
+                        " WHERE book_id = ? AND status NOT IN ('completed', 'skipped', 'cancelled', 'failed')",
+                        (book_id,),
+                    ).fetchone()
+                    if busy_exports is not None:
+                        item_error = "BOOK_BUSY"
+                    else:
+                        targets = self.list_book_cleanup_targets(book_id)
+                        for t in targets:
+                            segments = t.replace("\\", "/").split("/")
+                            if (
+                                ".." in segments
+                                or "." in segments
+                                or Path(t).is_absolute()
+                                or any(s == "" for s in segments[1:])
+                            ):
+                                item_error = "BOOK_DELETE_CONFLICT"
+                                break
+                            if storage is not None:
+                                try:
+                                    abs_p = Path(storage.absolute_path(t)).resolve()
+                                    root = storage.root.resolve()
+                                    abs_p.relative_to(root)
+                                except Exception:
+                                    item_error = "BOOK_DELETE_CONFLICT"
+                                    break
+            if item_error is not None:
+                all_ok = False
+            items.append({
+                "book_id": book_id,
+                "status": "not_started",
+                "error_code": item_error,
+            })
+        return all_ok, items
+
+    def execute_permanent_delete_db(self, book_targets_map: dict[str, list[str]]) -> None:
+        now_iso = datetime.now(timezone.utc).isoformat(timespec="milliseconds")
+        with self._conn:
+            for book_id, targets in book_targets_map.items():
+                book_row = self._conn.execute(
+                    "SELECT title FROM books WHERE book_id = ?", (book_id,)
+                ).fetchone()
+                book_title = book_row["title"] if book_row else ""
+
+                self._conn.execute(
+                    "INSERT OR REPLACE INTO book_cleanup_manifests (book_id, targets_json, created_at)"
+                    " VALUES (?, ?, ?)",
+                    (book_id, json.dumps(targets, ensure_ascii=False), now_iso),
+                )
+
+                if not book_row:
+                    continue
+
+                runs = self._conn.execute(
+                    "SELECT DISTINCT pr.run_id, pr.run_json FROM pipeline_runs pr"
+                    " WHERE json_extract(pr.run_json, '$.scope.book_id') = ?"
+                    "   OR EXISTS ("
+                    "       SELECT 1 FROM pipeline_run_targets prt"
+                    "       JOIN pages p ON p.page_id = prt.page_id"
+                    "       JOIN chapters c ON c.chapter_id = p.chapter_id"
+                    "       WHERE prt.pipeline_run_id = pr.run_id AND c.book_id = ?"
+                    "   )",
+                    (book_id, book_id),
+                ).fetchall()
+                for r in runs:
+                    run_id = r["run_id"]
+                    try:
+                        rj = json.loads(r["run_json"])
+                    except Exception:
+                        rj = {}
+                    if book_title:
+                        rj["book_title"] = book_title
+                        if isinstance(rj.get("scope"), dict):
+                            rj["scope"]["book_title"] = book_title
+                    self._conn.execute(
+                        "UPDATE pipeline_runs SET run_json = ? WHERE run_id = ?",
+                        (json.dumps(rj, ensure_ascii=False), run_id),
+                    )
+
+                self._conn.execute(
+                    "UPDATE pipeline_run_targets SET snapshot_json = '{}'"
+                    " WHERE page_id IN ("
+                    "   SELECT p.page_id FROM pages p"
+                    "   JOIN chapters c ON c.chapter_id = p.chapter_id"
+                    "   WHERE c.book_id = ?"
+                    " )",
+                    (book_id,),
+                )
+
+                self._conn.execute(
+                    "UPDATE step_runs SET input_refs_json = '[]', lock_snapshot_json = '{}', output_json = '{}'"
+                    " WHERE page_id IN ("
+                    "   SELECT p.page_id FROM pages p"
+                    "   JOIN chapters c ON c.chapter_id = p.chapter_id"
+                    "   WHERE c.book_id = ?"
+                    " )",
+                    (book_id,),
+                )
+
+                self._conn.execute(
+                    "UPDATE step_run_output_refs SET value_json = '{}'"
+                    " WHERE step_run_id IN ("
+                    "   SELECT sr.step_run_id FROM step_runs sr"
+                    "   JOIN pages p ON p.page_id = sr.page_id"
+                    "   JOIN chapters c ON c.chapter_id = p.chapter_id"
+                    "   WHERE c.book_id = ?"
+                    " )",
+                    (book_id,),
+                )
+
+                self._conn.execute(
+                    "UPDATE step_result_candidates SET payload_json = '{}'"
+                    " WHERE page_id IN ("
+                    "   SELECT p.page_id FROM pages p"
+                    "   JOIN chapters c ON c.chapter_id = p.chapter_id"
+                    "   WHERE c.book_id = ?"
+                    " )",
+                    (book_id,),
+                )
+
+                exp_rows = self._conn.execute(
+                    "SELECT export_id, scope_snapshot_json FROM export_history WHERE book_id = ?",
+                    (book_id,),
+                ).fetchall()
+                for exp in exp_rows:
+                    try:
+                        sc = json.loads(exp["scope_snapshot_json"] or "{}")
+                    except Exception:
+                        sc = {}
+                    if book_title:
+                        sc["book_title"] = book_title
+                    self._conn.execute(
+                        "UPDATE export_history SET scope_snapshot_json = ? WHERE export_id = ?",
+                        (json.dumps(sc, ensure_ascii=False), exp["export_id"]),
+                    )
+
+                self._conn.execute(
+                    "UPDATE artifact_revisions SET source_artifact_revision_id = NULL"
+                    " WHERE source_artifact_revision_id IN ("
+                    "   SELECT ar.artifact_revision_id FROM artifact_revisions ar"
+                    "   JOIN media_artifacts ma ON ma.artifact_id = ar.artifact_id"
+                    "   WHERE ma.book_id = ?"
+                    " )",
+                    (book_id,),
+                )
+                self._conn.execute(
+                    "DELETE FROM artifact_revisions WHERE artifact_id IN ("
+                    "   SELECT artifact_id FROM media_artifacts WHERE book_id = ?"
+                    " )",
+                    (book_id,),
+                )
+                self._conn.execute("DELETE FROM media_artifacts WHERE book_id = ?", (book_id,))
+                self._conn.execute(
+                    "DELETE FROM region_revisions WHERE region_id IN ("
+                    "   SELECT r.region_id FROM regions r"
+                    "   JOIN pages p ON p.page_id = r.page_id"
+                    "   JOIN chapters c ON c.chapter_id = p.chapter_id"
+                    "   WHERE c.book_id = ?"
+                    " )",
+                    (book_id,),
+                )
+                self._conn.execute(
+                    "DELETE FROM regions WHERE page_id IN ("
+                    "   SELECT p.page_id FROM pages p"
+                    "   JOIN chapters c ON c.chapter_id = p.chapter_id"
+                    "   WHERE c.book_id = ?"
+                    " )",
+                    (book_id,),
+                )
+                self._conn.execute("DELETE FROM reading_progress WHERE book_id = ?", (book_id,))
+                self._conn.execute(
+                    "DELETE FROM pages WHERE chapter_id IN ("
+                    "   SELECT chapter_id FROM chapters WHERE book_id = ?"
+                    " )",
+                    (book_id,),
+                )
+                self._conn.execute("DELETE FROM chapters WHERE book_id = ?", (book_id,))
+                self._conn.execute("DELETE FROM book_tags WHERE book_id = ?", (book_id,))
+                self._conn.execute("DELETE FROM books WHERE book_id = ?", (book_id,))
+
+    def cleanup_book_files(self, book_id: str, targets: Sequence[str], storage: Any) -> bool:
+        all_deleted = True
+        for t in targets:
+            try:
+                storage.remove_managed(t)
+            except Exception:
+                all_deleted = False
+
+        if storage is not None:
+            try:
+                root = storage.root.resolve()
+                book_dir = (root / "books" / book_id).resolve()
+                if book_dir.exists() and book_dir.is_dir():
+                    for dirpath, dirnames, filenames in os.walk(str(book_dir), topdown=False):
+                        if not filenames and not dirnames:
+                            try:
+                                os.rmdir(dirpath)
+                            except OSError:
+                                pass
+                        elif not filenames:
+                            try:
+                                os.rmdir(dirpath)
+                            except OSError:
+                                pass
+                    try:
+                        os.rmdir(str(book_dir))
+                    except OSError:
+                        pass
+            except Exception:
+                pass
+
+        if all_deleted:
+            with self._conn:
+                self._conn.execute(
+                    "DELETE FROM book_cleanup_manifests WHERE book_id = ?",
+                    (book_id,),
+                )
+            return True
+        return False
 
 
 def _soft_delete_timestamp() -> str:
