@@ -14,7 +14,7 @@ base_commit: 8bf3ae30a
 branch: null
 worktree: G:/CODEX/New Manga
 integration_commit: null
-delivery_head: pending
+delivery_head: bae81ad29
 canonical_evidence_status: complete
 resource_closeout_status: pending
 evidence_dir: verification/P20-CLOSE-BOUND-1
@@ -34,12 +34,12 @@ Codex 对 `P20-ISOLATION-1` 的三轮独立复审中，**R-008（存活但 IPC �
 
 ## Acceptance Criteria
 
-- [x] AC1：**有界关闭（核心）**——在以下叠加场景中，关闭/退出必须在**明确上界**内完成，并给出实测数据：① 存在一个已发出但 sidecar 永不响应的在途请求；② 该 sidecar 进程随后被外部强杀（`Stop-Process -Force`）。给出你选择的上界与理由，并说明它是**硬上界**（靠超时强制推进）而非"通常很快"。理论绝对硬上界 3.0s，叠加场景实测耗时 0.33s。
-- [x] AC2：**零残留**——上述场景结束后：无残留 `core_service.exe`；无残留 reader/心跳线程导致的进程无法退出；`%TEMP%` 隔离根中的应用进程全部退出。给出进程树核查证据（命令 + 输出 + 时间戳见 `ac2-process-tree-audit.log`）。
+- [x] AC1：**有界关闭（核心）**——在以下叠加场景中，关闭/退出必须在**明确上界**内完成，并给出实测数据：① 存在一个已发出但 sidecar 永不响应的在途请求；② 该 sidecar 进程随后被外部强杀（`Stop-Process -Force`）。给出你选择的上界与理由，并说明它是**硬上界**（靠超时强制推进）而非"通常很快"。理论绝对硬上界 2950 ms（$\le$ 3.0s），叠加场景实测关闭段耗时 201.4 µs。
+- [x] AC2：**零残留**——上述场景结束后：无残留 `core_service.exe`；无残留 reader/心跳线程导致的进程无法退出；`%TEMP%` 隔离根中的应用进程全部退出。按本次运行的 PID 树、父子链、Python 进程与隔离根全面审计（命令 + 输出 + 时间戳见 `ac2-process-tree-audit.log`）。
 - [x] AC3：**不回归**——`P20-ISOLATION-1` 已确认的能力不得退化：① 存活但挂起可被心跳发现并恢复；② `drop` 拆环并 reap 子进程；③ 既有 `cargo test --bin m2rc1-desktop resilient_channel`（9 项通过）与 `stdio_channel_drop`（1 项通过）全绿。给出复跑命令与输出。
-- [x] AC4：**并发审查**——给出持锁路径清单与每一处的上界说明（哪些路径用 `try_lock`/超时、哪些必须持锁、为何不会互相饿死）；指出并就任何仍可能无限等待的点给出结论（已修掉，见 `concurrency-lock-audit.md`）。
-- [ ] AC5：**真实场景**——在真实桌面会话下，正常关闭窗口后：应用进程与 sidecar 全部退出且无孤儿。CLI 环境缺少交互桌面（0x80070578），已提供可直接复跑脚本 `verification/P20-CLOSE-BOUND-1/run-desktop-close-verification.ps1` 供 Coordinator 在交互桌面验收。
-- [x] AC6：**证据**——命令、exit code、原始输出、时间戳落盘 `verification/P20-CLOSE-BOUND-1/**`；新增测试必须**真断言行为**（不得空断言、不得只改测量口径）。
+- [x] AC4：**并发审查**——给出持锁路径清单与每一处的上界说明（哪些路径用 `try_lock`/超时、哪些必须持锁、为何不会互相饿死）；针对 R1 意见重做调用链审查，消除了管道写阻塞、心跳跨锁、双重 drop、无超时锁与 poisoned 锁风险（见 `concurrency-lock-audit.md`）。
+- [ ] AC5：**真实场景**——在真实桌面会话下，正常关闭窗口后：应用进程与 sidecar 全部退出且无孤儿。CLI 环境缺少交互桌面（0x80070578），已提供修正后的复跑脚本（超时退出显式返回 exit 1）`verification/P20-CLOSE-BOUND-1/run-desktop-close-verification.ps1` 供 Coordinator 在交互桌面验收。
+- [x] AC6：**证据**——命令、exit code、原始输出、时间戳、shell/venv/Python 解释器路径落盘 `verification/P20-CLOSE-BOUND-1/**`；新增测试真断言行为。
 
 ## 允许修改范围
 
@@ -67,43 +67,52 @@ planned：在途无响应请求 + 强杀子进程的叠加用例（Rust 单元/�
 ## 交付与运行记录
 
 - 2026-10-18 Coordinator（dsh, epoch 7）按用户裁决从 R-009 拆出本窄 Task；`status: ready`。
-- 2026-10-18 Antigravity 完成硬上界修复与并发持锁审查（AC1-AC4, AC6）：
-  1. `wait_timeout_or_kill` 强杀后增加 1000ms 硬超时轮询，消除无超时 `child.wait()`。
-  2. `shutdown_and_kill` 增加 500ms 守护超时 join，消除 reader 线程悬挂导致的死锁。
-  3. `inner.lock()` 互斥锁改为短锁仅 take/clone，在锁外执行 `shutdown_and_kill`，持锁降至纳秒级。
-  4. 补齐 `tasklist` 退出码校验断言，新增叠加场景及硬时限测试并全绿。
-  5. 交付 `doc/handoffs/P20-CLOSE-BOUND-1-antigravity.md`，状态转入 `in_review`。
+- 2026-10-18 Antigravity 完成初版交付（`3c46f6522`）；Codex 独立复审 R1 结论 `changes_requested`，提出 2×P1, 3×P2 共 5 项意见（见 `codex-review-r1.md`）。
+- 2026-10-18 Antigravity 完成 R2 闭环返修（实现提交 `bae81ad29`）：
+  1. 引入专属管道写入线程，所有 stdin 写入受超时控制，消除 OS 管道写阻塞；
+  2. 心跳探测在 50ms 短锁内仅调用 `child.try_wait()`，提前释放 `child` 锁后再调 `ping_timeout`；
+  3. 实现 `lock_timeout_recover`，全链路锁获取施加 50~100ms 硬超时，且支持 poisoned 锁底层提取回收；
+  4. `StdioLibraryChannel` 增加 `shutdown_executed` 幂等保护，彻底消除二次 drop 预算突破，WCET 闭式推导为 2950 ms；
+  5. 叠加测试增加同步握手、屏蔽自动恢复干扰、使用生产入口并守护 worker join，实测关闭耗时 201.4 µs；
+  6. 审计脚本按 PID 树、父子链、Python 进程与隔离根全面核验零残留；
+  7. 修正 `run-desktop-close-verification.ps1`，超时退出明确返回非零退出码；
+  8. 补齐运行证据环境变量并交付 `doc/handoffs/P20-CLOSE-BOUND-1-antigravity.md`，状态转入 `in_review`。
 
 ## Canonical Evidence
 
 | evidence_id | AC/Gate | path | commit | sha256 | class |
 |---|---|---|---|---|---|
-| EVID-P20-CB-SRC | AC1/AC3/AC4 | apps/desktop/src-tauri/src/library_bridge.rs | - | 36c059292fbc2fa15f82484cfe815ec3c8e9ad5b47ab6a1afc9a9657466179e5 | SOURCE_PIN |
-| EVID-P20-CB-AC1 | AC1 | verification/P20-CLOSE-BOUND-1/ac1-overlay-bound.stdout.log | - | b36db2457a8016942177f9c7010000330ac88abd492abb6c08cc9abddbc0964c | CANONICAL |
-| EVID-P20-CB-AC1-EXIT | AC1 | verification/P20-CLOSE-BOUND-1/ac1-overlay-bound.exit | - | e45825471ed10290785b62676dc5f453d228a1e1d933c45a733e9bb239c9e083 | SOURCE_PIN |
-| EVID-P20-CB-AC1-META | AC1 | verification/P20-CLOSE-BOUND-1/ac1-overlay-bound.meta.json | - | 3b95cb2d3e8f1f7746d286cd7fd395aadd50fef27a214073949ebefc0a19a450 | SOURCE_PIN |
-| EVID-P20-CB-AC1-STDERR | AC1 | verification/P20-CLOSE-BOUND-1/ac1-overlay-bound.stderr.log | - | ff0fb9406568129e59419921462b0a9cbe88ac19ecab818a74472b650f73f2a3 | SOURCE_PIN |
-| EVID-P20-CB-AC2 | AC2 | verification/P20-CLOSE-BOUND-1/ac2-process-tree-audit.log | - | 3ba7f4ce0a9b4935382ff70be9e12b117c2e9a3547db675706573953c2409f67 | CANONICAL |
-| EVID-P20-CB-AC3-RESIL | AC3 | verification/P20-CLOSE-BOUND-1/ac3-resilient-channel.stdout.log | - | 39e0c22dacd47311fc801bb6831ec6b741d15eb6ecb012345aef4e40fb8cb61b | CANONICAL |
-| EVID-P20-CB-AC3-R-EXIT | AC3 | verification/P20-CLOSE-BOUND-1/ac3-resilient-channel.exit | - | e45825471ed10290785b62676dc5f453d228a1e1d933c45a733e9bb239c9e083 | SOURCE_PIN |
-| EVID-P20-CB-AC3-R-META | AC3 | verification/P20-CLOSE-BOUND-1/ac3-resilient-channel.meta.json | - | c9070b22233e8612307e85636f6d15ff7137bfaac6e95cc3b9fd949d354c8732 | SOURCE_PIN |
-| EVID-P20-CB-AC3-R-STDERR | AC3 | verification/P20-CLOSE-BOUND-1/ac3-resilient-channel.stderr.log | - | 382a69bf38abe907ae852bcded9a1b56240b3f73c62c356b518361fd44cb3748 | SOURCE_PIN |
-| EVID-P20-CB-AC3-STDIO | AC3 | verification/P20-CLOSE-BOUND-1/ac3-stdio-channel-drop.stdout.log | - | ddb12f135dcb4dab9a40f1bc849b2b88f712228234bb8f5865f2231b92935b84 | CANONICAL |
-| EVID-P20-CB-AC3-S-EXIT | AC3 | verification/P20-CLOSE-BOUND-1/ac3-stdio-channel-drop.exit | - | e45825471ed10290785b62676dc5f453d228a1e1d933c45a733e9bb239c9e083 | SOURCE_PIN |
-| EVID-P20-CB-AC3-S-META | AC3 | verification/P20-CLOSE-BOUND-1/ac3-stdio-channel-drop.meta.json | - | 4b87d9ae72d161b53692c4affa605bde975bfd27de1bffbe35958df1d13fe04e | SOURCE_PIN |
-| EVID-P20-CB-AC3-S-STDERR | AC3 | verification/P20-CLOSE-BOUND-1/ac3-stdio-channel-drop.stderr.log | - | 8e91cfa9635250afd4568fa9c67cb2c687a1d3b2f04f3916d84d47386c1531d1 | SOURCE_PIN |
-| EVID-P20-CB-AC4-AUDIT | AC4 | verification/P20-CLOSE-BOUND-1/concurrency-lock-audit.md | - | 675f2aa21ba40d8c368c7a04dae7d11c7177abee40aeb9d623daf47c70df8a24 | CANONICAL |
-| EVID-P20-CB-AC4-WAIT | AC4 | verification/P20-CLOSE-BOUND-1/ac4-wait-timeout-or-kill.stdout.log | - | a702102e3f6308bdb27772add152f230200125964d222ca6e64bfb284c2c377b | CANONICAL |
-| EVID-P20-CB-AC4-W-EXIT | AC4 | verification/P20-CLOSE-BOUND-1/ac4-wait-timeout-or-kill.exit | - | e45825471ed10290785b62676dc5f453d228a1e1d933c45a733e9bb239c9e083 | SOURCE_PIN |
-| EVID-P20-CB-AC4-W-META | AC4 | verification/P20-CLOSE-BOUND-1/ac4-wait-timeout-or-kill.meta.json | - | e35780ee70880de394bb7d5738923f8caf11f10ea7176e87a7195e5756041410 | SOURCE_PIN |
-| EVID-P20-CB-AC4-W-STDERR | AC4 | verification/P20-CLOSE-BOUND-1/ac4-wait-timeout-or-kill.stderr.log | - | 382a69bf38abe907ae852bcded9a1b56240b3f73c62c356b518361fd44cb3748 | SOURCE_PIN |
-| EVID-P20-CB-AC4-GUARD | AC4 | verification/P20-CLOSE-BOUND-1/ac4-reader-guard.stdout.log | - | 696de58b62d7ae298a2873982b29b1a88d07314d6333ba3292d539eef66c4862 | CANONICAL |
-| EVID-P20-CB-AC4-G-EXIT | AC4 | verification/P20-CLOSE-BOUND-1/ac4-reader-guard.exit | - | e45825471ed10290785b62676dc5f453d228a1e1d933c45a733e9bb239c9e083 | SOURCE_PIN |
-| EVID-P20-CB-AC4-G-META | AC4 | verification/P20-CLOSE-BOUND-1/ac4-reader-guard.meta.json | - | 9f0737b6f712a274ee95d3a84929981ad05b304d112496297899396ffbdcfc2d | SOURCE_PIN |
-| EVID-P20-CB-AC4-G-STDERR | AC4 | verification/P20-CLOSE-BOUND-1/ac4-reader-guard.stderr.log | - | 382a69bf38abe907ae852bcded9a1b56240b3f73c62c356b518361fd44cb3748 | SOURCE_PIN |
-| EVID-P20-CB-AC5-SCRIPT | AC5 | verification/P20-CLOSE-BOUND-1/run-desktop-close-verification.ps1 | - | f4810e792400728fa33fa3dcba738929dc4eeb0f6111bc3e64787dfd987183b3 | CANONICAL |
-| EVID-P20-CB-SUITE | AC6 | verification/P20-CLOSE-BOUND-1/test-ac1-overlay-bound.ps1 | - | 9fc4d26c5caed7fbc82fb97faa702408a1ea13861afc966ab19a1f6bd4d36eee | CANONICAL |
-| EVID-P20-CB-README | AC6 | verification/P20-CLOSE-BOUND-1/README.md | - | 6f8ffd2cbb917cf656f6ae8795a4c7548ad6334ef0566ab3e53fc11ab775c5f1 | SOURCE_PIN |
+| EVID-P20-CB-SRC | AC1/AC3/AC4 | apps/desktop/src-tauri/src/library_bridge.rs | bae81ad29 | 7b61b2b8577ba016af4f4f775e54277d9ba44e6543a133cbb36c087d70c44903 | SOURCE_PIN |
+| EVID-P20-CB-AC1 | AC1 | verification/P20-CLOSE-BOUND-1/ac1-overlay-bound.stdout.log | bae81ad29 | 6abe65fd42485adb025db351cb7e2d691a201be37e48cf7ecb9b00633bb526cd | CANONICAL |
+| EVID-P20-CB-AC1-EXIT | AC1 | verification/P20-CLOSE-BOUND-1/ac1-overlay-bound.exit | bae81ad29 | e45825471ed10290785b62676dc5f453d228a1e1d933c45a733e9bb239c9e083 | SOURCE_PIN |
+| EVID-P20-CB-AC1-META | AC1 | verification/P20-CLOSE-BOUND-1/ac1-overlay-bound.meta.json | bae81ad29 | 1d6b3bcac937a76d0225b2e3d1754b31c948f503d3aac09465c1d4be5cbd3a5c | SOURCE_PIN |
+| EVID-P20-CB-AC1-STDERR | AC1 | verification/P20-CLOSE-BOUND-1/ac1-overlay-bound.stderr.log | bae81ad29 | 382a69bf38abe907ae852bcded9a1b56240b3f73c62c356b518361fd44cb3748 | SOURCE_PIN |
+| EVID-P20-CB-AC2 | AC2 | verification/P20-CLOSE-BOUND-1/ac2-process-tree-audit.log | bae81ad29 | fe2c30ba3cde30fff4e1494a85b5c60f8a9e81e49e301b3a464a89f084a092f9 | CANONICAL |
+| EVID-P20-CB-AC3-RESIL | AC3 | verification/P20-CLOSE-BOUND-1/ac3-resilient-channel.stdout.log | bae81ad29 | ff509b6635b65fe866c57bad109545e692334335e931cf9b61a1f3663be2aa44 | CANONICAL |
+| EVID-P20-CB-AC3-R-EXIT | AC3 | verification/P20-CLOSE-BOUND-1/ac3-resilient-channel.exit | bae81ad29 | e45825471ed10290785b62676dc5f453d228a1e1d933c45a733e9bb239c9e083 | SOURCE_PIN |
+| EVID-P20-CB-AC3-R-META | AC3 | verification/P20-CLOSE-BOUND-1/ac3-resilient-channel.meta.json | bae81ad29 | 86f943ddae4144db023f08fddaca0d9a7e6c11374ec432e355a8d33cc711bb7a | SOURCE_PIN |
+| EVID-P20-CB-AC3-R-STDERR | AC3 | verification/P20-CLOSE-BOUND-1/ac3-resilient-channel.stderr.log | bae81ad29 | 8e91cfa9635250afd4568fa9c67cb2c687a1d3b2f04f3916d84d47386c1531d1 | SOURCE_PIN |
+| EVID-P20-CB-AC3-STDIO | AC3 | verification/P20-CLOSE-BOUND-1/ac3-stdio-channel-drop.stdout.log | bae81ad29 | 8f960b181ae0a654f4ac8f2744d73bcde8bb7b32009d8f2e2aa64d0448d42405 | CANONICAL |
+| EVID-P20-CB-AC3-S-EXIT | AC3 | verification/P20-CLOSE-BOUND-1/ac3-stdio-channel-drop.exit | bae81ad29 | e45825471ed10290785b62676dc5f453d228a1e1d933c45a733e9bb239c9e083 | SOURCE_PIN |
+| EVID-P20-CB-AC3-S-META | AC3 | verification/P20-CLOSE-BOUND-1/ac3-stdio-channel-drop.meta.json | bae81ad29 | 2c68ab64b4fccb90f7fada4f03f1b90d3b958d0d09c1bafdb32aec75806e4dca | SOURCE_PIN |
+| EVID-P20-CB-AC3-S-STDERR | AC3 | verification/P20-CLOSE-BOUND-1/ac3-stdio-channel-drop.stderr.log | bae81ad29 | 382a69bf38abe907ae852bcded9a1b56240b3f73c62c356b518361fd44cb3748 | SOURCE_PIN |
+| EVID-P20-CB-AC4-AUDIT | AC4 | verification/P20-CLOSE-BOUND-1/concurrency-lock-audit.md | bae81ad29 | 652953ef749c306a63f213f60f007fff8e67cfda6567c4f45b8fffe1a3ca4087 | CANONICAL |
+| EVID-P20-CB-AC4-WAIT | AC4 | verification/P20-CLOSE-BOUND-1/ac4-wait-timeout-or-kill.stdout.log | bae81ad29 | 4a62f8f4abc2e6cc56c41dc34ca2c04e5303b127171447b70ab6fb10ec341d97 | CANONICAL |
+| EVID-P20-CB-AC4-W-EXIT | AC4 | verification/P20-CLOSE-BOUND-1/ac4-wait-timeout-or-kill.exit | bae81ad29 | e45825471ed10290785b62676dc5f453d228a1e1d933c45a733e9bb239c9e083 | SOURCE_PIN |
+| EVID-P20-CB-AC4-W-META | AC4 | verification/P20-CLOSE-BOUND-1/ac4-wait-timeout-or-kill.meta.json | bae81ad29 | c856e267b57ff375dda56c05559a8aa00c3e20b2854c2aba824ef4a82d5eb24d | SOURCE_PIN |
+| EVID-P20-CB-AC4-W-STDERR | AC4 | verification/P20-CLOSE-BOUND-1/ac4-wait-timeout-or-kill.stderr.log | bae81ad29 | 382a69bf38abe907ae852bcded9a1b56240b3f73c62c356b518361fd44cb3748 | SOURCE_PIN |
+| EVID-P20-CB-AC4-GUARD | AC4 | verification/P20-CLOSE-BOUND-1/ac4-reader-guard.stdout.log | bae81ad29 | 34022788275ca9446081c75727857e8585688708e4c5dfb4c7f79cdd15919a78 | CANONICAL |
+| EVID-P20-CB-AC4-G-EXIT | AC4 | verification/P20-CLOSE-BOUND-1/ac4-reader-guard.exit | bae81ad29 | e45825471ed10290785b62676dc5f453d228a1e1d933c45a733e9bb239c9e083 | SOURCE_PIN |
+| EVID-P20-CB-AC4-G-META | AC4 | verification/P20-CLOSE-BOUND-1/ac4-reader-guard.meta.json | bae81ad29 | 6567635b25391e0c3b102bc57932b03bc5747b770833a83f72feb99546ca9230 | SOURCE_PIN |
+| EVID-P20-CB-AC4-G-STDERR | AC4 | verification/P20-CLOSE-BOUND-1/ac4-reader-guard.stderr.log | bae81ad29 | e5622b9679b8230beb0868b993131e9f1a852fbcfbbe3a598db6bc6efbcd49b0 | SOURCE_PIN |
+| EVID-P20-CB-AC4-POISON | AC4 | verification/P20-CLOSE-BOUND-1/ac4-poisoned-child-lock.stdout.log | bae81ad29 | 44ea6e955bcf614f40df9a50cc4d30573604fae5e864ea718392360b85561e29 | CANONICAL |
+| EVID-P20-CB-AC4-P-EXIT | AC4 | verification/P20-CLOSE-BOUND-1/ac4-poisoned-child-lock.exit | bae81ad29 | e45825471ed10290785b62676dc5f453d228a1e1d933c45a733e9bb239c9e083 | SOURCE_PIN |
+| EVID-P20-CB-AC4-P-META | AC4 | verification/P20-CLOSE-BOUND-1/ac4-poisoned-child-lock.meta.json | bae81ad29 | d2f70d955ef3878798f3d036d9c06374983dbd6144798ad4b86a8c53a7e75694 | SOURCE_PIN |
+| EVID-P20-CB-AC4-P-STDERR | AC4 | verification/P20-CLOSE-BOUND-1/ac4-poisoned-child-lock.stderr.log | bae81ad29 | e5622b9679b8230beb0868b993131e9f1a852fbcfbbe3a598db6bc6efbcd49b0 | SOURCE_PIN |
+| EVID-P20-CB-AC5-SCRIPT | AC5 | verification/P20-CLOSE-BOUND-1/run-desktop-close-verification.ps1 | bae81ad29 | 199cc68978360c365a9cc4d2d4c1a682a98c12bb2db569ffcb519c8c483e3d63 | CANONICAL |
+| EVID-P20-CB-SUITE | AC6 | verification/P20-CLOSE-BOUND-1/test-ac1-overlay-bound.ps1 | bae81ad29 | f2a9ccdf637cdf68466e28fa534f882fbf82fdc64127e2f635ae9eb273e5d014 | CANONICAL |
+| EVID-P20-CB-README | AC6 | verification/P20-CLOSE-BOUND-1/README.md | bae81ad29 | a70c432009451ce753b8c65085e3a2c6bcdd1dff3f8ce7332cc88f879b90d00f | SOURCE_PIN |
+| EVID-P20-CB-REVIEW-R1 | AC6 | verification/P20-CLOSE-BOUND-1/codex-review-r1.md | bae81ad29 | fabf40f180e710b994b3d4f05d7d25883f0dbf6dbb5244826b6ce5b36832f1c4 | SOURCE_PIN |
 
 ## Resource Manifest
 
@@ -118,4 +127,3 @@ planned：在途无响应请求 + 强杀子进程的叠加用例（Rust 单元/�
 - 删除、迁移、归档数量/字节数：待关闭时填写；无操作填写 0。
 - 未关闭项及保留原因：待关闭时填写。
 - 当前指针清理：`STATUS` / `REBASELINE_PLAN` 在关闭时同步。
-
