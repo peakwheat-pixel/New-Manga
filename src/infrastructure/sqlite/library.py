@@ -1114,9 +1114,19 @@ class SqliteLibraryRepository:
                             if entry is not None and entry.rel_path:
                                 # AC5 / N-004: shared with its own unit test so
                                 # this refusal cannot silently regress.
-                                unlink_preview_without_following(
+                                # F-004 (Codex R1): the helper returns False
+                                # when it REFUSED to remove (reparse point,
+                                # traversal, absolute path, or a plain unlink
+                                # failure).  Dropping the catalog row anyway
+                                # destroyed the only record of a file we did
+                                # not delete, turning a recoverable failure
+                                # into a permanent, untraceable leak.
+                                removed = unlink_preview_without_following(
                                     str(entry.rel_path), root_res
                                 )
+                                if not removed:
+                                    all_deleted = False
+                                    continue
                             catalog.remove(res_id)
                         except Exception:
                             all_deleted = False
