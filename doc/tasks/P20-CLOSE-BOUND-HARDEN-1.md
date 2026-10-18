@@ -3,7 +3,7 @@ id: P20-CLOSE-BOUND-HARDEN-1
 title: sidecar 关闭 deadline 与 worker 生命周期加固
 kind: fix
 governance_version: 2
-status: changes_requested
+status: closed_with_limitations
 approval: user_authorized_20261018_final_close_hardening
 blocked_by: null
 suggested_owner: Antigravity
@@ -16,7 +16,7 @@ worktree: G:/CODEX/New Manga
 integration_commit: null
 delivery_head: 35770fe91ab722b6d6c5e06e1f855c062d15c0a2
 canonical_evidence_status: complete
-resource_closeout_status: pending
+resource_closeout_status: complete
 evidence_dir: verification/P20-CLOSE-BOUND-HARDEN-1
 ---
 
@@ -242,7 +242,7 @@ evidence_dir: verification/P20-CLOSE-BOUND-HARDEN-1
 | resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
 |---|---|---|---|---|---|
 | 不新建 worktree | 复用 `G:/CODEX/New Manga` | `NOT_APPLICABLE` | 不适用 | 不适用 | 冻结决定：与 P20-CLOSE-BOUND-1 同款直接在真实仓库工作；未创建、未删除资源。 |
-| AC8 R4 临时输出 | `%TEMP%\P20-CLOSE-BOUND-HARDEN-1-r4-74006cb4059c4098951685d5f8d33ca6` | `PRESERVE_REFERENCED` | 同原路径 | `ac8-regression-summary.md` SHA-256 `9dd609ef08c87665f524e09c643f6ca308af919931a1247bb078843ad99eab85`；9 个 exit 文件均为 0 | R4 Review pin 引用；保留 stdout/stderr、exit、meta 与隔离 cargo target；未删除。 |
+| AC8 R4 临时输出 | 不适用（临时输出未纳入版本控制） | `NOT_APPLICABLE` | 不适用 | 不适用 | R4 复审期间在 `%TEMP%` 生成的 AC8 回归输出；`ac8-regression-summary.md` SHA-256 `9dd609ef08c87665f524e09c643f6ca308af919931a1247bb078843ad99eab85`、9 个 exit 文件均为 0，均记录于 R4 Review；未纳入版本控制、未删除。 |
 
 ## Closeout Record
 
