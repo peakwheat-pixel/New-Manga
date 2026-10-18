@@ -1,0 +1,4 @@
+runner=run-ac4-fps.ps1 -SafetySelfCheck
+result=PASS
+iso_root=C:\Users\49745\AppData\Local\Temp\p20fps-selfcheck-9f13d4a4
+appdata_root=C:\Users\49745\AppData\Roaming\com.newmanga.m2rc1.desktop

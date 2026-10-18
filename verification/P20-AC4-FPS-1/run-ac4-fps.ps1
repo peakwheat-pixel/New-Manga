@@ -54,6 +54,28 @@
 #     a missing window, an early app exit or an empty isolated root is a
 #     FAILURE, not a log line.
 #
+# FPS-R1-02 hardening round 3 (codex-review-r3):
+#   * Injected input is FOREGROUND-BOUND. WM_MOUSEWHEEL and SendKeys are
+#     delivered to the foreground (focus) window, NOT to the window under
+#     the cursor. Before EVERY injected tick the runner verifies via
+#     GetForegroundWindow + GetWindowThreadProcessId that the foreground
+#     window's PID equals THIS run's app PID; on mismatch it first makes ONE
+#     activation attempt (SetForegroundWindow, with the synthetic-Alt
+#     foreground-lock workaround as fallback) and re-verifies the PID. If the
+#     foreground still does not belong to this run's app, the run FAILS
+#     CLOSED (FOCUS_* -> non-zero exit): no wheel, no keys, ever, while the
+#     focus is unproven. The keys path additionally checks the AppActivate
+#     return value and refuses to SendKeys when activation reported failure.
+#   * Find-WindowByTitleForPid now scans the FULL same-title enumeration
+#     BEFORE returning (FPS-R1-02-AUDIT): foreign same-title windows are
+#     registered as NOT_OURS_WINDOW even when our own window is found first.
+#   * -SafetySelfCheck gains a focus-bound injection group: with a same-title
+#     decoy present AND the foreground held by an external window, the guard
+#     must refuse (zero input delivered to ANY window), the refusal must feed
+#     the same Fail() mechanism that makes the runner exit 6, and only a
+#     genuinely foreground stub window may receive wheel events (decoy and
+#     outsider receive nothing).
+#
 # Modes:
 #   -Mode single|webtoon|both   interactive measurement (Coordinator)
 #   -SmokeTest                  launch the exe for ~12s without measuring,
@@ -94,6 +116,62 @@ $script:ourPids = [System.Collections.Generic.HashSet[int]]::new()
 # a recorded PID (double check against PID reuse).
 $script:familyNames = @('m2rc1-desktop', 'core_service', 'host_bridge', 'acceptance_bridge', 'catalog_loader')
 
+# ---------- Win32 input / foreground primitives (FPS-R1-02 r3) ----------
+# M2Wheel: cursor placement + global wheel SendInput. M2Focus: foreground
+# window PID query + activation. Loaded once here because BOTH the
+# measurement injection path and the -SafetySelfCheck focus-injection group
+# use them.
+Add-Type -TypeDefinition @'
+using System;
+using System.Runtime.InteropServices;
+public static class M2Wheel {
+    [StructLayout(LayoutKind.Sequential)]
+    public struct MOUSEINPUT { public int dx; public int dy; public uint mouseData; public uint dwFlags; public uint time; public IntPtr dwExtraInfo; }
+    [StructLayout(LayoutKind.Sequential)]
+    public struct INPUT { public uint type; public MOUSEINPUT mi; }
+    [DllImport("user32.dll")] public static extern bool SetCursorPos(int x, int y);
+    [DllImport("user32.dll")] public static extern uint SendInput(uint n, INPUT[] inputs, int size);
+    public static void Wheel(int x, int y, int delta) {
+        SetCursorPos(x, y);
+        INPUT[] i = new INPUT[1];
+        i[0].type = 0; i[0].mi.dwFlags = 0x0800; i[0].mi.mouseData = unchecked((uint)delta);
+        SendInput(1, i, Marshal.SizeOf(typeof(INPUT)));
+    }
+}
+public static class M2Focus {
+    [DllImport("user32.dll")] public static extern IntPtr GetForegroundWindow();
+    [DllImport("user32.dll")] private static extern uint GetWindowThreadProcessId(IntPtr hWnd, out uint pid);
+    [DllImport("user32.dll")] public static extern bool SetForegroundWindow(IntPtr hWnd);
+    [DllImport("user32.dll")] public static extern bool BringWindowToTop(IntPtr hWnd);
+    [DllImport("user32.dll")] public static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
+    [DllImport("user32.dll")] public static extern void keybd_event(byte vk, byte scan, uint flags, UIntPtr extra);
+    public static int ForegroundPid() {
+        IntPtr h = GetForegroundWindow();
+        if (h == IntPtr.Zero) { return -1; }
+        uint p; GetWindowThreadProcessId(h, out p);
+        return unchecked((int)p);
+    }
+    public static bool TryActivate(IntPtr hWnd) {
+        if (hWnd == IntPtr.Zero) { return false; }
+        ShowWindow(hWnd, 9); // SW_RESTORE (no-op when already shown)
+        if (SetForegroundWindow(hWnd)) { return true; }
+        BringWindowToTop(hWnd);
+        if (SetForegroundWindow(hWnd)) { return true; }
+        // Foreground lock: a background caller may not take the foreground
+        // unless it also produced the last input event. One synthetic Alt
+        // press satisfies that allowance; the Alt is released right after.
+        // The boolean return is only a hint — the caller ALWAYS re-verifies
+        // via ForegroundPid() before injecting anything.
+        keybd_event(0x12, 0, 0, UIntPtr.Zero);
+        System.Threading.Thread.Sleep(50);
+        bool r = SetForegroundWindow(hWnd);
+        BringWindowToTop(hWnd);
+        keybd_event(0x12, 0, 2, UIntPtr.Zero);
+        return r;
+    }
+}
+'@
+
 # ---------- window lookup bound to THIS run's PID (FPS-R1-02 r2, P1) ----------
 $script:winTitle = 'M2-RC1 resource channel runtime'
 $script:notOursWindowPids = [System.Collections.Generic.HashSet[int]]::new()
@@ -104,19 +182,24 @@ function Find-WindowByTitleForPid([string]$title, [int]$ownerPid) {
     # "first same-title window": a window owned by any other process is logged
     # once per pid as NOT_OURS_WINDOW and never returned, so no shell check,
     # UIA invoke or scroll can ever land on a foreign instance.
+    # FPS-R1-02-AUDIT (r3): the FULL enumeration is scanned BEFORE returning —
+    # foreign same-title windows are registered even when our own window is
+    # found first (the old early return skipped the rest of the enumeration).
     try {
         $r = [System.Windows.Automation.AutomationElement]::RootElement
         $c = New-Object System.Windows.Automation.PropertyCondition([System.Windows.Automation.AutomationElement]::NameProperty, $title)
         $all = $r.FindAll($TS::Children, $c)
+        $ours = $null
         for ($i = 0; $i -lt $all.Count; $i++) {
             $el = $all.Item($i)
             try { $wpid = [int]$el.Current.ProcessId } catch { continue }
-            if ($wpid -eq $ownerPid) { return $el }
-            if ($script:notOursWindowPids.Add($wpid)) {
+            if ($wpid -eq $ownerPid) {
+                if (-not $ours) { $ours = $el }
+            } elseif ($script:notOursWindowPids.Add($wpid)) {
                 Write-Trace "NOT_OURS_WINDOW same-title window pid=$wpid (not this run's process; never clicked, never scrolled, never killed)"
             }
         }
-        return $null
+        return $ours
     } catch { return $null }
 }
 
@@ -126,6 +209,39 @@ function Assert-OurWindow($w) {
     if (-not $w -or -not $script:appProcess) { return $false }
     try { $wpid = [int]$w.Current.ProcessId } catch { return $false }
     return ($wpid -eq [int]$script:appProcess.Id)
+}
+
+function Assert-ForegroundIsPid([int]$appPid, [long]$hwndRaw, [string]$phase, [bool]$mayActivate) {
+    # FPS-R1-02 r3 (P1): injected wheel/keys are delivered to the FOREGROUND
+    # window, so input may only be sent after the foreground window's PID has
+    # been verified to equal the target app PID. On mismatch ONE activation
+    # attempt is made first (when allowed); any remaining mismatch FAILS
+    # CLOSED via Fail() (-> non-zero exit) and the caller must not inject.
+    $fgPid = [M2Focus]::ForegroundPid()
+    if ($fgPid -eq $appPid) { return $true }
+    Write-Trace "FOCUS_FOREGROUND_FOREIGN $phase fg_pid=$fgPid expected_app_pid=$appPid (injected input would be delivered to the foreground window's process)"
+    if (-not $mayActivate) {
+        Fail "FOCUS_NOT_OURS $phase (foreground pid=$fgPid is not this run's app pid=$appPid; NO input injected)"
+        return $false
+    }
+    $hwnd = [IntPtr]$hwndRaw
+    if ($hwnd -eq [IntPtr]::Zero) {
+        Fail "FOCUS_NO_HWND $phase (target window has no native handle to activate; NO input injected)"
+        return $false
+    }
+    Write-Trace "FOCUS_ACTIVATE $phase attempt=SetForegroundWindow hwnd=$hwnd"
+    [void][M2Focus]::TryActivate($hwnd)
+    $deadline = (Get-Date).AddMilliseconds(1500)
+    while ((Get-Date) -lt $deadline) {
+        Start-Sleep -Milliseconds 150
+        $fgPid = [M2Focus]::ForegroundPid()
+        if ($fgPid -eq $appPid) {
+            Write-Trace "FOCUS_FOREGROUND_REGAINED $phase fg_pid=$fgPid (verified via GetForegroundWindow + GetWindowThreadProcessId)"
+            return $true
+        }
+    }
+    Fail "FOCUS_ACTIVATE_FAILED $phase (foreground pid=$fgPid is still not this run's app pid=$appPid; NO input injected)"
+    return $false
 }
 
 function Win() { return Find-WindowByTitleForPid $script:winTitle ([int]$script:appProcess.Id) }
@@ -515,6 +631,167 @@ if ($SafetySelfCheck) {
                 Write-Trace "SELFCHECK decoy stopped pid=$decoyPid (this check's own launch)"
             }
         }
+
+        # 8) focus-bound input injection (FPS-R1-02 r3, P1): injected wheel
+        #    and keys are delivered to the FOREGROUND window. With a
+        #    same-title decoy present AND the foreground held by an external
+        #    window, the guard must refuse injection — NO window may receive
+        #    anything — and the refusal must feed the same Fail() mechanism
+        #    that makes the runner exit non-zero. Only when the stub app
+        #    genuinely holds the foreground may wheel events land, and they
+        #    must land in the stub ONLY (decoy and outsider receive nothing).
+        function Get-WheelCount([string]$p) {
+            if (-not (Test-Path -LiteralPath $p)) { return -1 }
+            return @((Get-Content -LiteralPath $p -ErrorAction SilentlyContinue) -eq 'wheel').Count
+        }
+        function Test-LogHasHandle([string]$p) {
+            if (-not (Test-Path -LiteralPath $p)) { return $false }
+            return (@(Get-Content -LiteralPath $p -ErrorAction SilentlyContinue) -contains 'handle')
+        }
+        $focusOutsiderTitle = 'P20FPS selfcheck focus outsider'
+        $stubPid = 0; $decoy2Pid = 0; $outsiderPid = 0
+        $wheelformHost = Join-Path $iso 'wheelform-host.ps1'
+        @'
+param([string]$Title, [string]$LogPath)
+Add-Type -AssemblyName System.Windows.Forms
+Add-Type -ReferencedAssemblies System.Windows.Forms -TypeDefinition @"
+using System; using System.IO; using System.Windows.Forms;
+public class WheelForm : Form {
+    public static string LogPath = "";
+    public WheelForm(string title) { Text = title; Width = 340; Height = 220; StartPosition = FormStartPosition.CenterScreen; }
+    protected override void OnHandleCreated(EventArgs e) { base.OnHandleCreated(e); try { File.AppendAllText(LogPath, "handle" + Environment.NewLine); } catch { } }
+    protected override void WndProc(ref Message m) {
+        if (m.Msg == 0x020A) { try { File.AppendAllText(LogPath, "wheel" + Environment.NewLine); } catch { } }
+        base.WndProc(ref m);
+    }
+}
+"@
+[WheelForm]::LogPath = $LogPath
+$f = New-Object WheelForm($Title)
+if ($args -contains 'ACTIVATE') { $f.Add_Shown({ param($s, $e) $s.Activate() }) }
+[System.Windows.Forms.Application]::Run($f)
+'@ | Set-Content -LiteralPath $wheelformHost -Encoding UTF8
+        $stubLog = Join-Path $OutDir 'selfcheck-focus-stub.log'
+        $decoy2Log = Join-Path $OutDir 'selfcheck-focus-decoy.log'
+        $outsiderLog = Join-Path $OutDir 'selfcheck-focus-outsider.log'
+        foreach ($l in @($stubLog, $decoy2Log, $outsiderLog)) { '' | Set-Content -LiteralPath $l -Encoding UTF8 }
+        try {
+            # -ArgumentList array elements are NOT auto-quoted by Start-Process:
+            # paths AND the window title contain spaces and must be quoted
+            # explicitly or the child powershell.exe receives broken arguments
+            # (a half-title window is invisible to the same-title UIA finder).
+            $stub = Start-Process -FilePath powershell.exe -ArgumentList @('-NoProfile', '-STA', '-WindowStyle', 'Hidden', '-ExecutionPolicy', 'Bypass', '-File', $wheelformHost, '-Title', ('"{0}"' -f $script:winTitle), '-LogPath', ('"{0}"' -f $stubLog)) -PassThru
+            $stubPid = $stub.Id
+            $decoy2 = Start-Process -FilePath powershell.exe -ArgumentList @('-NoProfile', '-STA', '-WindowStyle', 'Hidden', '-ExecutionPolicy', 'Bypass', '-File', $wheelformHost, '-Title', ('"{0}"' -f $script:winTitle), '-LogPath', ('"{0}"' -f $decoy2Log)) -PassThru
+            $decoy2Pid = $decoy2.Id
+            # launched LAST + self-activation: a freshly started process is
+            # allowed to take the foreground, so the outsider ends up holding it
+            $outsider = Start-Process -FilePath powershell.exe -ArgumentList @('-NoProfile', '-STA', '-WindowStyle', 'Hidden', '-ExecutionPolicy', 'Bypass', '-File', $wheelformHost, '-Title', ('"{0}"' -f $focusOutsiderTitle), '-LogPath', ('"{0}"' -f $outsiderLog), 'ACTIVATE') -PassThru
+            $outsiderPid = $outsider.Id
+            Write-Trace "SELFCHECK focus trio launched stub_pid=$stubPid decoy_pid=$decoy2Pid (same title) outsider_pid=$outsiderPid (foreground holder)"
+            # A created Win32 handle is not yet visible in the UIA tree; wait
+            # until the stub window is actually findable (like group 7 does).
+            $stubWin = $null
+            $dl = (Get-Date).AddSeconds(25)
+            while ((Get-Date) -lt $dl) {
+                Start-Sleep -Milliseconds 400
+                if ($stub.HasExited -or $decoy2.HasExited -or $outsider.HasExited) { break }
+                if (-not ((Test-LogHasHandle $stubLog) -and (Test-LogHasHandle $decoy2Log) -and (Test-LogHasHandle $outsiderLog))) { continue }
+                $stubWin = Find-WindowByTitleForPid $script:winTitle ([int]$stubPid)
+                if ($stubWin) { break }
+            }
+            if ($stub.HasExited -or $decoy2.HasExited -or $outsider.HasExited -or -not $stubWin) {
+                Fail "SELFCHECK focus-launch FAILED (stub/decoy/outsider window not ready or exited: stub_exited=$($stub.HasExited) decoy_exited=$($decoy2.HasExited) outsider_exited=$($outsider.HasExited) stub_uia_found=$([bool]$stubWin))"
+            } else {
+                # 8a) full-scan audit (FPS-R1-02-AUDIT): with BOTH same-title
+                #     windows on screen, ONE finder call must return the stub
+                #     AND register the decoy as NOT_OURS_WINDOW regardless of
+                #     enumeration order — the finder no longer returns early.
+                $script:notOursWindowPids.Clear()
+                $stubWin2 = Find-WindowByTitleForPid $script:winTitle ([int]$stubPid)
+                if ($stubWin2 -and $script:notOursWindowPids.Contains([int]$decoy2Pid)) {
+                    $stubWin = $stubWin2
+                    Write-Trace 'SELFCHECK focus-window-full-scan PASS (stub window returned AND same-title decoy registered NOT_OURS_WINDOW in the same call)'
+                } else {
+                    Fail 'SELFCHECK focus-window-full-scan FAILED (stub window not returned, or decoy not registered — early-return regression?)'
+                }
+
+                # 8b) establish the adverse precondition honestly: the
+                #     outsider window must REALLY hold the foreground; if the
+                #     desktop will not grant it, this group fails (no fake pass).
+                $ohwnd = 0
+                $ow = Find-WindowByTitleForPid $focusOutsiderTitle ([int]$outsiderPid)
+                if ($ow) { try { $ohwnd = [int]$ow.Current.NativeWindowHandle } catch { $ohwnd = 0 } }
+                if ($ohwnd -gt 0) { [void][M2Focus]::TryActivate([IntPtr]$ohwnd) }
+                $fgOk = $false
+                $dl2 = (Get-Date).AddSeconds(4)
+                while ((Get-Date) -lt $dl2) {
+                    if ([M2Focus]::ForegroundPid() -eq [int]$outsiderPid) { $fgOk = $true; break }
+                    Start-Sleep -Milliseconds 200
+                }
+                if (-not $fgOk) {
+                    Fail "SELFCHECK focus-outsider FAILED (could not bring the outsider to the foreground: fg_pid=$([M2Focus]::ForegroundPid()) outsider_pid=$outsiderPid; refusing to fake a pass)"
+                } else {
+                    Write-Trace "SELFCHECK focus-outsider-holds-foreground PASS (fg_pid=$outsiderPid)"
+
+                    # 8c) refusal path: with the foreground held by the
+                    #     external window the guard must refuse (no
+                    #     activation allowed) and NOTHING may be delivered to
+                    #     ANY window; the refusal must be recorded via Fail()
+                    #     — the very mechanism that makes the runner exit 6.
+                    $shwnd = 0
+                    if ($stubWin) { try { $shwnd = [int]$stubWin.Current.NativeWindowHandle } catch { $shwnd = 0 } }
+                    $wStub0 = Get-WheelCount $stubLog; $wDecoy0 = Get-WheelCount $decoy2Log; $wOut0 = Get-WheelCount $outsiderLog
+                    $g = Assert-ForegroundIsPid ([int]$stubPid) $shwnd 'selfcheck-focus-refuse' $false
+                    Start-Sleep -Milliseconds 600
+                    $wStub1 = Get-WheelCount $stubLog; $wDecoy1 = Get-WheelCount $decoy2Log; $wOut1 = Get-WheelCount $outsiderLog
+                    $refusal = @($script:failures | Where-Object { $_ -like 'FOCUS_NOT_OURS selfcheck-focus-refuse*' })
+                    if ((-not $g) -and $refusal.Count -ge 1 -and $wStub1 -eq $wStub0 -and $wDecoy1 -eq $wDecoy0 -and $wOut1 -eq $wOut0) {
+                        Write-Trace "SELFCHECK focus-refuse PASS (guard refused with a foreign foreground; zero input delivered to any window; Fail() recorded = the exit-6 mechanism)"
+                    } else {
+                        Fail "SELFCHECK focus-refuse FAILED (guard=$g refusal_recorded=$($refusal.Count -ge 1) wheel_delta stub=$($wStub1 - $wStub0) decoy=$($wDecoy1 - $wDecoy0) outsider=$($wOut1 - $wOut0))"
+                    }
+                    # The injected refusal is EXPECTED here: remove it so the
+                    # selfcheck can still exit 0. The refusal -> exit-6 link
+                    # was proven above by its presence in the failure list
+                    # (the same Fail() the measurement path relies on).
+                    foreach ($i in @($script:failures | Where-Object { $_ -like 'FOCUS_NOT_OURS selfcheck-focus-refuse*' })) { [void]$script:failures.Remove($i) }
+
+                    # 8d) genuine path: bring the STUB to the foreground via
+                    #     the same TryActivate the measurement uses, verify
+                    #     the foreground PID, then inject ONE wheel event —
+                    #     it must land in the stub ONLY (decoy and outsider
+                    #     unchanged: they never receive any input).
+                    [void][M2Focus]::TryActivate([IntPtr]$shwnd)
+                    $fgStub = $false
+                    $dl3 = (Get-Date).AddSeconds(4)
+                    while ((Get-Date) -lt $dl3) {
+                        if ([M2Focus]::ForegroundPid() -eq [int]$stubPid) { $fgStub = $true; break }
+                        Start-Sleep -Milliseconds 200
+                    }
+                    if (-not $fgStub) {
+                        Fail "SELFCHECK focus-activate FAILED (TryActivate could not bring the stub to the foreground: fg_pid=$([M2Focus]::ForegroundPid()) stub_pid=$stubPid)"
+                    } elseif (-not (Assert-ForegroundIsPid ([int]$stubPid) $shwnd 'selfcheck-focus-allow' $false)) {
+                        Fail 'SELFCHECK focus-allow FAILED (guard refused even though the stub holds the foreground)'
+                    } else {
+                        $r = $stubWin.Current.BoundingRectangle
+                        [M2Wheel]::Wheel([int]($r.X + $r.Width / 2), [int]($r.Y + $r.Height / 2), -120) | Out-Null
+                        Start-Sleep -Milliseconds 800
+                        $wStub2 = Get-WheelCount $stubLog; $wDecoy2c = Get-WheelCount $decoy2Log; $wOut2c = Get-WheelCount $outsiderLog
+                        if ($wStub2 -gt $wStub1 -and $wDecoy2c -eq $wDecoy1 -and $wOut2c -eq $wOut1) {
+                            Write-Trace "SELFCHECK focus-wheel-lands-on-ours PASS (stub received $($wStub2 - $wStub1) wheel event(s); same-title decoy and foreground outsider received NOTHING)"
+                        } else {
+                            Fail "SELFCHECK focus-wheel-lands-on-ours FAILED (stub_delta=$($wStub2 - $wStub1) decoy_delta=$($wDecoy2c - $wDecoy1) outsider_delta=$($wOut2c - $wOut1))"
+                        }
+                    }
+                }
+            }
+        } finally {
+            foreach ($p in @($stubPid, $decoy2Pid, $outsiderPid)) {
+                if ($p -gt 0) { Stop-Process -Id $p -Force -ErrorAction SilentlyContinue }
+            }
+            Write-Trace "SELFCHECK focus trio stopped (stub=$stubPid decoy=$decoy2Pid outsider=$outsiderPid; this check's own launches)"
+        }
     }
     Clear-IsolationEnv
     if ($script:failures.Count -eq 0) {
@@ -631,40 +908,35 @@ try {
 
     # ---------- scroll injection ----------
     Add-Type -AssemblyName System.Windows.Forms
-    if ($ScrollMode -eq 'wheel') {
-        Add-Type -TypeDefinition @'
-using System;
-using System.Runtime.InteropServices;
-public static class M2Wheel {
-    [StructLayout(LayoutKind.Sequential)]
-    public struct MOUSEINPUT { public int dx; public int dy; public uint mouseData; public uint dwFlags; public uint time; public IntPtr dwExtraInfo; }
-    [StructLayout(LayoutKind.Sequential)]
-    public struct INPUT { public uint type; public MOUSEINPUT mi; }
-    [DllImport("user32.dll")] public static extern bool SetCursorPos(int x, int y);
-    [DllImport("user32.dll")] public static extern uint SendInput(uint n, INPUT[] inputs, int size);
-    public static void Wheel(int x, int y, int delta) {
-        SetCursorPos(x, y);
-        INPUT[] i = new INPUT[1];
-        i[0].type = 0; i[0].mi.dwFlags = 0x0800; i[0].mi.mouseData = unchecked((uint)delta);
-        SendInput(1, i, Marshal.SizeOf(typeof(INPUT)));
-    }
-}
-'@
-    }
+    # M2Wheel (cursor + SendInput wheel) and M2Focus (foreground PID query +
+    # activation) are already loaded at the top of the script.
     $shellCom = New-Object -ComObject WScript.Shell
     function ScrollLoop([string]$label) {
-        Write-Trace "SCROLL begin mode=$ScrollMode seconds=$ScrollSeconds"
+        Write-Trace "SCROLL begin mode=$ScrollMode seconds=$ScrollSeconds (every tick is foreground-PID-guarded)"
         $sw = [System.Diagnostics.Stopwatch]::StartNew()
         $tick = 0
         while ($sw.Elapsed.TotalSeconds -lt $ScrollSeconds) {
             # FPS-R1-02 r2: never send input when our app has died mid-scroll.
             if ($script:appProcess.HasExited) { Fail "SCROLL_ABORT app pid=$($script:appProcess.Id) exited mid-scroll (exit_code=$($script:appProcess.ExitCode))"; break }
             if ($ScrollMode -eq 'wheel') {
-                # wheel over the reader area (window centre, below the panel)
+                # FPS-R1-02 r3 (P1): WM_MOUSEWHEEL is delivered to the FOCUS
+                # window, not to the window under the cursor — verify the
+                # foreground PID is ours (one activation attempt when needed)
+                # BEFORE placing the cursor or injecting anything.
+                $hwnd = 0
+                try { $hwnd = $win.Current.NativeWindowHandle } catch { }
+                if (-not (Assert-ForegroundIsPid ([int]$script:appProcess.Id) $hwnd "scroll[$label]tick=$tick" $true)) { break }
                 $r = $win.Current.BoundingRectangle
                 [M2Wheel]::Wheel([int]($r.X + $r.Width / 2), [int]($r.Y + $r.Height / 2), -120) | Out-Null
             } else {
-                $shellCom.AppActivate($script:appProcess.Id) | Out-Null
+                # FPS-R1-02 r3: AppActivate's return value must be checked; on
+                # activation failure NO keys are sent (fail closed), and even
+                # on success the foreground PID is re-verified before SendKeys.
+                $activated = $shellCom.AppActivate($script:appProcess.Id)
+                if (-not $activated) { Fail "KEYS_ACTIVATE_FAILED scroll[$label]tick=$tick (AppActivate returned false for app pid=$($script:appProcess.Id); NO keys sent)"; break }
+                $hwnd = 0
+                try { $hwnd = $win.Current.NativeWindowHandle } catch { }
+                if (-not (Assert-ForegroundIsPid ([int]$script:appProcess.Id) $hwnd "keys[$label]tick=$tick" $false)) { break }
                 [System.Windows.Forms.SendKeys]::SendWait('{PGDN}')
             }
             $tick++
