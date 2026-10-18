@@ -280,6 +280,28 @@ try {
     Assert-Condition ($jsonObj8.exit_code -eq $proc8.ExitCode) "Fallback metadata exit_code matches process ExitCode ($($proc8.ExitCode))"
 
     # -------------------------------------------------------------
+    # Case 8b: Child Process Non-Zero Exit Code Propagation (R3-03 Verification)
+    # -------------------------------------------------------------
+    Write-Host "`n--- Case 8b: Child process non-zero exit code propagation (ExitCode = 42) ---"
+    $outDir8b = Join-Path $testRoot "case8b_child_nonzero_exit"
+    New-Item -ItemType Directory -Path $outDir8b -Force | Out-Null
+    $appArgs8b = '"/c exit 42"'
+    $proc8b = Start-Process -FilePath "pwsh" -ArgumentList "-NoProfile", "-File", "`"$scriptPath`"", "-AppExe", "cmd.exe", "-AppArgs", $appArgs8b, "-OutDir", "`"$outDir8b`"" -PassThru -Wait
+
+    Assert-Condition ($proc8b.ExitCode -eq 42) "Runner process exited with propagated child code 42"
+    $exitFile8b = Join-Path $outDir8b "ac5.exit"
+    Assert-Condition (Test-Path $exitFile8b) "ac5.exit exists for Case 8b"
+    $actualExit8b = (Get-Content $exitFile8b -Raw).Trim()
+    Assert-Condition ($actualExit8b -eq "42") "ac5.exit content (42) matches child process exit code"
+
+    $metaJson8b = Join-Path $outDir8b "ac5-metadata.json"
+    Assert-Condition (Test-Path $metaJson8b) "ac5-metadata.json exists for Case 8b"
+    $jsonObj8b = Get-Content $metaJson8b -Raw | ConvertFrom-Json
+    Assert-Condition ($jsonObj8b.exit_code -eq 42) "Metadata exit_code matches 42"
+    Assert-Condition ($jsonObj8b.desktop_exit_code -eq 42) "Metadata desktop_exit_code matches child exit 42"
+    Assert-Condition ($jsonObj8b.desktop_exit_code -eq $proc8b.ExitCode) "Metadata desktop_exit_code matches runner ExitCode ($($proc8b.ExitCode))"
+
+    # -------------------------------------------------------------
     # Case 9: Real binary launch path under various artifact locks (Non-Mock execution)
     # -------------------------------------------------------------
     Write-Host "`n--- Case 9: Real binary invocation lock suite (Non-Mock execution) ---"
@@ -314,7 +336,10 @@ try {
         $jsonObj9a = Get-Content $metaJson9a -Raw | ConvertFrom-Json
         $actualExit9a = (Get-Content $exitFile9a -Raw).Trim()
         Assert-Condition ($jsonObj9a.exit_code.ToString() -eq $actualExit9a) "Case 9a: ac5.exit ($actualExit9a) matches metadata exit_code ($($jsonObj9a.exit_code))"
-        Assert-Condition ($jsonObj9a.exit_code -eq $proc9a.ExitCode) "Case 9a: metadata exit_code matches process ExitCode ($($proc9a.ExitCode))"
+        Assert-Condition ($jsonObj9a.exit_code -eq $proc9a.ExitCode) "Case 9a: metadata exit_code matches runner ExitCode ($($proc9a.ExitCode))"
+        Assert-Condition ($jsonObj9a.desktop_exit_code -eq $jsonObj9a.exit_code) "Case 9a: desktop child exit code ($($jsonObj9a.desktop_exit_code)) matches metadata exit_code ($($jsonObj9a.exit_code))"
+        Assert-Condition ($jsonObj9a.desktop_exit_code.ToString() -eq $actualExit9a) "Case 9a: desktop child exit code matches ac5.exit ($actualExit9a)"
+        Assert-Condition ($jsonObj9a.desktop_exit_code -eq $proc9a.ExitCode) "Case 9a: desktop child exit code matches runner ExitCode ($($proc9a.ExitCode))"
         Assert-Condition ($jsonObj9a.console_fallback_written -eq $true) "Case 9a: ac5-console-fallback.log written under console lock"
 
         # Case 9b: ac5.exit locked with real binary (Fallback exit assertion)
@@ -335,7 +360,10 @@ try {
         $jsonObj9b = Get-Content $metaJson9b -Raw | ConvertFrom-Json
         $actualFallbackExit9b = (Get-Content $fallbackExit9b -Raw).Trim()
         Assert-Condition ($jsonObj9b.exit_code.ToString() -eq $actualFallbackExit9b) "Case 9b: ac5.exit-fallback ($actualFallbackExit9b) matches metadata exit_code ($($jsonObj9b.exit_code))"
-        Assert-Condition ($jsonObj9b.exit_code -eq $proc9b.ExitCode) "Case 9b: metadata exit_code matches process ExitCode ($($proc9b.ExitCode))"
+        Assert-Condition ($jsonObj9b.exit_code -eq $proc9b.ExitCode) "Case 9b: metadata exit_code matches runner ExitCode ($($proc9b.ExitCode))"
+        Assert-Condition ($jsonObj9b.desktop_exit_code -eq $jsonObj9b.exit_code) "Case 9b: desktop child exit code ($($jsonObj9b.desktop_exit_code)) matches metadata exit_code ($($jsonObj9b.exit_code))"
+        Assert-Condition ($jsonObj9b.desktop_exit_code.ToString() -eq $actualFallbackExit9b) "Case 9b: desktop child exit code matches ac5.exit-fallback ($actualFallbackExit9b)"
+        Assert-Condition ($jsonObj9b.desktop_exit_code -eq $proc9b.ExitCode) "Case 9b: desktop child exit code matches runner ExitCode ($($proc9b.ExitCode))"
         Assert-Condition ($jsonObj9b.exit_written -eq $false) "Case 9b: metadata reports exit_written is false"
         Assert-Condition ($jsonObj9b.exit_fallback_written -eq $true) "Case 9b: metadata reports exit_fallback_written is true"
 
@@ -357,7 +385,10 @@ try {
         $jsonObj9c = Get-Content $fallbackJson9c -Raw | ConvertFrom-Json
         $actualExit9c = (Get-Content $primaryExit9c -Raw).Trim()
         Assert-Condition ($jsonObj9c.exit_code.ToString() -eq $actualExit9c) "Case 9c: ac5.exit ($actualExit9c) matches fallback metadata exit_code ($($jsonObj9c.exit_code))"
-        Assert-Condition ($jsonObj9c.exit_code -eq $proc9c.ExitCode) "Case 9c: fallback metadata exit_code matches process ExitCode ($($proc9c.ExitCode))"
+        Assert-Condition ($jsonObj9c.exit_code -eq $proc9c.ExitCode) "Case 9c: fallback metadata exit_code matches runner ExitCode ($($proc9c.ExitCode))"
+        Assert-Condition ($jsonObj9c.desktop_exit_code -eq $jsonObj9c.exit_code) "Case 9c: desktop child exit code ($($jsonObj9c.desktop_exit_code)) matches fallback metadata exit_code ($($jsonObj9c.exit_code))"
+        Assert-Condition ($jsonObj9c.desktop_exit_code.ToString() -eq $actualExit9c) "Case 9c: desktop child exit code matches ac5.exit ($actualExit9c)"
+        Assert-Condition ($jsonObj9c.desktop_exit_code -eq $proc9c.ExitCode) "Case 9c: desktop child exit code matches runner ExitCode ($($proc9c.ExitCode))"
         Assert-Condition ($jsonObj9c.exit_written -eq $true) "Case 9c: fallback metadata reports exit_written is true"
     } else {
         Write-Host "Skipping Case 9 (no real binary found in workspace)"

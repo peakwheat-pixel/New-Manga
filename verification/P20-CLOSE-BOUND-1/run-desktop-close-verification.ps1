@@ -5,6 +5,7 @@
 
 param(
     [string]$AppExe = "apps/desktop/src-tauri/target/release/m2rc1-desktop.exe",
+    [string]$AppArgs = "",
     [string]$SidecarDir = "resources/core-sidecar",
     [int]$HardBoundSeconds = 5,
     [string]$OutDir = "",
@@ -42,6 +43,7 @@ function Write-Log {
 }
 
 $scriptExitCode = 0
+$appExitCode = $null
 $startTime = Get-Date
 $startIso = $startTime.ToString("yyyy-MM-ddTHH:mm:ss.fffffffzzz")
 $releaseHash = "none"
@@ -70,6 +72,7 @@ try {
     if ($null -ne $MockExitCode) {
         Write-Log "MOCK EXECUTION: Simulating desktop run with exit code: $MockExitCode"
         $scriptExitCode = [int]$MockExitCode
+        $appExitCode = [int]$MockExitCode
         Remove-Item -Path $isolatedRoot -Recurse -Force -ErrorAction SilentlyContinue
         return
     }
@@ -86,12 +89,20 @@ try {
         # Check debug binary if default release not found
         $AppExe = "apps/desktop/src-tauri/target/debug/m2rc1-desktop.exe"
     }
-    if (-not (Test-Path $AppExe)) {
+    $resolvedExe = $null
+    if (Test-Path $AppExe) {
+        $resolvedExe = (Resolve-Path $AppExe).Path
+    } else {
+        $cmd = Get-Command $AppExe -ErrorAction SilentlyContinue
+        if ($cmd -and $cmd.Source) {
+            $resolvedExe = $cmd.Source
+        }
+    }
+    if (-not $resolvedExe) {
         Write-Log "Could not find desktop binary at: $AppExe. Please build the desktop app first." -ForegroundColor Red
         $scriptExitCode = 1
         return
     } else {
-        $resolvedExe = (Resolve-Path $AppExe).Path
         Write-Log "Launching desktop application: $resolvedExe"
         try {
             $releaseHash = (Get-FileHash $resolvedExe -Algorithm SHA256).Hash.ToLower()
@@ -99,6 +110,9 @@ try {
 
         $pinfo = New-Object System.Diagnostics.ProcessStartInfo
         $pinfo.FileName = $resolvedExe
+        if (-not [string]::IsNullOrEmpty($AppArgs)) {
+            $pinfo.Arguments = $AppArgs
+        }
         $pinfo.UseShellExecute = $false
         $pinfo.RedirectStandardOutput = $true
         $pinfo.RedirectStandardError = $true
@@ -116,6 +130,11 @@ try {
         $pollStart = Get-Date
 
         while (($null -eq $foundWindow -or -not $foundWindow) -and ((Get-Date) - $pollStart).TotalSeconds -lt 15) {
+            $proc.Refresh()
+            if ($proc.HasExited) {
+                Write-Log "Process exited during initialization polling (PID=$appPid)"
+                break
+            }
             Start-Sleep -Milliseconds 500
             
             # Query process tree
@@ -135,11 +154,13 @@ try {
 
         Write-Log "Process tree state: Main PID=$appPid, Child PIDs=$($sidecarPids -join ',')"
 
-        # 3. Request normal window close (CloseMainWindow / WM_CLOSE)
-        Write-Log "Sending CloseMainWindow request..."
+        # 3. Request normal window close (CloseMainWindow / WM_CLOSE) if still running
         $closeStart = Get-Date
-        $closeSuccess = $proc.CloseMainWindow()
-        Write-Log "CloseMainWindow returned: $closeSuccess"
+        if (-not $proc.HasExited) {
+            Write-Log "Sending CloseMainWindow request..."
+            $closeSuccess = $proc.CloseMainWindow()
+            Write-Log "CloseMainWindow returned: $closeSuccess"
+        }
 
         # 4. Wait for application exit within hard upper bound
         $exitedInBound = $proc.WaitForExit($HardBoundSeconds * 1000)
@@ -152,8 +173,12 @@ try {
             Write-Log "TIMEOUT FAILED: Main application did NOT exit within $HardBoundSeconds seconds (Took $closeElapsedMs ms)! Force killing for test cleanup..." -ForegroundColor Red
             $proc.Kill()
             Remove-Item -Path $isolatedRoot -Recurse -Force -ErrorAction SilentlyContinue
+            $appExitCode = -1
             $scriptExitCode = 1
         } else {
+            $appExitCode = $proc.ExitCode
+            Write-Log "App process exit code: $appExitCode"
+
             # 5. Process Tree & Zero Residual Orphan Check (scoped to PID tree and isolated root)
             Start-Sleep -Milliseconds 500
             $allProcs = Get-CimInstance Win32_Process
@@ -186,6 +211,7 @@ try {
             Write-Log "Exit within bound: $exitedInBound"
             Write-Log "Exit duration: $closeElapsedMs ms"
             Write-Log "Residual process count: $($residualProcs.Count)"
+            Write-Log "Desktop application exit code: $appExitCode"
 
             if ($residualProcs.Count -gt 0) {
                 Write-Log "FAILED: Residual processes found:" -ForegroundColor Red
@@ -194,8 +220,12 @@ try {
                 }
                 Remove-Item -Path $isolatedRoot -Recurse -Force -ErrorAction SilentlyContinue
                 $scriptExitCode = 2
+            } elseif ($appExitCode -ne 0) {
+                Write-Log "FAILED: Application exited with non-zero exit code: $appExitCode" -ForegroundColor Red
+                Remove-Item -Path $isolatedRoot -Recurse -Force -ErrorAction SilentlyContinue
+                $scriptExitCode = $appExitCode
             } else {
-                Write-Log "SUCCESS: Application exited within bound ($closeElapsedMs ms) and zero orphan processes remaining. Clean exit verified." -ForegroundColor Green
+                Write-Log "SUCCESS: Application exited within bound ($closeElapsedMs ms), exit code 0, and zero orphan processes remaining. Clean exit verified." -ForegroundColor Green
                 # Cleanup isolated directory
                 Remove-Item -Path $isolatedRoot -Recurse -Force -ErrorAction SilentlyContinue
                 Write-Log "Isolated root cleaned."
@@ -278,6 +308,7 @@ try {
         $metaBuilder.AppendLine("end_local=$endIso") | Out-Null
         $metaBuilder.AppendLine("duration_s=$durationSeconds") | Out-Null
         $metaBuilder.AppendLine("exit_code=$scriptExitCode") | Out-Null
+        $metaBuilder.AppendLine("desktop_exit_code=$appExitCode") | Out-Null
         $metaBuilder.AppendLine("release_sha256=$releaseHash") | Out-Null
         $metaBuilder.AppendLine("head=$gitHead") | Out-Null
         $metaBuilder.AppendLine("shell=$shellStr") | Out-Null
@@ -316,6 +347,7 @@ try {
             end_local = $endIso
             duration_s = $durationSeconds
             exit_code = $scriptExitCode
+            desktop_exit_code = $appExitCode
             release_sha256 = $releaseHash
             head = $gitHead
             shell = $shellStr

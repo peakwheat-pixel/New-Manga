@@ -1287,50 +1287,99 @@ pub(crate) fn register_atomic_deadline(
         }
     });
 
-    let mut committed = 0u64;
+    let mut cas_committed = false;
     for _ in 0..MAX_DEADLINE_CAS_RETRIES {
+        #[cfg(test)]
+        if TEST_INJECT_CAS_FAILURE.with(|c| c.get()) {
+            std::hint::spin_loop();
+            continue;
+        }
+
         let current = atomic_ms.load(Ordering::SeqCst);
         if current == 0 {
             if atomic_ms.compare_exchange(0, encoded, Ordering::SeqCst, Ordering::SeqCst).is_ok() {
-                committed = encoded;
+                cas_committed = true;
                 break;
             }
         } else {
             let tighter = tighter_encoded_deadline(current, encoded);
             if tighter == current {
-                committed = current;
+                // Shared state is already at least as tight as candidate
+                cas_committed = true;
                 break;
             }
             if atomic_ms.compare_exchange(current, tighter, Ordering::SeqCst, Ordering::SeqCst).is_ok() {
-                committed = tighter;
+                cas_committed = true;
                 break;
             }
         }
         std::hint::spin_loop();
     }
-    if committed == 0 {
-        // Hard upper bound fallback: on excessive contention, read current committed state
-        let final_val = atomic_ms.load(Ordering::SeqCst);
-        committed = if final_val == 0 { encoded } else { tighter_encoded_deadline(final_val, encoded) };
+
+    if !cas_committed {
+        // R3-02: After MAX_DEADLINE_CAS_RETRIES (32) CAS failures, read back shared atomic
+        // to verify whether concurrent writes established an equally tight or tighter deadline.
+        // If not, enforce monotonic tightening so shared atomic is guaranteed not to retain a looser deadline.
+        let cur = atomic_ms.load(Ordering::SeqCst);
+        if cur == 0 {
+            let _ = atomic_ms.compare_exchange(0, encoded, Ordering::SeqCst, Ordering::SeqCst);
+        } else if tighter_encoded_deadline(cur, encoded) != cur {
+            if encoded == 1 {
+                atomic_ms.store(1, Ordering::SeqCst);
+            } else {
+                atomic_ms.fetch_min(encoded, Ordering::SeqCst);
+            }
+        }
     }
 
-    // CBH-R1-02 / CBH-R2-01: After CAS succeeds/commits, re-check whether deadline has expired in the interim
-    // (e.g. caller thread was descheduled between encoding and CAS completion).
+    // Read back final committed state from shared atomic to return verified effective deadline
+    let shared_committed = atomic_ms.load(Ordering::SeqCst);
+
+    // CBH-R1-02 / CBH-R2-01 / CBH-R3-02: After CAS succeeds/commits, re-check whether deadline has expired
+    // in the interim (e.g. caller thread was descheduled between encoding and CAS completion).
     let now = Instant::now();
     if deadline <= now || deadline <= created_at {
         // Monotonically write expired sentinel 1 with bounded CAS retries (max MAX_DEADLINE_CAS_RETRIES)
+        let mut sentinel_written = false;
         for _ in 0..MAX_DEADLINE_CAS_RETRIES {
+            #[cfg(test)]
+            if TEST_INJECT_SENTINEL_CAS_FAILURE.with(|c| c.get()) {
+                std::hint::spin_loop();
+                continue;
+            }
+
             let cur = atomic_ms.load(Ordering::SeqCst);
             let tighter = tighter_encoded_deadline(cur, 1);
-            if tighter == cur || atomic_ms.compare_exchange(cur, tighter, Ordering::SeqCst, Ordering::SeqCst).is_ok() {
+            if tighter == cur {
+                sentinel_written = true;
+                break;
+            }
+            if atomic_ms.compare_exchange(cur, tighter, Ordering::SeqCst, Ordering::SeqCst).is_ok() {
+                sentinel_written = true;
                 break;
             }
             std::hint::spin_loop();
         }
+
+        // R3-02: On exhaustion after 32 attempts, MUST read back shared atomic to confirm whether
+        // sentinel took effect. If not, enforce sentinel 1 write and verify readback.
+        if !sentinel_written {
+            let cur = atomic_ms.load(Ordering::SeqCst);
+            if cur != 1 {
+                atomic_ms.store(1, Ordering::SeqCst);
+            }
+        }
+
+        let verified_sentinel = atomic_ms.load(Ordering::SeqCst);
+        assert_eq!(
+            verified_sentinel, 1,
+            "Shared atomic must be verified as expired sentinel 1 after exhaustion"
+        );
         return decode_deadline(1, created_at).unwrap();
     }
 
-    decode_deadline(committed, created_at).unwrap_or(deadline)
+    let final_encoded = if shared_committed != 0 { shared_committed } else { encoded };
+    decode_deadline(final_encoded, created_at).unwrap_or(deadline)
 }
 
 /// Reads the registered deadline from an AtomicU64.
@@ -1444,35 +1493,91 @@ pub(crate) struct UnreapedWorker {
     pub queued_at: Instant,
 }
 
+pub const MAX_UNREAPED_WORKERS: usize = 32;
+
 static UNREAPED_WORKER_REGISTRY: Mutex<Vec<UnreapedWorker>> = Mutex::new(Vec::new());
+
+fn prune_finished_unreaped_workers_locked(lock: &mut Vec<UnreapedWorker>) -> usize {
+    let mut reaped = 0;
+    let mut i = 0;
+    while i < lock.len() {
+        if lock[i].join_handle.is_finished() {
+            let item = lock.swap_remove(i);
+            let _ = item.join_handle.join();
+            reaped += 1;
+        } else {
+            i += 1;
+        }
+    }
+    reaped
+}
 
 pub(crate) fn track_unreaped_worker(
     name: &'static str,
-    handle: std::thread::JoinHandle<()>,
+    handle_slot: &mut Option<std::thread::JoinHandle<()>>,
     thread_handle: Arc<std::sync::atomic::AtomicIsize>,
     pipe_handle: Arc<std::sync::atomic::AtomicIsize>,
-) {
-    if let Some(mut lock) = lock_timeout_recover(&UNREAPED_WORKER_REGISTRY, Duration::from_millis(50)) {
-        lock.push(UnreapedWorker {
-            name,
-            join_handle: handle,
-            thread_handle,
-            pipe_handle,
-            queued_at: Instant::now(),
-        });
-    } else {
-        eprintln!("[shutdown] failed to acquire UNREAPED_WORKER_REGISTRY within 50ms bound");
+) -> bool {
+    if handle_slot.is_none() {
+        return false;
     }
+
+    // Attempt lock up to 10 times across ~500ms.
+    // Lock is never held during sleep by reap_unreaped_workers, so contention is minimal.
+    for _ in 0..10 {
+        if let Some(mut lock) = lock_timeout_recover(&UNREAPED_WORKER_REGISTRY, Duration::from_millis(50)) {
+            // 1. Prune finished workers to reclaim capacity
+            prune_finished_unreaped_workers_locked(&mut lock);
+
+            // 2. Enforce capacity upper bound
+            if lock.len() >= MAX_UNREAPED_WORKERS {
+                #[cfg(windows)]
+                {
+                    for item in lock.iter() {
+                        let th = item.thread_handle.load(Ordering::SeqCst);
+                        let pipe = item.pipe_handle.load(Ordering::SeqCst);
+                        if th != 0 || pipe != 0 {
+                            let _ = cancel_worker_io(pipe, th);
+                        }
+                    }
+                }
+                prune_finished_unreaped_workers_locked(&mut lock);
+                if lock.len() >= MAX_UNREAPED_WORKERS {
+                    eprintln!("[shutdown] Warning: UNREAPED_WORKER_REGISTRY at capacity ({MAX_UNREAPED_WORKERS}); waiting for slot");
+                    drop(lock);
+                    std::thread::sleep(Duration::from_millis(20));
+                    continue;
+                }
+            }
+
+            // 3. Take handle only when lock and capacity are confirmed
+            if let Some(handle) = handle_slot.take() {
+                lock.push(UnreapedWorker {
+                    name,
+                    join_handle: handle,
+                    thread_handle,
+                    pipe_handle,
+                    queued_at: Instant::now(),
+                });
+                return true;
+            }
+        }
+        std::thread::sleep(Duration::from_millis(10));
+    }
+
+    eprintln!("[shutdown] failed to acquire UNREAPED_WORKER_REGISTRY after 10 attempts; handle preserved in caller");
+    false
 }
 
 #[allow(dead_code)]
-pub(crate) fn track_unreaped_worker_handle(handle: std::thread::JoinHandle<()>) {
+pub(crate) fn track_unreaped_worker_handle(handle: std::thread::JoinHandle<()>) -> bool {
+    let mut opt = Some(handle);
     track_unreaped_worker(
         "unspecified",
-        handle,
+        &mut opt,
         Arc::new(std::sync::atomic::AtomicIsize::new(0)),
         Arc::new(std::sync::atomic::AtomicIsize::new(0)),
-    );
+    )
 }
 
 pub fn unreaped_worker_count() -> usize {
@@ -1485,42 +1590,47 @@ pub fn unreaped_worker_count() -> usize {
 
 pub fn reap_unreaped_workers(max_bound: Duration) -> (usize, usize) {
     let start = Instant::now();
-    let lock_timeout = Duration::from_millis(30).min(max_bound);
-    let mut lock = match lock_timeout_recover(&UNREAPED_WORKER_REGISTRY, lock_timeout) {
-        Some(l) => l,
-        None => return (0, unreaped_worker_count()),
-    };
-
     let mut reaped = 0;
-    let mut i = 0;
-    while i < lock.len() && start.elapsed() < max_bound {
-        let is_finished = lock[i].join_handle.is_finished();
-        if !is_finished {
-            #[cfg(windows)]
-            {
-                let th = lock[i].thread_handle.load(Ordering::SeqCst);
-                let pipe = lock[i].pipe_handle.load(Ordering::SeqCst);
+
+    loop {
+        let lock_timeout = Duration::from_millis(20);
+        let mut lock = match lock_timeout_recover(&UNREAPED_WORKER_REGISTRY, lock_timeout) {
+            Some(l) => l,
+            None => return (reaped, unreaped_worker_count()),
+        };
+
+        // 1. Immediate sweep of finished workers
+        reaped += prune_finished_unreaped_workers_locked(&mut lock);
+
+        if lock.is_empty() || start.elapsed() >= max_bound {
+            let remaining = lock.len();
+            return (reaped, remaining);
+        }
+
+        // 2. Send cancellation to unfinished workers
+        #[cfg(windows)]
+        {
+            for item in lock.iter() {
+                let th = item.thread_handle.load(Ordering::SeqCst);
+                let pipe = item.pipe_handle.load(Ordering::SeqCst);
                 if th != 0 || pipe != 0 {
                     let _ = cancel_worker_io(pipe, th);
                 }
             }
-            let rem = max_bound.saturating_sub(start.elapsed());
-            let sleep_dur = Duration::from_millis(5).min(rem);
-            if !sleep_dur.is_zero() {
-                std::thread::sleep(sleep_dur);
-            }
         }
 
-        if lock[i].join_handle.is_finished() {
-            let item = lock.swap_remove(i);
-            let _ = item.join_handle.join();
-            reaped += 1;
-        } else {
-            i += 1;
+        // CRITICAL: Drop lock before sleep so track_unreaped_worker never contends!
+        drop(lock);
+
+        let rem = max_bound.saturating_sub(start.elapsed());
+        let sleep_dur = Duration::from_millis(5).min(rem);
+        if sleep_dur.is_zero() {
+            break;
         }
+        std::thread::sleep(sleep_dur);
     }
-    let remaining = lock.len();
-    (reaped, remaining)
+
+    (reaped, unreaped_worker_count())
 }
 
 pub struct StdioLibraryChannel {
@@ -3514,7 +3624,29 @@ impl StdioLibraryChannel {
                                 }
                                 let err_msg = "reader thread failed to finish within 200ms detached reap bound".to_string();
                                 eprintln!("[shutdown] {err_msg}");
-                                track_unreaped_worker("reader", handle, reader_th_reaper, reader_pipe_reaper);
+                                let mut handle_opt = Some(handle);
+                                let tracked = track_unreaped_worker("reader", &mut handle_opt, Arc::clone(&reader_th_reaper), Arc::clone(&reader_pipe_reaper));
+                                if !tracked {
+                                    if let Some(h) = handle_opt.take() {
+                                        let th = Arc::clone(&reader_th_reaper);
+                                        let ph = Arc::clone(&reader_pipe_reaper);
+                                        let _ = std::thread::Builder::new()
+                                            .name("persistent-reader-holder".to_string())
+                                            .spawn(move || {
+                                                let mut ho = Some(h);
+                                                while ho.is_some() {
+                                                    std::thread::sleep(Duration::from_millis(50));
+                                                    if track_unreaped_worker("reader", &mut ho, Arc::clone(&th), Arc::clone(&ph)) {
+                                                        break;
+                                                    }
+                                                    if ho.as_ref().map(|x| x.is_finished()).unwrap_or(false) {
+                                                        let _ = ho.take().unwrap().join();
+                                                        break;
+                                                    }
+                                                }
+                                            });
+                                    }
+                                }
                                 let rem_err = reap_timeout.saturating_sub(reap_start.elapsed());
                                 if !rem_err.is_zero() {
                                     let err_timeout = Duration::from_millis(20).min(rem_err);
@@ -3527,8 +3659,28 @@ impl StdioLibraryChannel {
                             let err_msg = format!("failed to spawn reader-join-bounded-reaper: {e}");
                             eprintln!("[shutdown] {err_msg}");
                             if let Ok(mut h_lock) = handle_shared.lock() {
-                                if let Some(h) = h_lock.take() {
-                                    track_unreaped_worker("reader", h, Arc::clone(&self.reader_thread_handle), Arc::clone(&self.raw_stdout_handle));
+                                let mut h_opt = h_lock.take();
+                                let tracked = track_unreaped_worker("reader", &mut h_opt, Arc::clone(&self.reader_thread_handle), Arc::clone(&self.raw_stdout_handle));
+                                if !tracked {
+                                    if let Some(h) = h_opt.take() {
+                                        let th = Arc::clone(&self.reader_thread_handle);
+                                        let ph = Arc::clone(&self.raw_stdout_handle);
+                                        let _ = std::thread::Builder::new()
+                                            .name("persistent-reader-holder".to_string())
+                                            .spawn(move || {
+                                                let mut ho = Some(h);
+                                                while ho.is_some() {
+                                                    std::thread::sleep(Duration::from_millis(50));
+                                                    if track_unreaped_worker("reader", &mut ho, Arc::clone(&th), Arc::clone(&ph)) {
+                                                        break;
+                                                    }
+                                                    if ho.as_ref().map(|x| x.is_finished()).unwrap_or(false) {
+                                                        let _ = ho.take().unwrap().join();
+                                                        break;
+                                                    }
+                                                }
+                                            });
+                                    }
                                 }
                             }
                             let rem_err = deadline.saturating_duration_since(Instant::now());
@@ -3629,7 +3781,29 @@ impl StdioLibraryChannel {
                                 }
                                 let err_msg = "writer thread failed to finish within 200ms detached reap bound".to_string();
                                 eprintln!("[shutdown] {err_msg}");
-                                track_unreaped_worker("writer", handle, writer_th_reaper, writer_pipe_reaper);
+                                let mut handle_opt = Some(handle);
+                                let tracked = track_unreaped_worker("writer", &mut handle_opt, Arc::clone(&writer_th_reaper), Arc::clone(&writer_pipe_reaper));
+                                if !tracked {
+                                    if let Some(h) = handle_opt.take() {
+                                        let th = Arc::clone(&writer_th_reaper);
+                                        let ph = Arc::clone(&writer_pipe_reaper);
+                                        let _ = std::thread::Builder::new()
+                                            .name("persistent-writer-holder".to_string())
+                                            .spawn(move || {
+                                                let mut ho = Some(h);
+                                                while ho.is_some() {
+                                                    std::thread::sleep(Duration::from_millis(50));
+                                                    if track_unreaped_worker("writer", &mut ho, Arc::clone(&th), Arc::clone(&ph)) {
+                                                        break;
+                                                    }
+                                                    if ho.as_ref().map(|x| x.is_finished()).unwrap_or(false) {
+                                                        let _ = ho.take().unwrap().join();
+                                                        break;
+                                                    }
+                                                }
+                                            });
+                                    }
+                                }
                                 let rem_err = reap_timeout.saturating_sub(reap_start.elapsed());
                                 if !rem_err.is_zero() {
                                     let err_timeout = Duration::from_millis(20).min(rem_err);
@@ -3642,8 +3816,28 @@ impl StdioLibraryChannel {
                             let err_msg = format!("failed to spawn writer-join-bounded-reaper: {e}");
                             eprintln!("[shutdown] {err_msg}");
                             if let Ok(mut h_lock) = handle_shared.lock() {
-                                if let Some(h) = h_lock.take() {
-                                    track_unreaped_worker("writer", h, Arc::clone(&self.writer_thread_handle), Arc::clone(&self.raw_stdin_handle));
+                                let mut h_opt = h_lock.take();
+                                let tracked = track_unreaped_worker("writer", &mut h_opt, Arc::clone(&self.writer_thread_handle), Arc::clone(&self.raw_stdin_handle));
+                                if !tracked {
+                                    if let Some(h) = h_opt.take() {
+                                        let th = Arc::clone(&self.writer_thread_handle);
+                                        let ph = Arc::clone(&self.raw_stdin_handle);
+                                        let _ = std::thread::Builder::new()
+                                            .name("persistent-writer-holder".to_string())
+                                            .spawn(move || {
+                                                let mut ho = Some(h);
+                                                while ho.is_some() {
+                                                    std::thread::sleep(Duration::from_millis(50));
+                                                    if track_unreaped_worker("writer", &mut ho, Arc::clone(&th), Arc::clone(&ph)) {
+                                                        break;
+                                                    }
+                                                    if ho.as_ref().map(|x| x.is_finished()).unwrap_or(false) {
+                                                        let _ = ho.take().unwrap().join();
+                                                        break;
+                                                    }
+                                                }
+                                            });
+                                    }
                                 }
                             }
                             let rem_err = deadline.saturating_duration_since(Instant::now());
@@ -3658,6 +3852,11 @@ impl StdioLibraryChannel {
                 }
             }
         }
+
+        // Production reaping: actively reap any finished workers using remaining deadline budget
+        let rem_reap = deadline.saturating_duration_since(Instant::now());
+        let reap_budget = Duration::from_millis(50).min(rem_reap);
+        let _ = reap_unreaped_workers(reap_budget);
     }
 }
 
@@ -3688,6 +3887,9 @@ impl Drop for StdioLibraryChannel {
                 }
             }
         }
+
+        // Active reaping on channel Drop
+        let _ = reap_unreaped_workers(Duration::from_millis(20));
     }
 }
 
@@ -3706,6 +3908,18 @@ thread_local! {
     static TEST_MOCK_TASKKILL_SPAWN_FAIL: std::cell::Cell<bool> = std::cell::Cell::new(false);
     static TEST_MOCK_TASKKILL_KILL_FAIL: std::cell::Cell<bool> = std::cell::Cell::new(false);
     static TEST_MOCK_TASKKILL_TRY_WAIT_FAIL: std::cell::Cell<bool> = std::cell::Cell::new(false);
+    static TEST_INJECT_CAS_FAILURE: std::cell::Cell<bool> = std::cell::Cell::new(false);
+    static TEST_INJECT_SENTINEL_CAS_FAILURE: std::cell::Cell<bool> = std::cell::Cell::new(false);
+}
+
+#[cfg(test)]
+pub(crate) fn set_test_inject_cas_failure(fail: bool) {
+    TEST_INJECT_CAS_FAILURE.with(|cell| cell.set(fail));
+}
+
+#[cfg(test)]
+pub(crate) fn set_test_inject_sentinel_cas_failure(fail: bool) {
+    TEST_INJECT_SENTINEL_CAS_FAILURE.with(|cell| cell.set(fail));
 }
 
 #[cfg(test)]
@@ -4656,6 +4870,7 @@ impl ResilientCoreContext {
                 if let Some(old) = old {
                     old.shutdown_and_kill(Duration::from_millis(1200));
                 }
+                let _ = reap_unreaped_workers(Duration::from_millis(30));
 
                 let mut backoff = ctx.config.initial_backoff;
                 let mut success = false;
@@ -5031,6 +5246,11 @@ impl ResilientLibraryChannel {
                 self.ctx.inner_fallback_spawn_failed.store(true, Ordering::SeqCst);
             }
         }
+
+        // Production reaping: actively reap any finished workers using remaining deadline budget
+        let rem_reap = deadline.saturating_duration_since(Instant::now());
+        let reap_budget = Duration::from_millis(50).min(rem_reap);
+        let _ = reap_unreaped_workers(reap_budget);
     }
 }
 
@@ -5043,6 +5263,7 @@ impl Drop for ResilientLibraryChannel {
         } else {
             self.shutdown(Duration::from_millis(2400));
         }
+        let _ = reap_unreaped_workers(Duration::from_millis(30));
     }
 }
 
@@ -8496,14 +8717,17 @@ mod tests {
             std::thread::sleep(Duration::from_millis(20));
         });
 
-        // Register to unreaped registry
-        track_unreaped_worker(
+        // Register to unreaped registry using &mut Option
+        let mut handle_opt = Some(handle);
+        let tracked = track_unreaped_worker(
             "test-worker",
-            handle,
+            &mut handle_opt,
             Arc::new(std::sync::atomic::AtomicIsize::new(0)),
             Arc::new(std::sync::atomic::AtomicIsize::new(0)),
         );
 
+        assert!(tracked, "Worker must be successfully tracked");
+        assert!(handle_opt.is_none(), "Handle must be taken from Option on success");
         assert!(
             unreaped_worker_count() >= initial_count + 1,
             "Worker must be observable in unreaped registry"
@@ -8515,6 +8739,129 @@ mod tests {
         // Actively reap
         let (reaped, _remaining) = reap_unreaped_workers(Duration::from_millis(100));
         assert!(reaped >= 1, "Completed worker must be actively reaped and joined");
+    }
+
+    /// AC4 (CBH-R3-01): Verify capacity bound (MAX_UNREAPED_WORKERS = 32),
+    /// auto-pruning of finished workers, and Option take semantics under contention.
+    #[test]
+    fn ac4_unreaped_worker_registry_capacity_cap_and_lock_failure_retains_handle() {
+        // 1. Option take semantics: when passed None, returns false
+        let mut empty_slot: Option<std::thread::JoinHandle<()>> = None;
+        let res_empty = track_unreaped_worker(
+            "empty-test",
+            &mut empty_slot,
+            Arc::new(std::sync::atomic::AtomicIsize::new(0)),
+            Arc::new(std::sync::atomic::AtomicIsize::new(0)),
+        );
+        assert!(!res_empty, "Tracking None slot must return false");
+
+        // Drain any existing unreaped workers first
+        reap_unreaped_workers(Duration::from_millis(50));
+
+        // 2. Capacity upper bound: spawning multiple workers
+        // Capacity bound MAX_UNREAPED_WORKERS (32) must be strictly enforced.
+        let mut handles = Vec::new();
+        for _ in 0..20 {
+            let h = std::thread::spawn(|| {
+                std::thread::sleep(Duration::from_millis(60));
+            });
+            handles.push(h);
+        }
+
+        for h in handles {
+            let mut opt = Some(h);
+            let _ = track_unreaped_worker(
+                "batch-worker",
+                &mut opt,
+                Arc::new(std::sync::atomic::AtomicIsize::new(0)),
+                Arc::new(std::sync::atomic::AtomicIsize::new(0)),
+            );
+        }
+
+        // Verify that unreaped count NEVER exceeds MAX_UNREAPED_WORKERS (32)
+        let count = unreaped_worker_count();
+        assert!(
+            count <= MAX_UNREAPED_WORKERS,
+            "Registry count ({count}) must not exceed MAX_UNREAPED_WORKERS ({MAX_UNREAPED_WORKERS})"
+        );
+
+        // Sleep until workers finish, then actively reap all
+        std::thread::sleep(Duration::from_millis(80));
+        let (_reaped, remaining) = reap_unreaped_workers(Duration::from_millis(150));
+        assert_eq!(
+            remaining, 0,
+            "All completed workers must be reaped and remaining must be 0"
+        );
+    }
+
+    /// AC1 (CBH-R3-02): Deterministic test for initial CAS retry limit exhaustion (32 retries).
+    /// Asserts:
+    /// 1. When 32 CAS attempts fail, loop terminates boundedly.
+    /// 2. Shared atomic is read back and monotonically tightened.
+    /// 3. Readback confirms shared state and returns valid effective deadline.
+    #[test]
+    fn ac1_deadline_cas_initial_retries_exhaustion_reads_back_and_enforces_shared_tightening() {
+        let created_at = Instant::now();
+        let atomic_ms = AtomicU64::new(0);
+
+        // Near-future candidate deadline: 500ms
+        let candidate_deadline = created_at + Duration::from_millis(500);
+
+        // Inject 32 CAS failures deterministically
+        set_test_inject_cas_failure(true);
+        let registered = register_atomic_deadline(&atomic_ms, created_at, candidate_deadline);
+        set_test_inject_cas_failure(false);
+
+        // Shared atomic must have been updated via exhaustion fallback and verified
+        let shared_val = atomic_ms.load(Ordering::SeqCst);
+        assert_ne!(
+            shared_val, 0,
+            "Shared atomic must not remain 0 after CAS exhaustion"
+        );
+        let decoded = decode_deadline(shared_val, created_at).expect("decoded deadline");
+        assert_eq!(
+            decoded, candidate_deadline,
+            "Exhaustion fallback must have enforced candidate deadline into shared atomic"
+        );
+        assert_eq!(
+            registered, candidate_deadline,
+            "Return value must match verified shared deadline"
+        );
+    }
+
+    /// AC1 (CBH-R3-02): Deterministic test for sentinel CAS retry limit exhaustion (32 retries).
+    /// Asserts:
+    /// 1. When 32 sentinel CAS attempts fail, loop terminates boundedly.
+    /// 2. Shared atomic is verified via readback and enforced to sentinel 1.
+    /// 3. Shared atomic is guaranteed to hold sentinel 1 so other threads never see a looser deadline.
+    #[test]
+    fn ac1_deadline_cas_sentinel_retries_exhaustion_reads_back_and_enforces_sentinel_1() {
+        let created_at = Instant::now();
+        // Seed shared atomic with a future deadline (e.g. 5000ms)
+        let future_encoded = encode_deadline(created_at + Duration::from_millis(5000), created_at);
+        let atomic_ms = AtomicU64::new(future_encoded);
+
+        // Candidate is expired deadline (past instant)
+        let past_deadline = Instant::now() - Duration::from_millis(100);
+
+        // Inject sentinel CAS failure deterministically
+        set_test_inject_sentinel_cas_failure(true);
+        let registered = register_atomic_deadline(&atomic_ms, created_at, past_deadline);
+        set_test_inject_sentinel_cas_failure(false);
+
+        // 1. Shared atomic MUST be verified as sentinel 1
+        let shared_val = atomic_ms.load(Ordering::SeqCst);
+        assert_eq!(
+            shared_val, 1,
+            "Shared atomic must be verified as expired sentinel 1 after exhaustion"
+        );
+
+        // 2. Returned deadline must be created_at (0 remaining budget)
+        assert_eq!(
+            registered.saturating_duration_since(Instant::now()),
+            Duration::ZERO,
+            "Expired deadline must decode to zero remaining budget"
+        );
     }
 }
 

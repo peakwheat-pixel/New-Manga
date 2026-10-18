@@ -1,6 +1,6 @@
 === CBH-04 / CBH-05 Artifact Lock Fault Injection Suite ===
 Target script: G:\CODEX\New Manga\verification\P20-CLOSE-BOUND-1\run-desktop-close-verification.ps1
-Test scratch directory: C:\Users\49745\AppData\Local\Temp\cbh04_test_3f510867
+Test scratch directory: C:\Users\49745\AppData\Local\Temp\cbh04_test_79489d69
 
 --- Case 1: Baseline artifact write without lock contention ---
 [PASS] Process exited with code 0
@@ -15,7 +15,7 @@ Test scratch directory: C:\Users\49745\AppData\Local\Temp\cbh04_test_3f510867
 [PASS] Metadata metadata_txt_written is true
 
 --- Case 2: Console log locked with FileShare.None (Success simulation) ---
-Exclusive lock held on: C:\Users\49745\AppData\Local\Temp\cbh04_test_3f510867\case2_console_lock\ac5-console.log
+Exclusive lock held on: C:\Users\49745\AppData\Local\Temp\cbh04_test_79489d69\case2_console_lock\ac5-console.log
 Exclusive lock released.
 [PASS] Process exited with code 0 despite console log lock
 [PASS] ac5.exit exists
@@ -28,7 +28,7 @@ Exclusive lock released.
 [PASS] ac5-console-fallback.log was written
 
 --- Case 3: Console log locked with Failure simulation (MockExitCode = 1) ---
-Exclusive lock held on: C:\Users\49745\AppData\Local\Temp\cbh04_test_3f510867\case3_fail_console_lock\ac5-console.log
+Exclusive lock held on: C:\Users\49745\AppData\Local\Temp\cbh04_test_79489d69\case3_fail_console_lock\ac5-console.log
 Exclusive lock released.
 [PASS] Process exited with code 1
 [PASS] ac5.exit exists
@@ -46,7 +46,7 @@ Exclusive lock released.
 [PASS] Metadata exit_code equals 1
 
 --- Case 5: ac5.exit locked with FileShare.None (Fallback assertion) ---
-Exclusive lock held on: C:\Users\49745\AppData\Local\Temp\cbh04_test_3f510867\case5_exit_lock\ac5.exit
+Exclusive lock held on: C:\Users\49745\AppData\Local\Temp\cbh04_test_79489d69\case5_exit_lock\ac5.exit
 Exclusive lock on ac5.exit released.
 [PASS] Process exited with code 0
 [PASS] ac5.exit-fallback exists
@@ -59,7 +59,7 @@ Exclusive lock on ac5.exit released.
 [PASS] Metadata exit_code (0) matches process ExitCode (0)
 
 --- Case 6: ac5-metadata.json locked with FileShare.None (Fallback assertion) ---
-Exclusive lock held on: C:\Users\49745\AppData\Local\Temp\cbh04_test_3f510867\case6_json_lock\ac5-metadata.json
+Exclusive lock held on: C:\Users\49745\AppData\Local\Temp\cbh04_test_79489d69\case6_json_lock\ac5-metadata.json
 Exclusive lock on ac5-metadata.json released.
 [PASS] Process exited with code 0
 [PASS] ac5-metadata-fallback.json exists
@@ -71,7 +71,7 @@ Exclusive lock on ac5-metadata.json released.
 [PASS] Fallback metadata exit_code matches process ExitCode (0)
 
 --- Case 7: ac5-metadata.txt locked with FileShare.None (Fallback assertion) ---
-Exclusive lock held on: C:\Users\49745\AppData\Local\Temp\cbh04_test_3f510867\case7_txt_lock\ac5-metadata.txt
+Exclusive lock held on: C:\Users\49745\AppData\Local\Temp\cbh04_test_79489d69\case7_txt_lock\ac5-metadata.txt
 Exclusive lock on ac5-metadata.txt released.
 [PASS] Process exited with code 0
 [PASS] ac5-metadata-fallback.txt exists
@@ -93,29 +93,47 @@ All 4 locks released.
 [PASS] Fallback metadata exit_code (0) matches fallback exit (0)
 [PASS] Fallback metadata exit_code matches process ExitCode (0)
 
+--- Case 8b: Child process non-zero exit code propagation (ExitCode = 42) ---
+[PASS] Runner process exited with propagated child code 42
+[PASS] ac5.exit exists for Case 8b
+[PASS] ac5.exit content (42) matches child process exit code
+[PASS] ac5-metadata.json exists for Case 8b
+[PASS] Metadata exit_code matches 42
+[PASS] Metadata desktop_exit_code matches child exit 42
+[PASS] Metadata desktop_exit_code matches runner ExitCode (42)
+
 --- Case 9: Real binary invocation lock suite (Non-Mock execution) ---
 Using real desktop binary: apps/desktop/src-tauri/target/release/m2rc1-desktop.exe
 
 --- Case 9a: Console log locked with real binary ---
 [PASS] ac5-metadata.json exists for Case 9a
 [PASS] ac5.exit exists for Case 9a
-[PASS] Case 9a: ac5.exit (0) matches metadata exit_code (0)
-[PASS] Case 9a: metadata exit_code matches process ExitCode (0)
+[PASS] Case 9a: ac5.exit (101) matches metadata exit_code (101)
+[PASS] Case 9a: metadata exit_code matches runner ExitCode (101)
+[PASS] Case 9a: desktop child exit code (101) matches metadata exit_code (101)
+[PASS] Case 9a: desktop child exit code matches ac5.exit (101)
+[PASS] Case 9a: desktop child exit code matches runner ExitCode (101)
 [PASS] Case 9a: ac5-console-fallback.log written under console lock
 
 --- Case 9b: ac5.exit locked with real binary (Fallback path) ---
 [PASS] ac5.exit-fallback exists for Case 9b
 [PASS] ac5-metadata.json exists for Case 9b
-[PASS] Case 9b: ac5.exit-fallback (0) matches metadata exit_code (0)
-[PASS] Case 9b: metadata exit_code matches process ExitCode (0)
+[PASS] Case 9b: ac5.exit-fallback (101) matches metadata exit_code (101)
+[PASS] Case 9b: metadata exit_code matches runner ExitCode (101)
+[PASS] Case 9b: desktop child exit code (101) matches metadata exit_code (101)
+[PASS] Case 9b: desktop child exit code matches ac5.exit-fallback (101)
+[PASS] Case 9b: desktop child exit code matches runner ExitCode (101)
 [PASS] Case 9b: metadata reports exit_written is false
 [PASS] Case 9b: metadata reports exit_fallback_written is true
 
 --- Case 9c: ac5-metadata.json locked with real binary (Fallback metadata) ---
 [PASS] ac5.exit exists for Case 9c
 [PASS] ac5-metadata-fallback.json exists for Case 9c
-[PASS] Case 9c: ac5.exit (0) matches fallback metadata exit_code (0)
-[PASS] Case 9c: fallback metadata exit_code matches process ExitCode (0)
+[PASS] Case 9c: ac5.exit (101) matches fallback metadata exit_code (101)
+[PASS] Case 9c: fallback metadata exit_code matches runner ExitCode (101)
+[PASS] Case 9c: desktop child exit code (101) matches fallback metadata exit_code (101)
+[PASS] Case 9c: desktop child exit code matches ac5.exit (101)
+[PASS] Case 9c: desktop child exit code matches runner ExitCode (101)
 [PASS] Case 9c: fallback metadata reports exit_written is true
 
 Test scratch directory cleaned.
