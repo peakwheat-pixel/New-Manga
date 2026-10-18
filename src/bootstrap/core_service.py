@@ -1775,13 +1775,22 @@ class CoreServiceServer:
         if self._producer_root is None:
             return None
         try:
+            # Match on identifiers, not on the path: the reader projection
+            # exposes an absolute translated path while artifact_revisions
+            # stores the managed path relative to the data root, so comparing
+            # the two strings never matches and the origin silently stayed
+            # None.  This test caught exactly that.
             matching = self._core.conn.execute(
                 "SELECT ar.artifact_revision_id, ar.artifact_id"
                 " FROM artifact_revisions ar"
                 " JOIN media_artifacts ma ON ma.artifact_id = ar.artifact_id"
                 " WHERE ma.page_id = ? AND ma.artifact_type = 'translated'"
-                "   AND ar.managed_path = ?",
-                (page.page_id, page.translated_path),
+                "   AND ar.artifact_id = ? AND ar.artifact_revision_id = ?",
+                (
+                    page.page_id,
+                    page.translated_artifact_id,
+                    page.translated_revision_id,
+                ),
             ).fetchall()
         except Exception as error:
             raise RuntimeError(f"preview origin: source lookup failed: {error!r}") from error
