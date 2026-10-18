@@ -53,48 +53,48 @@ status: in_review
 | `verification/P20-CLOSE-BOUND-1/concurrency-lock-audit.md` | 22项阻塞清单与WCET审计 | `ae3c77608100db6bdba1d2e1e008ced780fad7d200ab9c96f75148ee54169c99` |
 | `verification/P20-CLOSE-BOUND-1/test-ac1-overlay-bound.ps1` | 缩窄后全套测试验证脚本 | `96da0aea7d8f0bf4948fa7f01abb801dec82200a138d2c6b8d6a98ede905ac04` |
 | `verification/P20-CLOSE-BOUND-1/run-desktop-close-verification.ps1` | AC5 桌面验证脚本 | `ac83b01696a5609b5c813843110bdc81d59dc996af6ad4604b6df30c664e8957` |
-| `verification/P20-CLOSE-BOUND-1/ac1-overlay-bound.stdout.log` | AC1 核心场景输出日志 | `dfa2041594eabbfc96ad18255ec19c3b4196f4cebf784814f2e77edcf078021b` |
+| `verification/P20-CLOSE-BOUND-1/ac1-overlay-bound.stdout.log` | AC1 核心场景输出日志 | `326143e82a36b380de0e8b03bb9f0ae97ec4b5863e1648cd45e3c671651eb9ec` |
 | `verification/P20-CLOSE-BOUND-1/ac1-overlay-bound.exit` | AC1 退出码 (0) | `e45825471ed10290785b62676dc5f453d228a1e1d933c45a733e9bb239c9e083` |
-| `verification/P20-CLOSE-BOUND-1/ac1-overlay-bound.meta.json` | AC1 元数据 | `6cedf421b4847ad7e12ee734679846b1356c9ee124181edbcfaf2449c7fc31b1` |
-| `verification/P20-CLOSE-BOUND-1/ac2-process-tree-audit.log` | AC2 进程树零孤儿审计日志 | `d7ec6c5fbc6f0fbea225d0f3833e10f1c81d482df9c8ae7aa35a2eb58e84ab40` |
+| `verification/P20-CLOSE-BOUND-1/ac1-overlay-bound.meta.json` | AC1 元数据 | `e1787e41180043cb41730b3debb2bc31524e77d70521e7aa1615267ea63e31ee` |
+| `verification/P20-CLOSE-BOUND-1/ac2-process-tree-audit.log` | AC2 进程树零孤儿审计日志 | `a2203a7e20fb87217da9fd8d3bf4801dff9dbb7cfdfb35994d57760a6c045218` |
 | `verification/P20-CLOSE-BOUND-1/ac2-process-tree-audit.exit` | AC2 退出码 (0) | `e45825471ed10290785b62676dc5f453d228a1e1d933c45a733e9bb239c9e083` |
-| `verification/P20-CLOSE-BOUND-1/ac2-process-tree-audit.meta.json` | AC2 元数据 | `ed32394c2c650b146921aebeeb3c1d47105777f384802076691c315c07b375c3` |
-| `verification/P20-CLOSE-BOUND-1/ac3-resilient-channel.stdout.log` | AC3 回归测试输出 (9 passed) | `4ceb5e29a9a81082ae822703a582533a4ff3caf0c742279ed87c75038be998c7` |
+| `verification/P20-CLOSE-BOUND-1/ac2-process-tree-audit.meta.json` | AC2 元数据 | `0f64a90991e9bb6456e79ac8832b96957623c04016f7f616ab3fb51d92e54185` |
+| `verification/P20-CLOSE-BOUND-1/ac3-resilient-channel.stdout.log` | AC3 回归测试输出 (9 passed) | `6a4e1a8d1669953f8591706b98406d54fa04edbc434907f33d15a9de9f5c2db2` |
 | `verification/P20-CLOSE-BOUND-1/ac3-resilient-channel.exit` | AC3 退出码 (0) | `e45825471ed10290785b62676dc5f453d228a1e1d933c45a733e9bb239c9e083` |
-| `verification/P20-CLOSE-BOUND-1/ac3-resilient-channel.meta.json` | AC3 元数据 | `1577263917550cc8cc9081bf670b6868066f785088315637fd73932ad217e065` |
-| `verification/P20-CLOSE-BOUND-1/ac3-stdio-channel-drop.stdout.log` | AC3 Drop 回归输出 (1 passed) | `3f5934019d1061029bfdd04fbca0d1b5983abfb4dcb03538e2c0a1bb5d6d6d2f` |
+| `verification/P20-CLOSE-BOUND-1/ac3-resilient-channel.meta.json` | AC3 元数据 | `612b9b25cdf39a871ad6c138e864cd3d47846eeefde4e8cb03c41489e42d5ca7` |
+| `verification/P20-CLOSE-BOUND-1/ac3-stdio-channel-drop.stdout.log` | AC3 Drop 回归输出 (1 passed) | `1ed09b2acccddc587467d831b0428cae8af52a5208cd31fde4034823a3ca2bfc` |
 | `verification/P20-CLOSE-BOUND-1/ac3-stdio-channel-drop.exit` | AC3 Drop 退出码 (0) | `e45825471ed10290785b62676dc5f453d228a1e1d933c45a733e9bb239c9e083` |
-| `verification/P20-CLOSE-BOUND-1/ac3-stdio-channel-drop.meta.json` | AC3 Drop 元数据 | `368b1822a69908575f5fec0e483dc4afe9a24615ad40acce9b508eaea14d627d` |
-| `verification/P20-CLOSE-BOUND-1/ac4-inner-lock-contention.stdout.log` | AC4 N1 成功分支输出 | `53e678221d36468a7fb6ecbb1a6be9d2f65f16d47e2636facf5a2129b34d2116` |
+| `verification/P20-CLOSE-BOUND-1/ac3-stdio-channel-drop.meta.json` | AC3 Drop 元数据 | `d5e4fab6e9286b8128fca9143efa3534c3b8f9a30ed3d6bb268c8e7ed6b1dd8a` |
+| `verification/P20-CLOSE-BOUND-1/ac4-inner-lock-contention.stdout.log` | AC4 N1 成功分支输出 | `d9942f1bf91ede35dbaf84171c83b5c6662575b5fed5869dca9204c133213a26` |
 | `verification/P20-CLOSE-BOUND-1/ac4-inner-lock-contention.exit` | AC4 N1 成功分支退出码 (0) | `e45825471ed10290785b62676dc5f453d228a1e1d933c45a733e9bb239c9e083` |
-| `verification/P20-CLOSE-BOUND-1/ac4-inner-lock-contention.meta.json` | AC4 N1 成功分支元数据 | `5335058933a873d6cbffae8f87e4d85a31dd0011c745b9902435f9e7e2d75694` |
-| `verification/P20-CLOSE-BOUND-1/ac4-inner-lock-fallback-timeout.stdout.log` | AC4 N1 超时分支输出 | `f7632d1e6c60ed4baf6833d61c1d809acfca2561ac60b22d9197e455a94b460f` |
+| `verification/P20-CLOSE-BOUND-1/ac4-inner-lock-contention.meta.json` | AC4 N1 成功分支元数据 | `a8670a7af7c1b4c5e99406a900e256fb5b0b46da65df3f264bb4ad4204794ad3` |
+| `verification/P20-CLOSE-BOUND-1/ac4-inner-lock-fallback-timeout.stdout.log` | AC4 N1 超时分支输出 | `eaf017b3101fc5727f973f42d2ab69e8800764fda8d6461c7bacf8ef7baca2ee` |
 | `verification/P20-CLOSE-BOUND-1/ac4-inner-lock-fallback-timeout.exit` | AC4 N1 超时分支退出码 (0) | `e45825471ed10290785b62676dc5f453d228a1e1d933c45a733e9bb239c9e083` |
-| `verification/P20-CLOSE-BOUND-1/ac4-inner-lock-fallback-timeout.meta.json` | AC4 N1 超时分支元数据 | `cd6dc5ee442a70d11d183d8912541f016456d474bfdcc47d84f956f7ac2a6269` |
-| `verification/P20-CLOSE-BOUND-1/ac4-inner-lock-fallback-spawn-failure.stdout.log` | AC4 N1 派发失败分支输出 | `60a593fc3ec6daf30834e137d2138bdd500ffadfe7f8204d0075e8845931b5a6` |
+| `verification/P20-CLOSE-BOUND-1/ac4-inner-lock-fallback-timeout.meta.json` | AC4 N1 超时分支元数据 | `c79374aefafb70de83f23e3572b54c2e83e4f460e442c0646377da21302c2911` |
+| `verification/P20-CLOSE-BOUND-1/ac4-inner-lock-fallback-spawn-failure.stdout.log` | AC4 N1 派发失败分支输出 | `e69e31024a787b5491a5bab8586dc96c7cafc3224c886ec23a83f2efe5e6eed6` |
 | `verification/P20-CLOSE-BOUND-1/ac4-inner-lock-fallback-spawn-failure.exit` | AC4 N1 派发失败分支退出码 (0) | `e45825471ed10290785b62676dc5f453d228a1e1d933c45a733e9bb239c9e083` |
-| `verification/P20-CLOSE-BOUND-1/ac4-inner-lock-fallback-spawn-failure.meta.json` | AC4 N1 派发失败分支元数据 | `257c270704328fabca95d0c8cfde28981c8328b3c6725a242c41a3698cac0414` |
-| `verification/P20-CLOSE-BOUND-1/ac4-reentrant-child-reap-check.stdout.log` | AC4 重入无假阳性测试输出 | `bbc6dfc82397ba65b1ef2095336225d13c45e35686553540167489175be98908` |
+| `verification/P20-CLOSE-BOUND-1/ac4-inner-lock-fallback-spawn-failure.meta.json` | AC4 N1 派发失败分支元数据 | `cf0b652a4f27cc32a823fb5f7a1cf3353f0f4625a9938b9e4d0b8c3abc0e180a` |
+| `verification/P20-CLOSE-BOUND-1/ac4-reentrant-child-reap-check.stdout.log` | AC4 重入无假阳性测试输出 | `cbba94390ae1a1babe48bb15035cd615847b566c0d10b79cc925068609d929d3` |
 | `verification/P20-CLOSE-BOUND-1/ac4-reentrant-child-reap-check.exit` | AC4 重入无假阳性退出码 (0) | `e45825471ed10290785b62676dc5f453d228a1e1d933c45a733e9bb239c9e083` |
-| `verification/P20-CLOSE-BOUND-1/ac4-reentrant-child-reap-check.meta.json` | AC4 重入无假阳性元数据 | `e1a3232577c3b29ae137aab6288b03f46c7eb4fa53f5f66dd58bd68e03883bb4` |
-| `verification/P20-CLOSE-BOUND-1/ac4-child-lock-contention.stdout.log` | AC4 child 争锁 fallback 输出 | `00eb05f36bc37bcf10bdc888c6dc051e33a3bf0a71dcf57b401b7ec1db405d3e` |
+| `verification/P20-CLOSE-BOUND-1/ac4-reentrant-child-reap-check.meta.json` | AC4 重入无假阳性元数据 | `0f5d867fb589b106588e479dbec12a1e8dfbcdbdbff441877725e9af2f53cd54` |
+| `verification/P20-CLOSE-BOUND-1/ac4-child-lock-contention.stdout.log` | AC4 child 争锁 fallback 输出 | `1b88d8bcd628ee15798c8757e6c76b5bfd2df1228b94c7e66d363cee3f2a1928` |
 | `verification/P20-CLOSE-BOUND-1/ac4-child-lock-contention.exit` | AC4 child 争锁退出码 (0) | `e45825471ed10290785b62676dc5f453d228a1e1d933c45a733e9bb239c9e083` |
-| `verification/P20-CLOSE-BOUND-1/ac4-child-lock-contention.meta.json` | AC4 child 争锁元数据 | `868d6c9e7f49c9728712bddb89448f9bd974d844df256a71be198dd15f868dfc` |
-| `verification/P20-CLOSE-BOUND-1/ac4-pending-lock-contention.stdout.log` | AC4 pending 争锁 fallback 输出 | `8cfc3bd7a27a414a9928504585370876bf946934782af0dacf263f29245153f6` |
+| `verification/P20-CLOSE-BOUND-1/ac4-child-lock-contention.meta.json` | AC4 child 争锁元数据 | `b5c19d205faba26b97f5c973569281372211d0b7ed853d33d7e4fb9f5c16ac91` |
+| `verification/P20-CLOSE-BOUND-1/ac4-pending-lock-contention.stdout.log` | AC4 pending 争锁 fallback 输出 | `3bf6f5326bd721b1fd86c1d3831f14564eabdd660ec4e15d08270a6d6e2c1bad` |
 | `verification/P20-CLOSE-BOUND-1/ac4-pending-lock-contention.exit` | AC4 pending 争锁退出码 (0) | `e45825471ed10290785b62676dc5f453d228a1e1d933c45a733e9bb239c9e083` |
-| `verification/P20-CLOSE-BOUND-1/ac4-pending-lock-contention.meta.json` | AC4 pending 争锁元数据 | `98a80c04a39183fad02cd0458dc8cac81356b71e20b554954230e90e2d7d532e` |
+| `verification/P20-CLOSE-BOUND-1/ac4-pending-lock-contention.meta.json` | AC4 pending 争锁元数据 | `57324fc87579af45241abc86b5b5ae36930dbaf0f05b750a46edd45bf3ea8c9a` |
 | `verification/P20-CLOSE-BOUND-1/ac4-poisoned-child-lock.stdout.log` | AC4 中毒锁恢复输出 | `eec452b399e473d7cda8dcbf0d0f0e15bc03d0111af3ab5b979388d955738edb` |
 | `verification/P20-CLOSE-BOUND-1/ac4-poisoned-child-lock.exit` | AC4 中毒锁退出码 (0) | `e45825471ed10290785b62676dc5f453d228a1e1d933c45a733e9bb239c9e083` |
-| `verification/P20-CLOSE-BOUND-1/ac4-poisoned-child-lock.meta.json` | AC4 中毒锁元数据 | `14b08dd213337f7e9fc8d70f0239abe32097ab1c7f0d5479dfe7819ea4447b41` |
-| `verification/P20-CLOSE-BOUND-1/ac4-reader-guard.stdout.log` | AC4 reader 守护超时输出 | `a3e7f5930ccf9478129be224bfa7e063f8991e036343d03c91320ff6c37ef0cf` |
+| `verification/P20-CLOSE-BOUND-1/ac4-poisoned-child-lock.meta.json` | AC4 中毒锁元数据 | `ae283df3b6f77133c11c85b49061b1833564bb69e81699824a3647ff747a6470` |
+| `verification/P20-CLOSE-BOUND-1/ac4-reader-guard.stdout.log` | AC4 reader 守护超时输出 | `2b93e1dfd2c94fc8bff047dc416e617cc1cc329ec6f0ed700b4f92641460be64` |
 | `verification/P20-CLOSE-BOUND-1/ac4-reader-guard.exit` | AC4 reader 守护退出码 (0) | `e45825471ed10290785b62676dc5f453d228a1e1d933c45a733e9bb239c9e083` |
-| `verification/P20-CLOSE-BOUND-1/ac4-reader-guard.meta.json` | AC4 reader 守护元数据 | `00011d70cf491ce28c48a84881de13096380e1d9dd6f1859147fc419da6515f5` |
+| `verification/P20-CLOSE-BOUND-1/ac4-reader-guard.meta.json` | AC4 reader 守护元数据 | `7fcd5aa21b9bb4bad55524774d9fd1103cf117bf579d7ee47a34df9c9d06a11f` |
 | `verification/P20-CLOSE-BOUND-1/ac4-wait-timeout-or-kill.stdout.log` | AC4 进程退出等待输出 | `3c29317bdcd573e64bd7309c31be8a7c5a80606c4f704a79499f3e25d5051711` |
 | `verification/P20-CLOSE-BOUND-1/ac4-wait-timeout-or-kill.exit` | AC4 进程退出等待退出码 (0) | `e45825471ed10290785b62676dc5f453d228a1e1d933c45a733e9bb239c9e083` |
-| `verification/P20-CLOSE-BOUND-1/ac4-wait-timeout-or-kill.meta.json` | AC4 进程退出等待元数据 | `df227b0652ff6694f20784887d31690cacdaed3d6ba720f3694245c48b870c70` |
-| `verification/P20-CLOSE-BOUND-1/ac4-writer-pipe-overflow.stdout.log` | AC4 管道满载溢出输出 | `f06128b0a9e1c70a1ed914455d997c46e53e5735475d39815f0184021d3e8e29` |
+| `verification/P20-CLOSE-BOUND-1/ac4-wait-timeout-or-kill.meta.json` | AC4 进程退出等待元数据 | `efacde57e43fb1b94755dcbd7cdd9c622d56e763f55e1ad09baf01f2d710e706` |
+| `verification/P20-CLOSE-BOUND-1/ac4-writer-pipe-overflow.stdout.log` | AC4 管道满载溢出输出 | `6f97780efcbb907bf0af1a7fa55b7a819d5400900d40dfca4e4b22f33b1aa54a` |
 | `verification/P20-CLOSE-BOUND-1/ac4-writer-pipe-overflow.exit` | AC4 管道满载溢出退出码 (0) | `e45825471ed10290785b62676dc5f453d228a1e1d933c45a733e9bb239c9e083` |
-| `verification/P20-CLOSE-BOUND-1/ac4-writer-pipe-overflow.meta.json` | AC4 管道满载溢出元数据 | `c2285b4aa1405840c46870184ffff162e535c2779d5d86a98b988154037c9ce5` |
+| `verification/P20-CLOSE-BOUND-1/ac4-writer-pipe-overflow.meta.json` | AC4 管道满载溢出元数据 | `695301a5e65333754c5dfb5bd8dbadece08de0a2edb305e60a322a556b285090` |
 
 ---
 

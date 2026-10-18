@@ -3,7 +3,7 @@ id: P20-CLOSE-BOUND-1
 title: sidecar 关闭路径的硬上界（强杀/在途无响应下的有界退出与零残留）
 kind: fix
 governance_version: 2
-status: in_review
+status: closed_with_limitations
 approval: coordinator_derived_from_user_ruling_20261018_split_r009
 blocked_by: null
 suggested_owner: Antigravity（ZCode CLI 不可用，按项目故障转移顺序）
@@ -14,9 +14,9 @@ base_commit: 8bf3ae30a
 branch: null
 worktree: G:/CODEX/New Manga
 integration_commit: null
-delivery_head: fdf715e79
-canonical_evidence_status: pending
-resource_closeout_status: pending
+delivery_head: 835f4bb17df565581a76cf66062760cdd3c85a9e
+canonical_evidence_status: complete
+resource_closeout_status: complete
 evidence_dir: verification/P20-CLOSE-BOUND-1
 ---
 
@@ -34,12 +34,12 @@ Codex 对 `P20-ISOLATION-1` 的三轮独立复审中，**R-008（存活但 IPC �
 
 ## Acceptance Criteria
 
-- [ ] AC1：**（第 5 轮返修已闭环，待 Codex 复审）** 引入单一共享绝对 `deadline` 约束全链路（消灭无界锁、`run_taskkill_bounded` 超时无界 wait、超时后独立重试与 Drop 重新开预算）；全链路细分为 20 个阻塞点并全部由 `min(自身上限, remaining)` 强力截断；动态物理上限收窄至 2400 ms；静态 WCET 闭式推导为 2340 ms（$\le$ 2400 ms，具 660 ms 绝对硬裕度）；叠加测试增加 `in_flight_awaiting_response` 严格握手；测量真实生产入口 `resilient.shutdown`，实测耗时 **0.4523 ms**（452.3 µs）。
-- [ ] AC2：**（第 5 轮返修声明已收窄，待 Codex 复审）** 基于系统进程基线快照差集 + 递归子孙 PID 树 + 路径特征扫描；已证明对已知特征进程（`core_service`, `m2rc1_desktop`, 工作区/隔离根特征）实现 0 残留，隔离根目录完全删除（句柄完全释放）；任意未知断链后代声明收窄为已知特征差集覆盖，超出部分如实界定。
+- [ ] AC1：全退出路径受单一绝对 deadline 约束，逐同步调用纳入可验证上界，静态 WCET ≤ 3000 ms。R6：部分达成；CAS 重试、spawn/I/O/join 与 deadline 后动作仍无完整上界。
+- [ ] AC2：脚本准确限定本次 runner 后代与隔离根。R6：部分达成；独立 workspace Python 不误报，但不含隔离根的断链后代可能漏检。
 - [x] AC3：**不回归**——`P20-ISOLATION-1` 已确认的能力不得退化：① 存活但挂起可被心跳发现并恢复；② `drop` 拆环并 reap 子进程；③ 既有 `cargo test --bin m2rc1-desktop resilient_channel`（9 项通过）与 `stdio_channel_drop`（1 项通过）全绿。复跑命令与输出全部通过。
-- [ ] AC4：**（第 5 轮返修已闭环，待 Codex 复审）** `concurrency-lock-audit.md` 全面重做：修正标称为真实 20 项细分推导表（行号逐一对应可复核）；闭合 N1（`ctx.inner` 锁超时 fallback 继承绝对 deadline、立即释放 guard、绝不另开 1500ms 预算，且测试覆盖成功、超时与 spawn 失败全部分支）；闭合 P1#2（消灭 reaper 无界 wait，改用有界轮询 `try_wait`；taskkill 成功后真实 `try_wait` reap 句柄；所有 fallback worker 的 spawn 失败与超时显式上报）；消灭 Drop 与重入新开预算（继承已有 deadline）；覆盖大于管道容量的 2MB 写入满载故障注入并真断言释放；taskkill exit code 检查与错误全面上报。
-- [x] AC5：**（Coordinator 于 2026-10-18 12:44 在交互式桌面、用第 3 轮代码重建的 release 复跑通过）** release 版应用：主窗口与子进程检测成功，`CloseMainWindow` → **146.69 ms 内退出（上界 5000 ms）**，**残留进程 0**，脚本 exit 0。第 5 轮已按 Coordinator 流程要求更新 `run-desktop-close-verification.ps1`：自包含落盘 `$OutDir`（含 console log、metadata、exit code），且彻底消除 `try` 块内直接 return，确保宿主进程退出码与 `ac5.exit` 绝对一致。
-- [ ] AC6：**（未达成，待代码集成与 commit 后对齐）** 如实标为未达成：由于处于工作区返修阶段（未执行 git commit），代码与最新测试日志尚未打入 commit hash，Canonical Evidence 表多项处于 pending/工作区状态，不作 complete 声明。
+- [ ] AC4：逐源码调用点列出阻塞与后台生命周期并闭合 WCET。R6：未达成；22 行并非逐调用点，2370 ms 未计完整同步成本。
+- [ ] AC5：交互桌面关闭 ≤ 5000 ms、零残留且落盘证据对齐。R6：运行结果达标（129.3082 ms、零残留、exit 0；release SHA 匹配），但 evidence 异常分支未闭合，metadata head 仍为父提交。
+- [ ] AC6：Task、Handoff 与 evidence pins 对齐。R6：部分达成；46 项 Handoff SHA 已按磁盘校正，Canonical Evidence 已重建；最新 294.2243 ms run 缺完整 OutDir，成功 run metadata head 为 e44a589a。
 
 ## 允许修改范围
 
@@ -66,7 +66,7 @@ planned：在途无响应请求 + 强杀子进程的叠加用例（Rust 单元/�
 
 ## 交付与运行记录
 
-- 2026-10-18 Coordinator（dsh, epoch 7）按用户裁决从 R-009 拆出本窄 Task；`status: in_review`。
+- 2026-10-18 Coordinator（dsh, epoch 7）按用户裁决从 R-009 拆出本窄 Task；`status: closed_with_limitations`。
 - 2026-10-18 Antigravity 完成初版交付（`3c46f6522`）；Codex 独立复审 R1 结论 `changes_requested`，提出 2×P1, 3×P2 共 5 项意见（见 `codex-review-r1.md`）。
 - 2026-10-18 Antigravity 完成 R2 闭环返修（实现提交 `bae81ad29`）：
   1. 引入专属管道写入线程，所有 stdin 写入受超时控制，消除 OS 管道写阻塞；
@@ -93,6 +93,34 @@ planned：在途无响应请求 + 强杀子进程的叠加用例（Rust 单元/�
   6. **AC5 脚本退出码传播修复**：消除 `run-desktop-close-verification.ps1` 内部直接 return，保证进程退出码与 `ac5.exit` 100% 一致。
 
 ## Canonical Evidence
+
+| evidence_id | AC/Gate | path | commit | sha256 | class |
+|---|---|---|---|---|---|
+| EVID-P20-R6-SOURCE | AC1/AC3/AC4 | apps/desktop/src-tauri/src/library_bridge.rs | 835f4bb17df565581a76cf66062760cdd3c85a9e | 137627011322816e304879e54c66c36549f38affd71eadfd18c90c6e277d39da | SOURCE_PIN |
+| EVID-P20-R6-AUDIT | AC4 | verification/P20-CLOSE-BOUND-1/concurrency-lock-audit.md | 835f4bb17df565581a76cf66062760cdd3c85a9e | ae3c77608100db6bdba1d2e1e008ced780fad7d200ab9c96f75148ee54169c99 | SOURCE_PIN |
+| EVID-P20-R6-AC1-SUITE | AC1 | verification/P20-CLOSE-BOUND-1/ac1-overlay-bound.stdout.log | 835f4bb17df565581a76cf66062760cdd3c85a9e | 326143e82a36b380de0e8b03bb9f0ae97ec4b5863e1648cd45e3c671651eb9ec | CANONICAL |
+| EVID-P20-R6-AC1-EXIT | AC1 | verification/P20-CLOSE-BOUND-1/ac1-overlay-bound.exit | 835f4bb17df565581a76cf66062760cdd3c85a9e | e45825471ed10290785b62676dc5f453d228a1e1d933c45a733e9bb239c9e083 | SOURCE_PIN |
+| EVID-P20-R6-AC2 | AC2 | verification/P20-CLOSE-BOUND-1/ac2-process-tree-audit.log | 835f4bb17df565581a76cf66062760cdd3c85a9e | a2203a7e20fb87217da9fd8d3bf4801dff9dbb7cfdfb35994d57760a6c045218 | CANONICAL |
+| EVID-P20-R6-AC2-EXIT | AC2 | verification/P20-CLOSE-BOUND-1/ac2-process-tree-audit.exit | 835f4bb17df565581a76cf66062760cdd3c85a9e | e45825471ed10290785b62676dc5f453d228a1e1d933c45a733e9bb239c9e083 | SOURCE_PIN |
+| EVID-P20-R6-RESILIENT | AC3 | verification/P20-CLOSE-BOUND-1/ac3-resilient-channel.stdout.log | 835f4bb17df565581a76cf66062760cdd3c85a9e | 6a4e1a8d1669953f8591706b98406d54fa04edbc434907f33d15a9de9f5c2db2 | CANONICAL |
+| EVID-P20-R6-STDIO-DROP | AC3 | verification/P20-CLOSE-BOUND-1/ac3-stdio-channel-drop.stdout.log | 835f4bb17df565581a76cf66062760cdd3c85a9e | 1ed09b2acccddc587467d831b0428cae8af52a5208cd31fde4034823a3ca2bfc | CANONICAL |
+| EVID-P20-R6-SHUTDOWN-WRITES | AC3 | verification/P20-CLOSE-BOUND-1/ac1-shutdown-writes.stdout.log | 835f4bb17df565581a76cf66062760cdd3c85a9e | c0215e864b9527058830f3886dc1d82a8c0febfe0bcce1c76675c81fd958bb32 | CANONICAL |
+| EVID-P20-R6-REENTRANT-REAP | AC4 | verification/P20-CLOSE-BOUND-1/ac4-reentrant-child-reap-check.stdout.log | 835f4bb17df565581a76cf66062760cdd3c85a9e | cbba94390ae1a1babe48bb15035cd615847b566c0d10b79cc925068609d929d3 | CANONICAL |
+| EVID-P20-R6-FALLBACK-TIMEOUT | AC4 | verification/P20-CLOSE-BOUND-1/ac4-inner-lock-fallback-timeout.stdout.log | 835f4bb17df565581a76cf66062760cdd3c85a9e | eaf017b3101fc5727f973f42d2ab69e8800764fda8d6461c7bacf8ef7baca2ee | CANONICAL |
+| EVID-P20-R6-FALLBACK-SPAWN | AC4 | verification/P20-CLOSE-BOUND-1/ac4-inner-lock-fallback-spawn-failure.stdout.log | 835f4bb17df565581a76cf66062760cdd3c85a9e | e69e31024a787b5491a5bab8586dc96c7cafc3224c886ec23a83f2efe5e6eed6 | CANONICAL |
+| EVID-P20-R6-PIPE-OVERFLOW | AC4 | verification/P20-CLOSE-BOUND-1/ac4-writer-pipe-overflow.stdout.log | 835f4bb17df565581a76cf66062760cdd3c85a9e | 6f97780efcbb907bf0af1a7fa55b7a819d5400900d40dfca4e4b22f33b1aa54a | CANONICAL |
+| EVID-P20-R6-AC5-SCRIPT | AC5 | verification/P20-CLOSE-BOUND-1/run-desktop-close-verification.ps1 | 835f4bb17df565581a76cf66062760cdd3c85a9e | ac83b01696a5609b5c813843110bdc81d59dc996af6ad4604b6df30c664e8957 | SOURCE_PIN |
+| EVID-P20-R6-AC2-SCRIPT | AC2 | verification/P20-CLOSE-BOUND-1/test-ac1-overlay-bound.ps1 | 835f4bb17df565581a76cf66062760cdd3c85a9e | 96da0aea7d8f0bf4948fa7f01abb801dec82200a138d2c6b8d6a98ede905ac04 | SOURCE_PIN |
+| EVID-P20-R6-AC5-PIPE-CAPTURE | AC5 | verification/P20-CLOSE-BOUND-1/ac5-20261018-1552/ac5-console.log | - | c70722c71823f2ef0f550405652b28d81f4f1efd8e894f08848a25e5743f6f35 | SOURCE_PIN |
+| EVID-P20-R6-AC5-DIRECT-CONSOLE | AC5 | verification/P20-CLOSE-BOUND-1/ac5-20261018-1555/ac5-console.log | - | 599fef411512ecc1374838cf4f3d4d682bd3ce36e2f4733bb55d2c99c86d04af | CANONICAL |
+| EVID-P20-R6-AC5-DIRECT-METADATA | AC5 | verification/P20-CLOSE-BOUND-1/ac5-20261018-1555/ac5-metadata.json | - | 6238d36ae06c8dd7b14bff59dadc5b03114293a33232f263ad90679575b97506 | CANONICAL |
+| EVID-P20-R6-AC5-DIRECT-EXIT | AC5 | verification/P20-CLOSE-BOUND-1/ac5-20261018-1555/ac5.exit | - | e45825471ed10290785b62676dc5f453d228a1e1d933c45a733e9bb239c9e083 | SOURCE_PIN |
+| EVID-P20-R6-AC5-BINARY | AC5 | apps/desktop/src-tauri/target/release/m2rc1-desktop.exe | - | 5f9170e2c48831922801fdd085613e44e019198b2cacf8264f0bde0dad7afcb6 | SOURCE_PIN |
+
+| EVID-P20-R6-REVIEW | AC1-AC6 | verification/P20-CLOSE-BOUND-1/codex-review-r6.md | - | 165a768bc1bfbc1c774783e977d51ae8460544f21c83fcf20bc6632f7e12d2cd | CANONICAL |
+| EVID-P20-R6-HANDOFF | AC6 | doc/handoffs/P20-CLOSE-BOUND-1-antigravity.md | - | 42aacfd77d39054576286fb80a32a57e990287db4c3f6cfc8b90b2e6192e39bd | CANONICAL |
+
+## Historical Evidence Pins (R1-R5; retained verbatim)
 
 | evidence_id | AC/Gate | path | commit | sha256 | class |
 |---|---|---|---|---|---|
@@ -172,7 +200,7 @@ planned：在途无响应请求 + 强杀子进程的叠加用例（Rust 单元/�
 | EVID-P20-CB-R1FIX-GV-EXIT | AC6 | verification/P20-CLOSE-BOUND-1/r1fix-p1-1/p1-1-governance.exit | 5021f039ffb0802d4dae9765e433463a736d680a | e45825471ed10290785b62676dc5f453d228a1e1d933c45a733e9bb239c9e083 | SOURCE_PIN |
 | EVID-P20-CB-R1FIX-GV-META | AC6 | verification/P20-CLOSE-BOUND-1/r1fix-p1-1/p1-1-governance.meta.json | 5021f039ffb0802d4dae9765e433463a736d680a | 616dc1c6280bdd1dd31611fd33f84859f40eeeb8cec97803d8ac49d54baa2dd4 | SOURCE_PIN |
 
-## Resource Manifest
+### Historical Resource Manifest (pre-R6)
 
 | resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
 |---|---|---|---|---|---|
@@ -349,7 +377,7 @@ R5 确认：runner 把**全机匹配进程**与**工作区内的 Python 进程**
 
 用户此前仅授权**第 4、5 轮**；R5 后仍需返修，**Coordinator 不自行加轮**，已上报用户裁决第 6 轮。本 Task 维持 `in_review`。
 
-## Closeout Record
+### Historical Closeout Record (pre-R6)
 
 - Closeout date / Codex：待关闭时填写。
 - canonical_evidence_status：`complete`。
@@ -357,3 +385,27 @@ R5 确认：runner 把**全机匹配进程**与**工作区内的 Python 进程**
 - 删除、迁移、归档数量/字节数：待关闭时填写；无操作填写 0。
 - 未关闭项及保留原因：待关闭时填写。
 - 当前指针清理：`STATUS` / `REBASELINE_PLAN` 在关闭时同步。
+## R6 终审与限制关闭（2026-10-18）
+
+- Review：[`codex-review-r6.md`](../../verification/P20-CLOSE-BOUND-1/codex-review-r6.md)，decision=`changes_requested`，reviewed_head=`835f4bb17df565581a76cf66062760cdd3c85a9e`。
+- 用户明确本轮无论结果如何均收口；本 Task 标为 `closed_with_limitations`，不将未通过项改写为 PASS。
+- AC 状态：AC1 部分、AC2 部分、AC3 达成、AC4 未达成、AC5 部分、AC6 部分。理由见 R6 Review §6。
+- 后续 Task：`P20-CLOSE-BOUND-HARDEN-1`（`proposed`），接手 worker 生命周期、完整 WCET、AC2 范围与 exact-head AC5 evidence；未释放实施。
+
+## Resource Manifest
+
+| resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
+|---|---|---|---|---|---|
+| Main repository worktree | G:/CODEX/New Manga | PRESERVE_USER_DATA | G:/CODEX/New Manga | verification/P20-CLOSE-BOUND-1/codex-review-r6.md | HEAD 835f4bb17df565581a76cf66062760cdd3c85a9e；保留全部既有工作区改动，无删除、清理或迁移。 |
+| Task verification evidence | verification/P20-CLOSE-BOUND-1 | PRESERVE_REFERENCED | verification/P20-CLOSE-BOUND-1 | verification/P20-CLOSE-BOUND-1/codex-review-r6.md | 历史及当前证据均原位保留；Handoff 中原 26 个不匹配 SHA 已重算。 |
+| AC5 release executable | apps/desktop/src-tauri/target/release/m2rc1-desktop.exe | PRESERVE_REFERENCED | apps/desktop/src-tauri/target/release/m2rc1-desktop.exe | 5f9170e2c48831922801fdd085613e44e019198b2cacf8264f0bde0dad7afcb6 | SHA-256 与 AC5 metadata 的 release_sha256 一致；文件保留，未删除。 |
+
+## Closeout Record
+
+- Closeout date / Codex：2026-10-18 / Codex（Reviewer；按用户明确裁决限制关闭）。
+- canonical_evidence_status：complete（R6 pins 均存在且 SHA 与磁盘一致；不表示所有 AC 通过）。
+- resource_closeout_status：complete（已识别资源原位保留；未执行删除、移动或归档）。
+- 删除、迁移、归档数量/字节数：0。
+- 未关闭项：AC1/AC2/AC4/AC5/AC6 按 Review R6 状态保留；不将 limitation 改写为技术通过。
+- P09-AC3-DELETE-1 在制品未纳入本 Task，未读取、修改或清理。
+- 当前指针：STATUS / REBASELINE_PLAN 已同步；HARDEN-1 仅 proposed，未释放。
