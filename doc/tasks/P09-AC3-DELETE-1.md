@@ -32,88 +32,83 @@ evidence_dir: verification/P09-AC3-DELETE-1
 
 ## Acceptance Criteria
 
-- [x] AC1：**契约先行（阻断性）**——Codex 已裁决必须新增项目级永久删除 IPC command，冻结命令名、入参、返回、错误语义与 ACL 白名单；不复用现有软删除或 Page purge 命令。共享契约见 [M2-C1 §5.11](../contracts/M2-C1_TYPED_IPC_CONTRACT.md#p09-ac3-delete-1-permanent-delete)；冻结事实、数据语义、证据分工与用户待裁决项见 [AC1 冻结记录](../../verification/P09-AC3-DELETE-1/contract-freeze-r1.md)。AC1 完成**不授权实现**；未决产品取舍裁决前不得开始 AC2–AC7 实现。
-- [ ] AC2：**项目级永久删除可用**——提供"永久删除项目"操作：硬删除该项目的 DB 行（book/chapter/page 及其关联），并回收其 **Managed Copy** 与派生资源；软删除（`delete_book`）与 Page 级 purge 的既有语义**不得改变**。
+- [x] AC1：**契约先行（阻断性）**——rev 2.10 保留既有单条删除命令请求形状，并新增独立批量 IPC command，冻结命令、参数、返回、错误、ACL、数据留存及批量原子性。共享契约见 [M2-C1 §5.11](../contracts/M2-C1_TYPED_IPC_CONTRACT.md#p09-ac3-delete-1-permanent-delete)；本轮裁决与相对 r1 的差异见 [AC1 冻结记录 r2](../../verification/P09-AC3-DELETE-1/contract-freeze-r2.md)。AC1 完成**不授权实现**；本 Task 剩余产品裁决完成、实现范围由 Codex明确释放前不得开始 AC2–AC7。
+- [ ] AC2：**项目级永久删除可用**——提供"永久删除项目"操作：删除该项目内容 DB 行（book/chapter/page、区域、Revision、Managed Copy 元数据及其余当前内容关系），回收其 **Managed Copy** 与派生资源；按契约脱离并保留 Pipeline Run/Task 历史，用户导出目录文件与全库历史备份不触碰。软删除（`delete_book`）与 Page 级 purge 的既有语义**不得改变**。
 - [ ] AC3：★ **源文件零改动（P0）**——永久删除项目后，**项目源目录内的源文件 hash 完全不变**（与删除前逐文件比对）；用 P09 同款隔离样本与真实工作流验证，产出可比对报告。
-- [ ] AC4：**无残留**——删除后：DB 无该项目残留行；Managed Storage 与派生/缓存目录**无孤儿文件**（给出清理前后文件数与字节数）；`core` 日志与 GC 路径无错误。
-- [ ] AC5：**误删防护与语义区分**——永久删除与软删除在 UI/契约层语义清晰（永久删除须显式确认、不可从回收站恢复）；不提供隐式触发路径。
+- [ ] AC4：**无项目内容残留**——删除后无 Book/Chapter/Page/区域/Revision 等内容行；Pipeline 历史记录保留且已脱离删除内容与资源 locator；Managed Storage 与派生/缓存目录**无孤儿文件**（给出清理前后文件数与字节数）；用户源文件和用户导出目录文件逐文件未变；`core` 日志与 GC 路径无错误。`export_history` DB 行的处置须待裁决后按冻结口径核查。
+- [ ] AC5：**误删防护与语义区分**——永久删除入口只在回收站提供、书架不暴露；用户勾选目标后必须通过显示精确目标和数量的第二次确认，IPC 目标 ID/数量与确认一致；提示应用回收站不可恢复、用户导出文件保留、旧全库备份可能保留删除前数据；不提供隐式触发路径。
 - [ ] AC6：**回补 P09 AC3**——把该路径证据并入 `verification/P09/evidence/**` 与 `P09.md` 的 Canonical Evidence；把 `P09.md` 的 AC3 从 `BLOCKED` 更新为**实际达成状态**（若仍有未覆盖路径则如实保留局部限制，并说明剩什么）。
 - [ ] AC7：**不回归 P09 已通过项**——导入 / 翻译 / 重修 / 重渲染 / 软删除 / Page 级永久清理的源 hash 零变化结论**不得退化**：复用 P09 的既有验收命令重跑并给出对照。
 
-## AC1 契约冻结（2026-10-18）
+## AC1 契约冻结 rev 2（2026-10-18，第二次冻结）
 
-### 契约裁决
+### 本轮裁决与修订依据
 
-**必须新增 IPC command。** 当前 `library_delete_book_permanently` 不存在；`LibraryService.delete_book`（`src/application/library/service.py:85`）只软删除，`TrashService.purge_batch`（`src/application/maintenance/trash.py:196`）只永久清理 Page 级数据。58 条既有 Tauri command 中没有项目级永久删除操作。把软删除与硬删除塞入同一命令或用 Page purge 序列拼装都会改变现有语义，故不复用。
+r1 冻结的 `PermanentlyDeleteBook` 明确只接收一个 `book_id`。用户确认必须支持批量后，该请求不能悄悄改成数组：这会破坏已冻结 payload，故采用**独立批量命令**，原单条命令和参数保持不变。共享规范为 [M2-C1 §5.11](../contracts/M2-C1_TYPED_IPC_CONTRACT.md#p09-ac3-delete-1-permanent-delete) rev 2.10；逐条前后差异见 [contract-freeze-r2.md](../../verification/P09-AC3-DELETE-1/contract-freeze-r2.md)。
 
-### 冻结命令面
+### 冻结命令与协议
 
 | 项 | 冻结值 |
 |---|---|
-| Tauri command | `library_delete_book_permanently`，production-only |
-| Core command | `PermanentlyDeleteBook`，Core protocol `2.9` |
-| Invoke 参数 | `{payload: {book_id: BookId, confirm_permanent_delete: true}}`；payload closed shape，不接受未知字段、ID 数组或任何路径 |
-| Core 成功结果 | `{book_id: BookId, deleted: true}`；成功只表示数据库和受控文件清理均完成并复核 |
-| Core 版本兼容 | major `2` 不变，minor `2.8→2.9`；只增新 command 与错误 `code` 字面值；旧 command 的 payload/result/error/event 均不变 |
-| 不可逆确认 | 必须提交 `confirm_permanent_delete: true`；缺失、false、null、类型错误或未知字段均在副作用前拒绝。UI 至少须呈现该书目标身份、会删除锁定内容与 current/pinned Revisions、永久不可恢复说明并取得显式确认 |
+| 单条 Tauri/Core | `library_delete_book_permanently` / `PermanentlyDeleteBook`；`{book_id, confirm_permanent_delete: true}` 不变 |
+| 批量 Tauri/Core | `library_delete_books_permanently` / `PermanentlyDeleteBooks`，production-only |
+| 协议 | M2-C1 文档 rev `2.10`；Core major `2` / minor `10`（minor `9→10`） |
+| 批量 payload | `{book_ids: BookId[1..20], confirmed_book_ids: BookId[1..20], confirm_count: integer, confirm_permanent_delete: true}`；closed shape，无路径/未知字段 |
+| 上限/输入 | 1..20 个唯一 ID；超过 20 拒绝；重复 ID 拒绝、不去重；目标集合等于当前全部 Book 行时拒绝 |
+| 成功结果 | `{requested_count, completed_count, items: [{book_id, status: "deleted", error_code: null}]}`，items 保持输入顺序 |
+| 批量错误逐项结构 | `{book_id, status: "not_started" | "cleanup_pending" | "deleted", error_code: string | null}`；错误投影只带安全的阶段、计数、items |
 
-#### 错误语义
+### 批量执行语义与完整拒绝面
 
-| 条件 | 错误 | 行为 |
-|---|---|---|
-| 请求字段无效或确认缺失/无效 | `INVALID_REQUEST` / `validation` / `retryable=false` | DB 与文件零改动 |
-| 活跃或已软删除 Book 行均不存在，且没有待续清理 manifest | `BOOK_NOT_FOUND` / `not_found` / `retryable=false` | 无副作用；软删除 Book 仍可由本显式命令永久删除；若同一 Book 有待清理 manifest，则幂等重试清理 |
-| 该 Book 的后代存在非终态或可恢复的 Run/Task/Export operation | `BOOK_BUSY` / `conflict` / `retryable=false` | 不自动 stop/cancel/abandon；无副作用 |
-| 项目关系图不完整、目标外仍引用其 Revision，或无法安全枚举资源 | `BOOK_DELETE_CONFLICT` / `conflict` / `retryable=false` | 不删除、不改其他项目关系 |
-| 仅存在手动 Lock、current/pinned Revision | 不单独报错 | 它们是确认范围内的项目后代，只在成功的全项目删除事务中一并删除；若关系图不一致或有目标外引用，返回 `BOOK_DELETE_CONFLICT` |
-| 删除 DB 事务失败，或 DB commit 前创建清理清单遇到 OS 权限/写入失败 | `BOOK_DELETE_FAILED` / `internal` / `retryable=unknown` | 单事务回滚；不开始文件清理 |
-| DB 已提交、受控文件清理未完成 | `BOOK_DELETE_CLEANUP_PENDING` / `internal` / `retryable=true` | 保留持久清理清单；不返回成功；相同 Book 请求可重试；错误不得含路径 |
-| 旧 Core 不识别该 command | `UNKNOWN` / `unknown` / `retryable=unknown` | Fail-closed、无副作用；不得回退软删除 |
-| 请求 protocol major 不受支持 | `PROTOCOL_VERSION_UNSUPPORTED` / `validation` / `retryable=false` | dispatch 前拒绝、无副作用 |
-| Tauri ACL 拒绝调用 | Tauri framework rejection（非 Core error） | Handler/Core 不执行、零副作用 |
-| Core channel 不可用 | 既有 host-level `CORE_UNAVAILABLE` | 无副作用，不回退软删除 |
+- 先对**全部**目标预检；缺失、忙碌、关系不完整、目标外引用、资源不安全等任一项失败时，整个批量 DB 操作不开始，返回 `BOOK_DELETE_BATCH_PREFLIGHT_FAILED` 和按输入顺序排列的 `not_started` 逐项结果。
+- 项目内容删除与历史脱离、Lock/Revision 清除、全部清理 manifest 持久化在**单一 DB 事务**：全有/全无。提交前失败用 `BOOK_DELETE_FAILED` 并回滚，不开始删文件。
+- DB 提交后按输入顺序逐本清理，单本失败不回滚其他已完成项，也继续处理其余项目。所有清理完成才返回成功；有 pending 项则返回 `BOOK_DELETE_BATCH_CLEANUP_PENDING`，明确给出 `deleted` 与 `cleanup_pending` 逐项状态。
+- pending 重试必须由用户显式确认，且只提交 pending IDs；清理 manifest 的文件删除幂等。已完成 ID 重放返回 `BOOK_NOT_FOUND` 且无副作用；混入重复 ID 用 `DUPLICATE_BOOK_ID`。
+- 错误码：`INVALID_REQUEST`（shape/确认不匹配/空列表）、`DUPLICATE_BOOK_ID`、`BOOK_DELETE_BATCH_LIMIT_EXCEEDED`、`BOOK_DELETE_BATCH_WHOLE_LIBRARY`、`BOOK_DELETE_BATCH_PREFLIGHT_FAILED`、`BOOK_DELETE_BATCH_CLEANUP_PENDING`、复用 `BOOK_NOT_FOUND` / `BOOK_BUSY` / `BOOK_DELETE_CONFLICT` / `BOOK_DELETE_FAILED`、`PROTOCOL_VERSION_UNSUPPORTED` / `UNKNOWN` / `CORE_UNAVAILABLE`。类别、重试性、逐项 `error_code` 白名单与 Tauri 安全投影详见共享契约 §5.11。
 
-`ErrorEnvelope` 沿用 `code: string` 与既有 `category/retryable` 字段，不新增全局错误枚举。Tauri 为本 command 使用独立安全错误投影，只返回 `code/category/retryable`，不透传 `details`、路径、异常栈或 Core stderr。完整 DTO 与映射见共享契约 §5.11。
+### 二次确认与禁止隐式触发
 
-#### ACL 白名单与 58 条命令的影响
+- 入口只在**回收站**，书架不显示永久删除操作。用户在回收站勾选后，第二步显示精确作品身份与数量、删除范围和不可恢复影响；必须勾选确认后提交。
+- `confirmed_book_ids` 必须与 `book_ids` 同序完全相等，`confirm_count == len(book_ids)` 且 `confirm_permanent_delete == true`。前端在最终确认后从同一冻结的选择快照组装这三项，Core 再校验；确认失败零副作用。
+- 必须提示 App 回收站无法恢复、用户选择目录内导出文件保留、全库历史备份不处理且可能含旧快照。不得由软删除、导入失败、GC、启动/退出、Pipeline 或其他 command 隐式触发；不回退软删除或 Page purge。
 
-- 新权限 identifier：`allow-library-delete-book-permanently`；Tauri 同时生成其默认 deny 项 `deny-library-delete-book-permanently`。`permissions/autogenerated/library_delete_book_permanently.toml` 由 `tauri-build` 根据 `build.rs` app manifest 自动生成，禁止手写生成文件。
-- 实现时只把 allow identifier 加入 `capabilities/m2rc1-commands.json`；并在 `main.rs` production command constant、production `generate_handler!`、`build.rs` app manifest 与相应计数/测试四处同步。probe 与 AC1 handler 不注册此破坏性命令。
-- 既有请求面零改动：51 production + 4 probe + 3 AC1 = 58；新增后为 52 production + 4 probe + 3 AC1 = 59。既有 58 条 command 的请求、返回、错误码、枚举与 ACL 行为不变。共享 Core command catalog 增一行并按 additive command 规则升 minor；不修改既有 DTO 字段、全局错误 envelope 字段或 enum。
-- 本轮只冻结 ACL 条目和生成方式，**不写** `permissions/autogenerated/**`、capability、Rust/React 源码或生成 schema；这些现存 dirty 文件保持原样。
+### 数据、文件及备份裁决后果
 
-#### 不可逆操作与安全边界
+| 对象 | 永久删除结果 |
+|---|---|
+| 项目当前内容 | 删除 `books`、`chapters`、`pages`、`regions`、`region_revisions`、`media_artifacts`、`artifact_revisions`、`reading_progress`、项目 `book_tags` 关联、Lock、current/pinned Revision 与其项目关系；共享 `tags`、全局设置/metadata 保留 |
+| Pipeline 历史 | 保留 `pipeline_runs`、`pipeline_run_targets`、`pipeline_tasks`、`step_runs`、`step_run_input_refs`、`step_run_output_refs`、`step_result_candidates`、`pipeline_stage_states` 的历史记录；脱离被删 Book/Page/Revision/Artifact 外键，移除资源 ID、路径和 locator；保留状态、操作类型、时间、顺序及安全结果/错误摘要。非终态/可恢复操作仍阻断删除 |
+| 用户源目录与文件 | 永不移动、改写或删除；逐文件磁盘 hash 验收 |
+| Managed Copy 与派生/缓存 | 只回收 DB 清单及 resource catalog 可权威归属的目标；校验受控 root 与 reparse point；持久 manifest 支持显式重试 |
+| 用户导出目录文件 | 必须保留；命令不接收/枚举/删除该目录或文件 |
+| `export_history` DB 行 | 尚未裁决是否保留及如何脱离 Book；输出文件保留不受此项影响。裁决前不得释放实现 |
+| 全库历史备份 | 不属于本命令：不创建、扫描、修改或删除；旧备份可能保留删除前快照，不能承诺从中抹除 |
 
-- 一次请求只接受一个 `book_id`，无批量参数；不提供“软删后自动 purge”、退出自动清理、GC 隐式触发或从其他普通命令中转的路径。
-- 硬删除不得复用 `delete_book` 软删除含义，也不得更改 Page `purge_batch` 语义。项目不进入可恢复回收站；成功后不能通过产品 restore 命令复原。
-- Core 自行枚举目标 Book 的关系与受控资源；WebView 不传路径。路径逃逸/reparse point、清单外文件、源目录文件一律拒绝触达。文件清理不得先于 DB 事务提交；跨 DB/文件系统失败必须留下可重试清理清单。
-- 失败时不得自动清除 Lock、解除 pin、改写当前 Revision 或修改其他 Book 的溯源；成功的全项目删除才一并清除这些项目后代。活动/可恢复 Run 一律先阻断。
+若 Pipeline 历史与内容外键不能脱离，整批必须回滚，不得级联删除历史。保留 Pipeline 历史如何显示已删除 Book（是否保留名称快照）仍待用户裁决。
 
-### 数据与资源语义（契约执行提案）
+### ACL 与向后兼容
 
-项目级范围按当前 SQLite 关系图确定，而非 UI 当前页：`books`；该 Book 的 `chapters`、`pages`；页后代 `regions`、`region_revisions`、`media_artifacts`、`artifact_revisions`；页目标相关 `pipeline_run_targets`、`pipeline_tasks`、`step_runs`、`step_run_input_refs`、`step_run_output_refs`、`step_result_candidates`、`pipeline_stage_states`；项目级 `book_tags`、`reading_progress`，以及 `book_id/chapter_id` 指向该项目的 `export_history`。`tags` 是跨书共享实体，仅移除关联；全局 `pipeline_defaults`、`schema_migrations`、`application_metadata` 不属于单项目删除范围。
-
-`pipeline_runs` 含从其 target/task 关系可确认属于该 Book 的运行记录；要做到 AC4“无项目残留行”，当前提案需连同它们删除。历史 Task/Run、ExportHistory 是否应保留成去标识摘要是待用户裁决项，不能由实现方自行决定。`pages.source_hash`、`artifact_revisions.provenance_json` / `source_artifact_revision_id`、`region_revisions` 的来源信息都是项目 DB 记录，随相应项目行删除；P09 的外部源文件 hash 对照、源样本与 verification evidence 留存，不随 Book 删除。若实现检查发现独立 Audit/Provenance 持久记录，先在 Task 中登记并提交用户裁决，不得静默删除或保留。
-
-文件回收目标仅限 DB 清单中该 Book 后代的 `pages.managed_original_ref`、`artifact_revisions.managed_path`，以及能按该 Book/Page/Revision 标识安全归属的派生/缓存资源（例如缩略图、render preview/cache、mask、clean/translated 等）。执行前必须按 managed/derived root 校验全部路径及 reparse point；只删列入清单的文件，不递归清空共享根。失败时保留可重试清单并禁止报告成功。派生资源目录无 Book 外键的条目需通过 resource catalog / ref ownership 定位，不能用路径猜测。
-
-**源文件与项目内部数据严格分离**：导入源位于用户选择的项目源目录；删除命令只携带 opaque `book_id`，不会收取源路径。`source_filename` 是记录字段，`source_hash` 是摘要，二者都不是可删除路径。源文件绝不移动、改写或删除；源目录选择、源 hash 与受控 Managed Copy/派生资源是不同对象。用户源文件不在 managed root 内是结构性安全边界，而非实现约定。
+- 新批量 allow identifier：`allow-library-delete-books-permanently`，自动生成 deny counterpart `deny-library-delete-books-permanently`；只加入 production capability `m2rc1-commands.json`。Tauri 命令清单、production handler、`build.rs` app manifest 和 allowlist 计数同步；由 `tauri-build` 生成 `permissions/autogenerated/library_delete_books_permanently.toml` 与 schema，禁止手写；不进入 probe/AC1 handler。
+- 计数：前序 58 条 + r1 单条 `PermanentlyDeleteBook` = 59 条 + 本轮批量 = 60 条（53 production + 4 probe + 3 AC1）。既有 58 条与 rev 2.9 单条 command 的 payload/result/error/ACL 不变。rev 2.10 只新增命令与错误字符串，major 不变、minor `9→10`；旧 host 不注册批量命令，旧 Core 对未知命令 fail-closed。
+- 当前只冻结契约；不改 runtime、Schema/migration、ACL 生成物、capability、React/Rust 或测试。若实现需迁移以脱离历史，须先更新 Task allowlist 并由 Codex授权。
 
 ### P09 AC3 回补与证据分工
 
-- 回补后在隔离根运行真实 Core assembly 工作流，使用 P09 两个源样本；在永久删除前后对源目录**逐文件**按相对路径记录 size 与磁盘字节 SHA-256，并核对文件集合相同、无缺失/新增/改名，不能只比较 DB `source_hash`。
-- 工作流须包括导入、软删除/Page purge 已通过路径，以及本 Task 的项目级永久删除；第二个样本在项目删除前执行真实 `TRANSLATE_ALL`、`REINPAINT_REGION`、`RERENDER_SINGLE`。最终逐文件 hash 必须与删除前完全一致。
-- `verification/P09/evidence/**` 存 P09 的 Canonical Evidence：汇总矩阵、最终逐文件对照报告与 AC3 结论；更新时保留现有阶段记录，不覆盖源 pin/已有原始日志。
-- `verification/P09-AC3-DELETE-1/**` 存本 Task 的原始、可复核产物：隔离运行脚本、命令/环境/时间戳/退出码、Core 日志、删除前后 DB 行与外键核查、Managed/derived 清理前后文件数/字节数与孤儿扫描、逐文件 hash 原始清单。P09 Canonical Evidence 引用最终汇总，Task Canonical Evidence 指向原始产物。
-- P09 的 AC3 在上述全路径通过后再更新为实测达成；若任何路径未实测，保留 `BLOCKED` 或局部限制，不得先改判定状态。AC7 复用 P09 已通过工作流回归重跑并对照。
+- 回补后在隔离根运行真实 Core assembly 工作流，使用 P09 两个源样本；永久删除前后对源目录**逐文件**按相对路径记录 size 和磁盘字节 SHA-256，并核对文件集合相同、无缺失/新增/改名，不能只比较 DB `source_hash`。
+- 工作流须包括导入、软删除/Page purge 已通过路径，以及本 Task 的单条与批量项目级永久删除；第二个样本在项目删除前执行真实 `TRANSLATE_ALL`、`REINPAINT_REGION`、`RERENDER_SINGLE`。最终逐文件 hash 必须与删除前完全一致。
+- `verification/P09/evidence/**` 存 P09 Canonical Evidence；`verification/P09-AC3-DELETE-1/**` 存本 Task 原始产物：脚本、命令/环境/时间戳/退出码、Core 日志、DB 内容/历史核查、Managed/derived 清理计数与孤儿扫描、源文件逐项 hash。保留既有阶段记录与 source pins，不覆盖原始日志。
+- P09 AC3 仅在实际全路径通过后更新；任何未实测路径保持 `BLOCKED` 或局部限制。AC7 重跑 P09 已通过工作流并对照。
 
-### 待用户裁决（实现前阻断）
+### 已裁决与仍待用户裁决
 
-1. 确认 UI 入口与确认交互：仅在回收站提供，还是也允许从书架直接永久删除；是否需要二次确认或要求输入书名/固定短语。当前 API 固定一个显式确认布尔值，不提供第二阶段 prepare/confirm 命令。
-2. 是否允许批量永久删除。当前冻结 command 每次只接受一个 `book_id`；批量若获准须另行修改契约，不能把数组悄悄加进本请求。
-3. 是否保留历史 Pipeline Run/Task 与 `export_history`，以及是否删除用户指定目录中的已导出文件。当前 AC4 无残留提案要求删除所有可归属于该 Book 的记录；若用户要保留，需决定去标识/脱离 Book 的形式，并复核“无残留”定义。导出文件在用户选择的输出路径且不属于 Managed Copy；当前命令不接收该路径、不删除它们。
-4. 是否需要清理包含该 Book 数据的全库历史备份。当前命令不接受备份路径，也不删除全库备份；旧备份可能保留删除前 DB 快照，需用户确定是否属于本 Task 的“永久删除”。
-**冻结状态**：IPC 命令形状、Core protocol minor、ACL identifier 与现有 58 条命令兼容边界已冻结；数据保留决策中标为待用户裁决的部分不得由 Owner 推定。实现前必须由用户完成上述产品裁决，并由 Codex 将其写入 Task；此处 AC1 完成不表示 AC2–AC7 获准开工。
+已裁决：①入口仅回收站，勾选后第二次确认，书架不暴露；②支持批量；③保留 Pipeline Run/Task 历史、不删除用户导出目录文件；④全库历史备份不纳入永久删除处理。
+
+仍待用户裁决（实现前阻断）：
+
+1. `export_history` 数据库记录是否保留；如保留，历史记录如何与已删 Book 脱离，以及 UI 如何呈现。
+2. 保留的 Pipeline Run/Task 历史是否保留已删除 Book 的名称快照，或仅以“已删除作品”展示。
+
+本轮没有实现代码、运行产品测试或修改 ACL/Schema。AC1 契约冻结完成；以上两项解决且 Codex更新实施授权范围前，Owner 不得开始 AC2–AC7。
 
 ## 允许修改范围
 
@@ -137,21 +132,21 @@ planned：永久删除的真实工作流验收（隔离源样本 + 真实 Core a
 ## 依赖、风险与阻塞
 
 - 依赖：`P09`（提供 AC3 事实、隔离样本与验收脚本）。
-- 风险一：**契约变更**是本 Task 最大风险 —— 必须先冻结，否则会污染 58 条命令的请求面与 ACL 白名单。
+- 风险一：**契约变更**是本 Task 最大风险 —— AC1 rev 2.10 已冻结；批量以独立命令增加到 60 条，不破坏前序 58 条或既有单条请求。`export_history` 行处置与历史标题快照仍阻断实现。
 - 风险二：永久删除属**不可逆破坏性操作**，验证必须全程在隔离根内，且不得对用户真实数据执行。
-- 已知阻塞：无（本 Task 即为解除 P09 的 BLOCKED）。
+- 已知阻塞：AC1 rev 2.10 已冻结；`export_history` 行处置与 Pipeline 历史标题快照待用户裁决，在此之前 AC2–AC7 不得释放实现。
 
 ## 交付与运行记录
 
 - 2026-10-18 Coordinator（dsh, epoch 7）按用户裁决创建本 Task；`status: ready`。
-- 第一步建议：由 Codex 先做**契约冻结裁决**（AC1），再释放 owner 实现。
+- 运行记录：Codex 已于 2026-10-18 完成 AC1 第二次冻结；待两项产品裁决补入 Task 后，由 Codex更新实施 allowlist 并释放 Owner。
 
 ## Canonical Evidence
 
 | evidence_id | AC/Gate | path | commit | sha256 | class |
 |---|---|---|---|---|---|
-| P09-AC3-DELETE-AC1 | AC1 | `verification/P09-AC3-DELETE-1/contract-freeze-r1.md` | `UNCOMMITTED` (workspace baseline `2c3f3844a`) | `b0f4851d288208058d97b27f53625588fab33f2246d8fe3227510d4f4611e321` | CANONICAL |
-| P09-AC3-DELETE-M2-C1-2.9 | AC1 | `doc/contracts/M2-C1_TYPED_IPC_CONTRACT.md` | `UNCOMMITTED` (workspace baseline `2c3f3844a`) | `24200709c3633fff5f39c4cbc29db5c6fd34caa9cb241fa3a222075fef7327fb` | CANONICAL |
+| P09-AC3-DELETE-AC1-R2 | AC1 | `verification/P09-AC3-DELETE-1/contract-freeze-r2.md` | `UNCOMMITTED` (workspace baseline `6cba806e5`) | `0ddca1f561bdd3992c34b6795ac2ae1272bf7679cabb437156b707e653bfbbda` | CANONICAL |
+| P09-AC3-DELETE-M2-C1-2.10 | AC1 | `doc/contracts/M2-C1_TYPED_IPC_CONTRACT.md` | `UNCOMMITTED` (workspace baseline `6cba806e5`) | `f954c2fda2fb213120cae33f859928c97c35a6aa73fbea980098af8b0bc01c08` | CANONICAL |
 
 ## Resource Manifest
 

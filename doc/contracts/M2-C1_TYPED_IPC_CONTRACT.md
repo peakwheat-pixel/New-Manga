@@ -1,6 +1,6 @@
 > **内部生命周期窄注记（2026-10-07，M2-DERIVED-GC-2 实现；零 wire 修订，协议 major/minor 不变）**：M2-DERIVED-GC-2 在专用 resource catalog 内引入 `preview_lifecycle` 来源行与 `preview_namespace` 绑定行，并给宿主→channel 的**内部** `revoke_resource` 控制请求加了受信 `retire_preview` 布尔位（CoreChannel 轮换专用方法；channel 仅在其自身 revoke 成功后据此把已登记自有 preview 行的 `retired` 置 1）。这些都是 host↔sidecar 控制面/SQLite 元数据内部实现：**不新增任何 Tauri IPC 命令、不改 WebView payload/ACL/十五条生产命令表、不发 `source_artifact_revision_id`/`producer_root` 等来源字段到 WebView、不改 issue/resolve/touch/revoke/TTL 的既有语义**（失败撤销新 key 与 WebView `revoke_resource_refs` 均不携带该位）。preview 回收（retired 副本删除）只发生在受 namespace 租约保护的独占启动窗口，见 [M2_DERIVED_PREVIEW_GC_DESIGN.md](M2_DERIVED_PREVIEW_GC_DESIGN.md)。
 >
-> **rev 2.9（2026-10-18，P09-AC3-DELETE-1 AC1）**：冻结 `PermanentlyDeleteBook` Core command 与 production-only Tauri command `library_delete_book_permanently`。该命令具有显式确认参数，与软删除 `delete_book` 语义分离；协议 major 保持 2，minor `8→9`，只新增命令与错误码，不改变已有命令请求、返回、错误或事件。仅冻结契约，不授权 runtime、Schema/migration、ACL 生成文件或 UI 实现；数据保留产品取舍见 [P09-AC3-DELETE-1](../tasks/P09-AC3-DELETE-1.md) §AC1。详见 §3.2、§5.11、§11、§12。
+> **rev 2.10（2026-10-18，P09-AC3-DELETE-1 AC1 第二次冻结）**：保留 rev 2.9 的 `PermanentlyDeleteBook` / `library_delete_book_permanently` 单条请求形状，新增独立批量 Core command `PermanentlyDeleteBooks` 与 production-only Tauri command `library_delete_books_permanently`。批量采用完整预检、DB 全有/全无事务、提交后逐本文件清理；最多 20 本，显式绑定二次确认的目标 ID 和数量。按用户裁决，仅在回收站提供 UI 入口并保留 Pipeline Run/Task 历史；不删除用户导出目录文件，不改写或清理全库历史备份。协议 major 保持 2，minor `9→10`；既有命令及单条删除的参数、结果和行为不变。仅冻结契约，不授权本轮实现。详见 §3.2、§5.11、§11、§12。
 >
 > **rev 2.8（2026-10-17，FEAT-CREATE-1）**：冻结 `CreateBook` / `CreateChapter` Core commands 与 production-only Tauri commands `library_create_book` / `create_chapter`。作品归属当前活动的单一书架/Library DB；章节只创建元数据，页面来源继续走既有 `ImportPages` / `ImportSourceRef`。协议 major 保持 2，minor 从 P15 当前目标 7 增至 8；命令为 additive，既有查询、投影、错误与资源阈值不变。本修订仅冻结契约，不授权 runtime、Schema/migration 或 UI 实现。详见 §3.2、§5、§11、§12。
 >
@@ -13,13 +13,14 @@
 
 # M2-C1 — Typed IPC Contract
 
-**当前修订范围：P09-AC3-DELETE-1 AC1 rev 2.9**（§3.2 版本与兼容、§5.11 永久删除命令与安全投影、§11 状态表、§12 release boundary）。在 FEAT-CREATE-1 rev 2.8 基础上，将 Core protocol minor `8→9`，只新增永久删除命令及其错误码；所有既有命令 wire 与语义零变化。既有 P13 Run、P16 Reader/Export、P12 `ImportPages`、HOST-ISSUER-1-C1 `HostControl`、P15 Settings、FEAT-CREATE-1 与读取 wire 均不变。
+**当前修订范围：P09-AC3-DELETE-1 AC1 第二次冻结 rev 2.10**（§3.2 版本与兼容、§3 command catalog、§5.11 永久删除命令与安全投影、§11 状态表、§12 release boundary）。在 rev 2.9 单条删除契约上保留既有请求形状并新增独立批量删除 command；Core protocol minor `9→10`。既有命令 wire 与语义零变化。rev 2.9 的单条命令仍为单个 `book_id`，不改为数组；批量另用 `PermanentlyDeleteBooks`。本修订只冻结契约，不授权 runtime、Schema/migration、ACL 生成文件或 UI 实现。
 
-状态：文档 rev `2.9`；Core protocol 为 major `2` / minor `9`。rev 2.9 只新增项目级永久删除 command；原 rev 2.8 创建 commands、rev 2.5 导出投影、rev 2.4 事件/Reveal、P15 2.7 Settings 以及更早冻结语义均不变。
+状态：文档 rev `2.10`；Core protocol 为 major `2` / minor `10`。rev 2.10 只增加一个独立批量永久删除 command 与其封闭错误投影，并冻结本 Task 的数据保留后果；单条 `PermanentlyDeleteBook` 参数、结果与既有命令语义不变。
 
 ## Revision history
 
-- `2.9`（P09-AC3-DELETE-1 AC1，2026-10-18）：冻结 `PermanentlyDeleteBook` / `library_delete_book_permanently` 的请求、返回、错误码与 production-only ACL 名称；major 保持 2，minor `8→9`。请求需要 `confirm_permanent_delete: true`；不复用软删除命令，不接受批量目标或路径。只新增 command/error values，既有命令与 envelope 字段不变；本修订仅冻结契约，不授权 runtime、Schema/migration、ACL 生成文件或 UI 实现。
+- `2.10`（P09-AC3-DELETE-1 AC1 第二次冻结，2026-10-18）：在保留 rev 2.9 单条命令 wire 原样的前提下，新增独立批量命令 `PermanentlyDeleteBooks` / `library_delete_books_permanently`。请求必须给出 1..20 个唯一 `book_ids`、顺序相同的 `confirmed_book_ids`、与数组长度相同的 `confirm_count` 和 `confirm_permanent_delete: true`；完整预检后 DB 删除全有/全无，提交后文件清理逐本处理并返回安全逐项状态。新增批量错误字面值，不改全局 `ErrorEnvelope` 字段/enum；major 保持 2，minor `9→10`。同时冻结 Pipeline Run/Task 历史保留并脱离已删除项目、用户导出文件不删除、全库历史备份不纳入删除操作。仅契约冻结，不授权 runtime、Schema/migration、ACL 生成文件或 UI 实现。
+- `2.9`（P09-AC3-DELETE-1 AC1，2026-10-18）：冻结 `PermanentlyDeleteBook` / `library_delete_book_permanently` 单条请求、返回、错误码与 production-only ACL 名称；major 保持 2，minor `8→9`。请求需要 `confirm_permanent_delete: true`；不复用软删除命令、不接受批量目标或路径。只新增 command/error values，既有命令与 envelope 字段不变；本修订仅冻结契约，不授权 runtime、Schema/migration、ACL 生成文件或 UI 实现。
 - `2.8`（FEAT-CREATE-1，2026-10-17）：冻结 `CreateBook` / `CreateChapter`、Tauri `library_create_book` / `create_chapter`、字段校验、错误投影、书架归属与 `ImportPages` 页面来源边界；major 保持 2，minor 按 P15 当前共享协议目标 `7→8`。只新增命令；`library_list_books`、`list_chapters`、P15 2.7 Settings 与其余既有 wire 不变。仅契约冻结，不授权 runtime 或 Schema/migration。
 - `2.5`（EXPORT-IPC-1，2026-10-16）：**授权契约修订（host→WebView 导出控制与查询安全投影）**——在不改动 Core stdio 导出 wire 的前提下，冻结 Tauri host 到 WebView 的三条 production-only 导出控制与查询命令及去除路径的安全投影：`library_cancel_export`、`library_get_export_snapshot`、`library_get_export_history`。WebView 返回结构由白名单显式重建：`ExportProgressSnapshotView`（`export_id`、`status`、`completed_pages`、`total_pages`、`current_page_id`、`accepted_at`、`completed_at`、`output: {format, sha256}`、`lineage`、`error_code`）与 `ExportHistoryEntryView`（`export_id`、`book_id`、`chapter_ids`、`ordered_page_ids`、`format`、`format_options`、`created_at`、`completed_at`、`status`、`sha256`、`lineage`）。`output_path`（任何绝对/相对/UNC 路径）、`ExportTargetRef`、grant/session 凭据与文件字节严禁下发到 WebView（对齐 §5 行 164 与 §10.3 L853）。空历史返回空列表 `{"exports": []}` 而非错误；未知/外来 `export_id` 返回 typed 错误 `EXPORT_NOT_FOUND`；typed 拒绝与错误信息绝不暴露宿主路径。命令仅在生产面存在，probe/AC1 面保持冻结形状不变。协议 minor 从 4 增至 5，major 保持 2；向后兼容。
 - `2.4`（EVENTS-FWD-1 + EXPORT-REVEAL-1，2026-10-16）：冻结六类 host→WebView 事件安全投影，并新增 production-only Tauri host command `library_reveal_export_folder`（请求 `{exportId: OpaqueId}`、成功返回 `null`）。协议 minor 从 3 增至 4 由事件转发变更引入；reveal 不新增 Core wire，拒绝面、当前 Core session 绑定、路径保密及 `ExportTargetRef` 单次消费语义见 §5.8。probe / AC1 命令面仍保持既有形状；兼容 widening，既有 Core 命令与导出 DTO 语义不变。
@@ -126,7 +127,7 @@ Event<T> = {
 - EVENTS-FWD-1 在 major 2 / minor 4 冻结 host→WebView 的事件名与安全 payload 投影；minor 从 3 增至 4。Core stdio wire 的既有 Request/Response/Event 及其 command/event payload 均不修改字段或语义；旧客户端若不监听该事件通道，仍可正常以轮询方式（如 `GetRunSnapshot` / `GetTaskProjection`）工作，P14 轮询降级路径不被阻断。事件通道仅为失效提示，消费方收到后须重查快照；payload 严禁暴露路径或引用。同 major 下向后兼容。
 - EXPORT-IPC-1 在 major 2 / minor 5 冻结 host→WebView 的导出控制与查询命令及安全投影；minor 从 4 增至 5。Core stdio wire 既有的 `CancelExport`、`GetExportSnapshot`、`GetExportHistory` 命令 wire、请求 payload、响应结果与错误码均零变化。WebView 面三条命令（`library_cancel_export`、`library_get_export_snapshot`、`library_get_export_history`）经白名单重建去除所有 `output_path` 与宿主私有凭据，严格遵守 §5 行 164 与 §10.3 L853。同 major 下向后兼容。
 - FEAT-CREATE-1 在 major 2 / minor 8 冻结两个 additive Core commands；共享前序目标为 P15 §2 的 major 2 / minor 7，故此修订为 `7→8`。新命令只在同一 Core major 支持且 paired host/Core 已包含本命令时可调用；旧 host 没有新 Tauri commands，旧 Core 对未知命令按既有 fail-closed 规则拒绝。既有 `library_list_books`、`list_chapters` 形状和 `BookSummary.page_count: null` 语义不变；成功创建后，两读取命令分别可见新作品/章节。无版本协商或自动迁移。
-- P09-AC3-DELETE-1 在 major 2 / minor 9 新增 `PermanentlyDeleteBook`；共享前序目标为 rev 2.8。新命令仅在 host/Core 均支持 2.9 时可调用；rev 2.8 host 不注册 Tauri command，rev 2.8 Core 对未知命令 fail-closed。既有 58 条 Tauri command 的请求/响应/错误语义不变；新 Core error `code` 值为 additive string values，不改变 §8 envelope 字段或全局枚举。无版本协商或自动迁移。
+- P09-AC3-DELETE-1 rev 2.9 在 major 2 / minor 9 新增 `PermanentlyDeleteBook`；rev 2.10 保留其单条请求并新增 `PermanentlyDeleteBooks`。rev 2.10 host 与 Core 必须配对支持批量 command；旧 host 不注册批量 Tauri command，旧 Core 对未知批量 command fail-closed。命令计数为：前序冻结面 58，rev 2.9 单条 command 后 59，rev 2.10 批量 command 后 60（53 production + 4 probe + 3 AC1）。既有前 58 条及 rev 2.9 单条命令的参数、结果、错误与 ACL 均不变；新增 error `code` 是 additive string values，不改变 §8 envelope 字段或全局枚举。无版本协商或自动迁移。
 - 版本握手/协商与自动迁移仍 `NOT_IMPLEMENTED`；客户端须以已知配置发送版本。`PROTOCOL_VERSION_UNSUPPORTED` 是稳定错误码。
 
 ## 4. Request/response 语义
@@ -146,7 +147,8 @@ Event<T> = {
 | `ListBooks` | `{}` → `BookSummary[]` | ViewModel 调 Library service 取书目；当前搜索、归档/收藏过滤、排序由 ViewModel 本地完成。AS-IS service call，IPC 未实现。**`1.2` 修订（M2-FIX-LISTBOOKS-PAGECOUNT-UNKNOWN）**：`BookSummary.page_count: int \| null`——COUNT 谓词无行的书 → `null`（unknown），有合格页的书 → 真实计数；known `0` 与 `null` 可区分（详见 Revision history `1.2`）。 |
 | `CreateBook` | `{title: string}` → `BookSummary` | **2.8 FROZEN**：Core wire、校验、错误、当前书架归属与安全投影见 §5.10；Tauri `library_create_book` production-only。原 proposal 的 `original_title?` 不属于冻结请求。 |
 | `DeleteBook` | `{book_id}` → `Unit` | 仍为 PROPOSAL；删除需 Core 检查关联和保留规则。 |
-| `PermanentlyDeleteBook` | `{book_id: BookId, confirm_permanent_delete: true}` → `{book_id: BookId, deleted: true}` | **2.9 FROZEN**：项目级不可逆删除；请求、活动任务冲突、源文件隔离、managed cleanup 与安全错误投影见 §5.11。不得解释为 `DeleteBook` / `delete_book` 的软删除，也不得通过既有命令模拟。 |
+| `PermanentlyDeleteBook` | `{book_id: BookId, confirm_permanent_delete: true}` → `{book_id: BookId, deleted: true}` | **2.10 FROZEN（rev 2.9 单条请求原样保留）**：项目级不可逆删除；请求、活动任务冲突、源文件隔离、managed cleanup 与安全错误投影见 §5.11。不得解释为 `DeleteBook` / `delete_book` 的软删除，也不得通过既有命令模拟。 |
+| `PermanentlyDeleteBooks` | `{book_ids: BookId[1..20], confirmed_book_ids: BookId[1..20], confirm_count: integer, confirm_permanent_delete: true}` → `{requested_count, completed_count, items[]}` | **2.10 FROZEN**：独立批量永久删除命令；二次确认绑定、全量预检、DB 原子边界、逐本清理及错误投影见 §5.11。不得扩展或替代单条 `PermanentlyDeleteBook`。 |
 | `SetBookFavorite` / `SetBookArchived` | `{book_id, value: boolean}` → `BookSummary` | 对应 Library service 调用。 |
 | `CreateChapter` | `{book_id: BookId, title: string, chapter_number?: string}` → `ChapterNavSummary` | **2.8 FROZEN**：Core wire、校验、错误、父作品归属及页面来源限制见 §5.10；Tauri `create_chapter` production-only。 |
 | `DeleteChapter` | `{chapter_id}` → `Unit` | 仍为 PROPOSAL；不由本修订冻结。 |
@@ -668,9 +670,9 @@ These commands are production-only. Phase 3 must add the new commands to the pro
 - New Core commands require the paired major 2 / minor 8 endpoint. The 2.8 Core must retain the existing minor 7 P15 command behavior; only these create commands require 2.8. Existing readers continue using the same projections; old hosts cannot invoke the new commands, and older Core rejects an unknown create command fail-closed. There is no version negotiation or automatic migration.
 
 <a id="p09-ac3-delete-1-permanent-delete"></a>
-### 5.11 Project-level permanent book deletion (P09-AC3-DELETE-1 AC1，冻结；Core protocol 2.9)
+### 5.11 项目级作品永久删除（P09-AC3-DELETE-1 AC1，冻结；Core protocol 2.10）
 
-本节冻结项目级永久删除的 IPC 契约，不表示 Core、Tauri host 或 React runtime 已实现。唯一业务和持久化权威仍是 Python Core。此命令与 §5 的 proposal `DeleteBook` 及既有 `LibraryService.delete_book`（软删除）严格区分。Core 请求/响应使用 §3 的 JSONL `Request<T>` / `Response<T>`，版本 `{major: 2, minor: 9}`；请求对象为 closed shape，未知字段 fail-closed；不发事件。
+本节冻结单条和批量项目级永久删除 IPC，不表示 Core、Tauri host 或 React runtime 已实现。唯一业务和持久化权威仍是 Python Core。两条命令均与 §5 proposal `DeleteBook` 及既有 `LibraryService.delete_book`（软删除）严格区分。Core 请求/响应使用 §3 的 JSONL `Request<T>` / `Response<T>`，版本 `{major: 2, minor: 10}`；请求对象为 closed shape，未知字段 fail-closed；不发事件。
 
 #### 5.11.1 DTO 与命令映射
 
@@ -680,48 +682,93 @@ PermanentlyDeleteBookPayload = {
   confirm_permanent_delete: true
 }
 
-PermanentlyDeleteBook Request = {
-  protocol: "new-manga.core", version: {major: 2, minor: 9},
-  request_id: OpaqueId, command: "PermanentlyDeleteBook",
-  payload: PermanentlyDeleteBookPayload
+PermanentlyDeleteBooksPayload = {
+  book_ids: BookId[1..20],
+  confirmed_book_ids: BookId[1..20],
+  confirm_count: integer,
+  confirm_permanent_delete: true
 }
 
 PermanentlyDeleteBookResult = {book_id: BookId, deleted: true}
 
-PermanentlyDeleteBook Response = {
-  protocol: "new-manga.core", version: {major: 2, minor: 9},
-  request_id: OpaqueId, result: PermanentlyDeleteBookResult, error: null
+BookDeleteBatchItem = {
+  book_id: BookId,
+  status: deleted | cleanup_pending | not_started,
+  error_code: string | null
+}
+
+PermanentlyDeleteBooksResult = {
+  requested_count: integer,
+  completed_count: integer,
+  items: BookDeleteBatchItem[]
+}
+
+PermanentlyDeleteBooks Request = {
+  protocol: "new-manga.core", version: {major: 2, minor: 10},
+  request_id: OpaqueId, command: "PermanentlyDeleteBooks",
+  payload: PermanentlyDeleteBooksPayload
 }
 ```
 
 | Tauri command | Invoke 参数 | 成功返回 | Core 操作 |
 |---|---|---|---|
 | `library_delete_book_permanently` | `{payload: {book_id, confirm_permanent_delete: true}}` | `{book_id, deleted: true}` | `PermanentlyDeleteBook` |
+| `library_delete_books_permanently` | `{payload: {book_ids, confirmed_book_ids, confirm_count, confirm_permanent_delete: true}}` | `{requested_count, completed_count, items}` | `PermanentlyDeleteBooks` |
 
-`book_id` 是唯一目标；本 command 不收 `book_ids` 数组，不接受源路径、Managed Copy 路径、任意文件路径、目标表名或删除策略。请求可指向活跃或已软删除但 DB 行仍存在的 Book；软删除状态不代替永久删除确认，也不自动触发此命令。结果不返回路径、磁盘位置或 Core 领域对象。`confirm_permanent_delete` 必填且必须为布尔值 `true`；缺失、`false`、`null`、其他类型及未知字段均在副作用前拒绝。UI 必须先呈现清晰的不可恢复语义并取得用户显式确认；本字段是 Core 侧硬门，不由按钮 disable 替代。二次确认 UI、确认文案和入口位置仍按 Task 的待用户裁决处理。
+单条命令维持 rev 2.9 冻结的单个 `book_id` 请求形状，绝不接受数组；本轮批量能力只通过独立 `PermanentlyDeleteBooks` command 提供。批量 `book_ids` 必须有 1..20 项、ID 唯一并保持调用方顺序；`confirmed_book_ids` 必须与 `book_ids` 逐项、同序相等，`confirm_count` 必须等于其长度，且 `confirm_permanent_delete` 必须为布尔值 `true`。不去重、不重排；重复 ID 是请求错误。Core 在目标预检所在事务中拒绝一次覆盖全部现存 Book 行的批量请求，防止单次批量清空书架。单条命令按其既有明确确认语义不变。
 
-#### 5.11.2 错误、原子性与恢复
+UI 入口只在回收站提供，书架不显示该操作。用户先勾选目标，再查看包含作品身份、数量、删除范围、导出文件保留以及“不会清理全库历史备份（旧备份可能保留删除前数据）”的第二次确认；必须勾选明确的不可逆确认后才能提交。host 将勾选后的同一有序 ID 列表同时写入 `book_ids` 与 `confirmed_book_ids`，并填写相同数量，防止确认后目标集合或数量被替换。确认字段是 Core 硬门，按钮状态不能替代。协议不接收路径、表名、删除策略或用户输入文件名；结果不返回路径、磁盘位置或 Core 领域对象。
 
-`ErrorEnvelope` 仍遵循 §8 的字段结构；本命令新增的 `code` 是 string 字面值，不建立新的全局 enum。失败时 `result=null`，错误不得含本地路径、输入值、源文件名、Secret、异常栈或任意 SQLite 详情。
+#### 5.11.2 校验、预检、原子性与重试
 
-| 条件 | Core ErrorEnvelope | 副作用与语义 |
+`ErrorEnvelope` 继续使用 §8 的字段结构；新增 `code` 均是 string 字面值，不建立全局 enum。失败时 `result=null`。所有错误不得含本地路径、源文件名、Secret、异常栈、任意 SQLite 详情或原始 Core stderr。
+
+批量请求按下列阶段执行，且输入与输出次序一致：
+
+1. **无副作用校验**：校验 closed shape、1..20 上限、所有 ID 格式、唯一性、确认列表和确认数。重复 ID 不静默折叠。超过上限立即拒绝。
+2. **全量预检**：在同一一致性边界中逐项确认所有 Book/待清理 manifest、非终态操作、关系图、目标外引用、全部 Managed/derived 路径归属与 reparse-point 安全。若任一项不可删，批量 DB 操作整体不开始；返回每个 ID 的 `not_started` 状态及失败项的安全 `error_code`。
+3. **DB 全有/全无**：在单一 SQLite 事务中删除本节规定的项目内容行、脱离并保留 Pipeline 历史、移除项目 Lock/current/pinned Revision，并持久化每本的清理清单。事务任一环节失败则整个 DB 事务回滚，不删任何文件。
+4. **提交后逐本清理**：DB 提交后，按 `book_ids` 顺序逐本执行 Managed/derived 清理。一个 Book 清理失败不撤销已提交 DB 事务，也不阻止其余 Book 清理；失败项保留持久 manifest，结果用 `cleanup_pending` 标记。只有每项清单完成且复核通过时该项标记 `deleted`。
+
+因此批量的**DB 删除原子性为全有/全无**；跨 DB 与文件系统的清理阶段允许逐本部分完成，且不可回滚已成功删除的文件。`PermanentlyDeleteBooksResult` 仅用于全部项目清理完成；若有清理失败，返回 `BOOK_DELETE_BATCH_CLEANUP_PENDING`，安全错误视图包含每本 `deleted` / `cleanup_pending` 状态及计数，不伪报整体完成。预检失败时返回 `BOOK_DELETE_BATCH_PREFLIGHT_FAILED`，DB 与文件零改动，错误视图按原顺序包含全部 `not_started` 条目及失败项的逐项错误码。
+
+清理失败后调用方只可在用户显式确认后重试 `cleanup_pending` IDs；Core 对持久 manifest 的文件删除是幂等的。已完成的 Book 不得再混入重试列表（其 DB 行和 manifest 均不存在，重放返回 `BOOK_NOT_FOUND`，无副作用）。同一请求的重复 ID 永远拒绝。清理按请求顺序进行；结果不排序。不得后台自动重试或把重试隐藏在其他 command、退出/启动、GC、软删除、导入失败或 Pipeline 流程中。
+
+#### 5.11.3 单条与批量错误语义
+
+| 条件 | ErrorEnvelope | 副作用与结果 |
 |---|---|---|
-| 请求缺字段、未知字段、ID 格式不合法或确认值不为 `true` | `INVALID_REQUEST` / `validation` / `retryable=false` | 先校验；数据库与文件零改动。 |
-| 不存在该 `book_id` 的活跃或软删除行，且没有该项目的待完成 managed-cleanup manifest | `BOOK_NOT_FOUND` / `not_found` / `retryable=false` | 无副作用。若此前数据库删除已提交且清理 manifest 仍待完成，同一 `book_id` 的再次确认调用先幂等重试清理，不误报为已完全完成。 |
-| 项目后代存在非终态或可恢复的 Pipeline Run/Task/Export operation | `BOOK_BUSY` / `conflict` / `retryable=false` | 不隐式 stop、cancel、abandon 或删除 operation；整个操作零副作用。 |
-| 发现目标外的外键/溯源依赖，或无法一致枚举项目后代 | `BOOK_DELETE_CONFLICT` / `conflict` / `retryable=false` | 不清锁、不解除 pin、不改其他项目关系；整个操作零副作用，交由诊断处理。 |
-| SQLite 删除事务失败，或在 DB commit 前创建清单时发生 OS 权限/写入错误 | `BOOK_DELETE_FAILED` / `internal` / `retryable=unknown` | 所有 DB 行须在同一事务中删除；事务回滚则不清理任何文件。不得先删除文件再提交 DB。 |
-| DB 事务已提交，但 Managed Copy/派生文件回收未全部完成 | `BOOK_DELETE_CLEANUP_PENDING` / `internal` / `retryable=true` | 已删除 DB 行；必须保留可重试的持久 cleanup manifest，错误不含路径。相同请求可重试，成功响应只在清单完成且复核无目标残留后发出。 |
-| Core 不支持请求的 protocol major | `PROTOCOL_VERSION_UNSUPPORTED` / `validation` / `retryable=false` | dispatch 前拒绝，无副作用；不得回退到软删除。 |
-| 旧 Core 收到未识别的 `PermanentlyDeleteBook` command | `UNKNOWN` / `unknown` / `retryable=unknown` | Fail-closed，无副作用；不得回退到软删除。 |
+| 任一请求字段缺失/多余、ID 格式错误、确认值无效；批量为空或确认 ID/数量不匹配 | `INVALID_REQUEST` / `validation` / `retryable=false` | dispatch/预检前拒绝；无 DB/文件改动。 |
+| 批量任一目标 ID 重复 | `DUPLICATE_BOOK_ID` / `validation` / `retryable=false` | 不去重；无副作用。 |
+| 批量目标数大于 20 | `BOOK_DELETE_BATCH_LIMIT_EXCEEDED` / `validation` / `retryable=false` | 无副作用。 |
+| 批量目标集合等于同一快照中的全部现存 Book 行 | `BOOK_DELETE_BATCH_WHOLE_LIBRARY` / `conflict` / `retryable=false` | 防止单次批量清空书架；无副作用。 |
+| 任一 ID 无 Book 行且无该 ID 的 pending manifest | 批量 `BOOK_DELETE_BATCH_PREFLIGHT_FAILED`，该 item code 为 `BOOK_NOT_FOUND`；单条 `BOOK_NOT_FOUND` / `not_found` / `retryable=false` | 全量预检失败；其他有效目标也为 `not_started`。 |
+| 任一 Book 有非终态或可恢复 Pipeline Run/Task/Export operation | 批量 `BOOK_DELETE_BATCH_PREFLIGHT_FAILED`，该 item code 为 `BOOK_BUSY`；单条 `BOOK_BUSY` / `conflict` / `retryable=false` | 不隐式 stop/cancel/abandon；整个批次 DB/文件零改动。Pipeline 历史保留不豁免活动操作阻断。 |
+| 项目关系图、目标外引用、Managed/derived 归属或安全枚举不一致 | 批量 `BOOK_DELETE_BATCH_PREFLIGHT_FAILED`，该 item code 为 `BOOK_DELETE_CONFLICT`；单条 `BOOK_DELETE_CONFLICT` / `conflict` / `retryable=false` | 整个批次无副作用；不清锁、不改其他 Book 关系。 |
+| 批量 DB 事务失败或持久清理清单不能在提交前写入 | `BOOK_DELETE_FAILED` / `internal` / `retryable=unknown` | 事务整体回滚；不开始任何文件清理。 |
+| 单条 DB 事务失败或其清单不能在提交前写入 | `BOOK_DELETE_FAILED` / `internal` / `retryable=unknown` | 单项目事务回滚；不开始文件清理。 |
+| 单条 DB 已提交但文件仍待清理 | `BOOK_DELETE_CLEANUP_PENDING` / `internal` / `retryable=true` | 持久 manifest 保留；相同 `book_id` 的显式确认请求可重试；不返回成功。 |
+| 批量 DB 已提交但一个或多个 Book 文件仍待清理 | `BOOK_DELETE_BATCH_CLEANUP_PENDING` / `internal` / `retryable=true` | 逐项报告完成/待清理；错误无路径；仅可显式重试 pending IDs。 |
+| protocol major 不受支持 / 旧 Core 不识别相应 command | `PROTOCOL_VERSION_UNSUPPORTED` / `validation` / `retryable=false`；或 `UNKNOWN` / `unknown` / `retryable=unknown` | dispatch 前拒绝或 fail-closed；无副作用；不得回退软删除。 |
+| Tauri ACL 拒绝 / Core channel 不可用 | Tauri framework rejection；或既有 host-level `CORE_UNAVAILABLE` | handler/Core 不执行或无副作用；不得回退软删除。 |
 
-Tauri ACL 在 handler 前拒绝未授权 command 时，返回 Tauri framework rejection，不产生 Core error 或副作用。Managed root/OS 权限不足若发生在 DB commit 后，映射为 `BOOK_DELETE_CLEANUP_PENDING`，不得伪装为 `PERMISSION_DENIED` 后丢失待清理清单；Core channel 不可用使用既有 host-level `CORE_UNAVAILABLE`，且无副作用。
+`BOOK_DELETE_BATCH_PREFLIGHT_FAILED` 安全详情只包含 `{phase: "preflight", requested_count, completed_count: 0, items: BookDeleteBatchItem[]}`；`BOOK_DELETE_BATCH_CLEANUP_PENDING` 只包含 `{phase: "cleanup", requested_count, completed_count, items: BookDeleteBatchItem[]}`。除这些白名单字段外，Tauri 不转发 Core `message/details`、路径或原始 stderr。每个 `item.error_code` 只接受上表列出的稳定码。
 
-手动 Lock、`is_pinned`、`current_revision_id` 与 Revision 历史属于项目后代；显式确认的全项目硬删除包含这些数据，不因其存在单独返回错误。它们必须保持原样直到删除事务提交，不得在准备阶段单独解锁、解除 pin 或改写 current pointer。此确认语义要求 UI 明示会删除项目及其人工锁定内容、当前与 pinned Revisions，且不可恢复；是否采用第二次确认或输入书名/短语仍由 UI 产品裁决。活动/可恢复任务一律按 `BOOK_BUSY` 拒绝。任何无法满足完整关系图或原子删除的状态按 `BOOK_DELETE_CONFLICT` 拒绝。
+#### 5.11.4 删除与保留的数据/文件边界
 
-#### 5.11.3 Tauri 错误安全投影与 ACL
+永久删除移除指定 Book 的项目内容及可恢复状态：`books`、其 `chapters` / `pages`、`regions` / `region_revisions`、`media_artifacts` / `artifact_revisions`、`reading_progress`、该 Book 的 `book_tags` 关系行、项目 Lock，以及 current/pinned Revision 与其项目关系。共享 `tags` 实体、全局 pipeline defaults、schema migration metadata 和 application metadata 不删除。无法安全拆分共享关系或发现未列明的目标外引用时，预检整体失败。
 
-新 command 使用独立错误投影，不改变现有 Tauri command rejection DTO：
+用户已裁决**保留 Pipeline Run/Task 历史**。因此 `pipeline_runs`、`pipeline_run_targets`、`pipeline_tasks`、`step_runs`、`step_run_input_refs`、`step_run_output_refs`、`step_result_candidates`、`pipeline_stage_states` 中属于历史的记录不得随 Book 内容级联删除。删除同一 DB 事务内应将这些记录脱离 Book/Page/Chapter/Region/Revision/Artifact 外键和资源定位符；保留 Run/Task/Step 的状态、操作类型、时间、排序及安全结果/错误摘要。引用已删除资源的路径、资源 ID、源文件路径或可还原文件的 locator 必须清除；不能脱离时整个批次冲突并回滚。活动/可恢复 Run/Task 仍按 `BOOK_BUSY` 阻断。是否在历史 UI 中保留被删 Book 的名称快照及导出历史 DB 行，仍待用户裁决（见 §11 / Task）；该未决项解决前不得释放实现。
+
+用户源目录、源文件与其 SHA-256 输入不在删除范围内。Managed Copy 的 `pages.managed_original_ref`、`artifact_revisions.managed_path` 和能由 resource catalog 权威归属至目标 Book 的派生产物/缓存可回收；仅删除清单所列文件，先通过 managed/derived root 与 reparse-point 校验，不递归清空共享根。**用户选择的导出目录及其中的导出文件一律保留**；命令不接收、遍历、删除或改写这些路径。`export_history` 数据库行的保留/脱离策略待用户裁决，但不改变导出文件保留要求。
+
+用户裁决**全库历史备份不纳入本删除操作**：命令不枚举、改写、创建、清理或删除全库历史备份；既有备份可能包含永久删除前的 DB 快照，本契约不承诺从备份清除该 Book。UI 的不可逆提示不得声称历史备份已被清除。项目源文件绝不移动、改写或删除；`source_filename` / `source_hash` 都不是文件路径授权。
+
+单条命令显式确认后删除其项目 Lock/current/pinned Revision。失败时这些数据维持原样；不得在预检期间单独解锁、解除 pin 或改写 current pointer。所有命令不得触发隐式 stop/cancel、GC 运行、备份处理或路径猜测。
+
+#### 5.11.5 Tauri 错误安全投影与 ACL
+
+单条命令沿用独立投影；批量命令使用只允许稳定错误码与逐项状态的批量投影：
 
 ```text
 PermanentlyDeleteBookErrorView = {
@@ -732,11 +779,24 @@ PermanentlyDeleteBookErrorView = {
   category: validation | not_found | conflict | unavailable | internal,
   retryable: true | false | unknown
 }
+
+PermanentlyDeleteBooksErrorView = {
+  code: INVALID_REQUEST | DUPLICATE_BOOK_ID |
+        BOOK_DELETE_BATCH_LIMIT_EXCEEDED | BOOK_DELETE_BATCH_WHOLE_LIBRARY |
+        BOOK_DELETE_BATCH_PREFLIGHT_FAILED | BOOK_DELETE_BATCH_CLEANUP_PENDING |
+        BOOK_DELETE_FAILED | UNKNOWN | PROTOCOL_VERSION_UNSUPPORTED | CORE_UNAVAILABLE,
+  category: validation | conflict | unavailable | internal | unknown,
+  retryable: true | false | unknown,
+  phase?: preflight | cleanup,
+  requested_count?: integer,
+  completed_count?: integer,
+  items?: BookDeleteBatchItem[]
+}
 ```
 
-映射保留上表 `code/category/retryable`；host 不向 WebView 转发 Core message/details、路径或原始 stderr。新权限标识为 `allow-library-delete-book-permanently`，仅加入生产 capability `m2rc1-commands.json`。Tauri command 必须在四处同步：`PRODUCTION_COMMANDS` 与 production `generate_handler!`、`build.rs` app manifest、capability allow 条目；同步增加/更新对应 Rust allowlist 计数与测试。不得注册进 probe/AC1 handler。Tauri `tauri-build` 从 app manifest 生成 `permissions/autogenerated/library_delete_book_permanently.toml` 的 allow/deny 项及 `gen/schemas/**` 输出；生成文件不手工编写。
+批量 `items` 必须是 Tauri host 从 Core 错误中按字段白名单重新构造的投影；不透明 `book_id` 可返回，错误码必须在 §5.11.3 集合内。host 不得透传任意 `details`、文本、路径或 stderr。新增批量权限 identifier 为 `allow-library-delete-books-permanently`，默认 deny counterpart 为 `deny-library-delete-books-permanently`；仅生产 capability `m2rc1-commands.json` 加 allow 项。同步 `PRODUCTION_COMMANDS`、production `generate_handler!`、`build.rs` app manifest、allowlist 计数/检查，以及 capability。生成 `permissions/autogenerated/library_delete_books_permanently.toml` 的 allow/deny 项及 `gen/schemas/**` 由 `tauri-build` 生成，禁止手写。批量 command 不注册至 probe/AC1 handler；单条 permission 与 ACL 项保持不变。
 
-该命令为单项目、显式调用、production-only 的硬删除入口；不得由软删除、导入失败、退出、GC 启动或其他隐式流程触发。命令不增加数据库 Schema/migration；如实现需要新增持久化 Schema、改既有 error enum 或扩大 ACL 授权面，须先停止并另立契约裁决。
+两条命令均仅响应回收站显式确认的产品流程；不得由软删除、导入失败、退出/启动、GC、Pipeline 或其他普通命令隐式触发。当前只冻结契约，不授权 runtime、Schema/migration、ACL 生成文件、UI 或测试实现。若实现需要持久化迁移以脱离并保留历史，必须先将迁移范围写入 Task 并由 Codex明确授权；不得以级联删除替代历史保留。
 
 ## 6. Typed projections 与 events
 
@@ -1137,8 +1197,8 @@ AS-IS `normalized_to_page_geometry(points, page_w, page_h)` owns conversion in a
 | Event ordering/replay/retention | `FROZEN (forwarding) / NOT_REPLAYED`（EVENTS-FWD-1 rev 2.4，§6.4） | host→WebView 事件转发面与安全 payload 投影已冻结于 §6.4。事件仅作为失效通知，不承诺交付、顺序、序列号、重放或保留；客户端收到后重查对应快照。Run 幂等创建冻结于 §5.5。 |
 | Export host commands and safe WebView projection | `FROZEN`（EXPORT-IPC-1 rev 2.5，§5.9） | `library_cancel_export`、`library_get_export_snapshot`、`library_get_export_history` 冻结去路径安全投影（`ExportProgressSnapshotView` 与 `ExportHistoryEntryView`），`output_path` 严格排除。 |
 | Book/chapter creation Core and Tauri command names | `FROZEN`（FEAT-CREATE-1 rev 2.8，§5.10） | Core `CreateBook` / `CreateChapter` 与 Tauri `library_create_book` / `create_chapter` 的 wire、字段校验、typed error 和 `LibrarySurfaceError` 封闭投影已冻结；runtime 未实现。 |
-| Project-level permanent book deletion command | `FROZEN`（P09-AC3-DELETE-1 AC1 rev 2.9，§5.11） | Core `PermanentlyDeleteBook` 与 Tauri `library_delete_book_permanently` 的 request/result/errors/ACL name 已冻结；显式确认后 Lock/pinned Revision 随项目一并删除，不另设状态错误。runtime 与生成 ACL 尚未授权。本命令不改变 `delete_book` 软删除或 Page purge。 |
-| Permanent-delete retention and confirmation product policy | `DEFERRED / USER_DECISION_REQUIRED`（P09-AC3-DELETE-1） | 是否保留 Run/Task 与 ExportHistory 摘要、如何处置用户选择目录中的导出文件及全库备份、二次确认 UI、入口位置及批量操作均由 Task §AC1 的用户裁决清单决定；实现不得推定。Lock/pinned Revision 是项目后代，显式确认后随整个项目删除。 |
+| Project-level permanent book deletion commands | `FROZEN`（P09-AC3-DELETE-1 AC1 rev 2.10，§5.11） | 单条 Core `PermanentlyDeleteBook` / Tauri `library_delete_book_permanently` 保持 rev 2.9 请求形状；批量 Core `PermanentlyDeleteBooks` / Tauri `library_delete_books_permanently` 为独立 additive command。批量有序唯一 ID 上限 20、双重目标确认、全量预检、DB 全有/全无及提交后逐本 cleanup；retention、错误投影及 ACL name 已冻结。runtime/Schema/生成 ACL/UI 尚未授权。 |
+| Permanent-delete user policy | `PARTIALLY FROZEN / USER_DECISION_REQUIRED`（P09-AC3-DELETE-1） | 已裁决：入口仅回收站、勾选后第二次确认、支持批量、保留 Pipeline Run/Task 历史、不删用户导出目录文件、不处理全库历史备份。仍待裁决：`export_history` DB 行的留存/脱离；保留的 Pipeline 历史是否保存已删除 Book 的名称快照。UI 必须提示旧全库备份可能仍含删除前快照。未决项裁决前不得释放实现。 |
 | Lock/revision conflict response details and concurrent edit policy | `PARTIALLY FROZEN`（`1.4` 草案：region 写命令面已冻结于 §5.4——人工优先、AI 侧 fail-closed、Revision/Lock 守卫交互、错误码映射；runtime 已由 M2-REGION-RETYPE-CORE 落地，`1.5` 时回填） | Core remains authority; §5.4 freezes the region-retype slice only; the rest of the command surface and finer conflict details stay open without weakening protection. |
 
 The UI mapping decision does not block freezing a transport-level Page status distinct from Run status. Any proposal to alter the status value or user-visible mapping returns to the user; M2-C1 does not resolve it.
@@ -1161,4 +1221,4 @@ EXPORT-IPC-1 rev 2.5 **明确授权 host 侧导出控制与查询命令及安全
 
 FEAT-CREATE-1 rev 2.8 **仅冻结契约，不授权任何 runtime 实现**。Core、Tauri host 与前端分别由后续独立释放的 FEAT-CREATE-2/-3/-4 Task 承接；各 Task 必须在自己的 Task 中冻结 allowlist、验证与 Reviewer。当前不批准 Schema/migration 或依赖变更；若实现证明需要显式多书架模型或新持久化结构，先停止该变更并另行取得用户批准。书架归属与页面来源边界见 §5.10。
 
-P09-AC3-DELETE-1 AC1 rev 2.9 **仅冻结项目级永久删除 IPC 契约，不授权本次 runtime 实现**。Task Owner 的 Core、Tauri 与 UI 变更仍须遵守该 Task 的释放 Gate；Run/history、导出文件、backup 与确认 UX 的未决产品取舍须先由用户裁决。当前不批准数据库 Schema/migration、依赖变更或对 58 条现有命令的修改。§5.11 的新增 command 仅在实现 Task 获得释放后，才可同步加入 handler、app manifest、capability 与自动生成的权限/schema。
+P09-AC3-DELETE-1 AC1 rev 2.10 **仅冻结项目级单条与批量永久删除 IPC 契约，不授权本轮 runtime 实现**。Core/Tauri/React、Schema/migration、依赖、capability、生成权限/schema 与测试实现仍须等 Task 剩余产品裁决和 Codex 的实施范围释放。rev 2.10 保持单条 `PermanentlyDeleteBook` payload 不变，并新增独立 `PermanentlyDeleteBooks`；不得改动前序 58 条命令的 wire 或 ACL。`export_history` 行处置与 Pipeline 历史名称快照仍待用户裁决。释放后才可按 §5.11 同步生产 handler、app manifest、capability 和生成物。
