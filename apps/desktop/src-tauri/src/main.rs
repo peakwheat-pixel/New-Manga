@@ -71,6 +71,8 @@ pub const PRODUCTION_COMMANDS: &[&str] = &[
     "revoke_resource_refs",
     "core_ping",
     "library_list_books",
+    // AC1 (R-007): the recycle bin read face.
+    "library_list_recycle_bin_books",
     "library_create_book",
     "create_chapter",
     // M2-SETTINGS-IPC-CHANNEL (contract rev 1.3 §5.3): the settings read/
@@ -353,6 +355,23 @@ fn library_list_books(state: tauri::State<'_, AppState>) -> Result<Vec<BookSumma
         .as_ref()
         .ok_or_else(|| "CORE_UNAVAILABLE".to_string())?
         .list_books()
+        .map_err(|error| error.code)
+}
+
+/// AC1 (R-007): the recycle bin read face.
+///
+/// Registered on the production surface so the frontend command actually has a
+/// handler. A channel that cannot answer yields its typed error, never an empty
+/// list - the two must stay distinguishable all the way to the UI.
+#[tauri::command]
+fn library_list_recycle_bin_books(
+    state: tauri::State<'_, AppState>,
+) -> Result<Vec<BookSummary>, String> {
+    state
+        .library
+        .as_ref()
+        .ok_or_else(|| "CORE_UNAVAILABLE".to_string())?
+        .list_recycle_bin_books()
         .map_err(|error| error.code)
 }
 
@@ -1579,6 +1598,7 @@ fn main() {
             revoke_resource_refs,
             core_ping,
             library_list_books,
+            library_list_recycle_bin_books,
             library_create_book,
             create_chapter,
             settings_get,
@@ -1778,6 +1798,7 @@ mod tests {
                 "revoke_resource_refs",
                 "core_ping",
                 "library_list_books",
+                "library_list_recycle_bin_books",
                 "library_create_book",
                 "create_chapter",
                 "settings_get",

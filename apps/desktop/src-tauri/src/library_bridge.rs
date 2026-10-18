@@ -720,6 +720,15 @@ pub type StatusEmitter = Arc<dyn Fn(&str, &str) + Send + Sync>;
 pub trait LibraryChannel: Send + Sync {
     fn ping(&self) -> Result<PingResult, LibraryError>;
     fn list_books(&self) -> Result<Vec<BookSummary>, LibraryError>;
+    /// AC1 (R-007): the recycle bin read face - every soft-deleted book.
+    ///
+    /// Defaulted to `unavailable`, deliberately, for the same reason as the
+    /// create faces: a channel that cannot answer must say so. Returning an
+    /// empty list here would be indistinguishable from "nothing is
+    /// soft-deleted", which is exactly the confusion AC1 exists to remove.
+    fn list_recycle_bin_books(&self) -> Result<Vec<BookSummary>, LibraryError> {
+        Err(LibraryError::unavailable("Recycle bin channel is unavailable"))
+    }
     fn create_book(&self, _title: &str) -> Result<BookSummary, LibraryError> {
         Err(LibraryError::unavailable("Create channel is unavailable"))
     }
@@ -4006,6 +4015,17 @@ impl LibraryChannel for StdioLibraryChannel {
         let val = self.round_trip("ListBooks", serde_json::json!({}))?;
         serde_json::from_value(val)
             .map_err(|e| LibraryError::malformed(&format!("Failed to parse BookSummary list: {e}")))
+    }
+
+    fn list_recycle_bin_books(&self) -> Result<Vec<BookSummary>, LibraryError> {
+        // AC1 (R-007): same frozen projection shape as ListBooks, different
+        // source set - the Core answers with the soft-delete set only.
+        let val = self.round_trip("ListRecycleBinBooks", serde_json::json!({}))?;
+        serde_json::from_value(val).map_err(|e| {
+            LibraryError::malformed(&format!(
+                "Failed to parse recycle bin BookSummary list: {e}"
+            ))
+        })
     }
 
     fn create_book(&self, title: &str) -> Result<BookSummary, LibraryError> {
