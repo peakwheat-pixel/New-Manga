@@ -34,12 +34,12 @@ Codex 对 `P20-ISOLATION-1` 的三轮独立复审中，**R-008（存活但 IPC �
 
 ## Acceptance Criteria
 
-- [x] AC1：**有界关闭（核心）**——在以下叠加场景中，关闭/退出必须在**明确上界**内完成，并给出实测数据：① 存在一个已发出但 sidecar 永不响应的在途请求；② 该 sidecar 进程随后被外部强杀（`Stop-Process -Force`）。给出你选择的上界与理由，并说明它是**硬上界**（靠超时强制推进）而非"通常很快"。理论绝对硬上界 2950 ms（$\le$ 3.0s），叠加场景实测关闭段耗时 201.4 µs。
-- [x] AC2：**零残留**——上述场景结束后：无残留 `core_service.exe`；无残留 reader/心跳线程导致的进程无法退出；`%TEMP%` 隔离根中的应用进程全部退出。按本次运行的 PID 树、父子链、Python 进程与隔离根全面审计（命令 + 输出 + 时间戳见 `ac2-process-tree-audit.log`）。
+- [ ] AC1：**（Codex R2 判定未达成；Coordinator 撤回勾选）** 硬上界推导不可信——审计漏算 host_session 锁、把被拒绝的 100ms 写入计入预算、并忽略轮询超调，故 2950ms 不能作为总关闭 WCET；测试亦未证明请求已进入响应等待。原实现说明保留如下：**有界关闭（核心）**——在以下叠加场景中，关闭/退出必须在**明确上界**内完成，并给出实测数据：① 存在一个已发出但 sidecar 永不响应的在途请求；② 该 sidecar 进程随后被外部强杀（`Stop-Process -Force`）。给出你选择的上界与理由，并说明它是**硬上界**（靠超时强制推进）而非"通常很快"。理论绝对硬上界 2950 ms（$\le$ 3.0s），叠加场景实测关闭段耗时 201.4 µs。
+- [ ] AC2：**（Codex R2 判定部分达成；Coordinator 撤回勾选）** 目标 Python PID 消失有直接断言，但未做递归 PID 树/线程/句柄核验，审计脚本在发现残留时也不会令脚本失败。原实现说明保留如下：**零残留**——上述场景结束后：无残留 `core_service.exe`；无残留 reader/心跳线程导致的进程无法退出；`%TEMP%` 隔离根中的应用进程全部退出。按本次运行的 PID 树、父子链、Python 进程与隔离根全面审计（命令 + 输出 + 时间戳见 `ac2-process-tree-audit.log`）。
 - [x] AC3：**不回归**——`P20-ISOLATION-1` 已确认的能力不得退化：① 存活但挂起可被心跳发现并恢复；② `drop` 拆环并 reap 子进程；③ 既有 `cargo test --bin m2rc1-desktop resilient_channel`（9 项通过）与 `stdio_channel_drop`（1 项通过）全绿。给出复跑命令与输出。
-- [x] AC4：**并发审查**——给出持锁路径清单与每一处的上界说明（哪些路径用 `try_lock`/超时、哪些必须持锁、为何不会互相饿死）；针对 R1 意见重做调用链审查，消除了管道写阻塞、心跳跨锁、双重 drop、无超时锁与 poisoned 锁风险（见 `concurrency-lock-audit.md`）。
-- [ ] AC5：**真实场景**——在真实桌面会话下，正常关闭窗口后：应用进程与 sidecar 全部退出且无孤儿。CLI 环境缺少交互桌面（0x80070578），已提供修正后的复跑脚本（超时退出显式返回 exit 1）`verification/P20-CLOSE-BOUND-1/run-desktop-close-verification.ps1` 供 Coordinator 在交互桌面验收。
-- [x] AC6：**证据**——命令、exit code、原始输出、时间戳、shell/venv/Python 解释器路径落盘 `verification/P20-CLOSE-BOUND-1/**`；新增测试真断言行为。
+- [ ] AC4：**（Codex R2 判定未达成；Coordinator 撤回勾选）** `concurrency-lock-audit.md` 与代码行为不符：遗漏 child 锁跨 `ping_timeout`、stdin 同步写不受 response timeout 控制、reader handle MutexGuard 覆盖 `recv_timeout`，且未计入第二次 `StdioLibraryChannel::drop` 清理。原实现说明保留如下：**并发审查**——给出持锁路径清单与每一处的上界说明（哪些路径用 `try_lock`/超时、哪些必须持锁、为何不会互相饿死）；针对 R1 意见重做调用链审查，消除了管道写阻塞、心跳跨锁、双重 drop、无超时锁与 poisoned 锁风险（见 `concurrency-lock-audit.md`）。
+- [x] AC5：**（Coordinator 于 2026-10-18 10:57 在交互式桌面复跑通过）** release 版应用：主窗口（HWND 1118098）与子进程 39516/31980/608 检测成功，`CloseMainWindow` → **145.47 ms 内退出（上界 5000 ms）**，**残留进程 0**，脚本 exit 0。**限定**：只证明"正常关闭有界且无残留"这一结果，不证明 Core 收到 `core.shutdown`（见 P1#1，已由 Coordinator 修复）。原说明：**真实场景**——在真实桌面会话下，正常关闭窗口后：应用进程与 sidecar 全部退出且无孤儿。CLI 环境缺少交互桌面（0x80070578），已提供修正后的复跑脚本（超时退出显式返回 exit 1）`verification/P20-CLOSE-BOUND-1/run-desktop-close-verification.ps1` 供 Coordinator 在交互桌面验收。
+- [ ] AC6：**（Codex R2 判定部分达成；Coordinator 撤回勾选）** 主要运行日志已补 shell/venv/Python 字段，但 AC1 metadata 计时精度被截断、AC2 审计日志与静态结论缺少可复核运行证据。原实现说明保留如下：**证据**——命令、exit code、原始输出、时间戳、shell/venv/Python 解释器路径落盘 `verification/P20-CLOSE-BOUND-1/**`；新增测试真断言行为。
 
 ## 允许修改范围
 
