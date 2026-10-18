@@ -3,7 +3,7 @@ id: P20-AC4-FPS-1
 title: P20 AC4 帧率与帧时间测量（默认关闭的前端 requestAnimationFrame 采样钩子）
 kind: feature
 governance_version: 2
-status: approved
+status: closed_with_limitations
 approval: user_ruling_20261018_ac4_fps_measurement
 blocked_by: null
 suggested_owner: ZCode
@@ -133,6 +133,21 @@ r3 返修交付 head 已固定（`16b995247`；r2 返修 `de5c06a4d`、r1 返修
 | EVID-FPS-SMOKE-R2 | AC3 (P1 实证：同标题 decoy 在场绑定本轮 PID) | verification/P20-AC4-FPS-1/smoke-20261018-180626/fps-trace.log | de5c06a4d572c849de7d7fed8e5027f92e0de156 | 34450559cec0d2eba74347de1cbf52f5185a6805a7f1f109d7fc1521ada407c1 | SOURCE_PIN |
 | EVID-FPS-SMOKE-R3 | AC3 (r3 回归：decoy 在场 SmokeTest，登记 NOT_OURS 后存活未触碰) | verification/P20-AC4-FPS-1/smoke-20261018-194147/fps-trace.log | 16b99524794a7ff2132a19753ce6a7fcd53fc244 | fb7df1f2176d59fb51887c643a0e3fdce25a3f363907178410f21cfabd51bda3 | SOURCE_PIN |
 | EVID-FPS-SMOKE-REG-R3 | AC3 (r3 回归：普通 SmokeTest，窗口绑定/AppData/全退) | verification/P20-AC4-FPS-1/smoke-20261018-194111/fps-trace.log | 16b99524794a7ff2132a19753ce6a7fcd53fc244 | 8b56cf627b8ea62ac733d5623c1145758eaf391639392e13f28f4020ea321950 | SOURCE_PIN |
+| AC3-ac3-grabber.ps1 | AC3 | verification/P20-AC4-FPS-1/ac3-real-desktop/ac3-grabber.ps1 | 28a174aa9488a8e7a89ebe59cdd9fdd0addaefb5 | b00347ed47514911c480282791ff0542467d342b2bd1dd6a5069c6f3f8730b7d | SOURCE_PIN |
+| AC3-AC3-REPORT.md | AC3 | verification/P20-AC4-FPS-1/ac3-real-desktop/AC3-REPORT.md | 28a174aa9488a8e7a89ebe59cdd9fdd0addaefb5 | 97c0c0e141f3b68876c58a968996dd530617b014fbed450b972735152a5bb578 | CANONICAL |
+| AC3-capture-channel-note.md | AC3 | verification/P20-AC4-FPS-1/ac3-real-desktop/capture-channel-note.md | 28a174aa9488a8e7a89ebe59cdd9fdd0addaefb5 | 673616c7b381f7d2c26ba2997bf863e7354c4c3b0d2851923e3d8020ad3f27d8 | CANONICAL |
+| AC3-fps-single-samples.csv | AC3 | verification/P20-AC4-FPS-1/ac3-real-desktop/fps-single-samples.csv | 28a174aa9488a8e7a89ebe59cdd9fdd0addaefb5 | f9a41f61292675b4e5664c4cecc5047edb8b72bd169c3a840f0026aa2086edf7 | CANONICAL |
+| AC3-fps-single-summary.json | AC3 | verification/P20-AC4-FPS-1/ac3-real-desktop/fps-single-summary.json | 28a174aa9488a8e7a89ebe59cdd9fdd0addaefb5 | 9c318cc0f0347c33511177a1dad929e6dbc27ef646925b05fad2b19a62d133d8 | CANONICAL |
+| AC3-fps-single-title-summary.txt | AC3 | verification/P20-AC4-FPS-1/ac3-real-desktop/fps-single-title-summary.txt | 28a174aa9488a8e7a89ebe59cdd9fdd0addaefb5 | 1d00f63b63e0e847b6972aa794e9fc13f830f003ad72fd90e361bbf009bc416b | CANONICAL |
+| AC3-fps-webtoon-samples.csv | AC3 | verification/P20-AC4-FPS-1/ac3-real-desktop/fps-webtoon-samples.csv | 28a174aa9488a8e7a89ebe59cdd9fdd0addaefb5 | 0539fb098cc5c6b960cd101e71ced2a1538f7dbbd084269ff9270ebd561fd33a | CANONICAL |
+| AC3-fps-webtoon-summary.json | AC3 | verification/P20-AC4-FPS-1/ac3-real-desktop/fps-webtoon-summary.json | 28a174aa9488a8e7a89ebe59cdd9fdd0addaefb5 | d022c634555b2d5f4f9f192fd4894e2985859af12042fd48ad0c7fe4b411c4f3 | CANONICAL |
+| AC3-fps-webtoon-title-summary.txt | AC3 | verification/P20-AC4-FPS-1/ac3-real-desktop/fps-webtoon-title-summary.txt | 28a174aa9488a8e7a89ebe59cdd9fdd0addaefb5 | e45f9679cb1ea7ab3709d0283c59ffd033bbbe36e5cc2970e267e0b09623ab73 | CANONICAL |
+| AC3-run1-appdata-after.txt | AC3 | verification/P20-AC4-FPS-1/ac3-real-desktop/run1-appdata-after.txt | 28a174aa9488a8e7a89ebe59cdd9fdd0addaefb5 | 16b1dda080293f09297c884a99b17ebd21a36e867ad74c04684b137773864279 | CANONICAL |
+| AC3-run1-appdata-baseline.txt | AC3 | verification/P20-AC4-FPS-1/ac3-real-desktop/run1-appdata-baseline.txt | 28a174aa9488a8e7a89ebe59cdd9fdd0addaefb5 | 16b1dda080293f09297c884a99b17ebd21a36e867ad74c04684b137773864279 | CANONICAL |
+| AC3-run1-single-trace.log | AC3 | verification/P20-AC4-FPS-1/ac3-real-desktop/run1-single-trace.log | 28a174aa9488a8e7a89ebe59cdd9fdd0addaefb5 | 73e4ff4cceaf74008ad208c267b54cd596f7218860ebec76dbdf1d5119538e39 | CANONICAL |
+| AC3-run4-appdata-after.txt | AC3 | verification/P20-AC4-FPS-1/ac3-real-desktop/run4-appdata-after.txt | 28a174aa9488a8e7a89ebe59cdd9fdd0addaefb5 | 16b1dda080293f09297c884a99b17ebd21a36e867ad74c04684b137773864279 | CANONICAL |
+| AC3-run4-appdata-baseline.txt | AC3 | verification/P20-AC4-FPS-1/ac3-real-desktop/run4-appdata-baseline.txt | 28a174aa9488a8e7a89ebe59cdd9fdd0addaefb5 | 16b1dda080293f09297c884a99b17ebd21a36e867ad74c04684b137773864279 | CANONICAL |
+| AC3-run4-webtoon-trace.log | AC3 | verification/P20-AC4-FPS-1/ac3-real-desktop/run4-webtoon-trace.log | 28a174aa9488a8e7a89ebe59cdd9fdd0addaefb5 | 753bbaac6dd3a3cf39cb471799a40eafb505171bfe0193bb4fd73702f8f42c0f | CANONICAL |
 
 ## Resource Manifest
 
