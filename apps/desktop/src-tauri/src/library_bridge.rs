@@ -8872,6 +8872,75 @@ mod tests {
         );
     }
 
+    /// AC1 (R4-01): consecutive registry-lock timeouts must not lose the handle.
+    ///
+    /// The pre-existing AC4 test is named "..._lock_failure_retains_handle" but
+    /// never actually holds the registry lock - it exercises the None-slot and
+    /// capacity paths only, so the ten-attempt timeout path went untested while
+    /// its name claimed otherwise.
+    ///
+    /// This test holds the lock across the whole retry window (10 x 50ms), so
+    /// every attempt times out for real, then checks both halves of the
+    /// guarantee: the handle stays with the caller, and the holder fallback gets
+    /// it into the registry once the lock is free.
+    #[test]
+    fn ac1_consecutive_lock_timeouts_keep_the_handle_and_the_holder_registers_it() {
+        reap_unreaped_workers(Duration::from_millis(50));
+
+        let guard = UNREAPED_WORKER_REGISTRY.lock().unwrap();
+
+        let worker = std::thread::spawn(|| {
+            std::thread::sleep(Duration::from_millis(2500));
+        });
+        let mut slot = Some(worker);
+        let th = Arc::new(std::sync::atomic::AtomicIsize::new(0));
+        let ph = Arc::new(std::sync::atomic::AtomicIsize::new(0));
+
+        let tracked = track_unreaped_worker(
+            "ac1-lock-timeout",
+            &mut slot,
+            Arc::clone(&th),
+            Arc::clone(&ph),
+        );
+        assert!(
+            !tracked,
+            "tracking must fail while the registry lock is held for the whole retry window"
+        );
+        assert!(
+            slot.is_some(),
+            "AC1: consecutive lock timeouts must leave the handle with the caller, never drop it"
+        );
+
+        drop(guard);
+
+        // The caller's fallback is the holder. It must land the handle in the
+        // registry once the lock is free - this is the guarantee that was
+        // silently void when a failed holder spawn dropped the handle.
+        let held = slot.take().expect("handle still owned by the caller");
+        spawn_persistent_holder("ac1-holder", held, th, ph);
+
+        let deadline = Instant::now() + Duration::from_secs(10);
+        let mut registered = false;
+        while Instant::now() < deadline {
+            if let Some(lock) =
+                lock_timeout_recover(&UNREAPED_WORKER_REGISTRY, Duration::from_millis(30))
+            {
+                if lock.iter().any(|w| w.name == "ac1-holder") {
+                    registered = true;
+                    break;
+                }
+            }
+            std::thread::sleep(Duration::from_millis(50));
+        }
+        assert!(
+            registered,
+            "AC1: the holder must eventually register the handle once the lock frees"
+        );
+
+        std::thread::sleep(Duration::from_millis(2600));
+        reap_unreaped_workers(Duration::from_millis(500));
+    }
+
     /// AC1 (CBH-R3-02): Deterministic test for initial CAS retry limit exhaustion (32 retries).
     /// Asserts:
     /// 1. When 32 CAS attempts fail, loop terminates boundedly.
