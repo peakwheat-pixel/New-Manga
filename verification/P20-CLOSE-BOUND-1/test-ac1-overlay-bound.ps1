@@ -19,6 +19,9 @@ New-Item -ItemType Directory -Path $isolatedRoot -Force | Out-Null
 $env:NEWMANGA_DATA_ROOT = Join-Path $isolatedRoot "data"
 $env:M2RC1_DERIVED_ROOT = Join-Path $isolatedRoot "derived"
 $env:M2RC1_PYTHON = (Get-Command python -ErrorAction SilentlyContinue).Source
+if (-not $env:CARGO_TARGET_DIR) {
+    $env:CARGO_TARGET_DIR = Join-Path $env:TEMP "cargo-p20-test-target"
+}
 
 # Discover runtime environment metadata (doc/09_COLLABORATION.md §6.12)
 $pythonExe = if ($env:M2RC1_PYTHON) { $env:M2RC1_PYTHON } else { (Get-Command python -ErrorAction SilentlyContinue).Source }
@@ -342,7 +345,7 @@ $ac2ExitCode = if ($residualCount -eq 0) { 0 } else { 1 }
 
 $ac2MetaFile = Join-Path $TargetDir "ac2-process-tree-audit.meta.json"
 $ac2Meta = [ordered]@{
-    command = "test-ac1-overlay-bound.ps1 (Process Tree & Broken-Chain Orphan Audit)"
+    command = "test-ac1-overlay-bound.ps1 (Runner Descendants & Isolation Root Audit)"
     command_name = "ac2_process_tree_audit"
     timestamp = (Get-Date -Format "yyyy-MM-ddTHH:mm:sszzz")
     exit_code = $ac2ExitCode

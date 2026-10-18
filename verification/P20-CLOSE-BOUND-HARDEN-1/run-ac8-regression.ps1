@@ -7,6 +7,10 @@ param(
 
 $ErrorActionPreference = "Stop"
 
+if (-not $env:CARGO_TARGET_DIR) {
+    $env:CARGO_TARGET_DIR = Join-Path $env:TEMP "cargo-p20-test-target"
+}
+
 if (-not (Test-Path $TargetDir)) {
     New-Item -ItemType Directory -Path $TargetDir -Force | Out-Null
 }

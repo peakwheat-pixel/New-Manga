@@ -212,9 +212,11 @@ try {
     $durationSeconds = [math]::Round(($endTime - $startTime).TotalSeconds, 2)
     $shellStr = "pwsh (PowerShell $($PSVersionTable.PSVersion))"
 
-    # Write ac5-console.log (isolated error handling)
+    # Write ac5-console.log (isolated error handling with fallback)
     $consoleLogFile = Join-Path $resolvedOutDir "ac5-console.log"
+    $fallbackConsole = Join-Path $resolvedOutDir "ac5-console-fallback.log"
     $consoleWritten = $false
+    $consoleFallbackWritten = $false
     $consoleError = $null
     try {
         [System.IO.File]::WriteAllLines($consoleLogFile, $logLines, [System.Text.Encoding]::UTF8)
@@ -223,15 +225,19 @@ try {
         $consoleError = $_.Exception.Message
         # If console log is locked (e.g. by caller Tee-Object), write to fallback file
         try {
-            $fallbackConsole = Join-Path $resolvedOutDir "ac5-console-fallback.log"
             [System.IO.File]::WriteAllLines($fallbackConsole, $logLines, [System.Text.Encoding]::UTF8)
+            $consoleFallbackWritten = $true
         } catch {
             # Ignore secondary fallback write failure
         }
     }
 
-    # Write ac5.exit with strict consistency guarantee
+    # Write ac5.exit with strict consistency guarantee and fallback path
     $exitFile = Join-Path $resolvedOutDir "ac5.exit"
+    $fallbackExit = Join-Path $resolvedOutDir "ac5.exit-fallback"
+    $exitWritten = $false
+    $exitFallbackWritten = $false
+    $exitWarning = $null
     try {
         [System.IO.File]::WriteAllText($exitFile, $scriptExitCode.ToString(), [System.Text.Encoding]::UTF8)
         # Read back to assert disk content matches exit code
@@ -242,14 +248,29 @@ try {
             # Re-write ac5.exit to match elevated exit code 1
             [System.IO.File]::WriteAllText($exitFile, "1", [System.Text.Encoding]::UTF8)
         }
+        $exitWritten = $true
     } catch {
-        Write-Host "Warning: Failed to write ac5.exit: $_"
-        $scriptExitCode = 1
+        $exitWarning = $_.Exception.Message
+        Write-Host "Warning: Failed to write primary ac5.exit ($exitWarning), attempting fallback..."
+        try {
+            [System.IO.File]::WriteAllText($fallbackExit, $scriptExitCode.ToString(), [System.Text.Encoding]::UTF8)
+            $readBackFallback = [System.IO.File]::ReadAllText($fallbackExit).Trim()
+            if ($readBackFallback -eq $scriptExitCode.ToString()) {
+                $exitFallbackWritten = $true
+                Write-Host "Fallback exit code recorded successfully in: $fallbackExit"
+            }
+        } catch {
+            $exitWarning += " | Fallback write failed: " + $_.Exception.Message
+        }
     }
 
-    # Write ac5-metadata.txt (isolated)
+    # Write ac5-metadata.txt (isolated with fallback)
+    $metaTxtFile = Join-Path $resolvedOutDir "ac5-metadata.txt"
+    $fallbackMetaTxt = Join-Path $resolvedOutDir "ac5-metadata-fallback.txt"
+    $metaTxtWritten = $false
+    $metaTxtFallbackWritten = $false
+    $metaTxtError = $null
     try {
-        $metaTxtFile = Join-Path $resolvedOutDir "ac5-metadata.txt"
         $metaBuilder = New-Object System.Text.StringBuilder
         $metaBuilder.AppendLine("runner=run-desktop-close-verification.ps1 (self-contained evidence logging)") | Out-Null
         $metaBuilder.AppendLine("outdir=$resolvedOutDir") | Out-Null
@@ -261,18 +282,33 @@ try {
         $metaBuilder.AppendLine("head=$gitHead") | Out-Null
         $metaBuilder.AppendLine("shell=$shellStr") | Out-Null
         $metaBuilder.AppendLine("console_written=$consoleWritten") | Out-Null
+        $metaBuilder.AppendLine("console_fallback_written=$consoleFallbackWritten") | Out-Null
+        $metaBuilder.AppendLine("exit_written=$exitWritten") | Out-Null
+        $metaBuilder.AppendLine("exit_fallback_written=$exitFallbackWritten") | Out-Null
         if ($consoleError) {
             $metaBuilder.AppendLine("console_warning=$consoleError") | Out-Null
         }
+        if ($exitWarning) {
+            $metaBuilder.AppendLine("exit_warning=$exitWarning") | Out-Null
+        }
         $metaBuilder.AppendLine("note=Self-contained evidence generation by run-desktop-close-verification.ps1 without relying on caller Tee.") | Out-Null
         [System.IO.File]::WriteAllText($metaTxtFile, $metaBuilder.ToString(), [System.Text.Encoding]::UTF8)
+        $metaTxtWritten = $true
     } catch {
-        Write-Host "Warning: Failed to write ac5-metadata.txt: $_"
+        $metaTxtError = $_.Exception.Message
+        try {
+            [System.IO.File]::WriteAllText($fallbackMetaTxt, $metaBuilder.ToString(), [System.Text.Encoding]::UTF8)
+            $metaTxtFallbackWritten = $true
+        } catch {}
     }
 
-    # Write ac5-metadata.json (isolated)
+    # Write ac5-metadata.json (isolated with fallback)
+    $metaJsonFile = Join-Path $resolvedOutDir "ac5-metadata.json"
+    $fallbackMetaJson = Join-Path $resolvedOutDir "ac5-metadata-fallback.json"
+    $metaJsonWritten = $false
+    $metaJsonFallbackWritten = $false
+    $metaJsonError = $null
     try {
-        $metaJsonFile = Join-Path $resolvedOutDir "ac5-metadata.json"
         $metaObj = [ordered]@{
             runner = "run-desktop-close-verification.ps1"
             outdir = $resolvedOutDir
@@ -284,13 +320,32 @@ try {
             head = $gitHead
             shell = $shellStr
             console_written = $consoleWritten
+            console_fallback_written = $consoleFallbackWritten
+            exit_written = $exitWritten
+            exit_fallback_written = $exitFallbackWritten
+            metadata_txt_written = $metaTxtWritten
+            metadata_txt_fallback_written = $metaTxtFallbackWritten
         }
         if ($consoleError) {
             $metaObj["console_warning"] = $consoleError
         }
-        [System.IO.File]::WriteAllText($metaJsonFile, ($metaObj | ConvertTo-Json -Depth 4), [System.Text.Encoding]::UTF8)
+        if ($exitWarning) {
+            $metaObj["exit_warning"] = $exitWarning
+        }
+        if ($metaTxtError) {
+            $metaObj["metadata_txt_warning"] = $metaTxtError
+        }
+        $metaJsonContent = ($metaObj | ConvertTo-Json -Depth 4)
+        [System.IO.File]::WriteAllText($metaJsonFile, $metaJsonContent, [System.Text.Encoding]::UTF8)
+        $metaJsonWritten = $true
     } catch {
-        Write-Host "Warning: Failed to write ac5-metadata.json: $_"
+        $metaJsonError = $_.Exception.Message
+        try {
+            if ($metaJsonContent) {
+                [System.IO.File]::WriteAllText($fallbackMetaJson, $metaJsonContent, [System.Text.Encoding]::UTF8)
+                $metaJsonFallbackWritten = $true
+            }
+        } catch {}
     }
 
     Write-Host "Self-contained evidence recorded in: $resolvedOutDir"

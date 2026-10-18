@@ -1278,28 +1278,53 @@ pub(crate) fn register_atomic_deadline(
     created_at: Instant,
     deadline: Instant,
 ) -> Instant {
+    #[cfg(test)]
+    TEST_BEFORE_DEADLINE_CAS_HOOK.with(|hook| {
+        if let Some(ref mut cb) = *hook.borrow_mut() {
+            cb();
+        }
+    });
+
     let encoded = encode_deadline(deadline, created_at);
+    let mut committed = 0u64;
     for _ in 0..MAX_DEADLINE_CAS_RETRIES {
         let current = atomic_ms.load(Ordering::SeqCst);
         if current == 0 {
             if atomic_ms.compare_exchange(0, encoded, Ordering::SeqCst, Ordering::SeqCst).is_ok() {
-                return decode_deadline(encoded, created_at).unwrap();
+                committed = encoded;
+                break;
             }
         } else {
             let tighter = tighter_encoded_deadline(current, encoded);
             if tighter == current {
-                return decode_deadline(current, created_at).unwrap();
+                committed = current;
+                break;
             }
             if atomic_ms.compare_exchange(current, tighter, Ordering::SeqCst, Ordering::SeqCst).is_ok() {
-                return decode_deadline(tighter, created_at).unwrap();
+                committed = tighter;
+                break;
             }
         }
         std::hint::spin_loop();
     }
-    // Hard upper bound fallback: on excessive contention, read current committed state
-    let final_val = atomic_ms.load(Ordering::SeqCst);
-    let chosen = if final_val == 0 { encoded } else { tighter_encoded_deadline(final_val, encoded) };
-    decode_deadline(chosen, created_at).unwrap_or(deadline)
+    if committed == 0 {
+        // Hard upper bound fallback: on excessive contention, read current committed state
+        let final_val = atomic_ms.load(Ordering::SeqCst);
+        committed = if final_val == 0 { encoded } else { tighter_encoded_deadline(final_val, encoded) };
+    }
+
+    // CBH-R1-02: After CAS succeeds/commits, re-check whether deadline has expired in the interim
+    // (e.g. caller thread was descheduled between encoding and CAS completion).
+    let now = Instant::now();
+    if deadline <= now || deadline <= created_at {
+        // Monotonically write expired sentinel 1 so other readers observe zero budget
+        let _ = atomic_ms.fetch_update(Ordering::SeqCst, Ordering::SeqCst, |val| {
+            Some(tighter_encoded_deadline(val, 1))
+        });
+        return decode_deadline(1, created_at).unwrap();
+    }
+
+    decode_deadline(committed, created_at).unwrap_or(deadline)
 }
 
 /// Reads the registered deadline from an AtomicU64.
@@ -1309,17 +1334,98 @@ pub(crate) fn get_atomic_deadline(atomic_ms: &AtomicU64, created_at: Instant) ->
 }
 
 #[cfg(windows)]
-pub(crate) fn cancel_pipe_handle(handle: std::os::windows::io::RawHandle) {
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub(crate) struct PipeCancellationReport {
+    pub ioex_canceled: bool,
+    pub ioex_last_error: u32,
+    pub sync_canceled: bool,
+    pub sync_last_error: u32,
+}
+
+#[cfg(windows)]
+pub(crate) fn cancel_pipe_handle(handle: std::os::windows::io::RawHandle) -> (bool, u32) {
+    if handle.is_null() || handle == (-1isize as *mut std::ffi::c_void) {
+        return (false, 6); // ERROR_INVALID_HANDLE
+    }
     extern "system" {
         fn CancelIoEx(
             h_file: *mut std::ffi::c_void,
             lp_overlapped: *const std::ffi::c_void,
         ) -> i32;
+        fn GetLastError() -> u32;
     }
-    if !handle.is_null() && handle != (-1isize as *mut std::ffi::c_void) {
-        unsafe {
-            let _ = CancelIoEx(handle as *mut std::ffi::c_void, std::ptr::null());
-        }
+    let res = unsafe { CancelIoEx(handle as *mut std::ffi::c_void, std::ptr::null()) };
+    if res != 0 {
+        (true, 0)
+    } else {
+        let err = unsafe { GetLastError() };
+        (false, err)
+    }
+}
+
+#[cfg(windows)]
+pub(crate) fn cancel_thread_synchronous_io(raw_handle: isize) -> (bool, u32) {
+    if raw_handle == 0 || raw_handle == -1 {
+        return (false, 6); // ERROR_INVALID_HANDLE
+    }
+    extern "system" {
+        fn CancelSynchronousIo(h_thread: *mut std::ffi::c_void) -> i32;
+        fn GetLastError() -> u32;
+    }
+    let res = unsafe { CancelSynchronousIo(raw_handle as *mut std::ffi::c_void) };
+    if res != 0 {
+        (true, 0)
+    } else {
+        let err = unsafe { GetLastError() };
+        (false, err)
+    }
+}
+
+#[cfg(windows)]
+pub(crate) fn cancel_worker_io(pipe_handle: isize, thread_handle: isize) -> PipeCancellationReport {
+    let (ioex_ok, ioex_err) = if pipe_handle != 0 && pipe_handle != -1 {
+        cancel_pipe_handle(pipe_handle as std::os::windows::io::RawHandle)
+    } else {
+        (false, 6)
+    };
+    let (sync_ok, sync_err) = if thread_handle != 0 && thread_handle != -1 {
+        cancel_thread_synchronous_io(thread_handle)
+    } else {
+        (false, 6)
+    };
+    PipeCancellationReport {
+        ioex_canceled: ioex_ok,
+        ioex_last_error: ioex_err,
+        sync_canceled: sync_ok,
+        sync_last_error: sync_err,
+    }
+}
+
+#[cfg(not(windows))]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub(crate) struct PipeCancellationReport {
+    pub ioex_canceled: bool,
+    pub ioex_last_error: u32,
+    pub sync_canceled: bool,
+    pub sync_last_error: u32,
+}
+
+#[cfg(not(windows))]
+pub(crate) fn cancel_worker_io(_pipe_handle: isize, _thread_handle: isize) -> PipeCancellationReport {
+    PipeCancellationReport {
+        ioex_canceled: false,
+        ioex_last_error: 0,
+        sync_canceled: false,
+        sync_last_error: 0,
+    }
+}
+
+#[allow(dead_code)]
+static UNREAPED_WORKER_HANDLES: Mutex<Vec<std::thread::JoinHandle<()>>> = Mutex::new(Vec::new());
+
+fn track_unreaped_worker_handle(handle: std::thread::JoinHandle<()>) {
+    if let Ok(mut lock) = UNREAPED_WORKER_HANDLES.lock() {
+        lock.push(handle);
     }
 }
 
@@ -1352,8 +1458,10 @@ pub struct StdioLibraryChannel {
     child_reap_fallback_handle: Mutex<Option<std::thread::JoinHandle<()>>>,
     created_at: Instant,
     shutdown_deadline_ms: AtomicU64,
-    raw_stdout_handle: std::sync::atomic::AtomicIsize,
-    raw_stdin_handle: std::sync::atomic::AtomicIsize,
+    raw_stdout_handle: Arc<std::sync::atomic::AtomicIsize>,
+    raw_stdin_handle: Arc<std::sync::atomic::AtomicIsize>,
+    reader_thread_handle: Arc<std::sync::atomic::AtomicIsize>,
+    writer_thread_handle: Arc<std::sync::atomic::AtomicIsize>,
 }
 
 struct HostSession {
@@ -1512,20 +1620,70 @@ impl StdioLibraryChannel {
         let reader_finished_clone = Arc::clone(&reader_finished);
         let reader_joined = Arc::new(AtomicBool::new(false));
 
+        let (writer_tx, writer_rx) = std::sync::mpsc::channel::<WriterCommand>();
+        let writer_finished = Arc::new(AtomicBool::new(false));
+        let writer_finished_clone = Arc::clone(&writer_finished);
+        let writer_joined = Arc::new(AtomicBool::new(false));
+        let raw_stdout_handle = Arc::new(std::sync::atomic::AtomicIsize::new(raw_stdout));
+        let raw_stdout_handle_clone = Arc::clone(&raw_stdout_handle);
+        let raw_stdin_handle = Arc::new(std::sync::atomic::AtomicIsize::new(raw_stdin));
+        let raw_stdin_handle_clone = Arc::clone(&raw_stdin_handle);
+
+        let reader_thread_handle = Arc::new(std::sync::atomic::AtomicIsize::new(0));
+        let reader_thread_handle_clone = Arc::clone(&reader_thread_handle);
+        let writer_thread_handle = Arc::new(std::sync::atomic::AtomicIsize::new(0));
+        let writer_thread_handle_clone = Arc::clone(&writer_thread_handle);
+
         let reader_thread = std::thread::Builder::new()
             .name("stdio-library-reader".to_string())
             .spawn(move || {
                 let _guard = ThreadFinishedGuard(reader_finished_clone);
+                struct ReaderHandleCleaner(Arc<std::sync::atomic::AtomicIsize>, Arc<std::sync::atomic::AtomicIsize>);
+                impl Drop for ReaderHandleCleaner {
+                    fn drop(&mut self) {
+                        self.0.store(0, Ordering::SeqCst);
+                        self.1.store(0, Ordering::SeqCst);
+                    }
+                }
+                let _cleaner = ReaderHandleCleaner(raw_stdout_handle_clone, Arc::clone(&reader_thread_handle_clone));
+
+                #[cfg(windows)]
+                {
+                    extern "system" {
+                        fn GetCurrentThread() -> *mut std::ffi::c_void;
+                        fn GetCurrentProcess() -> *mut std::ffi::c_void;
+                        fn DuplicateHandle(
+                            hSourceProcessHandle: *mut std::ffi::c_void,
+                            hSourceHandle: *mut std::ffi::c_void,
+                            hTargetProcessHandle: *mut std::ffi::c_void,
+                            lpTargetHandle: *mut *mut std::ffi::c_void,
+                            dwDesiredAccess: u32,
+                            bInheritHandle: i32,
+                            dwOptions: u32,
+                        ) -> i32;
+                    }
+                    const DUPLICATE_SAME_ACCESS: u32 = 0x0000_0002;
+                    let mut real_handle = std::ptr::null_mut();
+                    let cur_th = unsafe { GetCurrentThread() };
+                    let cur_proc = unsafe { GetCurrentProcess() };
+                    let ok = unsafe {
+                        DuplicateHandle(
+                            cur_proc,
+                            cur_th,
+                            cur_proc,
+                            &mut real_handle,
+                            0,
+                            0,
+                            DUPLICATE_SAME_ACCESS,
+                        )
+                    };
+                    if ok != 0 {
+                        reader_thread_handle_clone.store(real_handle as isize, Ordering::SeqCst);
+                    }
+                }
+
                 let mut reader = BufReader::new(stdout);
                 loop {
-                    #[cfg(test)]
-                    {
-                        if TEST_MOCK_READER_BLOCKED.load(Ordering::SeqCst) {
-                            while TEST_MOCK_READER_BLOCKED.load(Ordering::SeqCst) {
-                                std::thread::sleep(Duration::from_millis(15));
-                            }
-                        }
-                    }
                     let mut line = String::new();
                     match reader.read_line(&mut line) {
                         Ok(0) => {
@@ -1568,29 +1726,64 @@ impl StdioLibraryChannel {
                 LibraryError::unavailable(&format!("Failed to spawn reader thread: {e}"))
             })?;
 
-        let (writer_tx, writer_rx) = std::sync::mpsc::channel::<WriterCommand>();
-        let writer_finished = Arc::new(AtomicBool::new(false));
-        let writer_finished_clone = Arc::clone(&writer_finished);
-        let writer_joined = Arc::new(AtomicBool::new(false));
-
         let writer_thread = std::thread::Builder::new()
             .name("stdio-library-writer".to_string())
             .spawn(move || {
                 let _guard = ThreadFinishedGuard(writer_finished_clone);
+                struct WriterHandleCleaner(Arc<std::sync::atomic::AtomicIsize>, Arc<std::sync::atomic::AtomicIsize>);
+                impl Drop for WriterHandleCleaner {
+                    fn drop(&mut self) {
+                        self.0.store(0, Ordering::SeqCst);
+                        self.1.store(0, Ordering::SeqCst);
+                    }
+                }
+                let _cleaner = WriterHandleCleaner(raw_stdin_handle_clone, Arc::clone(&writer_thread_handle_clone));
+
+                #[cfg(windows)]
+                {
+                    extern "system" {
+                        fn GetCurrentThread() -> *mut std::ffi::c_void;
+                        fn GetCurrentProcess() -> *mut std::ffi::c_void;
+                        fn DuplicateHandle(
+                            hSourceProcessHandle: *mut std::ffi::c_void,
+                            hSourceHandle: *mut std::ffi::c_void,
+                            hTargetProcessHandle: *mut std::ffi::c_void,
+                            lpTargetHandle: *mut *mut std::ffi::c_void,
+                            dwDesiredAccess: u32,
+                            bInheritHandle: i32,
+                            dwOptions: u32,
+                        ) -> i32;
+                    }
+                    const DUPLICATE_SAME_ACCESS: u32 = 0x0000_0002;
+                    let mut real_handle = std::ptr::null_mut();
+                    let cur_th = unsafe { GetCurrentThread() };
+                    let cur_proc = unsafe { GetCurrentProcess() };
+                    let ok = unsafe {
+                        DuplicateHandle(
+                            cur_proc,
+                            cur_th,
+                            cur_proc,
+                            &mut real_handle,
+                            0,
+                            0,
+                            DUPLICATE_SAME_ACCESS,
+                        )
+                    };
+                    if ok != 0 {
+                        writer_thread_handle_clone.store(real_handle as isize, Ordering::SeqCst);
+                    }
+                }
+
                 let mut stdin = stdin;
                 while let Ok(cmd) = writer_rx.recv() {
-                    #[cfg(test)]
-                    {
-                        if TEST_MOCK_WRITER_BLOCKED.load(Ordering::SeqCst) {
-                            while TEST_MOCK_WRITER_BLOCKED.load(Ordering::SeqCst) {
-                                std::thread::sleep(Duration::from_millis(15));
-                            }
-                        }
-                    }
                     match cmd {
                         WriterCommand::Write(bytes, reply) => {
                             let res = stdin.write_all(&bytes).and_then(|_| stdin.flush());
+                            let is_err = res.is_err();
                             let _ = reply.send(res);
+                            if is_err {
+                                break;
+                            }
                         }
                         WriterCommand::Shutdown => break,
                     }
@@ -1629,8 +1822,10 @@ impl StdioLibraryChannel {
             child_reap_fallback_handle: Mutex::new(None),
             created_at: Instant::now(),
             shutdown_deadline_ms: AtomicU64::new(0),
-            raw_stdout_handle: std::sync::atomic::AtomicIsize::new(raw_stdout),
-            raw_stdin_handle: std::sync::atomic::AtomicIsize::new(raw_stdin),
+            raw_stdout_handle,
+            raw_stdin_handle,
+            reader_thread_handle,
+            writer_thread_handle,
         })
     }
 
@@ -1645,15 +1840,52 @@ impl StdioLibraryChannel {
     pub(crate) fn cancel_active_pipes(&self) {
         #[cfg(windows)]
         {
-            let stdout_raw = self.raw_stdout_handle.load(Ordering::SeqCst);
-            if stdout_raw != 0 && stdout_raw != -1 {
-                cancel_pipe_handle(stdout_raw as std::os::windows::io::RawHandle);
+            if !self.reader_finished.load(Ordering::SeqCst) {
+                let so = self.raw_stdout_handle.load(Ordering::SeqCst);
+                let r_th = self.reader_thread_handle.load(Ordering::SeqCst);
+                if so != 0 || r_th != 0 {
+                    let _ = cancel_worker_io(so, r_th);
+                }
             }
-            let stdin_raw = self.raw_stdin_handle.load(Ordering::SeqCst);
-            if stdin_raw != 0 && stdin_raw != -1 {
-                cancel_pipe_handle(stdin_raw as std::os::windows::io::RawHandle);
+
+            if !self.writer_finished.load(Ordering::SeqCst) {
+                let si = self.raw_stdin_handle.load(Ordering::SeqCst);
+                let w_th = self.writer_thread_handle.load(Ordering::SeqCst);
+                if si != 0 || w_th != 0 {
+                    let _ = cancel_worker_io(si, w_th);
+                }
             }
         }
+    }
+
+    #[cfg(test)]
+    pub(crate) fn cancel_reader_io(&self) -> PipeCancellationReport {
+        if self.reader_finished.load(Ordering::SeqCst) {
+            return PipeCancellationReport {
+                ioex_canceled: false,
+                ioex_last_error: 0,
+                sync_canceled: false,
+                sync_last_error: 0,
+            };
+        }
+        let so = self.raw_stdout_handle.load(Ordering::SeqCst);
+        let r_th = self.reader_thread_handle.load(Ordering::SeqCst);
+        cancel_worker_io(so, r_th)
+    }
+
+    #[cfg(test)]
+    pub(crate) fn cancel_writer_io(&self) -> PipeCancellationReport {
+        if self.writer_finished.load(Ordering::SeqCst) {
+            return PipeCancellationReport {
+                ioex_canceled: false,
+                ioex_last_error: 0,
+                sync_canceled: false,
+                sync_last_error: 0,
+            };
+        }
+        let si = self.raw_stdin_handle.load(Ordering::SeqCst);
+        let w_th = self.writer_thread_handle.load(Ordering::SeqCst);
+        cancel_worker_io(si, w_th)
     }
 
     #[allow(dead_code)]
@@ -3093,6 +3325,8 @@ impl StdioLibraryChannel {
                     } else {
                         let reader_finished = Arc::clone(&self.reader_finished);
                         let reader_joined = Arc::clone(&self.reader_joined);
+                        let reader_th_reaper = Arc::clone(&self.reader_thread_handle);
+                        let reader_pipe_reaper = Arc::clone(&self.raw_stdout_handle);
                         let last_shutdown_err = Arc::clone(&self.last_shutdown_error);
                         let spawn_res = std::thread::Builder::new()
                             .name("reader-join-bounded-reaper".to_string())
@@ -3105,6 +3339,14 @@ impl StdioLibraryChannel {
                                         reader_joined.store(true, Ordering::SeqCst);
                                         return;
                                     }
+                                    #[cfg(windows)]
+                                    {
+                                        let r_th = reader_th_reaper.load(Ordering::SeqCst);
+                                        let r_pipe = reader_pipe_reaper.load(Ordering::SeqCst);
+                                        if r_th != 0 || r_pipe != 0 {
+                                            let _ = cancel_worker_io(r_pipe, r_th);
+                                        }
+                                    }
                                     let rem = reap_timeout.saturating_sub(reap_start.elapsed());
                                     let sleep_dur = Duration::from_millis(10).min(rem);
                                     if sleep_dur.is_zero() {
@@ -3112,8 +3354,14 @@ impl StdioLibraryChannel {
                                     }
                                     std::thread::sleep(sleep_dur);
                                 }
+                                if reader_finished.load(Ordering::SeqCst) {
+                                    let _ = handle.join();
+                                    reader_joined.store(true, Ordering::SeqCst);
+                                    return;
+                                }
                                 let err_msg = "reader thread failed to finish within 200ms detached reap bound".to_string();
                                 eprintln!("[shutdown] {err_msg}");
+                                track_unreaped_worker_handle(handle);
                                 let rem_err = reap_timeout.saturating_sub(reap_start.elapsed());
                                 if !rem_err.is_zero() {
                                     let err_timeout = Duration::from_millis(20).min(rem_err);
@@ -3171,6 +3419,8 @@ impl StdioLibraryChannel {
                     } else {
                         let writer_finished = Arc::clone(&self.writer_finished);
                         let writer_joined = Arc::clone(&self.writer_joined);
+                        let writer_th_reaper = Arc::clone(&self.writer_thread_handle);
+                        let writer_pipe_reaper = Arc::clone(&self.raw_stdin_handle);
                         let last_shutdown_err = Arc::clone(&self.last_shutdown_error);
                         let spawn_res = std::thread::Builder::new()
                             .name("writer-join-bounded-reaper".to_string())
@@ -3183,6 +3433,14 @@ impl StdioLibraryChannel {
                                         writer_joined.store(true, Ordering::SeqCst);
                                         return;
                                     }
+                                    #[cfg(windows)]
+                                    {
+                                        let w_th = writer_th_reaper.load(Ordering::SeqCst);
+                                        let w_pipe = writer_pipe_reaper.load(Ordering::SeqCst);
+                                        if w_th != 0 || w_pipe != 0 {
+                                            let _ = cancel_worker_io(w_pipe, w_th);
+                                        }
+                                    }
                                     let rem = reap_timeout.saturating_sub(reap_start.elapsed());
                                     let sleep_dur = Duration::from_millis(10).min(rem);
                                     if sleep_dur.is_zero() {
@@ -3190,8 +3448,14 @@ impl StdioLibraryChannel {
                                     }
                                     std::thread::sleep(sleep_dur);
                                 }
+                                if writer_finished.load(Ordering::SeqCst) {
+                                    let _ = handle.join();
+                                    writer_joined.store(true, Ordering::SeqCst);
+                                    return;
+                                }
                                 let err_msg = "writer thread failed to finish within 200ms detached reap bound".to_string();
                                 eprintln!("[shutdown] {err_msg}");
+                                track_unreaped_worker_handle(handle);
                                 let rem_err = reap_timeout.saturating_sub(reap_start.elapsed());
                                 if !rem_err.is_zero() {
                                     let err_timeout = Duration::from_millis(20).min(rem_err);
@@ -3226,16 +3490,32 @@ impl Drop for StdioLibraryChannel {
             self.register_deadline(Instant::now() + Duration::from_millis(2400))
         };
         self.shutdown_and_kill_with_deadline(deadline);
+
+        #[cfg(windows)]
+        {
+            extern "system" {
+                fn CloseHandle(hObject: *mut std::ffi::c_void) -> i32;
+            }
+            let r_th = self.reader_thread_handle.swap(0, Ordering::SeqCst);
+            if r_th != 0 && r_th != -1 {
+                unsafe {
+                    CloseHandle(r_th as *mut std::ffi::c_void);
+                }
+            }
+            let w_th = self.writer_thread_handle.swap(0, Ordering::SeqCst);
+            if w_th != 0 && w_th != -1 {
+                unsafe {
+                    CloseHandle(w_th as *mut std::ffi::c_void);
+                }
+            }
+        }
     }
 }
 
 #[cfg(test)]
-static TEST_MOCK_READER_BLOCKED: AtomicBool = AtomicBool::new(false);
-#[cfg(test)]
-static TEST_MOCK_WRITER_BLOCKED: AtomicBool = AtomicBool::new(false);
-
-#[cfg(test)]
 thread_local! {
+    static TEST_BEFORE_DEADLINE_CAS_HOOK: std::cell::RefCell<Option<Box<dyn FnMut()>>> =
+        std::cell::RefCell::new(None);
     static TEST_AFTER_TRANSACTION_LOCK_HOOK: std::cell::RefCell<Option<Box<dyn FnMut(&str)>>> =
         std::cell::RefCell::new(None);
     static TEST_BEFORE_TRANSACTION_UNLOCK_HOOK: std::cell::RefCell<Option<Box<dyn FnMut(&str)>>> =
@@ -3250,13 +3530,13 @@ thread_local! {
 }
 
 #[cfg(test)]
-pub(crate) fn set_test_mock_reader_blocked(blocked: bool) {
-    TEST_MOCK_READER_BLOCKED.store(blocked, Ordering::SeqCst);
-}
-
-#[cfg(test)]
-pub(crate) fn set_test_mock_writer_blocked(blocked: bool) {
-    TEST_MOCK_WRITER_BLOCKED.store(blocked, Ordering::SeqCst);
+pub(crate) fn set_test_before_deadline_cas_hook<F>(f: Option<F>)
+where
+    F: FnMut() + 'static,
+{
+    TEST_BEFORE_DEADLINE_CAS_HOOK.with(|cell| {
+        *cell.borrow_mut() = f.map(|func| Box::new(func) as Box<dyn FnMut()>);
+    });
 }
 
 #[cfg(test)]
@@ -7625,6 +7905,53 @@ mod tests {
         );
     }
 
+    /// AC1 (CBH-R1-02): When a thread encodes a near-future deadline but is descheduled/paused
+    /// before CAS completes such that the deadline expires in the interim,
+    /// the post-CAS validation MUST detect the expiration, monotonically write sentinel 1,
+    /// and return zero budget.
+    #[test]
+    fn ac1_deadline_cas_expired_during_pause_writes_sentinel_1_and_returns_zero_budget() {
+        let created_at = Instant::now();
+        let atomic_ms = AtomicU64::new(0);
+
+        // Near-future deadline: 15ms in future
+        let candidate_deadline = Instant::now() + Duration::from_millis(15);
+
+        // Inject pause between encoding and CAS
+        set_test_before_deadline_cas_hook(Some(|| {
+            // Sleep 40ms so that candidate_deadline has definitely expired before CAS
+            std::thread::sleep(Duration::from_millis(40));
+        }));
+
+        let registered = register_atomic_deadline(&atomic_ms, created_at, candidate_deadline);
+
+        // Clear hook
+        set_test_before_deadline_cas_hook(None::<fn()>);
+
+        // 1. Registered deadline must decode to zero remaining budget
+        assert_eq!(
+            registered.saturating_duration_since(Instant::now()),
+            Duration::ZERO,
+            "Interim-expired deadline must return zero remaining budget"
+        );
+
+        // 2. Underlying atomic variable must hold expired sentinel 1
+        let final_raw = atomic_ms.load(Ordering::SeqCst);
+        assert_eq!(
+            final_raw,
+            1,
+            "Interim-expired deadline must result in atomic sentinel 1 being stored, got {final_raw}"
+        );
+
+        // 3. Any subsequent read must also yield zero budget
+        let read_back = get_atomic_deadline(&atomic_ms, created_at).expect("deadline readable");
+        assert_eq!(
+            read_back.saturating_duration_since(Instant::now()),
+            Duration::ZERO,
+            "Read back deadline must also yield zero budget"
+        );
+    }
+
     /// AC3 (CBH-01): Child fallback and reapers must NOT execute any actions after deadline has expired.
     /// Asserts:
     /// 1. Fallback skips thread spawning if deadline has already expired.
@@ -7672,12 +7999,71 @@ mod tests {
         let _ = run_taskkill_bounded(pid, Duration::from_millis(500));
     }
 
-    /// AC4 (CBH-01): Fault injection test for permanently blocked reader worker thread.
+    /// AC4 (CBH-R1-01): Direct validation of CancelSynchronousIo on a reader thread
+    /// genuinely blocked in the OS ReadFile system call on an empty pipe.
     /// Asserts:
-    /// 1. When reader is permanently blocked on I/O, caller shutdown returns boundedly (< 1500ms).
-    /// 2. Active pipe cancellation is invoked to unblock pipe I/O.
-    /// 3. Detached reaper runs within strictly bounded <= 200ms window without hanging.
-    /// 4. Once unblocked, worker finishes cleanly with zero orphan thread leaks.
+    /// 1. cancel_thread_synchronous_io returns CancelSynchronousIoResult::Canceled.
+    /// 2. The blocked reader is immediately aborted from ReadFile and finishes.
+    /// 3. A subsequent cancel call returns NoIoPending.
+    #[test]
+    fn ac4_cancel_synchronous_io_returns_canceled_on_blocked_pipe_read() {
+        let python_exe = std::env::var("M2RC1_PYTHON").unwrap_or_else(|_| "python".to_string());
+        let child = Command::new(&python_exe)
+            .args(["-c", "import time; time.sleep(60)"])
+            .stdin(Stdio::piped())
+            .stdout(Stdio::piped())
+            .stderr(Stdio::null())
+            .spawn()
+            .expect("spawn hung child");
+        let pid = child.id();
+        let chan = Arc::new(StdioLibraryChannel::adopt_child_for_test(child).expect("adopt"));
+
+        // Wait up to 200ms to ensure reader thread has entered ReadFile
+        std::thread::sleep(Duration::from_millis(50));
+        assert!(
+            !chan.is_reader_finished(),
+            "Reader thread must be running and genuinely blocked in ReadFile"
+        );
+
+        #[cfg(windows)]
+        {
+            // Cancel the active pipe IO (CancelIoEx / CancelSynchronousIo)
+            let report = chan.cancel_reader_io();
+            assert!(
+                report.ioex_canceled || report.sync_canceled,
+                "cancel_reader_io must report success (ioex_canceled: {}, sync_canceled: {}, ioex_err: {}, sync_err: {})",
+                report.ioex_canceled, report.sync_canceled, report.ioex_last_error, report.sync_last_error
+            );
+
+            // Wait for reader thread to finish after cancellation
+            let poll = Instant::now();
+            while !chan.is_reader_finished() && poll.elapsed() < Duration::from_millis(500) {
+                std::thread::sleep(Duration::from_millis(10));
+            }
+            assert!(
+                chan.is_reader_finished(),
+                "Reader thread must finish immediately upon cancellation aborting ReadFile"
+            );
+
+            // Second cancellation on now-idle thread must report no active IO
+            let second_report = chan.cancel_reader_io();
+            assert!(
+                !second_report.ioex_canceled && !second_report.sync_canceled,
+                "Subsequent cancellation on completed thread must report no active IO"
+            );
+        }
+
+        // Clean up channel and child
+        chan.shutdown_and_kill(Duration::from_millis(500));
+        let _ = run_taskkill_bounded(pid, Duration::from_millis(500));
+    }
+
+    /// AC4 (CBH-R1-01): Fault injection test for genuinely blocked reader worker thread.
+    /// The child process sleeps 60s and emits no stdout; reader thread genuinely blocks in ReadFile.
+    /// Asserts:
+    /// 1. Worker is genuinely blocked in OS ReadFile system call without any mock sleep.
+    /// 2. Channel shutdown cancels the thread via CancelSynchronousIo and reaps child in bounded time (< 1500ms).
+    /// 3. Worker finishes and is joined cleanly with zero orphan thread leaks.
     #[test]
     fn ac4_fault_injection_blocked_reader_worker_bounds_and_cancels() {
         let python_exe = std::env::var("M2RC1_PYTHON").unwrap_or_else(|_| "python".to_string());
@@ -7691,49 +8077,108 @@ mod tests {
         let pid = child.id();
         let chan = Arc::new(StdioLibraryChannel::adopt_child_for_test(child).expect("adopt"));
 
-        // Simulate blocked reader thread
-        set_test_mock_reader_blocked(true);
+        // Wait briefly for reader thread to enter blocking ReadFile
+        std::thread::sleep(Duration::from_millis(50));
+        assert!(
+            !chan.is_reader_finished(),
+            "Reader thread must be running and genuinely blocked in ReadFile"
+        );
 
         let start = Instant::now();
         // Shutdown with 500ms timeout
         chan.shutdown_and_kill(Duration::from_millis(500));
         let elapsed = start.elapsed();
 
-        // Caller must return boundedly (< 2000ms)
+        // Caller must return boundedly (< 1500ms)
         assert!(
-            elapsed < Duration::from_millis(2000),
+            elapsed < Duration::from_millis(1500),
             "Caller shutdown_and_kill must return in bounded time despite blocked reader, took {:?}",
             elapsed
         );
 
-        // Reader should not be joined yet because it is blocked in mock
-        assert!(
-            !chan.is_reader_joined(),
-            "Reader must not report joined while blocked"
-        );
-
-        // Unblock reader mock
-        set_test_mock_reader_blocked(false);
-
-        // Wait for reader thread to finish cleanly
-        let poll = Instant::now();
-        while !chan.is_reader_finished() && poll.elapsed() < Duration::from_millis(2000) {
-            std::thread::sleep(Duration::from_millis(20));
-        }
+        // Reader must have finished and joined cleanly thanks to CancelSynchronousIo
         assert!(
             chan.is_reader_finished(),
-            "Reader thread must finish after being unblocked"
+            "Reader thread must have finished after CancelSynchronousIo unblocked ReadFile"
+        );
+        assert!(
+            chan.is_reader_joined(),
+            "Reader thread must be joined by shutdown path"
         );
 
         // Clean up process
         let _ = run_taskkill_bounded(pid, Duration::from_millis(500));
     }
 
-    /// AC4 (CBH-01): Fault injection test for permanently blocked writer worker thread.
+    /// AC4 (CBH-R1-01): Direct validation of cancel_writer_io on a writer thread
+    /// genuinely blocked in the OS WriteFile system call on a saturated pipe.
     /// Asserts:
-    /// 1. When writer is permanently blocked, caller shutdown returns boundedly (< 1500ms).
-    /// 2. Detached reaper enforces strict 200ms timeout with sleep bounded by remaining time.
-    /// 3. Once unblocked, writer finishes cleanly with zero orphan thread leaks.
+    /// 1. cancel_writer_io succeeds and reports cancellation.
+    /// 2. The blocked writer is aborted from WriteFile and finishes.
+    /// 3. Subsequent cancel returns no active IO.
+    #[test]
+    fn ac4_cancel_pipe_io_returns_canceled_on_blocked_pipe_write() {
+        let python_exe = std::env::var("M2RC1_PYTHON").unwrap_or_else(|_| "python".to_string());
+        let child = Command::new(&python_exe)
+            .args(["-c", "import time; time.sleep(60)"])
+            .stdin(Stdio::piped())
+            .stdout(Stdio::piped())
+            .stderr(Stdio::null())
+            .spawn()
+            .expect("spawn hung child");
+        let pid = child.id();
+        let chan = Arc::new(StdioLibraryChannel::adopt_child_for_test(child).expect("adopt"));
+
+        let huge_chunk = vec![b'y'; 1024 * 512];
+        let chan_writer = Arc::clone(&chan);
+        std::thread::spawn(move || {
+            for _ in 0..16 {
+                let _ = chan_writer.write_stdin_raw_timeout(huge_chunk.clone(), None);
+            }
+        });
+
+        std::thread::sleep(Duration::from_millis(50));
+        assert!(
+            !chan.is_writer_finished(),
+            "Writer thread must be running and genuinely blocked in WriteFile"
+        );
+
+        #[cfg(windows)]
+        {
+            let report = chan.cancel_writer_io();
+            assert!(
+                report.ioex_canceled || report.sync_canceled,
+                "cancel_writer_io must report success (ioex_canceled: {}, sync_canceled: {}, ioex_err: {}, sync_err: {})",
+                report.ioex_canceled, report.sync_canceled, report.ioex_last_error, report.sync_last_error
+            );
+
+            let poll = Instant::now();
+            while !chan.is_writer_finished() && poll.elapsed() < Duration::from_millis(500) {
+                std::thread::sleep(Duration::from_millis(10));
+            }
+            assert!(
+                chan.is_writer_finished(),
+                "Writer thread must finish immediately upon cancellation aborting WriteFile"
+            );
+
+            let second_report = chan.cancel_writer_io();
+            assert!(
+                !second_report.ioex_canceled && !second_report.sync_canceled,
+                "Subsequent cancellation on completed thread must report no active IO"
+            );
+        }
+
+        chan.shutdown_and_kill(Duration::from_millis(500));
+        let _ = run_taskkill_bounded(pid, Duration::from_millis(500));
+    }
+
+    /// AC4 (CBH-R1-01): Fault injection test for genuinely blocked writer worker thread.
+    /// The child process sleeps 60s and never reads stdin; writer thread writes huge payload
+    /// that completely fills the OS anonymous pipe buffer, genuinely blocking in WriteFile.
+    /// Asserts:
+    /// 1. Writer is genuinely blocked in OS WriteFile system call without any mock sleep.
+    /// 2. Channel shutdown unblocks writer via CancelSynchronousIo and returns in bounded time (< 1500ms).
+    /// 3. Writer finishes and is joined cleanly with zero orphan thread leaks.
     #[test]
     fn ac4_fault_injection_blocked_writer_worker_bounds_and_cleans_up() {
         let python_exe = std::env::var("M2RC1_PYTHON").unwrap_or_else(|_| "python".to_string());
@@ -7747,31 +8192,43 @@ mod tests {
         let pid = child.id();
         let chan = Arc::new(StdioLibraryChannel::adopt_child_for_test(child).expect("adopt"));
 
-        // Simulate blocked writer thread
-        set_test_mock_writer_blocked(true);
+        // Fill OS pipe buffer (Windows anonymous pipe is typically 4KB..64KB)
+        // by sending writes until WriteFile genuinely blocks in the OS kernel.
+        let huge_chunk = vec![b'x'; 1024 * 512]; // 512KB chunk
+        let chan_writer = Arc::clone(&chan);
+        std::thread::spawn(move || {
+            for _ in 0..16 {
+                let _ = chan_writer.write_stdin_raw_timeout(huge_chunk.clone(), None);
+            }
+        });
+
+        // Wait briefly for pipe buffer to saturate and writer to block in WriteFile
+        std::thread::sleep(Duration::from_millis(50));
 
         let start = Instant::now();
         // Shutdown with 500ms timeout
         chan.shutdown_and_kill(Duration::from_millis(500));
         let elapsed = start.elapsed();
 
-        // Caller must return boundedly (< 2000ms)
+        // Caller must return boundedly (< 1500ms)
         assert!(
-            elapsed < Duration::from_millis(2000),
+            elapsed < Duration::from_millis(1500),
             "Caller shutdown_and_kill must return in bounded time despite blocked writer, took {:?}",
             elapsed
         );
 
-        // Unblock writer mock
-        set_test_mock_writer_blocked(false);
-
+        // Writer must have finished and joined cleanly thanks to CancelSynchronousIo
         let poll = Instant::now();
-        while !chan.is_writer_finished() && poll.elapsed() < Duration::from_millis(2000) {
-            std::thread::sleep(Duration::from_millis(20));
+        while !chan.is_writer_finished() && poll.elapsed() < Duration::from_millis(500) {
+            std::thread::sleep(Duration::from_millis(10));
         }
         assert!(
             chan.is_writer_finished(),
-            "Writer thread must finish after being unblocked"
+            "Writer thread must finish after CancelSynchronousIo unblocks WriteFile"
+        );
+        assert!(
+            chan.is_writer_joined(),
+            "Writer thread must be joined by shutdown path or reaper"
         );
 
         // Clean up process

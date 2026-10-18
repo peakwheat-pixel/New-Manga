@@ -9,6 +9,6 @@
 running 1 test
 test library_bridge::tests::resilient_inner_lock_contention_fallback_spawn_failure_reported ... ok
 
-test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 151 filtered out; finished in 0.35s
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 154 filtered out; finished in 0.32s
 
 

@@ -6,9 +6,9 @@ test library_bridge::tests::resilient_channel_early_startup_failure_recovers_wit
 test library_bridge::tests::resilient_channel_crash_loop_is_bounded_and_reaches_fatal ... ok
 test library_bridge::tests::resilient_channel_heartbeat_detects_unresponsive_child_and_recovers ... ok
 test library_bridge::tests::resilient_channel_heartbeat_unresponsive_child_caps_retries_and_reaches_fatal ... ok
+test library_bridge::tests::resilient_channel_drop_after_external_kill_with_in_flight_call_is_bounded_and_zero_orphan ... ok
 test library_bridge::tests::resilient_channel_shutdown_breaks_cycle_and_reaps_child_process ... ok
 test library_bridge::tests::resilient_channel_drop_with_in_flight_unresponsive_call_terminates_in_bounded_time ... ok
-test library_bridge::tests::resilient_channel_drop_after_external_kill_with_in_flight_call_is_bounded_and_zero_orphan ... ok
 
-test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 143 filtered out; finished in 0.40s
+test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 146 filtered out; finished in 0.35s
 

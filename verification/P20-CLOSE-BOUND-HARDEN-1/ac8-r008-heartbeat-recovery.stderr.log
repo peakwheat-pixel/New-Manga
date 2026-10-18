@@ -1,5 +1,6 @@
-﻿    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.51s
-     Running unittests src\main.rs (apps\desktop\src-tauri\target\debug\deps\m2rc1_desktop-24448612fc7535f6.exe)
+﻿   Compiling m2rc1-desktop v0.1.0 (G:\CODEX\New Manga\apps\desktop\src-tauri)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 4.21s
+     Running unittests src\main.rs (C:\Users\49745\AppData\Local\Temp\cargo-p20-test-target\debug\deps\m2rc1_desktop-24448612fc7535f6.exe)
 [heartbeat] core_service unresponsive to ping (CORE_UNAVAILABLE: stdout read failed: stream did not contain valid UTF-8 (category=unavailable, retryable=true)), triggering restart
 [heartbeat] Detected dead or unresponsive core_service, triggering restart
 [supervisor] Restarting core_service (attempt 1/3)...

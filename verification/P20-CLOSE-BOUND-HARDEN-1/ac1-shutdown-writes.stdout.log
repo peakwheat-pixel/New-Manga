@@ -10,6 +10,6 @@ running 2 tests
 test library_bridge::tests::shutdown_writes_protocol_shutdown_messages_with_session_to_sidecar_stdin ... ok
 test library_bridge::tests::shutdown_writes_core_shutdown_to_sidecar_stdin_without_session ... ok
 
-test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 150 filtered out; finished in 0.39s
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 153 filtered out; finished in 0.40s
 
 
