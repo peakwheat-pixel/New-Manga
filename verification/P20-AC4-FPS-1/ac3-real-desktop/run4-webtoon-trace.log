@@ -1,0 +1,28 @@
+[22:10:00.504] iso_root=C:\Users\49745\AppData\Local\Temp\p20fps-fc32bd45
+[22:10:00.527] ISOLATION pinned: NEWMANGA_DATA_ROOT=C:\Users\49745\AppData\Local\Temp\p20fps-fc32bd45 M2RC1_DERIVED_ROOT=C:\Users\49745\AppData\Local\Temp\p20fps-fc32bd45\derived M2RC1_MANAGED_ROOT=C:\Users\49745\AppData\Local\Temp\p20fps-fc32bd45\managed M2RC2_CATALOG_DB=C:\Users\49745\AppData\Local\Temp\p20fps-fc32bd45\catalog\catalog.sqlite (packaged sidecar mode)
+[22:10:00.563] APPDATA baseline recorded root=C:\Users\49745\AppData\Roaming\com.newmanga.m2rc1.desktop present=True files=24
+[22:10:00.578] NOT_OURS no pre-existing same-name processes
+[22:10:00.597] LAUNCH app pid=26668
+[22:10:01.521] WINDOW_BOUND pid=26668 title='M2-RC1 resource channel runtime' (all shell checks / UIA invocations / scrolling below run ONLY on this window)
+[22:10:01.539] window=true shell_ready=True fps_panel=True
+[22:10:01.679] OUR_PIDS now: 5424,31944,51404,46856,40384,41780,21580,40560,34700,35312,45592
+[22:12:24.821] OUR_PIDS now: 5424,31944,51404,46856,40384,41780,21580,40560,34700,35312,45592
+[22:12:25.365] SCROLL begin mode=wheel seconds=20 (every tick is foreground-PID-guarded)
+[22:12:45.402] SCROLL end label=webtoon ticks=316
+[22:12:46.448] TITLE[webtoon] M2-RC1 resource channel runtime
+[22:12:47.497] FAIL CAPTURE_CSV_MISSING webtoon (UIA pickup failed; rerun or export manually via the in-app Save As)
+[22:12:48.330] FAIL CAPTURE_JSON_MISSING webtoon (UIA pickup failed; rerun or export manually via the in-app Save As)
+[22:12:48.426] SUMMARY[webtoon] samples=1202 kept=1202 excluded=0 reasons=none
+[22:12:48.432] SUMMARY[webtoon] avg_ms=17.527 p95_ms=33.3 max_ms=33.5 min_ms=16.5 (nearest-rank p95; p95/max reported as measured, NOT a gate)
+[22:12:48.438] SUMMARY[webtoon] all_max_ms=33.5 excluded_max_ms=-1 (all-sample max includes excluded rows)
+[22:12:48.444] ASSERT PASS ac4:fps-webtoon avg<=50ms (user ruling 2026-10-18; avg=17.527)
+[22:12:48.458] PHASES requested=webtoon completed=webtoon
+[22:12:48.548] OUR_PIDS now: 5424,31944,51404,46856,40384,41780,21580,40560,34700,35312,45592
+[22:12:51.575] SKIP recorded pid=46856 name=msedgewebview2 (outside family whitelist - possible PID reuse, NOT touched)
+[22:12:51.582] SKIP recorded pid=21580 name=msedgewebview2 (outside family whitelist - possible PID reuse, NOT touched)
+[22:12:54.685] TEARDOWN all our processes exited
+[22:12:54.707] APPDATA[final] UNCHANGED (files=24, per-path sha256 compared)
+[22:12:54.719] ISO inventory: files=6 dirs=10 root=C:\Users\49745\AppData\Local\Temp\p20fps-fc32bd45
+[22:12:54.741] METADATA written; failures=2; restore default dist afterwards: cd apps\desktop\frontend; npm run build (without VITE_M2_FPS_SAMPLING)
+[22:12:54.747] FPS MEASUREMENT END
+[22:12:54.752] RESULT FAIL (2 failures): CAPTURE_CSV_MISSING webtoon (UIA pickup failed; rerun or export manually via the in-app Save As) | CAPTURE_JSON_MISSING webtoon (UIA pickup failed; rerun or export manually via the in-app Save As)

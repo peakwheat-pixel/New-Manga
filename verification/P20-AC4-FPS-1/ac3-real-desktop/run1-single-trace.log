@@ -1,0 +1,21 @@
+[21:13:12.120] iso_root=C:\Users\49745\AppData\Local\Temp\p20fps-2e90e0ce
+[21:13:12.144] ISOLATION pinned: NEWMANGA_DATA_ROOT=C:\Users\49745\AppData\Local\Temp\p20fps-2e90e0ce M2RC1_DERIVED_ROOT=C:\Users\49745\AppData\Local\Temp\p20fps-2e90e0ce\derived M2RC1_MANAGED_ROOT=C:\Users\49745\AppData\Local\Temp\p20fps-2e90e0ce\managed M2RC2_CATALOG_DB=C:\Users\49745\AppData\Local\Temp\p20fps-2e90e0ce\catalog\catalog.sqlite (packaged sidecar mode)
+[21:13:12.223] APPDATA baseline recorded root=C:\Users\49745\AppData\Roaming\com.newmanga.m2rc1.desktop present=True files=24
+[21:13:12.247] NOT_OURS no pre-existing same-name processes
+[21:13:12.659] LAUNCH app pid=55108
+[21:13:14.493] WINDOW_BOUND pid=55108 title='M2-RC1 resource channel runtime' (all shell checks / UIA invocations / scrolling below run ONLY on this window)
+[21:13:14.528] window=true shell_ready=True fps_panel=True
+[21:13:14.768] OUR_PIDS now: 52152,32328,54704,45808,47264,42880,18048,40668,29912,50836,49392
+[21:18:33.559] OUR_PIDS now: 52152,32328,54704,45808,47264,42880,18048,40668,29912,50836,49392
+[21:18:34.139] SCROLL begin mode=wheel seconds=20 (every tick is foreground-PID-guarded)
+[21:18:54.208] SCROLL end label=single ticks=308
+[21:18:55.269] TITLE[single] M2-RC1 resource channel runtime
+[21:18:56.141] FAIL CAPTURE_CSV_MISSING single (UIA pickup failed; rerun or export manually via the in-app Save As)
+[21:18:56.993] FAIL CAPTURE_JSON_MISSING single (UIA pickup failed; rerun or export manually via the in-app Save As)
+[21:18:57.004] FAIL SUMMARY missing csv for single
+[21:18:57.011] FAIL REQUIRED_ARTIFACT_MISSING fps-single-summary.json
+[21:25:52.914] TEARDOWN all our processes exited
+[21:25:52.932] APPDATA[final] UNCHANGED (files=24, per-path sha256 compared)
+[21:25:52.945] ISO inventory: files=9 dirs=10 root=C:\Users\49745\AppData\Local\Temp\p20fps-2e90e0ce
+[21:25:52.970] METADATA written; failures=4; restore default dist afterwards: cd apps\desktop\frontend; npm run build (without VITE_M2_FPS_SAMPLING)
+[21:25:52.976] FPS MEASUREMENT END

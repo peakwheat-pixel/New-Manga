@@ -1,0 +1,1 @@
+M2FPS state=STOPPED samples=1266 avg=16.681 p95=16.8 max=17 allmax=17 excluded=0 avg<=50ms:PASS
