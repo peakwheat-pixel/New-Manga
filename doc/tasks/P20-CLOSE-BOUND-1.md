@@ -237,7 +237,7 @@ AC5 所用脚本 `run-desktop-close-verification.ps1` **只向 stdout 打印、�
 
 **其他**：R3 确认 `d4e3b3eb9` 的 40 个文件**均在 allowlist 内**、与 43 项 tracked dirty **交集为 0**（无越界）；PID 复用方面判定**无可触发的误杀窗口**（`Child` 句柄在 fallback 期间仍有效），但指出 `taskkill` **未带 `/T`**，若 Core 派生子进程则 fallback 不保证整棵进程树退出。
 
-**结论**：第 3 轮仍未闭合，且出现**新 P1（N1）**。**是否授权第 4 轮返修由用户裁决**；授权前不派发第 4 轮。本 Task 维持 `in_review`。
+**结论**：第 3 轮仍未闭合，且出现**新 P1（N1）**。**用户于 2026-10-18 授权第 4 轮与第 5 轮返修**（不设"仍有 P1 即强制收口"的前置边界；若第 4/5 轮后仍未闭合，Coordinator 将如实上报并再行裁决）。第 4 轮范围＝R3 的 6 项（P1#2、P1#3、N1、P2#5、P2#6、P2#7），外加一项流程修正：让 run-desktop-close-verification.ps1 自己写 OutDir（AC5 产物落盘应由脚本负责，而非依赖调用方 Tee）。本 Task 维持 `in_review`。
 
 ## Closeout Record
 
