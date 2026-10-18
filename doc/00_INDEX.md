@@ -1,107 +1,62 @@
-# 项目文档索引与 Source of Truth
+# Document Truth Map / 项目文档权威地图
 
-## 2026-10-14 新时点准入路径（当前有效）
+更新：2026-10-13。当前目标架构固定为 Windows + React + TypeScript + Tauri/Rust + Python Core + SQLite + Managed Copy。本文是文档导航和冲突裁决表，不替代下列权威来源。
 
-P02 新时点基线已完成；X6 与 post-run Review 已批准；Build/Cargo 已集成并获 official convergence APPROVED。Build Task 的 BC-AC5 保持 PARTIAL，未知来源缓存及未检查的 profile cache 继续保留，未冒记为 PASS。当前产品验收 Task 为 [P02-NEW-TIME-X6-AC1-AC7](tasks/P02-NEW-TIME-X6-AC1-AC7.md)，Owner=ZCode，Reviewer=DeepSeek Harness，状态=in_progress / DISPATCHED；AC 结果待 Codex 核验。旧 H1 / P2-1 结论及 13 项原始来源缺失记录保持不变。当前 DAG 与运行状态分别见 [REBASELINE_PLAN](REBASELINE_PLAN.md) 与 [STATUS](STATUS.md)；Task 清单见 [Task Index](tasks/README.md)。
+## 权威来源与冲突裁决
 
-## 2026-10-10 用户裁决（当前有效）
-
-P02/P04 本机 Windows 验证按本项目验收口径等同于 Windows Sandbox 验证；不要求查询、安装、启用或启动 Windows Sandbox Feature，也不要求 guest 验证。此决定不表示本机具有虚拟机隔离能力，不豁免数据/写入保护，也不更改全产品干净 Windows 发布 Gate。P02 Build Gate 仍=`BLOCKED`（hook/cache/子进程写入边界及本机 Gate 证据未闭合）；P04 Owner R1 返修已交付于 `42b87f6bb6314fb42df3592f15a9fcd69866739b` 并进入只读实现 R2 Review，Cargo/Tauri 运行仍需 P02 本机 Build Gate=`PASS` 与 Codex provenance-bound scratch sidecar。当前详情见 [P02 checkpoint](../verification/P02/codex-checkpoint-local-validation-r1.md)、[P04 Task](tasks/P04.md) 与 [P04 R2 checkpoint](../verification/P04/codex-checkpoint-p04-r2-start-20261010.md)。
-
-裁决前 preflight 快照（2026-10-10；以下 Sandbox Feature blocker 已由最新用户裁决取代）：P01/P03/P08/P05=done；P02=in_progress / ACTIVE 为唯一 Active 产品验证 Task，产品范围 r1–r4、AC、Owner allowlist 与行为基线保持冻结。DSH R5 follow-up Review 对真实 D16=999e6adfc229698344c0cbf9bfb6d636fe73fb7c / tree=5da44588cbc791d4cf1d34aa3d20f0316fc320d5=APPROVED；R5-01..05 CLOSED；R5 findings=P0/P1/P2/P3=0/0/0/3、open=3；R5F-01/02=false_positive、R5F-03=deferred（可选 P3）。Fresh preflight D21 evidence Review=APPROVED（P0/P1/P2/P3=0/0/0/4；P3-1..4 修复复审待完成）。Review 后 fresh preflight 的 R2 HostFolder recheck=PASS（11/11 mappings、204,419 records、mismatch=0），12/12 roots、20/20 input hashes、14/14 registered sizes、3/3 EOL pins 与 3/3 hardlinks 均匹配。宿主 10/11 条件 PASS；Windows Sandbox Feature query=UNKNOWN（非提权 PowerShell EXIT=1 / COMException），所以 fresh preflight=BLOCKED（D21 evidence Review=APPROVED；P3-1..4 文档修正复审待完成），wsb start=NOT_RUN。Smoke=NOT_RUN、Build Gate=BLOCKED、build=NOT_AUTHORIZED / NOT_RUN、hook/cache=BLOCKED / NOT_VERIFIED、AC1–AC7=BLOCKED / NOT_RUN、Hard Build Barrier=EFFECTIVE。恢复见 [P02 post-review preflight blocker checkpoint](../verification/P02/codex-checkpoint-p02-post-review-preflight-blocked-r1.md)。
-
-历史观测（2026-10-10 04:11，clone 创建前）：Stage-1 pre-admission=PRESTART_STAGE_1_PASS（16/16），不作为当前准入证据。DSH Review 前的 host、feature、input、EOL、hardlink、UI 与 HostFolder captures 同样已被本次 post-review fresh 检查取代；当前 feature=UNKNOWN 与完整阻断依据见 [P02 blocker checkpoint](../verification/P02/codex-checkpoint-p02-post-review-preflight-blocked-r1.md)。
-
-前次工作快照（r6）：P08/P03/P01=done，唯一Active P02=`in_progress / ACTIVE`；P系列done 3/21、in_progress 1、proposed 17、ready 0。P02范围r1–r4冻结；Owner=Antigravity、Reviewer=DeepSeek Harness、Integrator=Codex。固定Stage A r6=`38672473f93971a4681aef682e5635e64b0bd896` / tree=`2aa967bbf961a0e9e58dd3e1489d74635491e28f` 的DSH正式Review=`approved_with_conditions`（仅Stage A），P0/P1/P2/P3=`0/0/0/4`，open=4；R5-01..06已闭合，R6-01..04为P3条件。r6未集成，`integration_commit: null`；r7已在原Antigravity会话按冻结allowlist返修。AC1–AC6仍BLOCKED；P01 integration=`13e66ec5bf9a2fc59f4e6c5623feb0bde22884c8`；P02行为基线=`241ff3b70b6fc0490ea238efd486cc707f849031`。恢复见[r6 Review后checkpoint](../verification/P02/codex-checkpoint-after-r6-dsh-review.md)、[P02 RESUME](../verification/P02/RESUME.md)和[P02自动推进提示词](../verification/P02/NEXT-AUTOPROGRESS-PROMPT.md)。
-
-2026-10-08人员更新：Qoder已退出本项目。当前角色/接管名单见[协作协议](09_COLLABORATION.md)；未来UI设计/实现归ZCode，历史Qoder署名仅作证据。整体路线与恢复材料已同步，不新增产品释放。
-
-**整体规划入口**：[权威Plan与候选Task](REBASELINE_PLAN.md)、[中文依赖图](../verification/PROJECT-ROADMAP-20261008/ROADMAP.md)、[全项目报告](../verification/PROJECT-ROADMAP-20261008/REPORT.md)、[196节点历史台账](../verification/PROJECT-ROADMAP-20261008/task-inventory.csv)、[恢复点](../verification/PROJECT-ROADMAP-20261008/RESUME.md)。历史审计基线为e4242ecd；P08/P03/P01已完成，P01 post-FF保护复核通过。167项登记完成或文档交付不代表新架构产品完成率。
-
-历史索引快照：P02 Owner转移未集成前的r8/C-2现场保留为历史证据；当前Owner、集成与接单状态以本页首段、Plan、Status和[P02 RESUME](../verification/P02/RESUME.md)为准。P01 D3 Review=`approved`、C1及D7 closeout Gate=`PASS`；C8 formal Review=changes_requested仍为历史证据。P03证据见[P03 RESUME](../verification/P03-PACKAGED-SFX-ENTRY/RESUME.md)。
-
-全任务盘点与 inventory 下方段落是其各自审计时的历史快照，不反映当前总数或授权状态；以本页首段、[Plan](REBASELINE_PLAN.md) 与 [STATUS](STATUS.md) 为当前事实。
-
-
-全量盘点快照：2026-10-07，审计输入 `main@32f9b932`。[REBASELINE 审计报告与下一步派发指令](../verification/REBASELINE-20261007/REPORT.md)；[全部 190 任务节点的台账与流程图](../verification/REBASELINE-20261007/TASK_GRAPH.md)；[完整 Git/Owner/Reviewer/worktree 参数](../verification/REBASELINE-20261007/inventory.json)。在该审计时间点无 Active、无 released；当前授权仍由 REBASELINE_PLAN / STATUS 决定，下面旧日期正文只作历史记录。
-
-> **2026-09-21 Stage A Rebaseline 生效**：后续 Milestone、Task、依赖、Legacy Mapping 与治理以 [REBASELINE_PLAN](REBASELINE_PLAN.md) 为唯一规划事实源；实时状态只看 [STATUS](STATUS.md)。TASK-001～065 及下方历史台账保留为证据，不再决定当前排期。Worktree 清理必须先看 [WORKTREE_SAFETY_INVENTORY](WORKTREE_SAFETY_INVENTORY.md)。
-
-> **Historical pointer（2026-10-07）**：Codex refresh @main `44421008`；A/B/C done，阈值 0.90 与 BJ13 维持现状已确认。该时点释放 [RC-4](tasks/M2-RC4-DOMAIN-COMMANDS.md)，[契约](contracts/M2-RC4_DOMAIN_COMMANDS.md)、[审计证据](../verification/M2-RC4-DOMAIN-COMMANDS/rebaseline-20261007.md)。当前以 PLAN/STATUS 为准。
-
-> **Architecture Decision / M2 release**：[AD-001](AD-001_TARGET_DESKTOP_ARCHITECTURE.md) 的 React + TypeScript / Tauri / Python Core / SQLite 目标保持。资源通道 runtime 与 command-surface hardening 已由 M2-RC1/RC2 集成；production Core 业务 IPC、产品四页 React shell、打包与完整 Release Gate 仍待后续 Task。
-
-2026-09-20 TASK-059 集成：设计重做 Task 已 `done`，integration=`53ae2e4`，最终 Review [TASK-059-58272ab](reviews/TASK-059-58272ab.md) `approved`。ND-1 选定 **F · Graphite Atelier**（A 色彩/状态色/主题 + B 几何含 `card-w=158px` + A IA；无 C 玻璃/D 顶栏/E 命令面板）；设计已集成但未释放实现 Task，ND-4/5/6/7 待用户裁决。
-
-2026-09-19 TASK-059 ND-1 用户裁决：候选方向选择 **A 的配色/视觉令牌与 IA + B 的几何比例（控件高度、行高、间距、字号、面板尺寸）**；不继承 B 的章节大卡 IA，也不启用 C 玻璃、D 顶栏或 E 命令面板。组合稿必须重新通过完整一致性审计后才能集成，C/D/E 未被选择。详见 [STATUS](STATUS.md) 当前台账。
-
-2026-09-19 TASK-059 改派：按用户指示，设计重做 Task 的 Owner 由 Qoder 改为 **ZCode**；新的 branch=`agent/zcode/TASK-059-ui-redesign`、worktree=`G:/CODEX/New Manga.worktrees/TASK-059-zcode`，Reviewer 仍为 Codex。原 Qoder 分支/worktree 未实施且仅留档，不再作为开工工作区；AC、授权和范围不变。
-
-以下 2026-09-19 及更早记录均为 **Legacy 历史台账，无排期或释放效力**。
-
-2026-09-19 增量：Qoder 是当时 QML UI/UX 责任方；[TASK-047](tasks/TASK-047.md)（仅设计）被用户否决。该记录只作历史追溯。
-
-状态（2026-09-19 更新）：TASK-001～TASK-021（TASK-021 仅 trash 子集）、TASK-024、TASK-028～TASK-044 已完成并集成；TASK-041 已完成并集成（`7c4fae0`）；TASK-045 已完成并集成（`e2a8f01`）；TASK-046、TASK-048～TASK-056、TASK-058 已完成并集成（**ZCode 全权窗口 2026-09-19 W0–W11**）；TASK-057 交付待集成（分支 `agent/zcode/TASK-057-backup-restore` 冻结于 `50c4b1a`）；TASK-022、TASK-025～TASK-027 仍冻结（proposed）。**角色已恢复初始定位**：Codex=Lead/唯一主线写入与合并责任人、ZCode=独立 Feature、DeepSeek Harness=独立 Review（不得自审）、Qoder=独立 Feature（与 ZCode 同面，可作**非作者** Reviewer）；Review 须覆盖 Architecture+Verification，Standards/Spec 为可选视角。以下为历史细节：TASK-013 生产 Pipeline seam 已按 `integration_commit=49c72fdf` 集成，R-1 已按 `integration_commit=734d5b3` 完成生产 Workbench 装配并验证；TASK-016 已按 `integration_commit=9bf85f5` 完成集成；TASK-018 已完成 Mask/Inpainting 路线独立实验的**三轮**独立 Review 与集成——首轮 `integration_commit=4d189ce`（Review `doc/reviews/TASK-018-6c33e7f.md` approved），修订切片 `integration_commit=14b92e4`（Review `doc/reviews/TASK-018-5063315.md` approved），尾项切片 `integration_commit=5a9f5c8`（Review `doc/reviews/TASK-018-965bcd2.md` approved；R-001～R-007 与 R-101/R-102/R-103/R-104/R-201 全部 closed，无待处理 finding；学习型路线质量与 Mask 内部结构损伤仍 BLOCKED/NOT_RUN）；TASK-015 已按窗口条款收口 `done`（integration=`fa72cee`，Review=`approved_subagent`）；TASK-024 已按窗口条款收口 `done`（仅设计，integration=`61c33e2`，扩展边界设计见 [TASK-024 契约](contracts/extensions.md)，U-1 已取消网页导入；U-2 已选 PDFium via pypdfium2；U-3 已批准本地目录插件首版范围；U-4 已决定 Plugin Agent 不进入首版，二阶段另行裁决；U-5 已批准字体上传上限与许可提示；U-6 已批准 Sakura 监控限于健康探测和就绪状态、不做深度指标），TASK-017 已按窗口条款收口 `done`（integration=`c0cf3a1`，实验报告见 [doc/research/TASK-017.md](research/TASK-017.md)），其尾项修订切片（吸收 Review R-001/R-002/R-003）已由非作者独立 Review（`doc/reviews/TASK-017-971efe6.md` approved）后集成（`integration_commit=d36f724`；R-001/R-002/R-003/R-101 全部 closed；真实端点层仍 NOT_RUN），窗口三项目标（TASK-015/024/017）全部完成；三份外部 post-hoc Review 均 approved，findings 已由 `c7a02bd` 收口。**TASK-019 已完成并集成**（Owner=`DeepSeek Harness`、Reviewer=`Codex`（非作者）、base=`36242fb`、被审 head `726baf5`（元数据 `6c981c2`）、Review `doc/reviews/TASK-019-726baf5.md` approved（F-1～F-7）、`integration_commit=3755af9`；集成后 `tests/providers` 110 passed/0 skipped、`tests/pipeline`+`core`+`storage` 78 passed/0 skipped、全仓 640 passed/6 skipped；**尾项切片（Standards S-1/S-2 分层修正）** 经非作者 Review `doc/reviews/TASK-019-ab26601.md` approved 后以 `integration_commit=9a5486a` 集成，`application → infrastructure` 依赖为 **0** 并有回归守卫，S-1/S-2 已关闭）；TASK-019 的 **AC-RFULL-001 完整链仍 `BLOCKED`**（缺 `color`/`term_extract`/`render` handler），且 Review 登记了**跨 Task P0 缺陷 F-1**（默认 `sfx_policy='skip'` + planner 不看 `region_type` → 真实默认下整链被 `SKIP_POLICY` 跳过，待用户/Codex 裁决后另立 Task）。TASK-020～TASK-023、TASK-025～TASK-027 继续冻结。仓库现状见 [STATUS](STATUS.md)。2026-09-16 23:30 ～ 09-17 08:30（Asia/Shanghai）的 ZCode 全权窗口已于 2026-09-17 按用户指示归还撤销；条款存档见 [STATUS](STATUS.md)「ZCode 全权窗口授权」。【2026-09-17 23:12:28 ～ 2026-09-18 08:50（Asia/Shanghai）第二个 ZCode 全权窗口进展（执行中）】：W1 **TASK-037 已收口 `done`**（integration=`372c3bf`；已定性 flaky `test_reader_webtoon_swaps_in_vertical_viewer` 修复＋TASK-036 R-01 关闭；三份机制探针修正 TASK-036 定性（extent 批次回写 −0.0、timer 有触发但持久化了回写后的 0），Webtoon 用例夹具改 40x1000 高页＋`landed` 落点断言；Review approved_subagent `7c35277`）。W2 **TASK-033 已收口 `done`**（integration=`4d0f932`；完整链收口——`color`/`term_extract`/`render` 三 handler 接入＋渲染侧生产装配（`RenderService` 复用既有适配器＋`content_decoder` NMFR→PNG 桥）＋「单一写者」P0 约束解决（RenderService 为 `translated` 指针唯一写者，render handler `revision_updates={}`，三次 render 指针 `[1,2,3]` 无抖动）；**AC-RFULL-001 口径更新为 BLOCKED（handler 与生产装配面已打通；真实 OCR/翻译/修复能力仍缺）＋逐项解锁条件，未记 PASS**；Review approved_subagent `401d6d7`；遗留 R-001 P2＝`_clean_available` 继承缺陷（render-only 命令跨 run 规划 BLOCKED，planner 在切片路径外未修，移交 Codex）。W3 **TASK-020 已收口 `done`**（integration=`b738200`；Webtoon 分块处理与阅读——新建 `src/infrastructure/imaging/webtoon_tiles.py`（TileGrid 几何/TileCache LRU/TiledPageRasterizer 按需解码），ViewModel opt-in `tile_factory` 接线（未注入时整图路径不变），QML webtoon viewer tiled 分支；一 Page 原则、坐标回映、边界去重、跨会话恢复均有测试；**1600x200000px fixture 像素解码 BLOCKED（Qt PNG handler ≳300MB rgb32 硬限制、setClipRect 无效），几何层 PASS，未记 PASS**；首轮 Review changes_requested（R-001 P1 全页同步解码）修订收口后复审 approved_subagent `40f20e7`）。F-1（跨 Task P0）已全面关闭：规划面 TASK-032（`e3e055e`）＋渲染面 TASK-035（`bd0d030`）。TASK-034（integration `b6051e5`+`8ca4b23`）与 TASK-036（integration `2725324`）此前已集成。**全部窗口集成的 Review 均为 approved_subagent（用户授权的同体审查）——期满后强制 Codex + DeepSeek Harness 外部 post-hoc 复审（可推翻窗口内 done）。**仓库现状见 [STATUS](STATUS.md)。「当前状态」段的历史口径见本行前文与 [12 Roadmap](12_ROADMAP.md)；本行截至 TASK-019/F-1 待裁决为止，其后进展以上述窗口进展为准。【第二轮（同一 T1=08:50）进展】：W5 **TASK-038 已收口 `done`**（integration=`f835ac9`；`assemble_engine` 注册 `readerViewModel`/`exportViewModel`——export 双路径（路径 A=`readerViewModel.exportController`、路径 B=`exportViewModel` 独立窗口随 workbench 章节）写明并以测试锁定；`tile_factory` 注入（TASK-020 分块阅读生产可达）；`ImportDocumentsUseCase` 接线（TASK-023 PDF 可达、MOBI 仍 typed UNSUPPORTED）；新增 `_ManagedReaderCatalog`（Page→ReaderPage，translated 消费当前 artifact）；`test_qml_contract.py:224` 前提变化等价更新；Review approved_subagent `fcf791f`）。W6 **TASK-039 已收口 `done`**（integration=`c8024fe`；planner `_clean_available` 判据叠加可选 `clean_probe`——probe=None 与修前逐字节等价，根因/对照矩阵/判别力留证；**TASK-033 R-001 已关闭**；生产 probe 注入点（bootstrap）白名单外移交；Review approved_subagent `18c9834`）。W7 **TASK-021 自洽子集已收口 `done`**（integration=`5bc17f8`＋修订 `b940497`；Page 级软删除/同 batch 恢复/受控-only 永久删除——`deleted_at` 列本就存在故零 Schema/migration 变更；`remove_managed` 防逃逸；R-001 P2 修订闭环（复审复现验证回归钩子），其余三子集 frozen；Review approved_subagent `a9b4141`+`79ec0d2`）。**第二轮全部 Review 为 approved_subagent（同体审查）——T1 后 Codex + DSH 强制 post-hoc 复审（可推翻）。**第二轮统一证据口径＝powershell.exe（继承 PATH，openssl 可用）+ TASK-012-py312 → 全仓 N passed/0 skipped（基线 770 → 772 → 780 → **787**）。「当前状态」段第一轮口径（截至 TASK-023）保留于本行前文，第二轮进展如上。【2026-09-19 01:10 ～ 09:00（Asia/Shanghai）第三个 ZCode 全权窗口进展】：W0 **TASK-046**（解码面 overlap=0 / rewind 折叠；Qoder 非作者 Review）integration=`2b40085`；W1 **TASK-048**（§11 P-1 跨线程 SQLite + 生产路径端到端测试资产）`be558ca`；W2 **TASK-049**（§11 P-2 区域输入面：detect handler + Region 生产路径）`e94d5af`；W3 **TASK-050**（§11 P-3 非 UI：设置/provider 绑定注入）`21b7301`；W4 **TASK-051**（§11 P-6 工作台三档视图）`65d1e13`；W5 **TASK-052**（§11 P-4 命令失败可见化，provisional）`a1c8171`；W6 **TASK-053**（TASK-044 R-03/R-04）`cd57ee4`；W7 **TASK-054**（TASK-043 R-02 改名）`771dbf7`；W8 **TASK-055**（TASK-021 子集①日志/诊断）`0493ea9`；W9 **TASK-056**（子集②缓存·版本·模型清理）`11517ac`；W11 **TASK-058**（自建切片，§11 P-10 退出排空）`414a8e1`。**W10 TASK-057（子集③备份/恢复）交付未集成**（并行会话，冻结 `50c4b1a`）。窗口内 Review 除 W0（Qoder `approved`，用户把 Reviewer 由 DSH 改派）外**全部为 `approved_subagent`（同体审查）**——按协议不是独立批准，**已排 Codex + Qoder 外部 post-hoc 复审（可推翻；原 DSH 槽位 2026-09-19 按用户指示改派 Qoder）**。收口验证：全仓 **905 passed / 6 skipped（共 911 collected）exit 0**（openssl 可用口径 911/0），与 T0 基线 848 collected 相比 +63 例。第三窗口进展如上。所有路径均相对本文档；保留现有 doc 目录及 02 文件名末尾的下划线。
-
-## 原始目标文档（已完整检查）
-
-| 证据编号 | 文档 | 权威职责 | 当前性质 |
-|---|---|---|---|
-| D01 | [01 功能架构](01_FUNCTIONAL_ARCHITECTURE.md) | 产品能力范围、入口、扩展能力 | To-Be；§5 的旧代码引用不能证明本仓库实现 |
-| D02 | [02 技术架构](02_TECHNICAL_ARCHITECTURE_.md) | 分层、技术选型、依赖边界、运行拓扑 | To-Be；TASK-005 仅实证最小 Python/PySide6 Core 入口与当前包边界 |
-| D03 | [03 数据模型](03_DATA_MODEL.md) | 实体、字段、数据不变量、持久化归属 | To-Be；G06～G13 的最小实现契约由 TASK-002 冻结；TASK-006 已有 v1 SQLite 基础，统一 v2 设计见 TASK-028 |
-| D04 | [04 用户流程](04_USER_FLOW.md) | 操作意图、用户流程、对象范围 | To-Be |
-| D05 | [05 UI 映射](05_UI_MAPPING.md) | Screen、Panel、Window、动作与 ViewModel 映射 | To-Be；内含线框示意，非实际 QML |
-| D06 | [06 Pipeline](06_TRANSLATION_PIPELINE.md) | 命令语义、DAG、Lock、失效、重试与进度协议 | To-Be；G06～G13 的最小执行契约由 TASK-002 冻结 |
-| D07 | [07 非功能需求](07_NON_FUNCTIONAL_REQUIREMENTS.md) | 性能、容量、可靠性、安全、Windows 与打包 | 目标数值，未经 Benchmark 验证 |
-| D08 | [08 验收标准](08_ACCEPTANCE_CRITERIA.md) | 验收预期、证据要求与发布 Gate | 验收规格，不是测试实现或 PASS 报告 |
-
-TASK-001 已将 D03～D08“基于”列表里的历史长文件名改为上表实际文件；这只恢复当前项目导航，不证明与未提供的历史版本逐字一致。原始引用保存在基线 `496b4ed`。
-
-## 接管与执行文档
-
-| 文件 | 用途 / 何时阅读 |
-|---|---|
-| [AGENTS.md](../AGENTS.md) | 三 Agent 每次进入项目必读入口 |
-| [STATUS](STATUS.md) | 当前授权、开发阶段、用户审核记录 |
-| [09 协作协议](09_COLLABORATION.md) | 角色、Git、Task/Handoff/Review 生命周期 |
-| [10 当前状态与 Gap Analysis](10_CURRENT_STATE_AND_GAPS.md) | 本次盘点、证据指纹、代码与目标差距、审核清单 |
-| [11 架构与交互地图](11_ARCHITECTURE_MAPS.md) | 11 类接管基线视图；目标设计仍不得冒充 TASK-005 最小骨架的实际能力 |
-| [12 Roadmap](12_ROADMAP.md) | 阶段 Gate、依赖和范围取舍 |
-| [13 验收追踪](13_ACCEPTANCE_TRACEABILITY.md) | D08 条目到计划 Task 的映射；不代表已验收 |
-| [14 接管验证](14_TAKEOVER_VERIFICATION.md) | 本次文档自检结果、复现命令与验证边界 |
-| [接管自检脚本](verify_takeover.ps1) | 仅适用于初始接管快照；TASK-001 已修改文档与授权，其 Hash/冻结断言不再适用于当前工作区 |
-| [TASK-001 检查](../verification/TASK-001/verify.ps1) | 验证文档引用、状态枚举、AC 编号/优先级及修改范围 |
-| [TASK-002 最小契约](contracts/TASK-002_MINIMUM_DATA_EXECUTION_CONTRACT.md) | G06～G13、R-011 的冻结语义；后续 Schema/Pipeline/UI/测试共同输入 |
-| [TASK-028 统一 SQLite 设计](contracts/TASK-028_UNIFIED_SQLITE_PERSISTENCE_DESIGN.md) | TASK-006/007/008 的 SQLite 收敛设计；实现由 TASK-029 承接 |
-| [TASK-029 统一 SQLite 实现](tasks/TASK-029.md) | 按 TASK-028 实现 v2 migration、Library/Page/Region adapter 与原子 Revision seam；已集成 |
-| [任务目录](tasks/README.md) | 历史 Task 与当前 Task 的证据索引；当前排期以 REBASELINE_PLAN / STATUS 为准 |
-| [Task 模板](templates/TASK.md) | 新任务创建 |
-| [Handoff 模板](templates/HANDOFF.md) | 实现 / 实验交付、故障中断交接 |
-| [Review 模板](templates/REVIEW.md) | 按固定 commit 独立审查和复审；**必须覆盖 Architecture / Verification 两面**；`code-review` 技能的 **Standards / Spec 为可选视角**（2026-09-18 用户决定取消其与 Spec 的"双轴"强制口径与并行/隔离要求）；建议标注各视角 `executed`/`N/A` |
-
-handoffs、reviews、verification 已包含固定提交的真实交付；目录或文件名本身仍不等于审查/验证通过。
-
-## Source of Truth 按问题区分
-
-| 要回答的问题 | 事实来源 | 不能替代它的材料 |
+| 事实类型 | 唯一权威来源 | 解释 |
 |---|---|---|
-| 当前实际做到了什么 | 当前项目 commit 的源代码、迁移、配置与同 commit 测试证据；工作区变化单独说明 | To-Be 图、旧项目能力表、Agent 自述 |
-| 产品应该做什么 | D01/D04/D05；冲突提交用户决策并在相关权威文档修订 | 实现中的偶然行为、测试中的猜测 |
-| 架构及数据怎么约束 | D02/D03/D06 按职责管理；已冻结缺口以对应 `doc/contracts/` 文件解释 | 任意 Agent 的私有笔记 |
-| 什么算达标 | D07/D08 与可复现 verification 记录 | 仅有测试文件或“本地通过”口头描述 |
-| 谁在做什么、可改哪里 | STATUS 的阶段授权 + 单个 Task 文件 | 看板截图、聊天中的认领 |
-| 交付了什么 | Handoff 中固定 commit、文件与测试结果 | 分支名称本身、作者概述 |
-| Review 是否完成 | 独立 Review 报告绑定的 base/head + Codex 集成验证 | 作者自查或对旧 head 的批准 |
+| 当前目标架构与技术边界 | [AD-001](AD-001_TARGET_DESKTOP_ARCHITECTURE.md)；后续用户明确裁决优先 | 目标是 React/TypeScript + Tauri/Rust + Python Core + SQLite + Managed Copy。PySide6/QML 仅为旧生产基线/迁移参考。 |
+| 项目规则与 Agent 权限 | [AGENTS.md](../AGENTS.md) | 当前角色、安全边界、默认上下文和工作区规则。 |
+| Milestone、Task DAG、依赖和释放状态 | [REBASELINE_PLAN](REBASELINE_PLAN.md) | 历史 Task 文件、聊天记录和旧计划快照不能激活 Task。 |
+| 唯一活动 Task 与运行状态 | [STATUS](STATUS.md) | 仅此处声明当前 Active Task、Gate、阻塞和恢复指针。 |
+| Task 范围与冻结契约 | Plan 指定的当前 Task、该 Task 明确引用的契约 | 已完成或历史 Task 不构成当前授权。 |
+| Review 结论 | 当前 Task 最新 Review 及 Codex adjudication | adjudication 记录 finding 的接受/拒绝及限制。 |
+| 当前恢复点 | STATUS 指定的 rolling checkpoint | 只为恢复当前 Task，不替代 Task、Review 或原始证据。 |
+| 技术事实/验证结果 | 当前 Task 指定的原始 evidence/source pin | 证据说明其实际测得内容；不自行授予授权或改写 Review/adjudication。 |
 
-不存在“代码永远胜过需求”或“编号越大越权威”的规则。代码回答实际行为，文档回答目标，两者差异记录为 Gap。D08 明确要求冲突先修订设计，不能用测试替代设计决策（D08 L15）。
+冲突时，先按事实类型选择权威来源。历史文档的旧技术路线、Task 状态和 Gate 不得覆盖当前来源；不得把要求文档、旧图或验证结果解释为实现授权。
 
-冲突处理：记录双方文件/章节/行号 → 在 Gap/Task 标明影响 → Codex提出可审查修改 → 产品范围变化由用户决定 → 在权威文档修订并同步受影响图和 AC。当前发现的问题尚未自动裁决。
+## 当前文档地图
 
-## 文档维护规则
+| 文档 | 分类 | 当前可依赖内容 |
+|---|---|---|
+| [AGENTS.md](../AGENTS.md) | CURRENT / GOVERNANCE | Agent 项目入口、角色、安全和最小读取规则。 |
+| [AD-001](AD-001_TARGET_DESKTOP_ARCHITECTURE.md) | CURRENT / ARCHITECTURE | 唯一目标架构及边界。 |
+| [REBASELINE_PLAN](REBASELINE_PLAN.md) | CURRENT / PLAN | 当前 DAG 和 Task 释放/阻塞关系。 |
+| [STATUS](STATUS.md) | CURRENT / STATUS | 当前唯一 Active Task、Gate 状态和恢复指针。 |
+| [09 协作协议](09_COLLABORATION.md) | CURRENT / PROCESS | 协作、Review、handoff 和 Task 关闭流程；按需读取。 |
+| [Workspace Governance](WORKSPACE_GOVERNANCE.md) | CURRENT / GOVERNANCE | 分类、归档、证据保护及派生产物规则。 |
+| [Governance checker](../tools/governance/check.ps1) | CURRENT / AUTOMATION | 只读检查当前指针、相对引用、目标架构标记、STATUS/PLAN 预算及受治理 Task 的 canonical evidence/closeout 字段。 |
+| [Worktree Safety Inventory](WORKTREE_SAFETY_INVENTORY.md) | CURRENT / OPERATIONAL | 删除 worktree 或 prune 前必须刷新并读取。 |
+| [Task templates](templates/TASK.md)、[Review template](templates/REVIEW.md)、[Handoff template](templates/HANDOFF.md) | CURRENT / TEMPLATE | 仅在创建对应交付时读取。 |
+| [TASK-002 minimum contract](contracts/TASK-002_MINIMUM_DATA_EXECUTION_CONTRACT.md) | TASK-SCOPED / SEMANTIC CONTRACT | G06–G13 semantics only when a current Task cites it; subordinate to AD-001 and not authority for QML/React UI architecture. |
+| Plan 指向的当前 Task、最新 Review/adjudication、checkpoint 和证据 | CURRENT / TASK-SCOPED | 只读当前 Task 明确引用的版本；其他内容均按需检索。 |
+| [01 功能架构](01_FUNCTIONAL_ARCHITECTURE.md)、[03 数据模型](03_DATA_MODEL.md)、[04 用户流程](04_USER_FLOW.md) | REQUIREMENT REFERENCE | 产品行为/概念数据意图；不授予实现权限。03 的正式字段与写入契约以当前 Task 冻结契约为准。 |
+| [06 Translation Pipeline](06_TRANSLATION_PIPELINE.md) | REQUIREMENT + LEGACY MAPPING | 业务流程与安全语义可作需求参考；Qt/QML 接线是历史映射。 |
+| [07 非功能需求](07_NON_FUNCTIONAL_REQUIREMENTS.md)、[08 验收标准](08_ACCEPTANCE_CRITERIA.md) | MIXED / REQUIREMENT | 产品级要求保留；旧 Qt/QML/PyInstaller 实现与 Gate 不可继承到新架构。 |
+| [02 技术架构](02_TECHNICAL_ARCHITECTURE_.md)、[05 UI 映射](05_UI_MAPPING.md)、[11 架构地图](11_ARCHITECTURE_MAPS.md) | LEGACY / HISTORICAL | PySide6/QML 旧生产基线与当时架构映射；不得作为目标架构或新 Task 实施说明。 |
+| [10 接管状态](10_CURRENT_STATE_AND_GAPS.md)、[12 Roadmap](12_ROADMAP.md)、[13 验收追踪](13_ACCEPTANCE_TRACEABILITY.md)、[14 接管验证](14_TAKEOVER_VERIFICATION.md) | HISTORICAL | 带时间点的历史事实、编号与验证结果；不参与当前 DAG、状态或新架构验收。 |
+| [2026-10-12 计划/状态/索引快照](../archive/history/2026-10-12/README.md) | ARCHIVE | 被当前导航替代的完整历史快照，仅审计/恢复时读取。 |
 
-- 新事实标明 As-Is（代码/测试）、To-Be（目标）、Proposal（本次建议）或 Unknown（无证据）。
-- 原始 01～08 已保存在初始基线；后续仅按已授权 Task 修订。接管报告的 SHA256 是修订前指纹，不是当前文件必须保持的值。
-- 架构图与矩阵是派生视图；出现实现后补充 source/test 路径与 commit，才能标为代码生成。
-- 代码、测试和文档同一 Task 一起交付。涉及未分配的共享文档，先交 Codex协调写权限。
-- 同一个结论只维护一个权威位置，其余位置使用链接；STATUS 管阶段，Task 管进度，Review 管审查结论。
+## 架构状态裁决
+
+| 状态 | 定义 | 当前记录 |
+|---|---|---|
+| 旧生产基线 | 曾实际采用的历史生产架构 | Python + PySide6/QML + SQLite；仅作为 Legacy Production Baseline / Migration Reference。 |
+| 迁移中间态 | 特定迁移 Task 中的阶段性实现状态 | 不构成另一个产品目标；仅由当前 Task 明确范围描述，不得推翻目标架构或默认释放 QML 工作。 |
+| 用户最终目标 | 当前唯一继续演进的产品架构 | Windows + React + TypeScript + Tauri/Rust + Python Core + SQLite + Managed Copy。 |
+
+因此，2026-09-25 注册快照中的 QML 保留/parity 计划、旧 M2 释放列表和 Qoder 分工均不代表当前决定；详情仅在 [AD-001 pre-Rebaseline snapshot](../archive/history/2026-10-13/document-rebaseline/source/doc/AD-001_TARGET_DESKTOP_ARCHITECTURE.md) 中作为原始历史文本保留。该归档副本不是权威来源。
+
+## Agent 默认最小读取集
+
+1. AGENTS.md
+2. AD-001
+3. STATUS 当前状态段
+4. REBASELINE_PLAN 当前 DAG
+5. Plan 指定的当前 Task
+6. 该 Task 最新 Review/adjudication
+7. STATUS 指定的 rolling checkpoint
+
+本索引只在需要定位文档或判断分类时读取。不得默认扫描全部 doc、Task、Review、verification、checkpoint 或 archive；历史材料只有在当前 Task 明确需要时按需读取。仓库根目录没有 README.md；本文件承担文档入口与真相地图。

@@ -18,6 +18,8 @@ Reviewer 不能是变更作者。decision 为 pending / changes_requested / appr
 
 ## 范围与依据
 
+本 Review 只对 YAML 中固定的 `base_commit` 与 `reviewed_head` 有效。Task/STATUS 当前指针指定的最新 Review/adjudication 是 canonical；head 改变或出现新 Review 后，本文件自动属于历史记录，不得覆盖或继续当作当前批准。
+
 需求/AC、diff、受影响调用链、共享契约、数据和 UI 边界；记录未审到的部分。
 
 ## Standards（可选视角）

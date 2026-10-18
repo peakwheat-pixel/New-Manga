@@ -4,11 +4,12 @@
 
 ## 每次开始工作
 
-1. 阅读 [Project Rebaseline Plan（唯一规划事实源）](doc/REBASELINE_PLAN.md)、[文档索引](doc/00_INDEX.md) 和 [当前阶段](doc/STATUS.md)。
-2. 阅读 [协作协议](doc/09_COLLABORATION.md)，核对自己的 Task、依赖、授权状态、基线 commit 和允许修改路径。
+1. 默认只读当前有效上下文：[目标架构 AD-001](doc/AD-001_TARGET_DESKTOP_ARCHITECTURE.md)、[当前阶段](doc/STATUS.md) 的当前状态、[Project Rebaseline Plan](doc/REBASELINE_PLAN.md) 的当前 DAG、当前 Task、该 Task 最新 Review/adjudication 和 rolling checkpoint。
+2. [Document Truth Map](doc/00_INDEX.md) 仅在需要定位文档、分类或裁决来源时查阅；[协作协议](doc/09_COLLABORATION.md) 按当前任务需要读取相关章节。不得默认通读历史快照，也不得默认扫描整个 doc/**、verification/**、历史 Task、Review 或 checkpoint。
 3. 检查工作区、分支及 Git common directory；阅读任务引用的需求与真实代码、测试。未提交内容归原作者所有。
 4. 发现事实与文档不一致，在 Task 中留下证据并交 Codex 处理；不能靠聊天、旧项目路径或目标图推断已有实现。
-5. 若 `STATUS` 指向当前审计或 checkpoint，先阅读对应的 `verification/**` 证据；它提供恢复与地图信息，但不替代 Plan、Status、Task 或代码测试事实。
+5. 只按当前 Task/Status 明确引用读取 `verification/**` 证据；它提供恢复与地图信息，但不替代 Plan、Status、Task 或代码测试事实。
+6. 创建/更新 Task、Review、当前状态或证据 pin，以及准备关闭 Task 时，按 [协作协议 §4](doc/09_COLLABORATION.md#4-task-文件约定) 执行生命周期；运行 `pwsh -NoProfile -File tools/governance/check.ps1` 检查当前权威指针。检查器只读，结果不能替代审查或授权。
 
 ## 每次结束对话
 
@@ -37,3 +38,11 @@
 当前唯一继续演进的产品架构为 Windows / React + TypeScript / Tauri / Python Core / SQLite / Managed Copy，详见 [AD-001 架构决策](doc/AD-001_TARGET_DESKTOP_ARCHITECTURE.md)。后续 Task、缺陷诊断和修复只允许落在该新架构；PySide6/QML 代码、测试和既有 Task 仅保留为历史证据，不再释放 Legacy 实现、诊断或修复任务。若旧架构暴露用户可见问题，只把对应产品行为转化为新架构需求并在新架构复现、修复和验收。产品仍只有书架、工作台、阅读器、设置四个一级页面。
 
 所有实现必须保护用户源文件、人工修改、Lock、current/pinned Revision 和任务可恢复性。React/WebView 不直接访问数据库、任意 OS 路径或模型；通过 Tauri IPC 与 Python Core 的冻结契约访问。详细约束按 Task 引用加载，不在本文件复制第二套定义。
+
+## 工作区、归档与派生产物
+
+项目源码固定在 `G:\CODEX\New Manga`。新建的 linked worktree、build、artifact、temp、agent output、task env、exchange 和非 Git archive 统一放入相邻的 `G:\CODEX\New Manga.workspace\`，按 [工作区治理规则](doc/WORKSPACE_GOVERNANCE.md) 的 Task 子目录命名。不得再在 `G:\CODEX\` 根目录新建 `repair-*`、`build-*`、`qoder-tmp`、`P02-*` 或 `*-exchange` 临时目录。既有目录只有在逐项核实来源、引用、dirty/untracked 内容、独有提交和用户数据后才能移动或清理；不确定项保留。
+
+删除 linked worktree 或执行 `git worktree prune` 前，先刷新并读取[当前 Worktree Safety Inventory](doc/WORKTREE_SAFETY_INVENTORY.md)；清洁状态或 HEAD 可达本身不授权删除。
+
+版本化历史资料的归档入口为仓库根目录 `archive/`；仓外派生产物的归档入口为 `G:\CODEX\New Manga.workspace\archive\`。归档或删除前必须记录来源、原路径、内容指纹和完整引用迁移；仍被当前 Gate、Task、Review、evidence/source pin 引用的文件留在原路径。

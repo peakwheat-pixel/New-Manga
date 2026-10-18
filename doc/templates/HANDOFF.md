@@ -43,6 +43,8 @@ status: draft
 
 未解决问题、用户选择、破坏性操作/迁移影响、回退方法、关联 Task；无需重复项目背景。
 
+DONE 前由 Codex按 Task 的 Canonical Evidence 与 Resource Manifest 收口；Handoff 指向最终证据及 closeout 记录。Handoff 本身不授予集成、删除或关闭权限。
+
 ## 实验附录（仅实验任务）
 
 数据来源与许可、数据 Hash、模型/权重版本和 Hash、Provider/Runtime、硬件、网络策略、参数、运行次数、原始结果、质量判断办法、失败样例、限制、建议。Secret 不入报告。

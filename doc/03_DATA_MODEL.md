@@ -1,14 +1,16 @@
 # 03 数据模型与 ER 设计（Target Data Model）
 
+> 范围说明（2026-10-13）：本文是概念领域数据与产品约束参考，不是当前 SQLite schema 或已实现状态。D02 只作为旧生产基线的历史上下文；当前技术架构以 AD-001 为准，字段/约束/写入契约以当前 Task 冻结内容为准。
+
 > 本文件定义新漫画翻译软件的目标数据模型（To-Be），用于指导 SQLite Schema、Repository、Domain Model、Pipeline 状态、Revision、Managed Copy、阅读进度、Provider/Profile、网络代理与后续 UI 映射设计。
 >
 > 本文件基于：
 > - `01_FUNCTIONAL_ARCHITECTURE.md`
-> - `02_TECHNICAL_ARCHITECTURE_.md`
+> - [02 技术架构](02_TECHNICAL_ARCHITECTURE_.md)（仅旧生产基线历史上下文，不是当前技术架构或实现依据）
 > - 已确认的产品规则与交互规则
 >
 > 本文件描述“什么数据是系统真值、实体之间如何关联、状态如何演进、哪些数据进入 SQLite、哪些数据进入 Managed File Storage”。
-> G06～G13 涉及的最小字段、枚举、约束和原子写回规则以 [TASK-002 最小契约](contracts/TASK-002_MINIMUM_DATA_EXECUTION_CONTRACT.md) 为冻结解释。
+> G06～G13 的字段/枚举/约束语义见 [TASK-002 最小契约](contracts/TASK-002_MINIMUM_DATA_EXECUTION_CONTRACT.md)；仅在当前 Task 明确引用时适用，且不决定目标架构或 UI 技术栈。
 >
 > 核心约束：
 > 1. 单用户、本机架构，不引入 User / Account / Permission 业务表。

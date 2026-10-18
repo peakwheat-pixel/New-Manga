@@ -1,158 +1,51 @@
 # Worktree Safety Inventory
 
-> **Staleness notice (2026-09-21):** this inventory was captured on
-> 2026-09-20 at an earlier master baseline. It remains a no-delete safety
-> record, not a current cleanup authorization. The current main-worktree
-> dirty set is recorded in [STATUS](STATUS.md); refresh this file before any
-> worktree deletion or `git worktree prune`.
+> 当前只读清单见[366 条 worktree 明细](../verification/PROJECT-GOVERNANCE-20261012/worktree-inventory.md)，删除/`git worktree prune` 以此清单与当前 Plan/Status 为准。2026-10-12 快照：366 registered，302 clean、64 dirty（47 有 untracked、17 tracked-only）、0 missing；主 checkout 当前状态 26 tracked changes / 1,234 untracked files，Git status SHA-256=`B9A6408B72F67CC0F57E9017E9F779710F0891A0B14433C8499F3A15D12F8F56`。
 
-Snapshot time: 2026-09-20 (Asia/Shanghai)
+- 64 个 dirty worktree 全部保留；当前 P02 路径按明细标记 `REQUIRED_EVIDENCE / MUST_PRESERVE`。
+- clean 不等于可删：Task 归属、独有 commit、未跟踪内容无法确认时一律 `UNKNOWN_DO_NOT_DELETE`。本轮无 worktree 同时满足删除条件，移除数为 0。
+- `.git/worktrees` 有 12 条 stale admin metadata；`git worktree prune --dry-run` 可列出，但实际 prune 因 `Permission denied` 未清除。未强制删除。
+- 只有 Task 明确 `done/closed`、worktree clean、无 untracked、无未集成独有 commit 且不属于当前 Task 时，才允许移除。
 
-Repository: `G:/CODEX/New Manga`
+旧的 2026-09-20 清单已原样归档于 [WORKTREE_SAFETY_INVENTORY.md](../archive/history/2026-10-12/WORKTREE_SAFETY_INVENTORY.md)，其中的 `SAFE_TO_REMOVE` 是历史候选，不构成当前删除授权。
 
-Master baseline: `d05b3dbbbf4806df07d2b310683923d5df01f2a5`
+## Stage 5 数据迁移与删除前复核（2026-10-13）
 
-No worktree was removed or pruned. Classification is conservative:
+本节快照取代上方 2026-10-12 的 366-worktree 当前数量；上方记录保留作历史证据。本阶段未触碰 P02/evidence，也未检查 active `M2-SFX-SYNTH-BG-AUTO` worktree 内容。
 
-- `MUST_PRESERVE`: active workspace or contains tracked/untracked changes.
-- `NEEDS_REVIEW`: clean but has commits not reachable from current `master`.
-- `SAFE_TO_REMOVE`: clean, task-related, and its HEAD is reachable from `master`; this is only eligibility, not an instruction to delete.
-- `UNKNOWN`: clean detached Codex worktree whose related task/ownership is not established.
+- 删除前 Git 注册 worktree：153；本地分支：336。活跃 Synth worktree 与 3 个保留候选均仍在注册表中。
+- 10 个已完成 Task 候选：`M2-KO-TILE-CALIB`、`M2-SFX-ANNOTATE-R1`、`M2-SFX-ANNOTATE-R3`、`M2-SFX-E2E-MATERIAL`、`M2-SFX-GATE-T3`、`M2-SFX-TRAIN-V1`、`M2-SFX-TRAIN-V2`、`M2-TA2B`、`M2-TA2C-TOOLING-GAPS`、`M2-TA3-A`。删除前二次核验均为 clean（tracked/untracked）、HEAD 未变、main 已包含、独有 commit 数为 0；对应非缓存源路径、文件数、字节数和 SHA-256 全部匹配迁移清单。
+- 迁移已将 8,596 个源文件（7,650,324,792 B）按 SHA-256 合并为 3,089 个对象（4,190,229,942 B）。Master registry、分类 manifest 与每个目标对象的 size/hash 均已验证；旧源路径、Task、许可证/用途和引用映射保存在 `G:\CODEX\New Manga.workspace\data-registry\registry.json`。
+- 保留候选：`M2-SFX-ANNOTATE-R2`（`in_review`/关闭未完成）；`M2-SFX-CORRECTION-EXPORTER`（最终 Review/关闭状态冲突）；`M2-SFX-DATA-INFRA`（active Synth 依赖该目录/manifest 契约，运行时路径 override 尚未核实）。三者数据与 worktree 不迁移、不删除。
+- 独立复核、迁移收据及逐项删除前快照：`G:\CODEX\New Manga.workspace\agent-output\stage5-20261013\source-data-migration-plan.json`、`copy-verification-receipt.json`、`pre-removal-worktree-inventory.json`。只有普通 `git worktree remove` 可安全执行；不删本地分支、不运行 prune、不用 force。
 
-Summary: 94 linked worktrees — 3 `MUST_PRESERVE`, 9 `NEEDS_REVIEW`, 76 `SAFE_TO_REMOVE`, 6 `UNKNOWN`.
+### Stage 5 执行后状态
 
-| Path | Branch | HEAD | Git status | Commits not in master | Related work | Disposition |
-|---|---|---:|---|---:|---|---|
-| `G:/CODEX/New Manga` | `master` | `d05b3db` | 1 tracked, 19 untracked | 0 | `ACTIVE-REBASELINE` | **MUST_PRESERVE** |
-| `C:/Users/49745/.codex/worktrees/0e0e/New Manga` | `(detached)` | `98b38b7` | clean | 0 | `UNKNOWN` | **UNKNOWN** |
-| `C:/Users/49745/.codex/worktrees/2a13/New Manga` | `(detached)` | `130e04c` | clean | 0 | `UNKNOWN` | **UNKNOWN** |
-| `C:/Users/49745/.codex/worktrees/3a4d/New Manga` | `(detached)` | `130e04c` | clean | 0 | `UNKNOWN` | **UNKNOWN** |
-| `C:/Users/49745/.codex/worktrees/88b4/New Manga` | `(detached)` | `98b38b7` | clean | 0 | `UNKNOWN` | **UNKNOWN** |
-| `C:/Users/49745/.codex/worktrees/97d5/New Manga` | `(detached)` | `132e776` | clean | 0 | `UNKNOWN` | **UNKNOWN** |
-| `C:/Users/49745/.codex/worktrees/e8e0/New Manga` | `(detached)` | `132e776` | clean | 0 | `UNKNOWN` | **UNKNOWN** |
-| `G:/CODEX/New Manga.worktrees/POSTHOC-WINDOW-2026-09-19-qoder` | `agent/qoder/POSTHOC-WINDOW-2026-09-19` | `86b1518` | clean | 0 | `POSTHOC-WINDOW-2026-09-19-qoder` | **SAFE_TO_REMOVE** |
-| `G:/CODEX/New Manga.worktrees/TASK-001-deepseek-review` | `agent/deepseek/TASK-001-review` | `6c0a996` | clean | 0 | `TASK-001` | **SAFE_TO_REMOVE** |
-| `G:/CODEX/New Manga.worktrees/TASK-002-deepseek-review` | `agent/deepseek/TASK-002-review` | `e866ea1` | clean | 0 | `TASK-002` | **SAFE_TO_REMOVE** |
-| `G:/CODEX/New Manga.worktrees/TASK-003-deepseek` | `agent/deepseek/TASK-003-verification-spec` | `4a76cac` | clean | 0 | `TASK-003` | **SAFE_TO_REMOVE** |
-| `G:/CODEX/New Manga.worktrees/TASK-004-deepseek-rereview` | `agent/deepseek/TASK-004-rereview-181a356` | `5f4db0f` | clean | 0 | `TASK-004` | **SAFE_TO_REMOVE** |
-| `G:/CODEX/New Manga.worktrees/TASK-004-deepseek-review` | `agent/deepseek/TASK-004-review` | `020c285` | clean | 1 | `TASK-004` | **NEEDS_REVIEW** |
-| `G:/CODEX/New Manga.worktrees/TASK-004-zcode` | `agent/zcode/TASK-004-windows-packaging` | `a370b1e` | clean | 0 | `TASK-004` | **SAFE_TO_REMOVE** |
-| `G:/CODEX/New Manga.worktrees/TASK-005-codex` | `agent/codex/TASK-005-minimal-bootstrap` | `28ffadc` | clean | 0 | `TASK-005` | **SAFE_TO_REMOVE** |
-| `G:/CODEX/New Manga.worktrees/TASK-005-deepseek-review` | `agent/deepseek/TASK-005-review` | `118038f` | clean | 0 | `TASK-005` | **SAFE_TO_REMOVE** |
-| `G:/CODEX/New Manga.worktrees/TASK-005-zcode-audit` | `agent/zcode/TASK-005-audit-metadata` | `9fa6835` | clean | 0 | `TASK-005` | **SAFE_TO_REMOVE** |
-| `G:/CODEX/New Manga.worktrees/TASK-006-deepseek-review` | `agent/deepseek/TASK-006-review` | `baeef13` | clean | 0 | `TASK-006` | **SAFE_TO_REMOVE** |
-| `G:/CODEX/New Manga.worktrees/TASK-006-zcode` | `agent/zcode/TASK-006-persistence-artifact` | `af6deef` | clean | 0 | `TASK-006` | **SAFE_TO_REMOVE** |
-| `G:/CODEX/New Manga.worktrees/TASK-007-deepseek-review` | `agent/deepseek/TASK-007-review` | `25df1ca` | clean | 0 | `TASK-007` | **SAFE_TO_REMOVE** |
-| `G:/CODEX/New Manga.worktrees/TASK-007-zcode` | `agent/zcode/TASK-007-library-import` | `76328bf` | clean | 0 | `TASK-007` | **SAFE_TO_REMOVE** |
-| `G:/CODEX/New Manga.worktrees/TASK-008-deepseek-review` | `agent/deepseek/TASK-008-review` | `f9e5977` | clean | 0 | `TASK-008` | **SAFE_TO_REMOVE** |
-| `G:/CODEX/New Manga.worktrees/TASK-008-zcode` | `agent/zcode/TASK-008-region-editing` | `f7becb4` | clean | 0 | `TASK-008` | **SAFE_TO_REMOVE** |
-| `G:/CODEX/New Manga.worktrees/TASK-009-deepseek-review` | `agent/deepseek/TASK-009-review` | `d2fe13c` | clean | 0 | `TASK-009` | **SAFE_TO_REMOVE** |
-| `G:/CODEX/New Manga.worktrees/TASK-009-zcode` | `agent/zcode/TASK-009-provider-network-credentials` | `50b6930` | clean | 0 | `TASK-009` | **SAFE_TO_REMOVE** |
-| `G:/CODEX/New Manga.worktrees/TASK-010-deepseek-review` | `agent/deepseek/TASK-010-review` | `008b101` | clean | 0 | `TASK-010` | **SAFE_TO_REMOVE** |
-| `G:/CODEX/New Manga.worktrees/TASK-010-zcode` | `agent/zcode/TASK-010-translation-context` | `05effee` | clean | 0 | `TASK-010` | **SAFE_TO_REMOVE** |
-| `G:/CODEX/New Manga.worktrees/TASK-011-deepseek-review` | `agent/deepseek/TASK-011-review` | `36f874a` | clean | 0 | `TASK-011` | **SAFE_TO_REMOVE** |
-| `G:/CODEX/New Manga.worktrees/TASK-012-deepseek-review` | `agent/deepseek/TASK-012-review` | `084db60` | clean | 0 | `TASK-012` | **SAFE_TO_REMOVE** |
-| `G:/CODEX/New Manga.worktrees/TASK-012-zcode` | `agent/zcode/TASK-012-navigation-library-ui` | `e6fe52a` | clean | 0 | `TASK-012` | **SAFE_TO_REMOVE** |
-| `G:/CODEX/New Manga.worktrees/TASK-013-deepseek-review` | `agent/deepseek/TASK-013-review` | `8f7c454` | clean | 0 | `TASK-013` | **SAFE_TO_REMOVE** |
-| `G:/CODEX/New Manga.worktrees/TASK-013-zcode` | `agent/zcode/TASK-013-workbench-task-progress` | `7e50523` | clean | 0 | `TASK-013` | **SAFE_TO_REMOVE** |
-| `G:/CODEX/New Manga.worktrees/TASK-014-deepseek-review` | `agent/deepseek/TASK-014-review` | `5276a18` | clean | 0 | `TASK-014` | **SAFE_TO_REMOVE** |
-| `G:/CODEX/New Manga.worktrees/TASK-014-rendering-style` | `agent/zcode/TASK-014-rendering-style` | `a49fc76` | clean | 0 | `TASK-014` | **SAFE_TO_REMOVE** |
-| `G:/CODEX/New Manga.worktrees/TASK-015-deepseek-posthoc` | `agent/deepseek/TASK-015-posthoc` | `9b77685` | clean | 1 | `TASK-015` | **NEEDS_REVIEW** |
-| `G:/CODEX/New Manga.worktrees/TASK-015-zcode` | `agent/zcode/TASK-015-reader-export` | `a915d56` | clean | 0 | `TASK-015` | **SAFE_TO_REMOVE** |
-| `G:/CODEX/New Manga.worktrees/TASK-016-deepseek` | `agent/deepseek/TASK-016-ocr-detection-experiment` | `8153274` | clean | 0 | `TASK-016` | **SAFE_TO_REMOVE** |
-| `G:/CODEX/New Manga.worktrees/TASK-016-review-fixed` | `(detached)` | `dfd11b9` | clean | 0 | `TASK-016` | **SAFE_TO_REMOVE** |
-| `G:/CODEX/New Manga.worktrees/TASK-017-deepseek-posthoc` | `agent/deepseek/TASK-017-posthoc` | `fb0bc40` | clean | 1 | `TASK-017` | **NEEDS_REVIEW** |
-| `G:/CODEX/New Manga.worktrees/TASK-017-deepseek-tail` | `agent/deepseek/TASK-017-tail-review` | `e50ba29` | clean | 0 | `TASK-017` | **SAFE_TO_REMOVE** |
-| `G:/CODEX/New Manga.worktrees/TASK-017-zcode` | `agent/zcode/TASK-017-translation-protocol-experiment` | `387bb1e` | clean | 0 | `TASK-017` | **SAFE_TO_REMOVE** |
-| `G:/CODEX/New Manga.worktrees/TASK-018-deepseek` | `agent/deepseek/TASK-018-mask-inpainting-experiment` | `c8c2a8e` | clean | 0 | `TASK-018` | **SAFE_TO_REMOVE** |
-| `G:/CODEX/New Manga.worktrees/TASK-019-deepseek` | `agent/deepseek/TASK-019-provider-integration` | `3929d9e` | clean | 0 | `TASK-019` | **SAFE_TO_REMOVE** |
-| `G:/CODEX/New Manga.worktrees/TASK-020-zcode` | `agent/zcode/TASK-020-webtoon-chunked-reading` | `40f20e7` | clean | 0 | `TASK-020` | **SAFE_TO_REMOVE** |
-| `G:/CODEX/New Manga.worktrees/TASK-021-zcode` | `agent/zcode/TASK-021-backup-trash-cleanup-diagnostics` | `79ec0d2` | clean | 0 | `TASK-021` | **SAFE_TO_REMOVE** |
-| `G:/CODEX/New Manga.worktrees/TASK-023-zcode` | `agent/zcode/TASK-023-pdf-mobi-import` | `c87f21c` | clean | 0 | `TASK-023` | **SAFE_TO_REMOVE** |
-| `G:/CODEX/New Manga.worktrees/TASK-024-deepseek-posthoc` | `agent/deepseek/TASK-024-posthoc` | `9454cec` | clean | 1 | `TASK-024` | **NEEDS_REVIEW** |
-| `G:/CODEX/New Manga.worktrees/TASK-024-zcode` | `agent/zcode/TASK-024-extension-boundaries-design` | `86072c3` | 1 tracked | 0 | `TASK-024` | **MUST_PRESERVE** |
-| `G:/CODEX/New Manga.worktrees/TASK-028-deepseek-review` | `agent/deepseek/TASK-028-review` | `09108d1` | clean | 0 | `TASK-028` | **SAFE_TO_REMOVE** |
-| `G:/CODEX/New Manga.worktrees/TASK-029-deepseek-review` | `agent/deepseek/TASK-029-review` | `9b69f35` | clean | 0 | `TASK-029` | **SAFE_TO_REMOVE** |
-| `G:/CODEX/New Manga.worktrees/TASK-029-zcode` | `agent/zcode/TASK-029-unified-sqlite-persistence` | `4fcb150` | clean | 0 | `TASK-029` | **SAFE_TO_REMOVE** |
-| `G:/CODEX/New Manga.worktrees/TASK-030-deepseek-review` | `agent/deepseek/TASK-030-review` | `dba2637` | clean | 0 | `TASK-030` | **SAFE_TO_REMOVE** |
-| `G:/CODEX/New Manga.worktrees/TASK-030-zcode` | `agent/zcode/TASK-030-main-bootstrap-assembly` | `a64c93a` | clean | 0 | `TASK-030` | **SAFE_TO_REMOVE** |
-| `G:/CODEX/New Manga.worktrees/TASK-031-deepseek-review` | `agent/deepseek/TASK-031-review` | `0509003` | clean | 0 | `TASK-031` | **SAFE_TO_REMOVE** |
-| `G:/CODEX/New Manga.worktrees/TASK-032-deepseek` | `agent/deepseek/TASK-032-sfx-policy-gate-region-type` | `ff887db` | clean | 0 | `TASK-032` | **SAFE_TO_REMOVE** |
-| `G:/CODEX/New Manga.worktrees/TASK-033-deepseek` | `agent/deepseek/TASK-033-full-chain-handlers` | `d322ce2` | clean | 0 | `TASK-033` | **SAFE_TO_REMOVE** |
-| `G:/CODEX/New Manga.worktrees/TASK-033-zcode` | `agent/zcode/TASK-033-full-chain-handlers` | `401d6d7` | clean | 0 | `TASK-033` | **SAFE_TO_REMOVE** |
-| `G:/CODEX/New Manga.worktrees/TASK-034-deepseek` | `agent/deepseek/TASK-034-test-layer-hardening` | `132e776` | clean | 0 | `TASK-034` | **SAFE_TO_REMOVE** |
-| `G:/CODEX/New Manga.worktrees/TASK-035-deepseek` | `agent/deepseek/TASK-035-render-sfx-gate-region-type` | `092957e` | clean | 0 | `TASK-035` | **SAFE_TO_REMOVE** |
-| `G:/CODEX/New Manga.worktrees/TASK-036-deepseek` | `agent/deepseek/TASK-036-settings-validation-and-export-order` | `5606221` | clean | 0 | `TASK-036` | **SAFE_TO_REMOVE** |
-| `G:/CODEX/New Manga.worktrees/TASK-037-zcode` | `agent/zcode/TASK-037-flaky-diagnostic-fix` | `7c35277` | clean | 0 | `TASK-037` | **SAFE_TO_REMOVE** |
-| `G:/CODEX/New Manga.worktrees/TASK-038-zcode` | `agent/zcode/TASK-038-production-assembly` | `fcf791f` | clean | 0 | `TASK-038` | **SAFE_TO_REMOVE** |
-| `G:/CODEX/New Manga.worktrees/TASK-039-zcode` | `agent/zcode/TASK-039-clean-availability` | `355c123` | clean | 0 | `TASK-039` | **SAFE_TO_REMOVE** |
-| `G:/CODEX/New Manga.worktrees/TASK-040-zcode` | `agent/zcode/TASK-040-clean-probe-injection` | `9b9c2da` | clean | 0 | `TASK-040` | **SAFE_TO_REMOVE** |
-| `G:/CODEX/New Manga.worktrees/TASK-041-zcode` | `agent/zcode/TASK-041-mobi-import` | `4d925f3` | clean | 0 | `TASK-041` | **SAFE_TO_REMOVE** |
-| `G:/CODEX/New Manga.worktrees/TASK-042-zcode` | `agent/zcode/TASK-042-streaming-decode` | `98b38b7` | clean | 0 | `TASK-042` | **SAFE_TO_REMOVE** |
-| `G:/CODEX/New Manga.worktrees/TASK-043-deepseek` | `agent/deepseek/TASK-043-import-fixes` | `d765f22` | clean | 0 | `TASK-043` | **SAFE_TO_REMOVE** |
-| `G:/CODEX/New Manga.worktrees/TASK-044-deepseek` | `agent/deepseek/TASK-044-purge-integrity` | `9c7d0fa` | clean | 0 | `TASK-044` | **SAFE_TO_REMOVE** |
-| `G:/CODEX/New Manga.worktrees/TASK-045-deepseek` | `agent/deepseek/TASK-045-webtoon-display-fixes` | `7261ec7` | clean | 0 | `TASK-045` | **SAFE_TO_REMOVE** |
-| `G:/CODEX/New Manga.worktrees/TASK-045-posthoc-zcode` | `agent/zcode/TASK-045-posthoc` | `8b47b2e` | clean | 1 | `TASK-045` | **NEEDS_REVIEW** |
-| `G:/CODEX/New Manga.worktrees/TASK-046-zcode` | `agent/zcode/TASK-046-decode-rewind-cost` | `60cebc0` | 1 tracked, 2 untracked | 0 | `TASK-046` | **MUST_PRESERVE** |
-| `G:/CODEX/New Manga.worktrees/TASK-047-qoder` | `agent/qoder/TASK-047-ui-ux-gui-design` | `980ae7d` | clean | 9 | `TASK-047` | **NEEDS_REVIEW** |
-| `G:/CODEX/New Manga.worktrees/TASK-048-zcode` | `agent/zcode/TASK-048-thread-sqlite` | `8dc13eb` | clean | 0 | `TASK-048` | **SAFE_TO_REMOVE** |
-| `G:/CODEX/New Manga.worktrees/TASK-049-zcode` | `agent/zcode/TASK-049-region-input` | `7aca966` | clean | 0 | `TASK-049` | **SAFE_TO_REMOVE** |
-| `G:/CODEX/New Manga.worktrees/TASK-050-zcode` | `agent/zcode/TASK-050-settings-bindings` | `e49349b` | clean | 0 | `TASK-050` | **SAFE_TO_REMOVE** |
-| `G:/CODEX/New Manga.worktrees/TASK-051-zcode` | `agent/zcode/TASK-051-workbench-viewer-modes` | `7299b81` | clean | 0 | `TASK-051` | **SAFE_TO_REMOVE** |
-| `G:/CODEX/New Manga.worktrees/TASK-052-zcode` | `agent/zcode/TASK-052-command-error-surface` | `78aa598` | clean | 0 | `TASK-052` | **SAFE_TO_REMOVE** |
-| `G:/CODEX/New Manga.worktrees/TASK-053-zcode` | `agent/zcode/TASK-053-run-files-leak` | `54fbdfc` | clean | 0 | `TASK-053` | **SAFE_TO_REMOVE** |
-| `G:/CODEX/New Manga.worktrees/TASK-054-zcode` | `agent/zcode/TASK-054-cancel-pending-rename` | `51bc5a5` | clean | 0 | `TASK-054` | **SAFE_TO_REMOVE** |
-| `G:/CODEX/New Manga.worktrees/TASK-055-zcode` | `agent/zcode/TASK-055-diagnostics` | `763a23c` | clean | 0 | `TASK-055` | **SAFE_TO_REMOVE** |
-| `G:/CODEX/New Manga.worktrees/TASK-056-zcode` | `agent/zcode/TASK-056-cache-version-cleanup` | `823b2d3` | clean | 0 | `TASK-056` | **SAFE_TO_REMOVE** |
-| `G:/CODEX/New Manga.worktrees/TASK-057-qoder-review` | `agent/qoder/TASK-057-review` | `257ee5b` | clean | 8 | `TASK-057` | **NEEDS_REVIEW** |
-| `G:/CODEX/New Manga.worktrees/TASK-057-zcode` | `agent/zcode/TASK-057-backup-restore` | `29546f7` | clean | 6 | `TASK-057` | **NEEDS_REVIEW** |
-| `G:/CODEX/New Manga.worktrees/TASK-058-qoder-review` | `agent/qoder/TASK-058-review` | `d0cac07` | clean | 0 | `TASK-058` | **SAFE_TO_REMOVE** |
-| `G:/CODEX/New Manga.worktrees/TASK-058-zcode` | `agent/zcode/TASK-058-graceful-shutdown-drain` | `9c8cd52` | clean | 0 | `TASK-058` | **SAFE_TO_REMOVE** |
-| `G:/CODEX/New Manga.worktrees/TASK-059-codex-review` | `agent/codex/TASK-059-review` | `06064f8` | clean | 0 | `TASK-059` | **SAFE_TO_REMOVE** |
-| `G:/CODEX/New Manga.worktrees/TASK-059-qoder` | `agent/qoder/TASK-059-ui-redesign` | `6cb0afb` | clean | 0 | `TASK-059` | **SAFE_TO_REMOVE** |
-| `G:/CODEX/New Manga.worktrees/TASK-059-zcode` | `agent/zcode/TASK-059-ui-redesign` | `58272ab` | clean | 0 | `TASK-059` | **SAFE_TO_REMOVE** |
-| `G:/CODEX/New Manga.worktrees/TASK-060-qoder-review` | `agent/qoder/TASK-060-review` | `36b886c` | clean | 0 | `TASK-060` | **SAFE_TO_REMOVE** |
-| `G:/CODEX/New Manga.worktrees/TASK-060-zcode` | `agent/zcode/TASK-060-sqlite-ownership` | `f7745e6` | clean | 0 | `TASK-060` | **SAFE_TO_REMOVE** |
-| `G:/CODEX/New Manga.worktrees/TASK-061-qoder-review` | `agent/qoder/TASK-061-review` | `be99544` | clean | 4 | `TASK-061` | **NEEDS_REVIEW** |
-| `G:/CODEX/New Manga.worktrees/TASK-061-zcode` | `agent/zcode/TASK-061-connection-eviction` | `ffdc47d` | clean | 0 | `TASK-061` | **SAFE_TO_REMOVE** |
-| `G:/CODEX/New Manga.worktrees/TASK-062-codex` | `agent/codex/TASK-062-posthoc-residuals` | `9188fc3` | clean | 0 | `TASK-062` | **SAFE_TO_REMOVE** |
-| `G:/CODEX/New Manga.worktrees/TASK-062-qoder-review` | `agent/qoder/TASK-062-review` | `0fe774d` | clean | 0 | `TASK-062` | **SAFE_TO_REMOVE** |
+- 10 个上述候选均已用普通 `git worktree remove` 成功移除；没有 `--force`、没有本地分支删除、没有 `git worktree prune`。worktree 由 153 降至 143；本地分支仍为 336，列表未变。
+- 3 个保留候选、active `M2-SFX-SYNTH-BG-AUTO` 仍已注册。P02/evidence 未访问或修改。
+- 3,089 个中央对象全部再次通过 size/SHA-256 检验，registry/category manifests 和所有 8,596 个已迁移 source alias 均有效；0 个唯一对象丢失，5,507 个重复文件实例已由唯一对象合并。
+- G: 可用空间：治理开始 1,546,634,313,728 B；复制后、移除前 1,542,395,023,360 B；移除后 1,551,931,813,888 B。移除阶段净增加 9,536,790,528 B；从治理开始到完成，净增加 5,297,500,160 B。
+- 最终只读复核：`G:\CODEX\New Manga.workspace\agent-output\stage5-20261013\final-post-migration-audit.json`（`PASS`）；逐项 Git 操作记录：`worktree-removal-receipt.json`。
+- 最终审计快照中的 G: 可用空间为 1,551,931,793,408 B，相比治理开始净增加 5,297,479,680 B；该值来自最终 audit 记录，卷上后续少量文件写入可能使实时可用空间略有浮动。
 
-## Dirty worktree details
+## Stage 6 P02PRE-R1H-P2-1 closeout deletion precheck (2026-10-13)
 
-### `G:/CODEX/New Manga`
+本节按 Task Lifecycle Governance v2 / 协作协议 §4.2 刷新本 Task 计划清理项；不是对其他 worktree 的全量状态复核。当前 Git 注册 worktree=151、本地分支=343。Codex 主 checkout HEAD=343895fb5f0329c0c07a7104ec321b698f967607，index SHA-256=C5CA88842173A8FE4B9C6B6B675528347EECBDC73F85600ABA06F11E3A692B68。
 
-- ` M experiments/TASK-017/README.md`
-- `?? .qoder-credits/[@代码审查](skill___fullstac__3a3ee254.canvas.tsx`
-- `?? .qoder-credits/[@代码审查](skill___fullstac__617e8c11.canvas.tsx`
-- `?? .qoder-credits/[@代码审查](skill___fullstac__6d0bdc2f.canvas.tsx`
-- `?? .qoder-credits/[@代码审查](skill___fullstac__6d692ab1.canvas.tsx`
-- `?? .qoder-credits/[@代码审查](skill___fullstac__92364678.canvas.tsx`
-- `?? .qoder-credits/[@代码审查](skill___fullstac__f77fdd01.canvas.tsx`
-- `?? .qoder-credits/[@代码审查](skill___fullstac__fce86d6b.canvas.tsx`
-- `?? .qoder-credits/report.json`
-- `?? .qoder-credits/接下来的任务不要保存在项目目录，另存在项目之外，__0f61192d.canvas.tsx`
-- `?? .qoder-credits/接下来的任务不要保存在项目目录，另存在项目之外，__1a7ff85c.canvas.tsx`
-- `?? .qoder-credits/接下来的任务不要保存在项目目录，另存在项目之外，__91b88c8d.canvas.tsx`
-- `?? .qoder-credits/接下来的任务不要保存在项目目录，另存在项目之外，__a97ca706.canvas.tsx`
-- `?? .qoder-credits/接下来的任务不要保存在项目目录，另存在项目之外，__c6f27d5d.canvas.tsx`
-- `?? .qoder-credits/接下来的任务不要保存在项目目录，另存在项目之外，__e02c94b5.canvas.tsx`
-- `?? .qoder-credits/这个是什么，有什么用，怎么用。请详细说明。不改动__17858942.canvas.tsx`
-- `?? .qoder-credits/这个是什么，有什么用，怎么用。请详细说明。不改动__279dc059.canvas.tsx`
-- `?? .qoder-credits/这个是什么，有什么用，怎么用。请详细说明。不改动__2e6401a8.canvas.tsx`
-- `?? .qoder-credits/这个是什么，有什么用，怎么用。请详细说明。不改动__a3e3bbc8.canvas.tsx`
-- `?? .qoder-credits/这个是什么，有什么用，怎么用。请详细说明。不改动__eab0bb7c.canvas.tsx`
+- DELETE_SAFE 候选：G:/CODEX/New Manga.workspace/worktrees/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE-INTEGRATION；branch=codex/integration-p02pre-r1h-p2-1-external-harness-trace；当前 HEAD=6dffaa6cd3748a74dbbe89e408ccaad3ea4fd10c；tracked/untracked 均 clean；git submodule status 为空。
+- 所有集成提交已 fast-forward 到保留 Task worktree branch agent/codex/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE，当前 HEAD 同为 6dffaa6cd3748a74dbbe89e408ccaad3ea4fd10c；集成历史可从此 branch 到达，branch 本身保留。
+- DELETE_SAFE 候选：Task agent-output 目录，共 9 个文件、125,739 B；逐文件大小和 SHA-256 记录在 Task 的 resource-closeout-r2.json。复查匹配后才移除。
+- PRESERVE_REFERENCED：原 Task worktree 固定路径保留，因为 DSH R2 会话与 workspace registration 引用该路径；DSH R1/R2 transcript、workspace registry 及 .codex 用户数据全部保留。
+- 一般 worktree 清理条件仍有效。此处仅使用 §4.2 明确的 lifecycle v2 approved/integration closeout window：精确 Task 资源、无 dirty/untracked/submodule、提交已由保留 branch 到达、inventory 已复核；随后只允许普通 git worktree remove，不使用 --force 或 git worktree prune。
+- 本节刷新时间：2026-10-13；删除前状态。最终移除结果将在本节追加，完成后重新读取本文件。
 
-### `G:/CODEX/New Manga.worktrees/TASK-024-zcode`
 
-- ` M verification/TASK-024/author-verification.md`
+### Stage 6 执行结果（2026-10-13）
 
-### `G:/CODEX/New Manga.worktrees/TASK-046-zcode`
+- agent-output 9/9 文件、125,739 B 全部与已提交 SHA-256 manifest 匹配后移除。
+- 集成 worktree 通过普通 git worktree remove 成功移除；未用 --force，未运行 git worktree prune。D13 提交仍由保留的 Task worktree branch 到达，integration branch ref 也保留。
+- 注册 worktree 数由 151 降至 150；本地 branch 数仍为 343。
+- 原 Task worktree 固定路径仍注册，HEAD=6dffaa6cd3748a74dbbe89e408ccaad3ea4fd10c，clean；DSH R2 session/workspace 路径保留。
+- Codex home、DSH R1/R2 session 与 workspace registry 未删除或修改。主 checkout HEAD 和 index SHA-256 仍与删除前快照一致。
+- 最终 closeout manifest 与 Task 终态记录随后写入保留 Task branch；本清单此后不再变更。
 
-- ` M doc/reviews/TASK-046-7bf476b.md`
-- `?? verification/TASK-046/review-7bf476b/post-integration-full-suite-2b40085.log`
-- `?? verification/TASK-046/review-7bf476b/run_suite_at.ps1`
-
-## Disposition rule
-
-No removal is authorized by this inventory alone. Before any later removal, refresh status, confirm ownership, and re-check reachability against the then-current master. Never substitute `git worktree prune` for that review.

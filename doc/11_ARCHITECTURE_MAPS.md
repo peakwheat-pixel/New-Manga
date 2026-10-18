@@ -1,5 +1,7 @@
 # Architecture / Data / UI / Flow 地图
 
+> **分类：HISTORICAL / LEGACY As-Is（2026-09-22 快照）**。下方 Python/PySide6/QML 图表描述旧生产代码与旧 To-Be 记录，不是当前实现快照，也不是目标架构。当前目标只以 [AD-001](AD-001_TARGET_DESKTOP_ARCHITECTURE.md) 为准；当前任务/实现事实按 [STATUS](STATUS.md)、[REBASELINE_PLAN](REBASELINE_PLAN.md) 与 Task 的固定证据核验。
+
 基线：2026-09-22，真实代码逆向部分见
 [PROJECT-AUDIT-2026-09-22](../verification/PROJECT-AUDIT-2026-09-22.md)。下文 D01～D08
 对应 [文档索引](00_INDEX.md)；旧的 2026-09-13 接管图仍保留为历史对照。

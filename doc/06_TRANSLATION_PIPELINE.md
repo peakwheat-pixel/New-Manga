@@ -1,5 +1,7 @@
 # 06 翻译 Pipeline 执行协议（Target Translation Pipeline）
 
+> **范围说明（2026-10-12）**：本文的业务 Pipeline 阶段、恢复语义与数据安全要求保留为产品/业务要求，不因旧 UI 技术映射而失效，也不自动释放实现任务。QML/UI Thread 展示与 Qt 接线属于 Legacy Migration Reference。当前目标由 Python Core 执行业务逻辑，经 Tauri IPC 提供给 React UI；新架构实现和验收须由当前授权 Task/contract 映射，见 [AD-001](AD-001_TARGET_DESKTOP_ARCHITECTURE.md)。
+
 > 本文件定义新漫画翻译软件的目标 Pipeline 执行协议（To-Be），用于把 `01 功能架构`、`02 技术架构`、`03 数据模型`、`04 用户流程`、`05 UI Mapping` 统一成可实现、可恢复、可测试的后台执行规则。
 >
 > 本文件直接承接：

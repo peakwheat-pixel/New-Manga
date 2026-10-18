@@ -1,11 +1,13 @@
 # 04 用户操作流程（Target User Flow）
 
+> **范围说明（2026-10-12）**：本文的用户操作流程保留为产品意图，不定义技术栈，也不自动释放实现任务。对 `05_UI_MAPPING.md` 的技术映射引用是历史映射；QML/Qt 组件不属于当前目标架构。新架构实现和验收由当前授权 Task/contract 将适用流程映射到 React/Tauri。
+
 > 本文件定义新漫画翻译软件的目标用户操作流程（To-Be）。
 >
 > 本文件基于：
 >
 > - `01_FUNCTIONAL_ARCHITECTURE.md`
-> - `02_TECHNICAL_ARCHITECTURE_.md`
+> - [02 技术架构](02_TECHNICAL_ARCHITECTURE_.md)（仅旧生产基线历史上下文，不定义当前技术架构）
 > - `03_DATA_MODEL.md`
 > - 已确认的导航、悬浮窗、批处理、锁定、Revision、Webtoon、自动字号与多 Provider / 网络代理规则
 >
@@ -18,7 +20,7 @@
 > 5. 哪些内容允许批量、重跑、跳过、恢复；
 > 6. 哪些操作必须保护人工修改和历史版本。
 >
-> 具体界面位置、控件名称和 QML 组件映射由后续 `05_UI_MAPPING.md` 定义；Pipeline 内部协议由 `06_TRANSLATION_PIPELINE.md` 进一步展开。
+> 本文原注册稿曾将界面位置和 QML 组件映射指向 05_UI_MAPPING.md；该映射现归类为 Legacy 历史参考，不定义 React UI。Pipeline 的业务流程与数据安全语义见 06_TRANSLATION_PIPELINE.md，技术实现仍由当前 Task/contract 冻结。
 
 ---
 
