@@ -101,8 +101,8 @@ if ($corePid -gt 0) {
     $recMs = if ($recoverAt) { [int]($recoverAt - $killAt).TotalMilliseconds } else { -1 }
     $resMs = if ($respawnAt) { [int]($respawnAt - $killAt).TotalMilliseconds } else { -1 }
     T "TIMELINE failure_banner_ms=$failMs recovered_banner_ms=$recMs respawn_ms=$resMs new_pid=$newPid"
-    T ("ASSERT " + $(if ($seenFail) { 'PASS' } else { 'FAIL' }) + " r004:explicit-failure-banner-observed (text=$firstFailText)")
-    T ("ASSERT " + $(if ($resMs -ge 0) { 'PASS' } else { 'FAIL' }) + " r004:sidecar-auto-respawned (ms=$resMs)")
+    A $seenFail "r004:explicit-failure-banner-observed (text=$firstFailText)"
+    A ($resMs -ge 0) "r004:sidecar-auto-respawned (ms=$resMs)"
     T ("FACT respawn_absolute_ms=$resMs failure_before_respawn=" + ($failMs -ge 0 -and ($resMs -lt 0 -or $failMs -le $resMs)))
 }
 if ($p -and -not $p.HasExited) { $p.CloseMainWindow() | Out-Null; Start-Sleep -Seconds 2 }

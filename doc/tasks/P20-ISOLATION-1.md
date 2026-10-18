@@ -14,9 +14,9 @@ base_commit: dbeca3bab
 branch: main
 worktree: G:/CODEX/New Manga（故障注入须在真实桌面执行；执行方写 verification/P20-ISOLATION-1/**、本 Task、doc/handoffs/P20-ISOLATION-1-*.md）
 integration_commit: null
-delivery_head: eb62dbc7f
-canonical_evidence_status: pending`nreview_status: changes_requested（Codex R1 7×P1 + R2 6×P1，最新 head c16e00c76；见 verification/P20-ISOLATION-1/codex-review-r2.md）
-review_status: changes_requested（Codex R1，7 项 P1；见 verification/P20-ISOLATION-1/codex-review-r1.md）
+delivery_head: baf4ec90c
+canonical_evidence_status: pending
+review_status: changes_requested（R1 7×P1、R2 6×P1、R3 3×P1+2×P2；见 verification/P20-ISOLATION-1/codex-review-r{1,2,3}.md）
 resource_closeout_status: pending
 evidence_dir: verification/P20-ISOLATION-1
 ---
@@ -37,7 +37,7 @@ evidence_dir: verification/P20-ISOLATION-1
 
 - [x] AC1：**用户可见的故障提示**——sidecar 异常退出后，UI 必须在有界时间内（建议 ≤ 5 s）呈现明确的后端异常状态（文案/横幅/状态区），不得继续表现为"一切正常"。（前端组件测试 PASS；真实桌面复核脚本准备就绪）
 - [x] AC2：**心跳探测与自动回收重启**——Tauri 侧以 1.5s 周期执行心跳探测，对存活进程发起 2.0s 有界 ping 超时探测（最长故障感知判定时间 1.5s + 2.0s = 3.5s ≤ 5.0s）；sidecar 异常退出或无响应后**自动重启**，且重启结果对 UI 可见（成功 → 恢复正常交互；连续失败 → 明确降级提示）；重启与 Drop 退出均采用有界回收（1.5s/5.0s wait_timeout_or_kill，杜绝无限等待）；重试上限 3 次，只有稳定存活超过 30s 稳定期才重置预算。（Rust 自愈包装器与测试 PASS，含存活无响应与有界关闭测试）
-- [x] AC3：**状态保全**——故障与重启期间，未提交草稿与操作状态不丢失。（前端组件级测试 PASS：草稿跨生命周期状态保留且恢复后可正常提交；真实桌面端到端注入脚本 verification/P20-ISOLATION-1/run-r010-ac3-real-injection.ps1 交付待 Coordinator 复跑）
+- [ ] AC3：**状态保全**——故障与重启期间，未提交草稿与操作状态不丢失。**（未通过，撤销勾选（Codex R3 R-010）：** 前端组件级测试仅证明合成生命周期事件期间 React 草稿可保留；`run-r010-ac3-real-injection.ps1` 的 `FindFirstEdit` 在**整窗**后代中取第一个 Edit，草稿实际写入**书架搜索框**而非创建弹窗的"作品标题"框（截图 01/02 可见弹窗标题框为空），`CreateTitleDialog.tsx` 的 `required` 校验因此拦截提交，请求从未到达 Core（隔离库 `books` 为 0）。**该次运行不构成 AC3 证据**；须先把 UIA 查找限定到弹窗标题控件后复跑。此前把误指向的 PASS 当作草稿保全属**证据夸大**，已更正。）
 - [ ] AC4：**不回归**——`P20` 已通过的项不得退化：冷启动（≤2.0 s / Core ≤3.5 s）、四页可达、`bundle` 与 `resources` 的 `core_service.exe` SHA-256 相等；`P20-MEM-OPT-1` 的内存目标亦不得因此恶化（同样按父子进程链口径测量）。（构建与 SHA-256 PASS，四页与冷启动端到端待交互式桌面复核）
 
 ## 允许修改范围
@@ -77,7 +77,7 @@ planned：故障注入（强杀 sidecar；可选：挂起/无响应）多轮；U
 | EVID-P20-ISOL-FETEST | AC1, AC2, AC3 | apps/desktop/frontend/src/shell/AppShell.lifecycle.test.tsx | f02721df106d7553a57056320dcdc6f81c1b9dfa | cf3d6b488936bbb5459085be7a95abe44e36ae43bf08a9a6993d68cd399a917e | SOURCE_PIN |
 | EVID-P20-ISOL-RUSTLOG | AC1, AC2, AC3 | verification/P20-ISOLATION-1/r1-fix/rust-resilient-channel-tests.log | f02721df106d7553a57056320dcdc6f81c1b9dfa | ea2af60fa17a67c64381fbaf45f112ab5840f51c26fa56c4d7ca7fc0fed8cb18 | CANONICAL |
 | EVID-P20-ISOL-FELOG | AC1, AC2, AC3 | verification/P20-ISOLATION-1/r1-fix/frontend-lifecycle-test.log | f02721df106d7553a57056320dcdc6f81c1b9dfa | d980f64f272471712857307f73682b66632c45479d277013539f1306ec462bdc | CANONICAL |
-| EVID-P20-ISOL-UISCRIPT | AC1, AC2 | verification/P20-ISOLATION-1/run-r004-timeline.ps1 | 70190df5d | d921f2a6ee0ed3d6c4b6b4b34f5659112478f15f34a33a917f9f0f9c52f1e8be | CANONICAL |
+| EVID-P20-ISOL-UISCRIPT | AC1, AC2 | verification/P20-ISOLATION-1/run-r004-timeline.ps1 | 70190df5d | 36d475628bb641ff814d468899455a8fea441aaa89fa840d379bb519feda1a14 | CANONICAL |
 | EVID-P20-ISOL-UITRACE | AC1, AC2 | verification/P20-ISOLATION-1/r004-20261018-082539/trace.log | f02721df106d7553a57056320dcdc6f81c1b9dfa | 771c4053107b61b779731d50140756bc2f6541073366831ff60c0f1b4bfd3536 | CANONICAL |
 | EVID-P20-ISOL-REVIEW-R1 | review | verification/P20-ISOLATION-1/codex-review-r1.md | f02721df106d7553a57056320dcdc6f81c1b9dfa | f8826ab6ec5a315d8ef757a448aa2e3f7683a673a8b7c4c20677539b2fc62f00 | CANONICAL |
 | EVID-P20-ISOL-REVIEW-R2 | review | verification/P20-ISOLATION-1/codex-review-r2.md | f02721df106d7553a57056320dcdc6f81c1b9dfa | cab31d88f53c2c25a1e32fb3d51f0b097f7fa54c078046bf56e822f501b33d4e | CANONICAL |
