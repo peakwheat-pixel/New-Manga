@@ -23,10 +23,10 @@
 |P20 Windows发布|P19/P03/P06/DOC|ready|
 |P20-MEM-OPT-1|P20|closed（AC1 完成；AC2 经调阈值消解）|
 |P20-ISOLATION-1|P20|in_review|
-|P20-AC4-FPS-1|P20|approved / 已集成（`16b995247`）；AC3 `NOT_RUN`|
+|P20-AC4-FPS-1|P20|approved+integrated; AC3 NOT_RUN; AC5 NOT_VERIFIED_BY_RULING|
 |GOV-DEBT-CLEANUP-1|P19/P20|blocked（待用户裁决）|
 |P20-CLOSE-BOUND-1|P20-ISOLATION-1|closed_with_limitations（R6）|
-|P20-CLOSE-BOUND-HARDEN-1|P20-CLOSE-BOUND-1|已交付 `35770fe91`，待 Codex R4 Review|
+|P20-CLOSE-BOUND-HARDEN-1|P20-CLOSE-BOUND-1|R4 changes_requested|
 |P09-AC3-DELETE-HARDEN-1|P09-AC3-DELETE-1|**ready**（R3 未闭合）|
 |RUST-ENV-BASELINE-1|P20-CLOSE-BOUND-1|proposed|
 |P07 交互补缺 / P21 旧栈归档|P02 / P20+另授权|proposed（均可选）|
