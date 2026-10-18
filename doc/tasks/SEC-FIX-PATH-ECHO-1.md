@@ -15,7 +15,7 @@ worktree: G:/CODEX/New Manga.workspace/worktrees/SEC-FIX-PATH-ECHO-1
 integration_commit: 06fb49f838fd1d6c83c64158aeacc0ed2c765d36
 delivery_head: c52ce4695802a06fde8f4e08f2d96a8cecfd855d
 canonical_evidence_status: complete
-resource_closeout_status: accounted_with_preserved_residuals
+resource_closeout_status: complete
 evidence_dir: verification/SEC-FIX-PATH-ECHO-1
 ---
 
@@ -85,6 +85,9 @@ REPRO_RESULT=PASS (the forbidden OS-path echo was reproduced; secret key was dro
 | SEC-FIX-PATH-ECHO-1-E17 | AC4 frontend 安装日志 | `verification/SEC-FIX-PATH-ECHO-1/baseline/npm-ci.log` | `022f4d73773a2d9bdafa04f16d4cca96af5c37ad` | `eef6288e00f4a2b3c8a649994b3333bdf47c96f758dd1632de9eb46c7c71cfe0` | CANONICAL |
 | SEC-FIX-PATH-ECHO-1-E18 | AC4 Rust source 初次阻塞记录 | `verification/SEC-FIX-PATH-ECHO-1/baseline/rust-source-build-blocked.log` | `022f4d73773a2d9bdafa04f16d4cca96af5c37ad` | `fc6cc0413af41e5e14b336873ea718476282d2ecf1dc9066a516989f40cd2962` | CANONICAL |
 | SEC-FIX-PATH-ECHO-1-E19 | AC5 Handoff | `doc/handoffs/SEC-FIX-PATH-ECHO-1-c52ce46.md` | `022f4d73773a2d9bdafa04f16d4cca96af5c37ad` | `29e447a2503c0acb2c2d2a0c0c4615e2b2ce2093c274bf50e518427950b0864a` | CANONICAL |
+| SEC-FIX-PATH-ECHO-1-E20 | 独立 Review | `verification/SEC-FIX-PATH-ECHO-1/dsh-review-r1.md` | `7ca0d87b76a93abde7e4fcb49f5ea36ff437b740` | `29f691d2a85e97316a7ea46318663a6f7ec40b6cc95a838b76918f1fb9e67b67` | CANONICAL |
+| SEC-FIX-PATH-ECHO-1-E21 | AC4 Core 独立复跑 | `verification/SEC-FIX-PATH-ECHO-1/core-pytest-coordinator-rerun.log` | `7ca0d87b76a93abde7e4fcb49f5ea36ff437b740` | `a52ecab36203016cb4a810918e9213c55c59493e570cae9578ed796a77579f0e` | CANONICAL |
+| SEC-FIX-PATH-ECHO-1-E22 | 证据目录 | `verification/SEC-FIX-PATH-ECHO-1/.gitattributes` | `7ca0d87b76a93abde7e4fcb49f5ea36ff437b740` | `a79691a93b46e49ce460c26ef22afcc03d6eca1e63bf2edbc20e96159510f6c9` | CANONICAL |
 
 - Canonical Evidence 状态：`complete`。19/19 条 commit 包含性校验通过。
 - BL-18：Codex 仅完成 Owner 自检；独立 Reviewer 为 DeepSeek Harness（非作者；`.orchestrator/tasks/SEC-FIX-PATH-ECHO-1-role.json` 证明其非 owner/contributor），Review 见 `verification/SEC-FIX-PATH-ECHO-1/dsh-review-r1.md`（`decision: approved`，`reviewed_head=6f27cf72a`）。
@@ -101,6 +104,13 @@ REPRO_RESULT=PASS (the forbidden OS-path echo was reproduced; secret key was dro
 - **E19 附带修正**：原记 `ecc0d82d…` 与磁盘在**两种行尾下都不符**（系 `022f4d737` 改写该 Handoff 后的陈旧 pin），属 **pin 记错**，本次一并修正为实测值 `29e447a2…`。
 - **自校验**：重算脚本二次运行报告 `stale=0`（全部与磁盘一致）。
 - **不变式**：`sha256` 仍按**磁盘字节**计算（BL-16），只是在新增 `.gitattributes` 之后，任何 checkout（含 fresh clone）都得到同一 LF 字节。
+
+## Resource Manifest
+
+| resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
+|---|---|---|---|---|---|
+| artifact | verification/SEC-FIX-PATH-ECHO-1 | PRESERVE_REFERENCED | verification/SEC-FIX-PATH-ECHO-1 | verification/SEC-FIX-PATH-ECHO-1/ac-results.md | 全部证据（含基线/交付日志、独立 Review、Coordinator 复跑）保留在此目录并被本 Task 的 pin 引用 |
+| artifact | G:/CODEX/New Manga.workspace | PRESERVE_REFERENCED | G:/CODEX/New Manga.workspace | verification/SEC-FIX-PATH-ECHO-1/ac-results.md | 仓外派生产物（构建/临时/agent 输出）按工作区治理保留，不在本 Task 处置范围 |
 
 ## Closeout Record（Coordinator dsh, epoch 7）
 
