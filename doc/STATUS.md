@@ -6,14 +6,15 @@
 
 - 当前 Task：[P20](tasks/P20.md) **ready**（Windows 发布）。**AC1/AC2/AC7 ✅**（AC2 0.46s）；**AC3 ✅**（455.1 MB ≤ 480 MB；trim 拦截见 [P20-MEM-OPT-1](tasks/P20-MEM-OPT-1.md)）；**AC6 ✅**（[P20-ISOLATION-1](tasks/P20-ISOLATION-1.md)：心跳+重试3+横幅，注入 12/12）；**AC4 ◐**（四页 5/5、延迟 avg 36.0 ms；帧率见 [P20-AC4-FPS-1](tasks/P20-AC4-FPS-1.md)）；**AC5 ✅**（重建复跑 76.54 ms、零残留）。
 - READY：[ARCH-DOC-REBASELINE](tasks/ARCH-DOC-REBASELINE.md)（AC7 已完成；AC1–AC3 PARTIAL、AC4–AC6 属消费者责任，不标 done）。
-- **P20 子项均已交付 `in_review`，待 Codex Review**：[P20-AC4-FPS-1](tasks/P20-AC4-FPS-1.md)（`011293151`）、[P20-CLOSE-BOUND-HARDEN-1](tasks/P20-CLOSE-BOUND-HARDEN-1.md)（`3e8f85a12`，CBH-01..05 自报 PASS，尚未独立复核）。
-- **READY 待派**：[P09-AC3-DELETE-HARDEN-1](tasks/P09-AC3-DELETE-HARDEN-1.md)（Owner=Antigravity）；[GOV-DEBT-CLEANUP-1](tasks/GOV-DEBT-CLEANUP-1.md)（Codex 分类中，本轮不删文件）。
-- **P09 已收口**：[P09-AC3-DELETE-1](tasks/P09-AC3-DELETE-1.md) `closed_with_limitations`（R3 `changes_requested`，DIR-4 上限；由 HARDEN-1 接手）。**P09 AC3 保持 `BLOCKED`。**
-- **T2**：4 failed 中 3 项在 `HEAD~` 已失败（非 P09）；`test_explicit_data_root_isolation` 由 `d9f7a628c` 引入（v5 断言）。
-- **P02 文档**：3 文件非用户所改，系 10-17 20:30:51 批量写入（[取证](../verification/P02-DOC-PROVENANCE-1/provenance-investigation.md)）。
+- **P20 子项**：[P20-AC4-FPS-1](tasks/P20-AC4-FPS-1.md) R4 复审中（`16b995247`）；[P20-CLOSE-BOUND-HARDEN-1](tasks/P20-CLOSE-BOUND-HARDEN-1.md) R3 返修中（最后一次）。
+- **新增**：[RUST-ENV-BASELINE-1](tasks/RUST-ENV-BASELINE-1.md) `proposed`（12 项 Rust 环境依赖失败）；**REBALANCE**：ZCode 遇 429 限流，其工作按故障转移顺序改派。
+- **READY 待派**：[P09-AC3-DELETE-HARDEN-1](tasks/P09-AC3-DELETE-HARDEN-1.md)（Owner=Antigravity）；[GOV-DEBT-CLEANUP-1](tasks/GOV-DEBT-CLEANUP-1.md) `blocked`（待用户裁决）。
+- **P09 已收口**：[P09-AC3-DELETE-1](tasks/P09-AC3-DELETE-1.md) `closed_with_limitations`（R3 `changes_requested`，DIR-4 上限）。**P09 AC3 保持 `BLOCKED`。**
+- **T2**：4 failed 中 3 项在 `HEAD~` 已失败；1 项由 `d9f7a628c` 引入（v5 断言）。
+- **P02**：16 份入库、3 份恢复 HEAD、`report.json` 待裁决；见 [逐份评估](../verification/P02-DOC-PROVENANCE-1/per-file-verdict.md)。
 - **待裁决**：P18/G25/BL-12/13。
-- DIR-2：Task Owner=codex；DIR-3：只保留一个 Active Coordinator；**DIR-4：同一失败上限 2 次，超限停手上报**；DIR-5：goal 轮次上限 1000。
-- Coordinator=dsh，epoch=8，lease=39640ba370ec4a7cade35c1abd67f234（LEASE_VALID）；用户 tracked dirty 20 项内容不变（20/20 sha256 复检一致）。
+- DIR-2：Task Owner=codex；DIR-3：只保留一个 Active Coordinator；**DIR-4：同一失败上限 2 次，超限停手上报**（P20 两子项各经用户豁免 1 次）；DIR-5：goal 轮次上限 1000。
+- Coordinator=dsh，epoch=8，lease=39640ba370ec4a7cade35c1abd67f234（LEASE_VALID）；20 份具名文件已按裁决处置，原件 20/20 备份于 `New Manga.workspace/P02-DOC-DISPOSAL-20261018/`。
 - 恢复点：`verification/PROJECT-ORCHESTRATION-20261016/`（checkpoint-r12）；日志 `.orchestrator/{INFLIGHT,OPLOG}`。
 
 ## Gate 与保留项
@@ -22,5 +23,5 @@ P02 父项限定关闭。Technical Gate=NOT_SATISFIED；private_registry_absence
 
 ## 当前权威指针
 
-- DAG：[REBASELINE_PLAN](REBASELINE_PLAN.md)；READY=ARCH-DOC-REBASELINE、P20、[P09-AC3-DELETE-HARDEN-1](tasks/P09-AC3-DELETE-HARDEN-1.md)；BLOCKED=GOV-DEBT-CLEANUP-1（等待用户复核 AC1/AC2 并裁决后续动作）。
-- 本轮证据：P09 [R3](../verification/P09-AC3-DELETE-1/codex-review-r3.md) + [T2](../verification/P09-AC3-DELETE-1/t2-fullsuite-triage.md)；[P02 取证](../verification/P02-DOC-PROVENANCE-1/provenance-investigation.md)。
+- DAG：[REBASELINE_PLAN](REBASELINE_PLAN.md)；READY=ARCH-DOC-REBASELINE、P20、[P09-AC3-DELETE-HARDEN-1](tasks/P09-AC3-DELETE-HARDEN-1.md)；BLOCKED=GOV-DEBT-CLEANUP-1。
+- 本轮证据：P09 [R3](../verification/P09-AC3-DELETE-1/codex-review-r3.md) + [T2](../verification/P09-AC3-DELETE-1/t2-fullsuite-triage.md)；P20 [CB-R3](../verification/P20-CLOSE-BOUND-HARDEN-1/codex-review-r3.md) + [FPS-R3](../verification/P20-AC4-FPS-1/codex-review-r3.md)。
