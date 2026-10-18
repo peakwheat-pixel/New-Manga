@@ -23,7 +23,7 @@
    - 建立双保险取消链 `cancel_worker_io`：结合线程级 `CancelSynchronousIo` 与句柄级 `CancelIoEx`，向 Windows 管道及阻塞在 kernel ReadFile/WriteFile 的线程发送取消请求，取消状态与错误码结构化聚合传播，主路径与 Reaper 严禁丢弃取消结果。
    - **线程句柄无泄漏保证**：工作线程正常退出时由 `ReaderHandleCleaner` / `WriterHandleCleaner` 通过原子 `swap(0, Ordering::SeqCst)` 负责 `CloseHandle`；若通道提前 Drop 则由 Drop 负责 `CloseHandle`，双保险互斥关闭，杜绝句柄泄漏。句柄复制失败时记录错误及负数 sentinel，绝不静默掩盖。
    - **Registry 容量硬上限与已完成 Worker 自动修剪（R3-01）**：全局 `UNREAPED_WORKER_REGISTRY` 引入静态硬上限 `pub const MAX_UNREAPED_WORKERS: usize = 32`。入队前由 `prune_finished_unreaped_workers_locked` 对已结束 Worker 立即执行非阻塞 `join()` 收割并移出 registry；活跃 Worker 达到 32 上限时触发紧急取消并等待背压槽位，杜绝无界增长。
-   - **Handle 零丢弃保证（Option 取出语义与持久持有保底，R3-01）**：`track_unreaped_worker` 改为 `&mut Option<JoinHandle<()>>` 取出语义，采用 10 次跨 500 ms 的锁重试循环，**只有在锁成功获取且容量未满时才 take()**；若锁争用超时或容量饱和，调用方（Reaper 或 Spawn 失败路径）绝不丢弃句柄，而是派发 `persistent-reader-holder` / `persistent-writer-holder` 持久持有线程在后台继续持有并周期重试转交，彻底杜绝 Rust 因为 Handle 被 drop 导致不可控 detach 的风险。
+   - **Handle 零丢弃保证（Option 取出语义与持久持有保底，R3-01）**：`track_unreaped_worker` 改为 `&mut Option<JoinHandle<()>>` 取出语义，采用 10 次跨 500 ms 的锁重试循环，**只有在锁成功获取且容量未满时才 take()**；若锁争用超时或容量饱和，调用方（Reaper 或 Spawn 失败路径）不丢弃句柄，而是派发 `persistent-reader-holder` / `persistent-writer-holder` 持久持有线程在后台持有并以**有界退避**（50 ms 起，倍增至 500 ms 上限）重试转交。**该保底的强度边界（R4-01 按真实语义修正）**：holder **成功启动**时句柄由其接管；**holder 自身 spawn 失败**时，句柄因停在共享槽而仍归调用方所有，随即**同步 `join`**（`spawn_persistent_holder`）。因此句柄在任何路径下都不会静默 drop，但**保证来自两条路径各自成立，而非来自「永不失败」的假设**——原文「绝不丢弃句柄」「彻底杜绝」超出实现强度，已改写。
    - **生产全链路主动收割（R3-01）**：在 `StdioLibraryChannel::shutdown_and_kill_with_deadline`、`StdioLibraryChannel::drop`、`ResilientLibraryChannel::shutdown_with_deadline`、`ResilientLibraryChannel::drop` 以及 `core-self-healing` 恢复自愈共 5 处生产关键生命周期中全面调用 `reap_unreaped_workers`，消除僵尸 Worker。
    - 引入 `ThreadFinishedGuard`：仅当 worker 线程的局部变量与所有流析构完成离开作用域时才置位 `finished = true`。
    - **仅在已确认 `finished == true` 时才允许调用 `join()`**；若未确认 finished 严禁 `join()`，彻底消除主线程挂死隐患。
@@ -131,8 +131,8 @@ $$\text{Margin}_{\text{syscall}} = 3000\,\text{ms} - 2400\,\text{ms} = \mathbf{6
 | **Worker 2**<br>`pending-drain-fallback` | `library_bridge.rs:3209` | 前台获取 `pending_responses` 超过 30 ms 超时 | **加固约束**：启动前及循环中检查 deadline，过期直接退出。<br>**最坏存活**：不超过主关闭 deadline。获锁后遍历 drain 并退出。 | 纯内存哈希表操作，无 I/O。前台不 join。 | **否** |
 | **Worker 3**<br>`child-reap-fallback` | `library_bridge.rs:3443` | 前台获取 `child` 超过 50 ms 超时 | **加固约束**：循环检查 deadline；**一旦 deadline 到期严禁调用 `child.kill()` 或 `child.try_wait()`**。<br>**最坏存活**：不超过主关闭 deadline。 | 仅在 deadline 预算内尝试获取锁并回收。前台不 join。 | **否** |
 | **Worker 4**<br>`taskkill-reaper-{pid}` | `library_bridge.rs:3034` | 前台 `run_taskkill_bounded` 超过 250 ms 超时 | **加固约束**：内部设固定 `reap_timeout = 200 ms`，轮询 sleep 与错误锁等待均受剩余时间截断，到期自动退出。<br>**最坏存活**：**严格 ≤ 200 ms**。 | 仅执行非阻塞 `child.try_wait()`，无管道 I/O。前台不 join。 | **否** |
-| **Worker 5**<br>`reader-join-bounded-reaper` | `library_bridge.rs:3581` | 前台等待 reader 退出超过 100 ms 超时 | **加固约束与真实语义（R3-01）**：固定 `200 ms` deadline，轮询执行 `cancel_worker_io` 并受剩余时间截断。若 200 ms 内未完成，转入全局 `UNREAPED_WORKER_REGISTRY`。<br>**Option 取出与持久持有保底**：`track_unreaped_worker` 采用 `Option` 取出语义与 500 ms 锁重试，锁未获得或容量达 `MAX_UNREAPED_WORKERS = 32` 上限时不 take 句柄；若超时或饱和立即启动 `persistent-reader-holder`（`library_bridge.rs:3634, 3669`）在后台持有并重试，句柄绝对不被 drop，杜绝隐式 detach。<br>**生产全链路主动收割**：生产代码在 5 处关键生命周期调用 `reap_unreaped_workers` 主动回收已完成 worker。<br>**最坏存活**：Reaper 本身严格 ≤ 200 ms；原 worker 进入全局受限容量（≤32）registry 并在生产路径被主动回收。 | 前台及 reaper 轮询触发 `CancelSynchronousIo` + `CancelIoEx`。仅在 `reader_finished == true` 时 join。由生产路径全链路主动回收。 | **否** |
-| **Worker 6**<br>`writer-join-bounded-reaper` | `library_bridge.rs:3738` | 前台等待 writer 退出超过 80 ms 超时 | **加固约束与真实语义（R3-01）**：固定 `200 ms` deadline，轮询执行 `cancel_worker_io` 并受剩余时间截断。若 200 ms 内未完成，转入全局 `UNREAPED_WORKER_REGISTRY`。<br>**Option 取出与持久持有保底**：`track_unreaped_worker` 采用 `Option` 取出语义与 500 ms 锁重试，锁未获得或容量达 `MAX_UNREAPED_WORKERS = 32` 上限时不 take 句柄；若超时或饱和立即启动 `persistent-writer-holder`（`library_bridge.rs:3791, 3826`）在后台持有并重试，句柄绝对不被 drop，杜绝隐式 detach。<br>**生产全链路主动收割**：生产代码在 5 处关键生命周期调用 `reap_unreaped_workers` 主动回收已完成 worker。<br>**最坏存活**：Reaper 本身严格 ≤ 200 ms；原 worker 进入全局受限容量（≤32）registry 并在生产路径被主动回收。 | 前台及 reaper 轮询触发 `CancelSynchronousIo` + `CancelIoEx`。仅在 `writer_finished == true` 时 join。由生产路径全链路主动回收。 | **否** |
+| **Worker 5**<br>`reader-join-bounded-reaper` | `library_bridge.rs:3581` | 前台等待 reader 退出超过 100 ms 超时 | **加固约束与真实语义（R3-01）**：固定 `200 ms` deadline，轮询执行 `cancel_worker_io` 并受剩余时间截断。若 200 ms 内未完成，转入全局 `UNREAPED_WORKER_REGISTRY`。<br>**Option 取出与持久持有保底**：`track_unreaped_worker` 采用 `Option` 取出语义与 500 ms 锁重试，锁未获得或容量达 `MAX_UNREAPED_WORKERS = 32` 上限时不 take 句柄；若超时或饱和则派发 `persistent-reader-holder`（经 `spawn_persistent_holder`；R4-01 重构后由 4 处内联收敛为 1 个 helper）在后台持有并以**有界退避**重试。**强度边界**：holder 成功启动时由其接管；**spawn 失败**时句柄经共享槽仍归调用方并**同步 `join`**。原文「句柄绝对不被 drop」过强，已改写。<br>**生产全链路主动收割**：生产代码在 5 处关键生命周期调用 `reap_unreaped_workers` 主动回收已完成 worker。<br>**最坏存活**：Reaper 本身严格 ≤ 200 ms；原 worker 进入全局受限容量（≤32）registry 并在生产路径被主动回收。 | 前台及 reaper 轮询触发 `CancelSynchronousIo` + `CancelIoEx`。仅在 `reader_finished == true` 时 join。由生产路径全链路主动回收。 | **否** |
+| **Worker 6**<br>`writer-join-bounded-reaper` | `library_bridge.rs:3738` | 前台等待 writer 退出超过 80 ms 超时 | **加固约束与真实语义（R3-01）**：固定 `200 ms` deadline，轮询执行 `cancel_worker_io` 并受剩余时间截断。若 200 ms 内未完成，转入全局 `UNREAPED_WORKER_REGISTRY`。<br>**Option 取出与持久持有保底**：`track_unreaped_worker` 采用 `Option` 取出语义与 500 ms 锁重试，锁未获得或容量达 `MAX_UNREAPED_WORKERS = 32` 上限时不 take 句柄；若超时或饱和则派发 `persistent-writer-holder`（经 `spawn_persistent_holder`；R4-01 重构后由 4 处内联收敛为 1 个 helper）在后台持有并以**有界退避**重试。**强度边界**：holder 成功启动时由其接管；**spawn 失败**时句柄经共享槽仍归调用方并**同步 `join`**。原文「句柄绝对不被 drop」过强，已改写。<br>**生产全链路主动收割**：生产代码在 5 处关键生命周期调用 `reap_unreaped_workers` 主动回收已完成 worker。<br>**最坏存活**：Reaper 本身严格 ≤ 200 ms；原 worker 进入全局受限容量（≤32）registry 并在生产路径被主动回收。 | 前台及 reaper 轮询触发 `CancelSynchronousIo` + `CancelIoEx`。仅在 `writer_finished == true` 时 join。由生产路径全链路主动回收。 | **否** |
 
 ---
 
@@ -146,7 +146,7 @@ $$\text{Margin}_{\text{syscall}} = 3000\,\text{ms} - 2400\,\text{ms} = \mathbf{6
 5. **Reaper 轮询与错误记录严格受限**：Taskkill reaper 及 reader/writer reaper 的轮询 sleep 和互斥锁等待严格受 200 ms 剩余时间截断，绝不跨越 200 ms。
 6. **未回收 Worker 容量上限、持久持有保底与生产全链路收割（R3-01）**：
    - Registry 设定静态硬上限 `MAX_UNREAPED_WORKERS = 32`，入队前即时修剪已结束 Worker，容量满时触发紧急取消；
-   - `track_unreaped_worker` 采用 `Option` 取出语义与 10 次跨 500 ms 锁重试，锁未取得或容量饱和时不执行 `take()`；调用方派发持久持有线程（`persistent-reader-holder` / `persistent-writer-holder`）保底持有，句柄绝不丢弃，杜绝隐式 detach；
+   - `track_unreaped_worker` 采用 `Option` 取出语义与 10 次跨 500 ms 锁重试，锁未取得或容量饱和时不执行 `take()`；调用方派发持久持有线程（`persistent-reader-holder` / `persistent-writer-holder`）保底持有，**holder 成功启动时由其接管，spawn 失败时经共享槽同步 `join`**（R4-01 修正：原文「句柄绝不丢弃」过强）；
    - 生产全链路在 `StdioLibraryChannel::shutdown_and_kill_with_deadline`、`StdioLibraryChannel::drop`、`ResilientLibraryChannel::shutdown_with_deadline`、`ResilientLibraryChannel::drop` 以及 `core-self-healing` 5 处生产关键生命周期中全面调用 `reap_unreaped_workers`，确保退出与运行中均有确定性收割。
 7. **Windows 线程句柄无泄漏保证**：工作线程内建立的独立句柄由 Cleaner（正常退出）与 Channel Drop（提前退出）通过原子 swap 互斥关闭，杜绝句柄泄漏；复制失败有负数 sentinel 记录。
 8. **Reap 状态无假阳性**：只有在 `child.try_wait()` 明确返回 `Ok(Some(_))` 时才记录为已回收。
@@ -157,3 +157,17 @@ $$\text{Margin}_{\text{syscall}} = 3000\,\text{ms} - 2400\,\text{ms} = \mathbf{6
 2. **Windows 句柄与线程 I/O 取消的驱动层响应性**：`CancelIoEx` 向文件系统驱动发送句柄取消请求，`CancelSynchronousIo` 向线程控制块发送同步 I/O 取消请求。绝大多数标准管道驱动（NPFS）会立即完成并向 ReadFile/WriteFile 返回 `ERROR_OPERATION_ABORTED` (995)，但在第三方过滤驱动挂钩或底层硬件驱动死锁时，驱动层未响应属于内核不可控边界。
 3. **高负载下定时器时钟漂移**：`std::thread::sleep` 依赖系统计时器分辨率。高负载下可能存在数毫秒级的时钟片抖动，由 600 ms 的安全裕度予以吸收。
 
+---
+
+## 5. 生命周期保证的强度边界（R4-01 补充，2026-10-19）
+
+本节记录 R4-01 之后对本审计表**表述强度**的修正。原文多处使用「绝不」「彻底」「绝对」描述句柄保留，经 R4-01 复核，这些表述**超出实现强度**，现按真实语义列明边界：
+
+1. **句柄保留不是无条件保证，而是两条路径的联合结果。** 直接调用 `track_unreaped_worker` 在锁超时或容量饱和时拒绝并**把句柄留在调用方**；调用方随即派发 holder 接管。holder **成功启动**时保证成立。
+2. **holder 自身可能启动失败。** 在 R4-01 之前，4 处 holder 点写作 `let _ = Builder::new()...spawn(move || {..})`：`JoinHandle` 已被 `move` 进闭包，spawn 失败即**连同句柄一起 drop**，而 `JoinHandle` 被 drop 意味着线程被 **detach 而非 join**。**该路径上原文「句柄绝对不被 drop」为假。**
+3. **修正后的实现（AC3）**：句柄停在共享槽而非被闭包捕获；holder 启动后第一件事即从槽中取走。**spawn 失败时句柄仍在槽中**，由 `spawn_persistent_holder` **同步 `join`**，并在 stderr 记录。因此**现在两条路径均不静默 drop**——但这是**实现**做到的，不是「永不失败」保证的。
+4. **容量饱和的行为是定义过的，且两条路径刻意不同**（AC2）：直接调用**可有界地接受或拒绝**（拒绝时句柄留在调用方）；holder **永不放弃**（放弃即等于 drop 句柄），但改为**有界退避**而非固定 50 ms 空转。
+5. **registry 是有界资源，不是完整生命周期保证。** `MAX_UNREAPED_WORKERS = 32` 是硬上限；已结束 worker 由 `prune_finished_unreaped_workers_locked` 即时收割，生产链路 5 处在关键生命周期主动调用 `reap_unreaped_workers`。**这是有限 capacity + 主动收割的组合，不等于「完整生命周期保证」。**
+6. **行号基准**：本表正文中的行号以 R4-01 修复后（`library_bridge.rs` 经 AC3 重构）为基准重新推导；原文引用 `3634, 3669, 3791, 3826` 系重构前行号，已失效，现统一指向 `spawn_persistent_holder` 及其 4 个调用点。
+
+**本节的证据**：AC3（`spawn_persistent_holder` 共享槽实现）、AC1（连续锁超时注入用例）、AC2（容量饱和注入用例）的代码与测试。
