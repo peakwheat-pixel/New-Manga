@@ -3,7 +3,7 @@ id: P20-AC4-FPS-1
 title: P20 AC4 帧率与帧时间测量（默认关闭的前端 requestAnimationFrame 采样钩子）
 kind: feature
 governance_version: 2
-status: in_review
+status: approved
 approval: user_ruling_20261018_ac4_fps_measurement
 blocked_by: null
 suggested_owner: ZCode
@@ -13,10 +13,10 @@ depends_on: [P20]
 base_commit: a04e4ea78d5b33a0f91efcdc06b396391c4b165e
 branch: null
 worktree: G:/CODEX/New Manga
-integration_commit: null
-delivery_head: 16b995247
-canonical_evidence_status: pending
-resource_closeout_status: pending
+integration_commit: 16b99524794a7ff2132a19753ce6a7fcd53fc244
+delivery_head: 16b99524794a7ff2132a19753ce6a7fcd53fc244
+canonical_evidence_status: complete
+resource_closeout_status: complete
 evidence_dir: verification/P20-AC4-FPS-1
 ---
 
@@ -109,7 +109,7 @@ evidence_dir: verification/P20-AC4-FPS-1
 
 ## Canonical Evidence
 
-r3 返修交付 head 已固定（`16b995247`；r2 返修 `de5c06a4d`、r1 返修 `4c54f3dd1`、r0 原始交付 `011293151` 留史）；下表为 Owner 侧登记，`CANONICAL` 定级与最终裁决由 Codex Review 后确认。真实桌面测量产物（`run-*/`）在 Coordinator 执行后由 Review 阶段补登。全部 sha256 按磁盘真实字节实算（本 Task 交付文件为 LF 行尾检出）。
+r3 返修交付 head 已固定（`16b995247`；r2 返修 `de5c06a4d`、r1 返修 `4c54f3dd1`、r0 原始交付 `011293151` 留史）；R4 已批准并完成集成指针登记。真实桌面测量产物（`run-*/`）在 Coordinator 执行后由 Review 阶段补登。本表共 20 个 pin，哈希按文件磁盘真实字节计算；本轮 `git ls-files --eol` 显示 Task 与 R4 Review 均为 `w/lf`（尽管 `core.autocrlf=true`），因此以实测字节为准，不按预期行尾转换重算。
 
 | evidence_id | AC/Gate | path | commit | sha256 | class (`CANONICAL` / `SOURCE_PIN`) |
 |---|---|---|---|---|---|
@@ -125,6 +125,7 @@ r3 返修交付 head 已固定（`16b995247`；r2 返修 `de5c06a4d`、r1 返修
 | EVID-FPS-REVIEW-R1 | Review | verification/P20-AC4-FPS-1/codex-review-r1.md | 4c54f3dd10e5e7168500e96687b67097ccae2c00 | 5ef026d9f300ea0a501c001b878e31f1c46337f68952c2a64c56607a28bd037f | SOURCE_PIN |
 | EVID-FPS-REVIEW-R2 | Review (r2 finding 依据) | verification/P20-AC4-FPS-1/codex-review-r2.md | de5c06a4d572c849de7d7fed8e5027f92e0de156 | c84cb4cb2f9dc69995bceb0dc659663b5531538d0a0b7c63ab52da2e1221c6bb | SOURCE_PIN |
 | EVID-FPS-REVIEW-R3 | Review (r3 finding 依据) | verification/P20-AC4-FPS-1/codex-review-r3.md | 16b99524794a7ff2132a19753ce6a7fcd53fc244 | 5924bece66e831d8788c85bf0aa8aee83a0fc58b32646922317c32bb1c8b5f47 | SOURCE_PIN |
+| EVID-FPS-REVIEW-R4 | Review (approved；FPS-R1-02 闭合与集成裁决) | verification/P20-AC4-FPS-1/codex-review-r4.md | cf477fe1b7ab6e2105be5a733c606da1684707a9 | 2c26b91a96c551ae8c66a9cd3e17ce4faab701ddd50f0e8ef6af87dd7f83728a | SOURCE_PIN |
 | EVID-FPS-SELFCHECK | AC3 (runner 隔离自检, r1) | verification/P20-AC4-FPS-1/selfcheck-20261018-173828/fps-trace.log | 4c54f3dd10e5e7168500e96687b67097ccae2c00 | f4a88496237617069a5dd41fb6850eeec84556cd96ab25e7cddb6741d0501491 | SOURCE_PIN |
 | EVID-FPS-SELFCHECK-R2 | AC3 (runner 自检 r2, 12 断言含故障注入+干扰窗口) | verification/P20-AC4-FPS-1/selfcheck-20261018-180541/fps-trace.log | de5c06a4d572c849de7d7fed8e5027f92e0de156 | 2adca517d384cfc6c920340c8ba6f5cfafe6c002f48bd40a60e11f0b4cf95292 | SOURCE_PIN |
 | EVID-FPS-SELFCHECK-R3 | AC3 (runner 自检 r3, 16 断言含焦点注入组：外部占前台零输入+Fail→exit6+滚轮只落 stub) | verification/P20-AC4-FPS-1/selfcheck-20261018-194056/fps-trace.log | 16b99524794a7ff2132a19753ce6a7fcd53fc244 | 075a66a7702f429720a2b3208753276c768ab9e64a16db905cc1cb3f8ca23746 | SOURCE_PIN |
@@ -141,9 +142,10 @@ r3 返修交付 head 已固定（`16b995247`；r2 返修 `de5c06a4d`、r1 返修
 
 ## Closeout Record
 
-- Closeout date / Codex：待关闭时填写。
-- `canonical_evidence_status`：`pending`。
-- `resource_closeout_status`：`pending`。
-- 删除、迁移、归档数量/字节数：待关闭时填写；无操作填写 0。
-- 未关闭项及保留原因：待 Owner 交付和 Review。
-- 当前指针清理：待 Task 激活或关闭时由 Codex 同步 STATUS/Plan。
+- Closeout date / Codex：2026-10-18 / Codex（实现集成与资源核销；Task 未关闭）。
+- `canonical_evidence_status`：`complete`；20/20 pin 的磁盘 SHA-256 与 commit:path 已核验。
+- `resource_closeout_status`：`complete`；仅复用仓库工作区，无新建 worktree、需迁移/归档/删除的派生产物；操作计数均为 0。
+- `integration_commit`：`16b99524794a7ff2132a19753ce6a7fcd53fc244`（已批准交付实现，且为当前主线祖先）；`delivery_head` 同此提交。
+- 未关闭项及保留原因：AC3 单页与 Webtoon 真实桌面测量仍为 `NOT_RUN`，留给 Coordinator；AC5 按用户裁决保持 `NOT_VERIFIED_BY_RULING`。Task 保持 `approved`，不得设为 `done`。
+- 当前指针：STATUS/Plan 保留 P20-AC4-FPS-1 当前项，标明实现已批准集成、等待 Coordinator 的 AC3 实测；AC5 限制不变。
+- Governance check：20/20 pin 独立校验 `PASS`；`check.ps1` 返回 `FAIL (1 errors, 3 warnings)`，唯一错误把“已集成的 `approved` + AC3/AC5 未完成”按 DONE 拦截。依用户裁决保留 `NOT_RUN` / `NOT_VERIFIED_BY_RULING`，不伪记完成。
