@@ -26,11 +26,21 @@ function getTauriInvoke(): InvokeFn {
 
 export class LibraryClientError extends Error {
   code: string;
+  /**
+   * AC3 (N-002): the structured detail the Core attached to the failure.
+   *
+   * A batch delete reports its per-item outcomes here (``details.items``).
+   * Keeping only ``code`` and ``message`` is precisely what lost the
+   * cleanup_pending targets and made a retry re-submit books that had already
+   * been deleted.
+   */
+  details?: unknown;
 
-  constructor(code: string, message?: string) {
+  constructor(code: string, message?: string, details?: unknown) {
     super(message || code);
     this.name = "LibraryClientError";
     this.code = code;
+    this.details = details;
   }
 }
 
@@ -318,13 +328,26 @@ export class LibraryClient {
       if (error instanceof LibraryClientError) {
         throw error;
       }
+      const carrier = (error ?? {}) as {
+        code?: string;
+        details?: unknown;
+        items?: unknown;
+        message?: string;
+      };
       const code =
         typeof error === "string"
           ? error
-          : (error as { code?: string })?.code ||
-            (error as Error)?.message ||
-            "CORE_UNAVAILABLE";
-      throw new LibraryClientError(code, `library_delete_book_permanently failed: ${code}`);
+          : carrier.code || carrier.message || "CORE_UNAVAILABLE";
+      // AC3 (N-002): the single-book face reports the same cleanup_pending
+      // detail shape, so it travels through the wrap unchanged too.
+      const details =
+        carrier.details ??
+        (carrier.items !== undefined ? { items: carrier.items } : undefined);
+      throw new LibraryClientError(
+        code,
+        `library_delete_book_permanently failed: ${code}`,
+        details,
+      );
     }
   }
 
@@ -354,13 +377,28 @@ export class LibraryClient {
       if (error instanceof LibraryClientError) {
         throw error;
       }
+      const carrier = (error ?? {}) as {
+        code?: string;
+        details?: unknown;
+        items?: unknown;
+        message?: string;
+      };
       const code =
         typeof error === "string"
           ? error
-          : (error as { code?: string })?.code ||
-            (error as Error)?.message ||
-            "CORE_UNAVAILABLE";
-      throw new LibraryClientError(code, `library_delete_books_permanently failed: ${code}`);
+          : carrier.code || carrier.message || "CORE_UNAVAILABLE";
+      // AC3 (N-002): carry the Core's structured detail through the wrap.
+      // A batch delete reports its per-item outcomes in details.items, and
+      // flattening the error to code+message is exactly what left the caller
+      // unable to tell the already-deleted books from the cleanup_pending ones.
+      const details =
+        carrier.details ??
+        (carrier.items !== undefined ? { items: carrier.items } : undefined);
+      throw new LibraryClientError(
+        code,
+        `library_delete_books_permanently failed: ${code}`,
+        details,
+      );
     }
   }
 }

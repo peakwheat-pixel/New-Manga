@@ -417,4 +417,60 @@ describe("AC5: Recycle Bin Permanent Delete & Confirmation Workflow", () => {
     expect(q('[data-testid="permanent-delete-confirm-dialog"]')).not.toBeNull();
     expect(q('[data-testid="recycle-bin-whole-library-error"]')).toBeNull();
   });
+  // AC3 (N-002): a partially succeeded batch keeps its per-item targets
+  it("AC3: a partially succeeded batch drops deleted books and keeps only cleanup_pending selected", async () => {
+    const mockInvoke = vi.fn(async (cmd: string) => {
+      if (cmd === LIBRARY_DELETE_BOOKS_PERMANENTLY_COMMAND) {
+        // book-1 really was deleted; book-2 is still cleanup_pending
+        throw {
+          code: "BOOK_DELETE_BATCH_CLEANUP_PENDING",
+          details: {
+            phase: "cleanup",
+            requested_count: 2,
+            completed_count: 1,
+            items: [
+              { book_id: "book-1", status: "deleted", error_code: null },
+              { book_id: "book-2", status: "cleanup_pending", error_code: null },
+            ],
+          },
+        };
+      }
+      return {};
+    });
+    const client = new LibraryClient(mockInvoke);
+
+    await act(async () => {
+      root.render(<RecycleBinPage client={client} initialBooks={MOCK_BOOKS} totalBooksCount={10} />);
+    });
+
+    await act(async () => {
+      q<HTMLInputElement>('[data-testid="recycle-item-checkbox-book-1"]')?.click();
+    });
+    await act(async () => {
+      q<HTMLInputElement>('[data-testid="recycle-item-checkbox-book-2"]')?.click();
+    });
+    await act(async () => {
+      q<HTMLButtonElement>('[data-testid="recycle-bin-permanent-delete-btn"]')?.click();
+    });
+    await act(async () => {
+      q<HTMLInputElement>('[data-testid="confirm-understand-checkbox"]')?.click();
+    });
+    await act(async () => {
+      q<HTMLButtonElement>('[data-testid="confirm-permanent-delete-btn"]')?.click();
+    });
+
+    // The book that really was deleted is gone from the recycle list, so it can
+    // never be submitted again (which would answer BOOK_NOT_FOUND) ...
+    expect(q('[data-testid="recycle-item-checkbox-book-1"]')).toBeNull();
+
+    // ... while the cleanup_pending book is still listed AND still selected, so
+    // the next submit retries just the pending subset.
+    const pending = q<HTMLInputElement>('[data-testid="recycle-item-checkbox-book-2"]');
+    expect(pending).not.toBeNull();
+    expect(pending?.checked).toBe(true);
+
+    // The outcome keeps both per-item counts instead of collapsing to a message.
+    expect(document.body.textContent).toContain("cleanup_pending");
+    expect(document.body.textContent).toContain("已永久删除 1 本");
+  });
 });
