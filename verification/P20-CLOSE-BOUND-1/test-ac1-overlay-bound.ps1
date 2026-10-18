@@ -25,6 +25,15 @@ $pythonExe = if ($env:M2RC1_PYTHON) { $env:M2RC1_PYTHON } else { (Get-Command py
 $venvPath  = if ($env:VIRTUAL_ENV) { $env:VIRTUAL_ENV } else { "none" }
 $shellType = "pwsh (PowerShell $($PSVersionTable.PSVersion))"
 
+# P2#5: Record baseline processes before any test runs to detect broken-chain descendants
+$suiteStartTime = Get-Date
+$baselineProcs = Get-CimInstance Win32_Process
+$baselinePidSet = [System.Collections.Generic.HashSet[int]]::new()
+foreach ($bp in $baselineProcs) {
+    [void]$baselinePidSet.Add($bp.ProcessId)
+}
+Write-Host "Baseline process snapshot recorded: $($baselinePidSet.Count) processes at $($suiteStartTime.ToString('yyyy-MM-ddTHH:mm:sszzz'))"
+
 function Run-LoggedCommand {
     param(
         [string]$CommandName,
@@ -170,7 +179,13 @@ $p2_6_Res = Run-LoggedCommand `
     -CommandLine "cargo test --manifest-path apps/desktop/src-tauri/Cargo.toml --bin m2rc1-desktop writer_overflow_pipe_capacity_unblocks_and_cleans_up_on_kill -- --nocapture" `
     -LogBase "ac4-writer-pipe-overflow"
 
-# 6. AC2: Direct Recursive Process Tree and Zero Residual Orphan Check
+# 5e. N1: Inner lock contention fallback
+$n1_Res = Run-LoggedCommand `
+    -CommandName "rust_inner_lock_contention_test" `
+    -CommandLine "cargo test --manifest-path apps/desktop/src-tauri/Cargo.toml --bin m2rc1-desktop resilient_inner_lock_contention_timeout_triggers_fallback_shutdown -- --nocapture" `
+    -LogBase "ac4-inner-lock-contention"
+
+# 6. AC2: Direct Recursive Process Tree and Zero Residual Orphan Check (with Broken-Chain Detection per P2#5)
 Write-Host "Performing comprehensive Recursive Process Tree and Zero Residual Orphan Check..."
 $allProcs = Get-CimInstance Win32_Process
 
@@ -190,10 +205,19 @@ while ($queue.Count -gt 0) {
     }
 }
 
-# 2) Filter candidate residual processes:
-# - Any descendant PID of runner still alive (cmd, cargo, test bin, python, etc.)
-# - Any global names: core_service, m2rc1_desktop, host_bridge
+# 2) P2#5: Compute Delta PIDs (processes created after suite started, even if parent already exited)
+$deltaProcs = @()
+foreach ($proc in $allProcs) {
+    if (-not $baselinePidSet.Contains($proc.ProcessId) -and $proc.ProcessId -ne $PID) {
+        $deltaProcs += $proc
+    }
+}
+
+# 3) Filter candidate residual processes:
+# - Any direct or indirect descendant PID of runner still alive
+# - Any global names: core_service, m2rc1_desktop, m2rc1-desktop, host_bridge
 # - Any python processes associated with the workspace ($RepoRoot), isolation root, bootstrap.core_service, or test scripts
+# - Any delta processes associated with test directories, m2rc1 binaries, or isolated data roots (broken chain)
 $repoRootRaw = (Get-Location).Path
 $repoPathEscaped = $repoRootRaw.Replace('\', '\\')
 $isolatedRootRaw = $isolatedRoot
@@ -206,7 +230,7 @@ foreach ($p in $allProcs) {
     $name = $p.Name
 
     $isDescendant = $descendantPids.Contains($p.ProcessId)
-    $isAppOrSidecar = ($name -like "*core_service*") -or ($name -like "*m2rc1_desktop*") -or ($name -like "*host_bridge*")
+    $isAppOrSidecar = ($name -like "*core_service*") -or ($name -like "*m2rc1_desktop*") -or ($name -like "*m2rc1-desktop*") -or ($name -like "*host_bridge*")
     $isPythonTarget = ($name -like "*python*") -and (
         ($cmd.Contains($isolatedRootRaw)) -or
         ($cmd.Contains($isolatedRootEscaped)) -or
@@ -215,29 +239,46 @@ foreach ($p in $allProcs) {
         ($cmd.Contains($repoRootRaw)) -or
         ($cmd.Contains($repoPathEscaped))
     )
+    $isBrokenChainDelta = (-not $baselinePidSet.Contains($p.ProcessId)) -and (
+        ($cmd.Contains($isolatedRootRaw)) -or
+        ($cmd.Contains($isolatedRootEscaped)) -or
+        ($cmd.Contains("p20-close-bound")) -or
+        ($cmd.Contains("apps\desktop\src-tauri"))
+    )
 
-    if ($isDescendant -or $isAppOrSidecar -or $isPythonTarget) {
+    if ($isDescendant -or $isAppOrSidecar -or $isPythonTarget -or $isBrokenChainDelta) {
         $residualProcs += $p
     }
 }
 
+$residualCount = $residualProcs.Count
+
+# Format report with standard environment header (doc/09_COLLABORATION.md §6.12)
 $treeReport = New-Object System.Text.StringBuilder
+$treeReport.AppendLine("# --- Environment Header (doc/09_COLLABORATION.md §6.12) ---") | Out-Null
+$treeReport.AppendLine("# Shell: $shellType") | Out-Null
+$treeReport.AppendLine("# Python: $pythonExe") | Out-Null
+$treeReport.AppendLine("# Venv: $venvPath") | Out-Null
+$treeReport.AppendLine("# Exit: $(if ($residualCount -eq 0) { 0 } else { 1 })") | Out-Null
+$treeReport.AppendLine("# Command: test-ac1-overlay-bound.ps1 (Process Tree & Broken-Chain Orphan Audit)") | Out-Null
+$treeReport.AppendLine("# ---------------------------------------------------------") | Out-Null
 $treeReport.AppendLine("=== Process Tree Zero Orphan Audit (AC2) ===") | Out-Null
 $treeReport.AppendLine("Timestamp: $(Get-Date -Format 'yyyy-MM-ddTHH:mm:sszzz')") | Out-Null
 $treeReport.AppendLine("Test Runner PID: $PID") | Out-Null
+$treeReport.AppendLine("Baseline Process Count: $($baselinePidSet.Count)") | Out-Null
+$treeReport.AppendLine("Delta Processes Evaluated: $($deltaProcs.Count)") | Out-Null
 $treeReport.AppendLine("Recursive Descendant PIDs Scanned: $($descendantPids.Count)") | Out-Null
 $treeReport.AppendLine("Isolation Root: $isolatedRoot") | Out-Null
 $treeReport.AppendLine("Python Interpreter: $pythonExe") | Out-Null
 
-$residualCount = 0
 if ($residualProcs.Count -gt 0) {
     foreach ($p in $residualProcs) {
         $treeReport.AppendLine("Residual Process: Name=$($p.Name), PID=$($p.ProcessId), ParentPID=$($p.ParentProcessId), CommandLine=$($p.CommandLine)") | Out-Null
-        $residualCount++
     }
 } else {
     $treeReport.AppendLine("Residual Process Audit: 0 matching residual processes found. Count = 0 (CLEAN).") | Out-Null
     $treeReport.AppendLine("Parent-Child Process Tree: No orphaned python / core_service / m2rc1_desktop child processes.") | Out-Null
+    $treeReport.AppendLine("Broken-Chain Process Audit: No unlinked descendant or helper processes lingering.") | Out-Null
 }
 
 # Real Handle / File-lock Verification:
@@ -252,6 +293,28 @@ try {
 
 $treeReportFile = Join-Path $TargetDir "ac2-process-tree-audit.log"
 [System.IO.File]::WriteAllText($treeReportFile, $treeReport.ToString(), [System.Text.Encoding]::UTF8)
+
+# Write metadata and exit code for ac2
+$ac2ExitFile = Join-Path $TargetDir "ac2-process-tree-audit.exit"
+$ac2ExitCode = if ($residualCount -eq 0) { 0 } else { 1 }
+[System.IO.File]::WriteAllText($ac2ExitFile, $ac2ExitCode.ToString(), [System.Text.Encoding]::UTF8)
+
+$ac2MetaFile = Join-Path $TargetDir "ac2-process-tree-audit.meta.json"
+$ac2Meta = [ordered]@{
+    command = "test-ac1-overlay-bound.ps1 (Process Tree & Broken-Chain Orphan Audit)"
+    command_name = "ac2_process_tree_audit"
+    timestamp = (Get-Date -Format "yyyy-MM-ddTHH:mm:sszzz")
+    exit_code = $ac2ExitCode
+    residual_count = $residualCount
+    baseline_process_count = $baselinePidSet.Count
+    delta_process_count = $deltaProcs.Count
+    descendant_pids_scanned = $descendantPids.Count
+    isolation_root = $isolatedRoot
+    shell = $shellType
+    python_exe = $pythonExe
+}
+[System.IO.File]::WriteAllText($ac2MetaFile, ($ac2Meta | ConvertTo-Json -Depth 4), [System.Text.Encoding]::UTF8)
+
 Write-Host "Process tree audit complete. Residual process count: $residualCount"
 
 # Non-zero exit code if residual count > 0 or any test failed!
@@ -265,6 +328,7 @@ $anyFailed = ($overlayRes.ExitCode -ne 0) -or `
     ($p1_2_ChildRes.ExitCode -ne 0) -or `
     ($p1_2_PendingRes.ExitCode -ne 0) -or `
     ($p2_6_Res.ExitCode -ne 0) -or `
+    ($n1_Res.ExitCode -ne 0) -or `
     ($residualCount -gt 0)
 
 if ($anyFailed) {

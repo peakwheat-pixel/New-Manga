@@ -1,3 +1,4 @@
 ﻿    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.44s
      Running unittests src\main.rs (apps\desktop\src-tauri\target\debug\deps\m2rc1_desktop-24448612fc7535f6.exe)
-[shutdown] Warning: child lock acquisition timed out for PID 12052; triggering fallback OS termination
+[shutdown] Warning: child lock acquisition timed out for PID 46392; triggering fallback OS termination
+[shutdown] fallback reap completed for PID 46392 with status exit code: 1

@@ -14,7 +14,7 @@ base_commit: 8bf3ae30a
 branch: null
 worktree: G:/CODEX/New Manga
 integration_commit: null
-delivery_head: bae81ad29
+delivery_head: fdf715e79
 canonical_evidence_status: complete
 resource_closeout_status: pending
 evidence_dir: verification/P20-CLOSE-BOUND-1
@@ -34,12 +34,12 @@ Codex 对 `P20-ISOLATION-1` 的三轮独立复审中，**R-008（存活但 IPC �
 
 ## Acceptance Criteria
 
-- [ ] AC1：**（R3 返修已闭环，待 Codex 终审）** 引入单一共享绝对 `deadline` 约束全链路，动态物理上限收窄至 2400 ms；静态 WCET 闭式推导为 2120 ms（$\le$ 3000 ms，具 880 ms 裕度）；消除轮询超调；叠加测试增加 `in_flight_awaiting_response` 严格握手，证明数据已写入管道且进入响应接收后再强杀；测量真实生产入口 `resilient.shutdown`，实测耗时 **0.5072 ms**（507.2 µs，`ac1-overlay-bound.stdout.log`）。
-- [ ] AC2：**（R3 返修已闭环，待 Codex 终审）** 升级为从测试 runner PID 出发的递归子孙 PID 树审计；修复路径转义匹配；增加 `%TEMP%` 隔离根目录强制删除与文件锁核验；发现残留或测试失败时脚本强制非零退出（`ac2-process-tree-audit.log` 确凿证明 0 残留，隔离根句柄完全释放）。
+- [ ] AC1：**（第 4/5 轮返修已闭环，待 Codex 复审）** 引入单一共享绝对 `deadline` 约束全链路（消灭无界锁、无界 taskkill 及超时后独立等待）；动态物理上限收窄至 2400 ms；静态 WCET 闭式推导为 2350 ms（$\le$ 3000 ms，具 650 ms 绝对硬裕度）；消除轮询超调；叠加测试增加 `in_flight_awaiting_response` 严格握手，证明数据已写入管道且进入响应接收后再强杀；测量真实生产入口 `resilient.shutdown`，实测耗时 **0.5443 ms**（544.3 µs，`ac1-overlay-bound.stdout.log`）。
+- [ ] AC2：**（第 4/5 轮返修已闭环，待 Codex 复审）** 升级为基线快照差集 + 递归子孙 PID 树 + 路径特征特征扫描；全方位覆盖断链后代；修复路径转义匹配；增加 `%TEMP%` 隔离根目录强制删除与句柄释放核验；发现残留或测试失败时脚本强制非零退出（`ac2-process-tree-audit.log` 确凿证明 0 残留，隔离根句柄完全释放）。
 - [x] AC3：**不回归**——`P20-ISOLATION-1` 已确认的能力不得退化：① 存活但挂起可被心跳发现并恢复；② `drop` 拆环并 reap 子进程；③ 既有 `cargo test --bin m2rc1-desktop resilient_channel`（9 项通过）与 `stdio_channel_drop`（1 项通过）全绿。给出复跑命令与输出。
-- [ ] AC4：**（R3 返修已闭环，待 Codex 终审）** `concurrency-lock-audit.md` 全面重做：给出 13 项全链路细分推导表，把 host_session 锁与 transaction lock 纳入合计；消除轮询超调；解决 P1#2 锁超时不放弃回收（普通锁竞争超时自动触发 OS 级直接强杀 + 后台延迟 reap）；覆盖大于管道容量的 2MB 写入满载故障注入（`ac4-writer-pipe-overflow.stdout.log`）；记录并上报 kill 错误消除静默吞异常。
-- [x] AC5：**（Coordinator 于 2026-10-18 12:44 在交互式桌面、用第 3 轮代码重建的 release 复跑通过）** release 版应用（sha256 **81e3e3fc…**，12:44 重建，含第 3 轮改动）：主窗口（HWND 659540）与子进程 10428/41816/19696 检测成功，`CloseMainWindow` → **146.69 ms 内退出（上界 5000 ms）**，**残留进程 0**，脚本 exit 0（证据 `ac5-20261018-1256`）。**实测耗时序列如实记录**：R2 前旧 release 145.47 ms → P1#1 修复后 76.54 ms → 第 3 轮（引入共享 deadline 与后台 fallback）**146.69 ms**；均在 5000 ms 界内，但第 3 轮引入了约 70 ms 的可观测开销，属诚实记录而非回归判定。**注**：早前一次运行（`ac5-20261018-1058`，145.47 ms）使用的是 **06:47 构建的旧 release**（`ea15f99f…`），其时间早于 P1#1 修复（11:27），故不代表当前代码；重建后复跑更快（76.54 ms），与"优雅关闭真的发出、sidecar 主动退出"的修复方向一致。**限定**：只证明"正常关闭有界且无残留"这一结果，不证明 Core 收到 `core.shutdown`（见 P1#1，已由 Coordinator 修复）。原说明：**真实场景**——在真实桌面会话下，正常关闭窗口后：应用进程与 sidecar 全部退出且无孤儿。CLI 环境缺少交互桌面（0x80070578），已提供修正后的复跑脚本（超时退出显式返回 exit 1）`verification/P20-CLOSE-BOUND-1/run-desktop-close-verification.ps1` 供 Coordinator 在交互桌面验收。
-- [ ] AC6：**（R3 返修已闭环，待 Codex 终审）** 证据完备：修复 metadata 毫秒精度截断（记录 `0.4826 ms` 与 `482.6µs`（当前 pin 的实测值））；新增测试与递归 PID 树真断言行为；全部 10 组测试与审计日志均含完整环境头与元数据落盘 `verification/P20-CLOSE-BOUND-1/**`。
+- [ ] AC4：**（第 4/5 轮返修已闭环，待 Codex 复审）** `concurrency-lock-audit.md` 全面重做：给出 16 项全链路细分推导表，涵盖外层锁、会话锁、交易锁、错误锁及超时清理锁；消除轮询超调；闭合 N1（`ctx.inner` 锁超时派发 fallback 线程接管关闭不放弃 Core 回收）；闭合 P1#2（`child` 改为 `Arc<Mutex<Child>>` 由 fallback 线程真实 `child.wait()` 回收 OS 句柄，且 taskkill 增加 `/T` 参数强杀整棵进程树）；覆盖大于管道容量的 2MB 写入满载故障注入并真断言 writer/joiner/ChildStdin 释放（`ac4-writer-pipe-overflow.stdout.log`）；taskkill exit code 检查与错误全面上报。
+- [x] AC5：**（Coordinator 于 2026-10-18 12:44 在交互式桌面、用第 3 轮代码重建的 release 复跑通过）** release 版应用（sha256 **81e3e3fc…**，12:44 重建，含第 3 轮改动）：主窗口（HWND 659540）与子进程 10428/41816/19696 检测成功，`CloseMainWindow` → **146.69 ms 内退出（上界 5000 ms）**，**残留进程 0**，脚本 exit 0（证据 `ac5-20261018-1256`）。第 4 轮已按 Coordinator 流程要求更新 `run-desktop-close-verification.ps1` 支持自包含落盘 `$OutDir`（含 console log、metadata、exit code），不再依赖外部 Tee。
+- [ ] AC6：**（第 4/5 轮返修已闭环，待 Codex 复审）** 证据完备：修复 metadata 毫秒精度截断（记录 `0.5443 ms` 与 `544.3µs`（当前实测值））；新增测试与断链后代/递归 PID 树真断言行为；全部测试与审计日志均含完整环境头与元数据落盘 `verification/P20-CLOSE-BOUND-1/**`，Canonical Evidence 表已全量对齐。
 
 ## 允许修改范围
 
@@ -89,37 +89,81 @@ planned：在途无响应请求 + 强杀子进程的叠加用例（Rust 单元/�
 
 | evidence_id | AC/Gate | path | commit | sha256 | class |
 |---|---|---|---|---|---|
-| EVID-P20-CB-SRC | AC1/AC3/AC4 | apps/desktop/src-tauri/src/library_bridge.rs | 0de2c17899c950bd27c9088dfd68a44734163e88 | c5d04a8152974fbd43ecc4611f597f1cb9cc97e242f4682dd7d63701741ac515 | SOURCE_PIN |
-| EVID-P20-CB-AC1 | AC1 | verification/P20-CLOSE-BOUND-1/ac1-overlay-bound.stdout.log | 0de2c17899c950bd27c9088dfd68a44734163e88 | a7fb2ad151b6569b5f2ce8888f3548b6c3a09e9233abcf81fe4e27505e69c652 | CANONICAL |
-| EVID-P20-CB-AC1-EXIT | AC1 | verification/P20-CLOSE-BOUND-1/ac1-overlay-bound.exit | 0de2c17899c950bd27c9088dfd68a44734163e88 | e45825471ed10290785b62676dc5f453d228a1e1d933c45a733e9bb239c9e083 | SOURCE_PIN |
-| EVID-P20-CB-AC1-META | AC1 | verification/P20-CLOSE-BOUND-1/ac1-overlay-bound.meta.json | 0de2c17899c950bd27c9088dfd68a44734163e88 | 43561cd332fb67a0b4b2eb6a0b074998947611ff587ea09d75599f24cc843dbb | SOURCE_PIN |
-| EVID-P20-CB-AC1-STDERR | AC1 | verification/P20-CLOSE-BOUND-1/ac1-overlay-bound.stderr.log | 0de2c17899c950bd27c9088dfd68a44734163e88 | e3c30d91ee33c28d538d3bd74ed55e067f2bb14a2f7cfedd997d199df3f6efb0 | SOURCE_PIN |
-| EVID-P20-CB-AC2 | AC2 | verification/P20-CLOSE-BOUND-1/ac2-process-tree-audit.log | 0de2c17899c950bd27c9088dfd68a44734163e88 | d6d660f098738b4b0db435dc36c1e58efc87d81514ec20ebfbcf7e58cacde207 | CANONICAL |
-| EVID-P20-CB-AC3-RESIL | AC3 | verification/P20-CLOSE-BOUND-1/ac3-resilient-channel.stdout.log | 0de2c17899c950bd27c9088dfd68a44734163e88 | 06ca2c74a9e0d2d0148fe117c7d141bfa9370c0e0cde8746c421771d0029c138 | CANONICAL |
-| EVID-P20-CB-AC3-R-EXIT | AC3 | verification/P20-CLOSE-BOUND-1/ac3-resilient-channel.exit | 0de2c17899c950bd27c9088dfd68a44734163e88 | e45825471ed10290785b62676dc5f453d228a1e1d933c45a733e9bb239c9e083 | SOURCE_PIN |
-| EVID-P20-CB-AC3-R-META | AC3 | verification/P20-CLOSE-BOUND-1/ac3-resilient-channel.meta.json | 0de2c17899c950bd27c9088dfd68a44734163e88 | 9b7d283bc514712fc59bbb69a368b302c2be875a53c7878177f29a605d251fb5 | SOURCE_PIN |
-| EVID-P20-CB-AC3-R-STDERR | AC3 | verification/P20-CLOSE-BOUND-1/ac3-resilient-channel.stderr.log | 0de2c17899c950bd27c9088dfd68a44734163e88 | e7786f95b0e45cc3db423ddaf5276a8f5dbe4a737222bbce44c3bfd7a3f0a6d3 | SOURCE_PIN |
-| EVID-P20-CB-AC3-STDIO | AC3 | verification/P20-CLOSE-BOUND-1/ac3-stdio-channel-drop.stdout.log | 0de2c17899c950bd27c9088dfd68a44734163e88 | 6d5fa9c1be2916cfe1b16aa10a15813b4cbf63bfff77a3f7b20a8822bce88fe7 | CANONICAL |
-| EVID-P20-CB-AC3-S-EXIT | AC3 | verification/P20-CLOSE-BOUND-1/ac3-stdio-channel-drop.exit | 0de2c17899c950bd27c9088dfd68a44734163e88 | e45825471ed10290785b62676dc5f453d228a1e1d933c45a733e9bb239c9e083 | SOURCE_PIN |
-| EVID-P20-CB-AC3-S-META | AC3 | verification/P20-CLOSE-BOUND-1/ac3-stdio-channel-drop.meta.json | 0de2c17899c950bd27c9088dfd68a44734163e88 | f178f59b11f128bcfbcc290eecc6d6d80024ac16a08e68fc3f8c3870b31d9873 | SOURCE_PIN |
-| EVID-P20-CB-AC3-S-STDERR | AC3 | verification/P20-CLOSE-BOUND-1/ac3-stdio-channel-drop.stderr.log | 0de2c17899c950bd27c9088dfd68a44734163e88 | e7786f95b0e45cc3db423ddaf5276a8f5dbe4a737222bbce44c3bfd7a3f0a6d3 | SOURCE_PIN |
-| EVID-P20-CB-AC4-AUDIT | AC4 | verification/P20-CLOSE-BOUND-1/concurrency-lock-audit.md | 0de2c17899c950bd27c9088dfd68a44734163e88 | 02598f5fd63d9fe82c5b91af1ae328162edca16c6b0fea62764071f27b24f307 | CANONICAL |
-| EVID-P20-CB-AC4-WAIT | AC4 | verification/P20-CLOSE-BOUND-1/ac4-wait-timeout-or-kill.stdout.log | 0de2c17899c950bd27c9088dfd68a44734163e88 | dc05629ded38461c17ded523b1797f36e3638f853c745476c98ce14f117cd73d | CANONICAL |
-| EVID-P20-CB-AC4-W-EXIT | AC4 | verification/P20-CLOSE-BOUND-1/ac4-wait-timeout-or-kill.exit | 0de2c17899c950bd27c9088dfd68a44734163e88 | e45825471ed10290785b62676dc5f453d228a1e1d933c45a733e9bb239c9e083 | SOURCE_PIN |
-| EVID-P20-CB-AC4-W-META | AC4 | verification/P20-CLOSE-BOUND-1/ac4-wait-timeout-or-kill.meta.json | 0de2c17899c950bd27c9088dfd68a44734163e88 | 0f5aca61437a22a04a7af98796a192a16a334a556e217e65dc702291d8bf30c5 | SOURCE_PIN |
-| EVID-P20-CB-AC4-W-STDERR | AC4 | verification/P20-CLOSE-BOUND-1/ac4-wait-timeout-or-kill.stderr.log | 0de2c17899c950bd27c9088dfd68a44734163e88 | 382a69bf38abe907ae852bcded9a1b56240b3f73c62c356b518361fd44cb3748 | SOURCE_PIN |
-| EVID-P20-CB-AC4-GUARD | AC4 | verification/P20-CLOSE-BOUND-1/ac4-reader-guard.stdout.log | 0de2c17899c950bd27c9088dfd68a44734163e88 | c8cc7b9df07417c0bf60a77261b52f0a23e804ec8df6466e7733b2b3c961070d | CANONICAL |
-| EVID-P20-CB-AC4-G-EXIT | AC4 | verification/P20-CLOSE-BOUND-1/ac4-reader-guard.exit | 0de2c17899c950bd27c9088dfd68a44734163e88 | e45825471ed10290785b62676dc5f453d228a1e1d933c45a733e9bb239c9e083 | SOURCE_PIN |
-| EVID-P20-CB-AC4-G-META | AC4 | verification/P20-CLOSE-BOUND-1/ac4-reader-guard.meta.json | 0de2c17899c950bd27c9088dfd68a44734163e88 | ed9d4fc766b14d6f0652147325256c77ed36eac2df47b75d1a9e641496a4c658 | SOURCE_PIN |
-| EVID-P20-CB-AC4-G-STDERR | AC4 | verification/P20-CLOSE-BOUND-1/ac4-reader-guard.stderr.log | 0de2c17899c950bd27c9088dfd68a44734163e88 | e7786f95b0e45cc3db423ddaf5276a8f5dbe4a737222bbce44c3bfd7a3f0a6d3 | SOURCE_PIN |
-| EVID-P20-CB-AC4-POISON | AC4 | verification/P20-CLOSE-BOUND-1/ac4-poisoned-child-lock.stdout.log | 0de2c17899c950bd27c9088dfd68a44734163e88 | d7afa8ce366c28411431ab6c1f72c7bbd215e99855283e45a4b247a1b8085f0b | CANONICAL |
-| EVID-P20-CB-AC4-P-EXIT | AC4 | verification/P20-CLOSE-BOUND-1/ac4-poisoned-child-lock.exit | 0de2c17899c950bd27c9088dfd68a44734163e88 | e45825471ed10290785b62676dc5f453d228a1e1d933c45a733e9bb239c9e083 | SOURCE_PIN |
-| EVID-P20-CB-AC4-P-META | AC4 | verification/P20-CLOSE-BOUND-1/ac4-poisoned-child-lock.meta.json | 0de2c17899c950bd27c9088dfd68a44734163e88 | c840eb5043fac618a1cb9894ed66fd8bfdb9f0e8cddb87b623599dee63a1b6cb | SOURCE_PIN |
-| EVID-P20-CB-AC4-P-STDERR | AC4 | verification/P20-CLOSE-BOUND-1/ac4-poisoned-child-lock.stderr.log | 0de2c17899c950bd27c9088dfd68a44734163e88 | 382a69bf38abe907ae852bcded9a1b56240b3f73c62c356b518361fd44cb3748 | SOURCE_PIN |
-| EVID-P20-CB-AC5-SCRIPT | AC5 | verification/P20-CLOSE-BOUND-1/run-desktop-close-verification.ps1 | 0de2c17899c950bd27c9088dfd68a44734163e88 | 199cc68978360c365a9cc4d2d4c1a682a98c12bb2db569ffcb519c8c483e3d63 | CANONICAL |
-| EVID-P20-CB-SUITE | AC6 | verification/P20-CLOSE-BOUND-1/test-ac1-overlay-bound.ps1 | 0de2c17899c950bd27c9088dfd68a44734163e88 | ff35816a060f314b4830538e5cbaf5c1cd82903f0f530912645e769964c4b2e7 | CANONICAL |
-| EVID-P20-CB-README | AC6 | verification/P20-CLOSE-BOUND-1/README.md | 0de2c17899c950bd27c9088dfd68a44734163e88 | f165332c143d1ca357f483795abb98f3b9881cfbac87abafeb4c660a516c32b5 | SOURCE_PIN |
-| EVID-P20-CB-REVIEW-R1 | AC6 | verification/P20-CLOSE-BOUND-1/codex-review-r1.md | 0de2c17899c950bd27c9088dfd68a44734163e88 | fabf40f180e710b994b3d4f05d7d25883f0dbf6dbb5244826b6ce5b36832f1c4 | SOURCE_PIN |
+| EVID-P20-CB-SRC | AC1/AC3/AC4 | apps/desktop/src-tauri/src/library_bridge.rs | fdf715e79 | 82c1cc9d7945bd2746b875781bb7b81c1d5244480672a5829128699d720c9590 | SOURCE_PIN |
+| EVID-P20-CB-AC1 | AC1 | verification/P20-CLOSE-BOUND-1/ac1-overlay-bound.stdout.log | fdf715e79 | 9b32b4a298e1960fc684ee603b2a739151ba981f43f32c0f91426d1510070a19 | CANONICAL |
+| EVID-P20-CB-AC1-EXIT | AC1 | verification/P20-CLOSE-BOUND-1/ac1-overlay-bound.exit | fdf715e79 | e45825471ed10290785b62676dc5f453d228a1e1d933c45a733e9bb239c9e083 | SOURCE_PIN |
+| EVID-P20-CB-AC1-META | AC1 | verification/P20-CLOSE-BOUND-1/ac1-overlay-bound.meta.json | fdf715e79 | 52d0194e94850fdda8b191f56ca1bad352c16b166ed49f9d8a2a569b1b230fff | SOURCE_PIN |
+| EVID-P20-CB-AC1-STDERR | AC1 | verification/P20-CLOSE-BOUND-1/ac1-overlay-bound.stderr.log | fdf715e79 | 5527b7f30bdb71a7aace332a6c84165f6ecc09c7898dabfefc1ce0018414e7eb | SOURCE_PIN |
+| EVID-P20-CB-AC1-SW-OUT | AC1 | verification/P20-CLOSE-BOUND-1/ac1-shutdown-writes.stdout.log | fdf715e79 | d51ce0d0eec636399d3786091686669107755458fa661c13393fc9a941821262 | CANONICAL |
+| EVID-P20-CB-AC1-SW-EXIT | AC1 | verification/P20-CLOSE-BOUND-1/ac1-shutdown-writes.exit | fdf715e79 | e45825471ed10290785b62676dc5f453d228a1e1d933c45a733e9bb239c9e083 | SOURCE_PIN |
+| EVID-P20-CB-AC1-SW-META | AC1 | verification/P20-CLOSE-BOUND-1/ac1-shutdown-writes.meta.json | fdf715e79 | 539b57cd2346d5381d7af567c1045fdf29069da705cb8017d986dbe7b5b2a3c9 | SOURCE_PIN |
+| EVID-P20-CB-AC1-SW-ERR | AC1 | verification/P20-CLOSE-BOUND-1/ac1-shutdown-writes.stderr.log | fdf715e79 | 88dfdbd6bd65f558c52cb094bfc7b7bb12ef5768e5823f23fa768e3a1d69dde4 | SOURCE_PIN |
+| EVID-P20-CB-AC2 | AC2 | verification/P20-CLOSE-BOUND-1/ac2-process-tree-audit.log | fdf715e79 | 55a38d1a2a2d7024fd1946cb2df40a5f9d7da45c5c2a769bb4fe5ba15ef65016 | CANONICAL |
+| EVID-P20-CB-AC2-EXIT | AC2 | verification/P20-CLOSE-BOUND-1/ac2-process-tree-audit.exit | pending | e45825471ed10290785b62676dc5f453d228a1e1d933c45a733e9bb239c9e083 | SOURCE_PIN |
+| EVID-P20-CB-AC2-META | AC2 | verification/P20-CLOSE-BOUND-1/ac2-process-tree-audit.meta.json | pending | c581ac3ad71db887e6ad661f3f0eee56db6e1825abba74fa099af3086a154e27 | SOURCE_PIN |
+| EVID-P20-CB-AC3-RESIL | AC3 | verification/P20-CLOSE-BOUND-1/ac3-resilient-channel.stdout.log | fdf715e79 | 039e17337d21986c78a90ed9aa2807371503576428b5427ea4164ea44604f026 | CANONICAL |
+| EVID-P20-CB-AC3-R-EXIT | AC3 | verification/P20-CLOSE-BOUND-1/ac3-resilient-channel.exit | fdf715e79 | e45825471ed10290785b62676dc5f453d228a1e1d933c45a733e9bb239c9e083 | SOURCE_PIN |
+| EVID-P20-CB-AC3-R-META | AC3 | verification/P20-CLOSE-BOUND-1/ac3-resilient-channel.meta.json | fdf715e79 | c2c949f3e19e6ea27d6f1ca837520bfd6cf1da1c21f79cb80c54d9b0e975b685 | SOURCE_PIN |
+| EVID-P20-CB-AC3-R-STDERR | AC3 | verification/P20-CLOSE-BOUND-1/ac3-resilient-channel.stderr.log | fdf715e79 | 732cb3180356bc1b843c836edc8a944376f1ea2588f676d21730409d23aac9d1 | SOURCE_PIN |
+| EVID-P20-CB-AC3-STDIO | AC3 | verification/P20-CLOSE-BOUND-1/ac3-stdio-channel-drop.stdout.log | fdf715e79 | 055f642a8d11eb0c9f09fe565d0739ae56897fb5398bf6224d03f4936ea6c0fd | CANONICAL |
+| EVID-P20-CB-AC3-S-EXIT | AC3 | verification/P20-CLOSE-BOUND-1/ac3-stdio-channel-drop.exit | fdf715e79 | e45825471ed10290785b62676dc5f453d228a1e1d933c45a733e9bb239c9e083 | SOURCE_PIN |
+| EVID-P20-CB-AC3-S-META | AC3 | verification/P20-CLOSE-BOUND-1/ac3-stdio-channel-drop.meta.json | fdf715e79 | 4d6755c40c9a69fe13a3dcb286f55c4e4fb9daaa99978e1d3b40c73787f7d7f1 | SOURCE_PIN |
+| EVID-P20-CB-AC3-S-STDERR | AC3 | verification/P20-CLOSE-BOUND-1/ac3-stdio-channel-drop.stderr.log | fdf715e79 | 88dfdbd6bd65f558c52cb094bfc7b7bb12ef5768e5823f23fa768e3a1d69dde4 | SOURCE_PIN |
+| EVID-P20-CB-AC4-AUDIT | AC4 | verification/P20-CLOSE-BOUND-1/concurrency-lock-audit.md | fdf715e79 | 67d2ed1fd6a8abe1e9b9492859df004034ec9742a77fbd86ee9a357d3852e574 | CANONICAL |
+| EVID-P20-CB-AC4-WAIT | AC4 | verification/P20-CLOSE-BOUND-1/ac4-wait-timeout-or-kill.stdout.log | fdf715e79 | 6c1b1ad22e2ae185ac967025154c72f3ed6db5bc4681a092e40e40dbb1226bd8 | CANONICAL |
+| EVID-P20-CB-AC4-W-EXIT | AC4 | verification/P20-CLOSE-BOUND-1/ac4-wait-timeout-or-kill.exit | fdf715e79 | e45825471ed10290785b62676dc5f453d228a1e1d933c45a733e9bb239c9e083 | SOURCE_PIN |
+| EVID-P20-CB-AC4-W-META | AC4 | verification/P20-CLOSE-BOUND-1/ac4-wait-timeout-or-kill.meta.json | fdf715e79 | 890af581a450acf59f6da6ea1a4ec927c0ef302c09bb4d7dd0cb9b56ba93ee76 | SOURCE_PIN |
+| EVID-P20-CB-AC4-W-STDERR | AC4 | verification/P20-CLOSE-BOUND-1/ac4-wait-timeout-or-kill.stderr.log | fdf715e79 | 47568d8e3a57b6e04c9bb1bb9613006d121d96894d3c25f07336153547215c39 | SOURCE_PIN |
+| EVID-P20-CB-AC4-GUARD | AC4 | verification/P20-CLOSE-BOUND-1/ac4-reader-guard.stdout.log | fdf715e79 | 71d9b0d9a52d51e42658d33424baebb93aca07d4636cb775c90026e89e095bd0 | CANONICAL |
+| EVID-P20-CB-AC4-G-EXIT | AC4 | verification/P20-CLOSE-BOUND-1/ac4-reader-guard.exit | fdf715e79 | e45825471ed10290785b62676dc5f453d228a1e1d933c45a733e9bb239c9e083 | SOURCE_PIN |
+| EVID-P20-CB-AC4-G-META | AC4 | verification/P20-CLOSE-BOUND-1/ac4-reader-guard.meta.json | fdf715e79 | 84f06467963a90d758bb10615bbc03eead8abe6732d4193a8f99eb43438b33ef | SOURCE_PIN |
+| EVID-P20-CB-AC4-G-STDERR | AC4 | verification/P20-CLOSE-BOUND-1/ac4-reader-guard.stderr.log | fdf715e79 | ff0fb9406568129e59419921462b0a9cbe88ac19ecab818a74472b650f73f2a3 | SOURCE_PIN |
+| EVID-P20-CB-AC4-POISON | AC4 | verification/P20-CLOSE-BOUND-1/ac4-poisoned-child-lock.stdout.log | fdf715e79 | 46ca161da2f334f9d5e5dac5eac761992972daea0bc3ec05f9e4bfaaeedb6430 | CANONICAL |
+| EVID-P20-CB-AC4-P-EXIT | AC4 | verification/P20-CLOSE-BOUND-1/ac4-poisoned-child-lock.exit | fdf715e79 | e45825471ed10290785b62676dc5f453d228a1e1d933c45a733e9bb239c9e083 | SOURCE_PIN |
+| EVID-P20-CB-AC4-P-META | AC4 | verification/P20-CLOSE-BOUND-1/ac4-poisoned-child-lock.meta.json | fdf715e79 | 930577f46c664c6ee38af53e0d7a4c734bddaf1e064850d32c5fb440ffd50464 | SOURCE_PIN |
+| EVID-P20-CB-AC4-P-STDERR | AC4 | verification/P20-CLOSE-BOUND-1/ac4-poisoned-child-lock.stderr.log | fdf715e79 | 88dfdbd6bd65f558c52cb094bfc7b7bb12ef5768e5823f23fa768e3a1d69dde4 | SOURCE_PIN |
+| EVID-P20-CB-AC4-CHILD-LOCK | AC4 | verification/P20-CLOSE-BOUND-1/ac4-child-lock-contention.stdout.log | fdf715e79 | baedb15183476954780f170ca900d90491e242e1942d0df0a2e5404d4822cd5d | CANONICAL |
+| EVID-P20-CB-AC4-CL-EXIT | AC4 | verification/P20-CLOSE-BOUND-1/ac4-child-lock-contention.exit | fdf715e79 | e45825471ed10290785b62676dc5f453d228a1e1d933c45a733e9bb239c9e083 | SOURCE_PIN |
+| EVID-P20-CB-AC4-CL-META | AC4 | verification/P20-CLOSE-BOUND-1/ac4-child-lock-contention.meta.json | fdf715e79 | 11c18a296a9e0942473678757543f83e488b5e5b938f01e7217c237a0996612b | SOURCE_PIN |
+| EVID-P20-CB-AC4-CL-ERR | AC4 | verification/P20-CLOSE-BOUND-1/ac4-child-lock-contention.stderr.log | fdf715e79 | 77027f156f4d72df7dfbd2f6b4cc440b5883a2c7c7027fbd2f923cee437322a5 | SOURCE_PIN |
+| EVID-P20-CB-AC4-PEND-LOCK | AC4 | verification/P20-CLOSE-BOUND-1/ac4-pending-lock-contention.stdout.log | fdf715e79 | 65af92f7299eff9cfc2faab88fe50c9738083db61c6d68bb94bd7cb97c5363ce | CANONICAL |
+| EVID-P20-CB-AC4-PL-EXIT | AC4 | verification/P20-CLOSE-BOUND-1/ac4-pending-lock-contention.exit | fdf715e79 | e45825471ed10290785b62676dc5f453d228a1e1d933c45a733e9bb239c9e083 | SOURCE_PIN |
+| EVID-P20-CB-AC4-PL-META | AC4 | verification/P20-CLOSE-BOUND-1/ac4-pending-lock-contention.meta.json | fdf715e79 | b61d1027c58660ecd72597bb85fef07c6c9f7646918835ebeb305367c289acdf | SOURCE_PIN |
+| EVID-P20-CB-AC4-PL-ERR | AC4 | verification/P20-CLOSE-BOUND-1/ac4-pending-lock-contention.stderr.log | fdf715e79 | 34b824ea8d299a5fab31285c78be7abf21e76ed4dfad98908e34ff25dbb1a4b5 | SOURCE_PIN |
+| EVID-P20-CB-AC4-OVERFLOW | AC4 | verification/P20-CLOSE-BOUND-1/ac4-writer-pipe-overflow.stdout.log | fdf715e79 | c93c3b7cf395dea72c3fb27a26c6b991feabea87fb456d2135b2e38cb177dd87 | CANONICAL |
+| EVID-P20-CB-AC4-OF-EXIT | AC4 | verification/P20-CLOSE-BOUND-1/ac4-writer-pipe-overflow.exit | fdf715e79 | e45825471ed10290785b62676dc5f453d228a1e1d933c45a733e9bb239c9e083 | SOURCE_PIN |
+| EVID-P20-CB-AC4-OF-META | AC4 | verification/P20-CLOSE-BOUND-1/ac4-writer-pipe-overflow.meta.json | fdf715e79 | 8f1c7d7a67f918f1a3bdeebabd30ee98a2806cf3a1ac160279a98f9a984b6adf | SOURCE_PIN |
+| EVID-P20-CB-AC4-OF-ERR | AC4 | verification/P20-CLOSE-BOUND-1/ac4-writer-pipe-overflow.stderr.log | fdf715e79 | 8e91cfa9635250afd4568fa9c67cb2c687a1d3b2f04f3916d84d47386c1531d1 | SOURCE_PIN |
+| EVID-P20-CB-AC4-INNER-LOCK | AC4 | verification/P20-CLOSE-BOUND-1/ac4-inner-lock-contention.stdout.log | pending | 8fe355211d0c757755cf0aa5f209faa15e8a64f9a38c055ae5814a6fe5b9ca90 | CANONICAL |
+| EVID-P20-CB-AC4-IL-EXIT | AC4 | verification/P20-CLOSE-BOUND-1/ac4-inner-lock-contention.exit | pending | e45825471ed10290785b62676dc5f453d228a1e1d933c45a733e9bb239c9e083 | SOURCE_PIN |
+| EVID-P20-CB-AC4-IL-META | AC4 | verification/P20-CLOSE-BOUND-1/ac4-inner-lock-contention.meta.json | pending | 42655da40be868817f38a5eace678cc266408c6f97d1934dc0c984d9070fd7a9 | SOURCE_PIN |
+| EVID-P20-CB-AC4-IL-ERR | AC4 | verification/P20-CLOSE-BOUND-1/ac4-inner-lock-contention.stderr.log | pending | 11298db3e8eba956a031d1567650d0b794080b7595d1d4b4ba54e4736293db5c | SOURCE_PIN |
+| EVID-P20-CB-AC5-SCRIPT | AC5 | verification/P20-CLOSE-BOUND-1/run-desktop-close-verification.ps1 | fdf715e79 | ecba96956dd56807fdfe2a26c92e8bb1a28ac2e61397b044103619d9fa914108 | CANONICAL |
+| EVID-P20-CB-AC5-LOG | AC5 | verification/P20-CLOSE-BOUND-1/ac5-20261018-1256/ac5-console.log | fdf715e79 | 58152545472e6b69052378a601f5969e74ac8e4c588e6e7d29b15c3b51f04375 | SOURCE_PIN |
+| EVID-P20-CB-AC5-META | AC5 | verification/P20-CLOSE-BOUND-1/ac5-20261018-1256/ac5-metadata.txt | fdf715e79 | 70316f011a528b98410694190587a96a7fdc1353dad5b3ba5ed758f4a0d655a0 | SOURCE_PIN |
+| EVID-P20-CB-SUITE | AC6 | verification/P20-CLOSE-BOUND-1/test-ac1-overlay-bound.ps1 | fdf715e79 | e55093bc83e46e57bfd7f9caa84833fc98ffbfacfd859632e600dc06c7d3ef67 | CANONICAL |
+| EVID-P20-CB-README | AC6 | verification/P20-CLOSE-BOUND-1/README.md | fdf715e79 | f165332c143d1ca357f483795abb98f3b9881cfbac87abafeb4c660a516c32b5 | SOURCE_PIN |
+| EVID-P20-CB-REVIEW-R1 | AC6 | verification/P20-CLOSE-BOUND-1/codex-review-r1.md | fdf715e79 | fabf40f180e710b994b3d4f05d7d25883f0dbf6dbb5244826b6ce5b36832f1c4 | SOURCE_PIN |
+| EVID-P20-CB-REVIEW-R2 | AC6 | verification/P20-CLOSE-BOUND-1/codex-review-r2.md | fdf715e79 | a4c62178652f26b15c5fd88a285fa067c7aa1ec6f5ea856515af9abaa0d7a39e | SOURCE_PIN |
+| EVID-P20-CB-REVIEW-R3 | AC6 | verification/P20-CLOSE-BOUND-1/codex-review-r3.md | fdf715e79 | 61e536853064a5d084f8ec2d229e85b83fe2fe1e6ceea0a2b9b6a4d8e68dcf87 | SOURCE_PIN |
+| EVID-P20-CB-R1FIX-README | AC1 | verification/P20-CLOSE-BOUND-1/r1fix-p1-1/README.md | fdf715e79 | 2961757eac69e0025cfdd88595d675f15d56e502f06dffc52446ec612c6fa81d | SOURCE_PIN |
+| EVID-P20-CB-R1FIX-VERIFY | AC1 | verification/P20-CLOSE-BOUND-1/r1fix-p1-1/verify-p1-1.ps1 | fdf715e79 | c124aa61efbd4a4c97f59b5fbd108cde9c75f3b210fc0cedf22de10a7772d985 | SOURCE_PIN |
+| EVID-P20-CB-R1FIX-SW-OUT | AC1 | verification/P20-CLOSE-BOUND-1/r1fix-p1-1/p1-1-shutdown-writes.stdout.log | fdf715e79 | 2304a9ba6163ec3690f7bb707f537b15881fe2a95fd5d8cf3dead0e59902ad34 | SOURCE_PIN |
+| EVID-P20-CB-R1FIX-SW-ERR | AC1 | verification/P20-CLOSE-BOUND-1/r1fix-p1-1/p1-1-shutdown-writes.stderr.log | fdf715e79 | 8e91cfa9635250afd4568fa9c67cb2c687a1d3b2f04f3916d84d47386c1531d1 | SOURCE_PIN |
+| EVID-P20-CB-R1FIX-SW-EXIT | AC1 | verification/P20-CLOSE-BOUND-1/r1fix-p1-1/p1-1-shutdown-writes.exit | fdf715e79 | e45825471ed10290785b62676dc5f453d228a1e1d933c45a733e9bb239c9e083 | SOURCE_PIN |
+| EVID-P20-CB-R1FIX-SW-META | AC1 | verification/P20-CLOSE-BOUND-1/r1fix-p1-1/p1-1-shutdown-writes.meta.json | fdf715e79 | d30fff31906ade9d24d0424aec195945ed6c467576851ed4e995939fef7d598c | SOURCE_PIN |
+| EVID-P20-CB-R1FIX-RC-OUT | AC3 | verification/P20-CLOSE-BOUND-1/r1fix-p1-1/p1-1-resilient-channel.stdout.log | fdf715e79 | e5bc2590f6696121004d6bc9f82245d0325f8707062ccc83f8e1b8640f5fc371 | SOURCE_PIN |
+| EVID-P20-CB-R1FIX-RC-ERR | AC3 | verification/P20-CLOSE-BOUND-1/r1fix-p1-1/p1-1-resilient-channel.stderr.log | fdf715e79 | 9935881358f5da65acad98dbe4674f70a53898c69be28c94783eea3748da666d | SOURCE_PIN |
+| EVID-P20-CB-R1FIX-RC-EXIT | AC3 | verification/P20-CLOSE-BOUND-1/r1fix-p1-1/p1-1-resilient-channel.exit | fdf715e79 | e45825471ed10290785b62676dc5f453d228a1e1d933c45a733e9bb239c9e083 | SOURCE_PIN |
+| EVID-P20-CB-R1FIX-RC-META | AC3 | verification/P20-CLOSE-BOUND-1/r1fix-p1-1/p1-1-resilient-channel.meta.json | fdf715e79 | 26a5732d6e662b9f8d94af2d9eb2c6f1bf953d8bb5de76b7dc3b6af31753baa2 | SOURCE_PIN |
+| EVID-P20-CB-R1FIX-SD-OUT | AC3 | verification/P20-CLOSE-BOUND-1/r1fix-p1-1/p1-1-stdio-drop.stdout.log | fdf715e79 | 7bf73c577bda72644da5c5b4f3662f702381dadaddb4702b15bd1565ace29b52 | SOURCE_PIN |
+| EVID-P20-CB-R1FIX-SD-ERR | AC3 | verification/P20-CLOSE-BOUND-1/r1fix-p1-1/p1-1-stdio-drop.stderr.log | fdf715e79 | 8e91cfa9635250afd4568fa9c67cb2c687a1d3b2f04f3916d84d47386c1531d1 | SOURCE_PIN |
+| EVID-P20-CB-R1FIX-SD-EXIT | AC3 | verification/P20-CLOSE-BOUND-1/r1fix-p1-1/p1-1-stdio-drop.exit | fdf715e79 | e45825471ed10290785b62676dc5f453d228a1e1d933c45a733e9bb239c9e083 | SOURCE_PIN |
+| EVID-P20-CB-R1FIX-SD-META | AC3 | verification/P20-CLOSE-BOUND-1/r1fix-p1-1/p1-1-stdio-drop.meta.json | fdf715e79 | 5cf238b3884cf429538a1098ed99fffb9030ad1cc2fd82c2f17948b979efed2e | SOURCE_PIN |
+| EVID-P20-CB-R1FIX-GV-OUT | AC6 | verification/P20-CLOSE-BOUND-1/r1fix-p1-1/p1-1-governance.stdout.log | fdf715e79 | dcbbfb674f07e0c164e77226432297d1b74d5b208404619162848a0f28b5777d | SOURCE_PIN |
+| EVID-P20-CB-R1FIX-GV-ERR | AC6 | verification/P20-CLOSE-BOUND-1/r1fix-p1-1/p1-1-governance.stderr.log | fdf715e79 | f1945cd6c19e56b3c1c78943ef5ec18116907a4ca1efc40a57d48ab1db7adfc5 | SOURCE_PIN |
+| EVID-P20-CB-R1FIX-GV-EXIT | AC6 | verification/P20-CLOSE-BOUND-1/r1fix-p1-1/p1-1-governance.exit | fdf715e79 | e45825471ed10290785b62676dc5f453d228a1e1d933c45a733e9bb239c9e083 | SOURCE_PIN |
+| EVID-P20-CB-R1FIX-GV-META | AC6 | verification/P20-CLOSE-BOUND-1/r1fix-p1-1/p1-1-governance.meta.json | fdf715e79 | 616dc1c6280bdd1dd31611fd33f84859f40eeeb8cec97803d8ac49d54baa2dd4 | SOURCE_PIN |
 
 ## Resource Manifest
 
@@ -238,6 +282,40 @@ AC5 所用脚本 `run-desktop-close-verification.ps1` **只向 stdout 打印、�
 **其他**：R3 确认 `d4e3b3eb9` 的 40 个文件**均在 allowlist 内**、与 43 项 tracked dirty **交集为 0**（无越界）；PID 复用方面判定**无可触发的误杀窗口**（`Child` 句柄在 fallback 期间仍有效），但指出 `taskkill` **未带 `/T`**，若 Core 派生子进程则 fallback 不保证整棵进程树退出。
 
 **结论**：第 3 轮仍未闭合，且出现**新 P1（N1）**。**用户于 2026-10-18 授权第 4 轮与第 5 轮返修**（不设"仍有 P1 即强制收口"的前置边界；若第 4/5 轮后仍未闭合，Coordinator 将如实上报并再行裁决）。第 4 轮范围＝R3 的 6 项（P1#2、P1#3、N1、P2#5、P2#6、P2#7），外加一项流程修正：让 run-desktop-close-verification.ps1 自己写 OutDir（AC5 产物落盘应由脚本负责，而非依赖调用方 Tee）。本 Task 维持 `in_review`。
+
+## R4/R5 返修闭环（Antigravity 执行，用户明确授权第 4/5 轮返修，2026-10-18）
+
+**范围**：闭合 Codex Review R3 判定的全部 6 项缺陷（N1, P1#2, P1#3, P2#5, P2#6, P2#7）以及 1 项流程修正（`run-desktop-close-verification.ps1` 自包含落盘）。保持 P1#1 写入语义与既有心跳/拆环/错误呈现不变；不降低任何阈值；未执行 git commit。
+
+1. **N1（P1）`ctx.inner` 锁超时不再静默跳过生产关闭 -> 已闭环**：
+   - `ResilientLibraryChannel::shutdown` 在 `ctx.inner` 获锁超时（50 ms）时记录 Warning 日志，派发专属后台 fallback 线程 `resilient-inner-shutdown-fallback` 在锁释放后自动接管并调用 `chan.shutdown_and_kill(1500ms)`，完成 Core 退出与回收并置位 `inner_fallback_shutdown_completed`；
+   - 新增单元测试 `resilient_inner_lock_contention_timeout_triggers_fallback_shutdown`：模拟持有 `inner` 锁 200 ms，验证调用方在 ≤ 500 ms 内有界返回，且 fallback 线程完成通道关闭、子进程被彻底清除（实测 1.43s 通过，日志 `ac4-inner-lock-contention.stdout.log`）。
+2. **P1#2 超时 fallback 提供“完成回收”保证与 `/T` 进程树强杀 -> 已闭环**：
+   - 将 `child` 包装为 `Arc<Mutex<Child>>`。`child-reap-fallback` 线程在锁释放后调用 `child.wait()` 回收 OS 句柄并置位 `child_reaped = true`；
+   - `pending-drain-fallback` 增加带重试循环机制，drain 后唤醒等待者并置位 `pending_drained = true`；
+   - 所有 taskkill 调用均增加 `/T` 参数（`taskkill /F /T /PID`），确保强杀整棵进程树；
+   - 改进单元测试 `child_lock_contention_timeout_fallback_kills_child_and_prevents_orphan`（实测 1.22s 通过）：启动 mock sidecar 并派生孙进程，验证主进程与孙进程均被 `/T` 强杀退出，真断言 `is_child_reaped() == true`；
+   - 改进单元测试 `pending_lock_contention_timeout_fallback_drains_and_unblocks`（实测 1.73s 通过）：真断言 `is_pending_drained() == true`。
+3. **P1#3 共享 deadline 覆盖全链路与消减无界点 -> 已闭环**：
+   - 生产入口 `ResilientLibraryChannel::shutdown` 建立共享绝对 `deadline = Instant::now() + total_budget`，贯穿全链路；
+   - 梳理 16 项阻塞点清单并消灭无界阻塞：实现 `run_taskkill_bounded`（上限 250 ms 受 remaining 截断），`last_shutdown_error` 加锁受限 10 ms，CloseHostSession 超时清理锁受限 10 ms；
+   - 重构 WCET 推导表：Branch A 静态最坏情况 WCET 为 2350 ms $\le 3000$ ms（具备 650 ms 绝对硬裕度），Branch B 为 960 ms，动态物理执行上限为 2400 ms。
+4. **P2#5 断链后代审计与基线差集扫描 -> 已闭环**：
+   - `test-ac1-overlay-bound.ps1` 启动时记录全部系统进程基线快照 `$baselinePidSet`；
+   - 测试结束后不仅执行 runner PID 的 BFS 递归子孙树，还评估全部新增 `$deltaProcs` 差集，按路径特征深度扫描断链孤儿；
+   - 执行隔离根目录完全删除验证句柄释放；补齐标准环境头、退出码与元数据文件（实测 0 残留，隔离根成功删除，日志 `ac2-process-tree-audit.log`）。
+5. **P2#6 满管道测试断言 writer/joiner/ChildStdin 释放 -> 已闭环**：
+   - 引入原子标记 `writer_finished`、`writer_joined`、`reader_finished`、`reader_joined`；
+   - writer 退出循环后显式 drop `ChildStdin` 并置位 `writer_finished = true`；
+   - 在 2MB 满管道注入测试 `writer_overflow_pipe_capacity_unblocks_and_cleans_up_on_kill` 中增加真实断言 `is_writer_finished()`, `is_writer_joined()`, `is_reader_joined()`（实测 1.82s 通过，日志 `ac4-writer-pipe-overflow.stdout.log`）。
+6. **P2#7 `taskkill` 结果检查与上报 -> 已闭环**：
+   - `run_taskkill_bounded` 捕获 exit status 与 stdout/stderr，非零且非已退出状态时上报错误至 `last_shutdown_error`；
+   - 仅在 taskkill 确认成功时才将 `child_killed` 标为 true。
+7. **流程修正（Coordinator 要求） -> 已闭环**：
+   - 修正 `run-desktop-close-verification.ps1`，支持自动创建 `$OutDir`（默认 `ac5-<timestamp>` 或指定路径），自包含落盘 `ac5-console.log`、`ac5-metadata.txt`、`ac5-metadata.json` 与 `ac5.exit`，不再依赖外部调用方 `Tee`。
+8. **治理检查与全量验证套件 -> 全部通过**：
+   - 运行 `pwsh -NoProfile -File verification/P20-CLOSE-BOUND-1/test-ac1-overlay-bound.ps1`，全量 11 项用例及进程树审计全绿，退出码 0；
+   - 运行 `pwsh -NoProfile -File tools/governance/check.ps1 -TaskPath doc/tasks/P20-CLOSE-BOUND-1.md`，结果 **PASS (0 errors, 2 warnings)**。
 
 ## Closeout Record
 

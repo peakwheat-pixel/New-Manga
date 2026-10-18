@@ -1,0 +1,13 @@
+﻿{
+  "command": "test-ac1-overlay-bound.ps1 (Process Tree & Broken-Chain Orphan Audit)",
+  "command_name": "ac2_process_tree_audit",
+  "timestamp": "2026-10-18T14:11:15+08:00",
+  "exit_code": 0,
+  "residual_count": 0,
+  "baseline_process_count": 373,
+  "delta_process_count": 0,
+  "descendant_pids_scanned": 0,
+  "isolation_root": "C:\\Users\\49745\\AppData\\Local\\Temp\\p20-close-bound-5d4203e4",
+  "shell": "pwsh (PowerShell 7.6.6)",
+  "python_exe": "C:\\Python314\\python.exe"
+}
