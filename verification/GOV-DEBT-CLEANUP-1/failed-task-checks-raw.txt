@@ -1,0 +1,748 @@
+COMMAND[1]: pwsh -NoProfile -File tools/governance/check.ps1 -TaskPath doc/tasks/P01.md
+EXIT_CODE[1]: 0
+Governance scope: 12 current documents; no historical directory scan.
+Task: doc\tasks\P01.md
+WARN: doc/STATUS.md 已达到预算的 80%：3139 bytes / 24 lines
+WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：2432 bytes / 35 lines
+WARN: 当前 Task 是 lifecycle v1；保留其原状态与证据，不强制回填旧 Task。
+Governance check: PASS (3 warnings)
+COMMAND[2]: pwsh -NoProfile -File tools/governance/check.ps1 -TaskPath doc/tasks/P02-MAINLINE-INTEGRATION.md
+EXIT_CODE[2]: 0
+Governance scope: 12 current documents; no historical directory scan.
+Task: doc\tasks\P02-MAINLINE-INTEGRATION.md
+WARN: doc/STATUS.md 已达到预算的 80%：3139 bytes / 24 lines
+WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：2432 bytes / 35 lines
+Governance check: PASS (2 warnings)
+COMMAND[3]: pwsh -NoProfile -File tools/governance/check.ps1 -TaskPath doc/tasks/P02-NEW-TIME-BASELINE-AC3-BRANCH-RESOLUTION.md
+EXIT_CODE[3]: 0
+Governance scope: 12 current documents; no historical directory scan.
+Task: doc\tasks\P02-NEW-TIME-BASELINE-AC3-BRANCH-RESOLUTION.md
+WARN: doc/STATUS.md 已达到预算的 80%：3139 bytes / 24 lines
+WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：2432 bytes / 35 lines
+Governance check: PASS (2 warnings)
+COMMAND[4]: pwsh -NoProfile -File tools/governance/check.ps1 -TaskPath doc/tasks/P02-NEW-TIME-BASELINE-AC3-GIT-TOPLEVEL-RESOLUTION.md
+EXIT_CODE[4]: 1
+Governance scope: 12 current documents; no historical directory scan.
+Task: doc\tasks\P02-NEW-TIME-BASELINE-AC3-GIT-TOPLEVEL-RESOLUTION.md
+WARN: doc/STATUS.md 已达到预算的 80%：3139 bytes / 24 lines
+WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：2432 bytes / 35 lines
+FAIL: Canonical evidence 路径缺失：verification/P02-NEW-TIME-BASELINE-AC3-GIT-TOPLEVEL-RESOLUTION/zcode-owner-preflight-r1.json
+FAIL: Canonical evidence 路径缺失：verification/P02-NEW-TIME-BASELINE-AC3-GIT-TOPLEVEL-RESOLUTION/zcode-owner-preflight-r2.json
+FAIL: Canonical evidence 路径缺失：verification/P02-NEW-TIME-BASELINE-AC3-GIT-TOPLEVEL-RESOLUTION/zcode-owner-preflight-r3.json
+FAIL: Evidence class 无效：IMPLEMENTATION SOURCE
+FAIL: Evidence class 无效：SELFTEST SOURCE
+FAIL: Canonical evidence 路径缺失：doc/handoffs/P02-NEW-TIME-BASELINE-AC3-GIT-TOPLEVEL-RESOLUTION-R1.md
+FAIL: Canonical evidence 路径缺失：verification/P02-NEW-TIME-BASELINE-AC3-GIT-TOPLEVEL-RESOLUTION/codex-selftest-verify-r1.meta.json
+FAIL: Canonical evidence 路径缺失：verification/P02-NEW-TIME-BASELINE-AC3-GIT-TOPLEVEL-RESOLUTION/selftest-temp-fixture-inventory-codex-r2.json
+FAIL: Canonical evidence 路径缺失：verification/P02-NEW-TIME-BASELINE-AC3-GIT-TOPLEVEL-RESOLUTION/codex-verify-ac3-resolution-r1.json
+FAIL: Canonical evidence 路径缺失：verification/P02-NEW-TIME-BASELINE-AC3-GIT-TOPLEVEL-RESOLUTION/codex-verify-ac3-resolution-r1.md
+FAIL: Canonical evidence 路径缺失：verification/P02-NEW-TIME-BASELINE-AC3-GIT-TOPLEVEL-RESOLUTION/p02-ac3-resolution-dsh-review-evidence-manifest-r1.json
+FAIL: Canonical evidence 路径缺失：verification/P02-NEW-TIME-BASELINE-AC3-GIT-TOPLEVEL-RESOLUTION/dsh-review-preflight-r1.json
+FAIL: Canonical evidence 路径缺失：verification/P02-NEW-TIME-BASELINE-AC3-GIT-TOPLEVEL-RESOLUTION/dsh-review-preflight-r2.json
+FAIL: Canonical evidence 路径缺失：verification/P02-NEW-TIME-BASELINE-AC3-GIT-TOPLEVEL-RESOLUTION/dsh-review-preflight-r3.json
+FAIL: Canonical evidence 路径缺失：verification/P02-NEW-TIME-BASELINE-AC3-GIT-TOPLEVEL-RESOLUTION/dsh-evidence-manifest-r2-post-update-verify.stdout.json
+FAIL: Canonical evidence 路径缺失：verification/P02-NEW-TIME-BASELINE-AC3-GIT-TOPLEVEL-RESOLUTION/p02-ac3-resolution-dsh-review-evidence-manifest-r2.json
+FAIL: Canonical evidence 路径缺失：verification/P02-NEW-TIME-BASELINE-AC3-GIT-TOPLEVEL-RESOLUTION/dsh-source-review-r1.md
+FAIL: Canonical evidence 路径缺失：verification/P02-NEW-TIME-BASELINE-AC3-GIT-TOPLEVEL-RESOLUTION/dsh-source-review-r1.meta.json
+FAIL: Canonical evidence 路径缺失：verification/P02-NEW-TIME-BASELINE-AC3-GIT-TOPLEVEL-RESOLUTION/codex-dsh-review-adjudication-r1.md
+FAIL: Canonical evidence 路径缺失：verification/P02-NEW-TIME-BASELINE-AC3-GIT-TOPLEVEL-RESOLUTION/codex-convergence-ac3-resolution-r1.stdout.json
+FAIL: Canonical evidence 路径缺失：verification/P02-NEW-TIME-BASELINE/codex-parent-integration-r1.md
+FAIL: Canonical evidence 路径缺失：verification/P02-NEW-TIME-BASELINE/codex-parent-integration-r1.json
+FAIL: Canonical evidence 路径缺失：verification/P02-NEW-TIME-BASELINE/codex-post-resolution-selftest-r1.meta.json
+FAIL: Canonical evidence 路径缺失：verification/P02-NEW-TIME-BASELINE/codex-post-resolution-selftest-r1.fixture-inventory.json
+FAIL: Canonical evidence 路径缺失：verification/P02-NEW-TIME-BASELINE-AC3-GIT-TOPLEVEL-RESOLUTION/resource-closeout-r1.json
+Governance check: FAIL (25 errors, 2 warnings)
+COMMAND[5]: pwsh -NoProfile -File tools/governance/check.ps1 -TaskPath doc/tasks/P02-NEW-TIME-BASELINE-AC3-HELPER-OUTPUT-RESOLUTION.md
+EXIT_CODE[5]: 0
+Governance scope: 12 current documents; no historical directory scan.
+Task: doc\tasks\P02-NEW-TIME-BASELINE-AC3-HELPER-OUTPUT-RESOLUTION.md
+WARN: doc/STATUS.md 已达到预算的 80%：3139 bytes / 24 lines
+WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：2432 bytes / 35 lines
+Governance check: PASS (2 warnings)
+COMMAND[6]: pwsh -NoProfile -File tools/governance/check.ps1 -TaskPath doc/tasks/P02-NEW-TIME-BASELINE.md
+EXIT_CODE[6]: 0
+Governance scope: 12 current documents; no historical directory scan.
+Task: doc\tasks\P02-NEW-TIME-BASELINE.md
+WARN: doc/STATUS.md 已达到预算的 80%：3139 bytes / 24 lines
+WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：2432 bytes / 35 lines
+Governance check: PASS (2 warnings)
+COMMAND[7]: pwsh -NoProfile -File tools/governance/check.ps1 -TaskPath doc/tasks/P02-NEW-TIME-X6-AC1-AC7.md
+EXIT_CODE[7]: 1
+Governance scope: 12 current documents; no historical directory scan.
+Task: doc\tasks\P02-NEW-TIME-X6-AC1-AC7.md
+WARN: doc/STATUS.md 已达到预算的 80%：3139 bytes / 24 lines
+WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：2432 bytes / 35 lines
+FAIL: Evidence SHA-256 不匹配：verification/P02-NEW-TIME-X6-AC1-AC7/final-gate-a7/codex-verification.json
+FAIL: Evidence SHA-256 不匹配：verification/P02-NEW-TIME-X6-AC1-AC7/final-gate-a7/convergence-input.json
+FAIL: Evidence SHA-256 不匹配：verification/P02-NEW-TIME-X6-AC1-AC7/final-gate-a7/gate-evidence-manifest.json
+FAIL: Evidence SHA-256 不匹配：verification/P02-NEW-TIME-X6-AC1-AC7/final-gate-a7/integration-adjudication.md
+FAIL: Evidence SHA-256 不匹配：verification/P02-NEW-TIME-X6-AC1-AC7/final-gate-a7/result-input.json
+FAIL: Evidence SHA-256 不匹配：verification/P02-NEW-TIME-X6-AC1-AC7/final-gate-a7/review-dispatch.json
+FAIL: Evidence SHA-256 不匹配：verification/P02-NEW-TIME-X6-AC1-AC7/final-gate-a7/revision-input.json
+FAIL: Evidence SHA-256 不匹配：verification/P02-NEW-TIME-X6-AC1-AC7/final-gate-a7/source-evidence-manifest.json
+Governance check: FAIL (8 errors, 2 warnings)
+COMMAND[8]: pwsh -NoProfile -File tools/governance/check.ps1 -TaskPath doc/tasks/P02-NEW-TIME-X6-BUILD-CARGO.md
+EXIT_CODE[8]: 1
+Governance scope: 12 current documents; no historical directory scan.
+Task: doc\tasks\P02-NEW-TIME-X6-BUILD-CARGO.md
+WARN: doc/STATUS.md 已达到预算的 80%：3139 bytes / 24 lines
+WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：2432 bytes / 35 lines
+FAIL: 当前 DAG 未登记非终态 Task：P02-NEW-TIME-X6-BUILD-CARGO
+FAIL: READY Task 未出现在 Plan 的 READY 节点：P02-NEW-TIME-X6-BUILD-CARGO
+Governance check: FAIL (2 errors, 2 warnings)
+COMMAND[9]: pwsh -NoProfile -File tools/governance/check.ps1 -TaskPath doc/tasks/P02-NEW-TIME-X6-POSTRUN-REVIEW.md
+EXIT_CODE[9]: 1
+Governance scope: 12 current documents; no historical directory scan.
+Task: doc\tasks\P02-NEW-TIME-X6-POSTRUN-REVIEW.md
+WARN: doc/STATUS.md 已达到预算的 80%：3139 bytes / 24 lines
+WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：2432 bytes / 35 lines
+FAIL: 当前 DAG 未登记非终态 Task：P02-NEW-TIME-X6-POSTRUN-REVIEW
+Governance check: FAIL (1 errors, 2 warnings)
+COMMAND[10]: pwsh -NoProfile -File tools/governance/check.ps1 -TaskPath doc/tasks/P02-NEW-TIME-X6.md
+EXIT_CODE[10]: 1
+Governance scope: 12 current documents; no historical directory scan.
+Task: doc\tasks\P02-NEW-TIME-X6.md
+WARN: doc/STATUS.md 已达到预算的 80%：3139 bytes / 24 lines
+WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：2432 bytes / 35 lines
+WARN: evidence_dir 含未登记过程文件（归入 workspace 或列为 SOURCE_PIN）：G:\CODEX\New Manga\verification\P02-NEW-TIME-X6\checkpoint.md, G:\CODEX\New Manga\verification\P02-NEW-TIME-X6\codex-ac2-verification-r2.md, G:\CODEX\New Manga\verification\P02-NEW-TIME-X6\codex-selftest-t-review-adjudication-r3.md, G:\CODEX\New Manga\verification\P02-NEW-TIME-X6\codex-source-review-adjudication-r1.md, G:\CODEX\New Manga\verification\P02-NEW-TIME-X6\codex-source-review-adjudication-r2.md, G:\CODEX\New Manga\verification\P02-NEW-TIME-X6\dsh-selftest-t-review-r3.md, G:\CODEX\New Manga\verification\P02-NEW-TIME-X6\dsh-source-review-input-manifest-r1.json, G:\CODEX\New Manga\verification\P02-NEW-TIME-X6\dsh-source-review-input-manifest-r2.json
+FAIL: 当前 DAG 未登记非终态 Task：P02-NEW-TIME-X6
+Governance check: FAIL (1 errors, 3 warnings)
+COMMAND[11]: pwsh -NoProfile -File tools/governance/check.ps1 -TaskPath doc/tasks/P02.md
+EXIT_CODE[11]: 0
+Governance scope: 12 current documents; no historical directory scan.
+Task: doc\tasks\P02.md
+WARN: doc/STATUS.md 已达到预算的 80%：3139 bytes / 24 lines
+WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：2432 bytes / 35 lines
+WARN: 当前 Task 是 lifecycle v1；保留其原状态与证据，不强制回填旧 Task。
+Governance check: PASS (3 warnings)
+COMMAND[12]: pwsh -NoProfile -File tools/governance/check.ps1 -TaskPath doc/tasks/P02PRE-R0.md
+EXIT_CODE[12]: 0
+Governance scope: 12 current documents; no historical directory scan.
+Task: doc\tasks\P02PRE-R0.md
+WARN: doc/STATUS.md 已达到预算的 80%：3139 bytes / 24 lines
+WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：2432 bytes / 35 lines
+WARN: 当前 Task 是 lifecycle v1；保留其原状态与证据，不强制回填旧 Task。
+Governance check: PASS (3 warnings)
+COMMAND[13]: pwsh -NoProfile -File tools/governance/check.ps1 -TaskPath doc/tasks/P02PRE-R0S1.md
+EXIT_CODE[13]: 0
+Governance scope: 12 current documents; no historical directory scan.
+Task: doc\tasks\P02PRE-R0S1.md
+WARN: doc/STATUS.md 已达到预算的 80%：3139 bytes / 24 lines
+WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：2432 bytes / 35 lines
+WARN: 当前 Task 是 lifecycle v1；保留其原状态与证据，不强制回填旧 Task。
+Governance check: PASS (3 warnings)
+COMMAND[14]: pwsh -NoProfile -File tools/governance/check.ps1 -TaskPath doc/tasks/P02PRE-R0S2.md
+EXIT_CODE[14]: 1
+Governance scope: 12 current documents; no historical directory scan.
+Task: doc\tasks\P02PRE-R0S2.md
+WARN: doc/STATUS.md 已达到预算的 80%：3139 bytes / 24 lines
+WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：2432 bytes / 35 lines
+WARN: 当前 Task 是 lifecycle v1；保留其原状态与证据，不强制回填旧 Task。
+FAIL: 当前 DAG 未登记非终态 Task：P02PRE-R0S2
+Governance check: FAIL (1 errors, 3 warnings)
+COMMAND[15]: pwsh -NoProfile -File tools/governance/check.ps1 -TaskPath doc/tasks/P02PRE-R0S3.md
+EXIT_CODE[15]: 0
+Governance scope: 12 current documents; no historical directory scan.
+Task: doc\tasks\P02PRE-R0S3.md
+WARN: doc/STATUS.md 已达到预算的 80%：3139 bytes / 24 lines
+WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：2432 bytes / 35 lines
+WARN: 当前 Task 是 lifecycle v1；保留其原状态与证据，不强制回填旧 Task。
+Governance check: PASS (3 warnings)
+COMMAND[16]: pwsh -NoProfile -File tools/governance/check.ps1 -TaskPath doc/tasks/P02PRE-R0S4.md
+EXIT_CODE[16]: 1
+Governance scope: 12 current documents; no historical directory scan.
+Task: doc\tasks\P02PRE-R0S4.md
+WARN: doc/STATUS.md 已达到预算的 80%：3139 bytes / 24 lines
+WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：2432 bytes / 35 lines
+WARN: 当前 Task 是 lifecycle v1；保留其原状态与证据，不强制回填旧 Task。
+FAIL: 当前 DAG 未登记非终态 Task：P02PRE-R0S4
+Governance check: FAIL (1 errors, 3 warnings)
+COMMAND[17]: pwsh -NoProfile -File tools/governance/check.ps1 -TaskPath doc/tasks/P02PRE-R0S5.md
+EXIT_CODE[17]: 1
+Governance scope: 12 current documents; no historical directory scan.
+Task: doc\tasks\P02PRE-R0S5.md
+WARN: doc/STATUS.md 已达到预算的 80%：3139 bytes / 24 lines
+WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：2432 bytes / 35 lines
+WARN: 当前 Task 是 lifecycle v1；保留其原状态与证据，不强制回填旧 Task。
+FAIL: 当前 DAG 未登记非终态 Task：P02PRE-R0S5
+Governance check: FAIL (1 errors, 3 warnings)
+COMMAND[18]: pwsh -NoProfile -File tools/governance/check.ps1 -TaskPath doc/tasks/P02PRE-R0S6.md
+EXIT_CODE[18]: 1
+Governance scope: 12 current documents; no historical directory scan.
+Task: doc\tasks\P02PRE-R0S6.md
+WARN: doc/STATUS.md 已达到预算的 80%：3139 bytes / 24 lines
+WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：2432 bytes / 35 lines
+WARN: 当前 Task 是 lifecycle v1；保留其原状态与证据，不强制回填旧 Task。
+FAIL: 当前 DAG 未登记非终态 Task：P02PRE-R0S6
+Governance check: FAIL (1 errors, 3 warnings)
+COMMAND[19]: pwsh -NoProfile -File tools/governance/check.ps1 -TaskPath doc/tasks/P02PRE-R1.md
+EXIT_CODE[19]: 0
+Governance scope: 12 current documents; no historical directory scan.
+Task: doc\tasks\P02PRE-R1.md
+WARN: doc/STATUS.md 已达到预算的 80%：3139 bytes / 24 lines
+WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：2432 bytes / 35 lines
+WARN: 当前 Task 是 lifecycle v1；保留其原状态与证据，不强制回填旧 Task。
+Governance check: PASS (3 warnings)
+COMMAND[20]: pwsh -NoProfile -File tools/governance/check.ps1 -TaskPath doc/tasks/P02PRE-R1F.md
+EXIT_CODE[20]: 0
+Governance scope: 12 current documents; no historical directory scan.
+Task: doc\tasks\P02PRE-R1F.md
+WARN: doc/STATUS.md 已达到预算的 80%：3139 bytes / 24 lines
+WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：2432 bytes / 35 lines
+WARN: 当前 Task 是 lifecycle v1；保留其原状态与证据，不强制回填旧 Task。
+Governance check: PASS (3 warnings)
+COMMAND[21]: pwsh -NoProfile -File tools/governance/check.ps1 -TaskPath doc/tasks/P02PRE-R1G.md
+EXIT_CODE[21]: 0
+Governance scope: 12 current documents; no historical directory scan.
+Task: doc\tasks\P02PRE-R1G.md
+WARN: doc/STATUS.md 已达到预算的 80%：3139 bytes / 24 lines
+WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：2432 bytes / 35 lines
+WARN: 当前 Task 是 lifecycle v1；保留其原状态与证据，不强制回填旧 Task。
+Governance check: PASS (3 warnings)
+COMMAND[22]: pwsh -NoProfile -File tools/governance/check.ps1 -TaskPath doc/tasks/P02PRE-R1H-FORENSIC-RECOVERY.md
+EXIT_CODE[22]: 0
+Governance scope: 12 current documents; no historical directory scan.
+Task: doc\tasks\P02PRE-R1H-FORENSIC-RECOVERY.md
+WARN: doc/STATUS.md 已达到预算的 80%：3139 bytes / 24 lines
+WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：2432 bytes / 35 lines
+Governance check: PASS (2 warnings)
+COMMAND[23]: pwsh -NoProfile -File tools/governance/check.ps1 -TaskPath doc/tasks/P02PRE-R1H-H1-CURRENT-INPUT-REVIEW.md
+EXIT_CODE[23]: 0
+Governance scope: 12 current documents; no historical directory scan.
+Task: doc\tasks\P02PRE-R1H-H1-CURRENT-INPUT-REVIEW.md
+WARN: doc/STATUS.md 已达到预算的 80%：3139 bytes / 24 lines
+WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：2432 bytes / 35 lines
+Governance check: PASS (2 warnings)
+COMMAND[24]: pwsh -NoProfile -File tools/governance/check.ps1 -TaskPath doc/tasks/P02PRE-R1H-H2-COLLECTOR.md
+EXIT_CODE[24]: 0
+Governance scope: 12 current documents; no historical directory scan.
+Task: doc\tasks\P02PRE-R1H-H2-COLLECTOR.md
+WARN: doc/STATUS.md 已达到预算的 80%：3139 bytes / 24 lines
+WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：2432 bytes / 35 lines
+Governance check: PASS (2 warnings)
+COMMAND[25]: pwsh -NoProfile -File tools/governance/check.ps1 -TaskPath doc/tasks/P02PRE-R1H-H2-RUN.md
+EXIT_CODE[25]: 0
+Governance scope: 12 current documents; no historical directory scan.
+Task: doc\tasks\P02PRE-R1H-H2-RUN.md
+WARN: doc/STATUS.md 已达到预算的 80%：3139 bytes / 24 lines
+WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：2432 bytes / 35 lines
+Governance check: PASS (2 warnings)
+COMMAND[26]: pwsh -NoProfile -File tools/governance/check.ps1 -TaskPath doc/tasks/P02PRE-R1H-P2-1-EVIDENCE-CLOSURE.md
+EXIT_CODE[26]: 1
+Governance scope: 12 current documents; no historical directory scan.
+Task: doc\tasks\P02PRE-R1H-P2-1-EVIDENCE-CLOSURE.md
+WARN: doc/STATUS.md 已达到预算的 80%：3139 bytes / 24 lines
+WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：2432 bytes / 35 lines
+WARN: 当前 Task 是 lifecycle v1；保留其原状态与证据，不强制回填旧 Task。
+FAIL: 当前 DAG 未登记非终态 Task：P02PRE-R1H-P2-1-EVIDENCE-CLOSURE
+Governance check: FAIL (1 errors, 3 warnings)
+COMMAND[27]: pwsh -NoProfile -File tools/governance/check.ps1 -TaskPath doc/tasks/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE.md
+EXIT_CODE[27]: 1
+Governance scope: 12 current documents; no historical directory scan.
+Task: doc\tasks\P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE.md
+WARN: doc/STATUS.md 已达到预算的 80%：3139 bytes / 24 lines
+WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：2432 bytes / 35 lines
+FAIL: Resource SHA-256 不匹配：C:/Users/49745/.dsh/storages/workspace.json
+Governance check: FAIL (1 errors, 2 warnings)
+COMMAND[28]: pwsh -NoProfile -File tools/governance/check.ps1 -TaskPath doc/tasks/P02PRE-R1H-R6-A4.md
+EXIT_CODE[28]: 0
+Governance scope: 12 current documents; no historical directory scan.
+Task: doc\tasks\P02PRE-R1H-R6-A4.md
+WARN: doc/STATUS.md 已达到预算的 80%：3139 bytes / 24 lines
+WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：2432 bytes / 35 lines
+WARN: 当前 Task 是 lifecycle v1；保留其原状态与证据，不强制回填旧 Task。
+Governance check: PASS (3 warnings)
+COMMAND[29]: pwsh -NoProfile -File tools/governance/check.ps1 -TaskPath doc/tasks/P02PRE-R1H-R6-EXEC-A4.md
+EXIT_CODE[29]: 1
+Governance scope: 12 current documents; no historical directory scan.
+Task: doc\tasks\P02PRE-R1H-R6-EXEC-A4.md
+WARN: doc/STATUS.md 已达到预算的 80%：3139 bytes / 24 lines
+WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：2432 bytes / 35 lines
+WARN: 当前 Task 是 lifecycle v1；保留其原状态与证据，不强制回填旧 Task。
+FAIL: 当前 DAG 未登记非终态 Task：P02PRE-R1H-R6-EXEC-A4
+Governance check: FAIL (1 errors, 3 warnings)
+COMMAND[30]: pwsh -NoProfile -File tools/governance/check.ps1 -TaskPath doc/tasks/P02PRE-R1H-R6-EXEC-A5.md
+EXIT_CODE[30]: 1
+Governance scope: 12 current documents; no historical directory scan.
+Task: doc\tasks\P02PRE-R1H-R6-EXEC-A5.md
+WARN: doc/STATUS.md 已达到预算的 80%：3139 bytes / 24 lines
+WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：2432 bytes / 35 lines
+WARN: 当前 Task 是 lifecycle v1；保留其原状态与证据，不强制回填旧 Task。
+FAIL: 当前 DAG 未登记非终态 Task：P02PRE-R1H-R6-EXEC-A5
+Governance check: FAIL (1 errors, 3 warnings)
+COMMAND[31]: pwsh -NoProfile -File tools/governance/check.ps1 -TaskPath doc/tasks/P02PRE-R1H-R6-EXEC-A6.md
+EXIT_CODE[31]: 1
+Governance scope: 12 current documents; no historical directory scan.
+Task: doc\tasks\P02PRE-R1H-R6-EXEC-A6.md
+WARN: doc/STATUS.md 已达到预算的 80%：3139 bytes / 24 lines
+WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：2432 bytes / 35 lines
+WARN: 当前 Task 是 lifecycle v1；保留其原状态与证据，不强制回填旧 Task。
+FAIL: 当前 DAG 未登记非终态 Task：P02PRE-R1H-R6-EXEC-A6
+Governance check: FAIL (1 errors, 3 warnings)
+COMMAND[32]: pwsh -NoProfile -File tools/governance/check.ps1 -TaskPath doc/tasks/P02PRE-R1H-R6-ZCODE-H1.md
+EXIT_CODE[32]: 1
+Governance scope: 12 current documents; no historical directory scan.
+Task: doc\tasks\P02PRE-R1H-R6-ZCODE-H1.md
+WARN: doc/STATUS.md 已达到预算的 80%：3139 bytes / 24 lines
+WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：2432 bytes / 35 lines
+WARN: 当前 Task 是 lifecycle v1；保留其原状态与证据，不强制回填旧 Task。
+FAIL: 当前 DAG 未登记非终态 Task：P02PRE-R1H-R6-ZCODE-H1
+Governance check: FAIL (1 errors, 3 warnings)
+COMMAND[33]: pwsh -NoProfile -File tools/governance/check.ps1 -TaskPath doc/tasks/P02PRE-R1H.md
+EXIT_CODE[33]: 1
+Governance scope: 12 current documents; no historical directory scan.
+Task: doc\tasks\P02PRE-R1H.md
+WARN: doc/STATUS.md 已达到预算的 80%：3139 bytes / 24 lines
+WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：2432 bytes / 35 lines
+WARN: 当前 Task 是 lifecycle v1；保留其原状态与证据，不强制回填旧 Task。
+FAIL: 当前 DAG 未登记非终态 Task：P02PRE-R1H
+Governance check: FAIL (1 errors, 3 warnings)
+COMMAND[34]: pwsh -NoProfile -File tools/governance/check.ps1 -TaskPath doc/tasks/P03.md
+EXIT_CODE[34]: 0
+Governance scope: 12 current documents; no historical directory scan.
+Task: doc\tasks\P03.md
+WARN: doc/STATUS.md 已达到预算的 80%：3139 bytes / 24 lines
+WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：2432 bytes / 35 lines
+WARN: 当前 Task 是 lifecycle v1；保留其原状态与证据，不强制回填旧 Task。
+Governance check: PASS (3 warnings)
+COMMAND[35]: pwsh -NoProfile -File tools/governance/check.ps1 -TaskPath doc/tasks/P04.md
+EXIT_CODE[35]: 0
+Governance scope: 12 current documents; no historical directory scan.
+Task: doc\tasks\P04.md
+WARN: doc/STATUS.md 已达到预算的 80%：3139 bytes / 24 lines
+WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：2432 bytes / 35 lines
+WARN: 当前 Task 是 lifecycle v1；保留其原状态与证据，不强制回填旧 Task。
+Governance check: PASS (3 warnings)
+COMMAND[36]: pwsh -NoProfile -File tools/governance/check.ps1 -TaskPath doc/tasks/P05.md
+EXIT_CODE[36]: 0
+Governance scope: 12 current documents; no historical directory scan.
+Task: doc\tasks\P05.md
+WARN: doc/STATUS.md 已达到预算的 80%：3139 bytes / 24 lines
+WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：2432 bytes / 35 lines
+WARN: 当前 Task 是 lifecycle v1；保留其原状态与证据，不强制回填旧 Task。
+Governance check: PASS (3 warnings)
+COMMAND[37]: pwsh -NoProfile -File tools/governance/check.ps1 -TaskPath doc/tasks/P06.md
+EXIT_CODE[37]: 0
+Governance scope: 12 current documents; no historical directory scan.
+Task: doc\tasks\P06.md
+WARN: doc/STATUS.md 已达到预算的 80%：3139 bytes / 24 lines
+WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：2432 bytes / 35 lines
+Governance check: PASS (2 warnings)
+COMMAND[38]: pwsh -NoProfile -File tools/governance/check.ps1 -TaskPath doc/tasks/P08.md
+EXIT_CODE[38]: 0
+Governance scope: 12 current documents; no historical directory scan.
+Task: doc\tasks\P08.md
+WARN: doc/STATUS.md 已达到预算的 80%：3139 bytes / 24 lines
+WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：2432 bytes / 35 lines
+WARN: 当前 Task 是 lifecycle v1；保留其原状态与证据，不强制回填旧 Task。
+Governance check: PASS (3 warnings)
+COMMAND[39]: pwsh -NoProfile -File tools/governance/check.ps1 -TaskPath doc/tasks/P09-AC3-DELETE-1.md
+EXIT_CODE[39]: 0
+Governance scope: 12 current documents; no historical directory scan.
+Task: doc\tasks\P09-AC3-DELETE-1.md
+WARN: doc/STATUS.md 已达到预算的 80%：3139 bytes / 24 lines
+WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：2432 bytes / 35 lines
+Governance check: PASS (2 warnings)
+COMMAND[40]: pwsh -NoProfile -File tools/governance/check.ps1 -TaskPath doc/tasks/P09-FU1.md
+EXIT_CODE[40]: 0
+Governance scope: 12 current documents; no historical directory scan.
+Task: doc\tasks\P09-FU1.md
+WARN: doc/STATUS.md 已达到预算的 80%：3139 bytes / 24 lines
+WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：2432 bytes / 35 lines
+Governance check: PASS (2 warnings)
+COMMAND[41]: pwsh -NoProfile -File tools/governance/check.ps1 -TaskPath doc/tasks/P09-FU2.md
+EXIT_CODE[41]: 1
+Governance scope: 12 current documents; no historical directory scan.
+Task: doc\tasks\P09-FU2.md
+WARN: doc/STATUS.md 已达到预算的 80%：3139 bytes / 24 lines
+WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：2432 bytes / 35 lines
+FAIL: Evidence SHA-256 不匹配：doc/contracts/M2-C1_TYPED_IPC_CONTRACT.md
+FAIL: Evidence SHA-256 不匹配：doc/tasks/P09.md
+Governance check: FAIL (2 errors, 2 warnings)
+COMMAND[42]: pwsh -NoProfile -File tools/governance/check.ps1 -TaskPath doc/tasks/P09.md
+EXIT_CODE[42]: 1
+Governance scope: 12 current documents; no historical directory scan.
+Task: doc\tasks\P09.md
+WARN: doc/STATUS.md 已达到预算的 80%：3139 bytes / 24 lines
+WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：2432 bytes / 35 lines
+WARN: evidence_dir 含未登记过程文件（归入 workspace 或列为 SOURCE_PIN）：G:\CODEX\New Manga\verification\P09\AC-STATUS.md, G:\CODEX\New Manga\verification\P09\run_pytest_in_workspace.py, G:\CODEX\New Manga\verification\P09\evidence\AC3-source-hashes-partial.json, G:\CODEX\New Manga\verification\P09\logs\00-path-tests-before-implementation.txt, G:\CODEX\New Manga\verification\P09\logs\01-path-source-tests.txt, G:\CODEX\New Manga\verification\P09\logs\02-path-source-tests-isolated.txt, G:\CODEX\New Manga\verification\P09\logs\03-path-source-tests-workspace-isolation.txt, G:\CODEX\New Manga\verification\P09\logs\04-path-source-tests-env-temp.txt
+FAIL: Evidence SHA-256 不匹配：verification/P09/evidence/AC3-source-hashes.json
+Governance check: FAIL (1 errors, 3 warnings)
+COMMAND[43]: pwsh -NoProfile -File tools/governance/check.ps1 -TaskPath doc/tasks/P10.md
+EXIT_CODE[43]: 0
+Governance scope: 12 current documents; no historical directory scan.
+Task: doc\tasks\P10.md
+WARN: doc/STATUS.md 已达到预算的 80%：3139 bytes / 24 lines
+WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：2432 bytes / 35 lines
+Governance check: PASS (2 warnings)
+COMMAND[44]: pwsh -NoProfile -File tools/governance/check.ps1 -TaskPath doc/tasks/P11.md
+EXIT_CODE[44]: 0
+Governance scope: 12 current documents; no historical directory scan.
+Task: doc\tasks\P11.md
+WARN: doc/STATUS.md 已达到预算的 80%：3139 bytes / 24 lines
+WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：2432 bytes / 35 lines
+Governance check: PASS (2 warnings)
+COMMAND[45]: pwsh -NoProfile -File tools/governance/check.ps1 -TaskPath doc/tasks/P12-C1.md
+EXIT_CODE[45]: 1
+Governance scope: 12 current documents; no historical directory scan.
+Task: doc\tasks\P12-C1.md
+WARN: doc/STATUS.md 已达到预算的 80%：3139 bytes / 24 lines
+WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：2432 bytes / 35 lines
+FAIL: Evidence SHA-256 不匹配：doc/contracts/M2-C1_TYPED_IPC_CONTRACT.md
+FAIL: Evidence SHA-256 不匹配：doc/tasks/P09.md
+FAIL: Evidence SHA-256 不匹配：src/infrastructure/sqlite/library.py
+Governance check: FAIL (3 errors, 2 warnings)
+COMMAND[46]: pwsh -NoProfile -File tools/governance/check.ps1 -TaskPath doc/tasks/P12.md
+EXIT_CODE[46]: 1
+Governance scope: 12 current documents; no historical directory scan.
+Task: doc\tasks\P12.md
+WARN: doc/STATUS.md 已达到预算的 80%：3139 bytes / 24 lines
+WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：2432 bytes / 35 lines
+FAIL: Resource manifest 不存在：verification/P12/resource-manifest.json
+Governance check: FAIL (1 errors, 2 warnings)
+COMMAND[47]: pwsh -NoProfile -File tools/governance/check.ps1 -TaskPath doc/tasks/P13-C1.md
+EXIT_CODE[47]: 1
+Governance scope: 12 current documents; no historical directory scan.
+Task: doc\tasks\P13-C1.md
+WARN: doc/STATUS.md 已达到预算的 80%：3139 bytes / 24 lines
+WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：2432 bytes / 35 lines
+FAIL: Evidence SHA-256 不匹配：doc/contracts/M2-C1_TYPED_IPC_CONTRACT.md
+FAIL: Evidence SHA-256 不匹配：doc/tasks/P13.md
+FAIL: Evidence SHA-256 不匹配：src/application/tasks/service.py
+FAIL: Evidence SHA-256 不匹配：src/application/tasks/store.py
+FAIL: Evidence SHA-256 不匹配：src/application/tasks/projection.py
+FAIL: Evidence SHA-256 不匹配：src/bootstrap/core_service.py
+Governance check: FAIL (6 errors, 2 warnings)
+COMMAND[48]: pwsh -NoProfile -File tools/governance/check.ps1 -TaskPath doc/tasks/P13.md
+EXIT_CODE[48]: 0
+Governance scope: 12 current documents; no historical directory scan.
+Task: doc\tasks\P13.md
+WARN: doc/STATUS.md 已达到预算的 80%：3139 bytes / 24 lines
+WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：2432 bytes / 35 lines
+Governance check: PASS (2 warnings)
+COMMAND[49]: pwsh -NoProfile -File tools/governance/check.ps1 -TaskPath doc/tasks/P14.md
+EXIT_CODE[49]: 1
+Governance scope: 12 current documents; no historical directory scan.
+Task: doc\tasks\P14.md
+WARN: doc/STATUS.md 已达到预算的 80%：3139 bytes / 24 lines
+WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：2432 bytes / 35 lines
+FAIL: DONE evidence_dir 含未登记文件：G:\CODEX\New Manga\verification\P14\frontend-build.log, G:\CODEX\New Manga\verification\P14\frontend-tests.log
+FAIL: Resource manifest 不存在：verification/P14/resource-manifest.json
+Governance check: FAIL (2 errors, 2 warnings)
+COMMAND[50]: pwsh -NoProfile -File tools/governance/check.ps1 -TaskPath doc/tasks/P15-C1-FU1.md
+EXIT_CODE[50]: 1
+Governance scope: 12 current documents; no historical directory scan.
+Task: doc\tasks\P15-C1-FU1.md
+WARN: doc/STATUS.md 已达到预算的 80%：3139 bytes / 24 lines
+WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：2432 bytes / 35 lines
+FAIL: Evidence SHA-256 不匹配：doc/contracts/P15_SETTINGS_IPC_CONTRACT.md
+FAIL: Evidence SHA-256 不匹配：doc/contracts/M2-C1_TYPED_IPC_CONTRACT.md
+FAIL: Resource manifest 不存在：verification/P15-C1-FU1/resource-manifest.json
+Governance check: FAIL (3 errors, 2 warnings)
+COMMAND[51]: pwsh -NoProfile -File tools/governance/check.ps1 -TaskPath doc/tasks/P15-C1-FU2.md
+EXIT_CODE[51]: 1
+Governance scope: 12 current documents; no historical directory scan.
+Task: doc\tasks\P15-C1-FU2.md
+WARN: doc/STATUS.md 已达到预算的 80%：3139 bytes / 24 lines
+WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：2432 bytes / 35 lines
+FAIL: Resource manifest 不存在：verification/P15-C1-FU2/resource-manifest.json
+Governance check: FAIL (1 errors, 2 warnings)
+COMMAND[52]: pwsh -NoProfile -File tools/governance/check.ps1 -TaskPath doc/tasks/P15-C1.md
+EXIT_CODE[52]: 1
+Governance scope: 12 current documents; no historical directory scan.
+Task: doc\tasks\P15-C1.md
+WARN: doc/STATUS.md 已达到预算的 80%：3139 bytes / 24 lines
+WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：2432 bytes / 35 lines
+FAIL: Evidence SHA-256 不匹配：doc/contracts/P15_SETTINGS_IPC_CONTRACT.md
+FAIL: DONE 不能保留未完成 Acceptance Criteria；范围未完成时使用 closed_with_limitations。
+FAIL: Resource manifest 不存在：verification/P15-C1/resource-manifest.json
+Governance check: FAIL (3 errors, 2 warnings)
+COMMAND[53]: pwsh -NoProfile -File tools/governance/check.ps1 -TaskPath doc/tasks/P15-CORE-1.md
+EXIT_CODE[53]: 1
+Governance scope: 12 current documents; no historical directory scan.
+Task: doc\tasks\P15-CORE-1.md
+WARN: doc/STATUS.md 已达到预算的 80%：3139 bytes / 24 lines
+WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：2432 bytes / 35 lines
+FAIL: 当前 DAG 未登记非终态 Task：P15-CORE-1
+Governance check: FAIL (1 errors, 2 warnings)
+COMMAND[54]: pwsh -NoProfile -File tools/governance/check.ps1 -TaskPath doc/tasks/P15-CORE-1A.md
+EXIT_CODE[54]: 1
+Governance scope: 12 current documents; no historical directory scan.
+Task: doc\tasks\P15-CORE-1A.md
+WARN: doc/STATUS.md 已达到预算的 80%：3139 bytes / 24 lines
+WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：2432 bytes / 35 lines
+FAIL: 失效的本地引用：doc\tasks\P15-CORE-1A.md → ../verification/PROJECT-ORCHESTRATION-20261016/ruling-P15-CORE-1-network-test.md
+FAIL: Evidence SHA-256 不匹配：doc/contracts/P15_SETTINGS_IPC_CONTRACT.md
+FAIL: Evidence SHA-256 不匹配：src/bootstrap/settings_commands.py
+FAIL: Evidence SHA-256 不匹配：src/bootstrap/core_service.py
+FAIL: Evidence SHA-256 不匹配：src/bootstrap/core_assembly.py
+FAIL: Evidence SHA-256 不匹配：src/application/tasks/service.py
+FAIL: Evidence SHA-256 不匹配：src/infrastructure/settings/json_profile_stores.py
+FAIL: Evidence SHA-256 不匹配：tests/core/test_p15_core_settings.py
+FAIL: DONE 不能保留未完成 Acceptance Criteria；范围未完成时使用 closed_with_limitations。
+Governance check: FAIL (9 errors, 2 warnings)
+COMMAND[55]: pwsh -NoProfile -File tools/governance/check.ps1 -TaskPath doc/tasks/P15-CORE-1B.md
+EXIT_CODE[55]: 1
+Governance scope: 12 current documents; no historical directory scan.
+Task: doc\tasks\P15-CORE-1B.md
+WARN: doc/STATUS.md 已达到预算的 80%：3139 bytes / 24 lines
+WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：2432 bytes / 35 lines
+FAIL: 失效的本地引用：doc\tasks\P15-CORE-1B.md → ../verification/PROJECT-ORCHESTRATION-20261016/ruling-P15-CORE-1-network-test.md
+FAIL: Evidence SHA-256 不匹配：doc/contracts/P15_SETTINGS_IPC_CONTRACT.md
+FAIL: Evidence SHA-256 不匹配：apps/desktop/src-tauri/src/main.rs
+FAIL: Evidence SHA-256 不匹配：src/bootstrap/settings_commands.py
+FAIL: Evidence SHA-256 不匹配：src/bootstrap/core_service.py
+FAIL: Evidence SHA-256 不匹配：src/bootstrap/core_assembly.py
+FAIL: Evidence SHA-256 不匹配：tests/core/test_p15_core_settings.py
+Governance check: FAIL (7 errors, 2 warnings)
+COMMAND[56]: pwsh -NoProfile -File tools/governance/check.ps1 -TaskPath doc/tasks/P15-CORE-1C.md
+EXIT_CODE[56]: 1
+Governance scope: 12 current documents; no historical directory scan.
+Task: doc\tasks\P15-CORE-1C.md
+WARN: doc/STATUS.md 已达到预算的 80%：3139 bytes / 24 lines
+WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：2432 bytes / 35 lines
+FAIL: Evidence SHA-256 不匹配：src/bootstrap/core_service.py
+FAIL: Evidence SHA-256 不匹配：doc/contracts/P15_SETTINGS_IPC_CONTRACT.md
+FAIL: DONE evidence_dir 含未登记文件：G:\CODEX\New Manga\verification\P15-CORE-1C\canonical-hash-verification.txt, G:\CODEX\New Manga\verification\P15-CORE-1C\pytest-core-focused.command.txt, G:\CODEX\New Manga\verification\P15-CORE-1C\pytest-core-focused.environment.txt, G:\CODEX\New Manga\verification\P15-CORE-1C\pytest-core-focused.exit-code.txt, G:\CODEX\New Manga\verification\P15-CORE-1C\pytest-core-focused.log
+Governance check: FAIL (3 errors, 2 warnings)
+COMMAND[57]: pwsh -NoProfile -File tools/governance/check.ps1 -TaskPath doc/tasks/P15-HOST-1.md
+EXIT_CODE[57]: 1
+Governance scope: 12 current documents; no historical directory scan.
+Task: doc\tasks\P15-HOST-1.md
+WARN: doc/STATUS.md 已达到预算的 80%：3139 bytes / 24 lines
+WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：2432 bytes / 35 lines
+FAIL: Evidence commit 不含所 pin 文件：ece3af6056e25dc51094b3d027f72d654a6f4dd1:verification/P15-HOST-1/rust-source.txt
+FAIL: Evidence commit 不含所 pin 文件：ece3af6056e25dc51094b3d027f72d654a6f4dd1:verification/P15-HOST-1/rust-packaged.txt
+FAIL: Evidence commit 不含所 pin 文件：ece3af6056e25dc51094b3d027f72d654a6f4dd1:verification/P15-HOST-1/core-pytest.txt
+FAIL: Evidence commit 不含所 pin 文件：ece3af6056e25dc51094b3d027f72d654a6f4dd1:verification/P15-HOST-1/frontend-vitest.txt
+FAIL: Evidence commit 不含所 pin 文件：ece3af6056e25dc51094b3d027f72d654a6f4dd1:verification/P15-HOST-1/frontend-npm-ci.txt
+FAIL: Evidence commit 不含所 pin 文件：ece3af6056e25dc51094b3d027f72d654a6f4dd1:verification/P15-HOST-1/host-only-route-scan.txt
+FAIL: Evidence commit 不含所 pin 文件：ece3af6056e25dc51094b3d027f72d654a6f4dd1:verification/P15-HOST-1/surface-sync-check.txt
+FAIL: DONE evidence_dir 含未登记文件：G:\CODEX\New Manga\verification\P15-HOST-1\.gitattributes, G:\CODEX\New Manga\verification\P15-HOST-1\core-pytest-full-suite-extra.txt, G:\CODEX\New Manga\verification\P15-HOST-1\resource-manifest.json
+FAIL: DONE 不能保留未完成 Acceptance Criteria；范围未完成时使用 closed_with_limitations。
+FAIL: Resource 最终路径未验证：同源保留供 Review
+FAIL: Resource manifest 不存在：verification/P15-HOST-1/resource-manifest.json (SHA256 `A00BD6DE0F036735E00601C69887ECA91D977C09EBB21C8708AAB203954039FD`)
+Governance check: FAIL (11 errors, 2 warnings)
+COMMAND[58]: pwsh -NoProfile -File tools/governance/check.ps1 -TaskPath doc/tasks/P15-HOST-2.md
+EXIT_CODE[58]: 1
+Governance scope: 12 current documents; no historical directory scan.
+Task: doc\tasks\P15-HOST-2.md
+WARN: doc/STATUS.md 已达到预算的 80%：3139 bytes / 24 lines
+WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：2432 bytes / 35 lines
+FAIL: Evidence commit 不含所 pin 文件：b03bf0d87bf8eae31650c36b2cc0d995236eaa8b:doc/handoffs/P15-HOST-2-codex.md
+FAIL: Evidence commit 不含所 pin 文件：b03bf0d87bf8eae31650c36b2cc0d995236eaa8b:verification/P15-HOST-2/rust-source-commit.log
+FAIL: Evidence commit 不含所 pin 文件：b03bf0d87bf8eae31650c36b2cc0d995236eaa8b:verification/P15-HOST-2/rust-packaged-commit.log
+FAIL: Evidence commit 不含所 pin 文件：b03bf0d87bf8eae31650c36b2cc0d995236eaa8b:verification/P15-HOST-2/core-pytest-commit.log
+FAIL: Evidence commit 不含所 pin 文件：b03bf0d87bf8eae31650c36b2cc0d995236eaa8b:verification/P15-HOST-2/frontend-vitest-commit.log
+FAIL: Evidence commit 不含所 pin 文件：b03bf0d87bf8eae31650c36b2cc0d995236eaa8b:verification/P15-HOST-2/surface-sync-check.log
+FAIL: Evidence commit 不含所 pin 文件：b03bf0d87bf8eae31650c36b2cc0d995236eaa8b:verification/P15-HOST-2/host-only-rescan.log
+FAIL: Evidence commit 不含所 pin 文件：b03bf0d87bf8eae31650c36b2cc0d995236eaa8b:verification/P15-HOST-2/ac5-counterexample-review.md
+FAIL: Evidence commit 不含所 pin 文件：b03bf0d87bf8eae31650c36b2cc0d995236eaa8b:verification/P15-HOST-2/modified-files-sha256.txt
+FAIL: Evidence commit 不含所 pin 文件：b03bf0d87bf8eae31650c36b2cc0d995236eaa8b:verification/P15-HOST-2/resource-manifest.json
+FAIL: DONE evidence_dir 含未登记文件：G:\CODEX\New Manga\verification\P15-HOST-2\ac1-coordinator-blocker.md, G:\CODEX\New Manga\verification\P15-HOST-2\core-pytest-final.log, G:\CODEX\New Manga\verification\P15-HOST-2\frontend-deps-setup.log, G:\CODEX\New Manga\verification\P15-HOST-2\frontend-vitest-alias-attempt.log, G:\CODEX\New Manga\verification\P15-HOST-2\frontend-vitest-final.log, G:\CODEX\New Manga\verification\P15-HOST-2\frontend-vitest-isolated.log, G:\CODEX\New Manga\verification\P15-HOST-2\host-only-rescan.ps1, G:\CODEX\New Manga\verification\P15-HOST-2\modified-files-sha256.py
+Governance check: FAIL (11 errors, 2 warnings)
+COMMAND[59]: pwsh -NoProfile -File tools/governance/check.ps1 -TaskPath doc/tasks/P15.md
+EXIT_CODE[59]: 1
+Governance scope: 12 current documents; no historical directory scan.
+Task: doc\tasks\P15.md
+WARN: doc/STATUS.md 已达到预算的 80%：3139 bytes / 24 lines
+WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：2432 bytes / 35 lines
+FAIL: Evidence SHA-256 不匹配：apps/desktop/frontend/src/settings/SettingsPage.test.tsx
+FAIL: DONE evidence_dir 含未登记文件：G:\CODEX\New Manga\verification\P15\cargo-test-unfiltered-first-run.log
+FAIL: DONE 不能保留未完成 Acceptance Criteria；范围未完成时使用 closed_with_limitations。
+FAIL: Resource manifest 不存在：verification/P15/resource-manifest.json
+Governance check: FAIL (4 errors, 2 warnings)
+COMMAND[60]: pwsh -NoProfile -File tools/governance/check.ps1 -TaskPath doc/tasks/P16-C1.md
+EXIT_CODE[60]: 1
+Governance scope: 12 current documents; no historical directory scan.
+Task: doc\tasks\P16-C1.md
+WARN: doc/STATUS.md 已达到预算的 80%：3139 bytes / 24 lines
+WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：2432 bytes / 35 lines
+FAIL: Evidence SHA-256 不匹配：doc/contracts/M2-C1_TYPED_IPC_CONTRACT.md
+Governance check: FAIL (1 errors, 2 warnings)
+COMMAND[61]: pwsh -NoProfile -File tools/governance/check.ps1 -TaskPath doc/tasks/P16.md
+EXIT_CODE[61]: 1
+Governance scope: 12 current documents; no historical directory scan.
+Task: doc\tasks\P16.md
+WARN: doc/STATUS.md 已达到预算的 80%：3139 bytes / 24 lines
+WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：2432 bytes / 35 lines
+FAIL: Evidence SHA-256 不匹配：doc/contracts/M2-C1_TYPED_IPC_CONTRACT.md
+Governance check: FAIL (1 errors, 2 warnings)
+COMMAND[62]: pwsh -NoProfile -File tools/governance/check.ps1 -TaskPath doc/tasks/P17.md
+EXIT_CODE[62]: 1
+Governance scope: 12 current documents; no historical directory scan.
+Task: doc\tasks\P17.md
+WARN: doc/STATUS.md 已达到预算的 80%：3139 bytes / 24 lines
+WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：2432 bytes / 35 lines
+FAIL: Evidence SHA-256 不匹配：verification/P17/pytest.log
+FAIL: Evidence SHA-256 不匹配：verification/P17/cargo-packaged.log
+FAIL: Evidence SHA-256 不匹配：verification/P17/boundary_audit.txt
+FAIL: Evidence SHA-256 不匹配：verification/P17/behavioral_evidence.md
+FAIL: Evidence SHA-256 不匹配：verification/P17/resource-manifest.json
+Governance check: FAIL (5 errors, 2 warnings)
+COMMAND[63]: pwsh -NoProfile -File tools/governance/check.ps1 -TaskPath doc/tasks/P18.md
+EXIT_CODE[63]: 0
+Governance scope: 12 current documents; no historical directory scan.
+Task: doc\tasks\P18.md
+WARN: doc/STATUS.md 已达到预算的 80%：3139 bytes / 24 lines
+WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：2432 bytes / 35 lines
+WARN: evidence_dir 含未登记过程文件（归入 workspace 或列为 SOURCE_PIN）：G:\CODEX\New Manga\verification\P18\raw\ja\probe-summary.json, G:\CODEX\New Manga\verification\P18\raw\ja\request-sequence.json, G:\CODEX\New Manga\verification\P18\raw\ja\sidecar-exit-code.txt, G:\CODEX\New Manga\verification\P18\raw\ja\sidecar-stderr.log, G:\CODEX\New Manga\verification\P18\raw\ja\sidecar-stdout.jsonl, G:\CODEX\New Manga\verification\P18\raw\ja\data\library.db, G:\CODEX\New Manga\verification\P18\raw\ja\data\library.db.run-owner.lock, G:\CODEX\New Manga\verification\P18\raw\ja\data\catalog\catalog.sqlite
+Governance check: PASS (3 warnings)
+COMMAND[64]: pwsh -NoProfile -File tools/governance/check.ps1 -TaskPath doc/tasks/P19-AC3-1.md
+EXIT_CODE[64]: 1
+Governance scope: 12 current documents; no historical directory scan.
+Task: doc\tasks\P19-AC3-1.md
+WARN: doc/STATUS.md 已达到预算的 80%：3139 bytes / 24 lines
+WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：2432 bytes / 35 lines
+FAIL: 当前 DAG 未登记非终态 Task：P19-AC3-1
+Governance check: FAIL (1 errors, 2 warnings)
+COMMAND[65]: pwsh -NoProfile -File tools/governance/check.ps1 -TaskPath doc/tasks/P19-BOOT-1.md
+EXIT_CODE[65]: 1
+Governance scope: 12 current documents; no historical directory scan.
+Task: doc\tasks\P19-BOOT-1.md
+WARN: doc/STATUS.md 已达到预算的 80%：3139 bytes / 24 lines
+WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：2432 bytes / 35 lines
+FAIL: 失效的本地引用：doc\tasks\P19-BOOT-1.md → ../verification/P19/boot-defect-r1.md
+FAIL: Evidence commit 不含所 pin 文件：c44b47dd9852121e18496502870f4e4cbaf5c737:verification/P19-BOOT-1/core-suite.log
+FAIL: Evidence commit 不含所 pin 文件：c44b47dd9852121e18496502870f4e4cbaf5c737:verification/P19-BOOT-1/cargo-build.log
+FAIL: Evidence commit 不含所 pin 文件：c44b47dd9852121e18496502870f4e4cbaf5c737:verification/P19-BOOT-1/cargo-build-custom-protocol.log
+FAIL: Evidence commit 不含所 pin 文件：c44b47dd9852121e18496502870f4e4cbaf5c737:verification/P19-BOOT-1/frontend-build.log
+FAIL: Evidence commit 不含所 pin 文件：c44b47dd9852121e18496502870f4e4cbaf5c737:verification/P19-BOOT-1/partial-state-runtime-final6.json
+FAIL: Evidence commit 不含所 pin 文件：c44b47dd9852121e18496502870f4e4cbaf5c737:verification/P19-BOOT-1/partial-state-runtime-final6-run.log
+FAIL: Evidence commit 不含所 pin 文件：c44b47dd9852121e18496502870f4e4cbaf5c737:verification/P19-BOOT-1/real-startup-launch-final.json
+FAIL: Evidence commit 不含所 pin 文件：c44b47dd9852121e18496502870f4e4cbaf5c737:verification/P19-BOOT-1/real-startup-final.json
+FAIL: Evidence commit 不含所 pin 文件：c44b47dd9852121e18496502870f4e4cbaf5c737:verification/P19-BOOT-1/real-startup-final-run.log
+FAIL: Evidence commit 不含所 pin 文件：c44b47dd9852121e18496502870f4e4cbaf5c737:verification/P19-BOOT-1/final-app.stderr.log
+FAIL: Evidence commit 不含所 pin 文件：c44b47dd9852121e18496502870f4e4cbaf5c737:verification/P19-BOOT-1/runtime-binding-final.json
+FAIL: Evidence commit 不含所 pin 文件：c44b47dd9852121e18496502870f4e4cbaf5c737:verification/P19-BOOT-1/runtime-binding-final-run.log
+FAIL: Evidence commit 不含所 pin 文件：c44b47dd9852121e18496502870f4e4cbaf5c737:verification/P19-BOOT-1/ui-bookshelf-real-window.png
+FAIL: Evidence commit 不含所 pin 文件：c44b47dd9852121e18496502870f4e4cbaf5c737:verification/P19-BOOT-1/ui-workbench-real-window.png
+FAIL: Evidence commit 不含所 pin 文件：c44b47dd9852121e18496502870f4e4cbaf5c737:verification/P19-BOOT-1/ui-reader-real-window.png
+FAIL: Evidence commit 不含所 pin 文件：c44b47dd9852121e18496502870f4e4cbaf5c737:verification/P19-BOOT-1/ui-settings-real-window.png
+FAIL: Evidence commit 不含所 pin 文件：c44b47dd9852121e18496502870f4e4cbaf5c737:verification/P19-BOOT-1/real-startup-evidence.md
+FAIL: Evidence commit 不含所 pin 文件：c44b47dd9852121e18496502870f4e4cbaf5c737:verification/P19-BOOT-1/prepare_partial_state.py
+FAIL: Evidence commit 不含所 pin 文件：c44b47dd9852121e18496502870f4e4cbaf5c737:verification/P19-BOOT-1/capture_real_startup.ps1
+FAIL: Evidence commit 不含所 pin 文件：c44b47dd9852121e18496502870f4e4cbaf5c737:verification/P19-BOOT-1/verify_runtime_binding.py
+FAIL: Evidence commit 不含所 pin 文件：c44b47dd9852121e18496502870f4e4cbaf5c737:verification/P19-BOOT-1/evidence-manifest.json
+FAIL: DONE evidence_dir 含未登记文件：G:\CODEX\New Manga\verification\P19-BOOT-1\.gitignore
+FAIL: Resource manifest 不存在：verification/P19-BOOT-1/resource-manifest.json
+Governance check: FAIL (24 errors, 2 warnings)
+COMMAND[66]: pwsh -NoProfile -File tools/governance/check.ps1 -TaskPath doc/tasks/P19-UI-FIX-1.md
+EXIT_CODE[66]: 1
+Governance scope: 12 current documents; no historical directory scan.
+Task: doc\tasks\P19-UI-FIX-1.md
+WARN: doc/STATUS.md 已达到预算的 80%：3139 bytes / 24 lines
+WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：2432 bytes / 35 lines
+FAIL: Evidence SHA-256 不匹配：verification/P19-UI-FIX-1/frontend-npm-test-final.log
+FAIL: Evidence SHA-256 不匹配：verification/P19-UI-FIX-1/frontend-npm-build-final.log
+FAIL: Evidence SHA-256 不匹配：verification/P19-UI-FIX-1/uia-before-after-comparison.md
+FAIL: Evidence SHA-256 不匹配：verification/P19-UI-FIX-1/run-uia.ps1
+FAIL: Evidence SHA-256 不匹配：verification/P19-UI-FIX-1/rebind-isolated-namespace.py
+FAIL: Evidence SHA-256 不匹配：verification/P19-UI-FIX-1/resource-manifest.json
+FAIL: Evidence SHA-256 不匹配：doc/handoffs/P19-UI-FIX-1-f19275a.md
+FAIL: DONE evidence_dir 含未登记文件：G:\CODEX\New Manga\verification\P19-UI-FIX-1\04-settings-before-final-code-refinement.uia.txt, G:\CODEX\New Manga\verification\P19-UI-FIX-1\04-settings-uia-pass-2.txt, G:\CODEX\New Manga\verification\P19-UI-FIX-1\04-settings-uia-pass-exit-code-blank.txt, G:\CODEX\New Manga\verification\P19-UI-FIX-1\app-err-before-final-code-refinement.log, G:\CODEX\New Manga\verification\P19-UI-FIX-1\app-err-namespace-mismatch.log, G:\CODEX\New Manga\verification\P19-UI-FIX-1\app-err-ui-a-pass-exit-code-blank-2.log, G:\CODEX\New Manga\verification\P19-UI-FIX-1\app-err-ui-load-failure.log, G:\CODEX\New Manga\verification\P19-UI-FIX-1\app-err-uia-pass-exit-code-blank.log
+FAIL: DONE 必须逐项填写 Resource Manifest；无资源时写 NOT_APPLICABLE。
+Governance check: FAIL (9 errors, 2 warnings)
+COMMAND[67]: pwsh -NoProfile -File tools/governance/check.ps1 -TaskPath doc/tasks/P19-UI-FIX-2.md
+EXIT_CODE[67]: 1
+Governance scope: 12 current documents; no historical directory scan.
+Task: doc\tasks\P19-UI-FIX-2.md
+WARN: doc/STATUS.md 已达到预算的 80%：3139 bytes / 24 lines
+WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：2432 bytes / 35 lines
+FAIL: Evidence SHA-256 不匹配：verification/P19-UI-FIX-2/uia-before-after-comparison.md
+FAIL: Evidence SHA-256 不匹配：verification/P19-UI-FIX-2/run-uia.ps1
+FAIL: DONE evidence_dir 含未登记文件：G:\CODEX\New Manga\verification\P19-UI-FIX-2\appdata-source-after.json, G:\CODEX\New Manga\verification\P19-UI-FIX-2\appdata-source-before.json, G:\CODEX\New Manga\verification\P19-UI-FIX-2\bookshelf-import-targeted-test-final-r2.log, G:\CODEX\New Manga\verification\P19-UI-FIX-2\bookshelf-import-targeted-test-final.log, G:\CODEX\New Manga\verification\P19-UI-FIX-2\bookshelf-import-targeted-test.log, G:\CODEX\New Manga\verification\P19-UI-FIX-2\cargo-build-before.log, G:\CODEX\New Manga\verification\P19-UI-FIX-2\dsh-review-r1.md, G:\CODEX\New Manga\verification\P19-UI-FIX-2\frontend-npm-build-before.log
+FAIL: DONE 必须逐项填写 Resource Manifest；无资源时写 NOT_APPLICABLE。
+Governance check: FAIL (4 errors, 2 warnings)
+COMMAND[68]: pwsh -NoProfile -File tools/governance/check.ps1 -TaskPath doc/tasks/P19-UI-FIX-3.md
+EXIT_CODE[68]: 1
+Governance scope: 12 current documents; no historical directory scan.
+Task: doc\tasks\P19-UI-FIX-3.md
+WARN: doc/STATUS.md 已达到预算的 80%：3139 bytes / 24 lines
+WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：2432 bytes / 35 lines
+FAIL: 当前 DAG 未登记非终态 Task：P19-UI-FIX-3
+Governance check: FAIL (1 errors, 2 warnings)
+COMMAND[69]: pwsh -NoProfile -File tools/governance/check.ps1 -TaskPath doc/tasks/P19.md
+EXIT_CODE[69]: 0
+Governance scope: 12 current documents; no historical directory scan.
+Task: doc\tasks\P19.md
+WARN: doc/STATUS.md 已达到预算的 80%：3139 bytes / 24 lines
+WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：2432 bytes / 35 lines
+WARN: evidence_dir 含未登记过程文件（归入 workspace 或列为 SOURCE_PIN）：G:\CODEX\New Manga\verification\P19\ac2-plan-r1.md, G:\CODEX\New Manga\verification\P19\app-stale-bundle-stderr.log, G:\CODEX\New Manga\verification\P19\app-window-bookshelf.png, G:\CODEX\New Manga\verification\P19\attribution-correction-r8.md, G:\CODEX\New Manga\verification\P19\boot-defect-r1.md, G:\CODEX\New Manga\verification\P19\boot-defect-stderr-run1.log, G:\CODEX\New Manga\verification\P19\boot-defect-stderr-run2.log, G:\CODEX\New Manga\verification\P19\boot-defect-stderr-run3.log
+Governance check: PASS (3 warnings)
+COMMAND[70]: pwsh -NoProfile -File tools/governance/check.ps1 -TaskPath doc/tasks/P20-AC4-FPS-1.md
+EXIT_CODE[70]: 0
+Governance scope: 12 current documents; no historical directory scan.
+Task: doc\tasks\P20-AC4-FPS-1.md
+WARN: doc/STATUS.md 已达到预算的 80%：3139 bytes / 24 lines
+WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：2432 bytes / 35 lines
+Governance check: PASS (2 warnings)
+COMMAND[71]: pwsh -NoProfile -File tools/governance/check.ps1 -TaskPath doc/tasks/P20-CLOSE-BOUND-1.md
+EXIT_CODE[71]: 1
+Governance scope: 12 current documents; no historical directory scan.
+Task: doc\tasks\P20-CLOSE-BOUND-1.md
+WARN: doc/STATUS.md 已达到预算的 80%：3139 bytes / 24 lines
+WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：2432 bytes / 35 lines
+WARN: evidence_dir 含未登记过程文件（归入 workspace 或列为 SOURCE_PIN）：G:\CODEX\New Manga\verification\P20-CLOSE-BOUND-1\ac1-overlay-bound.meta.json, G:\CODEX\New Manga\verification\P20-CLOSE-BOUND-1\ac1-overlay-bound.stderr.log, G:\CODEX\New Manga\verification\P20-CLOSE-BOUND-1\ac1-shutdown-writes.exit, G:\CODEX\New Manga\verification\P20-CLOSE-BOUND-1\ac1-shutdown-writes.meta.json, G:\CODEX\New Manga\verification\P20-CLOSE-BOUND-1\ac1-shutdown-writes.stderr.log, G:\CODEX\New Manga\verification\P20-CLOSE-BOUND-1\ac2-process-tree-audit.meta.json, G:\CODEX\New Manga\verification\P20-CLOSE-BOUND-1\ac3-resilient-channel.exit, G:\CODEX\New Manga\verification\P20-CLOSE-BOUND-1\ac3-resilient-channel.meta.json
+FAIL: Evidence SHA-256 不匹配：apps/desktop/src-tauri/src/library_bridge.rs
+FAIL: Evidence SHA-256 不匹配：verification/P20-CLOSE-BOUND-1/run-desktop-close-verification.ps1
+FAIL: Evidence SHA-256 不匹配：verification/P20-CLOSE-BOUND-1/test-ac1-overlay-bound.ps1
+Governance check: FAIL (3 errors, 3 warnings)
+COMMAND[72]: pwsh -NoProfile -File tools/governance/check.ps1 -TaskPath doc/tasks/P20-CLOSE-BOUND-HARDEN-1.md
+EXIT_CODE[72]: 0
+Governance scope: 12 current documents; no historical directory scan.
+Task: doc\tasks\P20-CLOSE-BOUND-HARDEN-1.md
+WARN: doc/STATUS.md 已达到预算的 80%：3139 bytes / 24 lines
+WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：2432 bytes / 35 lines
+Governance check: PASS (2 warnings)
+COMMAND[73]: pwsh -NoProfile -File tools/governance/check.ps1 -TaskPath doc/tasks/P20-ISOLATION-1.md
+EXIT_CODE[73]: 1
+Governance scope: 12 current documents; no historical directory scan.
+Task: doc\tasks\P20-ISOLATION-1.md
+WARN: doc/STATUS.md 已达到预算的 80%：3139 bytes / 24 lines
+WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：2432 bytes / 35 lines
+WARN: evidence_dir 含未登记过程文件（归入 workspace 或列为 SOURCE_PIN）：G:\CODEX\New Manga\verification\P20-ISOLATION-1\codex-review-r3.md, G:\CODEX\New Manga\verification\P20-ISOLATION-1\probe-fault-isolation-backend.ps1, G:\CODEX\New Manga\verification\P20-ISOLATION-1\README.md, G:\CODEX\New Manga\verification\P20-ISOLATION-1\run-ac6-ui-verification.ps1, G:\CODEX\New Manga\verification\P20-ISOLATION-1\backend-20261018-074711\app-err.log, G:\CODEX\New Manga\verification\P20-ISOLATION-1\backend-20261018-074711\app-out.log, G:\CODEX\New Manga\verification\P20-ISOLATION-1\backend-20261018-074711\trace.log, G:\CODEX\New Manga\verification\P20-ISOLATION-1\backend-20261018-074803\app-err.log
+FAIL: Evidence SHA-256 不匹配：apps/desktop/src-tauri/src/library_bridge.rs
+Governance check: FAIL (1 errors, 3 warnings)
+COMMAND[74]: pwsh -NoProfile -File tools/governance/check.ps1 -TaskPath doc/tasks/P20-MEM-OPT-1.md
+EXIT_CODE[74]: 0
+Governance scope: 12 current documents; no historical directory scan.
+Task: doc\tasks\P20-MEM-OPT-1.md
+WARN: doc/STATUS.md 已达到预算的 80%：3139 bytes / 24 lines
+WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：2432 bytes / 35 lines
+WARN: evidence_dir 含未登记过程文件（归入 workspace 或列为 SOURCE_PIN）：G:\CODEX\New Manga\verification\P20-MEM-OPT-1\experiment-flags.ps1, G:\CODEX\New Manga\verification\P20-MEM-OPT-1\README.md, G:\CODEX\New Manga\verification\P20-MEM-OPT-1\ac1-probe-20261018-071911\app-err.log, G:\CODEX\New Manga\verification\P20-MEM-OPT-1\ac1-probe-20261018-071911\app-out.log, G:\CODEX\New Manga\verification\P20-MEM-OPT-1\ac1-probe-20261018-071911\probe-trace.log, G:\CODEX\New Manga\verification\P20-MEM-OPT-1\ac1-probe-20261018-072149\app-err.log, G:\CODEX\New Manga\verification\P20-MEM-OPT-1\ac1-probe-20261018-072149\app-out.log, G:\CODEX\New Manga\verification\P20-MEM-OPT-1\ac1-probe-20261018-073022\app-err.log
+Governance check: PASS (3 warnings)
+COMMAND[75]: pwsh -NoProfile -File tools/governance/check.ps1 -TaskPath doc/tasks/P20.md
+EXIT_CODE[75]: 0
+Governance scope: 12 current documents; no historical directory scan.
+Task: doc\tasks\P20.md
+WARN: doc/STATUS.md 已达到预算的 80%：3139 bytes / 24 lines
+WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：2432 bytes / 35 lines
+Governance check: PASS (2 warnings)
+COMMAND[76]: pwsh -NoProfile -File tools/governance/check.ps1 -TaskPath doc/tasks/P22-REBASE-1.md
+EXIT_CODE[76]: 1
+Governance scope: 12 current documents; no historical directory scan.
+Task: doc\tasks\P22-REBASE-1.md
+WARN: doc/STATUS.md 已达到预算的 80%：3139 bytes / 24 lines
+WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：2432 bytes / 35 lines
+FAIL: Evidence SHA-256 不匹配：apps/desktop/src-tauri/src/library_bridge.rs
+FAIL: Evidence SHA-256 不匹配：apps/desktop/src-tauri/src/library_bridge.rs
+Governance check: FAIL (2 errors, 2 warnings)
+COMMAND[77]: pwsh -NoProfile -File tools/governance/check.ps1 -TaskPath doc/tasks/P22.md
+EXIT_CODE[77]: 1
+Governance scope: 12 current documents; no historical directory scan.
+Task: doc\tasks\P22.md
+WARN: doc/STATUS.md 已达到预算的 80%：3139 bytes / 24 lines
+WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：2432 bytes / 35 lines
+WARN: 当前 Task 是 lifecycle v1；保留其原状态与证据，不强制回填旧 Task。
+FAIL: 失效的本地引用：doc\tasks\P22.md → ../../New%20Manga.worktrees/P22-roundtrip-serialization-antigravity/verification/P22/dsh-p22-review-r1.stdout.md
+FAIL: 失效的本地引用：doc\tasks\P22.md → ../../New%20Manga.worktrees/P22-roundtrip-serialization-antigravity/verification/P22/dsh-p22-review-r2-attempt2.stdout.md
+FAIL: 失效的本地引用：doc\tasks\P22.md → ../../New%20Manga.worktrees/P22-roundtrip-serialization-antigravity/verification/P22/dsh-p22-review-r2-followup.stdout.md
+Governance check: FAIL (3 errors, 3 warnings)
+COMMAND[78]: pwsh -NoProfile -File tools/governance/check.ps1 -TaskPath doc/tasks/PROJECT-ROADMAP-RELEASE.md
+EXIT_CODE[78]: 0
+Governance scope: 12 current documents; no historical directory scan.
+Task: doc\tasks\PROJECT-ROADMAP-RELEASE.md
+WARN: doc/STATUS.md 已达到预算的 80%：3139 bytes / 24 lines
+WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：2432 bytes / 35 lines
+Governance check: PASS (2 warnings)

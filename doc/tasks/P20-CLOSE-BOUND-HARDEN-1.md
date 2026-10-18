@@ -3,16 +3,16 @@ id: P20-CLOSE-BOUND-HARDEN-1
 title: sidecar 关闭 deadline 与 worker 生命周期加固
 kind: fix
 governance_version: 2
-status: proposed
+status: ready
 approval: user_authorized_20261018_final_close_hardening
 blocked_by: null
 suggested_owner: Antigravity
-owner: null
+owner: Antigravity
 reviewer: Codex
 depends_on: [P20-CLOSE-BOUND-1]
-base_commit: 835f4bb17df565581a76cf66062760cdd3c85a9e
+base_commit: a04e4ea78d5b33a0f91efcdc06b396391c4b165e
 branch: null
-worktree: null
+worktree: G:/CODEX/New Manga
 integration_commit: null
 delivery_head: null
 canonical_evidence_status: pending
@@ -66,13 +66,45 @@ evidence_dir: verification/P20-CLOSE-BOUND-HARDEN-1
 
 - 依赖：`P20-CLOSE-BOUND-1` 已 `closed_with_limitations`；其 AC1/AC2/AC4/AC5/AC6 原始未完成状态不得在本 Task 前置状态中抹除。
 - 风险：标准 Rust 线程无法被任意强制取消；若采用可取消 I/O、句柄关闭或预建 worker，须以 Windows 故障注入证明退出语义和用户数据安全。
-- 本 Task 当前 `proposed`，不等于 Owner 已认领或实现获释放。
+- 本 Task 原为 `proposed`；已由 Coordinator 完成冻结，见下节。
+
+## 范围冻结记录（2026-10-18，Coordinator = dsh，epoch 8）
+
+用户 T3 指令：冻结并释放 `P20-CLOSE-BOUND-HARDEN-1`，未闭合清单取 `verification/P20-CLOSE-BOUND-1/codex-review-r6.md` §7。Coordinator 作为 Active Coordinator 完成 DAG/STATUS 登记与依赖/范围/Owner/base/worktree 冻结；**Codex 保持 Reviewer 身份，不参与本 Task 实现**。
+
+| 项 | 冻结值 |
+|---|---|
+| 状态 | `ready` |
+| Owner | Antigravity |
+| Reviewer | Codex（独立；`owner != reviewer`） |
+| base_commit | `a04e4ea78d5b33a0f91efcdc06b396391c4b165e`（冻结时的实际 HEAD） |
+| 工作路径 | `G:/CODEX/New Manga`（与 P20-CLOSE-BOUND-1 同款；不新建 worktree） |
+| 证据目录 | `verification/P20-CLOSE-BOUND-HARDEN-1/` |
+
+**base 说明（诚实记录一次基线漂移）**：r6 §7 给出的恢复点为 `835f4bb17df565581a76cf66062760cdd3c85a9e`，该值在复审当时等于 HEAD。此后 `a04e4ea78`（P09-AC3-DELETE-1 R2 修复）使 HEAD 前进。经实测，`git diff --name-only 835f4bb17..a04e4ea78 -- apps/desktop/src-tauri/src/library_bridge.rs` **为空**，即本 Task 的唯一目标源码在两点之间**完全一致**；故 base 对目标文件等价，`835f4bb17` 的 WCET/审计基线结论仍然适用，不需重做 R6 审计。
+
+### r6 §7 未闭合清单 → 本 Task AC 映射（Owner 必须逐条闭环）
+
+| 来源 ID | 级别 | 未闭合点（精确位置见 r6 §7） | 对应 AC |
+|---|---|---|---|
+| CBH-01 | P1 | deadline 后 child fallback 仍 `kill`/`try_wait`（`library_bridge.rs:2834-2838`）；reader/writer reaper 超时后 detach 仍可能阻塞的原 worker（`2925-2930,2992-2997`）；六处条件式 `join()`（`2893,2907,2919,2960,2974,2986`）；taskkill reaper kill 错误被忽略且轮询可越过 200 ms（`2403-2419`） | AC3 + AC4 |
+| CBH-02 | P1 | CAS retry 无硬上界（`1506-1524,3863-3881`）；同步 `Command::spawn`、输出读、`kill`、六次 `Builder::spawn` 及额外 `join` 未纳入 WCET（`2300,2359-2424,2567-2569,2791-2867,2881-3010,4322-4350`）；审计表 `concurrency-lock-audit.md:26,44,52-70` | AC1 + AC2 + AC5 |
+| CBH-03 | P2 | AC2 断链进程覆盖与措辞（`test-ac1-overlay-bound.ps1:226-262,273-280`） | AC6 |
+| CBH-04 | P2 | exact-head 运行证据：`ac5-20261018-1555/ac5-metadata.json` 记 `head=e44a589a`；`ac5-20261018-1552/ac5-console.log` 记 294.2243 ms 但缺 exit/metadata | AC7 |
+| CBH-05 | P2 | AC5 artifact 写入失败控制流（`run-desktop-close-verification.ps1:208-249`；读回不一致分支 `:216-218`） | AC7 |
+
+### 释放前置的已知限制（Owner 与 Coordinator 必须共同遵守）
+
+1. **AC7 的交互式桌面运行不能由 Antigravity 完成**——`agy` 无法创建 WebView2 窗口（`HRESULT 0x80070578`）。Owner 交付可运行脚本与 Rust 侧改动；AC7 的真实桌面直跑由 Coordinator 在真实交互式桌面执行，且该脚本与 `test-ac1-overlay-bound.ps1` **必须独占运行、不得被管道（`Tee-Object` 等）包裹**。
+2. **禁止 `git add -A` / `git add .` / `git commit -a`**：用户工作区有 20 个具名未提交文件，误提交即为违规（上一轮已发生过此类事故）。提交只能逐路径 `git add <明确路径>`。
+3. 不改写历史 pin：CBH-04 的旧 artifact 缺 exit/metadata 属既成事实，只允许**追加**正确 head 的新证据，不允许"修正"旧记录使其看起来通过。
 
 ## 交付与运行记录
 
-- Handoff：待 Owner 认领后创建。
-- Review：待固定 delivery head 后由 Codex 独立复核。
+- Handoff：待 Owner 认领后创建（`doc/handoffs/P20-CLOSE-BOUND-HARDEN-1-antigravity.md`）。
+- Review：待固定 delivery head 后由 Codex 独立复核，输出 `verification/P20-CLOSE-BOUND-HARDEN-1/codex-review-r<n>.md`。
 - 实际测试：NOT_RUN。
+- 2026-10-18 Coordinator（dsh, epoch 8）完成范围冻结与释放登记。
 
 ## Canonical Evidence
 
@@ -85,7 +117,7 @@ evidence_dir: verification/P20-CLOSE-BOUND-HARDEN-1
 
 | resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
 |---|---|---|---|---|---|
-| Proposed worktree | 待 Codex 创建，优先 `G:/CODEX/New Manga.workspace/P20-CLOSE-BOUND-HARDEN-1/` | `NOT_APPLICABLE` | 待创建 | 待记录 | Task 仍 proposed；未创建、未删除资源。 |
+| 不新建 worktree | 复用 `G:/CODEX/New Manga` | `NOT_APPLICABLE` | 不适用 | 不适用 | 冻结决定：与 P20-CLOSE-BOUND-1 同款直接在真实仓库工作；未创建、未删除资源。 |
 
 ## Closeout Record
 

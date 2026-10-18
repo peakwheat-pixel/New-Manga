@@ -13,8 +13,8 @@ base_commit: null
 branch: null
 worktree: null
 integration_commit: ebe47ff86
-delivery_head: null
-canonical_evidence_status: pending
+delivery_head: ebe47ff86bd3c155c2d9ebdb41029d41ec4a796c
+canonical_evidence_status: complete
 resource_closeout_status: complete
 evidence_dir: verification/FEAT-CREATE-2
 ---
@@ -42,6 +42,17 @@ evidence_dir: verification/FEAT-CREATE-2
 
 ## 交付与运行记录
 - 2026-10-17 Coordinator 释放（dsh, epoch 6）。
+
+## Canonical Evidence
+
+R3-006 于 2026-10-18 回填。以下 SHA-256 按当前磁盘字节计算；对应 40 位 commit 均包含所列路径，且其 Git blob 与当前磁盘字节一致。
+
+| evidence_id | AC/Gate | path | commit | sha256 | class |
+|---|---|---|---|---|---|
+| FEAT-CREATE-2-AC-RESULTS | AC1–AC4 | verification/FEAT-CREATE-2/ac-results.md | ebe47ff86bd3c155c2d9ebdb41029d41ec4a796c | 83300ff41776b67502893c8bfe08e4e852edf40fb9ee9d766c361d54f0b52212 | CANONICAL |
+| FEAT-CREATE-2-CHECKPOINT | Recovery | verification/FEAT-CREATE-2/codex-checkpoint-blocked-20261017.md | ebe47ff86bd3c155c2d9ebdb41029d41ec4a796c | 829ee2b8f01ecf5fa4eb0f1763ca07fccd44b883f25102408b81ee95fa767a1f | CANONICAL |
+| FEAT-CREATE-2-DSH-REVIEW-R1 | Review | verification/FEAT-CREATE-2/dsh-review-r1.md | ebe47ff86bd3c155c2d9ebdb41029d41ec4a796c | 47b8804d859f11fe12e72b337c79b149a09c52392819479d665c83245d75a9b6 | CANONICAL |
+| FEAT-CREATE-2-PYTEST-CORE | AC5 | verification/FEAT-CREATE-2/pytest-core.log | ebe47ff86bd3c155c2d9ebdb41029d41ec4a796c | 5e834c6c59ee3a8c998c571a2fbe02082633343a810e6aebd1abc826b95bb9f5 | CANONICAL |
 
 ## Coordinator 裁决（2026-10-17）：AC 与冻结契约对齐
 

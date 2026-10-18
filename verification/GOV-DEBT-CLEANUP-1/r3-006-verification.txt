@@ -1,0 +1,16 @@
+COMMAND: pwsh -NoProfile -File verification/GOV-DEBT-CLEANUP-1/verify-r3-006.ps1
+HEAD: a04e4ea78d5b33a0f91efcdc06b396391c4b165e
+EVIDENCE: G:\CODEX\New Manga\verification\GOV-DEBT-CLEANUP-1\r3-006-verification.json
+
+Task          Path                                                            Bytes CommitContainsPath CommitBlobEqualsD
+                                                                                                                     isk
+----          ----                                                            ----- ------------------ -----------------
+FEAT-CREATE-1 verification/FEAT-CREATE-1/decision-map.md                       4296               True              True
+FEAT-CREATE-1 verification/FEAT-CREATE-1/dsh-review-r1.md                      2025               True              True
+FEAT-CREATE-2 verification/FEAT-CREATE-2/ac-results.md                         1990               True              True
+FEAT-CREATE-2 verification/FEAT-CREATE-2/codex-checkpoint-blocked-20261017.md  2716               True              True
+FEAT-CREATE-2 verification/FEAT-CREATE-2/dsh-review-r1.md                      2140               True              True
+FEAT-CREATE-2 verification/FEAT-CREATE-2/pytest-core.log                       1540               True              True
+
+
+EXIT_CODE: 0

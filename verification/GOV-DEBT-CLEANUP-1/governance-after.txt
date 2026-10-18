@@ -1,0 +1,8 @@
+COMMAND: pwsh -NoProfile -File tools/governance/check.ps1
+EXIT_CODE: 0
+--- RAW OUTPUT ---
+Governance scope: 12 current documents; no historical directory scan.
+Task: doc\tasks\P20.md
+WARN: doc/STATUS.md 已达到预算的 80%：3037 bytes / 26 lines
+WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：2475 bytes / 35 lines
+Governance check: PASS (2 warnings)

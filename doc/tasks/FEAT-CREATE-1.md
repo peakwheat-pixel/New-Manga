@@ -13,8 +13,8 @@ base_commit: 8358f34025e791e27da8042c580d9a6ad1e0c6a7
 branch: codex/FEAT-CREATE-1
 worktree: G:/CODEX/New Manga.workspace/worktrees/FEAT-CREATE-1
 integration_commit: c633170d1
-delivery_head: null
-canonical_evidence_status: pending
+delivery_head: c633170d11494f82b5a080eeebc6fa031aa0c282
+canonical_evidence_status: complete
 resource_closeout_status: complete
 evidence_dir: verification/FEAT-CREATE-1
 ---
@@ -100,7 +100,12 @@ evidence_dir: verification/FEAT-CREATE-1
 
 ## Canonical Evidence
 
-最终 evidence table 在交付提交中填写；提交 hash 必须取 `git rev-parse HEAD` 原样输出，sha256 基于 worktree 磁盘字节，类目仅 `CANONICAL` / `SOURCE_PIN`。Handoff 在 delivery commit 后追加，避免 BL-15 自引用；绝不把作者自查描述成独立 Review（BL-18）。跨主 worktree 的字节 parity 受本 Task “读写限于 worktree” 限制，若不能在当前 scope 核实，需明确保留给 Coordinator。
+R3-006 于 2026-10-18 回填。以下 SHA-256 按当前磁盘字节计算；对应 40 位 commit 均包含所列路径，且其 Git blob 与当前磁盘字节一致。Handoff 在 delivery commit 后追加，避免 BL-15 自引用；绝不把作者自查描述成独立 Review（BL-18）。
+
+| evidence_id | AC/Gate | path | commit | sha256 | class |
+|---|---|---|---|---|---|
+| FEAT-CREATE-1-DECISION-MAP | AC1–AC4 | verification/FEAT-CREATE-1/decision-map.md | c633170d11494f82b5a080eeebc6fa031aa0c282 | f157e0f40c52b8def2a2b9115c39854993f3e178a9a85c0c33cb48f47ad9378e | CANONICAL |
+| FEAT-CREATE-1-DSH-REVIEW-R1 | Review | verification/FEAT-CREATE-1/dsh-review-r1.md | c633170d11494f82b5a080eeebc6fa031aa0c282 | be0be9e96a7b16e01124137b982853f0d922c775859e52ba6e02d0149b0a372c | CANONICAL |
 
 ## 依赖、风险与阻塞
 

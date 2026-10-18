@@ -1,0 +1,22 @@
+COMMAND: pwsh -NoProfile -File tools/governance/check.ps1 -TaskPath doc/tasks/FEAT-CREATE-1.md
+EXIT_CODE: 1
+--- RAW OUTPUT ---
+Governance scope: 12 current documents; no historical directory scan.
+Task: doc\tasks\FEAT-CREATE-1.md
+WARN: doc/STATUS.md 已达到预算的 80%：3037 bytes / 26 lines
+WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：2475 bytes / 35 lines
+FAIL: DONE 不能保留未完成 Acceptance Criteria；范围未完成时使用 closed_with_limitations。
+FAIL: DONE 必须逐项填写 Resource Manifest；无资源时写 NOT_APPLICABLE。
+Governance check: FAIL (2 errors, 2 warnings)
+
+COMMAND: pwsh -NoProfile -File tools/governance/check.ps1 -TaskPath doc/tasks/FEAT-CREATE-2.md
+EXIT_CODE: 1
+--- RAW OUTPUT ---
+Governance scope: 12 current documents; no historical directory scan.
+Task: doc\tasks\FEAT-CREATE-2.md
+WARN: doc/STATUS.md 已达到预算的 80%：3037 bytes / 26 lines
+WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：2475 bytes / 35 lines
+FAIL: DONE 不能保留未完成 Acceptance Criteria；范围未完成时使用 closed_with_limitations。
+FAIL: DONE 必须逐项填写 Resource Manifest；无资源时写 NOT_APPLICABLE。
+Governance check: FAIL (2 errors, 2 warnings)
+

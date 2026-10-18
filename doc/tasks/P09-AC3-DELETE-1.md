@@ -3,7 +3,7 @@ id: P09-AC3-DELETE-1
 title: 项目级永久删除（Core 硬删除）与 P09 AC3 源文件零改动回补
 kind: feature
 governance_version: 2
-status: ready
+status: closed_with_limitations
 approval: user_ruling_20261018_create_p09_ac3_delete
 blocked_by: null
 suggested_owner: Antigravity（ZCode CLI 不可用，按项目故障转移顺序）
@@ -15,8 +15,8 @@ branch: null
 worktree: G:/CODEX/New Manga（真实工作流验证须在隔离环境执行；执行方写 verification/P09-AC3-DELETE-1/**、本 Task、doc/handoffs/P09-AC3-DELETE-1-*.md）
 integration_commit: null
 delivery_head: null
-canonical_evidence_status: pending
-resource_closeout_status: pending
+canonical_evidence_status: complete
+resource_closeout_status: complete
 evidence_dir: verification/P09-AC3-DELETE-1
 ---
 
@@ -145,15 +145,16 @@ planned：永久删除的真实工作流验收（隔离源样本 + 真实 Core a
 
 | evidence_id | AC/Gate | path | commit | sha256 | class |
 |---|---|---|---|---|---|
-| P09-AC3-DELETE-AC1-R2 | AC1 | `verification/P09-AC3-DELETE-1/contract-freeze-r2.md` | `UNCOMMITTED` (workspace baseline `6cba806e5`) | `0ddca1f561bdd3992c34b6795ac2ae1272bf7679cabb437156b707e653bfbbda` | CANONICAL |
-| P09-AC3-DELETE-M2-C1-2.10 | AC1 | `doc/contracts/M2-C1_TYPED_IPC_CONTRACT.md` | `UNCOMMITTED` (workspace baseline `6cba806e5`) | `f954c2fda2fb213120cae33f859928c97c35a6aa73fbea980098af8b0bc01c08` | CANONICAL |
-| P09-AC3-DELETE-ALL-AC | AC2-AC7 | `verification/P09-AC3-DELETE-1/evidence/p09_ac3_delete_evidence.json` | `UNCOMMITTED` | `560dd8acdd3915817c3819be477b58fd9f5fa46124ea4d20eb2be24af1b264b5` | CANONICAL |
-| P09-AC3-SOURCE-HASHES | AC6 | `verification/P09/evidence/AC3-source-hashes.json` | `UNCOMMITTED` | `56e40a827c20725cc1a66ddd527c521b84fcd059f624873732cfcecb814266e3` | CANONICAL |
+| P09-AC3-DELETE-AC1-R2 | AC1 | `verification/P09-AC3-DELETE-1/contract-freeze-r2.md` | `694de50789de4e9b6ecde831364ddbca167fcb44` | `0ddca1f561bdd3992c34b6795ac2ae1272bf7679cabb437156b707e653bfbbda` | CANONICAL |
+| P09-AC3-DELETE-M2-C1-2.10 | AC1 | `doc/contracts/M2-C1_TYPED_IPC_CONTRACT.md` | `694de50789de4e9b6ecde831364ddbca167fcb44` | `f954c2fda2fb213120cae33f859928c97c35a6aa73fbea980098af8b0bc01c08` | CANONICAL |
+| P09-AC3-DELETE-ALL-AC | AC2-AC7 | `verification/P09-AC3-DELETE-1/evidence/p09_ac3_delete_evidence.json` | `d9f7a628c7c0b9e00d91a1bddd102daec76139c5` | null | CANONICAL |
+| P09-AC3-SOURCE-HASHES | AC6 | `verification/P09/evidence/AC3-source-hashes.json` | `d9f7a628c7c0b9e00d91a1bddd102daec76139c5` | `56e40a827c20725cc1a66ddd527c521b84fcd059f624873732cfcecb814266e3` | CANONICAL |
 
 ## Resource Manifest
 
 | resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
 |---|---|---|---|---|---|
+| 不新建 worktree | 复用 `G:/CODEX/New Manga` | `NOT_APPLICABLE` | 不适用 | 不适用 | 收口时实测未创建/未删除资源；`m2rc1-desktop`/`core_service`/`host_bridge` 进程数 = 0；隔离验证根均在 `%TEMP%` 且已清理。 |
 
 ## Coordinator 独立复核（2026-10-18）
 
@@ -176,9 +177,50 @@ Owner 证据含 `appdata_protection`：`%APPDATA%\com.newmanga.m2rc1.desktop` **
 
 ## Closeout Record
 
-- Closeout date / Codex：待关闭时填写。
-- canonical_evidence_status：`pending`。
-- resource_closeout_status：`pending`。
-- 删除、迁移、归档数量/字节数：待关闭时填写；无操作填写 0。
-- 未关闭项及保留原因：待关闭时填写。
-- 当前指针清理：`STATUS` / `REBASELINE_PLAN` 在关闭时同步。
+- Closeout date / Coordinator：**2026-10-18**，Coordinator = dsh（epoch 8），按用户裁决收口。
+- `canonical_evidence_status`：`complete`（**含 limitation**：1 条 pin 已失效，见下节）。
+- `resource_closeout_status`：`complete`（未创建、未删除资源）。
+- 删除、迁移、归档数量/字节数：0 / 0 / 0。
+- 未关闭项及保留原因：见下节「未闭合项清单」。
+- 当前指针清理：`doc/STATUS.md` 与 `doc/REBASELINE_PLAN.md` 已同步为 `closed_with_limitations`。
+
+## Coordinator 收口说明（2026-10-18，用户裁决）
+
+### 收口依据
+
+本 Task 经三轮独立复审（R1/R2/R3）与 R1fix、R2fix **两次返修**，已达 **DIR-4**「同一失败面最多 2 次返修」上限。第三轮复审（`verification/P09-AC3-DELETE-1/codex-review-r3.md`，reviewed_head `a04e4ea78d5b33a0f91efcdc06b396391c4b165e`）结论为 **`changes_requested`**。用户裁决：**拆加固 Task 接手未闭合项，原 Task 以 `closed_with_limitations` 收口，不突破 DIR-4**。
+
+**本 Task 不记为技术通过；`P09` 的 AC3 保持 `BLOCKED`，不得翻为 `PASS`，不得收口为全项通过。**
+
+### R3 finding 状态（原样保留，未改写）
+
+| 状态 | 项 |
+|---|---|
+| closed | R-001、R-002、R-004、R-005、R-006 |
+| partial | R-003、R-007、R-010 |
+| open | R-008、R-009、R-011、R-012 |
+| **新增 P1（R3 发现）** | N-001、N-002、N-003、N-004 |
+| **新增回归（T2 取证）** | `tests/packaging/test_frozen_runtime_contract.py::test_explicit_data_root_isolation` |
+
+### 未闭合项清单（交接给 `P09-AC3-DELETE-HARDEN-1`）
+
+1. **R-007 partial**：回收站命令未注册到 Tauri production command/handler 与 Core IPC handler；真实 UI 会静默显示空回收站。
+2. **N-001 P1**：`UNIQUE(pipeline_run_id, target_id)` 使多页 Run 的永久删除整体失败。
+3. **N-002 P1**：`cleanup_pending` 无法按契约逐项重试。
+4. **N-003 P1**：译图 preview 资源残留。
+5. **N-004 P1（数据安全）**：先 `resolve()` 再 `lstat()` 可被 symlink 替换绕过，可能误删 derived root 内其它登记资源。
+6. **R-003 partial**：`pipeline_stage_states` 未实际 detach；`run_json` 嵌套定位引用未清。
+7. **R-008 open**：`verify_all.py` 多表 `rows = else 0` 恒真，AC4 的 PASS 不可采信。
+8. **R-011 open**：仍 `os.walk` 递归遍历 `storage.root/books/<book_id>`。
+9. **R-009 open**：Rust `details.phase` 未做白名单投影。
+10. **R-010 / R-012 partial / open**：交付指针、证据 pin 与实现范围释放未自洽。
+
+### 证据 pin 状态（如实记录，未篡改历史）
+
+- `P09-AC3-DELETE-AC1-R2`、`P09-AC3-DELETE-M2-C1-2.10`、`P09-AC3-SOURCE-HASHES`：pin 与磁盘字节**一致**（收口时实算确认）。
+- `P09-AC3-DELETE-ALL-AC`（`verification/P09-AC3-DELETE-1/evidence/p09_ac3_delete_evidence.json`）：**原 pin `560dd8acdd3915817c3819be477b58fd9f5fa46124ea4d20eb2be24af1b264b5` 已失效** —— 该文件在 `d9f7a628c` 提交后被 R2fix 更新，收口时磁盘 SHA-256 为 `67d4dbdb008a0603aa662471e22f80c2af669fb1eab784d92cec52f94d4d6261`。遵循「禁止为消除失败而改写历史 pin」，本表**未把该值刷成当前值**，仅将 sha 列置 `null` 并在本段完整保留原值与现值。
+- 全部 commit 列改为**确实包含该路径**的 40 位 SHA（原 `UNCOMMITTED` 占位无法通过终态校验）。
+
+### 交接
+
+未闭合项由 **`P09-AC3-DELETE-HARDEN-1`**（`ready`，Owner=Antigravity / Reviewer=Codex）接手，见 `doc/tasks/P09-AC3-DELETE-HARDEN-1.md`。原 Task 的 12 项 finding 与 4 项新 P1 的原始状态在该 Task 前置中不得抹除。

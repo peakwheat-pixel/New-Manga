@@ -1,0 +1,7 @@
+SHA_PIN_FAILURES=61
+UNIQUE_PATHS=41
+AUDIT=G:\CODEX\New Manga\verification\GOV-DEBT-CLEANUP-1\historical-sha-pin-audit.tsv
+Source file changed in later committed history; historical pin matches cited commit bytes=33
+Stored SHA does not match cited commit bytes as LF or CRLF; historical pin/path binding is internally inconsistent=10
+Working-tree CRLF conversion differs from LF pin; committed source blob has not changed=18
+EXIT_CODE: 0

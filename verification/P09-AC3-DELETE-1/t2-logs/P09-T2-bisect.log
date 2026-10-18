@@ -1,0 +1,17 @@
+---- worktree status before bisect ----
+fdf715e79 [PRE-P09 + PRE-P20-R4] -> 3 failed, 58 passed in 17.52s
+    FAILED: test_pending_run_all_waiting_and_pause_stop_enabled; test_button_matrix_all_statuses; test_pause_shows_optimistic_feedback_immediately
+d9f7a628c [P09 impl commit 1] -> 4 failed, 57 passed in 19.10s
+    FAILED: test_explicit_data_root_isolation; test_pending_run_all_waiting_and_pause_stop_enabled; test_button_matrix_all_statuses; test_pause_shows_optimistic_feedback_immediately
+e44a589a0 [P09 impl commit 2] -> 4 failed, 57 passed in 19.17s
+    FAILED: test_explicit_data_root_isolation; test_pending_run_all_waiting_and_pause_stop_enabled; test_button_matrix_all_statuses; test_pause_shows_optimistic_feedback_immediately
+41bb13679 [P20-CB R4] -> 4 failed, 57 passed in 17.37s
+    FAILED: test_explicit_data_root_isolation; test_pending_run_all_waiting_and_pause_stop_enabled; test_button_matrix_all_statuses; test_pause_shows_optimistic_feedback_immediately
+7ee8b2639 [P20-CB evidence] -> 4 failed, 57 passed in 17.39s
+    FAILED: test_explicit_data_root_isolation; test_pending_run_all_waiting_and_pause_stop_enabled; test_button_matrix_all_statuses; test_pause_shows_optimistic_feedback_immediately
+835f4bb17 [P20-CB R6] -> 4 failed, 57 passed in 17.42s
+    FAILED: test_explicit_data_root_isolation; test_pending_run_all_waiting_and_pause_stop_enabled; test_button_matrix_all_statuses; test_pause_shows_optimistic_feedback_immediately
+e99791f92 [HEAD~1] -> 4 failed, 57 passed in 17.39s
+    FAILED: test_explicit_data_root_isolation; test_pending_run_all_waiting_and_pause_stop_enabled; test_button_matrix_all_statuses; test_pause_shows_optimistic_feedback_immediately
+a04e4ea78 [HEAD (P09 R2 fix)] -> 4 failed, 57 passed in 17.43s
+    FAILED: test_explicit_data_root_isolation; test_pending_run_all_waiting_and_pause_stop_enabled; test_button_matrix_all_statuses; test_pause_shows_optimistic_feedback_immediately

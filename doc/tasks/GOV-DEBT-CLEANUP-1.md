@@ -3,9 +3,9 @@ id: GOV-DEBT-CLEANUP-1
 title: 治理债务清理（历史 pin 失效与未入库证据）
 kind: governance
 governance_version: 2
-status: ready
+status: blocked
 approval: user_authorized_gov_debt_cleanup_20261018
-blocked_by: null
+blocked_by: user_review_and_41_vs_44_reconciliation
 owner: Codex
 reviewer: DeepSeek Harness（非作者）
 depends_on: [P19, P20]
@@ -39,7 +39,7 @@ P02-NEW-TIME-BASELINE 33、P04 36、P03-PACKAGED-SFX-ENTRY 11、P19 9，其余�
 
 ## 验收标准
 
-- [ ] AC1：**未入库证据分类清单（逐项）**——对 `verification/**` 下全部未跟踪文件逐项给出判定：
+- [x] AC1：**未入库证据分类清单（逐项）**——对 `verification/**` 下全部未跟踪文件逐项给出判定：
       ① 被当前 READY/在飞 Task、Canonical Evidence pin、机制文档或脚本引用 → **保留**（记录引用来源）；
       ② 无引用但具独立证据价值（原始运行日志、截图、DB 快照等）→ **入库**（说明为何有保存价值）；
       ③ 无引用且可再生产（脚本可一键重跑）或纯临时产物 → **可清理**（须指明再生产脚本）。
@@ -57,6 +57,13 @@ P02-NEW-TIME-BASELINE 33、P04 36、P03-PACKAGED-SFX-ENTRY 11、P19 9，其余�
 - [ ] AC6：**证据与报告**——`verification/GOV-DEBT-CLEANUP-1/**` 落盘：分类清单、动作清单、动作前后治理
       校验输出（含退出码与原始输出）、清理文件的引用证明（grep 结果）、以及删除清单与释放空间。
 
+## 本轮执行记录（2026-10-18）
+
+- AC1、AC2 分类清单已生成并逐项落盘；历史基线 41 项与当前复现 44 项的差异在 AC2 清单中如实标注。
+- AC6 仅完成本轮授权的分类、复现、SHA 复核和治理检查证据；动作清单、清理引用证明和删除清单未生成。
+- R3-006：两项 integration commit、main 祖先关系、六个 evidence 路径及磁盘 SHA-256 均复核通过并回填；两项 TaskPath 检查均因既有未勾选 AC 和缺失 Resource Manifest 返回 `FAIL`，详见 `r3-006-task-checks.txt`，未改写其 AC 或资源记录。
+- `blocked`：等待用户审阅 AC1/AC2 并裁决后续动作。AC3/AC4/AC5 尚未执行；本轮未执行删除、移动或归档。
+
 ## 硬约束
 
 - 规模大且不可逆 ⇒ **先分类、后动作**，分类清单必须先于任何删除落盘并被 Reviewer 复核。
@@ -71,6 +78,28 @@ P02-NEW-TIME-BASELINE 33、P04 36、P03-PACKAGED-SFX-ENTRY 11、P19 9，其余�
 
 | evidence_id | AC/Gate | path | commit | sha256 | class |
 |---|---|---|---|---|---|
+| GOV-AC1-TRIAGE | AC1 | verification/GOV-DEBT-CLEANUP-1/untracked-evidence-triage.md | - | 38ca3d07becadc26baee6804f073ecc71a1876526d9a41d0124bbc6c5c492163 | CANONICAL |
+| GOV-AC1-INVENTORY | AC1 raw inventory | verification/GOV-DEBT-CLEANUP-1/untracked-file-inventory.tsv | - | 4a140b2fe1d25509eada8a8ff0db2c108634def73ffbdbc5728f802cfea78afa | CANONICAL |
+| GOV-AC1-PATHS | AC1 raw paths | verification/GOV-DEBT-CLEANUP-1/untracked-verification-paths.txt | - | 700a008d4d15daff89a3b8299add550e3a9b15346c34f287b1f3ad4312ea5299 | CANONICAL |
+| GOV-AC1-GENERATOR | AC1 generation script | verification/GOV-DEBT-CLEANUP-1/generate-untracked-triage.ps1 | - | 3a66dccee69f1e5a717d2374e0673c17ab24bbf094f463e4f3c0896e2164f4d4 | CANONICAL |
+| GOV-AC1-GENERATOR-OUTPUT | AC1 generation output | verification/GOV-DEBT-CLEANUP-1/untracked-triage-generation.txt | - | 0580f3551ccf43131cb9b94e75ce2ed7267b4408295fe0cf6e6ba0563f3a4be5 | CANONICAL |
+| GOV-AC2-ROOTCAUSE | AC2 | verification/GOV-DEBT-CLEANUP-1/failed-task-rootcause.md | - | 507bcc1917033738d8368bafd84a85225e3b4a8b98c59f56ad59868906aec403 | CANONICAL |
+| GOV-AC2-CHECK-RAW | AC2 raw checker output | verification/GOV-DEBT-CLEANUP-1/failed-task-checks-raw.txt | - | 4cc30db5d6494e525eff381b3ad595441a8bf156311e11d32b8b09d167d62827 | CANONICAL |
+| GOV-AC2-CHECK-SUMMARY | AC2 checker summary | verification/GOV-DEBT-CLEANUP-1/failed-task-checks.tsv | - | 000e4de6010e40ed4b35f727981bf0279170f716e57528e361d5c9e710733107 | CANONICAL |
+| GOV-AC2-REPRODUCER | AC2 reproduction script | verification/GOV-DEBT-CLEANUP-1/reproduce-failed-task-checks.ps1 | - | b92bdcb55b0b423f4249a7d586dd05dc75158079439e95d872c849c3c0244df6 | CANONICAL |
+| GOV-AC2-ROOTCAUSE-GENERATOR | AC2 report script | verification/GOV-DEBT-CLEANUP-1/generate-failed-task-rootcause.ps1 | - | 8fa08ee469818f3f52111d3928b14802d30b69fb0e1b0f317cb1522312702195 | CANONICAL |
+| GOV-AC2-REPORT-OUTPUT | AC2 report generation output | verification/GOV-DEBT-CLEANUP-1/failed-task-report-generation.txt | - | 1af98ca0bbcb0b64187b6201e1053b8cf78aed923e09fde46c4d5b245b25194a | CANONICAL |
+| GOV-AC2-SHA-AUDIT | AC2 historical SHA audit | verification/GOV-DEBT-CLEANUP-1/historical-sha-pin-audit.tsv | - | d5ebe5483ad224aed4b372b0a3eaa87bc6239684f9e49e81cb51244de9f42ee1 | CANONICAL |
+| GOV-AC2-SHA-AUDIT-SCRIPT | AC2 SHA audit script | verification/GOV-DEBT-CLEANUP-1/audit-historical-sha-pins.ps1 | - | b248f22382c47207c5c9c457ce2cc6ca9d1f6b855d3421dcdd9131603353f49e | CANONICAL |
+| GOV-AC2-SHA-AUDIT-OUTPUT | AC2 SHA audit output | verification/GOV-DEBT-CLEANUP-1/historical-sha-pin-audit-run.txt | - | a6af795ab4c93be0ef9a22a9c5a418d00ca92efd3782e379c1c03f3bb9e775ac | CANONICAL |
+| GOV-AC6-GOVERNANCE-BEFORE | AC6 before check | verification/GOV-DEBT-CLEANUP-1/governance-before.txt | - | 5276467d8aa277c4bde879c86c795404aa3a4f1618107ca507feb9ac0f2d17e1 | CANONICAL |
+| GOV-AC6-GOVERNANCE-AFTER | AC6 after check | verification/GOV-DEBT-CLEANUP-1/governance-after.txt | - | ede669d4712b8bb3c1739ade99ebe7dbdb1bac88278ad271323e896f1232d3ee | CANONICAL |
+| GOV-AC6-TASKPATH | AC6 TaskPath check | verification/GOV-DEBT-CLEANUP-1/governance-taskpath.txt | - | a1d5ae86dce4c60869efc17f61874f551ffc3c05be1d15983d5405a712e81eac | CANONICAL |
+| GOV-AC6-HASH-INVENTORY | AC6 evidence hash list | verification/GOV-DEBT-CLEANUP-1/canonical-evidence-hashes.tsv | - | 5d0b846ca1b2a52caedb3b06e0ec67769b92331fd6c3ca7b7c0d52f42faddd4f | CANONICAL |
+| GOV-R3-006-VERIFY | R3-006 fact verification | verification/GOV-DEBT-CLEANUP-1/r3-006-verification.json | - | 28b2510ec5fe5978cc5a5deffb741cfd58dc611625363c696776c62236dc31eb | CANONICAL |
+| GOV-R3-006-VERIFY-OUTPUT | R3-006 verification output | verification/GOV-DEBT-CLEANUP-1/r3-006-verification.txt | - | 5f1111e6f1801c123059609e1e411995a6371014753fdca3bc495162dd8459c5 | CANONICAL |
+| GOV-R3-006-VERIFY-SCRIPT | R3-006 verification script | verification/GOV-DEBT-CLEANUP-1/verify-r3-006.ps1 | - | c4a93a135b9db87e9650a576b366aa509f14d651bffdb0e15eedbcdae457b642 | CANONICAL |
+| GOV-R3-006-TASK-CHECKS | R3-006 TaskPath results | verification/GOV-DEBT-CLEANUP-1/r3-006-task-checks.txt | - | b89db09df50c214365e6f685f7b68c86dcb044c37598dedc1c94ebe099edc5fa | CANONICAL |
 
 ## Resource Manifest
 

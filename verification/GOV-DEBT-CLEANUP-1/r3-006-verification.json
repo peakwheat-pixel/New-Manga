@@ -1,0 +1,62 @@
+[
+  {
+    "Task": "FEAT-CREATE-1",
+    "Commit": "c633170d11494f82b5a080eeebc6fa031aa0c282",
+    "IsHeadAncestor": true,
+    "Path": "verification/FEAT-CREATE-1/decision-map.md",
+    "Bytes": 4296,
+    "CommitContainsPath": true,
+    "CommitBlobEqualsDisk": true,
+    "Sha256": "f157e0f40c52b8def2a2b9115c39854993f3e178a9a85c0c33cb48f47ad9378e"
+  },
+  {
+    "Task": "FEAT-CREATE-1",
+    "Commit": "c633170d11494f82b5a080eeebc6fa031aa0c282",
+    "IsHeadAncestor": true,
+    "Path": "verification/FEAT-CREATE-1/dsh-review-r1.md",
+    "Bytes": 2025,
+    "CommitContainsPath": true,
+    "CommitBlobEqualsDisk": true,
+    "Sha256": "be0be9e96a7b16e01124137b982853f0d922c775859e52ba6e02d0149b0a372c"
+  },
+  {
+    "Task": "FEAT-CREATE-2",
+    "Commit": "ebe47ff86bd3c155c2d9ebdb41029d41ec4a796c",
+    "IsHeadAncestor": true,
+    "Path": "verification/FEAT-CREATE-2/ac-results.md",
+    "Bytes": 1990,
+    "CommitContainsPath": true,
+    "CommitBlobEqualsDisk": true,
+    "Sha256": "83300ff41776b67502893c8bfe08e4e852edf40fb9ee9d766c361d54f0b52212"
+  },
+  {
+    "Task": "FEAT-CREATE-2",
+    "Commit": "ebe47ff86bd3c155c2d9ebdb41029d41ec4a796c",
+    "IsHeadAncestor": true,
+    "Path": "verification/FEAT-CREATE-2/codex-checkpoint-blocked-20261017.md",
+    "Bytes": 2716,
+    "CommitContainsPath": true,
+    "CommitBlobEqualsDisk": true,
+    "Sha256": "829ee2b8f01ecf5fa4eb0f1763ca07fccd44b883f25102408b81ee95fa767a1f"
+  },
+  {
+    "Task": "FEAT-CREATE-2",
+    "Commit": "ebe47ff86bd3c155c2d9ebdb41029d41ec4a796c",
+    "IsHeadAncestor": true,
+    "Path": "verification/FEAT-CREATE-2/dsh-review-r1.md",
+    "Bytes": 2140,
+    "CommitContainsPath": true,
+    "CommitBlobEqualsDisk": true,
+    "Sha256": "47b8804d859f11fe12e72b337c79b149a09c52392819479d665c83245d75a9b6"
+  },
+  {
+    "Task": "FEAT-CREATE-2",
+    "Commit": "ebe47ff86bd3c155c2d9ebdb41029d41ec4a796c",
+    "IsHeadAncestor": true,
+    "Path": "verification/FEAT-CREATE-2/pytest-core.log",
+    "Bytes": 1540,
+    "CommitContainsPath": true,
+    "CommitBlobEqualsDisk": true,
+    "Sha256": "5e834c6c59ee3a8c998c571a2fbe02082633343a810e6aebd1abc826b95bb9f5"
+  }
+]
