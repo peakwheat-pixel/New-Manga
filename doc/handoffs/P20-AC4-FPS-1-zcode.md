@@ -3,75 +3,73 @@ task_id: P20-AC4-FPS-1
 author: ZCode
 recipient: Codex
 base_commit: a04e4ea78d5b33a0f91efcdc06b396391c4b165e
-delivery_head: 4c54f3dd1
+delivery_head: de5c06a4d
 status: delivered_for_review
-review_round: r1-rework
+review_round: r2-rework
 ---
 
-# Handoff：P20-AC4-FPS-1（AC4 帧率与帧时间测量钩子）r1 返修
+# Handoff：P20-AC4-FPS-1（AC4 帧率与帧时间测量钩子）r2 返修
 
 ## 交付结果
 
-本轮为 codex-review-r1（`changes_requested`）的返修交付。实现 commit `4c54f3dd10e5e7168500e96687b67097ccae2c00`（main，29 个明确路径）；本文档随其后的文档 commit 一并入库。r0 原始交付 `011293151` 保持为历史证据（其 npm-test log 与 main.tsx pin 未变，Task 表仍指向该 commit）。
+本轮为 codex-review-r2（`changes_requested`）的返修交付。实现 commit `de5c06a4d572c849de7d7fed8e5027f92e0de156`（main，22 个明确路径）；本文档随其后的文档 commit 一并入库。r1 返修 `4c54f3dd1`、r0 原始交付 `011293151` 保持为历史证据（前端与 npm-test pin 未变，Task 表仍指向各自 commit）。**r2 四项 finding 全部落在 runner 脚本，前端零改动**（`src/perf/**` 与 r1 交付逐字节一致，`npm test` 基线 324/324 仍有效）。
 
-## FPS-R1 逐项处置
+## r2 逐项处置
 
 | Finding | 级别 | 处置 | 验证 |
 |---|---|---|---|
-| FPS-R1-01 隔离根不完整，可能写用户 AppData | P1 FAIL | runner 启动前把 `NEWMANGA_DATA_ROOT`/`M2RC1_DERIVED_ROOT`/`M2RC1_MANAGED_ROOT`/`M2RC2_CATALOG_DB` 全部钉到新建 `%TEMP%` 隔离根并读回校验，任一缺失/越界拒绝启动（exit 7）；`-DevSrcRoot` 显式设置并核对 `M2RC1_SRC_ROOT`（dev 模式），不传时要求 exe 旁 packaged sidecar 存在（否则 app 必 panic，同样拒绝）；真实 AppData 启动前/收尾后逐文件 sha256 快照比对，任何变化 FAIL | **实测 PASS**：`-SmokeTest` 启动 exe 12 s（窗口正常）→ 收尾只清本轮进程全退 → 真实 AppData **24 文件 sha256 前后 UNCHANGED** → 写入（`catalog/catalog.sqlite`、`library.db`、`derived/.preview-lifecycle.lock`、`managed/temp`）全部落在隔离根，exit 0 |
-| FPS-R1-02 按进程名杀全局同名进程 | P1 FAIL | 只记录并清理本轮 app PID 及其后代（Win32_Process PPID 链；启动后与每轮 capture 前刷新；收尾补扫孤儿）；Stop-Process 前按家族白名单（m2rc1-desktop/core_service/host_bridge/acceptance_bridge/catalog_loader）复核防 PID 复用；既有同名进程登记 `NOT_OURS` 绝不触碰；清理统一 `try/finally`（正常/失败/人工中止三路覆盖），收尾复查全退、残留即 FAIL | 冒烟中 11 个后代 PID 全部清理退出（`TEARDOWN all our processes exited`）；启动前探测 `NOT_OURS no pre-existing same-name processes` |
-| FPS-R1-03 失败仍返回 exit 0 | P1 FAIL | 失败累积制：CSV/JSON 缺失、capture 失败、kept=0、`avg>50ms`、AppData 变化、本轮进程残留任一 → exit 6；SmokeTest 不再提前 exit 0（落到统一失败计算）；退出码表 0/2/3/4/5/6/7 固化于 GUIDE | `-SafetySelfCheck` 6 项 PASS exit 0；`-SmokeTest` exit 0；首跑自检曾 FAIL（exit 6）抓出 iso 前缀判定缺陷——失败路径真实非零 |
-| FPS-R1-04 导出走 WebView2 默认下载目录 | P2 PARTIAL | 面板导出改 `window.showSaveFilePicker()` 显式 Save As：目标由调用方选、**取消即不写任何位置**、无默认目录回退（Blob+anchor.download 路径已删除）；无 picker 环境明示用 Show/Copy；前端仍不接触绝对路径（handle 不暴露 path） | 单测三态：saved（内容=suggestedName 文件、createObjectURL/anchor.click 零调用）、cancelled（AbortError→"nothing written"）、unsupported（"unavailable"+零写入） |
-| FPS-R1-05 ≥1s 无条件排除可能掩盖前台停顿 | P2 PARTIAL | 排除仅当 `delta≥1000ms` **且与采样的 hidden 区间相交**（visibilitychange 跟踪，源可注入；无跟踪能力时保守保留）；reason 更名 `raf_gap_ge_1000ms_while_hidden`；summary/标题/JSON 新增 `allMaxMs`（全样本 max）与 `excludedMaxMs`，runner 复算同步输出 `all_max_ms`/`excluded_max_ms` | 单测：visible 下 5100ms 停顿保留参与 kept（avg FAIL 如实）、hidden 区间内排除且留 CSV、有跟踪但无 hidden 仍保留、allMax/excludedMax 双口径、titleSummary 含 `allmax=` |
+| FPS-R1-02 窗口未绑定本轮进程（UIA 可能操作他人同标题实例） | **P1 阻断** | 窗口查找重写为 `Find-WindowByTitleForPid`：枚举**全部**同标题顶层窗口，只返回 `ProcessId` == 本轮 app PID 的那个；**无「取首个同标题窗口」回退**；异进程同标题窗口登记 `NOT_OURS_WINDOW`（每 pid 一次）且永不点击/滚动/杀灭。测量路径窗口就绪后经 `Assert-OurWindow` 二次校验（不匹配 exit 2）；`WINDOW_BOUND pid=...` 日志固定绑定证据；滚动注入期间 app 退出即 `SCROLL_ABORT` FAIL | **两层实测**：① `-SafetySelfCheck` 干扰窗口注入三连 PASS（decoy 自身 PID 可查得=阳性对照／异 PID 返回 null=无首匹回退／`NOT_OURS_WINDOW` 审计轨迹），`selfcheck-20261018-180541/`；② 实机组合：持久 decoy 窗口（pid=48468）在场跑 `-SmokeTest` → 登记 NOT_OURS_WINDOW 48468 → 绑定本轮窗口（`window_pid=29896 app_pid=29896` 一致）→ 11 后代全退 → AppData UNCHANGED → exit 0 → **decoy 全程存活未被触碰**（验证后自行清理），`smoke-20261018-180626/` |
+| FPS-R1-01 AppData 快照不完整可能漏报（同路径前后均读失败 → 误判未变化）；缺故障注入 | PARTIAL | `Get-TreeManifest` 把枚举错误（`ENUM_FAIL`）与哈希错误（`HASH_FAIL`）记入错误表：**基线不完整拒绝启动（exit 7，不启动 exe）**、终末快照不完整 FAIL（exit 6）；`Compare-Manifests` 加 UNREADABLE 守卫（双侧不可读 → NOT-unchanged）。故障注入进 `-SafetySelfCheck`：独占锁定文件→HASH_FAIL 入表 PASS；同路径双侧 UNREADABLE→拒绝 PASS；枚举注入在本 Owner 令牌下因持 **ENABLED `SeBackupPrivilege`**（Windows 设计 bypass 读类 DACL）诚实降级为 PASS-by-channel（missing-directory 探针证明喂 ENUM_FAIL 的 `-ErrorVariable` 通道存活），无特权令牌走完整 deny-ACL 注入路径 | 12 项断言 PASS exit 0；**注入开发自身抓出两个真实缺陷并修复**（`Get-FileHash` 非终止错误须 `-ErrorAction Stop` 才进 catch，否则 `$hash` 静默变 `$null`；icacls `(OI)(CI)` 为 inherit-only 不作用于目录本对象）——两次中间 FAIL（`selfcheck-20261018-180101/`、`...180200/`）留档为注入有效性实证 |
+| FPS-R1-03 两处 false-pass（JSON artifact 可为残留内容；SmokeTest 窗口缺失/早退/隔离空仍 exit 0） | PARTIAL | ① `Show CSV`/`Show JSON` 按钮失败即 FAIL 且**不把 textarea 残留写成 artifact**；CSV 校验表头+行结构；JSON **解析并校验确为本轮数据**（`meta.task`、`totalSamples`/`excludedCount`、`samples[]` 长度 vs CSV 行数、首/末样本 `frameTsMs` vs CSV 首末行 `frame_ts_ms`）——上一轮残留 payload 无法通过。② SmokeTest 三处 false-pass 闭合：`SMOKE_NO_WINDOW`／`SMOKE_APP_EXITED_EARLY`／`..._DURING_SETTLE`／`ISO_EMPTY` 全部进 failure list（exit 6） | 按钮失败/结构不符/内容不匹配路径均产生非零退出（代码路径直连 failure list）；SmokeTest 窗口/退出/隔离判据在 decoy 组合冒烟中以正向形态验证（window_pid==app_pid、iso 4 文件、exit 0）；JSON 交叉核对的端到端执行归 AC3 实测（Coordinator） |
+| smell：`T`/`F` 命名不明 | 非阻断 | `T` → `Write-Trace`（日志职责）、`F` → `Find-UiaByName`（UIA 查找职责），全部调用点同步（含 `$refuse` 两处漏网形态） | `grep -P '(?<![A-Za-z0-9_$.])T [("\'']'` 零残留；PSParser 0 errors |
 
 ## 交付物与验证证据
 
 | 交付物 | 路径 | 验证 |
 |---|---|---|
-| 采样钩子本体 | `apps/desktop/frontend/src/perf/fpsRecorder.ts` | `npm test` 32 files / **324** tests passed，exit 0（`verification/P20-AC4-FPS-1/npm-test-20261018-r2.log`）；`npx tsc --noEmit` exit 0 |
-| 导出面板 | `apps/desktop/frontend/src/perf/FpsRecorderPanel.tsx` | 同上（saved/cancelled/unsupported 三态用例） |
-| 单元测试 | `src/perf/fpsRecorder.test.ts`、`src/perf/FpsRecorderPanel.test.tsx` | 同上 |
-| 测量脚本 | `verification/P20-AC4-FPS-1/run-ac4-fps.ps1` | parser 0 errors；`-SafetySelfCheck` exit 0（`selfcheck-20261018-173828/`）；`-SmokeTest` exit 0（`smoke-20261018-173917/`） |
-| 步骤说明 | `verification/P20-AC4-FPS-1/MEASUREMENT-GUIDE.md` | 排除口径/导出行为/退出码表/隔离与进程安全/Owner 实测记录已同步 |
-| r1 Review 入库 | `verification/P20-AC4-FPS-1/codex-review-r1.md` | commit `4c54f3dd1`（Canonical Evidence 表 EVID-FPS-REVIEW-R1） |
+| 测量脚本（r2） | `verification/P20-AC4-FPS-1/run-ac4-fps.ps1` | PSParser 0 errors；`-SafetySelfCheck` **12 项断言** PASS exit 0；decoy 组合 `-SmokeTest` PASS exit 0 |
+| 步骤说明（r2） | `verification/P20-AC4-FPS-1/MEASUREMENT-GUIDE.md` | 窗口绑定/快照 fail-closed/JSON 校验/SmokeTest 失败条件/12 项自检表/decoy 冒烟记录已同步 |
+| r2 Review 入库 | `verification/P20-AC4-FPS-1/codex-review-r2.md` | commit `de5c06a4d`（Canonical Evidence 表 EVID-FPS-REVIEW-R2） |
+| 自检证据（r2） | `selfcheck-20261018-180541/`（PASS）＋ `...180101/`、`...180200/`（中间 FAIL，注入有效性实证） | 全部入库 |
+| 冒烟证据（r2, decoy 在场） | `smoke-20261018-180626/` | 入库 |
+| 前端（r1 交付不变） | `apps/desktop/frontend/src/perf/**` | `npm test` 32 files / 324 tests passed（`npm-test-20261018-r2.log`）；`tsc --noEmit` 0；r2 未重跑（零改动） |
 
-**Owner 侧实测如何证明未写用户 AppData**：`-SmokeTest` 在启动 exe 前对 `%APPDATA%\com.newmanga.m2rc1.desktop` 做逐文件 sha256 清单（`appdata-baseline.txt`，24 文件），12 秒运行并完整收尾后重拍 `appdata-after.txt` 逐路径比对 → `UNCHANGED`；同期隔离根内实际产生 `catalog/catalog.sqlite`、`library.db`、`derived/.preview-lifecycle.lock`、`managed/temp`——即"有写入行为但全部落在隔离根"的正反双证。快照比对机制本身经 `-SafetySelfCheck` 阴性（相同树→UNCHANGED）与阳性（改+增→MUTATED）对照验证。
-
-## AC 对照（r1 返修后）
+## AC 对照（r2 返修后）
 
 | AC | 状态 | 依据 |
 |---|---|---|
-| AC1 默认关闭零开销 | **PASS**（单元级） | 默认态 rAF spy 0 注册、无实例无数组、默认 DOM 无面板；可见性监听仅 start() 时注册、stop/reset 注销 |
-| AC2 结构化产物 | **PASS**（单元级） | CSV/JSON（meta+summary+samples，含 allMaxMs/excludedMaxMs）；导出仅经显式 Save As 或 UIA 抓取写 OutDir；代码无路径写入、不触碰 AppData、无默认落盘 |
-| AC3 真实桌面测量 | **NOT_RUN（Owner 范围外）** | runner 已按 r1 Review 加固并经 SafetySelfCheck/SmokeTest 实证；单页+Webtoon 测量归 Coordinator（dsh, epoch 8） |
-| AC4 p95 如实记录 | **PASS**（机制层） | 排除仅两类且逐样本留痕（hidden 相关 gap / non_positive）；kept/all-sample/excluded 三口径并列；阈值 50ms 常量不可配置 |
+| AC1 默认关闭零开销 | **PASS**（单元级，r1） | 默认态 rAF spy 0 注册、无实例无数组、默认 DOM 无面板 |
+| AC2 结构化产物 | **PASS**（单元级，r1+r2） | CSV/JSON 结构与导出行为不变；r2 加按钮失败不落盘、JSON 内容校验（runner 侧） |
+| AC3 真实桌面测量 | **NOT_RUN（Owner 范围外）** | runner 按 r2 再加固（窗口绑定/快照 fail-closed/artifact 校验）并经 12 项自检 + decoy 组合冒烟实证；单页+Webtoon 测量归 Coordinator（dsh, epoch 8） |
+| AC4 p95 如实记录 | **PASS**（机制层，r1） | 排除仅两类且逐样本留痕；kept/all-sample/excluded 三口径并列；阈值 50ms 常量不可配置 |
 | AC5 撕裂只记 limitation | **NOT_VERIFIED_BY_RULING** | runner metadata 与 GUIDE 显式声明 |
-| AC6 不回归 | **PASS** | `npm test` 324/324（基线全保留）；`tsc` 0；AC4 既有延迟结论 `verification/P20/ac4-20261018-0720/**` 未触碰 |
-| AC7 不回归 P20 其他 AC | **PASS** | 变更面仅 `frontend/src/perf/**` + `verification/P20-AC4-FPS-1/**`；未碰 IPC/契约/Schema/ACL/依赖/`src-tauri/**`/用户 20 个 dirty 文件 |
+| AC6 不回归 | **PASS** | r2 零前端改动（基线 324/324 有效）；AC4 既有延迟结论未触碰 |
+| AC7 不回归 P20 其他 AC | **PASS** | r2 变更面仅 `verification/P20-AC4-FPS-1/**` + 本 Task/Handoff；未碰 IPC/契约/Schema/ACL/依赖/`src-tauri/**`/`.qoder-credits/report.json`/`doc/REBASELINE_PLAN.md`/`doc/STATUS.md` |
 
 ## 接收方式
 
-- 分支/仓库：`main` @ `G:\CODEX\New Manga`（未新建 worktree）。delivery_head = `4c54f3dd1`（实现）；文档 commit 在其后。
-- 复现：`cd apps/desktop/frontend && npm test`（应 324 passed）；`npx tsc --noEmit`（应 exit 0）；
-  `pwsh -NoProfile -File verification\P20-AC4-FPS-1\run-ac4-fps.ps1 -SafetySelfCheck`（应 6 项 PASS exit 0）；
-  `pwsh -NoProfile -File verification\P20-AC4-FPS-1\run-ac4-fps.ps1 -SmokeTest`（应 AppData UNCHANGED、进程全退、exit 0；会短暂启动 GUI）。
+- 分支/仓库：`main` @ `G:\CODEX\New Manga`（未新建 worktree）。delivery_head = `de5c06a4d`（实现）；文档 commit 在其后。
+- 复现：`pwsh -NoProfile -File verification\P20-AC4-FPS-1\run-ac4-fps.ps1 -SafetySelfCheck`（应 12 项 PASS exit 0；含 decoy 窗口注入，会短暂弹一个 320x200 窗口）；
+  `pwsh -NoProfile -File verification\P20-AC4-FPS-1\run-ac4-fps.ps1 -SmokeTest`（应 AppData UNCHANGED、进程全退、exit 0；会短暂启动 GUI）；
+  `cd apps/desktop/frontend && npm test`（应 324 passed，r2 零改动）。
 - Coordinator 测量入口：`pwsh -NoProfile -File verification\P20-AC4-FPS-1\run-ac4-fps.ps1 -BuildFrontend -Mode both`（exe 重编译 `-BuildExe` 需先与 P20-CLOSE-BOUND-HARDEN-1 协调）。
 - 无依赖变化；无共享契约变化。
 
 ## 下一任务建议（必填）
 
-- Task ID / 标题：本 Task r2 复审（Reviewer = Codex）；通过后由 Coordinator（dsh, epoch 8）执行 AC3 真实桌面测量。
+- Task ID / 标题：本 Task r3 复审（Reviewer = Codex）；通过后由 Coordinator（dsh, epoch 8）执行 AC3 真实桌面测量。
 - 推荐 Agent / Reviewer：Reviewer = Codex；测量执行 = dsh（Coordinator）。
-- 推荐原因与前置依赖：五项 finding 已全处置并附实测证据；测量依赖 `-BuildExe`（避开 HARDEN-1 对 `src-tauri/target` 的并行使用）。
-- Recovery point：仓库 `G:\CODEX\New Manga`，branch `main`，base `a04e4ea78`，r1 rework delivery `4c54f3dd1`。
-- 允许修改路径：复审返修限 `apps/desktop/frontend/src/perf/**`、`verification/P20-AC4-FPS-1/**`、本 Task 与本 Handoff。
-- 禁止范围与新增授权条件：维持 Task 冻结范围（不碰 IPC/契约/`src-tauri/**`/用户 20 个 dirty 文件；不得默认开启钩子；不得改 `avg ≤ 50 ms` 口径；不得以排除规则掩盖尖峰）。
-- 验证命令、环境与完成 Gate：`npm test` 全绿 + `-SafetySelfCheck`/`-SmokeTest` exit 0 + Codex r2 Review approved + Coordinator 产出 `run-*/fps-*-samples.csv` 与汇总（avg 判定、p95/all_max 如实）。
+- 推荐原因与前置依赖：r2 四项 finding 已全处置并附实测证据（P1 两层验证）；测量依赖 `-BuildExe`（避开 HARDEN-1 对 `src-tauri/target` 的并行使用）。
+- Recovery point：仓库 `G:\CODEX\New Manga`，branch `main`，base `a04e4ea78`，r2 rework delivery `de5c06a4d`（r1=`4c54f3dd1`、r0=`011293151` 留史）。
+- 允许修改路径：复审返修限 `verification/P20-AC4-FPS-1/**`、`apps/desktop/frontend/src/perf/**`、本 Task 与本 Handoff。
+- 禁止范围与新增授权条件：维持 Task 冻结范围（不碰 IPC/契约/`src-tauri/**`/`.qoder-credits/report.json`/`doc/REBASELINE_PLAN.md`/`doc/STATUS.md`/用户具名 dirty 文件；不得默认开启钩子；不得改 `avg ≤ 50 ms` 口径；不得以排除规则掩盖尖峰）。
+- 验证命令、环境与完成 Gate：`npm test` 全绿 + `-SafetySelfCheck` 12 项 exit 0 + `-SmokeTest` exit 0 + Codex r3 Review approved + Coordinator 产出 `run-*/fps-*-samples.csv` 与汇总（avg 判定、p95/all_max 如实）。
 
 ## 风险与遗留
 
-- 治理检查 `tools/governance/check.ps1`：READY DAG 指针项（`P20-AC4-FPS-1 当前为 in_review`）仍需 Codex 同步 `doc/REBASELINE_PLAN.md`（用户 dirty 文件，Owner 无权改）；其余见运行输出。
-- AC3 未执行（归 Coordinator）；`-SmokeTest` 已实证隔离/进程所有权/退出码，但不产生测量数据。
-- r1 证据行尾为 LF（本轮写入），与 r0 的 CRLF 检出字节不同；sha256 均按各自当时磁盘真实字节实算并已在 Task 注明。
+- AC3 未执行（归 Coordinator）；`-SmokeTest` 已实证隔离/进程所有权/窗口 PID 绑定/退出码，但不产生测量数据；JSON 交叉核对的端到端执行也随 AC3 实测。
+- 枚举故障注入在**持 ENABLED `SeBackupPrivilege` 的令牌**下无法以 DACL deny 呈现（Windows 语义 bypass，实测 cmd dir 亦照常）；该环境以通道探针验证（PASS-by-channel，trace 内明示原因）。Coordinator/Reviewer 正常终端令牌无此特权时走完整 deny-ACL 注入路径，两者已在代码中自动分流。
+- 治理检查 `tools/governance/check.ps1`：STATUS 指针（`doc/STATUS.md:9` 仍写 r0 head）与 PLAN 同步归 Codex/Coordinator（用户 dirty 文件，Owner 无权改）。
+- r2 证据行尾为 LF（本轮写入）；sha256 均按磁盘真实字节实算并已在 Task 注明。
 - p95 预期仍超 50ms（既有 77.5ms）：按用户裁决不阻断达标，如实登记；冷路径优化是否立项由 Coordinator 决定。
-- 回退方法：revert `4c54f3dd1` 即回到 r0 交付（无共享面变更）。
+- 回退方法：revert `de5c06a4d` 即回到 r1 交付（无共享面变更）。
