@@ -98,8 +98,10 @@ $closeElapsedMs = ($closeEnd - $closeStart).TotalMilliseconds
 Write-Host "App process exited: $exitedInBound (Took $closeElapsedMs ms, bound was $($HardBoundSeconds * 1000) ms)"
 
 if (-not $exitedInBound) {
-    Write-Warning "Main application did NOT exit within $HardBoundSeconds seconds! Force killing..."
+    Write-Error "TIMEOUT FAILED: Main application did NOT exit within $HardBoundSeconds seconds (Took $closeElapsedMs ms)! Force killing for test cleanup..."
     $proc.Kill()
+    Remove-Item -Path $isolatedRoot -Recurse -Force -ErrorAction SilentlyContinue
+    exit 1
 }
 
 # 5. Process Tree & Zero Residual Orphan Check
@@ -122,9 +124,10 @@ if ($residualProcs.Count -gt 0) {
     $residualProcs | ForEach-Object {
         Write-Host "  Name=$($_.Name), PID=$($_.ProcessId), ParentPID=$($_.ParentProcessId)"
     }
+    Remove-Item -Path $isolatedRoot -Recurse -Force -ErrorAction SilentlyContinue
     exit 2
 } else {
-    Write-Host "SUCCESS: Zero orphan processes remaining. Clean exit verified." -ForegroundColor Green
+    Write-Host "SUCCESS: Application exited within bound ($closeElapsedMs ms) and zero orphan processes remaining. Clean exit verified." -ForegroundColor Green
 }
 
 # Cleanup isolated directory

@@ -8,7 +8,7 @@ use serde_json::Value;
 use std::collections::{HashMap, HashSet};
 use std::io::{BufRead, BufReader, Write};
 use std::path::{Path, PathBuf};
-use std::process::{Child, ChildStdin, Command, Stdio};
+use std::process::{Child, Command, Stdio};
 use std::sync::atomic::{AtomicBool, AtomicU32, AtomicU64, Ordering};
 use std::sync::mpsc::SyncSender;
 use std::sync::{Arc, Mutex};
@@ -946,9 +946,38 @@ pub fn spawn_args() -> Vec<&'static str> {
     vec!["-m", "bootstrap.core_service"]
 }
 
+pub(crate) enum WriterCommand {
+    Write(Vec<u8>, std::sync::mpsc::SyncSender<std::io::Result<()>>),
+    Shutdown,
+}
+
+/// Bounded mutex acquisition with lock poisoning recovery.
+/// Eliminates infinite mutex blocking while guaranteeing that poisoned locks
+/// (e.g. child process handle) are recovered and not silently skipped.
+pub(crate) fn lock_timeout_recover<T>(
+    mutex: &std::sync::Mutex<T>,
+    timeout: Duration,
+) -> Option<std::sync::MutexGuard<'_, T>> {
+    let start = Instant::now();
+    let poll = Duration::from_millis(5);
+    loop {
+        match mutex.try_lock() {
+            Ok(guard) => return Some(guard),
+            Err(std::sync::TryLockError::Poisoned(p)) => return Some(p.into_inner()),
+            Err(std::sync::TryLockError::WouldBlock) => {
+                if start.elapsed() >= timeout {
+                    return None;
+                }
+                std::thread::sleep(poll);
+            }
+        }
+    }
+}
+
 pub struct StdioLibraryChannel {
-    child: Mutex<Child>,
-    stdin: Mutex<ChildStdin>,
+    pub(crate) child: Mutex<Child>,
+    writer_tx: std::sync::mpsc::Sender<WriterCommand>,
+    writer_join_handle: Mutex<Option<std::thread::JoinHandle<()>>>,
     transaction_lock: Mutex<()>,
     request_id_gen: AtomicU64,
     host_session: Mutex<Option<HostSession>>,
@@ -958,6 +987,7 @@ pub struct StdioLibraryChannel {
     is_down: Arc<AtomicBool>,
     on_down: Arc<Mutex<Option<Arc<dyn Fn() + Send + Sync>>>>,
     reader_join_handle: Mutex<Option<std::thread::JoinHandle<()>>>,
+    shutdown_executed: AtomicBool,
 }
 
 struct HostSession {
@@ -1149,9 +1179,29 @@ impl StdioLibraryChannel {
                 LibraryError::unavailable(&format!("Failed to spawn reader thread: {e}"))
             })?;
 
+        let (writer_tx, writer_rx) = std::sync::mpsc::channel::<WriterCommand>();
+        let writer_thread = std::thread::Builder::new()
+            .name("stdio-library-writer".to_string())
+            .spawn(move || {
+                let mut stdin = stdin;
+                while let Ok(cmd) = writer_rx.recv() {
+                    match cmd {
+                        WriterCommand::Write(bytes, reply) => {
+                            let res = stdin.write_all(&bytes).and_then(|_| stdin.flush());
+                            let _ = reply.send(res);
+                        }
+                        WriterCommand::Shutdown => break,
+                    }
+                }
+            })
+            .map_err(|e| {
+                LibraryError::unavailable(&format!("Failed to spawn writer thread: {e}"))
+            })?;
+
         Ok(Self {
             child: Mutex::new(child),
-            stdin: Mutex::new(stdin),
+            writer_tx,
+            writer_join_handle: Mutex::new(Some(writer_thread)),
             transaction_lock: Mutex::new(()),
             request_id_gen: AtomicU64::new(1),
             host_session: Mutex::new(None),
@@ -1161,7 +1211,42 @@ impl StdioLibraryChannel {
             is_down,
             on_down,
             reader_join_handle: Mutex::new(Some(reader_thread)),
+            shutdown_executed: AtomicBool::new(false),
         })
+    }
+
+    /// Asynchronous pipe write governed by explicit timeout.
+    /// Eliminates OS pipe write blocking by executing writes on a dedicated writer thread.
+    fn write_stdin_timeout(
+        &self,
+        bytes: Vec<u8>,
+        timeout: Option<Duration>,
+    ) -> Result<(), LibraryError> {
+        if self.is_down.load(Ordering::SeqCst) {
+            return Err(LibraryError::unavailable("Channel is shutting down"));
+        }
+        let (reply_tx, reply_rx) = std::sync::mpsc::sync_channel(1);
+        self.writer_tx
+            .send(WriterCommand::Write(bytes, reply_tx))
+            .map_err(|_| LibraryError::unavailable("Stdin writer thread unavailable"))?;
+
+        match timeout {
+            Some(t) => match reply_rx.recv_timeout(t) {
+                Ok(Ok(())) => Ok(()),
+                Ok(Err(e)) => Err(LibraryError::unavailable(&format!("stdin write failed: {e}"))),
+                Err(std::sync::mpsc::RecvTimeoutError::Timeout) => {
+                    Err(LibraryError::unavailable("stdin write timed out"))
+                }
+                Err(std::sync::mpsc::RecvTimeoutError::Disconnected) => {
+                    Err(LibraryError::unavailable("Stdin writer thread disconnected"))
+                }
+            },
+            None => match reply_rx.recv() {
+                Ok(Ok(())) => Ok(()),
+                Ok(Err(e)) => Err(LibraryError::unavailable(&format!("stdin write failed: {e}"))),
+                Err(_) => Err(LibraryError::unavailable("Stdin writer thread disconnected")),
+            },
+        }
     }
 
     pub fn set_on_down(&self, cb: Arc<dyn Fn() + Send + Sync>) {
@@ -1287,32 +1372,30 @@ impl StdioLibraryChannel {
 
         let (tx, rx) = std::sync::mpsc::sync_channel(1);
         {
-            let mut pending = self
-                .pending_responses
-                .lock()
-                .map_err(|_| LibraryError::unavailable("Internal mutex poisoned (pending)"))?;
+            let mut pending = lock_timeout_recover(&self.pending_responses, Duration::from_millis(100))
+                .ok_or_else(|| LibraryError::unavailable("Timed out acquiring pending mutex"))?;
             pending.insert(req_id.clone(), tx);
         }
 
-        {
-            let mut stdin = self
-                .stdin
-                .lock()
-                .map_err(|_| LibraryError::unavailable("Internal mutex poisoned (stdin)"))?;
-            if let Err(e) = stdin.write_all(line.as_bytes()) {
-                let mut pending = self.pending_responses.lock().unwrap();
-                pending.remove(&req_id);
-                return Err(LibraryError::unavailable(&format!(
-                    "stdin write failed: {e}"
-                )));
+        let remaining_for_write = match timeout {
+            Some(limit) => {
+                let elapsed = start.elapsed();
+                if elapsed >= limit {
+                    if let Some(mut pending) = lock_timeout_recover(&self.pending_responses, Duration::from_millis(50)) {
+                        pending.remove(&req_id);
+                    }
+                    return Err(LibraryError::unavailable("Core request timed out before write"));
+                }
+                Some(limit - elapsed)
             }
-            if let Err(e) = stdin.flush() {
-                let mut pending = self.pending_responses.lock().unwrap();
+            None => None,
+        };
+
+        if let Err(e) = self.write_stdin_timeout(line.into_bytes(), remaining_for_write) {
+            if let Some(mut pending) = lock_timeout_recover(&self.pending_responses, Duration::from_millis(50)) {
                 pending.remove(&req_id);
-                return Err(LibraryError::unavailable(&format!(
-                    "stdin flush failed: {e}"
-                )));
             }
+            return Err(e);
         }
 
         let response_line = match timeout {
@@ -1327,8 +1410,9 @@ impl StdioLibraryChannel {
                     Ok(Ok(resp)) => resp,
                     Ok(Err(err)) => return Err(err),
                     Err(std::sync::mpsc::RecvTimeoutError::Timeout) => {
-                        let mut pending = self.pending_responses.lock().unwrap();
-                        pending.remove(&req_id);
+                        if let Some(mut pending) = lock_timeout_recover(&self.pending_responses, Duration::from_millis(50)) {
+                            pending.remove(&req_id);
+                        }
                         return Err(LibraryError::unavailable("Core request timed out"));
                     }
                     Err(std::sync::mpsc::RecvTimeoutError::Disconnected) => {
@@ -1725,7 +1809,7 @@ pub fn wait_timeout_or_kill(
     timeout: std::time::Duration,
 ) -> Result<std::process::ExitStatus, std::io::Error> {
     let start = std::time::Instant::now();
-    let poll_interval = std::time::Duration::from_millis(25);
+    let poll_interval = std::time::Duration::from_millis(20);
     while start.elapsed() < timeout {
         if let Some(status) = child.try_wait()? {
             return Ok(status);
@@ -1734,9 +1818,9 @@ pub fn wait_timeout_or_kill(
     }
     // Timeout reached: kill the process
     let _ = child.kill();
-    // Hard upper bound: wait for killed child with bounded timeout (max 1000ms),
+    // Hard upper bound: wait for killed child with bounded timeout (max 800ms),
     // eliminating unbounded child.wait() blocking
-    let kill_wait_timeout = std::time::Duration::from_millis(1000);
+    let kill_wait_timeout = std::time::Duration::from_millis(800);
     let kill_start = std::time::Instant::now();
     while kill_start.elapsed() < kill_wait_timeout {
         if let Some(status) = child.try_wait()? {
@@ -1755,10 +1839,14 @@ pub fn wait_timeout_or_kill(
 
 impl StdioLibraryChannel {
     pub fn shutdown_and_kill(&self, kill_timeout: Duration) {
+        if self.shutdown_executed.swap(true, Ordering::SeqCst) {
+            // R-009: Idempotent guard prevents duplicate cleanup and preserves single cumulative bound (< 3000ms)
+            return;
+        }
         self.is_down.store(true, Ordering::SeqCst);
 
-        // 1. Unblock any threads waiting for responses immediately
-        if let Ok(mut lock) = self.pending_responses.lock() {
+        // 1. Unblock any threads waiting for responses immediately (max 50ms lock)
+        if let Some(mut lock) = lock_timeout_recover(&self.pending_responses, Duration::from_millis(50)) {
             for (_req_id, sender) in lock.drain() {
                 let _ = sender.send(Err(LibraryError::unavailable(
                     "Channel is shutting down",
@@ -1767,9 +1855,9 @@ impl StdioLibraryChannel {
         }
 
         // 2. Try closing host session ONLY if host_session lock is available,
-        // and exchange with bounded timeout (500ms). If cannot acquire lock or session, skip.
-        if let Ok(mut session) = self.host_session.try_lock() {
-            if let Some(session) = session.take() {
+        // and exchange with bounded timeout (250ms total, including tx lock, stdin write, and recv).
+        if let Some(mut session_slot) = lock_timeout_recover(&self.host_session, Duration::from_millis(50)) {
+            if let Some(session) = session_slot.take() {
                 let request_id = format!(
                     "hostctl-{}",
                     self.request_id_gen.fetch_add(1, Ordering::Relaxed)
@@ -1783,12 +1871,12 @@ impl StdioLibraryChannel {
                 let _ = self.exchange_expected_minor_timeout(
                     request,
                     None,
-                    Some(Duration::from_millis(500)),
+                    Some(Duration::from_millis(250)),
                 );
             }
         }
 
-        // 3. Send core.shutdown to stdin if possible (try_lock to avoid blocking)
+        // 3. Send core.shutdown to stdin if possible (strictly bounded to 100ms via writer thread)
         let req = serde_json::json!({
             "protocol": "new-manga.core",
             "version": { "major": 2, "minor": 3 },
@@ -1796,19 +1884,18 @@ impl StdioLibraryChannel {
             "command": "core.shutdown",
             "payload": {},
         });
-        if let Ok(mut stdin) = self.stdin.try_lock() {
-            let _ = writeln!(stdin, "{req}");
-            let _ = stdin.flush();
-        }
+        let mut req_str = req.to_string();
+        req_str.push('\n');
+        let _ = self.write_stdin_timeout(req_str.into_bytes(), Some(Duration::from_millis(100)));
 
-        // 4. Wait for child with timeout or kill (strictly bounded, eliminating unbounded child.wait())
-        if let Ok(mut child) = self.child.lock() {
+        // 4. Wait for child with timeout or kill (strictly bounded, recovering poisoned lock)
+        if let Some(mut child) = lock_timeout_recover(&self.child, Duration::from_millis(100)) {
             let _ = wait_timeout_or_kill(&mut child, kill_timeout);
         }
 
-        // 5. Join reader thread with bounded timeout (hard upper bound: 500ms)
+        // 5. Join reader thread with bounded timeout (hard upper bound: 150ms)
         // Eliminates unbounded handle.join() block if reader thread is hung on stdout
-        if let Ok(mut handle_slot) = self.reader_join_handle.lock() {
+        if let Some(mut handle_slot) = lock_timeout_recover(&self.reader_join_handle, Duration::from_millis(50)) {
             if let Some(handle) = handle_slot.take() {
                 let (done_tx, done_rx) = std::sync::mpsc::sync_channel(1);
                 let joiner = std::thread::Builder::new()
@@ -1818,7 +1905,24 @@ impl StdioLibraryChannel {
                         let _ = done_tx.send(());
                     });
                 if joiner.is_ok() {
-                    let _ = done_rx.recv_timeout(Duration::from_millis(500));
+                    let _ = done_rx.recv_timeout(Duration::from_millis(150));
+                }
+            }
+        }
+
+        // 6. Join writer thread with bounded timeout (hard upper bound: 100ms)
+        if let Some(mut handle_slot) = lock_timeout_recover(&self.writer_join_handle, Duration::from_millis(50)) {
+            if let Some(handle) = handle_slot.take() {
+                let _ = self.writer_tx.send(WriterCommand::Shutdown);
+                let (done_tx, done_rx) = std::sync::mpsc::sync_channel(1);
+                let joiner = std::thread::Builder::new()
+                    .name("writer-join-guard".to_string())
+                    .spawn(move || {
+                        let _ = handle.join();
+                        let _ = done_tx.send(());
+                    });
+                if joiner.is_ok() {
+                    let _ = done_rx.recv_timeout(Duration::from_millis(100));
                 }
             }
         }
@@ -1827,7 +1931,7 @@ impl StdioLibraryChannel {
 
 impl Drop for StdioLibraryChannel {
     fn drop(&mut self) {
-        self.shutdown_and_kill(std::time::Duration::from_secs(5));
+        self.shutdown_and_kill(std::time::Duration::from_millis(1200));
     }
 }
 
@@ -2690,14 +2794,14 @@ impl ResilientCoreContext {
                 // 先在短锁内 take 出 old channel，立即释放 inner 锁，再在锁外执行 shutdown_and_kill，
                 // 避免持有 inner 锁长达数秒导致其他线程饿死
                 let old = {
-                    if let Ok(mut guard) = ctx.inner.lock() {
+                    if let Some(mut guard) = lock_timeout_recover(&ctx.inner, Duration::from_millis(100)) {
                         guard.take()
                     } else {
                         None
                     }
                 };
                 if let Some(old) = old {
-                    old.shutdown_and_kill(Duration::from_millis(1500));
+                    old.shutdown_and_kill(Duration::from_millis(1200));
                 }
 
                 let mut backoff = ctx.config.initial_backoff;
@@ -2876,7 +2980,7 @@ impl ResilientLibraryChannel {
                     }
 
                     let chan_opt = {
-                        if let Ok(guard) = ctx.inner.lock() {
+                        if let Some(guard) = lock_timeout_recover(&ctx.inner, Duration::from_millis(50)) {
                             guard.clone()
                         } else {
                             None
@@ -2886,27 +2990,31 @@ impl ResilientLibraryChannel {
                     let needs_restart = match chan_opt {
                         None => true,
                         Some(ref chan) => {
-                            if chan.is_down.load(Ordering::SeqCst) {
-                                true
-                            } else if let Ok(mut child) = chan.child.lock() {
+                            let is_alive = if let Some(mut child) = lock_timeout_recover(&chan.child, Duration::from_millis(50)) {
                                 match child.try_wait() {
-                                    Ok(Some(_status)) => true,
-                                    Ok(None) => {
-                                        // R-008: Process is alive; probe IPC responsiveness with bounded ping timeout
-                                        match chan.ping_timeout(ctx.config.heartbeat_ping_timeout) {
-                                            Ok(_) => false,
-                                            Err(err) => {
-                                                eprintln!(
-                                                    "[heartbeat] core_service unresponsive to ping ({err}), triggering restart"
-                                                );
-                                                true
-                                            }
-                                        }
-                                    }
-                                    Err(_) => true,
+                                    Ok(None) => true,
+                                    _ => false,
                                 }
                             } else {
                                 false
+                            };
+
+                            if chan.is_down.load(Ordering::SeqCst) {
+                                true
+                            } else if is_alive {
+                                // R-008: Process is alive; probe IPC responsiveness with bounded ping timeout.
+                                // Child lock was released above before ping_timeout to prevent blocking shutdown.
+                                match chan.ping_timeout(ctx.config.heartbeat_ping_timeout) {
+                                    Ok(_) => false,
+                                    Err(err) => {
+                                        eprintln!(
+                                            "[heartbeat] core_service unresponsive to ping ({err}), triggering restart"
+                                        );
+                                        true
+                                    }
+                                }
+                            } else {
+                                true
                             }
                         }
                     };
@@ -2960,16 +3068,16 @@ impl ResilientLibraryChannel {
 // R-003, R-009: ResilientLibraryChannel::drop explicitly takes inner channel and executes bounded shutdown
 impl Drop for ResilientLibraryChannel {
     fn drop(&mut self) {
-        self.ctx.heartbeat_stop.store(true, Ordering::Relaxed);
+        self.ctx.heartbeat_stop.store(true, Ordering::SeqCst);
         let chan = {
-            if let Ok(mut guard) = self.ctx.inner.lock() {
+            if let Some(mut guard) = lock_timeout_recover(&self.ctx.inner, Duration::from_millis(100)) {
                 guard.take()
             } else {
                 None
             }
         };
         if let Some(chan) = chan {
-            chan.shutdown_and_kill(Duration::from_millis(1500));
+            chan.shutdown_and_kill(Duration::from_millis(1200));
         }
     }
 }
@@ -5027,14 +5135,41 @@ mod tests {
         let chan = StdioLibraryChannel::adopt_child_for_test(child).expect("adopt initial");
         let resilient = Arc::new(ResilientLibraryChannel::new(config, Some(chan)));
 
+        // Start heartbeat so its thread is active and part of lifecycle verification
+        resilient.start_heartbeat();
+
         // 1. Spawn in-flight request thread that hangs on unresponsive sidecar
         let resilient_clone = Arc::clone(&resilient);
         let worker_handle = std::thread::spawn(move || {
             resilient_clone.list_books()
         });
 
-        // Let the worker enter the IPC wait loop
-        std::thread::sleep(Duration::from_millis(60));
+        // Handshake: synchronously verify in-flight request has entered pending wait state
+        let handshake_start = Instant::now();
+        loop {
+            let has_pending = {
+                if let Some(guard) = lock_timeout_recover(&resilient.ctx.inner, Duration::from_millis(50)) {
+                    if let Some(ref c) = *guard {
+                        c.pending_responses.lock().map(|p| !p.is_empty()).unwrap_or(false)
+                    } else {
+                        false
+                    }
+                } else {
+                    false
+                }
+            };
+            if has_pending {
+                break;
+            }
+            assert!(
+                handshake_start.elapsed() < Duration::from_secs(5),
+                "Timed out waiting for in-flight call to enter pending state"
+            );
+            std::thread::sleep(Duration::from_millis(10));
+        }
+
+        // Suppress automatic restart to serialize cleanup and prevent race condition
+        resilient.ctx.heartbeat_stop.store(true, Ordering::SeqCst);
 
         // 2. Simulate external force-kill (Stop-Process -Force / taskkill /F)
         let kill_status = Command::new("taskkill")
@@ -5046,20 +5181,22 @@ mod tests {
             "External kill must succeed for target PID {pid}"
         );
 
-        // 3. Drop / shutdown the channel
-        let shutdown_start = Instant::now();
-        resilient.ctx.heartbeat_stop.store(true, Ordering::Relaxed);
+        // 3. Take the inner channel directly: MUST be Some (cannot be bypassed by auto-restart)
         let inner_chan = {
-            if let Ok(mut guard) = resilient.ctx.inner.lock() {
-                guard.take()
-            } else {
-                None
-            }
+            let mut guard = lock_timeout_recover(&resilient.ctx.inner, Duration::from_millis(500))
+                .expect("acquire ctx.inner lock");
+            guard.take().expect("inner channel must be present, cannot be None")
         };
-        if let Some(c) = inner_chan {
-            c.shutdown_and_kill(Duration::from_millis(1500));
-        }
+
+        // 4. Measure shutdown duration of the production shutdown entry point
+        let shutdown_start = Instant::now();
+        inner_chan.shutdown_and_kill(Duration::from_millis(1200));
         let shutdown_elapsed = shutdown_start.elapsed();
+        println!(
+            "[ac1-overlay-bound] measured shutdown_elapsed: {:?} ({} ms)",
+            shutdown_elapsed,
+            shutdown_elapsed.as_millis()
+        );
 
         // Hard upper bound assertion: must be strictly bounded (< 3000ms)
         assert!(
@@ -5068,8 +5205,16 @@ mod tests {
             shutdown_elapsed
         );
 
-        // In-flight worker thread must be unblocked and return Err
-        let worker_res = worker_handle.join().expect("worker handle join");
+        // 5. In-flight worker thread must be unblocked and return Err within bounded time
+        let (join_tx, join_rx) = std::sync::mpsc::sync_channel(1);
+        let _joiner = std::thread::spawn(move || {
+            let res = worker_handle.join();
+            let _ = join_tx.send(res);
+        });
+        let worker_res = join_rx
+            .recv_timeout(Duration::from_secs(2))
+            .expect("worker thread must join within 2s of shutdown")
+            .expect("worker thread joined without panic");
         assert!(
             worker_res.is_err(),
             "In-flight request must fail with unavailable error when sidecar is killed"
@@ -5080,7 +5225,7 @@ mod tests {
         // Give OS brief moment to complete process table cleanup
         std::thread::sleep(Duration::from_millis(100));
 
-        // Process tree / tasklist zero orphan assertion with exit code verification
+        // 6. Process tree / tasklist zero orphan assertion with exit code verification
         let output = Command::new("tasklist")
             .args(["/FI", &format!("PID eq {pid}"), "/FO", "CSV", "/NH"])
             .output()
@@ -5090,6 +5235,51 @@ mod tests {
         assert!(
             !stdout_str.contains(&format!("\"{pid}\"")),
             "Target PID {pid} must NOT be present in process table"
+        );
+    }
+
+    /// AC1 & AC4: Unit test confirming poisoned child mutex is recovered and killed (zero orphan guaranteed)
+    #[test]
+    fn poisoned_child_lock_is_recovered_and_killed() {
+        let child = Command::new("cmd")
+            .args(["/c", "pause"])
+            .stdin(Stdio::piped())
+            .stdout(Stdio::piped())
+            .stderr(Stdio::null())
+            .spawn()
+            .expect("spawn pause child");
+        let pid = child.id();
+
+        let chan = StdioLibraryChannel::adopt_child_for_test(child).expect("adopt initial");
+
+        // Intentionally poison the child lock by panicking inside a thread holding it
+        let _ = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
+            let _guard = chan.child.lock().unwrap();
+            panic!("intentional test panic to poison child mutex");
+        }));
+        assert!(chan.child.is_poisoned(), "child mutex must be poisoned");
+
+        // Now call shutdown_and_kill: it must recover the poisoned lock, kill the process, and not leak
+        let start = Instant::now();
+        chan.shutdown_and_kill(Duration::from_millis(1200));
+        let elapsed = start.elapsed();
+
+        assert!(
+            elapsed < Duration::from_secs(3),
+            "Shutdown under poisoned lock must complete within 3s, took {:?}",
+            elapsed
+        );
+
+        std::thread::sleep(Duration::from_millis(100));
+        let output = Command::new("tasklist")
+            .args(["/FI", &format!("PID eq {pid}"), "/FO", "CSV", "/NH"])
+            .output()
+            .expect("query tasklist");
+        assert!(output.status.success());
+        let stdout_str = String::from_utf8_lossy(&output.stdout);
+        assert!(
+            !stdout_str.contains(&format!("\"{pid}\"")),
+            "Process {pid} must be killed even when child mutex was poisoned"
         );
     }
 
