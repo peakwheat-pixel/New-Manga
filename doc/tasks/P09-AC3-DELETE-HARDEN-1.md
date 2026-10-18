@@ -6,8 +6,8 @@ governance_version: 2
 status: ready
 approval: user_ruling_20261018_p09_harden_split
 blocked_by: null
-suggested_owner: Antigravity
-owner: Antigravity
+suggested_owner: dsh
+owner: dsh
 reviewer: Codex
 depends_on: [P09-AC3-DELETE-1]
 base_commit: a04e4ea78d5b33a0f91efcdc06b396391c4b165e
@@ -21,6 +21,10 @@ evidence_dir: verification/P09-AC3-DELETE-HARDEN-1
 ---
 
 # P09-AC3-DELETE-HARDEN-1：永久删除加固
+
+## 执行方改派（2026-10-18 用户指令）
+
+用户指令：**本对话不再调用 agy**，停止 Antigravity 手上的本 Task，**改派 dsh 执行**。Owner 由 Antigravity 改为 **dsh**；Reviewer 仍为 **Codex**（满足 owner != reviewer）。Antigravity 在被停止前留下的一处有效改动（`tests/packaging/test_frozen_runtime_contract.py` 的 `ver == 4` -> `ver == 5`，即 AC10 核心）**已核实并保留**。
 
 ## 来源与授权
 

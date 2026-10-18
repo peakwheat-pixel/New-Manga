@@ -1075,13 +1075,36 @@ class SqliteLibraryRepository:
                         try:
                             entry = catalog.lookup(res_id)
                             if entry is not None and entry.rel_path:
-                                target_f = (root_res / entry.rel_path).resolve()
+                                # AC5 / N-004: never resolve() before lstat().
+                                # resolve() follows the link, so the reparse
+                                # check would inspect the *destination* and the
+                                # unlink would then delete the destination file
+                                # instead of refusing the tampered entry.
+                                # Walk the raw, unresolved path segment by
+                                # segment and refuse the whole removal on the
+                                # first link; only then touch the file.
+                                raw_rel = str(entry.rel_path).replace("\\", "/")
+                                raw_segs = [seg for seg in raw_rel.split("/") if seg]
                                 if (
-                                    target_f.is_relative_to(root_res)
-                                    and target_f.is_file()
-                                    and not _is_reparse_point(target_f.lstat())
+                                    raw_segs
+                                    and not any(seg in ("..", ".") for seg in raw_segs)
+                                    and not Path(raw_rel).is_absolute()
                                 ):
-                                    target_f.unlink(missing_ok=True)
+                                    probe = root_res
+                                    crossed_link = False
+                                    for seg in raw_segs:
+                                        probe = probe / seg
+                                        try:
+                                            probe_st = probe.lstat()
+                                        except OSError:
+                                            break  # nothing there to traverse
+                                        if _is_reparse_point(probe_st):
+                                            crossed_link = True
+                                            break
+                                    if not crossed_link:
+                                        target_f = root_res / raw_rel
+                                        if target_f.is_file():
+                                            target_f.unlink(missing_ok=True)
                             catalog.remove(res_id)
                         except Exception:
                             all_deleted = False

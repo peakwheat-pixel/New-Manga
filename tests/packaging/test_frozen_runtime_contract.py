@@ -64,11 +64,11 @@ def test_explicit_data_root_isolation(tmp_path):
         assert not str(db_path).startswith(str(ROOT / "src"))
         assert not str(db_path).startswith(str(ROOT / "packaging"))
 
-        # Verify schema version is current (v4)
+        # Verify schema version is current (v5)
         ver = services.conn.execute(
             "SELECT CAST(value_json AS INTEGER) FROM application_metadata WHERE metadata_key='schema_version'"
         ).fetchone()[0]
-        assert ver == 4
+        assert ver == 5
     finally:
         _shutdown_services(services)
 
