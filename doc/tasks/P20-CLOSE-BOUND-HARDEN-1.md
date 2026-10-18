@@ -3,7 +3,7 @@ id: P20-CLOSE-BOUND-HARDEN-1
 title: sidecar 关闭 deadline 与 worker 生命周期加固
 kind: fix
 governance_version: 2
-status: in_review
+status: changes_requested
 approval: user_authorized_20261018_final_close_hardening
 blocked_by: null
 suggested_owner: Antigravity
@@ -15,7 +15,7 @@ branch: null
 worktree: G:/CODEX/New Manga
 integration_commit: null
 delivery_head: 35770fe91ab722b6d6c5e06e1f855c062d15c0a2
-canonical_evidence_status: pending
+canonical_evidence_status: complete
 resource_closeout_status: pending
 evidence_dir: verification/P20-CLOSE-BOUND-HARDEN-1
 ---
@@ -37,7 +37,7 @@ evidence_dir: verification/P20-CLOSE-BOUND-HARDEN-1
 - [ ] AC5：`concurrency-lock-audit.md` 与源码调用点一对一，计数单位明确；主路径、锁争用/重入/Drop 分支均有闭式预算，逐项说明后台线程 lifetime 和 spawn cost；总和满足当前 Task 阈值，未纳入项显式列出并标 limitation。
 - [ ] AC6：AC2 脚本的残留范围与日志声明一致：独立 workspace Python 不误报；断链覆盖仅在有真实跟踪机制及故障注入证据时宣称。否则将结论严格限制于 runner 后代和隔离根命中。
 - [ ] AC7：AC5 direct desktop run 的 OutDir、`ac5.exit`、metadata、console log 与 exact build/head 一致；每个 Canonical Evidence SHA-256 与磁盘文件匹配。若读回或写入任一 artifact 失败（包括调用方 Tee 同时锁定同一 console log），脚本仍须独立写出一致的 `ac5.exit` 与 metadata，且真实进程 exit code 一致；加入 artifact-lock 故障用例。
-- [ ] AC8：不回归：R-008 心跳恢复、R-003 拆环与 reap、R-006 错误呈现、`MAX_RETRIES=3`、`is_down` 普通写拒绝/关机写放行、既有 resilient 9 项、stdio drop、shutdown writes、2 MB pipe overflow 用例。
+- [x] AC8：不回归：R-008 心跳恢复、R-003 拆环与 reap、R-006 错误呈现、`MAX_RETRIES=3`、`is_down` 普通写拒绝/关机写放行、既有 resilient 9 项、stdio drop、shutdown writes、2 MB pipe overflow 用例。R4 实跑 9/9 exit 0，见本 Task Review R4 pin。
 
 ## 允许修改范围
 
@@ -60,7 +60,7 @@ evidence_dir: verification/P20-CLOSE-BOUND-HARDEN-1
 | AC4 永久阻塞 I/O 与 kill/reap failure | Rust fault-injection tests，覆盖 reader、writer、taskkill spawn/kill/try_wait 失败 | Windows；仅隔离子进程 | NOT_RUN | stdout/stderr/exit/meta 与 PID/句柄结果 |
 | AC6 runner scope | 运行 `test-ac1-overlay-bound.ps1`，并同时启动独立 workspace Python 测试与模拟断链后代 | Windows PowerShell；唯一隔离根 | NOT_RUN | residual candidate 清单与 exit |
 | AC7 real desktop close | 交互桌面直接运行 `run-desktop-close-verification.ps1`，不经管道包装 | release build 与 WebView2 可用 | NOT_RUN | 自包含 OutDir、`ac5.exit`、metadata、console log、SHA-256 |
-| AC8 regression | resilient 9 项、stdio drop、shutdown writes、2 MB pipe overflow；R-006 UI 沿用有效证据或说明未重跑 | Windows；按用户数据隔离规则 | NOT_RUN | 每条命令独立 stdout/stderr/exit/meta |
+| AC8 regression | `run-ac8-regression.ps1`；九条 cargo test 命令见 R4 Review | Windows；PowerShell 7.6.6、cargo 1.98.1、rustc 1.98.1；独立 `%TEMP%` 根 | PASS（9/9，全部 exit 0） | `verification/P20-CLOSE-BOUND-HARDEN-1/codex-review-r4.md`；`%TEMP%\P20-CLOSE-BOUND-HARDEN-1-r4-74006cb4059c4098951685d5f8d33ca6\ac8-regression-summary.md` |
 
 ## 依赖、风险与阻塞
 
@@ -102,8 +102,8 @@ evidence_dir: verification/P20-CLOSE-BOUND-HARDEN-1
 ## 交付与运行记录
 
 - Handoff：待 Owner 认领后创建（`doc/handoffs/P20-CLOSE-BOUND-HARDEN-1-antigravity.md`）。
-- Review：待固定 delivery head 后由 Codex 独立复核，输出 `verification/P20-CLOSE-BOUND-HARDEN-1/codex-review-r<n>.md`。
-- 实际测试：NOT_RUN。
+- Review：R4 `changes_requested`，见 `verification/P20-CLOSE-BOUND-HARDEN-1/codex-review-r4.md`；R4-01（P1）未闭合。
+- 实际测试：AC8 R4 9/9 PASS；AC7 真实交互桌面仍 `NOT_RUN`，留给 Coordinator。
 - 2026-10-18 Coordinator（dsh, epoch 8）完成范围冻结与释放登记。
 
 ## Canonical Evidence
@@ -232,6 +232,7 @@ evidence_dir: verification/P20-CLOSE-BOUND-HARDEN-1
 | codex-review-r1.md | Gate | verification/P20-CLOSE-BOUND-HARDEN-1/codex-review-r1.md | 35770fe91ab722b6d6c5e06e1f855c062d15c0a2 | 521aac1945713264ca75f13f1932268600e847998c42cb3e626c4b2eb853d0d8 | SOURCE_PIN |
 | codex-review-r2.md | Gate | verification/P20-CLOSE-BOUND-HARDEN-1/codex-review-r2.md | 35770fe91ab722b6d6c5e06e1f855c062d15c0a2 | 1f9bfb8c6e792dc46cb61a1c5bae2e6824b1a28c5f58dde0a59e3a2e4f55909a | SOURCE_PIN |
 | codex-review-r3.md | Gate | verification/P20-CLOSE-BOUND-HARDEN-1/codex-review-r3.md | 35770fe91ab722b6d6c5e06e1f855c062d15c0a2 | a68aa289dc89fd6a6c52c2085b8531d82ee93e72631ef797f68c8726f328b210 | SOURCE_PIN |
+| codex-review-r4.md | Gate | verification/P20-CLOSE-BOUND-HARDEN-1/codex-review-r4.md | 0d6ba1e456987ff8c94dee0917b8266301a8bcd9 | 04252992581c9cf37d05f89005d5e1ddcf508a9e94b0fbc5ddb1516c4602997c | SOURCE_PIN |
 | run-ac8-regression.ps1 | Gate | verification/P20-CLOSE-BOUND-HARDEN-1/run-ac8-regression.ps1 | 35770fe91ab722b6d6c5e06e1f855c062d15c0a2 | f7052bd6d05ff4a42c1c15c69484746513fb88882b4b0a788e06c26076e1def7 | CANONICAL |
 | SHA256SUMS.txt | Gate | verification/P20-CLOSE-BOUND-HARDEN-1/SHA256SUMS.txt | 35770fe91ab722b6d6c5e06e1f855c062d15c0a2 | 8df4234fea4bb306c165b619f350b0312cd4e802a87ef08cb098bf842f994910 | CANONICAL |
 | test-artifact-lock-fault.ps1 | AC7 | verification/P20-CLOSE-BOUND-HARDEN-1/test-artifact-lock-fault.ps1 | 35770fe91ab722b6d6c5e06e1f855c062d15c0a2 | 6e9fe449badf3f8b87f87d27a55841f746922ee6f874988607c585732faf0612 | CANONICAL |
@@ -241,12 +242,13 @@ evidence_dir: verification/P20-CLOSE-BOUND-HARDEN-1
 | resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
 |---|---|---|---|---|---|
 | 不新建 worktree | 复用 `G:/CODEX/New Manga` | `NOT_APPLICABLE` | 不适用 | 不适用 | 冻结决定：与 P20-CLOSE-BOUND-1 同款直接在真实仓库工作；未创建、未删除资源。 |
+| AC8 R4 临时输出 | `%TEMP%\P20-CLOSE-BOUND-HARDEN-1-r4-74006cb4059c4098951685d5f8d33ca6` | `PRESERVE_REFERENCED` | 同原路径 | `ac8-regression-summary.md` SHA-256 `9dd609ef08c87665f524e09c643f6ca308af919931a1247bb078843ad99eab85`；9 个 exit 文件均为 0 | R4 Review pin 引用；保留 stdout/stderr、exit、meta 与隔离 cargo target；未删除。 |
 
 ## Closeout Record
 
 - Closeout date / Codex：待关闭时填写。
-- `canonical_evidence_status`：`pending`。
+- `canonical_evidence_status`：`complete`；126/126 pin 的磁盘 SHA-256 与 commit:path 已核验。
 - `resource_closeout_status`：`pending`。
 - 删除、迁移、归档数量/字节数：待关闭时填写。
-- 未关闭项及保留原因：待 Owner 交付和 Review。
-- 当前指针清理：待 Task 激活或关闭时由 Codex同步 STATUS/Plan。
+- 未关闭项及保留原因：R4-01（P1，holder 生命周期及 spawn 失败时的句柄保留）仍待 Owner 返修；AC7 保持 `NOT_RUN`，交 Coordinator。
+- 当前指针清理：STATUS/Plan 指向 R4 `changes_requested`；Task 保持非终态，待 Owner 新 head 返修并复审。
