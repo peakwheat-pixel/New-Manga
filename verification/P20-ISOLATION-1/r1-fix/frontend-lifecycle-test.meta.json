@@ -1,0 +1,7 @@
+{
+  "command": "npm test -- AppShell.lifecycle.test.tsx",
+  "cwd": "apps/desktop/frontend",
+  "start_time": "2026-10-18T08:20:07.8485719+08:00",
+  "end_time": "2026-10-18T08:20:09.9997803+08:00",
+  "exit_code": 0
+}

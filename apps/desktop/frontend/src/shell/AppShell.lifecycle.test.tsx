@@ -119,10 +119,10 @@ describe("AppShell - P20-ISOLATION-1 sidecar fault indicator and state preservat
     const fatalBanner = container.querySelector('[data-testid="core-status-banner"]');
     expect(fatalBanner).not.toBeNull();
     expect(fatalBanner?.textContent).toContain("后端服务异常，自动重启失败");
-    // Retry button present
+    // R-006: In fatal state, automatic retry budget is exhausted.
+    // Misleading manual retry button is removed so user is directed to check logs.
     const retryBtn = fatalBanner?.querySelector("button");
-    expect(retryBtn).not.toBeNull();
-    expect(retryBtn?.textContent).toContain("重试连接");
+    expect(retryBtn).toBeNull();
   });
 
   it("AC3: preserves draft inputs across sidecar crash and recovery", async () => {

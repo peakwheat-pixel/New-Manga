@@ -1321,7 +1321,14 @@ fn main() {
             Some(dir) => (dir.join("core_service.exe").to_string_lossy().to_string(), dir.clone()),
             None => (python_exe.clone(), src_root.clone()),
         };
-        let chan = StdioLibraryChannel::spawn_with_startup_ping(
+        let config = LibrarySpawnConfig::new(
+            sidecar_path.clone(),
+            working_dir.clone(),
+            data_root.clone(),
+            Some(derived_root.clone()),
+            Some(catalog_db.clone()),
+        );
+        let init_spawn_res = StdioLibraryChannel::spawn_with_startup_ping(
             &sidecar_path,
             &working_dir,
             data_root.as_deref(),
@@ -1329,17 +1336,23 @@ fn main() {
             Some(&catalog_db),
             std::time::Duration::from_secs(30),
         )
-        .expect("production core library sidecar failed to start (startup ping)");
-        chan.open_host_session()
-            .expect("production core HostControl session failed to open");
-        let config = LibrarySpawnConfig {
-            sidecar_path,
-            working_dir,
-            data_root: data_root.clone(),
-            derived_root: Some(derived_root.clone()),
-            catalog_db: Some(catalog_db.clone()),
+        .and_then(|chan| {
+            chan.open_host_session()?;
+            Ok(chan)
+        });
+
+        let (initial_chan, initial_failed) = match init_spawn_res {
+            Ok(chan) => (Some(chan), false),
+            Err(e) => {
+                eprintln!("[startup] WARNING: initial core_service startup failed ({e}); supervisor will recover");
+                (None, true)
+            }
         };
-        let resilient = ResilientLibraryChannel::new(config, chan);
+
+        let resilient = ResilientLibraryChannel::new(config, initial_chan);
+        if initial_failed {
+            resilient.record_initial_failure();
+        }
         resilient.start_heartbeat();
         Some(Box::new(resilient))
     } else {
@@ -1439,6 +1452,12 @@ fn main() {
                         }
                     },
                 ));
+
+                // R-002: If initial startup failed early, supervisor triggers self-healing
+                // now that status_emitter is hooked to the Tauri event bus.
+                if library.is_unhealthy() {
+                    library.trigger_restart();
+                }
             }
 
             Ok(())

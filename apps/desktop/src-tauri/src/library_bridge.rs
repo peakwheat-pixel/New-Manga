@@ -743,6 +743,14 @@ pub trait LibraryChannel: Send + Sync {
 
     /// P20-ISOLATION-1: Register a lifecycle status emitter for sidecar health events.
     fn set_status_emitter(&self, _emitter: StatusEmitter) {}
+
+    /// P20-ISOLATION-1: Trigger supervisor recovery if the channel is currently unhealthy or disconnected.
+    fn trigger_restart(&self) {}
+
+    /// P20-ISOLATION-1: Query whether the sidecar channel is in an unhealthy, restarting, or fatal state.
+    fn is_unhealthy(&self) -> bool {
+        false
+    }
 }
 
 fn reader_progress_payload(
@@ -2401,6 +2409,10 @@ impl LibraryChannel for MockLibraryChannel {
     }
 }
 
+pub type LibraryChannelSpawner = Arc<
+    dyn Fn(&LibrarySpawnConfig) -> Result<StdioLibraryChannel, LibraryError> + Send + Sync,
+>;
+
 /// Configuration required to spawn or respawn the Core library sidecar.
 #[derive(Clone)]
 pub struct LibrarySpawnConfig {
@@ -2409,20 +2421,92 @@ pub struct LibrarySpawnConfig {
     pub data_root: Option<PathBuf>,
     pub derived_root: Option<PathBuf>,
     pub catalog_db: Option<PathBuf>,
+    pub stable_duration: Duration,
+    pub initial_backoff: Duration,
+    pub custom_spawner: Option<LibraryChannelSpawner>,
 }
 
-struct ResilientCoreContext {
-    inner: Mutex<Option<StdioLibraryChannel>>,
-    config: LibrarySpawnConfig,
-    is_restarting: AtomicBool,
-    consecutive_failures: AtomicU32,
-    event_sink: Mutex<Option<EventSink>>,
-    status_emitter: Mutex<Option<StatusEmitter>>,
-    heartbeat_stop: AtomicBool,
+impl LibrarySpawnConfig {
+    pub fn new(
+        sidecar_path: String,
+        working_dir: PathBuf,
+        data_root: Option<PathBuf>,
+        derived_root: Option<PathBuf>,
+        catalog_db: Option<PathBuf>,
+    ) -> Self {
+        Self {
+            sidecar_path,
+            working_dir,
+            data_root,
+            derived_root,
+            catalog_db,
+            stable_duration: Duration::from_secs(30),
+            initial_backoff: Duration::from_millis(500),
+            custom_spawner: None,
+        }
+    }
+}
+
+pub(crate) struct ResilientCoreContext {
+    pub(crate) inner: Mutex<Option<StdioLibraryChannel>>,
+    pub(crate) config: LibrarySpawnConfig,
+    pub(crate) is_restarting: AtomicBool,
+    pub(crate) consecutive_failures: AtomicU32,
+    pub(crate) last_spawn_time: Mutex<Option<Instant>>,
+    pub(crate) is_fatal: AtomicBool,
+    pub(crate) event_sink: Mutex<Option<EventSink>>,
+    pub(crate) status_emitter: Mutex<Option<StatusEmitter>>,
+    pub(crate) heartbeat_stop: AtomicBool,
 }
 
 impl ResilientCoreContext {
+    pub fn is_unhealthy(&self) -> bool {
+        if self.is_fatal.load(Ordering::SeqCst) || self.is_restarting.load(Ordering::SeqCst) {
+            return true;
+        }
+        if let Ok(guard) = self.inner.lock() {
+            match guard.as_ref() {
+                Some(chan) => chan.is_down.load(Ordering::SeqCst),
+                None => true,
+            }
+        } else {
+            true
+        }
+    }
+
     pub fn trigger_restart(self: &Arc<Self>) {
+        if self.heartbeat_stop.load(Ordering::Relaxed) || self.is_fatal.load(Ordering::SeqCst) {
+            return;
+        }
+
+        // R-001: Replenish restart budget only if the sidecar has stably survived for >= stable_duration
+        {
+            if let Ok(mut last_spawn) = self.last_spawn_time.lock() {
+                if let Some(spawned_at) = *last_spawn {
+                    if spawned_at.elapsed() >= self.config.stable_duration {
+                        eprintln!(
+                            "[supervisor] sidecar survived stably for {:?}; replenishing restart budget",
+                            spawned_at.elapsed()
+                        );
+                        self.consecutive_failures.store(0, Ordering::SeqCst);
+                        *last_spawn = None;
+                    }
+                }
+            }
+        }
+
+        const MAX_RETRIES: u32 = 3;
+        if self.consecutive_failures.load(Ordering::SeqCst) >= MAX_RETRIES {
+            self.is_fatal.store(true, Ordering::SeqCst);
+            self.is_restarting.store(false, Ordering::SeqCst);
+            if let Ok(guard) = self.status_emitter.lock() {
+                if let Some(ref emitter) = *guard {
+                    emitter("fatal", "后端服务异常，自动重启失败，请检查服务日志");
+                }
+            }
+            return;
+        }
+
         if self
             .is_restarting
             .compare_exchange(false, true, Ordering::SeqCst, Ordering::SeqCst)
@@ -2431,8 +2515,9 @@ impl ResilientCoreContext {
             return;
         }
 
-        const MAX_RETRIES: u32 = 3;
+        // Re-check after acquiring restarting flag
         if self.consecutive_failures.load(Ordering::SeqCst) >= MAX_RETRIES {
+            self.is_fatal.store(true, Ordering::SeqCst);
             self.is_restarting.store(false, Ordering::SeqCst);
             if let Ok(guard) = self.status_emitter.lock() {
                 if let Some(ref emitter) = *guard {
@@ -2462,31 +2547,46 @@ impl ResilientCoreContext {
                     }
                 }
 
-                let mut backoff = Duration::from_millis(500);
+                let mut backoff = ctx.config.initial_backoff;
                 let mut success = false;
 
                 while ctx.consecutive_failures.load(Ordering::SeqCst) < MAX_RETRIES {
+                    if ctx.heartbeat_stop.load(Ordering::Relaxed) {
+                        break;
+                    }
                     let attempt = ctx.consecutive_failures.fetch_add(1, Ordering::SeqCst) + 1;
                     eprintln!("[supervisor] Restarting core_service (attempt {attempt}/{MAX_RETRIES})...");
                     std::thread::sleep(backoff);
+                    if ctx.heartbeat_stop.load(Ordering::Relaxed) {
+                        break;
+                    }
 
-                    let spawn_res = StdioLibraryChannel::spawn_with_startup_ping(
-                        &ctx.config.sidecar_path,
-                        &ctx.config.working_dir,
-                        ctx.config.data_root.as_deref(),
-                        ctx.config.derived_root.as_deref(),
-                        ctx.config.catalog_db.as_deref(),
-                        Duration::from_secs(15),
-                    );
+                    let spawn_res = match &ctx.config.custom_spawner {
+                        Some(spawner) => spawner(&ctx.config),
+                        None => {
+                            let r = StdioLibraryChannel::spawn_with_startup_ping(
+                                &ctx.config.sidecar_path,
+                                &ctx.config.working_dir,
+                                ctx.config.data_root.as_deref(),
+                                ctx.config.derived_root.as_deref(),
+                                ctx.config.catalog_db.as_deref(),
+                                Duration::from_secs(15),
+                            );
+                            match r {
+                                Ok(chan) => {
+                                    if let Err(e) = chan.open_host_session() {
+                                        Err(e)
+                                    } else {
+                                        Ok(chan)
+                                    }
+                                }
+                                Err(e) => Err(e),
+                            }
+                        }
+                    };
 
                     match spawn_res {
                         Ok(new_chan) => {
-                            if let Err(e) = new_chan.open_host_session() {
-                                eprintln!("[supervisor] open_host_session failed: {e}");
-                                backoff = backoff.saturating_mul(2);
-                                continue;
-                            }
-
                             // 重新注入之前注册的 event_sink
                             if let Ok(guard) = ctx.event_sink.lock() {
                                 if let Some(ref sink) = *guard {
@@ -2494,20 +2594,28 @@ impl ResilientCoreContext {
                                 }
                             }
 
-                            // 绑定下次异常退出的瞬时感知回调
-                            let ctx_down = Arc::clone(&ctx);
+                            // R-003: 绑定下次异常退出的瞬时感知回调（Weak 弱引用拆开所有权环）
+                            let ctx_weak = Arc::downgrade(&ctx);
                             new_chan.set_on_down(Arc::new(move || {
-                                ctx_down.trigger_restart();
+                                if let Some(c) = ctx_weak.upgrade() {
+                                    c.trigger_restart();
+                                }
                             }));
+
+                            // 记录启动时间
+                            if let Ok(mut guard) = ctx.last_spawn_time.lock() {
+                                *guard = Some(Instant::now());
+                            }
 
                             // 原子安装新 channel
                             if let Ok(mut guard) = ctx.inner.lock() {
                                 *guard = Some(new_chan);
                             }
 
-                            ctx.consecutive_failures.store(0, Ordering::SeqCst);
+                            // R-001: 启动成功不立即清零 consecutive_failures！
+                            // 只有稳定存活超过 stable_duration 后才重置预算。
                             success = true;
-                            eprintln!("[supervisor] core_service successfully recovered!");
+                            eprintln!("[supervisor] core_service successfully recovered (used attempt {attempt}/{MAX_RETRIES})!");
                             break;
                         }
                         Err(err) => {
@@ -2519,11 +2627,16 @@ impl ResilientCoreContext {
 
                 ctx.is_restarting.store(false, Ordering::SeqCst);
 
-                if let Ok(guard) = ctx.status_emitter.lock() {
-                    if let Some(ref emitter) = *guard {
-                        if success {
+                if success {
+                    if let Ok(guard) = ctx.status_emitter.lock() {
+                        if let Some(ref emitter) = *guard {
                             emitter("recovered", "后端服务已恢复正常");
-                        } else {
+                        }
+                    }
+                } else {
+                    ctx.is_fatal.store(true, Ordering::SeqCst);
+                    if let Ok(guard) = ctx.status_emitter.lock() {
+                        if let Some(ref emitter) = *guard {
                             emitter("fatal", "后端服务异常，自动重启失败，请检查服务日志");
                         }
                     }
@@ -2534,31 +2647,46 @@ impl ResilientCoreContext {
 }
 
 pub struct ResilientLibraryChannel {
-    ctx: Arc<ResilientCoreContext>,
+    pub(crate) ctx: Arc<ResilientCoreContext>,
 }
 
 impl ResilientLibraryChannel {
-    pub fn new(config: LibrarySpawnConfig, initial_channel: StdioLibraryChannel) -> Self {
+    pub fn new(config: LibrarySpawnConfig, initial_channel: Option<StdioLibraryChannel>) -> Self {
+        let initial_failures = if initial_channel.is_none() { 1 } else { 0 };
+        let initial_spawn_time = if initial_channel.is_some() {
+            Some(Instant::now())
+        } else {
+            None
+        };
         let ctx = Arc::new(ResilientCoreContext {
-            inner: Mutex::new(Some(initial_channel)),
+            inner: Mutex::new(initial_channel),
             config,
             is_restarting: AtomicBool::new(false),
-            consecutive_failures: AtomicU32::new(0),
+            consecutive_failures: AtomicU32::new(initial_failures),
+            last_spawn_time: Mutex::new(initial_spawn_time),
+            is_fatal: AtomicBool::new(false),
             event_sink: Mutex::new(None),
             status_emitter: Mutex::new(None),
             heartbeat_stop: AtomicBool::new(false),
         });
 
-        let ctx_clone = Arc::clone(&ctx);
+        // R-003: on_down captures Weak<ResilientCoreContext> to break strong reference cycle
+        let ctx_weak = Arc::downgrade(&ctx);
         if let Ok(guard) = ctx.inner.lock() {
             if let Some(ref chan) = *guard {
                 chan.set_on_down(Arc::new(move || {
-                    ctx_clone.trigger_restart();
+                    if let Some(c) = ctx_weak.upgrade() {
+                        c.trigger_restart();
+                    }
                 }));
             }
         }
 
         Self { ctx }
+    }
+
+    pub fn record_initial_failure(&self) {
+        self.ctx.consecutive_failures.store(1, Ordering::SeqCst);
     }
 
     /// AC2: Periodic heartbeat and dead sidecar recovery.
@@ -2572,11 +2700,29 @@ impl ResilientLibraryChannel {
                     if ctx.heartbeat_stop.load(Ordering::Relaxed) {
                         break;
                     }
+                    if ctx.is_fatal.load(Ordering::SeqCst) {
+                        continue;
+                    }
                     if ctx.is_restarting.load(Ordering::SeqCst) {
                         continue;
                     }
                     if ctx.consecutive_failures.load(Ordering::SeqCst) >= 3 {
                         continue;
+                    }
+
+                    // Replenish budget if sidecar has been stably alive for stable_duration
+                    if let Ok(last_spawn) = ctx.last_spawn_time.lock() {
+                        if let Some(spawned_at) = *last_spawn {
+                            if spawned_at.elapsed() >= ctx.config.stable_duration {
+                                if ctx.consecutive_failures.load(Ordering::SeqCst) > 0 {
+                                    eprintln!(
+                                        "[heartbeat] core_service stable for {:?}; replenishing restart budget",
+                                        spawned_at.elapsed()
+                                    );
+                                    ctx.consecutive_failures.store(0, Ordering::SeqCst);
+                                }
+                            }
+                        }
                     }
 
                     let needs_restart = {
@@ -2631,7 +2777,9 @@ impl ResilientLibraryChannel {
                 res
             }
             None => {
-                self.ctx.trigger_restart();
+                if !self.ctx.is_fatal.load(Ordering::SeqCst) {
+                    self.ctx.trigger_restart();
+                }
                 Err(LibraryError::unavailable(
                     "Core service is restarting or unavailable",
                 ))
@@ -2640,9 +2788,15 @@ impl ResilientLibraryChannel {
     }
 }
 
+// R-003: ResilientLibraryChannel::drop explicitly takes and drops inner channel to trigger shutdown and joins
 impl Drop for ResilientLibraryChannel {
     fn drop(&mut self) {
         self.ctx.heartbeat_stop.store(true, Ordering::Relaxed);
+        if let Ok(mut guard) = self.ctx.inner.lock() {
+            if let Some(chan) = guard.take() {
+                drop(chan);
+            }
+        }
     }
 }
 
@@ -2853,9 +3007,22 @@ impl LibraryChannel for ResilientLibraryChannel {
     }
 
     fn set_status_emitter(&self, emitter: StatusEmitter) {
+        if self.ctx.is_fatal.load(Ordering::SeqCst) {
+            emitter("fatal", "后端服务异常，自动重启失败，请检查服务日志");
+        } else if self.ctx.is_restarting.load(Ordering::SeqCst) {
+            emitter("restarting", "后端服务异常，正在尝试热重启...");
+        }
         if let Ok(mut guard) = self.ctx.status_emitter.lock() {
             *guard = Some(emitter);
         }
+    }
+
+    fn trigger_restart(&self) {
+        self.ctx.trigger_restart();
+    }
+
+    fn is_unhealthy(&self) -> bool {
+        self.ctx.is_unhealthy()
     }
 
     fn cancel_export(&self, export_id: &str) -> Result<ExportProgressSnapshotView, LibraryError> {
@@ -4118,19 +4285,21 @@ mod tests {
         let events = Arc::new(Mutex::new(Vec::<(String, String)>::new()));
         let events_clone = Arc::clone(&events);
 
-        let config = LibrarySpawnConfig {
-            sidecar_path: "non_existent_executable".to_string(),
-            working_dir: PathBuf::from("."),
-            data_root: None,
-            derived_root: None,
-            catalog_db: None,
-        };
+        let config = LibrarySpawnConfig::new(
+            "non_existent_executable".to_string(),
+            PathBuf::from("."),
+            None,
+            None,
+            None,
+        );
 
         let ctx = Arc::new(ResilientCoreContext {
             inner: Mutex::new(None),
             config,
             is_restarting: AtomicBool::new(false),
             consecutive_failures: AtomicU32::new(0),
+            last_spawn_time: Mutex::new(None),
+            is_fatal: AtomicBool::new(false),
             event_sink: Mutex::new(None),
             status_emitter: Mutex::new(Some(Arc::new(move |status, msg| {
                 events_clone.lock().unwrap().push((status.to_string(), msg.to_string()));
@@ -4153,19 +4322,21 @@ mod tests {
         let events = Arc::new(Mutex::new(Vec::<(String, String)>::new()));
         let events_clone = Arc::clone(&events);
 
-        let config = LibrarySpawnConfig {
-            sidecar_path: "non_existent_executable".to_string(),
-            working_dir: PathBuf::from("."),
-            data_root: None,
-            derived_root: None,
-            catalog_db: None,
-        };
+        let config = LibrarySpawnConfig::new(
+            "non_existent_executable".to_string(),
+            PathBuf::from("."),
+            None,
+            None,
+            None,
+        );
 
         let ctx = Arc::new(ResilientCoreContext {
             inner: Mutex::new(None),
             config,
             is_restarting: AtomicBool::new(false),
             consecutive_failures: AtomicU32::new(3), // Already reached MAX_RETRIES
+            last_spawn_time: Mutex::new(None),
+            is_fatal: AtomicBool::new(false),
             event_sink: Mutex::new(None),
             status_emitter: Mutex::new(Some(Arc::new(move |status, msg| {
                 events_clone.lock().unwrap().push((status.to_string(), msg.to_string()));
@@ -4180,5 +4351,202 @@ mod tests {
         assert_eq!(emitted.len(), 1);
         assert_eq!(emitted[0].0, "fatal");
         assert!(emitted[0].1.contains("自动重启失败"));
+    }
+
+    /// R-001 verification: Simulate a "successful spawn -> rapid exit" loop.
+    /// Asserts that rapid exits within stable_duration do NOT reset the failure counter,
+    /// so the restart attempts are strictly capped at MAX_RETRIES (3) and transition to fatal,
+    /// completely preventing infinite restart loops.
+    #[test]
+    fn resilient_channel_crash_loop_is_bounded_and_reaches_fatal() {
+        let events = Arc::new(Mutex::new(Vec::<(String, String)>::new()));
+        let events_clone = Arc::clone(&events);
+        let spawn_counter = Arc::new(AtomicU32::new(0));
+        let counter_clone = Arc::clone(&spawn_counter);
+
+        let mut config = LibrarySpawnConfig::new(
+            "cmd.exe".to_string(),
+            PathBuf::from("."),
+            None,
+            None,
+            None,
+        );
+        config.initial_backoff = Duration::from_millis(10);
+        config.stable_duration = Duration::from_secs(30);
+
+        config.custom_spawner = Some(Arc::new(move |_cfg| {
+            counter_clone.fetch_add(1, Ordering::SeqCst);
+            // Spawn a real child that exits immediately, closing stdout (EOF)
+            let child = Command::new("cmd")
+                .args(["/c", "exit 0"])
+                .stdin(Stdio::piped())
+                .stdout(Stdio::piped())
+                .stderr(Stdio::null())
+                .spawn()
+                .expect("spawn short-lived child");
+            StdioLibraryChannel::adopt_child_for_test(child)
+        }));
+
+        let resilient = ResilientLibraryChannel::new(config, None);
+        // Explicitly set failures to 0 to test exactly 3 recovery attempts
+        resilient.ctx.consecutive_failures.store(0, Ordering::SeqCst);
+
+        resilient.set_status_emitter(Arc::new(move |status, msg| {
+            events_clone.lock().unwrap().push((status.to_string(), msg.to_string()));
+        }));
+
+        // Trigger restart from supervisor
+        resilient.trigger_restart();
+
+        // Wait for the bounded retry cycle to complete (3 attempts)
+        let start = Instant::now();
+        while start.elapsed() < Duration::from_secs(5) {
+            if resilient.ctx.is_fatal.load(Ordering::SeqCst) {
+                break;
+            }
+            std::thread::sleep(Duration::from_millis(20));
+        }
+
+        assert!(
+            resilient.ctx.is_fatal.load(Ordering::SeqCst),
+            "Channel must enter fatal state when repeated short-lived crashes occur"
+        );
+        assert_eq!(
+            spawn_counter.load(Ordering::SeqCst),
+            3,
+            "Total spawn attempts must be capped at MAX_RETRIES (3)"
+        );
+
+        // Verify that subsequent trigger_restart calls do NOT spawn any more instances
+        resilient.trigger_restart();
+        assert_eq!(
+            spawn_counter.load(Ordering::SeqCst),
+            3,
+            "Spawn count must not increase after reaching fatal"
+        );
+
+        let emitted = events.lock().unwrap();
+        let statuses: Vec<String> = emitted.iter().map(|(s, _)| s.clone()).collect();
+        assert!(statuses.contains(&"restarting".to_string()));
+        assert_eq!(statuses.last().map(|s| s.as_str()), Some("fatal"));
+    }
+
+    /// R-002 verification: Simulate startup failure (initial_channel is None).
+    /// Asserts that the supervisor recovers cleanly without panicking or terminating host,
+    /// and transitions from restarting to recovered when sidecar comes back up.
+    #[test]
+    fn resilient_channel_early_startup_failure_recovers_without_panic() {
+        let events = Arc::new(Mutex::new(Vec::<(String, String)>::new()));
+        let events_clone = Arc::clone(&events);
+
+        let mut config = LibrarySpawnConfig::new(
+            "cmd.exe".to_string(),
+            PathBuf::from("."),
+            None,
+            None,
+            None,
+        );
+        config.initial_backoff = Duration::from_millis(10);
+
+        config.custom_spawner = Some(Arc::new(move |_cfg| {
+            // Spawn a process that stays alive
+            let child = Command::new("cmd")
+                .args(["/c", "pause"])
+                .stdin(Stdio::piped())
+                .stdout(Stdio::piped())
+                .stderr(Stdio::null())
+                .spawn()
+                .expect("spawn pause child");
+            StdioLibraryChannel::adopt_child_for_test(child)
+        }));
+
+        // Simulate startup failure: initial_channel is None
+        let resilient = ResilientLibraryChannel::new(config, None);
+        assert!(resilient.is_unhealthy(), "Must be unhealthy when initial channel is None");
+
+        // Ping returns unavailable rather than panicking
+        let ping_res = resilient.ping();
+        assert!(ping_res.is_err());
+        assert_eq!(ping_res.unwrap_err().code, "CORE_UNAVAILABLE");
+
+        resilient.set_status_emitter(Arc::new(move |status, msg| {
+            events_clone.lock().unwrap().push((status.to_string(), msg.to_string()));
+        }));
+
+        // Trigger recovery
+        resilient.trigger_restart();
+
+        // Wait for recovery
+        let start = Instant::now();
+        while start.elapsed() < Duration::from_secs(5) {
+            if !resilient.is_unhealthy() {
+                break;
+            }
+            std::thread::sleep(Duration::from_millis(20));
+        }
+
+        assert!(!resilient.is_unhealthy(), "Channel should recover successfully");
+        let emitted = events.lock().unwrap();
+        let statuses: Vec<String> = emitted.iter().map(|(s, _)| s.clone()).collect();
+        assert!(statuses.contains(&"restarting".to_string()));
+        assert!(statuses.contains(&"recovered".to_string()));
+    }
+
+    /// R-003 verification: Asserts that on_down callback holds Weak reference,
+    /// breaking the strong reference cycle (context -> channel -> callback -> context),
+    /// and that Drop for ResilientLibraryChannel reaps the child process and joins the reader thread.
+    #[test]
+    fn resilient_channel_shutdown_breaks_cycle_and_reaps_child_process() {
+        let config = LibrarySpawnConfig::new(
+            "cmd.exe".to_string(),
+            PathBuf::from("."),
+            None,
+            None,
+            None,
+        );
+
+        let child = Command::new("cmd")
+            .args(["/c", "pause"])
+            .stdin(Stdio::piped())
+            .stdout(Stdio::piped())
+            .stderr(Stdio::null())
+            .spawn()
+            .expect("spawn pause child");
+        let pid = child.id();
+
+        let chan = StdioLibraryChannel::adopt_child_for_test(child).expect("adopt child");
+        let resilient = ResilientLibraryChannel::new(config, Some(chan));
+
+        let weak_ctx = Arc::downgrade(&resilient.ctx);
+        // Before drop: strong count must be 1 (resilient channel owns it; on_down callback holds only Weak)
+        assert_eq!(
+            Arc::strong_count(&resilient.ctx),
+            1,
+            "on_down must not hold a strong reference to ResilientCoreContext"
+        );
+
+        // Explicitly drop resilient channel
+        drop(resilient);
+
+        // After drop: context must be deallocated (strong count == 0)
+        assert_eq!(
+            weak_ctx.upgrade().is_none(),
+            true,
+            "ResilientCoreContext must be completely dropped without reference cycle"
+        );
+
+        // Give OS a moment to reap
+        std::thread::sleep(Duration::from_millis(200));
+
+        // Verify child process is no longer running
+        let output = Command::new("tasklist")
+            .args(["/FI", &format!("PID eq {pid}"), "/FO", "CSV", "/NH"])
+            .output()
+            .expect("tasklist query");
+        let tasklist_str = String::from_utf8_lossy(&output.stdout);
+        assert!(
+            !tasklist_str.contains(&format!("\"{pid}\"")),
+            "Child process {pid} must be terminated and reaped upon channel drop"
+        );
     }
 }

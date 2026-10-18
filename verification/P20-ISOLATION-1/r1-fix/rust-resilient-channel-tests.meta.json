@@ -1,0 +1,7 @@
+{
+  "command": "cargo test --bin m2rc1-desktop resilient_channel -- --nocapture",
+  "cwd": "apps/desktop/src-tauri",
+  "start_time": "2026-10-18T08:19:55.0464311+08:00",
+  "end_time": "2026-10-18T08:19:55.8864073+08:00",
+  "exit_code": 0
+}

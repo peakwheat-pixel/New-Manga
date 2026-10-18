@@ -106,20 +106,6 @@ export function AppShell({ invoke, initialPage = "bookshelf" }: AppShellProps) {
     }
   }, [coreStatus]);
 
-  const handleManualRetry = async () => {
-    if (!invoke) return;
-    setCoreStatus("restarting");
-    setStatusMessage("后端服务异常，正在尝试热重启...");
-    try {
-      await invoke("core_ping");
-      setCoreStatus("recovered");
-      setStatusMessage("后端服务已恢复正常");
-    } catch {
-      setCoreStatus("fatal");
-      setStatusMessage("后端服务异常，自动重启失败，请检查服务日志");
-    }
-  };
-
   // Global Keyboard Shortcuts (Ctrl+1..4) (§1.4)
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -382,23 +368,6 @@ export function AppShell({ invoke, initialPage = "bookshelf" }: AppShellProps) {
               </span>
               <span>{statusMessage}</span>
             </div>
-            {coreStatus === "fatal" && (
-              <button
-                type="button"
-                onClick={handleManualRetry}
-                style={{
-                  padding: "4px 10px",
-                  fontSize: 12,
-                  backgroundColor: "#8a2020",
-                  color: "#fff",
-                  border: "none",
-                  borderRadius: 4,
-                  cursor: "pointer",
-                }}
-              >
-                重试连接
-              </button>
-            )}
           </div>
         )}
 
