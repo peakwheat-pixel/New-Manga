@@ -172,6 +172,8 @@ try {
     Assert-Condition ($jsonObj5.exit_written -eq $false) "Metadata exit_written is false"
     Assert-Condition ($jsonObj5.exit_fallback_written -eq $true) "Metadata exit_fallback_written is true"
     Assert-Condition (-not [string]::IsNullOrEmpty($jsonObj5.exit_warning)) "Metadata records exit_warning"
+    Assert-Condition ($jsonObj5.exit_code.ToString() -eq $fallbackVal5) "Metadata exit_code ($($jsonObj5.exit_code)) matches fallback exit value ($fallbackVal5)"
+    Assert-Condition ($jsonObj5.exit_code -eq $proc5.ExitCode) "Metadata exit_code ($($jsonObj5.exit_code)) matches process ExitCode ($($proc5.ExitCode))"
 
     # -------------------------------------------------------------
     # Case 6: ac5-metadata.json locked with FileShare.None
@@ -198,6 +200,13 @@ try {
     $jsonObj6 = Get-Content $fallbackJson6 -Raw | ConvertFrom-Json
     Assert-Condition ($jsonObj6.exit_code -eq 0) "Fallback metadata exit_code equals 0"
     Assert-Condition ($jsonObj6.exit_written -eq $true) "Fallback metadata exit_written is true"
+
+    $primaryExit6 = Join-Path $outDir6 "ac5.exit"
+    Assert-Condition (Test-Path $primaryExit6) "Primary ac5.exit exists"
+    $primaryExitVal6 = (Get-Content $primaryExit6 -Raw).Trim()
+    Assert-Condition ($primaryExitVal6 -eq "0") "Primary ac5.exit content equals 0"
+    Assert-Condition ($jsonObj6.exit_code.ToString() -eq $primaryExitVal6) "Fallback metadata exit_code ($($jsonObj6.exit_code)) matches primary ac5.exit ($primaryExitVal6)"
+    Assert-Condition ($jsonObj6.exit_code -eq $proc6.ExitCode) "Fallback metadata exit_code matches process ExitCode ($($proc6.ExitCode))"
 
     # -------------------------------------------------------------
     # Case 7: ac5-metadata.txt locked with FileShare.None
@@ -226,6 +235,12 @@ try {
     Assert-Condition ($jsonObj7.metadata_txt_written -eq $false) "Metadata metadata_txt_written is false"
     Assert-Condition ($jsonObj7.metadata_txt_fallback_written -eq $true) "Metadata metadata_txt_fallback_written is true"
     Assert-Condition (-not [string]::IsNullOrEmpty($jsonObj7.metadata_txt_warning)) "Metadata records metadata_txt_warning"
+
+    $primaryExit7 = Join-Path $outDir7 "ac5.exit"
+    Assert-Condition (Test-Path $primaryExit7) "Primary ac5.exit exists"
+    $primaryExitVal7 = (Get-Content $primaryExit7 -Raw).Trim()
+    Assert-Condition ($jsonObj7.exit_code.ToString() -eq $primaryExitVal7) "Metadata exit_code ($($jsonObj7.exit_code)) matches primary ac5.exit ($primaryExitVal7)"
+    Assert-Condition ($jsonObj7.exit_code -eq $proc7.ExitCode) "Metadata exit_code matches process ExitCode ($($proc7.ExitCode))"
 
     # -------------------------------------------------------------
     # Case 8: All artifacts simultaneously locked with FileShare.None
@@ -260,11 +275,14 @@ try {
     Assert-Condition (Test-Path (Join-Path $outDir8 "ac5-metadata-fallback.json")) "ac5-metadata-fallback.json exists"
     $val8 = (Get-Content (Join-Path $outDir8 "ac5.exit-fallback") -Raw).Trim()
     Assert-Condition ($val8 -eq "0") "Fallback exit code matches 0 under extreme lock contention"
+    $jsonObj8 = Get-Content (Join-Path $outDir8 "ac5-metadata-fallback.json") -Raw | ConvertFrom-Json
+    Assert-Condition ($jsonObj8.exit_code.ToString() -eq $val8) "Fallback metadata exit_code ($($jsonObj8.exit_code)) matches fallback exit ($val8)"
+    Assert-Condition ($jsonObj8.exit_code -eq $proc8.ExitCode) "Fallback metadata exit_code matches process ExitCode ($($proc8.ExitCode))"
 
     # -------------------------------------------------------------
-    # Case 9: Real binary launch path without MockExitCode
+    # Case 9: Real binary launch path under various artifact locks (Non-Mock execution)
     # -------------------------------------------------------------
-    Write-Host "`n--- Case 9: Real binary invocation lock test (Non-Mock execution) ---"
+    Write-Host "`n--- Case 9: Real binary invocation lock suite (Non-Mock execution) ---"
     $realBinary = if (-not [string]::IsNullOrEmpty($AppExe)) {
         $AppExe
     } elseif (Test-Path "apps/desktop/src-tauri/target/release/m2rc1-desktop.exe") {
@@ -277,28 +295,70 @@ try {
 
     if ($realBinary) {
         Write-Host "Using real desktop binary: $realBinary"
-        $outDir9 = Join-Path $testRoot "case9_real_binary"
-        New-Item -ItemType Directory -Path $outDir9 -Force | Out-Null
-        $lockedConsole9 = Join-Path $outDir9 "ac5-console.log"
-        $fs9 = [System.IO.File]::Open($lockedConsole9, [System.IO.FileMode]::Create, [System.IO.FileAccess]::ReadWrite, [System.IO.FileShare]::None)
-        
-        try {
-            # Run without -MockExitCode against real binary
-            $proc9 = Start-Process -FilePath "pwsh" -ArgumentList "-NoProfile", "-File", "`"$scriptPath`"", "-AppExe", "`"$realBinary`"", "-OutDir", "`"$outDir9`"" -PassThru -Wait
-        } finally {
-            $fs9.Close()
-            $fs9.Dispose()
-        }
 
-        # Assert artifacts were properly created even if app fails (e.g. headless window init 0x80070578)
-        $metaJson9 = Join-Path $outDir9 "ac5-metadata.json"
-        Assert-Condition (Test-Path $metaJson9) "ac5-metadata.json exists for real binary launch"
-        $exitFile9 = Join-Path $outDir9 "ac5.exit"
-        Assert-Condition (Test-Path $exitFile9) "ac5.exit exists for real binary launch"
-        $jsonObj9 = Get-Content $metaJson9 -Raw | ConvertFrom-Json
-        $actualExit9 = (Get-Content $exitFile9 -Raw).Trim()
-        Assert-Condition ($jsonObj9.exit_code.ToString() -eq $actualExit9) "ac5.exit matches metadata exit_code ($actualExit9) for real binary"
-        Assert-Condition ($jsonObj9.console_fallback_written -eq $true) "ac5-console-fallback.log written for real binary under console lock"
+        # Case 9a: Console log locked with real binary
+        Write-Host "`n--- Case 9a: Console log locked with real binary ---"
+        $outDir9a = Join-Path $testRoot "case9a_real_console_lock"
+        New-Item -ItemType Directory -Path $outDir9a -Force | Out-Null
+        $lockedConsole9a = Join-Path $outDir9a "ac5-console.log"
+        $fs9a = [System.IO.File]::Open($lockedConsole9a, [System.IO.FileMode]::Create, [System.IO.FileAccess]::ReadWrite, [System.IO.FileShare]::None)
+        try {
+            $proc9a = Start-Process -FilePath "pwsh" -ArgumentList "-NoProfile", "-File", "`"$scriptPath`"", "-AppExe", "`"$realBinary`"", "-OutDir", "`"$outDir9a`"" -PassThru -Wait
+        } finally {
+            $fs9a.Close(); $fs9a.Dispose()
+        }
+        $metaJson9a = Join-Path $outDir9a "ac5-metadata.json"
+        Assert-Condition (Test-Path $metaJson9a) "ac5-metadata.json exists for Case 9a"
+        $exitFile9a = Join-Path $outDir9a "ac5.exit"
+        Assert-Condition (Test-Path $exitFile9a) "ac5.exit exists for Case 9a"
+        $jsonObj9a = Get-Content $metaJson9a -Raw | ConvertFrom-Json
+        $actualExit9a = (Get-Content $exitFile9a -Raw).Trim()
+        Assert-Condition ($jsonObj9a.exit_code.ToString() -eq $actualExit9a) "Case 9a: ac5.exit ($actualExit9a) matches metadata exit_code ($($jsonObj9a.exit_code))"
+        Assert-Condition ($jsonObj9a.exit_code -eq $proc9a.ExitCode) "Case 9a: metadata exit_code matches process ExitCode ($($proc9a.ExitCode))"
+        Assert-Condition ($jsonObj9a.console_fallback_written -eq $true) "Case 9a: ac5-console-fallback.log written under console lock"
+
+        # Case 9b: ac5.exit locked with real binary (Fallback exit assertion)
+        Write-Host "`n--- Case 9b: ac5.exit locked with real binary (Fallback path) ---"
+        $outDir9b = Join-Path $testRoot "case9b_real_exit_lock"
+        New-Item -ItemType Directory -Path $outDir9b -Force | Out-Null
+        $lockedExit9b = Join-Path $outDir9b "ac5.exit"
+        $fs9b = [System.IO.File]::Open($lockedExit9b, [System.IO.FileMode]::Create, [System.IO.FileAccess]::ReadWrite, [System.IO.FileShare]::None)
+        try {
+            $proc9b = Start-Process -FilePath "pwsh" -ArgumentList "-NoProfile", "-File", "`"$scriptPath`"", "-AppExe", "`"$realBinary`"", "-OutDir", "`"$outDir9b`"" -PassThru -Wait
+        } finally {
+            $fs9b.Close(); $fs9b.Dispose()
+        }
+        $fallbackExit9b = Join-Path $outDir9b "ac5.exit-fallback"
+        Assert-Condition (Test-Path $fallbackExit9b) "ac5.exit-fallback exists for Case 9b"
+        $metaJson9b = Join-Path $outDir9b "ac5-metadata.json"
+        Assert-Condition (Test-Path $metaJson9b) "ac5-metadata.json exists for Case 9b"
+        $jsonObj9b = Get-Content $metaJson9b -Raw | ConvertFrom-Json
+        $actualFallbackExit9b = (Get-Content $fallbackExit9b -Raw).Trim()
+        Assert-Condition ($jsonObj9b.exit_code.ToString() -eq $actualFallbackExit9b) "Case 9b: ac5.exit-fallback ($actualFallbackExit9b) matches metadata exit_code ($($jsonObj9b.exit_code))"
+        Assert-Condition ($jsonObj9b.exit_code -eq $proc9b.ExitCode) "Case 9b: metadata exit_code matches process ExitCode ($($proc9b.ExitCode))"
+        Assert-Condition ($jsonObj9b.exit_written -eq $false) "Case 9b: metadata reports exit_written is false"
+        Assert-Condition ($jsonObj9b.exit_fallback_written -eq $true) "Case 9b: metadata reports exit_fallback_written is true"
+
+        # Case 9c: ac5-metadata.json locked with real binary (Fallback metadata assertion)
+        Write-Host "`n--- Case 9c: ac5-metadata.json locked with real binary (Fallback metadata) ---"
+        $outDir9c = Join-Path $testRoot "case9c_real_metadata_lock"
+        New-Item -ItemType Directory -Path $outDir9c -Force | Out-Null
+        $lockedJson9c = Join-Path $outDir9c "ac5-metadata.json"
+        $fs9c = [System.IO.File]::Open($lockedJson9c, [System.IO.FileMode]::Create, [System.IO.FileAccess]::ReadWrite, [System.IO.FileShare]::None)
+        try {
+            $proc9c = Start-Process -FilePath "pwsh" -ArgumentList "-NoProfile", "-File", "`"$scriptPath`"", "-AppExe", "`"$realBinary`"", "-OutDir", "`"$outDir9c`"" -PassThru -Wait
+        } finally {
+            $fs9c.Close(); $fs9c.Dispose()
+        }
+        $primaryExit9c = Join-Path $outDir9c "ac5.exit"
+        Assert-Condition (Test-Path $primaryExit9c) "ac5.exit exists for Case 9c"
+        $fallbackJson9c = Join-Path $outDir9c "ac5-metadata-fallback.json"
+        Assert-Condition (Test-Path $fallbackJson9c) "ac5-metadata-fallback.json exists for Case 9c"
+        $jsonObj9c = Get-Content $fallbackJson9c -Raw | ConvertFrom-Json
+        $actualExit9c = (Get-Content $primaryExit9c -Raw).Trim()
+        Assert-Condition ($jsonObj9c.exit_code.ToString() -eq $actualExit9c) "Case 9c: ac5.exit ($actualExit9c) matches fallback metadata exit_code ($($jsonObj9c.exit_code))"
+        Assert-Condition ($jsonObj9c.exit_code -eq $proc9c.ExitCode) "Case 9c: fallback metadata exit_code matches process ExitCode ($($proc9c.ExitCode))"
+        Assert-Condition ($jsonObj9c.exit_written -eq $true) "Case 9c: fallback metadata reports exit_written is true"
     } else {
         Write-Host "Skipping Case 9 (no real binary found in workspace)"
     }
