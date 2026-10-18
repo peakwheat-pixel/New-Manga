@@ -1,0 +1,27 @@
+[09:42:26.095] R-010 AC3 start pid=39384 iso=C:\Users\49745\AppData\Local\Temp\p20r010-161cd72c draft_title='Real Injection Draft Manga 094226'
+[09:42:27.507] ASSERT PASS r010:window-present
+[09:42:27.513] ASSERT PASS r010:shell-ready
+[09:42:27.681] core_service initial pid=26444
+[09:42:27.687] ASSERT PASS r010:sidecar-running-initially
+[09:42:27.691] Finding '+ 新建作品' button...
+[09:42:27.706] ASSERT PASS r010:new-book-button-found
+[09:42:28.363] ASSERT PASS r010:create-title-dialog-opened
+[09:42:28.400] ASSERT PASS r010:title-input-element-found
+[09:42:28.632] Draft title entered: 'Real Injection Draft Manga 094226'
+[09:42:28.639] ASSERT PASS r010:draft-title-entered-successfully
+[09:42:28.644] ASSERT PASS r010:input-is-not-search-box (name='作品标题')
+[09:42:28.675] ASSERT PASS r010:dialog-still-open-with-draft
+[09:42:28.681] INJECT FAULT: Terminating core_service pid=26444 at 09:42:28.680
+[09:42:28.919] SHOT 01-draft-preserved-during-crash -> G:\CODEX\New Manga\verification\P20-ISOLATION-1\r010-20261018-0944\01-draft-preserved-during-crash.png
+[09:42:28.925] ASSERT PASS r010:failure-banner-observed-during-crash
+[09:42:28.931] ASSERT PASS r010:draft-preserved-during-crash
+[09:42:28.935] Waiting for sidecar auto-recovery...
+[09:42:29.513] SHOT 02-draft-preserved-after-recovery -> G:\CODEX\New Manga\verification\P20-ISOLATION-1\r010-20261018-0944\02-draft-preserved-after-recovery.png
+[09:42:29.519] Sidecar recovered: new_pid=14560 seen_recover_banner=False
+[09:42:29.524] ASSERT PASS r010:sidecar-respawned
+[09:42:29.529] ASSERT PASS r010:draft-preserved-after-recovery
+[09:42:29.534] Submitting preserved draft title...
+[09:42:29.548] ASSERT PASS r010:submit-button-found
+[09:42:31.753] SHOT 03-draft-submitted-successfully -> G:\CODEX\New Manga\verification\P20-ISOLATION-1\r010-20261018-0944\03-draft-submitted-successfully.png
+[09:42:31.758] ASSERT PASS r010:draft-successfully-submitted-and-persisted
+[09:42:33.853] R-010 AC3 END script_fails=0

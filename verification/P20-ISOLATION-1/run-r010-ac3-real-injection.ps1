@@ -114,6 +114,43 @@ function FindFirstEdit($parent) {
     } catch { return $null }
 }
 
+# R-010 fix (Codex R3): the original code called FindFirstEdit on the WHOLE window, which returned the
+# bookshelf search box (first Edit in DOM order) instead of the create dialog's title field, so the
+# "draft preserved" PASS lines proved nothing. This locator scopes the search to the create dialog:
+#   1) prefer an Edit inside the ancestor container that also holds the "作品标题" label;
+#   2) otherwise take the first Edit whose accessible name/value does NOT look like a search box;
+#   3) expose which element was chosen so the trace is auditable.
+function FindDialogTitleEdit($win) {
+    if (-not $win) { return $null }
+    try {
+        $editCond = New-Object System.Windows.Automation.PropertyCondition([System.Windows.Automation.AutomationElement]::ControlTypeProperty, [System.Windows.Automation.ControlType]::Edit)
+        $allEdits = @($win.FindAll($TS::Descendants, $editCond))
+        # 1) label-anchored: find the "作品标题" text node, then take an Edit from its ancestor chain
+        $labelCond = New-Object System.Windows.Automation.PropertyCondition([System.Windows.Automation.AutomationElement]::NameProperty, '作品标题')
+        $label = $win.FindFirst($TS::Descendants, $labelCond)
+        if ($label) {
+            $walker = [System.Windows.Automation.TreeWalker]::ControlViewWalker
+            $node = $label
+            for ($i = 0; $i -lt 6 -and $node; $i++) {
+                $cand = $node.FindFirst($TS::Descendants, $editCond)
+                if ($cand) { Write-Host "R010_LOCATOR label-anchored (depth=$i) name='$($cand.Current.Name)'"; return $cand }
+                try { $node = $walker.GetParent($node) } catch { $node = $null }
+            }
+        }
+        # 2) fallback: first Edit that does not look like the search box
+        foreach ($e in $allEdits) {
+            $n = ''; $v = ''
+            try { $n = $e.Current.Name } catch {}
+            try { $vp = $e.GetCurrentPattern([System.Windows.Automation.ValuePattern]::Pattern); $v = $vp.Current.Value } catch {}
+            $looksSearch = ($n -match '搜索|Search') -or ($v -match '搜索|Search')
+            if (-not $looksSearch) { Write-Host "R010_LOCATOR fallback edit name='$n' value='$v'"; return $e }
+        }
+        # 3) last resort: report the failure instead of silently using the wrong element
+        Write-Host "R010_LOCATOR NOT_FOUND (edits=$($allEdits.Count))"
+        return $null
+    } catch { Write-Host "R010_LOCATOR ERROR $($_.Exception.Message)"; return $null }
+}
+
 function ClickEl($el) {
     if (-not $el) { return $false }
     try {
@@ -212,7 +249,7 @@ if ($corePid -gt 0 -and $win) {
     $dialogPresent = ($names -contains '新建作品')
     A $dialogPresent 'r010:create-title-dialog-opened'
 
-    $inputEl = FindFirstEdit $win
+    $inputEl = FindDialogTitleEdit $win
     A ([bool]$inputEl) 'r010:title-input-element-found'
     SetElText $inputEl $DRAFT_TITLE | Out-Null
     Start-Sleep -Milliseconds 200
@@ -220,6 +257,9 @@ if ($corePid -gt 0 -and $win) {
     $readBack = GetElText $inputEl
     T "Draft title entered: '$readBack'"
     A ($readBack -eq $DRAFT_TITLE) 'r010:draft-title-entered-successfully'
+    $editName = ''; try { $editName = $inputEl.Current.Name } catch {}
+    A ($editName -notmatch '搜索|Search') "r010:input-is-not-search-box (name='$editName')"
+    A ((AllNames $win) -contains '新建作品') 'r010:dialog-still-open-with-draft'
 
     # 5. REAL FAULT INJECTION: Kill sidecar while draft input is active and uncommitted
     $killAt = Get-Date
