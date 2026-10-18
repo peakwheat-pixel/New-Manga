@@ -6,8 +6,8 @@ governance_version: 2
 status: ready
 approval: user_ruling_20261018_close_harden_1_and_split_harden_2
 blocked_by: null
-suggested_owner: Antigravity
-owner: Antigravity
+suggested_owner: dsh
+owner: dsh
 reviewer: Codex
 depends_on: [P20-CLOSE-BOUND-HARDEN-1]
 base_commit: 35770fe91ab722b6d6c5e06e1f855c062d15c0a2
@@ -21,6 +21,12 @@ evidence_dir: verification/P20-CLOSE-BOUND-HARDEN-2
 ---
 
 # P20-CLOSE-BOUND-HARDEN-2：worker holder 生命周期与审计边界收口
+
+## 执行方改派（2026-10-18 用户指令）
+
+用户指令：**本对话不再调用 agy**，停止 Antigravity 手上的本 Task，**改派 dsh 执行**。Owner 由 Antigravity 改为 **dsh**；Reviewer 仍为 **Codex**（满足 owner != reviewer）。
+
+**AC5 的执行约束（改派后仍然成立）**：AC5 要求 `P20-CLOSE-BOUND-1` 的 AC7 **真实交互桌面直跑**，并明确「由 Coordinator 在交互式桌面执行；**本 Task 只负责脚本正确性，不得自行记 PASS**」。改派 dsh 执行**不改变**这一约束 —— dsh 可以交付并自检脚本，但**该 AC 的 PASS 只能由人在交互桌面上产生**，不得由执行方自行判定。
 
 ## 背景（用户裁决 2026-10-18）
 
