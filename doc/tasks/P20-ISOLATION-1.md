@@ -16,6 +16,7 @@ worktree: G:/CODEX/New Manga（故障注入须在真实桌面执行；执行方�
 integration_commit: null
 delivery_head: eb62dbc7f
 canonical_evidence_status: pending
+review_status: changes_requested（Codex R1，7 项 P1；见 verification/P20-ISOLATION-1/codex-review-r1.md）
 resource_closeout_status: pending
 evidence_dir: verification/P20-ISOLATION-1
 ---

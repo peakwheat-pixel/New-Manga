@@ -1,0 +1,4 @@
+t_ms_from_kill,event,detail
+7,ui_text,后端服务异常，正在尝试热重启...
+653,sidecar_respawned,pid=8024
+904,ui_text,后端服务已恢复正常

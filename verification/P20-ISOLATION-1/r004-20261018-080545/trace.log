@@ -1,0 +1,16 @@
+[08:05:45.350] R-004 start pid=30108 iso=C:\Users\49745\AppData\Local\Temp\p20r004-2d0a8ef6
+[08:05:46.456] window=True shell_ready=True
+[08:05:46.464] ASSERT PASS r004:window-present
+[08:05:46.588] core_service pid=17404
+[08:05:46.593] ASSERT PASS r004:sidecar-running
+[08:05:46.600] KILL pid=17404 at 08:05:46.599
+[08:05:46.692] UI_TEXT (+7ms) 后端服务异常，正在尝试热重启...
+[08:05:46.793] SHOT 01-failure-banner
+[08:05:47.348] RESPAWN (+653ms) pid=8024
+[08:05:47.529] UI_TEXT (+904ms) 后端服务已恢复正常
+[08:05:47.609] SHOT 02-recovered-banner
+[08:06:01.674] TIMELINE failure_banner_ms=98 recovered_banner_ms=935 respawn_ms=748 new_pid=8024
+[08:06:01.680] ASSERT PASS r004:explicit-failure-banner-observed (text=后端服务异常，正在尝试热重启...)
+[08:06:01.685] ASSERT PASS r004:sidecar-auto-respawned (ms=748)
+[08:06:01.690] FACT respawn_absolute_ms=748 failure_before_respawn=True
+[08:06:03.764] R-004 END
