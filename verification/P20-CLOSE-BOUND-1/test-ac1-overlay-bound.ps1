@@ -111,8 +111,9 @@ $overlayRes = Run-LoggedCommand `
     -LogBase "ac1-overlay-bound" `
     -ExtraMetaCallback {
         param($m, $out)
-        if ($out -match '\[ac1-overlay-bound\] measured shutdown_elapsed:\s+[^()]+\((\d+)\s+ms\)') {
-            $m["shutdown_elapsed_ms"] = [int]$matches[1]
+        if ($out -match '\[ac1-overlay-bound\] measured shutdown_elapsed:\s+([^\s]+)\s+\(([\d.]+)\s+ms\)') {
+            $m["shutdown_elapsed_raw"] = $matches[1]
+            $m["shutdown_elapsed_ms"] = [double]$matches[2]
         }
     }
 
@@ -144,39 +145,92 @@ $unitRes3 = Run-LoggedCommand `
     -CommandLine "cargo test --manifest-path apps/desktop/src-tauri/Cargo.toml --bin m2rc1-desktop poisoned_child_lock_is_recovered_and_killed" `
     -LogBase "ac4-poisoned-child-lock"
 
-# 5. AC2: Direct Process Tree and Zero Residual Orphan Check (scoped to PID tree, isolation root, and test python processes)
-Write-Host "Performing comprehensive Process Tree and Zero Residual Orphan Check..."
+# 5. P1#1 & P1#2 & P2#6 Unit Tests:
+# 5a. P1#1: Dedicated shutdown writes
+$p1_1_Res = Run-LoggedCommand `
+    -CommandName "rust_shutdown_writes_tests" `
+    -CommandLine "cargo test --manifest-path apps/desktop/src-tauri/Cargo.toml --bin m2rc1-desktop shutdown_writes -- --nocapture" `
+    -LogBase "ac1-shutdown-writes"
+
+# 5b. P1#2: Ordinary child lock contention fallback
+$p1_2_ChildRes = Run-LoggedCommand `
+    -CommandName "rust_child_lock_contention_test" `
+    -CommandLine "cargo test --manifest-path apps/desktop/src-tauri/Cargo.toml --bin m2rc1-desktop child_lock_contention_timeout_fallback_kills_child_and_prevents_orphan -- --nocapture" `
+    -LogBase "ac4-child-lock-contention"
+
+# 5c. P1#2: Ordinary pending lock contention fallback
+$p1_2_PendingRes = Run-LoggedCommand `
+    -CommandName "rust_pending_lock_contention_test" `
+    -CommandLine "cargo test --manifest-path apps/desktop/src-tauri/Cargo.toml --bin m2rc1-desktop pending_lock_contention_timeout_fallback_drains_and_unblocks -- --nocapture" `
+    -LogBase "ac4-pending-lock-contention"
+
+# 5d. P2#6: Writer pipe capacity overflow and kill unblock
+$p2_6_Res = Run-LoggedCommand `
+    -CommandName "rust_writer_pipe_overflow_test" `
+    -CommandLine "cargo test --manifest-path apps/desktop/src-tauri/Cargo.toml --bin m2rc1-desktop writer_overflow_pipe_capacity_unblocks_and_cleans_up_on_kill -- --nocapture" `
+    -LogBase "ac4-writer-pipe-overflow"
+
+# 6. AC2: Direct Recursive Process Tree and Zero Residual Orphan Check
+Write-Host "Performing comprehensive Recursive Process Tree and Zero Residual Orphan Check..."
 $allProcs = Get-CimInstance Win32_Process
 
-# Filter candidate processes:
-# 1) Global names: core_service, m2rc1_desktop, host_bridge
-# 2) Python processes associated with the workspace or isolation root
-# 3) Children of the current test runner PID ($PID)
-$repoPath = (Get-Location).Path.Replace('\', '\\')
+# 1) Build recursive descendant PID list from current runner PID ($PID)
+$descendantPids = New-Object System.Collections.Generic.HashSet[int]
+$queue = New-Object System.Collections.Generic.Queue[int]
+$queue.Enqueue($PID)
+
+while ($queue.Count -gt 0) {
+    $parentPid = $queue.Dequeue()
+    foreach ($proc in $allProcs) {
+        if ($proc.ParentProcessId -eq $parentPid -and $proc.ProcessId -ne $PID) {
+            if ($descendantPids.Add($proc.ProcessId)) {
+                $queue.Enqueue($proc.ProcessId)
+            }
+        }
+    }
+}
+
+# 2) Filter candidate residual processes:
+# - Any descendant PID of runner still alive (cmd, cargo, test bin, python, etc.)
+# - Any global names: core_service, m2rc1_desktop, host_bridge
+# - Any python processes associated with the workspace ($RepoRoot), isolation root, bootstrap.core_service, or test scripts
+$repoRootRaw = (Get-Location).Path
+$repoPathEscaped = $repoRootRaw.Replace('\', '\\')
+$isolatedRootRaw = $isolatedRoot
 $isolatedRootEscaped = $isolatedRoot.Replace('\', '\\')
 
-$residualProcs = $allProcs | Where-Object {
-    ($_.Name -like "*core_service*") -or
-    ($_.Name -like "*m2rc1_desktop*") -or
-    ($_.Name -like "*host_bridge*") -or
-    ($_.ParentProcessId -eq $PID -and $_.ProcessId -ne $PID) -or
-    ($_.Name -like "*python*" -and (
-        ($_.CommandLine -like "*$isolatedRootEscaped*") -or
-        ($_.CommandLine -like "*bootstrap.core_service*") -or
-        ($_.CommandLine -like "*time.sleep(60)*")
-    ))
+$residualProcs = @()
+foreach ($p in $allProcs) {
+    if ($p.ProcessId -eq $PID) { continue }
+    $cmd = if ($p.CommandLine) { $p.CommandLine } else { "" }
+    $name = $p.Name
+
+    $isDescendant = $descendantPids.Contains($p.ProcessId)
+    $isAppOrSidecar = ($name -like "*core_service*") -or ($name -like "*m2rc1_desktop*") -or ($name -like "*host_bridge*")
+    $isPythonTarget = ($name -like "*python*") -and (
+        ($cmd.Contains($isolatedRootRaw)) -or
+        ($cmd.Contains($isolatedRootEscaped)) -or
+        ($cmd -like "*bootstrap.core_service*") -or
+        ($cmd -like "*time.sleep(60)*") -or
+        ($cmd.Contains($repoRootRaw)) -or
+        ($cmd.Contains($repoPathEscaped))
+    )
+
+    if ($isDescendant -or $isAppOrSidecar -or $isPythonTarget) {
+        $residualProcs += $p
+    }
 }
 
 $treeReport = New-Object System.Text.StringBuilder
 $treeReport.AppendLine("=== Process Tree Zero Orphan Audit (AC2) ===") | Out-Null
 $treeReport.AppendLine("Timestamp: $(Get-Date -Format 'yyyy-MM-ddTHH:mm:sszzz')") | Out-Null
 $treeReport.AppendLine("Test Runner PID: $PID") | Out-Null
+$treeReport.AppendLine("Recursive Descendant PIDs Scanned: $($descendantPids.Count)") | Out-Null
 $treeReport.AppendLine("Isolation Root: $isolatedRoot") | Out-Null
 $treeReport.AppendLine("Python Interpreter: $pythonExe") | Out-Null
-$treeReport.AppendLine("Heartbeat Thread State: Cleanly terminated on heartbeat_stop and channel drop") | Out-Null
 
 $residualCount = 0
-if ($residualProcs) {
+if ($residualProcs.Count -gt 0) {
     foreach ($p in $residualProcs) {
         $treeReport.AppendLine("Residual Process: Name=$($p.Name), PID=$($p.ProcessId), ParentPID=$($p.ParentProcessId), CommandLine=$($p.CommandLine)") | Out-Null
         $residualCount++
@@ -184,15 +238,39 @@ if ($residualProcs) {
 } else {
     $treeReport.AppendLine("Residual Process Audit: 0 matching residual processes found. Count = 0 (CLEAN).") | Out-Null
     $treeReport.AppendLine("Parent-Child Process Tree: No orphaned python / core_service / m2rc1_desktop child processes.") | Out-Null
-    $treeReport.AppendLine("Isolation Root Verification: No process holds handles or references to $isolatedRoot.") | Out-Null
+}
+
+# Real Handle / File-lock Verification:
+# Attempt to completely delete the isolated root directory. If any process holds an open file/handle, this will fail.
+try {
+    Remove-Item -Path $isolatedRoot -Recurse -Force -ErrorAction Stop
+    $treeReport.AppendLine("Isolation Root Handle Check: Successfully removed $isolatedRoot (No active handles or locks held).") | Out-Null
+} catch {
+    $treeReport.AppendLine("Isolation Root Handle Check FAILED: $_ (Process holds lock on $isolatedRoot)") | Out-Null
+    $residualCount++
 }
 
 $treeReportFile = Join-Path $TargetDir "ac2-process-tree-audit.log"
 [System.IO.File]::WriteAllText($treeReportFile, $treeReport.ToString(), [System.Text.Encoding]::UTF8)
 Write-Host "Process tree audit complete. Residual process count: $residualCount"
 
-# Clean up isolated directory
-Remove-Item -Path $isolatedRoot -Recurse -Force -ErrorAction SilentlyContinue
-Write-Host "Cleaned up isolation root: $isolatedRoot"
+# Non-zero exit code if residual count > 0 or any test failed!
+$anyFailed = ($overlayRes.ExitCode -ne 0) -or `
+    ($resilientRes.ExitCode -ne 0) -or `
+    ($stdioRes.ExitCode -ne 0) -or `
+    ($unitRes1.ExitCode -ne 0) -or `
+    ($unitRes2.ExitCode -ne 0) -or `
+    ($unitRes3.ExitCode -ne 0) -or `
+    ($p1_1_Res.ExitCode -ne 0) -or `
+    ($p1_2_ChildRes.ExitCode -ne 0) -or `
+    ($p1_2_PendingRes.ExitCode -ne 0) -or `
+    ($p2_6_Res.ExitCode -ne 0) -or `
+    ($residualCount -gt 0)
 
-Write-Host "Suite complete."
+if ($anyFailed) {
+    Write-Error "Suite failed: one or more tests failed or residual process/handles detected (residualCount=$residualCount)."
+    exit 1
+}
+
+Write-Host "Suite complete. All tests PASSED, zero orphans verified."
+exit 0

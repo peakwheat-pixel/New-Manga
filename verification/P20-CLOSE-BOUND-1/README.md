@@ -1,12 +1,11 @@
-# P20-CLOSE-BOUND-1 证据目录（R2 修正版）
+# P20-CLOSE-BOUND-1 证据目录（R3 闭环返修版）
 
-来源：Codex 三轮复审中 R-009 的残余项（关闭路径硬上界），按用户 2026-10-18 裁决从 `P20-ISOLATION-1` 拆出的**窄 Task**。
+来源：Codex Review R2 中指出的 6 项未闭合缺陷（P1#2, P1#3, P2#4, P2#5, P2#6, P2#7），用户已明确授权第 3 轮返修。
 
-- 上游已确认：R-008 心跳可发现存活挂起并恢复；`with_channel` 已释放锁；正常强杀路径已有回收证据。
-- 本 Task 成果（R2 闭环）：
-  - **AC1 有界关闭**：全链路最坏情况关闭时间（WCET）闭式推导为 2950 ms（严格 $\le$ 3000 ms）。叠加场景（在途无响应 + 外部强杀）实测关闭段耗时 **201.4 µs**，命令总时长 0.28s（`ac1-overlay-bound.stdout.log`, `ac1-overlay-bound.meta.json`）。
-  - **AC2 零残留**：PID 父子树、隔离根与测试 Python 进程全面审计，确认 0 残留进程；心跳线程在 `heartbeat_stop` 与 channel drop 后安全收尾（`ac2-process-tree-audit.log`）。
-  - **AC3 不回归**：既有 9 项 resilient channel 测试、1 项 stdio channel drop 测试全部通过（`ac3-resilient-channel.stdout.log`, `ac3-stdio-channel-drop.stdout.log`）。
-  - **AC4 并发审查**：重做调用链审查（`concurrency-lock-audit.md`），引入专用管道写入线程彻底消除 OS 管道写阻塞风险；心跳探测在 `ping_timeout` 前提前释放 `child` 锁；`lock_timeout_recover` 支持中毒锁接管回收；原子 `shutdown_executed` 消除双重 drop 预算突破。
-  - **AC5 交互桌面复跑脚本**：修正 `run-desktop-close-verification.ps1`，确保超时强杀必须返回非零（exit 1），严格区分正常有界退出与超时强杀清理。
-  - **AC6 证据落盘**：所有运行日志已补齐 shell/venv 头与 Python 解释器路径，关闭段实测耗时落盘元数据。
+- **P1#1 关闭消息写入（Coordinator 独立验证）**：保留对外请求 `is_down` 拒绝，另辟 `write_stdin_shutdown` 专用关闭写入路径，`shutdown_writes` 2 项全绿。
+- **P1#2 锁超时不放弃回收**：`child` 锁超时立即触发 OS 级直接强杀（taskkill /F /PID）并调度后台 reap；`pending_responses` 锁超时调度后台 fallback drain；普通锁竞争超时用例全绿（`ac4-child-lock-contention.stdout.log`, `ac4-pending-lock-contention.stdout.log`）。
+- **P1#3 WCET ≤3000ms 闭式证明**：引入单一共享绝对 `deadline` 约束全链路，轮询步长截断消除超调；逐段闭式推导静态 WCET 为 2120 ms（$\le 3000$ ms，880 ms 安全裕度），动态物理执行上限为 2400 ms；明确区分“已证明硬上界”与“实测观测值”（`concurrency-lock-audit.md`）。
+- **P2#4 叠加测试时序有效性**：增加 `in_flight_awaiting_response > 0` 严格握手，确凿证明管道写已完成且正阻塞于响应接收后再 taskkill；计时针对真实生产入口 `resilient.shutdown`，实测耗时 **0.5072 ms**（`ac1-overlay-bound.stdout.log`, `ac1-overlay-bound.meta.json`）。
+- **P2#5 递归 PID 树核验与残留强制失败**：以 BFS 队列从当前 runner PID 递归检索所有后代 PID；真实执行隔离根完全删除验证句柄释放；存在任何残留或测试失败时脚本显式返回非零（`ac2-process-tree-audit.log`）。
+- **P2#6 writer 超时与管道满载（> pipe capacity）故障注入**：写入 2MB 远超管道缓冲区数据，调用方有界返回；kill 后内核破裂管道读端唤醒 writer 线程并释放句柄，零孤儿（`ac4-writer-pipe-overflow.stdout.log`）。
+- **P2#7 消除静默吞掉 kill 失败**：`wait_timeout_or_kill` 错误与 reap 超时明确记录并上报，且触发 OS 级直接强杀兜底。

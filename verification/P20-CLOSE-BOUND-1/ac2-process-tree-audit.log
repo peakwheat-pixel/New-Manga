@@ -1,9 +1,9 @@
 ﻿=== Process Tree Zero Orphan Audit (AC2) ===
-Timestamp: 2026-10-18T10:39:47+08:00
-Test Runner PID: 43888
-Isolation Root: C:\Users\49745\AppData\Local\Temp\p20-close-bound-2991c7ab
+Timestamp: 2026-10-18T12:43:42+08:00
+Test Runner PID: 41468
+Recursive Descendant PIDs Scanned: 0
+Isolation Root: C:\Users\49745\AppData\Local\Temp\p20-close-bound-424ddad3
 Python Interpreter: C:\Python314\python.exe
-Heartbeat Thread State: Cleanly terminated on heartbeat_stop and channel drop
 Residual Process Audit: 0 matching residual processes found. Count = 0 (CLEAN).
 Parent-Child Process Tree: No orphaned python / core_service / m2rc1_desktop child processes.
-Isolation Root Verification: No process holds handles or references to C:\Users\49745\AppData\Local\Temp\p20-close-bound-2991c7ab.
+Isolation Root Handle Check: Successfully removed C:\Users\49745\AppData\Local\Temp\p20-close-bound-424ddad3 (No active handles or locks held).

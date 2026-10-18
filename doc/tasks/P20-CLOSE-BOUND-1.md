@@ -34,12 +34,12 @@ Codex 对 `P20-ISOLATION-1` 的三轮独立复审中，**R-008（存活但 IPC �
 
 ## Acceptance Criteria
 
-- [ ] AC1：**（Codex R2 判定未达成；Coordinator 撤回勾选）** 硬上界推导不可信——审计漏算 host_session 锁、把被拒绝的 100ms 写入计入预算、并忽略轮询超调，故 2950ms 不能作为总关闭 WCET；测试亦未证明请求已进入响应等待。原实现说明保留如下：**有界关闭（核心）**——在以下叠加场景中，关闭/退出必须在**明确上界**内完成，并给出实测数据：① 存在一个已发出但 sidecar 永不响应的在途请求；② 该 sidecar 进程随后被外部强杀（`Stop-Process -Force`）。给出你选择的上界与理由，并说明它是**硬上界**（靠超时强制推进）而非"通常很快"。理论绝对硬上界 2950 ms（$\le$ 3.0s），叠加场景实测关闭段耗时 201.4 µs。
-- [ ] AC2：**（Codex R2 判定部分达成；Coordinator 撤回勾选）** 目标 Python PID 消失有直接断言，但未做递归 PID 树/线程/句柄核验，审计脚本在发现残留时也不会令脚本失败。原实现说明保留如下：**零残留**——上述场景结束后：无残留 `core_service.exe`；无残留 reader/心跳线程导致的进程无法退出；`%TEMP%` 隔离根中的应用进程全部退出。按本次运行的 PID 树、父子链、Python 进程与隔离根全面审计（命令 + 输出 + 时间戳见 `ac2-process-tree-audit.log`）。
+- [ ] AC1：**（R3 返修已闭环，待 Codex 终审）** 引入单一共享绝对 `deadline` 约束全链路，动态物理上限收窄至 2400 ms；静态 WCET 闭式推导为 2120 ms（$\le$ 3000 ms，具 880 ms 裕度）；消除轮询超调；叠加测试增加 `in_flight_awaiting_response` 严格握手，证明数据已写入管道且进入响应接收后再强杀；测量真实生产入口 `resilient.shutdown`，实测耗时 **0.5072 ms**（507.2 µs，`ac1-overlay-bound.stdout.log`）。
+- [ ] AC2：**（R3 返修已闭环，待 Codex 终审）** 升级为从测试 runner PID 出发的递归子孙 PID 树审计；修复路径转义匹配；增加 `%TEMP%` 隔离根目录强制删除与文件锁核验；发现残留或测试失败时脚本强制非零退出（`ac2-process-tree-audit.log` 确凿证明 0 残留，隔离根句柄完全释放）。
 - [x] AC3：**不回归**——`P20-ISOLATION-1` 已确认的能力不得退化：① 存活但挂起可被心跳发现并恢复；② `drop` 拆环并 reap 子进程；③ 既有 `cargo test --bin m2rc1-desktop resilient_channel`（9 项通过）与 `stdio_channel_drop`（1 项通过）全绿。给出复跑命令与输出。
-- [ ] AC4：**（Codex R2 判定未达成；Coordinator 撤回勾选）** `concurrency-lock-audit.md` 与代码行为不符：遗漏 child 锁跨 `ping_timeout`、stdin 同步写不受 response timeout 控制、reader handle MutexGuard 覆盖 `recv_timeout`，且未计入第二次 `StdioLibraryChannel::drop` 清理。原实现说明保留如下：**并发审查**——给出持锁路径清单与每一处的上界说明（哪些路径用 `try_lock`/超时、哪些必须持锁、为何不会互相饿死）；针对 R1 意见重做调用链审查，消除了管道写阻塞、心跳跨锁、双重 drop、无超时锁与 poisoned 锁风险（见 `concurrency-lock-audit.md`）。
+- [ ] AC4：**（R3 返修已闭环，待 Codex 终审）** `concurrency-lock-audit.md` 全面重做：给出 13 项全链路细分推导表，把 host_session 锁与 transaction lock 纳入合计；消除轮询超调；解决 P1#2 锁超时不放弃回收（普通锁竞争超时自动触发 OS 级直接强杀 + 后台延迟 reap）；覆盖大于管道容量的 2MB 写入满载故障注入（`ac4-writer-pipe-overflow.stdout.log`）；记录并上报 kill 错误消除静默吞异常。
 - [x] AC5：**（Coordinator 于 2026-10-18 11:55 在交互式桌面、用基于当前代码重建的 release 二进制复跑通过）** release 版应用（sha256 **22dcb685…**，11:53 重建）：主窗口（HWND 397256）与子进程 31924/42036/10140 检测成功，`CloseMainWindow` → **76.54 ms 内退出（上界 5000 ms）**，**残留进程 0**，脚本 exit 0（证据 `ac5-20261018-1156`）。**注**：早前一次运行（`ac5-20261018-1058`，145.47 ms）使用的是 **06:47 构建的旧 release**（`ea15f99f…`），其时间早于 P1#1 修复（11:27），故不代表当前代码；重建后复跑更快（76.54 ms），与"优雅关闭真的发出、sidecar 主动退出"的修复方向一致。**限定**：只证明"正常关闭有界且无残留"这一结果，不证明 Core 收到 `core.shutdown`（见 P1#1，已由 Coordinator 修复）。原说明：**真实场景**——在真实桌面会话下，正常关闭窗口后：应用进程与 sidecar 全部退出且无孤儿。CLI 环境缺少交互桌面（0x80070578），已提供修正后的复跑脚本（超时退出显式返回 exit 1）`verification/P20-CLOSE-BOUND-1/run-desktop-close-verification.ps1` 供 Coordinator 在交互桌面验收。
-- [ ] AC6：**（Codex R2 判定部分达成；Coordinator 撤回勾选）** 主要运行日志已补 shell/venv/Python 字段，但 AC1 metadata 计时精度被截断、AC2 审计日志与静态结论缺少可复核运行证据。原实现说明保留如下：**证据**——命令、exit code、原始输出、时间戳、shell/venv/Python 解释器路径落盘 `verification/P20-CLOSE-BOUND-1/**`；新增测试真断言行为。
+- [ ] AC6：**（R3 返修已闭环，待 Codex 终审）** 证据完备：修复 metadata 毫秒精度截断（记录 `0.5072 ms` 与 `507.2µs`）；新增测试与递归 PID 树真断言行为；全部 10 组测试与审计日志均含完整环境头与元数据落盘 `verification/P20-CLOSE-BOUND-1/**`。
 
 ## 允许修改范围
 
@@ -77,6 +77,13 @@ planned：在途无响应请求 + 强杀子进程的叠加用例（Rust 单元/�
   6. 审计脚本按 PID 树、父子链、Python 进程与隔离根全面核验零残留；
   7. 修正 `run-desktop-close-verification.ps1`，超时退出明确返回非零退出码；
   8. 补齐运行证据环境变量并交付 `doc/handoffs/P20-CLOSE-BOUND-1-antigravity.md`，状态转入 `in_review`。
+- 2026-10-18 用户授权突破 DIR-4 进行第 3 轮返修；Antigravity 完成 R3 全部 6 项缺陷闭环：
+  1. 共享绝对 deadline 机制：全链路受单一 `deadline` 动态收窄，消除轮询超调，闭式推导静态 WCET 为 2120 ms（$\le 3000$ ms，具 880 ms 裕度），动态物理执行上限为 2400 ms；
+  2. 锁超时不放弃回收：`child` 锁超时立即触发 OS 级直接强杀（taskkill /F /PID）并调度后台 reap，`pending_responses` 锁超时调度后台 fallback drain；普通锁竞争用例通过；
+  3. 叠加测试同步握手：等待 `in_flight_awaiting_response > 0`，确证管道写完成且进入响应接收后再 kill；计时针对真实生产入口 `resilient.shutdown`，实测耗时 0.5072 ms；
+  4. 升级递归 PID 树审计与隔离根强制删除句柄核验，发现残留强制非零失败（exit 1）；
+  5. 补齐 >2MB 管道满载故障注入测试，证明 kill 后内核破裂管道读端唤醒 writer 线程并释放句柄；
+  6. 消除静默吞异常：kill 与 reap 错误全面日志上报与 OS 级兜底强杀。
 
 ## Canonical Evidence
 
@@ -175,6 +182,30 @@ owner **自行执行了 git commit**（`bae81ad29` 实现、`95d483888` 文档�
 - `resilient_channel` **9 passed / 0 failed**（无回归）；`poisoned_child_lock_is_recovered_and_killed`、`reader_join_guard_enforces_hard_timeout_if_reader_hung`、`stdio_channel_drop` 均通过。
 - 执行方**未自行提交**（上轮越界已纠正遵守）；超时预算与心跳、重试预算、reader-guard、阈值**均未改动**。
 - 证据：`verification/P20-CLOSE-BOUND-1/r1fix-p1-1/**`（含 shell/venv/python 运行字段）。
+
+## R3 返修闭环（Antigravity 执行，用户授权突破 DIR-4 2次上限，2026-10-18）
+
+**范围**：闭合 Codex Review R2 的全部残余项（P1#2, P1#3, P2#4, P2#5, P2#6, P2#7），保留 Coordinator 已修复的 P1#1，不降低任何阈值，未执行 git commit。
+
+1. **P1#2 锁超时以"有限返回"换"漏杀/漏唤醒" -> 已闭环**：
+   - `child` 锁超时（普通锁竞争）不放弃回收，直接触发 OS 级强制终止（`taskkill /F /PID {child_id}`）并调度后台延迟 reap，确保无残留；
+   - `pending_responses` 锁超时调度后台 fallback drain 确保等待者被唤醒；
+   - 新增普通锁竞争超时测试 `child_lock_contention_timeout_fallback_kills_child_and_prevents_orphan`（通过）与 `pending_lock_contention_timeout_fallback_drains_and_unblocks`（通过）。
+2. **P1#3 ≤3000ms 闭式证明 -> 已闭环**：
+   - 引入单一共享绝对 `deadline` 约束全链路；
+   - 轮询间隔截断单步 sleep 时间（`poll.min(remaining)`），彻底消除超调；
+   - 13 项细分推导静态 WCET 为 2120 ms（$\le 3000$ ms，880 ms 裕度），动态物理执行上限为 2400 ms；
+   - `concurrency-lock-audit.md` 明确区分“已证明硬上界”与“实测观测值”。
+3. **P2#4 叠加测试时序有效性 -> 已闭环**：
+   - 增加 `in_flight_awaiting_response > 0` 严格握手，确证请求已真正写出 stdin 且正阻塞于响应接收通道；
+   - 计时生产入口 `resilient.shutdown`，实测耗时 0.5072 ms（507.2 µs）。
+4. **P2#5 递归 PID 树核验与残留强制失败 -> 已闭环**：
+   - 升级为从测试 runner PID 出发的递归后代 PID 树检索；
+   - 真实执行隔离根完全删除验证句柄释放；发现残留或测试失败时脚本强制非零退出（exit 1）。
+5. **P2#6 writer 超时与 >pipe capacity 写入故障注入 -> 已闭环**：
+   - 新增 2MB 满载管道写入测试，调用方 ~100ms 有界返回，kill 后内核 BrokenPipe 解除写阻塞，writer/reader join handle 干净释放，无孤儿。
+6. **P2#7 消除静默吞掉 kill 失败 -> 已闭环**：
+   - `child.kill()` 与 `wait_timeout_or_kill` 错误全面上报并记录，触发 OS 级直接强杀兜底。
 
 **结论**：P1#1 解除。**P1#2/P1#3 与 4 项 P2 仍未闭合**，AC1/AC4 仍未达成；本 Task 是否继续、以及是否以"P1#1 已修 + AC3/AC5 达成"如实收口，**待用户裁决**（DIR-4 2/2 已用满，Coordinator 不再自行派发 AC 返修）。
 

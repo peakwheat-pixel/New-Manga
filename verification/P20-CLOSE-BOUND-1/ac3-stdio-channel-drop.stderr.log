@@ -1,2 +1,2 @@
-﻿    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.43s
+﻿    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.45s
      Running unittests src\main.rs (apps\desktop\src-tauri\target\debug\deps\m2rc1_desktop-24448612fc7535f6.exe)

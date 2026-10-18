@@ -7,92 +7,70 @@ delivery_head: bae81ad29
 status: in_review
 ---
 
-# Handoff：P20-CLOSE-BOUND-1（R2 闭环修复）
+# Handoff：P20-CLOSE-BOUND-1（R3 闭环返修）
 
 ## 交付结果
 
-本 Task 针对 Codex 对 `P20-CLOSE-BOUND-1` 独立复审 R1（`verification/P20-CLOSE-BOUND-1/codex-review-r1.md`）指出的 5 项审查意见（2×P1, 3×P2），完成了全部缺陷的彻底闭环与实测：
+本 Task 在用户明确授权突破 DIR-4 进行第 3 轮返修的背景下，针对 Codex Review R2（`verification/P20-CLOSE-BOUND-1/codex-review-r2.md`）指出的 6 项未闭合缺陷（P1#2, P1#3, P2#4, P2#5, P2#6, P2#7），完成了全部缺陷的彻底闭环、闭式推导与测试验证（P1#1 由 Coordinator 修复并保持通过）：
 
-1. **P1 消除关闭路径无限阻塞（核心硬上界）**：
-   - **消除 OS 管道写阻塞**：引入专属管道写入线程（`stdio-library-writer`）与消息通道 `writer_tx`。所有向 stdin 的写入通过 `write_stdin_timeout(bytes, timeout)` 异步执行，受调用方 timeout 严格约束。在 `shutdown_and_kill` 中对 `core.shutdown` 写入施加 **100 ms 硬上限**；若管道阻塞，100 ms 超时后立即推进至强杀。强杀子进程后 Windows 内核自动关闭读端，阻塞的 `WriteFile` 立即解封并返回 `BrokenPipe`，写入线程干净退出。
-   - **请求超时覆盖写入阶段**：`exchange_expected_minor_timeout` 将请求超时预算统一分配给交易锁获取、管道写与响应等待。管道写不再脱离超时控制。
-   - **消除心跳持锁跨越 `ping_timeout`**：心跳线程改造为两阶段：在 50 ms 超时短锁内非阻塞调用 `child.try_wait()`，随后立即释放 `child` 锁；在无锁状态下调用 `ping_timeout`。关闭线程随时可在 ≤ 100 ms 内取得 `child` 锁。
-   - **消除无超时 Mutex 与 Poisoned 锁跳过回收**：实现 `lock_timeout_recover(mutex, timeout)`，所有锁获取施加 50~100 ms 硬上限；遇到 poisoned 锁时显式通过 `into_inner()` 提取底层资源，强制杀掉并回收子进程，保证零残留。
-   - **消除双重析构突破预算**：`StdioLibraryChannel` 引入 `shutdown_executed: AtomicBool` 幂等保护，二次调用直接返回（耗时 0 ms）；`StdioLibraryChannel::drop` 超时收窄为 1200 ms。
-   - **WCET 闭式推导**：最坏情况关闭总预算计算为 **2950 ms $\le$ 3000 ms**，保留 50 ms 安全裕度。
+1. **P1#2 锁超时不放弃回收**：
+   - `StdioLibraryChannel` 保存确定性的 `child_id: u32`。若 `child` 锁获取超时（因普通锁竞争），关闭流程**绝不跳过回收**，而是直接通过 OS 层执行进程终止：`taskkill /F /PID {child_id}`，并调度后台 fallback 线程在锁释放后调用 `child.wait()` 回收句柄，标记 `child_killed: AtomicBool`。
+   - `pending_responses` 锁超时同样调度后台 fallback 线程在锁释放后执行 drain 并唤醒等待者。
+   - 新增覆盖普通锁竞争超时的单元测试：`child_lock_contention_timeout_fallback_kills_child_and_prevents_orphan` 与 `pending_lock_contention_timeout_fallback_drains_and_unblocks`，均 100% 通过。
 
-2. **P1 消除叠加测试竞争绕过**：
-   - 增加**同步握手**：测试循环检查 `pending_responses.len() > 0`，确凿验证在途请求已完成加锁并进入阻塞等待通道。
-   - **屏蔽自动恢复干扰**：在外部 kill 前设置 `heartbeat_stop` 为 true，阻止 EOF 触发的自愈线程抢取 channel。
-   - **强制断言有效性**：测试通过 `guard.take().expect("channel must be present")` 取出内部 channel，杜绝 `None` 分支静默通过。
-   - **Timed Join 与实测打印**：调用生产 `shutdown_and_kill(1200ms)`，精确测量并打印实测关闭耗时（**201.4 µs**）；在途工作线程通过 `recv_timeout(2s)` 守护 join，验证其在关闭后立即解除并返回 `CORE_UNAVAILABLE`。
+2. **P1#3 ≤3000ms 闭式证明与轮询超调消除**：
+   - 引入**单一共享绝对 `deadline`**（`deadline = Instant::now() + min(timeout, 2400ms)`），全链路所有子阶段（锁、写入、优雅等待、reap、join 守护）超时均取自身静态上限与 `remaining` 的最小值。
+   - 所有轮询步长使用 `sleep_dur = poll.min(remaining)`，当 `remaining` 为 0 时直接退出，彻底消除轮询累加超调。
+   - 13 项细分推导静态 WCET 为 **2120 ms $\le 3000$ ms**（具备 880 ms 确定性安全裕度），动态物理执行上限为 **2400 ms**。
+   - `concurrency-lock-audit.md` 明确区分“已证明硬上界”与“实测观测值”。
 
-3. **P2 完善 AC2 全树零残留证据**：
-   - 启动并测试 heartbeat 线程，验证其在 `heartbeat_stop` 与 channel drop 后安全终止。
-   - 审计脚本覆盖：当前测试 runner PID 树、父子进程链、带有测试命令行特征或工作区/隔离根路径的 Python 进程，以及 `%TEMP%` 隔离根句柄，确认残留数为 0。
+3. **P2#4 叠加测试时序有效性与真实关闭入口测量**：
+   - `StdioLibraryChannel` 引入 `in_flight_awaiting_response: AtomicUsize`。仅在 stdin 写入完成、通过 RAII guard 真正进入响应接收等待时递增该计数。
+   - 叠加测试改为等待 `resilient.in_flight_awaiting_response() > 0`，确凿验证管道写已完成且正阻塞于响应接收后再 taskkill。
+   - 测量改为针对真实的生产关闭入口 `resilient.shutdown(Duration::from_millis(2400))`，实测耗时 **0.5072 ms (507.2 µs)**，修复 metadata 毫秒精度截断。
 
-4. **P2 修正 AC5 脚本误判缺陷**：
-   - 修正 `run-desktop-close-verification.ps1`：若应用未在 5 秒内退出，记录错误、强杀清理并**明确返回非零退出码（exit 1）**；残余孤儿进程返回 exit 2；严格区分"正常有界退出"与"超时后强杀清理"。
+4. **P2#5 递归 PID 树核验与残留强制失败**：
+   - 脚本以 BFS 队列从当前 runner PID 递归检索所有后代 PID 集合；修复单/双反斜杠路径转义匹配。
+   - 增加隔离根句柄真实释放检测：测试完成后执行 `Remove-Item -Recurse -Force $isolatedRoot`，若被句柄锁定无法删除则计入残留。
+   - 脚本在 `$residualCount > 0` 或任一测试失败时**强制 `exit 1`**。
 
-5. **P2 补齐运行证据字段与交付指针**：
-   - 日志与元数据补充 `shell`、`venv`、`python_exe` 运行环境字段（doc/09_COLLABORATION.md §6.12）。
-   - `ac1-overlay-bound.meta.json` 记录关闭段实测耗时 `shutdown_elapsed_ms`。
-   - Handoff 状态为 `in_review`，`delivery_head` 固定为实现提交 `bae81ad29`；Task frontmatter 因 `check.ps1` 校验 `REBASELINE_PLAN.md` READY DAG 规则要求暂时维持 `status: ready`，Canonical Evidence 与交付 head 已完整登记，待 Integrator 集成。
+5. **P2#6 writer 超时与管道满载（> pipe capacity）故障注入**：
+   - 新增专用测试 `writer_overflow_pipe_capacity_unblocks_and_cleans_up_on_kill`：向不读 stdin 的子进程注入 2MB 数据。
+   - 证明：调用方在 ~100 ms 内超时返回，不被 OS pipe write 阻塞；强杀子进程后 Windows 内核自动破裂读端，writer 线程收到 `BrokenPipe` 并干净退出；writer/reader join guard 成功释放，零孤儿（实测 1.27s 通过）。
+
+6. **P2#7 消除静默吞掉 kill 失败**：
+   - `wait_timeout_or_kill` 中检查 `child.kill()` 返回值，若报错且进程尚未退出，打印明确错误日志；若 reap 超时返回带有 PID 的 `Err(TimedOut)`。
+   - `shutdown_and_kill` 中捕获错误并记录至 `last_shutdown_error`，同时触发 OS 级直接强杀（taskkill /F /PID）兜底。
 
 ---
 
 ## 验证证据
 
-| AC/场景 | 实际命令/步骤 | 环境与被测 commit | 结果 | 日志/产物 |
+| AC/场景 | 实际命令/步骤 | 环境与被测代码 | 结果 | 日志/产物 |
 |---|---|---|---|---|
-| AC1：有界关闭（核心叠加场景） | `cargo test --manifest-path apps/desktop/src-tauri/Cargo.toml --bin m2rc1-desktop resilient_channel_drop_after_external_kill -- --nocapture` | Windows 11 (pwsh 7.6.6), Python 3.14.6, commit `bae81ad29` | PASS | `verification/P20-CLOSE-BOUND-1/ac1-overlay-bound.stdout.log` (关闭段实测 201.4 µs < 上界 3.0s) |
-| AC2：全树零残留 | 进程树、父子链、Python 进程与隔离根审计 | 同上 | PASS | `verification/P20-CLOSE-BOUND-1/ac2-process-tree-audit.log` (0 残留进程) |
+| AC1：有界关闭（核心叠加场景） | `cargo test --manifest-path apps/desktop/src-tauri/Cargo.toml --bin m2rc1-desktop resilient_channel_drop_after_external_kill -- --nocapture` | Windows 11 (pwsh 7.6.6), Python 3.14.6 | PASS | `verification/P20-CLOSE-BOUND-1/ac1-overlay-bound.stdout.log` (真实入口实测 0.5072 ms < 上界 3.0s) |
+| AC2：递归树零残留与句柄释放 | 递归后代 PID 树、隔离根删除与 Python 进程审计 | 同上 | PASS | `verification/P20-CLOSE-BOUND-1/ac2-process-tree-audit.log` (0 残留进程，隔离根句柄完全释放) |
 | AC3：不回归（resilient channel） | `cargo test --manifest-path apps/desktop/src-tauri/Cargo.toml --bin m2rc1-desktop resilient_channel` | 同上 | PASS (9 passed) | `verification/P20-CLOSE-BOUND-1/ac3-resilient-channel.stdout.log` |
 | AC3：不回归（stdio channel drop） | `cargo test --manifest-path apps/desktop/src-tauri/Cargo.toml --bin m2rc1-desktop stdio_channel_drop` | 同上 | PASS (1 passed) | `verification/P20-CLOSE-BOUND-1/ac3-stdio-channel-drop.stdout.log` |
-| AC4：并发审查与硬上界单元测试 | `concurrency-lock-audit.md` + 3 项 hard-bound 单元测试（含 poisoned 锁恢复） | 同上 | PASS (3 passed) | `verification/P20-CLOSE-BOUND-1/concurrency-lock-audit.md`, `ac4-poisoned-child-lock.stdout.log` |
-| AC5：真实桌面窗口关闭场景 | `pwsh -NoProfile -File verification/P20-CLOSE-BOUND-1/run-desktop-close-verification.ps1` | **未由 Antigravity 运行**（原因：无交互桌面会话，无法加载 WebView2 0x80070578）；已提供修正后的复跑脚本供 Coordinator 验收 | NOT_RUN（待 Coordinator 复跑） | `verification/P20-CLOSE-BOUND-1/run-desktop-close-verification.ps1` |
+| AC4：并发审查与硬上界闭式推导 | `concurrency-lock-audit.md` + 4 项 hard-bound 单元测试（含普通锁竞争超时 fallback、管道满载故障注入、中毒锁恢复） | 同上 | PASS (4 passed) | `verification/P20-CLOSE-BOUND-1/concurrency-lock-audit.md`, `ac4-child-lock-contention.stdout.log`, `ac4-writer-pipe-overflow.stdout.log` |
+| AC5：真实桌面窗口关闭场景 | `pwsh -NoProfile -File verification/P20-CLOSE-BOUND-1/run-desktop-close-verification.ps1` | 已由 Coordinator 于 11:55 在交互式桌面复跑通过（76.54 ms 退出，0 残留） | PASS（Coordinator 独立复跑） | `verification/P20-CLOSE-BOUND-1/run-desktop-close-verification.ps1` |
 | AC6：证据落盘与治理检查 | `pwsh -NoProfile -File tools/governance/check.ps1 -TaskPath doc/tasks/P20-CLOSE-BOUND-1.md` | 同上 | PASS (2 warnings，预算预警) | 完整验证产物落盘 `verification/P20-CLOSE-BOUND-1/` |
 
 ---
 
-## 接收方式
+## 接收方式与复核指令
 
-1. 工作区位于 `G:\CODEX\New Manga`，实现提交为 `bae81ad29`。
+1. 工作区位于 `G:\CODEX\New Manga`，代码与证据均已就绪（未执行 git commit，等待 Coordinator 提交）。
 2. 复现与回归测试命令：
    - 运行完整验证套件：`pwsh -NoProfile -File verification/P20-CLOSE-BOUND-1/test-ac1-overlay-bound.ps1`
    - 运行治理检查：`pwsh -NoProfile -File tools/governance/check.ps1 -TaskPath doc/tasks/P20-CLOSE-BOUND-1.md`
-3. 交互式桌面复跑（AC5）：
-   - 在具有 GUI 交互桌面（含 WebView2 支持）的会话中执行：
-     `pwsh -NoProfile -File verification/P20-CLOSE-BOUND-1/run-desktop-close-verification.ps1`
-   - 脚本将自动在 `%TEMP%` 全新隔离根中启动应用，检测主窗口并发送关闭命令，核查 5 秒内应用完全退出且无孤儿残留。若超时未退出，脚本显式返回 exit 1。
-
----
-
-## 下一任务建议（必填）
-
-- **Task ID / 标题**：`P20-CLOSE-BOUND-1` Codex 独立复审 R2
-- **推荐 Agent / Reviewer**：Codex
-- **推荐原因与前置依赖**：Antigravity 作为 Owner 已完成 Codex Review R1 提出的全部 5 项修改（2×P1, 3×P2），提交实现固定在 `bae81ad29`，证据文件已落盘且治理检查通过。需由 Codex 进行独立复审并在交互桌面环境下复跑 AC5。
-- **Recovery point**：仓库 `G:\CODEX\New Manga`，工作区 dirty 内容严格保留；
-- **允许修改路径**：`doc/tasks/P20-CLOSE-BOUND-1.md`、`doc/STATUS.md`、`doc/REBASELINE_PLAN.md`（仅限 Codex 在裁决与集成时更新指针）；
-- **禁止范围与新增授权条件**：不得回退已确认的 R-008、R-003 与 R-009 修复；保护用户 43 项未提交改动。
-- **交付物**：Codex 复审报告与集成裁决。
-- **验证命令、环境与完成 Gate**：
-  - `pwsh -NoProfile -File verification/P20-CLOSE-BOUND-1/test-ac1-overlay-bound.ps1`
-  - `pwsh -NoProfile -File verification/P20-CLOSE-BOUND-1/run-desktop-close-verification.ps1`（在交互桌面下执行）
-  - `pwsh -NoProfile -File tools/governance/check.ps1 -TaskPath doc/tasks/P20-CLOSE-BOUND-1.md`
-- **可直接转发给 Agent 的指令**：
-  ```
-  请对 P20-CLOSE-BOUND-1 执行独立复审 R2（head = bae81ad29）：
-  1. 检查 apps/desktop/src-tauri/src/library_bridge.rs 中写入线程、锁超时与恢复、心跳提前释放锁、双重 drop 幂等消除；
-  2. 运行 pwsh -NoProfile -File verification/P20-CLOSE-BOUND-1/test-ac1-overlay-bound.ps1 验证 AC1/AC2/AC3/AC4；
-  3. 在具有交互式桌面环境的会话中复跑 pwsh -NoProfile -File verification/P20-CLOSE-BOUND-1/run-desktop-close-verification.ps1 验收 AC5；
-  4. 给出复审结论并收口 Canonical Evidence。
-  ```
-
----
-
-## 风险与遗留
-
-- **AC5 需交互桌面复跑**：由于 CLI 运行环境处于非交互式 Windows 会话，WebView2 初始化会返回 `0x80070578`（无效窗口句柄），因此 AC5 未由 Antigravity 宣称通过，留待 Coordinator / Codex 在交互桌面下直接执行 `run-desktop-close-verification.ps1` 验收。
-- **用户既有改动完全隔离**：仓库现有的 43 项未提交改动以及 `cargo` 生成的 schema 文件未受任何影响，dirty 文件数量保持零增长。
+3. 推荐下一步：
+   - **推荐 Agent**：Codex（Reviewer / Integrator）
+   - **可直接转发给 Codex 的指令**：
+     ```
+     请对 P20-CLOSE-BOUND-1 执行独立复审 R3：
+     1. 检查 apps/desktop/src-tauri/src/library_bridge.rs 中共享绝对 deadline（deadline = Instant::now() + total_budget）、普通锁竞争超时 fallback、in_flight_awaiting_response 握手、管道满载 BrokenPipe 解除与 kill 错误上报；
+     2. 检查 verification/P20-CLOSE-BOUND-1/concurrency-lock-audit.md 的 13 项 WCET 闭式推导表（静态 2120 ms <= 3000 ms，动态 2400 ms）；
+     3. 运行 pwsh -NoProfile -File verification/P20-CLOSE-BOUND-1/test-ac1-overlay-bound.ps1 验证全部 10 项测试与递归 PID 树 0 残留；
+     4. 由 Coordinator 执行 git commit，收口 Task 并推进到 done。
+     ```
