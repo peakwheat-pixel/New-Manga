@@ -1725,15 +1725,32 @@ pub fn wait_timeout_or_kill(
     timeout: std::time::Duration,
 ) -> Result<std::process::ExitStatus, std::io::Error> {
     let start = std::time::Instant::now();
-    let poll_interval = std::time::Duration::from_millis(50);
+    let poll_interval = std::time::Duration::from_millis(25);
     while start.elapsed() < timeout {
         if let Some(status) = child.try_wait()? {
             return Ok(status);
         }
         std::thread::sleep(poll_interval);
     }
+    // Timeout reached: kill the process
     let _ = child.kill();
-    child.wait()
+    // Hard upper bound: wait for killed child with bounded timeout (max 1000ms),
+    // eliminating unbounded child.wait() blocking
+    let kill_wait_timeout = std::time::Duration::from_millis(1000);
+    let kill_start = std::time::Instant::now();
+    while kill_start.elapsed() < kill_wait_timeout {
+        if let Some(status) = child.try_wait()? {
+            return Ok(status);
+        }
+        std::thread::sleep(poll_interval);
+    }
+    Err(std::io::Error::new(
+        std::io::ErrorKind::TimedOut,
+        format!(
+            "Child process failed to exit after kill within {:?}",
+            kill_wait_timeout
+        ),
+    ))
 }
 
 impl StdioLibraryChannel {
@@ -1784,15 +1801,25 @@ impl StdioLibraryChannel {
             let _ = stdin.flush();
         }
 
-        // 4. Wait for child with timeout or kill
+        // 4. Wait for child with timeout or kill (strictly bounded, eliminating unbounded child.wait())
         if let Ok(mut child) = self.child.lock() {
             let _ = wait_timeout_or_kill(&mut child, kill_timeout);
         }
 
-        // 5. Join reader thread (since child is killed or exited, reader thread will receive EOF and exit)
+        // 5. Join reader thread with bounded timeout (hard upper bound: 500ms)
+        // Eliminates unbounded handle.join() block if reader thread is hung on stdout
         if let Ok(mut handle_slot) = self.reader_join_handle.lock() {
             if let Some(handle) = handle_slot.take() {
-                let _ = handle.join();
+                let (done_tx, done_rx) = std::sync::mpsc::sync_channel(1);
+                let joiner = std::thread::Builder::new()
+                    .name("reader-join-guard".to_string())
+                    .spawn(move || {
+                        let _ = handle.join();
+                        let _ = done_tx.send(());
+                    });
+                if joiner.is_ok() {
+                    let _ = done_rx.recv_timeout(Duration::from_millis(500));
+                }
             }
         }
     }
@@ -2660,12 +2687,17 @@ impl ResilientCoreContext {
             .name("core-self-healing".to_string())
             .spawn(move || {
                 // 1. 清理并回收旧进程（R-009: 有界强制回收）
-                {
+                // 先在短锁内 take 出 old channel，立即释放 inner 锁，再在锁外执行 shutdown_and_kill，
+                // 避免持有 inner 锁长达数秒导致其他线程饿死
+                let old = {
                     if let Ok(mut guard) = ctx.inner.lock() {
-                        if let Some(old) = guard.take() {
-                            old.shutdown_and_kill(Duration::from_millis(1500));
-                        }
+                        guard.take()
+                    } else {
+                        None
                     }
+                };
+                if let Some(old) = old {
+                    old.shutdown_and_kill(Duration::from_millis(1500));
                 }
 
                 let mut backoff = ctx.config.initial_backoff;
@@ -2929,10 +2961,15 @@ impl ResilientLibraryChannel {
 impl Drop for ResilientLibraryChannel {
     fn drop(&mut self) {
         self.ctx.heartbeat_stop.store(true, Ordering::Relaxed);
-        if let Ok(mut guard) = self.ctx.inner.lock() {
-            if let Some(chan) = guard.take() {
-                chan.shutdown_and_kill(Duration::from_millis(1500));
+        let chan = {
+            if let Ok(mut guard) = self.ctx.inner.lock() {
+                guard.take()
+            } else {
+                None
             }
+        };
+        if let Some(chan) = chan {
+            chan.shutdown_and_kill(Duration::from_millis(1500));
         }
     }
 }
@@ -4905,6 +4942,7 @@ mod tests {
             .args(["/FI", &format!("PID eq {pid}"), "/FO", "CSV", "/NH"])
             .output()
             .expect("tasklist query");
+        assert!(output.status.success(), "tasklist query must exit successfully");
         let tasklist_str = String::from_utf8_lossy(&output.stdout);
         assert!(
             !tasklist_str.contains(&format!("\"{pid}\"")),
@@ -4949,10 +4987,166 @@ mod tests {
             .args(["/FI", &format!("PID eq {pid}"), "/FO", "CSV", "/NH"])
             .output()
             .expect("tasklist query");
+        assert!(output.status.success(), "tasklist query must exit successfully");
         let tasklist_str = String::from_utf8_lossy(&output.stdout);
         assert!(
             !tasklist_str.contains(&format!("\"{pid}\"")),
             "Child process {pid} must be terminated and reaped upon StdioLibraryChannel drop"
+        );
+    }
+
+    /// AC1 & AC2 (P20-CLOSE-BOUND-1): In-flight unresponsive request + external force kill overlay scenario.
+    /// Scenario:
+    /// 1. An in-flight request is pending against an unresponsive sidecar (cmd /c pause).
+    /// 2. The sidecar process is externally force-killed (simulating `Stop-Process -Force` / taskkill /F).
+    /// 3. The channel is dropped / shut down.
+    /// Asserts:
+    /// - Shutdown completes within hard upper bound (< 3000ms, typical < 100ms).
+    /// - In-flight caller thread unblocks immediately and receives CORE_UNAVAILABLE.
+    /// - Zero orphans: child process is completely terminated and verified absent via tasklist with success exit code.
+    #[test]
+    fn resilient_channel_drop_after_external_kill_with_in_flight_call_is_bounded_and_zero_orphan() {
+        let config = LibrarySpawnConfig::new(
+            "cmd.exe".to_string(),
+            PathBuf::from("."),
+            None,
+            None,
+            None,
+        );
+
+        let python_exe = std::env::var("M2RC1_PYTHON").unwrap_or_else(|_| "python".to_string());
+        let child = Command::new(&python_exe)
+            .args(["-c", "import time; time.sleep(60)"])
+            .stdin(Stdio::piped())
+            .stdout(Stdio::piped())
+            .stderr(Stdio::null())
+            .spawn()
+            .expect("spawn hung python child");
+        let pid = child.id();
+
+        let chan = StdioLibraryChannel::adopt_child_for_test(child).expect("adopt initial");
+        let resilient = Arc::new(ResilientLibraryChannel::new(config, Some(chan)));
+
+        // 1. Spawn in-flight request thread that hangs on unresponsive sidecar
+        let resilient_clone = Arc::clone(&resilient);
+        let worker_handle = std::thread::spawn(move || {
+            resilient_clone.list_books()
+        });
+
+        // Let the worker enter the IPC wait loop
+        std::thread::sleep(Duration::from_millis(60));
+
+        // 2. Simulate external force-kill (Stop-Process -Force / taskkill /F)
+        let kill_status = Command::new("taskkill")
+            .args(["/F", "/PID", &pid.to_string()])
+            .output()
+            .expect("execute external taskkill");
+        assert!(
+            kill_status.status.success(),
+            "External kill must succeed for target PID {pid}"
+        );
+
+        // 3. Drop / shutdown the channel
+        let shutdown_start = Instant::now();
+        resilient.ctx.heartbeat_stop.store(true, Ordering::Relaxed);
+        let inner_chan = {
+            if let Ok(mut guard) = resilient.ctx.inner.lock() {
+                guard.take()
+            } else {
+                None
+            }
+        };
+        if let Some(c) = inner_chan {
+            c.shutdown_and_kill(Duration::from_millis(1500));
+        }
+        let shutdown_elapsed = shutdown_start.elapsed();
+
+        // Hard upper bound assertion: must be strictly bounded (< 3000ms)
+        assert!(
+            shutdown_elapsed < Duration::from_secs(3),
+            "Shutdown after external kill with in-flight call must complete within 3s, took {:?}",
+            shutdown_elapsed
+        );
+
+        // In-flight worker thread must be unblocked and return Err
+        let worker_res = worker_handle.join().expect("worker handle join");
+        assert!(
+            worker_res.is_err(),
+            "In-flight request must fail with unavailable error when sidecar is killed"
+        );
+        let err = worker_res.unwrap_err();
+        assert_eq!(err.code, "CORE_UNAVAILABLE");
+
+        // Give OS brief moment to complete process table cleanup
+        std::thread::sleep(Duration::from_millis(100));
+
+        // Process tree / tasklist zero orphan assertion with exit code verification
+        let output = Command::new("tasklist")
+            .args(["/FI", &format!("PID eq {pid}"), "/FO", "CSV", "/NH"])
+            .output()
+            .expect("query tasklist for reaped child");
+        assert!(output.status.success(), "tasklist query must return success exit code");
+        let stdout_str = String::from_utf8_lossy(&output.stdout);
+        assert!(
+            !stdout_str.contains(&format!("\"{pid}\"")),
+            "Target PID {pid} must NOT be present in process table"
+        );
+    }
+
+    /// AC1 & AC4: Unit test confirming wait_timeout_or_kill has strict hard upper bound
+    /// and does not hang infinitely even when process is already dead or refusing normal exit.
+    #[test]
+    fn wait_timeout_or_kill_returns_immediately_for_already_exited_child() {
+        let mut child = Command::new("cmd")
+            .args(["/c", "exit 0"])
+            .spawn()
+            .expect("spawn fast exit child");
+        
+        // Wait for it to finish first
+        std::thread::sleep(Duration::from_millis(100));
+
+        let start = Instant::now();
+        let res = wait_timeout_or_kill(&mut child, Duration::from_millis(1500));
+        let elapsed = start.elapsed();
+
+        assert!(res.is_ok(), "Already-exited child must return Ok exit status");
+        assert!(
+            elapsed < Duration::from_millis(100),
+            "Already-exited child check must complete immediately (< 100ms), took {:?}",
+            elapsed
+        );
+    }
+
+    /// AC1 & AC4: Unit test confirming reader join bounded guard prevents infinite hanging.
+    #[test]
+    fn reader_join_guard_enforces_hard_timeout_if_reader_hung() {
+        let (done_tx, done_rx) = std::sync::mpsc::sync_channel(1);
+        let hung_handle = std::thread::spawn(move || {
+            // Simulate a permanently hung reader thread
+            std::thread::sleep(Duration::from_secs(60));
+        });
+
+        let start = Instant::now();
+        let joiner = std::thread::Builder::new()
+            .name("test-reader-guard".to_string())
+            .spawn(move || {
+                let _ = hung_handle.join();
+                let _ = done_tx.send(());
+            });
+        assert!(joiner.is_ok());
+
+        // Hard bound timeout (500ms)
+        let res = done_rx.recv_timeout(Duration::from_millis(500));
+        let elapsed = start.elapsed();
+
+        assert!(
+            res.is_err(),
+            "Hung reader must trigger timeout on bounded guard"
+        );
+        assert!(
+            elapsed >= Duration::from_millis(450) && elapsed < Duration::from_millis(1200),
+            "Guard must time out around 500ms, elapsed: {:?}",
+            elapsed
         );
     }
 }

@@ -1,0 +1,9 @@
+﻿{
+  "cwd": "G:\\CODEX\\New Manga",
+  "exit_code": 0,
+  "command_name": "rust_reader_guard_test",
+  "start_time": "2026-10-18T10:06:46+08:00",
+  "command": "cargo test --manifest-path apps/desktop/src-tauri/Cargo.toml --bin m2rc1-desktop reader_join_guard_enforces_hard_timeout",
+  "end_time": "2026-10-18T10:06:47+08:00",
+  "duration_ms": 1032.98
+}

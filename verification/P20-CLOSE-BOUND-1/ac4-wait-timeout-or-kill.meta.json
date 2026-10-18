@@ -1,0 +1,9 @@
+﻿{
+  "cwd": "G:\\CODEX\\New Manga",
+  "exit_code": 0,
+  "command_name": "rust_wait_timeout_or_kill_test",
+  "start_time": "2026-10-18T10:06:45+08:00",
+  "command": "cargo test --manifest-path apps/desktop/src-tauri/Cargo.toml --bin m2rc1-desktop wait_timeout_or_kill_returns_immediately",
+  "end_time": "2026-10-18T10:06:46+08:00",
+  "duration_ms": 633.38
+}

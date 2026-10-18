@@ -1,0 +1,9 @@
+﻿{
+  "cwd": "G:\\CODEX\\New Manga",
+  "exit_code": 0,
+  "command_name": "rust_overlay_bound_test",
+  "start_time": "2026-10-18T10:06:42+08:00",
+  "command": "cargo test --manifest-path apps/desktop/src-tauri/Cargo.toml --bin m2rc1-desktop resilient_channel_drop_after_external_kill",
+  "end_time": "2026-10-18T10:06:43+08:00",
+  "duration_ms": 898.76
+}
