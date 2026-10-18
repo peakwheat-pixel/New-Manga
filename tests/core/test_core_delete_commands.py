@@ -495,7 +495,18 @@ def test_delete_book_output_refs_cleared_and_stage_states_retained(server: CoreS
     with conn:
         conn.execute(
             "INSERT INTO pipeline_runs (run_id, command_type, scope_type, requested_targets_json, settings_snapshot_json, provider_binding_snapshot_json, context_policy_json, status, run_json, updated_at)"
-            " VALUES ('run1', 'translate', 'page', '[]', '{}', '{}', '{}', 'completed', '{\"scope\": {\"book_id\": \"b1\"}}', 'now')"
+            " VALUES ('run1', 'translate', 'page', '[]', '{}', '{}', '{}', 'completed', ?, 'now')",
+            (
+                # AC6 (R-003): nested locators, not just the top-level scope.
+                # The old cleanup popped keys off rj["scope"] only, so every
+                # locator below survived and kept naming deleted content.
+                '{"scope": {"book_id": "b1", "page_ids": ["p1"]},'
+                ' "targets": [{"target_id": "p1", "page_id": "p1", "region_id": "rg1"}],'
+                ' "task": {"task_id": "t1", "run_target_id": "rt1"},'
+                ' "steps": [{"step_run_id": "sr1", "page_id": "p1"}],'
+                ' "book_title": "Book 1",'
+                ' "status": "completed"}',
+            ),
         )
         conn.execute(
             "INSERT INTO pipeline_run_targets (run_target_id, pipeline_run_id, target_id, target_type, page_id, target_order, snapshot_json)"
@@ -527,14 +538,67 @@ def test_delete_book_output_refs_cleared_and_stage_states_retained(server: CoreS
     assert ref_row is not None
     assert ref_row["value_json"] == "{}"
 
-    # Assert 2: pipeline_stage_states history was retained and not deleted
-    stage_row = conn.execute(
-        "SELECT status FROM pipeline_stage_states WHERE target_type = 'page' AND target_id = 'p1' AND stage = 'detection'"
-    ).fetchone()
-    assert stage_row is not None
-    assert stage_row["status"] == "completed"
+    # Assert 2 (AC6 / R-003): the history ROW is retained, but it is genuinely
+    # detached.  The previous assertion looked the row up BY the page id, so it
+    # could only pass while the locator still named permanently deleted content.
+    stage_rows = conn.execute(
+        "SELECT target_id, status FROM pipeline_stage_states"
+        " WHERE target_type = 'page' AND stage = 'detection'"
+    ).fetchall()
+    assert len(stage_rows) == 1, "the stage-state history row was not retained"
+    assert stage_rows[0]["status"] == "completed"
+    assert stage_rows[0]["target_id"] != "p1", (
+        "the retained history still identifies the permanently deleted page"
+    )
+    assert stage_rows[0]["target_id"].startswith("detached:")
 
-    # Assert 3: book is deleted
+    # Assert 3 (AC6 / R-003): every nested locator is gone from run_json, while
+    # the retained history still carries its human-readable title and status.
+    run_json = json.loads(
+        conn.execute(
+            "SELECT run_json FROM pipeline_runs WHERE run_id = 'run1'"
+        ).fetchone()["run_json"]
+    )
+
+    locator_keys = {
+        "book_id",
+        "chapter_id",
+        "page_id",
+        "page_ids",
+        "ordered_page_ids",
+        "last_page_id",
+        "region_id",
+        "region_ids",
+        "target_id",
+        "target_ids",
+        "run_target_id",
+        "run_target_ids",
+        "task_id",
+        "task_ids",
+        "step_run_id",
+        "step_run_ids",
+    }
+
+    def _locators_in(node: object) -> set[str]:
+        found: set[str] = set()
+        if isinstance(node, dict):
+            for key, item in node.items():
+                if key in locator_keys:
+                    found.add(key)
+                found |= _locators_in(item)
+        elif isinstance(node, list):
+            for item in node:
+                found |= _locators_in(item)
+        return found
+
+    survived = _locators_in(run_json)
+    assert survived == set(), (
+        f"nested locators survived the permanent delete: {sorted(survived)}"
+    )
+    assert run_json.get("book_title") == "Book 1"
+    assert run_json.get("status") == "completed"
+
+    # Assert 4: book is deleted
     assert conn.execute("SELECT 1 FROM books WHERE book_id = 'b1'").fetchone() is None
 
 

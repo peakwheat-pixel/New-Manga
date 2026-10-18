@@ -16,6 +16,7 @@ from pathlib import Path
 import sqlite3
 import stat
 from collections.abc import Sequence
+from typing import Any
 from datetime import datetime, timezone
 
 from domain.books.entities import Book, Chapter, ChapterType, ReadingDirection, Tag
@@ -885,14 +886,14 @@ class SqliteLibraryRepository:
                         rj = {}
                     if book_title:
                         rj["book_title"] = book_title
-                    if isinstance(rj.get("scope"), dict):
-                        if book_title:
-                            rj["scope"]["book_title"] = book_title
-                        rj["scope"].pop("book_id", None)
-                        rj["scope"].pop("chapter_id", None)
-                        rj["scope"].pop("page_id", None)
-                        rj["scope"].pop("page_ids", None)
-                        rj["scope"].pop("ordered_page_ids", None)
+                    if isinstance(rj.get("scope"), dict) and book_title:
+                        rj["scope"]["book_title"] = book_title
+                    # AC6 (R-003): strip locators from the WHOLE tree, not just
+                    # the top-level scope.  A target/task/step entry nested
+                    # below used to keep naming a page that no longer exists,
+                    # so the retained history still identified deleted content.
+                    # book_title is not a locator key and survives untouched.
+                    rj = strip_run_json_locators(rj)
                     self._conn.execute(
                         "UPDATE pipeline_runs SET run_json = ?, requested_targets_json = '[]' WHERE run_id = ?",
                         (json.dumps(rj, ensure_ascii=False), run_id),
@@ -982,7 +983,31 @@ class SqliteLibraryRepository:
                     (book_id, book_id),
                 )
 
-                # R-003: Retain and detach pipeline_stage_states history (do NOT DELETE per contract §5.11.4)
+                # R-003 / AC6: Retain AND detach pipeline_stage_states history.
+                # The rows must not be deleted (contract §5.11.4), but this
+                # comment used to be the entire implementation: the locator
+                # survived, so the retained history kept pointing at a page
+                # that no longer exists - and at a region id that no longer
+                # resolves.  The primary key is
+                # (target_type, target_id, stage), so the detached value has to
+                # stay unique across rows sharing a stage; a fresh random suffix
+                # keeps it unique while carrying no reference to the deleted
+                # page or region.
+                self._conn.execute(
+                    "UPDATE pipeline_stage_states"
+                    " SET target_id = 'detached:' || lower(hex(randomblob(16)))"
+                    " WHERE (target_type = 'page' AND target_id IN ("
+                    "   SELECT p.page_id FROM pages p"
+                    "   JOIN chapters c ON c.chapter_id = p.chapter_id"
+                    "   WHERE c.book_id = ?"
+                    " )) OR (target_type = 'region' AND target_id IN ("
+                    "   SELECT r.region_id FROM regions r"
+                    "   JOIN pages p ON p.page_id = r.page_id"
+                    "   JOIN chapters c ON c.chapter_id = p.chapter_id"
+                    "   WHERE c.book_id = ?"
+                    " ))",
+                    (book_id, book_id),
+                )
 
                 exp_rows = self._conn.execute(
                     "SELECT export_id, scope_snapshot_json FROM export_history WHERE book_id = ?",
@@ -1162,6 +1187,51 @@ class SqliteLibraryRepository:
             return True
         return False
 
+
+
+#: AC6 (R-003): locator keys that must not survive in a detached ``run_json``.
+#: They identify pages, regions, targets, tasks or steps that no longer exist
+#: once the book is permanently deleted.  ``run_id`` and the stage/status
+#: fields are deliberately absent: the run itself is the history being kept.
+_RUN_JSON_LOCATOR_KEYS = frozenset(
+    {
+        "book_id",
+        "chapter_id",
+        "page_id",
+        "page_ids",
+        "ordered_page_ids",
+        "last_page_id",
+        "region_id",
+        "region_ids",
+        "target_id",
+        "target_ids",
+        "run_target_id",
+        "run_target_ids",
+        "task_id",
+        "task_ids",
+        "step_run_id",
+        "step_run_ids",
+    }
+)
+
+
+def strip_run_json_locators(value: Any) -> Any:
+    """AC6 (R-003): drop nested target/task/step locators from a run_json tree.
+
+    The cleanup used to pop locators off ``rj["scope"]`` only, so any locator
+    nested deeper - inside a target, task or step entry - survived the
+    permanent delete and still named a page that no longer exists.  This walks
+    the whole tree.  It is pure: the input structure is not modified.
+    """
+    if isinstance(value, dict):
+        return {
+            key: strip_run_json_locators(item)
+            for key, item in value.items()
+            if key not in _RUN_JSON_LOCATOR_KEYS
+        }
+    if isinstance(value, list):
+        return [strip_run_json_locators(item) for item in value]
+    return value
 
 
 def unlink_preview_without_following(raw_rel: str, root_res: Path) -> bool:
