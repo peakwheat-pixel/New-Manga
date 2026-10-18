@@ -32,4 +32,4 @@
 |P07 交互补缺 / P21 旧栈归档|P02 / P20+另授权|proposed（均可选）|
 |P22 响应归属|P22-REBASE-1|已集成；P04 不放行，H1/P2-1/13 与 BC-AC5 缺项保留。已完成：ROADMAP-RELEASE、P22-REBASE-1、P04/06/09/10/11/FU1/13/13-C1/16/16-C1；P18/P19 限定关闭。|
 DOC=[架构映射](tasks/ARCH-DOC-REBASELINE.md)已集成未关闭（AC7完成）；P13*停写；P04不放行，H1/P2-1/13缺项与BC-AC5 PARTIAL保留。范围见[裁决](../verification/PROJECT-ROADMAP-RELEASE/REPORT.md)
-READY 节点：ARCH-DOC-REBASELINE、P20、P20-CLOSE-BOUND-HARDEN-2。P09-HARDEN-1 `in_review`。done：**33 项**；P19 `closed_with_limitations`。
+READY 节点：ARCH-DOC-REBASELINE、P20、P20。HARDEN-1/2 `in_review`。done：**33 项**；P19 `closed_with_limitations`。
