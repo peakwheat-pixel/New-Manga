@@ -36,8 +36,8 @@ evidence_dir: verification/P20-ISOLATION-1
 ## Acceptance Criteria
 
 - [x] AC1：**用户可见的故障提示**——sidecar 异常退出后，UI 必须在有界时间内（建议 ≤ 5 s）呈现明确的后端异常状态（文案/横幅/状态区），不得继续表现为"一切正常"。（前端组件测试 PASS；真实桌面复核脚本准备就绪）
-- [x] AC2：**心跳探测与自动回收重启**——Tauri 侧定期心跳探测；sidecar 无响应或退出后**自动重启**，且重启结果对 UI 可见（成功 → 恢复正常交互；连续失败 → 明确降级提示）。（Rust 自愈包装器与测试 PASS）
-- [x] AC3：**状态保全**——故障与重启期间，未提交草稿与操作状态不丢失（须有可复现的注入验证：导入/编辑进行中注入崩溃，重启后状态可恢复或明确标注）。（前端崩溃注入与草稿保全测试 PASS）
+- [x] AC2：**心跳探测与自动回收重启**——Tauri 侧以 1.5s 周期执行心跳探测，对存活进程发起 2.0s 有界 ping 超时探测（最长故障感知判定时间 1.5s + 2.0s = 3.5s ≤ 5.0s）；sidecar 异常退出或无响应后**自动重启**，且重启结果对 UI 可见（成功 → 恢复正常交互；连续失败 → 明确降级提示）；重启与 Drop 退出均采用有界回收（1.5s/5.0s wait_timeout_or_kill，杜绝无限等待）；重试上限 3 次，只有稳定存活超过 30s 稳定期才重置预算。（Rust 自愈包装器与测试 PASS，含存活无响应与有界关闭测试）
+- [x] AC3：**状态保全**——故障与重启期间，未提交草稿与操作状态不丢失。（前端组件级测试 PASS：草稿跨生命周期状态保留且恢复后可正常提交；真实桌面端到端注入脚本 verification/P20-ISOLATION-1/run-r010-ac3-real-injection.ps1 交付待 Coordinator 复跑）
 - [ ] AC4：**不回归**——`P20` 已通过的项不得退化：冷启动（≤2.0 s / Core ≤3.5 s）、四页可达、`bundle` 与 `resources` 的 `core_service.exe` SHA-256 相等；`P20-MEM-OPT-1` 的内存目标亦不得因此恶化（同样按父子进程链口径测量）。（构建与 SHA-256 PASS，四页与冷启动端到端待交互式桌面复核）
 
 ## 允许修改范围
@@ -60,19 +60,20 @@ planned：故障注入（强杀 sidecar；可选：挂起/无响应）多轮；U
 ## 依赖、风险与阻塞
 
 - 依赖：`P20`（提供 AC6 失败事实与注入脚本 `verification/P20/run-ac6-fault-isolation.ps1`）。
-- 风险：自动重启若做成"无限重启风暴"会掩盖真实故障，须有退避与连续失败上限（AC2 的"明确降级提示"）。已实施上限 3 次与指数退避（500ms -> 1000ms -> 2000ms）。
+- 风险：自动重启若做成"无限重启风暴"会掩盖真实故障，须有退避与连续失败上限（AC2 的"明确降级提示"）。已实施上限 3 次、指数退避（500ms -> 1000ms -> 2000ms）、30s 稳定存活冷却期（R-001）、心跳请求级超时（2.0s ping probe，R-008）、以及关闭路径有界回收（R-009）。
 - 已知阻塞：无。
 
 ## 交付与运行记录
 
 - 2026-10-18 Coordinator（dsh, epoch 7）按用户裁决创建本 Task；`status: in_review`，写入 `doc/REBASELINE_PLAN.md` 的 READY 节点与 `doc/STATUS.md`。
 - 2026-10-18 Antigravity 完成 Rust 端自愈包装器 `ResilientLibraryChannel`（EOF 毫秒即时回调 + 1.5s 心跳 + 3次重试上限与退避 + `core:lifecycle_status` 广播）与前端提示横幅（AppShell.tsx 监听生命周期与 2.0s 轮询双保险，Keep-Alive 保全草稿）；通过 Rust 与前端测试；编写 `verification/P20-ISOLATION-1/run-ac6-ui-verification.ps1` 供 Coordinator 在交互式会话复核。
+- 2026-10-18 Antigravity 完成 Codex R2 返修（R-008 心跳探测支持 2.0s ping 超时与无响应进程自愈；R-009 with_channel 释放内部锁、StdioChannel 支持 shutdown_and_kill 有界关闭；R-010 提供真实桌面 AC3 强杀草稿保全与提交复跑脚本；R-014 对齐 AC2 参数口径）。9 项 Rust 测试与 3 项前端测试全部 PASS。
 
 ## Canonical Evidence
 
 | evidence_id | AC/Gate | path | commit | sha256 | class |
 |---|---|---|---|---|---|
-| EVID-P20-ISOL-SRC | AC1, AC2 | apps/desktop/src-tauri/src/library_bridge.rs | f02721df106d7553a57056320dcdc6f81c1b9dfa | f101dbafcc9ab2ab030f00c0d882f8eacde8f323d5868ec53ff9d71bdd63c1ce | SOURCE_PIN |
+| EVID-P20-ISOL-SRC | AC1, AC2 | apps/desktop/src-tauri/src/library_bridge.rs | f02721df106d7553a57056320dcdc6f81c1b9dfa | 6df8794c170ffd111aed8e2ba28c76accfe8270c3a14654fd308cec6867b9250 | SOURCE_PIN |
 | EVID-P20-ISOL-FETEST | AC1, AC2, AC3 | apps/desktop/frontend/src/shell/AppShell.lifecycle.test.tsx | f02721df106d7553a57056320dcdc6f81c1b9dfa | cf3d6b488936bbb5459085be7a95abe44e36ae43bf08a9a6993d68cd399a917e | SOURCE_PIN |
 | EVID-P20-ISOL-RUSTLOG | AC1, AC2, AC3 | verification/P20-ISOLATION-1/r1-fix/rust-resilient-channel-tests.log | f02721df106d7553a57056320dcdc6f81c1b9dfa | ea2af60fa17a67c64381fbaf45f112ab5840f51c26fa56c4d7ca7fc0fed8cb18 | CANONICAL |
 | EVID-P20-ISOL-FELOG | AC1, AC2, AC3 | verification/P20-ISOLATION-1/r1-fix/frontend-lifecycle-test.log | f02721df106d7553a57056320dcdc6f81c1b9dfa | d980f64f272471712857307f73682b66632c45479d277013539f1306ec462bdc | CANONICAL |

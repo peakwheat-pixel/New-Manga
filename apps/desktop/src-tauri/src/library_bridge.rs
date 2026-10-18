@@ -1210,6 +1210,40 @@ impl StdioLibraryChannel {
         self.exchange_expected_minor(request, Some(7))
     }
 
+    fn acquire_transaction_lock(
+        &self,
+        timeout: Option<Duration>,
+    ) -> Result<std::sync::MutexGuard<'_, ()>, LibraryError> {
+        match timeout {
+            None => self
+                .transaction_lock
+                .lock()
+                .map_err(|_| LibraryError::unavailable("Internal mutex poisoned (transaction)")),
+            Some(limit) => {
+                let start = Instant::now();
+                let poll = Duration::from_millis(10);
+                loop {
+                    match self.transaction_lock.try_lock() {
+                        Ok(guard) => return Ok(guard),
+                        Err(std::sync::TryLockError::Poisoned(_)) => {
+                            return Err(LibraryError::unavailable(
+                                "Internal mutex poisoned (transaction)",
+                            ));
+                        }
+                        Err(std::sync::TryLockError::WouldBlock) => {
+                            if start.elapsed() >= limit {
+                                return Err(LibraryError::unavailable(
+                                    "Timed out waiting for transaction lock",
+                                ));
+                            }
+                            std::thread::sleep(poll);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     fn exchange(&self, request: Value) -> Result<Value, LibraryError> {
         self.exchange_expected_minor(request, None)
     }
@@ -1219,6 +1253,16 @@ impl StdioLibraryChannel {
         request: Value,
         expected_minor: Option<u32>,
     ) -> Result<Value, LibraryError> {
+        self.exchange_expected_minor_timeout(request, expected_minor, None)
+    }
+
+    fn exchange_expected_minor_timeout(
+        &self,
+        request: Value,
+        expected_minor: Option<u32>,
+        timeout: Option<Duration>,
+    ) -> Result<Value, LibraryError> {
+        let start = Instant::now();
         let req_id = request
             .get("request_id")
             .and_then(Value::as_str)
@@ -1228,10 +1272,7 @@ impl StdioLibraryChannel {
         let mut line = request.to_string();
         line.push('\n');
 
-        let _tx_guard = self
-            .transaction_lock
-            .lock()
-            .map_err(|_| LibraryError::unavailable("Internal mutex poisoned (transaction)"))?;
+        let _tx_guard = self.acquire_transaction_lock(timeout)?;
 
         #[cfg(test)]
         TEST_AFTER_TRANSACTION_LOCK_HOOK.with(|cell| {
@@ -1274,10 +1315,32 @@ impl StdioLibraryChannel {
             }
         }
 
-        let response_line = match rx.recv() {
-            Ok(Ok(resp)) => resp,
-            Ok(Err(err)) => return Err(err),
-            Err(_) => return Err(LibraryError::unavailable("Core stdout closed (EOF)")),
+        let response_line = match timeout {
+            Some(limit) => {
+                let elapsed = start.elapsed();
+                let remaining = if elapsed >= limit {
+                    Duration::from_millis(0)
+                } else {
+                    limit - elapsed
+                };
+                match rx.recv_timeout(remaining) {
+                    Ok(Ok(resp)) => resp,
+                    Ok(Err(err)) => return Err(err),
+                    Err(std::sync::mpsc::RecvTimeoutError::Timeout) => {
+                        let mut pending = self.pending_responses.lock().unwrap();
+                        pending.remove(&req_id);
+                        return Err(LibraryError::unavailable("Core request timed out"));
+                    }
+                    Err(std::sync::mpsc::RecvTimeoutError::Disconnected) => {
+                        return Err(LibraryError::unavailable("Core stdout closed (EOF)"));
+                    }
+                }
+            }
+            None => match rx.recv() {
+                Ok(Ok(resp)) => resp,
+                Ok(Err(err)) => return Err(err),
+                Err(_) => return Err(LibraryError::unavailable("Core stdout closed (EOF)")),
+            },
         };
 
         #[cfg(test)]
@@ -1318,6 +1381,27 @@ impl StdioLibraryChannel {
         }
 
         decode_response(response_line.trim_end())
+    }
+
+    pub fn round_trip_timeout(
+        &self,
+        command: &str,
+        payload: serde_json::Value,
+        timeout: Option<Duration>,
+    ) -> Result<serde_json::Value, LibraryError> {
+        let req_id = format!(
+            "req-{}",
+            self.request_id_gen.fetch_add(1, Ordering::Relaxed)
+        );
+        let request = build_application_envelope(&req_id, command, payload);
+
+        self.exchange_expected_minor_timeout(request, None, timeout)
+    }
+
+    pub fn ping_timeout(&self, timeout: Duration) -> Result<PingResult, LibraryError> {
+        let val = self.round_trip_timeout("core.ping", serde_json::json!({}), Some(timeout))?;
+        serde_json::from_value(val)
+            .map_err(|e| LibraryError::malformed(&format!("Failed to parse PingResult: {e}")))
     }
 
     fn host_control_round_trip(
@@ -1652,17 +1736,42 @@ pub fn wait_timeout_or_kill(
     child.wait()
 }
 
-impl Drop for StdioLibraryChannel {
-    fn drop(&mut self) {
-        if let Ok(mut session) = self.host_session.lock() {
+impl StdioLibraryChannel {
+    pub fn shutdown_and_kill(&self, kill_timeout: Duration) {
+        self.is_down.store(true, Ordering::SeqCst);
+
+        // 1. Unblock any threads waiting for responses immediately
+        if let Ok(mut lock) = self.pending_responses.lock() {
+            for (_req_id, sender) in lock.drain() {
+                let _ = sender.send(Err(LibraryError::unavailable(
+                    "Channel is shutting down",
+                )));
+            }
+        }
+
+        // 2. Try closing host session ONLY if host_session lock is available,
+        // and exchange with bounded timeout (500ms). If cannot acquire lock or session, skip.
+        if let Ok(mut session) = self.host_session.try_lock() {
             if let Some(session) = session.take() {
-                let _ = self.host_control_round_trip(
+                let request_id = format!(
+                    "hostctl-{}",
+                    self.request_id_gen.fetch_add(1, Ordering::Relaxed)
+                );
+                let request = build_host_control_envelope(
+                    &request_id,
                     "CloseHostSession",
                     serde_json::json!({}),
                     Some(&session),
                 );
+                let _ = self.exchange_expected_minor_timeout(
+                    request,
+                    None,
+                    Some(Duration::from_millis(500)),
+                );
             }
         }
+
+        // 3. Send core.shutdown to stdin if possible (try_lock to avoid blocking)
         let req = serde_json::json!({
             "protocol": "new-manga.core",
             "version": { "major": 2, "minor": 3 },
@@ -1670,18 +1779,28 @@ impl Drop for StdioLibraryChannel {
             "command": "core.shutdown",
             "payload": {},
         });
-        if let Ok(mut stdin) = self.stdin.lock() {
+        if let Ok(mut stdin) = self.stdin.try_lock() {
             let _ = writeln!(stdin, "{req}");
             let _ = stdin.flush();
         }
+
+        // 4. Wait for child with timeout or kill
         if let Ok(mut child) = self.child.lock() {
-            let _ = wait_timeout_or_kill(&mut child, std::time::Duration::from_secs(5));
+            let _ = wait_timeout_or_kill(&mut child, kill_timeout);
         }
+
+        // 5. Join reader thread (since child is killed or exited, reader thread will receive EOF and exit)
         if let Ok(mut handle_slot) = self.reader_join_handle.lock() {
             if let Some(handle) = handle_slot.take() {
                 let _ = handle.join();
             }
         }
+    }
+}
+
+impl Drop for StdioLibraryChannel {
+    fn drop(&mut self) {
+        self.shutdown_and_kill(std::time::Duration::from_secs(5));
     }
 }
 
@@ -1727,9 +1846,7 @@ where
 
 impl LibraryChannel for StdioLibraryChannel {
     fn ping(&self) -> Result<PingResult, LibraryError> {
-        let val = self.round_trip("core.ping", serde_json::json!({}))?;
-        serde_json::from_value(val)
-            .map_err(|e| LibraryError::malformed(&format!("Failed to parse PingResult: {e}")))
+        self.ping_timeout(Duration::from_millis(2000))
     }
 
     fn list_books(&self) -> Result<Vec<BookSummary>, LibraryError> {
@@ -2423,6 +2540,8 @@ pub struct LibrarySpawnConfig {
     pub catalog_db: Option<PathBuf>,
     pub stable_duration: Duration,
     pub initial_backoff: Duration,
+    pub heartbeat_interval: Duration,
+    pub heartbeat_ping_timeout: Duration,
     pub custom_spawner: Option<LibraryChannelSpawner>,
 }
 
@@ -2442,13 +2561,15 @@ impl LibrarySpawnConfig {
             catalog_db,
             stable_duration: Duration::from_secs(30),
             initial_backoff: Duration::from_millis(500),
+            heartbeat_interval: Duration::from_millis(1500),
+            heartbeat_ping_timeout: Duration::from_millis(2000),
             custom_spawner: None,
         }
     }
 }
 
 pub(crate) struct ResilientCoreContext {
-    pub(crate) inner: Mutex<Option<StdioLibraryChannel>>,
+    pub(crate) inner: Mutex<Option<Arc<StdioLibraryChannel>>>,
     pub(crate) config: LibrarySpawnConfig,
     pub(crate) is_restarting: AtomicBool,
     pub(crate) consecutive_failures: AtomicU32,
@@ -2538,11 +2659,11 @@ impl ResilientCoreContext {
         std::thread::Builder::new()
             .name("core-self-healing".to_string())
             .spawn(move || {
-                // 1. 清理并回收旧进程
+                // 1. 清理并回收旧进程（R-009: 有界强制回收）
                 {
                     if let Ok(mut guard) = ctx.inner.lock() {
                         if let Some(old) = guard.take() {
-                            drop(old);
+                            old.shutdown_and_kill(Duration::from_millis(1500));
                         }
                     }
                 }
@@ -2609,7 +2730,7 @@ impl ResilientCoreContext {
 
                             // 原子安装新 channel
                             if let Ok(mut guard) = ctx.inner.lock() {
-                                *guard = Some(new_chan);
+                                *guard = Some(Arc::new(new_chan));
                             }
 
                             // R-001: 启动成功不立即清零 consecutive_failures！
@@ -2659,7 +2780,7 @@ impl ResilientLibraryChannel {
             None
         };
         let ctx = Arc::new(ResilientCoreContext {
-            inner: Mutex::new(initial_channel),
+            inner: Mutex::new(initial_channel.map(Arc::new)),
             config,
             is_restarting: AtomicBool::new(false),
             consecutive_failures: AtomicU32::new(initial_failures),
@@ -2689,14 +2810,14 @@ impl ResilientLibraryChannel {
         self.ctx.consecutive_failures.store(1, Ordering::SeqCst);
     }
 
-    /// AC2: Periodic heartbeat and dead sidecar recovery.
+    /// AC2 & R-008: Periodic heartbeat and dead/unresponsive sidecar recovery.
     pub fn start_heartbeat(&self) {
         let ctx = Arc::clone(&self.ctx);
         std::thread::Builder::new()
             .name("core-heartbeat".to_string())
             .spawn(move || {
                 while !ctx.heartbeat_stop.load(Ordering::Relaxed) {
-                    std::thread::sleep(Duration::from_millis(1500));
+                    std::thread::sleep(ctx.config.heartbeat_interval);
                     if ctx.heartbeat_stop.load(Ordering::Relaxed) {
                         break;
                     }
@@ -2704,9 +2825,6 @@ impl ResilientLibraryChannel {
                         continue;
                     }
                     if ctx.is_restarting.load(Ordering::SeqCst) {
-                        continue;
-                    }
-                    if ctx.consecutive_failures.load(Ordering::SeqCst) >= 3 {
                         continue;
                     }
 
@@ -2725,31 +2843,44 @@ impl ResilientLibraryChannel {
                         }
                     }
 
-                    let needs_restart = {
+                    let chan_opt = {
                         if let Ok(guard) = ctx.inner.lock() {
-                            match guard.as_ref() {
-                                Some(chan) => {
-                                    if chan.is_down.load(Ordering::SeqCst) {
-                                        true
-                                    } else if let Ok(mut child) = chan.child.lock() {
-                                        match child.try_wait() {
-                                            Ok(Some(_status)) => true,
-                                            Ok(None) => false,
-                                            Err(_) => true,
-                                        }
-                                    } else {
-                                        false
-                                    }
-                                }
-                                None => true,
-                            }
+                            guard.clone()
                         } else {
-                            false
+                            None
                         }
                     };
 
-                    if needs_restart {
-                        eprintln!("[heartbeat] Detected dead core_service, triggering restart");
+                    let needs_restart = match chan_opt {
+                        None => true,
+                        Some(ref chan) => {
+                            if chan.is_down.load(Ordering::SeqCst) {
+                                true
+                            } else if let Ok(mut child) = chan.child.lock() {
+                                match child.try_wait() {
+                                    Ok(Some(_status)) => true,
+                                    Ok(None) => {
+                                        // R-008: Process is alive; probe IPC responsiveness with bounded ping timeout
+                                        match chan.ping_timeout(ctx.config.heartbeat_ping_timeout) {
+                                            Ok(_) => false,
+                                            Err(err) => {
+                                                eprintln!(
+                                                    "[heartbeat] core_service unresponsive to ping ({err}), triggering restart"
+                                                );
+                                                true
+                                            }
+                                        }
+                                    }
+                                    Err(_) => true,
+                                }
+                            } else {
+                                false
+                            }
+                        }
+                    };
+
+                    if needs_restart && !ctx.heartbeat_stop.load(Ordering::Relaxed) {
+                        eprintln!("[heartbeat] Detected dead or unresponsive core_service, triggering restart");
                         ctx.trigger_restart();
                     }
                 }
@@ -2761,14 +2892,20 @@ impl ResilientLibraryChannel {
     where
         F: FnOnce(&StdioLibraryChannel) -> Result<R, LibraryError>,
     {
-        let guard = self
-            .ctx
-            .inner
-            .lock()
-            .map_err(|_| LibraryError::unavailable("Lock poisoned"))?;
-        match guard.as_ref() {
+        // R-009: Only hold inner lock long enough to clone the Arc<StdioLibraryChannel>,
+        // never holding inner lock during IPC round-trip execution.
+        let chan = {
+            let guard = self
+                .ctx
+                .inner
+                .lock()
+                .map_err(|_| LibraryError::unavailable("Lock poisoned"))?;
+            guard.clone()
+        };
+
+        match chan {
             Some(chan) => {
-                let res = f(chan);
+                let res = f(&chan);
                 if let Err(ref err) = res {
                     if err.code == "CORE_UNAVAILABLE" || chan.is_down.load(Ordering::SeqCst) {
                         self.ctx.trigger_restart();
@@ -2788,13 +2925,13 @@ impl ResilientLibraryChannel {
     }
 }
 
-// R-003: ResilientLibraryChannel::drop explicitly takes and drops inner channel to trigger shutdown and joins
+// R-003, R-009: ResilientLibraryChannel::drop explicitly takes inner channel and executes bounded shutdown
 impl Drop for ResilientLibraryChannel {
     fn drop(&mut self) {
         self.ctx.heartbeat_stop.store(true, Ordering::Relaxed);
         if let Ok(mut guard) = self.ctx.inner.lock() {
             if let Some(chan) = guard.take() {
-                drop(chan);
+                chan.shutdown_and_kill(Duration::from_millis(1500));
             }
         }
     }
@@ -4547,6 +4684,275 @@ mod tests {
         assert!(
             !tasklist_str.contains(&format!("\"{pid}\"")),
             "Child process {pid} must be terminated and reaped upon channel drop"
+        );
+    }
+
+    /// R-008 verification: Heartbeat detects alive but unresponsive sidecar (e.g. hung/deadlocked).
+    /// Asserts that periodic heartbeat probes responsiveness via ping_timeout; when ping times out,
+    /// it detects the fault, emits "restarting", cleans up the hung process, and recovers.
+    #[test]
+    fn resilient_channel_heartbeat_detects_unresponsive_child_and_recovers() {
+        let events = Arc::new(Mutex::new(Vec::<(String, String)>::new()));
+        let events_clone = Arc::clone(&events);
+
+        let mut config = LibrarySpawnConfig::new(
+            "cmd.exe".to_string(),
+            PathBuf::from("."),
+            None,
+            None,
+            None,
+        );
+        config.heartbeat_interval = Duration::from_millis(50);
+        config.heartbeat_ping_timeout = Duration::from_millis(150);
+        config.initial_backoff = Duration::from_millis(10);
+
+        // Initial process: cmd /c pause (alive but never responds to IPC ping)
+        let child = Command::new("cmd")
+            .args(["/c", "pause"])
+            .stdin(Stdio::piped())
+            .stdout(Stdio::piped())
+            .stderr(Stdio::null())
+            .spawn()
+            .expect("spawn pause child");
+        let initial_pid = child.id();
+        let chan = StdioLibraryChannel::adopt_child_for_test(child).expect("adopt initial");
+
+        // Custom spawner returns a replacement child upon recovery
+        config.custom_spawner = Some(Arc::new(move |_cfg| {
+            let child = Command::new("cmd")
+                .args(["/c", "pause"])
+                .stdin(Stdio::piped())
+                .stdout(Stdio::piped())
+                .stderr(Stdio::null())
+                .spawn()
+                .expect("spawn recovered child");
+            StdioLibraryChannel::adopt_child_for_test(child)
+        }));
+
+        let resilient = ResilientLibraryChannel::new(config, Some(chan));
+        resilient.set_status_emitter(Arc::new(move |status, msg| {
+            events_clone.lock().unwrap().push((status.to_string(), msg.to_string()));
+        }));
+
+        // Start the periodic heartbeat
+        resilient.start_heartbeat();
+
+        // Wait for heartbeat to detect unresponsiveness and trigger recovery
+        let start = Instant::now();
+        while start.elapsed() < Duration::from_secs(5) {
+            let emitted = events.lock().unwrap();
+            let statuses: Vec<String> = emitted.iter().map(|(s, _)| s.clone()).collect();
+            if statuses.contains(&"restarting".to_string()) && statuses.contains(&"recovered".to_string()) {
+                break;
+            }
+            drop(emitted);
+            std::thread::sleep(Duration::from_millis(20));
+        }
+
+        let emitted = events.lock().unwrap();
+        let statuses: Vec<String> = emitted.iter().map(|(s, _)| s.clone()).collect();
+        assert!(
+            statuses.contains(&"restarting".to_string()),
+            "Heartbeat must detect unresponsive sidecar and emit restarting status"
+        );
+        assert!(
+            statuses.contains(&"recovered".to_string()),
+            "Supervisor must successfully recover sidecar after detecting unresponsive process"
+        );
+
+        // Verify the old hung process was killed and cleaned up
+        let output = Command::new("tasklist")
+            .args(["/FI", &format!("PID eq {initial_pid}"), "/FO", "CSV", "/NH"])
+            .output()
+            .expect("tasklist query");
+        let tasklist_str = String::from_utf8_lossy(&output.stdout);
+        assert!(
+            !tasklist_str.contains(&format!("\"{initial_pid}\"")),
+            "Old unresponsive child process {initial_pid} must be terminated and reaped upon recovery"
+        );
+    }
+
+    /// R-008 verification: Repeated unresponsiveness is strictly capped by retry budget to reach fatal.
+    #[test]
+    fn resilient_channel_heartbeat_unresponsive_child_caps_retries_and_reaches_fatal() {
+        let events = Arc::new(Mutex::new(Vec::<(String, String)>::new()));
+        let events_clone = Arc::clone(&events);
+        let respawn_count = Arc::new(AtomicU32::new(0));
+        let count_clone = Arc::clone(&respawn_count);
+
+        let mut config = LibrarySpawnConfig::new(
+            "cmd.exe".to_string(),
+            PathBuf::from("."),
+            None,
+            None,
+            None,
+        );
+        config.heartbeat_interval = Duration::from_millis(50);
+        config.heartbeat_ping_timeout = Duration::from_millis(150);
+        config.initial_backoff = Duration::from_millis(10);
+        config.stable_duration = Duration::from_secs(30);
+
+        // Initial unresponsive process
+        let child = Command::new("cmd")
+            .args(["/c", "pause"])
+            .stdin(Stdio::piped())
+            .stdout(Stdio::piped())
+            .stderr(Stdio::null())
+            .spawn()
+            .expect("spawn pause child");
+        let chan = StdioLibraryChannel::adopt_child_for_test(child).expect("adopt initial");
+
+        // Custom spawner repeatedly returns unresponsive processes
+        config.custom_spawner = Some(Arc::new(move |_cfg| {
+            count_clone.fetch_add(1, Ordering::SeqCst);
+            let child = Command::new("cmd")
+                .args(["/c", "pause"])
+                .stdin(Stdio::piped())
+                .stdout(Stdio::piped())
+                .stderr(Stdio::null())
+                .spawn()
+                .expect("spawn pause child");
+            StdioLibraryChannel::adopt_child_for_test(child)
+        }));
+
+        let resilient = ResilientLibraryChannel::new(config, Some(chan));
+        // Explicitly set consecutive_failures to 0 to test full budget of 3 retries
+        resilient.ctx.consecutive_failures.store(0, Ordering::SeqCst);
+
+        resilient.set_status_emitter(Arc::new(move |status, msg| {
+            events_clone.lock().unwrap().push((status.to_string(), msg.to_string()));
+        }));
+
+        resilient.start_heartbeat();
+
+        let start = Instant::now();
+        while start.elapsed() < Duration::from_secs(6) {
+            if resilient.ctx.is_fatal.load(Ordering::SeqCst) {
+                break;
+            }
+            std::thread::sleep(Duration::from_millis(20));
+        }
+
+        assert!(
+            resilient.ctx.is_fatal.load(Ordering::SeqCst),
+            "Channel must enter fatal state when repeated unresponsive timeouts exhaust retry budget"
+        );
+        let emitted = events.lock().unwrap();
+        let statuses: Vec<String> = emitted.iter().map(|(s, _)| s.clone()).collect();
+        assert_eq!(statuses.last().map(|s| s.as_str()), Some("fatal"));
+    }
+
+    /// R-009 verification: Drop / shutdown with in-flight unresponsive request completes in bounded time.
+    /// Asserts that in-flight requests waiting for an unresponsive sidecar do not block channel drop
+    /// and that the child process is guaranteed to be terminated and reaped without leaving orphan processes.
+    #[test]
+    fn resilient_channel_drop_with_in_flight_unresponsive_call_terminates_in_bounded_time() {
+        let config = LibrarySpawnConfig::new(
+            "cmd.exe".to_string(),
+            PathBuf::from("."),
+            None,
+            None,
+            None,
+        );
+
+        let child = Command::new("cmd")
+            .args(["/c", "pause"])
+            .stdin(Stdio::piped())
+            .stdout(Stdio::piped())
+            .stderr(Stdio::null())
+            .spawn()
+            .expect("spawn pause child");
+        let pid = child.id();
+
+        let chan = StdioLibraryChannel::adopt_child_for_test(child).expect("adopt initial");
+        let resilient = Arc::new(ResilientLibraryChannel::new(config, Some(chan)));
+
+        // Spawn a background thread that makes an IPC request against the unresponsive sidecar
+        let resilient_clone = Arc::clone(&resilient);
+        let worker_handle = std::thread::spawn(move || {
+            resilient_clone.list_books()
+        });
+
+        // Give worker thread a moment to enter the IPC call and wait
+        std::thread::sleep(Duration::from_millis(50));
+
+        // Now drop the resilient channel (measuring bounded shutdown time)
+        let start = Instant::now();
+        // Explicitly shutdown inner channel as drop does
+        resilient.ctx.heartbeat_stop.store(true, Ordering::Relaxed);
+        if let Ok(mut guard) = resilient.ctx.inner.lock() {
+            if let Some(c) = guard.take() {
+                c.shutdown_and_kill(Duration::from_millis(1500));
+            }
+        }
+        let elapsed = start.elapsed();
+
+        assert!(
+            elapsed < Duration::from_secs(3),
+            "Channel shutdown must complete in bounded time (took {:?})",
+            elapsed
+        );
+
+        // Worker thread must unblock and receive error
+        let worker_res = worker_handle.join().expect("worker join");
+        assert!(worker_res.is_err(), "In-flight request must fail upon shutdown");
+
+        // Give OS a moment to reap
+        std::thread::sleep(Duration::from_millis(200));
+
+        // Assert child process is reaped
+        let output = Command::new("tasklist")
+            .args(["/FI", &format!("PID eq {pid}"), "/FO", "CSV", "/NH"])
+            .output()
+            .expect("tasklist query");
+        let tasklist_str = String::from_utf8_lossy(&output.stdout);
+        assert!(
+            !tasklist_str.contains(&format!("\"{pid}\"")),
+            "Child process {pid} must be terminated and reaped on bounded shutdown"
+        );
+    }
+
+    /// R-009 verification: StdioLibraryChannel::drop does not hang indefinitely when host session is active and sidecar is hung.
+    #[test]
+    fn stdio_channel_drop_with_unresponsive_session_completes_in_bounded_time() {
+        let child = Command::new("cmd")
+            .args(["/c", "pause"])
+            .stdin(Stdio::piped())
+            .stdout(Stdio::piped())
+            .stderr(Stdio::null())
+            .spawn()
+            .expect("spawn pause child");
+        let pid = child.id();
+
+        let chan = StdioLibraryChannel::adopt_child_for_test(child).expect("adopt child");
+        // Set an active host session so drop exercises the CloseHostSession path
+        *chan.host_session.lock().unwrap() = Some(HostSession {
+            host_session_id: "test-hs".to_string(),
+            credential: "test-cred".to_string(),
+            core_session_id: "test-cs".to_string(),
+            signing_key: [0u8; 32],
+        });
+
+        let start = Instant::now();
+        drop(chan);
+        let elapsed = start.elapsed();
+
+        assert!(
+            elapsed < Duration::from_secs(3),
+            "StdioLibraryChannel drop must be bounded under unresponsive session, took {:?}",
+            elapsed
+        );
+
+        std::thread::sleep(Duration::from_millis(200));
+
+        let output = Command::new("tasklist")
+            .args(["/FI", &format!("PID eq {pid}"), "/FO", "CSV", "/NH"])
+            .output()
+            .expect("tasklist query");
+        let tasklist_str = String::from_utf8_lossy(&output.stdout);
+        assert!(
+            !tasklist_str.contains(&format!("\"{pid}\"")),
+            "Child process {pid} must be terminated and reaped upon StdioLibraryChannel drop"
         );
     }
 }

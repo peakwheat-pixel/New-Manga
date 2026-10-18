@@ -1,0 +1,23 @@
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.46s
+     Running unittests src\main.rs (apps\desktop\src-tauri\target\debug\deps\m2rc1_desktop-24448612fc7535f6.exe)
+
+running 8 tests
+test library_bridge::tests::resilient_channel_caps_retries_and_emits_fatal_after_three_failures ... ok
+test library_bridge::tests::resilient_channel_triggers_restart_and_emits_restarting_status ... ok
+test library_bridge::tests::resilient_channel_early_startup_failure_recovers_without_panic ... ok
+test library_bridge::tests::resilient_channel_crash_loop_is_bounded_and_reaches_fatal ... ok
+test library_bridge::tests::resilient_channel_heartbeat_detects_unresponsive_child_and_recovers ... ok
+test library_bridge::tests::resilient_channel_shutdown_breaks_cycle_and_reaps_child_process ... ok
+test library_bridge::tests::resilient_channel_drop_with_in_flight_unresponsive_call_terminates_in_bounded_time ... ok
+test library_bridge::tests::resilient_channel_heartbeat_unresponsive_child_caps_retries_and_reaches_fatal ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 122 filtered out; finished in 0.38s
+
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.45s
+     Running unittests src\main.rs (apps\desktop\src-tauri\target\debug\deps\m2rc1_desktop-24448612fc7535f6.exe)
+
+running 1 test
+test library_bridge::tests::stdio_channel_drop_with_unresponsive_session_completes_in_bounded_time ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 129 filtered out; finished in 0.33s
+

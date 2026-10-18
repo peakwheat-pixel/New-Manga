@@ -1,0 +1,8 @@
+{
+  "command": "npm test -- AppShell.lifecycle.test.tsx",
+  "cwd": "G:/CODEX/New Manga/apps/desktop/frontend",
+  "timestamp": "2026-10-18T08:53:58Z",
+  "exit_code": 0,
+  "tests_passed": 3,
+  "tests_failed": 0
+}

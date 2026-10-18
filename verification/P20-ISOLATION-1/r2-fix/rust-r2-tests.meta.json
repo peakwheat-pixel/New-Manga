@@ -1,0 +1,8 @@
+{
+  "command": "cargo test --manifest-path apps/desktop/src-tauri/Cargo.toml --bin m2rc1-desktop resilient_channel && cargo test --manifest-path apps/desktop/src-tauri/Cargo.toml --bin m2rc1-desktop stdio_channel_drop",
+  "cwd": "G:/CODEX/New Manga",
+  "timestamp": "2026-10-18T08:53:50Z",
+  "exit_code": 0,
+  "tests_passed": 9,
+  "tests_failed": 0
+}
