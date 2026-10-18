@@ -14,6 +14,7 @@ import json
 import os
 from pathlib import Path
 import sqlite3
+import stat
 from collections.abc import Sequence
 from datetime import datetime, timezone
 
@@ -1122,24 +1123,47 @@ class SqliteLibraryRepository:
                     resolved_dir.is_relative_to(books_base)
                     and resolved_dir != books_base
                     and resolved_dir.exists()
+                    and not _is_reparse_point(book_dir.lstat())
                 ):
-                    if not _is_reparse_point(book_dir.lstat()):
-                        for dirpath, dirnames, filenames in os.walk(str(resolved_dir), topdown=False):
-                            dp = Path(dirpath)
-                            try:
-                                if _is_reparse_point(dp.lstat()):
-                                    continue
-                                if not filenames and not dirnames:
-                                    os.rmdir(dirpath)
-                                elif not filenames:
-                                    os.rmdir(dirpath)
-                            except OSError:
-                                pass
+                    # AC8 (R-011): no recursive enumeration any more.  The
+                    # previous os.walk visited every entry under the book
+                    # directory just to rmdir empty ones, which enumerates
+                    # user-visible export directories as a side effect.
+                    # Now only the ancestor directories of the managed
+                    # targets this run actually removed may be pruned,
+                    # deepest first, and each prune is a plain rmdir that
+                    # fails as soon as the directory is not empty.  Nothing
+                    # under the book directory is listed, so a user export
+                    # directory can be neither enumerated nor removed.
+                    ancestors: set[Path] = set()
+                    for rel_target in targets:
+                        parts = [
+                            seg
+                            for seg in str(rel_target).replace("\\", "/").split("/")
+                            if seg
+                        ]
+                        for cut in range(len(parts) - 1, 0, -1):
+                            ancestors.add(Path(*parts[:cut]))
+                    for rel_dir in sorted(
+                        ancestors, key=lambda item: len(item.parts), reverse=True
+                    ):
+                        probe_dir = root / rel_dir
                         try:
-                            if not _is_reparse_point(book_dir.lstat()):
-                                os.rmdir(str(resolved_dir))
+                            probe_stat = probe_dir.lstat()
                         except OSError:
-                            pass
+                            continue
+                        if not stat.S_ISDIR(probe_stat.st_mode):
+                            continue
+                        if _is_reparse_point(probe_stat):
+                            continue
+                        try:
+                            probe_dir.rmdir()
+                        except OSError:
+                            pass  # not empty (or vanished): leave it alone
+                    try:
+                        os.rmdir(str(book_dir))
+                    except OSError:
+                        pass
             except Exception:
                 pass
 
