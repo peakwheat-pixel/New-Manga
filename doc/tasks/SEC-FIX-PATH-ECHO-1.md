@@ -107,7 +107,8 @@ REPRO_RESULT=PASS (the forbidden OS-path echo was reproduced; secret key was dro
 - Closeout date：2026-10-17（Asia/Shanghai）。
 - **独立 Review**：`verification/SEC-FIX-PATH-ECHO-1/dsh-review-r1.md`（Reviewer=dsh ≠ Owner=Codex），`decision: approved`，`reviewed_head=6f27cf72a`；其 Addendum 1 记录集成后核验与证据行尾规范化（方案 A）。
 - **集成**：分支 `codex/SEC-FIX-PATH-ECHO-1` 以 `--no-ff` 合并入 main，merge commit `06fb49f838fd1d6c83c64158aeacc0ed2c765d36`（写入前已用 `git merge-base --is-ancestor` 证明其已是 main 祖先）。
-- **主仓复验**：`python -m pytest tests/core -q -p no:cacheprovider` = `536 passed, 1 warning` / EXIT 0。
+- **主仓复验（owner）**：`python -m pytest tests/core -q -p no:cacheprovider` = `536 passed, 1 warning` / EXIT 0。
+- **主仓独立复跑（Coordinator dsh，2026-10-18 12:12）**：同一命令在同一 HEAD 上由 Coordinator 独立执行 = `536 passed, 1 warning in 38.61s` / EXIT 0，与 owner 记录（39.15s）一致；**证明该修复未引入 Core 侧回归**。原始输出：`verification/SEC-FIX-PATH-ECHO-1/core-pytest-coordinator-rerun.log`（sha256 `a52ecab36203016cb4a810918e9213c55c59493e570cae9578ed796a77579f0e`）。
 - **证据可复现性**：新增 `.gitattributes`（LF）后执行"删除 + 重新检出"验证，19/19 pin 与磁盘字节一致。
 - canonical_evidence_status：`complete`（19/19，commit 包含性校验通过）。
 - resource_closeout_status：`accounted_with_preserved_residuals` —— 保留 `verification/SEC-FIX-PATH-ECHO-1/tmp/**`（Python/Node 测试临时目录）与 4 个 `verification/P04/diagnostic_p22_*.jsonl`（Rust source 测试生成），均未纳入提交；删除/迁移/归档数量 = 0。
