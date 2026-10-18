@@ -898,8 +898,19 @@ class SqliteLibraryRepository:
                         (json.dumps(rj, ensure_ascii=False), run_id),
                     )
 
+                # AC2 (N-001): a bare '' is not unique within a run.  The
+                # table carries UNIQUE(pipeline_run_id, target_id), so
+                # detaching every target of a multi-target run with '' makes
+                # the second row collide and rolls the entire permanent delete
+                # back.  The detached value has to stay unique while carrying
+                # no locator meaning, so it is derived from the row's own
+                # primary key and prefixed to mark it as detached rather than
+                # as a reference to anything.
                 self._conn.execute(
-                    "UPDATE pipeline_run_targets SET page_id = '', target_id = '', region_id = NULL, snapshot_json = '{}'"
+                    "UPDATE pipeline_run_targets"
+                    " SET page_id = '',"
+                    "     target_id = 'detached:' || run_target_id,"
+                    "     region_id = NULL, snapshot_json = '{}'"
                     " WHERE page_id IN ("
                     "   SELECT p.page_id FROM pages p"
                     "   JOIN chapters c ON c.chapter_id = p.chapter_id"

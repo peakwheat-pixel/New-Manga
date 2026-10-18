@@ -675,3 +675,64 @@ def test_library_service_recycle_bin_queries_and_total_count(tmp_path: Path) -> 
         assert library.count_all_books() == 2
     finally:
         core.conn.close()
+
+
+def test_delete_book_with_multi_target_run_detaches_without_collision(
+    server: CoreServiceServer,
+) -> None:
+    """AC2 / N-001: a run with two targets must not roll the delete back.
+
+    ``pipeline_run_targets`` carries ``UNIQUE(pipeline_run_id, target_id)``.
+    Detaching every target of one run with a bare ``''`` therefore collided on
+    the second row and rolled the entire permanent delete back.  The detached
+    value must stay unique per row while carrying no locator meaning.
+    """
+    _seed_book(server, "b1", "Book 1")
+    _seed_chapter_and_page(server, "b1", "c1", "p1")
+    _seed_chapter_and_page(server, "b1", "c2", "p2")
+
+    with server._core.conn:
+        server._core.conn.execute(
+            "INSERT INTO pipeline_runs (run_id, command_type, scope_type,"
+            " requested_targets_json, settings_snapshot_json,"
+            " provider_binding_snapshot_json, context_policy_json, status,"
+            " run_json, updated_at)"
+            " VALUES ('r_multi', 'translate', 'book', '[]', '{}', '{}', '{}',"
+            " 'completed', '{}', 'now')"
+        )
+        server._core.conn.execute(
+            "INSERT INTO pipeline_run_targets (run_target_id, pipeline_run_id,"
+            " target_id, target_type, target_order, page_id, snapshot_json)"
+            " VALUES ('rt1', 'r_multi', 'p1', 'page', 0, 'p1', '{}')"
+        )
+        server._core.conn.execute(
+            "INSERT INTO pipeline_run_targets (run_target_id, pipeline_run_id,"
+            " target_id, target_type, target_order, page_id, snapshot_json)"
+            " VALUES ('rt2', 'r_multi', 'p2', 'page', 1, 'p2', '{}')"
+        )
+
+    res = _rpc(
+        server,
+        "PermanentlyDeleteBook",
+        {"book_id": "b1", "confirm_permanent_delete": True},
+    )
+    assert res["error"] is None, res["error"]
+    assert res["result"] == {"book_id": "b1", "deleted": True}
+
+    # Both rows survived the detach, each with its own unique value - which is
+    # exactly what the old single-quote detach could not do.
+    detached = sorted(
+        row[0]
+        for row in server._core.conn.execute(
+            "SELECT target_id FROM pipeline_run_targets"
+            " WHERE pipeline_run_id = 'r_multi'"
+        ).fetchall()
+    )
+    assert detached == ["detached:rt1", "detached:rt2"]
+
+    assert (
+        server._core.conn.execute(
+            "SELECT COUNT(*) FROM books WHERE book_id = 'b1'"
+        ).fetchone()[0]
+        == 0
+    )
