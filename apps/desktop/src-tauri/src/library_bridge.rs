@@ -1248,6 +1248,7 @@ pub struct StdioLibraryChannel {
     pending_drained: Arc<AtomicBool>,
     last_shutdown_error: Arc<Mutex<Option<String>>>,
     child_reap_fallback_handle: Mutex<Option<std::thread::JoinHandle<()>>>,
+    shutdown_deadline: Mutex<Option<Instant>>,
 }
 
 struct HostSession {
@@ -1496,6 +1497,7 @@ impl StdioLibraryChannel {
             pending_drained: Arc::new(AtomicBool::new(false)),
             last_shutdown_error: Arc::new(Mutex::new(None)),
             child_reap_fallback_handle: Mutex::new(None),
+            shutdown_deadline: Mutex::new(None),
         })
     }
 
@@ -1762,7 +1764,17 @@ impl StdioLibraryChannel {
 
         let (tx, rx) = std::sync::mpsc::sync_channel(1);
         {
-            let mut pending = lock_timeout_recover(&self.pending_responses, Duration::from_millis(100))
+            let rem_pending = match timeout {
+                Some(limit) => {
+                    let el = start.elapsed();
+                    if el >= limit {
+                        return Err(LibraryError::unavailable("Core request timed out before acquiring pending lock"));
+                    }
+                    Duration::from_millis(100).min(limit - el)
+                }
+                None => Duration::from_millis(100),
+            };
+            let mut pending = lock_timeout_recover(&self.pending_responses, rem_pending)
                 .ok_or_else(|| LibraryError::unavailable("Timed out acquiring pending mutex"))?;
             pending.insert(req_id.clone(), tx);
         }
@@ -1771,7 +1783,8 @@ impl StdioLibraryChannel {
             Some(limit) => {
                 let elapsed = start.elapsed();
                 if elapsed >= limit {
-                    if let Some(mut pending) = lock_timeout_recover(&self.pending_responses, Duration::from_millis(10)) {
+                    let rem_clean = Duration::from_millis(10).min(limit.saturating_sub(elapsed));
+                    if let Some(mut pending) = lock_timeout_recover(&self.pending_responses, rem_clean) {
                         pending.remove(&req_id);
                     }
                     return Err(LibraryError::unavailable("Core request timed out before write"));
@@ -1788,7 +1801,11 @@ impl StdioLibraryChannel {
         };
 
         if let Err(e) = write_res {
-            if let Some(mut pending) = lock_timeout_recover(&self.pending_responses, Duration::from_millis(10)) {
+            let rem_clean = match timeout {
+                Some(limit) => Duration::from_millis(10).min(limit.saturating_sub(start.elapsed())),
+                None => Duration::from_millis(10),
+            };
+            if let Some(mut pending) = lock_timeout_recover(&self.pending_responses, rem_clean) {
                 pending.remove(&req_id);
             }
             return Err(e);
@@ -1815,7 +1832,8 @@ impl StdioLibraryChannel {
                     Ok(Ok(resp)) => resp,
                     Ok(Err(err)) => return Err(err),
                     Err(std::sync::mpsc::RecvTimeoutError::Timeout) => {
-                        if let Some(mut pending) = lock_timeout_recover(&self.pending_responses, Duration::from_millis(10)) {
+                        let rem_clean = Duration::from_millis(10).min(limit.saturating_sub(start.elapsed()));
+                        if let Some(mut pending) = lock_timeout_recover(&self.pending_responses, rem_clean) {
                             pending.remove(&req_id);
                         }
                         return Err(LibraryError::unavailable("Core request timed out"));
@@ -2319,18 +2337,34 @@ pub fn run_taskkill_bounded(pid: u32, timeout: Duration) -> Result<std::process:
     }
 
     let _ = child.kill();
-    let _ = child.wait();
+    let _ = std::thread::Builder::new()
+        .name(format!("taskkill-reaper-{pid}"))
+        .spawn(move || {
+            let _ = child.wait();
+        });
     Err(format!("taskkill /F /T for PID {pid} timed out after {timeout:?}"))
 }
 
 impl StdioLibraryChannel {
     pub fn shutdown_and_kill(&self, kill_timeout: Duration) {
-        let total_budget = kill_timeout.min(Duration::from_millis(2400));
-        let deadline = Instant::now() + total_budget;
+        let deadline = if let Ok(dl) = self.shutdown_deadline.lock() {
+            dl.unwrap_or_else(|| {
+                let total_budget = kill_timeout.min(Duration::from_millis(2400));
+                Instant::now() + total_budget
+            })
+        } else {
+            let total_budget = kill_timeout.min(Duration::from_millis(2400));
+            Instant::now() + total_budget
+        };
         self.shutdown_and_kill_with_deadline(deadline);
     }
 
     pub fn shutdown_and_kill_with_deadline(&self, deadline: Instant) {
+        if let Ok(mut dl) = self.shutdown_deadline.lock() {
+            if dl.is_none() {
+                *dl = Some(deadline);
+            }
+        }
         if self.shutdown_executed.swap(true, Ordering::SeqCst) {
             // R-009: Idempotent guard prevents duplicate cleanup and preserves single cumulative bound (< 3000ms)
             // But if child wasn't killed yet due to previous timeout, retry killing child boundedly:
@@ -2347,15 +2381,35 @@ impl StdioLibraryChannel {
                     } else {
                         let rem_tk = deadline.saturating_duration_since(Instant::now());
                         let tk_timeout = Duration::from_millis(100).min(rem_tk);
-                        if let Ok(_) = run_taskkill_bounded(self.child_id, tk_timeout) {
-                            self.child_killed.store(true, Ordering::SeqCst);
+                        match run_taskkill_bounded(self.child_id, tk_timeout) {
+                            Ok(_) => {
+                                let _ = child.try_wait();
+                                self.child_killed.store(true, Ordering::SeqCst);
+                                self.child_reaped.store(true, Ordering::SeqCst);
+                            }
+                            Err(e) => {
+                                let rem_err = deadline.saturating_duration_since(Instant::now());
+                                let err_timeout = Duration::from_millis(10).min(rem_err);
+                                if let Some(mut slot) = lock_timeout_recover(&self.last_shutdown_error, err_timeout) {
+                                    *slot = Some(e);
+                                }
+                            }
                         }
                     }
                 } else {
                     let rem_tk = deadline.saturating_duration_since(Instant::now());
                     let tk_timeout = Duration::from_millis(100).min(rem_tk);
-                    if let Ok(_) = run_taskkill_bounded(self.child_id, tk_timeout) {
-                        self.child_killed.store(true, Ordering::SeqCst);
+                    match run_taskkill_bounded(self.child_id, tk_timeout) {
+                        Ok(_) => {
+                            self.child_killed.store(true, Ordering::SeqCst);
+                        }
+                        Err(e) => {
+                            let rem_err = deadline.saturating_duration_since(Instant::now());
+                            let err_timeout = Duration::from_millis(10).min(rem_err);
+                            if let Some(mut slot) = lock_timeout_recover(&self.last_shutdown_error, err_timeout) {
+                                *slot = Some(e);
+                            }
+                        }
                     }
                 }
             }
@@ -2379,7 +2433,7 @@ impl StdioLibraryChannel {
             let pending_arc = Arc::clone(&self.pending_responses);
             let pending_drained_flag = Arc::clone(&self.pending_drained);
             let last_shutdown_err = Arc::clone(&self.last_shutdown_error);
-            let _ = std::thread::Builder::new()
+            let spawn_res = std::thread::Builder::new()
                 .name("pending-drain-fallback".to_string())
                 .spawn(move || {
                     let start = Instant::now();
@@ -2405,6 +2459,15 @@ impl StdioLibraryChannel {
                         }
                     }
                 });
+            if let Err(e) = spawn_res {
+                let err_msg = format!("failed to spawn pending-drain-fallback worker: {e}");
+                eprintln!("[shutdown] {err_msg}");
+                let rem_err = deadline.saturating_duration_since(Instant::now());
+                let err_timeout = Duration::from_millis(10).min(rem_err);
+                if let Some(mut slot) = lock_timeout_recover(&self.last_shutdown_error, err_timeout) {
+                    *slot = Some(err_msg);
+                }
+            }
         }
 
         // 2. Try closing host session ONLY if host_session lock is available,
@@ -2466,7 +2529,9 @@ impl StdioLibraryChannel {
             } else if let Err(ref e) = wait_res {
                 let err_str = format!("wait_timeout_or_kill failed: {e}");
                 eprintln!("[shutdown] {err_str}");
-                if let Some(mut slot) = lock_timeout_recover(&self.last_shutdown_error, Duration::from_millis(10)) {
+                let rem_err1 = deadline.saturating_duration_since(Instant::now());
+                let err_timeout1 = Duration::from_millis(10).min(rem_err1);
+                if let Some(mut slot) = lock_timeout_recover(&self.last_shutdown_error, err_timeout1) {
                     *slot = Some(err_str);
                 }
                 // Fallback force kill via OS taskkill (/F /T) to guarantee no orphan
@@ -2474,12 +2539,15 @@ impl StdioLibraryChannel {
                 let tk_timeout = Duration::from_millis(250).min(rem_tk);
                 match run_taskkill_bounded(self.child_id, tk_timeout) {
                     Ok(_) => {
+                        let _ = child.try_wait();
                         self.child_killed.store(true, Ordering::SeqCst);
                         self.child_reaped.store(true, Ordering::SeqCst);
                     }
                     Err(err) => {
                         eprintln!("[shutdown] {err}");
-                        if let Some(mut slot) = lock_timeout_recover(&self.last_shutdown_error, Duration::from_millis(10)) {
+                        let rem_err2 = deadline.saturating_duration_since(Instant::now());
+                        let err_timeout2 = Duration::from_millis(10).min(rem_err2);
+                        if let Some(mut slot) = lock_timeout_recover(&self.last_shutdown_error, err_timeout2) {
                             *slot = Some(err);
                         }
                     }
@@ -2493,7 +2561,9 @@ impl StdioLibraryChannel {
                 self.child_id
             );
             eprintln!("[shutdown] Warning: {err_str}");
-            if let Some(mut slot) = lock_timeout_recover(&self.last_shutdown_error, Duration::from_millis(10)) {
+            let rem_err1 = deadline.saturating_duration_since(Instant::now());
+            let err_timeout1 = Duration::from_millis(10).min(rem_err1);
+            if let Some(mut slot) = lock_timeout_recover(&self.last_shutdown_error, err_timeout1) {
                 *slot = Some(err_str);
             }
             // 1. Immediately force-terminate process tree by PID so it cannot orphan or keep pipes open
@@ -2505,18 +2575,20 @@ impl StdioLibraryChannel {
                 }
                 Err(err) => {
                     eprintln!("[shutdown] {err}");
-                    if let Some(mut slot) = lock_timeout_recover(&self.last_shutdown_error, Duration::from_millis(10)) {
+                    let rem_err2 = deadline.saturating_duration_since(Instant::now());
+                    let err_timeout2 = Duration::from_millis(10).min(rem_err2);
+                    if let Some(mut slot) = lock_timeout_recover(&self.last_shutdown_error, err_timeout2) {
                         *slot = Some(err);
                     }
                 }
             }
 
-            // 2. Spawn deferred reaper to wait on child lock and call child.wait() to reap OS handle
+            // 2. Spawn deferred reaper to wait on child lock and call child.try_wait() to reap OS handle
             let child_arc = Arc::clone(&self.child);
             let child_reaped_flag = Arc::clone(&self.child_reaped);
             let last_shutdown_err = Arc::clone(&self.last_shutdown_error);
             let child_id = self.child_id;
-            let fallback_handle = std::thread::Builder::new()
+            let fallback_spawn = std::thread::Builder::new()
                 .name("child-reap-fallback".to_string())
                 .spawn(move || {
                     let start = Instant::now();
@@ -2524,17 +2596,33 @@ impl StdioLibraryChannel {
                     while start.elapsed() < Duration::from_millis(2500) {
                         if let Some(mut child) = lock_timeout_recover(&child_arc, Duration::from_millis(50)) {
                             acquired = true;
-                            match child.wait() {
-                                Ok(status) => {
-                                    eprintln!("[shutdown] fallback reap completed for PID {child_id} with status {status}");
-                                    child_reaped_flag.store(true, Ordering::SeqCst);
-                                }
-                                Err(e) => {
-                                    let err_msg = format!("fallback reap child.wait() for PID {child_id} failed: {e}");
-                                    eprintln!("[shutdown] {err_msg}");
-                                    if let Some(mut slot) = lock_timeout_recover(&last_shutdown_err, Duration::from_millis(20)) {
-                                        *slot = Some(err_msg);
+                            let reap_start = Instant::now();
+                            let mut reaped = false;
+                            while reap_start.elapsed() < Duration::from_millis(400) {
+                                match child.try_wait() {
+                                    Ok(Some(status)) => {
+                                        eprintln!("[shutdown] fallback reap completed for PID {child_id} with status {status}");
+                                        child_reaped_flag.store(true, Ordering::SeqCst);
+                                        reaped = true;
+                                        break;
                                     }
+                                    Ok(None) => {
+                                        std::thread::sleep(Duration::from_millis(15));
+                                    }
+                                    Err(e) => {
+                                        let err_msg = format!("fallback reap child.try_wait() for PID {child_id} failed: {e}");
+                                        eprintln!("[shutdown] {err_msg}");
+                                        if let Some(mut slot) = lock_timeout_recover(&last_shutdown_err, Duration::from_millis(20)) {
+                                            *slot = Some(err_msg);
+                                        }
+                                        break;
+                                    }
+                                }
+                            }
+                            if !reaped {
+                                let _ = child.kill();
+                                if let Ok(Some(_)) = child.try_wait() {
+                                    child_reaped_flag.store(true, Ordering::SeqCst);
                                 }
                             }
                             break;
@@ -2549,8 +2637,23 @@ impl StdioLibraryChannel {
                         }
                     }
                 });
-            if let Some(mut slot) = lock_timeout_recover(&self.child_reap_fallback_handle, Duration::from_millis(20)) {
-                *slot = fallback_handle.ok();
+            match fallback_spawn {
+                Ok(handle) => {
+                    let rem_slot = deadline.saturating_duration_since(Instant::now());
+                    let slot_timeout = Duration::from_millis(20).min(rem_slot);
+                    if let Some(mut slot) = lock_timeout_recover(&self.child_reap_fallback_handle, slot_timeout) {
+                        *slot = Some(handle);
+                    }
+                }
+                Err(e) => {
+                    let err_msg = format!("failed to spawn child-reap-fallback for PID {}: {e}", self.child_id);
+                    eprintln!("[shutdown] {err_msg}");
+                    let rem_err = deadline.saturating_duration_since(Instant::now());
+                    let err_timeout = Duration::from_millis(10).min(rem_err);
+                    if let Some(mut slot) = lock_timeout_recover(&self.last_shutdown_error, err_timeout) {
+                        *slot = Some(err_msg);
+                    }
+                }
             }
         }
 
@@ -2603,7 +2706,12 @@ impl StdioLibraryChannel {
 
 impl Drop for StdioLibraryChannel {
     fn drop(&mut self) {
-        self.shutdown_and_kill(std::time::Duration::from_millis(2400));
+        let deadline = if let Ok(dl) = self.shutdown_deadline.lock() {
+            dl.unwrap_or_else(|| Instant::now() + Duration::from_millis(2400))
+        } else {
+            Instant::now() + Duration::from_millis(2400)
+        };
+        self.shutdown_and_kill_with_deadline(deadline);
     }
 }
 
@@ -2615,6 +2723,12 @@ thread_local! {
         std::cell::RefCell::new(None);
     static TEST_RESPONSE_OBSERVER: std::cell::RefCell<Option<Box<dyn FnMut(&str, &str)>>> =
         std::cell::RefCell::new(None);
+    static TEST_FAIL_INNER_FALLBACK_SPAWN: std::cell::Cell<bool> = std::cell::Cell::new(false);
+}
+
+#[cfg(test)]
+pub(crate) fn set_test_fail_inner_fallback_spawn(fail: bool) {
+    TEST_FAIL_INNER_FALLBACK_SPAWN.with(|cell| cell.set(fail));
 }
 
 #[cfg(test)]
@@ -3424,6 +3538,8 @@ pub(crate) struct ResilientCoreContext {
     pub(crate) status_emitter: Mutex<Option<StatusEmitter>>,
     pub(crate) heartbeat_stop: AtomicBool,
     pub(crate) inner_fallback_shutdown_completed: AtomicBool,
+    pub(crate) inner_fallback_timed_out: AtomicBool,
+    pub(crate) inner_fallback_spawn_failed: AtomicBool,
 }
 
 impl ResilientCoreContext {
@@ -3641,6 +3757,8 @@ impl ResilientLibraryChannel {
             status_emitter: Mutex::new(None),
             heartbeat_stop: AtomicBool::new(false),
             inner_fallback_shutdown_completed: AtomicBool::new(false),
+            inner_fallback_timed_out: AtomicBool::new(false),
+            inner_fallback_spawn_failed: AtomicBool::new(false),
         });
 
         // R-003: on_down captures Weak<ResilientCoreContext> to break strong reference cycle
@@ -3795,6 +3913,16 @@ impl ResilientLibraryChannel {
         self.ctx.inner_fallback_shutdown_completed.load(Ordering::SeqCst)
     }
 
+    #[allow(dead_code)]
+    pub fn is_inner_fallback_timed_out(&self) -> bool {
+        self.ctx.inner_fallback_timed_out.load(Ordering::SeqCst)
+    }
+
+    #[allow(dead_code)]
+    pub fn is_inner_fallback_spawn_failed(&self) -> bool {
+        self.ctx.inner_fallback_spawn_failed.load(Ordering::SeqCst)
+    }
+
     pub fn shutdown(&self, timeout: Duration) {
         self.ctx.heartbeat_stop.store(true, Ordering::SeqCst);
         let total_budget = timeout.min(Duration::from_millis(2400));
@@ -3817,24 +3945,56 @@ impl ResilientLibraryChannel {
             eprintln!("[shutdown] Warning: {err_str}");
             let ctx = Arc::clone(&self.ctx);
             let rem_fallback = deadline.saturating_duration_since(Instant::now());
-            let fallback_timeout = Duration::from_millis(2000).max(rem_fallback);
-            let _ = std::thread::Builder::new()
-                .name("resilient-inner-shutdown-fallback".to_string())
-                .spawn(move || {
-                    let start = Instant::now();
-                    while start.elapsed() < fallback_timeout {
-                        if let Some(mut guard) = lock_timeout_recover(&ctx.inner, Duration::from_millis(50)) {
-                            if let Some(chan) = guard.take() {
-                                eprintln!("[shutdown] fallback resilient inner shutdown executing for channel");
-                                chan.shutdown_and_kill(Duration::from_millis(1500));
+            if rem_fallback.is_zero() {
+                eprintln!("[shutdown] Error: deadline already expired; skipping fallback worker spawn");
+                self.ctx.inner_fallback_timed_out.store(true, Ordering::SeqCst);
+                return;
+            }
+
+            #[cfg(test)]
+            let fail_spawn = TEST_FAIL_INNER_FALLBACK_SPAWN.with(|f| f.get());
+            #[cfg(not(test))]
+            let fail_spawn = false;
+
+            let spawn_res = if fail_spawn {
+                Err(std::io::Error::new(std::io::ErrorKind::Other, "simulated spawn failure"))
+            } else {
+                std::thread::Builder::new()
+                    .name("resilient-inner-shutdown-fallback".to_string())
+                    .spawn(move || {
+                        while Instant::now() < deadline {
+                            let rem = deadline.saturating_duration_since(Instant::now());
+                            let poll_timeout = Duration::from_millis(50).min(rem);
+                            if poll_timeout.is_zero() {
+                                break;
                             }
-                            ctx.inner_fallback_shutdown_completed.store(true, Ordering::SeqCst);
-                            return;
+                            if let Some(mut guard) = lock_timeout_recover(&ctx.inner, poll_timeout) {
+                                let chan = guard.take();
+                                drop(guard); // 【关键】立即释放 ctx.inner guard，不得长期持有！
+                                if let Some(chan) = chan {
+                                    eprintln!("[shutdown] fallback resilient inner shutdown executing for channel");
+                                    // 【关键】继承同一绝对 deadline，绝不新开 1500ms 预算！
+                                    chan.shutdown_and_kill_with_deadline(deadline);
+                                }
+                                ctx.inner_fallback_shutdown_completed.store(true, Ordering::SeqCst);
+                                return;
+                            }
+                            let rem_after = deadline.saturating_duration_since(Instant::now());
+                            let sleep_dur = Duration::from_millis(15).min(rem_after);
+                            if sleep_dur.is_zero() {
+                                break;
+                            }
+                            std::thread::sleep(sleep_dur);
                         }
-                        std::thread::sleep(Duration::from_millis(15));
-                    }
-                    eprintln!("[shutdown] Error: resilient-inner-shutdown-fallback timed out waiting for ctx.inner lock");
-                });
+                        ctx.inner_fallback_timed_out.store(true, Ordering::SeqCst);
+                        eprintln!("[shutdown] Error: resilient-inner-shutdown-fallback timed out waiting for ctx.inner lock within deadline");
+                    })
+            };
+
+            if let Err(e) = spawn_res {
+                eprintln!("[shutdown] Error: failed to spawn resilient-inner-shutdown-fallback worker: {e}");
+                self.ctx.inner_fallback_spawn_failed.store(true, Ordering::SeqCst);
+            }
         }
     }
 }
@@ -5366,6 +5526,8 @@ mod tests {
             }))),
             heartbeat_stop: AtomicBool::new(false),
             inner_fallback_shutdown_completed: AtomicBool::new(false),
+            inner_fallback_timed_out: AtomicBool::new(false),
+            inner_fallback_spawn_failed: AtomicBool::new(false),
         });
 
         // Trigger restart
@@ -5404,6 +5566,8 @@ mod tests {
             }))),
             heartbeat_stop: AtomicBool::new(false),
             inner_fallback_shutdown_completed: AtomicBool::new(false),
+            inner_fallback_timed_out: AtomicBool::new(false),
+            inner_fallback_spawn_failed: AtomicBool::new(false),
         });
 
         // Trigger restart when consecutive_failures >= 3
@@ -6589,7 +6753,121 @@ mod tests {
             .args(["/FI", &format!("PID eq {pid}"), "/FO", "CSV", "/NH"])
             .output()
             .expect("tasklist check");
+        assert!(output.status.success(), "tasklist execution must succeed");
         assert!(!String::from_utf8_lossy(&output.stdout).contains(&format!("\"{pid}\"")));
+    }
+
+    /// N1 (P1): When inner lock contention persists beyond the shared deadline,
+    /// fallback worker times out boundedly, sets inner_fallback_timed_out = true, and does not block indefinitely.
+    #[test]
+    fn resilient_inner_lock_contention_fallback_timeout_observed() {
+        let python_exe = std::env::var("M2RC1_PYTHON").unwrap_or_else(|_| "python".to_string());
+        let child = Command::new(&python_exe)
+            .args(["-c", "import time; time.sleep(60)"])
+            .stdin(Stdio::piped())
+            .stdout(Stdio::piped())
+            .stderr(Stdio::null())
+            .spawn()
+            .expect("spawn hung child");
+        let pid = child.id();
+        let chan = StdioLibraryChannel::adopt_child_for_test(child).expect("adopt");
+        let config = LibrarySpawnConfig::new(
+            python_exe.clone(),
+            PathBuf::from("."),
+            None,
+            None,
+            None,
+        );
+        let resilient = ResilientLibraryChannel::new(config, Some(chan));
+
+        // Background thread holds ctx.inner lock for 600ms (longer than the 150ms deadline)
+        let ctx_clone = Arc::clone(&resilient.ctx);
+        let holder = std::thread::spawn(move || {
+            let _guard = ctx_clone.inner.lock().expect("acquire inner lock");
+            std::thread::sleep(Duration::from_millis(600));
+        });
+
+        std::thread::sleep(Duration::from_millis(20));
+
+        // Call shutdown with short budget 150ms
+        let start = Instant::now();
+        resilient.shutdown(Duration::from_millis(150));
+        let elapsed = start.elapsed();
+
+        // Main caller must return boundedly (< 200ms)
+        assert!(
+            elapsed < Duration::from_millis(200),
+            "resilient.shutdown must return within initial bounded lock timeout, took {:?}",
+            elapsed
+        );
+
+        // Wait for fallback worker to notice deadline expiration (should time out around 150ms)
+        let poll_start = Instant::now();
+        while !resilient.is_inner_fallback_timed_out() && poll_start.elapsed() < Duration::from_millis(1000) {
+            std::thread::sleep(Duration::from_millis(20));
+        }
+
+        assert!(
+            resilient.is_inner_fallback_timed_out(),
+            "Fallback shutdown worker must report timed out when inner lock is held beyond absolute deadline"
+        );
+
+        holder.join().expect("join holder");
+
+        // Clean up child process
+        let _ = run_taskkill_bounded(pid, Duration::from_millis(500));
+    }
+
+    /// N1 (P1): When fallback thread spawn fails, the failure is reported and recorded
+    /// into inner_fallback_spawn_failed, rather than silently ignored.
+    #[test]
+    fn resilient_inner_lock_contention_fallback_spawn_failure_reported() {
+        let python_exe = std::env::var("M2RC1_PYTHON").unwrap_or_else(|_| "python".to_string());
+        let child = Command::new(&python_exe)
+            .args(["-c", "import time; time.sleep(60)"])
+            .stdin(Stdio::piped())
+            .stdout(Stdio::piped())
+            .stderr(Stdio::null())
+            .spawn()
+            .expect("spawn hung child");
+        let pid = child.id();
+        let chan = StdioLibraryChannel::adopt_child_for_test(child).expect("adopt");
+        let config = LibrarySpawnConfig::new(
+            python_exe.clone(),
+            PathBuf::from("."),
+            None,
+            None,
+            None,
+        );
+        let resilient = ResilientLibraryChannel::new(config, Some(chan));
+
+        // Inject simulated thread spawn failure
+        set_test_fail_inner_fallback_spawn(true);
+
+        // Hold inner lock so shutdown triggers fallback branch
+        let ctx_clone = Arc::clone(&resilient.ctx);
+        let holder = std::thread::spawn(move || {
+            let _guard = ctx_clone.inner.lock().expect("acquire inner lock");
+            std::thread::sleep(Duration::from_millis(200));
+        });
+
+        std::thread::sleep(Duration::from_millis(20));
+
+        resilient.shutdown(Duration::from_millis(500));
+
+        // Reset hook
+        set_test_fail_inner_fallback_spawn(false);
+
+        // Must report and record spawn failure
+        assert!(
+            resilient.is_inner_fallback_spawn_failed(),
+            "Fallback worker spawn failure must be reported and recorded in inner_fallback_spawn_failed"
+        );
+
+        holder.join().expect("join holder");
+
+        // Clean up child process
+        let _ = run_taskkill_bounded(pid, Duration::from_millis(500));
     }
 
     #[test]

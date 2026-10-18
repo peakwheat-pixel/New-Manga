@@ -6,14 +6,14 @@
 # Command: test-ac1-overlay-bound.ps1 (Process Tree & Broken-Chain Orphan Audit)
 # ---------------------------------------------------------
 === Process Tree Zero Orphan Audit (AC2) ===
-Timestamp: 2026-10-18T14:11:15+08:00
-Test Runner PID: 46980
-Baseline Process Count: 373
-Delta Processes Evaluated: 0
+Timestamp: 2026-10-18T14:58:23+08:00
+Test Runner PID: 50028
+Baseline Process Count: 380
+Delta Processes Evaluated: 11
 Recursive Descendant PIDs Scanned: 0
-Isolation Root: C:\Users\49745\AppData\Local\Temp\p20-close-bound-5d4203e4
+Isolation Root: C:\Users\49745\AppData\Local\Temp\p20-close-bound-47519fd6
 Python Interpreter: C:\Python314\python.exe
 Residual Process Audit: 0 matching residual processes found. Count = 0 (CLEAN).
 Parent-Child Process Tree: No orphaned python / core_service / m2rc1_desktop child processes.
 Broken-Chain Process Audit: No unlinked descendant or helper processes lingering.
-Isolation Root Handle Check: Successfully removed C:\Users\49745\AppData\Local\Temp\p20-close-bound-5d4203e4 (No active handles or locks held).
+Isolation Root Handle Check: Successfully removed C:\Users\49745\AppData\Local\Temp\p20-close-bound-47519fd6 (No active handles or locks held).

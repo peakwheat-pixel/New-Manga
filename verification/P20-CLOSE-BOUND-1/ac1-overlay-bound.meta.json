@@ -1,14 +1,14 @@
 ﻿{
   "command": "cargo test --manifest-path apps/desktop/src-tauri/Cargo.toml --bin m2rc1-desktop resilient_channel_drop_after_external_kill -- --nocapture",
   "command_name": "rust_overlay_bound_test",
-  "start_time": "2026-10-18T14:11:01+08:00",
-  "end_time": "2026-10-18T14:11:02+08:00",
-  "duration_ms": 927.82,
+  "start_time": "2026-10-18T14:58:09+08:00",
+  "end_time": "2026-10-18T14:58:10+08:00",
+  "duration_ms": 982.41,
   "exit_code": 0,
   "cwd": "G:\\CODEX\\New Manga",
   "shell": "pwsh (PowerShell 7.6.6)",
   "venv": "none",
   "python_exe": "C:\\Python314\\python.exe",
-  "shutdown_elapsed_raw": "544.3µs",
-  "shutdown_elapsed_ms": 0.5443
+  "shutdown_elapsed_raw": "477.1µs",
+  "shutdown_elapsed_ms": 0.4771
 }

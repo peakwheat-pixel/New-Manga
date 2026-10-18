@@ -9,6 +9,6 @@
 running 1 test
 test library_bridge::tests::poisoned_child_lock_is_recovered_and_killed ... ok
 
-test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 143 filtered out; finished in 0.27s
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 145 filtered out; finished in 0.25s
 
 

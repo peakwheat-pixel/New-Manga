@@ -1,9 +1,9 @@
 ﻿{
   "command": "cargo test --manifest-path apps/desktop/src-tauri/Cargo.toml --bin m2rc1-desktop resilient_channel",
   "command_name": "rust_resilient_channel_tests",
-  "start_time": "2026-10-18T14:11:02+08:00",
-  "end_time": "2026-10-18T14:11:03+08:00",
-  "duration_ms": 980.69,
+  "start_time": "2026-10-18T14:58:10+08:00",
+  "end_time": "2026-10-18T14:58:11+08:00",
+  "duration_ms": 984.24,
   "exit_code": 0,
   "cwd": "G:\\CODEX\\New Manga",
   "shell": "pwsh (PowerShell 7.6.6)",

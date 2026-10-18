@@ -81,106 +81,102 @@ try {
     if (-not (Test-Path $AppExe)) {
         Write-Log "Could not find m2rc1-desktop binary. Please build the desktop app first." -ForegroundColor Red
         $scriptExitCode = 1
-        return
-    }
-
-    $resolvedExe = (Resolve-Path $AppExe).Path
-    Write-Log "Launching desktop application: $resolvedExe"
-    try {
-        $releaseHash = (Get-FileHash $resolvedExe -Algorithm SHA256).Hash.ToLower()
-    } catch {}
-
-    $pinfo = New-Object System.Diagnostics.ProcessStartInfo
-    $pinfo.FileName = $resolvedExe
-    $pinfo.UseShellExecute = $false
-    $pinfo.RedirectStandardOutput = $true
-    $pinfo.RedirectStandardError = $true
-    $pinfo.CreateNoWindow = $false
-
-    $proc = New-Object System.Diagnostics.Process
-    $proc.StartInfo = $pinfo
-    $proc.Start() | Out-Null
-    $appPid = $proc.Id
-
-    Write-Log "App launched with PID: $appPid. Waiting for window initialization and sidecar spawn (up to 15s)..."
-
-    $sidecarPids = @()
-    $foundWindow = $false
-    $pollStart = Get-Date
-
-    while (($null -eq $foundWindow -or -not $foundWindow) -and ((Get-Date) - $pollStart).TotalSeconds -lt 15) {
-        Start-Sleep -Milliseconds 500
-        
-        # Query process tree
-        $children = Get-CimInstance Win32_Process | Where-Object { $_.ParentProcessId -eq $appPid }
-        if ($children) {
-            $sidecarPids = $children | ForEach-Object { $_.ProcessId }
-        }
-        
-        # Check main window handle
-        $proc.Refresh()
-        if ($proc.MainWindowHandle -ne 0) {
-            $foundWindow = $true
-            Write-Log "Main window detected! Handle: $($proc.MainWindowHandle)"
-            break
-        }
-    }
-
-    Write-Log "Process tree state: Main PID=$appPid, Child PIDs=$($sidecarPids -join ',')"
-
-    # 3. Request normal window close (CloseMainWindow / WM_CLOSE)
-    Write-Log "Sending CloseMainWindow request..."
-    $closeStart = Get-Date
-    $closeSuccess = $proc.CloseMainWindow()
-    Write-Log "CloseMainWindow returned: $closeSuccess"
-
-    # 4. Wait for application exit within hard upper bound
-    $exitedInBound = $proc.WaitForExit($HardBoundSeconds * 1000)
-    $closeEnd = Get-Date
-    $closeElapsedMs = ($closeEnd - $closeStart).TotalMilliseconds
-
-    Write-Log "App process exited: $exitedInBound (Took $closeElapsedMs ms, bound was $($HardBoundSeconds * 1000) ms)"
-
-    if (-not $exitedInBound) {
-        Write-Log "TIMEOUT FAILED: Main application did NOT exit within $HardBoundSeconds seconds (Took $closeElapsedMs ms)! Force killing for test cleanup..." -ForegroundColor Red
-        $proc.Kill()
-        Remove-Item -Path $isolatedRoot -Recurse -Force -ErrorAction SilentlyContinue
-        $scriptExitCode = 1
-        return
-    }
-
-    # 5. Process Tree & Zero Residual Orphan Check
-    Start-Sleep -Milliseconds 500
-    $residualProcs = Get-CimInstance Win32_Process | Where-Object {
-        $_.ProcessId -eq $appPid -or
-        $sidecarPids -contains $_.ProcessId -or
-        $_.ParentProcessId -eq $appPid -or
-        $_.Name -like "*core_service*" -or
-        $_.Name -like "*m2rc1_desktop*" -or
-        $_.Name -like "*m2rc1-desktop*"
-    }
-
-    Write-Log "=== Process Tree Verification Summary ==="
-    Write-Log "Exit within bound: $exitedInBound"
-    Write-Log "Exit duration: $closeElapsedMs ms"
-    Write-Log "Residual process count: $($residualProcs.Count)"
-
-    if ($residualProcs.Count -gt 0) {
-        Write-Log "FAILED: Residual processes found:" -ForegroundColor Red
-        $residualProcs | ForEach-Object {
-            Write-Log "  Name=$($_.Name), PID=$($_.ProcessId), ParentPID=$($_.ParentProcessId)"
-        }
-        Remove-Item -Path $isolatedRoot -Recurse -Force -ErrorAction SilentlyContinue
-        $scriptExitCode = 2
-        return
     } else {
-        Write-Log "SUCCESS: Application exited within bound ($closeElapsedMs ms) and zero orphan processes remaining. Clean exit verified." -ForegroundColor Green
-    }
+        $resolvedExe = (Resolve-Path $AppExe).Path
+        Write-Log "Launching desktop application: $resolvedExe"
+        try {
+            $releaseHash = (Get-FileHash $resolvedExe -Algorithm SHA256).Hash.ToLower()
+        } catch {}
 
-    # Cleanup isolated directory
-    Remove-Item -Path $isolatedRoot -Recurse -Force -ErrorAction SilentlyContinue
-    Write-Log "Isolated root cleaned."
-    $scriptExitCode = 0
+        $pinfo = New-Object System.Diagnostics.ProcessStartInfo
+        $pinfo.FileName = $resolvedExe
+        $pinfo.UseShellExecute = $false
+        $pinfo.RedirectStandardOutput = $true
+        $pinfo.RedirectStandardError = $true
+        $pinfo.CreateNoWindow = $false
+
+        $proc = New-Object System.Diagnostics.Process
+        $proc.StartInfo = $pinfo
+        $proc.Start() | Out-Null
+        $appPid = $proc.Id
+
+        Write-Log "App launched with PID: $appPid. Waiting for window initialization and sidecar spawn (up to 15s)..."
+
+        $sidecarPids = @()
+        $foundWindow = $false
+        $pollStart = Get-Date
+
+        while (($null -eq $foundWindow -or -not $foundWindow) -and ((Get-Date) - $pollStart).TotalSeconds -lt 15) {
+            Start-Sleep -Milliseconds 500
+            
+            # Query process tree
+            $children = Get-CimInstance Win32_Process | Where-Object { $_.ParentProcessId -eq $appPid }
+            if ($children) {
+                $sidecarPids = $children | ForEach-Object { $_.ProcessId }
+            }
+            
+            # Check main window handle
+            $proc.Refresh()
+            if ($proc.MainWindowHandle -ne 0) {
+                $foundWindow = $true
+                Write-Log "Main window detected! Handle: $($proc.MainWindowHandle)"
+                break
+            }
+        }
+
+        Write-Log "Process tree state: Main PID=$appPid, Child PIDs=$($sidecarPids -join ',')"
+
+        # 3. Request normal window close (CloseMainWindow / WM_CLOSE)
+        Write-Log "Sending CloseMainWindow request..."
+        $closeStart = Get-Date
+        $closeSuccess = $proc.CloseMainWindow()
+        Write-Log "CloseMainWindow returned: $closeSuccess"
+
+        # 4. Wait for application exit within hard upper bound
+        $exitedInBound = $proc.WaitForExit($HardBoundSeconds * 1000)
+        $closeEnd = Get-Date
+        $closeElapsedMs = ($closeEnd - $closeStart).TotalMilliseconds
+
+        Write-Log "App process exited: $exitedInBound (Took $closeElapsedMs ms, bound was $($HardBoundSeconds * 1000) ms)"
+
+        if (-not $exitedInBound) {
+            Write-Log "TIMEOUT FAILED: Main application did NOT exit within $HardBoundSeconds seconds (Took $closeElapsedMs ms)! Force killing for test cleanup..." -ForegroundColor Red
+            $proc.Kill()
+            Remove-Item -Path $isolatedRoot -Recurse -Force -ErrorAction SilentlyContinue
+            $scriptExitCode = 1
+        } else {
+            # 5. Process Tree & Zero Residual Orphan Check
+            Start-Sleep -Milliseconds 500
+            $residualProcs = Get-CimInstance Win32_Process | Where-Object {
+                $_.ProcessId -eq $appPid -or
+                $sidecarPids -contains $_.ProcessId -or
+                $_.ParentProcessId -eq $appPid -or
+                $_.Name -like "*core_service*" -or
+                $_.Name -like "*m2rc1_desktop*" -or
+                $_.Name -like "*m2rc1-desktop*"
+            }
+
+            Write-Log "=== Process Tree Verification Summary ==="
+            Write-Log "Exit within bound: $exitedInBound"
+            Write-Log "Exit duration: $closeElapsedMs ms"
+            Write-Log "Residual process count: $($residualProcs.Count)"
+
+            if ($residualProcs.Count -gt 0) {
+                Write-Log "FAILED: Residual processes found:" -ForegroundColor Red
+                $residualProcs | ForEach-Object {
+                    Write-Log "  Name=$($_.Name), PID=$($_.ProcessId), ParentPID=$($_.ParentProcessId)"
+                }
+                Remove-Item -Path $isolatedRoot -Recurse -Force -ErrorAction SilentlyContinue
+                $scriptExitCode = 2
+            } else {
+                Write-Log "SUCCESS: Application exited within bound ($closeElapsedMs ms) and zero orphan processes remaining. Clean exit verified." -ForegroundColor Green
+                # Cleanup isolated directory
+                Remove-Item -Path $isolatedRoot -Recurse -Force -ErrorAction SilentlyContinue
+                Write-Log "Isolated root cleaned."
+                $scriptExitCode = 0
+            }
+        }
+    }
 } catch {
     Write-Log "Script execution threw exception: $_" -ForegroundColor Red
     $scriptExitCode = 1
@@ -229,6 +225,7 @@ try {
     [System.IO.File]::WriteAllText($metaJsonFile, ($metaObj | ConvertTo-Json -Depth 4), [System.Text.Encoding]::UTF8)
 
     Write-Host "Self-contained evidence recorded in: $resolvedOutDir"
+    exit $scriptExitCode
 }
 
 exit $scriptExitCode

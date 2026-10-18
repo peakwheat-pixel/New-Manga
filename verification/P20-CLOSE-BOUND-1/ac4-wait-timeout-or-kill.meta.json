@@ -1,9 +1,9 @@
 ﻿{
   "command": "cargo test --manifest-path apps/desktop/src-tauri/Cargo.toml --bin m2rc1-desktop wait_timeout_or_kill_returns_immediately",
   "command_name": "rust_wait_timeout_or_kill_test",
-  "start_time": "2026-10-18T14:11:04+08:00",
-  "end_time": "2026-10-18T14:11:05+08:00",
-  "duration_ms": 689.35,
+  "start_time": "2026-10-18T14:58:12+08:00",
+  "end_time": "2026-10-18T14:58:12+08:00",
+  "duration_ms": 739.07,
   "exit_code": 0,
   "cwd": "G:\\CODEX\\New Manga",
   "shell": "pwsh (PowerShell 7.6.6)",

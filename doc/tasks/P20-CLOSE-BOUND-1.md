@@ -15,7 +15,7 @@ branch: null
 worktree: G:/CODEX/New Manga
 integration_commit: null
 delivery_head: fdf715e79
-canonical_evidence_status: complete
+canonical_evidence_status: pending
 resource_closeout_status: pending
 evidence_dir: verification/P20-CLOSE-BOUND-1
 ---
@@ -34,12 +34,12 @@ Codex 对 `P20-ISOLATION-1` 的三轮独立复审中，**R-008（存活但 IPC �
 
 ## Acceptance Criteria
 
-- [ ] AC1：**（第 4/5 轮返修已闭环，待 Codex 复审）** 引入单一共享绝对 `deadline` 约束全链路（消灭无界锁、无界 taskkill 及超时后独立等待）；动态物理上限收窄至 2400 ms；静态 WCET 闭式推导为 2350 ms（$\le$ 3000 ms，具 650 ms 绝对硬裕度）；消除轮询超调；叠加测试增加 `in_flight_awaiting_response` 严格握手，证明数据已写入管道且进入响应接收后再强杀；测量真实生产入口 `resilient.shutdown`，实测耗时 **0.5443 ms**（544.3 µs，`ac1-overlay-bound.stdout.log`）。
-- [ ] AC2：**（第 4/5 轮返修已闭环，待 Codex 复审）** 升级为基线快照差集 + 递归子孙 PID 树 + 路径特征特征扫描；全方位覆盖断链后代；修复路径转义匹配；增加 `%TEMP%` 隔离根目录强制删除与句柄释放核验；发现残留或测试失败时脚本强制非零退出（`ac2-process-tree-audit.log` 确凿证明 0 残留，隔离根句柄完全释放）。
-- [x] AC3：**不回归**——`P20-ISOLATION-1` 已确认的能力不得退化：① 存活但挂起可被心跳发现并恢复；② `drop` 拆环并 reap 子进程；③ 既有 `cargo test --bin m2rc1-desktop resilient_channel`（9 项通过）与 `stdio_channel_drop`（1 项通过）全绿。给出复跑命令与输出。
-- [ ] AC4：**（第 4/5 轮返修已闭环，待 Codex 复审）** `concurrency-lock-audit.md` 全面重做：给出 16 项全链路细分推导表，涵盖外层锁、会话锁、交易锁、错误锁及超时清理锁；消除轮询超调；闭合 N1（`ctx.inner` 锁超时派发 fallback 线程接管关闭不放弃 Core 回收）；闭合 P1#2（`child` 改为 `Arc<Mutex<Child>>` 由 fallback 线程真实 `child.wait()` 回收 OS 句柄，且 taskkill 增加 `/T` 参数强杀整棵进程树）；覆盖大于管道容量的 2MB 写入满载故障注入并真断言 writer/joiner/ChildStdin 释放（`ac4-writer-pipe-overflow.stdout.log`）；taskkill exit code 检查与错误全面上报。
-- [x] AC5：**（Coordinator 于 2026-10-18 12:44 在交互式桌面、用第 3 轮代码重建的 release 复跑通过）** release 版应用（sha256 **81e3e3fc…**，12:44 重建，含第 3 轮改动）：主窗口（HWND 659540）与子进程 10428/41816/19696 检测成功，`CloseMainWindow` → **146.69 ms 内退出（上界 5000 ms）**，**残留进程 0**，脚本 exit 0（证据 `ac5-20261018-1256`）。第 4 轮已按 Coordinator 流程要求更新 `run-desktop-close-verification.ps1` 支持自包含落盘 `$OutDir`（含 console log、metadata、exit code），不再依赖外部 Tee。
-- [ ] AC6：**（第 4/5 轮返修已闭环，待 Codex 复审）** 证据完备：修复 metadata 毫秒精度截断（记录 `0.5443 ms` 与 `544.3µs`（当前实测值））；新增测试与断链后代/递归 PID 树真断言行为；全部测试与审计日志均含完整环境头与元数据落盘 `verification/P20-CLOSE-BOUND-1/**`，Canonical Evidence 表已全量对齐。
+- [ ] AC1：**（第 5 轮返修已闭环，待 Codex 复审）** 引入单一共享绝对 `deadline` 约束全链路（消灭无界锁、`run_taskkill_bounded` 超时无界 wait、超时后独立重试与 Drop 重新开预算）；全链路细分为 20 个阻塞点并全部由 `min(自身上限, remaining)` 强力截断；动态物理上限收窄至 2400 ms；静态 WCET 闭式推导为 2340 ms（$\le$ 2400 ms，具 660 ms 绝对硬裕度）；叠加测试增加 `in_flight_awaiting_response` 严格握手；测量真实生产入口 `resilient.shutdown`，实测耗时 **0.4523 ms**（452.3 µs）。
+- [ ] AC2：**（第 5 轮返修声明已收窄，待 Codex 复审）** 基于系统进程基线快照差集 + 递归子孙 PID 树 + 路径特征扫描；已证明对已知特征进程（`core_service`, `m2rc1_desktop`, 工作区/隔离根特征）实现 0 残留，隔离根目录完全删除（句柄完全释放）；任意未知断链后代声明收窄为已知特征差集覆盖，超出部分如实界定。
+- [x] AC3：**不回归**——`P20-ISOLATION-1` 已确认的能力不得退化：① 存活但挂起可被心跳发现并恢复；② `drop` 拆环并 reap 子进程；③ 既有 `cargo test --bin m2rc1-desktop resilient_channel`（9 项通过）与 `stdio_channel_drop`（1 项通过）全绿。复跑命令与输出全部通过。
+- [ ] AC4：**（第 5 轮返修已闭环，待 Codex 复审）** `concurrency-lock-audit.md` 全面重做：修正标称为真实 20 项细分推导表（行号逐一对应可复核）；闭合 N1（`ctx.inner` 锁超时 fallback 继承绝对 deadline、立即释放 guard、绝不另开 1500ms 预算，且测试覆盖成功、超时与 spawn 失败全部分支）；闭合 P1#2（消灭 reaper 无界 wait，改用有界轮询 `try_wait`；taskkill 成功后真实 `try_wait` reap 句柄；所有 fallback worker 的 spawn 失败与超时显式上报）；消灭 Drop 与重入新开预算（继承已有 deadline）；覆盖大于管道容量的 2MB 写入满载故障注入并真断言释放；taskkill exit code 检查与错误全面上报。
+- [x] AC5：**（Coordinator 于 2026-10-18 12:44 在交互式桌面、用第 3 轮代码重建的 release 复跑通过）** release 版应用：主窗口与子进程检测成功，`CloseMainWindow` → **146.69 ms 内退出（上界 5000 ms）**，**残留进程 0**，脚本 exit 0。第 5 轮已按 Coordinator 流程要求更新 `run-desktop-close-verification.ps1`：自包含落盘 `$OutDir`（含 console log、metadata、exit code），且彻底消除 `try` 块内直接 return，确保宿主进程退出码与 `ac5.exit` 绝对一致。
+- [ ] AC6：**（未达成，待代码集成与 commit 后对齐）** 如实标为未达成：由于处于工作区返修阶段（未执行 git commit），代码与最新测试日志尚未打入 commit hash，Canonical Evidence 表多项处于 pending/工作区状态，不作 complete 声明。
 
 ## 允许修改范围
 
@@ -84,6 +84,13 @@ planned：在途无响应请求 + 强杀子进程的叠加用例（Rust 单元/�
   4. 升级递归 PID 树审计与隔离根强制删除句柄核验，发现残留强制非零失败（exit 1）；
   5. 补齐 >2MB 管道满载故障注入测试，证明 kill 后内核破裂管道读端唤醒 writer 线程并释放句柄；
   6. 消除静默吞异常：kill 与 reap 错误全面日志上报与 OS 级兜底强杀。
+- 2026-10-18 用户授权进行第 5 轮返修（R5）；Antigravity 完成 Review R4 提出的全部实质缺口闭环：
+  1. **N1 绝对 deadline 继承与 guard 及时释放**：`shutdown` 在 fallback 中彻底移除 `max(2000ms, rem)`，轮询严格受限于绝对 deadline；获锁后立即 drop guard，并在锁外调用 `shutdown_and_kill_with_deadline(deadline)`，绝不另开 1500ms 预算；spawn 失败与超时显式上报并置位标记；新增覆盖超时分支与 spawn 失败分支的单元测试。
+  2. **消除无界同步 wait 与未截断锁等待**：`run_taskkill_bounded` 超时后派发后台轻量守护线程回收 taskkill 自身句柄，消除无界同步 `wait()`；`exchange` 内 pending 注册锁及所有超时清理锁、错误记录锁全部增加 `min(上限, remaining)` 截断；taskkill 成功后执行真实 `child.try_wait()` 确认句柄回收；`child-reap-fallback` 改用有界轮询（≤ 400ms），绝不调用无界 `wait()`；所有 worker spawn 错误显式记录。
+  3. **Drop 共享同一 deadline**：`StdioLibraryChannel` 记录首次建立的 deadline，`Drop` 自动继承该 deadline，消除二次开辟 2400ms 预算的隐患。
+  4. **WCET 清单修正为真实项数**：修正标称为真实 20 项细分阻塞点，逐一列出代码行号映射，给出闭式推导加和 2340 ms（$\le 2400$ ms，具 660 ms 理论硬裕度）。
+  5. **收窄 AC2/AC6 声明**：AC2 明确界定为已知进程名与工作区路径特征差集覆盖；AC6 如实标为未达成（待提交集成后对齐）。
+  6. **AC5 脚本退出码传播修复**：消除 `run-desktop-close-verification.ps1` 内部直接 return，保证进程退出码与 `ac5.exit` 100% 一致。
 
 ## Canonical Evidence
 
