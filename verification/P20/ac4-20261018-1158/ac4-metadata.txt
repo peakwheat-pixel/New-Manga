@@ -1,0 +1,9 @@
+runner=run-ac4-interaction.ps1
+method=accessibility Invoke to observable post-condition; INCLUDES UIA overhead so it is an upper bound
+samples=20
+avg_ms=39.8
+p95_ms=77.5
+max_ms=77.5
+threshold_ms=50
+fps=NOT_MEASURED
+exe_sha256=4d75998307558fa529200d0376250c9f9206caf5cf3c0d85dc24f10fb48fab54
