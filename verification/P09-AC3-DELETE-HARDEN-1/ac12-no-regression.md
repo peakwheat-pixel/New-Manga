@@ -50,6 +50,19 @@ test_bootstrap_providers: AssertionError: assert 'ready' == 'missing_dependency'
                           """AC-OPTIONAL-001/002: missing models must not stop the application."""
 ```
 
+**F-007（Codex R1 更正）**：本节原先把这 6 项**整体**定性为「环境反转」，**该定性过宽**。Codex 独立复跑后的结论是：其中 **4 项**确属环境可用性反转（本机具备 GPU / `manga-ocr`），另 **2 项**是 **Transformers API 不兼容异常**（依赖版本与调用面不匹配），属于**独立的既有缺陷**，不是「环境更好」能够解释的。
+
+修正后的分类：
+
+| 类别 | 数量 | 性质 |
+|---|---|---|
+| 环境可用性反转 | **4** | 测试要求环境**缺失**能力，而本机具备 |
+| Transformers API 不兼容 | **2** | 依赖版本与调用面不匹配，**独立的既有缺陷** |
+
+**对 AC12 结论的影响：无。** 无论归入哪一类，这 6 项都与本 Task 的改动无关（本 Task 未触碰 provider / 设备探测 / OCR / registry 代码），**本 Task 引入的回归数仍为 0**。
+
+**证据时点声明**：本节全量结果记录于本 Task 交付 head 之前的工作区快照；Codex 在其复审时复跑得到相同的 `9 failed / 2250 passed / 9 skipped`。
+
 **这些测试断言「运行时 / 模型必须缺失」**（测试名即 `..._without_a_runtime_...`、`..._missing_models_...`、`..._not_ready`），而**当前环境的实际状态是 GPU 可用、`manga-ocr` ready** —— 即**环境比测试假设的条件更好**，测试因此失败。
 
 **这与本轮改动无关**：本轮未触碰任何 provider、设备探测、OCR 或 registry 代码；且失败方向是「环境具备能力」而非「代码返回错误」，不存在由删除逻辑引起的因果路径。
