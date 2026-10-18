@@ -113,3 +113,14 @@ P02-NEW-TIME-BASELINE 33、P04 36、P03-PACKAGED-SFX-ENTRY 11、P19 9，其余�
 - resource_closeout_status：`pending`。
 - 删除、迁移、归档数量/字节数：待关闭时填写；无操作填写 0。
 - 未关闭项及保留原因：待关闭时填写。
+
+## 用户裁决记录（2026-10-18，Coordinator dsh epoch 8 登记）
+
+用户就本轮分类结果作出两项裁决：
+
+1. **AC2 名单权威性**：以**当前实测复现的 44 项**失败 Task 为准。背景记录的 41 项与实测的**差额 3 项登记为待查项** —— 不阻塞后续推进，但须在后续轮次说明差额来源。
+2. **动作授权**：**只接受分类结果**。任何入库 / 清理 / 归档动作**均需用户审阅分类清单后另行单独授权**；在获得该授权前，本轮及后续轮次**不得执行任何删除、移动、归档或 `git add` 动作**。
+
+**当前状态**：`blocked`（`blocked_by: user_disposition_after_AC1_AC2_review`）。AC1 已完成（1474 文件 / 32,081,944 字节分类，建议清理 0）；AC2 `PARTIAL`（44 项已复现并逐条留证，含 61 条 SHA 错误分类）；AC3/AC4/AC5 动作保持 `BLOCKED`。
+
+**分类清单**：`verification/GOV-DEBT-CLEANUP-1/untracked-evidence-triage.md`（逐文件）+ `failed-task-rootcause.md`（41→44 项根因）。
