@@ -49,7 +49,7 @@ evidence_dir: verification/P20-CLOSE-BOUND-HARDEN-2
 - [x] **AC2**：registry **容量饱和**有明确定义的行为（拒绝、退避或显式扩容），并有注入用例。
 - [x] **AC3**：**holder spawn 失败**路径有覆盖，且失败时句柄处置明确（不泄漏、不误 drop）。
 - [x] **AC4**：`concurrency-lock-audit.md` 的**生命周期边界**按修复后真实语义重写；不得再出现"绝不 drop"或"完整生命周期保证"这类超出实现强度的表述；行号与源码一致。
-- **AC5**：**AC7 真实交互桌面直跑**（由 Coordinator 在交互式桌面执行；本 Task 只负责脚本正确性，不得自行记 PASS）。
+- [ ] **AC5**：**AC7 真实交互桌面直跑**（由 Coordinator 在交互式桌面执行；本 Task 只负责脚本正确性，不得自行记 PASS）。**当前状态：未执行、未记 PASS** —— 须由人在交互桌面运行 `verification/P20-CLOSE-BOUND-1/run-desktop-close-verification.ps1`；本 Task 已交付并自检脚本，但不为其提供任何 PASS 依据。
 - [x] **AC6**：不回归 —— `P20-CLOSE-BOUND-HARDEN-1` 已通过的 AC8 九项回归（R-008 心跳恢复、R-003 拆环 reap、R-006 错误呈现、`MAX_RETRIES=3`、resilient 9 项、stdio drop、shutdown writes、2 MB pipe overflow）保持通过。
 - [x] **AC7**：报告中所有 40 位 SHA 必须能通过 `git cat-file -e` 校验；`sha256` 按**磁盘真实字节**实算（本仓库为 **CRLF 检出**）。
 
