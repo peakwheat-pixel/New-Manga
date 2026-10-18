@@ -176,6 +176,11 @@ class MigrationRunner:
                 conn.rollback()
                 raise
         finally:
+            if conn.in_transaction:
+                try:
+                    conn.rollback()
+                except Exception:
+                    pass
             if needs_fk_off:
                 conn.execute("PRAGMA foreign_keys = ON")
 

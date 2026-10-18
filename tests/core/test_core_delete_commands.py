@@ -460,3 +460,218 @@ def test_delete_books_whole_library_exact_match_vs_not_found(server: CoreService
     items = res["error"]["details"]["items"]
     missing_item = next(it for it in items if it["book_id"] == "b_missing")
     assert missing_item["error_code"] == "BOOK_NOT_FOUND"
+
+
+# --- R-001: Export Runtime Exception Fail-Closed ---
+
+def test_delete_book_fail_closed_on_export_runtime_exception(server: CoreServiceServer) -> None:
+    _seed_book(server, "b1", "Book 1")
+    _seed_chapter_and_page(server, "b1", "c1", "p1")
+
+    class FaultyExportRuntime:
+        def has_active_exports_for_book(self, book_id: str) -> bool:
+            raise RuntimeError("Injected export runtime failure")
+
+    # Call preflight directly with faulty export runtime
+    all_ok, items = server._core.repository.preflight_permanent_delete(
+        ["b1"], storage=server._core.storage, export_runtime=FaultyExportRuntime()
+    )
+    assert not all_ok
+    assert items[0]["book_id"] == "b1"
+    assert items[0]["error_code"] == "BOOK_BUSY"
+
+    # Verify book still exists in DB
+    row = server._core.conn.execute("SELECT book_id FROM books WHERE book_id = 'b1'").fetchone()
+    assert row is not None
+
+
+# --- R-003: Output Refs Cleanup and Pipeline Stage States Retention ---
+
+def test_delete_book_output_refs_cleared_and_stage_states_retained(server: CoreServiceServer) -> None:
+    conn = server._core.conn
+    _seed_book(server, "b1", "Book 1")
+    _seed_chapter_and_page(server, "b1", "c1", "p1")
+
+    with conn:
+        conn.execute(
+            "INSERT INTO pipeline_runs (run_id, command_type, scope_type, requested_targets_json, settings_snapshot_json, provider_binding_snapshot_json, context_policy_json, status, run_json, updated_at)"
+            " VALUES ('run1', 'translate', 'page', '[]', '{}', '{}', '{}', 'completed', '{\"scope\": {\"book_id\": \"b1\"}}', 'now')"
+        )
+        conn.execute(
+            "INSERT INTO pipeline_run_targets (run_target_id, pipeline_run_id, target_id, target_type, page_id, target_order, snapshot_json)"
+            " VALUES ('rt1', 'run1', 'p1', 'page', 'p1', 0, '{}')"
+        )
+        conn.execute(
+            "INSERT INTO pipeline_tasks (task_id, pipeline_run_id, run_target_id, target_id, target_type, page_id, status, units_json, step_run_ids_json)"
+            " VALUES ('t1', 'run1', 'rt1', 'p1', 'page', 'p1', 'completed', '[]', '[\"sr1\"]')"
+        )
+        conn.execute(
+            "INSERT INTO step_runs (step_run_id, pipeline_run_id, task_id, target_id, page_id, step_type, unit_id, status, input_refs_json, lock_snapshot_json, output_json)"
+            " VALUES ('sr1', 'run1', 't1', 'p1', 'p1', 'step1', 'u1', 'completed', '[]', '{}', '{\"data\": 1}')"
+        )
+        conn.execute(
+            "INSERT INTO step_run_output_refs (step_run_id, output_order, ref_key, value_json)"
+            " VALUES ('sr1', 0, 'mask', '{\"locator\": \"media://b1/mask.png\"}')"
+        )
+        conn.execute(
+            "INSERT INTO pipeline_stage_states (target_type, target_id, stage, status, updated_at)"
+            " VALUES ('page', 'p1', 'detection', 'completed', 'now')"
+        )
+
+    # Execute permanent delete
+    res = _rpc(server, "PermanentlyDeleteBook", {"book_id": "b1", "confirm_permanent_delete": True})
+    assert res["error"] is None
+
+    # Assert 1: step_run_output_refs value_json was properly cleared to '{}' (frozen step_run_id list was not empty)
+    ref_row = conn.execute("SELECT value_json FROM step_run_output_refs WHERE step_run_id = 'sr1'").fetchone()
+    assert ref_row is not None
+    assert ref_row["value_json"] == "{}"
+
+    # Assert 2: pipeline_stage_states history was retained and not deleted
+    stage_row = conn.execute(
+        "SELECT status FROM pipeline_stage_states WHERE target_type = 'page' AND target_id = 'p1' AND stage = 'detection'"
+    ).fetchone()
+    assert stage_row is not None
+    assert stage_row["status"] == "completed"
+
+    # Assert 3: book is deleted
+    assert conn.execute("SELECT 1 FROM books WHERE book_id = 'b1'").fetchone() is None
+
+
+# --- R-004: Cleanup Pending Retry Cleans Derived Files and Manifest ---
+
+def test_delete_book_cleanup_pending_retry_cleans_derived_and_manifest(tmp_path: Path) -> None:
+    data_dir = tmp_path / "data_retry"
+    core = assemble_production_core(data_dir)
+    catalog_db = tmp_path / "derived" / "catalog.db"
+    catalog_db.parent.mkdir(parents=True, exist_ok=True)
+    derived_root = tmp_path / "derived"
+    derived_root.mkdir(parents=True, exist_ok=True)
+    initialize_namespace(catalog_db, derived_root)
+    catalog = ResourceCatalogStore(catalog_db)
+    publisher = RenderPreviewPublisher(derived_root, catalog)
+    server = CoreServiceServer(core, render_previews=publisher)
+
+    try:
+        _seed_book(server, "b1", "Book 1")
+        rel_path = _seed_chapter_and_page(server, "b1", "c1", "p1")
+        abs_path = Path(server._core.storage.absolute_path(rel_path))
+
+        # Publish a derived preview via publisher
+        publisher.publish_original(abs_path, "page-original-p1", ".png")
+        entry = catalog.lookup("page-original-p1")
+        assert entry is not None
+        derived_file = derived_root / entry.rel_path
+        assert derived_file.is_file()
+
+        # Step 1: Inject fault on catalog.lookup during initial delete so derived preview is not cleaned
+        original_lookup = catalog.lookup
+        def faulty_lookup(res_id: str):
+            raise RuntimeError("Injected catalog lookup failure")
+
+        catalog.lookup = faulty_lookup
+
+        res1 = _rpc(server, "PermanentlyDeleteBook", {"book_id": "b1", "confirm_permanent_delete": True})
+        assert res1["error"]["code"] == "BOOK_DELETE_CLEANUP_PENDING"
+
+        # At this point:
+        # - DB row for book b1 is deleted
+        assert core.conn.execute("SELECT 1 FROM books WHERE book_id = 'b1'").fetchone() is None
+        # - Manifest row exists and holds page_ids snapshot
+        manifest_data = core.repository.get_cleanup_manifest_data("b1")
+        assert manifest_data is not None
+        assert "p1" in manifest_data["page_ids"]
+        # - Derived file has NOT been removed because cleanup failed
+        assert derived_file.is_file()
+
+        # Step 2: Restore catalog.lookup and RETRY deletion
+        catalog.lookup = original_lookup
+
+        res2 = _rpc(server, "PermanentlyDeleteBook", {"book_id": "b1", "confirm_permanent_delete": True})
+        assert res2["error"] is None
+        assert res2["result"]["deleted"] is True
+
+        # Now derived preview and catalog entry MUST be cleaned via manifest snapshot
+        assert not derived_file.exists()
+        assert catalog.lookup("page-original-p1") is None
+
+        # And manifest must now be deleted
+        assert core.repository.get_cleanup_manifest_data("b1") is None
+    finally:
+        catalog.close()
+        core.conn.close()
+
+
+# --- R-006: Migrator Finally Rollback Before Restoring Foreign Keys ---
+
+def test_migrator_finally_rollback_before_restoring_foreign_keys(tmp_path: Path) -> None:
+    import sqlite3
+    from infrastructure.sqlite.migrator import MigrationRunner
+    from infrastructure.sqlite.schema import Migration
+
+    db_path = tmp_path / "test_migration_rollback.db"
+    conn = sqlite3.connect(str(db_path))
+    conn.execute("PRAGMA foreign_keys = ON")
+
+    migrator = MigrationRunner(conn, ())
+
+    # Migration that creates a table and then fails with a non-sqlite3 Exception
+    class CustomNonSqliteError(Exception):
+        pass
+
+    faulty_migration = Migration(
+        schema_version=5,
+        migration_name="005_test_faulty",
+        sql="CREATE TABLE test_faulty_tab (id INT PRIMARY KEY);",
+    )
+
+    # Monkey-patch _split_statements to yield SQL then raise CustomNonSqliteError
+    def faulty_split(sql: str):
+        yield "CREATE TABLE test_faulty_tab (id INT PRIMARY KEY);"
+        raise CustomNonSqliteError("Simulated non-sqlite error inside migration")
+
+    migrator._split_statements = faulty_split
+
+    with pytest.raises(CustomNonSqliteError):
+        migrator._apply_one(faulty_migration)
+
+    # Assert 1: Transaction is NOT left active (rolled back)
+    assert not conn.in_transaction
+
+    # Assert 2: Table created inside transaction was rolled back
+    row = conn.execute("SELECT 1 FROM sqlite_master WHERE type='table' AND name='test_faulty_tab'").fetchone()
+    assert row is None
+
+    # Assert 3: Foreign keys PRAGMA was successfully restored to ON
+    fk_enabled = conn.execute("PRAGMA foreign_keys").fetchone()[0]
+    assert fk_enabled == 1
+
+    conn.close()
+
+
+# --- R-007: LibraryService Recycle Bin Queries and Total Books Count ---
+
+def test_library_service_recycle_bin_queries_and_total_count(tmp_path: Path) -> None:
+    core = assemble_production_core(tmp_path / "data_service")
+    library = core.library
+    try:
+        book_active = library.create_book(title="Active Book")
+        book_deleted = library.create_book(title="Trashed Book")
+
+        # Soft delete book_deleted
+        library.delete_book(book_deleted.book_id)
+
+        # list_books() must only return non-soft-deleted books
+        active_list = library.list_books()
+        assert any(b.book_id == book_active.book_id for b in active_list)
+        assert not any(b.book_id == book_deleted.book_id for b in active_list)
+
+        # list_recycle_bin_books() must only return soft-deleted books
+        trash_list = library.list_recycle_bin_books()
+        assert not any(b.book_id == book_active.book_id for b in trash_list)
+        assert any(b.book_id == book_deleted.book_id for b in trash_list)
+
+        # count_all_books() must return total existing books (active + deleted = 2)
+        assert library.count_all_books() == 2
+    finally:
+        core.conn.close()

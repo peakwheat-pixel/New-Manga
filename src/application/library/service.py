@@ -76,6 +76,18 @@ class LibraryService:
         the UI filters views)."""
         return [book for book in self._repo.list_books() if not book.deleted]
 
+    def list_deleted_books(self) -> list[Book]:
+        """Recycle bin contents: every book that is soft-deleted."""
+        return [book for book in self._repo.list_books() if book.deleted]
+
+    def list_recycle_bin_books(self) -> list[Book]:
+        """Alias for list_deleted_books."""
+        return self.list_deleted_books()
+
+    def count_all_books(self) -> int:
+        """Total existing books in the repository (active + soft-deleted)."""
+        return len(self._repo.list_books())
+
     def update_book(self, book_id: str, **changes: str) -> Book:
         book = self.get_book(book_id)
         book.apply_edit(**changes)

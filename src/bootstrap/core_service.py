@@ -1099,9 +1099,13 @@ class CoreServiceServer:
                 return None, {"code": code, "category": cat, "retryable": False}
 
             page_ids = repo.list_book_page_ids(book_id)
+            if not page_ids:
+                manifest_data = repo.get_cleanup_manifest_data(book_id)
+                if manifest_data:
+                    page_ids = manifest_data.get("page_ids", [])
             targets = repo.list_book_cleanup_targets(book_id)
             try:
-                repo.execute_permanent_delete_db({book_id: targets})
+                repo.execute_permanent_delete_db({book_id: targets}, {book_id: page_ids})
             except Exception:
                 return None, {"code": "BOOK_DELETE_FAILED", "category": "internal", "retryable": "unknown"}
 
@@ -1171,10 +1175,17 @@ class CoreServiceServer:
                     },
                 }
 
-            book_page_ids_map = {bid: repo.list_book_page_ids(bid) for bid in book_ids}
+            book_page_ids_map = {}
+            for bid in book_ids:
+                pids = repo.list_book_page_ids(bid)
+                if not pids:
+                    mdata = repo.get_cleanup_manifest_data(bid)
+                    if mdata:
+                        pids = mdata.get("page_ids", [])
+                book_page_ids_map[bid] = pids
             book_targets_map = {bid: repo.list_book_cleanup_targets(bid) for bid in book_ids}
             try:
-                repo.execute_permanent_delete_db(book_targets_map)
+                repo.execute_permanent_delete_db(book_targets_map, book_page_ids_map)
             except Exception:
                 return None, {"code": "BOOK_DELETE_FAILED", "category": "internal", "retryable": "unknown"}
 

@@ -7,6 +7,7 @@ import { PermanentDeleteConfirmDialog } from "./PermanentDeleteConfirmDialog";
 export interface RecycleBinPageProps {
   client?: LibraryClient;
   totalBooksCount?: number;
+  activeBooksCount?: number;
   initialBooks?: BookSummary[];
   onClose?: () => void;
   onDeleteSuccess?: (deletedBookIds: string[]) => void;
@@ -15,6 +16,7 @@ export interface RecycleBinPageProps {
 export function RecycleBinPage({
   client,
   totalBooksCount,
+  activeBooksCount,
   initialBooks,
   onClose,
   onDeleteSuccess,
@@ -31,8 +33,9 @@ export function RecycleBinPage({
   const fetchRecycleBooks = useCallback(async () => {
     setLoading(true);
     try {
-      const allBooks = await activeClient.listBooks();
-      setBooks(allBooks);
+      // R-007: Query specifically for soft-deleted recycle bin books
+      const recycleBooks = await activeClient.listRecycleBinBooks();
+      setBooks(recycleBooks);
     } catch {
       // Fail-soft
       setBooks([]);
@@ -76,8 +79,12 @@ export function RecycleBinPage({
     }
 
     // AC5 Rule 5: Whole library deletion blocked
+    // Effective total must represent all existing books across the library (active + soft-deleted),
+    // not just the current recycle bin page items.
     const effectiveTotal =
-      typeof totalBooksCount === "number" ? totalBooksCount : books.length;
+      typeof totalBooksCount === "number"
+        ? totalBooksCount
+        : (typeof activeBooksCount === "number" ? activeBooksCount : 0) + books.length;
     if (effectiveTotal > 0 && selectedIds.length === effectiveTotal) {
       setBatchError("不能单次批量清空整库，请保留至少一部作品或分批处理。");
       return;

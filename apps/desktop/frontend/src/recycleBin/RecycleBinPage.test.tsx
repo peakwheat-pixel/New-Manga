@@ -6,6 +6,7 @@ import { BookshelfPage } from "../bookshelf/BookshelfPage";
 import {
   LIBRARY_DELETE_BOOK_PERMANENTLY_COMMAND,
   LIBRARY_DELETE_BOOKS_PERMANENTLY_COMMAND,
+  LIBRARY_LIST_RECYCLE_BIN_BOOKS_COMMAND,
   LibraryClient,
 } from "../library/client";
 import type { BookSummary } from "../library/types";
@@ -306,5 +307,114 @@ describe("AC5: Recycle Bin Permanent Delete & Confirmation Workflow", () => {
     expect(errorEl).not.toBeNull();
     expect(errorEl?.textContent).toContain("不能单次批量清空整库");
     expect(mockInvoke).not.toHaveBeenCalled();
+  });
+
+  // 7. R-007: Real service data source assertion for soft-deleted books
+  it("R-007: queries real service data source for soft-deleted books and never displays active books", async () => {
+    const activeBooks: BookSummary[] = [
+      {
+        book_id: "active-1",
+        title: "活动书-未软删",
+        original_title: "Active Book",
+        is_favorite: false,
+        is_archived: false,
+        page_count: 10,
+        created_at: "2026-09-01T00:00:00Z",
+        updated_at: "2026-10-01T00:00:00Z",
+      },
+    ];
+
+    const softDeletedBooks: BookSummary[] = [
+      {
+        book_id: "trashed-1",
+        title: "已软删除书-回收站目标",
+        original_title: "Trashed Book",
+        is_favorite: false,
+        is_archived: false,
+        page_count: 5,
+        created_at: "2026-09-02T00:00:00Z",
+        updated_at: "2026-10-02T00:00:00Z",
+      },
+    ];
+
+    const mockInvoke = vi.fn(async (cmd: string) => {
+      if (cmd === "library_list_books") {
+        return activeBooks;
+      }
+      if (cmd === LIBRARY_LIST_RECYCLE_BIN_BOOKS_COMMAND) {
+        return softDeletedBooks;
+      }
+      return {};
+    });
+
+    const client = new LibraryClient(mockInvoke);
+
+    // Render RecycleBinPage WITHOUT initialBooks -> must trigger real fetchRecycleBooks query
+    await act(async () => {
+      root.render(<RecycleBinPage client={client} activeBooksCount={1} />);
+    });
+
+    // Verify it invoked the dedicated recycle bin command, NOT library_list_books
+    expect(mockInvoke).toHaveBeenCalledWith(LIBRARY_LIST_RECYCLE_BIN_BOOKS_COMMAND);
+    expect(mockInvoke).not.toHaveBeenCalledWith("library_list_books");
+
+    // Verify the recycle bin displays the soft-deleted book
+    const trashedItem = q('[data-testid="recycle-item-trashed-1"]');
+    expect(trashedItem).not.toBeNull();
+    expect(trashedItem?.textContent).toContain("已软删除书-回收站目标");
+
+    // Verify the recycle bin does NOT display active books (semantic inversion fixed)
+    const activeItem = q('[data-testid="recycle-item-active-1"]');
+    expect(activeItem).toBeNull();
+  });
+
+  // 8. R-007: Whole library deletion validation considers all existing books in library
+  it("R-007: allows deleting all recycle bin items if library still retains active books", async () => {
+    const trashedBooks: BookSummary[] = [
+      {
+        book_id: "trashed-1",
+        title: "软删书 1",
+        original_title: "",
+        is_favorite: false,
+        is_archived: false,
+        page_count: 1,
+        created_at: "2026-09-01T00:00:00Z",
+        updated_at: "2026-10-01T00:00:00Z",
+      },
+      {
+        book_id: "trashed-2",
+        title: "软删书 2",
+        original_title: "",
+        is_favorite: false,
+        is_archived: false,
+        page_count: 1,
+        created_at: "2026-09-01T00:00:00Z",
+        updated_at: "2026-10-01T00:00:00Z",
+      },
+    ];
+
+    const mockInvoke = vi.fn(async () => ({}));
+    const client = new LibraryClient(mockInvoke);
+
+    // Scenario A: Library has 2 active books, recycle bin has 2 soft-deleted books. Total existing = 4.
+    await act(async () => {
+      root.render(
+        <RecycleBinPage client={client} initialBooks={trashedBooks} activeBooksCount={2} />,
+      );
+    });
+
+    // Select all 2 items in recycle bin
+    await act(async () => {
+      q<HTMLInputElement>('[data-testid="recycle-select-all-checkbox"]')?.click();
+    });
+
+    // Click permanent delete
+    await act(async () => {
+      q<HTMLButtonElement>('[data-testid="recycle-bin-permanent-delete-btn"]')?.click();
+    });
+
+    // Dialog SHOULD open because 2 deleted != 4 total books in library
+    expect(q('[data-testid="permanent-delete-confirm-dialog"]')).not.toBeNull();
+    expect(q('[data-testid="recycle-bin-whole-library-error"]')).toBeNull();
   });
 });

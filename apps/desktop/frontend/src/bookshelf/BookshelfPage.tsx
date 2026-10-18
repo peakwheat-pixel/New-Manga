@@ -434,7 +434,7 @@ export function BookshelfPage({
           >
             <RecycleBinPage
               client={activeClient}
-              totalBooksCount={books.length}
+              activeBooksCount={books.length}
               onClose={() => setRecycleBinOpen(false)}
               onDeleteSuccess={() => {
                 void fetchBooks();

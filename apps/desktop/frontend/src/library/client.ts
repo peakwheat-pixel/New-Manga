@@ -58,6 +58,7 @@ export const LIBRARY_IMPORT_FOLDER_COMMAND = "library_import_folder";
  */
 export const LIBRARY_DELETE_BOOK_PERMANENTLY_COMMAND = "library_delete_book_permanently";
 export const LIBRARY_DELETE_BOOKS_PERMANENTLY_COMMAND = "library_delete_books_permanently";
+export const LIBRARY_LIST_RECYCLE_BIN_BOOKS_COMMAND = "library_list_recycle_bin_books";
 
 const CREATE_ERROR_KEYS = [
   "LIBRARY_INVALID_INPUT",
@@ -113,6 +114,19 @@ export class LibraryClient {
     } catch (error) {
       const code = typeof error === "string" ? error : (error as Error)?.message || "CORE_UNAVAILABLE";
       throw new LibraryClientError(code, `library_list_books failed: ${code}`);
+    }
+  }
+
+  async listRecycleBinBooks(): Promise<BookSummary[]> {
+    try {
+      const res = await this.invoke(LIBRARY_LIST_RECYCLE_BIN_BOOKS_COMMAND);
+      return Array.isArray(res) ? (res as BookSummary[]) : [];
+    } catch (error) {
+      if (error instanceof LibraryClientError) {
+        throw error;
+      }
+      const code = typeof error === "string" ? error : (error as Error)?.message || "CORE_UNAVAILABLE";
+      throw new LibraryClientError(code, `library_list_recycle_bin_books failed: ${code}`);
     }
   }
 

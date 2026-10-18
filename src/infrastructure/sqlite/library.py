@@ -614,7 +614,7 @@ class SqliteLibraryRepository:
     # P09-AC3-DELETE-1: Project-level permanent deletion
     # ------------------------------------------------------------------
 
-    def get_cleanup_manifest(self, book_id: str) -> list[str] | None:
+    def get_cleanup_manifest_data(self, book_id: str) -> dict[str, list[str]] | None:
         row = self._conn.execute(
             "SELECT targets_json FROM book_cleanup_manifests WHERE book_id = ?",
             (book_id,),
@@ -623,9 +623,20 @@ class SqliteLibraryRepository:
             return None
         try:
             val = json.loads(row["targets_json"])
-            return val if isinstance(val, list) else []
+            if isinstance(val, dict):
+                return {
+                    "managed_targets": list(val.get("managed_targets", [])),
+                    "page_ids": list(val.get("page_ids", [])),
+                }
+            if isinstance(val, list):
+                return {"managed_targets": list(val), "page_ids": []}
+            return None
         except (json.JSONDecodeError, TypeError):
-            return []
+            return None
+
+    def get_cleanup_manifest(self, book_id: str) -> list[str] | None:
+        data = self.get_cleanup_manifest_data(book_id)
+        return data.get("managed_targets") if data is not None else None
 
     def list_book_cleanup_targets(self, book_id: str) -> list[str]:
         targets: list[str] = []
@@ -737,7 +748,7 @@ class SqliteLibraryRepository:
                             if export_runtime.has_active_exports_for_book(book_id):
                                 item_error = "BOOK_BUSY"
                         except Exception:
-                            pass
+                            item_error = "BOOK_BUSY"
 
                 if item_error is None:
                     # 4. R-002: Shared Managed Copy (external to the requested batch)
@@ -817,7 +828,11 @@ class SqliteLibraryRepository:
             })
         return all_ok, items
 
-    def execute_permanent_delete_db(self, book_targets_map: dict[str, list[str]]) -> None:
+    def execute_permanent_delete_db(
+        self,
+        book_targets_map: dict[str, list[str]],
+        book_page_ids_map: dict[str, list[str]] | None = None,
+    ) -> None:
         now_iso = datetime.now(timezone.utc).isoformat(timespec="milliseconds")
         with self._conn:
             for book_id, targets in book_targets_map.items():
@@ -826,10 +841,25 @@ class SqliteLibraryRepository:
                 ).fetchone()
                 book_title = book_row["title"] if book_row else ""
 
+                existing_manifest = self.get_cleanup_manifest_data(book_id)
+                if not book_row and existing_manifest:
+                    continue
+
+                pids = (book_page_ids_map or {}).get(book_id)
+                if not pids:
+                    pids = self.list_book_page_ids(book_id)
+                if not pids and existing_manifest:
+                    pids = existing_manifest.get("page_ids", [])
+
+                manifest_payload = {
+                    "managed_targets": list(targets),
+                    "page_ids": list(pids),
+                }
+
                 self._conn.execute(
                     "INSERT OR REPLACE INTO book_cleanup_manifests (book_id, targets_json, created_at)"
                     " VALUES (?, ?, ?)",
-                    (book_id, json.dumps(targets, ensure_ascii=False), now_iso),
+                    (book_id, json.dumps(manifest_payload, ensure_ascii=False), now_iso),
                 )
 
                 if not book_row:
@@ -877,6 +907,25 @@ class SqliteLibraryRepository:
                     (book_id,),
                 )
 
+                # R-003: Freeze target step_run_ids before clearing step_runs.page_id
+                sr_rows = self._conn.execute(
+                    "SELECT DISTINCT sr.step_run_id FROM step_runs sr"
+                    " JOIN pages p ON p.page_id = sr.page_id"
+                    " JOIN chapters c ON c.chapter_id = p.chapter_id"
+                    " WHERE c.book_id = ?",
+                    (book_id,),
+                ).fetchall()
+                target_step_run_ids = [r["step_run_id"] for r in sr_rows]
+
+                # Clear output refs using the frozen step_run_ids
+                if target_step_run_ids:
+                    placeholders = ",".join("?" * len(target_step_run_ids))
+                    self._conn.execute(
+                        f"UPDATE step_run_output_refs SET value_json = '{{}}'"
+                        f" WHERE step_run_id IN ({placeholders})",
+                        target_step_run_ids,
+                    )
+
                 self._conn.execute(
                     "UPDATE pipeline_tasks SET page_id = '', target_id = '', region_id = NULL, units_json = '[]', step_run_ids_json = '[]'"
                     " WHERE page_id IN ("
@@ -891,17 +940,6 @@ class SqliteLibraryRepository:
                     "UPDATE step_runs SET page_id = '', target_id = '', region_id = NULL, input_refs_json = '[]', lock_snapshot_json = '{}', output_json = '{}'"
                     " WHERE page_id IN ("
                     "   SELECT p.page_id FROM pages p"
-                    "   JOIN chapters c ON c.chapter_id = p.chapter_id"
-                    "   WHERE c.book_id = ?"
-                    " )",
-                    (book_id,),
-                )
-
-                self._conn.execute(
-                    "UPDATE step_run_output_refs SET value_json = '{}'"
-                    " WHERE step_run_id IN ("
-                    "   SELECT sr.step_run_id FROM step_runs sr"
-                    "   JOIN pages p ON p.page_id = sr.page_id"
                     "   JOIN chapters c ON c.chapter_id = p.chapter_id"
                     "   WHERE c.book_id = ?"
                     " )",
@@ -932,23 +970,7 @@ class SqliteLibraryRepository:
                     (book_id, book_id),
                 )
 
-                self._conn.execute(
-                    "DELETE FROM pipeline_stage_states WHERE target_type = 'page' AND target_id IN ("
-                    "   SELECT p.page_id FROM pages p"
-                    "   JOIN chapters c ON c.chapter_id = p.chapter_id"
-                    "   WHERE c.book_id = ?"
-                    " )",
-                    (book_id,),
-                )
-                self._conn.execute(
-                    "DELETE FROM pipeline_stage_states WHERE target_type = 'region' AND target_id IN ("
-                    "   SELECT r.region_id FROM regions r"
-                    "   JOIN pages p ON p.page_id = r.page_id"
-                    "   JOIN chapters c ON c.chapter_id = p.chapter_id"
-                    "   WHERE c.book_id = ?"
-                    " )",
-                    (book_id,),
-                )
+                # R-003: Retain and detach pipeline_stage_states history (do NOT DELETE per contract §5.11.4)
 
                 exp_rows = self._conn.execute(
                     "SELECT export_id, scope_snapshot_json FROM export_history WHERE book_id = ?",
@@ -1023,12 +1045,24 @@ class SqliteLibraryRepository:
         render_previews: Any = None,
         page_ids: Sequence[str] | None = None,
     ) -> bool:
+        manifest_data = None
+        if not targets:
+            manifest_data = self.get_cleanup_manifest_data(book_id)
+            if manifest_data:
+                targets = manifest_data.get("managed_targets", [])
+
         all_deleted = True
         for t in targets:
             try:
                 storage.remove_managed(t)
             except Exception:
                 all_deleted = False
+
+        if not page_ids:
+            if manifest_data is None:
+                manifest_data = self.get_cleanup_manifest_data(book_id)
+            if manifest_data:
+                page_ids = manifest_data.get("page_ids")
 
         if render_previews is not None and page_ids:
             try:

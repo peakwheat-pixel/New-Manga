@@ -1,0 +1,105 @@
+{
+  "task_id": "P09-AC3-DELETE-1",
+  "author": "Antigravity",
+  "timestamp": "2026-10-18T16:00:00+08:00",
+  "git_head": "835f4bb17df565581a76cf66062760cdd3c85a9e",
+  "review_round": 2,
+  "fixed_items": {
+    "R-007": {
+      "status": "closed",
+      "summary": "回收站改用明确包含软删除记录的查询，整库阻止以全库现存Book数校验，新增真实数据源与全库边界断言",
+      "files": [
+        "src/application/library/service.py:80-93",
+        "apps/desktop/frontend/src/library/client.ts:21,79,185-190",
+        "apps/desktop/frontend/src/recycleBin/RecycleBinPage.tsx:31-36,75-84",
+        "apps/desktop/frontend/src/bookshelf/BookshelfPage.tsx:433-440",
+        "apps/desktop/frontend/src/recycleBin/RecycleBinPage.test.tsx:310-355"
+      ]
+    },
+    "R-001": {
+      "status": "closed",
+      "summary": "fail-closed: 活动导出查询异常时不静默吞掉，立即返回 BOOK_BUSY 拒绝删除",
+      "files": [
+        "src/infrastructure/sqlite/library.py:746-755",
+        "tests/core/test_core_delete_commands.py:465-490"
+      ]
+    },
+    "R-003": {
+      "status": "closed",
+      "summary": "先保存目标 step_run_id 集合后再清理 output refs，保留并脱离 pipeline_stage_states 历史",
+      "files": [
+        "src/infrastructure/sqlite/library.py:898-955",
+        "tests/core/test_core_delete_commands.py:492-540"
+      ]
+    },
+    "R-004": {
+      "status": "closed",
+      "summary": "将 page_ids 快照持久化进 cleanup manifest，重试时利用快照清理 derived，全部清理完成前不删除 manifest",
+      "files": [
+        "src/infrastructure/sqlite/library.py:832-855,1060-1085",
+        "src/bootstrap/core_service.py:1120-1135",
+        "tests/core/test_core_delete_commands.py:542-590"
+      ]
+    },
+    "R-006": {
+      "status": "closed",
+      "summary": "migrator 的 finally 块在尝试恢复 FK 前先回滚活动事务",
+      "files": [
+        "src/infrastructure/sqlite/migrator.py:175-185",
+        "tests/core/test_core_delete_commands.py:592-620"
+      ]
+    }
+  },
+  "collection_errors_investigation": {
+    "files": [
+      "tests/core/test_p09_fu2_import_pages.py:33",
+      "tests/core/test_page_catalog_modes.py:26",
+      "tests/core/test_pipeline_defaults_assembly.py:31"
+    ],
+    "root_cause": "测试文件头部未将仓库根目录加入 sys.path，在未设 PYTHONPATH 的独立 pytest 收集阶段报错。通过 python -m pytest 运行可自动带入仓库根目录，全部 870 项测试 100% 通过",
+    "attribution": "属于仓库既存问题（早在 6284f6f3 引入），与本 Task 改动完全无关"
+  },
+  "test_execution": {
+    "python_m_pytest_root": {
+      "command": "python -m pytest -q",
+      "exit_code": 0,
+      "passed": 870,
+      "warning": 1
+    },
+    "python_m_pytest_core_dirs": {
+      "command": "python -m pytest tests/core tests/storage tests/reading_export tests/pipeline -q",
+      "exit_code": 0,
+      "passed": 870,
+      "warning": 1
+    },
+    "python_m_pytest_delete_commands": {
+      "command": "python -m pytest tests/core/test_core_delete_commands.py -q",
+      "exit_code": 0,
+      "passed": 19,
+      "failed": 0
+    },
+    "frontend_npm_test": {
+      "command": "npm test",
+      "exit_code": 0,
+      "test_files_passed": 30,
+      "tests_passed": 296
+    },
+    "governance_check": {
+      "command": "pwsh -NoProfile -File tools/governance/check.ps1",
+      "exit_code": 0,
+      "status": "PASS"
+    }
+  },
+  "ac3_source_hashes": {
+    "AC3-source.png": {
+      "disk_sha256": "36452bb8d135ac96f1c453e11c23689d5917a2f0db42d154aca02722507153d7",
+      "baseline_sha256": "36452bb8d135ac96f1c453e11c23689d5917a2f0db42d154aca02722507153d7",
+      "match": true
+    },
+    "AC3-workflow-source.png": {
+      "disk_sha256": "ee5f4ae0aae66a3d9ad8166933132bf2fad25da6220d8f02127f69546b5a4795",
+      "baseline_sha256": "ee5f4ae0aae66a3d9ad8166933132bf2fad25da6220d8f02127f69546b5a4795",
+      "match": true
+    }
+  }
+}
