@@ -1,0 +1,101 @@
+[
+  {
+    "ProcessId": 4124,
+    "ParentProcessId": 44620,
+    "Name": "m2rc1-desktop.exe",
+    "WorkingSetMB": 32.2,
+    "WebViewType": "non-webview",
+    "UtilitySubType": "",
+    "CommandLine": "\"G:\\CODEX\\New Manga\\apps\\desktop\\src-tauri\\target\\debug\\m2rc1-desktop.exe\""
+  },
+  {
+    "ProcessId": 44344,
+    "ParentProcessId": 4124,
+    "Name": "core_service.exe",
+    "WorkingSetMB": 46.77,
+    "WebViewType": "non-webview",
+    "UtilitySubType": "",
+    "CommandLine": "\"G:\\CODEX\\New Manga\\apps\\desktop\\src-tauri\\target\\debug\\resources\\core-sidecar\\core_service.exe\" -m bootstrap.core_service"
+  },
+  {
+    "ProcessId": 40792,
+    "ParentProcessId": 4124,
+    "Name": "host_bridge.exe",
+    "WorkingSetMB": 22.35,
+    "WebViewType": "non-webview",
+    "UtilitySubType": "",
+    "CommandLine": "\"G:\\CODEX\\New Manga\\apps\\desktop\\src-tauri\\target\\debug\\resources\\core-sidecar\\host_bridge.exe\""
+  },
+  {
+    "ProcessId": 21580,
+    "ParentProcessId": 4124,
+    "Name": "msedgewebview2.exe",
+    "WorkingSetMB": 117.22,
+    "WebViewType": "browser (embedded main)",
+    "UtilitySubType": "",
+    "CommandLine": "\"C:\\Program Files (x86)\\Microsoft\\EdgeWebView\\Application\\155.0.4283.60\\msedgewebview2.exe\" --embedded-browser-webview=1 --webview-exe-name=m2rc1-desktop.exe --webview-exe-version=0.1.0 --user-data-dir=\"C:\\Users\\49745\\AppData\\Local\\com.newmanga.m2rc1.desktop\\EBWebView\" --noerrdialogs --embedded-browser-webview-dpi-awareness=2 --autoplay-policy=no-user-gesture-required --disable-features=msWebOOUI,msPdfOOUI,msSmartScreenProtection --lang=zh-CN --mojo-named-platform-channel-pipe=4124.44868.6747822033223987615 /pfhostedapp:78ac49ab16300b383ddd770bfaf5e17958c5d478"
+  },
+  {
+    "ProcessId": 11012,
+    "ParentProcessId": 44344,
+    "Name": "conhost.exe",
+    "WorkingSetMB": 7.07,
+    "WebViewType": "non-webview",
+    "UtilitySubType": "",
+    "CommandLine": "\\??\\C:\\WINDOWS\\system32\\conhost.exe 0x4"
+  },
+  {
+    "ProcessId": 21188,
+    "ParentProcessId": 40792,
+    "Name": "conhost.exe",
+    "WorkingSetMB": 7.07,
+    "WebViewType": "non-webview",
+    "UtilitySubType": "",
+    "CommandLine": "\\??\\C:\\WINDOWS\\system32\\conhost.exe 0x4"
+  },
+  {
+    "ProcessId": 11280,
+    "ParentProcessId": 21580,
+    "Name": "msedgewebview2.exe",
+    "WorkingSetMB": 13.01,
+    "WebViewType": "crashpad-handler",
+    "UtilitySubType": "",
+    "CommandLine": "\"C:\\Program Files (x86)\\Microsoft\\EdgeWebView\\Application\\155.0.4283.60\\msedgewebview2.exe\" --type=crashpad-handler --user-data-dir=C:\\Users\\49745\\AppData\\Local\\com.newmanga.m2rc1.desktop\\EBWebView /prefetch:4 /pfhostedapp:78ac49ab16300b383ddd770bfaf5e17958c5d478 --monitor-self-annotation=ptype=crashpad-handler --database=C:\\Users\\49745\\AppData\\Local\\com.newmanga.m2rc1.desktop\\EBWebView\\Crashpad --annotation=IsOfficialBuild=1 --annotation=channel= --annotation=chromium-version=155.0.8059.80 \"--annotation=exe=C:\\Program Files (x86)\\Microsoft\\EdgeWebView\\Application\\155.0.4283.60\\msedgewebview2.exe\" --annotation=plat=Win64 \"--annotation=prod=Edge WebView2\" --annotation=ver=155.0.4283.60 --initial-client-data=0x17c,0x180,0x184,0x158,0x18c,0x7ffc2c9683e0,0x7ffc2c9683f0,0x7ffc2c968400"
+  },
+  {
+    "ProcessId": 4324,
+    "ParentProcessId": 21580,
+    "Name": "msedgewebview2.exe",
+    "WorkingSetMB": 70.45,
+    "WebViewType": "gpu-process",
+    "UtilitySubType": "",
+    "CommandLine": "\"C:\\Program Files (x86)\\Microsoft\\EdgeWebView\\Application\\155.0.4283.60\\msedgewebview2.exe\" --type=gpu-process --gpu-recent-crash-count=0 --noerrdialogs --user-data-dir=\"C:\\Users\\49745\\AppData\\Local\\com.newmanga.m2rc1.desktop\\EBWebView\" --webview-exe-name=m2rc1-desktop.exe --webview-exe-version=0.1.0 --embedded-browser-webview=1 --embedded-browser-webview-dpi-awareness=2 --gpu-preferences=WAAAAAAAAADgAAAEAAAAAAAAAAAAAGAAQAAAAAAAAAADAAAAAAAAADgAAAAAAAAAAAAAAAAAAAACAAAAAAAAAAAAAAAAAAAAKAAAAAAAAAAoAAAAAAAAAAgAAAAAAAAAEAAAAAIAAAABAAAAAAAAAAgAAAAAAAAACAAAAAAAAAA= --startup-read-main-dll --metrics-shmem-handle=1780,i,3150516563865321754,6500658642191772950,262144 --field-trial-handle=1916,i,9984526064560470903,1385136185147453783,262144 --disable-features=msPdfOOUI,msSmartScreenProtection,msWebOOUI --variations-seed-version --pseudonymization-salt-handle=1936,i,7758184347228834571,3166286263368693323,4 --trace-process-track-uuid=3190708988185955192 --mojo-platform-channel-handle=1900 /prefetch:2 /pfhostedapp:78ac49ab16300b383ddd770bfaf5e17958c5d478"
+  },
+  {
+    "ProcessId": 30204,
+    "ParentProcessId": 21580,
+    "Name": "msedgewebview2.exe",
+    "WorkingSetMB": 36.78,
+    "WebViewType": "utility",
+    "UtilitySubType": "network.mojom.NetworkService",
+    "CommandLine": "\"C:\\Program Files (x86)\\Microsoft\\EdgeWebView\\Application\\155.0.4283.60\\msedgewebview2.exe\" --type=utility --utility-sub-type=network.mojom.NetworkService --lang=zh-CN --service-sandbox-type=none --noerrdialogs --user-data-dir=\"C:\\Users\\49745\\AppData\\Local\\com.newmanga.m2rc1.desktop\\EBWebView\" --webview-exe-name=m2rc1-desktop.exe --webview-exe-version=0.1.0 --embedded-browser-webview=1 --embedded-browser-webview-dpi-awareness=2 --startup-read-main-dll --metrics-shmem-handle=2112,i,7251342949172779381,5728142743376828065,524288 --field-trial-handle=1916,i,9984526064560470903,1385136185147453783,262144 --disable-features=msPdfOOUI,msSmartScreenProtection,msWebOOUI --variations-seed-version --pseudonymization-salt-handle=1936,i,7758184347228834571,3166286263368693323,4 --trace-process-track-uuid=3190708989122997041 --mojo-platform-channel-handle=2120 /prefetch:11 /pfhostedapp:78ac49ab16300b383ddd770bfaf5e17958c5d478"
+  },
+  {
+    "ProcessId": 8924,
+    "ParentProcessId": 21580,
+    "Name": "msedgewebview2.exe",
+    "WorkingSetMB": 19.32,
+    "WebViewType": "utility",
+    "UtilitySubType": "storage.mojom.StorageService",
+    "CommandLine": "\"C:\\Program Files (x86)\\Microsoft\\EdgeWebView\\Application\\155.0.4283.60\\msedgewebview2.exe\" --type=utility --utility-sub-type=storage.mojom.StorageService --lang=zh-CN --service-sandbox-type=service --noerrdialogs --user-data-dir=\"C:\\Users\\49745\\AppData\\Local\\com.newmanga.m2rc1.desktop\\EBWebView\" --webview-exe-name=m2rc1-desktop.exe --webview-exe-version=0.1.0 --embedded-browser-webview=1 --embedded-browser-webview-dpi-awareness=2 --startup-read-main-dll --metrics-shmem-handle=2484,i,13953341168092475005,18225811643950623840,524288 --field-trial-handle=1916,i,9984526064560470903,1385136185147453783,262144 --disable-features=msPdfOOUI,msSmartScreenProtection,msWebOOUI --variations-seed-version --pseudonymization-salt-handle=1936,i,7758184347228834571,3166286263368693323,4 --trace-process-track-uuid=3190708990060038890 --mojo-platform-channel-handle=2496 /prefetch:13 /pfhostedapp:78ac49ab16300b383ddd770bfaf5e17958c5d478"
+  },
+  {
+    "ProcessId": 23300,
+    "ParentProcessId": 21580,
+    "Name": "msedgewebview2.exe",
+    "WorkingSetMB": 86.98,
+    "WebViewType": "renderer",
+    "UtilitySubType": "",
+    "CommandLine": "\"C:\\Program Files (x86)\\Microsoft\\EdgeWebView\\Application\\155.0.4283.60\\msedgewebview2.exe\" --type=renderer --noerrdialogs --user-data-dir=\"C:\\Users\\49745\\AppData\\Local\\com.newmanga.m2rc1.desktop\\EBWebView\" --webview-exe-name=m2rc1-desktop.exe --webview-exe-version=0.1.0 --embedded-browser-webview=1 --embedded-browser-webview-dpi-awareness=2 --autoplay-policy=no-user-gesture-required --video-capture-use-gpu-memory-buffer --lang=zh-CN --js-flags --device-scale-factor=1 --num-raster-threads=4 --enable-main-frame-before-activation --renderer-client-id=5 --ssd-no-pressure-read-main-dll --launch-time-ticks=28907232870 --metrics-shmem-handle=3692,i,4301698909557229529,8020386177550511231,1048576 --field-trial-handle=1916,i,9984526064560470903,1385136185147453783,262144 --disable-features=msPdfOOUI,msSmartScreenProtection,msWebOOUI --variations-seed-version --pseudonymization-salt-handle=1936,i,7758184347228834571,3166286263368693323,4 --trace-process-track-uuid=3190708990997080739 --mojo-platform-channel-handle=3708 /pfhostedapp:78ac49ab16300b383ddd770bfaf5e17958c5d478 /prefetch:1"
+  }
+]

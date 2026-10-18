@@ -1,0 +1,7 @@
+[07:19:11.998] Starting probe: exe=G:\CODEX\New Manga\apps\desktop\src-tauri\target\debug\m2rc1-desktop.exe iso=C:\Users\49745\AppData\Local\Temp\p20ac1-cf0faccd settle=15s
+[07:19:12.025] Root pid=37272
+[07:19:12.683] window_found=False
+[07:19:12.688] Waiting 15s for settle...
+[07:19:27.832] TOTAL_OWNED_COUNT = 0
+[07:19:27.839] TOTAL_WORKING_SET = 0.0 MB
+[07:19:27.845] Cleanup done.

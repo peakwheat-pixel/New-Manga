@@ -1,0 +1,20 @@
+[07:21:49.946] Starting probe: exe=G:\CODEX\New Manga\apps\desktop\src-tauri\target\debug\m2rc1-desktop.exe iso=C:\Users\49745\AppData\Local\Temp\p20ac1-f69f5326 settle=40s
+[07:21:49.964] Root pid=4124
+[07:22:20.064] window_found=False
+[07:22:20.070] Waiting 40s for settle...
+[07:23:00.217] PROC m2rc1-desktop.exe  pid=4124   parent=44620  ws=  32.2 MB  wvType=non-webview 
+[07:23:00.223] PROC core_service.exe   pid=44344  parent=4124   ws= 46.77 MB  wvType=non-webview 
+[07:23:00.233] PROC host_bridge.exe    pid=40792  parent=4124   ws= 22.35 MB  wvType=non-webview 
+[07:23:00.245] PROC msedgewebview2.exe pid=21580  parent=4124   ws=117.22 MB  wvType=browser (embedded main) 
+[07:23:00.255] PROC conhost.exe        pid=11012  parent=44344  ws=  7.07 MB  wvType=non-webview 
+[07:23:00.265] PROC conhost.exe        pid=21188  parent=40792  ws=  7.07 MB  wvType=non-webview 
+[07:23:00.275] PROC msedgewebview2.exe pid=11280  parent=21580  ws= 13.01 MB  wvType=crashpad-handler 
+[07:23:00.284] PROC msedgewebview2.exe pid=4324   parent=21580  ws= 70.45 MB  wvType=gpu-process 
+[07:23:00.294] PROC msedgewebview2.exe pid=30204  parent=21580  ws= 36.78 MB  wvType=utility network.mojom.NetworkService
+[07:23:00.303] PROC msedgewebview2.exe pid=8924   parent=21580  ws= 19.32 MB  wvType=utility storage.mojom.StorageService
+[07:23:00.312] PROC msedgewebview2.exe pid=23300  parent=21580  ws= 86.98 MB  wvType=renderer 
+[07:23:00.319] TOTAL_OWNED_COUNT = 11
+[07:23:00.323] TOTAL_WORKING_SET = 459.2 MB
+[07:23:00.329] WEBVIEW_COUNT     = 6
+[07:23:00.333] WEBVIEW_TOTAL_WS  = 343.8 MB
+[07:23:02.368] Cleanup complete.
