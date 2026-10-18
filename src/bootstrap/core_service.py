@@ -1758,6 +1758,42 @@ class CoreServiceServer:
             managed_rel_path=outcome.managed_path,
         )
 
+    def _resolve_preview_origin_for_page(self, page: Any) -> PreviewOrigin | None:
+        """AC4 (N-003): bind one translated reader page to its source revision.
+
+        The reader path starts from the page rather than from a render outcome,
+        so the artifact and its exact revision row are looked up by page plus
+        managed path.  Same identity rule as :meth:`_resolve_preview_origin`:
+        exactly one matching revision, and the stored identity is that row's
+        ``artifact_revision_id``.
+
+        Returns ``None`` when no single row matches.  That is deliberate: the
+        caller then publishes with ``origin=None``, which is precisely the
+        previous catalog-only behaviour.  A reader must never fail to open
+        because an older translated artifact predates this binding.
+        """
+        if self._producer_root is None:
+            return None
+        try:
+            matching = self._core.conn.execute(
+                "SELECT ar.artifact_revision_id, ar.artifact_id"
+                " FROM artifact_revisions ar"
+                " JOIN media_artifacts ma ON ma.artifact_id = ar.artifact_id"
+                " WHERE ma.page_id = ? AND ma.artifact_type = 'translated'"
+                "   AND ar.managed_path = ?",
+                (page.page_id, page.translated_path),
+            ).fetchall()
+        except Exception as error:
+            raise RuntimeError(f"preview origin: source lookup failed: {error!r}") from error
+        if len(matching) != 1:
+            return None
+        return PreviewOrigin(
+            producer_root=self._producer_root,
+            artifact_id=matching[0]["artifact_id"],
+            artifact_revision_id=matching[0]["artifact_revision_id"],
+            managed_rel_path=page.translated_path,
+        )
+
     def handle_list_chapters(self, payload: dict[str, Any]) -> dict[str, Any]:
         """M2-PAGE-NAV-PROJECTION-1 (contract M2-C1 rev 1.8 §5): the chapter
         navigation read face -- one book's chapters in the user's current
@@ -1878,7 +1914,20 @@ class CoreServiceServer:
                 translated_path = self._checked_managed_path(page.translated_path)
                 if self._render_previews is None or not translated_path.is_file():
                     raise P16WireError("EXPORT_INPUT_UNAVAILABLE", "unavailable", "Reader artifact is unavailable")
-                translated = self._render_previews.publish(translated_path, page.translated_revision_id)
+                # AC4 (N-003): publish WITH an origin so the preview lands in
+                # preview_lifecycle and can be reclaimed by reference.  Without
+                # it the row is catalog-only - which the publisher itself
+                # documents as "never reclaimable" - so every translated read
+                # leaked one permanent artifact per page, and the permanent
+                # delete could not find any of them because cleanup only knows
+                # the deterministic page-original key.  Passes None when no
+                # single source revision matches, which keeps the previous
+                # behaviour and never blocks the reader from opening.
+                translated = self._render_previews.publish(
+                    translated_path,
+                    page.translated_revision_id,
+                    origin=self._resolve_preview_origin_for_page(page),
+                )
             projection_pages.append({
                 "page_id": page.page_id, "order": order,
                 "width_px": page.width_px, "height_px": page.height_px,
