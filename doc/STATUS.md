@@ -19,5 +19,5 @@ P02新时点验收/AC6恢复/主线集成完成，父P02限定关闭。Technical
 
 ## 当前权威指针
 
-- DAG：[REBASELINE_PLAN](REBASELINE_PLAN.md)；READY=ARCH-DOC-REBASELINE、P20。
+- DAG：[REBASELINE_PLAN](REBASELINE_PLAN.md)；READY=ARCH-DOC-REBASELINE、P20、[P09-AC3-DELETE-1](tasks/P09-AC3-DELETE-1.md)（用户裁决另立：Core 项目级永久删除 + 回补 P09 AC3 源文件零改动；**契约先冻结**）。
 - 本轮证据：P19 [R4 Review](../verification/P19/codex-review-r4.md) + [AC2 结果](../verification/P19/ac2-mainflow-result-r1.md)；SEC-FIX [Review](../verification/SEC-FIX-PATH-ECHO-1/dsh-review-r1.md)；P19-AC3-1 [矩阵](../verification/P19-AC3-1/command-matrix.md)。
