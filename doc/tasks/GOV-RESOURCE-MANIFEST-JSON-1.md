@@ -3,7 +3,7 @@ id: GOV-RESOURCE-MANIFEST-JSON-1
 title: 治理检查器支持外部 JSON Resource Manifest
 kind: governance
 governance_version: 2
-status: ready
+status: in_progress
 approval: codex_release_2026-10-19_after_GOV-PLAN-BUDGET-1_integration; user_decision_2026-10-19_scheme_D
 suggested_owner: dsh
 owner: dsh

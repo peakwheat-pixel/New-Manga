@@ -1,0 +1,119 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://new-manga.local/schemas/resource-manifest.schema.json",
+  "title": "Resource Manifest",
+  "description": "Fixed schema for verification/<task>/resource-manifest.json. Referenced from a Task's '## Resource Manifest' section via a single repository-relative path. Every source_path / destination_path is preserved verbatim; normalised forms live only in derived fields produced by the checker, never written back here.",
+  "schema_version": 1,
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "task_id", "generated_at", "generated_by", "resources", "closeout_counts"],
+  "properties": {
+    "schema_version": {
+      "type": "integer",
+      "const": 1,
+      "description": "Only version 1 is accepted. A future version requires a new checker release."
+    },
+    "task_id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]*$",
+      "description": "Must equal the id of the Task whose section references this file."
+    },
+    "generated_at": {
+      "type": "string",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$",
+      "description": "ISO calendar date (YYYY-MM-DD)."
+    },
+    "generated_by": { "type": "string", "minLength": 1 },
+    "note": { "type": "string" },
+    "resources": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["resource_type", "source_path", "disposition", "destination_path", "process_check"],
+        "properties": {
+          "resource_type": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]*$",
+            "description": "Free-form category, e.g. worktree, generated-build-artifacts, evidence."
+          },
+          "source_path": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Original expression exactly as recorded. Brace shorthand, %VARS% and globs may appear here and are NEVER expanded."
+          },
+          "disposition": {
+            "type": "string",
+            "enum": [
+              "DELETE_SAFE",
+              "MIGRATE",
+              "ARCHIVE",
+              "PRESERVE_REFERENCED",
+              "PRESERVE_USER_DATA",
+              "PRESERVE_UNKNOWN",
+              "NOT_APPLICABLE",
+              "ALREADY_ABSENT"
+            ],
+            "description": "ALREADY_ABSENT is the only value permitted for a resource that was listed but whose target no longer exists. NOT_APPLICABLE means the resource never applied and must never be used for a vanished target."
+          },
+          "destination_path": {
+            "type": "string",
+            "description": "Original expression exactly as recorded. May hold prose such as 'Same source location'; the checker resolves it only when it is a plain resolvable path."
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[0-9a-fA-F]{64}$"
+          },
+          "manifest_path": {
+            "type": "string",
+            "description": "Repository-relative path to a manifest file, when integrity is carried by a file rather than an inline hash."
+          },
+          "process_check": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Reference / running-process check and its result. Required even for ALREADY_ABSENT, where it must state that no reference remains."
+          },
+          "deleted": { "type": "boolean" },
+          "moved": { "type": "boolean" },
+          "modified": { "type": "boolean" },
+          "absent_evidence": {
+            "type": "string",
+            "description": "ALREADY_ABSENT only: how it was established that the target no longer exists."
+          }
+        },
+        "allOf": [
+          {
+            "if": { "properties": { "disposition": { "const": "ALREADY_ABSENT" } }, "required": ["disposition"] },
+            "then": { "required": ["absent_evidence"], "properties": { "absent_evidence": { "minLength": 1 } } }
+          },
+          {
+            "if": {
+              "properties": { "disposition": { "enum": ["PRESERVE_REFERENCED", "PRESERVE_USER_DATA", "PRESERVE_UNKNOWN", "MIGRATE", "ARCHIVE"] } },
+              "required": ["disposition"]
+            },
+            "then": {
+              "anyOf": [
+                { "required": ["sha256"] },
+                { "required": ["manifest_path"] }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    "closeout_counts": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["deleted", "moved", "migrated", "archived"],
+      "description": "Every key must be a non-negative integer. The checker cross-checks these against the resources array: each record whose boolean of the same name is true contributes one to that count.",
+      "properties": {
+        "deleted": { "type": "integer", "minimum": 0 },
+        "moved": { "type": "integer", "minimum": 0 },
+        "migrated": { "type": "integer", "minimum": 0 },
+        "archived": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "closeout_note": { "type": "string" }
+  }
+}
