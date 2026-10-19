@@ -1,0 +1,8 @@
+[04:41:48.920] EXE_SHA256=be593a886c2a90ff3175fadb6164d79406798d4f63a43cdf2505d3eac3979574
+[04:41:50.214] HOST os=Microsoft Windows 11 专业版 build=26300 cpu=AMD Ryzen 9 7950X3D 16-Core Processor ram_mb=32407 gpu=MuMu Virtual Display Adapter;GameViewer Virtual Display Adapter;OrayIddDriver Device;NVIDIA GeForce RTX 5070 Ti
+[04:41:57.862] ROUND 1 cold_start_s=1.579 core_ready_s=1.591 idle_ws_mb=1161.2 core_ws_mb=48.2 procs=core_service+m2rc1-desktop+msedgewebview2
+[04:42:09.401] ROUND 2 cold_start_s=0.475 core_ready_s=0.476 idle_ws_mb=1147.3 core_ws_mb=48.3 procs=core_service+m2rc1-desktop+msedgewebview2
+[04:42:20.912] ROUND 3 cold_start_s=0.47 core_ready_s=0.472 idle_ws_mb=1150.2 core_ws_mb=48.1 procs=core_service+m2rc1-desktop+msedgewebview2
+[04:42:25.960] SUMMARY cold_avg_s=0.841 core_avg_s=0.846 idle_max_mb=1161.2 rounds=3
+[04:42:25.966] ASSERT PASS ac2:cold-start
+[04:42:25.970] ASSERT FAIL ac3:idle-memory

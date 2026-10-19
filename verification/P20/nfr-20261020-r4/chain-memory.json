@@ -1,0 +1,66 @@
+{
+ "exe_sha256": "be593a886c2a90ff3175fadb6164d79406798d4f63a43cdf2505d3eac3979574",
+ "chain_total_mb": 467.35,
+ "chain_process_count": 11,
+ "glob_total_mb": 1149.75,
+ "glob_process_count": 22,
+ "threshold_mb": 350,
+ "chain_verdict": "FAIL",
+ "processes": [
+  {
+   "pid": 54204,
+   "name": "m2rc1-desktop.exe",
+   "ws_mb": 37.05
+  },
+  {
+   "pid": 47436,
+   "name": "msedgewebview2.exe",
+   "ws_mb": 119.29
+  },
+  {
+   "pid": 57704,
+   "name": "msedgewebview2.exe",
+   "ws_mb": 85.98
+  },
+  {
+   "pid": 2436,
+   "name": "msedgewebview2.exe",
+   "ws_mb": 19.99
+  },
+  {
+   "pid": 57428,
+   "name": "msedgewebview2.exe",
+   "ws_mb": 34.88
+  },
+  {
+   "pid": 2432,
+   "name": "msedgewebview2.exe",
+   "ws_mb": 72.46
+  },
+  {
+   "pid": 37776,
+   "name": "msedgewebview2.exe",
+   "ws_mb": 10.77
+  },
+  {
+   "pid": 35240,
+   "name": "host_bridge.exe",
+   "ws_mb": 23.37
+  },
+  {
+   "pid": 53688,
+   "name": "conhost.exe",
+   "ws_mb": 8.13
+  },
+  {
+   "pid": 29800,
+   "name": "core_service.exe",
+   "ws_mb": 47.31
+  },
+  {
+   "pid": 58600,
+   "name": "conhost.exe",
+   "ws_mb": 8.13
+  }
+ ]
+}

@@ -1,0 +1,14 @@
+runner=run-nfr-coldstart-memory.ps1
+exe=G:\CODEX\New Manga\apps\desktop\src-tauri\target\debug\m2rc1-desktop.exe
+exe_sha256=be593a886c2a90ff3175fadb6164d79406798d4f63a43cdf2505d3eac3979574
+rounds=3
+cold_start_avg_s=0.841
+core_ready_avg_s=0.846
+idle_ws_max_mb=1161.2
+ac2_threshold_s=2.0/3.5
+ac3_threshold_mb=350
+host_os=Microsoft Windows 11 专业版 build=26300
+host_cpu=AMD Ryzen 9 7950X3D 16-Core Processor
+host_ram_mb=32407
+host_gpu=MuMu Virtual Display Adapter;GameViewer Virtual Display Adapter;OrayIddDriver Device;NVIDIA GeForce RTX 5070 Ti
+host_has_discrete_gpu=True
