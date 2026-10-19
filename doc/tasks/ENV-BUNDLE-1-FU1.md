@@ -182,11 +182,11 @@ evidence_dir: verification/ENV-BUNDLE-1-FU1
 | resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
 |---|---|---|---|---|---|
 | worktree | G:/CODEX/New Manga.workspace/worktrees/ENV-BUNDLE-1-FU1 | PRESERVE_REFERENCED | G:/CODEX/New Manga.workspace/worktrees/ENV-BUNDLE-1-FU1 | verification/ENV-BUNDLE-1-FU1/resource-manifest.json | Task branch/worktree retained for independent review |
-| frozen-bundle | G:/CODEX/New Manga.workspace/worktrees/ENV-BUNDLE-1-FU1/apps/desktop/src-tauri/target/core-sidecar | PRESERVE_REFERENCED | Same worktree ignored bundle | verification/ENV-BUNDLE-1-FU1/resource-manifest.json | 2.3 bundle; exe SHA-256 `896bd56286b25bc8539028d52f3ef991cfbcbda24f93ae6c6d75758a7dbfd842`; not staged |
-| main-frozen-bundle | G:/CODEX/New Manga/apps/desktop/src-tauri/target/core-sidecar | PRESERVE_REFERENCED | Same main ignored bundle | verification/ENV-BUNDLE-1-FU1/resource-manifest.json | AC4 refreshed; ignored artifacts retained for P19/P20 |
-| frontend-dist | G:/CODEX/New Manga.workspace/worktrees/ENV-BUNDLE-1-FU1/apps/desktop/frontend/dist | PRESERVE_REFERENCED | Same worktree ignored dist | verification/ENV-BUNDLE-1-FU1/resource-manifest.json | Production build output; not staged |
-| main-frontend-dist | G:/CODEX/New Manga/apps/desktop/frontend/dist | PRESERVE_REFERENCED | Same main ignored dist | verification/ENV-BUNDLE-1-FU1/resource-manifest.json | AC4 refreshed; ignored artifacts retained |
-| build-venv | G:/CODEX/New Manga.task-envs/m2ac5-build | PRESERVE_REFERENCED | Same existing venv | verification/ENV-BUNDLE-1-FU1/resource-manifest.json | Reused without rebuild; preserved |
+| frozen-bundle | G:/CODEX/New Manga.workspace/worktrees/ENV-BUNDLE-1-FU1/apps/desktop/src-tauri/target/core-sidecar | PRESERVE_REFERENCED | G:/CODEX/New Manga.workspace/worktrees/ENV-BUNDLE-1-FU1/apps/desktop/src-tauri/target/core-sidecar | verification/ENV-BUNDLE-1-FU1/resource-manifest.json | 2.3 bundle; exe SHA-256 `896bd56286b25bc8539028d52f3ef991cfbcbda24f93ae6c6d75758a7dbfd842`; not staged |
+| main-frozen-bundle | G:/CODEX/New Manga/apps/desktop/src-tauri/target/core-sidecar | PRESERVE_REFERENCED | G:/CODEX/New Manga/apps/desktop/src-tauri/target/core-sidecar | verification/ENV-BUNDLE-1-FU1/resource-manifest.json | AC4 refreshed; ignored artifacts retained for P19/P20 |
+| frontend-dist | G:/CODEX/New Manga.workspace/worktrees/ENV-BUNDLE-1-FU1/apps/desktop/frontend/dist | PRESERVE_REFERENCED | G:/CODEX/New Manga.workspace/worktrees/ENV-BUNDLE-1-FU1/apps/desktop/frontend/dist | verification/ENV-BUNDLE-1-FU1/resource-manifest.json | Production build output; not staged |
+| main-frontend-dist | G:/CODEX/New Manga/apps/desktop/frontend/dist | PRESERVE_REFERENCED | G:/CODEX/New Manga/apps/desktop/frontend/dist | verification/ENV-BUNDLE-1-FU1/resource-manifest.json | AC4 refreshed; ignored artifacts retained |
+| build-venv | G:/CODEX/New Manga.task-envs/m2ac5-build | PRESERVE_REFERENCED | G:/CODEX/New Manga.task-envs/m2ac5-build | verification/ENV-BUNDLE-1-FU1/resource-manifest.json | Reused without rebuild; preserved |
 
 ## Closeout Record
 

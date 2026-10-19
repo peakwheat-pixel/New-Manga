@@ -98,7 +98,7 @@ P15（设置页 UI）已 `done`，其交付在 Handoff 与本 Task 的 [P15 clos
 
 | resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
 |---|---|---|---|---|---|
-| worktree + junctions | G:/CODEX/New Manga.workspace/worktrees/P15-HOST-1 | PRESERVE_REFERENCED | 同源保留供 Review | verification/P15-HOST-1/resource-manifest.json (SHA256 `A00BD6DE0F036735E00601C69887ECA91D977C09EBB21C8708AAB203954039FD`) | 两个 junction 均确认保留；未删除/重建 `target/core-sidecar` 或 `frontend/dist` |
+| worktree + junctions | G:/CODEX/New Manga.workspace/worktrees/P15-HOST-1 | PRESERVE_REFERENCED | G:/CODEX/New Manga.workspace/worktrees/P15-HOST-1 | verification/P15-HOST-1/resource-manifest.json (SHA256 `A00BD6DE0F036735E00601C69887ECA91D977C09EBB21C8708AAB203954039FD`) | 两个 junction 均确认保留；未删除/重建 `target/core-sidecar` 或 `frontend/dist` |
 
 ## Closeout Record
 
