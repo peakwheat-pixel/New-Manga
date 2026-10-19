@@ -146,7 +146,11 @@ leaked_rows = len(remaining_rows)
 # R7 Finding 1: assert the survivor set by name.  Subtracting one assumed the single
 # remaining file is the lock; a stranded preview would have been counted as the lock and
 # the probe would have passed.
-survivor_names = sorted(p.name for p in remaining_files)
+# R10 Finding 1: compare the ROOT-relative path, not the basename.  A lock file placed
+# in a subdirectory has the same basename and was accepted as the root lock.
+survivor_names = sorted(
+    str(_p.relative_to(derived_root)).replace("\\", "/") for _p in remaining_files
+)
 # R8 Finding 1: literal set comparison, not "nothing unexpected remains".  The latter also
 # accepts an empty directory, which is not the expected end state.
 expected_survivors = [".preview-lifecycle.lock"]

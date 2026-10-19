@@ -161,7 +161,7 @@ all_rows_after = [e for e in catalog.entries()]
 row_rel_paths = {e.rel_path for e in all_rows_after if e.rel_path}
 unexplained = [
     p for p in files_after
-    if p.name != ".preview-lifecycle.lock"
+    if str(p.relative_to(derived_root)).replace("\\", "/") != ".preview-lifecycle.lock"
     and str(p.relative_to(derived_root)).replace("\\", "/") not in row_rel_paths
 ]
 leaked_files = len(unexplained)

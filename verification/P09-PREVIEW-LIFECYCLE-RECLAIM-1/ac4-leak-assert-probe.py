@@ -124,7 +124,11 @@ leaked_rows = len(published_after)
 # R7 Finding 1: counting survivors cannot tell a lock file from a stranded PNG.  The
 # namespace lock is the ONLY file that may remain; anything else is a leak, whatever the
 # arithmetic says.
-survivor_names = sorted(p.name for p in files_after)
+# R10 Finding 1: compare the ROOT-relative path, not the basename.  A lock file placed
+# in a subdirectory has the same basename and was accepted as the root lock.
+survivor_names = sorted(
+    str(_p.relative_to(derived_root)).replace("\\", "/") for _p in files_after
+)
 # R8 Finding 1: this must be a literal set comparison.  "Filter out the lock, then require
 # nothing left" also passes when NOTHING survived - including the lock - which is not the
 # expected state.  Require the exact set.

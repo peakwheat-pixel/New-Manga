@@ -138,7 +138,11 @@ if missing:
                     % [r[:24] + "..." for r in missing])
 # R7 Finding 1: name the survivors rather than counting them.  "At most one file left"
 # would accept a stranded preview PNG as if it were the namespace lock.
-survivor_names = sorted(p.name for p in remaining_files)
+# R10 Finding 1: compare the ROOT-relative path, not the basename.  A lock file placed
+# in a subdirectory has the same basename and was accepted as the root lock.
+survivor_names = sorted(
+    str(_p.relative_to(derived_root)).replace("\\", "/") for _p in remaining_files
+)
 # R8 Finding 1: literal set comparison.  A filtered "nothing unexpected" check passes on an
 # empty directory too, which would hide the lock going missing.
 expected_survivors = [".preview-lifecycle.lock"]
