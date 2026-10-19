@@ -136,8 +136,13 @@ missing = [r for r in handed_out if r not in catalog_keys]
 if missing:
     problems.append("the response named keys the catalog never held: %s"
                     % [r[:24] + "..." for r in missing])
-if len(remaining_files) > 1:   # only the namespace lock should remain
-    problems.append("files survived: %s" % [p.name for p in remaining_files])
+# R7 Finding 1: name the survivors rather than counting them.  "At most one file left"
+# would accept a stranded preview PNG as if it were the namespace lock.
+survivor_names = sorted(p.name for p in remaining_files)
+unexpected_survivors = [n for n in survivor_names if n != ".preview-lifecycle.lock"]
+print("survivors: %s" % survivor_names)
+if unexpected_survivors:
+    problems.append("unexpected files survived: %s" % unexpected_survivors)
 
 print()
 if problems:

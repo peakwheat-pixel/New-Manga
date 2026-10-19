@@ -143,9 +143,17 @@ if remaining_rows:
     print("  surviving rows:", [e.resource_id[:24] + "..." for e in remaining_rows[:4]])
 
 leaked_rows = len(remaining_rows)
-leaked_files = max(0, len(remaining_files) - 1)   # keep the lifecycle lock file out of it
+# R7 Finding 1: assert the survivor set by name.  Subtracting one assumed the single
+# remaining file is the lock; a stranded preview would have been counted as the lock and
+# the probe would have passed.
+survivor_names = sorted(p.name for p in remaining_files)
+unexpected = [n for n in survivor_names if n != ".preview-lifecycle.lock"]
+leaked_files = len(unexpected)
 print()
-print("LEAK: %d row(s), %d file(s)" % (leaked_rows, leaked_files))
+print("survivors: %s" % survivor_names)
+print("LEAK: %d row(s), %d unexpected file(s)" % (leaked_rows, leaked_files))
+if unexpected:
+    print("  unexpected:", unexpected)
 
 catalog.close()
 core.conn.close()

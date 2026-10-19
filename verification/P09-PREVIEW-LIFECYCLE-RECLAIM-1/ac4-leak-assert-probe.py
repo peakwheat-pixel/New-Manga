@@ -121,9 +121,17 @@ if files_after:
     print("  surviving files:", [p.name for p in files_after[:5]])
 
 leaked_rows = len(published_after)
-leaked_files = max(0, len(files_after) - 1)   # 1 baseline file predates the reads
+# R7 Finding 1: counting survivors cannot tell a lock file from a stranded PNG.  The
+# namespace lock is the ONLY file that may remain; anything else is a leak, whatever the
+# arithmetic says.
+survivor_names = sorted(p.name for p in files_after)
+unexpected = [n for n in survivor_names if n != ".preview-lifecycle.lock"]
+leaked_files = len(unexpected)
 print()
-print("LEAK: %d row(s), %d file(s)" % (leaked_rows, leaked_files))
+print("survivors: %s" % survivor_names)
+print("LEAK: %d row(s), %d unexpected file(s)" % (leaked_rows, leaked_files))
+if unexpected:
+    print("  unexpected:", unexpected)
 catalog.close()
 core.conn.close()
 
