@@ -12,6 +12,7 @@ R5b 在审计 `relative_to()` 比较时发现，`core_service.py` 与 `core_asse
 |---|---|
 | `src/bootstrap/core_service.py` | **464–467**、**1923–1926**、**2490–2493**、**2533–2542** |
 | `src/bootstrap/core_assembly.py` | **227–230**、**236–239**、**270–273** |
+| **`src/infrastructure/resource_channel/handle_resolver.py`** | **`resolve_namespace_identity`（609–617）—— R5b 与 R6 各自复现，见下** |
 
 **R5b 的复现**：
 
@@ -46,9 +47,17 @@ R5b 在审计 `relative_to()` 比较时发现，`core_service.py` 与 `core_asse
 | **② 逐段句柄链打开**（同 `unlink_by_handle`） | 复用现有逐段打开逻辑，但**只打开不删除** | **`win_unlink` 的链目前只支持 `DELETE` 末段** —— 需扩展为「只打开」模式 |
 | **③ 拒绝不可信路径** | 若**任一祖先段**是 reparse 点则直接拒绝 | **最简单，但会误伤合法使用链接的用户** |
 
-**`handle_resolver.resolve_namespace_identity` 已经有方向 ① 的雏形**（打开句柄 + `_final_path_of` + 与名字比对）—— **但 R5b 指出它在「首次 walk 后、`resolve()` 时」的竞态下仍会接受被重定向的路径**（因为它比对的是**已被重定向后的 `resolved` 名字**）。
+**`handle_resolver.resolve_namespace_identity` 已有方向 ① 的雏形**（打开句柄 + `_final_path_of` + 与名字比对）—— **但 R5b 与 R6 都证明它在竞态下仍会接受被重定向的路径**。
 
-**所以新 Task 需要先回答**：**「期望身份」从哪来？** —— 这是设计问题，不是接线问题。
+**R5b 的实测**：在**首次 `_lstat_reparse_walk(path)` 之后、`path.resolve()` 时**注入祖先 junction → **函数接受并返回了 `outside\derived`**。
+
+**R6 的独立实测**：`injection_fired=True`、**句柄身份函数接受了 `outside\derived`，外部字节可读** → **VULNERABLE**。
+
+**根因**：**它比对的是「已被重定向后的 `resolved` 名字」** —— **即它拿被污染的值去验证自己**。
+
+**⚠️ 本草案初版把这一项写成「已审计、无需改动」，那是错的** —— 我在更早一轮得出该结论时只验证了**静态场景**（junction 在调用前已存在），**并据此推断该类问题不存在**。**R5b 与 R6 各自独立推翻了这个推断。** 该项**必须纳入本 Task 的修复范围**。
+
+**所以新 Task 需要先回答**：**「期望身份」从哪来？** —— 这是设计问题，不是接线问题。**且答案必须是一个在竞态发生前就已固定、且不随后续路径解析而变化的值**（例如启动时对配置根的句柄身份快照）。
 
 ---
 
