@@ -817,7 +817,11 @@ class SqliteLibraryRepository:
                         if storage is not None:
                             try:
                                 abs_p = Path(storage.absolute_path(t)).resolve()
-                                root = storage.root.resolve()
+                                # R5 P1: baseline must not be resolved.  resolve() follows junctions, so a
+                                # link ABOVE the root drifts the baseline along with the candidate and
+                                # containment passes.  The candidate keeps resolve(), which is what makes an
+                                # escape visible.  Same defect class as N-004.
+                                root = Path(os.path.abspath(str(storage.root)))
                                 abs_p.relative_to(root)
                             except Exception:
                                 item_error = "BOOK_DELETE_CONFLICT"
@@ -1145,7 +1149,11 @@ class SqliteLibraryRepository:
         if storage is not None:
             try:
                 _sanitize_component(book_id)
-                root = storage.root.resolve()
+                # R5 P1: baseline must not be resolved.  resolve() follows junctions, so a
+                # link ABOVE the root drifts the baseline along with the candidate and
+                # containment passes.  The candidate keeps resolve(), which is what makes an
+                # escape visible.  Same defect class as N-004.
+                root = Path(os.path.abspath(str(storage.root)))
                 books_base = (root / "books").resolve()
                 book_dir = root / "books" / book_id
                 resolved_dir = book_dir.resolve()
