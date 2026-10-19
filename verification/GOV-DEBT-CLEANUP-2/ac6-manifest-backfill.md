@@ -58,3 +58,26 @@ worktree: G:/CODEX/New Manga.workspace/worktrees/FEAT-CREATE-2
 - `PRESERVE_UNKNOWN` 是保守标注，不表示已确认可清理。
 - 本 Task 未删除、移动、归档任何资源，未改动任何 worktree 内容。
 - `P19-UI-FIX-1` 的治理错误仍为 4，属已知且已说明的债务。
+
+## 后续进展（2026-10-19，DSH 补记）
+
+本文件写作时，`P19-UI-FIX-1` 因检查器不能解释其 Resource Manifest 形态而「保留原状、未表格化」。
+**该状态已被后续三个 Task 改变**，此处补记，不改原文：
+
+| 后续 Task | 结果 |
+|---|---|
+| `GOV-RESOURCE-MANIFEST-JSON-1` | 检查器可读外部 JSON Manifest（集成 `3fe78a67c`） |
+| `P19-UI-MANIFEST-VIEW-1` | `P19-UI-FIX-1` 的引用改为可解析路径（`closed_with_limitations`，集成 `4b545eada` 前序） |
+| `GOV-RESOURCE-MANIFEST-SAME-LOCATION-1` | 同源/空/`-` 目的地语义（集成 `4b545eada`） |
+
+**当前 `P19-UI-FIX-1` 的 4 个错误**（集成后实测）：
+
+```
+FAIL: Evidence SHA-256 不匹配：frontend-npm-test-final.log
+FAIL: Evidence SHA-256 不匹配：frontend-npm-build-final.log
+FAIL: DONE evidence_dir 含未登记文件：（8 个）
+FAIL: Resource 最终路径未验证：p19-ui-fix-1-isolation-20261017
+```
+
+其中前 3 项属本 Task 的 AC1 / AC7，第 4 项是真实缺失路径（需独立只读核实）。
+**本 Task 的 AC6 事实部分已达成**：P19 的资源事实已记录，且其格式债务已由后续 Task 从检查器侧解决。

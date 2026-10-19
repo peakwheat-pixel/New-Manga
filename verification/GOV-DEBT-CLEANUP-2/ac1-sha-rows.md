@@ -1,4 +1,4 @@
-# AC1 — 102 条 SHA-256 不匹配的逐行 adjudication
+# AC1 — SHA-256 不匹配的逐行 adjudication（105 行，已更正）
 
 **Task**: GOV-DEBT-CLEANUP-2 · **AC**: AC1 · **性质**: 只读分类，不重钉
 
@@ -6,14 +6,14 @@
 （该文件已逐行计算 raw/LF/CRLF 三种形式并与所 pin commit 的内容比对）。
 **裁定依据**: `codex-debt-ruling-r2.md` §1.1 / §1.2 / §1.3。
 
-**本文件的结论**: 102 行**全部保持原 pin 不变**。本 Task 未重钉任何一行、未改写任何历史 pin、
+**本文件的结论**: **105 行**（实测，见末尾更正）**全部保持原 pin 不变**。本 Task 未重钉任何一行、未改写任何历史 pin、
 未标记任何 `SUPERSEDED`、未修改任何 Task 的 Canonical Evidence 表。
 
 | 处置 | 行数 | 含义 |
 |---|---:|---|
-| `KEEP_HISTORIC_PIN` | 78 | pin 在其 commit 上准确，文件经后续正常提交演进；保留原 pin，不因检查器而重钉 |
-| `BLOCKED_ORIGIN_UNVERIFIED` | 13 | pin 在其 commit 上即不符，文件本身未被改动；须追溯原 pin 来源，不得用当前字节覆盖 |
-| `BLOCKED_PRESERVE_DIRTY` | 11 | pin 不符且工作区有未提交修改；不得从工作区生成 pin，保留 dirty 内容，待归属确认 |
+| `KEEP_HISTORIC_PIN` | 79 | pin 在其 commit 上准确，文件经后续正常提交演进；保留原 pin，不因检查器而重钉 |
+| `BLOCKED_ORIGIN_UNVERIFIED` | 14 | pin 在其 commit 上即不符，文件本身未被改动；须追溯原 pin 来源，不得用当前字节覆盖 |
+| `BLOCKED_PRESERVE_DIRTY` | 12 | pin 不符且工作区有未提交修改；不得从工作区生成 pin，保留 dirty 内容，待归属确认 |
 
 ## 逐行
 
@@ -269,3 +269,19 @@
 
 > 78/13/11 三类的解阻条件分别见 `codex-debt-ruling-r2.md` §1.1、§1.2、§1.3；
 > 均需 Reviewer 复核 + Codex 逐项核准后才能更新活动 pin。
+
+## 核对与更正（DSH 实测）
+
+本文件早期汇总记「102 行：78 KEEP / 13 ORIGIN / 11 DIRTY」。**逐行统计实测不符**：
+
+| 项 | 早期记录 | 实测 |
+|---|---:|---:|
+| 带处置的行 | 102 | **105** |
+| `KEEP_HISTORIC_PIN` | 78 | **79** |
+| `BLOCKED_ORIGIN_UNVERIFIED` | 13 | **14** |
+| `BLOCKED_PRESERVE_DIRTY` | 11 | **12** |
+
+统计方法：对所有以 `|` 开头且含 `KEEP_HISTORIC_PIN` / `BLOCKED_*` 的行计数（这些行全部带处置，
+不存在只含分类不含处置的行）。逐行记录本身是完整的 —— 差异只在汇总数字。
+
+与 AC4 同类：汇总按印象写，未与实际行数对账。此处的更正保留原数字。
