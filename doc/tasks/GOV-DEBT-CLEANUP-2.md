@@ -104,7 +104,7 @@ allowed_paths:
 
 | evidence_id | AC/Gate | path（仓库相对路径或绝对路径） | commit | sha256 | class (`CANONICAL` / `SOURCE_PIN`) |
 |---|---|---|---|---|---|
-| EVID-DEBT-AC1 | AC1 | `verification/GOV-DEBT-CLEANUP-2/ac1-sha-rows.md` | `b2b32e05e327f6b4144d07a854262b78453f0847` | `683446ac5f0a565ccbdd0a48efdf70bcc8a5470e75001360e96d349bf9f2ea55` | `CANONICAL` |
+| EVID-DEBT-AC1 | AC1 | `verification/GOV-DEBT-CLEANUP-2/ac1-sha-rows.md` | `b2b32e05e327f6b4144d07a854262b78453f0847` | `6bdc98d5be79e5be7cc002981ef57ad8cba4f2a8c1714202b50cdd260386f3f7` | `CANONICAL` |
 | EVID-DEBT-AC2 | AC2 | `verification/GOV-DEBT-CLEANUP-2/ac2-deferred-tasks.md` | `9be9bab21b70714f3102220f43170de813788995` | `5f2f410b60a959b9c55f6ea89ea15b033bab1fb4e229739eef8ea9edd1bcfc04` | `CANONICAL` |
 | EVID-DEBT-AC3 | AC3 | `verification/GOV-DEBT-CLEANUP-2/ac3-budget-decision.md` | `9be9bab21b70714f3102220f43170de813788995` | `0287ac3c083b1226e2598a589e7507c2ebf22f18c979a54f1e71c77e659bbf17` | `CANONICAL` |
 | EVID-DEBT-AC4 | AC4 | `verification/GOV-DEBT-CLEANUP-2/ac4-p02-ac3-pins.md` | `9be9bab21b70714f3102220f43170de813788995` | `73892ee7faea0c11288fa96aa1f74b832dbba65f8a12a76ad76c5157c7e77ccb` | `CANONICAL` |
@@ -142,30 +142,34 @@ Owner 为 dsh；本表按**逐条实测**给出，不采用文件内的自述汇
 
 | AC | 状态 | 依据 |
 |---|---|---|
-| AC1 | 达成 | 逐行记录 105 行（实测）；汇总原记 102/78/13/11，已更正为 105/79/14/12 |
+| AC1 | 达成 | 逐行 **102 行 = 78 KEEP + 13 ORIGIN + 11 DIRTY**（独立复核确认，原记录正确）|
 | AC2 | 达成 | 29 项逐条，含 Task ID/状态/Plan 指涉/tracked 依赖 |
 | AC3 | 达成 | 7000 bytes / 64 lines 已生效于 `check.ps1` |
 | AC4 | 达成 | **本轮补齐**：25 条逐项（21 存在 / 4 缺失）。原记录 23/18/5 有误，已更正 |
 | AC5 | 达成 | 13 项全记 `PRESERVE_UNKNOWN`，含 dirty/untracked 与 HEAD 可达性 |
 | AC6 | 达成 | 七项补录；`P19-UI-FIX-1` 的格式债务已由后续三个 Task 从检查器侧解决（已补进展记录） |
-| **AC7** | **未达成（部分）** | 分类完成（65 行），但文件自承「**没有做**『唯一最终证据』判定」，故 61 项全部保持候选分类 |
+| **AC7** | **未达成（部分）** | 分类完成（**61 个文件**，独立复核确认），但文件自承「**没有做**『唯一最终证据』判定」，故 61 项全部保持候选分类 |
 | AC8 | 达成 | 69 项未完成 AC 逐条记录，保留原状 |
 | **AC9** | **进行中** | 待 Antigravity 对本固定 head 独立 Review |
 
 ## 两处汇总数字错误（DSH 发现并更正）
 
-`AC1` 与 `AC4` 犯了同一类错误：**汇总按印象写，未与实际行数对账**。
+**只有 AC4 是真正的记录错误，AC1 不是。**
 
-- AC1：记 102 行（78/13/11），实测 **105 行（79/14/12）**；
-- AC4：记 23 条（18 存在 / 5 缺失），实测 **25 条（21 存在 / 4 缺失）**；
+- **AC4**：记 23 条（18 存在 / 5 缺失），实测 **25 条（21 存在 / 4 缺失）**；
   且把 `doc/handoffs/P02-NEW-TIME-BASELINE-AC3-GIT-TOPLEVEL-RESOLUTION-R1.md`
-  误记为缺失，实测在固定 head 上**存在**。
+  误记为缺失，实测在固定 head 上**存在**。**经 Antigravity 独立复核确认交付方更正正确。**
+- **AC1**：原记录 **102 行（78/13/11）本来就是对的**。交付方曾误判为 105 行（79/14/12），
+  原因是把汇总表自身那 3 行也计入了数据行。**该次「更正」是错的，已撤销**，
+  撤销记录见 `ac1-sha-rows.md` 末尾。
 
-两处均**保留原数字并附更正表**，不静默覆盖——本 Task 的使命是清理未实测的汇总，
-若它悄悄改掉自己的早期错误，就失去了证据价值。
+AC4 的更正**保留原数字并附更正表**，不静默覆盖；AC1 的撤销同样保留错误过程。
 
-这条同时也是本 Task 的方法论风险：**人工汇总产出证据，天然不可靠**。
-它不是两个笔误，而是这类治理 Task 的固有失败模式。
+这条构成本 Task 最重要的方法论观察：**人工汇总产出证据，天然不可靠**——
+连「发现汇总错误」这个动作本身，都可能产出新的未实测结论。
+交付方在核查 AC1 时正是犯了此错，由 Antigravity 独立复核才纠正。
+这不是两个笔误，而是这类治理 Task 的固有失败模式，因此本 Task 的终态必须是
+`closed_with_limitations` 而非 `done`。
 
 ## 建议终态
 
