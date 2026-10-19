@@ -83,11 +83,34 @@ class RenderPreviewPublisher:
             else:
                 self._catalog.register_preview_with_origin(resource_id, rel_path, origin)
         except Exception:
+            # R6 P1: cleanup deleted by path; the chain re-verifies instead.
             if temp_path is not None:
-                temp_path.unlink(missing_ok=True)
-            target.unlink(missing_ok=True)
+                self._cleanup_quietly(temp_path)
+            self._cleanup_quietly(target)
             raise
         return {"resource_id": resource_id, "revision": revision}
+
+    def _cleanup_quietly(self, path: Path) -> None:
+        """Delete a partial file during failure cleanup without re-resolving it.
+
+        R6 P1: the two lines this replaces ran on every publish failure and deleted
+        by path, so a directory repointed in between sent the delete outside the
+        derived root - R6's probe reproduced exactly that and read outside bytes.
+        The handle chain re-verifies each segment against the configured root; a
+        path that cannot be expressed relative to that root is not touched at all.
+        """
+        try:
+            rel = path.relative_to(self._root)
+        except ValueError:
+            return
+        segments = [part for part in rel.parts if part]
+        if not segments:
+            return
+        handled = unlink_by_handle(self._root, segments)
+        if handled is None:
+            # No handle chain on this platform: keep the previous behaviour.
+            path.unlink(missing_ok=True)
+        # handled True -> deleted; False -> refused, and cleanup must not force it.
 
     def publish_original(self, managed_file: Path | str, resource_id: str, suffix: str) -> dict[str, str]:
         """Publish one immutable managed-original page image under a
@@ -125,9 +148,10 @@ class RenderPreviewPublisher:
             os.replace(temp_path, target)
             self._catalog.upsert(resource_id, "derived-read-only", rel_path)
         except Exception:
+            # R6 P1: cleanup deleted by path; the chain re-verifies instead.
             if temp_path is not None:
-                temp_path.unlink(missing_ok=True)
-            target.unlink(missing_ok=True)
+                self._cleanup_quietly(temp_path)
+            self._cleanup_quietly(target)
             raise
         return {"resource_id": resource_id, "revision": ORIGINAL_REVISION}
 
