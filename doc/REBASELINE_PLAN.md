@@ -31,6 +31,7 @@
 |GOV-UNTRACKED-BACKLOG-1|—|done（1591 个未入库文件的分类与边界化；最小镜像集 3 文件；P1 由 GOV-EOL-PIN-1 修复）|
 |GOV-EOL-PIN-1|GOV-UNTRACKED-BACKLOG-1|done（为 hash-pinned 证据固定 LF；renormalize 无字节变化；worktree 复现通过）|
 |GOV-EVIDENCE-UNIQUE-1|GOV-DEBT-CLEANUP-2|done（AC 证据覆盖核验；83 AC：3 COVERED / 17 PARTIAL / 19 GAP / 42 N/A；四轮 Review）|
+|GOV-SOURCE-RECORDS-1|GOV-EVIDENCE-UNIQUE-1|in_progress（EXPORT-REVEAL-1 与 P15 的 AC 勾选记录维护；只改勾选框与注记）|
 |P20-CLOSE-BOUND-1|P20-ISOLATION-1|closed_with_limitations（R6）|
 |P20-CLOSE-BOUND-HARDEN-1|P20-CLOSE-BOUND-1|closed_with_limitations|
 |P09-AC3-DELETE-HARDEN-1|P09-AC3-DELETE-1|closed_with_limitations（未集成）|
