@@ -17,31 +17,42 @@
 
 ---
 
-## 二、关键问题：如何知道哪些 `preview-*` 属于被删的书
+## 二、归属判据：只能走「删除前快照」（R189 实测修正）
 
-**两条可行路径**（都已确认存在）：
+**本文初版提出的「按 `managed_rel_path` 前缀匹配」已被实测否定。**
 
-### 路径 ①：按 `managed_rel_path` 前缀（**推荐**）
+**实测**：`preview-*` 的 `rel_path` 由 `render_preview.py` 构造：
 
-**`preview_lifecycle.managed_rel_path` 是相对的派生路径**，**结构含 book/chapter/page**。
+```python
+L69-70:  resource_id = f"preview-{uuid.uuid4().hex}"
+         rel_path    = f"previews/{resource_id}.png"
+L138:    rel_path    = f"pages/{resource_id}{suffix}"
+```
 
-**优点**：
-- **不依赖 `media_artifacts`** —— **因此不受「删除时映射已消失」影响** ✅
-- **单表扫描即可**，**无需 join** ✅
+**即 `previews/preview-<32 位 uuid>.png`** —— **不含 book / chapter / page 的任何成分，无法按书筛选。**
 
-**待确认**：**该路径的实际前缀格式**（**需实测一条真实记录**，**不猜**）
+**对比**：`page-original-{pid}` 的路径含 `page_id`，可以反查所属 book。**`preview-*` 完全不能。**
 
-### 路径 ②：按 `artifact_id` 经 `media_artifacts`
+**所以归属只能经 `artifact_id`**：
 
-**R7 指出**：`execute_permanent_delete_db`（`core_service.py:1139`）**先删 `media_artifacts` 行**，**L1143 才 `cleanup_book_files`** → **反查时映射已不存在**。
+```
+page_ids → media_artifacts.artifact_id → preview_lifecycle.resource_id
+```
 
-**若走此路径，必须在删除前快照** —— **多一步，且引入时序依赖。**
+**而 `execute_permanent_delete_db`（`core_service.py:1139`）会先删掉 `media_artifacts` 行**，
+**`cleanup_book_files`（L1143）运行时映射已不存在** →
 
-**所以路径 ① 更简单。**
+> **必须在删除【之前】快照出待回收的 `resource_id` 列表。**
 
----
+**这正是 R7 当年对方案 A 的批评**（「使 artifact/resource 映射在数据库删除前可用」）——
+**它现在成了 C1 唯一的实现路径。**
 
 ## 三、改动草案
+
+**改动位置有两处**（初版只写了 1 处）：
+
+**(a) `core_service.py` 的永久删除流程** —— 在 `execute_permanent_delete_db` 之前，按 `page_ids` 快照出待回收的 `resource_id` 列表；
+**(b) `library.py:cleanup_book_files`** —— 接收该列表并逐个回收。
 
 ### 1. `cleanup_book_files`（`src/infrastructure/sqlite/library.py:1082`）
 
@@ -103,15 +114,24 @@ for row in preview_rows:
 
 ---
 
-## 六、实施前必须补的两项（未验证）
+## 六、两项未验证事实：已测出（R189）
 
-1. **`managed_rel_path` 的实际前缀格式** —— **需查一条真实记录**，**不猜**（**若前缀不含 book_id，路径 ① 不成立，需回到路径 ② + 快照**）
-2. **`catalog.entries()` 在大库上的代价** —— **它是全表读**；**若 `preview_lifecycle` 行数很大，需要按前缀查询而非遍历**（**可能要给 `ResourceCatalogStore` 加一个前缀查询方法 —— 那是 API 面扩张，需确认**）
+**① `managed_rel_path` 的前缀格式** —— **已测：不含 book_id** ❌
+**→ 路径 ① 不成立，归属改走 `artifact_id` + 删除前快照**（见第二节）。
 
-**第 2 点可能是本文最大的未决项**：**它决定这次是「接线」还是「加一个查询方法」。**
+**② `catalog.entries()` 的代价** —— **已测：全表读，无过滤**（`catalog_store.py:794-800`）：
 
----
+```python
+rows = self._connection.execute(
+    "SELECT resource_id, scope_class, rel_path FROM resource_catalog ORDER BY resource_id"
+).fetchall()
+```
 
+**且 `catalog_store.py` 内没有 `LIKE` / `startswith` 之类的前缀查询** →
+**若要避免全表遍历，需新增查询方法（API 面扩张）** —— **但按 `resource_id` 精确查已有先例**
+（`preview_lifecycle_row`、`lookup`），**所以按快照列表逐个查是既有机上的用法，不需要新方法** ✅
+
+**结论**：**两项测量都没有把 C1 变成「加 API」，但第一项把改动位置从 1 处变成了 2 处。**
 ## 七、边界声明
 
 **只读准备**：未改 `library.py` / `catalog_store.py` / 任何产品代码，未加列，未改 IPC，未创建 Task，未申请豁免，未改指针。
