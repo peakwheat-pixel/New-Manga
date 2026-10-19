@@ -1,5 +1,5 @@
 # Project Rebaseline Plan
-唯一DAG；运行见[STATUS](STATUS.md)。2026-10-15恢复完整产品路线；P22-REBASE-1已集成。
+唯一DAG；运行见[STATUS](STATUS.md)。2026-10-15恢复完整产品路线；P22-REBASE-1已集成。范围与裁决见[REPORT](../verification/PROJECT-ROADMAP-RELEASE/REPORT.md)。
 |节点/目标|依赖|状态|
 |---|---|---|
 |P01 台账 / P03 SFX入口 / P05 契约注记|—|done|
@@ -32,4 +32,4 @@
 |RUST-ENV-BASELINE-1|P20-CLOSE-BOUND-1|proposed|
 |P07 交互补缺 / P21 旧栈归档|P02 / P20+另授权|proposed（均可选）|
 |P22 响应归属|P22-REBASE-1|已集成；P04 不放行，H1/P2-1/13 与 BC-AC5 缺项保留。已完成见各节点行。|
-DOC=[架构映射](tasks/ARCH-DOC-REBASELINE.md)已集成未关闭（AC7完成）；P13*停写；P04不放行，H1/P2-1/13缺项与BC-AC5 PARTIAL保留（[裁决](../verification/PROJECT-ROADMAP-RELEASE/REPORT.md)）。READY 节点：ARCH-DOC-REBASELINE、P20。`in_review`：HARDEN-1/2、PREVIEW-LIFECYCLE-RECLAIM-1。done：**33 项**。
+READY 节点：ARCH-DOC-REBASELINE、P20。`in_review`：HARDEN-1/2、PREVIEW-LIFECYCLE-RECLAIM-1。done：**33 项**。
