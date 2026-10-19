@@ -2,11 +2,11 @@
 id: P09-PREVIEW-LIFECYCLE-RECLAIM-1
 title: 译图预览的永久删除回收（AC4 转交）
 kind: product-lifecycle
-status: ready
+status: in_review
 owner: dsh
 reviewer: Codex
 depends_on: [P09-AC3-DELETE-HARDEN-1]
-delivery_head: null
+delivery_head: 392977a83cc496206728ad26dded96274ead41dc
 base_commit: 1f157413675b62450034194fd17e550c79ee001b
 branch: antigravity/P09-PREVIEW-LIFECYCLE-RECLAIM-1
 allowed_paths:
