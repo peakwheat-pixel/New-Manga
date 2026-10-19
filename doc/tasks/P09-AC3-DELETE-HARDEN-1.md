@@ -11,7 +11,7 @@ owner: dsh
 reviewer: Codex
 depends_on: [P09-AC3-DELETE-1]
 base_commit: a04e4ea78d5b33a0f91efcdc06b396391c4b165e
-branch: null
+branch: antigravity/P09-AC3-DELETE-HARDEN-1
 worktree: G:/CODEX/New Manga
 integration_commit: null
 delivery_head: 1878f0b126e8a0e2603570f9b2009d8b70a259f1
@@ -95,7 +95,7 @@ evidence_dir: verification/P09-AC3-DELETE-HARDEN-1
 
 ## 交付与运行记录
 
-- Handoff：`doc/handoffs/P09-AC3-DELETE-HARDEN-1-dsh.md`（待创建）。
+- Handoff：**本 Task 的正式 Handoff 为 `verification/P09-AC3-DELETE-HARDEN-1/HANDOFF.md`（已建）**；`doc/handoffs/P09-AC3-DELETE-HARDEN-1-dsh.md` 为协作协议规定的仓库级交接件，**待 Codex 集成时建立**（两者内容以后者为准，前者是本次交付记录）。
 - Review：待固定 delivery head 后由 Codex 独立复核（owner=dsh, reviewer=Codex，满足 owner≠reviewer）。
 - 实际测试：逐项见上表。
 - 2026-10-18 Coordinator（dsh, epoch 8）按用户裁决建立本 Task 并冻结范围。
@@ -179,7 +179,7 @@ evidence_dir: verification/P09-AC3-DELETE-HARDEN-1
 - `canonical_evidence_status`：`complete`；上表 11 条 pin 的磁盘 SHA-256 已按**磁盘真实字节**实算（本仓库为 CRLF 检出），commit 均为 40-hex 且经 `git cat-file -e` 验证存在。
 - `resource_closeout_status`：`complete`；仅复用仓库工作区，无新建 worktree、无需迁移/归档/删除的派生产物。
 - 删除、迁移、归档数量/字节数：**0 / 0 / 0**。
-**未关闭 AC：AC4**（判 FAIL，已转交 `P09-PREVIEW-LIFECYCLE-RECLAIM-1`）。其余 AC 已关闭；AC9/AC10/AC12 见各轮复审的 NOT_VERIFIED 记录。**删除路径加固范围内无未完成项。**
+**未关闭 AC：AC4**（判 FAIL，已转交 `P09-PREVIEW-LIFECYCLE-RECLAIM-1`）。其余 AC 已关闭；验收表中 AC9/AC10/AC12 的 `PASS` 是**历史测试运行结果**（各附证据命令）；**R6 之后的复审未再运行 Rust/前端/packaging/全量集**，故这些 AC 的**当前复审状态为 NOT_VERIFIED**，**属带限制关闭**。**删除路径加固范围内无未完成项。**
 **`delivery_head`（收口固定）**：`1878f0b126e8a0e2603570f9b2009d8b70a259f1`（见 frontmatter；经 `git cat-file -e` 验证可达且含 `win_unlink.py`）。早期记录的 `4824ed5d…` 是 R1 阶段的旧指针，已由收口固定值取代。
 - **硬约束保持**：`P09` 的 **AC3 delete 子条件仍为 `BLOCKED`**，本 Task 未将其翻为 PASS；本 Task 只做加固与指针自洽，不改变原判定。
 
@@ -211,7 +211,7 @@ evidence_dir: verification/P09-AC3-DELETE-HARDEN-1
 
 - **被审固定 head**：`10202dc4e178eb58a7e08ee0c59e1453ecc6f522`（= `delivery_head`）
 - **报告**：`verification/P09-AC3-DELETE-HARDEN-1/codex-review-r2.md`（原字节入库，Codex session `01a1516c-77ed-7f93-a734-e4396fbead76`）
-- **decision**：`changes_requested`；**findings 10**（原 7 项 + 新增 3 项）
+- **decision**：`changes_requested`；**findings 10**（= R2 报告总数；其中**新增 3 项**，其余 7 项为 R1 结转）
 - **F-001 CLOSED**：rev 2.11 契约冻结经复审确认，范围冲突消除
 - **CLOSED**：F-001、F-003、F-004、F-005、F-006
 - **PARTIAL**：F-002（真实 reader preview 发布后仍 `retired=False`，不在 GC 候选中）、F-007（文档旧表述仍把 6 项统称环境反转，与新分类冲突）
@@ -232,7 +232,7 @@ evidence_dir: verification/P09-AC3-DELETE-HARDEN-1
 | 提升后上限 | **6** |
 | 剩余可用 | **3** |
 
-**提升依据**：R1/R2/R3 三轮共 12 项 finding，**已闭合 10 项**（R1 的 F-001~F-007；R2 的 N-001、N-003、F-007；R3 的 N-001、N-003、N-005、F-007）。剩余两项为：
+**提升依据**：R1/R2/R3 三轮**去重后共 12 项唯一 finding**（各轮报告数之和大于此值，因有结转重复），**已闭合 10 项**（R1 的 F-001~F-007；R2 的 N-001、N-003、F-007；R3 的 N-001、N-003、N-005、F-007）。剩余两项为：
 
 - **N-004**（根路径祖先可信性，**P1 安全**）—— R3 新增，需设计选择（根的祖先逐段走句柄 / 从卷句柄开始）
 - **F-002 剩余部分** —— 经本会话诊断确认为**测试覆盖缺口**（生产接线 `rotate_render_preview` 存在且条件正确；测试直接调 `mark_preview_retired` 而跳过了轮换路径），属确定性工作
@@ -307,7 +307,7 @@ evidence_dir: verification/P09-AC3-DELETE-HARDEN-1
 | `win_unlink.py` 句柄链（新增） | `unlink_by_handle`，逐段校验 reparse、`FILE_OPEN` 不创建、`finally` 释放 |
 | 静态 junction 基准 **9 处** | 5 探针 SAFE |
 | TOCTOU 删除路径 **4 条** | 探针 SAFE，**判别力经 R7 独立复现三组红绿对照** |
-| R1(7) / R2(3) / R3(6) / R4(3) | 全部 finding 关闭 |
+| R1(7) / R2(新增 3) / R3(6) / R4(3) | 全部 finding 关闭 |
 | AC5 | **R7 判 PASS** |
 
 **`delivery_head` 固定规则（本 Task 的教训）**：**收口时用 `git rev-parse` 一次性固定**。**本 Task 历史证明「每次提交后更新」被忘了三次**（R7 的 P2 #4 即由此而来），**故规则改为收口时固定，不得在返修过程中反复更新**。
