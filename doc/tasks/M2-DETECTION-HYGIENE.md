@@ -2,7 +2,8 @@
 id: M2-DETECTION-HYGIENE
 title: "检测/调度面 hygiene 一揽子（TILING R1/R3 env-parse 加固 + BACKFILL N1 except 收窄 + SETTINGS-IPC R7/R8 文档口径）"
 kind: feature
-status: done  # r1 有条件通过（5×P2）→ 返修 R1-R6 → r2 抓 P0（lazy split 被红态归档抹除——checkout-restore 同款错误第二次）→ 修复+事故登记 → r3 P0 closed → 集成
+status: done
+# r1 有条件通过（5×P2）→ 返修 R1-R6 → r2 抓 P0（lazy split 被红态归档抹除——checkout-restore 同款错误第二次）→ 修复+事故登记 → r3 P0 closed → 集成
 
 reviewed_head_r1: 561a79cd
 

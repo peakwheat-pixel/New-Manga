@@ -2,7 +2,8 @@
 id: M2-TASKS-BACKFILL-MULTIREGION
 title: "executor backfill 多 region 页逐 region 跟进调度（SFX-ENTRY 相邻发现）"
 kind: feature
-status: done  # DSH r1 有条件通过 → 返修 R1-R7 全 closed（R1 真修+断言有效性红态 terminal 12≠17）→ r2 approved 0×新 P0/P1/P2
+status: done
+# DSH r1 有条件通过 → 返修 R1-R7 全 closed（R1 真修+断言有效性红态 terminal 12≠17）→ r2 approved 0×新 P0/P1/P2
 
 approval: user_ruling_2026-10-01_three_followups_all
 suggested_owner: ZCode

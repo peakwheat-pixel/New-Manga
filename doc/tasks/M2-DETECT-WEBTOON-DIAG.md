@@ -2,7 +2,8 @@
 id: M2-DETECT-WEBTOON-DIAG
 title: "webtoon 长条漫 ogkalu 0 候选适配器级诊断（建议 A 第一步：先可观测值再定修法）"
 kind: diagnosis
-status: done  # DSH r1 changes_requested → 返修 R1-R11（含探针 schema v2 重跑，226/193 精确复现）→ r2 approved（可集成）
+status: done
+# DSH r1 changes_requested → 返修 R1-R11（含探针 schema v2 重跑，226/193 精确复现）→ r2 approved（可集成）
 
 approval: user_ruling_2026-10-01_all_four
 suggested_owner: ZCode

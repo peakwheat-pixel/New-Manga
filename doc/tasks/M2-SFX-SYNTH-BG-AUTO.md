@@ -2,7 +2,8 @@
 id: M2-SFX-SYNTH-BG-AUTO
 title: "SFX 合成底图自动 provider：ChatGPT 网页版全自动生成（Playwright 持久登录态）+ 底图库缺口自动触发（零 src；数据外部树）"
 kind: feature
-status: in_review（代码集成 done @merge；真实冒烟 manual 待用户登录后代跑）
+status: in_review
+# 代码集成 done @merge；真实冒烟 manual 待用户登录后代跑
 approval: user_ruling_2026-10-04_合成底图线路入项目_全自动内嵌（本会话原话「同意批量跑一组 20 张不同风格的底图」实测 20/20 后「我要把这个线路加入到项目中，在项目中所需要素这种素材的时候自动调用」+自动化形态裁决「全自动内嵌」）
 suggested_owner: ZCode
 owner: ZCode

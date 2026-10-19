@@ -2,7 +2,8 @@
 id: M2-SFX-TRANSLATE-ENTRY
 title: "SFX→translate 产品入口：sfx_policy 可配置化（用户裁决④：解除 SFX 翻译评测 n=0 的前置阻断）"
 kind: feature
-status: done  # DSH r1 approved_with_conditions（R1 语义登记+R2 行数更正由集成方闭合；0×P0/P1）
+status: done
+# DSH r1 approved_with_conditions（R1 语义登记+R2 行数更正由集成方闭合；0×P0/P1）
 
 approval: user_ruling_2026-10-01_all_four
 suggested_owner: ZCode

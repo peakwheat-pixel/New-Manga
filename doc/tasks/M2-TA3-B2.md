@@ -2,7 +2,8 @@
 id: M2-TA3-B2
 title: "TA3-B 阶段二：20-case 正式质量 qualification run（翻译=DeepSeek remote，用户裁决 (a) 2026-10-01）"
 kind: qualification
-status: done  # 集成收口：DSH r1 changes_requested（1×P1 R1）→ 集成方定案 R1 机制（export=Run1 渲染产物复制）→ Owner 返修 R1-R15（614be825+7922a3fc）→ DSH r2 收敛至 N1 → 集成修正闭合（N1-N4/N7 + paddle wrapper ndarray 适配）
+status: done
+# 集成收口：DSH r1 changes_requested（1×P1 R1）→ 集成方定案 R1 机制（export=Run1 渲染产物复制）→ Owner 返修 R1-R15（614be825+7922a3fc）→ DSH r2 收敛至 N1 → 集成修正闭合（N1-N4/N7 + paddle wrapper ndarray 适配）
 delivery_head: 7922a3fc  # 返修 tip（614be825+7922a3fc，DSH r1 R1-R15 处置）；3c8801b7=run 产物交付实体；base 线性链 521d0bdd→69137837(release)→…→81e5ad81→7922a3fc（r1 R14 集成方定案：merge-base=521d0bdd，两口径 diff 均 53 文件）
 approval: user_ruling_2026-10-01_option_a_deepseek
 suggested_owner: ZCode

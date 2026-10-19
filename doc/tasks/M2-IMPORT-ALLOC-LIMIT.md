@@ -2,7 +2,8 @@
 id: M2-IMPORT-ALLOC-LIMIT
 title: "大图导入 QImageReader allocation limit 可配置化（建议 B：Qt 256MB 默认上限拒绝 webtoon 导入）"
 kind: feature
-status: done  # DSH r1 approved_with_conditions → 条件返修 R1-R10 全 closed（r2 approved：机制锁定用例+stderr 补档+MOBI 收紧；五套件 550+1sk 全绿）
+status: done
+# DSH r1 approved_with_conditions → 条件返修 R1-R10 全 closed（r2 approved：机制锁定用例+stderr 补档+MOBI 收紧；五套件 550+1sk 全绿）
 
 approval: user_ruling_2026-10-01_all_four
 suggested_owner: ZCode

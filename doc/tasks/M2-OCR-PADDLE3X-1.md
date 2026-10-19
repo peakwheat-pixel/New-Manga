@@ -2,7 +2,8 @@
 id: M2-OCR-PADDLE3X-1
 title: "生产 ocr_local.py PaddleOCR 3.x 适配修复（bytes 静默忽略 + 3.x 输出形状 + 双 region 行为判定）"
 kind: feature
-status: done  # 集成收口：DSH r1 approved_with_conditions 条件全闭（integration.md），merge 进 main 由编排会话执行
+status: done
+# 集成收口：DSH r1 approved_with_conditions 条件全闭（integration.md），merge 进 main 由编排会话执行
 approval: ta3b_phase1_finding_registered_2026-10-01
 suggested_owner: ZCode
 owner: ZCode

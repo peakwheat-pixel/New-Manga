@@ -2,7 +2,8 @@
 id: M2-SETTINGS-UI-SFX-POLICY
 title: "React 设置页接入 sfx.policy 配置（SFX-ENTRY 后续；UI 协议说明：最小键接入，视觉审查可后补 Qoder）"
 kind: feature
-status: done  # DSH r1（SETTINGS-IPC 连带 review）approved_with_conditions 条件闭合+通道集成 @fab3ca56：UI 即插即用（接通在本分支已完成，命令名零漂移）
+status: done
+# DSH r1（SETTINGS-IPC 连带 review）approved_with_conditions 条件闭合+通道集成 @fab3ca56：UI 即插即用（接通在本分支已完成，命令名零漂移）
 
 
 approval: user_ruling_2026-10-01_three_followups_all

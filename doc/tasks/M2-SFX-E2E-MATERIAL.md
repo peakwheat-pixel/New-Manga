@@ -2,7 +2,8 @@
 id: M2-SFX-E2E-MATERIAL
 title: "SFX 端到端素材路线（用户裁决④全权授权）：ja BJ06 policy=translate 端到端验证 + SFX-rich 素材搜寻/下载/入池"
 kind: feature
-status: done  # DSH r1 有条件通过（1×P1 R1 误路由损害形态）→ 返修 R1-R10 全 closed → r2 approved → 集成 @68b351ad
+status: done
+# DSH r1 有条件通过（1×P1 R1 误路由损害形态）→ 返修 R1-R10 全 closed → r2 approved → 集成 @68b351ad
 
 approval: user_ruling_2026-10-02_seven_items_full_authority_material
 suggested_owner: ZCode

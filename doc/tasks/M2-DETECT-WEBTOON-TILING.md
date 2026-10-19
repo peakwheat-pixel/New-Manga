@@ -2,7 +2,8 @@
 id: M2-DETECT-WEBTOON-TILING
 title: "webtoon 长条漫 ogkalu tiling 检测修复（建议 A 第二步：按 DIAG 冻结口径实施，解锁 ko 6 case）"
 kind: feature
-status: done  # DSH r1 PASS（0×P0/P1/P2 阻塞；9×P3/P4 建议登记紧邻 follow-up）→ 集成（次序首位）
+status: done
+# DSH r1 PASS（0×P0/P1/P2 阻塞；9×P3/P4 建议登记紧邻 follow-up）→ 集成（次序首位）
 approval: user_ruling_2026-10-01_three_followups_all
 suggested_owner: ZCode
 owner: ZCode

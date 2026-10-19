@@ -2,7 +2,8 @@
 id: M2-TA3-B
 title: "TA3-B：20 案例端到端质量验收——阶段一（阈值定义+OCR 安装冒烟+case 选取）；阶段二（正式 run）BLOCKED_ON_USER 翻译 endpoint 二选一（用户「继续」推进 2026-10-01）"
 kind: qualification
-status: done  # 阶段一 done @merge 97450992（集成 81cf5125，DSH r2 approved）；阶段二=BLOCKED_ON_USER 候选（翻译 endpoint 二选一后另行释放）
+status: done
+# 阶段一 done @merge 97450992（集成 81cf5125，DSH r2 approved）；阶段二=BLOCKED_ON_USER 候选（翻译 endpoint 二选一后另行释放）
 delivery_head: cad45622  # N3 集成更新：b057ec69=交付实体，cad45622=DSH r1 返修 tip（被复核头，见 verification/M2-TA3-B/integration.md）
 approval: user_directive_2026-10-01_continue_ta3b
 suggested_owner: ZCode
