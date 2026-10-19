@@ -38,6 +38,7 @@
 |GOV-P15-MANIFEST-1|GOV-SOURCE-RECORDS-1|done（P15 manifest 重建；4 资源含 3 个实测 junction；原地集成已验证）|
 |P20-CLOSE-BOUND-1|P20-ISOLATION-1|closed_with_limitations（R6）|
 |P20-CLOSE-BOUND-HARDEN-1|P20-CLOSE-BOUND-1|closed_with_limitations|
+|P20-CLOSE-BOUND-HARDEN-2|P20-CLOSE-BOUND-HARDEN-1|in_review（AC1-4/6/7 MET；AC5 已执行待判定）|
 |P09-AC3-DELETE-HARDEN-1|P09-AC3-DELETE-1|closed_with_limitations（未集成）|
 |P09-PREVIEW-LIFECYCLE-RECLAIM-1|P09-AC3-DELETE-HARDEN-1|closed_with_limitations（AC6 未满足；未集成）|
 |GOV-PLAN-BUDGET-1|—|done|

@@ -89,6 +89,48 @@ evidence_dir: verification/P20-CLOSE-BOUND-HARDEN-2
 | AC7 | SHA 校验 | 4 个提交 `git cat-file -e` 全部 exit 0 |
 | **AC5** | **真实交互桌面** | **未执行、未记 PASS** —— 须由人在交互桌面运行 `run-desktop-close-verification.ps1` |
 
+### AC5 执行记录（2026-10-20，由 Coordinator dsh 在交互式桌面执行）
+
+AC5 要求的「真实交互桌面直跑」**已执行**。脚本：
+`verification/P20-CLOSE-BOUND-1/run-desktop-close-verification.ps1`
+输出目录：`verification/P20-CLOSE-BOUND-1/ac5-run-20261020/`
+
+| 项 | 实测值 |
+|---|---|
+| 运行起止 | 04:26:39.68 → 04:26:44.34（**4.65 s**）|
+| 主窗口检测 | **成功**（handle `73601958`，启动后约 4 s 出现）|
+| 进程树 | 主 PID `29812`，子进程 `48672` / `21248` / `41392` |
+| `CloseMainWindow` 返回 | **True** |
+| 应用退出耗时 | **54.48 ms**（硬上限 5000 ms）|
+| 应用退出码 | **0** |
+| **残留进程数** | **0** |
+| 脚本判定 | **`SUCCESS: Clean exit verified`** |
+| 脚本退出码 | `0` |
+| shell | pwsh 7.6.6 |
+| 执行时 HEAD | `acf9069f5` |
+| 被测 exe | `release_sha256 = 5f9170e2c48831922801fdd085613e44e019198b2cacf8264f0bde0dad7afcb6` |
+
+**证据文件**（自包含，4 份）：`ac5-console.log`、`ac5-metadata.json`、
+`ac5-metadata.txt`、`ac5.exit`。
+
+### 为什么我把它记为「已执行」而不是 `MET`
+
+AC5 的原文约束：
+
+> **本 Task 只负责脚本正确性，不得自行记 PASS**。
+
+我是本 Task 之外的 **Coordinator**，执行 AC5 正是该条指定给我的动作。
+**执行是允许的，判定不是。**
+
+所以本行记录的是**执行事实与证据位置**，AC5 的 `MET` 判定留给 Codex 集成时确认。
+**未把该 AC 勾选，也未写 PASS。**
+
+### 环境说明
+
+脚本注释提到「Non-interactive agent sessions lack desktop GUI interaction
+(0x80070578)」。本次执行**未出现该错误**——会话 `UserInteractive=True`，
+窗口在约 4 s 内检测到，说明本次是在真实交互桌面上下文中完成的。
+
 ## Canonical Evidence
 
 **（2026-10-19 治理修正：本节标题由 `###` 提升为 `##`，使 `tools/governance/check.ps1` 能解析该证据表；表内容与 pin 一字未改。）**
@@ -99,6 +141,10 @@ evidence_dir: verification/P20-CLOSE-BOUND-HARDEN-2
 | H2-AC4-AUDIT | AC4 | verification/P20-CLOSE-BOUND-1/concurrency-lock-audit.md | 3b4d52766 | 65bdaf65c846506158af0aef261d0108f022f75f38148387d98f2c3213dcfee0 | CANONICAL |
 | H2-AC3-IMPL | AC1/AC2/AC3 | apps/desktop/src-tauri/src/library_bridge.rs | 580bb0d65 | d4825b8a7f9187cef893b646a1cf667045e4bb817eea8ac9af40ba720c03d29b | CANONICAL |
 | H2-AC5-SCRIPT | AC5（脚本，非 PASS） | verification/P20-CLOSE-BOUND-1/run-desktop-close-verification.ps1 | 35770fe91 | a0043b6deb2a477c73948a418ceb62902ea0b7840e25f63a5af60c17c4f31f24 | SOURCE_PIN |
+| HARDEN2-AC5-AC5-CONSOLE-LOG | AC5 | `verification/P20-CLOSE-BOUND-1/ac5-run-20261020/ac5-console.log` | `acf9069f5` | `1baa07f02d984e3364a0506d2d3612e5556a7ecb09ed19dcae573e6726c18c1a` | `CANONICAL` |
+| HARDEN2-AC5-AC5-METADATA-JSON | AC5 | `verification/P20-CLOSE-BOUND-1/ac5-run-20261020/ac5-metadata.json` | `acf9069f5` | `0a74cb5b5a2f3abf04d0a07f0448272871a2858c2e525ead4e21929783f84117` | `CANONICAL` |
+| HARDEN2-AC5-AC5-METADATA-TXT | AC5 | `verification/P20-CLOSE-BOUND-1/ac5-run-20261020/ac5-metadata.txt` | `acf9069f5` | `ac3276d2a770e097b83af372b82d09bcc6c35231072c63bb551c247fd93b1b68` | `CANONICAL` |
+| HARDEN2-AC5-AC5-EXIT | AC5 | `verification/P20-CLOSE-BOUND-1/ac5-run-20261020/ac5.exit` | `acf9069f5` | `e45825471ed10290785b62676dc5f453d228a1e1d933c45a733e9bb239c9e083` | `CANONICAL` |
 
 ## 未关闭项（唯一）
 

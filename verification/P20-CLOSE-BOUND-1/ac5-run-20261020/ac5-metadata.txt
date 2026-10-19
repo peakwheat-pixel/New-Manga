@@ -1,0 +1,15 @@
+﻿runner=run-desktop-close-verification.ps1 (self-contained evidence logging)
+outdir=G:\CODEX\New Manga\verification\P20-CLOSE-BOUND-1\ac5-run-20261020
+start_local=2026-10-20T04:26:39.6833864+08:00
+end_local=2026-10-20T04:26:44.3379166+08:00
+duration_s=4.65
+exit_code=0
+desktop_exit_code=0
+release_sha256=5f9170e2c48831922801fdd085613e44e019198b2cacf8264f0bde0dad7afcb6
+head=acf9069f5deab7e7a68993fd25583070d9c573fc
+shell=pwsh (PowerShell 7.6.6)
+console_written=True
+console_fallback_written=False
+exit_written=True
+exit_fallback_written=False
+note=Self-contained evidence generation by run-desktop-close-verification.ps1 without relying on caller Tee.
