@@ -1,36 +1,63 @@
-# R8 两项断言的注入验证
+# 注入证据（R8 → R9 → R10 演进）
 
-**时间**：2026-10-19 · **HEAD**：`93a9bd965` · **执行**：dsh
-**触发**：R8 判定「文件身份变化需要注入证据」。**我此前认为集合比较无须注入，R8 的注入证明我错了** —— 它同时暴露了 batch 探针的第二处漏检。
+**最终更新**：2026-10-19 · **HEAD**：`82ead8c3f`
 
-## 注入 A：目录清空（连锁文件也没有）
+---
 
-**针对断言**：`survivor_names == ['.preview-lifecycle.lock']`
-**注入**：判定前删除 derived 目录下全部文件。
+## ⚠️ 本文件早先版本含有一句与代码不符的话
 
-```
-A) 基线                    exit=0   RESULT = PASS (no leak)
-B) 目录清空                exit=1   （集合不等于预期，报错）
-判别力 = CONFIRMED
-```
+**早先版本写着「孤立 PNG 注入下四个 probe 都拒绝，证明该问题已修复」以及「三者都拒绝空目录」。**
 
-**证明**：**修复前写的是「过滤掉 lock 后没有意外文件」，它在空集合上也成立。** 改为字面集合比较后，空目录被拒绝。
+**R9 复跑后指出**：**当时只有 `ac2-referenced-preview-probe.py` 会在空快照下 exit 1，而 `ac4-leak-assert-probe.py` 与 `ac4-retry-manifest-probe.py` 都是 exit 0 / PASS。**
 
-## 注入 B：b2 的预览文件被删、catalog row 保留
+**原因**：**R8 的修复把判定写成了 `leaked_files = 0 if survivor_names == expected else len(survivor_names)`** —— **而 `len([])` 是 0，所以空目录读作「无泄漏」。** **同一个洞换了个写法又被造了一遍。**
 
-**针对断言**：每个幸存 row 的 `rel_path` 必须指向存在的文件。
-**注入**：删除每个幸存 row 对应的文件，保留其 catalog row。
+**我当时的注入只跑了 `ac4-leak-assert-probe.py` 一个，却把结论推广到了三个。** **这句话不成立不是因为代码没修，而是因为我从一个样本推到了全部。**
 
-```
-A) 基线                    exit=0   RESULT = PASS
-B) row 在、文件缺失        exit=1   （missing_files 非空）
-判别力 = CONFIRMED
-```
+**R9 之后**：**两个 probe 的判定改为布尔比较本身（`survivors_match = (survivor_names == expected_survivors)`），数字只用于打印。** **本文件下面的记录是那次修复之后的运行。**
 
-**证明**：**修复前这一场景报 PASS**（R8 在 scratch 副本中复现过）。**一条没有对应文件的 row 不是「被保留的预览」，而是坏引用** —— 现在它使探针失败。
+---
 
-## 与 R7 的关系
+## 注入 1：空幸存列表（连锁文件也没了）
 
-**R7 Finding 1 的修复（计数 → 身份）本身是有效的**：R8 的孤立 PNG 注入下四个探针都拒绝。**但我的实现写成了「排除 lock 后无意外」，而不是「集合恰好等于」** —— **两者在「锁文件缺失」时结论相反**，而 R8 指出这一点并证明注入能发现它。
+**针对**：`survivor_names == ['.preview-lifecycle.lock']` 的字面集合断言。
 
-**这正是我在 R7 声称「无须注入」的地方。**
+**两个 probe 分别运行、分别记录**（不再从一个推广到全部）：
+
+| 探针 | 基线 | 注入空目录 | 判别力 |
+|---|---|---|---|
+| `ac4-leak-assert-probe.py` | exit 0 · PASS | **exit 1** | **CONFIRMED** |
+| `ac4-retry-manifest-probe.py` | exit 0 · PASS | **exit 1** | **CONFIRMED** |
+
+## 注入 2：同名、异路径孤儿文件
+
+**针对**：**文件归属按完整相对路径而非 basename 判定**。
+
+**注入方式**：取 b2 预期存活预览的 `rel_path`（`previews/preview-<hex>.png`），**在 `orphan-dir/` 下创建同名文件**。
+
+**⚠️ 第一次尝试无效，原因值得记录**：**注入建在 `files_after` 收集【之后】**，**所以孤儿根本不在被测文件列表里 —— 探针 PASS 是必然的，与断言是否严格无关。** **若不检查注入点位置，这次运行会被误读成「探针仍有洞」。**
+
+| 运行 | 结果 |
+|---|---|
+| 基线 | `exit 0` · `LEAK: 0 row(s), 0 unexplained file(s)` · PASS |
+| 注入（正确位置） | **`exit 1`** · `LEAK: 0 row(s), 1 unexplained file(s)` · **FAIL (unexplained files survived)** |
+| 注入输出 | `INJECTED: orphan-dir/preview-b4bd1a05….png (same basename as previews/preview-b4bd1a05….png)` |
+
+**判别力 = CONFIRMED。**
+
+**这条注入同时是「完整路径比较生效」的直接证据**：**同名、不同目录 → 判为 unexplained**；**若仍按 basename 比较，它会与 `previews/…` 的同名文件混淆而不被发现。**
+
+## 注入 3：存活 row 的文件被删（R8 Finding 2）
+
+| 运行 | 结果 |
+|---|---|
+| 基线 | `exit 0` · PASS |
+| 注入 | `exit 1` · `RESULT = FAIL (row survived but its file is missing: ['preview-…'])` |
+
+**判别力 = CONFIRMED。** **失败信息曾误报为「book b2 itself is gone」，已在 R9 前修正。**
+
+## 结论
+
+**三组断言各有失败侧证据，且每组都在基线与注入两侧运行。**
+
+**空目录注入之所以曾经失败，是因为判定用了计数；同名异路径注入之所以曾经误读，是因为注入点在被测数据收集之后。** **两次都不是断言写得不够漂亮，而是断言与实际执行路径不一致。**
