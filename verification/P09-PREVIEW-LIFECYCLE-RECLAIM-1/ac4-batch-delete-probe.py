@@ -57,10 +57,10 @@ def build(book: str, chapter: str, page_id: str) -> None:
     core.storage.publish(t, rel_t)
     with core.conn:
         core.conn.execute(
-            "INSERT INTO books (book_id,title,created_at,updated_at) VALUES (?,?,'now','now')",
+            "INSERT OR IGNORE INTO books (book_id,title,created_at,updated_at) VALUES (?,?,'now','now')",
             (book, book.upper()))
         core.conn.execute(
-            "INSERT INTO chapters (chapter_id,book_id,title,created_at,updated_at) VALUES (?,?,?,'now','now')",
+            "INSERT OR IGNORE INTO chapters (chapter_id,book_id,title,created_at,updated_at) VALUES (?,?,?,'now','now')",
             (chapter, book, "C"))
         core.conn.execute(
             "INSERT INTO pages (page_id,chapter_id,managed_original_ref,source_filename,"
