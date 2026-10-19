@@ -80,7 +80,7 @@ pwsh -NoProfile -File tools/governance/check.ps1 -TaskPath doc/tasks/EXPORT-REVE
 |---|---|---|---|---|---|
 | SWEEP-INVENTORY | AC1、AC2 | `verification/GOV-EVIDENCE-DIR-SWEEP-1/ac1-ac2-inventory.json` | `24fcfae13` | `cfe8bbf21c1d85443d3347cc12692ea797ab394980c8aa01642b78e7294650eb` | `CANONICAL` |
 | SWEEP-TRIAGE | AC1–AC4 | `verification/GOV-EVIDENCE-DIR-SWEEP-1/ac1-ac4-inventory-and-triage.md` | `24fcfae13` | `95e576c85067c0a8c690071af8e0a23435b989e974e162eb5f8ddb3e3a518579` | `CANONICAL` |
-| SWEEP-HANDOFF | AC5 | `doc/handoffs/GOV-EVIDENCE-DIR-SWEEP-1-24fcfae13.md` | `24fcfae13` | `c93a406c4f3979aa9630500129dee9d07411e40ee6185e5b9bf0482074bdcb25` | `CANONICAL` |
+| SWEEP-HANDOFF | AC5 | `doc/handoffs/GOV-EVIDENCE-DIR-SWEEP-1-24fcfae13.md` | `c5cec3f63` | `c93a406c4f3979aa9630500129dee9d07411e40ee6185e5b9bf0482074bdcb25` | `CANONICAL` |
 
 ## Resource Manifest
 
