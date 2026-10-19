@@ -3,12 +3,8 @@
 > **本文件是验证证据集，不是交付件。** 本 Task 的**正式 Handoff** 为 `doc/handoffs/P09-AC3-DELETE-HARDEN-1-1878f0b1.md`（按 `doc/09_COLLABORATION.md` §5）。本文件按协议 L106 的定位，提供 Handoff 所引用的验证证据与交付明细。
 
 - `task_id`: P09-AC3-DELETE-HARDEN-1
-- `branch`: antigravity/P09-AC3-DELETE-HARDEN-1
-- `handoff_head`: 见文末「固定规则」——**收口时由 `git rev-parse` 重取**
-- `owner`: dsh
-- `reviewer`: Codex（R1–R7 独立复审）
-- `status`: `in_review` → **删除路径范围内收口**（用户裁决路线 B：AC4 判 FAIL 并转出至 `P09-PREVIEW-LIFECYCLE-RECLAIM-1`）。**本 Task 不声称覆盖预览回收。**
-- `date`: 2026-10-19
+- **本文件不维护 Task 生命周期状态**（status / owner / reviewer / head 见正式 Handoff 与 Task 文件）。
+- 证据主体：`verification/P09-AC3-DELETE-HARDEN-1/`（探针 9 个 + `codex-review-r1..r13.md`）。
 
 ---
 
@@ -77,8 +73,6 @@
   - **第一版**（按 `artifact_id` 反查）—— **被「同一 artifact 累积多行、`retired` 无法区分在用与遗留」否定**（R7 独立确认无字段可判定）
   - **第二版被 R7 指出时序缺陷**：**生产流程先 `execute_permanent_delete_db`（删 `media_artifacts` 行）再 `cleanup_book_files`**，**清理阶段已无映射可查**
 - **核心障碍**：**没有任何现有数据能区分「在用行」与「遗留行」** → **属产品级生命周期决策，不是接线或时序修补**
-
-### Handoff / 正式转交 Task
 
 ### Handoff / 正式转交 Task
 
