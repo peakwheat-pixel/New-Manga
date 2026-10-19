@@ -79,7 +79,7 @@ pwsh -NoProfile -File tools/governance/check.ps1 -TaskPath doc/tasks/P15.md
 | P15M-REVIEW-R1 | AC4 | `doc/reviews/GOV-P15-MANIFEST-1-6eec515a5-antigravity-r1.md` | `bfbb7b1a9` | `24850b219c19e1a4518e5c804a983694d2b3905c3b4e9e5be2cf7a7a2baac923` | `CANONICAL` |
 | P15M-REVIEW-R2 | AC4 | `doc/reviews/GOV-P15-MANIFEST-1-2f9d549d5-antigravity-r2.md` | `bfbb7b1a9` | `3ab530f3beff5a8b65a7fc506368999f0958b11366df84b2483c2154192ac90c` | `CANONICAL` |
 | P15M-REVIEW-R3 | AC5 | `doc/reviews/GOV-P15-MANIFEST-1-2f9d549d5-antigravity-r3.md` | `68e696306` | `192f8198b9cc53ba55a8da1674a34161465c8549471d04c0fb7ceb85d3eed758` | `CANONICAL` |
-| P15M-INTEGRATION | AC4 | `verification/GOV-P15-MANIFEST-1/ac4-post-integration-verification.md` | `7b1cb6a78` | `f4cb5463e54a13dd18370b750402a80b457df9cab2bf66cfcb8b4ab830d6e5cf` | `CANONICAL` |
+| P15M-INTEGRATION | AC4 | `verification/GOV-P15-MANIFEST-1/ac4-post-integration-verification.md` | `38ea43336` | `f4cb5463e54a13dd18370b750402a80b457df9cab2bf66cfcb8b4ab830d6e5cf` | `CANONICAL` |
 
 ## Resource Manifest
 
