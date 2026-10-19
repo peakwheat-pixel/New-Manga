@@ -101,6 +101,18 @@ allowed_paths:
 
 登记 AC1–AC5 判别力矩阵、Handoff、Review 和 checker 输出；每项记录仓库相对路径、含文件 commit、SHA-256、class。Review 必须绑定精确 `reviewed_head`。
 
+| evidence_id | AC/Gate | path（仓库相对路径或绝对路径） | commit | sha256 | class (`CANONICAL` / `SOURCE_PIN`) |
+|---|---|---|---|---|---|
+| EVID-AC1-FREEZE | AC1 | `verification/GOV-EVIDENCE-UNIQUE-1/ac1-input-freeze-and-criteria.md` | `c41a40a09` | `a339dd41c030d1af2ea3e1a52a550d85dbecd042ec8d29c9a56ffb636d3e7f5e` | `CANONICAL` |
+| EVID-AC1 | AC1 | `verification/GOV-EVIDENCE-UNIQUE-1/ac1-matrix-v2.md` | `c41a40a09` | `2942b273afb820c7edc1cd85cf8856633263a32afd78d41e9aa299523abfbcfa` | `CANONICAL` |
+| EVID-AC1-JSON | AC1 | `verification/GOV-EVIDENCE-UNIQUE-1/ac1-matrix-v2.json` | `c41a40a09` | `ac54944b703d0fccc37d4b17a90b260280ec664b5493e5b87e79de47dbdcee2f` | `CANONICAL` |
+| EVID-AC2-MAP | AC2 | `verification/GOV-EVIDENCE-UNIQUE-1/ac2-ac-mapping-and-uniqueness.md` | `c41a40a09` | `09450278df57ad7b24e2da249a1bb7dd074e9e5581b7735d3f4761946b04df8f` | `CANONICAL` |
+| EVID-AC2-B1 | AC2 | `verification/GOV-EVIDENCE-UNIQUE-1/ac2-coverage-batch1.md` | `c41a40a09` | `926e6675e6c99e48a4f9a0ddca3c1e6846048cf7f22d1425856367439b043059` | `CANONICAL` |
+| EVID-AC2-B2 | AC2 | `verification/GOV-EVIDENCE-UNIQUE-1/ac2-coverage-batch2.md` | `c41a40a09` | `82c9523862aed6071e6e3bdeb8b979c3c50697811e6f9cfefff7fed9b5644241` | `CANONICAL` |
+| EVID-AC2-B3 | AC2 | `verification/GOV-EVIDENCE-UNIQUE-1/ac2-coverage-batch3-and-summary.md` | `c41a40a09` | `31b4d15fce8c6eae6427921df2d4e4e74326437f49d452a994438cabe2e5f898` | `CANONICAL` |
+| EVID-AC3 | AC3 | `verification/GOV-EVIDENCE-UNIQUE-1/ac3-readonly-verification.md` | `c41a40a09` | `89d92ef4084d88cfd63ade5ea4f836719b00788b6b0bbb3313db77f87c7d581c` | `CANONICAL` |
+| EVID-REVIEW | AC4 | `doc/reviews/GOV-EVIDENCE-UNIQUE-1-3b62f7937-antigravity-r1.md` | `c41a40a09` | `a9abc01e6514ddf786476dc369467a29afd787898a07de063f467781da7c83ed` | `CANONICAL` |
+
 ## Resource Manifest
 
 冻结 ready 前登记实际 Task worktree 路径；task-env、dataset、artifact、temp、agent-output、exchange 逐项核实。不适用需有目录核实依据；未知、dirty、被引用或用户数据一律保留。
