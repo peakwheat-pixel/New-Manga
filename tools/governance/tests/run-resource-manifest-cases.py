@@ -2,12 +2,16 @@
 """Offline cases for external Resource Manifest support.
 
 Case definitions live in fixtures/resource-manifest/cases.json (versioned data, not code).
-Each case runs against the real checker inside a throwaway task under doc/tasks/, which is
-removed in a finally block - nothing is committed, and no fixture Task is left behind.
 
-Why the real tree instead of a synthetic repo root: the checker validates eleven fixed
-governance files plus many doc/** cross-references, so a minimal synthetic tree produces
-40+ unrelated errors that drown the signal. Inside the real tree any FAIL is attributable.
+Isolation (r7 §2.4 and this task's prohibitions): the fixture Task is written to a system
+temporary directory, NEVER to the repository's doc/tasks/. The checker's -TaskPath accepts any
+path, so the real task tree is never touched. Only the referenced manifest lives under
+verification/, because manifest references are resolved relative to the repo root; that
+directory is created and removed per case.
+
+Why the real tree rather than a synthetic repo root: the checker validates eleven fixed
+governance files plus many doc/** cross-references, so a minimal synthetic tree yields 40+
+unrelated errors that drown the signal.
 """
 import hashlib
 import io
@@ -16,12 +20,12 @@ import os
 import shutil
 import subprocess
 import sys
+import tempfile
 
 WT = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", ".."))
 FIXTURES = os.path.join(os.path.dirname(os.path.abspath(__file__)),
                         "fixtures", "resource-manifest", "cases.json")
 TID = "ZZ-MANIFEST-FIXTURE"
-TPATH = os.path.join(WT, "doc", "tasks", TID + ".md")
 VDIR = os.path.join(WT, "verification", TID)
 
 # A real commit and a real on-disk hash so evidence checks pass and cannot mask manifest results.
@@ -63,7 +67,6 @@ evidence_dir: verification/{tid}-evidence
 
 
 def subst(obj):
-    """Replace the @TID@ token throughout a case definition."""
     if isinstance(obj, str):
         return obj.replace("@TID@", TID)
     if isinstance(obj, list):
@@ -73,19 +76,24 @@ def subst(obj):
     return obj
 
 
-def write_case(manifest, section):
+def write_case(manifest, section, taskdir):
     os.makedirs(VDIR, exist_ok=True)
+    mf = os.path.join(VDIR, "resource-manifest.json")
     if manifest is not None:
-        io.open(os.path.join(VDIR, "resource-manifest.json"), "w", encoding="utf-8").write(
+        io.open(mf, "w", encoding="utf-8").write(
             json.dumps(manifest, ensure_ascii=False, indent=2))
-    io.open(TPATH, "w", encoding="utf-8").write(TASK_TMPL.format(
+    elif os.path.exists(mf):
+        os.remove(mf)
+    tp = os.path.join(taskdir, TID + ".md")
+    io.open(tp, "w", encoding="utf-8").write(TASK_TMPL.format(
         tid=TID, commit=REAL_COMMIT, sha=AGENTS_SHA, section=section))
+    return tp
 
 
-def run():
+def run(tp):
     r = subprocess.run(["pwsh", "-NoProfile", "-File",
                         os.path.join(WT, "tools", "governance", "check.ps1"),
-                        "-TaskPath", TPATH],
+                        "-TaskPath", tp],
                        capture_output=True, text=True, encoding="utf-8", errors="replace", cwd=WT)
     out = (r.stdout or "") + (r.stderr or "")
     fails = [l.strip()[6:] for l in out.split("\n") if l.strip().startswith("FAIL:")]
@@ -100,11 +108,12 @@ MANIFEST_KEYS = ("Manifest", "manifest", "Resource", "ALREADY_ABSENT", "NOT_APPL
 def main():
     doc = json.load(io.open(FIXTURES, encoding="utf-8"))
     cases = subst(doc["cases"])
+    taskdir = tempfile.mkdtemp(prefix="gov-manifest-cases-")
     results = []
     try:
         for c in cases:
-            write_case(c["manifest"], c["section"])
-            summary, fails = run()
+            tp = write_case(c["manifest"], c["section"], taskdir)
+            summary, fails = run(tp)
             rel = [f for f in fails if any(k in f for k in MANIFEST_KEYS)]
             other = [f for f in fails if f not in rel]
             ok = (len(rel) > 0) == c["expect_manifest_fail"] and not other
@@ -115,16 +124,18 @@ def main():
                 print("        !! unrelated failures: %s" % other[:2])
             results.append(ok)
     finally:
-        if os.path.exists(TPATH):
-            os.remove(TPATH)
+        shutil.rmtree(taskdir, ignore_errors=True)
         if os.path.exists(VDIR):
             shutil.rmtree(VDIR, ignore_errors=True)
-        print("\ncleaned: task=%s dir=%s" % (not os.path.exists(TPATH), not os.path.exists(VDIR)))
+        repo_task = os.path.join(WT, "doc", "tasks", TID + ".md")
+        leaked = os.path.exists(repo_task)
+        print("\ncleaned: tempdir=%s manifest=%s doc/tasks untouched=%s"
+              % (not os.path.exists(taskdir), not os.path.exists(VDIR), not leaked))
+        if leaked:
+            os.remove(repo_task)
+            print("  (removed a leaked fixture from doc/tasks/)")
 
     print("%d/%d cases behaved as expected" % (sum(results), len(results)))
-    if os.path.exists(TPATH) or os.path.exists(VDIR):
-        print("WARNING: fixture not fully cleaned")
-        return 1
     return 0 if all(results) else 1
 
 

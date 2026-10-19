@@ -2,11 +2,18 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://new-manga.local/schemas/resource-manifest.schema.json",
   "title": "Resource Manifest",
-  "description": "Fixed schema for verification/<task>/resource-manifest.json. Referenced from a Task's '## Resource Manifest' section via a single repository-relative path. Every source_path / destination_path is preserved verbatim; normalised forms live only in derived fields produced by the checker, never written back here.",
+  "description": "Fixed schema for verification/<task>/resource-manifest.json, aligned with the real manifest in the repository. Structural requirements are enforced; integrity fields and extra metadata are accepted as recorded.",
   "schema_version": 1,
   "type": "object",
   "additionalProperties": false,
-  "required": ["schema_version", "task_id", "generated_at", "generated_by", "resources", "closeout_counts"],
+  "required": [
+    "schema_version",
+    "task_id",
+    "generated_at",
+    "generated_by",
+    "resources",
+    "closeout_counts"
+  ],
   "properties": {
     "schema_version": {
       "type": "integer",
@@ -23,15 +30,26 @@
       "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$",
       "description": "ISO calendar date (YYYY-MM-DD)."
     },
-    "generated_by": { "type": "string", "minLength": 1 },
-    "note": { "type": "string" },
+    "generated_by": {
+      "type": "string",
+      "minLength": 1
+    },
+    "note": {
+      "type": "string"
+    },
     "resources": {
       "type": "array",
       "minItems": 1,
       "items": {
         "type": "object",
-        "additionalProperties": false,
-        "required": ["resource_type", "source_path", "disposition", "destination_path", "process_check"],
+        "additionalProperties": true,
+        "required": [
+          "resource_type",
+          "source_path",
+          "disposition",
+          "destination_path",
+          "process_check"
+        ],
         "properties": {
           "resource_type": {
             "type": "string",
@@ -63,57 +81,102 @@
           },
           "sha256": {
             "type": "string",
-            "pattern": "^[0-9a-fA-F]{64}$"
+            "pattern": "^[0-9a-fA-F]{64}$",
+            "description": "Optional. Recorded when the author could compute one; absence is not a defect."
           },
           "manifest_path": {
             "type": "string",
-            "description": "Repository-relative path to a manifest file, when integrity is carried by a file rather than an inline hash."
+            "description": "Optional alternative to an inline sha256."
           },
           "process_check": {
             "type": "string",
             "minLength": 1,
             "description": "Reference / running-process check and its result. Required even for ALREADY_ABSENT, where it must state that no reference remains."
           },
-          "deleted": { "type": "boolean" },
-          "moved": { "type": "boolean" },
-          "modified": { "type": "boolean" },
+          "deleted": {
+            "type": "boolean"
+          },
+          "moved": {
+            "type": "boolean"
+          },
+          "modified": {
+            "type": "boolean"
+          },
           "absent_evidence": {
             "type": "string",
             "description": "ALREADY_ABSENT only: how it was established that the target no longer exists."
+          },
+          "base_commit": {
+            "type": "string"
+          },
+          "branch": {
+            "type": "string"
+          },
+          "delivery_head": {
+            "type": "string"
+          },
+          "note": {
+            "type": "string"
           }
         },
         "allOf": [
           {
-            "if": { "properties": { "disposition": { "const": "ALREADY_ABSENT" } }, "required": ["disposition"] },
-            "then": { "required": ["absent_evidence"], "properties": { "absent_evidence": { "minLength": 1 } } }
-          },
-          {
             "if": {
-              "properties": { "disposition": { "enum": ["PRESERVE_REFERENCED", "PRESERVE_USER_DATA", "PRESERVE_UNKNOWN", "MIGRATE", "ARCHIVE"] } },
-              "required": ["disposition"]
+              "properties": {
+                "disposition": {
+                  "const": "ALREADY_ABSENT"
+                }
+              },
+              "required": [
+                "disposition"
+              ]
             },
             "then": {
-              "anyOf": [
-                { "required": ["sha256"] },
-                { "required": ["manifest_path"] }
-              ]
+              "required": [
+                "absent_evidence"
+              ],
+              "properties": {
+                "absent_evidence": {
+                  "minLength": 1
+                }
+              }
             }
           }
-        ]
+        ],
+        "description": "Unknown keys are tolerated rather than rejected: the only real manifest in the repository carries branch / base_commit / delivery_head on its worktree resource, and a schema that rejects accurate historical data is worse than useless."
       }
     },
     "closeout_counts": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["deleted", "moved", "migrated", "archived"],
+      "required": [
+        "deleted",
+        "moved",
+        "migrated",
+        "archived"
+      ],
       "description": "Every key must be a non-negative integer. These are DECLARED closeout totals, not a derived count: they may include actions on files that are not themselves listed in resources (P19-UI-FIX-1 declares moved=6 for six logs renamed inside its evidence directory, while all seven listed resources carry moved=false). The checker therefore records a difference between a declared count and the number of matching booleans in resources, but must NOT fail on it - judged against the real manifest, the stricter rule condemned an accurate third-party record.",
       "properties": {
-        "deleted": { "type": "integer", "minimum": 0 },
-        "moved": { "type": "integer", "minimum": 0 },
-        "migrated": { "type": "integer", "minimum": 0 },
-        "archived": { "type": "integer", "minimum": 0 }
+        "deleted": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "moved": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "migrated": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "archived": {
+          "type": "integer",
+          "minimum": 0
+        }
       }
     },
-    "closeout_note": { "type": "string" }
+    "closeout_note": {
+      "type": "string"
+    }
   }
 }

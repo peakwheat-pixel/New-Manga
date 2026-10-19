@@ -442,6 +442,68 @@
       },
       "section": "见 `verification/@TID@/resource-manifest.json`。",
       "expect_manifest_fail": true
+    },
+    {
+      "id": 17,
+      "name": "ALREADY_ABSENT abs path that exists (P1 regression)",
+      "manifest": {
+        "schema_version": 1,
+        "task_id": "@TID@",
+        "generated_at": "2026-10-19",
+        "generated_by": "fixture",
+        "resources": [
+          {
+            "resource_type": "cache",
+            "source_path": "C:/Windows/System32/notepad.exe",
+            "disposition": "ALREADY_ABSENT",
+            "destination_path": "C:/Windows/System32/notepad.exe",
+            "process_check": "no references remain",
+            "absent_evidence": "believed gone"
+          }
+        ],
+        "closeout_counts": {
+          "deleted": 0,
+          "moved": 0,
+          "migrated": 0,
+          "archived": 0
+        }
+      },
+      "section": "见 `verification/@TID@/resource-manifest.json`。",
+      "expect_manifest_fail": true
+    },
+    {
+      "id": 18,
+      "name": "glob in reference",
+      "manifest": {
+        "schema_version": 1,
+        "task_id": "@TID@",
+        "generated_at": "2026-10-19",
+        "generated_by": "fixture",
+        "resources": [
+          {
+            "resource_type": "evidence",
+            "source_path": "verification/@TID@/resource-manifest.json",
+            "disposition": "PRESERVE_REFERENCED",
+            "destination_path": "verification/@TID@/resource-manifest.json",
+            "process_check": "read only"
+          }
+        ],
+        "closeout_counts": {
+          "deleted": 0,
+          "moved": 0,
+          "migrated": 0,
+          "archived": 0
+        }
+      },
+      "section": "见 `verification/@TID@/*.json`。",
+      "expect_manifest_fail": true
+    },
+    {
+      "id": 19,
+      "name": "malformed JSON",
+      "manifest": "{ this is not json",
+      "section": "见 `verification/@TID@/resource-manifest.json`。",
+      "expect_manifest_fail": true
     }
   ]
 }

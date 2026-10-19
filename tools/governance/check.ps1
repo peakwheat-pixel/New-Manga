@@ -100,8 +100,11 @@ function Test-ExternalResourceManifest([string]$ManifestPath, [string]$TaskId, [
             foreach ($expr in @([string]$res.source_path, [string]$res.destination_path)) {
                 if ([string]::IsNullOrWhiteSpace($expr)) { continue }
                 if ($expr -match '[{}*?\[\]]' -or $expr -match '%[^%]+%') { continue }
-                $cand = Join-Path $RepoRoot ($expr -replace '/', [IO.Path]::DirectorySeparatorChar)
-                if (Test-Path -LiteralPath $cand) { $problems.Add("ALREADY_ABSENT 但目标仍存在：$expr") }
+                # Resolve-LocalPath handles rooted paths; a bare Join-Path would glue an
+                # absolute expression onto the repo root (G:\...\C:\Windows\...), making every
+                # existing absolute target look absent and letting a fake disappearance pass.
+                $cand = Resolve-LocalPath $expr $RepoRoot
+                if ($cand -and (Test-Path -LiteralPath $cand)) { $problems.Add("ALREADY_ABSENT 但目标仍存在：$expr") }
             }
         } elseif ($disposition -eq 'NOT_APPLICABLE' -and ([string]$res.absent_evidence)) {
             $problems.Add("NOT_APPLICABLE 不得用于已消失资源：$($res.source_path)")
