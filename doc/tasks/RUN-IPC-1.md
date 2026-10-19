@@ -130,7 +130,7 @@ evidence_dir: verification/RUN-IPC-1
 | EVID-RUNIPC-PKG | AC4③/AC5 | `verification/RUN-IPC-1/rust-packaged-tests.log` | `5642b2a7235fb9e5092cf106c8701cb67eb0e4da` | `429042c7f3f5486138a9b67b349927832385b84e0d51256f80b3434af0100a1c` | `CANONICAL` |
 | EVID-RUNIPC-PY | AC5 | `verification/RUN-IPC-1/python-tests.log` | `5642b2a7235fb9e5092cf106c8701cb67eb0e4da` | `e0250da32cd2f546dee73aeacbae0b7e6dde65ad16bafb497177d3c5a4cca485` | `CANONICAL` |
 | EVID-RUNIPC-LAYER | AC4 | `verification/RUN-IPC-1/evidence-layering.md` | `5642b2a7235fb9e5092cf106c8701cb67eb0e4da` | `a28ca284bf12b3a338d1fbbffdbc08c335ddf3ccf44639a3a670ccb608d02493` | `CANONICAL` |
-| EVID-RUNIPC-REVIEW | AC1-AC6 | `verification/RUN-IPC-1/antigravity-review-r1.md` | `40450fde07d72890bfae15e9ae738634ffbf530c` | `76bf66faec2179ab45ec6043a0dc75719bc94c6dc61cd9f78b5c62a904b4052e` | `REVIEW` |
+| EVID-RUNIPC-REVIEW | AC1-AC6 | `verification/RUN-IPC-1/antigravity-review-r1.md` | `40450fde07d72890bfae15e9ae738634ffbf530c` | `76bf66faec2179ab45ec6043a0dc75719bc94c6dc61cd9f78b5c62a904b4052e` | `CANONICAL` |
 | EVID-RUNIPC-POSTMERGE-SRC | AC5（合并后） | `verification/RUN-IPC-1/post-merge-source.log` | `de3caf93adf44fdda226a5f9ad013cbe7739e0f4` | `433f8199b44636612a4bade2dea32f02214895caadfa2c30e716bb38426aeb6d` | `CANONICAL` |
 | EVID-RUNIPC-POSTMERGE-PKG | AC4③/AC5（合并后） | `verification/RUN-IPC-1/post-merge-packaged.log` | `de3caf93adf44fdda226a5f9ad013cbe7739e0f4` | `1d97c5819b931263d7c48f1b74d875ee9e3a345e7b7de8d1783cc53a5f72cbd7` | `CANONICAL` |
 ## Resource Manifest
