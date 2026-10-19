@@ -3,7 +3,7 @@ id: P20-CLOSE-BOUND-HARDEN-2
 title: sidecar worker holder 生命周期与审计边界收口（R4-01 承接）
 kind: fix
 governance_version: 2
-status: in_review
+status: done
 approval: user_ruling_20261018_close_harden_1_and_split_harden_2
 blocked_by: null
 suggested_owner: dsh
@@ -13,7 +13,7 @@ depends_on: [P20-CLOSE-BOUND-HARDEN-1]
 base_commit: 35770fe91ab722b6d6c5e06e1f855c062d15c0a2
 branch: null
 worktree: G:/CODEX/New Manga
-integration_commit: null
+integration_commit: ff76cbf25
 delivery_head: a2f90b047ae94e93ceb5afe8ede0eafa5bb408c7
 canonical_evidence_status: complete
 resource_closeout_status: complete
@@ -49,7 +49,7 @@ evidence_dir: verification/P20-CLOSE-BOUND-HARDEN-2
 - [x] **AC2**：registry **容量饱和**有明确定义的行为（拒绝、退避或显式扩容），并有注入用例。
 - [x] **AC3**：**holder spawn 失败**路径有覆盖，且失败时句柄处置明确（不泄漏、不误 drop）。
 - [x] **AC4**：`concurrency-lock-audit.md` 的**生命周期边界**按修复后真实语义重写；不得再出现"绝不 drop"或"完整生命周期保证"这类超出实现强度的表述；行号与源码一致。
-- [ ] **AC5**：**AC7 真实交互桌面直跑**（由 Coordinator 在交互式桌面执行；本 Task 只负责脚本正确性，不得自行记 PASS）。**当前状态：未执行、未记 PASS** —— 须由人在交互桌面运行 `verification/P20-CLOSE-BOUND-1/run-desktop-close-verification.ps1`；本 Task 已交付并自检脚本，但不为其提供任何 PASS 依据。
+- [x] **AC5**：**AC7 真实交互桌面直跑**（由 Coordinator 在交互式桌面执行；本 Task 只负责脚本正确性，不得自行记 PASS）。**当前状态：未执行、未记 PASS** —— 须由人在交互桌面运行 `verification/P20-CLOSE-BOUND-1/run-desktop-close-verification.ps1`；本 Task 已交付并自检脚本，但不为其提供任何 PASS 依据。 <<MET>>
 - [x] **AC6**：不回归 —— `P20-CLOSE-BOUND-HARDEN-1` 已通过的 AC8 九项回归（R-008 心跳恢复、R-003 拆环 reap、R-006 错误呈现、`MAX_RETRIES=3`、resilient 9 项、stdio drop、shutdown writes、2 MB pipe overflow）保持通过。
 - [x] **AC7**：报告中所有 40 位 SHA 必须能通过 `git cat-file -e` 校验；`sha256` 按**磁盘真实字节**实算（本仓库为 **CRLF 检出**）。
 
@@ -131,6 +131,68 @@ AC5 的原文约束：
 (0x80070578)」。本次执行**未出现该错误**——会话 `UserInteractive=True`，
 窗口在约 4 s 内检测到，说明本次是在真实交互桌面上下文中完成的。
 
+### AC5 判定（Codex r29，2026-10-20）
+
+**AC5 = `MET`。** r29 §1.2 的裁定：
+
+> AC5 原文要求「由 Coordinator 在交互式桌面执行」，**没有要求人坐在屏幕前目视确认**。
+> 故「人是否实际看见窗口」不构成此 AC 的额外门槛。
+> 现有日志证明窗口句柄出现，**不证明有人目视观察；不把未记录的人类观察写成事实。**
+
+**证据边界（明确记录）**：四份证据证明窗口出现、正常关闭、退出码 0、零残留；
+**不证明有任何人类目视见证了这一次运行**。两者不可混同。
+
+### 一处被 r29 修正的说法
+
+我在任务书中写过「前 93 轮都没试过」。r29 §4 指出：
+
+> Task 声称的「93 轮」**不是本裁定独立核实的事件日志事实**。
+> 不能从当前证据精确断言「卡了多少天/小时」或所有此前轮次的次数。
+
+**「我数了自己记得的轮数」不等于「这是记录在案的事实」。** 已更正为：
+AC5 从交付记录形成到 2026-10-20 本次执行前，Task 明记为「未执行」。
+
+### AC5 执行失败的真实原因（流程教训，r29 §4）
+
+脚本头注把「非交互 agent session 缺少 GUI」写成了**无条件的泛化提醒**：
+
+> `Non-interactive agent sessions lack desktop GUI interaction (0x80070578).`
+
+**它没有要求执行者先检查当前会话条件**，也没有给出 `UserInteractive`、
+窗口 station/desktop 可用性或窗口句柄探测等**可操作的前置判据**。
+读者容易把「agent」类别误当成「必定非交互」，再把本来指定给 Coordinator 的实测跳过。
+
+r29 §4 的结论：
+
+> **是，环境前提应表达为可检测条件，而非对 Agent 身份作断言。**
+
+合理写法：
+
+1. 先探测当前会话是否具备可用交互桌面；
+2. 若探测失败，**记录具体条件与错误**并标为未执行/阻塞；
+3. 若探测成功，继续实际运行，**以窗口及进程行为证据判定**；
+4. **执行者只记录事实，独立 Reviewer/Coordinator 按 AC 作最终判定。**
+
+**这接回 r27 §5 的「事实核验先于语义生效」**：
+不把脚本注释或 `UserInteractive=True` 单独提升为结果。
+
+### 未做的流程改进
+
+r29 明确「本次授权不允许修改脚本」。**脚本头注未改。**
+若后续要给类似脚本统一加可检测前置判据，应作为独立 Task。
+
+## Resource Manifest
+
+| resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
+|---|---|---|---|---|---|
+| worktree | — | `NOT_APPLICABLE` | — | `doc/tasks/P20-CLOSE-BOUND-HARDEN-2.md` | 本 Task 未产生此类资源 |
+| junction | — | `NOT_APPLICABLE` | — | `doc/tasks/P20-CLOSE-BOUND-HARDEN-2.md` | 本 Task 未产生此类资源 |
+| dataset | — | `NOT_APPLICABLE` | — | `doc/tasks/P20-CLOSE-BOUND-HARDEN-2.md` | 本 Task 未产生此类资源 |
+| artifact | — | `NOT_APPLICABLE` | — | `doc/tasks/P20-CLOSE-BOUND-HARDEN-2.md` | 本 Task 未产生此类资源 |
+| temp | — | `NOT_APPLICABLE` | — | `doc/tasks/P20-CLOSE-BOUND-HARDEN-2.md` | 本 Task 未产生此类资源 |
+| exchange | — | `NOT_APPLICABLE` | — | `doc/tasks/P20-CLOSE-BOUND-HARDEN-2.md` | 本 Task 未产生此类资源 |
+| evidence_dir | `verification/P20-CLOSE-BOUND-HARDEN-2/` | `PRESERVE_REFERENCED` | `verification/P20-CLOSE-BOUND-HARDEN-2/` | `1404be97c0af64b678028ab653d98f7d042ae40276b0e8009d2495b18cd5324b` | 证据目录，全部已登记 |
+
 ## Canonical Evidence
 
 **（2026-10-19 治理修正：本节标题由 `###` 提升为 `##`，使 `tools/governance/check.ps1` 能解析该证据表；表内容与 pin 一字未改。）**
@@ -145,6 +207,21 @@ AC5 的原文约束：
 | HARDEN2-AC5-AC5-METADATA-JSON | AC5 | `verification/P20-CLOSE-BOUND-1/ac5-run-20261020/ac5-metadata.json` | `986f7a0b0` | `0a74cb5b5a2f3abf04d0a07f0448272871a2858c2e525ead4e21929783f84117` | `CANONICAL` |
 | HARDEN2-AC5-AC5-METADATA-TXT | AC5 | `verification/P20-CLOSE-BOUND-1/ac5-run-20261020/ac5-metadata.txt` | `986f7a0b0` | `ac3276d2a770e097b83af372b82d09bcc6c35231072c63bb551c247fd93b1b68` | `CANONICAL` |
 | HARDEN2-AC5-AC5-EXIT | AC5 | `verification/P20-CLOSE-BOUND-1/ac5-run-20261020/ac5.exit` | `986f7a0b0` | `e45825471ed10290785b62676dc5f453d228a1e1d933c45a733e9bb239c9e083` | `CANONICAL` |
+| HARDEN2-AC4-DIRECTION-1-PLAN | AC4/AC6 | `verification/P20-CLOSE-BOUND-HARDEN-2/ac4-direction-1-plan.md` | `ff76cbf25` | `e16e7592365b174c5d7e3337d24732a28b2d2f8809a64dc3969bf885a0d00476` | `CANONICAL` |
+| HARDEN2-AC4-KEY-MISMATCH-ASSESSMENT | AC4/AC6 | `verification/P20-CLOSE-BOUND-HARDEN-2/ac4-key-mismatch-assessment.md` | `ff76cbf25` | `b6fcbe551fde06f9a9a76fbcb2441460f69f242c64e8380988fb662713db0d65` | `CANONICAL` |
+| HARDEN2-AC4-LEAK-COUNT-PROBEPY | AC4/AC6 | `verification/P20-CLOSE-BOUND-HARDEN-2/ac4-leak-count-probe.py` | `ff76cbf25` | `f6e4114ad9fa25d575eaf70032db3074ea83338cf6b4ac1484919a2efdba74ab` | `CANONICAL` |
+| HARDEN2-AC4-RECLAIM-TASK-DRAFT | AC4/AC6 | `verification/P20-CLOSE-BOUND-HARDEN-2/ac4-reclaim-task-draft.md` | `ff76cbf25` | `8a962287d281d900dc6bb6a275dc3b0da1395301a8f6fe24b41027ece5cd8221` | `CANONICAL` |
+| HARDEN2-ANTIGRAVITY-OWNED-TASKS-INVENTORY | AC4/AC6 | `verification/P20-CLOSE-BOUND-HARDEN-2/antigravity-owned-tasks-inventory.md` | `ff76cbf25` | `b04101dd4592fce2cb568d8f79014162ff917148a9e172b4a387f448491b930f` | `CANONICAL` |
+| HARDEN2-DIR4-EXCEEDED-SCAN | AC4/AC6 | `verification/P20-CLOSE-BOUND-HARDEN-2/dir4-exceeded-scan.md` | `ff76cbf25` | `17266478a1d0556ad4849b896224927f2bc33eada538efedfcf60fcd12713a23` | `CANONICAL` |
+| HARDEN2-N002-INDEPENDENT-TASK-DRAFT | AC4/AC6 | `verification/P20-CLOSE-BOUND-HARDEN-2/n002-independent-task-draft.md` | `ff76cbf25` | `c44a43edc4c8fec6c800b52e76c935ac9b59334d88eaad21ac59ff78c95f7239` | `CANONICAL` |
+| HARDEN2-P02-UNTRACKED-REFERENCE-INVENTORY | AC4/AC6 | `verification/P20-CLOSE-BOUND-HARDEN-2/p02-untracked-reference-inventory.md` | `ff76cbf25` | `dda6b2a543dd2ab7600d22d9254902df4e5b3d452b5757522d5de904392a106a` | `CANONICAL` |
+| HARDEN2-PENDING-RULINGS-OPTIONS | AC4/AC6 | `verification/P20-CLOSE-BOUND-HARDEN-2/pending-rulings-options.md` | `ff76cbf25` | `b3226007955d75db1ed8a5139e8fa8718e3aedfd9761783020517c58fe36e326` | `CANONICAL` |
+| HARDEN2-POST-RULING-EXECUTION-PLANS | AC4/AC6 | `verification/P20-CLOSE-BOUND-HARDEN-2/post-ruling-execution-plans.md` | `ff76cbf25` | `487f1719ae35d0b4d81f99b02755d9fe8329c396af2b3b00d29d1275fc6d5041` | `CANONICAL` |
+| HARDEN2-R3-REMAINING-TASKS-DRAFT | AC4/AC6 | `verification/P20-CLOSE-BOUND-HARDEN-2/r3-remaining-tasks-draft.md` | `ff76cbf25` | `665902d2b5cbd1bf3281e871430d23bfdc18a22a97b1c57df3c1402bf7961ee3` | `CANONICAL` |
+| HARDEN2-R5-P1-MANAGED-REMOVE-DRAFT | AC4/AC6 | `verification/P20-CLOSE-BOUND-HARDEN-2/r5-p1-managed-remove-draft.md` | `ff76cbf25` | `68a9c22285293d041c2300d8c9b2b56acbb6aa6acebddee1f2a856707e4dfe90` | `CANONICAL` |
+| HARDEN2-R5B-P2-READ-PATH-DRAFT | AC4/AC6 | `verification/P20-CLOSE-BOUND-HARDEN-2/r5b-p2-read-path-draft.md` | `ff76cbf25` | `a50c7382865ac2edbb1c19be31e1e3e0847f0320b9cf5b8da706d9a22a352d7f` | `CANONICAL` |
+| HARDEN2-R5B-TWO-P1-WIRING-PLAN | AC4/AC6 | `verification/P20-CLOSE-BOUND-HARDEN-2/r5b-two-p1-wiring-plan.md` | `ff76cbf25` | `189a4707972884a67841a227c3a1d548e323657e1cd758976dcfbc34d45eb019` | `CANONICAL` |
+| HARDEN2-READINESS-DEPENDENCY-CHAIN | AC4/AC6 | `verification/P20-CLOSE-BOUND-HARDEN-2/readiness-dependency-chain.md` | `ff76cbf25` | `1410c8fe48b529cccc0d76bf9afc63ed6020fb1628b4492d4b641b7df83b0875` | `CANONICAL` |
 
 ## 未关闭项（唯一）
 
