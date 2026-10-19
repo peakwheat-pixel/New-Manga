@@ -1,0 +1,48 @@
+# AC2 raw governance output
+# HEAD: 4543e23a02dd63124940598ead206ed29e71fc81
+
+## -TaskPath doc/tasks/P19-UI-MANIFEST-VIEW-1.md
+Governance scope: 12 current documents; no historical directory scan.
+Task: doc\tasks\P19-UI-MANIFEST-VIEW-1.md
+WARN: doc/STATUS.md 已达到预算的 80%：3169 bytes / 27 lines
+Governance check: PASS (1 warnings)
+
+# exit=0
+
+## -TaskPath doc/tasks/P19-UI-FIX-1.md  (10 errors after the reference fix)
+Governance scope: 12 current documents; no historical directory scan.
+Task: doc\tasks\P19-UI-FIX-1.md
+WARN: doc/STATUS.md 已达到预算的 80%：3169 bytes / 27 lines
+WARN: P19-UI-FIX-1: closeout_counts.moved=6 与 resources 中布尔为 true 的项数 0 不同（声明口径包含未列入 resources 的处置动作）
+FAIL: Evidence SHA-256 不匹配：verification/P19-UI-FIX-1/frontend-npm-test-final.log
+FAIL: Evidence SHA-256 不匹配：verification/P19-UI-FIX-1/frontend-npm-build-final.log
+FAIL: Evidence SHA-256 不匹配：verification/P19/import-no-response-r4.md
+FAIL: DONE evidence_dir 含未登记文件：G:\CODEX\New Manga\.agents\worktrees\P19-UI-MANIFEST-VIEW-1\verification\P19-UI-FIX-1\04-settings-before-final-code-refinement.uia.txt, G:\CODEX\New Manga\.agents\worktrees\P19-UI-MANIFEST-VIEW-1\verification\P19-UI-FIX-1\04-settings-uia-pass-2.txt, G:\CODEX\New Manga\.agents\worktrees\P19-UI-MANIFEST-VIEW-1\verification\P19-UI-FIX-1\04-settings-uia-pass-exit-code-blank.txt, G:\CODEX\New Manga\.agents\worktrees\P19-UI-MANIFEST-VIEW-1\verification\P19-UI-FIX-1\app-err-before-final-code-refinement.log, G:\CODEX\New Manga\.agents\worktrees\P19-UI-MANIFEST-VIEW-1\verification\P19-UI-FIX-1\app-err-namespace-mismatch.log, G:\CODEX\New Manga\.agents\worktrees\P19-UI-MANIFEST-VIEW-1\verification\P19-UI-FIX-1\app-err-ui-a-pass-exit-code-blank-2.log, G:\CODEX\New Manga\.agents\worktrees\P19-UI-MANIFEST-VIEW-1\verification\P19-UI-FIX-1\app-err-ui-load-failure.log, G:\CODEX\New Manga\.agents\worktrees\P19-UI-MANIFEST-VIEW-1\verification\P19-UI-FIX-1\app-err-uia-pass-exit-code-blank.log
+FAIL: Resource 最终路径未验证：Same ignored target/dist locations in this worktree
+FAIL: Resource 最终路径未验证：apps/desktop/src-tauri/target/p19-ui-fix-1-isolation-20261017
+FAIL: Resource 最终路径未验证：Same source location
+FAIL: Resource 最终路径未验证：Same shared build environment
+FAIL: Resource 最终路径未验证：Same local cache location
+FAIL: Resource 最终路径未验证：Same main-repository paths
+Governance check: FAIL (10 errors, 2 warnings)
+
+# exit=1
+
+## Error ledger
+# 1  Evidence SHA-256 mismatch  verification/P19-UI-FIX-1/frontend-npm-test-final.log
+# 2  Evidence SHA-256 mismatch  verification/P19-UI-FIX-1/frontend-npm-build-final.log
+# 3  Evidence SHA-256 mismatch  verification/P19/import-no-response-r4.md  <- worktree mirror line endings, not caused by this task
+# 4  DONE evidence_dir contains unregistered files (8 files, one message)
+# 5  Resource final path unverified: Same ignored target/dist locations in this worktree
+# 6  Resource final path unverified: apps/desktop/src-tauri/target/p19-ui-fix-1-isolation-20261017
+# 7  Resource final path unverified: Same source location
+# 8  Resource final path unverified: Same shared build environment
+# 9  Resource final path unverified: Same local cache location
+# 10 Resource final path unverified: Same main-repository paths
+
+## Before / after
+# before the reference fix: 4 errors (2 log SHA + 1 unregistered-files + 1 reference-format)
+# after:                    10 errors (items 1-10 above)
+# the reference-format error is gone; six destination items became reachable because the
+# manifest now parses. Codex r11 ruled: keep the change, do NOT revert, AC3 fails,
+# terminal state closed_with_limitations.
