@@ -3,7 +3,9 @@ sys.path.insert(0, r"G:\CODEX\New Manga\src")
 from pathlib import Path
 import infrastructure.filesystem.win_unlink as w
 
-base = Path(tempfile.mkdtemp()).resolve()
+WORKSPACE_TMP = Path(r"G:\CODEX\New Manga.workspace\agent-output\coordinator\n004-tmp")
+WORKSPACE_TMP.mkdir(parents=True, exist_ok=True)
+base = Path(tempfile.mkdtemp(dir=str(WORKSPACE_TMP))).resolve()
 # 结构：base/trusted/derived/pages/page-original.png
 trusted = base / "trusted"; derived = trusted / "derived"
 (derived / "pages").mkdir(parents=True)
@@ -19,7 +21,16 @@ def hooked(root):
     if not fired:
         fired.append(root)
         shutil.rmtree(trusted)
-        subprocess.run(["cmd","/c","mklink","/J",str(trusted),str(outside)], capture_output=True)
+        proc = subprocess.run(["cmd","/c","mklink","/J",str(trusted),str(outside)],
+                              capture_output=True, text=True)
+        # P2 (Codex R4): prove the injection actually happened.  Setting the flag
+        # before mklink meant a failed link still looked like a defended attack -
+        # the same "never ran reported as stopped" defect this suite exists to catch.
+        if proc.returncode != 0 or not trusted.is_dir():
+            raise SystemExit("INJECTION FAILED: junction not created: %s"
+                             % (proc.stdout.strip() or proc.stderr.strip()))
+        if not (trusted / "derived" / "pages" / "page-original.png").is_file():
+            raise SystemExit("INJECTION FAILED: junction does not expose the outside file")
     return orig_open_anchor(root)
 
 w._open_anchor = hooked

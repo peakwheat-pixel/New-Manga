@@ -1107,7 +1107,15 @@ class SqliteLibraryRepository:
                 derived_root = getattr(render_previews, "_root", None)
                 catalog = getattr(render_previews, "_catalog", None)
                 if derived_root is not None and catalog is not None:
-                    root_res = Path(derived_root).resolve()
+                    # N-004 (Codex R4): do NOT resolve() here.  resolve()
+                    # follows junctions, so when an ancestor of derived_root is a
+                    # link it hands the chain an already-redirected root - and the
+                    # chain then verifies that redirected root happily.  Measured:
+                    # junction 'trusted' to an outside folder, resolve() yields
+                    # outside\derived, and the delete succeeds on the outside file.
+                    # abspath only normalises the path; the handle chain does its own
+                    # per-segment reparse check starting at the drive root.
+                    root_res = Path(os.path.abspath(derived_root))
                     for pid in page_ids:
                         res_id = f"page-original-{pid}"
                         try:
