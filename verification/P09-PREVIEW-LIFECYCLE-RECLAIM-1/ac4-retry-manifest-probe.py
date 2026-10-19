@@ -150,8 +150,11 @@ survivor_names = sorted(p.name for p in remaining_files)
 # R8 Finding 1: literal set comparison, not "nothing unexpected remains".  The latter also
 # accepts an empty directory, which is not the expected end state.
 expected_survivors = [".preview-lifecycle.lock"]
-leaked_files = 0 if survivor_names == expected_survivors else len(survivor_names)
-if survivor_names != expected_survivors:
+# R9 Finding 1: same hole as the leak probe - len([]) == 0 read as "no leak".  Verdict is
+# the comparison, not the count.
+survivors_match = (survivor_names == expected_survivors)
+leaked_files = 0 if survivors_match else max(1, len(survivor_names))
+if not survivors_match:
     print("EXPECTED survivors %s, found %s" % (expected_survivors, survivor_names))
 print()
 print("survivors: %s" % survivor_names)

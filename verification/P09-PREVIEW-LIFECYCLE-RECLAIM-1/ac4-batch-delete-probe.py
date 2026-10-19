@@ -143,7 +143,10 @@ commands = core.conn.execute(
     "SELECT count(*) FROM books WHERE book_id = 'b2'").fetchone()[0]
 print("book b2 still present =", commands == 1)
 
-leaked_rows = len(rows_after)
+# R9 Finding 3: this counted every surviving row, but b2's preview IS expected to survive -
+# so the baseline printed "LEAK: 1 row(s)" next to "RESULT = PASS".  Count only rows that
+# are not the expected survivor.
+leaked_rows = len([r for r in rows_after if r not in b2_expected])
 # Expected survivors: b2's own preview file, plus the namespace lifecycle lock.  The
 # earlier version subtracted only the lock, which counted b2's preview as a leak - my
 # arithmetic, not a product defect.  Count the files that are neither.
@@ -153,10 +156,13 @@ leaked_rows = len(rows_after)
 # the probe pass.  That is a probe passing for the wrong reason, which is worse than a
 # probe failing: derive the expectation from the surviving rows instead.
 all_rows_after = [e for e in catalog.entries()]
-row_file_names = {e.rel_path.split("/")[-1] for e in all_rows_after if e.rel_path}
+# R9 Finding 2: comparing basenames accepted an orphan with the same name in another
+# directory.  Compare each file's full relative path against the surviving rows' paths.
+row_rel_paths = {e.rel_path for e in all_rows_after if e.rel_path}
 unexplained = [
     p for p in files_after
-    if p.name != ".preview-lifecycle.lock" and p.name not in row_file_names
+    if p.name != ".preview-lifecycle.lock"
+    and str(p.relative_to(derived_root)).replace("\\", "/") not in row_rel_paths
 ]
 leaked_files = len(unexplained)
 survivors_are_b2 = commands == 1 and rows_after == b2_expected

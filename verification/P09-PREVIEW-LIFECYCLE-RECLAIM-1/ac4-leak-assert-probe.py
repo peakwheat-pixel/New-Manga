@@ -129,8 +129,12 @@ survivor_names = sorted(p.name for p in files_after)
 # nothing left" also passes when NOTHING survived - including the lock - which is not the
 # expected state.  Require the exact set.
 expected_survivors = [".preview-lifecycle.lock"]
-leaked_files = 0 if survivor_names == expected_survivors else len(survivor_names)
-if survivor_names != expected_survivors:
+# R9 Finding 1: expressing the verdict as a COUNT reintroduced the hole.  An empty
+# directory gives len() == 0, which reads as "no leak".  The verdict is now the boolean
+# comparison itself; the number is only printed.
+survivors_match = (survivor_names == expected_survivors)
+leaked_files = 0 if survivors_match else max(1, len(survivor_names))
+if not survivors_match:
     print("EXPECTED survivors %s, found %s" % (expected_survivors, survivor_names))
 print()
 print("survivors: %s" % survivor_names)
