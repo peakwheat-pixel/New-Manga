@@ -16,7 +16,7 @@ worktree: G:/CODEX/New Manga（故障注入须在真实桌面执行；执行方�
 integration_commit: null
 delivery_head: e8cc6d1e4
 canonical_evidence_status: pending
-review_status: changes_requested（R1 7×P1、R2 6×P1、R3 3×P1+2×P2、R4 1×P1；见 verification/P20-ISOLATION-1/codex-review-r{1,2,3,4}.md）
+review_status: changes_requested（R1 7×P1、R2 6×P1、R3 3×P1+2×P2、R4 1×P1、R5 AC4 相对条件；见 verification/P20-ISOLATION-1/codex-review-r{1,2,3,4,5}.md）
 resource_closeout_status: pending
 evidence_dir: verification/P20-ISOLATION-1
 ---
@@ -130,6 +130,69 @@ R4 §4 **R-017（P1）**：AC4 标通过，但测量证据指向 EXE SHA `4d7599
 ### 最新 Review 指针
 
 已更新为 R4：`verification/P20-ISOLATION-1/codex-review-r4.md`。
+
+## R5 Review 结论（Codex，2026-10-20）
+
+**`decision = changes_requested`**（第五轮）。但 R5 在 AC4 上做了一处关键区分。
+
+### 绝对门槛 vs 相对不回归（R5 §3.2）
+
+R5 指出交付方先前用错了门槛：
+
+> **「不得恶化于一个从未达标的数字」在当前有效门槛下不成立。**
+> 443.3 MB 当初高于旧 350 MB 门槛，但**用户随后将 P20 AC3 的绝对上限调整为 480 MB**；
+> 443.3 MB 低于现行 480 MB，且 P20 当前记录将内存列为 PASS。
+> 因此，**443.3 MB 是已接受的历史实测基线，不是现行门槛下的失败值。**
+
+**两种验收条件必须分别解释：**
+
+| 条件 | 判定内容 | 本次结果 |
+|---|---|---|
+| **绝对门槛** | P20 AC3 当前上限 **≤ 480 MB** | 467.35 MB → **满足** |
+| **相对不回归** | 本 Task AC4 要求不因隔离改动而恶化于 443.3 MB 基线 | +5.4% → **未满足** |
+
+> **两者不应混成「是否超过 350 MB」。**（R5 原文）
+
+**交付方先前在 `ac4-rerun-20261020.md` 里把 350 MB 当作现行门槛，是错的。** 已在上文更正。
+
+### AC4 因此仍未达成，缺的条件很具体（R5 §3.4）
+
+> 按父子进程链和可比的稳态采样方法，将内存结果证明为**不高于已接受的 443.3 MB 基线**；
+> 若达不到，则需要**用户明确裁决修订/豁免 AC4 的相对条件**。
+
+**并且 R5 明确**：
+
+> 性能优化是独立产品工作，**本 Task 的返修不应无限期承担优化实现**：
+> 可另立有授权的内存优化 Task；本 Task 在此期间保持 `changes_requested`。
+
+**所以本 Task 不再无限期等内存优化。**
+
+### `library_bridge.rs` 的 pin：保留 FAIL，不追加 superseding pin（R5 §3.5）
+
+> **保留旧 pin 与当前 checker FAIL；不追加一条声称可以消除旧 FAIL 的 superseding pin。**
+> r27/r28 要求历史 basis 不明的 pin 保留原值、维持现行 checker 行为…
+> 已追溯到 CRLF 候选来源可作为诊断事实，但**不能证明旧 pin 当时的 basis**。
+
+**理由（R5 原文）**：
+
+> 单独新增当前文件的 pin 不会让现有旧 pin 自动停止被检查；
+> 在没有获授权的 supersession 语义/checker 迁移时，它**不能解决报错**，
+> 反而可能造成**误称「FAIL 已清」**。
+
+**因此该 FAIL 登记为 `legacy-unresolved` 的已知治理限制，保持可见。**
+
+### 因此本 Task 的当前状态
+
+| 项 | 值 |
+|---|---|
+| `status` | `in_review` |
+| `review_status` | `changes_requested`（R1–R5）|
+| AC4 | **未达成**（相对不回归未满足；绝对门槛已满足）|
+| AC5 的 pin FAIL | **保留，作为已知限制** |
+| 阻塞点 | **需用户裁决**：AC4 的相对条件是否保留 |
+
+**下一步不是技术工作，是一个裁决**：
+用户需决定 AC4 是否继续要求「相对不回归」；若保留，另立内存优化 Task 并按同一口径复测。
 
 ## Canonical Evidence
 
