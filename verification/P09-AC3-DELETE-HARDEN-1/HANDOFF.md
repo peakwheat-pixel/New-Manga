@@ -5,7 +5,7 @@
 - `handoff_head`: 见文末「固定规则」——**收口时由 `git rev-parse` 重取**
 - `owner`: dsh
 - `reviewer`: Codex（R1–R7 独立复审）
-- `status`: `in_review` → **不建议置为 done**（AC4 未通过）
+- `status`: `in_review` → **删除路径范围内收口**（用户裁决路线 B：AC4 判 FAIL 并转出至 `P09-PREVIEW-LIFECYCLE-RECLAIM-1`）。**本 Task 不声称覆盖预览回收。**
 - `date`: 2026-10-19
 
 ---
@@ -46,7 +46,7 @@
 
 ---
 
-## 二、探针清单（8 个，全部在库）
+## 二、探针清单（9 个，全部在库）
 
 | 探针 | 覆盖 | 结果 |
 |---|---|---|
@@ -92,7 +92,7 @@
 
 | 项 | 去向 |
 |---|---|
-| **AC4** | **`P09-PREVIEW-LIFECYCLE-RECLAIM-1`（建议新建）** —— 需先定义「在用行」的判定依据 |
+| **AC4** | **`P09-PREVIEW-LIFECYCLE-RECLAIM-1`（**已创建**）** —— 需先定义「在用行」的判定依据 |
 | **R5b P2 的 8 处读取/导出路径** | **`P09-MANAGED-READ-ROOT-TRUST-1`**（草案：`verification/P20-CLOSE-BOUND-HARDEN-2/r5b-p2-read-path-draft.md`，**scope 与 AC3 均已含 `handle_resolver`**）|
 
 ---

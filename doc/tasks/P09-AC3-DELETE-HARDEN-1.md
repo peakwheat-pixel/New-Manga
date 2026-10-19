@@ -40,7 +40,7 @@ evidence_dir: verification/P09-AC3-DELETE-HARDEN-1
 - [x] AC1：**回收站真实入口打通（R-007 收口）**——回收站命令注册到 Tauri production command 与 `generate_handler!`，Core 侧补齐 IPC handler，形成 command → Core → Service 完整路由；数据源返回**软删除集合**，整库阻止判定基于**全库现存 Book 集合**；补真实装配 / dispatcher 断言；UI 不得静默显示空回收站。
 - [x] AC2：**多页 Run 删除不再冲突（N-001）**——detached 值改为唯一且无定位语义的 `'detached:' || run_target_id`；补至少两个目标的真实 Run 测试。
 - [x] AC3：**逐项重试可用（N-002）**——`details` 穿透 `LibraryClientError`（原先在 client 层被压成 code/message，是我第一版修复的漏洞，由新测试抓出）；已 `deleted` 项移出列表与选择，仅 pending 子集保留供重试；补混合批量重试测试。
-- [x] AC4：**译图 preview 不残留（N-003）**——按用户裁决采用**方案 A**：译图阅读路径的 `publish()` 传入 origin，进入既有 `preview_lifecycle` 回收链（**不改 schema**，绕开 v5 冻结边界）；补真实译图 origin 绑定断言。
+- [ ] AC4：**译图 preview 不残留（N-003）—— 判 FAIL 并转出**。原实现（译图 `publish()` 传 origin 进入 `preview_lifecycle`）**只做到 origin 绑定**，**不等于永久删除能回收**：`publish` 生成 `preview-{uuid4}`，而清理查 `page-original-{page_id}`，**两者永不相等**。**转出至 `P09-PREVIEW-LIFECYCLE-RECLAIM-1`**（见文末收口记录）。
 - [x] AC5：**symlink 替换不得误删（N-004，数据安全）**——把 `resolve()` 先于链接检查的写法替换为对**未解析路径**逐段 `lstat()` 走查；补 junction 注入测试与判别力验证。
 - [x] AC6：**历史脱离完整（R-003 收口）**——`pipeline_stage_states` 实际 detach（原先**只有一行注释**）；`run_json` 由 scope-only 改为**全树**清理嵌套定位引用；补断言。
 - [x] AC7：**AC4 验收真实断言（R-008 收口）**——`verify_all.py` 的 `rows = else 0` 恒真硬编码改为按表结构的真实关联查询（9 张表各自路径）；以真实迁移 schema 校验 9/9 可执行。
@@ -74,7 +74,7 @@ evidence_dir: verification/P09-AC3-DELETE-HARDEN-1
 | AC1 真实装配/IPC 路由 | Core dispatcher + Rust 注册断言；回收站数据源与整库集合测试 | 隔离 DB / Rust toolchain | **PASS**：Core 新测试 `1 passed`（真实 dispatcher 应答；活跃书在 ListBooks 不在回收站，软删除后反转；投影形状一致）；Rust 注册断言 `1 passed`；前端 `11 passed` | `tests/core/test_p09_ac1_recycle_bin_route.py`、`library_bridge.rs` 单测、`RecycleBinPage.test.tsx` |
 | AC2 多页 Run 删除 | 至少两个目标的真实 Run 永久删除 | 隔离 DB | **PASS**：两目标回归测试 `1 passed`；判别力验证显示旧写法抛 `UNIQUE constraint failed: t.run, t.target`，新写法产出两个不同 `detached:<id>` | `test_core_delete_commands.py::test_delete_book_with_multi_target_run_detaches_without_collision` |
 | AC3 逐项重试 | "已删除 + cleanup_pending"混合批量重试 | 隔离 DB / 前端 | **PASS**：混合重试测试 `1 passed`（已删项离开列表、pending 项保留选中、两个计数保留）；`tsc --noEmit` exit 0 | `RecycleBinPage.test.tsx`、`src/library/client.ts` |
-| AC4 译图残留 | 真实译图 `publish()` 后断言 origin 绑定 | 隔离根 | **PASS**：`1 passed`（`preview_lifecycle` 行存在且绑定 `a1`/`ar1`）；**该测试暴露并修正了首版实现的路径比对缺陷（绝对路径 vs 相对 managed_path 永不匹配）** | `tests/core/test_p09_ac4_translated_preview.py` |
+| AC4 译图残留 | 真实译图 `publish()` 后断言 origin 绑定 | 隔离根 | **PARTIAL（判 FAIL 并转出）**：`1 passed`，证明 `preview_lifecycle` 行存在且绑定 `a1`/`ar1`（并暴露了首版实现的路径比对缺陷）。**但该测试不覆盖「永久删除后残留归零」** —— 实测每读一次泄漏 1 行 + 1 文件，R7 独立复现读 5 次后仍剩 5 行 + 5 PNG。**转出至 `P09-PREVIEW-LIFECYCLE-RECLAIM-1`** | `tests/core/test_p09_ac4_translated_preview.py` |
 | AC5 symlink 替换 | preflight 注入 junction 替换目标 | Windows 隔离根 | **PASS**：3 项 `passed`（普通文件仍删、junction 被拒且目的文件存活、绝对/穿越路径被拒）；判别力验证旧顺序 `PROTECTED_STILL_EXISTS: False` | `tests/storage/test_preview_unlink_reparse.py` |
 | AC6 历史脱离 | stage-state 与 run_json 嵌套引用断言 | 隔离 DB | **PASS**：`1 passed`（行数不变、status 保留、`target_id` 不再是 `p1` 且以 `detached:` 开头、全树无 locator 存活、`book_title`/`status` 保留） | `test_core_delete_commands.py::test_delete_book_output_refs_cleared_and_stage_states_retained` |
 | AC7 验收脚本 | 修正后的 `verify_all.py` 查询在真实 schema 上执行 | 隔离根 | **PASS**：9/9 查询可执行，`schema_version=5`；`verify_all.py` 语法通过 | `verification/P09-AC3-DELETE-HARDEN-1/ac7-verify-query-check.py` |
@@ -259,7 +259,7 @@ evidence_dir: verification/P09-AC3-DELETE-HARDEN-1
 
 ### 用户裁决与 R5b 两项修复（2026-10-19）
 
-**用户裁决**：路线 **B** —— 只修 R5b 的两条 P1 删除路径；**7 处读取/导出路径转独立 Task**。
+**用户裁决**：路线 **B** —— 只修 R5b 的两条 P1 删除路径；**8 处读取/导出路径转独立 Task**。
 
 **已完成**：
 
@@ -286,7 +286,7 @@ evidence_dir: verification/P09-AC3-DELETE-HARDEN-1
 
 **转出项**：
 
-- **R5b P2：7 处读取/导出路径**（`core_service.py` ×4、`core_assembly.py` ×3）→ **`P09-MANAGED-READ-ROOT-TRUST-1`**（草案：`verification/P20-CLOSE-BOUND-HARDEN-2/r5b-p2-read-path-draft.md`）
+- **R5b P2：8 处读取/导出路径**（7 处比较点 + `handle_resolver.resolve_namespace_identity`）（`core_service.py` ×4、`core_assembly.py` ×3）→ **`P09-MANAGED-READ-ROOT-TRUST-1`**（草案：`verification/P20-CLOSE-BOUND-HARDEN-2/r5b-p2-read-path-draft.md`）
 
 **转出理由**：**读取与删除不是同一类问题** —— 删除可用句柄 disposition**一次完成**；**读取需要句柄保持打开并把数据读出来，窗口更长**，**且需先回答「期望身份从哪来」这个设计问题**（`handle_resolver` 的身份比对比对的是**已被重定向后的名字**，故 R5b 证明它在竞态下仍会接受被绕过的路径）。
 
