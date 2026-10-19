@@ -32,4 +32,4 @@
 |RUST-ENV-BASELINE-1|P20-CLOSE-BOUND-1|proposed|
 |P07 交互补缺 / P21 旧栈归档|P02 / P20+另授权|proposed（均可选）|
 |P22 响应归属|P22-REBASE-1|已集成；P04 不放行，H1/P2-1/13 与 BC-AC5 缺项保留。已完成见各节点行。|
-DOC=[架构映射](tasks/ARCH-DOC-REBASELINE.md)已集成未关闭（AC7完成）；P13*停写；P04不放行，H1/P2-1/13缺项与BC-AC5 PARTIAL保留（[裁决](../verification/PROJECT-ROADMAP-RELEASE/REPORT.md)）。READY：ARCH-DOC-REBASELINE、P20；`in_review`：HARDEN-1/2、PREVIEW-LIFECYCLE-RECLAIM-1。done：**33 项**。
+DOC=[架构映射](tasks/ARCH-DOC-REBASELINE.md)已集成未关闭（AC7完成）；P13*停写；P04不放行，H1/P2-1/13缺项与BC-AC5 PARTIAL保留（[裁决](../verification/PROJECT-ROADMAP-RELEASE/REPORT.md)）。READY 节点：ARCH-DOC-REBASELINE、P20。`in_review`：HARDEN-1/2、PREVIEW-LIFECYCLE-RECLAIM-1。done：**33 项**。
