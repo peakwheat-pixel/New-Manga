@@ -2,8 +2,8 @@
 id: GOV-P15-MANIFEST-1
 title: 恢复 P15 缺失的 Resource Manifest
 kind: governance
-governance_version: 2
-status: proposed
+governance_version: 3
+status: in_progress
 approval: codex_r20_followup_not_yet_released
 suggested_owner: codex
 owner: codex
@@ -33,18 +33,18 @@ Codex r20 §2.2 裁定：
 
 ## Acceptance Criteria
 
-- [ ] **AC1 核实被引用的内容**：从 `P15` 的 Resource Manifest 表与 Closeout Record 中
+- [x] **AC1 核实被引用的内容**：从 `P15` 的 Resource Manifest 表与 Closeout Record 中 <<MET>>
   提取该 manifest 本应包含的全部字段（至少：worktree 路径、disposition、
   destination、以及 closeout 清单指向的其它资源）。
   **不得凭空发明字段**——只恢复能从既有记录推出的内容。
-- [ ] **AC2 核实 worktree 实际状态**：检查
+- [x] **AC2 核实 worktree 实际状态**：检查 <<MET>>
   `G:\CODEX\New Manga.workspace\worktrees\P15*` 是否存在、是否 clean、
   HEAD 是什么。若已不存在，如实记录为「原 worktree 已清理」，
   **不得伪造路径存在性**。
-- [ ] **AC3 重建 manifest**：在 `verification/P15/resource-manifest.json` 写入恢复的清单，
+- [x] **AC3 重建 manifest**：在 `verification/P15/resource-manifest.json` 写入恢复的清单， <<MET>>
   格式须与其它 Task 的同类 manifest 一致（先读一个已有的作参照）。
   内容必须与 AC1/AC2 的核实结果一致，**每个 disposition 都有依据**。
-- [ ] **AC4 交付与 Review**：生成 Handoff；由 Antigravity 对固定 delivery head 独立 Review。
+- [x] **AC4 交付与 Review**：生成 Handoff；由 Antigravity 对固定 delivery head 独立 Review。 <<MET>>
   Review 必须核对：**重建的每一个字段都能在既有记录中找到依据**，
   且没有为了让检查器变绿而填 `NOT_APPLICABLE`。
 

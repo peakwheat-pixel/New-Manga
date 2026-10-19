@@ -1,0 +1,38 @@
+{
+  "task_id": "P15",
+  "recorded_at": "2026-10-20",
+  "restored_by": "GOV-P15-MANIFEST-1",
+  "restoration_basis": [
+    "doc/tasks/P15.md#Resource Manifest (row: worktree, PRESERVE_REFERENCED)",
+    "doc/tasks/P15.md#Closeout Record (resource_closeout_status: complete; deleted/moved/archived = 0)",
+    "git worktree list (worktree still present at HEAD ee19898fc)"
+  ],
+  "resources": [
+    {
+      "resource_type": "worktree",
+      "source_path": "G:/CODEX/New Manga.workspace/worktrees/P15",
+      "disposition": "PRESERVE_REFERENCED",
+      "destination_path": "G:/CODEX/New Manga.workspace/worktrees/P15",
+      "reason": "Owner delivery and independent review recovery point; retained in place. Verified present at 2026-10-20 with HEAD ee19898fc, matching the delivery_head recorded in the task's Closeout Record.",
+      "verification": {
+        "exists": true,
+        "checked_at": "2026-10-20",
+        "head": "ee19898fc",
+        "head_matches_closeout_delivery_head": true,
+        "branch": "zcode/P15"
+      }
+    }
+  ],
+  "closeout_counts": {
+    "deleted": 0,
+    "moved": 0,
+    "archived": 0
+  },
+  "closeout_status": "complete",
+  "notes": [
+    "This file was referenced by the task's Resource Manifest row but was missing from the repository; the manifest reference therefore failed validation.",
+    "Restored strictly from what the existing task records state. No resource types are invented: P15's own manifest table lists only the worktree, and its Closeout Record records zero deletions, moves, or archives.",
+    "The worktree was verified to still exist rather than assumed. Its HEAD matches the delivery_head frozen at closeout, so PRESERVE_REFERENCED remains accurate.",
+    "Absent from this file by design: junction, test-build-output and test-dependencies entries. Sibling task EXPORT-REVEAL-1 has those, but P15's records never claim them, and inventing them would fabricate provenance."
+  ]
+}
