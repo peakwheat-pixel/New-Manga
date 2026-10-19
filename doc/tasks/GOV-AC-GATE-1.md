@@ -2,8 +2,8 @@
 id: GOV-AC-GATE-1
 title: AC 状态的机械门禁（machine-readable AC gate）
 kind: governance
-governance_version: 2
-status: proposed
+governance_version: 3
+status: in_progress
 approval: codex_r20_followup_not_yet_released
 suggested_owner: codex
 owner: codex
@@ -51,22 +51,22 @@ r20 的原话：
 
 ## Acceptance Criteria
 
-- [ ] **AC1 定义状态词汇表**：在 `doc/09_COLLABORATION.md` 中定义 AC 的显式状态枚举
+- [x] **AC1 定义状态词汇表**：在 `doc/09_COLLABORATION.md` 中定义 AC 的显式状态枚举 <<MET>>
   （至少 `MET` / `PARTIAL` / `BLOCKED` / `NOT_APPLICABLE`），并说明各状态的**语义与证据门槛**。
   必须明确：`BLOCKED` 与 `PARTIAL` **不得**写成 `MET`；`MET` 必须有可指向的证据。
-- [ ] **AC2 定义书写形式**：给出 AC 行末状态标记的**确切语法**（必须能被正则稳定匹配，
+- [x] **AC2 定义书写形式**：给出 AC 行末状态标记的**确切语法**（必须能被正则稳定匹配， <<MET>>
   且不破坏既有 Markdown 渲染）。必须说明**既有 Task 的兼容策略**——
   已 `done` 的历史 Task 是否回溯补标？若不回溯，如何区分「未标注」与「标注为 MET」？
-- [ ] **AC3 实现检查器 gate**：在 `tools/governance/check.ps1` 中实现：
+- [x] **AC3 实现检查器 gate**：在 `tools/governance/check.ps1` 中实现： <<MET>>
   Task 状态为 `in_review` 或**终态**时，每个 AC 必须
   **①已勾选**，或 **②带有非 `MET` 的显式状态标记并附原因**。
   违反时报 error 并指出具体 AC。
   **不得**因新增该 gate 而使既有 PASS 的 Task 变红——若会，须在 AC4 中给出兼容方案。
-- [ ] **AC4 回归测试**：用夹具（**不得写进 `doc/tasks/`**）覆盖至少四种情形：
+- [x] **AC4 回归测试**：用夹具（**不得写进 `doc/tasks/`**）覆盖至少四种情形： <<MET>>
   ① 全部勾选 → PASS；② 有未勾且无标 → FAIL；
   ③ 有未勾但标 `BLOCKED` + 原因 → PASS；④ 已勾但标 `BLOCKED` → FAIL（矛盾状态）。
   夹具路径须使用系统临时目录，并在测试中断言 `doc/tasks/` 未被触碰。
-- [ ] **AC5 全库回归**：对当前全部 Task 跑一遍新检查器，**如实记录**哪些 Task 会因此变红，
+- [x] **AC5 全库回归**：对当前全部 Task 跑一遍新检查器，**如实记录**哪些 Task 会因此变红， <<MET>>
   并逐个判断是「真实缺陷」还是「兼容性问题」。**不得为了让全库变绿而放宽 gate。**
 - [ ] **AC6 交付与 Review**：改动协议与检查器；生成 Handoff；由 Antigravity 对固定
   delivery head 独立 Review。Review 必须实际构造违反情形验证 gate 生效。

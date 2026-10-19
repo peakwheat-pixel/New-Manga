@@ -283,7 +283,7 @@ if ($TaskPath -and (Test-Path -LiteralPath $TaskPath -PathType Leaf)) {
         }
         if (-not $metadata.ContainsKey('governance_version')) {
             Add-Warning '当前 Task 是 lifecycle v1；保留其原状态与证据，不强制回填旧 Task。'
-        } elseif ($metadata['governance_version'] -eq '2') {
+        } elseif ($metadata['governance_version'] -in @('2', '3')) {
             if ($taskStatus -in @('in_review', 'approved', 'done', 'closed_with_limitations')) {
                 $evidenceRows = @(Get-TableRows (Get-Section $taskText 'Canonical Evidence'))
                 if ($evidenceRows.Count -eq 0) { Add-Error '进入 REVIEW/DONE 的 lifecycle v2 Task 必须列出 canonical evidence。' }
@@ -406,6 +406,41 @@ if ($TaskPath -and (Test-Path -LiteralPath $TaskPath -PathType Leaf)) {
                         } elseif ($disposition -in @('PRESERVE_REFERENCED', 'PRESERVE_USER_DATA', 'PRESERVE_UNKNOWN')) {
                             $finalPath = Resolve-LocalPath $destination $repoRoot
                             if ($finalPath -and (Test-Path -LiteralPath $finalPath -PathType Leaf) -and (Get-FileHash -LiteralPath $finalPath -Algorithm SHA256).Hash -ne $integrity) { Add-Error "Resource SHA-256 不匹配：$destination" }
+                        }
+                    }
+                }
+            }
+            if ($metadata['governance_version'] -eq '3' -and $taskStatus -in @('in_review', 'approved', 'done', 'closed_with_limitations')) {
+                # §4.3 AC 状态标记门禁：每个 AC 必须有合法 <<STATUS>>，且与勾选一致。
+                $acMatches = @([regex]::Matches($taskText, '(?m)^[ \t]*-[ \t]*\[([ xX])\][ \t]*\*\*AC[^\r\n]*$'))
+                if ($acMatches.Count -eq 0) {
+                    Add-Error 'lifecycle v3 Task 进入 REVIEW/DONE 时未找到任何 AC 行。'
+                }
+                foreach ($am in $acMatches) {
+                    $acLine = $am.Value
+                    $isChecked = ($am.Groups[1].Value -ne ' ')
+                    $acLabel = if ($acLine -match '\*\*(AC[0-9A-Za-z._-]+)') { $matches[1] } else { 'AC?' }
+                    $mk = [regex]::Match($acLine, '<<(MET|PARTIAL|BLOCKED|NOT_APPLICABLE)(?::[ \t]*([^>]*))?>>[ \t]*$')
+                    if (-not $mk.Success) {
+                        Add-Error "AC 状态标记缺失或非法（需行末 <<MET>> / <<PARTIAL: 原因>> / <<BLOCKED: 原因>> / <<NOT_APPLICABLE: 原因>>）：$acLabel"
+                        continue
+                    }
+                    $acState = $mk.Groups[1].Value
+                    $acReason = $mk.Groups[2].Value.Trim()
+                    $acText = ($acLine -replace '\s+', ' ')
+                    if ($acText.Length -gt 220) { $acText = $acText.Substring(0, 220) + '…' }
+                    switch ($acState) {
+                        'MET' {
+                            if (-not $isChecked) { Add-Error "AC 标记为 MET 但未勾选：$acLabel" }
+                            if ($acReason) { Add-Error "AC 标记为 MET 时不得附原因（依据应进 Canonical Evidence）：$acLabel" }
+                        }
+                        'NOT_APPLICABLE' {
+                            if (-not $isChecked) { Add-Error "AC 标记为 NOT_APPLICABLE 时必须勾选：$acLabel" }
+                            if (-not $acReason) { Add-Error "AC 标记为 NOT_APPLICABLE 时必须有原因：$acLabel" }
+                        }
+                        default {
+                            if ($isChecked) { Add-Error "AC 标记为 $acState 时不得勾选：$acLabel" }
+                            if (-not $acReason) { Add-Error "AC 标记为 $acState 时必须有原因：$acLabel" }
                         }
                     }
                 }

@@ -83,7 +83,7 @@ linked worktree 的 toplevel 可以不同，但 common directory 必须指向本
 
 当前 Task 指针所指的最新 Review/adjudication 才是当前审查结论；它们必须绑定精确 `base_commit` / `reviewed_head`。新 head 或新 Review 使旧结论自动降为 `HISTORICAL` / `SUPERSEDED`，原文件不改写。STATUS 指向的一个 rolling checkpoint 仅供当前恢复；更新指针后旧 checkpoint 降为历史，Task 终态后不再默认读取。
 
-检查器只验证当前权威文档和当前 Task 的相对引用、目标架构哨兵、体量预算及启用 lifecycle v2 的证据 pin。引用缺失、commit 中无对应文件、SHA-256 不匹配或 pin 未填写时为 FAIL；历史目录不作全量扫描。机器检查不能判定语义授权，也不能代替 Reviewer/Codex adjudication。
+检查器只验证当前权威文档和当前 Task 的相对引用、目标架构哨兵、体量预算、启用 lifecycle v2 的证据 pin，以及 lifecycle v3 的 AC 状态标记（§4.3）。引用缺失、commit 中无对应文件、SHA-256 不匹配或 pin 未填写时为 FAIL；历史目录不作全量扫描。机器检查不能判定语义授权，也不能代替 Reviewer/Codex adjudication。
 
 ### 4.2 Task closeout 与派生资源
 
@@ -98,6 +98,66 @@ linked worktree 的 toplevel 可以不同，但 common directory 必须指向本
 Task 的开发状态与产品 PipelineRun 状态是两套不同概念，不能混入应用 Schema。
 
 测试项必须注明 planned / executed、命令、环境、结果、证据；结果中的 `passed` 与 `skipped` 必须分列（如 `290 passed, 6 skipped`），并为每个 skip 记录原因。测试命令尚无实现时写“计划命令”，不能假装可立即运行。Acceptance Criteria 的逐项满足需实际证据，不能仅引用 D08 标题。
+
+### 4.3 AC 状态的显式标记（lifecycle v3）
+
+**为什么需要它。** 只靠 `- [ ]` / `- [x]` 无法区分三种完全不同的情况：
+「已完成但忘了勾」「确实未完成」「因外部原因阻塞」。前两种在文件里长得一样，
+第三种也没有位置记录原因。结果是**漏勾无法被机械发现**——检查器不知道该不该报错，
+Reviewer 只能靠肉眼。本项目已多次发生「AC 全部做完、一个框都没勾」。
+
+**适用范围。** 本节对 `governance_version: 3` 的 Task 生效。v1/v2 Task 保持原状，
+**不回溯补标**：它们的 `[x]`/`[ ]` 语义不变，检查器也不对它们套用本节规则。
+`governance_version: 3` 由 Codex 释放新 Task 时写入；已释放的 v2 Task 不因本节升级。
+
+**标记形式。** 每个 AC 行末（不受行内格式影响）追加一个状态标记：
+
+```
+- [x] **AC1 标题**：正文…… <<MET>>
+- [ ] **AC2 标题**：正文…… <<BLOCKED: 无头 Windows 无法取得 WebView2 句柄>>
+- [ ] **AC3 标题**：正文…… <<PARTIAL: ①/② 达成，③ 阻塞>>
+- [x] **AC4 标题**：正文…… <<NOT_APPLICABLE: 本 Task 无数据面>>
+```
+
+语法：`<<STATUS>>` 或 `<<STATUS: 原因>>`，`STATUS` ∈
+`MET` / `PARTIAL` / `BLOCKED` / `NOT_APPLICABLE`（大小写敏感，全大写）。
+`PARTIAL` / `BLOCKED` / `NOT_APPLICABLE` **必须带非空原因**；`MET` 不得带原因。
+标记在行末，其后不得再有其它内容。
+
+**勾选与标记的一致性规则**（这是门禁的核心）：
+
+| 勾选 | 允许的标记 | 语义 |
+|---|---|---|
+| `[x]` | `MET` / `NOT_APPLICABLE` | 已达成，或本 Task 范围内不适用 |
+| `[ ]` | `PARTIAL` / `BLOCKED` | 未达成且**必须**写明原因 |
+
+**矛盾组合一律不允许**：`[x]` + `BLOCKED`、`[ ]` + `MET`、
+以及任何缺标记的 AC（在 v3 Task 中）。
+
+**为什么 `MET` 不能带原因。** `MET` 表示该 AC 已达成，其依据应在
+`Canonical Evidence` 中登记，而不是写在 AC 行末。允许 `MET` 附原因会诱导
+「用文字解释代替证据」——正是本规则要防的。
+
+**`NOT_APPLICABLE` 与 `MET` 的区别。** `MET` = 该 AC 在本 Task 范围内成立且已验证；
+`NOT_APPLICABLE` = 该 AC 在本 Task 范围内**不产生要求**（例如纯前端 Task 的
+数据面 AC）。两者都勾选，但证据门槛不同：`NOT_APPLICABLE` 只需说明理由，
+`MET` 需要 Canonical Evidence 支撑。
+
+**门禁。** `tools/governance/check.ps1` 对 v3 Task 施加以下检查：
+
+- 状态进入 `in_review`、`approved`、`done`、`closed_with_limitations` 时，
+  **每个 AC 必须带合法标记**；缺失即 FAIL。
+- 勾选与标记的组合必须符合上表；矛盾即 FAIL。
+- `PARTIAL` / `BLOCKED` / `NOT_APPLICABLE` 缺原因即 FAIL。
+
+**这个门禁不能做什么。** 它只验证**标记的存在与自洽**，
+不能验证标记是否**诚实**——把未做的写成 `MET` 不会被它发现。
+那需要 `Canonical Evidence` 的 pin 校验与 Reviewer 判断，本节不重复。
+
+**不回溯的代价（明确记录）。** 截至 v3 引入时，本仓库 102 个有 AC 的 Task 共
+618 个 AC，其中 149 个未勾选，分布在 25 个已进入 `in_review` 或终态的 Task 中。
+这些 Task 一律保持 v2，不补标、不因本节变红。**本门禁只阻止新增此类缺陷，不清算存量。**
+存量由后续专项 Task 处理。
 
 ## 5. Handoff
 
