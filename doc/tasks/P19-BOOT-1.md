@@ -76,27 +76,27 @@ L3368: shared_lease = acquire_shared_lease(...)               # 缺锁 → FileN
 
 | evidence_id | AC/Gate | path（仓库相对路径或绝对路径） | commit | sha256 | class (`CANONICAL` / `SOURCE_PIN`) |
 |---|---|---|---|---|---|
-| core-suite | AC2–AC5 / Gate | verification/P19-BOOT-1/core-suite.log | c44b47dd9852121e18496502870f4e4cbaf5c737 | a4b5adb47d9defff1b7457dc455aaa9f4bb298b2a34a88c5d174a174566b6d50 | CANONICAL |
-| cargo-build | AC1 / Gate | verification/P19-BOOT-1/cargo-build.log | c44b47dd9852121e18496502870f4e4cbaf5c737 | ff59ac35c2f1898b87333a0aeda7b4671a2189bf5860dd669c9ea7d80caeb1cd | CANONICAL |
-| cargo-build-custom-protocol | AC1 / Gate | verification/P19-BOOT-1/cargo-build-custom-protocol.log | c44b47dd9852121e18496502870f4e4cbaf5c737 | a26ca0a54a0eba959b8b3d96c883fcd3a23c4238db75bf380a41a8da071548c9 | CANONICAL |
-| frontend-build | AC1 / Gate | verification/P19-BOOT-1/frontend-build.log | c44b47dd9852121e18496502870f4e4cbaf5c737 | b067992b1a1ea3f0be33c9d17ed3c83c5ccfe8be1b4b4bae8febdcab6738ebbb | CANONICAL |
-| partial-state-fixture | AC1, AC5 | verification/P19-BOOT-1/partial-state-runtime-final6.json | c44b47dd9852121e18496502870f4e4cbaf5c737 | 4e808a696575d832ceab115f9ed55200516842b224eefe586abcea789deaf209 | CANONICAL |
-| partial-state-setup-log | AC1, AC5 | verification/P19-BOOT-1/partial-state-runtime-final6-run.log | c44b47dd9852121e18496502870f4e4cbaf5c737 | 6d59d0637770bcda6b7ef4a20854de201c566c4aade8a1f9506e98d483c3551b | CANONICAL |
-| real-startup-launch | AC1, AC6 | verification/P19-BOOT-1/real-startup-launch-final.json | c44b47dd9852121e18496502870f4e4cbaf5c737 | fab6551fde639b5e71bd66986548244f11bb8025eec8cf6a59070dbacb8524fe | CANONICAL |
-| real-startup-result | AC1, AC6 | verification/P19-BOOT-1/real-startup-final.json | c44b47dd9852121e18496502870f4e4cbaf5c737 | 2661c53d8d14e2689ae061e4fac5bb1d009c4bc076fc9f7586e3eb653486df43 | CANONICAL |
-| real-startup-log | AC1, AC6 | verification/P19-BOOT-1/real-startup-final-run.log | c44b47dd9852121e18496502870f4e4cbaf5c737 | 746a93bdc576f1d83ecbfcc961ad246164405a133f55f99241bdb23bd0447d9f | CANONICAL |
-| real-startup-stderr | AC1, AC2, AC6 | verification/P19-BOOT-1/final-app.stderr.log | c44b47dd9852121e18496502870f4e4cbaf5c737 | b2b1b995fe740d66527532f0d28ac1d5b27811e118cc6bc91a1899cd3441572d | CANONICAL |
-| runtime-binding | AC2, AC3 | verification/P19-BOOT-1/runtime-binding-final.json | c44b47dd9852121e18496502870f4e4cbaf5c737 | 8f909b1ada972f3577aaa205b437d556b157f37f98927b0f0d8e0dc677440b4d | CANONICAL |
-| runtime-binding-log | AC2, AC3 | verification/P19-BOOT-1/runtime-binding-final-run.log | c44b47dd9852121e18496502870f4e4cbaf5c737 | 300276750cf3c5fcb49f497026f86b82e35a27e35693c8c7812fea3eaa359e31 | CANONICAL |
-| ui-bookshelf | AC1, AC6 | verification/P19-BOOT-1/ui-bookshelf-real-window.png | c44b47dd9852121e18496502870f4e4cbaf5c737 | cb373d919c2e8651b76d23c5afdc6830d74a2b2594b4e0c73dc578d6247a4848 | CANONICAL |
-| ui-workbench | AC1, AC6 | verification/P19-BOOT-1/ui-workbench-real-window.png | c44b47dd9852121e18496502870f4e4cbaf5c737 | 73d63aa14eff087372959e1b5669d93b25e36a8744a6d2dd20bc6799779e9c44 | CANONICAL |
-| ui-reader | AC1, AC6 | verification/P19-BOOT-1/ui-reader-real-window.png | c44b47dd9852121e18496502870f4e4cbaf5c737 | 4de460a24e1a94d31c25dec927dd878b86be074b7ce950c00aeffcd7fd5b6773 | CANONICAL |
-| ui-settings | AC1, AC6 | verification/P19-BOOT-1/ui-settings-real-window.png | c44b47dd9852121e18496502870f4e4cbaf5c737 | 6406b3766df95f0d3ac7d9dee81dd78248f14d402f2462d73588d193e8b0c455 | CANONICAL |
-| startup-evidence-narrative | AC1, AC6 | verification/P19-BOOT-1/real-startup-evidence.md | c44b47dd9852121e18496502870f4e4cbaf5c737 | 77537eb1b7bf01d4c61f5b85833ded26d75ff9cd7068656827f343ae33876fdd | CANONICAL |
-| partial-state-setup-script | AC1, AC5 | verification/P19-BOOT-1/prepare_partial_state.py | c44b47dd9852121e18496502870f4e4cbaf5c737 | f7fa7fd03e62100624a2fb6070c849815ad221dab44a7a7acdcb4d03b5d66020 | CANONICAL |
-| real-window-capture-script | AC1, AC6 | verification/P19-BOOT-1/capture_real_startup.ps1 | c44b47dd9852121e18496502870f4e4cbaf5c737 | 6a6c6dfb27eb0ecf9de4ff9338f60c34c00213367823671a1618858090d90bed | CANONICAL |
-| binding-check-script | AC2, AC3 | verification/P19-BOOT-1/verify_runtime_binding.py | c44b47dd9852121e18496502870f4e4cbaf5c737 | 680778ee36f006cdacc28ea32baeeba538f9526f2e681bfd268453d129d96460 | CANONICAL |
-| evidence-manifest | AC6 | verification/P19-BOOT-1/evidence-manifest.json | c44b47dd9852121e18496502870f4e4cbaf5c737 | a7c269b7145b098d41aef3923b6b2a9f71adda6520ca55192e9e9cf2605d5619 | CANONICAL |
+| core-suite | AC2–AC5 / Gate | verification/P19-BOOT-1/core-suite.log | e4aff85bc87fa36f8656710315add6ec52c5ce15 | a4b5adb47d9defff1b7457dc455aaa9f4bb298b2a34a88c5d174a174566b6d50 | CANONICAL |
+| cargo-build | AC1 / Gate | verification/P19-BOOT-1/cargo-build.log | e4aff85bc87fa36f8656710315add6ec52c5ce15 | ff59ac35c2f1898b87333a0aeda7b4671a2189bf5860dd669c9ea7d80caeb1cd | CANONICAL |
+| cargo-build-custom-protocol | AC1 / Gate | verification/P19-BOOT-1/cargo-build-custom-protocol.log | e4aff85bc87fa36f8656710315add6ec52c5ce15 | a26ca0a54a0eba959b8b3d96c883fcd3a23c4238db75bf380a41a8da071548c9 | CANONICAL |
+| frontend-build | AC1 / Gate | verification/P19-BOOT-1/frontend-build.log | e4aff85bc87fa36f8656710315add6ec52c5ce15 | b067992b1a1ea3f0be33c9d17ed3c83c5ccfe8be1b4b4bae8febdcab6738ebbb | CANONICAL |
+| partial-state-fixture | AC1, AC5 | verification/P19-BOOT-1/partial-state-runtime-final6.json | e4aff85bc87fa36f8656710315add6ec52c5ce15 | 4e808a696575d832ceab115f9ed55200516842b224eefe586abcea789deaf209 | CANONICAL |
+| partial-state-setup-log | AC1, AC5 | verification/P19-BOOT-1/partial-state-runtime-final6-run.log | e4aff85bc87fa36f8656710315add6ec52c5ce15 | 6d59d0637770bcda6b7ef4a20854de201c566c4aade8a1f9506e98d483c3551b | CANONICAL |
+| real-startup-launch | AC1, AC6 | verification/P19-BOOT-1/real-startup-launch-final.json | e4aff85bc87fa36f8656710315add6ec52c5ce15 | fab6551fde639b5e71bd66986548244f11bb8025eec8cf6a59070dbacb8524fe | CANONICAL |
+| real-startup-result | AC1, AC6 | verification/P19-BOOT-1/real-startup-final.json | e4aff85bc87fa36f8656710315add6ec52c5ce15 | 2661c53d8d14e2689ae061e4fac5bb1d009c4bc076fc9f7586e3eb653486df43 | CANONICAL |
+| real-startup-log | AC1, AC6 | verification/P19-BOOT-1/real-startup-final-run.log | e4aff85bc87fa36f8656710315add6ec52c5ce15 | 746a93bdc576f1d83ecbfcc961ad246164405a133f55f99241bdb23bd0447d9f | CANONICAL |
+| real-startup-stderr | AC1, AC2, AC6 | verification/P19-BOOT-1/final-app.stderr.log | e4aff85bc87fa36f8656710315add6ec52c5ce15 | b2b1b995fe740d66527532f0d28ac1d5b27811e118cc6bc91a1899cd3441572d | CANONICAL |
+| runtime-binding | AC2, AC3 | verification/P19-BOOT-1/runtime-binding-final.json | e4aff85bc87fa36f8656710315add6ec52c5ce15 | 8f909b1ada972f3577aaa205b437d556b157f37f98927b0f0d8e0dc677440b4d | CANONICAL |
+| runtime-binding-log | AC2, AC3 | verification/P19-BOOT-1/runtime-binding-final-run.log | e4aff85bc87fa36f8656710315add6ec52c5ce15 | 300276750cf3c5fcb49f497026f86b82e35a27e35693c8c7812fea3eaa359e31 | CANONICAL |
+| ui-bookshelf | AC1, AC6 | verification/P19-BOOT-1/ui-bookshelf-real-window.png | e4aff85bc87fa36f8656710315add6ec52c5ce15 | cb373d919c2e8651b76d23c5afdc6830d74a2b2594b4e0c73dc578d6247a4848 | CANONICAL |
+| ui-workbench | AC1, AC6 | verification/P19-BOOT-1/ui-workbench-real-window.png | e4aff85bc87fa36f8656710315add6ec52c5ce15 | 73d63aa14eff087372959e1b5669d93b25e36a8744a6d2dd20bc6799779e9c44 | CANONICAL |
+| ui-reader | AC1, AC6 | verification/P19-BOOT-1/ui-reader-real-window.png | e4aff85bc87fa36f8656710315add6ec52c5ce15 | 4de460a24e1a94d31c25dec927dd878b86be074b7ce950c00aeffcd7fd5b6773 | CANONICAL |
+| ui-settings | AC1, AC6 | verification/P19-BOOT-1/ui-settings-real-window.png | e4aff85bc87fa36f8656710315add6ec52c5ce15 | 6406b3766df95f0d3ac7d9dee81dd78248f14d402f2462d73588d193e8b0c455 | CANONICAL |
+| startup-evidence-narrative | AC1, AC6 | verification/P19-BOOT-1/real-startup-evidence.md | e4aff85bc87fa36f8656710315add6ec52c5ce15 | 77537eb1b7bf01d4c61f5b85833ded26d75ff9cd7068656827f343ae33876fdd | CANONICAL |
+| partial-state-setup-script | AC1, AC5 | verification/P19-BOOT-1/prepare_partial_state.py | e4aff85bc87fa36f8656710315add6ec52c5ce15 | f7fa7fd03e62100624a2fb6070c849815ad221dab44a7a7acdcb4d03b5d66020 | CANONICAL |
+| real-window-capture-script | AC1, AC6 | verification/P19-BOOT-1/capture_real_startup.ps1 | e4aff85bc87fa36f8656710315add6ec52c5ce15 | 6a6c6dfb27eb0ecf9de4ff9338f60c34c00213367823671a1618858090d90bed | CANONICAL |
+| binding-check-script | AC2, AC3 | verification/P19-BOOT-1/verify_runtime_binding.py | e4aff85bc87fa36f8656710315add6ec52c5ce15 | 680778ee36f006cdacc28ea32baeeba538f9526f2e681bfd268453d129d96460 | CANONICAL |
+| evidence-manifest | AC6 | verification/P19-BOOT-1/evidence-manifest.json | e4aff85bc87fa36f8656710315add6ec52c5ce15 | a7c269b7145b098d41aef3923b6b2a9f71adda6520ca55192e9e9cf2605d5619 | CANONICAL |
 | EVD-BOOT1-REVIEW-R1 | AC1–AC6 | `verification/P19-BOOT-1/dsh-review-r1.md` | `5b5349181` | `d0460645f81728bca9447868737d8aca3581ebff4ea265ac441b3585772e4d17` | SOURCE_PIN |
 
 ## Resource Manifest

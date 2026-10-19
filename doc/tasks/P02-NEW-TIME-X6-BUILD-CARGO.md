@@ -124,7 +124,7 @@ Build 时显式复用 `packaging/m2ac5/README.md` 中的 Windows 构建链。模
 | BC-BUILD-PREFLIGHT-AGY-BUNDLE-R1 | BC-AC1 Antigravity live preflight attempts manifest | G:/CODEX/New Manga.workspace/agent-output/codex/P02-NEW-TIME-X6-BUILD-CARGO/preflight-antigravity-r1/preflight-evidence-manifest-r1.json | - | F5B058B907FFAEBFC401A4B21DB51F311B3761244C073DBE8E9793CD6315B859 | CANONICAL |
 | BC-BUILD-AGY-RUN-R1 | BC-AC4 Antigravity Cargo attempt 2 & Tauri attempt 1 run evidence manifest | G:/CODEX/New Manga.workspace/agent-output/antigravity/P02-NEW-TIME-X6-BUILD-CARGO/antigravity-run-evidence-manifest-r1.json | - | 9A68B95F8D7B55098A01104F1BC5CBF57438D6326065C6B50CCB035AF355F1B6 | CANONICAL |
 | BC-BUILD-ARTIFACTS-MANIFEST-R1 | BC-AC4 Cargo binary and NSIS installer artifacts manifest | verification/P02-NEW-TIME-X6-BUILD-CARGO/build-artifacts-manifest-r1.json | - | CA2BB6CEDD9CE267CAC947681D03CE073C773C08CFE40F5B71623BF16256B57B | CANONICAL |
-| BC-BUILD-CANONICAL-EVIDENCE-MANIFEST-R1 | Build/Cargo evidence closure (34 immutable files; official generator --verify PASS, files_checked=34; manifest omits self-hash) | verification/P02-NEW-TIME-X6-BUILD-CARGO/canonical-evidence-manifest-r1.json | aafae764f6293fc5d6540019ca16187477abcf48 | SHA-256 intentionally not self-recorded | CANONICAL |
+| BC-BUILD-CANONICAL-EVIDENCE-MANIFEST-R1 | Build/Cargo evidence closure (34 immutable files; official generator --verify PASS, files_checked=34; manifest omits self-hash) | verification/P02-NEW-TIME-X6-BUILD-CARGO/canonical-evidence-manifest-r1.json | 77463b41315b33ce11240f2a7d24419d26bb05a6 | SHA-256 intentionally not self-recorded | CANONICAL |
 
 ## Resource Manifest
 

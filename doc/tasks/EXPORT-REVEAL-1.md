@@ -133,7 +133,7 @@ evidence_dir: verification/EXPORT-REVEAL-1
 
 | resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
 |---|---|---|---|---|---|
-| worktree | G:/CODEX/New Manga.workspace/worktrees/EXPORT-REVEAL-1 | PRESERVE_REFERENCED | G:/CODEX/New Manga.workspace/worktrees/EXPORT-REVEAL-1 | `verification/EXPORT-REVEAL-1/resource-manifest.json` / `2B7774178B10E9C9C2A49CBAB2C45CCDC8BC5E4E1BA803843B2CF34C1DBAB944` | 保留给独立 Review；未删除、移动或归档。现有 frozen bundle Junction 原位保留。 |
+| worktree | G:/CODEX/New Manga.workspace/worktrees/EXPORT-REVEAL-1 | PRESERVE_REFERENCED | G:/CODEX/New Manga.workspace/worktrees/EXPORT-REVEAL-1 | verification/EXPORT-REVEAL-1/resource-manifest.json | 保留给独立 Review；未删除、移动或归档。现有 frozen bundle Junction 原位保留。清单自身 SHA-256 `2B7774178B10E9C9C2A49CBAB2C45CCDC8BC5E4E1BA803843B2CF34C1DBAB944`。 |
 
 ## Closeout Record
 

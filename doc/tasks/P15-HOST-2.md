@@ -64,16 +64,16 @@ fn bind_profile_credential(...) -> Result<(), LibraryError> {
 
 | evidence_id | AC/Gate | path（仓库相对路径或绝对路径） | commit | sha256 | class (`CANONICAL` / `SOURCE_PIN`) |
 |---|---|---|---|---|---|
-| P15-HOST-2-HANDOFF | AC1 / AC6 / review handoff | `doc/handoffs/P15-HOST-2-codex.md` | `b03bf0d87bf8eae31650c36b2cc0d995236eaa8b` | `cea289d1162fb461a52ed362fbe0ff80e089907a54678b9a221c35783b00eb71` | SOURCE_PIN |
-| P15-HOST-2-RUST | AC2–AC4 | `verification/P15-HOST-2/rust-source-commit.log` | `b03bf0d87bf8eae31650c36b2cc0d995236eaa8b` | `f65fb042977d71bf9d18712fe24528151f32930f4a0561822fd8d8377a8c080a` | CANONICAL |
-| P15-HOST-2-PACKAGED | Regression | `verification/P15-HOST-2/rust-packaged-commit.log` | `b03bf0d87bf8eae31650c36b2cc0d995236eaa8b` | `67610e58b3ec2573b95f57c119529ea8da89d7ac22a80e268663e6bd6212e807` | CANONICAL |
-| P15-HOST-2-CORE | Regression / AC5 | `verification/P15-HOST-2/core-pytest-commit.log` | `b03bf0d87bf8eae31650c36b2cc0d995236eaa8b` | `ef62645dd1b808416a61c81af65e2538356f76b299e443bd261101118a2be83f` | CANONICAL |
-| P15-HOST-2-FRONTEND | Regression | `verification/P15-HOST-2/frontend-vitest-commit.log` | `b03bf0d87bf8eae31650c36b2cc0d995236eaa8b` | `7b2d8b81d30242a69bb959c1322233b8dda591478bdb20e95292bccc477b551e` | CANONICAL |
-| P15-HOST-2-SURFACE | AC4 | `verification/P15-HOST-2/surface-sync-check.log` | `b03bf0d87bf8eae31650c36b2cc0d995236eaa8b` | `61d8c607493e91c57fdbb3601d43ea243f34339c87e1068f26ca079135dae3e4` | CANONICAL |
-| P15-HOST-2-HOST-ONLY | AC4 | `verification/P15-HOST-2/host-only-rescan.log` | `b03bf0d87bf8eae31650c36b2cc0d995236eaa8b` | `1f59aaf30b245e0c8663753dbe6bcd596596a56818827ddcaa4242a517a6db27` | CANONICAL |
-| P15-HOST-2-AC5 | AC5 | `verification/P15-HOST-2/ac5-counterexample-review.md` | `b03bf0d87bf8eae31650c36b2cc0d995236eaa8b` | `8e63defc4ea4c56170a823abde10501b891336bad90866b3109eea8e13c0dbe2` | SOURCE_PIN |
-| P15-HOST-2-RV-P15-04 | BL-16 / changed source and generated files | `verification/P15-HOST-2/modified-files-sha256.txt` | `b03bf0d87bf8eae31650c36b2cc0d995236eaa8b` | `5be13d45a67d15abf34f1c45e8be1e4789f8bbd2daf38f0218a50391f8b6c786` | CANONICAL |
-| P15-HOST-2-RESOURCES | Resource preservation | `verification/P15-HOST-2/resource-manifest.json` | `b03bf0d87bf8eae31650c36b2cc0d995236eaa8b` | `7f7b8024e5c3d102a1a66c26fe3ad24d712f4623c18b040608101f8b573b37f5` | CANONICAL |
+| P15-HOST-2-HANDOFF | AC1 / AC6 / review handoff | `doc/handoffs/P15-HOST-2-codex.md` | 4e88bc4d413c38b467541c03a0886550b498826b | `cea289d1162fb461a52ed362fbe0ff80e089907a54678b9a221c35783b00eb71` | SOURCE_PIN |
+| P15-HOST-2-RUST | AC2–AC4 | `verification/P15-HOST-2/rust-source-commit.log` | 4e88bc4d413c38b467541c03a0886550b498826b | `f65fb042977d71bf9d18712fe24528151f32930f4a0561822fd8d8377a8c080a` | CANONICAL |
+| P15-HOST-2-PACKAGED | Regression | `verification/P15-HOST-2/rust-packaged-commit.log` | 4e88bc4d413c38b467541c03a0886550b498826b | `67610e58b3ec2573b95f57c119529ea8da89d7ac22a80e268663e6bd6212e807` | CANONICAL |
+| P15-HOST-2-CORE | Regression / AC5 | `verification/P15-HOST-2/core-pytest-commit.log` | 4e88bc4d413c38b467541c03a0886550b498826b | `ef62645dd1b808416a61c81af65e2538356f76b299e443bd261101118a2be83f` | CANONICAL |
+| P15-HOST-2-FRONTEND | Regression | `verification/P15-HOST-2/frontend-vitest-commit.log` | 4e88bc4d413c38b467541c03a0886550b498826b | `7b2d8b81d30242a69bb959c1322233b8dda591478bdb20e95292bccc477b551e` | CANONICAL |
+| P15-HOST-2-SURFACE | AC4 | `verification/P15-HOST-2/surface-sync-check.log` | 4e88bc4d413c38b467541c03a0886550b498826b | `61d8c607493e91c57fdbb3601d43ea243f34339c87e1068f26ca079135dae3e4` | CANONICAL |
+| P15-HOST-2-HOST-ONLY | AC4 | `verification/P15-HOST-2/host-only-rescan.log` | 4e88bc4d413c38b467541c03a0886550b498826b | `1f59aaf30b245e0c8663753dbe6bcd596596a56818827ddcaa4242a517a6db27` | CANONICAL |
+| P15-HOST-2-AC5 | AC5 | `verification/P15-HOST-2/ac5-counterexample-review.md` | 4e88bc4d413c38b467541c03a0886550b498826b | `8e63defc4ea4c56170a823abde10501b891336bad90866b3109eea8e13c0dbe2` | SOURCE_PIN |
+| P15-HOST-2-RV-P15-04 | BL-16 / changed source and generated files | `verification/P15-HOST-2/modified-files-sha256.txt` | 4e88bc4d413c38b467541c03a0886550b498826b | `5be13d45a67d15abf34f1c45e8be1e4789f8bbd2daf38f0218a50391f8b6c786` | CANONICAL |
+| P15-HOST-2-RESOURCES | Resource preservation | `verification/P15-HOST-2/resource-manifest.json` | 4e88bc4d413c38b467541c03a0886550b498826b | `7f7b8024e5c3d102a1a66c26fe3ad24d712f4623c18b040608101f8b573b37f5` | CANONICAL |
 
 | P15-HOST-2-REVIEW-R1 | AC1–AC6 | `verification/P15-HOST-2/dsh-review-r1.md` | `f46b9d988` | `2582c4956830fbebeb61ce9dd8910290d8f45a7bad331479ac7dedc7bbb089e9` | SOURCE_PIN |
 
