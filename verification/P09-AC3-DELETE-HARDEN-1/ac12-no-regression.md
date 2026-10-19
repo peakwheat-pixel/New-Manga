@@ -29,7 +29,7 @@ T2 triage 明确记录：这 3 项在 **PRE-P09（`fdf715e79`）与 HEAD~1（`e9
 
 本轮改动**未触碰** `workbench` 任何代码（改动面为 `library.py`、`core_service.py`、`library_bridge.rs`、`main.rs`、`RecycleBinPage.tsx`、`client.ts` 及新增测试）。
 
-### 2.2 providers（6 项）—— **环境反转，非本轮引入**
+### 2.2 providers（6 项）—— **4 项环境反转 + 2 项 Transformers API 不兼容，均非本轮引入**
 
 ```
 tests/providers/test_bootstrap_providers.py::test_production_stack_starts_without_heavy_runtimes
@@ -65,7 +65,7 @@ test_bootstrap_providers: AssertionError: assert 'ready' == 'missing_dependency'
 
 **这些测试断言「运行时 / 模型必须缺失」**（测试名即 `..._without_a_runtime_...`、`..._missing_models_...`、`..._not_ready`），而**当前环境的实际状态是 GPU 可用、`manga-ocr` ready** —— 即**环境比测试假设的条件更好**，测试因此失败。
 
-**这与本轮改动无关**：本轮未触碰任何 provider、设备探测、OCR 或 registry 代码；且失败方向是「环境具备能力」而非「代码返回错误」，不存在由删除逻辑引起的因果路径。
+**这与本轮改动无关**：本轮未触碰任何 provider、设备探测、OCR 或 registry 代码；且两类失败均非由删除逻辑引起的因果路径 ——其中 4 项环境反转的失败方向是「环境具备能力而测试假设缺失」，另 2 项是 `transformers` 依赖版本与调用面不匹配的独立既有缺陷。
 
 T2 triage 的 4 项基线**不含**这 6 项，说明基线是在**运行时缺失**的环境下测得的。**两个结果不可直接相减** —— 它们是不同环境的快照，而非同环境的回归对比。
 
@@ -84,7 +84,8 @@ T2 triage 记录：该项由 P09 升 Schema v4→v5 引起（`assert ver == 4` �
 | 类别 | 数量 | 与本轮改动的关系 |
 |---|---|---|
 | workbench（基线既有） | 3 | **无**（P09 之前即失败） |
-| providers（环境反转） | 6 | **无**（环境具备运行时/模型，测试假设缺失） |
+| providers（4 项环境反转） | 4 | **无**（环境具备运行时/模型，测试假设缺失） |
+| providers（2 项 Transformers API 不兼容） | 2 | **无**（依赖版本与调用面不匹配的独立既有缺陷） |
 | **本轮引入** | **0** | — |
 | 本轮修复（AC10） | −1 | 原基线第 4 项已通过 |
 
