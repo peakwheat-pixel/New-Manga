@@ -89,7 +89,9 @@ evidence_dir: verification/P20-CLOSE-BOUND-HARDEN-2
 | AC7 | SHA 校验 | 4 个提交 `git cat-file -e` 全部 exit 0 |
 | **AC5** | **真实交互桌面** | **未执行、未记 PASS** —— 须由人在交互桌面运行 `run-desktop-close-verification.ps1` |
 
-### Canonical Evidence
+## Canonical Evidence
+
+**（2026-10-19 治理修正：本节标题由 `###` 提升为 `##`，使 `tools/governance/check.ps1` 能解析该证据表；表内容与 pin 一字未改。）**
 
 | evidence_id | AC/Gate | path | commit | sha256 | class |
 |---|---|---|---|---|---|
@@ -98,10 +100,10 @@ evidence_dir: verification/P20-CLOSE-BOUND-HARDEN-2
 | H2-AC3-IMPL | AC1/AC2/AC3 | apps/desktop/src-tauri/src/library_bridge.rs | 580bb0d65 | d4825b8a7f9187cef893b646a1cf667045e4bb817eea8ac9af40ba720c03d29b | CANONICAL |
 | H2-AC5-SCRIPT | AC5（脚本，非 PASS） | verification/P20-CLOSE-BOUND-1/run-desktop-close-verification.ps1 | 35770fe91 | a0043b6deb2a477c73948a418ceb62902ea0b7840e25f63a5af60c17c4f31f24 | SOURCE_PIN |
 
-### 未关闭项（唯一）
+## 未关闭项（唯一）
 
 **AC5 未完成**，且**本 Task 无权自行判定**：Task 明文规定其由 Coordinator 在**交互式桌面**执行，且「本 Task 只负责脚本正确性，不得自行记 PASS」。本 Task 已交付脚本并自检其存在与结构，但**不为其提供 PASS 依据**。该项因此保持未勾选，Task 不得据此进入 `done`。
 
-### 强度边界（与 AC4 一致）
+## 强度边界（与 AC4 一致）
 
 AC3 之后，句柄保留是**两条路径的联合结果**：holder 成功启动时由其接管；holder 自身 spawn 失败时句柄仍在共享槽中并被同步 `join`。**这不是「永不失败」的保证**，而是**两条真实路径都不静默 drop**。AC1/AC2 的注入用例分别钉住这两条路径的可观测性质。
