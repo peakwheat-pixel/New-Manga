@@ -3,7 +3,7 @@ id: GOV-PLAN-BUDGET-1
 title: Plan 预算上限扩容
 kind: governance
 governance_version: 2
-status: ready
+status: in_progress
 approval: user_decision_1_2026-10-19; codex_scope_release_integration-closeout-r3
 suggested_owner: dsh
 owner: dsh
@@ -13,7 +13,7 @@ base_commit: 960188271d62bf40db4b3646b6fa02ab869bade0
 branch: GOV-PLAN-BUDGET-1
 worktree: G:/CODEX/New Manga/.agents/worktrees/GOV-PLAN-BUDGET-1
 integration_commit: null
-delivery_head: null
+delivery_head: 126f9f31c857a728c5818b01aab91071dc7ed273
 canonical_evidence_status: pending
 resource_closeout_status: pending
 evidence_dir: verification/GOV-PLAN-BUDGET-1
