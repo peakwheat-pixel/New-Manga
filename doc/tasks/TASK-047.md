@@ -2,7 +2,8 @@
 id: TASK-047
 title: UI/UX、GUI 与 QML 设计规范收敛（仅设计）
 kind: design
-status: rejected
+status: cancelled
+# 原值 rejected（非检查器词汇，2026-10-19 映射）
 approval: rejected_by_user
 suggested_owner: Qoder
 owner: Qoder
