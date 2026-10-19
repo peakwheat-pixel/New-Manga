@@ -92,6 +92,53 @@
 
 ---
 
-## 七、边界声明
+## 七、决定性发现：代码注释自己记录了缺陷的另一半
+
+`core_service.py:1968-1976`（`handle_get_reader_projection` 的 `publish` 调用处）原文：
+
+```
+# AC4 (N-003): publish WITH an origin so the preview lands in
+# preview_lifecycle and can be reclaimed by reference.  Without
+# it the row is catalog-only - which the publisher itself
+# documents as "never reclaimable" - so every translated read
+# leaked one permanent artifact per page, and the permanent
+# delete could not find any of them because cleanup only knows
+# the deterministic page-original key.  Passes None when no
+# single source revision matches, which keeps the previous
+# behaviour and never blocks the reader from opening.
+```
+
+**这段注释把两件事都写出来了**：
+
+1. **有 origin → 写 lifecycle 行**（**已做**）
+2. **「cleanup only knows the deterministic `page-original` key」**（**已识别，但未修**）
+
+**而结论句写的是「can be reclaimed by reference」** —— **它把「写了 origin 行」当成了「可以被回收」，而注释上一句刚刚说明「清理只认确定性 key」。**
+
+**这是「半修复 + 注释记录了另一半但没做」** —— 而且**注释的措辞让后读者以为已经完成**。**若非 R6 用真实 `GetReaderProjection` 走了一遍永久删除，这个缺口会一直看不出来**：**测试验证了行存在，注释说它能被回收，两者互相印证，而实际上谁也找不到它。**
+
+## 八、事实 #1 的完整答案（已查明）
+
+**`ARTIFACT_TYPE_DIRS`（`managed_storage.py:29-40`）共 10 种类型**：
+
+```
+original · thumbnail · detection_overlay · mask · clean ·
+translated · render_preview · export · debug_ocr · debug_detection
+```
+
+**但只有 2 处调用 `publish`**（即只有它们会创建 `preview-*` catalog 行）：
+
+| 位置 | handler | origin 来源 |
+|---|---|---|
+| `core_service.py:1721` | **`handle_rerender_page`** | `self._resolve_preview_origin(outcome)` |
+| `core_service.py:1977` | **`handle_get_reader_projection`** | `self._resolve_preview_origin_for_page(page)` |
+
+**两处都传了 `origin`** → **都会写 `preview_lifecycle` 行**。
+
+**结论**：**`mask` / `clean` / `thumbnail` / `export` 等类型不创建 preview catalog 行**，**因此方案里 `WHERE artifact_type = 'translated'` 的范围判断方向正确** —— **但需确认这两处在 `media_artifacts` 里登记的 `artifact_type` 是否都是 `translated`**（`handle_rerender_page` 的渲染产物类型我尚未确认 —— **它是 `translated` 还是 `render_preview`？这决定 `WHERE` 条件是否命中它**）。
+
+**⚠️ 这正是方案第四节第 1 条标注的价值**：**若不查这一步，`handle_rerender_page` 产生的预览会被静默跳过。**
+
+## 九、边界声明
 
 **只读评估**：未改任何产品代码、未创建 Task、未申请豁免、未改指针。写入 `verification/P20-CLOSE-BOUND-HARDEN-2/`。
