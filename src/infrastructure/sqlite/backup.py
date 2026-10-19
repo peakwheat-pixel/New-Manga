@@ -147,7 +147,8 @@ class SqliteBackupService:
         if _BACKUP_ID.fullmatch(backup_id) is None:
             raise BackupVerificationError("BACKUP_UNKNOWN", backup_id)
         target = (self._backup_root / f"{backup_id}.db").resolve()
-        if target.parent != self._backup_root.resolve():
+        # R5 P1: baseline must not be resolved - see managed_storage.remove_managed.
+        if target.parent != Path(os.path.abspath(str(self._backup_root))):
             raise BackupVerificationError("BACKUP_UNKNOWN", backup_id)
         row = self._conn.execute(
             "SELECT managed_path, database_hash, schema_version FROM backup_records"

@@ -54,7 +54,11 @@ class RenderPreviewPublisher:
         catalog-only legacy behaviour (the copy can never be reclaimed by
         reference)."""
 
-        root = self._root.resolve()
+        # R5 P1: baseline must not be resolved - resolve() follows junctions, so a
+        # link ABOVE the root drifts baseline and candidate together and containment
+        # passes.  The candidate keeps resolve(), which is what makes an escape
+        # visible.  Same defect class as N-004.
+        root = Path(os.path.abspath(str(self._root)))
         root.mkdir(parents=True, exist_ok=True)
         preview_dir = root / "previews"
         preview_dir.mkdir(parents=True, exist_ok=True)
@@ -96,7 +100,11 @@ class RenderPreviewPublisher:
         the derived read-only root with the same temp+fsync+replace and
         escape checks as preview publication.
         """
-        root = self._root.resolve()
+        # R5 P1: baseline must not be resolved - resolve() follows junctions, so a
+        # link ABOVE the root drifts baseline and candidate together and containment
+        # passes.  The candidate keeps resolve(), which is what makes an escape
+        # visible.  Same defect class as N-004.
+        root = Path(os.path.abspath(str(self._root)))
         root.mkdir(parents=True, exist_ok=True)
         pages_dir = root / "pages"
         pages_dir.mkdir(parents=True, exist_ok=True)
@@ -152,7 +160,11 @@ class RenderPreviewPublisher:
         user source file -- is deletable here: the directory gate and the
         per-row candidate check both escape-check before unlink.
         """
-        root = self._root.resolve()
+        # R5 P1: baseline must not be resolved - resolve() follows junctions, so a
+        # link ABOVE the root drifts baseline and candidate together and containment
+        # passes.  The candidate keeps resolve(), which is what makes an escape
+        # visible.  Same defect class as N-004.
+        root = Path(os.path.abspath(str(self._root)))
         root.mkdir(parents=True, exist_ok=True)
         rows = {entry.resource_id: entry for entry in self._catalog.entries()
                 if entry.scope_class == "derived-read-only"}
