@@ -138,7 +138,7 @@ Export 由 `library_start_export` → `start_export_to_path` → `build_export_g
 
 | evidence_id | AC/Gate | path（仓库相对路径或绝对路径） | commit | sha256 | class (`CANONICAL` / `SOURCE_PIN`) |
 |---|---|---|---|---|---|
-| EVD-HOSTTTL-AC1 | AC1 | `verification/HOST-TTL-BOUNDARY-1/ac1-contract-ruling.md` | `7fbce3018` | `3786fd91b3512a32ad5293bcf8aa9f7e328c1ea3cb5f6b532bb0fa414c5de98a` | CANONICAL |
+| EVD-HOSTTTL-AC1 | AC1 | `verification/HOST-TTL-BOUNDARY-1/ac1-contract-ruling.md` | `7fbce3018` | `6f37cd21c3c119ed75be37b7d8312d08088f214c05a9025da29413092d2c8d80` | CANONICAL |
 | EVD-HOSTTTL-AC3-PY | AC3 | `verification/HOST-TTL-BOUNDARY-1/ac3-python-ttl-boundary-6284f6f.log` | a4bc60dca0f31c61605ba45281dc4b511caf184e | `e2af0d4509d780a0fd4db569a5d4120856f67ba76b93039bb6c456b9b7ca3677` | CANONICAL |
 | EVD-HOSTTTL-AC3-RUST | AC2/AC3 | `verification/HOST-TTL-BOUNDARY-1/ac3-rust-ttl-boundary-6284f6f.log` | a4bc60dca0f31c61605ba45281dc4b511caf184e | `55c8216aa283871a677a773d6c785583f0fd354e6eae9c90a18adc1bdf436102` | CANONICAL |
 | EVD-HOSTTTL-AC4-PACKAGED | AC4/AC6 | `verification/HOST-TTL-BOUNDARY-1/ac4-ac6-packaged-rust-6284f6f.log` | a4bc60dca0f31c61605ba45281dc4b511caf184e | `52c93b31491c139bf04795e8c7746b5ab109cffb3656eabcee0ea6fecb97788a` | CANONICAL |

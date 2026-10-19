@@ -78,8 +78,8 @@ evidence_dir: verification/P19-UI-FIX-2
 | P19UIFIX2-UIA-AFTER | AC1, AC4 | `verification/P19-UI-FIX-2/after/uia-run.log` | `fc8e4eb9c4e8f32a00ccd6cd1d79df728f10d8f7` | `81900914c6f79588df28304b7215f0f62c5c757c7585f26534ca7ef850bdfd90` | CANONICAL |
 | P19UIFIX2-UIA-AFTER-ELEMENTS | AC1, AC4 | `verification/P19-UI-FIX-2/after/import-open.uia.txt` | `fc8e4eb9c4e8f32a00ccd6cd1d79df728f10d8f7` | `db3ebf3146eb8aae9f49513c7a53fd00be88a3155e68d63eca4e048814f4ac68` | CANONICAL |
 | P19UIFIX2-DATA | AC4 | `verification/P19-UI-FIX-2/appdata-source-preservation-check.json` | `fc8e4eb9c4e8f32a00ccd6cd1d79df728f10d8f7` | `38a55e549a2bebeb8f0b39e2050c587e234cc936a291fc897f0bbbf0cba75d45` | CANONICAL |
-| P19UIFIX2-COMPARISON | AC1, AC4 | `verification/P19-UI-FIX-2/uia-before-after-comparison.md` | `fc8e4eb9c4e8f32a00ccd6cd1d79df728f10d8f7` | `d5b496912c54a81832a00ac0db576119f4b7c6c6fd3cdafd83e21cb3f55c39d9` | CANONICAL |
-| P19UIFIX2-UIA-RUNNER | AC4 | `verification/P19-UI-FIX-2/run-uia.ps1` | `fc8e4eb9c4e8f32a00ccd6cd1d79df728f10d8f7` | `ab896e295b81b558eb3b6f763fb89b89c1df43559e4d46667222fe4e9dfddf37` | CANONICAL |
+| P19UIFIX2-COMPARISON | AC1, AC4 | `verification/P19-UI-FIX-2/uia-before-after-comparison.md` | `fc8e4eb9c4e8f32a00ccd6cd1d79df728f10d8f7` | `668f4e6b39b72ac1d80a0ceca7f66d018d84c0de0747dd830dbf71fde312b216` | CANONICAL |
+| P19UIFIX2-UIA-RUNNER | AC4 | `verification/P19-UI-FIX-2/run-uia.ps1` | `fc8e4eb9c4e8f32a00ccd6cd1d79df728f10d8f7` | `1e93214afae808be2738a5624482fd510ed1cb8d5d980d376d995da164e83180` | CANONICAL |
 | P19UIFIX2-ISOLATION-REBIND | AC4 | `verification/P19-UI-FIX-2/rebind-isolated-namespace.py` | `fc8e4eb9c4e8f32a00ccd6cd1d79df728f10d8f7` | `f24b70b8c71b1a3e7a79c8821609dce56371e6b677cbb7b4f6bfdf08e1ef79c6` | CANONICAL |
 | P19UIFIX2-ISOLATION-LOG | AC4 | `verification/P19-UI-FIX-2/isolation-rebind.log` | `fc8e4eb9c4e8f32a00ccd6cd1d79df728f10d8f7` | `d1e4f7218ba0ac3ed5ba0547005c7f7c135bc81697537a48e139f4298b506c35` | CANONICAL |
 

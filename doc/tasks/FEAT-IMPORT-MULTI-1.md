@@ -76,7 +76,7 @@ evidence_dir: verification/FEAT-IMPORT-MULTI-1
 | EVID-IMPORT-UI-TEST | AC2/4/6 | `apps/desktop/frontend/src/bookshelf/BookshelfPage.test.tsx` | `8b1a1da1774d418ed7e28ac6eb983028cf73b74b` | `16da9232110ccc0504791ba1051b720af7bbac3f76034def3aba01ad1364b329` | CANONICAL |
 | EVID-IMPORT-TAURI | AC1/2/3/5 | `apps/desktop/src-tauri/src/main.rs` | `8b1a1da1774d418ed7e28ac6eb983028cf73b74b` | `b9d74da3f483c9eed8e9e8c2fa8102092fb844834362d407e73c1d121bca6e85` | CANONICAL |
 | EVID-IMPORT-BRIDGE | AC1/3/5/6 | `apps/desktop/src-tauri/src/library_bridge.rs` | `8b1a1da1774d418ed7e28ac6eb983028cf73b74b` | `3a21e06c0a6890d010832a9cb46e1e7c8912119d5305787f95f114ca6aff04e5` | CANONICAL |
-| EVID-IMPORT-GRANT | AC1/3/5/6 | `apps/desktop/src-tauri/src/host_issuer.rs` | `8b1a1da1774d418ed7e28ac6eb983028cf73b74b` | `2ad3739dcd4526a1cfc1b3786105c00ad798117857487c58c0ec3469e2ba5a68` | CANONICAL |
+| EVID-IMPORT-GRANT | AC1/3/5/6 | `apps/desktop/src-tauri/src/host_issuer.rs` | `8b1a1da1774d418ed7e28ac6eb983028cf73b74b` | `00b1b7a3821f67c4c2ff3e1d27c94145469ba7777546f1ee28a9b1b3de2e4d3d` | CANONICAL |
 | EVID-IMPORT-PACKAGED-TEST | AC6 | `apps/desktop/src-tauri/src/packaged_sidecar_tests.rs` | `8b1a1da1774d418ed7e28ac6eb983028cf73b74b` | `babaf8c3d9fe174eecfc49232d012e3fa51ebbe0cb57cfef5e22c949d7caaa1b` | CANONICAL |
 | EVID-IMPORT-CORE-TEST | AC6 | `verification/FEAT-IMPORT-MULTI-1/closeout-r1/core-pytest.log` | `8b1a1da1774d418ed7e28ac6eb983028cf73b74b` | `7d5435de73c6e5d20acc35eb5dd1545312e6d0319a9214ef6e6ae3238e79550d` | CANONICAL |
 | EVID-IMPORT-FRONTEND-TEST | AC6 | `verification/FEAT-IMPORT-MULTI-1/closeout-r1/frontend-npm-test.log` | `8b1a1da1774d418ed7e28ac6eb983028cf73b74b` | `17449448956b2d685232eaa345d6c1630bdacf5339711493fe657f3fbbd6d4ac` | CANONICAL |
@@ -99,7 +99,7 @@ evidence_dir: verification/FEAT-IMPORT-MULTI-1
 | EVID-IMPORT-GUI-APPDATA | AC5/7 | `verification/FEAT-IMPORT-MULTI-1/closeout-r1/gui-run-r2/appdata-source-after.json` | `8b1a1da1774d418ed7e28ac6eb983028cf73b74b` | `ff9cec08c1c20c0f21f6fe9c3c9797c6a79ae9c07c2eba19f83d75779adb293a` | CANONICAL |
 | EVID-IMPORT-APPDATA-VERIFY | AC5/7 | `verification/FEAT-IMPORT-MULTI-1/closeout-r1/verify-appdata-unchanged-r2.log` | `8b1a1da1774d418ed7e28ac6eb983028cf73b74b` | `12b931f8dfc0c0d37ae99e1a7839fb9dc130c9d213fb4f9bad118391b7c861e7` | CANONICAL |
 | EVID-IMPORT-SAFETY | AC5/8 | `verification/FEAT-IMPORT-MULTI-1/closeout-r1/final-safety-r2.log` | `8b1a1da1774d418ed7e28ac6eb983028cf73b74b` | `c3e1003e576e68efebed8f499917dc7725a39c7fbc6e399df842814d0d438c91` | CANONICAL |
-| EVID-IMPORT-CHECKPOINT | Recovery | `verification/FEAT-IMPORT-MULTI-1/closeout-r1/checkpoint-r2.md` | `8b1a1da1774d418ed7e28ac6eb983028cf73b74b` | `f3c3533df0157afd61b5d3f1d9909c127422c9ae70fb17a4975a33c98a873b31` | CANONICAL |
-| EVID-IMPORT-HANDOFF | AC8 | `doc/handoffs/FEAT-IMPORT-MULTI-1-8b1a1da17.md` | `2795f5febe2ff3d7bad1f0f762edaa401cdbc8da` | `51e3385f26f32e64c904f6f3eaa85b58c678f566536335492cd72cd770db5b20` | CANONICAL |
+| EVID-IMPORT-CHECKPOINT | Recovery | `verification/FEAT-IMPORT-MULTI-1/closeout-r1/checkpoint-r2.md` | `8b1a1da1774d418ed7e28ac6eb983028cf73b74b` | `8ad06d1f18cf104b158ff471b3c917bc6fbc93c038bd68f2b84ef1090e4d4e8b` | CANONICAL |
+| EVID-IMPORT-HANDOFF | AC8 | `doc/handoffs/FEAT-IMPORT-MULTI-1-8b1a1da17.md` | `2795f5febe2ff3d7bad1f0f762edaa401cdbc8da` | `001908e9f2ad288876ef1a7fd40ea9d487f0160adc68da236bf18ad6919af0c1` | CANONICAL |
 
 Task 文件自身不列入自身 hash 表，避免自引用。表中 SHA-256 按当前 worktree 磁盘字节计算；`commit` 使用包含对应文件的完整 `git rev-parse HEAD` 值。`CANONICAL` 仅表示本次交付证据，不代表独立 Review 已通过。

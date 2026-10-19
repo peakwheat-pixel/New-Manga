@@ -175,13 +175,13 @@ evidence_dir: verification/UI-DESIGN-1
 
 | evidence_id | AC/Gate | path（仓库相对路径或绝对路径） | commit | sha256 | class (`CANONICAL` / `SOURCE_PIN`) |
 |---|---|---|---|---|---|
-| UI-DESIGN-1-E1 | AC1–AC7（含 AC4 I1 返修后：真缺口 24 条） | doc/design/AD001_FOUR_PAGE_UI_BASELINE.md | a996f821c | 374570b64b33c9004241cfa90e5ef4387b36571cbadb0faaff357aa86f845444 | CANONICAL |
+| UI-DESIGN-1-E1 | AC1–AC7（含 AC4 I1 返修后：真缺口 24 条） | doc/design/AD001_FOUR_PAGE_UI_BASELINE.md | a996f821c | abcfdb39a1528485b6cc385fd6ef3cb7c645b2a4582de62135137f1385e51b7e | CANONICAL |
 | UI-DESIGN-1-E2 | AC8(a)–(d)（I1 后 canonical 复跑，W=32/G=24） | verification/UI-DESIGN-1/selfcheck-output.txt | a996f821c | 496b3c1223b34a8d62b2651cb845aab83620708229adb3311a879e6afc061259 | CANONICAL |
-| UI-DESIGN-1-E3 | AC8 自检脚本 | verification/UI-DESIGN-1/selfcheck.ps1 | aaf00e59e | f36782d0a8c9fa72c539ac50490faaa1367016fc0b96e70e01816cb1d63629f8 | CANONICAL |
-| UI-DESIGN-1-E4 | AC8 Owner 阻塞登记 | verification/UI-DESIGN-1/selfcheck-BLOCKED.md | aaf00e59e | 5acab6837ad218c936716b17aa00b13acfee9916bb8b2c46413da087c107439d | CANONICAL |
-| UI-DESIGN-1-E5 | AC9 Owner 提交阻塞登记 | verification/UI-DESIGN-1/commit-BLOCKED.md | aaf00e59e | 6dad99ffa8e47cf7c5a7f430b1b127b1c445f5fc8861b4a5c75ee679bd930f33 | CANONICAL |
-| UI-DESIGN-1-E6 | AC8 Owner 等价运行原始日志 | verification/UI-DESIGN-1/selfcheck-output-owner-equivalent.txt | aaf00e59e | 01fc76c66e00809565aa82c36789ba434fd316b22f0952a78e3964998e8d9567 | SOURCE_PIN |
-| UI-DESIGN-1-E7 | AC9 resource closeout | verification/UI-DESIGN-1/resource-manifest.json | aaf00e59e | 17074d92abb2c055416765cd9b90fe453fb4d9f774ef9450bb7e96b808820874 | CANONICAL |
+| UI-DESIGN-1-E3 | AC8 自检脚本 | verification/UI-DESIGN-1/selfcheck.ps1 | aaf00e59e | 24988a2270cfcfba6431d51b5b1e45b8d068965a692f1393b6210b6a50f4d7d8 | CANONICAL |
+| UI-DESIGN-1-E4 | AC8 Owner 阻塞登记 | verification/UI-DESIGN-1/selfcheck-BLOCKED.md | aaf00e59e | 74904c636dde69de2a6482fdd89c82a8e6a77e1233db380b6d31c8b013aaa9c0 | CANONICAL |
+| UI-DESIGN-1-E5 | AC9 Owner 提交阻塞登记 | verification/UI-DESIGN-1/commit-BLOCKED.md | aaf00e59e | 3d6923d9c01053c0ee5e451e8e0d49c508ffdc1f95f4e09a1f6185a639f3c455 | CANONICAL |
+| UI-DESIGN-1-E6 | AC8 Owner 等价运行原始日志 | verification/UI-DESIGN-1/selfcheck-output-owner-equivalent.txt | aaf00e59e | 93ad6e342afb278832fbd9617ff07a12269418ad279196d462cab92364256e47 | SOURCE_PIN |
+| UI-DESIGN-1-E7 | AC9 resource closeout | verification/UI-DESIGN-1/resource-manifest.json | aaf00e59e | 9f8ac1f5ed628a485abfe470c7d0706f45ce26c7b4ced12791573931816ec3ae | CANONICAL |
 | UI-DESIGN-1-E8 | AC9 Handoff | doc/handoffs/UI-DESIGN-1-zcode.md | aaf00e59e | - | CANONICAL |
 | UI-DESIGN-1-E9 | 独立 Review R1（I1 收敛后 approved） | verification/UI-DESIGN-1/dsh-review-r1.md | 3f312c5dc | - | CANONICAL |
 
