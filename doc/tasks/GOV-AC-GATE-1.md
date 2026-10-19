@@ -3,7 +3,7 @@ id: GOV-AC-GATE-1
 title: AC 状态的机械门禁（machine-readable AC gate）
 kind: governance
 governance_version: 3
-status: in_progress
+status: in_review
 approval: codex_r20_followup_not_yet_released
 suggested_owner: codex
 owner: codex
@@ -13,7 +13,7 @@ base_commit: 3539d8d75
 branch: null
 worktree: null
 integration_commit: null
-delivery_head: null
+delivery_head: fbf459f28941f3760366d5f8e581f8e8ae79ce18
 canonical_evidence_status: pending
 resource_closeout_status: pending
 evidence_dir: verification/GOV-AC-GATE-1
@@ -68,7 +68,7 @@ r20 的原话：
   夹具路径须使用系统临时目录，并在测试中断言 `doc/tasks/` 未被触碰。
 - [x] **AC5 全库回归**：对当前全部 Task 跑一遍新检查器，**如实记录**哪些 Task 会因此变红， <<MET>>
   并逐个判断是「真实缺陷」还是「兼容性问题」。**不得为了让全库变绿而放宽 gate。**
-- [ ] **AC6 交付与 Review**：改动协议与检查器；生成 Handoff；由 Antigravity 对固定
+- [ ] **AC6 交付与 Review**：改动协议与检查器；生成 Handoff；由 Antigravity 对固定 <<PARTIAL: Handoff 已交付，独立 Review 待进行>>
   delivery head 独立 Review。Review 必须实际构造违反情形验证 gate 生效。
 
 ## 允许修改范围
@@ -96,9 +96,28 @@ python tools/governance/tests/run-<新用例>.py
 
 交付时登记协议 diff、检查器 diff、四类夹具结果、全库回归输出、Handoff、Review。
 
+| evidence_id | AC/Gate | path（仓库相对路径或绝对路径） | commit | sha256 | class (`CANONICAL` / `SOURCE_PIN`) |
+|---|---|---|---|---|---|
+| GATE-PROTOCOL | AC1、AC2 | `doc/09_COLLABORATION.md` | `fbf459f28` | `8c4fa3c7b7c6bc85bc4eba98782e8bd62bc6878ac4b6fa3741faa0fcf5456f46` | `CANONICAL` |
+| GATE-CHECKER | AC3 | `tools/governance/check.ps1` | `fbf459f28` | `19ee5e972ce72a35f7e97e97af616645268dbda6ca2cdbe1d6efee0a3b29514f` | `CANONICAL` |
+| GATE-FIXTURES | AC4 | `tools/governance/tests/test_ac_gate.py` | `fbf459f28` | `3bf623ba1068ca875cbaa30f43163e54a835329df733448190212062fbcf00ce` | `CANONICAL` |
+| GATE-WRITEUP | AC1–AC5 | `verification/GOV-AC-GATE-1/ac1-ac4-protocol-and-gate.md` | `fbf459f28` | `f449c758b6fc9d415f20806d73472b53607b509a85cf1eca96ad350d4dc8fa5e` | `CANONICAL` |
+| GATE-HANDOFF | AC6 | `doc/handoffs/GOV-AC-GATE-1-fbf459f28.md` | `fbf459f28` | `8be08f1088179638c1bbe1d4d3838040954a59a37aa040c051d6cf329e8e7ea5` | `CANONICAL` |
+
 ## Resource Manifest
 
 交付时逐项登记；新增夹具须证明写在临时目录。
+
+| resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
+|---|---|---|---|---|---|
+| worktree | — | `NOT_APPLICABLE` | — | `doc/tasks/GOV-AC-GATE-1.md` | 本 Task 只改协议、检查器与测试 |
+| task-env | — | `NOT_APPLICABLE` | — | `doc/tasks/GOV-AC-GATE-1.md` | 本 Task 只改协议、检查器与测试 |
+| dataset | — | `NOT_APPLICABLE` | — | `doc/tasks/GOV-AC-GATE-1.md` | 本 Task 只改协议、检查器与测试 |
+| artifact | — | `NOT_APPLICABLE` | — | `doc/tasks/GOV-AC-GATE-1.md` | 本 Task 只改协议、检查器与测试 |
+| temp | — | `NOT_APPLICABLE` | — | `doc/tasks/GOV-AC-GATE-1.md` | 本 Task 只改协议、检查器与测试 |
+| agent-output | — | `NOT_APPLICABLE` | — | `doc/tasks/GOV-AC-GATE-1.md` | 本 Task 只改协议、检查器与测试 |
+| exchange | — | `NOT_APPLICABLE` | — | `doc/tasks/GOV-AC-GATE-1.md` | 本 Task 只改协议、检查器与测试 |
+| evidence_dir | `verification/GOV-AC-GATE-1/` | `PRESERVE_REFERENCED` | `verification/GOV-AC-GATE-1/` | `f449c758b6fc9d415f20806d73472b53607b509a85cf1eca96ad350d4dc8fa5e` | 2 份证据 |
 
 ## Closeout Record
 
