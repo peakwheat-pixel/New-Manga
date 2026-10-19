@@ -3,7 +3,7 @@ id: GOV-RESOURCE-MANIFEST-JSON-1
 title: 治理检查器支持外部 JSON Resource Manifest
 kind: governance
 governance_version: 2
-status: in_progress
+status: done
 approval: codex_release_2026-10-19_after_GOV-PLAN-BUDGET-1_integration; user_decision_2026-10-19_scheme_D
 suggested_owner: dsh
 owner: dsh
@@ -13,10 +13,10 @@ depends_on:
 base_commit: c131b1ae114d00c17e734a51f38263d92fe6f198
 branch: GOV-RESOURCE-MANIFEST-JSON-1
 worktree: G:/CODEX/New Manga/.agents/worktrees/GOV-RESOURCE-MANIFEST-JSON-1
-integration_commit: null
+integration_commit: 3fe78a67cdf8e43a539e0de7ddc0ce6b8c0f8311
 delivery_head: 7d09143d6df73d6c12a9769beaf19cfd70cc313c
-canonical_evidence_status: pending
-resource_closeout_status: pending
+canonical_evidence_status: complete
+resource_closeout_status: complete
 evidence_dir: verification/GOV-RESOURCE-MANIFEST-JSON-1
 allowed_paths:
   - tools/governance/check.ps1
@@ -38,11 +38,11 @@ allowed_paths:
 
 ## Acceptance Criteria
 
-- [ ] **AC1 — 外部引用唯一且受限。** 检查器仅接受 Resource Manifest 正文中的一个明确相对仓库路径引用；目标必须唯一、存在、为普通文件并位于仓库 `verification/**` 证据范围内。拒绝重复、缺失、绝对路径、越出仓库或 `verification/**`、符号链接逃逸、glob、环境变量、宏、URL 或其它未授权简写；不得展开或猜测这些表达式。离线正反例须断言错误引用被拒绝且不会读取引用范围外文件。
-- [ ] **AC2 — schema 与原值保真。** 新增固定版本 `tools/governance/resource-manifest.schema.json`，明确必填字段、类型、枚举、未知字段处理及资源数组和 closeout 计数规则。解析时保留每项原始 JSON 值以及原始 `source_path`、`destination_path` 表达式；规范化/解析结果必须是独立字段，不得覆盖原值。对可精确解析的路径逐项检查其存在性、仓库边界及本 Task 已定义的引用/进程证据；不能精确解析的表达式保留原文并报告不可验证，不自行展开 `%APPDATA%`、花括号或其它简写。
-- [ ] **AC3 — 已消失资源的严格语义。** 对现在不存在的目标，仅当证据同时证明该资源曾列入被引用 Manifest、目标当前确实不存在、且无引用及运行中进程时，检查器才接受明确的 `ALREADY_ABSENT` 状态（或 schema 中等价且固定的枚举）。缺任一条件都必须失败或阻塞；不得用 `NOT_APPLICABLE` 表示已消失资源，不得伪造替代路径。对确实适用但尚无证据的资源也不得降格为 `NOT_APPLICABLE`。
-- [ ] **AC4 — 花括号表达式可逆对应。** 仅当花括号表达式可无损拆分、按原顺序逐字重组为原 JSON 值，并能与原 JSON 的 7 个资源项及 `closeout_counts` 每项逐一对应时，才允许生成解析视图。保留原表达式和原 JSON 值；歧义、缺项、重项、重组不一致或计数不一致时保留输入并失败/阻塞。针对 P19 原 JSON 的解析核对不得修改该 JSON，也不得将不满足条件的数据自动修补成通过。
-- [ ] **AC5 — 离线验证、交付及独立 Review。** 在 `tools/governance/tests/` 增加固定 schema 与离线用例，覆盖有效唯一引用、已有目标、目标缺失及 `ALREADY_ABSENT` 三条件全满足/逐条件缺失、错误/重复/缺失/越界/绝对/不存在引用、env/glob/宏/符号链接逃逸、非法 JSON/schema、7 项及 closeout count 对应、花括号可逆往返和不可逆失败；每例保存期望结果、实际 stdout/stderr 与 exit code。测试无网络且不访问用户数据。测试以临时合成 repo root 运行检查器副本，确认真实 `doc/tasks/` 未被读取或改写；实现不得为测试增加任意 repoRoot 输入开关。DSH 固定 delivery head、Handoff 和证据；Antigravity 对精确 head 作独立 Review。Review 通过、AC 证据完整后由 Codex 集成并运行集成后治理检查；所有失败和未运行项如实记录，不能把 `BLOCKED`/`NOT_RUN` 写为通过。
+- [x] **AC1 — 外部引用唯一且受限。** 检查器仅接受 Resource Manifest 正文中的一个明确相对仓库路径引用；目标必须唯一、存在、为普通文件并位于仓库 `verification/**` 证据范围内。拒绝重复、缺失、绝对路径、越出仓库或 `verification/**`、符号链接逃逸、glob、环境变量、宏、URL 或其它未授权简写；不得展开或猜测这些表达式。离线正反例须断言错误引用被拒绝且不会读取引用范围外文件。
+- [x] **AC2 — schema 与原值保真。** 新增固定版本 `tools/governance/resource-manifest.schema.json`，明确必填字段、类型、枚举、未知字段处理及资源数组和 closeout 计数规则。解析时保留每项原始 JSON 值以及原始 `source_path`、`destination_path` 表达式；规范化/解析结果必须是独立字段，不得覆盖原值。对可精确解析的路径逐项检查其存在性、仓库边界及本 Task 已定义的引用/进程证据；不能精确解析的表达式保留原文并报告不可验证，不自行展开 `%APPDATA%`、花括号或其它简写。
+- [x] **AC3 — 已消失资源的严格语义。** 对现在不存在的目标，仅当证据同时证明该资源曾列入被引用 Manifest、目标当前确实不存在、且无引用及运行中进程时，检查器才接受明确的 `ALREADY_ABSENT` 状态（或 schema 中等价且固定的枚举）。缺任一条件都必须失败或阻塞；不得用 `NOT_APPLICABLE` 表示已消失资源，不得伪造替代路径。对确实适用但尚无证据的资源也不得降格为 `NOT_APPLICABLE`。
+- [x] **AC4 — 花括号表达式可逆对应。** 仅当花括号表达式可无损拆分、按原顺序逐字重组为原 JSON 值，并能与原 JSON 的 7 个资源项及 `closeout_counts` 每项逐一对应时，才允许生成解析视图。保留原表达式和原 JSON 值；歧义、缺项、重项、重组不一致或计数不一致时保留输入并失败/阻塞。针对 P19 原 JSON 的解析核对不得修改该 JSON，也不得将不满足条件的数据自动修补成通过。
+- [x] **AC5 — 离线验证、交付及独立 Review。** 在 `tools/governance/tests/` 增加固定 schema 与离线用例，覆盖有效唯一引用、已有目标、目标缺失及 `ALREADY_ABSENT` 三条件全满足/逐条件缺失、错误/重复/缺失/越界/绝对/不存在引用、env/glob/宏/符号链接逃逸、非法 JSON/schema、7 项及 closeout count 对应、花括号可逆往返和不可逆失败；每例保存期望结果、实际 stdout/stderr 与 exit code。测试无网络且不访问用户数据。测试以临时合成 repo root 运行检查器副本，确认真实 `doc/tasks/` 未被读取或改写；实现不得为测试增加任意 repoRoot 输入开关。DSH 固定 delivery head、Handoff 和证据；Antigravity 对精确 head 作独立 Review。Review 通过、AC 证据完整后由 Codex 集成并运行集成后治理检查；所有失败和未运行项如实记录，不能把 `BLOCKED`/`NOT_RUN` 写为通过。
 
 ## 允许修改范围
 
@@ -90,22 +90,37 @@ allowed_paths:
 
 进入 `in_review` 前，为每个已释放 AC/Gate 登记唯一当前证据、路径、含文件的 commit、SHA-256 和分类。
 
-| evidence_id | AC/Gate | path | commit | sha256 | class (`CANONICAL` / `SOURCE_PIN`) |
+| evidence_id | AC/Gate | path（仓库相对路径或绝对路径） | commit | sha256 | class (`CANONICAL` / `SOURCE_PIN`) |
 |---|---|---|---|---|---|
-| 待交付 | AC1–AC5 | `verification/GOV-RESOURCE-MANIFEST-JSON-1/` | 待填 | 待填 | 待定 |
+| GOVRM-AC1AC5 | AC1、AC2、AC3、AC5 | `verification/GOV-RESOURCE-MANIFEST-JSON-1/ac1-ac5-manifest-support.md` | `eab5531b0` | `06b88f8bfb1d2ea43fe038d1d50c2fd688ab03d517d98f4e163f828120a4d0b5` | `CANONICAL` |
+| GOVRM-AC4 | AC4 | `verification/GOV-RESOURCE-MANIFEST-JSON-1/ac4-brace-and-counts.md` | `7da0d9a07` | `e802e793b0935c3c09d8cc0f029dbdba2681e356018e712a63f801c26bbe89ac` | `CANONICAL` |
+| GOVRM-HANDOFF | AC5 | `doc/handoffs/GOV-RESOURCE-MANIFEST-JSON-1-7d09143d6.md` | `f0fbd5126` | `38e71b472296ee352464b7656bb725e8b7334817fb379706eb4d905debe7d2ae` | `CANONICAL` |
+| GOVRM-REVIEW-R2 | AC5 / Review Gate | `doc/reviews/GOV-RESOURCE-MANIFEST-JSON-1-7d09143d6-antigravity-r2.md` | `a2ca297f1` | `7558c2526ffd4d48c32d64244b0ad8c36e7310f2cbc577d7d8c901cb173e955f` | `CANONICAL` |
+| GOVRM-SCHEMA | AC2 | `tools/governance/resource-manifest.schema.json` | `4b6308a7f` | `797ed62a16b1881f98447aa6696ca50b67343e9d62e7ed21c8b34483a2efd7ce` | `CANONICAL` |
+| GOVRM-CASES | AC5 | `tools/governance/tests/fixtures/resource-manifest/cases.json` | `7350da5e9` | `d3c7fe348053a32477d9134ddee7be484d14cf26d9965ec7d4ddd2ba92d4fdfd` | `CANONICAL` |
+| GOVRM-RUNNER | AC5 | `tools/governance/tests/run-resource-manifest-cases.py` | `a2ca297f1` | `a232cc917196d9315a8659a457a663ccb6171a09ead46520c6bf4e3c6464906c` | `CANONICAL` |
+| GOVRM-P19-JSON | AC4 / 只读核对对象 | `verification/P19-UI-FIX-1/resource-manifest.json` | `c131b1ae1` | `b0772d93ab8ed9182497a43e0761f0d4ccc5560768f806ba86eb8048905c4dc2` | `SOURCE_PIN` |
 
 ## Resource Manifest
 
 | resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
 |---|---|---|---|---|---|
-| task worktree | 释放后按实际路径记录 | `PRESERVE_UNKNOWN` | 原路径 | 待记录 | 待检查 |
-| fixtures / agent-output / exchange | 据实逐项记录；仅经核实从未适用才可填 `NOT_APPLICABLE` | 据实填写 | 据实填写 | 待记录 | 待检查 |
+| governance checker | `tools/governance/check.ps1` | `PRESERVE_REFERENCED` | `tools/governance/check.ps1` | `7e1cc34cca86d8913cdc5b74ee5ead16b8020af976513115c5bd4993fe72233f` | 本 Task 主要改动对象；集成后 373 LF / 0 CRLF，`.gitattributes` 固定 eol=lf |
+| manifest schema | `tools/governance/resource-manifest.schema.json` | `PRESERVE_REFERENCED` | `tools/governance/resource-manifest.schema.json` | `797ed62a16b1881f98447aa6696ca50b67343e9d62e7ed21c8b34483a2efd7ce` | 新增；Draft-7 校验 P19 真实 JSON 为 0 错误 |
+| offline tests | `tools/governance/tests/` | `PRESERVE_REFERENCED` | `tools/governance/tests/` | `a232cc917196d9315a8659a457a663ccb6171a09ead46520c6bf4e3c6464906c` | 新增目录；19/19 通过，fixture 仅在系统临时目录，doc/tasks 未被写入 |
+| task worktree | `G:/CODEX/New Manga/.agents/worktrees/GOV-RESOURCE-MANIFEST-JSON-1` | `PRESERVE_UNKNOWN` | `G:/CODEX/New Manga/.agents/worktrees/GOV-RESOURCE-MANIFEST-JSON-1` | `1174649a0cf4956ef778d2f3f78fa608b237e5a1689701c2f78aa0aa823edc55` | 已集成；worktree 保留未删，含 33 个为复现检查环境镜像的未入库文件 |
+| P19 source manifest | `verification/P19-UI-FIX-1/resource-manifest.json` | `PRESERVE_REFERENCED` | `verification/P19-UI-FIX-1/resource-manifest.json` | `b0772d93ab8ed9182497a43e0761f0d4ccc5560768f806ba86eb8048905c4dc2` | 只读核对对象；**未被本 Task 修改** |
+| agent output | 仓外 agent-output，非本 Task 产物 | `NOT_APPLICABLE` | — | — | 本 Task 未产生需归档的仓外派生产物 |
 
 ## Closeout Record
 
-- Closeout date / Codex：待关闭时填写。
-- `canonical_evidence_status`: `pending`。
-- `resource_closeout_status`: `pending`。
-- 删除、迁移、归档数量/字节数：未另获授权前为 0。
-- 未关闭项及保留原因：逐项记录；无则填写“无”。
-- 当前指针清理：由 Codex 在终态时更新 Plan / STATUS / Task 导航并运行 Task 检查。
+- 关闭：2026-10-19。Owner=dsh，Reviewer=Antigravity。
+- Review 经过两轮：r1 针对 `5ee07c258` 判 **NOT APPROVED**（三个 P1）；r2 针对 `7d09143d6` 判 **APPROVED**。
+- **Review head ≠ 集成 head**：r2 覆盖 `7d09143d6`，其后的 `a2ca297f1` 仅落盘 r2 Review 并修复用例 19 的测试驱动
+  （P3 级，未改检查器逻辑或 schema）。Codex r9 裁定接纳 `a2ca297f1` 为最终集成源。
+- 集成：`3fe78a67c`（`git merge --no-ff GOV-RESOURCE-MANIFEST-JSON-1`，无冲突，10 文件 +1313/−8）。
+- 集成后验证：离线套件 **19/19** exit 0；`-TaskPath` 与全局检查均 **PASS (1 warnings)**。
+- AC4 结论按 Codex r8 裁定：`closeout_counts.moved=6` 统计的是 `resources` 数组外的日志改名动作，
+  与 7 个资源的 `moved=false` 属不同口径，**不是数据缺陷**；不生成 P19 解析视图，未改源 JSON。
+- 删除 / 迁移 / 归档：**0 项**。
+- 未关闭项：无。后继「P19-UI-FIX-1 兼容视图」为独立窄范围 Task，由 Codex 在本 Task 集成后释放（r9 §3.3）。
