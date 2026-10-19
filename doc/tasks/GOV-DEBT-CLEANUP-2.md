@@ -1,17 +1,17 @@
 ---
 id: GOV-DEBT-CLEANUP-2
-title: 治理债逐项清理与证据/资源闭环
+title: 治理债逐项事实核对与资源证据闭环
 kind: governance
 governance_version: 2
-status: proposed
-approval: pending_user_decisions_and_codex_release
+status: ready
+approval: user_decisions_recorded_2026-10-19; codex_scope_release_approved
 suggested_owner: dsh
-owner: null
+owner: dsh
 reviewer: Antigravity
 depends_on: []
-base_commit: 55ee9e3da8fc2538c44a47c056c2828b293e9050
-branch: null
-worktree: null
+base_commit: 75da8281b28c7c11f92518c63d4669b5cf3973e6
+branch: agent/deepseek/GOV-DEBT-CLEANUP-2-governance-facts
+worktree: G:\CODEX\New Manga.workspace\worktrees\GOV-DEBT-CLEANUP-2
 integration_commit: null
 delivery_head: null
 canonical_evidence_status: pending
@@ -23,15 +23,17 @@ allowed_paths:
   - doc/STATUS.md
   - doc/handoffs/
   - doc/reviews/
-  - verification/
   - verification/GOV-DEBT-CLEANUP-2/
 ---
 
-# GOV-DEBT-CLEANUP-2：治理债逐项清理与证据/资源闭环
+# GOV-DEBT-CLEANUP-2：治理债逐项事实核对与资源证据闭环
 
 ## 来源与目标
 
-来源：
+按用户 2026-10-19 四项裁决和 Codex 的第二轮逐项裁定，形成可复核的事实记录、资源 Manifest 补录及明确的阻塞标注。原始证据、历史 pin、未完成 AC、Task 状态和资源内容保持可追溯。本 Task 不是对历史验收或集成的追认。
+
+主要只读来源：
+- `verification/P09-GOVERNANCE-DEBT-20261019/user-decisions-20261019.md`
 - `verification/P09-GOVERNANCE-DEBT-20261019/codex-debt-ruling.md`
 - `verification/P09-GOVERNANCE-DEBT-20261019/codex-debt-ruling-r2.md`
 - `verification/P09-GOVERNANCE-DEBT-20261019/round5-eol-repin-record.md`
@@ -41,86 +43,64 @@ allowed_paths:
 - `verification/P09-GOVERNANCE-DEBT-20261019/worktree-closeout-facts.md`
 - `verification/P09-GOVERNANCE-DEBT-20261019/evidence-dir-classification.md`
 - `verification/P09-GOVERNANCE-DEBT-20261019/missing-manifest-resource-facts.md`
-- `doc/09_COLLABORATION.md` §4.1 / §4.2 / §5；`doc/templates/TASK.md`；`doc/WORKTREE_SAFETY_INVENTORY.md`。
-
-目标：按 Codex 第二轮逐项裁定，对历史 evidence pin、未登记 DAG Task、P02 AC3 缺失证据、worktree/resource Manifest、DONE Task Manifest 和未登记 evidence_dir 文件形成可复核的逐项 adjudication 及获准的文档修正。所有原始状态、旧 pin、未完成 AC 和资源均保持可追溯；未经用户裁决的范围选择保持阻塞。
-
-### 释放门槛
-
-本 Task 当前为 `proposed`。Codex 只有在以下事项具备可验证记录后才能改为 `ready`：
-
-1. 用户已决定 Plan 预算是否调整；未同意扩容时，Codex须给出不突破现有预算的替代释放范围，不得擅自修改检查器或预算。
-2. 用户已对本轮要处理的 29 个非终态 Task 和未完成 AC 作逐项继续/取消/替代/暂缓裁决；仅不受这些决定影响的子项可由 Codex明确拆分后另行释放。
-3. `workspace.json` 个人数据快照的用户决定已记录；未裁决时仅允许原位保留和不含内容的元数据记录。
-4. Plan/STATUS 的登记方式、依赖、Owner、Reviewer、base、branch/worktree 和 allowed_paths 已由 Codex冻结，并符合协作协议 §4。
-5. 新 Task Owner 与 Reviewer 不同；Owner 为 DSH，Reviewer 为 Antigravity。不得由 DSH审查自己的变更。
+- `doc/09_COLLABORATION.md` §4.1 / §4.2 / §5；`doc/templates/TASK.md`。
 
 ## Acceptance Criteria
 
-- [ ] **AC1 — 102 条 SHA mismatch 逐行闭环。** 为 `sha-mismatch-evidence-chain.md` 中 102 行各建立唯一结果记录，至少包含 Task、原行/路径、pin commit、原 pin、raw/LF/CRLF 对比、工作区相对 HEAD 状态、分类、来源审查、AC 绑定、处置、授权/Reviewer/Codex 证据。78 条 commit 匹配项不得因后续演进覆盖历史 pin；仅按 Codex批准的替代关系更新活动 pin并保留 superseded 记录。13 条 commit 不匹配项必须追溯 pin 原始来源；找不到来源的标 `BLOCKED_ORIGIN_UNVERIFIED`。11 条叠加 dirty 的项目不得从工作区重钉；须记录 diff/stat/归属并保留 dirty，未解阻即 `BLOCKED_PRESERVE_DIRTY`。另验证 78 条 EOL-only 记录保留原/新值，不重复重钉。证据：逐行 adjudication 表、Reviewer 结果及逐项 Codex 决定。
-- [ ] **AC2 — 29 个未登记 Task 逐项状态裁决。** 对 `dangling-dag-facts.md` 中 29 项分别记录现状、Plan/STATUS 指涉、tracked 状态、依赖、交付/集成、未完成 AC、用户授权及建议。10 个未入库文件默认保持 `UNREGISTERED_UNTRUSTED_SNAPSHOT`，不得 `git add` 或写入 DAG，除非有明确用户裁决、来源证明、Codex释放和独立审查。其余项不得因 tracked 就自动登记。仅登记用户确认继续且仍非终态的最小集合；用户确认的终态变更保留原始状态和依据。更新 Plan/STATUS 必须逐项符合协作协议，READY 节点声明准确。任何未裁决项保留原状态并标 BLOCKED。
-- [ ] **AC3 — Plan 预算与 DAG 改动符合用户裁决。** 留存用户对 `2500 bytes / 35 lines` 是否扩至 `7000 / 64` 的明确决定。未同意扩容时不得变更上限；同意时只按批准值修改对应预算，并只登记 AC2 中核准的非终态最小集合。提交前后记录 Plan 字节/行数与 DAG 差异。不得通过历史快照、外部清单、伪节点或放宽检查器规避预算。
-- [ ] **AC4 — P02 AC3 的 23 条 pin 逐项有结论。** 对 18 条分支上存在文件记录内容 hash、对应 AC、固定源 head 和独立审查结论；只有单独获得 Codex 集成批准后才可在 approved integration window 集成最小集合。对分支上不存在的 5 条引用，逐项只读检索并记录精确来源/head/hash；未找回的保持原引用并标 `MISSING_FROM_FIXED_BRANCH_SOURCE_UNRESOLVED`。只有用户明确取消/转移对应 AC 且 Codex记录替代关系时才移出活动范围。不得合并整个分支、改用绝对路径、静默删除引用或将其称为 integrated。最终状态与证据事实一致。
-- [ ] **AC5 — 13 个 worktree 的 Resource Manifest 与安全 disposition。** 对 `worktree-closeout-facts.md` 中 13 项逐一记录精确 source/destination、注册状态、HEAD/branch、dirty/untracked 文件清单及 hash、Task/commit/evidence 引用、进程检查、disposition 与依据。P14、P15-C1-FU2 的不可达 HEAD 和所有 dirty/untracked 项均保留；RUN-IPC-1 的 25 tracked + 1 untracked 必须逐路径说明性质、归属及是否影响已 done 的 AC/交付，由 Antigravity复核、Codex裁决。无法证明无关的保持 `PRESERVE_UNKNOWN` 并暂停相关结论认定；证实不影响交付/AC 的保留原 done 结论。刷新 Safety Inventory 后也不构成删除授权。
-- [ ] **AC6 — 七个 DONE Task 补齐 Manifest 且 frontmatter 一致。** 为 `FEAT-CREATE-1`、`FEAT-CREATE-2`、`FEAT-CREATE-3`、`FEAT-CREATE-4`、`FEAT-IMPORT-MULTI-1`、`P19-UI-FIX-1`、`P19-UI-FIX-2` 补齐逐资源 Manifest 和可复核来源。`FEAT-CREATE-2` 将 `worktree: null` 更正为只读核验得到的精确已注册路径，并记录旧值及更正依据。保留 FEAT-CREATE-1 不可达 HEAD；逐项保留 FEAT-CREATE-3 dirty/untracked 和 FEAT-IMPORT-MULTI-1 的 50 dirty + 50 untracked，未证实其对 done 无影响前不作完成性声明。补表不自动回退或确认 done。对用户裁定可保存的 `workspace.json` 个人数据仍采用最小记录；未获裁决时原位保留、不复制/归档/迁移。
-- [ ] **AC7 — 61 个 evidence_dir 文件逐项裁定。** 对 `evidence-dir-classification.md` 的 61 项每项记录是否直接支持已释放 AC、是否唯一/最终、现有 Canonical Evidence 重复情况、最终类别和处置依据。10 个 A 候选只有满足 §4.1 才登记 `CANONICAL`/`SOURCE_PIN`；49 个 B 候选只在证实为过程产物后排除出 Canonical Evidence，不能因文件名降级唯一结果。`.gitattributes` 与 `.gitignore` 不是证据，留原位、不改、不删、不移，并记录覆盖规则/用途审查结论。任何搬迁/删除/归档均不在本 Task 授权内。
-- [ ] **AC8 — 未完成 AC 的用户范围决定和历史保真。** 对事实文件、关联 Task 与治理检查结果中发现的每个仍未勾选 AC，记录原文、原状态、证据、用户决定（继续/取消/转移/替代/暂缓）、successor 和依据。取消/转移必须由用户授权；不得把未完成写成 PASS，不得删除原始 AC 审计状态。未获决定的 AC 保持未完成并阻止相应 Task DONE。
-- [ ] **AC9 — 验证、交接与关闭记录完整。** 每个修正有对应 Task/Handoff/Review/commit 及 evidence pin；变更前后保留只读治理检查输出和适用的逐 Task 检查输出。执行 `pwsh -NoProfile -File tools/governance/check.ps1` 与本 Task 的 `-TaskPath` 检查，保存原始 stdout/stderr、退出码和环境；失败如实登记，不放宽检查器、不把 BLOCKED/NOT_RUN 写为 PASS。Antigravity 对固定 delivery head 独立 Review；Codex批准集成并完成集成后验证及 closeout 后方可设 `done`。
+- [ ] **AC1 — 102 条 SHA mismatch 只读分类与逐行结果。** 对 `sha-mismatch-evidence-chain.md` 的 102 行逐行记录 Task、行号/路径、声称 commit、旧 pin、raw/LF/CRLF 对比、工作区相对 HEAD 状态、分类和当前处置。78 行只记录 `pin_matches_at_commit` 及历史 pin 保留事实，不重钉；13 行只读追溯原始 pin 来源，记录查得来源或标 `BLOCKED_ORIGIN_UNVERIFIED`，不改 pin；11 行保留 dirty 原状，记录只读可得的 diff/stat、归属状态并标 `BLOCKED_PRESERVE_DIRTY`，不从工作区重钉。逐行核对 78 条 EOL-only 记录所含原/新值，不重复重钉。不得写回来源事实文件或历史 Review。
+- [ ] **AC2 — 29 个非终态 Task 的逐项暂缓记录。** 对 `dangling-dag-facts.md` 的 29 项各写一条只读 adjudication，至少记录 Task ID、现有状态、Plan/STATUS 指涉、tracked 状态、依赖/交付/集成事实及用户裁决。29 项全部记为暂缓且保持原状态与原 AC；10 个未入库文件保持 `UNREGISTERED_UNTRUSTED_SNAPSHOT`，不得 `git add`；本 Task 不把任何一项登记进 Plan。逐项记录不构成继续、取消、替代或历史化决定。
+- [ ] **AC3 — Plan 预算扩容裁决提案与记录。** 在本 Task evidence_dir 记录用户批准的唯一目标值 `7000 bytes / 64 lines`、当前规则 `2500 bytes / 35 lines`、来源裁决及其适用范围；确认本 Task 未改 Plan 预算值、未改 `tools/governance/check.ps1`，且本 AC 未改变 29 个 Task 对应的 DAG 节点集合。检查器中两个数值的实际修改单列后续治理维护 Task，须独立冻结范围、Review 并验证；该后续 Task 的 `allowed_paths` 必须含 `tools/governance/`。本 Task 若按释放协议登记自身 READY 节点，该单项登记由 Codex 管理，明确不属于 AC3 的 29 项节点登记。
+- [ ] **AC4 — P02 AC3 的 23 条 pin 只读状态记录。** 对固定分支上存在的 18 条及不存在的 5 条分别记录精确路径、固定 head、可核实的来源/head/hash 和状态；缺失项标 `MISSING_FROM_FIXED_BRANCH_SOURCE_UNRESOLVED`，保留原引用。分支内容不视为主线 Canonical Evidence 或已集成。不得合并分支、修改 pin、删除引用或把 `integration_status` 记成已证实。
+- [ ] **AC5 — 13 个 worktree 的只读保留清单。** 逐项记录 `worktree-closeout-facts.md` 已有的存在性、注册、HEAD、branch、dirty/untracked 计数及可取得的引用/安全事实；以 `PRESERVE_UNKNOWN` 或事实支持的保留 disposition 记录，不删除、移动或 prune。P14、P15-C1-FU2 的不可达 HEAD 与所有 dirty/untracked 内容均保留。RUN-IPC-1 未取得逐路径证据时明确标记未知，不推断其与 DONE 交付无关。
+- [ ] **AC6 — 七个 DONE Task 的 Manifest 事实补录。** 为 `FEAT-CREATE-1`、`FEAT-CREATE-2`、`FEAT-CREATE-3`、`FEAT-CREATE-4`、`FEAT-IMPORT-MULTI-1`、`P19-UI-FIX-1`、`P19-UI-FIX-2` 补齐有来源的 Resource Manifest。只读核实精确注册路径后，将 `FEAT-CREATE-2` frontmatter 的 `worktree: null` 更正为该路径，并在记录中保留原值、核实来源和更正日期；核实不到则不改该字段，标记 `BLOCKED_PATH_UNVERIFIED`。逐项记录实际存在的资源、HEAD/branch、dirty/untracked、引用及进程检查；未核实项保留并标 `PRESERVE_UNKNOWN`。补表和元数据更正均不改变 DONE 状态或任何 AC。
+- [ ] **AC7 — 61 个 evidence_dir 文件的只读分类。** 对 `evidence-dir-classification.md` 中 61 项逐文件记录路径、候选分类、内容/AC 绑定核查、是否唯一最终证据及处理结论。只有证实文件是已释放 AC 的唯一最终证据时才可列入对应 Canonical Evidence；其余项仅记录为来源/过程或待核实项，不因文件名作结论。`.gitattributes` 与 `.gitignore` 只记录用途，保持原位且内容不改。不移动、删除或归档任何文件。
+- [ ] **AC8 — 未完成 AC 保留裁决记录。** 对来源中发现的每项未完成 AC 记录 Task、原文定位、原勾选状态和用户裁决“保留未完成”。不得勾选、删除、转移、改写 AC，或把未完成结论写成 PASS。该 AC 只记录裁决，不修改关联 Task 的 AC。
+- [ ] **AC9 — 验证与交接。** DSH 提交逐项结果、canonical evidence、Resource Manifest 和固定 delivery head；Antigravity 对该固定 head 独立 Review；Codex 核对范围、Review、集成后验证和 closeout。保存治理检查与 `-TaskPath doc/tasks/GOV-DEBT-CLEANUP-2.md` 检查的完整命令、环境、stdout、stderr、退出码与时间；若预算上限导致检查失败，如实记 `FAIL/BLOCKED`，不得为通过检查修改规则。不得运行 AC 探针或产品测试。只有所有已释放 AC 有相应证据、独立 Review 通过、Codex 集成及集成后验证完成且资源 Manifest 闭环后才能由 Codex设为 `done`。
 
 ## 允许修改范围
 
-`allowed_paths` 中的相对项目根路径前缀即本 Task 全部写入范围：
-
-- `doc/tasks/`：只限 AC 明确涉及的 Task 文件，补 pin/adjudication、Manifest、`FEAT-CREATE-2` 的 worktree 字段和已获授权的 AC/状态记录。
-- `doc/REBASELINE_PLAN.md`、`doc/STATUS.md`：只在对应用户决定及 Codex DAG 登记批准后更新预算、节点、依赖和运行指针。
-- `verification/`：只限本 Task evidence_dir 与 AC1–AC9 所列关联 Task 的逐项裁定、资源清单和执行验证证据；不得覆盖来源事实文件。
-- `verification/GOV-DEBT-CLEANUP-2/`：本 Task 判别力证据、逐项 adjudication、原始治理检查输出及 Resource Manifest；该 evidence_dir 在 `allowed_paths` 中显式列出。
-- `doc/handoffs/`：本 Task 的 Owner Handoff。
-- `doc/reviews/`：独立 Reviewer 对固定 delivery head 的 Review。
-
-写入前复核精确文件路径属于上述范围。对 `.gitattributes`、`.gitignore` 仅读取/记录；对 worktree 外部资源仅记录路径/hash/manifest，不写入其内容。
+- `verification/GOV-DEBT-CLEANUP-2/`：本 Task 逐项 adjudication、只读检查结果、来源 pin 和必要的 Resource Manifest。不得覆盖 `verification/P09-GOVERNANCE-DEBT-20261019/` 下任何现存文件。
+- `doc/tasks/`：仅本 Task 文件及 AC6 指明的七个 DONE Task Manifest；其中 `FEAT-CREATE-2` 仅允许按 AC6 有证据的 `worktree` 元数据更正。不得修改这些 Task 的 status 或任何 AC。
+- `doc/REBASELINE_PLAN.md`：仅 Codex 按释放生命周期登记/更新本 Task 自身所需的 DAG/READY 记录；不得登记本 Task AC2 所列 29 项或修改预算内容。
+- `doc/STATUS.md`：仅 Codex 按释放生命周期记录本 Task 的运行/派发指针，不替换当前 Active Task，除非后续明确调度决定如此。
+- `doc/handoffs/`：本 Task Handoff。
+- `doc/reviews/`：Antigravity 对固定 delivery head 的独立 Review。
 
 ## 禁止范围与不做事项
 
-- 不改 `tools/governance/check.ps1`、产品源代码、测试、Schema、共享契约或依赖。
-- 不删、移、归档任何仓外文件，不写 `New.Manga.workspace/`；不删除或移动任何 evidence 文件。
-- 不删除任何 worktree，不运行 `git worktree prune`，不使用 `--force`；不改写 dirty/untracked 内容。
-- 不合并 `agent/zcode/P02-NEW-TIME-BASELINE-AC3-GIT-TOPLEVEL-RESOLUTION` 或其他未合并分支；不因分支存在就重钉/宣称集成。
-- 不执行 `git add` 来提交十个未入库 Task，除非后续有明确用户决定、Codex范围批准和单独释放的写入授权。
-- 不覆盖历史 SHA、Review、Handoff、原始 AC 或用户未提交内容；不把证据不全伪装为 DONE。
-- 不自动改 Plan 预算、不代替用户决定 Task 继续/取消/替代、不取消/转移 AC、不复制或处置 `workspace.json` 个人数据快照。
-- 不执行 AC 探针或产品测试。治理检查仅按 AC9 在该 Task 被释放且检查范围明确后运行。
+- 不删 worktree、不移动 worktree、不运行 `git worktree prune`。
+- 不合并 P02 AC3 分支或其他分支，不改任何历史/活动 pin，不将分支证据记为已集成。
+- 不改任何 Task 状态，不改任何既有 AC 原文或勾选状态。
+- 不登记 29 个非终态 Task；10 个未入库 Task 不执行 `git add`。
+- 不复制、快照、归档、迁移、重写或删除 `C:/Users/49745/.dsh/storages/workspace.json`；只记录路径、存在性、大小和记录时点，文件本体留在原位。
+- 不修改 `tools/governance/check.ps1`，不放宽任何检查规则。
+- 不覆盖事实来源，不移动/删除仓外文件，不运行 AC 探针或产品测试。
 
 ## 测试与验证计划
 
-| 场景/AC | 计划命令或手工步骤 | 前提/环境 | 实际结果 | 证据 |
-|---|---|---|---|---|
-| AC1–AC8 逐项核对 | 使用只读脚本/表格对来源行数、Task ID、pin/hash、路径、Manifest 与裁定字段做逐项对照；对 dirty 资源只读取得 diff/stat/hash | Task 已释放；用户门槛已满足；不得修改来源事实 | NOT_RUN | `verification/GOV-DEBT-CLEANUP-2/` |
-| AC3 DAG/预算 | 读取修改前后 `doc/REBASELINE_PLAN.md` 与 `doc/STATUS.md`，核对用户决定、字节/行数及节点集合 | 已有用户预算裁决与 Codex登记批准 | NOT_RUN | `verification/GOV-DEBT-CLEANUP-2/` |
-| AC9 全局治理校验 | `pwsh -NoProfile -File tools/governance/check.ps1` | Task 已释放、文档改动完成；保留原始输出和退出码 | NOT_RUN | `verification/GOV-DEBT-CLEANUP-2/` |
-| AC9 本 Task 校验 | `pwsh -NoProfile -File tools/governance/check.ps1 -TaskPath doc/tasks/GOV-DEBT-CLEANUP-2.md` | 同上；evidence_dir 必须列在 allowed_paths；不得用结果替代审查 | NOT_RUN | `verification/GOV-DEBT-CLEANUP-2/` |
-| 产品/AC 探针 | 不运行 | 明确排除在 Task 范围外 | NOT_RUN | 不适用 |
-
-实际执行时逐命令记录精确命令、PowerShell 版本、仓库 HEAD、输入文件 hash、stdout/stderr、exit code、执行时间和阻塞；不得把 planned、NOT_RUN 或 BLOCKED 写成 PASS。
+| 场景/AC | 计划步骤 | 结果 | 证据 |
+|---|---|---|---|
+| AC1–AC8 | 只读逐项对照来源事实与新增记录；检查保留项无写回 | NOT_RUN | `verification/GOV-DEBT-CLEANUP-2/` |
+| AC9 全局治理检查 | `pwsh -NoProfile -File tools/governance/check.ps1`，保存 stdout/stderr/exit code | NOT_RUN | `verification/GOV-DEBT-CLEANUP-2/` |
+| AC9 Task 检查 | `pwsh -NoProfile -File tools/governance/check.ps1 -TaskPath doc/tasks/GOV-DEBT-CLEANUP-2.md`，保存 stdout/stderr/exit code | NOT_RUN | `verification/GOV-DEBT-CLEANUP-2/` |
+| AC 探针/产品测试 | 不运行 | NOT_RUN | 不适用 |
 
 ## 依赖、风险与阻塞
 
-- `depends_on: []`：本 Task 依赖已落盘的 P09 事实材料与 codex-debt-ruling-r2，不依赖自动提交或合并任何业务分支。
-- 用户门槛：Plan 预算；29 个非终态 Task 的逐项范围；未完成 AC 取消/转移；`workspace.json` 个人数据快照许可。逐项记入 adjudication ledger，未决定项保持 BLOCKED。
-- 资源风险：dirty/untracked、不可达 HEAD、个人数据、唯一证据及 pinned 文件均按保留处理。发现文件可能影响历史 DONE 结论时暂停该项，交 Codex判断。
-- 若用户只裁决部分事项，Codex可拆分出范围已冻结的子 Task；不得由 Owner 自行缩小 AC、解除 blocker 或改写状态。
+- 用户四项裁决已记录；被暂缓的 29 个 Task、未完成 AC 和用户文件不得借本 Task 解锁。
+- dirty、不可达 HEAD、缺失来源、未知引用或用户数据均保留；不能证明的逐项标记 `BLOCKED_*` / `MISSING_*` 并报告 Codex。
+- 检查器预算数值维护是独立后续 Task，不是本 Task 的依赖性写入或隐含授权。
 
 ## 交付与运行记录
 
-- Task 文件：`doc/tasks/GOV-DEBT-CLEANUP-2.md`（本草案由 DSH 持 lease 落盘；落盘后由 Codex核对并登记，不得据此自启动）。
-- Handoff：待 Owner 固定 delivery head 后生成 `doc/handoffs/GOV-DEBT-CLEANUP-2-<short-head>.md`。
-- Review：Antigravity，针对固定 delivery head；不得由 DSH自审。
-- 实际测试：待执行；遵守上表。无产品测试/AC 探针。
-- 完成条件：全部已释放 AC 有证据；未决用户项已解除或通过 Codex核准拆分移出本 Task；独立 Review 通过；Codex集成、集成后验证及 Resource Manifest closeout 完成。
+- Owner：DSH；Reviewer：Antigravity（不得自审）。
+- Handoff：`doc/handoffs/GOV-DEBT-CLEANUP-2-<short-head>.md`，引用固定 delivery head。
+- Review：`doc/reviews/` 下绑定精确 reviewed head 的 Antigravity Review。
+- 实际命令、环境、输出、退出码、阻塞及未跑项逐项记录；不得把 NOT_RUN/BLOCKED 写成 PASS。
 
 ## Canonical Evidence
 
-在进入 `in_review` 前，对每项已释放 AC 登记唯一当前证据。原始七份事实文件只读引用，不复制或修改。
+进入 `in_review` 前逐项登记 AC1–AC9 的当前判别力证据。原始事实文件仅作为来源引用，不复制或修改。
 
 | evidence_id | AC/Gate | path（仓库相对路径或绝对路径） | commit | sha256 | class (`CANONICAL` / `SOURCE_PIN`) |
 |---|---|---|---|---|---|
@@ -128,19 +108,19 @@ allowed_paths:
 
 ## Resource Manifest
 
-不得以本 Manifest 授权物理清理。Task 自身 worktree/agent-output 在释放后按实际资源补录；不适用项填 `NOT_APPLICABLE`。任何未知、dirty、独有提交、pinned、个人数据或未跟踪资源均保留。
+所有未知、dirty、独有提交、pinned 或个人数据资源保持原位。不得以本 Manifest 授权物理清理。
 
 | resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
 |---|---|---|---|---|---|
-| task worktree | 待释放后记录 | `PRESERVE_UNKNOWN` | 原路径 | 待记录 | 待检查 |
-| agent-output / exchange | 待释放后记录 | 待核实 | 原路径 | 待记录 | 待检查 |
-| 其余资源 | 无或待核实 | `NOT_APPLICABLE` 仅在实证确认后填写 | — | — | 记录核实依据 |
+| task worktree | 释放后据实记录 | `PRESERVE_UNKNOWN` | 原路径 | 待记录 | 待检查 |
+| agent-output / exchange | 释放后据实记录 | 据实记录保留 disposition | 原路径 | 待记录 | 待检查 |
+| 其他资源 | 据实记录 | 据实记录；无资源须证实后填 `NOT_APPLICABLE` | 据实记录 | 据实记录 | 据实记录 |
 
 ## Closeout Record
 
-- Closeout date / Codex：待填写。
+- Closeout date / Codex：待关闭时填写。
 - canonical_evidence_status：`pending`。
 - resource_closeout_status：`pending`。
-- 删除、迁移、归档数量/字节数：预期均为 0；如获独立授权另行记录。
-- 未关闭项及保留原因：列明未裁决用户项、缺失 pin、dirty/untracked 和不可达提交；无则填写“无”。
-- 当前指针清理：完成时更新 STATUS / Plan / Task 导航；若用户门槛导致尚未释放或本 Task 被拆分，记录不适用及 successor。
+- 删除、迁移、归档数量/字节数：本 Task 禁止物理处置；据实记录为 0。
+- 未关闭项及保留原因：逐项记录 BLOCKED/MISSING 和仍保留的资源；无则填写“无”。
+- 当前指针清理：按协作协议由 Codex更新 Plan/STATUS；不改变被暂缓 Task 的状态或 AC。
