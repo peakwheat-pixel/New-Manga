@@ -1,5 +1,7 @@
 # HANDOFF — P09-AC3-DELETE-HARDEN-1
 
+> **本文件是验证证据集，不是交付件。** 本 Task 的**正式 Handoff** 为 `doc/handoffs/P09-AC3-DELETE-HARDEN-1-1878f0b1.md`（按 `doc/09_COLLABORATION.md` §5）。本文件按协议 L106 的定位，提供 Handoff 所引用的验证证据与交付明细。
+
 - `task_id`: P09-AC3-DELETE-HARDEN-1
 - `branch`: antigravity/P09-AC3-DELETE-HARDEN-1
 - `handoff_head`: 见文末「固定规则」——**收口时由 `git rev-parse` 重取**
@@ -78,7 +80,9 @@
 
 ### Handoff / 正式转交 Task
 
-**本次交付即补齐 Handoff**；**转交 Task 文件见第四节**。
+### Handoff / 正式转交 Task
+
+**正式 Handoff 见 `doc/handoffs/P09-AC3-DELETE-HARDEN-1-1878f0b1.md`**（协议 §5 路径）。**本文件不承担交付件角色，仅提供被引用的验证证据。**
 
 ### `delivery_head` 的固定规则
 
