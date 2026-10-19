@@ -3,7 +3,7 @@ id: GOV-DEBT-CLEANUP-2
 title: 治理债逐项事实核对与资源证据闭环
 kind: governance
 governance_version: 2
-status: in_review
+status: closed_with_limitations
 approval: user_decisions_recorded_2026-10-19; codex_scope_release_approved
 suggested_owner: dsh
 owner: dsh
@@ -12,10 +12,10 @@ depends_on: []
 base_commit: 75da8281b28c7c11f92518c63d4669b5cf3973e6
 branch: agent/deepseek/GOV-DEBT-CLEANUP-2-governance-facts
 worktree: G:\CODEX\New Manga.workspace\worktrees\GOV-DEBT-CLEANUP-2
-integration_commit: null
+integration_commit: 2636301fe5d6c33535f873aeb776c3e4beb5dd2d
 delivery_head: e63d9324766db0d381bad24b3fc60a58048430e1
-canonical_evidence_status: pending
-resource_closeout_status: pending
+canonical_evidence_status: complete
+resource_closeout_status: complete
 evidence_dir: verification/GOV-DEBT-CLEANUP-2
 allowed_paths:
   - doc/tasks/
@@ -104,16 +104,17 @@ allowed_paths:
 
 | evidence_id | AC/Gate | path（仓库相对路径或绝对路径） | commit | sha256 | class (`CANONICAL` / `SOURCE_PIN`) |
 |---|---|---|---|---|---|
-| EVID-DEBT-AC1 | AC1 | `verification/GOV-DEBT-CLEANUP-2/ac1-sha-rows.md` | `b2b32e05e327f6b4144d07a854262b78453f0847` | `6bdc98d5be79e5be7cc002981ef57ad8cba4f2a8c1714202b50cdd260386f3f7` | `CANONICAL` |
-| EVID-DEBT-AC2 | AC2 | `verification/GOV-DEBT-CLEANUP-2/ac2-deferred-tasks.md` | `9be9bab21b70714f3102220f43170de813788995` | `5f2f410b60a959b9c55f6ea89ea15b033bab1fb4e229739eef8ea9edd1bcfc04` | `CANONICAL` |
-| EVID-DEBT-AC3 | AC3 | `verification/GOV-DEBT-CLEANUP-2/ac3-budget-decision.md` | `9be9bab21b70714f3102220f43170de813788995` | `0287ac3c083b1226e2598a589e7507c2ebf22f18c979a54f1e71c77e659bbf17` | `CANONICAL` |
-| EVID-DEBT-AC4 | AC4 | `verification/GOV-DEBT-CLEANUP-2/ac4-p02-ac3-pins.md` | `9be9bab21b70714f3102220f43170de813788995` | `73892ee7faea0c11288fa96aa1f74b832dbba65f8a12a76ad76c5157c7e77ccb` | `CANONICAL` |
-| EVID-DEBT-AC5 | AC5 | `verification/GOV-DEBT-CLEANUP-2/ac5-worktree-preserve-list.md` | `5b5c3e299a4e478aff86e12bd923a23c293f70e2` | `e0c582a6a0f9391febae94511f1d3611d80606a10317a0bf4a729aa8f98d8594` | `CANONICAL` |
-| EVID-DEBT-AC6 | AC6 | `verification/GOV-DEBT-CLEANUP-2/ac6-manifest-backfill.md` | `713c3aaaf1aac44c1258557f88f5e8af325688a6` | `94d7df55b7d4a88502f9fcb21e6a90e1299c1549cce461c876f740634d2b5000` | `CANONICAL` |
-| EVID-DEBT-AC7 | AC7 | `verification/GOV-DEBT-CLEANUP-2/ac7-evidence-dir-files.md` | `5b5c3e299a4e478aff86e12bd923a23c293f70e2` | `8ec36c265967a7f45443bfb71c4608cd11bafc8a4d119085bbd15b354a7a5393` | `CANONICAL` |
-| EVID-DEBT-AC8 | AC8 | `verification/GOV-DEBT-CLEANUP-2/ac8-open-acs.md` | `4e9bbe04bb3b46f6812e7ce40ea89a0a491df28a` | `fb61c70f2638f2b1b4d1bbdd3ae34ec1dc6bb620aabb4dca81eb25a2b20a4377` | `CANONICAL` |
-| EVID-DEBT-AC9 | AC9 | `verification/GOV-DEBT-CLEANUP-2/ac9-governance-output.txt` | `e63d9324766db0d381bad24b3fc60a58048430e1` | `f2db42f794f8185cc7a0f68cdf78d3a7ce80b2ddddb51151151dcf97a6ccd4a4` | `CANONICAL` |
-| EVID-DEBT-FINDING | 治理基础设施发现 | `verification/GOV-DEBT-CLEANUP-2/finding-checker-not-tracked.md` | `e09cad1ed` | `a7a60f5c5df55bd5c99af0fab3422090f9136524ffb3bb21c93136e4fd05cd8f` | `CANONICAL` |
+| DEBT-AC1 | AC1 | `verification/GOV-DEBT-CLEANUP-2/ac1-sha-rows.md` | `2636301fe` | `6bdc98d5be79e5be7cc002981ef57ad8cba4f2a8c1714202b50cdd260386f3f7` | `CANONICAL` |
+| DEBT-AC2 | AC2 | `verification/GOV-DEBT-CLEANUP-2/ac2-deferred-tasks.md` | `2636301fe` | `5f2f410b60a959b9c55f6ea89ea15b033bab1fb4e229739eef8ea9edd1bcfc04` | `CANONICAL` |
+| DEBT-AC3 | AC3 | `verification/GOV-DEBT-CLEANUP-2/ac3-budget-decision.md` | `2636301fe` | `0287ac3c083b1226e2598a589e7507c2ebf22f18c979a54f1e71c77e659bbf17` | `CANONICAL` |
+| DEBT-AC4 | AC4 | `verification/GOV-DEBT-CLEANUP-2/ac4-p02-ac3-pins.md` | `2636301fe` | `73892ee7faea0c11288fa96aa1f74b832dbba65f8a12a76ad76c5157c7e77ccb` | `CANONICAL` |
+| DEBT-AC5 | AC5 | `verification/GOV-DEBT-CLEANUP-2/ac5-worktree-preserve-list.md` | `2636301fe` | `e0c582a6a0f9391febae94511f1d3611d80606a10317a0bf4a729aa8f98d8594` | `CANONICAL` |
+| DEBT-AC6 | AC6 | `verification/GOV-DEBT-CLEANUP-2/ac6-manifest-backfill.md` | `2636301fe` | `94d7df55b7d4a88502f9fcb21e6a90e1299c1549cce461c876f740634d2b5000` | `CANONICAL` |
+| DEBT-AC7 | AC7 | `verification/GOV-DEBT-CLEANUP-2/ac7-evidence-dir-files.md` | `2636301fe` | `8ec36c265967a7f45443bfb71c4608cd11bafc8a4d119085bbd15b354a7a5393` | `CANONICAL` |
+| DEBT-AC8 | AC8 | `verification/GOV-DEBT-CLEANUP-2/ac8-open-acs.md` | `2636301fe` | `fb61c70f2638f2b1b4d1bbdd3ae34ec1dc6bb620aabb4dca81eb25a2b20a4377` | `CANONICAL` |
+| DEBT-AC9 | AC9 | `verification/GOV-DEBT-CLEANUP-2/ac9-governance-output.txt` | `2636301fe` | `f2db42f794f8185cc7a0f68cdf78d3a7ce80b2ddddb51151151dcf97a6ccd4a4` | `CANONICAL` |
+| DEBT-FINDING | 发现项 | `verification/GOV-DEBT-CLEANUP-2/finding-checker-not-tracked.md` | `2636301fe` | `a7a60f5c5df55bd5c99af0fab3422090f9136524ffb3bb21c93136e4fd05cd8f` | `CANONICAL` |
+| DEBT-REVIEW | Review Gate | `doc/reviews/GOV-DEBT-CLEANUP-2-94c8dcdab-antigravity-r2.md` | `2636301fe` | `0af11140083d8ab9c38d80d38ef526a05ba3f8659be06f2513a5f5299e27531a` | `CANONICAL` |
 
 ## Resource Manifest
 
@@ -121,57 +122,29 @@ allowed_paths:
 
 | resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
 |---|---|---|---|---|---|
-| task worktree | 释放后据实记录 | `PRESERVE_UNKNOWN` | 原路径 | 待记录 | 待检查 |
-| agent-output / exchange | 释放后据实记录 | 据实记录保留 disposition | 原路径 | 待记录 | 待检查 |
-| 其他资源 | 据实记录 | 据实记录；无资源须证实后填 `NOT_APPLICABLE` | 据实记录 | 据实记录 | 据实记录 |
+| task file | `doc/tasks/GOV-DEBT-CLEANUP-2.md` | `NOT_APPLICABLE` | `doc/tasks/GOV-DEBT-CLEANUP-2.md` | `doc/tasks/GOV-DEBT-CLEANUP-2.md` | 本 Task 的容器文档，非被处置资源；自引用哈希无不动点，故不在此表 pin 自身，改由 Closeout Record 记录 | 本 Task 唯一改动的治理文档；未改生产代码 |
+| evidence dir | `verification/GOV-DEBT-CLEANUP-2/` | `PRESERVE_REFERENCED` | `verification/GOV-DEBT-CLEANUP-2/` | `f2db42f794f8185cc7a0f68cdf78d3a7ce80b2ddddb51151151dcf97a6ccd4a4` | 10 份证据，均为 AC 直接产物 |
+| task worktree | 不存在 | `NOT_APPLICABLE` | — | `c8aa1df32c5c2250a3f2b1ad33adc5d30153fe489a9d089b7720333d688bba74` | 本 Task 直接在主线交付，无 linked worktree、无 source 分支、无 merge commit |
+| gov checker | `tools/governance/check.ps1` | `PRESERVE_REFERENCED` | `tools/governance/check.ps1` | `296266d9e5dec5135e55bbf9bcc9b1d3345ffbf42aa9f5d5485693315bb34e49` | **本 Task 未修改**（仅 AC3 记录预算裁决，实际扩容由 GOV-PLAN-BUDGET-1 执行）|
+| agent output | 仓外 agent-output，非本 Task 交付物 | `NOT_APPLICABLE` | — | `c8aa1df32c5c2250a3f2b1ad33adc5d30153fe489a9d089b7720333d688bba74` | codex r14 等派发产物不入库 |
 
 ## Closeout Record
 
-尚未 closeout；adjudication 见 `verification/P09-GOVERNANCE-DEBT-20261019/codex-integration-closeout-r3.md`。
-
-- Closeout date / Codex：待关闭时填写。
-- canonical_evidence_status：`pending`。
-- resource_closeout_status：`pending`。
-- 删除、迁移、归档数量/字节数：本 Task 禁止物理处置；据实记录为 0。
-- 未关闭项及保留原因：逐项记录 BLOCKED/MISSING 和仍保留的资源；无则填写“无”。
-- 当前指针清理：按协作协议由 Codex更新 Plan/STATUS；不改变被暂缓 Task 的状态或 AC。
-
-## AC 状态与未达成项（DSH 独立核对，2026-10-19）
-
-Owner 为 dsh；本表按**逐条实测**给出，不采用文件内的自述汇总。
-
-| AC | 状态 | 依据 |
-|---|---|---|
-| AC1 | 达成 | 逐行 **102 行 = 78 KEEP + 13 ORIGIN + 11 DIRTY**（独立复核确认，原记录正确）|
-| AC2 | 达成 | 29 项逐条，含 Task ID/状态/Plan 指涉/tracked 依赖 |
-| AC3 | 达成 | 7000 bytes / 64 lines 已生效于 `check.ps1` |
-| AC4 | 达成 | **本轮补齐**：25 条逐项（21 存在 / 4 缺失）。原记录 23/18/5 有误，已更正 |
-| AC5 | 达成 | 13 项全记 `PRESERVE_UNKNOWN`，含 dirty/untracked 与 HEAD 可达性 |
-| AC6 | 达成 | 七项补录；`P19-UI-FIX-1` 的格式债务已由后续三个 Task 从检查器侧解决（已补进展记录） |
-| **AC7** | **未达成（部分）** | 分类完成（**61 个文件**，独立复核确认），但文件自承「**没有做**『唯一最终证据』判定」，故 61 项全部保持候选分类 |
-| AC8 | 达成 | 69 项未完成 AC 逐条记录，保留原状 |
-| **AC9** | **进行中** | 待 Antigravity 对本固定 head 独立 Review |
-
-## 两处汇总数字错误（DSH 发现并更正）
-
-**只有 AC4 是真正的记录错误，AC1 不是。**
-
-- **AC4**：记 23 条（18 存在 / 5 缺失），实测 **25 条（21 存在 / 4 缺失）**；
-  且把 `doc/handoffs/P02-NEW-TIME-BASELINE-AC3-GIT-TOPLEVEL-RESOLUTION-R1.md`
-  误记为缺失，实测在固定 head 上**存在**。**经 Antigravity 独立复核确认交付方更正正确。**
-- **AC1**：原记录 **102 行（78/13/11）本来就是对的**。交付方曾误判为 105 行（79/14/12），
-  原因是把汇总表自身那 3 行也计入了数据行。**该次「更正」是错的，已撤销**，
-  撤销记录见 `ac1-sha-rows.md` 末尾。
-
-AC4 的更正**保留原数字并附更正表**，不静默覆盖；AC1 的撤销同样保留错误过程。
-
-这条构成本 Task 最重要的方法论观察：**人工汇总产出证据，天然不可靠**——
-连「发现汇总错误」这个动作本身，都可能产出新的未实测结论。
-交付方在核查 AC1 时正是犯了此错，由 Antigravity 独立复核才纠正。
-这不是两个笔误，而是这类治理 Task 的固有失败模式，因此本 Task 的终态必须是
-`closed_with_limitations` 而非 `done`。
-
-## 建议终态
-
-按 Codex r13 §2.5：**有未完成 AC 则记 `closed_with_limitations`，不能记 `done`**。
-AC7 未达成 → 建议 `closed_with_limitations`。
+- 关闭：2026-10-20。Owner=dsh，Reviewer=Antigravity。裁定：Codex r14。
+- 终态：**`closed_with_limitations`**。AC1–AC6、AC8 达成；**AC7 仅完成 61 项候选分类，
+  「唯一最终证据」判定未做**；AC9 由本次 closeout 完成。按 r13/r14 口径，未完成 AC 阻断 `done`。
+- head 三元组：`reviewed_head=94c8dcdab`、`delivery_head=e63d932476`、
+  `integration_source_head=2636301fe`。
+- **集成方式：无需 merge。** 本 Task 从首次提交起就在目标主线
+  `antigravity/P09-AC3-DELETE-HARDEN-1` 上，不存在独立 source 分支或 linked worktree，
+  因此 `integration_commit` 记录为当前集成端点 `2636301fe`，并**明确它不是 merge commit**。
+  这与 `GOV-RESOURCE-MANIFEST-JSON-1`、`P19-UI-MANIFEST-VIEW-1`、
+  `GOV-RESOURCE-MANIFEST-SAME-LOCATION-1` 的 worktree→merge 拓扑不同，属可解释的执行差异。
+- 治理：Task 检查与全局检查均 PASS。
+- **本轮最重要的事实**：Review 抓出交付方一次**错误的「更正」**——dsh 曾把 AC1 汇总
+  「更正」为 105 行，实测原记录 102 行（78/13/11）本来就正确；错误源于把汇总表自身 3 行
+  计入数据行。已撤销并保留错误过程。AC4 的更正（23/18/5 → 25/21/4）则是真错误，经 Review 确认正确。
+  **两者不可混为一谈**，本文件与 `ac1-sha-rows.md` 均已分开记录。
+- 未关闭项（留债，不放弃）：AC7 的「唯一最终证据」判定 → 后继 Task `GOV-EVIDENCE-UNIQUE-1`
+  （Owner: dsh，Reviewer: Antigravity），由 Codex 正式登记并释放。
+- 删除 / 迁移 / 归档：**0 项**。

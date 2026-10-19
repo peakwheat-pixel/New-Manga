@@ -24,7 +24,7 @@
 |P20-ISOLATION-1|P20|in_review|
 |P20-AC4-FPS-1|P20|closed_with_limitations（AC3 PASS；AC5 依裁决）|
 |GOV-DEBT-CLEANUP-1|P19/P20|blocked（待用户裁决）|
-|GOV-DEBT-CLEANUP-2|—|approved（AC6 的 P19-UI-FIX-1 格式债务；AC7 的 61 项归属未结）|
+|GOV-DEBT-CLEANUP-2|—|closed_with_limitations（AC1–AC6/AC8 达成；AC7 仅完成 61 项候选分类，唯一最终证据判定未做；closeout r14）|
 |GOV-RESOURCE-MANIFEST-JSON-1|GOV-PLAN-BUDGET-1|done（外部 JSON Manifest 检查器；19/19 用例；集成 3fe78a67c）|
 |P19-UI-MANIFEST-VIEW-1|GOV-RESOURCE-MANIFEST-JSON-1|closed_with_limitations（AC1/AC2/AC4/AC5/AC6 达成；AC3 因 4→10 错误清单失败；按 Codex r11 保留修正）|
 |GOV-RESOURCE-MANIFEST-SAME-LOCATION-1|GOV-RESOURCE-MANIFEST-JSON-1|done（同源/空/\-\ 目的地语义；32/32 用例；集成 4b545eada；P19 错误 9→4）|
