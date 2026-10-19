@@ -118,7 +118,58 @@ def preview_lifecycle_rows_for_artifact(self, artifact_id: str) -> list[PreviewL
 2. **一个 `artifact_id` 是否可能对应多个 `preview-*` 行**（rerender 轮换会不断新建）→ **反查可能返回多行** —— **这是期望行为（全部回收），但需确认不会误删仍被引用的行**（`retired` 字段可作区分依据，**但当前逻辑不区分**）。
 3. **`catalog.remove(res_id)` 与文件删除的原子性** —— 既有代码已是「删文件成功才 remove 行」，**沿用即可**。
 
-**第 2 点最需要注意**：**若一个 artifact 有多行（历史轮换遗留），全删是对的**；**但若某行仍指向当前在用的预览，删掉会导致当前页面预览失效** —— **需要用 `retired` 或「是否为当前 revision」过滤**。**这一点我尚未确认，不能凭猜实施。**
+**第 2 点最需要注意**：**若一个 artifact 有多行（历史轮换遗留），全删是对的**；**但若某行仍指向当前在用的预览，删掉会导致当前页面预览失效** —— **需要用 `retired` 或「是否为当前 revision」过滤**。
+
+---
+
+## 五之二、两项未验证事实的结论（2026-10-19 补充）
+
+### 事实 #1：**已查明** ✅
+
+**`ArtifactType` 枚举（`ports/repositories/artifacts.py:17-25`）共 6 种**：`original` · `thumbnail` · `detection_overlay` · `mask` · `clean` · `translated`。
+**`ARTIFACT_TYPE_DIRS`（`managed_storage.py:29-40`）共 10 种**（多出 `render_preview` · `export` · `debug_ocr` · `debug_detection`）。
+
+**但只有 2 处调用 `publish`**，**且两处登记的 artifact 类型都是 `translated`**：
+
+| 位置 | handler | 产物类型 |
+|---|---|---|
+| `core_service.py:1721` | `handle_rerender_page` | **`ArtifactType.TRANSLATED`**（`rendering/service.py:177` 与 `:349` 两处 `create_artifact` 均为此类型）|
+| `core_service.py:1977` | `handle_get_reader_projection` | 译图（translated）|
+
+**结论**：**`mask` / `clean` / `thumbnail` / `export` 等类型从不创建 preview catalog 行** → **方案里 `WHERE artifact_type = 'translated'` 的范围正确，不会漏掉 `handle_rerender_page` 的预览** ✅
+
+### 事实 #2：**分析结论（未实测，实施前必须验证）** ⚠️
+
+**关键链条**（依据 `rendering/service.py:170-182`）：
+
+```python
+translated = self._locator.locate_current(page_id, ArtifactType.TRANSLATED)
+if translated is None:
+    translated_record = self._artifacts.create_artifact(...)   # 仅当不存在时新建
+    ...
+else:
+    ...                                                        # 已存在 → 复用同一 artifact_id
+```
+
+**所以同一 `artifact_id` 会被多次 `publish`**，**每次产生一个新的 `preview-{uuid}` 行**。**这与实测一致**（5 次投影 → 5 行，同一页同一 artifact）。
+
+**而 `retired` 无法区分「在用」与「遗留」**：
+
+- **`retired` 只在 `revoke_resource_retiring_preview` 里被置 1**
+- **该调用只发生在 `rotate_render_preview`（rerender 轮换）路径**
+- **reader projection 路径不轮换** → **历史行全部保持 `retired=0`**
+
+**因此「全删」有真实风险**：**若 WebView 仍持有某个历史 `preview-*` 的引用，删掉它会让当前页面预览失效** —— 而 **`preview_lifecycle` 里没有任何字段能告诉我们是哪一个**。
+
+**这不是接线能解决的问题** —— **它需要一个新的判定依据**，例如：
+
+- **保留每个 artifact 最新的一行**（按 `created_at` 或插入顺序）—— **但表里没有时间戳** ⚠️
+- **让 reader 投影走轮换语义**（每次新 publish 时退休上一个）—— **改动较大，但语义最干净**
+- **引入引用计数**（WebView 持有/释放时上报）—— **改动最大**
+
+**⚠️ 本方案因此不能直接实施。** 需要先回答「如何判定某行为在用」，**这是一个设计决策，不应在方案里替它决定**。
+
+**建议的下一步**：**把这一项并入 `P09-MANAGED-READ-ROOT-TRUST-1` 之前先做一次独立评估**，或者**单独开一个 AC4 修复 Task**（因为它的性质是「产品行为 + 生命周期设计」，与删除路径加固不同类）。
 
 ---
 
