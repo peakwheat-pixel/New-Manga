@@ -128,7 +128,7 @@ verification/P02/dsh-appcontainer-contract-r3-review-attempt1.status.txt
 | BACKLOG-AC2 | AC2 | `verification/GOV-UNTRACKED-BACKLOG-1/ac2-anomalous-entries.md` | `60970cf9d` | `9b8a87549371cd17a77812c7e1c80df1de067b2c2074c1ab7050a0fccb1f827b` | `CANONICAL` |
 | BACKLOG-AC3 | AC3 | `verification/GOV-UNTRACKED-BACKLOG-1/ac3-references.json` | `60970cf9d` | `e4dd2cb52db29825d6e241cf4b1510f74e348eb30da6c7372a05cf30585df3dc` | `CANONICAL` |
 | BACKLOG-AC4 | AC4 | `verification/GOV-UNTRACKED-BACKLOG-1/ac4-worktree-mirror-guide.md` | `60970cf9d` | `9611a6c0be6a9d91d58a060003f1338c51e7ef7aeb7561f23f3d1e36b50b8945` | `CANONICAL` |
-| BACKLOG-HANDOFF | AC6 | `doc/handoffs/GOV-UNTRACKED-BACKLOG-1-60970cf9d.md` | `60970cf9d` | `bd978b7d2865dde1865260ce147fb4e71a9115a4e54680829701ff5d06eefed6` | `CANONICAL` |
+| BACKLOG-HANDOFF | AC6 | `doc/handoffs/GOV-UNTRACKED-BACKLOG-1-60970cf9d.md` | `474926c18` | `bd978b7d2865dde1865260ce147fb4e71a9115a4e54680829701ff5d06eefed6` | `CANONICAL` |
 
 ## Resource Manifest
 
