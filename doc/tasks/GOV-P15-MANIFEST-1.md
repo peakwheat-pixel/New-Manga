@@ -3,7 +3,7 @@ id: GOV-P15-MANIFEST-1
 title: 恢复 P15 缺失的 Resource Manifest
 kind: governance
 governance_version: 3
-status: in_progress
+status: in_review
 approval: codex_r20_followup_not_yet_released
 suggested_owner: codex
 owner: codex
@@ -13,7 +13,7 @@ base_commit: 3539d8d75
 branch: null
 worktree: null
 integration_commit: null
-delivery_head: null
+delivery_head: 237c43862be57ce8d84b2932abe2c30b279e6c7c
 canonical_evidence_status: pending
 resource_closeout_status: pending
 evidence_dir: verification/GOV-P15-MANIFEST-1
@@ -71,9 +71,26 @@ pwsh -NoProfile -File tools/governance/check.ps1 -TaskPath doc/tasks/P15.md
 
 交付时登记恢复依据、worktree 实际状态核实、manifest 内容、Handoff、Review。
 
+| evidence_id | AC/Gate | path（仓库相对路径或绝对路径） | commit | sha256 | class (`CANONICAL` / `SOURCE_PIN`) |
+|---|---|---|---|---|---|
+| P15M-RESTORED | AC3 | `verification/P15/resource-manifest.json` | `237c43862` | `ccdb5fb7d298a41c0ccfec01e62e1fa2782b40581d87451583351d489ebc34e3` | `CANONICAL` |
+| P15M-WRITEUP | AC1–AC4 | `verification/GOV-P15-MANIFEST-1/ac1-ac4-manifest-restoration.md` | `237c43862` | `934b747842ff1c15dab1aeef2105bc1a7339077caf998225ccd9b11e9cb21788` | `CANONICAL` |
+| P15M-HANDOFF | AC5 | `doc/handoffs/GOV-P15-MANIFEST-1-237c43862.md` | `237c43862` | `81e37cd1808cfde9c08eea88d98273b1d9f9ce78b7550502be84ada09e564d31` | `CANONICAL` |
+
 ## Resource Manifest
 
 本 Task 自身不处置资源；但须在 closeout 中说明它为何不改变 `P15` 的既有资源结论。
+
+| resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
+|---|---|---|---|---|---|
+| worktree | — | `NOT_APPLICABLE` | — | `doc/tasks/GOV-P15-MANIFEST-1.md` | 只重建一个 JSON 文件 |
+| task-env | — | `NOT_APPLICABLE` | — | `doc/tasks/GOV-P15-MANIFEST-1.md` | 只重建一个 JSON 文件 |
+| dataset | — | `NOT_APPLICABLE` | — | `doc/tasks/GOV-P15-MANIFEST-1.md` | 只重建一个 JSON 文件 |
+| artifact | — | `NOT_APPLICABLE` | — | `doc/tasks/GOV-P15-MANIFEST-1.md` | 只重建一个 JSON 文件 |
+| temp | — | `NOT_APPLICABLE` | — | `doc/tasks/GOV-P15-MANIFEST-1.md` | 只重建一个 JSON 文件 |
+| agent-output | — | `NOT_APPLICABLE` | — | `doc/tasks/GOV-P15-MANIFEST-1.md` | 只重建一个 JSON 文件 |
+| exchange | — | `NOT_APPLICABLE` | — | `doc/tasks/GOV-P15-MANIFEST-1.md` | 只重建一个 JSON 文件 |
+| evidence_dir | `verification/GOV-P15-MANIFEST-1/` | `PRESERVE_REFERENCED` | `verification/GOV-P15-MANIFEST-1/` | `934b747842ff1c15dab1aeef2105bc1a7339077caf998225ccd9b11e9cb21788` | 1 份证据 |
 
 ## Closeout Record
 
