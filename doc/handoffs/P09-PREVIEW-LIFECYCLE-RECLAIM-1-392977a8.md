@@ -1,0 +1,99 @@
+# Handoff：P09-PREVIEW-LIFECYCLE-RECLAIM-1
+
+**Task**：`P09-PREVIEW-LIFECYCLE-RECLAIM-1`
+**Owner**：dsh · **Reviewer**：Codex · **日期**：2026-10-19
+**delivery_head**：`392977a83cc496206728ad26dded96274ead41dc`
+**分支**：`antigravity/P09-PREVIEW-LIFECYCLE-RECLAIM-1`
+**base_commit**：`1f157413675b62450034194fd17e550c79ee001b`
+
+---
+
+## 交付结果
+
+**永久删除书籍后，属于该书的分布式预览（`preview-<uuid4>` 行与文件）被回收；此前它们会残留。**
+
+### 改动
+
+| 文件 | 内容 |
+|---|---|
+| `src/bootstrap/core_service.py` | 单书（L1150）与批量（L1246）删除路径在 `execute_permanent_delete_db` **之前**快照预览 resource ids。**快照必须在删除前取，因为删除会清掉 `artifact_revisions`，之后无法再解析** |
+| `src/infrastructure/sqlite/library.py` | `list_page_artifact_ids`（library DB）；`cleanup_book_files` 新增 `preview_resource_ids` 参数与 manifest 回退；`preview_ids_known` 区分「写入时无预览」与「写入时无此字段」，后者不得当作成功 |
+| `src/infrastructure/resource_channel/catalog_store.py` | `preview_resource_ids_for_artifacts`。**`preview_lifecycle` 住在 catalog DB，`library.py` 无法代查**（R4 裁定纳入范围，已补录到 Task 的 `allowed_paths`）|
+
+### 根因
+
+**publish key 是 `preview-{uuid4().hex}`，其 `rel_path` 是 `previews/<key>.png` —— 不含 book、chapter 或 page 任何成分。** **所以删除时无法按路径筛选，只能按 `artifact_id` 反查。** **而删除会先清掉 `artifact_revisions`，反查通道随之消失 —— 这就是必须在删除前快照的原因。**
+
+## 验证证据
+
+### 修复前的红灯
+
+**同一份探针文件，两个树，`AC4_REPO` 选择**：
+
+| 代码 | 结果 | 退出码 |
+|---|---|---|
+| 修复前 `779a571ba` | `LEAK: 3 rows, 3 files` | **1** |
+| 修复后 | `LEAK: 0 rows, 0 files` | **0** |
+
+**R6 独立复现过。** 记录：`ac1-red-before-fix.md`。
+
+### 探针（四个，基线全绿）
+
+| 探针 | 覆盖 |
+|---|---|
+| `ac4-leak-assert-probe.py` | AC1 首次删除 |
+| `ac4-retry-manifest-probe.py` | 重试路径（**经生产 writer 写 manifest**，非手工写）|
+| `ac4-batch-delete-probe.py` | AC3 跨书 + 跨页 |
+| `ac2-referenced-preview-probe.py` | AC2 刚被读者取走的 key |
+
+### 注入（四组 CONFIRMED，详见 `r8-injection-evidence.md`）
+
+| 注入 | 基线 | 注入后 |
+|---|---|---|
+| 空幸存列表 · leak | exit 0 | **exit 1** |
+| 空幸存列表 · retry | exit 0 | **exit 1** |
+| decoy lock（同名异路径）· batch | exit 0 | **exit 1** |
+| 同名异路径孤儿文件 · batch | exit 0 | **exit 1** |
+| 快照注入为空（删除成功但不回收）· **AC2** | exit 0 | **exit 1** |
+
+**⚠️ 三处无法在本平台用注入区分**（**leak / retry / AC2 的 lock 比较**）：**R10 的注入方式（删根 lock + 子目录建一个）在此失败于 `WinError 32`，因为探针运行时 catalog 持有该锁。** **「只加 decoy」对这一处两种实现都报红，故不构成区分。** **如实记录，未记作已验证。**
+
+### 测试
+
+`tests/storage` **87 passed** · `tests/core` **558 passed** · `tests/m2_resource_channel` **106 passed** · `tests/core/test_core_delete_commands.py` **20 passed**（R6 独立运行）。
+
+### 治理
+
+`tools/governance/check.ps1` **PASS (2 warnings)**。
+
+## 接收方式
+
+```powershell
+git fetch
+git checkout antigravity/P09-PREVIEW-LIFECYCLE-RECLAIM-1
+git rev-parse HEAD     # 应为 392977a83cc496206728ad26dded96274ead41dc（交付 head）
+```
+
+**验证**：
+
+```powershell
+python verification/P09-PREVIEW-LIFECYCLE-RECLAIM-1/ac4-leak-assert-probe.py
+python verification/P09-PREVIEW-LIFECYCLE-RECLAIM-1/ac4-retry-manifest-probe.py
+python verification/P09-PREVIEW-LIFECYCLE-RECLAIM-1/ac4-batch-delete-probe.py
+python verification/P09-PREVIEW-LIFECYCLE-RECLAIM-1/ac2-referenced-preview-probe.py
+python -m pytest tests/storage tests/core -q
+```
+
+**⚠️ 四个探针启动时会 `shutil.rmtree` 自己的固定 fixture 目录**（`agent-output/coordinator/<name>/`）。**若其中有先前运行的数据会被删除 —— R10 因此只能绕道副本运行。** 若需保留，请先重定向。
+
+## 下一任务建议（必填）
+
+**无需下一步操作。** 本 Task 待 Codex 对固定 head 复审；复审通过后由 Codex 集成、做集成后验证与资源 closeout，并更新 Task 与 STATUS。**`P09` 的 AC3 delete 子条件保持 `BLOCKED`，本 Task 不移除该限制。**
+
+## 风险与遗留
+
+1. **`P09` AC3 delete 子条件仍为 `BLOCKED`** —— **本 Task 回收的是预览，不是该子条件。** 每轮核对，从未翻为 PASS。
+2. **三处 lock 断言缺失败侧注入**（见上），**属平台限制，非未做**。
+3. **AC2 的产品裁决依据**为「用户采纳推荐路径（直接确认 C1）」，**记录保留原话措辞，未改写成「确认 C1」**。R7 判定该形式足够。
+4. **两项越界事项已报告**：我运行过 `git worktree prune` 而未先读 `WORKTREE_SAFETY_INVENTORY`（**影响无法自行评估，仓库有 180+ worktree 记录**）；`n002-race-probe.py` 在注入未触发时仍打印 `SAFE`（**属前置 Task 范围，已记录未改**）。
+5. **`delivery_head` 指向交付 commit**；**若复审要求返修，按 R10 的 Route 应用新 head 与新 Handoff 重新审查，而非就地修改。**
