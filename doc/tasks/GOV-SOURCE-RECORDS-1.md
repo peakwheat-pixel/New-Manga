@@ -3,7 +3,7 @@ id: GOV-SOURCE-RECORDS-1
 title: 两个来源 Task 的 AC 勾选记录维护
 kind: governance
 governance_version: 2
-status: in_review
+status: done
 approval: codex_r19_requires_separate_maintenance_task
 suggested_owner: dsh
 owner: dsh
@@ -12,10 +12,10 @@ depends_on: [GOV-EVIDENCE-UNIQUE-1]
 base_commit: 32f95fdf9
 branch: null（纯记录维护，主线直接执行）
 worktree: null（不建 linked worktree）
-integration_commit: null
-delivery_head: d8ad739d2d99ac40fc96c3f2eed955eb59e516fa
-canonical_evidence_status: pending
-resource_closeout_status: pending
+integration_commit: 071fb2158
+delivery_head: cc373560c
+canonical_evidence_status: complete
+resource_closeout_status: complete
 evidence_dir: verification/GOV-SOURCE-RECORDS-1
 allowed_paths:
   - doc/tasks/EXPORT-REVEAL-1.md
@@ -128,6 +128,7 @@ pwsh -NoProfile -File tools/governance/check.ps1
 | SRC-AC1 | AC1、AC2 | `verification/GOV-SOURCE-RECORDS-1/ac1-tracing.md` | `d8ad739d2` | `042ca14c2e5c0686844479904bc76dc40108e2818f425306a88308006329a9f4` | `CANONICAL` |
 | SRC-AC2AC3 | AC2、AC3 | `verification/GOV-SOURCE-RECORDS-1/ac2-ac3-ticks-and-preexisting-errors.md` | `d8ad739d2` | `27caaffe934e24fd4791855313e7dcb45fe5fda314cbf79204bad53fafffa30a` | `CANONICAL` |
 | SRC-HANDOFF | AC5 | `doc/handoffs/GOV-SOURCE-RECORDS-1-d8ad739d2.md` | `cc373560c` | `497a9752ca3ac208e0378baf480a464d94b6aef73ca7fbec5c414baf457a0d1e` | `CANONICAL` |
+| SRC-REVIEW | AC5 | `doc/reviews/GOV-SOURCE-RECORDS-1-cc373560c-antigravity-r1.md` | `7f9f5ae46` | `714a4d2d0f58002d7d0b14788b91ebdd93e038e2b5ce008ee3246dfc6c158432` | `CANONICAL` |
 
 ## Resource Manifest
 
@@ -146,5 +147,31 @@ pwsh -NoProfile -File tools/governance/check.ps1
 
 ## Closeout Record
 
-- 状态：`in_progress`。由 DSH 直接执行（两个文件的行级改动，不建 worktree）。
-- 授权来源：`verification/P09-GOVERNANCE-DEBT-20261019/codex-closeout-evunique-r19.md` §2.5。
+- 关闭：2026-10-20。Owner=dsh，Reviewer=Antigravity。裁定：Codex r20。
+- 终态：**`done`**。AC 5/5 达成；Review 一轮 `APPROVED`。
+- head 三元组：`reviewed_head=cc373560c`（Review 绑定的精确 head）、
+  `delivery_head=cc373560c`（Handoff frontmatter 明载的交付 head）、
+  `integration_source_head=cc373560c`；
+  `integration_commit=071fb2158`（无 merge/cherry-pick；记录 Review 通过并完成
+  AC1–AC5 勾选后的集成后 HEAD，**不是 merge commit**）。
+- **本 Task 的结论**：两个 `done` 的 Task 里 13 个 AC 一条未勾，是**纯表单遗漏**，
+  不是 AC 未达成。依据是**它们自己的 Canonical Evidence 表的 `AC/Gate` 列**，
+  早已标注每份证据支持哪个 AC。补勾 12 项，保留 1 项。
+- **保留未勾的那一项是刻意的**：`EXPORT-REVEAL-1` AC4 的三个子项中 ①② 达成、
+  ③ 为 `BLOCKED`（无头 Windows 拿不到 WebView2 句柄 `0x80070578`）。
+  Review 的裁定比交付方更强：**「勾选框无法表达『部分』，勾上后自动化统计会归为已完成」**。
+- **对象 Task 的检查仍红，不构成本 Task 的 limitation**（r20 §2.1）：
+  那些错误描述的是**它们自己的**历史证据 pin、目录登记与资源清单，在本 Task 开始前
+  就已存在（交付方用基线/改后对比验证，Reviewer 独立复核），且本 Task 明确禁止改它们。
+- **两种情况必须区分**（r20 §2.2）：两条 pin 失配**不是行尾问题，是时间问题**——
+  `M2-C1` 契约已演进至 rev 2.11，`SettingsPage.test.tsx` 由 `528c6289c` 修改过。
+  **保留原 pin + 追加 lineage 说明，不重算覆盖**——否则会把「后来的内容」
+  冒充成「当时的证据」，破坏历史可追溯性。
+- **遗留三项已裁定拆分为三个专项 Task**（r20 §2.2），不在本 Task 范围：
+  ① 历史 pin lineage（含另外 5 个受同机制影响的已 done Task）；
+  ② 来源 evidence_dir 盘点（`EXPORT-REVEAL-1` 与 `P15`）；
+  ③ `P15` Resource Manifest 恢复。
+- 只读保护：本 Task 只改了两个对象 Task 的 AC 勾选框，未改任何其它字段、证据、pin 或 Review
+  （`git diff 32f95fdf9..HEAD -- doc/tasks/EXPORT-REVEAL-1.md doc/tasks/P15.md` 可机械验证：
+  12 行变更全部是 `- [ ]` → `- [x]`，AC 文字一字未动）。
+- 未关闭项：无（遗留三项已拆出）。
