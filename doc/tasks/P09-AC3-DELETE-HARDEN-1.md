@@ -14,7 +14,7 @@ base_commit: a04e4ea78d5b33a0f91efcdc06b396391c4b165e
 branch: null
 worktree: G:/CODEX/New Manga
 integration_commit: null
-delivery_head: e54ab969e9fb7836ab343a67e18025190d6f68ba
+delivery_head: 652d88e6513128023d120c99bfd05a8f8544dc13
 canonical_evidence_status: complete
 resource_closeout_status: complete
 evidence_dir: verification/P09-AC3-DELETE-HARDEN-1
@@ -256,3 +256,38 @@ evidence_dir: verification/P09-AC3-DELETE-HARDEN-1
 **F-002 判为 CLOSED**；AC4 的定性更新为：**GC 侧候选路径有 Python 测试覆盖；生产「轮换 → 退休」有 6 个 Rust 测试覆盖**。
 
 **同时记录**：本 Task 的 `rotate_render_preview` 设计意图（`main.rs:1077-1082` 注释声明）—— 同 key 轮换不得退休活着的 key、失败轮换不得标记任何可回收 —— **已有对应的负面测试**（`same_key_rotation_carries_no_retire_bit`、`failed_rotation_marks_nothing`），即**设计声明与测试覆盖一致**。
+
+### 用户裁决与 R5b 两项修复（2026-10-19）
+
+**用户裁决**：路线 **B** —— 只修 R5b 的两条 P1 删除路径；**7 处读取/导出路径转独立 Task**。
+
+**已完成**：
+
+| 项 | 提交 | 验证 |
+|---|---|---|
+| **R5b P1 #1** `managed_storage.remove_managed` | `f25d41d50` | 竞态探针 `VULNERABLE → SAFE`；静态探针不回归 |
+| **R5b P1 #2** `render_preview.collect_orphans` | `652d88e65` | 竞态探针 `VULNERABLE → SAFE`；**`orphan_files_removed` 由 1 变 0** |
+
+**两处均接线到既有句柄链** `win_unlink.unlink_by_handle`（N-002 时建好并验证，此前只接进 `unlink_preview_without_following` 一个调用点）。
+
+**修复前后的实测对比**：
+
+| | 修复前 | 修复后 |
+|---|---|---|
+| `remove_managed` | `NO_EXCEPTION` + 外部文件被删 | `ImmutablePathViolation` + 存活 |
+| `collect_orphans` | `{'orphan_files_removed': 1}` + 外部文件被删 | `{'orphan_files_removed': 0}` + 存活 |
+
+**`collect_orphans` 的计数语义**：被拒绝的条目不写入 `removed_files` —— 修复前它会返回一份「成功清理 1 个孤儿」的统计，而那个文件在派生根之外。
+
+**关键区分（写入 Task 以防后来者混淆）**：
+
+- **`is_file()` 保留，但只为区分「缺失」与「存在」** —— 既有语义是「缺失静默跳过、越界抛异常」，而句柄链把两者都报成 `False`，无法自行表达该差异
+- **它不是防护** —— **它正是竞态绕过的那次检查**；真正的防护在句柄链，它**不复用 `is_file()` 的结果**，而是重新逐段打开并校验
+
+**转出项**：
+
+- **R5b P2：7 处读取/导出路径**（`core_service.py` ×4、`core_assembly.py` ×3）→ **`P09-MANAGED-READ-ROOT-TRUST-1`**（草案：`verification/P20-CLOSE-BOUND-HARDEN-2/r5b-p2-read-path-draft.md`）
+
+**转出理由**：**读取与删除不是同一类问题** —— 删除可用句柄 disposition**一次完成**；**读取需要句柄保持打开并把数据读出来，窗口更长**，**且需先回答「期望身份从哪来」这个设计问题**（`handle_resolver` 的身份比对比对的是**已被重定向后的名字**，故 R5b 证明它在竞态下仍会接受被绕过的路径）。
+
+**本 Task 不声称覆盖读取路径。**
