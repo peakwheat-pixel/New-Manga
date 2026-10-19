@@ -93,6 +93,15 @@ CASES = [
     ("F9_done_unticked_met",
      "- [ ] **AC1 甲**：文本。 <<MET>>",
      "FAIL", "done"),
+    ("F10_done_with_partial",
+     "- [x] **AC1 甲**：文本。 <<MET>>\n- [ ] **AC2 乙**：文本。 <<PARTIAL: 只做了一半>>",
+     "FAIL", "done"),
+    ("F11_in_review_with_partial",
+     "- [x] **AC1 甲**：文本。 <<MET>>\n- [ ] **AC2 乙**：文本。 <<PARTIAL: 只做了一半>>",
+     "PASS", "in_review"),
+    ("F12_closed_with_limitations_partial",
+     "- [x] **AC1 甲**：文本。 <<MET>>\n- [ ] **AC2 乙**：文本。 <<BLOCKED: 外部环境限制>>",
+     "PASS", "closed_with_limitations"),
 ]
 
 

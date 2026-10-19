@@ -439,6 +439,7 @@ if ($TaskPath -and (Test-Path -LiteralPath $TaskPath -PathType Leaf)) {
                             if (-not $acReason) { Add-Error "AC 标记为 NOT_APPLICABLE 时必须有原因：$acLabel" }
                         }
                         default {
+                            if ($taskStatus -eq 'done') { Add-Error "DONE Task 不得包含未达成状态（$acState）的 AC：$acLabel；范围未达成时请使用 closed_with_limitations。" }
                             if ($isChecked) { Add-Error "AC 标记为 $acState 时不得勾选：$acLabel" }
                             if (-not $acReason) { Add-Error "AC 标记为 $acState 时必须有原因：$acLabel" }
                         }
