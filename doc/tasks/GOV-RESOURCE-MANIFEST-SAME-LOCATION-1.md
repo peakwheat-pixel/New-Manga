@@ -3,7 +3,7 @@ id: GOV-RESOURCE-MANIFEST-SAME-LOCATION-1
 title: Resource Manifest 同源与空目的地语义
 kind: governance/checker
 governance_version: 2
-status: in_review
+status: ready
 approval: codex_release_20261019_after_P19-UI-MANIFEST-VIEW-1_closeout
 suggested_owner: Antigravity
 owner: antigravity

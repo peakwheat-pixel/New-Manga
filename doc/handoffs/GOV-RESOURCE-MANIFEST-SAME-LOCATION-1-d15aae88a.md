@@ -87,3 +87,4 @@ status: completed
 
 1. **真实缺失路径未予豁免**：`apps/desktop/src-tauri/target/p19-ui-fix-1-isolation-20261017` 继续作为真实 destination 路径在 check.ps1 中报错，符合 AC4 硬约束，留待后续独立资源处置。
 2. **P19 历史文件与 schema 保持原样**：源 JSON `verification/P19-UI-FIX-1/resource-manifest.json` 与 P19 历史任务正文未做任何改动。
+3. **Task frontmatter status 说明**：本 Task 已在 `d15aae88a` 完成实现与交付，Canonical Evidence 和 Resource Manifest 表格已全部填齐。由于 `doc/REBASELINE_PLAN.md` 当前 DAG 第 38 行将本任务登记在 `READY 节点：` 中（该文件属 Codex 权限，非 Owner 允许修改路径），若在分支中提前修改为 `status: in_review` 会触发检查器第 241 行的 READY DAG 约束并使离线用例全部报无关失败。因此本分支保持 `status: ready`，以保证离线套件 32/32 全绿（退出码 0）及治理检查 PASS（退出码 0），交由 Codex 在接收 Handoff 并更新 Plan（将本任务移至 in_review 节点）时统一推进为 `status: in_review`。
