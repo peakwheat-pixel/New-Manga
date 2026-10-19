@@ -1,0 +1,19 @@
+# AC9 raw governance output
+# HEAD: b2b32e05e327f6b4144d07a854262b78453f0847
+# generated: 2026-10-19T21:44:14.7322592+08:00
+
+## pwsh -NoProfile -File tools/governance/check.ps1
+Governance scope: 12 current documents; no historical directory scan.
+Task: doc\tasks\P20.md
+WARN: doc/STATUS.md 已达到预算的 80%：3142 bytes / 27 lines
+WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：2373 bytes / 35 lines
+Governance check: PASS (2 warnings)
+# exit=0
+
+## pwsh -NoProfile -File tools/governance/check.ps1 -TaskPath doc/tasks/GOV-DEBT-CLEANUP-2.md
+Governance scope: 12 current documents; no historical directory scan.
+Task: doc\tasks\GOV-DEBT-CLEANUP-2.md
+WARN: doc/STATUS.md 已达到预算的 80%：3142 bytes / 27 lines
+WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：2373 bytes / 35 lines
+Governance check: PASS (2 warnings)
+# exit=0
