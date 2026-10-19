@@ -179,8 +179,8 @@ evidence_dir: verification/P09-AC3-DELETE-HARDEN-1
 - `canonical_evidence_status`：`complete`；上表 11 条 pin 的磁盘 SHA-256 已按**磁盘真实字节**实算（本仓库为 CRLF 检出），commit 均为 40-hex 且经 `git cat-file -e` 验证存在。
 - `resource_closeout_status`：`complete`；仅复用仓库工作区，无新建 worktree、无需迁移/归档/删除的派生产物。
 - 删除、迁移、归档数量/字节数：**0 / 0 / 0**。
-- 未关闭项及保留原因：**无未关闭 AC**。AC12 的全量失败数高于 T2 基线 4 项，已逐项定性为环境差异而非回归（3 项基线既有 + 4 项环境反转 + 2 项 `transformers` API 不兼容，本 Task 引入 **0** 项），理由与证据见 `ac12-no-regression.md`；**该定性不改变"引入 0 项回归"的结论**。
-- 当前指针清理：`delivery_head` 固定为 `4824ed5d4872a6dc519ca6e671bfa6485bd47d9a`；STATUS/Plan 的同步与 Task 关闭由 Codex 复审后执行。
+**未关闭 AC：AC4**（判 FAIL，已转交 `P09-PREVIEW-LIFECYCLE-RECLAIM-1`）。其余 AC 已关闭；AC9/AC10/AC12 见各轮复审的 NOT_VERIFIED 记录。**删除路径加固范围内无未完成项。**
+**`delivery_head`（收口固定）**：`1878f0b126e8a0e2603570f9b2009d8b70a259f1`（见 frontmatter；经 `git cat-file -e` 验证可达且含 `win_unlink.py`）。早期记录的 `4824ed5d…` 是 R1 阶段的旧指针，已由收口固定值取代。
 - **硬约束保持**：`P09` 的 **AC3 delete 子条件仍为 `BLOCKED`**，本 Task 未将其翻为 PASS；本 Task 只做加固与指针自洽，不改变原判定。
 
 ### F-001 关闭记录（用户裁决方向 A，2026-10-19）
