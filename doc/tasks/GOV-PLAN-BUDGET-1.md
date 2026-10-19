@@ -13,7 +13,7 @@ base_commit: 960188271d62bf40db4b3646b6fa02ab869bade0
 branch: GOV-PLAN-BUDGET-1
 worktree: G:/CODEX/New Manga/.agents/worktrees/GOV-PLAN-BUDGET-1
 integration_commit: null
-delivery_head: null
+delivery_head: 126f9f31c857a728c5818b01aab91071dc7ed273
 canonical_evidence_status: pending
 resource_closeout_status: pending
 evidence_dir: verification/GOV-PLAN-BUDGET-1
