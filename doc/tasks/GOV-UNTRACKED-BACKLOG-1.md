@@ -13,7 +13,7 @@ base_commit: 6ee8c87b1
 branch: GOV-UNTRACKED-BACKLOG-1
 worktree: null
 integration_commit: null
-delivery_head: 60970cf9da4b2852aeaf5b64f0c9e80883189684
+delivery_head: a2f411a6894c7de351173695519fd1b640cbdbc4
 canonical_evidence_status: pending
 resource_closeout_status: pending
 evidence_dir: verification/GOV-UNTRACKED-BACKLOG-1
@@ -94,7 +94,7 @@ verification/P02/dsh-appcontainer-contract-r3-review-attempt1.status.txt
 - [x] **AC3 引用关系核查**：核实 1591 项中哪些被当前 Plan / STATUS / Task / Review / Canonical Evidence pin 引用。**被引用者一律留在原路径**，不得移动或删除。
 - [x] **AC4 边界化文档**：产出一份可由后来者直接使用的说明，至少覆盖：为什么新建 worktree 会看到 6 个无关错误、如何最小化绕过（镜像哪些文件）、哪些文件永远不要 stage。目标是让下次新建 worktree 不再需要重新推导。
 - [x] **AC5 只读保护**：本 Task **不删除、不移动、不归档、不重命名**任何积压文件；不改 `.gitignore`、`.gitattributes` 或 `tools/governance/`。处置动作（若有）只以建议形式记录，由后续 Task 执行。
-- [ ] **AC6 交付与 Review**：入库分类矩阵与来源 commit/hash；生成 Handoff；由 Antigravity 对固定 delivery head 独立 Review。
+- [x] **AC6 交付与 Review**：入库分类矩阵与来源 commit/hash；生成 Handoff；由 Antigravity 对固定 delivery head 独立 Review。
 
 ## 允许修改范围
 
