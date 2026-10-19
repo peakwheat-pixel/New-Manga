@@ -3,19 +3,19 @@ id: P19-UI-MANIFEST-VIEW-1
 title: P19-UI-FIX-1 Resource Manifest 兼容视图修正
 kind: documentation
 governance_version: 2
-status: ready
+status: closed_with_limitations
 approval: coordinator_release_20261019_after_GOV-RESOURCE-MANIFEST-JSON-1_closeout
 suggested_owner: DeepSeek Harness
 owner: dsh
 reviewer: antigravity
 depends_on: [GOV-RESOURCE-MANIFEST-JSON-1]
 base_commit: cf4529297f4e38fcde0bbc51784ec301ddbdeb35
-branch: dsh/P19-UI-MANIFEST-VIEW-1
-worktree: G:/CODEX/New Manga.workspace/worktrees/P19-UI-MANIFEST-VIEW-1
+branch: P19-UI-MANIFEST-VIEW-1
+worktree: G:/CODEX/New Manga/.agents/worktrees/P19-UI-MANIFEST-VIEW-1
 integration_commit: null
-delivery_head: null
-canonical_evidence_status: pending
-resource_closeout_status: pending
+delivery_head: b36817d65e08a9e1269075bf7c116793e650e928
+canonical_evidence_status: complete
+resource_closeout_status: complete
 evidence_dir: verification/P19-UI-MANIFEST-VIEW-1
 allowed_paths:
   - doc/tasks/P19-UI-FIX-1.md
@@ -32,12 +32,12 @@ allowed_paths:
 
 ## Acceptance Criteria
 
-- [ ] **AC1 唯一正文改动**：只替换 `doc/tasks/P19-UI-FIX-1.md` 中 `## Resource Manifest` 节的正文引用；不改 frontmatter 或其他章节。新正文准确采用本 Task「精确替换文本」所列内容，保留工作区资源保留、删除计数及 6 个日志仅在证据目录内改名的原说明。
-- [ ] **AC2 检查器识别仓库相对路径**：运行 `pwsh -NoProfile -File tools/governance/check.ps1 -TaskPath doc/tasks/P19-UI-FIX-1.md`。证据须显示 `Resource Manifest 引用必须位于 verification/**` 已消失，且被解析目标为 `verification/P19-UI-FIX-1/resource-manifest.json`。本次预期该命令仍因 AC3 列出的三个已知历史问题以非零码失败；不得记作 PASS。
+- [x] **AC1 唯一正文改动**：只替换 `doc/tasks/P19-UI-FIX-1.md` 中 `## Resource Manifest` 节的正文引用；不改 frontmatter 或其他章节。新正文准确采用本 Task「精确替换文本」所列内容，保留工作区资源保留、删除计数及 6 个日志仅在证据目录内改名的原说明。
+- [x] **AC2 检查器识别仓库相对路径**：运行 `pwsh -NoProfile -File tools/governance/check.ps1 -TaskPath doc/tasks/P19-UI-FIX-1.md`。证据须显示 `Resource Manifest 引用必须位于 verification/**` 已消失，且被解析目标为 `verification/P19-UI-FIX-1/resource-manifest.json`。本次预期该命令仍因 AC3 列出的三个已知历史问题以非零码失败；不得记作 PASS。
 - [ ] **AC3 错误集合限定且如实报告**：保存命令完整 stdout/stderr 与 exit code。结果恰为两项已知 `Evidence SHA-256 不匹配`（`frontend-npm-test-final.log`、`frontend-npm-build-final.log`）及一项已知 `DONE evidence_dir 含未登记文件`（原有 8 个 `04-settings-*/app-err-*` 文件）；没有新的错误。记录基线 4 项到变更后 3 项的对照，结论为 P19 检查仍 FAIL。
-- [ ] **AC4 源 JSON 和历史证据不变**：记录 `verification/P19-UI-FIX-1/resource-manifest.json` 变更前后 SHA-256 相同；确认两个触发 SHA 错误的日志、8 个未登记文件、P19 的 Canonical Evidence/pins 均未被本 Task 改写或重钉。
-- [ ] **AC5 改动面与资源安全**：记录交付 diff 仅含 P19 Task 的 `## Resource Manifest` 正文和本 Task 明确允许的 Handoff/Review/evidence 产物；不改源 JSON，不改历史证据文件，不重钉 pin，不删、不移或归档资源。任何意外文件变化均停止并交 Codex 裁定。
-- [ ] **AC6 交付与复核**：在 `verification/P19-UI-MANIFEST-VIEW-1/` 留存变更前后文本/diff、上述可复核检查记录及退出码；提交 Handoff；由非作者 Antigravity 独立 Review 固定的 `delivery_head`，明确审查本 Task 的单节范围与预期残余 FAIL。Review 和 Codex 集成/集成后检查通过后才允许 Codex closeout 为 `done`。
+- [x] **AC4 源 JSON 和历史证据不变**：记录 `verification/P19-UI-FIX-1/resource-manifest.json` 变更前后 SHA-256 相同；确认两个触发 SHA 错误的日志、8 个未登记文件、P19 的 Canonical Evidence/pins 均未被本 Task 改写或重钉。
+- [x] **AC5 改动面与资源安全**：记录交付 diff 仅含 P19 Task 的 `## Resource Manifest` 正文和本 Task 明确允许的 Handoff/Review/evidence 产物；不改源 JSON，不改历史证据文件，不重钉 pin，不删、不移或归档资源。任何意外文件变化均停止并交 Codex 裁定。
+- [x] **AC6 交付与复核**：在 `verification/P19-UI-MANIFEST-VIEW-1/` 留存变更前后文本/diff、上述可复核检查记录及退出码；提交 Handoff；由非作者 Antigravity 独立 Review 固定的 `delivery_head`，明确审查本 Task 的单节范围与预期残余 FAIL。Review 和 Codex 集成/集成后检查通过后才允许 Codex closeout 为 `done`。
 
 ## 精确替换文本
 
@@ -87,23 +87,49 @@ allowed_paths:
 
 进入 `in_review` 前，为 AC1–AC5 各登记可复核证据及含文件的 commit/SHA-256；AC6 以 Handoff、独立 Review 与固定 commit 证明。
 
-| evidence_id | AC/Gate | path | commit | sha256 | class (`CANONICAL` / `SOURCE_PIN`) |
+| evidence_id | AC/Gate | path（仓库相对路径或绝对路径） | commit | sha256 | class (`CANONICAL` / `SOURCE_PIN`) |
 |---|---|---|---|---|---|
-| P19VIEW-DIFF | AC1/AC5 | `verification/P19-UI-MANIFEST-VIEW-1/scope-diff.md` | 待交付 | 待计算 | CANONICAL |
-| P19VIEW-CHECK | AC2/AC3 | `verification/P19-UI-MANIFEST-VIEW-1/p19-task-check-after.log` | 待交付 | 待计算 | CANONICAL |
-| P19VIEW-SOURCE | AC4 | `verification/P19-UI-MANIFEST-VIEW-1/source-preservation.md` | 待交付 | 待计算 | CANONICAL |
-| P19VIEW-HANDOFF | AC6 | 实际 Handoff 路径 | 待交付 | 待计算 | CANONICAL |
-| P19VIEW-REVIEW | AC6 | 实际 Review 路径 | Review commit | 待计算 | CANONICAL |
+| P19VIEW-AC1-ORIG | AC1 | `verification/P19-UI-MANIFEST-VIEW-1/ac1-original-section.md` | `ed5a584b6` | `185271200fd722c0a079bed6bf0375d01535c8135356dd8ff7463403d382e8ac` | `CANONICAL` |
+| P19VIEW-AC1-AC2 | AC1、AC2 | `verification/P19-UI-MANIFEST-VIEW-1/ac1-ac2-reference-fix-and-exposed-debt.md` | `ed5a584b6` | `d82721cf9faa06434f4323fde3b73c2e7ffb3074244b20ae725fb1a237cede3c` | `CANONICAL` |
+| P19VIEW-AC2-OUT | AC2、AC3 | `verification/P19-UI-MANIFEST-VIEW-1/ac2-governance-output.txt` | `ed5a584b6` | `174481da47a754f30d5e066f8e2daf52b937c32f2575c62d8350ac225d4697da` | `CANONICAL` |
+| P19VIEW-AC3-LOG | AC3 | `verification/P19-UI-MANIFEST-VIEW-1/p19-task-check-after.log` | `ed5a584b6` | `d79c0e7ea3862755129651f9bb7224e5b97f84ab0e2c95f11ff4f61acb2b99a6` | `CANONICAL` |
+| P19VIEW-AC4 | AC4 | `verification/P19-UI-MANIFEST-VIEW-1/source-preservation.md` | `ed5a584b6` | `f8b92df7264b80b6b823b95b33ce02c2ce78d45ae47e6376b125b8015b6642af` | `CANONICAL` |
+| P19VIEW-AC5 | AC5 | `verification/P19-UI-MANIFEST-VIEW-1/scope-diff.md` | `ed5a584b6` | `60ca3716ca882b5e6f71ee126edf9663281b1deee3bdbe84dc363936ff5462e8` | `CANONICAL` |
+| P19VIEW-P19JSON | AC4 / 只读对象 | `verification/P19-UI-FIX-1/resource-manifest.json` | `cf4529297` | `b0772d93ab8ed9182497a43e0761f0d4ccc5560768f806ba86eb8048905c4dc2` | `SOURCE_PIN` |
+| P19VIEW-CLOSEOUT | Codex closeout | `verification/P19-UI-MANIFEST-VIEW-1/codex-closeout-evidence.md` | `e6c636828` | `5c2bc3b830adc27cbe852401f91057d856f472dad25c89f23a1ac3946337eaa6` | `CANONICAL` |
 
 ## Resource Manifest
 
 本 Task 的 worktree、日志和派生产物在 closeout 时逐项记录引用/进程检查；不确定项保留，不因本 Task 而删除或移动任何 P19 历史资源。按协作协议 §4.2 在 closeout 前完成准确清点，不将“未删除”描述成“资源不存在”。
 
+
+| resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
+|---|---|---|---|---|---|
+| P19 task file | `doc/tasks/P19-UI-FIX-1.md` | `PRESERVE_REFERENCED` | `doc/tasks/P19-UI-FIX-1.md` | `cf735cc5e2073ff4f11eda100ab6ec922a73c01a6c133003c4ce80bce11d3525` | 唯一被修改的正文文件；只改 Resource Manifest 节一句 |
+| P19 source manifest | `verification/P19-UI-FIX-1/resource-manifest.json` | `PRESERVE_REFERENCED` | `verification/P19-UI-FIX-1/resource-manifest.json` | `b0772d93ab8ed9182497a43e0761f0d4ccc5560768f806ba86eb8048905c4dc2` | 只读对象；sha256 改前改后一致 |
+| evidence dir | `verification/P19-UI-MANIFEST-VIEW-1/` | `PRESERVE_REFERENCED` | `verification/P19-UI-MANIFEST-VIEW-1/` | `60ca3716ca882b5e6f71ee126edf9663281b1deee3bdbe84dc363936ff5462e8` | 6 份证据，均为本 Task 的 AC 直接产物 |
+| task worktree | `G:/CODEX/New Manga/.agents/worktrees/P19-UI-MANIFEST-VIEW-1` | `PRESERVE_UNKNOWN` | `G:/CODEX/New Manga/.agents/worktrees/P19-UI-MANIFEST-VIEW-1` | `fd5383ab7e6491d1e7501dca7e80222512161d5928fcd4914f718825fd925958` | 保留未删；含 33 个为复现检查环境镜像的未入库文件 |
+| agent output | 仓外 agent-output，非本 Task 产物 | `NOT_APPLICABLE` | — | — | 本 Task 未产生需归档的仓外派生产物 |
+
 ## Closeout Record
 
-- Closeout date / Codex：待关闭时填写。
-- `canonical_evidence_status`: `pending`。
-- `resource_closeout_status`: `pending`。
-- 删除、迁移、归档数量/字节数：待核实；按本 Task 禁止范围均应为 0。
-- 未关闭项及保留原因：P19 源 Task 检查仍预期有三项历史 FAIL；不属于本 Task AC。
-- 当前指针清理：由 Codex 在终态时更新 Plan / STATUS / Task 导航并运行 Task 检查。
+- 关闭：2026-10-19。Owner=dsh，Reviewer=Antigravity。
+- 终态：**`closed_with_limitations`**。Codex r11 裁定本 Task 不得记 `done`（AC3 未达成），
+  Antigravity 复核确认该状态选择正确（`done` 要求逐项 AC 证据，AC3 明确失败）。
+- Review：`doc/reviews/P19-UI-MANIFEST-VIEW-1-b36817d65-antigravity-r1.md`，**Approved with limitations**。
+- AC 对照：AC1 / AC2 / AC4 / AC5 / AC6 达成并勾选；**AC3 未达成，保持未勾选**。
+- 核心事实：改动使 `P19-UI-FIX-1` 的治理错误由 **4 增至 10**。
+  消失的 1 条是 `Resource Manifest 引用必须位于 verification/**`（本 Task 的目标）；
+  新增的 6 条是引用可解析后才可达的既有 destination 债务。
+- 十项错误账目见 `verification/P19-UI-MANIFEST-VIEW-1/ac2-governance-output.txt`，
+  逐项编号，含 4→10 对照。
+- 十项中：
+  - 2 条为 `P19-UI-FIX-1` 两个日志的 SHA 不匹配（既有历史债务）；
+  - 1 条为 worktree 镜像导致的 `verification/P19/import-no-response-r4.md` SHA 差异（环境性，非本 Task 造成）；
+  - 1 条为 8 个未登记证据文件（既有历史债务）；
+  - 5 条为 `Same ...` 同源位置标记，检查器缺少该语义（归后继 Task `GOV-RESOURCE-MANIFEST-SAME-LOCATION-1`）；
+  - 1 条为 `p19-ui-fix-1-isolation-20261017` 真实不存在（需单独核实）。
+- 未回退引用修改（r11 裁定：回退等于用书写错误掩盖深层债务）。
+- 源 JSON 未被修改：sha256 `b0772d93ab8ed9182497a43e0761f0d4ccc5560768f806ba86eb8048905c4dc2` 前后一致。
+- 删除 / 迁移 / 归档：**0 项**。
+- 后继：`GOV-RESOURCE-MANIFEST-SAME-LOCATION-1` 由 Codex 在本 Task closeout 后创建并释放。

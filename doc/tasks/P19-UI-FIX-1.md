@@ -85,7 +85,7 @@ evidence_dir: verification/P19-UI-FIX-1
 
 ## Resource Manifest
 
-见 [`resource-manifest.json`](../../verification/P19-UI-FIX-1/resource-manifest.json)。worktree、构建产物、隔离数据和源数据均保留；删除 0 项。6 个旧成功运行日志仅在证据目录内改名以防覆盖；`build_sidecar.ps1 -Force` 清理的外部 PyInstaller 缓存已在资源清单与 Handoff 风险中明确登记。
+外部清单：`verification/P19-UI-FIX-1/resource-manifest.json`。worktree、构建产物、隔离数据和源数据均保留；删除 0 项。6 个旧成功运行日志仅在证据目录内改名以防覆盖；`build_sidecar.ps1 -Force` 清理的外部 PyInstaller 缓存已在资源清单与 Handoff 风险中明确登记。
 
 ## Closeout Record
 
