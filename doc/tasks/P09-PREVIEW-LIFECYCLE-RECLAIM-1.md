@@ -138,15 +138,15 @@ HEAD 相对 PREVIEW 分支超越 22 个提交（**截至该测量时点**；**�
 
 **⚠️ §4.2 规定逐项处置「在 approved 集成窗口由 Codex 给出」。** 下表为 **Owner 侧的实测清册与建议处置**；**最终处置由 Codex 逐项确认**。
 
-| # | 类别 | 实测 | 建议处置 | 源 | hash/manifest | 引用检查 | 结果 |
+| # | 类别 | 实测 | 建议处置 | 源 | **目标** | hash/manifest | 引用检查 | 结果 |
 |---|---|---|---|---|---|---|---|
-| 1 | **worktree** | **本 Task 未新建** —— 全程使用仓库主工作区 `G:\CODEX\New Manga`（仓库当前共 208 个 worktree，均非本 Task 所建） | `NOT_APPLICABLE` | — | — | `git worktree list` 中无本 Task 专属项 | **无待核销** |
-| 2 | **task-env** | **不存在** —— `New Manga.workspace\task-envs\P09-PREVIEW-LIFECYCLE-RECLAIM-1` 实测为 False | `NOT_APPLICABLE` | — | — | 路径不存在 | **无待核销** |
-| 3 | **dataset / model / test-material** | **未引入** —— 探针用自造的小图 fixture（`write_temp`），**无外部数据集或模型权重** | `NOT_APPLICABLE` | — | — | 交付 diff 无数据或权重文件 | **无待核销** |
-| 4 | **artifact** | **无构建产物** —— 无打包、无 sidecar、无前端 dist | `NOT_APPLICABLE` | — | — | 交付 diff 仅源/测试/证据文件 | **无待核销** |
-| 5 | **temp** | **探针的固定工作目录**（每次运行先 `rmtree` 再重建）：`ac4-assert`、`ac4-retry`、`ac4-batch`、`ac2-referenced` | `PRESERVE_UNKNOWN` | `New Manga.workspace\agent-output\coordinator\<同名>` | 目录内容由探针每次重建，**无稳定 hash** | 四个探针仍存在且会复用这些路径；R16–R26 复审亦在仓外 scratch 运行 | **保留**；**非仓库内容，不阻止关闭** |
-| 6 | **agent-output** | 实测 18 个与本 Task / 前序 P09 相关的目录：`ac2-keys`、`ac2-referenced`、`ac4-assert`、`ac4-batch`、`ac4-count`、`ac4-diag`、`ac4-retry`、`n002-race-oldhook`、`n002-race2`、`n004-prod`、`n004-tmp`、`P09-AC3-R6-…`、`P09-PREVIEW-LIFECYCLE-RECLAIM-1-R3-scratch`、`P09-PREVIEW-LIFECYCLE-RECLAIM-1-r7-22b0860`、`P09-R8-empty-survivors`、`P09-R8-injection`、`P09-R8-probes`、`r4-n002-outside`、`r4-n002-root` | `PRESERVE_UNKNOWN` | 同上目录 | 逐目录未做 manifest（**部分属前序 Task**） | 位于治理规则指定的仓外 agent output 位置 | **保留并记录**；**未逐项核销 = 本表的已知缺口** |
-| 7 | **exchange** | **不存在** —— 无 `*-exchange` 目录 | `NOT_APPLICABLE` | — | — | 路径不存在 | **无待核销** |
+| 1 | **worktree** | **本 Task 未新建** —— 全程使用仓库主工作区 `G:\CODEX\New Manga`（仓库当前共 208 个 worktree，均非本 Task 所建） | `NOT_APPLICABLE` | — | **无**（不迁移） | — | `git worktree list` 中无本 Task 专属项 | **无待核销** |
+| 2 | **task-env** | **不存在** —— `New Manga.workspace\task-envs\P09-PREVIEW-LIFECYCLE-RECLAIM-1` 实测为 False | `NOT_APPLICABLE` | — | **无**（不迁移） | — | 路径不存在 | **无待核销** |
+| 3 | **dataset / model / test-material** | **未引入** —— 探针用自造的小图 fixture（`write_temp`），**无外部数据集或模型权重** | `NOT_APPLICABLE` | — | **无**（不迁移） | — | 交付 diff 无数据或权重文件 | **无待核销** |
+| 4 | **artifact** | **无构建产物** —— 无打包、无 sidecar、无前端 dist | `NOT_APPLICABLE` | — | **无**（不迁移） | — | 交付 diff 仅源/测试/证据文件 | **无待核销** |
+| 5 | **temp** | **探针的固定工作目录**（每次运行先 `rmtree` 再重建）：`ac4-assert`、`ac4-retry`、`ac4-batch`、`ac2-referenced` | `PRESERVE_UNKNOWN` | `New Manga.workspace\agent-output\coordinator\<同名>` | **保持原位**（探针仍复用该路径） | 目录内容由探针每次重建，**无稳定 hash** | 四个探针仍存在且会复用这些路径；R16–R26 复审亦在仓外 scratch 运行 | **保留**；**非仓库内容，不阻止关闭** |
+| 6 | **agent-output** | 实测 18 个与本 Task / 前序 P09 相关的目录：`ac2-keys`、`ac2-referenced`、`ac4-assert`、`ac4-batch`、`ac4-count`、`ac4-diag`、`ac4-retry`、`n002-race-oldhook`、`n002-race2`、`n004-prod`、`n004-tmp`、`P09-AC3-R6-…`、`P09-PREVIEW-LIFECYCLE-RECLAIM-1-R3-scratch`、`P09-PREVIEW-LIFECYCLE-RECLAIM-1-r7-22b0860`、`P09-R8-empty-survivors`、`P09-R8-injection`、`P09-R8-probes`、`r4-n002-outside`、`r4-n002-root` | `PRESERVE_UNKNOWN` | 同上目录 | **保持原位** | 逐目录未做 manifest（**部分属前序 Task**） | 位于治理规则指定的仓外 agent output 位置 | **保留并记录**；**未逐项核销 = 本表的已知缺口** |
+| 7 | **exchange** | **不存在** —— 无 `*-exchange` 目录 | `NOT_APPLICABLE` | — | **无**（不迁移） | — | 路径不存在 | **无待核销** |
 
 ### 另有两项不属于 §4.2 七类，但本 Task 确实产生
 

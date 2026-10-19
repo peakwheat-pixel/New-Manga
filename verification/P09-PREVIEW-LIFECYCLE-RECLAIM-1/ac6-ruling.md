@@ -44,4 +44,4 @@
 
 ## 本文件的性质
 
-**本文件是 Owner 对 Codex 裁决的存档**，**目的是使裁定不止留在 workspace 的会话输出里**。**它不是裁决原文**（**原文见上列路径**），**也不改变任何状态** —— **Task 的 `status` 仍为 `in_review`，直到 Codex 落盘其那一半。**
+**本文件是 Owner 对 Codex 裁决的存档**，**目的是使裁定不止留在 workspace 的会话输出里**。**它不是裁决原文**（**原文见上列路径**），**也不改变任何状态** —— **（写作时点：）Task 的 `status` 当时为 `in_review`，待 Codex 落盘其那一半。** **✅ 后续事实（R27 Finding 2 后补）：该落盘已完成 —— Task 现为 `closed_with_limitations`、`integration_commit: null`；本节前述「不改变任何状态」仅适用于本文写作时点。**
