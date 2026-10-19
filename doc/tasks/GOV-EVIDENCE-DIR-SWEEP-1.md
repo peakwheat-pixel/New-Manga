@@ -3,7 +3,7 @@ id: GOV-EVIDENCE-DIR-SWEEP-1
 title: 两个来源 Task 的 evidence 目录盘点
 kind: governance
 governance_version: 3
-status: in_progress
+status: in_review
 approval: codex_r20_followup_not_yet_released
 suggested_owner: codex
 owner: codex
@@ -13,7 +13,7 @@ base_commit: 3539d8d75
 branch: null
 worktree: null
 integration_commit: null
-delivery_head: null
+delivery_head: 24fcfae13f9871e28885f9240f067476d72d9005
 canonical_evidence_status: pending
 resource_closeout_status: pending
 evidence_dir: verification/GOV-EVIDENCE-DIR-SWEEP-1
@@ -47,7 +47,7 @@ Codex r20 §2.2 裁定：
 - [x] **AC4 执行移动（仅 ARCHIVE 项）**：把 `ARCHIVE` 项移入 <<NOT_APPLICABLE: 逐文件判定结果为 0 个 ARCHIVE，无文件需移动>>
   `G:\CODEX\New Manga.workspacerchive\<task>\`，记录原路径、hash 与移动时间。
   **移动前必须 `git status` 确认该文件未入库且有备份。**
-- [ ] **AC5 交付与 Review**：生成 Handoff；由 Antigravity 对固定 delivery head 独立 Review。
+- [ ] **AC5 交付与 Review**：生成 Handoff；由 Antigravity 对固定 delivery head 独立 Review。 <<PARTIAL: Handoff 已交付，独立 Review 待进行>>
   Review 必须核对：**没有把有引用的文件移走**，且每个 `ARCHIVE` 判定都有内容依据。
 
 ## 允许修改范围
@@ -76,10 +76,27 @@ pwsh -NoProfile -File tools/governance/check.ps1 -TaskPath doc/tasks/EXPORT-REVE
 
 交付时登记目录清单、逐文件判定表、引用核查、移动记录、Handoff、Review。
 
+| evidence_id | AC/Gate | path（仓库相对路径或绝对路径） | commit | sha256 | class (`CANONICAL` / `SOURCE_PIN`) |
+|---|---|---|---|---|---|
+| SWEEP-INVENTORY | AC1、AC2 | `verification/GOV-EVIDENCE-DIR-SWEEP-1/ac1-ac2-inventory.json` | `24fcfae13` | `cfe8bbf21c1d85443d3347cc12692ea797ab394980c8aa01642b78e7294650eb` | `CANONICAL` |
+| SWEEP-TRIAGE | AC1–AC4 | `verification/GOV-EVIDENCE-DIR-SWEEP-1/ac1-ac4-inventory-and-triage.md` | `24fcfae13` | `95e576c85067c0a8c690071af8e0a23435b989e974e162eb5f8ddb3e3a518579` | `CANONICAL` |
+| SWEEP-HANDOFF | AC5 | `doc/handoffs/GOV-EVIDENCE-DIR-SWEEP-1-24fcfae13.md` | `24fcfae13` | `c93a406c4f3979aa9630500129dee9d07411e40ee6185e5b9bf0482074bdcb25` | `CANONICAL` |
+
 ## Resource Manifest
 
 本 Task **会移动文件**，Resource Manifest 必须逐项登记每个被移动文件的
 原路径、目标路径、hash 与引用核查结论。
+
+| resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
+|---|---|---|---|---|---|
+| worktree | — | `NOT_APPLICABLE` | — | `doc/tasks/GOV-EVIDENCE-DIR-SWEEP-1.md` | 本 Task 未移动任何文件 |
+| task-env | — | `NOT_APPLICABLE` | — | `doc/tasks/GOV-EVIDENCE-DIR-SWEEP-1.md` | 本 Task 未移动任何文件 |
+| dataset | — | `NOT_APPLICABLE` | — | `doc/tasks/GOV-EVIDENCE-DIR-SWEEP-1.md` | 本 Task 未移动任何文件 |
+| artifact | — | `NOT_APPLICABLE` | — | `doc/tasks/GOV-EVIDENCE-DIR-SWEEP-1.md` | 本 Task 未移动任何文件 |
+| temp | — | `NOT_APPLICABLE` | — | `doc/tasks/GOV-EVIDENCE-DIR-SWEEP-1.md` | 本 Task 未移动任何文件 |
+| agent-output | — | `NOT_APPLICABLE` | — | `doc/tasks/GOV-EVIDENCE-DIR-SWEEP-1.md` | 本 Task 未移动任何文件 |
+| exchange | — | `NOT_APPLICABLE` | — | `doc/tasks/GOV-EVIDENCE-DIR-SWEEP-1.md` | 本 Task 未移动任何文件 |
+| evidence_dir | `verification/GOV-EVIDENCE-DIR-SWEEP-1/` | `PRESERVE_REFERENCED` | `verification/GOV-EVIDENCE-DIR-SWEEP-1/` | `95e576c85067c0a8c690071af8e0a23435b989e974e162eb5f8ddb3e3a518579` | 2 份证据 |
 
 ## Closeout Record
 
