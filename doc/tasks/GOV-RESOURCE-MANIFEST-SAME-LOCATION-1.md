@@ -3,7 +3,7 @@ id: GOV-RESOURCE-MANIFEST-SAME-LOCATION-1
 title: Resource Manifest 同源与空目的地语义
 kind: governance/checker
 governance_version: 2
-status: ready
+status: done
 approval: codex_release_20261019_after_P19-UI-MANIFEST-VIEW-1_closeout
 suggested_owner: Antigravity
 owner: antigravity
@@ -12,10 +12,10 @@ depends_on: [GOV-RESOURCE-MANIFEST-JSON-1]
 base_commit: 296a9389d
 branch: GOV-RESOURCE-MANIFEST-SAME-LOCATION-1
 worktree: G:/CODEX/New Manga/.agents/worktrees/GOV-RESOURCE-MANIFEST-SAME-LOCATION-1
-integration_commit: null
+integration_commit: 4b545eadac9ca837a686d5bc9ca92feb3fafa689
 delivery_head: d15aae88a
-canonical_evidence_status: pending
-resource_closeout_status: pending
+canonical_evidence_status: complete
+resource_closeout_status: complete
 evidence_dir: verification/GOV-RESOURCE-MANIFEST-SAME-LOCATION-1
 allowed_paths:
   - tools/governance/check.ps1
@@ -98,14 +98,16 @@ allowed_paths:
 
 进入 `in_review` 前为 AC1–AC7 各登记当前判别力证据及含文件的 commit/SHA-256。
 
-| evidence_id | AC/Gate | path | commit | sha256 | class (`CANONICAL` / `SOURCE_PIN`) |
+| evidence_id | AC/Gate | path（仓库相对路径或绝对路径） | commit | sha256 | class (`CANONICAL` / `SOURCE_PIN`) |
 |---|---|---|---|---|---|
-| E1 | AC1/AC2 | `tools/governance/check.ps1` | `d15aae88a` | `296266d9e5dec5135e55bbf9bcc9b1d3345ffbf42aa9f5d5485693315bb34e49` | `CANONICAL` |
-| E2 | AC5 | `tools/governance/tests/run-resource-manifest-cases.py` | `d15aae88a` | `75760a2200e36478b74f1a04ccc57a0000838761556fafc128897974ec82000f` | `CANONICAL` |
-| E3 | AC5 | `tools/governance/tests/fixtures/resource-manifest/cases.json` | `d15aae88a` | `f229327ac97fed4bde3a6e4c70011f9c77d0e3abf4c411e1131ae4d975db5a9e` | `CANONICAL` |
-| E4 | AC1–AC4 | `verification/GOV-RESOURCE-MANIFEST-SAME-LOCATION-1/resource-manifest-cases.txt` | `d15aae88a` | `8a464d86a27e56889c5f490070ba97912c87495b6e3a17910aee8e55fdd03aaf` | `CANONICAL` |
-| E5 | AC5 | `verification/GOV-RESOURCE-MANIFEST-SAME-LOCATION-1/regression.txt` | `d15aae88a` | `e6bc294f0c21d36cbb010d51b94248c7cf432486aeab93ec6844de9e6734f01d` | `CANONICAL` |
-| E6 | AC6 | `verification/GOV-RESOURCE-MANIFEST-SAME-LOCATION-1/task-check.txt` | `d15aae88a` | `f3b944446667267712fac9fe8b94942c17dbdd46a414d3ed0ac869183cb85c19` | `CANONICAL` |
+| E1 | AC1 | `verification/GOV-RESOURCE-MANIFEST-SAME-LOCATION-1/resource-manifest-cases.txt` | `d15aae88a` | `a3bf8922a74ba541d87e7407932ce3ff55e83bd25787abfa482f0b1ae2975ad8` | `CANONICAL` |
+| E2 | AC5、AC6 | `verification/GOV-RESOURCE-MANIFEST-SAME-LOCATION-1/regression.txt` | `d15aae88a` | `400f9d58e54d1cc47e40016c69e98dc9130df286abb4089eb0d156e913a2e00d` | `CANONICAL` |
+| E3 | AC6 | `verification/GOV-RESOURCE-MANIFEST-SAME-LOCATION-1/task-check.txt` | `d15aae88a` | `5e656fc9bd168a32497e0a40ed87f47264b9bcbec5e41e7f53a7f1817eb89093` | `CANONICAL` |
+| E4 | AC2、AC3、AC4 | `tools/governance/check.ps1` | `d15aae88a` | `296266d9e5dec5135e55bbf9bcc9b1d3345ffbf42aa9f5d5485693315bb34e49` | `CANONICAL` |
+| E5 | AC5 | `tools/governance/tests/run-resource-manifest-cases.py` | `d15aae88a` | `75760a2200e36478b74f1a04ccc57a0000838761556fafc128897974ec82000f` | `CANONICAL` |
+| E6 | AC5 | `tools/governance/tests/fixtures/resource-manifest/cases.json` | `d15aae88a` | `f229327ac97fed4bde3a6e4c70011f9c77d0e3abf4c411e1131ae4d975db5a9e` | `CANONICAL` |
+| E7 | 全 AC / 交付说明 | `doc/handoffs/GOV-RESOURCE-MANIFEST-SAME-LOCATION-1-d15aae88a.md` | `322568025` | `a3bb3f2da6d062fcae0c01a400e683e6603fc49d9146e5dfa7058740b6915dc4` | `CANONICAL` |
+| E8 | Review Gate | `doc/reviews/GOV-RESOURCE-MANIFEST-SAME-LOCATION-1-60242f28d-dsh-r1.md` | `0a2c45d5e` | `907c27e51ae41e85747ea63c7ae82482975b23ddd5526a14413e7a3e383e3281` | `CANONICAL` |
 
 ## Resource Manifest
 
@@ -113,15 +115,23 @@ Task worktree 与派生产物在 closeout 逐项核实；未知或 dirty 项保�
 
 | resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
 |---|---|---|---|---|---|
-| task worktree | `G:/CODEX/New Manga/.agents/worktrees/GOV-RESOURCE-MANIFEST-SAME-LOCATION-1` | `PRESERVE_UNKNOWN` | `Same source location` | HEAD d15aae88a, branch GOV-RESOURCE-MANIFEST-SAME-LOCATION-1 | 未完成盘点前保留 |
-| task env / agent output / exchange | `G:/CODEX/New Manga.workspace/` 对应 Task 子目录 | `NOT_APPLICABLE` | — | closeout 时复核 | 不假定存在；无独立 workspace 子目录 |
-| test fixtures / evidence | 本 Task `tools/governance/tests/` 与 `verification/GOV-RESOURCE-MANIFEST-SAME-LOCATION-1/` | `PRESERVE_REFERENCED` | `Same source location` | `d15aae88a` | 被回归套件/证据索引引用，保留 |
+| governance checker | `tools/governance/check.ps1` | `PRESERVE_REFERENCED` | `tools/governance/check.ps1` | `296266d9e5dec5135e55bbf9bcc9b1d3345ffbf42aa9f5d5485693315bb34e49` | 本 Task 主改动对象；新增同源语义 |
+| offline tests | `tools/governance/tests/` | `PRESERVE_REFERENCED` | `tools/governance/tests/` | `75760a2200e36478b74f1a04ccc57a0000838761556fafc128897974ec82000f` | 19 → 32 用例；既有 19 个预期未变 |
+| evidence dir | `verification/GOV-RESOURCE-MANIFEST-SAME-LOCATION-1/` | `PRESERVE_REFERENCED` | `verification/GOV-RESOURCE-MANIFEST-SAME-LOCATION-1/` | `400f9d58e54d1cc47e40016c69e98dc9130df286abb4089eb0d156e913a2e00d` | 3 份证据，均为本 Task AC 直接产物 |
+| P19 source manifest | `verification/P19-UI-FIX-1/resource-manifest.json` | `PRESERVE_REFERENCED` | `verification/P19-UI-FIX-1/resource-manifest.json` | `b0772d93ab8ed9182497a43e0761f0d4ccc5560768f806ba86eb8048905c4dc2` | **只读对象，未被本 Task 修改** |
+| P19 isolation dir | `apps/desktop/src-tauri/target/p19-ui-fix-1-isolation-20261017` | `NOT_APPLICABLE` | `apps/desktop/src-tauri/target/p19-ui-fix-1-isolation-20261017` | `verification/GOV-RESOURCE-MANIFEST-SAME-LOCATION-1/task-check.txt` | 该路径当前不存在，无资源可处置。P19 checker 仍报『Resource 最终路径未验证』，按 r13 保持失败；去向由独立只读核实 Task 调查（见 `P19-UI-MANIFEST-VIEW-1/codex-closeout-evidence.md` 十项账第 10 项）|
+| task worktree | `G:/CODEX/New Manga/.agents/worktrees/GOV-RESOURCE-MANIFEST-SAME-LOCATION-1` | `PRESERVE_UNKNOWN` | `G:/CODEX/New Manga/.agents/worktrees/GOV-RESOURCE-MANIFEST-SAME-LOCATION-1` | `doc/tasks/GOV-RESOURCE-MANIFEST-SAME-LOCATION-1.md` | 保留未删；含为复现检查环境镜像的未入库文件（不 stage、不 merge、不清理）|
 
 ## Closeout Record
 
-- Closeout date / Codex：待关闭时填写。
-- `canonical_evidence_status`: `pending`。
-- `resource_closeout_status`: `pending`。
-- 删除、迁移、归档数量/字节数：待核实；未获授权不操作。
-- 未关闭项及保留原因：待实测后填写。
-- 当前指针清理：Codex 更新 STATUS / Plan 并运行 Task checker。
+- 关闭：2026-10-19。Owner=antigravity，Reviewer=dsh。
+- head 三元组（r13 §2.1）：`reviewed_head=60242f28d`、`delivery_head=d15aae88a`、
+  `integration_source_head=0a2c45d5e`；`integration_commit=4b545eadac9ca837a686d5bc9ca92feb3fafa689`。
+- Review：`doc/reviews/GOV-RESOURCE-MANIFEST-SAME-LOCATION-1-60242f28d-dsh-r1.md`，**APPROVED**。
+- 集成：`git merge --no-ff 0a2c45d5e`，无冲突，9 文件 +836/−23。
+- 集成后验证：离线套件 **32/32 exit 0**；Task 与全局检查均 **PASS (1 warnings)**。
+- **P19 错误 9 → 4**：5 个 `Same ...` 同源错误全部消除，并各自输出可审计 note。
+  剩余 4 项中，2 个日志 SHA 差异 + 1 个未登记文件属 `GOV-DEBT-CLEANUP-2` 的 AC1/AC7，
+  1 个真实缺失 isolation 路径保持失败（AC4 要求）。
+- 删除 / 迁移 / 归档：**0 项**。源 JSON 未修改。
+- 未关闭项：`apps/desktop/src-tauri/target/p19-ui-fix-1-isolation-20261017` 的去向需独立只读核实（r13 §2.5）。

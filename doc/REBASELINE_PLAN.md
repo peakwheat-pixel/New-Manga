@@ -27,7 +27,7 @@
 |GOV-DEBT-CLEANUP-2|—|approved（AC6 的 P19-UI-FIX-1 格式债务；AC7 的 61 项归属未结）|
 |GOV-RESOURCE-MANIFEST-JSON-1|GOV-PLAN-BUDGET-1|done（外部 JSON Manifest 检查器；19/19 用例；集成 3fe78a67c）|
 |P19-UI-MANIFEST-VIEW-1|GOV-RESOURCE-MANIFEST-JSON-1|closed_with_limitations（AC1/AC2/AC4/AC5/AC6 达成；AC3 因 4→10 错误清单失败；按 Codex r11 保留修正）|
-|GOV-RESOURCE-MANIFEST-SAME-LOCATION-1|GOV-RESOURCE-MANIFEST-JSON-1|ready（外部 JSON Manifest 同源/空/`-` 目的地语义；不改 P19 源 JSON）|
+|GOV-RESOURCE-MANIFEST-SAME-LOCATION-1|GOV-RESOURCE-MANIFEST-JSON-1|done（同源/空/\-\ 目的地语义；32/32 用例；集成 4b545eada；P19 错误 9→4）|
 |P20-CLOSE-BOUND-1|P20-ISOLATION-1|closed_with_limitations（R6）|
 |P20-CLOSE-BOUND-HARDEN-1|P20-CLOSE-BOUND-1|closed_with_limitations|
 |P09-AC3-DELETE-HARDEN-1|P09-AC3-DELETE-1|closed_with_limitations（未集成）|
@@ -35,4 +35,4 @@
 |GOV-PLAN-BUDGET-1|—|done|
 |RUST-ENV-BASELINE-1（P20-CLOSE-BOUND-1）/ P07交互补缺（P02）/ P21旧栈归档（P20+另授权）|—|proposed（P07/P21可选）|
 |P22 响应归属|P22-REBASE-1|已集成；P04 不放行，H1/P2-1/13 与 BC-AC5 缺项保留。已完成见各节点行。|
-READY 节点：ARCH-DOC-REBASELINE、P20、GOV-RESOURCE-MANIFEST-SAME-LOCATION-1。in_review：HARDEN-2。done：**34 项**。
+READY 节点：ARCH-DOC-REBASELINE、P20。in_review：HARDEN-2。done：**34 项**。
