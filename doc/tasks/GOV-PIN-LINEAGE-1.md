@@ -129,15 +129,15 @@ python tools/governance/tests/<新增用例>.py
 
 | evidence_id | AC/Gate | path（仓库相对路径或绝对路径） | commit | sha256 | class (`CANONICAL` / `SOURCE_PIN`) |
 |---|---|---|---|---|---|
-| PINL-INVENTORY | AC1 | `verification/GOV-PIN-LINEAGE-1/pin-inventory.json` | `30669c0a8` | `3b4a34142e1961a4de2f2ca54f64b6f532826f1c0ea3d35c47cb7c0316f1d4d3` | `CANONICAL` |
-| PINL-SCOPE | AC1 | `verification/GOV-PIN-LINEAGE-1/pin-inventory-and-scope.md` | `30669c0a8` | `72966fd640860c0f2e4c134c4f812767db15f43612a5f8538b5e3fb62315573a` | `CANONICAL` |
-| PINL-PRECOND | AC1 | `verification/GOV-PIN-LINEAGE-1/release-preconditions.md` | `30669c0a8` | `e862241b8d275ee01bc7b97b9d1507404f297b014da9b59e1c0d1f6f9c08f8e5` | `CANONICAL` |
-| PINL-AVAIL | AC1 | `verification/GOV-PIN-LINEAGE-1/reviewer-availability.md` | `30669c0a8` | `cfb37437cce6ce00c697ba9106e1aa81aa33c7e48896579db904145abfab1208` | `CANONICAL` |
-| PINL-AC1-VERIFY | AC1 | `verification/GOV-PIN-LINEAGE-1/ac1-pin-only-verification.json` | `30669c0a8` | `636c60e9edc47fad1bb3db34b1ea7f182c88c2342d59a70f36b1f11901395679` | `CANONICAL` |
-| PINL-AC1-DIAG | AC1 | `verification/GOV-PIN-LINEAGE-1/ac1-mismatch-diagnosis.json` | `30669c0a8` | `2348819afa11fc1a86b608c3e9ed94dd2601712c467dae0a7a3936e946758b94` | `CANONICAL` |
-| PINL-AC1-FINDING | AC1 | `verification/GOV-PIN-LINEAGE-1/ac1-verification-finding.md` | `30669c0a8` | `c8a6d9004e8693d17aaa1082df13cfd792b8dbd664b43ad211c8c67edc8d7bff` | `CANONICAL` |
-| PINL-40-DIAG | AC1 | `verification/GOV-PIN-LINEAGE-1/ac1-content-differs-diagnosis.json` | `30669c0a8` | `403bfbf4aa4a0046c7e330a810f26cb7311b782eaff02b944e4e1128ed67b9dd` | `CANONICAL` |
-| PINL-40-REPORT | AC1 | `verification/GOV-PIN-LINEAGE-1/ac1-content-differs-report.md` | `30669c0a8` | `3047364a1f7f55d8bcae4da029c3bb4cc002b7d716a5458e21dcf509958a4ba6` | `CANONICAL` |
+| PINL-INVENTORY | AC1 | `verification/GOV-PIN-LINEAGE-1/pin-inventory.json` | `d3c11d859` | `3b4a34142e1961a4de2f2ca54f64b6f532826f1c0ea3d35c47cb7c0316f1d4d3` | `CANONICAL` |
+| PINL-SCOPE | AC1 | `verification/GOV-PIN-LINEAGE-1/pin-inventory-and-scope.md` | `d3c11d859` | `72966fd640860c0f2e4c134c4f812767db15f43612a5f8538b5e3fb62315573a` | `CANONICAL` |
+| PINL-PRECOND | AC1 | `verification/GOV-PIN-LINEAGE-1/release-preconditions.md` | `d3c11d859` | `e862241b8d275ee01bc7b97b9d1507404f297b014da9b59e1c0d1f6f9c08f8e5` | `CANONICAL` |
+| PINL-AVAIL | AC1 | `verification/GOV-PIN-LINEAGE-1/reviewer-availability.md` | `d3c11d859` | `cfb37437cce6ce00c697ba9106e1aa81aa33c7e48896579db904145abfab1208` | `CANONICAL` |
+| PINL-AC1-VERIFY | AC1 | `verification/GOV-PIN-LINEAGE-1/ac1-pin-only-verification.json` | `d3c11d859` | `636c60e9edc47fad1bb3db34b1ea7f182c88c2342d59a70f36b1f11901395679` | `CANONICAL` |
+| PINL-AC1-DIAG | AC1 | `verification/GOV-PIN-LINEAGE-1/ac1-mismatch-diagnosis.json` | `d3c11d859` | `2348819afa11fc1a86b608c3e9ed94dd2601712c467dae0a7a3936e946758b94` | `CANONICAL` |
+| PINL-AC1-FINDING | AC1 | `verification/GOV-PIN-LINEAGE-1/ac1-verification-finding.md` | `d3c11d859` | `c8a6d9004e8693d17aaa1082df13cfd792b8dbd664b43ad211c8c67edc8d7bff` | `CANONICAL` |
+| PINL-40-DIAG | AC1 | `verification/GOV-PIN-LINEAGE-1/ac1-content-differs-diagnosis.json` | `d3c11d859` | `403bfbf4aa4a0046c7e330a810f26cb7311b782eaff02b944e4e1128ed67b9dd` | `CANONICAL` |
+| PINL-40-REPORT | AC1 | `verification/GOV-PIN-LINEAGE-1/ac1-content-differs-report.md` | `d3c11d859` | `3047364a1f7f55d8bcae4da029c3bb4cc002b7d716a5458e21dcf509958a4ba6` | `CANONICAL` |
 
 ## Resource Manifest
 
@@ -149,7 +149,7 @@ python tools/governance/tests/<新增用例>.py
 | temp | — | `NOT_APPLICABLE` | — | `doc/tasks/GOV-PIN-LINEAGE-1.md` | 本 Task 未产生此类资源 |
 | agent-output | — | `NOT_APPLICABLE` | — | `doc/tasks/GOV-PIN-LINEAGE-1.md` | 本 Task 未产生此类资源 |
 | exchange | — | `NOT_APPLICABLE` | — | `doc/tasks/GOV-PIN-LINEAGE-1.md` | 本 Task 未产生此类资源 |
-| worktree | `G:/CODEX/New Manga.workspace/GOV-PIN-LINEAGE-1/worktree` | `PRESERVE_REFERENCED` | `G:/CODEX/New Manga.workspace/GOV-PIN-LINEAGE-1/worktree` | `—` | branch `dsh/GOV-PIN-LINEAGE-1` @ `60d47991b`；按 r28 §1 保留为审计输入，不迁移不删除 |
+| worktree | `G:/CODEX/New Manga.workspace/GOV-PIN-LINEAGE-1/worktree` | `PRESERVE_REFERENCED` | `G:/CODEX/New Manga.workspace/GOV-PIN-LINEAGE-1/worktree` | `verification/GOV-PIN-LINEAGE-1/pin-inventory.json` | branch `dsh/GOV-PIN-LINEAGE-1` @ `60d47991b`；按 r28 §1 保留为审计输入 |
 | evidence_dir | `verification/GOV-PIN-LINEAGE-1/` | `PRESERVE_REFERENCED` | `verification/GOV-PIN-LINEAGE-1/` | `3047364a1f7f55d8bcae4da029c3bb4cc002b7d716a5458e21dcf509958a4ba6` | 9 份证据，全部登记 |
 
 ## 执行顺序（r26 §3.3 强制）
@@ -181,7 +181,7 @@ r26 明确否决了「先改 checker、再看哪些变绿」的顺序。必须�
 | 项 | 值 |
 |---|---|
 | branch | `dsh/GOV-PIN-LINEAGE-1` |
-| worktree | `G:/CODEX/New Manga.workspace/GOV-PIN-LINEAGE-1/worktree` | `PRESERVE_REFERENCED` | `G:/CODEX/New Manga.workspace/GOV-PIN-LINEAGE-1/worktree` | `—` | branch `dsh/GOV-PIN-LINEAGE-1` @ `60d47991b`；按 r28 §1 保留为审计输入，不迁移不删除 |
+| worktree | `G:/CODEX/New Manga.workspace/GOV-PIN-LINEAGE-1/worktree` | `PRESERVE_REFERENCED` | `G:/CODEX/New Manga.workspace/GOV-PIN-LINEAGE-1/worktree` | `NOT_APPLICABLE` | branch `dsh/GOV-PIN-LINEAGE-1` @ `60d47991b`；按 r28 §1 保留为审计输入 |
 | base | `08935b198` |
 | 创建时状态 | HEAD `08935b198`，**clean** |
 
