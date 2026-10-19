@@ -7,6 +7,7 @@ import shutil
 import tempfile
 import uuid
 from pathlib import Path
+from infrastructure.filesystem.win_unlink import unlink_by_handle
 
 from infrastructure.resource_channel.catalog_store import PreviewOrigin, ResourceCatalogStore
 from infrastructure.resource_channel.handle_resolver import handle_verified_delete
@@ -182,7 +183,21 @@ class RenderPreviewPublisher:
                 if not item.is_file():
                     continue
                 if item.stem not in catalogued:
-                    item.unlink(missing_ok=True)
+                    # R5b P1: unlink() resolved the name a third time - after the
+                    # containment check and after the enumeration.  The probe won
+                    # that race and the outside file was deleted while this function
+                    # reported {'orphan_files_removed': 1}.  The chain works relative
+                    # to the configured root and re-verifies each segment, so a
+                    # directory repointed mid-enumeration is refused, not followed.
+                    # Enumeration is one level deep, so the relative path is just
+                    # <dirname>/<name>.
+                    handled = unlink_by_handle(root, [dirname, item.name])
+                    if handled is None:
+                        item.unlink(missing_ok=True)
+                    elif not handled:
+                        # Refused.  Do NOT count it: returning a plausible removed
+                        # count is exactly what the reproduction showed.
+                        continue
                     removed_files += 1
         for resource_id, entry in rows.items():
             candidate = (root / entry.rel_path).resolve()
