@@ -23,5 +23,8 @@ Technical Gate=NOT_SATISFIED；private_registry_absence=UNPROVABLE；Owner Risk 
 
 ## 当前权威指针
 
-- DAG：[REBASELINE_PLAN](REBASELINE_PLAN.md)；READY=ARCH-DOC-REBASELINE、P20；BLOCKED=GOV-DEBT-CLEANUP-1；`proposed`=MANAGED-READ-ROOT-TRUST-1、GOV-EVIDENCE-UNIQUE-1；`in_review`=P20-CLOSE-BOUND-HARDEN-2；已终态：PREVIEW-LIFECYCLE-RECLAIM-1、P09-AC3-DELETE-HARDEN-1、GOV-DEBT-CLEANUP-2。
-- 本轮证据：P09 [R3](../verification/P09-AC3-DELETE-1/codex-review-r3.md) + [T2](../verification/P09-AC3-DELETE-1/t2-fullsuite-triage.md)；P20 [CB-R4](../verification/P20-CLOSE-BOUND-HARDEN-1/codex-review-r4.md) + [FPS-R4](../verification/P20-AC4-FPS-1/codex-review-r4.md)。
+- DAG 与节点状态：[REBASELINE_PLAN](REBASELINE_PLAN.md)（唯一权威）。
+- 当前 Active Task 与运行状态：见本文件「当前 Task」；Gate 与保留项：见本文件「Gate 与保留项」。
+- 本轮证据：GOV 三链（MANIFEST-JSON-1 → MANIFEST-VIEW-1 → SAME-LOCATION-1）均已集成；
+  见 `verification/P09-GOVERNANCE-DEBT-20261019/` 的 r9–r15 裁定与本会话 Task 行。
+- 恢复点：[checkpoint-r12](../verification/PROJECT-ORCHESTRATION-20261016/)；日志 `.orchestrator/{INFLIGHT,OPLOG}`。
