@@ -32,6 +32,10 @@
 |GOV-EOL-PIN-1|GOV-UNTRACKED-BACKLOG-1|done（为 hash-pinned 证据固定 LF；renormalize 无字节变化；worktree 复现通过）|
 |GOV-EVIDENCE-UNIQUE-1|GOV-DEBT-CLEANUP-2|done（AC 证据覆盖核验；83 AC：3 COVERED / 17 PARTIAL / 19 GAP / 42 N/A；四轮 Review）|
 |GOV-SOURCE-RECORDS-1|GOV-EVIDENCE-UNIQUE-1|done（EXPORT-REVEAL-1 补勾 6、P15 补勾 6；AC4 因 ③ BLOCKED 保留未勾；遗留三项已裁定拆专项）|
+|GOV-AC-GATE-1|GOV-SOURCE-RECORDS-1|proposed（AC 状态的机械门禁；r20 §2.6 建议）|
+|GOV-PIN-LINEAGE-1|GOV-SOURCE-RECORDS-1|proposed（历史 pin lineage 补注；保留原 pin 不重算）|
+|GOV-EVIDENCE-DIR-SWEEP-1|GOV-SOURCE-RECORDS-1|proposed（EXPORT-REVEAL-1 与 P15 的 evidence 目录盘点）|
+|GOV-P15-MANIFEST-1|GOV-SOURCE-RECORDS-1|proposed（恢复 P15 缺失的 Resource Manifest）|
 |P20-CLOSE-BOUND-1|P20-ISOLATION-1|closed_with_limitations（R6）|
 |P20-CLOSE-BOUND-HARDEN-1|P20-CLOSE-BOUND-1|closed_with_limitations|
 |P09-AC3-DELETE-HARDEN-1|P09-AC3-DELETE-1|closed_with_limitations（未集成）|
