@@ -14,7 +14,7 @@ base_commit: c131b1ae114d00c17e734a51f38263d92fe6f198
 branch: GOV-RESOURCE-MANIFEST-JSON-1
 worktree: G:/CODEX/New Manga/.agents/worktrees/GOV-RESOURCE-MANIFEST-JSON-1
 integration_commit: null
-delivery_head: 5ee07c2583c3d0adaf4edc778c2907baef24c350
+delivery_head: 7d09143d6df73d6c12a9769beaf19cfd70cc313c
 canonical_evidence_status: pending
 resource_closeout_status: pending
 evidence_dir: verification/GOV-RESOURCE-MANIFEST-JSON-1
