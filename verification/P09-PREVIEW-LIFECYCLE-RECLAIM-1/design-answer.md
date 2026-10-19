@@ -73,7 +73,7 @@
 | **B. host 通过 IPC 通知引用释放** | host 在 `release_subscriber` / revoke 时向 Core 发事件 | **新增 IPC 事件 + 跨进程协议** | **IPC 契约变更 → 需先冻结契约** |
 | **C. 全删 + 容忍旧引用失效** | 直接回收全部 `preview-*` | **最简单**；**但已加载的 Blob / 正在显示的页面可能失效** | 无 |
 
-### 推荐：方案 A
+### 推荐：**修正为方案 B（原推荐 A 的代价被算少了）**
 
 **理由**：
 
@@ -82,7 +82,17 @@
 3. **判据的偏差方向是安全的** —— **保留不该留的，而不是删掉还在用的**
 4. **它的失败模式是可观测的** —— **若时间戳不更新，泄漏只是继续存在（与现状相同），不会变成误删**
 
-**⚠️ 但方案 A 需要一个 Schema 变更** —— **`preview_lifecycle` 当前没有时间戳列。** **按仓库规则，改 Schema 前须由 Codex 冻结契约。**
+**⚠️ 但方案 A 需要的不止一个 Schema 变更 —— 它需要先造一条迁移通道。**（R185 修正，见第八节）
+
+**`preview_lifecycle` 当前没有时间戳列**，而 catalog DB **没有迁移机制**：`catalog_store.py` 只用 `CREATE TABLE IF NOT EXISTS`（对已存在的表不生效），**全文件 `ALTER TABLE` 出现 0 次**，且该文件头部（L11）明确声明 `schema/migrations (out of this Task's allowed paths)`。
+
+**对照**：library DB 有迁移先例（`src/infrastructure/sqlite/schema.py:152` 起大量 `ALTER TABLE ... ADD COLUMN`）。**但那是另一个库。**
+
+**所以方案 A 的实际工作量 = 冻结 Schema 契约 + 建立 catalog DB 的迁移机制 + 加列。****我在本节原先只写了第一项。**
+
+**修正理由（R185）**：方案 A 的代价低估了一层（见上）。**方案 B 的代价则相对确定** —— **Core 与 host 之间已有 IPC 通道**（`core_bridge.rs` 就是这个通道），**加一个事件是既有机上的扩展**，而方案 A 要新建一条迁移通道。
+
+**但这不改变一件事：B 同样需要契约冻结（IPC 契约），所以最终仍由 Codex 裁定。**
 
 ### 我为什么不自行选 C
 
