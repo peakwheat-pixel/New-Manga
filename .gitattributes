@@ -20,3 +20,8 @@ tools/governance/check.ps1 text eol=lf
 # Evidence table. Without an eol rule, core.autocrlf=true rewrites them to CRLF on checkout and
 # every pin fails on a fresh clone - the same trap already documented for SEC-FIX-PATH-ECHO-1.
 verification/P19-UI-MANIFEST-VIEW-1/** text eol=lf
+
+# GOV-EOL-PIN-1: canonical evidence and handoff files are SHA-256 pinned.
+# Keep LF on checkout so pins remain reproducible when core.autocrlf=true.
+verification/GOV-UNTRACKED-BACKLOG-1/** text eol=lf
+doc/handoffs/GOV-UNTRACKED-BACKLOG-1-*.md text eol=lf
