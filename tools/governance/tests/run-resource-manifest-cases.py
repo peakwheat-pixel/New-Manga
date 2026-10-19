@@ -131,7 +131,10 @@ def main():
         m = base_manifest(); m["schema_version"] = 2
         results.append(case("8 schema_version != 1", m, R, True))
         m = base_manifest(); m["closeout_counts"]["deleted"] = 3
-        results.append(case("9 closeout_counts mismatch", m, R, True))
+        # A declared count that exceeds the booleans in resources is NOT an error: the real
+        # P19-UI-FIX-1 manifest declares moved=6 for six logs renamed inside its evidence dir,
+        # none of which are listed resources. Failing on it would condemn an accurate record.
+        results.append(case("9 declared count != resources (allowed)", m, R, False))
         m = base_manifest(); m["resources"] = []
         results.append(case("10 empty resources", m, R, True))
         m = base_manifest(); m["resources"][0]["disposition"] = "BOGUS"

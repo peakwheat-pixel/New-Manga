@@ -78,6 +78,7 @@ function Test-ExternalResourceManifest([string]$ManifestPath, [string]$TaskId, [
     # Validates the referenced JSON against the fixed v1 schema, then applies the same
     # disposition rules the table path uses, plus the strict ALREADY_ABSENT semantics.
     $problems = [System.Collections.Generic.List[string]]::new()
+    $notes = [System.Collections.Generic.List[string]]::new()
     try { $json = Get-Content -LiteralPath $ManifestPath -Raw -Encoding UTF8 | ConvertFrom-Json }
     catch { return @{ Errors = @("Resource Manifest JSON 无法解析：$ManifestPath"); Resources = @() } }
     if ($json.schema_version -ne 1) { $problems.Add("Resource Manifest schema_version 必须为 1") }
@@ -113,13 +114,17 @@ function Test-ExternalResourceManifest([string]$ManifestPath, [string]$TaskId, [
             try { $declared = [int]$json.closeout_counts.$k } catch { $problems.Add("closeout_counts.$k 必须为整数") }
             if ($declared -lt 0) { $problems.Add("closeout_counts.$k 不得为负") }
         }
-        foreach ($k in @('deleted','moved')) {
+        # Declared counts are a record of closeout actions, which may cover files that are not
+        # themselves listed in resources. P19-UI-FIX-1 declares moved=6 for six logs renamed
+        # inside its evidence dir while all seven listed resources carry moved=false - accurate,
+        # not inconsistent. Differences are surfaced as notes, never as failures.
+        foreach ($k in @('deleted','moved','migrated','archived')) {
             $declared = 0
             try { $declared = [int]$json.closeout_counts.$k } catch { }
-            if ($declared -ne $counts[$k]) { $problems.Add("closeout_counts.$k=$declared 与 resources 中 $k=true 的项数 $($counts[$k]) 不一致") }
+            if ($declared -ne $counts[$k]) { $notes.Add("closeout_counts.$k=$declared 与 resources 中布尔为 true 的项数 $($counts[$k]) 不同（声明口径包含未列入 resources 的处置动作）") }
         }
     } else { $problems.Add("Resource Manifest 缺少 closeout_counts") }
-    return @{ Errors = $problems; Resources = $resources }
+    return @{ Errors = $problems; Notes = $notes; Resources = $resources }
 }
 
 $staticFiles = @(

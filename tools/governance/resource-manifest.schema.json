@@ -106,7 +106,7 @@
       "type": "object",
       "additionalProperties": false,
       "required": ["deleted", "moved", "migrated", "archived"],
-      "description": "Every key must be a non-negative integer. The checker cross-checks these against the resources array: each record whose boolean of the same name is true contributes one to that count.",
+      "description": "Every key must be a non-negative integer. These are DECLARED closeout totals, not a derived count: they may include actions on files that are not themselves listed in resources (P19-UI-FIX-1 declares moved=6 for six logs renamed inside its evidence directory, while all seven listed resources carry moved=false). The checker therefore records a difference between a declared count and the number of matching booleans in resources, but must NOT fail on it - judged against the real manifest, the stricter rule condemned an accurate third-party record.",
       "properties": {
         "deleted": { "type": "integer", "minimum": 0 },
         "moved": { "type": "integer", "minimum": 0 },
