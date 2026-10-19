@@ -13,7 +13,7 @@ base_commit: cf4529297f4e38fcde0bbc51784ec301ddbdeb35
 branch: P19-UI-MANIFEST-VIEW-1
 worktree: G:/CODEX/New Manga/.agents/worktrees/P19-UI-MANIFEST-VIEW-1
 integration_commit: null
-delivery_head: ed5a584b62dd63124940598ead206ed29e71fc81
+delivery_head: b36817d65e08a9e1269075bf7c116793e650e928
 canonical_evidence_status: complete
 resource_closeout_status: complete
 evidence_dir: verification/P19-UI-MANIFEST-VIEW-1
@@ -112,9 +112,23 @@ allowed_paths:
 
 ## Closeout Record
 
-- Closeout date / Codex：待关闭时填写。
-- `canonical_evidence_status`: `pending`。
-- `resource_closeout_status`: `pending`。
-- 删除、迁移、归档数量/字节数：待核实；按本 Task 禁止范围均应为 0。
-- 未关闭项及保留原因：P19 源 Task 检查仍预期有三项历史 FAIL；不属于本 Task AC。
-- 当前指针清理：由 Codex 在终态时更新 Plan / STATUS / Task 导航并运行 Task 检查。
+- 关闭：2026-10-19。Owner=dsh，Reviewer=Antigravity。
+- 终态：**`closed_with_limitations`**。Codex r11 裁定本 Task 不得记 `done`（AC3 未达成），
+  Antigravity 复核确认该状态选择正确（`done` 要求逐项 AC 证据，AC3 明确失败）。
+- Review：`doc/reviews/P19-UI-MANIFEST-VIEW-1-b36817d65-antigravity-r1.md`，**Approved with limitations**。
+- AC 对照：AC1 / AC2 / AC4 / AC5 / AC6 达成并勾选；**AC3 未达成，保持未勾选**。
+- 核心事实：改动使 `P19-UI-FIX-1` 的治理错误由 **4 增至 10**。
+  消失的 1 条是 `Resource Manifest 引用必须位于 verification/**`（本 Task 的目标）；
+  新增的 6 条是引用可解析后才可达的既有 destination 债务。
+- 十项错误账目见 `verification/P19-UI-MANIFEST-VIEW-1/ac2-governance-output.txt`，
+  逐项编号，含 4→10 对照。
+- 十项中：
+  - 2 条为 `P19-UI-FIX-1` 两个日志的 SHA 不匹配（既有历史债务）；
+  - 1 条为 worktree 镜像导致的 `verification/P19/import-no-response-r4.md` SHA 差异（环境性，非本 Task 造成）；
+  - 1 条为 8 个未登记证据文件（既有历史债务）；
+  - 5 条为 `Same ...` 同源位置标记，检查器缺少该语义（归后继 Task `GOV-RESOURCE-MANIFEST-SAME-LOCATION-1`）；
+  - 1 条为 `p19-ui-fix-1-isolation-20261017` 真实不存在（需单独核实）。
+- 未回退引用修改（r11 裁定：回退等于用书写错误掩盖深层债务）。
+- 源 JSON 未被修改：sha256 `b0772d93ab8ed9182497a43e0761f0d4ccc5560768f806ba86eb8048905c4dc2` 前后一致。
+- 删除 / 迁移 / 归档：**0 项**。
+- 后继：`GOV-RESOURCE-MANIFEST-SAME-LOCATION-1` 由 Codex 在本 Task closeout 后创建并释放。
