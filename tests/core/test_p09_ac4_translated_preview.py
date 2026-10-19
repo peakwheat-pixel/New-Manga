@@ -166,6 +166,26 @@ def test_translated_reader_preview_registers_a_reclaimable_origin(tmp_path: Path
             "F-002: producer_root / managed_rel_path must point at the real"
             f" source file, but {resolved_producer} does not exist"
         )
+
+        # F-002 (Codex R2): everything above holds while retired=0 - which is the
+        # state a LIVE preview is supposed to be in.  The GC only ever reads
+        # retired=1 rows, so none of it shows that this preview can be reclaimed;
+        # the whole GC path had zero coverage because nothing in the suite ever
+        # flipped the flag.  Checking that the rink is open is not checking that
+        # anyone can skate on it.
+        assert catalog.mark_preview_retired(key) is True, (
+            "F-002: the channel's only lifecycle write must flip retired on an"
+            " already-registered own row"
+        )
+        retired_row = catalog.preview_lifecycle_row(key)
+        assert retired_row is not None and retired_row["retired"] is True
+
+        candidates = catalog.retired_preview_candidates(str(core.storage.root))
+        assert any(candidate.resource_id == key for candidate in candidates), (
+            "F-002: a retired preview bound to the registered producer root must"
+            " become a GC candidate; before this assertion the GC path was never"
+            " exercised because retired was never set"
+        )
     finally:
         catalog.close()
         core.conn.close()
