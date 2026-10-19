@@ -95,7 +95,7 @@ evidence_dir: verification/P09-AC3-DELETE-HARDEN-1
 
 ## 交付与运行记录
 
-- Handoff：**本 Task 的正式 Handoff 为 `verification/P09-AC3-DELETE-HARDEN-1/HANDOFF.md`（已建）**；`doc/handoffs/P09-AC3-DELETE-HARDEN-1-dsh.md` 为协作协议规定的仓库级交接件，**待 Codex 集成时建立**（两者内容以后者为准，前者是本次交付记录）。
+- Handoff：**`doc/handoffs/P09-AC3-DELETE-HARDEN-1-1878f0b1.md`**（按 `doc/09_COLLABORATION.md` §5）；**验证证据在 `verification/P09-AC3-DELETE-HARDEN-1/`，由 Handoff 引用**。
 - Review：待固定 delivery head 后由 Codex 独立复核（owner=dsh, reviewer=Codex，满足 owner≠reviewer）。
 - 实际测试：逐项见上表。
 - 2026-10-18 Coordinator（dsh, epoch 8）按用户裁决建立本 Task 并冻结范围。
