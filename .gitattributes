@@ -11,3 +11,7 @@ verification/M2-SFX-FINETUNE-PREFLIGHT/raw/** -whitespace
 # Canonical Evidence file; pin its line endings so the recorded sha256 is reproducible on
 # any checkout (core.autocrlf=true would otherwise emit CRLF and break the pin).
 doc/handoffs/SEC-FIX-PATH-ECHO-1-c52ce46.md text eol=lf
+
+# GOV-PLAN-BUDGET-1 / r5: the governance checker is now version-controlled; pin its line endings
+# so the recorded sha256 (25477A5D...) stays reproducible on any checkout under core.autocrlf=true.
+tools/governance/check.ps1 text eol=lf
