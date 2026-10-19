@@ -18,6 +18,7 @@ import uuid
 from pathlib import Path
 
 from infrastructure.filesystem.integrity import integrity_of
+from infrastructure.filesystem.win_unlink import unlink_by_handle
 from ports.repositories.storage import IntegrityInfo
 
 _TEMP_DIR = "temp"
@@ -184,5 +185,20 @@ class ManagedFileStorage:
                     f"refusing to remove {relative_path!r}:"
                     f" path crosses a junction/symlink at {probe}"
                 )
-        if absolute.is_file():
+        # R5b P1: a path check followed by a path delete is two resolutions of
+        # the same name, and the probe wins the race between them - the outside
+        # file is deleted with no exception raised.  is_file() stays only to keep
+        # the existing missing-file behaviour (a silent skip); it is NOT the guard.
+        # The guard is the handle chain, which re-opens and re-verifies every
+        # segment on its own and does not reuse that answer.
+        if not absolute.is_file():
+            return
+        handled = unlink_by_handle(self._root, segments)
+        if handled is None:
+            # No handle chain on this platform: fall back to the old behaviour.
             absolute.unlink()
+        elif not handled:
+            raise ImmutablePathViolation(
+                f"refusing to remove {relative_path!r}:"
+                " handle chain refused (link in the path or wrong object type)"
+            )
