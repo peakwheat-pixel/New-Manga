@@ -16,11 +16,15 @@ from __future__ import annotations
 
 import hashlib
 import json
+import os
 import shutil
 import sys
 from pathlib import Path
 
-REPO = Path(r"G:\CODEX\New Manga")
+# AC4_REPO lets this run against an isolated copy of the tree.  Without it the probe
+# silently imports the main checkout's src/, so a "pre-fix" run in a worktree would
+# really be testing the fixed code - which is what happened the first time I tried.
+REPO = Path(os.environ.get("AC4_REPO", r"G:\CODEX\New Manga"))
 sys.path.insert(0, str(REPO / "src"))
 
 from bootstrap.core_service import CoreServiceServer, assemble_production_core  # noqa: E402
