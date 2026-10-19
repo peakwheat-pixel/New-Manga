@@ -30,7 +30,7 @@
 |GOV-RESOURCE-MANIFEST-SAME-LOCATION-1|GOV-RESOURCE-MANIFEST-JSON-1|done（同源/空/\-\ 目的地语义；32/32 用例；集成 4b545eada；P19 错误 9→4）|
 |GOV-UNTRACKED-BACKLOG-1|—|done（1591 个未入库文件的分类与边界化；最小镜像集 3 文件；P1 由 GOV-EOL-PIN-1 修复）|
 |GOV-EOL-PIN-1|GOV-UNTRACKED-BACKLOG-1|done（为 hash-pinned 证据固定 LF；renormalize 无字节变化；worktree 复现通过）|
-|GOV-EVIDENCE-UNIQUE-1|GOV-DEBT-CLEANUP-2|ready（AC7 唯一最终证据判定；只读 61 文件，不改任何 pin）|
+|GOV-EVIDENCE-UNIQUE-1|GOV-DEBT-CLEANUP-2|in_progress（AC7 唯一最终证据判定；只读 61 文件，不改任何 pin）|
 |P20-CLOSE-BOUND-1|P20-ISOLATION-1|closed_with_limitations（R6）|
 |P20-CLOSE-BOUND-HARDEN-1|P20-CLOSE-BOUND-1|closed_with_limitations|
 |P09-AC3-DELETE-HARDEN-1|P09-AC3-DELETE-1|closed_with_limitations（未集成）|
@@ -38,4 +38,4 @@
 |GOV-PLAN-BUDGET-1|—|done|
 |RUST-ENV-BASELINE-1（P20-CLOSE-BOUND-1）/ P07交互补缺（P02）/ P21旧栈归档（P20+另授权）|—|proposed（P07/P21可选）|
 |P22 响应归属|P22-REBASE-1|已集成；P04 不放行，H1/P2-1/13 与 BC-AC5 缺项保留。已完成见各节点行。|
-READY 节点：ARCH-DOC-REBASELINE、P20、GOV-EVIDENCE-UNIQUE-1。in_review：HARDEN-2。done：**36 项**。
+READY 节点：ARCH-DOC-REBASELINE、P20。in_review：HARDEN-2。done：**36 项**。

@@ -3,7 +3,7 @@ id: GOV-EVIDENCE-UNIQUE-1
 title: GOV-DEBT-CLEANUP-2 AC7 唯一最终证据判定
 kind: governance
 governance_version: 2
-status: ready
+status: in_progress
 approval: codex_r14_scope_draft; dsh_release_2026-10-20_after_GOV-DEBT-CLEANUP-2_closeout
 suggested_owner: dsh
 owner: dsh
