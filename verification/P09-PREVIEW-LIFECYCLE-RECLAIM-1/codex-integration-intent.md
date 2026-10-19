@@ -1,5 +1,20 @@
 # P09 integration 落盘意图（Coordinator lease 阻止）
 
+> **⚠️ 状态时点说明（Owner 于 2026-10-19 追加，R26 Finding 4 后；本文正文一字未改）**
+>
+> **本文写于终态落盘【之前】，当时它是对 Codex 意图的记录。此后状态已变化：**
+>
+> | 本文写时的状态 | 现行状态 |
+> |---|---|
+> | 两项 Task 待落盘 | ✅ **已落盘**：`P09-AC3-DELETE-HARDEN-1` 与 `P09-PREVIEW-LIFECYCLE-RECLAIM-1` 均为 `closed_with_limitations`，`integration_commit` 均为 `null` |
+> | 「Coordinator lease 持有人可落盘」 | ✅ **已由 lease 持有人（`dsh`，epoch 8）执行** |
+> | AC6 待权威落盘 | ✅ **裁决已落盘**（`ac6-ruling.md`）；AC6 保持**未满足**、`NOT_VERIFIED`，无 `N/A` 无豁免 |
+>
+> **⚠️ 因此下文 L20–L22 的「以上为待处理意图，不是 Task 关闭记录」等措辞，应读作【写作时点】的状态，不是当前状态。** **本文作为历史意图材料保留；其处置建议已被执行，最终集成分项仍由 Codex 负责。**
+>
+> **`P09` 的 AC3 delete 子条件继续保持 `BLOCKED`。**
+
+
 日期：2026-10-19
 
 ## 本轮守卫结果
@@ -19,4 +34,6 @@
 
 ## 状态
 
-以上为待处理意图，不是 Task 关闭记录，也不代表集成、技术 Gate 通过或任何验收项变更。Coordinator lease 持有人可在重新核对当前仓库状态后落盘并运行治理检查。
+**（以下为写作时点的表述）** 以上为待处理意图，不是 Task 关闭记录，也不代表集成、技术 Gate 通过或任何验收项变更。Coordinator lease 持有人可在重新核对当前仓库状态后落盘并运行治理检查。
+
+**✅ 后续事实**：**上述落盘已由 lease 持有人完成**（两 Task 均为 `closed_with_limitations`、`integration_commit: null`）；**本句的「待处理」与「不是关闭记录」仅适用于本文写作时点。**
