@@ -82,7 +82,8 @@ def build(book: str, chapter: str, page_id: str) -> None:
 
 
 build("b1", "c1", "p1")
-build("b2", "c2", "p2")
+build("b1", "c1", "p1b")   # R3 Finding 3: AC3 needs cross-PAGE isolation too, so
+build("b2", "c2", "p2")    # book 1 holds two pages and both keys must be reclaimed
 
 for chapter in ("c1", "c2"):
     resp, _err = server.dispatch_request(json.dumps({
@@ -103,6 +104,16 @@ assert len(rows_before) >= 2, "need one preview per book, got %d" % len(rows_bef
 # snapshot was swapped for b2's ids - the survivor was the wrong book's preview and the
 # count still matched.  Record which key belongs to b2 BEFORE the delete and assert
 # identity, not arithmetic.
+b1_artifact_ids = set(core.repository.list_page_artifact_ids(["p1", "p1b"]))
+b1_expected = sorted(
+    rid for rid in rows_before
+    if (catalog.preview_lifecycle_row(rid) or {}).get("artifact_id") in b1_artifact_ids
+)
+print("b1 keys expected to be reclaimed: %d" % len(b1_expected))
+assert len(b1_expected) == 2, (
+    "cross-page fixture must give b1 two previews, got %d" % len(b1_expected)
+)
+
 b2_artifact_ids = set(core.repository.list_page_artifact_ids(["p2"]))
 b2_expected = sorted(
     rid for rid in rows_before
@@ -159,7 +170,12 @@ print("isolation: survivor is exactly b2's preview =", survivors_are_b2)
 catalog.close()
 core.conn.close()
 
-if len(rows_after) == len(b2_expected) and leaked_files == 0 and survivors_are_b2:
+reclaimed_b1 = [rid for rid in b1_expected if rid not in rows_after]
+print("cross-page isolation: %d/%d of b1 keys reclaimed"
+      % (len(reclaimed_b1), len(b1_expected)))
+if (len(reclaimed_b1) == len(b1_expected)
+        and len(rows_after) == len(b2_expected)
+        and leaked_files == 0 and survivors_are_b2):
     print("RESULT = PASS (batch reclaimed its own preview and only its own)")
     sys.exit(0)
 if rows_after != b2_expected:

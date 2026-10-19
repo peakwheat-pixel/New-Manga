@@ -87,18 +87,37 @@ resp, _err = server.dispatch_request(json.dumps({
 }))
 assert resp["error"] is None, resp["error"]
 
-referenced = [e for e in catalog.entries() if e.resource_id.startswith("preview-")]
+# R3 Finding 1: take the key from the projection response - that is the one the reader is
+# being handed - and assert THAT key is reclaimed. Inferring it from the catalog would
+# pass for any implementation that leaves response and catalog out of step.
+handed_out = []
+for page in (resp["result"] or {}).get("pages", []):
+    ref = ((page.get("translated") or {}).get("resource_ref") or {})
+    rid = ref.get("resource_id")
+    if rid:
+        handed_out.append(rid)
+print("keys handed to the reader: %s" % [x[:24] + "..." for x in handed_out])
+assert handed_out, "INCONCLUSIVE: the projection returned no translated resource_ref"
+
+catalog_keys = {e.resource_id for e in catalog.entries() if e.resource_id.startswith("preview-")}
+print("catalog preview rows:      %s" % [x[:24] + "..." for x in sorted(catalog_keys)])
+assert set(handed_out) <= catalog_keys, (
+    "the response named a key the catalog does not hold: %s" % (set(handed_out) - catalog_keys)
+)
+
 files_before = [p for p in derived_root.rglob("*") if p.is_file()]
-print("referenced previews: %s" % [e.resource_id[:24] + "..." for e in referenced])
 print("files before delete: %d" % len(files_before))
-assert referenced, "INCONCLUSIVE: the reader produced no preview, nothing is referenced"
 
 # --- delete immediately: no delay, the reference is as fresh as it can be ---
 result, error = server.handle_permanently_delete_book(
     {"book_id": "b1", "confirm_permanent_delete": True})
 print("delete ->", "ok" if error is None else error)
 assert error is None, error
-print("delete reported success =", result == {"book_id": "b1", "deleted": True})
+# R3 noted this was printed, not asserted.  A delete reporting cleanup_pending has
+# reclaimed nothing, so AC2 needs the success asserted.
+assert result == {"book_id": "b1", "deleted": True}, (
+    "the delete did not report a completed reclaim: %r" % (result,)
+)
 
 remaining_rows = [e for e in catalog.entries() if e.resource_id.startswith("preview-")]
 remaining_files = [p for p in derived_root.rglob("*") if p.is_file()]
@@ -108,9 +127,15 @@ catalog.close()
 core.conn.close()
 
 problems = []
-if remaining_rows:
-    problems.append("a preview that was referenced immediately before the delete survived: %s"
-                    % [e.resource_id[:24] + "..." for e in remaining_rows])
+remaining_ids = {e.resource_id for e in remaining_rows}
+not_reclaimed = [r for r in handed_out if r in remaining_ids]
+if not_reclaimed:
+    problems.append("keys handed to the reader were not reclaimed: %s"
+                    % [r[:24] + "..." for r in not_reclaimed])
+missing = [r for r in handed_out if r not in catalog_keys]
+if missing:
+    problems.append("the response named keys the catalog never held: %s"
+                    % [r[:24] + "..." for r in missing])
 if len(remaining_files) > 1:   # only the namespace lock should remain
     problems.append("files survived: %s" % [p.name for p in remaining_files])
 
