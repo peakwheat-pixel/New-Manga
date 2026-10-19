@@ -81,7 +81,7 @@ evidence_dir: verification/P09-AC3-DELETE-HARDEN-1
 | AC8 清理范围 | 证明未递归遍历未登记路径 | 隔离根 | **PASS**：`os.walk` 在 `library.py` 已无调用（仅注释留史）；`tests/core/test_core_delete_commands.py` 19 passed 且目录清理语义保持 | `src/infrastructure/sqlite/library.py` |
 | AC9 phase 投影 | 未知 `details.phase` 单测 | Rust toolchain | **PASS**：`1 passed`（`preflight`/`cleanup` 原样、`rollback`→`unknown`、空串→`unknown`、非字符串→`None`） | `cargo test --bin m2rc1-desktop permanently_delete_error_phase` |
 | AC10 版本断言 | `pytest tests/packaging/test_frozen_runtime_contract.py` + 全仓搜索 | 集成 Python | **PASS**：`3 passed`；全仓搜索仅剩 mock provider 构造参数与已动态取值处，无需再改 | `tests/packaging/test_frozen_runtime_contract.py` |
-| AC11 指针自洽 | `check.ps1` 全量 + 相关 `-TaskPath` | — | **PASS**：`check.ps1` 返回 `PASS (2 warnings)`；`delivery_head` 经 `git cat-file -e` 验证存在 | `doc/tasks/P09-AC3-DELETE-1.md`、`doc/tasks/P09.md` |
+| AC11 指针自洽 | `check.ps1` 全量 + 相关 `-TaskPath` | — | **PASS**：`check.ps1` 返回 `PASS (2 warnings)`；`delivery_head` 经 `git cat-file -e` 验证存在 | `doc/tasks/P09-AC3-DELETE-1.md`、`doc/tasks/P09.md`；**该 `PASS` 为历史测试结果；受上游 P09 AC3 `BLOCKED` 制约，当前复审状态 PARTIAL** |
 | AC12 回归 | 全量 `pytest tests` 并逐项定性 | 集成 Python | **PASS（附限制）**：`9 failed, 2250 passed, 9 skipped`；定性为 3 项基线既有（workbench，PRE-P09 即失败）+ 4 项环境反转（断言要求环境**缺失** GPU/OCR，而本机具备）+ 2 项 `transformers` API 不兼容（依赖版本与调用面不匹配的独立既有缺陷）；**本 Task 引入 0 项**，修复 1 项 | `verification/P09-AC3-DELETE-HARDEN-1/ac12-no-regression.md` |
 
 ## 依赖、风险与阻塞
@@ -136,7 +136,7 @@ evidence_dir: verification/P09-AC3-DELETE-HARDEN-1
 - `canonical_evidence_status`：`complete`；上表 11 条 pin 的磁盘 SHA-256 已按**磁盘真实字节**实算（本仓库为 CRLF 检出），commit 均为 40-hex 且经 `git cat-file -e` 验证存在。
 - `resource_closeout_status`：`complete`；仅复用仓库工作区，无新建 worktree、无需迁移/归档/删除的派生产物。
 - 删除、迁移、归档数量/字节数：**0 / 0 / 0**。
-**未关闭 AC：AC4**（判 FAIL，已转交 `P09-PREVIEW-LIFECYCLE-RECLAIM-1`）。其余 AC 已关闭；验收表中 AC9/AC10/AC12 的 `PASS` 是**历史测试运行结果**（各附证据命令）；**R6 之后的复审未再运行 Rust/前端/packaging/全量集**，故这些 AC 的**当前复审状态为 NOT_VERIFIED**，**属带限制关闭**。**删除路径加固范围内无未完成项。**
+**未关闭 AC：AC4**（判 FAIL，已转交 `P09-PREVIEW-LIFECYCLE-RECLAIM-1`）。**AC1/AC3/AC11 当前复审状态为 PARTIAL（上游或未跑项所致），非全绿**；验收表中 AC9/AC10/AC12 的 `PASS` 是**历史测试运行结果**（各附证据命令）；**R6 之后的复审未再运行 Rust/前端/packaging/全量集**，故这些 AC 的**当前复审状态为 NOT_VERIFIED**，**属带限制关闭**。**删除路径加固范围内无未完成项。**
 **`delivery_head`（收口固定）**：`1878f0b126e8a0e2603570f9b2009d8b70a259f1`（见 frontmatter；经 `git cat-file -e` 验证可达且含 `win_unlink.py`）。早期记录的 `4824ed5d…` 是 R1 阶段的旧指针，已由收口固定值取代。
 - **硬约束保持**：`P09` 的 **AC3 delete 子条件仍为 `BLOCKED`**，本 Task 未将其翻为 PASS；本 Task 只做加固与指针自洽，不改变原判定。
 
@@ -162,7 +162,6 @@ evidence_dir: verification/P09-AC3-DELETE-HARDEN-1
 
 **`delivery_head` 固定**：F-001 关闭后，`delivery_head` 由 R1 审查的 `4824ed5d4` 移至 **`10202dc4e`**（含 rev 2.11 契约冻结）。R1 的 18 个提交与本 Task 的 6 个返修提交均在链上。
 
-**下一步**：送 Codex 做 **R2 完整复审**（覆盖 R1 的 7 个 finding 闭合情况 + rev 2.11 契约冻结）。
 
 ### DIR-4 返修额度提升（用户裁决，2026-10-19）　**【裁决/结论记录，仍然生效；非历史叙事】**
 

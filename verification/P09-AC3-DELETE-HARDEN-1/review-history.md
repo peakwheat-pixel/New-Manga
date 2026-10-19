@@ -67,3 +67,7 @@
 - **Codex 实际运行**：`verify_all.py` exit 0 且输出 `Orphan scan: managed=0 derived=0`；4 个测试套件分别 4 / 2 / 1 / 1 passed
 - **Codex 主动拦截了 `verify_all.py` 对已 pin 历史 JSON 的覆盖写入**（并用 `-B -p no:cacheprovider` 防止字节码/缓存写入），派发前后 `git status` 零差异
 - **后续**：F-002 与 F-007 的 PARTIAL 及 3 项新增 finding 待返修（返修轮次计数按 DIR-4）
+
+### F-001 关闭后当时的下一步（历史计划，已被后续轮次取代）
+
+**下一步**：送 Codex 做 **R2 完整复审**（覆盖 R1 的 7 个 finding 闭合情况 + rev 2.11 契约冻结）。
