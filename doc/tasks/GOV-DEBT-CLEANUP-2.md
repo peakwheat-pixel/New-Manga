@@ -3,7 +3,7 @@ id: GOV-DEBT-CLEANUP-2
 title: 治理债逐项事实核对与资源证据闭环
 kind: governance
 governance_version: 2
-status: ready
+status: in_progress
 approval: user_decisions_recorded_2026-10-19; codex_scope_release_approved
 suggested_owner: dsh
 owner: dsh

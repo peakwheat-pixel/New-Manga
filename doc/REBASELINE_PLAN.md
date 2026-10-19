@@ -24,7 +24,7 @@
 |P20-ISOLATION-1|P20|in_review|
 |P20-AC4-FPS-1|P20|closed_with_limitations（AC3 PASS；AC5 依裁决）|
 |GOV-DEBT-CLEANUP-1|P19/P20|blocked（待用户裁决）|
-|GOV-DEBT-CLEANUP-2|—|ready|
+|GOV-DEBT-CLEANUP-2|—|in_progress|
 |P20-CLOSE-BOUND-1|P20-ISOLATION-1|closed_with_limitations（R6）|
 |P20-CLOSE-BOUND-HARDEN-1|P20-CLOSE-BOUND-1|closed_with_limitations|
 |P09-AC3-DELETE-HARDEN-1|P09-AC3-DELETE-1|closed_with_limitations（未集成）|
@@ -32,4 +32,4 @@
 |RUST-ENV-BASELINE-1|P20-CLOSE-BOUND-1|proposed|
 |P07 交互补缺 / P21 旧栈归档|P02 / P20+另授权|proposed（均可选）|
 |P22 响应归属|P22-REBASE-1|已集成；P04 不放行，H1/P2-1/13 与 BC-AC5 缺项保留。已完成见各节点行。|
-READY 节点：ARCH-DOC-REBASELINE、P20、GOV-DEBT-CLEANUP-2。`in_review`：HARDEN-2。done：**33 项**。
+READY 节点：ARCH-DOC-REBASELINE、P20。`in_review`：HARDEN-2。done：**33 项**。
