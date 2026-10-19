@@ -109,7 +109,7 @@ allowed_paths:
 | EVID-AC2-MAP | AC2 | `verification/GOV-EVIDENCE-UNIQUE-1/ac2-ac-mapping-and-uniqueness.md` | `c41a40a09` | `09450278df57ad7b24e2da249a1bb7dd074e9e5581b7735d3f4761946b04df8f` | `CANONICAL` |
 | EVID-AC2-B1 | AC2 | `verification/GOV-EVIDENCE-UNIQUE-1/ac2-coverage-batch1.md` | `c41a40a09` | `926e6675e6c99e48a4f9a0ddca3c1e6846048cf7f22d1425856367439b043059` | `CANONICAL` |
 | EVID-AC2-B2 | AC2 | `verification/GOV-EVIDENCE-UNIQUE-1/ac2-coverage-batch2.md` | `c41a40a09` | `82c9523862aed6071e6e3bdeb8b979c3c50697811e6f9cfefff7fed9b5644241` | `CANONICAL` |
-| EVID-AC2-B3 | AC2 | `verification/GOV-EVIDENCE-UNIQUE-1/ac2-coverage-batch3-and-summary.md` | `c41a40a09` | `31b4d15fce8c6eae6427921df2d4e4e74326437f49d452a994438cabe2e5f898` | `CANONICAL` |
+| EVID-AC2-B3 | AC2 | `verification/GOV-EVIDENCE-UNIQUE-1/ac2-coverage-batch3-and-summary.md` | `EF4AADFEE` | `81b2cdf78064c7de375a0734f5bfc0f148222e915fc7fca50a19793f3c45b2a6` | `CANONICAL` |
 | EVID-AC3 | AC3 | `verification/GOV-EVIDENCE-UNIQUE-1/ac3-readonly-verification.md` | `c41a40a09` | `89d92ef4084d88cfd63ade5ea4f836719b00788b6b0bbb3313db77f87c7d581c` | `CANONICAL` |
 | EVID-REVIEW | AC4 | `doc/reviews/GOV-EVIDENCE-UNIQUE-1-3b62f7937-antigravity-r1.md` | `c41a40a09` | `a9abc01e6514ddf786476dc369467a29afd787898a07de063f467781da7c83ed` | `CANONICAL` |
 
