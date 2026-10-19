@@ -1,6 +1,6 @@
 ---
 id: GOV-EVIDENCE-UNIQUE-1
-title: GOV-DEBT-CLEANUP-2 AC7 唯一最终证据判定
+title: AC 证据覆盖核验（原「AC7 唯一最终证据判定」，按 r18 修订）
 kind: governance
 governance_version: 2
 status: in_progress
@@ -26,7 +26,16 @@ allowed_paths:
   - verification/GOV-EVIDENCE-UNIQUE-1/
 ---
 
-# GOV-EVIDENCE-UNIQUE-1：GOV-DEBT-CLEANUP-2 AC7 唯一最终证据判定
+# GOV-EVIDENCE-UNIQUE-1：AC 证据覆盖核验
+
+> **目标已于 2026-10-20 按 Codex r18 授权修订。** 原名「AC7 唯一最终证据判定」。
+>
+> 修订理由（r18 §二原文意译）：证据可由日志、退出码、环境记录、交付说明等组成；
+> 一次 AC 也可能依赖多个测试面，候选集还包含不同尝试。**唯一性不能推出充分性**，
+> 单文件判定会把证据的组合结构压扁，也会把「没有一份文件独自证明 AC」误写成证据缺失。
+>
+> 本 Task 因此改为：**对每个已释放 AC，核实其证据**是否充分覆盖**，并指出缺口。**
+> 允许一项 AC 对应多份互补证据，也允许一份证据支持多个 AC。
 
 ## 来源与目标
 
@@ -37,11 +46,41 @@ allowed_paths:
 
 ## Acceptance Criteria
 
-- [ ] **AC1 — 61 项逐文件判定**：对源表 61 项逐项记录精确路径、文件 SHA-256、候选类别、对应来源 Task/已释放 AC、当前 Canonical Evidence pin、文件是否能证明 AC、是否存在等效替代证据、是否为唯一最终证据及理由。不得只依据文件名、目录或表面存在性判定。
-- [ ] **AC2 — 唯一性与完整性核验**：对每个已释放 AC 建立 `AC → Canonical Evidence` 映射；明确判为唯一、存在其他等效证据、非判别力证据、无法确定或不适用。任何缺失来源、无法访问、hash 不符或 AC 未释放均保留为 `BLOCKED/UNKNOWN`，不可改写成 PASS。
-- [ ] **AC3 — 只读保护**：不更改源 Task、Review、既有 Canonical Evidence、pin、61 个文件、`.gitattributes`、`.gitignore` 或生产文件；不移动、删除、归档、重命名、复制或补登记其他 Task 的 evidence。候选补 pin 只写本 Task 的建议表，须由 Codex 在独立获准范围处理。
-- [ ] **AC4 — 可复核交付与 Review**：入库逐项结果、来源 commit/hash、方法与未决项；生成 Handoff；由 Antigravity 对固定 delivery head 独立 Review。逐项证据覆盖和 limitation 保持一致。
-- [ ] **AC5 — 生命周期和资源 closeout**：完成 Task/Review/Plan/STATUS 生命周期、Canonical Evidence 与 Resource Manifest；更新 integration 字段并按直接/branch 集成事实登记；运行适用治理检查并完整保存命令、环境、stdout、stderr、exit code。任何不通过均如实记录，不放宽 checker。
+> 修订依据：Codex r18 §二。五条 AC 的边界由 r18 逐条给出，本节按其原文落实。
+
+- [ ] **AC1 — 61 项逐项记录**：对冻结的 61 项逐项记录路径、内容 Hash、存在性、内容类型、
+  可能关联的来源 Task/AC、**在证据组中的作用**及限制；**不能按文件名推断证明力**。
+- [ ] **AC2 — 以 AC 为单位的覆盖核验**：以每个已释放 AC 为单位，核实其 Canonical Evidence
+  与本次冻结候选的覆盖关系；允许一项 AC 对应多份互补证据，也允许一份证据支持多个 AC。
+  分别标明证据集合及角色、是否充分、实际缺口和不确定性。
+  **不得把「存在候选」当成「AC 已满足」。**
+- [ ] **AC3 — 只读保护**：不改来源 Task、Review、Canonical Evidence/pin、61 项源文件或生产文件；
+  本 Task **不补登记来源 pin、不处置文件**。
+- [ ] **AC4 — 可复核交付与 Review**：入库逐项结果、来源 commit/hash、方法与未决项；
+  按**AC 覆盖结果**报告，而不是要求每个 AC 恰有一份根证据；生成 Handoff；
+  由 Antigravity 对固定 delivery head 独立 Review。
+- [ ] **AC5 — 生命周期与 closeout**：完成 Task/Review/Plan/STATUS 生命周期、
+  Canonical Evidence 与 Resource Manifest；更新 integration 字段并如实登记集成拓扑；
+  运行治理检查。**任何 `BLOCKED`、`NOT_RUN`、`UNKNOWN` 均不得记为通过。**
+
+## 结果枚举（r18 §二指定）
+
+| 枚举 | 含义 |
+|---|---|
+| `COVERED` | 证据组充分支持 AC 达成 |
+| `PARTIAL` | 有相关证据但 AC 要求未被完整覆盖 |
+| `EVIDENCE_GAP` | 候选范围内没有相关证据 |
+| `UNKNOWN` / `BLOCKED` | 材料缺失、不可访问或无法判断 |
+| `NOT_RELEASED` | 来源 Task 非终态，AC 未释放 |
+| `NOT_APPLICABLE` | 该 AC 不要求文件级证据（如纯过程性 AC） |
+
+## 核验口径（r18 §二）
+
+- 测试/构建的**多次尝试**应保留其时间和结果关系；报告**哪次是最终判定所依赖的结果**，
+  以及失败尝试是否被后续有效运行取代。
+- **命令、环境、日志、退出码**作为**一组关联材料**核验。
+- 若 AC 明确要求「原始日志与退出码」，**只有日志而无可复核退出码**时应记为
+  `PARTIAL` 或 `UNKNOWN`，**不能按文件数判为覆盖**。
 
 ## 允许修改范围
 
@@ -65,6 +104,18 @@ allowed_paths:
 ## Resource Manifest
 
 冻结 ready 前登记实际 Task worktree 路径；task-env、dataset、artifact、temp、agent-output、exchange 逐项核实。不适用需有目录核实依据；未知、dirty、被引用或用户数据一律保留。
+
+## 本次修订记录
+
+- 修订日期：2026-10-20
+- 授权来源：Codex r18 —— `verification/P09-GOVERNANCE-DEBT-20261019/codex-adjudicate-evidence-unique-r18.md`
+- 修订前状态：`status: in_progress`，AC1/AC2 部分完成，产出 `YES 1 / NO 5 / UNKNOWN 55` 的文件级矩阵
+- 修订内容：目标由「唯一最终证据判定」改为「AC 证据覆盖核验」；AC1–AC5 按 r18 §二 重写；
+  新增结果枚举与核验口径两节
+- **明确作废**：r18 §三 要求「不得将已有 `YES 1 / NO 5 / UNKNOWN 55` 的文件级矩阵
+  包装为 AC 覆盖结论」。该矩阵**仅作为内容特征记录保留**，不作结论使用。
+- 两个来源 Task（`EXPORT-REVEAL-1` 0/7、`P15` 0/6）的「done 但 AC 全未勾选」异常，
+  按 r18 §一 继续按 `status` 纳入已释放 AC，同时**在 limitation 中单列**，不补勾、不重判。
 
 ## Closeout Record
 
