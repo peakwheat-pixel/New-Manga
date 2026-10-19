@@ -124,7 +124,7 @@ foreach ($relative in $truthPaths) {
 
 foreach ($budget in @(
     @{ Path = 'doc/STATUS.md'; Bytes = 3200; Lines = 45 },
-    @{ Path = 'doc/REBASELINE_PLAN.md'; Bytes = 2500; Lines = 35 }
+    @{ Path = 'doc/REBASELINE_PLAN.md'; Bytes = 7000; Lines = 64 }
 )) {
     $file = Join-Path $repoRoot $budget.Path
     $bytes = (Get-Item -LiteralPath $file).Length

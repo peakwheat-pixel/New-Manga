@@ -1,0 +1,28 @@
+# AC4 raw governance output (worktree GOV-PLAN-BUDGET-1)
+# HEAD: 85a1886bf2c1484ea3d36f328c8ac4f157cd57cd
+# generated: 2026-10-19T22:15:16.4652867+08:00
+# NOTE: worktree was seeded with the 33 untracked doc/ + archive/ files that exist only
+#       in the main checkout; without them the checker reports 6 spurious errors about
+#       missing governance entry points. Both runs are recorded below.
+
+## Pass 1 - worktree as created (untracked governance files absent)
+# exit=1
+# Governance check: FAIL (7 errors, 1 warnings)
+#   6 of the 7 were: 缺少当前治理入口 doc/WORKSPACE_GOVERNANCE.md and 5 失效的本地引用
+#   1 real:          READY DAG 只允许 status: ready；GOV-PLAN-BUDGET-1 当前为 in_progress
+
+## Pass 2 - after mirroring the untracked files (environment now matches main checkout)
+Governance scope: 12 current documents; no historical directory scan.
+Task: doc\tasks\P20.md
+WARN: doc/STATUS.md 已达到预算的 80%：3169 bytes / 27 lines
+FAIL: READY DAG 只允许 status: ready；GOV-PLAN-BUDGET-1 当前为 in_progress
+Governance check: FAIL (1 errors, 1 warnings)
+# exit=1
+
+## Task-scoped: -TaskPath doc/tasks/GOV-PLAN-BUDGET-1.md
+Governance scope: 12 current documents; no historical directory scan.
+Task: doc\tasks\GOV-PLAN-BUDGET-1.md
+WARN: doc/STATUS.md 已达到预算的 80%：3169 bytes / 27 lines
+FAIL: READY DAG 只允许 status: ready；GOV-PLAN-BUDGET-1 当前为 in_progress
+Governance check: FAIL (1 errors, 1 warnings)
+# exit=1

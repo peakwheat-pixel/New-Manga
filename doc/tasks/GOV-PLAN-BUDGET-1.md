@@ -3,7 +3,7 @@ id: GOV-PLAN-BUDGET-1
 title: Plan 预算上限扩容
 kind: governance
 governance_version: 2
-status: ready
+status: in_progress
 approval: user_decision_1_2026-10-19; codex_scope_release_integration-closeout-r3
 suggested_owner: dsh
 owner: dsh
