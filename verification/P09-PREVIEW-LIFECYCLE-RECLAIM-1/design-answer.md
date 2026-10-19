@@ -116,7 +116,7 @@
 - **未创建 IPC 事件**
 - **未自选方案 C**（**需产品裁决**）
 
-**本 Task 停在设计阶段，等待方案裁决与契约冻结。**
+**用户已于 2026-10-19 裁定 C1（允许引用失效）—— 见 `verification/P09-PREVIEW-LIFECYCLE-RECLAIM-1/c1-ruling-record.md`。**
 
 ---
 
