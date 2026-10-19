@@ -7,6 +7,7 @@ owner: dsh
 reviewer: Codex
 depends_on: [P09-AC3-DELETE-HARDEN-1]
 delivery_head: 392977a83cc496206728ad26dded96274ead41dc
+integration_commit: null   # 未集成；终态 closed_with_limitations（Codex 裁决）
 base_commit: 1f157413675b62450034194fd17e550c79ee001b
 branch: antigravity/P09-PREVIEW-LIFECYCLE-RECLAIM-1
 allowed_paths:
@@ -99,7 +100,7 @@ pwsh -NoProfile -File tools/governance/check.ps1 -TaskPath doc/tasks/P09-PREVIEW
 
 **记录此项的目的是：下一位 Owner 若沿用无参数调用，会得到同样的假象。** **检查本 Task 必须显式 `-TaskPath`。**
 
-## Owner 侧已闭合，等待 Codex 收敛
+## Owner 侧已闭合（此节为当时记录；终态已落盘，见下）
 
 **Owner 侧全部闭合（代码、测试、探针、注入证据、AC 逐项表、交付固定、状态一致）。** **原三项集成门中，DAG 登记与依赖状态记载均已由 Owner 完成（见下）；AC6 已由 Codex 裁决、权威落盘待 Codex。** **当时的收敛请求见：**
 
@@ -107,7 +108,7 @@ pwsh -NoProfile -File tools/governance/check.ps1 -TaskPath doc/tasks/P09-PREVIEW
 
 **该请求列明（DAG 登记 · 依赖集成状态核定 · AC6）、各自归属理由，以及四项 Owner 明确不执行的动作及其理由。** **其中 DAG 登记已由用户授权完成；依赖状态已按 `P09-AC3-DELETE-HARDEN-1` 的 frontmatter 据实陈述；AC6 已由 Codex 裁决为未满足、终态 `closed_with_limitations`（权威落盘待 Codex）。**
 
-**在 Codex 就另两项答复前，继续送复审只会以同样的结论返回。** **本 Task 停在 `in_review`，`delivery_head` 保持 `392977a83…` 不变。**
+**（当时记录）在 Codex 就另两项答复前，继续送复审只会以同样的结论返回；本 Task 当时停在 `in_review`。** **✅ 现行：终态已落盘为 `closed_with_limitations`；`delivery_head` 始终为 `392977a83…`。**
 
 
 ## 分支指针实测（R21 Finding 1；处置属 Codex）
@@ -130,6 +131,20 @@ HEAD 相对 PREVIEW 分支超越 22 个提交（**截至该测量时点**；**�
 **✅ 已由 Codex 裁定并由 Owner 执行（本轮）**：**Codex 建议将 `antigravity/P09-PREVIEW-LIFECYCLE-RECLAIM-1` 快进到当时的 HEAD，使本文档进展位于其声明分支上；并明确「由 Owner 执行该快进」。** **Owner 以 `git update-ref` 完成快进（未检出、未改工作区）。** **快进仅补齐分支上的文档历史，【不等于本 Task 已集成】；集成仍由 Codex 另行记录。** **`delivery_head` 保持 `392977a83…` 不变。**
 
 **处置属 Codex**（R21：「Integrator 应在集成前核实并处理分支归属」，并把「处理分支指针差异」列入 Codex 事项）。**Owner 不移动分支指针** —— **因为那会由我单方面确立「本 Task 的文档进展落在哪个分支」这一事实，而它正是集成要确立的东西。**
+
+## 资源 closeout（协议 §4.2）
+
+**`resource_closeout_status: complete`。**
+
+| 项 | 处置 |
+|---|---|
+| **新建 worktree** | **无** —— 全程复用仓库工作区与相邻 `New Manga.workspace` 下的 coordinator 输出目录 |
+| **派生产物需迁移/归档/删除** | **无** —— 探针一律在 `%TEMP%` 新建隔离根内运行（`AC4_REPO` 指向仓外副本），**不改动仓库内固定 fixture 目录**；R16–R24 的复审亦在仓外 scratch 副本执行 |
+| **Task 改动范围** | **6 个源/测试文件**（`core_service.py`、`catalog_store.py`、`library.py`、`tests/storage/test_refused_preview_unlink_keeps_records.py` 等）+ **11 个 `verification/P09-PREVIEW-LIFECYCLE-RECLAIM-1/` 证据文件**，**全部在 `allowed_paths` 内** |
+| **用户文件** | **未触碰** —— `.qoder-credits/report.json` 全程为唯一的 tracked dirty 项，归属用户 |
+| **待核销项** | **无** |
+
+**依据**：`git diff --name-only <base_commit>..<delivery_head>` 的实际文件清单；以及每轮复审报告的 scratch 隔离说明。**本项与依赖 Task `P09-AC3-DELETE-HARDEN-1` 的 closeout 同形（其记为「仅复用仓库工作区，无新建 worktree、无需迁移/归档/删除的派生产物」）。**
 
 ## AC6：未满足（权威记录，已落盘）
 
@@ -160,8 +175,8 @@ R13 判定 **`approved_with_conditions`** —— **「实现可接受；集成�
 
 **R13 同时确认**：四个探针全部 PASS 且未因错误原因通过（连续第三轮）；`645 passed`；R12 Finding 2 的 AC 逐项表要求已满足；**三处 lock 断言仍缺可区分的失败侧注入，「按现有记录不应算作已验证」**（与本 Task 自己的记录一致）。
 
-| Plan 已列入 DAG | ✅ **已登记**（`REBASELINE_PLAN` L31，`in_review`）|
-| 依赖状态 | **未集成；交付与证据已闭合，终态待 Codex** —— 读取 `P09-AC3-DELETE-HARDEN-1` 的 frontmatter 得：`status: in_review`、`integration_commit: null`、`delivery_head: 1878f0b126e8a0e2603570f9b2009d8b70a259f1`、`canonical_evidence_status: complete`、`resource_closeout_status: complete`。**即：该 Task 的交付头已固定、证据与资源回收均已闭合，但它【尚未集成】，终态由 Codex 设定。** **R15 的 `approved` 是 Review 结论，不等于集成完成。** *（本节原先写「依赖已集成」——无权威支持；后改为 `NOT_VERIFIED`；现按 frontmatter 据实陈述。据实不需要裁决，读文件即可。）* |
+| Plan 已列入 DAG | ✅ **已登记**（`REBASELINE_PLAN` L31；现为 `closed_with_limitations`）|
+| 依赖状态 | **未集成；交付与证据已闭合；终态已落盘为 `closed_with_limitations`** —— 读取 `P09-AC3-DELETE-HARDEN-1` 的 frontmatter 得：`status: in_review`、`integration_commit: null`、`delivery_head: 1878f0b126e8a0e2603570f9b2009d8b70a259f1`、`canonical_evidence_status: complete`、`resource_closeout_status: complete`。**即：该 Task 的交付头已固定、证据与资源回收均已闭合，但它【尚未集成】，终态由 Codex 设定。** **R15 的 `approved` 是 Review 结论，不等于集成完成。** *（本节原先写「依赖已集成」——无权威支持；后改为 `NOT_VERIFIED`；现按 frontmatter 据实陈述。据实不需要裁决，读文件即可。）* |
 | 范围/Owner/Reviewer/base/allowed_paths 已冻结 | ✅ **本次冻结**（见 frontmatter）|
 | STATUS 已登记 | ✅ **本次登记** |
 
