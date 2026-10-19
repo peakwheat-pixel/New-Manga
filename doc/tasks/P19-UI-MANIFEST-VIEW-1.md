@@ -92,9 +92,9 @@ allowed_paths:
 | P19VIEW-AC1-ORIG | AC1 | `verification/P19-UI-MANIFEST-VIEW-1/ac1-original-section.md` | `ed5a584b6` | `185271200fd722c0a079bed6bf0375d01535c8135356dd8ff7463403d382e8ac` | `CANONICAL` |
 | P19VIEW-AC1-AC2 | AC1、AC2 | `verification/P19-UI-MANIFEST-VIEW-1/ac1-ac2-reference-fix-and-exposed-debt.md` | `ed5a584b6` | `d82721cf9faa06434f4323fde3b73c2e7ffb3074244b20ae725fb1a237cede3c` | `CANONICAL` |
 | P19VIEW-AC2-OUT | AC2、AC3 | `verification/P19-UI-MANIFEST-VIEW-1/ac2-governance-output.txt` | `ed5a584b6` | `174481da47a754f30d5e066f8e2daf52b937c32f2575c62d8350ac225d4697da` | `CANONICAL` |
-| P19VIEW-AC3-LOG | AC3 | `verification/P19-UI-MANIFEST-VIEW-1/p19-task-check-after.log` | `ed5a584b6` | `d79c0e7ea3862755129651f9bb7224e5b97f84ab0e2c95f11ff4f61acb2b99a6` | `CANONICAL` |
-| P19VIEW-AC4 | AC4 | `verification/P19-UI-MANIFEST-VIEW-1/source-preservation.md` | `ed5a584b6` | `f8b92df7264b80b6b823b95b33ce02c2ce78d45ae47e6376b125b8015b6642af` | `CANONICAL` |
-| P19VIEW-AC5 | AC5 | `verification/P19-UI-MANIFEST-VIEW-1/scope-diff.md` | `ed5a584b6` | `60ca3716ca882b5e6f71ee126edf9663281b1deee3bdbe84dc363936ff5462e8` | `CANONICAL` |
+| P19VIEW-AC3-LOG | AC3 | `verification/P19-UI-MANIFEST-VIEW-1/p19-task-check-after.log` | `ed5a584b6` | `4c85b1797f686f21a63fc6d120bc8ee9765151a632aa9b3b32d31041188b9e57` | `CANONICAL` |
+| P19VIEW-AC4 | AC4 | `verification/P19-UI-MANIFEST-VIEW-1/source-preservation.md` | `ed5a584b6` | `9a6ae85ad9456308565ddb056c889230702df587aee7a4903144903f2ed3fed8` | `CANONICAL` |
+| P19VIEW-AC5 | AC5 | `verification/P19-UI-MANIFEST-VIEW-1/scope-diff.md` | `ed5a584b6` | `f581afa2122b0424f2ff1c1838b09a3c8db35edc228972c1ce653cf24cf5bb8e` | `CANONICAL` |
 | P19VIEW-P19JSON | AC4 / 只读对象 | `verification/P19-UI-FIX-1/resource-manifest.json` | `cf4529297` | `b0772d93ab8ed9182497a43e0761f0d4ccc5560768f806ba86eb8048905c4dc2` | `SOURCE_PIN` |
 | P19VIEW-CLOSEOUT | Codex closeout | `verification/P19-UI-MANIFEST-VIEW-1/codex-closeout-evidence.md` | `e6c636828` | `5c2bc3b830adc27cbe852401f91057d856f472dad25c89f23a1ac3946337eaa6` | `CANONICAL` |
 

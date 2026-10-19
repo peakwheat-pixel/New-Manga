@@ -15,3 +15,8 @@ doc/handoffs/SEC-FIX-PATH-ECHO-1-c52ce46.md text eol=lf
 # GOV-PLAN-BUDGET-1 / r5: the governance checker is now version-controlled; pin its line endings
 # so the recorded sha256 (25477A5D...) stays reproducible on any checkout under core.autocrlf=true.
 tools/governance/check.ps1 text eol=lf
+
+# P19-UI-MANIFEST-VIEW-1: these evidence files are pinned by sha256 in the task's Canonical
+# Evidence table. Without an eol rule, core.autocrlf=true rewrites them to CRLF on checkout and
+# every pin fails on a fresh clone - the same trap already documented for SEC-FIX-PATH-ECHO-1.
+verification/P19-UI-MANIFEST-VIEW-1/** text eol=lf
