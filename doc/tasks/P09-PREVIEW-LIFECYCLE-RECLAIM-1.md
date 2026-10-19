@@ -110,6 +110,25 @@ pwsh -NoProfile -File tools/governance/check.ps1 -TaskPath doc/tasks/P09-PREVIEW
 **在 Codex 就另两项答复前，继续送复审只会以同样的结论返回。** **本 Task 停在 `in_review`，`delivery_head` 保持 `392977a83…` 不变。**
 
 
+## 分支指针实测（R21 Finding 1；处置属 Codex）
+
+**R21 指出**：**Task frontmatter 声明 `branch: antigravity/P09-PREVIEW-LIFECYCLE-RECLAIM-1`，而当前 checkout 是 `antigravity/P09-AC3-DELETE-HARDEN-1`。**
+
+**Owner 实测（本轮，只读）**：
+
+```
+antigravity/P09-AC3-DELETE-HARDEN-1         7a2cfabc2   ← 当前 checkout，含交付后的全部文档进展
+antigravity/P09-PREVIEW-LIFECYCLE-RECLAIM-1  392977a83   ← 停在 delivery_head
+
+392977a83 是本 Task 的 delivery_head，且【同时是两分支的祖先】
+HEAD 相对 PREVIEW 分支超越 22 个提交
+这 22 个提交只改 7 个文件，全部在 doc/ 与 verification/ 下，【无 src/ 或 tests/ 改动】
+```
+
+**⚠️ 由此该不一致的性质是：不是「交付落错分支」，而是「交付之后的文档提交留在了另一分支上」。** **两边的交付身份一致（`392977a83`），`branch` 字段并未指错交付。**
+
+**处置属 Codex**（R21：「Integrator 应在集成前核实并处理分支归属」，并把「处理分支指针差异」列入 Codex 事项）。**Owner 不移动分支指针** —— **因为那会由我单方面确立「本 Task 的文档进展落在哪个分支」这一事实，而它正是集成要确立的东西。**
+
 ## AC6：未满足；终态裁决待 Codex 落盘
 
 **AC6 为【未满足】，证据状态 `NOT_VERIFIED`；Codex 已裁决终态为 `closed_with_limitations`。**
