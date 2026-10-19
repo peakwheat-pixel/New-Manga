@@ -69,7 +69,7 @@
 | **AC3** 跨页 / 跨书隔离 | ✅ **PASS** | `ac4-batch-delete-probe.py` | **b1 两页的 2 个 key 全部回收（跨页 2/2）**；**b2 的 key 存活且身份经断言（跨书）**。注入同名异路径孤儿后 exit 1。**本 Task 的 AC3 与 `P09` 的 AC3 delete 子条件不同 —— 后者仍 `BLOCKED`。** |
 | **AC4** `page-original-{pid}` 回收 | ✅ **PASS** | `tests/core/test_core_delete_commands.py`（**20 passed，R6 独立运行**）+ `tests/storage/test_refused_preview_unlink_keeps_records.py` | core 测试断言**确定性** `page-original-{pid}` 的回收；storage 测试断言成功清理时文件与 catalog 行一并移除，以及新契约下 `all_deleted is False`、manifest 存活的另一侧。 |
 | **AC5** 不回归 HARDEN 九探针 | ✅ **PASS（有条件）** | `ac5-harden-rerun.md` | **8 个有效 SAFE + 1 个预期 INCONCLUSIVE**（`n002-race-probe.py` 的 `race_hook_fired=False`，其注入不触发，**不计为安全证据**）+ 1 个查询检查（`queries_ok=9/9`）。**探针到覆盖项为一对一映射表**（R6 Finding 2 后补）。 |
-| **AC6** Schema 变更先冻结契约 | ❌ **`NOT_VERIFIED`** | 无实施前冻结持久化格式契约的证据（见下）| **本 Task 的 diff 不含 Schema 或 IPC 契约变更** —— 只新增 catalog 查询、清理清单字段与删除前快照。**故「先冻结契约」这一要求在本次无对象，记为 `N/A` 而非 PASS。** |
+| **AC6** Schema 变更先冻结契约 | ❌ **未满足**（证据状态 **`NOT_VERIFIED`**）| 无实施前冻结持久化格式契约的证据；**Codex 已裁决终态为 `closed_with_limitations`**，见 `verification/P09-PREVIEW-LIFECYCLE-RECLAIM-1/ac6-ruling.md` | **本 Task 的 diff 不含 Schema 或 IPC 契约变更** —— 只新增 catalog 查询、清理清单字段与删除前快照。**故「先冻结契约」这一要求在本次无对象，记为 `N/A` 而非 PASS。** |
 
 **AC6 结论（R15 后修正）**：**`NOT_VERIFIED`**。**本 Task 的设计答案把「Schema 变更」与「IPC 契约变更」并列为两类**（`design-answer.md:72-73`），**故 Schema 不限于 IPC**；而 C1 在方案 C 之外往 `targets_json` 新增了 `preview_resource_ids` 并重试时读取，**改变了持久化格式的兼容语义**（旧 manifest 无此字段 → `preview_ids_known` 为 False）。**`c1-plan-draft.md:4` 明确「未冻结契约」**，**`git log -S` 显示该字段由三条 `fix(AC4)` 引入，无冻结记录。** **原因是证据缺失，不是口径不明；处置（补冻结 / 改设计 / 经授权豁免）属 Codex。**
 
@@ -108,6 +108,19 @@ python -m pytest tests/storage tests/core -q
 ## 下一任务建议（必填）
 
 **无需下一步操作。** 本 Task 待 Codex 对固定 head 复审；复审通过后由 Codex 集成、做集成后验证与资源 closeout，并更新 Task 与 STATUS。**`P09` 的 AC3 delete 子条件保持 `BLOCKED`，本 Task 不移除该限制。**
+
+## AC6 终态（Codex 裁决，2026-10-19）
+
+**Codex 作为 Architect/Integrator 裁定**（会话 `01a15376-8338-7ed1-a862-45521145eedf`，存档 `verification/P09-PREVIEW-LIFECYCLE-RECLAIM-1/ac6-ruling.md`）：
+
+- **AC6 未满足**，证据状态 **`NOT_VERIFIED`** —— **不记 `N/A`，也无豁免**
+- **Owner 的「无法事后补满足」推理成立，但仅限时序要求**：**事后补写的冻结记录能说明当前格式、帮助后续兼容工作，但不能成为实施前冻结**
+- **终态：`closed_with_limitations`** —— **保留 AC6 未满足，不得改写为通过**
+- **保留现有交付中的字段**，**不启动方案 3**（**删除需独立授权和范围审查**）
+
+**该关闭的含义边界**：**不表示实现已集成，不表示技术门已满足，也不解除上游阻塞。**
+
+**⚠️ 落盘状态**：**截至本 Handoff，Task 的 `status` 仍为 `in_review`。** **按裁决的分工，将裁定写入 Task、同步 Plan/STATUS 并完成关闭记录属 Codex；本 Handoff 补齐的是 Owner 侧的 AC 与交接记录。** **不得把本 Task 描述为已落盘关闭。**
 
 ## 依赖状态（据实，非裁决）
 
