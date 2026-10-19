@@ -3,13 +3,13 @@ id: GOV-UNTRACKED-BACKLOG-1
 title: 仓库未入库积压（1591 文件）的分类与边界化
 kind: governance
 governance_version: 2
-status: proposed
-approval: pending_scope_release
+status: ready
+approval: dsh_release_2026-10-20_measured_1591_files
 suggested_owner: dsh
 owner: dsh
 reviewer: Antigravity
 depends_on: []
-base_commit: be62043b1
+base_commit: 6ee8c87b1
 branch: GOV-UNTRACKED-BACKLOG-1
 worktree: null
 integration_commit: null

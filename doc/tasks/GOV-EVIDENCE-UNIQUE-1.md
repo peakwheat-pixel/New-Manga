@@ -3,15 +3,15 @@ id: GOV-EVIDENCE-UNIQUE-1
 title: GOV-DEBT-CLEANUP-2 AC7 唯一最终证据判定
 kind: governance
 governance_version: 2
-status: proposed
-approval: codex_scope_release_required
+status: ready
+approval: codex_r14_scope_draft; dsh_release_2026-10-20_after_GOV-DEBT-CLEANUP-2_closeout
 suggested_owner: dsh
 owner: dsh
 reviewer: Antigravity
 depends_on: [GOV-DEBT-CLEANUP-2]
-base_commit: 2636301fe5d6c33535f873aeb776c3e4beb5dd2d
-branch: agent/deepseek/GOV-EVIDENCE-UNIQUE-1
-worktree: 待 Codex 在 G:\CODEX\New Manga.workspace\worktrees\GOV-EVIDENCE-UNIQUE-1 创建并登记实际路径
+base_commit: 6ee8c87b1
+branch: null（只读盘点，主线直接执行）
+worktree: null（只读，不建 linked worktree）
 integration_commit: null
 delivery_head: null
 canonical_evidence_status: pending
