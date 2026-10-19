@@ -44,9 +44,9 @@ injected: list[str] = []
 orig_open_relative = w._open_relative
 
 
-def hooked_open_relative(parent: int, name: str, *, directory: bool) -> int | None:
+def hooked_open_relative(parent: int, name: str, *, directory: bool, want_delete: bool = False) -> int | None:
     """Swap the directory for a junction right after its handle is opened."""
-    handle = orig_open_relative(parent, name, directory=directory)
+    handle = orig_open_relative(parent, name, directory=directory, want_delete=want_delete)
     if handle is not None and name == "pages" and not injected:
         injected.append(name)
         shutil.rmtree(target_dir)

@@ -155,7 +155,7 @@ evidence_dir: verification/P09-AC3-DELETE-HARDEN-1
 
 | evidence_id | AC/Gate | path | commit | sha256 | class (`CANONICAL` / `SOURCE_PIN`) |
 |---|---|---|---|---|---|
-| AC12-REGRESSION | AC12 | verification/P09-AC3-DELETE-HARDEN-1/ac12-no-regression.md | b7e409c1af1162d14f03354cc75594c73646f510 | d6590c7be0ddf7726ed1ff4ca5eabe7cadfc57ce3ec2e0adbc62e1384d2c4121 | CANONICAL |
+| AC12-REGRESSION | AC12 | verification/P09-AC3-DELETE-HARDEN-1/ac12-no-regression.md | 2e336a28c3bb516c30e7dfce6c0b99e12c3c20f0 | d6590c7be0ddf7726ed1ff4ca5eabe7cadfc57ce3ec2e0adbc62e1384d2c4121 | CANONICAL |
 | AC7-QUERY-CHECK | AC7 | verification/P09-AC3-DELETE-HARDEN-1/ac7-verify-query-check.py | 034d7e3f0a01237ba264615203e59ba3161afe38 | b409672408c0cf79f9a1f74bb64dc6828496bc65a990d786c7119487422e8afc | SOURCE_PIN |
 | AC1-DISPATCHER-TEST | AC1 | tests/core/test_p09_ac1_recycle_bin_route.py | 899b72b65d90c6c2f6c0835857ce0b4028b3d71d | d2dbffc7a13b656cd5e79e03b140caae7c85a2da3d07847ebb512af4fc4ff8de | CANONICAL |
 | AC4-ORIGIN-TEST | AC4 | tests/core/test_p09_ac4_translated_preview.py | fd5ae50fe5b3a418604a124bde284d23d1fe0f15 | b494bf26d1a759294e954227b359eaefcf56377248400482757eee515933985d | CANONICAL |
