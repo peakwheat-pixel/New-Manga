@@ -100,7 +100,7 @@ python tools/governance/tests/run-<新用例>.py
 |---|---|---|---|---|---|
 | GATE-PROTOCOL | AC1、AC2 | `doc/09_COLLABORATION.md` | `fbf459f28` | `8c4fa3c7b7c6bc85bc4eba98782e8bd62bc6878ac4b6fa3741faa0fcf5456f46` | `CANONICAL` |
 | GATE-CHECKER | AC3 | `tools/governance/check.ps1` | `fbf459f28` | `19ee5e972ce72a35f7e97e97af616645268dbda6ca2cdbe1d6efee0a3b29514f` | `CANONICAL` |
-| GATE-FIXTURES | AC4 | `tools/governance/tests/test_ac_gate.py` | `fbf459f28` | `3bf623ba1068ca875cbaa30f43163e54a835329df733448190212062fbcf00ce` | `CANONICAL` |
+| GATE-FIXTURES | AC4 | `tools/governance/tests/test_ac_gate.py` | `d3eedd735` | `8676b12b839df2542d8e87aa44c1c4be48fd9ef59a1943ac330f8a7cdce7be40` | `CANONICAL` |
 | GATE-WRITEUP | AC1–AC5 | `verification/GOV-AC-GATE-1/ac1-ac4-protocol-and-gate.md` | `fbf459f28` | `f449c758b6fc9d415f20806d73472b53607b509a85cf1eca96ad350d4dc8fa5e` | `CANONICAL` |
 | GATE-HANDOFF | AC6 | `doc/handoffs/GOV-AC-GATE-1-fbf459f28.md` | `489d7b1ba` | `8be08f1088179638c1bbe1d4d3838040954a59a37aa040c051d6cf329e8e7ea5` | `CANONICAL` |
 

@@ -101,14 +101,16 @@ def sha_of(rel):
 
 
 def main():
-    ev = os.path.join(REPO, EVID_REL.replace("/", os.sep))
-    if not os.path.exists(ev):
-        os.makedirs(os.path.dirname(ev), exist_ok=True)
-        io.open(ev, "w", encoding="utf-8", newline="\n").write(
-            "# GOV-AC-GATE-1 fixture evidence\n\n由 AC4 夹具测试引用的占位证据文件。\n")
-    sha = sha_of(EVID_REL)
-
     tmp = tempfile.mkdtemp(prefix="acgate-")
+    # The fixture's evidence file lives in the temp dir too: this test must leave no
+    # artefacts inside verification/ or doc/.
+    ev = os.path.join(tmp, "fixture-evidence.md")
+    io.open(ev, "w", encoding="utf-8", newline="\n").write(
+        "# GOV-AC-GATE-1 fixture evidence\n\n由 AC4 夹具测试引用的占位证据文件（临时）。\n")
+    ev_path_for_task = ev.replace("\\", "/")
+    ev_sha = hashlib.sha256(io.open(ev, "rb").read()).hexdigest()
+    ev_commit = subprocess.run(["git", "-C", REPO, "rev-parse", "HEAD"],
+                               capture_output=True, text=True).stdout.strip()[:9]
     before = set(os.listdir(os.path.join(REPO, "doc", "tasks")))
     results = []
     try:
@@ -116,7 +118,7 @@ def main():
             tid = "FIXTURE-" + name.upper().replace("_", "-")
             p = os.path.join(tmp, tid + ".md")
             io.open(p, "w", encoding="utf-8", newline="\n").write(
-                BASE_FM.format(tid=tid, status=status, acs=acs, evid=EVID_REL, sha=sha))
+                BASE_FM.format(tid=tid, status=status, acs=acs, evid=ev_path_for_task, sha=ev_sha))
             r = subprocess.run(["pwsh", "-NoProfile", "-File", CHECK, "-TaskPath", p],
                                capture_output=True, text=True, encoding="utf-8", cwd=REPO)
             out = (r.stdout or "") + (r.stderr or "")
