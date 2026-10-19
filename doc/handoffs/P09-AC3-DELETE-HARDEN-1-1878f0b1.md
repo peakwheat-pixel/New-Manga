@@ -4,7 +4,7 @@ author: dsh
 recipient: Codex
 base_commit: a04e4ea78d5b33a0f91efcdc06b396391c4b165e
 delivery_head: 1878f0b126e8a0e2603570f9b2009d8b70a259f1
-status: in_review
+status: in_review  # 交付时快照；当前状态以 doc/STATUS.md 与 Task 的 Review 指针为准
 ---
 
 # Handoff：P09-AC3-DELETE-HARDEN-1（托管文件删除路径加固）
