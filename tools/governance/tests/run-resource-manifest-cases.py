@@ -79,7 +79,11 @@ def subst(obj):
 def write_case(manifest, section, taskdir):
     os.makedirs(VDIR, exist_ok=True)
     mf = os.path.join(VDIR, "resource-manifest.json")
-    if manifest is not None:
+    if isinstance(manifest, str):
+        # Raw text: written verbatim so a deliberately malformed manifest really is malformed
+        # and exercises the parse-failure branch, not a valid JSON string.
+        io.open(mf, "w", encoding="utf-8").write(manifest)
+    elif manifest is not None:
         io.open(mf, "w", encoding="utf-8").write(
             json.dumps(manifest, ensure_ascii=False, indent=2))
     elif os.path.exists(mf):
