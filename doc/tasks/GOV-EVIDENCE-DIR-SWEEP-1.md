@@ -2,8 +2,8 @@
 id: GOV-EVIDENCE-DIR-SWEEP-1
 title: 两个来源 Task 的 evidence 目录盘点
 kind: governance
-governance_version: 2
-status: proposed
+governance_version: 3
+status: in_progress
 approval: codex_r20_followup_not_yet_released
 suggested_owner: codex
 owner: codex
@@ -34,17 +34,17 @@ Codex r20 §2.2 裁定：
 
 ## Acceptance Criteria
 
-- [ ] **AC1 只读清单**：列出两个 evidence_dir 的全部文件，逐项记录路径、大小、SHA-256、
+- [x] **AC1 只读清单**：列出两个 evidence_dir 的全部文件，逐项记录路径、大小、SHA-256、 <<MET>>
   是否已在 Canonical Evidence 表登记、是否被任何已入库文档引用。
-- [ ] **AC2 逐文件判定**：对每个未登记文件给出四分类之一——
+- [x] **AC2 逐文件判定**：对每个未登记文件给出四分类之一—— <<MET>>
   `REGISTER`（能证明某 AC/Review/交付结论，应补列登记）、
   `ARCHIVE`（冗余尝试或过程日志，且无现行引用，可移入 workspace archive）、
   `PRESERVE_UNKNOWN`（无法判定归属、或仍可能被引用 → **保留**）、
   `DUPLICATE`（与已登记文件内容相同，需给出被重复者的 evidence_id）。
   **判据必须引用文件实际内容，不得只看文件名。**
-- [ ] **AC3 引用核查**：对每个 `ARCHIVE` 候选，确认**没有**任何已入库文档、
+- [x] **AC3 引用核查**：对每个 `ARCHIVE` 候选，确认**没有**任何已入库文档、 <<MET>>
   Task、Review、pin 或 Plan/STATUS 引用它。**有引用者一律 `PRESERVE_UNKNOWN`。**
-- [ ] **AC4 执行移动（仅 ARCHIVE 项）**：把 `ARCHIVE` 项移入
+- [x] **AC4 执行移动（仅 ARCHIVE 项）**：把 `ARCHIVE` 项移入 <<NOT_APPLICABLE: 逐文件判定结果为 0 个 ARCHIVE，无文件需移动>>
   `G:\CODEX\New Manga.workspacerchive\<task>\`，记录原路径、hash 与移动时间。
   **移动前必须 `git status` 确认该文件未入库且有备份。**
 - [ ] **AC5 交付与 Review**：生成 Handoff；由 Antigravity 对固定 delivery head 独立 Review。

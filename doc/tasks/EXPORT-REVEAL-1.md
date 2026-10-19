@@ -128,6 +128,10 @@ evidence_dir: verification/EXPORT-REVEAL-1
 | EXPORT-REVEAL-RESOURCES | Resource | `verification/EXPORT-REVEAL-1/resource-manifest.json` | `fc5702e650b022608be79694d1c706a4eff51ca9` | `3456769436024a69ef0f40db47d1c319deaf71a3671b31fcdcacc9e6f0a440f7` | CANONICAL |
 
 | EXPORT-REVEAL-REVIEW-R1 | AC1-AC7 | `verification/EXPORT-REVEAL-1/dsh-review-r1.md` | `5cc5508b8` | `8ed36e1873d6766dd651a316d4ae50612e232fa5542648179d748f9a0b299f09` | SOURCE_PIN |
+| EXPORT-REVEAL-PACKAGED-CAPTURE-FAILURE | AC6 | `verification/EXPORT-REVEAL-1/post-merge-packaged-capture-error.log` | 4e4d73a0b | `d73b4c81f8ddd881c2ab62b30b16d217477bd977e0f2f817683da33d0a7cd7d9` | `SOURCE_PIN` |
+| EXPORT-REVEAL-PYTEST-CORE-PRE-MERGE | AC6 | `verification/EXPORT-REVEAL-1/pytest-core.log` | 4e4d73a0b | `b6bde45c516f16b1ed5aa130bd42fd288b06e5e62c09ad28bdefde88e80a37ad` | `SOURCE_PIN` |
+| EXPORT-REVEAL-RUST-PACKAGED-PRE-MERGE | AC6 | `verification/EXPORT-REVEAL-1/rust-packaged.log` | 4e4d73a0b | `285007f5a393dca2185f24284dacd87a9a8d9db917d4fd8248adf9c60dd1cfc2` | `SOURCE_PIN` |
+| EXPORT-REVEAL-RUST-SOURCE-PRE-MERGE | AC6 | `verification/EXPORT-REVEAL-1/rust-source.log` | 4e4d73a0b | `0d9e5489451a044929b8cb24e61dd11d0b1375b07f13db4c8e90c41812843a38` | `SOURCE_PIN` |
 
 ## Resource Manifest
 

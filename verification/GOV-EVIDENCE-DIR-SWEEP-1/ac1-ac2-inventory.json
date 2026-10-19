@@ -1,0 +1,192 @@
+[
+ {
+  "task": "EXPORT-REVEAL-1",
+  "name": "dsh-review-r1.md",
+  "path": "verification/EXPORT-REVEAL-1/dsh-review-r1.md",
+  "bytes": 9225,
+  "sha256": "8ed36e1873d6766dd651a316d4ae50612e232fa5542648179d748f9a0b299f09",
+  "verdict": "REGISTERED",
+  "evidence_id": "EXPORT-REVEAL-REVIEW-R1",
+  "note": "独立 Review；表中已登记为 EXPORT-REVEAL-REVIEW-R1"
+ },
+ {
+  "task": "EXPORT-REVEAL-1",
+  "name": "frozen-export-attempt.log",
+  "path": "verification/EXPORT-REVEAL-1/frozen-export-attempt.log",
+  "bytes": 1901,
+  "sha256": "66ba5a9f6b7274e6cd884241bf671e545b1c29b072ca7318477e5d3d0535cf18",
+  "verdict": "REGISTERED",
+  "evidence_id": "EXPORT-REVEAL-FROZEN-ATTEMPT",
+  "note": "frozen bundle 导出尝试；已登记（AC4-③）"
+ },
+ {
+  "task": "EXPORT-REVEAL-1",
+  "name": "merge-resolution.md",
+  "path": "verification/EXPORT-REVEAL-1/merge-resolution.md",
+  "bytes": 4433,
+  "sha256": "a11a035330aa513a94306c04fae3e361cb1d307ff859b6b71fe3e80d3dbd9ffc",
+  "verdict": "REGISTERED",
+  "evidence_id": "EXPORT-REVEAL-POST-MERGE-RESOLUTION",
+  "note": "合并冲突解决记录；已登记（Integration）"
+ },
+ {
+  "task": "EXPORT-REVEAL-1",
+  "name": "post-merge-packaged.log",
+  "path": "verification/EXPORT-REVEAL-1/post-merge-packaged.log",
+  "bytes": 2133,
+  "sha256": "df38c07d4f4a51c7c4e47a771e26229c2c4bd66d0586aa82ca934bfaa6835b89",
+  "verdict": "REGISTERED",
+  "evidence_id": "EXPORT-REVEAL-RUST-PACKAGED",
+  "note": "合并后 packaged 测试；已登记（AC4-③/AC6）"
+ },
+ {
+  "task": "EXPORT-REVEAL-1",
+  "name": "post-merge-python.log",
+  "path": "verification/EXPORT-REVEAL-1/post-merge-python.log",
+  "bytes": 1482,
+  "sha256": "99974ea3a4f2e6901a3266183fdf100704104cba12de249937ef403593e4ff21",
+  "verdict": "REGISTERED",
+  "evidence_id": "EXPORT-REVEAL-CORE-TESTS",
+  "note": "合并后 Core 测试；已登记（AC6）"
+ },
+ {
+  "task": "EXPORT-REVEAL-1",
+  "name": "post-merge-source.log",
+  "path": "verification/EXPORT-REVEAL-1/post-merge-source.log",
+  "bytes": 7507,
+  "sha256": "ac09c12ffd5dcbb4f189eb736f7b107571367405f6900749fe8fb50d7fc1134e",
+  "verdict": "REGISTERED",
+  "evidence_id": "EXPORT-REVEAL-ALLOWLIST-REFUSALS",
+  "note": "合并后 source 测试；已登记（AC4-①/②）"
+ },
+ {
+  "task": "EXPORT-REVEAL-1",
+  "name": "resource-manifest.json",
+  "path": "verification/EXPORT-REVEAL-1/resource-manifest.json",
+  "bytes": 1938,
+  "sha256": "3456769436024a69ef0f40db47d1c319deaf71a3671b31fcdcacc9e6f0a440f7",
+  "verdict": "REGISTERED",
+  "evidence_id": "EXPORT-REVEAL-RESOURCES",
+  "note": "资源清单；已登记（Resource）"
+ },
+ {
+  "task": "EXPORT-REVEAL-1",
+  "name": "reveal-roundtrip-status.md",
+  "path": "verification/EXPORT-REVEAL-1/reveal-roundtrip-status.md",
+  "bytes": 1663,
+  "sha256": "8c2d941c580ce266672d428f315bac28a895e45a777f5cadf81e64b1021af109",
+  "verdict": "REGISTERED",
+  "evidence_id": "EXPORT-REVEAL-GUI-BLOCK",
+  "note": "GUI 阻塞说明；已登记（AC4-③）"
+ },
+ {
+  "task": "EXPORT-REVEAL-1",
+  "name": "post-merge-packaged-capture-error.log",
+  "path": "verification/EXPORT-REVEAL-1/post-merge-packaged-capture-error.log",
+  "bytes": 408,
+  "sha256": "d73b4c81f8ddd881c2ab62b30b16d217477bd977e0f2f817683da33d0a7cd7d9",
+  "verdict": "REGISTER",
+  "evidence_id": "EXPORT-REVEAL-PACKAGED-CAPTURE-FAILURE",
+  "note": "**未登记**。内容为 `error: Unrecognized option: 'A'` / `error: test failed` / `EXIT_CODE=101`。是 packaged 测试一次失败尝试的原始记录——证明该测试非一次通过，属**有判别力的反证**，必须补登记。"
+ },
+ {
+  "task": "EXPORT-REVEAL-1",
+  "name": "pytest-core.log",
+  "path": "verification/EXPORT-REVEAL-1/pytest-core.log",
+  "bytes": 1127,
+  "sha256": "b6bde45c516f16b1ed5aa130bd42fd288b06e5e62c09ad28bdefde88e80a37ad",
+  "verdict": "REGISTER",
+  "evidence_id": "EXPORT-REVEAL-PYTEST-CORE-PRE-MERGE",
+  "note": "**未登记**。内容为 `405 passed, 1 warning` / `EXIT_CODE=0`。对应 Closeout「Core 405 passed」的原始日志；与已登记的 `post-merge-python.log` 是不同阶段（合并前/后）的两份，均应保留。"
+ },
+ {
+  "task": "EXPORT-REVEAL-1",
+  "name": "rust-packaged.log",
+  "path": "verification/EXPORT-REVEAL-1/rust-packaged.log",
+  "bytes": 2276,
+  "sha256": "285007f5a393dca2185f24284dacd87a9a8d9db917d4fd8248adf9c60dd1cfc2",
+  "verdict": "REGISTER",
+  "evidence_id": "EXPORT-REVEAL-RUST-PACKAGED-PRE-MERGE",
+  "note": "**未登记**。内容为 `test result: ok. 8 passed; 0 failed` / `EXIT_CODE=0`。对应 Closeout「packaged sidecar 8 passed」的原始日志；与已登记的 `post-merge-packaged.log` 为不同阶段。"
+ },
+ {
+  "task": "EXPORT-REVEAL-1",
+  "name": "rust-source.log",
+  "path": "verification/EXPORT-REVEAL-1/rust-source.log",
+  "bytes": 7662,
+  "sha256": "0d9e5489451a044929b8cb24e61dd11d0b1375b07f13db4c8e90c41812843a38",
+  "verdict": "REGISTER",
+  "evidence_id": "EXPORT-REVEAL-RUST-SOURCE-PRE-MERGE",
+  "note": "**未登记**。内容为 `test result: ok. 82 passed; 0 failed; 1 ignored` / `EXIT_CODE=0`。对应 Closeout「Rust source 82 passed / 1 ignored」的原始日志；与已登记的 `post-merge-source.log` 为不同阶段。"
+ },
+ {
+  "task": "P15",
+  "name": "dsh-review-r1.md",
+  "path": "verification/P15/dsh-review-r1.md",
+  "bytes": 7156,
+  "sha256": "44862ea78d6ab743234b8ed7831ea7b0389cee750311fd657f8b12da069ce13b",
+  "verdict": "REGISTERED",
+  "evidence_id": "E8",
+  "note": "独立 Review；已登记为 `E8 独立 Review`（AC1–AC6）"
+ },
+ {
+  "task": "P15",
+  "name": "npm-test.log",
+  "path": "verification/P15/npm-test.log",
+  "bytes": 120644,
+  "sha256": "ee330fedf2fa2f192577cce0e864238f5a56005f493bbf4827c2a9047bccc645",
+  "verdict": "REGISTERED",
+  "evidence_id": "E1",
+  "note": "前端套件；已登记为 `E1 前端套件`（AC1–AC5）"
+ },
+ {
+  "task": "P15",
+  "name": "npm-build.log",
+  "path": "verification/P15/npm-build.log",
+  "bytes": 618,
+  "sha256": "5ace5faa3b84b806fb3f3be0c5d67a5e4d0af430405ddb0871fcb0bed80b05a6",
+  "verdict": "REGISTERED",
+  "evidence_id": "E2",
+  "note": "前端构建；已登记为 `E2 前端构建`（AC5）"
+ },
+ {
+  "task": "P15",
+  "name": "pytest-tests-core.log",
+  "path": "verification/P15/pytest-tests-core.log",
+  "bytes": 7847,
+  "sha256": "69ec2d0c1b32996184325e14f8d022421fc72599d03333330f47b217759cc18d",
+  "verdict": "REGISTERED",
+  "evidence_id": "E3",
+  "note": "Core 回归；已登记为 `E3 Core 回归`（AC5）"
+ },
+ {
+  "task": "P15",
+  "name": "cargo-test-source.log",
+  "path": "verification/P15/cargo-test-source.log",
+  "bytes": 7869,
+  "sha256": "767455eb84bb6342cafe7a6dac344ce394a9413aa01ae2c0f838988d388d8658",
+  "verdict": "REGISTERED",
+  "evidence_id": "E4",
+  "note": "Rust source-backed；已登记为 `E4`（AC5）"
+ },
+ {
+  "task": "P15",
+  "name": "cargo-test-packaged.log",
+  "path": "verification/P15/cargo-test-packaged.log",
+  "bytes": 8759,
+  "sha256": "5074de149b03c217b05936e695378e6262e3f4691775d0b32b0d8d0bf297dd04",
+  "verdict": "REGISTERED",
+  "evidence_id": "E5",
+  "note": "Rust packaged frozen；已登记为 `E5`（AC5）"
+ },
+ {
+  "task": "P15",
+  "name": "cargo-test-unfiltered-first-run.log",
+  "path": "verification/P15/cargo-test-unfiltered-first-run.log",
+  "bytes": 21714,
+  "sha256": "5629b4990ece05f7bc41f846ede60369337af8626b0c3455d539f92de9d85c06",
+  "verdict": "REGISTER",
+  "evidence_id": "E9",
+  "note": "**未登记**。内容为 `error: test failed` / `EXIT_CODE=101`。P15 的 Closeout Record **明确提到它**：「Owner 保留未过滤首跑的失败日志并如实命名为 `cargo-test-unfiltered-first-run.log`（exit 101）」。这是**证据诚实性的正向记录**，必须补登记。"
+ }
+]
