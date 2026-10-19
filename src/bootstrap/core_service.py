@@ -1231,6 +1231,19 @@ class CoreServiceServer:
                         pids = mdata.get("page_ids", [])
                 book_page_ids_map[bid] = pids
             book_targets_map = {bid: repo.list_book_cleanup_targets(bid) for bid in book_ids}
+            # AC4: same snapshot as the single-book path, and for the same reason -
+            # preview_lifecycle is reached through artifact_id, and the delete below
+            # removes media_artifacts.  Measured: without this, the batch path leaks
+            # exactly as the single path did.
+            preview_ids_map: dict[str, list[str]] = {}
+            preview_catalog = getattr(self._render_previews, "_catalog", None)
+            if preview_catalog is not None:
+                for bid, pids in book_page_ids_map.items():
+                    preview_ids_map[bid] = (
+                        preview_catalog.preview_resource_ids_for_artifacts(
+                            repo.list_page_artifact_ids(pids)
+                        )
+                    )
             try:
                 repo.execute_permanent_delete_db(book_targets_map, book_page_ids_map)
             except Exception:
@@ -1248,6 +1261,7 @@ class CoreServiceServer:
                     storage,
                     render_previews=self._render_previews,
                     page_ids=pids,
+                    preview_resource_ids=preview_ids_map.get(bid, []),
                 )
                 if cleaned:
                     completed_count += 1
