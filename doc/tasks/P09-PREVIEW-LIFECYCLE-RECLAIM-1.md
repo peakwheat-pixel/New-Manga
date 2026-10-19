@@ -150,10 +150,17 @@ HEAD 相对 PREVIEW 分支超越 22 个提交（**截至该测量时点**；**�
 
 ### 另有两项不属于 §4.2 七类，但本 Task 确实产生
 
-| 项 | 实测 | 处置 |
-|---|---|---|
-| **review-scratch** | `New Manga.workspace\review-scratch\P09-PREVIEW-LIFECYCLE-RECLAIM-1-R17` **存在**（Codex R17 复审所建） | `PRESERVE_UNKNOWN` —— **由 Codex 处置** |
-| **R1–R26 审查记录** | 位于仓外 `New Manga.workspace\agent-output\coordinator\codex-p09plr*-*.md`；**R23 已由 Codex 纳入仓库** | `PRESERVE_REFERENCED` —— **R23 已入库并被他处引用；其余保留** |
+**按 §4.2 的四要素（源 · 目标 · hash 或 manifest · 引用检查 · 结果）逐项填写：**
+
+| 项 | 建议处置 | 源 | 目标 | hash / manifest | 引用检查 | 结果 |
+|---|---|---|---|---|---|---|
+| **review-scratch**（Codex R17 复审所建） | `PRESERVE_UNKNOWN` | `New Manga.workspace\review-scratch\P09-PREVIEW-LIFECYCLE-RECLAIM-1-R17` | **保持原位** | **未制作 manifest** —— 未逐文件清点 | **未核**（不知是否仍被引用） | **保留**；**处置由 Codex 给出** |
+| **R23 审查记录**（已入库） | `PRESERVE_REFERENCED` | 仓外 `…\coordinator\codex-p09plr23-result.md` → 仓库 `verification/P09-PREVIEW-LIFECYCLE-RECLAIM-1/codex-review-r23.md` | **仓库内保持**（仓外原件保留） | **仓库副本已在 Git 中，hash 即其 blob** | ✅ **有引用**：本 Task、`ac6-ruling.md`、`codex-integration-intent.md` 均指向它 | **保留** |
+| **R1–R22、R24–R27 审查记录**（仓外） | **`PRESERVE_UNKNOWN`** | 仓外 `…\coordinator\codex-p09plr*-*.md` | **保持原位** | **未制作 manifest** | ⚠️ **未逐项核** —— **仅 R23 已证明有引用；其余未核实** | **保留**；**处置由 Codex 给出** |
+
+**⚠️ 更正（R27 Finding 1）**：**先前把 R1–R26 记录整体记为 `PRESERVE_REFERENCED`，但文字只证明了 R23 有引用。** **现拆为两行：R23 保持 `PRESERVE_REFERENCED`（有引用证据），其余记为 `PRESERVE_UNKNOWN`（未核实）。**
+
+**⚠️ §4.2 规定逐项处置「在 approved 集成窗口由 Codex 给出」。** **上表全部为 Owner 侧的实测清册与【建议】；最终逐项裁定属 Codex。** **`resource_closeout_status: complete` 表示 Owner 侧清册已闭合，不表示 Codex 的逐项裁定已完成。**
 
 ### 交付路径清册（R26 Finding 1 的更正）
 
