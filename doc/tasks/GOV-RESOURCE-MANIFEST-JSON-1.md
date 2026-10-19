@@ -3,7 +3,7 @@ id: GOV-RESOURCE-MANIFEST-JSON-1
 title: 治理检查器支持外部 JSON Resource Manifest
 kind: governance
 governance_version: 2
-status: ready
+status: in_progress
 approval: codex_release_2026-10-19_after_GOV-PLAN-BUDGET-1_integration; user_decision_2026-10-19_scheme_D
 suggested_owner: dsh
 owner: dsh
@@ -11,10 +11,10 @@ reviewer: Antigravity
 depends_on:
   - GOV-PLAN-BUDGET-1
 base_commit: c131b1ae114d00c17e734a51f38263d92fe6f198
-branch: agent/deepseek/GOV-RESOURCE-MANIFEST-JSON-1
-worktree: G:/CODEX/New Manga.workspace/worktrees/GOV-RESOURCE-MANIFEST-JSON-1
+branch: GOV-RESOURCE-MANIFEST-JSON-1
+worktree: G:/CODEX/New Manga/.agents/worktrees/GOV-RESOURCE-MANIFEST-JSON-1
 integration_commit: null
-delivery_head: null
+delivery_head: 7d09143d6df73d6c12a9769beaf19cfd70cc313c
 canonical_evidence_status: pending
 resource_closeout_status: pending
 evidence_dir: verification/GOV-RESOURCE-MANIFEST-JSON-1

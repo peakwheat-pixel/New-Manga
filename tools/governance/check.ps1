@@ -51,6 +51,85 @@ function Get-TableRows([string]$Section) {
     return $rows
 }
 
+function Resolve-ManifestReference([string]$Section, [string]$RepoRoot) {
+    # A Resource Manifest section may reference exactly one repository-relative JSON file.
+    # Anything ambiguous or outside verification/** is refused rather than guessed at.
+    $refs = [System.Collections.Generic.List[string]]::new()
+    foreach ($m in [regex]::Matches($Section, '`([^`\s]+\.json)`')) { $refs.Add($m.Groups[1].Value.Trim()) }
+    if ($refs.Count -eq 0) { return @{ Path = $null; Error = $null } }
+    if ($refs.Count -gt 1) { return @{ Path = $null; Error = "Resource Manifest 引用了多个 JSON：$($refs -join ', ')" } }
+    $ref = $refs[0]
+    if ($ref -match '^(?i:[a-z]+:)' -or $ref.StartsWith('/') -or $ref.StartsWith('\')) {
+        return @{ Path = $null; Error = "Resource Manifest 引用不得为绝对路径或 URL：$ref" }
+    }
+    if ($ref -match '[*?\[\]]') { return @{ Path = $null; Error = "Resource Manifest 引用不得含 glob：$ref" } }
+    if ($ref -match '%[^%]+%' -or $ref -match '\$[A-Za-z_{(]') { return @{ Path = $null; Error = "Resource Manifest 引用不得含环境变量或宏：$ref" } }
+    $full = Join-Path $RepoRoot ($ref -replace '/', [IO.Path]::DirectorySeparatorChar)
+    $norm = $ref -replace '\\', '/'
+    if ($norm -notmatch '^verification/') { return @{ Path = $null; Error = "Resource Manifest 引用必须位于 verification/**：$ref" } }
+    if ($norm -match '\.\./') { return @{ Path = $null; Error = "Resource Manifest 引用不得越出仓库：$ref" } }
+    if (-not (Test-Path -LiteralPath $full -PathType Leaf)) { return @{ Path = $null; Error = "Resource Manifest 引用的文件不存在：$ref" } }
+    $item = Get-Item -LiteralPath $full
+    if ($item.LinkType) { return @{ Path = $null; Error = "Resource Manifest 引用不得为符号链接：$ref" } }
+    return @{ Path = $full; Error = $null }
+}
+
+function Test-ExternalResourceManifest([string]$ManifestPath, [string]$TaskId, [string]$RepoRoot) {
+    # Validates the referenced JSON against the fixed v1 schema, then applies the same
+    # disposition rules the table path uses, plus the strict ALREADY_ABSENT semantics.
+    $problems = [System.Collections.Generic.List[string]]::new()
+    $notes = [System.Collections.Generic.List[string]]::new()
+    try { $json = Get-Content -LiteralPath $ManifestPath -Raw -Encoding UTF8 | ConvertFrom-Json }
+    catch { return @{ Errors = @("Resource Manifest JSON 无法解析：$ManifestPath"); Resources = @() } }
+    if ($json.schema_version -ne 1) { $problems.Add("Resource Manifest schema_version 必须为 1") }
+    if ($json.task_id -ne $TaskId) { $problems.Add("Resource Manifest task_id '$($json.task_id)' 与 Task '$TaskId' 不一致") }
+    if (-not $json.resources -or $json.resources.Count -eq 0) { $problems.Add("Resource Manifest resources 不得为空") }
+
+    $allowed = @('DELETE_SAFE','MIGRATE','ARCHIVE','PRESERVE_REFERENCED','PRESERVE_USER_DATA','PRESERVE_UNKNOWN','NOT_APPLICABLE','ALREADY_ABSENT')
+    $counts = @{ deleted = 0; moved = 0; migrated = 0; archived = 0 }
+    $resources = @()
+    foreach ($res in $json.resources) {
+        $disposition = ([string]$res.disposition).ToUpperInvariant()
+        if ($disposition -notin $allowed) { $problems.Add("Resource disposition 无效：$disposition"); continue }
+        if ([string]::IsNullOrWhiteSpace([string]$res.process_check)) { $problems.Add("Resource Manifest 缺少引用/进程检查结果：$($res.source_path)") }
+        if ($res.deleted) { $counts.deleted++ }
+        if ($res.moved) { $counts.moved++ }
+        if ($res.modified -eq $null) { }
+        if ($disposition -eq 'ALREADY_ABSENT') {
+            if ([string]::IsNullOrWhiteSpace([string]$res.absent_evidence)) { $problems.Add("ALREADY_ABSENT 缺少 absent_evidence：$($res.source_path)") }
+            foreach ($expr in @([string]$res.source_path, [string]$res.destination_path)) {
+                if ([string]::IsNullOrWhiteSpace($expr)) { continue }
+                if ($expr -match '[{}*?\[\]]' -or $expr -match '%[^%]+%') { continue }
+                # Resolve-LocalPath handles rooted paths; a bare Join-Path would glue an
+                # absolute expression onto the repo root (G:\...\C:\Windows\...), making every
+                # existing absolute target look absent and letting a fake disappearance pass.
+                $cand = Resolve-LocalPath $expr $RepoRoot
+                if ($cand -and (Test-Path -LiteralPath $cand)) { $problems.Add("ALREADY_ABSENT 但目标仍存在：$expr") }
+            }
+        } elseif ($disposition -eq 'NOT_APPLICABLE' -and ([string]$res.absent_evidence)) {
+            $problems.Add("NOT_APPLICABLE 不得用于已消失资源：$($res.source_path)")
+        }
+        $resources += [pscustomobject]@{ Disposition = $disposition; Source = [string]$res.source_path; Destination = [string]$res.destination_path; Sha256 = [string]$res.sha256; ManifestPath = [string]$res.manifest_path }
+    }
+    if ($json.closeout_counts) {
+        foreach ($k in @('deleted','moved','migrated','archived')) {
+            $declared = 0
+            try { $declared = [int]$json.closeout_counts.$k } catch { $problems.Add("closeout_counts.$k 必须为整数") }
+            if ($declared -lt 0) { $problems.Add("closeout_counts.$k 不得为负") }
+        }
+        # Declared counts are a record of closeout actions, which may cover files that are not
+        # themselves listed in resources. P19-UI-FIX-1 declares moved=6 for six logs renamed
+        # inside its evidence dir while all seven listed resources carry moved=false - accurate,
+        # not inconsistent. Differences are surfaced as notes, never as failures.
+        foreach ($k in @('deleted','moved','migrated','archived')) {
+            $declared = 0
+            try { $declared = [int]$json.closeout_counts.$k } catch { }
+            if ($declared -ne $counts[$k]) { $notes.Add("closeout_counts.$k=$declared 与 resources 中布尔为 true 的项数 $($counts[$k]) 不同（声明口径包含未列入 resources 的处置动作）") }
+        }
+    } else { $problems.Add("Resource Manifest 缺少 closeout_counts") }
+    return @{ Errors = $problems; Notes = $notes; Resources = $resources }
+}
+
 $staticFiles = @(
     'AGENTS.md',
     'doc/00_INDEX.md',
@@ -231,8 +310,27 @@ if ($TaskPath -and (Test-Path -LiteralPath $TaskPath -PathType Leaf)) {
             }
             if ($closeoutRequired) {
                 if (($taskStatus -eq 'done' -or ($taskStatus -eq 'approved' -and $hasIntegrationCommit)) -and $taskText -match '(?m)^\s*-\s*\[ \]') { Add-Error 'DONE 不能保留未完成 Acceptance Criteria；范围未完成时使用 closed_with_limitations。' }
-                $resourceRows = @(Get-TableRows (Get-Section $taskText 'Resource Manifest'))
-                if ($resourceRows.Count -eq 0) { Add-Error 'DONE 必须逐项填写 Resource Manifest；无资源时写 NOT_APPLICABLE。' }
+                $manifestSection = Get-Section $taskText 'Resource Manifest'
+                $resourceRows = @(Get-TableRows $manifestSection)
+                $externalManifestUsed = $false
+                if ($resourceRows.Count -eq 0) {
+                    $ref = Resolve-ManifestReference $manifestSection $repoRoot
+                    if ($ref.Error) { Add-Error $ref.Error }
+                    elseif ($ref.Path) {
+                        $externalManifestUsed = $true
+                        $checked = Test-ExternalResourceManifest $ref.Path $taskId $repoRoot
+                        foreach ($p in $checked.Errors) { Add-Error $p }
+                        if ($checked.Notes) { foreach ($n in $checked.Notes) { Add-Warning "$($taskId): $n" } }
+                        foreach ($r in $checked.Resources) {
+                            if ($r.Disposition -in @('MIGRATE','ARCHIVE','PRESERVE_REFERENCED','PRESERVE_USER_DATA','PRESERVE_UNKNOWN')) {
+                                if ([string]::IsNullOrWhiteSpace($r.Destination) -or $r.Destination -match '^(?i:none|n/?a|-)$') { continue }
+                                if ($r.Destination -match '[{}*?\[\]]' -or $r.Destination -match '%[^%]+%') { continue }
+                                $finalPath = Resolve-LocalPath $r.Destination $repoRoot
+                                if (-not $finalPath -or -not (Test-Path -LiteralPath $finalPath)) { Add-Error "Resource 最终路径未验证：$($r.Destination)" }
+                            }
+                        }
+                    } else { Add-Error 'DONE 必须逐项填写 Resource Manifest；无资源时写 NOT_APPLICABLE。' }
+                }
                 $allowedDisposition = @('DELETE_SAFE', 'MIGRATE', 'ARCHIVE', 'PRESERVE_REFERENCED', 'PRESERVE_USER_DATA', 'PRESERVE_UNKNOWN', 'NOT_APPLICABLE')
                 foreach ($row in $resourceRows) {
                     if ($row.Count -lt 6) { Add-Error 'Resource Manifest 表格需要 6 列。'; continue }
