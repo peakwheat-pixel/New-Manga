@@ -3,8 +3,8 @@ id: GOV-PIN-LINEAGE-1
 title: 历史 evidence pin 的 lineage 补注
 kind: governance
 governance_version: 2
-status: blocked
-blocker: pin basis 未定义（r25 前提被 300 项核验推翻），40 项 CONTENT_DIFFERS 未诊断
+status: closed_with_limitations
+
 approval: codex_r26_released_scope_frozen
 suggested_owner: antigravity
 owner: dsh
@@ -15,8 +15,8 @@ branch: dsh/GOV-PIN-LINEAGE-1
 worktree: G:/CODEX/New Manga.workspace/GOV-PIN-LINEAGE-1/worktree
 integration_commit: null
 delivery_head: null
-canonical_evidence_status: pending
-resource_closeout_status: pending
+canonical_evidence_status: complete
+resource_closeout_status: complete
 evidence_dir: verification/GOV-PIN-LINEAGE-1
 ---
 
@@ -74,26 +74,26 @@ r25 §8 的原文：
 
 ## Acceptance Criteria
 
-- [ ] **AC1 — 冻结并核验 pin 清单**：以 `verification/GOV-PIN-LINEAGE-1/pin-inventory.json`
+- [ ] **AC1 — 冻结并核验 pin 清单**：以 `verification/GOV-PIN-LINEAGE-1/pin-inventory.json` <<BLOCKED: r27 撤回原方案、r28 停止改造，本 Task 未实施任何 AC>>
   为输入，逐条核验 63 个 `TIME_BASED` 与 6 个 `LINE_ENDING` pin 的
   `pinned_commit:path` Git blob。记录 Task、evidence_id、原 SHA、blob SHA、是否相符。
   **不得覆盖任何原 pin。**
-- [ ] **AC2 — 修正历史 pin 校验语义**：`tools/governance/check.ps1` 对有有效 Git commit
+- [ ] **AC2 — 修正历史 pin 校验语义**：`tools/governance/check.ps1` 对有有效 Git commit <<BLOCKED: r27 撤回原方案、r28 停止改造，本 Task 未实施任何 AC>>
   的仓库内 pin，以该 commit 中该路径的 blob SHA-256 与 pinned SHA 比较；
   **不得用当前工作区 SHA 代替历史 blob SHA**。pin commit/blob 缺失或 blob 不符时
   保留现有 error 语义。**工作区漂移另报为独立诊断（warning/info），不与 pin 有效性混同。**
-- [ ] **AC3 — 处理 6 项行尾样本**：对 6 个 `LINE_ENDING` pin 验证 pinned blob SHA
+- [ ] **AC3 — 处理 6 项行尾样本**：对 6 个 `LINE_ENDING` pin 验证 pinned blob SHA <<BLOCKED: r27 撤回原方案、r28 停止改造，本 Task 未实施任何 AC>>
   与原 SHA 相符，并复核 LF normalization 诊断；**不重算或覆盖任何 pin，
   不修改 `.gitattributes`**。无法复现的项作为未解释异常报告，**不得计为通过**。
-- [ ] **AC4 — 保留 23 项诊断边界**：逐项记录 `MISSING_FILE` 的 commit 可解析性、
+- [ ] **AC4 — 保留 23 项诊断边界**：逐项记录 `MISSING_FILE` 的 commit 可解析性、 <<BLOCKED: r27 撤回原方案、r28 停止改造，本 Task 未实施任何 AC>>
   commit 中路径/blob 状态及 hash 对照，并核对 Task/Handoff/manifest 中的来源引用；
   **只有来源链支持时才判为前缀错误或仓外证据**。
   不得改写 P02 Task、重建/复制/移动/删除证据，**不把未诊断项写成已解决**。
-- [ ] **AC5 — 回归保护既有门禁**：为以下情况建立确定性用例：历史 blob 匹配但工作区修改、
+- [ ] **AC5 — 回归保护既有门禁**：为以下情况建立确定性用例：历史 blob 匹配但工作区修改、 <<BLOCKED: r27 撤回原方案、r28 停止改造，本 Task 未实施任何 AC>>
   LF/CRLF 转换、commit 缺失、commit 中路径缺失、blob hash 不符、工作区与 pin 一致。
   运行 checker 自身既有夹具与相关 Task-scoped 检查，**证明 v3 AC gate、Resource Manifest
   等无关门禁不被绕过**。
-- [ ] **AC6 — 交付 registry 与独立 Review**：提交单一机器可读 lineage registry 与摘要、
+- [ ] **AC6 — 交付 registry 与独立 Review**：提交单一机器可读 lineage registry 与摘要、 <<BLOCKED: r27 撤回原方案、r28 停止改造，本 Task 未实施任何 AC>>
   **最小 checker diff**、测试证据、Handoff；registry 覆盖 63+6 条，保留逐项来源与结论。
   由**未编写该 checker/registry 的 Reviewer** 对固定 delivery head 独立 Review。
 
@@ -127,11 +127,30 @@ python tools/governance/tests/<新增用例>.py
 
 ## Canonical Evidence
 
-交付时登记输入清单、registry、checker diff、测试证据、Handoff、Review。
+| evidence_id | AC/Gate | path（仓库相对路径或绝对路径） | commit | sha256 | class (`CANONICAL` / `SOURCE_PIN`) |
+|---|---|---|---|---|---|
+| PINL-INVENTORY | AC1 | `verification/GOV-PIN-LINEAGE-1/pin-inventory.json` | `30669c0a8` | `3b4a34142e1961a4de2f2ca54f64b6f532826f1c0ea3d35c47cb7c0316f1d4d3` | `CANONICAL` |
+| PINL-SCOPE | AC1 | `verification/GOV-PIN-LINEAGE-1/pin-inventory-and-scope.md` | `30669c0a8` | `72966fd640860c0f2e4c134c4f812767db15f43612a5f8538b5e3fb62315573a` | `CANONICAL` |
+| PINL-PRECOND | AC1 | `verification/GOV-PIN-LINEAGE-1/release-preconditions.md` | `30669c0a8` | `e862241b8d275ee01bc7b97b9d1507404f297b014da9b59e1c0d1f6f9c08f8e5` | `CANONICAL` |
+| PINL-AVAIL | AC1 | `verification/GOV-PIN-LINEAGE-1/reviewer-availability.md` | `30669c0a8` | `cfb37437cce6ce00c697ba9106e1aa81aa33c7e48896579db904145abfab1208` | `CANONICAL` |
+| PINL-AC1-VERIFY | AC1 | `verification/GOV-PIN-LINEAGE-1/ac1-pin-only-verification.json` | `30669c0a8` | `636c60e9edc47fad1bb3db34b1ea7f182c88c2342d59a70f36b1f11901395679` | `CANONICAL` |
+| PINL-AC1-DIAG | AC1 | `verification/GOV-PIN-LINEAGE-1/ac1-mismatch-diagnosis.json` | `30669c0a8` | `2348819afa11fc1a86b608c3e9ed94dd2601712c467dae0a7a3936e946758b94` | `CANONICAL` |
+| PINL-AC1-FINDING | AC1 | `verification/GOV-PIN-LINEAGE-1/ac1-verification-finding.md` | `30669c0a8` | `c8a6d9004e8693d17aaa1082df13cfd792b8dbd664b43ad211c8c67edc8d7bff` | `CANONICAL` |
+| PINL-40-DIAG | AC1 | `verification/GOV-PIN-LINEAGE-1/ac1-content-differs-diagnosis.json` | `30669c0a8` | `403bfbf4aa4a0046c7e330a810f26cb7311b782eaff02b944e4e1128ed67b9dd` | `CANONICAL` |
+| PINL-40-REPORT | AC1 | `verification/GOV-PIN-LINEAGE-1/ac1-content-differs-report.md` | `30669c0a8` | `3047364a1f7f55d8bcae4da029c3bb4cc002b7d716a5458e21dcf509958a4ba6` | `CANONICAL` |
 
 ## Resource Manifest
 
-交付时逐项登记；本 Task 不改数据文件，只改一个工具与新增测试。
+| resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
+|---|---|---|---|---|---|
+| task-env | — | `NOT_APPLICABLE` | — | `doc/tasks/GOV-PIN-LINEAGE-1.md` | 本 Task 未产生此类资源 |
+| dataset | — | `NOT_APPLICABLE` | — | `doc/tasks/GOV-PIN-LINEAGE-1.md` | 本 Task 未产生此类资源 |
+| artifact | — | `NOT_APPLICABLE` | — | `doc/tasks/GOV-PIN-LINEAGE-1.md` | 本 Task 未产生此类资源 |
+| temp | — | `NOT_APPLICABLE` | — | `doc/tasks/GOV-PIN-LINEAGE-1.md` | 本 Task 未产生此类资源 |
+| agent-output | — | `NOT_APPLICABLE` | — | `doc/tasks/GOV-PIN-LINEAGE-1.md` | 本 Task 未产生此类资源 |
+| exchange | — | `NOT_APPLICABLE` | — | `doc/tasks/GOV-PIN-LINEAGE-1.md` | 本 Task 未产生此类资源 |
+| worktree | `G:/CODEX/New Manga.workspace/GOV-PIN-LINEAGE-1/worktree` | `PRESERVE_REFERENCED` | `G:/CODEX/New Manga.workspace/GOV-PIN-LINEAGE-1/worktree` | `—` | branch `dsh/GOV-PIN-LINEAGE-1` @ `60d47991b`；按 r28 §1 保留为审计输入，不迁移不删除 |
+| evidence_dir | `verification/GOV-PIN-LINEAGE-1/` | `PRESERVE_REFERENCED` | `verification/GOV-PIN-LINEAGE-1/` | `3047364a1f7f55d8bcae4da029c3bb4cc002b7d716a5458e21dcf509958a4ba6` | 9 份证据，全部登记 |
 
 ## 执行顺序（r26 §3.3 强制）
 
@@ -162,7 +181,7 @@ r26 明确否决了「先改 checker、再看哪些变绿」的顺序。必须�
 | 项 | 值 |
 |---|---|
 | branch | `dsh/GOV-PIN-LINEAGE-1` |
-| worktree | `G:/CODEX/New Manga.workspace/GOV-PIN-LINEAGE-1/worktree` |
+| worktree | `G:/CODEX/New Manga.workspace/GOV-PIN-LINEAGE-1/worktree` | `PRESERVE_REFERENCED` | `G:/CODEX/New Manga.workspace/GOV-PIN-LINEAGE-1/worktree` | `—` | branch `dsh/GOV-PIN-LINEAGE-1` @ `60d47991b`；按 r28 §1 保留为审计输入，不迁移不删除 |
 | base | `08935b198` |
 | 创建时状态 | HEAD `08935b198`，**clean** |
 
@@ -185,70 +204,89 @@ r26 明确否决了「先改 checker、再看哪些变绿」的顺序。必须�
 
 ## Closeout Record
 
-- 状态：**`blocked`**。授权来源：Codex r25（范围）→ r26（释放）→ **r27（撤回并暂停）**。
-- **阻塞原因**：r25 的核心语义前提被实测推翻。
+- 关闭：2026-10-20。Owner=dsh，Reviewer=Antigravity（裁定链 Codex r25→r26→r27→r28）。
+- **终态：`closed_with_limitations`。**
+  **不是 `done`**——原定的 checker 改造**从未实施**，且 r28 明确不再授权实施。
 
-### 发生了什么
+### 为什么关闭而不是完成
 
-r25 §1 断言：`Canonical Evidence` 的 `(path, commit, sha256)` 三元组意味着
-`sha256` 应当是**该 commit 中 Git blob** 的哈希，而 `check.ps1` 错误地对**工作区文件**
-计算。据此授权本 Task「改 checker 验 blob」。
+r27 撤回了 r25 的 blob-only 方案，本 Task 因此 `blocked`。r28 §6 的裁定是：
 
-r26 §3.3 要求**先核验**：19 个 pin-only Task 的每个 pin 的 blob 必须与原 SHA 相符，
-**改 checker 之前**完成。
+> 原本针对 19 个 Task 颜色的实施**已进入收益递减，应现在停止**，
+> **不授权改 checker 或批量补历史登记**。
+> 新 pin 逐行声明规则有适度的预防价值……**但这不足以证明现在值得改写全仓、
+> 改变治理门禁或专门重跑 19 个 Task**。
+> **现有历史问题不改变产品行为或已交付物。**
 
-**核验做完了（300 个 pin），结论是前提不成立：**
+**所以本 Task 以「已诊断、已裁定规则、未实施校验器改动」的状态关闭。**
 
-| 分类 | 数量 | 判定 |
-|---|---:|---|
-| `PIN_VALID` | 71 | `sha256(blob) == pin` |
-| `PIN_MATCHES_WORKTREE_NOT_BLOB` | **187** | `sha256(工作区) == pin`，`sha256(blob) != pin` |
-| `CONTENT_DIFFERS` | **40** | 两者都不符 |
-| `LINE_ENDING_ONLY` | 2 | 正文相同，仅行尾 |
+### 实际完成了什么
 
-**187 个 pin 是按工作区字节算的**（`core.autocrlf=true` → 工作区 CRLF、blob LF）。
-**按 r25 的方案改成 blob 校验，会制造 187 个新失败，修复 0 个。**
-
-### r27 的裁定
-
-1. **撤回 r25 的核心语义前提及由此推出的 checker 方案。**
-2. 认可两种显式 basis：**`blob`** 与 **`worktree`**。新 pin 必须声明 basis。
-3. **既有未声明 pin 暂时维持现行 checker 行为**（按工作区校验），
-   **不因新规则改变任何既有 PASS/FAIL**。
-   不得仅因「匹配工作区」便永久登记为已证明的 `worktree` pin；
-   历史记录缺少 basis 证据时登记 **`legacy-unresolved`**。
-4. 187 项是**行尾转换下匹配工作区 basis 的强证据，不是损坏证据**。
-5. **40 项 `CONTENT_DIFFERS` 必须逐项单独诊断**，维持 FAIL，成因未定。
-6. **本 Task 不得按 r25/r26 的 checker AC 继续实施。**
-
-### 解除阻塞的条件
-
-- 完成 40 项 `CONTENT_DIFFERS` 的只读诊断（成因、来源链、是否需改 pin）；
-- Codex 另行裁定 **pin basis 契约**（字段名、存放层级、定义、校验行为）；
-- 再决定本 Task 是重写、拆分还是关闭。
-
-### 从中确立的规范（r27 §5）
-
-> **任何会改变校验语义或既有结果的裁定，在作为实施授权生效前必须有相关核验结果。**
-> 核验无法完成时，**只能裁定「暂停/调查」**，不能把未经验证的全局假设冻结成实现 AC。
-> 核验范围须与拟变更影响范围相称，不能只选方便样本。
-
-**r26 的「先验证 19 个 Task 的 blob 再改 checker」正是正确的反证门槛**，
-应成为治理语义改动的标准要求。
-
-### 本 Task 已完成的产物（保留）
-
-| 产物 | 位置 |
+| 项 | 结果 |
 |---|---|
-| 300 项逐条核验 | `ac1-pin-only-verification.json` |
-| 229 项不符诊断 | `ac1-mismatch-diagnosis.json` |
-| 结论与三条出路 | `ac1-verification-finding.md` |
+| 全库扫描 | 313 个 Task、**1214 个 pin**、92 项失配（按当前工作区 hash）|
+| AC1 第 2 步核验 | 19 个 pin-only Task、**300 个 pin** 逐条（commit 可解析性、路径存在性、blob SHA）|
+| 229 项不符诊断 | 分类 + `pin`/`blob`/`disk` 三个 hash 逐条记录 |
+| **40 项 `CONTENT_DIFFERS` 诊断** | **35 条 CRLF 变体、1 条跨 commit、4 条指向 Task 文件自身** |
+| **结论** | **229 项不符中 0 项是证据损坏** |
 
-**这些在 `dsh/GOV-PIN-LINEAGE-1` worktree（commit `58cf6078e`），是后续裁定的输入。**
+### pin basis 契约（r28 §2，已裁定，未实施）
+
+- `sha256_basis` **逐条**出现在每条 Canonical Evidence pin 记录上，
+  与该行的 `path` / `commit` / `sha256` / `evidence_id` 同属一条。
+  **不得以 Task frontmatter 的单个值替代逐行字段。**
+- 允许值：**`blob`**（所指 commit/path 的 Git blob 原始字节 SHA-256）、
+  **`worktree`**（pin 生成时工作区文件原始字节 SHA-256）、
+  **`legacy-unresolved`**（仅供历史记录；无法从来源确认 basis）。
+- **历史未声明 pin 维持现行 checker 行为**，不因新规则改变任何既有 PASS/FAIL。
+
+### 保留的局限（这是 `closed_with_limitations` 的由来）
+
+1. **checker 未改动。** `Evidence SHA-256 不匹配` 仍按工作区字节校验，
+   因此 19 个 Task 仍会报该错误——**这是已知且已接受的现状，不是待办**。
+2. **4 条 pin 指向 Task 文件自身**（`HOST-ISSUER-1-C1 / H1-task`、
+   `P09-FU2 / SRC-P09FU2-IMPORTER`、`P12-C1 / SRC-P09-TASK`、`P13-C1 / SRC-P13`，
+   涉及 3 个文件路径）。r28 裁定：**保留为 `legacy-unresolved`，不豁免、不删行、不改 SHA。**
+   Task 文件证明不了自身稳定的历史内容身份。
+3. **1 条 pin 跨 commit**（`P09-AC3-DELETE-HARDEN-1 / AC2-AC6-AC8-IMPL`）：
+   保留原 `commit` 与 SHA，记 `legacy-unresolved`。**不默默改历史 pin。**
+4. **187 条 pin 按工作区字节计算**——不是错误，但不是 `blob` basis。
+   新规则下它们应为 `worktree`，但**本 Task 未批量补登记**（r28 §6 不授权）。
+
+### 修正记录（r28 §1 指出我的两处不准确）
+
+1. 我在诊断报告中写「3 个自引用 pin」——**实际是 4 条记录，指向 3 个文件路径**。
+   r28 按逐条 JSON 的 4 条处置，不合并。
+2. 我对「历史行尾变体」的汇总数字有文字不一致：逐项分类是
+   **35 条 CRLF 变体 + 2 条 `LINE_ENDING_ONLY`**，不应未经逐键核对写成另一个合计数。
+
+**两处都不影响裁定结论**（既有历史记录均不重算，行尾变体也不构成允许的 basis）。
+
+### 产物
+
+全部在 `dsh/GOV-PIN-LINEAGE-1` worktree（HEAD `60d47991b`），
+按 r28 §1「属于后续审计输入；不要求迁移、删除或改写」保留在原处：
+
+| 文件 | 内容 |
+|---|---|
+| `pin-inventory.json` | 92 项失配明细（全库） |
+| `pin-inventory-and-scope.md` | 范围分析 |
+| `release-preconditions.md` | 释放前置核查 |
+| `reviewer-availability.md` | Agent 可用性实测 |
+| `ac1-pin-only-verification.json` | **300 项**逐条核验 |
+| `ac1-mismatch-diagnosis.json` | **229 项**诊断 |
+| `ac1-verification-finding.md` | 结论（r25 前提被推翻） |
+| `ac1-content-differs-diagnosis.json` | **40 项**来源追溯 |
+| `ac1-content-differs-report.md` | 40 项诊断结论 |
+
+### 未来若需继续
+
+r28 §6：**不立刻追加 checker 修改或历史 pin migration Task。**
+如果未来新 Task 确有自动校验 basis 的需求，**再按具体消费者范围立一个窄 Task**。
 
 ### 明确未做
 
 - **未修改 `tools/governance/check.ps1`。**
-- 未重算或覆盖任何 pin。
-- 未修改任何 Task 的 pin（含那 40 个 `CONTENT_DIFFERS`）。
+- 未重算或覆盖任何 pin 的 sha256。
 - 未改 `.gitattributes`。
+- 未批量补登记 187 条 worktree-basis pin。

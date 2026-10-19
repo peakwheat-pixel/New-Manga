@@ -1,0 +1,362 @@
+[
+ {
+  "task": "ENV-BUNDLE-1",
+  "evidence_id": "S04",
+  "path": "apps/desktop/src-tauri/src/main.rs",
+  "pinned_commit": "c6fda8a09c1a8248ec6617369f9fdf9e1cef79ec",
+  "pinned_sha256": "21972b00bdcf643f950b4a0d3c0a669b86623e80896f818ff14903da938ca1b5",
+  "origin": "MATCHES_CRLF_VARIANT_AT_COMMIT",
+  "origin_commit": "2ad590a31ac2271db7de45f349d94eeaa494775c"
+ },
+ {
+  "task": "ENV-BUNDLE-1",
+  "evidence_id": "S05",
+  "path": "apps/desktop/src-tauri/src/library_bridge.rs",
+  "pinned_commit": "c6fda8a09c1a8248ec6617369f9fdf9e1cef79ec",
+  "pinned_sha256": "7599fd78c3c5c7e60647d4a351f54defdb7696bcbd950502c7b55f205437967d",
+  "origin": "MATCHES_CRLF_VARIANT_AT_COMMIT",
+  "origin_commit": "2ad590a31ac2271db7de45f349d94eeaa494775c"
+ },
+ {
+  "task": "HOST-CORE-1",
+  "evidence_id": "HOSTCORE-C1-PIN",
+  "path": "doc/contracts/M2-C1_TYPED_IPC_CONTRACT.md",
+  "pinned_commit": "97c2d559c6155375ce67da7da922d62a26971100",
+  "pinned_sha256": "6a2f38e0b17062d9d4f1d6ee109b4353b745504a5a6b889148781eee84fa2062",
+  "origin": "MATCHES_CRLF_VARIANT_AT_COMMIT",
+  "origin_commit": "af6fa705de54489ce32811cdc8dd3be51a1fd999"
+ },
+ {
+  "task": "HOST-ISSUER-1-C1",
+  "evidence_id": "C1-contract",
+  "path": "doc/contracts/M2-C1_TYPED_IPC_CONTRACT.md",
+  "pinned_commit": "af6fa705de54489ce32811cdc8dd3be51a1fd999",
+  "pinned_sha256": "6a2f38e0b17062d9d4f1d6ee109b4353b745504a5a6b889148781eee84fa2062",
+  "origin": "MATCHES_CRLF_VARIANT_AT_COMMIT",
+  "origin_commit": "af6fa705de54489ce32811cdc8dd3be51a1fd999"
+ },
+ {
+  "task": "HOST-ISSUER-1-C1",
+  "evidence_id": "H1-task",
+  "path": "doc/tasks/HOST-ISSUER-1.md",
+  "pinned_commit": "6a5051dcafa549f200730a4f9824d83d187f07a2",
+  "pinned_sha256": "d4926c93627b0c23db9c00fffed3f523dbfb2a71d653d941b04b314f301ecde5",
+  "origin": "ORIGIN_UNKNOWN",
+  "origin_commit": null
+ },
+ {
+  "task": "HOST-ISSUER-1",
+  "evidence_id": "HOSTISSUER-ISSUER-SOURCE",
+  "path": "apps/desktop/src-tauri/src/host_issuer.rs",
+  "pinned_commit": "2ad590a31ac2271db7de45f349d94eeaa494775c",
+  "pinned_sha256": "ef1ab4ef4b6ad98b53a41eef26b067c5781a615af4c6141a3942d0f1c8ab7b00",
+  "origin": "MATCHES_CRLF_VARIANT_AT_COMMIT",
+  "origin_commit": "2ad590a31ac2271db7de45f349d94eeaa494775c"
+ },
+ {
+  "task": "HOST-ISSUER-1",
+  "evidence_id": "HOSTISSUER-CLIENT-SOURCE",
+  "path": "apps/desktop/src-tauri/src/library_bridge.rs",
+  "pinned_commit": "2ad590a31ac2271db7de45f349d94eeaa494775c",
+  "pinned_sha256": "7599fd78c3c5c7e60647d4a351f54defdb7696bcbd950502c7b55f205437967d",
+  "origin": "MATCHES_CRLF_VARIANT_AT_COMMIT",
+  "origin_commit": "2ad590a31ac2271db7de45f349d94eeaa494775c"
+ },
+ {
+  "task": "HOST-ISSUER-1",
+  "evidence_id": "HOSTISSUER-TAURI-SURFACE",
+  "path": "apps/desktop/src-tauri/src/main.rs",
+  "pinned_commit": "2ad590a31ac2271db7de45f349d94eeaa494775c",
+  "pinned_sha256": "21972b00bdcf643f950b4a0d3c0a669b86623e80896f818ff14903da938ca1b5",
+  "origin": "MATCHES_CRLF_VARIANT_AT_COMMIT",
+  "origin_commit": "2ad590a31ac2271db7de45f349d94eeaa494775c"
+ },
+ {
+  "task": "HOST-ISSUER-1",
+  "evidence_id": "HOSTISSUER-APP-MANIFEST",
+  "path": "apps/desktop/src-tauri/build.rs",
+  "pinned_commit": "2ad590a31ac2271db7de45f349d94eeaa494775c",
+  "pinned_sha256": "c2b80e6dd7081d5c0c7a8ea52df3db01b36d83c9af8b566eaaae6cbbd943f014",
+  "origin": "MATCHES_CRLF_VARIANT_AT_COMMIT",
+  "origin_commit": "2ad590a31ac2271db7de45f349d94eeaa494775c"
+ },
+ {
+  "task": "HOST-ISSUER-1",
+  "evidence_id": "HOSTISSUER-CAPABILITY",
+  "path": "apps/desktop/src-tauri/capabilities/m2rc1-commands.json",
+  "pinned_commit": "2ad590a31ac2271db7de45f349d94eeaa494775c",
+  "pinned_sha256": "4db32b0d0ae22653e8178c1bc907e3d92bafa44518adca346e567f631770f623",
+  "origin": "MATCHES_CRLF_VARIANT_AT_COMMIT",
+  "origin_commit": "2ad590a31ac2271db7de45f349d94eeaa494775c"
+ },
+ {
+  "task": "HOST-ISSUER-1",
+  "evidence_id": "SRC-HOSTISSUER-CONTRACT",
+  "path": "doc/contracts/M2-C1_TYPED_IPC_CONTRACT.md",
+  "pinned_commit": "8a990a345c91b4e36cc0bfc6549104b454b24556",
+  "pinned_sha256": "6a2f38e0b17062d9d4f1d6ee109b4353b745504a5a6b889148781eee84fa2062",
+  "origin": "MATCHES_CRLF_VARIANT_AT_COMMIT",
+  "origin_commit": "af6fa705de54489ce32811cdc8dd3be51a1fd999"
+ },
+ {
+  "task": "P09-AC3-DELETE-1",
+  "evidence_id": "P09-AC3-DELETE-M2-C1-2.10",
+  "path": "doc/contracts/M2-C1_TYPED_IPC_CONTRACT.md",
+  "pinned_commit": "694de50789de4e9b6ecde831364ddbca167fcb44",
+  "pinned_sha256": "f954c2fda2fb213120cae33f859928c97c35a6aa73fbea980098af8b0bc01c08",
+  "origin": "MATCHES_CRLF_VARIANT_AT_COMMIT",
+  "origin_commit": "694de50789de4e9b6ecde831364ddbca167fcb44"
+ },
+ {
+  "task": "P09-AC3-DELETE-HARDEN-1",
+  "evidence_id": "AC2-AC6-AC8-IMPL",
+  "path": "src/infrastructure/sqlite/library.py",
+  "pinned_commit": "a73bf6b10b76b2bcdd2b7ed4f843608c661d8c6e",
+  "pinned_sha256": "abfab663f2b2ef28899282d9c11c7ccf48823aafa1ffdaf5f59f336c23145e04",
+  "origin": "MATCHES_BLOB_AT_COMMIT",
+  "origin_commit": "842792a566fc223ccdbba851dc13796a10a97d7d"
+ },
+ {
+  "task": "P09-AC3-DELETE-HARDEN-1",
+  "evidence_id": "AC1-AC4-CORE-IMPL",
+  "path": "src/bootstrap/core_service.py",
+  "pinned_commit": "51bd814d11f6903160788a6ac315da33d26b63f5",
+  "pinned_sha256": "e3ffba1e0e6b40893cf70883366080d293b1734201c47ae75d1eb30cbac55364",
+  "origin": "MATCHES_CRLF_VARIANT_AT_COMMIT",
+  "origin_commit": "51bd814d11f6903160788a6ac315da33d26b63f5"
+ },
+ {
+  "task": "P09-FU2",
+  "evidence_id": "SRC-P09FU2-CONTRACT",
+  "path": "doc/contracts/M2-C1_TYPED_IPC_CONTRACT.md",
+  "pinned_commit": "9fe6ac5cd116474de1006b4ab4b1e5341b71cf41",
+  "pinned_sha256": "b8cadc27572a25ec2785f507ca73dbb3d9b27b1cea6083eed9faa0ff46f82ad4",
+  "origin": "MATCHES_CRLF_VARIANT_AT_COMMIT",
+  "origin_commit": "919ca24731f5aaf50f1b46e8fe61c214b94c4b71"
+ },
+ {
+  "task": "P09-FU2",
+  "evidence_id": "SRC-P09FU2-IMPORTER",
+  "path": "doc/tasks/P09.md",
+  "pinned_commit": "9fe6ac5cd116474de1006b4ab4b1e5341b71cf41",
+  "pinned_sha256": "289a6c0b5bb8ee8054d1c1bf7349a520a4d68d396fddb7f603a4bc381e177ce8",
+  "origin": "ORIGIN_UNKNOWN",
+  "origin_commit": null
+ },
+ {
+  "task": "P09",
+  "evidence_id": "AC3-MATRIX",
+  "path": "verification/P09/evidence/AC3-source-hashes.json",
+  "pinned_commit": "8ab617f2e996e99a4a4ddac82fe71863d4b0684e",
+  "pinned_sha256": "6c2018642ae5aa4e930a88fa62d1885264e479b5dc9e4693e7401f266afcfeac",
+  "origin": "MATCHES_CRLF_VARIANT_AT_COMMIT",
+  "origin_commit": "8ab617f2e996e99a4a4ddac82fe71863d4b0684e"
+ },
+ {
+  "task": "P12-C1",
+  "evidence_id": "P12C1-CONTRACT",
+  "path": "doc/contracts/M2-C1_TYPED_IPC_CONTRACT.md",
+  "pinned_commit": "919ca24731f5aaf50f1b46e8fe61c214b94c4b71",
+  "pinned_sha256": "b8cadc27572a25ec2785f507ca73dbb3d9b27b1cea6083eed9faa0ff46f82ad4",
+  "origin": "MATCHES_CRLF_VARIANT_AT_COMMIT",
+  "origin_commit": "919ca24731f5aaf50f1b46e8fe61c214b94c4b71"
+ },
+ {
+  "task": "P12-C1",
+  "evidence_id": "SRC-P09-TASK",
+  "path": "doc/tasks/P09.md",
+  "pinned_commit": "58e70f0bba6292aa731338bd4077d1cafa4fc7b3",
+  "pinned_sha256": "289a6c0b5bb8ee8054d1c1bf7349a520a4d68d396fddb7f603a4bc381e177ce8",
+  "origin": "ORIGIN_UNKNOWN",
+  "origin_commit": null
+ },
+ {
+  "task": "P12-C1",
+  "evidence_id": "SRC-P09-SQLITE-LIBRARY",
+  "path": "src/infrastructure/sqlite/library.py",
+  "pinned_commit": "dc254fa93ca00cf7bde417d6c02ee178fc179606",
+  "pinned_sha256": "61c9c7d810fdf13ab5087ab6434f4eeae5c9f0a276f0c65254bb3361d9698308",
+  "origin": "MATCHES_CRLF_VARIANT_AT_COMMIT",
+  "origin_commit": "dc254fa93ca00cf7bde417d6c02ee178fc179606"
+ },
+ {
+  "task": "P13-C1",
+  "evidence_id": "OUT-CONTRACT",
+  "path": "doc/contracts/M2-C1_TYPED_IPC_CONTRACT.md",
+  "pinned_commit": "ed79a2b778e13e8aa892014eb16a38be4e27fdf7",
+  "pinned_sha256": "e29d1acf861f397a94ba0efa2ae3b2c499aa09e8e13ab2f0f130ae406cc5d9f8",
+  "origin": "MATCHES_CRLF_VARIANT_AT_COMMIT",
+  "origin_commit": "ed79a2b778e13e8aa892014eb16a38be4e27fdf7"
+ },
+ {
+  "task": "P13-C1",
+  "evidence_id": "SRC-P13",
+  "path": "doc/tasks/P13.md",
+  "pinned_commit": "c33033dc02c4373d3a3a35333a2c7aeac03c7ce6",
+  "pinned_sha256": "de74d349871787af35d804ea73bc4dc8413dafc29936db82a00e61eac94e6728",
+  "origin": "ORIGIN_UNKNOWN",
+  "origin_commit": null
+ },
+ {
+  "task": "P13-C1",
+  "evidence_id": "SRC-SERVICE",
+  "path": "src/application/tasks/service.py",
+  "pinned_commit": "c33033dc02c4373d3a3a35333a2c7aeac03c7ce6",
+  "pinned_sha256": "05c0db8d92aefb7f8e20053b6971909c1cecd162faca6f64b0781e560fdf685e",
+  "origin": "MATCHES_CRLF_VARIANT_AT_COMMIT",
+  "origin_commit": "02b6d2a2f160387594ef07fa4f6188802d1015c7"
+ },
+ {
+  "task": "P13-C1",
+  "evidence_id": "SRC-STORE",
+  "path": "src/application/tasks/store.py",
+  "pinned_commit": "c33033dc02c4373d3a3a35333a2c7aeac03c7ce6",
+  "pinned_sha256": "0e08d2e5aa257246c592571b280e0ec1bd5da423dbb165a28744b7c609bf3dbe",
+  "origin": "MATCHES_CRLF_VARIANT_AT_COMMIT",
+  "origin_commit": "6a2016bab42ab8766a1668a995c04106b0fbd749"
+ },
+ {
+  "task": "P13-C1",
+  "evidence_id": "SRC-PROJECTION",
+  "path": "src/application/tasks/projection.py",
+  "pinned_commit": "c33033dc02c4373d3a3a35333a2c7aeac03c7ce6",
+  "pinned_sha256": "1027d4b527de9cd1ffc1fc09fe6820d46e9e5413d7f31fd59d37530e67ce5fc1",
+  "origin": "MATCHES_CRLF_VARIANT_AT_COMMIT",
+  "origin_commit": "df26908139dcdf12c0ff0b35c40cd52b7fac1443"
+ },
+ {
+  "task": "P13-C1",
+  "evidence_id": "SRC-CORE",
+  "path": "src/bootstrap/core_service.py",
+  "pinned_commit": "c33033dc02c4373d3a3a35333a2c7aeac03c7ce6",
+  "pinned_sha256": "96ba2291d092fe9d8e1a8a6d9c4202df4f84ab09bf7dd9703efab8fa3668e222",
+  "origin": "MATCHES_CRLF_VARIANT_AT_COMMIT",
+  "origin_commit": "8ab617f2e996e99a4a4ddac82fe71863d4b0684e"
+ },
+ {
+  "task": "P15-CORE-1B",
+  "evidence_id": "EVD-P15-1B-CONTRACT",
+  "path": "doc/contracts/P15_SETTINGS_IPC_CONTRACT.md",
+  "pinned_commit": "c279659117db56b93d5676e5bb39fd8453b0d385",
+  "pinned_sha256": "b6b29246c01cb4cdd7a360bf8d34b4499cabbd751cce6d98e6309fe7a0d40090",
+  "origin": "MATCHES_CRLF_VARIANT_AT_COMMIT",
+  "origin_commit": "eeae29831b4f20b7ddf0e93897d3b99e806b8ccf"
+ },
+ {
+  "task": "P15-CORE-1B",
+  "evidence_id": "EVD-P15-1B-WEBVIEW-SOURCE",
+  "path": "apps/desktop/src-tauri/src/main.rs",
+  "pinned_commit": "c279659117db56b93d5676e5bb39fd8453b0d385",
+  "pinned_sha256": "2a6852c425e6e394b9e0eb6e4b0d097a2bcbe6701d62dfa2ab970d20f03327a4",
+  "origin": "MATCHES_CRLF_VARIANT_AT_COMMIT",
+  "origin_commit": "ab47ef2b006e63118280dd064e7b6806ccbd83aa"
+ },
+ {
+  "task": "P15-CORE-1B",
+  "evidence_id": "EVD-P15-1B-COMMANDS",
+  "path": "src/bootstrap/settings_commands.py",
+  "pinned_commit": "6cf3c820990591cf6e7581db1ae38eea54d14fdc",
+  "pinned_sha256": "c26173e9440de66bc4b230ca5d743d2e2bd7016ce648e15b6df0a3ddddeac5e3",
+  "origin": "MATCHES_CRLF_VARIANT_AT_COMMIT",
+  "origin_commit": "6cf3c820990591cf6e7581db1ae38eea54d14fdc"
+ },
+ {
+  "task": "P15-CORE-1B",
+  "evidence_id": "EVD-P15-1B-DISPATCH",
+  "path": "src/bootstrap/core_service.py",
+  "pinned_commit": "6cf3c820990591cf6e7581db1ae38eea54d14fdc",
+  "pinned_sha256": "4d5c08a061a55bbbf49c90ea70c6d5940bd017273a8de1beb7a61ed447944d29",
+  "origin": "MATCHES_CRLF_VARIANT_AT_COMMIT",
+  "origin_commit": "6cf3c820990591cf6e7581db1ae38eea54d14fdc"
+ },
+ {
+  "task": "P15-CORE-1B",
+  "evidence_id": "EVD-P15-1B-ASSEMBLY",
+  "path": "src/bootstrap/core_assembly.py",
+  "pinned_commit": "6cf3c820990591cf6e7581db1ae38eea54d14fdc",
+  "pinned_sha256": "95b3267166f3d1d407ed8c30b66bce3642ce8e3b23fec005a663a301102a4f15",
+  "origin": "MATCHES_CRLF_VARIANT_AT_COMMIT",
+  "origin_commit": "9232802c08b983225898cb784504fee49c4c43f4"
+ },
+ {
+  "task": "P15-CORE-1B",
+  "evidence_id": "EVD-P15-1B-TESTS",
+  "path": "tests/core/test_p15_core_settings.py",
+  "pinned_commit": "6cf3c820990591cf6e7581db1ae38eea54d14fdc",
+  "pinned_sha256": "6f3e6507c922dbf927d9e77cda7a534fcc0c5dd16d9305dc6a9d9f012938dda4",
+  "origin": "MATCHES_CRLF_VARIANT_AT_COMMIT",
+  "origin_commit": "6cf3c820990591cf6e7581db1ae38eea54d14fdc"
+ },
+ {
+  "task": "P15",
+  "evidence_id": "E6 布局/分类/禁用断言源",
+  "path": "apps/desktop/frontend/src/settings/SettingsPage.test.tsx",
+  "pinned_commit": "e5f1a719bdaf482da027498671490c585a376bd3",
+  "pinned_sha256": "4f6c8fe623f8d2c1e5503b136f0b90767a63a87eee07e5c9241ca4d3e55826ac",
+  "origin": "MATCHES_CRLF_VARIANT_AT_COMMIT",
+  "origin_commit": "e5f1a719bdaf482da027498671490c585a376bd3"
+ },
+ {
+  "task": "P16-C1",
+  "evidence_id": "EVID-P16-CONTRACT",
+  "path": "doc/contracts/M2-C1_TYPED_IPC_CONTRACT.md",
+  "pinned_commit": "196f50d45bc55eedfae87603b8887fd98ddcbf62",
+  "pinned_sha256": "91308343d86832d302bb6521368cfb84e1ad65c737fbf9f4665349073154dc6d",
+  "origin": "MATCHES_CRLF_VARIANT_AT_COMMIT",
+  "origin_commit": "196f50d45bc55eedfae87603b8887fd98ddcbf62"
+ },
+ {
+  "task": "P16",
+  "evidence_id": "P16-WIRE-PIN",
+  "path": "doc/contracts/M2-C1_TYPED_IPC_CONTRACT.md",
+  "pinned_commit": "093430c75a46d28ed759ec646039bf2f55e3d429",
+  "pinned_sha256": "91308343d86832d302bb6521368cfb84e1ad65c737fbf9f4665349073154dc6d",
+  "origin": "MATCHES_CRLF_VARIANT_AT_COMMIT",
+  "origin_commit": "196f50d45bc55eedfae87603b8887fd98ddcbf62"
+ },
+ {
+  "task": "P20-CLOSE-BOUND-1",
+  "evidence_id": "EVID-P20-R6-SOURCE",
+  "path": "apps/desktop/src-tauri/src/library_bridge.rs",
+  "pinned_commit": "835f4bb17df565581a76cf66062760cdd3c85a9e",
+  "pinned_sha256": "137627011322816e304879e54c66c36549f38affd71eadfd18c90c6e277d39da",
+  "origin": "MATCHES_CRLF_VARIANT_AT_COMMIT",
+  "origin_commit": "835f4bb17df565581a76cf66062760cdd3c85a9e"
+ },
+ {
+  "task": "P20-ISOLATION-1",
+  "evidence_id": "EVID-P20-ISOL-SRC",
+  "path": "apps/desktop/src-tauri/src/library_bridge.rs",
+  "pinned_commit": "e16f538f7f0cf119c3a27a95f107b6c113f465b6",
+  "pinned_sha256": "f2bae7687bbcce9c0bf8527a10488856dcddac0fc5818584a9ca5536e59f5adc",
+  "origin": "MATCHES_CRLF_VARIANT_AT_COMMIT",
+  "origin_commit": "1dc0df7304a91e21274494ef6b65e6ca257df338"
+ },
+ {
+  "task": "P22-REBASE-1",
+  "evidence_id": "EVD-P22-REBASE-1-DELIVERY-CODE-61C806C9",
+  "path": "apps/desktop/src-tauri/src/library_bridge.rs",
+  "pinned_commit": "61c806c9e17d3c756b15b328dfc95f5aa5a6c72f",
+  "pinned_sha256": "bb0f4cabe31bd93178e14cbe89bfa8cf371389bcbaff4490fe381ba41af8c96f",
+  "origin": "MATCHES_CRLF_VARIANT_AT_COMMIT",
+  "origin_commit": "61c806c9e17d3c756b15b328dfc95f5aa5a6c72f"
+ },
+ {
+  "task": "P22-REBASE-1",
+  "evidence_id": "EVD-P22-REBASE-1-INTEGRATED-CODE-4E5C71D9",
+  "path": "apps/desktop/src-tauri/src/library_bridge.rs",
+  "pinned_commit": "4e5c71d9f0a6191c85002fc287d55454e3bfcde8",
+  "pinned_sha256": "bb0f4cabe31bd93178e14cbe89bfa8cf371389bcbaff4490fe381ba41af8c96f",
+  "origin": "MATCHES_CRLF_VARIANT_AT_COMMIT",
+  "origin_commit": "61c806c9e17d3c756b15b328dfc95f5aa5a6c72f"
+ },
+ {
+  "task": "SEC-FIX-PATH-ECHO-1",
+  "evidence_id": "SEC-FIX-PATH-ECHO-1-E1",
+  "path": "src/bootstrap/core_service.py",
+  "pinned_commit": "022f4d73773a2d9bdafa04f16d4cca96af5c37ad",
+  "pinned_sha256": "d51b60db4cc38ed795502b907789f821bd18d834b8640accbff81ab2680ca80d",
+  "origin": "MATCHES_CRLF_VARIANT_AT_COMMIT",
+  "origin_commit": "c52ce4695802a06fde8f4e08f2d96a8cecfd855d"
+ }
+]
