@@ -79,35 +79,37 @@ created: 2026-10-19
 
 | 前置 | 状态 |
 |---|---|
-## R12 治理检查差异（未解决，交 Codex 判定）
+## 治理检查的调用方式（R13 查明；R12 差异的原因）
 
-**R12 在交付提交的仓外 scratch 副本中运行 `tools/governance/check.ps1` 得到：**
-
-```
-exit 1
-FAIL: 当前 DAG 未登记非终态 Task
-```
-
-**我在主仓库（HEAD 与 reviewed head 相同）运行同一脚本得到：**
+**R12 报告 `check.ps1` FAIL，我报告 PASS，我上一轮把它记为「未解决差异」。R13 查明它不是矛盾，是调用方式不同：**
 
 ```
-exit 0
-Governance check: PASS (2 warnings)
+pwsh -NoProfile -File tools/governance/check.ps1
+  -> 不带参数时从 STATUS 选中【当前 Task】（本次为 P20），只检查该 Task
+  -> 因此返回 PASS，而这一 PASS 与 P09-PREVIEW-LIFECYCLE-RECLAIM-1 无关
+
+pwsh -NoProfile -File tools/governance/check.ps1 -TaskPath doc/tasks/P09-PREVIEW-LIFECYCLE-RECLAIM-1.md
+  -> 显式指定本 Task
+  -> FAIL: DAG 未登记非终态 Task
 ```
 
-**同一脚本、同一份 `doc/REBASELINE_PLAN.md`（经 `grep` 确认确实未登记本 Task），一边 FAIL 一边 PASS。**
+**R13 用两种调用各自复现，机制是「检查器只验证被选中的 Task」。**
 
-**我没有解释。** 可想到的三条都不能从我手上的证据判定：
+**⚠️ 由此需要更正一项此前记录**：**本 Task 多轮报告中写的「治理 PASS」，实际检查的是 `P20`，不是本 Task。** **那些 PASS 本身是真的，但与本 Task 无关。** **本 Task 的真实治理状态是 FAIL（DAG 未登记），直到 Codex 完成登记。**
 
-1. 副本中的 PLAN 或 Task 状态与主仓库不同
-2. 副本使用的 check 脚本版本与主仓库不同
-3. 主仓库这一份的 DAG 检查在当前数据下不触发
+**记录此项的目的是：下一位 Owner 若沿用无参数调用，会得到同样的假象。** **检查本 Task 必须显式 `-TaskPath`。**
 
-**我不选其中一条来收尾。** **本 Task 已经因为「两个观察者看到不同结果」付过两次代价**（R5 的 C1 记录分裂、R11 的 Task 与 STATUS 状态分裂），**两次都是真实缺口而非误报。**
+## R13 的三项 finding（全部属 Codex）
 
-**但无论哪条成立，「`REBASELINE_PLAN` 未登记本 Task」这一事实都成立** —— `grep` 无输出，且 Task 下方那一行早已记录该登记待办。**所以这一项需要 Codex 处理，与上面的差异无关。**
+R13 判定 **`approved_with_conditions`** —— **「实现可接受；集成门尚未满足」**，且**「交付提交到当前 HEAD 的目标实现文件和测试无差异」**。
 
-**请 Codex 判定差异原因，并完成 DAG 登记。** `REBASELINE_PLAN` 现为 **35/35 行、2464/2500 字节**（满行），**登记需要重排，而它不在本 Task 的 `allowed_paths` 内。**
+| # | 内容 | 归属 |
+|---|---|---|
+| 1 | **P1 DAG 未登记本 Task**；`REBASELINE_PLAN` 现为 35/35 行满额，登记需重排 | **Codex** |
+| 2 | **P1 依赖「已集成」的记载与权威状态不符** —— 本 Task 记载依赖已集成，但 `P09-AC3-DELETE-HARDEN-1` 仍为 `in_review`、`integration_commit` 为 `null`，Plan 也仍列 `in_review`。**R15 的 `approved` 不等于已集成；R15 本身只支持 `closed_with_limitations`** | **Codex** |
+| 3 | **P2 AC6 的 `N/A` 取决于「Schema」口径** —— 无 SQL DDL / IPC 变更（按数据库/IPC 口径记 `N/A` 合理），**但交付在 `targets_json` 中新增并持久化了 `preview_resource_ids` 字段；该内部 JSON 格式是否属于 AC6 所说的 Schema，R13 记为 `NOT_VERIFIED`** | **Codex** |
+
+**R13 同时确认**：四个探针全部 PASS 且未因错误原因通过（连续第三轮）；`645 passed`；R12 Finding 2 的 AC 逐项表要求已满足；**三处 lock 断言仍缺可区分的失败侧注入，「按现有记录不应算作已验证」**（与本 Task 自己的记录一致）。
 
 | Plan 已列入 DAG | ⏳ **待 Codex**（`REBASELINE_PLAN` 现为 35/35 行，需其重排；不属 Owner 职责）|
 | 依赖已集成 | ✅ `P09-AC3-DELETE-HARDEN-1` 删除路径加固已闭环，R15 判 `approved` |
