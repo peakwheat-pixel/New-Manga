@@ -113,6 +113,7 @@ allowed_paths:
 | EVID-DEBT-AC7 | AC7 | `verification/GOV-DEBT-CLEANUP-2/ac7-evidence-dir-files.md` | `5b5c3e299a4e478aff86e12bd923a23c293f70e2` | `8ec36c265967a7f45443bfb71c4608cd11bafc8a4d119085bbd15b354a7a5393` | `CANONICAL` |
 | EVID-DEBT-AC8 | AC8 | `verification/GOV-DEBT-CLEANUP-2/ac8-open-acs.md` | `4e9bbe04bb3b46f6812e7ce40ea89a0a491df28a` | `fb61c70f2638f2b1b4d1bbdd3ae34ec1dc6bb620aabb4dca81eb25a2b20a4377` | `CANONICAL` |
 | EVID-DEBT-AC9 | AC9 | `verification/GOV-DEBT-CLEANUP-2/ac9-governance-output.txt` | `e63d9324766db0d381bad24b3fc60a58048430e1` | `f2db42f794f8185cc7a0f68cdf78d3a7ce80b2ddddb51151151dcf97a6ccd4a4` | `CANONICAL` |
+| EVID-DEBT-FINDING | 治理基础设施发现 | `verification/GOV-DEBT-CLEANUP-2/finding-checker-not-tracked.md` | `e09cad1ed` | `a7a60f5c5df55bd5c99af0fab3422090f9136524ffb3bb21c93136e4fd05cd8f` | `CANONICAL` |
 
 ## Resource Manifest
 
