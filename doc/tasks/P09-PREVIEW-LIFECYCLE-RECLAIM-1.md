@@ -13,12 +13,23 @@ allowed_paths:
   - src/infrastructure/resource_channel/render_preview.py
   - src/infrastructure/sqlite/library.py
   - src/bootstrap/core_service.py
+  - src/infrastructure/resource_channel/catalog_store.py   # R4 Finding 2 裁定加入
   - tests/core
   - tests/storage
 created: 2026-10-19
 ---
 
 # P09-PREVIEW-LIFECYCLE-RECLAIM-1
+
+## 范围裁决记录（R4 Finding 2，Integrator 裁定 2026-10-19）
+
+**裁定**：**将 `src/infrastructure/resource_channel/catalog_store.py` 纳入本 Task 范围。**
+
+**理由（Codex R4 原文要点）**：**`preview_lifecycle` 表由 catalog store 持有，查询必须在该数据库执行；`library.py` 的 library DB 不能代查这张表。此裁决不改变 IPC 或 Schema。**
+
+**背景**：**Task 原始冻结清单（`render_preview.py` · `library.py` · `core_service.py` · `tests/`）漏了这个文件** —— 而实现需要它，**因为 publish 侧的生命周期行住在 catalog DB**。**我在释放 Task 时凭当时的方案设想列了路径，方案随后变了（`preview_resource_ids_for_artifacts()` 是实测后才确定要加的）。**
+
+**受 R4 的只读约束，Codex 没有改写本文件；本条记录是按它的裁决补录的。**
 
 ## 来源
 
