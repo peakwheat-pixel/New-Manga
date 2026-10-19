@@ -3,7 +3,7 @@ id: GOV-P15-MANIFEST-1
 title: 恢复 P15 缺失的 Resource Manifest
 kind: governance
 governance_version: 3
-status: approved
+status: done
 approval: codex_r20_followup_not_yet_released
 suggested_owner: codex
 owner: codex
@@ -12,7 +12,7 @@ depends_on: [GOV-SOURCE-RECORDS-1]
 base_commit: 3539d8d75
 branch: null
 worktree: null
-integration_commit: null
+integration_commit: 7b1cb6a78346b42bb7c23de9bf924117b7c68a21
 delivery_head: 2f9d549d5
 canonical_evidence_status: complete
 resource_closeout_status: complete
@@ -79,6 +79,7 @@ pwsh -NoProfile -File tools/governance/check.ps1 -TaskPath doc/tasks/P15.md
 | P15M-REVIEW-R1 | AC4 | `doc/reviews/GOV-P15-MANIFEST-1-6eec515a5-antigravity-r1.md` | `bfbb7b1a9` | `24850b219c19e1a4518e5c804a983694d2b3905c3b4e9e5be2cf7a7a2baac923` | `CANONICAL` |
 | P15M-REVIEW-R2 | AC4 | `doc/reviews/GOV-P15-MANIFEST-1-2f9d549d5-antigravity-r2.md` | `bfbb7b1a9` | `3ab530f3beff5a8b65a7fc506368999f0958b11366df84b2483c2154192ac90c` | `CANONICAL` |
 | P15M-REVIEW-R3 | AC5 | `doc/reviews/GOV-P15-MANIFEST-1-2f9d549d5-antigravity-r3.md` | `68e696306` | `192f8198b9cc53ba55a8da1674a34161465c8549471d04c0fb7ceb85d3eed758` | `CANONICAL` |
+| P15M-INTEGRATION | AC4 | `verification/GOV-P15-MANIFEST-1/ac4-post-integration-verification.md` | `7b1cb6a78` | `f4cb5463e54a13dd18370b750402a80b457df9cab2bf66cfcb8b4ab830d6e5cf` | `CANONICAL` |
 
 ## Resource Manifest
 
@@ -131,3 +132,19 @@ pwsh -NoProfile -File tools/governance/check.ps1 -TaskPath doc/tasks/P15.md
   「commit 中存在该路径」与「磁盘 SHA-256 匹配」。六次失误不是缺校验器，
   是交付方没跑它。该 Task 主体仍是历史 pin lineage，不要因这六次而扩张范围。
 - 未关闭项：**Codex 集成与集成后验证**。完成后设 `integration_commit` 真实值并转 `done`。
+
+### 集成后验证（Codex r24 §1）
+
+验证完成于 2026-10-20，五项全部通过：
+
+| 项 | 结果 |
+|---|---|
+| `2f9d549d5` 是 HEAD 祖先 | **YES** |
+| 交付后 diff 触及 6 路径，无源码/证据改动 | **通过** |
+| merge commit | **0**（原地集成） |
+| Task + 全局检查器 | **PASS / PASS** |
+| `P15`：manifest 缺失错误已消除，剩 1 个既有时间性 pin 失配 | **通过** |
+
+`integration_commit` 记录为验证完成时的真实 HEAD `7b1cb6a78`。
+**不是占位值**：r24 §1 的原地集成口径就是「完成验证后填验证时的真实 HEAD」，
+且验证命令、结果与时间记录在 `ac4-post-integration-verification.md`。
