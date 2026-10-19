@@ -90,7 +90,7 @@ Codex r19 §2.5 裁定：该异常应**另立一个独立、有限的记录维�
 - [ ] **AC4 不改 status 与其它字段**：两个 Task 的 `status`、`integration_commit`、
   `delivery_head`、`canonical_evidence_status`、`resource_closeout_status`、
   Closeout Record 一律**不改动**。本 Task 只动 AC 行的勾选框与注记。
-- [ ] **AC5 记录与 Review**：产出逐 AC 判定表（含依据位置）；生成 Handoff；
+- [x] **AC5 记录与 Review**：产出逐 AC 判定表（含依据位置）；生成 Handoff；
   由 Antigravity 对固定 delivery head 独立 Review。
   **Review 必须核对：补勾的每一项都能在 Closeout Record 中找到依据，没有一项是凭 status 推定的。**
 
