@@ -15,6 +15,7 @@
 | **DAG 登记** | Plan 未登记本 Task（L33）| ✅ **已登记**：`REBASELINE_PLAN` L31，`in_review`（用户授权；R14、R15 确认）|
 | **治理检查** | `FAIL: DAG 未登记`（L41）| ✅ **`PASS (3 warnings)`**，**须显式 `-TaskPath`** |
 | **AC6** | 请求裁决口径；称按数据库/IPC 口径记 `N/A` 合理（L57–L63、L80）| ❌ **Codex 已裁决：未满足，`NOT_VERIFIED`，不记 `N/A`，无豁免**；终态 `closed_with_limitations`。见 `ac6-ruling.md` |
+| **依赖状态** | Owner 不知依赖的真实集成状态，等待核定（L61–L68）| ✅ **已据实记载**：`in_review`、`integration_commit: null`、交付头 `1878f0b12…`、证据与资源 closeout 均 `complete`（R15 判定为正确做法）|
 
 **⚠️ 本文其余部分保留原样以存原貌。** 若与上表冲突，**以上表与 `ac6-ruling.md` 为准。**
 
@@ -65,7 +66,7 @@ pwsh -NoProfile -File tools/governance/check.ps1 -TaskPath doc/tasks/P09-PREVIEW
 - **Plan 仍将其列作 `in_review`**
 - **R15 的 `approved` 不等于已集成；R15 本身只支持 Route B 的 `closed_with_limitations`**
 
-**⚠️ 这是本 Task 记录里的一处**错误陈述**，而它由本 Task 的 Owner 写下。** **我不知道依赖的实际集成状态，因此不会自行改写为「未集成」——那只是把一种未经核实的说法换成另一种。** **请核定后告知，我据实更正 Task 与 Handoff。**
+**⚠️ 这曾是本 Task 记录里的一处错误陈述，由 Owner 写下。** **✅ 现行事实（用户授权后据实更正）**：读取 `P09-AC3-DELETE-HARDEN-1` 的 frontmatter 得 `status: in_review`、`integration_commit: null`、`delivery_head: 1878f0b126e8a0e2603570f9b2009d8b70a259f1`、`canonical_evidence_status: complete`、`resource_closeout_status: complete`。**即：未集成，但交付头已固定、证据与资源回收均已闭合，终态待 Codex。** **R15 判定该据实陈述为正确做法。**
 
 ### 3. （已裁决）AC6 的 Schema 口径（P2）
 
@@ -88,11 +89,11 @@ pwsh -NoProfile -File tools/governance/check.ps1 -TaskPath doc/tasks/P09-PREVIEW
 
 ## 请求的动作
 
-1. **重排 `REBASELINE_PLAN`，登记本 Task**（腾出一行）
-2. **核定 `P09-AC3-DELETE-HARDEN-1` 的集成/关闭状态**，并告知本 Task 应如何记载依赖
+1. ~~重排 `REBASELINE_PLAN`，登记本 Task~~ ✅ **已完成**（用户授权；`REBASELINE_PLAN` L31；治理 `FAIL`→`PASS`）
+2. ~~核定 `P09-AC3-DELETE-HARDEN-1` 的集成/关闭状态~~ ⚠️ **部分完成**：依赖状态已按 frontmatter 据实记载（见上）；**其集成与终态仍待 Codex**
 3. ~~裁决 AC6 的 Schema 口径（含内部持久化 JSON 格式与否）~~ ✅ **已完成**：Codex 裁决 AC6 未满足、`NOT_VERIFIED`、无豁免；**权威落盘仍待 Codex**
-4. **三项完成后**，按 R13 的 Route 集成、做集成后验证与资源 closeout，更新 Task 与 STATUS
+4. **上述完成后**，按 R13 的 Route 集成、做集成后验证与资源 closeout，更新 Task 与 STATUS。**⚠️ 其中【权威落盘 AC6 裁决 · 同步 Plan/STATUS · 关闭记录 · 依赖集成终态】属 Codex。**
 
-**三项均完成后，Owner 侧可立即配合任何需要的更正。** **在此之前本 Task 停在 `in_review`，`delivery_head` 保持 `392977a83…` 不变。**
+**Owner 侧已完成的项不再等待；仅 Codex 负责的项在等待。** **在此之前本 Task 停在 `in_review`，`delivery_head` 保持 `392977a83…` 不变。**
 
 **`P09` 的 AC3 delete 子条件保持 `BLOCKED`。**

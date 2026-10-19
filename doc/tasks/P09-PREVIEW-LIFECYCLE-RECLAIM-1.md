@@ -95,13 +95,13 @@ pwsh -NoProfile -File tools/governance/check.ps1 -TaskPath doc/tasks/P09-PREVIEW
 
 **R13 用两种调用各自复现，机制是「检查器只验证被选中的 Task」。**
 
-**⚠️ 由此需要更正一项此前记录**：**本 Task 多轮报告中写的「治理 PASS」，实际检查的是 `P20`，不是本 Task。** **那些 PASS 本身是真的，但与本 Task 无关。** **本 Task 的真实治理状态是 FAIL（DAG 未登记），直到 Codex 完成登记。**
+**⚠️ 由此需要更正一项此前记录**：**本 Task 多轮报告中写的「治理 PASS」，实际检查的是 `P20`，不是本 Task。** **那些 PASS 本身是真的，但与本 Task 无关。** **本 Task 的真实治理状态当时为 FAIL（DAG 未登记）。** **✅ 现行事实：DAG 已由用户授权登记（`REBASELINE_PLAN` L31），本 Task 治理为 `PASS (3 warnings)`**（须显式 `-TaskPath`）。
 
 **记录此项的目的是：下一位 Owner 若沿用无参数调用，会得到同样的假象。** **检查本 Task 必须显式 `-TaskPath`。**
 
 ## Owner 侧已闭合，等待 Codex 收敛
 
-**Owner 侧全部闭合（代码、测试、探针、注入证据、AC 逐项表、交付固定、状态一致）。** **剩余项中，DAG 登记已由用户授权由 Owner 完成（见下）；另两项不在 Owner 职权内，已写成显式收敛请求：**
+**Owner 侧全部闭合（代码、测试、探针、注入证据、AC 逐项表、交付固定、状态一致）。** **原三项集成门中，DAG 登记与依赖状态记载均已由 Owner 完成（见下）；AC6 已由 Codex 裁决、权威落盘待 Codex。** **当时的收敛请求见：**
 
 **→ [`doc/handoffs/P09-PREVIEW-LIFECYCLE-RECLAIM-1-convergence-request.md`](../../doc/handoffs/P09-PREVIEW-LIFECYCLE-RECLAIM-1-convergence-request.md)**
 
