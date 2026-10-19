@@ -3,15 +3,15 @@ id: P19-UI-MANIFEST-VIEW-1
 title: P19-UI-FIX-1 Resource Manifest 兼容视图修正
 kind: documentation
 governance_version: 2
-status: ready
+status: in_progress
 approval: coordinator_release_20261019_after_GOV-RESOURCE-MANIFEST-JSON-1_closeout
 suggested_owner: DeepSeek Harness
 owner: dsh
 reviewer: antigravity
 depends_on: [GOV-RESOURCE-MANIFEST-JSON-1]
 base_commit: cf4529297f4e38fcde0bbc51784ec301ddbdeb35
-branch: dsh/P19-UI-MANIFEST-VIEW-1
-worktree: G:/CODEX/New Manga.workspace/worktrees/P19-UI-MANIFEST-VIEW-1
+branch: P19-UI-MANIFEST-VIEW-1
+worktree: G:/CODEX/New Manga/.agents/worktrees/P19-UI-MANIFEST-VIEW-1
 integration_commit: null
 delivery_head: null
 canonical_evidence_status: pending
