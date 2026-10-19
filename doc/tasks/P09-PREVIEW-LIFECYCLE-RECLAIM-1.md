@@ -105,7 +105,7 @@ pwsh -NoProfile -File tools/governance/check.ps1 -TaskPath doc/tasks/P09-PREVIEW
 
 **→ [`doc/handoffs/P09-PREVIEW-LIFECYCLE-RECLAIM-1-convergence-request.md`](../../doc/handoffs/P09-PREVIEW-LIFECYCLE-RECLAIM-1-convergence-request.md)**
 
-**该请求列明（DAG 登记 · 依赖集成状态核定 · AC6 口径裁决）、各自归属理由，以及四项 Owner 明确不执行的动作及其理由。其中 DAG 登记已由用户授权完成，另两项仍待 Codex。**
+**该请求列明（DAG 登记 · 依赖集成状态核定 · AC6 口径裁决）、各自归属理由，以及四项 Owner 明确不执行的动作及其理由。** **其中 DAG 登记已由用户授权完成；依赖状态已按 `P09-AC3-DELETE-HARDEN-1` 的 frontmatter 据实陈述；AC6 口径仍待 Codex。**
 
 **在 Codex 就另两项答复前，继续送复审只会以同样的结论返回。** **本 Task 停在 `in_review`，`delivery_head` 保持 `392977a83…` 不变。**
 
@@ -122,7 +122,7 @@ R13 判定 **`approved_with_conditions`** —— **「实现可接受；集成�
 **R13 同时确认**：四个探针全部 PASS 且未因错误原因通过（连续第三轮）；`645 passed`；R12 Finding 2 的 AC 逐项表要求已满足；**三处 lock 断言仍缺可区分的失败侧注入，「按现有记录不应算作已验证」**（与本 Task 自己的记录一致）。
 
 | Plan 已列入 DAG | ✅ **已登记**（`REBASELINE_PLAN` L31，`in_review`）|
-| 依赖集成状态 | ⚠️ **`NOT_VERIFIED`** —— `P09-AC3-DELETE-HARDEN-1` 仍为 `in_review`、`integration_commit: null`。**R15 的 `approved` 是 Review 结论，不等于集成完成**（R13/R14 均指出）。**该状态由 Codex 核定**；Owner 不判定，也不改写为「未集成」——那只是把一种未经核实的说法换成另一种 |
+| 依赖状态 | **未集成；交付与证据已闭合，终态待 Codex** —— 读取 `P09-AC3-DELETE-HARDEN-1` 的 frontmatter 得：`status: in_review`、`integration_commit: null`、`delivery_head: 1878f0b126e8a0e2603570f9b2009d8b70a259f1`、`canonical_evidence_status: complete`、`resource_closeout_status: complete`。**即：该 Task 的交付头已固定、证据与资源回收均已闭合，但它【尚未集成】，终态由 Codex 设定。** **R15 的 `approved` 是 Review 结论，不等于集成完成。** *（本节原先写「依赖已集成」——无权威支持；后改为 `NOT_VERIFIED`；现按 frontmatter 据实陈述。据实不需要裁决，读文件即可。）* |
 | 范围/Owner/Reviewer/base/allowed_paths 已冻结 | ✅ **本次冻结**（见 frontmatter）|
 | STATUS 已登记 | ✅ **本次登记** |
 

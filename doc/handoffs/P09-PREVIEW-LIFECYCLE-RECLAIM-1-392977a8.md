@@ -107,6 +107,22 @@ python -m pytest tests/storage tests/core -q
 
 **无需下一步操作。** 本 Task 待 Codex 对固定 head 复审；复审通过后由 Codex 集成、做集成后验证与资源 closeout，并更新 Task 与 STATUS。**`P09` 的 AC3 delete 子条件保持 `BLOCKED`，本 Task 不移除该限制。**
 
+## 依赖状态（据实，非裁决）
+
+**依赖 `P09-AC3-DELETE-HARDEN-1` 的 frontmatter**：
+
+```
+status:                    in_review
+integration_commit:        null
+delivery_head:             1878f0b126e8a0e2603570f9b2009d8b70a259f1
+canonical_evidence_status: complete
+resource_closeout_status:  complete
+```
+
+**即：交付头已固定、证据与资源回收均已闭合，但该 Task 【尚未集成】，终态由 Codex 设定。** **R15 的 `approved` 是 Review 结论，不等于集成完成。**
+
+**本 Handoff 早先写「依赖已集成」，无权威支持；现按上表据实陈述。**
+
 ## 风险与遗留
 
 1. **`P09` AC3 delete 子条件仍为 `BLOCKED`** —— **本 Task 回收的是预览，不是该子条件。** 每轮核对，从未翻为 PASS。
