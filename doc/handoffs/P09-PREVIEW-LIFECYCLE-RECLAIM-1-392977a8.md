@@ -58,6 +58,21 @@
 
 **⚠️ 三处无法在本平台用注入区分**（**leak / retry / AC2 的 lock 比较**）：**R10 的注入方式（删根 lock + 子目录建一个）在此失败于 `WinError 32`，因为探针运行时 catalog 持有该锁。** **「只加 decoy」对这一处两种实现都报红，故不构成区分。** **如实记录，未记作已验证。**
 
+### AC1–AC6 逐项结果（R12 Finding 2 要求）
+
+**此前 Handoff 映射了 AC1/AC2/AC3/AC5，但没有把 AC4 与 AC6 写成条目。下表补齐逐项结果与证据引用。**
+
+| AC | 结果 | 证据 | 该证据说明了什么 |
+|---|---|---|---|
+| **AC1** 多次阅读后残留归零 | ✅ **PASS** | `ac1-red-before-fix.md` + `ac1-red-before-fix.md` 的 A/B 对照 | **同一份探针文件、两个树**：修复前 `779a571ba` 得 `LEAK: 3 rows, 3 files` / exit 1；修复后 `LEAK: 0/0` / exit 0。**R6 独立复现过。** |
+| **AC2** 删除后仍被引用的预览行为 | ✅ **PASS**（**行为**） | `ac2-referenced-preview-probe.py` + `r8-injection-evidence.md` §3 | 探针从 reader projection 响应取回**交给读者的那个 key**，断言它在删除后被回收、且删除报告成功。**注入空快照后探针 exit 1 并指出未回收的 key** —— 证明「删除成功」与「预览被回收」可分离，而探针区分它们。**授权依据**：`c1-ruling-record.md`（用户采纳推荐路径 = 直接确认 C1）。 |
+| **AC3** 跨页 / 跨书隔离 | ✅ **PASS** | `ac4-batch-delete-probe.py` | **b1 两页的 2 个 key 全部回收（跨页 2/2）**；**b2 的 key 存活且身份经断言（跨书）**。注入同名异路径孤儿后 exit 1。**本 Task 的 AC3 与 `P09` 的 AC3 delete 子条件不同 —— 后者仍 `BLOCKED`。** |
+| **AC4** `page-original-{pid}` 回收 | ✅ **PASS** | `tests/core/test_core_delete_commands.py`（**20 passed，R6 独立运行**）+ `tests/storage/test_refused_preview_unlink_keeps_records.py` | core 测试断言**确定性** `page-original-{pid}` 的回收；storage 测试断言成功清理时文件与 catalog 行一并移除，以及新契约下 `all_deleted is False`、manifest 存活的另一侧。 |
+| **AC5** 不回归 HARDEN 九探针 | ✅ **PASS（有条件）** | `ac5-harden-rerun.md` | **8 个有效 SAFE + 1 个预期 INCONCLUSIVE**（`n002-race-probe.py` 的 `race_hook_fired=False`，其注入不触发，**不计为安全证据**）+ 1 个查询检查（`queries_ok=9/9`）。**探针到覆盖项为一对一映射表**（R6 Finding 2 后补）。 |
+| **AC6** Schema 变更先冻结契约 | ✅ **N/A** | 交付 diff | **本 Task 的 diff 不含 Schema 或 IPC 契约变更** —— 只新增 catalog 查询、清理清单字段与删除前快照。**故「先冻结契约」这一要求在本次无对象，记为 `N/A` 而非 PASS。** |
+
+**关于 AC6 的措辞**：R12 问「Schema 未变，因此是否 `N/A`」。**答案是 `N/A`** —— 该 AC 是**条件性**的（**若有 Schema 变更则须先冻结契约**），**而本次没有 Schema 变更，所以它不被触发。** **记 `N/A` 比记 `PASS` 更准确**：**`PASS` 会暗示存在一个被满足的检查，而实际是不存在该检查的对象。**
+
 ### 测试
 
 `tests/storage` **87 passed** · `tests/core` **558 passed** · `tests/m2_resource_channel` **106 passed** · `tests/core/test_core_delete_commands.py` **20 passed**（R6 独立运行）。
