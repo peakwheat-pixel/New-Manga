@@ -121,7 +121,7 @@ antigravity/P09-AC3-DELETE-HARDEN-1         7a2cfabc2   ← 当前 checkout，�
 antigravity/P09-PREVIEW-LIFECYCLE-RECLAIM-1  392977a83   ← 停在 delivery_head
 
 392977a83 是本 Task 的 delivery_head，且【同时是两分支的祖先】
-HEAD 相对 PREVIEW 分支超越 22 个提交（**截至该测量时点**；**写下本节的这个提交本身使其变为 23 —— R22 指出，数字正确而时态需限定**）
+HEAD 相对 PREVIEW 分支超越 22 个提交（**截至该测量时点**；**写下本节的这个提交本身使其变为 23，故数字正确而时态需限定。** **该计数关系由 Git 独立核实**：`7a2cfabc…` 相对 PREVIEW 分支领先 22、写下本节的 `51dc10cb…` 后为 23、`df30b9d…` 为 24。**⚠️ 原先此处写「R22 指出」，但 R22 的 Review 原文位于仓外 workspace、仓库内不可解析，故该出处不可由仓库验证（R23 记为 `NOT_VERIFIED`）—— 现改为不依赖仓外引用的表述。**）
 这 22 个提交只改 7 个文件，全部在 doc/ 与 verification/ 下，【无 src/ 或 tests/ 改动】
 ```
 
