@@ -79,6 +79,36 @@ created: 2026-10-19
 
 | 前置 | 状态 |
 |---|---|
+## R12 治理检查差异（未解决，交 Codex 判定）
+
+**R12 在交付提交的仓外 scratch 副本中运行 `tools/governance/check.ps1` 得到：**
+
+```
+exit 1
+FAIL: 当前 DAG 未登记非终态 Task
+```
+
+**我在主仓库（HEAD 与 reviewed head 相同）运行同一脚本得到：**
+
+```
+exit 0
+Governance check: PASS (2 warnings)
+```
+
+**同一脚本、同一份 `doc/REBASELINE_PLAN.md`（经 `grep` 确认确实未登记本 Task），一边 FAIL 一边 PASS。**
+
+**我没有解释。** 可想到的三条都不能从我手上的证据判定：
+
+1. 副本中的 PLAN 或 Task 状态与主仓库不同
+2. 副本使用的 check 脚本版本与主仓库不同
+3. 主仓库这一份的 DAG 检查在当前数据下不触发
+
+**我不选其中一条来收尾。** **本 Task 已经因为「两个观察者看到不同结果」付过两次代价**（R5 的 C1 记录分裂、R11 的 Task 与 STATUS 状态分裂），**两次都是真实缺口而非误报。**
+
+**但无论哪条成立，「`REBASELINE_PLAN` 未登记本 Task」这一事实都成立** —— `grep` 无输出，且 Task 下方那一行早已记录该登记待办。**所以这一项需要 Codex 处理，与上面的差异无关。**
+
+**请 Codex 判定差异原因，并完成 DAG 登记。** `REBASELINE_PLAN` 现为 **35/35 行、2464/2500 字节**（满行），**登记需要重排，而它不在本 Task 的 `allowed_paths` 内。**
+
 | Plan 已列入 DAG | ⏳ **待 Codex**（`REBASELINE_PLAN` 现为 35/35 行，需其重排；不属 Owner 职责）|
 | 依赖已集成 | ✅ `P09-AC3-DELETE-HARDEN-1` 删除路径加固已闭环，R15 判 `approved` |
 | 范围/Owner/Reviewer/base/allowed_paths 已冻结 | ✅ **本次冻结**（见 frontmatter）|
