@@ -155,17 +155,17 @@ evidence_dir: verification/P09-AC3-DELETE-HARDEN-1
 
 | evidence_id | AC/Gate | path | commit | sha256 | class (`CANONICAL` / `SOURCE_PIN`) |
 |---|---|---|---|---|---|
-| AC12-REGRESSION | AC12 | verification/P09-AC3-DELETE-HARDEN-1/ac12-no-regression.md | a5221281919dc28cce1fbdec3a9325110251df03 | d65675c91251aaa110af478e67593e4cf8159ed5177449a9c59deb5134a34a94 | CANONICAL |
+| AC12-REGRESSION | AC12 | verification/P09-AC3-DELETE-HARDEN-1/ac12-no-regression.md | 0add9072b7f9e14b52afeac4bfcf01c2725d9b60 | e7c843db816cbbdfa67bae86070f9816017951979dc3c67e518081140fb1aef0 | CANONICAL |
 | AC7-QUERY-CHECK | AC7 | verification/P09-AC3-DELETE-HARDEN-1/ac7-verify-query-check.py | 034d7e3f0a01237ba264615203e59ba3161afe38 | b409672408c0cf79f9a1f74bb64dc6828496bc65a990d786c7119487422e8afc | SOURCE_PIN |
 | AC1-DISPATCHER-TEST | AC1 | tests/core/test_p09_ac1_recycle_bin_route.py | 899b72b65d90c6c2f6c0835857ce0b4028b3d71d | d2dbffc7a13b656cd5e79e03b140caae7c85a2da3d07847ebb512af4fc4ff8de | CANONICAL |
-| AC4-ORIGIN-TEST | AC4 | tests/core/test_p09_ac4_translated_preview.py | bbf5d13258fdef184fe00745e9c59e207e13be3e | 5b5e644a8fff89f064acf329e0b0fba5da07158efd643256e1a7dff63b1a523f | CANONICAL |
-| AC5-REPARSE-TEST | AC5 | tests/storage/test_preview_unlink_reparse.py | 41fbf2d2e536ad8997750c060749de738a586a45 | 9fd3a1c7680ce472461dbf450c832ddbdf25e88c2e4dbbb8b32681a189c49e1e | CANONICAL |
-| AC2-AC6-AC8-IMPL | AC2/AC6/AC8 | src/infrastructure/sqlite/library.py | 98629ba369f44ea125c039c081ec7a0a8c3d4f33 | 6e4babac2ab5f3864743e58c456a5ade17099593972fbaab3ce0d5d25b46c01c | CANONICAL |
-| AC1-AC4-CORE-IMPL | AC1/AC4 | src/bootstrap/core_service.py | 5edf207b8b2fce124c5f0da79e6dc701ee6fcdb0 | 5faa0346bc1cde4cc8c6a0c9732264fa77e991a5fb1686ba5c95214ab24eae2e | CANONICAL |
-| AC9-AC1-RUST-IMPL | AC9/AC1 | apps/desktop/src-tauri/src/library_bridge.rs | 899b72b65d90c6c2f6c0835857ce0b4028b3d71d | 6026b952f24cbffd5741caed68d5f24999b795431b65bc16abd9a21f4b21bc18 | CANONICAL |
+| AC4-ORIGIN-TEST | AC4 | tests/core/test_p09_ac4_translated_preview.py | 51bd814d11f6903160788a6ac315da33d26b63f5 | 9fee20aa4333d159f275cae5241d907a7b902e8ab6dff88a4da79dcf855b118d | CANONICAL |
+| AC5-REPARSE-TEST | AC5 | tests/storage/test_preview_unlink_reparse.py | 992bdff3699c64f76192411da8868a32f45e012c | a4e683207a9375ecd2b46ef5232c58af4f2817d38529c24325cb2c728abc7b8f | CANONICAL |
+| AC2-AC6-AC8-IMPL | AC2/AC6/AC8 | src/infrastructure/sqlite/library.py | 992bdff3699c64f76192411da8868a32f45e012c | c04287522ef4d616a50be9ccb9918ad68843e26df837c7cfd1bac9630473239d | CANONICAL |
+| AC1-AC4-CORE-IMPL | AC1/AC4 | src/bootstrap/core_service.py | 51bd814d11f6903160788a6ac315da33d26b63f5 | e3ffba1e0e6b40893cf70883366080d293b1734201c47ae75d1eb30cbac55364 | CANONICAL |
+| AC9-AC1-RUST-IMPL | AC9/AC1 | apps/desktop/src-tauri/src/library_bridge.rs | 580bb0d65389c10cf0267692076c4e8b50135339 | d4825b8a7f9187cef893b646a1cf667045e4bb817eea8ac9af40ba720c03d29b | CANONICAL |
 | AC1-UI-IMPL | AC1 | apps/desktop/frontend/src/recycleBin/RecycleBinPage.tsx | 393e5e7e118c87893926fd33d6975aafe3a9cfc7 | 4c81aa15c0b4a61f56a275dec042571002d688c3316edec99921c9ff244c8a3e | CANONICAL |
 | AC3-CLIENT-IMPL | AC3 | apps/desktop/frontend/src/library/client.ts | c66fa6e9ea48a4f46c3186dc569131cbe364d9af | 06ca08658a9d733f58e7993430f4de7316395df84b518828aa2abcea0bfb4e7f | CANONICAL |
-| AC7-VERIFY-SCRIPT | AC7 | verification/P09-AC3-DELETE-1/verify_all.py | 034d7e3f0a01237ba264615203e59ba3161afe38 | 510f7820b5efb1a6cdb0e72dd4c226c19ffd38d11e1c79f83e2f77455547d923 | CANONICAL |
+| AC7-VERIFY-SCRIPT | AC7 | verification/P09-AC3-DELETE-1/verify_all.py | ac46e162c6dbe59212c89854562e738504fb4288 | ed1446b1bdc9dec0ddb43eedd3248e7da38f311c79a829458b4182bbac81ea3a | CANONICAL |
 
 ## Resource Manifest
 
