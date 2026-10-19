@@ -96,7 +96,7 @@ allowed_paths:
 | P19VIEW-AC4 | AC4 | `verification/P19-UI-MANIFEST-VIEW-1/source-preservation.md` | `ed5a584b6` | `f8b92df7264b80b6b823b95b33ce02c2ce78d45ae47e6376b125b8015b6642af` | `CANONICAL` |
 | P19VIEW-AC5 | AC5 | `verification/P19-UI-MANIFEST-VIEW-1/scope-diff.md` | `ed5a584b6` | `60ca3716ca882b5e6f71ee126edf9663281b1deee3bdbe84dc363936ff5462e8` | `CANONICAL` |
 | P19VIEW-P19JSON | AC4 / 只读对象 | `verification/P19-UI-FIX-1/resource-manifest.json` | `cf4529297` | `b0772d93ab8ed9182497a43e0761f0d4ccc5560768f806ba86eb8048905c4dc2` | `SOURCE_PIN` |
-| P19VIEW-CLOSEOUT | Codex closeout | \verification/P19-UI-MANIFEST-VIEW-1/codex-closeout-evidence.md\ | \PENDING\ | \5c2bc3b830adc27cbe852401f91057d856f472dad25c89f23a1ac3946337eaa6\ | \CANONICAL\ |
+| P19VIEW-CLOSEOUT | Codex closeout | `verification/P19-UI-MANIFEST-VIEW-1/codex-closeout-evidence.md` | `e6c636828` | `5c2bc3b830adc27cbe852401f91057d856f472dad25c89f23a1ac3946337eaa6` | `CANONICAL` |
 
 ## Resource Manifest
 
