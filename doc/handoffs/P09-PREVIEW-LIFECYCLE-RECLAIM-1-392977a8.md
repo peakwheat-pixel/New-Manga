@@ -91,7 +91,14 @@
 
 ### 治理
 
-`tools/governance/check.ps1` **PASS (2 warnings)**。
+```powershell
+pwsh -NoProfile -File tools/governance/check.ps1 -TaskPath doc/tasks/P09-PREVIEW-LIFECYCLE-RECLAIM-1.md
+# -> Governance check: PASS (3 warnings)
+```
+
+**⚠️ 必须显式指定 `-TaskPath`。** **不带参数时 `check.ps1` 从 `STATUS.md` 选中当前 Task（本次为 `P20`）并只检查它** —— **因此返回的 PASS 与本 Task 无关。本 Task 多轮报告中曾据此写「治理 PASS` (2 warnings)`」，那一次检查的是 `P20`。**
+
+**（R17 Finding 2 后更正：本行原写 `PASS (2 warnings)`，未注明调用参数，属历史、非本 Task 结果。）**
 
 ## 接收方式
 
