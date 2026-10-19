@@ -63,7 +63,7 @@ test_bootstrap_providers: AssertionError: assert 'ready' == 'missing_dependency'
 
 **证据时点声明**：本节全量结果记录于本 Task 交付 head 之前的工作区快照；Codex 在其复审时复跑得到相同的 `9 failed / 2250 passed / 9 skipped`。
 
-**这些测试断言「运行时 / 模型必须缺失」**（测试名即 `..._without_a_runtime_...`、`..._missing_models_...`、`..._not_ready`），而**当前环境的实际状态是 GPU 可用、`manga-ocr` ready** —— 即**环境比测试假设的条件更好**，测试因此失败。
+**其中 4 项**断言「运行时 / 模型必须缺失」（测试名即 `..._without_a_runtime_...`、`..._missing_models_...`、`..._not_ready`），而**当前环境的实际状态是 GPU 可用、`manga-ocr` ready** —— 即**环境比测试假设的条件更好**，这 4 项因此失败。**另 2 项不属此类**：它们是 `transformers` 依赖版本与调用面不匹配的独立既有缺陷，与运行时/模型可用性无关。
 
 **这与本轮改动无关**：本轮未触碰任何 provider、设备探测、OCR 或 registry 代码；且两类失败均非由删除逻辑引起的因果路径 ——其中 4 项环境反转的失败方向是「环境具备能力而测试假设缺失」，另 2 项是 `transformers` 依赖版本与调用面不匹配的独立既有缺陷。
 

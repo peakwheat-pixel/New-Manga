@@ -82,7 +82,7 @@ evidence_dir: verification/P09-AC3-DELETE-HARDEN-1
 | AC9 phase 投影 | 未知 `details.phase` 单测 | Rust toolchain | **PASS**：`1 passed`（`preflight`/`cleanup` 原样、`rollback`→`unknown`、空串→`unknown`、非字符串→`None`） | `cargo test --bin m2rc1-desktop permanently_delete_error_phase` |
 | AC10 版本断言 | `pytest tests/packaging/test_frozen_runtime_contract.py` + 全仓搜索 | 集成 Python | **PASS**：`3 passed`；全仓搜索仅剩 mock provider 构造参数与已动态取值处，无需再改 | `tests/packaging/test_frozen_runtime_contract.py` |
 | AC11 指针自洽 | `check.ps1` 全量 + 相关 `-TaskPath` | — | **PASS**：`check.ps1` 返回 `PASS (2 warnings)`；`delivery_head` 经 `git cat-file -e` 验证存在 | `doc/tasks/P09-AC3-DELETE-1.md`、`doc/tasks/P09.md` |
-| AC12 回归 | 全量 `pytest tests` 并逐项定性 | 集成 Python | **PASS（附限制）**：`9 failed, 2250 passed, 9 skipped`；定性为 3 项基线既有（workbench，PRE-P09 即失败）+ 6 项环境反转（断言要求环境**缺失** GPU/OCR，而本机具备）；**本 Task 引入 0 项**，修复 1 项 | `verification/P09-AC3-DELETE-HARDEN-1/ac12-no-regression.md` |
+| AC12 回归 | 全量 `pytest tests` 并逐项定性 | 集成 Python | **PASS（附限制）**：`9 failed, 2250 passed, 9 skipped`；定性为 3 项基线既有（workbench，PRE-P09 即失败）+ 4 项环境反转（断言要求环境**缺失** GPU/OCR，而本机具备）+ 2 项 `transformers` API 不兼容（依赖版本与调用面不匹配的独立既有缺陷）；**本 Task 引入 0 项**，修复 1 项 | `verification/P09-AC3-DELETE-HARDEN-1/ac12-no-regression.md` |
 
 ## 依赖、风险与阻塞
 
@@ -155,7 +155,7 @@ evidence_dir: verification/P09-AC3-DELETE-HARDEN-1
 
 | evidence_id | AC/Gate | path | commit | sha256 | class (`CANONICAL` / `SOURCE_PIN`) |
 |---|---|---|---|---|---|
-| AC12-REGRESSION | AC12 | verification/P09-AC3-DELETE-HARDEN-1/ac12-no-regression.md | b7e409c1af1162d14f03354cc75594c73646f510 | b9ba1d5362efb5d27cf5257608c7950ea6d87492f661fa495c8d27f03226f0ce | CANONICAL |
+| AC12-REGRESSION | AC12 | verification/P09-AC3-DELETE-HARDEN-1/ac12-no-regression.md | b7e409c1af1162d14f03354cc75594c73646f510 | d6590c7be0ddf7726ed1ff4ca5eabe7cadfc57ce3ec2e0adbc62e1384d2c4121 | CANONICAL |
 | AC7-QUERY-CHECK | AC7 | verification/P09-AC3-DELETE-HARDEN-1/ac7-verify-query-check.py | 034d7e3f0a01237ba264615203e59ba3161afe38 | b409672408c0cf79f9a1f74bb64dc6828496bc65a990d786c7119487422e8afc | SOURCE_PIN |
 | AC1-DISPATCHER-TEST | AC1 | tests/core/test_p09_ac1_recycle_bin_route.py | 899b72b65d90c6c2f6c0835857ce0b4028b3d71d | d2dbffc7a13b656cd5e79e03b140caae7c85a2da3d07847ebb512af4fc4ff8de | CANONICAL |
 | AC4-ORIGIN-TEST | AC4 | tests/core/test_p09_ac4_translated_preview.py | fd5ae50fe5b3a418604a124bde284d23d1fe0f15 | b494bf26d1a759294e954227b359eaefcf56377248400482757eee515933985d | CANONICAL |
@@ -179,7 +179,7 @@ evidence_dir: verification/P09-AC3-DELETE-HARDEN-1
 - `canonical_evidence_status`：`complete`；上表 11 条 pin 的磁盘 SHA-256 已按**磁盘真实字节**实算（本仓库为 CRLF 检出），commit 均为 40-hex 且经 `git cat-file -e` 验证存在。
 - `resource_closeout_status`：`complete`；仅复用仓库工作区，无新建 worktree、无需迁移/归档/删除的派生产物。
 - 删除、迁移、归档数量/字节数：**0 / 0 / 0**。
-- 未关闭项及保留原因：**无未关闭 AC**。AC12 的全量失败数高于 T2 基线 4 项，已逐项定性为环境差异而非回归（3 项基线既有 + 6 项环境反转，本 Task 引入 **0** 项），理由与证据见 `ac12-no-regression.md`；**该定性不改变"引入 0 项回归"的结论**。
+- 未关闭项及保留原因：**无未关闭 AC**。AC12 的全量失败数高于 T2 基线 4 项，已逐项定性为环境差异而非回归（3 项基线既有 + 4 项环境反转 + 2 项 `transformers` API 不兼容，本 Task 引入 **0** 项），理由与证据见 `ac12-no-regression.md`；**该定性不改变"引入 0 项回归"的结论**。
 - 当前指针清理：`delivery_head` 固定为 `4824ed5d4872a6dc519ca6e671bfa6485bd47d9a`；STATUS/Plan 的同步与 Task 关闭由 Codex 复审后执行。
 - **硬约束保持**：`P09` 的 **AC3 delete 子条件仍为 `BLOCKED`**，本 Task 未将其翻为 PASS；本 Task 只做加固与指针自洽，不改变原判定。
 
