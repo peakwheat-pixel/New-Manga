@@ -63,17 +63,17 @@ verification/P19-UI-MANIFEST-VIEW-1/** text eol=lf
 
 ## Acceptance Criteria
 
-- [ ] **AC1 追加规则**：在 `.gitattributes` 末尾追加带注释的独立规则组，为
+- [x] **AC1 追加规则**：在 `.gitattributes` 末尾追加带注释的独立规则组，为
   `verification/GOV-UNTRACKED-BACKLOG-1/**` 与 `doc/handoffs/GOV-UNTRACKED-BACKLOG-1-*.md`
   固定 `text eol=lf`。不改动既有任何规则。
-- [ ] **AC2 renormalize 与校验**：对上述路径执行 `git add --renormalize`，
+- [x] **AC2 renormalize 与校验**：对上述路径执行 `git add --renormalize`，
   用 `git ls-files --eol` 确认结果为 `i/lf w/lf`，
   并用 `Get-FileHash` 或 `sha256sum` 确认 6 份证据文件的字节与
   `GOV-UNTRACKED-BACKLOG-1` 已登记的 pin **完全一致**（预期不变）。
-- [ ] **AC3 worktree 复现验证**：新建一次性 linked worktree，确认
+- [x] **AC3 worktree 复现验证**：新建一次性 linked worktree，确认
   `GOV-UNTRACKED-BACKLOG-1` 的证据 pin 在该 worktree 中**不再失配**（修复前应失配）。
   验证后删除探针 worktree。
-- [ ] **AC4 只读保护**：不改任何证据文件内容、不改其它 Task、不改 `tools/governance/`。
+- [x] **AC4 只读保护**：不改任何证据文件内容、不改其它 Task、不改 `tools/governance/`。
   只改 `.gitattributes`。
 - [ ] **AC5 交付与 Review**：入库验证输出（含 `git ls-files --eol` 与 hash 对照）；
   生成 Handoff；由 Antigravity 对固定 delivery head 独立 Review。
