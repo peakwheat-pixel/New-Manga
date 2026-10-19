@@ -73,14 +73,14 @@ suggested_reviewer: Codex
 depends_on: [P09-AC3-DELETE-HARDEN-1]
 ```
 
-**范围**：`core_service.py` / `core_assembly.py` 中上述 7 处；对应测试。
+**范围**：`core_service.py` / `core_assembly.py` 中上述 7 处 **+ `handle_resolver.resolve_namespace_identity`**（R5b 与 R6 均已复现）；对应测试。
 **先决问题**：**定义「期望身份」的来源**（句柄身份 vs 配置路径 vs 启动时快照）。
 **禁止范围**：不改 IPC 契约、Schema、ACL、依赖；不改删除路径（那是 `P09-AC3-DELETE-HARDEN-1` 的范围）。
 
 **验收方向**：
 - AC1：R5b 的复现（祖先 junction → 读出 `outside bytes`）**被拒绝**
 - AC2：**合法读取不回归**（含符号链接合法使用的场景 —— 需明确产品是否允许）
-- AC3：7 处**逐个**有测试或探针，不接受「模式相同所以一起算」
+- AC3：**全部 8 处**（7 处比较点 + **`handle_resolver.resolve_namespace_identity`**）**逐个**有测试或探针，不接受「模式相同所以一起算」。**resolver 那处是 R5b 与 R6 各自复现过的**（静态场景通过、竞态下接受被重定向路径），**不是「顺带一提」**
 - AC4：不引入新的依赖或契约变更
 
 ---
