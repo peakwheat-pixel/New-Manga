@@ -99,6 +99,20 @@ files_before = len([p for p in derived_root.rglob("*") if p.is_file()])
 print("before: %d publish rows, %d files" % (len(rows_before), files_before))
 assert len(rows_before) >= 2, "need one preview per book, got %d" % len(rows_before)
 
+# R2 Finding 2: the previous version only counted survivors, so it passed when b1's
+# snapshot was swapped for b2's ids - the survivor was the wrong book's preview and the
+# count still matched.  Record which key belongs to b2 BEFORE the delete and assert
+# identity, not arithmetic.
+b2_artifact_ids = set(core.repository.list_page_artifact_ids(["p2"]))
+b2_expected = sorted(
+    rid for rid in rows_before
+    if (catalog.preview_lifecycle_row(rid) or {}).get("artifact_id") in b2_artifact_ids
+)
+print("b2 expected survivor(s): %s" % [x[:24] + "..." for x in b2_expected])
+assert len(b2_expected) == 1, (
+    "fixture must give b2 exactly one preview, got %d" % len(b2_expected)
+)
+
 # --- batch delete: two books exist, delete one, so is_whole_library() stays false ---
 result, error = server.handle_permanently_delete_books({
     "book_ids": ["b1"],
@@ -134,7 +148,8 @@ unexplained = [
     if p.name != ".preview-lifecycle.lock" and p.name not in row_file_names
 ]
 leaked_files = len(unexplained)
-survivors_are_b2 = commands == 1 and leaked_rows == 1
+survivors_are_b2 = commands == 1 and rows_after == b2_expected
+print("survivors == b2's expected preview:", rows_after == b2_expected)
 print()
 print("LEAK: %d row(s), %d unexplained file(s)" % (leaked_rows, leaked_files))
 if unexplained:
@@ -144,11 +159,14 @@ print("isolation: survivor is exactly b2's preview =", survivors_are_b2)
 catalog.close()
 core.conn.close()
 
-if leaked_rows == 1 and leaked_files == 0 and survivors_are_b2:
+if len(rows_after) == len(b2_expected) and leaked_files == 0 and survivors_are_b2:
     print("RESULT = PASS (batch reclaimed its own preview and only its own)")
     sys.exit(0)
-if leaked_rows > 1:
-    print("RESULT = FAIL (batch left more than the other book's preview behind)")
+if rows_after != b2_expected:
+    print("RESULT = FAIL (survivors are not the expected b2 preview: %s)"
+          % [x[:24] + "..." for x in rows_after])
+elif leaked_files > 0:
+    print("RESULT = FAIL (unexplained files survived)")
 else:
-    print("RESULT = FAIL (batch reclaimed too much - cross-book contamination)")
+    print("RESULT = FAIL (book b2 itself is gone)")
 sys.exit(1)
