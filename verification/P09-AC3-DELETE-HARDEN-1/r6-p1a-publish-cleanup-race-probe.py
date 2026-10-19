@@ -60,6 +60,7 @@ print("derived_root       =", derived_root)
 print("target             = pages/page-original-p1.png")
 
 injected: list[str] = []
+DIAG: list[str] = []
 orig_open = w.unlink_by_handle
 
 
@@ -77,6 +78,26 @@ def hooked_unlink(root, segments):  # type: ignore[no-untyped-def]
     return orig_open(root, segments)
 
 
+# The old implementation deleted by path, so hooking only unlink_by_handle would
+# never fire against it and the probe could not be shown to discriminate.  Both are
+# wrapped: whichever route the code takes, the injection gets its window.
+orig_path_unlink = Path.unlink
+
+
+def hooked_path_unlink(self, *a, **k):  # type: ignore[no-untyped-def]
+    global DIAG
+    DIAG.append('path.unlink called with %s' % self)
+    if not injected and self.name == 'page-original-p1.png':
+        try:
+            rel = self.relative_to(derived_root)
+        except ValueError:
+            rel = None
+        if rel is not None:
+            hooked_unlink(derived_root, [p for p in rel.parts if p])
+    return orig_path_unlink(self, *a, **k)
+
+
+Path.unlink = hooked_path_unlink  # type: ignore[assignment]
 w.unlink_by_handle = hooked_unlink  # type: ignore[assignment]
 # The publisher imported the name directly, so patch it there too.
 import infrastructure.resource_channel.render_preview as rp  # noqa: E402
@@ -92,8 +113,11 @@ try:
 finally:
     w.unlink_by_handle = orig_open  # type: ignore[assignment]
     rp.unlink_by_handle = orig_open  # type: ignore[assignment]
+    Path.unlink = orig_path_unlink  # type: ignore[assignment]
 
 survived = victim.is_file()
+for line in DIAG:
+    print("  diag:", line)
 print("injection_fired    =", bool(injected))
 print("publish outcome    =", outcome, "(failure is expected: it triggers cleanup)")
 print("outside_survived   =", survived)
