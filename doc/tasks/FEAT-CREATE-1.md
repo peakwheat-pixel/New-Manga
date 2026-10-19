@@ -119,6 +119,20 @@ R3-006 于 2026-10-18 回填。以下 SHA-256 按当前磁盘字节计算；对�
 - 实际产品测试：NOT_RUN（design/contract only）。
 - 交付 head、Handoff 与 Canonical Evidence 在 delivery commit 后回填；delivery 前保持 `in_progress`，交付后转 `in_review`。独立 Review 未完成前不得记 `done`。
 
+## Resource Manifest
+
+由 `GOV-DEBT-CLEANUP-2` AC6 补录；来源 `verification/P09-GOVERNANCE-DEBT-20261019/
+missing-manifest-resource-facts.md`（实测）。**本表不构成任何删除/移动/归档授权**。
+
+**注意**：其 HEAD 不在当前分支历史中，见下表。
+
+| resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
+|---|---|---|---|---|---|
+| task worktree | `G:/CODEX/New Manga.workspace/worktrees/FEAT-CREATE-1` | `PRESERVE_UNKNOWN` | `G:/CODEX/New Manga.workspace/worktrees/FEAT-CREATE-1` | `85623bba9e6eb72a4acd0bfc219712f489adf12f9ae0c5a6e834a21b96d919a2` | 实测存在且已注册；dirty=0，untracked=0；**HEAD 不在当前分支历史中**（持不可达提交，按 Safety Inventory 不可视为可移除） |
+| task env | 无 | `NOT_APPLICABLE` | — | `85623bba9e6eb72a4acd0bfc219712f489adf12f9ae0c5a6e834a21b96d919a2` | 实测 `New.Manga.workspace/task-envs/FEAT-CREATE-1` 不存在 |
+| agent output | 无 | `NOT_APPLICABLE` | — | `85623bba9e6eb72a4acd0bfc219712f489adf12f9ae0c5a6e834a21b96d919a2` | 实测 agent-output（coordinator 与根）均不存在 |
+| evidence | `verification/FEAT-CREATE-1/` | `PRESERVE_REFERENCED` | `verification/FEAT-CREATE-1/` | `85623bba9e6eb72a4acd0bfc219712f489adf12f9ae0c5a6e834a21b96d919a2` | 目录存在，2 个文件；未登记文件见 evidence-dir-classification.md |
+
 ## Closeout Record
 
 - 关闭：2026-10-17（dsh）。Reviewer=dsh（approved）。合并 c633170d1（无冲突）。

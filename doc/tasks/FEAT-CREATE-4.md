@@ -72,6 +72,18 @@ evidence_dir: verification/FEAT-CREATE-4
 | EVID-CREATE4-APPDATA | AC6 | verification/FEAT-CREATE-4/source-preservation-check.json | f10cde0752b0b47206fe3812e891353242f1be25 | dcf824b91666b1988b61e57e3f08c8d4942195b3c58182956e07882ea38984d1 | CANONICAL |
 | EVID-CREATE4-HANDOFF | AC7 | doc/handoffs/FEAT-CREATE-4-f10cde075.md | 7141c7f0ee825ed211e5e2646d19c9d0de6f9837 | 1828ff39f6dfa3302cbaf48a8ba9adad13a0c1e8b220e7c3b93e11109a0e3b2f | CANONICAL |
 
+## Resource Manifest
+
+由 `GOV-DEBT-CLEANUP-2` AC6 补录；来源 `verification/P09-GOVERNANCE-DEBT-20261019/
+missing-manifest-resource-facts.md`（实测）。**本表不构成任何删除/移动/归档授权**。
+
+| resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
+|---|---|---|---|---|---|
+| task worktree | `G:/CODEX/New Manga.workspace/worktrees/FEAT-CREATE-4` | `PRESERVE_UNKNOWN` | `G:/CODEX/New Manga.workspace/worktrees/FEAT-CREATE-4` | `c4697526c430cde233e0ffc7936f840ccd152323847b9986d7ffe5243eee04ac` | 实测存在且已注册；dirty=0，untracked=0；HEAD 已在当前分支历史中 |
+| task env | 无 | `NOT_APPLICABLE` | — | `c4697526c430cde233e0ffc7936f840ccd152323847b9986d7ffe5243eee04ac` | 实测 `New.Manga.workspace/task-envs/FEAT-CREATE-4` 不存在 |
+| agent output | 无 | `NOT_APPLICABLE` | — | `c4697526c430cde233e0ffc7936f840ccd152323847b9986d7ffe5243eee04ac` | 实测 agent-output（coordinator 与根）均不存在 |
+| evidence | `verification/FEAT-CREATE-4/` | `PRESERVE_REFERENCED` | `verification/FEAT-CREATE-4/` | `c4697526c430cde233e0ffc7936f840ccd152323847b9986d7ffe5243eee04ac` | 目录存在，28 个文件；未登记文件见 evidence-dir-classification.md |
+
 ## Closeout Record
 
 - 关闭：2026-10-17（dsh）。Reviewer=dsh（approved）。合并 cd509fd9（--no-ff，无冲突）。

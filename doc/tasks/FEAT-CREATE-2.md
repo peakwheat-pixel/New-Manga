@@ -11,7 +11,7 @@ reviewer: null
 depends_on: [FEAT-CREATE-1]
 base_commit: null
 branch: null
-worktree: null
+worktree: G:/CODEX/New Manga.workspace/worktrees/FEAT-CREATE-2
 integration_commit: ebe47ff86
 delivery_head: ebe47ff86bd3c155c2d9ebdb41029d41ec4a796c
 canonical_evidence_status: complete
@@ -60,3 +60,15 @@ Owner 在动手前引 §5.10.2 **L614/L616** 指出我方 AC 与契约冲突，*
 1. 契约权威：	itle **无最大长度**（L614）→ 不设上限、**删除超长反例**；只验**非空**。
 2. 契约**允许重复**标题/章节号（L616）→ **重复是正例**，**不得**断言重名失败；原子性改以**主键冲突/注入失败**验证。
 3. 其余 AC 不变。
+
+## Resource Manifest
+
+由 `GOV-DEBT-CLEANUP-2` AC6 补录；来源 `verification/P09-GOVERNANCE-DEBT-20261019/
+missing-manifest-resource-facts.md`（实测）。**本表不构成任何删除/移动/归档授权**。
+
+| resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
+|---|---|---|---|---|---|
+| task worktree | `G:/CODEX/New Manga.workspace/worktrees/FEAT-CREATE-2` | `PRESERVE_UNKNOWN` | `G:/CODEX/New Manga.workspace/worktrees/FEAT-CREATE-2` | `6cfa304013dcc41fd39978cf95dc1aa81be4db1c206594fe80bf2c030e683aa0` | 实测存在且已注册；dirty=0，untracked=0；HEAD 已在当前分支历史中 |
+| task env | 无 | `NOT_APPLICABLE` | — | `6cfa304013dcc41fd39978cf95dc1aa81be4db1c206594fe80bf2c030e683aa0` | 实测 `New.Manga.workspace/task-envs/FEAT-CREATE-2` 不存在 |
+| agent output | 无 | `NOT_APPLICABLE` | — | `6cfa304013dcc41fd39978cf95dc1aa81be4db1c206594fe80bf2c030e683aa0` | 实测 agent-output（coordinator 与根）均不存在 |
+| evidence | `verification/FEAT-CREATE-2/` | `PRESERVE_REFERENCED` | `verification/FEAT-CREATE-2/` | `6cfa304013dcc41fd39978cf95dc1aa81be4db1c206594fe80bf2c030e683aa0` | 目录存在，4 个文件；未登记文件见 evidence-dir-classification.md |

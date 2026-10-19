@@ -103,3 +103,17 @@ evidence_dir: verification/FEAT-IMPORT-MULTI-1
 | EVID-IMPORT-HANDOFF | AC8 | `doc/handoffs/FEAT-IMPORT-MULTI-1-8b1a1da17.md` | `2795f5febe2ff3d7bad1f0f762edaa401cdbc8da` | `001908e9f2ad288876ef1a7fd40ea9d487f0160adc68da236bf18ad6919af0c1` | CANONICAL |
 
 Task 文件自身不列入自身 hash 表，避免自引用。表中 SHA-256 按当前 worktree 磁盘字节计算；`commit` 使用包含对应文件的完整 `git rev-parse HEAD` 值。`CANONICAL` 仅表示本次交付证据，不代表独立 Review 已通过。
+
+## Resource Manifest
+
+由 `GOV-DEBT-CLEANUP-2` AC6 补录；来源 `verification/P09-GOVERNANCE-DEBT-20261019/
+missing-manifest-resource-facts.md`（实测）。**本表不构成任何删除/移动/归档授权**。
+
+**注意**：worktree 存在 dirty/untracked（50 tracked / 50 untracked），本表未改动。
+
+| resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
+|---|---|---|---|---|---|
+| task worktree | `G:/CODEX/New Manga.workspace/worktrees/FEAT-IMPORT-MULTI-1` | `PRESERVE_UNKNOWN` | `G:/CODEX/New Manga.workspace/worktrees/FEAT-IMPORT-MULTI-1` | `8e53bf92068c65e4186c66db6e16287441b70ec5d308a458ff411fd37cea9e1a` | 实测存在且已注册；dirty=50，untracked=50；HEAD 已在当前分支历史中 |
+| task env | 无 | `NOT_APPLICABLE` | — | `8e53bf92068c65e4186c66db6e16287441b70ec5d308a458ff411fd37cea9e1a` | 实测 `New.Manga.workspace/task-envs/FEAT-IMPORT-MULTI-1` 不存在 |
+| agent output | 无 | `NOT_APPLICABLE` | — | `8e53bf92068c65e4186c66db6e16287441b70ec5d308a458ff411fd37cea9e1a` | 实测 agent-output（coordinator 与根）均不存在 |
+| evidence | `verification/FEAT-IMPORT-MULTI-1/` | `PRESERVE_REFERENCED` | `verification/FEAT-IMPORT-MULTI-1/` | `8e53bf92068c65e4186c66db6e16287441b70ec5d308a458ff411fd37cea9e1a` | 目录存在，85 个文件；未登记文件见 evidence-dir-classification.md |
