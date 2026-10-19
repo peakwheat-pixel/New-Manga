@@ -138,7 +138,16 @@ HEAD 相对 PREVIEW 分支超越 22 个提交（**截至该测量时点**；**�
 
 ### 交付 diff 的实际构成
 
-**`git diff --name-only <base_commit>..<delivery_head>` 实测 17 个文件**：
+**两个范围都必须给 —— 初版只给了前一个，而 closeout 的时点是关闭（后者）：**
+
+| 范围 | 文件数 | 构成 |
+|---|---|---|
+| `<base_commit>..<delivery_head>`（交付） | **17** | 4 源/测试 + 11 verification + 2 doc |
+| `<base_commit>..<关闭时 HEAD>`（**关闭核销范围**） | **24** | 4 源/测试 + 14 verification + **6 doc** |
+
+**交付之后新增的 7 个文件**（均在 `allowed_paths` 或治理文件范围内）：`doc/REBASELINE_PLAN.md`、`doc/STATUS.md`、两个 handoff、`doc/tasks/P09-AC3-DELETE-HARDEN-1.md`、`verification/.../ac6-ruling.md`、`codex-integration-intent.md`、`codex-review-r23.md`、`design-answer.md`。
+
+**交付范围的实测明细**：
 
 | 类别 | 数量 | 内容 |
 |---|---|---|
