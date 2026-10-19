@@ -27,9 +27,9 @@
 |GOV-DEBT-CLEANUP-1|P19/P20|blocked（待用户裁决）|
 |P20-CLOSE-BOUND-1|P20-ISOLATION-1|closed_with_limitations（R6）|
 |P20-CLOSE-BOUND-HARDEN-1|P20-CLOSE-BOUND-1|closed_with_limitations|
-|P09-AC3-DELETE-HARDEN-1|P09-AC3-DELETE-1|`in_review`（待 Codex）|
-|P09-PREVIEW-LIFECYCLE-RECLAIM-1|P09-AC3-DELETE-HARDEN-1|`in_review`（R13 批准）|
+|P09-AC3-DELETE-HARDEN-1|P09-AC3-DELETE-1|closed_with_limitations（未集成）|
+|P09-PREVIEW-LIFECYCLE-RECLAIM-1|P09-AC3-DELETE-HARDEN-1|closed_with_limitations（AC6 未满足；未集成）|
 |RUST-ENV-BASELINE-1|P20-CLOSE-BOUND-1|proposed|
 |P07 交互补缺 / P21 旧栈归档|P02 / P20+另授权|proposed（均可选）|
 |P22 响应归属|P22-REBASE-1|已集成；P04 不放行，H1/P2-1/13 与 BC-AC5 缺项保留。已完成见各节点行。|
-READY 节点：ARCH-DOC-REBASELINE、P20。`in_review`：HARDEN-1/2、PREVIEW-LIFECYCLE-RECLAIM-1。done：**33 项**。
+READY 节点：ARCH-DOC-REBASELINE、P20。`in_review`：HARDEN-2。done：**33 项**。

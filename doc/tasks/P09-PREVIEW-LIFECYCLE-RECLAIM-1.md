@@ -2,7 +2,7 @@
 id: P09-PREVIEW-LIFECYCLE-RECLAIM-1
 title: 译图预览的永久删除回收（AC4 转交）
 kind: product-lifecycle
-status: in_review
+status: closed_with_limitations
 owner: dsh
 reviewer: Codex
 depends_on: [P09-AC3-DELETE-HARDEN-1]
@@ -131,15 +131,22 @@ HEAD 相对 PREVIEW 分支超越 22 个提交（**截至该测量时点**；**�
 
 **处置属 Codex**（R21：「Integrator 应在集成前核实并处理分支归属」，并把「处理分支指针差异」列入 Codex 事项）。**Owner 不移动分支指针** —— **因为那会由我单方面确立「本 Task 的文档进展落在哪个分支」这一事实，而它正是集成要确立的东西。**
 
-## AC6：未满足；终态裁决待 Codex 落盘
+## AC6：未满足（权威记录，已落盘）
 
-**AC6 为【未满足】，证据状态 `NOT_VERIFIED`；Codex 已裁决终态为 `closed_with_limitations`。**
+**AC6 为【未满足】，证据状态 `NOT_VERIFIED`。不记 `N/A`，无豁免。** 依据见 [`ac6-ruling.md`](../../verification/P09-PREVIEW-LIFECYCLE-RECLAIM-1/ac6-ruling.md)；该裁决的版本化 Review 记录见 [`codex-review-r23.md`](../../verification/P09-PREVIEW-LIFECYCLE-RECLAIM-1/codex-review-r23.md)。
 
-**该裁决的完整记录与依据见** [`verification/P09-PREVIEW-LIFECYCLE-RECLAIM-1/ac6-ruling.md`](../../verification/P09-PREVIEW-LIFECYCLE-RECLAIM-1/ac6-ruling.md)。
+**依据**：设计答案把「Schema 变更」与「IPC 契约变更」并列为两类（`design-answer.md:72-73`），故 Schema 不限于 IPC；C1 在方案 C 之外往 `targets_json` 新增 `preview_resource_ids` 并在重试时读取，改变了持久化格式的兼容语义。`c1-plan-draft.md:4` 明确「未冻结契约」。
 
-**⚠️ 本节只是一行指针，不是权威落盘。** 按裁决的分工，**将裁定写入 Task、同步 `REBASELINE_PLAN` 与 `STATUS.md`、完成关闭记录属 Codex**（R16 Finding 3 指出我此前在 Task 里写了裁决正文，超出了 Owner 半）。**Owner 侧负责 AC 与交接记录。**
+## 终态：`closed_with_limitations`（Codex 裁决，Owner 以 Coordinator lease 落盘）
 
-**⚠️ Task `status` 仍为 `in_review`**，**在 Codex 落盘前不得描述为已关闭。** **AC6 不得改写为通过、`N/A` 或已豁免。**
+**Codex 作为 Integrator 裁决**（`codex-integration-intent.md`，会话 `01a153aa-ea37-7b03-85ba-7a987de81013`）：**依 AC6 裁决，本 Task 设为 `closed_with_limitations`。**
+
+**三项限定**：
+- **本 Task 【未集成】**：**保留空的集成提交**（`integration_commit` 为 `null`）。
+- **AC6 保持未满足、`NOT_VERIFIED`，不得改写为通过、`N/A` 或已豁免。**
+- **`P09` 的 AC3 delete 子条件继续保持 `BLOCKED`。** 本终态**不解除**该阻塞，**也不表示技术 Gate 通过或任何验收项变更**。
+
+**落盘方式说明**：**治理写入门禁要求 Coordinator lease 持有人；裁决时持有人为 `dsh`，Codex 的 `guarded-write` 返回 `STALE_COORDINATOR`。** **故终态由 Codex 裁决、由 Owner 以有效 lease 落盘 —— 不是 Owner 自行设定。**
 
 ## R13 的三项 finding（第 1 项已完成，另两项属 Codex）
 

@@ -3,7 +3,7 @@ id: P09-AC3-DELETE-HARDEN-1
 title: P09 永久删除加固（R3 未闭合项、四项新 P1 与 Schema v5 测试回归）
 kind: fix
 governance_version: 2
-status: in_review
+status: closed_with_limitations
 approval: user_ruling_20261018_p09_harden_split
 blocked_by: null
 suggested_owner: dsh
@@ -18,6 +18,18 @@ delivery_head: 1878f0b126e8a0e2603570f9b2009d8b70a259f1
 canonical_evidence_status: complete
 resource_closeout_status: complete
 evidence_dir: verification/P09-AC3-DELETE-HARDEN-1
+## 终态落盘（Codex 裁决，Owner 以 Coordinator lease 执行）
+
+**Codex 作为 Integrator 作出终态裁决**（`verification/P09-PREVIEW-LIFECYCLE-RECLAIM-1/codex-integration-intent.md`，源自其会话 `01a153aa-ea37-7b03-85ba-7a987de81013`）：**本 Task 设为 `closed_with_limitations`。**
+
+**关键限定**：
+- **本 Task 【未集成】**：`integration_commit` 保持 `null`。
+- **不得把 R15 的 Review `approved` 写成已集成。**
+- **终态关闭，但未集成**（closeout 原文要求写明这一点）。
+
+**落盘方式说明**：**治理写入门禁要求 Coordinator lease 持有人；裁决时持有人为 `dsh`，Codex 的 `guarded-write` 返回 `STALE_COORDINATOR`。** **故终态由 Codex 裁决、由 Owner 以有效 lease 落盘 —— 不是 Owner 自行设定。**
+
+
 ---
 
 
