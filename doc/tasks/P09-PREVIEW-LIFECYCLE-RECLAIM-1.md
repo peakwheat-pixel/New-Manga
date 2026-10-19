@@ -101,28 +101,28 @@ pwsh -NoProfile -File tools/governance/check.ps1 -TaskPath doc/tasks/P09-PREVIEW
 
 ## Owner 侧已闭合，等待 Codex 收敛
 
-**Owner 侧全部闭合（代码、测试、探针、注入证据、AC 逐项表、交付固定、状态一致）。** **剩余三项均不在 Owner 职权内，已写成显式收敛请求：**
+**Owner 侧全部闭合（代码、测试、探针、注入证据、AC 逐项表、交付固定、状态一致）。** **剩余项中，DAG 登记已由用户授权由 Owner 完成（见下）；另两项不在 Owner 职权内，已写成显式收敛请求：**
 
 **→ [`doc/handoffs/P09-PREVIEW-LIFECYCLE-RECLAIM-1-convergence-request.md`](../../doc/handoffs/P09-PREVIEW-LIFECYCLE-RECLAIM-1-convergence-request.md)**
 
-**该请求列明三项（DAG 登记 · 依赖集成状态核定 · AC6 口径裁决）、各自归属理由，以及四项 Owner 明确不执行的动作及其理由。**
+**该请求列明（DAG 登记 · 依赖集成状态核定 · AC6 口径裁决）、各自归属理由，以及四项 Owner 明确不执行的动作及其理由。其中 DAG 登记已由用户授权完成，另两项仍待 Codex。**
 
-**在 Codex 答复前，继续送复审只会以同样的三项返回。** **本 Task 停在 `in_review`，`delivery_head` 保持 `392977a83…` 不变。**
+**在 Codex 就另两项答复前，继续送复审只会以同样的结论返回。** **本 Task 停在 `in_review`，`delivery_head` 保持 `392977a83…` 不变。**
 
-## R13 的三项 finding（全部属 Codex）
+## R13 的三项 finding（第 1 项已完成，另两项属 Codex）
 
 R13 判定 **`approved_with_conditions`** —— **「实现可接受；集成门尚未满足」**，且**「交付提交到当前 HEAD 的目标实现文件和测试无差异」**。
 
 | # | 内容 | 归属 |
 |---|---|---|
-| 1 | **P1 DAG 未登记本 Task**；`REBASELINE_PLAN` 现为 35/35 行满额，登记需重排 | **Codex** |
+| 1 | **P1 DAG 未登记本 Task** | ✅ **已完成**（用户授权；`REBASELINE_PLAN` L31；治理 FAIL→PASS，R14 独立确认）|
 | 2 | **P1 依赖「已集成」的记载与权威状态不符** —— 本 Task 记载依赖已集成，但 `P09-AC3-DELETE-HARDEN-1` 仍为 `in_review`、`integration_commit` 为 `null`，Plan 也仍列 `in_review`。**R15 的 `approved` 不等于已集成；R15 本身只支持 `closed_with_limitations`** | **Codex** |
 | 3 | **P2 AC6 的 `N/A` 取决于「Schema」口径** —— 无 SQL DDL / IPC 变更（按数据库/IPC 口径记 `N/A` 合理），**但交付在 `targets_json` 中新增并持久化了 `preview_resource_ids` 字段；该内部 JSON 格式是否属于 AC6 所说的 Schema，R13 记为 `NOT_VERIFIED`** | **Codex** |
 
 **R13 同时确认**：四个探针全部 PASS 且未因错误原因通过（连续第三轮）；`645 passed`；R12 Finding 2 的 AC 逐项表要求已满足；**三处 lock 断言仍缺可区分的失败侧注入，「按现有记录不应算作已验证」**（与本 Task 自己的记录一致）。
 
-| Plan 已列入 DAG | ⏳ **待 Codex**（`REBASELINE_PLAN` 现为 35/35 行，需其重排；不属 Owner 职责）|
-| 依赖已集成 | ✅ `P09-AC3-DELETE-HARDEN-1` 删除路径加固已闭环，R15 判 `approved` |
+| Plan 已列入 DAG | ✅ **已登记**（`REBASELINE_PLAN` L31，`in_review`）|
+| 依赖集成状态 | ⚠️ **`NOT_VERIFIED`** —— `P09-AC3-DELETE-HARDEN-1` 仍为 `in_review`、`integration_commit: null`。**R15 的 `approved` 是 Review 结论，不等于集成完成**（R13/R14 均指出）。**该状态由 Codex 核定**；Owner 不判定，也不改写为「未集成」——那只是把一种未经核实的说法换成另一种 |
 | 范围/Owner/Reviewer/base/allowed_paths 已冻结 | ✅ **本次冻结**（见 frontmatter）|
 | STATUS 已登记 | ✅ **本次登记** |
 

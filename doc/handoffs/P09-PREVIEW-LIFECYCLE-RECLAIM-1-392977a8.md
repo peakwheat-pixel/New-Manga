@@ -69,7 +69,9 @@
 | **AC3** 跨页 / 跨书隔离 | ✅ **PASS** | `ac4-batch-delete-probe.py` | **b1 两页的 2 个 key 全部回收（跨页 2/2）**；**b2 的 key 存活且身份经断言（跨书）**。注入同名异路径孤儿后 exit 1。**本 Task 的 AC3 与 `P09` 的 AC3 delete 子条件不同 —— 后者仍 `BLOCKED`。** |
 | **AC4** `page-original-{pid}` 回收 | ✅ **PASS** | `tests/core/test_core_delete_commands.py`（**20 passed，R6 独立运行**）+ `tests/storage/test_refused_preview_unlink_keeps_records.py` | core 测试断言**确定性** `page-original-{pid}` 的回收；storage 测试断言成功清理时文件与 catalog 行一并移除，以及新契约下 `all_deleted is False`、manifest 存活的另一侧。 |
 | **AC5** 不回归 HARDEN 九探针 | ✅ **PASS（有条件）** | `ac5-harden-rerun.md` | **8 个有效 SAFE + 1 个预期 INCONCLUSIVE**（`n002-race-probe.py` 的 `race_hook_fired=False`，其注入不触发，**不计为安全证据**）+ 1 个查询检查（`queries_ok=9/9`）。**探针到覆盖项为一对一映射表**（R6 Finding 2 后补）。 |
-| **AC6** Schema 变更先冻结契约 | ✅ **N/A** | 交付 diff | **本 Task 的 diff 不含 Schema 或 IPC 契约变更** —— 只新增 catalog 查询、清理清单字段与删除前快照。**故「先冻结契约」这一要求在本次无对象，记为 `N/A` 而非 PASS。** |
+| **AC6** Schema 变更先冻结契约 | ⚠️ **`NOT_VERIFIED`** | 交付 diff + `library.py:882,888` | **本 Task 的 diff 不含 Schema 或 IPC 契约变更** —— 只新增 catalog 查询、清理清单字段与删除前快照。**故「先冻结契约」这一要求在本次无对象，记为 `N/A` 而非 PASS。** |
+
+**R14 更正**：本表先前记 AC6 为 `N/A`。**交付无 SQL DDL、无 IPC 契约变更，但实现把 `preview_resource_ids` 写入 `targets_json`**（`library.py:882,888`）**并在重试时读取该字段**（L622–638）。**该内部持久化 JSON 字段是否属于 AC6 所指的 Schema，属 Codex 的契约裁决**，**R13、R14 均记为 `NOT_VERIFIED`。Owner 记录此证据，不自行改为 `N/A` 或 `PASS`。**
 
 **关于 AC6 的措辞**：R12 问「Schema 未变，因此是否 `N/A`」。**答案是 `N/A`** —— 该 AC 是**条件性**的（**若有 Schema 变更则须先冻结契约**），**而本次没有 Schema 变更，所以它不被触发。** **记 `N/A` 比记 `PASS` 更准确**：**`PASS` 会暗示存在一个被满足的检查，而实际是不存在该检查的对象。**
 
