@@ -132,54 +132,51 @@ HEAD 相对 PREVIEW 分支超越 22 个提交（**截至该测量时点**；**�
 
 **处置属 Codex**（R21：「Integrator 应在集成前核实并处理分支归属」，并把「处理分支指针差异」列入 Codex 事项）。**Owner 不移动分支指针** —— **因为那会由我单方面确立「本 Task 的文档进展落在哪个分支」这一事实，而它正是集成要确立的东西。**
 
-## 资源 closeout（协议 4.2）—— 据实测重写（R25 Finding 1 后）
+## Resource Manifest（协议 §4.2 七类 · 按实测重写，R26 后）
 
-**`resource_closeout_status: complete`** —— **以下按本轮实测填写；初版有三条不准确，已更正。**
+**§4.2 原文要求**：记录 worktree、task-env、dataset/model/test-material、artifact、temp、agent-output、exchange 七类；**不适用也明确填 `NOT_APPLICABLE`**；**逐项**给出处置（`DELETE_SAFE`/`MIGRATE`/`ARCHIVE`/`PRESERVE_REFERENCED`/`PRESERVE_USER_DATA`/`PRESERVE_UNKNOWN`/`NOT_APPLICABLE`），并记录**源/目标、hash 或 manifest、当前引用检查及结果**。
 
-### 交付 diff 的实际构成
+**⚠️ §4.2 规定逐项处置「在 approved 集成窗口由 Codex 给出」。** 下表为 **Owner 侧的实测清册与建议处置**；**最终处置由 Codex 逐项确认**。
 
-**两个范围都必须给 —— 初版只给了前一个，而 closeout 的时点是关闭（后者）：**
+| # | 类别 | 实测 | 建议处置 | 源 | hash/manifest | 引用检查 | 结果 |
+|---|---|---|---|---|---|---|---|
+| 1 | **worktree** | **本 Task 未新建** —— 全程使用仓库主工作区 `G:\CODEX\New Manga`（仓库当前共 208 个 worktree，均非本 Task 所建） | `NOT_APPLICABLE` | — | — | `git worktree list` 中无本 Task 专属项 | **无待核销** |
+| 2 | **task-env** | **不存在** —— `New Manga.workspace\task-envs\P09-PREVIEW-LIFECYCLE-RECLAIM-1` 实测为 False | `NOT_APPLICABLE` | — | — | 路径不存在 | **无待核销** |
+| 3 | **dataset / model / test-material** | **未引入** —— 探针用自造的小图 fixture（`write_temp`），**无外部数据集或模型权重** | `NOT_APPLICABLE` | — | — | 交付 diff 无数据或权重文件 | **无待核销** |
+| 4 | **artifact** | **无构建产物** —— 无打包、无 sidecar、无前端 dist | `NOT_APPLICABLE` | — | — | 交付 diff 仅源/测试/证据文件 | **无待核销** |
+| 5 | **temp** | **探针的固定工作目录**（每次运行先 `rmtree` 再重建）：`ac4-assert`、`ac4-retry`、`ac4-batch`、`ac2-referenced` | `PRESERVE_UNKNOWN` | `New Manga.workspace\agent-output\coordinator\<同名>` | 目录内容由探针每次重建，**无稳定 hash** | 四个探针仍存在且会复用这些路径；R16–R26 复审亦在仓外 scratch 运行 | **保留**；**非仓库内容，不阻止关闭** |
+| 6 | **agent-output** | 实测 18 个与本 Task / 前序 P09 相关的目录：`ac2-keys`、`ac2-referenced`、`ac4-assert`、`ac4-batch`、`ac4-count`、`ac4-diag`、`ac4-retry`、`n002-race-oldhook`、`n002-race2`、`n004-prod`、`n004-tmp`、`P09-AC3-R6-…`、`P09-PREVIEW-LIFECYCLE-RECLAIM-1-R3-scratch`、`P09-PREVIEW-LIFECYCLE-RECLAIM-1-r7-22b0860`、`P09-R8-empty-survivors`、`P09-R8-injection`、`P09-R8-probes`、`r4-n002-outside`、`r4-n002-root` | `PRESERVE_UNKNOWN` | 同上目录 | 逐目录未做 manifest（**部分属前序 Task**） | 位于治理规则指定的仓外 agent output 位置 | **保留并记录**；**未逐项核销 = 本表的已知缺口** |
+| 7 | **exchange** | **不存在** —— 无 `*-exchange` 目录 | `NOT_APPLICABLE` | — | — | 路径不存在 | **无待核销** |
 
-| 范围 | 文件数 | 构成 |
+### 另有两项不属于 §4.2 七类，但本 Task 确实产生
+
+| 项 | 实测 | 处置 |
 |---|---|---|
-| `<base_commit>..<delivery_head>`（交付） | **17** | 4 源/测试 + 11 verification + 2 doc |
-| `<base_commit>..<关闭时 HEAD>`（**关闭核销范围**） | **24** | 4 源/测试 + 14 verification + **6 doc** |
+| **review-scratch** | `New Manga.workspace\review-scratch\P09-PREVIEW-LIFECYCLE-RECLAIM-1-R17` **存在**（Codex R17 复审所建） | `PRESERVE_UNKNOWN` —— **由 Codex 处置** |
+| **R1–R26 审查记录** | 位于仓外 `New Manga.workspace\agent-output\coordinator\codex-p09plr*-*.md`；**R23 已由 Codex 纳入仓库** | `PRESERVE_REFERENCED` —— **R23 已入库并被他处引用；其余保留** |
 
-**交付之后新增的 7 个文件**（均在 `allowed_paths` 或治理文件范围内）：`doc/REBASELINE_PLAN.md`、`doc/STATUS.md`、两个 handoff、`doc/tasks/P09-AC3-DELETE-HARDEN-1.md`、`verification/.../ac6-ruling.md`、`codex-integration-intent.md`、`codex-review-r23.md`、`design-answer.md`。
+### 交付路径清册（R26 Finding 1 的更正）
 
-**交付范围的实测明细**：
-
-| 类别 | 数量 | 内容 |
-|---|---|---|
-| **源/测试** | **4** | `src/bootstrap/core_service.py`、`src/infrastructure/resource_channel/catalog_store.py`、`src/infrastructure/sqlite/library.py`、`tests/storage/test_refused_preview_unlink_keeps_records.py` |
-| **verification** | **11** | `verification/P09-PREVIEW-LIFECYCLE-RECLAIM-1/` 下的设计、裁决、AC1/AC5 证据与四个探针 |
-| **doc** | **2** | `doc/STATUS.md`、`doc/tasks/P09-PREVIEW-LIFECYCLE-RECLAIM-1.md` |
-
-**⚠️ 初版误记「6 个源/测试文件」；实测为 4 个（3 源 + 1 测试）。全 17 项均在 `allowed_paths` 覆盖范围内。**
-
-### 探针的派生产物：确实存在，且不在 `%TEMP%`
-
-**四个探针各自硬编码一个【仓外但固定】的工作目录，每次启动先删除再重建**：
+**`<delivery_head>..<HEAD>` 实测 10 个变更路径**（**不是 `24 − 17 = 7`；两段范围有重叠路径**）：
 
 ```
-ac4-assert / ac4-retry / ac4-batch / ac2-referenced
-  -> G:\CODEX\New Manga.workspace\agent-output\coordinator\<同名子目录>
-每个脚本在定义 WS 后即执行 shutil.rmtree(WS, ignore_errors=True)
+M doc/REBASELINE_PLAN.md
+M doc/STATUS.md
+A doc/handoffs/P09-PREVIEW-LIFECYCLE-RECLAIM-1-392977a8.md
+A doc/handoffs/P09-PREVIEW-LIFECYCLE-RECLAIM-1-convergence-request.md
+M doc/tasks/P09-AC3-DELETE-HARDEN-1.md
+M doc/tasks/P09-PREVIEW-LIFECYCLE-RECLAIM-1.md
+A verification/P09-PREVIEW-LIFECYCLE-RECLAIM-1/ac6-ruling.md
+A verification/P09-PREVIEW-LIFECYCLE-RECLAIM-1/codex-integration-intent.md
+A verification/P09-PREVIEW-LIFECYCLE-RECLAIM-1/codex-review-r23.md
+M verification/P09-PREVIEW-LIFECYCLE-RECLAIM-1/design-answer.md
 ```
 
-**⚠️ 初版误称「探针一律在 `%TEMP%` 新建隔离根运行」—— 不实。**
+### 授权依据（R26 Finding 3 的更正）
 
-**上述目录当前实际存在**（本轮实测）；**同目录下另有本 Task 与前序 Task 产生的 `ac2-keys`、`ac4-count`、`ac4-diag`、`n002-race-oldhook`、`n002-race2`、`n004-prod`、`n004-tmp`、`P09-AC3-R6-…` 等。**
+**⚠️ 先前写「全 17 项均在 `allowed_paths` 覆盖范围内」不准确。** **实测**：`allowed_paths` 仅列 **3 个源文件 + `tests/core` + `tests/storage`**（覆盖交付 diff 的 **4 个**源/测试文件），**未逐项列出 11 个 verification 文件**。
 
-**处置**：**均为仓外派生产物，位于治理规则指定的 `New Manga.workspace` agent output 位置，不属仓库内容，无需迁移或归档。** **但「无待处置派生产物」这一表述不成立 —— 它们存在，只是按既定仓外目录规则处置。**
-
-### 关于「未触碰用户文件」
-
-**⚠️ 无法由当前状态验证。** **可核实的仅是**：**本 Task 全程未把 `.qoder-credits/report.json` 纳入任何 commit，且每轮检查时它是唯一的 tracked dirty 项。** **「从未触碰」是更强的主张，本轮不声称。**
-
-### 结论
-
-**`resource_closeout_status: complete`**：**改动文件均在 `allowed_paths` 内；派生产物全部位于仓外既定目录，无仓库内残留需核销。** **初版三条不准确记录已按上述实测更正。**
+**verification 文件的授权依据是**：**Task 模板与 §4.2/§5 要求「验证证据提交到本仓库对应 `verification/` 路径」**，**即该目录属 Task 的既定交付位置**，**而非由 `allowed_paths` 逐项授权**。**若需更严格解释，请 Codex 裁定 `allowed_paths` 是否应显式包含 `verification/P09-PREVIEW-LIFECYCLE-RECLAIM-1/`。**
 
 ## AC6：未满足（权威记录，已落盘）
 
