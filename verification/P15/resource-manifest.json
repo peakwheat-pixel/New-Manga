@@ -5,7 +5,8 @@
   "restoration_basis": [
     "doc/tasks/P15.md#Resource Manifest (row: worktree, PRESERVE_REFERENCED)",
     "doc/tasks/P15.md#Closeout Record (resource_closeout_status: complete; deleted/moved/archived = 0)",
-    "git worktree list (worktree still present at HEAD ee19898fc)"
+    "git worktree list (worktree still present at HEAD ee19898fc)",
+    "physical inspection of the P15 worktree (2026-10-20) - see per-resource verification"
   ],
   "resources": [
     {
@@ -21,6 +22,45 @@
         "head_matches_closeout_delivery_head": true,
         "branch": "zcode/P15"
       }
+    },
+    {
+      "resource_type": "junction",
+      "source_path": "G:/CODEX/New Manga.workspace/worktrees/P15/apps/desktop/frontend/node_modules",
+      "disposition": "PRESERVE_REFERENCED",
+      "destination_path": "G:/CODEX/New Manga/apps/desktop/frontend/node_modules",
+      "reason": "Windows junction mounted from the review worktree into the main checkout, verified on 2026-10-20. Frontend dependencies installed without package-lock changes for the P15 build; retained so the build and test evidence can be reproduced.",
+      "verification": {
+        "exists": true,
+        "checked_at": "2026-10-20",
+        "is_reparse_point": true,
+        "target": "G:\\CODEX\\New Manga\\apps\\desktop\\frontend\\node_modules"
+      }
+    },
+    {
+      "resource_type": "junction",
+      "source_path": "G:/CODEX/New Manga.workspace/worktrees/P15/apps/desktop/frontend/dist",
+      "disposition": "PRESERVE_REFERENCED",
+      "destination_path": "G:/CODEX/New Manga/apps/desktop/frontend/dist",
+      "reason": "Windows junction mounted from the review worktree into the main checkout, verified on 2026-10-20. Generated to satisfy Tauri frontendDist during the P15 build; ignored by Git and retained for review reproduction.",
+      "verification": {
+        "exists": true,
+        "checked_at": "2026-10-20",
+        "is_reparse_point": true,
+        "target": "G:\\CODEX\\New Manga\\apps\\desktop\\frontend\\dist"
+      }
+    },
+    {
+      "resource_type": "junction",
+      "source_path": "G:/CODEX/New Manga.workspace/worktrees/P15/apps/desktop/src-tauri/target/core-sidecar",
+      "disposition": "PRESERVE_REFERENCED",
+      "destination_path": "G:/CODEX/New Manga/apps/desktop/src-tauri/target/core-sidecar",
+      "reason": "Windows junction mounted from the review worktree into the main checkout, verified on 2026-10-20. Pre-existing frozen 2.3 bundle reused by the P15 Rust tests; verified in place and not rebuilt.",
+      "verification": {
+        "exists": true,
+        "checked_at": "2026-10-20",
+        "is_reparse_point": true,
+        "target": "G:\\CODEX\\New Manga\\apps\\desktop\\src-tauri\\target\\core-sidecar"
+      }
     }
   ],
   "closeout_counts": {
@@ -31,8 +71,9 @@
   "closeout_status": "complete",
   "notes": [
     "This file was referenced by the task's Resource Manifest row but was missing from the repository; the manifest reference therefore failed validation.",
-    "Restored strictly from what the existing task records state. No resource types are invented: P15's own manifest table lists only the worktree, and its Closeout Record records zero deletions, moves, or archives.",
-    "The worktree was verified to still exist rather than assumed. Its HEAD matches the delivery_head frozen at closeout, so PRESERVE_REFERENCED remains accurate.",
-    "Absent from this file by design: junction, test-build-output and test-dependencies entries. Sibling task EXPORT-REVEAL-1 has those, but P15's records never claim them, and inventing them would fabricate provenance."
+    "RESTORED, not original. The original was never committed, so there is nothing to compare against. restored_by and restoration_basis are here so nobody has to guess whether a recreated artefact is genuine.",
+    "First version of this file listed only the worktree, on the reasoning that P15's own records never name junctions. Antigravity's review rejected that reasoning and was right to: not recording a resource that physically exists is not the same as not fabricating one. The three junctions were then verified on disk - each is a real Windows ReparsePoint pointing into the main checkout - and registered.",
+    "The distinction that first version got wrong: fabricating provenance means inventing resources that do not exist. It does not mean declining to observe ones that do. Physical truth outranks textual silence.",
+    "The worktree was verified to still exist rather than assumed. Its HEAD matches the delivery_head frozen at closeout, so PRESERVE_REFERENCED remains accurate."
   ]
 }
