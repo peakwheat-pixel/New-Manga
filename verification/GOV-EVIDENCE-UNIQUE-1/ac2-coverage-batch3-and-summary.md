@@ -60,19 +60,30 @@
 | AC2（production commands + CredUI） | `EVIDENCE_GAP` | 需代码 |
 | AC3（CredUIPrompt + CredWrite + CredentialRef） | `EVIDENCE_GAP` | 需代码 |
 | **AC4**「`PRODUCTION_COMMANDS` 与 `generate_handler!` 各 49；`P15_SETTINGS_PRODUCTION_ONLY_COMMANDS` 19；probe/AC1 仍 7/6」 | **`PARTIAL`** | 无计数断言日志；只有脚本 |
-| **AC5**「请求 secret/ref 字段拒绝且错误不回显…」反例测试 | **`COVERED`** | `frontend-vitest-final.log`（最终）+ `core-pytest-final.log`（508 passed）构成**最终依据**；三次尝试的先后关系可由文件名辨识（attempt → isolated → final） |
+| **AC5**「请求 secret/ref 字段拒绝且错误不回显…」反例测试 | **`PARTIAL`**（经 Review 修正） | `frontend-vitest-final.log` + `core-pytest-final.log` 证明**测试跑过且通过**，但**不能证明 AC5 要求的凭据反例细节被覆盖**（见下方修正说明） |
 | AC6 交付 | `NOT_APPLICABLE` | 交付类 |
 
-**AC5 是本批第四个 `COVERED`**，且它是**唯一正确使用了「多次尝试」口径的样本**：
-三份 vitest 日志按 attempt → isolated → final 递进，**最终依据明确是 `final`**。
-r18 第一条口径（保留时间与结果关系、报告哪次是最终依据）在这里被真正满足了。
+### 修正说明（2026-10-20，经 Antigravity Review）
 
-⚠️ 但必须注明：`core-pytest-final.log` 与三份 vitest 日志**都没有配套退出码文件**。
-按 r18 第三条，严格说应降为 `PARTIAL`。我判 `COVERED` 的理由是：
-**AC5 本身没有要求退出码**（它要求的是反例测试存在），与 `P14` 的 AC5 不同
-（后者明文要求「归档原始日志与退出码」）。
+本节原判 AC5 为 `COVERED`，理由有二：三次 vitest 递进使最终依据可辨识；
+且「AC5 未明文要求退出码，故不受 r18 第三条约束」。
 
-**这是一个判断，不是机械规则的结果。** 写在此处以备 Review 复核。
+**Review 推翻了这两条理由，结论是应降为 `PARTIAL`：**
+
+1. **退出码维度是双重标准**：`P15-HOST-2` 与 `P14` 的日志形态**完全一样**——
+   都在日志末尾打印 `EXIT_CODE=0`，但都**没有独立 exit-code 文件**。
+   我以「AC 正文是否逐字出现'退出码'三字」作为豁免依据，是把措辞差异当成了实质差异。
+
+2. **更根本的一条**：AC5 的核心要求是**具体的凭据反例业务逻辑**——
+   「请求 secret/ref 字段拒绝且错误不回显；成功响应仅状态；错误与 projection 对
+   额外引用字段失败关闭；intent 在输入前/绑定前检查；Core replace 失败保留原绑定；
+   clear 不 fallback」。
+   **仅凭前端 vitest 的三次尝试递进 + core 全量通过摘要，无法反推这些反例细节已被覆盖。**
+
+**因此本项改判 `PARTIAL`。真正的 `COVERED` 总数是 3，不是 4。**
+
+我把这条修正保留在原文位置而非静默改写，因为「用措辞差异给自己的结论开脱」
+正是本 Task 要清理的那类推理。
 
 ---
 
@@ -138,11 +149,11 @@ r18 第一条口径（保留时间与结果关系、报告哪次是最终依据�
 | `P15` | 6 | 0 | 0 | 1 | 5 |
 | `P15-CORE-1C` | 6 | **1** | 0 | 0 | 5 |
 | `P15-HOST-1` | 6 | 0 | 1 | 0 | 5 |
-| `P15-HOST-2` | 6 | **1** | 1 | 3 | 1 |
+| `P15-HOST-2` | 6 | 0 | **2** | 3 | 1 |
 | `P19-BOOT-1` | 6 | 0 | 0 | 3 | 3 |
 | `P19-UI-FIX-1` | 5 | **1** | 1 | 2 | 1 |
 | `P19-UI-FIX-2` | 5 | 0 | 3 | 1 | 1 |
-| **合计** | **83** | **4** | **16** | **19** | **42** |
+| **合计** | **83** | **3** | **17** | **19** | **42** |
 
 （`FEAT-IMPORT-MULTI-1` 的 8 个 AC：AC1–AC4 因 7 份日志缺失记 `EVIDENCE_GAP`，
 AC5–AC8 为约束/交付类记 `NOT_APPLICABLE` 与 `PARTIAL` 混合，明细见
@@ -152,8 +163,8 @@ AC5–AC8 为约束/交付类记 `NOT_APPLICABLE` 与 `PARTIAL` 混合，明细�
 
 | 枚举 | 数量 | 占比 |
 |---|---:|---:|
-| `COVERED` | **4** | 4.8% |
-| `PARTIAL` | 16 | 19.3% |
+| `COVERED` | **3** | 3.6% |
+| `PARTIAL` | 17 | 20.5% |
 | `EVIDENCE_GAP` | 19 | 22.9% |
 | `NOT_APPLICABLE` | 42 | 50.6% |
 | **合计** | **83** | |
@@ -164,7 +175,7 @@ AC5–AC8 为约束/交付类记 `NOT_APPLICABLE` 与 `PARTIAL` 混合，明细�
 
 ## 六、三条跨批次的结论
 
-### 1. 只有 4 个 AC 达到 `COVERED`，占 4.8%
+### 1. 只有 3 个 AC 达到 `COVERED`，占 3.6%
 
 | `COVERED` 的是 | 为什么成立 |
 |---|---|
@@ -174,6 +185,8 @@ AC5–AC8 为约束/交付类记 `NOT_APPLICABLE` 与 `PARTIAL` 混合，明细�
 | `P15-HOST-2` AC5 | 三次 vitest 递进 + core 508 passed，最终依据可辨识 |
 
 **共同点：它们都要求「可观测的状态值」，且候选集里恰有记录该值的日志。**
+
+（`P15-HOST-2` AC5 原被计入，经 Review 修正为 `PARTIAL`——它要求的是反例业务逻辑，不是可观测状态值。这个区别恰好印证了上述共同点。）
 
 ### 2. 一半的 AC 根本不要求文件级证据
 

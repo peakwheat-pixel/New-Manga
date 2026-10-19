@@ -50,14 +50,14 @@ status: ready_for_review
 
 | 枚举 | 数量 | 占比 |
 |---|---:|---:|
-| `COVERED` | **4** | 4.8% |
-| `PARTIAL` | 16 | 19.3% |
+| `COVERED` | **3** | 3.6% |
+| `PARTIAL` | 17 | 20.5% |
 | `EVIDENCE_GAP` | 19 | 22.9% |
 | `NOT_APPLICABLE` | **42** | **50.6%** |
 
 ## 三个跨批次结论
 
-### 1. 只有 4 个 AC 达到 `COVERED`
+### 1. 只有 3 个 AC 达到 `COVERED`
 
 | Task | AC | 为什么成立 |
 |---|---|---|
@@ -82,7 +82,7 @@ status: ready_for_review
 
 ## 请 Review 重点核对的三处
 
-### 1. 我的四个 `COVERED` 判断是否成立（最需要独立验证）
+### 1. 我的三个 `COVERED` 判断是否成立（最需要独立验证）
 
 特别是 `P15-HOST-2` AC5。我判 `COVERED` 的理由是：
 **AC5 不要求退出码**，故不受 r18 第三条硬口径约束。
