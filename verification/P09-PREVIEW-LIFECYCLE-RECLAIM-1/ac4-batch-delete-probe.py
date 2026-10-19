@@ -198,6 +198,13 @@ if (len(reclaimed_b1) == len(b1_expected)
 if rows_after != b2_expected:
     print("RESULT = FAIL (survivors are not the expected b2 preview: %s)"
           % [x[:24] + "..." for x in rows_after])
+elif missing_files:
+    # Injection B exposed this: the probe failed correctly but reported "book b2 itself is
+    # gone", because the row-without-its-file case had no branch of its own and fell through
+    # to the last one.  A tool whose failure message names the wrong cause is the same class
+    # of problem as a probe that passes for the wrong reason.
+    print("RESULT = FAIL (row survived but its file is missing: %s)"
+          % [r[:24] + "..." for r in missing_files])
 elif leaked_files > 0:
     print("RESULT = FAIL (unexplained files survived)")
 else:
