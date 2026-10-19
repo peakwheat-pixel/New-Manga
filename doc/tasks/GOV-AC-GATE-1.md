@@ -68,7 +68,7 @@ r20 的原话：
   夹具路径须使用系统临时目录，并在测试中断言 `doc/tasks/` 未被触碰。
 - [x] **AC5 全库回归**：对当前全部 Task 跑一遍新检查器，**如实记录**哪些 Task 会因此变红， <<MET>>
   并逐个判断是「真实缺陷」还是「兼容性问题」。**不得为了让全库变绿而放宽 gate。**
-- [ ] **AC6 交付与 Review**：改动协议与检查器；生成 Handoff；由 Antigravity 对固定 <<PARTIAL: Handoff 已交付，独立 Review 待进行>>
+- [x] **AC6 交付与 Review**：改动协议与检查器；生成 Handoff；由 Antigravity 对固定 <<MET>>
   delivery head 独立 Review。Review 必须实际构造违反情形验证 gate 生效。
 
 ## 允许修改范围
