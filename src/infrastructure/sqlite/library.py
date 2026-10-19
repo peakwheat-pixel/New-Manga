@@ -22,6 +22,7 @@ from datetime import datetime, timezone
 from domain.books.entities import Book, Chapter, ChapterType, ReadingDirection, Tag
 from domain.pages.entities import Page
 from infrastructure.filesystem.managed_storage import _is_reparse_point, _sanitize_component
+from infrastructure.filesystem.win_unlink import unlink_by_handle
 
 
 class SqliteLibraryRepository:
@@ -1282,6 +1283,19 @@ def unlink_preview_without_following(raw_rel: str, root_res: Path) -> bool:
             break  # nothing there to traverse through
         if _is_reparse_point(probe_stat):
             return False
+    # N-002 (Codex R2): hand the last step to a handle chain.  Everything above
+    # checks *names*; unlink() would resolve the name once more, and a junction
+    # swapped in after the loop sends that resolution outside the root.  The probe
+    # in verification/P09-AC3-DELETE-HARDEN-1 reproduces exactly that: the helper
+    # returned True while deleting the outside file, a silent wrong-delete, since
+    # the caller then proceeds to catalog.remove().
+    #
+    # unlink_by_handle opens each component relative to its parent's handle, so the
+    # checks and the delete act on the same object.  None means the platform has no
+    # such implementation and the path-based tail below runs instead.
+    handled = unlink_by_handle(root_res, segments)
+    if handled is not None:
+        return handled
     if probe.is_file():
         probe.unlink(missing_ok=True)
         return True
