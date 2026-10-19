@@ -14,7 +14,7 @@ base_commit: a04e4ea78d5b33a0f91efcdc06b396391c4b165e
 branch: null
 worktree: G:/CODEX/New Manga
 integration_commit: null
-delivery_head: 10202dc4e178eb58a7e08ee0c59e1453ecc6f522
+delivery_head: a73bf6b10b76b2bcdd2b7ed4f843608c661d8c6e
 canonical_evidence_status: complete
 resource_closeout_status: complete
 evidence_dir: verification/P09-AC3-DELETE-HARDEN-1
