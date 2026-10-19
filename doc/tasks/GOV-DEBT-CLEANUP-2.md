@@ -3,7 +3,7 @@ id: GOV-DEBT-CLEANUP-2
 title: 治理债逐项事实核对与资源证据闭环
 kind: governance
 governance_version: 2
-status: in_progress
+status: approved
 approval: user_decisions_recorded_2026-10-19; codex_scope_release_approved
 suggested_owner: dsh
 owner: dsh
@@ -13,7 +13,7 @@ base_commit: 75da8281b28c7c11f92518c63d4669b5cf3973e6
 branch: agent/deepseek/GOV-DEBT-CLEANUP-2-governance-facts
 worktree: G:\CODEX\New Manga.workspace\worktrees\GOV-DEBT-CLEANUP-2
 integration_commit: null
-delivery_head: null
+delivery_head: e63d9324766db0d381bad24b3fc60a58048430e1
 canonical_evidence_status: pending
 resource_closeout_status: pending
 evidence_dir: verification/GOV-DEBT-CLEANUP-2
@@ -104,7 +104,15 @@ allowed_paths:
 
 | evidence_id | AC/Gate | path（仓库相对路径或绝对路径） | commit | sha256 | class (`CANONICAL` / `SOURCE_PIN`) |
 |---|---|---|---|---|---|
-| 待交付 | AC1–AC9 | `verification/GOV-DEBT-CLEANUP-2/` 下逐项文件 | 待填 | 待填 | 待定 |
+| EVID-DEBT-AC1 | AC1 | `verification/GOV-DEBT-CLEANUP-2/ac1-sha-rows.md` | `b2b32e05e327f6b4144d07a854262b78453f0847` | `c3590dee2c8ec8eec6cb5d936aae749fcda497276843543247ed04365722f52f` | `CANONICAL` |
+| EVID-DEBT-AC2 | AC2 | `verification/GOV-DEBT-CLEANUP-2/ac2-deferred-tasks.md` | `9be9bab21b70714f3102220f43170de813788995` | `5f2f410b60a959b9c55f6ea89ea15b033bab1fb4e229739eef8ea9edd1bcfc04` | `CANONICAL` |
+| EVID-DEBT-AC3 | AC3 | `verification/GOV-DEBT-CLEANUP-2/ac3-budget-decision.md` | `9be9bab21b70714f3102220f43170de813788995` | `0287ac3c083b1226e2598a589e7507c2ebf22f18c979a54f1e71c77e659bbf17` | `CANONICAL` |
+| EVID-DEBT-AC4 | AC4 | `verification/GOV-DEBT-CLEANUP-2/ac4-p02-ac3-pins.md` | `9be9bab21b70714f3102220f43170de813788995` | `d7bfcca63669b3eec4e0f7dffc8c4398fdd38c2f5fda56a9eae214dac605cfc8` | `CANONICAL` |
+| EVID-DEBT-AC5 | AC5 | `verification/GOV-DEBT-CLEANUP-2/ac5-worktree-preserve-list.md` | `5b5c3e299a4e478aff86e12bd923a23c293f70e2` | `e0c582a6a0f9391febae94511f1d3611d80606a10317a0bf4a729aa8f98d8594` | `CANONICAL` |
+| EVID-DEBT-AC6 | AC6 | `verification/GOV-DEBT-CLEANUP-2/ac6-manifest-backfill.md` | `713c3aaaf1aac44c1258557f88f5e8af325688a6` | `ae0f67e16367ab96625fc3d2a59cecf01c3fe8bc51862d748d5ca72f14f0576d` | `CANONICAL` |
+| EVID-DEBT-AC7 | AC7 | `verification/GOV-DEBT-CLEANUP-2/ac7-evidence-dir-files.md` | `5b5c3e299a4e478aff86e12bd923a23c293f70e2` | `8ec36c265967a7f45443bfb71c4608cd11bafc8a4d119085bbd15b354a7a5393` | `CANONICAL` |
+| EVID-DEBT-AC8 | AC8 | `verification/GOV-DEBT-CLEANUP-2/ac8-open-acs.md` | `4e9bbe04bb3b46f6812e7ce40ea89a0a491df28a` | `fb61c70f2638f2b1b4d1bbdd3ae34ec1dc6bb620aabb4dca81eb25a2b20a4377` | `CANONICAL` |
+| EVID-DEBT-AC9 | AC9 | `verification/GOV-DEBT-CLEANUP-2/ac9-governance-output.txt` | `e63d9324766db0d381bad24b3fc60a58048430e1` | `f2db42f794f8185cc7a0f68cdf78d3a7ce80b2ddddb51151151dcf97a6ccd4a4` | `CANONICAL` |
 
 ## Resource Manifest
 
@@ -117,6 +125,8 @@ allowed_paths:
 | 其他资源 | 据实记录 | 据实记录；无资源须证实后填 `NOT_APPLICABLE` | 据实记录 | 据实记录 | 据实记录 |
 
 ## Closeout Record
+
+尚未 closeout；adjudication 见 `verification/P09-GOVERNANCE-DEBT-20261019/codex-integration-closeout-r3.md`。
 
 - Closeout date / Codex：待关闭时填写。
 - canonical_evidence_status：`pending`。
