@@ -75,7 +75,7 @@ pwsh -NoProfile -File tools/governance/check.ps1 -TaskPath doc/tasks/P15.md
 |---|---|---|---|---|---|
 | P15M-RESTORED | AC3 | `verification/P15/resource-manifest.json` | `237c43862` | `ccdb5fb7d298a41c0ccfec01e62e1fa2782b40581d87451583351d489ebc34e3` | `CANONICAL` |
 | P15M-WRITEUP | AC1–AC4 | `verification/GOV-P15-MANIFEST-1/ac1-ac4-manifest-restoration.md` | `237c43862` | `934b747842ff1c15dab1aeef2105bc1a7339077caf998225ccd9b11e9cb21788` | `CANONICAL` |
-| P15M-HANDOFF | AC5 | `doc/handoffs/GOV-P15-MANIFEST-1-237c43862.md` | `237c43862` | `81e37cd1808cfde9c08eea88d98273b1d9f9ce78b7550502be84ada09e564d31` | `CANONICAL` |
+| P15M-HANDOFF | AC5 | `doc/handoffs/GOV-P15-MANIFEST-1-237c43862.md` | `6eec515a5` | `81e37cd1808cfde9c08eea88d98273b1d9f9ce78b7550502be84ada09e564d31` | `CANONICAL` |
 
 ## Resource Manifest
 
