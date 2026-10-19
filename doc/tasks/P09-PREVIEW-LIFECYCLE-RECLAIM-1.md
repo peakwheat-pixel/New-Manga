@@ -102,16 +102,16 @@ pwsh -NoProfile -File tools/governance/check.ps1 -TaskPath doc/tasks/P09-PREVIEW
 
 ## Owner 侧已闭合（此节为当时记录；终态已落盘，见下）
 
-**Owner 侧全部闭合（代码、测试、探针、注入证据、AC 逐项表、交付固定、状态一致）。** **原三项集成门中，DAG 登记与依赖状态记载均已由 Owner 完成（见下）；AC6 已由 Codex 裁决、权威落盘待 Codex。** **当时的收敛请求见：**
+**Owner 侧全部闭合（代码、测试、探针、注入证据、AC 逐项表、交付固定、状态一致）。** **原三项集成门中，DAG 登记与依赖状态记载均已由 Owner 完成（见下）；AC6 已由 Codex 裁决、权威落盘待 Codex（⚠️ 当时表述）。** **✅ 现行：该权威落盘已完成** —— 见下方「AC6：未满足（权威记录，已落盘）」与「终态」两节。 **当时的收敛请求见：**
 
 **→ [`doc/handoffs/P09-PREVIEW-LIFECYCLE-RECLAIM-1-convergence-request.md`](../../doc/handoffs/P09-PREVIEW-LIFECYCLE-RECLAIM-1-convergence-request.md)**
 
-**该请求列明（DAG 登记 · 依赖集成状态核定 · AC6）、各自归属理由，以及四项 Owner 明确不执行的动作及其理由。** **其中 DAG 登记已由用户授权完成；依赖状态已按 `P09-AC3-DELETE-HARDEN-1` 的 frontmatter 据实陈述；AC6 已由 Codex 裁决为未满足、终态 `closed_with_limitations`（权威落盘待 Codex）。**
+**该请求列明（DAG 登记 · 依赖集成状态核定 · AC6）、各自归属理由，以及四项 Owner 明确不执行的动作及其理由。** **其中 DAG 登记已由用户授权完成；依赖状态已按 `P09-AC3-DELETE-HARDEN-1` 的 frontmatter 据实陈述；AC6 已由 Codex 裁决为未满足、终态 `closed_with_limitations`（⚠️ 当时表述；✅ 现行：落盘已完成）。**
 
 **（当时记录）在 Codex 就另两项答复前，继续送复审只会以同样的结论返回；本 Task 当时停在 `in_review`。** **✅ 现行：终态已落盘为 `closed_with_limitations`；`delivery_head` 始终为 `392977a83…`。**
 
 
-## 分支指针实测（R21 Finding 1；处置属 Codex）
+## 分支指针实测（R21 Finding 1；✅ 处置已由 Codex 裁定、Owner 执行 —— 见本节末）
 
 **R21 指出**：**Task frontmatter 声明 `branch: antigravity/P09-PREVIEW-LIFECYCLE-RECLAIM-1`，而当前 checkout 是 `antigravity/P09-AC3-DELETE-HARDEN-1`。**
 
@@ -130,40 +130,49 @@ HEAD 相对 PREVIEW 分支超越 22 个提交（**截至该测量时点**；**�
 
 **✅ 已由 Codex 裁定并由 Owner 执行（本轮）**：**Codex 建议将 `antigravity/P09-PREVIEW-LIFECYCLE-RECLAIM-1` 快进到当时的 HEAD，使本文档进展位于其声明分支上；并明确「由 Owner 执行该快进」。** **Owner 以 `git update-ref` 完成快进（未检出、未改工作区）。** **快进仅补齐分支上的文档历史，【不等于本 Task 已集成】；集成仍由 Codex 另行记录。** **`delivery_head` 保持 `392977a83…` 不变。**
 
-**处置属 Codex**（R21：「Integrator 应在集成前核实并处理分支归属」，并把「处理分支指针差异」列入 Codex 事项）。**Owner 不移动分支指针** —— **因为那会由我单方面确立「本 Task 的文档进展落在哪个分支」这一事实，而它正是集成要确立的东西。**
+**（当时立场，早于上段的执行）处置属 Codex**（R21：「Integrator 应在集成前核实并处理分支归属」，并把「处理分支指针差异」列入 Codex 事项）。**Owner 不移动分支指针** —— **因为那会由我单方面确立「本 Task 的文档进展落在哪个分支」这一事实，而它正是集成要确立的东西。** **✅ 现行：该处置已完成 —— Codex 裁定由 Owner 执行快进（见本节上方），故上段「Owner 不移动分支指针」只适用于裁定之前。**
 
-## Resource Manifest（协议 §4.2 七类 · 按实测重写，R26 后）
+## Resource Manifest（协议 §4.2 七类）
 
 **§4.2 原文要求**：记录 worktree、task-env、dataset/model/test-material、artifact、temp、agent-output、exchange 七类；**不适用也明确填 `NOT_APPLICABLE`**；**逐项**给出处置（`DELETE_SAFE`/`MIGRATE`/`ARCHIVE`/`PRESERVE_REFERENCED`/`PRESERVE_USER_DATA`/`PRESERVE_UNKNOWN`/`NOT_APPLICABLE`），并记录**源/目标、hash 或 manifest、当前引用检查及结果**。
 
-**⚠️ §4.2 规定逐项处置「在 approved 集成窗口由 Codex 给出」。** 下表为 **Owner 侧的实测清册与建议处置**；**最终处置由 Codex 逐项确认**。
+**✅ R29 逐项裁定已落盘（2026-10-19）**：**处置由 Codex 作为 Integrator 裁定** —— 裁定全文 [`codex-resource-ruling.md`](../../verification/P09-PREVIEW-LIFECYCLE-RECLAIM-1/codex-resource-ruling.md)（SHA-256 `10165005F51B1E311502D2C6693F2789C1671D52A81D6E9C5A5213B9B85B13CB`）；**Owner 侧实测清册** [`resource-manifest.json`](../../verification/P09-PREVIEW-LIFECYCLE-RECLAIM-1/resource-manifest.json)（37 项，SHA-256 `F4853B002DD894687EEEA44E694CCAB9A0236D6373DDBE9C139BD74C9C633EB6`）。**下表「裁定（Codex）」列即其处置结论；落盘由 Owner 以 Coordinator lease 执行（`dsh@epoch 8`）。**
 
-| # | 类别 | 实测 | 建议处置 | 源 | **目标** | hash/manifest | 引用检查 | 结果 |
+**⚠️ 快照时点**：`resource-manifest.json` 是 **R29 裁定所依据的测量快照** —— Codex 裁定头部即引用其 SHA-256，故该文件**保持不再改动**。它测于本轮派发**之前**，因此：`AO-ROOT` 的顶层 content SHA-256（588 文件）与 `IN-01` 的计数（14 文件）**不包含**随后新增的 R29 产物 —— `coordinator` 顶层 6 个（`codex-p09plr29-{task.txt,result.md,stdout.log,stderr.log}`、`pre-p09plr29.txt`、`post-p09plr29.txt`），以及 `verification/P09-PREVIEW-LIFECYCLE-RECLAIM-1/` 下的 `resource-manifest.json` 与 `codex-resource-ruling.md`。`AO-01`…`AO-29`、`RX-*`、`WS-*` 各条目的路径与内容在测量后未再变动；**例外**是四个探针固定工作目录（`AO-10` / `AO-11` / `AO-12` / `AO-15`），它们**每次探针运行都会被 `rmtree` 重建**，其 content hash 只对该次快照有效。
+
+| # | 类别 | 实测 | **裁定（Codex）** | 源 | **目标** | hash / manifest | 引用检查 | 结果 |
 |---|---|---|---|---|---|---|---|---|
-| 1 | **worktree** | **本 Task 未新建** —— 全程使用仓库主工作区 `G:\CODEX\New Manga`（仓库当前共 208 个 worktree，均非本 Task 所建） | `NOT_APPLICABLE` | — | **无**（不迁移） | — | `git worktree list` 中无本 Task 专属项 | **无待核销** |
-| 2 | **task-env** | **不存在** —— `New Manga.workspace\task-envs\P09-PREVIEW-LIFECYCLE-RECLAIM-1` 实测为 False | `NOT_APPLICABLE` | — | **无**（不迁移） | — | 路径不存在 | **无待核销** |
-| 3 | **dataset / model / test-material** | **未引入** —— 探针用自造的小图 fixture（`write_temp`），**无外部数据集或模型权重** | `NOT_APPLICABLE` | — | **无**（不迁移） | — | 交付 diff 无数据或权重文件 | **无待核销** |
-| 4 | **artifact** | **无构建产物** —— 无打包、无 sidecar、无前端 dist | `NOT_APPLICABLE` | — | **无**（不迁移） | — | 交付 diff 仅源/测试/证据文件 | **无待核销** |
-| 5 | **temp** | **探针的固定工作目录**（每次运行先 `rmtree` 再重建）：`ac4-assert`、`ac4-retry`、`ac4-batch`、`ac2-referenced` | `PRESERVE_UNKNOWN` | `New Manga.workspace\agent-output\coordinator\<同名>` | **保持原位**（探针仍复用该路径） | 目录内容由探针每次重建，**无稳定 hash** | 四个探针仍存在且会复用这些路径；R16–R26 复审亦在仓外 scratch 运行 | **保留**；**非仓库内容，不阻止关闭** |
-| 6 | **agent-output** | **实测 19 个**与本 Task / 前序 P09 相关的目录（括号内为文件数）：`ac2-keys`(7)；`ac2-referenced`(3)；`ac4-assert`(3)；`ac4-batch`(7)；`ac4-count`(8)；`ac4-diag`(8)；`ac4-retry`(3)；`n002-race-oldhook`(1)；`n002-race2`(1)；`n004-prod`(1)；`n004-tmp`(4)；`P09-AC3-R6-b9901af250064a409a7ae441a9dd27e9`(0)；`P09-PREVIEW-LIFECYCLE-RECLAIM-1-R3-scratch`(667)；`P09-PREVIEW-LIFECYCLE-RECLAIM-1-r7-22b0860`(20)；`P09-R8-empty-survivors`(12)；`P09-R8-injection`(31)；`P09-R8-probes`(20)；`r4-n002-outside`(1)；`r4-n002-root`(0) | `PRESERVE_UNKNOWN` | `New Manga.workspace\agent-output\coordinator\` | **保持原位**（不迁移、不删除） | **逐目录未制作 manifest**；**引用检查未做** | **未做** | **全部保留**；**逐项裁定属 Codex** |
-| 7 | **exchange** | **不存在** —— 无 `*-exchange` 目录 | `NOT_APPLICABLE` | — | **无**（不迁移） | — | 路径不存在 | **无待核销** |
+| 1 | **worktree** | **本 Task 未新建** —— 全程使用主工作区 `G:\CODEX\New Manga`（`git worktree list` 实测 **208** 项，无本 Task 专属项） | `NOT_APPLICABLE` | 主工作区 | **无**（不迁移） | 无本 Task 专属 worktree | 无本 Task 专属项；工作区有既存 dirty/untracked，不可清理 | **无待核销** |
+| 2 | **task-env** | **不存在** —— `New Manga.workspace\task-envs\P09-PREVIEW-LIFECYCLE-RECLAIM-1` 实测 `Test-Path=False` | `NOT_APPLICABLE` | — | **无**（不迁移） | `resource-manifest.json` | 路径不存在 | **无待核销** |
+| 3 | **dataset / model / test-material** | **未引入外部数据集或模型权重** —— 探针用自造小图 fixture | `NOT_APPLICABLE` | — | **无**（不迁移） | Task 测试说明与交付清单 | 无外部输入；生成的 fixture 归入 temp / agent-output 项 | **无待核销** |
+| 4 | **artifact** | **无独立构建 / 打包产物** —— 无打包、无 sidecar、无前端 dist | `NOT_APPLICABLE` | — | **无**（不迁移） | Task 交付清单、`resource-manifest.json` | 无另一独立 artifact 清册 | **无待核销** |
+| 5 | **temp** | **四个探针的固定工作目录**（每次运行先 `rmtree` 重建）：`ac2-referenced`、`ac4-assert`、`ac4-batch`、`ac4-retry` | **`PRESERVE_REFERENCED`** | `New Manga.workspace\agent-output\coordinator\` 下同名目录 | **保持原位** | `AO-10` / `AO-11` / `AO-12` / `AO-15` 的 content SHA-256 | 探针源码引用精确固定路径；**未查当前进程** | **保留**；不运行探针、不清理 |
+| 6 | **agent-output** | **实测 29 个目录**（旧表只列 19 个；逐项目录名、文件数、content SHA-256 见 `resource-manifest.json` 的 `AO-01`…`AO-29`） | **逐项**：**24 × `PRESERVE_REFERENCED`** · **5 × `PRESERVE_UNKNOWN`**（`p1-cleanup`、`p1-orphan`、`p1-publish`、`p1-race`、`p1-repro`） · 聚合根 **`AO-ROOT` = `PRESERVE_USER_DATA`** | `New Manga.workspace\agent-output\coordinator\` | **每项保持原位** | `AO-01`…`AO-29`、`AO-ROOT` 的 content SHA-256 | **逐项**见 `codex-resource-ruling.md` 第 1 节 | **全部保留** |
+| 7 | **exchange** | **无本 Task 项** —— workspace `exchange\` 根存在但不含本 Task 内容 | `NOT_APPLICABLE` | — | **无**（不迁移） | `resource-manifest.json` | 无本 Task 引用；共享根不作清理 | **无待核销** |
 
-**⚠️ 第 6 类的计数更正（R28 Finding 1）**：**上一版写「18 个」，实测为 19 个 —— 漏列了 `P09-AC3-R6-b9901af250064a409a7ae441a9dd27e9`（0 文件）。** **现按 19 项逐项列出并附文件数。**
-**⚠️ 逐目录的处置、hash/manifest 与引用检查【未逐项完成】** —— **§4.2 要求逐项记录；本表如实标注为 `PRESERVE_UNKNOWN` 与「未做」，而不声称已闭环。** **其中 `P09-PREVIEW-LIFECYCLE-RECLAIM-1-R3-scratch` 有 667 个文件，是最大的一项，也是最需要 manifest 的一项。** **逐项裁定属 Codex（§4.2 规定在集成窗口给出）。**
+**⚠️ 第 6 类的计数更正（R28 Finding 1 → R29 穷尽实测）**：R28 后曾把 18 更正为 19；**本轮实测为 29 个目录**，旧表漏列的 10 项是 `R14-probe-copies`、`R14-pytest-tmp`、`r10-injection-runs`、`r10-isolated-injections`、`r10-probe-runs`、`p1-cleanup`、`p1-orphan`、`p1-publish`、`p1-race`、`p1-repro`（前五项的名字直接带本 Task 的复审轮次编号 R10 / R14）。**逐项目录名与文件数不在本文重复列举**，以免留下第二份会漂移的清单 —— 权威清单是 `resource-manifest.json`。
 
-### 另有两项不属于 §4.2 七类，但本 Task 确实产生
+**⚠️ 裁定的性质与边界（Codex 裁定第 3 节）**：本轮**不是 approved integration window**。因此裁定**只给出非破坏性处置**（`PRESERVE_*` / `NOT_APPLICABLE`），**未授权也未执行** `DELETE_SAFE` / `MIGRATE` / `ARCHIVE`。破坏性处置需待适用集成窗口、并补足逐文件用途 / 引用 / 可重建性证据（worktree 还需当前 Safety Inventory 检查）。**本裁定不表示集成或物理清理完成。**
+
+**⚠️ 表格形状说明**：本 Task 是 lifecycle v1（无 `governance_version: 2`），因此 `tools/governance/check.ps1` 的 v2 资源表校验（6 列；列序 `source` / `disposition` / `destination` / `integrity` / `result`；终态 `destination` 必须实际存在）**对本表不生效** —— 本表列序按可读性设计，**不是 v2 形状**。若本 Task 未来升级 lifecycle v2，须先按 v2 列序回填，否则检查器会因列序不符报 `Resource disposition 无效`。
+
+### 七类之外的额外条目（R29 逐项裁定）
 
 **按 §4.2 的四要素（源 · 目标 · hash 或 manifest · 引用检查 · 结果）逐项填写：**
 
-| 项 | 建议处置 | 源 | 目标 | hash / manifest | 引用检查 | 结果 |
+| 项 | **裁定（Codex）** | 源 | 目标 | hash / manifest | 引用检查 | 结果 |
 |---|---|---|---|---|---|---|
-| **review-scratch**（Codex R17 复审所建） | `PRESERVE_UNKNOWN` | `New Manga.workspace\review-scratch\P09-PREVIEW-LIFECYCLE-RECLAIM-1-R17` | **保持原位** | **未制作 manifest** —— 未逐文件清点 | **未核**（不知是否仍被引用） | **保留**；**处置由 Codex 给出** |
-| **R23 审查记录**（已入库） | `PRESERVE_REFERENCED` | 仓外 `…\coordinator\codex-p09plr23-result.md` → 仓库 `verification/P09-PREVIEW-LIFECYCLE-RECLAIM-1/codex-review-r23.md` | **仓库内保持**（仓外原件保留） | **仓库副本已在 Git 中，hash 即其 blob** | ✅ **有引用**：本 Task、`ac6-ruling.md`、`codex-integration-intent.md` 均指向它 | **保留** |
-| **R1–R22、R24–R27 审查记录**（仓外） | **`PRESERVE_UNKNOWN`** | 仓外 `…\coordinator\codex-p09plr*-*.md` | **保持原位** | **未制作 manifest** | ⚠️ **未逐项核** —— **仅 R23 已证明有引用；其余未核实** | **保留**；**处置由 Codex 给出** |
+| **review-scratch**（R11 / R17 / R18 复审所建；**实测 4 个目录**，旧表只列 1 个） | `PRESERVE_UNKNOWN` | `New Manga.workspace\review-scratch\P09-PREVIEW-LIFECYCLE-RECLAIM-1-R11-392977a8`、`…-R11-392977a8-export`、`…-R17`、`…-R18` | **保持原位** | `resource-manifest.json` 的 `RX-01`…`RX-04` | 当前引用、逐文件用途、可重建性**未完整核实** | **保留** |
+| **workspace 根的两项**（旧表未列） | `PRESERVE_UNKNOWN` | `New Manga.workspace\P09-PREVIEW-LIFECYCLE-RECLAIM-1-R20-scratch`、`New Manga.workspace\P09-BASELINE-T2` | **保持原位** | `resource-manifest.json` 的 `WS-05`、`WS-06` | 与本 Task 的关系**未建立**；未核实引用 | **保留** |
+| **仓内 evidence_dir** | `PRESERVE_REFERENCED` | 仓库 `verification/P09-PREVIEW-LIFECYCLE-RECLAIM-1/` | **仓库内保持** | `resource-manifest.json` 的 `IN-01` | canonical `evidence_dir`；`ac6-ruling.md` 与 `codex-review-r23.md` 已 tracked | **保留** |
+| **R23 审查记录**（已入库） | `PRESERVE_REFERENCED` | 仓外 `…\coordinator\codex-p09plr23-result.md` → 仓库 `verification/P09-PREVIEW-LIFECYCLE-RECLAIM-1/codex-review-r23.md` | **仓库内保持**（仓外原件保留） | 仓库副本已在 Git 中，hash 即其 blob | ✅ **有引用**：本 Task、`ac6-ruling.md`、`codex-integration-intent.md` 均指向它 | **保留** |
+| **R1–R22、R24–R29 审查记录与共享聚合根**（仓外） | 聚合根 `AO-ROOT` = `PRESERVE_USER_DATA`；单轮结果文件 `PRESERVE_UNKNOWN` | 仓外 `…\coordinator\codex-p09plr*-*.md`、`codex-r*-*.md`、`pre-*` / `post-*` 等（顶层 588 文件） | **保持原位** | `resource-manifest.json` 的 `AO-ROOT`（顶层 content SHA-256） | ⚠️ **未逐项核** —— 仅 R23 已证明有引用；聚合根混有其他 Task 内容 | **保留**；**禁止单 Task 整体处置** |
 
-**⚠️ 更正（R27 Finding 1）**：**先前把 R1–R26 记录整体记为 `PRESERVE_REFERENCED`，但文字只证明了 R23 有引用。** **现拆为两行：R23 保持 `PRESERVE_REFERENCED`（有引用证据），其余记为 `PRESERVE_UNKNOWN`（未核实）。**
+**⚠️ 更正（R27 Finding 1）**：**先前把 R1–R26 记录整体记为 `PRESERVE_REFERENCED`，但文字只证明了 R23 有引用。** **现拆为：R23 保持 `PRESERVE_REFERENCED`（有引用证据），其余记为 `PRESERVE_UNKNOWN`（未核实）。**
 
-**⚠️ §4.2 规定逐项处置「在 approved 集成窗口由 Codex 给出」。** **上表全部为 Owner 侧的实测清册与【建议】；最终逐项裁定属 Codex。** **`resource_closeout_status: complete` 表示 Owner 侧清册已闭合，不表示 Codex 的逐项裁定已完成。**
+**⚠️ 更正（R29）**：旧标题「另有两项不属于 §4.2 七类」与实际行数不符（R27 拆为 3 行，R29 补为 **5 行**）。**计数以本表实际行数为准**，不再用标题里的数字。
+
+**⚠️ 裁定权限说明**：本表全部处置**由 Codex 于 R29 作出**（`codex-resource-ruling.md` 第 1、3 节），**由 Owner 以 Coordinator lease 落盘**；**不是** Owner 自行设定。裁定明确：**当前不是 approved integration window**，故**未授权也未执行**任何删除 / 迁移 / 归档。
 
 ### 交付路径清册（R26 Finding 1 的更正）
 
@@ -182,11 +191,15 @@ A verification/P09-PREVIEW-LIFECYCLE-RECLAIM-1/codex-review-r23.md
 M verification/P09-PREVIEW-LIFECYCLE-RECLAIM-1/design-answer.md
 ```
 
-### 授权依据（R26 Finding 3 的更正）
+### 授权依据（R26 Finding 3 → R29 Codex 裁定）
 
-**⚠️ 先前写「全 17 项均在 `allowed_paths` 覆盖范围内」不准确。** **实测**：`allowed_paths` 仅列 **3 个源文件 + `tests/core` + `tests/storage`**（覆盖交付 diff 的 **4 个**源/测试文件），**未逐项列出 11 个 verification 文件**。
+**R29 裁定（Codex，2026-10-19）**：**本 Task 的 `verification/P09-PREVIEW-LIFECYCLE-RECLAIM-1/` 证据不构成越界。**
 
-**verification 文件的授权依据是**：**Task 模板与 §4.2/§5 要求「验证证据提交到本仓库对应 `verification/` 路径」**，**即该目录属 Task 的既定交付位置**，**而非由 `allowed_paths` 逐项授权**。**若需更严格解释，请 Codex 裁定 `allowed_paths` 是否应显式包含 `verification/P09-PREVIEW-LIFECYCLE-RECLAIM-1/`。**
+裁定原文要点（[`codex-resource-ruling.md`](../../verification/P09-PREVIEW-LIFECYCLE-RECLAIM-1/codex-resource-ruling.md) 第 2 节）：**Task 模板定义 `evidence_dir`；协作协议 §4.1 要求判别力结果进入版本化 `verification/<TASK-ID>/`，§5 要求证据提交至对应 verification 路径并由 Handoff 引用。这是该证据目录的交付依据。Task 的 `allowed_paths` 未列该目录，属于释放时清单不完整，不追溯判为无授权。**
+
+**裁定指定的后续动作**：**后续 Task 应在 READY / 释放范围冻结窗口，由 Codex 显式把自己的 `evidence_dir` 加入 `allowed_paths`；模板或协议的默认规则由 Codex 在下一治理文档维护窗口提出，由当前 Coordinator lease 持有人落盘。** 本裁定**不修改**治理文件或 Task。
+
+**⚠️ 实测记录（R26 Finding 3）**：`allowed_paths` 仅列 **3 个源文件 + `tests/core` + `tests/storage`**（覆盖交付 diff 的 **4 个**源 / 测试文件），**未逐项列出 11 个 verification 文件**。
 
 ## AC6：未满足（权威记录，已落盘）
 
@@ -205,7 +218,7 @@ M verification/P09-PREVIEW-LIFECYCLE-RECLAIM-1/design-answer.md
 
 **落盘方式说明**：**治理写入门禁要求 Coordinator lease 持有人；裁决时持有人为 `dsh`，Codex 的 `guarded-write` 返回 `STALE_COORDINATOR`。** **故终态由 Codex 裁决、由 Owner 以有效 lease 落盘 —— 不是 Owner 自行设定。**
 
-## R13 的三项 finding（第 1 项已完成，另两项属 Codex）
+## R13 的三项 finding（✅ 三项均已处置；逐项见下表与「AC6」「终态」两节）
 
 R13 判定 **`approved_with_conditions`** —— **「实现可接受；集成门尚未满足」**，且**「交付提交到当前 HEAD 的目标实现文件和测试无差异」**。
 
@@ -213,7 +226,7 @@ R13 判定 **`approved_with_conditions`** —— **「实现可接受；集成�
 |---|---|---|
 | 1 | **P1 DAG 未登记本 Task** | ✅ **已完成**（用户授权；`REBASELINE_PLAN` L31；治理 FAIL→PASS，R14 独立确认）|
 | 2 | **（R13 当时记录，现已据实更正）P1 依赖「已集成」的记载与权威状态不符** —— 本 Task 记载依赖已集成，但 `P09-AC3-DELETE-HARDEN-1` 仍为 `in_review`、`integration_commit` 为 `null`，Plan 也仍列 `in_review`。**R15 的 `approved` 不等于已集成；R15 本身只支持 `closed_with_limitations`** | **Codex** |
-| 3 | **AC6** | ❌ **`NOT_VERIFIED`** —— **无实施前冻结持久化格式契约的证据**；证据见下节，处置属 Codex |
+| 3 | **AC6** | ❌ **`NOT_VERIFIED`** —— **无实施前冻结持久化格式契约的证据**；证据见下节，**✅ 处置已完成（Codex 裁决 + 权威落盘）** |
 
 **R13 同时确认**：四个探针全部 PASS 且未因错误原因通过（连续第三轮）；`645 passed`；R12 Finding 2 的 AC 逐项表要求已满足；**三处 lock 断言仍缺可区分的失败侧注入，「按现有记录不应算作已验证」**（与本 Task 自己的记录一致）。
 
