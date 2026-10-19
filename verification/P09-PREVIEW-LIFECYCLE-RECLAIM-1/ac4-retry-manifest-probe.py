@@ -95,25 +95,35 @@ files = [p for p in derived_root.rglob("*") if p.is_file()]
 print("published %d previews -> %d catalog rows, %d files" % (READS, len(rows), len(files)))
 assert len(rows) >= 1, "no publish rows were created, nothing to test"
 
-# --- simulate the state a refused cleanup leaves behind: the delete has already run,
-#     the manifest survives and carries the preview ids ---
+# --- the real delete flow, not a hand-written manifest.  R3 injected a writer that always
+#     wrote an empty id list and this probe still passed, because it built the manifest
+#     itself and so never exercised the writer.  Driving the production writer is what makes
+#     this a test of "write then retry" instead of "read a manifest I made up".
 targets = core.repository.list_book_cleanup_targets("b1")
 page_ids = core.repository.list_book_page_ids("b1")
 snapshot_ids = [e.resource_id for e in rows]
+snapshot_map = {"b1": list(snapshot_ids)}
 
-# media_artifacts is gone (the delete ran); that is exactly why the ids had to be persisted
-with core.conn:
-    core.conn.execute("DELETE FROM artifact_revisions")
-    core.conn.execute("DELETE FROM media_artifacts")
-    core.conn.execute(
-        "INSERT OR REPLACE INTO book_cleanup_manifests (book_id, targets_json, created_at)"
-        " VALUES ('b1', ?, 'now')",
-        (json.dumps({
-            "managed_targets": list(targets),
-            "page_ids": list(page_ids),
-            "preview_resource_ids": snapshot_ids,
-        }, ensure_ascii=False),),
-    )
+core.repository.execute_permanent_delete_db(
+    {"b1": list(targets)}, {"b1": list(page_ids)}, snapshot_map
+)
+
+# Read the manifest the writer produced and assert it actually carries the ids.  Without
+# this the probe would still pass if the writer persisted nothing, which is exactly the
+# injection R3 used.
+manifest = core.repository.get_cleanup_manifest_data("b1")
+print("manifest keys after the real delete: %s"
+      % sorted((manifest or {}).keys()))
+assert manifest is not None, "the delete produced no manifest at all"
+persisted = manifest.get("preview_resource_ids") or []
+print("ids persisted by the production writer: %d (expected %d)"
+      % (len(persisted), len(snapshot_ids)))
+assert sorted(persisted) == sorted(snapshot_ids), (
+    "the production writer did not persist the preview ids: %r" % (persisted,)
+)
+assert manifest.get("preview_ids_known") is True, (
+    "the writer must mark the field as known, otherwise the retry treats it as unknown"
+)
 post_snapshot = core.repository.list_page_artifact_ids(page_ids)
 print("artifact ids rebuildable after the delete = %d (expected 0)" % len(post_snapshot))
 assert post_snapshot == [], "fixture invalid: the mapping still exists, the retry would not be tested"
