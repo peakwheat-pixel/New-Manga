@@ -3,7 +3,8 @@ id: GOV-PIN-LINEAGE-1
 title: 历史 evidence pin 的 lineage 补注
 kind: governance
 governance_version: 2
-status: ready
+status: blocked
+blocker: pin basis 未定义（r25 前提被 300 项核验推翻），40 项 CONTENT_DIFFERS 未诊断
 approval: codex_r26_released_scope_frozen
 suggested_owner: antigravity
 owner: dsh
@@ -184,6 +185,70 @@ r26 明确否决了「先改 checker、再看哪些变绿」的顺序。必须�
 
 ## Closeout Record
 
-- 状态：`ready`。授权来源：Codex r25（范围）+ r26（释放）。
-- **范围已按 r25 重定**：从「7 项 pin 补 lineage」改为「修正校验语义 + 63 项 registry」。
-- 释放前需：Codex 确认 Owner/Reviewer、冻结 allowed paths、登记 Plan。
+- 状态：**`blocked`**。授权来源：Codex r25（范围）→ r26（释放）→ **r27（撤回并暂停）**。
+- **阻塞原因**：r25 的核心语义前提被实测推翻。
+
+### 发生了什么
+
+r25 §1 断言：`Canonical Evidence` 的 `(path, commit, sha256)` 三元组意味着
+`sha256` 应当是**该 commit 中 Git blob** 的哈希，而 `check.ps1` 错误地对**工作区文件**
+计算。据此授权本 Task「改 checker 验 blob」。
+
+r26 §3.3 要求**先核验**：19 个 pin-only Task 的每个 pin 的 blob 必须与原 SHA 相符，
+**改 checker 之前**完成。
+
+**核验做完了（300 个 pin），结论是前提不成立：**
+
+| 分类 | 数量 | 判定 |
+|---|---:|---|
+| `PIN_VALID` | 71 | `sha256(blob) == pin` |
+| `PIN_MATCHES_WORKTREE_NOT_BLOB` | **187** | `sha256(工作区) == pin`，`sha256(blob) != pin` |
+| `CONTENT_DIFFERS` | **40** | 两者都不符 |
+| `LINE_ENDING_ONLY` | 2 | 正文相同，仅行尾 |
+
+**187 个 pin 是按工作区字节算的**（`core.autocrlf=true` → 工作区 CRLF、blob LF）。
+**按 r25 的方案改成 blob 校验，会制造 187 个新失败，修复 0 个。**
+
+### r27 的裁定
+
+1. **撤回 r25 的核心语义前提及由此推出的 checker 方案。**
+2. 认可两种显式 basis：**`blob`** 与 **`worktree`**。新 pin 必须声明 basis。
+3. **既有未声明 pin 暂时维持现行 checker 行为**（按工作区校验），
+   **不因新规则改变任何既有 PASS/FAIL**。
+   不得仅因「匹配工作区」便永久登记为已证明的 `worktree` pin；
+   历史记录缺少 basis 证据时登记 **`legacy-unresolved`**。
+4. 187 项是**行尾转换下匹配工作区 basis 的强证据，不是损坏证据**。
+5. **40 项 `CONTENT_DIFFERS` 必须逐项单独诊断**，维持 FAIL，成因未定。
+6. **本 Task 不得按 r25/r26 的 checker AC 继续实施。**
+
+### 解除阻塞的条件
+
+- 完成 40 项 `CONTENT_DIFFERS` 的只读诊断（成因、来源链、是否需改 pin）；
+- Codex 另行裁定 **pin basis 契约**（字段名、存放层级、定义、校验行为）；
+- 再决定本 Task 是重写、拆分还是关闭。
+
+### 从中确立的规范（r27 §5）
+
+> **任何会改变校验语义或既有结果的裁定，在作为实施授权生效前必须有相关核验结果。**
+> 核验无法完成时，**只能裁定「暂停/调查」**，不能把未经验证的全局假设冻结成实现 AC。
+> 核验范围须与拟变更影响范围相称，不能只选方便样本。
+
+**r26 的「先验证 19 个 Task 的 blob 再改 checker」正是正确的反证门槛**，
+应成为治理语义改动的标准要求。
+
+### 本 Task 已完成的产物（保留）
+
+| 产物 | 位置 |
+|---|---|
+| 300 项逐条核验 | `ac1-pin-only-verification.json` |
+| 229 项不符诊断 | `ac1-mismatch-diagnosis.json` |
+| 结论与三条出路 | `ac1-verification-finding.md` |
+
+**这些在 `dsh/GOV-PIN-LINEAGE-1` worktree（commit `58cf6078e`），是后续裁定的输入。**
+
+### 明确未做
+
+- **未修改 `tools/governance/check.ps1`。**
+- 未重算或覆盖任何 pin。
+- 未修改任何 Task 的 pin（含那 40 个 `CONTENT_DIFFERS`）。
+- 未改 `.gitattributes`。
