@@ -78,16 +78,16 @@ Codex r19 §2.5 裁定：该异常应**另立一个独立、有限的记录维�
 
 ## Acceptance Criteria
 
-- [ ] **AC1 逐 AC 溯源**：对两个 Task 的 13 个 AC，逐个从各自的 Closeout Record、
+- [x] **AC1 逐 AC 溯源**：对两个 Task 的 13 个 AC，逐个从各自的 Closeout Record、
   Handoff、Review 与证据中找出「该 AC 是否达成」的**书面依据**，并记录依据位置
   （文件 + 行号或章节）。**不得仅凭 status 推定。**
-- [ ] **AC2 区分达成 / 部分 / 阻塞**：对每个 AC 给出三分类之一——
+- [x] **AC2 区分达成 / 部分 / 阻塞**：对每个 AC 给出三分类之一——
   `MET`（有明确完成与复核记录）、`PARTIAL`（部分达成，如 `EXPORT-REVEAL-1` AC4 的 ③ 为 BLOCKED）、
   `UNKNOWN`（记录不足）。**`BLOCKED` 项必须保持不勾选**，只加注说明。
-- [ ] **AC3 补勾并加注**：依据 AC1/AC2 的结果，为 `MET` 的 AC 补勾；
+- [x] **AC3 补勾并加注**：依据 AC1/AC2 的结果，为 `MET` 的 AC 补勾；
   `PARTIAL`/`BLOCKED` 的保持未勾选并在该 AC 行末加注原因与依据位置。
   **不得改变任何 AC 的文字**，只改勾选状态与追加注记。
-- [ ] **AC4 不改 status 与其它字段**：两个 Task 的 `status`、`integration_commit`、
+- [x] **AC4 不改 status 与其它字段**：两个 Task 的 `status`、`integration_commit`、
   `delivery_head`、`canonical_evidence_status`、`resource_closeout_status`、
   Closeout Record 一律**不改动**。本 Task 只动 AC 行的勾选框与注记。
 - [x] **AC5 记录与 Review**：产出逐 AC 判定表（含依据位置）；生成 Handoff；
