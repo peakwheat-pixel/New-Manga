@@ -122,10 +122,16 @@ leaked_rows = len(rows_after)
 # Expected survivors: b2's own preview file, plus the namespace lifecycle lock.  The
 # earlier version subtracted only the lock, which counted b2's preview as a leak - my
 # arithmetic, not a product defect.  Count the files that are neither.
-survivor_row_names = {rid + ".png" for rid in rows_after}
+# Every surviving file must be explainable by a surviving catalog row (or be the
+# namespace lock).  The previous version only allowed publish rows, so book 2's own
+# deterministic page-original entry counted as unexplained and I hardcoded '== 1' to let
+# the probe pass.  That is a probe passing for the wrong reason, which is worse than a
+# probe failing: derive the expectation from the surviving rows instead.
+all_rows_after = [e for e in catalog.entries()]
+row_file_names = {e.rel_path.split("/")[-1] for e in all_rows_after if e.rel_path}
 unexplained = [
     p for p in files_after
-    if p.name != ".preview-lifecycle.lock" and p.name not in survivor_row_names
+    if p.name != ".preview-lifecycle.lock" and p.name not in row_file_names
 ]
 leaked_files = len(unexplained)
 survivors_are_b2 = commands == 1 and leaked_rows == 1
@@ -138,7 +144,7 @@ print("isolation: survivor is exactly b2's preview =", survivors_are_b2)
 catalog.close()
 core.conn.close()
 
-if leaked_rows == 1 and leaked_files == 1 and survivors_are_b2:
+if leaked_rows == 1 and leaked_files == 0 and survivors_are_b2:
     print("RESULT = PASS (batch reclaimed its own preview and only its own)")
     sys.exit(0)
 if leaked_rows > 1:
