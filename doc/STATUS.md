@@ -23,5 +23,5 @@ Technical Gate=NOT_SATISFIED；private_registry_absence=UNPROVABLE；Owner Risk 
 
 ## 当前权威指针
 
-- DAG：[REBASELINE_PLAN](REBASELINE_PLAN.md)；READY=ARCH-DOC-REBASELINE、P20；BLOCKED=GOV-DEBT-CLEANUP-1；`ready`=PREVIEW-LIFECYCLE-RECLAIM-1；`proposed`=MANAGED-READ-ROOT-TRUST-1；`in_review`=P09-AC3-DELETE-HARDEN-1（轮次见 Task 的 Review 指针）、P20-CLOSE-BOUND-HARDEN-2。
+- DAG：[REBASELINE_PLAN](REBASELINE_PLAN.md)；READY=ARCH-DOC-REBASELINE、P20；BLOCKED=GOV-DEBT-CLEANUP-1；`proposed`=MANAGED-READ-ROOT-TRUST-1；`in_review`=PREVIEW-LIFECYCLE-RECLAIM-1、P09-AC3-DELETE-HARDEN-1（轮次见 Task 的 Review 指针）、P20-CLOSE-BOUND-HARDEN-2。
 - 本轮证据：P09 [R3](../verification/P09-AC3-DELETE-1/codex-review-r3.md) + [T2](../verification/P09-AC3-DELETE-1/t2-fullsuite-triage.md)；P20 [CB-R4](../verification/P20-CLOSE-BOUND-HARDEN-1/codex-review-r4.md) + [FPS-R4](../verification/P20-AC4-FPS-1/codex-review-r4.md)。
