@@ -10,8 +10,8 @@ owner: dsh
 reviewer: Antigravity
 depends_on: []
 base_commit: 960188271d62bf40db4b3646b6fa02ab869bade0
-branch: agent/deepseek/GOV-PLAN-BUDGET-1
-worktree: G:/CODEX/New Manga.workspace/worktrees/GOV-PLAN-BUDGET-1
+branch: GOV-PLAN-BUDGET-1
+worktree: G:/CODEX/New Manga/.agents/worktrees/GOV-PLAN-BUDGET-1
 integration_commit: null
 delivery_head: null
 canonical_evidence_status: pending
