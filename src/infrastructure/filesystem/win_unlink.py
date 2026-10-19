@@ -43,7 +43,12 @@ _FILE_READ_ATTRIBUTES = 0x00000080
 _SYNCHRONIZE = 0x00100000
 _FILE_SHARE_ALL = 0x00000001 | 0x00000002 | 0x00000004
 _OBJ_CASE_INSENSITIVE = 0x00000040
-_FILE_OPEN_IF = 0x00000003
+_FILE_OPEN = 0x00000001
+# N-005 (Codex R3): FILE_OPEN_IF creates a missing component.  This helper
+# is a delete path, so a component that is not there must be a refusal - with
+# OPEN_IF the chain quietly created the missing directory and then created and
+# removed the leaf, returning success for a path that never existed.
+_FILE_OPEN_IF = 0x00000003  # kept for reference; not used on the delete path
 _FILE_DIRECTORY_FILE = 0x00000001
 _FILE_NON_DIRECTORY_FILE = 0x00000040
 _FILE_OPEN_REPARSE_POINT = 0x00200000
@@ -177,7 +182,7 @@ def _open_relative(parent: int, name: str, *, directory: bool) -> int | None:
         None,
         _FILE_ATTRIBUTE_NORMAL,
         _FILE_SHARE_ALL,
-        _FILE_OPEN_IF,
+        _FILE_OPEN,
         options,
         None,
         0,
