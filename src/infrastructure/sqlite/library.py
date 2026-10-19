@@ -631,9 +631,19 @@ class SqliteLibraryRepository:
                     "managed_targets": list(val.get("managed_targets", [])),
                     "page_ids": list(val.get("page_ids", [])),
                     "preview_resource_ids": list(val.get("preview_resource_ids", [])),
+                    # R2 Finding 3: distinguish "written with no previews" from "written
+                    # before this field existed".  The first is a complete answer; the
+                    # second is an unknown, and treating an unknown as zero let a legacy
+                    # manifest report success, delete itself, and strand its previews.
+                    "preview_ids_known": "preview_resource_ids" in val,
                 }
             if isinstance(val, list):
-                return {"managed_targets": list(val), "page_ids": [], "preview_resource_ids": []}
+                return {
+                    "managed_targets": list(val),
+                    "page_ids": [],
+                    "preview_resource_ids": [],
+                    "preview_ids_known": False,   # bare-list legacy format
+                }
             return None
         except (json.JSONDecodeError, TypeError):
             return None
@@ -1146,6 +1156,7 @@ class SqliteLibraryRepository:
         # The caller snapshots their resource_ids before the DB delete, because
         # preview_lifecycle is only reachable through artifact_id and that mapping
         # is gone by the time cleanup runs (R7).
+        preview_ids_known = True
         if not preview_resource_ids:
             # R1 Finding 1: a retry after a refused cleanup cannot rebuild these (the
             # random key is gone once media_artifacts is deleted), so fall back to the
@@ -1154,6 +1165,10 @@ class SqliteLibraryRepository:
                 manifest_data = self.get_cleanup_manifest_data(book_id)
             if manifest_data:
                 preview_resource_ids = manifest_data.get("preview_resource_ids") or []
+                preview_ids_known = bool(manifest_data.get("preview_ids_known", True))
+            elif not page_ids:
+                # No manifest and no pages: nothing ever described previews for this book.
+                preview_ids_known = True
 
         if preview_resource_ids and render_previews is not None:
             derived_root = getattr(render_previews, "_root", None)
@@ -1292,6 +1307,13 @@ class SqliteLibraryRepository:
                         pass
             except Exception:
                 pass
+
+        if all_deleted and not preview_ids_known:
+            # R2 Finding 3: the manifest could not say whether previews exist (legacy
+            # format).  Reporting success here would delete the manifest and strand any
+            # rows it never described, with no record left to retry from.  Keep the
+            # manifest and report pending instead.
+            return False
 
         if all_deleted:
             with self._conn:

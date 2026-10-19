@@ -156,12 +156,71 @@ def test_successful_preview_unlink_still_clears_everything(tmp_path: Path) -> No
             "b1", [], None, render_previews=_Previews(), page_ids=["p1"]
         )
 
-        assert all_deleted is True
+        # R2 Finding 3 changed this contract deliberately.  A manifest without
+        # preview_resource_ids cannot say whether previews exist - it was written before
+        # the field did.  Reporting success here used to delete the manifest and strand
+        # any previews it never described, with nothing left to retry from.  Unknown is
+        # now reported as pending, and the manifest survives.
+        assert all_deleted is False
+        assert core.library._repo.get_cleanup_manifest_data("b1") is not None, (
+            "a legacy manifest must survive a pending cleanup"
+        )
         assert not preview_file.exists(), "the preview file should be gone"
         assert catalog.rows == {}
         remaining = core.conn.execute(
             "SELECT COUNT(*) FROM book_cleanup_manifests WHERE book_id = 'b1'"
         ).fetchone()[0]
-        assert remaining == 0
+        # This assertion used to require 0 (manifest cleared).  Under the contract R2
+        # Finding 3 established, a legacy manifest must survive: it is the only record
+        # that a retry can work from, and the reason the cleanup reports pending at all.
+        assert remaining == 1
+    finally:
+        core.conn.close()
+
+
+def test_manifest_with_known_empty_previews_still_completes(tmp_path: Path) -> None:
+    """The counterpart to the legacy case: a manifest that says "no previews" is a
+    complete answer, not an unknown, so cleanup must finish and clear the manifest."""
+    core = assemble_production_core(tmp_path / "data")
+    try:
+        derived_root = tmp_path / "derived"
+        derived_root.mkdir(parents=True, exist_ok=True)
+        (derived_root / "page-original-p1").write_bytes(b"preview bytes")
+
+        class _Entry:
+            rel_path = "page-original-p1"
+
+        class _Catalog:
+            def __init__(self) -> None:
+                self.rows = {"page-original-p1": _Entry()}
+
+            def lookup(self, res_id: str):
+                return self.rows.get(res_id)
+
+            def remove(self, res_id: str) -> None:
+                self.rows.pop(res_id, None)
+
+        class _Previews:
+            _root = derived_root
+            _catalog = _Catalog()
+
+        with core.conn:
+            core.conn.execute(
+                "INSERT INTO books (book_id, title, created_at, updated_at)"
+                " VALUES ('b1', 'B', 'now', 'now')"
+            )
+            core.conn.execute(
+                "INSERT INTO book_cleanup_manifests (book_id, targets_json,"
+                " created_at) VALUES ('b1', ?, 'now')",
+                ('{"managed_targets": [], "page_ids": ["p1"],'
+                 ' "preview_resource_ids": []}',),
+            )
+
+        all_deleted = core.library._repo.cleanup_book_files(
+            "b1", [], None, render_previews=_Previews(), page_ids=["p1"]
+        )
+
+        assert all_deleted is True
+        assert core.library._repo.get_cleanup_manifest_data("b1") is None
     finally:
         core.conn.close()
