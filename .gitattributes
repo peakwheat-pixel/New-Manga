@@ -25,3 +25,5 @@ verification/P19-UI-MANIFEST-VIEW-1/** text eol=lf
 # Keep LF on checkout so pins remain reproducible when core.autocrlf=true.
 verification/GOV-UNTRACKED-BACKLOG-1/** text eol=lf
 doc/handoffs/GOV-UNTRACKED-BACKLOG-1-*.md text eol=lf
+verification/GOV-EOL-PIN-1/** text eol=lf
+doc/handoffs/GOV-EOL-PIN-1-*.md text eol=lf

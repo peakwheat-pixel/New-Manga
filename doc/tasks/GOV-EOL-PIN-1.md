@@ -13,7 +13,7 @@ base_commit: 94efecc75a3132d6f4b1e76fc66a18c9f2912e8b
 branch: null（单一 .gitattributes 改动，主线直接执行）
 worktree: null（不建 linked worktree）
 integration_commit: null
-delivery_head: d19e74ab4dd9eb0fb15c6a776426df06fe174694
+delivery_head: 48f29726a
 canonical_evidence_status: pending
 resource_closeout_status: pending
 evidence_dir: verification/GOV-EOL-PIN-1
@@ -75,7 +75,7 @@ verification/P19-UI-MANIFEST-VIEW-1/** text eol=lf
   验证后删除探针 worktree。
 - [x] **AC4 只读保护**：不改任何证据文件内容、不改其它 Task、不改 `tools/governance/`。
   只改 `.gitattributes`。
-- [ ] **AC5 交付与 Review**：入库验证输出（含 `git ls-files --eol` 与 hash 对照）；
+- [x] **AC5 交付与 Review**：入库验证输出（含 `git ls-files --eol` 与 hash 对照）；
   生成 Handoff；由 Antigravity 对固定 delivery head 独立 Review。
 
 ## 允许修改范围
@@ -105,8 +105,8 @@ pwsh -NoProfile -File tools/governance/check.ps1
 
 | evidence_id | AC/Gate | path（仓库相对路径或绝对路径） | commit | sha256 | class (`CANONICAL` / `SOURCE_PIN`) |
 |---|---|---|---|---|---|
-| EOL-AC1AC3 | AC1、AC2、AC3 | `verification/GOV-EOL-PIN-1/ac1-ac3-eol-fix.md` | `d19e74ab4` | `f74ac2049d774b54860e0b4751ae8b507fbb97a640f02884fb838569fb6ece1a` | `CANONICAL` |
-| EOL-HANDOFF | AC5 | `doc/handoffs/GOV-EOL-PIN-1-d19e74ab4.md` | `d19e74ab4` | `e984070f4b7c687598290b8a695b349a493716ba0f1c918d3a3a09899a2bdd0d` | `CANONICAL` |
+| EOL-AC1AC3 | AC1、AC2、AC3 | `verification/GOV-EOL-PIN-1/ac1-ac3-eol-fix.md` | `d19e74ab4` | `b34e336ddc76255513c07a6e21770d2cc82826adcd27eda1e1891d085dce4c0b` | `CANONICAL` |
+| EOL-HANDOFF | AC5 | `doc/handoffs/GOV-EOL-PIN-1-d19e74ab4.md` | `48f29726a` | `9975fe1c0c37157719d35b8606fac879005ac102c897dca0997c40ccd94ebfb2` | `CANONICAL` |
 
 ## Resource Manifest
 
