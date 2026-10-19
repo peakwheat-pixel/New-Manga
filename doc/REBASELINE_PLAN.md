@@ -29,6 +29,7 @@
 |P19-UI-MANIFEST-VIEW-1|GOV-RESOURCE-MANIFEST-JSON-1|closed_with_limitations（AC1/AC2/AC4/AC5/AC6 达成；AC3 因 4→10 错误清单失败；按 Codex r11 保留修正）|
 |GOV-RESOURCE-MANIFEST-SAME-LOCATION-1|GOV-RESOURCE-MANIFEST-JSON-1|done（同源/空/\-\ 目的地语义；32/32 用例；集成 4b545eada；P19 错误 9→4）|
 |GOV-UNTRACKED-BACKLOG-1|—|in_progress（1591 个未入库文件的分类与边界化；只读盘点，不删不移；含 CON 与长句名两个异常条目）|
+|GOV-EOL-PIN-1|GOV-UNTRACKED-BACKLOG-1|in_review（为 hash-pinned 证据固定 LF 行尾；renormalize 无字节变化；worktree 复现验证通过）|
 |GOV-EVIDENCE-UNIQUE-1|GOV-DEBT-CLEANUP-2|ready（AC7 唯一最终证据判定；只读 61 文件，不改任何 pin）|
 |P20-CLOSE-BOUND-1|P20-ISOLATION-1|closed_with_limitations（R6）|
 |P20-CLOSE-BOUND-HARDEN-1|P20-CLOSE-BOUND-1|closed_with_limitations|
