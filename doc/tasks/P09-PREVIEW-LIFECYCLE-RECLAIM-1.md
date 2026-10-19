@@ -2,11 +2,19 @@
 id: P09-PREVIEW-LIFECYCLE-RECLAIM-1
 title: 译图预览的永久删除回收（AC4 转交）
 kind: product-lifecycle
-status: proposed
-owner: null
+status: ready
+owner: dsh
 reviewer: Codex
 depends_on: [P09-AC3-DELETE-HARDEN-1]
 delivery_head: null
+base_commit: 1f157413675b62450034194fd17e550c79ee001b
+branch: antigravity/P09-PREVIEW-LIFECYCLE-RECLAIM-1
+allowed_paths:
+  - src/infrastructure/resource_channel/render_preview.py
+  - src/infrastructure/sqlite/library.py
+  - src/bootstrap/core_service.py
+  - tests/core
+  - tests/storage
 created: 2026-10-19
 ---
 
@@ -51,3 +59,20 @@ created: 2026-10-19
 ## 参考
 
 `verification/P20-CLOSE-BOUND-HARDEN-2/ac4-reclaim-task-draft.md` · `ac4-key-mismatch-assessment.md` · `ac4-direction-1-plan.md` · `verification/P09-AC3-DELETE-HARDEN-1/HANDOFF.md` · `workspace/agent-output/coordinator/codex-r6-result.md`、`codex-r7-result.md`
+
+## 释放记录（2026-10-19，用户裁决）
+
+**用户指示**：释放本 Task（选项 a）。
+
+**协议 L68 的四项前置**：
+
+| 前置 | 状态 |
+|---|---|
+| Plan 已列入 DAG | ⏳ **待 Codex**（`REBASELINE_PLAN` 现为 35/35 行，需其重排；不属 Owner 职责）|
+| 依赖已集成 | ✅ `P09-AC3-DELETE-HARDEN-1` 删除路径加固已闭环，R15 判 `approved` |
+| 范围/Owner/Reviewer/base/allowed_paths 已冻结 | ✅ **本次冻结**（见 frontmatter）|
+| STATUS 已登记 | ✅ **本次登记** |
+
+**Owner**：dsh（用户裁决由本会话执行）· **Reviewer**：Codex（独立，满足 owner≠reviewer）
+
+**第一个交付物仍是设计答案**（**如何判定 `preview_lifecycle` 行「仍在使用」**），**不是补丁**。**两版修复方案已被否，原因见本 Task 前文。**
