@@ -145,7 +145,15 @@ class ManagedFileStorage:
           protected original through a link.
         """
         absolute = Path(self.absolute_path(relative_path)).resolve()
-        root = self._root.resolve()
+        # R5 P1: do NOT resolve the baseline.  resolve() follows junctions, so a
+        # link ABOVE the root moves the baseline and the candidate together and the
+        # containment check passes, while the reparse walk below starts from the
+        # unresolved root and never sees the link - because it is an ancestor of
+        # every segment it inspects, not one of them.  Both guards were sound and
+        # guarded different places.  abspath normalises without following links, so
+        # a candidate that crosses one now lands outside the baseline and
+        # relative_to refuses it.  Same defect class as N-004.
+        root = Path(os.path.abspath(str(self._root)))
         try:
             absolute.relative_to(root)
         except ValueError as error:
