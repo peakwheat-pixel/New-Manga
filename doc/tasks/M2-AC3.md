@@ -27,7 +27,7 @@ delivery_ledger: claim=c754e714 -> implementation=b0112834 -> evidence/handoff=t
 
 ## 来源与目标
 
-来源：[Rebaseline Plan](../REBASELINE_PLAN.md) M2 Acceptance Backlog 第 3 行（用户批准释放 2026-09-28）。对应 [AD-001](AD-001_TARGET_DESKTOP_ARCHITECTURE.md) 的产品承诺：**Provider 未配置、网络失败、部分失败时，命令计划与页面状态必须 fail-closed**——不产出半成品成果、typed 错误可诊断、可恢复、源文件零风险。
+来源：[Rebaseline Plan](../REBASELINE_PLAN.md) M2 Acceptance Backlog 第 3 行（用户批准释放 2026-09-28）。对应 [AD-001](../AD-001_TARGET_DESKTOP_ARCHITECTURE.md) 的产品承诺：**Provider 未配置、网络失败、部分失败时，命令计划与页面状态必须 fail-closed**——不产出半成品成果、typed 错误可诊断、可恢复、源文件零风险。
 
 验收形态与 M2-AC2 相同：纯 Python Core 层验收模块（`tests/m2_acceptance/` 新增），复用 M2-AC1/M2-AC2 的真实装配手法（production assembly、临时 data root、真实 SQLite、真实文件系统），**不扩 IPC 命令面、不走 test-mode bridge**。矩阵化验收：每个承诺一个场景族，先证明语义存在，再证明破坏被拒绝/检出。
 
@@ -42,7 +42,7 @@ Owner=ZCode；非作者 Reviewer=DeepSeek Harness；Integrator=Codex（**新会�
 - [x] **AC3 — 部分失败边界如实：** 多页/多 region 的 run 中部分成功部分失败时，run 终态如实（如 `COMPLETED_WITH_FAILURES`），成功页与失败页边界可查询、失败页无伪造成果；成功页成果完整可用；失败原因按页可诊断。→ **PASS（1 场景）**：双页 run（A 成功/B transport 失败）→ run=`COMPLETED_WITH_FAILURES`、task A=COMPLETED/B=FAILED 可查询；A 恰好 +1 revision 且 current 在其上、B 零 revision 零伪文本、B 的 typed detail 按页可诊断。
 - [x] **AC4 — 源文件零风险：** 上述全部失败场景中，用户源文件字节与 mtime 全程不变（Core 对源目录零写入），managed copy 无部分写入（字节与源一致）。→ **PASS（1 场景）**：连续两个失败 run（无 binding → 悬空 binding）后源 bytes/size/mtime_ns/目录清单不变、managed copy 逐字节等于源。
 - [x] **AC5 — 可恢复：** 失败后同一 data root 重新装配（进程重启等价），状态一致可查询；失败 run 可被重试/恢复路径触达（如 `recover_running_runs` 语义、剩余 units 可重试），重试成功后不留重复或悬空成果。→ **PASS（2 场景）**：重装配后 run/task/step 的 typed 失败状态全部持久可查询；binding 修复后重试 run=`COMPLETED`，旧 run 不复活，revision 序列 `[1,2]` 连续无重复、current 在最新且携带 provider 文本。
-- [x] **AC6 — 证据纪律：** 所有命令记录 shell、解释器、固定 HEAD、EXIT；`FAIL`/`BLOCKED`/`NOT_RUN` 分开报告；提交 Handoff 与 delivery head；`git diff --check <base>..<delivery-head>` exit 0。→ **PASS**：两级 pytest 日志（8 passed / 23 passed 均 EXIT=0）+ diff-check（实现区间 EXIT=0 实测，交付 tip 全区间由集成方复跑为准）；Qt/WebView2 错误呈现读面 NOT_RUN 单列；证据在 [verification/M2-AC3/verification-results.md](../verification/M2-AC3/verification-results.md)。
+- [x] **AC6 — 证据纪律：** 所有命令记录 shell、解释器、固定 HEAD、EXIT；`FAIL`/`BLOCKED`/`NOT_RUN` 分开报告；提交 Handoff 与 delivery head；`git diff --check <base>..<delivery-head>` exit 0。→ **PASS**：两级 pytest 日志（8 passed / 23 passed 均 EXIT=0）+ diff-check（实现区间 EXIT=0 实测，交付 tip 全区间由集成方复跑为准）；Qt/WebView2 错误呈现读面 NOT_RUN 单列；证据在 [verification/M2-AC3/verification-results.md](../../verification/M2-AC3/verification-results.md)。
 
 ## 允许修改范围
 
@@ -72,6 +72,6 @@ Owner=ZCode；非作者 Reviewer=DeepSeek Harness；Integrator=Codex（**新会�
 
 - Handoff：[doc/handoffs/M2-AC3-owner-delivery.md](../handoffs/M2-AC3-owner-delivery.md)（2026-09-28，Owner=ZCode）。
 - Review：DSH r1 `approved_with_conditions`（非作者静态 Review，0×P0；报告归档 [doc/reviews/M2-AC3-a63d3372-dsh-r1.md](../reviews/M2-AC3-a63d3372-dsh-r1.md)；C1-C5 已由集成方关闭）。
-- 集成：Codex（代行，ZCode 子 agent 会话，用户授权 2026-09-28）merge=`cac374855b6e6a4310f557ae362d34d0572cd649`；集成记录 [verification/M2-AC3/integration-a63d3372/integration.md](../verification/M2-AC3/integration-a63d3372/integration.md)。
-- 实际测试：见上方矩阵与 [verification/M2-AC3/verification-results.md](../verification/M2-AC3/verification-results.md)（含判别力 mutation 先红记录；集成方已在 tip `a63d3372` 独立复放 M1/M2 两红并补 raw 日志）。
+- 集成：Codex（代行，ZCode 子 agent 会话，用户授权 2026-09-28）merge=`cac374855b6e6a4310f557ae362d34d0572cd649`；集成记录 [verification/M2-AC3/integration-a63d3372/integration.md](../../verification/M2-AC3/integration-a63d3372/integration.md)。
+- 实际测试：见上方矩阵与 [verification/M2-AC3/verification-results.md](../../verification/M2-AC3/verification-results.md)（含判别力 mutation 先红记录；集成方已在 tip `a63d3372` 独立复放 M1/M2 两红并补 raw 日志）。
 - Head ledger：claim=`c754e714` → 实现=`b0112834` → evidence/handoff=交付 tip=`a63d3372`（本 commit；hash 由集成方补充落地）。

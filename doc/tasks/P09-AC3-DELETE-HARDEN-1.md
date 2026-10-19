@@ -117,7 +117,7 @@ evidence_dir: verification/P09-AC3-DELETE-HARDEN-1
 
 ## 复审与返修历史
 
-**逐轮 Review、裁决与返修叙事已移至 [`verification/P09-AC3-DELETE-HARDEN-1/review-history.md`](../verification/P09-AC3-DELETE-HARDEN-1/review-history.md)。**
+**逐轮 Review、裁决与返修叙事已移至 [`verification/P09-AC3-DELETE-HARDEN-1/review-history.md`](../../verification/P09-AC3-DELETE-HARDEN-1/review-history.md)。**
 
 **本文件只保留当前状态**：AC 定论、唯一的 `delivery_head`、当前 Review 指针、未完成项、证据索引、资源清单与 `BLOCKED` 约束。
 

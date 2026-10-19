@@ -22,11 +22,11 @@ dispatch_state: INTEGRATED
 
 # M2-AC5 — Windows Packaging & Clean-start Acceptance
 
-**已释放 `ready`（2026-09-29，用户授权编排会话按进展/需要/前置条件裁量释放；release commit=治理 commit，base=`6f79c040`）。** M2 Acceptance Backlog 第 5 行（Package / clean-start acceptance）。依赖 DIGEST-PERF `done`（integration `bc2529f0`）。[release evidence](../verification/M2-AC5/release-6f79c040.md)。
+**已释放 `ready`（2026-09-29，用户授权编排会话按进展/需要/前置条件裁量释放；release commit=治理 commit，base=`6f79c040`）。** M2 Acceptance Backlog 第 5 行（Package / clean-start acceptance）。依赖 DIGEST-PERF `done`（integration `bc2529f0`）。[release evidence](../../verification/M2-AC5/release-6f79c040.md)。
 
 ## 来源与目标
 
-来源：[Rebaseline Plan](../REBASELINE_PLAN.md) M2 Acceptance Backlog 第 5 行；M2 Release Gate 的硬前置（Gate 的 cold start / packaged dependencies 均依赖"有包可测"）。[AD-001](AD-001_TARGET_DESKTOP_ARCHITECTURE.md) 目标产品的可分发形态缺口。
+来源：[Rebaseline Plan](../REBASELINE_PLAN.md) M2 Acceptance Backlog 第 5 行；M2 Release Gate 的硬前置（Gate 的 cold start / packaged dependencies 均依赖"有包可测"）。[AD-001](../AD-001_TARGET_DESKTOP_ARCHITECTURE.md) 目标产品的可分发形态缺口。
 
 **释放时代码事实（起草核对，Owner 实现时如发现偏差在 Handoff 澄清）**：
 - `apps/desktop/src-tauri/tauri.conf.json` `bundle.active: false`——打包链不存在。
@@ -69,6 +69,6 @@ dispatch_state: INTEGRATED
 ## 交付与运行记录
 
 - Handoff：[doc/handoffs/M2-AC5-eccf88e3.md](../handoffs/M2-AC5-eccf88e3.md)（implementation head=`eccf88e3`；AC1-AC5 全 PASS，clean-start 终版 GATE PASS **25/25**）。
-- Verification：[verification/M2-AC5/verification-results.md](../verification/M2-AC5/verification-results.md) + [checkpoint.md](../verification/M2-AC5/checkpoint.md) + [raw/](../verification/M2-AC5/raw/README.md)（**34 份**原始日志/清单 + README，r2 P3-4 勘误）。
+- Verification：[verification/M2-AC5/verification-results.md](../../verification/M2-AC5/verification-results.md) + [checkpoint.md](../../verification/M2-AC5/checkpoint.md) + [raw/](../../verification/M2-AC5/raw/README.md)（**34 份**原始日志/清单 + README，r2 P3-4 勘误）。
 - Review：r1 [approved_with_conditions](../reviews/M2-AC5-eccf88e3-dsh-r1.md)（0×P0/P1、5×P2，session `ebd574e4`）→ Owner 返修 → r2 [approved](../reviews/M2-AC5-0541b86b-dsh-r2.md)（0×P0/P1/P2、10×P3，session `e30a24a6`）。
-- 集成：merge=`9db08dc7`；集成 head 复跑 cargo 38+1 / pytest 35 / vitest 31 / diff --check 全绿（fresh checkout 需先 `packaging/m2ac5/build_sidecar.ps1` 生成 sidecar 产物，见 [integration record](../verification/M2-AC5/integration-0541b86b/integration.md)）。剩余 P3 由集成方落字闭合或登记候选。
+- 集成：merge=`9db08dc7`；集成 head 复跑 cargo 38+1 / pytest 35 / vitest 31 / diff --check 全绿（fresh checkout 需先 `packaging/m2ac5/build_sidecar.ps1` 生成 sidecar 产物，见 [integration record](../../verification/M2-AC5/integration-0541b86b/integration.md)）。剩余 P3 由集成方落字闭合或登记候选。

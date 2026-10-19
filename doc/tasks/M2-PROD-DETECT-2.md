@@ -107,6 +107,6 @@ DSH r1 review（`G:/CODEX/New Manga.task-envs/M2-PROD-DETECT-2/dsh-review-r1.md`
 
 - **Review 轨迹**：DSH r1 [changes_requested](../reviews/M2-PROD-DETECT-2-dbad2027-dsh-r1.md)（2×P1：R1 warn 载体错位 + R2 AC5 口径越证据；5×P2；无 P0 无伪造）→ acting Codex 三裁决（AC5=PARTIAL / 装配 fail-fast 降级 detect 期对称 / hiddenimports 双保险）→ Owner review-fix `dbad2027`（R1-R12 全 closed，**含前任 Owner 熔断遗留半成品完成交接**；返修中 Owner 二次熔断由新子 agent 续接）→ DSH r2 [approved 可集成](../reviews/M2-PROD-DETECT-2-dbad2027-dsh-r2.md)（N1-N6 非阻塞）→ 集成修正 `a48dbfbd`（N1-N6 全闭 + 全量重建绑定，exe≡集成 commit）。
 - **merge=`9e44fb21`**（parents `1d876ef7`+`3bef8a15`，无冲突，61 文件 +25,705/-77）。集成后 main 三套件 **401 passed + 1 既有环境性失败**（@9e44fb21 复跑）。
-- **集成终态证据**：NSIS 460,181,312B（438.86 MiB）sha256 `07d7daa1…`（GATE 25/25 绑定）；探针 6/6（真实推理稳态 273ms/页、doctr typed NOT_CONFIGURED）；closure 断言三名（transformers/rt_detr/rt_detr_v2）；warn 958 missing/12 桶/0 unclassified、detect 硬依赖零 missing；安装态权重三 sha256=pin；`git diff --check` EXIT=0、禁改面空、权重零 tracked。详见 [integration.md](../verification/M2-PROD-DETECT-2/integration.md)。
+- **集成终态证据**：NSIS 460,181,312B（438.86 MiB）sha256 `07d7daa1…`（GATE 25/25 绑定）；探针 6/6（真实推理稳态 273ms/页、doctr typed NOT_CONFIGURED）；closure 断言三名（transformers/rt_detr/rt_detr_v2）；warn 958 missing/12 桶/0 unclassified、detect 硬依赖零 missing；安装态权重三 sha256=pin；`git diff --check` EXIT=0、禁改面空、权重零 tracked。详见 [integration.md](../../verification/M2-PROD-DETECT-2/integration.md)。
 - **AC 终判**：AC1-AC4/AC6/AC7 ✅，AC5=**PARTIAL**（frozen 进程内 detect 结构性不可达，NOT_RUN 登记后续 slice「M2-IPC1 命令面扩展 + frozen 进程内 detect 验证」）。
 - Owner branch/worktree 保留于 `3bef8a15`。

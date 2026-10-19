@@ -38,7 +38,7 @@ D01 §5；D02 §6/11；D06 §6～23/51～57/80～85；D08 AC-OCR/INPAINT/FALLBAC
 ## Acceptance Criteria
 
 - [x] 按已批准实验报告实现明确选定能力，覆盖本地OCR、韩文OCR、兼容Vision、Translation以及Simple Fill/漫画修复和彩色路线；不可用候选明确禁用，未获批范围不能称完成。
-      → **部分达成、已分列**：能力端口与适配器（manga-ocr / PaddleOCR Korean / OpenAI-compatible Vision / 远程与本地 Sakura 翻译 / Simple Fill+Edge Bleed 基线 / 彩色路线策略）全部交付；**真实 OCR、韩文 OCR、真实彩色修复的质量类判定为 `BLOCKED`**（无依赖/权重/端点），未获批范围（学习型修复路线）未称完成。逐条见 [AC 状态分列](../verification/TASK-019/ac-status.md)。
+      → **部分达成、已分列**：能力端口与适配器（manga-ocr / PaddleOCR Korean / OpenAI-compatible Vision / 远程与本地 Sakura 翻译 / Simple Fill+Edge Bleed 基线 / 彩色路线策略）全部交付；**真实 OCR、韩文 OCR、真实彩色修复的质量类判定为 `BLOCKED`**（无依赖/权重/端点），未获批范围（学习型修复路线）未称完成。逐条见 [AC 状态分列](../../verification/TASK-019/ac-status.md)。
 - [x] 通过统一网络/设备/文件边界接入Pipeline，严格输出映射、显式fallback、Mask/模型/options/provenance与单Region写回限制。
       → `tests/providers/test_handlers_pipeline.py`（真实 SQLite + 真实 seam）与 `tests/providers/test_retry_fallback.py`；`color`/`term_extract`/`render` 三步的 handler 不在本 Task 允许路径，完整链见 AC-RFULL-001 的 `BLOCKED` 登记。
 - [x] 模型延迟加载、下载进度/取消/Hash、Ready判定、OOM隔离、GPU重任务默认单并发；CPU fallback仅在Provider声明支持时执行。
@@ -46,7 +46,7 @@ D01 §5；D02 §6/11；D06 §6～23/51～57/80～85；D08 AC-OCR/INPAINT/FALLBAC
 - [x] D08 §78 的 AC-EXT-SAKURA-001：Sakura Profile 连接测试给出健康/就绪状态与原因，探测范围遵守 U-6；真实服务验证与实现证据必须实测，当前 D13 结果 NOT_RUN。SAKURA-002/003 仍为草案，不自动纳入本任务。
       → 探测实现 **PASS**（5 种结果与原因码；仅请求 `/models`（必要时 `/health`），无显存/负载字段）；**真实服务验证 `NOT_RUN`**：本机无 Sakura 实例，已用真实 `StdlibTransport` 执行一次真实探测（`unreachable` / `connection refused`）。SAKURA-002/003 未实现。
 - [x] 交付 Handoff、实际测试/审阅记录和未完成项，经非作者独立 Review 与 Codex 集成验证后才能 done。
-      → Handoff：[TASK-019-726baf5](../handoffs/TASK-019-726baf5.md)；取证：[verification/TASK-019/](../verification/TASK-019/author-verification.md)；**非作者独立 Review**：[doc/reviews/TASK-019-726baf5.md](../reviews/TASK-019-726baf5.md)（decision=`approved`，F-1～F-7）；**集成**：`integration_commit=3755af9`，集成后复验见 [verification/TASK-019/integration-3755af9.md](../../verification/TASK-019/integration-3755af9.md)。
+      → Handoff：[TASK-019-726baf5](../handoffs/TASK-019-726baf5.md)；取证：[verification/TASK-019/](../../verification/TASK-019/author-verification.md)；**非作者独立 Review**：[doc/reviews/TASK-019-726baf5.md](../reviews/TASK-019-726baf5.md)（decision=`approved`，F-1～F-7）；**集成**：`integration_commit=3755af9`，集成后复验见 [verification/TASK-019/integration-3755af9.md](../../verification/TASK-019/integration-3755af9.md)。
 
 ## 允许修改范围
 
@@ -97,7 +97,7 @@ D01 §5；D02 §6/11；D06 §6～23/51～57/80～85；D08 AC-OCR/INPAINT/FALLBAC
 - Handoff：[TASK-019-726baf5](../handoffs/TASK-019-726baf5.md)（delivery_head=`726baf5`）。
 - Review：尚无（待 Codex 非作者独立 Review）。
 - 实际执行/实验/测试：
-  - 取证总表：[verification/TASK-019/author-verification.md](../verification/TASK-019/author-verification.md)；AC 分列：[ac-status.md](../verification/TASK-019/ac-status.md)；环境：[environment.json](../verification/TASK-019/environment.json)；就绪报告：[readiness-report.json](../verification/TASK-019/readiness-report.json)；真实 Sakura 探测：[sakura-probe-attempt.json](../verification/TASK-019/sakura-probe-attempt.json)；日志：[pytest-providers.log](../verification/TASK-019/pytest-providers.log)、[pytest-regression.log](../verification/TASK-019/pytest-regression.log)、[pytest-full.log](../verification/TASK-019/pytest-full.log)；路径核对：[changed-paths.txt](../verification/TASK-019/changed-paths.txt)。
+  - 取证总表：[verification/TASK-019/author-verification.md](../../verification/TASK-019/author-verification.md)；AC 分列：[ac-status.md](../../verification/TASK-019/ac-status.md)；环境：[environment.json](../../verification/TASK-019/environment.json)；就绪报告：[readiness-report.json](../../verification/TASK-019/readiness-report.json)；真实 Sakura 探测：[sakura-probe-attempt.json](../../verification/TASK-019/sakura-probe-attempt.json)；日志：[pytest-providers.log](../../verification/TASK-019/pytest-providers.log)、[pytest-regression.log](../../verification/TASK-019/pytest-regression.log)、[pytest-full.log](../../verification/TASK-019/pytest-full.log)；路径核对：[changed-paths.txt](../../verification/TASK-019/changed-paths.txt)。
   - 命令与结果（本机 `G:/CODEX/New Manga.task-envs/TASK-012-py312`，Python 3.12.3 / PySide6 6.11.2 / pytest 9.1.1，`PYTHONDONTWRITEBYTECODE=1`，退出码全部 0）：基线 `python -m pytest -q -p no:cacheprovider` = **530 passed / 6 skipped**；`python -m pytest tests/providers` = **110 passed / 0 skipped**；`python -m pytest tests/pipeline tests/core tests/storage` = **78 passed / 0 skipped**；全仓 = **640 passed / 6 skipped**（+110 全部为本 Task 新增；6 条 skip 均在既有 `tests/network`，原因 `openssl unavailable`）。`git diff --check 36242fb..726baf5` 退出码 0；`git diff --name-only c9eb65a..HEAD` 56 条**全部在允许路径内**，禁止路径命中 0。
   - 真实探测（非 mock）：生产 `SakuraProbe` + `StdlibTransport` 对 `http://127.0.0.1:8080/v1` 发起真实连接 → `reason_code=unreachable`、`connection refused`、仅 1 个请求（各证明探测可用与 U-6 范围）。
   - **BLOCKED/NOT_RUN 如实分列**：真实 OCR/韩文 OCR/真实彩色修复质量、真实翻译质量与成本/时延、真实权重下载、`color`/`term_extract`/`render` 接线（AC-RFULL-001 完整链）为 `BLOCKED`；真实 Sakura 服务验证、真实端点端到端为 `NOT_RUN`。**未以 mock/替身冒充模型质量或真实端点**。

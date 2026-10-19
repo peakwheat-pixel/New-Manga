@@ -24,7 +24,7 @@ dispatch_state: INTEGRATED
 
 ## 来源与目标
 
-登记于 M2-AC2 集成收口（2026-09-28，integration `9d3c1db5`，[集成记录](../verification/M2-AC2/integration-c3ee8dbe/integration.md) §⑤），经编排会话按 [GOAL](../GOAL.md) G2 于 2026-09-29 释放（代理裁决，用户可撤销；理由=范围最小、已登记候选、解除 ImportPages 扩面前置）。
+登记于 M2-AC2 集成收口（2026-09-28，integration `9d3c1db5`，[集成记录](../../verification/M2-AC2/integration-c3ee8dbe/integration.md) §⑤），经编排会话按 [GOAL](../GOAL.md) G2 于 2026-09-29 释放（代理裁决，用户可撤销；理由=范围最小、已登记候选、解除 ImportPages 扩面前置）。
 
 缺陷（M2-AC2 Owner 实现发现 + DSH r2 P3-3 实证；起草时经代码复核）：`src/bootstrap/core_service.py:51-54` 的 `_PassthroughImageDecoder` stub 构造 `DecodedImage(width=1, height=1, format="rgb")`，而 `DecodedImage` 真实字段只有 `width/height/mime_type`（`src/application/importing/images/ports.py:11-16`）→ **双重 TypeError**：多余字段 `format=` + 缺失必填参数 `mime_type`。任何经该 stub 的导入都会崩。M2-IPC1 冻结命令面不含 import 故 production 未受影响；M2-AC2 验收经 assembly adapter-injection 自备 decoder 绕开。
 
@@ -62,7 +62,7 @@ dispatch_state: INTEGRATED
 ## 交付与运行记录
 
 - Handoff：`doc/handoffs/M2-FIX-STUB-DECODER-owner-delivery.md`（Owner=ZCode 子 agent 代行，用户授权 2026-09-28）。
-- Review：DSH r1（非作者静态）**approved_with_conditions**，0×P0/P1/P2，6×P3 不阻塞；归档 `doc/reviews/M2-FIX-STUB-DECODER-69250a39-dsh-r1.md`（SHA256 `d17b4262466ce4b9382b63319859f44c40aeb3c498db03692b61908c3a7d7fe6`）。C1/C2 由 Integrator 代跑关闭，P3-1..P3-6 处置见 [集成记录](../verification/M2-FIX-STUB-DECODER/integration-69250a39/integration.md)。
+- Review：DSH r1（非作者静态）**approved_with_conditions**，0×P0/P1/P2，6×P3 不阻塞；归档 `doc/reviews/M2-FIX-STUB-DECODER-69250a39-dsh-r1.md`（SHA256 `d17b4262466ce4b9382b63319859f44c40aeb3c498db03692b61908c3a7d7fe6`）。C1/C2 由 Integrator 代跑关闭，P3-1..P3-6 处置见 [集成记录](../../verification/M2-FIX-STUB-DECODER/integration-69250a39/integration.md)。
 - 实际测试（2026-09-28，TASK-012-py312，Windows x64 · Git Bash · Python 3.12.3 · pytest 9.1.1）：
   - 先红：TypeError @ `core_service.py:54`，2 failed，EXIT=1 → 修复后 2 passed，EXIT=0（`tests/core/test_stub_decoder.py`）。
   - 回归：`tests/core/` 76 passed；`tests/m2_acceptance` 32 passed + 2 xfailed（F-1/F-2 受控缺陷证据，未触碰）；均 EXIT=0。

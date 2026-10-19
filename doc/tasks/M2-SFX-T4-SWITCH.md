@@ -66,7 +66,7 @@ T3 正式评测门（done @merge `27817412`）逐门判定：**v2b（best.onnx `
 - **P3-3 AC1「新增故障=0」断言面说明**：`compare_g7_arms.py` 硬断言实际消费的是两臂 `attribution` 集合差（=新增 attribution=0）；`qual-report.failures=0`+逐 stage OK/COMPLETED 为佐证证据未被脚本消费。DSH 独立逐字段复核确认结论方向正确（两臂 attribution 空集+全 stage OK+failures=0）。断言面收窄已登记，脚本强化（并入 failures==0）留待下次重跑时一并（避免脚本与已落盘证据版本差）。
 - **P4 级登记（下轮补强，非阻断）**：锚 JSON 仅 rgb24 面（rgb32 走同一 provider 路径由独立测试钉住）；冻结探针 FV-1 PASS 判据不含 sfx 候选存在（记录面宽于判据面，观测值含 sfx-1/0.9047）；AC3/AC4 console 缺 shell 级退出码捕获；`rollback-drill.json` 的 `weights_sha256_verified_by_gate` 为脚本常量回显（真证明=`_build_engine` 内部比对通过）。
 
-**交付 head**：AC5 commit（见 branch tip）；详细部署指引与 NOT_RUN 清单见 [switch-report](../verification/M2-SFX-T4-SWITCH/switch-report.md) 与 [Handoff](../handoffs/M2-SFX-T4-SWITCH-zcode-20261006.md)。
+**交付 head**：AC5 commit（见 branch tip）；详细部署指引与 NOT_RUN 清单见 [switch-report](../../verification/M2-SFX-T4-SWITCH/switch-report.md) 与 [Handoff](../handoffs/M2-SFX-T4-SWITCH-zcode-20261006.md)。
 
 ## Review 返修记录
 

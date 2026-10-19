@@ -28,7 +28,7 @@ worktree: G:/CODEX/New Manga.worktrees/M2-DOCTR-QUAL-C4-zcode
 
 ## 冻结口径
 
-- 评分口径全套沿用 [thresholds.json](../../../experiments/M2-DOCTR-QUAL/thresholds.json)（用户裁决 2026-09-30 冻结版）：**block_coverage 主判定**（生产合并块）、Gate 三项（Recall ≥ 0.92 / Mean coverage ≥ 0.60 / severe ≤ 0.05）、**生产 pad 6px 为正式结果** + pad 抵消（strip 6px）附报、Precision 仅受污染观测下界不作 Gate（GT 盲区：SFX/背景文字未标注——结论表述必须带此前提）。
+- 评分口径全套沿用 [thresholds.json](../../experiments/M2-DOCTR-QUAL/thresholds.json)（用户裁决 2026-09-30 冻结版）：**block_coverage 主判定**（生产合并块）、Gate 三项（Recall ≥ 0.92 / Mean coverage ≥ 0.60 / severe ≤ 0.05）、**生产 pad 6px 为正式结果** + pad 抵消（strip 6px）附报、Precision 仅受污染观测下界不作 Gate（GT 盲区：SFX/背景文字未标注——结论表述必须带此前提）。
 - 对照基线（均已集成，直接引用）：fast_base 正式 Recall **0.4776**（MeanCov 0.7531 / severe 0.0385）、db_resnet50 **0.6085**（severe 0.0192）。
 - 评测基座复用：manifest= `G:/CODEX/New Manga.task-envs/M2-DOCTR-QUAL-work/eval-manifest.full.seg05.json`；GT 与评分/合并逻辑复用已集成 `eval_detection.py`（生产合并 MERGE_PAD_PX=6、三层评分、一对一贪心匹配）——**以 import 复用为主，禁止修改已集成文件的判定逻辑**。
 

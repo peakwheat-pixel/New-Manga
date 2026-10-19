@@ -22,7 +22,7 @@ evidence_dir: verification/P19-BOOT-1
 # P19-BOOT-1：修复 Core 自举的部分初始化崩溃
 
 ## 来源（**为什么需要**）
-**P19 的 D+（真实 WebView2 + CDP）验收第 1 步**（启动打包应用）即失败：`m2rc1-desktop.exe` **立即退出 exit 101**。完整复现、代码定位与证据见 **[verification/P19/boot-defect-r1.md](../verification/P19/boot-defect-r1.md)**（发现者 dsh，2026-10-17）。
+**P19 的 D+（真实 WebView2 + CDP）验收第 1 步**（启动打包应用）即失败：`m2rc1-desktop.exe` **立即退出 exit 101**。完整复现、代码定位与证据见 **[verification/P19/boot-defect-r1.md](../../verification/P19/boot-defect-r1.md)**（发现者 dsh，2026-10-17）。
 
 **根因（已定位到行）**：`src/bootstrap/core_service.py` **L3337** 以"`catalog.sqlite` 是否存在"判定"命名空间是否已初始化"，但二者可**不一致**：
 

@@ -42,7 +42,7 @@ integration_commit: 2b40085731227e99d152a413fa6887d53fe99199
 - [x] **AC ②（成本对照，主 AC）**：同一 shell + 同一 venv，同一页尺寸与同一测量脚本，修复前 vs 修复后**逐次**记录（≥3 次）：
   - `rewind` 次数：全页扫掠的 rewind 数**不再 = 块数 − 1**（目标 ≤1/次调用，单块调用为 0）；
   - 墙钟：`1600×8000` Qt 编码页"单块 → 两块同调用"的**额外**耗时应落在噪声级（对照 ≈8.9–9.7s）；`400×20000` 全页扫掠耗时同步下降；
-  - 与 `verification/TASK-045/rewind-cost-probe.txt`、[author-probes-rerun.txt](../verification/TASK-045/review-1171bc5/author-probes-rerun.txt) 的基线数字逐项对照。
+  - 与 `verification/TASK-045/rewind-cost-probe.txt`、[author-probes-rerun.txt](../../verification/TASK-045/review-1171bc5/author-probes-rerun.txt) 的基线数字逐项对照。
   ✅ rewinds 24→0（全页）、1→0（两块）；全页 0.92→0.17s（≈5.4×）；基线逐项吻合。**⚠ "额外耗时噪声级"字面未达成，已归因**：残余 4.61–5.22s = 第二块自身的线性解码成本（重扫增量 ≈4s 已消除）——如实登记于 Handoff AC② 表，交 Reviewer 裁定。
 - [x] **AC ③（像素语义不变）**：`tests/reading_export/**` 既有几何/带宽/缓存键/逐行断言**逐条不变**（不得放宽）：瓦片文件高度 == 声明 `content_height`、每块行 == 该页对应行、拼接 == 整页；全屏/视口请求返回的文件集合语义不变。
   ✅ 既有断言 0 修改 0 删除（diff 仅新增）；修后定向 136 passed / 0 skipped。

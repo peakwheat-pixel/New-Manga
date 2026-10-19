@@ -121,7 +121,7 @@ delivery_ledger: claim=33280f5e -> ac2-fix=29c71024 -> gate-v1=a1100d75 -> bookk
 ## 产物与交接链接
 
 - Handoff：`doc/handoffs/M2-RG1-a1100d75.md`（初交付版 + r1 返修节 + **r2 返修节**；r1 返修 delivery_head `05a8f93a7a96…`（仅历史），r2 后现行 delivery_head = 内容修正 commit `e752ba39c2cd…`，见 frontmatter 与 P2-1(N) 字面量口径）
-- Release evidence：`verification/M2-RG1/release-875eb818.md`（已交付；汇总表 [verification-results.md](../verification/M2-RG1/verification-results.md)——r1 返修后为 v2 版）
+- Release evidence：`verification/M2-RG1/release-875eb818.md`（已交付；汇总表 [verification-results.md](../../verification/M2-RG1/verification-results.md)——r1 返修后为 v2 版）
 - Review 报告：`doc/reviews/M2-RG1-a1100d75-dsh-r1.md`（DSH 非作者 r1，approved_with_conditions，集成方导入 @ e218cc65；r1 返修闭合清单见 Handoff r1 返修节）
 
 ## 已知阻塞

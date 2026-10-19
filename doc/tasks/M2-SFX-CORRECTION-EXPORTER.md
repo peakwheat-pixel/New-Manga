@@ -65,7 +65,7 @@ depends_on 均 done（T5b 是运行时数据来源而非本 Task 硬依赖——
 
 - Handoff：[M2-SFX-CORRECTION-EXPORTER-zcode-delivery-9c7cf7bc.md](../handoffs/M2-SFX-CORRECTION-EXPORTER-zcode-delivery-9c7cf7bc.md)（delivery_head=9c7cf7bc；提交链 1b765007→df0e05c4 claim→9c7cf7bc 实现→文档回填；尾部附 DSH r1 修订段）。
 - Review：DSH r1=changes_requested（P1-1 必修 + P2-1 + P3×5 + P4×10），已于 r1 返修 commit 全量处置（对照见 Handoff「DSH r1 修订段」findings_disposition）；待 DSH r2。
-- 实现：`experiments/M2-SFX-CORRECTION-EXPORTER/`（scanner/samples/eligibility/export/fixture/cli + 50 测试（r1 返修后）+ README）；报告 [exporter-report.md](../verification/M2-SFX-CORRECTION-EXPORTER/exporter-report.md)；导出物 training_data/sfx-corrections/（gitignored，Git 只进摘要）。
+- 实现：`experiments/M2-SFX-CORRECTION-EXPORTER/`（scanner/samples/eligibility/export/fixture/cli + 50 测试（r1 返修后）+ README）；报告 [exporter-report.md](../../verification/M2-SFX-CORRECTION-EXPORTER/exporter-report.md)；导出物 training_data/sfx-corrections/（gitignored，Git 只进摘要）。
 
 
 ## 集成收口（2026-10-04，编排会话代行 Codex）

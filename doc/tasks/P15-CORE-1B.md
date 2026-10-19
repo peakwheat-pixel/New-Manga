@@ -22,7 +22,7 @@ evidence_dir: verification/P15-CORE-1B
 # P15-CORE-1B：设置面 Core 实现 B：G22 凭据面 + G23 Network CRUD/默认/解析（不含测试命令）
 
 ## 来源
-P15-CORE-1 因契约 §5.2 的 TestNetworkProfile 目标缺口**失败关闭**，经裁决拆分为 1A/1B/1C（见 [ruling](../verification/PROJECT-ORCHESTRATION-20261016/ruling-P15-CORE-1-network-test.md)）。**本 Task 不受该缺口影响**，可直接实现。
+P15-CORE-1 因契约 §5.2 的 TestNetworkProfile 目标缺口**失败关闭**，经裁决拆分为 1A/1B/1C（见 [ruling](../../verification/PROJECT-ORCHESTRATION-20261016/ruling-P15-CORE-1-network-test.md)）。**本 Task 不受该缺口影响**，可直接实现。
 
 ## 范围
 实现契约 **§4.2**（受信 Host↔Core：`BindProfileCredential` / `ClearProfileCredential`）与 **§5.1**（Network Profile CRUD、`settings_network_profile_default_set/clear`、`settings_network_profile_resolve`）。**不含** `settings_network_profiles_test`（属 1C，等 P15-C1-FU1）。

@@ -27,7 +27,7 @@ integration_commit: 27253240d0fb2a8df82b15f34546cd74dc9b717f
 | 项 | 来源 | 现状（Codex 释放前实测，master `edfdcf2`） |
 |---|---|---|
 | **R-02** | TASK-034 Review [R-02](../reviews/TASK-034-002889e.md)（并入原 R-07 冻结项） | `RoutePolicy.from_settings({'inpaint': 'oops'}, default=…)` → **静默返回默认**（`inpaint` **段本身**非 mapping 被当作"键缺失"）。`route_policy` 非 mapping 已是 fail-loud（TASK-034 R-2），**段**类型错误却仍被静默忽略 |
-| **R-07a** | [TASK-034 AC ① 裁决](TASK-034-ac1-route-policy-ruling.md) R-7（本次解除冻结） | `allowed_routes='simple-fill'` → **逐字符展开** 11 个单字符 `('s','i','m',…)`；`fallback_routes` 同型 |
+| **R-07a** | [TASK-034 AC ① 裁决](../reviews/TASK-034-ac1-route-policy-ruling.md) R-7（本次解除冻结） | `allowed_routes='simple-fill'` → **逐字符展开** 11 个单字符 `('s','i','m',…)`；`fallback_routes` 同型 |
 | **R-07b** | 同上（D-9 记录的同型陷阱） | `requirements={'brushnet': 'false'}` → `{'brushnet': True}`（`bool("false")` 恒真） |
 | **R-05** | TASK-034 Review R-05 / Handoff N-1 | `src/ui/viewmodels/export/viewmodel.py` 的 `_finish`（`:379-389`）与 `_fail`（`:391-398`）**先清 `self._running`，后写 `_status` 并 emit 终态信号** → 观察者可在"标志已清、终态未发布"的**半发布窗口**内读到不一致状态（导出类测试 flaky 的机制根因） |
 

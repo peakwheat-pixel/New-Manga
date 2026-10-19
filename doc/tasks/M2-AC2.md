@@ -24,7 +24,7 @@ dispatch_state: INTEGRATED
 
 ## 目标
 
-在 production 装配 + 真实 SQLite + 真实文件系统上，验收 [Rebaseline Plan](../REBASELINE_PLAN.md) M2 Acceptance Backlog 第 2 行的全部数据安全承诺：**source hash 完整性、Managed Copy 隔离、人工修改保留、Lock 与 current/pinned Revision 完整性、端到端恢复**。这是产品"保护用户源文件、人工修改、Lock、current/pinned Revision"核心主张的验收 Task（[AD-001](AD-001_TARGET_DESKTOP_ARCHITECTURE.md)）。
+在 production 装配 + 真实 SQLite + 真实文件系统上，验收 [Rebaseline Plan](../REBASELINE_PLAN.md) M2 Acceptance Backlog 第 2 行的全部数据安全承诺：**source hash 完整性、Managed Copy 隔离、人工修改保留、Lock 与 current/pinned Revision 完整性、端到端恢复**。这是产品"保护用户源文件、人工修改、Lock、current/pinned Revision"核心主张的验收 Task（[AD-001](../AD-001_TARGET_DESKTOP_ARCHITECTURE.md)）。
 
 验收形态：纯 Python Core 层验收模块（`tests/m2_acceptance/test_data_integrity.py`），复用 M2-AC1 的真实装配手法（production assembly、临时 data root、真实进程级重启=重装配），**不扩 IPC 命令面、不走 test-mode bridge**。与 M2-P1 的单缺陷判别不同，本 Task 是矩阵化验收：每个承诺一个场景族，先证明语义存在，再证明破坏被拒绝/检出。
 

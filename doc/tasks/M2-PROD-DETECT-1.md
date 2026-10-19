@@ -106,4 +106,4 @@ delivery_head: a016d38c
 - **集成修正 `320d7955`**（acting Codex，doc/注释-only）：N1 release note 死链改 `verification/` 路径、N2 frontmatter `delivery_head` 加消歧注、N3 行数/计数同步（436 行/28 项）、N4 NaN 措辞收紧（±inf 归 clip 既有语义）。
 - **merge=`056617e4`**（parents `2fee7d6e`+`320d7955`，无冲突，11 文件全允许路径、1693 insertions）。集成后 main 三套件 387 passed + 1 既有环境性失败（与 base 集合一致）。
 - **NOT_VERIFIED 复跑处置**（DSH r1/r2 清单）：pytest 计数全对齐（含 R8 skip 未触发确认）；三权重文件 SHA-256 字节级复算逐字一致；git 层（commit 链/归属拆分/diff --check/禁改专项 diff）全过；sidecar GATE 25/25 沿用 Owner 轮证据（review-fix 后源码变化仅错误消息与 NaN 校验，均不在 GATE 场景路径，闭包面 +0 文件不变——如实登记为本集成轮的推定，未重建复跑）；C4 GPU 76.1ms 与 CPU envelope 315.6ms 为已冻结的量级参考（口径注已补，不复测）。
-- **登记**：后续 slice 候选两项（发布形态检测器运行时/权重分发、manga 权重 fetch/verify SOP）见上文「遗留 slice 候选」；`test_registry_readiness` 环境断言遗留另立 slice 候选。记录：[integration.md](../verification/M2-PROD-DETECT-1/integration.md)。Owner branch/worktree 保留于 `320d7955`。
+- **登记**：后续 slice 候选两项（发布形态检测器运行时/权重分发、manga 权重 fetch/verify SOP）见上文「遗留 slice 候选」；`test_registry_readiness` 环境断言遗留另立 slice 候选。记录：[integration.md](../../verification/M2-PROD-DETECT-1/integration.md)。Owner branch/worktree 保留于 `320d7955`。

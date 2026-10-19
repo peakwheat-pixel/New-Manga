@@ -22,7 +22,7 @@ evidence_dir: verification/P15-CORE-1A
 # P15-CORE-1A：设置面 Core 实现 A：G21 Provider 面 + G24 覆盖解析
 
 ## 来源
-P15-CORE-1 因契约 §5.2 的 TestNetworkProfile 目标缺口**失败关闭**，经裁决拆分为 1A/1B/1C（见 [ruling](../verification/PROJECT-ORCHESTRATION-20261016/ruling-P15-CORE-1-network-test.md)）。**本 Task 不受该缺口影响**，可直接实现。
+P15-CORE-1 因契约 §5.2 的 TestNetworkProfile 目标缺口**失败关闭**，经裁决拆分为 1A/1B/1C（见 [ruling](../../verification/PROJECT-ORCHESTRATION-20261016/ruling-P15-CORE-1-network-test.md)）。**本 Task 不受该缺口影响**，可直接实现。
 
 ## 范围
 实现契约 **§3.2**（Provider Profile CRUD、Capability 默认绑定）、**§3.3**（Run Snapshot 冻结查看）与 **§6**（`settings_resolve_overrides` 只读）对应的 Core 命令：`settings_provider_profiles_list/create/update/delete`、`settings_provider_bindings_set/clear/resolve`、`settings_provider_run_snapshot_get`、`settings_resolve_overrides`。

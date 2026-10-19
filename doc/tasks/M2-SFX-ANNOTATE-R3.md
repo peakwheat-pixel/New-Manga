@@ -80,7 +80,7 @@ AC4：三文档齐。
   底册口径差异如实登记：ask 字面「R2 final manifest 82」实为 preanimate 82/final 351（report §0）。
 - **GT 性质=ai-consensus**（human_review=false，沿 R1 §0 口径）；T3 材料更新=report §6 仅提案不裁决
   （考卷是否随正集扩容重划留用户/编排裁决）。
-- 证据：[stage-r3-report.md](../verification/M2-SFX-ANNOTATE-R3/stage-r3-report.md)（全部数字为收尾轮从盘上
-  产物复算，§2.2 十三项复算记录）+ [stage-r3-summary.json](../verification/M2-SFX-ANNOTATE-R3/stage-r3-summary.json)
-  + [Handoff](../doc/handoffs/M2-SFX-ANNOTATE-R3-zcode-20261005.md)。
+- 证据：[stage-r3-report.md](../../verification/M2-SFX-ANNOTATE-R3/stage-r3-report.md)（全部数字为收尾轮从盘上
+  产物复算，§2.2 十三项复算记录）+ [stage-r3-summary.json](../../verification/M2-SFX-ANNOTATE-R3/stage-r3-summary.json)
+  + [Handoff](../../doc/handoffs/M2-SFX-ANNOTATE-R3-zcode-20261005.md)。
 - 状态：**in_review**（待 Reviewer=DeepSeek Harness 非作者独立 Review；通过后编排会话代行 Codex 集成）。

@@ -23,7 +23,7 @@ worktree: G:/CODEX/New Manga.worktrees/M2-TA3-B2-zcode
 
 ## 交付（AC）
 
-按 [quality-thresholds.md](../verification/M2-TA3-B/quality-thresholds.md)（阶段一冻结提案）与 [phase2-plan.md](../verification/M2-TA3-B/phase2-plan.md)（13 步清单）执行，交付：
+按 [quality-thresholds.md](../../verification/M2-TA3-B/quality-thresholds.md)（阶段一冻结提案）与 [phase2-plan.md](../../verification/M2-TA3-B/phase2-plan.md)（13 步清单）执行，交付：
 
 1. **AC1 全链 run**：20 case（ja 10 + ko 10）全链 detect→OCR→translate→inpaint→render→export，detect=manga ogkalu 生产 provider（含 SFX chiqui7 并行）、OCR=ja manga-ocr / ko PaddleKoreanOcrProvider+双侧 wrapper（R6 探针已验证，box 物化 Python list）、translate=DeepSeek（SfxPolicy 默认 SKIP 口径）、inpaint/render/export 生产链；逐 case 结果登记，region 策略默认取消 `max_regions=40` 截断（`--max-regions` 逃生阀使用时必须置 `truncated: true`）。
 2. **AC2 自动评测**：G1 CER（ja：J46/J47 SVG 文本层；ko：K11/K19 present-but-unaligned 需人工对齐登记——按 r2 N1 在阈值文档补披露后按登记口径执行）、SFX translation non-fail 统计（n<15 只登记分布）、region_count=0 豁免、失败分类 typed。
@@ -52,7 +52,7 @@ worktree: G:/CODEX/New Manga.worktrees/M2-TA3-B2-zcode
 
 | AC | 结果 | 证据 |
 |---|---|---|
-| AC1 全链 run | 执行完成；**全链 Gate FAIL 如实登记**：ja 10/10 全链 completed+export OK（56 region、48 翻译=56−8 SFX、无截断；r1 R6 数字勘误：原写 53 无法由任何口径复原）；ko 9/10 fail-closed 于两条生产域缺口（F1 ogkalu 对 webtoon 长条漫 0 候选、F2 Qt 256MB 解码上限拒 K07/K09/K10 导入）；K11 修复后 export OK 但 run2 携带 2 个 typed data 失败；pipeline_failures=10（构成附表见 quality-report §1.1a） | [quality-report.md](../verification/M2-TA3-B/quality-report.md) §1 + `phase2/summaries/`（20 summary+report） |
+| AC1 全链 run | 执行完成；**全链 Gate FAIL 如实登记**：ja 10/10 全链 completed+export OK（56 region、48 翻译=56−8 SFX、无截断；r1 R6 数字勘误：原写 53 无法由任何口径复原）；ko 9/10 fail-closed 于两条生产域缺口（F1 ogkalu 对 webtoon 长条漫 0 候选、F2 Qt 256MB 解码上限拒 K07/K09/K10 导入）；K11 修复后 export OK 但 run2 携带 2 个 typed data 失败；pipeline_failures=10（构成附表见 quality-report §1.1a） | [quality-report.md](../../verification/M2-TA3-B/quality-report.md) §1 + `phase2/summaries/`（20 summary+report） |
 | AC2 自动评测 | ko G1 自动子集 n=6 median **0.0556**（提案 ≤0.20 → PASS，directional，对齐抽验 4/4）；ja G1 **NOT_AUTOMATED**（SVG credits 与 detect region 文本族不重合）；SFX n=0<15 只登记分布；G2 待审 50 行 | quality-report §2 + `phase2/ocr/cer-*` + `svg-gt-*` |
 | AC3 渲染确定性 | **BJ02 PASS（语义=Run1 页面级全链（含 remote 批量翻译）两次独立 run 逐位一致——export 复制 Run1 渲染产物，Run2 的 DB 更新不触发重渲染，r1 R1 集成方定案）**；K11 FAIL——根因在 Run1 内部非确定环节（OCR 已排除 0/13，未逐层隔离）；Run2 译文浮动 7/11（非空口径）为独立 remote 采样观察、不进入 export；K01 无产物 NOT_ACHIEVABLE；独立复算 **13/13**（含两个 .rerun 导出，`verify_exports.py` all_match）；确定性 Gate 在 remote 翻译下的重定义（reading_order 对齐译文相似度）=F5 裁决点移交 | quality-report §5 + `phase2/summaries/rerun-compare.json` + `phase2/export/export-hash-recompute.json` |
 | AC4 对白可读性预填 | 工作表 n=26（ja15+ko11，ko 池受 F1 级联限制，缺口如实登记）；**对 AC4 字面要求的双缺口（r1 R12 并列挂账）：n=26<30 + BJ06/BJ10 SFX 示例=0（生产 SfxPolicy 默认 SKIP，SFX→translate 通路未满足前置）**；DeepSeek 自评 ai_draft + owner 6-crop 抽检校准；用户终审=后续步骤（非本 Task 关闭条件） | `phase2/translate/dialogue-readability-worksheet.*` |
