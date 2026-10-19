@@ -3,7 +3,7 @@ id: GOV-UNTRACKED-BACKLOG-1
 title: 仓库未入库积压（1591 文件）的分类与边界化
 kind: governance
 governance_version: 2
-status: in_progress
+status: in_review
 approval: dsh_release_2026-10-20_measured_1591_files
 suggested_owner: dsh
 owner: dsh
@@ -13,7 +13,7 @@ base_commit: 6ee8c87b1
 branch: GOV-UNTRACKED-BACKLOG-1
 worktree: null
 integration_commit: null
-delivery_head: null
+delivery_head: 60970cf9da4b2852aeaf5b64f0c9e80883189684
 canonical_evidence_status: pending
 resource_closeout_status: pending
 evidence_dir: verification/GOV-UNTRACKED-BACKLOG-1
@@ -121,10 +121,26 @@ verification/P02/dsh-appcontainer-contract-r3-review-attempt1.status.txt
 交付时登记：分类矩阵、引用核查表、两个异常条目的指纹与结论、Handoff、Review、checker 输出。
 每项记录仓库相对路径、含文件 commit、SHA-256、class。
 
+| evidence_id | AC/Gate | path（仓库相对路径或绝对路径） | commit | sha256 | class (`CANONICAL` / `SOURCE_PIN`) |
+|---|---|---|---|---|---|
+| BACKLOG-AC1 | AC1 | `verification/GOV-UNTRACKED-BACKLOG-1/ac1-ac3-composition-and-references.md` | `60970cf9d` | `a86b42336085345e0d27edf5664061aac53d4337caf98e0b23a80ca62d883e6a` | `CANONICAL` |
+| BACKLOG-AC1-JSON | AC1 | `verification/GOV-UNTRACKED-BACKLOG-1/ac1-ac3-inventory.json` | `60970cf9d` | `4ec0cf8b8f4fed0eb9169a00a3eb948c54cd52f6f07c4093bf30e2165efff1db` | `CANONICAL` |
+| BACKLOG-AC2 | AC2 | `verification/GOV-UNTRACKED-BACKLOG-1/ac2-anomalous-entries.md` | `60970cf9d` | `9b8a87549371cd17a77812c7e1c80df1de067b2c2074c1ab7050a0fccb1f827b` | `CANONICAL` |
+| BACKLOG-AC3 | AC3 | `verification/GOV-UNTRACKED-BACKLOG-1/ac3-references.json` | `60970cf9d` | `e4dd2cb52db29825d6e241cf4b1510f74e348eb30da6c7372a05cf30585df3dc` | `CANONICAL` |
+| BACKLOG-AC4 | AC4 | `verification/GOV-UNTRACKED-BACKLOG-1/ac4-worktree-mirror-guide.md` | `60970cf9d` | `9611a6c0be6a9d91d58a060003f1338c51e7ef7aeb7561f23f3d1e36b50b8945` | `CANONICAL` |
+| BACKLOG-HANDOFF | AC6 | `doc/handoffs/GOV-UNTRACKED-BACKLOG-1-60970cf9d.md` | `60970cf9d` | `bd978b7d2865dde1865260ce147fb4e71a9115a4e54680829701ff5d06eefed6` | `CANONICAL` |
+
 ## Resource Manifest
 
 本 Task 不处置资源，只记录。交付时逐项登记盘点范围内的顶层目录与其保留结论；
 `NOT_APPLICABLE` 需有核实依据。
+
+| resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
+|---|---|---|---|---|---|
+| untracked backlog | `verification/`、`.orchestrator/`、`doc/`、`archive/` 下的 1591 个未入库文件 | `PRESERVE_UNKNOWN` | 原路径保留 | `doc/tasks/GOV-UNTRACKED-BACKLOG-1.md` | 本 Task 只读盘点，未删除/移动/归档任何一项；137 项被已入库文档引用，一律留原路径 |
+| CON (reserved name) | `CON` | `PRESERVE_REFERENCED` | `CON` | `8241373a2cc3ac428786e92b23a5872952cf7635e8a5153cac660560c4ac8714` | 34778 bytes，SHA-256 8241373A2CC3AC428786E92B23A5872952CF7635E8A5153CAC660560C4AC8714；内容为真实 SFX 哈希清单，不得删除 |
+| evidence dir | `verification/GOV-UNTRACKED-BACKLOG-1/` | `PRESERVE_REFERENCED` | `verification/GOV-UNTRACKED-BACKLOG-1/` | `9611a6c0be6a9d91d58a060003f1338c51e7ef7aeb7561f23f3d1e36b50b8945` | 6 份证据，均为本 Task AC 直接产物 |
+| agent output | 仓外 agent-output，非本 Task 交付物 | `NOT_APPLICABLE` | — | `doc/tasks/GOV-UNTRACKED-BACKLOG-1.md` | 派发产物不入库 |
 
 ## Closeout Record
 
