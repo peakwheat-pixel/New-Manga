@@ -1154,7 +1154,11 @@ class SqliteLibraryRepository:
                 # containment passes.  The candidate keeps resolve(), which is what makes an
                 # escape visible.  Same defect class as N-004.
                 root = Path(os.path.abspath(str(storage.root)))
-                books_base = (root / "books").resolve()
+                # R5 P1 (8th site, found by auditing every .resolve() rather than the
+                # pattern I had assumed): books_base is a BASELINE, so it must not be
+                # resolved either.  root is abspath now, but resolving books_base would
+                # still follow a junction planted at root/books and move the bound.
+                books_base = Path(os.path.abspath(str(root / "books")))
                 book_dir = root / "books" / book_id
                 resolved_dir = book_dir.resolve()
                 if (

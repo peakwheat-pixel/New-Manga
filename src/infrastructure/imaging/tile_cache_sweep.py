@@ -11,6 +11,7 @@ remover so the managed-root boundary stays enforced in one place.
 
 from __future__ import annotations
 
+import os
 from pathlib import Path
 
 from application.maintenance.cleanup import CleanupTarget
@@ -31,7 +32,12 @@ class WebtoonTileCacheSweeper:
         if not self._cache_root.is_dir():
             return ()
         resolved_cache = self._cache_root.resolve()
-        prefix = resolved_cache.relative_to(self._managed_root.resolve())
+        # R5 P1 (9th site): _managed_root is the configured baseline and must not be
+        # resolved.  resolved_cache stays resolved - it is the candidate here, so a
+        # junctioned cache_root fails this relative_to instead of silently matching.
+        prefix = resolved_cache.relative_to(
+            Path(os.path.abspath(str(self._managed_root)))
+        )
         targets = []
         for path in sorted(self._cache_root.glob(_TILE_GLOB)):
             # TASK-060 Q-007 ②: re-check *after* resolution — a reparse
