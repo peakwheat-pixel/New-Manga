@@ -1,0 +1,7 @@
+runner=smoke-four-pages.ps1
+exe=G:\CODEX\New Manga\apps\desktop\src-tauri\target\debug\m2rc1-desktop.exe
+exe_sha256=be593a886c2a90ff3175fadb6164d79406798d4f63a43cdf2505d3eac3979574
+iso=C:\Users\49745\AppData\Local\Temp\p19-smoke-93a37a56
+checks=5
+fails=0
+exit_code=0
