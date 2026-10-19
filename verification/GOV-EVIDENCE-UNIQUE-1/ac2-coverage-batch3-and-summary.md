@@ -182,7 +182,6 @@ AC5–AC8 为约束/交付类记 `NOT_APPLICABLE` 与 `PARTIAL` 混合，明细�
 | `P15-CORE-1C` AC6 | 命令 + 环境 + 退出码 + 日志 + 制品核验，五件齐全 |
 | `P19-UI-FIX-1` AC1 | 3 份 UIA 采集，`count=9` 直接对应九个按钮 |
 | `FEAT-CREATE-4` AC1 | GUI 实测日志给出 `enabled=true` 断言值 |
-| `P15-HOST-2` AC5 | 三次 vitest 递进 + core 508 passed，最终依据可辨识 |
 
 **共同点：它们都要求「可观测的状态值」，且候选集里恰有记录该值的日志。**
 
@@ -212,7 +211,7 @@ AC5–AC8 为约束/交付类记 `NOT_APPLICABLE` 与 `PARTIAL` 混合，明细�
 | 项 | 状态 |
 |---|---|
 | 13 个 Task 的 AC 全部提取并判定 | **完成**（83 个 AC） |
-| 四个 `COVERED` 逐个给出理由 | **完成** |
+| 三个 `COVERED` 逐个给出理由 | **完成** |
 | 缺口具体到「缺哪一件」 | **完成**（多数结论精确到文件类型） |
 | 每个 `PARTIAL`/`EVIDENCE_GAP` 的不确定性说明 | **完成** |
 
