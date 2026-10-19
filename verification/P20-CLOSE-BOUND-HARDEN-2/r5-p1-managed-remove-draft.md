@@ -106,6 +106,31 @@ depends_on: [P09-AC3-DELETE-HARDEN-1]
 
 **建议的排查方式**：搜索 `resolve()` 与 `unlink`/`remove`/`rmtree` 同现的函数，逐个判断其基准是否被解析。
 
+### 六之二、同类排查结果（2026-10-19 实查，只读）
+
+按上述方式搜索「同时含 `resolve()` 与 `unlink`/`remove`/`rmtree`」的文件，再逐处判断其 `resolve()` 是否**用作防护基准**。**结果：同一写法共 6 处，另有 1 处待判**。
+
+| # | 文件 | 函数 | 位置 | 写法 | 后果面 |
+|---|---|---|---|---|---|
+| 1 | `managed_storage.py` | `remove_managed` | L147-150 | `root = self._root.resolve()` + `absolute.relative_to(root)` | **P1，已复现** |
+| 2 | **`library.py`** | **`preflight_permanent_delete`** | **L819-820** | `abs_p = …resolve()` + `root = storage.root.resolve()` | ⚠️ **永久删除的预检门** |
+| 3 | **`library.py`** | **`cleanup_book_files`** | **L1148-1151** | `root = storage.root.resolve()` + `books_base = (root/"books").resolve()` | ⚠️ **永久删除** |
+| 4 | `render_preview.py` | `publish` | L57-61 | `root = self._root.resolve()` + `is_relative_to(root)` | 预览发布 |
+| 5 | `render_preview.py` | `publish_original` | L99-103 | 同上 | 原图发布 |
+| 6 | `render_preview.py` | `collect_orphans` | L155-176 | `root = self._root.resolve()`；**且 L176 用解析后的 `candidate`** | 孤儿回收 |
+| 7 | `backup.py` | `restore_backup` | L149-150 | `target = …resolve()` + `target.parent != self._backup_root.resolve()` | **恢复备份的落点** |
+
+**判断依据**：凡「先 `resolve()` 出一个根，再用它做 `relative_to` / `is_relative_to` / `parent ==` 比较」的，都是同一病根 —— **基准本身会跟随 junction 漂移**。
+
+**两处特别值得注意**：
+
+- **#2 `preflight_permanent_delete`**：函数名说明它是**删除前把关的那道门**。**若它的基准会漂移，这道门就形同虚设** —— 而它守卫的是永久删除。
+- **#7 `restore_backup`**：比较的是**落点父目录**。**恢复备份时把数据库写到错误位置**，后果与误删同级。
+
+**#3 `cleanup_book_files`** 是**本 Task 已接触过的函数**（`library.py:1125` 的预览清理在其内部）—— **但我修的是它里面 `root_res` 那一处，没有看它自己的 `root = storage.root.resolve()`**。**同一函数内、相隔 20 行，一处已修一处未修**，这本身就说明「只修报告点」的做法不可靠。
+
+**结论**：这是**一类系统性缺陷**（至少 6 处），**不是一行的问题**。因此建议新 Task 的范围定为「整类修复 + 每处加注入回归用例」，而不是只修 P1 报告点。
+
 ---
 
 ## 七、`P09-AC3-DELETE-HARDEN-1` 的收口声明（若选路线 C）
