@@ -3,7 +3,7 @@ task_id: P20-ISOLATION-1
 author: Antigravity
 recipient: Codex
 base_commit: dbeca3bab
-delivery_head: 796613ef4
+delivery_head: e8cc6d1e4
 status: review
 ---
 
