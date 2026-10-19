@@ -3,7 +3,7 @@ id: GOV-EVIDENCE-UNIQUE-1
 title: AC 证据覆盖核验（原「AC7 唯一最终证据判定」，按 r18 修订）
 kind: governance
 governance_version: 2
-status: in_review
+status: done
 approval: codex_r14_scope_draft; dsh_release_2026-10-20_after_GOV-DEBT-CLEANUP-2_closeout
 suggested_owner: dsh
 owner: dsh
@@ -12,10 +12,10 @@ depends_on: [GOV-DEBT-CLEANUP-2]
 base_commit: 6ee8c87b1
 branch: null（只读盘点，主线直接执行）
 worktree: null（只读，不建 linked worktree）
-integration_commit: null
+integration_commit: 69952f5a79e8921898ef26a9f567f22d4c81fb40
 delivery_head: 3b62f7937
-canonical_evidence_status: pending
-resource_closeout_status: pending
+canonical_evidence_status: complete
+resource_closeout_status: complete
 evidence_dir: verification/GOV-EVIDENCE-UNIQUE-1
 allowed_paths:
   - doc/tasks/GOV-EVIDENCE-UNIQUE-1.md
@@ -59,7 +59,7 @@ allowed_paths:
 - [x] **AC4 — 可复核交付与 Review**：入库逐项结果、来源 commit/hash、方法与未决项；
   按**AC 覆盖结果**报告，而不是要求每个 AC 恰有一份根证据；生成 Handoff；
   由 Antigravity 对固定 delivery head 独立 Review。
-- [ ] **AC5 — 生命周期与 closeout**：完成 Task/Review/Plan/STATUS 生命周期、
+- [x] **AC5 — 生命周期与 closeout**：完成 Task/Review/Plan/STATUS 生命周期、
   Canonical Evidence 与 Resource Manifest；更新 integration 字段并如实登记集成拓扑；
   运行治理检查。**任何 `BLOCKED`、`NOT_RUN`、`UNKNOWN` 均不得记为通过。**
 
@@ -111,11 +111,30 @@ allowed_paths:
 | EVID-AC2-B2 | AC2 | `verification/GOV-EVIDENCE-UNIQUE-1/ac2-coverage-batch2.md` | `c41a40a09` | `82c9523862aed6071e6e3bdeb8b979c3c50697811e6f9cfefff7fed9b5644241` | `CANONICAL` |
 | EVID-AC2-B3 | AC2 | `verification/GOV-EVIDENCE-UNIQUE-1/ac2-coverage-batch3-and-summary.md` | `EF4AADFEE` | `81b2cdf78064c7de375a0734f5bfc0f148222e915fc7fca50a19793f3c45b2a6` | `CANONICAL` |
 | EVID-AC3 | AC3 | `verification/GOV-EVIDENCE-UNIQUE-1/ac3-readonly-verification.md` | `c41a40a09` | `89d92ef4084d88cfd63ade5ea4f836719b00788b6b0bbb3313db77f87c7d581c` | `CANONICAL` |
-| EVID-REVIEW | AC4 | `doc/reviews/GOV-EVIDENCE-UNIQUE-1-3b62f7937-antigravity-r1.md` | `c41a40a09` | `a9abc01e6514ddf786476dc369467a29afd787898a07de063f467781da7c83ed` | `CANONICAL` |
+| EVID-AC1-V1 | AC1 | `verification/GOV-EVIDENCE-UNIQUE-1/ac1-verdict-matrix.md` | `7a434a82d` | `63bb477c8422755a9458109e019446f515c646f7373a6e1a2273441af2c62123` | `CANONICAL` |
+| EVID-AC1-V1-JSON | AC1 | `verification/GOV-EVIDENCE-UNIQUE-1/ac1-verdict-matrix.json` | `7a434a82d` | `2fe7e0c2038829b4fc4072e1a2c551360cafd32ba2e9516ae7d59b5bc5b4a6f5` | `CANONICAL` |
+| EVID-MANIFEST | AC1 | `verification/GOV-EVIDENCE-UNIQUE-1/input-manifest.json` | `7a434a82d` | `c0de649f1ee9a3368eb53e19b87464373c13b80aa36b4144e2cee097897fbeb1` | `CANONICAL` |
+| EVID-ACLIST | AC1 | `verification/GOV-EVIDENCE-UNIQUE-1/source-task-acs.json` | `7a434a82d` | `7a401f9ab76db8fe1b103c440e52648f37a052336d79cc9761035cfa8896758e` | `CANONICAL` |
+| EVID-DIGEST | AC1 | `verification/GOV-EVIDENCE-UNIQUE-1/content-digest.json` | `7a434a82d` | `352ee42636105858e5dfa951bba18d6102b47a2cf0b6885a2a91b56b70c0b7dd` | `CANONICAL` |
+| EVID-REVIEW-R1 | AC4 | `doc/reviews/GOV-EVIDENCE-UNIQUE-1-3b62f7937-antigravity-r1.md` | `c41a40a09` | `a9abc01e6514ddf786476dc369467a29afd787898a07de063f467781da7c83ed` | `CANONICAL` |
+| EVID-REVIEW-R2 | AC4 | `doc/reviews/GOV-EVIDENCE-UNIQUE-1-3b62f7937-antigravity-r2.md` | `0a9e809e2` | `fd3c249116fe87b48b16d379570d29e303425f5c38382deabeed5b1d8bc815d1` | `CANONICAL` |
+| EVID-REVIEW-R3 | AC4 | `doc/reviews/GOV-EVIDENCE-UNIQUE-1-3b62f7937-antigravity-r3.md` | `ef4aadfee` | `b6b55c1c553d2fe05b58ef501c51879e24e7f84d90c57121bd0e1d0dcbc201ad` | `CANONICAL` |
+| EVID-REVIEW-R4 | AC4 | `doc/reviews/GOV-EVIDENCE-UNIQUE-1-3b62f7937-antigravity-r4.md` | `90377dd22` | `8593ce4d75a66a02350de4022445097790ff8385061a9645be26035c379ce752` | `CANONICAL` |
 
 ## Resource Manifest
 
 冻结 ready 前登记实际 Task worktree 路径；task-env、dataset、artifact、temp、agent-output、exchange 逐项核实。不适用需有目录核实依据；未知、dirty、被引用或用户数据一律保留。
+
+| resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
+|---|---|---|---|---|---|
+| worktree | — | `NOT_APPLICABLE` | — | `doc/tasks/GOV-EVIDENCE-UNIQUE-1.md` | frontmatter `worktree: null`；在主 checkout 执行 |
+| task-env | — | `NOT_APPLICABLE` | — | `doc/tasks/GOV-EVIDENCE-UNIQUE-1.md` | 无专用 task environment |
+| dataset/model/test-material | — | `NOT_APPLICABLE` | — | `doc/tasks/GOV-EVIDENCE-UNIQUE-1.md` | 只读仓库证据文件，无独立派生材料 |
+| artifact | — | `NOT_APPLICABLE` | — | `doc/tasks/GOV-EVIDENCE-UNIQUE-1.md` | 无新建构建/产品 artifact |
+| temp | — | `NOT_APPLICABLE` | — | `doc/tasks/GOV-EVIDENCE-UNIQUE-1.md` | 无 Task 临时文件登记 |
+| agent-output | — | `NOT_APPLICABLE` | — | `doc/tasks/GOV-EVIDENCE-UNIQUE-1.md` | 交付材料直接入库，无另行保留资源 |
+| exchange | — | `NOT_APPLICABLE` | — | `doc/tasks/GOV-EVIDENCE-UNIQUE-1.md` | 无交换目录/文件 |
+| evidence_dir | `verification/GOV-EVIDENCE-UNIQUE-1/` | `PRESERVE_REFERENCED` | `verification/GOV-EVIDENCE-UNIQUE-1/` | `verification/GOV-EVIDENCE-UNIQUE-1/ac2-coverage-batch3-and-summary.md` | 13 份，本 Task 的版本化证据与当前 pin 引用；只读保留 |
 
 ## 本次修订记录
 
@@ -131,7 +150,30 @@ allowed_paths:
 
 ## Closeout Record
 
-- 状态：`proposed`。尚未释放、无 owner 认领、无交付。
-- 释放条件（Codex r14 §5）：登记真实 worktree 路径、base/head、Plan/STATUS 指针后，
-  由 Codex 置 `ready` 并派发。
-- 本 Task 的产出是只读判定矩阵，不修改任何证据文件、pin 或生产代码。
+- 关闭：2026-10-20。Owner=dsh，Reviewer=Antigravity。裁定：Codex r19。
+- 终态：**`done`**。AC1–AC4 达成，AC5 由本次 closeout 完成。
+- head 三元组：`reviewed_head=ef4aadfee`（r4 Review 的精确目标，不因后续 pin 修正改写）、
+  `delivery_head=3b62f793780defd70c092329e64ebb6b097a84be`（交付包身份，
+  不因后续 Review 修正与 closeout 元数据重定义）、
+  `integration_source_head=3b62f7937`。
+  `integration_commit=69952f5a7`（无 merge/cherry-pick；为满足 DONE 非空约束，
+  登记当前主线中最终修正与 closeout 状态所依据的实际提交，**非 merge commit**）。
+- **本 Task 的核心产出不是分类结果，而是问题定义本身被修正**：
+  原目标「AC7 唯一最终证据判定」在多数 AC 上无解——一个 AC 常需
+  「日志 + 退出码 + 环境」多件共同证明，问「哪一份是唯一的」问错了。
+  经 r18 授权改为「AC 证据覆盖核验」。
+- 核验结果（83 个 AC，13 个来源 Task）：`COVERED` **3**（3.6%）、`PARTIAL` 17、
+  `EVIDENCE_GAP` 19、`NOT_APPLICABLE` **42**（50.6%）。
+  **一半 AC 从来不要求文件级证据**，这直接否定了 AC7 的前提。
+- **Review 四轮**（r1–r4），逐轮抓出并修正：
+  r1 推翻 `P15-HOST-2` AC5 的 `COVERED`（4→3）；r2 指出修正只做一半；
+  r3 指出仍有 2 处表格残留；r4 确认表格并发现删行致 pin 失配。
+  **四轮全部为 CHANGES_REQUESTED 或带修复项，无一轮空过。**
+- **不追补历史**（r19 §2.6）：7 份缺失文件与 19 个 `EVIDENCE_GAP` 是**本 Task 的核验发现**，
+  不是本 Task 的未完成项。它们是来源 Task 的既成事实，**不回溯补证**。
+- **留一项有限记录债**（r19 §2.5）：`EXPORT-REVEAL-1`（AC 0/7 勾选）与
+  `P15`（AC 0/6 勾选）都标 `done`。本 Task **未补勾、未重判**。
+  该异常由后继「来源记录维护」Task 处置，不改变本 Task 的 done 资格。
+- 只读保护：7 个 commit 未修改任何来源 Task、Review、pin、61 项源文件或生产文件
+  （`ac3-readonly-verification.md` 有机械核验）。
+- 未关闭项：无。
