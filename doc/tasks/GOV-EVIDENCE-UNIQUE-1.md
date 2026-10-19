@@ -3,7 +3,7 @@ id: GOV-EVIDENCE-UNIQUE-1
 title: AC 证据覆盖核验（原「AC7 唯一最终证据判定」，按 r18 修订）
 kind: governance
 governance_version: 2
-status: in_progress
+status: in_review
 approval: codex_r14_scope_draft; dsh_release_2026-10-20_after_GOV-DEBT-CLEANUP-2_closeout
 suggested_owner: dsh
 owner: dsh
@@ -13,7 +13,7 @@ base_commit: 6ee8c87b1
 branch: null（只读盘点，主线直接执行）
 worktree: null（只读，不建 linked worktree）
 integration_commit: null
-delivery_head: null
+delivery_head: 3b62f7937
 canonical_evidence_status: pending
 resource_closeout_status: pending
 evidence_dir: verification/GOV-EVIDENCE-UNIQUE-1
