@@ -99,6 +99,16 @@ pwsh -NoProfile -File tools/governance/check.ps1 -TaskPath doc/tasks/P09-PREVIEW
 
 **记录此项的目的是：下一位 Owner 若沿用无参数调用，会得到同样的假象。** **检查本 Task 必须显式 `-TaskPath`。**
 
+## Owner 侧已闭合，等待 Codex 收敛
+
+**Owner 侧全部闭合（代码、测试、探针、注入证据、AC 逐项表、交付固定、状态一致）。** **剩余三项均不在 Owner 职权内，已写成显式收敛请求：**
+
+**→ [`doc/handoffs/P09-PREVIEW-LIFECYCLE-RECLAIM-1-convergence-request.md`](../../doc/handoffs/P09-PREVIEW-LIFECYCLE-RECLAIM-1-convergence-request.md)**
+
+**该请求列明三项（DAG 登记 · 依赖集成状态核定 · AC6 口径裁决）、各自归属理由，以及四项 Owner 明确不执行的动作及其理由。**
+
+**在 Codex 答复前，继续送复审只会以同样的三项返回。** **本 Task 停在 `in_review`，`delivery_head` 保持 `392977a83…` 不变。**
+
 ## R13 的三项 finding（全部属 Codex）
 
 R13 判定 **`approved_with_conditions`** —— **「实现可接受；集成门尚未满足」**，且**「交付提交到当前 HEAD 的目标实现文件和测试无差异」**。
