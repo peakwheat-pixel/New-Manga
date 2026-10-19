@@ -1,0 +1,97 @@
+=== 1. OFFLINE RESOURCE MANIFEST SUITE (32 CASES) ===
+COMMAND: python tools/governance/tests/run-resource-manifest-cases.py
+EXIT_CODE: 0
+
+STDOUT:
+OK  1 valid external reference                 Governance check: PASS (1 warnings)
+OK  2 referenced file missing                  Governance check: FAIL (1 errors, 1 warnings)
+        -> Resource Manifest ���õ��ļ������ڣ�verification/ZZ-MANIFEST-FIXTURE/nope.json
+OK  3 traversal                                Governance check: FAIL (1 errors, 1 warnings)
+        -> Resource Manifest ���ò���Խ���ֿ⣺verification/../doc/x.json
+OK  4 env var in reference                     Governance check: FAIL (1 errors, 1 warnings)
+        -> Resource Manifest ���ò��ú�����������꣺%APPDATA%/r.json
+OK  5 outside verification/                    Governance check: FAIL (1 errors, 1 warnings)
+        -> Resource Manifest ���ñ���λ�� verification/**��doc/x.json
+OK  6 two references                           Governance check: FAIL (1 errors, 1 warnings)
+        -> Resource Manifest �����˶�� JSON��verification/ZZ-MANIFEST-FIXTURE/a.json, verification/ZZ-MANIFEST-FIXTURE/b.json
+OK  7 task_id mismatch                         Governance check: FAIL (1 errors, 1 warnings)
+        -> Resource Manifest task_id 'OTHER' �� Task 'ZZ-MANIFEST-FIXTURE' ��һ��
+OK  8 schema_version != 1                      Governance check: FAIL (1 errors, 1 warnings)
+        -> Resource Manifest schema_version ����Ϊ 1
+OK  9 declared count != resources (allowed)    Governance check: PASS (2 warnings)
+OK 10 empty resources                          Governance check: FAIL (1 errors, 1 warnings)
+        -> Resource Manifest resources ����Ϊ��
+OK 11 invalid disposition                      Governance check: FAIL (1 errors, 1 warnings)
+        -> Resource disposition ��Ч��BOGUS
+OK 12 ALREADY_ABSENT all conditions            Governance check: PASS (1 warnings)
+OK 13 ALREADY_ABSENT no evidence               Governance check: FAIL (1 errors, 1 warnings)
+        -> ALREADY_ABSENT ȱ�� absent_evidence��C:/definitely/not/here-cache
+OK 14 ALREADY_ABSENT but target exists         Governance check: FAIL (2 errors, 1 warnings)
+        -> ALREADY_ABSENT ��Ŀ���Դ��ڣ�verification/ZZ-MANIFEST-FIXTURE/resource-manifest.json
+        -> ALREADY_ABSENT ��Ŀ���Դ��ڣ�verification/ZZ-MANIFEST-FIXTURE/resource-manifest.json
+OK 15 NOT_APPLICABLE for vanished              Governance check: FAIL (1 errors, 1 warnings)
+        -> NOT_APPLICABLE ������������ʧ��Դ��verification/ZZ-MANIFEST-FIXTURE/resource-manifest.json
+OK 16 missing process_check                    Governance check: FAIL (1 errors, 1 warnings)
+        -> Resource Manifest ȱ������/���̼������C:/definitely/not/here-cache
+OK 17 ALREADY_ABSENT abs path that exists (P1 regression) Governance check: FAIL (2 errors, 1 warnings)
+        -> ALREADY_ABSENT ��Ŀ���Դ��ڣ�C:/Windows/System32/notepad.exe
+        -> ALREADY_ABSENT ��Ŀ���Դ��ڣ�C:/Windows/System32/notepad.exe
+OK 18 glob in reference                        Governance check: FAIL (1 errors, 1 warnings)
+        -> Resource Manifest ���ò��ú� glob��verification/ZZ-MANIFEST-FIXTURE/*.json
+OK 19 malformed JSON                           Governance check: FAIL (1 errors, 1 warnings)
+        -> Resource Manifest JSON �޷�������G:\CODEX\New Manga\.agents\worktrees\GOV-RESOURCE-MANIFEST-SAME-LOCATION-1\verification\ZZ-MANIFEST-FIXTURE\resource-manif
+OK 20 sentinel: ignored target/dist            Governance check: PASS (2 warnings)
+        (note) ZZ-MANIFEST-FIXTURE: Resource 'evidence' destination 'Same ignored target/dist locations in this worktree' ����ΪͬԴ��ʹ�� source_path 'verification/ZZ-MANIF
+OK 21 sentinel: source location                Governance check: PASS (2 warnings)
+        (note) ZZ-MANIFEST-FIXTURE: Resource 'evidence' destination 'Same source location' ����ΪͬԴ��ʹ�� source_path 'verification/ZZ-MANIFEST-FIXTURE/resource-manifest.j
+OK 22 sentinel: shared build env               Governance check: PASS (2 warnings)
+        (note) ZZ-MANIFEST-FIXTURE: Resource 'evidence' destination 'Same shared build environment' ����ΪͬԴ��ʹ�� source_path 'verification/ZZ-MANIFEST-FIXTURE/resource-m
+OK 23 sentinel: local cache                    Governance check: PASS (2 warnings)
+        (note) ZZ-MANIFEST-FIXTURE: Resource 'evidence' destination 'Same local cache location' ����ΪͬԴ��ʹ�� source_path 'verification/ZZ-MANIFEST-FIXTURE/resource-manif
+OK 24 sentinel: main-repository paths          Governance check: PASS (2 warnings)
+        (note) ZZ-MANIFEST-FIXTURE: Resource 'evidence' destination 'Same main-repository paths' ����ΪͬԴ��ʹ�� source_path 'verification/ZZ-MANIFEST-FIXTURE/resource-mani
+OK 25 empty destination fallback               Governance check: PASS (2 warnings)
+        (note) ZZ-MANIFEST-FIXTURE: Resource 'evidence' destination '(blank)' ����ΪͬԴ��ʹ�� source_path 'verification/ZZ-MANIFEST-FIXTURE/resource-manifest.json'
+OK 26 whitespace destination fallback          Governance check: PASS (2 warnings)
+        (note) ZZ-MANIFEST-FIXTURE: Resource 'evidence' destination '(blank)' ����ΪͬԴ��ʹ�� source_path 'verification/ZZ-MANIFEST-FIXTURE/resource-manifest.json'
+OK 27 dash destination fallback                Governance check: PASS (2 warnings)
+        (note) ZZ-MANIFEST-FIXTURE: Resource 'evidence' destination '-' ����ΪͬԴ��ʹ�� source_path 'verification/ZZ-MANIFEST-FIXTURE/resource-manifest.json'
+OK 28 existing normal destination passes       Governance check: PASS (1 warnings)
+OK 29 prose destination fails                  Governance check: FAIL (1 errors, 1 warnings)
+        -> Resource ����·��δ��֤��some other place
+OK 30 unknown same destination fails           Governance check: FAIL (1 errors, 1 warnings)
+        -> Resource ����·��δ��֤��Same custom unknown location
+OK 31 real missing destination fails           Governance check: FAIL (1 errors, 1 warnings)
+        -> Resource ����·��δ��֤��apps/desktop/src-tauri/target/p19-ui-fix-1-isolation-20261017
+OK 32 dash destination with missing source fails Governance check: FAIL (1 errors, 2 warnings)
+        -> Resource ����·��δ��֤��verification/ZZ-MANIFEST-FIXTURE/nonexistent-source.file
+
+cleaned: tempdir=True manifest=True doc/tasks untouched=True
+32/32 cases behaved as expected
+
+STDERR:
+
+
+=== 2. TARGET P19 TASK CHECK (5 ERRORS ELIMINATED, REAL MISSING RETAINED) ===
+COMMAND: pwsh -NoProfile -File tools/governance/check.ps1 -TaskPath doc/tasks/P19-UI-FIX-1.md
+EXIT_CODE: 1
+
+STDOUT:
+Governance scope: 12 current documents; no historical directory scan.
+Task: doc\tasks\P19-UI-FIX-1.md
+WARN: doc/STATUS.md 已达到预算的 80%：3169 bytes / 27 lines
+WARN: P19-UI-FIX-1: Resource 'generated-build-artifacts' destination 'Same ignored target/dist locations in this worktree' 解释为同源，使用 source_path 'apps/desktop/src-tauri/target/{core-sidecar,debug/resources,debug/m2rc1-desktop.exe}; apps/desktop/frontend/dist'
+WARN: P19-UI-FIX-1: Resource 'user-data-source' destination 'Same source location' 解释为同源，使用 source_path '%APPDATA%/com.newmanga.m2rc1.desktop/{catalog,data,derived}'
+WARN: P19-UI-FIX-1: Resource 'sidecar-build-environment' destination 'Same shared build environment' 解释为同源，使用 source_path 'G:/CODEX/New Manga.task-envs/m2ac5-build'
+WARN: P19-UI-FIX-1: Resource 'pyinstaller-cache' destination 'Same local cache location' 解释为同源，使用 source_path 'C:/Users/49745/AppData/Local/pyinstaller'
+WARN: P19-UI-FIX-1: Resource 'read-only-baseline-evidence' destination 'Same main-repository paths' 解释为同源，使用 source_path 'G:/CODEX/New Manga/verification/P19/{d-run-v2,import-no-response-r4.md}'
+WARN: P19-UI-FIX-1: closeout_counts.moved=6 与 resources 中布尔为 true 的项数 0 不同（声明口径包含未列入 resources 的处置动作）
+FAIL: Evidence SHA-256 不匹配：verification/P19-UI-FIX-1/frontend-npm-test-final.log
+FAIL: Evidence SHA-256 不匹配：verification/P19-UI-FIX-1/frontend-npm-build-final.log
+FAIL: Evidence SHA-256 不匹配：verification/P19/import-no-response-r4.md
+FAIL: DONE evidence_dir 含未登记文件：G:\CODEX\New Manga\.agents\worktrees\GOV-RESOURCE-MANIFEST-SAME-LOCATION-1\verification\P19-UI-FIX-1\04-settings-before-final-code-refinement.uia.txt, G:\CODEX\New Manga\.agents\worktrees\GOV-RESOURCE-MANIFEST-SAME-LOCATION-1\verification\P19-UI-FIX-1\04-settings-uia-pass-2.txt, G:\CODEX\New Manga\.agents\worktrees\GOV-RESOURCE-MANIFEST-SAME-LOCATION-1\verification\P19-UI-FIX-1\04-settings-uia-pass-exit-code-blank.txt, G:\CODEX\New Manga\.agents\worktrees\GOV-RESOURCE-MANIFEST-SAME-LOCATION-1\verification\P19-UI-FIX-1\app-err-before-final-code-refinement.log, G:\CODEX\New Manga\.agents\worktrees\GOV-RESOURCE-MANIFEST-SAME-LOCATION-1\verification\P19-UI-FIX-1\app-err-namespace-mismatch.log, G:\CODEX\New Manga\.agents\worktrees\GOV-RESOURCE-MANIFEST-SAME-LOCATION-1\verification\P19-UI-FIX-1\app-err-ui-a-pass-exit-code-blank-2.log, G:\CODEX\New Manga\.agents\worktrees\GOV-RESOURCE-MANIFEST-SAME-LOCATION-1\verification\P19-UI-FIX-1\app-err-ui-load-failure.log, G:\CODEX\New Manga\.agents\worktrees\GOV-RESOURCE-MANIFEST-SAME-LOCATION-1\verification\P19-UI-FIX-1\app-err-uia-pass-exit-code-blank.log
+FAIL: Resource 最终路径未验证：apps/desktop/src-tauri/target/p19-ui-fix-1-isolation-20261017
+Governance check: FAIL (5 errors, 7 warnings)
+
+STDERR:
+

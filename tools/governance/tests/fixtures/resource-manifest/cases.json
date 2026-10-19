@@ -504,6 +504,389 @@
       "manifest": "{ this is not json",
       "section": "见 `verification/@TID@/resource-manifest.json`。",
       "expect_manifest_fail": true
+    },
+    {
+      "id": 20,
+      "name": "sentinel: ignored target/dist",
+      "manifest": {
+        "schema_version": 1,
+        "task_id": "@TID@",
+        "generated_at": "2026-10-19",
+        "generated_by": "fixture",
+        "resources": [
+          {
+            "resource_type": "evidence",
+            "source_path": "verification/@TID@/resource-manifest.json",
+            "disposition": "PRESERVE_REFERENCED",
+            "destination_path": "Same ignored target/dist locations in this worktree",
+            "process_check": "read only"
+          }
+        ],
+        "closeout_counts": {
+          "deleted": 0,
+          "moved": 0,
+          "migrated": 0,
+          "archived": 0
+        }
+      },
+      "section": "见 `verification/@TID@/resource-manifest.json`。",
+      "expect_manifest_fail": false,
+      "expect_notes": [
+        "Same ignored target/dist locations in this worktree",
+        "verification/@TID@/resource-manifest.json"
+      ]
+    },
+    {
+      "id": 21,
+      "name": "sentinel: source location",
+      "manifest": {
+        "schema_version": 1,
+        "task_id": "@TID@",
+        "generated_at": "2026-10-19",
+        "generated_by": "fixture",
+        "resources": [
+          {
+            "resource_type": "evidence",
+            "source_path": "verification/@TID@/resource-manifest.json",
+            "disposition": "PRESERVE_REFERENCED",
+            "destination_path": "Same source location",
+            "process_check": "read only"
+          }
+        ],
+        "closeout_counts": {
+          "deleted": 0,
+          "moved": 0,
+          "migrated": 0,
+          "archived": 0
+        }
+      },
+      "section": "见 `verification/@TID@/resource-manifest.json`。",
+      "expect_manifest_fail": false,
+      "expect_notes": [
+        "Same source location",
+        "verification/@TID@/resource-manifest.json"
+      ]
+    },
+    {
+      "id": 22,
+      "name": "sentinel: shared build env",
+      "manifest": {
+        "schema_version": 1,
+        "task_id": "@TID@",
+        "generated_at": "2026-10-19",
+        "generated_by": "fixture",
+        "resources": [
+          {
+            "resource_type": "evidence",
+            "source_path": "verification/@TID@/resource-manifest.json",
+            "disposition": "PRESERVE_REFERENCED",
+            "destination_path": "Same shared build environment",
+            "process_check": "read only"
+          }
+        ],
+        "closeout_counts": {
+          "deleted": 0,
+          "moved": 0,
+          "migrated": 0,
+          "archived": 0
+        }
+      },
+      "section": "见 `verification/@TID@/resource-manifest.json`。",
+      "expect_manifest_fail": false,
+      "expect_notes": [
+        "Same shared build environment",
+        "verification/@TID@/resource-manifest.json"
+      ]
+    },
+    {
+      "id": 23,
+      "name": "sentinel: local cache",
+      "manifest": {
+        "schema_version": 1,
+        "task_id": "@TID@",
+        "generated_at": "2026-10-19",
+        "generated_by": "fixture",
+        "resources": [
+          {
+            "resource_type": "evidence",
+            "source_path": "verification/@TID@/resource-manifest.json",
+            "disposition": "PRESERVE_REFERENCED",
+            "destination_path": "Same local cache location",
+            "process_check": "read only"
+          }
+        ],
+        "closeout_counts": {
+          "deleted": 0,
+          "moved": 0,
+          "migrated": 0,
+          "archived": 0
+        }
+      },
+      "section": "见 `verification/@TID@/resource-manifest.json`。",
+      "expect_manifest_fail": false,
+      "expect_notes": [
+        "Same local cache location",
+        "verification/@TID@/resource-manifest.json"
+      ]
+    },
+    {
+      "id": 24,
+      "name": "sentinel: main-repository paths",
+      "manifest": {
+        "schema_version": 1,
+        "task_id": "@TID@",
+        "generated_at": "2026-10-19",
+        "generated_by": "fixture",
+        "resources": [
+          {
+            "resource_type": "evidence",
+            "source_path": "verification/@TID@/resource-manifest.json",
+            "disposition": "PRESERVE_REFERENCED",
+            "destination_path": "Same main-repository paths",
+            "process_check": "read only"
+          }
+        ],
+        "closeout_counts": {
+          "deleted": 0,
+          "moved": 0,
+          "migrated": 0,
+          "archived": 0
+        }
+      },
+      "section": "见 `verification/@TID@/resource-manifest.json`。",
+      "expect_manifest_fail": false,
+      "expect_notes": [
+        "Same main-repository paths",
+        "verification/@TID@/resource-manifest.json"
+      ]
+    },
+    {
+      "id": 25,
+      "name": "empty destination fallback",
+      "manifest": {
+        "schema_version": 1,
+        "task_id": "@TID@",
+        "generated_at": "2026-10-19",
+        "generated_by": "fixture",
+        "resources": [
+          {
+            "resource_type": "evidence",
+            "source_path": "verification/@TID@/resource-manifest.json",
+            "disposition": "PRESERVE_REFERENCED",
+            "destination_path": "",
+            "process_check": "read only"
+          }
+        ],
+        "closeout_counts": {
+          "deleted": 0,
+          "moved": 0,
+          "migrated": 0,
+          "archived": 0
+        }
+      },
+      "section": "见 `verification/@TID@/resource-manifest.json`。",
+      "expect_manifest_fail": false,
+      "expect_notes": [
+        "(blank)",
+        "verification/@TID@/resource-manifest.json"
+      ]
+    },
+    {
+      "id": 26,
+      "name": "whitespace destination fallback",
+      "manifest": {
+        "schema_version": 1,
+        "task_id": "@TID@",
+        "generated_at": "2026-10-19",
+        "generated_by": "fixture",
+        "resources": [
+          {
+            "resource_type": "evidence",
+            "source_path": "verification/@TID@/resource-manifest.json",
+            "disposition": "PRESERVE_REFERENCED",
+            "destination_path": "   ",
+            "process_check": "read only"
+          }
+        ],
+        "closeout_counts": {
+          "deleted": 0,
+          "moved": 0,
+          "migrated": 0,
+          "archived": 0
+        }
+      },
+      "section": "见 `verification/@TID@/resource-manifest.json`。",
+      "expect_manifest_fail": false,
+      "expect_notes": [
+        "(blank)",
+        "verification/@TID@/resource-manifest.json"
+      ]
+    },
+    {
+      "id": 27,
+      "name": "dash destination fallback",
+      "manifest": {
+        "schema_version": 1,
+        "task_id": "@TID@",
+        "generated_at": "2026-10-19",
+        "generated_by": "fixture",
+        "resources": [
+          {
+            "resource_type": "evidence",
+            "source_path": "verification/@TID@/resource-manifest.json",
+            "disposition": "PRESERVE_REFERENCED",
+            "destination_path": "-",
+            "process_check": "read only"
+          }
+        ],
+        "closeout_counts": {
+          "deleted": 0,
+          "moved": 0,
+          "migrated": 0,
+          "archived": 0
+        }
+      },
+      "section": "见 `verification/@TID@/resource-manifest.json`。",
+      "expect_manifest_fail": false,
+      "expect_notes": [
+        "-",
+        "verification/@TID@/resource-manifest.json"
+      ]
+    },
+    {
+      "id": 28,
+      "name": "existing normal destination passes",
+      "manifest": {
+        "schema_version": 1,
+        "task_id": "@TID@",
+        "generated_at": "2026-10-19",
+        "generated_by": "fixture",
+        "resources": [
+          {
+            "resource_type": "evidence",
+            "source_path": "verification/@TID@/resource-manifest.json",
+            "disposition": "PRESERVE_REFERENCED",
+            "destination_path": "verification/@TID@/resource-manifest.json",
+            "process_check": "read only"
+          }
+        ],
+        "closeout_counts": {
+          "deleted": 0,
+          "moved": 0,
+          "migrated": 0,
+          "archived": 0
+        }
+      },
+      "section": "见 `verification/@TID@/resource-manifest.json`。",
+      "expect_manifest_fail": false
+    },
+    {
+      "id": 29,
+      "name": "prose destination fails",
+      "manifest": {
+        "schema_version": 1,
+        "task_id": "@TID@",
+        "generated_at": "2026-10-19",
+        "generated_by": "fixture",
+        "resources": [
+          {
+            "resource_type": "evidence",
+            "source_path": "verification/@TID@/resource-manifest.json",
+            "disposition": "PRESERVE_REFERENCED",
+            "destination_path": "some other place",
+            "process_check": "read only"
+          }
+        ],
+        "closeout_counts": {
+          "deleted": 0,
+          "moved": 0,
+          "migrated": 0,
+          "archived": 0
+        }
+      },
+      "section": "见 `verification/@TID@/resource-manifest.json`。",
+      "expect_manifest_fail": true
+    },
+    {
+      "id": 30,
+      "name": "unknown same destination fails",
+      "manifest": {
+        "schema_version": 1,
+        "task_id": "@TID@",
+        "generated_at": "2026-10-19",
+        "generated_by": "fixture",
+        "resources": [
+          {
+            "resource_type": "evidence",
+            "source_path": "verification/@TID@/resource-manifest.json",
+            "disposition": "PRESERVE_REFERENCED",
+            "destination_path": "Same custom unknown location",
+            "process_check": "read only"
+          }
+        ],
+        "closeout_counts": {
+          "deleted": 0,
+          "moved": 0,
+          "migrated": 0,
+          "archived": 0
+        }
+      },
+      "section": "见 `verification/@TID@/resource-manifest.json`。",
+      "expect_manifest_fail": true
+    },
+    {
+      "id": 31,
+      "name": "real missing destination fails",
+      "manifest": {
+        "schema_version": 1,
+        "task_id": "@TID@",
+        "generated_at": "2026-10-19",
+        "generated_by": "fixture",
+        "resources": [
+          {
+            "resource_type": "evidence",
+            "source_path": "verification/@TID@/resource-manifest.json",
+            "disposition": "PRESERVE_REFERENCED",
+            "destination_path": "apps/desktop/src-tauri/target/p19-ui-fix-1-isolation-20261017",
+            "process_check": "read only"
+          }
+        ],
+        "closeout_counts": {
+          "deleted": 0,
+          "moved": 0,
+          "migrated": 0,
+          "archived": 0
+        }
+      },
+      "section": "见 `verification/@TID@/resource-manifest.json`。",
+      "expect_manifest_fail": true
+    },
+    {
+      "id": 32,
+      "name": "dash destination with missing source fails",
+      "manifest": {
+        "schema_version": 1,
+        "task_id": "@TID@",
+        "generated_at": "2026-10-19",
+        "generated_by": "fixture",
+        "resources": [
+          {
+            "resource_type": "evidence",
+            "source_path": "verification/@TID@/nonexistent-source.file",
+            "disposition": "PRESERVE_REFERENCED",
+            "destination_path": "-",
+            "process_check": "read only"
+          }
+        ],
+        "closeout_counts": {
+          "deleted": 0,
+          "moved": 0,
+          "migrated": 0,
+          "archived": 0
+        }
+      },
+      "section": "见 `verification/@TID@/resource-manifest.json`。",
+      "expect_manifest_fail": true
     }
   ]
 }
