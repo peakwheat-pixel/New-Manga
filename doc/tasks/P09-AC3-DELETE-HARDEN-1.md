@@ -96,6 +96,7 @@ evidence_dir: verification/P09-AC3-DELETE-HARDEN-1
 ## 交付与运行记录
 
 - Handoff：**`doc/handoffs/P09-AC3-DELETE-HARDEN-1-1878f0b1.md`**（按 `doc/09_COLLABORATION.md` §5）；**验证证据在 `verification/P09-AC3-DELETE-HARDEN-1/`，由 Handoff 引用**。
+- **当前 Review 指针**：`verification/P09-AC3-DELETE-HARDEN-1/codex-review-r13.md`，`reviewed_head = 81de2741372339ac47f077252aef62f589615e7d`，`decision = changes_requested`。**R1–R13 报告均已入库**（同目录 `codex-review-rN.md`）。按协作协议 §4.1，**新 head 或新 Review 使旧结论自动降为 HISTORICAL**。
 - Review：待固定 delivery head 后由 Codex 独立复核（owner=dsh, reviewer=Codex，满足 owner≠reviewer）。
 - 实际测试：逐项见上表。
 - 2026-10-18 Coordinator（dsh, epoch 8）按用户裁决建立本 Task 并冻结范围。
