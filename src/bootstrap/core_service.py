@@ -1151,7 +1151,11 @@ class CoreServiceServer:
                     artifact_ids
                 )
             try:
-                repo.execute_permanent_delete_db({book_id: targets}, {book_id: page_ids})
+                repo.execute_permanent_delete_db(
+                    {book_id: targets},
+                    {book_id: page_ids},
+                    {book_id: preview_resource_ids},
+                )
             except Exception:
                 return None, {"code": "BOOK_DELETE_FAILED", "category": "internal", "retryable": "unknown"}
 
@@ -1245,7 +1249,9 @@ class CoreServiceServer:
                         )
                     )
             try:
-                repo.execute_permanent_delete_db(book_targets_map, book_page_ids_map)
+                repo.execute_permanent_delete_db(
+                    book_targets_map, book_page_ids_map, preview_ids_map
+                )
             except Exception:
                 return None, {"code": "BOOK_DELETE_FAILED", "category": "internal", "retryable": "unknown"}
 

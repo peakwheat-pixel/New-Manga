@@ -630,9 +630,10 @@ class SqliteLibraryRepository:
                 return {
                     "managed_targets": list(val.get("managed_targets", [])),
                     "page_ids": list(val.get("page_ids", [])),
+                    "preview_resource_ids": list(val.get("preview_resource_ids", [])),
                 }
             if isinstance(val, list):
-                return {"managed_targets": list(val), "page_ids": []}
+                return {"managed_targets": list(val), "page_ids": [], "preview_resource_ids": []}
             return None
         except (json.JSONDecodeError, TypeError):
             return None
@@ -839,6 +840,7 @@ class SqliteLibraryRepository:
         self,
         book_targets_map: dict[str, list[str]],
         book_page_ids_map: dict[str, list[str]] | None = None,
+        book_preview_ids_map: dict[str, list[str]] | None = None,
     ) -> None:
         now_iso = datetime.now(timezone.utc).isoformat(timespec="milliseconds")
         with self._conn:
@@ -858,9 +860,18 @@ class SqliteLibraryRepository:
                 if not pids and existing_manifest:
                     pids = existing_manifest.get("page_ids", [])
 
+                # R1 Finding 1: preview_resource_ids are random (preview-<uuid4>) and
+                # cannot be rebuilt once media_artifacts is gone, so a refused cleanup
+                # would lose them forever and its retry would find an empty snapshot.
+                # Persist them with the rest of the manifest.
+                prior_preview = (existing_manifest or {}).get("preview_resource_ids", [])
+                supplied_preview = (book_preview_ids_map or {}).get(book_id)
                 manifest_payload = {
                     "managed_targets": list(targets),
                     "page_ids": list(pids),
+                    "preview_resource_ids": list(
+                        supplied_preview if supplied_preview else prior_preview
+                    ),
                 }
 
                 self._conn.execute(
@@ -1135,6 +1146,15 @@ class SqliteLibraryRepository:
         # The caller snapshots their resource_ids before the DB delete, because
         # preview_lifecycle is only reachable through artifact_id and that mapping
         # is gone by the time cleanup runs (R7).
+        if not preview_resource_ids:
+            # R1 Finding 1: a retry after a refused cleanup cannot rebuild these (the
+            # random key is gone once media_artifacts is deleted), so fall back to the
+            # manifest written at delete time.
+            if manifest_data is None:
+                manifest_data = self.get_cleanup_manifest_data(book_id)
+            if manifest_data:
+                preview_resource_ids = manifest_data.get("preview_resource_ids") or []
+
         if preview_resource_ids and render_previews is not None:
             derived_root = getattr(render_previews, "_root", None)
             catalog = getattr(render_previews, "_catalog", None)
@@ -1149,9 +1169,16 @@ class SqliteLibraryRepository:
                     if entry is None or not entry.rel_path:
                         # Already gone: nothing to remove, nothing to count.
                         continue
-                    removed = unlink_preview_without_following(
-                        str(entry.rel_path), root_res
-                    )
+                    try:
+                        removed = unlink_preview_without_following(
+                            str(entry.rel_path), root_res
+                        )
+                    except Exception:
+                        # R1 Finding 3: the page-original branch converts a raising
+                        # unlink into all_deleted=False rather than letting it escape
+                        # past the boolean result.  Match that.
+                        all_deleted = False
+                        continue
                     if not removed:
                         # Same rule as the page-original branch: a refusal must not
                         # be counted as a removal, and its row must survive so the

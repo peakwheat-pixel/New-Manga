@@ -120,9 +120,13 @@ leaked_rows = len(published_after)
 leaked_files = max(0, len(files_after) - 1)   # 1 baseline file predates the reads
 print()
 print("LEAK: %d row(s), %d file(s)" % (leaked_rows, leaked_files))
-if leaked_rows == 0 and leaked_files == 0:
-    print("RESULT = PASS (no leak)")
-else:
-    print("RESULT = FAIL (leak present - expected until AC4 is fixed)")
 catalog.close()
 core.conn.close()
+
+# R1 Finding 4: printing FAIL is not failing.  A caller that only checks the exit code
+# would score a leak as success, which is the failure mode this probe exists to catch.
+if leaked_rows == 0 and leaked_files == 0:
+    print("RESULT = PASS (no leak)")
+    sys.exit(0)
+print("RESULT = FAIL (leak present)")
+sys.exit(1)
