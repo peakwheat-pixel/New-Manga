@@ -71,9 +71,9 @@ evidence_dir: verification/P09-AC3-DELETE-HARDEN-1
 
 | 场景/AC | 计划命令或手工步骤 | 前提/环境 | 实际结果 | 证据 |
 |---|---|---|---|---|
-| AC1 真实装配/IPC 路由 | Core dispatcher + Rust 注册断言；回收站数据源与整库集合测试 | 隔离 DB / Rust toolchain | **PASS**：Core 新测试 `1 passed`（真实 dispatcher 应答；活跃书在 ListBooks 不在回收站，软删除后反转；投影形状一致）；Rust 注册断言 `1 passed`；前端 `11 passed` | `tests/core/test_p09_ac1_recycle_bin_route.py`、`library_bridge.rs` 单测、`RecycleBinPage.test.tsx` |
+| AC1 真实装配/IPC 路由 | Core dispatcher + Rust 注册断言；回收站数据源与整库集合测试 | 隔离 DB / Rust toolchain | **PASS**：Core 新测试 `1 passed`（真实 dispatcher 应答；活跃书在 ListBooks 不在回收站，软删除后反转；投影形状一致）；Rust 注册断言 `1 passed`；前端 `11 passed` | `tests/core/test_p09_ac1_recycle_bin_route.py`、`library_bridge.rs` 单测、`RecycleBinPage.test.tsx`；**该 `PASS` 为历史测试结果；R6 后未再跑 Tauri/前端，当前复审状态 PARTIAL** |
 | AC2 多页 Run 删除 | 至少两个目标的真实 Run 永久删除 | 隔离 DB | **PASS**：两目标回归测试 `1 passed`；判别力验证显示旧写法抛 `UNIQUE constraint failed: t.run, t.target`，新写法产出两个不同 `detached:<id>` | `test_core_delete_commands.py::test_delete_book_with_multi_target_run_detaches_without_collision` |
-| AC3 逐项重试 | "已删除 + cleanup_pending"混合批量重试 | 隔离 DB / 前端 | **PASS**：混合重试测试 `1 passed`（已删项离开列表、pending 项保留选中、两个计数保留）；`tsc --noEmit` exit 0 | `RecycleBinPage.test.tsx`、`src/library/client.ts` |
+| AC3 逐项重试 | "已删除 + cleanup_pending"混合批量重试 | 隔离 DB / 前端 | **PASS**：混合重试测试 `1 passed`（已删项离开列表、pending 项保留选中、两个计数保留）；`tsc --noEmit` exit 0 | `RecycleBinPage.test.tsx`、`src/library/client.ts`；**该 `PASS` 为历史测试结果；R6 后未再跑前端 mixed-batch retry，当前复审状态 PARTIAL** |
 | AC4 译图残留 | 真实译图 `publish()` 后断言 origin 绑定 | 隔离根 | **PARTIAL（判 FAIL 并转出）**：`1 passed`，证明 `preview_lifecycle` 行存在且绑定 `a1`/`ar1`（并暴露了首版实现的路径比对缺陷）。**但该测试不覆盖「永久删除后残留归零」** —— 实测每读一次泄漏 1 行 + 1 文件，R7 独立复现读 5 次后仍剩 5 行 + 5 PNG。**转出至 `P09-PREVIEW-LIFECYCLE-RECLAIM-1`** | `tests/core/test_p09_ac4_translated_preview.py` |
 | AC5 symlink 替换 | preflight 注入 junction 替换目标 | Windows 隔离根 | **PASS**：3 项 `passed`（普通文件仍删、junction 被拒且目的文件存活、绝对/穿越路径被拒）；判别力验证旧顺序 `PROTECTED_STILL_EXISTS: False` | `tests/storage/test_preview_unlink_reparse.py` |
 | AC6 历史脱离 | stage-state 与 run_json 嵌套引用断言 | 隔离 DB | **PASS**：`1 passed`（行数不变、status 保留、`target_id` 不再是 `p1` 且以 `detached:` 开头、全树无 locator 存活、`book_title`/`status` 保留） | `test_core_delete_commands.py::test_delete_book_output_refs_cleared_and_stage_states_retained` |
@@ -140,7 +140,7 @@ evidence_dir: verification/P09-AC3-DELETE-HARDEN-1
 **`delivery_head`（收口固定）**：`1878f0b126e8a0e2603570f9b2009d8b70a259f1`（见 frontmatter；经 `git cat-file -e` 验证可达且含 `win_unlink.py`）。早期记录的 `4824ed5d…` 是 R1 阶段的旧指针，已由收口固定值取代。
 - **硬约束保持**：`P09` 的 **AC3 delete 子条件仍为 `BLOCKED`**，本 Task 未将其翻为 PASS；本 Task 只做加固与指针自洽，不改变原判定。
 
-### F-001 关闭记录（用户裁决方向 A，2026-10-19）
+### F-001 关闭记录（用户裁决方向 A，2026-10-19）　**【裁决/结论记录，仍然生效；非历史叙事】**
 
 **裁决**：用户 2026-10-19 选择**方向 A** —— 认定 AC1 原文「注册到 Tauri production command 与 `generate_handler!`」**构成对该命令的授权**，据此补齐契约冻结并关闭 F-001。
 
@@ -164,20 +164,7 @@ evidence_dir: verification/P09-AC3-DELETE-HARDEN-1
 
 **下一步**：送 Codex 做 **R2 完整复审**（覆盖 R1 的 7 个 finding 闭合情况 + rev 2.11 契约冻结）。
 
-### Codex R2 复审（2026-10-19）
-
-- **被审固定 head**：`10202dc4e178eb58a7e08ee0c59e1453ecc6f522`（= `delivery_head`）
-- **报告**：`verification/P09-AC3-DELETE-HARDEN-1/codex-review-r2.md`（原字节入库，Codex session `01a1516c-77ed-7f93-a734-e4396fbead76`）
-- **decision**：`changes_requested`；**findings 10**（= R2 报告总数；其中**新增 3 项**，其余 7 项为 R1 结转）
-- **F-001 CLOSED**：rev 2.11 契约冻结经复审确认，范围冲突消除
-- **CLOSED**：F-001、F-003、F-004、F-005、F-006
-- **PARTIAL**：F-002（真实 reader preview 发布后仍 `retired=False`，不在 GC 候选中）、F-007（文档旧表述仍把 6 项统称环境反转，与新分类冲突）
-- **新增**：N-001（版本号与 wire 错误码不一致）、以及报告内另列的两项
-- **Codex 实际运行**：`verify_all.py` exit 0 且输出 `Orphan scan: managed=0 derived=0`；4 个测试套件分别 4 / 2 / 1 / 1 passed
-- **Codex 主动拦截了 `verify_all.py` 对已 pin 历史 JSON 的覆盖写入**（并用 `-B -p no:cacheprovider` 防止字节码/缓存写入），派发前后 `git status` 零差异
-- **后续**：F-002 与 F-007 的 PARTIAL 及 3 项新增 finding 待返修（返修轮次计数按 DIR-4）
-
-### DIR-4 返修额度提升（用户裁决，2026-10-19）
+### DIR-4 返修额度提升（用户裁决，2026-10-19）　**【裁决/结论记录，仍然生效；非历史叙事】**
 
 **用户裁决原文**：选择路线 A，并**额外提升 4 次**。
 
@@ -196,7 +183,7 @@ evidence_dir: verification/P09-AC3-DELETE-HARDEN-1
 
 **本轮起的返修顺序**：F-002 测试覆盖（确定性）→ N-004（设计 + 实现）→ R4 独立复审。
 
-### F-002 闭合（2026-10-19，R4 前记录）
+### F-002 闭合（2026-10-19，R4 前记录）　**【裁决/结论记录，仍然生效；非历史叙事】**
 
 **诊断结论**：R3 对 F-002 的 PARTIAL 定性**依据正确但结论过强**。生产接线与测试覆盖**均存在**，二者合起来覆盖完整。
 
