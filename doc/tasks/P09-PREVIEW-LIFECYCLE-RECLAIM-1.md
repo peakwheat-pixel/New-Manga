@@ -105,36 +105,10 @@ pwsh -NoProfile -File tools/governance/check.ps1 -TaskPath doc/tasks/P09-PREVIEW
 
 **→ [`doc/handoffs/P09-PREVIEW-LIFECYCLE-RECLAIM-1-convergence-request.md`](../../doc/handoffs/P09-PREVIEW-LIFECYCLE-RECLAIM-1-convergence-request.md)**
 
-**该请求列明（DAG 登记 · 依赖集成状态核定 · AC6 口径裁决）、各自归属理由，以及四项 Owner 明确不执行的动作及其理由。** **其中 DAG 登记已由用户授权完成；依赖状态已按 `P09-AC3-DELETE-HARDEN-1` 的 frontmatter 据实陈述；AC6 口径仍待 Codex。**
+**该请求列明（DAG 登记 · 依赖集成状态核定 · AC6）、各自归属理由，以及四项 Owner 明确不执行的动作及其理由。** **其中 DAG 登记已由用户授权完成；依赖状态已按 `P09-AC3-DELETE-HARDEN-1` 的 frontmatter 据实陈述；AC6 已由 Codex 裁决为未满足、终态 `closed_with_limitations`（权威落盘待 Codex）。**
 
 **在 Codex 就另两项答复前，继续送复审只会以同样的结论返回。** **本 Task 停在 `in_review`，`delivery_head` 保持 `392977a83…` 不变。**
 
-
-## AC6：`NOT_VERIFIED`，且原因是【证据缺失】而非【口径不明】（R15 后修正）
-
-**R13、R14 记 AC6 为 `NOT_VERIFIED`；我一度据 Task/禁止范围的两行推出「契约只指 IPC」，改为 `N/A`。R15 驳回，并指出本 Task 自己的设计文档否证了那个推论。我读了它，R15 是对的。**
-
-### 三处证据
-
-| 来源 | 内容 |
-|---|---|
-| `design-answer.md:72-73` | **「契约影响」列把两类【并列】**：方案 A（给 `preview_lifecycle` 加列）→ **「Schema 变更 → 需先冻结契约」**；方案 B（新增 IPC 事件）→ **「IPC 契约变更 → 需先冻结契约」**。**即该文档所说的 Schema 不限于 IPC。** |
-| `c1-plan-draft.md:4` | **「本文是准备，不是实施：未改产品代码、未申请豁免、【未冻结契约】」** |
-| `git log -S preview_resource_ids -- src/infrastructure/sqlite/library.py` | **`4b0f1f711`、`51c5630b0`、`5bd9734b8`** —— **三条全是 `fix(AC4)`，无一条冻结记录** |
-
-### 事实
-
-**C1 方向（方案 C 的修正版）在原表中「契约影响」列为「无」** —— **因为方案 C 是「全删 + 容忍失效」，不新增任何持久化状态。** **而 C1 加入了「删除前快照预览 id」这一层，于是往 `targets_json` 新增了 `preview_resource_ids` 字段，并在重试路径读取它。**
-
-**即：C1 的实现在方案 C 的原始描述之外，引入了新的持久化字段，而没有实施前的契约冻结记录。** **该字段改变了持久化格式的兼容语义**（旧 manifest 无此字段时 `preview_ids_known` 为 False，代码据此区分「无预览」与「字段未知」）。
-
-### 结论
-
-**AC6 为 `NOT_VERIFIED`。** **但原因必须是准确的**：**不是「Schema 的范围无法确定」**（那已被设计文档确定，比 IPC 宽），**而是【没有实施前冻结该持久化格式契约的证据】**。**R15 也是这么写的：「没有找到实施前冻结该持久化格式契约的证据」。**
-
-**⚠️ 我不自行把它记为 `N/A`** —— 那是我上一轮做过的，且被驳回。**也不自行记为「违反 AC6」** —— **是否必须冻结、以及若无冻结应如何处置（补冻结、改设计、或经授权豁免），属 Codex 的契约裁决与产品授权。**
-
-**Owner 侧可做且已做**：**找到并列出三处证据，说明证据缺失的确切形态。**
 
 ## AC6：未满足；终态裁决待 Codex 落盘
 
