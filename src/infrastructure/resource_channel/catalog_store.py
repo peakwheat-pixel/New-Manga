@@ -799,6 +799,27 @@ class ResourceCatalogStore:
             ).fetchall()
         return [CatalogEntry(*row) for row in rows]
 
+    def preview_resource_ids_for_artifacts(self, artifact_ids) -> list[str]:
+        """AC4: publish-style resource_ids whose origin artifact is in this set.
+
+        The publish key is ``preview-<uuid4>`` with rel_path
+        ``previews/<key>.png``: it carries no book, chapter or page component, so
+        it cannot be selected by path (measured R189).  ``artifact_id`` is the only
+        link back to a page, which is why the caller must snapshot before the
+        delete removes the mapping.
+        """
+        ids = [a for a in (artifact_ids or []) if a]
+        if not ids:
+            return []
+        placeholders = ",".join("?" for _ in ids)
+        with self._lock:
+            rows = self._connection.execute(
+                "SELECT resource_id FROM preview_lifecycle WHERE artifact_id IN (%s)"
+                % placeholders,
+                tuple(ids),
+            ).fetchall()
+        return [row[0] for row in rows if row[0]]
+
     def preview_lifecycle_row(self, resource_id: str) -> Optional[dict]:
         """Diagnostic read (GC-2 evidence/tests): the origin row of a key."""
         with self._lock:

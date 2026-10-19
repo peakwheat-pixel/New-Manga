@@ -1135,6 +1135,21 @@ class CoreServiceServer:
                 if manifest_data:
                     page_ids = manifest_data.get("page_ids", [])
             targets = repo.list_book_cleanup_targets(book_id)
+            # AC4 (P09-PREVIEW-LIFECYCLE-RECLAIM-1): snapshot publish-style preview
+            # keys while the artifact mapping still exists.  Measured in R189: the
+            # publish key is preview-<uuid4> with rel_path previews/<key>.png, so it
+            # cannot be found by name during cleanup, and preview_lifecycle is only
+            # reachable via artifact_id, which the delete below removes.
+            # Two databases, two halves (measured R189): media_artifacts is in
+            # library.db, preview_lifecycle is in the catalog DB.  Querying the
+            # latter from library.db raises "no such table".
+            preview_resource_ids: list[str] = []
+            preview_catalog = getattr(self._render_previews, "_catalog", None)
+            if preview_catalog is not None:
+                artifact_ids = repo.list_page_artifact_ids(page_ids)
+                preview_resource_ids = preview_catalog.preview_resource_ids_for_artifacts(
+                    artifact_ids
+                )
             try:
                 repo.execute_permanent_delete_db({book_id: targets}, {book_id: page_ids})
             except Exception:
@@ -1146,6 +1161,7 @@ class CoreServiceServer:
                 storage,
                 render_previews=self._render_previews,
                 page_ids=page_ids,
+                preview_resource_ids=preview_resource_ids,
             )
             if cleaned:
                 return {"book_id": book_id, "deleted": True}, None

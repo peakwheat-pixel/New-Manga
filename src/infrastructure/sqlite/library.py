@@ -1079,6 +1079,28 @@ class SqliteLibraryRepository:
                 self._conn.execute("DELETE FROM book_tags WHERE book_id = ?", (book_id,))
                 self._conn.execute("DELETE FROM books WHERE book_id = ?", (book_id,))
 
+    def list_page_artifact_ids(self, page_ids: Sequence[str]) -> list[str]:
+        """AC4: artifact_ids of these pages, read from library.db.
+
+        This is deliberately only half the answer.  ``preview_lifecycle`` lives in
+        the *catalog* database, not this one - measured, not assumed: querying it
+        here raises "no such table".  The caller joins the two: these artifact_ids
+        are matched against catalog rows before the delete removes them.
+
+        Why before: ``preview_lifecycle`` is reachable only through ``artifact_id``,
+        and ``execute_permanent_delete_db`` deletes the ``media_artifacts`` rows.
+        R7 measured that a lookup inside cleanup finds nothing by then.
+        """
+        if not page_ids:
+            return []
+        placeholders = ",".join("?" for _ in page_ids)
+        rows = self._conn.execute(
+            "SELECT artifact_id FROM media_artifacts WHERE page_id IN (%s)"
+            % placeholders,
+            tuple(page_ids),
+        ).fetchall()
+        return [row[0] for row in rows if row[0]]
+
     def cleanup_book_files(
         self,
         book_id: str,
@@ -1086,6 +1108,7 @@ class SqliteLibraryRepository:
         storage: Any,
         render_previews: Any = None,
         page_ids: Sequence[str] | None = None,
+        preview_resource_ids: Sequence[str] | None = None,
     ) -> bool:
         manifest_data = None
         if not targets:
@@ -1105,6 +1128,40 @@ class SqliteLibraryRepository:
                 manifest_data = self.get_cleanup_manifest_data(book_id)
             if manifest_data:
                 page_ids = manifest_data.get("page_ids")
+
+        # AC4 (P09-PREVIEW-LIFECYCLE-RECLAIM-1): publish-style rows.  These cannot be
+        # found by name -- the key is preview-<uuid4> and its rel_path is
+        # previews/<key>.png, carrying no page or book component (measured R189).
+        # The caller snapshots their resource_ids before the DB delete, because
+        # preview_lifecycle is only reachable through artifact_id and that mapping
+        # is gone by the time cleanup runs (R7).
+        if preview_resource_ids and render_previews is not None:
+            derived_root = getattr(render_previews, "_root", None)
+            catalog = getattr(render_previews, "_catalog", None)
+            if derived_root is not None and catalog is not None:
+                root_res = Path(os.path.abspath(derived_root))
+                for res_id in preview_resource_ids:
+                    try:
+                        entry = catalog.lookup(res_id)
+                    except Exception:
+                        all_deleted = False
+                        continue
+                    if entry is None or not entry.rel_path:
+                        # Already gone: nothing to remove, nothing to count.
+                        continue
+                    removed = unlink_preview_without_following(
+                        str(entry.rel_path), root_res
+                    )
+                    if not removed:
+                        # Same rule as the page-original branch: a refusal must not
+                        # be counted as a removal, and its row must survive so the
+                        # file stays traceable.
+                        all_deleted = False
+                        continue
+                    try:
+                        catalog.remove(res_id)
+                    except Exception:
+                        all_deleted = False
 
         if render_previews is not None and page_ids:
             try:
