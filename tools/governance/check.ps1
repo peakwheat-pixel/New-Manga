@@ -317,6 +317,7 @@ if ($TaskPath -and (Test-Path -LiteralPath $TaskPath -PathType Leaf)) {
                         $externalManifestUsed = $true
                         $checked = Test-ExternalResourceManifest $ref.Path $taskId $repoRoot
                         foreach ($p in $checked.Errors) { Add-Error $p }
+                        if ($checked.Notes) { foreach ($n in $checked.Notes) { Add-Warning "$($taskId): $n" } }
                         foreach ($r in $checked.Resources) {
                             if ($r.Disposition -in @('MIGRATE','ARCHIVE','PRESERVE_REFERENCED','PRESERVE_USER_DATA','PRESERVE_UNKNOWN')) {
                                 if ([string]::IsNullOrWhiteSpace($r.Destination) -or $r.Destination -match '^(?i:none|n/?a|-)$') { continue }
