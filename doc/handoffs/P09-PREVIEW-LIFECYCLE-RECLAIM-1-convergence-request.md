@@ -6,6 +6,18 @@
 
 ---
 
+## ⚠️ 状态：本请求的三项已全部有结论（R18 Finding 1、2 后逐条更新）
+
+**本文写于 2026-10-19（R243 之后），当时三项均未解决。此后三项逐一解决，本文原先的陈述已过时。R18 指出该问题；以下逐条改为现行事实，并保留原文以便对照。**
+
+| 项 | 本文原陈述 | 现行事实 |
+|---|---|---|
+| **DAG 登记** | Plan 未登记本 Task（L33）| ✅ **已登记**：`REBASELINE_PLAN` L31，`in_review`（用户授权；R14、R15 确认）|
+| **治理检查** | `FAIL: DAG 未登记`（L41）| ✅ **`PASS (3 warnings)`**，**须显式 `-TaskPath`** |
+| **AC6** | 请求裁决口径；称按数据库/IPC 口径记 `N/A` 合理（L57–L63、L80）| ❌ **Codex 已裁决：未满足，`NOT_VERIFIED`，不记 `N/A`，无豁免**；终态 `closed_with_limitations`。见 `ac6-ruling.md` |
+
+**⚠️ 本文其余部分保留原样以存原貌。** 若与上表冲突，**以上表与 `ac6-ruling.md` 为准。**
+
 ## 为什么发这份请求
 
 **本 Task 的 Owner 侧已全部闭合，剩余三项均不在 Owner 职权内。** **继续送复审只会以同一理由返回，所以在动作之前先把请求显式化，而不是继续消耗轮次。**
@@ -30,7 +42,7 @@
 
 ### 1. 把本 Task 登记进 `REBASELINE_PLAN`（P1）
 
-**`grep` 确认 Plan 未登记本 Task。** **Plan 现为 35/35 行、2464/2500 字节 —— 满额，登记需先重排。**
+**（原文，现已过时）`grep` 确认 Plan 未登记本 Task。** **Plan 当时为 35/35 行、2464/2500 字节 —— 满额，登记需先重排。** **✅ 现行事实：已由用户授权完成登记（`REBASELINE_PLAN` L31），见文首状态表。**
 
 **不在 Owner 侧的三个理由**：**① `REBASELINE_PLAN` 不在本 Task 的 `allowed_paths` 内；② Plan 是 DAG 权威，重排影响其他 Task 的登记；③ 本 Task 自释放起即记录「Plan 已列入 DAG：⏳ 待 Codex」。**
 
@@ -38,7 +50,8 @@
 
 ```powershell
 pwsh -NoProfile -File tools/governance/check.ps1 -TaskPath doc/tasks/P09-PREVIEW-LIFECYCLE-RECLAIM-1.md
-# 当前输出：FAIL: 当前 DAG 未登记非终态 Task：P09-PREVIEW-LIFECYCLE-RECLAIM-1
+# （原文，当时输出）FAIL: 当前 DAG 未登记非终态 Task：P09-PREVIEW-LIFECYCLE-RECLAIM-1
+# ✅ 现行输出：Governance check: PASS (3 warnings)，exit 0（须显式 -TaskPath）
 ```
 
 **本 Task 多轮报告中的「治理 PASS」实际检查的是 `P20`。** **那些 PASS 本身为真，但与本 Task 无关 —— 已记入 Task，以免下一位 Owner 沿用同一调用方式。**
@@ -54,13 +67,13 @@ pwsh -NoProfile -File tools/governance/check.ps1 -TaskPath doc/tasks/P09-PREVIEW
 
 **⚠️ 这是本 Task 记录里的一处**错误陈述**，而它由本 Task 的 Owner 写下。** **我不知道依赖的实际集成状态，因此不会自行改写为「未集成」——那只是把一种未经核实的说法换成另一种。** **请核定后告知，我据实更正 Task 与 Handoff。**
 
-### 3. 裁决 AC6 的 Schema 口径（P2）
+### 3. （已裁决）AC6 的 Schema 口径（P2）
 
-**交付无 SQL DDL、无 IPC 契约变更**，**故按数据库/IPC 口径记 `N/A` 合理。**
+**（原文，已被裁决取代）交付无 SQL DDL、无 IPC 契约变更，故按数据库/IPC 口径记 `N/A` 合理。** **❌ 该推论已被 R15 驳回、Codex 否决：本 Task 的设计答案把 Schema 变更与 IPC 契约变更并列为两类，且 C1 往 `targets_json` 新增了持久化字段。现行结论为【未满足】。**
 
 **但交付在 `targets_json` 中新增并持久化了 `preview_resource_ids` 字段**（`library.py:882` 附近）。**该内部 JSON 格式是否属于 AC6 所说的 Schema，R13 记为 `NOT_VERIFIED`。**
 
-**Owner 侧无法自裁**：**若口径含内部持久化格式，则应补契约证据；若不含，`N/A` 成立。** **这是契约解释，属 Architect。**
+**（原文）Owner 侧无法自裁：若口径含内部持久化格式，则应补契约证据；若不含，`N/A` 成立。这是契约解释，属 Architect。** **✅ 已由 Codex 裁决（会话 `01a15376-8338-7ed1-a862-45521145eedf`）：AC6 未满足、`NOT_VERIFIED`、**无 `N/A` 也无豁免**；终态 `closed_with_limitations`。**
 
 ## 明确不属于 Owner 侧的动作
 
@@ -77,7 +90,7 @@ pwsh -NoProfile -File tools/governance/check.ps1 -TaskPath doc/tasks/P09-PREVIEW
 
 1. **重排 `REBASELINE_PLAN`，登记本 Task**（腾出一行）
 2. **核定 `P09-AC3-DELETE-HARDEN-1` 的集成/关闭状态**，并告知本 Task 应如何记载依赖
-3. **裁决 AC6 的 Schema 口径**（含内部持久化 JSON 格式与否）
+3. ~~裁决 AC6 的 Schema 口径（含内部持久化 JSON 格式与否）~~ ✅ **已完成**：Codex 裁决 AC6 未满足、`NOT_VERIFIED`、无豁免；**权威落盘仍待 Codex**
 4. **三项完成后**，按 R13 的 Route 集成、做集成后验证与资源 closeout，更新 Task 与 STATUS
 
 **三项均完成后，Owner 侧可立即配合任何需要的更正。** **在此之前本 Task 停在 `in_review`，`delivery_head` 保持 `392977a83…` 不变。**
