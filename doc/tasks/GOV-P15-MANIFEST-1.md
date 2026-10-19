@@ -13,7 +13,7 @@ base_commit: 3539d8d75
 branch: null
 worktree: null
 integration_commit: null
-delivery_head: 2f9d549d5578a50893eabb4572394b4e212f0d87
+delivery_head: 68e69630690c4c5686ccd4df51a295785119574d
 canonical_evidence_status: pending
 resource_closeout_status: pending
 evidence_dir: verification/GOV-P15-MANIFEST-1
@@ -73,10 +73,10 @@ pwsh -NoProfile -File tools/governance/check.ps1 -TaskPath doc/tasks/P15.md
 
 | evidence_id | AC/Gate | path（仓库相对路径或绝对路径） | commit | sha256 | class (`CANONICAL` / `SOURCE_PIN`) |
 |---|---|---|---|---|---|
-| P15M-RESTORED | AC3 | `verification/P15/resource-manifest.json` | `2f9d549d5` | `2a8be70bc89152dba1b98d723c43458d2b725754ef6c3a302e4b30cec7c5a02e` | `CANONICAL` |
+| P15M-RESTORED | AC3 | `verification/P15/resource-manifest.json` | `68e696306` | `2a8be70bc89152dba1b98d723c43458d2b725754ef6c3a302e4b30cec7c5a02e` | `CANONICAL` |
 | P15M-WRITEUP | AC1–AC4 | `verification/GOV-P15-MANIFEST-1/ac1-ac4-manifest-restoration.md` | `237c43862` | `934b747842ff1c15dab1aeef2105bc1a7339077caf998225ccd9b11e9cb21788` | `CANONICAL` |
 | P15M-HANDOFF | AC5 | `doc/handoffs/GOV-P15-MANIFEST-1-237c43862.md` | `6eec515a5` | `81e37cd1808cfde9c08eea88d98273b1d9f9ce78b7550502be84ada09e564d31` | `CANONICAL` |
-| P15M-REVIEW-R3 | AC5 | `doc/reviews/GOV-P15-MANIFEST-1-2f9d549d5-antigravity-r3.md` | bfbb7b1a9 | `192f8198b9cc53ba55a8da1674a34161465c8549471d04c0fb7ceb85d3eed758` | `CANONICAL` |
+| P15M-REVIEW-R3 | AC5 | `doc/reviews/GOV-P15-MANIFEST-1-2f9d549d5-antigravity-r3.md` | `68e696306` | `192f8198b9cc53ba55a8da1674a34161465c8549471d04c0fb7ceb85d3eed758` | `CANONICAL` |
 
 ## Resource Manifest
 
