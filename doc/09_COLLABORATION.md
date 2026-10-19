@@ -93,6 +93,8 @@ linked worktree 的 toplevel 可以不同，但 common directory 必须指向本
 
 `done` 前完成 `canonical_evidence_status: complete` 与 `resource_closeout_status: complete`，更新 STATUS/Plan/Task 导航中的当前指针，并运行 `pwsh -NoProfile -File tools/governance/check.ps1 -TaskPath doc/tasks/<TASK-ID>.md`。检查器只读、不删文件；安全清理由 Codex按 manifest 逐项执行并记录，未满足门槛即保留。关闭或取消 Task 同样必须核销资源；只有 `done` 要求所有已释放 AC 通过。
 
+**`allowed_paths` 必须显式包含 `evidence_dir`。** Task 的判别力证据按 §4.1 与 §5 提交到 `verification/<TASK-ID>/`（即模板 frontmatter 的 `evidence_dir`）。仅声明 `evidence_dir` 而不在 `allowed_paths` 中列出该目录，属于**释放时清单不完整**：该类证据**不因 frontmatter 漏列而被追溯判为越界**（其交付依据来自 §4.1 / §5，不是 `allowed_paths` 的逐项授权），但**释放 Task 时的范围冻结必须由 Codex 把 `evidence_dir` 显式列入 `allowed_paths`**。依据：Codex R29 资源裁定第 2 节（`verification/P09-PREVIEW-LIFECYCLE-RECLAIM-1/codex-resource-ruling.md`）。
+
 Task 的开发状态与产品 PipelineRun 状态是两套不同概念，不能混入应用 Schema。
 
 测试项必须注明 planned / executed、命令、环境、结果、证据；结果中的 `passed` 与 `skipped` 必须分列（如 `290 passed, 6 skipped`），并为每个 skip 记录原因。测试命令尚无实现时写“计划命令”，不能假装可立即运行。Acceptance Criteria 的逐项满足需实际证据，不能仅引用 D08 标题。

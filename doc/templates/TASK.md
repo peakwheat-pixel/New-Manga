@@ -17,6 +17,7 @@ delivery_head: null
 canonical_evidence_status: pending
 resource_closeout_status: pending
 evidence_dir: verification/TASK-xxx
+allowed_paths: []   # 必须显式包含 evidence_dir（见「允许修改范围」）
 ---
 
 # TASK-xxx：任务标题
@@ -34,6 +35,7 @@ evidence_dir: verification/TASK-xxx
 
 - 明确相对项目根目录的文件/目录；共享接口、Schema、依赖变更单列。
 - 本 Task、自己的 Handoff、经分配的测试/verification 路径。
+- **`allowed_paths` 必须显式包含 frontmatter 的 `evidence_dir`**（默认 `verification/TASK-xxx`）。判别力证据按协作协议 §4.1 / §5 提交到该目录；只声明 `evidence_dir` 而不把它列入 `allowed_paths`，属于释放时清单不完整（Codex R29 裁定第 2 节）。
 
 ## 禁止范围
 
