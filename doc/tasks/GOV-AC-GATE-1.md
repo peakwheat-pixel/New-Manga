@@ -103,7 +103,7 @@ python tools/governance/tests/run-<新用例>.py
 | GATE-FIXTURES | AC4 | `tools/governance/tests/test_ac_gate.py` | `d3eedd735` | `d9960f96e0b61a3f44a220a0d0e6071c8d22964431e4b6aa4e151879211314dc` | `CANONICAL` |
 | GATE-WRITEUP | AC1–AC5 | `verification/GOV-AC-GATE-1/ac1-ac4-protocol-and-gate.md` | `fbf459f28` | `f449c758b6fc9d415f20806d73472b53607b509a85cf1eca96ad350d4dc8fa5e` | `CANONICAL` |
 | GATE-HANDOFF | AC6 | `doc/handoffs/GOV-AC-GATE-1-fbf459f28.md` | `489d7b1ba` | `8be08f1088179638c1bbe1d4d3838040954a59a37aa040c051d6cf329e8e7ea5` | `CANONICAL` |
-| GATE-REVIEW-R1 | AC6 | `doc/reviews/GOV-AC-GATE-1-bf088bb01-antigravity-r1.md` | `bf088bb01` | `ba46ed3e591972fbbf9e493fbe69e76cd6b57cdcc492c3d4986e612c6b284ae6` | `CANONICAL` |
+| GATE-REVIEW-R1 | AC6 | `doc/reviews/GOV-AC-GATE-1-bf088bb01-antigravity-r1.md` | `29a30408b` | `ba46ed3e591972fbbf9e493fbe69e76cd6b57cdcc492c3d4986e612c6b284ae6` | `CANONICAL` |
 | GATE-REVIEW-R2 | AC6 | `doc/reviews/GOV-AC-GATE-1-bf088bb01-antigravity-r2.md` | `23f5d84b0` | `9b31bddc18f102cce6fdadd7435d5a2551add88cd3d0005fb20f0b794d4913e9` | `CANONICAL` |
 
 ## Resource Manifest
