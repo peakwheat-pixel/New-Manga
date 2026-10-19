@@ -3,7 +3,7 @@ id: GOV-EOL-PIN-1
 title: 为 hash-pinned 证据固定 LF 行尾
 kind: governance
 governance_version: 2
-status: in_progress
+status: in_review
 approval: codex_closeout_backlog_r16_separate_task_required
 suggested_owner: dsh
 owner: dsh
@@ -13,7 +13,7 @@ base_commit: 94efecc75a3132d6f4b1e76fc66a18c9f2912e8b
 branch: null（单一 .gitattributes 改动，主线直接执行）
 worktree: null（不建 linked worktree）
 integration_commit: null
-delivery_head: null
+delivery_head: d19e74ab4dd9eb0fb15c6a776426df06fe174694
 canonical_evidence_status: pending
 resource_closeout_status: pending
 evidence_dir: verification/GOV-EOL-PIN-1
@@ -102,6 +102,11 @@ pwsh -NoProfile -File tools/governance/check.ps1
 ## Canonical Evidence
 
 交付时登记验证输出、`.gitattributes` diff、worktree 复现对照、Handoff、Review。
+
+| evidence_id | AC/Gate | path（仓库相对路径或绝对路径） | commit | sha256 | class (`CANONICAL` / `SOURCE_PIN`) |
+|---|---|---|---|---|---|
+| EOL-AC1AC3 | AC1、AC2、AC3 | `verification/GOV-EOL-PIN-1/ac1-ac3-eol-fix.md` | `d19e74ab4` | `f74ac2049d774b54860e0b4751ae8b507fbb97a640f02884fb838569fb6ece1a` | `CANONICAL` |
+| EOL-HANDOFF | AC5 | `doc/handoffs/GOV-EOL-PIN-1-d19e74ab4.md` | `d19e74ab4` | `e984070f4b7c687598290b8a695b349a493716ba0f1c918d3a3a09899a2bdd0d` | `CANONICAL` |
 
 ## Resource Manifest
 
