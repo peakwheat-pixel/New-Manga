@@ -9,7 +9,7 @@ suggested_owner: Antigravity
 owner: antigravity
 reviewer: dsh
 depends_on: [GOV-RESOURCE-MANIFEST-JSON-1]
-base_commit: 0393ce44b08dd1562d7c404ce911d84934a8f54f
+base_commit: 296a9389d
 branch: GOV-RESOURCE-MANIFEST-SAME-LOCATION-1
 worktree: G:/CODEX/New Manga/.agents/worktrees/GOV-RESOURCE-MANIFEST-SAME-LOCATION-1
 integration_commit: null
