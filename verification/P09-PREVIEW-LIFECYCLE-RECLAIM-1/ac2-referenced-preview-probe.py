@@ -139,10 +139,12 @@ if missing:
 # R7 Finding 1: name the survivors rather than counting them.  "At most one file left"
 # would accept a stranded preview PNG as if it were the namespace lock.
 survivor_names = sorted(p.name for p in remaining_files)
-unexpected_survivors = [n for n in survivor_names if n != ".preview-lifecycle.lock"]
+# R8 Finding 1: literal set comparison.  A filtered "nothing unexpected" check passes on an
+# empty directory too, which would hide the lock going missing.
+expected_survivors = [".preview-lifecycle.lock"]
 print("survivors: %s" % survivor_names)
-if unexpected_survivors:
-    problems.append("unexpected files survived: %s" % unexpected_survivors)
+if survivor_names != expected_survivors:
+    problems.append("expected survivors %s, found %s" % (expected_survivors, survivor_names))
 
 print()
 if problems:

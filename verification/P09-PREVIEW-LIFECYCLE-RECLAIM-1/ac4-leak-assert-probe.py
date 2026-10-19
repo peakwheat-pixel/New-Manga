@@ -125,13 +125,16 @@ leaked_rows = len(published_after)
 # namespace lock is the ONLY file that may remain; anything else is a leak, whatever the
 # arithmetic says.
 survivor_names = sorted(p.name for p in files_after)
-unexpected = [n for n in survivor_names if n != ".preview-lifecycle.lock"]
-leaked_files = len(unexpected)
+# R8 Finding 1: this must be a literal set comparison.  "Filter out the lock, then require
+# nothing left" also passes when NOTHING survived - including the lock - which is not the
+# expected state.  Require the exact set.
+expected_survivors = [".preview-lifecycle.lock"]
+leaked_files = 0 if survivor_names == expected_survivors else len(survivor_names)
+if survivor_names != expected_survivors:
+    print("EXPECTED survivors %s, found %s" % (expected_survivors, survivor_names))
 print()
 print("survivors: %s" % survivor_names)
 print("LEAK: %d row(s), %d unexpected file(s)" % (leaked_rows, leaked_files))
-if unexpected:
-    print("  unexpected:", unexpected)
 catalog.close()
 core.conn.close()
 

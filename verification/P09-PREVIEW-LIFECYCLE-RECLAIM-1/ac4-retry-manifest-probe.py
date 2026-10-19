@@ -147,13 +147,15 @@ leaked_rows = len(remaining_rows)
 # remaining file is the lock; a stranded preview would have been counted as the lock and
 # the probe would have passed.
 survivor_names = sorted(p.name for p in remaining_files)
-unexpected = [n for n in survivor_names if n != ".preview-lifecycle.lock"]
-leaked_files = len(unexpected)
+# R8 Finding 1: literal set comparison, not "nothing unexpected remains".  The latter also
+# accepts an empty directory, which is not the expected end state.
+expected_survivors = [".preview-lifecycle.lock"]
+leaked_files = 0 if survivor_names == expected_survivors else len(survivor_names)
+if survivor_names != expected_survivors:
+    print("EXPECTED survivors %s, found %s" % (expected_survivors, survivor_names))
 print()
 print("survivors: %s" % survivor_names)
 print("LEAK: %d row(s), %d unexpected file(s)" % (leaked_rows, leaked_files))
-if unexpected:
-    print("  unexpected:", unexpected)
 
 catalog.close()
 core.conn.close()

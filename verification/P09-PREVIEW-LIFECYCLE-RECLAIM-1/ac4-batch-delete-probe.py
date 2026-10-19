@@ -160,6 +160,22 @@ unexplained = [
 ]
 leaked_files = len(unexplained)
 survivors_are_b2 = commands == 1 and rows_after == b2_expected
+
+# R8 Finding 2: the probe checked that every surviving FILE maps to a surviving row, but
+# not that every surviving ROW still has its file.  R8 deleted b2's preview png, kept its
+# catalog row, and the probe still passed.  A row whose file is gone is not a preserved
+# preview - it is a broken reference.
+missing_files = []
+for rid in rows_after:
+    entry = catalog.lookup(rid)
+    rel = getattr(entry, "rel_path", None) if entry is not None else None
+    if not rel:
+        missing_files.append(rid)
+        continue
+    if not (derived_root / rel).is_file():
+        missing_files.append(rid)
+if missing_files:
+    print("rows whose file is missing: %s" % [r[:24] + "..." for r in missing_files])
 print("survivors == b2's expected preview:", rows_after == b2_expected)
 print()
 print("LEAK: %d row(s), %d unexplained file(s)" % (leaked_rows, leaked_files))
@@ -175,7 +191,8 @@ print("cross-page isolation: %d/%d of b1 keys reclaimed"
       % (len(reclaimed_b1), len(b1_expected)))
 if (len(reclaimed_b1) == len(b1_expected)
         and len(rows_after) == len(b2_expected)
-        and leaked_files == 0 and survivors_are_b2):
+        and leaked_files == 0 and survivors_are_b2
+        and not missing_files):
     print("RESULT = PASS (batch reclaimed its own preview and only its own)")
     sys.exit(0)
 if rows_after != b2_expected:
