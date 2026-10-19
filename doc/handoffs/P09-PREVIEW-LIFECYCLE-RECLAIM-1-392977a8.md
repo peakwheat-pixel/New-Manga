@@ -69,13 +69,21 @@
 | **AC3** 跨页 / 跨书隔离 | ✅ **PASS** | `ac4-batch-delete-probe.py` | **b1 两页的 2 个 key 全部回收（跨页 2/2）**；**b2 的 key 存活且身份经断言（跨书）**。注入同名异路径孤儿后 exit 1。**本 Task 的 AC3 与 `P09` 的 AC3 delete 子条件不同 —— 后者仍 `BLOCKED`。** |
 | **AC4** `page-original-{pid}` 回收 | ✅ **PASS** | `tests/core/test_core_delete_commands.py`（**20 passed，R6 独立运行**）+ `tests/storage/test_refused_preview_unlink_keeps_records.py` | core 测试断言**确定性** `page-original-{pid}` 的回收；storage 测试断言成功清理时文件与 catalog 行一并移除，以及新契约下 `all_deleted is False`、manifest 存活的另一侧。 |
 | **AC5** 不回归 HARDEN 九探针 | ✅ **PASS（有条件）** | `ac5-harden-rerun.md` | **8 个有效 SAFE + 1 个预期 INCONCLUSIVE**（`n002-race-probe.py` 的 `race_hook_fired=False`，其注入不触发，**不计为安全证据**）+ 1 个查询检查（`queries_ok=9/9`）。**探针到覆盖项为一对一映射表**（R6 Finding 2 后补）。 |
-| **AC6** Schema 变更先冻结契约 | ❌ **未满足**（证据状态 **`NOT_VERIFIED`**）| 无实施前冻结持久化格式契约的证据；**Codex 已裁决终态为 `closed_with_limitations`**，见 `verification/P09-PREVIEW-LIFECYCLE-RECLAIM-1/ac6-ruling.md` | **本 Task 的 diff 不含 Schema 或 IPC 契约变更** —— 只新增 catalog 查询、清理清单字段与删除前快照。**故「先冻结契约」这一要求在本次无对象，记为 `N/A` 而非 PASS。** |
+| **AC6** Schema 变更先冻结契约 | ❌ **未满足**（证据状态 **`NOT_VERIFIED`**）| 无实施前冻结持久化格式契约的证据；**Codex 已裁决终态为 `closed_with_limitations`** | **C1 往 `targets_json` 新增 `preview_resource_ids` 并重试时读取，改变了持久化格式的兼容语义**；**`c1-plan-draft.md:4` 明确「未冻结契约」，`git log -S` 显示的三个引入提交无一是冻结提交。** |
 
-**AC6 结论（R15 后修正）**：**`NOT_VERIFIED`**。**本 Task 的设计答案把「Schema 变更」与「IPC 契约变更」并列为两类**（`design-answer.md:72-73`），**故 Schema 不限于 IPC**；而 C1 在方案 C 之外往 `targets_json` 新增了 `preview_resource_ids` 并重试时读取，**改变了持久化格式的兼容语义**（旧 manifest 无此字段 → `preview_ids_known` 为 False）。**`c1-plan-draft.md:4` 明确「未冻结契约」**，**`git log -S` 显示该字段由三条 `fix(AC4)` 引入，无冻结记录。** **原因是证据缺失，不是口径不明；处置（补冻结 / 改设计 / 经授权豁免）属 Codex。**
+**AC6 说明（唯一版本，R16 后统一）**
 
-**修订经过**：本表先后记过 `N/A`（无依据）、`NOT_VERIFIED`（R13/R14）、`N/A`（我据两行原文的推论，被 R15 驳回）、`NOT_VERIFIED`（现，原因写明为证据缺失）。**四次里三次是我在证据不足时选了一个看起来安全的标签。****交付无 SQL DDL、无 IPC 契约变更，但实现把 `preview_resource_ids` 写入 `targets_json`**（`library.py:882,888`）**并在重试时读取该字段**（L622–638）。**该内部持久化 JSON 字段是否属于 AC6 所指的 Schema，属 Codex 的契约裁决**，**R13、R14 均记为 `NOT_VERIFIED`。Owner 记录此证据，不自行改为 `N/A` 或 `PASS`。**
+**结论**：**未满足**，证据状态 **`NOT_VERIFIED`**。
 
-**关于 AC6 的措辞**：R12 问「Schema 未变，因此是否 `N/A`」。**答案是 `N/A`** —— 该 AC 是**条件性**的（**若有 Schema 变更则须先冻结契约**），**而本次没有 Schema 变更，所以它不被触发。** **记 `N/A` 比记 `PASS` 更准确**：**`PASS` 会暗示存在一个被满足的检查，而实际是不存在该检查的对象。**
+**依据**：**本 Task 的设计答案把「Schema 变更」与「IPC 契约变更」并列为两类**（`design-answer.md:72-73`），**故 Schema 不限于 IPC**；**而 C1 在方案 C 之外往 `targets_json` 新增了 `preview_resource_ids` 并在重试时读取**，**改变了持久化格式的兼容语义**（旧 manifest 无此字段 → `preview_ids_known` 为 False）。**`c1-plan-draft.md:4` 明确写「未冻结契约」**；**`git log -S preview_resource_ids` 显示该字段由 `4b0f1f711`、`51c5630b0`、`5bd9734b8` 三条 `fix(AC4)` 引入，无冻结提交。**
+
+**终态**：**Codex 已裁决为 `closed_with_limitations`**（会话 `01a15376-8338-7ed1-a862-45521145eedf`；存档 `verification/P09-PREVIEW-LIFECYCLE-RECLAIM-1/ac6-ruling.md`）。**保留 AC6 未满足，不得改写为通过、`N/A` 或已豁免。** **保留现有字段，不启动方案 3。**
+
+**关闭的含义边界**：**不表示实现已集成，不表示技术门已满足，也不解除上游阻塞。**
+
+**⚠️ 落盘状态**：**Task `status` 仍为 `in_review`。** 按裁决分工，**权威落盘、Plan/STATUS 同步与关闭记录属 Codex**；**本 Handoff 与 Task 属 Owner 侧的 AC 与交接记录。** **不得把本 Task 描述为已落盘关闭。**
+
+**⚠️ 本节的修订经过（保留以示前车）**：**AC6 在本 Task 中被贴过四次标签 —— `N/A`（无依据）、`NOT_VERIFIED`（R13/R14）、`N/A`（我据 Task 两行原文的推论，被 R15 驳回）、`NOT_VERIFIED`（现）。R16 又发现我上一轮只改了表格行，留下了三段说 `N/A` 的旧文本，使同一份 Handoff 自相矛盾。四次里三次是我在证据不足时选了一个看起来安全的标签；而最后一次是【改了被指出的那一处、没改同一结论的其他表述】。**
 
 ### 测试
 

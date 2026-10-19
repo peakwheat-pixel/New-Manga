@@ -2,8 +2,8 @@
 
 **裁决时间**：2026-10-19 · **裁决者**：Codex · **请求者**：dsh（Owner，经用户指示）
 **Codex 会话**：`01a15376-8338-7ed1-a862-45521145eedf`
-**请求任务书**：`.workspace/agent-output/coordinator/codex-p09plr-ac6-task.txt`
-**裁决原文**：`.workspace/agent-output/coordinator/codex-p09plr-ac6-result.md`
+**请求任务书与裁决原文**：位于【仓外】的相邻目录 `G:\CODEX\New Manga.workspace\agent-output\coordinator\`（`codex-p09plr-ac6-task.txt`、`codex-p09plr-ac6-result.md`）。
+**⚠️ 该目录不在 Git 仓库内**，**因此从仓库路径无法解析**（R16 Finding 2 指出）。**权威内容以上文转录的裁决要点为准**；**仓外原文仅作溯源。**
 
 ---
 

@@ -136,20 +136,15 @@ pwsh -NoProfile -File tools/governance/check.ps1 -TaskPath doc/tasks/P09-PREVIEW
 
 **Owner 侧可做且已做**：**找到并列出三处证据，说明证据缺失的确切形态。**
 
-## AC6 裁决与终态（Codex，2026-10-19）
+## AC6：未满足；终态裁决待 Codex 落盘
 
-**Codex 作为 Architect/Integrator 已裁决**（会话 `01a15376-8338-7ed1-a862-45521145eedf`；存档 `verification/P09-PREVIEW-LIFECYCLE-RECLAIM-1/ac6-ruling.md`）：
+**AC6 为【未满足】，证据状态 `NOT_VERIFIED`；Codex 已裁决终态为 `closed_with_limitations`。**
 
-| # | 裁决 |
-|---|---|
-| 1 | **AC6 未满足**，证据状态 `NOT_VERIFIED` —— **不记 `N/A`，无豁免** |
-| 2 | **Owner 的「无法事后补满足」推理成立**（仅限时序要求）；**事后补写的冻结记录能说明格式、帮助后续兼容，但不能成为实施前冻结** |
-| 3 | **终态：`closed_with_limitations`** —— **保留 AC6 未满足，不得改写为通过** |
-| 4 | **保留现有字段，不启动方案 3**（删除需独立授权与范围审查）|
+**该裁决的完整记录与依据见** [`verification/P09-PREVIEW-LIFECYCLE-RECLAIM-1/ac6-ruling.md`](../../verification/P09-PREVIEW-LIFECYCLE-RECLAIM-1/ac6-ruling.md)。
 
-**关闭的含义边界**：**不表示已集成、不表示技术门已满足、不解除上游阻塞。**
+**⚠️ 本节只是一行指针，不是权威落盘。** 按裁决的分工，**将裁定写入 Task、同步 `REBASELINE_PLAN` 与 `STATUS.md`、完成关闭记录属 Codex**（R16 Finding 3 指出我此前在 Task 里写了裁决正文，超出了 Owner 半）。**Owner 侧负责 AC 与交接记录。**
 
-**⚠️ 落盘状态**：**Task `status` 仍为 `in_review`。** 按裁决分工，**将裁定写入 Task、同步 Plan/STATUS 并完成关闭记录属 Codex**；**Owner 侧补齐 AC 与交接记录**（本文件与 Handoff 已完成该半）。**在 Codex 落盘前，不得将本 Task 描述为已关闭。**
+**⚠️ Task `status` 仍为 `in_review`**，**在 Codex 落盘前不得描述为已关闭。** **AC6 不得改写为通过、`N/A` 或已豁免。**
 
 ## R13 的三项 finding（第 1 项已完成，另两项属 Codex）
 
