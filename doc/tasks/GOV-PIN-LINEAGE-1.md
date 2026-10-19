@@ -3,15 +3,15 @@ id: GOV-PIN-LINEAGE-1
 title: 历史 evidence pin 的 lineage 补注
 kind: governance
 governance_version: 2
-status: proposed
-approval: codex_r25_scope_reset_not_yet_released
+status: ready
+approval: codex_r26_released_scope_frozen
 suggested_owner: antigravity
-owner: unassigned
-reviewer: zcode
+owner: dsh
+reviewer: Antigravity
 depends_on: [GOV-SOURCE-RECORDS-1]
-base_commit: d124977bf
-branch: null
-worktree: null
+base_commit: 08935b198094507f8029f5ddfcfc96c33c0cf08e
+branch: dsh/GOV-PIN-LINEAGE-1
+worktree: G:/CODEX/New Manga.workspace/GOV-PIN-LINEAGE-1/worktree
 integration_commit: null
 delivery_head: null
 canonical_evidence_status: pending
@@ -132,8 +132,58 @@ python tools/governance/tests/<新增用例>.py
 
 交付时逐项登记；本 Task 不改数据文件，只改一个工具与新增测试。
 
+## 执行顺序（r26 §3.3 强制）
+
+r26 明确否决了「先改 checker、再看哪些变绿」的顺序。必须按以下六步：
+
+1. **冻结 69 条输入记录与来源**：不覆盖 inventory 中的原 `evidence_id` / `commit` / `SHA`。
+2. **改 checker 之前**，核对 **19 个 pin-only Task** 涉及的每个 pin：
+   commit 可解析、该 commit 内路径存在、blob SHA 与原 pin **完全相符**。
+   记录全量逐项表及异常。**异常不是「先修 checker」的理由。**
+3. 核验 **63 条 `TIME_BASED` + 6 条 `LINE_ENDING`**（合计 69）的 pinned blob。
+   每条结果由脚本自动提取（`git cat-file` 取 blob 算 SHA-256 是允许的），
+   但**必须保留逐条输入键、原 SHA、commit、path、blob SHA**——
+   **不得只交一个总数或分类汇总**。
+4. **再改 checker**。由固定夹具证明六类行为；运行既有
+   `run-resource-manifest-cases.py` 与 `test_ac_gate.py`。
+5. **修改前后对照错误矩阵**。预期**最多 19 个** pin-only Task 消除该项错误；
+   由于仍有其他错误的 64 个 Task **不应被期待整体变绿**。
+   **超出预期的错误消失、无关门禁变化、或核验集合与转绿集合不一致，都应停下调查，
+   不得记 PASS。**
+6. Review 与 Codex 集成验证通过后才允许 closeout。
+
+## 隔离要求（r26 §3.2，释放条件而非可选优化）
+
+`check.ps1` 是被全局治理检查使用的基础设施，**直接原地改动会同时改变所有 Task 的判断**。
+
+因此本 Task 在专属 linked worktree 中实施：
+
+| 项 | 值 |
+|---|---|
+| branch | `dsh/GOV-PIN-LINEAGE-1` |
+| worktree | `G:/CODEX/New Manga.workspace/GOV-PIN-LINEAGE-1/worktree` |
+| base | `08935b198` |
+| 创建时状态 | HEAD `08935b198`，**clean** |
+
+**已知限制**：该 worktree 缺少三个历史文件（`doc/WORKSPACE_GOVERNANCE.md`、
+两个 archive README、AD-001 历史副本），因此在 worktree 内运行全局 checker
+会出现**与本 Task 无关的既有错误**。这是本 Session 早期已记录的现象，
+不构成本 Task 的失败；影响范围的判断以**主 checkout 的错误矩阵**为准。
+
+## 额外保护（r26 §3.3，因 `check.ps1` 已被改过三次）
+
+- 记录 checker 相对本 Task 基线的**最小 diff**；不回滚或重排前序 Task 的有效变更。
+- 新增的历史 blob 校验**放在现有 Canonical Evidence 校验路径内**，
+  限定于**明确含有有效仓库 commit 的仓内 pin**；保留无 commit / 仓外来源的原规则。
+- **先保存改动前**两个治理测试的结果，再运行改动后的相同测试及六类新夹具；
+  命令、环境、stdout/stderr、exit code **留档**。
+- **单独验证**无关的 v3 AC gate、Resource Manifest、路径和状态错误**仍能失败**；
+  **不能只以全局 PASS 推断无回归**。
+- 对照固定输入与错误矩阵，确认副作用**仅**是把历史 pin 有效性从工作区 hash
+  改为 pinned blob hash，并新增可见的漂移诊断。
+
 ## Closeout Record
 
-- 状态：`proposed`。授权来源：Codex r25。
+- 状态：`ready`。授权来源：Codex r25（范围）+ r26（释放）。
 - **范围已按 r25 重定**：从「7 项 pin 补 lineage」改为「修正校验语义 + 63 项 registry」。
 - 释放前需：Codex 确认 Owner/Reviewer、冻结 allowed paths、登记 Plan。

@@ -33,7 +33,7 @@
 |GOV-EVIDENCE-UNIQUE-1|GOV-DEBT-CLEANUP-2|done（AC 证据覆盖核验；83 AC：3 COVERED / 17 PARTIAL / 19 GAP / 42 N/A；四轮 Review）|
 |GOV-SOURCE-RECORDS-1|GOV-EVIDENCE-UNIQUE-1|done（EXPORT-REVEAL-1 补勾 6、P15 补勾 6；AC4 因 ③ BLOCKED 保留未勾；遗留三项已裁定拆专项）|
 |GOV-AC-GATE-1|GOV-SOURCE-RECORDS-1|done（v3 AC 门禁；12 夹具；窄 scope 不清算存量；两轮 Review）|
-|GOV-PIN-LINEAGE-1|GOV-SOURCE-RECORDS-1|proposed（历史 pin lineage 补注；保留原 pin 不重算）|
+|GOV-PIN-LINEAGE-1|GOV-SOURCE-RECORDS-1|ready（r25 重定范围：修 checker 历史 pin 校验语义 + 63 项 registry；隔离 worktree `dsh/GOV-PIN-LINEAGE-1`）|
 |GOV-EVIDENCE-DIR-SWEEP-1|GOV-SOURCE-RECORDS-1|done（19 文件盘点；5 项补登记；0 个 ARCHIVE；两份失败日志保留）|
 |GOV-P15-MANIFEST-1|GOV-SOURCE-RECORDS-1|done（P15 manifest 重建；4 资源含 3 个实测 junction；原地集成已验证）|
 |P20-CLOSE-BOUND-1|P20-ISOLATION-1|closed_with_limitations（R6）|
@@ -43,4 +43,4 @@
 |GOV-PLAN-BUDGET-1|—|done|
 |RUST-ENV-BASELINE-1（P20-CLOSE-BOUND-1）/ P07交互补缺（P02）/ P21旧栈归档（P20+另授权）|—|proposed（P07/P21可选）|
 |P22 响应归属|P22-REBASE-1|已集成；P04 不放行，H1/P2-1/13 与 BC-AC5 缺项保留。已完成见各节点行。|
-READY 节点：ARCH-DOC-REBASELINE、P20。in_review：HARDEN-2。done：**41 项**。
+READY 节点：ARCH-DOC-REBASELINE、P20、GOV-PIN-LINEAGE-1。in_review：HARDEN-2。done：**41 项**。
