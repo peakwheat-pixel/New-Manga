@@ -127,7 +127,7 @@ pwsh -NoProfile -File tools/governance/check.ps1
 |---|---|---|---|---|---|
 | SRC-AC1 | AC1、AC2 | `verification/GOV-SOURCE-RECORDS-1/ac1-tracing.md` | `d8ad739d2` | `042ca14c2e5c0686844479904bc76dc40108e2818f425306a88308006329a9f4` | `CANONICAL` |
 | SRC-AC2AC3 | AC2、AC3 | `verification/GOV-SOURCE-RECORDS-1/ac2-ac3-ticks-and-preexisting-errors.md` | `d8ad739d2` | `27caaffe934e24fd4791855313e7dcb45fe5fda314cbf79204bad53fafffa30a` | `CANONICAL` |
-| SRC-HANDOFF | AC5 | `doc/handoffs/GOV-SOURCE-RECORDS-1-d8ad739d2.md` | `d8ad739d2` | `497a9752ca3ac208e0378baf480a464d94b6aef73ca7fbec5c414baf457a0d1e` | `CANONICAL` |
+| SRC-HANDOFF | AC5 | `doc/handoffs/GOV-SOURCE-RECORDS-1-d8ad739d2.md` | `cc373560c` | `497a9752ca3ac208e0378baf480a464d94b6aef73ca7fbec5c414baf457a0d1e` | `CANONICAL` |
 
 ## Resource Manifest
 
