@@ -56,7 +56,7 @@ allowed_paths:
   **不得把「存在候选」当成「AC 已满足」。**
 - [x] **AC3 — 只读保护**：不改来源 Task、Review、Canonical Evidence/pin、61 项源文件或生产文件；
   本 Task **不补登记来源 pin、不处置文件**。
-- [ ] **AC4 — 可复核交付与 Review**：入库逐项结果、来源 commit/hash、方法与未决项；
+- [x] **AC4 — 可复核交付与 Review**：入库逐项结果、来源 commit/hash、方法与未决项；
   按**AC 覆盖结果**报告，而不是要求每个 AC 恰有一份根证据；生成 Handoff；
   由 Antigravity 对固定 delivery head 独立 Review。
 - [ ] **AC5 — 生命周期与 closeout**：完成 Task/Review/Plan/STATUS 生命周期、
