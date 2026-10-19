@@ -25,6 +25,7 @@
 |P20-AC4-FPS-1|P20|closed_with_limitations（AC3 PASS；AC5 依裁决）|
 |GOV-DEBT-CLEANUP-1|P19/P20|blocked（待用户裁决）|
 |GOV-DEBT-CLEANUP-2|—|approved（AC6 的 P19-UI-FIX-1 格式债务；AC7 的 61 项归属未结）|
+|GOV-RESOURCE-MANIFEST-JSON-1|GOV-PLAN-BUDGET-1|ready|
 |P20-CLOSE-BOUND-1|P20-ISOLATION-1|closed_with_limitations（R6）|
 |P20-CLOSE-BOUND-HARDEN-1|P20-CLOSE-BOUND-1|closed_with_limitations|
 |P09-AC3-DELETE-HARDEN-1|P09-AC3-DELETE-1|closed_with_limitations（未集成）|
@@ -32,4 +33,4 @@
 |GOV-PLAN-BUDGET-1|—|done|
 |RUST-ENV-BASELINE-1（P20-CLOSE-BOUND-1）/ P07交互补缺（P02）/ P21旧栈归档（P20+另授权）|—|proposed（P07/P21可选）|
 |P22 响应归属|P22-REBASE-1|已集成；P04 不放行，H1/P2-1/13 与 BC-AC5 缺项保留。已完成见各节点行。|
-READY 节点：ARCH-DOC-REBASELINE、P20。in_review：HARDEN-2。done：**34 项**。
+READY 节点：ARCH-DOC-REBASELINE、P20、GOV-RESOURCE-MANIFEST-JSON-1。in_review：HARDEN-2。done：**34 项**。
