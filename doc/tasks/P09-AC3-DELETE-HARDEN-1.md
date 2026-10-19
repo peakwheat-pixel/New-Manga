@@ -97,7 +97,7 @@ evidence_dir: verification/P09-AC3-DELETE-HARDEN-1
 
 - Handoff：**`doc/handoffs/P09-AC3-DELETE-HARDEN-1-1878f0b1.md`**（按 `doc/09_COLLABORATION.md` §5）；**验证证据在 `verification/P09-AC3-DELETE-HARDEN-1/`，由 Handoff 引用**。
 - **当前 Review 指针**：`verification/P09-AC3-DELETE-HARDEN-1/codex-review-r13.md`，`reviewed_head = 81de2741372339ac47f077252aef62f589615e7d`，`decision = changes_requested`。**R1–R13 报告均已入库**（同目录 `codex-review-rN.md`）。按协作协议 §4.1，**新 head 或新 Review 使旧结论自动降为 HISTORICAL**。
-- Review：待固定 delivery head 后由 Codex 独立复核（owner=dsh, reviewer=Codex，满足 owner≠reviewer）。
+- Review：**已由 Codex 独立复核至 R13**（owner=dsh, reviewer=Codex，满足 owner≠reviewer）。**当前 Review 指针见上**；`delivery_head` 已在收口时固定（见 frontmatter）。
 - 实际测试：逐项见上表。
 - 2026-10-18 Coordinator（dsh, epoch 8）按用户裁决建立本 Task 并冻结范围。
 - 2026-10-18 Owner（dsh）完成 AC1–AC12 实施，固定 delivery head `4824ed5d4872a6dc519ca6e671bfa6485bd47d9a`，共 18 个提交。
@@ -132,7 +132,7 @@ evidence_dir: verification/P09-AC3-DELETE-HARDEN-1
 
 ## Closeout Record
 
-- Closeout date / Codex：待 Codex 独立复审后填写。
+- Closeout date / Codex：**2026-10-19；Codex 已独立复审至 R13**（`reviewed_head = 81de2741…`，`decision = changes_requested`，见当前 Review 指针）。
 - `canonical_evidence_status`：`complete`；上表 11 条 pin 的磁盘 SHA-256 已按**磁盘真实字节**实算（本仓库为 CRLF 检出），commit 均为 40-hex 且经 `git cat-file -e` 验证存在。
 - `resource_closeout_status`：`complete`；仅复用仓库工作区，无新建 worktree、无需迁移/归档/删除的派生产物。
 - 删除、迁移、归档数量/字节数：**0 / 0 / 0**。
