@@ -145,7 +145,12 @@ HEAD 相对 PREVIEW 分支超越 22 个提交（**截至该测量时点**；**�
 | 3 | **dataset / model / test-material** | **未引入** —— 探针用自造的小图 fixture（`write_temp`），**无外部数据集或模型权重** | `NOT_APPLICABLE` | — | **无**（不迁移） | — | 交付 diff 无数据或权重文件 | **无待核销** |
 | 4 | **artifact** | **无构建产物** —— 无打包、无 sidecar、无前端 dist | `NOT_APPLICABLE` | — | **无**（不迁移） | — | 交付 diff 仅源/测试/证据文件 | **无待核销** |
 | 5 | **temp** | **探针的固定工作目录**（每次运行先 `rmtree` 再重建）：`ac4-assert`、`ac4-retry`、`ac4-batch`、`ac2-referenced` | `PRESERVE_UNKNOWN` | `New Manga.workspace\agent-output\coordinator\<同名>` | **保持原位**（探针仍复用该路径） | 目录内容由探针每次重建，**无稳定 hash** | 四个探针仍存在且会复用这些路径；R16–R26 复审亦在仓外 scratch 运行 | **保留**；**非仓库内容，不阻止关闭** |
-| 6 | **agent-output** | 实测 18 个与本 Task / 前序 P09 相关的目录：`ac2-keys`、`ac2-referenced`、`ac4-assert`、`ac4-batch`、`ac4-count`、`ac4-diag`、`ac4-retry`、`n002-race-oldhook`、`n002-race2`、`n004-prod`、`n004-tmp`、`P09-AC3-R6-…`、`P09-PREVIEW-LIFECYCLE-RECLAIM-1-R3-scratch`、`P09-PREVIEW-LIFECYCLE-RECLAIM-1-r7-22b0860`、`P09-R8-empty-survivors`、`P09-R8-injection`、`P09-R8-probes`、`r4-n002-outside`、`r4-n002-root` | `PRESERVE_UNKNOWN` | 同上目录 | **保持原位** | 逐目录未做 manifest（**部分属前序 Task**） | 位于治理规则指定的仓外 agent output 位置 | **保留并记录**；**未逐项核销 = 本表的已知缺口** |
+| 6 | **agent-output** | **实测 19 个**与本 Task / 前序 P09 相关的目录（括号内为文件数）：`ac2-keys`(7)；`ac2-referenced`(3)；`ac4-assert`(3)；`ac4-batch`(7)；`ac4-count`(8)；`ac4-diag`(8)；`ac4-retry`(3)；`n002-race-oldhook`(1)；`n002-race2`(1)；`n004-prod`(1)；`n004-tmp`(4)；`P09-AC3-R6-b9901af250064a409a7ae441a9dd27e9`(0)；`P09-PREVIEW-LIFECYCLE-RECLAIM-1-R3-scratch`(667)；`P09-PREVIEW-LIFECYCLE-RECLAIM-1-r7-22b0860`(20)；`P09-R8-empty-survivors`(12)；`P09-R8-injection`(31)；`P09-R8-probes`(20)；`r4-n002-outside`(1)；`r4-n002-root`(0) | `PRESERVE_UNKNOWN` | `New Manga.workspace\agent-output\coordinator\` | **保持原位**（不迁移、不删除） | **逐目录未制作 manifest**；**引用检查未做** | **全部保留**；**逐项裁定属 Codex** |
+
+**⚠️ 第 6 类的计数更正（R28 Finding 1）**：**上一版写「18 个」，实测为 19 个 —— 漏列了 `P09-AC3-R6-b9901af250064a409a7ae441a9dd27e9`（0 文件）。** **现按 19 项逐项列出并附文件数。**
+
+**⚠️ 逐目录的处置、hash/manifest 与引用检查【未逐项完成】** —— **§4.2 要求逐项记录；本表如实标注为 `PRESERVE_UNKNOWN` 与「未做」，而不声称已闭环。** **其中 `P09-PREVIEW-LIFECYCLE-RECLAIM-1-R3-scratch` 有 667 个文件，是最大的一项，也是最需要 manifest 的一项。** **逐项裁定属 Codex（§4.2 规定在集成窗口给出）。**
+
 | 7 | **exchange** | **不存在** —— 无 `*-exchange` 目录 | `NOT_APPLICABLE` | — | **无**（不迁移） | — | 路径不存在 | **无待核销** |
 
 ### 另有两项不属于 §4.2 七类，但本 Task 确实产生
