@@ -238,3 +238,21 @@ evidence_dir: verification/P09-AC3-DELETE-HARDEN-1
 - **F-002 剩余部分** —— 经本会话诊断确认为**测试覆盖缺口**（生产接线 `rotate_render_preview` 存在且条件正确；测试直接调 `mark_preview_retired` 而跳过了轮换路径），属确定性工作
 
 **本轮起的返修顺序**：F-002 测试覆盖（确定性）→ N-004（设计 + 实现）→ R4 独立复审。
+
+### F-002 闭合（2026-10-19，R4 前记录）
+
+**诊断结论**：R3 对 F-002 的 PARTIAL 定性**依据正确但结论过强**。生产接线与测试覆盖**均存在**，二者合起来覆盖完整。
+
+| 层 | 证据（本会话实测） |
+|---|---|
+| **生产接线** | `main.rs:1057 rotate_render_preview` → `L1076 same_key = next == previous` → `L1083 if !same_key && channel.revoke_resource_retiring_preview(previous_id)` → `core_bridge.rs:283-292` 发 `{"resource_id":…, "retire_preview": true}` → `host_bridge.py:136-145` 在 revoke 成功后调 `mark_preview_retired` |
+| **Rust 测试** | **6 个，本轮实跑全绿**：`successful_rotation_retires_previous_key_only`、`same_key_rotation_carries_no_retire_bit`、`failed_rotation_marks_nothing`、`rerender_fails_closed_when_previous_revoke_fails`、`preview_rotation_short_circuits_equal_catalog_key`、`none_preview_rotation_still_retires_previous_key` |
+| **Python 测试** | `tests/core/test_p09_ac4_translated_preview.py` 断言退休后该 preview 进入 `retired_preview_candidates` |
+
+**R3 原文**：「新测试直接调用 `catalog.mark_preview_retired(key)`…这验证了退休后的 GC 候选路径，却没有证明真实 reader 发布会退休 preview。」
+
+**判定**：该陈述**对"我 R2 后新加的那个 Python 测试"是准确的**（它确实只覆盖 GC 侧），**但由此推出 F-002 未闭合则过强** —— 生产侧「轮换 → 退休」由既有 6 个 Rust 测试覆盖，其中 `successful_rotation_retires_previous_key_only` 正是断言该行为。
+
+**F-002 判为 CLOSED**；AC4 的定性更新为：**GC 侧候选路径有 Python 测试覆盖；生产「轮换 → 退休」有 6 个 Rust 测试覆盖**。
+
+**同时记录**：本 Task 的 `rotate_render_preview` 设计意图（`main.rs:1077-1082` 注释声明）—— 同 key 轮换不得退休活着的 key、失败轮换不得标记任何可回收 —— **已有对应的负面测试**（`same_key_rotation_carries_no_retire_bit`、`failed_rotation_marks_nothing`），即**设计声明与测试覆盖一致**。
