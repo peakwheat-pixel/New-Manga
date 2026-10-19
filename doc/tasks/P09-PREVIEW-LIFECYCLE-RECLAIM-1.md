@@ -132,19 +132,45 @@ HEAD 相对 PREVIEW 分支超越 22 个提交（**截至该测量时点**；**�
 
 **处置属 Codex**（R21：「Integrator 应在集成前核实并处理分支归属」，并把「处理分支指针差异」列入 Codex 事项）。**Owner 不移动分支指针** —— **因为那会由我单方面确立「本 Task 的文档进展落在哪个分支」这一事实，而它正是集成要确立的东西。**
 
-## 资源 closeout（协议 §4.2）
+## 资源 closeout（协议 4.2）—— 据实测重写（R25 Finding 1 后）
 
-**`resource_closeout_status: complete`。**
+**`resource_closeout_status: complete`** —— **以下按本轮实测填写；初版有三条不准确，已更正。**
 
-| 项 | 处置 |
-|---|---|
-| **新建 worktree** | **无** —— 全程复用仓库工作区与相邻 `New Manga.workspace` 下的 coordinator 输出目录 |
-| **派生产物需迁移/归档/删除** | **无** —— 探针一律在 `%TEMP%` 新建隔离根内运行（`AC4_REPO` 指向仓外副本），**不改动仓库内固定 fixture 目录**；R16–R24 的复审亦在仓外 scratch 副本执行 |
-| **Task 改动范围** | **6 个源/测试文件**（`core_service.py`、`catalog_store.py`、`library.py`、`tests/storage/test_refused_preview_unlink_keeps_records.py` 等）+ **11 个 `verification/P09-PREVIEW-LIFECYCLE-RECLAIM-1/` 证据文件**，**全部在 `allowed_paths` 内** |
-| **用户文件** | **未触碰** —— `.qoder-credits/report.json` 全程为唯一的 tracked dirty 项，归属用户 |
-| **待核销项** | **无** |
+### 交付 diff 的实际构成
 
-**依据**：`git diff --name-only <base_commit>..<delivery_head>` 的实际文件清单；以及每轮复审报告的 scratch 隔离说明。**本项与依赖 Task `P09-AC3-DELETE-HARDEN-1` 的 closeout 同形（其记为「仅复用仓库工作区，无新建 worktree、无需迁移/归档/删除的派生产物」）。**
+**`git diff --name-only <base_commit>..<delivery_head>` 实测 17 个文件**：
+
+| 类别 | 数量 | 内容 |
+|---|---|---|
+| **源/测试** | **4** | `src/bootstrap/core_service.py`、`src/infrastructure/resource_channel/catalog_store.py`、`src/infrastructure/sqlite/library.py`、`tests/storage/test_refused_preview_unlink_keeps_records.py` |
+| **verification** | **11** | `verification/P09-PREVIEW-LIFECYCLE-RECLAIM-1/` 下的设计、裁决、AC1/AC5 证据与四个探针 |
+| **doc** | **2** | `doc/STATUS.md`、`doc/tasks/P09-PREVIEW-LIFECYCLE-RECLAIM-1.md` |
+
+**⚠️ 初版误记「6 个源/测试文件」；实测为 4 个（3 源 + 1 测试）。全 17 项均在 `allowed_paths` 覆盖范围内。**
+
+### 探针的派生产物：确实存在，且不在 `%TEMP%`
+
+**四个探针各自硬编码一个【仓外但固定】的工作目录，每次启动先删除再重建**：
+
+```
+ac4-assert / ac4-retry / ac4-batch / ac2-referenced
+  -> G:\CODEX\New Manga.workspace\agent-output\coordinator\<同名子目录>
+每个脚本在定义 WS 后即执行 shutil.rmtree(WS, ignore_errors=True)
+```
+
+**⚠️ 初版误称「探针一律在 `%TEMP%` 新建隔离根运行」—— 不实。**
+
+**上述目录当前实际存在**（本轮实测）；**同目录下另有本 Task 与前序 Task 产生的 `ac2-keys`、`ac4-count`、`ac4-diag`、`n002-race-oldhook`、`n002-race2`、`n004-prod`、`n004-tmp`、`P09-AC3-R6-…` 等。**
+
+**处置**：**均为仓外派生产物，位于治理规则指定的 `New Manga.workspace` agent output 位置，不属仓库内容，无需迁移或归档。** **但「无待处置派生产物」这一表述不成立 —— 它们存在，只是按既定仓外目录规则处置。**
+
+### 关于「未触碰用户文件」
+
+**⚠️ 无法由当前状态验证。** **可核实的仅是**：**本 Task 全程未把 `.qoder-credits/report.json` 纳入任何 commit，且每轮检查时它是唯一的 tracked dirty 项。** **「从未触碰」是更强的主张，本轮不声称。**
+
+### 结论
+
+**`resource_closeout_status: complete`**：**改动文件均在 `allowed_paths` 内；派生产物全部位于仓外既定目录，无仓库内残留需核销。** **初版三条不准确记录已按上述实测更正。**
 
 ## AC6：未满足（权威记录，已落盘）
 
@@ -170,13 +196,13 @@ R13 判定 **`approved_with_conditions`** —— **「实现可接受；集成�
 | # | 内容 | 归属 |
 |---|---|---|
 | 1 | **P1 DAG 未登记本 Task** | ✅ **已完成**（用户授权；`REBASELINE_PLAN` L31；治理 FAIL→PASS，R14 独立确认）|
-| 2 | **P1 依赖「已集成」的记载与权威状态不符** —— 本 Task 记载依赖已集成，但 `P09-AC3-DELETE-HARDEN-1` 仍为 `in_review`、`integration_commit` 为 `null`，Plan 也仍列 `in_review`。**R15 的 `approved` 不等于已集成；R15 本身只支持 `closed_with_limitations`** | **Codex** |
+| 2 | **（R13 当时记录，现已据实更正）P1 依赖「已集成」的记载与权威状态不符** —— 本 Task 记载依赖已集成，但 `P09-AC3-DELETE-HARDEN-1` 仍为 `in_review`、`integration_commit` 为 `null`，Plan 也仍列 `in_review`。**R15 的 `approved` 不等于已集成；R15 本身只支持 `closed_with_limitations`** | **Codex** |
 | 3 | **AC6** | ❌ **`NOT_VERIFIED`** —— **无实施前冻结持久化格式契约的证据**；证据见下节，处置属 Codex |
 
 **R13 同时确认**：四个探针全部 PASS 且未因错误原因通过（连续第三轮）；`645 passed`；R12 Finding 2 的 AC 逐项表要求已满足；**三处 lock 断言仍缺可区分的失败侧注入，「按现有记录不应算作已验证」**（与本 Task 自己的记录一致）。
 
 | Plan 已列入 DAG | ✅ **已登记**（`REBASELINE_PLAN` L31；现为 `closed_with_limitations`）|
-| 依赖状态 | **未集成；交付与证据已闭合；终态已落盘为 `closed_with_limitations`** —— 读取 `P09-AC3-DELETE-HARDEN-1` 的 frontmatter 得：`status: in_review`、`integration_commit: null`、`delivery_head: 1878f0b126e8a0e2603570f9b2009d8b70a259f1`、`canonical_evidence_status: complete`、`resource_closeout_status: complete`。**即：该 Task 的交付头已固定、证据与资源回收均已闭合，但它【尚未集成】，终态由 Codex 设定。** **R15 的 `approved` 是 Review 结论，不等于集成完成。** *（本节原先写「依赖已集成」——无权威支持；后改为 `NOT_VERIFIED`；现按 frontmatter 据实陈述。据实不需要裁决，读文件即可。）* |
+| 依赖状态 | **未集成；交付与证据已闭合；终态已落盘为 `closed_with_limitations`** —— **（引用为当时快照）** 读取 `P09-AC3-DELETE-HARDEN-1` 的 frontmatter 曾得 `status: in_review`、`integration_commit: null`、`delivery_head: 1878f0b126e8a0e2603570f9b2009d8b70a259f1`、`canonical_evidence_status: complete`、`resource_closeout_status: complete`。**✅ 该 Task 现已 `closed_with_limitations`、`integration_commit` 仍为 `null`。**
 | 范围/Owner/Reviewer/base/allowed_paths 已冻结 | ✅ **本次冻结**（见 frontmatter）|
 | STATUS 已登记 | ✅ **本次登记** |
 
