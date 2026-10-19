@@ -59,7 +59,33 @@
 
 1. **`segments` 的来源**：该函数已在 L175-176 用它做 reparse walk —— **直接复用，无需重算**
 2. **返回值语义**：`unlink_by_handle` 返回 `bool | None`；**`None` 仅表示「该平台无此实现」**，**Windows 上不会出现** → 回退到原路径逻辑（保持既有非 Windows 行为）
-3. **拒绝时应抛异常**：该函数的契约是「越界即 `ImmutablePathViolation`」；当前实现对「文件不存在」是静默跳过（`is_file()` 为假即不删）。**接线后需保持这一点** —— 若 `handled is False` 是因为**文件不存在**而非链接，静默跳过可能更符合既有语义。**这一点需在实现时对照既有测试确认**（`test_managed_*` 系列），不能凭猜。
+3. **拒绝时应抛异常**：该函数的契约是「越界即 `ImmutablePathViolation`」；当前实现对「文件不存在」是静默跳过（`is_file()` 为假即不删）。**接线后需保持这一点** —— 若 `handled is False` 是因为**文件不存在**而非链接，静默跳过可能更符合既有语义。
+
+   **已实测（2026-10-19）**，四种情况的既有行为：
+
+   | 输入 | 结果 |
+   |---|---|
+   | 文件不存在 | **`NO EXCEPTION`**（静默跳过）|
+   | 文件存在 | **`NO EXCEPTION`**（正常删除）|
+   | 目录不存在 | **`NO EXCEPTION`**（静默跳过）|
+   | 越界（`../outside.png`）| **`ImmutablePathViolation`** |
+
+   **因此接线不能直接 `return unlink_by_handle(...)`** —— 句柄链把「缺失」与「被拒绝」**都报成 `False`**，会丢掉「缺失即静默」这一既有语义。**正确写法**：
+
+   ```python
+   if not absolute.is_file():
+       return                      # 缺失：既有语义是静默跳过，保持不变
+   handled = unlink_by_handle(self._root, segments)
+   if handled is None:
+       absolute.unlink()           # 非 Windows：无句柄链，回退
+   elif not handled:
+       raise ImmutablePathViolation(
+           f"refusing to remove {relative_path!r}:"
+           " handle chain refused (link in the path or wrong object type)"
+       )
+   ```
+
+   **为什么这个顺序是对的**：`is_file()` 为真**不代表安全**（**它正是竞态里被绕过的那次检查**）—— 它**只用来区分「缺失」与「存在」**；**真正的防护在后面的句柄链**，它不复用 `is_file()` 的结果，而是**重新逐段打开并校验**。
 
 **可选**：接线后 L175-186 的 reparse walk 变成冗余（句柄链逐段做了同样的事）。**建议保留** —— 它提供更早、更明确的错误信息，且删除它属于额外风险。
 
