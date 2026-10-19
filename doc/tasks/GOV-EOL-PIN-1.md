@@ -3,7 +3,7 @@ id: GOV-EOL-PIN-1
 title: 为 hash-pinned 证据固定 LF 行尾
 kind: governance
 governance_version: 2
-status: in_review
+status: done
 approval: codex_closeout_backlog_r16_separate_task_required
 suggested_owner: dsh
 owner: dsh
@@ -12,10 +12,10 @@ depends_on: [GOV-UNTRACKED-BACKLOG-1]
 base_commit: 94efecc75a3132d6f4b1e76fc66a18c9f2912e8b
 branch: null（单一 .gitattributes 改动，主线直接执行）
 worktree: null（不建 linked worktree）
-integration_commit: null
+integration_commit: 48f29726a
 delivery_head: 48f29726a
-canonical_evidence_status: pending
-resource_closeout_status: pending
+canonical_evidence_status: complete
+resource_closeout_status: complete
 evidence_dir: verification/GOV-EOL-PIN-1
 allowed_paths:
   - .gitattributes
@@ -112,6 +112,27 @@ pwsh -NoProfile -File tools/governance/check.ps1
 
 本 Task 不处置资源，只追加行尾规则。交付时逐项登记 `.gitattributes` 与证据目录。
 
+| resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
+|---|---|---|---|---|---|
+| attribute file | `.gitattributes` | `PRESERVE_REFERENCED` | `.gitattributes` | `8ff73db56d36855eca92279ea9f369ca9d3a1806d7dc55de79cb1c65702363c1` | 追加 8 行规则（本 Task 自身 2 行 + 前序 Task 2 行 + 注释 2 行 + 空行）；既有四条规则未改动 |
+| evidence dir | `verification/GOV-EOL-PIN-1/` | `PRESERVE_REFERENCED` | `verification/GOV-EOL-PIN-1/` | `b34e336ddc76255513c07a6e21770d2cc82826adcd27eda1e1891d085dce4c0b` | 1 份验证输出，AC 直接产物 |
+| pinned evidence (维护对象) | `verification/GOV-UNTRACKED-BACKLOG-1/` | `PRESERVE_REFERENCED` | `verification/GOV-UNTRACKED-BACKLOG-1/` | `9611a6c0be6a9d91d58a060003f1338c51e7ef7aeb7561f23f3d1e36b50b8945` | 6 份证据字节未变（renormalize 只固定未来检出行为）|
+| agent output | 仓外 agent-output，非本 Task 交付物 | `NOT_APPLICABLE` | — | `.gitattributes` | 派发产物不入库 |
+
 ## Closeout Record
 
-- 状态：`in_progress`。由 DSH 直接执行（单一文件改动，不建 worktree）。
+- 关闭：2026-10-20。Owner=dsh，Reviewer=Antigravity。裁定：Codex r17。
+- 终态：**`done`**。AC 5/5 全部达成；Review 给出 `APPROVED_AFTER_FIX`。
+- head：`reviewed_head=48f29726a`、`delivery_head=48f29726a`、
+  `integration_source_head=48f29726a`；`integration_commit=null`
+  （本 Task 在主 checkout 直接完成，无 merge、无独立分支或 worktree）。
+- **本 Task 的关键事实**：它是 `GOV-UNTRACKED-BACKLOG-1` 的 P1 修复。
+  之所以必须独立立项，是因为 Backlog 的 AC5 明文禁止改 `.gitattributes`——
+  而该禁止同样约束 Codex closeout（r16）。**禁止范围不能被「反正我是集成方」绕过。**
+- **Review 抓出本 Task 自己也犯了同类错误**：只给前序 Task 加规则，遗漏自身两条路径；
+  在 worktree 中自检时自身两个 pin 失配。已补规则并重算 pin。
+  同时证据文件曾为 `w/mixed`（编辑时写入 CRLF），已规范化为纯 LF（2715 → 2714 bytes）。
+  现在全部 `i/lf w/lf`。
+- 资源核销：只改 `.gitattributes`（追加 8 行规则）与本 Task 自身文件；
+  未删除、未移动任何文件。
+- 未关闭项：无。

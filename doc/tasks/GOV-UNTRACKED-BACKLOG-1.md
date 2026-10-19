@@ -3,7 +3,7 @@ id: GOV-UNTRACKED-BACKLOG-1
 title: 仓库未入库积压（1591 文件）的分类与边界化
 kind: governance
 governance_version: 2
-status: in_review
+status: done
 approval: dsh_release_2026-10-20_measured_1591_files
 suggested_owner: dsh
 owner: dsh
@@ -12,10 +12,10 @@ depends_on: []
 base_commit: 6ee8c87b1
 branch: GOV-UNTRACKED-BACKLOG-1
 worktree: null
-integration_commit: null
+integration_commit: a2f411a68
 delivery_head: a2f411a6894c7de351173695519fd1b640cbdbc4
-canonical_evidence_status: pending
-resource_closeout_status: pending
+canonical_evidence_status: complete
+resource_closeout_status: complete
 evidence_dir: verification/GOV-UNTRACKED-BACKLOG-1
 allowed_paths:
   - doc/tasks/GOV-UNTRACKED-BACKLOG-1.md
@@ -137,12 +137,28 @@ verification/P02/dsh-appcontainer-contract-r3-review-attempt1.status.txt
 
 | resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
 |---|---|---|---|---|---|
-| untracked backlog | `verification/`、`.orchestrator/`、`doc/`、`archive/` 下的 1591 个未入库文件 | `PRESERVE_UNKNOWN` | 原路径保留 | `doc/tasks/GOV-UNTRACKED-BACKLOG-1.md` | 本 Task 只读盘点，未删除/移动/归档任何一项；137 项被已入库文档引用，一律留原路径 |
+| untracked backlog | `verification/`、`.orchestrator/`、`doc/`、`archive/` 下的 1591 个未入库文件 | `PRESERVE_UNKNOWN` | `verification/P02` | `doc/tasks/GOV-UNTRACKED-BACKLOG-1.md` | 本 Task 只读盘点，未删除/移动/归档任何一项；137 项被已入库文档引用，一律留原路径 |
 | CON (reserved name) | `CON` | `PRESERVE_REFERENCED` | `CON` | `8241373a2cc3ac428786e92b23a5872952cf7635e8a5153cac660560c4ac8714` | 34778 bytes，SHA-256 8241373A2CC3AC428786E92B23A5872952CF7635E8A5153CAC660560C4AC8714；内容为真实 SFX 哈希清单，不得删除 |
 | evidence dir | `verification/GOV-UNTRACKED-BACKLOG-1/` | `PRESERVE_REFERENCED` | `verification/GOV-UNTRACKED-BACKLOG-1/` | `9611a6c0be6a9d91d58a060003f1338c51e7ef7aeb7561f23f3d1e36b50b8945` | 6 份证据，均为本 Task AC 直接产物 |
 | agent output | 仓外 agent-output，非本 Task 交付物 | `NOT_APPLICABLE` | — | `doc/tasks/GOV-UNTRACKED-BACKLOG-1.md` | 派发产物不入库 |
 
 ## Closeout Record
 
-- 状态：`proposed`。尚未释放、无交付。
-- 释放前置：由 Codex 确认范围冻结、登记真实 branch/worktree 与 base/head。
+- 关闭：2026-10-20。Owner=dsh，Reviewer=Antigravity。裁定：Codex r17。
+- 终态：**`done`**。AC 6/6 全部达成；Review 给出 `APPROVED`（无 P0）。
+- head：`reviewed_head=a2f411a68`、`delivery_head=a2f411a68`、
+  `integration_source_head=a2f411a68`；`integration_commit=null`
+  （本 Task 在主 checkout 直接完成，无 merge、无独立分支或 worktree）。
+  **r16 已裁定：不得把含 Review 的后续 HEAD 冒充 `delivery_head`。**
+- **阻塞解除**：本 Task 曾因 P1（跨 worktree CRLF 破坏证据 pin）被 r16 判定不转 `done`。
+  P1 由独立 Task `GOV-EOL-PIN-1` 修复（5/5 AC，`APPROVED_AFTER_FIX`），r17 确认解除。
+- **本 Task 的核心产出**：把「1233 个未入库文件」这句流传的话换成三个实测数字——
+  **1591** 个文件（不是 `git status` 的 1235 条目），`verification/` 占 92%，
+  `verification/P02` 单项 1072；**137** 项被已入库文档引用（一律留原路径），
+  **1454** 项无引用（但无引用 ≠ 可删）。
+- **最有用的产出是 AC4 的最小镜像集**：新建 worktree 会看到 6 个与本 Task 无关的治理错误，
+  复制**3 个文件**即可绕过——而非本会话早期误用的 33 个。
+- 两个异常条目（`CON` 保留设备名下的真实 34KB SFX 哈希清单、长句名 bug 产物）
+  已记录处置建议，本 Task **未删除、未移动**任何一项。
+- 资源核销：未删除/移动/归档/重命名任何积压文件；未改 `.gitignore`、`tools/governance/`。
+- 未关闭项：无。后续处置属新范围，不在本 Task。
