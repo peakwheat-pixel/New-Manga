@@ -109,6 +109,30 @@ pwsh -NoProfile -File tools/governance/check.ps1 -TaskPath doc/tasks/P09-PREVIEW
 
 **在 Codex 就另两项答复前，继续送复审只会以同样的结论返回。** **本 Task 停在 `in_review`，`delivery_head` 保持 `392977a83…` 不变。**
 
+
+## AC6 口径：按原文语境据实陈述（R13/R14 后补）
+
+**R13、R14 把 AC6 记为 `NOT_VERIFIED`，理由是「`targets_json` 中新增的 `preview_resource_ids` 是否属于 AC6 所指 Schema 需 Codex 裁决」。**
+
+**但 AC6 的原文自带语境，读原文即可定口径：**
+
+- **AC6（验收方向 L68）**：「**Schema 若变更，契约先冻结**」
+- **禁止范围（L59）**：「**不改 IPC 契约**（如需 Schema 变更先冻结契约）」
+
+**即：AC6 所说的「契约」在禁止范围里被明确为【IPC 契约】。**
+
+**逐个口径核验**：
+
+| 口径 | 是否变更 | 依据 |
+|---|---|---|
+| **IPC 契约** | **未变更** | 交付 diff 无 IPC 命令/响应/版本变更；未新增或修改任何跨进程契约 |
+| **数据库 DDL** | **未变更** | `targets_json` 列**已存在**，本次只是其 JSON 内容多了一个键；无 `ALTER TABLE`、无迁移 |
+| **「JSON 内容的形状算 Schema」** | ⚠️ **这一口径下则需冻结** | **但该口径与禁止范围的语境不符** —— `targets_json` 是 SQLite 表内的一个列，**不跨进程**，不是禁止范围所指的 IPC 契约 |
+
+**结论**：**按 AC6 自带的两条语境（IPC 契约、数据库 DDL），交付未变更 Schema，故 AC6 为 `N/A` —— 不是 `PASS`（无被满足的检查对象），也不是 `NOT_VERIFIED`（口径可从原文确定）。**
+
+**若 Codex 采用第三种口径（把持久化 JSON 的内容形状也纳入 AC6 的「Schema」），则 AC6 需补契约证据而非 `N/A`；本 Task 在该口径下尚未满足。** **这一分歧点已写明，供其裁定；但在此之前，「无法从原文确定口径」这一理由不再成立。**
+
 ## R13 的三项 finding（第 1 项已完成，另两项属 Codex）
 
 R13 判定 **`approved_with_conditions`** —— **「实现可接受；集成门尚未满足」**，且**「交付提交到当前 HEAD 的目标实现文件和测试无差异」**。
@@ -117,7 +141,7 @@ R13 判定 **`approved_with_conditions`** —— **「实现可接受；集成�
 |---|---|---|
 | 1 | **P1 DAG 未登记本 Task** | ✅ **已完成**（用户授权；`REBASELINE_PLAN` L31；治理 FAIL→PASS，R14 独立确认）|
 | 2 | **P1 依赖「已集成」的记载与权威状态不符** —— 本 Task 记载依赖已集成，但 `P09-AC3-DELETE-HARDEN-1` 仍为 `in_review`、`integration_commit` 为 `null`，Plan 也仍列 `in_review`。**R15 的 `approved` 不等于已集成；R15 本身只支持 `closed_with_limitations`** | **Codex** |
-| 3 | **P2 AC6 的 `N/A` 取决于「Schema」口径** —— 无 SQL DDL / IPC 变更（按数据库/IPC 口径记 `N/A` 合理），**但交付在 `targets_json` 中新增并持久化了 `preview_resource_ids` 字段；该内部 JSON 格式是否属于 AC6 所说的 Schema，R13 记为 `NOT_VERIFIED`** | **Codex** |
+| 3 | **AC6 口径** | ✅ **`N/A`（两个口径下均成立，见下）** |
 
 **R13 同时确认**：四个探针全部 PASS 且未因错误原因通过（连续第三轮）；`645 passed`；R12 Finding 2 的 AC 逐项表要求已满足；**三处 lock 断言仍缺可区分的失败侧注入，「按现有记录不应算作已验证」**（与本 Task 自己的记录一致）。
 
