@@ -47,7 +47,7 @@ Codex r20 §2.2 裁定：
 - [x] **AC4 执行移动（仅 ARCHIVE 项）**：把 `ARCHIVE` 项移入 <<NOT_APPLICABLE: 逐文件判定结果为 0 个 ARCHIVE，无文件需移动>>
   `G:\CODEX\New Manga.workspacerchive\<task>\`，记录原路径、hash 与移动时间。
   **移动前必须 `git status` 确认该文件未入库且有备份。**
-- [ ] **AC5 交付与 Review**：生成 Handoff；由 Antigravity 对固定 delivery head 独立 Review。 <<PARTIAL: Handoff 已交付，独立 Review 待进行>>
+- [x] **AC5 交付与 Review**：生成 Handoff；由 Antigravity 对固定 delivery head 独立 Review。 <<MET>>
   Review 必须核对：**没有把有引用的文件移走**，且每个 `ARCHIVE` 判定都有内容依据。
 
 ## 允许修改范围
@@ -81,6 +81,7 @@ pwsh -NoProfile -File tools/governance/check.ps1 -TaskPath doc/tasks/EXPORT-REVE
 | SWEEP-INVENTORY | AC1、AC2 | `verification/GOV-EVIDENCE-DIR-SWEEP-1/ac1-ac2-inventory.json` | `24fcfae13` | `cfe8bbf21c1d85443d3347cc12692ea797ab394980c8aa01642b78e7294650eb` | `CANONICAL` |
 | SWEEP-TRIAGE | AC1–AC4 | `verification/GOV-EVIDENCE-DIR-SWEEP-1/ac1-ac4-inventory-and-triage.md` | `24fcfae13` | `95e576c85067c0a8c690071af8e0a23435b989e974e162eb5f8ddb3e3a518579` | `CANONICAL` |
 | SWEEP-HANDOFF | AC5 | `doc/handoffs/GOV-EVIDENCE-DIR-SWEEP-1-24fcfae13.md` | `c5cec3f63` | `c93a406c4f3979aa9630500129dee9d07411e40ee6185e5b9bf0482074bdcb25` | `CANONICAL` |
+| SWEEP-REVIEW | AC5 | `doc/reviews/GOV-EVIDENCE-DIR-SWEEP-1-c5cec3f63-antigravity-r1.md` | `23336a1a7` | `df473330d0e82cc1b2683e653652da5a7a0547e24d56ffa5a8ad8521a896a6a8` | `CANONICAL` |
 
 ## Resource Manifest
 
