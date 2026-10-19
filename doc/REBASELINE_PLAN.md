@@ -35,7 +35,7 @@
 |GOV-AC-GATE-1|GOV-SOURCE-RECORDS-1|done（v3 AC 门禁；12 夹具；窄 scope 不清算存量；两轮 Review）|
 |GOV-PIN-LINEAGE-1|GOV-SOURCE-RECORDS-1|proposed（历史 pin lineage 补注；保留原 pin 不重算）|
 |GOV-EVIDENCE-DIR-SWEEP-1|GOV-SOURCE-RECORDS-1|done（19 文件盘点；5 项补登记；0 个 ARCHIVE；两份失败日志保留）|
-|GOV-P15-MANIFEST-1|GOV-SOURCE-RECORDS-1|proposed（恢复 P15 缺失的 Resource Manifest）|
+|GOV-P15-MANIFEST-1|GOV-SOURCE-RECORDS-1|approved（P15 manifest 重建；4 资源含 3 个实测 junction；待 Codex 集成后 done）|
 |P20-CLOSE-BOUND-1|P20-ISOLATION-1|closed_with_limitations（R6）|
 |P20-CLOSE-BOUND-HARDEN-1|P20-CLOSE-BOUND-1|closed_with_limitations|
 |P09-AC3-DELETE-HARDEN-1|P09-AC3-DELETE-1|closed_with_limitations（未集成）|
