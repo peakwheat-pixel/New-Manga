@@ -1,0 +1,857 @@
+{
+  "generated_at": "2026-10-20",
+  "head": "20eae780a00a38fdc2b690281582b34261ced9e6",
+  "untracked_count": 1592,
+  "referenced_count": 137,
+  "load_bearing_count": 137,
+  "load_bearing": {
+    ".orchestrator/BACKLOG.md": [
+      "doc/tasks/ENV-BUNDLE-1.md",
+      "doc/tasks/P09.md"
+    ],
+    ".orchestrator/BL11-ENV-EVIDENCE.md": [
+      "doc/tasks/ENV-BUNDLE-1-FU1.md",
+      "doc/tasks/ENV-BUNDLE-1.md",
+      "doc/tasks/HOST-ISSUER-1.md"
+    ],
+    ".orchestrator/RUNTIME_DIRECTIVES.md": [
+      "doc/tasks/P12.md",
+      "doc/tasks/P15-C1.md",
+      "doc/tasks/UI-DESIGN-1.md"
+    ],
+    ".orchestrator/tasks/ARCH-DOC-REBASELINE-role.json": [
+      "doc/tasks/ARCH-DOC-REBASELINE.md"
+    ],
+    ".orchestrator/tasks/P04-role.json": [
+      "doc/tasks/P04.md"
+    ],
+    ".orchestrator/tasks/P10-role.json": [
+      "doc/tasks/P10.md"
+    ],
+    ".orchestrator/tasks/P11-role.json": [
+      "doc/tasks/P11.md"
+    ],
+    ".orchestrator/tasks/P13-role.json": [
+      "doc/tasks/P13.md"
+    ],
+    ".orchestrator/tasks/SEC-FIX-PATH-ECHO-1-role.json": [
+      "doc/tasks/SEC-FIX-PATH-ECHO-1.md"
+    ],
+    "CON": [
+      "doc/tasks/GOV-UNTRACKED-BACKLOG-1.md"
+    ],
+    "INTERRUPTED by Codex before final report; no exit marker; partial JSONL preserved; not Review evidence": [
+      "doc/tasks/GOV-UNTRACKED-BACKLOG-1.md"
+    ],
+    "archive/history/2026-10-12/REBASELINE_PLAN.md": [
+      "doc/tasks/P06.md"
+    ],
+    "doc/WORKSPACE_GOVERNANCE.md": [
+      "doc/handoffs/GOV-PLAN-BUDGET-1-126f9f31c.md",
+      "doc/handoffs/GOV-RESOURCE-MANIFEST-SAME-LOCATION-1-d15aae88a.md",
+      "doc/handoffs/P18-codex-50329bc0.md",
+      "doc/reviews/GOV-PLAN-BUDGET-1-126f9f31c-antigravity-r1.md",
+      "doc/tasks/GOV-UNTRACKED-BACKLOG-1.md",
+      "doc/tasks/P18.md"
+    ],
+    "doc/reviews/P02-5fa8a41f-dsh-r3-review.md": [
+      "doc/handoffs/P02-stage-a-foundation-handoff.md"
+    ],
+    "doc/reviews/P02-972049f9-dsh-review.md": [
+      "doc/handoffs/P02-stage-a-foundation-handoff.md"
+    ],
+    "doc/reviews/P02-9b82e97b-dsh-r2-review.md": [
+      "doc/handoffs/P02-stage-a-foundation-handoff.md"
+    ],
+    "doc/tasks/P02-NEW-TIME-BASELINE-AC3-GIT-TOPLEVEL-RESOLUTION.md": [
+      "doc/reviews/GOV-DEBT-CLEANUP-2-94c8dcdab-antigravity-r2.md"
+    ],
+    "doc/tasks/P02PRE-R0.md": [
+      "doc/tasks/P02.md"
+    ],
+    "doc/tasks/P02PRE-R0S2.md": [
+      "doc/tasks/P02.md"
+    ],
+    "doc/tasks/P02PRE-R1H-FORENSIC-RECOVERY.md": [
+      "doc/handoffs/P02PRE-R1H-FORENSIC-RECOVERY.md"
+    ],
+    "doc/tasks/P02PRE-R1H-H2-COLLECTOR.md": [
+      "doc/handoffs/P02PRE-R1H-FORENSIC-RECOVERY.md"
+    ],
+    "doc/tasks/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE.md": [
+      "doc/handoffs/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE-R1.md"
+    ],
+    "verification/P02/appcontainer-readonly-preflight-r2.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/codex-appcontainer-create-gate-alternative-20261010.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/codex-appcontainer-create-gate-alternative-adjudication-20261010.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/codex-appcontainer-create-gate-alternative-review-20261010.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/codex-checkpoint-p02-m7-m8-review-m9-20261010.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/codex-checkpoint-p02-owner-risk-waiver-manifest-review-r3-20261010.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/codex-checkpoint-p02-profile-folder-contract-m6-20261010.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/codex-checkpoint-p02-profile-folder-versioned-contract-m7-20261010.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/codex-checkpoint-p02-readonly-preflight-r0-20261011.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/codex-checkpoint-p02-readonly-preflight-r0s1-20261011.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/codex-checkpoint-p02pre-r1h-round6-attempt4-baseline-blocked-20261012.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/codex-checkpoint-p02pre-r1h-round6-attempt4-owner-active-20261012.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/codex-elevated-isolation-assessment-r2-adjudication-20261010.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/codex-elevated-isolation-method-assessment-20261010-r1.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/codex-elevated-isolation-method-assessment-20261010-r2.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/codex-elevated-isolation-method-assessment-review-20261010-r1.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/codex-elevated-isolation-method-assessment-review-20261010-r2.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/codex-p02-execution-manifest-design-advice-20261010.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/codex-p02-human-required-decision-20261010.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/codex-p02-identity-derive-evidence-20261010.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/codex-p02-isolation-architecture-assessment-20261010.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/codex-p02-noncreating-registry-absence-adjudication-20261010.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/codex-p02-noncreating-registry-absence-options-20261010.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/codex-p02-noncreating-registry-absence-options-review-20261010.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/codex-p02-owner-risk-waiver-manifest-r1-adjudication-20261010.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/codex-p02-owner-risk-waiver-manifest-r3-adjudication-20261010.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/codex-p02-owner-risk-waiver-manifest-r4-adjudication-20261010.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/codex-p02-owner-risk-waiver-manifest-r5-adjudication-20261010.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/codex-p02-owner-risk-waiver-manifest-r6-adjudication-20261011.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/codex-p02-profile-folder-noncreating-contract-adjudication-20261010.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/codex-p02-profile-folder-noncreating-contract-assessment-20261010.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/codex-p02-profile-folder-noncreating-contract-assessment-review-20261010.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/codex-p02-profile-folder-versioned-contract-adjudication-20261010.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/codex-p02-profile-folder-versioned-contract-research-20261010.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/codex-p02-profile-folder-versioned-contract-research-review-20261010.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/codex-p02-unwaived-gate-feasibility-20261011.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/codex-p02-unwaived-gate-feasibility-adjudication-20261011.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/codex-p02-unwaived-gate-feasibility-review-20261011.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/codex-p02-versioned-registry-absence-adjudication-20261010.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/codex-p02-versioned-registry-absence-contract-20261010.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/codex-p02-versioned-registry-absence-contract-review-20261010.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/codex-p02-wer-per-image-bootstrap-contract-research-20261010.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/codex-p02-wer-per-image-bootstrap-contract-research-review-20261010.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/codex-p02-zero-capability-registry-getter-contract-research-20261010.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/codex-p02-zero-capability-registry-getter-contract-research-review-20261010.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/codex-p02pre-r0s1-adjudication-20261011.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/codex-p02pre-r1h-attempt4-integration-verify-20261012.json": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/codex-phase-a-method-blockers-20261010-r10.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/codex-phase-a-method-blockers-20261010-r3.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/codex-phase-a-method-blockers-20261010-r4.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/codex-phase-a-method-blockers-20261010-r5.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/codex-phase-a-method-blockers-20261010-r6.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/codex-phase-a-method-blockers-20261010-r7.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/codex-phase-a-method-blockers-20261010-r8.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/codex-phase-a-method-blockers-20261010-r9.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/codex-phase-a-method-blockers-20261010.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/codex-phase-a-method-blockers-review-r10-attempt1-adjudication.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/codex-phase-a-method-blockers-review-r10-attempt2-adjudication.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/codex-phase-a-method-blockers-review-r3-attempt2-adjudication.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/codex-phase-a-method-blockers-review-r6-attempt1-adjudication.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/codex-phase-a-method-blockers-review-r7-attempt1-adjudication.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/codex-phase-a-method-blockers-review-r8-attempt1-adjudication.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/codex-phase-a-method-blockers-review-r9-attempt1-adjudication.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/dsh-p02pre-r0s2-manifest-review-20261011.prompt.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/dsh-p02pre-r0s5-review-r3-20261011.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/dsh-phase-a-method-blockers-review-r10-attempt1.prompt.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/dsh-phase-a-method-blockers-review-r10-attempt2.prompt.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/dsh-phase-a-method-blockers-review-r10-attempt2.stdout.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/dsh-phase-a-method-blockers-review-r2.prompt.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/dsh-phase-a-method-blockers-review-r3-attempt2.prompt.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/dsh-phase-a-method-blockers-review-r3-attempt2.stdout.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/dsh-phase-a-method-blockers-review-r3-attempt3.prompt.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/dsh-phase-a-method-blockers-review-r3.prompt.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/dsh-phase-a-method-blockers-review-r3.stdout.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/dsh-phase-a-method-blockers-review-r4-attempt1.prompt.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/dsh-phase-a-method-blockers-review-r5-attempt1.prompt.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/dsh-phase-a-method-blockers-review-r6-attempt1.prompt.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/dsh-phase-a-method-blockers-review-r6-attempt1.stdout.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/dsh-phase-a-method-blockers-review-r7-attempt1.prompt.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/dsh-phase-a-method-blockers-review-r7-attempt1.stdout.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/dsh-phase-a-method-blockers-review-r8-attempt1.prompt.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/dsh-phase-a-method-blockers-review-r8-attempt1.stdout.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/dsh-phase-a-method-blockers-review-r9-attempt1.prompt.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/dsh-phase-a-method-blockers-review-r9-attempt1.stdout.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/implementation-stage-a-r4-dsh-review.md": [
+      "doc/handoffs/P02-stage-a-foundation-handoff.md"
+    ],
+    "verification/P02/implementation-stage-a-r5-dsh-review.md": [
+      "doc/handoffs/P02-stage-a-foundation-handoff.md"
+    ],
+    "verification/P02/p02-owner-risk-waiver-execution-manifest-r1-20261010.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/p02-owner-risk-waiver-execution-manifest-r1-review-20261010.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/p02-owner-risk-waiver-execution-manifest-r2-20261010.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/p02-owner-risk-waiver-execution-manifest-r2-review-20261010.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/p02-owner-risk-waiver-execution-manifest-r3-20261010.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/p02-owner-risk-waiver-execution-manifest-r3-review-20261010.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/p02-owner-risk-waiver-execution-manifest-r4-20261010.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/p02-owner-risk-waiver-execution-manifest-r4-review-20261010.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/p02-owner-risk-waiver-execution-manifest-r5-20261010.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/p02-owner-risk-waiver-execution-manifest-r5-review-20261010.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/p02-owner-risk-waiver-execution-manifest-r6-20261011.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/p02-owner-risk-waiver-execution-manifest-r6-review-20261011.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/p02-readonly-preflight-r0-evidence-20261011.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/p02-readonly-preflight-r0-manifest-20261011.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/p02-readonly-preflight-r0s1-manifest-20261011.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/p02-readonly-preflight-r0s2-manifest-20261011.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/p02pre-r0s6-manifest-20261011.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/p02pre-r1-adjudication-20261011.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/p02pre-r1g-postrun-adjudication-20261012.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/p02pre-r1g-review-adjudication-20261012.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/p02pre-r1h-manifest-20261012.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02PRE-R1H-FORENSIC-RECOVERY/dsh-review-r2.md": [
+      "doc/handoffs/P02PRE-R1H-FORENSIC-RECOVERY.md"
+    ],
+    "verification/P02PRE-R1H-FORENSIC-RECOVERY/resource-closeout-r2.json": [
+      "doc/handoffs/P02PRE-R1H-FORENSIC-RECOVERY-R2.md"
+    ],
+    "verification/P02PRE-R1H-H1-CURRENT-INPUT-REVIEW/codex-adjudication-r1.md": [
+      "doc/handoffs/P02-NEW-TIME-X6-8b4daf9b.md",
+      "doc/tasks/P02-NEW-TIME-X6.md"
+    ],
+    "verification/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE/candidate-trace-r1.json": [
+      "doc/handoffs/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE-R1.md"
+    ],
+    "verification/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE/codex-adjudication-r1.md": [
+      "doc/handoffs/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE-R2.md"
+    ],
+    "verification/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE/existing-pins-validation-r1.json": [
+      "doc/handoffs/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE-R1.md"
+    ],
+    "verification/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE/store-inventory-r1.json": [
+      "doc/handoffs/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE-R1.md"
+    ],
+    "verification/P20-CLOSE-BOUND-1/codex-review-r6.md": [
+      "doc/tasks/P20-CLOSE-BOUND-1.md",
+      "doc/tasks/P20-CLOSE-BOUND-HARDEN-1.md"
+    ]
+  },
+  "referenced": {
+    ".orchestrator/BACKLOG.md": [
+      "doc/tasks/ENV-BUNDLE-1.md",
+      "doc/tasks/P09.md"
+    ],
+    ".orchestrator/BL11-ENV-EVIDENCE.md": [
+      "doc/tasks/ENV-BUNDLE-1-FU1.md",
+      "doc/tasks/ENV-BUNDLE-1.md",
+      "doc/tasks/HOST-ISSUER-1.md"
+    ],
+    ".orchestrator/RUNTIME_DIRECTIVES.md": [
+      "doc/tasks/P12.md",
+      "doc/tasks/P15-C1.md",
+      "doc/tasks/UI-DESIGN-1.md"
+    ],
+    ".orchestrator/tasks/ARCH-DOC-REBASELINE-role.json": [
+      "doc/tasks/ARCH-DOC-REBASELINE.md"
+    ],
+    ".orchestrator/tasks/P04-role.json": [
+      "doc/tasks/P04.md"
+    ],
+    ".orchestrator/tasks/P10-role.json": [
+      "doc/tasks/P10.md"
+    ],
+    ".orchestrator/tasks/P11-role.json": [
+      "doc/tasks/P11.md"
+    ],
+    ".orchestrator/tasks/P13-role.json": [
+      "doc/tasks/P13.md"
+    ],
+    ".orchestrator/tasks/SEC-FIX-PATH-ECHO-1-role.json": [
+      "doc/tasks/SEC-FIX-PATH-ECHO-1.md"
+    ],
+    "CON": [
+      "doc/tasks/GOV-UNTRACKED-BACKLOG-1.md"
+    ],
+    "INTERRUPTED by Codex before final report; no exit marker; partial JSONL preserved; not Review evidence": [
+      "doc/tasks/GOV-UNTRACKED-BACKLOG-1.md"
+    ],
+    "archive/history/2026-10-12/REBASELINE_PLAN.md": [
+      "doc/tasks/P06.md"
+    ],
+    "doc/WORKSPACE_GOVERNANCE.md": [
+      "doc/handoffs/GOV-PLAN-BUDGET-1-126f9f31c.md",
+      "doc/handoffs/GOV-RESOURCE-MANIFEST-SAME-LOCATION-1-d15aae88a.md",
+      "doc/handoffs/P18-codex-50329bc0.md",
+      "doc/reviews/GOV-PLAN-BUDGET-1-126f9f31c-antigravity-r1.md",
+      "doc/tasks/GOV-UNTRACKED-BACKLOG-1.md",
+      "doc/tasks/P18.md"
+    ],
+    "doc/reviews/P02-5fa8a41f-dsh-r3-review.md": [
+      "doc/handoffs/P02-stage-a-foundation-handoff.md"
+    ],
+    "doc/reviews/P02-972049f9-dsh-review.md": [
+      "doc/handoffs/P02-stage-a-foundation-handoff.md"
+    ],
+    "doc/reviews/P02-9b82e97b-dsh-r2-review.md": [
+      "doc/handoffs/P02-stage-a-foundation-handoff.md"
+    ],
+    "doc/tasks/P02-NEW-TIME-BASELINE-AC3-GIT-TOPLEVEL-RESOLUTION.md": [
+      "doc/reviews/GOV-DEBT-CLEANUP-2-94c8dcdab-antigravity-r2.md"
+    ],
+    "doc/tasks/P02PRE-R0.md": [
+      "doc/tasks/P02.md"
+    ],
+    "doc/tasks/P02PRE-R0S2.md": [
+      "doc/tasks/P02.md"
+    ],
+    "doc/tasks/P02PRE-R1H-FORENSIC-RECOVERY.md": [
+      "doc/handoffs/P02PRE-R1H-FORENSIC-RECOVERY.md"
+    ],
+    "doc/tasks/P02PRE-R1H-H2-COLLECTOR.md": [
+      "doc/handoffs/P02PRE-R1H-FORENSIC-RECOVERY.md"
+    ],
+    "doc/tasks/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE.md": [
+      "doc/handoffs/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE-R1.md"
+    ],
+    "verification/P02/appcontainer-readonly-preflight-r2.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/codex-appcontainer-create-gate-alternative-20261010.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/codex-appcontainer-create-gate-alternative-adjudication-20261010.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/codex-appcontainer-create-gate-alternative-review-20261010.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/codex-checkpoint-p02-m7-m8-review-m9-20261010.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/codex-checkpoint-p02-owner-risk-waiver-manifest-review-r3-20261010.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/codex-checkpoint-p02-profile-folder-contract-m6-20261010.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/codex-checkpoint-p02-profile-folder-versioned-contract-m7-20261010.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/codex-checkpoint-p02-readonly-preflight-r0-20261011.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/codex-checkpoint-p02-readonly-preflight-r0s1-20261011.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/codex-checkpoint-p02pre-r1h-round6-attempt4-baseline-blocked-20261012.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/codex-checkpoint-p02pre-r1h-round6-attempt4-owner-active-20261012.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/codex-elevated-isolation-assessment-r2-adjudication-20261010.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/codex-elevated-isolation-method-assessment-20261010-r1.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/codex-elevated-isolation-method-assessment-20261010-r2.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/codex-elevated-isolation-method-assessment-review-20261010-r1.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/codex-elevated-isolation-method-assessment-review-20261010-r2.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/codex-p02-execution-manifest-design-advice-20261010.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/codex-p02-human-required-decision-20261010.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/codex-p02-identity-derive-evidence-20261010.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/codex-p02-isolation-architecture-assessment-20261010.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/codex-p02-noncreating-registry-absence-adjudication-20261010.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/codex-p02-noncreating-registry-absence-options-20261010.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/codex-p02-noncreating-registry-absence-options-review-20261010.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/codex-p02-owner-risk-waiver-manifest-r1-adjudication-20261010.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/codex-p02-owner-risk-waiver-manifest-r3-adjudication-20261010.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/codex-p02-owner-risk-waiver-manifest-r4-adjudication-20261010.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/codex-p02-owner-risk-waiver-manifest-r5-adjudication-20261010.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/codex-p02-owner-risk-waiver-manifest-r6-adjudication-20261011.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/codex-p02-profile-folder-noncreating-contract-adjudication-20261010.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/codex-p02-profile-folder-noncreating-contract-assessment-20261010.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/codex-p02-profile-folder-noncreating-contract-assessment-review-20261010.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/codex-p02-profile-folder-versioned-contract-adjudication-20261010.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/codex-p02-profile-folder-versioned-contract-research-20261010.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/codex-p02-profile-folder-versioned-contract-research-review-20261010.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/codex-p02-unwaived-gate-feasibility-20261011.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/codex-p02-unwaived-gate-feasibility-adjudication-20261011.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/codex-p02-unwaived-gate-feasibility-review-20261011.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/codex-p02-versioned-registry-absence-adjudication-20261010.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/codex-p02-versioned-registry-absence-contract-20261010.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/codex-p02-versioned-registry-absence-contract-review-20261010.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/codex-p02-wer-per-image-bootstrap-contract-research-20261010.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/codex-p02-wer-per-image-bootstrap-contract-research-review-20261010.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/codex-p02-zero-capability-registry-getter-contract-research-20261010.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/codex-p02-zero-capability-registry-getter-contract-research-review-20261010.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/codex-p02pre-r0s1-adjudication-20261011.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/codex-p02pre-r1h-attempt4-integration-verify-20261012.json": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/codex-phase-a-method-blockers-20261010-r10.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/codex-phase-a-method-blockers-20261010-r3.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/codex-phase-a-method-blockers-20261010-r4.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/codex-phase-a-method-blockers-20261010-r5.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/codex-phase-a-method-blockers-20261010-r6.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/codex-phase-a-method-blockers-20261010-r7.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/codex-phase-a-method-blockers-20261010-r8.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/codex-phase-a-method-blockers-20261010-r9.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/codex-phase-a-method-blockers-20261010.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/codex-phase-a-method-blockers-review-r10-attempt1-adjudication.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/codex-phase-a-method-blockers-review-r10-attempt2-adjudication.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/codex-phase-a-method-blockers-review-r3-attempt2-adjudication.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/codex-phase-a-method-blockers-review-r6-attempt1-adjudication.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/codex-phase-a-method-blockers-review-r7-attempt1-adjudication.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/codex-phase-a-method-blockers-review-r8-attempt1-adjudication.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/codex-phase-a-method-blockers-review-r9-attempt1-adjudication.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/dsh-p02pre-r0s2-manifest-review-20261011.prompt.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/dsh-p02pre-r0s5-review-r3-20261011.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/dsh-phase-a-method-blockers-review-r10-attempt1.prompt.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/dsh-phase-a-method-blockers-review-r10-attempt2.prompt.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/dsh-phase-a-method-blockers-review-r10-attempt2.stdout.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/dsh-phase-a-method-blockers-review-r2.prompt.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/dsh-phase-a-method-blockers-review-r3-attempt2.prompt.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/dsh-phase-a-method-blockers-review-r3-attempt2.stdout.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/dsh-phase-a-method-blockers-review-r3-attempt3.prompt.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/dsh-phase-a-method-blockers-review-r3.prompt.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/dsh-phase-a-method-blockers-review-r3.stdout.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/dsh-phase-a-method-blockers-review-r4-attempt1.prompt.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/dsh-phase-a-method-blockers-review-r5-attempt1.prompt.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/dsh-phase-a-method-blockers-review-r6-attempt1.prompt.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/dsh-phase-a-method-blockers-review-r6-attempt1.stdout.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/dsh-phase-a-method-blockers-review-r7-attempt1.prompt.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/dsh-phase-a-method-blockers-review-r7-attempt1.stdout.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/dsh-phase-a-method-blockers-review-r8-attempt1.prompt.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/dsh-phase-a-method-blockers-review-r8-attempt1.stdout.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/dsh-phase-a-method-blockers-review-r9-attempt1.prompt.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/dsh-phase-a-method-blockers-review-r9-attempt1.stdout.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/implementation-stage-a-r4-dsh-review.md": [
+      "doc/handoffs/P02-stage-a-foundation-handoff.md"
+    ],
+    "verification/P02/implementation-stage-a-r5-dsh-review.md": [
+      "doc/handoffs/P02-stage-a-foundation-handoff.md"
+    ],
+    "verification/P02/p02-owner-risk-waiver-execution-manifest-r1-20261010.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/p02-owner-risk-waiver-execution-manifest-r1-review-20261010.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/p02-owner-risk-waiver-execution-manifest-r2-20261010.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/p02-owner-risk-waiver-execution-manifest-r2-review-20261010.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/p02-owner-risk-waiver-execution-manifest-r3-20261010.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/p02-owner-risk-waiver-execution-manifest-r3-review-20261010.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/p02-owner-risk-waiver-execution-manifest-r4-20261010.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/p02-owner-risk-waiver-execution-manifest-r4-review-20261010.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/p02-owner-risk-waiver-execution-manifest-r5-20261010.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/p02-owner-risk-waiver-execution-manifest-r5-review-20261010.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/p02-owner-risk-waiver-execution-manifest-r6-20261011.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/p02-owner-risk-waiver-execution-manifest-r6-review-20261011.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/p02-readonly-preflight-r0-evidence-20261011.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/p02-readonly-preflight-r0-manifest-20261011.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/p02-readonly-preflight-r0s1-manifest-20261011.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/p02-readonly-preflight-r0s2-manifest-20261011.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/p02pre-r0s6-manifest-20261011.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/p02pre-r1-adjudication-20261011.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/p02pre-r1g-postrun-adjudication-20261012.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/p02pre-r1g-review-adjudication-20261012.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/p02pre-r1h-manifest-20261012.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02PRE-R1H-FORENSIC-RECOVERY/dsh-review-r2.md": [
+      "doc/handoffs/P02PRE-R1H-FORENSIC-RECOVERY.md"
+    ],
+    "verification/P02PRE-R1H-FORENSIC-RECOVERY/resource-closeout-r2.json": [
+      "doc/handoffs/P02PRE-R1H-FORENSIC-RECOVERY-R2.md"
+    ],
+    "verification/P02PRE-R1H-H1-CURRENT-INPUT-REVIEW/codex-adjudication-r1.md": [
+      "doc/handoffs/P02-NEW-TIME-X6-8b4daf9b.md",
+      "doc/tasks/P02-NEW-TIME-X6.md"
+    ],
+    "verification/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE/candidate-trace-r1.json": [
+      "doc/handoffs/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE-R1.md"
+    ],
+    "verification/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE/codex-adjudication-r1.md": [
+      "doc/handoffs/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE-R2.md"
+    ],
+    "verification/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE/existing-pins-validation-r1.json": [
+      "doc/handoffs/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE-R1.md"
+    ],
+    "verification/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE/store-inventory-r1.json": [
+      "doc/handoffs/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE-R1.md"
+    ],
+    "verification/P20-CLOSE-BOUND-1/codex-review-r6.md": [
+      "doc/tasks/P20-CLOSE-BOUND-1.md",
+      "doc/tasks/P20-CLOSE-BOUND-HARDEN-1.md"
+    ]
+  }
+}

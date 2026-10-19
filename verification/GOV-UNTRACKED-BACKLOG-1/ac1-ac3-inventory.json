@@ -1,0 +1,530 @@
+{
+  "generated_at": "2026-10-20",
+  "head": "20eae780a00a38fdc2b690281582b34261ced9e6",
+  "untracked_count": 1591,
+  "by_top": {
+    "verification": 1470,
+    ".orchestrator": 67,
+    "doc": 32,
+    "archive": 19,
+    "\".qoder-credits": 1,
+    "CON": 1,
+    "INTERRUPTED by Codex before final report; no exit marker; partial JSONL preserved; not Review evidence": 1
+  },
+  "by_second": {
+    "verification/P02": 1072,
+    "verification/P22": 69,
+    "verification/P02-NEW-TIME-BASELINE-AC3-HELPER-OUTPUT-RESOLUTION": 60,
+    ".orchestrator/tasks": 59,
+    "verification/P02-NEW-TIME-BASELINE-AC3-BRANCH-RESOLUTION": 39,
+    "verification/P04": 38,
+    "verification/P02-NEW-TIME-BASELINE": 33,
+    "doc/tasks": 26,
+    "verification/P02PRE-R1H-H2-COLLECTOR": 25,
+    "verification/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE": 25,
+    "verification/P19": 24,
+    "archive/history": 18,
+    "verification/P02PRE-R1H-H2-RUN": 17,
+    "verification/P02PRE-R1H-H1-CURRENT-INPUT-REVIEW": 15,
+    "verification/P03-PACKAGED-SFX-ENTRY": 11,
+    "verification/PROJECT-ROADMAP-20261010": 10,
+    "verification/P02PRE-R1H-FORENSIC-RECOVERY": 9,
+    "verification/P08": 8,
+    "verification/PROJECT-ORCHESTRATION-20261014": 5,
+    "doc/reviews": 4
+  },
+  "by_ext": {
+    ".md": 699,
+    ".json": 310,
+    ".log": 280,
+    ".exit": 189,
+    ".jsonl": 66,
+    ".txt": 29,
+    ".ps1": 9,
+    "(none)": 2,
+    ".yaml": 1,
+    ".tsx\"": 1,
+    ".patch": 1,
+    ".bin": 1,
+    ".png": 1,
+    ".svg": 1,
+    ".csv": 1
+  },
+  "origin_hint": {
+    "dsh": 504,
+    "other": 384,
+    "codex": 311,
+    "agent-run-artifact": 185,
+    "antigravity": 107,
+    "zcode": 66,
+    "agy": 34
+  },
+  "referenced_count": 173,
+  "referenced": {
+    ".orchestrator/BACKLOG.md": [
+      "doc/tasks/ENV-BUNDLE-1.md",
+      "doc/tasks/P09.md"
+    ],
+    ".orchestrator/BL11-ENV-EVIDENCE.md": [
+      "doc/tasks/ENV-BUNDLE-1-FU1.md",
+      "doc/tasks/ENV-BUNDLE-1.md",
+      "doc/tasks/HOST-ISSUER-1.md"
+    ],
+    ".orchestrator/RUNTIME_DIRECTIVES.md": [
+      "doc/tasks/P12.md",
+      "doc/tasks/P15-C1.md",
+      "doc/tasks/UI-DESIGN-1.md"
+    ],
+    ".orchestrator/tasks/ARCH-DOC-REBASELINE-role.json": [
+      "doc/tasks/ARCH-DOC-REBASELINE.md"
+    ],
+    ".orchestrator/tasks/P04-role.json": [
+      "doc/tasks/P04.md"
+    ],
+    ".orchestrator/tasks/P10-role.json": [
+      "doc/tasks/P10.md"
+    ],
+    ".orchestrator/tasks/P11-role.json": [
+      "doc/tasks/P11.md"
+    ],
+    ".orchestrator/tasks/P13-role.json": [
+      "doc/tasks/P13.md"
+    ],
+    ".orchestrator/tasks/SEC-FIX-PATH-ECHO-1-role.json": [
+      "doc/tasks/SEC-FIX-PATH-ECHO-1.md"
+    ],
+    "CON": [
+      "doc/00_INDEX.md",
+      "doc/01_FUNCTIONAL_ARCHITECTURE.md",
+      "doc/02_TECHNICAL_ARCHITECTURE_.md",
+      "doc/03_DATA_MODEL.md",
+      "doc/04_USER_FLOW.md",
+      "doc/05_UI_MAPPING.md",
+      "doc/06_TRANSLATION_PIPELINE.md",
+      "doc/07_NON_FUNCTIONAL_REQUIREMENTS.md",
+      "doc/08_ACCEPTANCE_CRITERIA.md",
+      "doc/10_CURRENT_STATE_AND_GAPS.md",
+      "doc/11_ARCHITECTURE_MAPS.md",
+      "doc/13_ACCEPTANCE_TRACEABILITY.md",
+      "doc/REBASELINE_PLAN.md",
+      "doc/contracts/M2-C1_TYPED_IPC_CONTRACT.md",
+      "doc/contracts/M2-RC4_DOMAIN_COMMANDS.md",
+      "doc/contracts/M2_DERIVED_PREVIEW_GC_DESIGN.md",
+      "doc/contracts/P09_IMPORT_CONTRACT.md",
+      "doc/contracts/P11_LONG_TASK_LIFECYCLE_CONTRACT.md",
+      "doc/contracts/P15_SETTINGS_IPC_CONTRACT.md",
+      "doc/contracts/TASK-002_MINIMUM_DATA_EXECUTION_CONTRACT.md",
+      "doc/design/AD001_FOUR_PAGE_UI_BASELINE.md",
+      "doc/design/M2-SFX-MISROUTE-UI-MITIGATION/design.md",
+      "doc/handoffs/DIAG-M2-LOCK-CHANGED-REPRO-002-zcode-delivery-20260930.md",
+      "doc/handoffs/EVENTS-FWD-1-fwd1.md",
+      "doc/handoffs/EXPORT-IPC-1-antigravity-a4c8f9a.md",
+      "doc/handoffs/EXPORT-REVEAL-1-codex-5f95aac.md",
+      "doc/handoffs/EXPORT-REVEAL-1-codex-post-merge.md",
+      "doc/handoffs/FEAT-CREATE-3-89ec87027.md",
+      "doc/handoffs/HOST-ISSUER-1-C1-codex-af6fa705d.md",
+      "doc/handoffs/HOST-ISSUER-1-codex-2ad590a31.md",
+      "doc/handoffs/M2-AC1-zcode-delivery-20260928.md",
+      "doc/handoffs/M2-AC4-owner-delivery.md",
+      "doc/handoffs/M2-C1-zcode-7de1cd2.md",
+      "doc/handoffs/M2-C2-67f814ff.md",
+      "doc/handoffs/M2-CATEGORY-CLARIFY-1-zcode-af640916.md",
+      "doc/handoffs/M2-DERIVED-GC-2-363265b1.md",
+      "doc/handoffs/M2-DETECT-WEBTOON-TILING-29a7f5b5.md",
+      "doc/handoffs/M2-FIX-EXPORT-LINEAGE-owner-delivery.md",
+      "doc/handoffs/M2-FIX-F02-RESOURCE-CHANNEL-FLAKY-owner-delivery.md",
+      "doc/handoffs/M2-FIX-LISTBOOKS-PAGECOUNT-UNKNOWN-owner-delivery.md",
+      "doc/handoffs/M2-I1-0766952.md",
+      "doc/handoffs/M2-MANGA-WEIGHTS-SOP-1019ed6b.md",
+      "doc/handoffs/M2-P1-78e9637f.md",
+      "doc/handoffs/M2-PAGE-NAV-PROJECTION-1-zcode-614f3f98.md",
+      "doc/handoffs/M2-PAGE-RESOURCE-RESOLVE-1-zcode-61c71952.md",
+      "doc/handoffs/M2-PROD-DETECT-1-d7faea39.md",
+      "doc/handoffs/M2-PROD-DETECT-2-1cf731ca.md",
+      "doc/handoffs/M2-PROD-DETECT-2-dbad2027.md",
+      "doc/handoffs/M2-PROD-DETECT-3-983a50d5.md",
+      "doc/handoffs/M2-PROD-SFX-PROBE-1-zcode-20261004.md",
+      "doc/handoffs/M2-RC1-39552370.md",
+      "doc/handoffs/M2-RC1-FIX-702b02b0.md",
+      "doc/handoffs/M2-REGION-RETYPE-CONTRACT-a108996b.md",
+      "doc/handoffs/M2-REGION-RETYPE-CORE-zcode-delivery-cfbf3859.md",
+      "doc/handoffs/M2-RG1-a1100d75.md",
+      "doc/handoffs/M2-S3-bf749332.md",
+      "doc/handoffs/M2-SETTINGS-IPC-CHANNEL-45e15524.md",
+      "doc/handoffs/M2-SETTINGS-UI-SFX-POLICY-8c798aed.md",
+      "doc/handoffs/M2-SFX-ANNOTATE-R3-zcode-20261005.md",
+      "doc/handoffs/M2-SFX-CORRECTION-EXPORTER-zcode-delivery-9c7cf7bc.md",
+      "doc/handoffs/M2-SFX-PROD-1-038e8faf.md",
+      "doc/handoffs/M2-SFX-SEM-1-0c2e746c.md",
+      "doc/handoffs/M2-SFX-SYNTH-BG-AUTO-zcode-delivery-20261004.md",
+      "doc/handoffs/M2-SFX-TRANSLATE-ENTRY-a377a25a.md",
+      "doc/handoffs/M2-UI1-8031173.md",
+      "doc/handoffs/M2-WORKBENCH-REACT-1-zcode-20261006.md",
+      "doc/handoffs/P01-9b124936.md",
+      "doc/handoffs/P05-5288db42-handoff.md",
+      "doc/handoffs/P05-a2569f38-handoff.md",
+      "doc/handoffs/P09-PREVIEW-LIFECYCLE-RECLAIM-1-392977a8.md",
+      "doc/handoffs/P09-PREVIEW-LIFECYCLE-RECLAIM-1-convergence-request.md",
+      "doc/handoffs/P10-codex-a6e2cf58.md",
+      "doc/handoffs/P11-codex-b7fb6773.md",
+      "doc/handoffs/P12-C1-codex-919ca247.md",
+      "doc/handoffs/P13-C1-codex-ed79a2b7.md",
+      "doc/handoffs/P14-workbench.md",
+      "doc/handoffs/P15-C1-8d083ee.md",
+      "doc/handoffs/P15-C1-FU1-eeae298.md",
+      "doc/handoffs/P15-C1-FU2-26fb0e7.md",
+      "doc/handoffs/P15-CORE-1C-52b0974ad.md",
+      "doc/handoffs/P16-C1-codex-196f50d45.md",
+      "doc/handoffs/P18-codex-50329bc0.md",
+      "doc/handoffs/P19-AC3-1-36887879c9.md",
+      "doc/handoffs/P19-UI-FIX-2-f1fab80.md",
+      "doc/handoffs/SEC-FIX-PATH-ECHO-1-c52ce46.md",
+      "doc/handoffs/T1.1.1-zcode-handoff-865074f.md",
+      "doc/handoffs/T1.2.1-zcode-handoff.md",
+      "doc/handoffs/T1.3.1-TASK-057-integration.md",
+      "doc/handoffs/T3.2.1-zcode-delivery-20260926.md",
+      "doc/handoffs/TASK-001-615a073.md",
+      "doc/handoffs/TASK-002-c335315.md",
+      "doc/handoffs/TASK-003-6caefe1.md",
+      "doc/handoffs/TASK-006-ba1e769.md",
+      "doc/handoffs/TASK-009-b42fc32.md",
+      "doc/handoffs/TASK-009-f1dd602.md",
+      "doc/handoffs/TASK-010-cd76d30.md",
+      "doc/handoffs/TASK-016-4834447.md",
+      "doc/handoffs/TASK-016-9ef06d9.md",
+      "doc/handoffs/TASK-033-933819f.md",
+      "doc/handoffs/TASK-049-a57617f.md",
+      "doc/handoffs/TASK-050-5027998.md",
+      "doc/handoffs/TASK-052-3afaade.md",
+      "doc/research/M2-S1_RESOURCE_CHANNEL_SPIKE.md",
+      "doc/research/M2-S2_SECURITY_VERIFICATION_SPIKE.md",
+      "doc/research/TASK-017.md",
+      "doc/reviews/DIAG-M2-LOCK-CHANGED-REPRO-002-57a83485-dsh-r1.md",
+      "doc/reviews/DIAG-M2-LOCK-CHANGED-REPRO-002-fb36d21f-dsh-r2.md",
+      "doc/reviews/M2-AC1-7d157858-dsh-r1.md",
+      "doc/reviews/M2-AC1-d8c1173b-dsh-r2.md",
+      "doc/reviews/M2-AC4-890f0c74-dsh-r1.md",
+      "doc/reviews/M2-C1-zcode-7de1cd2-dsh-r3.md",
+      "doc/reviews/M2-C1-zcode-7de1cd2-qoder.md",
+      "doc/reviews/M2-C2-c18f273a.md",
+      "doc/reviews/M2-CATEGORY-CLARIFY-1-af640916-dsh-r1.md",
+      "doc/reviews/M2-CATEGORY-CLARIFY-1-e0ab0444-dsh-r2.md",
+      "doc/reviews/M2-DERIVED-GC-2-230c076f-codex-r4.md",
+      "doc/reviews/M2-DERIVED-GC-2-DESIGN-4a930c61-dsh-r1.md",
+      "doc/reviews/M2-DETECT-WEBTOON-DIAG-b311f52f-dsh-r1.md",
+      "doc/reviews/M2-DETECT-WEBTOON-TILING-29a7f5b5-dsh-r1.md",
+      "doc/reviews/M2-DETECTION-HYGIENE-02b6d2a2-dsh-r2.md",
+      "doc/reviews/M2-DETECTION-HYGIENE-561a79cd-dsh-r1.md",
+      "doc/reviews/M2-FIX-EXPORT-LINEAGE-0ec1f052-dsh-r1.md",
+      "doc/reviews/M2-FIX-F02-RESOURCE-CHANNEL-FLAKY-fd31a7ad-dsh-r1.md",
+      "doc/reviews/M2-FIX-LISTBOOKS-PAGECOUNT-UNKNOWN-852a92ae-dsh-r1.md",
+      "doc/reviews/M2-FIX-LISTBOOKS-PAGECOUNT-UNKNOWN-b6cb1af2-dsh-r2.md",
+      "doc/reviews/M2-FIX-RESOURCE-CHANNEL-DIGEST-PERF-5d7cff11-dsh-r1.md",
+      "doc/reviews/M2-I1-0766952.md",
+      "doc/reviews/M2-I1-a89447f.md",
+      "doc/reviews/M2-IMPORT-ALLOC-LIMIT-400046ef-dsh-r2.md",
+      "doc/reviews/M2-IMPORT-ALLOC-LIMIT-a5c8adf1-dsh-r1.md",
+      "doc/reviews/M2-IPC1-5556fc8e-dsh-r2.md",
+      "doc/reviews/M2-IPC1-a2f8d6b8-dsh-r1.md",
+      "doc/reviews/M2-KO-TILE-CALIB-76bf2a94-dsh-r1.md",
+      "doc/reviews/M2-P1-59acb340-dsh.md",
+      "doc/reviews/M2-PACKAGED-AC1-ICU-ISOLATION-FIX-4499217d-dsh-r2.md",
+      "doc/reviews/M2-PAGE-NAV-PROJECTION-1-614f3f98-dsh-r1.md",
+      "doc/reviews/M2-PAGE-RESOURCE-RESOLVE-1-ad00dcf3-dsh-r2.md",
+      "doc/reviews/M2-PAGE-RESOURCE-RESOLVE-1-b58bb944-dsh-r1.md",
+      "doc/reviews/M2-PROD-DETECT-1-a016d38c-dsh-r1.md",
+      "doc/reviews/M2-PROD-DETECT-2-dbad2027-dsh-r1.md",
+      "doc/reviews/M2-PROD-DETECT-2-dbad2027-dsh-r2.md",
+      "doc/reviews/M2-PROD-DETECT-3-7314ad20-dsh-r1.md",
+      "doc/reviews/M2-PROD-SFX-PROBE-1-b1dd1ad4-dsh-r1.md",
+      "doc/reviews/M2-QUAL-DETERM-CALIB-e3b7c48d-dsh-r1.md",
+      "doc/reviews/M2-RC1-FIX-702b02b0-round2.md",
+      "doc/reviews/M2-RC1-FIX-702b02b0.md",
+      "doc/reviews/M2-RC1-f8ce10a2.md",
+      "doc/reviews/M2-RC4-DOMAIN-COMMANDS-5954bb4b-dsh-r1.md",
+      "doc/reviews/M2-RC4-DOMAIN-COMMANDS-bb7f3dcb-dsh-preflight.md",
+      "doc/reviews/M2-REGION-RETYPE-CONTRACT-7f390ca6-dsh-r2.md",
+      "doc/reviews/M2-REGION-RETYPE-CONTRACT-a108996b-dsh-r1.md",
+      "doc/reviews/M2-REGION-RETYPE-CORE-eaed7858-dsh-r1.md",
+      "doc/reviews/M2-RG1-6b6366fc-dsh-r2.md",
+      "doc/reviews/M2-RG1-a1100d75-dsh-r1.md",
+      "doc/reviews/M2-RUNNER-SNAPSHOT-DEBT-2af6b71a-dsh-r3.md",
+      "doc/reviews/M2-S1-4eaad68.md",
+      "doc/reviews/M2-S1-64c87d1.md",
+      "doc/reviews/M2-S2-fbdf1bc2.md",
+      "doc/reviews/M2-S3-233d0901.md",
+      "doc/reviews/M2-SFX-BJ13-RECALL-1-04d5f621-dsh-r2.md",
+      "doc/reviews/M2-SFX-BJ13-RECALL-1-e6b4684c-dsh-r1.md",
+      "doc/reviews/M2-SFX-CORRECTION-EXPORTER-669146a1-dsh-r2.md",
+      "doc/reviews/M2-SFX-CORRECTION-EXPORTER-9c7cf7bc-dsh-r1.md",
+      "doc/reviews/M2-SFX-E2E-MATERIAL-40a8ceec-dsh-r1.md",
+      "doc/reviews/M2-SFX-FINETUNE-PREFLIGHT-6b73c92a-dsh-r1.md",
+      "doc/reviews/M2-SFX-GATE-T3-e53a2629-dsh-r1.md",
+      "doc/reviews/M2-SFX-MISROUTE-UI-MITIGATION-3f589a0b-dsh-r2.md",
+      "doc/reviews/M2-SFX-MISROUTE-UI-MITIGATION-c92eaddd-dsh-r1.md",
+      "doc/reviews/M2-SFX-PROD-1-0c4afdb1-dsh-r1.md",
+      "doc/reviews/M2-SFX-SEM-1-0349be25-dsh-r1.md",
+      "doc/reviews/M2-SFX-T4-SWITCH-6464c4a3-dsh-r1.md",
+      "doc/reviews/M2-SFX-T5-TILE-KO-aa5095cc-dsh-r1.md",
+      "doc/reviews/M2-SFX-TRANSLATE-ENTRY-a377a25a-dsh-r1.md",
+      "doc/reviews/M2-TASKS-BACKFILL-MULTIREGION-95469952-dsh-r2.md",
+      "doc/reviews/M2-TASKS-BACKFILL-MULTIREGION-f541b2f4-dsh-r1.md",
+      "doc/reviews/M2-UI1-23a5ac0.md",
+      "doc/reviews/M2-UI1-8031173.md",
+      "doc/reviews/M2-WORKBENCH-REACT-1-3a98a3ac-dsh-r1.md",
+      "doc/reviews/M2-WORKBENCH-REACT-1-a8bd3ddc-dsh-r2.md",
+      "doc/reviews/P01-3e67d53-dsh-r2.md",
+      "doc/reviews/P01-51bc01fe-antigravity-d3.md",
+      "doc/reviews/P01-6f24006c-dsh-r1.md",
+      "doc/reviews/P01-7645577a-antigravity-c9.md",
+      "doc/reviews/POSTHOC-WINDOW-2026-09-19-Qoder.md",
+      "doc/reviews/POSTHOC-WINDOW-DSH-2026-09-18.md",
+      "doc/reviews/SKILL-orchestrator-05c00083-zcode-review.md",
+      "doc/reviews/T3.2.1-78aba7c.md",
+      "doc/reviews/TASK-001-615a073.md",
+      "doc/reviews/TASK-002-c335315.md",
+      "doc/reviews/TASK-003-588383f.md",
+      "doc/reviews/TASK-006-ba1e769.md",
+      "doc/reviews/TASK-009-b42fc32.md",
+      "doc/reviews/TASK-009-f1dd602.md",
+      "doc/reviews/TASK-010-cd76d30.md",
+      "doc/reviews/TASK-011-6a2016b.md",
+      "doc/reviews/TASK-014-72cb2be.md",
+      "doc/reviews/TASK-015-488fafc.md",
+      "doc/reviews/TASK-016-a286578.md",
+      "doc/reviews/TASK-019-standards-addendum.md",
+      "doc/reviews/TASK-024-design.md",
+      "doc/reviews/TASK-028-e7f9e41.md",
+      "doc/reviews/TASK-028-f9f2811.md",
+      "doc/reviews/TASK-032-771977c.md",
+      "doc/reviews/TASK-033-933819f.md",
+      "doc/reviews/TASK-049-a57617f.md",
+      "doc/reviews/TASK-052-3afaade.md",
+      "doc/reviews/TASK-062-9ba21f8.md",
+      "doc/tasks/DIAG-M2-LOCK-CHANGED-REPRO-002.md",
+      "doc/tasks/ENV-BUNDLE-1-FU1.md",
+      "doc/tasks/EVENTS-FWD-1.md",
+      "doc/tasks/EXPORT-IPC-1.md",
+      "doc/tasks/EXPORT-REVEAL-1.md",
+      "doc/tasks/FEAT-CREATE-3.md",
+      "doc/tasks/FEAT-IMPORT-MULTI-1.md",
+      "doc/tasks/GOV-DEBT-CLEANUP-1.md",
+      "doc/tasks/GOV-UNTRACKED-BACKLOG-1.md",
+      "doc/tasks/HOST-CORE-1.md",
+      "doc/tasks/HOST-ISSUER-1-C1.md",
+      "doc/tasks/HOST-ISSUER-1.md",
+      "doc/tasks/HOST-TTL-BOUNDARY-1.md",
+      "doc/tasks/M2-AC3.md",
+      "doc/tasks/M2-AC4.md",
+      "doc/tasks/M2-C1.md",
+      "doc/tasks/M2-C2.md",
+      "doc/tasks/M2-CATEGORY-CLARIFY-1.md",
+      "doc/tasks/M2-DERIVED-GC-2.md",
+      "doc/tasks/M2-DETECT-WEBTOON-TILING.md",
+      "doc/tasks/M2-FIX-EXPORT-LINEAGE.md",
+      "doc/tasks/M2-FIX-F02-RESOURCE-CHANNEL-FLAKY.md",
+      "doc/tasks/M2-FIX-RESOURCE-CHANNEL-DIGEST-PERF.md",
+      "doc/tasks/M2-I1.md",
+      "doc/tasks/M2-IPC1.md",
+      "doc/tasks/M2-P1.md",
+      "doc/tasks/M2-PROD-DETECT-1.md",
+      "doc/tasks/M2-PROD-DETECT-2.md",
+      "doc/tasks/M2-PROD-DETECT-3.md",
+      "doc/tasks/M2-PROD-SFX-PROBE-1.md",
+      "doc/tasks/M2-RC1.md",
+      "doc/tasks/M2-REGION-RETYPE-CONTRACT.md",
+      "doc/tasks/M2-REGION-RETYPE-CORE.md",
+      "doc/tasks/M2-RG1.md",
+      "doc/tasks/M2-S1.md",
+      "doc/tasks/M2-SETTINGS-IPC-CHANNEL.md",
+      "doc/tasks/M2-SETTINGS-UI-SFX-POLICY.md",
+      "doc/tasks/M2-SFX-BJ13-RECALL-1.md",
+      "doc/tasks/M2-SFX-CORRECTION-EXPORTER.md",
+      "doc/tasks/M2-SFX-GPU-EP-1.md",
+      "doc/tasks/M2-SFX-MISROUTE-UI-IMPL-1.md",
+      "doc/tasks/M2-SFX-PROD-1.md",
+      "doc/tasks/M2-SFX-SEM-1.md",
+      "doc/tasks/M2-SFX-SYNTH-BG-AUTO.md",
+      "doc/tasks/M2-SFX-TILE-WIDTH-CALIB-1.md",
+      "doc/tasks/M2-UI1.md",
+      "doc/tasks/M2-WORKBENCH-REACT-1.md",
+      "doc/tasks/P01.md",
+      "doc/tasks/P02-NEW-TIME-BASELINE.md",
+      "doc/tasks/P02-NEW-TIME-X6-BUILD-CARGO.md",
+      "doc/tasks/P02-NEW-TIME-X6-POSTRUN-REVIEW.md",
+      "doc/tasks/P02.md",
+      "doc/tasks/P04.md",
+      "doc/tasks/P05.md",
+      "doc/tasks/P08.md",
+      "doc/tasks/P09-AC3-DELETE-1.md",
+      "doc/tasks/P09-FU2.md",
+      "doc/tasks/P09.md",
+      "doc/tasks/P10.md",
+      "doc/tasks/P11.md",
+      "doc/tasks/P12-C1.md",
+      "doc/tasks/P12.md",
+      "doc/tasks/P13-C1.md",
+      "doc/tasks/P13.md",
+      "doc/tasks/P14.md",
+      "doc/tasks/P15-C1-FU1.md",
+      "doc/tasks/P15-C1-FU2.md",
+      "doc/tasks/P15-C1.md",
+      "doc/tasks/P15-CORE-1.md",
+      "doc/tasks/P15-CORE-1A.md",
+      "doc/tasks/P15-CORE-1B.md",
+      "doc/tasks/P15-CORE-1C.md",
+      "doc/tasks/P15-HOST-1.md",
+      "doc/tasks/P15.md",
+      "doc/tasks/P16-C1.md",
+      "doc/tasks/P16.md",
+      "doc/tasks/P17.md",
+      "doc/tasks/P18.md",
+      "doc/tasks/P19-UI-FIX-2.md",
+      "doc/tasks/P19.md",
+      "doc/tasks/P20-CLOSE-BOUND-1.md",
+      "doc/tasks/P20.md",
+      "doc/tasks/P22-REBASE-1.md",
+      "doc/tasks/RUN-IPC-1.md",
+      "doc/tasks/T1.1.1.md",
+      "doc/tasks/T3.2.1-REPAIR-13.md",
+      "doc/tasks/T3.2.1-REPAIR-17-mock-local-pipeline-smoke.md",
+      "doc/tasks/T3.2.1.md",
+      "doc/tasks/TASK-009.md",
+      "doc/tasks/TASK-010.md",
+      "doc/tasks/TASK-011.md",
+      "doc/tasks/TASK-017.md",
+      "doc/tasks/TASK-029.md",
+      "doc/tasks/TASK-049.md",
+      "doc/tasks/TASK-050.md",
+      "doc/tasks/UI-DESIGN-1.md",
+      "doc/verification-plan/TASK-003_ACCEPTANCE_AND_FIXTURE_SPEC.md"
+    ],
+    "INTERRUPTED by Codex before final report; no exit marker; partial JSONL preserved; not Review evidence": [
+      "doc/tasks/GOV-UNTRACKED-BACKLOG-1.md"
+    ],
+    "archive/history/2026-10-12/12_ROADMAP.md": [
+      "doc/12_ROADMAP.md"
+    ],
+    "archive/history/2026-10-12/README.md": [
+      "doc/00_INDEX.md"
+    ],
+    "archive/history/2026-10-12/REBASELINE_PLAN.md": [
+      "doc/tasks/P06.md"
+    ],
+    "archive/history/2026-10-12/WORKTREE_SAFETY_INVENTORY.md": [
+      "doc/WORKTREE_SAFETY_INVENTORY.md"
+    ],
+    "archive/history/2026-10-13/document-rebaseline/source/doc/AD-001_TARGET_DESKTOP_ARCHITECTURE.md": [
+      "doc/00_INDEX.md",
+      "doc/AD-001_TARGET_DESKTOP_ARCHITECTURE.md"
+    ],
+    "doc/WORKSPACE_GOVERNANCE.md": [
+      "doc/handoffs/GOV-PLAN-BUDGET-1-126f9f31c.md",
+      "doc/handoffs/GOV-RESOURCE-MANIFEST-SAME-LOCATION-1-d15aae88a.md",
+      "doc/handoffs/P18-codex-50329bc0.md",
+      "doc/reviews/GOV-PLAN-BUDGET-1-126f9f31c-antigravity-r1.md",
+      "doc/tasks/GOV-UNTRACKED-BACKLOG-1.md",
+      "doc/tasks/P18.md",
+      "doc/tasks/PROJECT-ROADMAP-RELEASE.md"
+    ],
+    "doc/reviews/P02-5fa8a41f-dsh-r3-review.md": [
+      "doc/handoffs/P02-stage-a-foundation-handoff.md"
+    ],
+    "doc/reviews/P02-972049f9-dsh-review.md": [
+      "doc/handoffs/P02-stage-a-foundation-handoff.md"
+    ],
+    "doc/reviews/P02-9b82e97b-dsh-r2-review.md": [
+      "doc/handoffs/P02-stage-a-foundation-handoff.md"
+    ],
+    "doc/reviews/P03-PACKAGED-SFX-ENTRY-6d84b480-dsh.md": [
+      "doc/handoffs/P03-PACKAGED-SFX-ENTRY-29024a21-r1.md"
+    ],
+    "doc/tasks/P02-NEW-TIME-BASELINE-AC3-GIT-TOPLEVEL-RESOLUTION.md": [
+      "doc/reviews/GOV-DEBT-CLEANUP-2-94c8dcdab-antigravity-r2.md"
+    ],
+    "doc/tasks/P02PRE-R0.md": [
+      "doc/tasks/P02.md"
+    ],
+    "doc/tasks/P02PRE-R0S2.md": [
+      "doc/tasks/P02.md"
+    ],
+    "doc/tasks/P02PRE-R1H-FORENSIC-RECOVERY.md": [
+      "doc/handoffs/P02PRE-R1H-FORENSIC-RECOVERY.md"
+    ],
+    "doc/tasks/P02PRE-R1H-H2-COLLECTOR.md": [
+      "doc/handoffs/P02PRE-R1H-FORENSIC-RECOVERY.md"
+    ],
+    "doc/tasks/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE.md": [
+      "doc/handoffs/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE-R1.md"
+    ],
+    "doc/tasks/P22.md": [
+      "doc/tasks/PROJECT-ROADMAP-RELEASE.md"
+    ],
+    "verification/P02/appcontainer-readonly-preflight-r2.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/codex-appcontainer-contract-r3-adjudication.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/codex-appcontainer-contract-r4-adjudication.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/codex-appcontainer-contract-r5-adjudication.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/codex-appcontainer-contract-r6-adjudication.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/codex-appcontainer-contract-r7-adjudication.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/codex-appcontainer-create-gate-alternative-20261010.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/codex-appcontainer-create-gate-alternative-adjudication-20261010.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/codex-appcontainer-create-gate-alternative-review-20261010.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/codex-checkpoint-p02-m7-m8-review-m9-20261010.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/codex-checkpoint-p02-manifest-r6-reconciliation-20261011.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/codex-checkpoint-p02-owner-risk-waiver-manifest-review-r1-20261010.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/codex-checkpoint-p02-owner-risk-waiver-manifest-review-r3-20261010.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/codex-checkpoint-p02-owner-risk-waiver-start-20261010.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/codex-checkpoint-p02-profile-folder-contract-m6-20261010.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/codex-checkpoint-p02-profile-folder-versioned-contract-m7-20261010.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/codex-checkpoint-p02-readonly-preflight-r0-20261011.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/codex-checkpoint-p02-readonly-preflight-r0s1-20261011.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/codex-checkpoint-p02pre-r1f-20261011.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/codex-checkpoint-p02pre-r1f-postrun-20261011.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/codex-checkpoint-p02pre-r1g-20261012.md": [
+      "doc/tasks/P02.md"
+    ],
+    "verification/P02/codex-checkpoint-p02pre-r1h-round6-attempt4-baseline-blocked-20261012.md": [
+      "doc/tasks/P02.md"
+    ]
+  }
+}
