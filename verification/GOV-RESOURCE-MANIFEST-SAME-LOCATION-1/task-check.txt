@@ -1,0 +1,11 @@
+COMMAND: pwsh -NoProfile -File tools/governance/check.ps1 -TaskPath doc/tasks/GOV-RESOURCE-MANIFEST-SAME-LOCATION-1.md
+EXIT_CODE: 0
+
+STDOUT:
+Governance scope: 12 current documents; no historical directory scan.
+Task: doc\tasks\GOV-RESOURCE-MANIFEST-SAME-LOCATION-1.md
+WARN: doc/STATUS.md 已达到预算的 80%：3169 bytes / 27 lines
+Governance check: PASS (1 warnings)
+
+STDERR:
+

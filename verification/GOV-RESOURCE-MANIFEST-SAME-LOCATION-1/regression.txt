@@ -1,0 +1,72 @@
+COMMAND: python tools/governance/tests/run-resource-manifest-cases.py
+EXIT_CODE: 0
+
+STDOUT:
+OK  1 valid external reference                 Governance check: PASS (1 warnings)
+OK  2 referenced file missing                  Governance check: FAIL (1 errors, 1 warnings)
+        -> Resource Manifest ���õ��ļ������ڣ�verification/ZZ-MANIFEST-FIXTURE/nope.json
+OK  3 traversal                                Governance check: FAIL (1 errors, 1 warnings)
+        -> Resource Manifest ���ò���Խ���ֿ⣺verification/../doc/x.json
+OK  4 env var in reference                     Governance check: FAIL (1 errors, 1 warnings)
+        -> Resource Manifest ���ò��ú�����������꣺%APPDATA%/r.json
+OK  5 outside verification/                    Governance check: FAIL (1 errors, 1 warnings)
+        -> Resource Manifest ���ñ���λ�� verification/**��doc/x.json
+OK  6 two references                           Governance check: FAIL (1 errors, 1 warnings)
+        -> Resource Manifest �����˶�� JSON��verification/ZZ-MANIFEST-FIXTURE/a.json, verification/ZZ-MANIFEST-FIXTURE/b.json
+OK  7 task_id mismatch                         Governance check: FAIL (1 errors, 1 warnings)
+        -> Resource Manifest task_id 'OTHER' �� Task 'ZZ-MANIFEST-FIXTURE' ��һ��
+OK  8 schema_version != 1                      Governance check: FAIL (1 errors, 1 warnings)
+        -> Resource Manifest schema_version ����Ϊ 1
+OK  9 declared count != resources (allowed)    Governance check: PASS (2 warnings)
+OK 10 empty resources                          Governance check: FAIL (1 errors, 1 warnings)
+        -> Resource Manifest resources ����Ϊ��
+OK 11 invalid disposition                      Governance check: FAIL (1 errors, 1 warnings)
+        -> Resource disposition ��Ч��BOGUS
+OK 12 ALREADY_ABSENT all conditions            Governance check: PASS (1 warnings)
+OK 13 ALREADY_ABSENT no evidence               Governance check: FAIL (1 errors, 1 warnings)
+        -> ALREADY_ABSENT ȱ�� absent_evidence��C:/definitely/not/here-cache
+OK 14 ALREADY_ABSENT but target exists         Governance check: FAIL (2 errors, 1 warnings)
+        -> ALREADY_ABSENT ��Ŀ���Դ��ڣ�verification/ZZ-MANIFEST-FIXTURE/resource-manifest.json
+        -> ALREADY_ABSENT ��Ŀ���Դ��ڣ�verification/ZZ-MANIFEST-FIXTURE/resource-manifest.json
+OK 15 NOT_APPLICABLE for vanished              Governance check: FAIL (1 errors, 1 warnings)
+        -> NOT_APPLICABLE ������������ʧ��Դ��verification/ZZ-MANIFEST-FIXTURE/resource-manifest.json
+OK 16 missing process_check                    Governance check: FAIL (1 errors, 1 warnings)
+        -> Resource Manifest ȱ������/���̼������C:/definitely/not/here-cache
+OK 17 ALREADY_ABSENT abs path that exists (P1 regression) Governance check: FAIL (2 errors, 1 warnings)
+        -> ALREADY_ABSENT ��Ŀ���Դ��ڣ�C:/Windows/System32/notepad.exe
+        -> ALREADY_ABSENT ��Ŀ���Դ��ڣ�C:/Windows/System32/notepad.exe
+OK 18 glob in reference                        Governance check: FAIL (1 errors, 1 warnings)
+        -> Resource Manifest ���ò��ú� glob��verification/ZZ-MANIFEST-FIXTURE/*.json
+OK 19 malformed JSON                           Governance check: FAIL (1 errors, 1 warnings)
+        -> Resource Manifest JSON �޷�������G:\CODEX\New Manga\.agents\worktrees\GOV-RESOURCE-MANIFEST-SAME-LOCATION-1\verification\ZZ-MANIFEST-FIXTURE\resource-manif
+OK 20 sentinel: ignored target/dist            Governance check: PASS (2 warnings)
+        (note) ZZ-MANIFEST-FIXTURE: Resource 'evidence' destination 'Same ignored target/dist locations in this worktree' ����ΪͬԴ��ʹ�� source_path 'verification/ZZ-MANIF
+OK 21 sentinel: source location                Governance check: PASS (2 warnings)
+        (note) ZZ-MANIFEST-FIXTURE: Resource 'evidence' destination 'Same source location' ����ΪͬԴ��ʹ�� source_path 'verification/ZZ-MANIFEST-FIXTURE/resource-manifest.j
+OK 22 sentinel: shared build env               Governance check: PASS (2 warnings)
+        (note) ZZ-MANIFEST-FIXTURE: Resource 'evidence' destination 'Same shared build environment' ����ΪͬԴ��ʹ�� source_path 'verification/ZZ-MANIFEST-FIXTURE/resource-m
+OK 23 sentinel: local cache                    Governance check: PASS (2 warnings)
+        (note) ZZ-MANIFEST-FIXTURE: Resource 'evidence' destination 'Same local cache location' ����ΪͬԴ��ʹ�� source_path 'verification/ZZ-MANIFEST-FIXTURE/resource-manif
+OK 24 sentinel: main-repository paths          Governance check: PASS (2 warnings)
+        (note) ZZ-MANIFEST-FIXTURE: Resource 'evidence' destination 'Same main-repository paths' ����ΪͬԴ��ʹ�� source_path 'verification/ZZ-MANIFEST-FIXTURE/resource-mani
+OK 25 empty destination fallback               Governance check: PASS (2 warnings)
+        (note) ZZ-MANIFEST-FIXTURE: Resource 'evidence' destination '(blank)' ����ΪͬԴ��ʹ�� source_path 'verification/ZZ-MANIFEST-FIXTURE/resource-manifest.json'
+OK 26 whitespace destination fallback          Governance check: PASS (2 warnings)
+        (note) ZZ-MANIFEST-FIXTURE: Resource 'evidence' destination '(blank)' ����ΪͬԴ��ʹ�� source_path 'verification/ZZ-MANIFEST-FIXTURE/resource-manifest.json'
+OK 27 dash destination fallback                Governance check: PASS (2 warnings)
+        (note) ZZ-MANIFEST-FIXTURE: Resource 'evidence' destination '-' ����ΪͬԴ��ʹ�� source_path 'verification/ZZ-MANIFEST-FIXTURE/resource-manifest.json'
+OK 28 existing normal destination passes       Governance check: PASS (1 warnings)
+OK 29 prose destination fails                  Governance check: FAIL (1 errors, 1 warnings)
+        -> Resource ����·��δ��֤��some other place
+OK 30 unknown same destination fails           Governance check: FAIL (1 errors, 1 warnings)
+        -> Resource ����·��δ��֤��Same custom unknown location
+OK 31 real missing destination fails           Governance check: FAIL (1 errors, 1 warnings)
+        -> Resource ����·��δ��֤��apps/desktop/src-tauri/target/p19-ui-fix-1-isolation-20261017
+OK 32 dash destination with missing source fails Governance check: FAIL (1 errors, 2 warnings)
+        -> Resource ����·��δ��֤��verification/ZZ-MANIFEST-FIXTURE/nonexistent-source.file
+
+cleaned: tempdir=True manifest=True doc/tasks untouched=True
+32/32 cases behaved as expected
+
+STDERR:
+

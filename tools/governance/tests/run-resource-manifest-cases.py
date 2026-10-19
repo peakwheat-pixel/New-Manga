@@ -101,8 +101,9 @@ def run(tp):
                        capture_output=True, text=True, encoding="utf-8", errors="replace", cwd=WT)
     out = (r.stdout or "") + (r.stderr or "")
     fails = [l.strip()[6:] for l in out.split("\n") if l.strip().startswith("FAIL:")]
+    warns = [l.strip()[6:] for l in out.split("\n") if l.strip().startswith("WARN:")]
     summ = [l.strip() for l in out.split("\n") if "Governance check" in l]
-    return (summ[0] if summ else "(none)"), fails
+    return (summ[0] if summ else "(none)"), fails, warns
 
 
 MANIFEST_KEYS = ("Manifest", "manifest", "Resource", "ALREADY_ABSENT", "NOT_APPLICABLE",
@@ -117,13 +118,23 @@ def main():
     try:
         for c in cases:
             tp = write_case(c["manifest"], c["section"], taskdir)
-            summary, fails = run(tp)
+            summary, fails, warns = run(tp)
             rel = [f for f in fails if any(k in f for k in MANIFEST_KEYS)]
             other = [f for f in fails if f not in rel]
             ok = (len(rel) > 0) == c["expect_manifest_fail"] and not other
+            expect_notes = c.get("expect_notes")
+            if expect_notes:
+                same_notes = [w for w in warns if "解释为同源" in w]
+                for note_sub in expect_notes:
+                    if not any(note_sub in w for w in same_notes):
+                        ok = False
+                        print("        !! missing expected note snippet: %s" % note_sub)
             print("%-2s %2d %-40s %s" % ("OK" if ok else "XX", c["id"], c["name"], summary))
             for f in rel[:3]:
                 print("        -> " + f[:150])
+            if expect_notes:
+                for w in [w for w in warns if "解释为同源" in w][:2]:
+                    print("        (note) " + w[:150])
             if other:
                 print("        !! unrelated failures: %s" % other[:2])
             results.append(ok)

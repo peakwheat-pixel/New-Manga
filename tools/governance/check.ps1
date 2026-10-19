@@ -86,6 +86,13 @@ function Test-ExternalResourceManifest([string]$ManifestPath, [string]$TaskId, [
     if (-not $json.resources -or $json.resources.Count -eq 0) { $problems.Add("Resource Manifest resources 不得为空") }
 
     $allowed = @('DELETE_SAFE','MIGRATE','ARCHIVE','PRESERVE_REFERENCED','PRESERVE_USER_DATA','PRESERVE_UNKNOWN','NOT_APPLICABLE','ALREADY_ABSENT')
+    $sameLocationSentinels = @(
+        'Same ignored target/dist locations in this worktree',
+        'Same source location',
+        'Same shared build environment',
+        'Same local cache location',
+        'Same main-repository paths'
+    )
     $counts = @{ deleted = 0; moved = 0; migrated = 0; archived = 0 }
     $resources = @()
     foreach ($res in $json.resources) {
@@ -95,9 +102,30 @@ function Test-ExternalResourceManifest([string]$ManifestPath, [string]$TaskId, [
         if ($res.deleted) { $counts.deleted++ }
         if ($res.moved) { $counts.moved++ }
         if ($res.modified -eq $null) { }
+
+        $rawDest = if ($res.destination_path -ne $null) { [string]$res.destination_path } else { '' }
+        $trimmedDest = $rawDest.Trim()
+        $isSentinel = $sameLocationSentinels -contains $trimmedDest
+        $isBlank = [string]::IsNullOrWhiteSpace($rawDest)
+        $isDash = ($trimmedDest -eq '-')
+        $isSameLocation = $isSentinel -or $isBlank -or $isDash
+
+        if ($isSameLocation) {
+            $destDesc = if ($isBlank) { '(blank)' } elseif ($isDash) { '-' } else { $rawDest }
+            $resId = if (-not [string]::IsNullOrWhiteSpace([string]$res.resource_type)) {
+                [string]$res.resource_type
+            } elseif (-not [string]::IsNullOrWhiteSpace([string]$res.source_path)) {
+                [string]$res.source_path
+            } else {
+                'resource'
+            }
+            $notes.Add("Resource '$resId' destination '$destDesc' 解释为同源，使用 source_path '$([string]$res.source_path)'")
+        }
+
         if ($disposition -eq 'ALREADY_ABSENT') {
             if ([string]::IsNullOrWhiteSpace([string]$res.absent_evidence)) { $problems.Add("ALREADY_ABSENT 缺少 absent_evidence：$($res.source_path)") }
-            foreach ($expr in @([string]$res.source_path, [string]$res.destination_path)) {
+            $exprs = if ($isSameLocation) { @([string]$res.source_path) } else { @([string]$res.source_path, [string]$res.destination_path) }
+            foreach ($expr in $exprs) {
                 if ([string]::IsNullOrWhiteSpace($expr)) { continue }
                 if ($expr -match '[{}*?\[\]]' -or $expr -match '%[^%]+%') { continue }
                 # Resolve-LocalPath handles rooted paths; a bare Join-Path would glue an
@@ -109,7 +137,15 @@ function Test-ExternalResourceManifest([string]$ManifestPath, [string]$TaskId, [
         } elseif ($disposition -eq 'NOT_APPLICABLE' -and ([string]$res.absent_evidence)) {
             $problems.Add("NOT_APPLICABLE 不得用于已消失资源：$($res.source_path)")
         }
-        $resources += [pscustomobject]@{ Disposition = $disposition; Source = [string]$res.source_path; Destination = [string]$res.destination_path; Sha256 = [string]$res.sha256; ManifestPath = [string]$res.manifest_path }
+        $resources += [pscustomobject]@{
+            Disposition = $disposition
+            Source = [string]$res.source_path
+            Destination = [string]$res.destination_path
+            Sha256 = [string]$res.sha256
+            ManifestPath = [string]$res.manifest_path
+            IsSameLocation = $isSameLocation
+            IsSentinel = $isSentinel
+        }
     }
     if ($json.closeout_counts) {
         foreach ($k in @('deleted','moved','migrated','archived')) {
@@ -323,9 +359,22 @@ if ($TaskPath -and (Test-Path -LiteralPath $TaskPath -PathType Leaf)) {
                         if ($checked.Notes) { foreach ($n in $checked.Notes) { Add-Warning "$($taskId): $n" } }
                         foreach ($r in $checked.Resources) {
                             if ($r.Disposition -in @('MIGRATE','ARCHIVE','PRESERVE_REFERENCED','PRESERVE_USER_DATA','PRESERVE_UNKNOWN')) {
+                                if ($r.IsSameLocation) {
+                                    $target = $r.Source
+                                    if ([string]::IsNullOrWhiteSpace($target) -or $target.Trim() -eq '-') { continue }
+                                    if ($target -match '[{}*?\[\]]' -or $target -match '%[^%]+%') { continue }
+                                    $finalPath = try { Resolve-LocalPath $target $repoRoot } catch { $null }
+                                    if ($finalPath -and (Test-Path -LiteralPath $finalPath)) { continue }
+                                    if ($r.IsSentinel) {
+                                        # AC1: 五个已核实 sentinel 是同源位置说明，若 source 未在本地存在（例如已清理的构建缓存），明确跳过 destination 存在性校验
+                                        continue
+                                    }
+                                    Add-Error "Resource 最终路径未验证：$target"
+                                    continue
+                                }
                                 if ([string]::IsNullOrWhiteSpace($r.Destination) -or $r.Destination -match '^(?i:none|n/?a|-)$') { continue }
                                 if ($r.Destination -match '[{}*?\[\]]' -or $r.Destination -match '%[^%]+%') { continue }
-                                $finalPath = Resolve-LocalPath $r.Destination $repoRoot
+                                $finalPath = try { Resolve-LocalPath $r.Destination $repoRoot } catch { $null }
                                 if (-not $finalPath -or -not (Test-Path -LiteralPath $finalPath)) { Add-Error "Resource 最终路径未验证：$($r.Destination)" }
                             }
                         }
