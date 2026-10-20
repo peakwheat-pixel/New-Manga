@@ -107,7 +107,7 @@ MAX_DETECT_PIXELS = MAX_DETECT_PAGE_BYTES // 3   # = 11,184,810
 
 | resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
 |---|---|---|---|---|---|
-| NOT_APPLICABLE | — | — | — | — | 本 Task 不涉及资源操作 |
+| （none） | — | NOT_APPLICABLE | — | — | 本 Task 不涉及资源操作 |
 
 ## Closeout Record
 
