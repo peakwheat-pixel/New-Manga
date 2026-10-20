@@ -94,7 +94,16 @@ def _compose_pdf(images, regions_by_page):
                     encoded = _cid_text(text, cid_by_char)
                     if encoded:
                         content.append(f"BT /F0 10 Tf 3 Tr 1 0 0 1 {x:g} {max(0, height-y-line_no*10):g} Tm <{encoded}> Tj ET\n")
-        content_id = add(_stream(b"", "".join(content).encode("ascii")))
+        # PDF-STREAM-FIX-1: _stream's contract is "you pass compressed data, I
+        # declare /Filter /FlateDecode". Every other call site passes
+        # zlib.compress(...); this one used to pass plain ASCII, so the content
+        # stream declared a filter its bytes did not have. Readers could not
+        # inflate it, skipped the stream, and never ran the "q ... /Im0 Do Q"
+        # that paints the page - every exported PDF rendered blank while
+        # page_count, rect sizes and get_images() all reported correctly.
+        content_id = add(
+            _stream(b"", zlib.compress("".join(content).encode("ascii")))
+        )
         font_resource = f" /Font << /F0 {font_refs} 0 R >>" if font_refs is not None else ""
         page_id = add(
             f"<< /Type /Page /Parent {pages_id} 0 R /MediaBox [0 0 {width} {height}] /Resources << /XObject << /Im0 {image_id} 0 R >>{font_resource} >> /Contents {content_id} 0 R >>".encode()
