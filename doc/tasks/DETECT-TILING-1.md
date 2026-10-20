@@ -109,7 +109,7 @@ MAX_DETECT_PIXELS = MAX_DETECT_PAGE_BYTES // 3
 | EV-DT1-RV1 | AC5 | `verification/DETECT-TILING-1/dsh-stageA-zcode-review.md` | 01fcffe95 | `f3d8d438c47a2064229229e052ec46586de41c8613ce3d2fe65695422e54e890` | CANONICAL |
 | EV-DT1-RV2 | AC5 | `verification/DETECT-TILING-1/dsh-stageA-zcode-review-r2.md` | 1746927ec | `e3f7bf244a0d8f9de17cc7c145613ee4e729d4233ca9f0007b91c7e792bc272f` | CANONICAL |
 | EV-DT1-R35 | AC0 | `verification/P09-GOVERNANCE-DEBT-20261019/codex-adjudicate-tiling-stage2-r35.md` | 5885b182e | `bbcf1ac2517cb3dcbae90c414a9a5e421a305e162b52fe7b8d299a8fbefd30aa` | SOURCE_PIN |
-| EV-DT1-R36 | AC0 | `verification/P09-GOVERNANCE-DEBT-20261019/codex-adjudicate-tiling-closeout-r36.md` | 1746927ec | `ad6b4b33480324f58fbe7d053e46c8137ab9bab1c2b62d33b11d62245995aa1d` | SOURCE_PIN |
+| EV-DT1-R36 | AC0 | `verification/P09-GOVERNANCE-DEBT-20261019/codex-adjudicate-tiling-closeout-r36.md` | 1746927ec | - | SOURCE_PIN |
 
 ## Resource Manifest
 

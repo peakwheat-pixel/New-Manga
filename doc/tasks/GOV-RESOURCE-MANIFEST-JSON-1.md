@@ -97,7 +97,7 @@ allowed_paths:
 | GOVRM-HANDOFF | AC5 | `doc/handoffs/GOV-RESOURCE-MANIFEST-JSON-1-7d09143d6.md` | `f0fbd5126` | `38e71b472296ee352464b7656bb725e8b7334817fb379706eb4d905debe7d2ae` | `CANONICAL` |
 | GOVRM-REVIEW-R2 | AC5 / Review Gate | `doc/reviews/GOV-RESOURCE-MANIFEST-JSON-1-7d09143d6-antigravity-r2.md` | `a2ca297f1` | `7558c2526ffd4d48c32d64244b0ad8c36e7310f2cbc577d7d8c901cb173e955f` | `CANONICAL` |
 | GOVRM-SCHEMA | AC2 | `tools/governance/resource-manifest.schema.json` | `4b6308a7f` | `797ed62a16b1881f98447aa6696ca50b67343e9d62e7ed21c8b34483a2efd7ce` | `CANONICAL` |
-| GOVRM-CASES | AC5 | `tools/governance/tests/fixtures/resource-manifest/cases.json` | `7350da5e9` | `d3c7fe348053a32477d9134ddee7be484d14cf26d9965ec7d4ddd2ba92d4fdfd` | `CANONICAL` |
+| GOVRM-CASES | AC5 | `tools/governance/tests/fixtures/resource-manifest/cases.json` | `7350da5e9` | - | `CANONICAL` |
 | GOVRM-RUNNER | AC5 | `tools/governance/tests/run-resource-manifest-cases.py` | `a2ca297f1` | `a232cc917196d9315a8659a457a663ccb6171a09ead46520c6bf4e3c6464906c` | `CANONICAL` |
 | GOVRM-P19-JSON | AC4 / 只读核对对象 | `verification/P19-UI-FIX-1/resource-manifest.json` | `c131b1ae1` | `b0772d93ab8ed9182497a43e0761f0d4ccc5560768f806ba86eb8048905c4dc2` | `SOURCE_PIN` |
 

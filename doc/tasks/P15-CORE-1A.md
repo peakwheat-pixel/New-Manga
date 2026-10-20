@@ -64,18 +64,18 @@ Secret / 明文凭据 / 认证头 / CredentialRef / 原始响应 / 路径 / 异�
 
 | evidence_id | AC/Gate | path（仓库相对路径或绝对路径） | commit | sha256 | class (CANONICAL / SOURCE_PIN) |
 |---|---|---|---|---|---|
-| EVD-P15-1A-CONTRACT | AC1 / frozen wire | `doc/contracts/P15_SETTINGS_IPC_CONTRACT.md` | `b1f4d08c79ad8f7c11bbc945cdbeddd3ef5f6523` | `b6b29246c01cb4cdd7a360bf8d34b4499cabbd751cce6d98e6309fe7a0d40090` | SOURCE_PIN |
+| EVD-P15-1A-CONTRACT | AC1 / frozen wire | `doc/contracts/P15_SETTINGS_IPC_CONTRACT.md` | `b1f4d08c79ad8f7c11bbc945cdbeddd3ef5f6523` | - | SOURCE_PIN |
 | EVD-P15-1A-P10-BOUNDARY | AC1 / P10 logic boundary | `doc/contracts/P10_CREDENTIAL_CONFIG_CONTRACT.md` | `b1f4d08c79ad8f7c11bbc945cdbeddd3ef5f6523` | `7e186ca9818654448582e769505597fe93376179e2dca5972bd36f5632b4828d` | SOURCE_PIN |
 | EVD-P15-1A-REGISTRY-FACT | AC3 / registry adjudication | `src/infrastructure/providers/handlers.py` | `b1f4d08c79ad8f7c11bbc945cdbeddd3ef5f6523` | `3e1386f1a561cf721320e19e8a9d06daa2b9bb5a2796842c74de2510da3e6be9` | SOURCE_PIN |
 | EVD-P15-1A-COMMANDS | AC1–AC4 | `src/bootstrap/settings_commands.py` | `9232802c08b983225898cb784504fee49c4c43f4` | `a9b1ad574b8d90c33f5647fd53b849c27f28a7e3a7c1e02c26d63d28f0efb7b5` | CANONICAL |
-| EVD-P15-1A-DISPATCH | AC1 / protocol compatibility | `src/bootstrap/core_service.py` | `9232802c08b983225898cb784504fee49c4c43f4` | `33ddb0f83b8d344d33b5e7ebfdd6c8399599a81629615b4a7f9e3c19fe937bc5` | CANONICAL |
+| EVD-P15-1A-DISPATCH | AC1 / protocol compatibility | `src/bootstrap/core_service.py` | `9232802c08b983225898cb784504fee49c4c43f4` | - | CANONICAL |
 | EVD-P15-1A-ASSEMBLY | AC3 / Core Store assembly | `src/bootstrap/core_assembly.py` | `9232802c08b983225898cb784504fee49c4c43f4` | `95b3267166f3d1d407ed8c30b66bce3642ce8e3b23fec005a663a301102a4f15` | CANONICAL |
 | EVD-P15-1A-START-RUN | AC2 / frozen StartRun | `src/application/tasks/service.py` | `9232802c08b983225898cb784504fee49c4c43f4` | `efaa266ad2ad7571f2a637a337fef8d3d519e3bdaf74b1382a376f83b977eb12` | CANONICAL |
 | EVD-P15-1A-SETTINGS-STORE | AC2 / snapshot projection | `src/application/tasks/store.py` | `9232802c08b983225898cb784504fee49c4c43f4` | `da3c1848d62898b558f4f397d8de9e7c2b9f8fd889f38596e5bc533d8e96139f` | CANONICAL |
 | EVD-P15-1A-PROFILE-STORE | AC1 / binding persistence | `src/infrastructure/settings/json_profile_stores.py` | `9232802c08b983225898cb784504fee49c4c43f4` | `47b15a0dfd6b2e025c075f99d56f7b954522a655edb46f793747fc1bb1b293b8` | CANONICAL |
 | EVD-P15-1A-SQLITE-SNAPSHOT | AC2 / reserved metadata filtering | `src/infrastructure/sqlite/pipeline.py` | `9232802c08b983225898cb784504fee49c4c43f4` | `d6c18cff8a2fdbf5a746c92791bde61075b70b754aafe868506f7e619311a551` | CANONICAL |
 | EVD-P15-1A-CAPABILITY | AC1 / Rendering capability | `src/ports/providers/profiles.py` | `9232802c08b983225898cb784504fee49c4c43f4` | `1ff37b589a0963014734516786a371fddc53dad2e7adb5c8e1edd613f56c3073` | CANONICAL |
-| EVD-P15-1A-TESTS | AC1–AC4 / counterexamples and matrix | `tests/core/test_p15_core_settings.py` | `9232802c08b983225898cb784504fee49c4c43f4` | `a163d7bb104eb54ad0210b11455060e1ac89dd484fe786d7441311cebbe1b04e` | CANONICAL |
+| EVD-P15-1A-TESTS | AC1–AC4 / counterexamples and matrix | `tests/core/test_p15_core_settings.py` | `9232802c08b983225898cb784504fee49c4c43f4` | - | CANONICAL |
 | EVD-P15-1A-FULL-TEST-LOG | AC5 / full regression | `verification/P15-CORE-1A/pytest-core.log` | `3f11a8d52f1d4b3fe9f9847c0466ca293643eba2` | `ca9f00193b986700b7eacdd2afe962d15aec96ebab9f84c1b19729927a07c1ad` | CANONICAL |
 | EVD-P15-1A-EXIT | AC5 / exit status | `verification/P15-CORE-1A/pytest-core.exit-code.txt` | `3f11a8d52f1d4b3fe9f9847c0466ca293643eba2` | `13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354` | CANONICAL |
 | EVD-P15-1A-FIRST-ATTEMPT | Diagnostic / corrected protocol compatibility | `verification/P15-CORE-1A/pytest-core-first-attempt.log` | `3f11a8d52f1d4b3fe9f9847c0466ca293643eba2` | `61a05ffa0e5c36ced6b87e5bd9ebc3b900ca10bcdbf8037b55e62257aba69a41` | CANONICAL |

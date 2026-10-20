@@ -65,8 +65,8 @@ evidence_dir: verification/P19-UI-FIX-1
 
 | evidence_id | AC/Gate | path（仓库相对路径或绝对路径） | commit | sha256 | class (`CANONICAL` / `SOURCE_PIN`) |
 |---|---|---|---|---|---|
-| P19UI-TEST | AC3 | `verification/P19-UI-FIX-1/frontend-npm-test-final.log` | `5dd4b2af0a0c1da00d49d7267ddac11d718cd94c` | `2f6bd61d4acd94e6204278f276084b2261a57192cb129bec41cde9446088eba8` | CANONICAL |
-| P19UI-FRONTEND-BUILD | AC3 | `verification/P19-UI-FIX-1/frontend-npm-build-final.log` | `5dd4b2af0a0c1da00d49d7267ddac11d718cd94c` | `80c9e7ebc60daf5c45635a57346f4114111248be10ebcd57749e3c628619fad6` | CANONICAL |
+| P19UI-TEST | AC3 | `verification/P19-UI-FIX-1/frontend-npm-test-final.log` | `5dd4b2af0a0c1da00d49d7267ddac11d718cd94c` | - | CANONICAL |
+| P19UI-FRONTEND-BUILD | AC3 | `verification/P19-UI-FIX-1/frontend-npm-build-final.log` | `5dd4b2af0a0c1da00d49d7267ddac11d718cd94c` | - | CANONICAL |
 | P19UI-SIDECAR-BUILD | AC4 | `verification/P19-UI-FIX-1/sidecar-build-final.log` | `5dd4b2af0a0c1da00d49d7267ddac11d718cd94c` | `43481c84a651406eb2f17188ea66ef6bfa777c0fe58935c92ed5b6d3bf3d6ed6` | CANONICAL |
 | P19UI-CARGO-BUILD | AC4 | `verification/P19-UI-FIX-1/cargo-build-final.log` | `5dd4b2af0a0c1da00d49d7267ddac11d718cd94c` | `a1be79b3172400a7f29f78b1e5117ac053a79063e3c10d1fe70242a0ec408e29` | CANONICAL |
 | P19UI-SIDECAR-HASHES | AC4 | `verification/P19-UI-FIX-1/sidecar-resource-hash-comparison-final.json` | `5dd4b2af0a0c1da00d49d7267ddac11d718cd94c` | `dcfdc28fff13a3f5edfb0e5426a8cf3f3ecc47c5b9a4069e2f235256ab1fb27c` | CANONICAL |

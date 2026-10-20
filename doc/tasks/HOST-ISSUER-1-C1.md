@@ -108,7 +108,7 @@ evidence_dir: verification/HOST-ISSUER-1-C1
 | C1-compatibility | AC1–AC4, AC7 | verification/HOST-ISSUER-1-C1/compatibility-impact.md | af6fa705de54489ce32811cdc8dd3be51a1fd999 | ac09c396a03edbba3aa7f4724f06efaba6990b3961e56760bbe7c2d3af437214 | CANONICAL |
 | C1-handoff | AC8 | doc/handoffs/HOST-ISSUER-1-C1-codex-af6fa705d.md | 0603263b1e8e0785c80687e1de0ed891917c1372 | 26014c7bf4fdc51ed033973532d2f73155106600e185fc7c7e0f2e3b945a590f | CANONICAL |
 | H1-blocker | AC6 source fact | verification/HOST-ISSUER-1-C1/source-pins/host-issuer-blocker-assessment.md | 40afd0b67afa0ab702033bd73489228e064d08e1 | 008ab54be031609547a569ad7aab856f1cc75956c90b2e46788842b83ceceb6f | SOURCE_PIN |
-| H1-task | AC6 source contract | doc/tasks/HOST-ISSUER-1.md | 6a5051dcafa549f200730a4f9824d83d187f07a2 | d4926c93627b0c23db9c00fffed3f523dbfb2a71d653d941b04b314f301ecde5 | SOURCE_PIN |
+| H1-task | AC6 source contract | doc/tasks/HOST-ISSUER-1.md | 6a5051dcafa549f200730a4f9824d83d187f07a2 | - | SOURCE_PIN |
 | P09-task | AC3/AC6 source contract | doc/tasks/P09-FU2.md | 6a5051dcafa549f200730a4f9824d83d187f07a2 | adc5f72e40761bca5f5408670c830d3467fceb03d6a105a1df67b74f37c7b33a | SOURCE_PIN |
 | P09-seam | AC3/AC6 source evidence | verification/P09-FU2/host-issuer-and-test-seam.md | 6a5051dcafa549f200730a4f9824d83d187f07a2 | 05156daee56bd9f4a38a3dc3014e6b3ed9361698261f910250572fcc3e0f9132 | SOURCE_PIN |
 | P16-task | AC3/AC6 source contract | doc/tasks/P16.md | 6a5051dcafa549f200730a4f9824d83d187f07a2 | 7fe5e5b18a18419f25d5372c8713a5b5c084d81f7764db9acac7099dd43831bd | SOURCE_PIN |

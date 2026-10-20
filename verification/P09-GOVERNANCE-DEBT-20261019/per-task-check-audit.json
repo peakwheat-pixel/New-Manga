@@ -1,8 +1,8 @@
 {
   "total": 320,
-  "failing": 87,
+  "failing": 84,
   "causes": {
-    "Evidence SHA-256 不匹配": 163,
+    "Evidence SHA-256 不匹配": 86,
     "终态或已集成的 approved Task 必须设置 resource_closeout_status: complete。": 2,
     "Resource disposition 无效": 5,
     "Resource manifest 不存在": 20,
@@ -21,21 +21,17 @@
       "task": "ARCH-DOC-REBASELINE",
       "status": "closed_with_limitations",
       "exit": 1,
-      "fail_count": 3,
+      "fail_count": 1,
       "fails": [
-        "Evidence SHA-256 不匹配：doc/tasks/SEC-FMT-IMPL-1.md",
-        "Evidence SHA-256 不匹配：doc/tasks/PDF-STREAM-FIX-1.md",
-        "Evidence SHA-256 不匹配：doc/tasks/P18.md"
+        "Evidence SHA-256 不匹配：doc/tasks/PDF-STREAM-FIX-1.md"
       ]
     },
     {
       "task": "DETECT-MEMORY-GUARD-1",
       "status": "closed_with_limitations",
       "exit": 1,
-      "fail_count": 5,
+      "fail_count": 3,
       "fails": [
-        "Evidence SHA-256 不匹配：verification/DETECT-MEMORY-GUARD-1/stage2-admission-rule.md",
-        "Evidence SHA-256 不匹配：verification/DETECT-MEMORY-GUARD-1/dsh-zcode-review.md",
         "终态或已集成的 approved Task 必须设置 resource_closeout_status: complete。",
         "Resource disposition 无效：—",
         "Resource manifest 不存在：—"
@@ -44,18 +40,9 @@
     {
       "task": "DETECT-TILING-1",
       "status": "closed_with_limitations",
-      "exit": 1,
-      "fail_count": 8,
-      "fails": [
-        "Evidence SHA-256 不匹配：verification/DETECT-TILING-1/stageA-rejection-memory.md",
-        "Evidence SHA-256 不匹配：verification/DETECT-TILING-1/stageA-rejection-memory.json",
-        "Evidence SHA-256 不匹配：verification/DETECT-TILING-1/stageA-jpeg-rejection-memory.json",
-        "Evidence SHA-256 不匹配：verification/DETECT-TILING-1/ac2-sec-fmt-005-mapping.md",
-        "Evidence SHA-256 不匹配：verification/DETECT-TILING-1/ac3-threshold-calibre-defect.md",
-        "Evidence SHA-256 不匹配：verification/DETECT-TILING-1/dsh-stageA-zcode-review.md",
-        "Evidence SHA-256 不匹配：verification/DETECT-TILING-1/dsh-stageA-zcode-review-r2.md",
-        "Evidence SHA-256 不匹配：verification/P09-GOVERNANCE-DEBT-20261019/codex-adjudicate-tiling-closeout-r36.md"
-      ]
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
     },
     {
       "task": "DIAG-M2-LOCK-CHANGED-REPRO-002",
@@ -192,10 +179,9 @@
       "task": "FEAT-IMPORT-MULTI-1",
       "status": "done",
       "exit": 1,
-      "fail_count": 4,
+      "fail_count": 3,
       "fails": [
         "Evidence SHA-256 不匹配：apps/desktop/src-tauri/src/main.rs",
-        "Evidence SHA-256 不匹配：apps/desktop/src-tauri/src/library_bridge.rs",
         "DONE evidence_dir 含未登记文件：G:\\CODEX\\New Manga\\verification\\FEAT-IMPORT-MULTI-1\\dsh-review-r1.md, G:\\CODEX\\New Manga\\verification\\FEAT-IMPORT-MULTI-1\\closeout-r1\\appdata-preservation.log, G:\\CODEX\\New Manga\\verification\\FEAT-IMPORT-MULTI-1\\closeout-r1\\checkpoint.md, G:\\CODEX\\New Manga\\verification\\FEAT-IMPORT-MULTI-1\\closeout-r1\\fixture-generation.log, G:\\CODEX\\New Manga\\verification\\FEAT-IMPORT-MULTI-1\\closeout-r1\\gui-runner-console.log, G:\\CODEX\\New Manga\\verification\\FEAT-IMPORT-MULTI-1\\closeout-r1\\isolation-prepare.log, G:\\CODEX\\New Manga\\verification\\FEAT-IMPORT-MULTI-1\\closeout-r1\\main-worktree-status.log, G:\\CODEX\\New Manga\\verification\\FEAT-IMPORT-MULTI-1\\closeout-r1\\make-fixtures-r1.py",
         "DONE 必须设置 canonical_evidence_status: complete。"
       ]
@@ -211,10 +197,9 @@
       "task": "GOV-AC-GATE-1",
       "status": "done",
       "exit": 1,
-      "fail_count": 2,
+      "fail_count": 1,
       "fails": [
-        "Evidence SHA-256 不匹配：doc/09_COLLABORATION.md",
-        "Evidence SHA-256 不匹配：tools/governance/check.ps1"
+        "Evidence SHA-256 不匹配：doc/09_COLLABORATION.md"
       ]
     },
     {
@@ -283,9 +268,8 @@
       "task": "GOV-RESOURCE-MANIFEST-JSON-1",
       "status": "done",
       "exit": 1,
-      "fail_count": 3,
+      "fail_count": 2,
       "fails": [
-        "Evidence SHA-256 不匹配：tools/governance/tests/fixtures/resource-manifest/cases.json",
         "Evidence SHA-256 不匹配：tools/governance/tests/run-resource-manifest-cases.py",
         "Resource SHA-256 不匹配：tools/governance/check.ps1"
       ]
@@ -294,9 +278,8 @@
       "task": "GOV-RESOURCE-MANIFEST-SAME-LOCATION-1",
       "status": "done",
       "exit": 1,
-      "fail_count": 2,
+      "fail_count": 1,
       "fails": [
-        "Evidence SHA-256 不匹配：tools/governance/check.ps1",
         "Resource SHA-256 不匹配：tools/governance/check.ps1"
       ]
     },
@@ -327,12 +310,9 @@
       "task": "HOST-ISSUER-1-C1",
       "status": "done",
       "exit": 1,
-      "fail_count": 4,
+      "fail_count": 1,
       "fails": [
-        "Evidence SHA-256 不匹配：doc/contracts/M2-C1_TYPED_IPC_CONTRACT.md",
-        "Evidence SHA-256 不匹配：doc/tasks/HOST-ISSUER-1.md",
-        "Evidence SHA-256 不匹配：doc/tasks/P09-FU2.md",
-        "Evidence SHA-256 不匹配：doc/tasks/P16.md"
+        "Evidence SHA-256 不匹配：doc/contracts/M2-C1_TYPED_IPC_CONTRACT.md"
       ]
     },
     {
@@ -353,10 +333,8 @@
       "task": "HOST-TTL-BOUNDARY-1",
       "status": "done",
       "exit": 1,
-      "fail_count": 5,
+      "fail_count": 3,
       "fails": [
-        "Evidence SHA-256 不匹配：verification/HOST-TTL-BOUNDARY-1/ac6-rust-concurrency-diagnostic-6284f6f.jsonl",
-        "Evidence SHA-256 不匹配：verification/HOST-TTL-BOUNDARY-1/ac6-export-rust-concurrency-diagnostic-7fbce30.jsonl",
         "Evidence SHA-256 不匹配：doc/contracts/M2-C1_TYPED_IPC_CONTRACT.md",
         "DONE evidence_dir 含未登记文件：G:\\CODEX\\New Manga\\verification\\HOST-TTL-BOUNDARY-1\\ac3-rust-ttl-boundary-build-attempt-1.log, G:\\CODEX\\New Manga\\verification\\HOST-TTL-BOUNDARY-1\\ac4-export-frozen-rust-attempt1-4662239.log, G:\\CODEX\\New Manga\\verification\\HOST-TTL-BOUNDARY-1\\ac4-frozen-host-importpages.log, G:\\CODEX\\New Manga\\verification\\HOST-TTL-BOUNDARY-1\\ac6-rust-tests.log",
         "Resource manifest 不存在：verification/HOST-TTL-BOUNDARY-1/resource-manifest.json"
@@ -660,7 +638,7 @@
     },
     {
       "task": "M2-PROD-DETECT-ENV-1",
-      "status": "blocked",
+      "status": "closed_with_limitations",
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -1097,23 +1075,9 @@
     {
       "task": "P02-NEW-TIME-BASELINE-AC3-BRANCH-RESOLUTION",
       "status": "done",
-      "exit": 1,
-      "fail_count": 13,
-      "fails": [
-        "Evidence SHA-256 不匹配：verification/P02-NEW-TIME-BASELINE-AC3-BRANCH-RESOLUTION/codex-ac3-resolution-verify-20261013T2002Z.md",
-        "Evidence SHA-256 不匹配：verification/P02-NEW-TIME-BASELINE-AC3-BRANCH-RESOLUTION/codex-selftest-ac3-branch-res-20261013T2002Z.env.txt",
-        "Evidence SHA-256 不匹配：verification/P02-NEW-TIME-BASELINE-AC3-BRANCH-RESOLUTION/dsh-preflight-attestation-basis.md",
-        "Evidence SHA-256 不匹配：verification/P02-NEW-TIME-BASELINE-AC3-BRANCH-RESOLUTION/dsh-review-ac3-branch-p2-bounded-prompt.md",
-        "Evidence SHA-256 不匹配：verification/P02-NEW-TIME-BASELINE-AC3-BRANCH-RESOLUTION/dsh-review-ac3-branch-resolution-summary.md",
-        "Evidence SHA-256 不匹配：verification/P02-NEW-TIME-BASELINE-AC3-BRANCH-RESOLUTION/dsh-review-manifest-bounded-r1.json",
-        "Evidence SHA-256 不匹配：verification/P02-NEW-TIME-BASELINE-AC3-BRANCH-RESOLUTION/evidence-manifest-ac3-branch-res-r1.json",
-        "Evidence SHA-256 不匹配：verification/P02-NEW-TIME-BASELINE-AC3-BRANCH-RESOLUTION/zcode-agent-preflight-20261014T0341.json",
-        "Evidence SHA-256 不匹配：verification/P02-NEW-TIME-BASELINE-AC3-BRANCH-RESOLUTION/zcode-preflight-dry-run-20261014T0340.json",
-        "Evidence SHA-256 不匹配：verification/P02-NEW-TIME-BASELINE-AC3-BRANCH-RESOLUTION/zcode-preflight-dry-run-20261014T0341.json",
-        "Evidence SHA-256 不匹配：verification/P02-NEW-TIME-BASELINE-AC3-BRANCH-RESOLUTION/zcode-selftest-ac3-branch-res-20261013T1947Z.command.txt",
-        "Evidence SHA-256 不匹配：verification/P02-NEW-TIME-BASELINE-AC3-BRANCH-RESOLUTION/zcode-selftest-ac3-branch-res-20261013T1947Z.exit",
-        "Evidence SHA-256 不匹配：verification/P02-NEW-TIME-BASELINE-AC3-BRANCH-RESOLUTION/zcode-selftest-ac3-branch-res-20261013T1947Z.summary.md"
-      ]
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
     },
     {
       "task": "P02-NEW-TIME-BASELINE-AC3-GIT-TOPLEVEL-RESOLUTION",
@@ -1152,19 +1116,9 @@
       "task": "P02-NEW-TIME-BASELINE-AC3-HELPER-OUTPUT-RESOLUTION",
       "status": "done",
       "exit": 1,
-      "fail_count": 16,
+      "fail_count": 6,
       "fails": [
-        "Evidence SHA-256 不匹配：verification/P02-NEW-TIME-BASELINE-AC3-HELPER-OUTPUT-RESOLUTION/selftest-run-record-20261014T0506+0800.md",
-        "Evidence SHA-256 不匹配：verification/P02-NEW-TIME-BASELINE-AC3-HELPER-OUTPUT-RESOLUTION/codex-selftest-run-record-20261014T050945.md",
-        "Evidence SHA-256 不匹配：verification/P02-NEW-TIME-BASELINE-AC3-HELPER-OUTPUT-RESOLUTION/codex-verify-r1-20261014.md",
-        "Evidence SHA-256 不匹配：verification/P02-NEW-TIME-BASELINE-AC3-HELPER-OUTPUT-RESOLUTION/dsh-bounded-review-manifest-r1.json",
-        "Evidence SHA-256 不匹配：verification/P02-NEW-TIME-BASELINE-AC3-HELPER-OUTPUT-RESOLUTION/dsh-bounded-review-request-r1.md",
         "Evidence SHA-256 不匹配：verification/P02-NEW-TIME-BASELINE-AC3-HELPER-OUTPUT-RESOLUTION/codex-review-input-binding-r1.md",
-        "Evidence SHA-256 不匹配：verification/P02-NEW-TIME-BASELINE-AC3-HELPER-OUTPUT-RESOLUTION/dsh-bounded-review-followup-r1.md",
-        "Evidence SHA-256 不匹配：verification/P02-NEW-TIME-BASELINE-AC3-HELPER-OUTPUT-RESOLUTION/dsh-bounded-review-followup-run-record-r1.md",
-        "Evidence SHA-256 不匹配：verification/P02-NEW-TIME-BASELINE-AC3-HELPER-OUTPUT-RESOLUTION/codex-dsh-review-adjudication-r1.md",
-        "Evidence SHA-256 不匹配：verification/P02-NEW-TIME-BASELINE-AC3-HELPER-OUTPUT-RESOLUTION/codex-parent-integration-record-r1.md",
-        "Evidence SHA-256 不匹配：verification/P02-NEW-TIME-BASELINE-AC3-HELPER-OUTPUT-RESOLUTION/post-integration-selftest-run-record-r1.md",
         "Evidence SHA-256 不匹配：verification/P02-NEW-TIME-BASELINE-AC3-HELPER-OUTPUT-RESOLUTION/codex-selftest-20261014T050945-exit.txt",
         "Evidence SHA-256 不匹配：verification/P02-NEW-TIME-BASELINE-AC3-HELPER-OUTPUT-RESOLUTION/dsh-review-preflight-r1-exit.txt",
         "Evidence SHA-256 不匹配：verification/P02-NEW-TIME-BASELINE-AC3-HELPER-OUTPUT-RESOLUTION/dsh-review-preflight-r2-exit.txt",
@@ -1316,10 +1270,9 @@
       "task": "P02PRE-R1H-FORENSIC-RECOVERY",
       "status": "done",
       "exit": 1,
-      "fail_count": 3,
+      "fail_count": 2,
       "fails": [
         "Evidence SHA-256 不匹配：verification/P02PRE-R1H-FORENSIC-RECOVERY/checkpoint.md",
-        "Evidence SHA-256 不匹配：verification/P02PRE-R1H-FORENSIC-RECOVERY/recovery-report.md",
         "Evidence SHA-256 不匹配：verification/P02PRE-R1H-FORENSIC-RECOVERY/resource-closeout-r2.json"
       ]
     },
@@ -1327,15 +1280,8 @@
       "task": "P02PRE-R1H-H1-CURRENT-INPUT-REVIEW",
       "status": "done",
       "exit": 1,
-      "fail_count": 10,
+      "fail_count": 3,
       "fails": [
-        "Evidence SHA-256 不匹配：verification/P02PRE-R1H-H1-CURRENT-INPUT-REVIEW/task-contract-r1.md",
-        "Evidence SHA-256 不匹配：verification/P02PRE-R1H-H1-CURRENT-INPUT-REVIEW/h1-subject-task-r1.md",
-        "Evidence SHA-256 不匹配：verification/P02PRE-R1H-H1-CURRENT-INPUT-REVIEW/h2-run-task-r1.md",
-        "Evidence SHA-256 不匹配：verification/P02PRE-R1H-H1-CURRENT-INPUT-REVIEW/dsh-review-request-r1.md",
-        "Evidence SHA-256 不匹配：verification/P02PRE-R1H-H1-CURRENT-INPUT-REVIEW/applicability-matrix-r1.md",
-        "Evidence SHA-256 不匹配：verification/P02PRE-R1H-H1-CURRENT-INPUT-REVIEW/codex-adjudication-r1.md",
-        "Evidence SHA-256 不匹配：verification/P02PRE-R1H-H1-CURRENT-INPUT-REVIEW/codex-handoff-r1.md",
         "Evidence SHA-256 不匹配：verification/P02PRE-R1H-H1-CURRENT-INPUT-REVIEW/checkpoint.md",
         "Evidence SHA-256 不匹配：verification/P02PRE-R1H-H1-CURRENT-INPUT-REVIEW/resource-closeout-r1.json",
         "Evidence SHA-256 不匹配：verification/P02PRE-R1H-H1-CURRENT-INPUT-REVIEW/codex-handoff-r2.md"
@@ -1366,17 +1312,15 @@
       "task": "P02PRE-R1H-H2-RUN",
       "status": "done",
       "exit": 1,
-      "fail_count": 9,
+      "fail_count": 7,
       "fails": [
         "Evidence SHA-256 不匹配：verification/P02PRE-R1H-H2-COLLECTOR/dsh-source-review-r7.md",
         "Evidence SHA-256 不匹配：verification/P02PRE-R1H-H2-COLLECTOR/source-review-r7-adjudication.md",
         "Evidence SHA-256 不匹配：verification/P02PRE-R1H-H2-RUN/preflight-freeze-r1.md",
-        "Evidence SHA-256 不匹配：verification/P02PRE-R1H-H2-RUN/checkpoint.md",
         "Evidence SHA-256 不匹配：verification/P02PRE-R1H-H2-RUN/runtime-verification-r1.md",
         "Evidence SHA-256 不匹配：verification/P02PRE-R1H-H2-RUN/codex-handoff-r1.md",
         "Evidence SHA-256 不匹配：verification/P02PRE-R1H-H2-RUN/runtime-verification-r2.md",
-        "Evidence SHA-256 不匹配：verification/P02PRE-R1H-H2-RUN/codex-adjudication-r1.md",
-        "Evidence SHA-256 不匹配：verification/P02PRE-R1H-H2-RUN/codex-handoff-r2.md"
+        "Evidence SHA-256 不匹配：verification/P02PRE-R1H-H2-RUN/codex-adjudication-r1.md"
       ]
     },
     {
@@ -1392,18 +1336,12 @@
       "task": "P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE",
       "status": "done",
       "exit": 1,
-      "fail_count": 11,
+      "fail_count": 5,
       "fails": [
         "Evidence SHA-256 不匹配：verification/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE/checkpoint.md",
         "Evidence SHA-256 不匹配：verification/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE/review-request-r1.md",
         "Evidence SHA-256 不匹配：verification/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE/r1-commit-normalization-map-r1.json",
         "Evidence SHA-256 不匹配：verification/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE/review-request-r2.md",
-        "Evidence SHA-256 不匹配：verification/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE/review-input-pins-r2.json",
-        "Evidence SHA-256 不匹配：verification/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE/dsh-review-dispatch-r2.md",
-        "Evidence SHA-256 不匹配：verification/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE/post-review-pins-r2.json",
-        "Evidence SHA-256 不匹配：verification/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE/dsh-review-run-r2.json",
-        "Evidence SHA-256 不匹配：verification/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE/codex-adjudication-r2.md",
-        "Evidence SHA-256 不匹配：verification/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE/integration-gate-r2.json",
         "Resource SHA-256 不匹配：C:/Users/49745/.dsh/storages/workspace.json"
       ]
     },
@@ -1507,9 +1445,8 @@
       "task": "P09-AC3-DELETE-HARDEN-1",
       "status": "closed_with_limitations",
       "exit": 1,
-      "fail_count": 2,
+      "fail_count": 1,
       "fails": [
-        "Evidence SHA-256 不匹配：src/infrastructure/sqlite/library.py",
         "Evidence SHA-256 不匹配：src/bootstrap/core_service.py"
       ]
     },
@@ -1524,11 +1461,9 @@
       "task": "P09-FU2",
       "status": "done",
       "exit": 1,
-      "fail_count": 3,
+      "fail_count": 1,
       "fails": [
-        "Evidence SHA-256 不匹配：doc/contracts/M2-C1_TYPED_IPC_CONTRACT.md",
-        "Evidence SHA-256 不匹配：doc/tasks/P09.md",
-        "Evidence SHA-256 不匹配：doc/tasks/P16.md"
+        "Evidence SHA-256 不匹配：doc/contracts/M2-C1_TYPED_IPC_CONTRACT.md"
       ]
     },
     {
@@ -1579,12 +1514,10 @@
       "task": "P12-C1",
       "status": "done",
       "exit": 1,
-      "fail_count": 4,
+      "fail_count": 2,
       "fails": [
         "Evidence SHA-256 不匹配：doc/contracts/M2-C1_TYPED_IPC_CONTRACT.md",
-        "Evidence SHA-256 不匹配：doc/tasks/P09.md",
-        "Evidence SHA-256 不匹配：src/infrastructure/sqlite/library.py",
-        "Evidence SHA-256 不匹配：doc/tasks/P16-C1.md"
+        "Evidence SHA-256 不匹配：src/infrastructure/sqlite/library.py"
       ]
     },
     {
@@ -1600,10 +1533,9 @@
       "task": "P13-C1",
       "status": "done",
       "exit": 1,
-      "fail_count": 6,
+      "fail_count": 5,
       "fails": [
         "Evidence SHA-256 不匹配：doc/contracts/M2-C1_TYPED_IPC_CONTRACT.md",
-        "Evidence SHA-256 不匹配：doc/tasks/P13.md",
         "Evidence SHA-256 不匹配：src/application/tasks/service.py",
         "Evidence SHA-256 不匹配：src/application/tasks/store.py",
         "Evidence SHA-256 不匹配：src/application/tasks/projection.py",
@@ -1642,9 +1574,8 @@
       "task": "P15-C1-FU2",
       "status": "done",
       "exit": 1,
-      "fail_count": 2,
+      "fail_count": 1,
       "fails": [
-        "Evidence SHA-256 不匹配：doc/tasks/P15-HOST-1.md",
         "Resource manifest 不存在：verification/P15-C1-FU2/resource-manifest.json"
       ]
     },
@@ -1672,15 +1603,12 @@
       "task": "P15-CORE-1A",
       "status": "done",
       "exit": 1,
-      "fail_count": 8,
+      "fail_count": 5,
       "fails": [
-        "Evidence SHA-256 不匹配：doc/contracts/P15_SETTINGS_IPC_CONTRACT.md",
         "Evidence SHA-256 不匹配：src/bootstrap/settings_commands.py",
-        "Evidence SHA-256 不匹配：src/bootstrap/core_service.py",
         "Evidence SHA-256 不匹配：src/bootstrap/core_assembly.py",
         "Evidence SHA-256 不匹配：src/application/tasks/service.py",
         "Evidence SHA-256 不匹配：src/infrastructure/settings/json_profile_stores.py",
-        "Evidence SHA-256 不匹配：tests/core/test_p15_core_settings.py",
         "DONE 不能保留未完成 Acceptance Criteria；范围未完成时使用 closed_with_limitations。"
       ]
     },
@@ -1759,12 +1687,9 @@
     {
       "task": "P17",
       "status": "done",
-      "exit": 1,
-      "fail_count": 2,
-      "fails": [
-        "Evidence SHA-256 不匹配：verification/P17/pytest.log",
-        "Evidence SHA-256 不匹配：verification/P17/cargo-packaged.log"
-      ]
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
     },
     {
       "task": "P18",
@@ -1796,10 +1721,8 @@
       "task": "P19-UI-FIX-1",
       "status": "done",
       "exit": 1,
-      "fail_count": 4,
+      "fail_count": 2,
       "fails": [
-        "Evidence SHA-256 不匹配：verification/P19-UI-FIX-1/frontend-npm-test-final.log",
-        "Evidence SHA-256 不匹配：verification/P19-UI-FIX-1/frontend-npm-build-final.log",
         "DONE evidence_dir 含未登记文件：G:\\CODEX\\New Manga\\verification\\P19-UI-FIX-1\\04-settings-before-final-code-refinement.uia.txt, G:\\CODEX\\New Manga\\verification\\P19-UI-FIX-1\\04-settings-uia-pass-2.txt, G:\\CODEX\\New Manga\\verification\\P19-UI-FIX-1\\04-settings-uia-pass-exit-code-blank.txt, G:\\CODEX\\New Manga\\verification\\P19-UI-FIX-1\\app-err-before-final-code-refinement.log, G:\\CODEX\\New Manga\\verification\\P19-UI-FIX-1\\app-err-namespace-mismatch.log, G:\\CODEX\\New Manga\\verification\\P19-UI-FIX-1\\app-err-ui-a-pass-exit-code-blank-2.log, G:\\CODEX\\New Manga\\verification\\P19-UI-FIX-1\\app-err-ui-load-failure.log, G:\\CODEX\\New Manga\\verification\\P19-UI-FIX-1\\app-err-uia-pass-exit-code-blank.log",
         "Resource 最终路径未验证：apps/desktop/src-tauri/target/p19-ui-fix-1-isolation-20261017"
       ]
@@ -1849,12 +1772,9 @@
       "task": "P20-CLOSE-BOUND-1",
       "status": "closed_with_limitations",
       "exit": 1,
-      "fail_count": 5,
+      "fail_count": 2,
       "fails": [
         "Evidence SHA-256 不匹配：apps/desktop/src-tauri/src/library_bridge.rs",
-        "Evidence SHA-256 不匹配：verification/P20-CLOSE-BOUND-1/concurrency-lock-audit.md",
-        "Evidence SHA-256 不匹配：verification/P20-CLOSE-BOUND-1/run-desktop-close-verification.ps1",
-        "Evidence SHA-256 不匹配：verification/P20-CLOSE-BOUND-1/test-ac1-overlay-bound.ps1",
         "Evidence SHA-256 不匹配：verification/P20-CLOSE-BOUND-1/codex-review-r6.md"
       ]
     },
