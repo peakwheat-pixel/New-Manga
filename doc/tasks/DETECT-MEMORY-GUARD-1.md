@@ -3,7 +3,7 @@ id: DETECT-MEMORY-GUARD-1
 title: core.detect 的可用物理内存检查（补 SEC-FMT-005 第①项）
 kind: implementation
 governance_version: 3
-status: in_review
+status: closed_with_limitations
 language: zh-CN
 parent: ARCH-DOC-REBASELINE
 blocked_by: null
@@ -14,7 +14,7 @@ depends_on: []
 base_commit: 2c569457c
 branch: agent/dsh/DETECT-MEMORY-GUARD-1
 worktree: null
-integration_commit: null
+integration_commit: a1bc8652b
 delivery_head: fa8615dc5
 canonical_evidence_status: complete
 resource_closeout_status: pending
@@ -111,8 +111,39 @@ MAX_DETECT_PIXELS = MAX_DETECT_PAGE_BYTES // 3   # = 11,184,810
 
 ## Closeout Record
 
-- Closeout date / Codex：待关闭时填写。
-- canonical_evidence_status：`pending`。
-- resource_closeout_status：`pending`。
-- 删除、迁移、归档数量/字节数：待关闭时填写；无操作填写 0。
-- 未关闭项及保留原因：待关闭时填写。
+- **Closeout date / Codex**：2026-10-20（依 ZCode Review `APPROVE_WITH_COMMENTS` + 全部 P1/P2 已处置）
+- **canonical_evidence_status**：`complete`
+- **resource_closeout_status**：`complete`
+- **删除、迁移、归档数量/字节数**：**0**
+- **未关闭项及保留原因**：见下「限制清单」
+
+### 逐 AC 终态
+
+| AC | 终态 | 证据 |
+|---|---|---|
+| AC1 可用内存探测 | **MET** | `stage1-memory-api.md`；失败回退另有测试 |
+| AC2 准入规则设计 | **MET** | `stage2-admission-rule.md` §一–§二 |
+| AC3 与既有上限的关系 | **MET** | diff 验证：无常量被改 |
+| AC4 清晰内存警告 | **MET** | 消息含可用/需求/预算/建议四值 |
+| AC5 回归 + 独立审查 | **MET** | 40 tests；ZCode Review + 6/6 处置 |
+
+### 限制清单（必须保留可见）
+
+| # | 限制 | 原因 |
+|---|---|---|
+| **L1** | **判据 (2) 在正常机器上永不触发** | 实测可用 8.7 GB vs 需求 42.7 MB（0.49%）；只在可用内存低于约 170 MB 时生效。**这是防御性判据的本质属性，但代码在多数运行中不执行** |
+| **L2** | **只有一台机器的数据** | 8.7 GB / 42.7 MB 是本机读数；4 GB 低配机未测 |
+| **L3** | **Windows 专有 API** | `GlobalMemoryStatusEx`；当前产品边界为 Windows 单平台（AD-001），属范围非缺陷 |
+| **L4** | **安全系数 0.25 未调优** | 它是「只在极端时才说话」的值；170 MB 拒绝线是否合适无跨机器数据 |
+| **L5** | **转换峰值未直接测量** | 峰值约 6N–7N 是推算；`DETECT-TILING-1` 测过同类但不含本样本组。**精调 0.25 前必须先测这一项** |
+| **L6** | **不得宣传为「OOM 防护完成态」** | 价值上限是兜底 |
+| **L7** | **`agy` 在本环境无法执行实施类任务** | 两次卡死（42 分钟 CPU +0.2 s、10 分钟 CPU +0.0 s）|
+
+### 过程记录
+
+| 项 | 内容 |
+|---|---|
+| 独立 Review | ZCode，`APPROVE_WITH_COMMENTS`，P0 无，P1 一项 + P2 五项，**6/6 已处置** |
+| 关键实证 | 把内存判据块移到 `convert()` 之后，测试转红（`convert was called with [(2000, 2000)]`），还原后 40 passed |
+| 我自己的错误 | 幂等标记与上一个 Task 的字符串撞车，导致一次修复脚本静默跳过；靠「测试数没变」发现 |
+
