@@ -134,7 +134,7 @@ evidence_dir: verification/ENV-BUNDLE-1
 | S03 | AC2 | `packaging/m2ac5/build_sidecar.ps1` | `c6fda8a09c1a8248ec6617369f9fdf9e1cef79ec` | 07e12e80ceb2a35bab96150f4530b7a788b914a2467a32056098adbb775dd30e | SOURCE_PIN |
 | S04 | AC4 | `apps/desktop/src-tauri/src/main.rs` | `c6fda8a09c1a8248ec6617369f9fdf9e1cef79ec` | 21972b00bdcf643f950b4a0d3c0a669b86623e80896f818ff14903da938ca1b5 | SOURCE_PIN |
 | S05 | AC4 | `apps/desktop/src-tauri/src/library_bridge.rs` | `c6fda8a09c1a8248ec6617369f9fdf9e1cef79ec` | 7599fd78c3c5c7e60647d4a351f54defdb7696bcbd950502c7b55f205437967d | SOURCE_PIN |
-| S06 | AC3 | `apps/desktop/frontend/package-lock.json` | `c6fda8a09c1a8248ec6617369f9fdf9e1cef79ec` | 520be4900b855e235b8347f8a179b3cffe4a520069a51464151fc880b05f0295 | SOURCE_PIN |
+| S06 | AC3 | `apps/desktop/frontend/package-lock.json` | `c6fda8a09c1a8248ec6617369f9fdf9e1cef79ec` | 520be4900b855e235b8347f8a179b3cffe4a520069a51464151fc880b05f0295 | SOURCE_PIN |
 | EVD-ENVBUNDLE1-REVIEW-R1 | AC7 | `verification/ENV-BUNDLE-1/dsh-review-r1.md` | `8250b4205375c2347f607fb8aa47b4dff22b813f` | `24f847a551a3e866cd487a65ffda473cf8263a8caf8fcda13d5fbf3c375fadd5` | CANONICAL |
 
 ## Resource Manifest

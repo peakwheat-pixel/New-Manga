@@ -27,3 +27,14 @@ verification/GOV-UNTRACKED-BACKLOG-1/** text eol=lf
 doc/handoffs/GOV-UNTRACKED-BACKLOG-1-*.md text eol=lf
 verification/GOV-EOL-PIN-1/** text eol=lf
 doc/handoffs/GOV-EOL-PIN-1-*.md text eol=lf
+
+# GOV-EOL-PIN-1 generalised (r187): the governance checker parses Acceptance
+# Criteria with '(?m)^...**AC[^\r\n]*$', and .NET's multiline $ never matches
+# before a CRLF. With core.autocrlf=true a fresh checkout rewrote every task
+# file to CRLF, which made every AC line invisible - 60 files were in that state
+# and a clean clone would have made it all 320. The AC rules only work on LF, so
+# the line ending is part of the contract, not a preference.
+#
+# Same reason the existing eol=lf pins above exist: recorded sha256 evidence
+# breaks when autocrlf rewrites a file, and the fix is to stop the rewriting.
+doc/tasks/*.md text eol=lf

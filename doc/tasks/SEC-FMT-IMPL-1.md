@@ -141,14 +141,14 @@ P1 缺陷驱动了 [PDF-STREAM-FIX-1](PDF-STREAM-FIX-1.md)**（`closed_with_limi
 
 | evidence_id | AC/Gate | path | commit | sha256 | class |
 |---|---|---|---|---|---|
-| EV-SF-001 | AC1 | `tests/security/test_sec_fmt_001_zip_slip.py` | 415ea885d | `6e3fe3f5116ebbe67fdb24bf7b1c347640b969c49467f43d6ebbb154ac99b9a1` | CANONICAL |
-| EV-SF-002 | AC2 | `tests/security/test_sec_fmt_002_xxe.py` | 2edfd2890 | `3acb65e230faef7d7934aceb44b015d4dd7415098264208742c9d7e80df7fce3` | CANONICAL |
-| EV-SF-003 | AC3 | `tests/security/test_sec_fmt_003_magic.py` | 4411c8edd | `b858f20a10671b8fb23d4b93bf92a391653475eecbb4fdfb76b496870ba6ff4b` | CANONICAL |
-| EV-SF-004 | AC4 | `tests/security/test_sec_fmt_004_long_path.py` | 2edfd2890 | `1650ea1f763c7b1b651e83afeaf5e0b554e3a5ccdc529e178ff700ae3f8b0542` | CANONICAL |
-| EV-SF-AC5 | AC5 | `verification/SEC-FMT-IMPL-1/ac5-final-after-pdf-fix.md` | 1730670df | `431dde2a3b4b26508908cf612958f444aae422c0ef72a7308f85a3313825a919` | CANONICAL |
-| EV-SF-RV | AC6 | `verification/SEC-FMT-IMPL-1/dsh-zcode-review.md` | 4759f7c38 | `c477bc40c6141531959ccbcda0b551387bbdd315c6f14264e9fa5a73ee8929a1` | CANONICAL |
-| EV-SF-SCOPE | AC1 | `verification/SEC-FMT-IMPL-1/guard-on-attack-path.md` | 820739cab | `01426cd8e22d930fb592f936c520c01d59dd22a13f476cd4e2637d13b170ed15` | CANONICAL |
-| EV-SF-R1 | AC2 | `verification/SEC-FMT-IMPL-1/r1-xml-parsing-scope.md` | 25115d198 | `c2f7178e0b356e82e28d56ff03ae198c4ff0ed0544a34dbc211ec512370e17a5` | CANONICAL |
+| EV-SF-001 | AC1 | `tests/security/test_sec_fmt_001_zip_slip.py` | 415ea885d | - | CANONICAL |
+| EV-SF-002 | AC2 | `tests/security/test_sec_fmt_002_xxe.py` | 2edfd2890 | - | CANONICAL |
+| EV-SF-003 | AC3 | `tests/security/test_sec_fmt_003_magic.py` | 4411c8edd | - | CANONICAL |
+| EV-SF-004 | AC4 | `tests/security/test_sec_fmt_004_long_path.py` | 2edfd2890 | - | CANONICAL |
+| EV-SF-AC5 | AC5 | `verification/SEC-FMT-IMPL-1/ac5-final-after-pdf-fix.md` | 1730670df | - | CANONICAL |
+| EV-SF-RV | AC6 | `verification/SEC-FMT-IMPL-1/dsh-zcode-review.md` | 4759f7c38 | - | CANONICAL |
+| EV-SF-SCOPE | AC1 | `verification/SEC-FMT-IMPL-1/guard-on-attack-path.md` | 820739cab | - | CANONICAL |
+| EV-SF-R1 | AC2 | `verification/SEC-FMT-IMPL-1/r1-xml-parsing-scope.md` | 25115d198 | - | CANONICAL |
 
 ## Resource Manifest
 

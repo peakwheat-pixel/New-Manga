@@ -125,7 +125,7 @@ evidence_dir: verification/HOST-CORE-1
 | HOSTCORE-SCOPE | AC6 | `verification/HOST-CORE-1/scope-audit.md` | `97c2d559c6155375ce67da7da922d62a26971100` | `8c44349c14684e83cdc6f48b559ad2eb6d2332b8a38c5e91a6035f480152b7a7` | CANONICAL |
 | HOSTCORE-HANDOFF | AC8 | `doc/handoffs/HOST-CORE-1-codex-ff42c670.md` | `97c2d559c6155375ce67da7da922d62a26971100` | `9f2eef0764c387fa2b69d4fb9a0332238936aede8548af71b3032a20e39032e8` | CANONICAL |
 | HOSTCORE-RESOURCES | Resource | `verification/HOST-CORE-1/resource-manifest.json` | `97c2d559c6155375ce67da7da922d62a26971100` | `f7545186d829ddcc24787b2eb90f7b730888d4522a0eb679e4130dcd4f6be9fe` | CANONICAL |
-| HOSTCORE-C1-PIN | §5.7 / §10.3 / §10.4 / §12 source | `doc/contracts/M2-C1_TYPED_IPC_CONTRACT.md` | `97c2d559c6155375ce67da7da922d62a26971100` | `6a2f38e0b17062d9d4f1d6ee109b4353b745504a5a6b889148781eee84fa2062` | SOURCE_PIN |
+| HOSTCORE-C1-PIN | §5.7 / §10.3 / §10.4 / §12 source | `doc/contracts/M2-C1_TYPED_IPC_CONTRACT.md` | `97c2d559c6155375ce67da7da922d62a26971100` | `6a2f38e0b17062d9d4f1d6ee109b4353b745504a5a6b889148781eee84fa2062` | SOURCE_PIN |
 | EVD-HOSTCORE1-REVIEW-R1 | AC8 | `verification/HOST-CORE-1/dsh-review-r1.md` | `237a662c701d98751f155a2b55f669eee51d8643` | `cd864e86b82047e7a1afba87c25f30fe08e7873eeef81dad6fc9e82490c6970e` | CANONICAL |
 
 注：Task 文件自身不列入自身 hash 表，以避免自引用；每个 evidence commit 均为包含对应路径的真实 commit，SHA-256 按工作区文件值记录。

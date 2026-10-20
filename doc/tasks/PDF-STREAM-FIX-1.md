@@ -96,11 +96,11 @@ content_id = add(_stream(b"", "".join(content).encode("ascii")))
 
 | evidence_id | AC/Gate | path | commit | sha256 | class |
 |---|---|---|---|---|---|
-| EV-PF-FIX | AC1 | `src/infrastructure/export/qt_free.py` | bb54b6492 | `e065520b538e5ad6ae1ce08055608147c40877a311026b62bca46a11d3b6e50a` | CANONICAL |
-| EV-PF-TEST | AC2 | `tests/export/test_pdf_stream_integrity.py` | 09676cc19 | `d71b393eaa4ce471cceab1d48825e70f2e5602447cf6f6e262c8399910ba632e` | CANONICAL |
-| EV-PF-P11 | AC3 | `verification/PDF-STREAM-FIX-1/p1-1-stderr-capture-experiment.md` | 09676cc19 | `a74178b3dce9e1241919429de76df261942227c6f47f0fa1c797df6af59181c1` | CANONICAL |
-| EV-PF-REG | AC5 | `verification/PDF-STREAM-FIX-1/ac5-regression-baseline-comparison.md` | 09676cc19 | `f66bc5a5d8ef2fd5e58647892b9cf33b171c9dd95c2e1ae5a95fb916956d692d` | CANONICAL |
-| EV-PF-RV | AC5 | `verification/PDF-STREAM-FIX-1/dsh-zcode-review.md` | 09676cc19 | `7257ad44cd6cc44cda67c7492645c305bcdce1dd04da499be6ebb871cfa833ab` | CANONICAL |
+| EV-PF-FIX | AC1 | `src/infrastructure/export/qt_free.py` | 662ba150e | - | CANONICAL |
+| EV-PF-TEST | AC2 | `tests/export/test_pdf_stream_integrity.py` | 09676cc19 | - | CANONICAL |
+| EV-PF-P11 | AC3 | `verification/PDF-STREAM-FIX-1/p1-1-stderr-capture-experiment.md` | 09676cc19 | - | CANONICAL |
+| EV-PF-REG | AC5 | `verification/PDF-STREAM-FIX-1/ac5-regression-baseline-comparison.md` | 09676cc19 | - | CANONICAL |
+| EV-PF-RV | AC5 | `verification/PDF-STREAM-FIX-1/dsh-zcode-review.md` | 09676cc19 | - | CANONICAL |
 
 ## Resource Manifest
 

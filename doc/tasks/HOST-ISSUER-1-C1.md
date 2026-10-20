@@ -112,7 +112,7 @@ evidence_dir: verification/HOST-ISSUER-1-C1
 | P09-task | AC3/AC6 source contract | doc/tasks/P09-FU2.md | 6a5051dcafa549f200730a4f9824d83d187f07a2 | adc5f72e40761bca5f5408670c830d3467fceb03d6a105a1df67b74f37c7b33a | SOURCE_PIN |
 | P09-seam | AC3/AC6 source evidence | verification/P09-FU2/host-issuer-and-test-seam.md | 6a5051dcafa549f200730a4f9824d83d187f07a2 | 05156daee56bd9f4a38a3dc3014e6b3ed9361698261f910250572fcc3e0f9132 | SOURCE_PIN |
 | P16-task | AC3/AC6 source contract | doc/tasks/P16.md | 6a5051dcafa549f200730a4f9824d83d187f07a2 | 7fe5e5b18a18419f25d5372c8713a5b5c084d81f7764db9acac7099dd43831bd | SOURCE_PIN |
-| P16-target-ref | AC3/AC6 source evidence | verification/P16/ac3-target-ref-matrix.md | 6a5051dcafa549f200730a4f9824d83d187f07a2 | a0ef395406ce42d30e422254b862e68900c00f591710eacb7859131eb48e39af | SOURCE_PIN |
+| P16-target-ref | AC3/AC6 source evidence | verification/P16/ac3-target-ref-matrix.md | 6a5051dcafa549f200730a4f9824d83d187f07a2 | a0ef395406ce42d30e422254b862e68900c00f591710eacb7859131eb48e39af | SOURCE_PIN |
 | EVD-HOSTC1-REVIEW-R1 | AC8 | `verification/HOST-ISSUER-1-C1/dsh-review-r1.md` | `c8a42e10e4eafad1d02bc42c859e7cca4e350b9d` | `9dee972defad27cc80b1286d04ac575fd46556529d81ea31379cf1b9e2ff5025` | CANONICAL |
 | EVD-HOSTC1-RESOURCE-MANIFEST | Resource | `verification/HOST-ISSUER-1-C1/resource-manifest.json` | `-` | `f78a679c40edc7d88dd68fbd35fa22eb4af670606a25321c8299b39baceb01f9` | CANONICAL |
 
