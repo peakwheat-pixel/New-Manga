@@ -7,9 +7,9 @@ Reconciliation of every `doc/tasks/*.md` against the plan's node set. r38 §3 es
 | metric | value |
 |---|---:|
 | task files | 317 |
-| terminal | 279 |
-| non-terminal | 38 |
-| non-terminal named in the plan | 4 |
+| terminal | 280 |
+| non-terminal | 37 |
+| non-terminal named in the plan | 3 |
 | non-terminal outside the plan | 34 |
 
 ## By status
@@ -17,7 +17,7 @@ Reconciliation of every `doc/tasks/*.md` against the plan's node set. r38 §3 es
 | status | count | terminal |
 |---|---:|---|
 | `done` | 251 | yes |
-| `closed_with_limitations` | 27 | yes |
+| `closed_with_limitations` | 28 | yes |
 | `blocked` | 10 | no |
 | `proposed` | 9 | no |
 | `approved` | 5 | no |

@@ -4,7 +4,7 @@
 
 ## 当前 Task
 
-- 当前 Task：[RUST-ENV-BASELINE-1](tasks/RUST-ENV-BASELINE-1.md) `proposed`（Plan 内非终态项之一；r29 建议保持 proposed，r38 未改其状态）。
+- 当前 Task：[RUST-ENV-BASELINE-1](tasks/RUST-ENV-BASELINE-1.md) `proposed`（Plan 内非终态项之一；r29 建议保持 proposed）。最近收口：[SEARCHABLE-PDF-CJK-1](tasks/SEARCHABLE-PDF-CJK-1.md)（`closed_with_limitations`：韩文可搜索 PDF 已可用；L1 未子集化、L5 错误消息不可操作）。
 - **Plan 集合内无活动节点**（`REBASELINE_PLAN` 的全部节点已终态）。**此陈述仅限 Plan 集合，不外推为"仓库内无活动 Task"**（r38 §5-1）。
 - **[ARCH-DOC-REBASELINE](tasks/ARCH-DOC-REBASELINE.md)**：`closed_with_limitations`（r37 的 7+1：7 Gate 达成 + AC-CONSUMPTION `PARTIAL`，6/8 消费者已处置；**ZCode 设计 Gate 与第二环境无活动 Task**）。
 - `DETECT-TILING-1` / `DETECT-MEMORY-GUARD-1` / `SEC-FMT-IMPL-1` / `PDF-STREAM-FIX-1` 均 `closed_with_limitations`。

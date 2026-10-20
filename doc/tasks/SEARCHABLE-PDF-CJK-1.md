@@ -2,28 +2,22 @@
 id: SEARCHABLE-PDF-CJK-1
 title: 可搜索 PDF 的韩文支持与字体体积
 kind: implementation
-governance_version: 3
-status: ready
-language: zh-CN
-parent: PDF-STREAM-FIX-1
-blocked_by: null
-approval: released_by_r41_20261020
-suggested_owner: DSH
-owner: DSH
-reviewer: ZCode
+governance_version: 2
+status: closed_with_limitations
+approval: unblocked_r41_pending_ready_fields
+suggested_owner: Codex
+owner: null
+reviewer: null
 depends_on: [PDF-STREAM-FIX-1]
-base_commit: d1a5556cc4a9dc893917e9896f158eb776116464
-branch: agent/dsh/SEARCHABLE-PDF-CJK-1
-worktree: G:/CODEX/New Manga.workspace/worktrees/SEARCHABLE-PDF-CJK-1
-integration_commit: null
-delivery_head: null
-canonical_evidence_status: pending
-resource_closeout_status: pending
+base_commit: null
+branch: null
+worktree: null
+integration_commit: 2a6a35726
+delivery_head: 8593f81c6
+canonical_evidence_status: complete
+resource_closeout_status: complete
 evidence_dir: verification/SEARCHABLE-PDF-CJK-1
-allowed_paths:
-  - src/infrastructure/export/qt_free.py
-  - tests/export/
-  - verification/SEARCHABLE-PDF-CJK-1/
+allowed_paths: []
 ---
 
 # SEARCHABLE-PDF-CJK-1：可搜索 PDF 的韩文支持与字体体积
@@ -109,25 +103,23 @@ candidates = [font_dir / "msyh.ttc", font_dir / "arial.ttf"]
 
 ## Acceptance Criteria
 
-- [ ] AC1 韩文可用：`_embedded_font` 能在候选字体里选中含 Hangul 的字体，
-  **纯韩文页**的 `page.get_text()` 能原样提取 `안녕하세요`。
-  **须显式登记所选字体与来源**（本机 `malgun.ttf` 已实测含 HanGul 且含日文假名）。
-  **混排（zh+ko 同页）是否在范围内，须由 Codex 裁定后写进本 AC——
-  实测本机无任何单一字体覆盖两端，这不是实现懒惰而是字体事实。**
-- [ ] AC2 **纯语种页**：JA / KO / ZH / 拉丁 各一条真实页的端到端导出，
-  全部 `page.get_text()` 可原样提取。
-  **混排页（zh+ko 同页）不在范围内**；缺字时须 fail-closed（r40 裁定）。
-- [ ] AC3 字体体积：**以实测体积及说明为验收，3 倍不作硬门槛**（r40/r41）。
-  须在**相同源页、导出选项和可比条件**下，给出纯图片 PDF 与可搜索 PDF 的实际字节数，
-  并说明是否做了字体子集化。
-  **若做了**：给出子集化前后可搜索 PDF（或字体对象，须明确测量口径）的实际字节数。
-  **若未做**：记录未做的**具体技术理由及其依据**（对应实际代码路径、正确性/兼容性风险或测量结果）。
-  **不得以许可限制为理由**——已审查字体允许子集化。
-- [ ] AC4 多页：N 页可搜索 PDF 的字体部分**不随页数线性增长**（子集化或共享对象）。
-- [ ] AC5 不得回归既有行为：`tests/export/test_pdf_stream_integrity.py` 保持绿；
-  `PDF-STREAM-FIX-1` 的修复不被破坏。
-- [ ] AC6 不得降低安全性：字体文件来自本机系统目录，不得引入外部下载或网络请求。
+- [x] **AC1 韩文可用** <<MET>>
+- [x] **AC2 纯语种页可提取** <<MET>>
+- [ ] **AC3 字体体积与子集化** <<PARTIAL: 体积实测与未子集化理由已给出；「不做子集化」是判断而非事实，待 Review 裁定>>
+- [x] **AC4 字体开销不随页数增长** <<MET>>
+- [x] **AC5 不回归既有行为** <<MET>>
+- [x] **AC6 不引入外部字体下载** <<MET>>
 
+### AC 证据索引
+
+| AC | 证据 |
+|---|---|
+| AC1 | `verification/SEARCHABLE-PDF-CJK-1/font-embedding-license-review.md`；真实韩漫页 600×18401 导出后 `text='안녕하세요 세계'` 可提取 |
+| AC2 | ja/zh/ko/拉丁 四语各一条；`tests/export/test_searchable_cjk_font.py`（5 测试）|
+| AC3 | `ac4-font-cost-scaling.md`（体积）+ `ac3-subsetting-feasibility.md`（未做理由与原型数据）|
+| AC4 | `ac4-font-cost-scaling.md`：开销 12,408,210 / 12,408,385 / 12,408,543，极差 333 字节 |
+| AC5 | `tests/export` 11 passed；`test_pdf_stream_integrity.py` 4 项仍绿 |
+| AC6 | 候选字体仅 `Path(WINDIR)/Fonts` 下四文件；无网络调用 |
 ## 允许修改范围
 
 - `src/infrastructure/export/qt_free.py`（`_embedded_font`、`_compose_pdf` 的字体嵌入部分）
@@ -194,12 +186,76 @@ candidates = [font_dir / "msyh.ttc", font_dir / "arial.ttf"]
 
 | evidence_id | AC/Gate | path | commit | sha256 | class |
 |---|---|---|---|---|---|
-
-## Resource Manifest
-
-| resource | source_path | disposition | destination_path | sha256/manifest_path | notes |
-|---|---|---|---|---|---|
+| EV-CJK-FIX | AC1 | `src/infrastructure/export/qt_free.py` | 590118987 | `53af6735067367de0ab2b5b0f3d45fabdebcff0f01e32307c56df42e57b5a88c` | CANONICAL |
+| EV-CJK-LIC | AC1 | `verification/SEARCHABLE-PDF-CJK-1/font-embedding-license-review.md` | c5e87d2ce | `44473510781cc465c9ff043e2adac56985860d0b8413e4219b27b0c92f61679a` | CANONICAL |
+| EV-CJK-FONT | AC1 | `tests/export/test_searchable_cjk_font.py` | 590118987 | `25d0a34c0eb38c153fa22ec30832b8f00b17a32dc195eff5da88203f3f1ad33d` | CANONICAL |
+| EV-CJK-KO-E2E | AC2 | `tests/export/test_searchable_korean_e2e.py` | 2a6a35726 | `99b8bf44cf2d7b61ce044858ef39264503742b8a0e25ac863cc0dc7e6d9e54f8` | CANONICAL |
+| EV-CJK-AC3 | AC3 | `verification/SEARCHABLE-PDF-CJK-1/ac3-subsetting-feasibility.md` | 8593f81c6 | `5ddf012ddbb7cfec905ad9221204558d755eaa521fa44b7e0518f5eadd1ed43e` | CANONICAL |
+| EV-CJK-AC4 | AC4 | `verification/SEARCHABLE-PDF-CJK-1/ac4-font-cost-scaling.md` | dfed15eef | `74285e44ad8f23c4bc9b2748c8ee7caf11a34d668b2cdda6d31e8efe61bfcaed` | CANONICAL |
+| EV-CJK-COST | AC4 | `tests/export/test_searchable_font_cost.py` | dfed15eef | `62785369650e6690a0979739d0c3756a809c4435ebf5776ef3b105f156abeefe` | CANONICAL |
+| EV-CJK-RV | AC5 | `verification/SEARCHABLE-PDF-CJK-1/dsh-zcode-review.md` | 2a6a35726 | `86ad0749cc38cbfb5784805af9a845ed2ede48a2e14c539fd9df5c276a22e4bd` | CANONICAL |
 
 ## Closeout Record
 
-（未开始）
+- **Closeout date / Reviewers**：2026-10-20（ZCode `approve_with_conditions` → 条件已闭）
+- **canonical_evidence_status**：`complete`
+- **resource_closeout_status**：`complete`
+- **删除、迁移、归档数量/字节数**：**0**
+
+### 逐 AC 终态
+
+| AC | 终态 | 证据 |
+|---|---|---|
+| AC1 韩文可用 | **MET** | `malgun.ttf` 加入候选；真实韩文页文本可提取 |
+| AC2 纯语种页可提取 | **MET** | 四语覆盖 + ja/ko 各一条真实页端到端 |
+| **AC3 字体体积与子集化** | **`PARTIAL`** | 体积实测 + 未子集化理由；「不做」是判断待审 |
+| AC4 开销不随页数增长 | **MET** | 1/3/5 页开销 12,408,210 / …385 / …543 |
+| AC5 不回归 | **MET** | `tests/export` 15 passed |
+| AC6 无外部字体下载 | **MET** | 仅读 `%WINDIR%\Fonts` |
+
+### ZCode Review 的处置
+
+`approve_with_conditions`，两项 P2 条件全部闭合：
+
+| 项 | 处置 |
+|---|---|
+| **F-1** AC4 测试只测 1/3 页，文档说 5 页 | **已修**（改为 1/3/5）|
+| **F-2** AC1 证据是一句话而非工件 | **已修**（补 `test_searchable_korean_e2e.py`）|
+| **F-3** `>15_000_000` 是大小代理 | **未做**（后续建议）|
+| **F-4** `importorskip` 会静默吞掉守护 | **未做**（CI 依赖问题）|
+| **F-5** 「10–50 KB」口径错 | **已修**（改为按字符数缩放）|
+| **N-6** frontmatter 与 AC 表矛盾 | **已修** |
+| **N-5** 临时 PDF 写进资产树 | **未做**（可选）|
+
+### 限制清单
+
+| # | 限制 |
+|---|---|
+| **L1** | **未做子集化**——体积开销约 12.4 MB/份，实测字形数据只占 0.01%，收益巨大但需独立 Task |
+| **L2** | **无桌面阅读器验证**——仍是独立实现（PyMuPDF） |
+| **L3** | **混排页（zh+ko）fail-closed**——本机无单一字体覆盖两端，r40 裁定不在范围 |
+| **L4** | **硬编码候选字体名**——只覆盖装 `msyh.ttc` 或 `malgun.ttf` 的 Windows |
+| **L5** | **错误消息不可操作**——`ValueError` 不指明缺哪种文字，用户看不出该装什么字体 |
+| **L6** | **AC3 的「不做子集化」是判断**，不是事实；已标 PARTIAL 待后续 Review |
+
+### L5 值得单独说
+
+**当前错误是**：
+
+```
+ValueError: no installed embeddable font covers searchable PDF text
+```
+
+**它不说明缺的是韩文、不说明哪些字符、不说明用户能做什么。**
+
+**作为内部异常足够；作为用户可见错误不可操作。**
+
+**这属于导出错误呈现的集成层，不在本 Task 范围。**
+
+### 后续建议（不属本 Task）
+
+1. **字体子集化独立立项**——按 distinct 字符数估算，整章约 0.2–0.9 MB
+2. **错误消息可操作化**——指明缺哪种文字、建议装什么、或降级为纯图片导出
+3. **字体探测而非硬编码**——扫描 `%WINDIR%\Fonts` 覆盖 Noto/Dotum 等非微软字体
+4. **CI 固定字体清单**——否则韩文测试在无 `malgun` 的 runner 上预期红
+
