@@ -272,9 +272,44 @@ Canonical Evidence，属流程状态而非产品失败。本轮已把该 Review 
 | EV-R209-RESPONSE | R209 F-01..F-04 | `verification/WORKSPACE-CONSOLIDATION-1/rework-r209-response.md` | - | 79b5b1c92d18e1fad35a7727da6f2696ee872e59663a225c6681d12aecb0bf17 | CANONICAL |
 | EV-R209-HANDOFF | R209 交付 | `verification/WORKSPACE-CONSOLIDATION-1/HANDOFF-r209.md` | - | ffaa70eb2b7d85b117eb6b07bb66289bd1014547047668c28e5df14767f9de14 | SOURCE_PIN |
 | EV-R210-REVIEW | R210 Review | `verification/WORKSPACE-CONSOLIDATION-1/codex-review-r210.md` | - | 7f63f6edbf84c3706ab71975f1489e4652f773e9e47d443dc0f75b4c131fac7e | SOURCE_PIN |
+| EV-R211-RECOVERY | R211 恢复搜索 | `verification/WORKSPACE-CONSOLIDATION-1/recovery-search-r211.md` | - | 7991137143285319982a52bbb4a19c73f6c9812384fb664676098fb0a95141cc | CANONICAL |
+| EV-R211-CLOSURE | R211 关闭请求 | `verification/WORKSPACE-CONSOLIDATION-1/closure-package-r211.md` | - | 53d7f303361d931538561b8cbd40621f2c22c071f89a9842cb0eae6f69b63e7c | CANONICAL |
 | EV-R208-GITATTR | 证据 EOL pin | `verification/WORKSPACE-CONSOLIDATION-1/.gitattributes` | - | db13af9f871ab99b3859fc1177d97e7d32a0d212b2c9ac70ad445eeabf614213 | SOURCE_PIN |
 
 ## Resource Manifest
+
+本表在 r211 关闭请求时改为**当前保留资源清单**（不再把已删动作列为 disposition）；r208 原表原文保留在
+下一节历史附录中，不删除。18 个受保护 source 的受损记录只在事故台账表达，**不在此表新增 `LOST` disposition**。
+
+| resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
+|---|---|---|---|---|---|
+| worktree | G:/CODEX/New Manga | PRESERVE_REFERENCED | G:/CODEX/New Manga | verification/WORKSPACE-CONSOLIDATION-1/inventory.json | 主 checkout，本 Task 执行位置；未改其注册 |
+| archive | G:/CODEX/New Manga.workspace/archive/bundles | PRESERVE_REFERENCED | G:/CODEX/New Manga.workspace/archive/bundles | verification/WORKSPACE-CONSOLIDATION-1/archive-manifest.json | 76 个原分支 bundle + 1 个 P03 增量 bundle；77/77 verify exit 0；增量依赖前置 |
+| archive-bundle-p03 | G:/CODEX/New Manga.workspace/archive/bundles/P03-review-prep-112495c7.bundle | PRESERVE_REFERENCED | G:/CODEX/New Manga.workspace/archive/bundles/P03-review-prep-112495c7.bundle | 4c2aef444ab3974401dfe038c7cf26f289cb8dd370bfe6062dfb5d2d70fddbee | tag archive/P03-review-prep-112495c7 指向 0a25ceb45；bundle 4,391 B，SHA-256 匹配 |
+| task-env | G:/CODEX/New Manga.workspace/task-envs | PRESERVE_REFERENCED | G:/CODEX/New Manga.workspace/task-envs | verification/WORKSPACE-CONSOLIDATION-1/measurements-r208.json | 总逻辑 3,880,296,828 B；检测环境 138,129,041 B；未删除 |
+| workspace | G:/CODEX/New Manga.workspace | PRESERVE_REFERENCED | G:/CODEX/New Manga.workspace | verification/WORKSPACE-CONSOLIDATION-1/workspace-cleanup.json | 保留 kept 5 项（2 项 pin、3 项 WinError 5）；派生产物删除记录见收据 |
+| workspace-worktrees | G:/CODEX/New Manga.workspace/worktrees | PRESERVE_REFERENCED | G:/CODEX/New Manga.workspace/worktrees | verification/WORKSPACE-CONSOLIDATION-1/worktree-removal.json | 移除 50 处（workspace/worktrees 7 处、4 处回建）；37 处仅移除登记；当前注册 132 |
+| legacy-worktrees | G:/CODEX/New Manga.worktrees | PRESERVE_UNKNOWN | G:/CODEX/New Manga.worktrees | verification/WORKSPACE-CONSOLIDATION-1/inventory.json | 历史 worktree 根；6 处路径部分重建（HEAD 快照）；37 个孤儿目录保留 |
+| review-scratch | G:/CODEX/New Manga.workspace/review-scratch | PRESERVE_UNKNOWN | G:/CODEX/New Manga.workspace/review-scratch | verification/WORKSPACE-CONSOLIDATION-1/incident-ledger-r208.json | 目录现为空；4 个 P09 scratch 原位置缺失记录见事故台账 |
+| temp | G:/CODEX/New Manga.workspace/temp | PRESERVE_UNKNOWN | G:/CODEX/New Manga.workspace/temp | verification/WORKSPACE-CONSOLIDATION-1/incident-ledger-r208.json | 3 个 BASELINE temp 根缺失；X6 根已删（capture 副本/可重建字节见台账） |
+| p06-run-root | G:/CODEX/New Manga.workspace/P06-GC-DISTRIBUTION-MIGRATION | PRESERVE_REFERENCED | G:/CODEX/New Manga.workspace/P06-GC-DISTRIBUTION-MIGRATION | verification/P06/resource-manifest.json | 父根保留；受保护子树 old-runtime/worktree 缺失记录见事故台账 |
+
+### R211 关闭裁决请求（2026-10-21，待 Codex 裁决）
+
+用户 2026-10-20 23:51 回复「按你的推荐进行裁决」，接受：以 `closed_with_limitations` 收口、接受残余风险、
+先做限时恢复搜索、工具修复另开 Task。关闭请求与 L1–L8 限制清单见
+`verification/WORKSPACE-CONSOLIDATION-1/closure-package-r211.md`；恢复搜索证据见
+`verification/WORKSPACE-CONSOLIDATION-1/recovery-search-r211.md`。
+
+- **恢复搜索（executed）**：8 个目标在 5 卷目录名枚举、回收站、卷影、USN 中 FOUND=0；G: USN 证实
+  T1–T7 于 2026-10-20 20:25 被批量删除且无同名重建；T8 删除早于 journal 窗口；G: 无卷影副本。
+  bounded NOT_FOUND，不升级为永久不可恢复。
+- **L1–L8 limitations**：18 个受保护 source 受损、P09/BASELINE 缺失、六 worktree 仅部分重建、
+  49.48 GiB 逻辑字节非物理净释放、增量 bundle、工具根因未修、AC PARTIAL、F-01 临时目录保留。
+- **请求**：Codex 记录 `closed_with_limitations`（`integration_commit: null`、不标 done），
+  以 L1–L8 作为 canonical/resource `complete` 的内容。Owner 仍未自审/自批/关闭。
+
+## 附：r208 原 Resource Manifest（历史，不参与当前校验）
 
 | resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
 |---|---|---|---|---|---|
@@ -297,13 +332,13 @@ Canonical Evidence，属流程状态而非产品失败。本轮已把该 Review 
 
 ## Closeout Record
 
-- Closeout date / Codex：**未关闭**。r208=`changes_requested`；r209=`changes_requested`；r210=`approved_with_conditions`（仅批准 F-01..F-04 处置，明确不批准关闭 Task）。
-  用户 2026-10-20 已授权 Owner 自动推进与对残余范围事项自我裁决，但不授权 Owner 自审/自批/关闭 Task。
-- canonical_evidence_status：`pending`（返修固定 head 与 Review 后重判）。
-- resource_closeout_status：`pending` / 事故项 open。
+- Closeout date / Codex：**拟关闭，待 r211 裁决**。r208=`changes_requested`；r209=`changes_requested`；
+  r210=`approved_with_conditions`（仅批准 F-01..F-04 处置、不批准关闭）；r211 关闭请求已提交
+  （`closed_with_limitations` + L1–L8，见 `closure-package-r211.md`）。
+- canonical_evidence_status：拟 `complete`（Codex 记录关闭裁决时置位；当前仍 `pending`）。
+- resource_closeout_status：拟 `complete`（以 L1–L8 为收口内容，**不表示资源完整**）。
 - 删除、迁移、归档数量/字节数：50 worktree 目录移除 + 37 仅登记移除 − 6 回建 = 132 注册 worktree；
   分支净删除 325；158 项派生产物；删除前递归逻辑字节合计 53,129,852,873 B（49.48 GiB，非物理净释放）；
   18 个受保护 source 受影响（11 原位置缺失、6 部分回建、P06 子树缺失）；76 个原 bundle + 1 个 P03 增量 bundle。
-- 未关闭项及保留原因：P09/P06 受损资源、ignored 内容缺口、不可恢复残余与 tools 修复范围——均需用户/Codex 裁决
-  （见 `findings-disposition-r208.md` §4、`rework-r209-response.md` §7）。
-- 当前指针清理：待复审与用户裁决后由后续授权处理；本轮未改主线、未 push、未 GC/prune。
+- 未关闭项及保留原因：见 `closure-package-r211.md` L1–L8；用户已接受残余风险，最终由 Codex 记录关闭裁决。
+- 当前指针清理：关闭裁决时更新 STATUS/Plan/TASK_LEDGER；本轮未改主线、未 push、未 GC/prune。
