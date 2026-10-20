@@ -49,3 +49,84 @@
 - Codex home、DSH R1/R2 session 与 workspace registry 未删除或修改。主 checkout HEAD 和 index SHA-256 仍与删除前快照一致。
 - 最终 closeout manifest 与 Task 终态记录随后写入保留 Task branch；本清单此后不再变更。
 
+## Stage 7 工作区整理（2026-10-20，WORKSPACE-CONSOLIDATION-1）
+
+本节是整个仓库第一次**批量**清理，由 dsh 执行、Codex 复核。前 6 个 Stage 均在
+P02/P02PRE 单条线上作业，本节处理全仓。
+
+### 删除前状态（实测）
+
+| 项 | 值 |
+|---|---:|
+| 本地分支 | **418**（已并入主线 342 / 未并入 76）|
+| 已注册 worktree | **213** |
+| 受 `PRESERVE_REFERENCED` 保护的 worktree | **57** |
+| 带未提交改动或 stash 的 worktree | 82 |
+| `doc/tasks` 未跟踪草稿 | 26（全部保留）|
+
+### 判定规则（三条同时满足才可删）
+
+1. worktree 名字**不在**任何 `PRESERVE_REFERENCED` 集合内（38 条来自 `verification/**/*.json`，加上 Task 表共 57 个名字）
+2. `git status --porcelain` 为空（**含未跟踪文件**；不忽略 ignored）
+3. `git stash list` 为空
+
+**不满足者一律保留。** 主 checkout 单独硬编码排除。
+
+### 三步兜底（先建、后删）
+
+1. **76 个未合并分支**：逐个 `git tag archive/<name>` + `git bundle create`（增量 bundle，前置为当前主线）
+2. **76 个 bundle 全部 `git bundle verify` 通过**，合计 **21.1 MB**，覆盖 **1,223 个独有提交**
+3. 只有 bundle 校验通过的未合并分支才允许 `git branch -D`；已合并分支只用 `-d`（让 git 自己复核）
+
+### 执行结果
+
+| 动作 | 结果 |
+|---|---|
+| worktree 移除 | **50 个实际移除**，释放 **29.3 GB** |
+| 陈旧 worktree 登记清理 | **37 个**（目录内 `.git` 已不存在，`git worktree remove` 清掉元数据但**保留目录**）|
+| worktree 总数 | 213 → **126** |
+| 分支删除 | **323 个**（已合并 267 + 已归档未合并 56）|
+| 分支总数 | 418 → **93** |
+| 派生产物清理 | 158 项，释放 **20.15 GB**（`review-scratch` / `builds` / `temp` / `tmp`）|
+| 保 `P22-REBASE-1` | 8.68 GB 因被证据 pin 引用而**保留** |
+
+### 拒绝清理的（如实记录）
+
+- **82 个 worktree 有未提交改动或 stash**：未碰。`git worktree remove` 无一个使用 `--force`
+- **37 个孤儿目录（0.67 GB）**：`.git` 已丢失，无法判定其内容与任何提交的差异，**保留并记录**
+- **`workspace/worktrees`（111 GB）**：含 57 个受保护恢复点。其中 `node_modules`/`target` 虽然在技术上可再生，但 P15 manifest 已把三个 junction 明确登记为 `PRESERVE_REFERENCED`，**故一律不动**
+- **`workspace/task-envs`（3.6 GB）**：含 `M2-PROD-DETECT-ENV-1` 的隔离 venv。**删掉它会以「清理」之名撤销该 Task 的成果**，保留
+- **26 个未跟踪 Task 草稿**：未 add、未改、未删
+
+### 主线裁定（AC8）
+
+**保留 `antigravity/P09-AC3-DELETE-HARDEN-1` 为唯一主线，本轮不改名。**
+
+本 Task 自己禁止改写主线；且 44 个文件引用该名字，改名应作为独立决定而非清理的副作用。
+
+**`main` 与 `master` 已删除，内容均有兜底：**
+
+| 分支 | 独有提交 | 处置依据 |
+|---|---:|---|
+| `main` | **0** | `origin/main..main` 的 2,051 个提交**逐条核对，全部已在主线**；仅冗余指针 |
+| `master` | **3** | `archive/master` + `master.bundle`；其中两个 `verification/M2-RC2/` 证据文件已单独恢复到主线 |
+
+**`master` 的发现值得记**：`doc/tasks/M2-RC2.md`（`done`）链接的
+`verification/M2-RC2/release-22a2c2bf.md` **只存在于 master**，主线一直是一个悬空链接，
+而唯一能满足它的是清理中第一个会被删掉的分支。
+
+### 删除后状态（实测）
+
+| 项 | 值 |
+|---|---:|
+| 本地分支 | **93**（主线 1 + 受保护 worktree 检出 92）|
+| 已注册 worktree | **126** |
+| `archive/*` tag | **76** |
+| `git fsck` | **0 problems** |
+| 治理检查 | **PASS (3 warnings)** |
+
+### 独立复核要求
+
+**Codex 复核时应验证**：57 个 `PRESERVE_REFERENCED` worktree 目录全部仍在；
+76 个 bundle 存在且 `git bundle verify` 通过；`git fsck` 无错误；
+26 个草稿数量未变。

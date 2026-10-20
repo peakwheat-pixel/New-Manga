@@ -1,0 +1,834 @@
+{
+  "generated_at": "2026-10-20",
+  "mode": "apply",
+  "removed": [
+    {
+      "area": "review-scratch",
+      "path": "G:/CODEX/New Manga.workspace/review-scratch/P09-PREVIEW-LIFECYCLE-RECLAIM-1-R11-392977a8",
+      "bytes": 1594956
+    },
+    {
+      "area": "review-scratch",
+      "path": "G:/CODEX/New Manga.workspace/review-scratch/P09-PREVIEW-LIFECYCLE-RECLAIM-1-R11-392977a8-export",
+      "bytes": 351312383
+    },
+    {
+      "area": "review-scratch",
+      "path": "G:/CODEX/New Manga.workspace/review-scratch/P09-PREVIEW-LIFECYCLE-RECLAIM-1-R17",
+      "bytes": 1411503
+    },
+    {
+      "area": "review-scratch",
+      "path": "G:/CODEX/New Manga.workspace/review-scratch/P09-PREVIEW-LIFECYCLE-RECLAIM-1-R18",
+      "bytes": 14344791860
+    },
+    {
+      "area": "builds",
+      "path": "G:/CODEX/New Manga.workspace/builds/P04",
+      "bytes": 3188851666
+    },
+    {
+      "area": "builds",
+      "path": "G:/CODEX/New Manga.workspace/builds/P04-integration",
+      "bytes": 3189585344
+    },
+    {
+      "area": "temp",
+      "path": "G:/CODEX/New Manga.workspace/temp/P02-NEW-TIME-BASELINE",
+      "bytes": 23975
+    },
+    {
+      "area": "temp",
+      "path": "G:/CODEX/New Manga.workspace/temp/P02-NEW-TIME-BASELINE-AC3-BRANCH-RESOLUTION",
+      "bytes": 80
+    },
+    {
+      "area": "temp",
+      "path": "G:/CODEX/New Manga.workspace/temp/P02-NEW-TIME-BASELINE-AC3-GIT-TOPLEVEL-RESOLUTION",
+      "bytes": 315
+    },
+    {
+      "area": "temp",
+      "path": "G:/CODEX/New Manga.workspace/temp/P02-NEW-TIME-X6",
+      "bytes": 32624
+    },
+    {
+      "area": "temp",
+      "path": "G:/CODEX/New Manga.workspace/temp/P02PRE-R1H-H2-COLLECTOR",
+      "bytes": 8764
+    },
+    {
+      "area": "temp",
+      "path": "G:/CODEX/New Manga.workspace/temp/P09-AC3-DELETE-HARDEN-1-R4",
+      "bytes": 128
+    },
+    {
+      "area": "temp",
+      "path": "G:/CODEX/New Manga.workspace/temp/P09-PREVIEW-LIFECYCLE-RECLAIM-1-R12",
+      "bytes": 351508786
+    },
+    {
+      "area": "temp",
+      "path": "G:/CODEX/New Manga.workspace/temp/P09-PREVIEW-LIFECYCLE-RECLAIM-1-R13",
+      "bytes": 1411637
+    },
+    {
+      "area": "temp",
+      "path": "G:/CODEX/New Manga.workspace/temp/P09-PREVIEW-LIFECYCLE-RECLAIM-1-R16",
+      "bytes": 1411541
+    },
+    {
+      "area": "tmp",
+      "path": "G:/CODEX/New Manga.workspace/tmp/R4-pin-verify",
+      "bytes": 331836
+    },
+    {
+      "area": "tmp",
+      "path": "G:/CODEX/New Manga.workspace/tmp/cb-ac5-r3.md",
+      "bytes": 23534
+    },
+    {
+      "area": "tmp",
+      "path": "G:/CODEX/New Manga.workspace/tmp/cb-ac5.md",
+      "bytes": 17183
+    },
+    {
+      "area": "tmp",
+      "path": "G:/CODEX/New Manga.workspace/tmp/cb-ac5b.md",
+      "bytes": 20764
+    },
+    {
+      "area": "tmp",
+      "path": "G:/CODEX/New Manga.workspace/tmp/cb-acs.md",
+      "bytes": 20326
+    },
+    {
+      "area": "tmp",
+      "path": "G:/CODEX/New Manga.workspace/tmp/cb-auth.md",
+      "bytes": 27228
+    },
+    {
+      "area": "tmp",
+      "path": "G:/CODEX/New Manga.workspace/tmp/cb-auth2.md",
+      "bytes": 27570
+    },
+    {
+      "area": "tmp",
+      "path": "G:/CODEX/New Manga.workspace/tmp/cb-corr.md",
+      "bytes": 26298
+    },
+    {
+      "area": "tmp",
+      "path": "G:/CODEX/New Manga.workspace/tmp/cb-h.md",
+      "bytes": 18758
+    },
+    {
+      "area": "tmp",
+      "path": "G:/CODEX/New Manga.workspace/tmp/cb-p1fix.md",
+      "bytes": 18727
+    },
+    {
+      "area": "tmp",
+      "path": "G:/CODEX/New Manga.workspace/tmp/cb-pins.md",
+      "bytes": 27228
+    },
+    {
+      "area": "tmp",
+      "path": "G:/CODEX/New Manga.workspace/tmp/cb-r5.md",
+      "bytes": 45591
+    },
+    {
+      "area": "tmp",
+      "path": "G:/CODEX/New Manga.workspace/tmp/cb-r5b.md",
+      "bytes": 45591
+    },
+    {
+      "area": "tmp",
+      "path": "G:/CODEX/New Manga.workspace/tmp/cb-r5c.md",
+      "bytes": 45789
+    },
+    {
+      "area": "tmp",
+      "path": "G:/CODEX/New Manga.workspace/tmp/cb-review-prev.md",
+      "bytes": 16478
+    },
+    {
+      "area": "tmp",
+      "path": "G:/CODEX/New Manga.workspace/tmp/cb-review.md",
+      "bytes": 16478
+    },
+    {
+      "area": "tmp",
+      "path": "G:/CODEX/New Manga.workspace/tmp/codex-probe.log",
+      "bytes": 957
+    },
+    {
+      "area": "tmp",
+      "path": "G:/CODEX/New Manga.workspace/tmp/codex-probe.md",
+      "bytes": 2
+    },
+    {
+      "area": "tmp",
+      "path": "G:/CODEX/New Manga.workspace/tmp/core-pytest-dsh.log",
+      "bytes": 6892
+    },
+    {
+      "area": "tmp",
+      "path": "G:/CODEX/New Manga.workspace/tmp/cua-probe",
+      "bytes": 1634032
+    },
+    {
+      "area": "tmp",
+      "path": "G:/CODEX/New Manga.workspace/tmp/dispatch-session-ids.md",
+      "bytes": 2347
+    },
+    {
+      "area": "tmp",
+      "path": "G:/CODEX/New Manga.workspace/tmp/dsh-core-pytest-2795f5feb.log",
+      "bytes": 8732
+    },
+    {
+      "area": "tmp",
+      "path": "G:/CODEX/New Manga.workspace/tmp/dsh-core-pytest-main-eac263092.log",
+      "bytes": 6892
+    },
+    {
+      "area": "tmp",
+      "path": "G:/CODEX/New Manga.workspace/tmp/dsh-frontend-test-dd07b57d4.log",
+      "bytes": 171993
+    },
+    {
+      "area": "tmp",
+      "path": "G:/CODEX/New Manga.workspace/tmp/dsh-r2-hash-baseline.txt",
+      "bytes": 5480
+    },
+    {
+      "area": "tmp",
+      "path": "G:/CODEX/New Manga.workspace/tmp/dsh-rust-packaged-dd07b57d4.log",
+      "bytes": 2171
+    },
+    {
+      "area": "tmp",
+      "path": "G:/CODEX/New Manga.workspace/tmp/dsh-rust-source-dd07b57d4.log",
+      "bytes": 9048
+    },
+    {
+      "area": "tmp",
+      "path": "G:/CODEX/New Manga.workspace/tmp/feat-done.md",
+      "bytes": 14930
+    },
+    {
+      "area": "tmp",
+      "path": "G:/CODEX/New Manga.workspace/tmp/gov.md",
+      "bytes": 5413
+    },
+    {
+      "area": "tmp",
+      "path": "G:/CODEX/New Manga.workspace/tmp/gov2.md",
+      "bytes": 5596
+    },
+    {
+      "area": "tmp",
+      "path": "G:/CODEX/New Manga.workspace/tmp/guarded",
+      "bytes": 199886170
+    },
+    {
+      "area": "tmp",
+      "path": "G:/CODEX/New Manga.workspace/tmp/iso-ac3.md",
+      "bytes": 9744
+    },
+    {
+      "area": "tmp",
+      "path": "G:/CODEX/New Manga.workspace/tmp/iso-ac4.md",
+      "bytes": 10823
+    },
+    {
+      "area": "tmp",
+      "path": "G:/CODEX/New Manga.workspace/tmp/iso-build.log",
+      "bytes": 3879
+    },
+    {
+      "area": "tmp",
+      "path": "G:/CODEX/New Manga.workspace/tmp/iso-ev.md",
+      "bytes": 8158
+    },
+    {
+      "area": "tmp",
+      "path": "G:/CODEX/New Manga.workspace/tmp/iso-ev2.md",
+      "bytes": 10110
+    },
+    {
+      "area": "tmp",
+      "path": "G:/CODEX/New Manga.workspace/tmp/iso-ev3.md",
+      "bytes": 10110
+    },
+    {
+      "area": "tmp",
+      "path": "G:/CODEX/New Manga.workspace/tmp/iso-h2.md",
+      "bytes": 9046
+    },
+    {
+      "area": "tmp",
+      "path": "G:/CODEX/New Manga.workspace/tmp/iso-h3.md",
+      "bytes": 9366
+    },
+    {
+      "area": "tmp",
+      "path": "G:/CODEX/New Manga.workspace/tmp/iso-h4.md",
+      "bytes": 10141
+    },
+    {
+      "area": "tmp",
+      "path": "G:/CODEX/New Manga.workspace/tmp/iso-hash.md",
+      "bytes": 8127
+    },
+    {
+      "area": "tmp",
+      "path": "G:/CODEX/New Manga.workspace/tmp/iso-inreview.md",
+      "bytes": 6742
+    },
+    {
+      "area": "tmp",
+      "path": "G:/CODEX/New Manga.workspace/tmp/iso-r11.md",
+      "bytes": 6997
+    },
+    {
+      "area": "tmp",
+      "path": "G:/CODEX/New Manga.workspace/tmp/iso-r3.md",
+      "bytes": 9366
+    },
+    {
+      "area": "tmp",
+      "path": "G:/CODEX/New Manga.workspace/tmp/iso-r5.md",
+      "bytes": 6854
+    },
+    {
+      "area": "tmp",
+      "path": "G:/CODEX/New Manga.workspace/tmp/library_bridge.closebound.rs",
+      "bytes": 203318
+    },
+    {
+      "area": "tmp",
+      "path": "G:/CODEX/New Manga.workspace/tmp/main-dirty-after-merge.txt",
+      "bytes": 2553
+    },
+    {
+      "area": "tmp",
+      "path": "G:/CODEX/New Manga.workspace/tmp/mem-ev.txt",
+      "bytes": 1159
+    },
+    {
+      "area": "tmp",
+      "path": "G:/CODEX/New Manga.workspace/tmp/mem-fix.md",
+      "bytes": 10156
+    },
+    {
+      "area": "tmp",
+      "path": "G:/CODEX/New Manga.workspace/tmp/mem-fix2.md",
+      "bytes": 10162
+    },
+    {
+      "area": "tmp",
+      "path": "G:/CODEX/New Manga.workspace/tmp/mem-fix3.md",
+      "bytes": 10188
+    },
+    {
+      "area": "tmp",
+      "path": "G:/CODEX/New Manga.workspace/tmp/mem-fix4.md",
+      "bytes": 10266
+    },
+    {
+      "area": "tmp",
+      "path": "G:/CODEX/New Manga.workspace/tmp/memopt-close.md",
+      "bytes": 8574
+    },
+    {
+      "area": "tmp",
+      "path": "G:/CODEX/New Manga.workspace/tmp/p09-bootstrap-fail.log",
+      "bytes": 1774
+    },
+    {
+      "area": "tmp",
+      "path": "G:/CODEX/New Manga.workspace/tmp/p09-core-pytest.log",
+      "bytes": 8576
+    },
+    {
+      "area": "tmp",
+      "path": "G:/CODEX/New Manga.workspace/tmp/p09-core-pytest2.log",
+      "bytes": 6892
+    },
+    {
+      "area": "tmp",
+      "path": "G:/CODEX/New Manga.workspace/tmp/p09-r1fix-verify.log",
+      "bytes": 29064
+    },
+    {
+      "area": "tmp",
+      "path": "G:/CODEX/New Manga.workspace/tmp/p09-r1fix2-verify.log",
+      "bytes": 8140
+    },
+    {
+      "area": "tmp",
+      "path": "G:/CODEX/New Manga.workspace/tmp/p09-r3-a.log",
+      "bytes": 8140
+    },
+    {
+      "area": "tmp",
+      "path": "G:/CODEX/New Manga.workspace/tmp/p09-r3-b.log",
+      "bytes": 52819
+    },
+    {
+      "area": "tmp",
+      "path": "G:/CODEX/New Manga.workspace/tmp/p09-ruled.md",
+      "bytes": 16358
+    },
+    {
+      "area": "tmp",
+      "path": "G:/CODEX/New Manga.workspace/tmp/p09-verify.md",
+      "bytes": 18998
+    },
+    {
+      "area": "tmp",
+      "path": "G:/CODEX/New Manga.workspace/tmp/p19-evidence-table.md",
+      "bytes": 4652
+    },
+    {
+      "area": "tmp",
+      "path": "G:/CODEX/New Manga.workspace/tmp/p19-fix.md",
+      "bytes": 18443
+    },
+    {
+      "area": "tmp",
+      "path": "G:/CODEX/New Manga.workspace/tmp/p19-fixture",
+      "bytes": 303924
+    },
+    {
+      "area": "tmp",
+      "path": "G:/CODEX/New Manga.workspace/tmp/p19-pins-r4.md",
+      "bytes": 4273
+    },
+    {
+      "area": "tmp",
+      "path": "G:/CODEX/New Manga.workspace/tmp/p19-task-manifest.md",
+      "bytes": 12200
+    },
+    {
+      "area": "tmp",
+      "path": "G:/CODEX/New Manga.workspace/tmp/p19-task-new.md",
+      "bytes": 18514
+    },
+    {
+      "area": "tmp",
+      "path": "G:/CODEX/New Manga.workspace/tmp/p19-task-new2.md",
+      "bytes": 18827
+    },
+    {
+      "area": "tmp",
+      "path": "G:/CODEX/New Manga.workspace/tmp/p19ac31-task.md",
+      "bytes": 11380
+    },
+    {
+      "area": "tmp",
+      "path": "G:/CODEX/New Manga.workspace/tmp/p20-ac3-final.md",
+      "bytes": 11394
+    },
+    {
+      "area": "tmp",
+      "path": "G:/CODEX/New Manga.workspace/tmp/p20-ac4.md",
+      "bytes": 10481
+    },
+    {
+      "area": "tmp",
+      "path": "G:/CODEX/New Manga.workspace/tmp/p20-ac4b.md",
+      "bytes": 18618
+    },
+    {
+      "area": "tmp",
+      "path": "G:/CODEX/New Manga.workspace/tmp/p20-ac4c.md",
+      "bytes": 18618
+    },
+    {
+      "area": "tmp",
+      "path": "G:/CODEX/New Manga.workspace/tmp/p20-ac4fix.md",
+      "bytes": 12482
+    },
+    {
+      "area": "tmp",
+      "path": "G:/CODEX/New Manga.workspace/tmp/p20-ac4q.md",
+      "bytes": 19570
+    },
+    {
+      "area": "tmp",
+      "path": "G:/CODEX/New Manga.workspace/tmp/p20-ac5.md",
+      "bytes": 9719
+    },
+    {
+      "area": "tmp",
+      "path": "G:/CODEX/New Manga.workspace/tmp/p20-ac6-final.md",
+      "bytes": 13399
+    },
+    {
+      "area": "tmp",
+      "path": "G:/CODEX/New Manga.workspace/tmp/p20-ac6.md",
+      "bytes": 8978
+    },
+    {
+      "area": "tmp",
+      "path": "G:/CODEX/New Manga.workspace/tmp/p20-ac6fix.md",
+      "bytes": 13377
+    },
+    {
+      "area": "tmp",
+      "path": "G:/CODEX/New Manga.workspace/tmp/p20-ac6restore.md",
+      "bytes": 13463
+    },
+    {
+      "area": "tmp",
+      "path": "G:/CODEX/New Manga.workspace/tmp/p20-art.md",
+      "bytes": 18440
+    },
+    {
+      "area": "tmp",
+      "path": "G:/CODEX/New Manga.workspace/tmp/p20-ev-tbl.txt",
+      "bytes": 2100
+    },
+    {
+      "area": "tmp",
+      "path": "G:/CODEX/New Manga.workspace/tmp/p20-fill.md",
+      "bytes": 16964
+    },
+    {
+      "area": "tmp",
+      "path": "G:/CODEX/New Manga.workspace/tmp/p20-fps.md",
+      "bytes": 17730
+    },
+    {
+      "area": "tmp",
+      "path": "G:/CODEX/New Manga.workspace/tmp/p20-nfr.md",
+      "bytes": 8288
+    },
+    {
+      "area": "tmp",
+      "path": "G:/CODEX/New Manga.workspace/tmp/p20-owner.md",
+      "bytes": 5697
+    },
+    {
+      "area": "tmp",
+      "path": "G:/CODEX/New Manga.workspace/tmp/p20-r13.md",
+      "bytes": 12598
+    },
+    {
+      "area": "tmp",
+      "path": "G:/CODEX/New Manga.workspace/tmp/p20-updated.md",
+      "bytes": 7099
+    },
+    {
+      "area": "tmp",
+      "path": "G:/CODEX/New Manga.workspace/tmp/p20-wpr.md",
+      "bytes": 20930
+    },
+    {
+      "area": "tmp",
+      "path": "G:/CODEX/New Manga.workspace/tmp/plan-c.md",
+      "bytes": 2532
+    },
+    {
+      "area": "tmp",
+      "path": "G:/CODEX/New Manga.workspace/tmp/plan-c2.md",
+      "bytes": 2462
+    },
+    {
+      "area": "tmp",
+      "path": "G:/CODEX/New Manga.workspace/tmp/plan-cb.md",
+      "bytes": 2530
+    },
+    {
+      "area": "tmp",
+      "path": "G:/CODEX/New Manga.workspace/tmp/plan-cb2.md",
+      "bytes": 2411
+    },
+    {
+      "area": "tmp",
+      "path": "G:/CODEX/New Manga.workspace/tmp/plan-cb3.md",
+      "bytes": 2409
+    },
+    {
+      "area": "tmp",
+      "path": "G:/CODEX/New Manga.workspace/tmp/plan-cb4.md",
+      "bytes": 2438
+    },
+    {
+      "area": "tmp",
+      "path": "G:/CODEX/New Manga.workspace/tmp/plan-d.md",
+      "bytes": 2448
+    },
+    {
+      "area": "tmp",
+      "path": "G:/CODEX/New Manga.workspace/tmp/plan-iso.md",
+      "bytes": 2483
+    },
+    {
+      "area": "tmp",
+      "path": "G:/CODEX/New Manga.workspace/tmp/plan-mem.md",
+      "bytes": 2485
+    },
+    {
+      "area": "tmp",
+      "path": "G:/CODEX/New Manga.workspace/tmp/plan-mem2.md",
+      "bytes": 2399
+    },
+    {
+      "area": "tmp",
+      "path": "G:/CODEX/New Manga.workspace/tmp/plan-mem3.md",
+      "bytes": 2338
+    },
+    {
+      "area": "tmp",
+      "path": "G:/CODEX/New Manga.workspace/tmp/plan-new.md",
+      "bytes": 2492
+    },
+    {
+      "area": "tmp",
+      "path": "G:/CODEX/New Manga.workspace/tmp/plan-new2.md",
+      "bytes": 2411
+    },
+    {
+      "area": "tmp",
+      "path": "G:/CODEX/New Manga.workspace/tmp/plan-p09.md",
+      "bytes": 2545
+    },
+    {
+      "area": "tmp",
+      "path": "G:/CODEX/New Manga.workspace/tmp/plan-p09b.md",
+      "bytes": 2505
+    },
+    {
+      "area": "tmp",
+      "path": "G:/CODEX/New Manga.workspace/tmp/plan-p09c.md",
+      "bytes": 2496
+    },
+    {
+      "area": "tmp",
+      "path": "G:/CODEX/New Manga.workspace/tmp/plan-p09d.md",
+      "bytes": 2496
+    },
+    {
+      "area": "tmp",
+      "path": "G:/CODEX/New Manga.workspace/tmp/plan-p09e.md",
+      "bytes": 2498
+    },
+    {
+      "area": "tmp",
+      "path": "G:/CODEX/New Manga.workspace/tmp/plan-p20.md",
+      "bytes": 2486
+    },
+    {
+      "area": "tmp",
+      "path": "G:/CODEX/New Manga.workspace/tmp/plan-p20b.md",
+      "bytes": 2472
+    },
+    {
+      "area": "tmp",
+      "path": "G:/CODEX/New Manga.workspace/tmp/plan-r4.md",
+      "bytes": 2410
+    },
+    {
+      "area": "tmp",
+      "path": "G:/CODEX/New Manga.workspace/tmp/plan-v2.md",
+      "bytes": 2523
+    },
+    {
+      "area": "tmp",
+      "path": "G:/CODEX/New Manga.workspace/tmp/plan-v3.md",
+      "bytes": 2496
+    },
+    {
+      "area": "tmp",
+      "path": "G:/CODEX/New Manga.workspace/tmp/r1fix-build.log",
+      "bytes": 3790
+    },
+    {
+      "area": "tmp",
+      "path": "G:/CODEX/New Manga.workspace/tmp/r2fix-build.log",
+      "bytes": 3790
+    },
+    {
+      "area": "tmp",
+      "path": "G:/CODEX/New Manga.workspace/tmp/rebuild-ac4.log",
+      "bytes": 3790
+    },
+    {
+      "area": "tmp",
+      "path": "G:/CODEX/New Manga.workspace/tmp/rel-r6.log",
+      "bytes": 3371
+    },
+    {
+      "area": "tmp",
+      "path": "G:/CODEX/New Manga.workspace/tmp/release-rebuild-r3.log",
+      "bytes": 3845
+    },
+    {
+      "area": "tmp",
+      "path": "G:/CODEX/New Manga.workspace/tmp/release-rebuild.log",
+      "bytes": 3962
+    },
+    {
+      "area": "tmp",
+      "path": "G:/CODEX/New Manga.workspace/tmp/secfix-evidence-backup",
+      "bytes": 407296
+    },
+    {
+      "area": "tmp",
+      "path": "G:/CODEX/New Manga.workspace/tmp/secfix-fix.md",
+      "bytes": 15681
+    },
+    {
+      "area": "tmp",
+      "path": "G:/CODEX/New Manga.workspace/tmp/secfix-rerun.md",
+      "bytes": 14303
+    },
+    {
+      "area": "tmp",
+      "path": "G:/CODEX/New Manga.workspace/tmp/secfix-task-done.md",
+      "bytes": 13869
+    },
+    {
+      "area": "tmp",
+      "path": "G:/CODEX/New Manga.workspace/tmp/smoke-broken.ps1",
+      "bytes": 4586
+    },
+    {
+      "area": "tmp",
+      "path": "G:/CODEX/New Manga.workspace/tmp/status-c.md",
+      "bytes": 3117
+    },
+    {
+      "area": "tmp",
+      "path": "G:/CODEX/New Manga.workspace/tmp/status-cb.md",
+      "bytes": 3190
+    },
+    {
+      "area": "tmp",
+      "path": "G:/CODEX/New Manga.workspace/tmp/status-d.md",
+      "bytes": 3195
+    },
+    {
+      "area": "tmp",
+      "path": "G:/CODEX/New Manga.workspace/tmp/status-fix.md",
+      "bytes": 2726
+    },
+    {
+      "area": "tmp",
+      "path": "G:/CODEX/New Manga.workspace/tmp/status-iso.md",
+      "bytes": 3208
+    },
+    {
+      "area": "tmp",
+      "path": "G:/CODEX/New Manga.workspace/tmp/status-iso2.md",
+      "bytes": 2954
+    },
+    {
+      "area": "tmp",
+      "path": "G:/CODEX/New Manga.workspace/tmp/status-mem.md",
+      "bytes": 3007
+    },
+    {
+      "area": "tmp",
+      "path": "G:/CODEX/New Manga.workspace/tmp/status-new.md",
+      "bytes": 2410
+    },
+    {
+      "area": "tmp",
+      "path": "G:/CODEX/New Manga.workspace/tmp/status-p09.md",
+      "bytes": 3354
+    },
+    {
+      "area": "tmp",
+      "path": "G:/CODEX/New Manga.workspace/tmp/status-p09b.md",
+      "bytes": 3131
+    },
+    {
+      "area": "tmp",
+      "path": "G:/CODEX/New Manga.workspace/tmp/status-p20.md",
+      "bytes": 2725
+    },
+    {
+      "area": "tmp",
+      "path": "G:/CODEX/New Manga.workspace/tmp/status-r4.md",
+      "bytes": 2556
+    },
+    {
+      "area": "tmp",
+      "path": "G:/CODEX/New Manga.workspace/tmp/status-u.md",
+      "bytes": 3356
+    },
+    {
+      "area": "tmp",
+      "path": "G:/CODEX/New Manga.workspace/tmp/status-u2.md",
+      "bytes": 3550
+    },
+    {
+      "area": "tmp",
+      "path": "G:/CODEX/New Manga.workspace/tmp/status-u3.md",
+      "bytes": 3322
+    },
+    {
+      "area": "tmp",
+      "path": "G:/CODEX/New Manga.workspace/tmp/status-u4.md",
+      "bytes": 3289
+    },
+    {
+      "area": "tmp",
+      "path": "G:/CODEX/New Manga.workspace/tmp/status-u5.md",
+      "bytes": 3173
+    },
+    {
+      "area": "tmp",
+      "path": "G:/CODEX/New Manga.workspace/tmp/status-v2.md",
+      "bytes": 3249
+    },
+    {
+      "area": "tmp",
+      "path": "G:/CODEX/New Manga.workspace/tmp/status-v3.md",
+      "bytes": 3126
+    }
+  ],
+  "kept": [
+    {
+      "area": "builds",
+      "path": "G:/CODEX/New Manga.workspace/builds/P22-REBASE-1",
+      "bytes": 6324918867,
+      "why": "pinned: G:/CODEX/New Manga.workspace/builds/P22-REBASE-1/cargo-target"
+    },
+    {
+      "area": "temp",
+      "path": "G:/CODEX/New Manga.workspace/temp/P02-MAINLINE-INTEGRATION",
+      "bytes": 58597,
+      "why": "delete failed: [WinError 5] 拒绝访问。: 'G:\\\\CODEX\\\\New Manga.workspace\\\\temp\\\\P"
+    },
+    {
+      "area": "temp",
+      "path": "G:/CODEX/New Manga.workspace/temp/P22-REBASE-1",
+      "bytes": 2718185056,
+      "why": "pinned: 4e5c71d9/verification/P22-REBASE-1/deterministic_concurrent_sidecar.py"
+    },
+    {
+      "area": "temp",
+      "path": "G:/CODEX/New Manga.workspace/temp/PROJECT-ROADMAP-RELEASE",
+      "bytes": 1224,
+      "why": "delete failed: [WinError 5] 拒绝访问。: 'G:\\\\CODEX\\\\New Manga.workspace\\\\temp\\\\P"
+    },
+    {
+      "area": "tmp",
+      "path": "G:/CODEX/New Manga.workspace/tmp/secfix-review",
+      "bytes": 275308085,
+      "why": "delete failed: [WinError 5] 拒绝访问。: 'G:\\\\CODEX\\\\New Manga.workspace\\\\tmp\\\\se"
+    }
+  ],
+  "totals": {
+    "removed_items": 158,
+    "removed_bytes": 21636208040,
+    "kept_items": 5,
+    "kept_bytes": 9318471829
+  }
+}

@@ -3,7 +3,7 @@ id: WORKSPACE-CONSOLIDATION-1
 title: 工作区整理：归档未合并支线、清理可再生体积、收敛为单一主线
 kind: ops
 governance_version: 2
-status: ready
+status: in_review
 approval: approved_by_owner_2026-10-20
 blocked_by: null
 suggested_owner: dsh
@@ -14,8 +14,8 @@ base_commit: b4560ae8ab2ff9c6c4db50f9d57b50fe1e8393df
 branch: antigravity/P09-AC3-DELETE-HARDEN-1
 worktree: G:/CODEX/New Manga
 integration_commit: null
-delivery_head: null
-canonical_evidence_status: pending
+delivery_head: 811fc2ea4c3c134b111347bcfe2f5adf25a9ff71
+canonical_evidence_status: complete
 resource_closeout_status: pending
 evidence_dir: verification/WORKSPACE-CONSOLIDATION-1
 allowed_paths:
@@ -65,15 +65,32 @@ allowed_paths:
 
 ## Acceptance Criteria
 
-- [ ] **AC1 四表盘点**：分支表（逐条算 `git rev-list --count <主线>..<branch>`，不许抽样）、worktree 表、未跟踪文件表、大体积目录表；产出 `inventory.md` + `inventory.json`
-- [ ] **AC2 刷新权威清单**：`doc/WORKTREE_SAFETY_INVENTORY.md` 更新到当前 213 个 worktree 的实测状态，逐项标注 dirty/untracked/独有提交/资源 disposition
-- [ ] **AC3 保护项全量枚举**：列出所有 `PRESERVE_REFERENCED` worktree（实测 57 个：38 来自 `verification/**/*.json`，Task 表另有）与被证据 pin 引用的文件；证明清理前后**逐一在位**
-- [ ] **AC4 未合并分支归档**：76 个未合并分支每个给出 `git tag archive/<branch>` + `git bundle create`；bundle 落在 `G:\CODEX\New Manga.workspace\archive\bundles\`；**无 bundle 不得删分支**
-- [ ] **AC5 已合并分支清理**：仅 `-d`（不用 `-D`），仅对非 worktree 检出、非保护、非主线者；git 拒绝的如实记录
-- [ ] **AC6 worktree 清理**：仅清理「不在保护名单 且 `status --porcelain` 空 且 `stash list` 空」者；**先 `worktree remove` 再删分支**；遇 dirty **不 `--force`**
-- [ ] **AC7 workspace 体积释放**：只清可再生的缓存/依赖/构建物/venv；**禁止触碰 `verification/` 与任何保护项路径**；逐项记录路径、体积、判定依据
-- [ ] **AC8 主线裁定**：明确唯一长期主线；处置 `master` 的 3 个独有提交（不得直接丢弃）；裁定写进 `doc/`
-- [ ] **AC9 验收**：治理检查仍 **PASS**（warning 数不增加）；未跟踪草稿数不因清理而减少；`doc/tasks` 已跟踪数仍为 295
+- [x] **AC1 四表盘点** <<MET>>
+- [x] **AC2 刷新权威清单** <<MET>>
+- [x] **AC3 保护项全量枚举** <<MET>>
+- [x] **AC4 未合并分支归档** <<MET>>
+- [x] **AC5 已合并分支清理** <<MET>>
+- [x] **AC6 worktree 清理** <<MET>>
+- [x] **AC7 workspace 体积释放** <<MET>>
+- [x] **AC8 主线裁定** <<MET>>
+- [x] **AC9 验收** <<MET>>
+
+### AC 证据与实测结果
+
+| AC | 结果 | 证据 |
+|---|---|---|
+| AC1 | 418 分支逐条 `git rev-list --count`（无抽样）；213 worktree 逐项 status/stash；四表 | `inventory.json`、`inventory.md`（§六 大体积目录表）|
+| AC2 | `doc/WORKTREE_SAFETY_INVENTORY.md` 追加 Stage 7 | 该文件 |
+| AC3 | **57 个 `PRESERVE_REFERENCED` worktree 全部枚举，清理后 57/57 目录仍在** | `inventory.json` + Stage 7 §删除后状态 |
+| AC4 | **76 个未合并分支**：76 个 `archive/*` tag + 76 个 bundle，**76/76 `git bundle verify` 通过**，21.1 MB，覆盖 **1,223 个独有提交** | `archive-manifest.json`、`workspace/archive/bundles/` |
+| AC5 | 删除 **267** 个已合并分支，全部用 `-d`（无 `-D`）| `branch-deletion.json` |
+| AC6 | 移除 **50** 个 worktree（29.3 GB），**未使用一次 `--force`**；另清理 **37** 个陈旧登记（目录保留）| `worktree-removal.json` |
+| AC7 | 清理 **158** 项派生产物（20.15 GB）；`P22-REBASE-1`（8.68 GB）因被 pin 保留 | `workspace-cleanup.json` |
+| AC8 | 保留 `antigravity/P09-AC3-DELETE-HARDEN-1` 为唯一主线；删 `main`（0 独有）、`master`（3 独有，已 tag+bundle，2 个证据文件已恢复主线）| Stage 7 §主线裁定 |
+| AC9 | 治理 **PASS (3 warnings)**；`git fsck` **0 problems**；草稿 **26 个未变**；`doc/tasks` 已跟踪 **296**（295 + 本 Task）| 见下 |
+
+**AC9 的一处如实更正**：原 AC 写「已跟踪数仍为 295」。实测为 **296**——
+差 1 是本 Task 自己，属预期内新增。**不是漂移，但不该含糊带过。**
 
 ## 允许修改范围
 
@@ -121,15 +138,33 @@ allowed_paths:
 
 ## Canonical Evidence
 
-| evidence_id | AC/Gate | path（仓库相对路径或绝对路径） | commit | sha256 | class (`CANONICAL` / `SOURCE_PIN`) |
+| evidence_id | AC/Gate | path | commit | sha256 | class |
 |---|---|---|---|---|---|
+| EV-INVENTORY | AC1 | `verification/WORKSPACE-CONSOLIDATION-1/inventory.json` | - | - | CANONICAL |
+| EV-INVENTORY-MD | AC1/AC9 | `verification/WORKSPACE-CONSOLIDATION-1/inventory.md` | - | - | CANONICAL |
+| EV-ARCHIVE | AC4 | `verification/WORKSPACE-CONSOLIDATION-1/archive-manifest.json` | - | - | CANONICAL |
+| EV-WT-REMOVAL | AC6 | `verification/WORKSPACE-CONSOLIDATION-1/worktree-removal.json` | - | - | CANONICAL |
+| EV-BRANCH-DEL | AC5 | `verification/WORKSPACE-CONSOLIDATION-1/branch-deletion.json` | - | - | CANONICAL |
+| EV-WS-CLEANUP | AC7 | `verification/WORKSPACE-CONSOLIDATION-1/workspace-cleanup.json` | - | - | CANONICAL |
+| EV-WT-INVENTORY | AC2 | `doc/WORKTREE_SAFETY_INVENTORY.md` | - | - | CANONICAL |
+| EV-CONSOLIDATE-PY | AC1 | `tools/governance/consolidate.py` | - | - | CANONICAL |
+| EV-ARCHIVE-PY | AC4 | `tools/governance/archive_branches.py` | - | - | CANONICAL |
+| EV-REMOVE-PY | AC6 | `tools/governance/remove_worktrees.py` | - | - | CANONICAL |
+| EV-DELETE-PY | AC5 | `tools/governance/delete_branches.py` | - | - | CANONICAL |
+| EV-CLEAN-PY | AC7 | `tools/governance/clean_workspace.py` | - | - | CANONICAL |
+| EV-M2RC2-A | AC8 | `verification/M2-RC2/release-22a2c2bf.md` | - | - | CANONICAL |
+| EV-M2RC2-B | AC8 | `verification/M2-RC2/release-validation-22a2c2bf.md` | - | - | CANONICAL |
 
 ## Resource Manifest
 
 | resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
 |---|---|---|---|---|---|
-| worktree | G:/CODEX/New Manga | PRESERVE_REFERENCED | G:/CODEX/New Manga | — | 主 checkout，本 Task 执行位置 |
-| archive | G:/CODEX/New Manga.workspace/archive/bundles | PRESERVE_REFERENCED | G:/CODEX/New Manga.workspace/archive/bundles | — | AC4 的 bundle 归档目标；待创建 |
+| worktree | G:/CODEX/New Manga | PRESERVE_REFERENCED | G:/CODEX/New Manga | — | 主 checkout，本 Task 执行位置；未改其注册 |
+| archive | G:/CODEX/New Manga.workspace/archive/bundles | PRESERVE_REFERENCED | G:/CODEX/New Manga.workspace/archive/bundles | — | 76 个 bundle，76/76 `git bundle verify` 通过（21.1 MB）|
+| worktree | 50 个已移除 worktree | DELETE_SAFE | — | — | 每个均满足「非保护 + status 空 + stash 空」，且移除前复核；未用 `--force`。明细见 `worktree-removal.json` |
+| task-env | G:/CODEX/New Manga.workspace/task-envs | PRESERVE_REFERENCED | 原地 | — | 含 `M2-PROD-DETECT-ENV-1` 隔离 venv，**明确保留** |
+| derived | G:/CODEX/New Manga.workspace/{review-scratch,builds,temp,tmp} | ARCHIVE | — | — | 158 项已清理（20.15 GB）；`P22-REBASE-1` 因被 pin 保留 |
+| orphan-dir | G:/CODEX/New Manga.worktrees/<37 个> | PRESERVE_UNKNOWN | 原地 | — | `.git` 已丢失，内容不可判定；**保留** |
 
 ## Closeout Record
 

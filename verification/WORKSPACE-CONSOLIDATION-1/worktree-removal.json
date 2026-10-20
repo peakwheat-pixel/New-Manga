@@ -1,0 +1,969 @@
+{
+  "generated_at": "2026-10-20",
+  "mode": "apply",
+  "removed": [
+    {
+      "path": "C:/Users/49745/.codex/worktrees/P02-hook-cache-review-dsh-r4",
+      "branch": "(detached)",
+      "bytes": 242347275,
+      "removed": true
+    },
+    {
+      "path": "C:/Users/49745/.codex/worktrees/p02-post-review-preflight-review/New Manga",
+      "branch": "(detached)",
+      "bytes": 289735989,
+      "removed": true
+    },
+    {
+      "path": "C:/Users/49745/.codex/worktrees/p02-post-review-preflight-review-r2/New Manga",
+      "branch": "(detached)",
+      "bytes": 289759699,
+      "removed": true
+    },
+    {
+      "path": "C:/Users/49745/.codex/worktrees/P02-preflight-r4-condition-closure-92dc7361-review-dsh",
+      "branch": "review/deepseek/P02-preflight-r4-condition-closure-92dc7361",
+      "bytes": 242344756,
+      "removed": true
+    },
+    {
+      "path": "C:/Users/49745/.codex/worktrees/P02-preflight-r5-844aec28-review-dsh",
+      "branch": "review/deepseek/P02-preflight-r5-844aec28",
+      "bytes": 242431053,
+      "removed": true
+    },
+    {
+      "path": "C:/Users/49745/.codex/worktrees/P02-preflight-review-dsh-r1",
+      "branch": "(detached)",
+      "bytes": 242059135,
+      "removed": true
+    },
+    {
+      "path": "C:/Users/49745/.codex/worktrees/P02-process-isolation-review-dsh-r1",
+      "branch": "(detached)",
+      "bytes": 241721256,
+      "removed": true
+    },
+    {
+      "path": "C:/Users/49745/.codex/worktrees/P02-process-isolation-review-dsh-r2",
+      "branch": "(detached)",
+      "bytes": 241784362,
+      "removed": true
+    },
+    {
+      "path": "C:/Users/49745/.codex/worktrees/P02-process-isolation-review-dsh-r3",
+      "branch": "(detached)",
+      "bytes": 241848498,
+      "removed": true
+    },
+    {
+      "path": "C:/Users/49745/.codex/worktrees/P02-process-isolation-review-dsh-r4",
+      "branch": "(detached)",
+      "bytes": 241899439,
+      "removed": true
+    },
+    {
+      "path": "C:/Users/49745/.codex/worktrees/P02-process-isolation-review-dsh-r5",
+      "branch": "(detached)",
+      "bytes": 241945003,
+      "removed": true
+    },
+    {
+      "path": "C:/Users/49745/.codex/worktrees/P02-process-isolation-review-dsh-r6",
+      "branch": "(detached)",
+      "bytes": 241982966,
+      "removed": true
+    },
+    {
+      "path": "C:/Users/49745/.codex/worktrees/P02-process-isolation-review-dsh-r6-followup",
+      "branch": "(detached)",
+      "bytes": 242016846,
+      "removed": true
+    },
+    {
+      "path": "C:/Users/49745/.codex/worktrees/P02-process-isolation-review-dsh-r7",
+      "branch": "(detached)",
+      "bytes": 289420824,
+      "removed": true
+    },
+    {
+      "path": "C:/Users/49745/.codex/worktrees/p02-r2-docs-closeout/New Manga",
+      "branch": "codex/P02-r2-docs-closeout",
+      "bytes": 289822730,
+      "removed": true
+    },
+    {
+      "path": "C:/Users/49745/.codex/worktrees/p02pre-r1h-codex",
+      "branch": "agent/codex/P02PRE-R1H",
+      "bytes": 290104202,
+      "removed": true
+    },
+    {
+      "path": "C:/Users/49745/.codex/worktrees/p02pre-r1h-r6-attempt4-antigravity",
+      "branch": "agent/antigravity/P02PRE-R1H-R6-A4",
+      "bytes": 289910589,
+      "removed": true
+    },
+    {
+      "path": "C:/Users/49745/.codex/worktrees/p02pre-r1h-zcode",
+      "branch": "agent/zcode/P02PRE-R1H",
+      "bytes": 290053031,
+      "removed": true
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/GOV-PIN-LINEAGE-1/worktree",
+      "branch": "dsh/GOV-PIN-LINEAGE-1",
+      "bytes": 348191855,
+      "removed": true
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/P06-GC-DISTRIBUTION-MIGRATION/old-runtime/worktree",
+      "branch": "(detached)",
+      "bytes": 2186496184,
+      "removed": true
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/P09-BASELINE-T2",
+      "branch": "(detached)",
+      "bytes": 352537586,
+      "removed": true
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/FEAT-CREATE-1",
+      "branch": "codex/FEAT-CREATE-1",
+      "bytes": 305714018,
+      "removed": true
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/FEAT-CREATE-2",
+      "branch": "codex/FEAT-CREATE-2",
+      "bytes": 1601245026,
+      "removed": true
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/FEAT-CREATE-4",
+      "branch": "codex/FEAT-CREATE-4",
+      "bytes": 5045303306,
+      "removed": true
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-X6-AC1-AC7",
+      "branch": "agent/zcode/P02-NEW-TIME-X6-AC1-AC7",
+      "bytes": 291116178,
+      "removed": true
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P15-C1-review",
+      "branch": "(detached)",
+      "bytes": 302460207,
+      "removed": true
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P19-AC3-1",
+      "branch": "codex/P19-AC3-1",
+      "bytes": 308738904,
+      "removed": true
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P19-UI-FIX-2",
+      "branch": "codex/P19-UI-FIX-2",
+      "bytes": 5371083340,
+      "removed": true
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/M2-C1-codex-typed-ipc-contract",
+      "branch": "agent/codex/M2-C1-typed-ipc-contract",
+      "bytes": 31441181,
+      "removed": true
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/M2-C1-deepseek-review-r2-7e65f4f",
+      "branch": "review/deepseek/M2-C1-typed-ipc-r2-7e65f4f",
+      "bytes": 31481617,
+      "removed": true
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/M2-C1-deepseek-review-r3-4d66523",
+      "branch": "review/deepseek/M2-C1-typed-ipc-r3-4d66523",
+      "bytes": 31424688,
+      "removed": true
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/M2-C1-qoder-review-r3-4d66523",
+      "branch": "review/qoder/M2-C1-typed-ipc-r3-4d66523",
+      "bytes": 31516508,
+      "removed": true
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/M2-I1-zcode",
+      "branch": "agent/zcode/M2-I1-core-assembly-seam",
+      "bytes": 30075617,
+      "removed": true
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/M2-SFX-ANNOTATE-R2-zcode",
+      "branch": "agent/zcode/M2-SFX-ANNOTATE-R2",
+      "bytes": 1048483789,
+      "removed": true
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/M2-SFX-CORRECTION-EXPORTER-zcode",
+      "branch": "agent/zcode/M2-SFX-CORRECTION-EXPORTER",
+      "bytes": 221053094,
+      "removed": true
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/M2-SFX-DATA-INFRA-zcode",
+      "branch": "agent/zcode/M2-SFX-DATA-INFRA",
+      "bytes": 286497707,
+      "removed": true
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/M2-SFX-SYNTH-BG-AUTO-zcode",
+      "branch": "agent/zcode/M2-SFX-SYNTH-BG-AUTO",
+      "bytes": 219667703,
+      "removed": true
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/M2-UI1-integration-final-83a",
+      "branch": "master",
+      "bytes": 1807600910,
+      "removed": true
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/P02-build-preflight-codex",
+      "branch": "codex/P02-build-preflight",
+      "bytes": 239579296,
+      "removed": true
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/P02-fallback-scope-codex",
+      "branch": "codex/P02-fallback-scope",
+      "bytes": 240778456,
+      "removed": true
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/P02-harness-scope",
+      "branch": "codex/P02-harness-scope",
+      "bytes": 240757744,
+      "removed": true
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/P02-hook-cache-review-dsh",
+      "branch": "(detached)",
+      "bytes": 242300903,
+      "removed": true
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/P02-owner-amendment-codex",
+      "branch": "codex/P02-owner-amendment",
+      "bytes": 240810781,
+      "removed": true
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/P02-owner-transfer-integration-codex",
+      "branch": "codex/P02-owner-transfer-integration",
+      "bytes": 239759739,
+      "removed": true
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/P02-process-isolation-review-dsh-r7",
+      "branch": "(detached)",
+      "bytes": 289420823,
+      "removed": true
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/P02-real-webview-harness-antigravity",
+      "branch": "agent/antigravity/P02-real-webview-harness",
+      "bytes": 239977457,
+      "removed": true
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/P03-review-prep-112495c7",
+      "branch": "(detached)",
+      "bytes": 238378906,
+      "removed": true
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/P04-prod-command-concurrency-antigravity",
+      "branch": "agent/antigravity/P04-prod-command-concurrency",
+      "bytes": 1592456000,
+      "removed": true
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/P04-scope-freeze",
+      "branch": "codex/P04-scope-freeze",
+      "bytes": 242212167,
+      "removed": true
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/PACKAGED-AC1-DLL-DIAG-dsh",
+      "branch": "agent/deepseek/M2-PACKAGED-AC1-DLL-DIAG",
+      "bytes": 2903895490,
+      "removed": true
+    }
+  ],
+  "refused": [
+    {
+      "path": "C:/Users/49745/.codex/worktrees/M2-C1-dsh-review-7de1cd2-r2",
+      "why": "2 dirty/untracked entries"
+    },
+    {
+      "path": "C:/Users/49745/.codex/worktrees/m2-i2-review-a4705a9/New Manga",
+      "why": "1 dirty/untracked entries"
+    },
+    {
+      "path": "C:/Users/49745/.codex/worktrees/P02-current-prestart-review-dsh-r1",
+      "why": "4 dirty/untracked entries"
+    },
+    {
+      "path": "C:/Users/49745/.codex/worktrees/P02-current-prestart-review-dsh-r2",
+      "why": "6 dirty/untracked entries"
+    },
+    {
+      "path": "C:/Users/49745/.codex/worktrees/P02-current-prestart-review-dsh-r3",
+      "why": "5 dirty/untracked entries"
+    },
+    {
+      "path": "C:/Users/49745/.codex/worktrees/P02-current-prestart-review-dsh-r4",
+      "why": "5 dirty/untracked entries"
+    },
+    {
+      "path": "C:/Users/49745/.codex/worktrees/P02-current-prestart-review-dsh-r5",
+      "why": "3 dirty/untracked entries"
+    },
+    {
+      "path": "C:/Users/49745/.codex/worktrees/P02-current-prestart-review-dsh-r5-followup",
+      "why": "3 dirty/untracked entries"
+    },
+    {
+      "path": "C:/Users/49745/.codex/worktrees/p02-d27-review-repair-review",
+      "why": "1 dirty/untracked entries"
+    },
+    {
+      "path": "C:/Users/49745/.codex/worktrees/P02-preflight-r4-083d2b47-review-dsh",
+      "why": "3 dirty/untracked entries"
+    },
+    {
+      "path": "C:/Users/49745/.codex/worktrees/P02-preflight-r6-c85a041c-review-dsh",
+      "why": "1 dirty/untracked entries"
+    },
+    {
+      "path": "C:/Users/49745/.codex/worktrees/p02-r2-docs-closeout-review/New Manga",
+      "why": "7 dirty/untracked entries"
+    },
+    {
+      "path": "C:/Users/49745/.codex/worktrees/p02-r2-docs-fixes-review",
+      "why": "7 dirty/untracked entries"
+    },
+    {
+      "path": "C:/Users/49745/.codex/worktrees/p02pre-r1h-r6-exec-a6-antigravity/New Manga",
+      "why": "3 dirty/untracked entries"
+    },
+    {
+      "path": "C:/Users/49745/.codex/worktrees/p04-prod-command-concurrency-review",
+      "why": "7 dirty/untracked entries"
+    },
+    {
+      "path": "C:/Users/49745/AppData/Local/Temp/diag002-s2-2jWfPm",
+      "why": "2804 dirty/untracked entries"
+    },
+    {
+      "path": "C:/Users/49745/AppData/Local/Temp/diag002-s2v4-FTf6BC",
+      "why": "2804 dirty/untracked entries"
+    },
+    {
+      "path": "C:/Users/49745/AppData/Local/Temp/diag002-s2v5-WJGAfi",
+      "why": "2804 dirty/untracked entries"
+    },
+    {
+      "path": "G:/CODEX/New Manga/.agents/worktrees/GOV-PLAN-BUDGET-1",
+      "why": "33 dirty/untracked entries"
+    },
+    {
+      "path": "G:/CODEX/New Manga/.agents/worktrees/GOV-RESOURCE-MANIFEST-JSON-1",
+      "why": "33 dirty/untracked entries"
+    },
+    {
+      "path": "G:/CODEX/New Manga/.agents/worktrees/GOV-RESOURCE-MANIFEST-SAME-LOCATION-1",
+      "why": "2 dirty/untracked entries"
+    },
+    {
+      "path": "G:/CODEX/New Manga/.agents/worktrees/P19-UI-MANIFEST-VIEW-1",
+      "why": "34 dirty/untracked entries"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/FEAT-CREATE-3",
+      "why": "1 dirty/untracked entries"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/FEAT-IMPORT-MULTI-1",
+      "why": "50 dirty/untracked entries"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-X6-POSTRUN-REVIEW",
+      "why": "28 dirty/untracked entries"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P02PRE-R1H-H2-COLLECTOR",
+      "why": "2 dirty/untracked entries"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P14-review",
+      "why": "40 dirty/untracked entries"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P15-review",
+      "why": "40 dirty/untracked entries"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P19-UI-FIX-3",
+      "why": "2 dirty/untracked entries"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/PROJECT-ROADMAP-REBASELINE",
+      "why": "27 dirty/untracked entries"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/RUN-IPC-1-review",
+      "why": "1 dirty/untracked entries"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/SEC-FIX-PATH-ECHO-1",
+      "why": "5 dirty/untracked entries"
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/DERIVED-GC-2-zcode",
+      "why": "24 dirty/untracked entries"
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/M2-AC5-BUILD-FRESH-CHECKOUT-zcode",
+      "why": "14 dirty/untracked entries"
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/M2-C1-deepseek-review-7d908a5",
+      "why": "4 dirty/untracked entries"
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/M2-C1-dsh-review-7de1cd2",
+      "why": "2 dirty/untracked entries"
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/M2-C1-qoder-review-7de1cd2",
+      "why": "1 dirty/untracked entries"
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/M2-C2-zcode",
+      "why": "2 dirty/untracked entries"
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/M2-FIX-DIGEST-SEEK-2GIB-zcode",
+      "why": "14 dirty/untracked entries"
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/M2-I2-review-0d6acc7",
+      "why": "1 dirty/untracked entries"
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/M2-SETTINGS-IPC-CHANNEL-zcode",
+      "why": "6 dirty/untracked entries"
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/P01-c8-review-dsh",
+      "why": "5 dirty/untracked entries"
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/P01-c9-review-antigravity",
+      "why": "5 dirty/untracked entries"
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/P01-closeout-review-antigravity",
+      "why": "12 dirty/untracked entries"
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/P02-hook-cache-isolation-plan-codex",
+      "why": "10 dirty/untracked entries"
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/P02-real-webview-harness-zcode",
+      "why": "26 dirty/untracked entries"
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/P02-stage-a-validation-172eee84-failureprobe",
+      "why": "3 dirty/untracked entries"
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/P02-stage-a-validation-172eee84-full",
+      "why": "8 dirty/untracked entries"
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/P02-stage-a-validation-172eee84-probe",
+      "why": "5 dirty/untracked entries"
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/P02-stage-a-validation-38672473-exact",
+      "why": "9 dirty/untracked entries"
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/P02-stage-a-validation-38959ba99-exact",
+      "why": "9 dirty/untracked entries"
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/P02-stage-a-validation-5fa8a41f",
+      "why": "5 dirty/untracked entries"
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/P02-stage-a-validation-9b82e97b",
+      "why": "5 dirty/untracked entries"
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/P02-stage-a-validation-cc1bd750-full",
+      "why": "7 dirty/untracked entries"
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/P02-stage-a-validation-cc1bd750-probe",
+      "why": "4 dirty/untracked entries"
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/P03-dsh-review-6d84b48",
+      "why": "1 dirty/untracked entries"
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/P03-packaged-sfx-entry-antigravity",
+      "why": "3 dirty/untracked entries"
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/P03-review-prep-85482c5b",
+      "why": "2 dirty/untracked entries"
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/P22-roundtrip-serialization-antigravity",
+      "why": "57 dirty/untracked entries"
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/PAGE-NAV-1",
+      "why": "2 dirty/untracked entries"
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/RC4-domain-commands",
+      "why": "1 dirty/untracked entries"
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/RC4-integration",
+      "why": "21 dirty/untracked entries"
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/RUNNER-HISTORICAL-RAW-OUTPUT-GUARD-dsh-r1",
+      "why": "2 dirty/untracked entries"
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/RUNNER-HISTORICAL-RAW-OUTPUT-GUARD-dsh-r2",
+      "why": "3 dirty/untracked entries"
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/T1.1.1-detector-evaluation",
+      "why": "git refused: error: failed to delete 'G:/CODEX/New Manga.worktrees/T1.1.1-detector-evaluation': Permission denied"
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/T1.2.1-settings-ui-viewmodel",
+      "why": "git refused: error: failed to delete 'G:/CODEX/New Manga.worktrees/T1.2.1-settings-ui-viewmodel': Permission deni"
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/T2.2.1-qoder",
+      "why": "git refused: error: failed to delete 'G:/CODEX/New Manga.worktrees/T2.2.1-qoder': Permission denied\nerror: failed"
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/T2.2.1-zcode",
+      "why": "1 dirty/untracked entries"
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/T3.2.1-antigravity-packaging",
+      "why": "git refused: error: failed to delete 'G:/CODEX/New Manga.worktrees/T3.2.1-antigravity-packaging': Permission deni"
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/T3.2.1-antigravity-repair-10",
+      "why": "git refused: error: failed to delete 'G:/CODEX/New Manga.worktrees/T3.2.1-antigravity-repair-10': Permission deni"
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/T3.2.1-antigravity-repair-11",
+      "why": "git refused: error: failed to delete 'G:/CODEX/New Manga.worktrees/T3.2.1-antigravity-repair-11': Permission deni"
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/T3.2.1-antigravity-repair-14",
+      "why": "git refused: error: failed to delete 'G:/CODEX/New Manga.worktrees/T3.2.1-antigravity-repair-14': Permission deni"
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/T3.2.1-antigravity-repair-3",
+      "why": "git refused: error: failed to delete 'G:/CODEX/New Manga.worktrees/T3.2.1-antigravity-repair-3': Permission denie"
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/T3.2.1-antigravity-repair-4",
+      "why": "git refused: error: failed to delete 'G:/CODEX/New Manga.worktrees/T3.2.1-antigravity-repair-4': Permission denie"
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/T3.2.1-antigravity-repair-5",
+      "why": "git refused: error: failed to delete 'G:/CODEX/New Manga.worktrees/T3.2.1-antigravity-repair-5': Permission denie"
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/T3.2.1-antigravity-repair-6",
+      "why": "git refused: error: failed to delete 'G:/CODEX/New Manga.worktrees/T3.2.1-antigravity-repair-6': Permission denie"
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/T3.2.1-antigravity-repair-7",
+      "why": "git refused: error: failed to delete 'G:/CODEX/New Manga.worktrees/T3.2.1-antigravity-repair-7': Permission denie"
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/T3.2.1-antigravity-repair-9",
+      "why": "git refused: error: failed to delete 'G:/CODEX/New Manga.worktrees/T3.2.1-antigravity-repair-9': Permission denie"
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/T3.2.1-codex-release-gate-closeout",
+      "why": "git refused: error: failed to delete 'G:/CODEX/New Manga.worktrees/T3.2.1-codex-release-gate-closeout': Permissio"
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/T3.2.1-deepseek-review-10",
+      "why": "git refused: error: failed to delete 'G:/CODEX/New Manga.worktrees/T3.2.1-deepseek-review-10': Permission denied\n"
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/T3.2.1-deepseek-review-11",
+      "why": "git refused: error: failed to delete 'G:/CODEX/New Manga.worktrees/T3.2.1-deepseek-review-11': Permission denied\n"
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/T3.2.1-deepseek-review-12",
+      "why": "git refused: error: failed to delete 'G:/CODEX/New Manga.worktrees/T3.2.1-deepseek-review-12': Permission denied\n"
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/T3.2.1-deepseek-review-740503e",
+      "why": "git refused: error: failed to delete 'G:/CODEX/New Manga.worktrees/T3.2.1-deepseek-review-740503e': Permission de"
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/T3.2.1-deepseek-review-7d687f5",
+      "why": "git refused: error: failed to delete 'G:/CODEX/New Manga.worktrees/T3.2.1-deepseek-review-7d687f5': Permission de"
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/T3.2.1-deepseek-review-9",
+      "why": "git refused: error: failed to delete 'G:/CODEX/New Manga.worktrees/T3.2.1-deepseek-review-9': Permission denied\ne"
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/T3.2.1-deepseek-review-92c9307c",
+      "why": "git refused: error: failed to delete 'G:/CODEX/New Manga.worktrees/T3.2.1-deepseek-review-92c9307c': Permission d"
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/T3.2.1-deepseek-review-cdc0b6f",
+      "why": "git refused: error: failed to delete 'G:/CODEX/New Manga.worktrees/T3.2.1-deepseek-review-cdc0b6f': Permission de"
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/T3.2.1-deepseek-review-d79d7dd",
+      "why": "git refused: error: failed to delete 'G:/CODEX/New Manga.worktrees/T3.2.1-deepseek-review-d79d7dd': Permission de"
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/T3.2.1-deepseek-review-f39ddc0",
+      "why": "git refused: error: failed to delete 'G:/CODEX/New Manga.worktrees/T3.2.1-deepseek-review-f39ddc0': Permission de"
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/T3.2.1-deepseek-review-f6dc383",
+      "why": "git refused: error: failed to delete 'G:/CODEX/New Manga.worktrees/T3.2.1-deepseek-review-f6dc383': Permission de"
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/T3.2.1-deepseek-review-repair-14",
+      "why": "git refused: error: failed to delete 'G:/CODEX/New Manga.worktrees/T3.2.1-deepseek-review-repair-14': Permission "
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/T3.2.1-deepseek-review-repair-14-r2",
+      "why": "git refused: error: failed to delete 'G:/CODEX/New Manga.worktrees/T3.2.1-deepseek-review-repair-14-r2': Permissi"
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/T3.2.1-deepseek-review-repair-7",
+      "why": "git refused: error: failed to delete 'G:/CODEX/New Manga.worktrees/T3.2.1-deepseek-review-repair-7': Permission d"
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/T3.2.1-qoder-repair-13",
+      "why": "git refused: error: failed to delete 'G:/CODEX/New Manga.worktrees/T3.2.1-qoder-repair-13': Permission denied\nerr"
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/T3.2.1-zcode-repair-13",
+      "why": "3 dirty/untracked entries"
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/TASK-004-deepseek-review",
+      "why": "git refused: error: failed to delete 'G:/CODEX/New Manga.worktrees/TASK-004-deepseek-review': Permission denied\ne"
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/TASK-013-qoder",
+      "why": "git refused: error: failed to delete 'G:/CODEX/New Manga.worktrees/TASK-013-qoder': Permission denied\nerror: fail"
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/TASK-015-deepseek-posthoc",
+      "why": "git refused: error: failed to delete 'G:/CODEX/New Manga.worktrees/TASK-015-deepseek-posthoc': Permission denied\n"
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/TASK-017-deepseek-posthoc",
+      "why": "git refused: error: failed to delete 'G:/CODEX/New Manga.worktrees/TASK-017-deepseek-posthoc': Permission denied\n"
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/TASK-024-deepseek-posthoc",
+      "why": "git refused: error: failed to delete 'G:/CODEX/New Manga.worktrees/TASK-024-deepseek-posthoc': Permission denied\n"
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/TASK-024-zcode",
+      "why": "1 dirty/untracked entries"
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/TASK-045-posthoc-zcode",
+      "why": "git refused: error: failed to delete 'G:/CODEX/New Manga.worktrees/TASK-045-posthoc-zcode': Permission denied\nerr"
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/TASK-046-zcode",
+      "why": "3 dirty/untracked entries"
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/TASK-047-qoder",
+      "why": "git refused: error: failed to delete 'G:/CODEX/New Manga.worktrees/TASK-047-qoder': Permission denied\nerror: fail"
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/TASK-061-qoder-review",
+      "why": "git refused: error: failed to delete 'G:/CODEX/New Manga.worktrees/TASK-061-qoder-review': Permission denied\nerro"
+    }
+  ],
+  "skipped": [
+    {
+      "path": "G:/CODEX/New Manga",
+      "why": "main checkout"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/ARCH-DOC-REBASELINE",
+      "why": "protected"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/ENV-BUNDLE-1",
+      "why": "protected"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/ENV-BUNDLE-1-FU1",
+      "why": "protected"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/EVENTS-FWD-1",
+      "why": "protected"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/EXPORT-IPC-1",
+      "why": "protected"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/EXPORT-REVEAL-1",
+      "why": "protected"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/HOST-CORE-1",
+      "why": "protected"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/HOST-ISSUER-1",
+      "why": "protected"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/HOST-ISSUER-1-C1",
+      "why": "protected"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/HOST-TTL-BOUNDARY-1",
+      "why": "protected"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-BASELINE",
+      "why": "protected"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-BASELINE-AC3-BRANCH-RESOLUTION",
+      "why": "protected"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-BASELINE-AC3-GIT-TOPLEVEL-RESOLUTION",
+      "why": "protected"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-BASELINE-AC3-HELPER-OUTPUT-RESOLUTION",
+      "why": "protected"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-X6",
+      "why": "protected"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-X6-AC1-AC7-ANTIGRAVITY",
+      "why": "protected"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-X6-AC1-AC7-INTEGRATION",
+      "why": "protected"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-X6-BUILD-CARGO",
+      "why": "protected"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-X6-BUILD-CARGO-DSH-REVIEW",
+      "why": "protected"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P02PRE-R1H-FORENSIC-RECOVERY-INTEGRATION",
+      "why": "protected"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P02PRE-R1H-H1-CURRENT-INPUT-REVIEW",
+      "why": "protected"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P02PRE-R1H-H2-COLLECTOR-ANTIGRAVITY-R3",
+      "why": "protected"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P02PRE-R1H-H2-COLLECTOR-INTEGRATION",
+      "why": "protected"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P02PRE-R1H-H2-RUN-INTEGRATION",
+      "why": "protected"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE",
+      "why": "protected"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P06-GC-DISTRIBUTION-MIGRATION",
+      "why": "protected"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P09-FU1-DECODER-TEST",
+      "why": "protected"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P09-FU2-IMPORT-IPC-RUNTIME",
+      "why": "protected"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P09-IMPORT-CORE",
+      "why": "protected"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P10-CREDENTIAL-CONFIG-CONTRACT",
+      "why": "protected"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P11-LONG-TASK-LIFECYCLE-CONTRACT",
+      "why": "protected"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P12",
+      "why": "protected"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P12-C1-IMPORT-IPC",
+      "why": "protected"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P13-C1-RUNTIME-IPC",
+      "why": "protected"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P13-RUN-RUNTIME",
+      "why": "protected"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P14",
+      "why": "protected"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P15",
+      "why": "protected"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P15-C1",
+      "why": "protected"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P15-C1-FU1",
+      "why": "protected"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P15-C1-FU2",
+      "why": "protected"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P15-CORE-1",
+      "why": "protected"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P15-CORE-1A",
+      "why": "protected"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P15-CORE-1B",
+      "why": "protected"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P15-CORE-1C",
+      "why": "protected"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P15-HOST-1",
+      "why": "protected"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P15-HOST-2",
+      "why": "protected"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P16-C1-READER-EXPORT-IPC",
+      "why": "protected"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P16-READER-EXPORT-CORE",
+      "why": "protected"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P17",
+      "why": "protected"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P18-JA-KO-QUALITY",
+      "why": "protected"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P19-BOOT-1",
+      "why": "protected"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P19-UI-FIX-1",
+      "why": "protected"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P22-REBASE-1",
+      "why": "protected"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/PROJECT-ROADMAP-RELEASE-REVIEW",
+      "why": "protected"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/READER-IPC-1",
+      "why": "protected"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/RUN-IPC-1",
+      "why": "protected"
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/UI-DESIGN-1",
+      "why": "protected"
+    }
+  ],
+  "totals": {
+    "candidates": 155,
+    "removed": 50,
+    "refused": 105,
+    "skipped": 58,
+    "bytes": 31493644833
+  }
+}

@@ -1,0 +1,2334 @@
+{
+  "generated_at": "2026-10-20",
+  "mode": "apply",
+  "deleted": [
+    {
+      "branch": "agent/antigravity/DETECT-TILING-1",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "agent/antigravity/M2-I2-qtfree-logic-extraction",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "agent/antigravity/M2-IPC1-production-core-library",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "agent/antigravity/M2-P1-regionless-region-rebinding",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "agent/antigravity/M2-PACKAGED-AC1-ICU-ISOLATION-FIX",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "agent/antigravity/M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "agent/antigravity/M2-S2-review-fbdf1bc2",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "agent/antigravity/M2-UI1-review-23a5ac0",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "agent/antigravity/P02-real-webview-harness",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "agent/antigravity/P02PRE-R1G",
+      "via": "-D",
+      "merged": false,
+      "unique": 6
+    },
+    {
+      "branch": "agent/antigravity/P02PRE-R1H",
+      "via": "-D",
+      "merged": false,
+      "unique": 7
+    },
+    {
+      "branch": "agent/antigravity/P02PRE-R1H-R6-A4",
+      "via": "-D",
+      "merged": false,
+      "unique": 2
+    },
+    {
+      "branch": "agent/antigravity/P04-prod-command-concurrency",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "agent/antigravity/T3.1.1-storage-sqlite",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "agent/antigravity/T3.2.1-repair-10",
+      "via": "-D",
+      "merged": false,
+      "unique": 49
+    },
+    {
+      "branch": "agent/antigravity/T3.2.1-repair-11",
+      "via": "-D",
+      "merged": false,
+      "unique": 53
+    },
+    {
+      "branch": "agent/antigravity/T3.2.1-repair-12",
+      "via": "-D",
+      "merged": false,
+      "unique": 54
+    },
+    {
+      "branch": "agent/antigravity/T3.2.1-repair-14",
+      "via": "-D",
+      "merged": false,
+      "unique": 4
+    },
+    {
+      "branch": "agent/antigravity/T3.2.1-repair-3",
+      "via": "-D",
+      "merged": false,
+      "unique": 15
+    },
+    {
+      "branch": "agent/antigravity/T3.2.1-repair-4",
+      "via": "-D",
+      "merged": false,
+      "unique": 19
+    },
+    {
+      "branch": "agent/antigravity/T3.2.1-repair-5",
+      "via": "-D",
+      "merged": false,
+      "unique": 25
+    },
+    {
+      "branch": "agent/antigravity/T3.2.1-repair-6",
+      "via": "-D",
+      "merged": false,
+      "unique": 30
+    },
+    {
+      "branch": "agent/antigravity/T3.2.1-repair-7",
+      "via": "-D",
+      "merged": false,
+      "unique": 41
+    },
+    {
+      "branch": "agent/antigravity/T3.2.1-repair-9",
+      "via": "-D",
+      "merged": false,
+      "unique": 46
+    },
+    {
+      "branch": "agent/antigravity/T3.2.1-windows-packaging",
+      "via": "-D",
+      "merged": false,
+      "unique": 8
+    },
+    {
+      "branch": "agent/codex/M2-C1-typed-ipc-contract",
+      "via": "-D",
+      "merged": false,
+      "unique": 16
+    },
+    {
+      "branch": "agent/codex/M2-C1-zcode-owner-registration",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "agent/codex/M2-TA1-comic-test-asset-foundation",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "agent/codex/M2-TA2A-ja-public-assets",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "agent/codex/M2-TA2C-no-hf-assets",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "agent/codex/P01-metadata-audit",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "agent/codex/P02PRE-R1H",
+      "via": "-D",
+      "merged": false,
+      "unique": 13
+    },
+    {
+      "branch": "agent/codex/T1.1.1-integration",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "agent/codex/T1.2.1-integration",
+      "via": "-D",
+      "merged": false,
+      "unique": 2
+    },
+    {
+      "branch": "agent/codex/T1.2.1-r5-integration",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "agent/codex/T1.3.1-backup-integration",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "agent/codex/T2.1.1-integration",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "agent/codex/T3.1.1-storage-sqlite",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "agent/codex/TASK-001-doc-consistency",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "agent/codex/TASK-002-contract-freeze",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "agent/codex/TASK-005-minimal-bootstrap",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "agent/codex/TASK-011-command-scheduler",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "agent/codex/TASK-013-production-pipeline-seam",
+      "via": "-D",
+      "merged": false,
+      "unique": 2
+    },
+    {
+      "branch": "agent/codex/TASK-031-production-import-adapters",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "agent/codex/TASK-059-review",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "agent/codex/TASK-062-posthoc-residuals",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "agent/codex/TASK-063-diagnostics-boundaries",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "agent/codex/TASK-064-diagnostics-production-wiring",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "agent/codex/TASK-065-task058-followups",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "agent/deepseek/DIAG-M2-REGIONLESS-LOCK-CHANGED-001",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "agent/deepseek/DIAG-READING-EXPORT-001-reading-export-flaky-diagnosis",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "agent/deepseek/GOV-001-review-5a16d8a",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "agent/deepseek/M2-D1-headless-qt-coupling-audit",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "agent/deepseek/M2-PACKAGED-AC1-DLL-DIAG",
+      "via": "-D",
+      "merged": false,
+      "unique": 1
+    },
+    {
+      "branch": "agent/deepseek/M2-R1-qt-runtime-feasibility",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "agent/deepseek/M2-S3-tauri-asset-protocol-probe",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "agent/deepseek/T1.1.1-detector-evaluation",
+      "via": "-D",
+      "merged": false,
+      "unique": 1
+    },
+    {
+      "branch": "agent/deepseek/T3.1.1-review-899bd3c",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "agent/deepseek/T3.2.1-review-740503e",
+      "via": "-D",
+      "merged": false,
+      "unique": 1
+    },
+    {
+      "branch": "agent/deepseek/T3.2.1-review-7d687f5",
+      "via": "-D",
+      "merged": false,
+      "unique": 1
+    },
+    {
+      "branch": "agent/deepseek/T3.2.1-review-92c9307c",
+      "via": "-D",
+      "merged": false,
+      "unique": 1
+    },
+    {
+      "branch": "agent/deepseek/T3.2.1-review-9622395",
+      "via": "-D",
+      "merged": false,
+      "unique": 53
+    },
+    {
+      "branch": "agent/deepseek/T3.2.1-review-a2f6695",
+      "via": "-D",
+      "merged": false,
+      "unique": 54
+    },
+    {
+      "branch": "agent/deepseek/T3.2.1-review-be5200e",
+      "via": "-D",
+      "merged": false,
+      "unique": 49
+    },
+    {
+      "branch": "agent/deepseek/T3.2.1-review-cdc0b6f",
+      "via": "-D",
+      "merged": false,
+      "unique": 6
+    },
+    {
+      "branch": "agent/deepseek/T3.2.1-review-d2bf6a8",
+      "via": "-D",
+      "merged": false,
+      "unique": 46
+    },
+    {
+      "branch": "agent/deepseek/T3.2.1-review-d79d7dd",
+      "via": "-D",
+      "merged": false,
+      "unique": 14
+    },
+    {
+      "branch": "agent/deepseek/T3.2.1-review-f39ddc0",
+      "via": "-D",
+      "merged": false,
+      "unique": 1
+    },
+    {
+      "branch": "agent/deepseek/T3.2.1-review-f6dc383",
+      "via": "-D",
+      "merged": false,
+      "unique": 31
+    },
+    {
+      "branch": "agent/deepseek/T3.2.1-review-repair-14",
+      "via": "-D",
+      "merged": false,
+      "unique": 3
+    },
+    {
+      "branch": "agent/deepseek/T3.2.1-review-repair-14-r2",
+      "via": "-D",
+      "merged": false,
+      "unique": 5
+    },
+    {
+      "branch": "agent/deepseek/T3.2.1-review-repair-7",
+      "via": "-D",
+      "merged": false,
+      "unique": 6
+    },
+    {
+      "branch": "agent/deepseek/TASK-001-review",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "agent/deepseek/TASK-002-review",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "agent/deepseek/TASK-003-verification-spec",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "agent/deepseek/TASK-004-rereview-181a356",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "agent/deepseek/TASK-004-review",
+      "via": "-D",
+      "merged": false,
+      "unique": 1
+    },
+    {
+      "branch": "agent/deepseek/TASK-005-review",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "agent/deepseek/TASK-006-review",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "agent/deepseek/TASK-007-review",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "agent/deepseek/TASK-008-review",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "agent/deepseek/TASK-009-review",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "agent/deepseek/TASK-010-review",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "agent/deepseek/TASK-011-review",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "agent/deepseek/TASK-012-review",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "agent/deepseek/TASK-013-review",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "agent/deepseek/TASK-014-review",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "agent/deepseek/TASK-015-posthoc",
+      "via": "-D",
+      "merged": false,
+      "unique": 1
+    },
+    {
+      "branch": "agent/deepseek/TASK-016-ocr-detection-experiment",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "agent/deepseek/TASK-017-posthoc",
+      "via": "-D",
+      "merged": false,
+      "unique": 1
+    },
+    {
+      "branch": "agent/deepseek/TASK-017-tail-review",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "agent/deepseek/TASK-018-mask-inpainting-experiment",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "agent/deepseek/TASK-019-provider-integration",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "agent/deepseek/TASK-024-posthoc",
+      "via": "-D",
+      "merged": false,
+      "unique": 1
+    },
+    {
+      "branch": "agent/deepseek/TASK-028-review",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "agent/deepseek/TASK-029-review",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "agent/deepseek/TASK-030-review",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "agent/deepseek/TASK-031-review",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "agent/deepseek/TASK-032-sfx-policy-gate-region-type",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "agent/deepseek/TASK-033-full-chain-handlers",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "agent/deepseek/TASK-034-test-layer-hardening",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "agent/deepseek/TASK-035-render-sfx-gate-region-type",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "agent/deepseek/TASK-036-settings-validation-and-export-order",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "agent/deepseek/TASK-043-import-fixes",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "agent/deepseek/TASK-044-purge-integrity",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "agent/deepseek/TASK-045-webtoon-display-fixes",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "agent/dsh/DETECT-MEMORY-GUARD-1",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "agent/dsh/P11-PROJECTION-TEST-ALIGN-1",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "agent/dsh/PDF-STREAM-FIX-1",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "agent/dsh/SEARCHABLE-PDF-CJK-1",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "agent/dsh/TEST-ENV-ASSUMPTIONS-1",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "agent/qoder/M2-UI1-react-parity-visual-contract",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "agent/qoder/POSTHOC-WINDOW-2026-09-19",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "agent/qoder/T1.1.2-region-canvas",
+      "via": "-D",
+      "merged": false,
+      "unique": 2
+    },
+    {
+      "branch": "agent/qoder/T2.1.1-design-f-qml",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "agent/qoder/T2.2.1-reader-workbench-qml",
+      "via": "-D",
+      "merged": false,
+      "unique": 5
+    },
+    {
+      "branch": "agent/qoder/T3.2.1-repair-13",
+      "via": "-D",
+      "merged": false,
+      "unique": 54
+    },
+    {
+      "branch": "agent/qoder/T3.2.1-review-78aba7c",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "agent/qoder/TASK-047-ui-ux-gui-design",
+      "via": "-D",
+      "merged": false,
+      "unique": 9
+    },
+    {
+      "branch": "agent/qoder/TASK-057-review",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "agent/qoder/TASK-058-review",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "agent/qoder/TASK-059-ui-redesign",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "agent/qoder/TASK-060-review",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "agent/qoder/TASK-061-review",
+      "via": "-D",
+      "merged": false,
+      "unique": 4
+    },
+    {
+      "branch": "agent/qoder/TASK-062-review",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "agent/zcode/DIAG-M2-LOCK-CHANGED-REPRO-002",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "agent/zcode/DIAG-READING-EXPORT-001-FIX-A-terminal-wait-semantics",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "agent/zcode/DIAG-READING-EXPORT-001-FIX-B-reader-heartbeat-lifecycle",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "agent/zcode/DIAG-READING-EXPORT-001-FIX-C-quit-and-leave-wiring",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "agent/zcode/DOC-FIX-LOCK-CHANGED-STALE-COMMENTS",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "agent/zcode/M2-AC1-end-to-end-acceptance",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "agent/zcode/M2-AC2-data-integrity",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "agent/zcode/M2-AC3-provider-fail-closed",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "agent/zcode/M2-AC4-reader-lineage-library-pagecount",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "agent/zcode/M2-AC5-package-clean-start",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "agent/zcode/M2-C1-typed-ipc-contract",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "agent/zcode/M2-DETECT-WEBTOON-DIAG",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "agent/zcode/M2-DETECT-WEBTOON-TILING",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "agent/zcode/M2-DETECTION-HYGIENE",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "agent/zcode/M2-DOCTR-QUAL-C1",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "agent/zcode/M2-DOCTR-QUAL-C4",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "agent/zcode/M2-DOCTR-QUAL-PREFLIGHT",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "agent/zcode/M2-DOCTR-QUAL-RUN",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "agent/zcode/M2-FIX-EXPORT-LINEAGE",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "agent/zcode/M2-FIX-F02-RESOURCE-CHANNEL-FLAKY",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "agent/zcode/M2-FIX-LISTBOOKS-PAGECOUNT-UNKNOWN",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "agent/zcode/M2-FIX-REGISTRY-ENV",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "agent/zcode/M2-FIX-RESOURCE-CHANNEL-DIGEST-PERF",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "agent/zcode/M2-FIX-STUB-DECODER",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "agent/zcode/M2-I1-core-assembly-seam",
+      "via": "-D",
+      "merged": false,
+      "unique": 1
+    },
+    {
+      "branch": "agent/zcode/M2-IMPORT-ALLOC-LIMIT",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "agent/zcode/M2-KO-TILE-CALIB",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "agent/zcode/M2-MANGA-WEIGHTS-SOP",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "agent/zcode/M2-OCR-PADDLE3X-1",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "agent/zcode/M2-PROD-DETECT-1",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "agent/zcode/M2-PROD-DETECT-2",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "agent/zcode/M2-PROD-DETECT-3",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "agent/zcode/M2-PROD-SFX-PROBE-1",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "agent/zcode/M2-QUAL-DETERM-CALIB",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "agent/zcode/M2-RC1-large-media-resource-channel-runtime",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "agent/zcode/M2-RC2-resource-channel-hardening",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "agent/zcode/M2-REGION-OVERLAP-ARBITRATION",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "agent/zcode/M2-REGION-RETYPE-CONTRACT",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "agent/zcode/M2-REGION-RETYPE-CORE",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "agent/zcode/M2-RG1-release-gate",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "agent/zcode/M2-S2-resource-channel-security",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "agent/zcode/M2-S3-tauri-asset-protocol-probe",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "agent/zcode/M2-SETTINGS-UI-SFX-POLICY",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "agent/zcode/M2-SFX-ANNOTATE-R1",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "agent/zcode/M2-SFX-ANNOTATE-R2",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "agent/zcode/M2-SFX-ANNOTATE-R3",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "agent/zcode/M2-SFX-BJ13-RECALL-1",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "agent/zcode/M2-SFX-CORRECTION-EXPORTER",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "agent/zcode/M2-SFX-DATA-INFRA",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "agent/zcode/M2-SFX-DETECT-DOMAIN-EXT-DIAG",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "agent/zcode/M2-SFX-DETECT-EVAL",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "agent/zcode/M2-SFX-E2E-MATERIAL",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "agent/zcode/M2-SFX-EPFAIL-AUDIT-1",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "agent/zcode/M2-SFX-FINETUNE-PREFLIGHT",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "agent/zcode/M2-SFX-GATE-T3",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "agent/zcode/M2-SFX-GPU-EP-1",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "agent/zcode/M2-SFX-MISROUTE-UI-IMPL-1",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "agent/zcode/M2-SFX-MISROUTE-UI-MITIGATION",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "agent/zcode/M2-SFX-PROD-1",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "agent/zcode/M2-SFX-SEM-1",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "agent/zcode/M2-SFX-SYNTH-BG-AUTO",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "agent/zcode/M2-SFX-T4-SWITCH",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "agent/zcode/M2-SFX-T5-TILE-KO",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "agent/zcode/M2-SFX-TILE-WIDTH-CALIB-1",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "agent/zcode/M2-SFX-TRAIN-V1",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "agent/zcode/M2-SFX-TRAIN-V2",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "agent/zcode/M2-SFX-TRANSLATE-ENTRY",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "agent/zcode/M2-TA2B-OPEN-ASSETS",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "agent/zcode/M2-TA2C-TOOLING-GAPS",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "agent/zcode/M2-TA3-A-E2E-SMOKE",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "agent/zcode/M2-TA3-B",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "agent/zcode/M2-TA3-B2",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "agent/zcode/M2-TA3-B2-KO-RERUN",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "agent/zcode/M2-TA3-B3-KO-FULLRUN",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "agent/zcode/M2-TASKS-BACKFILL-MULTIREGION",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "agent/zcode/M2-TASKS-PRIMARY-SFX-GATE",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "agent/zcode/M2-WORKBENCH-REACT-1",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "agent/zcode/P02-NEW-TIME-X6-AC1-AC7",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "agent/zcode/P02PRE-R1H",
+      "via": "-D",
+      "merged": false,
+      "unique": 7
+    },
+    {
+      "branch": "agent/zcode/P02PRE-R1H-P2-1-EVIDENCE-CLOSURE",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "agent/zcode/P02PRE-R1H-R6-EXEC-A6",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "agent/zcode/T1.1.1-production-text-detector",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "agent/zcode/T1.2.1-settings-ui-viewmodel",
+      "via": "-D",
+      "merged": false,
+      "unique": 1
+    },
+    {
+      "branch": "agent/zcode/TASK-004-windows-packaging",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "agent/zcode/TASK-005-audit-metadata",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "agent/zcode/TASK-006-persistence-artifact",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "agent/zcode/TASK-007-library-import",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "agent/zcode/TASK-008-region-editing",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "agent/zcode/TASK-009-provider-network-credentials",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "agent/zcode/TASK-010-translation-context",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "agent/zcode/TASK-012-navigation-library-ui",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "agent/zcode/TASK-013-workbench-task-progress",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "agent/zcode/TASK-014-rendering-style",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "agent/zcode/TASK-015-reader-export",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "agent/zcode/TASK-017-translation-protocol-experiment",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "agent/zcode/TASK-020-webtoon-chunked-reading",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "agent/zcode/TASK-021-backup-trash-cleanup-diagnostics",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "agent/zcode/TASK-023-pdf-mobi-import",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "agent/zcode/TASK-029-unified-sqlite-persistence",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "agent/zcode/TASK-030-main-bootstrap-assembly",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "agent/zcode/TASK-033-full-chain-handlers",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "agent/zcode/TASK-037-flaky-diagnostic-fix",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "agent/zcode/TASK-038-production-assembly",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "agent/zcode/TASK-039-clean-availability",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "agent/zcode/TASK-040-clean-probe-injection",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "agent/zcode/TASK-041-mobi-import",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "agent/zcode/TASK-042-streaming-decode",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "agent/zcode/TASK-045-posthoc",
+      "via": "-D",
+      "merged": false,
+      "unique": 1
+    },
+    {
+      "branch": "agent/zcode/TASK-048-thread-sqlite",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "agent/zcode/TASK-049-region-input",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "agent/zcode/TASK-050-settings-bindings",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "agent/zcode/TASK-051-workbench-viewer-modes",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "agent/zcode/TASK-052-command-error-surface",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "agent/zcode/TASK-053-run-files-leak",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "agent/zcode/TASK-054-cancel-pending-rename",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "agent/zcode/TASK-055-diagnostics",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "agent/zcode/TASK-056-cache-version-cleanup",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "agent/zcode/TASK-057-backup-restore",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "agent/zcode/TASK-058-graceful-shutdown-drain",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "agent/zcode/TASK-059-ui-redesign",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "agent/zcode/TASK-060-sqlite-ownership",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "agent/zcode/TASK-061-connection-eviction",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "antigravity/P09-PREVIEW-LIFECYCLE-RECLAIM-1",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "codex/DIAG-FIX-A-integration",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "codex/DIAG-FIX-B-integration",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "codex/DIAG-FIX-C-integration",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "codex/DIAG-READING-EXPORT-001-integration",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "codex/FEAT-CREATE-1",
+      "via": "-D",
+      "merged": false,
+      "unique": 3
+    },
+    {
+      "branch": "codex/FEAT-CREATE-2",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "codex/FEAT-CREATE-4",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "codex/GOV-001-integration",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "codex/M2-AC1-integration",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "codex/M2-C1-dsh-r3-bundle-recovery",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "codex/M2-C1-integration-gate-r3",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "codex/M2-D1-audit-registration",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "codex/M2-D1-integration",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "codex/M2-D1-review-0a27a54",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "codex/M2-I1-R2-review-0766952",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "codex/M2-I1-R3-integration-09ad43a",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "codex/M2-I1-review-a89447f",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "codex/M2-I2-integration-0d6acc7",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "codex/M2-I2-review-5d4a465",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "codex/M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD-integration",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "codex/M2-RUNNER-SNAPSHOT-DEBT",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "codex/M2-S1-integration",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "codex/M2-S1-release",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "codex/M2-S1-review-4eaad68",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "codex/M2-S1-review-64c87d1",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "codex/M2-S1-scope-registration",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "codex/M2-UI1-integration",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "codex/M2-UI1-integration-final-83a",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "codex/M2-UI1-master-integration-20260925",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "codex/P01-integration-20261009",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "codex/P02-build-preflight",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "codex/P02-fallback-scope",
+      "via": "-D",
+      "merged": false,
+      "unique": 1
+    },
+    {
+      "branch": "codex/P02-harness-scope",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "codex/P02-owner-amendment",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "codex/P02-owner-transfer-integration",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "codex/P02-post-review-preflight",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "codex/P02-process-isolation",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "codex/P02-r2-docs-closeout",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "codex/P02-stage-a-r8-integration",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "codex/P03-traceability-log-normalization",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "codex/P04-scope-freeze",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "codex/P05-category-retryable-notes",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "codex/P19-AC3-1",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "codex/P19-UI-FIX-2",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "codex/T3.2.1-REPAIR-13-owner-zcode",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "codex/T3.2.1-clean-release-gate-20260925",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "codex/T3.2.1-integration-20260926",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "codex/T3.2.1-legacy-closure-20260926",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "codex/T3.2.1-release-gate-closeout",
+      "via": "-D",
+      "merged": false,
+      "unique": 50
+    },
+    {
+      "branch": "codex/T3.2.1-repair-14-integration",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "codex/architecture-decision-registration",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "codex/integration-p02pre-r1h-p2-1-external-harness-trace",
+      "via": "-D",
+      "merged": false,
+      "unique": 18
+    },
+    {
+      "branch": "codex/m2-derived-gc-2-design",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "codex/m2-derived-gc-2-design-review-r1",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "codex/m2-derived-gc-2-design-review-r2",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "codex/m2-derived-gc-2-design-review-r3",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "codex/m2-derived-gc-2-design-review-r4",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "codex/m2-rc2-integration",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "codex/p02-newtime-ac-integration-20261015",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "codex/preserve-preexisting-main-worktree-20260925",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "codex/rc4-react-consumer",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "codex/rebaseline-audit-20260921",
+      "via": "-D",
+      "merged": false,
+      "unique": 1
+    },
+    {
+      "branch": "dsh/GOV-PIN-LINEAGE-1",
+      "via": "-D",
+      "merged": false,
+      "unique": 2
+    },
+    {
+      "branch": "review/deepseek/M2-C1-typed-ipc-r2-7e65f4f",
+      "via": "-D",
+      "merged": false,
+      "unique": 12
+    },
+    {
+      "branch": "review/deepseek/M2-C1-typed-ipc-r3-4d66523",
+      "via": "-D",
+      "merged": false,
+      "unique": 14
+    },
+    {
+      "branch": "review/deepseek/M2-C1-zcode-7de1cd2-r3",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "review/deepseek/P02-preflight-r4-condition-closure-92dc7361",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "review/deepseek/P02-preflight-r5-844aec28",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "review/qoder/M2-C1-typed-ipc-r3-4d66523",
+      "via": "-D",
+      "merged": false,
+      "unique": 15
+    },
+    {
+      "branch": "task/t1.1.2-region-canvas-qoder",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "zcode/category-clarify-1",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "zcode/derived-gc-1",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "zcode/page-resource-resolve-1",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "zcode/region-debounce-1",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    },
+    {
+      "branch": "zcode/resolve-debounce-1",
+      "via": "-d",
+      "merged": true,
+      "unique": 0
+    }
+  ],
+  "refused": [],
+  "skipped": [
+    {
+      "branch": "GOV-PLAN-BUDGET-1",
+      "why": "checked out in a worktree"
+    },
+    {
+      "branch": "GOV-RESOURCE-MANIFEST-JSON-1",
+      "why": "checked out in a worktree"
+    },
+    {
+      "branch": "GOV-RESOURCE-MANIFEST-SAME-LOCATION-1",
+      "why": "checked out in a worktree"
+    },
+    {
+      "branch": "P19-UI-MANIFEST-VIEW-1",
+      "why": "checked out in a worktree"
+    },
+    {
+      "branch": "agent/antigravity/EVENTS-FWD-1",
+      "why": "checked out in a worktree"
+    },
+    {
+      "branch": "agent/antigravity/EXPORT-IPC-1",
+      "why": "checked out in a worktree"
+    },
+    {
+      "branch": "agent/antigravity/P02-NEW-TIME-X6-AC1-AC7",
+      "why": "checked out in a worktree"
+    },
+    {
+      "branch": "agent/antigravity/P02-NEW-TIME-X6-BUILD-CARGO",
+      "why": "checked out in a worktree"
+    },
+    {
+      "branch": "agent/antigravity/P02PRE-R1H-H2-COLLECTOR-R3",
+      "why": "checked out in a worktree"
+    },
+    {
+      "branch": "agent/antigravity/P02PRE-R1H-R6-EXEC-A6",
+      "why": "checked out in a worktree"
+    },
+    {
+      "branch": "agent/antigravity/P03-packaged-sfx-entry",
+      "why": "checked out in a worktree"
+    },
+    {
+      "branch": "agent/antigravity/P12-bookshelf-ui",
+      "why": "checked out in a worktree"
+    },
+    {
+      "branch": "agent/antigravity/P17",
+      "why": "checked out in a worktree"
+    },
+    {
+      "branch": "agent/antigravity/P22-roundtrip-serialization",
+      "why": "checked out in a worktree"
+    },
+    {
+      "branch": "agent/codex/P02-NEW-TIME-X6-POSTRUN-REVIEW",
+      "why": "checked out in a worktree"
+    },
+    {
+      "branch": "agent/codex/P02PRE-R1H-FORENSIC-RECOVERY-INTEGRATION",
+      "why": "checked out in a worktree"
+    },
+    {
+      "branch": "agent/codex/P02PRE-R1H-H1-CURRENT-INPUT-REVIEW",
+      "why": "checked out in a worktree"
+    },
+    {
+      "branch": "agent/codex/P02PRE-R1H-H2-RUN-INTEGRATION",
+      "why": "checked out in a worktree"
+    },
+    {
+      "branch": "agent/codex/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE",
+      "why": "checked out in a worktree"
+    },
+    {
+      "branch": "agent/dsh/RUN-IPC-1",
+      "why": "checked out in a worktree"
+    },
+    {
+      "branch": "agent/zcode/M2-AC5-BUILD-FRESH-CHECKOUT",
+      "why": "checked out in a worktree"
+    },
+    {
+      "branch": "agent/zcode/M2-C2-typed-ipc-contract-revision",
+      "why": "checked out in a worktree"
+    },
+    {
+      "branch": "agent/zcode/M2-DERIVED-GC-2",
+      "why": "checked out in a worktree"
+    },
+    {
+      "branch": "agent/zcode/M2-FIX-DIGEST-SEEK-2GIB",
+      "why": "checked out in a worktree"
+    },
+    {
+      "branch": "agent/zcode/M2-SETTINGS-IPC-CHANNEL",
+      "why": "checked out in a worktree"
+    },
+    {
+      "branch": "agent/zcode/P02-NEW-TIME-BASELINE",
+      "why": "checked out in a worktree"
+    },
+    {
+      "branch": "agent/zcode/P02-NEW-TIME-BASELINE-AC3-BRANCH-RESOLUTION",
+      "why": "checked out in a worktree"
+    },
+    {
+      "branch": "agent/zcode/P02-NEW-TIME-BASELINE-AC3-GIT-TOPLEVEL-RESOLUTION",
+      "why": "checked out in a worktree"
+    },
+    {
+      "branch": "agent/zcode/P02-NEW-TIME-BASELINE-AC3-HELPER-OUTPUT-RESOLUTION",
+      "why": "checked out in a worktree"
+    },
+    {
+      "branch": "agent/zcode/P02-NEW-TIME-X6",
+      "why": "checked out in a worktree"
+    },
+    {
+      "branch": "agent/zcode/P02-real-webview-harness",
+      "why": "checked out in a worktree"
+    },
+    {
+      "branch": "agent/zcode/P02PRE-R1H-H2-COLLECTOR",
+      "why": "checked out in a worktree"
+    },
+    {
+      "branch": "agent/zcode/T2.2.1-reader-workbench-polish",
+      "why": "checked out in a worktree"
+    },
+    {
+      "branch": "agent/zcode/T3.2.1-repair-13",
+      "why": "checked out in a worktree"
+    },
+    {
+      "branch": "agent/zcode/TASK-024-extension-boundaries-design",
+      "why": "checked out in a worktree"
+    },
+    {
+      "branch": "agent/zcode/TASK-046-decode-rewind-cost",
+      "why": "checked out in a worktree"
+    },
+    {
+      "branch": "agent/zcode/UI-DESIGN-1",
+      "why": "checked out in a worktree"
+    },
+    {
+      "branch": "antigravity/P09-AC3-DELETE-HARDEN-1",
+      "why": "mainline"
+    },
+    {
+      "branch": "antigravity/P15-C1",
+      "why": "checked out in a worktree"
+    },
+    {
+      "branch": "codex/ENV-BUNDLE-1-FU1-packaged-acceptance",
+      "why": "checked out in a worktree"
+    },
+    {
+      "branch": "codex/ENV-BUNDLE-1-sidecar-rebuild",
+      "why": "checked out in a worktree"
+    },
+    {
+      "branch": "codex/EXPORT-REVEAL-1",
+      "why": "checked out in a worktree"
+    },
+    {
+      "branch": "codex/FEAT-CREATE-3",
+      "why": "checked out in a worktree"
+    },
+    {
+      "branch": "codex/FEAT-IMPORT-MULTI-1",
+      "why": "checked out in a worktree"
+    },
+    {
+      "branch": "codex/HOST-CORE-1-hostcontrol-handler",
+      "why": "checked out in a worktree"
+    },
+    {
+      "branch": "codex/HOST-ISSUER-1-C1-grant-registration-contract",
+      "why": "checked out in a worktree"
+    },
+    {
+      "branch": "codex/HOST-ISSUER-1-tauri-ref-issuer",
+      "why": "checked out in a worktree"
+    },
+    {
+      "branch": "codex/HOST-TTL-BOUNDARY-1-grant-ttl",
+      "why": "checked out in a worktree"
+    },
+    {
+      "branch": "codex/P02-hook-cache-isolation-plan",
+      "why": "checked out in a worktree"
+    },
+    {
+      "branch": "codex/P03-integration-4c04459",
+      "why": "checked out in a worktree"
+    },
+    {
+      "branch": "codex/P06-gc-distribution-migration-evidence",
+      "why": "checked out in a worktree"
+    },
+    {
+      "branch": "codex/P09-FU1-decoder-test-baseline",
+      "why": "checked out in a worktree"
+    },
+    {
+      "branch": "codex/P09-FU2-import-ipc-runtime",
+      "why": "checked out in a worktree"
+    },
+    {
+      "branch": "codex/P09-import-core",
+      "why": "checked out in a worktree"
+    },
+    {
+      "branch": "codex/P10-credential-config-contract",
+      "why": "checked out in a worktree"
+    },
+    {
+      "branch": "codex/P11-long-task-lifecycle-contract",
+      "why": "checked out in a worktree"
+    },
+    {
+      "branch": "codex/P12-C1-import-ipc-contract",
+      "why": "checked out in a worktree"
+    },
+    {
+      "branch": "codex/P13-C1-runtime-ipc-contract",
+      "why": "checked out in a worktree"
+    },
+    {
+      "branch": "codex/P13-run-runtime-control-recovery",
+      "why": "checked out in a worktree"
+    },
+    {
+      "branch": "codex/P14",
+      "why": "checked out in a worktree"
+    },
+    {
+      "branch": "codex/P15-C1-FU1",
+      "why": "checked out in a worktree"
+    },
+    {
+      "branch": "codex/P15-C1-FU2",
+      "why": "checked out in a worktree"
+    },
+    {
+      "branch": "codex/P15-CORE-1",
+      "why": "checked out in a worktree"
+    },
+    {
+      "branch": "codex/P15-CORE-1A",
+      "why": "checked out in a worktree"
+    },
+    {
+      "branch": "codex/P15-CORE-1B",
+      "why": "checked out in a worktree"
+    },
+    {
+      "branch": "codex/P15-CORE-1C",
+      "why": "checked out in a worktree"
+    },
+    {
+      "branch": "codex/P15-HOST-1",
+      "why": "checked out in a worktree"
+    },
+    {
+      "branch": "codex/P15-HOST-2",
+      "why": "checked out in a worktree"
+    },
+    {
+      "branch": "codex/P16-C1-reader-export-ipc-contract",
+      "why": "checked out in a worktree"
+    },
+    {
+      "branch": "codex/P16-reader-export-core",
+      "why": "checked out in a worktree"
+    },
+    {
+      "branch": "codex/P18-ja-ko-quality-qualification",
+      "why": "checked out in a worktree"
+    },
+    {
+      "branch": "codex/P19-BOOT-1",
+      "why": "checked out in a worktree"
+    },
+    {
+      "branch": "codex/P19-UI-FIX-1",
+      "why": "checked out in a worktree"
+    },
+    {
+      "branch": "codex/P19-UI-FIX-3",
+      "why": "checked out in a worktree"
+    },
+    {
+      "branch": "codex/READER-IPC-1",
+      "why": "checked out in a worktree"
+    },
+    {
+      "branch": "codex/SEC-FIX-PATH-ECHO-1",
+      "why": "checked out in a worktree"
+    },
+    {
+      "branch": "codex/arch-doc-rebaseline",
+      "why": "checked out in a worktree"
+    },
+    {
+      "branch": "codex/p02-mainline-closeout-20261015",
+      "why": "checked out in a worktree"
+    },
+    {
+      "branch": "codex/p22-rebase-1",
+      "why": "checked out in a worktree"
+    },
+    {
+      "branch": "codex/project-roadmap-rebaseline",
+      "why": "checked out in a worktree"
+    },
+    {
+      "branch": "codex/rc4-domain-commands",
+      "why": "checked out in a worktree"
+    },
+    {
+      "branch": "codex/rc4-integration",
+      "why": "checked out in a worktree"
+    },
+    {
+      "branch": "main",
+      "why": "reserved for the AC8 decision"
+    },
+    {
+      "branch": "master",
+      "why": "reserved for the AC8 decision"
+    },
+    {
+      "branch": "review/deepseek/M2-C1-typed-ipc-7d908a5",
+      "why": "checked out in a worktree"
+    },
+    {
+      "branch": "review/deepseek/M2-C1-zcode-7de1cd2",
+      "why": "checked out in a worktree"
+    },
+    {
+      "branch": "review/deepseek/M2-C1-zcode-7de1cd2-r2",
+      "why": "checked out in a worktree"
+    },
+    {
+      "branch": "review/deepseek/M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD-r1",
+      "why": "checked out in a worktree"
+    },
+    {
+      "branch": "review/deepseek/M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD-r2",
+      "why": "checked out in a worktree"
+    },
+    {
+      "branch": "review/deepseek/P02-preflight-r4-083d2b47",
+      "why": "checked out in a worktree"
+    },
+    {
+      "branch": "review/deepseek/P02-preflight-r6-c85a041c",
+      "why": "checked out in a worktree"
+    },
+    {
+      "branch": "review/deepseek/P03-packaged-sfx-entry-6d84b48",
+      "why": "checked out in a worktree"
+    },
+    {
+      "branch": "review/qoder/M2-C1-zcode-7de1cd2",
+      "why": "checked out in a worktree"
+    },
+    {
+      "branch": "zcode/P15",
+      "why": "checked out in a worktree"
+    },
+    {
+      "branch": "zcode/page-nav-projection-1",
+      "why": "checked out in a worktree"
+    }
+  ],
+  "totals": {
+    "deleted": 323,
+    "deleted_merged": 267,
+    "deleted_unmerged": 56,
+    "refused": 0,
+    "skipped": 95
+  }
+}

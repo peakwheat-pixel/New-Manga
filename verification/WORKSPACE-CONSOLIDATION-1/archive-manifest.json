@@ -1,0 +1,775 @@
+{
+  "generated_at": "2026-10-20",
+  "mainline": "antigravity/P09-AC3-DELETE-HARDEN-1",
+  "bundles_dir": "G:\\CODEX\\New Manga.workspace\\archive\\bundles",
+  "archived": [
+    {
+      "branch": "agent/antigravity/P02PRE-R1G",
+      "tag": "archive/agent_antigravity_P02PRE-R1G",
+      "tip": "946938bd0696dfddd01f87d61fe6723c63ecdc86",
+      "unique_commits": 6,
+      "bundle": "<repo>.workspace\\archive\\bundles\\agent_antigravity_P02PRE-R1G.bundle",
+      "bundle_bytes": 40714,
+      "verified": true,
+      "verify_first_line": "The bundle contains this ref:"
+    },
+    {
+      "branch": "agent/antigravity/P02PRE-R1H",
+      "tag": "archive/agent_antigravity_P02PRE-R1H",
+      "tip": "256e3ea622cba7a658020ddcf015b18894d88b38",
+      "unique_commits": 7,
+      "bundle": "<repo>.workspace\\archive\\bundles\\agent_antigravity_P02PRE-R1H.bundle",
+      "bundle_bytes": 51224,
+      "verified": true,
+      "verify_first_line": "The bundle contains this ref:"
+    },
+    {
+      "branch": "agent/antigravity/P02PRE-R1H-H2-COLLECTOR-R3",
+      "tag": "archive/agent_antigravity_P02PRE-R1H-H2-COLLECTOR-R3",
+      "tip": "c763efa27db0f10949a52416f1374e88173a31e2",
+      "unique_commits": 15,
+      "bundle": "<repo>.workspace\\archive\\bundles\\agent_antigravity_P02PRE-R1H-H2-COLLECTOR-R3.bundle",
+      "bundle_bytes": 143934,
+      "verified": true,
+      "verify_first_line": "The bundle contains this ref:"
+    },
+    {
+      "branch": "agent/antigravity/P02PRE-R1H-R6-A4",
+      "tag": "archive/agent_antigravity_P02PRE-R1H-R6-A4",
+      "tip": "c7c7879e8ae90ad23b29d9d8cc6ea97e3eff5427",
+      "unique_commits": 2,
+      "bundle": "<repo>.workspace\\archive\\bundles\\agent_antigravity_P02PRE-R1H-R6-A4.bundle",
+      "bundle_bytes": 27017,
+      "verified": true,
+      "verify_first_line": "The bundle contains this ref:"
+    },
+    {
+      "branch": "agent/antigravity/P22-roundtrip-serialization",
+      "tag": "archive/agent_antigravity_P22-roundtrip-serialization",
+      "tip": "4a707db80499f11e93cee163a9a10bf6392b1a92",
+      "unique_commits": 10,
+      "bundle": "<repo>.workspace\\archive\\bundles\\agent_antigravity_P22-roundtrip-serialization.bundle",
+      "bundle_bytes": 26367,
+      "verified": true,
+      "verify_first_line": "The bundle contains this ref:"
+    },
+    {
+      "branch": "agent/antigravity/T3.2.1-repair-10",
+      "tag": "archive/agent_antigravity_T3.2.1-repair-10",
+      "tip": "d7edea5f00507a8d9601e6a95294695353cbf7f6",
+      "unique_commits": 49,
+      "bundle": "<repo>.workspace\\archive\\bundles\\agent_antigravity_T3.2.1-repair-10.bundle",
+      "bundle_bytes": 513879,
+      "verified": true,
+      "verify_first_line": "The bundle contains this ref:"
+    },
+    {
+      "branch": "agent/antigravity/T3.2.1-repair-11",
+      "tag": "archive/agent_antigravity_T3.2.1-repair-11",
+      "tip": "941dbc89e139a2e24e6b1d17c900e363995decfc",
+      "unique_commits": 53,
+      "bundle": "<repo>.workspace\\archive\\bundles\\agent_antigravity_T3.2.1-repair-11.bundle",
+      "bundle_bytes": 527492,
+      "verified": true,
+      "verify_first_line": "The bundle contains this ref:"
+    },
+    {
+      "branch": "agent/antigravity/T3.2.1-repair-12",
+      "tag": "archive/agent_antigravity_T3.2.1-repair-12",
+      "tip": "8738c41d7215920935e6fa067d3740e69280cdc6",
+      "unique_commits": 54,
+      "bundle": "<repo>.workspace\\archive\\bundles\\agent_antigravity_T3.2.1-repair-12.bundle",
+      "bundle_bytes": 529173,
+      "verified": true,
+      "verify_first_line": "The bundle contains this ref:"
+    },
+    {
+      "branch": "agent/antigravity/T3.2.1-repair-14",
+      "tag": "archive/agent_antigravity_T3.2.1-repair-14",
+      "tip": "2f0d26645a5e3597977859f0624d72f561d38ba1",
+      "unique_commits": 4,
+      "bundle": "<repo>.workspace\\archive\\bundles\\agent_antigravity_T3.2.1-repair-14.bundle",
+      "bundle_bytes": 360243,
+      "verified": true,
+      "verify_first_line": "The bundle contains this ref:"
+    },
+    {
+      "branch": "agent/antigravity/T3.2.1-repair-3",
+      "tag": "archive/agent_antigravity_T3.2.1-repair-3",
+      "tip": "d37088a46f0bdae14b7a068f93bbcec38ffe5bad",
+      "unique_commits": 15,
+      "bundle": "<repo>.workspace\\archive\\bundles\\agent_antigravity_T3.2.1-repair-3.bundle",
+      "bundle_bytes": 322854,
+      "verified": true,
+      "verify_first_line": "The bundle contains this ref:"
+    },
+    {
+      "branch": "agent/antigravity/T3.2.1-repair-4",
+      "tag": "archive/agent_antigravity_T3.2.1-repair-4",
+      "tip": "0e0905f8041743175239183d9c4ab7eabb78cb90",
+      "unique_commits": 19,
+      "bundle": "<repo>.workspace\\archive\\bundles\\agent_antigravity_T3.2.1-repair-4.bundle",
+      "bundle_bytes": 335704,
+      "verified": true,
+      "verify_first_line": "The bundle contains this ref:"
+    },
+    {
+      "branch": "agent/antigravity/T3.2.1-repair-5",
+      "tag": "archive/agent_antigravity_T3.2.1-repair-5",
+      "tip": "297c3dd7d0c977eb22eedefd0ba1ae03d29b64cd",
+      "unique_commits": 25,
+      "bundle": "<repo>.workspace\\archive\\bundles\\agent_antigravity_T3.2.1-repair-5.bundle",
+      "bundle_bytes": 355050,
+      "verified": true,
+      "verify_first_line": "The bundle contains this ref:"
+    },
+    {
+      "branch": "agent/antigravity/T3.2.1-repair-6",
+      "tag": "archive/agent_antigravity_T3.2.1-repair-6",
+      "tip": "14f587c90f6627c0788ec35d5fd72e44ff4806cf",
+      "unique_commits": 30,
+      "bundle": "<repo>.workspace\\archive\\bundles\\agent_antigravity_T3.2.1-repair-6.bundle",
+      "bundle_bytes": 370851,
+      "verified": true,
+      "verify_first_line": "The bundle contains this ref:"
+    },
+    {
+      "branch": "agent/antigravity/T3.2.1-repair-7",
+      "tag": "archive/agent_antigravity_T3.2.1-repair-7",
+      "tip": "37d5488ebf8e33f897e802b4147cbd5fb1ad8e04",
+      "unique_commits": 41,
+      "bundle": "<repo>.workspace\\archive\\bundles\\agent_antigravity_T3.2.1-repair-7.bundle",
+      "bundle_bytes": 442511,
+      "verified": true,
+      "verify_first_line": "The bundle contains this ref:"
+    },
+    {
+      "branch": "agent/antigravity/T3.2.1-repair-9",
+      "tag": "archive/agent_antigravity_T3.2.1-repair-9",
+      "tip": "eeb095ea94cdf0d477bcb09ab7c761883b06f833",
+      "unique_commits": 46,
+      "bundle": "<repo>.workspace\\archive\\bundles\\agent_antigravity_T3.2.1-repair-9.bundle",
+      "bundle_bytes": 497195,
+      "verified": true,
+      "verify_first_line": "The bundle contains this ref:"
+    },
+    {
+      "branch": "agent/antigravity/T3.2.1-windows-packaging",
+      "tag": "archive/agent_antigravity_T3.2.1-windows-packaging",
+      "tip": "ffff7c688df07165c6e801c0c9572e9c4910cb9e",
+      "unique_commits": 8,
+      "bundle": "<repo>.workspace\\archive\\bundles\\agent_antigravity_T3.2.1-windows-packaging.bundle",
+      "bundle_bytes": 304723,
+      "verified": true,
+      "verify_first_line": "The bundle contains this ref:"
+    },
+    {
+      "branch": "agent/codex/M2-C1-typed-ipc-contract",
+      "tag": "archive/agent_codex_M2-C1-typed-ipc-contract",
+      "tip": "86013b34da52e106ad55afc035792e9340c5aee8",
+      "unique_commits": 16,
+      "bundle": "<repo>.workspace\\archive\\bundles\\agent_codex_M2-C1-typed-ipc-contract.bundle",
+      "bundle_bytes": 91298,
+      "verified": true,
+      "verify_first_line": "The bundle contains this ref:"
+    },
+    {
+      "branch": "agent/codex/P02PRE-R1H",
+      "tag": "archive/agent_codex_P02PRE-R1H",
+      "tip": "c1cc26811ea0c7e0690b49e6b8f2edbf4c55987d",
+      "unique_commits": 13,
+      "bundle": "<repo>.workspace\\archive\\bundles\\agent_codex_P02PRE-R1H.bundle",
+      "bundle_bytes": 82595,
+      "verified": true,
+      "verify_first_line": "The bundle contains this ref:"
+    },
+    {
+      "branch": "agent/codex/P02PRE-R1H-FORENSIC-RECOVERY-INTEGRATION",
+      "tag": "archive/agent_codex_P02PRE-R1H-FORENSIC-RECOVERY-INTEGRATION",
+      "tip": "4569093db896b019cfab401e35b66ed4bcea673d",
+      "unique_commits": 3,
+      "bundle": "<repo>.workspace\\archive\\bundles\\agent_codex_P02PRE-R1H-FORENSIC-RECOVERY-INTEGRATION.bundle",
+      "bundle_bytes": 49758,
+      "verified": true,
+      "verify_first_line": "The bundle contains this ref:"
+    },
+    {
+      "branch": "agent/codex/P02PRE-R1H-H1-CURRENT-INPUT-REVIEW",
+      "tag": "archive/agent_codex_P02PRE-R1H-H1-CURRENT-INPUT-REVIEW",
+      "tip": "a6f33f7be1fc13cca64539ecaaa4bd9528a0184e",
+      "unique_commits": 4,
+      "bundle": "<repo>.workspace\\archive\\bundles\\agent_codex_P02PRE-R1H-H1-CURRENT-INPUT-REVIEW.bundle",
+      "bundle_bytes": 57855,
+      "verified": true,
+      "verify_first_line": "The bundle contains this ref:"
+    },
+    {
+      "branch": "agent/codex/P02PRE-R1H-H2-RUN-INTEGRATION",
+      "tag": "archive/agent_codex_P02PRE-R1H-H2-RUN-INTEGRATION",
+      "tip": "06990b7993d042ae5e74ab479e291e494b622588",
+      "unique_commits": 3,
+      "bundle": "<repo>.workspace\\archive\\bundles\\agent_codex_P02PRE-R1H-H2-RUN-INTEGRATION.bundle",
+      "bundle_bytes": 42726,
+      "verified": true,
+      "verify_first_line": "The bundle contains this ref:"
+    },
+    {
+      "branch": "agent/codex/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE",
+      "tag": "archive/agent_codex_P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE",
+      "tip": "23bec747df77e67e93ec1fa9fd859d077219e941",
+      "unique_commits": 18,
+      "bundle": "<repo>.workspace\\archive\\bundles\\agent_codex_P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE.bundle",
+      "bundle_bytes": 72817,
+      "verified": true,
+      "verify_first_line": "The bundle contains this ref:"
+    },
+    {
+      "branch": "agent/codex/T1.2.1-integration",
+      "tag": "archive/agent_codex_T1.2.1-integration",
+      "tip": "0b4e4342e94576a23a20d2861a045d42ab911005",
+      "unique_commits": 2,
+      "bundle": "<repo>.workspace\\archive\\bundles\\agent_codex_T1.2.1-integration.bundle",
+      "bundle_bytes": 2000,
+      "verified": true,
+      "verify_first_line": "The bundle contains this ref:"
+    },
+    {
+      "branch": "agent/codex/TASK-013-production-pipeline-seam",
+      "tag": "archive/agent_codex_TASK-013-production-pipeline-seam",
+      "tip": "0eb49ae7fb3b4429877f2d704ff410d061600d55",
+      "unique_commits": 2,
+      "bundle": "<repo>.workspace\\archive\\bundles\\agent_codex_TASK-013-production-pipeline-seam.bundle",
+      "bundle_bytes": 3272,
+      "verified": true,
+      "verify_first_line": "The bundle contains this ref:"
+    },
+    {
+      "branch": "agent/deepseek/M2-PACKAGED-AC1-DLL-DIAG",
+      "tag": "archive/agent_deepseek_M2-PACKAGED-AC1-DLL-DIAG",
+      "tip": "c2bde356554c37520bd87d0bc13791a748250133",
+      "unique_commits": 1,
+      "bundle": "<repo>.workspace\\archive\\bundles\\agent_deepseek_M2-PACKAGED-AC1-DLL-DIAG.bundle",
+      "bundle_bytes": 2204,
+      "verified": true,
+      "verify_first_line": "The bundle contains this ref:"
+    },
+    {
+      "branch": "agent/deepseek/T1.1.1-detector-evaluation",
+      "tag": "archive/agent_deepseek_T1.1.1-detector-evaluation",
+      "tip": "ed607b755e68e478914f7106ac903cef909cb080",
+      "unique_commits": 1,
+      "bundle": "<repo>.workspace\\archive\\bundles\\agent_deepseek_T1.1.1-detector-evaluation.bundle",
+      "bundle_bytes": 92535,
+      "verified": true,
+      "verify_first_line": "The bundle contains this ref:"
+    },
+    {
+      "branch": "agent/deepseek/T3.2.1-review-740503e",
+      "tag": "archive/agent_deepseek_T3.2.1-review-740503e",
+      "tip": "60d1d5035e32b0709c00f2ab0fdde844e2acee9e",
+      "unique_commits": 1,
+      "bundle": "<repo>.workspace\\archive\\bundles\\agent_deepseek_T3.2.1-review-740503e.bundle",
+      "bundle_bytes": 57086,
+      "verified": true,
+      "verify_first_line": "The bundle contains this ref:"
+    },
+    {
+      "branch": "agent/deepseek/T3.2.1-review-7d687f5",
+      "tag": "archive/agent_deepseek_T3.2.1-review-7d687f5",
+      "tip": "4613338815406be0fdf2240cb1e5715a619f61f7",
+      "unique_commits": 1,
+      "bundle": "<repo>.workspace\\archive\\bundles\\agent_deepseek_T3.2.1-review-7d687f5.bundle",
+      "bundle_bytes": 52290,
+      "verified": true,
+      "verify_first_line": "The bundle contains this ref:"
+    },
+    {
+      "branch": "agent/deepseek/T3.2.1-review-92c9307c",
+      "tag": "archive/agent_deepseek_T3.2.1-review-92c9307c",
+      "tip": "48bc7f36b67fa73d3b5badbc4f0d079aa11bb29f",
+      "unique_commits": 1,
+      "bundle": "<repo>.workspace\\archive\\bundles\\agent_deepseek_T3.2.1-review-92c9307c.bundle",
+      "bundle_bytes": 65759,
+      "verified": true,
+      "verify_first_line": "The bundle contains this ref:"
+    },
+    {
+      "branch": "agent/deepseek/T3.2.1-review-9622395",
+      "tag": "archive/agent_deepseek_T3.2.1-review-9622395",
+      "tip": "4f2f8a07e5b8119834cdc4cfd0fd0aa5c62ac4cc",
+      "unique_commits": 53,
+      "bundle": "<repo>.workspace\\archive\\bundles\\agent_deepseek_T3.2.1-review-9622395.bundle",
+      "bundle_bytes": 536302,
+      "verified": true,
+      "verify_first_line": "The bundle contains this ref:"
+    },
+    {
+      "branch": "agent/deepseek/T3.2.1-review-a2f6695",
+      "tag": "archive/agent_deepseek_T3.2.1-review-a2f6695",
+      "tip": "a6564862649b00fd91fa4e4ea8a2f64205eb71b7",
+      "unique_commits": 54,
+      "bundle": "<repo>.workspace\\archive\\bundles\\agent_deepseek_T3.2.1-review-a2f6695.bundle",
+      "bundle_bytes": 532828,
+      "verified": true,
+      "verify_first_line": "The bundle contains this ref:"
+    },
+    {
+      "branch": "agent/deepseek/T3.2.1-review-be5200e",
+      "tag": "archive/agent_deepseek_T3.2.1-review-be5200e",
+      "tip": "ddc21a2f3cf5521675e95d6e2a8f8f50b1c065fb",
+      "unique_commits": 49,
+      "bundle": "<repo>.workspace\\archive\\bundles\\agent_deepseek_T3.2.1-review-be5200e.bundle",
+      "bundle_bytes": 514785,
+      "verified": true,
+      "verify_first_line": "The bundle contains this ref:"
+    },
+    {
+      "branch": "agent/deepseek/T3.2.1-review-cdc0b6f",
+      "tag": "archive/agent_deepseek_T3.2.1-review-cdc0b6f",
+      "tip": "54bf043379363cacca3da5310eb1ecb371f62407",
+      "unique_commits": 6,
+      "bundle": "<repo>.workspace\\archive\\bundles\\agent_deepseek_T3.2.1-review-cdc0b6f.bundle",
+      "bundle_bytes": 300539,
+      "verified": true,
+      "verify_first_line": "The bundle contains this ref:"
+    },
+    {
+      "branch": "agent/deepseek/T3.2.1-review-d2bf6a8",
+      "tag": "archive/agent_deepseek_T3.2.1-review-d2bf6a8",
+      "tip": "85f8c59d0a012c1edc4e466187b5b42515297d74",
+      "unique_commits": 46,
+      "bundle": "<repo>.workspace\\archive\\bundles\\agent_deepseek_T3.2.1-review-d2bf6a8.bundle",
+      "bundle_bytes": 509429,
+      "verified": true,
+      "verify_first_line": "The bundle contains this ref:"
+    },
+    {
+      "branch": "agent/deepseek/T3.2.1-review-d79d7dd",
+      "tag": "archive/agent_deepseek_T3.2.1-review-d79d7dd",
+      "tip": "54f2627196969309d5c3942caf19ccec6c6ab7b5",
+      "unique_commits": 14,
+      "bundle": "<repo>.workspace\\archive\\bundles\\agent_deepseek_T3.2.1-review-d79d7dd.bundle",
+      "bundle_bytes": 331458,
+      "verified": true,
+      "verify_first_line": "The bundle contains this ref:"
+    },
+    {
+      "branch": "agent/deepseek/T3.2.1-review-f39ddc0",
+      "tag": "archive/agent_deepseek_T3.2.1-review-f39ddc0",
+      "tip": "dc199f607c407adce40d303cb182b28f9a76a1db",
+      "unique_commits": 1,
+      "bundle": "<repo>.workspace\\archive\\bundles\\agent_deepseek_T3.2.1-review-f39ddc0.bundle",
+      "bundle_bytes": 61041,
+      "verified": true,
+      "verify_first_line": "The bundle contains this ref:"
+    },
+    {
+      "branch": "agent/deepseek/T3.2.1-review-f6dc383",
+      "tag": "archive/agent_deepseek_T3.2.1-review-f6dc383",
+      "tip": "82049145f5dae7e36c6e4f8b71b0b959995ed0c7",
+      "unique_commits": 31,
+      "bundle": "<repo>.workspace\\archive\\bundles\\agent_deepseek_T3.2.1-review-f6dc383.bundle",
+      "bundle_bytes": 390798,
+      "verified": true,
+      "verify_first_line": "The bundle contains this ref:"
+    },
+    {
+      "branch": "agent/deepseek/T3.2.1-review-repair-14",
+      "tag": "archive/agent_deepseek_T3.2.1-review-repair-14",
+      "tip": "430193968b01022b52edb72b4d6615e3e836e181",
+      "unique_commits": 3,
+      "bundle": "<repo>.workspace\\archive\\bundles\\agent_deepseek_T3.2.1-review-repair-14.bundle",
+      "bundle_bytes": 23949,
+      "verified": true,
+      "verify_first_line": "The bundle contains this ref:"
+    },
+    {
+      "branch": "agent/deepseek/T3.2.1-review-repair-14-r2",
+      "tag": "archive/agent_deepseek_T3.2.1-review-repair-14-r2",
+      "tip": "f616175e24229c4fbcffb0145e10764e0c7f93df",
+      "unique_commits": 5,
+      "bundle": "<repo>.workspace\\archive\\bundles\\agent_deepseek_T3.2.1-review-repair-14-r2.bundle",
+      "bundle_bytes": 369775,
+      "verified": true,
+      "verify_first_line": "The bundle contains this ref:"
+    },
+    {
+      "branch": "agent/deepseek/T3.2.1-review-repair-7",
+      "tag": "archive/agent_deepseek_T3.2.1-review-repair-7",
+      "tip": "2585efd69009cd7620c6b020e67df90c7d49b0f1",
+      "unique_commits": 6,
+      "bundle": "<repo>.workspace\\archive\\bundles\\agent_deepseek_T3.2.1-review-repair-7.bundle",
+      "bundle_bytes": 132212,
+      "verified": true,
+      "verify_first_line": "The bundle contains this ref:"
+    },
+    {
+      "branch": "agent/deepseek/TASK-004-review",
+      "tag": "archive/agent_deepseek_TASK-004-review",
+      "tip": "020c2859b601dedf53c0bc1c822f75f55dae5a2a",
+      "unique_commits": 1,
+      "bundle": "<repo>.workspace\\archive\\bundles\\agent_deepseek_TASK-004-review.bundle",
+      "bundle_bytes": 4902,
+      "verified": true,
+      "verify_first_line": "The bundle contains this ref:"
+    },
+    {
+      "branch": "agent/deepseek/TASK-015-posthoc",
+      "tag": "archive/agent_deepseek_TASK-015-posthoc",
+      "tip": "9b776853787ed22bd18082057cc0c4895a9c0f40",
+      "unique_commits": 1,
+      "bundle": "<repo>.workspace\\archive\\bundles\\agent_deepseek_TASK-015-posthoc.bundle",
+      "bundle_bytes": 3667,
+      "verified": true,
+      "verify_first_line": "The bundle contains this ref:"
+    },
+    {
+      "branch": "agent/deepseek/TASK-017-posthoc",
+      "tag": "archive/agent_deepseek_TASK-017-posthoc",
+      "tip": "fb0bc400709665e1fcc998d42cd367a696fb5030",
+      "unique_commits": 1,
+      "bundle": "<repo>.workspace\\archive\\bundles\\agent_deepseek_TASK-017-posthoc.bundle",
+      "bundle_bytes": 3919,
+      "verified": true,
+      "verify_first_line": "The bundle contains this ref:"
+    },
+    {
+      "branch": "agent/deepseek/TASK-024-posthoc",
+      "tag": "archive/agent_deepseek_TASK-024-posthoc",
+      "tip": "9454cecf7be07ff12dda8734dfc73fb7e9aa3fdd",
+      "unique_commits": 1,
+      "bundle": "<repo>.workspace\\archive\\bundles\\agent_deepseek_TASK-024-posthoc.bundle",
+      "bundle_bytes": 4976,
+      "verified": true,
+      "verify_first_line": "The bundle contains this ref:"
+    },
+    {
+      "branch": "agent/qoder/T1.1.2-region-canvas",
+      "tag": "archive/agent_qoder_T1.1.2-region-canvas",
+      "tip": "52de319a4d9cb03ab591736438ac9ca1a3e0f720",
+      "unique_commits": 2,
+      "bundle": "<repo>.workspace\\archive\\bundles\\agent_qoder_T1.1.2-region-canvas.bundle",
+      "bundle_bytes": 8002,
+      "verified": true,
+      "verify_first_line": "The bundle contains this ref:"
+    },
+    {
+      "branch": "agent/qoder/T2.2.1-reader-workbench-qml",
+      "tag": "archive/agent_qoder_T2.2.1-reader-workbench-qml",
+      "tip": "08465739ae92d7175a77d00053abe598bb150bae",
+      "unique_commits": 5,
+      "bundle": "<repo>.workspace\\archive\\bundles\\agent_qoder_T2.2.1-reader-workbench-qml.bundle",
+      "bundle_bytes": 13163,
+      "verified": true,
+      "verify_first_line": "The bundle contains this ref:"
+    },
+    {
+      "branch": "agent/qoder/T3.2.1-repair-13",
+      "tag": "archive/agent_qoder_T3.2.1-repair-13",
+      "tip": "8738c41d7215920935e6fa067d3740e69280cdc6",
+      "unique_commits": 54,
+      "bundle": "<repo>.workspace\\archive\\bundles\\agent_qoder_T3.2.1-repair-13.bundle",
+      "bundle_bytes": 529167,
+      "verified": true,
+      "verify_first_line": "The bundle contains this ref:"
+    },
+    {
+      "branch": "agent/qoder/TASK-047-ui-ux-gui-design",
+      "tag": "archive/agent_qoder_TASK-047-ui-ux-gui-design",
+      "tip": "980ae7df716a0a1b40a060cb3d028cd250e93cbc",
+      "unique_commits": 9,
+      "bundle": "<repo>.workspace\\archive\\bundles\\agent_qoder_TASK-047-ui-ux-gui-design.bundle",
+      "bundle_bytes": 6867697,
+      "verified": true,
+      "verify_first_line": "The bundle contains this ref:"
+    },
+    {
+      "branch": "agent/qoder/TASK-061-review",
+      "tag": "archive/agent_qoder_TASK-061-review",
+      "tip": "be995446db5a3309adcc81ee0e8779abcc79f65e",
+      "unique_commits": 4,
+      "bundle": "<repo>.workspace\\archive\\bundles\\agent_qoder_TASK-061-review.bundle",
+      "bundle_bytes": 71291,
+      "verified": true,
+      "verify_first_line": "The bundle contains this ref:"
+    },
+    {
+      "branch": "agent/zcode/M2-I1-core-assembly-seam",
+      "tag": "archive/agent_zcode_M2-I1-core-assembly-seam",
+      "tip": "8dab0abbc667e09054616d4f0b0f5a76b1a04d9e",
+      "unique_commits": 1,
+      "bundle": "<repo>.workspace\\archive\\bundles\\agent_zcode_M2-I1-core-assembly-seam.bundle",
+      "bundle_bytes": 7927,
+      "verified": true,
+      "verify_first_line": "The bundle contains this ref:"
+    },
+    {
+      "branch": "agent/zcode/P02-NEW-TIME-BASELINE",
+      "tag": "archive/agent_zcode_P02-NEW-TIME-BASELINE",
+      "tip": "7ab5b7d0574041f2ca9fa1424ca5b440ff298aaf",
+      "unique_commits": 60,
+      "bundle": "<repo>.workspace\\archive\\bundles\\agent_zcode_P02-NEW-TIME-BASELINE.bundle",
+      "bundle_bytes": 404205,
+      "verified": true,
+      "verify_first_line": "The bundle contains this ref:"
+    },
+    {
+      "branch": "agent/zcode/P02-NEW-TIME-BASELINE-AC3-BRANCH-RESOLUTION",
+      "tag": "archive/agent_zcode_P02-NEW-TIME-BASELINE-AC3-BRANCH-RESOLUTION",
+      "tip": "10c35daed241aa3717b248da14c1b9b959ff1fba",
+      "unique_commits": 31,
+      "bundle": "<repo>.workspace\\archive\\bundles\\agent_zcode_P02-NEW-TIME-BASELINE-AC3-BRANCH-RESOLUTION.bundle",
+      "bundle_bytes": 204649,
+      "verified": true,
+      "verify_first_line": "The bundle contains this ref:"
+    },
+    {
+      "branch": "agent/zcode/P02-NEW-TIME-BASELINE-AC3-GIT-TOPLEVEL-RESOLUTION",
+      "tag": "archive/agent_zcode_P02-NEW-TIME-BASELINE-AC3-GIT-TOPLEVEL-RESOLUTION",
+      "tip": "0af8980884e9d027042ef145cd966577d86b5bc5",
+      "unique_commits": 78,
+      "bundle": "<repo>.workspace\\archive\\bundles\\agent_zcode_P02-NEW-TIME-BASELINE-AC3-GIT-TOPLEVEL-RESOLUTION.bundle",
+      "bundle_bytes": 403637,
+      "verified": true,
+      "verify_first_line": "The bundle contains this ref:"
+    },
+    {
+      "branch": "agent/zcode/P02-NEW-TIME-BASELINE-AC3-HELPER-OUTPUT-RESOLUTION",
+      "tag": "archive/agent_zcode_P02-NEW-TIME-BASELINE-AC3-HELPER-OUTPUT-RESOLUTION",
+      "tip": "14da1e814931e1e32ebc1f76a12bc3685b63646e",
+      "unique_commits": 43,
+      "bundle": "<repo>.workspace\\archive\\bundles\\agent_zcode_P02-NEW-TIME-BASELINE-AC3-HELPER-OUTPUT-RESOLUTION.bundle",
+      "bundle_bytes": 275085,
+      "verified": true,
+      "verify_first_line": "The bundle contains this ref:"
+    },
+    {
+      "branch": "agent/zcode/P02PRE-R1H",
+      "tag": "archive/agent_zcode_P02PRE-R1H",
+      "tip": "256e3ea622cba7a658020ddcf015b18894d88b38",
+      "unique_commits": 7,
+      "bundle": "<repo>.workspace\\archive\\bundles\\agent_zcode_P02PRE-R1H.bundle",
+      "bundle_bytes": 51218,
+      "verified": true,
+      "verify_first_line": "The bundle contains this ref:"
+    },
+    {
+      "branch": "agent/zcode/P02PRE-R1H-H2-COLLECTOR",
+      "tag": "archive/agent_zcode_P02PRE-R1H-H2-COLLECTOR",
+      "tip": "4a90d820a5d58a54cbc190665fbd87d563bc19af",
+      "unique_commits": 4,
+      "bundle": "<repo>.workspace\\archive\\bundles\\agent_zcode_P02PRE-R1H-H2-COLLECTOR.bundle",
+      "bundle_bytes": 67475,
+      "verified": true,
+      "verify_first_line": "The bundle contains this ref:"
+    },
+    {
+      "branch": "agent/zcode/T1.2.1-settings-ui-viewmodel",
+      "tag": "archive/agent_zcode_T1.2.1-settings-ui-viewmodel",
+      "tip": "b8a8841449135320337c9bc9736f85b695d8ab2a",
+      "unique_commits": 1,
+      "bundle": "<repo>.workspace\\archive\\bundles\\agent_zcode_T1.2.1-settings-ui-viewmodel.bundle",
+      "bundle_bytes": 1221,
+      "verified": true,
+      "verify_first_line": "The bundle contains this ref:"
+    },
+    {
+      "branch": "agent/zcode/T2.2.1-reader-workbench-polish",
+      "tag": "archive/agent_zcode_T2.2.1-reader-workbench-polish",
+      "tip": "df637df1f9d6e8468bc73d6ff585bbf55e8e9a64",
+      "unique_commits": 1,
+      "bundle": "<repo>.workspace\\archive\\bundles\\agent_zcode_T2.2.1-reader-workbench-polish.bundle",
+      "bundle_bytes": 1447,
+      "verified": true,
+      "verify_first_line": "The bundle contains this ref:"
+    },
+    {
+      "branch": "agent/zcode/T3.2.1-repair-13",
+      "tag": "archive/agent_zcode_T3.2.1-repair-13",
+      "tip": "13ae23f65e963cf1d5aea19634572627e5e709db",
+      "unique_commits": 64,
+      "bundle": "<repo>.workspace\\archive\\bundles\\agent_zcode_T3.2.1-repair-13.bundle",
+      "bundle_bytes": 2257799,
+      "verified": true,
+      "verify_first_line": "The bundle contains this ref:"
+    },
+    {
+      "branch": "agent/zcode/TASK-045-posthoc",
+      "tag": "archive/agent_zcode_TASK-045-posthoc",
+      "tip": "8b47b2efd05b86f6bdef2f251f3365c5fb812998",
+      "unique_commits": 1,
+      "bundle": "<repo>.workspace\\archive\\bundles\\agent_zcode_TASK-045-posthoc.bundle",
+      "bundle_bytes": 4180,
+      "verified": true,
+      "verify_first_line": "The bundle contains this ref:"
+    },
+    {
+      "branch": "codex/FEAT-CREATE-1",
+      "tag": "archive/codex_FEAT-CREATE-1",
+      "tip": "c96958172de8f8a3f3563da43a9fef09ac4447ba",
+      "unique_commits": 3,
+      "bundle": "<repo>.workspace\\archive\\bundles\\codex_FEAT-CREATE-1.bundle",
+      "bundle_bytes": 8602,
+      "verified": true,
+      "verify_first_line": "The bundle contains this ref:"
+    },
+    {
+      "branch": "codex/P02-fallback-scope",
+      "tag": "archive/codex_P02-fallback-scope",
+      "tip": "0b95c6a1024f89ae341c637c0d531611175acdc5",
+      "unique_commits": 1,
+      "bundle": "<repo>.workspace\\archive\\bundles\\codex_P02-fallback-scope.bundle",
+      "bundle_bytes": 3152,
+      "verified": true,
+      "verify_first_line": "The bundle contains this ref:"
+    },
+    {
+      "branch": "codex/P02-hook-cache-isolation-plan",
+      "tag": "archive/codex_P02-hook-cache-isolation-plan",
+      "tip": "ceca2446da88df23a719f40868cc89e1481ccb2c",
+      "unique_commits": 7,
+      "bundle": "<repo>.workspace\\archive\\bundles\\codex_P02-hook-cache-isolation-plan.bundle",
+      "bundle_bytes": 293157,
+      "verified": true,
+      "verify_first_line": "The bundle contains this ref:"
+    },
+    {
+      "branch": "codex/P14",
+      "tag": "archive/codex_P14",
+      "tip": "41c3206942730536bc9b41e871f23ad9b3de3f1d",
+      "unique_commits": 2,
+      "bundle": "<repo>.workspace\\archive\\bundles\\codex_P14.bundle",
+      "bundle_bytes": 10464,
+      "verified": true,
+      "verify_first_line": "The bundle contains this ref:"
+    },
+    {
+      "branch": "codex/P15-C1-FU2",
+      "tag": "archive/codex_P15-C1-FU2",
+      "tip": "0aa01eddcd751adf9c4d2e3894f4cce9ec657909",
+      "unique_commits": 2,
+      "bundle": "<repo>.workspace\\archive\\bundles\\codex_P15-C1-FU2.bundle",
+      "bundle_bytes": 1629,
+      "verified": true,
+      "verify_first_line": "The bundle contains this ref:"
+    },
+    {
+      "branch": "codex/T3.2.1-release-gate-closeout",
+      "tag": "archive/codex_T3.2.1-release-gate-closeout",
+      "tip": "188d72a9d144b8cab16f77757abc46318ac8e5e6",
+      "unique_commits": 50,
+      "bundle": "<repo>.workspace\\archive\\bundles\\codex_T3.2.1-release-gate-closeout.bundle",
+      "bundle_bytes": 514280,
+      "verified": true,
+      "verify_first_line": "The bundle contains this ref:"
+    },
+    {
+      "branch": "codex/integration-p02pre-r1h-p2-1-external-harness-trace",
+      "tag": "archive/codex_integration-p02pre-r1h-p2-1-external-harness-trace",
+      "tip": "23bec747df77e67e93ec1fa9fd859d077219e941",
+      "unique_commits": 18,
+      "bundle": "<repo>.workspace\\archive\\bundles\\codex_integration-p02pre-r1h-p2-1-external-harness-trace.bundle",
+      "bundle_bytes": 72823,
+      "verified": true,
+      "verify_first_line": "The bundle contains this ref:"
+    },
+    {
+      "branch": "codex/project-roadmap-rebaseline",
+      "tag": "archive/codex_project-roadmap-rebaseline",
+      "tip": "000cbfe9909c3eb566fd4d077c77199ce4d7c86e",
+      "unique_commits": 1,
+      "bundle": "<repo>.workspace\\archive\\bundles\\codex_project-roadmap-rebaseline.bundle",
+      "bundle_bytes": 359727,
+      "verified": true,
+      "verify_first_line": "The bundle contains this ref:"
+    },
+    {
+      "branch": "codex/rebaseline-audit-20260921",
+      "tag": "archive/codex_rebaseline-audit-20260921",
+      "tip": "17ba1335d6dbf6810d8d0a684385e239a75f7b49",
+      "unique_commits": 1,
+      "bundle": "<repo>.workspace\\archive\\bundles\\codex_rebaseline-audit-20260921.bundle",
+      "bundle_bytes": 10833,
+      "verified": true,
+      "verify_first_line": "The bundle contains this ref:"
+    },
+    {
+      "branch": "dsh/GOV-PIN-LINEAGE-1",
+      "tag": "archive/dsh_GOV-PIN-LINEAGE-1",
+      "tip": "60d47991baea777996313d2cf1a335c136fb1ba0",
+      "unique_commits": 2,
+      "bundle": "<repo>.workspace\\archive\\bundles\\dsh_GOV-PIN-LINEAGE-1.bundle",
+      "bundle_bytes": 65954,
+      "verified": true,
+      "verify_first_line": "The bundle contains this ref:"
+    },
+    {
+      "branch": "master",
+      "tag": "archive/master",
+      "tip": "78faeee583600c51740200efd0e05776d6f2cf96",
+      "unique_commits": 3,
+      "bundle": "<repo>.workspace\\archive\\bundles\\master.bundle",
+      "bundle_bytes": 12918,
+      "verified": true,
+      "verify_first_line": "The bundle contains this ref:"
+    },
+    {
+      "branch": "review/deepseek/M2-C1-typed-ipc-7d908a5",
+      "tag": "archive/review_deepseek_M2-C1-typed-ipc-7d908a5",
+      "tip": "e6fc3a59b913f2aef1ab8c7a77ff47df0cd114a1",
+      "unique_commits": 4,
+      "bundle": "<repo>.workspace\\archive\\bundles\\review_deepseek_M2-C1-typed-ipc-7d908a5.bundle",
+      "bundle_bytes": 38591,
+      "verified": true,
+      "verify_first_line": "The bundle contains this ref:"
+    },
+    {
+      "branch": "review/deepseek/M2-C1-typed-ipc-r2-7e65f4f",
+      "tag": "archive/review_deepseek_M2-C1-typed-ipc-r2-7e65f4f",
+      "tip": "5386744720061d1e411356d2004c5e3ae6ccb6fd",
+      "unique_commits": 12,
+      "bundle": "<repo>.workspace\\archive\\bundles\\review_deepseek_M2-C1-typed-ipc-r2-7e65f4f.bundle",
+      "bundle_bytes": 94658,
+      "verified": true,
+      "verify_first_line": "The bundle contains this ref:"
+    },
+    {
+      "branch": "review/deepseek/M2-C1-typed-ipc-r3-4d66523",
+      "tag": "archive/review_deepseek_M2-C1-typed-ipc-r3-4d66523",
+      "tip": "ac38dede84ff22290c9b9d579c1372c8184a7bd5",
+      "unique_commits": 14,
+      "bundle": "<repo>.workspace\\archive\\bundles\\review_deepseek_M2-C1-typed-ipc-r3-4d66523.bundle",
+      "bundle_bytes": 77567,
+      "verified": true,
+      "verify_first_line": "The bundle contains this ref:"
+    },
+    {
+      "branch": "review/deepseek/M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD-r2",
+      "tag": "archive/review_deepseek_M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD-r2",
+      "tip": "daab1996b99c7036108bc505cc3db29b744fdf9d",
+      "unique_commits": 1,
+      "bundle": "<repo>.workspace\\archive\\bundles\\review_deepseek_M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD-r2.bundle",
+      "bundle_bytes": 17173,
+      "verified": true,
+      "verify_first_line": "The bundle contains this ref:"
+    },
+    {
+      "branch": "review/qoder/M2-C1-typed-ipc-r3-4d66523",
+      "tag": "archive/review_qoder_M2-C1-typed-ipc-r3-4d66523",
+      "tip": "1950a23619ae489ecc88209593eac75546d61105",
+      "unique_commits": 15,
+      "bundle": "<repo>.workspace\\archive\\bundles\\review_qoder_M2-C1-typed-ipc-r3-4d66523.bundle",
+      "bundle_bytes": 115314,
+      "verified": true,
+      "verify_first_line": "The bundle contains this ref:"
+    }
+  ],
+  "failed": [],
+  "totals": {
+    "branches": 76,
+    "archived_ok": 76,
+    "failed": 0,
+    "bundle_bytes": 22106711,
+    "unique_commits": 1223
+  }
+}

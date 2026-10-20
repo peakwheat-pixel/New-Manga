@@ -1,0 +1,6026 @@
+{
+  "generated_at": "2026-10-20",
+  "mainline": "antigravity/P09-AC3-DELETE-HARDEN-1",
+  "head": "62303a5766f3596a1cc1c082ea1a077cfa1a79ad",
+  "counts": {
+    "branches": 418,
+    "merged": 342,
+    "unmerged": 76,
+    "worktrees": 213,
+    "protected_worktree_names": 57
+  },
+  "branches": [
+    {
+      "branch": "GOV-PLAN-BUDGET-1",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-10-19",
+      "checked_out_at": [
+        "G:/CODEX/New Manga/.agents/worktrees/GOV-PLAN-BUDGET-1"
+      ],
+      "is_mainline": false
+    },
+    {
+      "branch": "GOV-RESOURCE-MANIFEST-JSON-1",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-10-19",
+      "checked_out_at": [
+        "G:/CODEX/New Manga/.agents/worktrees/GOV-RESOURCE-MANIFEST-JSON-1"
+      ],
+      "is_mainline": false
+    },
+    {
+      "branch": "GOV-RESOURCE-MANIFEST-SAME-LOCATION-1",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-10-20",
+      "checked_out_at": [
+        "G:/CODEX/New Manga/.agents/worktrees/GOV-RESOURCE-MANIFEST-SAME-LOCATION-1"
+      ],
+      "is_mainline": false
+    },
+    {
+      "branch": "P19-UI-MANIFEST-VIEW-1",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-10-20",
+      "checked_out_at": [
+        "G:/CODEX/New Manga/.agents/worktrees/P19-UI-MANIFEST-VIEW-1"
+      ],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/antigravity/DETECT-TILING-1",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-10-20",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/antigravity/EVENTS-FWD-1",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-10-16",
+      "checked_out_at": [
+        "G:/CODEX/New Manga.workspace/worktrees/EVENTS-FWD-1"
+      ],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/antigravity/EXPORT-IPC-1",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-10-16",
+      "checked_out_at": [
+        "G:/CODEX/New Manga.workspace/worktrees/EXPORT-IPC-1"
+      ],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/antigravity/M2-I2-qtfree-logic-extraction",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-09-25",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/antigravity/M2-IPC1-production-core-library",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-09-28",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/antigravity/M2-P1-regionless-region-rebinding",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-09-28",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/antigravity/M2-PACKAGED-AC1-ICU-ISOLATION-FIX",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-10-08",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/antigravity/M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-10-08",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/antigravity/M2-S2-review-fbdf1bc2",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-09-26",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/antigravity/M2-UI1-review-23a5ac0",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-09-25",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/antigravity/P02-NEW-TIME-X6-AC1-AC7",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-10-15",
+      "checked_out_at": [
+        "G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-X6-AC1-AC7-ANTIGRAVITY"
+      ],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/antigravity/P02-NEW-TIME-X6-BUILD-CARGO",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-10-14",
+      "checked_out_at": [
+        "G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-X6-BUILD-CARGO"
+      ],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/antigravity/P02-real-webview-harness",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-10-09",
+      "checked_out_at": [
+        "G:/CODEX/New Manga.worktrees/P02-real-webview-harness-antigravity"
+      ],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/antigravity/P02PRE-R1G",
+      "merged": false,
+      "unique_commits": 6,
+      "tip_date": "2026-10-12",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/antigravity/P02PRE-R1H",
+      "merged": false,
+      "unique_commits": 7,
+      "tip_date": "2026-10-12",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/antigravity/P02PRE-R1H-H2-COLLECTOR-R3",
+      "merged": false,
+      "unique_commits": 15,
+      "tip_date": "2026-10-13",
+      "checked_out_at": [
+        "G:/CODEX/New Manga.workspace/worktrees/P02PRE-R1H-H2-COLLECTOR-ANTIGRAVITY-R3"
+      ],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/antigravity/P02PRE-R1H-R6-A4",
+      "merged": false,
+      "unique_commits": 2,
+      "tip_date": "2026-10-12",
+      "checked_out_at": [
+        "C:/Users/49745/.codex/worktrees/p02pre-r1h-r6-attempt4-antigravity"
+      ],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/antigravity/P02PRE-R1H-R6-EXEC-A6",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-10-12",
+      "checked_out_at": [
+        "C:/Users/49745/.codex/worktrees/p02pre-r1h-r6-exec-a6-antigravity/New Manga"
+      ],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/antigravity/P03-packaged-sfx-entry",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-10-09",
+      "checked_out_at": [
+        "G:/CODEX/New Manga.worktrees/P03-packaged-sfx-entry-antigravity"
+      ],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/antigravity/P04-prod-command-concurrency",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-10-15",
+      "checked_out_at": [
+        "G:/CODEX/New Manga.worktrees/P04-prod-command-concurrency-antigravity"
+      ],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/antigravity/P12-bookshelf-ui",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-10-16",
+      "checked_out_at": [
+        "G:/CODEX/New Manga.workspace/worktrees/P12"
+      ],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/antigravity/P17",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-10-16",
+      "checked_out_at": [
+        "G:/CODEX/New Manga.workspace/worktrees/P17"
+      ],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/antigravity/P22-roundtrip-serialization",
+      "merged": false,
+      "unique_commits": 10,
+      "tip_date": "2026-10-10",
+      "checked_out_at": [
+        "G:/CODEX/New Manga.worktrees/P22-roundtrip-serialization-antigravity"
+      ],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/antigravity/T3.1.1-storage-sqlite",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-09-22",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/antigravity/T3.2.1-repair-10",
+      "merged": false,
+      "unique_commits": 49,
+      "tip_date": "2026-09-24",
+      "checked_out_at": [
+        "G:/CODEX/New Manga.worktrees/T3.2.1-antigravity-repair-10"
+      ],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/antigravity/T3.2.1-repair-11",
+      "merged": false,
+      "unique_commits": 53,
+      "tip_date": "2026-09-24",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/antigravity/T3.2.1-repair-12",
+      "merged": false,
+      "unique_commits": 54,
+      "tip_date": "2026-09-24",
+      "checked_out_at": [
+        "G:/CODEX/New Manga.worktrees/T3.2.1-antigravity-repair-11"
+      ],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/antigravity/T3.2.1-repair-14",
+      "merged": false,
+      "unique_commits": 4,
+      "tip_date": "2026-09-25",
+      "checked_out_at": [
+        "G:/CODEX/New Manga.worktrees/T3.2.1-antigravity-repair-14"
+      ],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/antigravity/T3.2.1-repair-3",
+      "merged": false,
+      "unique_commits": 15,
+      "tip_date": "2026-09-23",
+      "checked_out_at": [
+        "G:/CODEX/New Manga.worktrees/T3.2.1-antigravity-repair-3"
+      ],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/antigravity/T3.2.1-repair-4",
+      "merged": false,
+      "unique_commits": 19,
+      "tip_date": "2026-09-23",
+      "checked_out_at": [
+        "G:/CODEX/New Manga.worktrees/T3.2.1-antigravity-repair-4"
+      ],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/antigravity/T3.2.1-repair-5",
+      "merged": false,
+      "unique_commits": 25,
+      "tip_date": "2026-09-23",
+      "checked_out_at": [
+        "G:/CODEX/New Manga.worktrees/T3.2.1-antigravity-repair-5"
+      ],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/antigravity/T3.2.1-repair-6",
+      "merged": false,
+      "unique_commits": 30,
+      "tip_date": "2026-09-23",
+      "checked_out_at": [
+        "G:/CODEX/New Manga.worktrees/T3.2.1-antigravity-repair-6"
+      ],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/antigravity/T3.2.1-repair-7",
+      "merged": false,
+      "unique_commits": 41,
+      "tip_date": "2026-09-23",
+      "checked_out_at": [
+        "G:/CODEX/New Manga.worktrees/T3.2.1-antigravity-repair-7"
+      ],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/antigravity/T3.2.1-repair-9",
+      "merged": false,
+      "unique_commits": 46,
+      "tip_date": "2026-09-24",
+      "checked_out_at": [
+        "G:/CODEX/New Manga.worktrees/T3.2.1-antigravity-repair-9"
+      ],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/antigravity/T3.2.1-windows-packaging",
+      "merged": false,
+      "unique_commits": 8,
+      "tip_date": "2026-09-23",
+      "checked_out_at": [
+        "G:/CODEX/New Manga.worktrees/T3.2.1-antigravity-packaging"
+      ],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/codex/M2-C1-typed-ipc-contract",
+      "merged": false,
+      "unique_commits": 16,
+      "tip_date": "2026-09-26",
+      "checked_out_at": [
+        "G:/CODEX/New Manga.worktrees/M2-C1-codex-typed-ipc-contract"
+      ],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/codex/M2-C1-zcode-owner-registration",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-09-26",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/codex/M2-TA1-comic-test-asset-foundation",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-09-29",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/codex/M2-TA2A-ja-public-assets",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-09-29",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/codex/M2-TA2C-no-hf-assets",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-09-29",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/codex/P01-metadata-audit",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-10-09",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/codex/P02-NEW-TIME-X6-POSTRUN-REVIEW",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-10-14",
+      "checked_out_at": [
+        "G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-X6-POSTRUN-REVIEW"
+      ],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/codex/P02PRE-R1H",
+      "merged": false,
+      "unique_commits": 13,
+      "tip_date": "2026-10-12",
+      "checked_out_at": [
+        "C:/Users/49745/.codex/worktrees/p02pre-r1h-codex"
+      ],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/codex/P02PRE-R1H-FORENSIC-RECOVERY-INTEGRATION",
+      "merged": false,
+      "unique_commits": 3,
+      "tip_date": "2026-10-13",
+      "checked_out_at": [
+        "G:/CODEX/New Manga.workspace/worktrees/P02PRE-R1H-FORENSIC-RECOVERY-INTEGRATION"
+      ],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/codex/P02PRE-R1H-H1-CURRENT-INPUT-REVIEW",
+      "merged": false,
+      "unique_commits": 4,
+      "tip_date": "2026-10-13",
+      "checked_out_at": [
+        "G:/CODEX/New Manga.workspace/worktrees/P02PRE-R1H-H1-CURRENT-INPUT-REVIEW"
+      ],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/codex/P02PRE-R1H-H2-RUN-INTEGRATION",
+      "merged": false,
+      "unique_commits": 3,
+      "tip_date": "2026-10-13",
+      "checked_out_at": [
+        "G:/CODEX/New Manga.workspace/worktrees/P02PRE-R1H-H2-RUN-INTEGRATION"
+      ],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/codex/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE",
+      "merged": false,
+      "unique_commits": 18,
+      "tip_date": "2026-10-13",
+      "checked_out_at": [
+        "G:/CODEX/New Manga.workspace/worktrees/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE"
+      ],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/codex/T1.1.1-integration",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-09-22",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/codex/T1.2.1-integration",
+      "merged": false,
+      "unique_commits": 2,
+      "tip_date": "2026-09-22",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/codex/T1.2.1-r5-integration",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-09-22",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/codex/T1.3.1-backup-integration",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-09-21",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/codex/T2.1.1-integration",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-09-22",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/codex/T3.1.1-storage-sqlite",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-09-22",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/codex/TASK-001-doc-consistency",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-09-13",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/codex/TASK-002-contract-freeze",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-09-13",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/codex/TASK-005-minimal-bootstrap",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-09-14",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/codex/TASK-011-command-scheduler",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-09-16",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/codex/TASK-013-production-pipeline-seam",
+      "merged": false,
+      "unique_commits": 2,
+      "tip_date": "2026-09-16",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/codex/TASK-031-production-import-adapters",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-09-16",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/codex/TASK-059-review",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-09-20",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/codex/TASK-062-posthoc-residuals",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-09-19",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/codex/TASK-063-diagnostics-boundaries",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-09-20",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/codex/TASK-064-diagnostics-production-wiring",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-09-20",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/codex/TASK-065-task058-followups",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-09-21",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/deepseek/DIAG-M2-REGIONLESS-LOCK-CHANGED-001",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-09-28",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/deepseek/DIAG-READING-EXPORT-001-reading-export-flaky-diagnosis",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-09-27",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/deepseek/GOV-001-review-5a16d8a",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-09-25",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/deepseek/M2-D1-headless-qt-coupling-audit",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-09-25",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/deepseek/M2-PACKAGED-AC1-DLL-DIAG",
+      "merged": false,
+      "unique_commits": 1,
+      "tip_date": "2026-10-08",
+      "checked_out_at": [
+        "G:/CODEX/New Manga.worktrees/PACKAGED-AC1-DLL-DIAG-dsh"
+      ],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/deepseek/M2-R1-qt-runtime-feasibility",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-09-25",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/deepseek/M2-S3-tauri-asset-protocol-probe",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-09-26",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/deepseek/T1.1.1-detector-evaluation",
+      "merged": false,
+      "unique_commits": 1,
+      "tip_date": "2026-09-21",
+      "checked_out_at": [
+        "G:/CODEX/New Manga.worktrees/T1.1.1-detector-evaluation"
+      ],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/deepseek/T3.1.1-review-899bd3c",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-09-22",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/deepseek/T3.2.1-review-740503e",
+      "merged": false,
+      "unique_commits": 1,
+      "tip_date": "2026-09-23",
+      "checked_out_at": [
+        "G:/CODEX/New Manga.worktrees/T3.2.1-deepseek-review-740503e"
+      ],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/deepseek/T3.2.1-review-7d687f5",
+      "merged": false,
+      "unique_commits": 1,
+      "tip_date": "2026-09-23",
+      "checked_out_at": [
+        "G:/CODEX/New Manga.worktrees/T3.2.1-deepseek-review-7d687f5"
+      ],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/deepseek/T3.2.1-review-92c9307c",
+      "merged": false,
+      "unique_commits": 1,
+      "tip_date": "2026-09-23",
+      "checked_out_at": [
+        "G:/CODEX/New Manga.worktrees/T3.2.1-deepseek-review-92c9307c"
+      ],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/deepseek/T3.2.1-review-9622395",
+      "merged": false,
+      "unique_commits": 53,
+      "tip_date": "2026-09-24",
+      "checked_out_at": [
+        "G:/CODEX/New Manga.worktrees/T3.2.1-deepseek-review-11"
+      ],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/deepseek/T3.2.1-review-a2f6695",
+      "merged": false,
+      "unique_commits": 54,
+      "tip_date": "2026-09-24",
+      "checked_out_at": [
+        "G:/CODEX/New Manga.worktrees/T3.2.1-deepseek-review-12"
+      ],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/deepseek/T3.2.1-review-be5200e",
+      "merged": false,
+      "unique_commits": 49,
+      "tip_date": "2026-09-24",
+      "checked_out_at": [
+        "G:/CODEX/New Manga.worktrees/T3.2.1-deepseek-review-10"
+      ],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/deepseek/T3.2.1-review-cdc0b6f",
+      "merged": false,
+      "unique_commits": 6,
+      "tip_date": "2026-09-23",
+      "checked_out_at": [
+        "G:/CODEX/New Manga.worktrees/T3.2.1-deepseek-review-cdc0b6f"
+      ],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/deepseek/T3.2.1-review-d2bf6a8",
+      "merged": false,
+      "unique_commits": 46,
+      "tip_date": "2026-09-24",
+      "checked_out_at": [
+        "G:/CODEX/New Manga.worktrees/T3.2.1-deepseek-review-9"
+      ],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/deepseek/T3.2.1-review-d79d7dd",
+      "merged": false,
+      "unique_commits": 14,
+      "tip_date": "2026-09-23",
+      "checked_out_at": [
+        "G:/CODEX/New Manga.worktrees/T3.2.1-deepseek-review-d79d7dd"
+      ],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/deepseek/T3.2.1-review-f39ddc0",
+      "merged": false,
+      "unique_commits": 1,
+      "tip_date": "2026-09-23",
+      "checked_out_at": [
+        "G:/CODEX/New Manga.worktrees/T3.2.1-deepseek-review-f39ddc0"
+      ],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/deepseek/T3.2.1-review-f6dc383",
+      "merged": false,
+      "unique_commits": 31,
+      "tip_date": "2026-09-23",
+      "checked_out_at": [
+        "G:/CODEX/New Manga.worktrees/T3.2.1-deepseek-review-f6dc383"
+      ],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/deepseek/T3.2.1-review-repair-14",
+      "merged": false,
+      "unique_commits": 3,
+      "tip_date": "2026-09-25",
+      "checked_out_at": [
+        "G:/CODEX/New Manga.worktrees/T3.2.1-deepseek-review-repair-14"
+      ],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/deepseek/T3.2.1-review-repair-14-r2",
+      "merged": false,
+      "unique_commits": 5,
+      "tip_date": "2026-09-25",
+      "checked_out_at": [
+        "G:/CODEX/New Manga.worktrees/T3.2.1-deepseek-review-repair-14-r2"
+      ],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/deepseek/T3.2.1-review-repair-7",
+      "merged": false,
+      "unique_commits": 6,
+      "tip_date": "2026-09-23",
+      "checked_out_at": [
+        "G:/CODEX/New Manga.worktrees/T3.2.1-deepseek-review-repair-7"
+      ],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/deepseek/TASK-001-review",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-09-13",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/deepseek/TASK-002-review",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-09-13",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/deepseek/TASK-003-verification-spec",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-09-14",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/deepseek/TASK-004-rereview-181a356",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-09-14",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/deepseek/TASK-004-review",
+      "merged": false,
+      "unique_commits": 1,
+      "tip_date": "2026-09-14",
+      "checked_out_at": [
+        "G:/CODEX/New Manga.worktrees/TASK-004-deepseek-review"
+      ],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/deepseek/TASK-005-review",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-09-14",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/deepseek/TASK-006-review",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-09-15",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/deepseek/TASK-007-review",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-09-15",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/deepseek/TASK-008-review",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-09-15",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/deepseek/TASK-009-review",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-09-15",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/deepseek/TASK-010-review",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-09-15",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/deepseek/TASK-011-review",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-09-16",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/deepseek/TASK-012-review",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-09-16",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/deepseek/TASK-013-review",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-09-16",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/deepseek/TASK-014-review",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-09-15",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/deepseek/TASK-015-posthoc",
+      "merged": false,
+      "unique_commits": 1,
+      "tip_date": "2026-09-17",
+      "checked_out_at": [
+        "G:/CODEX/New Manga.worktrees/TASK-015-deepseek-posthoc"
+      ],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/deepseek/TASK-016-ocr-detection-experiment",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-09-16",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/deepseek/TASK-017-posthoc",
+      "merged": false,
+      "unique_commits": 1,
+      "tip_date": "2026-09-17",
+      "checked_out_at": [
+        "G:/CODEX/New Manga.worktrees/TASK-017-deepseek-posthoc"
+      ],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/deepseek/TASK-017-tail-review",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-09-17",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/deepseek/TASK-018-mask-inpainting-experiment",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-09-17",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/deepseek/TASK-019-provider-integration",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-09-17",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/deepseek/TASK-024-posthoc",
+      "merged": false,
+      "unique_commits": 1,
+      "tip_date": "2026-09-17",
+      "checked_out_at": [
+        "G:/CODEX/New Manga.worktrees/TASK-024-deepseek-posthoc"
+      ],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/deepseek/TASK-028-review",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-09-15",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/deepseek/TASK-029-review",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-09-15",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/deepseek/TASK-030-review",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-09-16",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/deepseek/TASK-031-review",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-09-16",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/deepseek/TASK-032-sfx-policy-gate-region-type",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-09-17",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/deepseek/TASK-033-full-chain-handlers",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-09-17",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/deepseek/TASK-034-test-layer-hardening",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-09-17",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/deepseek/TASK-035-render-sfx-gate-region-type",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-09-17",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/deepseek/TASK-036-settings-validation-and-export-order",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-09-17",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/deepseek/TASK-043-import-fixes",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-09-18",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/deepseek/TASK-044-purge-integrity",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-09-18",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/deepseek/TASK-045-webtoon-display-fixes",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-09-18",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/dsh/DETECT-MEMORY-GUARD-1",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-10-20",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/dsh/P11-PROJECTION-TEST-ALIGN-1",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-10-20",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/dsh/PDF-STREAM-FIX-1",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-10-20",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/dsh/RUN-IPC-1",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-10-16",
+      "checked_out_at": [
+        "G:/CODEX/New Manga.workspace/worktrees/RUN-IPC-1"
+      ],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/dsh/SEARCHABLE-PDF-CJK-1",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-10-20",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/dsh/TEST-ENV-ASSUMPTIONS-1",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-10-20",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/qoder/M2-UI1-react-parity-visual-contract",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-09-25",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/qoder/POSTHOC-WINDOW-2026-09-19",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-09-19",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/qoder/T1.1.2-region-canvas",
+      "merged": false,
+      "unique_commits": 2,
+      "tip_date": "2026-09-21",
+      "checked_out_at": [
+        "G:/CODEX/New Manga.worktrees/TASK-013-qoder"
+      ],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/qoder/T2.1.1-design-f-qml",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-09-22",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/qoder/T2.2.1-reader-workbench-qml",
+      "merged": false,
+      "unique_commits": 5,
+      "tip_date": "2026-09-22",
+      "checked_out_at": [
+        "G:/CODEX/New Manga.worktrees/T2.2.1-qoder"
+      ],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/qoder/T3.2.1-repair-13",
+      "merged": false,
+      "unique_commits": 54,
+      "tip_date": "2026-09-24",
+      "checked_out_at": [
+        "G:/CODEX/New Manga.worktrees/T3.2.1-qoder-repair-13"
+      ],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/qoder/T3.2.1-review-78aba7c",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-09-26",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/qoder/TASK-047-ui-ux-gui-design",
+      "merged": false,
+      "unique_commits": 9,
+      "tip_date": "2026-09-19",
+      "checked_out_at": [
+        "G:/CODEX/New Manga.worktrees/TASK-047-qoder"
+      ],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/qoder/TASK-057-review",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-09-20",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/qoder/TASK-058-review",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-09-20",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/qoder/TASK-059-ui-redesign",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-09-19",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/qoder/TASK-060-review",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-09-19",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/qoder/TASK-061-review",
+      "merged": false,
+      "unique_commits": 4,
+      "tip_date": "2026-09-19",
+      "checked_out_at": [
+        "G:/CODEX/New Manga.worktrees/TASK-061-qoder-review"
+      ],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/qoder/TASK-062-review",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-09-20",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/zcode/DIAG-M2-LOCK-CHANGED-REPRO-002",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-09-30",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/zcode/DIAG-READING-EXPORT-001-FIX-A-terminal-wait-semantics",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-09-28",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/zcode/DIAG-READING-EXPORT-001-FIX-B-reader-heartbeat-lifecycle",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-09-28",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/zcode/DIAG-READING-EXPORT-001-FIX-C-quit-and-leave-wiring",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-09-28",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/zcode/DOC-FIX-LOCK-CHANGED-STALE-COMMENTS",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-09-30",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/zcode/M2-AC1-end-to-end-acceptance",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-09-28",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/zcode/M2-AC2-data-integrity",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-09-28",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/zcode/M2-AC3-provider-fail-closed",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-09-28",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/zcode/M2-AC4-reader-lineage-library-pagecount",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-09-29",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/zcode/M2-AC5-BUILD-FRESH-CHECKOUT",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-09-30",
+      "checked_out_at": [
+        "G:/CODEX/New Manga.worktrees/M2-AC5-BUILD-FRESH-CHECKOUT-zcode"
+      ],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/zcode/M2-AC5-package-clean-start",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-09-29",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/zcode/M2-C1-typed-ipc-contract",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-09-26",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/zcode/M2-C2-typed-ipc-contract-revision",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-09-26",
+      "checked_out_at": [
+        "G:/CODEX/New Manga.worktrees/M2-C2-zcode"
+      ],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/zcode/M2-DERIVED-GC-2",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-10-08",
+      "checked_out_at": [
+        "G:/CODEX/New Manga.worktrees/DERIVED-GC-2-zcode"
+      ],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/zcode/M2-DETECT-WEBTOON-DIAG",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-10-01",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/zcode/M2-DETECT-WEBTOON-TILING",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-10-02",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/zcode/M2-DETECTION-HYGIENE",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-10-02",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/zcode/M2-DOCTR-QUAL-C1",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-09-30",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/zcode/M2-DOCTR-QUAL-C4",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-09-30",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/zcode/M2-DOCTR-QUAL-PREFLIGHT",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-09-30",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/zcode/M2-DOCTR-QUAL-RUN",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-09-30",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/zcode/M2-FIX-DIGEST-SEEK-2GIB",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-09-30",
+      "checked_out_at": [
+        "G:/CODEX/New Manga.worktrees/M2-FIX-DIGEST-SEEK-2GIB-zcode"
+      ],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/zcode/M2-FIX-EXPORT-LINEAGE",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-09-29",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/zcode/M2-FIX-F02-RESOURCE-CHANNEL-FLAKY",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-09-29",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/zcode/M2-FIX-LISTBOOKS-PAGECOUNT-UNKNOWN",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-09-29",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/zcode/M2-FIX-REGISTRY-ENV",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-10-01",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/zcode/M2-FIX-RESOURCE-CHANNEL-DIGEST-PERF",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-09-29",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/zcode/M2-FIX-STUB-DECODER",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-09-29",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/zcode/M2-I1-core-assembly-seam",
+      "merged": false,
+      "unique_commits": 1,
+      "tip_date": "2026-09-25",
+      "checked_out_at": [
+        "G:/CODEX/New Manga.worktrees/M2-I1-zcode"
+      ],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/zcode/M2-IMPORT-ALLOC-LIMIT",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-10-01",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/zcode/M2-KO-TILE-CALIB",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-10-05",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/zcode/M2-MANGA-WEIGHTS-SOP",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-10-01",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/zcode/M2-OCR-PADDLE3X-1",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-10-01",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/zcode/M2-PROD-DETECT-1",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-09-30",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/zcode/M2-PROD-DETECT-2",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-10-01",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/zcode/M2-PROD-DETECT-3",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-10-01",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/zcode/M2-PROD-SFX-PROBE-1",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-10-06",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/zcode/M2-QUAL-DETERM-CALIB",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-10-01",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/zcode/M2-RC1-large-media-resource-channel-runtime",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-09-27",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/zcode/M2-RC2-resource-channel-hardening",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-09-27",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/zcode/M2-REGION-OVERLAP-ARBITRATION",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-10-04",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/zcode/M2-REGION-RETYPE-CONTRACT",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-10-04",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/zcode/M2-REGION-RETYPE-CORE",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-10-04",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/zcode/M2-RG1-release-gate",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-09-29",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/zcode/M2-S2-resource-channel-security",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-09-26",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/zcode/M2-S3-tauri-asset-protocol-probe",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-09-26",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/zcode/M2-SETTINGS-IPC-CHANNEL",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-10-02",
+      "checked_out_at": [
+        "G:/CODEX/New Manga.worktrees/M2-SETTINGS-IPC-CHANNEL-zcode"
+      ],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/zcode/M2-SETTINGS-UI-SFX-POLICY",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-10-01",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/zcode/M2-SFX-ANNOTATE-R1",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-10-04",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/zcode/M2-SFX-ANNOTATE-R2",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-10-04",
+      "checked_out_at": [
+        "G:/CODEX/New Manga.worktrees/M2-SFX-ANNOTATE-R2-zcode"
+      ],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/zcode/M2-SFX-ANNOTATE-R3",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-10-05",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/zcode/M2-SFX-BJ13-RECALL-1",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-10-06",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/zcode/M2-SFX-CORRECTION-EXPORTER",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-10-04",
+      "checked_out_at": [
+        "G:/CODEX/New Manga.worktrees/M2-SFX-CORRECTION-EXPORTER-zcode"
+      ],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/zcode/M2-SFX-DATA-INFRA",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-10-04",
+      "checked_out_at": [
+        "G:/CODEX/New Manga.worktrees/M2-SFX-DATA-INFRA-zcode"
+      ],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/zcode/M2-SFX-DETECT-DOMAIN-EXT-DIAG",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-10-04",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/zcode/M2-SFX-DETECT-EVAL",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-10-01",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/zcode/M2-SFX-E2E-MATERIAL",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-10-02",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/zcode/M2-SFX-EPFAIL-AUDIT-1",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-10-06",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/zcode/M2-SFX-FINETUNE-PREFLIGHT",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-10-04",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/zcode/M2-SFX-GATE-T3",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-10-05",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/zcode/M2-SFX-GPU-EP-1",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-10-06",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/zcode/M2-SFX-MISROUTE-UI-IMPL-1",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-10-07",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/zcode/M2-SFX-MISROUTE-UI-MITIGATION",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-10-04",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/zcode/M2-SFX-PROD-1",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-10-01",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/zcode/M2-SFX-SEM-1",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-10-01",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/zcode/M2-SFX-SYNTH-BG-AUTO",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-10-04",
+      "checked_out_at": [
+        "G:/CODEX/New Manga.worktrees/M2-SFX-SYNTH-BG-AUTO-zcode"
+      ],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/zcode/M2-SFX-T4-SWITCH",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-10-06",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/zcode/M2-SFX-T5-TILE-KO",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-10-06",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/zcode/M2-SFX-TILE-WIDTH-CALIB-1",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-10-06",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/zcode/M2-SFX-TRAIN-V1",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-10-05",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/zcode/M2-SFX-TRAIN-V2",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-10-05",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/zcode/M2-SFX-TRANSLATE-ENTRY",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-10-01",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/zcode/M2-TA2B-OPEN-ASSETS",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-09-30",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/zcode/M2-TA2C-TOOLING-GAPS",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-09-30",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/zcode/M2-TA3-A-E2E-SMOKE",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-09-30",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/zcode/M2-TA3-B",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-10-01",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/zcode/M2-TA3-B2",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-10-01",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/zcode/M2-TA3-B2-KO-RERUN",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-10-02",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/zcode/M2-TA3-B3-KO-FULLRUN",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-10-03",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/zcode/M2-TASKS-BACKFILL-MULTIREGION",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-10-02",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/zcode/M2-TASKS-PRIMARY-SFX-GATE",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-10-02",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/zcode/M2-WORKBENCH-REACT-1",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-10-06",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/zcode/P02-NEW-TIME-BASELINE",
+      "merged": false,
+      "unique_commits": 60,
+      "tip_date": "2026-10-14",
+      "checked_out_at": [
+        "G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-BASELINE"
+      ],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/zcode/P02-NEW-TIME-BASELINE-AC3-BRANCH-RESOLUTION",
+      "merged": false,
+      "unique_commits": 31,
+      "tip_date": "2026-10-14",
+      "checked_out_at": [
+        "G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-BASELINE-AC3-BRANCH-RESOLUTION"
+      ],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/zcode/P02-NEW-TIME-BASELINE-AC3-GIT-TOPLEVEL-RESOLUTION",
+      "merged": false,
+      "unique_commits": 78,
+      "tip_date": "2026-10-14",
+      "checked_out_at": [
+        "G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-BASELINE-AC3-GIT-TOPLEVEL-RESOLUTION"
+      ],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/zcode/P02-NEW-TIME-BASELINE-AC3-HELPER-OUTPUT-RESOLUTION",
+      "merged": false,
+      "unique_commits": 43,
+      "tip_date": "2026-10-14",
+      "checked_out_at": [
+        "G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-BASELINE-AC3-HELPER-OUTPUT-RESOLUTION"
+      ],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/zcode/P02-NEW-TIME-X6",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-10-14",
+      "checked_out_at": [
+        "G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-X6"
+      ],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/zcode/P02-NEW-TIME-X6-AC1-AC7",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-10-14",
+      "checked_out_at": [
+        "G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-X6-AC1-AC7"
+      ],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/zcode/P02-real-webview-harness",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-10-09",
+      "checked_out_at": [
+        "G:/CODEX/New Manga.worktrees/P02-real-webview-harness-zcode"
+      ],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/zcode/P02PRE-R1H",
+      "merged": false,
+      "unique_commits": 7,
+      "tip_date": "2026-10-12",
+      "checked_out_at": [
+        "C:/Users/49745/.codex/worktrees/p02pre-r1h-zcode"
+      ],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/zcode/P02PRE-R1H-H2-COLLECTOR",
+      "merged": false,
+      "unique_commits": 4,
+      "tip_date": "2026-10-13",
+      "checked_out_at": [
+        "G:/CODEX/New Manga.workspace/worktrees/P02PRE-R1H-H2-COLLECTOR"
+      ],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/zcode/P02PRE-R1H-P2-1-EVIDENCE-CLOSURE",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-10-12",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/zcode/P02PRE-R1H-R6-EXEC-A6",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-10-12",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/zcode/T1.1.1-production-text-detector",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-09-22",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/zcode/T1.2.1-settings-ui-viewmodel",
+      "merged": false,
+      "unique_commits": 1,
+      "tip_date": "2026-09-22",
+      "checked_out_at": [
+        "G:/CODEX/New Manga.worktrees/T1.2.1-settings-ui-viewmodel"
+      ],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/zcode/T2.2.1-reader-workbench-polish",
+      "merged": false,
+      "unique_commits": 1,
+      "tip_date": "2026-09-22",
+      "checked_out_at": [
+        "G:/CODEX/New Manga.worktrees/T2.2.1-zcode"
+      ],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/zcode/T3.2.1-repair-13",
+      "merged": false,
+      "unique_commits": 64,
+      "tip_date": "2026-09-25",
+      "checked_out_at": [
+        "G:/CODEX/New Manga.worktrees/T3.2.1-zcode-repair-13"
+      ],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/zcode/TASK-004-windows-packaging",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-09-14",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/zcode/TASK-005-audit-metadata",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-09-15",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/zcode/TASK-006-persistence-artifact",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-09-15",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/zcode/TASK-007-library-import",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-09-15",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/zcode/TASK-008-region-editing",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-09-15",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/zcode/TASK-009-provider-network-credentials",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-09-15",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/zcode/TASK-010-translation-context",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-09-16",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/zcode/TASK-012-navigation-library-ui",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-09-16",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/zcode/TASK-013-workbench-task-progress",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-09-16",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/zcode/TASK-014-rendering-style",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-09-15",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/zcode/TASK-015-reader-export",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-09-17",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/zcode/TASK-017-translation-protocol-experiment",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-09-17",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/zcode/TASK-020-webtoon-chunked-reading",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-09-18",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/zcode/TASK-021-backup-trash-cleanup-diagnostics",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-09-18",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/zcode/TASK-023-pdf-mobi-import",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-09-18",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/zcode/TASK-024-extension-boundaries-design",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-09-17",
+      "checked_out_at": [
+        "G:/CODEX/New Manga.worktrees/TASK-024-zcode"
+      ],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/zcode/TASK-029-unified-sqlite-persistence",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-09-15",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/zcode/TASK-030-main-bootstrap-assembly",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-09-16",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/zcode/TASK-033-full-chain-handlers",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-09-18",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/zcode/TASK-037-flaky-diagnostic-fix",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-09-18",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/zcode/TASK-038-production-assembly",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-09-18",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/zcode/TASK-039-clean-availability",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-09-18",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/zcode/TASK-040-clean-probe-injection",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-09-18",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/zcode/TASK-041-mobi-import",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-09-18",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/zcode/TASK-042-streaming-decode",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-09-18",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/zcode/TASK-045-posthoc",
+      "merged": false,
+      "unique_commits": 1,
+      "tip_date": "2026-09-19",
+      "checked_out_at": [
+        "G:/CODEX/New Manga.worktrees/TASK-045-posthoc-zcode"
+      ],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/zcode/TASK-046-decode-rewind-cost",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-09-19",
+      "checked_out_at": [
+        "G:/CODEX/New Manga.worktrees/TASK-046-zcode"
+      ],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/zcode/TASK-048-thread-sqlite",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-09-19",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/zcode/TASK-049-region-input",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-09-19",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/zcode/TASK-050-settings-bindings",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-09-19",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/zcode/TASK-051-workbench-viewer-modes",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-09-19",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/zcode/TASK-052-command-error-surface",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-09-19",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/zcode/TASK-053-run-files-leak",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-09-19",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/zcode/TASK-054-cancel-pending-rename",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-09-19",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/zcode/TASK-055-diagnostics",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-09-19",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/zcode/TASK-056-cache-version-cleanup",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-09-19",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/zcode/TASK-057-backup-restore",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-09-19",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/zcode/TASK-058-graceful-shutdown-drain",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-09-19",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/zcode/TASK-059-ui-redesign",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-09-20",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/zcode/TASK-060-sqlite-ownership",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-09-19",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/zcode/TASK-061-connection-eviction",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-09-19",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "agent/zcode/UI-DESIGN-1",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-10-16",
+      "checked_out_at": [
+        "G:/CODEX/New Manga.workspace/worktrees/UI-DESIGN-1"
+      ],
+      "is_mainline": false
+    },
+    {
+      "branch": "antigravity/P09-AC3-DELETE-HARDEN-1",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-10-20",
+      "checked_out_at": [
+        "G:/CODEX/New Manga"
+      ],
+      "is_mainline": true
+    },
+    {
+      "branch": "antigravity/P09-PREVIEW-LIFECYCLE-RECLAIM-1",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-10-19",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "antigravity/P15-C1",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-10-16",
+      "checked_out_at": [
+        "G:/CODEX/New Manga.workspace/worktrees/P15-C1"
+      ],
+      "is_mainline": false
+    },
+    {
+      "branch": "codex/DIAG-FIX-A-integration",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-09-28",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "codex/DIAG-FIX-B-integration",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-09-28",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "codex/DIAG-FIX-C-integration",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-09-28",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "codex/DIAG-READING-EXPORT-001-integration",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-09-28",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "codex/ENV-BUNDLE-1-FU1-packaged-acceptance",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-10-16",
+      "checked_out_at": [
+        "G:/CODEX/New Manga.workspace/worktrees/ENV-BUNDLE-1-FU1"
+      ],
+      "is_mainline": false
+    },
+    {
+      "branch": "codex/ENV-BUNDLE-1-sidecar-rebuild",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-10-16",
+      "checked_out_at": [
+        "G:/CODEX/New Manga.workspace/worktrees/ENV-BUNDLE-1"
+      ],
+      "is_mainline": false
+    },
+    {
+      "branch": "codex/EXPORT-REVEAL-1",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-10-16",
+      "checked_out_at": [
+        "G:/CODEX/New Manga.workspace/worktrees/EXPORT-REVEAL-1"
+      ],
+      "is_mainline": false
+    },
+    {
+      "branch": "codex/FEAT-CREATE-1",
+      "merged": false,
+      "unique_commits": 3,
+      "tip_date": "2026-10-17",
+      "checked_out_at": [
+        "G:/CODEX/New Manga.workspace/worktrees/FEAT-CREATE-1"
+      ],
+      "is_mainline": false
+    },
+    {
+      "branch": "codex/FEAT-CREATE-2",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-10-17",
+      "checked_out_at": [
+        "G:/CODEX/New Manga.workspace/worktrees/FEAT-CREATE-2"
+      ],
+      "is_mainline": false
+    },
+    {
+      "branch": "codex/FEAT-CREATE-3",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-10-17",
+      "checked_out_at": [
+        "G:/CODEX/New Manga.workspace/worktrees/FEAT-CREATE-3"
+      ],
+      "is_mainline": false
+    },
+    {
+      "branch": "codex/FEAT-CREATE-4",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-10-17",
+      "checked_out_at": [
+        "G:/CODEX/New Manga.workspace/worktrees/FEAT-CREATE-4"
+      ],
+      "is_mainline": false
+    },
+    {
+      "branch": "codex/FEAT-IMPORT-MULTI-1",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-10-18",
+      "checked_out_at": [
+        "G:/CODEX/New Manga.workspace/worktrees/FEAT-IMPORT-MULTI-1"
+      ],
+      "is_mainline": false
+    },
+    {
+      "branch": "codex/GOV-001-integration",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-09-25",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "codex/HOST-CORE-1-hostcontrol-handler",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-10-16",
+      "checked_out_at": [
+        "G:/CODEX/New Manga.workspace/worktrees/HOST-CORE-1"
+      ],
+      "is_mainline": false
+    },
+    {
+      "branch": "codex/HOST-ISSUER-1-C1-grant-registration-contract",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-10-16",
+      "checked_out_at": [
+        "G:/CODEX/New Manga.workspace/worktrees/HOST-ISSUER-1-C1"
+      ],
+      "is_mainline": false
+    },
+    {
+      "branch": "codex/HOST-ISSUER-1-tauri-ref-issuer",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-10-16",
+      "checked_out_at": [
+        "G:/CODEX/New Manga.workspace/worktrees/HOST-ISSUER-1"
+      ],
+      "is_mainline": false
+    },
+    {
+      "branch": "codex/HOST-TTL-BOUNDARY-1-grant-ttl",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-10-16",
+      "checked_out_at": [
+        "G:/CODEX/New Manga.workspace/worktrees/HOST-TTL-BOUNDARY-1"
+      ],
+      "is_mainline": false
+    },
+    {
+      "branch": "codex/M2-AC1-integration",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-09-28",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "codex/M2-C1-dsh-r3-bundle-recovery",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-09-26",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "codex/M2-C1-integration-gate-r3",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-09-26",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "codex/M2-D1-audit-registration",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-09-25",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "codex/M2-D1-integration",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-09-25",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "codex/M2-D1-review-0a27a54",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-09-25",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "codex/M2-I1-R2-review-0766952",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-09-25",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "codex/M2-I1-R3-integration-09ad43a",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-09-25",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "codex/M2-I1-review-a89447f",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-09-25",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "codex/M2-I2-integration-0d6acc7",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-09-25",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "codex/M2-I2-review-5d4a465",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-09-25",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "codex/M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD-integration",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-10-08",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "codex/M2-RUNNER-SNAPSHOT-DEBT",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-10-08",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "codex/M2-S1-integration",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-09-26",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "codex/M2-S1-release",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-09-26",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "codex/M2-S1-review-4eaad68",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-09-26",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "codex/M2-S1-review-64c87d1",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-09-26",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "codex/M2-S1-scope-registration",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-09-26",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "codex/M2-UI1-integration",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-09-25",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "codex/M2-UI1-integration-final-83a",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-09-25",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "codex/M2-UI1-master-integration-20260925",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-09-25",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "codex/P01-integration-20261009",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-10-09",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "codex/P02-build-preflight",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-10-09",
+      "checked_out_at": [
+        "G:/CODEX/New Manga.worktrees/P02-build-preflight-codex"
+      ],
+      "is_mainline": false
+    },
+    {
+      "branch": "codex/P02-fallback-scope",
+      "merged": false,
+      "unique_commits": 1,
+      "tip_date": "2026-10-09",
+      "checked_out_at": [
+        "G:/CODEX/New Manga.worktrees/P02-fallback-scope-codex"
+      ],
+      "is_mainline": false
+    },
+    {
+      "branch": "codex/P02-harness-scope",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-10-09",
+      "checked_out_at": [
+        "G:/CODEX/New Manga.worktrees/P02-harness-scope"
+      ],
+      "is_mainline": false
+    },
+    {
+      "branch": "codex/P02-hook-cache-isolation-plan",
+      "merged": false,
+      "unique_commits": 7,
+      "tip_date": "2026-10-09",
+      "checked_out_at": [
+        "G:/CODEX/New Manga.worktrees/P02-hook-cache-isolation-plan-codex"
+      ],
+      "is_mainline": false
+    },
+    {
+      "branch": "codex/P02-owner-amendment",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-10-09",
+      "checked_out_at": [
+        "G:/CODEX/New Manga.worktrees/P02-owner-amendment-codex"
+      ],
+      "is_mainline": false
+    },
+    {
+      "branch": "codex/P02-owner-transfer-integration",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-10-09",
+      "checked_out_at": [
+        "G:/CODEX/New Manga.worktrees/P02-owner-transfer-integration-codex"
+      ],
+      "is_mainline": false
+    },
+    {
+      "branch": "codex/P02-post-review-preflight",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-10-10",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "codex/P02-process-isolation",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-10-10",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "codex/P02-r2-docs-closeout",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-10-10",
+      "checked_out_at": [
+        "C:/Users/49745/.codex/worktrees/p02-r2-docs-closeout/New Manga"
+      ],
+      "is_mainline": false
+    },
+    {
+      "branch": "codex/P02-stage-a-r8-integration",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-10-09",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "codex/P03-integration-4c04459",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-10-09",
+      "checked_out_at": [
+        "G:/CODEX/New Manga.worktrees/P03-review-prep-85482c5b"
+      ],
+      "is_mainline": false
+    },
+    {
+      "branch": "codex/P03-traceability-log-normalization",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-10-09",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "codex/P04-scope-freeze",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-10-10",
+      "checked_out_at": [
+        "G:/CODEX/New Manga.worktrees/P04-scope-freeze"
+      ],
+      "is_mainline": false
+    },
+    {
+      "branch": "codex/P05-category-retryable-notes",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-10-10",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "codex/P06-gc-distribution-migration-evidence",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-10-15",
+      "checked_out_at": [
+        "G:/CODEX/New Manga.workspace/worktrees/P06-GC-DISTRIBUTION-MIGRATION"
+      ],
+      "is_mainline": false
+    },
+    {
+      "branch": "codex/P09-FU1-decoder-test-baseline",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-10-16",
+      "checked_out_at": [
+        "G:/CODEX/New Manga.workspace/worktrees/P09-FU1-DECODER-TEST"
+      ],
+      "is_mainline": false
+    },
+    {
+      "branch": "codex/P09-FU2-import-ipc-runtime",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-10-16",
+      "checked_out_at": [
+        "G:/CODEX/New Manga.workspace/worktrees/P09-FU2-IMPORT-IPC-RUNTIME"
+      ],
+      "is_mainline": false
+    },
+    {
+      "branch": "codex/P09-import-core",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-10-16",
+      "checked_out_at": [
+        "G:/CODEX/New Manga.workspace/worktrees/P09-IMPORT-CORE"
+      ],
+      "is_mainline": false
+    },
+    {
+      "branch": "codex/P10-credential-config-contract",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-10-15",
+      "checked_out_at": [
+        "G:/CODEX/New Manga.workspace/worktrees/P10-CREDENTIAL-CONFIG-CONTRACT"
+      ],
+      "is_mainline": false
+    },
+    {
+      "branch": "codex/P11-long-task-lifecycle-contract",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-10-15",
+      "checked_out_at": [
+        "G:/CODEX/New Manga.workspace/worktrees/P11-LONG-TASK-LIFECYCLE-CONTRACT"
+      ],
+      "is_mainline": false
+    },
+    {
+      "branch": "codex/P12-C1-import-ipc-contract",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-10-16",
+      "checked_out_at": [
+        "G:/CODEX/New Manga.workspace/worktrees/P12-C1-IMPORT-IPC"
+      ],
+      "is_mainline": false
+    },
+    {
+      "branch": "codex/P13-C1-runtime-ipc-contract",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-10-16",
+      "checked_out_at": [
+        "G:/CODEX/New Manga.workspace/worktrees/P13-C1-RUNTIME-IPC"
+      ],
+      "is_mainline": false
+    },
+    {
+      "branch": "codex/P13-run-runtime-control-recovery",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-10-16",
+      "checked_out_at": [
+        "G:/CODEX/New Manga.workspace/worktrees/P13-RUN-RUNTIME"
+      ],
+      "is_mainline": false
+    },
+    {
+      "branch": "codex/P14",
+      "merged": false,
+      "unique_commits": 2,
+      "tip_date": "2026-10-16",
+      "checked_out_at": [
+        "G:/CODEX/New Manga.workspace/worktrees/P14"
+      ],
+      "is_mainline": false
+    },
+    {
+      "branch": "codex/P15-C1-FU1",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-10-17",
+      "checked_out_at": [
+        "G:/CODEX/New Manga.workspace/worktrees/P15-C1-FU1"
+      ],
+      "is_mainline": false
+    },
+    {
+      "branch": "codex/P15-C1-FU2",
+      "merged": false,
+      "unique_commits": 2,
+      "tip_date": "2026-10-17",
+      "checked_out_at": [
+        "G:/CODEX/New Manga.workspace/worktrees/P15-C1-FU2"
+      ],
+      "is_mainline": false
+    },
+    {
+      "branch": "codex/P15-CORE-1",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-10-17",
+      "checked_out_at": [
+        "G:/CODEX/New Manga.workspace/worktrees/P15-CORE-1"
+      ],
+      "is_mainline": false
+    },
+    {
+      "branch": "codex/P15-CORE-1A",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-10-17",
+      "checked_out_at": [
+        "G:/CODEX/New Manga.workspace/worktrees/P15-CORE-1A"
+      ],
+      "is_mainline": false
+    },
+    {
+      "branch": "codex/P15-CORE-1B",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-10-17",
+      "checked_out_at": [
+        "G:/CODEX/New Manga.workspace/worktrees/P15-CORE-1B"
+      ],
+      "is_mainline": false
+    },
+    {
+      "branch": "codex/P15-CORE-1C",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-10-17",
+      "checked_out_at": [
+        "G:/CODEX/New Manga.workspace/worktrees/P15-CORE-1C"
+      ],
+      "is_mainline": false
+    },
+    {
+      "branch": "codex/P15-HOST-1",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-10-17",
+      "checked_out_at": [
+        "G:/CODEX/New Manga.workspace/worktrees/P15-HOST-1"
+      ],
+      "is_mainline": false
+    },
+    {
+      "branch": "codex/P15-HOST-2",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-10-17",
+      "checked_out_at": [
+        "G:/CODEX/New Manga.workspace/worktrees/P15-HOST-2"
+      ],
+      "is_mainline": false
+    },
+    {
+      "branch": "codex/P16-C1-reader-export-ipc-contract",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-10-16",
+      "checked_out_at": [
+        "G:/CODEX/New Manga.workspace/worktrees/P16-C1-READER-EXPORT-IPC"
+      ],
+      "is_mainline": false
+    },
+    {
+      "branch": "codex/P16-reader-export-core",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-10-16",
+      "checked_out_at": [
+        "G:/CODEX/New Manga.workspace/worktrees/P16-READER-EXPORT-CORE"
+      ],
+      "is_mainline": false
+    },
+    {
+      "branch": "codex/P18-ja-ko-quality-qualification",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-10-16",
+      "checked_out_at": [
+        "G:/CODEX/New Manga.workspace/worktrees/P18-JA-KO-QUALITY"
+      ],
+      "is_mainline": false
+    },
+    {
+      "branch": "codex/P19-AC3-1",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-10-17",
+      "checked_out_at": [
+        "G:/CODEX/New Manga.workspace/worktrees/P19-AC3-1"
+      ],
+      "is_mainline": false
+    },
+    {
+      "branch": "codex/P19-BOOT-1",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-10-17",
+      "checked_out_at": [
+        "G:/CODEX/New Manga.workspace/worktrees/P19-BOOT-1"
+      ],
+      "is_mainline": false
+    },
+    {
+      "branch": "codex/P19-UI-FIX-1",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-10-17",
+      "checked_out_at": [
+        "G:/CODEX/New Manga.workspace/worktrees/P19-UI-FIX-1"
+      ],
+      "is_mainline": false
+    },
+    {
+      "branch": "codex/P19-UI-FIX-2",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-10-17",
+      "checked_out_at": [
+        "G:/CODEX/New Manga.workspace/worktrees/P19-UI-FIX-2"
+      ],
+      "is_mainline": false
+    },
+    {
+      "branch": "codex/P19-UI-FIX-3",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-10-17",
+      "checked_out_at": [
+        "G:/CODEX/New Manga.workspace/worktrees/P19-UI-FIX-3"
+      ],
+      "is_mainline": false
+    },
+    {
+      "branch": "codex/READER-IPC-1",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-10-16",
+      "checked_out_at": [
+        "G:/CODEX/New Manga.workspace/worktrees/READER-IPC-1"
+      ],
+      "is_mainline": false
+    },
+    {
+      "branch": "codex/SEC-FIX-PATH-ECHO-1",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-10-17",
+      "checked_out_at": [
+        "G:/CODEX/New Manga.workspace/worktrees/SEC-FIX-PATH-ECHO-1"
+      ],
+      "is_mainline": false
+    },
+    {
+      "branch": "codex/T3.2.1-REPAIR-13-owner-zcode",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-09-25",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "codex/T3.2.1-clean-release-gate-20260925",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-09-26",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "codex/T3.2.1-integration-20260926",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-09-26",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "codex/T3.2.1-legacy-closure-20260926",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-09-26",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "codex/T3.2.1-release-gate-closeout",
+      "merged": false,
+      "unique_commits": 50,
+      "tip_date": "2026-09-24",
+      "checked_out_at": [
+        "G:/CODEX/New Manga.worktrees/T3.2.1-codex-release-gate-closeout"
+      ],
+      "is_mainline": false
+    },
+    {
+      "branch": "codex/T3.2.1-repair-14-integration",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-09-25",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "codex/arch-doc-rebaseline",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-10-15",
+      "checked_out_at": [
+        "G:/CODEX/New Manga.workspace/worktrees/ARCH-DOC-REBASELINE"
+      ],
+      "is_mainline": false
+    },
+    {
+      "branch": "codex/architecture-decision-registration",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-09-25",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "codex/integration-p02pre-r1h-p2-1-external-harness-trace",
+      "merged": false,
+      "unique_commits": 18,
+      "tip_date": "2026-10-13",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "codex/m2-derived-gc-2-design",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-10-07",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "codex/m2-derived-gc-2-design-review-r1",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-10-07",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "codex/m2-derived-gc-2-design-review-r2",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-10-07",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "codex/m2-derived-gc-2-design-review-r3",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-10-07",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "codex/m2-derived-gc-2-design-review-r4",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-10-07",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "codex/m2-rc2-integration",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-09-27",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "codex/p02-mainline-closeout-20261015",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-10-15",
+      "checked_out_at": [
+        "G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-X6-AC1-AC7-INTEGRATION"
+      ],
+      "is_mainline": false
+    },
+    {
+      "branch": "codex/p02-newtime-ac-integration-20261015",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-10-15",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "codex/p22-rebase-1",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-10-15",
+      "checked_out_at": [
+        "G:/CODEX/New Manga.workspace/worktrees/P22-REBASE-1"
+      ],
+      "is_mainline": false
+    },
+    {
+      "branch": "codex/preserve-preexisting-main-worktree-20260925",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-09-25",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "codex/project-roadmap-rebaseline",
+      "merged": false,
+      "unique_commits": 1,
+      "tip_date": "2026-10-15",
+      "checked_out_at": [
+        "G:/CODEX/New Manga.workspace/worktrees/PROJECT-ROADMAP-REBASELINE"
+      ],
+      "is_mainline": false
+    },
+    {
+      "branch": "codex/rc4-domain-commands",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-10-07",
+      "checked_out_at": [
+        "G:/CODEX/New Manga.worktrees/RC4-domain-commands"
+      ],
+      "is_mainline": false
+    },
+    {
+      "branch": "codex/rc4-integration",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-10-07",
+      "checked_out_at": [
+        "G:/CODEX/New Manga.worktrees/RC4-integration"
+      ],
+      "is_mainline": false
+    },
+    {
+      "branch": "codex/rc4-react-consumer",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-10-07",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "codex/rebaseline-audit-20260921",
+      "merged": false,
+      "unique_commits": 1,
+      "tip_date": "2026-09-21",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "dsh/GOV-PIN-LINEAGE-1",
+      "merged": false,
+      "unique_commits": 2,
+      "tip_date": "2026-10-20",
+      "checked_out_at": [
+        "G:/CODEX/New Manga.workspace/GOV-PIN-LINEAGE-1/worktree"
+      ],
+      "is_mainline": false
+    },
+    {
+      "branch": "main",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-10-18",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "master",
+      "merged": false,
+      "unique_commits": 3,
+      "tip_date": "2026-09-27",
+      "checked_out_at": [
+        "G:/CODEX/New Manga.worktrees/M2-UI1-integration-final-83a"
+      ],
+      "is_mainline": false
+    },
+    {
+      "branch": "review/deepseek/M2-C1-typed-ipc-7d908a5",
+      "merged": false,
+      "unique_commits": 4,
+      "tip_date": "2026-09-26",
+      "checked_out_at": [
+        "G:/CODEX/New Manga.worktrees/M2-C1-deepseek-review-7d908a5"
+      ],
+      "is_mainline": false
+    },
+    {
+      "branch": "review/deepseek/M2-C1-typed-ipc-r2-7e65f4f",
+      "merged": false,
+      "unique_commits": 12,
+      "tip_date": "2026-09-26",
+      "checked_out_at": [
+        "G:/CODEX/New Manga.worktrees/M2-C1-deepseek-review-r2-7e65f4f"
+      ],
+      "is_mainline": false
+    },
+    {
+      "branch": "review/deepseek/M2-C1-typed-ipc-r3-4d66523",
+      "merged": false,
+      "unique_commits": 14,
+      "tip_date": "2026-09-26",
+      "checked_out_at": [
+        "G:/CODEX/New Manga.worktrees/M2-C1-deepseek-review-r3-4d66523"
+      ],
+      "is_mainline": false
+    },
+    {
+      "branch": "review/deepseek/M2-C1-zcode-7de1cd2",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-09-26",
+      "checked_out_at": [
+        "G:/CODEX/New Manga.worktrees/M2-C1-dsh-review-7de1cd2"
+      ],
+      "is_mainline": false
+    },
+    {
+      "branch": "review/deepseek/M2-C1-zcode-7de1cd2-r2",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-09-26",
+      "checked_out_at": [
+        "C:/Users/49745/.codex/worktrees/M2-C1-dsh-review-7de1cd2-r2"
+      ],
+      "is_mainline": false
+    },
+    {
+      "branch": "review/deepseek/M2-C1-zcode-7de1cd2-r3",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-09-26",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "review/deepseek/M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD-r1",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-10-08",
+      "checked_out_at": [
+        "G:/CODEX/New Manga.worktrees/RUNNER-HISTORICAL-RAW-OUTPUT-GUARD-dsh-r1"
+      ],
+      "is_mainline": false
+    },
+    {
+      "branch": "review/deepseek/M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD-r2",
+      "merged": false,
+      "unique_commits": 1,
+      "tip_date": "2026-10-08",
+      "checked_out_at": [
+        "G:/CODEX/New Manga.worktrees/RUNNER-HISTORICAL-RAW-OUTPUT-GUARD-dsh-r2"
+      ],
+      "is_mainline": false
+    },
+    {
+      "branch": "review/deepseek/P02-preflight-r4-083d2b47",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-10-10",
+      "checked_out_at": [
+        "C:/Users/49745/.codex/worktrees/P02-preflight-r4-083d2b47-review-dsh"
+      ],
+      "is_mainline": false
+    },
+    {
+      "branch": "review/deepseek/P02-preflight-r4-condition-closure-92dc7361",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-10-10",
+      "checked_out_at": [
+        "C:/Users/49745/.codex/worktrees/P02-preflight-r4-condition-closure-92dc7361-review-dsh"
+      ],
+      "is_mainline": false
+    },
+    {
+      "branch": "review/deepseek/P02-preflight-r5-844aec28",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-10-10",
+      "checked_out_at": [
+        "C:/Users/49745/.codex/worktrees/P02-preflight-r5-844aec28-review-dsh"
+      ],
+      "is_mainline": false
+    },
+    {
+      "branch": "review/deepseek/P02-preflight-r6-c85a041c",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-10-10",
+      "checked_out_at": [
+        "C:/Users/49745/.codex/worktrees/P02-preflight-r6-c85a041c-review-dsh"
+      ],
+      "is_mainline": false
+    },
+    {
+      "branch": "review/deepseek/P03-packaged-sfx-entry-6d84b48",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-10-09",
+      "checked_out_at": [
+        "G:/CODEX/New Manga.worktrees/P03-dsh-review-6d84b48"
+      ],
+      "is_mainline": false
+    },
+    {
+      "branch": "review/qoder/M2-C1-typed-ipc-r3-4d66523",
+      "merged": false,
+      "unique_commits": 15,
+      "tip_date": "2026-09-26",
+      "checked_out_at": [
+        "G:/CODEX/New Manga.worktrees/M2-C1-qoder-review-r3-4d66523"
+      ],
+      "is_mainline": false
+    },
+    {
+      "branch": "review/qoder/M2-C1-zcode-7de1cd2",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-09-26",
+      "checked_out_at": [
+        "G:/CODEX/New Manga.worktrees/M2-C1-qoder-review-7de1cd2"
+      ],
+      "is_mainline": false
+    },
+    {
+      "branch": "task/t1.1.2-region-canvas-qoder",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-09-21",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "zcode/P15",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-10-17",
+      "checked_out_at": [
+        "G:/CODEX/New Manga.workspace/worktrees/P15"
+      ],
+      "is_mainline": false
+    },
+    {
+      "branch": "zcode/category-clarify-1",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-10-07",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "zcode/derived-gc-1",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-10-07",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "zcode/page-nav-projection-1",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-10-07",
+      "checked_out_at": [
+        "G:/CODEX/New Manga.worktrees/PAGE-NAV-1"
+      ],
+      "is_mainline": false
+    },
+    {
+      "branch": "zcode/page-resource-resolve-1",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-10-07",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "zcode/region-debounce-1",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-10-07",
+      "checked_out_at": [],
+      "is_mainline": false
+    },
+    {
+      "branch": "zcode/resolve-debounce-1",
+      "merged": true,
+      "unique_commits": 0,
+      "tip_date": "2026-10-07",
+      "checked_out_at": [],
+      "is_mainline": false
+    }
+  ],
+  "worktrees": [
+    {
+      "path": "G:/CODEX/New Manga",
+      "branch": "antigravity/P09-AC3-DELETE-HARDEN-1",
+      "head": "62303a576",
+      "exists": true,
+      "dirty_entries": 1237,
+      "stashes": 0,
+      "protected": []
+    },
+    {
+      "path": "C:/Users/49745/.codex/worktrees/M2-C1-dsh-review-7de1cd2-r2",
+      "branch": "review/deepseek/M2-C1-zcode-7de1cd2-r2",
+      "head": "b23772886",
+      "exists": true,
+      "dirty_entries": 2,
+      "stashes": 0,
+      "protected": []
+    },
+    {
+      "path": "C:/Users/49745/.codex/worktrees/m2-i2-review-a4705a9/New Manga",
+      "branch": "(detached)",
+      "head": "a4705a9f4",
+      "exists": true,
+      "dirty_entries": 1,
+      "stashes": 0,
+      "protected": []
+    },
+    {
+      "path": "C:/Users/49745/.codex/worktrees/P02-current-prestart-review-dsh-r1",
+      "branch": "(detached)",
+      "head": "e6227e0b0",
+      "exists": true,
+      "dirty_entries": 4,
+      "stashes": 0,
+      "protected": []
+    },
+    {
+      "path": "C:/Users/49745/.codex/worktrees/P02-current-prestart-review-dsh-r2",
+      "branch": "(detached)",
+      "head": "9bd1999c7",
+      "exists": true,
+      "dirty_entries": 6,
+      "stashes": 0,
+      "protected": []
+    },
+    {
+      "path": "C:/Users/49745/.codex/worktrees/P02-current-prestart-review-dsh-r3",
+      "branch": "(detached)",
+      "head": "322526fcd",
+      "exists": true,
+      "dirty_entries": 5,
+      "stashes": 0,
+      "protected": []
+    },
+    {
+      "path": "C:/Users/49745/.codex/worktrees/P02-current-prestart-review-dsh-r4",
+      "branch": "(detached)",
+      "head": "6ffa2a9c5",
+      "exists": true,
+      "dirty_entries": 5,
+      "stashes": 0,
+      "protected": []
+    },
+    {
+      "path": "C:/Users/49745/.codex/worktrees/P02-current-prestart-review-dsh-r5",
+      "branch": "(detached)",
+      "head": "68bafd374",
+      "exists": true,
+      "dirty_entries": 3,
+      "stashes": 0,
+      "protected": []
+    },
+    {
+      "path": "C:/Users/49745/.codex/worktrees/P02-current-prestart-review-dsh-r5-followup",
+      "branch": "(detached)",
+      "head": "999e6adfc",
+      "exists": true,
+      "dirty_entries": 3,
+      "stashes": 0,
+      "protected": []
+    },
+    {
+      "path": "C:/Users/49745/.codex/worktrees/p02-d27-review-repair-review",
+      "branch": "(detached)",
+      "head": "c328691af",
+      "exists": true,
+      "dirty_entries": 1,
+      "stashes": 0,
+      "protected": []
+    },
+    {
+      "path": "C:/Users/49745/.codex/worktrees/P02-hook-cache-review-dsh-r4",
+      "branch": "(detached)",
+      "head": "ceca2446d",
+      "exists": true,
+      "dirty_entries": 0,
+      "stashes": 0,
+      "protected": []
+    },
+    {
+      "path": "C:/Users/49745/.codex/worktrees/p02-post-review-preflight-review/New Manga",
+      "branch": "(detached)",
+      "head": "d92c40530",
+      "exists": true,
+      "dirty_entries": 0,
+      "stashes": 0,
+      "protected": []
+    },
+    {
+      "path": "C:/Users/49745/.codex/worktrees/p02-post-review-preflight-review-r2/New Manga",
+      "branch": "(detached)",
+      "head": "8a0685c9b",
+      "exists": true,
+      "dirty_entries": 0,
+      "stashes": 0,
+      "protected": []
+    },
+    {
+      "path": "C:/Users/49745/.codex/worktrees/P02-preflight-r4-083d2b47-review-dsh",
+      "branch": "review/deepseek/P02-preflight-r4-083d2b47",
+      "head": "083d2b47f",
+      "exists": true,
+      "dirty_entries": 3,
+      "stashes": 0,
+      "protected": []
+    },
+    {
+      "path": "C:/Users/49745/.codex/worktrees/P02-preflight-r4-condition-closure-92dc7361-review-dsh",
+      "branch": "review/deepseek/P02-preflight-r4-condition-closure-92dc7361",
+      "head": "92dc73611",
+      "exists": true,
+      "dirty_entries": 0,
+      "stashes": 0,
+      "protected": []
+    },
+    {
+      "path": "C:/Users/49745/.codex/worktrees/P02-preflight-r5-844aec28-review-dsh",
+      "branch": "review/deepseek/P02-preflight-r5-844aec28",
+      "head": "844aec282",
+      "exists": true,
+      "dirty_entries": 0,
+      "stashes": 0,
+      "protected": []
+    },
+    {
+      "path": "C:/Users/49745/.codex/worktrees/P02-preflight-r6-c85a041c-review-dsh",
+      "branch": "review/deepseek/P02-preflight-r6-c85a041c",
+      "head": "c85a041c5",
+      "exists": true,
+      "dirty_entries": 1,
+      "stashes": 0,
+      "protected": []
+    },
+    {
+      "path": "C:/Users/49745/.codex/worktrees/P02-preflight-review-dsh-r1",
+      "branch": "(detached)",
+      "head": "561f41051",
+      "exists": true,
+      "dirty_entries": 0,
+      "stashes": 0,
+      "protected": []
+    },
+    {
+      "path": "C:/Users/49745/.codex/worktrees/P02-process-isolation-review-dsh-r1",
+      "branch": "(detached)",
+      "head": "c542a31b1",
+      "exists": true,
+      "dirty_entries": 0,
+      "stashes": 0,
+      "protected": []
+    },
+    {
+      "path": "C:/Users/49745/.codex/worktrees/P02-process-isolation-review-dsh-r2",
+      "branch": "(detached)",
+      "head": "3555213a7",
+      "exists": true,
+      "dirty_entries": 0,
+      "stashes": 0,
+      "protected": []
+    },
+    {
+      "path": "C:/Users/49745/.codex/worktrees/P02-process-isolation-review-dsh-r3",
+      "branch": "(detached)",
+      "head": "92361e357",
+      "exists": true,
+      "dirty_entries": 0,
+      "stashes": 0,
+      "protected": []
+    },
+    {
+      "path": "C:/Users/49745/.codex/worktrees/P02-process-isolation-review-dsh-r4",
+      "branch": "(detached)",
+      "head": "fb0a7668d",
+      "exists": true,
+      "dirty_entries": 0,
+      "stashes": 0,
+      "protected": []
+    },
+    {
+      "path": "C:/Users/49745/.codex/worktrees/P02-process-isolation-review-dsh-r5",
+      "branch": "(detached)",
+      "head": "1c7efb172",
+      "exists": true,
+      "dirty_entries": 0,
+      "stashes": 0,
+      "protected": []
+    },
+    {
+      "path": "C:/Users/49745/.codex/worktrees/P02-process-isolation-review-dsh-r6",
+      "branch": "(detached)",
+      "head": "30da5fafb",
+      "exists": true,
+      "dirty_entries": 0,
+      "stashes": 0,
+      "protected": []
+    },
+    {
+      "path": "C:/Users/49745/.codex/worktrees/P02-process-isolation-review-dsh-r6-followup",
+      "branch": "(detached)",
+      "head": "2394dc98d",
+      "exists": true,
+      "dirty_entries": 0,
+      "stashes": 0,
+      "protected": []
+    },
+    {
+      "path": "C:/Users/49745/.codex/worktrees/P02-process-isolation-review-dsh-r7",
+      "branch": "(detached)",
+      "head": "d90dd8f1d",
+      "exists": true,
+      "dirty_entries": 0,
+      "stashes": 0,
+      "protected": []
+    },
+    {
+      "path": "C:/Users/49745/.codex/worktrees/p02-r2-docs-closeout/New Manga",
+      "branch": "codex/P02-r2-docs-closeout",
+      "head": "67fdf9c5c",
+      "exists": true,
+      "dirty_entries": 0,
+      "stashes": 0,
+      "protected": []
+    },
+    {
+      "path": "C:/Users/49745/.codex/worktrees/p02-r2-docs-closeout-review/New Manga",
+      "branch": "(detached)",
+      "head": "4d5a08644",
+      "exists": true,
+      "dirty_entries": 7,
+      "stashes": 0,
+      "protected": []
+    },
+    {
+      "path": "C:/Users/49745/.codex/worktrees/p02-r2-docs-fixes-review",
+      "branch": "(detached)",
+      "head": "f366124ec",
+      "exists": true,
+      "dirty_entries": 7,
+      "stashes": 0,
+      "protected": []
+    },
+    {
+      "path": "C:/Users/49745/.codex/worktrees/p02pre-r1h-codex",
+      "branch": "agent/codex/P02PRE-R1H",
+      "head": "c1cc26811",
+      "exists": true,
+      "dirty_entries": 0,
+      "stashes": 0,
+      "protected": []
+    },
+    {
+      "path": "C:/Users/49745/.codex/worktrees/p02pre-r1h-r6-attempt4-antigravity",
+      "branch": "agent/antigravity/P02PRE-R1H-R6-A4",
+      "head": "c7c7879e8",
+      "exists": true,
+      "dirty_entries": 0,
+      "stashes": 0,
+      "protected": []
+    },
+    {
+      "path": "C:/Users/49745/.codex/worktrees/p02pre-r1h-r6-exec-a6-antigravity/New Manga",
+      "branch": "agent/antigravity/P02PRE-R1H-R6-EXEC-A6",
+      "head": "343895fb5",
+      "exists": true,
+      "dirty_entries": 3,
+      "stashes": 0,
+      "protected": []
+    },
+    {
+      "path": "C:/Users/49745/.codex/worktrees/p02pre-r1h-zcode",
+      "branch": "agent/zcode/P02PRE-R1H",
+      "head": "256e3ea62",
+      "exists": true,
+      "dirty_entries": 0,
+      "stashes": 0,
+      "protected": []
+    },
+    {
+      "path": "C:/Users/49745/.codex/worktrees/p04-prod-command-concurrency-review",
+      "branch": "(detached)",
+      "head": "751abae22",
+      "exists": true,
+      "dirty_entries": 7,
+      "stashes": 0,
+      "protected": []
+    },
+    {
+      "path": "C:/Users/49745/AppData/Local/Temp/diag002-s2-2jWfPm",
+      "branch": "(detached)",
+      "head": "d268a1708",
+      "exists": true,
+      "dirty_entries": 2804,
+      "stashes": 0,
+      "protected": []
+    },
+    {
+      "path": "C:/Users/49745/AppData/Local/Temp/diag002-s2v4-FTf6BC",
+      "branch": "(detached)",
+      "head": "d268a1708",
+      "exists": true,
+      "dirty_entries": 2804,
+      "stashes": 0,
+      "protected": []
+    },
+    {
+      "path": "C:/Users/49745/AppData/Local/Temp/diag002-s2v5-WJGAfi",
+      "branch": "(detached)",
+      "head": "d268a1708",
+      "exists": true,
+      "dirty_entries": 2804,
+      "stashes": 0,
+      "protected": []
+    },
+    {
+      "path": "G:/CODEX/New Manga/.agents/worktrees/GOV-PLAN-BUDGET-1",
+      "branch": "GOV-PLAN-BUDGET-1",
+      "head": "126af54e7",
+      "exists": true,
+      "dirty_entries": 33,
+      "stashes": 0,
+      "protected": []
+    },
+    {
+      "path": "G:/CODEX/New Manga/.agents/worktrees/GOV-RESOURCE-MANIFEST-JSON-1",
+      "branch": "GOV-RESOURCE-MANIFEST-JSON-1",
+      "head": "a2ca297f1",
+      "exists": true,
+      "dirty_entries": 33,
+      "stashes": 0,
+      "protected": []
+    },
+    {
+      "path": "G:/CODEX/New Manga/.agents/worktrees/GOV-RESOURCE-MANIFEST-SAME-LOCATION-1",
+      "branch": "GOV-RESOURCE-MANIFEST-SAME-LOCATION-1",
+      "head": "0a2c45d5e",
+      "exists": true,
+      "dirty_entries": 2,
+      "stashes": 0,
+      "protected": []
+    },
+    {
+      "path": "G:/CODEX/New Manga/.agents/worktrees/P19-UI-MANIFEST-VIEW-1",
+      "branch": "P19-UI-MANIFEST-VIEW-1",
+      "head": "3e316830c",
+      "exists": true,
+      "dirty_entries": 34,
+      "stashes": 0,
+      "protected": []
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/GOV-PIN-LINEAGE-1/worktree",
+      "branch": "dsh/GOV-PIN-LINEAGE-1",
+      "head": "60d47991b",
+      "exists": true,
+      "dirty_entries": 0,
+      "stashes": 0,
+      "protected": []
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/P06-GC-DISTRIBUTION-MIGRATION/old-runtime/worktree",
+      "branch": "(detached)",
+      "head": "ad75fadc2",
+      "exists": true,
+      "dirty_entries": 0,
+      "stashes": 0,
+      "protected": []
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/P09-BASELINE-T2",
+      "branch": "(detached)",
+      "head": "a04e4ea78",
+      "exists": true,
+      "dirty_entries": 0,
+      "stashes": 0,
+      "protected": []
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/ARCH-DOC-REBASELINE",
+      "branch": "codex/arch-doc-rebaseline",
+      "head": "702081442",
+      "exists": true,
+      "dirty_entries": 0,
+      "stashes": 0,
+      "protected": [
+        "doc/tasks/ARCH-DOC-REBASELINE.md"
+      ]
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/ENV-BUNDLE-1",
+      "branch": "codex/ENV-BUNDLE-1-sidecar-rebuild",
+      "head": "5a23c5037",
+      "exists": true,
+      "dirty_entries": 0,
+      "stashes": 0,
+      "protected": [
+        "doc/tasks/ENV-BUNDLE-1.md",
+        "doc/tasks/ENV-BUNDLE-1.md"
+      ]
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/ENV-BUNDLE-1-FU1",
+      "branch": "codex/ENV-BUNDLE-1-FU1-packaged-acceptance",
+      "head": "77f760e5f",
+      "exists": true,
+      "dirty_entries": 0,
+      "stashes": 0,
+      "protected": [
+        "doc/tasks/ENV-BUNDLE-1-FU1.md",
+        "doc/tasks/ENV-BUNDLE-1-FU1.md",
+        "doc/tasks/ENV-BUNDLE-1-FU1.md",
+        "verification/ENV-BUNDLE-1-FU1/resource-manifest.json",
+        "verification/ENV-BUNDLE-1-FU1/resource-manifest.json",
+        "verification/ENV-BUNDLE-1-FU1/resource-manifest.json",
+        "verification/ENV-BUNDLE-1-FU1/resource-manifest.json"
+      ]
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/EVENTS-FWD-1",
+      "branch": "agent/antigravity/EVENTS-FWD-1",
+      "head": "5f1d9870e",
+      "exists": true,
+      "dirty_entries": 0,
+      "stashes": 0,
+      "protected": [
+        "doc/tasks/EVENTS-FWD-1.md",
+        "verification/EVENTS-FWD-1/resource-manifest.json",
+        "verification/EVENTS-FWD-1/resource-manifest.json",
+        "verification/EVENTS-FWD-1/resource-manifest.json"
+      ]
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/EXPORT-IPC-1",
+      "branch": "agent/antigravity/EXPORT-IPC-1",
+      "head": "fee223e36",
+      "exists": true,
+      "dirty_entries": 0,
+      "stashes": 0,
+      "protected": [
+        "doc/tasks/EXPORT-IPC-1.md",
+        "verification/EXPORT-IPC-1/resource-manifest.json",
+        "verification/EXPORT-IPC-1/resource-manifest.json",
+        "verification/EXPORT-IPC-1/resource-manifest.json"
+      ]
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/EXPORT-REVEAL-1",
+      "branch": "codex/EXPORT-REVEAL-1",
+      "head": "13ac5b30f",
+      "exists": true,
+      "dirty_entries": 1,
+      "stashes": 0,
+      "protected": [
+        "doc/tasks/EXPORT-REVEAL-1.md",
+        "verification/EXPORT-REVEAL-1/resource-manifest.json",
+        "verification/EXPORT-REVEAL-1/resource-manifest.json",
+        "verification/EXPORT-REVEAL-1/resource-manifest.json",
+        "verification/EXPORT-REVEAL-1/resource-manifest.json"
+      ]
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/FEAT-CREATE-1",
+      "branch": "codex/FEAT-CREATE-1",
+      "head": "c96958172",
+      "exists": true,
+      "dirty_entries": 0,
+      "stashes": 0,
+      "protected": []
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/FEAT-CREATE-2",
+      "branch": "codex/FEAT-CREATE-2",
+      "head": "8202f2411",
+      "exists": true,
+      "dirty_entries": 0,
+      "stashes": 0,
+      "protected": []
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/FEAT-CREATE-3",
+      "branch": "codex/FEAT-CREATE-3",
+      "head": "f15d085e6",
+      "exists": true,
+      "dirty_entries": 1,
+      "stashes": 0,
+      "protected": []
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/FEAT-CREATE-4",
+      "branch": "codex/FEAT-CREATE-4",
+      "head": "f2c66ff26",
+      "exists": true,
+      "dirty_entries": 0,
+      "stashes": 0,
+      "protected": []
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/FEAT-IMPORT-MULTI-1",
+      "branch": "codex/FEAT-IMPORT-MULTI-1",
+      "head": "6caddf38e",
+      "exists": true,
+      "dirty_entries": 50,
+      "stashes": 0,
+      "protected": []
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/HOST-CORE-1",
+      "branch": "codex/HOST-CORE-1-hostcontrol-handler",
+      "head": "c97b2d125",
+      "exists": true,
+      "dirty_entries": 0,
+      "stashes": 0,
+      "protected": [
+        "doc/tasks/HOST-CORE-1.md",
+        "verification/HOST-CORE-1/resource-manifest.json"
+      ]
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/HOST-ISSUER-1",
+      "branch": "codex/HOST-ISSUER-1-tauri-ref-issuer",
+      "head": "deb2dfc0b",
+      "exists": true,
+      "dirty_entries": 0,
+      "stashes": 0,
+      "protected": [
+        "doc/tasks/HOST-ISSUER-1.md",
+        "verification/HOST-ISSUER-1-C1/resource-manifest.json",
+        "verification/HOST-ISSUER-1/resource-manifest.json",
+        "verification/HOST-ISSUER-1/resource-manifest.json"
+      ]
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/HOST-ISSUER-1-C1",
+      "branch": "codex/HOST-ISSUER-1-C1-grant-registration-contract",
+      "head": "13cc2bb54",
+      "exists": true,
+      "dirty_entries": 0,
+      "stashes": 0,
+      "protected": [
+        "doc/tasks/HOST-ISSUER-1-C1.md",
+        "verification/HOST-ISSUER-1-C1/resource-manifest.json"
+      ]
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/HOST-TTL-BOUNDARY-1",
+      "branch": "codex/HOST-TTL-BOUNDARY-1-grant-ttl",
+      "head": "fdf974645",
+      "exists": true,
+      "dirty_entries": 0,
+      "stashes": 0,
+      "protected": [
+        "doc/tasks/HOST-TTL-BOUNDARY-1.md",
+        "verification/HOST-TTL-BOUNDARY-1/resource-manifest.json",
+        "verification/HOST-TTL-BOUNDARY-1/resource-manifest.json"
+      ]
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-BASELINE",
+      "branch": "agent/zcode/P02-NEW-TIME-BASELINE",
+      "head": "7ab5b7d05",
+      "exists": true,
+      "dirty_entries": 88,
+      "stashes": 0,
+      "protected": [
+        "doc/tasks/P02-NEW-TIME-BASELINE.md"
+      ]
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-BASELINE-AC3-BRANCH-RESOLUTION",
+      "branch": "agent/zcode/P02-NEW-TIME-BASELINE-AC3-BRANCH-RESOLUTION",
+      "head": "10c35daed",
+      "exists": true,
+      "dirty_entries": 3,
+      "stashes": 0,
+      "protected": [
+        "doc/tasks/P02-NEW-TIME-BASELINE-AC3-BRANCH-RESOLUTION.md",
+        "doc/tasks/P02-NEW-TIME-BASELINE-AC3-BRANCH-RESOLUTION.md",
+        "doc/tasks/P02-NEW-TIME-BASELINE-AC3-BRANCH-RESOLUTION.md",
+        "doc/tasks/P02-NEW-TIME-BASELINE-AC3-BRANCH-RESOLUTION.md",
+        "doc/tasks/P02-NEW-TIME-BASELINE.md"
+      ]
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-BASELINE-AC3-GIT-TOPLEVEL-RESOLUTION",
+      "branch": "agent/zcode/P02-NEW-TIME-BASELINE-AC3-GIT-TOPLEVEL-RESOLUTION",
+      "head": "0af898088",
+      "exists": true,
+      "dirty_entries": 0,
+      "stashes": 0,
+      "protected": [
+        "doc/tasks/P02-NEW-TIME-BASELINE-AC3-GIT-TOPLEVEL-RESOLUTION.md",
+        "doc/tasks/P02-NEW-TIME-BASELINE-AC3-GIT-TOPLEVEL-RESOLUTION.md",
+        "doc/tasks/P02-NEW-TIME-BASELINE.md"
+      ]
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-BASELINE-AC3-HELPER-OUTPUT-RESOLUTION",
+      "branch": "agent/zcode/P02-NEW-TIME-BASELINE-AC3-HELPER-OUTPUT-RESOLUTION",
+      "head": "14da1e814",
+      "exists": true,
+      "dirty_entries": 0,
+      "stashes": 0,
+      "protected": [
+        "doc/tasks/P02-NEW-TIME-BASELINE-AC3-HELPER-OUTPUT-RESOLUTION.md"
+      ]
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-X6",
+      "branch": "agent/zcode/P02-NEW-TIME-X6",
+      "head": "49d2a2f9c",
+      "exists": true,
+      "dirty_entries": 0,
+      "stashes": 0,
+      "protected": [
+        "doc/tasks/P02-NEW-TIME-X6-POSTRUN-REVIEW.md",
+        "doc/tasks/P02-NEW-TIME-X6.md",
+        "doc/tasks/P02-NEW-TIME-X6.md",
+        "doc/tasks/P02-NEW-TIME-X6.md"
+      ]
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-X6-AC1-AC7",
+      "branch": "agent/zcode/P02-NEW-TIME-X6-AC1-AC7",
+      "head": "6935aa388",
+      "exists": true,
+      "dirty_entries": 0,
+      "stashes": 0,
+      "protected": []
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-X6-AC1-AC7-ANTIGRAVITY",
+      "branch": "agent/antigravity/P02-NEW-TIME-X6-AC1-AC7",
+      "head": "4abb8d288",
+      "exists": true,
+      "dirty_entries": 1,
+      "stashes": 0,
+      "protected": [
+        "doc/tasks/P02-NEW-TIME-X6-AC1-AC7.md",
+        "doc/tasks/RES-P02-AC6-CDP-RECOVERY.md",
+        "verification/P02-NEW-TIME-X6-AC1-AC7/final-gate-a7/resource-inventory.json"
+      ]
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-X6-AC1-AC7-INTEGRATION",
+      "branch": "codex/p02-mainline-closeout-20261015",
+      "head": "0dcc94f35",
+      "exists": true,
+      "dirty_entries": 0,
+      "stashes": 0,
+      "protected": [
+        "doc/tasks/P02-MAINLINE-INTEGRATION.md",
+        "doc/tasks/P02-NEW-TIME-X6-AC1-AC7.md",
+        "doc/tasks/RES-P02-AC6-CDP-RECOVERY.md",
+        "verification/P02-NEW-TIME-X6-AC1-AC7/final-gate-a7/resource-inventory.json"
+      ]
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-X6-BUILD-CARGO",
+      "branch": "agent/antigravity/P02-NEW-TIME-X6-BUILD-CARGO",
+      "head": "708ac7938",
+      "exists": true,
+      "dirty_entries": 25,
+      "stashes": 0,
+      "protected": [
+        "doc/tasks/P02-NEW-TIME-X6-AC1-AC7.md",
+        "doc/tasks/P02-NEW-TIME-X6-BUILD-CARGO.md",
+        "doc/tasks/P02-NEW-TIME-X6-BUILD-CARGO.md",
+        "doc/tasks/P02-NEW-TIME-X6-BUILD-CARGO.md",
+        "doc/tasks/RES-P02-AC6-CDP-RECOVERY.md",
+        "verification/P02-NEW-TIME-X6-AC1-AC7/final-gate-a7/resource-inventory.json"
+      ]
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-X6-BUILD-CARGO-DSH-REVIEW",
+      "branch": "(detached)",
+      "head": "708ac7938",
+      "exists": true,
+      "dirty_entries": 0,
+      "stashes": 0,
+      "protected": [
+        "doc/tasks/P02-NEW-TIME-X6-BUILD-CARGO.md"
+      ]
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-X6-POSTRUN-REVIEW",
+      "branch": "agent/codex/P02-NEW-TIME-X6-POSTRUN-REVIEW",
+      "head": "2f38141d6",
+      "exists": true,
+      "dirty_entries": 28,
+      "stashes": 0,
+      "protected": []
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P02PRE-R1H-FORENSIC-RECOVERY-INTEGRATION",
+      "branch": "agent/codex/P02PRE-R1H-FORENSIC-RECOVERY-INTEGRATION",
+      "head": "4569093db",
+      "exists": true,
+      "dirty_entries": 0,
+      "stashes": 0,
+      "protected": [
+        "doc/tasks/P02PRE-R1H-FORENSIC-RECOVERY.md"
+      ]
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P02PRE-R1H-H1-CURRENT-INPUT-REVIEW",
+      "branch": "agent/codex/P02PRE-R1H-H1-CURRENT-INPUT-REVIEW",
+      "head": "a6f33f7be",
+      "exists": true,
+      "dirty_entries": 0,
+      "stashes": 0,
+      "protected": [
+        "doc/tasks/P02PRE-R1H-H1-CURRENT-INPUT-REVIEW.md"
+      ]
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P02PRE-R1H-H2-COLLECTOR",
+      "branch": "agent/zcode/P02PRE-R1H-H2-COLLECTOR",
+      "head": "4a90d820a",
+      "exists": true,
+      "dirty_entries": 2,
+      "stashes": 0,
+      "protected": []
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P02PRE-R1H-H2-COLLECTOR-ANTIGRAVITY-R3",
+      "branch": "agent/antigravity/P02PRE-R1H-H2-COLLECTOR-R3",
+      "head": "c763efa27",
+      "exists": true,
+      "dirty_entries": 0,
+      "stashes": 0,
+      "protected": [
+        "doc/tasks/P02PRE-R1H-H2-COLLECTOR.md",
+        "doc/tasks/P02PRE-R1H-H2-RUN.md"
+      ]
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P02PRE-R1H-H2-COLLECTOR-INTEGRATION",
+      "branch": "(detached)",
+      "head": "1924fbb4f",
+      "exists": true,
+      "dirty_entries": 0,
+      "stashes": 0,
+      "protected": [
+        "doc/tasks/P02PRE-R1H-H2-COLLECTOR.md",
+        "doc/tasks/P02PRE-R1H-H2-RUN.md"
+      ]
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P02PRE-R1H-H2-RUN-INTEGRATION",
+      "branch": "agent/codex/P02PRE-R1H-H2-RUN-INTEGRATION",
+      "head": "06990b799",
+      "exists": true,
+      "dirty_entries": 0,
+      "stashes": 0,
+      "protected": [
+        "doc/tasks/P02PRE-R1H-H2-RUN.md"
+      ]
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE",
+      "branch": "agent/codex/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE",
+      "head": "23bec747d",
+      "exists": true,
+      "dirty_entries": 0,
+      "stashes": 0,
+      "protected": [
+        "doc/tasks/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE.md"
+      ]
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P06-GC-DISTRIBUTION-MIGRATION",
+      "branch": "codex/P06-gc-distribution-migration-evidence",
+      "head": "4ed493a3f",
+      "exists": true,
+      "dirty_entries": 0,
+      "stashes": 0,
+      "protected": [
+        "doc/tasks/P06.md",
+        "verification/P06/resource-manifest.json"
+      ]
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P09-FU1-DECODER-TEST",
+      "branch": "codex/P09-FU1-decoder-test-baseline",
+      "head": "c15cb9589",
+      "exists": true,
+      "dirty_entries": 0,
+      "stashes": 0,
+      "protected": [
+        "doc/tasks/P09-FU1.md",
+        "verification/P09-FU1/resource-manifest.json"
+      ]
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P09-FU2-IMPORT-IPC-RUNTIME",
+      "branch": "codex/P09-FU2-import-ipc-runtime",
+      "head": "73b52e86a",
+      "exists": true,
+      "dirty_entries": 0,
+      "stashes": 0,
+      "protected": [
+        "doc/tasks/P09-FU2.md",
+        "verification/P09-FU2/resource-manifest.json"
+      ]
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P09-IMPORT-CORE",
+      "branch": "codex/P09-import-core",
+      "head": "54d40e668",
+      "exists": true,
+      "dirty_entries": 0,
+      "stashes": 0,
+      "protected": [
+        "doc/tasks/P09.md",
+        "verification/P09/resource-manifest.json"
+      ]
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P10-CREDENTIAL-CONFIG-CONTRACT",
+      "branch": "codex/P10-credential-config-contract",
+      "head": "fa20602de",
+      "exists": true,
+      "dirty_entries": 0,
+      "stashes": 0,
+      "protected": [
+        "doc/tasks/P10.md",
+        "verification/P10/resource-manifest.json"
+      ]
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P11-LONG-TASK-LIFECYCLE-CONTRACT",
+      "branch": "codex/P11-long-task-lifecycle-contract",
+      "head": "c7922ae1c",
+      "exists": true,
+      "dirty_entries": 0,
+      "stashes": 0,
+      "protected": [
+        "doc/tasks/P11.md",
+        "verification/P11/resource-manifest.json"
+      ]
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P12",
+      "branch": "agent/antigravity/P12-bookshelf-ui",
+      "head": "98f3055f1",
+      "exists": true,
+      "dirty_entries": 0,
+      "stashes": 0,
+      "protected": [
+        "doc/tasks/P12.md",
+        "verification/P12/resource-manifest.json",
+        "verification/P12/resource-manifest.json"
+      ]
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P12-C1-IMPORT-IPC",
+      "branch": "codex/P12-C1-import-ipc-contract",
+      "head": "e325e0072",
+      "exists": true,
+      "dirty_entries": 0,
+      "stashes": 0,
+      "protected": [
+        "doc/tasks/P12-C1.md",
+        "verification/P12-C1/resource-manifest.json"
+      ]
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P13-C1-RUNTIME-IPC",
+      "branch": "codex/P13-C1-runtime-ipc-contract",
+      "head": "7dde1f6c4",
+      "exists": true,
+      "dirty_entries": 0,
+      "stashes": 0,
+      "protected": [
+        "doc/tasks/P13-C1.md",
+        "verification/P13-C1/resource-manifest.json"
+      ]
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P13-RUN-RUNTIME",
+      "branch": "codex/P13-run-runtime-control-recovery",
+      "head": "8056ee63e",
+      "exists": true,
+      "dirty_entries": 0,
+      "stashes": 0,
+      "protected": [
+        "doc/tasks/P13.md",
+        "verification/P13/resource-manifest.json"
+      ]
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P14",
+      "branch": "codex/P14",
+      "head": "41c320694",
+      "exists": true,
+      "dirty_entries": 4,
+      "stashes": 0,
+      "protected": [
+        "doc/tasks/P14.md",
+        "verification/P14/resource-manifest.json",
+        "verification/P14/resource-manifest.json",
+        "verification/P14/resource-manifest.json"
+      ]
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P14-review",
+      "branch": "(detached)",
+      "head": "ee1d1e287",
+      "exists": true,
+      "dirty_entries": 40,
+      "stashes": 0,
+      "protected": []
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P15",
+      "branch": "zcode/P15",
+      "head": "ee19898fc",
+      "exists": true,
+      "dirty_entries": 2,
+      "stashes": 0,
+      "protected": [
+        "doc/tasks/P15.md",
+        "verification/P15/resource-manifest.json",
+        "verification/P15/resource-manifest.json",
+        "verification/P15/resource-manifest.json",
+        "verification/P15/resource-manifest.json"
+      ]
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P15-C1",
+      "branch": "antigravity/P15-C1",
+      "head": "9c0200e88",
+      "exists": true,
+      "dirty_entries": 0,
+      "stashes": 0,
+      "protected": [
+        "doc/tasks/P15-C1.md",
+        "verification/P15-C1/resource-manifest.json",
+        "verification/P15-C1/resource-manifest.json",
+        "verification/P15-C1/resource-manifest.json"
+      ]
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P15-C1-FU1",
+      "branch": "codex/P15-C1-FU1",
+      "head": "9b0a24590",
+      "exists": true,
+      "dirty_entries": 0,
+      "stashes": 0,
+      "protected": [
+        "doc/tasks/P15-C1-FU1.md",
+        "verification/P15-C1-FU1/resource-manifest.json"
+      ]
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P15-C1-FU2",
+      "branch": "codex/P15-C1-FU2",
+      "head": "0aa01eddc",
+      "exists": true,
+      "dirty_entries": 0,
+      "stashes": 0,
+      "protected": [
+        "doc/tasks/P15-C1-FU2.md",
+        "verification/P15-C1-FU2/resource-manifest.json"
+      ]
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P15-C1-review",
+      "branch": "(detached)",
+      "head": "8d083ee18",
+      "exists": true,
+      "dirty_entries": 0,
+      "stashes": 0,
+      "protected": []
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P15-CORE-1",
+      "branch": "codex/P15-CORE-1",
+      "head": "c399b1ae2",
+      "exists": true,
+      "dirty_entries": 3,
+      "stashes": 0,
+      "protected": [
+        "doc/tasks/P15-CORE-1.md"
+      ]
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P15-CORE-1A",
+      "branch": "codex/P15-CORE-1A",
+      "head": "99641c41f",
+      "exists": true,
+      "dirty_entries": 0,
+      "stashes": 0,
+      "protected": [
+        "doc/tasks/P15-CORE-1A.md",
+        "verification/P15-CORE-1A/resource-manifest.json"
+      ]
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P15-CORE-1B",
+      "branch": "codex/P15-CORE-1B",
+      "head": "075bcbad8",
+      "exists": true,
+      "dirty_entries": 0,
+      "stashes": 0,
+      "protected": [
+        "doc/tasks/P15-CORE-1B.md",
+        "verification/P15-CORE-1B/resource-manifest.json"
+      ]
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P15-CORE-1C",
+      "branch": "codex/P15-CORE-1C",
+      "head": "faa37493d",
+      "exists": true,
+      "dirty_entries": 1,
+      "stashes": 0,
+      "protected": [
+        "doc/tasks/P15-CORE-1C.md"
+      ]
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P15-HOST-1",
+      "branch": "codex/P15-HOST-1",
+      "head": "f80678bbd",
+      "exists": true,
+      "dirty_entries": 0,
+      "stashes": 0,
+      "protected": [
+        "doc/tasks/P15-HOST-1.md"
+      ]
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P15-HOST-2",
+      "branch": "codex/P15-HOST-2",
+      "head": "4e88bc4d4",
+      "exists": true,
+      "dirty_entries": 64,
+      "stashes": 0,
+      "protected": [
+        "doc/tasks/P15-HOST-2.md"
+      ]
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P15-review",
+      "branch": "(detached)",
+      "head": "ee19898fc",
+      "exists": true,
+      "dirty_entries": 40,
+      "stashes": 0,
+      "protected": []
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P16-C1-READER-EXPORT-IPC",
+      "branch": "codex/P16-C1-reader-export-ipc-contract",
+      "head": "356a9fe07",
+      "exists": true,
+      "dirty_entries": 0,
+      "stashes": 0,
+      "protected": [
+        "doc/tasks/P16-C1.md",
+        "verification/P16-C1/resource-manifest.json"
+      ]
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P16-READER-EXPORT-CORE",
+      "branch": "codex/P16-reader-export-core",
+      "head": "316d79ece",
+      "exists": true,
+      "dirty_entries": 0,
+      "stashes": 0,
+      "protected": [
+        "doc/tasks/P16.md",
+        "verification/P16/resource-manifest.json"
+      ]
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P17",
+      "branch": "agent/antigravity/P17",
+      "head": "55b9ff3f8",
+      "exists": true,
+      "dirty_entries": 0,
+      "stashes": 0,
+      "protected": [
+        "doc/tasks/P17.md",
+        "verification/P17/resource-manifest.json"
+      ]
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P18-JA-KO-QUALITY",
+      "branch": "codex/P18-ja-ko-quality-qualification",
+      "head": "34d81c96a",
+      "exists": true,
+      "dirty_entries": 0,
+      "stashes": 0,
+      "protected": [
+        "doc/tasks/P18.md",
+        "verification/P18/resource-manifest.json"
+      ]
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P19-AC3-1",
+      "branch": "codex/P19-AC3-1",
+      "head": "ee5eb7864",
+      "exists": true,
+      "dirty_entries": 0,
+      "stashes": 0,
+      "protected": []
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P19-BOOT-1",
+      "branch": "codex/P19-BOOT-1",
+      "head": "e4aff85bc",
+      "exists": true,
+      "dirty_entries": 0,
+      "stashes": 0,
+      "protected": [
+        "doc/tasks/P19-BOOT-1.md",
+        "verification/P19-BOOT-1/resource-manifest.json",
+        "verification/P19-BOOT-1/resource-manifest.json"
+      ]
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P19-UI-FIX-1",
+      "branch": "codex/P19-UI-FIX-1",
+      "head": "00c5e87da",
+      "exists": true,
+      "dirty_entries": 0,
+      "stashes": 0,
+      "protected": [
+        "verification/P19-UI-FIX-1/resource-manifest.json"
+      ]
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P19-UI-FIX-2",
+      "branch": "codex/P19-UI-FIX-2",
+      "head": "541aabb1e",
+      "exists": true,
+      "dirty_entries": 0,
+      "stashes": 0,
+      "protected": []
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P19-UI-FIX-3",
+      "branch": "codex/P19-UI-FIX-3",
+      "head": "9e152b631",
+      "exists": true,
+      "dirty_entries": 2,
+      "stashes": 0,
+      "protected": []
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P22-REBASE-1",
+      "branch": "codex/p22-rebase-1",
+      "head": "5181facbb",
+      "exists": true,
+      "dirty_entries": 25,
+      "stashes": 0,
+      "protected": [
+        "doc/tasks/P22-REBASE-1.md",
+        "doc/tasks/P22-REBASE-1.md",
+        "doc/tasks/P22-REBASE-1.md",
+        "doc/tasks/PROJECT-ROADMAP-RELEASE.md",
+        "verification/P22-REBASE-1/integration/resource-closeout-manifest.json",
+        "verification/P22-REBASE-1/integration/resource-closeout-manifest.json",
+        "verification/P22-REBASE-1/integration/resource-closeout-manifest.json"
+      ]
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/PROJECT-ROADMAP-REBASELINE",
+      "branch": "codex/project-roadmap-rebaseline",
+      "head": "000cbfe99",
+      "exists": true,
+      "dirty_entries": 27,
+      "stashes": 0,
+      "protected": []
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/PROJECT-ROADMAP-RELEASE-REVIEW",
+      "branch": "(detached)",
+      "head": "a43c6b9fe",
+      "exists": true,
+      "dirty_entries": 0,
+      "stashes": 0,
+      "protected": [
+        "doc/tasks/PROJECT-ROADMAP-RELEASE.md"
+      ]
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/READER-IPC-1",
+      "branch": "codex/READER-IPC-1",
+      "head": "6aadc70de",
+      "exists": true,
+      "dirty_entries": 1,
+      "stashes": 0,
+      "protected": [
+        "doc/tasks/READER-IPC-1.md",
+        "verification/READER-IPC-1/resource-manifest.json",
+        "verification/READER-IPC-1/resource-manifest.json",
+        "verification/READER-IPC-1/resource-manifest.json"
+      ]
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/RUN-IPC-1",
+      "branch": "agent/dsh/RUN-IPC-1",
+      "head": "de3caf93a",
+      "exists": true,
+      "dirty_entries": 26,
+      "stashes": 0,
+      "protected": [
+        "doc/tasks/RUN-IPC-1.md",
+        "verification/RUN-IPC-1/resource-manifest.json",
+        "verification/RUN-IPC-1/resource-manifest.json",
+        "verification/RUN-IPC-1/resource-manifest.json"
+      ]
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/RUN-IPC-1-review",
+      "branch": "(detached)",
+      "head": "be14d721c",
+      "exists": true,
+      "dirty_entries": 1,
+      "stashes": 0,
+      "protected": []
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/SEC-FIX-PATH-ECHO-1",
+      "branch": "codex/SEC-FIX-PATH-ECHO-1",
+      "head": "6efbfcf06",
+      "exists": true,
+      "dirty_entries": 5,
+      "stashes": 0,
+      "protected": []
+    },
+    {
+      "path": "G:/CODEX/New Manga.workspace/worktrees/UI-DESIGN-1",
+      "branch": "agent/zcode/UI-DESIGN-1",
+      "head": "920151a9c",
+      "exists": true,
+      "dirty_entries": 0,
+      "stashes": 0,
+      "protected": [
+        "doc/tasks/UI-DESIGN-1.md",
+        "verification/UI-DESIGN-1/resource-manifest.json"
+      ]
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/DERIVED-GC-2-zcode",
+      "branch": "agent/zcode/M2-DERIVED-GC-2",
+      "head": "0fadc330a",
+      "exists": true,
+      "dirty_entries": 24,
+      "stashes": 0,
+      "protected": []
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/M2-AC5-BUILD-FRESH-CHECKOUT-zcode",
+      "branch": "agent/zcode/M2-AC5-BUILD-FRESH-CHECKOUT",
+      "head": "ed8a6ea64",
+      "exists": true,
+      "dirty_entries": 14,
+      "stashes": 0,
+      "protected": []
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/M2-C1-codex-typed-ipc-contract",
+      "branch": "agent/codex/M2-C1-typed-ipc-contract",
+      "head": "86013b34d",
+      "exists": true,
+      "dirty_entries": 0,
+      "stashes": 0,
+      "protected": []
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/M2-C1-deepseek-review-7d908a5",
+      "branch": "review/deepseek/M2-C1-typed-ipc-7d908a5",
+      "head": "e6fc3a59b",
+      "exists": true,
+      "dirty_entries": 4,
+      "stashes": 0,
+      "protected": []
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/M2-C1-deepseek-review-r2-7e65f4f",
+      "branch": "review/deepseek/M2-C1-typed-ipc-r2-7e65f4f",
+      "head": "538674472",
+      "exists": true,
+      "dirty_entries": 0,
+      "stashes": 0,
+      "protected": []
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/M2-C1-deepseek-review-r3-4d66523",
+      "branch": "review/deepseek/M2-C1-typed-ipc-r3-4d66523",
+      "head": "ac38dede8",
+      "exists": true,
+      "dirty_entries": 0,
+      "stashes": 0,
+      "protected": []
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/M2-C1-dsh-review-7de1cd2",
+      "branch": "review/deepseek/M2-C1-zcode-7de1cd2",
+      "head": "b23772886",
+      "exists": true,
+      "dirty_entries": 2,
+      "stashes": 0,
+      "protected": []
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/M2-C1-qoder-review-7de1cd2",
+      "branch": "review/qoder/M2-C1-zcode-7de1cd2",
+      "head": "0d73983a5",
+      "exists": true,
+      "dirty_entries": 1,
+      "stashes": 0,
+      "protected": []
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/M2-C1-qoder-review-r3-4d66523",
+      "branch": "review/qoder/M2-C1-typed-ipc-r3-4d66523",
+      "head": "1950a2361",
+      "exists": true,
+      "dirty_entries": 0,
+      "stashes": 0,
+      "protected": []
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/M2-C2-zcode",
+      "branch": "agent/zcode/M2-C2-typed-ipc-contract-revision",
+      "head": "c18f273ad",
+      "exists": true,
+      "dirty_entries": 2,
+      "stashes": 0,
+      "protected": []
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/M2-FIX-DIGEST-SEEK-2GIB-zcode",
+      "branch": "agent/zcode/M2-FIX-DIGEST-SEEK-2GIB",
+      "head": "8a1bc1e85",
+      "exists": true,
+      "dirty_entries": 14,
+      "stashes": 0,
+      "protected": []
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/M2-I1-zcode",
+      "branch": "agent/zcode/M2-I1-core-assembly-seam",
+      "head": "8dab0abbc",
+      "exists": true,
+      "dirty_entries": 0,
+      "stashes": 0,
+      "protected": []
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/M2-I2-review-0d6acc7",
+      "branch": "(detached)",
+      "head": "0d6acc7d9",
+      "exists": true,
+      "dirty_entries": 1,
+      "stashes": 0,
+      "protected": []
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/M2-SETTINGS-IPC-CHANNEL-zcode",
+      "branch": "agent/zcode/M2-SETTINGS-IPC-CHANNEL",
+      "head": "8a28c797b",
+      "exists": true,
+      "dirty_entries": 6,
+      "stashes": 0,
+      "protected": []
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/M2-SFX-ANNOTATE-R2-zcode",
+      "branch": "agent/zcode/M2-SFX-ANNOTATE-R2",
+      "head": "44cd7cfb6",
+      "exists": true,
+      "dirty_entries": 0,
+      "stashes": 0,
+      "protected": []
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/M2-SFX-CORRECTION-EXPORTER-zcode",
+      "branch": "agent/zcode/M2-SFX-CORRECTION-EXPORTER",
+      "head": "669146a19",
+      "exists": true,
+      "dirty_entries": 0,
+      "stashes": 0,
+      "protected": []
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/M2-SFX-DATA-INFRA-zcode",
+      "branch": "agent/zcode/M2-SFX-DATA-INFRA",
+      "head": "54e04f1ba",
+      "exists": true,
+      "dirty_entries": 0,
+      "stashes": 0,
+      "protected": []
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/M2-SFX-SYNTH-BG-AUTO-zcode",
+      "branch": "agent/zcode/M2-SFX-SYNTH-BG-AUTO",
+      "head": "5907be596",
+      "exists": true,
+      "dirty_entries": 0,
+      "stashes": 0,
+      "protected": []
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/M2-UI1-integration-final-83a",
+      "branch": "master",
+      "head": "78faeee58",
+      "exists": true,
+      "dirty_entries": 0,
+      "stashes": 0,
+      "protected": []
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/P01-c8-review-dsh",
+      "branch": "(detached)",
+      "head": "91ab1ef8d",
+      "exists": true,
+      "dirty_entries": 5,
+      "stashes": 0,
+      "protected": []
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/P01-c9-review-antigravity",
+      "branch": "(detached)",
+      "head": "7645577ab",
+      "exists": true,
+      "dirty_entries": 5,
+      "stashes": 0,
+      "protected": []
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/P01-closeout-review-antigravity",
+      "branch": "(detached)",
+      "head": "51bc01fec",
+      "exists": true,
+      "dirty_entries": 12,
+      "stashes": 0,
+      "protected": []
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/P02-build-preflight-codex",
+      "branch": "codex/P02-build-preflight",
+      "head": "4b54f304d",
+      "exists": true,
+      "dirty_entries": 0,
+      "stashes": 0,
+      "protected": []
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/P02-fallback-scope-codex",
+      "branch": "codex/P02-fallback-scope",
+      "head": "0b95c6a10",
+      "exists": true,
+      "dirty_entries": 0,
+      "stashes": 0,
+      "protected": []
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/P02-harness-scope",
+      "branch": "codex/P02-harness-scope",
+      "head": "3c3e46877",
+      "exists": true,
+      "dirty_entries": 0,
+      "stashes": 0,
+      "protected": []
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/P02-hook-cache-isolation-plan-codex",
+      "branch": "codex/P02-hook-cache-isolation-plan",
+      "head": "ceca2446d",
+      "exists": true,
+      "dirty_entries": 10,
+      "stashes": 0,
+      "protected": []
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/P02-hook-cache-review-dsh",
+      "branch": "(detached)",
+      "head": "09d592a09",
+      "exists": true,
+      "dirty_entries": 0,
+      "stashes": 0,
+      "protected": []
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/P02-owner-amendment-codex",
+      "branch": "codex/P02-owner-amendment",
+      "head": "4458b3505",
+      "exists": true,
+      "dirty_entries": 0,
+      "stashes": 0,
+      "protected": []
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/P02-owner-transfer-integration-codex",
+      "branch": "codex/P02-owner-transfer-integration",
+      "head": "3f4d16633",
+      "exists": true,
+      "dirty_entries": 0,
+      "stashes": 0,
+      "protected": []
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/P02-process-isolation-review-dsh-r7",
+      "branch": "(detached)",
+      "head": "d90dd8f1d",
+      "exists": true,
+      "dirty_entries": 0,
+      "stashes": 0,
+      "protected": []
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/P02-real-webview-harness-antigravity",
+      "branch": "agent/antigravity/P02-real-webview-harness",
+      "head": "89413f45a",
+      "exists": true,
+      "dirty_entries": 0,
+      "stashes": 0,
+      "protected": []
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/P02-real-webview-harness-zcode",
+      "branch": "agent/zcode/P02-real-webview-harness",
+      "head": "e19484660",
+      "exists": true,
+      "dirty_entries": 26,
+      "stashes": 0,
+      "protected": []
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/P02-stage-a-validation-172eee84-failureprobe",
+      "branch": "(detached)",
+      "head": "172eee842",
+      "exists": true,
+      "dirty_entries": 3,
+      "stashes": 0,
+      "protected": []
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/P02-stage-a-validation-172eee84-full",
+      "branch": "(detached)",
+      "head": "172eee842",
+      "exists": true,
+      "dirty_entries": 8,
+      "stashes": 0,
+      "protected": []
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/P02-stage-a-validation-172eee84-probe",
+      "branch": "(detached)",
+      "head": "172eee842",
+      "exists": true,
+      "dirty_entries": 5,
+      "stashes": 0,
+      "protected": []
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/P02-stage-a-validation-38672473-exact",
+      "branch": "(detached)",
+      "head": "38672473f",
+      "exists": true,
+      "dirty_entries": 9,
+      "stashes": 0,
+      "protected": []
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/P02-stage-a-validation-38959ba99-exact",
+      "branch": "(detached)",
+      "head": "38959ba99",
+      "exists": true,
+      "dirty_entries": 9,
+      "stashes": 0,
+      "protected": []
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/P02-stage-a-validation-5fa8a41f",
+      "branch": "(detached)",
+      "head": "5fa8a41f1",
+      "exists": true,
+      "dirty_entries": 5,
+      "stashes": 0,
+      "protected": []
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/P02-stage-a-validation-9b82e97b",
+      "branch": "(detached)",
+      "head": "9b82e97b8",
+      "exists": true,
+      "dirty_entries": 5,
+      "stashes": 0,
+      "protected": []
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/P02-stage-a-validation-cc1bd750-full",
+      "branch": "(detached)",
+      "head": "cc1bd7505",
+      "exists": true,
+      "dirty_entries": 7,
+      "stashes": 0,
+      "protected": []
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/P02-stage-a-validation-cc1bd750-probe",
+      "branch": "(detached)",
+      "head": "cc1bd7505",
+      "exists": true,
+      "dirty_entries": 4,
+      "stashes": 0,
+      "protected": []
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/P03-dsh-review-6d84b48",
+      "branch": "review/deepseek/P03-packaged-sfx-entry-6d84b48",
+      "head": "6d84b480d",
+      "exists": true,
+      "dirty_entries": 1,
+      "stashes": 0,
+      "protected": []
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/P03-packaged-sfx-entry-antigravity",
+      "branch": "agent/antigravity/P03-packaged-sfx-entry",
+      "head": "85482c5b0",
+      "exists": true,
+      "dirty_entries": 3,
+      "stashes": 0,
+      "protected": []
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/P03-review-prep-112495c7",
+      "branch": "(detached)",
+      "head": "0a25ceb45",
+      "exists": true,
+      "dirty_entries": 0,
+      "stashes": 0,
+      "protected": []
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/P03-review-prep-85482c5b",
+      "branch": "codex/P03-integration-4c04459",
+      "head": "552464238",
+      "exists": true,
+      "dirty_entries": 2,
+      "stashes": 0,
+      "protected": []
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/P04-prod-command-concurrency-antigravity",
+      "branch": "agent/antigravity/P04-prod-command-concurrency",
+      "head": "a4419167b",
+      "exists": true,
+      "dirty_entries": 0,
+      "stashes": 0,
+      "protected": []
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/P04-scope-freeze",
+      "branch": "codex/P04-scope-freeze",
+      "head": "4e6a8cfd4",
+      "exists": true,
+      "dirty_entries": 0,
+      "stashes": 0,
+      "protected": []
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/P22-roundtrip-serialization-antigravity",
+      "branch": "agent/antigravity/P22-roundtrip-serialization",
+      "head": "4a707db80",
+      "exists": true,
+      "dirty_entries": 57,
+      "stashes": 0,
+      "protected": []
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/PACKAGED-AC1-DLL-DIAG-dsh",
+      "branch": "agent/deepseek/M2-PACKAGED-AC1-DLL-DIAG",
+      "head": "c2bde3565",
+      "exists": true,
+      "dirty_entries": 0,
+      "stashes": 0,
+      "protected": []
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/PAGE-NAV-1",
+      "branch": "zcode/page-nav-projection-1",
+      "head": "7bec3589e",
+      "exists": true,
+      "dirty_entries": 2,
+      "stashes": 0,
+      "protected": []
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/RC4-domain-commands",
+      "branch": "codex/rc4-domain-commands",
+      "head": "6a7b4c3d6",
+      "exists": true,
+      "dirty_entries": 1,
+      "stashes": 0,
+      "protected": []
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/RC4-integration",
+      "branch": "codex/rc4-integration",
+      "head": "0a7e0d5be",
+      "exists": true,
+      "dirty_entries": 21,
+      "stashes": 0,
+      "protected": []
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/RUNNER-HISTORICAL-RAW-OUTPUT-GUARD-dsh-r1",
+      "branch": "review/deepseek/M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD-r1",
+      "head": "0ea16b832",
+      "exists": true,
+      "dirty_entries": 2,
+      "stashes": 0,
+      "protected": []
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/RUNNER-HISTORICAL-RAW-OUTPUT-GUARD-dsh-r2",
+      "branch": "review/deepseek/M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD-r2",
+      "head": "daab1996b",
+      "exists": true,
+      "dirty_entries": 3,
+      "stashes": 0,
+      "protected": []
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/T1.1.1-detector-evaluation",
+      "branch": "agent/deepseek/T1.1.1-detector-evaluation",
+      "head": "ed607b755",
+      "exists": true,
+      "dirty_entries": 0,
+      "stashes": 0,
+      "protected": []
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/T1.2.1-settings-ui-viewmodel",
+      "branch": "agent/zcode/T1.2.1-settings-ui-viewmodel",
+      "head": "b8a884144",
+      "exists": true,
+      "dirty_entries": 0,
+      "stashes": 0,
+      "protected": []
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/T2.2.1-qoder",
+      "branch": "agent/qoder/T2.2.1-reader-workbench-qml",
+      "head": "08465739a",
+      "exists": true,
+      "dirty_entries": 0,
+      "stashes": 0,
+      "protected": []
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/T2.2.1-zcode",
+      "branch": "agent/zcode/T2.2.1-reader-workbench-polish",
+      "head": "df637df1f",
+      "exists": true,
+      "dirty_entries": 1,
+      "stashes": 0,
+      "protected": []
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/T3.2.1-antigravity-packaging",
+      "branch": "agent/antigravity/T3.2.1-windows-packaging",
+      "head": "ffff7c688",
+      "exists": true,
+      "dirty_entries": 0,
+      "stashes": 0,
+      "protected": []
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/T3.2.1-antigravity-repair-10",
+      "branch": "agent/antigravity/T3.2.1-repair-10",
+      "head": "d7edea5f0",
+      "exists": true,
+      "dirty_entries": 0,
+      "stashes": 0,
+      "protected": []
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/T3.2.1-antigravity-repair-11",
+      "branch": "agent/antigravity/T3.2.1-repair-12",
+      "head": "8738c41d7",
+      "exists": true,
+      "dirty_entries": 0,
+      "stashes": 0,
+      "protected": []
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/T3.2.1-antigravity-repair-14",
+      "branch": "agent/antigravity/T3.2.1-repair-14",
+      "head": "2f0d26645",
+      "exists": true,
+      "dirty_entries": 0,
+      "stashes": 0,
+      "protected": []
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/T3.2.1-antigravity-repair-3",
+      "branch": "agent/antigravity/T3.2.1-repair-3",
+      "head": "d37088a46",
+      "exists": true,
+      "dirty_entries": 0,
+      "stashes": 0,
+      "protected": []
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/T3.2.1-antigravity-repair-4",
+      "branch": "agent/antigravity/T3.2.1-repair-4",
+      "head": "0e0905f80",
+      "exists": true,
+      "dirty_entries": 0,
+      "stashes": 0,
+      "protected": []
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/T3.2.1-antigravity-repair-5",
+      "branch": "agent/antigravity/T3.2.1-repair-5",
+      "head": "297c3dd7d",
+      "exists": true,
+      "dirty_entries": 0,
+      "stashes": 0,
+      "protected": []
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/T3.2.1-antigravity-repair-6",
+      "branch": "agent/antigravity/T3.2.1-repair-6",
+      "head": "14f587c90",
+      "exists": true,
+      "dirty_entries": 0,
+      "stashes": 0,
+      "protected": []
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/T3.2.1-antigravity-repair-7",
+      "branch": "agent/antigravity/T3.2.1-repair-7",
+      "head": "37d5488eb",
+      "exists": true,
+      "dirty_entries": 0,
+      "stashes": 0,
+      "protected": []
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/T3.2.1-antigravity-repair-9",
+      "branch": "agent/antigravity/T3.2.1-repair-9",
+      "head": "eeb095ea9",
+      "exists": true,
+      "dirty_entries": 0,
+      "stashes": 0,
+      "protected": []
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/T3.2.1-codex-release-gate-closeout",
+      "branch": "codex/T3.2.1-release-gate-closeout",
+      "head": "188d72a9d",
+      "exists": true,
+      "dirty_entries": 0,
+      "stashes": 0,
+      "protected": []
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/T3.2.1-deepseek-review-10",
+      "branch": "agent/deepseek/T3.2.1-review-be5200e",
+      "head": "ddc21a2f3",
+      "exists": true,
+      "dirty_entries": 0,
+      "stashes": 0,
+      "protected": []
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/T3.2.1-deepseek-review-11",
+      "branch": "agent/deepseek/T3.2.1-review-9622395",
+      "head": "4f2f8a07e",
+      "exists": true,
+      "dirty_entries": 0,
+      "stashes": 0,
+      "protected": []
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/T3.2.1-deepseek-review-12",
+      "branch": "agent/deepseek/T3.2.1-review-a2f6695",
+      "head": "a65648626",
+      "exists": true,
+      "dirty_entries": 0,
+      "stashes": 0,
+      "protected": []
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/T3.2.1-deepseek-review-740503e",
+      "branch": "agent/deepseek/T3.2.1-review-740503e",
+      "head": "60d1d5035",
+      "exists": true,
+      "dirty_entries": 0,
+      "stashes": 0,
+      "protected": []
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/T3.2.1-deepseek-review-7d687f5",
+      "branch": "agent/deepseek/T3.2.1-review-7d687f5",
+      "head": "461333881",
+      "exists": true,
+      "dirty_entries": 0,
+      "stashes": 0,
+      "protected": []
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/T3.2.1-deepseek-review-9",
+      "branch": "agent/deepseek/T3.2.1-review-d2bf6a8",
+      "head": "85f8c59d0",
+      "exists": true,
+      "dirty_entries": 0,
+      "stashes": 0,
+      "protected": []
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/T3.2.1-deepseek-review-92c9307c",
+      "branch": "agent/deepseek/T3.2.1-review-92c9307c",
+      "head": "48bc7f36b",
+      "exists": true,
+      "dirty_entries": 0,
+      "stashes": 0,
+      "protected": []
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/T3.2.1-deepseek-review-cdc0b6f",
+      "branch": "agent/deepseek/T3.2.1-review-cdc0b6f",
+      "head": "54bf04337",
+      "exists": true,
+      "dirty_entries": 0,
+      "stashes": 0,
+      "protected": []
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/T3.2.1-deepseek-review-d79d7dd",
+      "branch": "agent/deepseek/T3.2.1-review-d79d7dd",
+      "head": "54f262719",
+      "exists": true,
+      "dirty_entries": 0,
+      "stashes": 0,
+      "protected": []
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/T3.2.1-deepseek-review-f39ddc0",
+      "branch": "agent/deepseek/T3.2.1-review-f39ddc0",
+      "head": "dc199f607",
+      "exists": true,
+      "dirty_entries": 0,
+      "stashes": 0,
+      "protected": []
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/T3.2.1-deepseek-review-f6dc383",
+      "branch": "agent/deepseek/T3.2.1-review-f6dc383",
+      "head": "82049145f",
+      "exists": true,
+      "dirty_entries": 0,
+      "stashes": 0,
+      "protected": []
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/T3.2.1-deepseek-review-repair-14",
+      "branch": "agent/deepseek/T3.2.1-review-repair-14",
+      "head": "430193968",
+      "exists": true,
+      "dirty_entries": 0,
+      "stashes": 0,
+      "protected": []
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/T3.2.1-deepseek-review-repair-14-r2",
+      "branch": "agent/deepseek/T3.2.1-review-repair-14-r2",
+      "head": "f616175e2",
+      "exists": true,
+      "dirty_entries": 0,
+      "stashes": 0,
+      "protected": []
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/T3.2.1-deepseek-review-repair-7",
+      "branch": "agent/deepseek/T3.2.1-review-repair-7",
+      "head": "2585efd69",
+      "exists": true,
+      "dirty_entries": 0,
+      "stashes": 0,
+      "protected": []
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/T3.2.1-qoder-repair-13",
+      "branch": "agent/qoder/T3.2.1-repair-13",
+      "head": "8738c41d7",
+      "exists": true,
+      "dirty_entries": 0,
+      "stashes": 0,
+      "protected": []
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/T3.2.1-zcode-repair-13",
+      "branch": "agent/zcode/T3.2.1-repair-13",
+      "head": "13ae23f65",
+      "exists": true,
+      "dirty_entries": 3,
+      "stashes": 0,
+      "protected": []
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/TASK-004-deepseek-review",
+      "branch": "agent/deepseek/TASK-004-review",
+      "head": "020c2859b",
+      "exists": true,
+      "dirty_entries": 0,
+      "stashes": 0,
+      "protected": []
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/TASK-013-qoder",
+      "branch": "agent/qoder/T1.1.2-region-canvas",
+      "head": "52de319a4",
+      "exists": true,
+      "dirty_entries": 0,
+      "stashes": 0,
+      "protected": []
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/TASK-015-deepseek-posthoc",
+      "branch": "agent/deepseek/TASK-015-posthoc",
+      "head": "9b7768537",
+      "exists": true,
+      "dirty_entries": 0,
+      "stashes": 0,
+      "protected": []
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/TASK-017-deepseek-posthoc",
+      "branch": "agent/deepseek/TASK-017-posthoc",
+      "head": "fb0bc4007",
+      "exists": true,
+      "dirty_entries": 0,
+      "stashes": 0,
+      "protected": []
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/TASK-024-deepseek-posthoc",
+      "branch": "agent/deepseek/TASK-024-posthoc",
+      "head": "9454cecf7",
+      "exists": true,
+      "dirty_entries": 0,
+      "stashes": 0,
+      "protected": []
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/TASK-024-zcode",
+      "branch": "agent/zcode/TASK-024-extension-boundaries-design",
+      "head": "86072c30a",
+      "exists": true,
+      "dirty_entries": 1,
+      "stashes": 0,
+      "protected": []
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/TASK-045-posthoc-zcode",
+      "branch": "agent/zcode/TASK-045-posthoc",
+      "head": "8b47b2efd",
+      "exists": true,
+      "dirty_entries": 0,
+      "stashes": 0,
+      "protected": []
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/TASK-046-zcode",
+      "branch": "agent/zcode/TASK-046-decode-rewind-cost",
+      "head": "60cebc060",
+      "exists": true,
+      "dirty_entries": 3,
+      "stashes": 0,
+      "protected": []
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/TASK-047-qoder",
+      "branch": "agent/qoder/TASK-047-ui-ux-gui-design",
+      "head": "980ae7df7",
+      "exists": true,
+      "dirty_entries": 0,
+      "stashes": 0,
+      "protected": []
+    },
+    {
+      "path": "G:/CODEX/New Manga.worktrees/TASK-061-qoder-review",
+      "branch": "agent/qoder/TASK-061-review",
+      "head": "be995446d",
+      "exists": true,
+      "dirty_entries": 0,
+      "stashes": 0,
+      "protected": []
+    }
+  ],
+  "protected_worktree_names": {
+    "ARCH-DOC-REBASELINE": [
+      "doc/tasks/ARCH-DOC-REBASELINE.md"
+    ],
+    "ENV-BUNDLE-1": [
+      "doc/tasks/ENV-BUNDLE-1.md"
+    ],
+    "ENV-BUNDLE-1-FU1": [
+      "doc/tasks/ENV-BUNDLE-1-FU1.md",
+      "verification/ENV-BUNDLE-1-FU1/resource-manifest.json"
+    ],
+    "EVENTS-FWD-1": [
+      "doc/tasks/EVENTS-FWD-1.md",
+      "verification/EVENTS-FWD-1/resource-manifest.json"
+    ],
+    "EXPORT-IPC-1": [
+      "doc/tasks/EXPORT-IPC-1.md",
+      "verification/EXPORT-IPC-1/resource-manifest.json"
+    ],
+    "EXPORT-REVEAL-1": [
+      "doc/tasks/EXPORT-REVEAL-1.md",
+      "verification/EXPORT-REVEAL-1/resource-manifest.json"
+    ],
+    "HOST-CORE-1": [
+      "doc/tasks/HOST-CORE-1.md",
+      "verification/HOST-CORE-1/resource-manifest.json"
+    ],
+    "HOST-ISSUER-1": [
+      "doc/tasks/HOST-ISSUER-1.md",
+      "verification/HOST-ISSUER-1-C1/resource-manifest.json",
+      "verification/HOST-ISSUER-1/resource-manifest.json"
+    ],
+    "HOST-ISSUER-1-C1": [
+      "doc/tasks/HOST-ISSUER-1-C1.md",
+      "verification/HOST-ISSUER-1-C1/resource-manifest.json"
+    ],
+    "HOST-TTL-BOUNDARY-1": [
+      "doc/tasks/HOST-TTL-BOUNDARY-1.md",
+      "verification/HOST-TTL-BOUNDARY-1/resource-manifest.json"
+    ],
+    "P02-NEW-TIME-BASELINE": [
+      "doc/tasks/P02-NEW-TIME-BASELINE.md"
+    ],
+    "P02-NEW-TIME-BASELINE-AC3-BRANCH-RESOLUTION": [
+      "doc/tasks/P02-NEW-TIME-BASELINE-AC3-BRANCH-RESOLUTION.md",
+      "doc/tasks/P02-NEW-TIME-BASELINE.md"
+    ],
+    "P02-NEW-TIME-BASELINE-AC3-GIT-TOPLEVEL-RESOLUTION": [
+      "doc/tasks/P02-NEW-TIME-BASELINE-AC3-GIT-TOPLEVEL-RESOLUTION.md",
+      "doc/tasks/P02-NEW-TIME-BASELINE.md"
+    ],
+    "P02-NEW-TIME-BASELINE-AC3-HELPER-OUTPUT-RESOLUTION": [
+      "doc/tasks/P02-NEW-TIME-BASELINE-AC3-HELPER-OUTPUT-RESOLUTION.md"
+    ],
+    "P02-NEW-TIME-X6": [
+      "doc/tasks/P02-NEW-TIME-X6-POSTRUN-REVIEW.md",
+      "doc/tasks/P02-NEW-TIME-X6.md"
+    ],
+    "P02-NEW-TIME-X6-AC1-AC7-ANTIGRAVITY": [
+      "doc/tasks/P02-NEW-TIME-X6-AC1-AC7.md",
+      "doc/tasks/RES-P02-AC6-CDP-RECOVERY.md",
+      "verification/P02-NEW-TIME-X6-AC1-AC7/final-gate-a7/resource-inventory.json"
+    ],
+    "P02-NEW-TIME-X6-AC1-AC7-INTEGRATION": [
+      "doc/tasks/P02-MAINLINE-INTEGRATION.md",
+      "doc/tasks/P02-NEW-TIME-X6-AC1-AC7.md",
+      "doc/tasks/RES-P02-AC6-CDP-RECOVERY.md",
+      "verification/P02-NEW-TIME-X6-AC1-AC7/final-gate-a7/resource-inventory.json"
+    ],
+    "P02-NEW-TIME-X6-BUILD-CARGO": [
+      "doc/tasks/P02-NEW-TIME-X6-AC1-AC7.md",
+      "doc/tasks/P02-NEW-TIME-X6-BUILD-CARGO.md",
+      "doc/tasks/RES-P02-AC6-CDP-RECOVERY.md",
+      "verification/P02-NEW-TIME-X6-AC1-AC7/final-gate-a7/resource-inventory.json"
+    ],
+    "P02-NEW-TIME-X6-BUILD-CARGO-DSH-REVIEW": [
+      "doc/tasks/P02-NEW-TIME-X6-BUILD-CARGO.md"
+    ],
+    "P02PRE-R1H-FORENSIC-RECOVERY-INTEGRATION": [
+      "doc/tasks/P02PRE-R1H-FORENSIC-RECOVERY.md"
+    ],
+    "P02PRE-R1H-H1-CURRENT-INPUT-REVIEW": [
+      "doc/tasks/P02PRE-R1H-H1-CURRENT-INPUT-REVIEW.md"
+    ],
+    "P02PRE-R1H-H2-COLLECTOR-ANTIGRAVITY-R3": [
+      "doc/tasks/P02PRE-R1H-H2-COLLECTOR.md",
+      "doc/tasks/P02PRE-R1H-H2-RUN.md"
+    ],
+    "P02PRE-R1H-H2-COLLECTOR-INTEGRATION": [
+      "doc/tasks/P02PRE-R1H-H2-COLLECTOR.md",
+      "doc/tasks/P02PRE-R1H-H2-RUN.md"
+    ],
+    "P02PRE-R1H-H2-RUN-INTEGRATION": [
+      "doc/tasks/P02PRE-R1H-H2-RUN.md"
+    ],
+    "P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE": [
+      "doc/tasks/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE.md"
+    ],
+    "P06-GC-DISTRIBUTION-MIGRATION": [
+      "doc/tasks/P06.md",
+      "verification/P06/resource-manifest.json"
+    ],
+    "P09-FU1-DECODER-TEST": [
+      "doc/tasks/P09-FU1.md",
+      "verification/P09-FU1/resource-manifest.json"
+    ],
+    "P09-FU2-IMPORT-IPC-RUNTIME": [
+      "doc/tasks/P09-FU2.md",
+      "verification/P09-FU2/resource-manifest.json"
+    ],
+    "P09-IMPORT-CORE": [
+      "doc/tasks/P09.md",
+      "verification/P09/resource-manifest.json"
+    ],
+    "P10-CREDENTIAL-CONFIG-CONTRACT": [
+      "doc/tasks/P10.md",
+      "verification/P10/resource-manifest.json"
+    ],
+    "P11-LONG-TASK-LIFECYCLE-CONTRACT": [
+      "doc/tasks/P11.md",
+      "verification/P11/resource-manifest.json"
+    ],
+    "P12": [
+      "doc/tasks/P12.md",
+      "verification/P12/resource-manifest.json"
+    ],
+    "P12-C1-IMPORT-IPC": [
+      "doc/tasks/P12-C1.md",
+      "verification/P12-C1/resource-manifest.json"
+    ],
+    "P13-C1-RUNTIME-IPC": [
+      "doc/tasks/P13-C1.md",
+      "verification/P13-C1/resource-manifest.json"
+    ],
+    "P13-RUN-RUNTIME": [
+      "doc/tasks/P13.md",
+      "verification/P13/resource-manifest.json"
+    ],
+    "P14": [
+      "doc/tasks/P14.md",
+      "verification/P14/resource-manifest.json"
+    ],
+    "P15": [
+      "doc/tasks/P15.md",
+      "verification/P15/resource-manifest.json"
+    ],
+    "P15-C1": [
+      "doc/tasks/P15-C1.md",
+      "verification/P15-C1/resource-manifest.json"
+    ],
+    "P15-C1-FU1": [
+      "doc/tasks/P15-C1-FU1.md",
+      "verification/P15-C1-FU1/resource-manifest.json"
+    ],
+    "P15-C1-FU2": [
+      "doc/tasks/P15-C1-FU2.md",
+      "verification/P15-C1-FU2/resource-manifest.json"
+    ],
+    "P15-CORE-1": [
+      "doc/tasks/P15-CORE-1.md"
+    ],
+    "P15-CORE-1A": [
+      "doc/tasks/P15-CORE-1A.md",
+      "verification/P15-CORE-1A/resource-manifest.json"
+    ],
+    "P15-CORE-1B": [
+      "doc/tasks/P15-CORE-1B.md",
+      "verification/P15-CORE-1B/resource-manifest.json"
+    ],
+    "P15-CORE-1C": [
+      "doc/tasks/P15-CORE-1C.md"
+    ],
+    "P15-HOST-1": [
+      "doc/tasks/P15-HOST-1.md"
+    ],
+    "P15-HOST-2": [
+      "doc/tasks/P15-HOST-2.md"
+    ],
+    "P16-C1-READER-EXPORT-IPC": [
+      "doc/tasks/P16-C1.md",
+      "verification/P16-C1/resource-manifest.json"
+    ],
+    "P16-READER-EXPORT-CORE": [
+      "doc/tasks/P16.md",
+      "verification/P16/resource-manifest.json"
+    ],
+    "P17": [
+      "doc/tasks/P17.md",
+      "verification/P17/resource-manifest.json"
+    ],
+    "P18-JA-KO-QUALITY": [
+      "doc/tasks/P18.md",
+      "verification/P18/resource-manifest.json"
+    ],
+    "P19-BOOT-1": [
+      "doc/tasks/P19-BOOT-1.md",
+      "verification/P19-BOOT-1/resource-manifest.json"
+    ],
+    "P19-UI-FIX-1": [
+      "verification/P19-UI-FIX-1/resource-manifest.json"
+    ],
+    "P22-REBASE-1": [
+      "doc/tasks/P22-REBASE-1.md",
+      "doc/tasks/PROJECT-ROADMAP-RELEASE.md",
+      "verification/P22-REBASE-1/integration/resource-closeout-manifest.json"
+    ],
+    "PROJECT-ROADMAP-RELEASE-REVIEW": [
+      "doc/tasks/PROJECT-ROADMAP-RELEASE.md"
+    ],
+    "READER-IPC-1": [
+      "doc/tasks/READER-IPC-1.md",
+      "verification/READER-IPC-1/resource-manifest.json"
+    ],
+    "RUN-IPC-1": [
+      "doc/tasks/RUN-IPC-1.md",
+      "verification/RUN-IPC-1/resource-manifest.json"
+    ],
+    "UI-DESIGN-1": [
+      "doc/tasks/UI-DESIGN-1.md",
+      "verification/UI-DESIGN-1/resource-manifest.json"
+    ]
+  }
+}
