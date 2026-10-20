@@ -3,7 +3,7 @@ id: DETECT-TILING-1
 title: core.detect 超限输入的预解码安全拒绝（含 SEC-FMT-005 映射）
 kind: implementation
 governance_version: 3
-status: ready
+status: in_review
 language: zh-CN
 parent: ARCH-DOC-REBASELINE
 blocked_by: null
@@ -11,12 +11,12 @@ suggested_owner: Antigravity
 owner: Antigravity
 reviewer: DSH（非作者独立复核；实现/审查分离）
 depends_on: []
-base_commit: null
-branch: null
+base_commit: 5885b182e
+branch: agent/antigravity/DETECT-TILING-1
 worktree: null
 integration_commit: null
-delivery_head: null
-canonical_evidence_status: pending
+delivery_head: 843cfe705
+canonical_evidence_status: partial
 resource_closeout_status: pending
 evidence_dir: verification/DETECT-TILING-1
 activation_note: r34 方向批准，尚未释放；本文件为 Task 本体，Plan 状态为 proposed
@@ -126,11 +126,35 @@ MAX_DETECT_PIXELS = MAX_DETECT_PAGE_BYTES // 3
 
 | evidence_id | AC/Gate | path | commit | sha256 | class |
 |---|---|---|---|---|---|
+| EV-DT1-MEM | AC1 | `verification/DETECT-TILING-1/stageA-rejection-memory.md` | 843cfe705 | (worktree) | CANONICAL |
+| EV-DT1-MEMJSON | AC1 | `verification/DETECT-TILING-1/stageA-rejection-memory.json` | 843cfe705 | (worktree) | CANONICAL |
+| EV-DT1-S1 | AC1 basis | `verification/DETECT-TILING-1/stage1-decoder-memory.md` | b5253ebfc | (worktree) | CANONICAL |
+| EV-DT1-S2 | AC1 basis | `verification/DETECT-TILING-1/stage2-candidate-paths.md` | c776dc1ae | (worktree) | CANONICAL |
+| EV-DT1-R35 | ruling | `verification/P09-GOVERNANCE-DEBT-20261019/codex-adjudicate-tiling-stage2-r35.md` | 5885b182e | (worktree) | SOURCE_PIN |
 
 ## Resource Manifest
 
 | resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
 |---|---|---|---|---|---|
+
+## 阶段 A 交付（2026-10-20）
+
+**Handoff**：`doc/handoffs/DETECT-TILING-1-dsh-stageA-20261020.md`
+**delivery_head**：`843cfe705`（分支 `agent/antigravity/DETECT-TILING-1`）
+**base_commit**：`5885b182e`（主线不含本次产品改动）
+
+| AC | 状态 |
+|---|---|
+| AC1（预解码安全拒绝 + 内存证据） | 代码 + 实测 + 测试完成，**待独立 Review** |
+| AC4（实测证据） | **`PARTIAL`** —— PNG 已测，**JPEG 超限样本不存在** |
+| AC2（SEC-FMT-005 映射） | 未开始 |
+| AC3（RGBA 阈值缺陷登记） | 未开始（缺陷已在 stage2 记录） |
+| AC5（回归 + 独立审查） | 回归已跑 34 通过；**独立审查未做** |
+
+**实测关键数**：满幅 RGBA 163.5 MB，拒绝时峰值 **37.3 MB**。
+
+**Owner 不符**：Task 的 `owner` 是 `Antigravity`，实际实施者为 DSH
+（`agy` 两次卡死；详见 Handoff §风险 R1）。**需 Codex 裁定。**
 
 ## Closeout Record
 
