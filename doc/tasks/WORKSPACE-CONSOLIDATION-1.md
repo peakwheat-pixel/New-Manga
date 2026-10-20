@@ -140,20 +140,23 @@ allowed_paths:
 
 | evidence_id | AC/Gate | path | commit | sha256 | class |
 |---|---|---|---|---|---|
-| EV-INVENTORY | AC1 | `verification/WORKSPACE-CONSOLIDATION-1/inventory.json` | - | - | CANONICAL |
-| EV-INVENTORY-MD | AC1/AC9 | `verification/WORKSPACE-CONSOLIDATION-1/inventory.md` | - | - | CANONICAL |
-| EV-ARCHIVE | AC4 | `verification/WORKSPACE-CONSOLIDATION-1/archive-manifest.json` | - | - | CANONICAL |
-| EV-WT-REMOVAL | AC6 | `verification/WORKSPACE-CONSOLIDATION-1/worktree-removal.json` | - | - | CANONICAL |
-| EV-BRANCH-DEL | AC5 | `verification/WORKSPACE-CONSOLIDATION-1/branch-deletion.json` | - | - | CANONICAL |
-| EV-WS-CLEANUP | AC7 | `verification/WORKSPACE-CONSOLIDATION-1/workspace-cleanup.json` | - | - | CANONICAL |
-| EV-WT-INVENTORY | AC2 | `doc/WORKTREE_SAFETY_INVENTORY.md` | - | - | CANONICAL |
-| EV-CONSOLIDATE-PY | AC1 | `tools/governance/consolidate.py` | - | - | CANONICAL |
-| EV-ARCHIVE-PY | AC4 | `tools/governance/archive_branches.py` | - | - | CANONICAL |
-| EV-REMOVE-PY | AC6 | `tools/governance/remove_worktrees.py` | - | - | CANONICAL |
-| EV-DELETE-PY | AC5 | `tools/governance/delete_branches.py` | - | - | CANONICAL |
-| EV-CLEAN-PY | AC7 | `tools/governance/clean_workspace.py` | - | - | CANONICAL |
-| EV-M2RC2-A | AC8 | `verification/M2-RC2/release-22a2c2bf.md` | - | - | CANONICAL |
-| EV-M2RC2-B | AC8 | `verification/M2-RC2/release-validation-22a2c2bf.md` | - | - | CANONICAL |
+| EV-INVENTORY | AC1 | `verification/WORKSPACE-CONSOLIDATION-1/inventory.json` | 3fe6b9a40 | - | CANONICAL |
+| EV-INVENTORY-MD | AC1/AC9 | `verification/WORKSPACE-CONSOLIDATION-1/inventory.md` | 3fe6b9a40 | - | CANONICAL |
+| EV-ARCHIVE | AC4 | `verification/WORKSPACE-CONSOLIDATION-1/archive-manifest.json` | 3fe6b9a40 | - | CANONICAL |
+| EV-WT-REMOVAL | AC6 | `verification/WORKSPACE-CONSOLIDATION-1/worktree-removal.json` | 3fe6b9a40 | - | CANONICAL |
+| EV-BRANCH-DEL | AC5 | `verification/WORKSPACE-CONSOLIDATION-1/branch-deletion.json` | 3fe6b9a40 | - | CANONICAL |
+| EV-WS-CLEANUP | AC7 | `verification/WORKSPACE-CONSOLIDATION-1/workspace-cleanup.json` | 3fe6b9a40 | - | CANONICAL |
+| EV-WT-INVENTORY | AC2 | `doc/WORKTREE_SAFETY_INVENTORY.md` | 3fe6b9a40 | - | CANONICAL |
+| EV-CONSOLIDATE-PY | AC1 | `tools/governance/consolidate.py` | 3fe6b9a40 | - | CANONICAL |
+| EV-ARCHIVE-PY | AC4 | `tools/governance/archive_branches.py` | 3fe6b9a40 | - | CANONICAL |
+| EV-REMOVE-PY | AC6 | `tools/governance/remove_worktrees.py` | 3fe6b9a40 | - | CANONICAL |
+| EV-DELETE-PY | AC5 | `tools/governance/delete_branches.py` | 3fe6b9a40 | - | CANONICAL |
+| EV-CLEAN-PY | AC7 | `tools/governance/clean_workspace.py` | 3fe6b9a40 | - | CANONICAL |
+| EV-M2RC2-A | AC8 | `verification/M2-RC2/release-22a2c2bf.md` | 811fc2ea4 | - | CANONICAL |
+| EV-M2RC2-B | AC8 | `verification/M2-RC2/release-validation-22a2c2bf.md` | 811fc2ea4 | - | CANONICAL |
+| EV-DRYRUN-WT | AC6 | `verification/WORKSPACE-CONSOLIDATION-1/worktree-removal-dryrun.json` | 3fe6b9a40 | - | CANONICAL |
+| EV-DRYRUN-BR | AC5 | `verification/WORKSPACE-CONSOLIDATION-1/branch-deletion-dryrun.json` | 3fe6b9a40 | - | CANONICAL |
+| EV-DRYRUN-WS | AC7 | `verification/WORKSPACE-CONSOLIDATION-1/workspace-cleanup-dryrun.json` | 3fe6b9a40 | - | CANONICAL |
 
 ## Resource Manifest
 
