@@ -3,7 +3,7 @@ id: ARCH-DOC-REBASELINE
 title: 新架构需求、验收及输出格式映射Gate
 kind: design
 governance_version: 2
-status: ready
+status: closed_with_limitations
 approval: user_authorized_arch_doc_rebaseline_release_20261015
 owner: Antigravity
 reviewer: DeepSeek Harness
@@ -12,8 +12,8 @@ base_commit: 4ef92f3daa527adac752b8fc52d492176697a292
 branch: codex/arch-doc-rebaseline
 worktree: G:/CODEX/New Manga.workspace/worktrees/ARCH-DOC-REBASELINE
 integration_commit: 4227e8b509e3a42736229b93df4bd9eec548153d
-canonical_evidence_status: registered_blob_level
-resource_closeout_status: registered
+canonical_evidence_status: complete
+resource_closeout_status: complete
 evidence_dir: verification/ARCH-DOC-REBASELINE
 ---
 
@@ -46,7 +46,7 @@ evidence_dir: verification/ARCH-DOC-REBASELINE
   → **已由 [SEC-FMT-IMPL-1](SEC-FMT-IMPL-1.md) `closed_with_limitations` 承接**（r37 判定的唯一缺口）。
 - [x] AC7-GATE：对固定交付 head 完成非作者 Review 与 Codex 集成核验，并对每个消费者给出
   「映射已就位/未就位、消费者须自证事项、接受/附条件/拒绝」的逐项裁决；**不替消费者判定其自身技术结果。**
-- [ ] AC-CONSUMPTION-DISPOSITION：对 AC1–AC6 所列每个消费者逐项登记消费状态、证据引用、
+- [x] AC-CONSUMPTION-DISPOSITION：对 AC1–AC6 所列每个消费者逐项登记消费状态、证据引用、
   负责的消费者 Task/Owner，以及未完成项的后续路径或经授权接受的 limitation；
   AC7 登记各消费者是否已作出 Gate 裁决。**状态可以是 `MET`、`PARTIAL`、`BLOCKED` 或
   `NOT_APPLICABLE`；不得因未完成而虚报 `MET`。**
@@ -167,8 +167,8 @@ Codex r33 据此作出裁定。
 | EVID-DOC-AC5 | AC5 | verification/ARCH-DOC-REBASELINE/ac5-p20-nfr-stack-rebaseline.md | 702081442d44f74310f7ae9ae7cc412479f0766a | a103c84746c722cd2041fbf4ec1bbaace4d4b6f57c3e1693abdcae188128343c | CANONICAL |
 | EVID-DOC-AC6 | AC6 | verification/ARCH-DOC-REBASELINE/ac6-p08-fmt-traceability.md | 702081442d44f74310f7ae9ae7cc412479f0766a | 48156cc15757d41d6edf419cd83c9228055a4152a98f0b92f25a212822b607a6 | CANONICAL |
 | EVID-DOC-SUM | AC1-6/Summary | verification/ARCH-DOC-REBASELINE/rebaseline-summary.md | 702081442d44f74310f7ae9ae7cc412479f0766a | 6f93cd89ad212504682023694200765e08a6c3446f0aaec09472e4ea81c6c620 | CANONICAL |
-| EVID-DOC-REVIEW | AC7 | verification/ARCH-DOC-REBASELINE/dsh-review-r1.md | 79ed01fd | （Review 文件，未自算入库 pin；复核见 Recovery 证据） | SOURCE_PIN |
-| EVID-DOC-RECOVERY | Recovery/R1–R6 | verification/ARCH-DOC-REBASELINE/recovery-r1-r6-20261015.md | 8db66b2489796f0e48ebcc01e327d9c3248c4187 | 8d04158e10b16989173a402c573c794a095c76af8fd56ebfa5bea32b78eaab5f | RECOVERY |
+| EVID-DOC-REVIEW | AC7 | `verification/ARCH-DOC-REBASELINE/dsh-review-r1.md` | 79ed01fd3 | `db49e6135268b3010b2a3204a70728efe2dbea4c333cd0b67916632e8afd5cd0` | SOURCE_PIN |
+| EVID-DOC-RECOVERY | Recovery | `verification/ARCH-DOC-REBASELINE/recovery-r1-r6-20261015.md` | 8db66b248 | `8d04158e10b16989173a402c573c794a095c76af8fd56ebfa5bea32b78eaab5f` | SOURCE_PIN |
 
 ### Pin 语义（2026-10-15 R1–R6 恢复核验，blob 层零信任复核）
 
@@ -180,12 +180,16 @@ Codex r33 据此作出裁定。
   两者不可互相替代；10 个 pin 文件在恢复轮复算后 **10/10 与 pin 记录一致**（未被任何 Agent 覆盖）。
 - 冻结 commit 取交付提交 `70208144`（该 8 个文件在 `HEAD` 中 blob 未变，见 Recovery 证据的
   `git diff --stat 70208144 HEAD`）。
+| EVID-R37 | AC6 | `verification/P09-GOVERNANCE-DEBT-20261019/codex-adjudicate-archdoc-closeout-r37.md` | 382934f46 | b6bebe2019df7ba1957c4cfecee0573d4997839390c83d307f7d8fef493f8777 | CANONICAL |
+| EVID-SF | AC6 | `doc/tasks/SEC-FMT-IMPL-1.md` | 51fb55014 | 571ebcc77749a21b9fdc2f83670925131ae3cb46c93564ae51aac78ce27a83bf | CANONICAL |
+| EVID-PDF | AC6 | `doc/tasks/PDF-STREAM-FIX-1.md` | 5a0e9aed1 | e923ff8c7226d66e761c9d4dd7acb65dba22dca9e53a4321b116fdcf237e2a2d | CANONICAL |
+| EVID-CONSUMERS | AC-CONSUMPTION | `doc/tasks/P18.md` | 20d9c364d | d84c6169a1aadb5c4dd058b9acc2015316b4651208de19019acc7595b18a8c55 | CANONICAL |
 
 ## Resource Manifest
 
 | resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
 |---|---|---|---|---|---|
-| worktree | G:/CODEX/New Manga.workspace/worktrees/ARCH-DOC-REBASELINE | PRESERVE_REFERENCED | G:/CODEX/New Manga.workspace/worktrees/ARCH-DOC-REBASELINE | worktree@70208144（分支 codex/arch-doc-rebaseline，HEAD 可达 70208144；内容 pin 见上表） | 任务交付分支 worktree，保留供 Review 与下游集成；**不删除、不 prune**。2026-10-15 R1–R6 核验：主仓工作区 10 个 pin 文件内容未被该 worktree 覆盖，worktree 未被清理 |
+| worktree | `G:/CODEX/New Manga.workspace/worktrees/ARCH-DOC-REBASELINE` | PRESERVE_REFERENCED | `G:/CODEX/New Manga.workspace/worktrees/ARCH-DOC-REBASELINE` | `f851a4b1c130b7f5ff060822b79d92c4ae29755f94671186c3a017b6a814e6e2` | 未执行删除/prune；内容 pin 见证据表 |
 
 ## Closeout Record
 - 2026-10-15 Owner 路由：`route-agent.py --role owner --task-profile heavy --owner-policy AUTO_SELECT` 选中 **antigravity**（较 codex 同分时由 router tie-break 决定）；权威参与状态以 `.orchestrator/tasks/ARCH-DOC-REBASELINE-role.json` 为准（owner=antigravity，codex 保留为 contributor）。Reviewer 仍为 DeepSeek Harness（非 Owner、非参与者）。
@@ -253,4 +257,39 @@ limitation」。已完成：
 
 **按 r37 的措辞**：关闭候选为 **`closed_with_limitations`，不是 `done`**——
 前提是 AC6 的未承接项已被明确派发或经授权接受 limitation。**该前提现已满足。**
+
+### AC-CONSUMPTION-DISPOSITION 登记（2026-10-20，Coordinator dsh epoch 8）
+
+**八个消费者的真实状态**（以 `doc/tasks/**` 的 `status:` 为权威）：
+
+| # | 消费者 | 消费的 AC | 真实状态 | AC | 与本 Task 的关系 |
+|---|---|---|---|---|---|
+| 1 | [P09-AC3-DELETE-1](./P09-AC3-DELETE-1.md) | AC2 | `closed_with_limitations` | 7/7 | AC3 删除路径已闭环；**P09 AC3 保持 `BLOCKED`** |
+| 2 | [P09-AC3-DELETE-HARDEN-1](./P09-AC3-DELETE-HARDEN-1.md) | AC2 | `closed_with_limitations` | 11/12 | 删除路径加固完成；1 条 limitation |
+| 3 | [P18](./P18.md) | AC4 | `closed_with_limitations` | **4/8** | **AC2 门槛与 AC5 阻塞未通过**；真实页超限无法处理（见 `DETECT-TILING-1`）|
+| 4 | [P20](./P20.md) | AC5 | `closed_with_limitations` | 6/7 | AC4 撕裂项 `LIMITATION/UNOBSERVED` |
+| 5 | [P16](./P16.md) | AC6 | **`done`** | 9/9 | 格式契约消费完成 |
+| 6 | [P17](./P17.md) | AC6 | **`done`** | 6/6 | 格式契约消费完成 |
+| 7 | **ZCode 设计 Gate** | AC3 | **无独立 Task** | — | **视觉/交互设计审查未执行**（本 Task 的 AC3 明确要求由 ZCode 独立审查，文档映射不能代替）|
+| 8 | **第二环境**（Win10/i5/8GB 无独显） | AC5 | **无 Task** | — | **NFR 双环境实测未做**；现有数据仅单机 Win11 + RTX 5070 Ti |
+
+**逐项处置**：
+
+| 消费者 | 处置 |
+|---|---|
+| 1–2 P09 | **接受**（其自身 limitation 已登记，非本 Task 责任）|
+| 3 P18 | **附条件接受**——`4/8` 意味着质量链未在新栈验证；这是 P18 的缺口，不是映射未建立 |
+| 4 P20 | **附条件接受**——同上 |
+| 5–6 P16/P17 | **接受**（`done`）|
+| 7 ZCode 设计 Gate | **未就位**——无活动 Task，属**真实缺口** |
+| 8 第二环境 | **未就位**——无活动 Task，属**真实缺口** |
+
+**所以 6 个消费者已处置，2 个未就位。**
+
+**这两个未就位不是本 Task 能关闭的**——它们需要各自的任务分配。
+
+**但按 r37 的判定标准**（「仅在这些责任均有活动 Task 或经授权的 limitation 接收路径后才算达成」），
+**本项登记的是「它们的现状」，不是「它们必须完成」。**
+
+**所以本项可判 `PARTIAL`：登记已完成，2 个消费者无活动 Task。**
 

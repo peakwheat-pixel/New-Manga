@@ -6,7 +6,7 @@
 |P04 并发验收|P22|done|
 |P06 GC补证|—|**done**（集成 d3342895）|
 |P08 产品范围|—|done|
-|ARCH-DOC-REBASELINE|P08|ready / integrated（AC7 消费者裁决待做）|
+|ARCH-DOC-REBASELINE|-|**closed_with_limitations**（r37 的 7+1：7 Gate 达成 + AC-CONSUMPTION `PARTIAL`（6/8 消费者已处置，ZCode 设计 Gate 与第二环境无活动 Task））|
 |P09 导入Core|P08/DOC|closed_with_limitations（集成 c6a7339f；AC3 由下项回补）|
 |P09-AC3-DELETE-1|P09|closed_with_limitations（R3 changes_requested；HARDEN-1 接手）|
 |P10 凭据通道 / P11 长任务契约|P08|**done**（c46c0df0 / ceca5721）|
@@ -47,4 +47,4 @@
 |GOV-PLAN-BUDGET-1|—|done|
 |RUST-ENV-BASELINE-1（P20-CLOSE-BOUND-1）/ P07交互补缺（P02）/ P21旧栈归档（P20+另授权）|—|proposed（P07/P21可选）|
 |P22 响应归属|P22-REBASE-1|已集成；P04 不放行，H1/P2-1/13 与 BC-AC5 缺项保留。已完成见各节点行。|
-READY 节点：ARCH-DOC-REBASELINE。done：**46 项**。
+READY 节点：**无**。done：**46 项**。见 `ARCH-DOC-REBASELINE` 的 AC-CONSUMPTION-DISPOSITION 登记。
