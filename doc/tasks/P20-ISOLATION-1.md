@@ -3,7 +3,7 @@ id: P20-ISOLATION-1
 title: P20 sidecar 故障提示与自愈（sidecar 崩溃无提示、不重生）
 kind: feature
 governance_version: 2
-status: in_review
+status: closed_with_limitations
 approval: user_ruling_20261018_create_p20_isolation
 blocked_by: null
 suggested_owner: Antigravity（ZCode CLI 不可用，按项目故障转移顺序）
@@ -13,11 +13,11 @@ depends_on: [P20]
 base_commit: dbeca3bab
 branch: main
 worktree: G:/CODEX/New Manga（故障注入须在真实桌面执行；执行方写 verification/P20-ISOLATION-1/**、本 Task、doc/handoffs/P20-ISOLATION-1-*.md）
-integration_commit: null
+integration_commit: 5f157f4fc
 delivery_head: e8cc6d1e4
-canonical_evidence_status: pending
-review_status: changes_requested（R1 7×P1、R2 6×P1、R3 3×P1+2×P2、R4 1×P1、R5 AC4 相对条件；见 verification/P20-ISOLATION-1/codex-review-r{1,2,3,4,5}.md）
-resource_closeout_status: pending
+canonical_evidence_status: complete
+review_status: closed_with_limitations（R1–R6 六轮 changes_requested，问题逐轮收敛；R6 判 AC4 = MET，仅余登记项）
+resource_closeout_status: complete
 evidence_dir: verification/P20-ISOLATION-1
 ---
 
@@ -239,18 +239,43 @@ Codex R5 §3.2 指出二者不可混同：
 | EVID-P20-ISOL-REVIEW-R2 | review | verification/P20-ISOLATION-1/codex-review-r2.md | f02721df106d7553a57056320dcdc6f81c1b9dfa | cab31d88f53c2c25a1e32fb3d51f0b097f7fa54c078046bf56e822f501b33d4e | CANONICAL |
 | EVID-P20-ISOL-R010 | AC3 | verification/P20-ISOLATION-1/run-r010-ac3-real-injection.ps1 | 8898e56a0 | 3e6d5a2bc13465ff446f244fd42b040be0fb65c19f3a2fb4529552a2102c7cd4 | CANONICAL |
 | EVID-P20-ISOL-R010RUN | AC3 | verification/P20-ISOLATION-1/r010-20261018-0944/trace.log | 8898e56a0 | 3ef9f5dc3abff39ec8427204a4afb6826d69b806c0198811dd814a50b1ea434b | CANONICAL |
+| EVID-P20-ISOL-AC4-RERUN | AC4 | `verification/P20-ISOLATION-1/ac4-rerun-20261020.md` | `5f157f4fc` | `0e5692d3c6ff56ef0f9724dc80a67d13bdaa01319e5b630944c47f9cf48e50f7` | `CANONICAL` |
+| EVID-P20-ISOL-AC4-NFRTRACE | AC4 | `verification/P20/nfr-20261020-r4/nfr-trace.log` | `5f157f4fc` | `f536cacc242714602800ddafeafd3b81c919315ab3e707520283bf0f87273255` | `CANONICAL` |
+| EVID-P20-ISOL-AC4-NFRCSV | AC4 | `verification/P20/nfr-20261020-r4/coldstart-memory.csv` | `5f157f4fc` | `afa2a65ed389f76f4ac724869b76e5034b5f2d0669c0263a84b2d775a9981909` | `CANONICAL` |
+| EVID-P20-ISOL-AC4-NFRMETA | AC4 | `verification/P20/nfr-20261020-r4/nfr-metadata.txt` | `5f157f4fc` | `59ccf34e46ae7ff9c206e25ec875a0402dc253c00ca14daca82f16f134a5f7c5` | `CANONICAL` |
+| EVID-P20-ISOL-AC4-CHAIN | AC4 | `verification/P20/nfr-20261020-r4/chain-memory.json` | `5f157f4fc` | `2ed3c58a25e25b1e8f21af85a560de46b2ed8d70128045b621e5558a523b24c4` | `CANONICAL` |
+| EVID-P20-ISOL-AC4-SMOKE | AC4 | `verification/P20/smoke-20261020-r4/smoke-trace.log` | `5f157f4fc` | `6f8753a5f435db59600da60d822067baa577b10dd2249f41853c775e4909ae0d` | `CANONICAL` |
+| EVID-P20-ISOL-AC4-SMOKEMETA | AC4 | `verification/P20/smoke-20261020-r4/smoke-metadata.txt` | `5f157f4fc` | `2c61112777dd82ed16025e7ed3462a68c491b2723a3ef2a3b071f7554c53c1ba` | `CANONICAL` |
 
 ## Resource Manifest
 
 | resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
 |---|---|---|---|---|---|
-| artifact | verification/P20-ISOLATION-1 | PRESERVE_REFERENCED | verification/P20-ISOLATION-1 | - | P20-ISOLATION-1 证据目录 |
+| artifact | verification/P20-ISOLATION-1 | PRESERVE_REFERENCED | verification/P20-ISOLATION-1 | `verification/P20-ISOLATION-1/README.md` | P20-ISOLATION-1 证据目录 |
 
 ## Closeout Record
 
-- Closeout date / Codex：待关闭时填写。
-- canonical_evidence_status：`pending`（待交互式桌面端到端注入复查后完成）。
-- resource_closeout_status：`pending`。
-- 删除、迁移、归档数量/字节数：待关闭时填写；无操作填写 0。
-- 未关闭项及保留原因：待关闭时填写。
-- 当前指针清理：`STATUS` / `REBASELINE_PLAN` 在关闭时同步。
+- 关闭：2026-10-20。Owner=Antigravity，Reviewer=Codex（R1–R6 六轮）。
+- **终态：`closed_with_limitations`。**
+  证实状态：4 个 AC 全部 `<<MET>>`；Codex R6 判 **AC4 = `MET`**。
+- head 三元组：`reviewed_head=5f157f4fc`、`delivery_head=e8cc6d1e4`、
+  `integration_commit=5f157f4fc`（本 Task 直接在主线实施，无独立分支；
+  `5f157f4fc` 是 AC4 依用户裁决修订后的提交，也是 R6 固定审查的对象）。
+- **AC4 的最终判定**：四项实测全部符合**修订后**的 AC4 文本——
+  冷启动 0.841 s（≤2.0）、四页可达 `checks=5 fails=0`、`bundle==resource`
+  四份副本同 SHA `cd8dcc5e…`、空闲内存 467.35 MB（父子链口径，**≤480 MB**）。
+  被测 EXE `be593a88…`，与 R4 R-017 所指当前工作区 EXE 一致。
+- **AC4 曾被误读为「超过 350 MB 门槛」**：旧 350 MB 已被用户调至 480 MB，
+  且旧 AC4 还混写了「不得恶化于 443.3 MB 基线」这一相对条件——
+  该基线本身是旧门槛下的失败值，以其为参照会把失败固化。
+  **2026-10-20 用户裁决撤销相对条件，只保留绝对门槛**，AC4 据此判 MET。
+- **唯一的 limitation**：`EVID-P20-ISOL-SRC`（`library_bridge.rs`）的旧 pin
+  按**历史 commit `1dc0df7304a9` 的 CRLF 变体**计算，而当前工作区为 LF，
+  故 `check.ps1 -TaskPath` **永久报 1 个 `Evidence SHA-256 不匹配`**。
+  Codex R5 §3.5 裁定：**保留旧 pin 与 FAIL 可见，不追加会误称「FAIL 已清」的
+  superseding pin**；按 r27/r28 历史 basis 不明的 pin 保留原值、不重算。
+  该 FAIL **登记为已知治理限制**，不是未完成项。
+- **不另立 EOL pin 续修 Task**（R6 §4 依 r28：收益递减判断仍然成立）。
+- 六轮 Review 全部 `changes_requested`，问题逐轮收敛：
+  R1 7×P1、R2 6×P1、R3 3×P1+2×P2、R4 1×P1、R5 AC4 相对条件、R6 仅剩 R-019（登记）。
+- 未关闭项：无（limitation 已述）。

@@ -21,7 +21,7 @@
 |P19 四页安全E2E|P12/14/15/17/18/P04|closed_with_limitations（4c860d882）|
 |P20 Windows发布|P19/P03/P06/DOC|ready|
 |P20-MEM-OPT-1|P20|closed（AC1 完成；AC2 经调阈值消解）|
-|P20-ISOLATION-1|P20|in_review|
+|P20-ISOLATION-1|P20|closed_with_limitations（AC4 四项 MET；`library_bridge.rs` 旧 pin FAIL 保留为已知限制）|
 |P20-AC4-FPS-1|P20|closed_with_limitations（AC3 PASS；AC5 依裁决）|
 |GOV-DEBT-CLEANUP-1|P19/P20|blocked（待用户裁决）|
 |GOV-DEBT-CLEANUP-2|—|closed_with_limitations（AC1–AC6/AC8 达成；AC7 仅完成 61 项候选分类，唯一最终证据判定未做；closeout r14）|
