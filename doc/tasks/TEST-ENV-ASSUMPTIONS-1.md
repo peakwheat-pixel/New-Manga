@@ -110,7 +110,7 @@ r42 裁定 §二。
 | EV-ENV-BOOT | AC1/AC2 | `tests/providers/test_bootstrap_providers.py` | 20b087d7e | - | CANONICAL |
 | EV-ENV-REG | AC2 | `tests/providers/test_registry_readiness.py` | 20b087d7e | - | CANONICAL |
 | EV-ENV-DOC | AC3 | `verification/TEST-ENV-ASSUMPTIONS-1/two-sided-coverage.md` | 20b087d7e | - | CANONICAL |
-| EV-ZC-REVIEW | Review | `verification/TEST-ENV-ASSUMPTIONS-1/dsh-zcode-review-r189.md` | - | - | CANONICAL |
+| EV-ZC-REVIEW | Review | `verification/TEST-ENV-ASSUMPTIONS-1/dsh-zcode-review-r189.md` | b047e5947 | - | CANONICAL |
 
 ## Resource Manifest
 

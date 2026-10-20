@@ -107,7 +107,7 @@ allowed_paths:
 |---|---|---|---|---|---|
 | EV-PROJ-TEST | AC1/AC2 | `tests/workbench/test_projection.py` | 9c594cd4f | - | CANONICAL |
 | EV-PROJ-DOC | AC2/AC3 | `verification/P11-PROJECTION-TEST-ALIGN-1/matrix-alignment.md` | 9c594cd4f | - | CANONICAL |
-| EV-ZC-REVIEW | Review | `verification/TEST-ENV-ASSUMPTIONS-1/dsh-zcode-review-r189.md` | - | - | CANONICAL |
+| EV-ZC-REVIEW | Review | `verification/TEST-ENV-ASSUMPTIONS-1/dsh-zcode-review-r189.md` | b047e5947 | - | CANONICAL |
 
 ## Resource Manifest
 
