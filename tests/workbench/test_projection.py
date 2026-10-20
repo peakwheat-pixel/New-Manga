@@ -24,6 +24,7 @@ from domain.tasks.models import (
 from application.tasks.projection import (
     STATUS_FAILED,
     STATUS_WAITING,
+    _button_enablement,
     build_projection,
 )
 
@@ -36,7 +37,19 @@ def run_of(service, catalog_pages=None, command="translate_all", **kwargs):
     return run
 
 
-def test_pending_run_all_waiting_and_pause_stop_enabled():
+def test_pending_run_all_waiting_and_stop_enabled_only():
+    """Pending may be stopped but NOT paused (P11 §4.5).
+
+    The name changed from ``..._pause_stop_enabled`` because that said the
+    opposite of the contract. It was written when PENDING and RUNNING shared one
+    arm of ``_button_enablement``; P13 split them and P11 §4.5 then froze
+    Pending as "scheduler start, stop" with pause explicitly rejected, because a
+    run that has not started has nothing to pause at - the useful action is to
+    cancel it before it begins.
+
+    The rename is deliberate rather than cosmetic: a test whose name asserts a
+    behaviour the contract forbids will keep inviting the old expectation back.
+    """
     service, _ = make_pipeline(pages=[("p1", 1), ("p2", 2)])
     run = run_of(service)
     projection = build_projection(run)
@@ -45,8 +58,9 @@ def test_pending_run_all_waiting_and_pause_stop_enabled():
     assert projection.total_page_count == 2
     assert projection.waiting_page_count == 2
     assert projection.completed_page_count == 0
-    # D06 §103 Running/Pending: pause + stop, no continue.
-    assert projection.can_pause is True
+    # P11 §4.5: Pending allows scheduler start and stop; pause is in the
+    # illegal-transition list.
+    assert projection.can_pause is False
     assert projection.can_stop is True
     assert projection.can_continue is False
     # D06 §75: nothing terminal yet.
@@ -111,15 +125,79 @@ def test_completed_with_failures_is_not_total_failure():
     assert [row.page_id for row in failed_rows] == ["p39", "p40"]
 
 
+#: The button matrix exactly as P11 §4.5 freezes it. "仅允许" is the only
+#: column that matters here: any action not listed for a state must be rejected,
+#: and the projection is what the UI reads.
+#:
+#: Kept as a table so a future disagreement shows up as one bad row naming its
+#: state, instead of a tuple that has to be decoded.
+P11_BUTTON_MATRIX = {
+    # status: (can_pause, can_stop, can_continue, can_restart, can_abandon)
+    PipelineRunStatus.PENDING: (False, True, False, False, False),
+    PipelineRunStatus.RUNNING: (True, True, False, False, False),
+    PipelineRunStatus.PAUSED: (False, True, True, False, False),
+    PipelineRunStatus.BLOCKED: (False, True, False, False, False),
+    # Interrupted with no disposition may be continued, restarted or abandoned.
+    PipelineRunStatus.INTERRUPTED: (False, False, True, True, True),
+    PipelineRunStatus.COMPLETED: (False, False, False, False, False),
+    PipelineRunStatus.COMPLETED_WITH_FAILURES: (False, False, False, False, False),
+    PipelineRunStatus.FAILED: (False, False, False, False, False),
+    PipelineRunStatus.CANCELLED: (False, False, False, False, False),
+}
+
+
+def test_button_matrix_matches_p11_4_5_for_every_status():
+    """Every status, not just the two the old version sampled.
+
+    The previous body checked pending and completed and called itself 'all
+    statuses'. Pending was wrong, and seven other states were never looked at -
+    including RUNNING, which is the one the pause button exists for.
+    """
+    for status, expected in P11_BUTTON_MATRIX.items():
+        enabled = _button_enablement(status, has_failures=False)
+        actual = (
+            enabled.get("can_pause") is True,
+            enabled.get("can_stop") is True,
+            enabled.get("can_continue") is True,
+            enabled.get("can_restart") is True,
+            enabled.get("can_abandon") is True,
+        )
+        assert actual == expected, (
+            "%s: expected (pause, stop, continue, restart, abandon) = %r, got %r "
+            "from %r" % (status.name, expected, actual, enabled)
+        )
+
+
+def test_interrupted_with_a_disposition_offers_nothing():
+    """P11 §4.5: an Interrupted run that was already disposed of accepts nothing."""
+    for disposition in ("restarted", "abandoned"):
+        enabled = _button_enablement(
+            PipelineRunStatus.INTERRUPTED, has_failures=False,
+            interruption_disposition=disposition)
+        assert enabled == {}, (
+            "disposition %r still offered %r" % (disposition, enabled)
+        )
+
+
+def test_retry_is_offered_only_for_failures_that_exist():
+    """completed_with_failures is retryable only when it actually has failures."""
+    assert _button_enablement(
+        PipelineRunStatus.COMPLETED_WITH_FAILURES, has_failures=False) == {}
+    assert _button_enablement(
+        PipelineRunStatus.COMPLETED_WITH_FAILURES, has_failures=True
+    ) == {"can_retry_failed": True}
+
+
 def test_button_matrix_all_statuses():
-    """D06 §103 / D05 §32 across the run lifecycle."""
+    """The lifecycle through build_projection, end to end."""
 
     service, _ = make_pipeline(pages=[("p1", 1)])
 
     run = run_of(service)
     projection = build_projection(run)
+    # P11 §4.5: pending stops, cannot pause.
     assert (projection.can_pause, projection.can_stop, projection.can_continue) == (
-        True, True, False,
+        False, True, False,
     )
 
     service.execute_run(run.run_id)  # 1 page completes immediately
