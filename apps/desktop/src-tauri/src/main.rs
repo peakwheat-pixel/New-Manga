@@ -259,6 +259,10 @@ pub const EXPORT_PRODUCTION_ONLY_COMMANDS: &[&str] = &[
     "library_get_export_history",
 ];
 
+/// AC1 (R-007): the recycle-bin read face is production-only; probe and AC1
+/// keep their frozen historical command surfaces.
+pub const RECYCLE_BIN_PRODUCTION_ONLY_COMMANDS: &[&str] = &["library_list_recycle_bin_books"];
+
 pub const CREATE_PRODUCTION_ONLY_COMMANDS: &[&str] = &["library_create_book", "create_chapter"];
 
 pub const DELETE_PRODUCTION_ONLY_COMMANDS: &[&str] = &[
@@ -286,6 +290,7 @@ pub fn command_allowlist(probe_mode: bool, ac1_mode: bool) -> Vec<&'static str> 
                     && !EXPORT_PRODUCTION_ONLY_COMMANDS.contains(command)
                     && !CREATE_PRODUCTION_ONLY_COMMANDS.contains(command)
                     && !DELETE_PRODUCTION_ONLY_COMMANDS.contains(command)
+                    && !RECYCLE_BIN_PRODUCTION_ONLY_COMMANDS.contains(command)
             })
             .collect()
     } else {
@@ -1854,7 +1859,7 @@ mod tests {
     #[test]
     fn p15_settings_commands_are_exact_and_production_only() {
         assert_eq!(P15_SETTINGS_PRODUCTION_ONLY_COMMANDS.len(), 19);
-        assert_eq!(PRODUCTION_COMMANDS.len(), 53);
+        assert_eq!(PRODUCTION_COMMANDS.len(), 54);
         assert_eq!(command_allowlist(true, false).len(), 7);
         assert_eq!(command_allowlist(false, true).len(), 6);
         for command in P15_SETTINGS_PRODUCTION_ONLY_COMMANDS {
@@ -1870,7 +1875,7 @@ mod tests {
             CREATE_PRODUCTION_ONLY_COMMANDS,
             &["library_create_book", "create_chapter"]
         );
-        assert_eq!(PRODUCTION_COMMANDS.len(), 53);
+        assert_eq!(PRODUCTION_COMMANDS.len(), 54);
         assert_eq!(command_allowlist(true, false).len(), 7);
         assert_eq!(command_allowlist(false, true).len(), 6);
         for command in CREATE_PRODUCTION_ONLY_COMMANDS {
@@ -2171,6 +2176,7 @@ mod tests {
                 - EXPORT_PRODUCTION_ONLY_COMMANDS.len()
                 - CREATE_PRODUCTION_ONLY_COMMANDS.len()
                 - DELETE_PRODUCTION_ONLY_COMMANDS.len()
+                - RECYCLE_BIN_PRODUCTION_ONLY_COMMANDS.len()
                 + PROBE_ONLY_COMMANDS.len()
         );
     }
@@ -2271,6 +2277,7 @@ mod tests {
                 - EXPORT_PRODUCTION_ONLY_COMMANDS.len()
                 - CREATE_PRODUCTION_ONLY_COMMANDS.len()
                 - DELETE_PRODUCTION_ONLY_COMMANDS.len()
+                - RECYCLE_BIN_PRODUCTION_ONLY_COMMANDS.len()
                 + AC1_TEST_COMMANDS.len()
         );
     }
@@ -2293,6 +2300,7 @@ mod tests {
             .chain(EXPORT_PRODUCTION_ONLY_COMMANDS)
             .chain(CREATE_PRODUCTION_ONLY_COMMANDS)
             .chain(DELETE_PRODUCTION_ONLY_COMMANDS)
+            .chain(RECYCLE_BIN_PRODUCTION_ONLY_COMMANDS)
         {
             assert!(
                 !command_allowlist(true, false).contains(command),
@@ -2324,8 +2332,8 @@ mod tests {
                 "library_retry_failed_targets",
             ]
         );
-        // 32 pre-existing production commands + 19 P15 settings commands + 2 delete commands = 53.
-        assert_eq!(PRODUCTION_COMMANDS.len(), 53);
+        // 33 pre-existing production commands (incl. recycle-bin read face) + 19 P15 settings commands + 2 delete commands = 54.
+        assert_eq!(PRODUCTION_COMMANDS.len(), 54);
 
         let production = command_allowlist(false, false);
         let probe = command_allowlist(true, false);
@@ -2358,7 +2366,7 @@ mod tests {
                 "library_get_export_history",
             ]
         );
-        assert_eq!(PRODUCTION_COMMANDS.len(), 53);
+        assert_eq!(PRODUCTION_COMMANDS.len(), 54);
 
         let production = command_allowlist(false, false);
         let probe = command_allowlist(true, false);
@@ -2390,7 +2398,7 @@ mod tests {
                 "library_delete_books_permanently",
             ]
         );
-        assert_eq!(PRODUCTION_COMMANDS.len(), 53);
+        assert_eq!(PRODUCTION_COMMANDS.len(), 54);
 
         let production = command_allowlist(false, false);
         let probe = command_allowlist(true, false);

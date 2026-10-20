@@ -471,6 +471,12 @@
           "markdownDescription": "Enables the library_list_books command without any pre-configured scope."
         },
         {
+          "description": "Enables the library_list_recycle_bin_books command without any pre-configured scope.",
+          "type": "string",
+          "const": "allow-library-list-recycle-bin-books",
+          "markdownDescription": "Enables the library_list_recycle_bin_books command without any pre-configured scope."
+        },
+        {
           "description": "Enables the library_resume_blocked_run command without any pre-configured scope.",
           "type": "string",
           "const": "allow-library-resume-blocked-run",
@@ -829,6 +835,12 @@
           "type": "string",
           "const": "deny-library-list-books",
           "markdownDescription": "Denies the library_list_books command without any pre-configured scope."
+        },
+        {
+          "description": "Denies the library_list_recycle_bin_books command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-library-list-recycle-bin-books",
+          "markdownDescription": "Denies the library_list_recycle_bin_books command without any pre-configured scope."
         },
         {
           "description": "Denies the library_resume_blocked_run command without any pre-configured scope.",
