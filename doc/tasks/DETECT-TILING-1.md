@@ -9,7 +9,7 @@ parent: ARCH-DOC-REBASELINE
 blocked_by: null
 suggested_owner: Antigravity
 owner: DSH
-reviewer: DSH（非作者独立复核；实现/审查分离）
+reviewer: null（必须非 DSH；DSH 已实现，不得自审。当前 Session 无人可派，待 Codex 指派）
 depends_on: []
 base_commit: 5885b182e
 branch: agent/antigravity/DETECT-TILING-1
@@ -198,6 +198,31 @@ MAX_DETECT_PIXELS = MAX_DETECT_PAGE_BYTES // 3
 
 **Owner 不符**：Task 的 `owner` 是 `Antigravity`，实际实施者为 DSH
 （`agy` 两次卡死；详见 Handoff §风险 R1）。**需 Codex 裁定。**
+
+### 2026-10-20 阻塞：无可用 Reviewer
+
+**`owner` 与 `reviewer` 不能是同一人**（`AGENTS.md`：DSH 不得审核自己实现的变更）。
+
+**当前事实**：
+
+| 候选 | 可用性 |
+|---|---|
+| DSH | **是实施者，不可自审** |
+| Antigravity | **本环境两次卡死**（42 分钟 0.2 s CPU / 10 分钟 0.0 s CPU）|
+| Codex | 是 Lead/Integrator，**通常不兼 Reviewer**；可裁定但不宜作为独立实现审查者 |
+| ZCode | 有 headless CLI，但 `AGENTS.md` 未把它列为通用代码 Reviewer |
+| Qoder | **2026-10-08 已退出项目**，不得分配 |
+
+**所以本 Session 没有合规的独立 Reviewer。**
+
+**这不是我能靠努力解决的**——它是环境与角色分配的事实。
+
+**因此本 Task 保持 `in_review`，不得进入 `done`。**
+**任何「已自审通过」的记录都是伪造，我没有写。**
+
+**需要 Codex 处置**：
+1. 指派一个非 DSH 的 Reviewer；或
+2. 明确授权「本 Task 以 limitation 收口，接受无独立审查」并记录该限制。
 
 ## Closeout Record
 
