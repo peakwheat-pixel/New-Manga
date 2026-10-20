@@ -12,7 +12,7 @@ Two tempting fixes are both wrong:
   - skip when the runtime is present, which leaves the absent path untested on
     every machine that has the runtime and the present path untested everywhere
 
-ZCode's r42 condition was that both sides be covered deterministically and that
+Codex's r42 adjudication required both sides to be covered deterministically and that
 no production seam be added for the purpose. Everything below patches only
 test-visible lookups, so nothing in src/ learns about tests.
 
@@ -56,6 +56,10 @@ OPTIONAL_PROVIDER_MODULES = (
     "torch",
     "diffusers",
     "numpy",
+    # PIL is not an optional runtime in spirit, but manga-ocr declares it as a
+    # requirement next to manga_ocr, so leaving it on the real probe made the
+    # "runtimes present" side depend on a host fact the test never stated.
+    "PIL",
 )
 
 
@@ -129,24 +133,3 @@ def gpu_state(*, available: bool, name: str = "Simulated GPU",
                 sys.modules["torch"] = previous_torch  # type: ignore[assignment]
             else:
                 sys.modules.pop("torch", None)
-
-
-def simulated_gpu_is_reachable() -> bool:
-    """True when a real GPU would be visible - used to pick the integration side.
-
-    Not for skipping: the deterministic tests do not call this. It exists so the
-    one test that is *about* the real machine can assert the truth instead of an
-    assumption.
-    """
-    import importlib.util
-
-    if importlib.util.find_spec("torch") is None:
-        return False
-    try:
-        import torch  # noqa: PLC0415 - deliberately late, torch is optional
-    except Exception:  # noqa: BLE001 - any import failure means "not reachable"
-        return False
-    try:
-        return bool(torch.cuda.is_available())
-    except Exception:  # noqa: BLE001
-        return False

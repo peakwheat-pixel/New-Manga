@@ -112,7 +112,10 @@ def test_optional_providers_report_ready_when_their_runtimes_are_present() -> No
     """
     from tests.providers.env_sim import modules_state
 
-    with modules_state(present=frozenset({"manga_ocr", "paddleocr", "paddle"})):
+    # PIL is in the present set because manga-ocr declares (manga_ocr, PIL).
+    # Leaving it out made this test pass only on hosts that happen to have PIL.
+    present = frozenset({"manga_ocr", "paddleocr", "paddle", "PIL"})
+    with modules_state(present=present):
         registry, _ = build_provider_registry(settings={})
         statuses = {status.provider_id: status for status in registry.statuses()}
 
