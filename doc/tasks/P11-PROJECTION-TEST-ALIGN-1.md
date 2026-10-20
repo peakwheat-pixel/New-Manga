@@ -108,6 +108,7 @@ allowed_paths:
 | EV-PROJ-TEST | AC1/AC2 | `tests/workbench/test_projection.py` | 9c594cd4f | - | CANONICAL |
 | EV-PROJ-DOC | AC2/AC3 | `verification/P11-PROJECTION-TEST-ALIGN-1/matrix-alignment.md` | 9c594cd4f | - | CANONICAL |
 | EV-ZC-REVIEW | Review | `verification/TEST-ENV-ASSUMPTIONS-1/dsh-zcode-review-r189.md` | b047e5947 | - | CANONICAL |
+| EV-R101R102 | R-101/R-102 | `verification/P11-PROJECTION-TEST-ALIGN-1/r101-r102-closure.md` | 871a0171d | - | CANONICAL |
 
 ## Resource Manifest
 
@@ -155,15 +156,28 @@ allowed_paths:
 - **`can_retry_failed` 不进 5 列矩阵是有意拆分**，不是遗漏：
   它是 `has_failures` 的函数而非 status 的函数，且已有两个专项测试覆盖两个方向。
 
-**两条非阻断建议（未做，留待后续触及该文件的 Task 顺路处理）**：
+**两条非阻断建议：r190 已全部闭合**（见 `verification/P11-PROJECTION-TEST-ALIGN-1/r101-r102-closure.md`）：
 
 | 项 | 内容 |
 |---|---|
-| **R-101** | 「已处置 Interrupted」只有直调 `_button_enablement` 的用例；`build_projection` 的接线（`projection.py:262-266`）只有无处置方向被端到端覆盖 |
-| **R-102** | 矩阵用 `enabled.get(...) is True` 对照，不抓「多余的第 6 键」；可改为 dict 全等 |
+| **R-101** | **已闭合**：补两条端到端测试（有/无 disposition 各一条），双向钉住 `build_projection` 的接线 |
+| **R-102** | **已闭合**：矩阵改为 dict 全等；实测旧五列检查会漏报多余键 |
+
+### r190 补充：R-101 / R-102 已闭合
+
+| 项 | 结果 |
+|---|---|
+| `test_projection.py` 测试数 | 16 → **18** |
+| 判别力 | 破坏接线 → R-101 测试 **RED**；PENDING 多发键 → 矩阵 **RED** |
+
+**判别力验证中我犯的错（本会话第三次同类）**：第一次 sabotage patch 了
+`application.tasks.projection._button_enablement`，测试仍绿——**因为测试文件
+`from ... import _button_enablement` 持有自己的引用**。改 patch 测试模块的绑定后才 RED。
+
+**「测试没红」与「缺陷不存在」在输出上无法区分，这是三次共同的表现形式。**
 
 ### 后续建议
 
-1. **R-101 / R-102** 可在后续触及 `test_projection.py` 的 Task 中顺路处理
-2. 建议在契约（P11）与投影矩阵之间加一个自动对照（L3），避免人工转写漂移
+1. 建议在契约（P11）与投影矩阵之间加一个自动对照（L3），避免人工转写漂移
+2. R-003 / R-103（`base_commit` 口径）移交 Codex
 
