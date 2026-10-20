@@ -3,7 +3,7 @@ id: P02-NEW-TIME-X6-BUILD-CARGO
 title: P02 新时点 X6 后续 Build / Cargo 构建门
 kind: verification
 governance_version: 2
-status: approved
+status: superseded
 approval: user_authorized_new_time_baseline_20261014
 suggested_owner: ZCode
 owner: Antigravity
@@ -24,7 +24,7 @@ blocked_by: []
 profile: ANTIGRAVITY_FALLBACK
 revisions: {implementation: 0, test: 0, evidence: 1}
 canonical_evidence_status: verified
-resource_closeout_status: accounted_with_preserved_residuals
+resource_closeout_status: complete
 evidence_dir: verification/P02-NEW-TIME-X6-BUILD-CARGO
 canonical_evidence_manifest: verification/P02-NEW-TIME-X6-BUILD-CARGO/canonical-evidence-manifest-r1.json
 ---
@@ -128,6 +128,16 @@ Build 时显式复用 `packaging/m2ac5/README.md` 中的 Windows 构建链。模
 
 ## Resource Manifest
 
+r211 更正：本表从历史“证据清单”改为**当前实际资源清单**（`PRESERVE_REFERENCED`，原位保留、不清理）；旧表原文见下一节历史附录，未删除。
+
+| resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
+|---|---|---|---|---|---|
+| worktree | G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-X6-BUILD-CARGO | PRESERVE_REFERENCED | G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-X6-BUILD-CARGO | G:/CODEX/New Manga.workspace/agent-output/codex/P02-NEW-TIME-X6-BUILD-CARGO/preparation-manifest-r1.json | Antigravity build worktree；HEAD 708ac793；保留 |
+| worktree-review | G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-X6-BUILD-CARGO-DSH-REVIEW | PRESERVE_REFERENCED | G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-X6-BUILD-CARGO-DSH-REVIEW | G:/CODEX/New Manga.workspace/agent-output/codex/P02-NEW-TIME-X6-BUILD-CARGO/preparation-manifest-r1.json | DSH Review worktree；保留 |
+| task-env | G:/CODEX/New Manga.workspace/task-envs/P02-NEW-TIME-X6-BUILD-CARGO | PRESERVE_REFERENCED | G:/CODEX/New Manga.workspace/task-envs/P02-NEW-TIME-X6-BUILD-CARGO | G:/CODEX/New Manga.workspace/agent-output/codex/P02-NEW-TIME-X6-BUILD-CARGO/preparation-manifest-r1.json | 构建 venv/缓存；保留原位 |
+| agent-output | G:/CODEX/New Manga.workspace/agent-output/codex/P02-NEW-TIME-X6-BUILD-CARGO | PRESERVE_REFERENCED | G:/CODEX/New Manga.workspace/agent-output/codex/P02-NEW-TIME-X6-BUILD-CARGO | G:/CODEX/New Manga.workspace/agent-output/codex/P02-NEW-TIME-X6-BUILD-CARGO/preparation-manifest-r1.json | 准备与构建原始输出；保留 |
+
+## 附：原 Resource Manifest（历史，不参与当前校验）
 本 Task 的 build worktree、Python venv、npm/cargo cache、sidecar、dist、Cargo target、installer 与所有失败/成功日志均保留并逐项盘点；禁止因可重建而自动删除。本 Task 不清理任何已有 worktree、model source 或用户数据。
 
 | resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
@@ -160,3 +170,9 @@ Build 时显式复用 `packaging/m2ac5/README.md` 中的 Windows 构建链。模
 - 精确删除/迁移/归档数量与字节数：1 个 / 6 B（仅 DSH 创建的 exact probe，依据 cleanup record）；迁移和归档：0 / 0 B。
 - 未关闭项及保留原因：BC-AC5=PARTIAL；44 个 ignored __pycache__ / 87 个 .pyc 来源未知、profile PyInstaller cache 未检查，全部保留。F01/F02/F04/F05/F06/F08/F12 为已接受 P3/P4 backlog。Build Task 维持 approved，不是 done。
 - 当前指针：Build/Cargo convergence 已释放 P02-NEW-TIME-X6-AC1-AC7；更新 STATUS / Plan / Task README / P02 current-path status 与 rolling checkpoint。
+
+## 历史收口（2026-10-21，dsh）
+
+- 收口状态：`superseded`。P02 已 `closed_with_limitations`；本 X6 观测/构建/post-run 链不再作为 v1 发布门禁，未交付/未集成部分保持原样。
+- Resource Manifest 已按当前实际资源重写（`PRESERVE_REFERENCED`，原位保留）；旧表原文保留在同节历史附录中，不删除证据。
+- 依据：`verification/V1-FINALIZE-20261021/legacy-task-closure-adjudication.md`；不删除、不移动、不改写历史 pin。

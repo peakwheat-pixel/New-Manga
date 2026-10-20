@@ -3,7 +3,7 @@ id: P02-NEW-TIME-X6-POSTRUN-REVIEW
 title: P02 新时点 X6 post-run 独立结果审查
 kind: verification
 governance_version: 2
-status: approved
+status: superseded
 approval: user_authorized_new_time_baseline_20261014
 suggested_owner: DeepSeek Harness
 owner: DeepSeek Harness
@@ -115,6 +115,13 @@ Review 已按不可变 Git manifest 与仓外输入 pin 冻结；以下为本 Ta
 
 ## Resource Manifest
 
+r211 更正：本表从历史“证据清单”改为**当前实际资源清单**（`PRESERVE_REFERENCED`，原位保留、不清理）；旧表原文见下一节历史附录，未删除。
+
+| resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
+|---|---|---|---|---|---|
+| agent-output-review | G:/CODEX/New Manga.workspace/agent-output/codex/P02-NEW-TIME-X6-POSTRUN-REVIEW | PRESERVE_REFERENCED | G:/CODEX/New Manga.workspace/agent-output/codex/P02-NEW-TIME-X6-POSTRUN-REVIEW | G:/CODEX/New Manga.workspace/agent-output/codex/P02-NEW-TIME-X6-POSTRUN-REVIEW/preflight-evidence-manifest-r1.json | post-run Review、preflight 原始输出；保留 |
+
+## 附：原 Resource Manifest（历史，不参与当前校验）
 | resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
 |---|---|---|---|---|---|
 | DSH result review raw output | G:/CODEX/New Manga.workspace/agent-output/codex/P02-NEW-TIME-X6-POSTRUN-REVIEW/dsh-postrun-review-r1/ | PRESERVE_REFERENCED | same | stdout.jsonl 406010 B / C4C3172F280054E8F7369C7C22589E7E3074F8239A36B2F8C798FB3F0ED6B1C7; stderr 0 B | session session-0c48155b-3ef4-4407-a6d0-99a4ff43cab8; 282 events, exactly one final; command/prompt/environment/exit retained |
@@ -140,3 +147,9 @@ Review 已按不可变 Git manifest 与仓外输入 pin 冻结；以下为本 Ta
 - 删除、迁移、归档数量/字节数：0 / 0 B；所有输入、DSH raw output、临时副本与官方协议产物均原路径保留。
 - 未关闭项：X6-PR-01..07 为 P3/P4 非阻塞 backlog，按官方收敛决策不返修、不创建 follow-up/resolution；主线集成仍待 Codex 在安全集成窗口完成。
 - 当前指针清理：本 Review=approved；P02-NEW-TIME-X6=approved；Build/Cargo 是唯一 READY 后继，须先通过 ZCode AGENT_PREFLIGHT；产品 AC1–AC7 未释放。
+
+## 历史收口（2026-10-21，dsh）
+
+- 收口状态：`superseded`。P02 已 `closed_with_limitations`；本 X6 观测/构建/post-run 链不再作为 v1 发布门禁，未交付/未集成部分保持原样。
+- Resource Manifest 已按当前实际资源重写（`PRESERVE_REFERENCED`，原位保留）；旧表原文保留在同节历史附录中，不删除证据。
+- 依据：`verification/V1-FINALIZE-20261021/legacy-task-closure-adjudication.md`；不删除、不移动、不改写历史 pin。

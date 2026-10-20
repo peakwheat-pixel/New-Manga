@@ -7,13 +7,13 @@ Reconciliation of every `doc/tasks/*.md` against the plan's node set. r38 §3 es
 | metric | value |
 |---|---:|
 | task files | 322 |
-| terminal | 306 |
-| non-terminal | 16 |
+| terminal | 309 |
+| non-terminal | 13 |
 | non-terminal named in the plan | 2 |
-| non-terminal outside the plan | 14 |
+| non-terminal outside the plan | 11 |
 | task files tracked by git | 296 |
 | task files untracked (drafts) | 26 |
-| non-terminal tracked by git | 5 |
+| non-terminal tracked by git | 2 |
 
 ## By status
 
@@ -23,19 +23,15 @@ Reconciliation of every `doc/tasks/*.md` against the plan's node set. r38 §3 es
 | `closed_with_limitations` | 34 | yes |
 | `cancelled` | 19 | yes |
 | `blocked` | 7 | no |
-| `approved` | 3 | no |
+| `superseded` | 5 | yes |
 | `in_progress` | 2 | no |
 | `in_review` | 2 | no |
 | `proposed` | 2 | no |
-| `superseded` | 2 | yes |
 
 ## Non-terminal tasks
 
 | task | status | in plan |
 |---|---|---|
-| `P02-NEW-TIME-X6` | `approved` | no |
-| `P02-NEW-TIME-X6-BUILD-CARGO` | `approved` | no |
-| `P02-NEW-TIME-X6-POSTRUN-REVIEW` | `approved` | no |
 | `P02PRE-R0S2` | `blocked` | no |
 | `P02PRE-R0S4` | `blocked` | no |
 | `P02PRE-R0S5` | `blocked` | no |

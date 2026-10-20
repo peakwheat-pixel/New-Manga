@@ -3,7 +3,7 @@ id: P02-NEW-TIME-X6
 title: P02 新时点 X6 动态闭包与一次性执行
 kind: verification
 governance_version: 2
-status: approved
+status: superseded
 approval: user_authorized_new_time_baseline_20261014
 suggested_owner: ZCode
 owner: ZCode
@@ -149,6 +149,15 @@ r1 轮 SOURCE_PIN（executor/selftest/protocol-r1/inventory-r1/handoff-r1 @ 8b4d
 
 ## Resource Manifest
 
+r211 更正：本表从历史“证据清单”改为**当前实际资源清单**（`PRESERVE_REFERENCED`，原位保留、不清理）；旧表原文见下一节历史附录，未删除。
+
+| resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
+|---|---|---|---|---|---|
+| worktree | G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-X6 | PRESERVE_REFERENCED | G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-X6 | G:/CODEX/New Manga.workspace/agent-output/codex/P02-NEW-TIME-X6/dsh-source-review-r1/stdout.md | P02 X6 源码观测 worktree；保留原位、不清理 |
+| agent-output-zcode | G:/CODEX/New Manga.workspace/agent-output/zcode/P02-NEW-TIME-X6 | PRESERVE_REFERENCED | G:/CODEX/New Manga.workspace/agent-output/zcode/P02-NEW-TIME-X6 | G:/CODEX/New Manga.workspace/agent-output/zcode/P02-NEW-TIME-X6/source-delivery-r1/dispatch-prompt.md | ZCode 原始派发与尝试输出；保留 |
+| agent-output-codex | G:/CODEX/New Manga.workspace/agent-output/codex/P02-NEW-TIME-X6 | PRESERVE_REFERENCED | G:/CODEX/New Manga.workspace/agent-output/codex/P02-NEW-TIME-X6 | G:/CODEX/New Manga.workspace/agent-output/codex/P02-NEW-TIME-X6/dsh-source-review-r1/stdout.md | Codex/DSH Review 原始输出；保留 |
+
+## 附：原 Resource Manifest（历史，不参与当前校验）
 本 Task branch/worktree、raw run bundles、temp/fixtures、test materials 与所有中间失败材料均须按真实路径逐项记录。未知或被引用项保留；本 Task 不清理任何已有 worktree 或根目录用户数据。
 
 | resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
@@ -185,3 +194,9 @@ r1 轮 SOURCE_PIN（executor/selftest/protocol-r1/inventory-r1/handoff-r1 @ 8b4d
 - 删除、迁移、归档数量/字节数：0 / 0 B；未移动、归档或删除原始证据、worktree、capture 或用户数据。
 - 未关闭项：主线 commit 集成仍待安全窗口；X6-PR-01..07 为已分类非阻塞 backlog。
 - 当前指针清理：X6=approved，post-run Review=approved；仅释放新时点 Build/Cargo 为唯一 READY，产品 AC1–AC7 仍 BLOCKED/NOT_RUN；旧 H1/P2-1 与 13 项缺失记录不变。
+
+## 历史收口（2026-10-21，dsh）
+
+- 收口状态：`superseded`。P02 已 `closed_with_limitations`；本 X6 观测/构建/post-run 链不再作为 v1 发布门禁，未交付/未集成部分保持原样。
+- Resource Manifest 已按当前实际资源重写（`PRESERVE_REFERENCED`，原位保留）；旧表原文保留在同节历史附录中，不删除证据。
+- 依据：`verification/V1-FINALIZE-20261021/legacy-task-closure-adjudication.md`；不删除、不移动、不改写历史 pin。
