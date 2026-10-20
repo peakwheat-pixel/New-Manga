@@ -103,3 +103,34 @@ Governance check: PASS (3 warnings)
 - 本 Handoff 与 Task 的 R210 登记、STATUS/Plan 指针更新属于**复审后的元数据提交**，不改变 G 的已审内容；
   R210 报告按 SOURCE_PIN（工作区字节）登记，Reviewer 原文保持未跟踪。
 - 建议下一步保持 Task `in_review`，由用户/Codex 处理尚未关闭的资源与验收项；不得据本复审自行关闭 Task。
+
+## 9. R212 关闭裁决与最终状态（2026-10-21）
+
+`codex-review-r212.md`（reviewed_head=`2e0a30644ad434f94a7ca4cd5836ab490f43b5da`）：
+**decision=`approved_with_conditions`**，批准以 `closed_with_limitations` 收口，并授权 Owner 执行关闭提交、
+重生成 TASK_LEDGER、运行治理检查；授权明确不含删除/移动/GC/prune/push/历史改写。
+
+关闭执行结果：
+
+- Task：`status: closed_with_limitations`、`integration_commit: null`、`canonical_evidence_status: complete`、
+  `resource_closeout_status: complete`（以 L1–L8 + `p03-temp-scratch` 为内容，不表示资源完整）；
+- STATUS：改指 `WORKSPACE-CLEANUP-TOOL-HARDENING-1`（`proposed` / `pending_user_release`，**未释放**）；
+- Plan：本 Task 行改为 `closed_with_limitations`；新 Task 记入 proposed 组，不作为 READY；
+- TASK_LEDGER：322 task files / 284 terminal / 38 non-terminal；
+- 本 Task 不标 `done`，AC1/2/3/6/7/9 维持 `PARTIAL`，事故台账与历史 pin 未改写。
+
+关闭提交前治理实测（`pwsh -NoProfile -File tools/governance/check.ps1 -TaskPath doc/tasks/WORKSPACE-CONSOLIDATION-1.md`）：
+
+```text
+Governance scope: 13 current documents; no historical directory scan.
+Task: doc\tasks\WORKSPACE-CONSOLIDATION-1.md
+WARN: 存在 38 个非终态 Task（见 TASK_LEDGER）；状态字段不能证明活性，不得据此批量关闭（r38）
+WARN: doc/STATUS.md 已达到预算的 80%：2908 bytes / 25 lines
+WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：6270 bytes / 55 lines
+Governance check: PASS (3 warnings)
+```
+
+退出码 0。治理 PASS 只说明文档一致性，**不表示资源完整或事故已消除**。
+
+下一步：`WORKSPACE-CLEANUP-TOOL-HARDENING-1` 保持 proposed，由 Codex 单独冻结范围后释放；
+在此之前不清理、不 GC/prune、不恢复写回。

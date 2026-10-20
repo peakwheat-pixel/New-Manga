@@ -3,7 +3,7 @@ id: WORKSPACE-CONSOLIDATION-1
 title: 工作区整理：归档未合并支线、清理可再生体积、收敛为单一主线
 kind: ops
 governance_version: 2
-status: in_review
+status: closed_with_limitations
 approval: approved_by_owner_2026-10-20
 blocked_by: null
 suggested_owner: dsh
@@ -15,8 +15,8 @@ branch: antigravity/P09-AC3-DELETE-HARDEN-1
 worktree: G:/CODEX/New Manga
 integration_commit: null
 delivery_head: 877a7962e0151536de8cdbb57b63904f446df71e
-canonical_evidence_status: pending
-resource_closeout_status: pending
+canonical_evidence_status: complete
+resource_closeout_status: complete
 evidence_dir: verification/WORKSPACE-CONSOLIDATION-1
 allowed_paths:
   - verification/WORKSPACE-CONSOLIDATION-1
@@ -232,6 +232,8 @@ R209 报告：`verification/WORKSPACE-CONSOLIDATION-1/codex-review-r209.md`
 | Codex r208 | `verification/WORKSPACE-CONSOLIDATION-1/codex-review-r208.md` | `3947d63447457fe3ef8d3587942e632724ab3d72` | `changes_requested` | 已按 `findings-disposition-r208.md` 逐项返修；第一轮固定 head `8d24d4eaf` |
 | Codex r209 | `verification/WORKSPACE-CONSOLIDATION-1/codex-review-r209.md` | `8d24d4eafe798dd48045404843ca312f2aedc261` | `changes_requested` | 已按 `rework-r209-response.md` 处置 F-01..F-04；第二轮返修交付，待 Codex 复审 |
 | Codex r210 | `verification/WORKSPACE-CONSOLIDATION-1/codex-review-r210.md` | `4072411eba420684cf0ba694c29cfcbdab9b0fc8` | `approved_with_conditions` | 仅批准 F-01..F-04 处置，**不批准关闭 Task**；F-01..F-04 均判定已处置、无新实质问题；资源缺口仍 open |
+| Codex r211 | `verification/WORKSPACE-CONSOLIDATION-1/codex-review-r211.md` | `abba2b0c580bbf6c2190ed10d129c263bf39cf20` | `changes_requested` | R211-01 补列 p03-temp-scratch、R211-02 重生成 Ledger；E4 已补正 |
+| Codex r212 | `verification/WORKSPACE-CONSOLIDATION-1/codex-review-r212.md` | `2e0a30644ad434f94a7ca4cd5836ab490f43b5da` | `approved_with_conditions` | **批准 closed_with_limitations**；授权 Owner 执行关闭提交并复核 Ledger/治理；不含删除/移动/GC/prune/历史改写 |
 
 **第四条治理 warning 解释**：r208 写入后治理检查为 `PASS (4 warnings)`，第四条是
 `evidence_dir 含未登记过程文件 … codex-review-r208.md`——Review 报告是新增未跟踪文件、尚未登记到
@@ -270,10 +272,12 @@ Canonical Evidence，属流程状态而非产品失败。本轮已把该 Review 
 | EV-R208-HANDOFF | R208 交付 | `verification/WORKSPACE-CONSOLIDATION-1/HANDOFF-r208.md` | - | 2beec13ef9cc5671ad43424fb32f5c447beb9b3c2bad239d9f11dcea7ae08fe9 | SOURCE_PIN |
 | EV-R209-REVIEW | R209 Review | `verification/WORKSPACE-CONSOLIDATION-1/codex-review-r209.md` | - | a3710e23fcbec3d2a8dcb60ea171945d1068693776b9533385fbdebb91bce04d | SOURCE_PIN |
 | EV-R209-RESPONSE | R209 F-01..F-04 | `verification/WORKSPACE-CONSOLIDATION-1/rework-r209-response.md` | - | 79b5b1c92d18e1fad35a7727da6f2696ee872e59663a225c6681d12aecb0bf17 | CANONICAL |
-| EV-R209-HANDOFF | R209 交付 | `verification/WORKSPACE-CONSOLIDATION-1/HANDOFF-r209.md` | - | ffaa70eb2b7d85b117eb6b07bb66289bd1014547047668c28e5df14767f9de14 | SOURCE_PIN |
+| EV-R209-HANDOFF | R209 交付 | `verification/WORKSPACE-CONSOLIDATION-1/HANDOFF-r209.md` | - | 239f37322f9a5d7a9afae6ee41e9ecfae85c9301d029655aa48f3740139c5b54 | SOURCE_PIN |
 | EV-R210-REVIEW | R210 Review | `verification/WORKSPACE-CONSOLIDATION-1/codex-review-r210.md` | - | 7f63f6edbf84c3706ab71975f1489e4652f773e9e47d443dc0f75b4c131fac7e | SOURCE_PIN |
 | EV-R211-RECOVERY | R211 恢复搜索 | `verification/WORKSPACE-CONSOLIDATION-1/recovery-search-r211.md` | - | 7991137143285319982a52bbb4a19c73f6c9812384fb664676098fb0a95141cc | CANONICAL |
 | EV-R211-CLOSURE | R211 关闭请求 | `verification/WORKSPACE-CONSOLIDATION-1/closure-package-r211.md` | - | ee23870b605861d17ddbcf7580b77bd05524fe0395125a8b4414ec9d7180b89f | CANONICAL |
+| EV-R211-REVIEW | R211 Review | `verification/WORKSPACE-CONSOLIDATION-1/codex-review-r211.md` | - | 2005dedf15a909042af2675bd77826fa28b266fd65b794541943f068efadad2e | SOURCE_PIN |
+| EV-R212-REVIEW | R212 Review | `verification/WORKSPACE-CONSOLIDATION-1/codex-review-r212.md` | - | a3fa8ac6413b5ecfd60b2faba6bf15f5d055a34e41576f82444c9f052ead5667 | SOURCE_PIN |
 | EV-R208-GITATTR | 证据 EOL pin | `verification/WORKSPACE-CONSOLIDATION-1/.gitattributes` | - | db13af9f871ab99b3859fc1177d97e7d32a0d212b2c9ac70ad445eeabf614213 | SOURCE_PIN |
 
 ## Resource Manifest
@@ -309,6 +313,8 @@ Canonical Evidence，属流程状态而非产品失败。本轮已把该 Review 
   49.48 GiB 逻辑字节非物理净释放、增量 bundle、工具根因未修、AC PARTIAL、F-01 临时目录保留。
 **R211 复审（`changes_requested`）响应**：R211-01 已补列 `p03-temp-scratch`；R211-02 收口提交前重生成 TASK_LEDGER；R211-03/04 记为 ACKNOWLEDGED；详见 `closure-package-r211.md` §8。
 
+**R212 裁决（2026-10-21）**：`approved_with_conditions`；R211-01/02 **FIXED**、R211-03/04 **ACKNOWLEDGED**；Codex 批准以 `closed_with_limitations` 收口，并授权 Owner 执行关闭提交、重生成 Ledger、运行治理检查。**不含删除/移动/GC/prune/push/历史改写。**
+
 - **请求**：Codex 记录 `closed_with_limitations`（`integration_commit: null`、不标 done），
   以 L1–L8 作为 canonical/resource `complete` 的内容。Owner 仍未自审/自批/关闭。
 
@@ -335,13 +341,15 @@ Canonical Evidence，属流程状态而非产品失败。本轮已把该 Review 
 
 ## Closeout Record
 
-- Closeout date / Codex：**拟关闭，待 r211 裁决**。r208=`changes_requested`；r209=`changes_requested`；
-  r210=`approved_with_conditions`（仅批准 F-01..F-04 处置、不批准关闭）；r211 关闭请求已提交
-  （`closed_with_limitations` + L1–L8，见 `closure-package-r211.md`）。
-- canonical_evidence_status：拟 `complete`（Codex 记录关闭裁决时置位；当前仍 `pending`）。
-- resource_closeout_status：拟 `complete`（以 L1–L8 为收口内容，**不表示资源完整**）。
+- Closeout date / Codex：**2026-10-21 关闭（Codex r212 批准）**。r208/r209=`changes_requested`；
+  r210=`approved_with_conditions`（F-01..F-04）；r211=`changes_requested`（补 p03-temp-scratch）；
+  r212=`approved_with_conditions`（批准 `closed_with_limitations` 收口）。
+- canonical_evidence_status：`complete`。
+- resource_closeout_status：`complete`（以 L1–L8 + `p03-temp-scratch` 为收口内容，**不表示资源完整恢复**）。
 - 删除、迁移、归档数量/字节数：50 worktree 目录移除 + 37 仅登记移除 − 6 回建 = 132 注册 worktree；
   分支净删除 325；158 项派生产物；删除前递归逻辑字节合计 53,129,852,873 B（49.48 GiB，非物理净释放）；
   18 个受保护 source 受影响（11 原位置缺失、6 部分回建、P06 子树缺失）；76 个原 bundle + 1 个 P03 增量 bundle。
-- 未关闭项及保留原因：见 `closure-package-r211.md` L1–L8；用户已接受残余风险，最终由 Codex 记录关闭裁决。
-- 当前指针清理：关闭裁决时更新 STATUS/Plan/TASK_LEDGER；本轮未改主线、未 push、未 GC/prune。
+- 未关闭项及保留原因：L1–L8（见 `closure-package-r211.md` §4）；AC1/2/3/6/7/9 维持 `PARTIAL`；
+  用户已接受残余风险；工具根因另立 `WORKSPACE-CLEANUP-TOOL-HARDENING-1`（proposed，未释放）。
+- 当前指针清理：STATUS 已改指 proposed 候选（未释放）；Plan 已更新；TASK_LEDGER 重生成
+  （322 files / 38 non-terminal）；本 Task 不标 `done`、`integration_commit` 仍 `null`。
