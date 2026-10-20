@@ -3,7 +3,7 @@ id: TEST-ENV-ASSUMPTIONS-1
 title: 把可选运行时假设从测试中断言移出
 kind: implementation
 governance_version: 3
-status: ready
+status: closed_with_limitations
 language: zh-CN
 parent: P13
 blocked_by: null
@@ -15,10 +15,10 @@ depends_on: []
 base_commit: 0e93a5687
 branch: agent/dsh/TEST-ENV-ASSUMPTIONS-1
 worktree: G:/CODEX/New Manga.workspace/worktrees/TEST-ENV-ASSUMPTIONS-1
-integration_commit: null
-delivery_head: null
-canonical_evidence_status: pending
-resource_closeout_status: pending
+integration_commit: 9c594cd4f
+delivery_head: 9c594cd4f
+canonical_evidence_status: complete
+resource_closeout_status: complete
 evidence_dir: verification/TEST-ENV-ASSUMPTIONS-1
 allowed_paths:
   - tests/providers/
@@ -50,18 +50,23 @@ r42 裁定 §二。
 
 ## Acceptance Criteria
 
-- [ ] **AC1 无运行时一侧**：在模拟「无 manga-ocr / 无可用 CUDA」前提下，
-  Provider 如实报告缺依赖、GPU 如实报告不可用；
-  声明支持 CPU fallback 时选 CPU 并记录 fallback provenance，不支持时保持拒绝。
-- [ ] **AC2 有运行时一侧**：在模拟「有 manga-ocr / CUDA 可用」前提下，
-  Provider 与 GPU 如实报告可用；A1 的相反断言在此前提下同样成立。
-- [ ] **AC3 确定性**：两侧均由确定性测试覆盖（monkeypatch / 注入探测器 / 等价 seam），
-  **不得把一侧留给「另一台裸机碰巧覆盖」**。
-  **不得为此新增生产接口。**
-- [ ] **AC4 不伪装环境**：不得通过卸载依赖或改断言值来让测试通过；
-  在有可选依赖的开发机与无可选依赖的环境均可运行。
-- [ ] **AC5 不回归**：`tests/providers` 其余测试保持通过（当前 432 passed / 3 skipped）。
-- [ ] **AC6 零 `src/`**：不修改 `src/**`、产品依赖声明、Provider 就绪规则或设备选择语义。
+- [x] **AC1 无运行时一侧** <<MET>>
+- [x] **AC2 有运行时一侧** <<MET>>
+- [x] **AC3 确定性** <<MET>>
+- [x] **AC4 不伪装环境** <<MET>>
+- [x] **AC5 不回归** <<MET>>
+- [x] **AC6 零 `src/`** <<MET>>
+
+### AC 证据
+
+| AC | 证据 |
+|---|---|
+| AC1 | `env_sim.modules_state(absent=…)` / `with_optional_runtimes(available=False)` / `gpu_state(available=False)`；4 个原测试各强制其前提 |
+| AC2 | 新增 4 个存在侧测试；`tests/providers` 从 6 failed 变为 2 failed（余 2 属离线环境 Task）|
+| AC3 | 7 个 sabotage 全部被抓（`two-sided-coverage.md` §四）——含 4 个针对原始缺失侧方向 |
+| AC4 | 未卸载依赖、未改断言值；`env_sim` 只在测试进程内 patch |
+| AC5 | 440 passed / 3 skipped；3 个 skip 均为改动前既有，本 Task 未新增 skip |
+| AC6 | `git diff --stat` 只含 `tests/providers/` 与 `verification/`（见 Closeout Record）|
 
 ## 允许修改范围
 
@@ -100,17 +105,51 @@ r42 裁定 §二。
 
 | evidence_id | AC/Gate | path | commit | sha256 | class |
 |---|---|---|---|---|---|
+| EV-ENV-SIM | AC3 | `tests/providers/env_sim.py` | 20b087d7e | - | CANONICAL |
+| EV-ENV-DEV | AC1/AC2 | `tests/providers/test_devices.py` | 20b087d7e | - | CANONICAL |
+| EV-ENV-BOOT | AC1/AC2 | `tests/providers/test_bootstrap_providers.py` | 20b087d7e | - | CANONICAL |
+| EV-ENV-REG | AC2 | `tests/providers/test_registry_readiness.py` | 20b087d7e | - | CANONICAL |
+| EV-ENV-DOC | AC3 | `verification/TEST-ENV-ASSUMPTIONS-1/two-sided-coverage.md` | 20b087d7e | - | CANONICAL |
 
 ## Resource Manifest
 
 **本 Task 无资源删除、迁移或归档。**
 
-| resource | source_path | disposition | destination_path | sha256/manifest_path | notes |
+| resource_type | source_path | disposition | destination_path | sha256/manifest_path | notes |
 |---|---|---|---|---|---|
-| **（无）** | — | **NOT_APPLICABLE** | — | — | 只改测试与新增证据 |
+| （无） | — | NOT_APPLICABLE | — | — | 只改测试与新增证据 |
 
 **closeout_counts**：`deleted=0`、`moved=0`、`migrated=0`、`archived=0`。
 
 ## Closeout Record
 
-（未开始）
+- **Closeout date**：2026-10-20 · **Reviewer**：待 ZCode（按协作协议 §5）
+- **canonical_evidence_status**：`complete`
+- **resource_closeout_status**：`complete`
+- **删除、迁移、归档数量/字节数**：**0**
+
+### 改动清单
+
+| 文件 | 性质 |
+|---|---|
+| `tests/providers/env_sim.py` | **新增**，测试专用环境模拟 |
+| `tests/providers/test_devices.py` | 2 个测试加前提强制 + **新增 2 个存在侧测试** |
+| `tests/providers/test_bootstrap_providers.py` | 1 个测试加前提强制 + **新增 1 个存在侧测试** |
+| `tests/providers/test_registry_readiness.py` | 1 个测试加前提强制 + **新增 1 个存在侧测试** |
+
+**`src/` 零改动**（可用 `git diff --stat` 核实）。
+
+### 限制
+
+| # | 限制 |
+|---|---|
+| **L1** | **未独立 Review**——本 Task 由 DSH 实现，按协作协议须由 ZCode 审 |
+| **L2** | **剩余 2 个 `tests/providers` 失败属 `M2-PROD-DETECT-ENV-1`**（`transformers` 版本，本机离线）|
+| **L3** | **`env_sim` 依赖两个私有名**（`_module_present`、`probe_module`）。若未来重构改其位置，测试会以 `AttributeError` 红——**这是有意的**：宁可红，不可静默失效 |
+| **L4** | **判别力脚本未入库**（一次性工具）；其逻辑在证据 §四 可复现 |
+
+### 后续建议
+
+1. **交 ZCode 独立 Review**（L1）
+2. `M2-PROD-DETECT-ENV-1` 在有网络环境执行
+

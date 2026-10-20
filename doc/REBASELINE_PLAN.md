@@ -25,8 +25,8 @@
 |SEC-FMT-IMPL-1|ARCH-DOC-REBASELINE|**closed_with_limitations**（5 MET + AC5 `PARTIAL`；29 测试；AC5 发现并驱动修复 P1 [PDF-STREAM-FIX-1](tasks/PDF-STREAM-FIX-1.md)）|
 |PDF-STREAM-FIX-1|P18|**closed_with_limitations**（4 MET + AC3 `NOT_APPLICABLE`；`09676cc19`；ZCode `CHANGES_REQUESTED` 已返修；L2：PDFium 单引擎四天假绿）|
 |SEARCHABLE-PDF-CJK-1|PDF-STREAM-FIX-1|**closed_with_limitations**（5 MET + AC3 `PARTIAL`；韩文可搜索 PDF 已可用；L1 未子集化、L5 错误消息不可操作）|
-|TEST-ENV-ASSUMPTIONS-1|P13|**ready**（r42：4 个测试把「机器是裸的」写成断言；只改 `tests/providers/`，两侧须确定性覆盖）|
-|P11-PROJECTION-TEST-ALIGN-1|P13|**ready**（r42：2 个 projection 测试与 P11 §4.5 冲突；代码符合契约，改测试）|
+|TEST-ENV-ASSUMPTIONS-1|P13|**closed_with_limitations**（6 MET；`tests/providers` 6→2 failed；新增 4 个存在侧测试；7 sabotage 全抓；待 Review）|
+|P11-PROJECTION-TEST-ALIGN-1|P13|**closed_with_limitations**（6 MET；矩阵测试 2→9 状态；5 sabotage 全抓；待 Review）|
 |M2-PROD-DETECT-ENV-1|M2-PROD-DETECT-1|**blocked**（本机离线，`transformers 4.48.3` vs 钉死 `5.17.0`；检测链路本机不可用）|
 |P20-ISOLATION-1|P20|closed_with_limitations（AC4 四项 MET；`library_bridge.rs` 旧 pin FAIL 保留为已知限制）|
 |P20-AC4-FPS-1|P20|closed_with_limitations（AC3 PASS；AC5 依裁决）|
@@ -51,4 +51,4 @@
 |GOV-PLAN-BUDGET-1|—|done|
 |RUST-ENV-BASELINE-1（P20-CLOSE-BOUND-1）/ P07交互补缺（P02）/ P21旧栈归档（P20+另授权）|—|proposed（P07/P21可选）|
 |P22 响应归属|P22-REBASE-1|已集成；P04 不放行，H1/P2-1/13 与 BC-AC5 缺项保留。已完成见各节点行。|
-READY 节点：`TEST-ENV-ASSUMPTIONS-1`、`P11-PROJECTION-TEST-ALIGN-1`。blocked：`M2-PROD-DETECT-ENV-1`（离线）。done：**50 项**。
+READY 节点：**无**。blocked：`M2-PROD-DETECT-ENV-1`（离线）。done：**50 项**。

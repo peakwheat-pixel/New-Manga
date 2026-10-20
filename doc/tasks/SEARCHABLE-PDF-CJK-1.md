@@ -186,22 +186,22 @@ candidates = [font_dir / "msyh.ttc", font_dir / "arial.ttf"]
 
 | evidence_id | AC/Gate | path | commit | sha256 | class |
 |---|---|---|---|---|---|
-| EV-CJK-FIX | AC1 | `src/infrastructure/export/qt_free.py` | 590118987 | `53af6735067367de0ab2b5b0f3d45fabdebcff0f01e32307c56df42e57b5a88c` | CANONICAL |
-| EV-CJK-LIC | AC1 | `verification/SEARCHABLE-PDF-CJK-1/font-embedding-license-review.md` | c5e87d2ce | `44473510781cc465c9ff043e2adac56985860d0b8413e4219b27b0c92f61679a` | CANONICAL |
-| EV-CJK-FONT | AC1 | `tests/export/test_searchable_cjk_font.py` | 590118987 | `25d0a34c0eb38c153fa22ec30832b8f00b17a32dc195eff5da88203f3f1ad33d` | CANONICAL |
-| EV-CJK-KO-E2E | AC2 | `tests/export/test_searchable_korean_e2e.py` | 2a6a35726 | `99b8bf44cf2d7b61ce044858ef39264503742b8a0e25ac863cc0dc7e6d9e54f8` | CANONICAL |
-| EV-CJK-AC3 | AC3 | `verification/SEARCHABLE-PDF-CJK-1/ac3-subsetting-feasibility.md` | 8593f81c6 | `5ddf012ddbb7cfec905ad9221204558d755eaa521fa44b7e0518f5eadd1ed43e` | CANONICAL |
-| EV-CJK-AC4 | AC4 | `verification/SEARCHABLE-PDF-CJK-1/ac4-font-cost-scaling.md` | dfed15eef | `74285e44ad8f23c4bc9b2748c8ee7caf11a34d668b2cdda6d31e8efe61bfcaed` | CANONICAL |
-| EV-CJK-COST | AC4 | `tests/export/test_searchable_font_cost.py` | dfed15eef | `62785369650e6690a0979739d0c3756a809c4435ebf5776ef3b105f156abeefe` | CANONICAL |
-| EV-CJK-RV | AC5 | `verification/SEARCHABLE-PDF-CJK-1/dsh-zcode-review.md` | 2a6a35726 | `86ad0749cc38cbfb5784805af9a845ed2ede48a2e14c539fd9df5c276a22e4bd` | CANONICAL |
+| EV-CJK-FIX | AC1 | `src/infrastructure/export/qt_free.py` | 590118987 | - | CANONICAL |
+| EV-CJK-LIC | AC1 | `verification/SEARCHABLE-PDF-CJK-1/font-embedding-license-review.md` | c5e87d2ce | - | CANONICAL |
+| EV-CJK-FONT | AC1 | `tests/export/test_searchable_cjk_font.py` | 590118987 | - | CANONICAL |
+| EV-CJK-KO-E2E | AC2 | `tests/export/test_searchable_korean_e2e.py` | 2a6a35726 | - | CANONICAL |
+| EV-CJK-AC3 | AC3 | `verification/SEARCHABLE-PDF-CJK-1/ac3-subsetting-feasibility.md` | 8593f81c6 | - | CANONICAL |
+| EV-CJK-AC4 | AC4 | `verification/SEARCHABLE-PDF-CJK-1/ac4-font-cost-scaling.md` | dfed15eef | - | CANONICAL |
+| EV-CJK-COST | AC4 | `tests/export/test_searchable_font_cost.py` | dfed15eef | - | CANONICAL |
+| EV-CJK-RV | AC5 | `verification/SEARCHABLE-PDF-CJK-1/dsh-zcode-review.md` | 2a6a35726 | - | CANONICAL |
 
 ## Resource Manifest
 
 **本 Task 无资源删除、迁移或归档。**
 
-| resource | source_path | disposition | destination_path | sha256/manifest_path | notes |
+| resource_type | source_path | disposition | destination_path | sha256/manifest_path | notes |
 |---|---|---|---|---|---|
-| **（无）** | — | **NOT_APPLICABLE** | — | — | 只改 `src/infrastructure/export/qt_free.py` 一处候选列表，并新增测试与证据；未移动或删除任何被引用资源 |
+| （无） | — | NOT_APPLICABLE | — | — | 只改 `src/infrastructure/export/qt_free.py` 一处候选列表，并新增测试与证据；未移动或删除任何被引用资源 |
 
 **closeout_counts**：`deleted=0`、`moved=0`、`migrated=0`、`archived=0`。
 

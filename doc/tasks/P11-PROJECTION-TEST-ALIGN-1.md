@@ -3,7 +3,7 @@ id: P11-PROJECTION-TEST-ALIGN-1
 title: 让 projection 测试对齐 P11 §4.5 冻结契约
 kind: test-alignment
 governance_version: 3
-status: ready
+status: closed_with_limitations
 language: zh-CN
 parent: P13
 blocked_by: null
@@ -15,10 +15,10 @@ depends_on: []
 base_commit: 0e93a5687
 branch: agent/dsh/P11-PROJECTION-TEST-ALIGN-1
 worktree: G:/CODEX/New Manga.workspace/worktrees/P11-PROJECTION-TEST-ALIGN-1
-integration_commit: null
-delivery_head: null
-canonical_evidence_status: pending
-resource_closeout_status: pending
+integration_commit: 9c594cd4f
+delivery_head: 9c594cd4f
+canonical_evidence_status: complete
+resource_closeout_status: complete
 evidence_dir: verification/P11-PROJECTION-TEST-ALIGN-1
 allowed_paths:
   - tests/workbench/
@@ -53,15 +53,23 @@ allowed_paths:
 
 ## Acceptance Criteria
 
-- [ ] **AC1 `pending` 行**：`can_pause` 为 `False`、`can_stop` 为 `True`；
-  测试名与断言一致（当前测试名 `..._pause_stop_enabled` 若与新语义冲突，须改名或加注说明）。
-- [ ] **AC2 其余状态矩阵**：`running` / `paused` / `blocked` / `interrupted` / `completed` /
-  `completed_with_failures` / `failed` / `cancelled` 的可达按钮组合与 P11 §4.5 一致。
-- [ ] **AC3 双文件一致**：`test_pending_run_all_waiting_and_pause_stop_enabled` 与
-  `test_button_matrix_all_statuses` 的期望互相一致，且都与契约一致。
-- [ ] **AC4 零 `src/`**：**不改 `projection.py` 去迎合旧期望**；不改任何产品代码。
-- [ ] **AC5 历史保留**：TASK-013 的历史内容与提交保持历史事实，不因测试更新而改写。
-- [ ] **AC6 不回归**：`tests/workbench` 其余测试与 `tests/pipeline`（94 passed）保持通过。
+- [x] **AC1 `pending` 行** <<MET>>
+- [x] **AC2 其余状态矩阵** <<MET>>
+- [x] **AC3 双文件一致** <<MET>>
+- [x] **AC4 零 `src/`** <<MET>>
+- [x] **AC5 历史保留** <<MET>>
+- [x] **AC6 不回归** <<MET>>
+
+### AC 证据
+
+| AC | 证据 |
+|---|---|
+| AC1 | `can_pause is False` / `can_stop is True`；测试改名 `..._stop_enabled_only` 并在 docstring 说明理由 |
+| AC2 | `P11_BUTTON_MATRIX` 表覆盖全部 **9 个** `PipelineRunStatus`；另加 Interrupted-with-disposition 与 retry-only-when-failures 两个专项 |
+| AC3 | `test_button_matrix_matches_p11_4_5_for_every_status` + `test_button_matrix_all_statuses`（端到端）互相一致，且都与 §4.5 一致 |
+| AC4 | `src/` 零改动 |
+| AC5 | TASK-013 历史与 `da1daf11e` 未改写；改名理由记录在 docstring 与证据 |
+| AC6 | `tests/workbench/test_projection.py` 16 passed；`tests/pipeline` 94 passed |
 
 ## 允许修改范围
 
@@ -97,17 +105,45 @@ allowed_paths:
 
 | evidence_id | AC/Gate | path | commit | sha256 | class |
 |---|---|---|---|---|---|
+| EV-PROJ-TEST | AC1/AC2 | `tests/workbench/test_projection.py` | 9c594cd4f | - | CANONICAL |
+| EV-PROJ-DOC | AC2/AC3 | `verification/P11-PROJECTION-TEST-ALIGN-1/matrix-alignment.md` | 9c594cd4f | - | CANONICAL |
 
 ## Resource Manifest
 
 **本 Task 无资源删除、迁移或归档。**
 
-| resource | source_path | disposition | destination_path | sha256/manifest_path | notes |
+| resource_type | source_path | disposition | destination_path | sha256/manifest_path | notes |
 |---|---|---|---|---|---|
-| **（无）** | — | **NOT_APPLICABLE** | — | — | 仅测试对齐与证据 |
+| （无） | — | NOT_APPLICABLE | — | — | 仅测试对齐与证据 |
 
 **closeout_counts**：`deleted=0`、`moved=0`、`migrated=0`、`archived=0`。
 
 ## Closeout Record
 
-（未开始）
+- **Closeout date**：2026-10-20 · **Reviewer**：待 ZCode（按协作协议 §5）
+- **canonical_evidence_status**：`complete`
+- **resource_closeout_status**：`complete`
+- **删除、迁移、归档数量/字节数**：**0**
+
+### 改动清单
+
+| 文件 | 性质 |
+|---|---|
+| `tests/workbench/test_projection.py` | 1 个测试改名 + 1 个测试拆成 4 个（表驱动 9 状态）|
+
+**`src/` 零改动。**
+
+### 限制
+
+| # | 限制 |
+|---|---|
+| **L1** | **未独立 Review**——本 Task 由 DSH 实现，按协作协议须由 ZCode 审 |
+| **L2** | **仅断言按钮**enabled**状态**；按钮的可见性/布局不在范围 |
+| **L3** | **`P11_BUTTON_MATRIX` 是对 §4.5 的人工转写**，若契约变更需同步更新——表驱动让它只改一行，但不会自动发现契约变更 |
+| **L4** | **`test_workbench_viewmodel.py::test_pause_shows_optimistic_feedback_immediately` 仍失败**，属旧 PySide6 栈，r42 §五 不释放 |
+
+### 后续建议
+
+1. **交 ZCode 独立 Review**（L1）
+2. 建议在契约（P11）与投影矩阵之间加一个自动对照（L3），避免人工转写漂移
+

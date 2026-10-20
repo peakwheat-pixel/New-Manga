@@ -7,9 +7,9 @@ Reconciliation of every `doc/tasks/*.md` against the plan's node set. r38 §3 es
 | metric | value |
 |---|---:|
 | task files | 320 |
-| terminal | 280 |
-| non-terminal | 40 |
-| non-terminal named in the plan | 6 |
+| terminal | 282 |
+| non-terminal | 38 |
+| non-terminal named in the plan | 4 |
 | non-terminal outside the plan | 34 |
 
 ## By status
@@ -17,12 +17,12 @@ Reconciliation of every `doc/tasks/*.md` against the plan's node set. r38 §3 es
 | status | count | terminal |
 |---|---:|---|
 | `done` | 251 | yes |
-| `closed_with_limitations` | 28 | yes |
+| `closed_with_limitations` | 30 | yes |
 | `blocked` | 11 | no |
 | `proposed` | 9 | no |
-| `ready` | 6 | no |
 | `approved` | 5 | no |
 | `changes_requested` | 4 | no |
+| `ready` | 4 | no |
 | `in_review` | 3 | no |
 | `in_progress` | 2 | no |
 | `cancelled` | 1 | yes |
@@ -65,12 +65,10 @@ Reconciliation of every `doc/tasks/*.md` against the plan's node set. r38 §3 es
 | `TASK-025` | `proposed` | no |
 | `TASK-026` | `proposed` | no |
 | `TASK-027` | `proposed` | no |
-| `P11-PROJECTION-TEST-ALIGN-1` | `ready` | own row |
 | `T3.2.1-REPAIR-10` | `ready` | no |
 | `T3.2.1-REPAIR-3` | `ready` | no |
 | `T3.2.1-REPAIR-7` | `ready` | no |
 | `T3.2.1-REPAIR-9` | `ready` | no |
-| `TEST-ENV-ASSUMPTIONS-1` | `ready` | own row |
 
 ## What this ledger does not say
 
