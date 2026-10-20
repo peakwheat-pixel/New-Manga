@@ -126,12 +126,12 @@ MAX_DETECT_PIXELS = MAX_DETECT_PAGE_BYTES // 3
 
 | evidence_id | AC/Gate | path | commit | sha256 | class |
 |---|---|---|---|---|---|
-| EV-DT1-MEM | AC1 | `verification/DETECT-TILING-1/stageA-rejection-memory.md` | 843cfe705 | (worktree) | CANONICAL |
-| EV-DT1-MEMJSON | AC1 | `verification/DETECT-TILING-1/stageA-rejection-memory.json` | 843cfe705 | (worktree) | CANONICAL |
-| EV-DT1-JPEG | AC4 | `verification/DETECT-TILING-1/stageA-jpeg-rejection-memory.json` | 843cfe705 | (worktree) | CANONICAL |
-| EV-DT1-S1 | AC1 basis | `verification/DETECT-TILING-1/stage1-decoder-memory.md` | b5253ebfc | (worktree) | CANONICAL |
-| EV-DT1-S2 | AC1 basis | `verification/DETECT-TILING-1/stage2-candidate-paths.md` | c776dc1ae | (worktree) | CANONICAL |
-| EV-DT1-R35 | ruling | `verification/P09-GOVERNANCE-DEBT-20261019/codex-adjudicate-tiling-stage2-r35.md` | 5885b182e | (worktree) | SOURCE_PIN |
+| EV-DT1-MEM | AC1 | `verification/DETECT-TILING-1/stageA-rejection-memory.md` | 843cfe705 | b0dc64f00ecd1c50c188473b7e972f61adeb37da5c3b958779835d443dd7ef61 | CANONICAL |
+| EV-DT1-MEMJSON | AC1 | `verification/DETECT-TILING-1/stageA-rejection-memory.json` | 843cfe705 | 7a469ead6060b4374bb96145eb310a4c92a05a20235c8db2e27d27def9ab80e8 | CANONICAL |
+| EV-DT1-JPEG | AC4 | `verification/DETECT-TILING-1/stageA-jpeg-rejection-memory.json` | 783434e5b | e330c2158edcdcded52770dda9859bbc2a30d1c873af3a41de00f784dfb2e93c | CANONICAL |
+| EV-DT1-S1 | AC1 basis | `verification/DETECT-TILING-1/stage1-decoder-memory.md` | b5253ebfc | 47995fc2fbf61c046a0ae7a84dfcdf0b09c425f5442ee353f74ba8adebab7e9c | CANONICAL |
+| EV-DT1-S2 | AC1 basis | `verification/DETECT-TILING-1/stage2-candidate-paths.md` | c776dc1ae | 57131c6ea89b38f3be8fa2e03f6ab6736370de0f6c0180569dfd87bc1fda26cc | CANONICAL |
+| EV-DT1-R35 | ruling | `verification/P09-GOVERNANCE-DEBT-20261019/codex-adjudicate-tiling-stage2-r35.md` | 5885b182e | bbcf1ac2517cb3dcbae90c414a9a5e421a305e162b52fe7b8d299a8fbefd30aa | SOURCE_PIN |
 
 ## Resource Manifest
 
@@ -189,7 +189,7 @@ MAX_DETECT_PIXELS = MAX_DETECT_PAGE_BYTES // 3
 | AC | 状态 |
 |---|---|
 | AC1（预解码安全拒绝 + 内存证据） | 代码 + 实测 + 测试完成，**待独立 Review** |
-| AC4（实测证据） | **`PARTIAL`** —— PNG 已测，**JPEG 超限样本不存在** |
+| AC4（实测证据） | PNG 与合成 JPEG 均已测（见下「AC4 收口」）；**真实超限 JPEG 仍不存在**，该项限制保留 |
 | AC2（SEC-FMT-005 映射） | 未开始 |
 | AC3（RGBA 阈值缺陷登记） | 未开始（缺陷已在 stage2 记录） |
 | AC5（回归 + 独立审查） | 回归已跑 34 通过；**独立审查未做** |
@@ -223,6 +223,25 @@ MAX_DETECT_PIXELS = MAX_DETECT_PAGE_BYTES // 3
 **需要 Codex 处置**：
 1. 指派一个非 DSH 的 Reviewer；或
 2. 明确授权「本 Task 以 limitation 收口，接受无独立审查」并记录该限制。
+
+### 2026-10-20 ZCode Review 处置（P1-2 / P2）
+
+**Review**：`verification/DETECT-TILING-1/dsh-stageA-zcode-review.md`（结论 `APPROVE_WITH_COMMENTS`，P0 无）
+
+| 项 | 处置 |
+|---|---|
+| **P1-1** 测试不守「拒绝先于解码」 | **已修**（`07e414773`）：新增 `test_detect_oversized_rejected_before_any_pixel_decode` 与对照组；**注入回归实测证明旧测试通过、新测试失败** |
+| **P1-2(a)** `PARTIAL` 与「已收口」并存 | **已修**（本 commit）|
+| **P1-2(b)** `EV-DT1-JPEG` pin 指向 `843cfe705`，实际为 `783434e5b` | **已修**（本 commit）|
+| **P1-2(c)** sha256 全为 `(worktree)`，合成 JPEG 无 sha256 | **已修**（本 commit）|
+| **P1-2(d)** AC4 改用合成 JPEG 属口径变更，需追认 | **未处置**（需 Codex 追认）|
+| **P2-1** 同源对照 | **已做**：`stageA-remeasurement-20261020.md` |
+| **P2-2** 指标口径矛盾 | **已做并撤回旧数**：37.3 MB 是 trim 基线产物，真实拒绝峰值 141.7 MB |
+| **P2-3** stageA md 自述过时 | **未修** |
+| **P2-4** 弱断言 `"over" in message` | **未修** |
+
+**合成 JPEG 样本 sha256**：`84592ff425ae348313ef202230d59583ef727cada9aca55027dfcc1f800bee5f`
+路径：`G:\CODEX\New Manga.workspace\DETECT-TILING-1\synthetic\oversized-5000x4000.jpg`（**在 workspace 内，未入库**）
 
 ## Closeout Record
 
