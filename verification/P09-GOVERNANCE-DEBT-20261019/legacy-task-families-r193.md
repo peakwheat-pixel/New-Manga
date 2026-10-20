@@ -1,7 +1,12 @@
 # 22 个「未在 DAG 登记的非终态 Task」的家族分析
 
 **产出**：2026-10-20 · **数据**：`per-task-check-audit.json`
-**用途**：把「22 个 Task 需要逐个裁定」压缩成「**7 个家族需要裁定**」。
+**用途**：把「22 个 Task 需要逐个裁定」压缩成「**6 个家族需要裁定**」。
+
+> **⚠ r196 修正**：本文原按「磁盘上所有 Task 文件」统计，得 22 个、7 个家族。
+> **其中 10 个是**从未提交的草稿**（整个 `P02PRE` 家族都在此列），不属仓库债务。
+> **真实数字是 12 个已跟踪 Task、6 个家族。** 修正后的清单见 §七。
+> 错误来源与修正方法见 `baseline-correction-r196.md`。
 
 ## 一、结论先行
 
@@ -118,3 +123,61 @@ T3.2.1-REPAIR-12                       approved
 - **未把任何 Task 标为 `superseded`**（r38 要求具名替代物或架构裁定）
 - **未验证**这 22 个 Task 的历史证据是否仍可解析
 - **未判断**它们是否已被后续 Task 实际覆盖
+
+
+## 七、r196 修正：真实清单（已跟踪 12 个 / 6 个家族）
+
+**判据**：`git ls-files doc/tasks` 含该文件。
+
+### 家族 1：`P02-NEW-TIME-X6`（3，全 `approved`）
+
+```
+P02-NEW-TIME-X6                  approved
+P02-NEW-TIME-X6-BUILD-CARGO      approved
+P02-NEW-TIME-X6-POSTRUN-REVIEW   approved
+```
+
+**家族根自身非终态** —— 整条线未进入当前 Plan。
+
+### 家族 2：`T3.2.1-REPAIR`（6，根已 `closed_with_limitations`）
+
+```
+T3.2.1-REPAIR-8                  approved
+T3.2.1-REPAIR-12                 approved
+T3.2.1-REPAIR-4                  changes_requested
+T3.2.1-REPAIR-5                  changes_requested
+T3.2.1-REPAIR-6                  changes_requested
+T3.2.1-REPAIR-11                 changes_requested
+```
+
+**这是最大的一族，也是唯一混合了两种状态语义的一族。**
+
+### 家族 3：`P15`（1，根 `done`）
+
+```
+P15-CORE-1                       blocked
+```
+
+### 家族 4：`P19`（2，根 `closed_with_limitations`）
+
+```
+P19-AC3-1                        in_review
+P19-UI-FIX-3                     blocked
+```
+
+### 被剔除的：整个 `P02PRE` 家族（10 个，全为草稿）
+
+```
+P02PRE-R0S2 / R0S4 / R0S5 / R0S6          blocked
+P02PRE-R1H                                in_progress
+P02PRE-R1H-P2-1-EVIDENCE-CLOSURE          blocked
+P02PRE-R1H-R6-EXEC-A4 / A5                blocked
+P02PRE-R1H-R6-EXEC-A6                     in_progress
+P02PRE-R1H-R6-ZCODE-H1                    in_review
+```
+
+**这 10 个从未提交。它们的状态陈述没有进入仓库，也就不构成仓库的授权债务。**
+**它们的作者尚未提交——不是我的裁定对象，也不是「遗留」。**
+
+**所以 Round 193 里我说「`P02PRE-R1H` 是唯一一个声称正在做的根，最需要先定性」——
+那个「根」根本不在仓库里。基于磁盘视图得出的结论，在仓库视图下不成立。**
