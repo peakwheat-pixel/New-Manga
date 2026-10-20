@@ -352,7 +352,35 @@ if ($TaskPath -and (Test-Path -LiteralPath $TaskPath -PathType Leaf)) {
                     }
                     if ($sha) {
                         if ($sha -notmatch '^[0-9a-f]{64}$') { Add-Error "Evidence SHA-256 格式无效：$path" }
-                        elseif ((Get-FileHash -LiteralPath $evidencePath -Algorithm SHA256).Hash.ToLowerInvariant() -ne $sha) { Add-Error "Evidence SHA-256 不匹配：$path" }
+                        if ($sha) {
+                            if ($sha -notmatch '^[0-9a-f]{64}$') { Add-Error "Evidence SHA-256 格式无效：$path" }
+                            else {
+                                # r194: a pin may be against worktree bytes (CRLF under
+                                # core.autocrlf=true) or against the committed blob (LF).
+                                # Both are legitimate readings of "the same file" and which
+                                # one a task recorded depends on when it was authored, so
+                                # accept either. The blob branch is only computed when the
+                                # commit really contains the path; otherwise it would compare
+                                # against nothing and pass silently.
+                                $worktreeSha = (Get-FileHash -LiteralPath $evidencePath -Algorithm SHA256).Hash.ToLowerInvariant()
+                                $matches = ($worktreeSha -eq $sha)
+                                if (-not $matches -and $commit) {
+                                    $repoRel = [IO.Path]::GetRelativePath($repoRoot, $evidencePath).Replace('\', '/')
+                                    if ($repoRel -ne '..' -and -not $repoRel.StartsWith('../')) {
+                                        $blobHex = & git -C $repoRoot rev-parse "${commit}:$repoRel" 2>$null
+                                        if ($LASTEXITCODE -eq 0 -and $blobHex) {
+                                            $tmp = [IO.Path]::GetTempFileName()
+                                            try {
+                                                & git -C $repoRoot cat-file blob $blobHex > $tmp 2>$null
+                                                $blobSha = (Get-FileHash -LiteralPath $tmp -Algorithm SHA256).Hash.ToLowerInvariant()
+                                                if ($blobSha -eq $sha) { $matches = $true }
+                                            } finally { Remove-Item -LiteralPath $tmp -ErrorAction SilentlyContinue }
+                                        }
+                                    }
+                                }
+                                if (-not $matches) { Add-Error "Evidence SHA-256 不匹配：$path" }
+                            }
+                        }
                     }
                 }
                 $evidenceDir = $metadata['evidence_dir']
