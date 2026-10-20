@@ -124,6 +124,7 @@ evidence_dir: verification/EVENTS-FWD-1
 | EVID-FWD-FE-BUILD | AC3/AC6 | `verification/EVENTS-FWD-1/frontend-build.log` | `6229e230f` | `9d3ea38314dc7aa2d517f54bfd31ef89a01bd1e2539ce939fa17e8979700f22e` | `CANONICAL` |
 
 | EVID-FWD-REVIEW | AC1-AC7 | `verification/EVENTS-FWD-1/dsh-review-r1.md` | `b0432a89f` | - | SOURCE_PIN |
+| EV-RES-MANIFEST | Resource | `verification/EVENTS-FWD-1/resource-manifest.json` | 19412ff70 | - | CANONICAL |
 
 ## Resource Manifest
 

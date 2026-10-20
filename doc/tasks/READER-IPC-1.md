@@ -116,6 +116,7 @@ Rust command 参数使用上述 snake_case 名称；Tauri invoke 按既有默认
 | READER-CORE | AC3/AC4-②/AC5 | `verification/READER-IPC-1/core-pytest.log` | `96c7b057672589892458a3d1e78c91031f8f03e6` | `1cb15e787efc9bf37df4ef7ac267a8f6855be058a52edfe30be5d25902fa27fa` | CANONICAL |
 
 | EVID-READER-REVIEW-R1 | AC1-AC6 | `verification/READER-IPC-1/dsh-review-r1.md` | `ab47ef2b0` | `91c834dd56b5490984cacb5582777432758261a312ddcdcc728e57be06276103` | SOURCE_PIN |
+| EV-RES-MANIFEST | Resource | `verification/READER-IPC-1/resource-manifest.json` | 19412ff70 | - | CANONICAL |
 
 ## Resource Manifest
 

@@ -111,6 +111,7 @@ evidence_dir: verification/EXPORT-IPC-1
 | EVID-EXPIPC-LAYER | AC3/AC4 | `verification/EXPORT-IPC-1/evidence-layering.md` | `a4c8f9ac05fd20bd1a97a0b22a290d515fe5c475` | `cddf5ade407097b527a72eb5eaa7f1624e640bf67e14a98b14c82c9c6ed54994` | `CANONICAL` |
 
 | EVID-EXPIPC-REVIEW-R1 | AC1-AC6 | `verification/EXPORT-IPC-1/dsh-review-r1.md` | `9835608c7` | `e5830d3769b923339c253aefad75e96af1b01d48c81792f988d601315ac3b891` | SOURCE_PIN |
+| EV-RES-MANIFEST | Resource | `verification/EXPORT-IPC-1/resource-manifest.json` | 19412ff70 | - | CANONICAL |
 
 ## Resource Manifest
 

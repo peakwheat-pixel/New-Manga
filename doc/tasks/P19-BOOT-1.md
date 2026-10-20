@@ -98,6 +98,7 @@ L3368: shared_lease = acquire_shared_lease(...)               # 缺锁 → FileN
 | binding-check-script | AC2, AC3 | verification/P19-BOOT-1/verify_runtime_binding.py | e4aff85bc87fa36f8656710315add6ec52c5ce15 | 680778ee36f006cdacc28ea32baeeba538f9526f2e681bfd268453d129d96460 | CANONICAL |
 | evidence-manifest | AC6 | verification/P19-BOOT-1/evidence-manifest.json | e4aff85bc87fa36f8656710315add6ec52c5ce15 | a7c269b7145b098d41aef3923b6b2a9f71adda6520ca55192e9e9cf2605d5619 | CANONICAL |
 | EVD-BOOT1-REVIEW-R1 | AC1–AC6 | `verification/P19-BOOT-1/dsh-review-r1.md` | `5b5349181` | `d0460645f81728bca9447868737d8aca3581ebff4ea265ac441b3585772e4d17` | SOURCE_PIN |
+| EV-RES-MANIFEST | Resource | `verification/P19-BOOT-1/resource-manifest.json` | 215ff93c1 | - | CANONICAL |
 
 ## Resource Manifest
 
