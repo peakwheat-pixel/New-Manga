@@ -549,7 +549,14 @@ def test_detect_decoded_pixel_cap_rejected(tmp_path: Path) -> None:
 
     A highly compressible (all-white) PNG lands far below the byte cap but
     decodes past the pixel cap (32 MiB RGB24 = 11,184,810 px) -- rejected
-    typed INVALID_REQUEST before any convert/tobytes allocation."""
+    typed INVALID_REQUEST before any convert/tobytes allocation.
+
+    DETECT-TILING-1 (r35): the rejection message must be actionable, not a
+    bare "exceeds the pixel limit". Tiling is not an option for this input
+    class (a PNG is one zlib stream; cropping still decodes the whole page),
+    so the caller needs to know the actual size, how far over it is, and what
+    to do about it.
+    """
     from bootstrap.core_service import _MAX_DETECT_PAGE_B64_CHARS, MAX_DETECT_PIXELS
 
     server, core = _make_server(tmp_path)
@@ -567,10 +574,26 @@ def test_detect_decoded_pixel_cap_rejected(tmp_path: Path) -> None:
         )
         assert res["result"] is None
         assert res["error"]["code"] == E_INVALID_REQUEST
-        assert "pixel limit" in res["error"]["message"]
+
+        message = res["error"]["message"]
+        # the actual size and the ceiling
+        assert "4096x4096" in message
+        assert str(4096 * 4096) in message
+        assert str(MAX_DETECT_PIXELS) in message
+        # how far over, so the caller can judge the required reduction
+        assert "over" in message
+        # the rejection happened before decoding, said so explicitly
+        assert "before any pixel decoding" in message
+        # a concrete target and a fallback
+        ceiling_edge = int(MAX_DETECT_PIXELS ** 0.5)
+        assert f"about {ceiling_edge}x{ceiling_edge}" in message
+        assert "split" in message
+
+        # unchanged: no provider call was made
         assert core.detector.seen_request is None
     finally:
         core.conn.close()
+
 
 
 def test_detect_non_png_jpeg_format_rejected_fail_closed(tmp_path: Path) -> None:

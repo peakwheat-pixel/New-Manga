@@ -1,0 +1,25 @@
+{
+ "purpose": "prove handle_detect rejects oversized pages before any page-sized pixel allocation",
+ "method": "fresh subprocess per sample; peak Working Set via corrected GetProcessMemoryInfo ctypes signature",
+ "our_max_detect_pixels": 11184810,
+ "samples": [
+  {
+   "path": "G:\\CODEX\\New Manga.workspace\\test-materials\\objects\\sha256\\02\\02499d71f86f78ae17b1c9f937a455c28fb087c9a29f9352363f10fe1129275f.png",
+   "max_detect_pixels": 11184810,
+   "file_mb": 19.46,
+   "width": 690,
+   "height": 62133,
+   "format": "PNG",
+   "mode": "RGBA",
+   "pixels": 42871770,
+   "full_rgb24_mb": 122.66,
+   "full_rgba_mb": 163.54,
+   "peak_increase_after_open_mb": 37.3,
+   "exceeds_limit": true,
+   "peak_increase_at_rejection_mb": 37.3,
+   "ws_increase_at_rejection_mb": 63.3,
+   "rejected_before_decode": true,
+   "label": "PNG"
+  }
+ ]
+}

@@ -1405,13 +1405,30 @@ class CoreServiceServer:
                 # R10 (DSH r1): the byte cap bounds the encoded file only;
                 # cap the DECODED pixel count before any convert/tobytes
                 # allocation (32 MiB RGB24 equivalent, see MAX_DETECT_PIXELS).
+                # DETECT-TILING-1 (r35): the rejection below already happens
+                # BEFORE any pixel decode; what was missing was an actionable
+                # message. Tiling is not an option here -- a PNG is a single
+                # zlib stream, so cropping cannot avoid the full decode (see
+                # verification/DETECT-TILING-1/stage1-decoder-memory.md).
                 if image.width * image.height > MAX_DETECT_PIXELS:
+                    width_px = image.width
+                    height_px = image.height
+                    pixels = width_px * height_px
+                    # Square-equivalent edge for the current ceiling, so the
+                    # caller gets a concrete target instead of a bare number.
+                    ceiling_edge = int(MAX_DETECT_PIXELS ** 0.5)
                     raise DetectRequestError(
-                        "core.detect page exceeds the pixel limit "
-                        f"({image.width}x{image.height} = "
-                        f"{image.width * image.height} px > "
-                        f"{MAX_DETECT_PIXELS} px)"
+                        "core.detect page is too large to process safely: "
+                        f"{width_px}x{height_px} = {pixels} px exceeds the "
+                        f"{MAX_DETECT_PIXELS} px limit "
+                        f"({pixels / MAX_DETECT_PIXELS:.2f}x over). "
+                        "The page was rejected before any pixel decoding, so "
+                        "no page-sized buffer was allocated. "
+                        f"Reduce the page to at most {MAX_DETECT_PIXELS} pixels "
+                        f"(about {ceiling_edge}x{ceiling_edge}) and retry, or "
+                        "split a tall page into several shorter images."
                     )
+
                 rgb = image.convert("RGB")
                 actual_width, actual_height = rgb.size
                 if actual_width != width or actual_height != height:
