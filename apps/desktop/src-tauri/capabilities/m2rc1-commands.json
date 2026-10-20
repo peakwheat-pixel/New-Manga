@@ -10,7 +10,7 @@
   "allow-revoke-ref",
   "allow-revoke-resource-refs",
   "allow-core-ping",
-  
+
   "allow-library-list-books",
   "allow-library-list-recycle-bin-books",
   "allow-library-create-book",

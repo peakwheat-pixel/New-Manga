@@ -3,7 +3,7 @@ id: GOV-DEBT-CLEANUP-1
 title: 治理债务清理（历史 pin 失效与未入库证据）
 kind: governance
 governance_version: 2
-status: blocked
+status: superseded
 approval: user_authorized_gov_debt_cleanup_20261018
 blocked_by: user_review_and_41_vs_44_reconciliation
 owner: Codex
@@ -13,7 +13,7 @@ base_commit: 6cba806e5
 branch: null
 evidence_dir: verification/GOV-DEBT-CLEANUP-1
 canonical_evidence_status: pending
-resource_closeout_status: pending
+resource_closeout_status: complete
 ---
 
 # GOV-DEBT-CLEANUP-1：治理债务清理（历史 pin 失效与未入库证据）
@@ -105,6 +105,7 @@ P02-NEW-TIME-BASELINE 33、P04 36、P03-PACKAGED-SFX-ENTRY 11、P19 9，其余�
 
 | resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
 |---|---|---|---|---|---|
+| NOT_APPLICABLE | - | NOT_APPLICABLE | - | - | 本 Task 无持久资源；只读扫描/证据不改变工作区，终态收口不涉及迁移或删除 |
 
 ## Closeout Record
 
@@ -124,3 +125,8 @@ P02-NEW-TIME-BASELINE 33、P04 36、P03-PACKAGED-SFX-ENTRY 11、P19 9，其余�
 **当前状态**：`blocked`（`blocked_by: user_disposition_after_AC1_AC2_review`）。AC1 已完成（1474 文件 / 32,081,944 字节分类，建议清理 0）；AC2 `PARTIAL`（44 项已复现并逐条留证，含 61 条 SHA 错误分类）；AC3/AC4/AC5 动作保持 `BLOCKED`。
 
 **分类清单**：`verification/GOV-DEBT-CLEANUP-1/untracked-evidence-triage.md`（逐文件）+ `failed-task-rootcause.md`（41→44 项根因）。
+
+## 历史收口（2026-10-21，dsh）
+
+- 收口状态：`superseded`。范围已由 `GOV-DEBT-CLEANUP-2`、`GOV-UNTRACKED-BACKLOG-1`、`GOV-PIN-LINEAGE-1`（均已终态）部分承接；剩余历史 pin/未入库证据不再阻塞 v1。
+- 本 Task 从未实施，未交付/未集成；不声称 AC 完成。依据：`verification/V1-FINALIZE-20261021/legacy-task-closure-adjudication.md`。

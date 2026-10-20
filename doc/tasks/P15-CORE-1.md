@@ -3,7 +3,7 @@ id: P15-CORE-1
 title: 设置面 G21/G22/G23 专用命令的 Core 侧实现（Python Core 2.6；配对 P15-C1 契约）
 kind: feature
 governance_version: 2
-status: blocked
+status: cancelled
 approval: coordinator_ruling_20261017_scope_split_after_owner_escalation
 suggested_owner: Codex
 owner: null
@@ -15,7 +15,7 @@ worktree: null
 integration_commit: null
 delivery_head: null
 canonical_evidence_status: pending
-resource_closeout_status: pending
+resource_closeout_status: complete
 evidence_dir: verification/P15-CORE-1
 ---
 
@@ -89,7 +89,7 @@ evidence_dir: verification/P15-CORE-1
 
 | resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
 |---|---|---|---|---|---|
-| worktree | G:/CODEX/New Manga.workspace/worktrees/P15-CORE-1 | PRESERVE_REFERENCED | G:/CODEX/New Manga.workspace/worktrees/P15-CORE-1 | verification/P15-CORE-1/resource-manifest.json | 派发时创建；closeout 按 Worktree Safety Inventory 复核后填写 |
+| worktree | G:/CODEX/New Manga.workspace/worktrees/P15-CORE-1 | PRESERVE_UNKNOWN | G:/CODEX/New Manga.workspace/worktrees/P15-CORE-1 | doc/tasks/P15-CORE-1.md | 未交付的隔离 worktree；保留原位、未清理；本 Task 未产生实现或产品数据 |
 
 ## Closeout Record
 
@@ -113,3 +113,8 @@ evidence_dir: verification/P15-CORE-1
 | **P15-CORE-1C** | `settings_network_profiles_test`（六阶段） | **必须等 [P15-C1-FU1](P15-C1-FU1.md) 关闭** |
 
 Owner 成果：基线 `407 passed`（与我独立实测一致）已归档于其 worktree；**无实现提交**（HEAD 未移动），未改契约/apps/Schema/依赖。
+
+## 历史收口（2026-10-21，dsh）
+
+- 收口状态：`cancelled`。G21/G22/G23 专用 Core 命令不在 v1 发布范围内；P15 已 `closed_with_limitations`，v1 设置面使用既有命令。未交付/未集成，不声称 AC 完成。
+- 依据：`verification/V1-FINALIZE-20261021/legacy-task-closure-adjudication.md`；worktree 保留原位，未删除或移动。

@@ -1,0 +1,12 @@
+   Compiling m2rc1-desktop v0.1.0 (G:\CODEX\New Manga\apps\desktop\src-tauri)
+error: failed to run custom build command for `m2rc1-desktop v0.1.0 (G:\CODEX\New Manga\apps\desktop\src-tauri)`
+
+Caused by:
+  process didn't exit successfully: `G:\CODEX\New Manga\apps\desktop\src-tauri\target\debug\build\m2rc1-desktop-3fe09a83a5f31ea2\build-script-build` (exit code: 101)
+  --- stderr
+
+  thread 'main' (29816) panicked at build.rs:23:9:
+  missing sidecar bundle: G:\CODEX\New Manga\apps\desktop\src-tauri\target\core-sidecar\core-sidecar does not exist (gitignored build artifact, absent on a fresh checkout).
+  Fix: run `powershell -NoProfile -ExecutionPolicy Bypass -File packaging/m2ac5/build_sidecar.ps1` from the repository root (add -Force to rebuild an existing bundle).
+  See packaging/m2ac5/README.md (fresh checkout section) for the full setup.
+  note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace

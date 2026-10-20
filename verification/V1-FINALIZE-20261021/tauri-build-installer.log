@@ -1,0 +1,100 @@
+        Info Looking up installed tauri packages to check mismatched versions...
+   Compiling m2rc1-desktop v0.1.0 (G:\CODEX\New Manga\apps\desktop\src-tauri)
+warning: unused imports: `P15CredentialTarget`, `P15SettingsCommand`, and `P15_HOST_ONLY_COMMANDS`
+  --> src\main.rs:50:55
+   |
+50 |     LibraryChannel, LibraryError, LibrarySpawnConfig, P15CredentialTarget, P15SettingsCommand,
+   |                                                       ^^^^^^^^^^^^^^^^^^^  ^^^^^^^^^^^^^^^^^^
+...
+53 |     PingResult, ResilientLibraryChannel, StdioLibraryChannel, P15_HOST_ONLY_COMMANDS,
+   |                                                               ^^^^^^^^^^^^^^^^^^^^^^
+   |
+   = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: struct `MockCoreChannel` is never constructed
+   --> src\core_bridge.rs:335:12
+    |
+335 | pub struct MockCoreChannel {
+    |            ^^^^^^^^^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: struct `MockEntry` is never constructed
+   --> src\core_bridge.rs:350:12
+    |
+350 | pub struct MockEntry {
+    |            ^^^^^^^^^
+
+warning: associated items `new`, `register`, and `issue_internal` are never used
+   --> src\core_bridge.rs:359:12
+    |
+358 | impl MockCoreChannel {
+    | -------------------- associated items in this implementation
+359 |     pub fn new() -> Self {
+    |            ^^^
+...
+370 |     pub fn register(&self, resource_id: &str, rel_path: &str) -> Result<(), CoreError> {
+    |            ^^^^^^^^
+...
+378 |     fn issue_internal(
+    |        ^^^^^^^^^^^^^^
+
+warning: constant `P15_HOST_ONLY_COMMANDS` is never used
+   --> src\library_bridge.rs:707:11
+    |
+707 | pub const P15_HOST_ONLY_COMMANDS: [&str; 2] =
+    |           ^^^^^^^^^^^^^^^^^^^^^^
+
+warning: function `track_unreaped_worker_handle` is never used
+    --> src\library_bridge.rs:1647:15
+     |
+1647 | pub(crate) fn track_unreaped_worker_handle(handle: std::thread::JoinHandle<()>) -> bool {
+     |               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: associated function `spawn` is never used
+    --> src\library_bridge.rs:1813:12
+     |
+1812 | impl StdioLibraryChannel {
+     | ------------------------ associated function in this implementation
+1813 |     pub fn spawn(
+     |            ^^^^^
+
+warning: multiple methods are never used
+    --> src\library_bridge.rs:4497:12
+     |
+4454 | impl MockLibraryChannel {
+     | ----------------------- methods in this implementation
+...
+4497 |     pub fn set_export_snapshot_result(
+     |            ^^^^^^^^^^^^^^^^^^^^^^^^^^
+...
+4504 |     pub fn set_export_history_result(
+     |            ^^^^^^^^^^^^^^^^^^^^^^^^^
+...
+4511 |     pub fn set_books(&self, books: Vec<BookSummary>) {
+     |            ^^^^^^^^^
+...
+4515 |     pub fn set_books_error(&self, error: LibraryError) {
+     |            ^^^^^^^^^^^^^^^
+...
+4521 |     pub fn set_settings_result(&self, result: Result<serde_json::Value, LibraryError>) {
+     |            ^^^^^^^^^^^^^^^^^^^
+...
+4527 |     pub fn set_retype_result(&self, result: Result<serde_json::Value, LibraryError>) {
+     |            ^^^^^^^^^^^^^^^^^
+...
+4531 |     pub fn set_regions_result(&self, result: Result<serde_json::Value, LibraryError>) {
+     |            ^^^^^^^^^^^^^^^^^^
+...
+4538 |     pub fn set_domain_result(&self, result: Result<serde_json::Value, LibraryError>) {
+     |            ^^^^^^^^^^^^^^^^^
+
+warning: `m2rc1-desktop` (bin "m2rc1-desktop") generated 8 warnings (run `cargo fix --bin "m2rc1-desktop" -p m2rc1-desktop` to apply 1 suggestion)
+    Finished `release` profile [optimized] target(s) in 38.24s
+       Built application at: G:\CODEX\New Manga\apps\desktop\src-tauri\target\release\m2rc1-desktop.exe
+        Info Patching G:\CODEX\New Manga\apps\desktop\src-tauri\target\release\m2rc1-desktop.exe with bundle type information: nsis
+        Info Target: x64
+     Running makensis to produce G:\CODEX\New Manga\apps\desktop\src-tauri\target\release\bundle\nsis\m2rc1-desktop_0.1.0_x64-setup.exe
+    Finished 1 bundle at:
+        G:\CODEX\New Manga\apps\desktop\src-tauri\target\release\bundle\nsis\m2rc1-desktop_0.1.0_x64-setup.exe (553.11 MiB)
+

@@ -2,7 +2,7 @@
 id: TASK-025
 title: 按批准契约实现 Plugin/Hooks 与可选扩展
 kind: implementation
-status: proposed
+status: cancelled
 approval: pending_user_review
 suggested_owner: ZCode
 owner: null
@@ -71,3 +71,9 @@ D02 §12；D07 §71～72/110；TASK-024获批契约。D 编号对应 [文档索�
 - 最近状态：2026-09-13 接管规划创建；proposed，pending_user_review。
 
 > **2026-09-19 ZCode 全权窗口条目**：本 Task 已纳入 [STATUS](../STATUS.md) 的窗口队列（W12+ 尾项），但**门槛未达成**：需 **TASK-022** 完成（其自身依赖 TASK-019/022/024）。门槛满足前一律记 `BLOCKED（前置未达成）`，**不得跳过前置强行开工**；窗口内如需调整门槛，由 Codex 在 T1 后处理。
+
+## 历史收口（2026-10-21，dsh）
+
+- 收口状态：`cancelled`。
+- 理由：早期规划草案：从未授权/认领/实施，范围已被 Rebaseline Plan 与 M2 架构取代；Qoder 已于 2026-10-08 退出项目。
+- 依据：`verification/V1-FINALIZE-20261021/legacy-task-closure-adjudication.md`；本次仅改状态并追加本说明，不删除正文/证据，不改写历史 Review 或 pin。

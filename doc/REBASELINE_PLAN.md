@@ -30,7 +30,7 @@
 |M2-PROD-DETECT-ENV-1|M2-PROD-DETECT-1|**closed_with_limitations**（5 MET；隔离 venv 装 `transformers==5.17.0`；`tests/providers` 2 failed→0；原「离线」为误判）|
 |P20-ISOLATION-1|P20|closed_with_limitations（AC4 四项 MET；`library_bridge.rs` 旧 pin FAIL 保留为已知限制）|
 |P20-AC4-FPS-1|P20|closed_with_limitations（AC3 PASS；AC5 依裁决）|
-|GOV-DEBT-CLEANUP-1|P19/P20|blocked（待用户裁决）|
+|GOV-DEBT-CLEANUP-1|P19/P20|superseded（2026-10-21：由 GOV-DEBT-CLEANUP-2 / GOV-UNTRACKED-BACKLOG-1 / GOV-PIN-LINEAGE-1 承接；剩余历史证据不阻塞 v1）|
 |GOV-DEBT-CLEANUP-2|—|closed_with_limitations（AC1–AC6/AC8 达成；AC7 仅完成 61 项候选分类，唯一最终证据判定未做；closeout r14）|
 |GOV-RESOURCE-MANIFEST-JSON-1|GOV-PLAN-BUDGET-1|done（外部 JSON Manifest 检查器；19/19 用例；集成 3fe78a67c）|
 |P19-UI-MANIFEST-VIEW-1|GOV-RESOURCE-MANIFEST-JSON-1|closed_with_limitations（AC1/AC2/AC4/AC5/AC6 达成；AC3 因 4→10 错误清单失败；按 Codex r11 保留修正）|

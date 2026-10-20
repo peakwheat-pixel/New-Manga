@@ -7,27 +7,27 @@ Reconciliation of every `doc/tasks/*.md` against the plan's node set. r38 §3 es
 | metric | value |
 |---|---:|
 | task files | 322 |
-| terminal | 284 |
-| non-terminal | 38 |
-| non-terminal named in the plan | 4 |
-| non-terminal outside the plan | 34 |
+| terminal | 306 |
+| non-terminal | 16 |
+| non-terminal named in the plan | 2 |
+| non-terminal outside the plan | 14 |
 | task files tracked by git | 296 |
 | task files untracked (drafts) | 26 |
-| non-terminal tracked by git | 27 |
+| non-terminal tracked by git | 5 |
 
 ## By status
 
 | status | count | terminal |
 |---|---:|---|
 | `done` | 251 | yes |
-| `closed_with_limitations` | 32 | yes |
-| `proposed` | 14 | no |
-| `blocked` | 10 | no |
-| `approved` | 5 | no |
-| `changes_requested` | 4 | no |
-| `in_review` | 3 | no |
+| `closed_with_limitations` | 34 | yes |
+| `cancelled` | 19 | yes |
+| `blocked` | 7 | no |
+| `approved` | 3 | no |
 | `in_progress` | 2 | no |
-| `cancelled` | 1 | yes |
+| `in_review` | 2 | no |
+| `proposed` | 2 | no |
+| `superseded` | 2 | yes |
 
 ## Non-terminal tasks
 
@@ -36,9 +36,6 @@ Reconciliation of every `doc/tasks/*.md` against the plan's node set. r38 §3 es
 | `P02-NEW-TIME-X6` | `approved` | no |
 | `P02-NEW-TIME-X6-BUILD-CARGO` | `approved` | no |
 | `P02-NEW-TIME-X6-POSTRUN-REVIEW` | `approved` | no |
-| `T3.2.1-REPAIR-12` | `approved` | no |
-| `T3.2.1-REPAIR-8` | `approved` | no |
-| `GOV-DEBT-CLEANUP-1` | `blocked` | own row |
 | `P02PRE-R0S2` | `blocked` | no |
 | `P02PRE-R0S4` | `blocked` | no |
 | `P02PRE-R0S5` | `blocked` | no |
@@ -46,30 +43,11 @@ Reconciliation of every `doc/tasks/*.md` against the plan's node set. r38 §3 es
 | `P02PRE-R1H-P2-1-EVIDENCE-CLOSURE` | `blocked` | no |
 | `P02PRE-R1H-R6-EXEC-A4` | `blocked` | no |
 | `P02PRE-R1H-R6-EXEC-A5` | `blocked` | no |
-| `P15-CORE-1` | `blocked` | no |
-| `P19-UI-FIX-3` | `blocked` | no |
-| `T3.2.1-REPAIR-11` | `changes_requested` | no |
-| `T3.2.1-REPAIR-4` | `changes_requested` | no |
-| `T3.2.1-REPAIR-5` | `changes_requested` | no |
-| `T3.2.1-REPAIR-6` | `changes_requested` | no |
 | `P02PRE-R1H` | `in_progress` | no |
 | `P02PRE-R1H-R6-EXEC-A6` | `in_progress` | no |
 | `P02PRE-R1H-R6-ZCODE-H1` | `in_review` | no |
-| `P19-AC3-1` | `in_review` | no |
 | `P22` | `in_review` | own row |
 | `P09-MANAGED-READ-ROOT-TRUST-1` | `proposed` | no |
-| `RUST-ENV-BASELINE-1` | `proposed` | mentioned |
-| `T3.2.1-REPAIR-10` | `proposed` | no |
-| `T3.2.1-REPAIR-15-reader-export-lineage` | `proposed` | no |
-| `T3.2.1-REPAIR-16-bookshelf-page-count` | `proposed` | no |
-| `T3.2.1-REPAIR-17-mock-local-pipeline-smoke` | `proposed` | no |
-| `T3.2.1-REPAIR-3` | `proposed` | no |
-| `T3.2.1-REPAIR-7` | `proposed` | no |
-| `T3.2.1-REPAIR-9` | `proposed` | no |
-| `TASK-022` | `proposed` | no |
-| `TASK-025` | `proposed` | no |
-| `TASK-026` | `proposed` | no |
-| `TASK-027` | `proposed` | no |
 | `WORKSPACE-CLEANUP-TOOL-HARDENING-1` | `proposed` | mentioned |
 
 ## What this ledger does not say

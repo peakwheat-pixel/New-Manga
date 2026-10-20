@@ -2,7 +2,7 @@
 id: TASK-022
 title: 补齐工具窗口、设置与视觉交互验收
 kind: implementation
-status: proposed
+status: cancelled
 approval: pending_user_review
 suggested_owner: Qoder
 owner: null
@@ -77,3 +77,9 @@ D05 §4～5/13～14/30/43～55/64～67；D01 §2字体上传；D08 AC-WIN/DPI/CL
 - 最近状态：2026-09-13 接管规划创建；proposed，pending_user_review。
 
 > **2026-09-19 ZCode 全权窗口条目**：本 Task 已纳入 [STATUS](../STATUS.md) 的窗口队列（W12+ 尾项），但**门槛未达成**：需 **TASK-021 三子集（TASK-055/056/057）** + **TASK-059 设计门（Qoder；原 TASK-047 已被否决，改挂 TASK-059）** + **TASK-050（W3，绑定写入面）** 全部完成。门槛满足前一律记 `BLOCKED（前置未达成）`，**不得跳过前置强行开工**；窗口内如需调整门槛，由 Codex 在 T1 后处理。
+
+## 历史收口（2026-10-21，dsh）
+
+- 收口状态：`cancelled`。
+- 理由：早期规划草案：从未授权/认领/实施，范围已被 Rebaseline Plan 与 M2 架构取代；Qoder 已于 2026-10-08 退出项目。
+- 依据：`verification/V1-FINALIZE-20261021/legacy-task-closure-adjudication.md`；本次仅改状态并追加本说明，不删除正文/证据，不改写历史 Review 或 pin。

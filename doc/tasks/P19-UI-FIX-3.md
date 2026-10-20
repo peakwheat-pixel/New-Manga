@@ -3,7 +3,7 @@ id: P19-UI-FIX-3
 title: 修复「新建作品/章节」不可用（用户裁决 A：应允许在空书架创建）
 kind: bugfix
 governance_version: 2
-status: blocked
+status: superseded
 approval: user_ruling_20261017_A_allow_create_work_on_empty_shelf
 suggested_owner: Codex
 owner: null
@@ -15,7 +15,7 @@ worktree: null
 integration_commit: null
 delivery_head: null
 canonical_evidence_status: pending
-resource_closeout_status: pending
+resource_closeout_status: complete
 evidence_dir: verification/P19-UI-FIX-3
 ---
 
@@ -46,3 +46,14 @@ evidence_dir: verification/P19-UI-FIX-3
 ## 阻塞（2026-10-17，Coordinator 采信）
 
 硬门核对证明创建能力从未实现（契约仍 proposal、host/Core 无 create）。用户已裁决 **A1：立项 FEAT-CREATE-1..4** 补齐该能力，本 UI Task 由该功能链取代 → locked。证据：erification/P19-UI-FIX-3/hard-gate-conclusion.md。
+
+## Resource Manifest
+
+| resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
+|---|---|---|---|---|---|
+| NOT_APPLICABLE | - | NOT_APPLICABLE | - | - | 本 Task 无持久资源；只读扫描/证据不改变工作区，终态收口不涉及迁移或删除 |
+
+## 历史收口（2026-10-21，dsh）
+
+- 收口状态：`superseded`。空书架新建作品/章节的能力已由 `FEAT-CREATE-1`–`FEAT-CREATE-4`（均 `done`）交付：前端 `BookshelfPage` 通过 `library_create_book` 创建并有 Vitest 覆盖；本 Task 未执行，不声称其 AC 完成。
+- 依据：`verification/V1-FINALIZE-20261021/legacy-task-closure-adjudication.md`；原阻塞（需要新 wire）已由 FEAT-CREATE 链的冻结契约解决。

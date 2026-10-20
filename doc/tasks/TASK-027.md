@@ -2,7 +2,7 @@
 id: TASK-027
 title: 发布候选集成、打包与最终验收
 kind: integration
-status: proposed
+status: cancelled
 approval: pending_user_review
 suggested_owner: Codex
 owner: null
@@ -76,3 +76,9 @@ D02 §1/14；D07 §81～82/106/111；D08 §52～53/71～76。D 编号对应 [文
 - 最近状态：2026-09-13 接管规划创建；proposed，pending_user_review。
 
 > **2026-09-19 ZCode 全权窗口条目**：本 Task 已纳入 [STATUS](../STATUS.md) 的窗口队列（W12+ 尾项），但**门槛未达成**：需 **TASK-026** 完成 + **用户发布审核**。门槛满足前一律记 `BLOCKED（前置未达成）`，**不得跳过前置强行开工**；窗口内如需调整门槛，由 Codex 在 T1 后处理。
+
+## 历史收口（2026-10-21，dsh）
+
+- 收口状态：`cancelled`。
+- 理由：早期规划草案：从未授权/认领/实施，范围已被 Rebaseline Plan 与 M2 架构取代；Qoder 已于 2026-10-08 退出项目。
+- 依据：`verification/V1-FINALIZE-20261021/legacy-task-closure-adjudication.md`；本次仅改状态并追加本说明，不删除正文/证据，不改写历史 Review 或 pin。
