@@ -5,13 +5,25 @@ was one line: the content stream declared /Filter /FlateDecode while carrying
 plain ASCII, so readers could not inflate it, skipped it, and never ran the
 "q ... /Im0 Do Q" that paints the image.
 
-The three tests below exist because the obvious checks do not catch it:
+The tests below exist because the obvious checks do not catch it:
 
   - page_count, page rects and get_images() are all correct in the broken file
   - MuPDF reports the failure on stderr and does not raise, so try/except
     around fitz.open passes against a broken PDF
   - only inflating the streams, or looking at rendered pixels, distinguishes
     a working document from a blank one
+
+
+There is deliberately NO test asserting that MuPDF stops printing "zlib error".
+Such a test existed and was deleted: MuPDF emits that message only when stderr is a
+terminal, so it is invisible to capsys, to capfd, and to a child process piped
+through subprocess.run. Verified experimentally - see
+verification/PDF-STREAM-FIX-1/p1-1-stderr-capture-experiment.md.
+
+The substance still holds: rendering non-white pixels proves the content stream was
+successfully inflated and executed, which is what AC3 was after. Asserting the
+absence of a message that cannot be observed would only produce a green test
+that means nothing.
 """
 
 from __future__ import annotations
@@ -85,34 +97,6 @@ def test_declared_length_matches_actual_bytes() -> None:
             f"stream #{index}: declared {stream['declared']} bytes, "
             f"found {len(stream['raw'])}"
         )
-
-
-def test_mupdf_reports_no_zlib_error(capfd) -> None:
-    """AC3: ASSERT NOTHING USEFUL - this test does not catch the defect.
-
-    Verified by restoring the broken line and running it: exit 0, 1 passed,
-    with the defect present. Both capsys and capfd fail to see MuPDF's
-    message, even though the same message is plainly visible on the terminal
-    when the probe runs outside pytest.
-
-    Kept as documentation of a real trap rather than deleted: the CI signal
-    this test appears to give is false. AC2 and AC4 do catch the defect
-    (verified in the same run), so the suite is not blind - but anyone
-    reading a green result here should not count it.
-
-    Why it fails is not established. MuPDF writes through its own error
-    callback into the CRT's stderr, which pytest's capture does not
-    necessarily intercept at process level.
-    """
-    pdf = _compose_pdf([_png(40, 60, (255, 0, 0))], None)
-    document = pymupdf.open(stream=pdf, filetype="pdf")
-    try:
-        for index in range(document.page_count):
-            document.load_page(index).get_pixmap(dpi=36)
-    finally:
-        document.close()
-    # recorded, not asserted: see the docstring
-    capfd.readouterr()
 
 
 def test_rendered_page_is_not_blank() -> None:

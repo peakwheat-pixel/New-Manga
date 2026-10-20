@@ -101,15 +101,28 @@ AttributeError('module transformers has no attribute RTDetrV2ForObjectDetection'
 
 ## 六、命令可复算
 
-```
+```bash
+# 1. put the working tree aside (the fix lives there)
+git stash push -u -m "pdf-fix-wip"
+
+# 2. go to the commit BEFORE the fix
 git checkout d58748dee
+
+# 3. run the same files
 python -m pytest tests/providers/test_bootstrap_providers.py \
   tests/providers/test_detection_manga_real.py \
   tests/providers/test_devices.py \
   tests/providers/test_registry_readiness.py \
   tests/workbench -q
 # -> 9 failed, 146 passed, 1 skipped
+
+# 4. come back and restore (WITHOUT this, your work is stranded in the stash)
+git checkout agent/dsh/PDF-STREAM-FIX-1
+git stash pop
 ```
+
+**P2-3（ZCode Review）**：本文件初版只写了第 2、3 步。照抄执行的人会把
+未跟踪的工作区内容留在 `pdf-fix-wip` 这个 stash 里。已补全往返。
 
 ```
 git checkout agent/dsh/PDF-STREAM-FIX-1
