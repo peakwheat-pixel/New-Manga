@@ -3,11 +3,11 @@ id: M2-PROD-DETECT-ENV-1
 title: 恢复 manga 检测链路的运行环境基线
 kind: environment
 governance_version: 3
-status: blocked
+status: closed_with_limitations
 language: zh-CN
 parent: M2-PROD-DETECT-1
 blocked_by: null
-blocked_reason: 本机离线，pip index 不可达且缓存无 transformers wheel；需在有网络的环境执行
+blocked_reason: null  # r192 解除：原「离线」判断为误判，见 Closeout Record
 approval: released_by_r42_20261020
 suggested_owner: DSH
 owner: DSH
@@ -16,10 +16,10 @@ depends_on: []
 base_commit: 0e93a5687
 branch: null
 worktree: null
-integration_commit: null
-delivery_head: null
-canonical_evidence_status: pending
-resource_closeout_status: pending
+integration_commit: 9464003cd
+delivery_head: 9464003cd
+canonical_evidence_status: complete
+resource_closeout_status: complete
 evidence_dir: verification/M2-PROD-DETECT-ENV-1
 allowed_paths:
   - verification/M2-PROD-DETECT-ENV-1/
@@ -54,18 +54,21 @@ AttributeError: module transformers has no attribute RTDetrV2ForObjectDetection
 
 ## Acceptance Criteria
 
-- [ ] **AC1 环境记录**：记录执行环境、Python 版本、实际安装包版本及安装来源；
-  核对 `requirements.txt` 的 `transformers==5.17.0`、`torch==2.14.0`、`safetensors==0.8.0` 基线，
-  并说明实际平台与该基线的兼容性处理。
-- [ ] **AC2 本地权重构造**：**在不联网下载权重的前提下**，确认本地权重目录及其 `config`
-  与受测代码使用**同一模型快照**；从该本地快照成功构造 `model` 与 `processor`。
-- [ ] **AC3 真实用例**：在该环境执行两个真实检测用例（候选检测 / 空白页零候选），
-  **逐项记录实际结果**。若环境或权重无法满足，**标 `BLOCKED` 或 `NOT_RUN` 并保留日志**，
-  **不得报告「检测链路可用」**。
-- [ ] **AC4 落点与复现**：明确环境修复落点（隔离 venv / Task 环境 / CI 环境）及复现方式；
-  **不以升级全局 Python 环境作为默认操作**。
-- [ ] **AC5 不改 V2 为 V1**：**不得为迁就旧运行时把 `RTDetrV2ForObjectDetection` 改成 V1 类**，
-  也不得只改测试断言。
+- [x] **AC1 环境记录** <<MET>>
+- [x] **AC2 本地权重构造** <<MET>>
+- [x] **AC3 真实用例** <<MET>>
+- [x] **AC4 落点与复现** <<MET>>
+- [x] **AC5 不改 V2 为 V1** <<MET>>
+
+### AC 证据
+
+| AC | 证据 |
+|---|---|
+| AC1 | `environment-restoration.md` §二：`transformers` 5.17.0 与钉值一致；`torch`/`torchvision` 的不一致是 `requirements.txt` L9-12 记录在案的 GPU 变体 |
+| AC2 | 同文件 §三：`HF_HUB_OFFLINE=1` + `TRANSFORMERS_OFFLINE=1` 下从本地快照构造 `RTDetrImageProcessor` + `RTDetrV2ForObjectDetection`（42,733,137 参数，5.5 s），未下载权重 |
+| AC3 | 同文件 §四：`tests/providers/test_detection_manga_real.py` **2 passed**；改前是模型加载阶段失败 |
+| AC4 | 同文件 §六：隔离 venv 落点 + 可复现命令；**未升级全局 Python 环境** |
+| AC5 | 同文件 §五：`detection_manga.py:525` 仍为 `RTDetrV2ForObjectDetection`，未被改动 |
 
 ## 允许修改范围
 
@@ -109,17 +112,62 @@ AttributeError: module transformers has no attribute RTDetrV2ForObjectDetection
 
 | evidence_id | AC/Gate | path | commit | sha256 | class |
 |---|---|---|---|---|---|
+| EV-ENV-DOC | AC1-AC5 | `verification/M2-PROD-DETECT-ENV-1/environment-restoration.md` | 9464003cd | - | CANONICAL |
+| EV-ENV-TEST | AC3 | `tests/providers/test_detection_manga_real.py` | a016d38cb | - | CANONICAL |
+| EV-ENV-SRC | AC5 | `src/infrastructure/providers/detection_manga.py` | ed86cc465 | - | CANONICAL |
 
 ## Resource Manifest
 
 **本 Task 无资源删除、迁移或归档。**
 
-| resource | source_path | disposition | destination_path | sha256/manifest_path | notes |
+| resource_type | source_path | disposition | destination_path | sha256/manifest_path | notes |
 |---|---|---|---|---|---|
-| **（无）** | — | **NOT_APPLICABLE** | — | — | 仅环境恢复与证据 |
+| （无） | — | NOT_APPLICABLE | — | — | 仅环境恢复与证据 |
 
 **closeout_counts**：`deleted=0`、`moved=0`、`migrated=0`、`archived=0`。
 
 ## Closeout Record
 
-（未开始）
+- **Closeout date**：2026-10-20 · **Executor**：DSH · **Reviewer**：待 ZCode
+- **canonical_evidence_status**：`complete`
+- **resource_closeout_status**：`complete`
+- **删除、迁移、归档数量/字节数**：**0**
+
+### 阻塞理由被证伪
+
+**原 `blocked_reason` 写**：「本机离线，`pip index` 不可达」。
+
+**实测：网络通。** TCP 443、DNS、HTTPS GET 全部正常，`pip download` 成功。
+
+**真实原因**：配置的镜像 `pypi.tuna.tsinghua.edu.cn` 对 `transformers` 返回空版本列表，
+而 `pip index versions` 默认走该镜像——**「某个镜像坏了」被读成了「没有网络」。**
+
+**`requirements.txt` 钉的 `transformers==5.17.0` 在 `pypi.org` 上确实存在。**
+
+### 结果
+
+| 环境 | `tests/providers` |
+|---|---|
+| 全局 `transformers 4.48.3`（修前）| **2 failed**, 440 passed, 3 skipped |
+| **隔离 venv `5.17.0`** | **0 failed**, **442 passed**, 3 skipped |
+
+**`src/` 与 `tests/` 零改动**——差异完全来自环境。
+
+### 限制
+
+| # | 限制 |
+|---|---|
+| **L1** | **未独立 Review**（按协作协议须由 ZCode 审）|
+| **L2** | **未改 `requirements.txt`**——本 Task 只恢复环境，不动基线声明 |
+| **L3** | **CPU 构建基线（`torch==2.14.0`）未验证**——本机是 GPU 机器，只验了 `2.11.0+cu128` |
+| **L4** | **`python-doctr==1.1.0` 缺失**——属 T1.1.1 检测器，本 Task 范围外的既有状态 |
+| **L5** | **只修了本机**；其他机器/CI 需各自按证据 §六 复现 |
+| **L6** | **镜像对该包仍异常**——复现必须显式 `--index-url https://pypi.org/simple` |
+| **L7** | **venv 未入版本控制**（在 workspace 目录，按工区治理规则本就不入库）|
+
+### 后续建议
+
+1. **交 ZCode 独立 Review**（L1）
+2. **L3**：若需 CPU 构建基线，另立 Task（本机无 CPU 环境变量组合的验证条件）
+3. **L6**：可考虑在 `requirements.txt` 或装配文档里注明该包须走 `pypi.org`
+

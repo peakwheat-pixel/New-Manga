@@ -27,7 +27,7 @@
 |SEARCHABLE-PDF-CJK-1|PDF-STREAM-FIX-1|**closed_with_limitations**（5 MET + AC3 `PARTIAL`；韩文可搜索 PDF 已可用；L1 未子集化、L5 错误消息不可操作）|
 |TEST-ENV-ASSUMPTIONS-1|P13|**closed_with_limitations**（6 MET；`tests/providers` 6→2 failed；新增 4 个存在侧测试；7 sabotage 全抓；待 Review）|
 |P11-PROJECTION-TEST-ALIGN-1|P13|**closed_with_limitations**（6 MET；矩阵测试 2→9 状态；5 sabotage 全抓；待 Review）|
-|M2-PROD-DETECT-ENV-1|M2-PROD-DETECT-1|**blocked**（本机离线，`transformers 4.48.3` vs 钉死 `5.17.0`；检测链路本机不可用）|
+|M2-PROD-DETECT-ENV-1|M2-PROD-DETECT-1|**closed_with_limitations**（5 MET；隔离 venv 装 `transformers==5.17.0`；`tests/providers` 2 failed→0；原「离线」为误判）|
 |P20-ISOLATION-1|P20|closed_with_limitations（AC4 四项 MET；`library_bridge.rs` 旧 pin FAIL 保留为已知限制）|
 |P20-AC4-FPS-1|P20|closed_with_limitations（AC3 PASS；AC5 依裁决）|
 |GOV-DEBT-CLEANUP-1|P19/P20|blocked（待用户裁决）|
@@ -51,4 +51,4 @@
 |GOV-PLAN-BUDGET-1|—|done|
 |RUST-ENV-BASELINE-1（P20-CLOSE-BOUND-1）/ P07交互补缺（P02）/ P21旧栈归档（P20+另授权）|—|proposed（P07/P21可选）|
 |P22 响应归属|P22-REBASE-1|已集成；P04 不放行，H1/P2-1/13 与 BC-AC5 缺项保留。已完成见各节点行。|
-READY 节点：**无**。blocked：`M2-PROD-DETECT-ENV-1`（离线）。done：**50 项**。
+READY 节点：**无**。done：**51 项**。
