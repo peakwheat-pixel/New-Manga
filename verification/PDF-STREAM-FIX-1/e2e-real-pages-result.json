@@ -1,0 +1,100 @@
+{
+  "workdir": "C:\\Users\\49745\\AppData\\Local\\Temp\\e2e-real-gbcdd04d",
+  "source_pages": [
+    {
+      "path": "...\\日漫_JA\\oc material\\17\\168.jpg",
+      "bytes": 263549
+    },
+    {
+      "path": "...\\日漫_JA\\oc material\\17\\009.jpg",
+      "bytes": 587916
+    },
+    {
+      "path": "...\\韩漫_KO\\01_real_webtoon_cleaned_dataset\\K01_724815_1\\conf_text_ctd.png",
+      "bytes": 1205365
+    }
+  ],
+  "pdf_bytes": 5493116,
+  "pages": [
+    {
+      "page": 0,
+      "source": "...\\日漫_JA\\oc material\\17\\168.jpg",
+      "source_size": [
+        1350,
+        1920
+      ],
+      "page_size_pt": [
+        1350,
+        1920
+      ],
+      "source_dominant": [
+        255,
+        255,
+        255
+      ],
+      "rendered_dominant": [
+        255,
+        255,
+        255
+      ],
+      "source_mean_grey": 243.7,
+      "mean_abs_difference": 0.0,
+      "rendered_distinct_colours": 186
+    },
+    {
+      "page": 1,
+      "source": "...\\日漫_JA\\oc material\\17\\009.jpg",
+      "source_size": [
+        1350,
+        1920
+      ],
+      "page_size_pt": [
+        1350,
+        1920
+      ],
+      "source_dominant": [
+        255,
+        255,
+        255
+      ],
+      "rendered_dominant": [
+        255,
+        255,
+        255
+      ],
+      "source_mean_grey": 173.9,
+      "mean_abs_difference": 0.0,
+      "rendered_distinct_colours": 256
+    },
+    {
+      "page": 2,
+      "source": "...\\韩漫_KO\\01_real_webtoon_cleaned_dataset\\K01_724815_1\\conf_text_ctd.png",
+      "source_size": [
+        690,
+        62133
+      ],
+      "page_size_pt": [
+        690,
+        62133
+      ],
+      "source_dominant": [
+        0,
+        0,
+        0
+      ],
+      "rendered_dominant": [
+        0,
+        0,
+        0
+      ],
+      "source_mean_grey": 1.0,
+      "mean_abs_difference": 0.0,
+      "rendered_distinct_colours": 50
+    }
+  ],
+  "pdf_opened": true,
+  "seven_zip_pdf": {
+    "exit": 2,
+    "ok": false
+  }
+}
