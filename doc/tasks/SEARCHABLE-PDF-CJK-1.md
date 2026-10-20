@@ -2,22 +2,28 @@
 id: SEARCHABLE-PDF-CJK-1
 title: 可搜索 PDF 的韩文支持与字体体积
 kind: implementation
-governance_version: 2
-status: proposed
-approval: unblocked_r41_pending_ready_fields
-suggested_owner: Codex
-owner: null
-reviewer: null
+governance_version: 3
+status: ready
+language: zh-CN
+parent: PDF-STREAM-FIX-1
+blocked_by: null
+approval: released_by_r41_20261020
+suggested_owner: DSH
+owner: DSH
+reviewer: ZCode
 depends_on: [PDF-STREAM-FIX-1]
-base_commit: null
-branch: null
-worktree: null
+base_commit: d1a5556cc4a9dc893917e9896f158eb776116464
+branch: agent/dsh/SEARCHABLE-PDF-CJK-1
+worktree: G:/CODEX/New Manga.workspace/worktrees/SEARCHABLE-PDF-CJK-1
 integration_commit: null
 delivery_head: null
 canonical_evidence_status: pending
 resource_closeout_status: pending
 evidence_dir: verification/SEARCHABLE-PDF-CJK-1
-allowed_paths: []
+allowed_paths:
+  - src/infrastructure/export/qt_free.py
+  - tests/export/
+  - verification/SEARCHABLE-PDF-CJK-1/
 ---
 
 # SEARCHABLE-PDF-CJK-1：可搜索 PDF 的韩文支持与字体体积

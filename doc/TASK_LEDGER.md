@@ -19,10 +19,10 @@ Reconciliation of every `doc/tasks/*.md` against the plan's node set. r38 §3 es
 | `done` | 251 | yes |
 | `closed_with_limitations` | 27 | yes |
 | `blocked` | 10 | no |
-| `proposed` | 10 | no |
+| `proposed` | 9 | no |
 | `approved` | 5 | no |
+| `ready` | 5 | no |
 | `changes_requested` | 4 | no |
-| `ready` | 4 | no |
 | `in_review` | 3 | no |
 | `in_progress` | 2 | no |
 | `cancelled` | 1 | yes |
@@ -57,7 +57,6 @@ Reconciliation of every `doc/tasks/*.md` against the plan's node set. r38 §3 es
 | `P22` | `in_review` | own row |
 | `P09-MANAGED-READ-ROOT-TRUST-1` | `proposed` | no |
 | `RUST-ENV-BASELINE-1` | `proposed` | mentioned |
-| `SEARCHABLE-PDF-CJK-1` | `proposed` | own row |
 | `T3.2.1-REPAIR-15-reader-export-lineage` | `proposed` | no |
 | `T3.2.1-REPAIR-16-bookshelf-page-count` | `proposed` | no |
 | `T3.2.1-REPAIR-17-mock-local-pipeline-smoke` | `proposed` | no |
@@ -65,6 +64,7 @@ Reconciliation of every `doc/tasks/*.md` against the plan's node set. r38 §3 es
 | `TASK-025` | `proposed` | no |
 | `TASK-026` | `proposed` | no |
 | `TASK-027` | `proposed` | no |
+| `SEARCHABLE-PDF-CJK-1` | `ready` | own row |
 | `T3.2.1-REPAIR-10` | `ready` | no |
 | `T3.2.1-REPAIR-3` | `ready` | no |
 | `T3.2.1-REPAIR-7` | `ready` | no |
