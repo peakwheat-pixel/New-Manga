@@ -24,6 +24,7 @@
 |DETECT-MEMORY-GUARD-1|DETECT-TILING-1|**closed_with_limitations**（5/5 AC；实现 `fa8615dc5`；ZCode Review 通过；限制 L1–L7，核心是「正常机器上永不触发」与「单机数据」）|
 |SEC-FMT-IMPL-1|ARCH-DOC-REBASELINE|**closed_with_limitations**（5 MET + AC5 `PARTIAL`；29 测试；AC5 发现并驱动修复 P1 [PDF-STREAM-FIX-1](tasks/PDF-STREAM-FIX-1.md)）|
 |PDF-STREAM-FIX-1|P18|**closed_with_limitations**（4 MET + AC3 `NOT_APPLICABLE`；`09676cc19`；ZCode `CHANGES_REQUESTED` 已返修；L2：PDFium 单引擎四天假绿）|
+|SEARCHABLE-PDF-CJK-1|PDF-STREAM-FIX-1|**blocked**（r40：待字体嵌入许可审查后释放；范围限定纯语种页，混排 fail-closed；AC3 体积改以实测为验收；韩文可搜索 PDF 目前抛 `ValueError`）|
 |P20-ISOLATION-1|P20|closed_with_limitations（AC4 四项 MET；`library_bridge.rs` 旧 pin FAIL 保留为已知限制）|
 |P20-AC4-FPS-1|P20|closed_with_limitations（AC3 PASS；AC5 依裁决）|
 |GOV-DEBT-CLEANUP-1|P19/P20|blocked（待用户裁决）|
@@ -47,4 +48,4 @@
 |GOV-PLAN-BUDGET-1|—|done|
 |RUST-ENV-BASELINE-1（P20-CLOSE-BOUND-1）/ P07交互补缺（P02）/ P21旧栈归档（P20+另授权）|—|proposed（P07/P21可选）|
 |P22 响应归属|P22-REBASE-1|已集成；P04 不放行，H1/P2-1/13 与 BC-AC5 缺项保留。已完成见各节点行。|
-READY 节点：**无**。done：**46 项**。见 `ARCH-DOC-REBASELINE` 的 AC-CONSUMPTION-DISPOSITION 登记。
+READY 节点：**无**。**blocked 节点：`SEARCHABLE-PDF-CJK-1`**（待字体许可审查）。done：**49 项**。

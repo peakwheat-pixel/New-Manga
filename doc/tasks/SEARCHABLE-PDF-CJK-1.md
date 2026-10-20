@@ -3,8 +3,8 @@ id: SEARCHABLE-PDF-CJK-1
 title: 可搜索 PDF 的韩文支持与字体体积
 kind: implementation
 governance_version: 2
-status: proposed
-approval: pending_user_review
+status: blocked
+approval: blocked_pending_font_license_review_r40
 suggested_owner: Codex
 owner: null
 reviewer: null
@@ -89,10 +89,14 @@ candidates = [font_dir / "msyh.ttc", font_dir / "arial.ttf"]
 | 纯图片 PDF | 224,454 |
 | **可搜索 PDF** | **12,632,851** |
 
-**原因**：`msyh.ttc` 原始 **19.5 MB**，
-而**当前实现对每一页重新嵌入完整字体**（`_compose_pdf` L54-56 在每页循环里调 `_embedded_font`）。
+**原因**：`msyh.ttc` 原始 **19.5 MB**，**整份字体被完整嵌入，没有子集化**。
 
-**一本 200 页的漫画会重复嵌入 200 次。**
+**r40 改正了本文档初版的一处错误**：初版写「对每一页重新嵌入」，
+但代码实际是 `_embedded_font`（L43）与字体流（L56）都在页循环（L73）**之前**——
+**每份 PDF 只嵌入一次字体。**
+
+**所以 56 倍不是重复的后果，是「嵌入整份 19.5 MB 字体」的后果。**
+**子集化能把用到的几百个字形压到几十 KB，这是唯一能降低体积的路径。
 
 **可观察的交付结果**：韩文文本能导出为可搜索 PDF 且可提取；
 可搜索 PDF 的体积增长从「线性于页数」降到「一次嵌入 + 子集化」。
@@ -104,10 +108,11 @@ candidates = [font_dir / "msyh.ttc", font_dir / "arial.ttf"]
   **须显式登记所选字体与来源**（本机 `malgun.ttf` 已实测含 HanGul 且含日文假名）。
   **混排（zh+ko 同页）是否在范围内，须由 Codex 裁定后写进本 AC——
   实测本机无任何单一字体覆盖两端，这不是实现懒惰而是字体事实。**
-- [ ] AC2 JA / KO / ZH / 拉丁 四种文本各一条真实页的端到端导出，
+- [ ] AC2 **纯语种页**：JA / KO / ZH / 拉丁 各一条真实页的端到端导出，
   全部 `page.get_text()` 可原样提取。
-- [ ] AC3 字体体积：单页可搜索 PDF ≤ 纯图片 PDF 的 3 倍；
-  或**记录并解释**为什么做不到（例如字体子集化不成熟）。
+  **混排页（zh+ko 同页）不在范围内**；缺字时须 fail-closed（r40 裁定）。
+- [ ] AC3 字体体积：**以实测体积 + 说明为验收，3 倍不作硬门槛**（r40 裁定）。
+  须给出「纯图片 PDF vs 可搜索 PDF」的实际字节数，并说明是否做了子集化。
 - [ ] AC4 多页：N 页可搜索 PDF 的字体部分**不随页数线性增长**（子集化或共享对象）。
 - [ ] AC5 不得回归既有行为：`tests/export/test_pdf_stream_integrity.py` 保持绿；
   `PDF-STREAM-FIX-1` 的修复不被破坏。
@@ -142,9 +147,23 @@ candidates = [font_dir / "msyh.ttc", font_dir / "arial.ttf"]
 | **R2** | **字体子集化需要解析 TrueType 表**，`_load_ttf` 已有部分能力，但子集化是更复杂的工作 |
 | **R3** | **体积目标（AC3）可能不可达**——若如此，须如实记录而不是降低文本质量来凑 |
 
+## r40 裁定（2026-10-20）
+
+**产出**：`verification/P09-GOVERNANCE-DEBT-20261019/codex-adjudicate-searchable-cjk-r40.md`
+
+| 裁定项 | 结论 |
+|---|---|
+| **Plan 归属** | **先作为 `blocked` 节点处理**，待字体嵌入许可审查与 AC 范围冻结后释放 |
+| **混排范围** | **只管纯语种**；缺字时 fail-closed |
+| **AC3 体积** | **改以实测 + 说明为验收，3 倍不作硬门槛** |
+| **可搜索路径是否接线** | **已接入导出界面**，默认 `image_only`（不是功能未接线）|
+| **字体嵌入次数** | **每份 PDF 只嵌一次**——纠正本文档初版的错误说法 |
+
+**所以本 Task 现在 `blocked`，阻塞条件是「字体嵌入许可审查」。**
+
 ## 交付与运行记录
 
-（未开始）
+**未开始（`blocked`）。**
 
 ## Canonical Evidence
 
