@@ -116,6 +116,8 @@ AttributeError: module transformers has no attribute RTDetrV2ForObjectDetection
 | EV-ENV-TEST | AC3 | `tests/providers/test_detection_manga_real.py` | a016d38cb | - | CANONICAL |
 | EV-ENV-SRC | AC5 | `src/infrastructure/providers/detection_manga.py` | ed86cc465 | - | CANONICAL |
 
+| EV-ZC-REVIEW | Review | `verification/M2-PROD-DETECT-ENV-1/dsh-zcode-review-r193.md` | d4d0f46ab | - | CANONICAL |
+
 ## Resource Manifest
 
 **本 Task 无资源删除、迁移或归档。**
