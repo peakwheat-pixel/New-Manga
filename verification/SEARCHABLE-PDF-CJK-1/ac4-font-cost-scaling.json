@@ -1,0 +1,36 @@
+{
+  "source": {
+    "path": "...\\17\\001.jpg",
+    "size": [
+      1350,
+      1920
+    ],
+    "bytes": 674841
+  },
+  "measurements": [
+    {
+      "pages": 1,
+      "plain_bytes": 5336253,
+      "searchable_bytes": 17744463,
+      "ratio": 3.33
+    },
+    {
+      "pages": 3,
+      "plain_bytes": 16008290,
+      "searchable_bytes": 28416675,
+      "ratio": 1.78
+    },
+    {
+      "pages": 5,
+      "plain_bytes": 26680330,
+      "searchable_bytes": 39088873,
+      "ratio": 1.47
+    }
+  ],
+  "absolute_overhead_bytes": [
+    12408210,
+    12408385,
+    12408543
+  ],
+  "overhead_is_constant": true
+}
