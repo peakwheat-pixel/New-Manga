@@ -3,7 +3,7 @@ id: PDF-STREAM-FIX-1
 title: 修复 QtFreePdfComposer 的 content stream 压缩声明
 kind: bugfix
 governance_version: 3
-status: ready
+status: closed_with_limitations
 language: zh-CN
 parent: P18
 blocked_by: null
@@ -12,12 +12,12 @@ owner: DSH
 reviewer: ZCode
 depends_on: []
 base_commit: f4fd0671e
-branch: null
+branch: agent/dsh/PDF-STREAM-FIX-1
 worktree: null
-integration_commit: null
-delivery_head: null
-canonical_evidence_status: pending
-resource_closeout_status: pending
+integration_commit: 09676cc19
+delivery_head: 09676cc19
+canonical_evidence_status: complete
+resource_closeout_status: complete
 evidence_dir: verification/PDF-STREAM-FIX-1
 activation_note: P1 缺陷，由 SEC-FMT-IMPL-1 AC5 的外部验证发现
 ---
@@ -60,25 +60,11 @@ content_id = add(_stream(b"", "".join(content).encode("ascii")))
 
 ## Acceptance Criteria
 
-- [ ] **AC1 修复 content stream 的声明与数据一致** <<PARTIAL: 待实施>>
-  - `_stream` 的契约是「调用者给压缩数据，我加 `/Filter /FlateDecode` 声明」。
-  - **L97 必须遵守这个契约**（传压缩数据），或 `_stream` 增加不压缩的分支。
-  - **不得改变其它调用点的行为**——它们的输入已经是压缩的。
-- [ ] **AC2 单元级：每个 stream 都能被 zlib 解压** <<PARTIAL: 待实施>>
-  - 解析 `_compose_pdf` 的输出，对**每一个** `/Filter /FlateDecode` 流调用 `zlib.decompress`。
-  - **全部必须成功。**
-  - 同时断言每个流的 `/Length` 声明值与实际字节数一致。
-- [ ] **AC3 集成级：MuPDF 不再报 zlib 错误** <<PARTIAL: 待实施>>
-  - **注意**：MuPDF 的 zlib 错误走 **stderr**，不抛异常。
-  - 所以测试必须**捕获 stderr**（`capsys` 或 `contextlib.redirect_stderr`），断言其中没有 `zlib error`。
-  - **只用 `try/except` 包 `fitz.open` 抓不到这个缺陷。**
-- [ ] **AC4 端到端：渲染出的页面不是空白** <<PARTIAL: 待实施>>
-  - 生成一个**纯色**页面的 PDF（例如纯红），用 MuPDF 渲染成位图。
-  - **断言至少有一个非白像素，且其中包含预期的颜色。**
-  - **这一条是唯一能证明「修好了」的测试**——AC2/AC3 都可能因其它原因通过。
-- [ ] **AC5 回归与独立审查** <<PARTIAL: 待实施>>
-  - 既有导出测试全通过；既有 PDF 相关测试全通过。
-  - 固定 `delivery_head`，由**非作者**独立复审。
+- [x] **AC1 修复 content stream 的声明与数据一致** <<MET>>
+- [x] **AC2 单元级：每个 stream 都能被 zlib 解压** <<MET>>
+- [x] **AC3 集成级：MuPDF 不再报 zlib 错误** <<NOT_APPLICABLE: MuPDF 只在 stderr 是终端时输出，capsys/capfd/子进程均不可见；实质由 AC4 蕴含>>
+- [x] **AC4 端到端：渲染出的页面不是空白** <<MET>>
+- [x] **AC5 回归与独立审查** <<MET>>
 
 ## 允许修改范围
 
@@ -110,6 +96,11 @@ content_id = add(_stream(b"", "".join(content).encode("ascii")))
 
 | evidence_id | AC/Gate | path | commit | sha256 | class |
 |---|---|---|---|---|---|
+| EV-PF-FIX | AC1 | `src/infrastructure/export/qt_free.py` | bb54b6492 | `e065520b538e5ad6ae1ce08055608147c40877a311026b62bca46a11d3b6e50a` | CANONICAL |
+| EV-PF-TEST | AC2 | `tests/export/test_pdf_stream_integrity.py` | 09676cc19 | `d71b393eaa4ce471cceab1d48825e70f2e5602447cf6f6e262c8399910ba632e` | CANONICAL |
+| EV-PF-P11 | AC3 | `verification/PDF-STREAM-FIX-1/p1-1-stderr-capture-experiment.md` | 09676cc19 | `a74178b3dce9e1241919429de76df261942227c6f47f0fa1c797df6af59181c1` | CANONICAL |
+| EV-PF-REG | AC5 | `verification/PDF-STREAM-FIX-1/ac5-regression-baseline-comparison.md` | 09676cc19 | `f66bc5a5d8ef2fd5e58647892b9cf33b171c9dd95c2e1ae5a95fb916956d692d` | CANONICAL |
+| EV-PF-RV | AC5 | `verification/PDF-STREAM-FIX-1/dsh-zcode-review.md` | 09676cc19 | `7257ad44cd6cc44cda67c7492645c305bcdce1dd04da499be6ebb871cfa833ab` | CANONICAL |
 
 ## Resource Manifest
 
@@ -119,20 +110,80 @@ content_id = add(_stream(b"", "".join(content).encode("ascii")))
 
 ## Closeout Record
 
-- Closeout date / Codex：待关闭时填写。
-- canonical_evidence_status：`pending`。
-- resource_closeout_status：`pending`。
-- 删除、迁移、归档数量/字节数：待关闭时填写；无操作填写 0。
-- 未关闭项及保留原因：待关闭时填写。
+- **Closeout date / Reviewers**：2026-10-20（ZCode `CHANGES_REQUESTED` → 已返修）
+- **canonical_evidence_status**：`complete`
+- **resource_closeout_status**：`complete`
+- **删除、迁移、归档数量/字节数**：**0**
+- **未关闭项及保留原因**：见下
 
-## 释放记录（2026-10-20）
+### 逐 AC 终态
 
-**Owner = DSH，Reviewer = ZCode**（已验证的组合）。
+| AC | 终态 | 证据 |
+|---|---|---|
+| AC1 修复 content stream | **MET** | `qt_free.py` L104-105 |
+| AC2 每个流可解压 | **MET** | `test_every_declared_flate_stream_actually_inflates` |
+| AC3 MuPDF 不报 zlib 错误 | **NOT_APPLICABLE**（不可机器断言）| `p1-1-stderr-capture-experiment.md`；**实质由 AC4 蕴含** |
+| AC4 渲染非空白 | **MET** | `test_rendered_page_is_not_blank`；纯红/纯蓝各 5400 非白像素 |
+| AC5 回归与独立审查 | **MET** | 基线对照 9/9 pre-existing；ZCode Review + P1/P2 处置 |
 
-**为什么直接释放为 `ready`**：
-- 缺陷已定位到具体行（L97），修复方案明确（三选一，推荐 A）
-- 影响已实测（页面空白）
-- AC 已设计到「能证明修好」的程度（AC4 的渲染断言）
-- 无外部依赖
+**4 MET + 1 NOT_APPLICABLE（有机制证据）。**
 
-**这不是「先做再想」——Round 150/151 已经完成定位与影响评估。**
+### AC3 为什么是 `NOT_APPLICABLE` 而不是 `MET` 或 `PARTIAL`
+
+**MuPDF 的 zlib 消息只在 stderr 是终端时输出。**
+
+**实验证据**（`p1-1-stderr-capture-experiment.md`）：
+
+| 场景 | 可见 |
+|---|---|
+| 终端直接跑 | ✅ |
+| pytest `capsys` | ❌ |
+| pytest `capfd` | ❌ |
+| **子进程 `capture_output=True`** | **❌**（0 字节）|
+| 子进程 + `mupdf_display_errors(True)` | **❌**（默认已是 1）|
+
+**所以这个断言在自动化环境里不可观测。**
+
+**但 AC3 的实质要求（content stream 能被正确解析）由 AC4 蕴含**：
+**渲染出非白像素 ⟹ inflate 成功 ⟹ 无 zlib error。**
+
+### 限制清单
+
+| # | 限制 |
+|---|---|
+| **L1** | **AC3 的 stderr 文本断言不可机器验证**（机制见上）|
+| **L2** | **既有 PDFium 端到端测试在缺陷期间全绿四天** | 
+| **L3** | **CBZ/ZIP 的独立验证（7-Zip）只在 verification 探针层，未进 pytest** |
+
+### L2 的完整说明（这是本 Task 最重要的发现）
+
+**`tests/core/test_p16_reader_export.py:580-590` 一直在用 PDFium 在真实生产链路上
+断言精确像素。它不是同构读回。**
+
+**而缺陷正是引入那个测试的提交（`e2c07fa9b`，2026-10-16）带来的，四天全绿。**
+
+**原因**：**PDFium 对「声明 FlateDecode、内容为明文」的流按容错路径照常渲染，
+而 MuPDF 与 Chrome 拒绝。**
+
+**所以缺口不是「没有独立验证」，是「互操作性押在单一外部实现上，
+缺陷的可见性由该引擎的容错行为决定」。**
+
+**这是 ZCode Review §3.5 的结论，我采纳。**
+
+### ZCode Review 的处置
+
+| 项 | 处置 |
+|---|---|
+| **P1-1** `test_mupdf_reports_no_zlib_error` 应处置 | **已按选项 2 删除** + docstring + 实验文档 |
+| **P2-1** `_stream` 契约集中化 | **未做**（后续 Task；把 `zlib.compress` 收进 helper）|
+| **P2-2** 测试策略缺口登记 | **未做**（后续 Backlog；两件事见下）|
+| **P2-3** 回归命令缺 stash 往返 | **已修** |
+| **P2-4** `_streams` 定界健壮性 | **未做**（当前输入下概率可忽略）|
+
+### 后续建议（不属于本 Task）
+
+1. **`_stream` 契约集中化**：把 `zlib.compress` 收进 helper，使「忘压缩」在调用点不可表达。
+2. **CBZ/ZIP 的独立验证进 pytest**：7-Zip 子进程目前只在探针层。
+3. **「单引擎验证对规范违反类缺陷无判别力」写入验证纪律。**
+4. **`transformers` 版本不匹配**（`RTDetrV2ForObjectDetection` 缺失）需独立 Task。
+
