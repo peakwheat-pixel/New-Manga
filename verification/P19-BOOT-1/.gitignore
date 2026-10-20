@@ -16,6 +16,11 @@
 
 /*.json
 !evidence-manifest.json
+# r197: resource-manifest.json is the resource closeout artefact every
+# closed task references. The line above allowed only evidence-manifest.json,
+# so this task's own manifest could never be committed - which is why its
+# Resource Manifest row pointed at a file that no checkout would ever contain.
+!resource-manifest.json
 !partial-state-runtime-final6.json
 !real-startup-final.json
 !real-startup-launch-final.json
