@@ -1,16 +1,14 @@
 {
   "total": 320,
-  "failing": 84,
-  "failing_tracked": 66,
+  "failing": 80,
+  "failing_tracked": 62,
   "failing_drafts": 18,
-  "error_rows": 198,
-  "error_rows_tracked": 124,
+  "error_rows": 184,
+  "error_rows_tracked": 110,
   "error_rows_drafts": 74,
   "causes": {
     "Evidence SHA-256 不匹配": 86,
     "终态或已集成的 approved Task 必须设置 resource_closeout_status: complete。": 2,
-    "Resource disposition 无效": 5,
-    "Resource manifest 不存在": 20,
     "DONE 不能保留未完成 Acceptance Criteria；范围未完成时使用 closed_with_limitations。": 10,
     "DONE evidence_dir 含未登记文件": 11,
     "DONE 必须设置 canonical_evidence_status: complete。": 1,
@@ -19,19 +17,21 @@
     "Canonical evidence 路径缺失": 23,
     "Evidence class 无效": 2,
     "当前 DAG 未登记非终态 Task": 22,
+    "Resource manifest 不存在": 7,
+    "Resource disposition 无效": 4,
     "Resource 最终路径未验证": 2
   },
   "causes_tracked": {
     "Evidence SHA-256 不匹配": 51,
     "终态或已集成的 approved Task 必须设置 resource_closeout_status: complete。": 2,
-    "Resource disposition 无效": 5,
-    "Resource manifest 不存在": 20,
     "DONE 不能保留未完成 Acceptance Criteria；范围未完成时使用 closed_with_limitations。": 10,
     "DONE evidence_dir 含未登记文件": 11,
     "DONE 必须设置 canonical_evidence_status: complete。": 1,
     "Resource SHA-256 不匹配": 6,
     "失效的本地引用": 4,
     "当前 DAG 未登记非终态 Task": 12,
+    "Resource manifest 不存在": 7,
+    "Resource disposition 无效": 4,
     "Resource 最终路径未验证": 2
   },
   "tasks": [
@@ -50,11 +50,9 @@
       "status": "closed_with_limitations",
       "tracked": true,
       "exit": 1,
-      "fail_count": 3,
+      "fail_count": 1,
       "fails": [
-        "终态或已集成的 approved Task 必须设置 resource_closeout_status: complete。",
-        "Resource disposition 无效：—",
-        "Resource manifest 不存在：—"
+        "终态或已集成的 approved Task 必须设置 resource_closeout_status: complete。"
       ]
     },
     {
@@ -144,21 +142,18 @@
       "task": "EVENTS-FWD-1",
       "status": "done",
       "tracked": true,
-      "exit": 1,
-      "fail_count": 1,
-      "fails": [
-        "Resource manifest 不存在：verification/EVENTS-FWD-1/resource-manifest.json"
-      ]
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
     },
     {
       "task": "EXPORT-IPC-1",
       "status": "done",
       "tracked": true,
       "exit": 1,
-      "fail_count": 2,
+      "fail_count": 1,
       "fails": [
-        "DONE 不能保留未完成 Acceptance Criteria；范围未完成时使用 closed_with_limitations。",
-        "Resource manifest 不存在：verification/EXPORT-IPC-1/resource-manifest.json"
+        "DONE 不能保留未完成 Acceptance Criteria；范围未完成时使用 closed_with_limitations。"
       ]
     },
     {
@@ -389,11 +384,10 @@
       "status": "done",
       "tracked": true,
       "exit": 1,
-      "fail_count": 3,
+      "fail_count": 2,
       "fails": [
         "Evidence SHA-256 不匹配：doc/contracts/M2-C1_TYPED_IPC_CONTRACT.md",
-        "DONE evidence_dir 含未登记文件：G:\\CODEX\\New Manga\\verification\\HOST-TTL-BOUNDARY-1\\ac3-rust-ttl-boundary-build-attempt-1.log, G:\\CODEX\\New Manga\\verification\\HOST-TTL-BOUNDARY-1\\ac4-export-frozen-rust-attempt1-4662239.log, G:\\CODEX\\New Manga\\verification\\HOST-TTL-BOUNDARY-1\\ac4-frozen-host-importpages.log, G:\\CODEX\\New Manga\\verification\\HOST-TTL-BOUNDARY-1\\ac6-rust-tests.log",
-        "Resource manifest 不存在：verification/HOST-TTL-BOUNDARY-1/resource-manifest.json"
+        "DONE evidence_dir 含未登记文件：G:\\CODEX\\New Manga\\verification\\HOST-TTL-BOUNDARY-1\\ac3-rust-ttl-boundary-build-attempt-1.log, G:\\CODEX\\New Manga\\verification\\HOST-TTL-BOUNDARY-1\\ac4-export-frozen-rust-attempt1-4662239.log, G:\\CODEX\\New Manga\\verification\\HOST-TTL-BOUNDARY-1\\ac4-frozen-host-importpages.log, G:\\CODEX\\New Manga\\verification\\HOST-TTL-BOUNDARY-1\\ac6-rust-tests.log, G:\\CODEX\\New Manga\\verification\\HOST-TTL-BOUNDARY-1\\resource-manifest.json"
       ]
     },
     {
@@ -1731,11 +1725,9 @@
       "task": "P12",
       "status": "done",
       "tracked": true,
-      "exit": 1,
-      "fail_count": 1,
-      "fails": [
-        "Resource manifest 不存在：verification/P12/resource-manifest.json"
-      ]
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
     },
     {
       "task": "P13-C1",
@@ -1764,10 +1756,9 @@
       "status": "done",
       "tracked": true,
       "exit": 1,
-      "fail_count": 2,
+      "fail_count": 1,
       "fails": [
-        "DONE evidence_dir 含未登记文件：G:\\CODEX\\New Manga\\verification\\P14\\frontend-build.log, G:\\CODEX\\New Manga\\verification\\P14\\frontend-tests.log",
-        "Resource manifest 不存在：verification/P14/resource-manifest.json"
+        "DONE evidence_dir 含未登记文件：G:\\CODEX\\New Manga\\verification\\P14\\frontend-build.log, G:\\CODEX\\New Manga\\verification\\P14\\frontend-tests.log"
       ]
     },
     {
@@ -1775,33 +1766,29 @@
       "status": "done",
       "tracked": true,
       "exit": 1,
-      "fail_count": 3,
+      "fail_count": 2,
       "fails": [
         "Evidence SHA-256 不匹配：doc/contracts/P15_SETTINGS_IPC_CONTRACT.md",
-        "Evidence SHA-256 不匹配：doc/contracts/M2-C1_TYPED_IPC_CONTRACT.md",
-        "Resource manifest 不存在：verification/P15-C1-FU1/resource-manifest.json"
+        "Evidence SHA-256 不匹配：doc/contracts/M2-C1_TYPED_IPC_CONTRACT.md"
       ]
     },
     {
       "task": "P15-C1-FU2",
       "status": "done",
       "tracked": true,
-      "exit": 1,
-      "fail_count": 1,
-      "fails": [
-        "Resource manifest 不存在：verification/P15-C1-FU2/resource-manifest.json"
-      ]
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
     },
     {
       "task": "P15-C1",
       "status": "done",
       "tracked": true,
       "exit": 1,
-      "fail_count": 3,
+      "fail_count": 2,
       "fails": [
         "Evidence SHA-256 不匹配：doc/contracts/P15_SETTINGS_IPC_CONTRACT.md",
-        "DONE 不能保留未完成 Acceptance Criteria；范围未完成时使用 closed_with_limitations。",
-        "Resource manifest 不存在：verification/P15-C1/resource-manifest.json"
+        "DONE 不能保留未完成 Acceptance Criteria；范围未完成时使用 closed_with_limitations。"
       ]
     },
     {
@@ -1860,11 +1847,10 @@
       "status": "done",
       "tracked": true,
       "exit": 1,
-      "fail_count": 3,
+      "fail_count": 2,
       "fails": [
         "DONE evidence_dir 含未登记文件：G:\\CODEX\\New Manga\\verification\\P15-HOST-1\\.gitattributes, G:\\CODEX\\New Manga\\verification\\P15-HOST-1\\core-pytest-full-suite-extra.txt, G:\\CODEX\\New Manga\\verification\\P15-HOST-1\\resource-manifest.json",
-        "DONE 不能保留未完成 Acceptance Criteria；范围未完成时使用 closed_with_limitations。",
-        "Resource manifest 不存在：verification/P15-HOST-1/resource-manifest.json (SHA256 `A00BD6DE0F036735E00601C69887ECA91D977C09EBB21C8708AAB203954039FD`)"
+        "DONE 不能保留未完成 Acceptance Criteria；范围未完成时使用 closed_with_limitations。"
       ]
     },
     {
@@ -1938,10 +1924,9 @@
       "status": "done",
       "tracked": true,
       "exit": 1,
-      "fail_count": 2,
+      "fail_count": 1,
       "fails": [
-        "DONE evidence_dir 含未登记文件：G:\\CODEX\\New Manga\\verification\\P19-BOOT-1\\.gitignore",
-        "Resource manifest 不存在：verification/P19-BOOT-1/resource-manifest.json"
+        "DONE evidence_dir 含未登记文件：G:\\CODEX\\New Manga\\verification\\P19-BOOT-1\\.gitignore"
       ]
     },
     {
@@ -2097,11 +2082,9 @@
       "task": "READER-IPC-1",
       "status": "done",
       "tracked": true,
-      "exit": 1,
-      "fail_count": 1,
-      "fails": [
-        "Resource manifest 不存在：verification/READER-IPC-1/resource-manifest.json"
-      ]
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
     },
     {
       "task": "RES-P02-AC6-CDP-RECOVERY",
@@ -2116,10 +2099,9 @@
       "status": "done",
       "tracked": true,
       "exit": 1,
-      "fail_count": 2,
+      "fail_count": 1,
       "fails": [
-        "DONE 不能保留未完成 Acceptance Criteria；范围未完成时使用 closed_with_limitations。",
-        "Resource manifest 不存在：verification/RUN-IPC-1/resource-manifest.json"
+        "DONE 不能保留未完成 Acceptance Criteria；范围未完成时使用 closed_with_limitations。"
       ]
     },
     {
