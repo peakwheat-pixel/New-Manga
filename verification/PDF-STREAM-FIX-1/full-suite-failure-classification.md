@@ -43,7 +43,22 @@ AttributeError: module transformers has no attribute RTDetrV2ForObjectDetection
 
 **`RTDetrV2` 在 4.49.0 引入**（权重 config 的 `transformers_version` 就是证据）。
 
-**修复方式是 `pip install "transformers>=4.49.0"`。**
+**但实际偏差比「低一个次版本」更大——我此前的表述不够准确。**
+
+**`requirements.txt` L28 钉的是 `transformers==5.17.0`**（注释说明：经 CPU 兼容门与
+C4 GPU 资格验证）。**本机装的是 `4.48.3`。**
+
+**所以不是「比模型要求低一点」，是「不符合项目自己的固定依赖基线」。**
+
+**顺带核实了同组的另外两个包，避免误报**：
+
+| 包 | `requirements.txt` | 本机 | 判定 |
+|---|---|---|---|
+| `transformers` | **`5.17.0`** | **`4.48.3`** | **真偏离** |
+| `torch` | `2.14.0`（CPU 构建）| `2.11.0+cu128` | **不是偏离**——L9-12 明确写「GPU(CUDA) wheels 是单独的打包决定（T3.2.1），**不在 requirements.txt 内**」，且记录的正是 `torch 2.11.0+cu128` / RTX 5070 Ti |
+| `safetensors` | `0.8.0` | `0.8.0` | 一致 |
+
+**修复方式是让 `transformers` 符合基线（`5.17.0`），而不只是「>= 4.49.0」。**
 
 ### 而这个修复在本机做不了
 
