@@ -124,8 +124,14 @@ def test_genuine_png_passes_the_format_gate() -> None:
         assert "PNG or JPEG" not in message, (
             f"a genuine PNG was rejected by the format gate: {message}"
         )
-    except AttributeError:
-        # self._core is absent on a __new__ instance: the payload was accepted
+    except AttributeError as error:
+        # self._core is absent on a __new__ instance: the payload was accepted.
+        # Pinned to the exact message (ZCode P2-3): a bare AttributeError would
+        # also swallow one raised from inside the validation section, turning
+        # "passed the format gate" into "something inside validation blew up".
+        assert "_core" in str(error), (
+            f"unexpected AttributeError before the provider lookup: {error}"
+        )
         reached_provider_lookup = True
 
     assert reached_provider_lookup, (
