@@ -1,0 +1,65 @@
+{
+ "workdir": "C:\\Users\\49745\\AppData\\Local\\Temp\\ac5-74b8q_dl",
+ "exports": [
+  {
+   "format": "cbz",
+   "status": "completed",
+   "path": "C:\\Users\\49745\\AppData\\Local\\Temp\\ac5-74b8q_dl\\ac5.cbz",
+   "size_bytes": 1135,
+   "page_count": 3
+  },
+  {
+   "format": "pdf",
+   "status": "completed",
+   "path": "C:\\Users\\49745\\AppData\\Local\\Temp\\ac5-74b8q_dl\\ac5.pdf",
+   "size_bytes": 8810,
+   "page_count": 3
+  }
+ ],
+ "verifications": {
+  "cbz_7zip": {
+   "available": true,
+   "tool": "7-Zip 7z.exe",
+   "exit_code_list": 0,
+   "exit_code_test": 0,
+   "test_ok": true,
+   "entry_count": 4,
+   "entries": [
+    "0001_001.png",
+    "0002_002.png",
+    "0003_003.png",
+    "ComicInfo.xml"
+   ],
+   "has_comicinfo": true
+  },
+  "pdf_fitz": {
+   "available": true,
+   "tool": "PyMuPDF (MuPDF)",
+   "page_count": 3,
+   "page_sizes_pt": [
+    [
+     600.0,
+     900.0
+    ],
+    [
+     610.0,
+     900.0
+    ],
+    [
+     620.0,
+     900.0
+    ]
+   ],
+   "embedded_images_first5": 3,
+   "text_chars_first5": 0,
+   "opened_ok": true
+  },
+  "pdf_chrome": {
+   "available": true,
+   "tool": "Chrome headless",
+   "exit_code": 0,
+   "rendered": false,
+   "png_bytes": 0
+  }
+ }
+}
