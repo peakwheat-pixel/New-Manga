@@ -544,6 +544,100 @@ def test_detect_decoded_length_guard_backs_the_text_guard(tmp_path: Path) -> Non
         core.conn.close()
 
 
+def test_detect_oversized_rejected_before_any_pixel_decode(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """P1-1 (ZCode review): the pixel cap must fire BEFORE any pixel decode.
+
+    The sibling test above asserts on the error message. That is not the same
+    property: if someone moved the pixel check after ``image.convert("RGB")``,
+    every assertion there would still pass while the whole point of this
+    rejection -- not allocating a page-sized buffer -- silently disappeared.
+
+    So this test spies on ``Image.Image.convert`` and asserts it is never
+    reached. It guards ordering, not wording.
+    """
+    from bootstrap.core_service import MAX_DETECT_PIXELS
+
+    conversions: list[tuple[int, int]] = []
+    real_convert = Image.Image.convert
+
+    def spy_convert(self, *args, **kwargs):  # type: ignore[no-untyped-def]
+        conversions.append((self.width, self.height))
+        return real_convert(self, *args, **kwargs)
+
+    monkeypatch.setattr(Image.Image, "convert", spy_convert)
+
+    server, core = _make_server(tmp_path)
+    try:
+        core.detector = FakeDetectionProvider(result=_fake_result(()))
+        # over the pixel cap but tiny on the wire, so it is the PIXEL check
+        # that must fire (not the byte cap)
+        buffer = io.BytesIO()
+        Image.new("RGB", (4096, 4096), "white").save(buffer, "PNG")
+        page = base64.b64encode(buffer.getvalue()).decode("ascii")
+        encoded = buffer.getvalue()
+        assert 4096 * 4096 > MAX_DETECT_PIXELS
+        assert len(encoded) < MAX_DETECT_PAGE_BYTES
+
+        res, _ = _dispatch(
+            server, "d-px-order", {"page": page, "width": 4096, "height": 4096}
+        )
+
+        assert res["result"] is None
+        assert res["error"]["code"] == E_INVALID_REQUEST
+        # THE assertion this test exists for:
+        assert conversions == [], (
+            "pixel-cap rejection must happen before any convert() call; "
+            f"convert was called with {conversions}"
+        )
+        # and the provider was never consulted either
+        assert core.detector.seen_request is None
+    finally:
+        core.conn.close()
+
+
+def test_detect_within_cap_does_reach_convert(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """P1-1 companion: a page UNDER the cap must go through convert().
+
+    Without this, the ordering test above could be satisfied by a bug that
+    rejects everything. Together they pin the actual behaviour: over the cap
+    -> no decode; under the cap -> decode.
+    """
+    from bootstrap.core_service import MAX_DETECT_PIXELS
+
+    conversions: list[tuple[int, int]] = []
+    real_convert = Image.Image.convert
+
+    def spy_convert(self, *args, **kwargs):  # type: ignore[no-untyped-def]
+        conversions.append((self.width, self.height))
+        return real_convert(self, *args, **kwargs)
+
+    monkeypatch.setattr(Image.Image, "convert", spy_convert)
+
+    server, core = _make_server(tmp_path)
+    try:
+        core.detector = FakeDetectionProvider(result=_fake_result(()))
+        # 200x200 = 40,000 px, far under the cap
+        buffer = io.BytesIO()
+        Image.new("RGB", (200, 200), "white").save(buffer, "PNG")
+        page = base64.b64encode(buffer.getvalue()).decode("ascii")
+        assert 200 * 200 < MAX_DETECT_PIXELS
+
+        res, _ = _dispatch(
+            server, "d-px-under", {"page": page, "width": 200, "height": 200}
+        )
+
+        # it reaches the provider, which means it decoded
+        assert res["error"] is None
+        assert conversions != [], "a page under the cap must be decoded"
+        assert core.detector.seen_request is not None
+    finally:
+        core.conn.close()
+
+
 def test_detect_decoded_pixel_cap_rejected(tmp_path: Path) -> None:
     """DSH r1 R10: the 32 MiB file cap does not bound the DECODED buffer.
 
