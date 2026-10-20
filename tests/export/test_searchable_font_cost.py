@@ -91,7 +91,7 @@ def _export(source: str, pages: int, searchable: bool) -> int:
 def test_font_overhead_is_constant_across_page_counts(source_page) -> None:
     """AC4: the searchable-minus-plain gap must not grow with page count."""
     overheads = []
-    for pages in (1, 3):
+    for pages in (1, 3, 5):
         plain = _export(source_page, pages, searchable=False)
         searchable = _export(source_page, pages, searchable=True)
         overheads.append(searchable - plain)
@@ -103,9 +103,9 @@ def test_font_overhead_is_constant_across_page_counts(source_page) -> None:
         "being embedded at all: %r" % (overheads,)
     )
     assert spread < 0.10 * smallest, (
-        "font overhead scales with page count (%d vs %d bytes, spread %d). "
-        "That means the font is embedded per page, which breaks the cost model "
-        "for long books." % (overheads[0], overheads[1], spread)
+        "font overhead scales with page count (%r, spread %d). That means the "
+        "font is embedded per page, which breaks the cost model for long books."
+        % (overheads, spread)
     )
 
 
