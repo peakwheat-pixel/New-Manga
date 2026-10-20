@@ -18,6 +18,7 @@ from __future__ import annotations
 
 import argparse
 import glob
+import subprocess
 import io
 import os
 import sys
@@ -49,8 +50,32 @@ def read_frontmatter_status(text: str) -> str | None:
     return None
 
 
+def tracked_ids() -> set[str]:
+    """Task ids git knows about.
+
+    The scan below walks the directory, so a draft that was never committed is
+    counted exactly like a released task. r188 measured the gap: 320 files on
+    disk, 295 tracked, 26 untracked drafts - and the headline "38 non-terminal
+    tasks" silently included drafts. Reporting both numbers keeps the existing
+    metrics stable while making the difference visible.
+    """
+    try:
+        out = subprocess.run(
+            ["git", "-C", REPO, "ls-files", "--", "doc/tasks"],
+            capture_output=True, text=True, encoding="utf-8", check=True).stdout
+    except (OSError, subprocess.CalledProcessError):
+        return set()
+    ids = set()
+    for line in out.splitlines():
+        name = os.path.basename(line.strip())
+        if name.endswith(".md"):
+            ids.add(name[:-3])
+    return ids
+
+
 def collect() -> list[dict]:
     rows = []
+    committed = tracked_ids()
     for path in sorted(glob.glob(os.path.join(TASKS_DIR, "*.md"))):
         task_id = os.path.basename(path)[:-3]
         # README.md is the task index, not a task. Counting it produced a
@@ -63,6 +88,7 @@ def collect() -> list[dict]:
                 "id": task_id,
                 "status": read_frontmatter_status(text) or "(none)",
                 "path": os.path.relpath(path, REPO).replace("\\", "/"),
+                "tracked": task_id in committed,
             }
         )
     return rows
@@ -100,10 +126,17 @@ def main() -> int:
     named_only = [r for r in non_terminal if r["in_plan"]]
     outside = [r for r in non_terminal if not r["in_plan"]]
 
+    tracked = [r for r in rows if r["tracked"]]
+    untracked = [r for r in rows if not r["tracked"]]
+
     print("Task ledger (reproducible from doc/tasks/*.md)")
-    print("  task files            : %d" % len(rows))
+    print("  task files            : %d  (tracked %d, untracked drafts %d)"
+          % (len(rows), len(tracked), len(untracked)))
     print("  terminal              : %d" % len(terminal))
-    print("  non-terminal          : %d" % len(non_terminal))
+    print("  non-terminal          : %d  (tracked %d, untracked drafts %d)"
+          % (len(non_terminal),
+             len([r for r in non_terminal if r["tracked"]]),
+             len([r for r in non_terminal if not r["tracked"]])))
     own_row = [r for r in non_terminal if r.get("plan_row")]
     print("    own plan row        : %d" % len(own_row))
     print("    named anywhere      : %d" % len(named_only))
@@ -147,6 +180,10 @@ def main() -> int:
             "| non-terminal | %d |" % len(non_terminal),
             "| non-terminal named in the plan | %d |" % len(named_only),
             "| non-terminal outside the plan | %d |" % len(outside),
+            "| task files tracked by git | %d |" % len(tracked),
+            "| task files untracked (drafts) | %d |" % len(untracked),
+            "| non-terminal tracked by git | %d |"
+            % len([r for r in non_terminal if r["tracked"]]),
             "",
             "## By status",
             "",
