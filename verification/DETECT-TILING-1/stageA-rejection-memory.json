@@ -1,25 +1,185 @@
 {
- "purpose": "prove handle_detect rejects oversized pages before any page-sized pixel allocation",
- "method": "fresh subprocess per sample; peak Working Set via corrected GetProcessMemoryInfo ctypes signature",
+ "method": "fresh subprocess per (sample, mode); absolute WorkingSet and PeakWorkingSet at each checkpoint; explicit ctypes argtypes",
+ "why_absolute": "the previous record reported ws_increase 63.3 alongside peak_increase 37.3, which cannot both hold. Cause: SetProcessWorkingSetSize trims the current working set but not the peak counter, so the two deltas had different origins. Absolute readings make the invariant ws <= peak checkable from the record.",
+ "control_arm": "full_decode measures the same sample through the actual convert/tobytes path, so 'rejection costs less than decoding' is demonstrated within one document",
  "our_max_detect_pixels": 11184810,
  "samples": [
   {
    "path": "G:\\CODEX\\New Manga.workspace\\test-materials\\objects\\sha256\\02\\02499d71f86f78ae17b1c9f937a455c28fb087c9a29f9352363f10fe1129275f.png",
-   "max_detect_pixels": 11184810,
-   "file_mb": 19.46,
    "width": 690,
    "height": 62133,
    "format": "PNG",
    "mode": "RGBA",
    "pixels": 42871770,
+   "max_detect_pixels": 11184810,
+   "file_mb": 19.46,
    "full_rgb24_mb": 122.66,
    "full_rgba_mb": 163.54,
-   "peak_increase_after_open_mb": 37.3,
-   "exceeds_limit": true,
-   "peak_increase_at_rejection_mb": 37.3,
-   "ws_increase_at_rejection_mb": 63.3,
-   "rejected_before_decode": true,
-   "label": "PNG"
+   "mode_kind": "reject",
+   "baseline": {
+    "ws_mb": 70.3,
+    "peak_mb": 70.3
+   },
+   "after_read": {
+    "ws_mb": 96.2,
+    "peak_mb": 122.2
+   },
+   "rejected": true,
+   "error_type": "DetectRequestError",
+   "message": "core.detect page is too large to process safely: 690x62133 = 42871770 px exceeds the 11184810 px limit (3.83x over). The page was rejected before any pixel decoding, so no page-sized buffer was allocated. Reduce the page to at most 11184810 pixels (about 3344x3344) and retry, or split a tall page into several shorter images.",
+   "at_rejection": {
+    "ws_mb": 96.9,
+    "peak_mb": 141.7
+   },
+   "label": "PNG oversize"
+  },
+  {
+   "path": "G:\\CODEX\\New Manga.workspace\\test-materials\\objects\\sha256\\02\\02499d71f86f78ae17b1c9f937a455c28fb087c9a29f9352363f10fe1129275f.png",
+   "width": 690,
+   "height": 62133,
+   "format": "PNG",
+   "mode": "RGBA",
+   "pixels": 42871770,
+   "max_detect_pixels": 11184810,
+   "file_mb": 19.46,
+   "full_rgb24_mb": 122.66,
+   "full_rgba_mb": 163.54,
+   "mode_kind": "full_decode",
+   "baseline": {
+    "ws_mb": 70.4,
+    "peak_mb": 70.4
+   },
+   "after_read": {
+    "ws_mb": 70.4,
+    "peak_mb": 70.4
+   },
+   "after_convert": {
+    "ws_mb": 235.0,
+    "peak_mb": 398.5
+   },
+   "after_tobytes": {
+    "ws_mb": 357.5,
+    "peak_mb": 479.8
+   },
+   "label": "PNG oversize"
+  },
+  {
+   "path": "G:\\CODEX\\New Manga.workspace\\DETECT-TILING-1\\synthetic\\oversized-5000x4000.jpg",
+   "width": 5000,
+   "height": 4000,
+   "format": "JPEG",
+   "mode": "RGB",
+   "pixels": 20000000,
+   "max_detect_pixels": 11184810,
+   "file_mb": 0.3,
+   "full_rgb24_mb": 57.22,
+   "full_rgba_mb": 76.29,
+   "mode_kind": "reject",
+   "baseline": {
+    "ws_mb": 51.4,
+    "peak_mb": 51.4
+   },
+   "after_read": {
+    "ws_mb": 52.1,
+    "peak_mb": 52.1
+   },
+   "rejected": true,
+   "error_type": "DetectRequestError",
+   "message": "core.detect page is too large to process safely: 5000x4000 = 20000000 px exceeds the 11184810 px limit (1.79x over). The page was rejected before any pixel decoding, so no page-sized buffer was allocated. Reduce the page to at most 11184810 pixels (about 3344x3344) and retry, or split a tall page into several shorter images.",
+   "at_rejection": {
+    "ws_mb": 53.2,
+    "peak_mb": 53.2
+   },
+   "label": "JPEG oversize (synthetic)"
+  },
+  {
+   "path": "G:\\CODEX\\New Manga.workspace\\DETECT-TILING-1\\synthetic\\oversized-5000x4000.jpg",
+   "width": 5000,
+   "height": 4000,
+   "format": "JPEG",
+   "mode": "RGB",
+   "pixels": 20000000,
+   "max_detect_pixels": 11184810,
+   "file_mb": 0.3,
+   "full_rgb24_mb": 57.22,
+   "full_rgba_mb": 76.29,
+   "mode_kind": "full_decode",
+   "baseline": {
+    "ws_mb": 51.2,
+    "peak_mb": 51.2
+   },
+   "after_read": {
+    "ws_mb": 51.2,
+    "peak_mb": 51.2
+   },
+   "after_convert": {
+    "ws_mb": 127.9,
+    "peak_mb": 204.2
+   },
+   "after_tobytes": {
+    "ws_mb": 185.1,
+    "peak_mb": 242.2
+   },
+   "label": "JPEG oversize (synthetic)"
+  },
+  {
+   "path": "G:\\CODEX\\New Manga.workspace\\test-materials\\objects\\sha256\\16\\16a2767bc9e6e22128c2ac3c1e215526b456c1c7c23d1aa774dfbd9a4dadba44.png",
+   "width": 600,
+   "height": 18401,
+   "format": "PNG",
+   "mode": "RGBA",
+   "pixels": 11040600,
+   "max_detect_pixels": 11184810,
+   "file_mb": 1.6,
+   "full_rgb24_mb": 31.59,
+   "full_rgba_mb": 42.12,
+   "mode_kind": "reject",
+   "baseline": {
+    "ws_mb": 52.5,
+    "peak_mb": 52.5
+   },
+   "after_read": {
+    "ws_mb": 54.6,
+    "peak_mb": 56.8
+   },
+   "rejected": true,
+   "error_type": "AttributeError",
+   "message": "'CoreServiceServer' object has no attribute '_core'",
+   "at_rejection": {
+    "ws_mb": 56.0,
+    "peak_mb": 204.8
+   },
+   "label": "CONTROL undersize"
+  },
+  {
+   "path": "G:\\CODEX\\New Manga.workspace\\test-materials\\objects\\sha256\\16\\16a2767bc9e6e22128c2ac3c1e215526b456c1c7c23d1aa774dfbd9a4dadba44.png",
+   "width": 600,
+   "height": 18401,
+   "format": "PNG",
+   "mode": "RGBA",
+   "pixels": 11040600,
+   "max_detect_pixels": 11184810,
+   "file_mb": 1.6,
+   "full_rgb24_mb": 31.59,
+   "full_rgba_mb": 42.12,
+   "mode_kind": "full_decode",
+   "baseline": {
+    "ws_mb": 52.4,
+    "peak_mb": 52.4
+   },
+   "after_read": {
+    "ws_mb": 52.4,
+    "peak_mb": 52.4
+   },
+   "after_convert": {
+    "ws_mb": 94.9,
+    "peak_mb": 137.0
+   },
+   "after_tobytes": {
+    "ws_mb": 126.9,
+    "peak_mb": 157.9
+   },
+   "label": "CONTROL undersize"
   }
  ]
 }
