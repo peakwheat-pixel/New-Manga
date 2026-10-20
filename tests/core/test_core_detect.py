@@ -773,10 +773,23 @@ def test_detect_memory_backstop_rejects_when_host_is_short(
 
     The page used here (2000x2000 = 4 M px) is comfortably UNDER the pixel cap,
     so the only thing that can reject it is the memory check.
+
+    P1-1 (ZCode review): the memory criterion must fire BEFORE convert(), for
+    exactly the reason DETECT-TILING-1's pixel cap does - refusing after the
+    page-sized buffer exists defeats the purpose. This test spies on convert.
     """
     import bootstrap.core_service as cs
 
     from bootstrap.core_service import MAX_DETECT_PIXELS
+
+    conversions: list[tuple[int, int]] = []
+    real_convert = Image.Image.convert
+
+    def spy_convert(self, *args, **kwargs):  # type: ignore[no-untyped-def]
+        conversions.append((self.width, self.height))
+        return real_convert(self, *args, **kwargs)
+
+    monkeypatch.setattr(Image.Image, "convert", spy_convert)
 
     server, core = _make_server(tmp_path)
     try:
@@ -794,15 +807,22 @@ def test_detect_memory_backstop_rejects_when_host_is_short(
             server, "d-mem-low", {"page": page, "width": 2000, "height": 2000}
         )
         assert res["result"] is None
+        # P2-3: assert the exact typed code, not merely "some error"
         assert res["error"]["code"] == E_INVALID_REQUEST
 
         message = res["error"]["message"]
         # the message must carry the actual figures, per SEC-FMT-005 item 3
         assert "2000x2000" in message
-        assert "MB" in message
+        assert "needs about" in message
         assert "available" in message
         assert "25%" in message
-        # and it must not have decoded
+        # P2-3: and it must be the MEMORY message, not the pixel-cap one
+        assert "too large to process safely" not in message
+        # P1-1: the rejection must precede any pixel decode
+        assert conversions == [], (
+            "memory rejection must happen before any convert() call; "
+            f"convert was called with {conversions}"
+        )
         assert core.detector.seen_request is None
     finally:
         core.conn.close()
@@ -878,3 +898,23 @@ def test_detect_memory_probe_failure_falls_back_to_pixel_cap(
         assert core.detector.seen_request is not None
     finally:
         core.conn.close()
+
+def test_memory_probe_returns_real_value_on_windows() -> None:
+    """P2-2 (ZCode review): do not patch the probe, prove it works.
+
+    Every other memory test monkeypatches _available_physical_bytes, so if the
+    real probe broke and always returned None, the backstop would silently
+    stop existing and every test would stay green. This is the one assertion
+    that can go red for that failure.
+    """
+    import bootstrap.core_service as cs
+
+    if sys.platform != "win32":
+        pytest.skip("GlobalMemoryStatusEx is Windows-only by design")
+
+    value = cs._available_physical_bytes()
+    assert value is not None, "real probe must not return None on Windows"
+    assert isinstance(value, int)
+    assert value > 0, f"available physical memory must be positive, got {value}"
+    # a plausible lower bound: any machine running this test has > 64 MB free
+    assert value > 64 * 1024 * 1024
