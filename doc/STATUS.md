@@ -8,6 +8,7 @@
 - READY：[ARCH-DOC-REBASELINE](tasks/ARCH-DOC-REBASELINE.md)（AC7 已完成；AC1–AC3 PARTIAL、AC4–AC6 属消费者责任，不标 done）。
 - P20：**`closed_with_limitations`**（6/7 AC done；AC4 撕裂项 `LIMITATION/UNOBSERVED`；用户 2026-10-20 授权）。
 - **新增**：[RUST-ENV-BASELINE-1](tasks/RUST-ENV-BASELINE-1.md) `proposed`（12 项 Rust 环境依赖失败）；**REBALANCE**：ZCode 遇 429 限流。
+- **新增提案**：[DETECT-TILING-1](tasks/DETECT-TILING-1.md) `proposed`（r34 方向批准未释放）：`core.detect` 分块处理超 32 MiB RGB24 的页面，与 `ARCH-DOC-REBASELINE` AC6 的 `SEC-FMT-005` 合并验收。
 - **治理债已收束**：11 个 GOV-* Task 全部终态（9 `done`、2 `closed_with_limitations`；PIN-LINEAGE-1 按 r28 停改，checker 未改）。裁定 r20–r29 在 `verification/P09-GOVERNANCE-DEBT-20261019/`。
 - **[GOV-DEBT-CLEANUP-1](tasks/GOV-DEBT-CLEANUP-1.md)**：`blocked`（待用户裁决）。
 - **P09 已收口**：[P09-AC3-DELETE-1](tasks/P09-AC3-DELETE-1.md) `closed_with_limitations`（R3 `changes_requested`）。**P09 AC3 保持 `BLOCKED`。** **HARDEN-1 删除路径闭环；AC4 判 FAIL 转出。**

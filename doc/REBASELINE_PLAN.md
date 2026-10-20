@@ -20,6 +20,7 @@
 |P18 JA/KO质量|P10/P13/DOC|closed_with_limitations（AC2门槛、AC5阻塞）|
 |P19 四页安全E2E|P12/14/15/17/18/P04|closed_with_limitations（4c860d882）|
 |P20 Windows发布|P19/P03/P06/DOC|closed_with_limitations（AC4 撕裂项 LIMITATION/UNOBSERVED；其余 6 AC done；用户 2026-10-20 授权）|
+|DETECT-TILING-1|ARCH-DOC-REBASELINE|**proposed**（r34 方向批准、尚未释放；`core.detect` 分块 + `SEC-FMT-005` 合并验收；5 条 AC；Owner 建议 Antigravity / Reviewer DSH）|
 |P20-MEM-OPT-1|P20|closed（AC1 完成；AC2 经调阈值消解）|
 |P20-ISOLATION-1|P20|closed_with_limitations（AC4 四项 MET；`library_bridge.rs` 旧 pin FAIL 保留为已知限制）|
 |P20-AC4-FPS-1|P20|closed_with_limitations（AC3 PASS；AC5 依裁决）|
