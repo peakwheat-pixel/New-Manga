@@ -1,6 +1,11 @@
 {
   "total": 320,
   "failing": 84,
+  "failing_tracked": 66,
+  "failing_drafts": 18,
+  "error_rows": 198,
+  "error_rows_tracked": 124,
+  "error_rows_drafts": 74,
   "causes": {
     "Evidence SHA-256 不匹配": 86,
     "终态或已集成的 approved Task 必须设置 resource_closeout_status: complete。": 2,
@@ -16,10 +21,24 @@
     "当前 DAG 未登记非终态 Task": 22,
     "Resource 最终路径未验证": 2
   },
+  "causes_tracked": {
+    "Evidence SHA-256 不匹配": 51,
+    "终态或已集成的 approved Task 必须设置 resource_closeout_status: complete。": 2,
+    "Resource disposition 无效": 5,
+    "Resource manifest 不存在": 20,
+    "DONE 不能保留未完成 Acceptance Criteria；范围未完成时使用 closed_with_limitations。": 10,
+    "DONE evidence_dir 含未登记文件": 11,
+    "DONE 必须设置 canonical_evidence_status: complete。": 1,
+    "Resource SHA-256 不匹配": 6,
+    "失效的本地引用": 4,
+    "当前 DAG 未登记非终态 Task": 12,
+    "Resource 最终路径未验证": 2
+  },
   "tasks": [
     {
       "task": "ARCH-DOC-REBASELINE",
       "status": "closed_with_limitations",
+      "tracked": true,
       "exit": 1,
       "fail_count": 1,
       "fails": [
@@ -29,6 +48,7 @@
     {
       "task": "DETECT-MEMORY-GUARD-1",
       "status": "closed_with_limitations",
+      "tracked": true,
       "exit": 1,
       "fail_count": 3,
       "fails": [
@@ -40,6 +60,7 @@
     {
       "task": "DETECT-TILING-1",
       "status": "closed_with_limitations",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -47,6 +68,7 @@
     {
       "task": "DIAG-M2-LOCK-CHANGED-REPRO-002",
       "status": "done",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -54,6 +76,7 @@
     {
       "task": "DIAG-M2-REGIONLESS-LOCK-CHANGED-001",
       "status": "done",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -61,6 +84,7 @@
     {
       "task": "DIAG-READING-EXPORT-001-FIX-A",
       "status": "done",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -68,6 +92,7 @@
     {
       "task": "DIAG-READING-EXPORT-001-FIX-B",
       "status": "done",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -75,6 +100,7 @@
     {
       "task": "DIAG-READING-EXPORT-001-FIX-C",
       "status": "done",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -82,6 +108,7 @@
     {
       "task": "DIAG-READING-EXPORT-001",
       "status": "done",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -89,6 +116,7 @@
     {
       "task": "DOC-FIX-LOCK-CHANGED-STALE-COMMENTS",
       "status": "done",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -96,6 +124,7 @@
     {
       "task": "ENV-BUNDLE-1-FU1",
       "status": "closed_with_limitations",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -103,6 +132,7 @@
     {
       "task": "ENV-BUNDLE-1",
       "status": "closed_with_limitations",
+      "tracked": true,
       "exit": 1,
       "fail_count": 2,
       "fails": [
@@ -113,6 +143,7 @@
     {
       "task": "EVENTS-FWD-1",
       "status": "done",
+      "tracked": true,
       "exit": 1,
       "fail_count": 1,
       "fails": [
@@ -122,6 +153,7 @@
     {
       "task": "EXPORT-IPC-1",
       "status": "done",
+      "tracked": true,
       "exit": 1,
       "fail_count": 2,
       "fails": [
@@ -132,6 +164,7 @@
     {
       "task": "EXPORT-REVEAL-1",
       "status": "done",
+      "tracked": true,
       "exit": 1,
       "fail_count": 2,
       "fails": [
@@ -142,6 +175,7 @@
     {
       "task": "FEAT-CREATE-1",
       "status": "done",
+      "tracked": true,
       "exit": 1,
       "fail_count": 1,
       "fails": [
@@ -151,6 +185,7 @@
     {
       "task": "FEAT-CREATE-2",
       "status": "done",
+      "tracked": true,
       "exit": 1,
       "fail_count": 1,
       "fails": [
@@ -160,6 +195,7 @@
     {
       "task": "FEAT-CREATE-3",
       "status": "done",
+      "tracked": true,
       "exit": 1,
       "fail_count": 1,
       "fails": [
@@ -169,6 +205,7 @@
     {
       "task": "FEAT-CREATE-4",
       "status": "done",
+      "tracked": true,
       "exit": 1,
       "fail_count": 1,
       "fails": [
@@ -178,6 +215,7 @@
     {
       "task": "FEAT-IMPORT-MULTI-1",
       "status": "done",
+      "tracked": true,
       "exit": 1,
       "fail_count": 3,
       "fails": [
@@ -189,6 +227,7 @@
     {
       "task": "GOV-001",
       "status": "done",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -196,6 +235,7 @@
     {
       "task": "GOV-AC-GATE-1",
       "status": "done",
+      "tracked": true,
       "exit": 1,
       "fail_count": 1,
       "fails": [
@@ -205,6 +245,7 @@
     {
       "task": "GOV-DEBT-CLEANUP-1",
       "status": "blocked",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -212,6 +253,7 @@
     {
       "task": "GOV-DEBT-CLEANUP-2",
       "status": "closed_with_limitations",
+      "tracked": true,
       "exit": 1,
       "fail_count": 1,
       "fails": [
@@ -221,6 +263,7 @@
     {
       "task": "GOV-EOL-PIN-1",
       "status": "done",
+      "tracked": true,
       "exit": 1,
       "fail_count": 1,
       "fails": [
@@ -230,6 +273,7 @@
     {
       "task": "GOV-EVIDENCE-DIR-SWEEP-1",
       "status": "done",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -237,6 +281,7 @@
     {
       "task": "GOV-EVIDENCE-UNIQUE-1",
       "status": "done",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -244,6 +289,7 @@
     {
       "task": "GOV-P15-MANIFEST-1",
       "status": "done",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -251,6 +297,7 @@
     {
       "task": "GOV-PIN-LINEAGE-1",
       "status": "closed_with_limitations",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -258,6 +305,7 @@
     {
       "task": "GOV-PLAN-BUDGET-1",
       "status": "done",
+      "tracked": true,
       "exit": 1,
       "fail_count": 1,
       "fails": [
@@ -267,6 +315,7 @@
     {
       "task": "GOV-RESOURCE-MANIFEST-JSON-1",
       "status": "done",
+      "tracked": true,
       "exit": 1,
       "fail_count": 2,
       "fails": [
@@ -277,6 +326,7 @@
     {
       "task": "GOV-RESOURCE-MANIFEST-SAME-LOCATION-1",
       "status": "done",
+      "tracked": true,
       "exit": 1,
       "fail_count": 1,
       "fails": [
@@ -286,6 +336,7 @@
     {
       "task": "GOV-SOURCE-RECORDS-1",
       "status": "done",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -293,6 +344,7 @@
     {
       "task": "GOV-UNTRACKED-BACKLOG-1",
       "status": "done",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -300,6 +352,7 @@
     {
       "task": "HOST-CORE-1",
       "status": "done",
+      "tracked": true,
       "exit": 1,
       "fail_count": 1,
       "fails": [
@@ -309,6 +362,7 @@
     {
       "task": "HOST-ISSUER-1-C1",
       "status": "done",
+      "tracked": true,
       "exit": 1,
       "fail_count": 1,
       "fails": [
@@ -318,6 +372,7 @@
     {
       "task": "HOST-ISSUER-1",
       "status": "done",
+      "tracked": true,
       "exit": 1,
       "fail_count": 6,
       "fails": [
@@ -332,6 +387,7 @@
     {
       "task": "HOST-TTL-BOUNDARY-1",
       "status": "done",
+      "tracked": true,
       "exit": 1,
       "fail_count": 3,
       "fails": [
@@ -343,6 +399,7 @@
     {
       "task": "M2-AC1",
       "status": "done",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -350,6 +407,7 @@
     {
       "task": "M2-AC2",
       "status": "done",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -357,6 +415,7 @@
     {
       "task": "M2-AC3",
       "status": "done",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -364,6 +423,7 @@
     {
       "task": "M2-AC4",
       "status": "done",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -371,6 +431,7 @@
     {
       "task": "M2-AC5-BUILD-FRESH-CHECKOUT",
       "status": "done",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -378,6 +439,7 @@
     {
       "task": "M2-AC5",
       "status": "done",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -385,6 +447,7 @@
     {
       "task": "M2-C1",
       "status": "done",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -392,6 +455,7 @@
     {
       "task": "M2-C2",
       "status": "done",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -399,6 +463,7 @@
     {
       "task": "M2-CATEGORY-CLARIFY-1",
       "status": "done",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -406,6 +471,7 @@
     {
       "task": "M2-D1",
       "status": "done",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -413,6 +479,7 @@
     {
       "task": "M2-DERIVED-GC-1",
       "status": "done",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -420,6 +487,7 @@
     {
       "task": "M2-DERIVED-GC-2-DESIGN",
       "status": "done",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -427,6 +495,7 @@
     {
       "task": "M2-DERIVED-GC-2",
       "status": "done",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -434,6 +503,7 @@
     {
       "task": "M2-DETECT-WEBTOON-DIAG",
       "status": "done",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -441,6 +511,7 @@
     {
       "task": "M2-DETECT-WEBTOON-TILING",
       "status": "done",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -448,6 +519,7 @@
     {
       "task": "M2-DETECTION-HYGIENE",
       "status": "done",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -455,6 +527,7 @@
     {
       "task": "M2-DOCTR-QUAL-C1",
       "status": "done",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -462,6 +535,7 @@
     {
       "task": "M2-DOCTR-QUAL-C4",
       "status": "done",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -469,6 +543,7 @@
     {
       "task": "M2-DOCTR-QUAL-PREFLIGHT",
       "status": "done",
+      "tracked": true,
       "exit": 1,
       "fail_count": 1,
       "fails": [
@@ -478,6 +553,7 @@
     {
       "task": "M2-DOCTR-QUAL-RUN",
       "status": "done",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -485,6 +561,7 @@
     {
       "task": "M2-FIX-DIGEST-SEEK-2GIB",
       "status": "done",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -492,6 +569,7 @@
     {
       "task": "M2-FIX-EXPORT-LINEAGE",
       "status": "done",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -499,6 +577,7 @@
     {
       "task": "M2-FIX-F02-RESOURCE-CHANNEL-FLAKY",
       "status": "done",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -506,6 +585,7 @@
     {
       "task": "M2-FIX-LISTBOOKS-PAGECOUNT-UNKNOWN",
       "status": "done",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -513,6 +593,7 @@
     {
       "task": "M2-FIX-REGISTRY-READINESS-ENV",
       "status": "done",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -520,6 +601,7 @@
     {
       "task": "M2-FIX-RESOURCE-CHANNEL-DIGEST-PERF",
       "status": "done",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -527,6 +609,7 @@
     {
       "task": "M2-FIX-STUB-DECODER",
       "status": "done",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -534,6 +617,7 @@
     {
       "task": "M2-I1",
       "status": "done",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -541,6 +625,7 @@
     {
       "task": "M2-I2",
       "status": "done",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -548,6 +633,7 @@
     {
       "task": "M2-IMPORT-ALLOC-LIMIT",
       "status": "done",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -555,6 +641,7 @@
     {
       "task": "M2-IPC1",
       "status": "done",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -562,6 +649,7 @@
     {
       "task": "M2-KO-TILE-CALIB",
       "status": "done",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -569,6 +657,7 @@
     {
       "task": "M2-MANGA-WEIGHTS-SOP",
       "status": "done",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -576,6 +665,7 @@
     {
       "task": "M2-OCR-PADDLE3X-1",
       "status": "done",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -583,6 +673,7 @@
     {
       "task": "M2-P1",
       "status": "done",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -590,6 +681,7 @@
     {
       "task": "M2-PACKAGED-AC1-DLL-DIAG",
       "status": "done",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -597,6 +689,7 @@
     {
       "task": "M2-PACKAGED-AC1-ICU-ISOLATION-FIX",
       "status": "done",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -604,6 +697,7 @@
     {
       "task": "M2-PAGE-NAV-PROJECTION-1",
       "status": "done",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -611,6 +705,7 @@
     {
       "task": "M2-PAGE-RESOURCE-RESOLVE-1",
       "status": "done",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -618,6 +713,7 @@
     {
       "task": "M2-PROD-DETECT-1",
       "status": "done",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -625,6 +721,7 @@
     {
       "task": "M2-PROD-DETECT-2",
       "status": "done",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -632,6 +729,7 @@
     {
       "task": "M2-PROD-DETECT-3",
       "status": "done",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -639,6 +737,7 @@
     {
       "task": "M2-PROD-DETECT-ENV-1",
       "status": "closed_with_limitations",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -646,6 +745,7 @@
     {
       "task": "M2-PROD-SFX-PROBE-1",
       "status": "done",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -653,6 +753,7 @@
     {
       "task": "M2-QUAL-DETERM-CALIB",
       "status": "done",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -660,6 +761,7 @@
     {
       "task": "M2-R1",
       "status": "done",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -667,6 +769,7 @@
     {
       "task": "M2-RC1",
       "status": "done",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -674,6 +777,7 @@
     {
       "task": "M2-RC2",
       "status": "done",
+      "tracked": true,
       "exit": 1,
       "fail_count": 1,
       "fails": [
@@ -683,6 +787,7 @@
     {
       "task": "M2-RC4-DOMAIN-COMMANDS",
       "status": "done",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -690,6 +795,7 @@
     {
       "task": "M2-REGION-DEBOUNCE-1",
       "status": "done",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -697,6 +803,7 @@
     {
       "task": "M2-REGION-OVERLAP-ARBITRATION",
       "status": "done",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -704,6 +811,7 @@
     {
       "task": "M2-REGION-RETYPE-CONTRACT",
       "status": "done",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -711,6 +819,7 @@
     {
       "task": "M2-REGION-RETYPE-CORE",
       "status": "done",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -718,6 +827,7 @@
     {
       "task": "M2-RESOLVE-DEBOUNCE-1",
       "status": "done",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -725,6 +835,7 @@
     {
       "task": "M2-RG1",
       "status": "done",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -732,6 +843,7 @@
     {
       "task": "M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD",
       "status": "done",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -739,6 +851,7 @@
     {
       "task": "M2-RUNNER-SNAPSHOT-DEBT",
       "status": "done",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -746,6 +859,7 @@
     {
       "task": "M2-S1",
       "status": "done",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -753,6 +867,7 @@
     {
       "task": "M2-S2",
       "status": "done",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -760,6 +875,7 @@
     {
       "task": "M2-S3",
       "status": "done",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -767,6 +883,7 @@
     {
       "task": "M2-SETTINGS-IPC-CHANNEL",
       "status": "done",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -774,6 +891,7 @@
     {
       "task": "M2-SETTINGS-UI-SFX-POLICY",
       "status": "done",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -781,6 +899,7 @@
     {
       "task": "M2-SFX-ANNOTATE-R1",
       "status": "done",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -788,6 +907,7 @@
     {
       "task": "M2-SFX-ANNOTATE-R2",
       "status": "done",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -795,6 +915,7 @@
     {
       "task": "M2-SFX-ANNOTATE-R3",
       "status": "done",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -802,6 +923,7 @@
     {
       "task": "M2-SFX-BJ13-RECALL-1",
       "status": "done",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -809,6 +931,7 @@
     {
       "task": "M2-SFX-CORRECTION-EXPORTER",
       "status": "done",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -816,6 +939,7 @@
     {
       "task": "M2-SFX-DATA-INFRA",
       "status": "done",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -823,6 +947,7 @@
     {
       "task": "M2-SFX-DETECT-DOMAIN-EXT-DIAG",
       "status": "done",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -830,6 +955,7 @@
     {
       "task": "M2-SFX-DETECT-EVAL",
       "status": "done",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -837,6 +963,7 @@
     {
       "task": "M2-SFX-E2E-MATERIAL",
       "status": "done",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -844,6 +971,7 @@
     {
       "task": "M2-SFX-EPFAIL-AUDIT-1",
       "status": "done",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -851,6 +979,7 @@
     {
       "task": "M2-SFX-FINETUNE-PREFLIGHT",
       "status": "done",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -858,6 +987,7 @@
     {
       "task": "M2-SFX-GATE-T3",
       "status": "done",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -865,6 +995,7 @@
     {
       "task": "M2-SFX-GPU-EP-1",
       "status": "done",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -872,6 +1003,7 @@
     {
       "task": "M2-SFX-MISROUTE-UI-IMPL-1",
       "status": "done",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -879,6 +1011,7 @@
     {
       "task": "M2-SFX-MISROUTE-UI-MITIGATION",
       "status": "done",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -886,6 +1019,7 @@
     {
       "task": "M2-SFX-PROD-1",
       "status": "done",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -893,6 +1027,7 @@
     {
       "task": "M2-SFX-SEM-1",
       "status": "done",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -900,6 +1035,7 @@
     {
       "task": "M2-SFX-SYNTH-BG-AUTO",
       "status": "done",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -907,6 +1043,7 @@
     {
       "task": "M2-SFX-T4-SWITCH",
       "status": "done",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -914,6 +1051,7 @@
     {
       "task": "M2-SFX-T5-TILE-KO",
       "status": "done",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -921,6 +1059,7 @@
     {
       "task": "M2-SFX-TILE-WIDTH-CALIB-1",
       "status": "done",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -928,6 +1067,7 @@
     {
       "task": "M2-SFX-TRAIN-V1",
       "status": "done",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -935,6 +1075,7 @@
     {
       "task": "M2-SFX-TRAIN-V2",
       "status": "done",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -942,6 +1083,7 @@
     {
       "task": "M2-SFX-TRANSLATE-ENTRY",
       "status": "done",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -949,6 +1091,7 @@
     {
       "task": "M2-TA1",
       "status": "done",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -956,6 +1099,7 @@
     {
       "task": "M2-TA2A",
       "status": "done",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -963,6 +1107,7 @@
     {
       "task": "M2-TA2B",
       "status": "done",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -970,6 +1115,7 @@
     {
       "task": "M2-TA2C-TOOLING-GAPS",
       "status": "done",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -977,6 +1123,7 @@
     {
       "task": "M2-TA2C",
       "status": "done",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -984,6 +1131,7 @@
     {
       "task": "M2-TA3-A",
       "status": "done",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -991,6 +1139,7 @@
     {
       "task": "M2-TA3-B",
       "status": "done",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -998,6 +1147,7 @@
     {
       "task": "M2-TA3-B2-KO-RERUN",
       "status": "done",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -1005,6 +1155,7 @@
     {
       "task": "M2-TA3-B2",
       "status": "done",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -1012,6 +1163,7 @@
     {
       "task": "M2-TA3-B3-KO-FULLRUN",
       "status": "done",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -1019,6 +1171,7 @@
     {
       "task": "M2-TASKS-BACKFILL-MULTIREGION",
       "status": "done",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -1026,6 +1179,7 @@
     {
       "task": "M2-TASKS-PRIMARY-SFX-GATE",
       "status": "done",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -1033,6 +1187,7 @@
     {
       "task": "M2-TEST-CATALOG-DRIFT-CLEAR-1",
       "status": "done",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -1040,6 +1195,7 @@
     {
       "task": "M2-UI-SHELL-ENV-1",
       "status": "done",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -1047,6 +1203,7 @@
     {
       "task": "M2-UI1",
       "status": "done",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -1054,6 +1211,7 @@
     {
       "task": "M2-WORKBENCH-REACT-1",
       "status": "done",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -1061,6 +1219,7 @@
     {
       "task": "P01",
       "status": "done",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -1068,6 +1227,7 @@
     {
       "task": "P02-MAINLINE-INTEGRATION",
       "status": "done",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -1075,6 +1235,7 @@
     {
       "task": "P02-NEW-TIME-BASELINE-AC3-BRANCH-RESOLUTION",
       "status": "done",
+      "tracked": false,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -1082,6 +1243,7 @@
     {
       "task": "P02-NEW-TIME-BASELINE-AC3-GIT-TOPLEVEL-RESOLUTION",
       "status": "done",
+      "tracked": false,
       "exit": 1,
       "fail_count": 25,
       "fails": [
@@ -1115,6 +1277,7 @@
     {
       "task": "P02-NEW-TIME-BASELINE-AC3-HELPER-OUTPUT-RESOLUTION",
       "status": "done",
+      "tracked": false,
       "exit": 1,
       "fail_count": 6,
       "fails": [
@@ -1129,6 +1292,7 @@
     {
       "task": "P02-NEW-TIME-BASELINE",
       "status": "done",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -1136,6 +1300,7 @@
     {
       "task": "P02-NEW-TIME-X6-AC1-AC7",
       "status": "done",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -1143,6 +1308,7 @@
     {
       "task": "P02-NEW-TIME-X6-BUILD-CARGO",
       "status": "approved",
+      "tracked": true,
       "exit": 1,
       "fail_count": 15,
       "fails": [
@@ -1166,6 +1332,7 @@
     {
       "task": "P02-NEW-TIME-X6-POSTRUN-REVIEW",
       "status": "approved",
+      "tracked": true,
       "exit": 1,
       "fail_count": 1,
       "fails": [
@@ -1175,6 +1342,7 @@
     {
       "task": "P02-NEW-TIME-X6",
       "status": "approved",
+      "tracked": true,
       "exit": 1,
       "fail_count": 1,
       "fails": [
@@ -1184,6 +1352,7 @@
     {
       "task": "P02",
       "status": "closed_with_limitations",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -1191,6 +1360,7 @@
     {
       "task": "P02PRE-R0",
       "status": "done",
+      "tracked": false,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -1198,6 +1368,7 @@
     {
       "task": "P02PRE-R0S1",
       "status": "done",
+      "tracked": false,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -1205,6 +1376,7 @@
     {
       "task": "P02PRE-R0S2",
       "status": "blocked",
+      "tracked": false,
       "exit": 1,
       "fail_count": 1,
       "fails": [
@@ -1214,6 +1386,7 @@
     {
       "task": "P02PRE-R0S3",
       "status": "done",
+      "tracked": false,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -1221,6 +1394,7 @@
     {
       "task": "P02PRE-R0S4",
       "status": "blocked",
+      "tracked": false,
       "exit": 1,
       "fail_count": 1,
       "fails": [
@@ -1230,6 +1404,7 @@
     {
       "task": "P02PRE-R0S5",
       "status": "blocked",
+      "tracked": false,
       "exit": 1,
       "fail_count": 1,
       "fails": [
@@ -1239,6 +1414,7 @@
     {
       "task": "P02PRE-R0S6",
       "status": "blocked",
+      "tracked": false,
       "exit": 1,
       "fail_count": 1,
       "fails": [
@@ -1248,6 +1424,7 @@
     {
       "task": "P02PRE-R1",
       "status": "closed_with_limitations",
+      "tracked": false,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -1255,6 +1432,7 @@
     {
       "task": "P02PRE-R1F",
       "status": "closed_with_limitations",
+      "tracked": false,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -1262,6 +1440,7 @@
     {
       "task": "P02PRE-R1G",
       "status": "closed_with_limitations",
+      "tracked": false,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -1269,6 +1448,7 @@
     {
       "task": "P02PRE-R1H-FORENSIC-RECOVERY",
       "status": "done",
+      "tracked": false,
       "exit": 1,
       "fail_count": 2,
       "fails": [
@@ -1279,6 +1459,7 @@
     {
       "task": "P02PRE-R1H-H1-CURRENT-INPUT-REVIEW",
       "status": "done",
+      "tracked": false,
       "exit": 1,
       "fail_count": 3,
       "fails": [
@@ -1290,6 +1471,7 @@
     {
       "task": "P02PRE-R1H-H2-COLLECTOR",
       "status": "done",
+      "tracked": false,
       "exit": 1,
       "fail_count": 13,
       "fails": [
@@ -1311,6 +1493,7 @@
     {
       "task": "P02PRE-R1H-H2-RUN",
       "status": "done",
+      "tracked": false,
       "exit": 1,
       "fail_count": 7,
       "fails": [
@@ -1326,6 +1509,7 @@
     {
       "task": "P02PRE-R1H-P2-1-EVIDENCE-CLOSURE",
       "status": "blocked",
+      "tracked": false,
       "exit": 1,
       "fail_count": 1,
       "fails": [
@@ -1335,6 +1519,7 @@
     {
       "task": "P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE",
       "status": "done",
+      "tracked": false,
       "exit": 1,
       "fail_count": 5,
       "fails": [
@@ -1348,6 +1533,7 @@
     {
       "task": "P02PRE-R1H-R6-A4",
       "status": "done",
+      "tracked": false,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -1355,6 +1541,7 @@
     {
       "task": "P02PRE-R1H-R6-EXEC-A4",
       "status": "blocked",
+      "tracked": false,
       "exit": 1,
       "fail_count": 1,
       "fails": [
@@ -1364,6 +1551,7 @@
     {
       "task": "P02PRE-R1H-R6-EXEC-A5",
       "status": "blocked",
+      "tracked": false,
       "exit": 1,
       "fail_count": 1,
       "fails": [
@@ -1373,6 +1561,7 @@
     {
       "task": "P02PRE-R1H-R6-EXEC-A6",
       "status": "in_progress",
+      "tracked": false,
       "exit": 1,
       "fail_count": 1,
       "fails": [
@@ -1382,6 +1571,7 @@
     {
       "task": "P02PRE-R1H-R6-ZCODE-H1",
       "status": "in_review",
+      "tracked": false,
       "exit": 1,
       "fail_count": 1,
       "fails": [
@@ -1391,6 +1581,7 @@
     {
       "task": "P02PRE-R1H",
       "status": "in_progress",
+      "tracked": false,
       "exit": 1,
       "fail_count": 1,
       "fails": [
@@ -1400,6 +1591,7 @@
     {
       "task": "P03",
       "status": "done",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -1407,6 +1599,7 @@
     {
       "task": "P04",
       "status": "done",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -1414,6 +1607,7 @@
     {
       "task": "P05",
       "status": "done",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -1421,6 +1615,7 @@
     {
       "task": "P06",
       "status": "done",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -1428,6 +1623,7 @@
     {
       "task": "P08",
       "status": "done",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -1435,6 +1631,7 @@
     {
       "task": "P09-AC3-DELETE-1",
       "status": "closed_with_limitations",
+      "tracked": true,
       "exit": 1,
       "fail_count": 1,
       "fails": [
@@ -1444,6 +1641,7 @@
     {
       "task": "P09-AC3-DELETE-HARDEN-1",
       "status": "closed_with_limitations",
+      "tracked": true,
       "exit": 1,
       "fail_count": 1,
       "fails": [
@@ -1453,6 +1651,7 @@
     {
       "task": "P09-FU1",
       "status": "done",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -1460,6 +1659,7 @@
     {
       "task": "P09-FU2",
       "status": "done",
+      "tracked": true,
       "exit": 1,
       "fail_count": 1,
       "fails": [
@@ -1469,6 +1669,7 @@
     {
       "task": "P09-MANAGED-READ-ROOT-TRUST-1",
       "status": "proposed",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -1476,6 +1677,7 @@
     {
       "task": "P09-PREVIEW-LIFECYCLE-RECLAIM-1",
       "status": "closed_with_limitations",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -1483,6 +1685,7 @@
     {
       "task": "P09",
       "status": "closed_with_limitations",
+      "tracked": true,
       "exit": 1,
       "fail_count": 1,
       "fails": [
@@ -1492,6 +1695,7 @@
     {
       "task": "P10",
       "status": "done",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -1499,6 +1703,7 @@
     {
       "task": "P11-PROJECTION-TEST-ALIGN-1",
       "status": "closed_with_limitations",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -1506,6 +1711,7 @@
     {
       "task": "P11",
       "status": "done",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -1513,6 +1719,7 @@
     {
       "task": "P12-C1",
       "status": "done",
+      "tracked": true,
       "exit": 1,
       "fail_count": 2,
       "fails": [
@@ -1523,6 +1730,7 @@
     {
       "task": "P12",
       "status": "done",
+      "tracked": true,
       "exit": 1,
       "fail_count": 1,
       "fails": [
@@ -1532,6 +1740,7 @@
     {
       "task": "P13-C1",
       "status": "done",
+      "tracked": true,
       "exit": 1,
       "fail_count": 5,
       "fails": [
@@ -1545,6 +1754,7 @@
     {
       "task": "P13",
       "status": "done",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -1552,6 +1762,7 @@
     {
       "task": "P14",
       "status": "done",
+      "tracked": true,
       "exit": 1,
       "fail_count": 2,
       "fails": [
@@ -1562,6 +1773,7 @@
     {
       "task": "P15-C1-FU1",
       "status": "done",
+      "tracked": true,
       "exit": 1,
       "fail_count": 3,
       "fails": [
@@ -1573,6 +1785,7 @@
     {
       "task": "P15-C1-FU2",
       "status": "done",
+      "tracked": true,
       "exit": 1,
       "fail_count": 1,
       "fails": [
@@ -1582,6 +1795,7 @@
     {
       "task": "P15-C1",
       "status": "done",
+      "tracked": true,
       "exit": 1,
       "fail_count": 3,
       "fails": [
@@ -1593,6 +1807,7 @@
     {
       "task": "P15-CORE-1",
       "status": "blocked",
+      "tracked": true,
       "exit": 1,
       "fail_count": 1,
       "fails": [
@@ -1602,6 +1817,7 @@
     {
       "task": "P15-CORE-1A",
       "status": "done",
+      "tracked": true,
       "exit": 1,
       "fail_count": 5,
       "fails": [
@@ -1615,6 +1831,7 @@
     {
       "task": "P15-CORE-1B",
       "status": "done",
+      "tracked": true,
       "exit": 1,
       "fail_count": 6,
       "fails": [
@@ -1629,6 +1846,7 @@
     {
       "task": "P15-CORE-1C",
       "status": "done",
+      "tracked": true,
       "exit": 1,
       "fail_count": 3,
       "fails": [
@@ -1640,6 +1858,7 @@
     {
       "task": "P15-HOST-1",
       "status": "done",
+      "tracked": true,
       "exit": 1,
       "fail_count": 3,
       "fails": [
@@ -1651,6 +1870,7 @@
     {
       "task": "P15-HOST-2",
       "status": "done",
+      "tracked": true,
       "exit": 1,
       "fail_count": 1,
       "fails": [
@@ -1660,6 +1880,7 @@
     {
       "task": "P15",
       "status": "done",
+      "tracked": true,
       "exit": 1,
       "fail_count": 1,
       "fails": [
@@ -1669,6 +1890,7 @@
     {
       "task": "P16-C1",
       "status": "done",
+      "tracked": true,
       "exit": 1,
       "fail_count": 1,
       "fails": [
@@ -1678,6 +1900,7 @@
     {
       "task": "P16",
       "status": "done",
+      "tracked": true,
       "exit": 1,
       "fail_count": 1,
       "fails": [
@@ -1687,6 +1910,7 @@
     {
       "task": "P17",
       "status": "done",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -1694,6 +1918,7 @@
     {
       "task": "P18",
       "status": "closed_with_limitations",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -1701,6 +1926,7 @@
     {
       "task": "P19-AC3-1",
       "status": "in_review",
+      "tracked": true,
       "exit": 1,
       "fail_count": 1,
       "fails": [
@@ -1710,6 +1936,7 @@
     {
       "task": "P19-BOOT-1",
       "status": "done",
+      "tracked": true,
       "exit": 1,
       "fail_count": 2,
       "fails": [
@@ -1720,6 +1947,7 @@
     {
       "task": "P19-UI-FIX-1",
       "status": "done",
+      "tracked": true,
       "exit": 1,
       "fail_count": 2,
       "fails": [
@@ -1730,6 +1958,7 @@
     {
       "task": "P19-UI-FIX-2",
       "status": "done",
+      "tracked": true,
       "exit": 1,
       "fail_count": 1,
       "fails": [
@@ -1739,6 +1968,7 @@
     {
       "task": "P19-UI-FIX-3",
       "status": "blocked",
+      "tracked": true,
       "exit": 1,
       "fail_count": 1,
       "fails": [
@@ -1748,6 +1978,7 @@
     {
       "task": "P19-UI-MANIFEST-VIEW-1",
       "status": "closed_with_limitations",
+      "tracked": true,
       "exit": 1,
       "fail_count": 1,
       "fails": [
@@ -1757,6 +1988,7 @@
     {
       "task": "P19",
       "status": "closed_with_limitations",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -1764,6 +1996,7 @@
     {
       "task": "P20-AC4-FPS-1",
       "status": "closed_with_limitations",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -1771,6 +2004,7 @@
     {
       "task": "P20-CLOSE-BOUND-1",
       "status": "closed_with_limitations",
+      "tracked": true,
       "exit": 1,
       "fail_count": 2,
       "fails": [
@@ -1781,6 +2015,7 @@
     {
       "task": "P20-CLOSE-BOUND-HARDEN-1",
       "status": "closed_with_limitations",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -1788,6 +2023,7 @@
     {
       "task": "P20-CLOSE-BOUND-HARDEN-2",
       "status": "done",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -1795,6 +2031,7 @@
     {
       "task": "P20-ISOLATION-1",
       "status": "closed_with_limitations",
+      "tracked": true,
       "exit": 1,
       "fail_count": 1,
       "fails": [
@@ -1804,6 +2041,7 @@
     {
       "task": "P20-MEM-OPT-1",
       "status": "closed_with_limitations",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -1811,6 +2049,7 @@
     {
       "task": "P20",
       "status": "closed_with_limitations",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -1818,6 +2057,7 @@
     {
       "task": "P22-REBASE-1",
       "status": "done",
+      "tracked": true,
       "exit": 1,
       "fail_count": 2,
       "fails": [
@@ -1828,6 +2068,7 @@
     {
       "task": "P22",
       "status": "in_review",
+      "tracked": false,
       "exit": 1,
       "fail_count": 3,
       "fails": [
@@ -1839,6 +2080,7 @@
     {
       "task": "PDF-STREAM-FIX-1",
       "status": "closed_with_limitations",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -1846,6 +2088,7 @@
     {
       "task": "PROJECT-ROADMAP-RELEASE",
       "status": "done",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -1853,6 +2096,7 @@
     {
       "task": "READER-IPC-1",
       "status": "done",
+      "tracked": true,
       "exit": 1,
       "fail_count": 1,
       "fails": [
@@ -1862,6 +2106,7 @@
     {
       "task": "RES-P02-AC6-CDP-RECOVERY",
       "status": "done",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -1869,6 +2114,7 @@
     {
       "task": "RUN-IPC-1",
       "status": "done",
+      "tracked": true,
       "exit": 1,
       "fail_count": 2,
       "fails": [
@@ -1879,6 +2125,7 @@
     {
       "task": "RUST-ENV-BASELINE-1",
       "status": "proposed",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -1886,6 +2133,7 @@
     {
       "task": "SEARCHABLE-PDF-CJK-1",
       "status": "closed_with_limitations",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -1893,6 +2141,7 @@
     {
       "task": "SEC-FIX-PATH-ECHO-1",
       "status": "done",
+      "tracked": true,
       "exit": 1,
       "fail_count": 1,
       "fails": [
@@ -1902,6 +2151,7 @@
     {
       "task": "SEC-FMT-IMPL-1",
       "status": "closed_with_limitations",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -1909,6 +2159,7 @@
     {
       "task": "T1.1.1",
       "status": "done",
+      "tracked": true,
       "exit": 1,
       "fail_count": 2,
       "fails": [
@@ -1919,6 +2170,7 @@
     {
       "task": "T1.2.1",
       "status": "done",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -1926,6 +2178,7 @@
     {
       "task": "T2.1.1",
       "status": "done",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -1933,6 +2186,7 @@
     {
       "task": "T2.2.1",
       "status": "done",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -1940,6 +2194,7 @@
     {
       "task": "T3.1.1",
       "status": "done",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -1947,6 +2202,7 @@
     {
       "task": "T3.2.1-REPAIR-10",
       "status": "proposed",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -1954,6 +2210,7 @@
     {
       "task": "T3.2.1-REPAIR-11",
       "status": "changes_requested",
+      "tracked": true,
       "exit": 1,
       "fail_count": 1,
       "fails": [
@@ -1963,6 +2220,7 @@
     {
       "task": "T3.2.1-REPAIR-12",
       "status": "approved",
+      "tracked": true,
       "exit": 1,
       "fail_count": 1,
       "fails": [
@@ -1972,6 +2230,7 @@
     {
       "task": "T3.2.1-REPAIR-13",
       "status": "done",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -1979,6 +2238,7 @@
     {
       "task": "T3.2.1-REPAIR-14",
       "status": "done",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -1986,6 +2246,7 @@
     {
       "task": "T3.2.1-REPAIR-15-reader-export-lineage",
       "status": "proposed",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -1993,6 +2254,7 @@
     {
       "task": "T3.2.1-REPAIR-16-bookshelf-page-count",
       "status": "proposed",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -2000,6 +2262,7 @@
     {
       "task": "T3.2.1-REPAIR-17-mock-local-pipeline-smoke",
       "status": "proposed",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -2007,6 +2270,7 @@
     {
       "task": "T3.2.1-REPAIR-3",
       "status": "proposed",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -2014,6 +2278,7 @@
     {
       "task": "T3.2.1-REPAIR-4",
       "status": "changes_requested",
+      "tracked": true,
       "exit": 1,
       "fail_count": 1,
       "fails": [
@@ -2023,6 +2288,7 @@
     {
       "task": "T3.2.1-REPAIR-5",
       "status": "changes_requested",
+      "tracked": true,
       "exit": 1,
       "fail_count": 1,
       "fails": [
@@ -2032,6 +2298,7 @@
     {
       "task": "T3.2.1-REPAIR-6",
       "status": "changes_requested",
+      "tracked": true,
       "exit": 1,
       "fail_count": 1,
       "fails": [
@@ -2041,6 +2308,7 @@
     {
       "task": "T3.2.1-REPAIR-7",
       "status": "proposed",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -2048,6 +2316,7 @@
     {
       "task": "T3.2.1-REPAIR-8",
       "status": "approved",
+      "tracked": true,
       "exit": 1,
       "fail_count": 1,
       "fails": [
@@ -2057,6 +2326,7 @@
     {
       "task": "T3.2.1-REPAIR-9",
       "status": "proposed",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -2064,6 +2334,7 @@
     {
       "task": "T3.2.1",
       "status": "closed_with_limitations",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -2071,6 +2342,7 @@
     {
       "task": "TASK-001",
       "status": "done",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -2078,6 +2350,7 @@
     {
       "task": "TASK-002",
       "status": "done",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -2085,6 +2358,7 @@
     {
       "task": "TASK-003",
       "status": "done",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -2092,6 +2366,7 @@
     {
       "task": "TASK-004",
       "status": "done",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -2099,6 +2374,7 @@
     {
       "task": "TASK-005",
       "status": "done",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -2106,6 +2382,7 @@
     {
       "task": "TASK-006",
       "status": "done",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -2113,6 +2390,7 @@
     {
       "task": "TASK-007",
       "status": "done",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -2120,6 +2398,7 @@
     {
       "task": "TASK-008",
       "status": "done",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -2127,6 +2406,7 @@
     {
       "task": "TASK-009",
       "status": "done",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -2134,6 +2414,7 @@
     {
       "task": "TASK-010",
       "status": "done",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -2141,6 +2422,7 @@
     {
       "task": "TASK-011",
       "status": "done",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -2148,6 +2430,7 @@
     {
       "task": "TASK-012",
       "status": "done",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -2155,6 +2438,7 @@
     {
       "task": "TASK-013",
       "status": "done",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -2162,6 +2446,7 @@
     {
       "task": "TASK-014",
       "status": "done",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -2169,6 +2454,7 @@
     {
       "task": "TASK-015",
       "status": "done",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -2176,6 +2462,7 @@
     {
       "task": "TASK-016",
       "status": "done",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -2183,6 +2470,7 @@
     {
       "task": "TASK-017",
       "status": "done",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -2190,6 +2478,7 @@
     {
       "task": "TASK-018",
       "status": "done",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -2197,6 +2486,7 @@
     {
       "task": "TASK-019",
       "status": "done",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -2204,6 +2494,7 @@
     {
       "task": "TASK-020",
       "status": "done",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -2211,6 +2502,7 @@
     {
       "task": "TASK-021",
       "status": "done",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -2218,6 +2510,7 @@
     {
       "task": "TASK-022",
       "status": "proposed",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -2225,6 +2518,7 @@
     {
       "task": "TASK-023",
       "status": "done",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -2232,6 +2526,7 @@
     {
       "task": "TASK-024",
       "status": "done",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -2239,6 +2534,7 @@
     {
       "task": "TASK-025",
       "status": "proposed",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -2246,6 +2542,7 @@
     {
       "task": "TASK-026",
       "status": "proposed",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -2253,6 +2550,7 @@
     {
       "task": "TASK-027",
       "status": "proposed",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -2260,6 +2558,7 @@
     {
       "task": "TASK-028",
       "status": "done",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -2267,6 +2566,7 @@
     {
       "task": "TASK-029",
       "status": "done",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -2274,6 +2574,7 @@
     {
       "task": "TASK-030",
       "status": "done",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -2281,6 +2582,7 @@
     {
       "task": "TASK-031",
       "status": "done",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -2288,6 +2590,7 @@
     {
       "task": "TASK-032",
       "status": "done",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -2295,6 +2598,7 @@
     {
       "task": "TASK-033",
       "status": "done",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -2302,6 +2606,7 @@
     {
       "task": "TASK-034",
       "status": "done",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -2309,6 +2614,7 @@
     {
       "task": "TASK-035",
       "status": "done",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -2316,6 +2622,7 @@
     {
       "task": "TASK-036",
       "status": "done",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -2323,6 +2630,7 @@
     {
       "task": "TASK-037",
       "status": "done",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -2330,6 +2638,7 @@
     {
       "task": "TASK-038",
       "status": "done",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -2337,6 +2646,7 @@
     {
       "task": "TASK-039",
       "status": "done",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -2344,6 +2654,7 @@
     {
       "task": "TASK-040",
       "status": "done",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -2351,6 +2662,7 @@
     {
       "task": "TASK-041",
       "status": "done",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -2358,6 +2670,7 @@
     {
       "task": "TASK-042",
       "status": "done",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -2365,6 +2678,7 @@
     {
       "task": "TASK-043",
       "status": "done",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -2372,6 +2686,7 @@
     {
       "task": "TASK-044",
       "status": "done",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -2379,6 +2694,7 @@
     {
       "task": "TASK-045",
       "status": "done",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -2386,6 +2702,7 @@
     {
       "task": "TASK-046",
       "status": "done",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -2393,6 +2710,7 @@
     {
       "task": "TASK-047",
       "status": "cancelled",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -2400,6 +2718,7 @@
     {
       "task": "TASK-048",
       "status": "done",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -2407,6 +2726,7 @@
     {
       "task": "TASK-049",
       "status": "done",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -2414,6 +2734,7 @@
     {
       "task": "TASK-050",
       "status": "done",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -2421,6 +2742,7 @@
     {
       "task": "TASK-051",
       "status": "done",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -2428,6 +2750,7 @@
     {
       "task": "TASK-052",
       "status": "done",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -2435,6 +2758,7 @@
     {
       "task": "TASK-053",
       "status": "done",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -2442,6 +2766,7 @@
     {
       "task": "TASK-054",
       "status": "done",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -2449,6 +2774,7 @@
     {
       "task": "TASK-055",
       "status": "done",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -2456,6 +2782,7 @@
     {
       "task": "TASK-056",
       "status": "done",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -2463,6 +2790,7 @@
     {
       "task": "TASK-057",
       "status": "done",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -2470,6 +2798,7 @@
     {
       "task": "TASK-058",
       "status": "done",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -2477,6 +2806,7 @@
     {
       "task": "TASK-059",
       "status": "done",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -2484,6 +2814,7 @@
     {
       "task": "TASK-060",
       "status": "done",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -2491,6 +2822,7 @@
     {
       "task": "TASK-061",
       "status": "done",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -2498,6 +2830,7 @@
     {
       "task": "TASK-062",
       "status": "done",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -2505,6 +2838,7 @@
     {
       "task": "TASK-063",
       "status": "done",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -2512,6 +2846,7 @@
     {
       "task": "TASK-064",
       "status": "done",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -2519,6 +2854,7 @@
     {
       "task": "TASK-065",
       "status": "done",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -2526,6 +2862,7 @@
     {
       "task": "TEST-ENV-ASSUMPTIONS-1",
       "status": "closed_with_limitations",
+      "tracked": true,
       "exit": 0,
       "fail_count": 0,
       "fails": []
@@ -2533,6 +2870,7 @@
     {
       "task": "UI-DESIGN-1",
       "status": "done",
+      "tracked": true,
       "exit": 1,
       "fail_count": 1,
       "fails": [
