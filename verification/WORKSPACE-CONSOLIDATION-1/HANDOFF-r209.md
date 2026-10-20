@@ -91,3 +91,15 @@ Governance check: PASS (3 warnings)
 3. 增量 bundle 依赖前置历史，不是独立完整备份。
 4. tools 保护修复未做；Handoff 目录未迁移；两者都需先冻结范围。
 5. 更早的工作区状态转换历史仍为 UNVERIFIED。
+
+## 8. R210 复审结果（交付后追加）
+
+`codex-review-r210.md`（reviewed_head=`4072411eba420684cf0ba694c29cfcbdab9b0fc8`，即本轮交付提交 G）：
+**decision=`approved_with_conditions`**。
+
+- F-01..F-04 **全部判定“已处置”**，本轮未发现新的实质问题；F-01 临时 bare repo 保留原位，清理需另行授权。
+- 复审明确：**仅批准本轮 F-01..F-04 的处置，不批准关闭 Task**；`canonical_evidence_status` /
+  `resource_closeout_status` 仍为 `pending`，R208 的资源缺口仍 open。
+- 本 Handoff 与 Task 的 R210 登记、STATUS/Plan 指针更新属于**复审后的元数据提交**，不改变 G 的已审内容；
+  R210 报告按 SOURCE_PIN（工作区字节）登记，Reviewer 原文保持未跟踪。
+- 建议下一步保持 Task `in_review`，由用户/Codex 处理尚未关闭的资源与验收项；不得据本复审自行关闭 Task。

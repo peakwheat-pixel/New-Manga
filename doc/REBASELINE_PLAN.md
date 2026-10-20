@@ -51,5 +51,5 @@
 |GOV-PLAN-BUDGET-1|—|done|
 |RUST-ENV-BASELINE-1（P20-CLOSE-BOUND-1）/ P07交互补缺（P02）/ P21旧栈归档（P20+另授权）|—|proposed（P07/P21可选）|
 |P22 响应归属|P22-REBASE-1|已集成；P04 不放行，H1/P2-1/13 与 BC-AC5 缺项保留。已完成见各节点行。|
-|WORKSPACE-CONSOLIDATION-1|—|**in_review（r209 第二轮返修已交付）**：r208/r209 均 changes_requested；132 worktree、93 分支（19 未合并均已归档）、18 个保护资源受影响；P03 两提交已保全（77 refs，1,225 合计/322 去重）；49.48 GiB 为删除收据逻辑字节、非物理净释放；AC1/AC2/AC3/AC6/AC7/AC9 PARTIAL，不得判 MET。详见 rework-r209-response|
+|WORKSPACE-CONSOLIDATION-1|—|**in_review（r210=approved_with_conditions；仅 F-01..F-04 处置，不批准关闭）**：r208/r209 为 changes_requested；132 worktree、93 分支（19 未合并均已归档）、18 个保护资源受影响；P03 两提交已保全（77 refs，1,225 合计/322 去重）；49.48 GiB 为删除收据逻辑字节、非物理净释放；AC1/AC2/AC3/AC6/AC7/AC9 PARTIAL，不得判 MET。详见 codex-review-r210|
 READY 节点：**无**。done：**51 项**。

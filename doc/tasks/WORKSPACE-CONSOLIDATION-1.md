@@ -171,6 +171,8 @@ R209 报告：`verification/WORKSPACE-CONSOLIDATION-1/codex-review-r209.md`
 
 治理：登记 r209 Review 后 `PASS (3 warnings)`、exit 0；第 4 条“未登记过程文件”warning 消失。
 
+**R210 复审结果（2026-10-20）**：`approved_with_conditions`；F-01..F-04 均判定“已处置”、无新实质问题；复审明确**不批准关闭 Task**，R208 资源缺口仍 open。已登记 `EV-R210-REVIEW`（SOURCE_PIN，Reviewer 原文保持未跟踪）；复审后的本段与 Top 指针属元数据提交，不改变已审交付内容 G。
+
 ## 允许修改范围
 
 - 本 Task 文件、`verification/WORKSPACE-CONSOLIDATION-1/`
@@ -229,6 +231,7 @@ R209 报告：`verification/WORKSPACE-CONSOLIDATION-1/codex-review-r209.md`
 |---|---|---|---|---|
 | Codex r208 | `verification/WORKSPACE-CONSOLIDATION-1/codex-review-r208.md` | `3947d63447457fe3ef8d3587942e632724ab3d72` | `changes_requested` | 已按 `findings-disposition-r208.md` 逐项返修；第一轮固定 head `8d24d4eaf` |
 | Codex r209 | `verification/WORKSPACE-CONSOLIDATION-1/codex-review-r209.md` | `8d24d4eafe798dd48045404843ca312f2aedc261` | `changes_requested` | 已按 `rework-r209-response.md` 处置 F-01..F-04；第二轮返修交付，待 Codex 复审 |
+| Codex r210 | `verification/WORKSPACE-CONSOLIDATION-1/codex-review-r210.md` | `4072411eba420684cf0ba694c29cfcbdab9b0fc8` | `approved_with_conditions` | 仅批准 F-01..F-04 处置，**不批准关闭 Task**；F-01..F-04 均判定已处置、无新实质问题；资源缺口仍 open |
 
 **第四条治理 warning 解释**：r208 写入后治理检查为 `PASS (4 warnings)`，第四条是
 `evidence_dir 含未登记过程文件 … codex-review-r208.md`——Review 报告是新增未跟踪文件、尚未登记到
@@ -267,7 +270,8 @@ Canonical Evidence，属流程状态而非产品失败。本轮已把该 Review 
 | EV-R208-HANDOFF | R208 交付 | `verification/WORKSPACE-CONSOLIDATION-1/HANDOFF-r208.md` | - | 2beec13ef9cc5671ad43424fb32f5c447beb9b3c2bad239d9f11dcea7ae08fe9 | SOURCE_PIN |
 | EV-R209-REVIEW | R209 Review | `verification/WORKSPACE-CONSOLIDATION-1/codex-review-r209.md` | - | a3710e23fcbec3d2a8dcb60ea171945d1068693776b9533385fbdebb91bce04d | SOURCE_PIN |
 | EV-R209-RESPONSE | R209 F-01..F-04 | `verification/WORKSPACE-CONSOLIDATION-1/rework-r209-response.md` | - | 79b5b1c92d18e1fad35a7727da6f2696ee872e59663a225c6681d12aecb0bf17 | CANONICAL |
-| EV-R209-HANDOFF | R209 交付 | `verification/WORKSPACE-CONSOLIDATION-1/HANDOFF-r209.md` | - | b143dfee91268d480d4bb671b82145a0eb1838dcc454a8fddd31cd863faa69ca | SOURCE_PIN |
+| EV-R209-HANDOFF | R209 交付 | `verification/WORKSPACE-CONSOLIDATION-1/HANDOFF-r209.md` | - | ffaa70eb2b7d85b117eb6b07bb66289bd1014547047668c28e5df14767f9de14 | SOURCE_PIN |
+| EV-R210-REVIEW | R210 Review | `verification/WORKSPACE-CONSOLIDATION-1/codex-review-r210.md` | - | 7f63f6edbf84c3706ab71975f1489e4652f773e9e47d443dc0f75b4c131fac7e | SOURCE_PIN |
 | EV-R208-GITATTR | 证据 EOL pin | `verification/WORKSPACE-CONSOLIDATION-1/.gitattributes` | - | db13af9f871ab99b3859fc1177d97e7d32a0d212b2c9ac70ad445eeabf614213 | SOURCE_PIN |
 
 ## Resource Manifest
@@ -293,7 +297,7 @@ Canonical Evidence，属流程状态而非产品失败。本轮已把该 Review 
 
 ## Closeout Record
 
-- Closeout date / Codex：**未关闭**。r208、r209 均为 `changes_requested`；第二轮返修已提交，等待 Codex 独立复审。
+- Closeout date / Codex：**未关闭**。r208=`changes_requested`；r209=`changes_requested`；r210=`approved_with_conditions`（仅批准 F-01..F-04 处置，明确不批准关闭 Task）。
   用户 2026-10-20 已授权 Owner 自动推进与对残余范围事项自我裁决，但不授权 Owner 自审/自批/关闭 Task。
 - canonical_evidence_status：`pending`（返修固定 head 与 Review 后重判）。
 - resource_closeout_status：`pending` / 事故项 open。

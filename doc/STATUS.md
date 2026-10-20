@@ -4,8 +4,8 @@
 
 ## 当前 Task
 
-- 当前 Task：[WORKSPACE-CONSOLIDATION-1](tasks/WORKSPACE-CONSOLIDATION-1.md) **`in_review`**（r209 第二轮返修已交付：132 worktree、93 分支（19 未合并均已归档）、18 个保护资源受影响；P03 已保全；49.48 GiB 为删除收据逻辑字节；AC1/2/3/6/7/9 PARTIAL；详见 Task 与 codex-review-r209.md）。最近收口：[M2-PROD-DETECT-ENV-1](tasks/M2-PROD-DETECT-ENV-1.md)（`closed_with_limitations`：检测链路本机已可用，`tests/providers` 442 passed；原「离线」为误判）。
-- **WORKSPACE-CONSOLIDATION-1**：r208/r209 均 changes_requested；Task 未 done；F-01 系统 Temp 演练已自我裁定保留原状；残余风险与 ignored 缺口待用户/Reviewer 裁决；不得再清理/GC/prune。
+- 当前 Task：[WORKSPACE-CONSOLIDATION-1](tasks/WORKSPACE-CONSOLIDATION-1.md) **`in_review`**（r210=`approved_with_conditions`，仅批准 F-01..F-04 处置、不批准关闭：132 worktree、93 分支（19 未合并均已归档）、18 个保护资源受影响；P03 已保全；49.48 GiB 为删除收据逻辑字节；AC1/2/3/6/7/9 PARTIAL；详见 Task 与 codex-review-r210.md）。最近收口：[M2-PROD-DETECT-ENV-1](tasks/M2-PROD-DETECT-ENV-1.md)（`closed_with_limitations`：检测链路本机已可用，`tests/providers` 442 passed；原「离线」为误判）。
+- **WORKSPACE-CONSOLIDATION-1**：r208/r209=`changes_requested` → r210=`approved_with_conditions`；Task 未 done；F-01 系统 Temp 演练自我裁定保留原状；残余风险与 ignored 缺口待用户/Reviewer 裁决；不得再清理/GC/prune。
 - **[ARCH-DOC-REBASELINE](tasks/ARCH-DOC-REBASELINE.md)**：`closed_with_limitations`（r37 的 7+1：7 Gate 达成 + AC-CONSUMPTION `PARTIAL`，6/8 消费者已处置；**ZCode 设计 Gate 与第二环境无活动 Task**）。
 - `DETECT-TILING-1` / `DETECT-MEMORY-GUARD-1` / `SEC-FMT-IMPL-1` / `PDF-STREAM-FIX-1` 均 `closed_with_limitations`。
 - `P09-AC3-DELETE-1`/`HARDEN-1` `closed_with_limitations`；**`P18` 4/8**（AC2 门槛、AC5 阻塞）；`P20` 6/7；`P16`/`P17` `done`。
