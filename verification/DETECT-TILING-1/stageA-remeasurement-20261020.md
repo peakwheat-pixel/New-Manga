@@ -74,22 +74,44 @@
 **旧数字并不支持「拒绝很便宜」这个更弱的结论吗？**
 **不——141.7 vs 479.8（3.4×）依然支持。但 37.3 那个数不成立，必须撤回。**
 
-## 四、控制组选错了，但它暴露了一个真实行为
+## 四、控制组：**我的归因是错的**（ZCode r2 的 N-1）
 
-**我原意是找一张「不超限」的页做对照**，选了
-`600×18401 = 11,040,600 px`（**小于** `MAX_DETECT_PIXELS` = 11,184,810）。
+**本文件初稿写**：对照页 `600×18401`「仍然被拒绝……原因：编码字节数超过 `MAX_DETECT_PAGE_BYTES`（32 MiB）」，并称这是「有价值的意外」——字节上限也在正确拒绝。
 
-**结果它仍然被拒绝了（`rejected: True`）。**
+**这是错的。ZCode r2 查了我自己的 JSON：**
 
-**原因**：它的**编码字节数**超过了 `MAX_DETECT_PAGE_BYTES`（32 MiB）。
+```
+label     : CONTROL undersize
+file_mb   : 1.6            <-- 1.6 MB 不可能触发 32 MiB 的字节门
+pixels    : 11040600  vs limit 11184810   <-- 也不超像素门
+rejected  : True
+error_type: AttributeError
+message   : 'CoreServiceServer' object has no attribute '_core'
+```
 
-**所以控制组实际验证的是**：**字节上限这条路径也在正确拒绝**。
+**所以那不是产品拒绝，是我的探针崩溃。**
 
-**这是一个有价值的意外**——但它**不是**我要的「不超限页走完整检测」。
+**根因**：探针用 `CoreServiceServer.__new__(CoreServiceServer)` 绕过 `__init__`，于是 `self._core` 不存在。崩溃点在 `getattr(self._core, "detector", None)`，**晚于** `convert()`（L1432）与 `tobytes()`（L1440）。
 
-**所以我目前仍然没有「一张正常页通过 `handle_detect` 并产出 region」的对照。**
+**这个错误为什么严重**：被字节门拒绝会抛 `DetectRequestError`（typed INVALID_REQUEST），**不可能抛 `AttributeError`**。而且 1.6 MB 与 32 MiB 相差 20 倍——**只要看一眼同一份 JSON 就站不住，而我把它写成了「有价值的意外」。**
 
-**这一条如实登记为缺口，不能算 AC1 满足。**
+### 这次崩溃反而给了一个真实数据
+
+**因为崩溃发生在解码之后**，那一行的 `peak_mb: 204.8` **实际上是一个不超限页（11,040,600 px，满幅 RGBA 42.1 MB）走完整解码的真实峰值**。
+
+| 检查点 | Working Set | Peak Working Set |
+|---|---:|---:|
+| baseline | 52.5 MB | 52.5 MB |
+| after_read | 54.6 MB | 56.8 MB |
+| at_rejection（实为解码完成） | 56.0 MB | **204.8 MB** |
+
+**这是本 Task 唯一一次「不超限页走完整解码路径」的实测**，**但它仍然不是「正常页通过 `handle_detect` 产出 region」的对照**（崩溃发生在 provider 调用之前）。
+
+**所以那个缺口仍然存在，如实登记，不因这次数据而算作已补。**
+
+### 字节门的正确性不依赖这份证据
+
+字节上限已有既有单测覆盖（`test_detect_oversized_payload_rejected_before_decode`、`test_detect_decoded_length_guard_backs_the_text_guard`）。**不需要这个假证据背书。**
 
 ## 五、剩余未处置的 Review 项
 

@@ -126,12 +126,12 @@ MAX_DETECT_PIXELS = MAX_DETECT_PAGE_BYTES // 3
 
 | evidence_id | AC/Gate | path | commit | sha256 | class |
 |---|---|---|---|---|---|
-| EV-DT1-MEM | AC1 | `verification/DETECT-TILING-1/stageA-rejection-memory.md` | 843cfe705 | b0dc64f00ecd1c50c188473b7e972f61adeb37da5c3b958779835d443dd7ef61 | CANONICAL |
-| EV-DT1-MEMJSON | AC1 | `verification/DETECT-TILING-1/stageA-rejection-memory.json` | 843cfe705 | 7a469ead6060b4374bb96145eb310a4c92a05a20235c8db2e27d27def9ab80e8 | CANONICAL |
-| EV-DT1-JPEG | AC4 | `verification/DETECT-TILING-1/stageA-jpeg-rejection-memory.json` | 783434e5b | e330c2158edcdcded52770dda9859bbc2a30d1c873af3a41de00f784dfb2e93c | CANONICAL |
-| EV-DT1-S1 | AC1 basis | `verification/DETECT-TILING-1/stage1-decoder-memory.md` | b5253ebfc | 47995fc2fbf61c046a0ae7a84dfcdf0b09c425f5442ee353f74ba8adebab7e9c | CANONICAL |
-| EV-DT1-S2 | AC1 basis | `verification/DETECT-TILING-1/stage2-candidate-paths.md` | c776dc1ae | 57131c6ea89b38f3be8fa2e03f6ab6736370de0f6c0180569dfd87bc1fda26cc | CANONICAL |
-| EV-DT1-R35 | ruling | `verification/P09-GOVERNANCE-DEBT-20261019/codex-adjudicate-tiling-stage2-r35.md` | 5885b182e | bbcf1ac2517cb3dcbae90c414a9a5e421a305e162b52fe7b8d299a8fbefd30aa | SOURCE_PIN |
+| EV-DT1-MEM | AC1 | `verification/DETECT-TILING-1/stageA-rejection-memory.md` | 843cfe705 | `f3de5ce30fe5696858411ba3587e3729c1d77dfd` | CANONICAL |
+| EV-DT1-MEMJSON | AC1 | `verification/DETECT-TILING-1/stageA-rejection-memory.json` | 843cfe705 | `1c33d92ecec43961597455c3e3f22df55e86174b` | CANONICAL |
+| EV-DT1-JPEG | AC4 | `verification/DETECT-TILING-1/stageA-jpeg-rejection-memory.json` | 783434e5b | `0a0fa56e5ec76ed0dad96f7d4f84ae4647d3ad7d` | CANONICAL |
+| EV-DT1-S1 | AC1 basis | `verification/DETECT-TILING-1/stage1-decoder-memory.md` | b5253ebfc | 506d34e60f7b2590824fa2d553a72c8108f95b6d | CANONICAL |
+| EV-DT1-S2 | AC1 basis | `verification/DETECT-TILING-1/stage2-candidate-paths.md` | c776dc1ae | `611780af4206182e71eba0cd15baff51b8349d49` | CANONICAL |
+| EV-DT1-R35 | ruling | `verification/P09-GOVERNANCE-DEBT-20261019/codex-adjudicate-tiling-stage2-r35.md` | 5885b182e | `7e17c88c7b6a6d695074a220966b895bd4e3b015` | SOURCE_PIN |
 
 ## Resource Manifest
 
