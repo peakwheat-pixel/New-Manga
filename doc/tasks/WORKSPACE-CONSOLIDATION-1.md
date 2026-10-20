@@ -3,7 +3,7 @@ id: WORKSPACE-CONSOLIDATION-1
 title: 工作区整理：归档未合并支线、清理可再生体积、收敛为单一主线
 kind: ops
 governance_version: 2
-status: in_review
+status: in_progress
 approval: approved_by_owner_2026-10-20
 blocked_by: null
 suggested_owner: dsh
@@ -14,7 +14,7 @@ base_commit: b4560ae8ab2ff9c6c4db50f9d57b50fe1e8393df
 branch: antigravity/P09-AC3-DELETE-HARDEN-1
 worktree: G:/CODEX/New Manga
 integration_commit: null
-delivery_head: ea5c6fd24ad5258849c25a29cdbb94ad996c3e48
+delivery_head: null
 canonical_evidence_status: pending
 resource_closeout_status: pending
 evidence_dir: verification/WORKSPACE-CONSOLIDATION-1
@@ -156,6 +156,21 @@ allowed_paths:
 **恢复边界**：本轮只完成映射，没有把任何内容写回被删除的原路径；写回必须先冻结范围与来源，
 且不得覆盖现存文件；禁止重跑一次性 X6 冒充原运行。
 
+### R209 第二轮返修（2026-10-20，追加式）
+
+R209 报告：`verification/WORKSPACE-CONSOLIDATION-1/codex-review-r209.md`
+（reviewed_head=`8d24d4eafe798dd48045404843ca312f2aedc261`，decision=`changes_requested`）。
+逐项处置见 `verification/WORKSPACE-CONSOLIDATION-1/rework-r209-response.md`；摘要：
+
+| ID | 处置 | 说明 |
+|---|---|---|
+| F-01 | **RECORDED / SELF-ADJUDICATED（保留原状）** | P03 隔离演练在系统 Temp 建 bare repo（`C:/Users/49745/AppData/Local/Temp/p03-bundle-verify-db01e2dede9740858d74fd6ae93a2d5f`；20 files / 26,469 B；`objects/` 为空、ref + FETCH_HEAD + hooks 样本）属范围偏离；在用户本轮“全部授权、自我裁决”下裁定为一次性只读演练 scratch，**保留原位、不删不移**，不构成项目证据；清理需另行授权 |
+| F-02 | **FIXED（可证部分）** | 本轮以内容提交（`status: in_progress`）→ 交付提交（`status: in_review` + `delivery_head`）留下状态转换；更早的工作区瞬时状态仍为 UNVERIFIED |
+| F-03 | **FIXED** | `findings-disposition-r208.md` §0/§1 已区分“执行证据状态”与“finding 处置标签”；`LOST_ORIGINAL:0` 明确为报告级 availability 汇总 |
+| F-04 | **FIXED（保留 verbatim 字节）** | 证据目录 `.gitattributes` 对 `p03-preservation-r208.md` 设 `-whitespace`；原始输出字节未改写，`git diff --check 3947d6344..HEAD` exit 0 |
+
+治理：登记 r209 Review 后 `PASS (3 warnings)`、exit 0；第 4 条“未登记过程文件”warning 消失。
+
 ## 允许修改范围
 
 - 本 Task 文件、`verification/WORKSPACE-CONSOLIDATION-1/`
@@ -196,22 +211,24 @@ allowed_paths:
 
 ## 交付与运行记录
 
-- Handoff：`verification/WORKSPACE-CONSOLIDATION-1/HANDOFF-r208.md`（**返修 Handoff**；`doc/handoffs/` 不在
-  本 Task 冻结 allowed_paths，未自行扩权迁移，待 Integrator/Codex 裁定）。
-- Review：`reviewer: Codex`（本 Task 为自己执行，按协作协议不得自审）。已收到
-  `verification/WORKSPACE-CONSOLIDATION-1/codex-review-r208.md`
-  （`reviewed_head=3947d63447457fe3ef8d3587942e632724ab3d72`，`decision=changes_requested`）；
-  逐项 disposition 见 `findings-disposition-r208.md`，**Task 未进入 done，也未自行批准**。
-- 实际测试：原「测试要求」表多为计划行 `NOT_RUN`，不能作为 AC MET 依据。R208 返修实际执行的验证：
+- Handoff：`verification/WORKSPACE-CONSOLIDATION-1/HANDOFF-r208.md`（第一轮）、
+  `verification/WORKSPACE-CONSOLIDATION-1/HANDOFF-r209.md`（第二轮；`doc/handoffs/` 不在本 Task 冻结
+  allowed_paths，未自行扩权迁移，待 Integrator/Codex 裁定）。
+- Review：`reviewer: Codex`（本 Task 为自己执行，按协作协议不得自审）。已收到两轮 Review：
+  `codex-review-r208.md`（reviewed_head=`3947d6344…`）与 `codex-review-r209.md`
+  （reviewed_head=`8d24d4eaf…`），decision 均为 `changes_requested`；逐项 disposition 见
+  `findings-disposition-r208.md` 与 `rework-r209-response.md`，**Task 未进入 done，也未自行批准**。
+- 实际测试：原「测试要求」表多为计划行 `NOT_RUN`，不能作为 AC MET 依据。R208/R209 返修实际执行的验证：
   P03 tag/bundle/verify/隔离恢复演练（exit 0）、18/15 事故台账、132/93/19 与 1223/320 复算、
-  49.48 GiB 逻辑字节核算、7 处 workspace/worktrees 移除核对、X6 副本哈希复核、治理检查（见 Handoff §4）。
+  49.48 GiB 逻辑字节核算、7 处 workspace/worktrees 移除核对、X6 副本哈希复核、治理检查（见两份 Handoff）。
   未执行：tools 修复、全盘/卷影/备份搜索、恢复写回、76/77 全量 bundle 恢复演练（均为 NOT_RUN 或 UNVERIFIED）。
 
 ## Review 记录（追加式，不改旧 Review）
 
 | Review | path | reviewed_head | decision | 处置 |
 |---|---|---|---|---|
-| Codex r208 | `verification/WORKSPACE-CONSOLIDATION-1/codex-review-r208.md` | `3947d63447457fe3ef8d3587942e632724ab3d72` | `changes_requested` | 已按 `findings-disposition-r208.md` 逐项返修；待 Codex 复审 |
+| Codex r208 | `verification/WORKSPACE-CONSOLIDATION-1/codex-review-r208.md` | `3947d63447457fe3ef8d3587942e632724ab3d72` | `changes_requested` | 已按 `findings-disposition-r208.md` 逐项返修；第一轮固定 head `8d24d4eaf` |
+| Codex r209 | `verification/WORKSPACE-CONSOLIDATION-1/codex-review-r209.md` | `8d24d4eafe798dd48045404843ca312f2aedc261` | `changes_requested` | 已按 `rework-r209-response.md` 处置 F-01..F-04；第二轮返修交付，待 Codex 复审 |
 
 **第四条治理 warning 解释**：r208 写入后治理检查为 `PASS (4 warnings)`，第四条是
 `evidence_dir 含未登记过程文件 … codex-review-r208.md`——Review 报告是新增未跟踪文件、尚未登记到
@@ -246,9 +263,12 @@ Canonical Evidence，属流程状态而非产品失败。本轮已把该 Review 
 | EV-R208-INCIDENT-JSON | R208-02/03 | `verification/WORKSPACE-CONSOLIDATION-1/incident-ledger-r208.json` | - | 5acabdaa45d8a81ab22e1e2d81255c863a7b438326b9c39f34188ef589d99667 | CANONICAL |
 | EV-R208-RECORDS | R208-05/07/08 | `verification/WORKSPACE-CONSOLIDATION-1/records-correction-r208.md` | - | 7983fc523b65f607932db7bf5093b3749c2d9f50be64f2e4dfe9427fac777548 | CANONICAL |
 | EV-R208-MEASURE | R208-07/08 | `verification/WORKSPACE-CONSOLIDATION-1/measurements-r208.json` | - | c1c26cddd323e34b0a09404e8c1bae3e7237b0396467904b6466899ab42a6e02 | CANONICAL |
-| EV-R208-FINDINGS | R208 Findings | `verification/WORKSPACE-CONSOLIDATION-1/findings-disposition-r208.md` | - | 6aa186d1d0b654341d36f8ab5856ca84daa0d0f0aeb10804fc3e74477ea4b894 | CANONICAL |
+| EV-R208-FINDINGS | R208 Findings | `verification/WORKSPACE-CONSOLIDATION-1/findings-disposition-r208.md` | - | b5ba6326aa997e1ce29b3af84fda8287ca1c1cc13fb840b1eda45160ce594d2d | CANONICAL |
 | EV-R208-HANDOFF | R208 交付 | `verification/WORKSPACE-CONSOLIDATION-1/HANDOFF-r208.md` | - | 2beec13ef9cc5671ad43424fb32f5c447beb9b3c2bad239d9f11dcea7ae08fe9 | SOURCE_PIN |
-| EV-R208-GITATTR | 证据 EOL pin | `verification/WORKSPACE-CONSOLIDATION-1/.gitattributes` | - | bb25730cadf642493493d0638750ac0ab1b521735948aebba1f3ee747797a424 | SOURCE_PIN |
+| EV-R209-REVIEW | R209 Review | `verification/WORKSPACE-CONSOLIDATION-1/codex-review-r209.md` | - | a3710e23fcbec3d2a8dcb60ea171945d1068693776b9533385fbdebb91bce04d | SOURCE_PIN |
+| EV-R209-RESPONSE | R209 F-01..F-04 | `verification/WORKSPACE-CONSOLIDATION-1/rework-r209-response.md` | - | 79b5b1c92d18e1fad35a7727da6f2696ee872e59663a225c6681d12aecb0bf17 | CANONICAL |
+| EV-R209-HANDOFF | R209 交付 | `verification/WORKSPACE-CONSOLIDATION-1/HANDOFF-r209.md` | - | b143dfee91268d480d4bb671b82145a0eb1838dcc454a8fddd31cd863faa69ca | SOURCE_PIN |
+| EV-R208-GITATTR | 证据 EOL pin | `verification/WORKSPACE-CONSOLIDATION-1/.gitattributes` | - | db13af9f871ab99b3859fc1177d97e7d32a0d212b2c9ac70ad445eeabf614213 | SOURCE_PIN |
 
 ## Resource Manifest
 
@@ -273,12 +293,13 @@ Canonical Evidence，属流程状态而非产品失败。本轮已把该 Review 
 
 ## Closeout Record
 
-- Closeout date / Codex：**未关闭**。r208=`changes_requested`，返修已提交，等待 Codex 独立复审。
+- Closeout date / Codex：**未关闭**。r208、r209 均为 `changes_requested`；第二轮返修已提交，等待 Codex 独立复审。
+  用户 2026-10-20 已授权 Owner 自动推进与对残余范围事项自我裁决，但不授权 Owner 自审/自批/关闭 Task。
 - canonical_evidence_status：`pending`（返修固定 head 与 Review 后重判）。
 - resource_closeout_status：`pending` / 事故项 open。
 - 删除、迁移、归档数量/字节数：50 worktree 目录移除 + 37 仅登记移除 − 6 回建 = 132 注册 worktree；
   分支净删除 325；158 项派生产物；删除前递归逻辑字节合计 53,129,852,873 B（49.48 GiB，非物理净释放）；
   18 个受保护 source 受影响（11 原位置缺失、6 部分回建、P06 子树缺失）；76 个原 bundle + 1 个 P03 增量 bundle。
 - 未关闭项及保留原因：P09/P06 受损资源、ignored 内容缺口、不可恢复残余与 tools 修复范围——均需用户/Codex 裁决
-  （见 `findings-disposition-r208.md` §4）。
+  （见 `findings-disposition-r208.md` §4、`rework-r209-response.md` §7）。
 - 当前指针清理：待复审与用户裁决后由后续授权处理；本轮未改主线、未 push、未 GC/prune。

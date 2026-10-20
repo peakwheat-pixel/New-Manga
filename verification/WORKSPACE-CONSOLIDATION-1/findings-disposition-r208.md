@@ -17,7 +17,7 @@ approval: none (Owner 不自行批准、不关闭 Task)
 
 - 本文件是 **Owner 对 Reviewer findings 的逐项 disposition**，不是 Review、不是批准、不是关闭。
 - Reviewer 仍为 Codex；Task 保持 `in_review`，最终是否接受由 Codex 与用户裁决。
-- 所有状态只用三类：**executed**（本轮实际执行、有原始输出/可复算）、**NOT_RUN**（未执行，原因明确）、**UNVERIFIED**（没有可核实证据）。没有证据的项目一律不写 MET。
+- **执行证据状态**只用三类：**executed**（本轮实际执行、有原始输出/可复算）、**NOT_RUN**（未执行，原因明确）、**UNVERIFIED**（没有可核实证据）；没有证据的项目一律不写 MET。**总表的处置状态**（FIXED / MAPPED / CORRECTED / NOT_FIXED / ACKNOWLEDGED / PARTIAL / OPEN）是另一个层次，描述 finding 是否被处理，不是执行证据状态；两者不得混读（见 R209 F-03 澄清）。
 - 本轮没有新增删除、移动、分支清理、历史改写、force、push、GC/prune；没有重跑一次性 X6，也没有把任何内容写回被删除的原路径。
 - 数字口径见 `records-correction-r208.md` 与 `measurements-r208.json`；事故逐项映射见 `incident-ledger-r208.md` / `.json`；P03 保全见 `p03-preservation-r208.md` / `.json`。
 
@@ -34,6 +34,11 @@ approval: none (Owner 不自行批准、不关闭 Task)
 | R208-07 | P2 | **PARTIAL（可补部分已补，缺口明示）** | 补出 93 条当前 refs→完整 SHA、19 条未合并分支 tag/bundle/verify；248 条已删分支无原 tip，不能补造 | `measurements-r208.json`、`records-correction-r208.md` 附录 C |
 | R208-08 | P2 | **CORRECTED** | 1223/320、77/1225/322、49.48 GiB 逻辑字节、7 处 workspace/worktrees 移除、task-envs 边界均已更正 | `records-correction-r208.md` §1–3 |
 | 补充 | — | **OPEN / user decision** | 不可恢复残余、ignored 内容缺口、恢复写回范围均需用户/Codex 裁定 | 本文件 §4 |
+
+> **R209 F-03 澄清**：主表的处置标签（FIXED/MAPPED/…）不是执行证据状态；例如 R208-01 的 FIXED 仅指
+> “P03 提交保全动作完成”，不等于 Task 通过，也不等于资源完整。另：`incident-ledger-r208.json` 的
+> `LOST_ORIGINAL: 0` 是**报告级 availability 汇总**，不是给任何 source 赋 `LOST` disposition；
+> 旧 Schema 的 disposition 枚举未被修改。
 
 ## 2. 逐项处置
 
@@ -192,3 +197,15 @@ WARN: evidence_dir 含未登记过程文件（归入 workspace 或列为 SOURCE_
 | bundle 恢复演练（76/77 全部） | **NOT_RUN**（只对 P03 新增 bundle 做了隔离恢复演练） |
 | 重跑 X6 / 重建原 selftest 文件实例 | **NOT_RUN**（禁止；只做内存字节重建） |
 | 删除/移动/分支清理/历史改写/force/push/GC/prune | **NOT_RUN**（全部禁止） |
+
+## 6. R209 复审 findings（第二轮，追加式）
+
+R209 报告：`codex-review-r209.md`（reviewed_head=`8d24d4eafe798dd48045404843ca312f2aedc261`，
+decision=`changes_requested`）。逐项处置见 `rework-r209-response.md`；摘要：
+
+| ID | 级别 | 处置 | 说明 |
+|---|---|---|---|
+| F-01 | P2 | **RECORDED / SELF-ADJUDICATED（保留原状）** | P03 隔离恢复演练在系统 Temp 建 bare repo，属范围偏离；在用户“全部授权、自我裁决”下裁定为一次性只读演练 scratch，保留原位不删不移，路径/状态已记录；不构成项目证据 |
+| F-02 | P3 | **FIXED（历史可证部分）** | 以两个提交留下 `in_progress` → `in_review` 的状态转换；更早的工作区瞬时状态仍为 UNVERIFIED |
+| F-03 | P3 | **FIXED** | 本文件 §0/§1 已加两层状态澄清；`LOST_ORIGINAL:0` 明确为报告级汇总 |
+| F-04 | P3 | **FIXED（保留 verbatim 字节）** | 证据目录 `.gitattributes` 对 `p03-preservation-r208.md` 设 `-whitespace`；`git diff --check` exit 0，原始输出字节未改写 |

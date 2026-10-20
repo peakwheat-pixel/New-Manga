@@ -3,3 +3,9 @@
 # so those pins stay reproducible under core.autocrlf=true — same rationale as
 # the GOV-EOL-PIN-1 rules in the repository-root .gitattributes.
 * text eol=lf
+
+# R209 F-04: p03-preservation-r208.md quotes `git bundle verify` / failure output
+# verbatim; Git terminates the prerequisite line with a space. Keep those bytes
+# (the file is SHA-256 pinned) instead of rewriting the evidence, and exempt this
+# one file from `git diff --check` trailing-whitespace diagnostics.
+p03-preservation-r208.md -whitespace
