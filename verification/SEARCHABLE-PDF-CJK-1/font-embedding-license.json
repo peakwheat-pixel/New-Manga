@@ -1,0 +1,85 @@
+{
+  "font_dir": "C:\\WINDOWS\\Fonts",
+  "fonts": [
+    {
+      "font": "malgun.ttf",
+      "version": 2,
+      "fsType": 8,
+      "label": "Editable",
+      "meaning": "可嵌入，接收方可编辑",
+      "may_embed": true,
+      "no_subsetting": false,
+      "bitmap_only": false
+    },
+    {
+      "font": "malgunbd.ttf",
+      "version": 2,
+      "fsType": 8,
+      "label": "Editable",
+      "meaning": "可嵌入，接收方可编辑",
+      "may_embed": true,
+      "no_subsetting": false,
+      "bitmap_only": false
+    },
+    {
+      "font": "msyh.ttc",
+      "version": 3,
+      "fsType": 8,
+      "label": "Editable",
+      "meaning": "可嵌入，接收方可编辑",
+      "may_embed": true,
+      "no_subsetting": false,
+      "bitmap_only": false
+    },
+    {
+      "font": "msyhbd.ttc",
+      "version": 3,
+      "fsType": 8,
+      "label": "Editable",
+      "meaning": "可嵌入，接收方可编辑",
+      "may_embed": true,
+      "no_subsetting": false,
+      "bitmap_only": false
+    },
+    {
+      "font": "simsun.ttc",
+      "version": 3,
+      "fsType": 8,
+      "label": "Editable",
+      "meaning": "可嵌入，接收方可编辑",
+      "may_embed": true,
+      "no_subsetting": false,
+      "bitmap_only": false
+    },
+    {
+      "font": "msjh.ttc",
+      "version": 3,
+      "fsType": 8,
+      "label": "Editable",
+      "meaning": "可嵌入，接收方可编辑",
+      "may_embed": true,
+      "no_subsetting": false,
+      "bitmap_only": false
+    },
+    {
+      "font": "arial.ttf",
+      "version": 3,
+      "fsType": 8,
+      "label": "Editable",
+      "meaning": "可嵌入，接收方可编辑",
+      "may_embed": true,
+      "no_subsetting": false,
+      "bitmap_only": false
+    },
+    {
+      "font": "segoeui.ttf",
+      "version": 3,
+      "fsType": 8,
+      "label": "Editable",
+      "meaning": "可嵌入，接收方可编辑",
+      "may_embed": true,
+      "no_subsetting": false,
+      "bitmap_only": false
+    }
+  ]
+}
