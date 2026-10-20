@@ -93,16 +93,32 @@ opened ok=True  pages=3  sizes=[[600,900],[610,900],[620,900]]  images=3
 
 **而 Chrome headless 渲染产出 0 字节 PNG。**
 
-### 3.3 为什么 Chrome 失败而 MuPDF 不抛
+### 3.3 页面是**空白**的——已实测
 
-**MuPDF 把 zlib 错误当成 warning（stderr），继续渲染——
-图像本身是好的，坏的只是画在页面上的那条指令流。**
+**生成一个**纯红色** `(255, 0, 0)` 的单页 PDF，用 MuPDF 渲染成位图，数像素**：
 
-**而 content stream 承载 `/Im0 Do` 这条「把图像画上去」的指令。**
+```
+rendered size: 60 x 90
+distinct colours: 1
+top colours (count, rgb): [(5400, (255, 255, 255))]
+non-white pixels: 0 of 5400
+```
 
-**所以 content stream 解压失败 → 图像没被画上去 → 页面是空白的。**
+**一个纯红页面渲染出来是**纯白**，5400 个像素里 0 个非白。**
 
-**Chrome 的「0 字节 PNG」与这个一致，但本轮没有直接看到 Chrome 的空白页面，这一条是推断。**
+**这是铁证：图像数据是好的，但「把图像画上去」这条指令没有执行。**
+
+**因果链完整**：
+
+1. content stream 声明 `/Filter /FlateDecode` 但内容是明文
+2. 阅读器尝试 inflate → 失败
+3. **失败后那个流被跳过 → 其中的 `q … /Im0 Do Q` 从未执行**
+4. **图像没被画上去 → 页面空白**
+
+**而 `page_count=3`、`rect` 尺寸正确、`get_images()` 返回图像——
+这些全部为真，同时页面是空白的。**
+
+**Chrome 的「0 字节 PNG」与这一致。**
 
 ## 四、这不是 `SEC-FMT` 的范畴
 
