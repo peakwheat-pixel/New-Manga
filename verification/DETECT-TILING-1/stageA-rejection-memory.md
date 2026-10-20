@@ -110,3 +110,26 @@ several shorter images.
 - `src/bootstrap/core_service.py`（已改，未提交）
 - `verification/DETECT-TILING-1/stageA-rejection-memory.json`
 - 本文件
+
+## 勘误（2026-10-20 追加）
+
+**本文件 §四、§五 的陈述在提交时已过时，特此更正：**
+
+| 本文件原写 | 实际 |
+|---|---|
+| §四「测试未补」 | **已补**：`test_detect_oversized_rejected_before_any_pixel_decode` 与 `test_detect_within_cap_does_reach_convert`（commit `07e414773`）|
+| §四「Handoff 未写」 | **已写**：`doc/handoffs/DETECT-TILING-1-dsh-stageA-20261020.md` |
+| §五「未提交」 | **已提交**：`843cfe705`（产品改动）|
+
+**§二的内存数字已被后续重测取代，见 `stageA-remeasurement-20261020.md`：**
+
+| 项 | 本文件原值 | 重测值（口径已修） |
+|---|---:|---:|
+| PNG 拒绝峰值 | 37.3 MB | **141.7 MB** |
+| JPEG 拒绝峰值 | 19.5 MB | **53.2 MB** |
+
+**37.3 MB / 19.5 MB 是 `SetProcessWorkingSetSize` trim 基线后的读数，基线偏低，已撤回。**
+**原因与修复见 `stageA-remeasurement-20261020.md` §一（ZCode Review P2-2）。**
+
+**本文件保留原值不删**——它是当时真实测量的记录，但任何引用本文件 §二数字的地方都必须改用重测值。
+

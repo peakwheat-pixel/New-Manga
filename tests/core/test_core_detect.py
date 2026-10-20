@@ -674,8 +674,10 @@ def test_detect_decoded_pixel_cap_rejected(tmp_path: Path) -> None:
         assert "4096x4096" in message
         assert str(4096 * 4096) in message
         assert str(MAX_DETECT_PIXELS) in message
-        # how far over, so the caller can judge the required reduction
-        assert "over" in message
+        # how far over, so the caller can judge the required reduction.
+        # P2-4 (ZCode review): assert the computed ratio, not just the word
+        # "over" -- any phrasing containing it would satisfy the weak form.
+        assert f"{4096 * 4096 / MAX_DETECT_PIXELS:.2f}x over" in message
         # the rejection happened before decoding, said so explicitly
         assert "before any pixel decoding" in message
         # a concrete target and a fallback
