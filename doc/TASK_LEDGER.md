@@ -6,10 +6,10 @@ Reconciliation of every `doc/tasks/*.md` against the plan's node set. r38 §3 es
 
 | metric | value |
 |---|---:|
-| task files | 317 |
+| task files | 320 |
 | terminal | 280 |
-| non-terminal | 37 |
-| non-terminal named in the plan | 3 |
+| non-terminal | 40 |
+| non-terminal named in the plan | 6 |
 | non-terminal outside the plan | 34 |
 
 ## By status
@@ -18,10 +18,10 @@ Reconciliation of every `doc/tasks/*.md` against the plan's node set. r38 §3 es
 |---|---:|---|
 | `done` | 251 | yes |
 | `closed_with_limitations` | 28 | yes |
-| `blocked` | 10 | no |
+| `blocked` | 11 | no |
 | `proposed` | 9 | no |
+| `ready` | 6 | no |
 | `approved` | 5 | no |
-| `ready` | 5 | no |
 | `changes_requested` | 4 | no |
 | `in_review` | 3 | no |
 | `in_progress` | 2 | no |
@@ -37,6 +37,7 @@ Reconciliation of every `doc/tasks/*.md` against the plan's node set. r38 §3 es
 | `T3.2.1-REPAIR-12` | `approved` | no |
 | `T3.2.1-REPAIR-8` | `approved` | no |
 | `GOV-DEBT-CLEANUP-1` | `blocked` | own row |
+| `M2-PROD-DETECT-ENV-1` | `blocked` | own row |
 | `P02PRE-R0S2` | `blocked` | no |
 | `P02PRE-R0S4` | `blocked` | no |
 | `P02PRE-R0S5` | `blocked` | no |
@@ -64,11 +65,12 @@ Reconciliation of every `doc/tasks/*.md` against the plan's node set. r38 §3 es
 | `TASK-025` | `proposed` | no |
 | `TASK-026` | `proposed` | no |
 | `TASK-027` | `proposed` | no |
-| `SEARCHABLE-PDF-CJK-1` | `ready` | own row |
+| `P11-PROJECTION-TEST-ALIGN-1` | `ready` | own row |
 | `T3.2.1-REPAIR-10` | `ready` | no |
 | `T3.2.1-REPAIR-3` | `ready` | no |
 | `T3.2.1-REPAIR-7` | `ready` | no |
 | `T3.2.1-REPAIR-9` | `ready` | no |
+| `TEST-ENV-ASSUMPTIONS-1` | `ready` | own row |
 
 ## What this ledger does not say
 
