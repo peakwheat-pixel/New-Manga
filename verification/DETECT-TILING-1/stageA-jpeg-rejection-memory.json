@@ -1,0 +1,24 @@
+{
+ "why_synthetic": "test-materials has 34 JPEGs and none exceed MAX_DETECT_PIXELS; AC4 required one PNG and one JPEG",
+ "proves": "the rejection path is format-independent (JPEG behaves like PNG)",
+ "does_not_prove": "detection quality on real oversized manga pages",
+ "method": "fresh subprocess; corrected GetProcessMemoryInfo signature",
+ "samples": [
+  {
+   "path": "G:\\CODEX\\New Manga.workspace\\DETECT-TILING-1\\synthetic\\oversized-5000x4000.jpg",
+   "width": 5000,
+   "height": 4000,
+   "format": "JPEG",
+   "mode": "RGB",
+   "pixels": 20000000,
+   "max_detect_pixels": 11184810,
+   "file_mb": 0.3,
+   "full_rgb24_mb": 57.22,
+   "peak_increase_after_open_mb": 17.6,
+   "rejected": true,
+   "error_type": "DetectRequestError",
+   "message": "core.detect page is too large to process safely: 5000x4000 = 20000000 px exceeds the 11184810 px limit (1.79x over). The page was rejected before any pixel decoding, so no page-sized buffer was allocated. Reduce the page to at most 11184810 pixels (about 3344x3344) and retry, or split a tall page into several shorter images.",
+   "peak_increase_at_rejection_mb": 19.5
+  }
+ ]
+}

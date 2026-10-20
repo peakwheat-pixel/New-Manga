@@ -8,7 +8,7 @@ language: zh-CN
 parent: ARCH-DOC-REBASELINE
 blocked_by: null
 suggested_owner: Antigravity
-owner: Antigravity
+owner: DSH
 reviewer: DSH（非作者独立复核；实现/审查分离）
 depends_on: []
 base_commit: 5885b182e
@@ -16,7 +16,7 @@ branch: agent/antigravity/DETECT-TILING-1
 worktree: null
 integration_commit: null
 delivery_head: 843cfe705
-canonical_evidence_status: partial
+canonical_evidence_status: complete
 resource_closeout_status: pending
 evidence_dir: verification/DETECT-TILING-1
 activation_note: r34 方向批准，尚未释放；本文件为 Task 本体，Plan 状态为 proposed
@@ -127,7 +127,8 @@ MAX_DETECT_PIXELS = MAX_DETECT_PAGE_BYTES // 3
 | evidence_id | AC/Gate | path | commit | sha256 | class |
 |---|---|---|---|---|---|
 | EV-DT1-MEM | AC1 | `verification/DETECT-TILING-1/stageA-rejection-memory.md` | 843cfe705 | (worktree) | CANONICAL |
-| EV-DT1-MEMJSON | AC1 | `verification/DETECT-TILING-1/stageA-rejection-memory.json` | 843cfe705 | (worktree) | CANONICAL |
+| EV-DT1-MEMJSON | AC1 | `verification/DETECT-TILING-1/stageA-rejection-memory.json` | 843cfe705 | (worktree) | CANONICAL |
+| EV-DT1-JPEG | AC4 | `verification/DETECT-TILING-1/stageA-jpeg-rejection-memory.json` | 843cfe705 | (worktree) | CANONICAL |
 | EV-DT1-S1 | AC1 basis | `verification/DETECT-TILING-1/stage1-decoder-memory.md` | b5253ebfc | (worktree) | CANONICAL |
 | EV-DT1-S2 | AC1 basis | `verification/DETECT-TILING-1/stage2-candidate-paths.md` | c776dc1ae | (worktree) | CANONICAL |
 | EV-DT1-R35 | ruling | `verification/P09-GOVERNANCE-DEBT-20261019/codex-adjudicate-tiling-stage2-r35.md` | 5885b182e | (worktree) | SOURCE_PIN |
@@ -137,7 +138,49 @@ MAX_DETECT_PIXELS = MAX_DETECT_PAGE_BYTES // 3
 | resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
 |---|---|---|---|---|---|
 
-## 阶段 A 交付（2026-10-20）
+## 阶段 A 交付
+
+### 2026-10-20 Owner 变更
+
+**`owner` 由 `Antigravity` 改为 `DSH`。**
+
+**理由**：实际实施者是 DSH。`agy`（Antigravity CLI）在本环境**两次卡死**：
+
+| 次 | 卡住时长 | CPU 观测 | 产出 |
+|---|---:|---|---|
+| 1 | **42 分钟** | 20 秒涨 **0.2 s** | 0 字节 |
+| 2 | **10 分钟** | 15 秒涨 **0.0 s** | 0 字节 |
+
+**同一 `agy` 做只读探测任务 98.9 秒成功**（正确报出 `MAX_DETECT_PAGE_BYTES` L289
+与 `MAX_DETECT_PIXELS` L299 的值）。**所以它能做只读分析，做不了实施。**
+
+**这一条是环境约束，不是本 Task 的缺陷**，应另行登记到治理层，
+否则下一个 Task 还会重复派给 Antigravity 再等 40 分钟。
+
+**`Reviewer` 不变**：DSH 不得审核自己实现的变更，**所以本次变更必须由非 DSH 复审**。
+**当前 Session 无人可派，这是需要 Codex 处置的治理事实。**
+
+
+
+### 2026-10-20 AC4 收口（合成 JPEG）
+
+**问题**：AC4 原文要求「至少覆盖一个 PNG 与一个 JPEG」，
+而 `test-materials` 的 34 个 JPEG **没有一个超过 `MAX_DETECT_PIXELS`**。
+
+**裁定（按推荐自行裁决）**：用**合成 JPEG** 补齐，理由与边界写在证据里。
+
+| 样本 | 尺寸 | 像素 | 满幅 RGB24 | **拒绝时峰值** |
+|---|---|---:|---:|---:|
+| 真实 PNG | `690×62133` | 42,871,770 | 122.7 MB（RGBA 163.5）| **37.3 MB** |
+| **合成 JPEG** | `5000×4000` | 20,000,000 | 57.2 MB | **19.5 MB** |
+
+**合成 JPEG 证明的是**：拒绝路径**与格式无关**，JPEG 与 PNG 行为一致。
+**合成 JPEG 不证明**：真实超大漫画页的检测质量——**那条限制仍然存在**。
+
+样本位置：`G:\CODEX\New Manga.workspace\DETECT-TILING-1\synthetic\oversized-5000x4000.jpg`
+（**在 workspace 内，未入库**，符合素材治理规则）。
+
+（2026-10-20）
 
 **Handoff**：`doc/handoffs/DETECT-TILING-1-dsh-stageA-20261020.md`
 **delivery_head**：`843cfe705`（分支 `agent/antigravity/DETECT-TILING-1`）
