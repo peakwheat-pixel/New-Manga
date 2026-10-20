@@ -85,7 +85,7 @@ allowed_paths:
 | AC4 | **76 个未合并分支**：76 个 `archive/*` tag + 76 个 bundle，**76/76 `git bundle verify` 通过**，22,106,711 B；**1,223 是逐分支计数合计，跨 bundle 去重 320**；增量 bundle 依赖前置对象历史，非独立完整备份。P03 返修另行保全后当前 77 条（1,225 / 322） | `archive-manifest.json`、`workspace/archive/bundles/`；`records-correction-r208.md` §1 |
 | AC5 | 删除 **267** 个已合并分支，全部用 `-d`（无 `-D`）；净删 325 = 323 receipt + main/master 2 | `branch-deletion.json` |
 | AC6 | 移除 **50** 个 worktree（删除前递归逻辑字节 31,493,644,833 B）；另 **37** 个仅移除登记（目录保留）；**6 处回建后当前注册 132**；**r208：ignored 清册、原始 status/stash 输出、独有/终态/引用门槛不完整** | `worktree-removal.json`；`records-correction-r208.md` §3.1 |
-| AC7 | 清理 **158** 项派生产物（删除前逻辑字节 21,636,208,040 B）；`P22-REBASE-1`（8.68 GB）因被 pin 保留；**r208：两份收据逻辑合计 53,129,852,873 B = 49.48 GiB，物理净释放未证实；workspace/worktrees 实际移除 7 处** | `workspace-cleanup.json`；`records-correction-r208.md` §3.4–3.5 |
+| AC7 | 清理 **158** 项派生产物（删除前逻辑字节 21,636,208,040 B）；**r208 更正 kept 5 项合计 9,318,471,829 B（8.68 GiB）：其中 2 项因 pin 保留（`P22-REBASE-1` builds + temp = 9,043,103,923 B），另 3 项为删除失败 `WinError 5`（275,367,906 B）**；两份收据逻辑合计 53,129,852,873 B = 49.48 GiB，物理净释放未证实；workspace/worktrees 实际移除 7 处 | `workspace-cleanup.json`；`records-correction-r208.md` §3.4–3.5 |
 | AC8 | 保留 `antigravity/P09-AC3-DELETE-HARDEN-1` 为唯一主线；删 `main`（0 独有）、`master`（3 独有，已 tag+bundle，2 个证据文件已恢复主线）| Stage 7 §主线裁定 |
 | AC9 | 治理 **PASS (3 warnings)**（登记 r208 Review 前为 4）；`git fsck` exit 0、无 corruption、**613 条 dangling**；草稿 **26 个未变**；`doc/tasks` 已跟踪 **296**；**r208：保护/恢复验收不成立** | 见下；`HANDOFF-r208.md` §4 |
 
@@ -247,7 +247,7 @@ Canonical Evidence，属流程状态而非产品失败。本轮已把该 Review 
 | EV-R208-RECORDS | R208-05/07/08 | `verification/WORKSPACE-CONSOLIDATION-1/records-correction-r208.md` | - | 7983fc523b65f607932db7bf5093b3749c2d9f50be64f2e4dfe9427fac777548 | CANONICAL |
 | EV-R208-MEASURE | R208-07/08 | `verification/WORKSPACE-CONSOLIDATION-1/measurements-r208.json` | - | c1c26cddd323e34b0a09404e8c1bae3e7237b0396467904b6466899ab42a6e02 | CANONICAL |
 | EV-R208-FINDINGS | R208 Findings | `verification/WORKSPACE-CONSOLIDATION-1/findings-disposition-r208.md` | - | 6aa186d1d0b654341d36f8ab5856ca84daa0d0f0aeb10804fc3e74477ea4b894 | CANONICAL |
-| EV-R208-HANDOFF | R208 交付 | `verification/WORKSPACE-CONSOLIDATION-1/HANDOFF-r208.md` | - | 9e347c13772d0777f96f325224416c96ce4f74f27ea4fedd0b7547301e197d55 | SOURCE_PIN |
+| EV-R208-HANDOFF | R208 交付 | `verification/WORKSPACE-CONSOLIDATION-1/HANDOFF-r208.md` | - | 2beec13ef9cc5671ad43424fb32f5c447beb9b3c2bad239d9f11dcea7ae08fe9 | SOURCE_PIN |
 | EV-R208-GITATTR | 证据 EOL pin | `verification/WORKSPACE-CONSOLIDATION-1/.gitattributes` | - | bb25730cadf642493493d0638750ac0ab1b521735948aebba1f3ee747797a424 | SOURCE_PIN |
 
 ## Resource Manifest

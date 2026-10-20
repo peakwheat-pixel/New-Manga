@@ -5,7 +5,7 @@ author: dsh
 recipient: Codex
 reviewer: Codex
 base_commit: 3947d63447457fe3ef8d3587942e632724ab3d72
-delivery_head: null
+delivery_head: 198a9e440cf1626dec9c4bc31affbaf773d23706
 status: rework_submitted_for_review
 date: 2026-10-20
 ---
@@ -19,8 +19,9 @@ date: 2026-10-20
 - 本轮未新增删除、移动、分支清理、历史改写、force、push、GC/prune；未重跑一次性 X6；未写回任何被删原路径。
 - 本文件位于 `verification/WORKSPACE-CONSOLIDATION-1/`。**`doc/handoffs/` 不在本 Task 冻结 allowed_paths**，
   因此 Handoff 暂放 evidence_dir，未自行扩权；是否迁移到 `doc/handoffs/` 请 Integrator/Codex 裁定。
-- 固定 head：本文件与全部返修内容位于**内容提交 A**；其直接后继是仅更新 Task `delivery_head` 的 pointer-only 提交 B，
-  **复审用固定 head = B**（B 的 SHA 见交付消息；A 的 SHA 即 B 中 Task 的 `delivery_head` 值）。
+- 固定 head：返修由三个提交组成——内容提交 A（`198a9e44…`，全部返修文件与证据）、
+  修正提交 C（Task AC7 kept 口径与 HANDOFF frontmatter pin 更正）、pointer-only 提交 D（仅更新 Task `delivery_head`）。
+  **复审用固定 head = D**（D 的 SHA 见交付消息；D 中 Task 的 `delivery_head` = C，本文件 frontmatter 记录实现提交 A）。
 
 ## 1. 交付结果（按用户返修指令逐项）
 
@@ -109,8 +110,8 @@ Review 报告属于新增未跟踪文件，按原作者边界未 `git add`，只
 ## 5. 接收方式 / 复审入口
 
 - 仓库：`G:/CODEX/New Manga`；分支：`antigravity/P09-AC3-DELETE-HARDEN-1`；主 checkout（未新建 worktree）。
-- 复审固定 head：内容提交 A 的 pointer-only 后继 B（见交付消息）；`git show --stat` 应显示 A 含全部返修文件，
-  B 只改 Task `delivery_head` 一个字段。
+- 复审固定 head：修正提交 C 的 pointer-only 后继 D（见交付消息）；`git show --stat` 应显示 A 含全部返修文件，
+  C 只改 Task AC7 一行与 HANDOFF 两处，D 只改 Task `delivery_head` 一个字段。
 - 关键文件：`verification/WORKSPACE-CONSOLIDATION-1/{codex-review-r208.md, p03-preservation-r208.md/.json,
   incident-ledger-r208.md/.json, records-correction-r208.md, measurements-r208.json,
   findings-disposition-r208.md, HANDOFF-r208.md}`。
