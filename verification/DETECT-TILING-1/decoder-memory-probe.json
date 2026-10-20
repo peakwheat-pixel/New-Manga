@@ -1,0 +1,211 @@
+{
+ "method": "fresh subprocess per measurement; explicit ctypes argtypes; WorkingSet and PeakWorkingSet via GetProcessMemoryInfo",
+ "failure_chain": [
+  "tracemalloc tracks only the Python heap; Pillow allocates in C",
+  "PeakWorkingSetSize is a high-water mark and never falls",
+  "SetProcessWorkingSetSize lives in kernel32, not psapi",
+  "GetProcessMemoryInfo needs explicit argtypes or the HANDLE truncates and the call returns False - three versions read zeros without checking"
+ ],
+ "our_max_detect_pixels": 11184810,
+ "pillow_max_image_pixels": 89478485,
+ "samples": [
+  {
+   "width": 600,
+   "height": 18401,
+   "format": "PNG",
+   "mode": "RGBA",
+   "path": "G:\\CODEX\\New Manga.workspace\\test-materials\\objects\\sha256\\16\\16a2767bc9e6e22128c2ac3c1e215526b456c1c7c23d1aa774dfbd9a4dadba44.png",
+   "file_mb": 1.6,
+   "pixels": 11040600,
+   "full_rgb24_mb": 31.59,
+   "measurements": [
+    {
+     "mode": "open_only",
+     "ws_before_mb": 1.1,
+     "ws_after_mb": 9.5,
+     "ws_delta_mb": 8.5,
+     "peak_before_mb": 33.3,
+     "peak_after_mb": 33.3,
+     "peak_increase_mb": 0.0
+    },
+    {
+     "mode": "crop_1x1_convert",
+     "ws_before_mb": 1.1,
+     "ws_after_mb": 52.4,
+     "ws_delta_mb": 51.3,
+     "peak_before_mb": 33.3,
+     "peak_after_mb": 52.4,
+     "peak_increase_mb": 19.1
+    },
+    {
+     "mode": "crop_half_convert",
+     "ws_before_mb": 1.1,
+     "ws_after_mb": 52.2,
+     "ws_delta_mb": 51.1,
+     "peak_before_mb": 33.2,
+     "peak_after_mb": 94.3,
+     "peak_increase_mb": 61.1
+    },
+    {
+     "mode": "convert_full",
+     "ws_before_mb": 1.1,
+     "ws_after_mb": 52.0,
+     "ws_delta_mb": 50.9,
+     "peak_before_mb": 33.5,
+     "peak_after_mb": 94.1,
+     "peak_increase_mb": 60.7
+    },
+    {
+     "mode": "tobytes_full",
+     "ws_before_mb": 1.1,
+     "ws_after_mb": 52.2,
+     "ws_delta_mb": 51.2,
+     "peak_before_mb": 33.5,
+     "peak_after_mb": 157.5,
+     "peak_increase_mb": 124.0
+    },
+    {
+     "mode": "crop_half_tobytes",
+     "ws_before_mb": 1.1,
+     "ws_after_mb": 52.3,
+     "ws_delta_mb": 51.2,
+     "peak_before_mb": 33.2,
+     "peak_after_mb": 104.8,
+     "peak_increase_mb": 71.7
+    }
+   ]
+  },
+  {
+   "width": 690,
+   "height": 100674,
+   "format": "PNG",
+   "mode": "L",
+   "path": "G:\\CODEX\\New Manga.workspace\\test-materials\\objects\\sha256\\15\\15e9bcb8b6d020af0aeba5cf3f17c2e408c779c97c85a0d2605056a0534e752a.png",
+   "file_mb": 0.62,
+   "pixels": 69465060,
+   "full_rgb24_mb": 198.74,
+   "measurements": [
+    {
+     "mode": "open_only",
+     "ws_before_mb": 1.1,
+     "ws_after_mb": 9.7,
+     "ws_delta_mb": 8.6,
+     "peak_before_mb": 33.5,
+     "peak_after_mb": 33.5,
+     "peak_increase_mb": 0.0
+    },
+    {
+     "mode": "crop_1x1_convert",
+     "ws_before_mb": 1.1,
+     "ws_after_mb": 76.9,
+     "ws_delta_mb": 75.8,
+     "peak_before_mb": 33.3,
+     "peak_after_mb": 76.9,
+     "peak_increase_mb": 43.6
+    },
+    {
+     "mode": "crop_half_convert",
+     "ws_before_mb": 1.1,
+     "ws_after_mb": 77.6,
+     "ws_delta_mb": 76.5,
+     "peak_before_mb": 33.4,
+     "peak_after_mb": 243.2,
+     "peak_increase_mb": 209.9
+    },
+    {
+     "mode": "convert_full",
+     "ws_before_mb": 1.1,
+     "ws_after_mb": 76.6,
+     "ws_delta_mb": 75.5,
+     "peak_before_mb": 33.4,
+     "peak_after_mb": 342.7,
+     "peak_increase_mb": 309.3
+    },
+    {
+     "mode": "tobytes_full",
+     "ws_before_mb": 1.1,
+     "ws_after_mb": 77.8,
+     "ws_delta_mb": 76.7,
+     "peak_before_mb": 33.4,
+     "peak_after_mb": 740.6,
+     "peak_increase_mb": 707.2
+    },
+    {
+     "mode": "crop_half_tobytes",
+     "ws_before_mb": 1.1,
+     "ws_after_mb": 77.4,
+     "ws_delta_mb": 76.3,
+     "peak_before_mb": 33.5,
+     "peak_after_mb": 408.9,
+     "peak_increase_mb": 375.4
+    }
+   ]
+  },
+  {
+   "width": 690,
+   "height": 131289,
+   "format": "PNG",
+   "mode": "RGBA",
+   "path": "G:\\CODEX\\New Manga.workspace\\test-materials\\objects\\sha256\\0d\\0d977ae7436c6208d4cdeb4f01503e1961305d15c781c97c7d70d3c7f05acbee.png",
+   "file_mb": 53.58,
+   "pixels": 90589410,
+   "full_rgb24_mb": 259.18,
+   "measurements": [
+    {
+     "mode": "open_only",
+     "ws_before_mb": 1.1,
+     "ws_after_mb": 10.3,
+     "ws_delta_mb": 9.2,
+     "peak_before_mb": 33.3,
+     "peak_after_mb": 33.3,
+     "peak_increase_mb": 0.0
+    },
+    {
+     "mode": "crop_1x1_convert",
+     "ws_before_mb": 1.1,
+     "ws_after_mb": 357.7,
+     "ws_delta_mb": 356.6,
+     "peak_before_mb": 33.3,
+     "peak_after_mb": 357.7,
+     "peak_increase_mb": 324.4
+    },
+    {
+     "mode": "crop_half_convert",
+     "ws_before_mb": 1.1,
+     "ws_after_mb": 357.0,
+     "ws_delta_mb": 356.0,
+     "peak_before_mb": 33.3,
+     "peak_after_mb": 703.9,
+     "peak_increase_mb": 670.6
+    },
+    {
+     "mode": "convert_full",
+     "ws_before_mb": 1.1,
+     "ws_after_mb": 357.6,
+     "ws_delta_mb": 356.5,
+     "peak_before_mb": 33.4,
+     "peak_after_mb": 704.2,
+     "peak_increase_mb": 670.8
+    },
+    {
+     "mode": "tobytes_full",
+     "ws_before_mb": 1.1,
+     "ws_after_mb": 358.6,
+     "ws_delta_mb": 357.5,
+     "peak_before_mb": 33.5,
+     "peak_after_mb": 1222.9,
+     "peak_increase_mb": 1189.4
+    },
+    {
+     "mode": "crop_half_tobytes",
+     "ws_before_mb": 1.1,
+     "ws_after_mb": 357.6,
+     "ws_delta_mb": 356.5,
+     "peak_before_mb": 33.1,
+     "peak_after_mb": 789.6,
+     "peak_increase_mb": 756.5
+    }
+   ]
+  }
+ ]
+}
