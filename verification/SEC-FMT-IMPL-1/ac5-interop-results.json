@@ -1,18 +1,18 @@
 {
- "workdir": "C:\\Users\\49745\\AppData\\Local\\Temp\\ac5-74b8q_dl",
+ "workdir": "C:\\Users\\49745\\AppData\\Local\\Temp\\ac5-qs3v3pz8",
  "exports": [
   {
    "format": "cbz",
    "status": "completed",
-   "path": "C:\\Users\\49745\\AppData\\Local\\Temp\\ac5-74b8q_dl\\ac5.cbz",
+   "path": "C:\\Users\\49745\\AppData\\Local\\Temp\\ac5-qs3v3pz8\\ac5.cbz",
    "size_bytes": 1135,
    "page_count": 3
   },
   {
    "format": "pdf",
    "status": "completed",
-   "path": "C:\\Users\\49745\\AppData\\Local\\Temp\\ac5-74b8q_dl\\ac5.pdf",
-   "size_bytes": 8810,
+   "path": "C:\\Users\\49745\\AppData\\Local\\Temp\\ac5-qs3v3pz8\\ac5.pdf",
+   "size_bytes": 8812,
    "page_count": 3
   }
  ],
