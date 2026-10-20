@@ -131,18 +131,26 @@ def test_completed_with_failures_is_not_total_failure():
 #:
 #: Kept as a table so a future disagreement shows up as one bad row naming its
 #: state, instead of a tuple that has to be decoded.
+#: The exact dict ``_button_enablement`` must return, per state. Compared by
+#: equality rather than per-key, because a per-key check cannot see a key that
+#: should not be there - a PENDING run offering ``can_retry_failed`` would pass
+#: a five-column comparison while telling the UI it has a button it must not.
 P11_BUTTON_MATRIX = {
-    # status: (can_pause, can_stop, can_continue, can_restart, can_abandon)
-    PipelineRunStatus.PENDING: (False, True, False, False, False),
-    PipelineRunStatus.RUNNING: (True, True, False, False, False),
-    PipelineRunStatus.PAUSED: (False, True, True, False, False),
-    PipelineRunStatus.BLOCKED: (False, True, False, False, False),
-    # Interrupted with no disposition may be continued, restarted or abandoned.
-    PipelineRunStatus.INTERRUPTED: (False, False, True, True, True),
-    PipelineRunStatus.COMPLETED: (False, False, False, False, False),
-    PipelineRunStatus.COMPLETED_WITH_FAILURES: (False, False, False, False, False),
-    PipelineRunStatus.FAILED: (False, False, False, False, False),
-    PipelineRunStatus.CANCELLED: (False, False, False, False, False),
+    PipelineRunStatus.PENDING: {"can_stop": True},
+    PipelineRunStatus.RUNNING: {"can_pause": True, "can_stop": True},
+    PipelineRunStatus.PAUSED: {"can_stop": True, "can_continue": True},
+    PipelineRunStatus.BLOCKED: {"can_stop": True},
+    # Interrupted with no disposition: continue, restart or abandon - and
+    # explicitly not stop, which P11 §4.5 puts in this state's rejected list.
+    PipelineRunStatus.INTERRUPTED: {
+        "can_continue": True, "can_restart": True, "can_abandon": True,
+    },
+    PipelineRunStatus.COMPLETED: {},
+    # Retry is a function of has_failures, not of status, so it is asserted
+    # separately in test_retry_is_offered_only_for_failures_that_exist.
+    PipelineRunStatus.COMPLETED_WITH_FAILURES: {},
+    PipelineRunStatus.FAILED: {},
+    PipelineRunStatus.CANCELLED: {},
 }
 
 
@@ -155,17 +163,52 @@ def test_button_matrix_matches_p11_4_5_for_every_status():
     """
     for status, expected in P11_BUTTON_MATRIX.items():
         enabled = _button_enablement(status, has_failures=False)
-        actual = (
-            enabled.get("can_pause") is True,
-            enabled.get("can_stop") is True,
-            enabled.get("can_continue") is True,
-            enabled.get("can_restart") is True,
-            enabled.get("can_abandon") is True,
+        assert enabled == expected, (
+            "%s: expected exactly %r, got %r" % (status.name, expected, enabled)
         )
-        assert actual == expected, (
-            "%s: expected (pause, stop, continue, restart, abandon) = %r, got %r "
-            "from %r" % (status.name, expected, actual, enabled)
-        )
+
+
+def test_interrupted_with_a_disposition_is_wired_through_build_projection():
+    """R-101: build_projection must pass interruption_disposition through.
+
+    The unit test below calls _button_enablement directly, which proves the
+    function's own logic. It does not prove build_projection hands the field
+    over - if projection.py:262-266 stopped passing run.interruption_disposition,
+    every direct-call test would stay green while a restarted run kept offering
+    Continue in the UI.
+    """
+    service, _ = make_pipeline(pages=[("p1", 1)])
+    run = run_of(service)
+    run.status = PipelineRunStatus.INTERRUPTED
+    run.interruption_disposition = "restarted"
+
+    projection = build_projection(run)
+
+    assert projection.can_continue is False
+    assert projection.can_restart is False
+    assert projection.can_abandon is False
+    assert projection.can_pause is False
+    assert projection.can_stop is False
+
+
+def test_interrupted_without_a_disposition_still_offers_the_three_ways_out():
+    """The control for R-101: without a disposition the same wiring must offer them.
+
+    Together with the test above this pins the wiring in both directions, so a
+    build_projection that ignored the field entirely would fail one of them
+    whichever way it ignored it.
+    """
+    service, _ = make_pipeline(pages=[("p1", 1)])
+    run = run_of(service)
+    run.status = PipelineRunStatus.INTERRUPTED
+    run.interruption_disposition = None
+
+    projection = build_projection(run)
+
+    assert projection.can_continue is True
+    assert projection.can_restart is True
+    assert projection.can_abandon is True
+    assert projection.can_stop is False
 
 
 def test_interrupted_with_a_disposition_offers_nothing():
