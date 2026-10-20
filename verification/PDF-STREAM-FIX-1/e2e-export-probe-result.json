@@ -1,0 +1,78 @@
+{
+  "pages_created": 3,
+  "export": {
+    "pdf": {
+      "ok": true,
+      "path": "C:\\Users\\49745\\AppData\\Local\\Temp\\e2e-x62ycgqm\\comic.pdf",
+      "bytes": 9542
+    },
+    "cbz": {
+      "ok": true,
+      "path": "C:\\Users\\49745\\AppData\\Local\\Temp\\e2e-x62ycgqm\\comic.cbz",
+      "bytes": 1163
+    }
+  },
+  "pdf_pages": [
+    {
+      "page": 0,
+      "size": [
+        600,
+        900
+      ],
+      "distinct_colours": 2,
+      "non_white": 540000,
+      "black_pixels": 16000,
+      "dominant": [
+        220,
+        40,
+        40
+      ],
+      "text_length": 0
+    },
+    {
+      "page": 1,
+      "size": [
+        600,
+        900
+      ],
+      "distinct_colours": 2,
+      "non_white": 540000,
+      "black_pixels": 16000,
+      "dominant": [
+        40,
+        160,
+        80
+      ],
+      "text_length": 0
+    },
+    {
+      "page": 2,
+      "size": [
+        600,
+        900
+      ],
+      "distinct_colours": 2,
+      "non_white": 540000,
+      "black_pixels": 16000,
+      "dominant": [
+        50,
+        80,
+        220
+      ],
+      "text_length": 0
+    }
+  ],
+  "pdf_zlib_clean": true,
+  "cbz": {
+    "list_exit": 0,
+    "test_exit": 0,
+    "everything_ok": true,
+    "members": [
+      "0001_0001_001.png",
+      "0002_0002_002.png",
+      "0003_0003_003.png",
+      "ComicInfo.xml"
+    ],
+    "has_comicinfo": true
+  }
+}
