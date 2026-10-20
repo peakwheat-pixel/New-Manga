@@ -25,13 +25,31 @@ evidence_dir: verification/ARCH-DOC-REBASELINE
 
 ## Acceptance Criteria
 
-- [ ] AC1：AC-DOC-001逐份核验01–08覆盖，新技术架构/权限与UI映射具备正式来源，不只证明文件存在。
-- [ ] AC2：AC-DOC-002领域/Pipeline/版本/受控来源/持久化与错误语义跨文档一致，有逐项对照证据。
-- [ ] AC3：AC-DOC-003四一级页面/默认书架/基础Reader/延期项与01/04/05/08一致；四页设计独立释放，不以文档替代设计审查。
-- [ ] AC4：P18的JA/KO、无字页、质量AC对应新链，明确真实样本/真值/阈值/version/device/model/endpoint证据责任；旧结果不继承。
-- [ ] AC5：P20的Tauri/WebView2/Python sidecar/Windows/UI/可选模型对应旧stack-specific条目，逐项保留要求与新证据Gate。
-- [ ] AC6：P08-FMT PNG/ZIP/CBZ/PDF/文本转录长期验收追踪；P16/P17在消费对应格式契约前须此项完成。
-- [ ] AC7：固定head非作者Review、Codex集成与逐消费者Gate裁决；某项未完成不标整Task done，可按消费者拆独立已审交付但须另冻结。
+**结构依 `codex-adjudicate-archdoc-closeout-r37.md` 的裁定：7 条 Gate + 1 条消费处置汇总。**
+**本 Task 只对「映射是否确立」与「交接是否处置」负责，不替消费者判定其自身技术结果。**
+
+- [x] AC1-GATE：逐份核验 01–08 的覆盖；为新技术架构、权限边界和 UI 映射指定正式来源；
+  明确 Legacy/Historical 内容、范围边界及其与目标架构的对应关系，并提供可复核引用。
+  **该项验收规范与映射是否确立，不验收具体 React 组件渲染或 Tauri IPC 编译。**
+- [x] AC2-GATE：对领域模型、Pipeline、版本/Revision、受控来源、持久化及错误语义提供
+  逐项跨文档一致性对照；记录新栈 IPC/领域服务集成验证的消费者、Gate 和证据要求。
+  **该项不要求消费者集成测试已通过。**
+- [x] AC3-GATE：正式确立四个一级页面、默认书架、基础 Reader 与延期项，并证明其与 01/04/05/08 一致；
+  明确 React 视觉/交互设计须由 ZCode 的独立设计 Gate 审查，**文档映射不能代替设计审查。**
+- [x] AC4-GATE：将 P18 的 JA/KO、无字页及质量验收项映射到新链；定义真实样本、真值、阈值及
+  `version/device/model/endpoint` 的证据责任，并明确旧结果不继承、消费者实测由 P18 或其经授权的后续 Task 出具。
+- [x] AC5-GATE：逐项映射 P20 的 Tauri/WebView2/Python sidecar/Windows/UI/可选模型 NFR，
+  **原要求及阈值不得降低**；明确各项测量方法、环境矩阵、证据字段和消费者 Gate。
+- [x] AC6-GATE：建立 P08-FMT PNG/ZIP/CBZ/PDF/文本格式的长期追踪表；为导入/导出契约、
+  `SEC-FMT-001..005`、外部阅读器互操作验证逐项指定责任 Task/Owner、前置关系、证据
+  和未满足时可用的限制处置。**仅在这些责任均有活动 Task 或经授权的 limitation 接收路径后才算达成。**
+  → **已由 [SEC-FMT-IMPL-1](SEC-FMT-IMPL-1.md) `closed_with_limitations` 承接**（r37 判定的唯一缺口）。
+- [x] AC7-GATE：对固定交付 head 完成非作者 Review 与 Codex 集成核验，并对每个消费者给出
+  「映射已就位/未就位、消费者须自证事项、接受/附条件/拒绝」的逐项裁决；**不替消费者判定其自身技术结果。**
+- [ ] AC-CONSUMPTION-DISPOSITION：对 AC1–AC6 所列每个消费者逐项登记消费状态、证据引用、
+  负责的消费者 Task/Owner，以及未完成项的后续路径或经授权接受的 limitation；
+  AC7 登记各消费者是否已作出 Gate 裁决。**状态可以是 `MET`、`PARTIAL`、`BLOCKED` 或
+  `NOT_APPLICABLE`；不得因未完成而虚报 `MET`。**
 
 ## 允许修改范围（2026-10-15 冻结）
 
@@ -205,3 +223,34 @@ Codex r33 据此作出裁定。
 - **裁决**：AC5 的消费者 **P20 尚不存在**，故**按 AC7"某项未完成不标整 Task done"**，本 Task **保持 `status: ready`**，**不**标 done；AC1–AC3（P09）、AC4（P18）、AC6（P16/P17）对应的消费者**均已关闭**，其证据形态与范围已由 R1 非作者 Review（`verification/ARCH-DOC-REBASELINE/dsh-review-r1.md`：architecture_axis **PASS** / verification_axis **PASS**，`approved_with_conditions`）覆盖，**无需重做**。
 - **不做的**：不重跑已 PASS 的核验、不迁移历史 PASS、不新增产品范围、不改阈值；**未**为 AC5 预写结论（P20 未释放，预写即越权）。
 - **解除条件**：**P20 释放并关闭**后，本 Task 方可做 AC5 裁决并整体 closeout（或按 AC7 另行冻结 consumer-scoped 交付）。**P20 又依赖 P19 的验收方式（用户裁决硬门）** → 本节点实质由该裁决解锁。
+
+### 2026-10-20 按 r37 裁定实施 7+1 结构（Coordinator dsh, epoch 8）
+
+**依据**：`verification/P09-GOVERNANCE-DEBT-20261019/codex-adjudicate-archdoc-closeout-r37.md`
+
+**r37 的判定**：7 条 Gate 中 **AC1–AC5、AC7 已达成，AC6 部分达成**——
+「格式追踪表、前置要求和 `SEC-FMT` 定义存在；但 `SEC-FMT-001..004` 及外部阅读器验证
+没有活动承接 Task/Owner」。**这是唯一的 Gate 责任缺口。**
+
+**该缺口已关闭**：r37 判定的下一步是「为 AC6 未承接项明确后续 Task/Owner 或经授权接受的
+limitation」。已完成：
+
+- **[SEC-FMT-IMPL-1](./SEC-FMT-IMPL-1.md)** 建立并收口为 `closed_with_limitations`
+  （5 MET + AC5 `PARTIAL`），29 个测试覆盖 `SEC-FMT-001..004`。
+- **由它发现并驱动修复了一个 P1 缺陷**
+  [PDF-STREAM-FIX-1](./PDF-STREAM-FIX-1.md)（`closed_with_limitations`）：
+  `QtFreePdfComposer` 的 content stream 声明了 FlateDecode 但未压缩，
+  **导致所有导出 PDF 渲染空白**。
+
+**所以 7 条 Gate 现已全部达成**（AC6 的责任缺口由活动 Task 承接并关闭）。
+
+**剩余 1 条 `AC-CONSUMPTION-DISPOSITION` 未完成**：它要求逐消费者登记消费状态。
+**这依赖 P09 / P18 / P20 / P16 / P17 / ZCode 设计 Gate / 第二环境 / 真实阅读器各自的执行结果。**
+
+**这不是本 Task 能自己完成的**——**它是「向消费者要结果」的登记，不是「本 Task 交东西」。**
+
+**所以本 Task 现在的形态是**：**7 Gate 全达成 + 1 消费处置汇总待消费者**。
+
+**按 r37 的措辞**：关闭候选为 **`closed_with_limitations`，不是 `done`**——
+前提是 AC6 的未承接项已被明确派发或经授权接受 limitation。**该前提现已满足。**
+
