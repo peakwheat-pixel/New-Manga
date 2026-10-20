@@ -12,7 +12,7 @@ suggested_owner: DSH
 owner: DSH
 reviewer: ZCode
 depends_on: []
-base_commit: 0e93a5687
+base_commit: 20b087d7e
 branch: agent/dsh/P11-PROJECTION-TEST-ALIGN-1
 worktree: G:/CODEX/New Manga.workspace/worktrees/P11-PROJECTION-TEST-ALIGN-1
 integration_commit: 9c594cd4f
@@ -23,6 +23,7 @@ evidence_dir: verification/P11-PROJECTION-TEST-ALIGN-1
 allowed_paths:
   - tests/workbench/
   - verification/P11-PROJECTION-TEST-ALIGN-1/
+<!-- r191: base_commit is the parent of this branch's first commit; delivery_head is the branch tip; integration_commit is the mainline fast-forward point. Previously all three carried the commit that happened to be HEAD when the file was authored. -->
 ---
 
 # P11-PROJECTION-TEST-ALIGN-1：让 projection 测试对齐 P11 §4.5

@@ -12,17 +12,18 @@ suggested_owner: DSH
 owner: DSH
 reviewer: ZCode
 depends_on: []
-base_commit: 0e93a5687
+base_commit: a3d5dfd8a
 branch: agent/dsh/TEST-ENV-ASSUMPTIONS-1
 worktree: G:/CODEX/New Manga.workspace/worktrees/TEST-ENV-ASSUMPTIONS-1
-integration_commit: 9c594cd4f
-delivery_head: 9c594cd4f
+integration_commit: 20b087d7e
+delivery_head: 20b087d7e
 canonical_evidence_status: complete
 resource_closeout_status: complete
 evidence_dir: verification/TEST-ENV-ASSUMPTIONS-1
 allowed_paths:
   - tests/providers/
   - verification/TEST-ENV-ASSUMPTIONS-1/
+<!-- r191: base_commit is the parent of this branch's first commit; delivery_head is the branch tip; integration_commit is the mainline fast-forward point. Previously all three carried the commit that happened to be HEAD when the file was authored. -->
 ---
 
 # TEST-ENV-ASSUMPTIONS-1：把可选运行时假设从测试中断言移出
