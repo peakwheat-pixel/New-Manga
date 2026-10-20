@@ -1,6 +1,6 @@
 {
   "total": 320,
-  "failing": 91,
+  "failing": 87,
   "causes": {
     "Evidence SHA-256 不匹配": 163,
     "终态或已集成的 approved Task 必须设置 resource_closeout_status: complete。": 2,
@@ -13,9 +13,8 @@
     "失效的本地引用": 7,
     "Canonical evidence 路径缺失": 23,
     "Evidence class 无效": 2,
-    "当前 DAG 未登记非终态 Task": 26,
-    "Resource 最终路径未验证": 2,
-    "READY Task 未出现在 Plan 的 READY 节点": 4
+    "当前 DAG 未登记非终态 Task": 22,
+    "Resource 最终路径未验证": 2
   },
   "tasks": [
     {
@@ -2027,13 +2026,10 @@
     },
     {
       "task": "T3.2.1-REPAIR-10",
-      "status": "ready",
-      "exit": 1,
-      "fail_count": 2,
-      "fails": [
-        "当前 DAG 未登记非终态 Task：T3.2.1-REPAIR-10",
-        "READY Task 未出现在 Plan 的 READY 节点：T3.2.1-REPAIR-10"
-      ]
+      "status": "proposed",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
     },
     {
       "task": "T3.2.1-REPAIR-11",
@@ -2090,13 +2086,10 @@
     },
     {
       "task": "T3.2.1-REPAIR-3",
-      "status": "ready",
-      "exit": 1,
-      "fail_count": 2,
-      "fails": [
-        "当前 DAG 未登记非终态 Task：T3.2.1-REPAIR-3",
-        "READY Task 未出现在 Plan 的 READY 节点：T3.2.1-REPAIR-3"
-      ]
+      "status": "proposed",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
     },
     {
       "task": "T3.2.1-REPAIR-4",
@@ -2127,13 +2120,10 @@
     },
     {
       "task": "T3.2.1-REPAIR-7",
-      "status": "ready",
-      "exit": 1,
-      "fail_count": 2,
-      "fails": [
-        "当前 DAG 未登记非终态 Task：T3.2.1-REPAIR-7",
-        "READY Task 未出现在 Plan 的 READY 节点：T3.2.1-REPAIR-7"
-      ]
+      "status": "proposed",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
     },
     {
       "task": "T3.2.1-REPAIR-8",
@@ -2146,13 +2136,10 @@
     },
     {
       "task": "T3.2.1-REPAIR-9",
-      "status": "ready",
-      "exit": 1,
-      "fail_count": 2,
-      "fails": [
-        "当前 DAG 未登记非终态 Task：T3.2.1-REPAIR-9",
-        "READY Task 未出现在 Plan 的 READY 节点：T3.2.1-REPAIR-9"
-      ]
+      "status": "proposed",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
     },
     {
       "task": "T3.2.1",

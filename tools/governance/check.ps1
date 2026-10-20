@@ -452,12 +452,16 @@ if ($TaskPath -and (Test-Path -LiteralPath $TaskPath -PathType Leaf)) {
             }
             if ($metadata['governance_version'] -eq '3' -and $taskStatus -in @('in_review', 'approved', 'done', 'closed_with_limitations')) {
                 # §4.3 AC 状态标记门禁：每个 AC 必须有合法 <<STATUS>>，且与勾选一致。
-                $acMatches = @([regex]::Matches($taskText, '(?m)^[ \t]*-[ \t]*\[([ xX])\][ \t]*\*\*AC[^\r\n]*$'))
+                $acMatches = @([regex]::Matches($taskText, '(?m)^[ \t]*-[ \t]*\[([ xX])\][ \t]*\*\*AC[^\r\n]*\r?$'))
                 if ($acMatches.Count -eq 0) {
                     Add-Error 'lifecycle v3 Task 进入 REVIEW/DONE 时未找到任何 AC 行。'
                 }
                 foreach ($am in $acMatches) {
-                    $acLine = $am.Value
+                    # r188: the AC match may end with \r on a CRLF file (the pattern above
+                    # tolerates it so AC lines are visible either way). Downstream marker matching
+                    # anchors on $, so strip the \r once here instead of making every later
+                    # pattern CRLF-aware.
+                    $acLine = $am.Value.TrimEnd([char]13)
                     $isChecked = ($am.Groups[1].Value -ne ' ')
                     $acLabel = if ($acLine -match '\*\*(AC[0-9A-Za-z._-]+)') { $matches[1] } else { 'AC?' }
                     $mk = [regex]::Match($acLine, '<<(MET|PARTIAL|BLOCKED|NOT_APPLICABLE)(?::[ \t]*([^>]*))?>>[ \t]*$')
