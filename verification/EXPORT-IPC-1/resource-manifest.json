@@ -1,0 +1,65 @@
+{
+  "task_id": "EXPORT-IPC-1",
+  "recorded_at": "2026-10-20",
+  "restored_by": "DSH",
+  "restoration_basis": [
+    "doc/tasks/EXPORT-IPC-1.md#Resource Manifest (1 row(s))",
+    "doc/tasks/EXPORT-IPC-1.md frontmatter delivery_head: fee223e36bfc28fe8c75cdc7f260933f8c49d6f6",
+    "physical inspection of the worktree, 2026-10-20",
+    "physical junction inspection: apps/desktop/frontend/dist",
+    "physical junction inspection: apps/desktop/src-tauri/target/core-sidecar",
+    "doc/tasks/EXPORT-IPC-1.md#Closeout Record (deleted/moved/archived = 0)"
+  ],
+  "resources": [
+    {
+      "resource_type": "worktree",
+      "source_path": "G:/CODEX/New Manga.workspace/worktrees/EXPORT-IPC-1",
+      "disposition": "PRESERVE_REFERENCED",
+      "destination_path": "G:/CODEX/New Manga.workspace/worktrees/EXPORT-IPC-1",
+      "reason": "Recorded by the task's own Resource Manifest table row; retained in place.",
+      "verification": {
+        "exists": true,
+        "checked_at": "2026-10-20",
+        "head": "fee223e36",
+        "head_matches_closeout_delivery_head": true
+      }
+    },
+    {
+      "resource_type": "junction",
+      "source_path": "G:/CODEX/New Manga.workspace/worktrees/EXPORT-IPC-1/apps/desktop/frontend/dist",
+      "disposition": "PRESERVE_REFERENCED",
+      "destination_path": "G:/CODEX/New Manga/apps/desktop/frontend/dist",
+      "reason": "Windows junction found inside the worktree during restoration; recorded because it physically exists, not because a row names it.",
+      "verification": {
+        "exists": true,
+        "checked_at": "2026-10-20",
+        "is_reparse_point": true,
+        "target": "G:/CODEX/New Manga/apps/desktop/frontend/dist"
+      }
+    },
+    {
+      "resource_type": "junction",
+      "source_path": "G:/CODEX/New Manga.workspace/worktrees/EXPORT-IPC-1/apps/desktop/src-tauri/target/core-sidecar",
+      "disposition": "PRESERVE_REFERENCED",
+      "destination_path": "G:/CODEX/New Manga/apps/desktop/src-tauri/target/core-sidecar",
+      "reason": "Windows junction found inside the worktree during restoration; recorded because it physically exists, not because a row names it.",
+      "verification": {
+        "exists": true,
+        "checked_at": "2026-10-20",
+        "is_reparse_point": true,
+        "target": "G:/CODEX/New Manga/apps/desktop/src-tauri/target/core-sidecar"
+      }
+    }
+  ],
+  "closeout_counts": {
+    "deleted": 0,
+    "moved": 0,
+    "archived": 0
+  },
+  "closeout_status": "complete",
+  "notes": [
+    "RESTORED, not original. The original was never committed, so there is nothing to compare against; restored_by and restoration_basis are here so nobody has to guess whether a recreated artefact is genuine.",
+    "Method follows GOV-P15-MANIFEST-1: restore only what existing records support, never invent fields.",
+    "Junctions found on disk are registered even though the task's table did not name them - physical truth outranks textual silence, per that task's review."
+  ]
+}

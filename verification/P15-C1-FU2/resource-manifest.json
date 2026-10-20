@@ -1,0 +1,37 @@
+{
+  "task_id": "P15-C1-FU2",
+  "recorded_at": "2026-10-20",
+  "restored_by": "DSH",
+  "restoration_basis": [
+    "doc/tasks/P15-C1-FU2.md#Resource Manifest (1 row(s))",
+    "doc/tasks/P15-C1-FU2.md frontmatter delivery_head: 023cbf80dcd2593a64546f56f01ae1bac9b0bcd1",
+    "physical inspection of the worktree, 2026-10-20",
+    "doc/tasks/P15-C1-FU2.md#Closeout Record (deleted/moved/archived = 0)"
+  ],
+  "resources": [
+    {
+      "resource_type": "worktree",
+      "source_path": "G:/CODEX/New Manga.workspace/worktrees/P15-C1-FU2",
+      "disposition": "PRESERVE_REFERENCED",
+      "destination_path": "G:/CODEX/New Manga.workspace/worktrees/P15-C1-FU2",
+      "reason": "Recorded by the task's own Resource Manifest table row; retained in place.",
+      "verification": {
+        "exists": true,
+        "checked_at": "2026-10-20",
+        "head": "0aa01eddc",
+        "head_matches_closeout_delivery_head": false
+      }
+    }
+  ],
+  "closeout_counts": {
+    "deleted": 0,
+    "moved": 0,
+    "archived": 0
+  },
+  "closeout_status": "complete",
+  "notes": [
+    "RESTORED, not original. The original was never committed, so there is nothing to compare against; restored_by and restoration_basis are here so nobody has to guess whether a recreated artefact is genuine.",
+    "Method follows GOV-P15-MANIFEST-1: restore only what existing records support, never invent fields.",
+    "Junctions found on disk are registered even though the task's table did not name them - physical truth outranks textual silence, per that task's review."
+  ]
+}
