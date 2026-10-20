@@ -1,0 +1,45 @@
+{
+ "purpose": "establish what Windows reports before designing an admission rule that depends on it",
+ "api": "GlobalMemoryStatusEx (kernel32)",
+ "runs": [
+  {
+   "platform": "windows",
+   "call_ok": true,
+   "struct_size": 64,
+   "memory_load_pct": 72,
+   "total_phys_mb": 32407.0,
+   "avail_phys_mb": 8956.4,
+   "total_pagefile_mb": 65175.0,
+   "avail_pagefile_mb": 27501.8,
+   "total_virtual_mb": 134217727.9,
+   "avail_virtual_mb": 134213508.9
+  },
+  {
+   "platform": "windows",
+   "call_ok": true,
+   "struct_size": 64,
+   "memory_load_pct": 72,
+   "total_phys_mb": 32407.0,
+   "avail_phys_mb": 8956.3,
+   "total_pagefile_mb": 65175.0,
+   "avail_pagefile_mb": 27502.0,
+   "total_virtual_mb": 134217727.9,
+   "avail_virtual_mb": 134213508.9
+  },
+  {
+   "platform": "windows",
+   "call_ok": true,
+   "struct_size": 64,
+   "memory_load_pct": 72,
+   "total_phys_mb": 32407.0,
+   "avail_phys_mb": 8963.7,
+   "total_pagefile_mb": 65175.0,
+   "avail_pagefile_mb": 27509.9,
+   "total_virtual_mb": 134217727.9,
+   "avail_virtual_mb": 134213508.9
+  }
+ ],
+ "avail_spread_mb": 7.4,
+ "page_need_rgb24_mb": 32.0,
+ "page_need_rgba_mb": 42.67
+}
