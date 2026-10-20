@@ -14,7 +14,7 @@ base_commit: b4560ae8ab2ff9c6c4db50f9d57b50fe1e8393df
 branch: antigravity/P09-AC3-DELETE-HARDEN-1
 worktree: G:/CODEX/New Manga
 integration_commit: null
-delivery_head: null
+delivery_head: 198a9e440cf1626dec9c4bc31affbaf773d23706
 canonical_evidence_status: pending
 resource_closeout_status: pending
 evidence_dir: verification/WORKSPACE-CONSOLIDATION-1
