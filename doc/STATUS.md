@@ -4,7 +4,7 @@
 
 ## 当前 Task
 
-- 当前 Task：无（`PDF-STREAM-FIX-1` 已收口）。**[SEC-FMT-IMPL-1](tasks/SEC-FMT-IMPL-1.md)** `ready`（AC1–AC4 完成，AC5 已发现并驱动 [PDF-STREAM-FIX-1](tasks/PDF-STREAM-FIX-1.md) 修复）。
+- 当前 Task：无。`SEC-FMT-IMPL-1` 与 `PDF-STREAM-FIX-1` 均已收口。**READY 仅 [ARCH-DOC-REBASELINE](tasks/ARCH-DOC-REBASELINE.md)**（7 AC 全等下游，见 r37 及 `ac1-ac3-gap-analysis`）。
 - **[DETECT-TILING-1](tasks/DETECT-TILING-1.md)**：**`closed_with_limitations`**（5/5 AC；3 `MET`、2 `PARTIAL`；集成 `3928c35c4`）。限制：`SEC-FMT-005` 的「检查可用物理内存」未实现；真实超限 JPEG 不存在。
 - **[DETECT-MEMORY-GUARD-1](tasks/DETECT-MEMORY-GUARD-1.md)**：**`closed_with_limitations`**（5/5 AC；ZCode Review 通过；限制 L1「正常机器上永不触发」、L2「单机数据」等 7 条）。
 - P20：**`closed_with_limitations`**（6/7 AC；AC4 撕裂项 `LIMITATION/UNOBSERVED`；用户 2026-10-20 授权）。AC1/AC2/AC3/AC6/AC7 ✅；AC4 ◐ 延迟 36.0 ms。

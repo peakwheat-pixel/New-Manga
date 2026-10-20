@@ -3,7 +3,7 @@ id: SEC-FMT-IMPL-1
 title: SEC-FMT-001..004 的实现与外部阅读器互操作验证
 kind: implementation
 governance_version: 3
-status: ready
+status: closed_with_limitations
 language: zh-CN
 parent: ARCH-DOC-REBASELINE
 blocked_by: null
@@ -14,10 +14,10 @@ depends_on: []
 base_commit: null
 branch: null
 worktree: null
-integration_commit: null
-delivery_head: null
-canonical_evidence_status: pending
-resource_closeout_status: pending
+integration_commit: 4411c8edd
+delivery_head: 4411c8edd
+canonical_evidence_status: complete
+resource_closeout_status: complete
 evidence_dir: verification/SEC-FMT-IMPL-1
 activation_note: r37 判定这是 ARCH-DOC-REBASELINE 的 AC6 Gate 责任缺口；本文件为承接 Task 本体
 ---
@@ -53,47 +53,18 @@ activation_note: r37 判定这是 ARCH-DOC-REBASELINE 的 AC6 Gate 责任缺口�
 
 ## Acceptance Criteria
 
-- [ ] **AC1 Zip Slip：证明 `zip_parts` 挡住六类攻击** <<PARTIAL: 待实施>>
-  - 六类：`../` 穿越、绝对路径、Windows 驱动器前缀、反斜杠、NUL 字节、`.`/空段。
-  - 断言 `zip_parts` 对每一类**抛 `ValueError`**，合法条目正常返回。
-  - **对照臂**：`images/<title>/001.jpg` 必须被接受（否则「拒绝一切」也能过前六条）。
-  - 依据：`guard-on-attack-path.md` §1.2。
-- [ ] **AC2 XXE：证明 DTD/ENTITY 拒绝有效** <<PARTIAL: 待实施>>
-  - 外部实体（`<!DOCTYPE ... SYSTEM "file:///...">`）、Billion Laughs（嵌套 `<!ENTITY>`）均被拒。
-  - **对照臂**：合法 `ComicInfo.xml` 仍能解析。
-  - 依据：`r1-xml-parsing-scope.md` §7.2。
-- [ ] **AC3 魔数：证明非图片被拒，并记录机制** <<PARTIAL: 待实施>>
-  - 把文本/可执行/截断图片改名为 `.png`/`.jpg`，断言得到 typed 错误、不崩溃。
-  - **必须记录**：本项目的嗅探是**委托 Pillow `Image.open()`** + `image.format` 白名单，
-    不是自建魔数检查。**文档不得写成「本项目实现了魔数嗅探」。**
-  - 依据：`final-two-items.md` §一。
-- [ ] **AC4 长路径：把探针转成回归测试** <<PARTIAL: 待实施>>
-  - `probe-sfx004-lifecycle.py` 已验证 434 字符路径 7/7 通过；**需转成 pytest 用例**。
-  - 断言 `write_temp`/`publish`/读回/`remove_managed` 在 >300 字符根目录下均成功。
-  - 依据：`sfx004-long-path-repro.md` §三。
-- [ ] **AC5 外部阅读器互操作验证** <<PARTIAL: 待实施>>
-  - 至少用**一个**外部阅读器打开导出的 CBZ 与 PDF。
-  - **若本环境无法安装，必须如实登记为 limitation，不得以结构验证充当**（r33 已禁止）。
-- [ ] **AC6 回归与独立审查** <<PARTIAL: 待实施>>
-  - 既有测试全通过；固定 `delivery_head`，由**非作者**独立复审。
-
-### 2026-10-20 释放记录（范围经四轮证据收敛）
-
-**Owner = DSH，Reviewer = ZCode**（与 `DETECT-MEMORY-GUARD-1` 同一对，两端均已实证）。
-
-**范围收敛过程**（每一轮的初始判断都不对）：
-
-| 轮 | 原以为 | 实际 |
-|---|---|---|
-| 143 | `SEC-FMT-002` 不适用 | 已实现（`assets.py` DTD 拒绝）|
-| 144 | 四项都要实现 | 四项都已存在 |
-| 145 | 都有守卫 | 001/002 在「产品不用」的路径上 |
-| 146 | `SEC-FMT-004` 是真缺口 | 缺口可能无害 |
-| **147** | **004 需要实现** | **实测 7/7 通过，规范的技术细节过时** |
-
-**所以本 Task 没有「从零实现」的工作，全部是「落证据为测试」。**
-
-**唯一可能的新实现是 UI 层地址栏不截断（未测），但那可能属于另一个 Task。**
+- [x] **AC1 Zip Slip：证明 `zip_parts` 挡住六类攻击** <<MET>>
+  - 8 类攻击 + 合法条目 + 目录条目；`tests/security/test_sec_fmt_001_zip_slip.py`（11 测试）。
+- [x] **AC2 XXE：证明 DTD/ENTITY 拒绝有效** <<MET>>
+  - 外部实体 / Billion Laughs / 参数实体 / 合法 XML / 畸形 XML / 守卫先于解析器；6 测试。
+- [x] **AC3 魔数：证明非图片被拒，并记录机制** <<MET>>
+  - 文本改名 / MZ 改名 / GIF / 截断 PNG / 真 PNG 对照；6 测试。
+  - **机制是委托 Pillow `Image.open()` 嗅探 + `image.format` 白名单，不是自建魔数检查。**
+- [x] **AC4 长路径：把探针转成回归测试** <<MET>>
+  - 270 / 350 / 430 三档 + 完整生命周期 + guard-the-guard；6 测试。
+  - **限定：本机 `LongPathsEnabled=1` 下实测通过**（Windows 默认 0）。
+- [ ] **AC5 外部阅读器互操作验证** <<PARTIAL: 独立实现层达成（7-Zip + PyMuPDF），阅读器层未做——本机无专用漫画/PDF 阅读器>>
+- [x] **AC6 回归与独立审查** <<MET>>
 
 ## 允许修改范围（待释放时冻结）
 
@@ -120,12 +91,64 @@ activation_note: r37 判定这是 ARCH-DOC-REBASELINE 的 AC6 Gate 责任缺口�
 
 ## 交付与运行记录
 
-（待实施后填写）
+**交付**：`tests/security/` 下 4 个文件 29 个测试；6 份证据文档；**并由 AC5 发现
+P1 缺陷驱动了 [PDF-STREAM-FIX-1](PDF-STREAM-FIX-1.md)**（`closed_with_limitations`）。
+
+**运行**（每次单独跑，无需 `PYTHONPATH`——`conftest.py` 已补）：
+
+| 套件 | 结果 |
+|---|---|
+| `tests/security` | **29 passed** |
+| `tests/export` | **4 passed** |
+| `tests/core` | **564 passed** |
+| 全量 | `9 failed, 2293 passed, 9 skipped`（**9 个失败经基线对照证明为 pre-existing**）|
+
+**关键澄清**：`tests/security` / `tests/export` / `tests/core` 等 **7 个套件原本缺 `conftest.py`**，
+**全量能绿靠的是收集顺序（字母序靠前的套件先注入 `src/`）——是巧合不是设计**。已全部补上。
+
+### AC5 为什么是 `PARTIAL` 而不是 `MET`
+
+**Task 原文要求「外部**阅读器**」。**
+
+**本机实际可用的是独立**解析/解压器**：7-Zip（ZIP）、PyMuPDF（PDF）。**
+
+| 层 | 状态 |
+|---|---|
+| **独立实现层** | **达成**（7-Zip `list`/`test` exit=0；PyMuPDF 修复后无 zlib 错误）|
+| **阅读器层** | **未做**（无专用漫画阅读器，无桌面 PDF 阅读器）|
+
+**ZCode Review（P3-1）指出**：我在 `ac5-final-after-pdf-fix.md` 里把「阅读器」转述成
+「验证器」，据此判为「实质要求已达成」——**那是自我放宽验收标准**。
+**本 Task 最初（`ac5-interop-plan.md` §五）就判的是 `PARTIAL`，现回归该判定。**
+
+**Chrome headless 不是有效验证器**：它对**已知良好**的 PDF 同样产出 0 字节 PNG。
+
+### ZCode Review 的处置
+
+`APPROVED_WITH_CONDITIONS`，无 P0/P1。
+
+| 项 | 处置 |
+|---|---|
+| **P2-1** Task 文件未随交付更新 | **已修**（本节与 AC 块）|
+| **P2-2** 缺 `conftest.py` | **已修**（7 个套件，非 Review 说的 2 个）|
+| **P2-3** `AttributeError` 断言过宽 | **已修**（要求消息含 `_core`）|
+| **P3-1** AC5 应回归 `PARTIAL` | **已采纳**（见上）|
+| **P3-2** 长路径机制链补全 | **已采纳**（AC4 带环境限定语）|
+| **P3-3** 为「产品不适用」建负哨兵 | **未做**（后续建议）|
+| **P3-4** 7z 未进 pytest 等 | **未做**（后续建议）|
 
 ## Canonical Evidence
 
 | evidence_id | AC/Gate | path | commit | sha256 | class |
 |---|---|---|---|---|---|
+| EV-SF-001 | AC1 | `tests/security/test_sec_fmt_001_zip_slip.py` | 415ea885d | `6e3fe3f5116ebbe67fdb24bf7b1c347640b969c49467f43d6ebbb154ac99b9a1` | CANONICAL |
+| EV-SF-002 | AC2 | `tests/security/test_sec_fmt_002_xxe.py` | 2edfd2890 | `3acb65e230faef7d7934aceb44b015d4dd7415098264208742c9d7e80df7fce3` | CANONICAL |
+| EV-SF-003 | AC3 | `tests/security/test_sec_fmt_003_magic.py` | 4411c8edd | `b858f20a10671b8fb23d4b93bf92a391653475eecbb4fdfb76b496870ba6ff4b` | CANONICAL |
+| EV-SF-004 | AC4 | `tests/security/test_sec_fmt_004_long_path.py` | 2edfd2890 | `1650ea1f763c7b1b651e83afeaf5e0b554e3a5ccdc529e178ff700ae3f8b0542` | CANONICAL |
+| EV-SF-AC5 | AC5 | `verification/SEC-FMT-IMPL-1/ac5-final-after-pdf-fix.md` | 1730670df | `431dde2a3b4b26508908cf612958f444aae422c0ef72a7308f85a3313825a919` | CANONICAL |
+| EV-SF-RV | AC6 | `verification/SEC-FMT-IMPL-1/dsh-zcode-review.md` | 4759f7c38 | `c477bc40c6141531959ccbcda0b551387bbdd315c6f14264e9fa5a73ee8929a1` | CANONICAL |
+| EV-SF-SCOPE | AC1 | `verification/SEC-FMT-IMPL-1/guard-on-attack-path.md` | 820739cab | `01426cd8e22d930fb592f936c520c01d59dd22a13f476cd4e2637d13b170ed15` | CANONICAL |
+| EV-SF-R1 | AC2 | `verification/SEC-FMT-IMPL-1/r1-xml-parsing-scope.md` | 25115d198 | `c2f7178e0b356e82e28d56ff03ae198c4ff0ed0544a34dbc211ec512370e17a5` | CANONICAL |
 
 ## Resource Manifest
 
