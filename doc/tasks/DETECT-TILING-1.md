@@ -1,6 +1,6 @@
 ---
 id: DETECT-TILING-1
-title: core.detect 分块处理超限页面（含 SEC-FMT-005 超大图安全）
+title: core.detect 超限输入的预解码安全拒绝（含 SEC-FMT-005 映射）
 kind: implementation
 governance_version: 3
 status: ready
@@ -48,57 +48,52 @@ MAX_DETECT_PIXELS = MAX_DETECT_PAGE_BYTES // 3
 **裁定**：`verification/P09-GOVERNANCE-DEBT-20261019/codex-adjudicate-detect-tiling-r34.md`
 
 ## Acceptance Criteria
-
-- [ ] AC1：**有界解码与分块坐标**——对超限页面，选定解码方式的**峰值内存必须有界并实测证明**；
-      不得以「裁 tile 后逐块 `convert()`」默认等价于有界解码（Pillow 可能在首次像素访问时
-      解码整图）。无法有界解码的输入必须**在大分配之前**按明确上限拒绝并给出清晰错误。
-      可处理时，每 tile 解码后 RGB24 ≤ `MAX_DETECT_PIXELS`，结果坐标映射回**整页坐标空间**。
-- [ ] AC2：**重叠边界的唯一性与不漏检**——跨 tile 的同一文本块必须唯一且不丢。
-      允许采用保守的 tile ownership / overlap 策略，但**不得**把重复 region 留作
-      「以后再合并」后仍声称 P18 质量切片可用。必须写明所选策略与理由。
-- [ ] AC3：**32 MiB 契约与输入语义不变**——`MAX_DETECT_PAGE_BYTES` / `MAX_DETECT_PIXELS`
-      **值不得修改**（分块是解法，调阈值不是）；PNG/JPEG 白名单、base64 校验、
-      `width`/`height` 一致性校验的语义**保持不变**。
-- [ ] AC4：**超限样本与正常页对照**——用 `test-materials` 中**已存在的**超限样本实测通过，
-      产出 region 集与**整页坐标**；同时用一张**未超限页**做对照，证明分块未改变正常页结果。
-      **原目标页 `2946×4167` 已不在 `test-materials` 中**（见
-      `verification/DETECT-TILING-1-preflight-20261020.md`），改用同源等价样本：
-      实测可用样本见下表，**引用方式为 `test-materials` 路径 + `sha256`，不得复制入仓库**
-      （依据 `data-registry` policy `unknown rights mean no redistribution` 与
-      `WORKSPACE_GOVERNANCE.md` L83，见 `verification/test-materials-licence-check-20261020.md`）。
-
-      | 用途 | 尺寸 | 像素数 | 与 `MAX_DETECT_PIXELS` 之比 |
-      |---|---|---:|---:|
-      | **对照（不超限）** | `600×18401` | 11,040,600 | **0.987×** |
-      | **超限（主样本）** | `690×100674` | 69,465,060 | **6.21×** |
-      | **超限（极端）** | `690×131289` | 90,589,410 | **8.10×** |
-
-      **注意**：`690×131289` 会先触发 **Pillow 自身的** `MAX_IMAGE_PIXELS`（默认
-      `89,478,485`，为本项目阈值的 8.00 倍）。**AC1 的峰值内存实测必须覆盖这一点**：
-      确认 Pillow 的保护在哪一步生效、本项目的拒绝是否仍能先于大分配。
-- [ ] AC5：**`SEC-FMT-005` 超大图安全 + 回归 + 独立审查**——逐字覆盖 `SEC-FMT-005` 的三项要求
-      （检查可用物理内存、分块或尺寸限制、清晰内存警告防 OOM），覆盖 `> 10000×20000` 场景；
-      既有 `core.detect` 测试全通过；固定 `delivery_head` 由 DSH 独立复审。
+- [ ] AC1：**超限输入的预解码安全拒绝与内存证据**——对 PNG/JPEG 请求，必须在**任何触发
+      像素解码或建立整页像素缓冲的操作之前**完成格式、尺寸与资源策略判定。超过明确最大处理尺寸
+      或内存策略的页面必须**安全拒绝**，错误须说明**实际尺寸、适用上限及用户可采取的处理方式**。
+      不得通过 `crop()` / `reduce()` / `draft()` 或其它 Pillow 访问路径绕过上限。
+      **须实测记录拒绝前后的峰值内存**，证明拒绝路径**未触发整图像素分配**。
+      若某格式的头部/元数据解析本身会触发像素分配，必须相应调整判定路径，
+      或明确拒绝声称满足本 AC。
+      ——**改写依据**：`codex-adjudicate-tiling-stage2-r35.md` §2。
+      阶段 1/2 已实测证明「裁 tile 后逐块 `convert()`」**不是**有界解码
+      （见 `verification/DETECT-TILING-1/stage1-decoder-memory.md`
+      与 `stage2-candidate-paths.md`）。
+- [ ] AC2：**`SEC-FMT-005` 的逐项映射**——`SEC-FMT-005` 原文要求「检查可用物理内存、
+      **分块或适当限制最大处理尺寸**、提供清晰内存警告防止 OOM」。
+      **「限制」是被明文允许的**，所以本 Task 走拒绝路线不违反它。
+      但**当前代码的像素上限与通用错误尚不能单独证明其全部满足**，
+      必须把四项逐一映射并给证据：①可用物理内存检查/明确上限
+      ②超限前拒绝 ③用户可读警告 ④OOM 防护。
       **未覆盖全项只能登记 `PARTIAL`，不得声称 `SEC-FMT-005` 已满足。**
+- [ ] AC3：**阈值口径缺陷单独立项，本 Task 不改常量**——
+      `MAX_DETECT_PIXELS = MAX_DETECT_PAGE_BYTES // 3` 按 **RGB24** 计算，
+      而实测样本 `mode` 可为 **RGBA**（4 B/px）。
+      32 MiB ÷ 4 = **8,388,608 px** 才是 RGBA 平面的对应上限；
+      现行 11,184,810 px 的 RGBA 满幅为 **42.7 MB**，超过 32 MiB 的设计意图。
+      **该缺陷成立，但本 Task 明确禁止改常量值**（改它是收紧，会拒绝更多页）。
+      **须在证据中登记该缺陷并给出建议口径**，实际修正在**另立 Task** 中进行。
+- [ ] AC4：**实测证据**——用 `test-materials` 中已存在的超限样本实测拒绝行为，
+      记录：输入尺寸、现有错误文本、拒绝是否发生在像素解码前、拒绝前后峰值内存。
+      样本引用方式为路径 + `sha256`，**不得复制入仓库**（依据 `data-registry` policy
+      `unknown rights mean no redistribution`）。至少覆盖一个 PNG 与一个 JPEG。
+- [ ] AC5：**回归与独立审查**——既有 `core.detect` 测试全通过；
+      PNG/JPEG 白名单、base64 校验、`width`/`height` 一致性校验的语义**不变**；
+      正常页（未超限）的检测行为与结果**不得改变**；
+      固定 `delivery_head` 由 DSH 独立复审。
 
-### 2026-10-20 释放记录
+**已删除的 AC**：原 AC2（跨 tile 边界去重）——**不再产生 tile，无验收对象**
+（依据 r35 §3）。
 
-**释放依据**：`verification/P09-GOVERNANCE-DEBT-20261019/codex-adjudicate-detect-tiling-r34.md`
-（方向批准）+ 两项释放前 Gate 复核：
+### 2026-10-20 r35 重写
 
-| Gate | 结果 |
-|---|---|
-| dirty 工作区基线 | **通过**（他人未提交内容未触碰）|
-| 样本可用 | **通过**——`test-materials` 有 78 张超限图，最大 90.6 M px |
-| 许可 | **通过**——policy 允许私有工作区内使用，禁止复制入仓 |
+原目标是「分块处理超限页面」。阶段 1/2 实测证明 **Pillow 无法对该类 PNG 做有界分块解码**（裁 1×1 像素即 324.4 MB；PNG 是单一 zlib 流，只有一个整图 tile）。
 
-**AC4 已按实际样本改写**（原目标页已丢失，改用同源等价样本）。
+**Codex r35 裁定改为「预解码安全拒绝」**：不承诺超限页可检测，改为在像素解码前准确拒绝、给可操作错误、并用实测证明拒绝路径不触发整图分配。
 
-**Owner = Antigravity**（`AGENTS.md`：承担 Codex 已释放的 Python/应用/基础设施/测试编程 Task）。
-**Reviewer = DSH**（`AGENTS.md`：不得审核自己实现的变更）。
+**关键事实**：现有 `handle_detect` **已经在 `Image.open` 后、`convert()` 前校验像素数并拒绝**——所以这不是新增机制，而是**把已有拒绝做准确、做可证明**。
 
-**本 Task 与 KO 链路无关**——`paddleocr` 在 Python 3.14 无可用 wheel 的问题
-不会阻塞本 Task，反之本 Task 也不会解决它。
+**AC 从 5 条重排**：分块目标与跨 tile 去重（原 AC2）删除；`SEC-FMT-005` 映射与阈值口径缺陷登记成为新 AC2 / AC3。
 
 ## 允许修改范围（r34 收敛，待释放时冻结）
 
