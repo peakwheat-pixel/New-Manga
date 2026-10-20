@@ -55,44 +55,76 @@ def test_requirement_probes_cover_module_weight_and_endpoint(tmp_path) -> None:
 
 
 def test_real_environment_reports_optional_providers_as_not_ready() -> None:
-    """AC-OPTIONAL-001/002: absent runtimes must not crash the assembly."""
-    registry, models = build_provider_registry(settings={})
-    statuses = {status.provider_id: status for status in registry.statuses()}
+    """AC-OPTIONAL-001/002: absent runtimes must not crash the assembly.
 
-    for provider_id in ("manga-ocr", "paddleocr-korean"):
-        status = statuses[provider_id]
-        assert status.ready is False
-        assert status.state == ProviderState.MISSING_DEPENDENCY
-        assert status.error_code == ProviderDependencyMissing.error_code
-        assert status.missing_requirements
-        with pytest.raises(ProviderDependencyMissing):
-            registry.resolve(CAPABILITY_OCR, provider_id)
+    "Absent" is now forced instead of inferred from the host, so this runs the
+    same way on CI and on a workstation that happens to have the runtimes.
+    """
+    from tests.providers.env_sim import modules_state
 
-    for provider_id in ("openai-vision-ocr", "openai-compatible-translation"):
-        status = statuses[provider_id]
-        assert status.ready is False
-        assert status.state == ProviderState.NOT_CONFIGURED
-        with pytest.raises(ProviderNotConfigured):
-            registry.resolve(
-                CAPABILITY_OCR if provider_id == "openai-vision-ocr" else CAPABILITY_TRANSLATION,
-                provider_id,
+    with modules_state(absent=frozenset({"manga_ocr", "paddleocr", "paddle"})):
+        registry, models = build_provider_registry(settings={})
+        statuses = {status.provider_id: status for status in registry.statuses()}
+
+        for provider_id in ("manga-ocr", "paddleocr-korean"):
+            status = statuses[provider_id]
+            assert status.ready is False
+            assert status.state == ProviderState.MISSING_DEPENDENCY
+            assert status.error_code == ProviderDependencyMissing.error_code
+            assert status.missing_requirements
+            with pytest.raises(ProviderDependencyMissing):
+                registry.resolve(CAPABILITY_OCR, provider_id)
+
+        for provider_id in ("openai-vision-ocr", "openai-compatible-translation"):
+            status = statuses[provider_id]
+            assert status.ready is False
+            assert status.state == ProviderState.NOT_CONFIGURED
+            with pytest.raises(ProviderNotConfigured):
+                registry.resolve(
+                    CAPABILITY_OCR if provider_id == "openai-vision-ocr" else CAPABILITY_TRANSLATION,
+                    provider_id,
+                )
+
+        # Dependency-free routes are ready; learned routes never are (R-007).
+        assert statuses["inpaint-simple-fill"].ready is True
+        assert statuses["inpaint-edge-bleed"].ready is True
+        for provider_id in (
+            "inpaint-manga-lama",
+            "inpaint-aot-gan",
+            "inpaint-brushnet",
+            "inpaint-flux-fill",
+        ):
+            status = statuses[provider_id]
+            assert status.ready is False
+            assert status.error_code == ProviderNotImplemented.error_code
+            with pytest.raises(ProviderNotImplemented):
+                registry.resolve(CAPABILITY_INPAINT, provider_id)
+        assert models.states() == ()
+
+
+def test_optional_providers_report_ready_when_their_runtimes_are_present() -> None:
+    """The side nothing covered: satisfaction, not just absence.
+
+    A registry that reported missing_dependency unconditionally would satisfy
+    the absent-side assertions forever. This pins that satisfying the probes
+    actually flips the state, so the absent-side test cannot be satisfied by a
+    provider that never becomes ready at all.
+    """
+    from tests.providers.env_sim import modules_state
+
+    with modules_state(present=frozenset({"manga_ocr", "paddleocr", "paddle"})):
+        registry, _ = build_provider_registry(settings={})
+        statuses = {status.provider_id: status for status in registry.statuses()}
+
+        for provider_id in ("manga-ocr", "paddleocr-korean"):
+            status = statuses[provider_id]
+            assert status.ready is True, (
+                "%s stayed %s with its requirements satisfied: %s"
+                % (provider_id, status.state, status.missing_requirements)
             )
-
-    # Dependency-free routes are ready; learned routes never are (R-007).
-    assert statuses["inpaint-simple-fill"].ready is True
-    assert statuses["inpaint-edge-bleed"].ready is True
-    for provider_id in (
-        "inpaint-manga-lama",
-        "inpaint-aot-gan",
-        "inpaint-brushnet",
-        "inpaint-flux-fill",
-    ):
-        status = statuses[provider_id]
-        assert status.ready is False
-        assert status.error_code == ProviderNotImplemented.error_code
-        with pytest.raises(ProviderNotImplemented):
-            registry.resolve(CAPABILITY_INPAINT, provider_id)
-    assert models.states() == ()
+            assert status.state != ProviderState.MISSING_DEPENDENCY
+            assert status.missing_requirements == ()
+            registry.resolve(CAPABILITY_OCR, provider_id)
 
 
 def test_disabled_profile_and_unknown_provider_fail_closed() -> None:

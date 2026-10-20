@@ -10,6 +10,7 @@ import pytest
 from infrastructure.devices.manager import (
     DEVICE_CPU,
     DEVICE_GPU,
+    GPU_AVAILABLE,
     GPU_UNAVAILABLE,
     DeviceManager,
     HeavyJobGate,
@@ -17,32 +18,68 @@ from infrastructure.devices.manager import (
 )
 from ports.providers.errors import DeviceUnavailable, ProviderOutOfMemory
 
+from tests.providers.env_sim import gpu_state
+
 
 def test_gpu_is_unavailable_without_a_runtime_but_reported_not_invented() -> None:
-    manager = DeviceManager()
-    info = manager.gpu_info()
-    assert info.state == GPU_UNAVAILABLE
-    assert info.available is False
-    assert "torch" in info.detail
-    # AC-GPU-003: no silent downgrade when the provider cannot run on CPU.
-    with pytest.raises(DeviceUnavailable):
-        manager.plan(requires_gpu=True, supports_cpu_fallback=False)
+    """The no-runtime path, forced rather than assumed.
+
+    This used to read the real machine and assert no GPU was there. It passed on
+    CI and failed on any workstation with a CUDA card, which says nothing about
+    DeviceManager. The absence is now simulated so the path is exercised
+    everywhere.
+    """
+    with gpu_state(available=False):
+        manager = DeviceManager()
+        info = manager.gpu_info()
+        assert info.state == GPU_UNAVAILABLE
+        assert info.available is False
+        assert "torch" in info.detail
+        # AC-GPU-003: no silent downgrade when the provider cannot run on CPU.
+        with pytest.raises(DeviceUnavailable):
+            manager.plan(requires_gpu=True, supports_cpu_fallback=False)
+
+
+def test_gpu_is_reported_available_when_a_runtime_is_present() -> None:
+    """The other side, which nothing used to cover.
+
+    Without this, a change that made _probe_gpu always report unavailable would
+    keep every test green on a machine without a GPU.
+    """
+    with gpu_state(available=True, name="Simulated GPU", total_memory_mb=12288):
+        manager = DeviceManager()
+        info = manager.gpu_info()
+        assert info.state == GPU_AVAILABLE
+        assert info.available is True
+        assert info.name == "Simulated GPU"
+        assert info.total_memory_mb == 12288
+
+
+def test_plan_uses_the_gpu_when_one_is_available_and_does_not_fall_back() -> None:
+    """A reachable GPU must not be reported as a fallback to CPU."""
+    with gpu_state(available=True):
+        manager = DeviceManager()
+        plan = manager.plan(requires_gpu=True, supports_cpu_fallback=True)
+        assert plan.device == DEVICE_GPU
+        assert plan.fell_back is False
+        assert plan.as_provenance()["device_fell_back"] is False
 
 
 def test_cpu_fallback_only_when_the_provider_declares_it() -> None:
-    manager = DeviceManager()
-    plan = manager.plan(requires_gpu=True, supports_cpu_fallback=True)
-    assert plan.device == DEVICE_CPU
-    assert plan.requested_device == DEVICE_GPU
-    assert plan.fell_back is True
-    assert "gpu_unavailable" in plan.fallback_reason
-    provenance = plan.as_provenance()
-    assert provenance["device_fell_back"] is True
-    assert provenance["device"] == DEVICE_CPU
+    with gpu_state(available=False):
+        manager = DeviceManager()
+        plan = manager.plan(requires_gpu=True, supports_cpu_fallback=True)
+        assert plan.device == DEVICE_CPU
+        assert plan.requested_device == DEVICE_GPU
+        assert plan.fell_back is True
+        assert "gpu_unavailable" in plan.fallback_reason
+        provenance = plan.as_provenance()
+        assert provenance["device_fell_back"] is True
+        assert provenance["device"] == DEVICE_CPU
 
-    plain = manager.plan(requires_gpu=False, supports_cpu_fallback=False)
-    assert plain.device == DEVICE_CPU
-    assert plain.fell_back is False
+        plain = manager.plan(requires_gpu=False, supports_cpu_fallback=False)
+        assert plain.device == DEVICE_CPU
+        assert plain.fell_back is False
 
 
 def test_oom_is_typed_and_does_not_escape(monkeypatch) -> None:

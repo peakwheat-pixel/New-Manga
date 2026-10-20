@@ -41,25 +41,60 @@ def _png(width: int = 24, height: int = 24) -> bytes:
 
 
 def test_production_stack_starts_without_heavy_runtimes(tmp_path: Path) -> None:
-    """AC-OPTIONAL-001/002: missing models must not stop the application."""
-    from bootstrap.app import assemble_services
+    """AC-OPTIONAL-001/002: missing models must not stop the application.
 
-    services = assemble_services(tmp_path / "library.db", tmp_path / "managed")
-    try:
-        status = services.providers.status()
-        states = {
-            entry["provider_id"]: entry["state"] for entry in status["providers"]
-        }
-        assert states["manga-ocr"] == "missing_dependency"
-        assert states["paddleocr-korean"] == "missing_dependency"
-        assert states["openai-vision-ocr"] == "not_configured"
-        assert states["inpaint-simple-fill"] == "ready"
-        assert states["inpaint-edge-bleed"] == "ready"
-        assert states["inpaint-manga-lama"] == "not_ready"
-        assert status["gpu"]["state"] == "unavailable"
-        assert status["models"] == []
-    finally:
-        services.conn.close()
+    The heavy runtimes are made absent rather than assumed absent. On a
+    workstation with manga-ocr installed this test used to fail while the
+    application booted perfectly - the boot path was fine, the expectation was
+    about the machine.
+    """
+    from bootstrap.app import assemble_services
+    from tests.providers.env_sim import gpu_state, with_optional_runtimes
+
+    with with_optional_runtimes(available=False), gpu_state(available=False):
+        services = assemble_services(tmp_path / "library.db", tmp_path / "managed")
+        try:
+            status = services.providers.status()
+            states = {
+                entry["provider_id"]: entry["state"] for entry in status["providers"]
+            }
+            assert states["manga-ocr"] == "missing_dependency"
+            assert states["paddleocr-korean"] == "missing_dependency"
+            assert states["openai-vision-ocr"] == "not_configured"
+            assert states["inpaint-simple-fill"] == "ready"
+            assert states["inpaint-edge-bleed"] == "ready"
+            assert states["inpaint-manga-lama"] == "not_ready"
+            assert status["gpu"]["state"] == "unavailable"
+            assert status["models"] == []
+        finally:
+            services.conn.close()
+
+
+def test_production_stack_reports_optional_runtimes_as_ready_when_present(
+    tmp_path: Path,
+) -> None:
+    """The side that used to be missing entirely.
+
+    With the optional runtimes present the application must boot and report them
+    as ready. Before this, the only covered behaviour was the absent one, so a
+    regression that reported everything missing would have gone unnoticed on
+    every machine.
+    """
+    from bootstrap.app import assemble_services
+    from tests.providers.env_sim import gpu_state, with_optional_runtimes
+
+    with with_optional_runtimes(available=True), gpu_state(available=True):
+        services = assemble_services(tmp_path / "library.db", tmp_path / "managed")
+        try:
+            status = services.providers.status()
+            states = {
+                entry["provider_id"]: entry["state"] for entry in status["providers"]
+            }
+            assert states["manga-ocr"] == "ready"
+            assert states["paddleocr-korean"] == "ready"
+            assert status["gpu"]["state"] == "available"
+        finally:
+            services.conn.close()
 
 
 def test_run_with_unconfigured_provider_fails_closed(tmp_path: Path) -> None:
