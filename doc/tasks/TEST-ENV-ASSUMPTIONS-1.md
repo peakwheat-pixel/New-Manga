@@ -110,6 +110,7 @@ r42 裁定 §二。
 | EV-ENV-BOOT | AC1/AC2 | `tests/providers/test_bootstrap_providers.py` | 20b087d7e | - | CANONICAL |
 | EV-ENV-REG | AC2 | `tests/providers/test_registry_readiness.py` | 20b087d7e | - | CANONICAL |
 | EV-ENV-DOC | AC3 | `verification/TEST-ENV-ASSUMPTIONS-1/two-sided-coverage.md` | 20b087d7e | - | CANONICAL |
+| EV-ZC-REVIEW | Review | `verification/TEST-ENV-ASSUMPTIONS-1/dsh-zcode-review-r189.md` | - | - | CANONICAL |
 
 ## Resource Manifest
 
@@ -143,13 +144,28 @@ r42 裁定 §二。
 
 | # | 限制 |
 |---|---|
-| **L1** | **未独立 Review**——本 Task 由 DSH 实现，按协作协议须由 ZCode 审 |
+| **L1** | **已由 ZCode 独立 Review（r189）**：`approve_with_conditions`。条件 C1/C2 已闭合（见下）；R-003（base 口径）移交 Codex |
 | **L2** | **剩余 2 个 `tests/providers` 失败属 `M2-PROD-DETECT-ENV-1`**（`transformers` 版本，本机离线）|
 | **L3** | **`env_sim` 依赖两个私有名**（`_module_present`、`probe_module`）。若未来重构改其位置，测试会以 `AttributeError` 红——**这是有意的**：宁可红，不可静默失效 |
 | **L4** | **判别力脚本未入库**（一次性工具）；其逻辑在证据 §四 可复现 |
 
+### ZCode Review r189 的处置
+
+**产出**：`verification/TEST-ENV-ASSUMPTIONS-1/dsh-zcode-review-r189.md`
+**结论**：**`approve_with_conditions`**（2 项 P2 条件）
+
+| 项 | 处置 |
+|---|---|
+| **C1 / R-001** `OPTIONAL_PROVIDER_MODULES` 缺 `"PIL"`（manga-ocr 的要求是 `(manga_ocr, PIL)`）| **已修**：加入 `"PIL"`；并给 registry 测试的**显式** present 集合补上 `"PIL"`（只改前者不够——该测试用显式集合，实测仍会红）|
+| **C2 / R-002** `simulated_gpu_is_reachable()` 无调用者，docstring 却声称存在一个「关于真机」的测试 | **已删**（该测试不存在，声明悬空）|
+| **R-004** 我把 r42 误署名为 ZCode | **已修**：改为「Codex's r42 adjudication」（r42 是 Codex 裁定）|
+| **R-003** frontmatter `base_commit` / `delivery_head` 口径三处不一致 | **移交 Codex**（需 git 裁决）|
+
+**C1 的验证方法**：把真实 `probe_module` 对 `PIL` 强制报缺失，两个存在侧测试仍须通过。
+**只改 `OPTIONAL_PROVIDER_MODULES` 时实测仍红**（registry 测试用的是显式集合），补上后才 `2 passed`。
+
 ### 后续建议
 
-1. **交 ZCode 独立 Review**（L1）
+1. **R-003（base 口径）交 Codex**
 2. `M2-PROD-DETECT-ENV-1` 在有网络环境执行
 

@@ -107,6 +107,7 @@ allowed_paths:
 |---|---|---|---|---|---|
 | EV-PROJ-TEST | AC1/AC2 | `tests/workbench/test_projection.py` | 9c594cd4f | - | CANONICAL |
 | EV-PROJ-DOC | AC2/AC3 | `verification/P11-PROJECTION-TEST-ALIGN-1/matrix-alignment.md` | 9c594cd4f | - | CANONICAL |
+| EV-ZC-REVIEW | Review | `verification/TEST-ENV-ASSUMPTIONS-1/dsh-zcode-review-r189.md` | - | - | CANONICAL |
 
 ## Resource Manifest
 
@@ -137,13 +138,32 @@ allowed_paths:
 
 | # | 限制 |
 |---|---|
-| **L1** | **未独立 Review**——本 Task 由 DSH 实现，按协作协议须由 ZCode 审 |
+| **L1** | **已由 ZCode 独立 Review（r189）**：**`approve`**（无阻断条件）|
 | **L2** | **仅断言按钮**enabled**状态**；按钮的可见性/布局不在范围 |
 | **L3** | **`P11_BUTTON_MATRIX` 是对 §4.5 的人工转写**，若契约变更需同步更新——表驱动让它只改一行，但不会自动发现契约变更 |
 | **L4** | **`test_workbench_viewmodel.py::test_pause_shows_optimistic_feedback_immediately` 仍失败**，属旧 PySide6 栈，r42 §五 不释放 |
 
+### ZCode Review r189 的处置
+
+**产出**：`verification/TEST-ENV-ASSUMPTIONS-1/dsh-zcode-review-r189.md`（两个 Task 同一份）
+**结论**：**`approve`**（无阻断条件）。ZCode **独立读取 P11 §4.5 原文**逐行核对了 9 行矩阵，全部一致。
+
+**确认的两点**：
+
+- **`INTERRUPTED` 无处置时 `can_stop=False` 是契约明文，不是我的推论**——
+  §4.5 的 Interrupted 行「必须拒绝」列逐字写有 `stop`。我在 Task 里的表述过谦。
+- **`can_retry_failed` 不进 5 列矩阵是有意拆分**，不是遗漏：
+  它是 `has_failures` 的函数而非 status 的函数，且已有两个专项测试覆盖两个方向。
+
+**两条非阻断建议（未做，留待后续触及该文件的 Task 顺路处理）**：
+
+| 项 | 内容 |
+|---|---|
+| **R-101** | 「已处置 Interrupted」只有直调 `_button_enablement` 的用例；`build_projection` 的接线（`projection.py:262-266`）只有无处置方向被端到端覆盖 |
+| **R-102** | 矩阵用 `enabled.get(...) is True` 对照，不抓「多余的第 6 键」；可改为 dict 全等 |
+
 ### 后续建议
 
-1. **交 ZCode 独立 Review**（L1）
+1. **R-101 / R-102** 可在后续触及 `test_projection.py` 的 Task 中顺路处理
 2. 建议在契约（P11）与投影矩阵之间加一个自动对照（L3），避免人工转写漂移
 
