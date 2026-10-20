@@ -113,6 +113,9 @@ message   : 'CoreServiceServer' object has no attribute '_core'
 
 字节上限已有既有单测覆盖（`test_detect_oversized_payload_rejected_before_decode`、`test_detect_decoded_length_guard_backs_the_text_guard`）。**不需要这个假证据背书。**
 
+> **时点快照声明**：本节是写入时点的状态记录，**不代表终态**。
+> **终态以 `doc/tasks/DETECT-TILING-1.md` 的「终态处置表」为准。**
+
 ## 五、剩余未处置的 Review 项
 
 | 项 | 状态 |
