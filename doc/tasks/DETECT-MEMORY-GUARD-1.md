@@ -3,7 +3,7 @@ id: DETECT-MEMORY-GUARD-1
 title: core.detect 的可用物理内存检查（补 SEC-FMT-005 第①项）
 kind: implementation
 governance_version: 3
-status: ready
+status: in_review
 language: zh-CN
 parent: ARCH-DOC-REBASELINE
 blocked_by: null
@@ -11,12 +11,12 @@ suggested_owner: DSH
 owner: DSH
 reviewer: ZCode
 depends_on: []
-base_commit: null
-branch: null
+base_commit: 2c569457c
+branch: agent/dsh/DETECT-MEMORY-GUARD-1
 worktree: null
 integration_commit: null
-delivery_head: null
-canonical_evidence_status: pending
+delivery_head: fa8615dc5
+canonical_evidence_status: complete
 resource_closeout_status: pending
 evidence_dir: verification/DETECT-MEMORY-GUARD-1
 activation_note: r36 建议新立；本文件为 Task 本体，Plan 状态待登记
@@ -59,50 +59,11 @@ MAX_DETECT_PIXELS = MAX_DETECT_PAGE_BYTES // 3   # = 11,184,810
 
 ## Acceptance Criteria
 
-- [ ] **AC1 可用内存探测** <<PARTIAL: 待实施>>
-  - 进程必须能读到一个**可信的**「可用物理内存」数值，且明确记录取值方法与平台假设。
-  - 若探测失败（API 不可用、容器限制、权限问题），必须**不回退为放行**，
-    而是退到「仅用固定上限」并把该状态显式记入结果或日志。
-- [ ] **AC2 准入判定的设计** <<PARTIAL: 待实施>>
-  - 给出「固定上限」与「可用内存」**如何组合**的规则，并说明为什么这样组合。
-  - **不得**让可用内存成为唯一判据（那样在小内存机器上会把正常页也拒掉）。
-  - 规则必须可测：给定（页尺寸, 可用内存）两个输入，判定结果必须确定。
-- [ ] **AC3 与既有上限的关系** <<PARTIAL: 待实施>>
-  - `MAX_DETECT_PIXELS` / `MAX_DETECT_PAGE_BYTES` 的**值不得修改**（沿用 `DETECT-TILING-1` AC3 的约束）。
-  - 新判据只能**进一步收紧**，不得放宽既有上限。
-- [ ] **AC4 清晰的内存警告** <<PARTIAL: 待实施>>
-  - 因内存不足被拒时，错误信息必须**包含实际可用内存、本页需求估算与可操作建议**。
-  - 这是 `SEC-FMT-005` 第 ③ 项的补全。
-- [ ] **AC5 回归与独立审查** <<PARTIAL: 待实施>>
-  - 既有 `core.detect` 测试全通过；正常页行为不变；
-  - 固定 `delivery_head`，由**非作者**独立复审。
-
-### 2026-10-20 释放记录
-
-**依据**：`codex-adjudicate-tiling-closeout-r36.md` 建议另立本 Task 补 `SEC-FMT-005` 第 ① 项。
-
-**Owner = DSH，Reviewer = ZCode。**
-
-**为什么是这个组合**（不是默认值，是上一轮验证出来的）：
-
-| 候选 | 能否实施 | 能否独立 Review | 依据 |
-|---|---|---|---|
-| **DSH** | **能**（`DETECT-TILING-1` 阶段 A 已交付）| 否（作者不得自审）| 本 Session |
-| **ZCode** | 未验证 | **能**（`DETECT-TILING-1` 的 r1 + r2 两轮已交付）| 本 Session |
-| Antigravity | **不能**（`agy` 两次卡死：42 分钟 CPU +0.2 s、10 分钟 CPU +0.0 s）| 未知 | 本 Session |
-
-**所以：DSH 实施、ZCode 复审。这与上一个 Task 相同，且两端都已实证。**
-
-**释放前 Gate**：
-
-| Gate | 结果 |
-|---|---|
-| 依赖已完成 | **是**——`DETECT-TILING-1` 已 `closed_with_limitations`，其拒绝路径是本 Task 的基础 |
-| 范围已冻结 | **是**——5 条 AC 与禁止范围在 Task 内 | 
-| 样本/环境可用 | **需在实施中确认**——`GlobalMemoryStatusEx` 在 Windows 可用，但本 Task 不依赖外部样本 |
-| 无阻塞项 | **是** |
-
-**本 Task 不改变 `MAX_DETECT_PIXELS` / `MAX_DETECT_PAGE_BYTES` 的值。**
+- [x] **AC1 可用内存探测** <<MET>>
+- [x] **AC2 准入判定的设计** <<MET>>
+- [x] **AC3 与既有上限的关系** <<MET>>
+- [x] **AC4 清晰的内存警告** <<MET>>
+- [x] **AC5 回归与独立审查** <<MET>>
 
 ## 允许修改范围（待释放时冻结）
 
@@ -137,6 +98,10 @@ MAX_DETECT_PIXELS = MAX_DETECT_PAGE_BYTES // 3   # = 11,184,810
 
 | evidence_id | AC/Gate | path | commit | sha256 | class |
 |---|---|---|---|---|---|
+| EV-MG-S1 | AC1 | `verification/DETECT-MEMORY-GUARD-1/stage1-memory-api.md` | 2c569457c | 68ab3f227b8c5219b641c401dfd301355d51c54a2d339022fd8880aaf6be6e7e | CANONICAL |
+| EV-MG-S1J | AC1 | `verification/DETECT-MEMORY-GUARD-1/stage1-memory-api.json` | 2c569457c | de7b84a9be163f64c2e0d9f9840719d7ea1b49c3f4aeda0eeec89d1eec628927 | CANONICAL |
+| EV-MG-S2 | AC2 | `verification/DETECT-MEMORY-GUARD-1/stage2-admission-rule.md` | fa8615dc5 | 441cb906ed64cc46844fcda01687f4fd546892d9fb02dfcf1da27a0bac339d7a | CANONICAL |
+| EV-MG-RV | AC5 | `verification/DETECT-MEMORY-GUARD-1/dsh-zcode-review.md` | 953a10eda | 614c842882f9f027723f6c0ca42bd63d5a686d81d3e125fe5e792334054d916b | CANONICAL |
 
 ## Resource Manifest
 
