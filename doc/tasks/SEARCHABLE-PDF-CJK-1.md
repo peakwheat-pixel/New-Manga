@@ -195,6 +195,16 @@ candidates = [font_dir / "msyh.ttc", font_dir / "arial.ttf"]
 | EV-CJK-COST | AC4 | `tests/export/test_searchable_font_cost.py` | dfed15eef | `62785369650e6690a0979739d0c3756a809c4435ebf5776ef3b105f156abeefe` | CANONICAL |
 | EV-CJK-RV | AC5 | `verification/SEARCHABLE-PDF-CJK-1/dsh-zcode-review.md` | 2a6a35726 | `86ad0749cc38cbfb5784805af9a845ed2ede48a2e14c539fd9df5c276a22e4bd` | CANONICAL |
 
+## Resource Manifest
+
+**本 Task 无资源删除、迁移或归档。**
+
+| resource | source_path | disposition | destination_path | sha256/manifest_path | notes |
+|---|---|---|---|---|---|
+| **（无）** | — | **NOT_APPLICABLE** | — | — | 只改 `src/infrastructure/export/qt_free.py` 一处候选列表，并新增测试与证据；未移动或删除任何被引用资源 |
+
+**closeout_counts**：`deleted=0`、`moved=0`、`migrated=0`、`archived=0`。
+
 ## Closeout Record
 
 - **Closeout date / Reviewers**：2026-10-20（ZCode `approve_with_conditions` → 条件已闭）
