@@ -2,7 +2,7 @@
 id: M2-SFX-ANNOTATE-R2
 title: "SFX 标注轮 R2（T1b-R2 扩标轮）：素材补齐（BJ+10 页/KO+5 页）+BJ 低置信扩审+回放补审+三集扩集重导出——闭合 A′ 输入条件缺口"
 kind: feature
-status: in_review
+status: done
 owner_claim: 2026-10-04 by zcode subagent @9b9916af（AC1 素材链）+ @cb055135（AC2-AC5 三集扩集重导出；docs 收尾轮报告/Handoff/本回填随 docs 提交）
 approval: user_ruling_2026-10-04_选项a_补齐再训
 suggested_owner: ZCode

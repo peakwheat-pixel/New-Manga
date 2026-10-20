@@ -7,23 +7,23 @@ Reconciliation of every `doc/tasks/*.md` against the plan's node set. r38 §3 es
 | metric | value |
 |---|---:|
 | task files | 316 |
-| terminal | 276 |
-| non-terminal | 40 |
+| terminal | 279 |
+| non-terminal | 37 |
 | non-terminal named in the plan | 3 |
-| non-terminal outside the plan | 37 |
+| non-terminal outside the plan | 34 |
 
 ## By status
 
 | status | count | terminal |
 |---|---:|---|
-| `done` | 248 | yes |
+| `done` | 251 | yes |
 | `closed_with_limitations` | 27 | yes |
 | `blocked` | 10 | no |
-| `proposed` | 10 | no |
+| `proposed` | 9 | no |
 | `approved` | 5 | no |
-| `in_review` | 5 | no |
 | `changes_requested` | 4 | no |
 | `ready` | 4 | no |
+| `in_review` | 3 | no |
 | `in_progress` | 2 | no |
 | `cancelled` | 1 | yes |
 
@@ -52,12 +52,9 @@ Reconciliation of every `doc/tasks/*.md` against the plan's node set. r38 §3 es
 | `T3.2.1-REPAIR-6` | `changes_requested` | no |
 | `P02PRE-R1H` | `in_progress` | no |
 | `P02PRE-R1H-R6-EXEC-A6` | `in_progress` | no |
-| `M2-SFX-ANNOTATE-R2` | `in_review` | no |
-| `M2-SFX-SYNTH-BG-AUTO` | `in_review` | no |
 | `P02PRE-R1H-R6-ZCODE-H1` | `in_review` | no |
 | `P19-AC3-1` | `in_review` | no |
 | `P22` | `in_review` | own row |
-| `M2-TA2B` | `proposed` | no |
 | `P09-MANAGED-READ-ROOT-TRUST-1` | `proposed` | no |
 | `RUST-ENV-BASELINE-1` | `proposed` | mentioned |
 | `T3.2.1-REPAIR-15-reader-export-lineage` | `proposed` | no |
