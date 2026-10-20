@@ -121,7 +121,18 @@ def _region_lines(region: dict) -> tuple[str, ...]:
 
 def _embedded_font(text: str):
     font_dir = Path(__import__("os").environ.get("WINDIR", r"C:\Windows")) / "Fonts"
-    candidates = [font_dir / "msyh.ttc", font_dir / "arial.ttf"]
+    # SEARCHABLE-PDF-CJK-1: msyh.ttc carries CJK ideographs and kana but no
+    # Hangul, so a Korean page raised ValueError and Korean comics could not
+    # produce a searchable PDF at all. malgun.ttf is the Windows Korean UI font:
+    # measured cmap coverage ja+ko (no zh), fsType 0x0008 Editable, subsetting
+    # permitted. Order below only decides which font wins when several cover the
+    # text - the predicate is "does this candidate cover every character".
+    candidates = [
+        font_dir / "msyh.ttc",
+        font_dir / "malgun.ttf",
+        font_dir / "malgunbd.ttf",
+        font_dir / "arial.ttf",
+    ]
     for path in candidates:
         if not path.is_file():
             continue
