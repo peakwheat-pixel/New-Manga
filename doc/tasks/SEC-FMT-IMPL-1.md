@@ -3,13 +3,13 @@ id: SEC-FMT-IMPL-1
 title: SEC-FMT-001..004 的实现与外部阅读器互操作验证
 kind: implementation
 governance_version: 3
-status: proposed
+status: ready
 language: zh-CN
 parent: ARCH-DOC-REBASELINE
 blocked_by: null
 suggested_owner: DSH
-owner: null
-reviewer: null
+owner: DSH
+reviewer: ZCode
 depends_on: []
 base_commit: null
 branch: null
@@ -53,25 +53,47 @@ activation_note: r37 判定这是 ARCH-DOC-REBASELINE 的 AC6 Gate 责任缺口�
 
 ## Acceptance Criteria
 
-- [ ] **AC1 Zip Slip 防御** <<PARTIAL: 待实施>>
-  - 构造含 `../../` 的恶意 ZIP/CBZ，断言条目被拒绝并记日志，且不写托管沙箱之外。
-  - **必须覆盖**：绝对路径条目、多级 `../`、Windows 驱动器前缀（`C:\`）、UNC 路径。
-- [ ] **AC2 XXE / Billion Laughs 防御** <<PARTIAL: 待实施>>
-  - 构造含外部实体和实体扩展炸弹的 XML，断言解析器**不解析外部实体**且**不耗尽内存/CPU**。
-  - **须说明**：本项目是否真的解析 XML（CBZ 的 `ComicInfo.xml`）？若不解析，本项记为 `NOT_APPLICABLE` 并给出代码证据。
-- [ ] **AC3 魔数嗅探** <<PARTIAL: 待实施>>
-  - 把文本文件、可执行文件、截断图片改名为 `.png`/`.jpg`，断言得到 typed 错误、**不崩溃、不进入解码器**。
-  - 注意：`core.detect` 已有 Pillow 格式白名单（fail-closed），但**那是 detect 面，不是导入面**。
-- [ ] **AC4 长路径** <<PARTIAL: 待实施>>
-  - 超过 260 字符的路径必须可读取与转存，**无截断**。
-  - 须说明 Windows 长路径前缀是自动启用还是需清单项（`longPathAware`）。
+- [ ] **AC1 Zip Slip：证明 `zip_parts` 挡住六类攻击** <<PARTIAL: 待实施>>
+  - 六类：`../` 穿越、绝对路径、Windows 驱动器前缀、反斜杠、NUL 字节、`.`/空段。
+  - 断言 `zip_parts` 对每一类**抛 `ValueError`**，合法条目正常返回。
+  - **对照臂**：`images/<title>/001.jpg` 必须被接受（否则「拒绝一切」也能过前六条）。
+  - 依据：`guard-on-attack-path.md` §1.2。
+- [ ] **AC2 XXE：证明 DTD/ENTITY 拒绝有效** <<PARTIAL: 待实施>>
+  - 外部实体（`<!DOCTYPE ... SYSTEM "file:///...">`）、Billion Laughs（嵌套 `<!ENTITY>`）均被拒。
+  - **对照臂**：合法 `ComicInfo.xml` 仍能解析。
+  - 依据：`r1-xml-parsing-scope.md` §7.2。
+- [ ] **AC3 魔数：证明非图片被拒，并记录机制** <<PARTIAL: 待实施>>
+  - 把文本/可执行/截断图片改名为 `.png`/`.jpg`，断言得到 typed 错误、不崩溃。
+  - **必须记录**：本项目的嗅探是**委托 Pillow `Image.open()`** + `image.format` 白名单，
+    不是自建魔数检查。**文档不得写成「本项目实现了魔数嗅探」。**
+  - 依据：`final-two-items.md` §一。
+- [ ] **AC4 长路径：把探针转成回归测试** <<PARTIAL: 待实施>>
+  - `probe-sfx004-lifecycle.py` 已验证 434 字符路径 7/7 通过；**需转成 pytest 用例**。
+  - 断言 `write_temp`/`publish`/读回/`remove_managed` 在 >300 字符根目录下均成功。
+  - 依据：`sfx004-long-path-repro.md` §三。
 - [ ] **AC5 外部阅读器互操作验证** <<PARTIAL: 待实施>>
-  - `DETECT-TILING-1` 的 L1/L5 已记录：**结构验证不能替代真实阅读器验证**（r33 裁定）。
-  - 至少用**一个**外部阅读器打开导出的 CBZ 与 PDF，记录结果。
-  - **若本环境无法安装外部阅读器，必须如实登记为 limitation，不得以结构验证充当**。
+  - 至少用**一个**外部阅读器打开导出的 CBZ 与 PDF。
+  - **若本环境无法安装，必须如实登记为 limitation，不得以结构验证充当**（r33 已禁止）。
 - [ ] **AC6 回归与独立审查** <<PARTIAL: 待实施>>
-  - 既有导入/导出测试全通过；
-  - 固定 `delivery_head`，由**非作者**独立复审。
+  - 既有测试全通过；固定 `delivery_head`，由**非作者**独立复审。
+
+### 2026-10-20 释放记录（范围经四轮证据收敛）
+
+**Owner = DSH，Reviewer = ZCode**（与 `DETECT-MEMORY-GUARD-1` 同一对，两端均已实证）。
+
+**范围收敛过程**（每一轮的初始判断都不对）：
+
+| 轮 | 原以为 | 实际 |
+|---|---|---|
+| 143 | `SEC-FMT-002` 不适用 | 已实现（`assets.py` DTD 拒绝）|
+| 144 | 四项都要实现 | 四项都已存在 |
+| 145 | 都有守卫 | 001/002 在「产品不用」的路径上 |
+| 146 | `SEC-FMT-004` 是真缺口 | 缺口可能无害 |
+| **147** | **004 需要实现** | **实测 7/7 通过，规范的技术细节过时** |
+
+**所以本 Task 没有「从零实现」的工作，全部是「落证据为测试」。**
+
+**唯一可能的新实现是 UI 层地址栏不截断（未测），但那可能属于另一个 Task。**
 
 ## 允许修改范围（待释放时冻结）
 

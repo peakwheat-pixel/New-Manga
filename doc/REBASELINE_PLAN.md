@@ -22,7 +22,7 @@
 |P20 Windows发布|P19/P03/P06/DOC|closed_with_limitations（AC4 撕裂项 LIMITATION/UNOBSERVED；其余 6 AC done；用户 2026-10-20 授权）|
 |DETECT-TILING-1|ARCH-DOC-REBASELINE|**closed_with_limitations**（r36 收口；5/5 AC 完成，2 条带 limitation：SEC-FMT-005 的物理内存检查未实现、真实超限 JPEG 不存在；集成 `9d7eddf57`）|
 |DETECT-MEMORY-GUARD-1|DETECT-TILING-1|**closed_with_limitations**（5/5 AC；实现 `fa8615dc5`；ZCode Review 通过；限制 L1–L7，核心是「正常机器上永不触发」与「单机数据」）|
-|SEC-FMT-IMPL-1|ARCH-DOC-REBASELINE|**proposed**（r37 判定为 AC6 Gate 责任缺口；`SEC-FMT-001..004` + 外部阅读器验证；6 AC）|
+|SEC-FMT-IMPL-1|ARCH-DOC-REBASELINE|**ready**（r37 判定的 AC6 Gate 缺口；四轮证据收敛后**无新实现**，全部是把已存在的防御落成测试；6 AC；Owner DSH / Reviewer ZCode）|
 |P20-MEM-OPT-1|P20|closed（AC1 完成；AC2 经调阈值消解）|
 |P20-ISOLATION-1|P20|closed_with_limitations（AC4 四项 MET；`library_bridge.rs` 旧 pin FAIL 保留为已知限制）|
 |P20-AC4-FPS-1|P20|closed_with_limitations（AC3 PASS；AC5 依裁决）|
@@ -47,4 +47,4 @@
 |GOV-PLAN-BUDGET-1|—|done|
 |RUST-ENV-BASELINE-1（P20-CLOSE-BOUND-1）/ P07交互补缺（P02）/ P21旧栈归档（P20+另授权）|—|proposed（P07/P21可选）|
 |P22 响应归属|P22-REBASE-1|已集成；P04 不放行，H1/P2-1/13 与 BC-AC5 缺项保留。已完成见各节点行。|
-READY 节点：ARCH-DOC-REBASELINE。done：**44 项**。
+READY 节点：ARCH-DOC-REBASELINE、SEC-FMT-IMPL-1。done：**44 项**。

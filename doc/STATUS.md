@@ -4,7 +4,7 @@
 
 ## 当前 Task
 
-- 当前 Task：无。`DETECT-TILING-1` 已于 2026-10-20 收口；READY 仅 [ARCH-DOC-REBASELINE](tasks/ARCH-DOC-REBASELINE.md)（AC1–AC6 PARTIAL、AC7 待做，属消费者责任，不标 done）。
+- 当前 Task：**[SEC-FMT-IMPL-1](tasks/SEC-FMT-IMPL-1.md)** `ready`（`SEC-FMT-001..004` 落测试 + 外部阅读器验证；**无新实现**；Owner DSH / Reviewer ZCode）。
 - **[DETECT-TILING-1](tasks/DETECT-TILING-1.md)**：**`closed_with_limitations`**（5/5 AC；3 `MET`、2 `PARTIAL`；集成 `3928c35c4`）。限制：`SEC-FMT-005` 的「检查可用物理内存」未实现；真实超限 JPEG 不存在。
 - **[DETECT-MEMORY-GUARD-1](tasks/DETECT-MEMORY-GUARD-1.md)**：**`closed_with_limitations`**（5/5 AC；ZCode Review 通过；限制 L1「正常机器上永不触发」、L2「单机数据」等 7 条）。
 - P20：**`closed_with_limitations`**（6/7 AC；AC4 撕裂项 `LIMITATION/UNOBSERVED`；用户 2026-10-20 授权）。AC1/AC2/AC3/AC6/AC7 ✅；AC4 ◐ 延迟 36.0 ms。
