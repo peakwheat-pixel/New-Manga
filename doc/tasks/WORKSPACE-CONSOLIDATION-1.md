@@ -3,7 +3,7 @@ id: WORKSPACE-CONSOLIDATION-1
 title: 工作区整理：归档未合并支线、清理可再生体积、收敛为单一主线
 kind: ops
 governance_version: 2
-status: in_progress
+status: in_review
 approval: approved_by_owner_2026-10-20
 blocked_by: null
 suggested_owner: dsh
@@ -14,7 +14,7 @@ base_commit: b4560ae8ab2ff9c6c4db50f9d57b50fe1e8393df
 branch: antigravity/P09-AC3-DELETE-HARDEN-1
 worktree: G:/CODEX/New Manga
 integration_commit: null
-delivery_head: null
+delivery_head: 877a7962e0151536de8cdbb57b63904f446df71e
 canonical_evidence_status: pending
 resource_closeout_status: pending
 evidence_dir: verification/WORKSPACE-CONSOLIDATION-1
