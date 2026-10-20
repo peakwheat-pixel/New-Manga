@@ -1,5 +1,10 @@
 {
-  "font_dir": "C:\\WINDOWS\\Fonts",
+  "_provenance": {
+    "captured": "2026-10-20",
+    "platform": "Windows, system font directory",
+    "scope": "one-time observation on the review machine",
+    "warning": "This is NOT a project prerequisite. Fonts must be probed at runtime and their absence handled fail-closed; this file does not prove any font exists on another machine."
+  },
   "fonts": [
     {
       "font": "malgun.ttf",

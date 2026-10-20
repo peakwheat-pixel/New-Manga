@@ -9,8 +9,8 @@ Reconciliation of every `doc/tasks/*.md` against the plan's node set. r38 §3 es
 | task files | 317 |
 | terminal | 279 |
 | non-terminal | 38 |
-| non-terminal named in the plan | 3 |
-| non-terminal outside the plan | 35 |
+| non-terminal named in the plan | 4 |
+| non-terminal outside the plan | 34 |
 
 ## By status
 
@@ -18,8 +18,8 @@ Reconciliation of every `doc/tasks/*.md` against the plan's node set. r38 §3 es
 |---|---:|---|
 | `done` | 251 | yes |
 | `closed_with_limitations` | 27 | yes |
-| `blocked` | 11 | no |
-| `proposed` | 9 | no |
+| `blocked` | 10 | no |
+| `proposed` | 10 | no |
 | `approved` | 5 | no |
 | `changes_requested` | 4 | no |
 | `ready` | 4 | no |
@@ -46,7 +46,6 @@ Reconciliation of every `doc/tasks/*.md` against the plan's node set. r38 §3 es
 | `P02PRE-R1H-R6-EXEC-A5` | `blocked` | no |
 | `P15-CORE-1` | `blocked` | no |
 | `P19-UI-FIX-3` | `blocked` | no |
-| `SEARCHABLE-PDF-CJK-1` | `blocked` | no |
 | `T3.2.1-REPAIR-11` | `changes_requested` | no |
 | `T3.2.1-REPAIR-4` | `changes_requested` | no |
 | `T3.2.1-REPAIR-5` | `changes_requested` | no |
@@ -58,6 +57,7 @@ Reconciliation of every `doc/tasks/*.md` against the plan's node set. r38 §3 es
 | `P22` | `in_review` | own row |
 | `P09-MANAGED-READ-ROOT-TRUST-1` | `proposed` | no |
 | `RUST-ENV-BASELINE-1` | `proposed` | mentioned |
+| `SEARCHABLE-PDF-CJK-1` | `proposed` | own row |
 | `T3.2.1-REPAIR-15-reader-export-lineage` | `proposed` | no |
 | `T3.2.1-REPAIR-16-bookshelf-page-count` | `proposed` | no |
 | `T3.2.1-REPAIR-17-mock-local-pipeline-smoke` | `proposed` | no |

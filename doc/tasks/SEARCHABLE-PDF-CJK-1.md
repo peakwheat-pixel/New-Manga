@@ -3,8 +3,8 @@ id: SEARCHABLE-PDF-CJK-1
 title: 可搜索 PDF 的韩文支持与字体体积
 kind: implementation
 governance_version: 2
-status: blocked
-approval: blocked_pending_font_license_review_r40
+status: proposed
+approval: unblocked_r41_pending_ready_fields
 suggested_owner: Codex
 owner: null
 reviewer: null
@@ -111,8 +111,12 @@ candidates = [font_dir / "msyh.ttc", font_dir / "arial.ttf"]
 - [ ] AC2 **纯语种页**：JA / KO / ZH / 拉丁 各一条真实页的端到端导出，
   全部 `page.get_text()` 可原样提取。
   **混排页（zh+ko 同页）不在范围内**；缺字时须 fail-closed（r40 裁定）。
-- [ ] AC3 字体体积：**以实测体积 + 说明为验收，3 倍不作硬门槛**（r40 裁定）。
-  须给出「纯图片 PDF vs 可搜索 PDF」的实际字节数，并说明是否做了子集化。
+- [ ] AC3 字体体积：**以实测体积及说明为验收，3 倍不作硬门槛**（r40/r41）。
+  须在**相同源页、导出选项和可比条件**下，给出纯图片 PDF 与可搜索 PDF 的实际字节数，
+  并说明是否做了字体子集化。
+  **若做了**：给出子集化前后可搜索 PDF（或字体对象，须明确测量口径）的实际字节数。
+  **若未做**：记录未做的**具体技术理由及其依据**（对应实际代码路径、正确性/兼容性风险或测量结果）。
+  **不得以许可限制为理由**——已审查字体允许子集化。
 - [ ] AC4 多页：N 页可搜索 PDF 的字体部分**不随页数线性增长**（子集化或共享对象）。
 - [ ] AC5 不得回归既有行为：`tests/export/test_pdf_stream_integrity.py` 保持绿；
   `PDF-STREAM-FIX-1` 的修复不被破坏。
@@ -160,6 +164,21 @@ candidates = [font_dir / "msyh.ttc", font_dir / "arial.ttf"]
 | **字体嵌入次数** | **每份 PDF 只嵌一次**——纠正本文档初版的错误说法 |
 
 **所以本 Task 现在 `blocked`，阻塞条件是「字体嵌入许可审查」。**
+
+## r41 裁定（2026-10-20）
+
+**产出**：`verification/SEARCHABLE-PDF-CJK-1/codex-confirm-unblock-r41.md`
+
+| 裁定项 | 结论 |
+|---|---|
+| **许可审查** | **完成**，r40 的阻塞条件解除 |
+| **解除目标状态** | **`proposed`（不是 `ready`）** |
+| **`ready` 门槛** | 须补齐 Owner / Reviewer / `base_commit` / branch / worktree / 完整 `allowed_paths`，并登记到 `STATUS` |
+| **AC3** | 按 §2 定稿（已应用）|
+| **实施顺序** | 先纯韩文，再单独评估子集化；可分阶段交付 |
+| **字体清单 JSON** | **须脱敏**——去掉本机绝对路径，标注为一次性观测 |
+
+**本 Task 现为 `proposed`：阻塞已解除，但释放字段未齐。**
 
 ## 交付与运行记录
 
