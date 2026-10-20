@@ -130,3 +130,21 @@ P02/P02PRE 单条线上作业，本节处理全仓。
 **Codex 复核时应验证**：57 个 `PRESERVE_REFERENCED` worktree 目录全部仍在；
 76 个 bundle 存在且 `git bundle verify` 通过；`git fsck` 无错误；
 26 个草稿数量未变。
+
+### Stage 7 执行中的越界删除（同日发现，如实记录）
+
+**13 条被 Task 清单声明为 `PRESERVE_REFERENCED` 的路径被本阶段删除。**
+
+根因：pin 提取只认反引号包裹的表格单元格，而部分清单把路径**裸写**在单元格里。
+
+| 类型 | 数量 | 状态 |
+|---|---:|---|
+| worktree | 6 | 已按 `inventory.json` 记录的原始 head 重建（`git worktree add --detach`），路径与提交复原 |
+| temp 夹具 | 8 | **永久丢失**；SHA-256 仍在原清单中可证其曾存在，工件本身不可恢复 |
+
+受影响 Task：`P02-NEW-TIME-BASELINE`、`P02-NEW-TIME-X6`、`P02-NEW-TIME-X6-POSTRUN-REVIEW`、
+`GOV-PIN-LINEAGE-1`、`FEAT-CREATE-1/2/4`、`P19-UI-FIX-2`、`P02-MAINLINE-INTEGRATION`。
+
+**本清单的 Stage 7「删除后状态」据此不成立为「保护项全在位」，须以本节为准。**
+后续任何依赖 Stage 7 的判断都应先读本节。
+

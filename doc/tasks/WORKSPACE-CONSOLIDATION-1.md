@@ -67,11 +67,11 @@ allowed_paths:
 
 - [x] **AC1 四表盘点** <<MET>>
 - [x] **AC2 刷新权威清单** <<MET>>
-- [x] **AC3 保护项全量枚举** <<MET>>
+- [ ] **AC3 保护项全量枚举** <<PARTIAL: 枚举到的 57 个 worktree 全在位，但检测漏读了 6 个被 Task 表声明 PRESERVE_REFERENCED 的 worktree 与 8 个 temp 夹具；6 个 worktree 已按原提交重建，8 个 temp 夹具永久丢失>>
 - [x] **AC4 未合并分支归档** <<MET>>
 - [x] **AC5 已合并分支清理** <<MET>>
 - [x] **AC6 worktree 清理** <<MET>>
-- [x] **AC7 workspace 体积释放** <<MET>>
+- [ ] **AC7 workspace 体积释放** <<PARTIAL: 释放 20.15 GB，但其中 8 个目录被 Task 清单声明 PRESERVE_REFERENCED，属越界删除；见「本 Task 自身缺陷」>>
 - [x] **AC8 主线裁定** <<MET>>
 - [x] **AC9 验收** <<MET>>
 
@@ -91,6 +91,33 @@ allowed_paths:
 
 **AC9 的一处如实更正**：原 AC 写「已跟踪数仍为 295」。实测为 **296**——
 差 1 是本 Task 自己，属预期内新增。**不是漂移，但不该含糊带过。**
+
+
+### ⚠ 本 Task 自身缺陷（执行后发现，未修复的部分）
+
+**清理过程中我删掉了 13 条被 Task 资源清单声明为 `PRESERVE_REFERENCED` / `PRESERVE_USER_DATA` 的路径。**
+
+**根因**：`tools/governance/clean_workspace.py` 的 pin 提取只认**反引号包裹**的表格单元格
+（``` `path` ```）。而 `P02-NEW-TIME-BASELINE.md`、`P02-NEW-TIME-X6.md` 等清单里，
+路径是**裸写**在单元格中的（`| New-time selftest fixtures | G:/... | PRESERVE_REFERENCED | ...`）。
+**裸路径没有被当成 pin，于是被当成普通派生目录删除。**
+
+**处置结果：**
+
+| 类型 | 数量 | 状态 |
+|---|---:|---|
+| worktree | **6** | **已按 `inventory.json` 记录的原始 head 用 `git worktree add --detach` 重建**，路径与提交均复原 |
+| temp 夹具 | **8** | **永久丢失**（`shutil.rmtree` 不进回收站）。其 SHA-256 仍记录在原清单中，故「曾经存在且内容为 X」仍可证明，但**工件本身不可恢复** |
+
+**受影响的 Task 文件**：`P02-NEW-TIME-BASELINE.md`（`done`）、
+`P02-NEW-TIME-X6.md`（`approved`）、`P02-NEW-TIME-X6-POSTRUN-REVIEW.md`（`approved`）、
+`GOV-PIN-LINEAGE-1.md`、`FEAT-CREATE-1/2/4.md`、`P19-UI-FIX-2.md`、`P02-MAINLINE-INTEGRATION.md`。
+
+**这 13 条中有 6 条已复原、8 条不可复原——
+所以「保护项全部在位」这句话在本 Task 上不能成立。**
+
+**教训**：我在此前多轮反复记录过「区域 vs 名称」的错误（`git add doc/tasks` 卷走草稿）。
+**这次是同一个形状的第四次**：我写的是「证据表里的 pin」，实际需要的是「任何声明了 PRESERVE 的行里的路径」。
 
 ## 允许修改范围
 
