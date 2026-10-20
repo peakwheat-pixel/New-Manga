@@ -303,6 +303,63 @@ MAX_DETECT_PIXELS = MAX_DETECT_PAGE_BYTES // 3
 #: frame GIF, and those must not ride this face.
 _DETECT_PAGE_FORMATS = frozenset({"PNG", "JPEG"})
 
+# DETECT-MEMORY-GUARD-1 (SEC-FMT-005 item 1): the pixel cap above is a fixed
+# constant, identical on an 8 GB machine and a 64 GB one. SEC-FMT-005 also
+# asks that available physical memory be considered. This is a BACKSTOP, not
+# the primary criterion: a page at the ceiling needs ~42.7 MB while a healthy
+# host reports gigabytes free, so on a normal machine this never fires and the
+# pixel cap remains the real constraint. It matters in a container, under
+# memory pressure, or on a pathologically small host.
+#: Fraction of currently-available physical memory one page may claim. 0.25
+#: leaves the rest for the sidecar, the model, and the OS - the page buffer is
+#: a transient copy, not the process's working set.
+_DETECT_MEMORY_SAFETY_RATIO = 0.25
+#: Worst-case bytes per decoded pixel (RGBA = 4, RGB24 = 3). The larger value
+#: is the conservative choice for an admission decision.
+_DETECT_BYTES_PER_PIXEL = 4
+
+
+def _available_physical_bytes() -> int | None:
+    """Best-effort available physical memory, or None when unavailable.
+
+    Windows-only by design: the product boundary is Windows single-platform
+    (AD-001). Returns None rather than raising so the caller can fall back to
+    the fixed pixel cap instead of guessing.
+    """
+    if sys.platform != "win32":  # pragma: no cover - platform, not logic
+        return None
+    try:
+        import ctypes
+        import ctypes.wintypes as wt
+    except Exception:  # pragma: no cover - ctypes is stdlib
+        return None
+
+    class _MEMORYSTATUSEX(ctypes.Structure):
+        _fields_ = [
+            ("dwLength", wt.DWORD),
+            ("dwMemoryLoad", wt.DWORD),
+            ("ullTotalPhys", ctypes.c_ulonglong),
+            ("ullAvailPhys", ctypes.c_ulonglong),
+            ("ullTotalPageFile", ctypes.c_ulonglong),
+            ("ullAvailPageFile", ctypes.c_ulonglong),
+            ("ullTotalVirtual", ctypes.c_ulonglong),
+            ("ullAvailVirtual", ctypes.c_ulonglong),
+            ("ullAvailExtendedVirtual", ctypes.c_ulonglong),
+        ]
+
+    try:
+        kernel32 = ctypes.WinDLL("kernel32", use_last_error=True)
+        kernel32.GlobalMemoryStatusEx.argtypes = [ctypes.POINTER(_MEMORYSTATUSEX)]
+        kernel32.GlobalMemoryStatusEx.restype = wt.BOOL
+        status = _MEMORYSTATUSEX()
+        status.dwLength = ctypes.sizeof(status)
+        if not kernel32.GlobalMemoryStatusEx(ctypes.byref(status)):
+            return None
+        return int(status.ullAvailPhys)
+    except Exception:  # noqa: BLE001 - probe failure must not break detect
+        return None
+
+
 # M2-PROD-DETECT-3 integration (DSH r1 R1): provider error TEXT never rides
 # the IPC line -- real provider messages embed local absolute paths (weights
 # directories), which Contract §8 forbids on the wire. The envelope carries
@@ -1428,6 +1485,35 @@ class CoreServiceServer:
                         f"(about {ceiling_edge}x{ceiling_edge}) and retry, or "
                         "split a tall page into several shorter images."
                     )
+
+                # DETECT-MEMORY-GUARD-1 (SEC-FMT-005 item 1): the pixel cap is
+                # a fixed constant; this consults the host. It is a BACKSTOP --
+                # on a healthy machine available memory dwarfs the page buffer
+                # so this never fires, and the pixel cap above stays the real
+                # constraint. A probe failure falls back to the pixel cap (it
+                # does NOT fail open past it): the page has already passed the
+                # fixed ceiling by the time we get here.
+                needed_bytes = (
+                    image.width * image.height * _DETECT_BYTES_PER_PIXEL
+                )
+                avail_bytes = _available_physical_bytes()
+                if avail_bytes is not None:
+                    budget_bytes = int(avail_bytes * _DETECT_MEMORY_SAFETY_RATIO)
+                    if needed_bytes > budget_bytes:
+                        avail_mb = avail_bytes / (1024 * 1024)
+                        budget_mb = budget_bytes / (1024 * 1024)
+                        needed_mb = needed_bytes / (1024 * 1024)
+                        raise DetectRequestError(
+                            "core.detect page needs more memory than this host "
+                            f"can safely spare: {image.width}x{image.height} "
+                            f"needs about {needed_mb:.1f} MB, but only "
+                            f"{avail_mb:.1f} MB is available and the page may "
+                            f"claim at most {budget_mb:.1f} MB "
+                            f"({_DETECT_MEMORY_SAFETY_RATIO:.0%} of available). "
+                            "Close other applications and retry, reduce the "
+                            "page size, or split a tall page into several "
+                            "shorter images."
+                        )
 
                 rgb = image.convert("RGB")
                 actual_width, actual_height = rgb.size

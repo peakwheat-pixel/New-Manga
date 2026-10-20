@@ -761,3 +761,120 @@ def test_temp_data_root_is_isolated() -> None:
             assert (Path(tmp) / "data" / "library.db").is_file()
         finally:
             core.conn.close()
+
+def test_detect_memory_backstop_rejects_when_host_is_short(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """DETECT-MEMORY-GUARD-1 / SEC-FMT-005 item 1: consult available memory.
+
+    SEC-FMT-005 requires the memory manager to check available physical
+    memory. The pixel cap is a fixed constant, so this is a separate backstop
+    evaluated on the host.
+
+    The page used here (2000x2000 = 4 M px) is comfortably UNDER the pixel cap,
+    so the only thing that can reject it is the memory check.
+    """
+    import bootstrap.core_service as cs
+
+    from bootstrap.core_service import MAX_DETECT_PIXELS
+
+    server, core = _make_server(tmp_path)
+    try:
+        core.detector = FakeDetectionProvider(result=_fake_result(()))
+        buffer = io.BytesIO()
+        Image.new("RGB", (2000, 2000), "white").save(buffer, "PNG")
+        page = base64.b64encode(buffer.getvalue()).decode("ascii")
+        assert 2000 * 2000 < MAX_DETECT_PIXELS, "must be under the pixel cap"
+
+        # claim the host has 8 MB free: 2000x2000 needs 15.3 MB as RGBA
+        monkeypatch.setattr(cs, "_available_physical_bytes",
+                            lambda: 8 * 1024 * 1024)
+
+        res, _ = _dispatch(
+            server, "d-mem-low", {"page": page, "width": 2000, "height": 2000}
+        )
+        assert res["result"] is None
+        assert res["error"]["code"] == E_INVALID_REQUEST
+
+        message = res["error"]["message"]
+        # the message must carry the actual figures, per SEC-FMT-005 item 3
+        assert "2000x2000" in message
+        assert "MB" in message
+        assert "available" in message
+        assert "25%" in message
+        # and it must not have decoded
+        assert core.detector.seen_request is None
+    finally:
+        core.conn.close()
+
+
+def test_detect_memory_backstop_allows_when_host_is_fine(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """Companion: a healthy host must not reject an ordinary page.
+
+    Without this, a bug that always rejects would satisfy the test above.
+    """
+    import bootstrap.core_service as cs
+
+    server, core = _make_server(tmp_path)
+    try:
+        core.detector = FakeDetectionProvider(result=_fake_result(()))
+        buffer = io.BytesIO()
+        Image.new("RGB", (200, 200), "white").save(buffer, "PNG")
+        page = base64.b64encode(buffer.getvalue()).decode("ascii")
+
+        # 8 GB available: 200x200 needs 0.15 MB, far under 25% of 8 GB
+        monkeypatch.setattr(cs, "_available_physical_bytes",
+                            lambda: 8 * 1024 * 1024 * 1024)
+
+        res, _ = _dispatch(
+            server, "d-mem-ok", {"page": page, "width": 200, "height": 200}
+        )
+        assert res["error"] is None
+        assert core.detector.seen_request is not None, "page should be processed"
+    finally:
+        core.conn.close()
+
+
+def test_detect_memory_probe_failure_falls_back_to_pixel_cap(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """A failed probe must not fail open PAST the pixel cap.
+
+    AC1: "若探测失败…必须不回退为放行，而是退到「仅用固定上限」".
+    So: oversized still rejected by the pixel cap; ordinary still processed.
+    """
+    import bootstrap.core_service as cs
+
+    from bootstrap.core_service import MAX_DETECT_PIXELS
+
+    monkeypatch.setattr(cs, "_available_physical_bytes", lambda: None)
+
+    server, core = _make_server(tmp_path)
+    try:
+        core.detector = FakeDetectionProvider(result=_fake_result(()))
+
+        # oversized -> still rejected by the pixel cap
+        big = io.BytesIO()
+        Image.new("RGB", (4096, 4096), "white").save(big, "PNG")
+        assert 4096 * 4096 > MAX_DETECT_PIXELS
+        res, _ = _dispatch(
+            server, "d-mem-none-big",
+            {"page": base64.b64encode(big.getvalue()).decode("ascii"),
+             "width": 4096, "height": 4096},
+        )
+        assert res["error"] is not None
+
+        # ordinary -> still processed
+        small = io.BytesIO()
+        Image.new("RGB", (200, 200), "white").save(small, "PNG")
+        res2, _ = _dispatch(
+            server, "d-mem-none-small",
+            {"page": base64.b64encode(small.getvalue()).decode("ascii"),
+             "width": 200, "height": 200},
+        )
+        assert res2["error"] is None
+        assert core.detector.seen_request is not None
+    finally:
+        core.conn.close()
