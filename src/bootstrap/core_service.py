@@ -303,19 +303,27 @@ MAX_DETECT_PIXELS = MAX_DETECT_PAGE_BYTES // 3
 #: frame GIF, and those must not ride this face.
 _DETECT_PAGE_FORMATS = frozenset({"PNG", "JPEG"})
 
-# DETECT-MEMORY-GUARD-1 (SEC-FMT-005 item 1): the pixel cap above is a fixed
-# constant, identical on an 8 GB machine and a 64 GB one. SEC-FMT-005 also
-# asks that available physical memory be considered. This is a BACKSTOP, not
-# the primary criterion: a page at the ceiling needs ~42.7 MB while a healthy
-# host reports gigabytes free, so on a normal machine this never fires and the
-# pixel cap remains the real constraint. It matters in a container, under
-# memory pressure, or on a pathologically small host.
-#: Fraction of currently-available physical memory one page may claim. 0.25
-#: leaves the rest for the sidecar, the model, and the OS - the page buffer is
-#: a transient copy, not the process's working set.
+# DETECT-MEMORY-GUARD-1 (SEC-FMT-005 item 1): the pixel cap above is a
+# fixed constant, identical on an 8 GB machine and a 64 GB one.
+# SEC-FMT-005 also asks that available physical memory be considered.
+# This is a BACKSTOP, not the primary criterion: a page at the ceiling
+# needs ~32 MB as RGB24 while a healthy host reports gigabytes free, so
+# on a normal machine this never fires and the pixel cap remains the
+# real constraint. It matters in a container, under memory pressure, or
+# on a pathologically small host.
+#: Fraction of currently-available physical memory one page may claim.
+#: 0.25 leaves the rest for the sidecar, the model, and the OS.
+#: The effective rejection line is avail < 16N for an N-pixel page;
+#: measured convert() peaks run about 3N-7N, so the ratio keeps more
+#: than 2x headroom over the real allocation.
 _DETECT_MEMORY_SAFETY_RATIO = 0.25
-#: Worst-case bytes per decoded pixel (RGBA = 4, RGB24 = 3). The larger value
-#: is the conservative choice for an admission decision.
+#: Bytes per pixel used to ESTIMATE the page's allocation need. This is
+#: the destination-buffer figure (RGBA = 4, RGB24 = 3), not a peak
+#: guarantee: converting an RGBA source keeps the source and target
+#: buffers alive together, so the transient peak is roughly 6N-7N for
+#: an N-pixel page. The 4 B/px estimate is therefore a lower bound on
+#: the peak, and it is the SAFETY RATIO above - not this constant -
+#: that covers the difference. Do not read this as a worst-case peak.
 _DETECT_BYTES_PER_PIXEL = 4
 
 
@@ -1506,9 +1514,9 @@ class CoreServiceServer:
                         raise DetectRequestError(
                             "core.detect page needs more memory than this host "
                             f"can safely spare: {image.width}x{image.height} "
-                            f"needs about {needed_mb:.1f} MB, but only "
-                            f"{avail_mb:.1f} MB is available and the page may "
-                            f"claim at most {budget_mb:.1f} MB "
+                            f"needs about {needed_mb:.1f} MiB, but only "
+                            f"{avail_mb:.1f} MiB is available and the page may "
+                            f"claim at most {budget_mb:.1f} MiB "
                             f"({_DETECT_MEMORY_SAFETY_RATIO:.0%} of available). "
                             "Close other applications and retry, reduce the "
                             "page size, or split a tall page into several "
