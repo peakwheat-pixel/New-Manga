@@ -20,11 +20,36 @@
 
 **所以原先的「不可达」判断是**错的**。**
 
-**真实原因**：**配置的镜像 `pypi.tuna.tsinghua.edu.cn` 对该包返回空版本列表**
-（`from versions: none`），而 `pypi.org` 正常。
-**`pip index versions` 默认走配置的镜像，所以看起来像离线。**
+### 真实原因（r193 Review C1 后重写）
 
-**这是一个把「某个镜像坏了」误判成「没有网络」的错误。**
+**我最初写的是「镜像对该包返回空版本列表」。那句话是**错的**——ZCode 的独立复核与我后来的实测都推翻了它。**
+
+**可复现的事实只有这些：**
+
+| 观察 | 结果 |
+|---|---|
+| `pip` 对 tuna 的 `/simple/pip/` 与 `/simple/transformers/` | **HTTP 403 Forbidden**（pip 自身 `-vvv` 日志记录）|
+| 同一 URL 用 `urllib` 取 | **HTTP 200**，页面含 5.17.0，最高 5.20.2 |
+| 同一 URL 用 `requests`（含 pip 的 UA）取 | **HTTP 200**，136,564 字节 |
+| 清空 `HTTP_PROXY`/`HTTPS_PROXY` 后重跑 pip | **仍 `from versions: none`** |
+| tuna 的 JSON 索引（`Accept: application/vnd.pypi.simple.v1+json`）| **495 files，含 5.17.0，最高 5.20.2** |
+| `pip` 显式 `--index-url https://pypi.org/simple` | **成功** |
+
+**所以三条错论都被排除：**
+
+- **不是「没有网络」**——TCP、DNS、HTTPS 均通
+- **不是「镜像没有这个包」**——它的 JSON 索引明确列出 5.17.0
+- **不是「同步滞后到 5.5.0」**——ZCode 当时观测到的上限；我现在测到 5.20.2，说明镜像内容本身在变
+- **也不是代理**——清空代理环境变量后行为不变
+
+**剩下的可复现事实是：`pip` 从该镜像收到 403，而同一 URL 对 `urllib`/`requests` 正常。**
+
+**`pip` 侧的具体触发条件我**没能隔离**。这是如实陈述，不是保留。**
+
+**未验证的推测**：镜像按 TLS 指纹或客户端特征拒绝 pip；镜像对 pip 版本做过滤。
+**我没有证据支持其中任何一条，所以不写进结论。**
+
+**修复（已实施且已验证）**：显式 `--index-url https://pypi.org/simple`。
 
 ## 二、AC1：环境记录与基线核对
 
@@ -72,6 +97,17 @@ load seconds: 5.5
 ```
 
 **没有联网下载任何权重**——`local_files_only=True` 且两个离线环境变量均置 1。
+
+### 为什么这证明了「同一模型快照」（r193 Review C2）
+
+**`detection_manga.py:511-519` 在 `from_pretrained`（`:522-527`）**之前**，对三个权重文件逐一做
+**完整 64 位** SHA-256 校验，不匹配即 `raise ProviderError`（fail-closed，不是 warning）。**
+
+**所以 §四 那两个用例通过这件事**本身蕴含**「三文件完整校验通过」——
+否则引擎根本建不起来，测试不可能绿。**
+
+**因此「权重与受测代码为同一快照」不是靠前 16 位前缀推断的，是由 AC3 的通过反推的。
+前 16 位只是便于人眼核对代码里的 pin。**
 
 ## 四、AC3：两个真实检测用例
 
@@ -151,6 +187,16 @@ $env:PYTHONPATH = "G:\CODEX\New Manga;G:\CODEX\New Manga\src"
 **代价**：venv 里 `transformers 5.17.0` 与全局 `4.48.3` 并存；
 venv 的 `site-packages` 在 `sys.path` 中优先，所以 venv 内解析到 5.17.0（已实测确认）。
 
+### 使用警示（r193 Review C3）
+
+| 陷阱 | 后果 |
+|---|---|
+| **在该 venv 内 `pip uninstall` 或降级 `transformers`** | 只移除 venv 副本，随后**露出全局 `4.48.3`**——检测链路会「无声地」退回不可用 |
+| **该 venv 的依赖解析「看得见」整个全局栈** | 将来装新包时其依赖可能被**全局旧版**满足而不在 venv 内落副本，版本来源不清 |
+
+**所以这个 venv 是「全局栈 + transformers 覆盖层」，不是干净环境。
+任何排障必须先问：现在解析到的是哪一个。**
+
 ## 七、限制
 
 | # | 限制 |
@@ -160,7 +206,7 @@ venv 的 `site-packages` 在 `sys.path` 中优先，所以 venv 内解析到 5.1
 | **L3** | **CPU 构建基线（`torch==2.14.0`）未验证**——本机是 GPU 机器，只验了 GPU 变体 |
 | **L4** | **`python-doctr==1.1.0` 缺失**——属 T1.1.1 检测器，本 Task 范围外的既有状态 |
 | **L5** | **只修了本机**；CI 或其他机器仍需各自按 §六 复现 |
-| **L6** | **镜像 `pypi.tuna.tsinghua.edu.cn` 对该包仍异常**——复现时须显式 `--index-url https://pypi.org/simple` |
+| **L6** | **配置的镜像对 `pip` 返回 HTTP 403**（对 `urllib`/`requests` 正常），触发条件未隔离；**复现时必须显式 `--index-url https://pypi.org/simple`** |
 
 ## 八、明确未做
 

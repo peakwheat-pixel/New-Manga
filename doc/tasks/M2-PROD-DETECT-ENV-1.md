@@ -157,7 +157,7 @@ AttributeError: module transformers has no attribute RTDetrV2ForObjectDetection
 
 | # | 限制 |
 |---|---|
-| **L1** | **未独立 Review**（按协作协议须由 ZCode 审）|
+| **L1** | **已由 ZCode 独立 Review（r193）**：`approve_with_conditions`；C1/C2/C3 已全部闭合（见下）|
 | **L2** | **未改 `requirements.txt`**——本 Task 只恢复环境，不动基线声明 |
 | **L3** | **CPU 构建基线（`torch==2.14.0`）未验证**——本机是 GPU 机器，只验了 `2.11.0+cu128` |
 | **L4** | **`python-doctr==1.1.0` 缺失**——属 T1.1.1 检测器，本 Task 范围外的既有状态 |
@@ -165,9 +165,24 @@ AttributeError: module transformers has no attribute RTDetrV2ForObjectDetection
 | **L6** | **镜像对该包仍异常**——复现必须显式 `--index-url https://pypi.org/simple` |
 | **L7** | **venv 未入版本控制**（在 workspace 目录，按工区治理规则本就不入库）|
 
+### ZCode Review r193 的处置
+
+**产出**：`verification/M2-PROD-DETECT-ENV-1/dsh-zcode-review-r193.md`
+**结论**：**`approve_with_conditions`**（1×P2 + 2×P3，全部为文档表述级，无代码/环境返修）
+
+| 项 | 处置 |
+|---|---|
+| **C1（P2）**「镜像返回空版本列表」的机制表述与实测不符 | **已重写**。核实后发现**三种解释都不成立**：不是离线（网络通）、不是镜像无此包（其 JSON 索引含 5.17.0）、不是同步滞后（ZCode 测到上限 5.5.0，我测到 5.20.2）。**可复现事实是 pip 收到 403 而 urllib/requests 收到 200**，触发条件未能隔离，已如实写明 |
+| **C2（P3）** 「同一快照」的证据形式不足 | **已补**：`detection_manga.py:511-519` 的**完整 64 位** SHA-256 fail-closed 校验先于 `from_pretrained`，**故 AC3 通过即蕴含三文件校验通过** |
+| **C3（P3）** venv 使用警示缺失 | **已补**：卸载/降级会露出全局 4.48.3；依赖解析看得见全局栈 |
+
+**Review 的独立佐证（其沙箱无法执行 python/pwsh/git，全部 pytest 复跑登记 `NOT_RUN`）**：
+`pip.ini` 内容、tuna/pypi 双索引抓取、venv `pyvenv.cfg` 与 dist-info、`RTDetrV2` 模块文件与 `.pyc` 物证、
+权重三文件字节数、321 个 Task 文件的 `\| resource \|` 表头扫描（**0 命中**，与我的结论一致）。
+
 ### 后续建议
 
-1. **交 ZCode 独立 Review**（L1）
+1. ~~交 ZCode 独立 Review~~（**已完成**）
 2. **L3**：若需 CPU 构建基线，另立 Task（本机无 CPU 环境变量组合的验证条件）
 3. **L6**：可考虑在 `requirements.txt` 或装配文档里注明该包须走 `pypi.org`
 
