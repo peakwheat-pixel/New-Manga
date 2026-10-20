@@ -1,0 +1,1736 @@
+{
+  "schema_version": 1,
+  "ledger_id": "incident-ledger-r208",
+  "task_id": "WORKSPACE-CONSOLIDATION-1",
+  "title": "R208 事故影响台账：18 个受保护资源 + 15 个删除根逐项映射",
+  "generated_at": "2026-10-20T21:44:09+08:00",
+  "generated_by": "incident-ledger (DSH teammate)",
+  "investigation_mode": "read_only",
+  "language": "zh-CN",
+  "authoritative_inputs": {
+    "review": "verification/WORKSPACE-CONSOLIDATION-1/codex-review-r208.md",
+    "review_questions_used": [
+      "Q1",
+      "Q3",
+      "Q6",
+      "Q7"
+    ],
+    "reviewed_head": "3947d63447457fe3ef8d3587942e632724ab3d72",
+    "review_decision": "changes_requested",
+    "receipts": [
+      "verification/WORKSPACE-CONSOLIDATION-1/worktree-removal.json",
+      "verification/WORKSPACE-CONSOLIDATION-1/workspace-cleanup.json"
+    ],
+    "inventories": [
+      "verification/WORKSPACE-CONSOLIDATION-1/inventory.json",
+      "verification/WORKSPACE-CONSOLIDATION-1/inventory.md"
+    ],
+    "ruling_p09": "verification/P09-PREVIEW-LIFECYCLE-RECLAIM-1/codex-resource-ruling.md",
+    "manifest_p06": "verification/P06/resource-manifest.json"
+  },
+  "fixed_point": {
+    "expected_head": "3947d63447457fe3ef8d3587942e632724ab3d72",
+    "measured_head": "3947d63447457fe3ef8d3587942e632724ab3d72",
+    "head_unchanged": true,
+    "tracked_or_staged_changes": 0,
+    "worktree_registrations_measured": 132,
+    "measured_at": "2026-10-20T21:44:09+08:00",
+    "note": "被审 HEAD 未漂移；本台账写作期间未执行任何 Git 写命令。"
+  },
+  "read_only_boundary": {
+    "files_written_by_this_investigation": [
+      "verification/WORKSPACE-CONSOLIDATION-1/incident-ledger-r208.json",
+      "verification/WORKSPACE-CONSOLIDATION-1/incident-ledger-r208.md"
+    ],
+    "forbidden_actions_not_performed": [
+      "删除/移动/恢复写回原位置",
+      "git add/commit",
+      "GC/prune",
+      "任何 Git 写命令",
+      "修改 doc/**、tools/**、既有证据或历史 pin",
+      "重跑 X6",
+      "把 ignored 内容直接认定为缓存"
+    ],
+    "git_invocation_policy": "所有 Git 查询使用 git --no-optional-locks；文件系统统计使用只读 scandir/lstat（不跟随 reparse/junction）"
+  },
+  "baseline_recomputation": {
+    "worktree_removal_receipt": {
+      "receipt_file": "verification/WORKSPACE-CONSOLIDATION-1/worktree-removal.json",
+      "mode": "apply",
+      "removed_entries": 50,
+      "sum_removed_bytes": 31493644833,
+      "totals_field": {
+        "candidates": 155,
+        "removed": 50,
+        "refused": 105,
+        "skipped": 58,
+        "bytes": 31493644833
+      },
+      "task_baseline": "50 removed / 31,493,644,833 B",
+      "matches": true
+    },
+    "workspace_cleanup_receipt": {
+      "receipt_file": "verification/WORKSPACE-CONSOLIDATION-1/workspace-cleanup.json",
+      "mode": "apply",
+      "removed_entries": 158,
+      "sum_removed_bytes": 21636208040,
+      "totals_field": {
+        "removed_items": 158,
+        "removed_bytes": 21636208040,
+        "kept_items": 5,
+        "kept_bytes": 9318471829
+      },
+      "task_baseline": "158 removed / 21,636,208,040 B",
+      "matches": true
+    },
+    "combined_removed_bytes": 53129852873,
+    "combined_gib": 49.48,
+    "combined_note": "两份收据的删除前递归逻辑字节合计；没有磁盘空闲量前后证据，不能据此认证实际物理净释放（Review Q7）。",
+    "selected_15_roots_bytes": 29797178882,
+    "selected_15_roots_gib": 27.75,
+    "selected_15_roots_parts": {
+      "six_worktrees": 12911515002,
+      "p06_old_runtime_worktree": 2186496184,
+      "four_review_scratch": 14699110702,
+      "four_temp_roots": 56994
+    }
+  },
+  "scope": {
+    "protected_source_count": 18,
+    "removed_root_count": 15,
+    "grouping": {
+      "worktree": 6,
+      "temp": 7,
+      "review_scratch_p09": 4,
+      "p06_preserved_root": 1
+    },
+    "unique_paths_in_original_13_claim": 13,
+    "original_13_derivation": "6 worktree + 7 唯一 temp 资源",
+    "new_findings_beyond_13": 5,
+    "new_findings_list": [
+      "review-scratch/P09-PREVIEW-LIFECYCLE-RECLAIM-1-R11-392977a8",
+      "review-scratch/P09-PREVIEW-LIFECYCLE-RECLAIM-1-R11-392977a8-export",
+      "review-scratch/P09-PREVIEW-LIFECYCLE-RECLAIM-1-R17",
+      "review-scratch/P09-PREVIEW-LIFECYCLE-RECLAIM-1-R18",
+      "P06-GC-DISTRIBUTION-MIGRATION 保留根（受损子树 old-runtime/worktree）"
+    ],
+    "root_enumeration": "15 = 14 个与受保护 source 路径字符串相等的删除根 + 1 个位于 P06 保留根内的子树删除根（old-runtime/worktree）"
+  },
+  "removed_roots": [
+    {
+      "id": "ROOT-01",
+      "path": "G:/CODEX/New Manga.workspace/GOV-PIN-LINEAGE-1/worktree",
+      "receipt": {
+        "receipt_file": "verification/WORKSPACE-CONSOLIDATION-1/worktree-removal.json",
+        "receipt_entry": "removed[18]",
+        "receipt_line": 114,
+        "bytes": 348191855,
+        "removed_flag": true,
+        "parent_root_receipt": false
+      },
+      "relation_to_protected_source": "exact_source_path",
+      "covered_source_ids": [
+        "SRC-01"
+      ],
+      "current_state_now": "PARTIAL_REBUILD",
+      "current_state_detail": {
+        "current_head_full_sha": "60d47991baea777996313d2cf1a335c136fb1ba0",
+        "detached": true,
+        "current_measured_bytes": 348199489,
+        "delta_bytes": 7634
+      },
+      "byte_check": {
+        "receipt_bytes": 348191855,
+        "current_bytes": 348199489,
+        "delta_bytes": 7634
+      }
+    },
+    {
+      "id": "ROOT-02",
+      "path": "G:/CODEX/New Manga.workspace/P06-GC-DISTRIBUTION-MIGRATION/old-runtime/worktree",
+      "receipt": {
+        "receipt_file": "verification/WORKSPACE-CONSOLIDATION-1/worktree-removal.json",
+        "receipt_entry": "removed[19]",
+        "receipt_line": 120,
+        "bytes": 2186496184,
+        "removed_flag": true,
+        "parent_root_receipt": false
+      },
+      "relation_to_protected_source": "descendant_within_preserved_source_root",
+      "covered_source_ids": [
+        "SRC-02"
+      ],
+      "current_state_now": "MISSING",
+      "current_state_detail": {
+        "path_exists": false,
+        "parent_old_runtime_exists": true,
+        "parent_old_runtime_empty": true
+      },
+      "byte_check": {
+        "receipt_bytes": 2186496184,
+        "current_bytes": null,
+        "delta_bytes": null
+      }
+    },
+    {
+      "id": "ROOT-03",
+      "path": "G:/CODEX/New Manga.workspace/worktrees/FEAT-CREATE-1",
+      "receipt": {
+        "receipt_file": "verification/WORKSPACE-CONSOLIDATION-1/worktree-removal.json",
+        "receipt_entry": "removed[21]",
+        "receipt_line": 132,
+        "bytes": 305714018,
+        "removed_flag": true,
+        "parent_root_receipt": false
+      },
+      "relation_to_protected_source": "exact_source_path",
+      "covered_source_ids": [
+        "SRC-14"
+      ],
+      "current_state_now": "PARTIAL_REBUILD",
+      "current_state_detail": {
+        "current_head_full_sha": "c96958172de8f8a3f3563da43a9fef09ac4447ba",
+        "detached": true,
+        "current_measured_bytes": 305714018,
+        "delta_bytes": 0
+      },
+      "byte_check": {
+        "receipt_bytes": 305714018,
+        "current_bytes": 305714018,
+        "delta_bytes": 0
+      }
+    },
+    {
+      "id": "ROOT-04",
+      "path": "G:/CODEX/New Manga.workspace/worktrees/FEAT-CREATE-2",
+      "receipt": {
+        "receipt_file": "verification/WORKSPACE-CONSOLIDATION-1/worktree-removal.json",
+        "receipt_entry": "removed[22]",
+        "receipt_line": 138,
+        "bytes": 1601245026,
+        "removed_flag": true,
+        "parent_root_receipt": false
+      },
+      "relation_to_protected_source": "exact_source_path",
+      "covered_source_ids": [
+        "SRC-15"
+      ],
+      "current_state_now": "PARTIAL_REBUILD",
+      "current_state_detail": {
+        "current_head_full_sha": "8202f24117ee7ab3ec48d0bb6b7a45d4bca1f2d7",
+        "detached": true,
+        "current_measured_bytes": 305734384,
+        "delta_bytes": -1295510642
+      },
+      "byte_check": {
+        "receipt_bytes": 1601245026,
+        "current_bytes": 305734384,
+        "delta_bytes": -1295510642
+      }
+    },
+    {
+      "id": "ROOT-05",
+      "path": "G:/CODEX/New Manga.workspace/worktrees/FEAT-CREATE-4",
+      "receipt": {
+        "receipt_file": "verification/WORKSPACE-CONSOLIDATION-1/worktree-removal.json",
+        "receipt_entry": "removed[23]",
+        "receipt_line": 144,
+        "bytes": 5045303306,
+        "removed_flag": true,
+        "parent_root_receipt": false
+      },
+      "relation_to_protected_source": "exact_source_path",
+      "covered_source_ids": [
+        "SRC-16"
+      ],
+      "current_state_now": "PARTIAL_REBUILD",
+      "current_state_detail": {
+        "current_head_full_sha": "f2c66ff262299f20292d8ca92cf8c2a28abce75b",
+        "detached": true,
+        "current_measured_bytes": 306305569,
+        "delta_bytes": -4738997737
+      },
+      "byte_check": {
+        "receipt_bytes": 5045303306,
+        "current_bytes": 306305569,
+        "delta_bytes": -4738997737
+      }
+    },
+    {
+      "id": "ROOT-06",
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P19-UI-FIX-2",
+      "receipt": {
+        "receipt_file": "verification/WORKSPACE-CONSOLIDATION-1/worktree-removal.json",
+        "receipt_entry": "removed[27]",
+        "receipt_line": 168,
+        "bytes": 5371083340,
+        "removed_flag": true,
+        "parent_root_receipt": false
+      },
+      "relation_to_protected_source": "exact_source_path",
+      "covered_source_ids": [
+        "SRC-17"
+      ],
+      "current_state_now": "PARTIAL_REBUILD",
+      "current_state_detail": {
+        "current_head_full_sha": "541aabb1e88a18e7ed6fb82afc971bc0bcff6c9c",
+        "detached": true,
+        "current_measured_bytes": 305663182,
+        "delta_bytes": -5065420158
+      },
+      "byte_check": {
+        "receipt_bytes": 5371083340,
+        "current_bytes": 305663182,
+        "delta_bytes": -5065420158
+      }
+    },
+    {
+      "id": "ROOT-07",
+      "path": "G:/CODEX/New Manga.worktrees/P02-real-webview-harness-antigravity",
+      "receipt": {
+        "receipt_file": "verification/WORKSPACE-CONSOLIDATION-1/worktree-removal.json",
+        "receipt_entry": "removed[45]",
+        "receipt_line": 276,
+        "bytes": 239977457,
+        "removed_flag": true,
+        "parent_root_receipt": false
+      },
+      "relation_to_protected_source": "exact_source_path",
+      "covered_source_ids": [
+        "SRC-18"
+      ],
+      "current_state_now": "PARTIAL_REBUILD",
+      "current_state_detail": {
+        "current_head_full_sha": "89413f45a601966eb40d7af7abea65cbdfc754b3",
+        "detached": true,
+        "current_measured_bytes": 241182506,
+        "delta_bytes": 1205049
+      },
+      "byte_check": {
+        "receipt_bytes": 239977457,
+        "current_bytes": 241182506,
+        "delta_bytes": 1205049
+      }
+    },
+    {
+      "id": "ROOT-08",
+      "path": "G:/CODEX/New Manga.workspace/review-scratch/P09-PREVIEW-LIFECYCLE-RECLAIM-1-R11-392977a8",
+      "receipt": {
+        "receipt_file": "verification/WORKSPACE-CONSOLIDATION-1/workspace-cleanup.json",
+        "receipt_entry": "removed[0]",
+        "receipt_line": 7,
+        "bytes": 1594956,
+        "removed_flag": true,
+        "parent_root_receipt": false
+      },
+      "relation_to_protected_source": "exact_source_path",
+      "covered_source_ids": [
+        "SRC-03"
+      ],
+      "current_state_now": "MISSING",
+      "current_state_detail": {
+        "path_exists": false,
+        "parent_review_scratch_exists": true,
+        "parent_children": []
+      },
+      "byte_check": {
+        "receipt_bytes": 1594956,
+        "current_bytes": null,
+        "delta_bytes": null
+      }
+    },
+    {
+      "id": "ROOT-09",
+      "path": "G:/CODEX/New Manga.workspace/review-scratch/P09-PREVIEW-LIFECYCLE-RECLAIM-1-R11-392977a8-export",
+      "receipt": {
+        "receipt_file": "verification/WORKSPACE-CONSOLIDATION-1/workspace-cleanup.json",
+        "receipt_entry": "removed[1]",
+        "receipt_line": 12,
+        "bytes": 351312383,
+        "removed_flag": true,
+        "parent_root_receipt": false
+      },
+      "relation_to_protected_source": "exact_source_path",
+      "covered_source_ids": [
+        "SRC-04"
+      ],
+      "current_state_now": "MISSING",
+      "current_state_detail": {
+        "path_exists": false,
+        "parent_review_scratch_exists": true,
+        "parent_children": []
+      },
+      "byte_check": {
+        "receipt_bytes": 351312383,
+        "current_bytes": null,
+        "delta_bytes": null
+      }
+    },
+    {
+      "id": "ROOT-10",
+      "path": "G:/CODEX/New Manga.workspace/review-scratch/P09-PREVIEW-LIFECYCLE-RECLAIM-1-R17",
+      "receipt": {
+        "receipt_file": "verification/WORKSPACE-CONSOLIDATION-1/workspace-cleanup.json",
+        "receipt_entry": "removed[2]",
+        "receipt_line": 17,
+        "bytes": 1411503,
+        "removed_flag": true,
+        "parent_root_receipt": false
+      },
+      "relation_to_protected_source": "exact_source_path",
+      "covered_source_ids": [
+        "SRC-05"
+      ],
+      "current_state_now": "MISSING",
+      "current_state_detail": {
+        "path_exists": false,
+        "parent_review_scratch_exists": true,
+        "parent_children": []
+      },
+      "byte_check": {
+        "receipt_bytes": 1411503,
+        "current_bytes": null,
+        "delta_bytes": null
+      }
+    },
+    {
+      "id": "ROOT-11",
+      "path": "G:/CODEX/New Manga.workspace/review-scratch/P09-PREVIEW-LIFECYCLE-RECLAIM-1-R18",
+      "receipt": {
+        "receipt_file": "verification/WORKSPACE-CONSOLIDATION-1/workspace-cleanup.json",
+        "receipt_entry": "removed[3]",
+        "receipt_line": 22,
+        "bytes": 14344791860,
+        "removed_flag": true,
+        "parent_root_receipt": false
+      },
+      "relation_to_protected_source": "exact_source_path",
+      "covered_source_ids": [
+        "SRC-06"
+      ],
+      "current_state_now": "MISSING",
+      "current_state_detail": {
+        "path_exists": false,
+        "parent_review_scratch_exists": true,
+        "parent_children": []
+      },
+      "byte_check": {
+        "receipt_bytes": 14344791860,
+        "current_bytes": null,
+        "delta_bytes": null
+      }
+    },
+    {
+      "id": "ROOT-12",
+      "path": "G:/CODEX/New Manga.workspace/temp/P02-NEW-TIME-BASELINE",
+      "receipt": {
+        "receipt_file": "verification/WORKSPACE-CONSOLIDATION-1/workspace-cleanup.json",
+        "receipt_entry": "removed[6]",
+        "receipt_line": 37,
+        "bytes": 23975,
+        "removed_flag": true,
+        "parent_root_receipt": false
+      },
+      "relation_to_protected_source": "exact_source_path",
+      "covered_source_ids": [
+        "SRC-07"
+      ],
+      "current_state_now": "MISSING",
+      "current_state_detail": {
+        "path_exists": false,
+        "parent_temp_exists": true
+      },
+      "byte_check": {
+        "receipt_bytes": 23975,
+        "current_bytes": null,
+        "delta_bytes": null
+      }
+    },
+    {
+      "id": "ROOT-13",
+      "path": "G:/CODEX/New Manga.workspace/temp/P02-NEW-TIME-BASELINE-AC3-BRANCH-RESOLUTION",
+      "receipt": {
+        "receipt_file": "verification/WORKSPACE-CONSOLIDATION-1/workspace-cleanup.json",
+        "receipt_entry": "removed[7]",
+        "receipt_line": 42,
+        "bytes": 80,
+        "removed_flag": true,
+        "parent_root_receipt": false
+      },
+      "relation_to_protected_source": "exact_source_path",
+      "covered_source_ids": [
+        "SRC-08"
+      ],
+      "current_state_now": "MISSING",
+      "current_state_detail": {
+        "path_exists": false,
+        "parent_temp_exists": true
+      },
+      "byte_check": {
+        "receipt_bytes": 80,
+        "current_bytes": null,
+        "delta_bytes": null
+      }
+    },
+    {
+      "id": "ROOT-14",
+      "path": "G:/CODEX/New Manga.workspace/temp/P02-NEW-TIME-BASELINE-AC3-GIT-TOPLEVEL-RESOLUTION",
+      "receipt": {
+        "receipt_file": "verification/WORKSPACE-CONSOLIDATION-1/workspace-cleanup.json",
+        "receipt_entry": "removed[8]",
+        "receipt_line": 47,
+        "bytes": 315,
+        "removed_flag": true,
+        "parent_root_receipt": false
+      },
+      "relation_to_protected_source": "exact_source_path",
+      "covered_source_ids": [
+        "SRC-09"
+      ],
+      "current_state_now": "MISSING",
+      "current_state_detail": {
+        "path_exists": false,
+        "parent_temp_exists": true
+      },
+      "byte_check": {
+        "receipt_bytes": 315,
+        "current_bytes": null,
+        "delta_bytes": null
+      }
+    },
+    {
+      "id": "ROOT-15",
+      "path": "G:/CODEX/New Manga.workspace/temp/P02-NEW-TIME-X6",
+      "receipt": {
+        "receipt_file": "verification/WORKSPACE-CONSOLIDATION-1/workspace-cleanup.json",
+        "receipt_entry": "removed[9]",
+        "receipt_line": 52,
+        "bytes": 32624,
+        "removed_flag": true,
+        "parent_root_receipt": true
+      },
+      "relation_to_protected_source": "exact_source_path",
+      "covered_source_ids": [
+        "SRC-10",
+        "SRC-11",
+        "SRC-12",
+        "SRC-13"
+      ],
+      "current_state_now": "MISSING",
+      "current_state_detail": {
+        "path_exists": false,
+        "children_bytes_sum": 32624,
+        "is_parent_root_for_children_sources": true
+      },
+      "byte_check": {
+        "receipt_bytes": 32624,
+        "current_bytes": null,
+        "delta_bytes": null
+      }
+    }
+  ],
+  "protected_sources": [
+    {
+      "id": "SRC-01",
+      "group": "worktree",
+      "source_path": "G:/CODEX/New Manga.workspace/GOV-PIN-LINEAGE-1/worktree",
+      "disposition_original": "PRESERVE_REFERENCED",
+      "declaration_source": [
+        {
+          "file": "doc/tasks/GOV-PIN-LINEAGE-1.md",
+          "line": 152
+        },
+        {
+          "file": "doc/tasks/GOV-PIN-LINEAGE-1.md",
+          "line": 184
+        },
+        {
+          "file": "verification/WORKSPACE-CONSOLIDATION-1/inventory.json",
+          "json_pointer": "$.worktrees[41]"
+        }
+      ],
+      "deletion_receipt": {
+        "receipt_file": "verification/WORKSPACE-CONSOLIDATION-1/worktree-removal.json",
+        "receipt_entry": "removed[18]",
+        "receipt_line": 114,
+        "bytes": 348191855,
+        "parent_root_receipt": false
+      },
+      "current_state_now": "PARTIAL_REBUILD",
+      "current_state_detail": {
+        "exists": true,
+        "registered_state": "git worktree list --porcelain = detached",
+        "original_head_prefix": "60d47991b",
+        "original_head_full_sha": "60d47991baea777996313d2cf1a335c136fb1ba0",
+        "current_head_full_sha": "60d47991baea777996313d2cf1a335c136fb1ba0",
+        "head_prefix_match": true,
+        "symbolic_ref_exit": 1,
+        "status_porcelain_lines": 0,
+        "ignored_untracked_lines": 0,
+        "original_branch": "dsh/GOV-PIN-LINEAGE-1",
+        "original_branch_ref_exists": false,
+        "archive_tag_exists": true,
+        "current_measured_bytes": 348199489,
+        "current_regular_files": 11118,
+        "current_directories": 1118,
+        "interpretation": "原路径与 HEAD 部分重建；detached 检出，原分支检出/ignored 内容/目录元数据未恢复"
+      },
+      "recovery_source": {
+        "kind": "GIT_HEAD_REBUILD",
+        "original_head_commit_resolvable": true,
+        "original_head_full_sha": "60d47991baea777996313d2cf1a335c136fb1ba0",
+        "note": "原提交对象仍在主对象库可解析；重建由 git worktree add --detach 完成。没有原目录字节副本，也没有 ignored 内容备份。"
+      },
+      "byte_verification": {
+        "original_receipt_bytes": 348191855,
+        "current_measured_bytes": 348199489,
+        "delta_bytes": 7634,
+        "original_head_full_sha": "60d47991baea777996313d2cf1a335c136fb1ba0",
+        "current_head_full_sha": "60d47991baea777996313d2cf1a335c136fb1ba0",
+        "head_equal": true,
+        "conclusion": "HEAD 提交快照一致，但目录字节不是原目录恢复；当前目录只含 HEAD checkout（status 与 ignored 均为空）。当前实测比原记录大 7,634 B；差异未逐项归因，记入 remaining_gap。"
+      },
+      "remaining_gap": [
+        "原 ignored 内容（依赖/构建/模型/测试输入等）与目录元数据没有删除前逐文件清册，无法恢复或逐字节归因",
+        "原分支检出未恢复；原分支 ref 已不存在",
+        "无删除前 status/stash 原始 stdout、stderr、退出码，无法在目录删除后独立复现当时完整文件状态"
+      ],
+      "availability": "PARTIALLY_RECONSTRUCTED"
+    },
+    {
+      "id": "SRC-02",
+      "group": "p06_preserved_root",
+      "source_path": "G:/CODEX/New Manga.workspace/P06-GC-DISTRIBUTION-MIGRATION",
+      "disposition_original": "PRESERVE_REFERENCED",
+      "declaration_source": [
+        {
+          "file": "doc/tasks/P06.md",
+          "line": 127
+        },
+        {
+          "file": "verification/P06/resource-manifest.json",
+          "json_pointer": "$.resources[1].subdirectories[0]"
+        },
+        {
+          "file": "doc/tasks/P06.md",
+          "line": 97
+        }
+      ],
+      "deletion_receipt": {
+        "receipt_file": "verification/WORKSPACE-CONSOLIDATION-1/worktree-removal.json",
+        "receipt_entry": "removed[19]",
+        "receipt_line": 120,
+        "bytes": 2186496184,
+        "parent_root_receipt": false,
+        "relation_note": "收据删除的是受保护根内的子树 old-runtime/worktree；源根目录本体未被删除"
+      },
+      "current_state_now": "PARENT_ONLY",
+      "current_state_detail": {
+        "parent_root_exists": true,
+        "old_runtime_exists": true,
+        "old_runtime_worktree_exists": false,
+        "manifest_subdirectories": [
+          "old-runtime/worktree",
+          "ac2-run",
+          "ac3-case1a-unbound-no-lock",
+          "ac3-case1b-unbound-with-lock",
+          "ac3-case2-legacy-schema",
+          "old-sidecar-probe"
+        ],
+        "manifest_subdirs_present": [
+          "ac2-run",
+          "ac3-case1a-unbound-no-lock",
+          "ac3-case1b-unbound-with-lock",
+          "ac3-case2-legacy-schema",
+          "old-sidecar-probe"
+        ],
+        "manifest_subdirs_missing": [
+          "old-runtime/worktree"
+        ],
+        "unlisted_existing_subdirs": [
+          "ac3-case1-unbound-rows"
+        ],
+        "measured_surviving_subdirs": {
+          "ac2-run": {
+            "bytes": 328034,
+            "files": 3
+          },
+          "ac3-case1-unbound-rows": {
+            "bytes": 315392,
+            "files": 2
+          },
+          "ac3-case1a-unbound-no-lock": {
+            "bytes": 315392,
+            "files": 2
+          },
+          "ac3-case1b-unbound-with-lock": {
+            "bytes": 315417,
+            "files": 3
+          },
+          "ac3-case2-legacy-schema": {
+            "bytes": 315392,
+            "files": 2
+          },
+          "old-sidecar-probe": {
+            "bytes": 315392,
+            "files": 2
+          }
+        },
+        "original_head_prefix": "ad75fadc2",
+        "original_head_full_sha": "ad75fadc2944983b4322f353176ba70cf0b0b7ae",
+        "original_head_commit_resolvable": true,
+        "comment": "父根仍存在，受保护子树 old-runtime/worktree 原位置缺失"
+      },
+      "recovery_source": {
+        "kind": "NONE_PROVEN",
+        "search_scope": [
+          "原路径 Test-Path = False",
+          "父目录 old-runtime 存在但为空（0 文件 0 B）",
+          "P06 父根其余 manifest 子目录与一个未列子目录存在（大小见 current_state_detail）",
+          "workspace/archive/worktree-data/manifest.json 的 object_count = 0（该归档通道无对象）",
+          "未做全盘/卷影/回收站/外部备份系统搜索"
+        ],
+        "lead_not_claim": "原 commit ad75fadc2944983b4322f353176ba70cf0b0b7ae 仍可 cat-file 读取；但旧 runtime 构建产物与 ignored 内容不在 Git 中，尚未证明可逐字节重建，故不记为可恢复。"
+      },
+      "byte_verification": {
+        "original_record": "resource-manifest.json 仅以 subdirectories 名称登记受保护子树，无逐文件字节/哈希；删除收据记录 2,186,496,184 B",
+        "current_measured": "old-runtime/worktree 不存在；old-runtime 当前 0 B；其余 manifest 子目录合计 1,589,627 B（5 处）",
+        "conclusion": "无逐文件 pin 可对比；原记录字节无法在当前恢复，且当前父根不构成受损子树的恢复"
+      },
+      "remaining_gap": [
+        "old-runtime/worktree 无逐文件清册/哈希，无法核验重建完整性",
+        "旧 runtime 构建产物与 ignored 内容不在 Git，原构建环境与字节未证明可重建"
+      ],
+      "availability": "UNVERIFIED_NO_BACKUP_EVIDENCE"
+    },
+    {
+      "id": "SRC-03",
+      "group": "review_scratch_p09",
+      "source_path": "G:/CODEX/New Manga.workspace/review-scratch/P09-PREVIEW-LIFECYCLE-RECLAIM-1-R11-392977a8",
+      "disposition_original": "PRESERVE_UNKNOWN",
+      "declaration_source": [
+        {
+          "file": "doc/tasks/P09-PREVIEW-LIFECYCLE-RECLAIM-1.md",
+          "line": 165
+        },
+        {
+          "file": "verification/P09-PREVIEW-LIFECYCLE-RECLAIM-1/codex-resource-ruling.md",
+          "line": 59
+        },
+        {
+          "file": "verification/P09-PREVIEW-LIFECYCLE-RECLAIM-1/resource-manifest.json",
+          "json_pointer": "$.entries[30]"
+        }
+      ],
+      "deletion_receipt": {
+        "receipt_file": "verification/WORKSPACE-CONSOLIDATION-1/workspace-cleanup.json",
+        "receipt_entry": "removed[0]",
+        "receipt_line": 7,
+        "bytes": 1594956,
+        "parent_root_receipt": false
+      },
+      "current_state_now": "MISSING",
+      "current_state_detail": {
+        "exists": false,
+        "parent_review_scratch_exists": true,
+        "parent_review_scratch_children": []
+      },
+      "recovery_source": {
+        "kind": "NONE_PROVEN",
+        "search_scope": [
+          "原路径 Test-Path = False",
+          "父目录 workspace/review-scratch 存在但为空（无任何子项）",
+          "agent-output/coordinator 下仅有 P09-PREVIEW-LIFECYCLE-RECLAIM-1-R3-scratch 与 -r7-22b0860（不同资源，仍存在）",
+          "workspace 顶层仅有 P09-PREVIEW-LIFECYCLE-RECLAIM-1-R20-scratch（WS-05，不同资源）",
+          "workspace/archive 顶层无 review-scratch 备份（子项：bundles、P02-NEW-TIME-X6-AC1-AC7、sfx_review、skills、top-level-closeout-20261013、worktree-data）",
+          "未做全盘/卷影/回收站/外部备份系统搜索"
+        ]
+      },
+      "byte_verification": {
+        "original_pin": {
+          "files": 20,
+          "bytes": 1594956,
+          "content_sha256": "e93ab2efd2c3309152c2f48ce0ecbc577e4a985074143ae67bb0b5c3f987d106",
+          "shape_sha256": "7e2bc433fa9c2db7b359fdd88fff8e9dee422006f2c07f8ae65bf48917477e63",
+          "manifest_note": "review-scratch: R11 review checkout of delivery_head 392977a8"
+        },
+        "current_measured": "目录不存在，无法实测",
+        "conclusion": "原 pin 记录的文件数/字节/内容哈希均无法在当前位置复核；搜索范围内未找到副本；不据 rmtree 推断永久不可恢复"
+      },
+      "remaining_gap": [
+        "无逐文件用途/唯一修改/可重建性盘点，不能判定目录内容性质（不得直接认定为缓存）",
+        "无哈希相同的现存副本证据"
+      ],
+      "availability": "UNVERIFIED_NO_BACKUP_EVIDENCE"
+    },
+    {
+      "id": "SRC-04",
+      "group": "review_scratch_p09",
+      "source_path": "G:/CODEX/New Manga.workspace/review-scratch/P09-PREVIEW-LIFECYCLE-RECLAIM-1-R11-392977a8-export",
+      "disposition_original": "PRESERVE_UNKNOWN",
+      "declaration_source": [
+        {
+          "file": "doc/tasks/P09-PREVIEW-LIFECYCLE-RECLAIM-1.md",
+          "line": 165
+        },
+        {
+          "file": "verification/P09-PREVIEW-LIFECYCLE-RECLAIM-1/codex-resource-ruling.md",
+          "line": 60
+        },
+        {
+          "file": "verification/P09-PREVIEW-LIFECYCLE-RECLAIM-1/resource-manifest.json",
+          "json_pointer": "$.entries[31]"
+        }
+      ],
+      "deletion_receipt": {
+        "receipt_file": "verification/WORKSPACE-CONSOLIDATION-1/workspace-cleanup.json",
+        "receipt_entry": "removed[1]",
+        "receipt_line": 12,
+        "bytes": 351312383,
+        "parent_root_receipt": false
+      },
+      "current_state_now": "MISSING",
+      "current_state_detail": {
+        "exists": false,
+        "parent_review_scratch_exists": true,
+        "parent_review_scratch_children": []
+      },
+      "recovery_source": {
+        "kind": "NONE_PROVEN",
+        "search_scope": [
+          "原路径 Test-Path = False",
+          "父目录 workspace/review-scratch 存在但为空（无任何子项）",
+          "agent-output/coordinator 下仅有 P09-PREVIEW-LIFECYCLE-RECLAIM-1-R3-scratch 与 -r7-22b0860（不同资源，仍存在）",
+          "workspace 顶层仅有 P09-PREVIEW-LIFECYCLE-RECLAIM-1-R20-scratch（WS-05，不同资源）",
+          "workspace/archive 顶层无 review-scratch 备份（子项：bundles、P02-NEW-TIME-X6-AC1-AC7、sfx_review、skills、top-level-closeout-20261013、worktree-data）",
+          "未做全盘/卷影/回收站/外部备份系统搜索"
+        ],
+        "additional_lead_not_claim": "RX-02 的 note 指向 delivery_head 392977a8；该提交 392977a83cc496206728ad26dded96274ead41dc 当前仍可从 6 个 ref 到达（含主线），且 rev-list --not --all = 0，因此其 tracked 内容存在重建可能；但导出目录是否等于该提交的干净导出、是否含 ignored/额外文件均未验证，故不记为已证实可恢复。"
+      },
+      "byte_verification": {
+        "original_pin": {
+          "files": 11185,
+          "bytes": 351312383,
+          "content_sha256": "158f6ba1257516d760189f174d0ffb7ed88fe808588e36091c613f4b1b01ad41",
+          "shape_sha256": "f9c7385ab283398b420f30d35923559a11086e16303b83f8dad25713ece0ef3e",
+          "manifest_note": "review-scratch: R11 full export copy (contains src/, tests/, docs)"
+        },
+        "current_measured": "目录不存在，无法实测",
+        "conclusion": "原 pin 记录的文件数/字节/内容哈希均无法在当前位置复核；搜索范围内未找到副本；不据 rmtree 推断永久不可恢复"
+      },
+      "remaining_gap": [
+        "无逐文件用途/唯一修改/可重建性盘点，不能判定目录内容性质（不得直接认定为缓存）",
+        "无哈希相同的现存副本证据"
+      ],
+      "availability": "UNVERIFIED_NO_BACKUP_EVIDENCE"
+    },
+    {
+      "id": "SRC-05",
+      "group": "review_scratch_p09",
+      "source_path": "G:/CODEX/New Manga.workspace/review-scratch/P09-PREVIEW-LIFECYCLE-RECLAIM-1-R17",
+      "disposition_original": "PRESERVE_UNKNOWN",
+      "declaration_source": [
+        {
+          "file": "doc/tasks/P09-PREVIEW-LIFECYCLE-RECLAIM-1.md",
+          "line": 165
+        },
+        {
+          "file": "verification/P09-PREVIEW-LIFECYCLE-RECLAIM-1/codex-resource-ruling.md",
+          "line": 61
+        },
+        {
+          "file": "verification/P09-PREVIEW-LIFECYCLE-RECLAIM-1/resource-manifest.json",
+          "json_pointer": "$.entries[32]"
+        }
+      ],
+      "deletion_receipt": {
+        "receipt_file": "verification/WORKSPACE-CONSOLIDATION-1/workspace-cleanup.json",
+        "receipt_entry": "removed[2]",
+        "receipt_line": 17,
+        "bytes": 1411503,
+        "parent_root_receipt": false
+      },
+      "current_state_now": "MISSING",
+      "current_state_detail": {
+        "exists": false,
+        "parent_review_scratch_exists": true,
+        "parent_review_scratch_children": []
+      },
+      "recovery_source": {
+        "kind": "NONE_PROVEN",
+        "search_scope": [
+          "原路径 Test-Path = False",
+          "父目录 workspace/review-scratch 存在但为空（无任何子项）",
+          "agent-output/coordinator 下仅有 P09-PREVIEW-LIFECYCLE-RECLAIM-1-R3-scratch 与 -r7-22b0860（不同资源，仍存在）",
+          "workspace 顶层仅有 P09-PREVIEW-LIFECYCLE-RECLAIM-1-R20-scratch（WS-05，不同资源）",
+          "workspace/archive 顶层无 review-scratch 备份（子项：bundles、P02-NEW-TIME-X6-AC1-AC7、sfx_review、skills、top-level-closeout-20261013、worktree-data）",
+          "未做全盘/卷影/回收站/外部备份系统搜索"
+        ]
+      },
+      "byte_verification": {
+        "original_pin": {
+          "files": 20,
+          "bytes": 1411503,
+          "content_sha256": "87bedea4d5ee2022ac06133cd8c182358f5358879bbf70dc533171b0bacf2f3b",
+          "shape_sha256": "1cbd06370c0ad6de300dc3ccd27ecd4aa7d2991527f9cc9c7c4bbeb5cbf248ef",
+          "manifest_note": "review-scratch: R17 review scratch (the only one named in the Task)"
+        },
+        "current_measured": "目录不存在，无法实测",
+        "conclusion": "原 pin 记录的文件数/字节/内容哈希均无法在当前位置复核；搜索范围内未找到副本；不据 rmtree 推断永久不可恢复"
+      },
+      "remaining_gap": [
+        "无逐文件用途/唯一修改/可重建性盘点，不能判定目录内容性质（不得直接认定为缓存）",
+        "无哈希相同的现存副本证据"
+      ],
+      "availability": "UNVERIFIED_NO_BACKUP_EVIDENCE"
+    },
+    {
+      "id": "SRC-06",
+      "group": "review_scratch_p09",
+      "source_path": "G:/CODEX/New Manga.workspace/review-scratch/P09-PREVIEW-LIFECYCLE-RECLAIM-1-R18",
+      "disposition_original": "PRESERVE_UNKNOWN",
+      "declaration_source": [
+        {
+          "file": "doc/tasks/P09-PREVIEW-LIFECYCLE-RECLAIM-1.md",
+          "line": 165
+        },
+        {
+          "file": "verification/P09-PREVIEW-LIFECYCLE-RECLAIM-1/codex-resource-ruling.md",
+          "line": 62
+        },
+        {
+          "file": "verification/P09-PREVIEW-LIFECYCLE-RECLAIM-1/resource-manifest.json",
+          "json_pointer": "$.entries[33]"
+        }
+      ],
+      "deletion_receipt": {
+        "receipt_file": "verification/WORKSPACE-CONSOLIDATION-1/workspace-cleanup.json",
+        "receipt_entry": "removed[3]",
+        "receipt_line": 22,
+        "bytes": 14344791860,
+        "parent_root_receipt": false
+      },
+      "current_state_now": "MISSING",
+      "current_state_detail": {
+        "exists": false,
+        "parent_review_scratch_exists": true,
+        "parent_review_scratch_children": []
+      },
+      "recovery_source": {
+        "kind": "NONE_PROVEN",
+        "search_scope": [
+          "原路径 Test-Path = False",
+          "父目录 workspace/review-scratch 存在但为空（无任何子项）",
+          "agent-output/coordinator 下仅有 P09-PREVIEW-LIFECYCLE-RECLAIM-1-R3-scratch 与 -r7-22b0860（不同资源，仍存在）",
+          "workspace 顶层仅有 P09-PREVIEW-LIFECYCLE-RECLAIM-1-R20-scratch（WS-05，不同资源）",
+          "workspace/archive 顶层无 review-scratch 备份（子项：bundles、P02-NEW-TIME-X6-AC1-AC7、sfx_review、skills、top-level-closeout-20261013、worktree-data）",
+          "未做全盘/卷影/回收站/外部备份系统搜索"
+        ]
+      },
+      "byte_verification": {
+        "original_pin": {
+          "files": 39914,
+          "bytes": 14344791860,
+          "content_sha256": "30b695d531d2be953404bd7e3f68d5bb232ffc15b6b560f9a843f80f932bd9ce",
+          "shape_sha256": "20a2c7501d3ea9527b3e3223c360d3a9c26b0e9ecd419d9bbfa9391a8e3e480b",
+          "manifest_note": "review-scratch: R18 review scratch"
+        },
+        "current_measured": "目录不存在，无法实测",
+        "conclusion": "原 pin 记录的文件数/字节/内容哈希均无法在当前位置复核；搜索范围内未找到副本；不据 rmtree 推断永久不可恢复"
+      },
+      "remaining_gap": [
+        "无逐文件用途/唯一修改/可重建性盘点，不能判定目录内容性质（不得直接认定为缓存）",
+        "无哈希相同的现存副本证据"
+      ],
+      "availability": "UNVERIFIED_NO_BACKUP_EVIDENCE"
+    },
+    {
+      "id": "SRC-07",
+      "group": "temp",
+      "source_path": "G:/CODEX/New Manga.workspace/temp/P02-NEW-TIME-BASELINE",
+      "disposition_original": "PRESERVE_REFERENCED",
+      "declaration_source": [
+        {
+          "file": "doc/tasks/P02-NEW-TIME-BASELINE.md",
+          "line": 135
+        }
+      ],
+      "deletion_receipt": {
+        "receipt_file": "verification/WORKSPACE-CONSOLIDATION-1/workspace-cleanup.json",
+        "receipt_entry": "removed[6]",
+        "receipt_line": 37,
+        "bytes": 23975,
+        "parent_root_receipt": false
+      },
+      "current_state_now": "MISSING",
+      "current_state_detail": {
+        "exists": false,
+        "parent_temp_exists": true
+      },
+      "recovery_source": {
+        "kind": "NONE_PROVEN",
+        "search_scope": [
+          "原路径 Test-Path = False（3 个 temp 根均不存在）",
+          "workspace/temp 顶层当前仅剩 3 个子目录（P02-MAINLINE-INTEGRATION、P22-REBASE-1、PROJECT-ROADMAP-RELEASE），无同名副本",
+          "被引用的 G:/CODEX/New Manga.workspace/agent-output/codex/P02-NEW-TIME-BASELINE/closeout-resource-inventory-r2.json 的 resources[13..15] 只有目录存在性记录，无文件级 bytes/hash",
+          "agent-output/{codex,zcode,dsh}/P02-NEW-TIME-BASELINE* 为原始运行记录目录，非 temp 根副本",
+          "未做全盘/卷影/回收站/外部备份系统搜索"
+        ]
+      },
+      "byte_verification": {
+        "original_record": {
+          "receipt_bytes": 23975,
+          "task_declaration_note": "New-time selftest fixtures（synthetic task fixtures retained; no user data mixed）",
+          "closeout_inventory": "只有目录存在记录，无文件级哈希"
+        },
+        "current_measured": "目录不存在，无法实测",
+        "conclusion": "无内容级 pin 可与当前对比；恢复能力未证实，不推断永久不可恢复"
+      },
+      "remaining_gap": [
+        "无文件清单/哈希，无法知道丢失的具体文件与用途",
+        "未做全盘/备份系统搜索"
+      ],
+      "availability": "UNVERIFIED_NO_BACKUP_EVIDENCE"
+    },
+    {
+      "id": "SRC-08",
+      "group": "temp",
+      "source_path": "G:/CODEX/New Manga.workspace/temp/P02-NEW-TIME-BASELINE-AC3-BRANCH-RESOLUTION",
+      "disposition_original": "PRESERVE_REFERENCED",
+      "declaration_source": [
+        {
+          "file": "doc/tasks/P02-NEW-TIME-BASELINE.md",
+          "line": 137
+        }
+      ],
+      "deletion_receipt": {
+        "receipt_file": "verification/WORKSPACE-CONSOLIDATION-1/workspace-cleanup.json",
+        "receipt_entry": "removed[7]",
+        "receipt_line": 42,
+        "bytes": 80,
+        "parent_root_receipt": false
+      },
+      "current_state_now": "MISSING",
+      "current_state_detail": {
+        "exists": false,
+        "parent_temp_exists": true
+      },
+      "recovery_source": {
+        "kind": "NONE_PROVEN",
+        "search_scope": [
+          "原路径 Test-Path = False（3 个 temp 根均不存在）",
+          "workspace/temp 顶层当前仅剩 3 个子目录（P02-MAINLINE-INTEGRATION、P22-REBASE-1、PROJECT-ROADMAP-RELEASE），无同名副本",
+          "被引用的 G:/CODEX/New Manga.workspace/agent-output/codex/P02-NEW-TIME-BASELINE/closeout-resource-inventory-r2.json 的 resources[13..15] 只有目录存在性记录，无文件级 bytes/hash",
+          "agent-output/{codex,zcode,dsh}/P02-NEW-TIME-BASELINE* 为原始运行记录目录，非 temp 根副本",
+          "未做全盘/卷影/回收站/外部备份系统搜索"
+        ]
+      },
+      "byte_verification": {
+        "original_record": {
+          "receipt_bytes": 80,
+          "task_declaration_note": "AC3 branch resolution fixtures（task fixtures retained in place）",
+          "closeout_inventory": "只有目录存在记录，无文件级哈希"
+        },
+        "current_measured": "目录不存在，无法实测",
+        "conclusion": "无内容级 pin 可与当前对比；恢复能力未证实，不推断永久不可恢复"
+      },
+      "remaining_gap": [
+        "无文件清单/哈希，无法知道丢失的具体文件与用途",
+        "未做全盘/备份系统搜索"
+      ],
+      "availability": "UNVERIFIED_NO_BACKUP_EVIDENCE"
+    },
+    {
+      "id": "SRC-09",
+      "group": "temp",
+      "source_path": "G:/CODEX/New Manga.workspace/temp/P02-NEW-TIME-BASELINE-AC3-GIT-TOPLEVEL-RESOLUTION",
+      "disposition_original": "PRESERVE_REFERENCED",
+      "declaration_source": [
+        {
+          "file": "doc/tasks/P02-NEW-TIME-BASELINE.md",
+          "line": 136
+        }
+      ],
+      "deletion_receipt": {
+        "receipt_file": "verification/WORKSPACE-CONSOLIDATION-1/workspace-cleanup.json",
+        "receipt_entry": "removed[8]",
+        "receipt_line": 47,
+        "bytes": 315,
+        "parent_root_receipt": false
+      },
+      "current_state_now": "MISSING",
+      "current_state_detail": {
+        "exists": false,
+        "parent_temp_exists": true
+      },
+      "recovery_source": {
+        "kind": "NONE_PROVEN",
+        "search_scope": [
+          "原路径 Test-Path = False（3 个 temp 根均不存在）",
+          "workspace/temp 顶层当前仅剩 3 个子目录（P02-MAINLINE-INTEGRATION、P22-REBASE-1、PROJECT-ROADMAP-RELEASE），无同名副本",
+          "被引用的 G:/CODEX/New Manga.workspace/agent-output/codex/P02-NEW-TIME-BASELINE/closeout-resource-inventory-r2.json 的 resources[13..15] 只有目录存在性记录，无文件级 bytes/hash",
+          "agent-output/{codex,zcode,dsh}/P02-NEW-TIME-BASELINE* 为原始运行记录目录，非 temp 根副本",
+          "未做全盘/卷影/回收站/外部备份系统搜索"
+        ]
+      },
+      "byte_verification": {
+        "original_record": {
+          "receipt_bytes": 315,
+          "task_declaration_note": "AC3 resolution fixtures（task fixtures retained in place）",
+          "closeout_inventory": "只有目录存在记录，无文件级哈希"
+        },
+        "current_measured": "目录不存在，无法实测",
+        "conclusion": "无内容级 pin 可与当前对比；恢复能力未证实，不推断永久不可恢复"
+      },
+      "remaining_gap": [
+        "无文件清单/哈希，无法知道丢失的具体文件与用途",
+        "未做全盘/备份系统搜索"
+      ],
+      "availability": "UNVERIFIED_NO_BACKUP_EVIDENCE"
+    },
+    {
+      "id": "SRC-10",
+      "group": "temp",
+      "source_path": "G:/CODEX/New Manga.workspace/temp/P02-NEW-TIME-X6",
+      "disposition_original": "PRESERVE_REFERENCED",
+      "declaration_source": [
+        {
+          "file": "doc/tasks/P02-NEW-TIME-X6.md",
+          "line": 173
+        }
+      ],
+      "deletion_receipt": {
+        "receipt_file": "verification/WORKSPACE-CONSOLIDATION-1/workspace-cleanup.json",
+        "receipt_entry": "removed[9]",
+        "receipt_line": 52,
+        "bytes": 32624,
+        "parent_root_receipt": false
+      },
+      "current_state_now": "MISSING",
+      "current_state_detail": {
+        "exists": false,
+        "children_coverage": [
+          "SRC-11",
+          "SRC-12",
+          "SRC-13"
+        ]
+      },
+      "recovery_source": {
+        "kind": "BYTES_RECONSTRUCTIBLE",
+        "recipe": "父根字节 32,624 = capture 副本 32,426 B（SRC-13 现存副本）+ 两轮 selftest 夹具 2 × (5+1+93) = 198 B；三项字节均可获得（副本或内存重建），但原目录实例与目录元数据未恢复。",
+        "arithmetic_check": "32426 + 99 + 99 = 32624 = 删除收据 bytes"
+      },
+      "byte_verification": {
+        "original_receipt_bytes": 32624,
+        "reconstructed_component_bytes": {
+          "capture_copy": 32426,
+          "selftest_attempt_1": 99,
+          "selftest_attempt_2": 99
+        },
+        "sum": 32624,
+        "conclusion": "父根记录字节可由已测子项字节精确相加解释；字节层面可重建，但不是原目录恢复"
+      },
+      "remaining_gap": [
+        "原目录实例、目录元数据与当次运行属性不可恢复",
+        "capture 副本尚未复制回原位置（本 Task 禁止写回）"
+      ],
+      "availability": "BYTES_RECONSTRUCTIBLE"
+    },
+    {
+      "id": "SRC-11",
+      "group": "temp",
+      "source_path": "G:/CODEX/New Manga.workspace/temp/P02-NEW-TIME-X6/codex-ac2-20261014-123308-pure-selftest",
+      "disposition_original": "PRESERVE_REFERENCED",
+      "declaration_source": [
+        {
+          "file": "doc/tasks/P02-NEW-TIME-X6.md",
+          "line": 168
+        }
+      ],
+      "deletion_receipt": {
+        "receipt_file": "verification/WORKSPACE-CONSOLIDATION-1/workspace-cleanup.json",
+        "receipt_entry": "removed[9]",
+        "receipt_line": 52,
+        "bytes": 32624,
+        "parent_root_receipt": true
+      },
+      "current_state_now": "MISSING",
+      "current_state_detail": {
+        "exists": false,
+        "covered_by_root_receipt": "ROOT-15"
+      },
+      "recovery_source": {
+        "kind": "BYTES_RECONSTRUCTIBLE_IN_MEMORY",
+        "construction_source": "verification/P02-NEW-TIME-X6/executor/p02-new-time-x6-selftest.ps1:861-863,871-879,888-896",
+        "construction": {
+          "collision.bin": "bytes [1,2,3,4,5]（selftest.ps1:862）",
+          "exclusive.bin": "单字节 0x41（ASCII 'A'，selftest.ps1:873）",
+          "partial-run.json": "两行 compact JSON（ConvertTo-Json -Compress + LF）：{\"kind\":\"meta\",\"task\":\"P02-NEW-TIME-X6\"} + LF + {\"kind\":\"observation\",\"observation\":{\"id\":\"first\"}} + LF（selftest.ps1:889-896）"
+        },
+        "in_memory_result": {
+          "collision.bin": {
+            "bytes": 5,
+            "sha256": "74f81fe167d99b4cb41d6d0ccda82278caee9f3e2f25d5e5a3936ff3dcec60d0"
+          },
+          "exclusive.bin": {
+            "bytes": 1,
+            "sha256": "559aead08264d5795d3909718cdd05abd49572e84fe55590eef31a88a08fdffd"
+          },
+          "partial-run.json": {
+            "bytes": 93,
+            "sha256": "695d4bf696d7988c3a4561810a004bfe29b84083700c52fed34987194302a45d"
+          }
+        },
+        "boundary": "只在内存构造并哈希，未写文件、未重跑 X6；字节可精确重建 ≠ 原文件实例/当次运行属性恢复"
+      },
+      "byte_verification": {
+        "original_pin": {
+          "collision.bin": "5 B / 74F81FE167D99B4CB41D6D0CCDA82278CAEE9F3E2F25D5E5A3936FF3DCEC60D0",
+          "exclusive.bin": "1 B / 559AEAD08264D5795D3909718CDD05ABD49572E84FE55590EEF31A88A08FDFFD",
+          "partial-run.json": "93 B / 695D4BF696D7988C3A4561810A004BFE29B84083700C52FED34987194302A45D"
+        },
+        "reconstructed": "三项长度与 SHA-256 全部与两轮原 pin 相符",
+        "conclusion": "字节可精确重建（两轮 pin 相同）；原文件实例与运行属性未恢复"
+      },
+      "remaining_gap": [
+        "仅字节可重建，原文件实例、时间戳、目录项与当次运行属性不可恢复",
+        "未写回原位置（本 Task 边界禁止）"
+      ],
+      "availability": "BYTES_RECONSTRUCTIBLE"
+    },
+    {
+      "id": "SRC-12",
+      "group": "temp",
+      "source_path": "G:/CODEX/New Manga.workspace/temp/P02-NEW-TIME-X6/codex-ac2-r2-20261014-124643-pure-selftest",
+      "disposition_original": "PRESERVE_REFERENCED",
+      "declaration_source": [
+        {
+          "file": "doc/tasks/P02-NEW-TIME-X6.md",
+          "line": 171
+        }
+      ],
+      "deletion_receipt": {
+        "receipt_file": "verification/WORKSPACE-CONSOLIDATION-1/workspace-cleanup.json",
+        "receipt_entry": "removed[9]",
+        "receipt_line": 52,
+        "bytes": 32624,
+        "parent_root_receipt": true
+      },
+      "current_state_now": "MISSING",
+      "current_state_detail": {
+        "exists": false,
+        "covered_by_root_receipt": "ROOT-15"
+      },
+      "recovery_source": {
+        "kind": "BYTES_RECONSTRUCTIBLE_IN_MEMORY",
+        "construction_source": "verification/P02-NEW-TIME-X6/executor/p02-new-time-x6-selftest.ps1:861-863,871-879,888-896",
+        "construction": {
+          "collision.bin": "bytes [1,2,3,4,5]（selftest.ps1:862）",
+          "exclusive.bin": "单字节 0x41（ASCII 'A'，selftest.ps1:873）",
+          "partial-run.json": "两行 compact JSON（ConvertTo-Json -Compress + LF）：{\"kind\":\"meta\",\"task\":\"P02-NEW-TIME-X6\"} + LF + {\"kind\":\"observation\",\"observation\":{\"id\":\"first\"}} + LF（selftest.ps1:889-896）"
+        },
+        "in_memory_result": {
+          "collision.bin": {
+            "bytes": 5,
+            "sha256": "74f81fe167d99b4cb41d6d0ccda82278caee9f3e2f25d5e5a3936ff3dcec60d0"
+          },
+          "exclusive.bin": {
+            "bytes": 1,
+            "sha256": "559aead08264d5795d3909718cdd05abd49572e84fe55590eef31a88a08fdffd"
+          },
+          "partial-run.json": {
+            "bytes": 93,
+            "sha256": "695d4bf696d7988c3a4561810a004bfe29b84083700c52fed34987194302a45d"
+          }
+        },
+        "boundary": "只在内存构造并哈希，未写文件、未重跑 X6；字节可精确重建 ≠ 原文件实例/当次运行属性恢复"
+      },
+      "byte_verification": {
+        "original_pin": {
+          "collision.bin": "5 B / 74F81FE167D99B4CB41D6D0CCDA82278CAEE9F3E2F25D5E5A3936FF3DCEC60D0",
+          "exclusive.bin": "1 B / 559AEAD08264D5795D3909718CDD05ABD49572E84FE55590EEF31A88A08FDFFD",
+          "partial-run.json": "93 B / 695D4BF696D7988C3A4561810A004BFE29B84083700C52FED34987194302A45D"
+        },
+        "reconstructed": "三项长度与 SHA-256 全部与两轮原 pin 相符",
+        "conclusion": "字节可精确重建（两轮 pin 相同）；原文件实例与运行属性未恢复"
+      },
+      "remaining_gap": [
+        "仅字节可重建，原文件实例、时间戳、目录项与当次运行属性不可恢复",
+        "未写回原位置（本 Task 边界禁止）"
+      ],
+      "availability": "BYTES_RECONSTRUCTIBLE"
+    },
+    {
+      "id": "SRC-13",
+      "group": "temp",
+      "source_path": "G:/CODEX/New Manga.workspace/temp/P02-NEW-TIME-X6/x6-20261014T1305CST-p02-newtime-r1-capture",
+      "disposition_original": "PRESERVE_REFERENCED",
+      "declaration_source": [
+        {
+          "file": "doc/tasks/P02-NEW-TIME-X6.md",
+          "line": 175
+        },
+        {
+          "file": "doc/tasks/P02-NEW-TIME-X6-POSTRUN-REVIEW.md",
+          "line": 132
+        }
+      ],
+      "deletion_receipt": {
+        "receipt_file": "verification/WORKSPACE-CONSOLIDATION-1/workspace-cleanup.json",
+        "receipt_entry": "removed[9]",
+        "receipt_line": 52,
+        "bytes": 32624,
+        "parent_root_receipt": true
+      },
+      "current_state_now": "MISSING",
+      "current_state_detail": {
+        "exists": false,
+        "covered_by_root_receipt": "ROOT-15"
+      },
+      "recovery_source": {
+        "kind": "EXISTING_COPY_HASH_MATCHED",
+        "copy_paths": [
+          "G:/CODEX/New Manga.workspace/agent-output/zcode/P02-NEW-TIME-X6/x6-20261014T1305CST-p02-newtime-r1/stdout.md",
+          "G:/CODEX/New Manga.workspace/agent-output/zcode/P02-NEW-TIME-X6/x6-20261014T1305CST-p02-newtime-r1/stderr.md"
+        ],
+        "measured": {
+          "stdout.md": {
+            "bytes": 32426,
+            "sha256": "0109aed4fd474546eac28d1b1bfa88510285f1f367c0f157007f93e1886a3602"
+          },
+          "stderr.md": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          }
+        },
+        "note": "现存副本与丢失 capture 的 stdout.bytes / stderr.bytes pin（大小与 SHA-256）一致；本轮未复制、未写回原位置"
+      },
+      "byte_verification": {
+        "original_pin": {
+          "stdout.bytes": "32,426 B / 0109AED4FD474546EAC28D1B1BFA88510285F1F367C0F157007F93E1886A3602",
+          "stderr.bytes": "0 B / E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855"
+        },
+        "measured_copy": {
+          "stdout.md": "32,426 B / 0109aed4fd474546eac28d1b1bfa88510285f1f367c0f157007f93e1886a3602",
+          "stderr.md": "0 B / e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "matches": true,
+        "conclusion": "字节副本现存且哈希相同；原 temp 路径实例未恢复，副本复制需另行授权"
+      },
+      "remaining_gap": [
+        "副本尚未复制回原位置；需授权并记录恢复事件",
+        "原 temp 目录/文件实例元数据不可恢复"
+      ],
+      "availability": "COPY_AVAILABLE"
+    },
+    {
+      "id": "SRC-14",
+      "group": "worktree",
+      "source_path": "G:/CODEX/New Manga.workspace/worktrees/FEAT-CREATE-1",
+      "disposition_original": "PRESERVE_UNKNOWN",
+      "declaration_source": [
+        {
+          "file": "doc/tasks/FEAT-CREATE-1.md",
+          "line": 131
+        },
+        {
+          "file": "verification/WORKSPACE-CONSOLIDATION-1/inventory.json",
+          "json_pointer": "$.worktrees[50]"
+        }
+      ],
+      "deletion_receipt": {
+        "receipt_file": "verification/WORKSPACE-CONSOLIDATION-1/worktree-removal.json",
+        "receipt_entry": "removed[21]",
+        "receipt_line": 132,
+        "bytes": 305714018,
+        "parent_root_receipt": false
+      },
+      "current_state_now": "PARTIAL_REBUILD",
+      "current_state_detail": {
+        "exists": true,
+        "registered_state": "git worktree list --porcelain = detached",
+        "original_head_prefix": "c96958172",
+        "original_head_full_sha": "c96958172de8f8a3f3563da43a9fef09ac4447ba",
+        "current_head_full_sha": "c96958172de8f8a3f3563da43a9fef09ac4447ba",
+        "head_prefix_match": true,
+        "symbolic_ref_exit": 1,
+        "status_porcelain_lines": 0,
+        "ignored_untracked_lines": 0,
+        "original_branch": "codex/FEAT-CREATE-1",
+        "original_branch_ref_exists": false,
+        "archive_tag_exists": true,
+        "current_measured_bytes": 305714018,
+        "current_regular_files": 9769,
+        "current_directories": 990,
+        "interpretation": "原路径与 HEAD 部分重建；detached 检出，原分支检出/ignored 内容/目录元数据未恢复"
+      },
+      "recovery_source": {
+        "kind": "GIT_HEAD_REBUILD",
+        "original_head_commit_resolvable": true,
+        "original_head_full_sha": "c96958172de8f8a3f3563da43a9fef09ac4447ba",
+        "note": "原提交对象仍在主对象库可解析；重建由 git worktree add --detach 完成。没有原目录字节副本，也没有 ignored 内容备份。"
+      },
+      "byte_verification": {
+        "original_receipt_bytes": 305714018,
+        "current_measured_bytes": 305714018,
+        "delta_bytes": 0,
+        "original_head_full_sha": "c96958172de8f8a3f3563da43a9fef09ac4447ba",
+        "current_head_full_sha": "c96958172de8f8a3f3563da43a9fef09ac4447ba",
+        "head_equal": true,
+        "conclusion": "HEAD 提交快照一致，但目录字节不是原目录恢复；当前目录只含 HEAD checkout（status 与 ignored 均为空）。当前实测与原记录恰好相同；数值相同不等于原树内容完整（仍无删除前逐文件/ignored 清册）。"
+      },
+      "remaining_gap": [
+        "原 ignored 内容（依赖/构建/模型/测试输入等）与目录元数据没有删除前逐文件清册，无法恢复或逐字节归因",
+        "原分支检出未恢复；原分支 ref 已不存在",
+        "无删除前 status/stash 原始 stdout、stderr、退出码，无法在目录删除后独立复现当时完整文件状态"
+      ],
+      "availability": "PARTIALLY_RECONSTRUCTED"
+    },
+    {
+      "id": "SRC-15",
+      "group": "worktree",
+      "source_path": "G:/CODEX/New Manga.workspace/worktrees/FEAT-CREATE-2",
+      "disposition_original": "PRESERVE_UNKNOWN",
+      "declaration_source": [
+        {
+          "file": "doc/tasks/FEAT-CREATE-2.md",
+          "line": 71
+        },
+        {
+          "file": "verification/WORKSPACE-CONSOLIDATION-1/inventory.json",
+          "json_pointer": "$.worktrees[51]"
+        }
+      ],
+      "deletion_receipt": {
+        "receipt_file": "verification/WORKSPACE-CONSOLIDATION-1/worktree-removal.json",
+        "receipt_entry": "removed[22]",
+        "receipt_line": 138,
+        "bytes": 1601245026,
+        "parent_root_receipt": false
+      },
+      "current_state_now": "PARTIAL_REBUILD",
+      "current_state_detail": {
+        "exists": true,
+        "registered_state": "git worktree list --porcelain = detached",
+        "original_head_prefix": "8202f2411",
+        "original_head_full_sha": "8202f24117ee7ab3ec48d0bb6b7a45d4bca1f2d7",
+        "current_head_full_sha": "8202f24117ee7ab3ec48d0bb6b7a45d4bca1f2d7",
+        "head_prefix_match": true,
+        "symbolic_ref_exit": 1,
+        "status_porcelain_lines": 0,
+        "ignored_untracked_lines": 0,
+        "original_branch": "codex/FEAT-CREATE-2",
+        "original_branch_ref_exists": false,
+        "archive_tag_exists": false,
+        "current_measured_bytes": 305734384,
+        "current_regular_files": 9773,
+        "current_directories": 991,
+        "interpretation": "原路径与 HEAD 部分重建；detached 检出，原分支检出/ignored 内容/目录元数据未恢复"
+      },
+      "recovery_source": {
+        "kind": "GIT_HEAD_REBUILD",
+        "original_head_commit_resolvable": true,
+        "original_head_full_sha": "8202f24117ee7ab3ec48d0bb6b7a45d4bca1f2d7",
+        "note": "原提交对象仍在主对象库可解析；重建由 git worktree add --detach 完成。没有原目录字节副本，也没有 ignored 内容备份。"
+      },
+      "byte_verification": {
+        "original_receipt_bytes": 1601245026,
+        "current_measured_bytes": 305734384,
+        "delta_bytes": -1295510642,
+        "original_head_full_sha": "8202f24117ee7ab3ec48d0bb6b7a45d4bca1f2d7",
+        "current_head_full_sha": "8202f24117ee7ab3ec48d0bb6b7a45d4bca1f2d7",
+        "head_equal": true,
+        "conclusion": "HEAD 提交快照一致，但目录字节不是原目录恢复；当前目录只含 HEAD checkout（status 与 ignored 均为空）。当前实测比原记录少 1,295,510,642 B；当前目录只含 HEAD checkout，原目录中约 1.30 GB 非 HEAD 内容未恢复。"
+      },
+      "remaining_gap": [
+        "原 ignored 内容（依赖/构建/模型/测试输入等）与目录元数据没有删除前逐文件清册，无法恢复或逐字节归因",
+        "原分支检出未恢复；原分支 ref 已不存在",
+        "无删除前 status/stash 原始 stdout、stderr、退出码，无法在目录删除后独立复现当时完整文件状态"
+      ],
+      "availability": "PARTIALLY_RECONSTRUCTED"
+    },
+    {
+      "id": "SRC-16",
+      "group": "worktree",
+      "source_path": "G:/CODEX/New Manga.workspace/worktrees/FEAT-CREATE-4",
+      "disposition_original": "PRESERVE_UNKNOWN",
+      "declaration_source": [
+        {
+          "file": "doc/tasks/FEAT-CREATE-4.md",
+          "line": 82
+        },
+        {
+          "file": "verification/WORKSPACE-CONSOLIDATION-1/inventory.json",
+          "json_pointer": "$.worktrees[53]"
+        }
+      ],
+      "deletion_receipt": {
+        "receipt_file": "verification/WORKSPACE-CONSOLIDATION-1/worktree-removal.json",
+        "receipt_entry": "removed[23]",
+        "receipt_line": 144,
+        "bytes": 5045303306,
+        "parent_root_receipt": false
+      },
+      "current_state_now": "PARTIAL_REBUILD",
+      "current_state_detail": {
+        "exists": true,
+        "registered_state": "git worktree list --porcelain = detached",
+        "original_head_prefix": "f2c66ff26",
+        "original_head_full_sha": "f2c66ff262299f20292d8ca92cf8c2a28abce75b",
+        "current_head_full_sha": "f2c66ff262299f20292d8ca92cf8c2a28abce75b",
+        "head_prefix_match": true,
+        "symbolic_ref_exit": 1,
+        "status_porcelain_lines": 0,
+        "ignored_untracked_lines": 0,
+        "original_branch": "codex/FEAT-CREATE-4",
+        "original_branch_ref_exists": false,
+        "archive_tag_exists": false,
+        "current_measured_bytes": 306305569,
+        "current_regular_files": 9816,
+        "current_directories": 994,
+        "interpretation": "原路径与 HEAD 部分重建；detached 检出，原分支检出/ignored 内容/目录元数据未恢复"
+      },
+      "recovery_source": {
+        "kind": "GIT_HEAD_REBUILD",
+        "original_head_commit_resolvable": true,
+        "original_head_full_sha": "f2c66ff262299f20292d8ca92cf8c2a28abce75b",
+        "note": "原提交对象仍在主对象库可解析；重建由 git worktree add --detach 完成。没有原目录字节副本，也没有 ignored 内容备份。"
+      },
+      "byte_verification": {
+        "original_receipt_bytes": 5045303306,
+        "current_measured_bytes": 306305569,
+        "delta_bytes": -4738997737,
+        "original_head_full_sha": "f2c66ff262299f20292d8ca92cf8c2a28abce75b",
+        "current_head_full_sha": "f2c66ff262299f20292d8ca92cf8c2a28abce75b",
+        "head_equal": true,
+        "conclusion": "HEAD 提交快照一致，但目录字节不是原目录恢复；当前目录只含 HEAD checkout（status 与 ignored 均为空）。当前实测比原记录少 4,738,997,737 B；当前目录只含 HEAD checkout，原目录中约 4.74 GB 非 HEAD 内容未恢复。"
+      },
+      "remaining_gap": [
+        "原 ignored 内容（依赖/构建/模型/测试输入等）与目录元数据没有删除前逐文件清册，无法恢复或逐字节归因",
+        "原分支检出未恢复；原分支 ref 已不存在",
+        "无删除前 status/stash 原始 stdout、stderr、退出码，无法在目录删除后独立复现当时完整文件状态"
+      ],
+      "availability": "PARTIALLY_RECONSTRUCTED"
+    },
+    {
+      "id": "SRC-17",
+      "group": "worktree",
+      "source_path": "G:/CODEX/New Manga.workspace/worktrees/P19-UI-FIX-2",
+      "disposition_original": "PRESERVE_UNKNOWN",
+      "declaration_source": [
+        {
+          "file": "doc/tasks/P19-UI-FIX-2.md",
+          "line": 100
+        },
+        {
+          "file": "verification/WORKSPACE-CONSOLIDATION-1/inventory.json",
+          "json_pointer": "$.worktrees[108]"
+        }
+      ],
+      "deletion_receipt": {
+        "receipt_file": "verification/WORKSPACE-CONSOLIDATION-1/worktree-removal.json",
+        "receipt_entry": "removed[27]",
+        "receipt_line": 168,
+        "bytes": 5371083340,
+        "parent_root_receipt": false
+      },
+      "current_state_now": "PARTIAL_REBUILD",
+      "current_state_detail": {
+        "exists": true,
+        "registered_state": "git worktree list --porcelain = detached",
+        "original_head_prefix": "541aabb1e",
+        "original_head_full_sha": "541aabb1e88a18e7ed6fb82afc971bc0bcff6c9c",
+        "current_head_full_sha": "541aabb1e88a18e7ed6fb82afc971bc0bcff6c9c",
+        "head_prefix_match": true,
+        "symbolic_ref_exit": 1,
+        "status_porcelain_lines": 0,
+        "ignored_untracked_lines": 0,
+        "original_branch": "codex/P19-UI-FIX-2",
+        "original_branch_ref_exists": false,
+        "archive_tag_exists": false,
+        "current_measured_bytes": 305663182,
+        "current_regular_files": 9760,
+        "current_directories": 988,
+        "interpretation": "原路径与 HEAD 部分重建；detached 检出，原分支检出/ignored 内容/目录元数据未恢复"
+      },
+      "recovery_source": {
+        "kind": "GIT_HEAD_REBUILD",
+        "original_head_commit_resolvable": true,
+        "original_head_full_sha": "541aabb1e88a18e7ed6fb82afc971bc0bcff6c9c",
+        "note": "原提交对象仍在主对象库可解析；重建由 git worktree add --detach 完成。没有原目录字节副本，也没有 ignored 内容备份。"
+      },
+      "byte_verification": {
+        "original_receipt_bytes": 5371083340,
+        "current_measured_bytes": 305663182,
+        "delta_bytes": -5065420158,
+        "original_head_full_sha": "541aabb1e88a18e7ed6fb82afc971bc0bcff6c9c",
+        "current_head_full_sha": "541aabb1e88a18e7ed6fb82afc971bc0bcff6c9c",
+        "head_equal": true,
+        "conclusion": "HEAD 提交快照一致，但目录字节不是原目录恢复；当前目录只含 HEAD checkout（status 与 ignored 均为空）。当前实测比原记录少 5,065,420,158 B；当前目录只含 HEAD checkout，原目录中约 5.07 GB 非 HEAD 内容未恢复。"
+      },
+      "remaining_gap": [
+        "原 ignored 内容（依赖/构建/模型/测试输入等）与目录元数据没有删除前逐文件清册，无法恢复或逐字节归因",
+        "原分支检出未恢复；原分支 ref 已不存在",
+        "无删除前 status/stash 原始 stdout、stderr、退出码，无法在目录删除后独立复现当时完整文件状态"
+      ],
+      "availability": "PARTIALLY_RECONSTRUCTED"
+    },
+    {
+      "id": "SRC-18",
+      "group": "worktree",
+      "source_path": "G:/CODEX/New Manga.worktrees/P02-real-webview-harness-antigravity",
+      "disposition_original": "PRESERVE_UNKNOWN",
+      "declaration_source": [
+        {
+          "file": "doc/tasks/P02-MAINLINE-INTEGRATION.md",
+          "line": 83
+        },
+        {
+          "file": "verification/WORKSPACE-CONSOLIDATION-1/inventory.json",
+          "json_pointer": "$.worktrees[148]"
+        }
+      ],
+      "deletion_receipt": {
+        "receipt_file": "verification/WORKSPACE-CONSOLIDATION-1/worktree-removal.json",
+        "receipt_entry": "removed[45]",
+        "receipt_line": 276,
+        "bytes": 239977457,
+        "parent_root_receipt": false
+      },
+      "current_state_now": "PARTIAL_REBUILD",
+      "current_state_detail": {
+        "exists": true,
+        "registered_state": "git worktree list --porcelain = detached",
+        "original_head_prefix": "89413f45a",
+        "original_head_full_sha": "89413f45a601966eb40d7af7abea65cbdfc754b3",
+        "current_head_full_sha": "89413f45a601966eb40d7af7abea65cbdfc754b3",
+        "head_prefix_match": true,
+        "symbolic_ref_exit": 1,
+        "status_porcelain_lines": 0,
+        "ignored_untracked_lines": 0,
+        "original_branch": "agent/antigravity/P02-real-webview-harness",
+        "original_branch_ref_exists": false,
+        "archive_tag_exists": false,
+        "current_measured_bytes": 241182506,
+        "current_regular_files": 7524,
+        "current_directories": 793,
+        "interpretation": "原路径与 HEAD 部分重建；detached 检出，原分支检出/ignored 内容/目录元数据未恢复"
+      },
+      "recovery_source": {
+        "kind": "GIT_HEAD_REBUILD",
+        "original_head_commit_resolvable": true,
+        "original_head_full_sha": "89413f45a601966eb40d7af7abea65cbdfc754b3",
+        "note": "原提交对象仍在主对象库可解析；重建由 git worktree add --detach 完成。没有原目录字节副本，也没有 ignored 内容备份。"
+      },
+      "byte_verification": {
+        "original_receipt_bytes": 239977457,
+        "current_measured_bytes": 241182506,
+        "delta_bytes": 1205049,
+        "original_head_full_sha": "89413f45a601966eb40d7af7abea65cbdfc754b3",
+        "current_head_full_sha": "89413f45a601966eb40d7af7abea65cbdfc754b3",
+        "head_equal": true,
+        "conclusion": "HEAD 提交快照一致，但目录字节不是原目录恢复；当前目录只含 HEAD checkout（status 与 ignored 均为空）。当前实测比原记录大 1,205,049 B；差异未逐项归因，记入 remaining_gap。"
+      },
+      "remaining_gap": [
+        "原 ignored 内容（依赖/构建/模型/测试输入等）与目录元数据没有删除前逐文件清册，无法恢复或逐字节归因",
+        "原分支检出未恢复；原分支 ref 已不存在",
+        "无删除前 status/stash 原始 stdout、stderr、退出码，无法在目录删除后独立复现当时完整文件状态"
+      ],
+      "availability": "PARTIALLY_RECONSTRUCTED"
+    }
+  ],
+  "availability_summary": {
+    "COPY_AVAILABLE": 1,
+    "BYTES_RECONSTRUCTIBLE": 3,
+    "PARTIALLY_RECONSTRUCTED": 6,
+    "LOST_ORIGINAL": 0,
+    "UNVERIFIED_NO_BACKUP_EVIDENCE": 8,
+    "total": 18,
+    "enum_note": "仅使用任务说明性枚举；LOST_ORIGINAL 计数为 0，因为没有任何一项被证明永久不可恢复。"
+  },
+  "count_corrections": [
+    {
+      "claim": "13 条 = 6 worktree + 8 temp 行；6 处复原、8 处永久丢失",
+      "correction": "13 是唯一路径数：6 worktree + 7 temp 唯一资源。8 个 temp 行中 X6 capture 在 P02-NEW-TIME-X6.md:175 与 P02-NEW-TIME-X6-POSTRUN-REVIEW.md:132 重复登记，去重后为 7；6+8=14 是行数口径，与 13 条唯一路径混用。",
+      "evidence": [
+        "verification/WORKSPACE-CONSOLIDATION-1/codex-review-r208.md Q1",
+        "doc/tasks/P02-NEW-TIME-X6.md:175",
+        "doc/tasks/P02-NEW-TIME-X6-POSTRUN-REVIEW.md:132"
+      ]
+    },
+    {
+      "claim": "18 个受保护 source",
+      "correction": "18 = 13 + 5：新增 4 个 P09 review-scratch 与 1 个 P06 保留根（受损子树 old-runtime/worktree）。分组：6 worktree + 7 temp + 4 review-scratch + 1 P06 = 18。",
+      "evidence": [
+        "verification/WORKSPACE-CONSOLIDATION-1/codex-review-r208.md Q1",
+        "doc/tasks/P09-PREVIEW-LIFECYCLE-RECLAIM-1.md:165",
+        "doc/tasks/P06.md:127"
+      ]
+    },
+    {
+      "claim": "15 个删除根",
+      "correction": "15 = 14 个与受保护 source 路径字符串相等的删除根 + 1 个位于 P06 保留根内的子树删除根；单纯字符串相等为 14，父子目录覆盖后为 15。",
+      "evidence": [
+        "verification/WORKSPACE-CONSOLIDATION-1/codex-review-r208.md Q1"
+      ]
+    },
+    {
+      "claim": "6 个 worktree 已复原（路径与提交均复原）",
+      "correction": "只能表述为“原路径与 HEAD 部分重建”：六处均为 detached，原分支 ref 均不存在，原分支检出、ignored 内容、目录元数据未恢复。六处当前实测合计 1,812,799,148 B，仅为原记录 12,911,515,002 B 的 14.04%。",
+      "evidence": [
+        "doc/tasks/WORKSPACE-CONSOLIDATION-1.md:109",
+        "verification/WORKSPACE-CONSOLIDATION-1/codex-review-r208.md Q2"
+      ]
+    },
+    {
+      "claim": "8 个 temp 夹具永久丢失/不可恢复",
+      "correction": "不成立：1 个 capture（SRC-13）有哈希相同的现存副本（COPY_AVAILABLE）；2 个 selftest 的 3 个固定内容文件（SRC-11/12）字节可在内存精确重建（BYTES_RECONSTRUCTIBLE）；X6 父根（SRC-10）记录字节 = 32,426 + 2×99 = 32,624，可由子项解释。其余 3 个 BASELINE temp、P06 受损子树和 4 个 P09 目录记为“原位置缺失/恢复能力未证实”，不推断永久不可恢复。",
+      "evidence": [
+        "doc/tasks/WORKSPACE-CONSOLIDATION-1.md:110",
+        "verification/WORKSPACE-CONSOLIDATION-1/codex-review-r208.md Q3",
+        "verification/P02-NEW-TIME-X6/codex-x6-result-verification-r1.md:37"
+      ]
+    },
+    {
+      "claim": "6 个被 Task 表声明 PRESERVE_REFERENCED 的 worktree",
+      "correction": "仅 GOV-PIN-LINEAGE-1/worktree 为 PRESERVE_REFERENCED；FEAT-CREATE-1/2/4、P19-UI-FIX-2、旧 P02 worktree 为 PRESERVE_UNKNOWN。两者都不允许直接删除，但不能把 5 个 UNKNOWN 写成 REFERENCED。",
+      "evidence": [
+        "doc/tasks/FEAT-CREATE-1.md:131",
+        "doc/tasks/FEAT-CREATE-2.md:71",
+        "doc/tasks/FEAT-CREATE-4.md:82",
+        "doc/tasks/P19-UI-FIX-2.md:100",
+        "doc/tasks/P02-MAINLINE-INTEGRATION.md:83"
+      ]
+    },
+    {
+      "claim": "review-scratch 0 条证据 pin 引用、已清理",
+      "correction": "四个 review-scratch 目录被 codex-resource-ruling.md 裁定 PRESERVE_UNKNOWN（RX-01..RX-04，原位保留），不是 0 pin；inventory.md:348 的“0 条证据 pin 引用”与裁定不一致。",
+      "evidence": [
+        "verification/P09-PREVIEW-LIFECYCLE-RECLAIM-1/codex-resource-ruling.md:59-62",
+        "verification/WORKSPACE-CONSOLIDATION-1/inventory.md:348"
+      ]
+    }
+  ],
+  "remaining_gap_global": [
+    "六 worktree 的原 ignored 内容、目录元数据与原分支检出未恢复；无删除前逐文件/ignored 清册，无法逐字节归因当前与收据差额。",
+    "原分支 ref 六处均不存在（branch_ref_exit=1）；仅 GOV-PIN 与 FEAT-CREATE-1 找到 archive tag；其余提交当前仅由 detached worktree HEAD 保持可达。",
+    "P09 四个 review-scratch 无逐文件用途/唯一修改/可重建性盘点；当前缺失且搜索范围内无副本；恢复能力未证实。",
+    "BASELINE 三个 temp 资源无文件级字节/哈希记录（closeout-resource-inventory-r2.json 仅目录存在记录）；未做全盘/卷影/备份系统搜索。",
+    "P06 old-runtime/worktree 无文件级清册；原 commit ad75fadc2 可解析，但旧 runtime 构建产物与 ignored 内容不在 Git，逐字节重建未证实。",
+    "X6 capture 副本尚未复制回原位置（本 Task 禁止写回）；复制需授权并记录恢复事件。",
+    "X6 selftest 三文件仅内存字节可重建；原文件实例、时间戳与当次运行属性不可恢复。",
+    "未执行任何恢复/写回/GC/prune；P03 detached 两提交（Review R208-01）不在本台账 18/15 范围内，仍待 Owner 处置。",
+    "未做全盘/卷影/回收站/外部备份系统搜索，故所有无副本项只能记“原位置缺失/恢复能力未证实”。",
+    "本台账为追加式记录，不修改任何历史 pin、旧 Review、原清册或 Task 状态；availability 为新增说明性字段，未改旧 schema disposition 枚举。"
+  ],
+  "verification_anchors": {
+    "main_head_command": "git --no-optional-locks rev-parse HEAD",
+    "worktree_state_command": "git --no-optional-locks -C <path> rev-parse HEAD / symbolic-ref -q HEAD / rev-parse --git-common-dir / status --porcelain=v1 -uall / ls-files --others --ignored --exclude-standard --directory",
+    "worktree_registry_command": "git --no-optional-locks worktree list --porcelain",
+    "x6_copy_hash_command": "Get-FileHash -LiteralPath <file> -Algorithm SHA256",
+    "selftest_reconstruction": "Python 3.14.6 -B 内存构造（未落盘）",
+    "p06_scan": "Python 3.14.6 -B os.walk(followlinks=False) 只读统计",
+    "receipt_recompute": "Python 3.14.6 -B json 解析 + 求和",
+    "md_appendix": "verification/WORKSPACE-CONSOLIDATION-1/incident-ledger-r208.md 附录 A/B"
+  }
+}

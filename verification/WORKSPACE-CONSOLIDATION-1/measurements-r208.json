@@ -1,0 +1,649 @@
+{
+  "schema": "records-correction-r208/measurements/v1",
+  "task_id": "WORKSPACE-CONSOLIDATION-1",
+  "deliverable": "R208 数值与 AC 更正底稿（机器可读实测）",
+  "producer": "records-correction (DSH teammate)",
+  "generated_at": "2026-10-20T21:45:31+08:00",
+  "mode": "read_only_measurement",
+  "review_basis": "verification/WORKSPACE-CONSOLIDATION-1/codex-review-r208.md",
+  "environment": {
+    "os": "Windows",
+    "shell": "PowerShell 7.6.6",
+    "git": "2.52.0.windows.1",
+    "python": "C:/Python314/python.exe 3.14.6 (-B inline scripts)",
+    "repo": "G:/CODEX/New Manga",
+    "mainline": "antigravity/P09-AC3-DELETE-HARDEN-1"
+  },
+  "baseline": {
+    "head": "3947d63447457fe3ef8d3587942e632724ab3d72",
+    "head_short": "3947d6344",
+    "branch": "antigravity/P09-AC3-DELETE-HARDEN-1",
+    "tracked_dirty": 0,
+    "staged": 0,
+    "untracked_porcelain_default_entries": 1239,
+    "untracked_porcelain_uall_entries": 1595,
+    "tracked_files_total": 11295,
+    "tracked_doc_tasks": 296,
+    "untracked_doc_tasks_drafts": 26,
+    "note": "tracked dirty 0 / staged 0 与 132 worktree、93 分支同为本轮实测时点；untracked 数量只说明未跟踪条目数，不证明字节未变。",
+    "post_write_state": {
+      "checked_at": "2026-10-20T21:52+08:00",
+      "head": "3947d63447457fe3ef8d3587942e632724ab3d72",
+      "tracked_dirty": 0,
+      "staged": 0,
+      "porcelain_default_entries": 1243,
+      "branches": 93,
+      "tags": 77,
+      "worktrees": 132,
+      "note": "写入本文件与 records-correction-r208.md 后复测；+2 为本交付物，另 +2 为并发协作者新增的 incident-ledger-r208.md/.json。HEAD、tracked dirty、staged、refs、worktree 注册均未变。"
+    },
+    "commands": [
+      "git rev-parse HEAD  # exit 0",
+      "git rev-parse --abbrev-ref HEAD  # exit 0",
+      "git status --porcelain  # exit 0; 1239 entries; tracked_dirty=0 staged=0",
+      "git status --porcelain -uall  # exit 0; 1595 entries",
+      "git ls-files doc/tasks | count  # 296",
+      "git ls-files --others --exclude-standard doc/tasks | count  # 26",
+      "git ls-files | count  # 11295"
+    ]
+  },
+  "git_refs": {
+    "local_branches": 93,
+    "merged_into_mainline": 74,
+    "unmerged_into_mainline": 19,
+    "mainline_tip": "3947d63447457fe3ef8d3587942e632724ab3d72",
+    "deletion_receipt": {
+      "deleted_total": 323,
+      "deleted_merged": 267,
+      "deleted_unmerged": 56,
+      "skipped": 95,
+      "skipped_breakdown": {
+        "checked_out_in_a_worktree": 92,
+        "reserved_for_AC8_decision": 2,
+        "mainline": 1
+      },
+      "main_master_separately_deleted": 2,
+      "net_branch_refs_deleted": 325,
+      "closure": "418 - 323 - 2 = 93；418 - 325 = 93"
+    },
+    "unmerged_branch_list": [
+      "agent/antigravity/P02PRE-R1H-H2-COLLECTOR-R3",
+      "agent/antigravity/P22-roundtrip-serialization",
+      "agent/codex/P02PRE-R1H-FORENSIC-RECOVERY-INTEGRATION",
+      "agent/codex/P02PRE-R1H-H1-CURRENT-INPUT-REVIEW",
+      "agent/codex/P02PRE-R1H-H2-RUN-INTEGRATION",
+      "agent/codex/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE",
+      "agent/zcode/P02-NEW-TIME-BASELINE",
+      "agent/zcode/P02-NEW-TIME-BASELINE-AC3-BRANCH-RESOLUTION",
+      "agent/zcode/P02-NEW-TIME-BASELINE-AC3-GIT-TOPLEVEL-RESOLUTION",
+      "agent/zcode/P02-NEW-TIME-BASELINE-AC3-HELPER-OUTPUT-RESOLUTION",
+      "agent/zcode/P02PRE-R1H-H2-COLLECTOR",
+      "agent/zcode/T2.2.1-reader-workbench-polish",
+      "agent/zcode/T3.2.1-repair-13",
+      "codex/P02-hook-cache-isolation-plan",
+      "codex/P14",
+      "codex/P15-C1-FU2",
+      "codex/project-roadmap-rebaseline",
+      "review/deepseek/M2-C1-typed-ipc-7d908a5",
+      "review/deepseek/M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD-r2"
+    ],
+    "commands": [
+      "git show-ref --heads | count  # exit 0; 93",
+      "for each ref: git merge-base --is-ancestor <ref> antigravity/P09-AC3-DELETE-HARDEN-1  # 74 exit 0, 19 exit 1",
+      "git worktree list --porcelain  # exit 0"
+    ]
+  },
+  "worktrees": {
+    "registered_current": 132,
+    "pre_state_inventory": 213,
+    "removed_directories": 50,
+    "registration_only_removed": 37,
+    "rebuilt": 6,
+    "closure": "213 - 50 - 37 + 6 = 132",
+    "rebuilt_list": [
+      {"path": "G:/CODEX/New Manga.workspace/GOV-PIN-LINEAGE-1/worktree", "inventory_head_9": "60d47991b", "current_head": "60d47991baea777996313d2cf1a335c136fb1ba0", "prefix_match": true, "detached": true, "status_porcelain_empty": true},
+      {"path": "G:/CODEX/New Manga.workspace/worktrees/FEAT-CREATE-1", "inventory_head_9": "c96958172", "current_head": "c96958172de8f8a3f3563da43a9fef09ac4447ba", "prefix_match": true, "detached": true, "status_porcelain_empty": true},
+      {"path": "G:/CODEX/New Manga.workspace/worktrees/FEAT-CREATE-2", "inventory_head_9": "8202f2411", "current_head": "8202f24117ee7ab3ec48d0bb6b7a45d4bca1f2d7", "prefix_match": true, "detached": true, "status_porcelain_empty": true},
+      {"path": "G:/CODEX/New Manga.workspace/worktrees/FEAT-CREATE-4", "inventory_head_9": "f2c66ff26", "current_head": "f2c66ff262299f20292d8ca92cf8c2a28abce75b", "prefix_match": true, "detached": true, "status_porcelain_empty": true},
+      {"path": "G:/CODEX/New Manga.workspace/worktrees/P19-UI-FIX-2", "inventory_head_9": "541aabb1e", "current_head": "541aabb1e88a18e7ed6fb82afc971bc0bcff6c9c", "prefix_match": true, "detached": true, "status_porcelain_empty": true},
+      {"path": "G:/CODEX/New Manga.worktrees/P02-real-webview-harness-antigravity", "inventory_head_9": "89413f45a", "current_head": "89413f45a601966eb40d7af7abea65cbdfc754b3", "prefix_match": true, "detached": true, "status_porcelain_empty": true}
+    ],
+    "refused": {
+      "total": 105,
+      "dirty_or_untracked_at_inventory": 68,
+      "permission_denied_at_apply": 37
+    },
+    "skipped": {
+      "total": 58,
+      "protected": 57,
+      "main_checkout": 1
+    },
+    "reconciliation": {
+      "inventory_dirty_gt0": 82,
+      "inventory_dirty_inside_protected_skipped": 14,
+      "dirty_refused": 68,
+      "note": "82 = 14（受保护且 dirty，skipped）+ 68（dirty，refused）；另有 37 条 inventory dirty=0 但 apply 时 git 拒绝（Permission denied），故 refused=105。"
+    },
+    "commands": [
+      "git worktree list --porcelain | count 'worktree '  # 132",
+      "inventory.json worktrees[] join current registration  # 213 -> 132",
+      "inventory 213 - 50 removed - 37 dir-exists-but-unregistered + 6 rebuilt = 132"
+    ]
+  },
+  "archive_bundles": {
+    "manifest_tags": 76,
+    "current_archive_tags": 77,
+    "current_bundle_files": 77,
+    "current_bundle_bytes": 22111102,
+    "manifest_bundle_bytes": 22106711,
+    "bundle_verify": {"total": 77, "exit_0": 77, "non_zero": 0},
+    "sum_unique_commits_manifest_tags": 1223,
+    "union_unique_commits_manifest_tags": 320,
+    "sum_unique_commits_all_current_tags": 1225,
+    "union_unique_commits_all_current_tags": 322,
+    "sum_unique_commits_19_remaining": 351,
+    "union_unique_commits_19_remaining": 224,
+    "algorithm": "对每个 archive tag 执行 git rev-list <mainline>..<tag> 得提交集合；逐分支计数求和与集合并集大小分别记录。mainline=antigravity/P09-AC3-DELETE-HARDEN-1（tip 3947d634）。同一结果在 base=inventory.head 62303a5766f3596a1cc1c082ea1a077cfa1a79ad 下复算一致（1225/1225，77 个 tag）。",
+    "reconciliation": "76 个 manifest tag：1223 / 320，与 Codex r208 Q4 一致；当前多出的第 77 个 tag archive/P03-review-prep-112495c7 携带 2 个独有提交，故 77 个 tag 为 1225 / 322；差值恰为 P03 两提交。",
+    "scopes": {
+      "scope_A_original_76_corpus": {
+        "definition": "archive-manifest.json 的 76 条 archived[] branch 记录（排除 2026-10-20 返修期新增的 archive/P03-review-prep-112495c7）；这是 Codex r208 Q4 与 Task 原记录的口径，也是『1223 是分支计数合计、去重 320』的来源。",
+        "tag_count": 76,
+        "sum_unique_commits": 1223,
+        "union_unique_commits": 320,
+        "command": "python: man=json.load(archive-manifest.json); for e in man['archived']: ids=git rev-list <mainline>..e['tag']; sum+=len(ids); union|=set(ids)，最后输出 1223 / 320"
+      },
+      "scope_B_current_all_archive_refs": {
+        "definition": "当前仓库全部 archive/* tag（含返修期新增 P03 tag）；不是 Review 的 76 原始口径。",
+        "tag_count": 77,
+        "sum_unique_commits": 1225,
+        "union_unique_commits": 322,
+        "extra_tag": "archive/P03-review-prep-112495c7",
+        "extra_commits": ["0a25ceb4577158d9dff184776ff4599e74e25c57", "112495c70ff8a9c50fe00f4cd2eaa861d9a11b69"],
+        "command": "python: tags=git tag -l 'archive/*'; for t in tags: ids=git rev-list <mainline>..t; sum+=len(ids); union|=set(ids)，最后输出 1225 / 322"
+      },
+      "rule": "两个口径不得混用：引用 Review 的 1223/320 时必须写明『76 个 manifest 分支归档 corpus』；引用当前状态时必须写『77 个 archive ref（含 P03 返修保全），1225 合计 / 322 去重』。",
+      "verified_at": "2026-10-20T21:46+08:00，两种循环均实测：SCOPE-A 1223/320，SCOPE-B 1225/322，extra_commits 恰为 P03 两提交。"
+    },
+    "extra_tag": {
+      "tag": "archive/P03-review-prep-112495c7",
+      "tip": "0a25ceb4577158d9dff184776ff4599e74e25c57",
+      "bundle": "G:/CODEX/New Manga.workspace/archive/bundles/P03-review-prep-112495c7.bundle",
+      "bundle_bytes": 4391,
+      "bundle_sha256": "4c2aef444ab3974401dfe038c7cf26f289cb8dd370bfe6062dfb5d2d70fddbee",
+      "verify_exit": 0,
+      "bundle_mtime": "2026-10-20T21:32:49+08:00",
+      "created_after_review": true,
+      "covered_commits": ["0a25ceb4577158d9dff184776ff4599e74e25c57", "112495c70ff8a9c50fe00f4cd2eaa861d9a11b69"],
+      "external_evidence": "verification/WORKSPACE-CONSOLIDATION-1/p03-preservation-r208.md（另一协作者 dsh 的返修证据；本测量仅独立复核 tag/bundle/verify）"
+    },
+    "per_branch_manifest": {
+      "agent/antigravity/P02PRE-R1G": {"tag": "archive/agent_antigravity_P02PRE-R1G", "count": 6},
+      "agent/antigravity/P02PRE-R1H": {"tag": "archive/agent_antigravity_P02PRE-R1H", "count": 7},
+      "agent/antigravity/P02PRE-R1H-H2-COLLECTOR-R3": {"tag": "archive/agent_antigravity_P02PRE-R1H-H2-COLLECTOR-R3", "count": 15},
+      "agent/antigravity/P02PRE-R1H-R6-A4": {"tag": "archive/agent_antigravity_P02PRE-R1H-R6-A4", "count": 2},
+      "agent/antigravity/P22-roundtrip-serialization": {"tag": "archive/agent_antigravity_P22-roundtrip-serialization", "count": 10},
+      "agent/antigravity/T3.2.1-repair-10": {"tag": "archive/agent_antigravity_T3.2.1-repair-10", "count": 49},
+      "agent/antigravity/T3.2.1-repair-11": {"tag": "archive/agent_antigravity_T3.2.1-repair-11", "count": 53},
+      "agent/antigravity/T3.2.1-repair-12": {"tag": "archive/agent_antigravity_T3.2.1-repair-12", "count": 54},
+      "agent/antigravity/T3.2.1-repair-14": {"tag": "archive/agent_antigravity_T3.2.1-repair-14", "count": 4},
+      "agent/antigravity/T3.2.1-repair-3": {"tag": "archive/agent_antigravity_T3.2.1-repair-3", "count": 15},
+      "agent/antigravity/T3.2.1-repair-4": {"tag": "archive/agent_antigravity_T3.2.1-repair-4", "count": 19},
+      "agent/antigravity/T3.2.1-repair-5": {"tag": "archive/agent_antigravity_T3.2.1-repair-5", "count": 25},
+      "agent/antigravity/T3.2.1-repair-6": {"tag": "archive/agent_antigravity_T3.2.1-repair-6", "count": 30},
+      "agent/antigravity/T3.2.1-repair-7": {"tag": "archive/agent_antigravity_T3.2.1-repair-7", "count": 41},
+      "agent/antigravity/T3.2.1-repair-9": {"tag": "archive/agent_antigravity_T3.2.1-repair-9", "count": 46},
+      "agent/antigravity/T3.2.1-windows-packaging": {"tag": "archive/agent_antigravity_T3.2.1-windows-packaging", "count": 8},
+      "agent/codex/M2-C1-typed-ipc-contract": {"tag": "archive/agent_codex_M2-C1-typed-ipc-contract", "count": 16},
+      "agent/codex/P02PRE-R1H": {"tag": "archive/agent_codex_P02PRE-R1H", "count": 13},
+      "agent/codex/P02PRE-R1H-FORENSIC-RECOVERY-INTEGRATION": {"tag": "archive/agent_codex_P02PRE-R1H-FORENSIC-RECOVERY-INTEGRATION", "count": 3},
+      "agent/codex/P02PRE-R1H-H1-CURRENT-INPUT-REVIEW": {"tag": "archive/agent_codex_P02PRE-R1H-H1-CURRENT-INPUT-REVIEW", "count": 4},
+      "agent/codex/P02PRE-R1H-H2-RUN-INTEGRATION": {"tag": "archive/agent_codex_P02PRE-R1H-H2-RUN-INTEGRATION", "count": 3},
+      "agent/codex/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE": {"tag": "archive/agent_codex_P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE", "count": 18},
+      "agent/codex/T1.2.1-integration": {"tag": "archive/agent_codex_T1.2.1-integration", "count": 2},
+      "agent/codex/TASK-013-production-pipeline-seam": {"tag": "archive/agent_codex_TASK-013-production-pipeline-seam", "count": 2},
+      "agent/deepseek/M2-PACKAGED-AC1-DLL-DIAG": {"tag": "archive/agent_deepseek_M2-PACKAGED-AC1-DLL-DIAG", "count": 1},
+      "agent/deepseek/T1.1.1-detector-evaluation": {"tag": "archive/agent_deepseek_T1.1.1-detector-evaluation", "count": 1},
+      "agent/deepseek/T3.2.1-review-740503e": {"tag": "archive/agent_deepseek_T3.2.1-review-740503e", "count": 1},
+      "agent/deepseek/T3.2.1-review-7d687f5": {"tag": "archive/agent_deepseek_T3.2.1-review-7d687f5", "count": 1},
+      "agent/deepseek/T3.2.1-review-92c9307c": {"tag": "archive/agent_deepseek_T3.2.1-review-92c9307c", "count": 1},
+      "agent/deepseek/T3.2.1-review-9622395": {"tag": "archive/agent_deepseek_T3.2.1-review-9622395", "count": 53},
+      "agent/deepseek/T3.2.1-review-a2f6695": {"tag": "archive/agent_deepseek_T3.2.1-review-a2f6695", "count": 54},
+      "agent/deepseek/T3.2.1-review-be5200e": {"tag": "archive/agent_deepseek_T3.2.1-review-be5200e", "count": 49},
+      "agent/deepseek/T3.2.1-review-cdc0b6f": {"tag": "archive/agent_deepseek_T3.2.1-review-cdc0b6f", "count": 6},
+      "agent/deepseek/T3.2.1-review-d2bf6a8": {"tag": "archive/agent_deepseek_T3.2.1-review-d2bf6a8", "count": 46},
+      "agent/deepseek/T3.2.1-review-d79d7dd": {"tag": "archive/agent_deepseek_T3.2.1-review-d79d7dd", "count": 14},
+      "agent/deepseek/T3.2.1-review-f39ddc0": {"tag": "archive/agent_deepseek_T3.2.1-review-f39ddc0", "count": 1},
+      "agent/deepseek/T3.2.1-review-f6dc383": {"tag": "archive/agent_deepseek_T3.2.1-review-f6dc383", "count": 31},
+      "agent/deepseek/T3.2.1-review-repair-14": {"tag": "archive/agent_deepseek_T3.2.1-review-repair-14", "count": 3},
+      "agent/deepseek/T3.2.1-review-repair-14-r2": {"tag": "archive/agent_deepseek_T3.2.1-review-repair-14-r2", "count": 5},
+      "agent/deepseek/T3.2.1-review-repair-7": {"tag": "archive/agent_deepseek_T3.2.1-review-repair-7", "count": 6},
+      "agent/deepseek/TASK-004-review": {"tag": "archive/agent_deepseek_TASK-004-review", "count": 1},
+      "agent/deepseek/TASK-015-posthoc": {"tag": "archive/agent_deepseek_TASK-015-posthoc", "count": 1},
+      "agent/deepseek/TASK-017-posthoc": {"tag": "archive/agent_deepseek_TASK-017-posthoc", "count": 1},
+      "agent/deepseek/TASK-024-posthoc": {"tag": "archive/agent_deepseek_TASK-024-posthoc", "count": 1},
+      "agent/qoder/T1.1.2-region-canvas": {"tag": "archive/agent_qoder_T1.1.2-region-canvas", "count": 2},
+      "agent/qoder/T2.2.1-reader-workbench-qml": {"tag": "archive/agent_qoder_T2.2.1-reader-workbench-qml", "count": 5},
+      "agent/qoder/T3.2.1-repair-13": {"tag": "archive/agent_qoder_T3.2.1-repair-13", "count": 54},
+      "agent/qoder/TASK-047-ui-ux-gui-design": {"tag": "archive/agent_qoder_TASK-047-ui-ux-gui-design", "count": 9},
+      "agent/qoder/TASK-061-review": {"tag": "archive/agent_qoder_TASK-061-review", "count": 4},
+      "agent/zcode/M2-I1-core-assembly-seam": {"tag": "archive/agent_zcode_M2-I1-core-assembly-seam", "count": 1},
+      "agent/zcode/P02-NEW-TIME-BASELINE": {"tag": "archive/agent_zcode_P02-NEW-TIME-BASELINE", "count": 60},
+      "agent/zcode/P02-NEW-TIME-BASELINE-AC3-BRANCH-RESOLUTION": {"tag": "archive/agent_zcode_P02-NEW-TIME-BASELINE-AC3-BRANCH-RESOLUTION", "count": 31},
+      "agent/zcode/P02-NEW-TIME-BASELINE-AC3-GIT-TOPLEVEL-RESOLUTION": {"tag": "archive/agent_zcode_P02-NEW-TIME-BASELINE-AC3-GIT-TOPLEVEL-RESOLUTION", "count": 78},
+      "agent/zcode/P02-NEW-TIME-BASELINE-AC3-HELPER-OUTPUT-RESOLUTION": {"tag": "archive/agent_zcode_P02-NEW-TIME-BASELINE-AC3-HELPER-OUTPUT-RESOLUTION", "count": 43},
+      "agent/zcode/P02PRE-R1H": {"tag": "archive/agent_zcode_P02PRE-R1H", "count": 7},
+      "agent/zcode/P02PRE-R1H-H2-COLLECTOR": {"tag": "archive/agent_zcode_P02PRE-R1H-H2-COLLECTOR", "count": 4},
+      "agent/zcode/T1.2.1-settings-ui-viewmodel": {"tag": "archive/agent_zcode_T1.2.1-settings-ui-viewmodel", "count": 1},
+      "agent/zcode/T2.2.1-reader-workbench-polish": {"tag": "archive/agent_zcode_T2.2.1-reader-workbench-polish", "count": 1},
+      "agent/zcode/T3.2.1-repair-13": {"tag": "archive/agent_zcode_T3.2.1-repair-13", "count": 64},
+      "agent/zcode/TASK-045-posthoc": {"tag": "archive/agent_zcode_TASK-045-posthoc", "count": 1},
+      "codex/FEAT-CREATE-1": {"tag": "archive/codex_FEAT-CREATE-1", "count": 3},
+      "codex/P02-fallback-scope": {"tag": "archive/codex_P02-fallback-scope", "count": 1},
+      "codex/P02-hook-cache-isolation-plan": {"tag": "archive/codex_P02-hook-cache-isolation-plan", "count": 7},
+      "codex/P14": {"tag": "archive/codex_P14", "count": 2},
+      "codex/P15-C1-FU2": {"tag": "archive/codex_P15-C1-FU2", "count": 2},
+      "codex/T3.2.1-release-gate-closeout": {"tag": "archive/codex_T3.2.1-release-gate-closeout", "count": 50},
+      "codex/integration-p02pre-r1h-p2-1-external-harness-trace": {"tag": "archive/codex_integration-p02pre-r1h-p2-1-external-harness-trace", "count": 18},
+      "codex/project-roadmap-rebaseline": {"tag": "archive/codex_project-roadmap-rebaseline", "count": 1},
+      "codex/rebaseline-audit-20260921": {"tag": "archive/codex_rebaseline-audit-20260921", "count": 1},
+      "dsh/GOV-PIN-LINEAGE-1": {"tag": "archive/dsh_GOV-PIN-LINEAGE-1", "count": 2},
+      "master": {"tag": "archive/master", "count": 3},
+      "review/deepseek/M2-C1-typed-ipc-7d908a5": {"tag": "archive/review_deepseek_M2-C1-typed-ipc-7d908a5", "count": 4},
+      "review/deepseek/M2-C1-typed-ipc-r2-7e65f4f": {"tag": "archive/review_deepseek_M2-C1-typed-ipc-r2-7e65f4f", "count": 12},
+      "review/deepseek/M2-C1-typed-ipc-r3-4d66523": {"tag": "archive/review_deepseek_M2-C1-typed-ipc-r3-4d66523", "count": 14},
+      "review/deepseek/M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD-r2": {"tag": "archive/review_deepseek_M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD-r2", "count": 1},
+      "review/qoder/M2-C1-typed-ipc-r3-4d66523": {"tag": "archive/review_qoder_M2-C1-typed-ipc-r3-4d66523", "count": 15}
+    },
+    "nineteen_remaining_detail": [
+      {"branch": "agent/antigravity/P02PRE-R1H-H2-COLLECTOR-R3", "tip": "c763efa27db0f10949a52416f1374e88173a31e2", "tag": "archive/agent_antigravity_P02PRE-R1H-H2-COLLECTOR-R3", "tag_tip": "c763efa27db0f10949a52416f1374e88173a31e2", "tag_match": true, "bundle": "G:/CODEX/New Manga.workspace/archive/bundles/agent_antigravity_P02PRE-R1H-H2-COLLECTOR-R3.bundle", "bundle_exists": true, "verify_exit": 0, "unique_commits": 15},
+      {"branch": "agent/antigravity/P22-roundtrip-serialization", "tip": "4a707db80499f11e93cee163a9a10bf6392b1a92", "tag": "archive/agent_antigravity_P22-roundtrip-serialization", "tag_tip": "4a707db80499f11e93cee163a9a10bf6392b1a92", "tag_match": true, "bundle": "G:/CODEX/New Manga.workspace/archive/bundles/agent_antigravity_P22-roundtrip-serialization.bundle", "bundle_exists": true, "verify_exit": 0, "unique_commits": 10},
+      {"branch": "agent/codex/P02PRE-R1H-FORENSIC-RECOVERY-INTEGRATION", "tip": "4569093db896b019cfab401e35b66ed4bcea673d", "tag": "archive/agent_codex_P02PRE-R1H-FORENSIC-RECOVERY-INTEGRATION", "tag_tip": "4569093db896b019cfab401e35b66ed4bcea673d", "tag_match": true, "bundle": "G:/CODEX/New Manga.workspace/archive/bundles/agent_codex_P02PRE-R1H-FORENSIC-RECOVERY-INTEGRATION.bundle", "bundle_exists": true, "verify_exit": 0, "unique_commits": 3},
+      {"branch": "agent/codex/P02PRE-R1H-H1-CURRENT-INPUT-REVIEW", "tip": "a6f33f7be1fc13cca64539ecaaa4bd9528a0184e", "tag": "archive/agent_codex_P02PRE-R1H-H1-CURRENT-INPUT-REVIEW", "tag_tip": "a6f33f7be1fc13cca64539ecaaa4bd9528a0184e", "tag_match": true, "bundle": "G:/CODEX/New Manga.workspace/archive/bundles/agent_codex_P02PRE-R1H-H1-CURRENT-INPUT-REVIEW.bundle", "bundle_exists": true, "verify_exit": 0, "unique_commits": 4},
+      {"branch": "agent/codex/P02PRE-R1H-H2-RUN-INTEGRATION", "tip": "06990b7993d042ae5e74ab479e291e494b622588", "tag": "archive/agent_codex_P02PRE-R1H-H2-RUN-INTEGRATION", "tag_tip": "06990b7993d042ae5e74ab479e291e494b622588", "tag_match": true, "bundle": "G:/CODEX/New Manga.workspace/archive/bundles/agent_codex_P02PRE-R1H-H2-RUN-INTEGRATION.bundle", "bundle_exists": true, "verify_exit": 0, "unique_commits": 3},
+      {"branch": "agent/codex/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE", "tip": "23bec747df77e67e93ec1fa9fd859d077219e941", "tag": "archive/agent_codex_P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE", "tag_tip": "23bec747df77e67e93ec1fa9fd859d077219e941", "tag_match": true, "bundle": "G:/CODEX/New Manga.workspace/archive/bundles/agent_codex_P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE.bundle", "bundle_exists": true, "verify_exit": 0, "unique_commits": 18},
+      {"branch": "agent/zcode/P02-NEW-TIME-BASELINE", "tip": "7ab5b7d0574041f2ca9fa1424ca5b440ff298aaf", "tag": "archive/agent_zcode_P02-NEW-TIME-BASELINE", "tag_tip": "7ab5b7d0574041f2ca9fa1424ca5b440ff298aaf", "tag_match": true, "bundle": "G:/CODEX/New Manga.workspace/archive/bundles/agent_zcode_P02-NEW-TIME-BASELINE.bundle", "bundle_exists": true, "verify_exit": 0, "unique_commits": 60},
+      {"branch": "agent/zcode/P02-NEW-TIME-BASELINE-AC3-BRANCH-RESOLUTION", "tip": "10c35daed241aa3717b248da14c1b9b959ff1fba", "tag": "archive/agent_zcode_P02-NEW-TIME-BASELINE-AC3-BRANCH-RESOLUTION", "tag_tip": "10c35daed241aa3717b248da14c1b9b959ff1fba", "tag_match": true, "bundle": "G:/CODEX/New Manga.workspace/archive/bundles/agent_zcode_P02-NEW-TIME-BASELINE-AC3-BRANCH-RESOLUTION.bundle", "bundle_exists": true, "verify_exit": 0, "unique_commits": 31},
+      {"branch": "agent/zcode/P02-NEW-TIME-BASELINE-AC3-GIT-TOPLEVEL-RESOLUTION", "tip": "0af8980884e9d027042ef145cd966577d86b5bc5", "tag": "archive/agent_zcode_P02-NEW-TIME-BASELINE-AC3-GIT-TOPLEVEL-RESOLUTION", "tag_tip": "0af8980884e9d027042ef145cd966577d86b5bc5", "tag_match": true, "bundle": "G:/CODEX/New Manga.workspace/archive/bundles/agent_zcode_P02-NEW-TIME-BASELINE-AC3-GIT-TOPLEVEL-RESOLUTION.bundle", "bundle_exists": true, "verify_exit": 0, "unique_commits": 78},
+      {"branch": "agent/zcode/P02-NEW-TIME-BASELINE-AC3-HELPER-OUTPUT-RESOLUTION", "tip": "14da1e814931e1e32ebc1f76a12bc3685b63646e", "tag": "archive/agent_zcode_P02-NEW-TIME-BASELINE-AC3-HELPER-OUTPUT-RESOLUTION", "tag_tip": "14da1e814931e1e32ebc1f76a12bc3685b63646e", "tag_match": true, "bundle": "G:/CODEX/New Manga.workspace/archive/bundles/agent_zcode_P02-NEW-TIME-BASELINE-AC3-HELPER-OUTPUT-RESOLUTION.bundle", "bundle_exists": true, "verify_exit": 0, "unique_commits": 43},
+      {"branch": "agent/zcode/P02PRE-R1H-H2-COLLECTOR", "tip": "4a90d820a5d58a54cbc190665fbd87d563bc19af", "tag": "archive/agent_zcode_P02PRE-R1H-H2-COLLECTOR", "tag_tip": "4a90d820a5d58a54cbc190665fbd87d563bc19af", "tag_match": true, "bundle": "G:/CODEX/New Manga.workspace/archive/bundles/agent_zcode_P02PRE-R1H-H2-COLLECTOR.bundle", "bundle_exists": true, "verify_exit": 0, "unique_commits": 4},
+      {"branch": "agent/zcode/T2.2.1-reader-workbench-polish", "tip": "df637df1f9d6e8468bc73d6ff585bbf55e8e9a64", "tag": "archive/agent_zcode_T2.2.1-reader-workbench-polish", "tag_tip": "df637df1f9d6e8468bc73d6ff585bbf55e8e9a64", "tag_match": true, "bundle": "G:/CODEX/New Manga.workspace/archive/bundles/agent_zcode_T2.2.1-reader-workbench-polish.bundle", "bundle_exists": true, "verify_exit": 0, "unique_commits": 1},
+      {"branch": "agent/zcode/T3.2.1-repair-13", "tip": "13ae23f65e963cf1d5aea19634572627e5e709db", "tag": "archive/agent_zcode_T3.2.1-repair-13", "tag_tip": "13ae23f65e963cf1d5aea19634572627e5e709db", "tag_match": true, "bundle": "G:/CODEX/New Manga.workspace/archive/bundles/agent_zcode_T3.2.1-repair-13.bundle", "bundle_exists": true, "verify_exit": 0, "unique_commits": 64},
+      {"branch": "codex/P02-hook-cache-isolation-plan", "tip": "ceca2446da88df23a719f40868cc89e1481ccb2c", "tag": "archive/codex_P02-hook-cache-isolation-plan", "tag_tip": "ceca2446da88df23a719f40868cc89e1481ccb2c", "tag_match": true, "bundle": "G:/CODEX/New Manga.workspace/archive/bundles/codex_P02-hook-cache-isolation-plan.bundle", "bundle_exists": true, "verify_exit": 0, "unique_commits": 7},
+      {"branch": "codex/P14", "tip": "41c3206942730536bc9b41e871f23ad9b3de3f1d", "tag": "archive/codex_P14", "tag_tip": "41c3206942730536bc9b41e871f23ad9b3de3f1d", "tag_match": true, "bundle": "G:/CODEX/New Manga.workspace/archive/bundles/codex_P14.bundle", "bundle_exists": true, "verify_exit": 0, "unique_commits": 2},
+      {"branch": "codex/P15-C1-FU2", "tip": "0aa01eddcd751adf9c4d2e3894f4cce9ec657909", "tag": "archive/codex_P15-C1-FU2", "tag_tip": "0aa01eddcd751adf9c4d2e3894f4cce9ec657909", "tag_match": true, "bundle": "G:/CODEX/New Manga.workspace/archive/bundles/codex_P15-C1-FU2.bundle", "bundle_exists": true, "verify_exit": 0, "unique_commits": 2},
+      {"branch": "codex/project-roadmap-rebaseline", "tip": "000cbfe9909c3eb566fd4d077c77199ce4d7c86e", "tag": "archive/codex_project-roadmap-rebaseline", "tag_tip": "000cbfe9909c3eb566fd4d077c77199ce4d7c86e", "tag_match": true, "bundle": "G:/CODEX/New Manga.workspace/archive/bundles/codex_project-roadmap-rebaseline.bundle", "bundle_exists": true, "verify_exit": 0, "unique_commits": 1},
+      {"branch": "review/deepseek/M2-C1-typed-ipc-7d908a5", "tip": "e6fc3a59b913f2aef1ab8c7a77ff47df0cd114a1", "tag": "archive/review_deepseek_M2-C1-typed-ipc-7d908a5", "tag_tip": "e6fc3a59b913f2aef1ab8c7a77ff47df0cd114a1", "tag_match": true, "bundle": "G:/CODEX/New Manga.workspace/archive/bundles/review_deepseek_M2-C1-typed-ipc-7d908a5.bundle", "bundle_exists": true, "verify_exit": 0, "unique_commits": 4},
+      {"branch": "review/deepseek/M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD-r2", "tip": "daab1996b99c7036108bc505cc3db29b744fdf9d", "tag": "archive/review_deepseek_M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD-r2", "tag_tip": "daab1996b99c7036108bc505cc3db29b744fdf9d", "tag_match": true, "bundle": "G:/CODEX/New Manga.workspace/archive/bundles/review_deepseek_M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD-r2.bundle", "bundle_exists": true, "verify_exit": 0, "unique_commits": 1}
+    ],
+    "commands": [
+      "git tag -l 'archive/*' | count  # 77",
+      "for each tag: git rev-list <mainline>..<tag>  # commit set; per-tag count; union in memory",
+      "for each tag: git rev-parse <tag>  # tag tip",
+      "for each bundle: git bundle verify <path>  # 77/77 exit 0",
+      "for each manifest entry: compare bundle file size with archive-manifest.json bundle_bytes  # 76/76 match"
+    ]
+  },
+  "bytes_removed": {
+    "worktree_removal": {"items": 50, "sum_bytes": 31493644833, "GiB": 29.330742, "matches_receipt_total": true},
+    "workspace_cleanup": {"items": 158, "sum_bytes": 21636208040, "GiB": 20.150289, "matches_receipt_total": true},
+    "total_bytes": 53129852873,
+    "total_GiB": 49.481031,
+    "total_GB": 53.129853,
+    "arithmetic": "31,493,644,833 + 21,636,208,040 = 53,129,852,873 B = 49.481031 GiB = 53.129853 GB",
+    "meaning": "两份删除收据的删除前递归逻辑字节合计",
+    "physical_net_release_proven": false,
+    "evidence_gaps": [
+      "没有删除前后卷可用空间（G: free space）差值记录",
+      "没有 junction/hardlink 分摊说明；同一 junction 目标可能被多处可见",
+      "删除后 6 个 worktree 已回建，回建占用未从合计中扣除",
+      "逻辑字节不等于磁盘占用或可释放物理空间"
+    ],
+    "workspace_cleanup_kept": {"items": 5, "bytes": 9318471829, "GiB": 8.678503},
+    "commands": [
+      "sum(removed[].bytes) for worktree-removal.json  # 31,493,644,833",
+      "sum(removed[].bytes) for workspace-cleanup.json  # 21,636,208,040",
+      "python: total/1024**3  # 49.48103136662394"
+    ]
+  },
+  "workspace_worktrees_removals": {
+    "count": 7,
+    "sum_bytes": 13225660979,
+    "GiB": 12.317357,
+    "items": [
+      {"path": "G:/CODEX/New Manga.workspace/worktrees/FEAT-CREATE-1", "bytes": 305714018, "branch": "codex/FEAT-CREATE-1", "exists_now": true, "rebuilt": true},
+      {"path": "G:/CODEX/New Manga.workspace/worktrees/FEAT-CREATE-2", "bytes": 1601245026, "branch": "codex/FEAT-CREATE-2", "exists_now": true, "rebuilt": true},
+      {"path": "G:/CODEX/New Manga.workspace/worktrees/FEAT-CREATE-4", "bytes": 5045303306, "branch": "codex/FEAT-CREATE-4", "exists_now": true, "rebuilt": true},
+      {"path": "G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-X6-AC1-AC7", "bytes": 291116178, "branch": "agent/zcode/P02-NEW-TIME-X6-AC1-AC7", "exists_now": false, "rebuilt": false},
+      {"path": "G:/CODEX/New Manga.workspace/worktrees/P15-C1-review", "bytes": 302460207, "branch": "(detached)", "exists_now": false, "rebuilt": false},
+      {"path": "G:/CODEX/New Manga.workspace/worktrees/P19-AC3-1", "bytes": 308738904, "branch": "codex/P19-AC3-1", "exists_now": false, "rebuilt": false},
+      {"path": "G:/CODEX/New Manga.workspace/worktrees/P19-UI-FIX-2", "bytes": 5371083340, "branch": "codex/P19-UI-FIX-2", "exists_now": true, "rebuilt": true}
+    ],
+    "rebuilt_among_seven": 4,
+    "commands": [
+      "filter worktree-removal.json removed[] where path startswith 'G:/CODEX/New Manga.workspace/worktrees/'  # 7",
+      "os.path.isdir(path) for each  # 4 true / 3 false"
+    ]
+  },
+  "task_envs": {
+    "root": "G:/CODEX/New Manga.workspace/task-envs",
+    "total_bytes": 3880296828,
+    "total_GiB": 3.613808,
+    "files": 104117,
+    "dirs": 22923,
+    "reparse_points_encountered_not_followed": 0,
+    "permission_denials": [],
+    "direct_children": [
+      {"name": "M2-PROD-DETECT-ENV-1", "bytes": 138129041, "MiB": 131.73, "files": 6677},
+      {"name": "P02-NEW-TIME-X6-AC1-AC7", "bytes": 305640790, "files": 6137},
+      {"name": "P02-NEW-TIME-X6-BUILD-CARGO", "bytes": 2328053874, "files": 55805},
+      {"name": "P04", "bytes": 364553476, "files": 11489},
+      {"name": "P04-integration", "bytes": 364553476, "files": 11489},
+      {"name": "P22-REBASE-1", "bytes": 379366171, "files": 12520}
+    ],
+    "detection_env": {
+      "path": "G:/CODEX/New Manga.workspace/task-envs/M2-PROD-DETECT-ENV-1",
+      "bytes": 138129041,
+      "MiB": 131.730119,
+      "GiB": 0.128643,
+      "files": 6677,
+      "pyvenv_cfg": {
+        "home": "C:/Python314",
+        "include_system_site_packages": true,
+        "version": "3.14.6",
+        "command": "C:/Python314/python.exe -m venv --system-site-packages G:/CODEX/New Manga.workspace/task-envs/M2-PROD-DETECT-ENV-1/venv"
+      },
+      "transformers_metadata": "Name: transformers / Version: 5.17.0",
+      "python_exe_present": true,
+      "meaning": "保留的是全局 Python 3.14.6 + transformers 5.17.0 的覆盖层，不是完全自包含环境"
+    },
+    "rest_bytes": 3742167787,
+    "rest_GiB": 3.485164,
+    "note": "不能把整个 3.61 GiB task-envs 称为检测环境；检测环境（M2-PROD-DETECT-ENV-1）仅 138,129,041 B = 131.73 MiB，其余为 P02-NEW-TIME-X6-BUILD-CARGO（2,328,053,874 B）等。",
+    "no_removal_in_receipts": "worktree-removal.json / workspace-cleanup.json / branch-deletion.json / archive-manifest.json 均无 'task-envs' 字样（每份 count=0）；未发现 task-envs 被删除的收据。",
+    "commands": [
+      "python os.scandir/lstat recursive sum, skip FILE_ATTRIBUTE_REPARSE_POINT, do not follow junctions  # exit 0",
+      "per direct child: same scan  # 6 children sum exactly 3,880,296,828",
+      "Get-Content .../M2-PROD-DETECT-ENV-1/venv/pyvenv.cfg  # exit 0",
+      "Get-Content .../transformers-5.17.0.dist-info/METADATA -TotalCount 5  # Name: transformers / Version: 5.17.0"
+    ]
+  },
+  "workspace_worktrees_scan": {
+    "root": "G:/CODEX/New Manga.workspace/worktrees",
+    "bytes": 120499443541,
+    "GiB": 112.223852,
+    "regular_files": 954980,
+    "directories": 134998,
+    "direct_subdirs": 71,
+    "reparse_points_skipped": 1520,
+    "permission_denials": 0,
+    "review_value": {"bytes": 120225570583, "GiB": 111.97, "files": 952193, "denials": 7},
+    "delta_vs_review": {"bytes": 273872958, "files": 2787, "note": "本扫描晚于 r208 且未遇到权限拒绝（0 vs 7）；差异与 r208 所说被拒绝的 .pytest_cache / pytest-of-49745 子树方向一致，但未做逐路径归属，NOT_RUN/UNVERIFIED。"},
+    "commands": ["python os.scandir/lstat recursive sum, skip reparse, do not follow  # exit 0, 19.3s"]
+  },
+  "protected_name_subset": {
+    "protected_names_in_inventory": 57,
+    "protected_skipped_in_receipt": 57,
+    "name_sets_equal": true,
+    "currently_matched_to_registered_worktree_by_basename": 57,
+    "matched_path_directories_exist": 57,
+    "boundary": "只证明这 57 个名称仍对应已注册 worktree 且目录存在；不证明保护枚举完整、不证明这些目录内字节未变，也不覆盖 18 个具体受影响资源。例如 P06-GC-DISTRIBUTION-MIGRATION 根目录存在，但其受保护子树 old-runtime/worktree 已缺失。",
+    "commands": [
+      "inventory.json protected_worktree_names  # 57 keys",
+      "worktree-removal.json skipped[why=protected]  # 57 paths; basename set == inventory name set",
+      "git worktree list --porcelain  # match basename; os.path.isdir  # 57/57"
+    ]
+  },
+  "affected_resources_18": {
+    "deletion_roots_hit": 15,
+    "sources_total": 18,
+    "sources_existing_now": 7,
+    "sources_original_path_missing": 11,
+    "sources_partial_rebuild": 6,
+    "sources_with_content_gap": 12,
+    "items": [
+      {"path": "G:/CODEX/New Manga.workspace/GOV-PIN-LINEAGE-1/worktree", "disposition": "PRESERVE_REFERENCED", "exists_now": true, "state": "commit snapshot rebuilt; checkout originally on branch, now detached; ignored contents not restored"},
+      {"path": "G:/CODEX/New Manga.workspace/P06-GC-DISTRIBUTION-MIGRATION", "disposition": "PRESERVE_REFERENCED", "exists_now": true, "state": "parent exists; protected subtree old-runtime/worktree missing"},
+      {"path": "G:/CODEX/New Manga.workspace/review-scratch/P09-PREVIEW-LIFECYCLE-RECLAIM-1-R11-392977a8", "disposition": "PRESERVE_UNKNOWN", "exists_now": false, "receipt_bytes": 1594956},
+      {"path": "G:/CODEX/New Manga.workspace/review-scratch/P09-PREVIEW-LIFECYCLE-RECLAIM-1-R11-392977a8-export", "disposition": "PRESERVE_UNKNOWN", "exists_now": false, "receipt_bytes": 351312383},
+      {"path": "G:/CODEX/New Manga.workspace/review-scratch/P09-PREVIEW-LIFECYCLE-RECLAIM-1-R17", "disposition": "PRESERVE_UNKNOWN", "exists_now": false, "receipt_bytes": 1411503},
+      {"path": "G:/CODEX/New Manga.workspace/review-scratch/P09-PREVIEW-LIFECYCLE-RECLAIM-1-R18", "disposition": "PRESERVE_UNKNOWN", "exists_now": false, "receipt_bytes": 14344791860},
+      {"path": "G:/CODEX/New Manga.workspace/temp/P02-NEW-TIME-BASELINE", "disposition": "PRESERVE_REFERENCED", "exists_now": false, "receipt_bytes": 23975},
+      {"path": "G:/CODEX/New Manga.workspace/temp/P02-NEW-TIME-BASELINE-AC3-BRANCH-RESOLUTION", "disposition": "PRESERVE_REFERENCED", "exists_now": false, "receipt_bytes": 80},
+      {"path": "G:/CODEX/New Manga.workspace/temp/P02-NEW-TIME-BASELINE-AC3-GIT-TOPLEVEL-RESOLUTION", "disposition": "PRESERVE_REFERENCED", "exists_now": false, "receipt_bytes": 315},
+      {"path": "G:/CODEX/New Manga.workspace/temp/P02-NEW-TIME-X6", "disposition": "PRESERVE_REFERENCED", "exists_now": false, "receipt_bytes": 32624},
+      {"path": "G:/CODEX/New Manga.workspace/temp/P02-NEW-TIME-X6/codex-ac2-20261014-123308-pure-selftest", "disposition": "PRESERVE_REFERENCED", "exists_now": false, "state": "nested under X6 root; fixed bytes reconstructable from tracked selftest source (r208 Q3)"},
+      {"path": "G:/CODEX/New Manga.workspace/temp/P02-NEW-TIME-X6/codex-ac2-r2-20261014-124643-pure-selftest", "disposition": "PRESERVE_REFERENCED", "exists_now": false, "state": "nested under X6 root; fixed bytes reconstructable from tracked selftest source (r208 Q3)"},
+      {"path": "G:/CODEX/New Manga.workspace/temp/P02-NEW-TIME-X6/x6-20261014T1305CST-p02-newtime-r1-capture", "disposition": "PRESERVE_REFERENCED", "exists_now": false, "state": "COPY_AVAILABLE: stdout.md 32,426 B SHA 0109aed4...a3602; stderr.md 0 B SHA e3b0c442...b855"},
+      {"path": "G:/CODEX/New Manga.workspace/worktrees/FEAT-CREATE-1", "disposition": "PRESERVE_UNKNOWN", "exists_now": true, "state": "commit snapshot rebuilt; detached"},
+      {"path": "G:/CODEX/New Manga.workspace/worktrees/FEAT-CREATE-2", "disposition": "PRESERVE_UNKNOWN", "exists_now": true, "state": "commit snapshot rebuilt; detached"},
+      {"path": "G:/CODEX/New Manga.workspace/worktrees/FEAT-CREATE-4", "disposition": "PRESERVE_UNKNOWN", "exists_now": true, "state": "commit snapshot rebuilt; detached"},
+      {"path": "G:/CODEX/New Manga.workspace/worktrees/P19-UI-FIX-2", "disposition": "PRESERVE_UNKNOWN", "exists_now": true, "state": "commit snapshot rebuilt; detached"},
+      {"path": "G:/CODEX/New Manga.worktrees/P02-real-webview-harness-antigravity", "disposition": "PRESERVE_UNKNOWN", "exists_now": true, "state": "commit snapshot rebuilt; detached"}
+    ],
+    "receipt_totals": {
+      "review_scratch_4_paths_bytes": 14699110702,
+      "review_scratch_GiB": 13.689614,
+      "temp_4_roots_bytes": 56994,
+      "note": "temp 的 7 个 source 中 2 个 selftest 与 1 个 capture 是 X6 根的子路径，删除收据只记录 X6 根 32,624 B；不能把子路径字节重复相加。"
+    },
+    "x6_copy_verification": {
+      "stdout_md_bytes": 32426,
+      "stdout_md_sha256": "0109aed4fd474546eac28d1b1bfa88510285f1f367c0f157007f93e1886a3602",
+      "stderr_md_bytes": 0,
+      "stderr_md_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "matches_review": true
+    },
+    "commands": [
+      "os.path.isdir for each of 18 source paths  # 7 true / 11 false",
+      "os.path.isdir P06.../old-runtime/worktree  # false; old-runtime true",
+      "Get-FileHash X6 stdout.md/stderr.md -Algorithm SHA256  # match r208 Q3",
+      "sum review-scratch receipt bytes  # 14,699,110,702"
+    ]
+  },
+  "fsck": {
+    "command": "git fsck --no-progress",
+    "exit": 0,
+    "dangling_blob": 382,
+    "dangling_tree": 75,
+    "dangling_commit": 156,
+    "dangling_total": 613,
+    "non_dangling_diagnostics": 0,
+    "corruption_or_missing": false,
+    "review_value": {"dangling_total": 614, "dangling_commit": 157},
+    "delta_note": "r208 记录 614（382+75+157）。返修期新增 archive/P03-review-prep-112495c7 使 P03 两个提交变为可达（-2 预期），但实测 commit 为 156（-1）；差额 +1 未归因，NOT_RUN。dangling 不是损坏，也不能作为数据安全证明。"
+  },
+  "governance_check": {
+    "command": "pwsh -NoProfile -File tools/governance/check.ps1 -TaskPath doc/tasks/WORKSPACE-CONSOLIDATION-1.md",
+    "exit": 0,
+    "warnings": 4,
+    "raw_output": [
+      "Governance scope: 13 current documents; no historical directory scan.",
+      "Task: doc\\tasks\\WORKSPACE-CONSOLIDATION-1.md",
+      "WARN: 存在 38 个非终态 Task（见 TASK_LEDGER）；状态字段不能证明活性，不得据此批量关闭（r38）",
+      "WARN: doc/STATUS.md 已达到预算的 80%：3152 bytes / 26 lines",
+      "WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：5997 bytes / 55 lines",
+      "WARN: evidence_dir 含未登记过程文件（归入 workspace 或列为 SOURCE_PIN）：G:\\CODEX\\New Manga\\verification\\WORKSPACE-CONSOLIDATION-1\\codex-review-r208.md, G:\\CODEX\\New Manga\\verification\\WORKSPACE-CONSOLIDATION-1\\p03-preservation-r208.json, G:\\CODEX\\New Manga\\verification\\WORKSPACE-CONSOLIDATION-1\\p03-preservation-r208.md",
+      "Governance check: PASS (4 warnings)"
+    ],
+    "note": "本测量写于治理检查之后；本文件与 records-correction-r208.md 写入后会使 evidence_dir 未登记清单增加这两个文件名，warning 数量仍为 4，但需由 Owner 在 Task 证据表登记。",
+    "post_write_raw_output": [
+      "WARN: evidence_dir 含未登记过程文件（归入 workspace 或列为 SOURCE_PIN）：G:\\CODEX\\New Manga\\verification\\WORKSPACE-CONSOLIDATION-1\\codex-review-r208.md, G:\\CODEX\\New Manga\\verification\\WORKSPACE-CONSOLIDATION-1\\incident-ledger-r208.json, G:\\CODEX\\New Manga\\verification\\WORKSPACE-CONSOLIDATION-1\\incident-ledger-r208.md, G:\\CODEX\\New Manga\\verification\\WORKSPACE-CONSOLIDATION-1\\measurements-r208.json, G:\\CODEX\\New Manga\\verification\\WORKSPACE-CONSOLIDATION-1\\p03-preservation-r208.json, G:\\CODEX\\New Manga\\verification\\WORKSPACE-CONSOLIDATION-1\\p03-preservation-r208.md, G:\\CODEX\\New Manga\\verification\\WORKSPACE-CONSOLIDATION-1\\records-correction-r208.md",
+      "Governance check: PASS (4 warnings)",
+      "EXIT: 0"
+    ]
+  },
+  "review_discrepancies": [
+    {
+      "item": "archive bundle 数量",
+      "review": "76 个 .bundle，22,106,711 B，76/76 verify exit 0",
+      "measured_now": "77 个 .bundle，22,111,102 B，77/77 verify exit 0",
+      "difference": "+4,391 B（P03-review-prep-112495c7.bundle）",
+      "explanation": "review 之后（bundle mtime 2026-10-20 21:32:49）另一协作者按 R208-01 新建 archive/P03-review-prep-112495c7 tag + bundle；本测量独立 verify exit 0。review 的 76 数在新状态之前成立，不是计算错误。"
+    },
+    {
+      "item": "1,223 / 320",
+      "review": "76 个 bundle 逐分支独有提交之和 1,223；去重 320",
+      "measured_now": "76 个 manifest tag：1,223 / 320（一致）；77 个当前 tag：1,225 / 322",
+      "difference": "全部当前 tag 多 2（P03 两提交）",
+      "explanation": "与 review 完全一致；差异只来自返修期新增 P03 tag。19 条当前未合并分支子集为 351 / 224。"
+    },
+    {
+      "item": "worktrees 逻辑字节",
+      "review": "120,225,570,583 B / 111.97 GiB / 952,193 files，7 处权限拒绝",
+      "measured_now": "120,499,443,541 B / 112.223852 GiB / 954,980 files，0 处权限拒绝",
+      "difference": "+273,872,958 B / +2,787 files",
+      "explanation": "本扫描晚于 review 且未遇到权限拒绝；差异方向与被拒绝的 .pytest_cache / pytest-of-49745 子树一致，但未逐路径归因（NOT_RUN）。"
+    },
+    {
+      "item": "git fsck dangling",
+      "review": "382 blob / 75 tree / 157 commit = 614",
+      "measured_now": "382 blob / 75 tree / 156 commit = 613，exit 0，0 其他诊断",
+      "difference": "-1 commit",
+      "explanation": "P03 tag 使两个 P03 提交可达应减少 2；实测仅减少 1，+1 未归因（NOT_RUN）。"
+    },
+    {
+      "item": "治理 warning",
+      "review": "写报告后 PASS (4 warnings)",
+      "measured_now": "PASS (4 warnings)，exit 0",
+      "difference": "一致",
+      "explanation": "新增的 review/P03 证据文件都在同一 warning 的未登记清单中。"
+    },
+    {
+      "item": "18 个受影响资源",
+      "review": "18 具体 source / 15 删除根 / 12 完整性缺口",
+      "measured_now": "18 source、15 删除根（沿用 review 口径）、11 个原位置缺失 + P06 子树缺失 + 6 个部分回建；12 个完整性缺口与 review 一致",
+      "difference": "一致",
+      "explanation": "本测量独立检查 18 条路径存在性、P06 子树、6 处回建 HEAD 前缀与 detached 状态。"
+    },
+    {
+      "item": "82 个 dirty worktree",
+      "review": "50/50 removed 在 inventory 中 dirty=0",
+      "measured_now": "inventory dirty>0 = 82；apply refused 105 = 68 dirty + 37 permission；57 protected + main skipped",
+      "difference": "文档中的 82 与收据 105 不是同一口径",
+      "explanation": "82 是删除前 inventory 的 dirty>0 计数（其中 14 个受保护并被 skipped）；apply 时另有 37 个 inventory dirty=0 但 git 拒绝（Permission denied）。Stage 7 的『82 未碰』需要按此改写。"
+    },
+    {
+      "item": "49.48 GiB",
+      "review": "53,129,852,873 B = 49.48 GiB 逻辑字节合计，不能认证物理净释放",
+      "measured_now": "53,129,852,873 B = 49.481031 GiB = 53.129853 GB；收据匹配；无卷空间前后差值",
+      "difference": "一致",
+      "explanation": "数值可复算；限制同 review，且删除后 6 个 worktree 回建。"
+    }
+  ],
+  "ac_reevaluation": {
+    "rule": "没有证据的 AC 不能写 MET；executed / NOT_RUN / UNVERIFIED 分开记录。以下为建议判定，不是自我批准。",
+    "AC1": {
+      "original": "MET",
+      "recommended": "PARTIAL（不能 MET）",
+      "executed_evidence": [
+        "inventory.json 可读：counts=418/342/76/213/57；branches=418 条；worktrees=213 条；protected_worktree_names=57 条",
+        "inventory.md 含『AC1 四表』标题与六节（总量/分支表/worktree 表/可清理候选/带改动 worktree/大体积目录表）",
+        "archive-manifest 76、worktree-removal 50/105/58、branch-deletion 323/95、workspace-cleanup 158/5 收据均在"
+      ],
+      "not_run_or_unverified": [
+        "没有未跟踪逐文件大小/引用表（R208-07）",
+        "branch 表记录无原 tip SHA（字段仅 branch/merged/unique_commits/tip_date/checked_out_at/is_mainline）",
+        "267 条已合并删除项只有 19 条有原 tip 交叉证据",
+        "Task 测试表 AC1 行写 NOT_RUN，与 AC1 MET 冲突"
+      ]
+    },
+    "AC2": {
+      "original": "MET",
+      "recommended": "PARTIAL（不能 MET）",
+      "executed_evidence": ["Stage 7 节存在（doc/WORKTREE_SAFETY_INVENTORY.md:52-150），已读"],
+      "not_run_or_unverified": [
+        "126 与当前 132 不一致",
+        "『不忽略 ignored』与默认 git status 不展开 ignored 的事实相反",
+        "『8 个 temp 夹具永久丢失』被现存同哈希副本与可重建固定字节反证",
+        "『workspace/worktrees 一律不动』与实际移除 7 处不符",
+        "1223 被当作去重提交数（实际去重 320）",
+        "3.6 GiB task-envs 被整体称为检测环境（检测环境仅 131.73 MiB）",
+        "fsck 写 0 problems 但当前有 613 条 dangling 诊断"
+      ]
+    },
+    "AC3": {
+      "original": "PARTIAL（13 条：6 worktree + 8 temp）",
+      "recommended": "PARTIAL / 保护目标 FAIL",
+      "executed_evidence": [
+        "57/57 保护名仍匹配已注册 worktree 且目录存在（名称子集）",
+        "18 条具体 source 存在性：7 存在 / 11 原位置缺失",
+        "P06 old-runtime/worktree 缺失；old-runtime 存在",
+        "review-scratch 4 条收据合计 14,699,110,702 B",
+        "X6 capture 副本 stdout.md/stderr.md hash 与 r208 Q3 一致"
+      ],
+      "not_run_or_unverified": [
+        "保护枚举完整性（共享根 SEC-FIX 泛化声明、38 个 verification json + Task 表）未重建",
+        "57 名子集不能证明字节未变，也不能覆盖 18 个资源",
+        "7 个 temp source 的备份搜索未做（UNVERIFIED）"
+      ]
+    },
+    "AC6": {
+      "original": "MET",
+      "recommended": "PARTIAL（不能 MET）",
+      "executed_evidence": [
+        "worktree-removal.json：removed=50（inventory dirty=0）、refused=105、skipped=58",
+        "213 - 50 - 37 + 6 = 132；当前 132",
+        "6 处回建 HEAD 均匹配 inventory 九位前缀、detached、status 空",
+        "44 个被删目录未再注册且不存在；37 个仅登记移除的目录仍存在"
+      ],
+      "not_run_or_unverified": [
+        "ignored 内容无逐文件清册（R208 关键缺口）",
+        "原始 status/stash stdout、stderr、退出码未保存",
+        "protected/unique/terminal/reference 门槛未完整落实（P03 detached 两提交、18 资源）",
+        "无删除前全量字节哈希"
+      ]
+    },
+    "AC7": {
+      "original": "PARTIAL（释放 20.15 GB）",
+      "recommended": "PARTIAL / 安全目标 FAIL",
+      "executed_evidence": [
+        "workspace-cleanup removed=158，sum=21,636,208,040 B = 20.150289 GiB",
+        "worktree-removal removed=50，sum=31,493,644,833 B = 29.330742 GiB",
+        "合计 53,129,852,873 B = 49.481031 GiB",
+        "workspace/worktrees 实际移除 7 处，其中 4 处回建"
+      ],
+      "not_run_or_unverified": [
+        "无 G: 可用空间前后差值",
+        "无 junction/hardlink 分摊",
+        "回建占用未扣除",
+        "物理净释放 UNVERIFIED"
+      ]
+    },
+    "AC9": {
+      "original": "MET（PASS 3 warnings；fsck 0 problems；26 草稿）",
+      "recommended": "PARTIAL（不能 MET）",
+      "executed_evidence": [
+        "governance check exit 0，PASS (4 warnings)",
+        "git fsck exit 0，无 corruption；613 条 dangling 诊断",
+        "untracked doc/tasks 26；tracked doc/tasks 296；tracked dirty 0/staged 0",
+        "93 分支 / 132 worktree 实测"
+      ],
+      "not_run_or_unverified": [
+        "保护与恢复验收不成立（18 资源、11 缺失、6 部分回建）",
+        "『8 个永久丢失』未证实",
+        "bundle 恢复演练未做（UNVERIFIED）",
+        "AC9 MET 与 Task 测试表 NOT_RUN 冲突"
+      ]
+    },
+    "AC4_AC5_AC8_note": "不在本次重评范围：AC4 payload 76/76（当前 77/77）verify 通过；AC5 净删除 325 = 323 receipt + main/master 2；AC8 主线裁定未变。"
+  },
+  "instructions_number_note": {
+    "text": "派发说明中出现『41 个 archive bundle』；Lead 于 2026-10-20 确认系笔误。",
+    "lead_confirmation": "正确口径为 76（archive-manifest 原 corpus）/ 77（含 P03 返修保全新增）；本项目所有证据中不存在 41 个 bundle 的口径。",
+    "is_discrepancy_item": false,
+    "status": "LEAD_CONFIRMED_TYPO",
+    "measured": {"manifest": 76, "current": 77}
+  },
+  "read_only_boundary": {
+    "git_write_commands_run": [],
+    "deleted_or_moved": [],
+    "gc_prune_run": false,
+    "push_run": false,
+    "doc_or_tools_modified": false,
+    "files_written": [
+      "verification/WORKSPACE-CONSOLIDATION-1/measurements-r208.json",
+      "verification/WORKSPACE-CONSOLIDATION-1/records-correction-r208.md"
+    ]
+  }
+}

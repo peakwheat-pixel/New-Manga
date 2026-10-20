@@ -4,9 +4,8 @@
 
 ## 当前 Task
 
-- 当前 Task：[WORKSPACE-CONSOLIDATION-1](tasks/WORKSPACE-CONSOLIDATION-1.md) **`in_review`**（用户 2026-10-20 授权执行，已完成：418→93 分支、213→126 worktree、释放约 49.5 GB、57/57 保护项在位；待 Codex 复核）。最近收口：[M2-PROD-DETECT-ENV-1](tasks/M2-PROD-DETECT-ENV-1.md)（`closed_with_limitations`：检测链路本机已可用，`tests/providers` 442 passed；原「离线」为误判）。
-- **WORKSPACE-CONSOLIDATION-1 解除了 Codex 2026-10-20T19:55 的三条停止理由**：①dsh 已在位为唯一 Active Coordinator（`coordinator-lease.py status` → `state: ACTIVE`），不需要交接；②Task 文件 + 本行 + Plan 行即激活与冻结范围；③该 Task 的 AC2 就是刷新 `WORKTREE_SAFETY_INVENTORY`。
-- ~~**Plan 集合内无活动节点**~~（已由上一行取代；历史陈述保留于 r38 §5-1，不再适用）。
+- 当前 Task：[WORKSPACE-CONSOLIDATION-1](tasks/WORKSPACE-CONSOLIDATION-1.md) **`in_review`**（r208=`changes_requested`，返修中：418→93 分支、213→132 注册 worktree；76 条 archive bundle（P03 保全后 77，77/77 verify exit 0）；53,129,852,873 B=49.48 GiB 为删除收据逻辑字节、非物理净释放；18 个保护资源受影响：11 缺失、P06 子树缺失、6 仅部分回建；AC1/2/3/6/7/9 不判 MET；详见 Task 与 codex-review-r208.md）。最近收口：[M2-PROD-DETECT-ENV-1](tasks/M2-PROD-DETECT-ENV-1.md)（`closed_with_limitations`：检测链路本机已可用，`tests/providers` 442 passed；原「离线」为误判）。
+- **WORKSPACE-CONSOLIDATION-1 返修依据**：Codex r208 指出 P03 两提交未归档、18 个保护资源受影响、ignored 无删前清册、记录与 AC 过时；已保全 P03、建台账、追加更正四文档，待 Codex 复审，不得自行 done。
 - **[ARCH-DOC-REBASELINE](tasks/ARCH-DOC-REBASELINE.md)**：`closed_with_limitations`（r37 的 7+1：7 Gate 达成 + AC-CONSUMPTION `PARTIAL`，6/8 消费者已处置；**ZCode 设计 Gate 与第二环境无活动 Task**）。
 - `DETECT-TILING-1` / `DETECT-MEMORY-GUARD-1` / `SEC-FMT-IMPL-1` / `PDF-STREAM-FIX-1` 均 `closed_with_limitations`。
 - `P09-AC3-DELETE-1`/`HARDEN-1` `closed_with_limitations`；**`P18` 4/8**（AC2 门槛、AC5 阻塞）；`P20` 6/7；`P16`/`P17` `done`。

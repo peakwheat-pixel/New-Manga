@@ -51,5 +51,5 @@
 |GOV-PLAN-BUDGET-1|—|done|
 |RUST-ENV-BASELINE-1（P20-CLOSE-BOUND-1）/ P07交互补缺（P02）/ P21旧栈归档（P20+另授权）|—|proposed（P07/P21可选）|
 |P22 响应归属|P22-REBASE-1|已集成；P04 不放行，H1/P2-1/13 与 BC-AC5 缺项保留。已完成见各节点行。|
-|WORKSPACE-CONSOLIDATION-1|—|**in_review**（用户 2026-10-20 授权执行；9 AC 全 MET；418→93 分支、213→126 worktree、释放约 49.5 GB；57/57 保护项在位；待 Codex 复核）|
+|WORKSPACE-CONSOLIDATION-1|—|**in_review / changes_requested（r208）**：418→93 分支、213→132 注册 worktree；76 条 archive bundle（P03 保全后 77，77/77 verify exit 0）；49.48 GiB 为两份删除收据的删除前递归逻辑字节合计、非物理净释放；18 个具体保护资源受影响（11 原位置缺失、P06 子树缺失、6 仅部分回建）；AC1/AC2/AC3/AC6/AC7/AC9 不能判 MET。详见 records-correction-r208|
 READY 节点：**无**。done：**51 项**。

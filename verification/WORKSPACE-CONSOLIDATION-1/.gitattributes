@@ -1,0 +1,5 @@
+# R208: files under this evidence directory are SHA-256 pinned in
+# doc/tasks/WORKSPACE-CONSOLIDATION-1.md Canonical Evidence. Keep LF on checkout
+# so those pins stay reproducible under core.autocrlf=true — same rationale as
+# the GOV-EOL-PIN-1 rules in the repository-root .gitattributes.
+* text eol=lf

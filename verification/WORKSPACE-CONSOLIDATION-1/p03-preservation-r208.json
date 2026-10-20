@@ -1,0 +1,176 @@
+{
+  "evidence_id": "EV-R208-P03-PRESERVATION",
+  "task_id": "WORKSPACE-CONSOLIDATION-1",
+  "review_basis": "verification/WORKSPACE-CONSOLIDATION-1/codex-review-r208.md#R208-01",
+  "authorization": {
+    "task_file": "doc/tasks/WORKSPACE-CONSOLIDATION-1.md",
+    "allowed_paths": [
+      "G:/CODEX/New Manga.workspace/archive/bundles",
+      "Git refs: archive/* tag creation (Task '允许修改范围')"
+    ],
+    "notes": "No scope expansion used. Only one new archive tag and one new bundle file were created; no existing ref or bundle was overwritten."
+  },
+  "generated_at": "2026-10-20T21:36:00+08:00",
+  "environment": {
+    "shell": "PowerShell 7.6.6",
+    "git": "git version 2.52.0.windows.1",
+    "repo": "G:/CODEX/New Manga"
+  },
+  "subjects": {
+    "deleted_worktree_path": "G:/CODEX/New Manga.worktrees/P03-review-prep-112495c7",
+    "deleted_worktree_present_now": false,
+    "head_commit": "0a25ceb4577158d9dff184776ff4599e74e25c57",
+    "parent_commit": "112495c70ff8a9c50fe00f4cd2eaa861d9a11b69",
+    "prerequisite_commit": "e3319990216699357c8b5a37c494010505535bb6",
+    "unique_commit_set": [
+      "0a25ceb4577158d9dff184776ff4599e74e25c57",
+      "112495c70ff8a9c50fe00f4cd2eaa861d9a11b69"
+    ],
+    "commit_subjects": {
+      "0a25ceb4577158d9dff184776ff4599e74e25c57": "docs(P03): pin handoff guidance and review checkpoint",
+      "112495c70ff8a9c50fe00f4cd2eaa861d9a11b69": "docs(P03): update r3 handoff and RESUME referencing evidence commit e3319990 and state in_review"
+    }
+  },
+  "pre_state": {
+    "measured_at": "2026-10-20T21:31:00+08:00",
+    "head": "3947d63447457fe3ef8d3587942e632724ab3d72",
+    "branch": "antigravity/P09-AC3-DELETE-HARDEN-1",
+    "object_type_head": "commit",
+    "object_type_parent": "commit",
+    "refs_containing_head_commit": [],
+    "refs_containing_parent_commit": [],
+    "rev_list_head_not_all": [
+      "0a25ceb4577158d9dff184776ff4599e74e25c57",
+      "112495c70ff8a9c50fe00f4cd2eaa861d9a11b69"
+    ],
+    "tag_collision_check": {
+      "ref": "refs/tags/archive/P03-review-prep-112495c7",
+      "git_rev_parse_verify_exit": 1,
+      "result": "absent"
+    },
+    "bundle_collision_check": {
+      "path": "G:/CODEX/New Manga.workspace/archive/bundles/P03-review-prep-112495c7.bundle",
+      "test_path": false,
+      "result": "absent"
+    },
+    "archive_tag_count_before": 76,
+    "bundle_file_count_before": 76,
+    "ancestor_check": {
+      "command": "git merge-base --is-ancestor e3319990216699357c8b5a37c494010505535bb6 antigravity/P09-AC3-DELETE-HARDEN-1",
+      "exit": 0,
+      "result": "prerequisite is on the governance mainline; mainline..head contains exactly the two unique commits"
+    }
+  },
+  "actions": [
+    {
+      "order": 1,
+      "command": "git -C 'G:/CODEX/New Manga' tag archive/P03-review-prep-112495c7 0a25ceb4577158d9dff184776ff4599e74e25c57",
+      "exit": 0,
+      "effect": "created lightweight archive tag",
+      "force_used": false
+    },
+    {
+      "order": 2,
+      "command": "git -C 'G:/CODEX/New Manga' bundle create 'G:/CODEX/New Manga.workspace/archive/bundles/P03-review-prep-112495c7.bundle' antigravity/P09-AC3-DELETE-HARDEN-1..archive/P03-review-prep-112495c7",
+      "exit": 0,
+      "effect": "created incremental bundle; no -f flag exists for this command and the target path did not exist beforehand",
+      "force_used": false
+    }
+  ],
+  "ref": {
+    "refname": "refs/tags/archive/P03-review-prep-112495c7",
+    "objectname": "0a25ceb4577158d9dff184776ff4599e74e25c57",
+    "type": "commit",
+    "persistent": true,
+    "verified_after_creation": true
+  },
+  "bundle": {
+    "path": "G:/CODEX/New Manga.workspace/archive/bundles/P03-review-prep-112495c7.bundle",
+    "bytes": 4391,
+    "sha256": "4c2aef444ab3974401dfe038c7cf26f289cb8dd370bfe6062dfb5d2d70fddbee",
+    "format": "git bundle v2",
+    "hash_algorithm": "sha1",
+    "self_contained": false,
+    "incremental": true,
+    "prerequisites": [
+      {
+        "sha": "e3319990216699357c8b5a37c494010505535bb6",
+        "comment": "fix(verification): strengthen read-only normalization verifier and remove unverified causal claims in manifest",
+        "present_in_repo_at_delivery": true
+      }
+    ],
+    "dependency_statement": "This is an incremental bundle, not an independent complete backup. Restoring it requires the prerequisite object e3319990216699357c8b5a37c494010505535bb6 and its ancestor history to remain in the repository (or in another preserved full backup). The 76 pre-existing branch bundles have the same property.",
+    "header_text": "# v2 git bundle\n-e3319990216699357c8b5a37c494010505535bb6 fix(verification): strengthen read-only normalization verifier and remove unverified causal claims in manifest\n0a25ceb4577158d9dff184776ff4599e74e25c57 refs/tags/archive/P03-review-prep-112495c7\n"
+  },
+  "bundle_verify": {
+    "with_prerequisites": {
+      "command": "git -C 'G:/CODEX/New Manga' bundle verify 'G:/CODEX/New Manga.workspace/archive/bundles/P03-review-prep-112495c7.bundle'",
+      "exit": 0,
+      "output": "The bundle contains this ref:\n0a25ceb4577158d9dff184776ff4599e74e25c57 refs/tags/archive/P03-review-prep-112495c7\nThe bundle requires this ref:\ne3319990216699357c8b5a37c494010505535bb6 \nThe bundle uses this hash algorithm: sha1\nG:/CODEX/New Manga.workspace/archive/bundles/P03-review-prep-112495c7.bundle is okay"
+    },
+    "without_prerequisites": {
+      "method": "git init --bare in an isolated system-temp directory, then git bundle verify before any object transfer",
+      "exit": 1,
+      "output": "error: Repository lacks these prerequisite commits:\nerror: e3319990216699357c8b5a37c494010505535bb6 ",
+      "conclusion": "Confirms the bundle is incremental and cannot restore the commits without the prerequisite history."
+    },
+    "list_heads": {
+      "command": "git -C 'G:/CODEX/New Manga' bundle list-heads <bundle>",
+      "exit": 0,
+      "output": "0a25ceb4577158d9dff184776ff4599e74e25c57 refs/tags/archive/P03-review-prep-112495c7"
+    }
+  },
+  "restore_drill": {
+    "performed_at": "2026-10-20T21:33:00+08:00",
+    "isolated_directory": "C:/Users/49745/AppData/Local/Temp/p03-bundle-verify-db01e2dede9740858d74fd6ae93a2d5f",
+    "method": "git init --bare; GIT_ALTERNATE_OBJECT_DIRECTORIES pointed at G:/CODEX/New Manga/.git/objects to supply the prerequisite; git fetch from the bundle file; then inspect the restored tag and commits. The main repository was not modified.",
+    "fetch_exit": 0,
+    "fetched_ref_output": "From G:/CODEX/New Manga.workspace/archive/bundles/P03-review-prep-112495c7.bundle\n * [new tag]             archive/P03-review-prep-112495c7 -> archive/P03-review-prep-112495c7",
+    "restored_ref_sha": "0a25ceb4577158d9dff184776ff4599e74e25c57",
+    "restored_commit_types": {
+      "0a25ceb4577158d9dff184776ff4599e74e25c57": "commit",
+      "112495c70ff8a9c50fe00f4cd2eaa861d9a11b69": "commit"
+    },
+    "restored_log": [
+      "0a25ceb45 (tag: archive/P03-review-prep-112495c7) docs(P03): pin handoff guidance and review checkpoint",
+      "112495c70 docs(P03): update r3 handoff and RESUME referencing evidence commit e3319990 and state in_review"
+    ],
+    "commit_coverage": {
+      "expected_rev_list": [
+        "0a25ceb4577158d9dff184776ff4599e74e25c57",
+        "112495c70ff8a9c50fe00f4cd2eaa861d9a11b69"
+      ],
+      "restored_rev_list": [
+        "0a25ceb4577158d9dff184776ff4599e74e25c57",
+        "112495c70ff8a9c50fe00f4cd2eaa861d9a11b69"
+      ],
+      "set_equal": true,
+      "changed_paths": [
+        "M\tdoc/handoffs/P03-PACKAGED-SFX-ENTRY-140a6686-r3.md",
+        "M\tverification/P03-PACKAGED-SFX-ENTRY/RESUME.md"
+      ]
+    },
+    "conclusion": "Both unique commits can be reconstructed from the bundle when the recorded prerequisite history exists. This proves byte-level archive recoverability, not restoration of the deleted worktree directory, its branch checkout form, or its ignored/untracked runtime content."
+  },
+  "existing_archive_untouched": {
+    "pre_existing_bundles": 76,
+    "post_creation_bundles": 77,
+    "pre_existing_bundle_total_bytes": 22106711,
+    "post_creation_bundle_total_bytes": 22111102,
+    "delta_bytes": 4391,
+    "unchanged_evidence": "All 76 pre-existing bundle files retain their prior mtimes (latest 2026/10/20 20:09:43, before this run at 21:32:49); only the new file was added. Their contents were not re-created or overwritten by this action."
+  },
+  "not_performed": [
+    "git gc / git prune / git maintenance",
+    "git push",
+    "git branch -f / tag -f / force update",
+    "deletion or moving of any repository or archive file",
+    "write-back/restore into the deleted original worktree path"
+  ],
+  "residual_limitations": [
+    "The deleted worktree directory G:/CODEX/New Manga.worktrees/P03-review-prep-112495c7 is not recreated; only its two commits are made ref-addressable and archived.",
+    "The pre-deletion worktree form (detached HEAD checkout), ignored files, and directory metadata are not restored and no pre-deletion byte inventory for them exists.",
+    "The bundle is incremental; its restorability depends on the prerequisite object and its ancestors remaining in a preserved repository.",
+    "No GC/prune was run, so no object was removed before archiving."
+  ]
+}

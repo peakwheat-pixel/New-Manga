@@ -51,6 +51,12 @@
 
 ## Stage 7 工作区整理（2026-10-20，WORKSPACE-CONSOLIDATION-1）
 
+> **r208 更正（2026-10-20）**：本节以下关于「126 个 worktree」「57/57 保护项在位」
+> 「8 个 temp 永久丢失」「1,223 个独有提交」「49.5 GB」「workspace/worktrees 未动」
+> 「3.6 GB task-envs 是检测环境」等表述已被 Codex `codex-review-r208.md` 与
+> `verification/WORKSPACE-CONSOLIDATION-1/records-correction-r208.md` 推翻。
+> **历史原文保留；当前口径以本节末尾新增的「Stage 8」为准。**
+
 本节是整个仓库第一次**批量**清理，由 dsh 执行、Codex 复核。前 6 个 Stage 均在
 P02/P02PRE 单条线上作业，本节处理全仓。
 
@@ -147,4 +153,60 @@ P02/P02PRE 单条线上作业，本节处理全仓。
 
 **本清单的 Stage 7「删除后状态」据此不成立为「保护项全在位」，须以本节为准。**
 后续任何依赖 Stage 7 的判断都应先读本节。
+
+## Stage 8 r208 复审后的当前口径（2026-10-20，追加式更正）
+
+本节不删除 Stage 7 原文；只修正当前数量、口径与事故影响面。依据：
+`verification/WORKSPACE-CONSOLIDATION-1/codex-review-r208.md`（`changes_requested`）、
+`incident-ledger-r208.md` / `.json`、`records-correction-r208.md`、`measurements-r208.json`。
+本节度量时点 HEAD = `3947d63447457fe3ef8d3587942e632724ab3d72`（未漂移）。
+
+### 当前数量（实测，可复算）
+
+| 项 | Stage 7 旧值 | 当前实测 | 复算 |
+|---|---:|---:|---|
+| 已注册 worktree | 126 | **132** | 213 − 50（目录移除）− 37（仅移除登记）+ 6（回建）|
+| 本地分支 | 93 | **93** | 418 − 323（receipt）− 2（main/master）|
+| 其中未并入治理主线 | 未单列 | **19** | 19/19 均有 `archive/*` tag、bundle 且 verify exit 0 |
+| `archive/*` tag | 76 | **77** | 76 个原分支归档 + 1 个 P03 返修保全 |
+| `git fsck` | 0 problems | exit 0，无 corruption | **613 条 dangling 诊断**（382 blob / 75 tree / 156 commit），dangling 不等于损坏 |
+| 治理检查 | PASS (3 warnings) | PASS (4→3 warnings) | 登记 `codex-review-r208.md` 后第 4 条未登记 warning 消失 |
+
+### 口径更正
+
+- **1,223 是分支计数合计，不是去重提交数**：`archive-manifest.json` 的 76 条 branch 逐分支
+  `rev-list mainline..tag` 求和 = 1,223；跨 bundle 去重 = 320。返修期新增 P03 后当前 77 个 archive ref
+  = 1,225 合计 / 322 去重。两口径不得混用。
+- **49.48 GiB 是删除收据的逻辑字节合计，不是物理净释放**：`31,493,644,833 + 21,636,208,040 =
+  53,129,852,873 B = 49.481031 GiB`；没有删除前后卷可用空间差值，未扣 junction/硬链接与回建占用。
+- **`workspace/worktrees` 实际移除 7 处，不是「完全没动」**：FEAT-CREATE-1/2/4、
+  P02-NEW-TIME-X6-AC1-AC7、P15-C1-review、P19-AC3-1、P19-UI-FIX-2；其中 4 处后来回建。
+  该目录当前逻辑字节 120,499,443,541 B（112.22 GiB，不跟随 reparse；与 r208 时点差异未逐路径归因）。
+- **`task-envs` 不等于检测环境**：总逻辑 3,880,296,828 B（3.61 GiB），6 个直接子目录；
+  `M2-PROD-DETECT-ENV-1` 仅 138,129,041 B（131.73 MiB），最大项是 P02-NEW-TIME-X6-BUILD-CARGO
+  （2,328,053,874 B）。
+- **57/57 只是名称子集**：57 个保护名仍注册且目录存在，但不证明保护枚举完整，也不证明字节未变。
+  反例：`P06-GC-DISTRIBUTION-MIGRATION` 根在名单内且存在，但其受保护子树 `old-runtime/worktree` 已缺失。
+- **判定规则第 2 条的 ignored 语义**：默认 `git status` **不展开 ignored**；Stage 7 原文写「不忽略 ignored」
+  与事实相反。ignored 内容必须另行逐文件清册，不能以 status 空代证。
+
+### 事故影响面（18 个 source / 15 个删除根）
+
+- 原「13 条」= 6 worktree + 7 个唯一 temp 资源；X6 capture 在父 Task 与 POSTRUN-REVIEW 重复登记，
+  去重后是 7 个 temp，不是 8 个。新发现 4 个 P09 `review-scratch` 与 P06 `old-runtime/worktree` 子树，
+  因此当前口径为 **18 个具体受保护 source，命中 15 个实际删除根**（14 个路径相等 + 1 个父子覆盖）。
+- 当前状态：6 个 worktree **仅原路径与 HEAD 部分重建**（detached；原分支检出、ignored 内容、目录元数据未恢复）；
+  11 个 source 原位置缺失（4 review-scratch + 7 temp 路径）；P06 父根在而受保护子树缺失。
+- 可用性分类（说明性字段，不新增旧 schema 的 disposition）：`PARTIALLY_RECONSTRUCTED` 6、
+  `COPY_AVAILABLE` 1（X6 capture，现存副本同哈希）、`BYTES_RECONSTRUCTIBLE` 3
+  （X6 根 + 两轮 selftest 的固定内容文件，内存可精确重建）、`UNVERIFIED_NO_BACKUP_EVIDENCE` 8。
+- 不得再把「8 个 temp 永久丢失」当既证事实；不得把六个 worktree 称原样复原；
+  不得把 57/57 称保护项全在位。逐项字段与搜索范围见 `incident-ledger-r208.md`。
+
+### 独立复核要求（取代 Stage 7 同名段）
+
+**Codex 复核时应验证**：132 个注册 worktree；57 个名称子集仍注册且目录存在（不等于保护完整）；
+19 条未合并分支的 tag/tip/bundle/verify；76 manifest + 1 P03 增量共 77 个 bundle；
+fsck exit 0 但含 613 条 dangling；26 个草稿路径不变；18 个受影响 source 按 availability 逐项记录；
+Plan/STATUS/Task 的 r208 更正与本文件一致。
 
