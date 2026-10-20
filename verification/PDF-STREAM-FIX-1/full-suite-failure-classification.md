@@ -10,7 +10,7 @@
 |---|---:|---|---|
 | **A. 环境版本过旧** | **2** | `transformers 4.48.3` < 权重要求的 `4.49.0` | **否**（离线，无索引无缓存）|
 | **B. 测试假设「机器是裸的」** | **4** | 测试把「没装可选依赖」写成断言 | **是**（改测试，不改产品）|
-| **C. workbench 时序/投影** | **3** | **未深究** | 未知 |
+| **C. 测试与 P11 §4.5 冲突 / 旧 Qt 栈** | **3** | **测试过期 + 旧栈** | 策略上不修 |
 
 **其中没有一个是「产品代码有 bug」的直接证据。**
 
@@ -136,25 +136,100 @@ else:
 
 **本文档是证据，不是实施。**
 
-## 四、C 类：workbench（3 个，未深究）
+## 四、C 类：workbench（3 个）——已诊断，全部不是新架构缺陷
 
-| 测试 | 首条断言 |
+**上一版本文档把这 3 个标为「未深究」。现已查清。**
+
+### 4.1 两个：测试与冻结契约 P11 §4.5 冲突
+
+**失败**：
+
+```
+test_projection.py::test_pending_run_all_waiting_and_pause_stop_enabled
+   assert projection.can_pause is True   -> 实际 False
+test_projection.py::test_button_matrix_all_statuses
+   assert (False, True, False) == (True, True, False)
+```
+
+**即：两个测试都要求 `pending` 状态的 Run 可以 pause。**
+
+**而 P11 §4.5「非法转换拒绝清单」明确写**：
+
+| 当前状态 | 仅允许 | **必须拒绝** |
+|---|---|---|
+| **`Pending`** | scheduler start、`stop` | **`pause`**、`continue`、`restart`、`abandon`、… |
+
+**所以按冻结契约，`Pending` 必须**拒绝** `pause`。**
+
+**`src/application/tasks/projection.py:417-418` 正是这么实现的**：
+
+```python
+if status is PipelineRunStatus.PENDING:
+    return dict(can_stop=True)        # 无 can_pause
+```
+
+**代码与 P11 §4.5 一致；测试与契约冲突。**
+
+**时间线（`git log -L` 证据）**：
+
+| 提交 | 内容 |
 |---|---|
-| `test_projection.py::test_pending_run_all_waiting_and_pause_stop_enabled` | `assert False is True` |
-| `test_projection.py::test_button_matrix_all_statuses` | `assert (False, True, False) == (True, True, False)` |
-| `test_workbench_viewmodel.py::test_pause_shows_optimistic_feedback_immediately` | `assert False` |
+| `da1daf11e`（TASK-013） | 测试写下 `pending → pause 可用` 的期望 |
+| `78b0d439a`（P13） | **故意**把 `_button_enablement` 改为：`RUNNING` → pause+stop；**`PENDING` → 仅 stop** |
+| —— | **测试未随之更新** |
 
-**这三个我没有查根因。**
+**原始实现是** `running = {PENDING, RUNNING}; if status in running: return dict(can_pause=True, can_stop=True)`，
+**P13 显式拆开，把 PENDING 排除出 pause。**
 
-**它们可能是**：
-- **产品缺陷**（UI 状态投影错了）
-- **测试过期**（期望值对应旧行为）
+**所以：这是测试过期，不是产品缺陷。**
 
-**从名字看涉及 pause 的乐观反馈与按钮矩阵投影。**
+### 4.2 一个：旧 PySide6 栈，且失败点与 pause 无关
 
-**我无法从断言文本区分这两者**，需要读 `tests/workbench` 与被测的 projection/ViewModel 代码。
+**失败**：
 
-**所以：C 类既不能算「环境问题」，也不能算「已证明无害」。**
+```
+test_workbench_viewmodel.py::test_pause_shows_optimistic_feedback_immediately
+   continueRun() 后 15s 内 run_status 未到达 "completed"
+```
+
+**注意它前面全部通过了**：
+
+- `elapsed_ms <= 200` **通过**
+- `taskProgress["pausing"] is True` **通过**
+- `can_pause is False`（暂停中不可重复暂停）**通过**
+- `run_status == "paused"` **通过**
+- `can_continue is True` **通过**
+
+**失败在**最后一步**：`continueRun()` 之后等不到 `completed`。**
+
+### 4.3 而这个测试驱动的是**旧 Qt 栈**
+
+**`src/ui/viewmodels/workbench/viewmodel.py` 第 6 行**：
+
+```python
+from PySide6.QtCore import Property, QObject, QTimer, Signal, Slot
+```
+
+**`tests/workbench/` 有 8 个文件导入 PySide6。**
+
+**而 `AGENTS.md` 明确**：
+
+> **当前唯一继续演进的产品架构为 Windows / React + TypeScript / Tauri / Python Core / SQLite / Managed Copy。**
+> **PySide6/QML 代码、测试和既有 Task 仅保留为历史证据，不再释放 Legacy 实现、诊断或修复任务。**
+
+**所以这个测试在**策略上**不属于可修复范围。**
+
+### 4.4 但我不能因此说「共享层没问题」
+
+**这个测试同时驱动 `PipelineService`（应用层，新架构仍在用）。**
+
+**`continue` 后跑不完，理论上也可能是应用层的缺陷。**
+
+**反证**：`tests/pipeline` **94 passed**——应用层管线本身是健康的。
+
+**所以失败点更可能在旧 viewmodel 的 continue 路径上。**
+
+**但这只是推断，不是验证。要点是：即使是应用层缺陷，这个测试也不是能证明它的地方。**
 
 ## 五、对「9 failed」的准确表述
 
@@ -166,9 +241,11 @@ else:
 |---|---:|---|
 | **环境版本过旧（transformers）** | **2** | **否**（代码与权重都正确）|
 | **测试假设机器无 GPU/无 manga-ocr** | **4** | **否**（产品行为正确）|
-| **workbench 时序/投影** | **3** | **未知**（未深究）|
+| **测试与 P11 §4.5 冲突（2）/ 旧 Qt 栈（1）** | **3** | **否**（代码符合契约；测试过期）|
 
-**所以「6 个不是产品缺陷、3 个待查」比「9 个都是 pre-existing」更准确。**
+**所以：9 个里没有一个是新架构的产品缺陷。**
+
+**这个结论现在有逐项证据，不再是「待查」。**
 
 **而「pre-existing」这个词本身容易读成「老问题、不重要」——**
 **其中 2 个是**真实的功能不可用**（韩漫/日漫检测链路在本机跑不起来）。**
@@ -177,11 +254,15 @@ else:
 
 1. **A 类**：在有网络的机器上升级 `transformers>=4.49.0`，然后复跑 `tests/providers`。
 2. **B 类**：把 4 个测试改为「按运行时前提分支」，两侧都断言（见 §三）。**不得改断言值。**
-3. **C 类**：先诊断，再定性。
+3. **C 类**：**不建议修复**。
+   - 2 个 projection 测试应更新为符合 P11 §4.5（`pending` 不可 pause），
+     **但它们是旧测试且不在任何活动 Task 内**；
+   - 1 个 viewmodel 测试在旧 PySide6 栈上，**按 AGENTS.md 不释放 Legacy 修复任务**。
 
 ## 七、明确未做
 
 - **未改任何测试或 `src/`**
 - **未尝试升级 transformers**（离线，`pip index` 不可达，缓存为空）
-- **未诊断 C 类 3 个失败**
+- **未修复任何 C 类测试**（旧栈 + 活跃 Task 范围外）
 - **未立 Task**（Plan 已收口，需先由 Codex 裁定是否纳入）
+- **未验证** 4.2 的失败是否也存在于应用层（只反证了 `tests/pipeline` 94 passed）
