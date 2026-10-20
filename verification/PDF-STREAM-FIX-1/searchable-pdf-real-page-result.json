@@ -1,0 +1,41 @@
+{
+  "source": {
+    "path": "...\\日漫_JA\\oc material\\17\\169.jpg",
+    "bytes": 82862,
+    "size": [
+      1350,
+      1920
+    ]
+  },
+  "regions": [
+    {
+      "lang": "ja",
+      "text": "こんにちは世界"
+    },
+    {
+      "lang": "zh",
+      "text": "你好世界"
+    },
+    {
+      "lang": "mixed",
+      "text": "漫画 manga 123"
+    }
+  ],
+  "pdf_bytes": 12632851,
+  "extracted_text": "こんにちは世界\n你好世界\n漫画 manga 123\n",
+  "extracted_length": 25,
+  "fonts": [
+    "P16ExportFont"
+  ],
+  "text_found": {
+    "ja": true,
+    "zh": true,
+    "mixed": true
+  },
+  "all_text_found": true,
+  "render": {
+    "pixels": 2592000,
+    "distinct_colours": 21480,
+    "non_white": 248760
+  }
+}
