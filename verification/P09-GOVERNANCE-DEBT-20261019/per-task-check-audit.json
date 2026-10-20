@@ -1,0 +1,2636 @@
+{
+  "total": 320,
+  "failing": 91,
+  "causes": {
+    "Evidence SHA-256 不匹配": 163,
+    "终态或已集成的 approved Task 必须设置 resource_closeout_status: complete。": 2,
+    "Resource disposition 无效": 5,
+    "Resource manifest 不存在": 20,
+    "DONE 不能保留未完成 Acceptance Criteria；范围未完成时使用 closed_with_limitations。": 10,
+    "DONE evidence_dir 含未登记文件": 11,
+    "DONE 必须设置 canonical_evidence_status: complete。": 1,
+    "Resource SHA-256 不匹配": 7,
+    "失效的本地引用": 7,
+    "Canonical evidence 路径缺失": 23,
+    "Evidence class 无效": 2,
+    "当前 DAG 未登记非终态 Task": 26,
+    "Resource 最终路径未验证": 2,
+    "READY Task 未出现在 Plan 的 READY 节点": 4
+  },
+  "tasks": [
+    {
+      "task": "ARCH-DOC-REBASELINE",
+      "status": "closed_with_limitations",
+      "exit": 1,
+      "fail_count": 3,
+      "fails": [
+        "Evidence SHA-256 不匹配：doc/tasks/SEC-FMT-IMPL-1.md",
+        "Evidence SHA-256 不匹配：doc/tasks/PDF-STREAM-FIX-1.md",
+        "Evidence SHA-256 不匹配：doc/tasks/P18.md"
+      ]
+    },
+    {
+      "task": "DETECT-MEMORY-GUARD-1",
+      "status": "closed_with_limitations",
+      "exit": 1,
+      "fail_count": 5,
+      "fails": [
+        "Evidence SHA-256 不匹配：verification/DETECT-MEMORY-GUARD-1/stage2-admission-rule.md",
+        "Evidence SHA-256 不匹配：verification/DETECT-MEMORY-GUARD-1/dsh-zcode-review.md",
+        "终态或已集成的 approved Task 必须设置 resource_closeout_status: complete。",
+        "Resource disposition 无效：—",
+        "Resource manifest 不存在：—"
+      ]
+    },
+    {
+      "task": "DETECT-TILING-1",
+      "status": "closed_with_limitations",
+      "exit": 1,
+      "fail_count": 8,
+      "fails": [
+        "Evidence SHA-256 不匹配：verification/DETECT-TILING-1/stageA-rejection-memory.md",
+        "Evidence SHA-256 不匹配：verification/DETECT-TILING-1/stageA-rejection-memory.json",
+        "Evidence SHA-256 不匹配：verification/DETECT-TILING-1/stageA-jpeg-rejection-memory.json",
+        "Evidence SHA-256 不匹配：verification/DETECT-TILING-1/ac2-sec-fmt-005-mapping.md",
+        "Evidence SHA-256 不匹配：verification/DETECT-TILING-1/ac3-threshold-calibre-defect.md",
+        "Evidence SHA-256 不匹配：verification/DETECT-TILING-1/dsh-stageA-zcode-review.md",
+        "Evidence SHA-256 不匹配：verification/DETECT-TILING-1/dsh-stageA-zcode-review-r2.md",
+        "Evidence SHA-256 不匹配：verification/P09-GOVERNANCE-DEBT-20261019/codex-adjudicate-tiling-closeout-r36.md"
+      ]
+    },
+    {
+      "task": "DIAG-M2-LOCK-CHANGED-REPRO-002",
+      "status": "done",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "DIAG-M2-REGIONLESS-LOCK-CHANGED-001",
+      "status": "done",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "DIAG-READING-EXPORT-001-FIX-A",
+      "status": "done",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "DIAG-READING-EXPORT-001-FIX-B",
+      "status": "done",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "DIAG-READING-EXPORT-001-FIX-C",
+      "status": "done",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "DIAG-READING-EXPORT-001",
+      "status": "done",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "DOC-FIX-LOCK-CHANGED-STALE-COMMENTS",
+      "status": "done",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "ENV-BUNDLE-1-FU1",
+      "status": "closed_with_limitations",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "ENV-BUNDLE-1",
+      "status": "closed_with_limitations",
+      "exit": 1,
+      "fail_count": 2,
+      "fails": [
+        "Evidence SHA-256 不匹配：apps/desktop/src-tauri/src/main.rs",
+        "Evidence SHA-256 不匹配：apps/desktop/src-tauri/src/library_bridge.rs"
+      ]
+    },
+    {
+      "task": "EVENTS-FWD-1",
+      "status": "done",
+      "exit": 1,
+      "fail_count": 1,
+      "fails": [
+        "Resource manifest 不存在：verification/EVENTS-FWD-1/resource-manifest.json"
+      ]
+    },
+    {
+      "task": "EXPORT-IPC-1",
+      "status": "done",
+      "exit": 1,
+      "fail_count": 2,
+      "fails": [
+        "DONE 不能保留未完成 Acceptance Criteria；范围未完成时使用 closed_with_limitations。",
+        "Resource manifest 不存在：verification/EXPORT-IPC-1/resource-manifest.json"
+      ]
+    },
+    {
+      "task": "EXPORT-REVEAL-1",
+      "status": "done",
+      "exit": 1,
+      "fail_count": 2,
+      "fails": [
+        "Evidence SHA-256 不匹配：doc/contracts/M2-C1_TYPED_IPC_CONTRACT.md",
+        "DONE 不能保留未完成 Acceptance Criteria；范围未完成时使用 closed_with_limitations。"
+      ]
+    },
+    {
+      "task": "FEAT-CREATE-1",
+      "status": "done",
+      "exit": 1,
+      "fail_count": 1,
+      "fails": [
+        "DONE 不能保留未完成 Acceptance Criteria；范围未完成时使用 closed_with_limitations。"
+      ]
+    },
+    {
+      "task": "FEAT-CREATE-2",
+      "status": "done",
+      "exit": 1,
+      "fail_count": 1,
+      "fails": [
+        "DONE 不能保留未完成 Acceptance Criteria；范围未完成时使用 closed_with_limitations。"
+      ]
+    },
+    {
+      "task": "FEAT-CREATE-3",
+      "status": "done",
+      "exit": 1,
+      "fail_count": 1,
+      "fails": [
+        "DONE evidence_dir 含未登记文件：G:\\CODEX\\New Manga\\verification\\FEAT-CREATE-3\\dsh-review-r1.md"
+      ]
+    },
+    {
+      "task": "FEAT-CREATE-4",
+      "status": "done",
+      "exit": 1,
+      "fail_count": 1,
+      "fails": [
+        "DONE evidence_dir 含未登记文件：G:\\CODEX\\New Manga\\verification\\FEAT-CREATE-4\\dsh-review-r1.md, G:\\CODEX\\New Manga\\verification\\FEAT-CREATE-4\\gui-uia-command-r5.log, G:\\CODEX\\New Manga\\verification\\FEAT-CREATE-4\\isolation-namespace-rebind.log, G:\\CODEX\\New Manga\\verification\\FEAT-CREATE-4\\isolation-prepare.log, G:\\CODEX\\New Manga\\verification\\FEAT-CREATE-4\\prepare-isolated-data.ps1, G:\\CODEX\\New Manga\\verification\\FEAT-CREATE-4\\rebind-isolated-namespace.py, G:\\CODEX\\New Manga\\verification\\FEAT-CREATE-4\\run-create-uia.ps1, G:\\CODEX\\New Manga\\verification\\FEAT-CREATE-4\\source-preservation-check.log"
+      ]
+    },
+    {
+      "task": "FEAT-IMPORT-MULTI-1",
+      "status": "done",
+      "exit": 1,
+      "fail_count": 4,
+      "fails": [
+        "Evidence SHA-256 不匹配：apps/desktop/src-tauri/src/main.rs",
+        "Evidence SHA-256 不匹配：apps/desktop/src-tauri/src/library_bridge.rs",
+        "DONE evidence_dir 含未登记文件：G:\\CODEX\\New Manga\\verification\\FEAT-IMPORT-MULTI-1\\dsh-review-r1.md, G:\\CODEX\\New Manga\\verification\\FEAT-IMPORT-MULTI-1\\closeout-r1\\appdata-preservation.log, G:\\CODEX\\New Manga\\verification\\FEAT-IMPORT-MULTI-1\\closeout-r1\\checkpoint.md, G:\\CODEX\\New Manga\\verification\\FEAT-IMPORT-MULTI-1\\closeout-r1\\fixture-generation.log, G:\\CODEX\\New Manga\\verification\\FEAT-IMPORT-MULTI-1\\closeout-r1\\gui-runner-console.log, G:\\CODEX\\New Manga\\verification\\FEAT-IMPORT-MULTI-1\\closeout-r1\\isolation-prepare.log, G:\\CODEX\\New Manga\\verification\\FEAT-IMPORT-MULTI-1\\closeout-r1\\main-worktree-status.log, G:\\CODEX\\New Manga\\verification\\FEAT-IMPORT-MULTI-1\\closeout-r1\\make-fixtures-r1.py",
+        "DONE 必须设置 canonical_evidence_status: complete。"
+      ]
+    },
+    {
+      "task": "GOV-001",
+      "status": "done",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "GOV-AC-GATE-1",
+      "status": "done",
+      "exit": 1,
+      "fail_count": 2,
+      "fails": [
+        "Evidence SHA-256 不匹配：doc/09_COLLABORATION.md",
+        "Evidence SHA-256 不匹配：tools/governance/check.ps1"
+      ]
+    },
+    {
+      "task": "GOV-DEBT-CLEANUP-1",
+      "status": "blocked",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "GOV-DEBT-CLEANUP-2",
+      "status": "closed_with_limitations",
+      "exit": 1,
+      "fail_count": 1,
+      "fails": [
+        "Resource SHA-256 不匹配：tools/governance/check.ps1"
+      ]
+    },
+    {
+      "task": "GOV-EOL-PIN-1",
+      "status": "done",
+      "exit": 1,
+      "fail_count": 1,
+      "fails": [
+        "Resource SHA-256 不匹配：.gitattributes"
+      ]
+    },
+    {
+      "task": "GOV-EVIDENCE-DIR-SWEEP-1",
+      "status": "done",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "GOV-EVIDENCE-UNIQUE-1",
+      "status": "done",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "GOV-P15-MANIFEST-1",
+      "status": "done",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "GOV-PIN-LINEAGE-1",
+      "status": "closed_with_limitations",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "GOV-PLAN-BUDGET-1",
+      "status": "done",
+      "exit": 1,
+      "fail_count": 1,
+      "fails": [
+        "Resource SHA-256 不匹配：tools/governance/check.ps1"
+      ]
+    },
+    {
+      "task": "GOV-RESOURCE-MANIFEST-JSON-1",
+      "status": "done",
+      "exit": 1,
+      "fail_count": 3,
+      "fails": [
+        "Evidence SHA-256 不匹配：tools/governance/tests/fixtures/resource-manifest/cases.json",
+        "Evidence SHA-256 不匹配：tools/governance/tests/run-resource-manifest-cases.py",
+        "Resource SHA-256 不匹配：tools/governance/check.ps1"
+      ]
+    },
+    {
+      "task": "GOV-RESOURCE-MANIFEST-SAME-LOCATION-1",
+      "status": "done",
+      "exit": 1,
+      "fail_count": 2,
+      "fails": [
+        "Evidence SHA-256 不匹配：tools/governance/check.ps1",
+        "Resource SHA-256 不匹配：tools/governance/check.ps1"
+      ]
+    },
+    {
+      "task": "GOV-SOURCE-RECORDS-1",
+      "status": "done",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "GOV-UNTRACKED-BACKLOG-1",
+      "status": "done",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "HOST-CORE-1",
+      "status": "done",
+      "exit": 1,
+      "fail_count": 1,
+      "fails": [
+        "Evidence SHA-256 不匹配：doc/contracts/M2-C1_TYPED_IPC_CONTRACT.md"
+      ]
+    },
+    {
+      "task": "HOST-ISSUER-1-C1",
+      "status": "done",
+      "exit": 1,
+      "fail_count": 4,
+      "fails": [
+        "Evidence SHA-256 不匹配：doc/contracts/M2-C1_TYPED_IPC_CONTRACT.md",
+        "Evidence SHA-256 不匹配：doc/tasks/HOST-ISSUER-1.md",
+        "Evidence SHA-256 不匹配：doc/tasks/P09-FU2.md",
+        "Evidence SHA-256 不匹配：doc/tasks/P16.md"
+      ]
+    },
+    {
+      "task": "HOST-ISSUER-1",
+      "status": "done",
+      "exit": 1,
+      "fail_count": 6,
+      "fails": [
+        "Evidence SHA-256 不匹配：apps/desktop/src-tauri/src/host_issuer.rs",
+        "Evidence SHA-256 不匹配：apps/desktop/src-tauri/src/library_bridge.rs",
+        "Evidence SHA-256 不匹配：apps/desktop/src-tauri/src/main.rs",
+        "Evidence SHA-256 不匹配：apps/desktop/src-tauri/build.rs",
+        "Evidence SHA-256 不匹配：apps/desktop/src-tauri/capabilities/m2rc1-commands.json",
+        "Evidence SHA-256 不匹配：doc/contracts/M2-C1_TYPED_IPC_CONTRACT.md"
+      ]
+    },
+    {
+      "task": "HOST-TTL-BOUNDARY-1",
+      "status": "done",
+      "exit": 1,
+      "fail_count": 5,
+      "fails": [
+        "Evidence SHA-256 不匹配：verification/HOST-TTL-BOUNDARY-1/ac6-rust-concurrency-diagnostic-6284f6f.jsonl",
+        "Evidence SHA-256 不匹配：verification/HOST-TTL-BOUNDARY-1/ac6-export-rust-concurrency-diagnostic-7fbce30.jsonl",
+        "Evidence SHA-256 不匹配：doc/contracts/M2-C1_TYPED_IPC_CONTRACT.md",
+        "DONE evidence_dir 含未登记文件：G:\\CODEX\\New Manga\\verification\\HOST-TTL-BOUNDARY-1\\ac3-rust-ttl-boundary-build-attempt-1.log, G:\\CODEX\\New Manga\\verification\\HOST-TTL-BOUNDARY-1\\ac4-export-frozen-rust-attempt1-4662239.log, G:\\CODEX\\New Manga\\verification\\HOST-TTL-BOUNDARY-1\\ac4-frozen-host-importpages.log, G:\\CODEX\\New Manga\\verification\\HOST-TTL-BOUNDARY-1\\ac6-rust-tests.log",
+        "Resource manifest 不存在：verification/HOST-TTL-BOUNDARY-1/resource-manifest.json"
+      ]
+    },
+    {
+      "task": "M2-AC1",
+      "status": "done",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "M2-AC2",
+      "status": "done",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "M2-AC3",
+      "status": "done",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "M2-AC4",
+      "status": "done",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "M2-AC5-BUILD-FRESH-CHECKOUT",
+      "status": "done",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "M2-AC5",
+      "status": "done",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "M2-C1",
+      "status": "done",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "M2-C2",
+      "status": "done",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "M2-CATEGORY-CLARIFY-1",
+      "status": "done",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "M2-D1",
+      "status": "done",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "M2-DERIVED-GC-1",
+      "status": "done",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "M2-DERIVED-GC-2-DESIGN",
+      "status": "done",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "M2-DERIVED-GC-2",
+      "status": "done",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "M2-DETECT-WEBTOON-DIAG",
+      "status": "done",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "M2-DETECT-WEBTOON-TILING",
+      "status": "done",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "M2-DETECTION-HYGIENE",
+      "status": "done",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "M2-DOCTR-QUAL-C1",
+      "status": "done",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "M2-DOCTR-QUAL-C4",
+      "status": "done",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "M2-DOCTR-QUAL-PREFLIGHT",
+      "status": "done",
+      "exit": 1,
+      "fail_count": 1,
+      "fails": [
+        "失效的本地引用：doc\\tasks\\M2-DOCTR-QUAL-PREFLIGHT.md → ../../doc/reviews/M2-DOCTR-QUAL-d99ad695-dsh-r5.md"
+      ]
+    },
+    {
+      "task": "M2-DOCTR-QUAL-RUN",
+      "status": "done",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "M2-FIX-DIGEST-SEEK-2GIB",
+      "status": "done",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "M2-FIX-EXPORT-LINEAGE",
+      "status": "done",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "M2-FIX-F02-RESOURCE-CHANNEL-FLAKY",
+      "status": "done",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "M2-FIX-LISTBOOKS-PAGECOUNT-UNKNOWN",
+      "status": "done",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "M2-FIX-REGISTRY-READINESS-ENV",
+      "status": "done",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "M2-FIX-RESOURCE-CHANNEL-DIGEST-PERF",
+      "status": "done",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "M2-FIX-STUB-DECODER",
+      "status": "done",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "M2-I1",
+      "status": "done",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "M2-I2",
+      "status": "done",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "M2-IMPORT-ALLOC-LIMIT",
+      "status": "done",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "M2-IPC1",
+      "status": "done",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "M2-KO-TILE-CALIB",
+      "status": "done",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "M2-MANGA-WEIGHTS-SOP",
+      "status": "done",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "M2-OCR-PADDLE3X-1",
+      "status": "done",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "M2-P1",
+      "status": "done",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "M2-PACKAGED-AC1-DLL-DIAG",
+      "status": "done",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "M2-PACKAGED-AC1-ICU-ISOLATION-FIX",
+      "status": "done",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "M2-PAGE-NAV-PROJECTION-1",
+      "status": "done",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "M2-PAGE-RESOURCE-RESOLVE-1",
+      "status": "done",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "M2-PROD-DETECT-1",
+      "status": "done",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "M2-PROD-DETECT-2",
+      "status": "done",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "M2-PROD-DETECT-3",
+      "status": "done",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "M2-PROD-DETECT-ENV-1",
+      "status": "blocked",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "M2-PROD-SFX-PROBE-1",
+      "status": "done",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "M2-QUAL-DETERM-CALIB",
+      "status": "done",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "M2-R1",
+      "status": "done",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "M2-RC1",
+      "status": "done",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "M2-RC2",
+      "status": "done",
+      "exit": 1,
+      "fail_count": 1,
+      "fails": [
+        "失效的本地引用：doc\\tasks\\M2-RC2.md → ../../verification/M2-RC2/release-22a2c2bf.md"
+      ]
+    },
+    {
+      "task": "M2-RC4-DOMAIN-COMMANDS",
+      "status": "done",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "M2-REGION-DEBOUNCE-1",
+      "status": "done",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "M2-REGION-OVERLAP-ARBITRATION",
+      "status": "done",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "M2-REGION-RETYPE-CONTRACT",
+      "status": "done",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "M2-REGION-RETYPE-CORE",
+      "status": "done",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "M2-RESOLVE-DEBOUNCE-1",
+      "status": "done",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "M2-RG1",
+      "status": "done",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "M2-RUNNER-HISTORICAL-RAW-OUTPUT-GUARD",
+      "status": "done",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "M2-RUNNER-SNAPSHOT-DEBT",
+      "status": "done",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "M2-S1",
+      "status": "done",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "M2-S2",
+      "status": "done",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "M2-S3",
+      "status": "done",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "M2-SETTINGS-IPC-CHANNEL",
+      "status": "done",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "M2-SETTINGS-UI-SFX-POLICY",
+      "status": "done",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "M2-SFX-ANNOTATE-R1",
+      "status": "done",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "M2-SFX-ANNOTATE-R2",
+      "status": "done",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "M2-SFX-ANNOTATE-R3",
+      "status": "done",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "M2-SFX-BJ13-RECALL-1",
+      "status": "done",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "M2-SFX-CORRECTION-EXPORTER",
+      "status": "done",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "M2-SFX-DATA-INFRA",
+      "status": "done",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "M2-SFX-DETECT-DOMAIN-EXT-DIAG",
+      "status": "done",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "M2-SFX-DETECT-EVAL",
+      "status": "done",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "M2-SFX-E2E-MATERIAL",
+      "status": "done",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "M2-SFX-EPFAIL-AUDIT-1",
+      "status": "done",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "M2-SFX-FINETUNE-PREFLIGHT",
+      "status": "done",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "M2-SFX-GATE-T3",
+      "status": "done",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "M2-SFX-GPU-EP-1",
+      "status": "done",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "M2-SFX-MISROUTE-UI-IMPL-1",
+      "status": "done",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "M2-SFX-MISROUTE-UI-MITIGATION",
+      "status": "done",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "M2-SFX-PROD-1",
+      "status": "done",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "M2-SFX-SEM-1",
+      "status": "done",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "M2-SFX-SYNTH-BG-AUTO",
+      "status": "done",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "M2-SFX-T4-SWITCH",
+      "status": "done",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "M2-SFX-T5-TILE-KO",
+      "status": "done",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "M2-SFX-TILE-WIDTH-CALIB-1",
+      "status": "done",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "M2-SFX-TRAIN-V1",
+      "status": "done",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "M2-SFX-TRAIN-V2",
+      "status": "done",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "M2-SFX-TRANSLATE-ENTRY",
+      "status": "done",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "M2-TA1",
+      "status": "done",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "M2-TA2A",
+      "status": "done",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "M2-TA2B",
+      "status": "done",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "M2-TA2C-TOOLING-GAPS",
+      "status": "done",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "M2-TA2C",
+      "status": "done",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "M2-TA3-A",
+      "status": "done",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "M2-TA3-B",
+      "status": "done",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "M2-TA3-B2-KO-RERUN",
+      "status": "done",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "M2-TA3-B2",
+      "status": "done",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "M2-TA3-B3-KO-FULLRUN",
+      "status": "done",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "M2-TASKS-BACKFILL-MULTIREGION",
+      "status": "done",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "M2-TASKS-PRIMARY-SFX-GATE",
+      "status": "done",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "M2-TEST-CATALOG-DRIFT-CLEAR-1",
+      "status": "done",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "M2-UI-SHELL-ENV-1",
+      "status": "done",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "M2-UI1",
+      "status": "done",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "M2-WORKBENCH-REACT-1",
+      "status": "done",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "P01",
+      "status": "done",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "P02-MAINLINE-INTEGRATION",
+      "status": "done",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "P02-NEW-TIME-BASELINE-AC3-BRANCH-RESOLUTION",
+      "status": "done",
+      "exit": 1,
+      "fail_count": 13,
+      "fails": [
+        "Evidence SHA-256 不匹配：verification/P02-NEW-TIME-BASELINE-AC3-BRANCH-RESOLUTION/codex-ac3-resolution-verify-20261013T2002Z.md",
+        "Evidence SHA-256 不匹配：verification/P02-NEW-TIME-BASELINE-AC3-BRANCH-RESOLUTION/codex-selftest-ac3-branch-res-20261013T2002Z.env.txt",
+        "Evidence SHA-256 不匹配：verification/P02-NEW-TIME-BASELINE-AC3-BRANCH-RESOLUTION/dsh-preflight-attestation-basis.md",
+        "Evidence SHA-256 不匹配：verification/P02-NEW-TIME-BASELINE-AC3-BRANCH-RESOLUTION/dsh-review-ac3-branch-p2-bounded-prompt.md",
+        "Evidence SHA-256 不匹配：verification/P02-NEW-TIME-BASELINE-AC3-BRANCH-RESOLUTION/dsh-review-ac3-branch-resolution-summary.md",
+        "Evidence SHA-256 不匹配：verification/P02-NEW-TIME-BASELINE-AC3-BRANCH-RESOLUTION/dsh-review-manifest-bounded-r1.json",
+        "Evidence SHA-256 不匹配：verification/P02-NEW-TIME-BASELINE-AC3-BRANCH-RESOLUTION/evidence-manifest-ac3-branch-res-r1.json",
+        "Evidence SHA-256 不匹配：verification/P02-NEW-TIME-BASELINE-AC3-BRANCH-RESOLUTION/zcode-agent-preflight-20261014T0341.json",
+        "Evidence SHA-256 不匹配：verification/P02-NEW-TIME-BASELINE-AC3-BRANCH-RESOLUTION/zcode-preflight-dry-run-20261014T0340.json",
+        "Evidence SHA-256 不匹配：verification/P02-NEW-TIME-BASELINE-AC3-BRANCH-RESOLUTION/zcode-preflight-dry-run-20261014T0341.json",
+        "Evidence SHA-256 不匹配：verification/P02-NEW-TIME-BASELINE-AC3-BRANCH-RESOLUTION/zcode-selftest-ac3-branch-res-20261013T1947Z.command.txt",
+        "Evidence SHA-256 不匹配：verification/P02-NEW-TIME-BASELINE-AC3-BRANCH-RESOLUTION/zcode-selftest-ac3-branch-res-20261013T1947Z.exit",
+        "Evidence SHA-256 不匹配：verification/P02-NEW-TIME-BASELINE-AC3-BRANCH-RESOLUTION/zcode-selftest-ac3-branch-res-20261013T1947Z.summary.md"
+      ]
+    },
+    {
+      "task": "P02-NEW-TIME-BASELINE-AC3-GIT-TOPLEVEL-RESOLUTION",
+      "status": "done",
+      "exit": 1,
+      "fail_count": 25,
+      "fails": [
+        "Canonical evidence 路径缺失：verification/P02-NEW-TIME-BASELINE-AC3-GIT-TOPLEVEL-RESOLUTION/zcode-owner-preflight-r1.json",
+        "Canonical evidence 路径缺失：verification/P02-NEW-TIME-BASELINE-AC3-GIT-TOPLEVEL-RESOLUTION/zcode-owner-preflight-r2.json",
+        "Canonical evidence 路径缺失：verification/P02-NEW-TIME-BASELINE-AC3-GIT-TOPLEVEL-RESOLUTION/zcode-owner-preflight-r3.json",
+        "Evidence class 无效：IMPLEMENTATION SOURCE",
+        "Evidence class 无效：SELFTEST SOURCE",
+        "Canonical evidence 路径缺失：doc/handoffs/P02-NEW-TIME-BASELINE-AC3-GIT-TOPLEVEL-RESOLUTION-R1.md",
+        "Canonical evidence 路径缺失：verification/P02-NEW-TIME-BASELINE-AC3-GIT-TOPLEVEL-RESOLUTION/codex-selftest-verify-r1.meta.json",
+        "Canonical evidence 路径缺失：verification/P02-NEW-TIME-BASELINE-AC3-GIT-TOPLEVEL-RESOLUTION/selftest-temp-fixture-inventory-codex-r2.json",
+        "Canonical evidence 路径缺失：verification/P02-NEW-TIME-BASELINE-AC3-GIT-TOPLEVEL-RESOLUTION/codex-verify-ac3-resolution-r1.json",
+        "Canonical evidence 路径缺失：verification/P02-NEW-TIME-BASELINE-AC3-GIT-TOPLEVEL-RESOLUTION/codex-verify-ac3-resolution-r1.md",
+        "Canonical evidence 路径缺失：verification/P02-NEW-TIME-BASELINE-AC3-GIT-TOPLEVEL-RESOLUTION/p02-ac3-resolution-dsh-review-evidence-manifest-r1.json",
+        "Canonical evidence 路径缺失：verification/P02-NEW-TIME-BASELINE-AC3-GIT-TOPLEVEL-RESOLUTION/dsh-review-preflight-r1.json",
+        "Canonical evidence 路径缺失：verification/P02-NEW-TIME-BASELINE-AC3-GIT-TOPLEVEL-RESOLUTION/dsh-review-preflight-r2.json",
+        "Canonical evidence 路径缺失：verification/P02-NEW-TIME-BASELINE-AC3-GIT-TOPLEVEL-RESOLUTION/dsh-review-preflight-r3.json",
+        "Canonical evidence 路径缺失：verification/P02-NEW-TIME-BASELINE-AC3-GIT-TOPLEVEL-RESOLUTION/dsh-evidence-manifest-r2-post-update-verify.stdout.json",
+        "Canonical evidence 路径缺失：verification/P02-NEW-TIME-BASELINE-AC3-GIT-TOPLEVEL-RESOLUTION/p02-ac3-resolution-dsh-review-evidence-manifest-r2.json",
+        "Canonical evidence 路径缺失：verification/P02-NEW-TIME-BASELINE-AC3-GIT-TOPLEVEL-RESOLUTION/dsh-source-review-r1.md",
+        "Canonical evidence 路径缺失：verification/P02-NEW-TIME-BASELINE-AC3-GIT-TOPLEVEL-RESOLUTION/dsh-source-review-r1.meta.json",
+        "Canonical evidence 路径缺失：verification/P02-NEW-TIME-BASELINE-AC3-GIT-TOPLEVEL-RESOLUTION/codex-dsh-review-adjudication-r1.md",
+        "Canonical evidence 路径缺失：verification/P02-NEW-TIME-BASELINE-AC3-GIT-TOPLEVEL-RESOLUTION/codex-convergence-ac3-resolution-r1.stdout.json",
+        "Canonical evidence 路径缺失：verification/P02-NEW-TIME-BASELINE/codex-parent-integration-r1.md",
+        "Canonical evidence 路径缺失：verification/P02-NEW-TIME-BASELINE/codex-parent-integration-r1.json",
+        "Canonical evidence 路径缺失：verification/P02-NEW-TIME-BASELINE/codex-post-resolution-selftest-r1.meta.json",
+        "Canonical evidence 路径缺失：verification/P02-NEW-TIME-BASELINE/codex-post-resolution-selftest-r1.fixture-inventory.json",
+        "Canonical evidence 路径缺失：verification/P02-NEW-TIME-BASELINE-AC3-GIT-TOPLEVEL-RESOLUTION/resource-closeout-r1.json"
+      ]
+    },
+    {
+      "task": "P02-NEW-TIME-BASELINE-AC3-HELPER-OUTPUT-RESOLUTION",
+      "status": "done",
+      "exit": 1,
+      "fail_count": 16,
+      "fails": [
+        "Evidence SHA-256 不匹配：verification/P02-NEW-TIME-BASELINE-AC3-HELPER-OUTPUT-RESOLUTION/selftest-run-record-20261014T0506+0800.md",
+        "Evidence SHA-256 不匹配：verification/P02-NEW-TIME-BASELINE-AC3-HELPER-OUTPUT-RESOLUTION/codex-selftest-run-record-20261014T050945.md",
+        "Evidence SHA-256 不匹配：verification/P02-NEW-TIME-BASELINE-AC3-HELPER-OUTPUT-RESOLUTION/codex-verify-r1-20261014.md",
+        "Evidence SHA-256 不匹配：verification/P02-NEW-TIME-BASELINE-AC3-HELPER-OUTPUT-RESOLUTION/dsh-bounded-review-manifest-r1.json",
+        "Evidence SHA-256 不匹配：verification/P02-NEW-TIME-BASELINE-AC3-HELPER-OUTPUT-RESOLUTION/dsh-bounded-review-request-r1.md",
+        "Evidence SHA-256 不匹配：verification/P02-NEW-TIME-BASELINE-AC3-HELPER-OUTPUT-RESOLUTION/codex-review-input-binding-r1.md",
+        "Evidence SHA-256 不匹配：verification/P02-NEW-TIME-BASELINE-AC3-HELPER-OUTPUT-RESOLUTION/dsh-bounded-review-followup-r1.md",
+        "Evidence SHA-256 不匹配：verification/P02-NEW-TIME-BASELINE-AC3-HELPER-OUTPUT-RESOLUTION/dsh-bounded-review-followup-run-record-r1.md",
+        "Evidence SHA-256 不匹配：verification/P02-NEW-TIME-BASELINE-AC3-HELPER-OUTPUT-RESOLUTION/codex-dsh-review-adjudication-r1.md",
+        "Evidence SHA-256 不匹配：verification/P02-NEW-TIME-BASELINE-AC3-HELPER-OUTPUT-RESOLUTION/codex-parent-integration-record-r1.md",
+        "Evidence SHA-256 不匹配：verification/P02-NEW-TIME-BASELINE-AC3-HELPER-OUTPUT-RESOLUTION/post-integration-selftest-run-record-r1.md",
+        "Evidence SHA-256 不匹配：verification/P02-NEW-TIME-BASELINE-AC3-HELPER-OUTPUT-RESOLUTION/codex-selftest-20261014T050945-exit.txt",
+        "Evidence SHA-256 不匹配：verification/P02-NEW-TIME-BASELINE-AC3-HELPER-OUTPUT-RESOLUTION/dsh-review-preflight-r1-exit.txt",
+        "Evidence SHA-256 不匹配：verification/P02-NEW-TIME-BASELINE-AC3-HELPER-OUTPUT-RESOLUTION/dsh-review-preflight-r2-exit.txt",
+        "Evidence SHA-256 不匹配：verification/P02-NEW-TIME-BASELINE-AC3-HELPER-OUTPUT-RESOLUTION/zcode-preflight-attempt2.json",
+        "Evidence SHA-256 不匹配：verification/P02-NEW-TIME-BASELINE-AC3-HELPER-OUTPUT-RESOLUTION/zcode-preflight.json"
+      ]
+    },
+    {
+      "task": "P02-NEW-TIME-BASELINE",
+      "status": "done",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "P02-NEW-TIME-X6-AC1-AC7",
+      "status": "done",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "P02-NEW-TIME-X6-BUILD-CARGO",
+      "status": "approved",
+      "exit": 1,
+      "fail_count": 15,
+      "fails": [
+        "当前 DAG 未登记非终态 Task：P02-NEW-TIME-X6-BUILD-CARGO",
+        "终态或已集成的 approved Task 必须设置 resource_closeout_status: complete。",
+        "DONE 不能保留未完成 Acceptance Criteria；范围未完成时使用 closed_with_limitations。",
+        "Resource manifest 不存在：build-artifacts-manifest-r1.json; codex-schema-permission-integrity-r1.json SHA-256=7D6E0B1CE13A377ED630A2EB672BDE15DB504B79A54504E6AF407A869CE2658D",
+        "Resource manifest 不存在：cleanup-record-r1.json",
+        "Resource manifest 不存在：task-env retained in place",
+        "Resource disposition 无效：PRESERVE_UNCLASSIFIED",
+        "Resource manifest 不存在：codex-scope-residual-closure-r1.json",
+        "Resource disposition 无效：NOT_INSPECTED_PRESERVE",
+        "Resource manifest 不存在：codex-scope-residual-closure-r1.json",
+        "Resource 最终路径未验证：same",
+        "Resource disposition 无效：DELETED_EXACT_PROBE_ONLY",
+        "Resource manifest 不存在：cleanup-record-r1.json",
+        "Resource disposition 无效：PRESERVE_CANONICAL",
+        "Resource manifest 不存在：generator --verify PASS, files_checked=34, exit=0"
+      ]
+    },
+    {
+      "task": "P02-NEW-TIME-X6-POSTRUN-REVIEW",
+      "status": "approved",
+      "exit": 1,
+      "fail_count": 1,
+      "fails": [
+        "当前 DAG 未登记非终态 Task：P02-NEW-TIME-X6-POSTRUN-REVIEW"
+      ]
+    },
+    {
+      "task": "P02-NEW-TIME-X6",
+      "status": "approved",
+      "exit": 1,
+      "fail_count": 1,
+      "fails": [
+        "当前 DAG 未登记非终态 Task：P02-NEW-TIME-X6"
+      ]
+    },
+    {
+      "task": "P02",
+      "status": "closed_with_limitations",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "P02PRE-R0",
+      "status": "done",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "P02PRE-R0S1",
+      "status": "done",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "P02PRE-R0S2",
+      "status": "blocked",
+      "exit": 1,
+      "fail_count": 1,
+      "fails": [
+        "当前 DAG 未登记非终态 Task：P02PRE-R0S2"
+      ]
+    },
+    {
+      "task": "P02PRE-R0S3",
+      "status": "done",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "P02PRE-R0S4",
+      "status": "blocked",
+      "exit": 1,
+      "fail_count": 1,
+      "fails": [
+        "当前 DAG 未登记非终态 Task：P02PRE-R0S4"
+      ]
+    },
+    {
+      "task": "P02PRE-R0S5",
+      "status": "blocked",
+      "exit": 1,
+      "fail_count": 1,
+      "fails": [
+        "当前 DAG 未登记非终态 Task：P02PRE-R0S5"
+      ]
+    },
+    {
+      "task": "P02PRE-R0S6",
+      "status": "blocked",
+      "exit": 1,
+      "fail_count": 1,
+      "fails": [
+        "当前 DAG 未登记非终态 Task：P02PRE-R0S6"
+      ]
+    },
+    {
+      "task": "P02PRE-R1",
+      "status": "closed_with_limitations",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "P02PRE-R1F",
+      "status": "closed_with_limitations",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "P02PRE-R1G",
+      "status": "closed_with_limitations",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "P02PRE-R1H-FORENSIC-RECOVERY",
+      "status": "done",
+      "exit": 1,
+      "fail_count": 3,
+      "fails": [
+        "Evidence SHA-256 不匹配：verification/P02PRE-R1H-FORENSIC-RECOVERY/checkpoint.md",
+        "Evidence SHA-256 不匹配：verification/P02PRE-R1H-FORENSIC-RECOVERY/recovery-report.md",
+        "Evidence SHA-256 不匹配：verification/P02PRE-R1H-FORENSIC-RECOVERY/resource-closeout-r2.json"
+      ]
+    },
+    {
+      "task": "P02PRE-R1H-H1-CURRENT-INPUT-REVIEW",
+      "status": "done",
+      "exit": 1,
+      "fail_count": 10,
+      "fails": [
+        "Evidence SHA-256 不匹配：verification/P02PRE-R1H-H1-CURRENT-INPUT-REVIEW/task-contract-r1.md",
+        "Evidence SHA-256 不匹配：verification/P02PRE-R1H-H1-CURRENT-INPUT-REVIEW/h1-subject-task-r1.md",
+        "Evidence SHA-256 不匹配：verification/P02PRE-R1H-H1-CURRENT-INPUT-REVIEW/h2-run-task-r1.md",
+        "Evidence SHA-256 不匹配：verification/P02PRE-R1H-H1-CURRENT-INPUT-REVIEW/dsh-review-request-r1.md",
+        "Evidence SHA-256 不匹配：verification/P02PRE-R1H-H1-CURRENT-INPUT-REVIEW/applicability-matrix-r1.md",
+        "Evidence SHA-256 不匹配：verification/P02PRE-R1H-H1-CURRENT-INPUT-REVIEW/codex-adjudication-r1.md",
+        "Evidence SHA-256 不匹配：verification/P02PRE-R1H-H1-CURRENT-INPUT-REVIEW/codex-handoff-r1.md",
+        "Evidence SHA-256 不匹配：verification/P02PRE-R1H-H1-CURRENT-INPUT-REVIEW/checkpoint.md",
+        "Evidence SHA-256 不匹配：verification/P02PRE-R1H-H1-CURRENT-INPUT-REVIEW/resource-closeout-r1.json",
+        "Evidence SHA-256 不匹配：verification/P02PRE-R1H-H1-CURRENT-INPUT-REVIEW/codex-handoff-r2.md"
+      ]
+    },
+    {
+      "task": "P02PRE-R1H-H2-COLLECTOR",
+      "status": "done",
+      "exit": 1,
+      "fail_count": 13,
+      "fails": [
+        "Evidence SHA-256 不匹配：verification/P02PRE-R1H-H2-COLLECTOR/dsh-source-review-r2.md",
+        "Evidence SHA-256 不匹配：verification/P02PRE-R1H-H2-COLLECTOR/source-review-r2-adjudication.md",
+        "Evidence SHA-256 不匹配：verification/P02PRE-R1H-H2-COLLECTOR/dsh-source-review-r3.md",
+        "Evidence SHA-256 不匹配：verification/P02PRE-R1H-H2-COLLECTOR/source-review-r3-adjudication.md",
+        "Evidence SHA-256 不匹配：verification/P02PRE-R1H-H2-COLLECTOR/dsh-source-review-r4.md",
+        "Evidence SHA-256 不匹配：verification/P02PRE-R1H-H2-COLLECTOR/source-review-r4-adjudication.md",
+        "Evidence SHA-256 不匹配：verification/P02PRE-R1H-H2-COLLECTOR/checkpoint.md",
+        "Evidence SHA-256 不匹配：verification/P02PRE-R1H-H2-COLLECTOR/dsh-source-review-r5.md",
+        "Evidence SHA-256 不匹配：verification/P02PRE-R1H-H2-COLLECTOR/source-review-r5-adjudication.md",
+        "Evidence SHA-256 不匹配：verification/P02PRE-R1H-H2-COLLECTOR/dsh-source-review-r6.md",
+        "Evidence SHA-256 不匹配：verification/P02PRE-R1H-H2-COLLECTOR/source-review-r6-adjudication.md",
+        "Evidence SHA-256 不匹配：verification/P02PRE-R1H-H2-COLLECTOR/dsh-source-review-r7.md",
+        "Evidence SHA-256 不匹配：verification/P02PRE-R1H-H2-COLLECTOR/source-review-r7-adjudication.md"
+      ]
+    },
+    {
+      "task": "P02PRE-R1H-H2-RUN",
+      "status": "done",
+      "exit": 1,
+      "fail_count": 9,
+      "fails": [
+        "Evidence SHA-256 不匹配：verification/P02PRE-R1H-H2-COLLECTOR/dsh-source-review-r7.md",
+        "Evidence SHA-256 不匹配：verification/P02PRE-R1H-H2-COLLECTOR/source-review-r7-adjudication.md",
+        "Evidence SHA-256 不匹配：verification/P02PRE-R1H-H2-RUN/preflight-freeze-r1.md",
+        "Evidence SHA-256 不匹配：verification/P02PRE-R1H-H2-RUN/checkpoint.md",
+        "Evidence SHA-256 不匹配：verification/P02PRE-R1H-H2-RUN/runtime-verification-r1.md",
+        "Evidence SHA-256 不匹配：verification/P02PRE-R1H-H2-RUN/codex-handoff-r1.md",
+        "Evidence SHA-256 不匹配：verification/P02PRE-R1H-H2-RUN/runtime-verification-r2.md",
+        "Evidence SHA-256 不匹配：verification/P02PRE-R1H-H2-RUN/codex-adjudication-r1.md",
+        "Evidence SHA-256 不匹配：verification/P02PRE-R1H-H2-RUN/codex-handoff-r2.md"
+      ]
+    },
+    {
+      "task": "P02PRE-R1H-P2-1-EVIDENCE-CLOSURE",
+      "status": "blocked",
+      "exit": 1,
+      "fail_count": 1,
+      "fails": [
+        "当前 DAG 未登记非终态 Task：P02PRE-R1H-P2-1-EVIDENCE-CLOSURE"
+      ]
+    },
+    {
+      "task": "P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE",
+      "status": "done",
+      "exit": 1,
+      "fail_count": 11,
+      "fails": [
+        "Evidence SHA-256 不匹配：verification/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE/checkpoint.md",
+        "Evidence SHA-256 不匹配：verification/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE/review-request-r1.md",
+        "Evidence SHA-256 不匹配：verification/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE/r1-commit-normalization-map-r1.json",
+        "Evidence SHA-256 不匹配：verification/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE/review-request-r2.md",
+        "Evidence SHA-256 不匹配：verification/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE/review-input-pins-r2.json",
+        "Evidence SHA-256 不匹配：verification/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE/dsh-review-dispatch-r2.md",
+        "Evidence SHA-256 不匹配：verification/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE/post-review-pins-r2.json",
+        "Evidence SHA-256 不匹配：verification/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE/dsh-review-run-r2.json",
+        "Evidence SHA-256 不匹配：verification/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE/codex-adjudication-r2.md",
+        "Evidence SHA-256 不匹配：verification/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE/integration-gate-r2.json",
+        "Resource SHA-256 不匹配：C:/Users/49745/.dsh/storages/workspace.json"
+      ]
+    },
+    {
+      "task": "P02PRE-R1H-R6-A4",
+      "status": "done",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "P02PRE-R1H-R6-EXEC-A4",
+      "status": "blocked",
+      "exit": 1,
+      "fail_count": 1,
+      "fails": [
+        "当前 DAG 未登记非终态 Task：P02PRE-R1H-R6-EXEC-A4"
+      ]
+    },
+    {
+      "task": "P02PRE-R1H-R6-EXEC-A5",
+      "status": "blocked",
+      "exit": 1,
+      "fail_count": 1,
+      "fails": [
+        "当前 DAG 未登记非终态 Task：P02PRE-R1H-R6-EXEC-A5"
+      ]
+    },
+    {
+      "task": "P02PRE-R1H-R6-EXEC-A6",
+      "status": "in_progress",
+      "exit": 1,
+      "fail_count": 1,
+      "fails": [
+        "当前 DAG 未登记非终态 Task：P02PRE-R1H-R6-EXEC-A6"
+      ]
+    },
+    {
+      "task": "P02PRE-R1H-R6-ZCODE-H1",
+      "status": "in_review",
+      "exit": 1,
+      "fail_count": 1,
+      "fails": [
+        "当前 DAG 未登记非终态 Task：P02PRE-R1H-R6-ZCODE-H1"
+      ]
+    },
+    {
+      "task": "P02PRE-R1H",
+      "status": "in_progress",
+      "exit": 1,
+      "fail_count": 1,
+      "fails": [
+        "当前 DAG 未登记非终态 Task：P02PRE-R1H"
+      ]
+    },
+    {
+      "task": "P03",
+      "status": "done",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "P04",
+      "status": "done",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "P05",
+      "status": "done",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "P06",
+      "status": "done",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "P08",
+      "status": "done",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "P09-AC3-DELETE-1",
+      "status": "closed_with_limitations",
+      "exit": 1,
+      "fail_count": 1,
+      "fails": [
+        "Evidence SHA-256 不匹配：doc/contracts/M2-C1_TYPED_IPC_CONTRACT.md"
+      ]
+    },
+    {
+      "task": "P09-AC3-DELETE-HARDEN-1",
+      "status": "closed_with_limitations",
+      "exit": 1,
+      "fail_count": 2,
+      "fails": [
+        "Evidence SHA-256 不匹配：src/infrastructure/sqlite/library.py",
+        "Evidence SHA-256 不匹配：src/bootstrap/core_service.py"
+      ]
+    },
+    {
+      "task": "P09-FU1",
+      "status": "done",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "P09-FU2",
+      "status": "done",
+      "exit": 1,
+      "fail_count": 3,
+      "fails": [
+        "Evidence SHA-256 不匹配：doc/contracts/M2-C1_TYPED_IPC_CONTRACT.md",
+        "Evidence SHA-256 不匹配：doc/tasks/P09.md",
+        "Evidence SHA-256 不匹配：doc/tasks/P16.md"
+      ]
+    },
+    {
+      "task": "P09-MANAGED-READ-ROOT-TRUST-1",
+      "status": "proposed",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "P09-PREVIEW-LIFECYCLE-RECLAIM-1",
+      "status": "closed_with_limitations",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "P09",
+      "status": "closed_with_limitations",
+      "exit": 1,
+      "fail_count": 1,
+      "fails": [
+        "Evidence SHA-256 不匹配：verification/P09/evidence/AC3-source-hashes.json"
+      ]
+    },
+    {
+      "task": "P10",
+      "status": "done",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "P11-PROJECTION-TEST-ALIGN-1",
+      "status": "closed_with_limitations",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "P11",
+      "status": "done",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "P12-C1",
+      "status": "done",
+      "exit": 1,
+      "fail_count": 4,
+      "fails": [
+        "Evidence SHA-256 不匹配：doc/contracts/M2-C1_TYPED_IPC_CONTRACT.md",
+        "Evidence SHA-256 不匹配：doc/tasks/P09.md",
+        "Evidence SHA-256 不匹配：src/infrastructure/sqlite/library.py",
+        "Evidence SHA-256 不匹配：doc/tasks/P16-C1.md"
+      ]
+    },
+    {
+      "task": "P12",
+      "status": "done",
+      "exit": 1,
+      "fail_count": 1,
+      "fails": [
+        "Resource manifest 不存在：verification/P12/resource-manifest.json"
+      ]
+    },
+    {
+      "task": "P13-C1",
+      "status": "done",
+      "exit": 1,
+      "fail_count": 6,
+      "fails": [
+        "Evidence SHA-256 不匹配：doc/contracts/M2-C1_TYPED_IPC_CONTRACT.md",
+        "Evidence SHA-256 不匹配：doc/tasks/P13.md",
+        "Evidence SHA-256 不匹配：src/application/tasks/service.py",
+        "Evidence SHA-256 不匹配：src/application/tasks/store.py",
+        "Evidence SHA-256 不匹配：src/application/tasks/projection.py",
+        "Evidence SHA-256 不匹配：src/bootstrap/core_service.py"
+      ]
+    },
+    {
+      "task": "P13",
+      "status": "done",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "P14",
+      "status": "done",
+      "exit": 1,
+      "fail_count": 2,
+      "fails": [
+        "DONE evidence_dir 含未登记文件：G:\\CODEX\\New Manga\\verification\\P14\\frontend-build.log, G:\\CODEX\\New Manga\\verification\\P14\\frontend-tests.log",
+        "Resource manifest 不存在：verification/P14/resource-manifest.json"
+      ]
+    },
+    {
+      "task": "P15-C1-FU1",
+      "status": "done",
+      "exit": 1,
+      "fail_count": 3,
+      "fails": [
+        "Evidence SHA-256 不匹配：doc/contracts/P15_SETTINGS_IPC_CONTRACT.md",
+        "Evidence SHA-256 不匹配：doc/contracts/M2-C1_TYPED_IPC_CONTRACT.md",
+        "Resource manifest 不存在：verification/P15-C1-FU1/resource-manifest.json"
+      ]
+    },
+    {
+      "task": "P15-C1-FU2",
+      "status": "done",
+      "exit": 1,
+      "fail_count": 2,
+      "fails": [
+        "Evidence SHA-256 不匹配：doc/tasks/P15-HOST-1.md",
+        "Resource manifest 不存在：verification/P15-C1-FU2/resource-manifest.json"
+      ]
+    },
+    {
+      "task": "P15-C1",
+      "status": "done",
+      "exit": 1,
+      "fail_count": 3,
+      "fails": [
+        "Evidence SHA-256 不匹配：doc/contracts/P15_SETTINGS_IPC_CONTRACT.md",
+        "DONE 不能保留未完成 Acceptance Criteria；范围未完成时使用 closed_with_limitations。",
+        "Resource manifest 不存在：verification/P15-C1/resource-manifest.json"
+      ]
+    },
+    {
+      "task": "P15-CORE-1",
+      "status": "blocked",
+      "exit": 1,
+      "fail_count": 1,
+      "fails": [
+        "当前 DAG 未登记非终态 Task：P15-CORE-1"
+      ]
+    },
+    {
+      "task": "P15-CORE-1A",
+      "status": "done",
+      "exit": 1,
+      "fail_count": 8,
+      "fails": [
+        "Evidence SHA-256 不匹配：doc/contracts/P15_SETTINGS_IPC_CONTRACT.md",
+        "Evidence SHA-256 不匹配：src/bootstrap/settings_commands.py",
+        "Evidence SHA-256 不匹配：src/bootstrap/core_service.py",
+        "Evidence SHA-256 不匹配：src/bootstrap/core_assembly.py",
+        "Evidence SHA-256 不匹配：src/application/tasks/service.py",
+        "Evidence SHA-256 不匹配：src/infrastructure/settings/json_profile_stores.py",
+        "Evidence SHA-256 不匹配：tests/core/test_p15_core_settings.py",
+        "DONE 不能保留未完成 Acceptance Criteria；范围未完成时使用 closed_with_limitations。"
+      ]
+    },
+    {
+      "task": "P15-CORE-1B",
+      "status": "done",
+      "exit": 1,
+      "fail_count": 6,
+      "fails": [
+        "Evidence SHA-256 不匹配：doc/contracts/P15_SETTINGS_IPC_CONTRACT.md",
+        "Evidence SHA-256 不匹配：apps/desktop/src-tauri/src/main.rs",
+        "Evidence SHA-256 不匹配：src/bootstrap/settings_commands.py",
+        "Evidence SHA-256 不匹配：src/bootstrap/core_service.py",
+        "Evidence SHA-256 不匹配：src/bootstrap/core_assembly.py",
+        "Evidence SHA-256 不匹配：tests/core/test_p15_core_settings.py"
+      ]
+    },
+    {
+      "task": "P15-CORE-1C",
+      "status": "done",
+      "exit": 1,
+      "fail_count": 3,
+      "fails": [
+        "Evidence SHA-256 不匹配：src/bootstrap/core_service.py",
+        "Evidence SHA-256 不匹配：doc/contracts/P15_SETTINGS_IPC_CONTRACT.md",
+        "DONE evidence_dir 含未登记文件：G:\\CODEX\\New Manga\\verification\\P15-CORE-1C\\canonical-hash-verification.txt, G:\\CODEX\\New Manga\\verification\\P15-CORE-1C\\pytest-core-focused.command.txt, G:\\CODEX\\New Manga\\verification\\P15-CORE-1C\\pytest-core-focused.environment.txt, G:\\CODEX\\New Manga\\verification\\P15-CORE-1C\\pytest-core-focused.exit-code.txt, G:\\CODEX\\New Manga\\verification\\P15-CORE-1C\\pytest-core-focused.log"
+      ]
+    },
+    {
+      "task": "P15-HOST-1",
+      "status": "done",
+      "exit": 1,
+      "fail_count": 3,
+      "fails": [
+        "DONE evidence_dir 含未登记文件：G:\\CODEX\\New Manga\\verification\\P15-HOST-1\\.gitattributes, G:\\CODEX\\New Manga\\verification\\P15-HOST-1\\core-pytest-full-suite-extra.txt, G:\\CODEX\\New Manga\\verification\\P15-HOST-1\\resource-manifest.json",
+        "DONE 不能保留未完成 Acceptance Criteria；范围未完成时使用 closed_with_limitations。",
+        "Resource manifest 不存在：verification/P15-HOST-1/resource-manifest.json (SHA256 `A00BD6DE0F036735E00601C69887ECA91D977C09EBB21C8708AAB203954039FD`)"
+      ]
+    },
+    {
+      "task": "P15-HOST-2",
+      "status": "done",
+      "exit": 1,
+      "fail_count": 1,
+      "fails": [
+        "DONE evidence_dir 含未登记文件：G:\\CODEX\\New Manga\\verification\\P15-HOST-2\\ac1-coordinator-blocker.md, G:\\CODEX\\New Manga\\verification\\P15-HOST-2\\core-pytest-final.log, G:\\CODEX\\New Manga\\verification\\P15-HOST-2\\frontend-deps-setup.log, G:\\CODEX\\New Manga\\verification\\P15-HOST-2\\frontend-vitest-alias-attempt.log, G:\\CODEX\\New Manga\\verification\\P15-HOST-2\\frontend-vitest-final.log, G:\\CODEX\\New Manga\\verification\\P15-HOST-2\\frontend-vitest-isolated.log, G:\\CODEX\\New Manga\\verification\\P15-HOST-2\\host-only-rescan.ps1, G:\\CODEX\\New Manga\\verification\\P15-HOST-2\\modified-files-sha256.py"
+      ]
+    },
+    {
+      "task": "P15",
+      "status": "done",
+      "exit": 1,
+      "fail_count": 1,
+      "fails": [
+        "Evidence SHA-256 不匹配：apps/desktop/frontend/src/settings/SettingsPage.test.tsx"
+      ]
+    },
+    {
+      "task": "P16-C1",
+      "status": "done",
+      "exit": 1,
+      "fail_count": 1,
+      "fails": [
+        "Evidence SHA-256 不匹配：doc/contracts/M2-C1_TYPED_IPC_CONTRACT.md"
+      ]
+    },
+    {
+      "task": "P16",
+      "status": "done",
+      "exit": 1,
+      "fail_count": 1,
+      "fails": [
+        "Evidence SHA-256 不匹配：doc/contracts/M2-C1_TYPED_IPC_CONTRACT.md"
+      ]
+    },
+    {
+      "task": "P17",
+      "status": "done",
+      "exit": 1,
+      "fail_count": 2,
+      "fails": [
+        "Evidence SHA-256 不匹配：verification/P17/pytest.log",
+        "Evidence SHA-256 不匹配：verification/P17/cargo-packaged.log"
+      ]
+    },
+    {
+      "task": "P18",
+      "status": "closed_with_limitations",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "P19-AC3-1",
+      "status": "in_review",
+      "exit": 1,
+      "fail_count": 1,
+      "fails": [
+        "当前 DAG 未登记非终态 Task：P19-AC3-1"
+      ]
+    },
+    {
+      "task": "P19-BOOT-1",
+      "status": "done",
+      "exit": 1,
+      "fail_count": 2,
+      "fails": [
+        "DONE evidence_dir 含未登记文件：G:\\CODEX\\New Manga\\verification\\P19-BOOT-1\\.gitignore",
+        "Resource manifest 不存在：verification/P19-BOOT-1/resource-manifest.json"
+      ]
+    },
+    {
+      "task": "P19-UI-FIX-1",
+      "status": "done",
+      "exit": 1,
+      "fail_count": 4,
+      "fails": [
+        "Evidence SHA-256 不匹配：verification/P19-UI-FIX-1/frontend-npm-test-final.log",
+        "Evidence SHA-256 不匹配：verification/P19-UI-FIX-1/frontend-npm-build-final.log",
+        "DONE evidence_dir 含未登记文件：G:\\CODEX\\New Manga\\verification\\P19-UI-FIX-1\\04-settings-before-final-code-refinement.uia.txt, G:\\CODEX\\New Manga\\verification\\P19-UI-FIX-1\\04-settings-uia-pass-2.txt, G:\\CODEX\\New Manga\\verification\\P19-UI-FIX-1\\04-settings-uia-pass-exit-code-blank.txt, G:\\CODEX\\New Manga\\verification\\P19-UI-FIX-1\\app-err-before-final-code-refinement.log, G:\\CODEX\\New Manga\\verification\\P19-UI-FIX-1\\app-err-namespace-mismatch.log, G:\\CODEX\\New Manga\\verification\\P19-UI-FIX-1\\app-err-ui-a-pass-exit-code-blank-2.log, G:\\CODEX\\New Manga\\verification\\P19-UI-FIX-1\\app-err-ui-load-failure.log, G:\\CODEX\\New Manga\\verification\\P19-UI-FIX-1\\app-err-uia-pass-exit-code-blank.log",
+        "Resource 最终路径未验证：apps/desktop/src-tauri/target/p19-ui-fix-1-isolation-20261017"
+      ]
+    },
+    {
+      "task": "P19-UI-FIX-2",
+      "status": "done",
+      "exit": 1,
+      "fail_count": 1,
+      "fails": [
+        "DONE evidence_dir 含未登记文件：G:\\CODEX\\New Manga\\verification\\P19-UI-FIX-2\\appdata-source-after.json, G:\\CODEX\\New Manga\\verification\\P19-UI-FIX-2\\appdata-source-before.json, G:\\CODEX\\New Manga\\verification\\P19-UI-FIX-2\\bookshelf-import-targeted-test-final-r2.log, G:\\CODEX\\New Manga\\verification\\P19-UI-FIX-2\\bookshelf-import-targeted-test-final.log, G:\\CODEX\\New Manga\\verification\\P19-UI-FIX-2\\bookshelf-import-targeted-test.log, G:\\CODEX\\New Manga\\verification\\P19-UI-FIX-2\\cargo-build-before.log, G:\\CODEX\\New Manga\\verification\\P19-UI-FIX-2\\dsh-review-r1.md, G:\\CODEX\\New Manga\\verification\\P19-UI-FIX-2\\frontend-npm-build-before.log"
+      ]
+    },
+    {
+      "task": "P19-UI-FIX-3",
+      "status": "blocked",
+      "exit": 1,
+      "fail_count": 1,
+      "fails": [
+        "当前 DAG 未登记非终态 Task：P19-UI-FIX-3"
+      ]
+    },
+    {
+      "task": "P19-UI-MANIFEST-VIEW-1",
+      "status": "closed_with_limitations",
+      "exit": 1,
+      "fail_count": 1,
+      "fails": [
+        "Resource SHA-256 不匹配：doc/tasks/P19-UI-FIX-1.md"
+      ]
+    },
+    {
+      "task": "P19",
+      "status": "closed_with_limitations",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "P20-AC4-FPS-1",
+      "status": "closed_with_limitations",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "P20-CLOSE-BOUND-1",
+      "status": "closed_with_limitations",
+      "exit": 1,
+      "fail_count": 5,
+      "fails": [
+        "Evidence SHA-256 不匹配：apps/desktop/src-tauri/src/library_bridge.rs",
+        "Evidence SHA-256 不匹配：verification/P20-CLOSE-BOUND-1/concurrency-lock-audit.md",
+        "Evidence SHA-256 不匹配：verification/P20-CLOSE-BOUND-1/run-desktop-close-verification.ps1",
+        "Evidence SHA-256 不匹配：verification/P20-CLOSE-BOUND-1/test-ac1-overlay-bound.ps1",
+        "Evidence SHA-256 不匹配：verification/P20-CLOSE-BOUND-1/codex-review-r6.md"
+      ]
+    },
+    {
+      "task": "P20-CLOSE-BOUND-HARDEN-1",
+      "status": "closed_with_limitations",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "P20-CLOSE-BOUND-HARDEN-2",
+      "status": "done",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "P20-ISOLATION-1",
+      "status": "closed_with_limitations",
+      "exit": 1,
+      "fail_count": 1,
+      "fails": [
+        "Evidence SHA-256 不匹配：apps/desktop/src-tauri/src/library_bridge.rs"
+      ]
+    },
+    {
+      "task": "P20-MEM-OPT-1",
+      "status": "closed_with_limitations",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "P20",
+      "status": "closed_with_limitations",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "P22-REBASE-1",
+      "status": "done",
+      "exit": 1,
+      "fail_count": 2,
+      "fails": [
+        "Evidence SHA-256 不匹配：apps/desktop/src-tauri/src/library_bridge.rs",
+        "Evidence SHA-256 不匹配：apps/desktop/src-tauri/src/library_bridge.rs"
+      ]
+    },
+    {
+      "task": "P22",
+      "status": "in_review",
+      "exit": 1,
+      "fail_count": 3,
+      "fails": [
+        "失效的本地引用：doc\\tasks\\P22.md → ../../New%20Manga.worktrees/P22-roundtrip-serialization-antigravity/verification/P22/dsh-p22-review-r1.stdout.md",
+        "失效的本地引用：doc\\tasks\\P22.md → ../../New%20Manga.worktrees/P22-roundtrip-serialization-antigravity/verification/P22/dsh-p22-review-r2-attempt2.stdout.md",
+        "失效的本地引用：doc\\tasks\\P22.md → ../../New%20Manga.worktrees/P22-roundtrip-serialization-antigravity/verification/P22/dsh-p22-review-r2-followup.stdout.md"
+      ]
+    },
+    {
+      "task": "PDF-STREAM-FIX-1",
+      "status": "closed_with_limitations",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "PROJECT-ROADMAP-RELEASE",
+      "status": "done",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "READER-IPC-1",
+      "status": "done",
+      "exit": 1,
+      "fail_count": 1,
+      "fails": [
+        "Resource manifest 不存在：verification/READER-IPC-1/resource-manifest.json"
+      ]
+    },
+    {
+      "task": "RES-P02-AC6-CDP-RECOVERY",
+      "status": "done",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "RUN-IPC-1",
+      "status": "done",
+      "exit": 1,
+      "fail_count": 2,
+      "fails": [
+        "DONE 不能保留未完成 Acceptance Criteria；范围未完成时使用 closed_with_limitations。",
+        "Resource manifest 不存在：verification/RUN-IPC-1/resource-manifest.json"
+      ]
+    },
+    {
+      "task": "RUST-ENV-BASELINE-1",
+      "status": "proposed",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "SEARCHABLE-PDF-CJK-1",
+      "status": "closed_with_limitations",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "SEC-FIX-PATH-ECHO-1",
+      "status": "done",
+      "exit": 1,
+      "fail_count": 1,
+      "fails": [
+        "Evidence SHA-256 不匹配：src/bootstrap/core_service.py"
+      ]
+    },
+    {
+      "task": "SEC-FMT-IMPL-1",
+      "status": "closed_with_limitations",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "T1.1.1",
+      "status": "done",
+      "exit": 1,
+      "fail_count": 2,
+      "fails": [
+        "失效的本地引用：doc\\tasks\\T1.1.1.md → ../research/T1.1.1-detector-evaluation.md",
+        "失效的本地引用：doc\\tasks\\T1.1.1.md → ../../verification/T1.1.1/README.md"
+      ]
+    },
+    {
+      "task": "T1.2.1",
+      "status": "done",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "T2.1.1",
+      "status": "done",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "T2.2.1",
+      "status": "done",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "T3.1.1",
+      "status": "done",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "T3.2.1-REPAIR-10",
+      "status": "ready",
+      "exit": 1,
+      "fail_count": 2,
+      "fails": [
+        "当前 DAG 未登记非终态 Task：T3.2.1-REPAIR-10",
+        "READY Task 未出现在 Plan 的 READY 节点：T3.2.1-REPAIR-10"
+      ]
+    },
+    {
+      "task": "T3.2.1-REPAIR-11",
+      "status": "changes_requested",
+      "exit": 1,
+      "fail_count": 1,
+      "fails": [
+        "当前 DAG 未登记非终态 Task：T3.2.1-REPAIR-11"
+      ]
+    },
+    {
+      "task": "T3.2.1-REPAIR-12",
+      "status": "approved",
+      "exit": 1,
+      "fail_count": 1,
+      "fails": [
+        "当前 DAG 未登记非终态 Task：T3.2.1-REPAIR-12"
+      ]
+    },
+    {
+      "task": "T3.2.1-REPAIR-13",
+      "status": "done",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "T3.2.1-REPAIR-14",
+      "status": "done",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "T3.2.1-REPAIR-15-reader-export-lineage",
+      "status": "proposed",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "T3.2.1-REPAIR-16-bookshelf-page-count",
+      "status": "proposed",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "T3.2.1-REPAIR-17-mock-local-pipeline-smoke",
+      "status": "proposed",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "T3.2.1-REPAIR-3",
+      "status": "ready",
+      "exit": 1,
+      "fail_count": 2,
+      "fails": [
+        "当前 DAG 未登记非终态 Task：T3.2.1-REPAIR-3",
+        "READY Task 未出现在 Plan 的 READY 节点：T3.2.1-REPAIR-3"
+      ]
+    },
+    {
+      "task": "T3.2.1-REPAIR-4",
+      "status": "changes_requested",
+      "exit": 1,
+      "fail_count": 1,
+      "fails": [
+        "当前 DAG 未登记非终态 Task：T3.2.1-REPAIR-4"
+      ]
+    },
+    {
+      "task": "T3.2.1-REPAIR-5",
+      "status": "changes_requested",
+      "exit": 1,
+      "fail_count": 1,
+      "fails": [
+        "当前 DAG 未登记非终态 Task：T3.2.1-REPAIR-5"
+      ]
+    },
+    {
+      "task": "T3.2.1-REPAIR-6",
+      "status": "changes_requested",
+      "exit": 1,
+      "fail_count": 1,
+      "fails": [
+        "当前 DAG 未登记非终态 Task：T3.2.1-REPAIR-6"
+      ]
+    },
+    {
+      "task": "T3.2.1-REPAIR-7",
+      "status": "ready",
+      "exit": 1,
+      "fail_count": 2,
+      "fails": [
+        "当前 DAG 未登记非终态 Task：T3.2.1-REPAIR-7",
+        "READY Task 未出现在 Plan 的 READY 节点：T3.2.1-REPAIR-7"
+      ]
+    },
+    {
+      "task": "T3.2.1-REPAIR-8",
+      "status": "approved",
+      "exit": 1,
+      "fail_count": 1,
+      "fails": [
+        "当前 DAG 未登记非终态 Task：T3.2.1-REPAIR-8"
+      ]
+    },
+    {
+      "task": "T3.2.1-REPAIR-9",
+      "status": "ready",
+      "exit": 1,
+      "fail_count": 2,
+      "fails": [
+        "当前 DAG 未登记非终态 Task：T3.2.1-REPAIR-9",
+        "READY Task 未出现在 Plan 的 READY 节点：T3.2.1-REPAIR-9"
+      ]
+    },
+    {
+      "task": "T3.2.1",
+      "status": "closed_with_limitations",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "TASK-001",
+      "status": "done",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "TASK-002",
+      "status": "done",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "TASK-003",
+      "status": "done",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "TASK-004",
+      "status": "done",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "TASK-005",
+      "status": "done",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "TASK-006",
+      "status": "done",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "TASK-007",
+      "status": "done",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "TASK-008",
+      "status": "done",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "TASK-009",
+      "status": "done",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "TASK-010",
+      "status": "done",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "TASK-011",
+      "status": "done",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "TASK-012",
+      "status": "done",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "TASK-013",
+      "status": "done",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "TASK-014",
+      "status": "done",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "TASK-015",
+      "status": "done",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "TASK-016",
+      "status": "done",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "TASK-017",
+      "status": "done",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "TASK-018",
+      "status": "done",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "TASK-019",
+      "status": "done",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "TASK-020",
+      "status": "done",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "TASK-021",
+      "status": "done",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "TASK-022",
+      "status": "proposed",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "TASK-023",
+      "status": "done",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "TASK-024",
+      "status": "done",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "TASK-025",
+      "status": "proposed",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "TASK-026",
+      "status": "proposed",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "TASK-027",
+      "status": "proposed",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "TASK-028",
+      "status": "done",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "TASK-029",
+      "status": "done",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "TASK-030",
+      "status": "done",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "TASK-031",
+      "status": "done",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "TASK-032",
+      "status": "done",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "TASK-033",
+      "status": "done",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "TASK-034",
+      "status": "done",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "TASK-035",
+      "status": "done",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "TASK-036",
+      "status": "done",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "TASK-037",
+      "status": "done",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "TASK-038",
+      "status": "done",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "TASK-039",
+      "status": "done",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "TASK-040",
+      "status": "done",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "TASK-041",
+      "status": "done",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "TASK-042",
+      "status": "done",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "TASK-043",
+      "status": "done",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "TASK-044",
+      "status": "done",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "TASK-045",
+      "status": "done",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "TASK-046",
+      "status": "done",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "TASK-047",
+      "status": "cancelled",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "TASK-048",
+      "status": "done",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "TASK-049",
+      "status": "done",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "TASK-050",
+      "status": "done",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "TASK-051",
+      "status": "done",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "TASK-052",
+      "status": "done",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "TASK-053",
+      "status": "done",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "TASK-054",
+      "status": "done",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "TASK-055",
+      "status": "done",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "TASK-056",
+      "status": "done",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "TASK-057",
+      "status": "done",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "TASK-058",
+      "status": "done",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "TASK-059",
+      "status": "done",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "TASK-060",
+      "status": "done",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "TASK-061",
+      "status": "done",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "TASK-062",
+      "status": "done",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "TASK-063",
+      "status": "done",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "TASK-064",
+      "status": "done",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "TASK-065",
+      "status": "done",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "TEST-ENV-ASSUMPTIONS-1",
+      "status": "closed_with_limitations",
+      "exit": 0,
+      "fail_count": 0,
+      "fails": []
+    },
+    {
+      "task": "UI-DESIGN-1",
+      "status": "done",
+      "exit": 1,
+      "fail_count": 1,
+      "fails": [
+        "DONE 不能保留未完成 Acceptance Criteria；范围未完成时使用 closed_with_limitations。"
+      ]
+    }
+  ]
+}
