@@ -273,7 +273,7 @@ Canonical Evidence，属流程状态而非产品失败。本轮已把该 Review 
 | EV-R209-HANDOFF | R209 交付 | `verification/WORKSPACE-CONSOLIDATION-1/HANDOFF-r209.md` | - | ffaa70eb2b7d85b117eb6b07bb66289bd1014547047668c28e5df14767f9de14 | SOURCE_PIN |
 | EV-R210-REVIEW | R210 Review | `verification/WORKSPACE-CONSOLIDATION-1/codex-review-r210.md` | - | 7f63f6edbf84c3706ab71975f1489e4652f773e9e47d443dc0f75b4c131fac7e | SOURCE_PIN |
 | EV-R211-RECOVERY | R211 恢复搜索 | `verification/WORKSPACE-CONSOLIDATION-1/recovery-search-r211.md` | - | 7991137143285319982a52bbb4a19c73f6c9812384fb664676098fb0a95141cc | CANONICAL |
-| EV-R211-CLOSURE | R211 关闭请求 | `verification/WORKSPACE-CONSOLIDATION-1/closure-package-r211.md` | - | 53d7f303361d931538561b8cbd40621f2c22c071f89a9842cb0eae6f69b63e7c | CANONICAL |
+| EV-R211-CLOSURE | R211 关闭请求 | `verification/WORKSPACE-CONSOLIDATION-1/closure-package-r211.md` | - | ee23870b605861d17ddbcf7580b77bd05524fe0395125a8b4414ec9d7180b89f | CANONICAL |
 | EV-R208-GITATTR | 证据 EOL pin | `verification/WORKSPACE-CONSOLIDATION-1/.gitattributes` | - | db13af9f871ab99b3859fc1177d97e7d32a0d212b2c9ac70ad445eeabf614213 | SOURCE_PIN |
 
 ## Resource Manifest
@@ -292,6 +292,7 @@ Canonical Evidence，属流程状态而非产品失败。本轮已把该 Review 
 | legacy-worktrees | G:/CODEX/New Manga.worktrees | PRESERVE_UNKNOWN | G:/CODEX/New Manga.worktrees | verification/WORKSPACE-CONSOLIDATION-1/inventory.json | 历史 worktree 根；6 处路径部分重建（HEAD 快照）；37 个孤儿目录保留 |
 | review-scratch | G:/CODEX/New Manga.workspace/review-scratch | PRESERVE_UNKNOWN | G:/CODEX/New Manga.workspace/review-scratch | verification/WORKSPACE-CONSOLIDATION-1/incident-ledger-r208.json | 目录现为空；4 个 P09 scratch 原位置缺失记录见事故台账 |
 | temp | G:/CODEX/New Manga.workspace/temp | PRESERVE_UNKNOWN | G:/CODEX/New Manga.workspace/temp | verification/WORKSPACE-CONSOLIDATION-1/incident-ledger-r208.json | 3 个 BASELINE temp 根缺失；X6 根已删（capture 副本/可重建字节见台账） |
+| p03-temp-scratch | C:/Users/49745/AppData/Local/Temp/p03-bundle-verify-db01e2dede9740858d74fd6ae93a2d5f | PRESERVE_UNKNOWN | C:/Users/49745/AppData/Local/Temp/p03-bundle-verify-db01e2dede9740858d74fd6ae93a2d5f | verification/WORKSPACE-CONSOLIDATION-1/rework-r209-response.md | P03 隔离恢复演练临时 bare repo：20 files / 26,469 B；objects 为空；保留原位、不删不移；清理需另行授权（R211-01） |
 | p06-run-root | G:/CODEX/New Manga.workspace/P06-GC-DISTRIBUTION-MIGRATION | PRESERVE_REFERENCED | G:/CODEX/New Manga.workspace/P06-GC-DISTRIBUTION-MIGRATION | verification/P06/resource-manifest.json | 父根保留；受保护子树 old-runtime/worktree 缺失记录见事故台账 |
 
 ### R211 关闭裁决请求（2026-10-21，待 Codex 裁决）
@@ -306,6 +307,8 @@ Canonical Evidence，属流程状态而非产品失败。本轮已把该 Review 
   bounded NOT_FOUND，不升级为永久不可恢复。
 - **L1–L8 limitations**：18 个受保护 source 受损、P09/BASELINE 缺失、六 worktree 仅部分重建、
   49.48 GiB 逻辑字节非物理净释放、增量 bundle、工具根因未修、AC PARTIAL、F-01 临时目录保留。
+**R211 复审（`changes_requested`）响应**：R211-01 已补列 `p03-temp-scratch`；R211-02 收口提交前重生成 TASK_LEDGER；R211-03/04 记为 ACKNOWLEDGED；详见 `closure-package-r211.md` §8。
+
 - **请求**：Codex 记录 `closed_with_limitations`（`integration_commit: null`、不标 done），
   以 L1–L8 作为 canonical/resource `complete` 的内容。Owner 仍未自审/自批/关闭。
 

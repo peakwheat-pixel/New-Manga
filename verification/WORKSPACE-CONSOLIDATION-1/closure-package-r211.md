@@ -88,3 +88,18 @@ r208 原表原文移入同节之后的历史附录，不删除。**不新增 `LO
 - 可选取证恢复：只读磁盘镜像 + `$MFT`/`$UsnJrnl`/文件雕刻；本 Task 不做；
 - GC/prune 继续禁止，直到前置对象历史有独立保全；
 - `doc/handoffs/` 迁移与 STATUS/Plan 指针由收口提交一并处理。
+
+## 8. R211 复审响应（2026-10-21）
+
+`codex-review-r211.md`（reviewed_head=`abba2b0c580bbf6c2190ed10d129c263bf39cf20`）decision=`changes_requested`。
+逐项响应：
+
+| ID | 级别 | 处置 | 说明 |
+|---|---|---|---|
+| R211-01 | High | **FIXED** | 已在 Task Resource Manifest 补列 `p03-temp-scratch`：源/目标路径 `C:/Users/49745/AppData/Local/Temp/p03-bundle-verify-db01e2dede9740858d74fd6ae93a2d5f`，disposition `PRESERVE_UNKNOWN`，integrity 指向 `rework-r209-response.md`，注明 20 files / 26,469 B、objects 为空、保留原位不删不移、清理需另行授权 |
+| R211-02 | Medium | **FIXED（收口时重生成）** | 上次 Ledger 在 E3 提交前生成，tracked/untracked 子计数滞后；本轮已重跑 `task_ledger.py --write`，关闭提交前会再次重跑以反映 322→关闭后的实际总数与子计数 |
+| R211-03 | Low | **ACKNOWLEDGED** | `WORKSPACE-CLEANUP-TOOL-HARDENING-1` 保持 `proposed` / `pending_user_release`，未分配 owner、无实现分支；父 Task 关闭不构成实施授权，需 Codex 另行冻结范围与登记 |
+| R211-04 | Low | **ACKNOWLEDGED** | `recovery-search-r211.md` 保留为“已披露证据限制”：目录名/回收站/VSS/USN 的原始枚举日志未逐条持久化；Lead 抽检的 Test-Path、`vssadmin /for=G:`、`fsutil usn queryjournal` 输出已写入该文件 §1/§5；不得把 NOT_FOUND 升级为永久不可恢复 |
+
+补充：R211 复审本轮因执行环境 `helper_unknown_error: setup refresh had errors` 未能重跑 shell 命令，
+该限制由 Reviewer 如实披露；本响应未把其前序结果冒充为本轮新跑结果。
