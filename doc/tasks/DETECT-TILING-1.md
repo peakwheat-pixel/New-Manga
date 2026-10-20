@@ -3,12 +3,12 @@ id: DETECT-TILING-1
 title: core.detect 分块处理超限页面（含 SEC-FMT-005 超大图安全）
 kind: implementation
 governance_version: 3
-status: proposed
+status: ready
 language: zh-CN
 parent: ARCH-DOC-REBASELINE
 blocked_by: null
 suggested_owner: Antigravity
-owner: null
+owner: Antigravity
 reviewer: DSH（非作者独立复核；实现/审查分离）
 depends_on: []
 base_commit: null
@@ -59,12 +59,46 @@ MAX_DETECT_PIXELS = MAX_DETECT_PAGE_BYTES // 3
 - [ ] AC3：**32 MiB 契约与输入语义不变**——`MAX_DETECT_PAGE_BYTES` / `MAX_DETECT_PIXELS`
       **值不得修改**（分块是解法，调阈值不是）；PNG/JPEG 白名单、base64 校验、
       `width`/`height` 一致性校验的语义**保持不变**。
-- [ ] AC4：**真实页与普通页对照**——用被拒的那一页（`2946×4167 = 12,275,982 px`）实测通过，
-      产出 region 集与整页坐标；同时用一张**正常页**做对照，证明分块未改变正常页结果。
+- [ ] AC4：**超限样本与正常页对照**——用 `test-materials` 中**已存在的**超限样本实测通过，
+      产出 region 集与**整页坐标**；同时用一张**未超限页**做对照，证明分块未改变正常页结果。
+      **原目标页 `2946×4167` 已不在 `test-materials` 中**（见
+      `verification/DETECT-TILING-1-preflight-20261020.md`），改用同源等价样本：
+      实测可用样本见下表，**引用方式为 `test-materials` 路径 + `sha256`，不得复制入仓库**
+      （依据 `data-registry` policy `unknown rights mean no redistribution` 与
+      `WORKSPACE_GOVERNANCE.md` L83，见 `verification/test-materials-licence-check-20261020.md`）。
+
+      | 用途 | 尺寸 | 像素数 | 与 `MAX_DETECT_PIXELS` 之比 |
+      |---|---|---:|---:|
+      | **对照（不超限）** | `600×18401` | 11,040,600 | **0.987×** |
+      | **超限（主样本）** | `690×100674` | 69,465,060 | **6.21×** |
+      | **超限（极端）** | `690×131289` | 90,589,410 | **8.10×** |
+
+      **注意**：`690×131289` 会先触发 **Pillow 自身的** `MAX_IMAGE_PIXELS`（默认
+      `89,478,485`，为本项目阈值的 8.00 倍）。**AC1 的峰值内存实测必须覆盖这一点**：
+      确认 Pillow 的保护在哪一步生效、本项目的拒绝是否仍能先于大分配。
 - [ ] AC5：**`SEC-FMT-005` 超大图安全 + 回归 + 独立审查**——逐字覆盖 `SEC-FMT-005` 的三项要求
       （检查可用物理内存、分块或尺寸限制、清晰内存警告防 OOM），覆盖 `> 10000×20000` 场景；
       既有 `core.detect` 测试全通过；固定 `delivery_head` 由 DSH 独立复审。
       **未覆盖全项只能登记 `PARTIAL`，不得声称 `SEC-FMT-005` 已满足。**
+
+### 2026-10-20 释放记录
+
+**释放依据**：`verification/P09-GOVERNANCE-DEBT-20261019/codex-adjudicate-detect-tiling-r34.md`
+（方向批准）+ 两项释放前 Gate 复核：
+
+| Gate | 结果 |
+|---|---|
+| dirty 工作区基线 | **通过**（他人未提交内容未触碰）|
+| 样本可用 | **通过**——`test-materials` 有 78 张超限图，最大 90.6 M px |
+| 许可 | **通过**——policy 允许私有工作区内使用，禁止复制入仓 |
+
+**AC4 已按实际样本改写**（原目标页已丢失，改用同源等价样本）。
+
+**Owner = Antigravity**（`AGENTS.md`：承担 Codex 已释放的 Python/应用/基础设施/测试编程 Task）。
+**Reviewer = DSH**（`AGENTS.md`：不得审核自己实现的变更）。
+
+**本 Task 与 KO 链路无关**——`paddleocr` 在 Python 3.14 无可用 wheel 的问题
+不会阻塞本 Task，反之本 Task 也不会解决它。
 
 ## 允许修改范围（r34 收敛，待释放时冻结）
 
