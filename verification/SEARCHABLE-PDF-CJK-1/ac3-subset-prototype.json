@@ -1,0 +1,52 @@
+{
+  "probes": [
+    {
+      "font": "msyh.ttc",
+      "full_bytes": 19704352,
+      "total_glyphs": 30209,
+      "wanted_glyphs": 8,
+      "glyph_bytes_kept": 2382,
+      "glyph_bytes_total": 18617410,
+      "note": "glyph data only; a real subsetter must also rebuild loca, hmtx, cmap and the table directory",
+      "lang": "ja",
+      "text": "こんにちは世界",
+      "glyph_ratio": 0.0001
+    },
+    {
+      "font": "malgun.ttf",
+      "full_bytes": 13459196,
+      "total_glyphs": 28215,
+      "wanted_glyphs": 6,
+      "glyph_bytes_kept": 1518,
+      "glyph_bytes_total": 13030084,
+      "note": "glyph data only; a real subsetter must also rebuild loca, hmtx, cmap and the table directory",
+      "lang": "ko",
+      "text": "안녕하세요",
+      "glyph_ratio": 0.0001
+    },
+    {
+      "font": "msyh.ttc",
+      "full_bytes": 19704352,
+      "total_glyphs": 30209,
+      "wanted_glyphs": 5,
+      "glyph_bytes_kept": 2234,
+      "glyph_bytes_total": 18617410,
+      "note": "glyph data only; a real subsetter must also rebuild loca, hmtx, cmap and the table directory",
+      "lang": "zh",
+      "text": "你好世界",
+      "glyph_ratio": 0.0001
+    },
+    {
+      "font": "arial.ttf",
+      "full_bytes": 1045720,
+      "total_glyphs": 4651,
+      "wanted_glyphs": 9,
+      "glyph_bytes_kept": 4826,
+      "glyph_bytes_total": 690982,
+      "note": "glyph data only; a real subsetter must also rebuild loca, hmtx, cmap and the table directory",
+      "lang": "latin",
+      "text": "hello world",
+      "glyph_ratio": 0.0046
+    }
+  ]
+}
