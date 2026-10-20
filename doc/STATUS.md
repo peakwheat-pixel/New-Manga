@@ -4,9 +4,9 @@
 
 ## 当前 Task
 
-- 当前 Task：[P20](tasks/P20.md) **ready**。**AC1/AC2/AC7 ✅**；**AC3 ✅**（455.1 MB，见 [P20-MEM-OPT-1](tasks/P20-MEM-OPT-1.md)）；**AC6 ✅**（[P20-ISOLATION-1](tasks/P20-ISOLATION-1.md)：12/12）；**AC4 ◐**（延迟 36.0 ms；帧率见 [P20-AC4-FPS-1](tasks/P20-AC4-FPS-1.md)）；**AC5 ✅**（76.54 ms、零残留）。
+- 当前 Task：无（`P20` 已 `closed_with_limitations`，READY 仅 [ARCH-DOC-REBASELINE](tasks/ARCH-DOC-REBASELINE.md)）。**AC1/AC2/AC7 ✅**；**AC3 ✅**（455.1 MB，见 [P20-MEM-OPT-1](tasks/P20-MEM-OPT-1.md)）；**AC6 ✅**（[P20-ISOLATION-1](tasks/P20-ISOLATION-1.md)：12/12）；**AC4 ◐**（延迟 36.0 ms；帧率见 [P20-AC4-FPS-1](tasks/P20-AC4-FPS-1.md)）；**AC5 ✅**（76.54 ms、零残留）。
 - READY：[ARCH-DOC-REBASELINE](tasks/ARCH-DOC-REBASELINE.md)（AC7 已完成；AC1–AC3 PARTIAL、AC4–AC6 属消费者责任，不标 done）。
-- P20：[FPS-1](tasks/P20-AC4-FPS-1.md) 集成 `approved`；AC3 `NOT_RUN`（Coordinator），AC5 `NOT_VERIFIED_BY_RULING`；HARDEN-1 R4 → `closed_with_limitations`；**R4-01 由 [HARDEN-2](tasks/P20-CLOSE-BOUND-HARDEN-2.md) 承接完毕（`done`，7/7；AC5 桌面实测 54.48 ms 零残留）**；AC7 `NOT_RUN`。
+- P20：**`closed_with_limitations`**（6/7 AC done；AC4 撕裂项 `LIMITATION/UNOBSERVED`；用户 2026-10-20 授权）。
 - **新增**：[RUST-ENV-BASELINE-1](tasks/RUST-ENV-BASELINE-1.md) `proposed`（12 项 Rust 环境依赖失败）；**REBALANCE**：ZCode 遇 429 限流。
 - **治理债已收束**：11 个 GOV-* Task 全部终态（9 `done`、2 `closed_with_limitations`；PIN-LINEAGE-1 按 r28 停改，checker 未改）。裁定 r20–r29 在 `verification/P09-GOVERNANCE-DEBT-20261019/`。
 - **[GOV-DEBT-CLEANUP-1](tasks/GOV-DEBT-CLEANUP-1.md)**：`blocked`（待用户裁决）。
