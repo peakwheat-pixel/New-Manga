@@ -3,13 +3,13 @@ id: DETECT-MEMORY-GUARD-1
 title: core.detect 的可用物理内存检查（补 SEC-FMT-005 第①项）
 kind: implementation
 governance_version: 3
-status: proposed
+status: ready
 language: zh-CN
 parent: ARCH-DOC-REBASELINE
 blocked_by: null
 suggested_owner: DSH
-owner: null
-reviewer: null
+owner: DSH
+reviewer: ZCode
 depends_on: []
 base_commit: null
 branch: null
@@ -76,6 +76,33 @@ MAX_DETECT_PIXELS = MAX_DETECT_PAGE_BYTES // 3   # = 11,184,810
 - [ ] **AC5 回归与独立审查** <<PARTIAL: 待实施>>
   - 既有 `core.detect` 测试全通过；正常页行为不变；
   - 固定 `delivery_head`，由**非作者**独立复审。
+
+### 2026-10-20 释放记录
+
+**依据**：`codex-adjudicate-tiling-closeout-r36.md` 建议另立本 Task 补 `SEC-FMT-005` 第 ① 项。
+
+**Owner = DSH，Reviewer = ZCode。**
+
+**为什么是这个组合**（不是默认值，是上一轮验证出来的）：
+
+| 候选 | 能否实施 | 能否独立 Review | 依据 |
+|---|---|---|---|
+| **DSH** | **能**（`DETECT-TILING-1` 阶段 A 已交付）| 否（作者不得自审）| 本 Session |
+| **ZCode** | 未验证 | **能**（`DETECT-TILING-1` 的 r1 + r2 两轮已交付）| 本 Session |
+| Antigravity | **不能**（`agy` 两次卡死：42 分钟 CPU +0.2 s、10 分钟 CPU +0.0 s）| 未知 | 本 Session |
+
+**所以：DSH 实施、ZCode 复审。这与上一个 Task 相同，且两端都已实证。**
+
+**释放前 Gate**：
+
+| Gate | 结果 |
+|---|---|
+| 依赖已完成 | **是**——`DETECT-TILING-1` 已 `closed_with_limitations`，其拒绝路径是本 Task 的基础 |
+| 范围已冻结 | **是**——5 条 AC 与禁止范围在 Task 内 | 
+| 样本/环境可用 | **需在实施中确认**——`GlobalMemoryStatusEx` 在 Windows 可用，但本 Task 不依赖外部样本 |
+| 无阻塞项 | **是** |
+
+**本 Task 不改变 `MAX_DETECT_PIXELS` / `MAX_DETECT_PAGE_BYTES` 的值。**
 
 ## 允许修改范围（待释放时冻结）
 

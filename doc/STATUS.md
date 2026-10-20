@@ -6,7 +6,7 @@
 
 - 当前 Task：无。`DETECT-TILING-1` 已于 2026-10-20 收口；READY 仅 [ARCH-DOC-REBASELINE](tasks/ARCH-DOC-REBASELINE.md)（AC1–AC6 PARTIAL、AC7 待做，属消费者责任，不标 done）。
 - **[DETECT-TILING-1](tasks/DETECT-TILING-1.md)**：**`closed_with_limitations`**（5/5 AC；3 `MET`、2 `PARTIAL`；集成 `3928c35c4`）。限制：`SEC-FMT-005` 的「检查可用物理内存」未实现；真实超限 JPEG 不存在。
-- **建议新立**：[DETECT-MEMORY-GUARD-1](tasks/DETECT-MEMORY-GUARD-1.md) `proposed`（r36 建议；补 `SEC-FMT-005` ①）。
+- **READY 待派**：[DETECT-MEMORY-GUARD-1](tasks/DETECT-MEMORY-GUARD-1.md) **`ready`**（补 `SEC-FMT-005` ①③；5 AC；Owner DSH / Reviewer ZCode）。
 - P20：**`closed_with_limitations`**（6/7 AC；AC4 撕裂项 `LIMITATION/UNOBSERVED`；用户 2026-10-20 授权）。AC1/AC2/AC3/AC6/AC7 ✅；AC4 ◐ 延迟 36.0 ms。
 - **新增**：[RUST-ENV-BASELINE-1](tasks/RUST-ENV-BASELINE-1.md) `proposed`（12 项 Rust 环境依赖失败）；**REBALANCE**：ZCode 遇 429 限流。
 - **治理债已收束**：11 个 GOV-* Task 全部终态（9 `done`、2 `closed_with_limitations`；PIN-LINEAGE-1 按 r28 停改，checker 未改）。裁定 r20–r36 在 `verification/P09-GOVERNANCE-DEBT-20261019/`。

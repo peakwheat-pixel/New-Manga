@@ -21,7 +21,7 @@
 |P19 四页安全E2E|P12/14/15/17/18/P04|closed_with_limitations（4c860d882）|
 |P20 Windows发布|P19/P03/P06/DOC|closed_with_limitations（AC4 撕裂项 LIMITATION/UNOBSERVED；其余 6 AC done；用户 2026-10-20 授权）|
 |DETECT-TILING-1|ARCH-DOC-REBASELINE|**closed_with_limitations**（r36 收口；5/5 AC 完成，2 条带 limitation：SEC-FMT-005 的物理内存检查未实现、真实超限 JPEG 不存在；集成 `9d7eddf57`）|
-|DETECT-MEMORY-GUARD-1|DETECT-TILING-1|**proposed**（r36 建议；补 `SEC-FMT-005` ①「检查可用物理内存」与 ③「清晰内存警告」；5 AC）|
+|DETECT-MEMORY-GUARD-1|DETECT-TILING-1|**ready**（r36 建议 + 释放前 Gate 通过；补 `SEC-FMT-005` ①③；5 AC；Owner DSH / Reviewer ZCode）|
 |P20-MEM-OPT-1|P20|closed（AC1 完成；AC2 经调阈值消解）|
 |P20-ISOLATION-1|P20|closed_with_limitations（AC4 四项 MET；`library_bridge.rs` 旧 pin FAIL 保留为已知限制）|
 |P20-AC4-FPS-1|P20|closed_with_limitations（AC3 PASS；AC5 依裁决）|
@@ -46,4 +46,4 @@
 |GOV-PLAN-BUDGET-1|—|done|
 |RUST-ENV-BASELINE-1（P20-CLOSE-BOUND-1）/ P07交互补缺（P02）/ P21旧栈归档（P20+另授权）|—|proposed（P07/P21可选）|
 |P22 响应归属|P22-REBASE-1|已集成；P04 不放行，H1/P2-1/13 与 BC-AC5 缺项保留。已完成见各节点行。|
-READY 节点：ARCH-DOC-REBASELINE。done：**43 项**。
+READY 节点：ARCH-DOC-REBASELINE、DETECT-MEMORY-GUARD-1。done：**43 项**。
