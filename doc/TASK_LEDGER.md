@@ -6,13 +6,13 @@ Reconciliation of every `doc/tasks/*.md` against the plan's node set. r38 §3 es
 
 | metric | value |
 |---|---:|
-| task files | 320 |
+| task files | 321 |
 | terminal | 283 |
-| non-terminal | 37 |
-| non-terminal named in the plan | 3 |
+| non-terminal | 38 |
+| non-terminal named in the plan | 4 |
 | non-terminal outside the plan | 34 |
 | task files tracked by git | 294 |
-| task files untracked (drafts) | 26 |
+| task files untracked (drafts) | 27 |
 | non-terminal tracked by git | 26 |
 
 ## By status
@@ -28,6 +28,7 @@ Reconciliation of every `doc/tasks/*.md` against the plan's node set. r38 §3 es
 | `in_review` | 3 | no |
 | `in_progress` | 2 | no |
 | `cancelled` | 1 | yes |
+| `ready` | 1 | no |
 
 ## Non-terminal tasks
 
@@ -70,6 +71,7 @@ Reconciliation of every `doc/tasks/*.md` against the plan's node set. r38 §3 es
 | `TASK-025` | `proposed` | no |
 | `TASK-026` | `proposed` | no |
 | `TASK-027` | `proposed` | no |
+| `WORKSPACE-CONSOLIDATION-1` | `ready` | own row |
 
 ## What this ledger does not say
 

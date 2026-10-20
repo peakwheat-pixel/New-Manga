@@ -51,4 +51,5 @@
 |GOV-PLAN-BUDGET-1|—|done|
 |RUST-ENV-BASELINE-1（P20-CLOSE-BOUND-1）/ P07交互补缺（P02）/ P21旧栈归档（P20+另授权）|—|proposed（P07/P21可选）|
 |P22 响应归属|P22-REBASE-1|已集成；P04 不放行，H1/P2-1/13 与 BC-AC5 缺项保留。已完成见各节点行。|
-READY 节点：**无**。done：**51 项**。
+|WORKSPACE-CONSOLIDATION-1|—|**ready**（用户 2026-10-20 授权「由你来执行」；Owner=dsh，Reviewer=Codex；四表盘点→归档→清理→单主线）|
+READY 节点：**WORKSPACE-CONSOLIDATION-1**。done：**51 项**。
