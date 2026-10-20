@@ -91,3 +91,83 @@ ahead: cda1f5fea governance(ARCH-DOC-REBASELINE): all seven ACs are waiting
 
 **这属于本 Session 反复出现的同一类问题**：
 **输出里有我需要的信息，而我读的是我以为会出现的信息。**
+
+## 七、处置结果（2026-10-20 完成）
+
+**已选定方案 A 并执行完毕。**
+
+### 7.1 主线是 ntigravity/P09-AC3-DELETE-HARDEN-1
+
+**判据**：doc/REBASELINE_PLAN.md 的历史提交
+
+`
+e60829c8b  (antigravity/P09-AC3-DELETE-HARDEN-1) governance(DETECT-TILING-1): released
+f6fec5de2  governance: register DETECT-TILING-1 as proposed
+c11e55d7c  governance(P20): closed with limitations
+60052bb95  governance(P20-ISOLATION-1): closed with limitations
+b7120504a  governance(P20-CLOSE-BOUND-HARDEN-2): done
+...
+`
+
+**20 个治理提交全部落在这条分支上。**
+所以它是治理主线，尽管名字看起来像一条 Task 分支
+（本项目把主线与 Task 分支混用了命名，**这是另一个治理缺口，见 §八**）。
+
+### 7.2 执行的是干净的 fast-forward
+
+`
+git merge-base --is-ancestor antigravity/P09-AC3-DELETE-HARDEN-1 agent/antigravity/DETECT-TILING-1
+exit=0        <- 主线是我那条分支的祖先，ff 无冲突
+
+git checkout antigravity/P09-AC3-DELETE-HARDEN-1
+git merge --ff-only agent/antigravity/DETECT-TILING-1
+`
+
+**结果**：
+
+| 项 | 值 |
+|---|---|
+| 主线 HEAD | **1a4c61aea** |
+| Task 分支 | 1a4c61aea（与主线相同，不再唯一）|
+| 治理检查 | **PASS（1 warning）** |
+
+**7 个治理提交全部回到主线**：
+
+`
+1a4c61aea 分支切换事故记录
+923a928fc 修一个字节当兆字节的笔误
+c776dc1ae 阶段 2：五个候选解码路径全部失败
+b5253ebfc 阶段 1：裁剪不限定解码内存
+4a899c938 派发卡住 42 分钟
+cda1f5fea ARCH-DOC-REBASELINE 的 7 个 AC 都在等下游
+e60829c8b 释放 DETECT-TILING-1
+`
+
+**没有重写任何 commit hash，没有 cherry-pick，没有冲突。**
+
+### 7.3 一个附带确认
+
+**gent/antigravity/DETECT-TILING-1 现在与主线指向同一个 commit。**
+
+**保留它**——它是 Antigravity 的工作分支，实施时从它继续。
+但它现在**不再包含主线没有的东西**，所以不会造成历史分叉。
+
+## 八、暴露的第二个治理缺口
+
+**主线分支的名字是 ntigravity/P09-AC3-DELETE-HARDEN-1。**
+
+**这个命名建议它是 P09-AC3-DELETE-HARDEN-1 这个 Task 的分支**
+（AGENTS.md 规定 Antigravity「使用自己的任务分支」），
+**但它实际上承载了整个项目的治理历史（3326 个提交）**。
+
+**而 main（落后 367）和 master（落后 2271）都不是主线。**
+
+**所以任何新 Agent 读 git branch 时都会困惑：哪条是主线？**
+
+**建议**：在 doc/STATUS.md 或 doc/WORKSPACE_GOVERNANCE.md 里
+**明文登记「当前治理主线分支名」**，并在切换主线时更新它。
+
+**这不是我本轮能单方面定的**（改主线名或建一条真正的 main 都是结构性变更），
+**但「登记主线名」这一条是纯文档动作，可以立即做。**
+
+**本轮未做**——先记在这里。
