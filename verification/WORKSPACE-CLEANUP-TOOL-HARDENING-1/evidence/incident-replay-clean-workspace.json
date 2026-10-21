@@ -1,0 +1,169 @@
+{
+  "schema_version": 1,
+  "tool": "clean_workspace.py",
+  "mode": "incident_replay",
+  "generated_at": "2026-10-21T11:30:30+08:00",
+  "ledger": {
+    "path": "G:/CODEX/New Manga.workspace/worktrees/WORKSPACE-CLEANUP-TOOL-HARDENING-1/verification/WORKSPACE-CONSOLIDATION-1/incident-ledger-r208.json",
+    "sha256": "5acabdaa45d8a81ab22e1e2d81255c863a7b438326b9c39f34188ef589d99667",
+    "ledger_id": "incident-ledger-r208",
+    "ledger_sha256": "5acabdaa45d8a81ab22e1e2d81255c863a7b438326b9c39f34188ef589d99667"
+  },
+  "input_counts": {
+    "protected_sources": 18,
+    "removed_roots": 15
+  },
+  "decisions": [
+    {
+      "id": "ROOT-01",
+      "path": "G:/CODEX/New Manga.workspace/GOV-PIN-LINEAGE-1/worktree",
+      "normalized": "g:/codex/new manga.workspace/gov-pin-lineage-1/worktree",
+      "decision": "REJECT",
+      "reasons": [
+        "exact_source_path:g:/codex/new manga.workspace/gov-pin-lineage-1/worktree [PRESERVE_REFERENCED] {G:/CODEX/New Manga.workspace/worktrees/WORKSPACE-CLEANUP-TOOL-HARDENING-1/verification/WORKSPACE-CONSOLIDATION-1/incident-ledger-r208.json protected_sources[0] (SRC-01)}"
+      ]
+    },
+    {
+      "id": "ROOT-02",
+      "path": "G:/CODEX/New Manga.workspace/P06-GC-DISTRIBUTION-MIGRATION/old-runtime/worktree",
+      "normalized": "g:/codex/new manga.workspace/p06-gc-distribution-migration/old-runtime/worktree",
+      "decision": "REJECT",
+      "reasons": [
+        "descendant_of_preserved_root:g:/codex/new manga.workspace/p06-gc-distribution-migration [PRESERVE_REFERENCED] {G:/CODEX/New Manga.workspace/worktrees/WORKSPACE-CLEANUP-TOOL-HARDENING-1/verification/WORKSPACE-CONSOLIDATION-1/incident-ledger-r208.json protected_sources[1] (SRC-02)}"
+      ]
+    },
+    {
+      "id": "ROOT-03",
+      "path": "G:/CODEX/New Manga.workspace/worktrees/FEAT-CREATE-1",
+      "normalized": "g:/codex/new manga.workspace/worktrees/feat-create-1",
+      "decision": "REJECT",
+      "reasons": [
+        "exact_source_path:g:/codex/new manga.workspace/worktrees/feat-create-1 [PRESERVE_UNKNOWN] {G:/CODEX/New Manga.workspace/worktrees/WORKSPACE-CLEANUP-TOOL-HARDENING-1/verification/WORKSPACE-CONSOLIDATION-1/incident-ledger-r208.json protected_sources[13] (SRC-14)}"
+      ]
+    },
+    {
+      "id": "ROOT-04",
+      "path": "G:/CODEX/New Manga.workspace/worktrees/FEAT-CREATE-2",
+      "normalized": "g:/codex/new manga.workspace/worktrees/feat-create-2",
+      "decision": "REJECT",
+      "reasons": [
+        "exact_source_path:g:/codex/new manga.workspace/worktrees/feat-create-2 [PRESERVE_UNKNOWN] {G:/CODEX/New Manga.workspace/worktrees/WORKSPACE-CLEANUP-TOOL-HARDENING-1/verification/WORKSPACE-CONSOLIDATION-1/incident-ledger-r208.json protected_sources[14] (SRC-15)}"
+      ]
+    },
+    {
+      "id": "ROOT-05",
+      "path": "G:/CODEX/New Manga.workspace/worktrees/FEAT-CREATE-4",
+      "normalized": "g:/codex/new manga.workspace/worktrees/feat-create-4",
+      "decision": "REJECT",
+      "reasons": [
+        "exact_source_path:g:/codex/new manga.workspace/worktrees/feat-create-4 [PRESERVE_UNKNOWN] {G:/CODEX/New Manga.workspace/worktrees/WORKSPACE-CLEANUP-TOOL-HARDENING-1/verification/WORKSPACE-CONSOLIDATION-1/incident-ledger-r208.json protected_sources[15] (SRC-16)}"
+      ]
+    },
+    {
+      "id": "ROOT-06",
+      "path": "G:/CODEX/New Manga.workspace/worktrees/P19-UI-FIX-2",
+      "normalized": "g:/codex/new manga.workspace/worktrees/p19-ui-fix-2",
+      "decision": "REJECT",
+      "reasons": [
+        "exact_source_path:g:/codex/new manga.workspace/worktrees/p19-ui-fix-2 [PRESERVE_UNKNOWN] {G:/CODEX/New Manga.workspace/worktrees/WORKSPACE-CLEANUP-TOOL-HARDENING-1/verification/WORKSPACE-CONSOLIDATION-1/incident-ledger-r208.json protected_sources[16] (SRC-17)}"
+      ]
+    },
+    {
+      "id": "ROOT-07",
+      "path": "G:/CODEX/New Manga.worktrees/P02-real-webview-harness-antigravity",
+      "normalized": "g:/codex/new manga.worktrees/p02-real-webview-harness-antigravity",
+      "decision": "REJECT",
+      "reasons": [
+        "exact_source_path:g:/codex/new manga.worktrees/p02-real-webview-harness-antigravity [PRESERVE_UNKNOWN] {G:/CODEX/New Manga.workspace/worktrees/WORKSPACE-CLEANUP-TOOL-HARDENING-1/verification/WORKSPACE-CONSOLIDATION-1/incident-ledger-r208.json protected_sources[17] (SRC-18)}"
+      ]
+    },
+    {
+      "id": "ROOT-08",
+      "path": "G:/CODEX/New Manga.workspace/review-scratch/P09-PREVIEW-LIFECYCLE-RECLAIM-1-R11-392977a8",
+      "normalized": "g:/codex/new manga.workspace/review-scratch/p09-preview-lifecycle-reclaim-1-r11-392977a8",
+      "decision": "REJECT",
+      "reasons": [
+        "exact_source_path:g:/codex/new manga.workspace/review-scratch/p09-preview-lifecycle-reclaim-1-r11-392977a8 [PRESERVE_UNKNOWN] {G:/CODEX/New Manga.workspace/worktrees/WORKSPACE-CLEANUP-TOOL-HARDENING-1/verification/WORKSPACE-CONSOLIDATION-1/incident-ledger-r208.json protected_sources[2] (SRC-03)}"
+      ]
+    },
+    {
+      "id": "ROOT-09",
+      "path": "G:/CODEX/New Manga.workspace/review-scratch/P09-PREVIEW-LIFECYCLE-RECLAIM-1-R11-392977a8-export",
+      "normalized": "g:/codex/new manga.workspace/review-scratch/p09-preview-lifecycle-reclaim-1-r11-392977a8-export",
+      "decision": "REJECT",
+      "reasons": [
+        "exact_source_path:g:/codex/new manga.workspace/review-scratch/p09-preview-lifecycle-reclaim-1-r11-392977a8-export [PRESERVE_UNKNOWN] {G:/CODEX/New Manga.workspace/worktrees/WORKSPACE-CLEANUP-TOOL-HARDENING-1/verification/WORKSPACE-CONSOLIDATION-1/incident-ledger-r208.json protected_sources[3] (SRC-04)}"
+      ]
+    },
+    {
+      "id": "ROOT-10",
+      "path": "G:/CODEX/New Manga.workspace/review-scratch/P09-PREVIEW-LIFECYCLE-RECLAIM-1-R17",
+      "normalized": "g:/codex/new manga.workspace/review-scratch/p09-preview-lifecycle-reclaim-1-r17",
+      "decision": "REJECT",
+      "reasons": [
+        "exact_source_path:g:/codex/new manga.workspace/review-scratch/p09-preview-lifecycle-reclaim-1-r17 [PRESERVE_UNKNOWN] {G:/CODEX/New Manga.workspace/worktrees/WORKSPACE-CLEANUP-TOOL-HARDENING-1/verification/WORKSPACE-CONSOLIDATION-1/incident-ledger-r208.json protected_sources[4] (SRC-05)}"
+      ]
+    },
+    {
+      "id": "ROOT-11",
+      "path": "G:/CODEX/New Manga.workspace/review-scratch/P09-PREVIEW-LIFECYCLE-RECLAIM-1-R18",
+      "normalized": "g:/codex/new manga.workspace/review-scratch/p09-preview-lifecycle-reclaim-1-r18",
+      "decision": "REJECT",
+      "reasons": [
+        "exact_source_path:g:/codex/new manga.workspace/review-scratch/p09-preview-lifecycle-reclaim-1-r18 [PRESERVE_UNKNOWN] {G:/CODEX/New Manga.workspace/worktrees/WORKSPACE-CLEANUP-TOOL-HARDENING-1/verification/WORKSPACE-CONSOLIDATION-1/incident-ledger-r208.json protected_sources[5] (SRC-06)}"
+      ]
+    },
+    {
+      "id": "ROOT-12",
+      "path": "G:/CODEX/New Manga.workspace/temp/P02-NEW-TIME-BASELINE",
+      "normalized": "g:/codex/new manga.workspace/temp/p02-new-time-baseline",
+      "decision": "REJECT",
+      "reasons": [
+        "exact_source_path:g:/codex/new manga.workspace/temp/p02-new-time-baseline [PRESERVE_REFERENCED] {G:/CODEX/New Manga.workspace/worktrees/WORKSPACE-CLEANUP-TOOL-HARDENING-1/verification/WORKSPACE-CONSOLIDATION-1/incident-ledger-r208.json protected_sources[6] (SRC-07)}"
+      ]
+    },
+    {
+      "id": "ROOT-13",
+      "path": "G:/CODEX/New Manga.workspace/temp/P02-NEW-TIME-BASELINE-AC3-BRANCH-RESOLUTION",
+      "normalized": "g:/codex/new manga.workspace/temp/p02-new-time-baseline-ac3-branch-resolution",
+      "decision": "REJECT",
+      "reasons": [
+        "exact_source_path:g:/codex/new manga.workspace/temp/p02-new-time-baseline-ac3-branch-resolution [PRESERVE_REFERENCED] {G:/CODEX/New Manga.workspace/worktrees/WORKSPACE-CLEANUP-TOOL-HARDENING-1/verification/WORKSPACE-CONSOLIDATION-1/incident-ledger-r208.json protected_sources[7] (SRC-08)}"
+      ]
+    },
+    {
+      "id": "ROOT-14",
+      "path": "G:/CODEX/New Manga.workspace/temp/P02-NEW-TIME-BASELINE-AC3-GIT-TOPLEVEL-RESOLUTION",
+      "normalized": "g:/codex/new manga.workspace/temp/p02-new-time-baseline-ac3-git-toplevel-resolution",
+      "decision": "REJECT",
+      "reasons": [
+        "exact_source_path:g:/codex/new manga.workspace/temp/p02-new-time-baseline-ac3-git-toplevel-resolution [PRESERVE_REFERENCED] {G:/CODEX/New Manga.workspace/worktrees/WORKSPACE-CLEANUP-TOOL-HARDENING-1/verification/WORKSPACE-CONSOLIDATION-1/incident-ledger-r208.json protected_sources[8] (SRC-09)}"
+      ]
+    },
+    {
+      "id": "ROOT-15",
+      "path": "G:/CODEX/New Manga.workspace/temp/P02-NEW-TIME-X6",
+      "normalized": "g:/codex/new manga.workspace/temp/p02-new-time-x6",
+      "decision": "REJECT",
+      "reasons": [
+        "exact_source_path:g:/codex/new manga.workspace/temp/p02-new-time-x6 [PRESERVE_REFERENCED] {G:/CODEX/New Manga.workspace/worktrees/WORKSPACE-CLEANUP-TOOL-HARDENING-1/verification/WORKSPACE-CONSOLIDATION-1/incident-ledger-r208.json protected_sources[9] (SRC-10)}",
+        "ancestor_of_preserved_source:g:/codex/new manga.workspace/temp/p02-new-time-x6/codex-ac2-20261014-123308-pure-selftest [PRESERVE_REFERENCED] {G:/CODEX/New Manga.workspace/worktrees/WORKSPACE-CLEANUP-TOOL-HARDENING-1/verification/WORKSPACE-CONSOLIDATION-1/incident-ledger-r208.json protected_sources[10] (SRC-11)}",
+        "ancestor_of_preserved_source:g:/codex/new manga.workspace/temp/p02-new-time-x6/codex-ac2-r2-20261014-124643-pure-selftest [PRESERVE_REFERENCED] {G:/CODEX/New Manga.workspace/worktrees/WORKSPACE-CLEANUP-TOOL-HARDENING-1/verification/WORKSPACE-CONSOLIDATION-1/incident-ledger-r208.json protected_sources[11] (SRC-12)}",
+        "ancestor_of_preserved_source:g:/codex/new manga.workspace/temp/p02-new-time-x6/x6-20261014t1305cst-p02-newtime-r1-capture [PRESERVE_REFERENCED] {G:/CODEX/New Manga.workspace/worktrees/WORKSPACE-CLEANUP-TOOL-HARDENING-1/verification/WORKSPACE-CONSOLIDATION-1/incident-ledger-r208.json protected_sources[12] (SRC-13)}"
+      ]
+    }
+  ],
+  "coverage": {
+    "sources_covering_roots": 18,
+    "sources_without_root": []
+  },
+  "violations": [],
+  "totals": {
+    "candidates": 15,
+    "rejected": 15,
+    "deleted": 0,
+    "violations": 0
+  },
+  "ok": true,
+  "report_sha256": "bb5678b0f69357d5ad7bde7d5a55d4c1de1e9db8cf7faf2805ab12e3452f313c"
+}

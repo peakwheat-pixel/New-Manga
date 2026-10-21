@@ -1,0 +1,13 @@
+declaration audit: 1858 declaration(s), 1264 protected root(s), 163 error(s), 54 warning(s)
+  incident ledger sources protected by repo declarations: 18/18
+  ERROR TABLE_ROW_ARITY: table row at line 6 has 7 columns, header has 6; non-standard tables cannot be trusted for protection [doc/tasks/GOV-DEBT-CLEANUP-2.md]
+  ERROR DECL_BARE_NAME: declared path '���� agent-output���Ǳ� Task ������' is a bare name, not an absolute or resolvable repo-relative path [doc/tasks/GOV-EOL-PIN-1.md]
+  ERROR DECL_BARE_NAME: declared path '���� agent-output���Ǳ� Task ����' is a bare name, not an absolute or resolvable repo-relative path [doc/tasks/GOV-PLAN-BUDGET-1.md]
+  ERROR DECL_BARE_NAME: declared path '���� agent-output���Ǳ� Task ����' is a bare name, not an absolute or resolvable repo-relative path [doc/tasks/GOV-RESOURCE-MANIFEST-JSON-1.md]
+  ERROR DECL_BARE_NAME: declared path '���� agent-output���Ǳ� Task ������' is a bare name, not an absolute or resolvable repo-relative path [doc/tasks/GOV-UNTRACKED-BACKLOG-1.md]
+  ERROR DECL_BARE_NAME: declared path 'NOT_APPLICABLE' is a bare name, not an absolute or resolvable repo-relative path [doc/tasks/P02-NEW-TIME-BASELINE-AC3-GIT-TOPLEVEL-RESOLUTION.md]
+  ERROR DECL_BARE_NAME: declared path 'NOT_APPLICABLE' is a bare name, not an absolute or resolvable repo-relative path [doc/tasks/P02-NEW-TIME-BASELINE-AC3-GIT-TOPLEVEL-RESOLUTION.md]
+  ERROR DECL_BARE_NAME: declared path 'NOT_APPLICABLE' is a bare name, not an absolute or resolvable repo-relative path [doc/tasks/P02-NEW-TIME-BASELINE-AC3-GIT-TOPLEVEL-RESOLUTION.md]
+  ERROR DECL_BARE_NAME: declared path 'NOT_APPLICABLE' is a bare name, not an absolute or resolvable repo-relative path [doc/tasks/P02PRE-R1H-FORENSIC-RECOVERY.md]
+  ERROR DECL_BARE_NAME: declared path 'NOT_APPLICABLE' is a bare name, not an absolute or resolvable repo-relative path [doc/tasks/P02PRE-R1H-FORENSIC-RECOVERY.md]
+  report: G:/CODEX/New Manga.workspace/worktrees/WORKSPACE-CLEANUP-TOOL-HARDENING-1/verification/WORKSPACE-CLEANUP-TOOL-HARDENING-1/evidence/declaration-audit.json
