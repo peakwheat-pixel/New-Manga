@@ -4,14 +4,16 @@
 No filesystem outside %TEMP% is touched.  The fixture repository is needed only
 so that repo-relative declarations have a concrete repository root.
 """
+import datetime
 import os
+import shutil
+import subprocess
 import sys
 import unittest
 
 from fixture_support import (RepoFixture, TOOLS, acceptance_digest_from_report,
                              guard, load_json, make_release_window, utc_now,
                              write_json)
-import datetime
 
 if TOOLS not in sys.path:
     sys.path.insert(0, TOOLS)
@@ -165,6 +167,42 @@ class TestProtectionIndex(unittest.TestCase):
         self.index.finalize()
         self.assertTrue(self.index.evaluate(
             guard.norm_abs(os.path.join(self.fixture.repo, "README.md"))))
+
+    def test_junction_declaration_protects_real_target(self):
+        """F-01: a junction declaration also registers its real target."""
+        target = os.path.join(self.ws, "temp", "JUNCTION-TARGET")
+        os.makedirs(target, exist_ok=True)
+        link = os.path.join(self.ws, "temp", "JUNCTION-DECL")
+        os.makedirs(os.path.dirname(link), exist_ok=True)
+        result = subprocess.run(["cmd", "/c", "mklink", "/J", link, target],
+                                capture_output=True, text=True,
+                                encoding="utf-8", errors="replace")
+        if result.returncode != 0 or not os.path.isdir(link):
+            self.skipTest("directory junctions are not supported on this host")
+        self.addCleanup(lambda: shutil.rmtree(link, ignore_errors=True))
+        self.index.add_declaration(link, "PRESERVE_REFERENCED",
+                                   "doc/tasks/FIXTURE.md", "l1")
+        self.index.finalize()
+        self.assertTrue(self.index.evaluate(self._norm(target)))
+        self.assertTrue(self.index.evaluate(self._norm(link)))
+        self.assertTrue(any("DECL_ALIAS_REAL_TARGET" in warning["code"]
+                            for warning in self.index.warnings))
+
+    def test_pathlike_destination_failure_is_integrity_error(self):
+        """F-03: path-like but unresolvable destination is a hard error."""
+        self.index.add_declaration(os.path.join(self.ws, "temp", "SAFE"),
+                                   "DELETE_SAFE", "f.md", "l1")
+        self.index.add_destination("Same target/dist location", "f.md", "l1")
+        codes = [error["code"] for error in self.index.errors]
+        self.assertIn("DECL_DESTINATION_UNRESOLVED", codes)
+        with self.assertRaises(guard.GuardError):
+            self.index.finalize()
+
+    def test_descriptive_destination_is_allowed_prose(self):
+        self.index.add_destination("由管理员裁定，不指定路径", "f.md", "l1")
+        self.assertEqual(self.index.errors, [])
+        self.assertTrue(any("DECL_DESTINATION_PROSE" in warning["code"]
+                            for warning in self.index.warnings))
 
 
 class TestMarkdownDeclarations(unittest.TestCase):

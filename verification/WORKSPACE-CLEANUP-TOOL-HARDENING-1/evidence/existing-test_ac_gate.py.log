@@ -2,12 +2,12 @@ case                             expect  got     result
 ------------------------------------------------------------------------------
 F1_all_met                       PASS    PASS    OK
       FAIL: ��ǰ DAG δ�ǼǷ���̬ Task��FIXTURE-F1-ALL-MET
-      FAIL: Evidence commit ������ pin �ļ���071fb2158:C:/Users/49745/AppData/Local/Temp/acgate-c71gh4_t/fixture-evidence.
+      FAIL: Evidence commit ������ pin �ļ���071fb2158:C:/Users/49745/AppData/Local/Temp/acgate-fk4ow6h9/fixture-evidence.
 F2_unticked_no_marker            FAIL    FAIL    OK
       FAIL: AC ״̬���ȱʧ��Ƿ�������ĩ <<MET>> / <<PARTIAL: ԭ��>> / <<BLOCKED: ԭ��>> / <<NOT_APPLICABLE: ԭ��>>����AC2
 F3_blocked_with_reason           PASS    PASS    OK
       FAIL: ��ǰ DAG δ�ǼǷ���̬ Task��FIXTURE-F3-BLOCKED-WITH-REASON
-      FAIL: Evidence commit ������ pin �ļ���071fb2158:C:/Users/49745/AppData/Local/Temp/acgate-c71gh4_t/fixture-evidence.
+      FAIL: Evidence commit ������ pin �ļ���071fb2158:C:/Users/49745/AppData/Local/Temp/acgate-fk4ow6h9/fixture-evidence.
 F4_checked_but_blocked           FAIL    FAIL    OK
       FAIL: AC ���Ϊ BLOCKED ʱ���ù�ѡ��AC2
 F5_met_with_reason               FAIL    FAIL    OK
@@ -16,7 +16,7 @@ F6_blocked_without_reason        FAIL    FAIL    OK
       FAIL: AC ���Ϊ BLOCKED ʱ������ԭ��AC2
 F7_not_applicable_with_reason    PASS    PASS    OK
       FAIL: ��ǰ DAG δ�ǼǷ���̬ Task��FIXTURE-F7-NOT-APPLICABLE-WITH-REASON
-      FAIL: Evidence commit ������ pin �ļ���071fb2158:C:/Users/49745/AppData/Local/Temp/acgate-c71gh4_t/fixture-evidence.
+      FAIL: Evidence commit ������ pin �ļ���071fb2158:C:/Users/49745/AppData/Local/Temp/acgate-fk4ow6h9/fixture-evidence.
 F8_in_progress_no_gate           PASS    PASS    OK
       FAIL: ��ǰ DAG δ�ǼǷ���̬ Task��FIXTURE-F8-IN-PROGRESS-NO-GATE
 F9_done_unticked_met             FAIL    FAIL    OK
@@ -25,8 +25,8 @@ F10_done_with_partial            FAIL    FAIL    OK
       FAIL: DONE Task ���ð���δ���״̬��PARTIAL���� AC��AC2����Χδ���ʱ��ʹ�� closed_with_limitations��
 F11_in_review_with_partial       PASS    PASS    OK
       FAIL: ��ǰ DAG δ�ǼǷ���̬ Task��FIXTURE-F11-IN-REVIEW-WITH-PARTIAL
-      FAIL: Evidence commit ������ pin �ļ���071fb2158:C:/Users/49745/AppData/Local/Temp/acgate-c71gh4_t/fixture-evidence.
+      FAIL: Evidence commit ������ pin �ļ���071fb2158:C:/Users/49745/AppData/Local/Temp/acgate-fk4ow6h9/fixture-evidence.
 F12_closed_with_limitations_partial PASS    PASS    OK
-      FAIL: Evidence commit ������ pin �ļ���071fb2158:C:/Users/49745/AppData/Local/Temp/acgate-c71gh4_t/fixture-evidence.
+      FAIL: Evidence commit ������ pin �ļ���071fb2158:C:/Users/49745/AppData/Local/Temp/acgate-fk4ow6h9/fixture-evidence.
 ------------------------------------------------------------------------------
 12/12 cases behaved as specified

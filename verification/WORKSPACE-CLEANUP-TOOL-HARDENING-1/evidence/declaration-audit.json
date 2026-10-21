@@ -2,28 +2,31 @@
   "schema_version": 1,
   "tool": "clean_workspace.py",
   "mode": "declaration_audit",
-  "generated_at": "2026-10-21T10:14:48+08:00",
+  "generated_at": "2026-10-21T11:12:29+08:00",
   "scan": {
-    "markdown": 1591,
-    "json": 897,
-    "unparsable_json": 60,
-    "declarations": 1501,
-    "errors": 46,
-    "warnings": 90
+    "markdown": 2268,
+    "json": 1146,
+    "unparsable_json": 69,
+    "tracked_declaration_files": 7351,
+    "untracked_declaration_files": 1504,
+    "declarations": 1855,
+    "errors": 93,
+    "warnings": 122
   },
   "counts": {
-    "declarations": 1501,
-    "protected_roots": 1023,
+    "declarations": 1855,
+    "protected_roots": 1263,
     "by_disposition": {
-      "DESTINATION_PIN": 288,
-      "EVIDENCE_PIN": 896,
+      "DELETE_SAFE": 2,
+      "DESTINATION_PIN": 348,
+      "EVIDENCE_PIN": 1117,
       "NOT_APPLICABLE": 1,
-      "PRESERVE_REFERENCED": 282,
-      "PRESERVE_UNKNOWN": 29,
-      "PRESERVE_USER_DATA": 5
+      "PRESERVE_REFERENCED": 341,
+      "PRESERVE_UNKNOWN": 30,
+      "PRESERVE_USER_DATA": 16
     },
-    "errors": 46,
-    "warnings": 90
+    "errors": 93,
+    "warnings": 122
   },
   "errors": [
     {
@@ -55,6 +58,138 @@
       "message": "declared path '仓外 agent-output，非本 Task 交付物' is a bare name, not an absolute or resolvable repo-relative path",
       "file": "doc/tasks/GOV-UNTRACKED-BACKLOG-1.md",
       "locator": "line 10"
+    },
+    {
+      "code": "DECL_BARE_NAME",
+      "message": "declared path 'NOT_APPLICABLE' is a bare name, not an absolute or resolvable repo-relative path",
+      "file": "doc/tasks/P02-NEW-TIME-BASELINE-AC3-GIT-TOPLEVEL-RESOLUTION.md",
+      "locator": "line 5"
+    },
+    {
+      "code": "DECL_BARE_NAME",
+      "message": "declared path 'NOT_APPLICABLE' is a bare name, not an absolute or resolvable repo-relative path",
+      "file": "doc/tasks/P02-NEW-TIME-BASELINE-AC3-GIT-TOPLEVEL-RESOLUTION.md",
+      "locator": "line 6"
+    },
+    {
+      "code": "DECL_BARE_NAME",
+      "message": "declared path 'NOT_APPLICABLE' is a bare name, not an absolute or resolvable repo-relative path",
+      "file": "doc/tasks/P02-NEW-TIME-BASELINE-AC3-GIT-TOPLEVEL-RESOLUTION.md",
+      "locator": "line 11"
+    },
+    {
+      "code": "DECL_BARE_NAME",
+      "message": "declared path 'NOT_APPLICABLE' is a bare name, not an absolute or resolvable repo-relative path",
+      "file": "doc/tasks/P02PRE-R1H-FORENSIC-RECOVERY.md",
+      "locator": "line 8"
+    },
+    {
+      "code": "DECL_BARE_NAME",
+      "message": "declared path 'NOT_APPLICABLE' is a bare name, not an absolute or resolvable repo-relative path",
+      "file": "doc/tasks/P02PRE-R1H-FORENSIC-RECOVERY.md",
+      "locator": "line 9"
+    },
+    {
+      "code": "DECL_BARE_NAME",
+      "message": "declared path 'NOT_APPLICABLE' is a bare name, not an absolute or resolvable repo-relative path",
+      "file": "doc/tasks/P02PRE-R1H-FORENSIC-RECOVERY.md",
+      "locator": "line 10"
+    },
+    {
+      "code": "DECL_BARE_NAME",
+      "message": "declared path 'NOT_APPLICABLE' is a bare name, not an absolute or resolvable repo-relative path",
+      "file": "doc/tasks/P02PRE-R1H-FORENSIC-RECOVERY.md",
+      "locator": "line 11"
+    },
+    {
+      "code": "DECL_BARE_NAME",
+      "message": "declared path 'NOT_APPLICABLE' is a bare name, not an absolute or resolvable repo-relative path",
+      "file": "doc/tasks/P02PRE-R1H-FORENSIC-RECOVERY.md",
+      "locator": "line 12"
+    },
+    {
+      "code": "DECL_BARE_NAME",
+      "message": "declared path 'NOT_APPLICABLE' is a bare name, not an absolute or resolvable repo-relative path",
+      "file": "doc/tasks/P02PRE-R1H-H1-CURRENT-INPUT-REVIEW.md",
+      "locator": "line 7"
+    },
+    {
+      "code": "DECL_BARE_NAME",
+      "message": "declared path 'NOT_APPLICABLE' is a bare name, not an absolute or resolvable repo-relative path",
+      "file": "doc/tasks/P02PRE-R1H-H1-CURRENT-INPUT-REVIEW.md",
+      "locator": "line 8"
+    },
+    {
+      "code": "DECL_BARE_NAME",
+      "message": "declared path 'NOT_APPLICABLE' is a bare name, not an absolute or resolvable repo-relative path",
+      "file": "doc/tasks/P02PRE-R1H-H1-CURRENT-INPUT-REVIEW.md",
+      "locator": "line 9"
+    },
+    {
+      "code": "DECL_BARE_NAME",
+      "message": "declared path 'NOT_APPLICABLE' is a bare name, not an absolute or resolvable repo-relative path",
+      "file": "doc/tasks/P02PRE-R1H-H1-CURRENT-INPUT-REVIEW.md",
+      "locator": "line 10"
+    },
+    {
+      "code": "DECL_BARE_NAME",
+      "message": "declared path 'NOT_APPLICABLE' is a bare name, not an absolute or resolvable repo-relative path",
+      "file": "doc/tasks/P02PRE-R1H-H1-CURRENT-INPUT-REVIEW.md",
+      "locator": "line 11"
+    },
+    {
+      "code": "DECL_BARE_NAME",
+      "message": "declared path 'NOT_APPLICABLE' is a bare name, not an absolute or resolvable repo-relative path",
+      "file": "doc/tasks/P02PRE-R1H-H2-COLLECTOR.md",
+      "locator": "line 9"
+    },
+    {
+      "code": "DECL_BARE_NAME",
+      "message": "declared path 'NOT_APPLICABLE' is a bare name, not an absolute or resolvable repo-relative path",
+      "file": "doc/tasks/P02PRE-R1H-H2-RUN.md",
+      "locator": "line 12"
+    },
+    {
+      "code": "DECL_BARE_NAME",
+      "message": "declared path 'NOT_APPLICABLE' is a bare name, not an absolute or resolvable repo-relative path",
+      "file": "doc/tasks/P02PRE-R1H-H2-RUN.md",
+      "locator": "line 13"
+    },
+    {
+      "code": "DECL_BARE_NAME",
+      "message": "declared path 'NOT_APPLICABLE' is a bare name, not an absolute or resolvable repo-relative path",
+      "file": "doc/tasks/P02PRE-R1H-H2-RUN.md",
+      "locator": "line 15"
+    },
+    {
+      "code": "DECL_BARE_NAME",
+      "message": "declared path 'NOT_APPLICABLE' is a bare name, not an absolute or resolvable repo-relative path",
+      "file": "doc/tasks/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE.md",
+      "locator": "line 7"
+    },
+    {
+      "code": "DECL_BARE_NAME",
+      "message": "declared path 'NOT_APPLICABLE' is a bare name, not an absolute or resolvable repo-relative path",
+      "file": "doc/tasks/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE.md",
+      "locator": "line 8"
+    },
+    {
+      "code": "DECL_BARE_NAME",
+      "message": "declared path 'NOT_APPLICABLE' is a bare name, not an absolute or resolvable repo-relative path",
+      "file": "doc/tasks/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE.md",
+      "locator": "line 9"
+    },
+    {
+      "code": "DECL_BARE_NAME",
+      "message": "declared path 'NOT_APPLICABLE' is a bare name, not an absolute or resolvable repo-relative path",
+      "file": "doc/tasks/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE.md",
+      "locator": "line 10"
+    },
+    {
+      "code": "DECL_BARE_NAME",
+      "message": "declared path 'NOT_APPLICABLE' is a bare name, not an absolute or resolvable repo-relative path",
+      "file": "doc/tasks/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE.md",
+      "locator": "line 15"
     },
     {
       "code": "DECL_RELATIVE_UNRESOLVED",
@@ -129,7 +264,19 @@
       "locator": "line 5"
     },
     {
+      "code": "DECL_DESTINATION_UNRESOLVED",
+      "message": "declaration 'G:/CODEX/New Manga.workspace' resolves to g:/codex/new manga.workspace, which is the workspace root or a managed area root (g:/codex/new manga.workspace) or above; over-broad declarations need an explicit ruling",
+      "file": "doc/tasks/SEC-FIX-PATH-ECHO-1.md",
+      "locator": "line 5"
+    },
+    {
       "code": "DECL_GENERALIZED",
+      "message": "declaration 'G:/CODEX/New Manga.workspace/task-envs' resolves to g:/codex/new manga.workspace/task-envs, which is the workspace root or a managed area root (g:/codex/new manga.workspace/task-envs) or above; over-broad declarations need an explicit ruling",
+      "file": "doc/tasks/WORKSPACE-CONSOLIDATION-1.md",
+      "locator": "line 10"
+    },
+    {
+      "code": "DECL_DESTINATION_UNRESOLVED",
       "message": "declaration 'G:/CODEX/New Manga.workspace/task-envs' resolves to g:/codex/new manga.workspace/task-envs, which is the workspace root or a managed area root (g:/codex/new manga.workspace/task-envs) or above; over-broad declarations need an explicit ruling",
       "file": "doc/tasks/WORKSPACE-CONSOLIDATION-1.md",
       "locator": "line 10"
@@ -141,7 +288,19 @@
       "locator": "line 11"
     },
     {
+      "code": "DECL_DESTINATION_UNRESOLVED",
+      "message": "declaration 'G:/CODEX/New Manga.workspace' resolves to g:/codex/new manga.workspace, which is the workspace root or a managed area root (g:/codex/new manga.workspace) or above; over-broad declarations need an explicit ruling",
+      "file": "doc/tasks/WORKSPACE-CONSOLIDATION-1.md",
+      "locator": "line 11"
+    },
+    {
       "code": "DECL_GENERALIZED",
+      "message": "declaration 'G:/CODEX/New Manga.workspace/worktrees' resolves to g:/codex/new manga.workspace/worktrees, which is the workspace root or a managed area root (g:/codex/new manga.workspace/worktrees) or above; over-broad declarations need an explicit ruling",
+      "file": "doc/tasks/WORKSPACE-CONSOLIDATION-1.md",
+      "locator": "line 12"
+    },
+    {
+      "code": "DECL_DESTINATION_UNRESOLVED",
       "message": "declaration 'G:/CODEX/New Manga.workspace/worktrees' resolves to g:/codex/new manga.workspace/worktrees, which is the workspace root or a managed area root (g:/codex/new manga.workspace/worktrees) or above; over-broad declarations need an explicit ruling",
       "file": "doc/tasks/WORKSPACE-CONSOLIDATION-1.md",
       "locator": "line 12"
@@ -153,7 +312,19 @@
       "locator": "line 14"
     },
     {
+      "code": "DECL_DESTINATION_UNRESOLVED",
+      "message": "declaration 'G:/CODEX/New Manga.workspace/review-scratch' resolves to g:/codex/new manga.workspace/review-scratch, which is the workspace root or a managed area root (g:/codex/new manga.workspace/review-scratch) or above; over-broad declarations need an explicit ruling",
+      "file": "doc/tasks/WORKSPACE-CONSOLIDATION-1.md",
+      "locator": "line 14"
+    },
+    {
       "code": "DECL_GENERALIZED",
+      "message": "declaration 'G:/CODEX/New Manga.workspace/temp' resolves to g:/codex/new manga.workspace/temp, which is the workspace root or a managed area root (g:/codex/new manga.workspace/temp) or above; over-broad declarations need an explicit ruling",
+      "file": "doc/tasks/WORKSPACE-CONSOLIDATION-1.md",
+      "locator": "line 15"
+    },
+    {
+      "code": "DECL_DESTINATION_UNRESOLVED",
       "message": "declaration 'G:/CODEX/New Manga.workspace/temp' resolves to g:/codex/new manga.workspace/temp, which is the workspace root or a managed area root (g:/codex/new manga.workspace/temp) or above; over-broad declarations need an explicit ruling",
       "file": "doc/tasks/WORKSPACE-CONSOLIDATION-1.md",
       "locator": "line 15"
@@ -163,6 +334,66 @@
       "message": "resource '%TEMP%/.tmp* created by Rust tempfile tests' has unknown disposition 'CLEANED_BY_OWNER'",
       "file": "verification/ENV-BUNDLE-1-FU1/resource-manifest.json",
       "locator": "$.resources[7].disposition"
+    },
+    {
+      "code": "DECL_BARE_NAME",
+      "message": "declared path 'none yet' is a bare name, not an absolute or resolvable repo-relative path",
+      "file": "verification/P02-NEW-TIME-BASELINE/freeze/p02-task-pre-run-20261014T0430CST-ac3fix.md",
+      "locator": "line 6"
+    },
+    {
+      "code": "DECL_BARE_NAME",
+      "message": "declared path 'dsh-bounded-review-i2-r1.stdout.jsonl（父 Task Owner worktree）' is a bare name, not an absolute or resolvable repo-relative path",
+      "file": "verification/P02-NEW-TIME-BASELINE/freeze/p02-task-pre-run-20261014T0430CST-ac3fix.md",
+      "locator": "line 5"
+    },
+    {
+      "code": "DECL_BARE_NAME",
+      "message": "declared path 'codex-i2-verify-adjudication-r1.md（父 Task Owner worktree）' is a bare name, not an absolute or resolvable repo-relative path",
+      "file": "verification/P02-NEW-TIME-BASELINE/freeze/p02-task-pre-run-20261014T0430CST-ac3fix.md",
+      "locator": "line 6"
+    },
+    {
+      "code": "DECL_BARE_NAME",
+      "message": "declared path 'codex-ac3-branch-ref-blocker-20261014T0337.md（父 Task Owner worktree）' is a bare name, not an absolute or resolvable repo-relative path",
+      "file": "verification/P02-NEW-TIME-BASELINE/freeze/p02-task-pre-run-20261014T0430CST-ac3fix.md",
+      "locator": "line 7"
+    },
+    {
+      "code": "DECL_BARE_NAME",
+      "message": "declared path 'convergence-post-i2-ac3-branch-output-20261014T0337.json（父 Task Owner worktree）' is a bare name, not an absolute or resolvable repo-relative path",
+      "file": "verification/P02-NEW-TIME-BASELINE/freeze/p02-task-pre-run-20261014T0430CST-ac3fix.md",
+      "locator": "line 8"
+    },
+    {
+      "code": "DECL_BARE_NAME",
+      "message": "declared path 'none yet' is a bare name, not an absolute or resolvable repo-relative path",
+      "file": "verification/P02-NEW-TIME-BASELINE/freeze/p02-task-review-head-83588bb.md",
+      "locator": "line 6"
+    },
+    {
+      "code": "DECL_BARE_NAME",
+      "message": "declared path 'dsh-bounded-review-i2-r1.stdout.jsonl（父 Task Owner worktree）' is a bare name, not an absolute or resolvable repo-relative path",
+      "file": "verification/P02-NEW-TIME-BASELINE/freeze/p02-task-review-head-83588bb.md",
+      "locator": "line 5"
+    },
+    {
+      "code": "DECL_BARE_NAME",
+      "message": "declared path 'codex-i2-verify-adjudication-r1.md（父 Task Owner worktree）' is a bare name, not an absolute or resolvable repo-relative path",
+      "file": "verification/P02-NEW-TIME-BASELINE/freeze/p02-task-review-head-83588bb.md",
+      "locator": "line 6"
+    },
+    {
+      "code": "DECL_BARE_NAME",
+      "message": "declared path 'codex-ac3-branch-ref-blocker-20261014T0337.md（父 Task Owner worktree）' is a bare name, not an absolute or resolvable repo-relative path",
+      "file": "verification/P02-NEW-TIME-BASELINE/freeze/p02-task-review-head-83588bb.md",
+      "locator": "line 7"
+    },
+    {
+      "code": "DECL_BARE_NAME",
+      "message": "declared path 'convergence-post-i2-ac3-branch-output-20261014T0337.json（父 Task Owner worktree）' is a bare name, not an absolute or resolvable repo-relative path",
+      "file": "verification/P02-NEW-TIME-BASELINE/freeze/p02-task-review-head-83588bb.md",
+      "locator": "line 8"
     },
     {
       "code": "FILE_UNREADABLE",
@@ -175,6 +406,54 @@
       "message": "tracked markdown g:\\codex\\new manga\\verification\\P02\\dsh-p02-r2-closeout-review-r2.mount.md is not valid UTF-8: 'utf-8' codec can't decode byte 0xd2 in position 0: invalid continuation byte",
       "file": "verification/P02/dsh-p02-r2-closeout-review-r2.mount.md",
       "locator": null
+    },
+    {
+      "code": "DECL_BARE_NAME",
+      "message": "declared path 'NOT_APPLICABLE' is a bare name, not an absolute or resolvable repo-relative path",
+      "file": "verification/P02PRE-R1H-H1-CURRENT-INPUT-REVIEW/h2-run-task-r1.md",
+      "locator": "line 12"
+    },
+    {
+      "code": "DECL_BARE_NAME",
+      "message": "declared path 'NOT_APPLICABLE' is a bare name, not an absolute or resolvable repo-relative path",
+      "file": "verification/P02PRE-R1H-H1-CURRENT-INPUT-REVIEW/h2-run-task-r1.md",
+      "locator": "line 13"
+    },
+    {
+      "code": "DECL_BARE_NAME",
+      "message": "declared path 'NOT_APPLICABLE' is a bare name, not an absolute or resolvable repo-relative path",
+      "file": "verification/P02PRE-R1H-H1-CURRENT-INPUT-REVIEW/h2-run-task-r1.md",
+      "locator": "line 15"
+    },
+    {
+      "code": "DECL_BARE_NAME",
+      "message": "declared path 'NOT_APPLICABLE' is a bare name, not an absolute or resolvable repo-relative path",
+      "file": "verification/P02PRE-R1H-H1-CURRENT-INPUT-REVIEW/task-contract-r1.md",
+      "locator": "line 7"
+    },
+    {
+      "code": "DECL_BARE_NAME",
+      "message": "declared path 'NOT_APPLICABLE' is a bare name, not an absolute or resolvable repo-relative path",
+      "file": "verification/P02PRE-R1H-H1-CURRENT-INPUT-REVIEW/task-contract-r1.md",
+      "locator": "line 8"
+    },
+    {
+      "code": "DECL_BARE_NAME",
+      "message": "declared path 'NOT_APPLICABLE' is a bare name, not an absolute or resolvable repo-relative path",
+      "file": "verification/P02PRE-R1H-H1-CURRENT-INPUT-REVIEW/task-contract-r1.md",
+      "locator": "line 9"
+    },
+    {
+      "code": "DECL_BARE_NAME",
+      "message": "declared path 'NOT_APPLICABLE' is a bare name, not an absolute or resolvable repo-relative path",
+      "file": "verification/P02PRE-R1H-H1-CURRENT-INPUT-REVIEW/task-contract-r1.md",
+      "locator": "line 10"
+    },
+    {
+      "code": "DECL_BARE_NAME",
+      "message": "declared path 'NOT_APPLICABLE' is a bare name, not an absolute or resolvable repo-relative path",
+      "file": "verification/P02PRE-R1H-H1-CURRENT-INPUT-REVIEW/task-contract-r1.md",
+      "locator": "line 11"
     },
     {
       "code": "FILE_UNREADABLE",
@@ -279,6 +558,12 @@
       "locator": "line 5"
     },
     {
+      "code": "DECL_DESTINATION_UNRESOLVED",
+      "message": "declared relative path 'Same ignored target/dist locations in this worktree' is not an existing repo top-level entry; identity is ambiguous",
+      "file": "verification/P19-UI-FIX-1/resource-manifest.json",
+      "locator": "$.resources[1].destination_path"
+    },
+    {
       "code": "DECL_ENV",
       "message": "declared path '%APPDATA%/com.newmanga.m2rc1.desktop/{catalog,data,derived}' contains an environment variable or shell home token",
       "file": "verification/P19-UI-FIX-1/resource-manifest.json",
@@ -305,76 +590,154 @@
   ],
   "warnings": [
     {
-      "code": "DECL_DESTINATION_UNRESOLVED",
-      "message": "declared path '不适用' is a bare name, not an absolute or resolvable repo-relative path",
+      "code": "DECL_DESTINATION_PROSE",
+      "message": "destination 'CON' is descriptive text, not a path; it is not protection",
+      "file": "doc/tasks/GOV-UNTRACKED-BACKLOG-1.md",
+      "locator": "line 8"
+    },
+    {
+      "code": "DECL_DESTINATION_PROSE",
+      "message": "destination 'NOT_APPLICABLE' is descriptive text, not a path; it is not protection",
+      "file": "doc/tasks/P02-NEW-TIME-BASELINE-AC3-GIT-TOPLEVEL-RESOLUTION.md",
+      "locator": "line 5"
+    },
+    {
+      "code": "DECL_DESTINATION_PROSE",
+      "message": "destination 'NOT_APPLICABLE' is descriptive text, not a path; it is not protection",
+      "file": "doc/tasks/P02-NEW-TIME-BASELINE-AC3-GIT-TOPLEVEL-RESOLUTION.md",
+      "locator": "line 6"
+    },
+    {
+      "code": "DECL_DESTINATION_PROSE",
+      "message": "destination 'NOT_APPLICABLE' is descriptive text, not a path; it is not protection",
+      "file": "doc/tasks/P02-NEW-TIME-BASELINE-AC3-GIT-TOPLEVEL-RESOLUTION.md",
+      "locator": "line 11"
+    },
+    {
+      "code": "DECL_DESTINATION_PROSE",
+      "message": "destination 'NOT_APPLICABLE' is descriptive text, not a path; it is not protection",
+      "file": "doc/tasks/P02PRE-R1H-H2-COLLECTOR.md",
+      "locator": "line 9"
+    },
+    {
+      "code": "DECL_DESTINATION_PROSE",
+      "message": "destination '不适用' is descriptive text, not a path; it is not protection",
       "file": "doc/tasks/P09-AC3-DELETE-1.md",
       "locator": "line 4"
     },
     {
-      "code": "DECL_DESTINATION_UNRESOLVED",
-      "message": "declared path '不适用' is a bare name, not an absolute or resolvable repo-relative path",
+      "code": "DECL_DESTINATION_PROSE",
+      "message": "destination '不适用' is descriptive text, not a path; it is not protection",
       "file": "doc/tasks/P09-AC3-DELETE-HARDEN-1.md",
       "locator": "line 4"
     },
     {
-      "code": "DECL_DESTINATION_UNRESOLVED",
-      "message": "declared path '不适用' is a bare name, not an absolute or resolvable repo-relative path",
+      "code": "DECL_DESTINATION_PROSE",
+      "message": "destination '不适用' is descriptive text, not a path; it is not protection",
       "file": "doc/tasks/P20-AC4-FPS-1.md",
       "locator": "line 4"
     },
     {
-      "code": "DECL_DESTINATION_UNRESOLVED",
-      "message": "declared path '不适用' is a bare name, not an absolute or resolvable repo-relative path",
+      "code": "DECL_DESTINATION_PROSE",
+      "message": "destination '不适用' is descriptive text, not a path; it is not protection",
       "file": "doc/tasks/P20-CLOSE-BOUND-HARDEN-1.md",
       "locator": "line 4"
     },
     {
-      "code": "DECL_DESTINATION_UNRESOLVED",
-      "message": "declared path '不适用' is a bare name, not an absolute or resolvable repo-relative path",
+      "code": "DECL_DESTINATION_PROSE",
+      "message": "destination '不适用' is descriptive text, not a path; it is not protection",
       "file": "doc/tasks/P20-CLOSE-BOUND-HARDEN-1.md",
       "locator": "line 5"
     },
     {
-      "code": "DECL_DESTINATION_UNRESOLVED",
-      "message": "declared path 'Same ignored bundle in task worktree' is a bare name, not an absolute or resolvable repo-relative path",
+      "code": "DECL_DESTINATION_PROSE",
+      "message": "destination 'Same ignored bundle in task worktree' is descriptive text, not a path; it is not protection",
       "file": "verification/ENV-BUNDLE-1-FU1/resource-manifest.json",
       "locator": "$.resources[1].destination_path"
     },
     {
-      "code": "DECL_DESTINATION_UNRESOLVED",
-      "message": "declared path 'Same ignored bundle in main worktree' is a bare name, not an absolute or resolvable repo-relative path",
+      "code": "DECL_DESTINATION_PROSE",
+      "message": "destination 'Same ignored bundle in main worktree' is descriptive text, not a path; it is not protection",
       "file": "verification/ENV-BUNDLE-1-FU1/resource-manifest.json",
       "locator": "$.resources[2].destination_path"
     },
     {
-      "code": "DECL_DESTINATION_UNRESOLVED",
-      "message": "declared path 'Same ignored dist in task worktree' is a bare name, not an absolute or resolvable repo-relative path",
+      "code": "DECL_DESTINATION_PROSE",
+      "message": "destination 'Same ignored dist in task worktree' is descriptive text, not a path; it is not protection",
       "file": "verification/ENV-BUNDLE-1-FU1/resource-manifest.json",
       "locator": "$.resources[3].destination_path"
     },
     {
-      "code": "DECL_DESTINATION_UNRESOLVED",
-      "message": "declared path 'Same ignored dist in main worktree' is a bare name, not an absolute or resolvable repo-relative path",
+      "code": "DECL_DESTINATION_PROSE",
+      "message": "destination 'Same ignored dist in main worktree' is descriptive text, not a path; it is not protection",
       "file": "verification/ENV-BUNDLE-1-FU1/resource-manifest.json",
       "locator": "$.resources[4].destination_path"
     },
     {
-      "code": "DECL_DESTINATION_UNRESOLVED",
-      "message": "declared path 'Same existing isolated build venv' is a bare name, not an absolute or resolvable repo-relative path",
+      "code": "DECL_DESTINATION_PROSE",
+      "message": "destination 'Same existing isolated build venv' is descriptive text, not a path; it is not protection",
       "file": "verification/ENV-BUNDLE-1-FU1/resource-manifest.json",
       "locator": "$.resources[5].destination_path"
     },
     {
-      "code": "DECL_DESTINATION_UNRESOLVED",
-      "message": "declared path 'Same ignored node_modules in task worktree' is a bare name, not an absolute or resolvable repo-relative path",
+      "code": "DECL_DESTINATION_PROSE",
+      "message": "destination 'Same ignored node_modules in task worktree' is descriptive text, not a path; it is not protection",
       "file": "verification/ENV-BUNDLE-1-FU1/resource-manifest.json",
       "locator": "$.resources[6].destination_path"
     },
     {
-      "code": "DECL_DESTINATION_UNRESOLVED",
-      "message": "declared path 'junctions to the coordinator-provided main-repo build artifacts' is a bare name, not an absolute or resolvable repo-relative path",
+      "code": "DECL_ALIAS_REAL_TARGET",
+      "message": "declaration 'G:/CODEX/New Manga.workspace/worktrees/EVENTS-FWD-1/apps/desktop/frontend/node_modules' is reached through a symlink/junction; the real target g:/codex/new manga/apps/desktop/frontend/node_modules is protected as well",
+      "file": "verification/EVENTS-FWD-1/resource-manifest.json",
+      "locator": "$.resources[1].disposition"
+    },
+    {
+      "code": "DECL_ALIAS_REAL_TARGET",
+      "message": "declaration 'G:/CODEX/New Manga.workspace/worktrees/EVENTS-FWD-1/apps/desktop/src-tauri/target/core-sidecar' is reached through a symlink/junction; the real target g:/codex/new manga/apps/desktop/src-tauri/target/core-sidecar is protected as well",
+      "file": "verification/EVENTS-FWD-1/resource-manifest.json",
+      "locator": "$.resources[2].disposition"
+    },
+    {
+      "code": "DECL_ALIAS_REAL_TARGET",
+      "message": "declaration 'G:/CODEX/New Manga.workspace/worktrees/EXPORT-IPC-1/apps/desktop/frontend/dist' is reached through a symlink/junction; the real target g:/codex/new manga/apps/desktop/frontend/dist is protected as well",
+      "file": "verification/EXPORT-IPC-1/resource-manifest.json",
+      "locator": "$.resources[1].disposition"
+    },
+    {
+      "code": "DECL_ALIAS_REAL_TARGET",
+      "message": "declaration 'G:/CODEX/New Manga.workspace/worktrees/EXPORT-IPC-1/apps/desktop/src-tauri/target/core-sidecar' is reached through a symlink/junction; the real target g:/codex/new manga/apps/desktop/src-tauri/target/core-sidecar is protected as well",
+      "file": "verification/EXPORT-IPC-1/resource-manifest.json",
+      "locator": "$.resources[2].disposition"
+    },
+    {
+      "code": "DECL_ALIAS_REAL_TARGET",
+      "message": "declaration 'G:/CODEX/New Manga.workspace/worktrees/EXPORT-REVEAL-1/apps/desktop/src-tauri/target/core-sidecar' is reached through a symlink/junction; the real target g:/codex/new manga/apps/desktop/src-tauri/target/core-sidecar is protected as well",
+      "file": "verification/EXPORT-REVEAL-1/resource-manifest.json",
+      "locator": "$.resources[1].disposition"
+    },
+    {
+      "code": "DECL_DESTINATION_PROSE",
+      "message": "destination 'junctions to the coordinator-provided main-repo build artifacts' is descriptive text, not a path; it is not protection",
       "file": "verification/HOST-ISSUER-1/resource-manifest.json",
       "locator": "$.resources[2].destination_path"
+    },
+    {
+      "code": "DECL_ALIAS_REAL_TARGET",
+      "message": "declaration 'G:/CODEX/New Manga.workspace/worktrees/HOST-TTL-BOUNDARY-1/apps/desktop/src-tauri/target/core-sidecar' is reached through a symlink/junction; the real target g:/codex/new manga/apps/desktop/src-tauri/target/core-sidecar is protected as well",
+      "file": "verification/HOST-TTL-BOUNDARY-1/resource-manifest.json",
+      "locator": "$.resources[1].disposition"
+    },
+    {
+      "code": "JSON_NONSTANDARD",
+      "message": "untracked JSON is not a single JSON document and contains no PRESERVE marker (untracked JSON g:\\codex\\new manga\\verification\\P02-NEW-TIME-BASELINE-AC3-HELPER-OUTPUT-RESOLUTION\\dsh-review-preflight-r1.json is not valid JSON: Expecting value: line 1 column 1 (char 0))",
+      "file": "verification/P02-NEW-TIME-BASELINE-AC3-HELPER-OUTPUT-RESOLUTION/dsh-review-preflight-r1.json",
+      "locator": null
+    },
+    {
+      "code": "JSON_NONSTANDARD",
+      "message": "untracked JSON is not a single JSON document and contains no PRESERVE marker (untracked JSON g:\\codex\\new manga\\verification\\P02-NEW-TIME-BASELINE\\run-baseline-20261014T0430CST-ac3fix.json is not valid JSON: Extra data: line 2 column 1 (char 5001))",
+      "file": "verification/P02-NEW-TIME-BASELINE/run-baseline-20261014T0430CST-ac3fix.json",
+      "locator": null
     },
     {
       "code": "JSON_NONSTANDARD",
@@ -401,110 +764,200 @@
       "locator": null
     },
     {
-      "code": "DECL_DESTINATION_UNRESOLVED",
-      "message": "declared path '原路径' is a bare name, not an absolute or resolvable repo-relative path",
+      "code": "JSON_NONSTANDARD",
+      "message": "untracked JSON is not a single JSON document and contains no PRESERVE marker (untracked JSON g:\\codex\\new manga\\verification\\P02\\zcode-dispatch-env-smoke-20261012-152149.stdout.json is not valid JSON: Expecting value: line 1 column 1 (char 0))",
+      "file": "verification/P02/zcode-dispatch-env-smoke-20261012-152149.stdout.json",
+      "locator": null
+    },
+    {
+      "code": "JSON_NONSTANDARD",
+      "message": "untracked JSON is not a single JSON document and contains no PRESERVE marker (untracked JSON g:\\codex\\new manga\\verification\\P02\\zcode-dispatch-env-smoke-a6-20261012-152336.stdout.json is not valid JSON: Expecting value: line 1 column 1 (char 0))",
+      "file": "verification/P02/zcode-dispatch-env-smoke-a6-20261012-152336.stdout.json",
+      "locator": null
+    },
+    {
+      "code": "JSON_NONSTANDARD",
+      "message": "untracked JSON is not a single JSON document and contains no PRESERVE marker (untracked JSON g:\\codex\\new manga\\verification\\P02\\zcode-dispatch-smoke-20261012.stdout.json is not valid JSON: Expecting value: line 1 column 1 (char 0))",
+      "file": "verification/P02/zcode-dispatch-smoke-20261012.stdout.json",
+      "locator": null
+    },
+    {
+      "code": "JSON_NONSTANDARD",
+      "message": "untracked JSON is not a single JSON document and contains no PRESERVE marker (untracked JSON g:\\codex\\new manga\\verification\\P02\\zcode-dispatch-smoke-after-restore-20261012.stdout.json is not valid JSON: Expecting value: line 1 column 1 (char 0))",
+      "file": "verification/P02/zcode-dispatch-smoke-after-restore-20261012.stdout.json",
+      "locator": null
+    },
+    {
+      "code": "JSON_NONSTANDARD",
+      "message": "untracked JSON is not a single JSON document and contains no PRESERVE marker (untracked JSON g:\\codex\\new manga\\verification\\P02\\zcode-p02pre-r1h-exec-a6-retry-20261012.stdout.json is not valid JSON: Expecting value: line 1 column 1 (char 0))",
+      "file": "verification/P02/zcode-p02pre-r1h-exec-a6-retry-20261012.stdout.json",
+      "locator": null
+    },
+    {
+      "code": "JSON_NONSTANDARD",
+      "message": "untracked JSON is not a single JSON document and contains no PRESERVE marker (untracked JSON g:\\codex\\new manga\\verification\\P02\\zcode-p02pre-r1h-exec-a6-retry-desktop-20261012.stdout.json is not valid JSON: Expecting value: line 1 column 1 (char 0))",
+      "file": "verification/P02/zcode-p02pre-r1h-exec-a6-retry-desktop-20261012.stdout.json",
+      "locator": null
+    },
+    {
+      "code": "JSON_NONSTANDARD",
+      "message": "untracked JSON is not a single JSON document and contains no PRESERVE marker (untracked JSON g:\\codex\\new manga\\verification\\P02\\zcode-p02pre-r1h-exec-a6.stdout.json is not valid JSON: Expecting value: line 1 column 1 (char 0))",
+      "file": "verification/P02/zcode-p02pre-r1h-exec-a6.stdout.json",
+      "locator": null
+    },
+    {
+      "code": "DECL_DESTINATION_PROSE",
+      "message": "destination '原路径' is descriptive text, not a path; it is not protection",
       "file": "verification/P09-GOVERNANCE-DEBT-20261019/codex-closeout-p19-view-r12.md",
       "locator": "line 6"
     },
     {
-      "code": "DECL_DESTINATION_UNRESOLVED",
-      "message": "declared path '原路径' is a bare name, not an absolute or resolvable repo-relative path",
+      "code": "DECL_DESTINATION_PROSE",
+      "message": "destination '原路径' is descriptive text, not a path; it is not protection",
       "file": "verification/P09-GOVERNANCE-DEBT-20261019/codex-closeout-p19-view-r12.md",
       "locator": "line 8"
     },
     {
-      "code": "DECL_DESTINATION_UNRESOLVED",
-      "message": "declared path '原路径' is a bare name, not an absolute or resolvable repo-relative path",
+      "code": "DECL_DESTINATION_PROSE",
+      "message": "destination '原路径' is descriptive text, not a path; it is not protection",
       "file": "verification/P09-GOVERNANCE-DEBT-20261019/codex-debt-ruling-r2.md",
       "locator": "line 6"
     },
     {
-      "code": "DECL_DESTINATION_UNRESOLVED",
-      "message": "declared path '原路径' is a bare name, not an absolute or resolvable repo-relative path",
+      "code": "DECL_DESTINATION_PROSE",
+      "message": "destination '原路径' is descriptive text, not a path; it is not protection",
       "file": "verification/P09-GOVERNANCE-DEBT-20261019/codex-debt-ruling-r2.md",
       "locator": "line 7"
     },
     {
-      "code": "DECL_DESTINATION_UNRESOLVED",
-      "message": "declared path '原路径' is a bare name, not an absolute or resolvable repo-relative path",
+      "code": "DECL_DESTINATION_PROSE",
+      "message": "destination '原路径' is descriptive text, not a path; it is not protection",
       "file": "verification/P09-GOVERNANCE-DEBT-20261019/codex-integration-closeout-r3.md",
       "locator": "line 4"
     },
     {
-      "code": "DECL_DESTINATION_UNRESOLVED",
-      "message": "declared path '原路径' is a bare name, not an absolute or resolvable repo-relative path",
+      "code": "DECL_DESTINATION_PROSE",
+      "message": "destination '原路径' is descriptive text, not a path; it is not protection",
       "file": "verification/P09-GOVERNANCE-DEBT-20261019/codex-integration-closeout-r3.md",
       "locator": "line 5"
     },
     {
-      "code": "DECL_DESTINATION_UNRESOLVED",
-      "message": "declared path '原路径' is a bare name, not an absolute or resolvable repo-relative path",
+      "code": "DECL_DESTINATION_PROSE",
+      "message": "destination '原路径' is descriptive text, not a path; it is not protection",
       "file": "verification/P09-GOVERNANCE-DEBT-20261019/codex-release-decision.md",
       "locator": "line 6"
     },
     {
-      "code": "DECL_DESTINATION_UNRESOLVED",
-      "message": "declared path '原路径' is a bare name, not an absolute or resolvable repo-relative path",
+      "code": "DECL_DESTINATION_PROSE",
+      "message": "destination '原路径' is descriptive text, not a path; it is not protection",
       "file": "verification/P09-GOVERNANCE-DEBT-20261019/codex-release-decision.md",
       "locator": "line 7"
     },
     {
-      "code": "DECL_DESTINATION_UNRESOLVED",
-      "message": "declared path '据实记录' is a bare name, not an absolute or resolvable repo-relative path",
+      "code": "DECL_DESTINATION_PROSE",
+      "message": "destination '据实记录' is descriptive text, not a path; it is not protection",
       "file": "verification/P09-GOVERNANCE-DEBT-20261019/codex-release-decision.md",
       "locator": "line 8"
     },
     {
-      "code": "DECL_DESTINATION_UNRESOLVED",
-      "message": "declared path '原路径' is a bare name, not an absolute or resolvable repo-relative path",
+      "code": "DECL_DESTINATION_PROSE",
+      "message": "destination '原路径' is descriptive text, not a path; it is not protection",
       "file": "verification/P09-GOVERNANCE-DEBT-20261019/codex-release-manifest-task-r7.md",
       "locator": "line 4"
     },
     {
-      "code": "DECL_DESTINATION_UNRESOLVED",
-      "message": "declared path '据实填写' is a bare name, not an absolute or resolvable repo-relative path",
+      "code": "DECL_DESTINATION_PROSE",
+      "message": "destination '据实填写' is descriptive text, not a path; it is not protection",
       "file": "verification/P09-GOVERNANCE-DEBT-20261019/codex-release-manifest-task-r7.md",
       "locator": "line 5"
     },
     {
-      "code": "DECL_DESTINATION_UNRESOLVED",
-      "message": "declared path '原路径' is a bare name, not an absolute or resolvable repo-relative path",
+      "code": "DECL_DESTINATION_PROSE",
+      "message": "destination '原路径' is descriptive text, not a path; it is not protection",
       "file": "verification/P09-GOVERNANCE-DEBT-20261019/codex-release-two-r4.md",
       "locator": "line 4"
     },
     {
-      "code": "DECL_DESTINATION_UNRESOLVED",
-      "message": "declared path '原路径' is a bare name, not an absolute or resolvable repo-relative path",
+      "code": "DECL_DESTINATION_PROSE",
+      "message": "destination '原路径' is descriptive text, not a path; it is not protection",
       "file": "verification/P09-GOVERNANCE-DEBT-20261019/codex-release-two-r4.md",
       "locator": "line 5"
     },
     {
-      "code": "DECL_DESTINATION_UNRESOLVED",
-      "message": "declared relative path 'Same ignored target/dist locations in this worktree' is not an existing repo top-level entry; identity is ambiguous",
-      "file": "verification/P19-UI-FIX-1/resource-manifest.json",
-      "locator": "$.resources[1].destination_path"
+      "code": "DECL_ALIAS_REAL_TARGET",
+      "message": "declaration 'G:/CODEX/New Manga.workspace/worktrees/P12/apps/desktop/src-tauri/target/core-sidecar' is reached through a symlink/junction; the real target g:/codex/new manga/apps/desktop/src-tauri/target/core-sidecar is protected as well",
+      "file": "verification/P12/resource-manifest.json",
+      "locator": "$.resources[1].disposition"
     },
     {
-      "code": "DECL_DESTINATION_UNRESOLVED",
-      "message": "declared path 'Same source location' is a bare name, not an absolute or resolvable repo-relative path",
+      "code": "DECL_ALIAS_REAL_TARGET",
+      "message": "declaration 'G:/CODEX/New Manga.workspace/worktrees/P14/apps/desktop/frontend/dist' is reached through a symlink/junction; the real target g:/codex/new manga/apps/desktop/frontend/dist is protected as well",
+      "file": "verification/P14/resource-manifest.json",
+      "locator": "$.resources[1].disposition"
+    },
+    {
+      "code": "DECL_ALIAS_REAL_TARGET",
+      "message": "declaration 'G:/CODEX/New Manga.workspace/worktrees/P14/apps/desktop/src-tauri/target/core-sidecar' is reached through a symlink/junction; the real target g:/codex/new manga/apps/desktop/src-tauri/target/core-sidecar is protected as well",
+      "file": "verification/P14/resource-manifest.json",
+      "locator": "$.resources[2].disposition"
+    },
+    {
+      "code": "DECL_ALIAS_REAL_TARGET",
+      "message": "declaration 'G:/CODEX/New Manga.workspace/worktrees/P15-C1/apps/desktop/frontend/dist' is reached through a symlink/junction; the real target g:/codex/new manga/apps/desktop/frontend/dist is protected as well",
+      "file": "verification/P15-C1/resource-manifest.json",
+      "locator": "$.resources[1].disposition"
+    },
+    {
+      "code": "DECL_ALIAS_REAL_TARGET",
+      "message": "declaration 'G:/CODEX/New Manga.workspace/worktrees/P15-C1/apps/desktop/src-tauri/target/core-sidecar' is reached through a symlink/junction; the real target g:/codex/new manga/apps/desktop/src-tauri/target/core-sidecar is protected as well",
+      "file": "verification/P15-C1/resource-manifest.json",
+      "locator": "$.resources[2].disposition"
+    },
+    {
+      "code": "DECL_ALIAS_REAL_TARGET",
+      "message": "declaration 'G:/CODEX/New Manga.workspace/worktrees/P15/apps/desktop/frontend/node_modules' is reached through a symlink/junction; the real target g:/codex/new manga/apps/desktop/frontend/node_modules is protected as well",
+      "file": "verification/P15/resource-manifest.json",
+      "locator": "$.resources[1].disposition"
+    },
+    {
+      "code": "DECL_ALIAS_REAL_TARGET",
+      "message": "declaration 'G:/CODEX/New Manga.workspace/worktrees/P15/apps/desktop/frontend/dist' is reached through a symlink/junction; the real target g:/codex/new manga/apps/desktop/frontend/dist is protected as well",
+      "file": "verification/P15/resource-manifest.json",
+      "locator": "$.resources[2].disposition"
+    },
+    {
+      "code": "DECL_ALIAS_REAL_TARGET",
+      "message": "declaration 'G:/CODEX/New Manga.workspace/worktrees/P15/apps/desktop/src-tauri/target/core-sidecar' is reached through a symlink/junction; the real target g:/codex/new manga/apps/desktop/src-tauri/target/core-sidecar is protected as well",
+      "file": "verification/P15/resource-manifest.json",
+      "locator": "$.resources[3].disposition"
+    },
+    {
+      "code": "DECL_ALIAS_REAL_TARGET",
+      "message": "declaration 'G:/CODEX/New Manga.workspace/worktrees/P19-BOOT-1/apps/desktop/src-tauri/target/core-sidecar' is reached through a symlink/junction; the real target g:/codex/new manga/apps/desktop/src-tauri/target/core-sidecar is protected as well",
+      "file": "verification/P19-BOOT-1/resource-manifest.json",
+      "locator": "$.resources[1].disposition"
+    },
+    {
+      "code": "DECL_DESTINATION_PROSE",
+      "message": "destination 'Same source location' is descriptive text, not a path; it is not protection",
       "file": "verification/P19-UI-FIX-1/resource-manifest.json",
       "locator": "$.resources[3].destination_path"
     },
     {
-      "code": "DECL_DESTINATION_UNRESOLVED",
-      "message": "declared path 'Same shared build environment' is a bare name, not an absolute or resolvable repo-relative path",
+      "code": "DECL_DESTINATION_PROSE",
+      "message": "destination 'Same shared build environment' is descriptive text, not a path; it is not protection",
       "file": "verification/P19-UI-FIX-1/resource-manifest.json",
       "locator": "$.resources[4].destination_path"
     },
     {
-      "code": "DECL_DESTINATION_UNRESOLVED",
-      "message": "declared path 'Same local cache location' is a bare name, not an absolute or resolvable repo-relative path",
+      "code": "DECL_DESTINATION_PROSE",
+      "message": "destination 'Same local cache location' is descriptive text, not a path; it is not protection",
       "file": "verification/P19-UI-FIX-1/resource-manifest.json",
       "locator": "$.resources[5].destination_path"
     },
     {
-      "code": "DECL_DESTINATION_UNRESOLVED",
-      "message": "declared path 'Same main-repository paths' is a bare name, not an absolute or resolvable repo-relative path",
+      "code": "DECL_DESTINATION_PROSE",
+      "message": "destination 'Same main-repository paths' is descriptive text, not a path; it is not protection",
       "file": "verification/P19-UI-FIX-1/resource-manifest.json",
       "locator": "$.resources[6].destination_path"
     },
@@ -809,6 +1262,30 @@
       "locator": null
     },
     {
+      "code": "DECL_ALIAS_REAL_TARGET",
+      "message": "declaration 'G:/CODEX/New Manga.workspace/worktrees/READER-IPC-1/apps/desktop/frontend/dist' is reached through a symlink/junction; the real target g:/codex/new manga/apps/desktop/frontend/dist is protected as well",
+      "file": "verification/READER-IPC-1/resource-manifest.json",
+      "locator": "$.resources[1].disposition"
+    },
+    {
+      "code": "DECL_ALIAS_REAL_TARGET",
+      "message": "declaration 'G:/CODEX/New Manga.workspace/worktrees/READER-IPC-1/apps/desktop/src-tauri/target/core-sidecar' is reached through a symlink/junction; the real target g:/codex/new manga/apps/desktop/src-tauri/target/core-sidecar is protected as well",
+      "file": "verification/READER-IPC-1/resource-manifest.json",
+      "locator": "$.resources[2].disposition"
+    },
+    {
+      "code": "DECL_ALIAS_REAL_TARGET",
+      "message": "declaration 'G:/CODEX/New Manga.workspace/worktrees/RUN-IPC-1/apps/desktop/frontend/dist' is reached through a symlink/junction; the real target g:/codex/new manga/apps/desktop/frontend/dist is protected as well",
+      "file": "verification/RUN-IPC-1/resource-manifest.json",
+      "locator": "$.resources[1].disposition"
+    },
+    {
+      "code": "DECL_ALIAS_REAL_TARGET",
+      "message": "declaration 'G:/CODEX/New Manga.workspace/worktrees/RUN-IPC-1/apps/desktop/src-tauri/target/core-sidecar' is reached through a symlink/junction; the real target g:/codex/new manga/apps/desktop/src-tauri/target/core-sidecar is protected as well",
+      "file": "verification/RUN-IPC-1/resource-manifest.json",
+      "locator": "$.resources[2].disposition"
+    },
+    {
       "code": "JSON_NONSTANDARD",
       "message": "tracked JSON is not a single JSON document and contains no PRESERVE marker (tracked JSON g:\\codex\\new manga\\verification\\T3.2.1\\clean-release-gate-20260926\\host-simulation\\artifact-run-logs\\cold-start-benchmark\\logs-argparse-fail-attempt1\\cold-start-results.json is not valid JSON: Unexpected UTF-8 BOM (decode using utf-8-sig): line 1 column 1 (char 0))",
       "file": "verification/T3.2.1/clean-release-gate-20260926/host-simulation/artifact-run-logs/cold-start-benchmark/logs-argparse-fail-attempt1/cold-start-results.json",
@@ -851,7 +1328,6 @@
       "source_path": "G:/CODEX/New Manga.workspace/GOV-PIN-LINEAGE-1/worktree",
       "protected_by_repo_declarations": true,
       "hits": [
-        "descendant_of_preserved_root:g:/codex/new manga.workspace [DESTINATION_PIN] {doc/tasks/SEC-FIX-PATH-ECHO-1.md line 5, doc/tasks/WORKSPACE-CONSOLIDATION-1.md line 11}",
         "exact_source_path:g:/codex/new manga.workspace/gov-pin-lineage-1/worktree [DESTINATION_PIN/PRESERVE_REFERENCED] {doc/tasks/GOV-PIN-LINEAGE-1.md line 10, verification/WORKSPACE-CONSOLIDATION-1/incident-ledger-r208.json $.protected_sources[0].disposition_original}"
       ]
     },
@@ -860,7 +1336,6 @@
       "source_path": "G:/CODEX/New Manga.workspace/P06-GC-DISTRIBUTION-MIGRATION",
       "protected_by_repo_declarations": true,
       "hits": [
-        "descendant_of_preserved_root:g:/codex/new manga.workspace [DESTINATION_PIN] {doc/tasks/SEC-FIX-PATH-ECHO-1.md line 5, doc/tasks/WORKSPACE-CONSOLIDATION-1.md line 11}",
         "exact_source_path:g:/codex/new manga.workspace/p06-gc-distribution-migration [DESTINATION_PIN/PRESERVE_REFERENCED] {doc/tasks/P06.md line 5, doc/tasks/WORKSPACE-CONSOLIDATION-1.md line 17, +3}"
       ]
     },
@@ -869,8 +1344,6 @@
       "source_path": "G:/CODEX/New Manga.workspace/review-scratch/P09-PREVIEW-LIFECYCLE-RECLAIM-1-R11-392977a8",
       "protected_by_repo_declarations": true,
       "hits": [
-        "descendant_of_preserved_root:g:/codex/new manga.workspace [DESTINATION_PIN] {doc/tasks/SEC-FIX-PATH-ECHO-1.md line 5, doc/tasks/WORKSPACE-CONSOLIDATION-1.md line 11}",
-        "descendant_of_preserved_root:g:/codex/new manga.workspace/review-scratch [DESTINATION_PIN] {doc/tasks/WORKSPACE-CONSOLIDATION-1.md line 14}",
         "exact_source_path:g:/codex/new manga.workspace/review-scratch/p09-preview-lifecycle-reclaim-1-r11-392977a8 [PRESERVE_UNKNOWN] {verification/WORKSPACE-CONSOLIDATION-1/incident-ledger-r208.json $.protected_sources[2].disposition_original}"
       ]
     },
@@ -879,8 +1352,6 @@
       "source_path": "G:/CODEX/New Manga.workspace/review-scratch/P09-PREVIEW-LIFECYCLE-RECLAIM-1-R11-392977a8-export",
       "protected_by_repo_declarations": true,
       "hits": [
-        "descendant_of_preserved_root:g:/codex/new manga.workspace [DESTINATION_PIN] {doc/tasks/SEC-FIX-PATH-ECHO-1.md line 5, doc/tasks/WORKSPACE-CONSOLIDATION-1.md line 11}",
-        "descendant_of_preserved_root:g:/codex/new manga.workspace/review-scratch [DESTINATION_PIN] {doc/tasks/WORKSPACE-CONSOLIDATION-1.md line 14}",
         "exact_source_path:g:/codex/new manga.workspace/review-scratch/p09-preview-lifecycle-reclaim-1-r11-392977a8-export [PRESERVE_UNKNOWN] {verification/WORKSPACE-CONSOLIDATION-1/incident-ledger-r208.json $.protected_sources[3].disposition_original}"
       ]
     },
@@ -889,8 +1360,6 @@
       "source_path": "G:/CODEX/New Manga.workspace/review-scratch/P09-PREVIEW-LIFECYCLE-RECLAIM-1-R17",
       "protected_by_repo_declarations": true,
       "hits": [
-        "descendant_of_preserved_root:g:/codex/new manga.workspace [DESTINATION_PIN] {doc/tasks/SEC-FIX-PATH-ECHO-1.md line 5, doc/tasks/WORKSPACE-CONSOLIDATION-1.md line 11}",
-        "descendant_of_preserved_root:g:/codex/new manga.workspace/review-scratch [DESTINATION_PIN] {doc/tasks/WORKSPACE-CONSOLIDATION-1.md line 14}",
         "exact_source_path:g:/codex/new manga.workspace/review-scratch/p09-preview-lifecycle-reclaim-1-r17 [PRESERVE_UNKNOWN] {verification/WORKSPACE-CONSOLIDATION-1/incident-ledger-r208.json $.protected_sources[4].disposition_original}"
       ]
     },
@@ -899,8 +1368,6 @@
       "source_path": "G:/CODEX/New Manga.workspace/review-scratch/P09-PREVIEW-LIFECYCLE-RECLAIM-1-R18",
       "protected_by_repo_declarations": true,
       "hits": [
-        "descendant_of_preserved_root:g:/codex/new manga.workspace [DESTINATION_PIN] {doc/tasks/SEC-FIX-PATH-ECHO-1.md line 5, doc/tasks/WORKSPACE-CONSOLIDATION-1.md line 11}",
-        "descendant_of_preserved_root:g:/codex/new manga.workspace/review-scratch [DESTINATION_PIN] {doc/tasks/WORKSPACE-CONSOLIDATION-1.md line 14}",
         "exact_source_path:g:/codex/new manga.workspace/review-scratch/p09-preview-lifecycle-reclaim-1-r18 [PRESERVE_UNKNOWN] {verification/WORKSPACE-CONSOLIDATION-1/incident-ledger-r208.json $.protected_sources[5].disposition_original}"
       ]
     },
@@ -909,9 +1376,9 @@
       "source_path": "G:/CODEX/New Manga.workspace/temp/P02-NEW-TIME-BASELINE",
       "protected_by_repo_declarations": true,
       "hits": [
-        "descendant_of_preserved_root:g:/codex/new manga.workspace [DESTINATION_PIN] {doc/tasks/SEC-FIX-PATH-ECHO-1.md line 5, doc/tasks/WORKSPACE-CONSOLIDATION-1.md line 11}",
-        "descendant_of_preserved_root:g:/codex/new manga.workspace/temp [DESTINATION_PIN] {doc/tasks/WORKSPACE-CONSOLIDATION-1.md line 15}",
-        "exact_source_path:g:/codex/new manga.workspace/temp/p02-new-time-baseline [DESTINATION_PIN/PRESERVE_REFERENCED] {doc/tasks/P02-NEW-TIME-BASELINE.md line 19, verification/WORKSPACE-CONSOLIDATION-1/incident-ledger-r208.json $.protected_sources[6].disposition_original}"
+        "exact_source_path:g:/codex/new manga.workspace/temp/p02-new-time-baseline [DESTINATION_PIN/PRESERVE_REFERENCED] {doc/tasks/P02-NEW-TIME-BASELINE.md line 19, verification/WORKSPACE-CONSOLIDATION-1/incident-ledger-r208.json $.protected_sources[6].disposition_original}",
+        "ancestor_of_preserved_source:g:/codex/new manga.workspace/temp/p02-new-time-baseline/20261014-035539-pure-selftest [DESTINATION_PIN/PRESERVE_REFERENCED] {doc/tasks/P02-NEW-TIME-BASELINE-AC3-BRANCH-RESOLUTION.md line 10}",
+        "ancestor_of_preserved_source:g:/codex/new manga.workspace/temp/p02-new-time-baseline/20261014-040714-pure-selftest [DESTINATION_PIN/PRESERVE_REFERENCED] {doc/tasks/P02-NEW-TIME-BASELINE-AC3-BRANCH-RESOLUTION.md line 11}"
       ]
     },
     {
@@ -919,8 +1386,6 @@
       "source_path": "G:/CODEX/New Manga.workspace/temp/P02-NEW-TIME-BASELINE-AC3-BRANCH-RESOLUTION",
       "protected_by_repo_declarations": true,
       "hits": [
-        "descendant_of_preserved_root:g:/codex/new manga.workspace [DESTINATION_PIN] {doc/tasks/SEC-FIX-PATH-ECHO-1.md line 5, doc/tasks/WORKSPACE-CONSOLIDATION-1.md line 11}",
-        "descendant_of_preserved_root:g:/codex/new manga.workspace/temp [DESTINATION_PIN] {doc/tasks/WORKSPACE-CONSOLIDATION-1.md line 15}",
         "exact_source_path:g:/codex/new manga.workspace/temp/p02-new-time-baseline-ac3-branch-resolution [DESTINATION_PIN/PRESERVE_REFERENCED] {doc/tasks/P02-NEW-TIME-BASELINE.md line 21, verification/WORKSPACE-CONSOLIDATION-1/incident-ledger-r208.json $.protected_sources[7].disposition_original}"
       ]
     },
@@ -929,9 +1394,7 @@
       "source_path": "G:/CODEX/New Manga.workspace/temp/P02-NEW-TIME-BASELINE-AC3-GIT-TOPLEVEL-RESOLUTION",
       "protected_by_repo_declarations": true,
       "hits": [
-        "descendant_of_preserved_root:g:/codex/new manga.workspace [DESTINATION_PIN] {doc/tasks/SEC-FIX-PATH-ECHO-1.md line 5, doc/tasks/WORKSPACE-CONSOLIDATION-1.md line 11}",
-        "descendant_of_preserved_root:g:/codex/new manga.workspace/temp [DESTINATION_PIN] {doc/tasks/WORKSPACE-CONSOLIDATION-1.md line 15}",
-        "exact_source_path:g:/codex/new manga.workspace/temp/p02-new-time-baseline-ac3-git-toplevel-resolution [DESTINATION_PIN/PRESERVE_REFERENCED] {doc/tasks/P02-NEW-TIME-BASELINE.md line 20, verification/WORKSPACE-CONSOLIDATION-1/incident-ledger-r208.json $.protected_sources[8].disposition_original}"
+        "exact_source_path:g:/codex/new manga.workspace/temp/p02-new-time-baseline-ac3-git-toplevel-resolution [DESTINATION_PIN/PRESERVE_REFERENCED] {doc/tasks/P02-NEW-TIME-BASELINE-AC3-GIT-TOPLEVEL-RESOLUTION.md line 8, doc/tasks/P02-NEW-TIME-BASELINE.md line 20, +1}"
       ]
     },
     {
@@ -939,9 +1402,9 @@
       "source_path": "G:/CODEX/New Manga.workspace/temp/P02-NEW-TIME-X6",
       "protected_by_repo_declarations": true,
       "hits": [
-        "descendant_of_preserved_root:g:/codex/new manga.workspace [DESTINATION_PIN] {doc/tasks/SEC-FIX-PATH-ECHO-1.md line 5, doc/tasks/WORKSPACE-CONSOLIDATION-1.md line 11}",
-        "descendant_of_preserved_root:g:/codex/new manga.workspace/temp [DESTINATION_PIN] {doc/tasks/WORKSPACE-CONSOLIDATION-1.md line 15}",
-        "exact_source_path:g:/codex/new manga.workspace/temp/p02-new-time-x6 [PRESERVE_REFERENCED] {verification/WORKSPACE-CONSOLIDATION-1/incident-ledger-r208.json $.protected_sources[9].disposition_original}"
+        "exact_source_path:g:/codex/new manga.workspace/temp/p02-new-time-x6 [PRESERVE_REFERENCED] {verification/WORKSPACE-CONSOLIDATION-1/incident-ledger-r208.json $.protected_sources[9].disposition_original}",
+        "ancestor_of_preserved_source:g:/codex/new manga.workspace/temp/p02-new-time-x6/codex-ac2-20261014-123308-pure-selftest [PRESERVE_REFERENCED] {verification/WORKSPACE-CONSOLIDATION-1/incident-ledger-r208.json $.protected_sources[10].disposition_original}",
+        "ancestor_of_preserved_source:g:/codex/new manga.workspace/temp/p02-new-time-x6/codex-ac2-r2-20261014-124643-pure-selftest [PRESERVE_REFERENCED] {verification/WORKSPACE-CONSOLIDATION-1/incident-ledger-r208.json $.protected_sources[11].disposition_original}"
       ]
     },
     {
@@ -949,9 +1412,8 @@
       "source_path": "G:/CODEX/New Manga.workspace/temp/P02-NEW-TIME-X6/codex-ac2-20261014-123308-pure-selftest",
       "protected_by_repo_declarations": true,
       "hits": [
-        "descendant_of_preserved_root:g:/codex/new manga.workspace [DESTINATION_PIN] {doc/tasks/SEC-FIX-PATH-ECHO-1.md line 5, doc/tasks/WORKSPACE-CONSOLIDATION-1.md line 11}",
-        "descendant_of_preserved_root:g:/codex/new manga.workspace/temp [DESTINATION_PIN] {doc/tasks/WORKSPACE-CONSOLIDATION-1.md line 15}",
-        "descendant_of_preserved_root:g:/codex/new manga.workspace/temp/p02-new-time-x6 [PRESERVE_REFERENCED] {verification/WORKSPACE-CONSOLIDATION-1/incident-ledger-r208.json $.protected_sources[9].disposition_original}"
+        "descendant_of_preserved_root:g:/codex/new manga.workspace/temp/p02-new-time-x6 [PRESERVE_REFERENCED] {verification/WORKSPACE-CONSOLIDATION-1/incident-ledger-r208.json $.protected_sources[9].disposition_original}",
+        "exact_source_path:g:/codex/new manga.workspace/temp/p02-new-time-x6/codex-ac2-20261014-123308-pure-selftest [PRESERVE_REFERENCED] {verification/WORKSPACE-CONSOLIDATION-1/incident-ledger-r208.json $.protected_sources[10].disposition_original}"
       ]
     },
     {
@@ -959,9 +1421,8 @@
       "source_path": "G:/CODEX/New Manga.workspace/temp/P02-NEW-TIME-X6/codex-ac2-r2-20261014-124643-pure-selftest",
       "protected_by_repo_declarations": true,
       "hits": [
-        "descendant_of_preserved_root:g:/codex/new manga.workspace [DESTINATION_PIN] {doc/tasks/SEC-FIX-PATH-ECHO-1.md line 5, doc/tasks/WORKSPACE-CONSOLIDATION-1.md line 11}",
-        "descendant_of_preserved_root:g:/codex/new manga.workspace/temp [DESTINATION_PIN] {doc/tasks/WORKSPACE-CONSOLIDATION-1.md line 15}",
-        "descendant_of_preserved_root:g:/codex/new manga.workspace/temp/p02-new-time-x6 [PRESERVE_REFERENCED] {verification/WORKSPACE-CONSOLIDATION-1/incident-ledger-r208.json $.protected_sources[9].disposition_original}"
+        "descendant_of_preserved_root:g:/codex/new manga.workspace/temp/p02-new-time-x6 [PRESERVE_REFERENCED] {verification/WORKSPACE-CONSOLIDATION-1/incident-ledger-r208.json $.protected_sources[9].disposition_original}",
+        "exact_source_path:g:/codex/new manga.workspace/temp/p02-new-time-x6/codex-ac2-r2-20261014-124643-pure-selftest [PRESERVE_REFERENCED] {verification/WORKSPACE-CONSOLIDATION-1/incident-ledger-r208.json $.protected_sources[11].disposition_original}"
       ]
     },
     {
@@ -969,9 +1430,8 @@
       "source_path": "G:/CODEX/New Manga.workspace/temp/P02-NEW-TIME-X6/x6-20261014T1305CST-p02-newtime-r1-capture",
       "protected_by_repo_declarations": true,
       "hits": [
-        "descendant_of_preserved_root:g:/codex/new manga.workspace [DESTINATION_PIN] {doc/tasks/SEC-FIX-PATH-ECHO-1.md line 5, doc/tasks/WORKSPACE-CONSOLIDATION-1.md line 11}",
-        "descendant_of_preserved_root:g:/codex/new manga.workspace/temp [DESTINATION_PIN] {doc/tasks/WORKSPACE-CONSOLIDATION-1.md line 15}",
-        "descendant_of_preserved_root:g:/codex/new manga.workspace/temp/p02-new-time-x6 [PRESERVE_REFERENCED] {verification/WORKSPACE-CONSOLIDATION-1/incident-ledger-r208.json $.protected_sources[9].disposition_original}"
+        "descendant_of_preserved_root:g:/codex/new manga.workspace/temp/p02-new-time-x6 [PRESERVE_REFERENCED] {verification/WORKSPACE-CONSOLIDATION-1/incident-ledger-r208.json $.protected_sources[9].disposition_original}",
+        "exact_source_path:g:/codex/new manga.workspace/temp/p02-new-time-x6/x6-20261014t1305cst-p02-newtime-r1-capture [PRESERVE_REFERENCED] {verification/WORKSPACE-CONSOLIDATION-1/incident-ledger-r208.json $.protected_sources[12].disposition_original}"
       ]
     },
     {
@@ -979,8 +1439,6 @@
       "source_path": "G:/CODEX/New Manga.workspace/worktrees/FEAT-CREATE-1",
       "protected_by_repo_declarations": true,
       "hits": [
-        "descendant_of_preserved_root:g:/codex/new manga.workspace [DESTINATION_PIN] {doc/tasks/SEC-FIX-PATH-ECHO-1.md line 5, doc/tasks/WORKSPACE-CONSOLIDATION-1.md line 11}",
-        "descendant_of_preserved_root:g:/codex/new manga.workspace/worktrees [DESTINATION_PIN] {doc/tasks/WORKSPACE-CONSOLIDATION-1.md line 12}",
         "exact_source_path:g:/codex/new manga.workspace/worktrees/feat-create-1 [DESTINATION_PIN/PRESERVE_UNKNOWN] {doc/tasks/FEAT-CREATE-1.md line 9, verification/WORKSPACE-CONSOLIDATION-1/incident-ledger-r208.json $.protected_sources[13].disposition_original}"
       ]
     },
@@ -989,8 +1447,6 @@
       "source_path": "G:/CODEX/New Manga.workspace/worktrees/FEAT-CREATE-2",
       "protected_by_repo_declarations": true,
       "hits": [
-        "descendant_of_preserved_root:g:/codex/new manga.workspace [DESTINATION_PIN] {doc/tasks/SEC-FIX-PATH-ECHO-1.md line 5, doc/tasks/WORKSPACE-CONSOLIDATION-1.md line 11}",
-        "descendant_of_preserved_root:g:/codex/new manga.workspace/worktrees [DESTINATION_PIN] {doc/tasks/WORKSPACE-CONSOLIDATION-1.md line 12}",
         "exact_source_path:g:/codex/new manga.workspace/worktrees/feat-create-2 [DESTINATION_PIN/PRESERVE_UNKNOWN] {doc/tasks/FEAT-CREATE-2.md line 7, verification/WORKSPACE-CONSOLIDATION-1/incident-ledger-r208.json $.protected_sources[14].disposition_original}"
       ]
     },
@@ -999,8 +1455,6 @@
       "source_path": "G:/CODEX/New Manga.workspace/worktrees/FEAT-CREATE-4",
       "protected_by_repo_declarations": true,
       "hits": [
-        "descendant_of_preserved_root:g:/codex/new manga.workspace [DESTINATION_PIN] {doc/tasks/SEC-FIX-PATH-ECHO-1.md line 5, doc/tasks/WORKSPACE-CONSOLIDATION-1.md line 11}",
-        "descendant_of_preserved_root:g:/codex/new manga.workspace/worktrees [DESTINATION_PIN] {doc/tasks/WORKSPACE-CONSOLIDATION-1.md line 12}",
         "exact_source_path:g:/codex/new manga.workspace/worktrees/feat-create-4 [DESTINATION_PIN/PRESERVE_UNKNOWN] {doc/tasks/FEAT-CREATE-4.md line 7, verification/WORKSPACE-CONSOLIDATION-1/incident-ledger-r208.json $.protected_sources[15].disposition_original}"
       ]
     },
@@ -1009,8 +1463,6 @@
       "source_path": "G:/CODEX/New Manga.workspace/worktrees/P19-UI-FIX-2",
       "protected_by_repo_declarations": true,
       "hits": [
-        "descendant_of_preserved_root:g:/codex/new manga.workspace [DESTINATION_PIN] {doc/tasks/SEC-FIX-PATH-ECHO-1.md line 5, doc/tasks/WORKSPACE-CONSOLIDATION-1.md line 11}",
-        "descendant_of_preserved_root:g:/codex/new manga.workspace/worktrees [DESTINATION_PIN] {doc/tasks/WORKSPACE-CONSOLIDATION-1.md line 12}",
         "exact_source_path:g:/codex/new manga.workspace/worktrees/p19-ui-fix-2 [DESTINATION_PIN/PRESERVE_UNKNOWN] {doc/tasks/P19-UI-FIX-2.md line 7, verification/WORKSPACE-CONSOLIDATION-1/incident-ledger-r208.json $.protected_sources[16].disposition_original}"
       ]
     },
@@ -1026,5 +1478,5 @@
   ],
   "incident_sources_covered": 18,
   "incident_sources_total": 18,
-  "report_sha256": "eaa58912c354a7abafe5b511e4b87525b6df8984cbc6d7602219b4e215907732"
+  "report_sha256": "0f049b13d44d107a1632d9ec8c388bcbb2eabada32965dff363a617c5d031c9b"
 }

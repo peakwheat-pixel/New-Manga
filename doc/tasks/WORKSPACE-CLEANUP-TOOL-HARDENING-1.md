@@ -3,7 +3,7 @@ id: WORKSPACE-CLEANUP-TOOL-HARDENING-1
 title: 工作区清理工具的保护判断与失败关闭修复（r208/r209 事故根因）
 kind: fix
 governance_version: 2
-status: in_review
+status: in_progress
 approval: released_by_user_2026-10-21
 blocked_by: null
 suggested_owner: dsh
@@ -14,9 +14,9 @@ base_commit: b8a1e519703f13af73b320dded117004b4bb189a
 branch: dsh/WORKSPACE-CLEANUP-TOOL-HARDENING-1
 worktree: G:/CODEX/New Manga.workspace/worktrees/WORKSPACE-CLEANUP-TOOL-HARDENING-1
 integration_commit: null
-delivery_head: cf7d2d46dad593eac9ec0789943aab38d4931fa2
-canonical_evidence_status: complete
-resource_closeout_status: complete
+delivery_head: null
+canonical_evidence_status: pending
+resource_closeout_status: pending
 evidence_dir: verification/WORKSPACE-CLEANUP-TOOL-HARDENING-1
 allowed_paths:
   - tools/governance/clean_workspace.py

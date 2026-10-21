@@ -12,7 +12,9 @@
       "test_tools_fixtures.ToolFixture.test_ac4_02_bare_declaration_path": "ok",
       "test_tools_fixtures.ToolFixture.test_ac4_05_preserve_unknown": "ok",
       "test_tools_fixtures.ToolFixture.test_ac4_06_parent_protection": "ok",
-      "test_tools_fixtures.ToolFixture.test_ac4_10_duplicate_alias_path": "ok"
+      "test_tools_fixtures.ToolFixture.test_ac4_10_duplicate_alias_path": "ok",
+      "test_tools_fixtures.ToolFixture.test_ac1_junction_declaration_real_target_protected": "ok",
+      "test_guard_core.TestProtectionIndex.test_junction_declaration_protects_real_target": "ok"
     },
     "missing_or_failed": [],
     "covered": true
@@ -24,13 +26,22 @@
       "test_guard_core.TestPathIdentity.test_escape_outside_managed_root_is_refused": "ok",
       "test_guard_core.TestProtectionIndex.test_unresolved_declarations_fail_closed": "ok",
       "test_guard_core.TestProtectionIndex.test_unknown_and_empty_dispositions_fail_closed": "ok",
+      "test_guard_core.TestProtectionIndex.test_pathlike_destination_failure_is_integrity_error": "ok",
+      "test_guard_core.TestProtectionIndex.test_descriptive_destination_is_allowed_prose": "ok",
       "test_guard_core.TestReleaseWindowAndInventory.test_permission_denied_is_fail_closed": "ok",
       "test_tools_fixtures.ToolFixture.test_ac4_03_relative_path": "ok",
       "test_tools_fixtures.ToolFixture.test_ac4_04_nonstandard_table_columns": "ok",
       "test_tools_fixtures.ToolFixture.test_ac4_07_nonstandard_worktree_location": "ok",
       "test_tools_fixtures.ToolFixture.test_ac4_08_stash_nonzero": "ok",
       "test_tools_fixtures.ToolFixture.test_ac4_09_permission_denied": "ok",
+      "test_tools_fixtures.ToolFixture.test_ac4_10_duplicate_alias_path": "ok",
+      "test_tools_fixtures.ToolFixture.test_ac4_08_stash_nonzero_real_entry": "ok",
+      "test_tools_fixtures.ToolFixture.test_ac4_09_permission_denied_real_entry": "ok",
       "test_tools_fixtures.ToolFixture.test_ac4_11_symlink_escape": "ok",
+      "test_tools_fixtures.ToolFixture.test_ac2_untracked_declarations_are_scanned": "ok",
+      "test_tools_fixtures.ToolFixture.test_ac2_untracked_declaration_parse_error_refused": "ok",
+      "test_tools_fixtures.ToolFixture.test_ac2_destination_pathlike_unresolved_refused": "ok",
+      "test_tools_fixtures.ToolFixture.test_ac2_destination_prose_allowed": "ok",
       "test_tools_fixtures.ToolFixture.test_ac2_git_status_failure_is_refused": "ok",
       "test_tools_fixtures.ToolFixture.test_ac2_tampered_inventory_schema_is_refused": "ok",
       "test_tools_fixtures.ToolFixture.test_audit_declarations_refuses_unknown_disposition": "ok",
@@ -61,7 +72,9 @@
       "test_tools_fixtures.ToolFixture.test_ac4_08_stash_nonzero": "ok",
       "test_tools_fixtures.ToolFixture.test_ac4_09_permission_denied": "ok",
       "test_tools_fixtures.ToolFixture.test_ac4_10_duplicate_alias_path": "ok",
-      "test_tools_fixtures.ToolFixture.test_ac4_11_symlink_escape": "ok"
+      "test_tools_fixtures.ToolFixture.test_ac4_11_symlink_escape": "ok",
+      "test_tools_fixtures.ToolFixture.test_ac4_08_stash_nonzero_real_entry": "ok",
+      "test_tools_fixtures.ToolFixture.test_ac4_09_permission_denied_real_entry": "ok"
     },
     "missing_or_failed": [],
     "covered": true
@@ -77,6 +90,7 @@
       "test_tools_fixtures.ToolFixture.test_ac5_dry_run_report_is_reproducible": "ok",
       "test_tools_fixtures.ToolFixture.test_ac5_apply_matches_dry_run_and_deletes_only_fixture": "ok",
       "test_tools_fixtures.ToolFixture.test_ac5_candidate_drift_refuses_apply": "ok",
+      "test_tools_fixtures.ToolFixture.test_ac5_out_inside_candidate_refused": "ok",
       "test_other_tools.BranchFixture.test_archive_default_is_plan_only": "ok",
       "test_other_tools.BranchFixture.test_archive_apply_requires_release_window": "ok",
       "test_other_tools.BranchFixture.test_archive_apply_creates_verified_bundle_without_force": "ok",

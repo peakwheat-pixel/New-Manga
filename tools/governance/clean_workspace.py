@@ -646,15 +646,53 @@ def _is_placeholder(text):
     return text.strip().lower() in PLACEHOLDERS
 
 
-class Declaration(object):
-    __slots__ = ("raw", "disposition", "source_file", "locator", "normalized")
+def is_path_like(text):
+    """True when a cell/prose value uses path syntax (F-03 rule).
 
-    def __init__(self, raw, disposition, source_file, locator, normalized):
+    Only path-like values must resolve; descriptive text without path syntax is
+    allowed as a destination annotation (recorded as a warning, never as
+    protection).  This keeps "destination = sentence" legal while refusing
+    "destination = path-like but unresolvable".
+    """
+    if not isinstance(text, str):
+        return False
+    if re.search(r"[\\/]", text):
+        return True
+    if re.match(r"^[A-Za-z]:", text):
+        return True
+    if text.startswith((".", "~")):
+        return True
+    if ENV_RE.search(text):
+        return True
+    return False
+
+
+class Declaration(object):
+    __slots__ = ("raw", "disposition", "source_file", "locator", "normalized",
+                 "real_normalized")
+
+    def __init__(self, raw, disposition, source_file, locator, normalized,
+                 real_normalized=None):
         self.raw = raw
         self.disposition = disposition
         self.source_file = source_file
         self.locator = locator
         self.normalized = normalized
+        # Real target after resolving symlinks/junctions (F-01).  When it
+        # differs, BOTH identities are registered as protection: a junction
+        # declaration must protect what the junction actually points at.
+        self.real_normalized = real_normalized or normalized
+
+
+def resolve_real_target(normalized, what):
+    """Resolve a normalised path to its real target (junction/symlink aware)."""
+    try:
+        real = os.path.normcase(
+            os.path.realpath(normalized.replace("/", os.sep))).replace("\\", "/")
+    except OSError as exc:
+        fail("REALPATH_FAILED", "cannot resolve the real target of %s %s: %s"
+             % (what, normalized, exc))
+    return real
 
 
 def is_protective(disposition):
@@ -770,6 +808,35 @@ class ProtectionIndex(object):
                 return base
         return None
 
+    def _register_protective(self, declaration):
+        """Register a protective declaration under lexical and real identity."""
+        self.declarations.append(declaration)
+        keys = [declaration.normalized]
+        if declaration.real_normalized != declaration.normalized:
+            keys.append(declaration.real_normalized)
+        for key in keys:
+            self.protected.setdefault(key, []).append(declaration)
+
+    def _declared_identity(self, text, source_file, locator):
+        """Resolve a declaration to (lexical, real) normalised identities."""
+        normalized = self.resolve_declared_path(text, source_file, locator)
+        real = resolve_real_target(normalized, "declaration")
+        for value in (normalized, real):
+            generalized = self._generalized(value)
+            if generalized:
+                fail("DECL_GENERALIZED",
+                     "declaration %r resolves to %s, which is the workspace root "
+                     "or a managed area root (%s) or above; over-broad "
+                     "declarations need an explicit ruling"
+                     % (text, value, generalized))
+        if real != normalized:
+            self.add_warning(
+                "DECL_ALIAS_REAL_TARGET",
+                "declaration %r is reached through a symlink/junction; the real "
+                "target %s is protected as well" % (text, real),
+                source_file, locator)
+        return normalized, real
+
     def add_declaration(self, raw, disposition, source_file, locator):
         text = clean_cell(raw)
         disp = clean_cell(disposition).upper()
@@ -792,23 +859,16 @@ class ProtectionIndex(object):
                            % (text, disposition), source_file, locator)
             return None
         try:
-            normalized = self.resolve_declared_path(text, source_file, locator)
+            normalized, real = self._declared_identity(text, source_file, locator)
         except GuardError as exc:
             self.add_error(exc.code, exc.message, source_file, locator)
             return None
-        generalized = self._generalized(normalized)
-        if generalized:
-            self.add_error("DECL_GENERALIZED",
-                           "declaration %r resolves to %s, which is the workspace "
-                           "root or a managed area root (%s) or above; over-broad "
-                           "declarations need an explicit ruling"
-                           % (text, normalized, generalized), source_file, locator)
-            return None
-        declaration = Declaration(text, disp, source_file, locator, normalized)
-        self.declarations.append(declaration)
+        declaration = Declaration(text, disp, source_file, locator, normalized,
+                                  real)
         if is_protective(disp):
-            self.protected.setdefault(normalized, []).append(declaration)
+            self._register_protective(declaration)
         else:
+            self.declarations.append(declaration)
             self.non_protective.append(declaration)
         return declaration
 
@@ -817,33 +877,39 @@ class ProtectionIndex(object):
         if _is_placeholder(text):
             return None
         try:
-            normalized = self.resolve_declared_path(text, source_file, locator)
+            normalized, real = self._declared_identity(text, source_file, locator)
         except GuardError as exc:
             self.add_error(exc.code, exc.message, source_file, locator)
             return None
         declaration = Declaration(text, "EVIDENCE_PIN", source_file, locator,
-                                  normalized)
-        self.declarations.append(declaration)
-        self.protected.setdefault(normalized, []).append(declaration)
+                                  normalized, real)
+        self._register_protective(declaration)
         return declaration
 
     def add_destination(self, raw, source_file, locator):
         text = clean_cell(raw)
         if _is_placeholder(text):
             return None
-        try:
-            normalized = self.resolve_declared_path(text, source_file, locator)
-        except GuardError as exc:
-            # Destination prose is common in legacy manifests; a destination is
-            # additional protection, never a deletion licence, so an unresolvable
-            # destination is a warning rather than a global refusal.
-            self.add_warning("DECL_DESTINATION_UNRESOLVED", exc.message,
+        if not is_path_like(text):
+            # Descriptive destination (e.g. "由管理员裁定").  Explicitly allowed
+            # and recorded; it cannot declare protection because it is not a
+            # path (F-03).
+            self.add_warning("DECL_DESTINATION_PROSE",
+                             "destination %r is descriptive text, not a path; "
+                             "it is not protection" % text,
                              source_file, locator)
             return None
+        try:
+            normalized, real = self._declared_identity(text, source_file, locator)
+        except GuardError as exc:
+            # Path-like destination that cannot be resolved is an integrity
+            # error, not a warning: its protection cannot be enumerated (F-03).
+            self.add_error("DECL_DESTINATION_UNRESOLVED", exc.message,
+                           source_file, locator)
+            return None
         declaration = Declaration(text, "DESTINATION_PIN", source_file, locator,
-                                  normalized)
-        self.declarations.append(declaration)
-        self.protected.setdefault(normalized, []).append(declaration)
+                                  normalized, real)
+        self._register_protective(declaration)
         return declaration
 
     # -- evaluation ---------------------------------------------------------
@@ -1083,25 +1149,41 @@ def parse_json_declarations(index, data, source_file):
 
 
 def scan_repo_declarations(repo_root, ws_root):
-    """Build the protection index from tracked doc/tasks/*.md and verification/**.
+    """Build the protection index from ``doc/tasks/**`` and ``verification/**``.
 
-    Read-only.  ``git ls-files`` failure is fatal (AC2).  Unparsable JSON that
-    advertises PRESERVE content is fatal; unparsable JSON with no PRESERVE marker
-    is a recorded warning (it cannot carry a declaration), never a silent skip.
+    Read-only.  Both TRACKED files and non-ignored UNTRACKED ``.md``/``.json``
+    files are scanned (F-02): a declaration that only exists as an untracked
+    draft still names a protected resource, and silently ignoring it is exactly
+    the r208 failure mode.  Untracked declarations that cannot be parsed are
+    integrity errors, so apply is refused rather than run with incomplete
+    protection.
+
+    ``git ls-files`` failure is fatal (AC2).  Unparsable JSON that advertises
+    PRESERVE content is fatal; unparsable JSON with no PRESERVE marker is a
+    recorded warning (it cannot carry a declaration), never a silent skip.
     """
     index = ProtectionIndex(repo_root=repo_root, ws_root=ws_root)
     repo = index.repo_root
-    listing = git_checked(repo, "ls-files", "-z", "--", "doc/tasks", "verification",
-                          what="git ls-files")
-    files = [item for item in listing.split("\x00") if item]
-    scanned = {"markdown": 0, "json": 0, "unparsable_json": 0}
-    for relative in sorted(files):
+    tracked = git_checked(repo, "ls-files", "-z", "--", "doc/tasks",
+                          "verification", what="git ls-files")
+    untracked = git_checked(repo, "ls-files", "-z", "--others",
+                            "--exclude-standard", "--", "doc/tasks",
+                            "verification",
+                            what="git ls-files --others --exclude-standard")
+    tracked_files = {item for item in tracked.split("\x00") if item}
+    untracked_files = {item for item in untracked.split("\x00") if item}
+    files = sorted(tracked_files | untracked_files)
+    scanned = {"markdown": 0, "json": 0, "unparsable_json": 0,
+               "tracked_declaration_files": len(tracked_files),
+               "untracked_declaration_files": len(untracked_files)}
+    for relative in files:
         absolute = os.path.join(repo.replace("/", os.sep),
                                 relative.replace("/", os.sep))
+        source_kind = "tracked" if relative in tracked_files else "untracked"
         if relative.endswith(".md"):
             scanned["markdown"] += 1
             try:
-                text = read_text(absolute, "tracked markdown")
+                text = read_text(absolute, "%s markdown" % source_kind)
             except GuardError as exc:
                 index.add_error("FILE_UNREADABLE", exc.message, relative)
                 continue
@@ -1109,7 +1191,7 @@ def scan_repo_declarations(repo_root, ws_root):
         elif relative.endswith(".json"):
             scanned["json"] += 1
             try:
-                data = load_json(absolute, "tracked JSON")
+                data = load_json(absolute, "%s JSON" % source_kind)
             except GuardError as exc:
                 scanned["unparsable_json"] += 1
                 try:
@@ -1124,9 +1206,9 @@ def scan_repo_declarations(repo_root, ws_root):
                                     relative)
                 else:
                     index.add_warning("JSON_NONSTANDARD",
-                                      "tracked JSON is not a single JSON document "
+                                      "%s JSON is not a single JSON document "
                                       "and contains no PRESERVE marker (%s)"
-                                      % exc.message, relative)
+                                      % (source_kind, exc.message), relative)
                 continue
             parse_json_declarations(index, data, relative)
     scanned["declarations"] = len(index.declarations)
@@ -1424,6 +1506,33 @@ def remove_worktree(repo, path):
     return (result.returncode, result.stdout or "", result.stderr or "")
 
 
+def ensure_out_outside_candidates(out_dir, candidates, what="--out"):
+    """F-04: refuse an output directory that lives inside a deletion candidate.
+
+    The pre-delete inventory/report is written before deletion, so an ``--out``
+    inside (or aliasing into) a candidate would be deleted along with it and the
+    inventory would disappear.  Compared lexically AND by real target so a
+    junction cannot smuggle the output into a candidate.
+    """
+    if not out_dir:
+        return
+    out_ident = resolve_identity(out_dir, what)
+    out_values = {out_ident.normalised, out_ident.real}
+    for candidate in candidates:
+        candidate_norm = norm_abs(candidate, "deletion candidate")
+        candidate_real = resolve_real_target(candidate_norm, "deletion candidate")
+        for out_value in out_values:
+            for candidate_value in {candidate_norm, candidate_real}:
+                relation = path_relation(out_value, candidate_value)
+                if relation in ("same", "descendant"):
+                    fail("OUT_INSIDE_CANDIDATE",
+                         "%s %r is %s deletion candidate %s; the pre-delete "
+                         "inventory/report would be deleted with the candidate"
+                         % (what, out_dir,
+                            "equal to" if relation == "same" else "inside",
+                            candidate_value))
+
+
 # ---------------------------------------------------------------------------
 # reports / output
 # ---------------------------------------------------------------------------
@@ -1604,6 +1713,7 @@ def build_clean_report(config, index, scanned):
         "roots": [{"area": label, "normalized": config["root_norm"][label]}
                   for label, _ in config["roots"]],
         "declarations": index.counts(),
+        "declaration_scan": scanned,
         "declaration_warnings": index.warnings,
         "candidates": candidates,
         "skipped_roots": skipped,
@@ -1691,6 +1801,11 @@ def run_clean_workspace(config):
         "candidate_count": report["candidate_count"],
     }
     record = verify_release_window(config["release_window"], expected)
+    ensure_out_outside_candidates(
+        config.get("out"),
+        [item["normalized"] for item in report["candidates"]
+         if item["decision"] == "CANDIDATE"],
+        what="--out")
     _write_inventories(config, inventories)
     verify_inventory_acceptance(record, inventories)
 

@@ -12,6 +12,8 @@ fixture).  The AC4 matrix names one test per required fault-injection scenario:
   05 PRESERVE_UNKNOWN             11 symlink / escape path
   06 parent-directory protection
 """
+import contextlib
+import io
 import os
 import shutil
 import subprocess
@@ -59,6 +61,22 @@ def force_write(path, text):
         pass
     with open(path, "w", encoding="utf-8") as handle:
         handle.write(text)
+
+
+def run_main(module, argv):
+    """Exercise a tool's real CLI entry (``main(argv)``) in this process.
+
+    Used for fault injection that must still go through argument parsing, the
+    report/exit-code path and the apply gates rather than a helper function
+    (Review F-06).
+    """
+    out, err = io.StringIO(), io.StringIO()
+    with contextlib.redirect_stdout(out), contextlib.redirect_stderr(err):
+        try:
+            code = module.main(list(argv))
+        except SystemExit as exc:  # pragma: no cover - main returns int
+            code = exc.code if isinstance(exc.code, int) else 0
+    return code, out.getvalue(), err.getvalue()
 
 
 class ToolFixture(unittest.TestCase):
@@ -321,7 +339,7 @@ class ToolFixture(unittest.TestCase):
         self.assertTrue(os.path.isdir(target))
 
     def test_ac4_10_duplicate_alias_path(self):
-        """Duplicate spellings collapse to one identity; a junction is an alias."""
+        """Duplicate inventory identities are refused; a junction is an alias."""
         worktree = self.fx.make_worktree("DUP-WT", "dup-branch")
         inventory = self.fx.write_inventory([
             {"path": worktree, "branch": "dup-branch"},
@@ -330,14 +348,12 @@ class ToolFixture(unittest.TestCase):
              "branch": "dup-branch"},
         ])
         result = self.run_worktrees(inventory)
-        self.assertEqual(result.returncode, 0, result.stderr)
-        report = self.report("worktree-removal-dryrun.json")
-        self.assertEqual(report["inventory"]["unique_entries"], 1)
-        self.assertEqual(len(report["inventory"]["duplicate_entries"]), 2)
-        self.assertEqual(len([item for item in report["worktrees"]
-                              if item["normalized"] == guard.norm_abs(worktree)]),
-                         1)
+        self.assertEqual(result.returncode, 2, result.stdout + result.stderr)
+        self.assertIn("INVENTORY_DUPLICATE_IDENTITY",
+                      result.stdout + result.stderr)
         self.assertTrue(os.path.isdir(worktree))
+        self.assertFalse(os.path.exists(
+            os.path.join(self.fx.out, "worktree-removal-dryrun.json")))
 
         real = self.fx.candidate("temp", "ALIAS-TARGET", {"f.txt": "x"})
         alias = os.path.join(self.fx.ws, "temp", "ALIAS-JUNCTION")
@@ -350,6 +366,7 @@ class ToolFixture(unittest.TestCase):
         self.assertEqual(record["decision"], "REJECT")
         self.assertTrue(any("PATH_ALIAS" in reason
                             for reason in record["reasons"]))
+        self.assertTrue(os.path.isdir(real))
         shutil.rmtree(alias, ignore_errors=True)
 
     def test_ac4_11_symlink_escape(self):
@@ -545,6 +562,173 @@ class ToolFixture(unittest.TestCase):
         self.assertIn("WINDOW_CANDIDATE_DRIFT", result.stdout + result.stderr)
         self.assertTrue(os.path.isdir(first))
         self.assertTrue(os.path.isdir(second))
+
+    # ==================================================================
+    # Review r1 rework: F-01/F-02/F-03/F-04/F-06 at the REAL entry
+    # ==================================================================
+    def test_ac1_junction_declaration_real_target_protected(self):
+        """F-01: a declaration through a junction protects its REAL target."""
+        target = self.fx.candidate("temp", "JUNCTION-TARGET",
+                                   {"secret.bin": "must not be deleted"})
+        declaration_link = os.path.join(self.fx.ws, "temp", "JUNCTION-DECL")
+        if not make_junction(declaration_link, target):
+            self.skipTest("directory junctions are not supported on this host")
+        self.fx.declare([(declaration_link, "PRESERVE_REFERENCED")])
+        result = self.run_clean()
+        self.assertEqual(result.returncode, 0, result.stderr)
+        report = self.report("clean-workspace-dryrun.json")
+        target_record = self.candidate(report, guard.norm_abs(target))
+        self.assertEqual(target_record["decision"], "REJECT")
+        self.assertTrue(any("exact_source_path" in reason
+                            for reason in target_record["reasons"]),
+                        target_record["reasons"])
+        link_record = self.candidate(report, guard.norm_abs(declaration_link))
+        self.assertEqual(link_record["decision"], "REJECT")
+        self.assertTrue(any("PATH_ALIAS" in reason
+                            for reason in link_record["reasons"]))
+        self.assertEqual(report["totals"]["would_delete"], 0)
+        self.assertTrue(os.path.isfile(os.path.join(target, "secret.bin")))
+        self.assertTrue(os.path.isdir(declaration_link))
+
+        # The integrity model must also expose the alias declaration.
+        self.assertTrue(any("DECL_ALIAS_REAL_TARGET" in warning["code"]
+                            for warning in report["declaration_warnings"]))
+        shutil.rmtree(declaration_link, ignore_errors=True)
+
+    def test_ac2_untracked_declarations_are_scanned(self):
+        """F-02: an untracked declaration still protects its resource."""
+        target = self.fx.candidate("temp", "UNTRACKED-PROTECTED",
+                                   {"f.txt": "untracked declaration"})
+        self.fx.declare([(target, "PRESERVE_REFERENCED")], commit=False)
+        status = self.fx.git("status", "--porcelain").stdout
+        self.assertIn("??", status)
+        untracked = self.fx.git("ls-files", "--others",
+                                "--exclude-standard").stdout
+        self.assertIn("doc/tasks/FIXTURE-RESOURCES.md", untracked)
+        result = self.run_clean()
+        self.assertEqual(result.returncode, 0, result.stderr)
+        report = self.report("clean-workspace-dryrun.json")
+        record = self.candidate(report, guard.norm_abs(target))
+        self.assertEqual(record["decision"], "REJECT")
+        self.assertEqual(report["totals"]["would_delete"], 0)
+        self.assertEqual(report["declaration_scan"]["untracked_declaration_files"],
+                         1)
+
+    def test_ac2_untracked_declaration_parse_error_refused(self):
+        """F-02: an unparsable untracked declaration refuses apply."""
+        self.fx.declare([(os.path.join(self.fx.ws, "temp", "X"),
+                          "CLEANED_BY_OWNER")], commit=False)
+        result = self.run_clean()
+        self.assertEqual(result.returncode, 2, result.stdout + result.stderr)
+        self.assertIn("DECL_UNKNOWN_DISPOSITION", result.stdout + result.stderr)
+        self.assertIn("declaration integrity", result.stdout + result.stderr)
+
+    def test_ac2_destination_pathlike_unresolved_refused(self):
+        """F-03: a path-like but unresolvable destination is an integrity error."""
+        target = self.fx.candidate("temp", "DEST-UNRESOLVED", {"f.txt": "x"})
+        self.fx.declare([(target, "DELETE_SAFE",
+                          "Same target/dist location (not a real path)")])
+        result = self.run_clean()
+        self.assertEqual(result.returncode, 2, result.stdout + result.stderr)
+        refused = self.report("clean-workspace-refused.json")
+        codes = [error["code"] for error in refused["declaration_errors"]]
+        self.assertIn("DECL_DESTINATION_UNRESOLVED", codes)
+        self.assertTrue(os.path.isdir(target))
+
+    def test_ac2_destination_prose_allowed(self):
+        """F-03: descriptive (non path-like) destination text is allowed."""
+        target = self.fx.candidate("temp", "DEST-PROSE", {"f.txt": "x"})
+        self.fx.declare([(target, "DELETE_SAFE", "由管理员裁定，不指定路径")])
+        result = self.run_clean()
+        self.assertEqual(result.returncode, 0, result.stderr)
+        report = self.report("clean-workspace-dryrun.json")
+        self.assertTrue(any("DECL_DESTINATION_PROSE" in warning["code"]
+                            for warning in report["declaration_warnings"]))
+        record = self.candidate(report, guard.norm_abs(target))
+        self.assertEqual(record["decision"], "CANDIDATE")
+
+    def test_ac5_out_inside_candidate_refused(self):
+        """F-04: an --out inside (or aliasing into) a candidate is refused."""
+        target = self.fx.candidate("temp", "OUT-INSIDE", {"f.txt": "keep"})
+        dry = self.run_clean()
+        self.assertEqual(dry.returncode, 0, dry.stderr)
+        record = self.make_clean_record()
+        inside = os.path.join(target, "reports")
+        result = run_tool("clean_workspace.py", "--repo", self.fx.repo,
+                          "--workspace-root", self.fx.ws, "--out", inside,
+                          "--apply", "--release-window", record)
+        self.assertEqual(result.returncode, 2, result.stdout + result.stderr)
+        self.assertIn("OUT_INSIDE_CANDIDATE", result.stdout + result.stderr)
+        self.assertTrue(os.path.isdir(target))
+        self.assertFalse(os.path.exists(inside))
+
+        junction_out = os.path.join(self.fx.ws, "temp", "OUT-LINK")
+        if make_junction(junction_out, target):
+            result = run_tool("clean_workspace.py", "--repo", self.fx.repo,
+                              "--workspace-root", self.fx.ws, "--out",
+                              os.path.join(junction_out, "reports"),
+                              "--apply", "--release-window", record)
+            self.assertEqual(result.returncode, 2,
+                             result.stdout + result.stderr)
+            self.assertIn("OUT_INSIDE_CANDIDATE",
+                          result.stdout + result.stderr)
+            self.assertTrue(os.path.isdir(target))
+            shutil.rmtree(junction_out, ignore_errors=True)
+
+    def test_ac4_08_stash_nonzero_real_entry(self):
+        """F-06: stash failure through the real CLI entry rejects the candidate."""
+        worktree = self.fx.make_worktree("STASH-REAL-WT", "stash-real-branch")
+        inventory = self.fx.write_inventory(
+            [{"path": worktree, "branch": "stash-real-branch"}])
+        out = os.path.join(self.fx.tmp, "real-stash-out")
+        os.makedirs(out)
+        original = guard.git_stash_entries
+
+        def failing(_path):
+            raise guard.GuardError("GIT_STASH_FAILED",
+                                   "git stash list failed (exit 128)")
+
+        guard.git_stash_entries = failing
+        try:
+            code, stdout, stderr = run_main(remove_worktrees, [
+                "--repo", self.fx.repo, "--workspace-root", self.fx.ws,
+                "--inventory", inventory, "--out", out])
+        finally:
+            guard.git_stash_entries = original
+        self.assertEqual(code, 0, stdout + stderr)
+        report = load_json(os.path.join(out, "worktree-removal-dryrun.json"))
+        record = [item for item in report["worktrees"]
+                  if item["normalized"] == guard.norm_abs(worktree)][0]
+        self.assertEqual(record["decision"], "REJECT")
+        self.assertIn("GIT_STASH_FAILED", " ".join(record["reasons"]))
+        self.assertTrue(os.path.isdir(worktree))
+
+    def test_ac4_09_permission_denied_real_entry(self):
+        """F-06: permission denial through the real CLI entry rejects the candidate."""
+        target = self.fx.candidate("temp", "PERMISSION-REAL",
+                                   {"a.txt": "alpha"})
+        out = os.path.join(self.fx.tmp, "real-permission-out")
+        os.makedirs(out)
+        original = guard.sha256_file
+
+        def denied(_path):
+            raise guard.GuardError("PERMISSION_DENIED",
+                                   "simulated denial while hashing")
+
+        guard.sha256_file = denied
+        try:
+            code, stdout, stderr = run_main(clean_workspace, [
+                "--repo", self.fx.repo, "--workspace-root", self.fx.ws,
+                "--out", out])
+        finally:
+            guard.sha256_file = original
+        self.assertEqual(code, 0, stdout + stderr)
+        report = load_json(os.path.join(out, "clean-workspace-dryrun.json"))
+        record = [item for item in report["candidates"]
+                  if item.get("normalized") == guard.norm_abs(target)][0]
+        self.assertEqual(record["decision"], "REJECT")
+        self.assertIn("PERMISSION_DENIED", " ".join(record["reasons"]))
+        self.assertTrue(os.path.isdir(target))
 
 
 if __name__ == "__main__":

@@ -102,16 +102,22 @@ def load_inventory(path):
             guard.fail("INVENTORY_SCHEMA",
                        "worktrees[%d].protected is not a list" % position)
         if normalized in seen:
-            duplicates.append({"normalized": normalized,
-                               "first_index": seen[normalized],
-                               "duplicate_index": position,
-                               "raw": item["path"]})
-            continue
+            # F-06: duplicate/aliased inventory identity is REFUSED, not silently
+            # collapsed.  A duplicated entry means the candidate list cannot be
+            # trusted as a set (the same directory could be planned twice), so a
+            # fail-closed refusal is safer than guessing which row is intended.
+            guard.fail("INVENTORY_DUPLICATE_IDENTITY",
+                       "worktrees[%d] and worktrees[%d] normalise to the same "
+                       "identity %s (raw: %r / %r); refusing to treat a "
+                       "duplicated candidate set"
+                       % (seen[normalized], position, normalized,
+                          data["worktrees"][seen[normalized]]["path"],
+                          item["path"]))
         seen[normalized] = position
         entries.append({"position": position, "raw": item["path"],
                         "normalized": normalized, "branch": item["branch"],
                         "protected": item["protected"]})
-    return data, entries, protected_names, duplicates
+    return data, entries, protected_names, []
 
 
 def _registered_map(repo):
@@ -380,6 +386,11 @@ def run_remove_worktrees(config):
         "candidate_count": report["candidate_count"],
     }
     record = guard.verify_release_window(config["release_window"], expected)
+    guard.ensure_out_outside_candidates(
+        config.get("out"),
+        [item["normalized"] for item in report["worktrees"]
+         if item["decision"] == "CANDIDATE"],
+        what="--out")
     _write_inventories(config, inventories)
     guard.verify_inventory_acceptance(record, inventories)
 
