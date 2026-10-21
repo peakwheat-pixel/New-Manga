@@ -3,7 +3,7 @@ id: WORKSPACE-DECLARATION-REMEDIATION-1
 title: 真实仓库声明完整性错误的分诊与解析精度修复（163 → 残余，review r2 加固）
 kind: governance-hardening
 governance_version: 2
-status: in_review
+status: done
 approval: user_authorized_20261021_declaration_followup
 suggested_owner: DeepSeek Harness
 owner: workspace-hardening
@@ -12,10 +12,10 @@ depends_on: [WORKSPACE-CLEANUP-TOOL-HARDENING-1]
 base_commit: 83b111ac104d47b30cf0842f553f97656cd0d8d1
 branch: dsh/WORKSPACE-DECLARATION-REMEDIATION-1
 worktree: G:/CODEX/New Manga.workspace/worktrees/WORKSPACE-DECLARATION-REMEDIATION-1
-integration_commit: null
+integration_commit: bb7887442475cebc80e037e8d34d219e0eb9bf19
 delivery_head: cacd1c021a34c363f5b36d1b2b72f19f07acc081
 canonical_evidence_status: complete
-resource_closeout_status: pending
+resource_closeout_status: complete
 start_commit: f0f19596f
 evidence_dir: verification/WORKSPACE-DECLARATION-REMEDIATION-1
 allowed_paths:
@@ -169,3 +169,12 @@ F-04 使 44 个不完整 identity 表恢复 fatal，F-05 拒绝 3 个含 NUL/UTF
 - 删除、迁移、归档数量/字节数：0。
 - 未关闭项：76 条残余声明错误（`RESIDUAL.md`）；详见风险段。
 - 当前指针清理：未修改 Plan/STATUS/其他 Task/历史 Review；最终治理检查由 Codex 在主仓执行。
+
+## Closeout Record（Lead 2026-10-21）
+
+- Codex Review 链：r1–r6 `changes_requested`（共 5 轮返修），**r7 `approved`**（0 阻塞 finding）；原始报告归档于 `doc/reviews/WORKSPACE-DECLARATION-REMEDIATION-1-*-codex-r*.md`。
+- 集成：合并 `bb7887442`（delivery `cacd1c021`；evidence `cacd1c021` 冻结，32 条 Canonical Evidence pin、30 条 manifest 可复算）。
+- 结果：真实仓库 `--audit-declarations` 从 163 errors 降到 **76 errors / 236 warnings**；76 条全部保留 fail-closed，逐条在 `RESIDUAL.md`；未放宽解析语义、未改历史文件/旧证据、未执行真实删除。
+- 资源核销：linked worktree 保留（PRESERVE_REFERENCED）；`temp/WORKSPACE-DECL-REMEDIATION/pycache` 为空且未删除；`resource_closeout_status: complete`。
+- 回归：29 新测试 + 80 既有测试 exit 0；双 incident replay 15/15 REJECT、0 删除、18/18 source；`run_evidence.py` exit 0；集成后主仓治理检查 PASS。
+- 后续：76 条残余按 `RESIDUAL.md` 分类另立 Task/裁定（历史表结构 44、泛化/环境 10、JSON/不可读/歧义等 22），本 Task 不授权真实清理。
